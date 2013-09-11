@@ -49,7 +49,7 @@
  *
  * @UUID_SUB: subvolume uuid (e.g. btrfs)
  *
- * @UUID_LOG: external log UUID (e.g. xfs)
+ * @LOGUUID: external log UUID (e.g. xfs)
  *
  * @UUID_RAW: raw UUID from FS superblock
  *
