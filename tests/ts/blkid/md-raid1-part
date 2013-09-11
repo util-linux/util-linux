@@ -42,6 +42,16 @@ w
 q
 EOF
 
+# replace generated ID with something stable
+$TS_CMD_FDISK ${DEVICE} &> /dev/null <<EOF
+x
+i
+0x1
+r
+w
+q
+EOF
+
 udevadm settle
 MD_DEVNAME=md8
 MD_DEVICE=/dev/${MD_DEVNAME}
