@@ -7,6 +7,7 @@ libcommon_la_SOURCES = \
 	lib/canonicalize.c \
 	lib/colors.c \
 	lib/crc32.c \
+	lib/crc64.c \
 	lib/env.c \
 	lib/fileutils.c \
 	lib/ismounted.c \
