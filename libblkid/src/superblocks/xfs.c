@@ -125,6 +125,9 @@ static int probe_xfs_log(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!buf)
 		return -1;
 
+	if (memcmp(buf, "XFSB", 4) == 0)
+		return 1;			/* this is regular XFS, ignore */
+
 	/* check the first 512 512-byte sectors */
 	for (i = 0; i < 512; i++) {
 		rhead = (struct xlog_rec_header *)&buf[i*512];
