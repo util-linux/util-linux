@@ -101,12 +101,12 @@ static int probe_silraid(blkid_probe pr,
 		return -1;
 
 	if (le32_to_cpu(sil->magic) != SILICON_MAGIC)
-		return -1;
+		return 1;
 	if (sil->disk_number >= 8)
-		return -1;
+		return 1;
 	if (!checksum(sil)) {
 		DBG(LOWPROBE, blkid_debug("silicon raid: incorrect checksum"));
-		return -1;
+		return 1;
 	}
 
 	if (blkid_probe_sprintf_version(pr, "%u.%u",
