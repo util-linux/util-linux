@@ -336,6 +336,16 @@ struct blkid_chain *blkid_probe_get_chain(blkid_probe pr)
 	return pr->cur_chain;
 }
 
+static const char *blkid_probe_get_probername(blkid_probe pr)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+
+	if (chn && chn->idx >= 0 && chn->idx < chn->driver->nidinfos)
+		return chn->driver->idinfos[chn->idx]->name;
+
+	return NULL;
+}
+
 void *blkid_probe_get_binary_data(blkid_probe pr, struct blkid_chain *chn)
 {
 	int rc, org_prob_flags;
@@ -1339,6 +1349,20 @@ int blkid_probe_set_magic(blkid_probe pr, blkid_loff_t offset,
 	}
 
 	return rc;
+}
+
+int blkid_probe_verify_csum(blkid_probe pr, uint64_t csum, uint64_t expected)
+{
+	if (csum != expected) {
+		DBG(LOWPROBE, blkid_debug(
+				"incorrect checksum for type %s,"
+				" got %jX, expected %jX",
+				blkid_probe_get_probername(pr),
+				csum, expected));
+		return 0;
+	}
+
+	return 1;
 }
 
 /**

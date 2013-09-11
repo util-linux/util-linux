@@ -42,7 +42,7 @@ static uint8_t via_checksum(struct via_metadata *v)
 	while (i--)
 		cs += ((uint8_t*) v)[i];
 
-	return cs == v->checksum;
+	return cs;
 }
 
 static int probe_viaraid(blkid_probe pr,
@@ -69,7 +69,7 @@ static int probe_viaraid(blkid_probe pr,
 		return 1;
 	if (v->version_number > 2)
 		return 1;
-	if (!via_checksum(v))
+	if (!blkid_probe_verify_csum(pr, via_checksum(v), v->checksum))
 		return 1;
 
 	if (blkid_probe_sprintf_version(pr, "%u", v->version_number) != 0)

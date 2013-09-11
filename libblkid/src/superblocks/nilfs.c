@@ -89,8 +89,8 @@ static int probe_nilfs2(blkid_probe pr, const struct blkid_idmag *mag)
 	crc = crc32(crc, sum, 4);
 	crc = crc32(crc, (unsigned char *)sb + sumoff + 4, bytes - sumoff - 4);
 
-	if (crc != le32_to_cpu(sb->s_sum))
-		return -1;
+	if (!blkid_probe_verify_csum(pr, crc, le32_to_cpu(sb->s_sum)))
+		return 1;
 
 	if (strlen(sb->s_volume_name))
 		blkid_probe_set_label(pr, (unsigned char *) sb->s_volume_name,

@@ -97,13 +97,12 @@ static int probe_lvm2(blkid_probe pr, const struct blkid_idmag *mag)
 	if (le64_to_cpu(label->sector_xl) != (unsigned) sector)
 		return 1;
 
-	if (lvm2_calc_crc(&label->offset_xl, LVM2_LABEL_SIZE -
-			((char *) &label->offset_xl - (char *) label)) !=
-			le32_to_cpu(label->crc_xl)) {
-		DBG(PROBE, blkid_debug("LVM2: label checksum incorrect at sector %d",
-			   sector));
+	if (!blkid_probe_verify_csum(
+		pr, lvm2_calc_crc(
+			&label->offset_xl, LVM2_LABEL_SIZE -
+			((char *) &label->offset_xl - (char *) label)),
+			le32_to_cpu(label->crc_xl)))
 		return 1;
-	}
 
 	format_lvm_uuid(uuid, (char *) label->pv_uuid);
 	blkid_probe_sprintf_uuid(pr, label->pv_uuid, sizeof(label->pv_uuid),

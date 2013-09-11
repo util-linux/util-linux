@@ -516,6 +516,9 @@ extern int blkid_probe_set_magic(blkid_probe pr, blkid_loff_t offset,
 				size_t len, unsigned char *magic)
 			__attribute__((nonnull));
 
+extern int blkid_probe_verify_csum(blkid_probe pr, uint64_t csum, uint64_t expected)
+			__attribute__((nonnull));
+
 extern void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len)
 			__attribute__((nonnull));
 extern int blkid_uuid_is_empty(const unsigned char *buf, size_t len);
