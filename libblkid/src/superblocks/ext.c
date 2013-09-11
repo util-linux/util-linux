@@ -333,6 +333,8 @@ static int probe_jbd(blkid_probe pr,
 		return -BLKID_ERR_PARAM;
 
 	ext_get_info(pr, 2, es);
+	blkid_probe_set_uuid_as(pr, es->s_uuid, "LOGUUID");
+
 	return 0;
 }
 
