@@ -129,6 +129,7 @@ struct options {
 	char *issue;			/* alternative issue file */
 	char *erasechars;		/* string with erase chars */
 	char *killchars;		/* string with kill chars */
+	char *osrelease;		/* /etc/os-release data */
 	int delay;			/* Sleep seconds before prompt */
 	int nice;			/* Run login with this priority */
 	int numspeed;			/* number of baud rates to try */
@@ -465,7 +466,8 @@ int main(int argc, char **argv)
 			log_warn(_("%s: can't change process priority: %m"),
 				options.tty);
 	}
-
+	if (options.osrelease)
+		free(options.osrelease);
 #ifdef DEBUGGING
 	fprintf(dbf, "read %c\n", ch);
 	if (close_stream(dbf) != 0)
@@ -1317,6 +1319,84 @@ static char *xgetdomainname(void)
 	return NULL;
 }
 
+static char *read_os_release(struct options *op, const char *varname)
+{
+	int fd = -1;
+	struct stat st;
+	size_t varsz = strlen(varname);
+	char *p, *buf = NULL, *ret = NULL;
+
+	/* read the file only once */
+	if (!op->osrelease) {
+		fd = open(_PATH_OS_RELEASE, O_RDONLY);
+		if (fd == -1) {
+			log_warn(_("cannot open: %s: %m"), _PATH_OS_RELEASE);
+			return NULL;
+		}
+
+		if (fstat(fd, &st) < 0 || st.st_size > 4 * 1024 * 1024)
+			goto done;
+
+		op->osrelease = malloc(st.st_size + 1);
+		if (!op->osrelease)
+			log_err(_("failed to allocate memory: %m"));
+		if (read_all(fd, op->osrelease, st.st_size) != (ssize_t) st.st_size) {
+			free(op->osrelease);
+			op->osrelease = NULL;
+			goto done;
+		}
+		op->osrelease[st.st_size] = 0;
+	}
+	buf = strdup(op->osrelease);
+	if (!buf)
+		log_err(_("failed to allocate memory: %m"));
+	p = buf;
+
+	for (;;) {
+		char *eol, *eon;
+
+		p += strspn(p, "\n\r");
+		p += strspn(p, " \t\n\r");
+		if (!*p)
+			break;
+		if (strspn(p, "#;\n") != 0) {
+			p += strcspn(p, "\n\r");
+			continue;
+		}
+		if (strncmp(p, varname, varsz) != 0) {
+			p += strcspn(p, "\n\r");
+			continue;
+		}
+		p += varsz;
+		p += strspn(p, " \t\n\r=\"");
+		eol = p + strcspn(p, "\n\r");
+		*eol = '\0';
+		eon = eol-1;
+		while (eon > p) {
+			if (*eon == '\t' || *eon == ' ') {
+				eon--;
+				continue;
+			}
+			if (*eon == '"') {
+				*eon = '\0';
+				break;
+			}
+			break;
+		}
+		if (ret)
+			free(ret);
+		ret = strdup(p);
+		if (!ret)
+			log_err(_("failed to allocate memory: %m"));
+		p = eol + 1;
+	}
+done:
+	free(buf);
+	if (fd >= 0)
+		close(fd);
+	return ret;
+}
+
 /* Show login prompt, optionally preceded by /etc/issue contents. */
 static void do_prompt(struct options *op, struct termios *tp)
 {
@@ -2003,6 +2083,24 @@ static void output_special_char(unsigned char c, struct options *op,
 				printf("%ld", speedtab[i].speed);
 				break;
 			}
+		}
+		break;
+	}
+	case 'S':
+	{
+		char *var = NULL, varname[64];
+
+		if (get_escape_argument(fp, varname, sizeof(varname)))
+			var = read_os_release(op, varname);
+		else if (!(var = read_os_release(op, "PRETTY_NAME")))
+			var = uts.sysname;
+		if (var) {
+			if (strcmp(varname, "ANSI_COLOR") == 0)
+				printf("\033[%sm", var);
+			else
+				printf("%s", var);
+			if (var != uts.sysname)
+				free(var);
 		}
 		break;
 	}
