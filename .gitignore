@@ -13,6 +13,7 @@
 *.gcno
 *.gcov
 *.pyc
+*.vim
 Makefile
 aclocal.m4
 autom4te.cache
@@ -47,6 +48,7 @@ tags
 .tarball-version
 .version
 .dirstamp
+.clang_complete
 config/ltmain.sh
 config/test-driver
 test-suite.log
