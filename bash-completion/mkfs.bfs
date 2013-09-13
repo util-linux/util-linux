@@ -1,4 +1,4 @@
-_bfs_module()
+_mkfs.bfs_module()
 {
 	local cur prev OPTS DEVS
 	COMPREPLY=()
@@ -28,4 +28,4 @@ _bfs_module()
 	COMPREPLY=( $(compgen -W "$DEVS /path/to/file" -- $cur) )
 	return 0
 }
-complete -F _bfs_module bfs
+complete -F _mkfs.bfs_module mkfs.bfs
