@@ -83,9 +83,9 @@ int fdisk_write_disklabel(struct fdisk_context *cxt)
 int fdisk_require_geometry(struct fdisk_context *cxt)
 {
 	assert(cxt);
-	assert(cxt->label);
 
-	return cxt->label->flags & FDISK_LABEL_FL_REQUIRE_GEOMETRY ? 1 : 0;
+	return cxt->label
+	       && cxt->label->flags & FDISK_LABEL_FL_REQUIRE_GEOMETRY ? 1 : 0;
 }
 
 int fdisk_missing_geometry(struct fdisk_context *cxt)
@@ -93,7 +93,6 @@ int fdisk_missing_geometry(struct fdisk_context *cxt)
 	int rc;
 
 	assert(cxt);
-	assert(cxt->label);
 
 	rc = (fdisk_require_geometry(cxt) &&
 		    (!cxt->geom.heads || !cxt->geom.sectors

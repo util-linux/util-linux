@@ -348,13 +348,18 @@ static void print_all_devices_pt(struct fdisk_context *cxt)
 		return;
 	}
 
+	DBG(FRONTEND, dbgprint("reading "_PATH_PROC_PARTITIONS));
+
 	while (fgets(line, sizeof(line), f)) {
 		char ptname[128 + 1], devname[256];
 
-		if (sscanf(line, " %*d %*d %*d %128[^\n ]", ptname) != 4)
+		if (sscanf(line, " %*d %*d %*d %128[^\n ]", ptname) != 1)
 			continue;
 
 		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
+
+		DBG(FRONTEND, dbgprint("listing %s", devname));
+
 		if (is_whole_disk(devname)) {
 			char *cn = canonicalize_path(devname);
 			if (cn) {
