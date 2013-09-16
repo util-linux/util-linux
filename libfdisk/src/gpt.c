@@ -1104,10 +1104,6 @@ static int gpt_probe_label(struct fdisk_context *cxt)
 
 	cxt->label->nparts_max = le32_to_cpu(gpt->pheader->npartition_entries);
 	cxt->label->nparts_cur = partitions_in_use(gpt->pheader, gpt->ents);
-
-	fdisk_warnx(cxt, _("WARNING: fdisk GPT support is currently new, and therefore "
-		 "in an experimental phase. Use at your own discretion."));
-
 	return 1;
 failed:
 	DBG(LABEL, dbgprint("GPT probe failed"));
