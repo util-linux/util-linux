@@ -53,8 +53,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 	fprintf(out,
 	      _(" %1$s [options] <disk>    change partition table\n"
-	        " %1$s [options] -l <disk> list partition table(s)\n"
-	        " %1$s -s <partition>      give partition size(s) in blocks (deprecated)\n"),
+	        " %1$s [options] -l <disk> list partition table(s)\n"),
 	       program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
@@ -162,7 +161,7 @@ void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 void change_partition_type(struct fdisk_context *cxt)
 {
 	size_t i;
-	struct fdisk_parttype *t, *org_t;
+	struct fdisk_parttype *t = NULL, *org_t = NULL;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -173,25 +172,22 @@ void change_partition_type(struct fdisk_context *cxt)
 	org_t = t = fdisk_get_partition_type(cxt, i);
 	if (!t)
                 fdisk_warnx(cxt, _("Partition %zu does not exist yet!"), i + 1);
+        else {
+		do {
+			t = ask_partition_type(cxt);
+		} while (!t);
 
-        else do {
-		t = ask_partition_type(cxt);
-		if (!t)
-			continue;
-
-		if (fdisk_set_partition_type(cxt, i, t) == 0) {
+		if (fdisk_set_partition_type(cxt, i, t) == 0)
 			fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
 				_("Changed type of partition '%s' to '%s'."),
 				org_t ? org_t->name : _("Unknown"),
 				    t ?     t->name : _("Unknown"));
-		} else {
+		else
 			fdisk_info(cxt,
 				_("Type of partition %zu is unchanged: %s."),
 				i + 1,
 				org_t ? org_t->name : _("Unknown"));
-		}
-		break;
-        } while (1);
+        }
 
 	fdisk_free_parttype(t);
 	fdisk_free_parttype(org_t);

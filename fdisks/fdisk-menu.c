@@ -312,7 +312,7 @@ static int menu_detect_collisions(struct fdisk_context *cxt)
 	return 0;
 }
 
-int print_fdisk_menu(struct fdisk_context *cxt)
+static int print_fdisk_menu(struct fdisk_context *cxt)
 {
 	struct menu_context mc = MENU_CXT_EMPTY;
 	const struct menu_entry *e;

@@ -301,7 +301,7 @@ int fdisk_discover_geometry(struct fdisk_context *cxt)
 		cxt->total_sectors = (nsects / (cxt->sector_size >> 9));
 
 	/* what the kernel/bios thinks the geometry is */
-	blkdev_get_geometry(cxt->dev_fd, &cxt->geom.heads, &cxt->geom.sectors);
+	blkdev_get_geometry(cxt->dev_fd, &cxt->geom.heads, (unsigned int *) &cxt->geom.sectors);
 
 	/* obtained heads and sectors */
 	recount_geometry(cxt);
