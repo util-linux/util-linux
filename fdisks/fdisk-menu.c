@@ -108,6 +108,7 @@ struct menu menu_generic = {
 		MENU_ENT_L('w', N_("write table to disk"), FDISK_DISKLABEL_BSD),
 		MENU_BENT ('q', N_("quit without saving changes")),
 		MENU_XENT ('r', N_("return to main menu")),
+		MENU_ENT_L('r', N_("return to main menu"), FDISK_DISKLABEL_BSD),
 
 		{ 0, NULL }
 	}
@@ -483,15 +484,12 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 	case 'r':
 		/* return from nested PT (e.g. BSD) */
 		if (cxt->parent) {
-			struct fdisk_context *tmp = cxt->parent;
+			*cxt0 = cxt->parent;
 
 			fdisk_info(cxt, _("Leaving nested disk label."));
 			fdisk_free_context(cxt);
-			cxt = tmp;
+			cxt = *cxt0;
 		}
-		break;
-	default:
-		fdisk_warnx(cxt, _("%c: unimplemented command"), ent->key);
 		break;
 	}
 
