@@ -335,6 +335,7 @@ static void print_device_pt(struct fdisk_context *cxt, char *device)
 
 	if (fdisk_dev_has_disklabel(cxt))
 		fdisk_list_disklabel(cxt);
+	fputc('\n', stdout);
 }
 
 static void print_all_devices_pt(struct fdisk_context *cxt)
