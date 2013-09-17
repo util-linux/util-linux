@@ -809,28 +809,3 @@ static int createlabel_menu_cb(struct fdisk_context **cxt0,
 	}
 	return rc;
 }
-
-#ifdef TEST_PROGRAM
-struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt) { return NULL; }
-struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt) { return NULL; }
-struct fdisk_label *fdisk_new_mac_label(struct fdisk_context *cxt) { return NULL; }
-struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt) { return NULL; }
-
-int main(int argc, char *argv[])
-{
-	struct fdisk_context *cxt;
-	int idx = 1;
-
-	fdisk_init_debug(0);
-	cxt = fdisk_new_context();
-
-	if (argc > idx && strcmp(argv[idx], "--expert") == 0) {
-		fdisk_context_enable_details(cxt, 1);
-		idx++;
-	}
-	fdisk_context_switch_label(cxt, argc > idx ? argv[idx] : "gpt");
-
-	print_fdisk_menu(cxt);
-	return 0;
-}
-#endif

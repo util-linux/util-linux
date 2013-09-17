@@ -31,12 +31,6 @@ fdisk_static_CFLAGS = $(fdisk_CFLAGS)
 fdisk_static_LDADD = $(fdisk_LDADD)
 endif
 
-check_PROGRAMS += test_fdisk_menu
-
-test_fdisk_menu_SOURCES = fdisks/fdisk-menu.c
-test_fdisk_menu_CFLAGS = -DTEST_PROGRAM $(fdisk_CFLAGS)
-test_fdisk_menu_LDADD = $(fdisk_LDADD)
-
 endif # BUILD_FDISK
 
 
