@@ -663,9 +663,6 @@ int fdisk_info_new_partition(
 }
 
 #ifdef TEST_PROGRAM
-struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt) { return NULL; }
-struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt) { return NULL; }
-
 int test_ranges(struct fdisk_test *ts, int argc, char *argv[])
 {
 	/*                1  -  3,       6,    8, 9,   11    13 */
@@ -677,9 +674,9 @@ int test_ranges(struct fdisk_test *ts, int argc, char *argv[])
 	for (i = 0; i < ARRAY_SIZE(nums); i++) {
 		if (!nums[i])
 			continue;
-		ptr = mk_string_list(ptr, &len, &begin, &run, i);
+		ptr = mk_string_list(ptr, &len, &begin, &run, i, 0);
 	}
-	mk_string_list(ptr, &len, &begin, &run, -1);
+	mk_string_list(ptr, &len, &begin, &run, -1, 0);
 	printf("list: '%s'\n", range);
 
 	ptr = range;
@@ -687,9 +684,9 @@ int test_ranges(struct fdisk_test *ts, int argc, char *argv[])
 	for (i = 0; i < ARRAY_SIZE(numx); i++) {
 		if (!numx[i])
 			continue;
-		ptr = mk_string_list(ptr, &len, &begin, &run, i);
+		ptr = mk_string_list(ptr, &len, &begin, &run, i, 0);
 	}
-	mk_string_list(ptr, &len, &begin, &run, -1);
+	mk_string_list(ptr, &len, &begin, &run, -1, 0);
 	printf("empty list: '%s'\n", range);
 
 	return 0;
