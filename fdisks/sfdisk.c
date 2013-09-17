@@ -3158,9 +3158,9 @@ do_fdisk(char *dev) {
 	    ignore_result( fgets(answer, sizeof(answer), stdin) );
 	    if (answer[0] == 'q' || answer[0] == 'Q') {
 		errx(EXIT_FAILURE, _("Quitting - nothing changed"));
-	    } else if (rpmatch(answer) == 1) {
-		continue;
 	    } else if (rpmatch(answer) == 0) {
+		continue;
+	    } else if (rpmatch(answer) == 1) {
 		break;
 	    } else {
 		printf(_("Please answer one of y,n,q\n"));
