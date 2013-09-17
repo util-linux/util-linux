@@ -69,7 +69,12 @@ int fdisk_do_ask(struct fdisk_context *cxt, struct fdisk_ask *ask)
 	assert(ask);
 	assert(cxt);
 
-	DBG(ASK, dbgprint("asking for '%s'", ask->query));
+	DBG(ASK, dbgprint("do_ask for '%s'",
+				ask->query ? ask->query :
+				ask->type == FDISK_ASKTYPE_INFO  ? "info" :
+				ask->type == FDISK_ASKTYPE_WARNX ? "warnx" :
+				ask->type == FDISK_ASKTYPE_WARN  ? "warn" :
+				"?nothing?"));
 
 	if (!cxt->ask_cb) {
 		DBG(ASK, dbgprint("no ask callback specified!"));

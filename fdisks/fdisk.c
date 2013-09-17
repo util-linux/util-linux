@@ -487,9 +487,12 @@ int main(int argc, char **argv)
 		warnx(_("The device properties (sector size and geometry) should"
 			" be used with one specified device only."));
 
+	colors_init(colormode);
+
 	switch (act) {
 	case ACT_LIST:
 		fdisk_context_enable_listonly(cxt, 1);
+
 		if (argc > optind) {
 			int k;
 			for (k = optind; k < argc; k++)
@@ -514,8 +517,6 @@ int main(int argc, char **argv)
 	case ACT_FDISK:
 		if (argc-optind != 1)
 			usage(stderr);
-
-		colors_init(colormode);
 
 		if (fdisk_context_assign_device(cxt, argv[optind], 0) != 0)
 			err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
