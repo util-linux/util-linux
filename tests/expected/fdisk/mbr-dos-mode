@@ -4,190 +4,199 @@ Create new DOS partition table
 57e721e38d1266c2df055067c18f2cf9 mbr-dos-mode.img
 
 ---layout----------
-__ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
-255 heads, 63 sectors/track, 1 cylinders
-Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
+Geometry: 255 heads, 63 sectors/track, 1024 cylinders
+Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk label type: dos
-Disk identifier: 0x00000001
+Disk identifier: <removed>
 
-     Device Boot      Start         End      Blocks   Id  System
+
 -------------------
 
 Create primary partition
 ae4f9b12f4a768849f72ea36938c30c7 mbr-dos-mode.img
 
 ---layout----------
-__ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
-255 heads, 63 sectors/track, 1 cylinders
-Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
+Geometry: 255 heads, 63 sectors/track, 1024 cylinders
+Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk label type: dos
-Disk identifier: 0x00000001
+Disk identifier: <removed>
 
-     Device Boot      Start         End      Blocks   Id  System
-__ts_dev__1               1           1        8001   83  Linux
+Device     Boot Start End Blocks  Id System
+<removed>1          1   1   8001  83 Linux
+
 -------------------
 
 Set partition type
 4a5dba818f9962a82a086d8b99b89a17 mbr-dos-mode.img
 
 ---layout----------
-__ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
-255 heads, 63 sectors/track, 1 cylinders
-Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
+Geometry: 255 heads, 63 sectors/track, 1024 cylinders
+Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk label type: dos
-Disk identifier: 0x00000001
+Disk identifier: <removed>
 
-     Device Boot      Start         End      Blocks   Id  System
-__ts_dev__1               1           1        8001   bf  Solaris
+Device     Boot Start End Blocks  Id System
+<removed>1          1   1   8001  bf Solaris
+
 -------------------
 
 Set primary partition active
 c30e9c761b71cf95c67e758b93706ac5 mbr-dos-mode.img
 
 ---layout----------
-__ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
-255 heads, 63 sectors/track, 1 cylinders
-Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
+Geometry: 255 heads, 63 sectors/track, 1024 cylinders
+Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk label type: dos
-Disk identifier: 0x00000001
+Disk identifier: <removed>
 
-     Device Boot      Start         End      Blocks   Id  System
-__ts_dev__1   *           1           1        8001   bf  Solaris
+Device     Boot Start End Blocks  Id System
+<removed>1 *        1   1   8001  bf Solaris
+
 -------------------
 
 Re-create primary partition
 ae4f9b12f4a768849f72ea36938c30c7 mbr-dos-mode.img
 
 ---layout----------
-__ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
-255 heads, 63 sectors/track, 1 cylinders
-Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
+Geometry: 255 heads, 63 sectors/track, 1024 cylinders
+Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk label type: dos
-Disk identifier: 0x00000001
+Disk identifier: <removed>
 
-     Device Boot      Start         End      Blocks   Id  System
-__ts_dev__1               1           1        8001   83  Linux
+Device     Boot Start End Blocks  Id System
+<removed>1          1   1   8001  83 Linux
+
 -------------------
 
 Create extended partition
 76987a00b353687cd1dba3ddea9d66f9 mbr-dos-mode.img
 
 ---layout----------
-__ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
-255 heads, 63 sectors/track, 1 cylinders
-Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
+Geometry: 255 heads, 63 sectors/track, 1024 cylinders
+Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk label type: dos
-Disk identifier: 0x00000001
+Disk identifier: <removed>
 
-     Device Boot      Start         End      Blocks   Id  System
-__ts_dev__1               1           1        8001   83  Linux
-__ts_dev__2               2          12       88357+   5  Extended
+Device     Boot Start End Blocks  Id System
+<removed>1          1   1   8001  83 Linux
+<removed>2          2  12  88357+  5 Extended
+
 -------------------
 
 Create logical partitions
 a1cd6708e4a6d2e5f6bc9d5c0da0cf3b mbr-dos-mode.img
 
 ---layout----------
-__ts_dev__: 57 MB, 57577472 bytes, 112456 sectors
-255 heads, 63 sectors/track, 7 cylinders
-Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk <removed>: 54.9 MiB, 57577472 bytes, 112456 sectors
+Geometry: 255 heads, 63 sectors/track, 1024 cylinders
+Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk label type: dos
-Disk identifier: 0x00000001
+Disk identifier: <removed>
 
-     Device Boot      Start         End      Blocks   Id  System
-__ts_dev__1               1           1        8001   83  Linux
-__ts_dev__2               2          12       88357+   5  Extended
-__ts_dev__5               2           3       16033+  83  Linux
-__ts_dev__6               4           5       16033+  83  Linux
-__ts_dev__7               6           7       16033+  83  Linux
-__ts_dev__8               8           9       16033+  83  Linux
+Device     Boot Start End Blocks  Id System
+<removed>1          1   1   8001  83 Linux
+<removed>2          2  12  88357+  5 Extended
+<removed>5          2   3  16033+ 83 Linux
+<removed>6          4   5  16033+ 83 Linux
+<removed>7          6   7  16033+ 83 Linux
+<removed>8          8   9  16033+ 83 Linux
+
 -------------------
 
 Delete logical partitions
 4c6937d529ace5661fb82efb9394154a mbr-dos-mode.img
 
 ---layout----------
-__ts_dev__: 57 MB, 57577472 bytes, 112456 sectors
-255 heads, 63 sectors/track, 7 cylinders
-Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk <removed>: 54.9 MiB, 57577472 bytes, 112456 sectors
+Geometry: 255 heads, 63 sectors/track, 1024 cylinders
+Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk label type: dos
-Disk identifier: 0x00000001
+Disk identifier: <removed>
 
-     Device Boot      Start         End      Blocks   Id  System
-__ts_dev__1               1           1        8001   83  Linux
-__ts_dev__2               2          12       88357+   5  Extended
-__ts_dev__5               6           7       16033+  83  Linux
+Device     Boot Start End Blocks  Id System
+<removed>1          1   1   8001  83 Linux
+<removed>2          2  12  88357+  5 Extended
+<removed>5          6   7  16033+ 83 Linux
+
 -------------------
 
 Create another logical partition
 9589eaaed698d2402945ab3e513c1eb4 mbr-dos-mode.img
 
 ---layout----------
-__ts_dev__: 57 MB, 57577472 bytes, 112456 sectors
-255 heads, 63 sectors/track, 7 cylinders
-Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk <removed>: 54.9 MiB, 57577472 bytes, 112456 sectors
+Geometry: 255 heads, 63 sectors/track, 1024 cylinders
+Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk label type: dos
-Disk identifier: 0x00000001
+Disk identifier: <removed>
 
-     Device Boot      Start         End      Blocks   Id  System
-__ts_dev__1               1           1        8001   83  Linux
-__ts_dev__2               2          12       88357+   5  Extended
-__ts_dev__5               6           7       16033+  83  Linux
-__ts_dev__6               2           3       16033+  83  Linux
+Device     Boot Start End Blocks  Id System
+<removed>1          1   1   8001  83 Linux
+<removed>2          2  12  88357+  5 Extended
+<removed>5          6   7  16033+ 83 Linux
+<removed>6          2   3  16033+ 83 Linux
 
-Partition table entries are not in disk order
+Partition table entries are not in disk order.
+
 -------------------
 
 Delete primary partition
 1e6d646e5df66a2664cfbbb13fa9a08a mbr-dos-mode.img
 
 ---layout----------
-__ts_dev__: 57 MB, 57577472 bytes, 112456 sectors
-255 heads, 63 sectors/track, 7 cylinders
-Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk <removed>: 54.9 MiB, 57577472 bytes, 112456 sectors
+Geometry: 255 heads, 63 sectors/track, 1024 cylinders
+Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk label type: dos
-Disk identifier: 0x00000001
+Disk identifier: <removed>
 
-     Device Boot      Start         End      Blocks   Id  System
-__ts_dev__2               2          12       88357+   5  Extended
-__ts_dev__5               6           7       16033+  83  Linux
-__ts_dev__6               2           3       16033+  83  Linux
+Device     Boot Start End Blocks  Id System
+<removed>2          2  12  88357+  5 Extended
+<removed>5          6   7  16033+ 83 Linux
+<removed>6          2   3  16033+ 83 Linux
 
-Partition table entries are not in disk order
+Partition table entries are not in disk order.
+
 -------------------
 
 Delete extended partition
 fc3cdb12326656d7996b09b6f76973e7 mbr-dos-mode.img
 
 ---layout----------
-__ts_dev__: 57 MB, 57577472 bytes, 112456 sectors
-255 heads, 63 sectors/track, 7 cylinders
-Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk <removed>: 54.9 MiB, 57577472 bytes, 112456 sectors
+Geometry: 255 heads, 63 sectors/track, 1024 cylinders
+Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk label type: dos
-Disk identifier: 0x00000001
+Disk identifier: <removed>
 
-     Device Boot      Start         End      Blocks   Id  System
+
 -------------------
 

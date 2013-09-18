@@ -86,5 +86,6 @@ udevadm settle
 rmmod scsi_debug
 
 ts_fdisk_clean $DEVICE
+ts_fdisk_clean $MD_DEVICE
 
 ts_finalize

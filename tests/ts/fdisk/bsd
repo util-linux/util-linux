@@ -39,17 +39,14 @@ FDISK_CMD_BSD_LIST_TYPES="b\nl\nq\n"         # list supported PT types and quit
 
 function print_layout {
 	echo -ne "\n---layout----------" >> $TS_OUTPUT
-	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} | \
-		sed 's/^.*\.img/__ts_dev__/g;
-		     s/^[[:blank:]]*Device Boot/     Device Boot/g' >> $TS_OUTPUT 2>&1
+	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME}  >> $TS_OUTPUT
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
 }
 
 function print_bsd_layout {
 	echo -ne "\n---layout----------" >> $TS_OUTPUT
-	echo -e "${FDISK_CMD_BSD_LIST}" | $TS_CMD_FDISK ${TEST_IMAGE_NAME} | \
-		sed 's/Reading .*//g;
-	             s/Welcome to fdisk .*//' >> $TS_OUTPUT 2>&1
+	echo -e "${FDISK_CMD_BSD_LIST}" | \
+			$TS_CMD_FDISK ${TEST_IMAGE_NAME} >> $TS_OUTPUT
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
 }
 
@@ -103,4 +100,5 @@ echo -e "${FDISK_CMD_BSD_LIST_TYPES}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} | \
 	sed 's/Reading .*//g; s/Welcome to fdisk .*//' >> $TS_OUTPUT 2>&1
 
+ts_fdisk_clean ${TEST_IMAGE_NAME}
 ts_finalize

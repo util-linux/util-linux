@@ -32,13 +32,9 @@ FDISK_CMD_CHANGE_TYPE_BY_UUID="t\n5\n0657FD6D-A4AB-43C4-84E5-0933C84B4F4F\n"
 FDISK_CMD_DELETE_PART="d\n2\n"               # delete 2nd partition	
 FDISK_CMD_CREATE_PART="n\n2\n\n\n"           # create 2nd partition
 
-#set -x 
-
 function print_layout {
 	echo -ne "\n---layout----------" >> $TS_OUTPUT
-	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} 2> /dev/null | \
-		sed 's/^.*\.img/__ts_dev__/g;
-		     s/^[[:blank:]]*Device Boot/     Device Boot/g' >> $TS_OUTPUT 2>&1
+	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} >> $TS_OUTPUT
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
 }
 
@@ -81,4 +77,5 @@ echo -e "${FDISK_CMD_CREATE_PART}${FDISK_CMD_WRITE_CLOSE}" \
 
 print_layout
 
+ts_fdisk_clean ${TEST_IMAGE_NAME}
 ts_finalize

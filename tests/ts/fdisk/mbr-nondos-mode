@@ -36,9 +36,7 @@ FDISK_CMD_DELETE_EXTENDED="d\n3\n" # delete second primary
 
 function print_layout {
 	echo -ne "\n---layout----------" >> $TS_OUTPUT
-	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} | \
-		sed 's/^.*\.img/__ts_dev__/g;
-		     s/^[[:blank:]]*Device Boot/     Device Boot/g' >> $TS_OUTPUT 2>&1
+	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} >> $TS_OUTPUT
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
 }
 
@@ -58,80 +56,83 @@ ts_image_md5sum >> $TS_OUTPUT 2>&1
 print_layout
 
 ts_log "Create 1st primary partition"
-echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CREATE_1PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
+echo -e "${FDISK_CMD_CREATE_1PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 print_layout
 
 ts_log "Set primary partition active"
-echo -e "${FDISK_CMD_INIT}${FDISK_CMD_SET_ACTIVE}${FDISK_CMD_WRITE_CLOSE}" | \
+echo -e "${FDISK_CMD_SET_ACTIVE}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 print_layout
 
 ts_log "Re-create 1st primary partition"
-echo -e "${FDISK_CMD_INIT}d\n${FDISK_CMD_CREATE_1PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
+echo -e "d\n${FDISK_CMD_CREATE_1PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 print_layout
 
 ts_log "Create 2nd primary partition"
-echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CREATE_2PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
+echo -e "${FDISK_CMD_CREATE_2PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 print_layout
 
 ts_log "Create extended partition"
-echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CREATE_EXTENDED}${FDISK_CMD_WRITE_CLOSE}" | \
+echo -e "${FDISK_CMD_CREATE_EXTENDED}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK  ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 print_layout
 
 ts_log "Create logical partitions"
-echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_WRITE_CLOSE}" \
+echo -e "${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 print_layout
 
 ts_log "Delete logical partitions"
-echo -e "${FDISK_CMD_INIT}${FDISK_CMD_DELETE_LOGICALS}${FDISK_CMD_WRITE_CLOSE}" \
+echo -e "${FDISK_CMD_DELETE_LOGICALS}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 print_layout
+
 
 ts_log "Create another logical partition"
-echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_WRITE_CLOSE}" \
+echo -e "${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 print_layout
 
 ts_log "Delete primary partition"
-echo -e "${FDISK_CMD_INIT}${FDISK_CMD_DELETE_1PRIMARY}${FDISK_CMD_WRITE_CLOSE}" \
+echo -e "${FDISK_CMD_DELETE_1PRIMARY}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 print_layout
 
 ts_log "Delete primary partition"
-echo -e "${FDISK_CMD_INIT}${FDISK_CMD_DELETE_2PRIMARY}${FDISK_CMD_WRITE_CLOSE}" \
+echo -e "${FDISK_CMD_DELETE_2PRIMARY}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 print_layout
 
 ts_log "Delete extended partition"
-echo -e "${FDISK_CMD_INIT}${FDISK_CMD_DELETE_EXTENDED}${FDISK_CMD_WRITE_CLOSE}" \
+echo -e "${FDISK_CMD_DELETE_EXTENDED}${FDISK_CMD_WRITE_CLOSE}" \
 	| $TS_CMD_FDISK -c=dos -u=cylinders ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 print_layout
+
+ts_fdisk_clean ${TEST_IMAGE_NAME}
 
 ts_finalize

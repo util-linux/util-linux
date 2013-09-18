@@ -64,7 +64,6 @@ q
 EOF
 
 ts_device_deinit $DEVICE
-
-ts_fdisk_clean
+ts_fdisk_clean $DEVICE
 
 ts_finalize

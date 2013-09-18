@@ -4,29 +4,30 @@ Create new DOS partition table
 57e721e38d1266c2df055067c18f2cf9 bsd.img
 
 ---layout----------
-__ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
-Units = sectors of 1 * 512 = 512 bytes
+Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
+Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk label type: dos
-Disk identifier: 0x00000001
+Disk identifier: <removed>
 
-     Device Boot      Start         End      Blocks   Id  System
+
 -------------------
 
 Create 1st primary partition
 ada64ace122978d00d1d1c0e5ee45d26 bsd.img
 
 ---layout----------
-__ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
-Units = sectors of 1 * 512 = 512 bytes
+Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
+Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk label type: dos
-Disk identifier: 0x00000001
+Disk identifier: <removed>
 
-     Device Boot      Start         End      Blocks   Id  System
-__ts_dev__1            2048        4095        1024   83  Linux
+Device     Boot Start       End Blocks  Id System
+<removed>1       2048      4095   1024  83 Linux
+
 -------------------
 
 Create 2st primary partition
@@ -35,57 +36,74 @@ Set 2nd partition type
 2d8e8dff51a88a045db233418dd73fbe bsd.img
 
 ---layout----------
-__ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
-Units = sectors of 1 * 512 = 512 bytes
+Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
+Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk label type: dos
-Disk identifier: 0x00000001
+Disk identifier: <removed>
 
-     Device Boot      Start         End      Blocks   Id  System
-__ts_dev__1            2048        4095        1024   83  Linux
-__ts_dev__2            4096       20479        8192   a5  FreeBSD
+Device     Boot Start       End Blocks  Id System
+<removed>1       2048      4095   1024  83 Linux
+<removed>2       4096     20479   8192  a5 FreeBSD
+
 -------------------
 
 Create default BSD
 2e1cee529cb59c9341afef0443f196a1 bsd.img
 
 ---layout----------
-
+Welcome to fdisk <removed>.
 Changes will remain in memory only, until you decide to write them.
 Be careful before using the write command.
 
 
+Command (m for help): Entering to nested BSD disk label
+
+Command (m for help): Disk <removed>2: 10 MiB, 10485760 bytes, 20480 sectors
+Geometry: 255 heads, 63 sectors/track, 1 cylinders
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: bsd
+partitions: 4
+
+# Start       End      Size Type     fsize bsize cpg
+c  4096     20479     16384 unused   0     0     
+d     0     16064     16065 unused   0     0     
+
 Command (m for help): 
+Leaving nested disk label.
 
-BSD disklabel command (m for help): 
-4 partitions:
-#       start       end      size     fstype   [fsize bsize   cpg]
-  c:     4096     20479     16384     unused        0     0       
-  d:        0     16064     16065     unused        0     0       
-
-BSD disklabel command (m for help): 
 Command (m for help): 
 -------------------
 
 b5c121c2091b2ff26b880551feac7112 bsd.img
 
 ---layout----------
-
+Welcome to fdisk <removed>.
 Changes will remain in memory only, until you decide to write them.
 Be careful before using the write command.
 
 
+Command (m for help): Entering to nested BSD disk label
+
+Command (m for help): Disk <removed>2: 10 MiB, 10485760 bytes, 20480 sectors
+Geometry: 255 heads, 63 sectors/track, 1 cylinders
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: bsd
+partitions: 4
+
+# Start       End      Size Type     fsize bsize cpg
+a  4096      6144      2049 4.2BSD   0     0     0
+c  4096     20479     16384 unused   0     0     
+d     0     16064     16065 unused   0     0     
+
 Command (m for help): 
+Leaving nested disk label.
 
-BSD disklabel command (m for help): 
-4 partitions:
-#       start       end      size     fstype   [fsize bsize   cpg]
-  a:     4096      6144      2049     4.2BSD        0     0     0 
-  c:     4096     20479     16384     unused        0     0       
-  d:        0     16064     16065     unused        0     0       
-
-BSD disklabel command (m for help): 
 Command (m for help): 
 -------------------
 
@@ -95,13 +113,13 @@ Changes will remain in memory only, until you decide to write them.
 Be careful before using the write command.
 
 
-Command (m for help): 
+Command (m for help): Entering to nested BSD disk label
 
-BSD disklabel command (m for help): 
+Command (m for help): 
  0  unused           5  4.1BSD           9  4.4LFS           d  boot           
  1  swap             6  Eighth Edition   a  unknown          e  ADOS           
  2  Version 6        7  4.2BSD           b  HPFS             f  HFS            
  3  Version 7        8  MS-DOS           c  ISO-9660        10  AdvFS          
  4  System V       
 
-BSD disklabel command (m for help): 
+Command (m for help): 
