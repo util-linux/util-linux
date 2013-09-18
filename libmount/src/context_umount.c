@@ -423,6 +423,8 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		if (optstr && !mnt_optstr_get_option(optstr,
 					"user", &mtab_user, &sz) && sz)
 			ok = !strncmp(curr_user, mtab_user, sz);
+
+		free(curr_user);
 	}
 
 	if (ok) {
