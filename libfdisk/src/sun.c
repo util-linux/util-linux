@@ -607,6 +607,9 @@ static int sun_add_partition(
 	if (rc)
 		return rc;
 
+	if (fdisk_context_use_cylinders(cxt))
+		last *= fdisk_context_get_units_per_sector(cxt);
+
 	if (n == 2 && !first) {
 		if (last >= stop2) {
 		    whole_disk = 1;

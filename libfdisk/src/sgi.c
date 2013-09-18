@@ -933,6 +933,9 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 	if (rc)
 		return rc;
 
+	if (fdisk_context_use_cylinders(cxt))
+		last *= fdisk_context_get_units_per_sector(cxt);
+
 	if (sys == SGI_TYPE_ENTIRE_DISK
 	    && (first != 0 || last != sgi_get_lastblock(cxt)))
 		fdisk_info(cxt, _("It is highly recommended that eleventh "

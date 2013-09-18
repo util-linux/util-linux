@@ -82,7 +82,7 @@ static struct fdisk_parttype dos_parttypes[] = {
 		   (fdisk_is_disklabel(_x, DOS) && \
                     fdisk_dos_is_compatible(fdisk_context_get_label(_x, NULL)))
 
-#define cround(c, n)	fdisk_scround(c, n)
+#define cround(c, n)	fdisk_cround(c, n)
 
 
 static inline struct fdisk_dos_label *self_label(struct fdisk_context *cxt)
@@ -722,6 +722,10 @@ static void set_partition(struct fdisk_context *cxt,
 	struct dos_partition *p;
 	sector_t offset;
 
+	DBG(LABEL, dbgprint("DOS: setting partition %d%s, start=%zu, stop=%zu, sysid=%02x",
+				i, doext ? " [extended]" : "",
+				(size_t) start, (size_t) stop, sysid));
+
 	if (doext) {
 		struct fdisk_dos_label *l = self_label(cxt);
 		p = pe->ex_entry;
@@ -830,9 +834,10 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 			+ dos_partition_get_size(q) - 1;
 	}
 	if (fdisk_context_use_cylinders(cxt))
-		for (i = 0; i < cxt->label->nparts_max; i++)
+		for (i = 0; i < cxt->label->nparts_max; i++) {
 			first[i] = (cround(cxt, first[i]) - 1)
 				* fdisk_context_get_units_per_sector(cxt);
+		}
 
 	/*
 	 * Ask for first sector
@@ -950,6 +955,11 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 
 		stop = fdisk_ask_number_get_result(ask);
 
+		if (fdisk_context_use_cylinders(cxt)) {
+			stop = stop * fdisk_context_get_units_per_sector(cxt) - 1;
+                        if (stop >limit)
+                                stop = limit;
+		}
 		if (fdisk_ask_number_is_relative(ask)
 		    && alignment_required(cxt)) {
 			/* the last sector has not been exactly requested (but

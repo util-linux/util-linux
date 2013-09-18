@@ -492,6 +492,12 @@ sector_t fdisk_scround(struct fdisk_context *cxt, sector_t num)
 	return (num + un - 1) / un;
 }
 
+sector_t fdisk_cround(struct fdisk_context *cxt, sector_t num)
+{
+	return fdisk_context_use_cylinders(cxt) ?
+			(num / fdisk_context_get_units_per_sector(cxt)) + 1 : num;
+}
+
 int fdisk_reread_partition_table(struct fdisk_context *cxt)
 {
 	int i;
