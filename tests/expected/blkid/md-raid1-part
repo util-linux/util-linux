@@ -1,41 +1,43 @@
 Create partitions
 
-
+Welcome to fdisk <removed>.
 Changes will remain in memory only, until you decide to write them.
 Be careful before using the write command.
 
-Device does not contain a recognized partition table
+Device does not contain a recognized partition table.
 
-
-Command (m for help): Partition type:
-   p   primary (0 primary, 0 extended, 4 free)
-   e   extended
-Select (default p): Partition number (1-4, default 1): First sector (2048-104447, default 2048): Using default value 2048
-Last sector, +sectors or +size{K,M,G} (2048-104447, default 104447): Partition 1 of type Linux and of size 25 MiB is set
-
-Command (m for help): Partition type:
-   p   primary (1 primary, 0 extended, 3 free)
-   e   extended
-Select (default p): Partition number (2-4, default 2): First sector (53248-104447, default 53248): Using default value 53248
-Last sector, +sectors or +size{K,M,G} (53248-104447, default 104447): Using default value 104447
-Partition 2 of type Linux and of size 25 MiB is set
+Created a new <removed>.
 
 Command (m for help): 
-Disk /dev/...: 53 MB, 53477376 bytes, 104448 sectors
-Units = sectors of 1 * 512 = 512 bytes
+Partition type:
+   p   primary (0 primary, 0 extended, 4 free)
+   e   extended
+Select (default p): Partition number (1-4, default 1): First sector (2048-104447, default 2048): Last sector, +sectors or +size{K,M,G,T,P} (2048-104447, default 104447): 
+Created a new <removed>.
+
+Command (m for help): 
+Partition type:
+   p   primary (1 primary, 0 extended, 3 free)
+   e   extended
+Select (default p): Partition number (2-4, default 2): First sector (53248-104447, default 53248): Last sector, +sectors or +size{K,M,G,T,P} (53248-104447, default 104447): 
+Created a new <removed>.
+
+Command (m for help): Disk <removed>: 51 MiB, 53477376 bytes, 104448 sectors
+Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 32768 bytes
 Disk label type: dos
+Disk identifier: <removed>
 
+Device     Boot     Start       End Blocks  Id System
+<removed>1           2048     53247  25600  83 Linux
+<removed>2          53248    104447  25600  83 Linux
 
-   Device Boot      Start         End      Blocks   Id  System
-/dev/...1            2048       53247       25600   83  Linux
-/dev/...2           53248      104447       25600   83  Linux
-
-Command (m for help): The partition table has been altered!
-
+Command (m for help): 
+The partition table has been altered.
 Calling ioctl() to re-read partition table.
 Syncing disks.
+
 Create RAID1 device
 Probe whole-disk
 ID_PART_TABLE_TYPE=dos
