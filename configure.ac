@@ -1374,25 +1374,32 @@ AM_CONDITIONAL([BUILD_BASH_COMPLETION], [test "x$enable_bash_completion" = xyes]
 
 
 AC_ARG_WITH([python],
-  AS_HELP_STRING([--without-python], [do not generate python bindings]),
-  [], [with_python=yes]
+  AS_HELP_STRING([--without-python], [do not generate python bindings, use --with-python={2,3} to force version]),
+  [], [with_python=check]
 )
-have_python=no
-AS_IF([test "x$with_python" = xyes], [
-  AM_PATH_PYTHON([2.4])
-  AS_IF([test -x "$PYTHON-config"], [
-    have_python=yes
-    PYTHON_INCLUDES=$($PYTHON-config --includes)
-    AC_SUBST(PYTHON_INCLUDES)
-  ])
-])
 
-dnl FIXME: the python3 should be fixed in future.
-AS_CASE([$PYTHON_VERSION],
-	[2.*], [],
-	[3.*], [AC_MSG_ERROR([pylibmount will not work with python3])],
-	[AC_MSG_ERROR([unanticipated python version])]
-)
+have_python=no
+AS_IF([test "x$with_python" != xno], [
+  # We follow distributions default and look for PKG module name "python"
+  # (minimal version is 2) but if major version is explicitly specified by
+  # --with-python=2 or --with-python=3 then we look for PKG module "python2" or
+  # "python3".
+  pymajor="2"
+  modname="python"
+  AS_IF([test "x$withval" != xno -a "x$withval" != xyes], [
+    pymajor="$withval"
+    modname="python${pymajor}"
+  ])
+  PKG_CHECK_MODULES(PYTHON,[${modname} >= $pymajor],
+		           [have_python=yes
+			    PYTHON_VERSION=`$PKG_CONFIG --modversion $modname`
+			    AC_SUBST([PYTHON_VERSION])],
+			   [have_python=no])
+  AS_CASE([$with_python:$have_python],
+    [yes:no],
+      [AC_MSG_ERROR([python selected but libpython not found])],
+  )
+])
 
 UL_BUILD_INIT([pylibmount], [check])
 UL_REQUIRES_HAVE([pylibmount], [python])
@@ -1531,7 +1538,9 @@ AC_MSG_RESULT([
 	suid cflags:       ${SUID_CFLAGS}
 	ldflags:           ${LDFLAGS}
 	suid ldflags:      ${SUID_LDFLAGS}
-	Bash completions dir: ${with_bashcompletiondir}
+
+	Python:            ${PYTHON_VERSION}
+	Bash completions:  ${with_bashcompletiondir}
 
 	warnings:
 
