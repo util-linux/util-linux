@@ -463,6 +463,7 @@ static int valid_pmbr(struct fdisk_context *cxt)
 {
 	int i, part = 0, ret = 0; /* invalid by default */
 	struct gpt_legacy_mbr *pmbr = NULL;
+	uint32_t sz_lba = 0;
 
 	if (!cxt->firstsector)
 		goto done;
@@ -503,12 +504,15 @@ check_hybrid:
 	/*
 	 * Protective MBRs take up the lesser of the whole disk
 	 * or 2 TiB (32bit LBA), ignoring the rest of the disk.
+	 * Some partitioning programs, nonetheless, choose to set
+	 * the size to the maximum 32-bit limitation, disregarding
+	 * the disk size.
 	 *
 	 * Hybrid MBRs do not necessarily comply with this.
 	 */
 	if (ret == GPT_MBR_PROTECTIVE) {
-		if (le32_to_cpu(pmbr->partition_record[part].size_in_lba) !=
-		    min((uint32_t) cxt->total_sectors - 1, 0xFFFFFFFF))
+		sz_lba = le32_to_cpu(pmbr->partition_record[part].size_in_lba);
+		if (sz_lba != (uint32_t) cxt->total_sectors - 1 && sz_lba != 0xFFFFFFFF)
 			ret = 0;
 	}
 done:
