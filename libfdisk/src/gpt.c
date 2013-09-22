@@ -490,9 +490,10 @@ static int valid_pmbr(struct fdisk_context *cxt)
 			goto check_hybrid;
 		}
 	}
-check_hybrid:
+
 	if (ret != GPT_MBR_PROTECTIVE)
 		goto done;
+check_hybrid:
 	for (i = 0 ; i < 4; i++) {
 		if ((pmbr->partition_record[i].os_type != EFI_PMBR_OSTYPE) &&
 		    (pmbr->partition_record[i].os_type != 0x00))
