@@ -87,9 +87,9 @@ void add(const char *fmt)
 
 	/* Start new linked list of format units. */
 	tfs = xcalloc(1, sizeof(FS));
-	INIT_LIST_HEAD(&tfs->nextfs);
-	INIT_LIST_HEAD(&tfs->nextfu);
-	list_add_tail(&tfs->nextfs, &fshead);
+	INIT_LIST_HEAD(&tfs->fslist);
+	INIT_LIST_HEAD(&tfs->fulist);
+	list_add_tail(&tfs->fslist, &fshead);
 
 	/* Take the format string and break it up into format units. */
 	p = (unsigned char *)fmt;
@@ -102,9 +102,9 @@ void add(const char *fmt)
 
 		/* Allocate a new format unit and link it in. */
 		tfu = xcalloc(1, sizeof(FU));
-		INIT_LIST_HEAD(&tfu->nextfu);
-		INIT_LIST_HEAD(&tfu->nextpr);
-		list_add_tail(&tfu->nextfu, &tfs->nextfu);
+		INIT_LIST_HEAD(&tfu->fulist);
+		INIT_LIST_HEAD(&tfu->prlist);
+		list_add_tail(&tfu->fulist, &tfs->fulist);
 		tfu->reps = 1;
 
 		/* If leading digit, repetition count. */
@@ -166,8 +166,8 @@ int block_size(FS *fs)
 	int prec;
 
 	/* figure out the data block size needed for each format unit */
-	list_for_each (p, &fs->nextfu) {
-		fu = list_entry(p, FU, nextfu);
+	list_for_each (p, &fs->fulist) {
+		fu = list_entry(p, FU, fulist);
 		if (fu->bcnt) {
 			cursize += fu->bcnt * fu->reps;
 			continue;
@@ -229,8 +229,8 @@ void rewrite(FS *fs)
 
 	prec = 0;
 
-	list_for_each (p, &fs->nextfu) {
-		fu = list_entry(p, FU, nextfu);
+	list_for_each (p, &fs->fulist) {
+		fu = list_entry(p, FU, fulist);
 		/*
 		 * Break each format unit into print units; each
 		 * conversion character gets its own.
@@ -239,8 +239,8 @@ void rewrite(FS *fs)
 		fmtp = fu->fmt;
 		while (*fmtp) {
 			pr = xcalloc(1, sizeof(PR));
-			INIT_LIST_HEAD(&pr->nextpr);
-			list_add_tail(&pr->nextpr, &fu->nextpr);
+			INIT_LIST_HEAD(&pr->prlist);
+			list_add_tail(&pr->prlist, &fu->prlist);
 
 			/* Skip preceding text and up to the next % sign. */
 			p1 = fmtp;
@@ -434,8 +434,8 @@ void rewrite(FS *fs)
 		 * so can adjust rep count later.
 		 */
 		if (!fu->bcnt)
-			list_for_each(q, &fu->nextpr)
-				fu->bcnt += (list_entry(q, PR, nextpr))->bcnt;
+			list_for_each(q, &fu->prlist)
+				fu->bcnt += (list_entry(q, PR, prlist))->bcnt;
 	}
 	/*
 	 * If the format string interprets any data at all, and it's
@@ -446,14 +446,14 @@ void rewrite(FS *fs)
 	 * If rep count is greater than 1, no trailing whitespace
 	 * gets output from the last iteration of the format unit.
 	 */
-	list_for_each (p, &fs->nextfu) {
-		fu = list_entry(p, FU, nextfu);
-		if (list_entry_is_last(&fu->nextfu, &fs->nextfu) && fs->bcnt < blocksize &&
+	list_for_each (p, &fs->fulist) {
+		fu = list_entry(p, FU, fulist);
+		if (list_entry_is_last(&fu->fulist, &fs->fulist) && fs->bcnt < blocksize &&
 		    !(fu->flags&F_SETREP) && fu->bcnt)
 			fu->reps += (blocksize - fs->bcnt) / fu->bcnt;
 		if (fu->reps > 1) {
-			if (!list_empty(&fu->nextpr)) {
-				pr = list_last_entry(&fu->nextpr, PR, nextpr);
+			if (!list_empty(&fu->prlist)) {
+				pr = list_last_entry(&fu->prlist, PR, prlist);
 				for (p1 = pr->fmt, p2 = NULL; *p1; ++p1)
 					p2 = isspace(*p1) ? p1 : NULL;
 				if (p2)

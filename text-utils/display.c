@@ -190,15 +190,15 @@ void display(void)
 	while ((bp = get()) != NULL) {
 		fs = &fshead; savebp = bp; saveaddress = address;
 		list_for_each(p, fs) {
-			fss = list_entry(p, FS, nextfs);
-			list_for_each(q, &fss->nextfu) {
-				fu = list_entry(q, FU, nextfu);
+			fss = list_entry(p, FS, fslist);
+			list_for_each(q, &fss->fulist) {
+				fu = list_entry(q, FU, fulist);
 				if (fu->flags&F_IGNORE)
 					break;
 				cnt = fu->reps;
 				while (cnt) {
-					list_for_each(r, &fu->nextpr) {
-						pr = list_entry(r, PR, nextpr);
+					list_for_each(r, &fu->prlist) {
+						pr = list_entry(r, PR, prlist);
 					    if (eaddress && address >= eaddress &&
 						!(pr->flags&(F_TEXT|F_BPAD)))
 						    bpad(pr);
@@ -228,8 +228,8 @@ void display(void)
 				return;
 			eaddress = address;
 		}
-		list_for_each (p, &endfu->nextpr) {
-			pr = list_entry(p, PR, nextpr);
+		list_for_each (p, &endfu->prlist) {
+			pr = list_entry(p, PR, prlist);
 			switch(pr->flags) {
 			case F_ADDRESS:
 				printf(pr->fmt, (int64_t)eaddress);

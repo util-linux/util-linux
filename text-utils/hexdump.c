@@ -72,14 +72,14 @@ int main(int argc, char **argv)
 	/* figure out the data block size */
 	blocksize = 0;
 	list_for_each(p, &fshead) {
-		tfs = list_entry(p, FS, nextfs);
+		tfs = list_entry(p, FS, fslist);
 		if ((tfs->bcnt = block_size(tfs)) > blocksize)
 			blocksize = tfs->bcnt;
 	}
 
 	/* rewrite the rules, do syntax checking */
 	list_for_each(p, &fshead)
-		rewrite(list_entry(p, FS, nextfs));
+		rewrite(list_entry(p, FS, fslist));
 
 	next(argv);
 	display();

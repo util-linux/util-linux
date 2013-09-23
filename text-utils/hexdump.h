@@ -36,7 +36,7 @@
 #include "list.h"
 
 typedef struct _pr {
-	struct list_head nextpr;		/* next print unit */
+	struct list_head prlist;		/* next print unit */
 #define	F_ADDRESS	0x001		/* print offset */
 #define	F_BPAD		0x002		/* blank pad */
 #define	F_C		0x004		/* %_c */
@@ -56,8 +56,8 @@ typedef struct _pr {
 } PR;
 
 typedef struct _fu {
-	struct list_head nextfu;		/* next format unit */
-	struct list_head nextpr;		/* next print unit */
+	struct list_head fulist;		/* next format unit */
+	struct list_head prlist;		/* next print unit */
 #define	F_IGNORE	0x01		/* %_A */
 #define	F_SETREP	0x02		/* rep count set, not default */
 	unsigned int flags;		/* flag values */
@@ -67,8 +67,8 @@ typedef struct _fu {
 } FU;
 
 typedef struct _fs {			/* format strings */
-	struct list_head nextfs;		/* linked list of format strings */
-	struct list_head nextfu;		/* linked list of format units */
+	struct list_head fslist;		/* linked list of format strings */
+	struct list_head fulist;		/* linked list of format units */
 	int bcnt;
 } FS;
 
