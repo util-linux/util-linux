@@ -162,9 +162,17 @@ static void bpad(PR *pr)
 	pr->flags = F_BPAD;
 	pr->cchar[0] = 's';
 	pr->cchar[1] = 0;
-	for (p1 = pr->fmt; *p1 != '%'; ++p1);
-	for (p2 = ++p1; *p1 && strchr(spec, *p1); ++p1);
-	while ((*p2++ = *p1++) != 0) ;
+
+	p1 = pr->fmt;
+	while (*p1 != '%')
+		++p1;
+
+	p2 = ++p1;
+	while (*p1 && strchr(spec, *p1))
+		++p1;
+
+	while ((*p2++ = *p1++))
+		;
 }
 
 void display(void)

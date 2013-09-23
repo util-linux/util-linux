@@ -73,12 +73,12 @@ conv_c(PR *pr, u_char *p)
 	}
 	if (isprint(*p)) {
 		*pr->cchar = 'c';
-		(void)printf(pr->fmt, *p);
+		printf(pr->fmt, *p);
 	} else {
-		(void)sprintf(buf, "%03o", (int)*p);
+		sprintf(buf, "%03o", (int)*p);
 		str = buf;
 strpr:		*pr->cchar = 's';
-		(void)printf(pr->fmt, str);
+		printf(pr->fmt, str);
 	}
 }
 
@@ -95,15 +95,15 @@ conv_u(PR *pr, u_char *p)
 						/* od used nl, not lf */
 	if (*p <= 0x1f) {
 		*pr->cchar = 's';
-		(void)printf(pr->fmt, list[*p]);
+		printf(pr->fmt, list[*p]);
 	} else if (*p == 0x7f) {
 		*pr->cchar = 's';
-		(void)printf(pr->fmt, "del");
+		printf(pr->fmt, "del");
 	} else if (isprint(*p)) {
 		*pr->cchar = 'c';
-		(void)printf(pr->fmt, *p);
+		printf(pr->fmt, *p);
 	} else {
 		*pr->cchar = 'x';
-		(void)printf(pr->fmt, (int)*p);
+		printf(pr->fmt, (int)*p);
 	}
 }

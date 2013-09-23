@@ -78,10 +78,8 @@ int main(int argc, char **argv)
 	}
 
 	/* rewrite the rules, do syntax checking */
-	list_for_each(p, &fshead) {
-		tfs = list_entry(p, FS, nextfs);
-		rewrite(tfs);
-	}
+	list_for_each(p, &fshead)
+		rewrite(list_entry(p, FS, nextfs));
 
 	next(argv);
 	display();

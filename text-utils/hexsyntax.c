@@ -56,7 +56,7 @@ newsyntax(int argc, char ***argvp)
 {
 	int ch;
 	char **argv;
-	char *hex_offt_fmt = "\"%07.7_Ax\n\"";
+	char *hex_offt = "\"%07.7_Ax\n\"";
 
 	static const struct option longopts[] = {
 		{"one-byte-octal", no_argument, NULL, 'b'},
@@ -79,11 +79,11 @@ newsyntax(int argc, char ***argvp)
 	while ((ch = getopt_long(argc, argv, "bcCde:f:n:os:vxhV", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'b':
-			add(hex_offt_fmt);
+			add(hex_offt);
 			add("\"%07.7_ax \" 16/1 \"%03o \" \"\\n\"");
 			break;
 		case 'c':
-			add(hex_offt_fmt);
+			add(hex_offt);
 			add("\"%07.7_ax \" 16/1 \"%3_c \" \"\\n\"");
 			break;
 		case 'C':
@@ -92,7 +92,7 @@ newsyntax(int argc, char ***argvp)
 			add("\"  |\" 16/1 \"%_p\" \"|\\n\"");
 			break;
 		case 'd':
-			add(hex_offt_fmt);
+			add(hex_offt);
 			add("\"%07.7_ax \" 8/2 \"  %05u \" \"\\n\"");
 			break;
 		case 'e':
@@ -105,7 +105,7 @@ newsyntax(int argc, char ***argvp)
 			length = strtosize_or_err(optarg, _("failed to parse length"));
 			break;
 		case 'o':
-			add(hex_offt_fmt);
+			add(hex_offt);
 			add("\"%07.7_ax \" 8/2 \" %06o \" \"\\n\"");
 			break;
 		case 's':
@@ -115,7 +115,7 @@ newsyntax(int argc, char ***argvp)
 			vflag = ALL;
 			break;
 		case 'x':
-			add(hex_offt_fmt);
+			add(hex_offt);
 			add("\"%07.7_ax \" 8/2 \"   %04x \" \"\\n\"");
 			break;
 		case 'h':
@@ -130,7 +130,7 @@ newsyntax(int argc, char ***argvp)
 	}
 
 	if (list_empty(&fshead)) {
-		add(hex_offt_fmt);
+		add(hex_offt);
 		add("\"%07.7_ax \" 8/2 \"%04x \" \"\\n\"");
 	}
 

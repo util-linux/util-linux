@@ -119,7 +119,7 @@ void add(const char *fmt)
 			tfu->reps = atoi((char *)savep);
 			tfu->flags = F_SETREP;
 			/* skip trailing white space */
-			while (++p && isspace(*p))
+			while (isspace(*++p))
 				;
 		}
 
@@ -137,7 +137,7 @@ void add(const char *fmt)
 				badfmt(fmt);
 			tfu->bcnt = atoi((char *)savep);
 			/* skip trailing white space */
-			while (++p && isspace(*p))
+			while (isspace(*++p))
 				;
 		}
 
@@ -455,10 +455,10 @@ void rewrite(FS *fs)
 		if (fu->reps > 1) {
 			if (!list_empty(&fu->nextpr)) {
 				pr = list_last_entry(&fu->nextpr, PR, nextpr);
-			for (p1 = pr->fmt, p2 = NULL; *p1; ++p1)
-				p2 = isspace(*p1) ? p1 : NULL;
-			if (p2)
-				pr->nospace = p2;
+				for (p1 = pr->fmt, p2 = NULL; *p1; ++p1)
+					p2 = isspace(*p1) ? p1 : NULL;
+				if (p2)
+					pr->nospace = p2;
 			}
 		}
 	}
