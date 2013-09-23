@@ -471,7 +471,8 @@ static void escape(char *p1)
 	char *p2;
 
 	/* alphabetic escape sequences have to be done in place */
-	for (p2 = p1;; ++p1, ++p2) {
+	p2 = p1;
+	while (TRUE) {
 		if (!*p1) {
 			*p2 = *p1;
 			break;
@@ -504,6 +505,7 @@ static void escape(char *p1)
 				*p2 = *p1;
 				break;
 			}
+		++p1; ++p2;
 	}
 }
 
