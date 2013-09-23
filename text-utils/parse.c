@@ -268,11 +268,10 @@ void rewrite(FS *fs)
 				/* skip any special chars, field width */
 				while (strchr(spec + 1, *++p1))
 					;
-				if (*p1 == '.' &&
-				    isdigit((unsigned char)*++p1)) {
+				if (*p1 == '.' && isdigit(*++p1)) {
 					sokay = USEPREC;
 					prec = atoi(p1);
-					while (isdigit((unsigned char)*++p1))
+					while (isdigit(*++p1))
 						;
 				} else
 					sokay = NOTOKAY;
@@ -313,18 +312,18 @@ void rewrite(FS *fs)
 					cs[1] = cs[0];
 					cs[0] = 'q';
 					switch(fu->bcnt) {
-					case 0:
-						pr->bcnt = 4;
-						break;
-					case 1:
-					case 2:
-					case 4:
-					case 8:
-						pr->bcnt = fu->bcnt;
-						break;
-					default:
-						p1[1] = '\0';
-						badcnt(p1);
+						case 0:
+							pr->bcnt = 4;
+							break;
+						case 1:
+						case 2:
+						case 4:
+						case 8:
+							pr->bcnt = fu->bcnt;
+							break;
+						default:
+							p1[1] = '\0';
+							badcnt(p1);
 					}
 					break;
 				case 'e':
@@ -334,16 +333,16 @@ void rewrite(FS *fs)
 				case 'G':
 					pr->flags = F_DBL;
 					switch(fu->bcnt) {
-					case 0:
-						pr->bcnt = 8;
-						break;
-					case 4:
-					case 8:
-						pr->bcnt = fu->bcnt;
-						break;
-					default:
-						p1[1] = '\0';
-						badcnt(p1);
+						case 0:
+							pr->bcnt = 8;
+							break;
+						case 4:
+						case 8:
+							pr->bcnt = fu->bcnt;
+							break;
+						default:
+							p1[1] = '\0';
+							badcnt(p1);
 					}
 					break;
 				case 's':
@@ -456,10 +455,10 @@ void rewrite(FS *fs)
 		if (fu->reps > 1) {
 			if (!list_empty(&fu->nextpr)) {
 				pr = list_last_entry(&fu->nextpr, PR, nextpr);
-				for (p1 = pr->fmt, p2 = NULL; *p1; ++p1)
-					p2 = isspace(*p1) ? p1 : NULL;
-				if (p2)
-					pr->nospace = p2;
+			for (p1 = pr->fmt, p2 = NULL; *p1; ++p1)
+				p2 = isspace(*p1) ? p1 : NULL;
+			if (p2)
+				pr->nospace = p2;
 			}
 		}
 	}
