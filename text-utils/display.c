@@ -253,7 +253,8 @@ get(void)
 		savp = tmpp;
 		address += blocksize;
 	}
-	for (need = blocksize, nread = 0;;) {
+	need = blocksize, nread = 0;
+	while (TRUE) {
 		/*
 		 * if read the right number of bytes, or at EOF for one file,
 		 * and no other files are available, zero-pad the rest of the
