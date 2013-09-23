@@ -44,6 +44,7 @@
 #include "hexdump.h"
 #include "nls.h"
 #include "xalloc.h"
+#include "strutils.h"
 
 static void escape(char *p1);
 static void badcnt(const char *s);
@@ -148,8 +149,7 @@ void add(const char *fmt)
 				badfmt(fmt);
 		}
 		tfu->fmt = xmalloc(p - savep + 1);
-		strncpy(tfu->fmt, (char *)savep, p - savep);
-		tfu->fmt[p - savep] = '\0';
+		xstrncpy(tfu->fmt, (char *)savep, p - savep + 1);
 		escape(tfu->fmt);
 		++p;
 	}
