@@ -52,7 +52,7 @@ static void badsfmt(void);
 static void badfmt(const char *fmt);
 static void badconv(const char *ch);
 
-#define in(s,f) strchr(f, *(s))
+#define first_letter(s,f) strchr(f, *(s))
 
 FU *endfu;					/* format at end-of-data */
 
@@ -191,13 +191,13 @@ int block_size(FS *fs)
 				while (isdigit(*++fmt))
 					;
 			}
-			if (in(fmt, "diouxX"))
+			if (first_letter(fmt, "diouxX"))
 				bcnt += 4;
-			else if (in(fmt, "efgEG"))
+			else if (first_letter(fmt, "efgEG"))
 				bcnt += 8;
 			else if (*fmt == 's')
 				bcnt += prec;
-			else if (*fmt == 'c' || (*fmt == '_' && in(++fmt, "cpu")))
+			else if (*fmt == 'c' || (*fmt == '_' && first_letter(++fmt, "cpu")))
 				++bcnt;
 			++fmt;
 		}
@@ -283,10 +283,10 @@ void rewrite(FS *fs)
 						p1[1] = '\0';
 						badcnt(p1);
 				}
-			} else if (in(cs, "di")) {
+			} else if (first_letter(cs, "di")) {
 				pr->flags = F_INT;
 				goto isint;
-			} else if (in(cs, "ouxX")) {
+			} else if (first_letter(cs, "ouxX")) {
 				pr->flags = F_UINT;
 isint:				cs[2] = '\0';
 				cs[1] = cs[0];
@@ -305,7 +305,7 @@ isint:				cs[2] = '\0';
 						p1[1] = '\0';
 						badcnt(p1);
 				}
-			} else if (in(cs, "efgEG")) {
+			} else if (first_letter(cs, "efgEG")) {
 				pr->flags = F_DBL;
 				switch(fu->bcnt) {
 					case 0:
@@ -341,7 +341,7 @@ isint:				cs[2] = '\0';
 					case 'a':
 						pr->flags = F_ADDRESS;
 						++p2;
-						if (in(p1 + 2, "dox")) {
+						if (first_letter(p1 + 2, "dox")) {
 							cs[0] = 'q';
 							cs[1] = p1[2];
 							cs[2] = '\0';
