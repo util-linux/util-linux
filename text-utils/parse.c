@@ -92,8 +92,6 @@ void add(const char *fmt)
 	INIT_LIST_HEAD(&tfs->nextfu);
 	list_add_tail(&tfs->nextfs, &fshead);
 
-	//entry_list here
-
 	/* Take the format string and break it up into format units. */
 	p = (unsigned char *)fmt;
 	while (TRUE) {
@@ -121,7 +119,7 @@ void add(const char *fmt)
 			tfu->reps = atoi((char *)savep);
 			tfu->flags = F_SETREP;
 			/* skip trailing white space */
-			while (++p && isspace(*p)) //correct?
+			while (++p && isspace(*p))
 				;
 		}
 
@@ -139,7 +137,7 @@ void add(const char *fmt)
 				badfmt(fmt);
 			tfu->bcnt = atoi((char *)savep);
 			/* skip trailing white space */
-			while (++p && isspace(*p)) //correct?
+			while (++p && isspace(*p))
 				;
 		}
 
@@ -148,7 +146,7 @@ void add(const char *fmt)
 			badfmt(fmt);
 		savep = ++p;
 		while (*p != '"')
-			if (*p++ == 0)
+			if (!*p++)
 				badfmt(fmt);
 		tfu->fmt = xmalloc(p - savep + 1);
 		strncpy(tfu->fmt, (char *)savep, p - savep);
