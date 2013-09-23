@@ -82,7 +82,7 @@ void addfile(char *name)
 
 void add(const char *fmt)
 {
-	const unsigned char *p, *savep;
+	const char *p, *savep;
 	FS *tfs;
 	FU *tfu;
 
@@ -93,7 +93,7 @@ void add(const char *fmt)
 	list_add_tail(&tfs->fslist, &fshead);
 
 	/* Take the format string and break it up into format units. */
-	p = (unsigned char *)fmt;
+	p = fmt;
 	while (TRUE) {
 		/* Skip leading white space. */
 		while (isspace(*p) && ++p)
@@ -117,7 +117,7 @@ void add(const char *fmt)
 			if (!isspace(*p) && *p != '/')
 				badfmt(fmt);
 			/* may overwrite either white space or slash */
-			tfu->reps = atoi((char *)savep);
+			tfu->reps = atoi(savep);
 			tfu->flags = F_SETREP;
 			/* skip trailing white space */
 			while (isspace(*++p))
@@ -136,7 +136,7 @@ void add(const char *fmt)
 				;
 			if (!isspace(*p))
 				badfmt(fmt);
-			tfu->bcnt = atoi((char *)savep);
+			tfu->bcnt = atoi(savep);
 			/* skip trailing white space */
 			while (isspace(*++p))
 				;
@@ -151,7 +151,7 @@ void add(const char *fmt)
 				badfmt(fmt);
 		}
 		tfu->fmt = xmalloc(p - savep + 1);
-		xstrncpy(tfu->fmt, (char *)savep, p - savep + 1);
+		xstrncpy(tfu->fmt, savep, p - savep + 1);
 		escape(tfu->fmt);
 		++p;
 	}
@@ -163,7 +163,7 @@ int block_size(FS *fs)
 {
 	FU *fu;
 	int bcnt, prec, cursize = 0;
-	unsigned char *fmt;
+	char *fmt;
 	struct list_head *p;
 
 	/* figure out the data block size needed for each format unit */
@@ -174,7 +174,7 @@ int block_size(FS *fs)
 			continue;
 		}
 		bcnt = prec = 0;
-		fmt = (unsigned char *)fu->fmt;
+		fmt = fu->fmt;
 		while (*fmt) {
 			if (*fmt != '%') {
 				++fmt;
@@ -187,7 +187,7 @@ int block_size(FS *fs)
 			while (strchr(spec + 1, *++fmt))
 				;
 			if (*fmt == '.' && isdigit(*++fmt)) {
-				prec = atoi((char *)fmt);
+				prec = atoi(fmt);
 				while (isdigit(*++fmt))
 					;
 			}

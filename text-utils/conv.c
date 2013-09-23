@@ -76,7 +76,7 @@ conv_c(PR *pr, u_char *p)
 		*pr->cchar = 'c';
 		printf(pr->fmt, *p);
 	} else {
-		xasprintf(&buf, "%03o", (int)*p);
+		xasprintf(&buf, "%03o", *p);
 		str = buf;
 strpr:		*pr->cchar = 's';
 		printf(pr->fmt, str);
@@ -106,6 +106,6 @@ conv_u(PR *pr, u_char *p)
 		printf(pr->fmt, *p);
 	} else {
 		*pr->cchar = 'x';
-		printf(pr->fmt, (int)*p);
+		printf(pr->fmt, *p);
 	}
 }
