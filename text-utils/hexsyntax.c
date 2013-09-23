@@ -128,7 +128,7 @@ newsyntax(int argc, char ***argvp)
 		}
 	}
 
-	if (!fshead) {
+	if (list_empty(&fshead)) {
 		add("\"%07.7_Ax\n\"");
 		add("\"%07.7_ax \" 8/2 \"%04x \" \"\\n\"");
 	}

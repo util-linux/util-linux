@@ -41,40 +41,47 @@
 #include <stdlib.h>
 #include "hexdump.h"
 
+#include "list.h"
 #include "nls.h"
 #include "c.h"
 #include "closestream.h"
 
-FS *fshead;				/* head of format strings */
+struct list_head fshead;				/* head of format strings */
 ssize_t blocksize;			/* data block size */
 int exitval;				/* final exit value */
 ssize_t length = -1;			/* max bytes to read */
 
 int main(int argc, char **argv)
 {
+	struct list_head *p;
 	FS *tfs;
-	char *p;
+	char *c;
+	INIT_LIST_HEAD(&fshead);
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	if (!(p = strrchr(argv[0], 'o')) || strcmp(p, "od")) {
+	if (!(c = strrchr(argv[0], 'o')) || strcmp(c, "od")) {
 		newsyntax(argc, &argv);
 	} else
 		errx(EXIT_FAILURE, _("calling hexdump as od has been deprecated "
 				     "in favour to GNU coreutils od."));
 
 	/* figure out the data block size */
-	for (blocksize = 0, tfs = fshead; tfs; tfs = tfs->nextfs) {
-		tfs->bcnt = block_size(tfs);
-		if (blocksize < tfs->bcnt)
+	blocksize = 0;
+	list_for_each(p, &fshead) {
+		tfs = list_entry(p, FS, nextfs);
+		if ((tfs->bcnt = block_size(tfs)) > blocksize)
 			blocksize = tfs->bcnt;
 	}
+
 	/* rewrite the rules, do syntax checking */
-	for (tfs = fshead; tfs; tfs = tfs->nextfs)
+	list_for_each(p, &fshead) {
+		tfs = list_entry(p, FS, nextfs);
 		rewrite(tfs);
+	}
 
 	(void)next(argv);
 	display();

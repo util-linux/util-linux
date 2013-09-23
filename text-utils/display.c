@@ -169,35 +169,47 @@ static void bpad(PR *pr)
 
 void display(void)
 {
-	register FS *fs;
+	struct list_head *fs;
+	register FS *fss;
 	register FU *fu;
 	register PR *pr;
 	register int cnt;
 	register unsigned char *bp;
 	off_t saveaddress;
 	unsigned char savech = 0, *savebp;
+	struct list_head *p, *q, *r;
 
-	while ((bp = get()) != NULL)
-	    for (fs = fshead, savebp = bp, saveaddress = address; fs;
-		fs = fs->nextfs, bp = savebp, address = saveaddress)
-		    for (fu = fs->nextfu; fu; fu = fu->nextfu) {
-			if (fu->flags&F_IGNORE)
-				break;
-			for (cnt = fu->reps; cnt; --cnt)
-			    for (pr = fu->nextpr; pr; address += pr->bcnt,
-				bp += pr->bcnt, pr = pr->nextpr) {
-				    if (eaddress && address >= eaddress &&
-					!(pr->flags&(F_TEXT|F_BPAD)))
-					    bpad(pr);
-				    if (cnt == 1 && pr->nospace) {
-					savech = *pr->nospace;
-					*pr->nospace = '\0';
-				    }
-				    print(pr, bp);
-				    if (cnt == 1 && pr->nospace)
-					*pr->nospace = savech;
-			    }
-		    }
+	while ((bp = get()) != NULL) {
+		fs = &fshead; savebp = bp; saveaddress = address;
+		list_for_each(p, fs) {
+			fss = list_entry(p, FS, nextfs);
+			list_for_each(q, &fss->nextfu) {
+				fu = list_entry(q, FU, nextfu);
+				if (fu->flags&F_IGNORE)
+					break;
+				cnt = fu->reps;
+				while (cnt) {
+					list_for_each(r, &fu->nextpr) {
+						pr = list_entry(r, PR, nextpr);
+					    if (eaddress && address >= eaddress &&
+						!(pr->flags&(F_TEXT|F_BPAD)))
+						    bpad(pr);
+					    if (cnt == 1 && pr->nospace) {
+						savech = *pr->nospace;
+						*pr->nospace = '\0';
+					    }
+					    print(pr, bp);
+					    if (cnt == 1 && pr->nospace)
+						*pr->nospace = savech;
+					    address += pr->bcnt;
+					    bp += pr->bcnt;
+					}
+					--cnt;
+				}
+			}
+			bp = savebp; address = saveaddress;
+		}
+	}
 	if (endfu) {
 		/*
 		 * if eaddress not set, error or file size was multiple of
@@ -208,15 +220,17 @@ void display(void)
 				return;
 			eaddress = address;
 		}
-		for (pr = endfu->nextpr; pr; pr = pr->nextpr)
+		list_for_each (p, &endfu->nextpr) {
+			pr = list_entry(p, PR, nextpr);
 			switch(pr->flags) {
 			case F_ADDRESS:
-				(void)printf(pr->fmt, (int64_t)eaddress);
+				printf(pr->fmt, (int64_t)eaddress);
 				break;
 			case F_TEXT:
-				(void)printf("%s", pr->fmt);
+				printf("%s", pr->fmt);
 				break;
 			}
+		}
 	}
 }
 

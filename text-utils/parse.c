@@ -55,7 +55,7 @@ FU *endfu;					/* format at end-of-data */
 
 void addfile(char *name)
 {
-	char *p;
+	unsigned char *p;
 	FILE *fp;
 	int ch;
 	char buf[2048 + 1];
@@ -63,85 +63,93 @@ void addfile(char *name)
 	if ((fp = fopen(name, "r")) == NULL)
 	        err(EXIT_FAILURE, _("can't read %s"), name);
 	while (fgets(buf, sizeof(buf), fp)) {
-		if ((p = strchr(buf, '\n')) == NULL) {
+		if ((p = (unsigned char *)strchr(buf, '\n')) == NULL) {
 			warnx(_("line too long"));
 			while ((ch = getchar()) != '\n' && ch != EOF);
 			continue;
 		}
 		*p = '\0';
-		for (p = buf; *p && isspace((unsigned char)*p); ++p);
+		for (p = (unsigned char *)buf; *p && isspace(*p); ++p);
 		if (!*p || *p == '#')
 			continue;
-		add(p);
+		add((char *)p);
 	}
-	(void)fclose(fp);
+	fclose(fp);
 }
 
 void add(const char *fmt)
 {
-	const char *p;
-	static FS **nextfs = NULL;
+	const unsigned char *p;
 	FS *tfs;
-	FU *tfu, **nextfu;
-	const char *savep;
+	FU *tfu;
+	const unsigned char *savep;
 
 	/* Start new linked list of format units. */
 	tfs = xcalloc(1, sizeof(FS));
-	if (!fshead)
-		fshead = tfs;
-	else if (nextfs)
-		*nextfs = tfs;
+	INIT_LIST_HEAD(&tfs->nextfs);
+	INIT_LIST_HEAD(&tfs->nextfu);
+	list_add_tail(&tfs->nextfs, &fshead);
 
-	nextfs = &tfs->nextfs;
-	nextfu = &tfs->nextfu;
+	//entry_list here
 
 	/* Take the format string and break it up into format units. */
-	for (p = fmt;;) {
+	p = (unsigned char *)fmt;
+	while (TRUE) {
 		/* Skip leading white space. */
-		for (; isspace((unsigned char)*p); ++p);
+		while (isspace(*p) && ++p)
+			;
 		if (!*p)
 			break;
 
 		/* Allocate a new format unit and link it in. */
 		tfu = xcalloc(1, sizeof(FU));
-		*nextfu = tfu;
-		nextfu = &tfu->nextfu;
+		INIT_LIST_HEAD(&tfu->nextfu);
+		INIT_LIST_HEAD(&tfu->nextpr);
+		list_add_tail(&tfu->nextfu, &tfs->nextfu);
 		tfu->reps = 1;
 
 		/* If leading digit, repetition count. */
-		if (isdigit((unsigned char)*p)) {
-			for (savep = p; isdigit((unsigned char)*p); ++p);
-			if (!isspace((unsigned char)*p) && *p != '/')
+		if (isdigit(*p)) {
+			savep = p;
+			while (isdigit(*p) && ++p)
+				;
+			if (!isspace(*p) && *p != '/')
 				badfmt(fmt);
 			/* may overwrite either white space or slash */
-			tfu->reps = atoi(savep);
+			tfu->reps = atoi((char *)savep);
 			tfu->flags = F_SETREP;
 			/* skip trailing white space */
-			for (++p; isspace((unsigned char)*p); ++p);
+			while (++p && isspace(*p)) //correct?
+				;
 		}
 
 		/* Skip slash and trailing white space. */
 		if (*p == '/')
-			while (isspace((unsigned char)*++p));
+			while (isspace(*++p))
+				;
 
 		/* byte count */
-		if (isdigit((unsigned char)*p)) {
-			for (savep = p; isdigit((unsigned char)*p); ++p);
-			if (!isspace((unsigned char)*p))
+		if (isdigit(*p)) {
+			savep = p;
+			while (isdigit(*p) && ++p)
+				;
+			if (!isspace(*p))
 				badfmt(fmt);
-			tfu->bcnt = atoi(savep);
+			tfu->bcnt = atoi((char *)savep);
 			/* skip trailing white space */
-			for (++p; isspace((unsigned char)*p); ++p);
+			while (++p && isspace(*p)) //correct?
+				;
 		}
 
 		/* format */
 		if (*p != '"')
 			badfmt(fmt);
-		for (savep = ++p; *p != '"';)
+		savep = ++p;
+		while (*p != '"')
 			if (*p++ == 0)
 				badfmt(fmt);
 		tfu->fmt = xmalloc(p - savep + 1);
-		(void) strncpy(tfu->fmt, savep, p - savep);
+		strncpy(tfu->fmt, (char *)savep, p - savep);
 		tfu->fmt[p - savep] = '\0';
 		escape(tfu->fmt);
 		p++;
@@ -153,27 +161,34 @@ static const char *spec = ".#-+ 0123456789";
 int block_size(FS *fs)
 {
 	FU *fu;
-	int bcnt, cursize;
-	char *fmt;
+	int bcnt, cursize = 0;
+	unsigned char *fmt;
+	struct list_head *p;
 	int prec;
 
 	/* figure out the data block size needed for each format unit */
-	for (cursize = 0, fu = fs->nextfu; fu; fu = fu->nextfu) {
+	list_for_each (p, &fs->nextfu) {
+		fu = list_entry(p, FU, nextfu);
 		if (fu->bcnt) {
 			cursize += fu->bcnt * fu->reps;
 			continue;
 		}
-		for (bcnt = prec = 0, fmt = fu->fmt; *fmt; ++fmt) {
-			if (*fmt != '%')
+		bcnt = prec = 0;
+		fmt = (unsigned char *)fu->fmt;
+		while (*fmt) {
+			if (*fmt != '%') {
+				++fmt;
 				continue;
+			}
 			/*
 			 * skip any special chars -- save precision in
 			 * case it's a %s format.
 			 */
 			while (strchr(spec + 1, *++fmt));
-			if (*fmt == '.' && isdigit((unsigned char)*++fmt)) {
-				prec = atoi(fmt);
-				while (isdigit((unsigned char)*++fmt));
+			if (*fmt == '.' && isdigit(*++fmt)) {
+				prec = atoi((char *)fmt);
+				while (isdigit(*++fmt))
+					;
 			}
 			switch(*fmt) {
 			case 'c':
@@ -196,6 +211,7 @@ int block_size(FS *fs)
 					break;
 				}
 			}
+			++fmt;
 		}
 		cursize += bcnt * fu->reps;
 	}
@@ -205,26 +221,27 @@ int block_size(FS *fs)
 void rewrite(FS *fs)
 {
 	enum { NOTOKAY, USEBCNT, USEPREC } sokay;
-	PR *pr, **nextpr;
+	PR *pr;
 	FU *fu;
+	struct list_head *p, *q;
 	char *p1, *p2;
 	char savech, *fmtp, cs[3];
 	int nconv, prec;
 
-	nextpr = NULL;
 	prec = 0;
 
-	for (fu = fs->nextfu; fu; fu = fu->nextfu) {
+	list_for_each (p, &fs->nextfu) {
+		fu = list_entry(p, FU, nextfu);
 		/*
 		 * Break each format unit into print units; each
 		 * conversion character gets its own.
 		 */
-		for (nconv = 0, fmtp = fu->fmt; *fmtp; nextpr = &pr->nextpr) {
+		nconv = 0;
+		fmtp = fu->fmt;
+		while (*fmtp) {
 			pr = xcalloc(1, sizeof(PR));
-			if (!fu->nextpr)
-				fu->nextpr = pr;
-			else if (nextpr)
-				*nextpr = pr;
+			INIT_LIST_HEAD(&pr->nextpr);
+			list_add_tail(&pr->nextpr, &fu->nextpr);
 
 			/* Skip preceding text and up to the next % sign. */
 			for (p1 = fmtp; *p1 && *p1 != '%'; ++p1);
@@ -286,17 +303,14 @@ isint:				cs[2] = '\0';
 				cs[1] = cs[0];
 				cs[0] = 'q';
 				switch(fu->bcnt) {
-				case 0: case 4:
+				case 0:
 					pr->bcnt = 4;
 					break;
 				case 1:
-					pr->bcnt = 1;
-					break;
 				case 2:
-					pr->bcnt = 2;
-					break;
+				case 4:
 				case 8:
-					pr->bcnt = 8;
+					pr->bcnt = fu->bcnt;
 					break;
 				default:
 					p1[1] = '\0';
@@ -306,11 +320,12 @@ isint:				cs[2] = '\0';
 			case 'e': case 'E': case 'f': case 'g': case 'G':
 				pr->flags = F_DBL;
 				switch(fu->bcnt) {
-				case 0: case 8:
+				case 0:
 					pr->bcnt = 8;
 					break;
 				case 4:
-					pr->bcnt = 4;
+				case 8:
+					pr->bcnt = fu->bcnt;
 					break;
 				default:
 					p1[1] = '\0';
@@ -404,8 +419,8 @@ isint2:					switch(fu->bcnt) {
 		 * so can adjust rep count later.
 		 */
 		if (!fu->bcnt)
-			for (pr = fu->nextpr; pr; pr = pr->nextpr)
-				fu->bcnt += pr->bcnt;
+			list_for_each(q, &fu->nextpr)
+				fu->bcnt += (list_entry(q, PR, nextpr))->bcnt;
 	}
 	/*
 	 * If the format string interprets any data at all, and it's
@@ -416,17 +431,16 @@ isint2:					switch(fu->bcnt) {
 	 * If rep count is greater than 1, no trailing whitespace
 	 * gets output from the last iteration of the format unit.
 	 */
-	for (fu = fs->nextfu; fu; fu = fu->nextfu) {
-		if (!fu->nextfu && fs->bcnt < blocksize &&
+	list_for_each (p, &fs->nextfu) {
+		fu = list_entry(p, FU, nextfu);
+		if (list_entry_is_last(&fu->nextfu, &fs->nextfu) && fs->bcnt < blocksize &&
 		    !(fu->flags&F_SETREP) && fu->bcnt)
 			fu->reps += (blocksize - fs->bcnt) / fu->bcnt;
 		if (fu->reps > 1) {
-			if (fu->nextpr) {
-				for (pr = fu->nextpr; ; pr = pr->nextpr)
-					if (!pr->nextpr)
-						break;
+			if (!list_empty(&fu->nextpr)) {
+				pr = list_last_entry(&fu->nextpr, PR, nextpr);
 				for (p1 = pr->fmt, p2 = NULL; *p1; ++p1)
-					p2 = isspace((unsigned char)*p1) ? p1 : NULL;
+					p2 = isspace(*p1) ? p1 : NULL;
 				if (p2)
 					pr->nospace = p2;
 			}
