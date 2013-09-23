@@ -58,7 +58,7 @@ print(PR *pr, unsigned char *bp) {
 
 	switch(pr->flags) {
 	case F_ADDRESS:
-		printf(pr->fmt, (int64_t)address);
+		printf(pr->fmt, address);
 		break;
 	case F_BPAD:
 		printf(pr->fmt, "");
@@ -93,19 +93,19 @@ print(PR *pr, unsigned char *bp) {
 
 		switch(pr->bcnt) {
 		case 1:
-			printf(pr->fmt, (int64_t)*bp);
+			printf(pr->fmt, *bp);
 			break;
 		case 2:
 			memmove(&sval, bp, sizeof(sval));
-			printf(pr->fmt, (int64_t)sval);
+			printf(pr->fmt, sval);
 			break;
 		case 4:
 			memmove(&ival, bp, sizeof(ival));
-			printf(pr->fmt, (int64_t)ival);
+			printf(pr->fmt, ival);
 			break;
 		case 8:
 			memmove(&Lval, bp, sizeof(Lval));
-			printf(pr->fmt, (int64_t)Lval);
+			printf(pr->fmt, Lval);
 			break;
 		}
 		break;
@@ -130,19 +130,19 @@ print(PR *pr, unsigned char *bp) {
 
 		switch(pr->bcnt) {
 		case 1:
-			printf(pr->fmt, (uint64_t)*bp);
+			printf(pr->fmt, *bp);
 			break;
 		case 2:
 			memmove(&sval, bp, sizeof(sval));
-			printf(pr->fmt, (uint64_t)sval);
+			printf(pr->fmt, sval);
 			break;
 		case 4:
 			memmove(&ival, bp, sizeof(ival));
-			printf(pr->fmt, (uint64_t)ival);
+			printf(pr->fmt, ival);
 			break;
 		case 8:
 			memmove(&Lval, bp, sizeof(Lval));
-			printf(pr->fmt, (uint64_t)Lval);
+			printf(pr->fmt, Lval);
 			break;
 		}
 		break;
@@ -232,7 +232,7 @@ void display(void)
 			pr = list_entry(p, PR, prlist);
 			switch(pr->flags) {
 			case F_ADDRESS:
-				printf(pr->fmt, (int64_t)eaddress);
+				printf(pr->fmt, eaddress);
 				break;
 			case F_TEXT:
 				printf("%s", pr->fmt);
