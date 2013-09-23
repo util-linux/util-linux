@@ -189,33 +189,42 @@ void display(void)
 
 	while ((bp = get()) != NULL) {
 		fs = &fshead; savebp = bp; saveaddress = address;
+
 		list_for_each(p, fs) {
 			fss = list_entry(p, FS, fslist);
+
 			list_for_each(q, &fss->fulist) {
 				fu = list_entry(q, FU, fulist);
+
 				if (fu->flags&F_IGNORE)
 					break;
+
 				cnt = fu->reps;
+
 				while (cnt) {
 					list_for_each(r, &fu->prlist) {
 						pr = list_entry(r, PR, prlist);
-					    if (eaddress && address >= eaddress &&
-						!(pr->flags&(F_TEXT|F_BPAD)))
-						    bpad(pr);
-					    if (cnt == 1 && pr->nospace) {
-						savech = *pr->nospace;
-						*pr->nospace = '\0';
-					    }
-					    print(pr, bp);
-					    if (cnt == 1 && pr->nospace)
-						*pr->nospace = savech;
-					    address += pr->bcnt;
-					    bp += pr->bcnt;
+
+						if (eaddress && address >= eaddress
+						    && !(pr->flags&(F_TEXT|F_BPAD)))
+							bpad(pr);
+
+						if (cnt == 1 && pr->nospace) {
+							savech = *pr->nospace;
+							*pr->nospace = '\0';
+							print(pr, bp);
+							*pr->nospace = savech;
+						} else
+							print(pr, bp);
+
+						address += pr->bcnt;
+						bp += pr->bcnt;
 					}
 					--cnt;
 				}
 			}
-			bp = savebp; address = saveaddress;
+			bp = savebp;
+			address = saveaddress;
 		}
 	}
 	if (endfu) {
