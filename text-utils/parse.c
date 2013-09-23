@@ -57,25 +57,24 @@ void addfile(char *name)
 {
 	char *p;
 	FILE *fp;
-	int ch;
-	char buf[2048 + 1];
+	size_t n;
+	char *buf = NULL;
 
 	if ((fp = fopen(name, "r")) == NULL)
 	        err(EXIT_FAILURE, _("can't read %s"), name);
-	while (fgets(buf, sizeof(buf), fp)) {
-		if ((p = strchr(buf, '\n')) == NULL) {
-			warnx(_("line too long"));
-			while ((ch = getchar()) != '\n' && ch != EOF)
-				;
-			continue;
-		}
+
+	while (getline(&buf, &n, fp) != -1) {
 		p = buf;
+
 		while (*p && isspace(*p))
 			++p;
 		if (!*p || *p == '#')
 			continue;
+
 		add(p);
 	}
+
+	free(buf);
 	fclose(fp);
 }
 
