@@ -58,16 +58,16 @@ print(PR *pr, unsigned char *bp) {
 
 	switch(pr->flags) {
 	case F_ADDRESS:
-		(void)printf(pr->fmt, (int64_t)address);
+		printf(pr->fmt, (int64_t)address);
 		break;
 	case F_BPAD:
-		(void)printf(pr->fmt, "");
+		printf(pr->fmt, "");
 		break;
 	case F_C:
 		conv_c(pr, bp);
 		break;
 	case F_CHAR:
-		(void)printf(pr->fmt, *bp);
+		printf(pr->fmt, *bp);
 		break;
 	case F_DBL:
 	    {
@@ -76,11 +76,11 @@ print(PR *pr, unsigned char *bp) {
 		switch(pr->bcnt) {
 		case 4:
 			memmove(&fval, bp, sizeof(fval));
-			(void)printf(pr->fmt, fval);
+			printf(pr->fmt, fval);
 			break;
 		case 8:
 			memmove(&dval, bp, sizeof(dval));
-			(void)printf(pr->fmt, dval);
+			printf(pr->fmt, dval);
 			break;
 		}
 		break;
@@ -93,31 +93,31 @@ print(PR *pr, unsigned char *bp) {
 
 		switch(pr->bcnt) {
 		case 1:
-			(void)printf(pr->fmt, (int64_t)*bp);
+			printf(pr->fmt, (int64_t)*bp);
 			break;
 		case 2:
 			memmove(&sval, bp, sizeof(sval));
-			(void)printf(pr->fmt, (int64_t)sval);
+			printf(pr->fmt, (int64_t)sval);
 			break;
 		case 4:
 			memmove(&ival, bp, sizeof(ival));
-			(void)printf(pr->fmt, (int64_t)ival);
+			printf(pr->fmt, (int64_t)ival);
 			break;
 		case 8:
 			memmove(&Lval, bp, sizeof(Lval));
-			(void)printf(pr->fmt, (int64_t)Lval);
+			printf(pr->fmt, (int64_t)Lval);
 			break;
 		}
 		break;
 	    }
 	case F_P:
-		(void)printf(pr->fmt, isprint(*bp) ? *bp : '.');
+		printf(pr->fmt, isprint(*bp) ? *bp : '.');
 		break;
 	case F_STR:
-		(void)printf(pr->fmt, (char *)bp);
+		printf(pr->fmt, (char *)bp);
 		break;
 	case F_TEXT:
-		(void)printf("%s", pr->fmt);
+		printf("%s", pr->fmt);
 		break;
 	case F_U:
 		conv_u(pr, bp);
@@ -130,19 +130,19 @@ print(PR *pr, unsigned char *bp) {
 
 		switch(pr->bcnt) {
 		case 1:
-			(void)printf(pr->fmt, (uint64_t)*bp);
+			printf(pr->fmt, (uint64_t)*bp);
 			break;
 		case 2:
 			memmove(&sval, bp, sizeof(sval));
-			(void)printf(pr->fmt, (uint64_t)sval);
+			printf(pr->fmt, (uint64_t)sval);
 			break;
 		case 4:
 			memmove(&ival, bp, sizeof(ival));
-			(void)printf(pr->fmt, (uint64_t)ival);
+			printf(pr->fmt, (uint64_t)ival);
 			break;
 		case 8:
 			memmove(&Lval, bp, sizeof(Lval));
-			(void)printf(pr->fmt, (uint64_t)Lval);
+			printf(pr->fmt, (uint64_t)Lval);
 			break;
 		}
 		break;
@@ -169,7 +169,7 @@ static void bpad(PR *pr)
 
 void display(void)
 {
-	struct list_head *fs;
+	register struct list_head *fs;
 	register FS *fss;
 	register FU *fu;
 	register PR *pr;
@@ -265,7 +265,7 @@ get(void)
 			if (!need && vflag != ALL &&
 			    !memcmp(curp, savp, nread)) {
 				if (vflag != DUP)
-					(void)printf("*\n");
+					printf("*\n");
 				return(NULL);
 			}
 			if (need > 0)
@@ -296,7 +296,7 @@ get(void)
 				return(curp);
 			}
 			if (vflag == WAIT)
-				(void)printf("*\n");
+				printf("*\n");
 			vflag = DUP;
 			address += blocksize;
 			need = blocksize;

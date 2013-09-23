@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 		rewrite(tfs);
 	}
 
-	(void)next(argv);
+	next(argv);
 	display();
 	return exitval;
 }
