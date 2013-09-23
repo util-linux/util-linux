@@ -50,6 +50,7 @@ struct list_head fshead;				/* head of format strings */
 ssize_t blocksize;			/* data block size */
 int exitval;				/* final exit value */
 ssize_t length = -1;			/* max bytes to read */
+void hex_free(void);
 
 int main(int argc, char **argv)
 {
@@ -83,5 +84,28 @@ int main(int argc, char **argv)
 
 	next(argv);
 	display();
+	hex_free();
 	return exitval;
+}
+
+void hex_free(void)
+{
+	struct list_head *p, *pn, *q, *qn, *r, *rn;
+	FS *fs;
+	FU *fu;
+	PR *pr;
+	list_for_each_safe(p, pn, &fshead) {
+		fs = list_entry(p, FS, fslist);
+		list_for_each_safe(q, qn, &fs->fulist) {
+			fu = list_entry(q, FU, fulist);
+			list_for_each_safe(r, rn, &fu->prlist) {
+				pr = list_entry(r, PR, prlist);
+				free(pr->fmt);
+				free(pr);
+			}
+			free(fu->fmt);
+			free(fu);
+		}
+		free(fs);
+	}
 }

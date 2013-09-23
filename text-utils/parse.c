@@ -231,7 +231,7 @@ void rewrite(FS *fs)
 
 			/* Only text in the string. */
 			if (!*p1) {
-				pr->fmt = fmtp;
+				pr->fmt = xstrdup(fmtp);
 				pr->flags = F_TEXT;
 				break;
 			}

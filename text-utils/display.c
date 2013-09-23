@@ -279,12 +279,12 @@ get(void)
 		 */
 		if (!length || (ateof && !next(NULL))) {
 			if (need == blocksize)
-				return(NULL);
+				goto retnul;
 			if (!need && vflag != ALL &&
 			    !memcmp(curp, savp, nread)) {
 				if (vflag != DUP)
 					printf("*\n");
-				return(NULL);
+				goto retnul;
 			}
 			if (need > 0)
 				memset((char *)curp + nread, 0, need);
@@ -293,7 +293,7 @@ get(void)
 		}
 		if (fileno(stdin) == -1) {
 			warnx(_("all input file arguments failed"));
-			return(NULL);
+			goto retnul;
 		}
 		n = fread((char *)curp + nread, sizeof(unsigned char),
 		    length == -1 ? need : min(length, need), stdin);
@@ -323,6 +323,10 @@ get(void)
 		else
 			nread += n;
 	}
+retnul:
+	free (curp);
+	free (savp);
+	return NULL;
 }
 
 int next(char **argv)
