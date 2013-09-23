@@ -317,7 +317,7 @@ int next(char **argv)
 		_argv = argv;
 		return(1);
 	}
-	for (;;) {
+	while (TRUE) {
 		if (*_argv) {
 			if (!(freopen(*_argv, "r", stdin))) {
 				warn("%s", *_argv);
