@@ -52,6 +52,8 @@ static void badsfmt(void);
 static void badfmt(const char *fmt);
 static void badconv(const char *ch);
 
+#define in(s,f) strchr(f, *(s))
+
 FU *endfu;					/* format at end-of-data */
 
 void addfile(char *name)
@@ -189,29 +191,14 @@ int block_size(FS *fs)
 				while (isdigit(*++fmt))
 					;
 			}
-			switch(*fmt) {
-			case 'c':
-				bcnt += 1;
-				break;
-			case 'd': case 'i': case 'o': case 'u':
-			case 'x': case 'X':
+			if (in(fmt, "diouxX"))
 				bcnt += 4;
-				break;
-			case 'e' ... 'g':
-			case 'E':
-			case 'G':
+			else if (in(fmt, "efgEG"))
 				bcnt += 8;
-				break;
-			case 's':
+			else if (*fmt == 's')
 				bcnt += prec;
-				break;
-			case '_':
-				switch(*++fmt) {
-				case 'c': case 'p': case 'u':
-					bcnt += 1;
-					break;
-				}
-			}
+			else if (*fmt == 'c' || (*fmt == '_' && in(++fmt, "cpu")))
+				++bcnt;
 			++fmt;
 		}
 		cursize += bcnt * fu->reps;
@@ -285,66 +272,56 @@ void rewrite(FS *fs)
 			 * rewrite the format as necessary, set up blank-
 			 * padding for end of data.
 			 */
-			switch(cs[0]) {
-				case 'c':
-					pr->flags = F_CHAR;
-					switch(fu->bcnt) {
-						case 0:
-						case 1:
-							pr->bcnt = 1;
-							break;
-						default:
-							p1[1] = '\0';
-							badcnt(p1);
-					}
-					break;
-				case 'd':
-				case 'i':
-					pr->flags = F_INT;
-					goto isint;
-				case 'o':
-				case 'u':
-				case 'x':
-				case 'X':
-					pr->flags = F_UINT;
-	isint:				cs[2] = '\0';
-					cs[1] = cs[0];
-					cs[0] = 'q';
-					switch(fu->bcnt) {
-						case 0:
-							pr->bcnt = 4;
-							break;
-						case 1:
-						case 2:
-						case 4:
-						case 8:
-							pr->bcnt = fu->bcnt;
-							break;
-						default:
-							p1[1] = '\0';
-							badcnt(p1);
-					}
-					break;
-				case 'e' ... 'g':
-				case 'E':
-				case 'G':
-					pr->flags = F_DBL;
-					switch(fu->bcnt) {
-						case 0:
-							pr->bcnt = 8;
-							break;
-						case 4:
-						case 8:
-							pr->bcnt = fu->bcnt;
-							break;
-						default:
-							p1[1] = '\0';
-							badcnt(p1);
-					}
-					break;
-				case 's':
-					pr->flags = F_STR;
-					switch(sokay) {
+			if (*cs == 'c') {
+				pr->flags = F_CHAR;
+				switch(fu->bcnt) {
+					case 0:
+					case 1:
+						pr->bcnt = 1;
+						break;
+					default:
+						p1[1] = '\0';
+						badcnt(p1);
+				}
+			} else if (in(cs, "di")) {
+				pr->flags = F_INT;
+				goto isint;
+			} else if (in(cs, "ouxX")) {
+				pr->flags = F_UINT;
+isint:				cs[2] = '\0';
+				cs[1] = cs[0];
+				cs[0] = 'q';
+				switch(fu->bcnt) {
+					case 0:
+						pr->bcnt = 4;
+						break;
+					case 1:
+					case 2:
+					case 4:
+					case 8:
+						pr->bcnt = fu->bcnt;
+						break;
+					default:
+						p1[1] = '\0';
+						badcnt(p1);
+				}
+			} else if (in(cs, "efgEG")) {
+				pr->flags = F_DBL;
+				switch(fu->bcnt) {
+					case 0:
+						pr->bcnt = 8;
+						break;
+					case 4:
+					case 8:
+						pr->bcnt = fu->bcnt;
+						break;
+					default:
+						p1[1] = '\0';
+						badcnt(p1);
+				}
+			} else if(*cs == 's') {
+				pr->flags = F_STR;
+				switch(sokay) {
 					case NOTOKAY:
 						badsfmt();
 					case USEBCNT:
@@ -353,60 +330,54 @@ void rewrite(FS *fs)
 					case USEPREC:
 						pr->bcnt = prec;
 						break;
-					}
-					break;
-				case '_':
-					++p2;
-					switch(p1[1]) {
-						case 'A':
-							endfu = fu;
-							fu->flags |= F_IGNORE;
-							/* FALLTHROUGH */
-						case 'a':
-							pr->flags = F_ADDRESS;
-							++p2;
-							switch(p1[2]) {
-								case 'd':
-								case 'o':
-								case 'x':
-									cs[0] = 'q';
-									cs[1] = p1[2];
-									cs[2] = '\0';
-									break;
-								default:
-									p1[3] = '\0';
-									badconv(p1);
-							}
-							break;
-						case 'c':
-							pr->flags = F_C;
-							/* cs[0] = 'c';	set in conv_c */
-							goto isint2;
-						case 'p':
-							pr->flags = F_P;
-							cs[0] = 'c';
-							goto isint2;
-						case 'u':
-							pr->flags = F_U;
-							/* cs[0] = 'c';	set in conv_u */
-		isint2:					switch(fu->bcnt) {
-								case 0:
-								case 1:
-									pr->bcnt = 1;
-									break;
-								default:
-									p1[2] = '\0';
-									badcnt(p1);
-							}
-							break;
-						default:
-							p1[2] = '\0';
+				}
+			} else if (*cs == '_') {
+				++p2;
+				switch(p1[1]) {
+					case 'A':
+						endfu = fu;
+						fu->flags |= F_IGNORE;
+						/* FALLTHROUGH */
+					case 'a':
+						pr->flags = F_ADDRESS;
+						++p2;
+						if (in(p1 + 2, "dox")) {
+							cs[0] = 'q';
+							cs[1] = p1[2];
+							cs[2] = '\0';
+						} else {
+							p1[3] = '\0';
 							badconv(p1);
-					}
-					break;
-				default:
-					p1[1] = '\0';
-					badconv(p1);
+						}
+						break;
+					case 'c':
+						pr->flags = F_C;
+						/* cs[0] = 'c';	set in conv_c */
+						goto isint2;
+					case 'p':
+						pr->flags = F_P;
+						cs[0] = 'c';
+						goto isint2;
+					case 'u':
+						pr->flags = F_U;
+						/* cs[0] = 'c';	set in conv_u */
+	isint2:					switch(fu->bcnt) {
+							case 0:
+							case 1:
+								pr->bcnt = 1;
+								break;
+							default:
+								p1[2] = '\0';
+								badcnt(p1);
+						}
+						break;
+					default:
+						p1[2] = '\0';
+						badconv(p1);
+				}
+			} else {
+				p1[1] = '\0';
+				badconv(p1);
 			}
 
 			/*
