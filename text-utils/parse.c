@@ -55,7 +55,7 @@ FU *endfu;					/* format at end-of-data */
 
 void addfile(char *name)
 {
-	unsigned char *p;
+	char *p;
 	FILE *fp;
 	int ch;
 	char buf[2048 + 1];
@@ -63,16 +63,18 @@ void addfile(char *name)
 	if ((fp = fopen(name, "r")) == NULL)
 	        err(EXIT_FAILURE, _("can't read %s"), name);
 	while (fgets(buf, sizeof(buf), fp)) {
-		if ((p = (unsigned char *)strchr(buf, '\n')) == NULL) {
+		if ((p = strchr(buf, '\n')) == NULL) {
 			warnx(_("line too long"));
-			while ((ch = getchar()) != '\n' && ch != EOF);
+			while ((ch = getchar()) != '\n' && ch != EOF)
+				;
 			continue;
 		}
-		*p = '\0';
-		for (p = (unsigned char *)buf; *p && isspace(*p); ++p);
+		p = buf;
+		while (*p && isspace(*p))
+			++p;
 		if (!*p || *p == '#')
 			continue;
-		add((char *)p);
+		add(p);
 	}
 	fclose(fp);
 }
