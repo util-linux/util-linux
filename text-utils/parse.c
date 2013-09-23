@@ -58,7 +58,7 @@ FU *endfu;					/* format at end-of-data */
 
 void addfile(char *name)
 {
-	char *p, *buf = NULL;
+	char *fmt, *buf = NULL;
 	FILE *fp;
 	size_t n;
 
@@ -66,14 +66,14 @@ void addfile(char *name)
 	        err(EXIT_FAILURE, _("can't read %s"), name);
 
 	while (getline(&buf, &n, fp) != -1) {
-		p = buf;
+		fmt = buf;
 
-		while (*p && isspace(*p))
-			++p;
-		if (!*p || *p == '#')
+		while (*fmt && isspace(*fmt))
+			++fmt;
+		if (!*fmt || *fmt == '#')
 			continue;
 
-		add(p);
+		add(fmt);
 	}
 
 	free(buf);
