@@ -22,15 +22,6 @@
 #include "pathnames.h"
 #include "strutils.h"
 
-static inline char *skip_spaces(char *s)
-{
-	assert(s);
-
-	while (*s == ' ' || *s == '\t')
-		s++;
-	return s;
-}
-
 static int next_number(char **s, int *num)
 {
 	char *end = NULL;
@@ -38,7 +29,7 @@ static int next_number(char **s, int *num)
 	assert(num);
 	assert(s);
 
-	*s = skip_spaces(*s);
+	*s = (char *) skip_blank(*s);
 	if (!**s)
 		return -1;
 	*num = strtol(*s, &end, 10);
@@ -111,7 +102,7 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
 	fs->passno = fs->freq = 0;
 
 	if (xrc == 4 && n)
-		s = skip_spaces(s + n);
+		s = (char *) skip_blank(s + n);
 	if (xrc == 4 && *s) {
 		if (next_number(&s, &fs->freq) != 0) {
 			if (*s) {
@@ -346,7 +337,7 @@ static int guess_table_format(char *line)
 
 static int is_comment_line(char *line)
 {
-	char *p	= skip_spaces(line);
+	char *p	= (char *) skip_blank(line);
 
 	if (p && (*p == '#' || *p == '\n'))
 		return 1;
@@ -474,7 +465,7 @@ next_line:
 		*s = '\0';
 		if (--s >= buf && *s == '\r')
 			*s = '\0';
-		s = skip_spaces(buf);
+		s = (char *) skip_blank(buf);
 	} while (*s == '\0' || *s == '#');
 
 	if (tb->fmt == MNT_FMT_GUESS) {

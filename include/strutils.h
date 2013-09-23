@@ -5,6 +5,7 @@
 #include <inttypes.h>
 #include <string.h>
 #include <sys/types.h>
+#include <ctype.h>
 
 /* default strtoxx_or_err() exit code */
 #ifndef STRTOXX_EXIT_CODE
@@ -141,6 +142,23 @@ static inline const char *endswith(const char *s, const char *postfix)
 	if (memcmp(s + sl - pl, postfix, pl) != 0)
 		return NULL;
 	return (char *)s + sl - pl;
+}
+
+/*
+ * Skip leading white space.
+ */
+static inline const char *skip_space(const char *p)
+{
+	while (isspace(*p))
+		++p;
+	return p;
+}
+
+static inline const char *skip_blank(const char *p)
+{
+	while (isblank(*p))
+		++p;
+	return p;
 }
 
 #endif
