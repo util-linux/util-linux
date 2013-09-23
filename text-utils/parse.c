@@ -55,10 +55,9 @@ FU *endfu;					/* format at end-of-data */
 
 void addfile(char *name)
 {
-	char *p;
+	char *p, *buf = NULL;
 	FILE *fp;
 	size_t n;
-	char *buf = NULL;
 
 	if ((fp = fopen(name, "r")) == NULL)
 	        err(EXIT_FAILURE, _("can't read %s"), name);
@@ -80,10 +79,9 @@ void addfile(char *name)
 
 void add(const char *fmt)
 {
-	const unsigned char *p;
+	const unsigned char *p, *savep;
 	FS *tfs;
 	FU *tfu;
-	const unsigned char *savep;
 
 	/* Start new linked list of format units. */
 	tfs = xcalloc(1, sizeof(FS));
@@ -102,10 +100,11 @@ void add(const char *fmt)
 
 		/* Allocate a new format unit and link it in. */
 		tfu = xcalloc(1, sizeof(FU));
+		tfu->reps = 1;
+
 		INIT_LIST_HEAD(&tfu->fulist);
 		INIT_LIST_HEAD(&tfu->prlist);
 		list_add_tail(&tfu->fulist, &tfs->fulist);
-		tfu->reps = 1;
 
 		/* If leading digit, repetition count. */
 		if (isdigit(*p)) {
@@ -144,14 +143,15 @@ void add(const char *fmt)
 		if (*p != '"')
 			badfmt(fmt);
 		savep = ++p;
-		while (*p != '"')
+		while (*p != '"') {
 			if (!*p++)
 				badfmt(fmt);
+		}
 		tfu->fmt = xmalloc(p - savep + 1);
 		strncpy(tfu->fmt, (char *)savep, p - savep);
 		tfu->fmt[p - savep] = '\0';
 		escape(tfu->fmt);
-		p++;
+		++p;
 	}
 }
 
@@ -160,10 +160,9 @@ static const char *spec = ".#-+ 0123456789";
 int block_size(FS *fs)
 {
 	FU *fu;
-	int bcnt, cursize = 0;
+	int bcnt, prec, cursize = 0;
 	unsigned char *fmt;
 	struct list_head *p;
-	int prec;
 
 	/* figure out the data block size needed for each format unit */
 	list_for_each (p, &fs->fulist) {
@@ -183,7 +182,8 @@ int block_size(FS *fs)
 			 * skip any special chars -- save precision in
 			 * case it's a %s format.
 			 */
-			while (strchr(spec + 1, *++fmt));
+			while (strchr(spec + 1, *++fmt))
+				;
 			if (*fmt == '.' && isdigit(*++fmt)) {
 				prec = atoi((char *)fmt);
 				while (isdigit(*++fmt))
@@ -223,11 +223,9 @@ void rewrite(FS *fs)
 	PR *pr;
 	FU *fu;
 	struct list_head *p, *q;
-	char *p1, *p2;
-	char savech, *fmtp, cs[3];
-	int nconv, prec;
-
-	prec = 0;
+	char *p1, *p2, *fmtp;
+	char savech, cs[3];
+	int nconv, prec = 0;
 
 	list_for_each (p, &fs->fulist) {
 		fu = list_entry(p, FU, fulist);
@@ -448,9 +446,11 @@ void rewrite(FS *fs)
 	 */
 	list_for_each (p, &fs->fulist) {
 		fu = list_entry(p, FU, fulist);
-		if (list_entry_is_last(&fu->fulist, &fs->fulist) && fs->bcnt < blocksize &&
-		    !(fu->flags&F_SETREP) && fu->bcnt)
-			fu->reps += (blocksize - fs->bcnt) / fu->bcnt;
+
+		if (list_entry_is_last(&fu->fulist, &fs->fulist) &&
+			fs->bcnt < blocksize &&
+			!(fu->flags&F_SETREP) && fu->bcnt)
+				fu->reps += (blocksize - fs->bcnt) / fu->bcnt;
 		if (fu->reps > 1) {
 			if (!list_empty(&fu->prlist)) {
 				pr = list_last_entry(&fu->prlist, PR, prlist);
