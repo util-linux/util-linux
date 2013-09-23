@@ -244,7 +244,9 @@ void rewrite(FS *fs)
 			list_add_tail(&pr->nextpr, &fu->nextpr);
 
 			/* Skip preceding text and up to the next % sign. */
-			for (p1 = fmtp; *p1 && *p1 != '%'; ++p1);
+			p1 = fmtp;
+			while (*p1 && *p1 != '%')
+				++p1;
 
 			/* Only text in the string. */
 			if (!*p1) {
@@ -260,15 +262,18 @@ void rewrite(FS *fs)
 			if (fu->bcnt) {
 				sokay = USEBCNT;
 				/* skip to conversion character */
-				for (++p1; strchr(spec, *p1); ++p1);
+				while (++p1 && strchr(spec, *p1))
+					;
 			} else {
 				/* skip any special chars, field width */
-				while (strchr(spec + 1, *++p1));
+				while (strchr(spec + 1, *++p1))
+					;
 				if (*p1 == '.' &&
 				    isdigit((unsigned char)*++p1)) {
 					sokay = USEPREC;
 					prec = atoi(p1);
-					while (isdigit((unsigned char)*++p1));
+					while (isdigit((unsigned char)*++p1))
+						;
 				} else
 					sokay = NOTOKAY;
 			}
@@ -283,117 +288,129 @@ void rewrite(FS *fs)
 			 * padding for end of data.
 			 */
 			switch(cs[0]) {
-			case 'c':
-				pr->flags = F_CHAR;
-				switch(fu->bcnt) {
-				case 0: case 1:
-					pr->bcnt = 1;
-					break;
-				default:
-					p1[1] = '\0';
-					badcnt(p1);
-				}
-				break;
-			case 'd': case 'i':
-				pr->flags = F_INT;
-				goto isint;
-			case 'o': case 'u': case 'x': case 'X':
-				pr->flags = F_UINT;
-isint:				cs[2] = '\0';
-				cs[1] = cs[0];
-				cs[0] = 'q';
-				switch(fu->bcnt) {
-				case 0:
-					pr->bcnt = 4;
-					break;
-				case 1:
-				case 2:
-				case 4:
-				case 8:
-					pr->bcnt = fu->bcnt;
-					break;
-				default:
-					p1[1] = '\0';
-					badcnt(p1);
-				}
-				break;
-			case 'e': case 'E': case 'f': case 'g': case 'G':
-				pr->flags = F_DBL;
-				switch(fu->bcnt) {
-				case 0:
-					pr->bcnt = 8;
-					break;
-				case 4:
-				case 8:
-					pr->bcnt = fu->bcnt;
-					break;
-				default:
-					p1[1] = '\0';
-					badcnt(p1);
-				}
-				break;
-			case 's':
-				pr->flags = F_STR;
-				switch(sokay) {
-				case NOTOKAY:
-					badsfmt();
-				case USEBCNT:
-					pr->bcnt = fu->bcnt;
-					break;
-				case USEPREC:
-					pr->bcnt = prec;
-					break;
-				}
-				break;
-			case '_':
-				++p2;
-				switch(p1[1]) {
-				case 'A':
-					endfu = fu;
-					fu->flags |= F_IGNORE;
-					/* FALLTHROUGH */
-				case 'a':
-					pr->flags = F_ADDRESS;
-					++p2;
-					switch(p1[2]) {
-					case 'd': case 'o': case'x':
-						cs[0] = 'q';
-						cs[1] = p1[2];
-						cs[2] = '\0';
-						break;
-					default:
-						p1[3] = '\0';
-						badconv(p1);
+				case 'c':
+					pr->flags = F_CHAR;
+					switch(fu->bcnt) {
+						case 0:
+						case 1:
+							pr->bcnt = 1;
+							break;
+						default:
+							p1[1] = '\0';
+							badcnt(p1);
 					}
 					break;
-				case 'c':
-					pr->flags = F_C;
-					/* cs[0] = 'c';	set in conv_c */
-					goto isint2;
-				case 'p':
-					pr->flags = F_P;
-					cs[0] = 'c';
-					goto isint2;
+				case 'd':
+				case 'i':
+					pr->flags = F_INT;
+					goto isint;
+				case 'o':
 				case 'u':
-					pr->flags = F_U;
-					/* cs[0] = 'c';	set in conv_u */
-isint2:					switch(fu->bcnt) {
-					case 0: case 1:
-						pr->bcnt = 1;
+				case 'x':
+				case 'X':
+					pr->flags = F_UINT;
+	isint:				cs[2] = '\0';
+					cs[1] = cs[0];
+					cs[0] = 'q';
+					switch(fu->bcnt) {
+					case 0:
+						pr->bcnt = 4;
+						break;
+					case 1:
+					case 2:
+					case 4:
+					case 8:
+						pr->bcnt = fu->bcnt;
 						break;
 					default:
-						p1[2] = '\0';
+						p1[1] = '\0';
 						badcnt(p1);
 					}
 					break;
+				case 'e':
+				case 'E':
+				case 'f':
+				case 'g':
+				case 'G':
+					pr->flags = F_DBL;
+					switch(fu->bcnt) {
+					case 0:
+						pr->bcnt = 8;
+						break;
+					case 4:
+					case 8:
+						pr->bcnt = fu->bcnt;
+						break;
+					default:
+						p1[1] = '\0';
+						badcnt(p1);
+					}
+					break;
+				case 's':
+					pr->flags = F_STR;
+					switch(sokay) {
+					case NOTOKAY:
+						badsfmt();
+					case USEBCNT:
+						pr->bcnt = fu->bcnt;
+						break;
+					case USEPREC:
+						pr->bcnt = prec;
+						break;
+					}
+					break;
+				case '_':
+					++p2;
+					switch(p1[1]) {
+						case 'A':
+							endfu = fu;
+							fu->flags |= F_IGNORE;
+							/* FALLTHROUGH */
+						case 'a':
+							pr->flags = F_ADDRESS;
+							++p2;
+							switch(p1[2]) {
+								case 'd':
+								case 'o':
+								case 'x':
+									cs[0] = 'q';
+									cs[1] = p1[2];
+									cs[2] = '\0';
+									break;
+								default:
+									p1[3] = '\0';
+									badconv(p1);
+							}
+							break;
+						case 'c':
+							pr->flags = F_C;
+							/* cs[0] = 'c';	set in conv_c */
+							goto isint2;
+						case 'p':
+							pr->flags = F_P;
+							cs[0] = 'c';
+							goto isint2;
+						case 'u':
+							pr->flags = F_U;
+							/* cs[0] = 'c';	set in conv_u */
+		isint2:					switch(fu->bcnt) {
+								case 0:
+								case 1:
+									pr->bcnt = 1;
+									break;
+								default:
+									p1[2] = '\0';
+									badcnt(p1);
+							}
+							break;
+						default:
+							p1[2] = '\0';
+							badconv(p1);
+					}
+					break;
 				default:
-					p1[2] = '\0';
+					p1[1] = '\0';
 					badconv(p1);
-				}
-				break;
-			default:
-				p1[1] = '\0';
-				badconv(p1);
 			}
 
 			/*
@@ -403,8 +420,8 @@ isint2:					switch(fu->bcnt) {
 			savech = *p2;
 			p1[0] = '\0';
 			pr->fmt = xmalloc(strlen(fmtp) + strlen(cs) + 1);
-			(void)strcpy(pr->fmt, fmtp);
-			(void)strcat(pr->fmt, cs);
+			strcpy(pr->fmt, fmtp);
+			strcat(pr->fmt, cs);
 			*p2 = savech;
 			pr->cchar = pr->fmt + (p1 - fmtp);
 			fmtp = p2;
