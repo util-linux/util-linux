@@ -96,9 +96,7 @@ void add(const char *fmt)
 	p = fmt;
 	while (TRUE) {
 		/* Skip leading white space. */
-		while (isspace(*p) && ++p)
-			;
-		if (!*p)
+		if (!*(p = skip_space(p)))
 			break;
 
 		/* Allocate a new format unit and link it in. */
@@ -120,14 +118,12 @@ void add(const char *fmt)
 			tfu->reps = atoi(savep);
 			tfu->flags = F_SETREP;
 			/* skip trailing white space */
-			while (isspace(*++p))
-				;
+			p = skip_space(++p);
 		}
 
 		/* Skip slash and trailing white space. */
 		if (*p == '/')
-			while (isspace(*++p))
-				;
+			p = skip_space(p);
 
 		/* byte count */
 		if (isdigit(*p)) {
@@ -138,8 +134,7 @@ void add(const char *fmt)
 				badfmt(fmt);
 			tfu->bcnt = atoi(savep);
 			/* skip trailing white space */
-			while (isspace(*++p))
-				;
+			p = skip_space(++p);
 		}
 
 		/* format */
