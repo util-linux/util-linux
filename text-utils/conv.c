@@ -35,11 +35,12 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include "hexdump.h"
+#include "xalloc.h"
 
 void
 conv_c(PR *pr, u_char *p)
 {
-	char buf[10];
+	char *buf = NULL;
 	char const *str;
 
 	switch(*p) {
@@ -75,11 +76,12 @@ conv_c(PR *pr, u_char *p)
 		*pr->cchar = 'c';
 		printf(pr->fmt, *p);
 	} else {
-		sprintf(buf, "%03o", (int)*p);
+		xasprintf(&buf, "%03o", (int)*p);
 		str = buf;
 strpr:		*pr->cchar = 's';
 		printf(pr->fmt, str);
 	}
+	free(buf);
 }
 
 void
