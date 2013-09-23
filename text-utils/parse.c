@@ -197,7 +197,9 @@ int block_size(FS *fs)
 			case 'x': case 'X':
 				bcnt += 4;
 				break;
-			case 'e': case 'E': case 'f': case 'g': case 'G':
+			case 'e' ... 'g':
+			case 'E':
+			case 'G':
 				bcnt += 8;
 				break;
 			case 's':
@@ -323,10 +325,8 @@ void rewrite(FS *fs)
 							badcnt(p1);
 					}
 					break;
-				case 'e':
+				case 'e' ... 'g':
 				case 'E':
-				case 'f':
-				case 'g':
 				case 'G':
 					pr->flags = F_DBL;
 					switch(fu->bcnt) {
