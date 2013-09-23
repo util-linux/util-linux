@@ -51,11 +51,10 @@
 off_t skip;				/* bytes to skip */
 
 
-void
-newsyntax(int argc, char ***argvp)
+int
+newsyntax(int argc, char **argv)
 {
 	int ch;
-	char **argv;
 	char *hex_offt = "\"%07.7_Ax\n\"";
 
 	static const struct option longopts[] = {
@@ -75,7 +74,6 @@ newsyntax(int argc, char ***argvp)
 		{NULL, no_argument, NULL, 0}
 	};
 
-	argv = *argvp;
 	while ((ch = getopt_long(argc, argv, "bcCde:f:n:os:vxhV", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'b':
@@ -134,7 +132,7 @@ newsyntax(int argc, char ***argvp)
 		add("\"%07.7_ax \" 8/2 \"%04x \" \"\\n\"");
 	}
 
-	*argvp += optind;
+	return optind;
 }
 
 void __attribute__((__noreturn__)) usage(FILE *out)

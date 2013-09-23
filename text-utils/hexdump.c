@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	if (!(c = strrchr(argv[0], 'o')) || strcmp(c, "od")) {
-		newsyntax(argc, &argv);
+		argv += newsyntax(argc, argv);
 	} else
 		errx(EXIT_FAILURE, _("calling hexdump as od has been deprecated "
 				     "in favour to GNU coreutils od."));

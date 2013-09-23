@@ -91,4 +91,4 @@ void __attribute__((__noreturn__)) usage(FILE *out);
 void conv_c(PR *, u_char *);
 void conv_u(PR *, u_char *);
 int  next(char **);
-void newsyntax(int, char ***);
+int newsyntax(int, char **);
