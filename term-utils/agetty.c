@@ -1794,8 +1794,8 @@ static speed_t bcode(char *s)
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %1$s [options] line [baud_rate,...] [termtype]\n"
-		       " %1$s [options] baud_rate,... line [termtype]\n"), program_invocation_short_name);
+	fprintf(out, _(" %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
+		       " %1$s [options] <baud_rate>,... <line> [<termtype>]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -8, --8bits                assume 8-bit tty\n"), out);
 	fputs(_(" -a, --autologin <user>     login the specified user automatically\n"), out);
