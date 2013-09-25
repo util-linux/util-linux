@@ -7,11 +7,7 @@ TS_DESC="tab files-py"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
-
-set -x
-
 ts_init_py libmount
-
 
 PYDBG="$PYTHON -m pdb"
 TESTPROG="$TS_HELPER_PYLIBMOUNT_TAB"
@@ -20,8 +16,6 @@ ts_init_subtest "parse-fstab"
 $PYTHON $TESTPROG --parse "$TS_SELF/files/fstab" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
-
-exit 1
 
 ts_init_subtest "parse-fstab-full"
 $PYTHON $TESTPROG --parse "$TS_SELF/files/fstab.comment" --comments &> $TS_OUTPUT
