@@ -567,12 +567,18 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs,
 			rc = __mnt_optstr_append_option(fs, name, namesz,
 								val, valsz);
 		if (rc) {
-			if (vfs)
+			if (vfs) {
 				free(*vfs);
-			if (fs)
+				*vfs = NULL;
+			}
+			if (fs) {
 				free(*fs);
-			if (user)
+				*fs = NULL;
+			}
+			if (user) {
 				free(*user);
+				*user = NULL;
+			}
 			return rc;
 		}
 	}
