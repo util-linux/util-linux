@@ -517,8 +517,12 @@ static int sun_add_partition(
 			int cs = cxt->geom.heads * cxt->geom.sectors;
 			int x = first % cs;
 
-			if (x)
+			if (x) {
+				fdisk_info(cxt, _("Aligning the first sector from %u to %u "
+						  "to be on cylinder boundary."),
+						first, first + cs - x);
 				first += cs - x;
+			}
 		}
 		if (n == 2 && first != 0)
 			fdisk_warnx(cxt, _("It is highly recommended that the "
