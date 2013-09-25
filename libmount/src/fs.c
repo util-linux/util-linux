@@ -831,8 +831,12 @@ int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr)
 		if (rc)
 			return rc;
 		n = strdup(optstr);
-		if (!n)
+		if (!n) {
+			free(u);
+			free(v);
+			free(f);
 			return -ENOMEM;
+		}
 	}
 
 	free(fs->fs_optstr);
