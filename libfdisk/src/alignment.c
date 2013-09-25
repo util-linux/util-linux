@@ -176,12 +176,17 @@ int fdisk_save_user_geometry(struct fdisk_context *cxt,
 	if (!cxt)
 		return -EINVAL;
 
-	cxt->user_geom.heads = heads > 256 ? 0 : heads;
-	cxt->user_geom.sectors = sectors >= 64 ? 0 : sectors;
-	cxt->user_geom.cylinders = cylinders;
+	if (heads)
+		cxt->user_geom.heads = heads > 256 ? 0 : heads;
+	if (sectors)
+		cxt->user_geom.sectors = sectors >= 64 ? 0 : sectors;
+	if (cylinders)
+		cxt->user_geom.cylinders = cylinders;
 
 	DBG(GEOMETRY, dbgprint("user C/H/S: %u/%u/%u",
-				cylinders, heads, sectors));
+				(unsigned) cxt->user_geom.cylinders,
+				(unsigned) cxt->user_geom.heads,
+				(unsigned) cxt->user_geom.sectors));
 
 	return 0;
 }
