@@ -190,11 +190,7 @@ static void ask_geom(struct fdisk_context *cxt)
 
 static int sun_create_disklabel(struct fdisk_context *cxt)
 {
-	struct hd_geometry geometry;
-	sector_t llsectors, llcyls;
-	unsigned int ndiv, sec_fac;
-	int res;
-
+	unsigned int ndiv;
 	struct fdisk_sun_label *sun;		/* libfdisk sun handler */
 	struct sun_disklabel *sunlabel;	/* on disk data */
 
@@ -216,23 +212,19 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	sunlabel->vtoc.sanity = cpu_to_be32(SUN_VTOC_SANITY);
 	sunlabel->vtoc.nparts = cpu_to_be16(SUN_MAXPARTITIONS);
 
-	res = blkdev_get_sectors(cxt->dev_fd, &llsectors);
-	sec_fac = cxt->sector_size / 512;
-
 #ifdef HDIO_GETGEO
-	if (ioctl(cxt->dev_fd, HDIO_GETGEO, &geometry) == 0
-	    && geometry.heads
-	    && geometry.sectors) {
+	if (cxt->geom.heads && cxt->geom.sectors) {
+		sector_t llsectors;
 
-	        cxt->geom.heads = geometry.heads;
-	        cxt->geom.sectors = geometry.sectors;
-		if (res == 0) {
+		if (blkdev_get_sectors(cxt->dev_fd, &llsectors) == 0) {
+			int sec_fac = cxt->sector_size / 512;
+			sector_t llcyls;
+
 			llcyls = llsectors / (cxt->geom.heads * cxt->geom.sectors * sec_fac);
 			cxt->geom.cylinders = llcyls;
 			if (cxt->geom.cylinders != llcyls)
 				cxt->geom.cylinders = ~0;
 		} else {
-			cxt->geom.cylinders = geometry.cylinders;
 			fdisk_warnx(cxt,
 				_("BLKGETSIZE ioctl failed on %s. "
 				  "Using geometry cylinder value of %llu. "

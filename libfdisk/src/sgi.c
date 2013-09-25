@@ -952,41 +952,32 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 {
 	struct fdisk_sgi_label *sgi;
 	struct sgi_disklabel *sgilabel;
-	struct hd_geometry geometry;
-	sector_t llsectors;
-	int res; 		/* the result from the ioctl */
-	int sec_fac; 		/* the sector factor */
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SGI));
 
-	sec_fac = cxt->sector_size / 512;	/* determine the sector factor */
-	res = blkdev_get_sectors(cxt->dev_fd, &llsectors);
-
 #ifdef HDIO_GETGEO
-	/* TODO: it seems unnecessary, geometry is already set in the context */
-	if (ioctl(cxt->dev_fd, HDIO_GETGEO, &geometry) < 0) {
-		fdisk_warn(cxt, _("HDIO_GETGEO ioctl failed on %s"), cxt->dev_path);
-		return -1;
-	}
-	cxt->geom.heads = geometry.heads;
-	cxt->geom.sectors = geometry.sectors;
-	if (res == 0) {
-		/* the get device size ioctl was successful */
-	        sector_t llcyls;
-		llcyls = llsectors / (cxt->geom.heads * cxt->geom.sectors * sec_fac);
-		cxt->geom.cylinders = llcyls;
-		if (cxt->geom.cylinders != llcyls)	/* truncated? */
-			cxt->geom.cylinders = ~0;
-	} else {
-		/* otherwise print error and use truncated version */
-		cxt->geom.cylinders = geometry.cylinders;
-		fdisk_warnx(cxt,
-			_("Warning:  BLKGETSIZE ioctl failed on %s.  "
-			  "Using geometry cylinder value of %llu."
-			  "This value may be truncated for devices"
-			  " > 33.8 GB."), cxt->dev_path, cxt->geom.cylinders);
+	if (cxt->geom.heads && cxt->geom.sectors) {
+		sector_t llsectors;
+
+		if (blkdev_get_sectors(cxt->dev_fd, &llsectors) == 0) {
+			/* the get device size ioctl was successful */
+			sector_t llcyls;
+			int sec_fac = cxt->sector_size / 512;
+
+			llcyls = llsectors / (cxt->geom.heads * cxt->geom.sectors * sec_fac);
+			cxt->geom.cylinders = llcyls;
+			if (cxt->geom.cylinders != llcyls)	/* truncated? */
+				cxt->geom.cylinders = ~0;
+		} else {
+			/* otherwise print error and use truncated version */
+			fdisk_warnx(cxt,
+				_("Warning:  BLKGETSIZE ioctl failed on %s.  "
+				  "Using geometry cylinder value of %llu."
+				  "This value may be truncated for devices"
+				  " > 33.8 GB."), cxt->dev_path, cxt->geom.cylinders);
+		}
 	}
 #endif
 	fdisk_zeroize_firstsector(cxt);
@@ -1007,14 +998,14 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	sgilabel->devparam.gap1			= (0);
 	sgilabel->devparam.gap2			= (0);
 	sgilabel->devparam.sparecyl			= (0);
-	sgilabel->devparam.pcylcount	= cpu_to_be16(geometry.cylinders);
+	sgilabel->devparam.pcylcount	= cpu_to_be16(cxt->geom.cylinders);
 	sgilabel->devparam.head_vol0	= cpu_to_be16(0);
-	sgilabel->devparam.ntrks	= cpu_to_be16(geometry.heads);
+	sgilabel->devparam.ntrks	= cpu_to_be16(cxt->geom.heads);
 	/* tracks/cylinder (heads) */
 	sgilabel->devparam.cmd_tag_queue_depth	= (0);
 	sgilabel->devparam.unused0			= (0);
 	sgilabel->devparam.unused1	= cpu_to_be16(0);
-	sgilabel->devparam.nsect	= cpu_to_be16(geometry.sectors);
+	sgilabel->devparam.nsect	= cpu_to_be16(cxt->geom.sectors);
 	/* sectors/track */
 	sgilabel->devparam.bytes	= cpu_to_be16(cxt->sector_size);
 	sgilabel->devparam.ilfact	= cpu_to_be16(1);
