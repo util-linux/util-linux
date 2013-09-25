@@ -40,7 +40,7 @@ void mnt_init_debug(int mask)
 
 	libmount_debug_mask |= MNT_DEBUG_INIT;
 
-	if (libmount_debug_mask && libmount_debug_mask != MNT_DEBUG_INIT) {
+	if (libmount_debug_mask != MNT_DEBUG_INIT) {
 		const char *ver = NULL;
 		const char **features = NULL, **p;
 
