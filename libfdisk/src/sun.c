@@ -220,7 +220,10 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	sec_fac = cxt->sector_size / 512;
 
 #ifdef HDIO_GETGEO
-	if (!ioctl(cxt->dev_fd, HDIO_GETGEO, &geometry)) {
+	if (ioctl(cxt->dev_fd, HDIO_GETGEO, &geometry) == 0
+	    && geometry.heads
+	    && geometry.sectors) {
+
 	        cxt->geom.heads = geometry.heads;
 	        cxt->geom.sectors = geometry.sectors;
 		if (res == 0) {
