@@ -204,7 +204,7 @@ void list_disk_geometry(struct fdisk_context *cxt)
 			cxt->dev_path, strsz, bytes, cxt->total_sectors);
 	free(strsz);
 
-	if (fdisk_require_geometry(cxt))
+	if (fdisk_require_geometry(cxt) || fdisk_context_use_cylinders(cxt))
 		fdisk_colon(cxt, _("Geometry: %d heads, %llu sectors/track, %llu cylinders"),
 			       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
 
