@@ -974,11 +974,6 @@ int mnt_context_mount(struct libmnt_context *cxt)
 		rc = mnt_context_prepare_update(cxt);
 	if (!rc)
 		rc = mnt_context_do_mount(cxt);
-
-	/* TODO: if a mtab update is expected, then check if the
-	 * target is really mounted read-write to avoid 'ro' in
-	 * mtab and 'rw' in /proc/mounts.
-	 */
 	if (!rc)
 		rc = mnt_context_update_tabs(cxt);
 	return rc;
