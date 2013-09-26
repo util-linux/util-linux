@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.17.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-09-26 10:31+0200\n"
+"POT-Creation-Date: 2013-09-26 11:48+0200\n"
 "PO-Revision-Date: 2010-02-16 19:58+0100\n"
 "Last-Translator: Mikel Olasagasti Uranga <hey_neken@mundurat.net>\n"
 "Language-Team: Basque <translation-team-eu@lists.sourceforge.net>\n"
@@ -32,8 +32,8 @@ msgstr ""
 #: disk-utils/mkfs.cramfs.c:791 disk-utils/mkfs.minix.c:757
 #: disk-utils/partx.c:931 disk-utils/resizepart.c:97
 #: disk-utils/swaplabel.c:105 fdisks/cfdisk.c:1827 fdisks/cfdisk.c:1949
-#: fdisks/cfdisk.c:2037 fdisks/fdisk.c:332 fdisks/fdisk.c:348
-#: fdisks/fdisk.c:382 fdisks/fdisk.c:523 lib/path.c:60 lib/path.c:72
+#: fdisks/cfdisk.c:2037 fdisks/fdisk.c:330 fdisks/fdisk.c:346
+#: fdisks/fdisk.c:380 fdisks/fdisk.c:521 lib/path.c:60 lib/path.c:72
 #: login-utils/islocal.c:87 login-utils/last.c:613
 #: login-utils/last-deprecated.c:245 login-utils/sulogin.c:399
 #: login-utils/sulogin.c:437 login-utils/utmpdump.c:125
@@ -2681,7 +2681,7 @@ msgstr "Hasieran"
 msgid "Add partition at beginning of free space"
 msgstr "Gehitu partizioa leku librearen hasieran"
 
-#: fdisks/cfdisk.c:1313 libfdisk/src/bsd.c:397 libfdisk/src/dos.c:1606
+#: fdisks/cfdisk.c:1313 libfdisk/src/bsd.c:395 libfdisk/src/dos.c:1606
 #: libfdisk/src/gpt.c:1201 libfdisk/src/sgi.c:278 libfdisk/src/sun.c:703
 msgid "End"
 msgstr "Amaiera"
@@ -2826,8 +2826,8 @@ msgstr "   Primarioa"
 msgid "   Logical"
 msgstr "   Logikoa"
 
-#: fdisks/cfdisk.c:1915 fdisks/fdisk.c:183 fdisks/fdisk.c:184
-#: fdisks/fdisk.c:189 fdisks/sfdisk.c:585 libfdisk/src/ask.c:660
+#: fdisks/cfdisk.c:1915 fdisks/fdisk.c:181 fdisks/fdisk.c:182
+#: fdisks/fdisk.c:187 fdisks/sfdisk.c:585 libfdisk/src/ask.c:660
 #: libfdisk/src/dos.c:1661
 msgid "Unknown"
 msgstr "Ezezaguna"
@@ -3283,7 +3283,7 @@ msgstr "Irten"
 msgid "Quit program without writing partition table"
 msgstr "Irten programatik partizio taula idatzi gabe"
 
-#: fdisks/cfdisk.c:2590 libfdisk/src/bsd.c:399 libfdisk/src/gpt.c:1203
+#: fdisks/cfdisk.c:2590 libfdisk/src/bsd.c:397 libfdisk/src/gpt.c:1203
 msgid "Type"
 msgstr "Moeta"
 
@@ -3466,209 +3466,204 @@ msgstr "Kode hexadezimala (sakatu L kodeak zerrendatzeko): "
 msgid "Hex code (type L to list all codes): "
 msgstr "Kode hexadezimala (sakatu L kodeak zerrendatzeko): "
 
-#: fdisks/fdisk.c:55
+#: fdisks/fdisk.c:53
 #, c-format
 msgid ""
 " %1$s [options] <disk>    change partition table\n"
 " %1$s [options] -l <disk> list partition table(s)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:60
+#: fdisks/fdisk.c:58
 msgid " -b <size>         sector size (512, 1024, 2048 or 4096)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:61 fdisks/fdisk.c:63
+#: fdisks/fdisk.c:59 fdisks/fdisk.c:61
 msgid " -c[=<mode>]       compatible mode: 'dos' or 'nondos' (default)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:62
+#: fdisks/fdisk.c:60
 #, fuzzy
 msgid " -h                print this help text\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: fdisks/fdisk.c:64
+#: fdisks/fdisk.c:62
 msgid " -L[=<when>]       colorize output (auto, always or never)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:65
+#: fdisks/fdisk.c:63
 msgid " -u[=<unit>]       display units: 'cylinders' or 'sectors' (default)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:66
+#: fdisks/fdisk.c:64
 #, fuzzy
 msgid " -v                print program version\n"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: fdisks/fdisk.c:67
+#: fdisks/fdisk.c:65
 #, fuzzy
 msgid " -C <number>       specify the number of cylinders\n"
 msgstr "Sartu zilindro kopurua:"
 
-#: fdisks/fdisk.c:68
+#: fdisks/fdisk.c:66
 #, fuzzy
 msgid " -H <number>       specify the number of heads\n"
 msgstr "Sartu buru kopurua:"
 
-#: fdisks/fdisk.c:69
+#: fdisks/fdisk.c:67
 #, fuzzy
 msgid " -S <number>       specify the number of sectors per track\n"
 msgstr "Sartu pistako zenbat sektore kopurua:"
 
-#: fdisks/fdisk.c:152
+#: fdisks/fdisk.c:150
 #, fuzzy
 msgid "DOS Compatibility flag is set (DEPRECATED!)"
 msgstr "DOS bateragarritasun marka ezarrita dago\n"
 
-#: fdisks/fdisk.c:153
+#: fdisks/fdisk.c:151
 #, fuzzy
 msgid "DOS Compatibility flag is not set"
 msgstr "DOS bateragarritasun marka ez dago ezarrita\n"
 
-#: fdisks/fdisk.c:174
+#: fdisks/fdisk.c:172
 #, fuzzy, c-format
 msgid "Partition %zu does not exist yet!"
 msgstr ""
 "\n"
 "Ez da swap partiziorik existitzen.\n"
 
-#: fdisks/fdisk.c:182
+#: fdisks/fdisk.c:180
 #, fuzzy, c-format
 msgid "Changed type of partition '%s' to '%s'."
 msgstr "   t   aldatu paritzioaren fitxategi sistema IDa"
 
-#: fdisks/fdisk.c:187
+#: fdisks/fdisk.c:185
 #, c-format
 msgid "Type of partition %zu is unchanged: %s."
 msgstr ""
 
-#: fdisks/fdisk.c:203
+#: fdisks/fdisk.c:201
 #, fuzzy, c-format
 msgid "Disk %s: %s, %llu bytes, %llu sectors"
 msgstr "Buruak: %d   Sektoreak pistako: %d   Zilindroak: %lld"
 
-#: fdisks/fdisk.c:208
+#: fdisks/fdisk.c:206
 #, fuzzy, c-format
 msgid "Geometry: %d heads, %llu sectors/track, %llu cylinders"
 msgstr "%d buru, %llu sektore pistako, %d zilindro"
 
-#: fdisks/fdisk.c:211
+#: fdisks/fdisk.c:209
 #, fuzzy, c-format
 msgid "Units: %s of %d * %ld = %ld bytes"
 msgstr "Unitateak: %s %d-(e)tik * %d = %d byte\n"
 
-#: fdisks/fdisk.c:217
+#: fdisks/fdisk.c:215
 #, c-format
 msgid "Sector size (logical/physical): %lu bytes / %lu bytes"
 msgstr ""
 
-#: fdisks/fdisk.c:219
+#: fdisks/fdisk.c:217
 #, c-format
 msgid "I/O size (minimum/optimal): %lu bytes / %lu bytes"
 msgstr ""
 
-#: fdisks/fdisk.c:222
+#: fdisks/fdisk.c:220
 #, fuzzy, c-format
 msgid "Alignment offset: %lu bytes"
 msgstr "lortu irakurketa soilik"
 
-#: fdisks/fdisk.c:225
+#: fdisks/fdisk.c:223
 #, fuzzy, c-format
 msgid "Disk label type: %s"
 msgstr "Disko unitatea: %s\n"
 
-#: fdisks/fdisk.c:228
+#: fdisks/fdisk.c:226
 #, fuzzy, c-format
 msgid "Disk identifier: %s"
 msgstr "Disko identifikatzailea: 0x%08x\n"
 
-#: fdisks/fdisk.c:278
+#: fdisks/fdisk.c:274
 #, c-format
 msgid ""
 "\n"
 "%s: offset = %ju, size = %zu bytes."
 msgstr ""
 
-#: fdisks/fdisk.c:282
+#: fdisks/fdisk.c:278
 #, fuzzy
 msgid "cannot seek"
 msgstr "ezin da fork egin"
 
-#: fdisks/fdisk.c:284
-#, fuzzy
-msgid "cannot allocate"
-msgstr "ezin da fork egin"
-
-#: fdisks/fdisk.c:286
+#: fdisks/fdisk.c:283
 #, fuzzy
 msgid "cannot read"
 msgstr "hexdump: ezin da %s  irakurri.\n"
 
-#: fdisks/fdisk.c:299 libfdisk/src/bsd.c:217 libfdisk/src/dos.c:876
+#: fdisks/fdisk.c:297 libfdisk/src/bsd.c:215 libfdisk/src/dos.c:876
 #: libfdisk/src/gpt.c:1684
 #, fuzzy
 msgid "First sector"
 msgstr "Lehenengo %s"
 
-#: fdisks/fdisk.c:385
+#: fdisks/fdisk.c:383
 #, fuzzy, c-format
 msgid "BLKGETSIZE ioctl failed on %s"
 msgstr "KDGHWCLK ioctl-ek huts egin du"
 
-#: fdisks/fdisk.c:411
+#: fdisks/fdisk.c:409
 #, fuzzy
 msgid "failed to allocate libfdisk context"
 msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
-#: fdisks/fdisk.c:420
+#: fdisks/fdisk.c:418
 #, fuzzy
 msgid "invalid sector size argument"
 msgstr "baliogabeko aukera"
 
-#: fdisks/fdisk.c:429 fdisks/sfdisk.c:2597
+#: fdisks/fdisk.c:427 fdisks/sfdisk.c:2597
 #, fuzzy
 msgid "invalid cylinders argument"
 msgstr "baliogabeko aukera"
 
-#: fdisks/fdisk.c:438
+#: fdisks/fdisk.c:436
 #, fuzzy
 msgid "not found DOS label driver"
 msgstr ""
 "\n"
 "BSD etiketa gailuarentzat: %s\n"
 
-#: fdisks/fdisk.c:451 fdisks/sfdisk.c:2606
+#: fdisks/fdisk.c:449 fdisks/sfdisk.c:2606
 #, fuzzy
 msgid "invalid heads argument"
 msgstr "baliogabeko aukera"
 
-#: fdisks/fdisk.c:457 fdisks/sfdisk.c:2624
+#: fdisks/fdisk.c:455 fdisks/sfdisk.c:2624
 #, fuzzy
 msgid "invalid sectors argument"
 msgstr "baliogabeko aukera"
 
-#: fdisks/fdisk.c:465 misc-utils/cal.c:351 sys-utils/dmesg.c:1286
+#: fdisks/fdisk.c:463 misc-utils/cal.c:351 sys-utils/dmesg.c:1286
 #, fuzzy
 msgid "unsupported color mode"
 msgstr "%s: Komando ezezaguna: %s\n"
 
-#: fdisks/fdisk.c:488
+#: fdisks/fdisk.c:486
 msgid ""
 "The device properties (sector size and geometry) should be used with one "
 "specified device only."
 msgstr ""
 
-#: fdisks/fdisk.c:527
+#: fdisks/fdisk.c:525
 #, c-format
 msgid "Welcome to fdisk (%s)."
 msgstr ""
 
-#: fdisks/fdisk.c:529
+#: fdisks/fdisk.c:527
 msgid ""
 "Changes will remain in memory only, until you decide to write them.\n"
 "Be careful before using the write command.\n"
 msgstr ""
 
-#: fdisks/fdisk.c:534
+#: fdisks/fdisk.c:532
 #, fuzzy
 msgid "Device does not contain a recognized partition table."
 msgstr "%s diskak ez dauka partizio taula zuzena\n"
@@ -4206,7 +4201,7 @@ msgstr "Inprimatu taula raw datu formatua erabiliz"
 msgid "unimplemented format - using %s"
 msgstr "UTC ordua erabiltzen.\n"
 
-#: fdisks/sfdisk.c:891 libfdisk/src/bsd.c:498
+#: fdisks/sfdisk.c:891 libfdisk/src/bsd.c:496
 msgid "cylinders"
 msgstr "zilindroak"
 
@@ -5376,275 +5371,275 @@ msgstr ""
 "\n"
 "Ez da swap partiziorik existitzen.\n"
 
-#: libfdisk/src/bsd.c:154
+#: libfdisk/src/bsd.c:152
 #, fuzzy, c-format
 msgid "Partition %zd: has invalid starting sector 0."
 msgstr "%s partizioak hasierako 0 sektore baliogabea dauka.\n"
 
-#: libfdisk/src/bsd.c:169
+#: libfdisk/src/bsd.c:167
 #, fuzzy, c-format
 msgid "There is no *BSD partition on %s."
 msgstr "Ez dago *BSD partiziorik %s-(e)n.\n"
 
-#: libfdisk/src/bsd.c:215 libfdisk/src/dos.c:874
+#: libfdisk/src/bsd.c:213 libfdisk/src/dos.c:874
 #, fuzzy
 msgid "First cylinder"
 msgstr "zilindroa"
 
-#: libfdisk/src/bsd.c:242 libfdisk/src/dos.c:936
+#: libfdisk/src/bsd.c:240 libfdisk/src/dos.c:936
 #, fuzzy
 msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgstr "Azken %s-(e)a edo +tamainua edo +tamainuaM edo +tamainuaK"
 
-#: libfdisk/src/bsd.c:247 libfdisk/src/dos.c:941 libfdisk/src/gpt.c:1705
+#: libfdisk/src/bsd.c:245 libfdisk/src/dos.c:941 libfdisk/src/gpt.c:1705
 #, fuzzy
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr "Azken %s-(e)a edo +tamainua edo +tamainuaM edo +tamainuaK"
 
-#: libfdisk/src/bsd.c:283
+#: libfdisk/src/bsd.c:281
 #, fuzzy, c-format
 msgid "The device %s does not contain BSD disklabel."
 msgstr "%s contains no disklabel.\n"
 
-#: libfdisk/src/bsd.c:285
+#: libfdisk/src/bsd.c:283
 msgid "Do you want to create a BSD disklabel?"
 msgstr ""
 
-#: libfdisk/src/bsd.c:348
+#: libfdisk/src/bsd.c:346
 #, fuzzy, c-format
 msgid "type: %s"
 msgstr "moeta: %s\n"
 
-#: libfdisk/src/bsd.c:350
+#: libfdisk/src/bsd.c:348
 #, fuzzy, c-format
 msgid "type: %d"
 msgstr "moeta: %d\n"
 
-#: libfdisk/src/bsd.c:352
+#: libfdisk/src/bsd.c:350
 #, fuzzy, c-format
 msgid "disk: %.*s"
 msgstr "diskoa: %.*s\n"
 
-#: libfdisk/src/bsd.c:353
+#: libfdisk/src/bsd.c:351
 #, fuzzy, c-format
 msgid "label: %.*s"
 msgstr "etiketa: %.*s\n"
 
-#: libfdisk/src/bsd.c:355
+#: libfdisk/src/bsd.c:353
 #, fuzzy, c-format
 msgid "flags: %s"
 msgstr "adierazgarriak:"
 
-#: libfdisk/src/bsd.c:356
+#: libfdisk/src/bsd.c:354
 msgid " removable"
 msgstr " kengarria"
 
-#: libfdisk/src/bsd.c:357
+#: libfdisk/src/bsd.c:355
 msgid " ecc"
 msgstr " ecc"
 
-#: libfdisk/src/bsd.c:358
+#: libfdisk/src/bsd.c:356
 msgid " badsect"
 msgstr " badsect"
 
-#: libfdisk/src/bsd.c:362
+#: libfdisk/src/bsd.c:360
 #, fuzzy, c-format
 msgid "bytes/sector: %ld"
 msgstr "byte-ak sektoreko: %ld\n"
 
-#: libfdisk/src/bsd.c:363
+#: libfdisk/src/bsd.c:361
 #, fuzzy, c-format
 msgid "sectors/track: %ld"
 msgstr "sektoreak pistako: %ld\n"
 
-#: libfdisk/src/bsd.c:364
+#: libfdisk/src/bsd.c:362
 #, fuzzy, c-format
 msgid "tracks/cylinder: %ld"
 msgstr "pistak zilindroko: %ld\n"
 
-#: libfdisk/src/bsd.c:365
+#: libfdisk/src/bsd.c:363
 #, fuzzy, c-format
 msgid "sectors/cylinder: %ld"
 msgstr "sektoreak/zilindroa: %ld\n"
 
-#: libfdisk/src/bsd.c:366
+#: libfdisk/src/bsd.c:364
 #, fuzzy, c-format
 msgid "cylinders: %ld"
 msgstr "zilindroak: %ld\n"
 
-#: libfdisk/src/bsd.c:367
+#: libfdisk/src/bsd.c:365
 #, fuzzy, c-format
 msgid "rpm: %d"
 msgstr "rpm: %d\n"
 
-#: libfdisk/src/bsd.c:368
+#: libfdisk/src/bsd.c:366
 #, fuzzy, c-format
 msgid "interleave: %d"
 msgstr "tartekatzea: %d\n"
 
-#: libfdisk/src/bsd.c:369
+#: libfdisk/src/bsd.c:367
 #, fuzzy, c-format
 msgid "trackskew: %d"
 msgstr "pista skew-ea: %d\n"
 
-#: libfdisk/src/bsd.c:370
+#: libfdisk/src/bsd.c:368
 #, fuzzy, c-format
 msgid "cylinderskew: %d"
 msgstr "zilindro skew-ea: %d\n"
 
-#: libfdisk/src/bsd.c:371
+#: libfdisk/src/bsd.c:369
 #, fuzzy, c-format
 msgid "headswitch: %ld (milliseconds)"
 msgstr "headswitch: %ld\t\t# milisegundu\n"
 
-#: libfdisk/src/bsd.c:372
+#: libfdisk/src/bsd.c:370
 #, fuzzy, c-format
 msgid "track-to-track seek: %ld (milliseconds)"
 msgstr "pistatik pistara bilaketa: %ld\t# milisegundu\n"
 
-#: libfdisk/src/bsd.c:385
+#: libfdisk/src/bsd.c:383
 #, fuzzy, c-format
 msgid "partitions: %d"
 msgstr ""
 "\n"
 "%d partizio:\n"
 
-#: libfdisk/src/bsd.c:395 libfdisk/src/sgi.c:334
+#: libfdisk/src/bsd.c:393 libfdisk/src/sgi.c:334
 msgid "#"
 msgstr ""
 
-#: libfdisk/src/bsd.c:396 libfdisk/src/dos.c:1512 libfdisk/src/dos.c:1605
+#: libfdisk/src/bsd.c:394 libfdisk/src/dos.c:1512 libfdisk/src/dos.c:1605
 #: libfdisk/src/gpt.c:1200 libfdisk/src/sgi.c:277 libfdisk/src/sun.c:702
 #, fuzzy
 msgid "Start"
 msgstr "hasiera"
 
-#: libfdisk/src/bsd.c:398 libfdisk/src/dos.c:1513 libfdisk/src/gpt.c:1202
+#: libfdisk/src/bsd.c:396 libfdisk/src/dos.c:1513 libfdisk/src/gpt.c:1202
 #: libfdisk/src/sgi.c:337
 msgid "Size"
 msgstr ""
 
-#: libfdisk/src/bsd.c:400
+#: libfdisk/src/bsd.c:398
 msgid "fsize"
 msgstr ""
 
-#: libfdisk/src/bsd.c:401
+#: libfdisk/src/bsd.c:399
 msgid "bsize"
 msgstr ""
 
-#: libfdisk/src/bsd.c:402
+#: libfdisk/src/bsd.c:400
 msgid "cpg"
 msgstr ""
 
-#: libfdisk/src/bsd.c:493
+#: libfdisk/src/bsd.c:491
 msgid "bytes/sector"
 msgstr "byte kopurua sektoreko"
 
-#: libfdisk/src/bsd.c:496
+#: libfdisk/src/bsd.c:494
 msgid "sectors/track"
 msgstr "sektoreak pistako"
 
-#: libfdisk/src/bsd.c:497
+#: libfdisk/src/bsd.c:495
 msgid "tracks/cylinder"
 msgstr "pistak zilindroko"
 
-#: libfdisk/src/bsd.c:502
+#: libfdisk/src/bsd.c:500
 msgid "sectors/cylinder"
 msgstr "sektoreak zilindroko"
 
-#: libfdisk/src/bsd.c:505
+#: libfdisk/src/bsd.c:503
 msgid "rpm"
 msgstr "rpm"
 
-#: libfdisk/src/bsd.c:506
+#: libfdisk/src/bsd.c:504
 #, fuzzy
 msgid "interleave"
 msgstr "tartekatzea: %d\n"
 
-#: libfdisk/src/bsd.c:507
+#: libfdisk/src/bsd.c:505
 #, fuzzy
 msgid "trackskew"
 msgstr "pista skew-ea: %d\n"
 
-#: libfdisk/src/bsd.c:508
+#: libfdisk/src/bsd.c:506
 #, fuzzy
 msgid "cylinderskew"
 msgstr "zilindro skew-ea: %d\n"
 
-#: libfdisk/src/bsd.c:510
+#: libfdisk/src/bsd.c:508
 #, fuzzy
 msgid "headswitch"
 msgstr "headswitch: %ld\t\t# milisegundu\n"
 
-#: libfdisk/src/bsd.c:511
+#: libfdisk/src/bsd.c:509
 #, fuzzy
 msgid "track-to-track seek"
 msgstr "pistatik pistara bilaketa: %ld\t# milisegundu\n"
 
-#: libfdisk/src/bsd.c:523
+#: libfdisk/src/bsd.c:521
 #, fuzzy, c-format
 msgid "open failed %s"
 msgstr "open-ek huts egin du: %s"
 
-#: libfdisk/src/bsd.c:528
+#: libfdisk/src/bsd.c:526
 #, fuzzy, c-format
 msgid "read failed %s"
 msgstr "read-ek huts egin du: %s"
 
-#: libfdisk/src/bsd.c:534
+#: libfdisk/src/bsd.c:532
 #, c-format
 msgid "The bootstrap file %s successfully loaded."
 msgstr ""
 
-#: libfdisk/src/bsd.c:550
+#: libfdisk/src/bsd.c:548
 #, fuzzy, c-format
 msgid "Bootstrap: %1$sboot -> boot%1$s (default %1$s)"
 msgstr "OS/2 Boot Manager"
 
-#: libfdisk/src/bsd.c:581
+#: libfdisk/src/bsd.c:579
 msgid "Bootstrap overlaps with disk label!"
 msgstr ""
 
-#: libfdisk/src/bsd.c:595
+#: libfdisk/src/bsd.c:593
 #, fuzzy, c-format
 msgid "seek failed %s"
 msgstr "seek-ek huts egin du"
 
-#: libfdisk/src/bsd.c:600
+#: libfdisk/src/bsd.c:598
 #, fuzzy, c-format
 msgid "write failed %s"
 msgstr "write-k huts egin du: %s"
 
-#: libfdisk/src/bsd.c:606
+#: libfdisk/src/bsd.c:604
 #, fuzzy, c-format
 msgid "Bootstrap installed on %s."
 msgstr "        disko guztian. "
 
-#: libfdisk/src/bsd.c:763
+#: libfdisk/src/bsd.c:761
 #, fuzzy, c-format
 msgid "seek failed: %d"
 msgstr "seek-ek huts egin du"
 
-#: libfdisk/src/bsd.c:767
+#: libfdisk/src/bsd.c:765
 #, fuzzy, c-format
 msgid "write failed: %d"
 msgstr "write-k huts egin du: %s"
 
-#: libfdisk/src/bsd.c:773
+#: libfdisk/src/bsd.c:771
 #, fuzzy, c-format
 msgid "Disklabel written to %s."
 msgstr "Disko unitatea: %s\n"
 
-#: libfdisk/src/bsd.c:779 libfdisk/src/context.c:213
+#: libfdisk/src/bsd.c:777 libfdisk/src/context.c:213
 #, fuzzy
 msgid "Syncing disks."
 msgstr "Diskak sinkronizatzen.\n"
 
-#: libfdisk/src/bsd.c:813
+#: libfdisk/src/bsd.c:811
 msgid "BSD label is not nested within a DOS partition"
 msgstr ""
 
-#: libfdisk/src/bsd.c:842
+#: libfdisk/src/bsd.c:840
 #, fuzzy, c-format
 msgid "BSD partition '%c' linked to DOS partition %d."
 msgstr "   x   estekatu BSD partizioa BSD ez den partizio bati"
@@ -17577,6 +17572,10 @@ msgstr ""
 #, fuzzy
 msgid "Input line too long."
 msgstr "Sarrera lerro luzeegia.\n"
+
+#, fuzzy
+#~ msgid "cannot allocate"
+#~ msgstr "ezin da fork egin"
 
 #~ msgid "usage:\n"
 #~ msgstr "erabilera:\n"

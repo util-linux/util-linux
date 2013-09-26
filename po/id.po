@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.17.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-09-26 10:31+0200\n"
+"POT-Creation-Date: 2013-09-26 11:48+0200\n"
 "PO-Revision-Date: 2010-02-18 04:00+0700\n"
 "Last-Translator: Arif E. Nugroho <arif_endro@yahoo.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
@@ -34,8 +34,8 @@ msgstr ""
 #: disk-utils/mkfs.cramfs.c:791 disk-utils/mkfs.minix.c:757
 #: disk-utils/partx.c:931 disk-utils/resizepart.c:97
 #: disk-utils/swaplabel.c:105 fdisks/cfdisk.c:1827 fdisks/cfdisk.c:1949
-#: fdisks/cfdisk.c:2037 fdisks/fdisk.c:332 fdisks/fdisk.c:348
-#: fdisks/fdisk.c:382 fdisks/fdisk.c:523 lib/path.c:60 lib/path.c:72
+#: fdisks/cfdisk.c:2037 fdisks/fdisk.c:330 fdisks/fdisk.c:346
+#: fdisks/fdisk.c:380 fdisks/fdisk.c:521 lib/path.c:60 lib/path.c:72
 #: login-utils/islocal.c:87 login-utils/last.c:613
 #: login-utils/last-deprecated.c:245 login-utils/sulogin.c:399
 #: login-utils/sulogin.c:437 login-utils/utmpdump.c:125
@@ -2744,7 +2744,7 @@ msgstr "Diawali"
 msgid "Add partition at beginning of free space"
 msgstr "Tambahkan partisi di awal ruang kosong"
 
-#: fdisks/cfdisk.c:1313 libfdisk/src/bsd.c:397 libfdisk/src/dos.c:1606
+#: fdisks/cfdisk.c:1313 libfdisk/src/bsd.c:395 libfdisk/src/dos.c:1606
 #: libfdisk/src/gpt.c:1201 libfdisk/src/sgi.c:278 libfdisk/src/sun.c:703
 msgid "End"
 msgstr "Akhir"
@@ -2893,8 +2893,8 @@ msgstr "   Primary"
 msgid "   Logical"
 msgstr "   Logical"
 
-#: fdisks/cfdisk.c:1915 fdisks/fdisk.c:183 fdisks/fdisk.c:184
-#: fdisks/fdisk.c:189 fdisks/sfdisk.c:585 libfdisk/src/ask.c:660
+#: fdisks/cfdisk.c:1915 fdisks/fdisk.c:181 fdisks/fdisk.c:182
+#: fdisks/fdisk.c:187 fdisks/sfdisk.c:585 libfdisk/src/ask.c:660
 #: libfdisk/src/dos.c:1661
 msgid "Unknown"
 msgstr "Tidak diketahui"
@@ -3351,7 +3351,7 @@ msgstr "Berhenti"
 msgid "Quit program without writing partition table"
 msgstr "Berhenti dari aplikasi tanpa menulis tabel partisi"
 
-#: fdisks/cfdisk.c:2590 libfdisk/src/bsd.c:399 libfdisk/src/gpt.c:1203
+#: fdisks/cfdisk.c:2590 libfdisk/src/bsd.c:397 libfdisk/src/gpt.c:1203
 msgid "Type"
 msgstr "Tipe"
 
@@ -3534,190 +3534,185 @@ msgstr "Kode hex (ketik L untuk daftar dari kode): "
 msgid "Hex code (type L to list all codes): "
 msgstr "Kode hex (ketik L untuk daftar dari kode): "
 
-#: fdisks/fdisk.c:55
+#: fdisks/fdisk.c:53
 #, c-format
 msgid ""
 " %1$s [options] <disk>    change partition table\n"
 " %1$s [options] -l <disk> list partition table(s)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:60
+#: fdisks/fdisk.c:58
 msgid " -b <size>         sector size (512, 1024, 2048 or 4096)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:61 fdisks/fdisk.c:63
+#: fdisks/fdisk.c:59 fdisks/fdisk.c:61
 msgid " -c[=<mode>]       compatible mode: 'dos' or 'nondos' (default)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:62
+#: fdisks/fdisk.c:60
 #, fuzzy
 msgid " -h                print this help text\n"
 msgstr "  -h, --help                   Ini sedikit petunjuk penggunaan\n"
 
-#: fdisks/fdisk.c:64
+#: fdisks/fdisk.c:62
 msgid " -L[=<when>]       colorize output (auto, always or never)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:65
+#: fdisks/fdisk.c:63
 msgid " -u[=<unit>]       display units: 'cylinders' or 'sectors' (default)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:66
+#: fdisks/fdisk.c:64
 #, fuzzy
 msgid " -v                print program version\n"
 msgstr "  -h, --help                   Ini sedikit petunjuk penggunaan\n"
 
-#: fdisks/fdisk.c:67
+#: fdisks/fdisk.c:65
 #, fuzzy
 msgid " -C <number>       specify the number of cylinders\n"
 msgstr "Masukkan jumlah dari cylinder: "
 
-#: fdisks/fdisk.c:68
+#: fdisks/fdisk.c:66
 #, fuzzy
 msgid " -H <number>       specify the number of heads\n"
 msgstr "    -H# [atau --heads #]:  set jumlah dari heads yang digunakan"
 
-#: fdisks/fdisk.c:69
+#: fdisks/fdisk.c:67
 #, fuzzy
 msgid " -S <number>       specify the number of sectors per track\n"
 msgstr "Masukkan jumlah sektor per track: "
 
-#: fdisks/fdisk.c:152
+#: fdisks/fdisk.c:150
 #, fuzzy
 msgid "DOS Compatibility flag is set (DEPRECATED!)"
 msgstr "Tanda kompatibilitas DOS telah diset\n"
 
-#: fdisks/fdisk.c:153
+#: fdisks/fdisk.c:151
 #, fuzzy
 msgid "DOS Compatibility flag is not set"
 msgstr "Tanda kompatibilias DOS belum diset\n"
 
-#: fdisks/fdisk.c:174
+#: fdisks/fdisk.c:172
 #, fuzzy, c-format
 msgid "Partition %zu does not exist yet!"
 msgstr "Partisi %d belum ada!\n"
 
-#: fdisks/fdisk.c:182
+#: fdisks/fdisk.c:180
 #, fuzzy, c-format
 msgid "Changed type of partition '%s' to '%s'."
 msgstr "Menguba tipe sistem partisi dari %d menjadi %x (%s)\n"
 
-#: fdisks/fdisk.c:187
+#: fdisks/fdisk.c:185
 #, fuzzy, c-format
 msgid "Type of partition %zu is unchanged: %s."
 msgstr "Tipe sistem dari parisi %d tidak berubah: %x (%s)\n"
 
-#: fdisks/fdisk.c:203
+#: fdisks/fdisk.c:201
 #, fuzzy, c-format
 msgid "Disk %s: %s, %llu bytes, %llu sectors"
 msgstr ""
 "\n"
 "Disk %s: %lu cylinders, %lu heads, %lu sectors/track\n"
 
-#: fdisks/fdisk.c:208
+#: fdisks/fdisk.c:206
 #, fuzzy, c-format
 msgid "Geometry: %d heads, %llu sectors/track, %llu cylinders"
 msgstr "%d heads, %llu sektor/track, %d cylinders"
 
-#: fdisks/fdisk.c:211
+#: fdisks/fdisk.c:209
 #, fuzzy, c-format
 msgid "Units: %s of %d * %ld = %ld bytes"
 msgstr "Units = %s dari %d * %d = %d bytes\n"
 
-#: fdisks/fdisk.c:217
+#: fdisks/fdisk.c:215
 #, fuzzy, c-format
 msgid "Sector size (logical/physical): %lu bytes / %lu bytes"
 msgstr "Ukuran sektor (logikal/fisikal): %u bytes / %lu bytes\n"
 
-#: fdisks/fdisk.c:219
+#: fdisks/fdisk.c:217
 #, fuzzy, c-format
 msgid "I/O size (minimum/optimal): %lu bytes / %lu bytes"
 msgstr "Ukuran I/O (minimal/optimal): %lu bytes / %lu bytes\n"
 
-#: fdisks/fdisk.c:222
+#: fdisks/fdisk.c:220
 #, fuzzy, c-format
 msgid "Alignment offset: %lu bytes"
 msgstr "Penyesuaian ofset: %lu bytes\n"
 
-#: fdisks/fdisk.c:225
+#: fdisks/fdisk.c:223
 #, fuzzy, c-format
 msgid "Disk label type: %s"
 msgstr "Disk Drive: %s\n"
 
-#: fdisks/fdisk.c:228
+#: fdisks/fdisk.c:226
 #, fuzzy, c-format
 msgid "Disk identifier: %s"
 msgstr "Identifikasi disk: 0x%08x\n"
 
-#: fdisks/fdisk.c:278
+#: fdisks/fdisk.c:274
 #, c-format
 msgid ""
 "\n"
 "%s: offset = %ju, size = %zu bytes."
 msgstr ""
 
-#: fdisks/fdisk.c:282
+#: fdisks/fdisk.c:278
 #, fuzzy
 msgid "cannot seek"
 msgstr "tidak dapat melakukan fork"
 
-#: fdisks/fdisk.c:284
-#, fuzzy
-msgid "cannot allocate"
-msgstr "tidak dapat melakukan fork"
-
-#: fdisks/fdisk.c:286
+#: fdisks/fdisk.c:283
 #, fuzzy
 msgid "cannot read"
 msgstr "%s: tidak dapat membaca %s.\n"
 
-#: fdisks/fdisk.c:299 libfdisk/src/bsd.c:217 libfdisk/src/dos.c:876
+#: fdisks/fdisk.c:297 libfdisk/src/bsd.c:215 libfdisk/src/dos.c:876
 #: libfdisk/src/gpt.c:1684
 #, fuzzy
 msgid "First sector"
 msgstr "Pertama %s"
 
-#: fdisks/fdisk.c:385
+#: fdisks/fdisk.c:383
 #, fuzzy, c-format
 msgid "BLKGETSIZE ioctl failed on %s"
 msgstr "BLKGETSIZE ioctl gagal di %s\n"
 
-#: fdisks/fdisk.c:411
+#: fdisks/fdisk.c:409
 #, fuzzy
 msgid "failed to allocate libfdisk context"
 msgstr "gagal mengalokasikan outbuffer"
 
-#: fdisks/fdisk.c:420
+#: fdisks/fdisk.c:418
 #, fuzzy
 msgid "invalid sector size argument"
 msgstr "pilihan tidak valid"
 
-#: fdisks/fdisk.c:429 fdisks/sfdisk.c:2597
+#: fdisks/fdisk.c:427 fdisks/sfdisk.c:2597
 #, fuzzy
 msgid "invalid cylinders argument"
 msgstr "pilihan tidak valid"
 
-#: fdisks/fdisk.c:438
+#: fdisks/fdisk.c:436
 #, fuzzy
 msgid "not found DOS label driver"
 msgstr "tidak dapat menemukan perangkat %s"
 
-#: fdisks/fdisk.c:451 fdisks/sfdisk.c:2606
+#: fdisks/fdisk.c:449 fdisks/sfdisk.c:2606
 #, fuzzy
 msgid "invalid heads argument"
 msgstr "pilihan tidak valid"
 
-#: fdisks/fdisk.c:457 fdisks/sfdisk.c:2624
+#: fdisks/fdisk.c:455 fdisks/sfdisk.c:2624
 #, fuzzy
 msgid "invalid sectors argument"
 msgstr "pilihan tidak valid"
 
-#: fdisks/fdisk.c:465 misc-utils/cal.c:351 sys-utils/dmesg.c:1286
+#: fdisks/fdisk.c:463 misc-utils/cal.c:351 sys-utils/dmesg.c:1286
 #, fuzzy
 msgid "unsupported color mode"
 msgstr "tidak ada perintah?\n"
 
-#: fdisks/fdisk.c:488
+#: fdisks/fdisk.c:486
 #, fuzzy
 msgid ""
 "The device properties (sector size and geometry) should be used with one "
@@ -3726,12 +3721,12 @@ msgstr ""
 "Peringatan: pilihan -b (set ukuran sektor) seharusnya digunakan dengan salah "
 "satuperangkat yang digunakan\n"
 
-#: fdisks/fdisk.c:527
+#: fdisks/fdisk.c:525
 #, c-format
 msgid "Welcome to fdisk (%s)."
 msgstr ""
 
-#: fdisks/fdisk.c:529
+#: fdisks/fdisk.c:527
 #, fuzzy
 msgid ""
 "Changes will remain in memory only, until you decide to write them.\n"
@@ -3741,7 +3736,7 @@ msgstr ""
 "sampai anda memutuskan untuk menulis perubahan tersebut. Sesudah itu, tentu\n"
 ", isi sebelumnya tidak dapat di kembalikan.\n"
 
-#: fdisks/fdisk.c:534
+#: fdisks/fdisk.c:532
 #, fuzzy
 msgid "Device does not contain a recognized partition table."
 msgstr "Disk %s tidak memiliki sebuah tabel partisi yang valid\n"
@@ -4297,7 +4292,7 @@ msgstr "format tidak dikenali - menggunakan sektor\n"
 msgid "unimplemented format - using %s"
 msgstr "format tidak diimplementasikan - menggunakan %s\n"
 
-#: fdisks/sfdisk.c:891 libfdisk/src/bsd.c:498
+#: fdisks/sfdisk.c:891 libfdisk/src/bsd.c:496
 msgid "cylinders"
 msgstr "cylinders"
 
@@ -5561,274 +5556,274 @@ msgstr "Nomor partisi"
 msgid "Created a new partition %d of type '%s' and of size %s."
 msgstr "Partisi %d belum ada!\n"
 
-#: libfdisk/src/bsd.c:154
+#: libfdisk/src/bsd.c:152
 #, fuzzy, c-format
 msgid "Partition %zd: has invalid starting sector 0."
 msgstr "Partisi %s mempunyai sektor 0 awal yang tidak valid.\n"
 
-#: libfdisk/src/bsd.c:169
+#: libfdisk/src/bsd.c:167
 #, fuzzy, c-format
 msgid "There is no *BSD partition on %s."
 msgstr "Tidak ada partisi *BSD di %s.\n"
 
-#: libfdisk/src/bsd.c:215 libfdisk/src/dos.c:874
+#: libfdisk/src/bsd.c:213 libfdisk/src/dos.c:874
 #, fuzzy
 msgid "First cylinder"
 msgstr "cylinder"
 
-#: libfdisk/src/bsd.c:242 libfdisk/src/dos.c:936
+#: libfdisk/src/bsd.c:240 libfdisk/src/dos.c:936
 #, fuzzy
 msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgstr "Terakhir %1$s, +%2$s atau +size{K,M,G}"
 
-#: libfdisk/src/bsd.c:247 libfdisk/src/dos.c:941 libfdisk/src/gpt.c:1705
+#: libfdisk/src/bsd.c:245 libfdisk/src/dos.c:941 libfdisk/src/gpt.c:1705
 #, fuzzy
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr "Terakhir %1$s, +%2$s atau +size{K,M,G}"
 
-#: libfdisk/src/bsd.c:283
+#: libfdisk/src/bsd.c:281
 #, fuzzy, c-format
 msgid "The device %s does not contain BSD disklabel."
 msgstr "%s tidak terdapat disklabel.\n"
 
-#: libfdisk/src/bsd.c:285
+#: libfdisk/src/bsd.c:283
 #, fuzzy
 msgid "Do you want to create a BSD disklabel?"
 msgstr "Anda ingin membuat sebuah disklabel? (y/n) "
 
-#: libfdisk/src/bsd.c:348
+#: libfdisk/src/bsd.c:346
 #, fuzzy, c-format
 msgid "type: %s"
 msgstr "tipe: %s\n"
 
-#: libfdisk/src/bsd.c:350
+#: libfdisk/src/bsd.c:348
 #, fuzzy, c-format
 msgid "type: %d"
 msgstr "tipe: %d\n"
 
-#: libfdisk/src/bsd.c:352
+#: libfdisk/src/bsd.c:350
 #, fuzzy, c-format
 msgid "disk: %.*s"
 msgstr "disk: %.*s\n"
 
-#: libfdisk/src/bsd.c:353
+#: libfdisk/src/bsd.c:351
 #, fuzzy, c-format
 msgid "label: %.*s"
 msgstr "label: %.*s\n"
 
-#: libfdisk/src/bsd.c:355
+#: libfdisk/src/bsd.c:353
 #, fuzzy, c-format
 msgid "flags: %s"
 msgstr "tanda:"
 
-#: libfdisk/src/bsd.c:356
+#: libfdisk/src/bsd.c:354
 msgid " removable"
 msgstr " removable"
 
-#: libfdisk/src/bsd.c:357
+#: libfdisk/src/bsd.c:355
 msgid " ecc"
 msgstr " ecc"
 
-#: libfdisk/src/bsd.c:358
+#: libfdisk/src/bsd.c:356
 msgid " badsect"
 msgstr " badsect"
 
-#: libfdisk/src/bsd.c:362
+#: libfdisk/src/bsd.c:360
 #, fuzzy, c-format
 msgid "bytes/sector: %ld"
 msgstr "bytes/sektor: %ld\n"
 
-#: libfdisk/src/bsd.c:363
+#: libfdisk/src/bsd.c:361
 #, fuzzy, c-format
 msgid "sectors/track: %ld"
 msgstr "sektor/track: %ld\n"
 
-#: libfdisk/src/bsd.c:364
+#: libfdisk/src/bsd.c:362
 #, fuzzy, c-format
 msgid "tracks/cylinder: %ld"
 msgstr "tracks/cylinder: %ld\n"
 
-#: libfdisk/src/bsd.c:365
+#: libfdisk/src/bsd.c:363
 #, fuzzy, c-format
 msgid "sectors/cylinder: %ld"
 msgstr "sektor/cylinder: %ld\n"
 
-#: libfdisk/src/bsd.c:366
+#: libfdisk/src/bsd.c:364
 #, fuzzy, c-format
 msgid "cylinders: %ld"
 msgstr "cylinders: %ld\n"
 
-#: libfdisk/src/bsd.c:367
+#: libfdisk/src/bsd.c:365
 #, fuzzy, c-format
 msgid "rpm: %d"
 msgstr "rpm: %d\n"
 
-#: libfdisk/src/bsd.c:368
+#: libfdisk/src/bsd.c:366
 #, fuzzy, c-format
 msgid "interleave: %d"
 msgstr "interleave: %d\n"
 
-#: libfdisk/src/bsd.c:369
+#: libfdisk/src/bsd.c:367
 #, fuzzy, c-format
 msgid "trackskew: %d"
 msgstr "trackskew: %d\n"
 
-#: libfdisk/src/bsd.c:370
+#: libfdisk/src/bsd.c:368
 #, fuzzy, c-format
 msgid "cylinderskew: %d"
 msgstr "cylinderskew: %d\n"
 
-#: libfdisk/src/bsd.c:371
+#: libfdisk/src/bsd.c:369
 #, fuzzy, c-format
 msgid "headswitch: %ld (milliseconds)"
 msgstr "headswitch: %ld\t\t# milliseconds\n"
 
-#: libfdisk/src/bsd.c:372
+#: libfdisk/src/bsd.c:370
 #, fuzzy, c-format
 msgid "track-to-track seek: %ld (milliseconds)"
 msgstr "track-to-track seek: %ld\t# milliseconds\n"
 
-#: libfdisk/src/bsd.c:385
+#: libfdisk/src/bsd.c:383
 #, fuzzy, c-format
 msgid "partitions: %d"
 msgstr ""
 "\n"
 "%d partisi:\n"
 
-#: libfdisk/src/bsd.c:395 libfdisk/src/sgi.c:334
+#: libfdisk/src/bsd.c:393 libfdisk/src/sgi.c:334
 msgid "#"
 msgstr ""
 
-#: libfdisk/src/bsd.c:396 libfdisk/src/dos.c:1512 libfdisk/src/dos.c:1605
+#: libfdisk/src/bsd.c:394 libfdisk/src/dos.c:1512 libfdisk/src/dos.c:1605
 #: libfdisk/src/gpt.c:1200 libfdisk/src/sgi.c:277 libfdisk/src/sun.c:702
 #, fuzzy
 msgid "Start"
 msgstr "awal"
 
-#: libfdisk/src/bsd.c:398 libfdisk/src/dos.c:1513 libfdisk/src/gpt.c:1202
+#: libfdisk/src/bsd.c:396 libfdisk/src/dos.c:1513 libfdisk/src/gpt.c:1202
 #: libfdisk/src/sgi.c:337
 msgid "Size"
 msgstr ""
 
-#: libfdisk/src/bsd.c:400
+#: libfdisk/src/bsd.c:398
 #, fuzzy
 msgid "fsize"
 msgstr ", besar=%9lu"
 
-#: libfdisk/src/bsd.c:401
+#: libfdisk/src/bsd.c:399
 #, fuzzy
 msgid "bsize"
 msgstr ", besar=%9lu"
 
-#: libfdisk/src/bsd.c:402
+#: libfdisk/src/bsd.c:400
 msgid "cpg"
 msgstr ""
 
-#: libfdisk/src/bsd.c:493
+#: libfdisk/src/bsd.c:491
 msgid "bytes/sector"
 msgstr "bytes/sektor"
 
-#: libfdisk/src/bsd.c:496
+#: libfdisk/src/bsd.c:494
 msgid "sectors/track"
 msgstr "sektor/track"
 
-#: libfdisk/src/bsd.c:497
+#: libfdisk/src/bsd.c:495
 msgid "tracks/cylinder"
 msgstr "tracks/cylinder"
 
-#: libfdisk/src/bsd.c:502
+#: libfdisk/src/bsd.c:500
 msgid "sectors/cylinder"
 msgstr "sektor/cylinder"
 
-#: libfdisk/src/bsd.c:505
+#: libfdisk/src/bsd.c:503
 msgid "rpm"
 msgstr "rpm"
 
-#: libfdisk/src/bsd.c:506
+#: libfdisk/src/bsd.c:504
 msgid "interleave"
 msgstr "interleave"
 
-#: libfdisk/src/bsd.c:507
+#: libfdisk/src/bsd.c:505
 msgid "trackskew"
 msgstr "trackskew"
 
-#: libfdisk/src/bsd.c:508
+#: libfdisk/src/bsd.c:506
 msgid "cylinderskew"
 msgstr "cylinderskew"
 
-#: libfdisk/src/bsd.c:510
+#: libfdisk/src/bsd.c:508
 msgid "headswitch"
 msgstr "headswitch"
 
-#: libfdisk/src/bsd.c:511
+#: libfdisk/src/bsd.c:509
 msgid "track-to-track seek"
 msgstr "track-to-track seek"
 
-#: libfdisk/src/bsd.c:523
+#: libfdisk/src/bsd.c:521
 #, fuzzy, c-format
 msgid "open failed %s"
 msgstr "gagal membuka: %s"
 
-#: libfdisk/src/bsd.c:528
+#: libfdisk/src/bsd.c:526
 #, fuzzy, c-format
 msgid "read failed %s"
 msgstr "gagal membaca: %s"
 
-#: libfdisk/src/bsd.c:534
+#: libfdisk/src/bsd.c:532
 #, c-format
 msgid "The bootstrap file %s successfully loaded."
 msgstr ""
 
-#: libfdisk/src/bsd.c:550
+#: libfdisk/src/bsd.c:548
 #, fuzzy, c-format
 msgid "Bootstrap: %1$sboot -> boot%1$s (default %1$s)"
 msgstr "Bootstrap: %sboot -> boot%s (%s): "
 
-#: libfdisk/src/bsd.c:581
+#: libfdisk/src/bsd.c:579
 #, fuzzy
 msgid "Bootstrap overlaps with disk label!"
 msgstr "Bootstrap overlaps dengan disk label!\n"
 
-#: libfdisk/src/bsd.c:595
+#: libfdisk/src/bsd.c:593
 #, fuzzy, c-format
 msgid "seek failed %s"
 msgstr "gagal seek"
 
-#: libfdisk/src/bsd.c:600
+#: libfdisk/src/bsd.c:598
 #, fuzzy, c-format
 msgid "write failed %s"
 msgstr "gagal menulis: %s"
 
-#: libfdisk/src/bsd.c:606
+#: libfdisk/src/bsd.c:604
 #, fuzzy, c-format
 msgid "Bootstrap installed on %s."
 msgstr "Bootstrap dipasang di %s.\n"
 
-#: libfdisk/src/bsd.c:763
+#: libfdisk/src/bsd.c:761
 #, fuzzy, c-format
 msgid "seek failed: %d"
 msgstr "gagal seek"
 
-#: libfdisk/src/bsd.c:767
+#: libfdisk/src/bsd.c:765
 #, fuzzy, c-format
 msgid "write failed: %d"
 msgstr "gagal menulis: %s"
 
-#: libfdisk/src/bsd.c:773
+#: libfdisk/src/bsd.c:771
 #, fuzzy, c-format
 msgid "Disklabel written to %s."
 msgstr "Disk Drive: %s\n"
 
-#: libfdisk/src/bsd.c:779 libfdisk/src/context.c:213
+#: libfdisk/src/bsd.c:777 libfdisk/src/context.c:213
 #, fuzzy
 msgid "Syncing disks."
 msgstr "Sinkronisasi disks.\n"
 
-#: libfdisk/src/bsd.c:813
+#: libfdisk/src/bsd.c:811
 msgid "BSD label is not nested within a DOS partition"
 msgstr ""
 
-#: libfdisk/src/bsd.c:842
+#: libfdisk/src/bsd.c:840
 #, fuzzy, c-format
 msgid "BSD partition '%c' linked to DOS partition %d."
 msgstr "   x   sambung BSD partisi ke non-BSD partisi"
@@ -18349,6 +18344,10 @@ msgstr "escape sequence tidak diketahui pada input: %o, %o\n"
 #, fuzzy
 msgid "Input line too long."
 msgstr "Baris input terlalu panjang.\n"
+
+#, fuzzy
+#~ msgid "cannot allocate"
+#~ msgstr "tidak dapat melakukan fork"
 
 #~ msgid "usage:\n"
 #~ msgstr "penggunaan:\n"

@@ -51,7 +51,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.23-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-09-26 10:31+0200\n"
+"POT-Creation-Date: 2013-09-26 11:48+0200\n"
 "PO-Revision-Date: 2013-04-13 19:30+01:00\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -75,8 +75,8 @@ msgstr " %s <diskenhed> <partitionsnummer> <start> <længde>\n"
 #: disk-utils/mkfs.cramfs.c:791 disk-utils/mkfs.minix.c:757
 #: disk-utils/partx.c:931 disk-utils/resizepart.c:97
 #: disk-utils/swaplabel.c:105 fdisks/cfdisk.c:1827 fdisks/cfdisk.c:1949
-#: fdisks/cfdisk.c:2037 fdisks/fdisk.c:332 fdisks/fdisk.c:348
-#: fdisks/fdisk.c:382 fdisks/fdisk.c:523 lib/path.c:60 lib/path.c:72
+#: fdisks/cfdisk.c:2037 fdisks/fdisk.c:330 fdisks/fdisk.c:346
+#: fdisks/fdisk.c:380 fdisks/fdisk.c:521 lib/path.c:60 lib/path.c:72
 #: login-utils/islocal.c:87 login-utils/last.c:613
 #: login-utils/last-deprecated.c:245 login-utils/sulogin.c:399
 #: login-utils/sulogin.c:437 login-utils/utmpdump.c:125
@@ -2789,7 +2789,7 @@ msgstr "Begyndelse"
 msgid "Add partition at beginning of free space"
 msgstr "Tilføj partition i starten af det frie område"
 
-#: fdisks/cfdisk.c:1313 libfdisk/src/bsd.c:397 libfdisk/src/dos.c:1606
+#: fdisks/cfdisk.c:1313 libfdisk/src/bsd.c:395 libfdisk/src/dos.c:1606
 #: libfdisk/src/gpt.c:1201 libfdisk/src/sgi.c:278 libfdisk/src/sun.c:703
 msgid "End"
 msgstr "Slut"
@@ -2937,8 +2937,8 @@ msgstr "   Primær"
 msgid "   Logical"
 msgstr "   Logisk"
 
-#: fdisks/cfdisk.c:1915 fdisks/fdisk.c:183 fdisks/fdisk.c:184
-#: fdisks/fdisk.c:189 fdisks/sfdisk.c:585 libfdisk/src/ask.c:660
+#: fdisks/cfdisk.c:1915 fdisks/fdisk.c:181 fdisks/fdisk.c:182
+#: fdisks/fdisk.c:187 fdisks/sfdisk.c:585 libfdisk/src/ask.c:660
 #: libfdisk/src/dos.c:1661
 msgid "Unknown"
 msgstr "Ukendt"
@@ -3391,7 +3391,7 @@ msgstr "Afslut"
 msgid "Quit program without writing partition table"
 msgstr "Afslut program uden at ændre partitionstabellen"
 
-#: fdisks/cfdisk.c:2590 libfdisk/src/bsd.c:399 libfdisk/src/gpt.c:1203
+#: fdisks/cfdisk.c:2590 libfdisk/src/bsd.c:397 libfdisk/src/gpt.c:1203
 msgid "Type"
 msgstr "Type"
 
@@ -3572,112 +3572,112 @@ msgstr "Hekskode (tryk L for en liste over koderne): "
 msgid "Hex code (type L to list all codes): "
 msgstr "Hekskode (tryk L for en liste over koderne): "
 
-#: fdisks/fdisk.c:55
+#: fdisks/fdisk.c:53
 #, c-format
 msgid ""
 " %1$s [options] <disk>    change partition table\n"
 " %1$s [options] -l <disk> list partition table(s)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:60
+#: fdisks/fdisk.c:58
 msgid " -b <size>         sector size (512, 1024, 2048 or 4096)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:61 fdisks/fdisk.c:63
+#: fdisks/fdisk.c:59 fdisks/fdisk.c:61
 msgid " -c[=<mode>]       compatible mode: 'dos' or 'nondos' (default)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:62
+#: fdisks/fdisk.c:60
 #, fuzzy
 msgid " -h                print this help text\n"
 msgstr " -h, --help     vis denne hjælpetekst og afslut\n"
 
-#: fdisks/fdisk.c:64
+#: fdisks/fdisk.c:62
 msgid " -L[=<when>]       colorize output (auto, always or never)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:65
+#: fdisks/fdisk.c:63
 msgid " -u[=<unit>]       display units: 'cylinders' or 'sectors' (default)\n"
 msgstr ""
 
-#: fdisks/fdisk.c:66
+#: fdisks/fdisk.c:64
 #, fuzzy
 msgid " -v                print program version\n"
 msgstr " -a, --all      forespørg alle rå enheder\n"
 
-#: fdisks/fdisk.c:67
+#: fdisks/fdisk.c:65
 #, fuzzy
 msgid " -C <number>       specify the number of cylinders\n"
 msgstr "Angiv antallet af cylindre: "
 
-#: fdisks/fdisk.c:68
+#: fdisks/fdisk.c:66
 #, fuzzy
 msgid " -H <number>       specify the number of heads\n"
 msgstr "    -H# [eller --heads #]:    angiv det hovedantal, der skal bruges"
 
-#: fdisks/fdisk.c:69
+#: fdisks/fdisk.c:67
 #, fuzzy
 msgid " -S <number>       specify the number of sectors per track\n"
 msgstr "Angiv antallet af sektorer per spor: "
 
-#: fdisks/fdisk.c:152
+#: fdisks/fdisk.c:150
 #, fuzzy
 msgid "DOS Compatibility flag is set (DEPRECATED!)"
 msgstr "DOS-kompatilitetsflag er sat (FORÆLDET!)\n"
 
-#: fdisks/fdisk.c:153
+#: fdisks/fdisk.c:151
 #, fuzzy
 msgid "DOS Compatibility flag is not set"
 msgstr "DOS-kompatilitetsflag er ikke sat\n"
 
-#: fdisks/fdisk.c:174
+#: fdisks/fdisk.c:172
 #, fuzzy, c-format
 msgid "Partition %zu does not exist yet!"
 msgstr "Partition %d eksisterer ikke endnu!\n"
 
-#: fdisks/fdisk.c:182
+#: fdisks/fdisk.c:180
 #, fuzzy, c-format
 msgid "Changed type of partition '%s' to '%s'."
 msgstr "Ændrede systemtypen for partition %d til %x (%s)\n"
 
-#: fdisks/fdisk.c:187
+#: fdisks/fdisk.c:185
 #, fuzzy, c-format
 msgid "Type of partition %zu is unchanged: %s."
 msgstr "Systemtypen for partition %d er uændret: %x (%s)\n"
 
-#: fdisks/fdisk.c:203
+#: fdisks/fdisk.c:201
 #, fuzzy, c-format
 msgid "Disk %s: %s, %llu bytes, %llu sectors"
 msgstr ""
 "\n"
 "Disk %s: %lu cylindre, %lu hoveder, %lu sektorer/spor\n"
 
-#: fdisks/fdisk.c:208
+#: fdisks/fdisk.c:206
 #, fuzzy, c-format
 msgid "Geometry: %d heads, %llu sectors/track, %llu cylinders"
 msgstr "%d hoveder, %llu sektorer/spor, %llu cylindre\n"
 
-#: fdisks/fdisk.c:211
+#: fdisks/fdisk.c:209
 #, fuzzy, c-format
 msgid "Units: %s of %d * %ld = %ld bytes"
 msgstr "Enheder = %s af %d * %ld = %ld byte\n"
 
-#: fdisks/fdisk.c:217
+#: fdisks/fdisk.c:215
 #, fuzzy, c-format
 msgid "Sector size (logical/physical): %lu bytes / %lu bytes"
 msgstr "Sektorstørrelse (logisk/fysisk): %lu byte / %lu byte\n"
 
-#: fdisks/fdisk.c:219
+#: fdisks/fdisk.c:217
 #, fuzzy, c-format
 msgid "I/O size (minimum/optimal): %lu bytes / %lu bytes"
 msgstr "I/O-størrelse (minimum/optimal): %lu byte / %lu byte\n"
 
-#: fdisks/fdisk.c:222
+#: fdisks/fdisk.c:220
 #, fuzzy, c-format
 msgid "Alignment offset: %lu bytes"
 msgstr "Justeringsforskydning: %lu byte\n"
 
-#: fdisks/fdisk.c:225
+#: fdisks/fdisk.c:223
 #, fuzzy, c-format
 msgid "Disk label type: %s"
 msgstr "Drev: %s\n"
@@ -3685,75 +3685,70 @@ msgstr "Drev: %s\n"
 # Evt. kan vi omgå det lidt mystiske "identifikation" ved bare at bruge
 # forkortelsen id:
 # Disk-id: ...
-#: fdisks/fdisk.c:228
+#: fdisks/fdisk.c:226
 #, fuzzy, c-format
 msgid "Disk identifier: %s"
 msgstr "Diskidentifikation: 0x%08x\n"
 
-#: fdisks/fdisk.c:278
+#: fdisks/fdisk.c:274
 #, c-format
 msgid ""
 "\n"
 "%s: offset = %ju, size = %zu bytes."
 msgstr ""
 
-#: fdisks/fdisk.c:282
+#: fdisks/fdisk.c:278
 #, fuzzy
 msgid "cannot seek"
 msgstr "kunne ikke forgrene (fork)"
 
-#: fdisks/fdisk.c:284
-#, fuzzy
-msgid "cannot allocate"
-msgstr "kan ikke indhente lås"
-
-#: fdisks/fdisk.c:286
+#: fdisks/fdisk.c:283
 #, fuzzy
 msgid "cannot read"
 msgstr "kan ikke læse %s"
 
-#: fdisks/fdisk.c:299 libfdisk/src/bsd.c:217 libfdisk/src/dos.c:876
+#: fdisks/fdisk.c:297 libfdisk/src/bsd.c:215 libfdisk/src/dos.c:876
 #: libfdisk/src/gpt.c:1684
 msgid "First sector"
 msgstr "Første sektor"
 
-#: fdisks/fdisk.c:385
+#: fdisks/fdisk.c:383
 #, c-format
 msgid "BLKGETSIZE ioctl failed on %s"
 msgstr "BLKGETSIZE ioctl mislykkedes på %s"
 
-#: fdisks/fdisk.c:411
+#: fdisks/fdisk.c:409
 #, fuzzy
 msgid "failed to allocate libfdisk context"
 msgstr "kunne ikke allokere iterator"
 
-#: fdisks/fdisk.c:420
+#: fdisks/fdisk.c:418
 msgid "invalid sector size argument"
 msgstr "ugyldig parameter for sektorstørrelse"
 
-#: fdisks/fdisk.c:429 fdisks/sfdisk.c:2597
+#: fdisks/fdisk.c:427 fdisks/sfdisk.c:2597
 msgid "invalid cylinders argument"
 msgstr "ugyldig parameter for cylindre"
 
-#: fdisks/fdisk.c:438
+#: fdisks/fdisk.c:436
 #, fuzzy
 msgid "not found DOS label driver"
 msgstr "kan ikke finde enheden for %s"
 
-#: fdisks/fdisk.c:451 fdisks/sfdisk.c:2606
+#: fdisks/fdisk.c:449 fdisks/sfdisk.c:2606
 msgid "invalid heads argument"
 msgstr "ugyldig parameter for hoveder"
 
-#: fdisks/fdisk.c:457 fdisks/sfdisk.c:2624
+#: fdisks/fdisk.c:455 fdisks/sfdisk.c:2624
 msgid "invalid sectors argument"
 msgstr "ugyldig parameter for sektorer"
 
-#: fdisks/fdisk.c:465 misc-utils/cal.c:351 sys-utils/dmesg.c:1286
+#: fdisks/fdisk.c:463 misc-utils/cal.c:351 sys-utils/dmesg.c:1286
 #, fuzzy
 msgid "unsupported color mode"
 msgstr "ikke understøttet kommando"
 
-#: fdisks/fdisk.c:488
+#: fdisks/fdisk.c:486
 #, fuzzy
 msgid ""
 "The device properties (sector size and geometry) should be used with one "
@@ -3762,12 +3757,12 @@ msgstr ""
 "Advarsel: Tilvalget -b (angiv sektorstørrelse) kræver angivelse af "
 "diskenhed\n"
 
-#: fdisks/fdisk.c:527
+#: fdisks/fdisk.c:525
 #, c-format
 msgid "Welcome to fdisk (%s)."
 msgstr ""
 
-#: fdisks/fdisk.c:529
+#: fdisks/fdisk.c:527
 #, fuzzy
 msgid ""
 "Changes will remain in memory only, until you decide to write them.\n"
@@ -3779,7 +3774,7 @@ msgstr ""
 "Vær forsigtig før du bruger kommanden write (skriv).\n"
 "\n"
 
-#: fdisks/fdisk.c:534
+#: fdisks/fdisk.c:532
 #, fuzzy
 msgid "Device does not contain a recognized partition table."
 msgstr "Enheden indeholder ikke en genkendt partitionstabel\n"
@@ -4289,7 +4284,7 @@ msgstr "ukendt format - benytter sektorer\n"
 msgid "unimplemented format - using %s"
 msgstr "ikke-implementeret format - benytter %s\n"
 
-#: fdisks/sfdisk.c:891 libfdisk/src/bsd.c:498
+#: fdisks/sfdisk.c:891 libfdisk/src/bsd.c:496
 msgid "cylinders"
 msgstr "cylindre"
 
@@ -5554,275 +5549,275 @@ msgstr "Partitionsnummer"
 msgid "Created a new partition %d of type '%s' and of size %s."
 msgstr "Partition %d af type %s og størrelse %s er angivet\n"
 
-#: libfdisk/src/bsd.c:154
+#: libfdisk/src/bsd.c:152
 #, fuzzy, c-format
 msgid "Partition %zd: has invalid starting sector 0."
 msgstr "Partition %s har en ugyldig startsektor 0.\n"
 
-#: libfdisk/src/bsd.c:169
+#: libfdisk/src/bsd.c:167
 #, fuzzy, c-format
 msgid "There is no *BSD partition on %s."
 msgstr "Der er ingen *BSD-partitioner på %s.\n"
 
-#: libfdisk/src/bsd.c:215 libfdisk/src/dos.c:874
+#: libfdisk/src/bsd.c:213 libfdisk/src/dos.c:874
 #, fuzzy
 msgid "First cylinder"
 msgstr "cylinder"
 
 # (lidt specielt men man skriver vist +1024, +1024K, +2048M eller
 # tilsvarende konstruktion)
-#: libfdisk/src/bsd.c:242 libfdisk/src/dos.c:936
+#: libfdisk/src/bsd.c:240 libfdisk/src/dos.c:936
 #, fuzzy
 msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgstr "Seneste sektor, +sektorer eller +størrelse{K,M,G,T,P}"
 
 # (lidt specielt men man skriver vist +1024, +1024K, +2048M eller
 # tilsvarende konstruktion)
-#: libfdisk/src/bsd.c:247 libfdisk/src/dos.c:941 libfdisk/src/gpt.c:1705
+#: libfdisk/src/bsd.c:245 libfdisk/src/dos.c:941 libfdisk/src/gpt.c:1705
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr "Seneste sektor, +sektorer eller +størrelse{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:283
+#: libfdisk/src/bsd.c:281
 #, fuzzy, c-format
 msgid "The device %s does not contain BSD disklabel."
 msgstr "%s har ingen disketiket.\n"
 
-#: libfdisk/src/bsd.c:285
+#: libfdisk/src/bsd.c:283
 #, fuzzy
 msgid "Do you want to create a BSD disklabel?"
 msgstr "Vil du oprette en disketiket? (j/n) "
 
-#: libfdisk/src/bsd.c:348
+#: libfdisk/src/bsd.c:346
 #, fuzzy, c-format
 msgid "type: %s"
 msgstr "type: %s\n"
 
-#: libfdisk/src/bsd.c:350
+#: libfdisk/src/bsd.c:348
 #, fuzzy, c-format
 msgid "type: %d"
 msgstr "type: %d\n"
 
-#: libfdisk/src/bsd.c:352
+#: libfdisk/src/bsd.c:350
 #, fuzzy, c-format
 msgid "disk: %.*s"
 msgstr "disk: %.*s\n"
 
-#: libfdisk/src/bsd.c:353
+#: libfdisk/src/bsd.c:351
 #, fuzzy, c-format
 msgid "label: %.*s"
 msgstr "etiket: %.*s\n"
 
-#: libfdisk/src/bsd.c:355
+#: libfdisk/src/bsd.c:353
 #, fuzzy, c-format
 msgid "flags: %s"
 msgstr "flag:"
 
-#: libfdisk/src/bsd.c:356
+#: libfdisk/src/bsd.c:354
 msgid " removable"
 msgstr " flytbar"
 
-#: libfdisk/src/bsd.c:357
+#: libfdisk/src/bsd.c:355
 msgid " ecc"
 msgstr " ecc"
 
-#: libfdisk/src/bsd.c:358
+#: libfdisk/src/bsd.c:356
 msgid " badsect"
 msgstr " fejlsekt"
 
-#: libfdisk/src/bsd.c:362
+#: libfdisk/src/bsd.c:360
 #, fuzzy, c-format
 msgid "bytes/sector: %ld"
 msgstr "byte/sektor: %ld\n"
 
-#: libfdisk/src/bsd.c:363
+#: libfdisk/src/bsd.c:361
 #, fuzzy, c-format
 msgid "sectors/track: %ld"
 msgstr "sektorer/spor: %ld\n"
 
-#: libfdisk/src/bsd.c:364
+#: libfdisk/src/bsd.c:362
 #, fuzzy, c-format
 msgid "tracks/cylinder: %ld"
 msgstr "spor/cylinder: %ld\n"
 
-#: libfdisk/src/bsd.c:365
+#: libfdisk/src/bsd.c:363
 #, fuzzy, c-format
 msgid "sectors/cylinder: %ld"
 msgstr "sektorer/cylinder: %ld\n"
 
-#: libfdisk/src/bsd.c:366
+#: libfdisk/src/bsd.c:364
 #, fuzzy, c-format
 msgid "cylinders: %ld"
 msgstr "cylindre: %ld\n"
 
-#: libfdisk/src/bsd.c:367
+#: libfdisk/src/bsd.c:365
 #, fuzzy, c-format
 msgid "rpm: %d"
 msgstr "omdr. per minut: %d\n"
 
-#: libfdisk/src/bsd.c:368
+#: libfdisk/src/bsd.c:366
 #, fuzzy, c-format
 msgid "interleave: %d"
 msgstr "interleave: %d\n"
 
-#: libfdisk/src/bsd.c:369
+#: libfdisk/src/bsd.c:367
 #, fuzzy, c-format
 msgid "trackskew: %d"
 msgstr "sporafvigelse: %d\n"
 
-#: libfdisk/src/bsd.c:370
+#: libfdisk/src/bsd.c:368
 #, fuzzy, c-format
 msgid "cylinderskew: %d"
 msgstr "cylinderafvigelse: %d\n"
 
-#: libfdisk/src/bsd.c:371
+#: libfdisk/src/bsd.c:369
 #, fuzzy, c-format
 msgid "headswitch: %ld (milliseconds)"
 msgstr "hovedskift: %ld\t\t# millisekunder\n"
 
-#: libfdisk/src/bsd.c:372
+#: libfdisk/src/bsd.c:370
 #, fuzzy, c-format
 msgid "track-to-track seek: %ld (milliseconds)"
 msgstr "spor-til-spor søgning: %ld\t# millisekunder\n"
 
-#: libfdisk/src/bsd.c:385
+#: libfdisk/src/bsd.c:383
 #, fuzzy, c-format
 msgid "partitions: %d"
 msgstr ""
 "\n"
 "%d partitioner:\n"
 
-#: libfdisk/src/bsd.c:395 libfdisk/src/sgi.c:334
+#: libfdisk/src/bsd.c:393 libfdisk/src/sgi.c:334
 msgid "#"
 msgstr ""
 
-#: libfdisk/src/bsd.c:396 libfdisk/src/dos.c:1512 libfdisk/src/dos.c:1605
+#: libfdisk/src/bsd.c:394 libfdisk/src/dos.c:1512 libfdisk/src/dos.c:1605
 #: libfdisk/src/gpt.c:1200 libfdisk/src/sgi.c:277 libfdisk/src/sun.c:702
 #, fuzzy
 msgid "Start"
 msgstr "start"
 
-#: libfdisk/src/bsd.c:398 libfdisk/src/dos.c:1513 libfdisk/src/gpt.c:1202
+#: libfdisk/src/bsd.c:396 libfdisk/src/dos.c:1513 libfdisk/src/gpt.c:1202
 #: libfdisk/src/sgi.c:337
 msgid "Size"
 msgstr ""
 
-#: libfdisk/src/bsd.c:400
+#: libfdisk/src/bsd.c:398
 msgid "fsize"
 msgstr ""
 
-#: libfdisk/src/bsd.c:401
+#: libfdisk/src/bsd.c:399
 msgid "bsize"
 msgstr ""
 
-#: libfdisk/src/bsd.c:402
+#: libfdisk/src/bsd.c:400
 msgid "cpg"
 msgstr ""
 
-#: libfdisk/src/bsd.c:493
+#: libfdisk/src/bsd.c:491
 msgid "bytes/sector"
 msgstr "byte/sektor"
 
-#: libfdisk/src/bsd.c:496
+#: libfdisk/src/bsd.c:494
 msgid "sectors/track"
 msgstr "sektorer/spor"
 
-#: libfdisk/src/bsd.c:497
+#: libfdisk/src/bsd.c:495
 msgid "tracks/cylinder"
 msgstr "spor/cylinder"
 
-#: libfdisk/src/bsd.c:502
+#: libfdisk/src/bsd.c:500
 msgid "sectors/cylinder"
 msgstr "sektorer/cylinder"
 
-#: libfdisk/src/bsd.c:505
+#: libfdisk/src/bsd.c:503
 msgid "rpm"
 msgstr "omdr. per minut"
 
-#: libfdisk/src/bsd.c:506
+#: libfdisk/src/bsd.c:504
 msgid "interleave"
 msgstr "interleave"
 
-#: libfdisk/src/bsd.c:507
+#: libfdisk/src/bsd.c:505
 msgid "trackskew"
 msgstr "sporafvigelse"
 
-#: libfdisk/src/bsd.c:508
+#: libfdisk/src/bsd.c:506
 msgid "cylinderskew"
 msgstr "cylinderafvigelse"
 
-#: libfdisk/src/bsd.c:510
+#: libfdisk/src/bsd.c:508
 msgid "headswitch"
 msgstr "hovedskift"
 
-#: libfdisk/src/bsd.c:511
+#: libfdisk/src/bsd.c:509
 msgid "track-to-track seek"
 msgstr "spor-til-spor søgning"
 
-#: libfdisk/src/bsd.c:523
+#: libfdisk/src/bsd.c:521
 #, fuzzy, c-format
 msgid "open failed %s"
 msgstr "open (åbn) mislykkedes: %s"
 
-#: libfdisk/src/bsd.c:528
+#: libfdisk/src/bsd.c:526
 #, fuzzy, c-format
 msgid "read failed %s"
 msgstr "read (læsning) mislykkedes: %s"
 
-#: libfdisk/src/bsd.c:534
+#: libfdisk/src/bsd.c:532
 #, c-format
 msgid "The bootstrap file %s successfully loaded."
 msgstr ""
 
-#: libfdisk/src/bsd.c:550
+#: libfdisk/src/bsd.c:548
 #, fuzzy, c-format
 msgid "Bootstrap: %1$sboot -> boot%1$s (default %1$s)"
 msgstr "Opstartsigangsætter: %sopstart -> opstart%s (%s): "
 
-#: libfdisk/src/bsd.c:581
+#: libfdisk/src/bsd.c:579
 #, fuzzy
 msgid "Bootstrap overlaps with disk label!"
 msgstr "Opstartsigangsætter overlapper med disketiket!\n"
 
-#: libfdisk/src/bsd.c:595
+#: libfdisk/src/bsd.c:593
 #, fuzzy, c-format
 msgid "seek failed %s"
 msgstr "søgning mislykkedes"
 
-#: libfdisk/src/bsd.c:600
+#: libfdisk/src/bsd.c:598
 #, fuzzy, c-format
 msgid "write failed %s"
 msgstr "skrivning mislykkedes: %s"
 
-#: libfdisk/src/bsd.c:606
+#: libfdisk/src/bsd.c:604
 #, fuzzy, c-format
 msgid "Bootstrap installed on %s."
 msgstr "Opstartsigangsætter installeret på %s.\n"
 
-#: libfdisk/src/bsd.c:763
+#: libfdisk/src/bsd.c:761
 #, fuzzy, c-format
 msgid "seek failed: %d"
 msgstr "søgning mislykkedes"
 
-#: libfdisk/src/bsd.c:767
+#: libfdisk/src/bsd.c:765
 #, fuzzy, c-format
 msgid "write failed: %d"
 msgstr "skrivning mislykkedes: %s"
 
-#: libfdisk/src/bsd.c:773
+#: libfdisk/src/bsd.c:771
 #, fuzzy, c-format
 msgid "Disklabel written to %s."
 msgstr "Drev: %s\n"
 
-#: libfdisk/src/bsd.c:779 libfdisk/src/context.c:213
+#: libfdisk/src/bsd.c:777 libfdisk/src/context.c:213
 #, fuzzy
 msgid "Syncing disks."
 msgstr "Synkroniserer diske.\n"
 
-#: libfdisk/src/bsd.c:813
+#: libfdisk/src/bsd.c:811
 msgid "BSD label is not nested within a DOS partition"
 msgstr ""
 
-#: libfdisk/src/bsd.c:842
+#: libfdisk/src/bsd.c:840
 #, fuzzy, c-format
 msgid "BSD partition '%c' linked to DOS partition %d."
 msgstr "lænk en BSD-partition til en ikke-BSD-partition"
@@ -18208,6 +18203,10 @@ msgstr "Ukendt undvigelsessekvens i inddata: %o, %o\n"
 #, fuzzy
 msgid "Input line too long."
 msgstr "For lang inddatalinje.\n"
+
+#, fuzzy
+#~ msgid "cannot allocate"
+#~ msgstr "kan ikke indhente lås"
 
 #~ msgid "usage:\n"
 #~ msgstr "brug:\n"
