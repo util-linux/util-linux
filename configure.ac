@@ -50,14 +50,14 @@ LIBMOUNT_VERSION_INFO=`expr $LIBMOUNT_LT_MAJOR + $LIBMOUNT_LT_MINOR`:$LIBMOUNT_L
 AS_CASE([$exec_prefix:$prefix],
 [NONE:NONE | NONE:/usr | /usr:*],
   [AC_MSG_NOTICE([Default --exec-prefix detected.])
-   AS_CASE([$bindir],  [${exec_prefix}/bin],  [bindir=/bin;  AC_MSG_NOTICE([  --bindir defaults to /bin])  ])
-   AS_CASE([$sbindir], [${exec_prefix}/sbin], [bindir=/sbin; AC_MSG_NOTICE([  --sbindir defaults to /sbin])])
-   AS_CASE([$libdir],  [${exec_prefix}/lib],  [bindir=/lib;  AC_MSG_NOTICE([  --libdir defaults to /lib])  ])
+   AS_CASE([$bindir],  ['${exec_prefix}/bin'],  [bindir=/bin;  AC_MSG_NOTICE([  --bindir defaults to /bin])  ])
+   AS_CASE([$sbindir], ['${exec_prefix}/sbin'], [bindir=/sbin; AC_MSG_NOTICE([  --sbindir defaults to /sbin])])
+   AS_CASE([$libdir],  ['${exec_prefix}/lib'],  [bindir=/lib;  AC_MSG_NOTICE([  --libdir defaults to /lib])  ])
   ]
 )
 
 AS_CASE([$prefix:$localstatedir],
-  [NONE:${prefix}/var | /usr:${prefix}/var],
+  [NONE:'${prefix}/var' | /usr:'${prefix}/var'],
     [localstatedir=/run
      AC_MSG_NOTICE([  --localstatedir defaults to /run])
     ]
@@ -73,7 +73,7 @@ usrsbin_execdir='${exec_prefix}/sbin'
 AC_SUBST([usrsbin_execdir])
 
 AS_CASE([$libdir],
- [${exec_prefix}/* | ${prefix}/* | /usr/*],
+ ['${exec_prefix}/'* | '${prefix}/'* | /usr/*],
    [usrlib_execdir=$libdir],
  [usrlib_execdir='${exec_prefix}'$libdir]
 )
@@ -675,6 +675,7 @@ AS_IF([test "x$enable_most_builds" = xyes], [
   enable_tunelp=yes
   enable_vipw=yes
   enable_write=yes
+  with_python=yes
 ])
 
 dnl
@@ -1374,8 +1375,8 @@ AM_CONDITIONAL([BUILD_BASH_COMPLETION], [test "x$enable_bash_completion" = xyes]
 
 
 AC_ARG_WITH([python],
-  AS_HELP_STRING([--without-python], [do not generate python bindings, use --with-python={2,3} to force version]),
-  [], [with_python=check]
+  AS_HELP_STRING([--with-python], [generate python bindings, use --with-python={2,3} to force version]),
+  [], [with_python=no]
 )
 
 have_python=no
@@ -1539,6 +1540,9 @@ AC_MSG_RESULT([
 	suid ldflags:      ${SUID_LDFLAGS}
 
 	Python:            ${PYTHON_VERSION}
+	Python scripts:    ${pythondir}
+	Python libs:       ${pyexecdir}
+
 	Bash completions:  ${with_bashcompletiondir}
 
 	warnings:
