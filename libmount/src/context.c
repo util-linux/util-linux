@@ -1624,6 +1624,7 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 	if (mnt_context_is_nohelpers(cxt)
 	    || !type
 	    || !strcmp(type, "none")
+	    || strstr(type, "/..")		/* don't try to smuggle path */
 	    || mnt_fs_is_swaparea(cxt->fs))
 		return 0;
 
