@@ -14,8 +14,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <errno.h>
-#include "nls.h"
-
 #include <sys/param.h>
 
 #include "nls.h"
