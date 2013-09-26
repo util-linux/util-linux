@@ -41,7 +41,7 @@ dist_noinst_HEADERS += \
 	include/swapheader.h \
 	include/sysfs.h \
 	include/timer.h \
-	include/timeutils.h
+	include/timeutils.h \
 	include/tt.h \
 	include/ttyutils.h \
 	include/wholedisk.h \
