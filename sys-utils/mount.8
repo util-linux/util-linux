@@ -148,8 +148,13 @@ partition
 .B PARTUUID
 or
 .B PARTLABEL
-(partition identifiers are supported for GUID Partition Table (GPT) and MAC
-partition tables only).
+(partition identifiers are supported for example for GUID Partition Table (GPT)
+partition tables).
+
+Don't forget that there is no guarantee that UUIDs and labels are really
+unique, especially if you move, share or copy the device.  Use
+.BR "lsblk -o +UUID,PARTUUID"
+to verify that the UUIDs are really unique in your system.
 
 The recommended setup is to use tags (e.g. LABEL=<label>) rather than
 .B /dev/disk/by-{label,uuid,partuuid,partlabel}
