@@ -45,8 +45,6 @@
 # include <linux/blkpg.h>
 #endif
 
-#include "fdisk.h"
-
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
@@ -273,20 +271,20 @@ static void dump_buffer(off_t base, unsigned char *buf, size_t sz, int all)
 static void dump_blkdev(struct fdisk_context *cxt, const char *name,
 			off_t offset, size_t size, int all)
 {
-	unsigned char *buf = NULL;
-
 	fdisk_colon(cxt, _("\n%s: offset = %ju, size = %zu bytes."),
 			name, offset, size);
 
 	if (lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1)
 		fdisk_warn(cxt, _("cannot seek"));
-	else if (!(buf = malloc(size)))
-		fdisk_warn(cxt, _("cannot allocate"));
-	else if (read_all(cxt->dev_fd, (char *) buf, size) != (ssize_t) size)
-		fdisk_warn(cxt, _("cannot read"));
-	else
-		dump_buffer(offset, buf, size, all);
-	free(buf);
+	else {
+		unsigned char *buf = xmalloc(size);
+
+		if (read_all(cxt->dev_fd, (char *) buf, size) != (ssize_t) size)
+			fdisk_warn(cxt, _("cannot read"));
+		else
+			dump_buffer(offset, buf, size, all);
+		free(buf);
+	}
 }
 
 void dump_firstsector(struct fdisk_context *cxt)
