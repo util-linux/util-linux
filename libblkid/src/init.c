@@ -40,7 +40,7 @@ void blkid_init_debug(int mask)
 
 	libblkid_debug_mask |= BLKID_DEBUG_INIT;
 
-	if (libblkid_debug_mask && libblkid_debug_mask != BLKID_DEBUG_INIT) {
+	if (libblkid_debug_mask != BLKID_DEBUG_INIT) {
 		const char *ver = NULL;
 		const char *date = NULL;
 
