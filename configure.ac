@@ -1392,8 +1392,7 @@ AS_IF([test "x$with_python" != xno], [
   ])
   PKG_CHECK_MODULES(PYTHON,[${modname} >= $pymajor],
 		           [have_python=yes
-			    PYTHON_VERSION=`$PKG_CONFIG --modversion $modname`
-			    AC_SUBST([PYTHON_VERSION])],
+			    AM_PATH_PYTHON([$pymajor])],
 			   [have_python=no])
   AS_CASE([$with_python:$have_python],
     [yes:no],
