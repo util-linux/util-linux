@@ -20,6 +20,9 @@ TS_DESC="color"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+# --color output depends on terminal type
+export TERM=linux
+
 set -o pipefail
 
 USETERM=$( ts_has_option "useterm" "$*" )
