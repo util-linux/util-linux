@@ -7,6 +7,8 @@ pylibmountexec_LTLIBRARIES = pylibmount.la
 pythonlibmountdir = $(pythondir)/libmount
 pythonlibmount_SCRIPTS = libmount/python/libmount/__init__.py
 
+EXTRA_DIST += $(pythonlibmount_SCRIPTS)
+
 pylibmount_la_SOURCES = \
 	libmount/python/pylibmount.c \
 	libmount/python/pylibmount.h \
