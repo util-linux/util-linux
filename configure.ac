@@ -1542,7 +1542,6 @@ AC_MSG_RESULT([
 	suid ldflags:      ${SUID_LDFLAGS}
 
 	Python:            ${PYTHON_VERSION}
-	Python scripts:    ${pythondir}
 	Python libs:       ${pyexecdir}
 
 	Bash completions:  ${with_bashcompletiondir}

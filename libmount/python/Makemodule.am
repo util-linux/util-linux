@@ -2,12 +2,14 @@
 if BUILD_PYLIBMOUNT
 
 pylibmountexecdir = $(pyexecdir)/libmount
+
+# Please, don't use $pythondir for the scripts. We have to use the same
+# directory for binary stuff as well as for the scripts otherwise it's
+# not possible to install 32-bit and 64-bit version on the same system.
 pylibmountexec_LTLIBRARIES = pylibmount.la
+pylibmountexec_SCRIPTS = libmount/python/libmount/__init__.py
 
-pythonlibmountdir = $(pythondir)/libmount
-pythonlibmount_SCRIPTS = libmount/python/libmount/__init__.py
-
-EXTRA_DIST += $(pythonlibmount_SCRIPTS)
+EXTRA_DIST += $(pylibmountexec_SCRIPTS)
 
 pylibmount_la_SOURCES = \
 	libmount/python/pylibmount.c \
