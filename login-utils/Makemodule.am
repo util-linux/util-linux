@@ -8,7 +8,7 @@ last_SOURCES = login-utils/last.c lib/strutils.c
 last_LDADD = $(LDADD) libcommon.la
 
 install-exec-hook-last:
-	cd $(DESTDIR)$(usrsbin_execdir) && ln -sf last lastb
+	cd $(DESTDIR)$(usrbin_execdir) && ln -sf last lastb
 
 INSTALL_EXEC_HOOKS += install-exec-hook-last
 endif
