@@ -390,7 +390,7 @@ AC_ARG_ENABLE([static-programs],
 
 AS_CASE([$enable_static_programs],
   [yes],
-    [enable_static_programs=m4_quote([UL_STATIC_PROGRAMS])],
+    [enable_static_programs=m4_quote(UL_STATIC_PROGRAMS)],
   [no],
     [enable_static_programs=]
 )
@@ -400,6 +400,7 @@ m4_foreach([UL_PRG], m4_defn([UL_STATIC_PROGRAMS]), [
   AS_CASE([,$enable_static_programs,],
    [*,UL_PRG,*], [static_[]UL_PRG=yes]
   )
+  AS_IF([test "x$static_[]UL_PRG" = xyes], [AC_MSG_NOTICE([enable static build: UL_PRG.])])
   AM_CONDITIONAL([HAVE_STATIC_]m4_toupper(UL_PRG),
     [test "x$static_[]UL_PRG" = xyes])
 ])
@@ -1399,11 +1400,12 @@ AS_IF([test "x$with_python" != xno], [
     [yes:no],
       [AC_MSG_ERROR([python selected but libpython not found])],
   )
+
+  UL_BUILD_INIT([pylibmount], [check])
+  UL_REQUIRES_HAVE([pylibmount], [python], [libpython])
+  UL_REQUIRES_BUILD([pylibmount], [libmount])
 ])
 
-UL_BUILD_INIT([pylibmount], [check])
-UL_REQUIRES_HAVE([pylibmount], [python])
-UL_REQUIRES_BUILD([pylibmount], [libmount])
 AM_CONDITIONAL([BUILD_PYLIBMOUNT], [test "x$build_pylibmount" = "xyes"])
 
 
