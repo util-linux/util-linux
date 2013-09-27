@@ -83,6 +83,7 @@ Changes between v2.23 and v2.24
  ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.24/
 
 agetty:
+   - unrecognized option '--loginpause'"  [kernc]
    - -L accepts optional argument  [Karel Zak]
    - add \S to output /etc/os-release data  [Karel Zak]
    - add baud rates available from glibc that are not already supported  [James Buren]
@@ -96,7 +97,6 @@ agetty:
    - only use EXTA/EXTB macros if B19200/B38400 macros are not present  [James Buren]
    - update man page and usage()  [Karel Zak]
    - use O_NONBLOCK only for serial lines with CLOCAL  [Karel Zak]
-   - unrecognized option '--loginpause'"  [kernc]
 bash-completion:
    - add mount and umount  [Sami Kerola]
    - fix typos in mkfs.bfs logic  [Mike Frysinger]
@@ -119,9 +119,12 @@ build-sys:
    - fix ${prefix} usage, be more verbose about py paths  [Karel Zak]
    - fix include Makemodule.am  [Karel Zak]
    - fix last stuff  [Karel Zak]
+   - fix lastb symlink  [Karel Zak]
+   - fix static builds  [Karel Zak]
    - improbe UL_CONFLICT_BUILD macro  [Karel Zak]
    - install pylibmount into  [Karel Zak]
    - install to the correct python dirs  [Karel Zak]
+   - one install dir for all pylibmount stuff  [Karel Zak]
    - prefer AS_CASE rather than shell 'case'  [Sami Kerola]
    - prefer AS_IF rather than shell 'if'  [Sami Kerola]
    - pylibmount will not work when python3 is present  [Sami Kerola]
@@ -183,6 +186,7 @@ docs:
    - add lscpu max mhz to manual and bash completion  [Sami Kerola]
    - add missing options to sfdisk manual  [Sami Kerola]
    - add note to wall(1) about sessions which will not get message  [Sami Kerola]
+   - add v2.24-ReleaseNotes  [Karel Zak]
    - be clear which last(1) is deprecated  [Sami Kerola]
    - cal  add --color option description to manual page  [Sami Kerola]
    - cal  stop telling year 9999 is upper limit  [Sami Kerola]
@@ -452,6 +456,7 @@ libblkid:
    - set PTUUID for GPT and DOS  [Karel Zak]
    - split blkid_parttable_set_id()  [Karel Zak]
    - support pseudo PARTUUID= for MBR  [Karel Zak]
+   - update docs  [Karel Zak]
    - use separate function to verify checksums  [Karel Zak]
 libfdisk:
    - (bds) cleanup includes  [Karel Zak]
@@ -539,6 +544,8 @@ libmount:
    - free username after check  [Dave Reisner]
    - make mnt_fs_{ap,pre}pend_options() more robust  [Karel Zak]
    - more robust options string parsing  [Karel Zak]
+   - small cleanup in umount code  [Karel Zak]
+   - update docs  [Karel Zak]
    - use MS_SILENT for /{proc,etc}/filesystems  [Karel Zak]
    - use err.h in test  [Karel Zak]
    - use memmove when overlap possible  [Dave Reisner]
@@ -597,6 +604,7 @@ more:
    - use variable lenght printf field width to print blanks  [Sami Kerola]
 mount:
    - (deprecated) fix typo tailed->failed  [Yuri Chornoivan]
+   - add notes about UUIDs to the man page  [Karel Zak]
    - fix mistaken word and some grammar in man page of mount  [Benno Schulenberg]
    - fix repeating words in the man page  [Karel Zak]
    - update xfs docs  [Karel Zak]
@@ -734,6 +742,7 @@ tests:
    - refresh fdisk tests  [Karel Zak]
    - refresh jbd blkid test  [Karel Zak]
    - remove remaining set -x  [Karel Zak]
+   - update build tests  [Karel Zak]
    - update fdisk outputs  [Karel Zak]
    - update libmount fstab full parse test  [Karel Zak]
    - update lscpu tests  [Karel Zak]
@@ -755,6 +764,8 @@ ul:
    - enhance command performance  [Sami Kerola]
    - use correct types  [Sami Kerola]
    - use string printing function  [Sami Kerola]
+umount:
+   - provide more helpful error message  [Karel Zak]
 unshare:
    - add --fork options for pid namespaces  [Mike Frysinger]
    - add --mount-proc for pid namespaces  [Karel Zak]
@@ -782,3 +793,4 @@ wipefs:
 write:
    - change determination can user write to a terminal  [Sami Kerola]
 
+- change determination can user write to a terminal  [Sami Kerola]
