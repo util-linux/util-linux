@@ -115,7 +115,7 @@ void mnt_ref_table(struct libmnt_table *tb)
  * mnt_unref_table:
  * @tb: table pointer
  *
- * De-increments reference counter, on zero the FS is automatically
+ * De-increments reference counter, on zero the @tb is automatically
  * deallocated by mnt_free_table().
  */
 void mnt_unref_table(struct libmnt_table *tb)

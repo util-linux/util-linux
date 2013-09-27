@@ -112,7 +112,7 @@ void mnt_ref_fs(struct libmnt_fs *fs)
  * mnt_unref_fs:
  * @fs: fs pointer
  *
- * De-increments reference counter, on zero the FS is automatically
+ * De-increments reference counter, on zero the @fs is automatically
  * deallocated by mnt_free_fs().
  */
 void mnt_unref_fs(struct libmnt_fs *fs)
