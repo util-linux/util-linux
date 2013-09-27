@@ -190,6 +190,9 @@ err:
 	return rc;
 }
 
+/* this is umount replacement to mnt_context_apply_fstab(), use
+ * mnt_context_tab_applied() to check result.
+ */
 static int lookup_umount_fs(struct libmnt_context *cxt)
 {
 	const char *tgt;
@@ -210,7 +213,7 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 		return rc;
 	if (rc == 1 || !fs) {
 		DBG(CXT, mnt_debug_h(cxt, "umount: cannot find '%s' in mtab", tgt));
-		return 0;
+		return 0;	/* this is correct! */
 	}
 
 	if (fs != cxt->fs) {
@@ -312,7 +315,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 
 	DBG(CXT, mnt_debug_h(cxt, "umount: evaluating permissions"));
 
-	if (!(cxt->flags & MNT_FL_TAB_APPLIED)) {
+	if (!mnt_context_tab_applied(cxt)) {
 		DBG(CXT, mnt_debug_h(cxt,
 				"cannot find %s in mtab and you are not root",
 				mnt_fs_get_target(cxt->fs)));

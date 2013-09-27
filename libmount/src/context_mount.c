@@ -362,7 +362,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		/*
 		 * user mount
 		 */
-		if (!(cxt->flags & MNT_FL_TAB_APPLIED))
+		if (!mnt_context_tab_applied(cxt))
 		{
 			DBG(CXT, mnt_debug_h(cxt, "perms: fstab not applied, ignore user mount"));
 			return -EPERM;
