@@ -198,6 +198,12 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 		/*
 		 * libmount errors (extra library checks)
 		 */
+		if (rc == -EPERM && !mnt_context_tab_applied(cxt)) {
+			/* failed to evaluate permissions because not found
+			 * relevant entry in mtab */
+			warnx(_("%s: not mounted"), tgt);
+			return MOUNT_EX_USAGE;
+		}
 		return handle_generic_errors(rc, _("%s: umount failed"), tgt);
 
 	} else if (mnt_context_get_syscall_errno(cxt) == 0) {
