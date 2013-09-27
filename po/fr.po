@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23.1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-09-26 11:48+0200\n"
+"POT-Creation-Date: 2013-09-27 12:21+0200\n"
 "PO-Revision-Date: 2013-05-28 14:51-0400\n"
 "Last-Translator: David Prévot <david@tilapin.org>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -388,7 +388,7 @@ msgstr "%s : erreur d'analyse à la ligne %d — ignorée"
 msgid "%s: failed to parse fstab"
 msgstr "%s : échec d'analyse de fstab"
 
-#: disk-utils/fsck.c:587 sys-utils/umount.c:400 sys-utils/umount.c:423
+#: disk-utils/fsck.c:587 sys-utils/umount.c:406 sys-utils/umount.c:429
 #, c-format
 msgid "%s: not found"
 msgstr "%s : introuvable"
@@ -8587,7 +8587,7 @@ msgstr "impossible de lire %s"
 
 #: misc-utils/findmnt.c:937 misc-utils/findmnt.c:1003 sys-utils/mount.c:135
 #: sys-utils/mount.c:183 sys-utils/swapoff.c:98 sys-utils/swapon.c:207
-#: sys-utils/swapon.c:238 sys-utils/swapon.c:636 sys-utils/umount.c:266
+#: sys-utils/swapon.c:238 sys-utils/swapon.c:636 sys-utils/umount.c:272
 msgid "failed to initialize libmount iterator"
 msgstr "échec d'initialisation de l'itérateur libmount"
 
@@ -12083,8 +12083,8 @@ msgstr "%s : impossible de trouver le périphérique"
 msgid "device name is `%s'"
 msgstr "le nom du périphérique est « %s »"
 
-#: sys-utils/eject.c:1002 sys-utils/umount.c:227 sys-utils/umount.c:399
-#: sys-utils/umount.c:422
+#: sys-utils/eject.c:1002 sys-utils/umount.c:204 sys-utils/umount.c:233
+#: sys-utils/umount.c:405 sys-utils/umount.c:428
 #, c-format
 msgid "%s: not mounted"
 msgstr "%s : non monté"
@@ -14573,7 +14573,7 @@ msgstr "%s : erreur d'analyse : entrée ignorée à la ligne %d."
 msgid "failed to read mtab"
 msgstr "échec de lecture de mtab"
 
-#: sys-utils/mount.c:193 sys-utils/umount.c:276
+#: sys-utils/mount.c:193 sys-utils/umount.c:282
 #, c-format
 msgid "%-25s: ignored\n"
 msgstr "%-25s : ignoré\n"
@@ -15026,11 +15026,11 @@ msgstr ""
 " --make-runbindable      marquer récursivement tout un sous-rép. non "
 "remontable\n"
 
-#: sys-utils/mount.c:845 sys-utils/umount.c:533
+#: sys-utils/mount.c:845 sys-utils/umount.c:539
 msgid "libmount context allocation failed"
 msgstr "échec d'allocation de contexte libmount"
 
-#: sys-utils/mount.c:902 sys-utils/umount.c:586
+#: sys-utils/mount.c:902 sys-utils/umount.c:592
 msgid "failed to set options pattern"
 msgstr "échec de configuration des options de motif"
 
@@ -16444,7 +16444,7 @@ msgstr "swapon %s\n"
 msgid "%s: swapon failed"
 msgstr "%s : échec de swapon"
 
-#: sys-utils/swapon.c:632 sys-utils/umount.c:319
+#: sys-utils/swapon.c:632 sys-utils/umount.c:325
 #, c-format
 msgid "failed to parse %s"
 msgstr "échec d'analyse de %s"
@@ -16823,28 +16823,28 @@ msgstr "%s (%s) démonté"
 msgid "%s unmounted"
 msgstr "%s démonté"
 
-#: sys-utils/umount.c:201
+#: sys-utils/umount.c:207
 #, c-format
 msgid "%s: umount failed"
 msgstr "%s : échec de démontage"
 
 # NOTE: maybe s/ mount/ umount/
-#: sys-utils/umount.c:210
+#: sys-utils/umount.c:216
 #, fuzzy, c-format
 msgid "%s: filesystem was unmounted, but mount(8) failed"
 msgstr "%s : système de fichiers démonté, mais échec de mount(8)"
 
-#: sys-utils/umount.c:224
+#: sys-utils/umount.c:230
 #, c-format
 msgid "%s: invalid block device"
 msgstr "%s : périphérique bloc non valable"
 
-#: sys-utils/umount.c:230
+#: sys-utils/umount.c:236
 #, c-format
 msgid "%s: can't write superblock"
 msgstr "%s : impossible d'écrire sur le superbloc"
 
-#: sys-utils/umount.c:233
+#: sys-utils/umount.c:239
 #, fuzzy, c-format
 msgid ""
 "%s: target is busy\n"
@@ -16855,44 +16855,44 @@ msgstr ""
 "       (Dans certains cas, des renseignements sur les processus utilisant\n"
 "        le périphérique sont accessibles avec lsof(8) ou fuser(1))"
 
-#: sys-utils/umount.c:240
+#: sys-utils/umount.c:246
 #, fuzzy, c-format
 msgid "%s: mountpoint not found"
 msgstr "%s : introuvable"
 
-#: sys-utils/umount.c:242
+#: sys-utils/umount.c:248
 #, fuzzy
 msgid "undefined mountpoint"
 msgstr "point de montage"
 
-#: sys-utils/umount.c:245
+#: sys-utils/umount.c:251
 #, fuzzy, c-format
 msgid "%s: must be superuser to unmount"
 msgstr "%s : seul le superutilisateur peut utiliser umount"
 
-#: sys-utils/umount.c:248
+#: sys-utils/umount.c:254
 #, fuzzy, c-format
 msgid "%s: block devices are not permitted on filesystem"
 msgstr "%s : périphérique bloc non autorisé sur le système de fichiers"
 
-#: sys-utils/umount.c:297
+#: sys-utils/umount.c:303
 msgid "failed to set umount target"
 msgstr "échec de définition de la cible de démontage"
 
-#: sys-utils/umount.c:313
+#: sys-utils/umount.c:319
 msgid "libmount table allocation failed"
 msgstr "échec d'allocation de tableau libmount"
 
-#: sys-utils/umount.c:356 sys-utils/umount.c:434
+#: sys-utils/umount.c:362 sys-utils/umount.c:440
 msgid "libmount iterator allocation failed"
 msgstr "échec d'allocation d'itérateur libmount"
 
-#: sys-utils/umount.c:362
+#: sys-utils/umount.c:368
 #, c-format
 msgid "failed to get child fs of %s"
 msgstr "échec d'obtention du système de fichiers %s"
 
-#: sys-utils/umount.c:430
+#: sys-utils/umount.c:436
 #, c-format
 msgid "%s: failed to determine source"
 msgstr "%s : échec de détermination de la source"

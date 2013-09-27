@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-09-26 11:48+0200\n"
+"POT-Creation-Date: 2013-09-27 12:21+0200\n"
 "PO-Revision-Date: 2006-03-06 15:45+0200\n"
 "Last-Translator: Nilgün Belma Bugüner <nilgun@buguner.name.tr>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
@@ -388,7 +388,7 @@ msgstr "erişim hatası"
 msgid "%s: failed to parse fstab"
 msgstr "%s: açılamıyor: %s\n"
 
-#: disk-utils/fsck.c:587 sys-utils/umount.c:400 sys-utils/umount.c:423
+#: disk-utils/fsck.c:587 sys-utils/umount.c:406 sys-utils/umount.c:429
 #, fuzzy, c-format
 msgid "%s: not found"
 msgstr "umount: %s: yok"
@@ -8577,7 +8577,7 @@ msgstr "%s: %s okunamıyor.\n"
 
 #: misc-utils/findmnt.c:937 misc-utils/findmnt.c:1003 sys-utils/mount.c:135
 #: sys-utils/mount.c:183 sys-utils/swapoff.c:98 sys-utils/swapon.c:207
-#: sys-utils/swapon.c:238 sys-utils/swapon.c:636 sys-utils/umount.c:266
+#: sys-utils/swapon.c:238 sys-utils/swapon.c:636 sys-utils/umount.c:272
 #, fuzzy
 msgid "failed to initialize libmount iterator"
 msgstr "Tampon ayrılamadı.\n"
@@ -11829,8 +11829,8 @@ msgstr "takas alanında başa gidilemiyor"
 msgid "device name is `%s'"
 msgstr "loop: %s aygıtı açılamıyor: %s\n"
 
-#: sys-utils/eject.c:1002 sys-utils/umount.c:227 sys-utils/umount.c:399
-#: sys-utils/umount.c:422
+#: sys-utils/eject.c:1002 sys-utils/umount.c:204 sys-utils/umount.c:233
+#: sys-utils/umount.c:405 sys-utils/umount.c:428
 #, fuzzy, c-format
 msgid "%s: not mounted"
 msgstr "umount: %s: yok"
@@ -14253,7 +14253,7 @@ msgstr "erişim hatası"
 msgid "failed to read mtab"
 msgstr "%s durum bilgileri alınamıyor"
 
-#: sys-utils/mount.c:193 sys-utils/umount.c:276
+#: sys-utils/mount.c:193 sys-utils/umount.c:282
 #, c-format
 msgid "%-25s: ignored\n"
 msgstr ""
@@ -14639,12 +14639,12 @@ msgid ""
 " --make-runbindable      recursively mark a whole subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:845 sys-utils/umount.c:533
+#: sys-utils/mount.c:845 sys-utils/umount.c:539
 #, fuzzy
 msgid "libmount context allocation failed"
 msgstr "mount: bağlanamadı"
 
-#: sys-utils/mount.c:902 sys-utils/umount.c:586
+#: sys-utils/mount.c:902 sys-utils/umount.c:592
 #, fuzzy
 msgid "failed to set options pattern"
 msgstr "%s disk bölümüne yazarken hata oluştu\n"
@@ -16008,7 +16008,7 @@ msgstr "%s %s üzerinde\n"
 msgid "%s: swapon failed"
 msgstr "erişim başarısız"
 
-#: sys-utils/swapon.c:632 sys-utils/umount.c:319
+#: sys-utils/swapon.c:632 sys-utils/umount.c:325
 #, fuzzy, c-format
 msgid "failed to parse %s"
 msgstr "%s: açılamıyor: %s\n"
@@ -16339,27 +16339,27 @@ msgstr "%s bağlı.\t"
 msgid "%s unmounted"
 msgstr "umount: %s: yok"
 
-#: sys-utils/umount.c:201
+#: sys-utils/umount.c:207
 #, fuzzy, c-format
 msgid "%s: umount failed"
 msgstr "mount başarısız"
 
-#: sys-utils/umount.c:210
+#: sys-utils/umount.c:216
 #, fuzzy, c-format
 msgid "%s: filesystem was unmounted, but mount(8) failed"
 msgstr "mount: bağlanamadı"
 
-#: sys-utils/umount.c:224
+#: sys-utils/umount.c:230
 #, fuzzy, c-format
 msgid "%s: invalid block device"
 msgstr "umount: %s: blok aygıtı geçersiz"
 
-#: sys-utils/umount.c:230
+#: sys-utils/umount.c:236
 #, fuzzy, c-format
 msgid "%s: can't write superblock"
 msgstr "mount: %s: superblok okunamıyor"
 
-#: sys-utils/umount.c:233
+#: sys-utils/umount.c:239
 #, c-format
 msgid ""
 "%s: target is busy\n"
@@ -16367,47 +16367,47 @@ msgid ""
 "         use the device is found by lsof(8) or fuser(1).)"
 msgstr ""
 
-#: sys-utils/umount.c:240
+#: sys-utils/umount.c:246
 #, fuzzy, c-format
 msgid "%s: mountpoint not found"
 msgstr "umount: %s: yok"
 
-#: sys-utils/umount.c:242
+#: sys-utils/umount.c:248
 #, fuzzy
 msgid "undefined mountpoint"
 msgstr "mount: %s  %s içinde bulunamıyor"
 
-#: sys-utils/umount.c:245
+#: sys-utils/umount.c:251
 #, fuzzy, c-format
 msgid "%s: must be superuser to unmount"
 msgstr "umount: %s: bağı kaldırmak için root gerekli"
 
-#: sys-utils/umount.c:248
+#: sys-utils/umount.c:254
 #, fuzzy, c-format
 msgid "%s: block devices are not permitted on filesystem"
 msgstr "umount: %s: dosya sisteminde blok aygıtlara izin yok"
 
-#: sys-utils/umount.c:297
+#: sys-utils/umount.c:303
 #, fuzzy
 msgid "failed to set umount target"
 msgstr "%s: açılamıyor: %s\n"
 
-#: sys-utils/umount.c:313
+#: sys-utils/umount.c:319
 #, fuzzy
 msgid "libmount table allocation failed"
 msgstr "mount: bağlanamadı"
 
-#: sys-utils/umount.c:356 sys-utils/umount.c:434
+#: sys-utils/umount.c:362 sys-utils/umount.c:440
 #, fuzzy
 msgid "libmount iterator allocation failed"
 msgstr "mount: bağlanamadı"
 
-#: sys-utils/umount.c:362
+#: sys-utils/umount.c:368
 #, fuzzy, c-format
 msgid "failed to get child fs of %s"
 msgstr "%s disk bölümüne yazarken hata oluştu\n"
 
-#: sys-utils/umount.c:430
+#: sys-utils/umount.c:436
 #, fuzzy, c-format
 msgid "%s: failed to determine source"
 msgstr "%s: açılamıyor: %s\n"

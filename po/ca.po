@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-09-26 11:48+0200\n"
+"POT-Creation-Date: 2013-09-27 12:21+0200\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -389,7 +389,7 @@ msgstr "s'ha produït un error en cercar"
 msgid "%s: failed to parse fstab"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: disk-utils/fsck.c:587 sys-utils/umount.c:400 sys-utils/umount.c:423
+#: disk-utils/fsck.c:587 sys-utils/umount.c:406 sys-utils/umount.c:429
 #, fuzzy, c-format
 msgid "%s: not found"
 msgstr "umount: %s: no s'ha trobat"
@@ -8640,7 +8640,7 @@ msgstr "%s: no s'ha pogut llegir %s.\n"
 
 #: misc-utils/findmnt.c:937 misc-utils/findmnt.c:1003 sys-utils/mount.c:135
 #: sys-utils/mount.c:183 sys-utils/swapoff.c:98 sys-utils/swapon.c:207
-#: sys-utils/swapon.c:238 sys-utils/swapon.c:636 sys-utils/umount.c:266
+#: sys-utils/swapon.c:238 sys-utils/swapon.c:636 sys-utils/umount.c:272
 #, fuzzy
 msgid "failed to initialize libmount iterator"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
@@ -11888,8 +11888,8 @@ msgstr "no s'ha pogut rebobinar el dispositiu d'intercanvi"
 msgid "device name is `%s'"
 msgstr "loop: no s'ha pogut obrir el dispositiu %s: %s\n"
 
-#: sys-utils/eject.c:1002 sys-utils/umount.c:227 sys-utils/umount.c:399
-#: sys-utils/umount.c:422
+#: sys-utils/eject.c:1002 sys-utils/umount.c:204 sys-utils/umount.c:233
+#: sys-utils/umount.c:405 sys-utils/umount.c:428
 #, fuzzy, c-format
 msgid "%s: not mounted"
 msgstr "umount: %s: no s'ha trobat"
@@ -14342,7 +14342,7 @@ msgstr "s'ha produït un error en cercar"
 msgid "failed to read mtab"
 msgstr "no es pot fer stat per a %s"
 
-#: sys-utils/mount.c:193 sys-utils/umount.c:276
+#: sys-utils/mount.c:193 sys-utils/umount.c:282
 #, c-format
 msgid "%-25s: ignored\n"
 msgstr ""
@@ -14732,12 +14732,12 @@ msgid ""
 " --make-runbindable      recursively mark a whole subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:845 sys-utils/umount.c:533
+#: sys-utils/mount.c:845 sys-utils/umount.c:539
 #, fuzzy
 msgid "libmount context allocation failed"
 msgstr "mount: no ha estat possible muntar"
 
-#: sys-utils/mount.c:902 sys-utils/umount.c:586
+#: sys-utils/mount.c:902 sys-utils/umount.c:592
 #, fuzzy
 msgid "failed to set options pattern"
 msgstr "No s'ha pogut escriure la partició a %s\n"
@@ -16103,7 +16103,7 @@ msgstr "%s a %s\n"
 msgid "%s: swapon failed"
 msgstr "la cerca ha fallat"
 
-#: sys-utils/swapon.c:632 sys-utils/umount.c:319
+#: sys-utils/swapon.c:632 sys-utils/umount.c:325
 #, fuzzy, c-format
 msgid "failed to parse %s"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
@@ -16434,27 +16434,27 @@ msgstr "%s està muntat.\t "
 msgid "%s unmounted"
 msgstr "umount: %s: no s'ha trobat"
 
-#: sys-utils/umount.c:201
+#: sys-utils/umount.c:207
 #, fuzzy, c-format
 msgid "%s: umount failed"
 msgstr "no s'ha estat possible muntar"
 
-#: sys-utils/umount.c:210
+#: sys-utils/umount.c:216
 #, fuzzy, c-format
 msgid "%s: filesystem was unmounted, but mount(8) failed"
 msgstr "mount: no ha estat possible muntar"
 
-#: sys-utils/umount.c:224
+#: sys-utils/umount.c:230
 #, fuzzy, c-format
 msgid "%s: invalid block device"
 msgstr "umount: %s: dispositiu de blocs no vàlid"
 
-#: sys-utils/umount.c:230
+#: sys-utils/umount.c:236
 #, fuzzy, c-format
 msgid "%s: can't write superblock"
 msgstr "mount: %s: no s'ha pogut llegir el superbloc"
 
-#: sys-utils/umount.c:233
+#: sys-utils/umount.c:239
 #, c-format
 msgid ""
 "%s: target is busy\n"
@@ -16462,47 +16462,47 @@ msgid ""
 "         use the device is found by lsof(8) or fuser(1).)"
 msgstr ""
 
-#: sys-utils/umount.c:240
+#: sys-utils/umount.c:246
 #, fuzzy, c-format
 msgid "%s: mountpoint not found"
 msgstr "umount: %s: no s'ha trobat"
 
-#: sys-utils/umount.c:242
+#: sys-utils/umount.c:248
 #, fuzzy
 msgid "undefined mountpoint"
 msgstr "mount: no s'ha pogut trobar %s a %s"
 
-#: sys-utils/umount.c:245
+#: sys-utils/umount.c:251
 #, fuzzy, c-format
 msgid "%s: must be superuser to unmount"
 msgstr "umount: %s: haureu de ser superusuari per poder usar umount"
 
-#: sys-utils/umount.c:248
+#: sys-utils/umount.c:254
 #, fuzzy, c-format
 msgid "%s: block devices are not permitted on filesystem"
 msgstr "umount: %s: dispositius de blocs no permesos en el sistema de fitxers"
 
-#: sys-utils/umount.c:297
+#: sys-utils/umount.c:303
 #, fuzzy
 msgid "failed to set umount target"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: sys-utils/umount.c:313
+#: sys-utils/umount.c:319
 #, fuzzy
 msgid "libmount table allocation failed"
 msgstr "mount: no ha estat possible muntar"
 
-#: sys-utils/umount.c:356 sys-utils/umount.c:434
+#: sys-utils/umount.c:362 sys-utils/umount.c:440
 #, fuzzy
 msgid "libmount iterator allocation failed"
 msgstr "mount: no ha estat possible muntar"
 
-#: sys-utils/umount.c:362
+#: sys-utils/umount.c:368
 #, fuzzy, c-format
 msgid "failed to get child fs of %s"
 msgstr "No s'ha pogut escriure la partició a %s\n"
 
-#: sys-utils/umount.c:430
+#: sys-utils/umount.c:436
 #, fuzzy, c-format
 msgid "%s: failed to determine source"
 msgstr "%s: s'ha produït un error en obrir: %s\n"

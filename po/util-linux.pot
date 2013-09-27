@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-09-26 11:48+0200\n"
+"POT-Creation-Date: 2013-09-27 12:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -366,7 +366,7 @@ msgstr ""
 msgid "%s: failed to parse fstab"
 msgstr ""
 
-#: disk-utils/fsck.c:587 sys-utils/umount.c:400 sys-utils/umount.c:423
+#: disk-utils/fsck.c:587 sys-utils/umount.c:406 sys-utils/umount.c:429
 #, c-format
 msgid "%s: not found"
 msgstr ""
@@ -7796,7 +7796,7 @@ msgstr ""
 
 #: misc-utils/findmnt.c:937 misc-utils/findmnt.c:1003 sys-utils/mount.c:135
 #: sys-utils/mount.c:183 sys-utils/swapoff.c:98 sys-utils/swapon.c:207
-#: sys-utils/swapon.c:238 sys-utils/swapon.c:636 sys-utils/umount.c:266
+#: sys-utils/swapon.c:238 sys-utils/swapon.c:636 sys-utils/umount.c:272
 msgid "failed to initialize libmount iterator"
 msgstr ""
 
@@ -10830,8 +10830,8 @@ msgstr ""
 msgid "device name is `%s'"
 msgstr ""
 
-#: sys-utils/eject.c:1002 sys-utils/umount.c:227 sys-utils/umount.c:399
-#: sys-utils/umount.c:422
+#: sys-utils/eject.c:1002 sys-utils/umount.c:204 sys-utils/umount.c:233
+#: sys-utils/umount.c:405 sys-utils/umount.c:428
 #, c-format
 msgid "%s: not mounted"
 msgstr ""
@@ -13071,7 +13071,7 @@ msgstr ""
 msgid "failed to read mtab"
 msgstr ""
 
-#: sys-utils/mount.c:193 sys-utils/umount.c:276
+#: sys-utils/mount.c:193 sys-utils/umount.c:282
 #, c-format
 msgid "%-25s: ignored\n"
 msgstr ""
@@ -13439,11 +13439,11 @@ msgid ""
 " --make-runbindable      recursively mark a whole subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:845 sys-utils/umount.c:533
+#: sys-utils/mount.c:845 sys-utils/umount.c:539
 msgid "libmount context allocation failed"
 msgstr ""
 
-#: sys-utils/mount.c:902 sys-utils/umount.c:586
+#: sys-utils/mount.c:902 sys-utils/umount.c:592
 msgid "failed to set options pattern"
 msgstr ""
 
@@ -14725,7 +14725,7 @@ msgstr ""
 msgid "%s: swapon failed"
 msgstr ""
 
-#: sys-utils/swapon.c:632 sys-utils/umount.c:319
+#: sys-utils/swapon.c:632 sys-utils/umount.c:325
 #, c-format
 msgid "failed to parse %s"
 msgstr ""
@@ -15038,27 +15038,27 @@ msgstr ""
 msgid "%s unmounted"
 msgstr ""
 
-#: sys-utils/umount.c:201
+#: sys-utils/umount.c:207
 #, c-format
 msgid "%s: umount failed"
 msgstr ""
 
-#: sys-utils/umount.c:210
+#: sys-utils/umount.c:216
 #, c-format
 msgid "%s: filesystem was unmounted, but mount(8) failed"
 msgstr ""
 
-#: sys-utils/umount.c:224
+#: sys-utils/umount.c:230
 #, c-format
 msgid "%s: invalid block device"
 msgstr ""
 
-#: sys-utils/umount.c:230
+#: sys-utils/umount.c:236
 #, c-format
 msgid "%s: can't write superblock"
 msgstr ""
 
-#: sys-utils/umount.c:233
+#: sys-utils/umount.c:239
 #, c-format
 msgid ""
 "%s: target is busy\n"
@@ -15066,43 +15066,43 @@ msgid ""
 "         use the device is found by lsof(8) or fuser(1).)"
 msgstr ""
 
-#: sys-utils/umount.c:240
+#: sys-utils/umount.c:246
 #, c-format
 msgid "%s: mountpoint not found"
 msgstr ""
 
-#: sys-utils/umount.c:242
+#: sys-utils/umount.c:248
 msgid "undefined mountpoint"
 msgstr ""
 
-#: sys-utils/umount.c:245
+#: sys-utils/umount.c:251
 #, c-format
 msgid "%s: must be superuser to unmount"
 msgstr ""
 
-#: sys-utils/umount.c:248
+#: sys-utils/umount.c:254
 #, c-format
 msgid "%s: block devices are not permitted on filesystem"
 msgstr ""
 
-#: sys-utils/umount.c:297
+#: sys-utils/umount.c:303
 msgid "failed to set umount target"
 msgstr ""
 
-#: sys-utils/umount.c:313
+#: sys-utils/umount.c:319
 msgid "libmount table allocation failed"
 msgstr ""
 
-#: sys-utils/umount.c:356 sys-utils/umount.c:434
+#: sys-utils/umount.c:362 sys-utils/umount.c:440
 msgid "libmount iterator allocation failed"
 msgstr ""
 
-#: sys-utils/umount.c:362
+#: sys-utils/umount.c:368
 #, c-format
 msgid "failed to get child fs of %s"
 msgstr ""
 
-#: sys-utils/umount.c:430
+#: sys-utils/umount.c:436
 #, c-format
 msgid "%s: failed to determine source"
 msgstr ""
