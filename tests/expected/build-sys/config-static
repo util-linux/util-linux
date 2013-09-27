@@ -36,7 +36,7 @@ column:
 ctrlaltdel:  
 cytune:  
 delpart:  
-dmesg:  
+dmesg:  librt 
 fallocate:  
 fdformat:  
 fdisk.static: STATIC
@@ -54,6 +54,7 @@ ipcrm:
 ipcs:  
 isosize:  
 kill:  
+last:  
 ldattach:  
 logger:  
 login:  libpam libpam_misc 
@@ -62,6 +63,7 @@ losetup:
 losetup.static: STATIC
 lscpu:  
 mcookie:  
+mesg:  
 mkfs:  
 mkfs.bfs:  
 mkfs.cramfs:  libz 

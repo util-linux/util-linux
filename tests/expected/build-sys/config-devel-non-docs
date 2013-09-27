@@ -14,6 +14,7 @@ mkswap:  libblkid libselinux libuuid
 mount:  libblkid libmount libselinux libuuid 
 mountpoint:  libblkid libmount libselinux libuuid 
 partx:  libblkid libuuid 
+pylibmount.so:  libblkid libmount libpython2 libselinux libuuid 
 swaplabel:  libblkid libuuid 
 swapoff:  libblkid libmount libselinux libuuid 
 swapon:  libblkid libmount libselinux libuuid 
@@ -37,7 +38,7 @@ column:
 ctrlaltdel:  
 cytune:  
 delpart:  
-dmesg:  
+dmesg:  librt 
 fallocate:  
 fdformat:  
 flock:  

@@ -35,7 +35,7 @@ column:
 ctrlaltdel:  
 cytune:  
 delpart:  
-dmesg:  
+dmesg:  librt 
 fallocate:  
 fdformat:  
 flock:  
@@ -52,6 +52,7 @@ ipcrm:
 ipcs:  
 isosize:  
 kill:  
+last:  
 ldattach:  
 logger:  
 login:  libpam libpam_misc 
@@ -59,6 +60,7 @@ look:
 losetup:  
 lscpu:  
 mcookie:  
+mesg:  
 mkfs:  
 mkfs.bfs:  
 mkfs.cramfs:  libz 
