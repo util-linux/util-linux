@@ -469,7 +469,7 @@ static char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 		break;
 	case COL_USEPERC:
 		if (buf.f_blocks == 0)
-			return "-";
+			return xstrdup("-");
 
 		xasprintf(&sizestr, "%.0f%%",
 				(double)(buf.f_blocks - buf.f_bfree) /
