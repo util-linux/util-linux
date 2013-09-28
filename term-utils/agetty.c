@@ -667,7 +667,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 				else if (strcmp(optarg, "=auto") == 0)
 					op->clocal = CLOCAL_MODE_AUTO;
 				else
-					log_err(_("unssuported --local-line mode argument"));
+					log_err(_("unsupported --local-line mode argument"));
 			}
 			break;
 		case 'm':
@@ -1807,7 +1807,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -i, --noissue              do not display issue file\n"), out);
 	fputs(_(" -I, --init-string <string> set init string\n"), out);
 	fputs(_(" -l, --login-program <file> specify login program\n"), out);
-	fputs(_(" -L, --local-line[=<mode>]  cotrol local line flag\n"), out);
+	fputs(_(" -L, --local-line[=<mode>]  control local line flag\n"), out);
 	fputs(_(" -m, --extract-baud         extract baud rate during connect\n"), out);
 	fputs(_(" -n, --skip-login           do not prompt for login\n"), out);
 	fputs(_(" -o, --login-options <opts> options that are passed to login\n"), out);
