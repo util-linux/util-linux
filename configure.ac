@@ -595,25 +595,50 @@ AM_CONDITIONAL([HAVE_NCURSES], [false])
 
 AS_IF([test "x$with_ncurses" != xno], [
   have_ncurses=no
-  AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h], [
-    AS_IF([test "x$with_ncurses" = xauto], [
-      UL_CHECK_LIB([ncursesw], [initscr], [ncurses])
-      AS_IF([test "x$have_ncurses" = xyes], [
-	AC_CHECK_HEADERS([ncursesw/ncurses.h])
-	NCURSES_LIBS="-lncursesw"
+
+  dnl First try to find the pkg-config module.
+  PKG_CHECK_MODULES(NCURSESW, [ncursesw], [
+    have_ncurses=yes
+    NCURSES_LIBS=${NCURSESW_LIBS}
+    NCURSES_CFLAGS=${NCURSESW_CFLAGS}
+    AC_DEFINE([HAVE_LIBNCURSESW])
+  ], [
+    PKG_CHECK_MODULES(NCURSES, [ncurses], [
+      have_ncurses=yes
+      AC_DEFINE([HAVE_LIBNCURSES])
+    ], [:])
+  ])
+
+  AS_IF([test "x$have_ncurses" = xyes], [
+    dnl If that worked, setup the defines that the code expects.
+    save_CPPFLAGS="$CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS $NCURSES_CFLAGS"
+    AC_CHECK_HEADERS([ncurses.h])
+    CPPFLAGS="$save_CPPFLAGS"
+  ], [
+    dnl If that failed, fall back to classic searching.
+    AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h], [
+      AS_IF([test "x$with_ncurses" = xauto], [
+	UL_CHECK_LIB([ncursesw], [initscr], [ncurses])
+	AS_IF([test "x$have_ncurses" = xyes], [
+	  AC_CHECK_HEADERS([ncursesw/ncurses.h])
+	  NCURSES_LIBS="-lncursesw"
+	])
       ])
-    ])
-    AS_IF([test "x$have_ncurses" = xno], [
-      UL_CHECK_LIB(ncurses, initscr)
-      AS_IF([test "x$have_ncurses" = xyes], [
-	NCURSES_LIBS="-lncurses"
+      AS_IF([test "x$have_ncurses" = xno], [
+	UL_CHECK_LIB(ncurses, initscr)
+	AS_IF([test "x$have_ncurses" = xyes], [
+	  NCURSES_LIBS="-lncurses"
+	])
       ])
     ])
   ])
+
   AS_IF([test "x$have_ncurses" = xno], [
     AC_MSG_ERROR([ncurses or ncursesw selected, but library not found (--without-ncurses to disable)])
   ])
 ])
+AC_SUBST([NCURSES_CFLAGS])
 AC_SUBST([NCURSES_LIBS])
 
 
@@ -642,9 +667,11 @@ AM_CONDITIONAL([HAVE_SLANG], [test "x$have_slang" = xyes])
 AM_CONDITIONAL([BUILD_CFDISK], [test "x$have_slang" = xyes -o "x$have_ncurses" = xyes])
 
 
-have_tinfo=no
 AC_CHECK_LIB([tinfo], [tgetent], [have_tinfo=yes])
-AM_CONDITIONAL([HAVE_TINFO], [test "x$have_tinfo" = xyes])
+AS_IF([test "x$have_tinfo" = xyes], [
+  TINFO_LIBS="-ltinfo"
+])
+AC_SUBST([TINFO_LIBS])
 
 
 AC_ARG_WITH([utempter],

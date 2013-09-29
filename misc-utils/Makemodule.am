@@ -10,19 +10,11 @@ if !HAVE_LANGINFO
 cal_SOURCES += lib/langinfo.c
 endif
 
-cal_LDADD = $(LDADD) libcommon.la
-
-if HAVE_TINFO
-cal_LDADD += -ltinfo @NCURSES_LIBS@
-else
-if HAVE_NCURSES
-cal_LDADD += @NCURSES_LIBS@
-else
+cal_CFLAGS = $(AM_CFLAGS) $(NCURSES_CFLAGS)
+cal_LDADD = $(LDADD) libcommon.la $(NCURSES_LIBS) $(TINFO_LIBS)
 if HAVE_TERMCAP
 cal_LDADD += -ltermcap
 endif
-endif # !HAVE_NCURSES
-endif # !HAVE_TINFO
 
 
 usrbin_exec_PROGRAMS += logger

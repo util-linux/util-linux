@@ -56,7 +56,7 @@ if BUILD_CFDISK
 sbin_PROGRAMS += cfdisk
 dist_man_MANS += fdisks/cfdisk.8
 cfdisk_SOURCES = fdisks/cfdisk.c
-cfdisk_CFLAGS =
+cfdisk_CFLAGS = $(AM_CFLAGS)
 cfdisk_LDADD = $(LDADD) libcommon.la
 
 if BUILD_LIBBLKID
@@ -67,9 +67,8 @@ endif
 if HAVE_SLANG
 cfdisk_LDADD += -lslang
 else
-if HAVE_NCURSES
-cfdisk_LDADD += @NCURSES_LIBS@
-endif
+cfdisk_CFLAGS += $(NCURSES_CFLAGS)
+cfdisk_LDADD += $(NCURSES_LIBS)
 endif
 endif # BUILD_CFDISK
 
