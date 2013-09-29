@@ -1421,20 +1421,14 @@ AS_IF([test "x$with_python" != xno], [
   # (minimal version is 2) but if major version is explicitly specified by
   # --with-python=2 or --with-python=3 then we look for PKG module "python2" or
   # "python3".
-  pymajor="2"
-  modname="python"
-  AS_IF([test "x$withval" != xno -a "x$withval" != xyes], [
-    pymajor="$withval"
-    modname="python${pymajor}"
-  ])
-  PKG_CHECK_MODULES(PYTHON,[${modname} >= $pymajor],
-		           [have_python=yes
-			    AM_PATH_PYTHON([$pymajor])],
-			   [have_python=no])
+  AS_IF([test "x$withval" != xno -a "x$withval" != xyes],
+	[pymajor="$withval"; PYTHON=python${pymajor}], [pymajor="2"])
+  AM_PATH_PYTHON([$pymajor], [have_python=yes], [have_python=no])
   AS_CASE([$with_python:$have_python],
     [yes:no],
-      [AC_MSG_ERROR([python selected but libpython not found])],
+      [AC_MSG_ERROR([python selected but libpython not found])]
   )
+  PKG_CHECK_MODULES([PYTHON], [python-$PYTHON_VERSION])
 
   UL_BUILD_INIT([pylibmount], [check])
   UL_REQUIRES_HAVE([pylibmount], [python], [libpython])
@@ -1576,7 +1570,8 @@ AC_MSG_RESULT([
 	ldflags:           ${LDFLAGS}
 	suid ldflags:      ${SUID_LDFLAGS}
 
-	Python:            ${PYTHON_VERSION}
+	Python:            ${PYTHON}
+	Python version:    ${PYTHON_VERSION}
 	Python libs:       ${pyexecdir}
 
 	Bash completions:  ${with_bashcompletiondir}
