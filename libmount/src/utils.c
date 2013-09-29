@@ -849,6 +849,8 @@ int mnt_open_uniq_filename(const char *filename, char **name)
 	oldmode = umask(S_IRGRP|S_IWGRP|S_IXGRP|
 			S_IROTH|S_IWOTH|S_IXOTH);
 	fd = mkostemp(n, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
+	if (fd < 0)
+		fd = -errno;
 	umask(oldmode);
 
 	if (fd >= 0 && name)
@@ -856,7 +858,7 @@ int mnt_open_uniq_filename(const char *filename, char **name)
 	else
 		free(n);
 
-	return fd < 0 ? -errno : fd;
+	return fd;
 }
 
 /**
