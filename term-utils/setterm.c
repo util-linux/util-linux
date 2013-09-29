@@ -100,16 +100,17 @@
 #include <termios.h>
 #include <string.h>
 #include <fcntl.h>
+
 #ifndef NCURSES_CONST
 #define NCURSES_CONST const	/* define before including term.h */
 #endif
-#include <term.h>
-
 #ifdef HAVE_NCURSES_H
 #include <ncurses.h>
 #elif defined(HAVE_NCURSES_NCURSES_H)
 #include <ncurses/ncurses.h>
 #endif
+/* must include after ncurses.h */
+#include <term.h>
 
 #include <sys/param.h>		/* for MAXPATHLEN */
 #include <sys/ioctl.h>
