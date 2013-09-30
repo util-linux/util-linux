@@ -1251,7 +1251,7 @@ static int dos_add_partition(
 			rc = add_logical(cxt);
 		} else
 			fdisk_info(cxt, _("If you want to create more than "
-				"four partitions, you must replace a"
+				"four partitions, you must replace a "
 				"primary partition with an extended "
 				"partition first."));
 
@@ -1585,7 +1585,7 @@ static int dos_list_disklabel(struct fdisk_context *cxt)
 
 	if (is_garbage_table(cxt)) {
 		fdisk_warnx(cxt, _(
-			"This doesn't look like a partition table "
+			"This doesn't look like a partition table. "
 			"Probably you selected the wrong device."));
 	}
 

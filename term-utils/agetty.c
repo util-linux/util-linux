@@ -667,7 +667,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 				else if (strcmp(optarg, "=auto") == 0)
 					op->clocal = CLOCAL_MODE_AUTO;
 				else
-					log_err(_("unssuported --local-line mode argument"));
+					log_err(_("unsupported --local-line mode argument"));
 			}
 			break;
 		case 'm':

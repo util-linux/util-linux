@@ -1479,7 +1479,7 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 	}
 	if (le64_to_cpu(gpt->pheader->alternative_lba) >= cxt->total_sectors) {
 		nerror++;
-		fdisk_warnx(cxt, _("Disk is to small to hold all data."));
+		fdisk_warnx(cxt, _("Disk is too small to hold all data."));
 	}
 
 	/*
@@ -1529,7 +1529,9 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 			 "(largest %ld)."),
 		       free_sectors, nsegments, largest_segment);
 	} else
-		fdisk_warnx(cxt, _("Detected %d error(s)."), nerror);
+		fdisk_warnx(cxt,
+			P_("%d error detected.", "%s errors detected", nerror),
+			nerror);
 
 	return 0;
 }

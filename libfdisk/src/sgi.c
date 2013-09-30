@@ -973,10 +973,10 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 		} else {
 			/* otherwise print error and use truncated version */
 			fdisk_warnx(cxt,
-				_("Warning:  BLKGETSIZE ioctl failed on %s.  "
-				  "Using geometry cylinder value of %llu."
-				  "This value may be truncated for devices"
-				  " > 33.8 GB."), cxt->dev_path, cxt->geom.cylinders);
+				_("Warning:  BLKGETSIZE ioctl failed on %s. "
+				  "Using geometry cylinder value of %llu. "
+				  "This value may be truncated for devices "
+				  "> 33.8 GB."), cxt->dev_path, cxt->geom.cylinders);
 		}
 	}
 #endif
