@@ -40,6 +40,7 @@ _nsenter_module()
 			return 0
 			;;
 	esac
+	local IFS=$'\n'
 	compopt -o filenames
 	COMPREPLY=( $(compgen -f -- $cur) )
 	return 0

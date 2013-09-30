@@ -6,6 +6,7 @@ _blkid_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-c')
+			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -f -- $cur) )
 			return 0

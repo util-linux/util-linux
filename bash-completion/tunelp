@@ -44,6 +44,7 @@ _tunelp_module()
 			return 0
 			;;
 	esac
+	local IFS=$'\n'
 	compopt -o filenames
 	COMPREPLY=( $(compgen -f -- ${cur:-"/dev/lp"}) )
 	return 0

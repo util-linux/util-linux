@@ -42,6 +42,7 @@ _ldattach_module()
 			return 0
 			;;
 		/*)
+			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -f -- $cur) )
 			return 0

@@ -14,6 +14,7 @@ _sfdisk_module()
 			return 0
 			;;
 		'-O'|'-I')
+			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -f -- $cur) )
 			return 0

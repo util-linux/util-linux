@@ -45,6 +45,7 @@ _setterm_module()
 			return 0
 			;;
 		'-file')
+			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -f -- $cur) )
 			return 0

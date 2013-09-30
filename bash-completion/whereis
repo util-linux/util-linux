@@ -6,6 +6,7 @@ _whereis_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-B'|'-M'|'-S')
+			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -o dirnames -- ${cur:-"/"}) )
 			return 0

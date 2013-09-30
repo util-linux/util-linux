@@ -24,6 +24,7 @@ _rename_module()
 			COMPREPLY=( $(compgen -W "replacement" -- $cur) )
 			;;
 		*)
+			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -f -- $cur) )
 			;;

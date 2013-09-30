@@ -11,6 +11,7 @@ _pivot_root_module()
 	esac
 	case $COMP_CWORD in
 		1|2)
+			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -o dirnames -- ${cur:-"/"}) )
 			;;

@@ -6,16 +6,19 @@ _uuidd_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-p'|'--pid'|'-s'|'--socket')
+			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -f -- $cur) )
 			return 0
 			;;
 		'-T'|'--timeout')
+			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -W "timeout" -- $cur) )
 			return 0
 			;;
 		'-n'|'--uuids')
+			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -W "number" -- $cur) )
 			return 0

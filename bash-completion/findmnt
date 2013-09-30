@@ -18,6 +18,7 @@ _findmnt_module()
 			return 0
 			;;
 		'-F'|'--tab-file')
+			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -f -- $cur) )
 			return 0

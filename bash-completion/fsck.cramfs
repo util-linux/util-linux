@@ -6,6 +6,7 @@ _fsck.cramfs_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-x'|'--destination')
+			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -o dirnames -- ${cur:-"/"}) )
 			return 0
