@@ -31,6 +31,8 @@
 #define	_PATH_HUSHLOGIN		".hushlogin"
 #define	_PATH_HUSHLOGINS	"/etc/hushlogins"
 
+#define _PATH_NOLOGIN_TXT	"/etc/nologin.txt"
+
 #ifndef _PATH_MAILDIR
 #define	_PATH_MAILDIR		"/var/spool/mail"
 #endif

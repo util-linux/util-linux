@@ -130,6 +130,7 @@ tests/run.sh.trs
 /mountpoint
 /namei
 /newgrp
+/nologin
 /nsenter
 /partx
 /pg

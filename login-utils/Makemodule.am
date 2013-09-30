@@ -60,6 +60,13 @@ endif
 endif # BUILD_LOGIN
 
 
+if BUILD_NOLOGIN
+sbin_PROGRAMS += nologin
+dist_man_MANS += login-utils/nologin.8
+nologin_SOURCES = login-utils/nologin.c
+endif
+
+
 if BUILD_UTMPDUMP
 usrbin_exec_PROGRAMS += utmpdump
 dist_man_MANS += login-utils/utmpdump.1

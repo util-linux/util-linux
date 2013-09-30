@@ -1211,6 +1211,14 @@ AS_IF([test "x$enable_login_stat_mail" = xyes], [
 ])
 
 
+AC_ARG_ENABLE([nologin],
+  AS_HELP_STRING([--disable-nologin], [do not build nologin]),
+  [], [enable_nologin=yes]
+)
+UL_BUILD_INIT([nologin])
+AM_CONDITIONAL([BUILD_NOLOGIN], [test "x$build_nologin" = xyes])
+
+
 AC_ARG_ENABLE([sulogin],
   AS_HELP_STRING([--disable-sulogin], [do not build sulogin]),
   [], [enable_sulogin=yes]

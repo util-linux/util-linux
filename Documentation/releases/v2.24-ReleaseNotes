@@ -61,6 +61,10 @@ wipefs(8):
   - supports new command line option --backup to backup erased data to
     $HOME/wipefs-<devname>-<offset>.bak
 
+nologin(8):
+  - this command has been merged into util-linux, the command politely
+    refuse a login.
+
 
 Stable maintenance releases between v2.23 and v2.24
 ---------------------------------------------------
