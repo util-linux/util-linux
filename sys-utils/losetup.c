@@ -387,7 +387,7 @@ static void usage(FILE *out)
 
 	fputs(_(" -l, --list                    list info about all or specified\n"), out);
 	fputs(_(" -O, --output <cols>           specify columns to output for --list\n"), out);
-	fputs(_(" -n, --noheadings              don't print headings for --list ouput\n"), out);
+	fputs(_(" -n, --noheadings              don't print headings for --list output\n"), out);
 	fputs(_("     --raw                     use raw --list output format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);

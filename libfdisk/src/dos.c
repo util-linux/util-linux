@@ -1421,7 +1421,7 @@ static int dos_set_parttype(
 
 	if (is_dos_partition(t->type) || is_dos_partition(p->sys_ind))
 	    fdisk_info(cxt, _("If you have created or modified any DOS 6.x "
-		"partitions, please see the fdisk documantation for additional "
+		"partitions, please see the fdisk documentation for additional "
 		"information."));
 
 	p->sys_ind = t->type;
