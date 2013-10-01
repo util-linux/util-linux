@@ -440,10 +440,14 @@ static void load_fs_info(void)
 	if (mnt_table_parse_fstab(fstab, path)) {
 		if (!path)
 			path = mnt_get_fstab_path();
-		if (errno)
-			warn(_("%s: failed to parse fstab"), path);
-		else
-			warnx(_("%s: failed to parse fstab"), path);
+
+		/* don't print error when there is no fstab at all */
+		if (access(path, F_OK) == 0) {
+			if (errno)
+				warn(_("%s: failed to parse fstab"), path);
+			else
+				warnx(_("%s: failed to parse fstab"), path);
+		}
 	}
 }
 
