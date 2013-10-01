@@ -854,8 +854,7 @@ static PyObject *Context_get_fstab(ContextObjext *self)
 {
 	struct libmnt_table *tab = NULL;
 
-	mnt_context_get_fstab(self->cxt, &tab);
-	if (!tab)
+	if (mnt_context_get_fstab(self->cxt, &tab) != 0 || !tab)
 		return NULL;
 	return PyObjectResultTab(tab);
 }
@@ -864,7 +863,8 @@ static PyObject *Context_get_mtab(ContextObjext *self)
 {
 	struct libmnt_table *tab = NULL;
 
-	mnt_context_get_mtab(self->cxt, &tab);
+	if (mnt_context_get_mtab(self->cxt, &tab) != 0 || !tab)
+		return NULL;
 	return PyObjectResultTab(tab);
 }
 
