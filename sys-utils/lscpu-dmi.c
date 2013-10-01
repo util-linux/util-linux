@@ -213,6 +213,8 @@ static int address_from_efi(size_t *address)
 	ret = EFI_NO_SMBIOS;
 	while ((fgets(linebuf, sizeof(linebuf) - 1, tab)) != NULL) {
 		char *addrp = strchr(linebuf, '=');
+		if (!addrp)
+			continue;
 		*(addrp++) = '\0';
 		if (strcmp(linebuf, "SMBIOS") == 0) {
 			*address = strtoul(addrp, NULL, 0);
