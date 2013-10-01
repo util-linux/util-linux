@@ -623,7 +623,8 @@ static void process_wtmp_file(const struct last_control *ctl)
 	if (uread(ctl, fp, &ut, NULL) == 1)
 		begintime = ut.UL_UT_TIME;
 	else {
-		fstat(fileno(fp), &st);
+		if (fstat(fileno(fp), &st) != 0)
+			err(EXIT_FAILURE, _("stat failed %s"), ctl->altv[ctl->alti]);
 		begintime = st.st_ctime;
 		quit = 1;
 	}
