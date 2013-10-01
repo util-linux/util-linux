@@ -39,7 +39,8 @@ static PyObject *Fs_get_tag(FsObject *self)
 	const char *tag = NULL, *val = NULL;
 	PyObject *result;
 
-	mnt_fs_get_tag(self->fs, &tag, &val);
+	if (mnt_fs_get_tag(self->fs, &tag, &val) != 0)
+		return NULL;
 
 	result = Py_BuildValue("(ss)", tag, val);
 	if (!result)
