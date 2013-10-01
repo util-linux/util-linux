@@ -640,6 +640,12 @@ int mnt_table_replace_file(struct libmnt_table *tb, const char *filename)
 
 		mnt_table_write_file(tb, f);
 
+		if (fflush(f) != 0) {
+			rc = -errno;
+			DBG(UPDATE, mnt_debug("%s: fflush failed: %m", uq));
+			goto leave;
+		}
+
 		rc = fchmod(fd, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) ? -errno : 0;
 
 		if (!rc && stat(filename, &st) == 0)
@@ -647,19 +653,25 @@ int mnt_table_replace_file(struct libmnt_table *tb, const char *filename)
 			rc = fchown(fd, st.st_uid, st.st_gid) ? -errno : 0;
 
 		fclose(f);
+		f = NULL;
+
 		if (!rc)
-			rename(uq, filename);
+			rc = rename(uq, filename) ? -errno : 0;
 	} else {
 		rc = -errno;
 		close(fd);
 	}
 
+leave:
+	if (f)
+		fclose(f);
 	unlink(uq);
 	free(uq);
 
 	DBG(TAB, mnt_debug_h(tb, "replace done [rc=%d]", rc));
 	return rc;
 }
+
 static int add_file_entry(struct libmnt_table *tb, struct libmnt_update *upd)
 {
 	struct libmnt_fs *fs;
