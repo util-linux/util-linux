@@ -38,7 +38,7 @@ int append_string(char **a, const char *b)
 	}
 
 	al = strlen(*a);
-	bl = b ? strlen(b) : 0;
+	bl = strlen(b);
 
 	tmp = realloc(*a, al + bl + 1);
 	if (!tmp)
