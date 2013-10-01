@@ -155,11 +155,12 @@ static int hypervisor_from_dmi_table(uint32_t base, uint16_t len,
 		data = next;
 		i++;
 	}
-	if (!strcmp(manufacturer, "innotek GmbH"))
+	if (manufacturer && !strcmp(manufacturer, "innotek GmbH"))
 		return HYPER_INNOTEK;
-	else if (strstr(manufacturer, "HITACHI") && strstr(product, "LPAR"))
+	else if (manufacturer && strstr(manufacturer, "HITACHI") &&
+					product && strstr(product, "LPAR"))
 		return HYPER_HITACHI;
-	else if (!strcmp(vendor, "Parallels"))
+	else if (!vendor && strcmp(vendor, "Parallels"))
 		return HYPER_PARALLELS;
 
 	free(buf);
