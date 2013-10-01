@@ -673,11 +673,7 @@ int main(int argc, char **argv)
 			/* errors */
 			errpre = hasdev && loopcxt_get_fd(&lc) < 0 ?
 					 loopcxt_get_device(&lc) : file;
-			if (errno == ERANGE && offset && offset % 512)
-				warnx(_("%s: failed to set up loop device, "
-					"offset is not 512-byte aligned."), errpre);
-			else
-				warn(_("%s: failed to set up loop device"), errpre);
+			warn(_("%s: failed to set up loop device"), errpre);
 			break;
 		} while (hasdev == 0);
 

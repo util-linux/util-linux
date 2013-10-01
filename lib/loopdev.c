@@ -1129,6 +1129,12 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
 		return -errno;
 	}
 
+	/* It's block device, so, align to 512-byte sectors */
+	if (expected_size % 512) {
+		DBG(lc, loopdev_debug("expected size misaligned to 512-byte sectors"));
+		expected_size = (expected_size >> 9) << 9;
+	}
+
 	if (expected_size != size) {
 		DBG(lc, loopdev_debug("warning: loopdev and expected "
 				      "size dismatch (%ju/%ju)",
