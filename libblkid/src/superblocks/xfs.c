@@ -92,7 +92,7 @@ struct xlog_rec_header {
 
 static int xlog_valid_rec_header(struct xlog_rec_header *rhead)
 {
-	int hlen;
+	uint32_t hlen;
 
 	if (rhead->h_magicno != cpu_to_be32(XLOG_HEADER_MAGIC_NUM))
 		return 0;
