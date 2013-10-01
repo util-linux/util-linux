@@ -199,7 +199,7 @@ static FILE *dump(FILE *in, const char *filename, int follow, FILE *out)
 	struct utmp ut;
 
 	if (follow)
-		fseek(in, -10 * sizeof(ut), SEEK_END);
+		ignore_result( fseek(in, -10 * sizeof(ut), SEEK_END) );
 
 	while (fread(&ut, sizeof(ut), 1, in) == 1)
 		print_utline(ut, out);
