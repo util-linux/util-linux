@@ -630,7 +630,7 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		char buf[BUFSIZ];
 		char *val = NULL;
 
-		fd = path_fopen("r", 0, _PATH_PROC_STATUS);
+		fd = path_fopen("r", 1, _PATH_PROC_STATUS);
 		while (fgets(buf, sizeof(buf), fd) != NULL) {
 			if (lookup(buf, "VxID", &val))
 				break;

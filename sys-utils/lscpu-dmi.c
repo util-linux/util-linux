@@ -55,24 +55,26 @@ static int checksum(const uint8_t *buf, size_t len)
 
 static void *get_mem_chunk(size_t base, size_t len, const char *devmem)
 {
-	void *p;
+	void *p = NULL;
 	int fd;
 
-	if ((fd = open(devmem, O_RDONLY)) == -1)
+	if ((fd = open(devmem, O_RDONLY)) < 0)
 		return NULL;
-	if ((p = malloc(len)) == NULL)
-		return NULL;
-	if (lseek(fd, base, SEEK_SET) == -1) {
-		free(p);
-		return NULL;
-	}
-	if (read_all(fd, p, len) == -1) {
-		free(p);
-		return NULL;
-	}
+
+	if (!(p = malloc(len)))
+		goto nothing;
+	if (lseek(fd, base, SEEK_SET) == -1)
+		goto nothing;
+	if (read_all(fd, p, len) == -1)
+		goto nothing;
 
 	close(fd);
 	return p;
+
+nothing:
+	free(p);
+	close(fd);
+	return NULL;
 }
 
 static void to_dmi_header(struct dmi_header *h, uint8_t *data)
@@ -107,16 +109,17 @@ static char *dmi_string(const struct dmi_header *dm, uint8_t s)
 static int hypervisor_from_dmi_table(uint32_t base, uint16_t len,
 				uint16_t num, const char *devmem)
 {
-	uint8_t *buf = NULL;
+	uint8_t *buf;
 	uint8_t *data;
 	int i = 0;
 	char *vendor = NULL;
 	char *product = NULL;
 	char *manufacturer = NULL;
+	int rc = HYPER_NONE;
 
-	if ((buf = get_mem_chunk(base, len, devmem)) == NULL)
-		return HYPER_NONE;
-	data = buf;
+	data = buf = get_mem_chunk(base, len, devmem);
+	if (!buf)
+		goto done;
 
 	 /* 4 is the length of an SMBIOS structure header */
 	while (i < num && data + 4 <= buf + len) {
@@ -130,10 +133,8 @@ static int hypervisor_from_dmi_table(uint32_t base, uint16_t len,
 		 * is invalid, but we cannot reliably locate the next entry.
 		 * Better stop at this point.
 		 */
-		if (h.length < 4) {
-			free(data);
-			return HYPER_NONE;
-		}
+		if (h.length < 4)
+			goto done;
 
 		/* look for the next handle */
 		next = data + h.length;
@@ -156,15 +157,15 @@ static int hypervisor_from_dmi_table(uint32_t base, uint16_t len,
 		i++;
 	}
 	if (manufacturer && !strcmp(manufacturer, "innotek GmbH"))
-		return HYPER_INNOTEK;
+		rc = HYPER_INNOTEK;
 	else if (manufacturer && strstr(manufacturer, "HITACHI") &&
 					product && strstr(product, "LPAR"))
-		return HYPER_HITACHI;
+		rc = HYPER_HITACHI;
 	else if (!vendor && strcmp(vendor, "Parallels"))
-		return HYPER_PARALLELS;
-
+		rc = HYPER_PARALLELS;
+done:
 	free(buf);
-	return HYPER_NONE;
+	return rc;
 }
 
 static int hypervisor_decode_legacy(uint8_t *buf, const char *devmem)
@@ -229,7 +230,7 @@ static int address_from_efi(size_t *address)
 
 int read_hypervisor_dmi(void)
 {
-	int ret = HYPER_NONE;
+	int rc = HYPER_NONE;
 	uint8_t *buf = NULL;
 	size_t fp = 0;
 
@@ -237,41 +238,45 @@ int read_hypervisor_dmi(void)
 	    || sizeof(uint16_t) != 2
 	    || sizeof(uint32_t) != 4
 	    || '\0' != 0)
-		return ret;
+		return rc;
 
 	/* First try EFI (ia64, Intel-based Mac) */
 	switch (address_from_efi(&fp)) {
 		case EFI_NOT_FOUND:
 			goto memory_scan;
 		case EFI_NO_SMBIOS:
-			goto exit_free;
+			goto done;
 	}
 
 	buf = get_mem_chunk(fp, 0x20, _PATH_DEV_MEM);
 	if (!buf)
-		goto exit_free;
-
-	if (hypervisor_decode_smbios(buf, _PATH_DEV_MEM))
 		goto done;
+
+	rc = hypervisor_decode_smbios(buf, _PATH_DEV_MEM);
+	if (rc)
+		goto done;
+	free(buf);
 
 memory_scan:
 	/* Fallback to memory scan (x86, x86_64) */
 	buf = get_mem_chunk(0xF0000, 0x10000, _PATH_DEV_MEM);
 	if (!buf)
-		goto exit_free;
+		goto done;
 
 	for (fp = 0; fp <= 0xFFF0; fp += 16) {
 		if (memcmp(buf + fp, "_SM_", 4) == 0 && fp <= 0xFFE0) {
-			if ((ret = hypervisor_decode_smbios(buf + fp,
-						 _PATH_DEV_MEM)) == -1)
+			rc = hypervisor_decode_smbios(buf + fp, _PATH_DEV_MEM);
+			if (rc == -1)
 				fp += 16;
 
 		} else if (memcmp(buf + fp, "_DMI_", 5) == 0)
-			ret = hypervisor_decode_legacy(buf + fp, _PATH_DEV_MEM);
+			rc = hypervisor_decode_legacy(buf + fp, _PATH_DEV_MEM);
+
+		if (rc >= 0)
+			break;
 	}
 
 done:
 	free(buf);
-exit_free:
-	return ret;
+	return rc;
 }
