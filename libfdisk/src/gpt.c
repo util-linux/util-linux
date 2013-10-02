@@ -1727,11 +1727,14 @@ static int gpt_add_partition(
 				     user_f, user_l, &typeid, ents) != 0)
 		fdisk_warnx(cxt, _("Could not create partition %zd"), partnum + 1);
 	else {
+		struct fdisk_parttype *t;
+
 		cxt->label->nparts_cur++;
 		fdisk_label_set_changed(cxt->label, 1);
-		fdisk_info_new_partition(cxt, partnum + 1,
-				user_f, user_l,
-				gpt_get_partition_type(cxt, partnum));
+
+		t = gpt_get_partition_type(cxt, partnum);
+		fdisk_info_new_partition(cxt, partnum + 1, user_f, user_l, t);
+		fdisk_free_parttype(t);
 	}
 
 	rc = 0;
