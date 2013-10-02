@@ -15,16 +15,6 @@ bash completion
 - Comma separated value, e.g., --output 'value1,value2', are not
   completed for users.
 
-wipefs
-------
- - generate /root/wipefs-<devname>-<offset>.bak with wiped bytes, so after 
-   mistake user can use dd(1) to restore erased stuff
-
-lscpu
------
-  - detect more hypervisors, see 'virt-what' shell script
-    http://people.redhat.com/~rjones/virt-what/
-
 libmount (mount/umount)
 -----------------------
 
@@ -39,14 +29,6 @@ libmount (mount/umount)
    --options-source-force                              MNT_OMODE_FORCE
 
    (all this already supported by libmount)
-
- - (!) on systems with regular mtab file it is impossible to umount by "umount
-   /dev/loop0" if the loop device has been created by "mount -o loop", because
-   there is backing file in the mtab (instead of the device name). 
-
-   Now we have all necessary information in /sysfs so it should be possible to
-   translate the device name to backing file and then search in mtab for the 
-   filename. See loopdev_get_loopfile().
 
 partx
 -----
@@ -68,6 +50,7 @@ lib/tt.c
 --------
 
  - allows to sort columns, for example sort lsblk(8) output by SIZE
+ - support colors (per column, per line, per field)
 
 login-utils:
 -----------
@@ -85,8 +68,6 @@ login-utils:
 libblkid
 --------
 
- - improve DBG() debug macro, see new imeplemntation in libmount/src/mountP.h
-
  - (!) don't use internally blkid_loff_t, rather use off_t, size_t, ssize_t,
        stdint.h types and so on...
 
@@ -96,6 +77,9 @@ libblkid
 
 fdisk(s)
 --------
+
+ - (!) add 'I'nfo fommand to print all details about specified partition
+   (like offset, size, name, uuid, type, C/H/S, fstype)
 
  - add to "First sector" dialog a line with information about available
    gaps (free areas) to make it more user friendly if you want to skip
@@ -108,11 +92,6 @@ fdisk(s)
 
  - sfdisk rounds to cylinders is -uM (megabyte units) is specified, this is
    pretty stupid feature. It has to round to sectors if -uS or -uM is specified.
-
- - Sun label support is completely useless for large disks, it uses number of
-   cylinders from on-disk-label where the geometry is stored by int16 values.
-   It seems better to completely ignore this stuff from the label and always
-   use geometry + BLKGETSIZE64 from kernel.
 
  - use off_t instead "long long"
 
