@@ -288,6 +288,8 @@ create_watching_parent (void)
   else
     _pam_session_opened = 1;
 
+  memset(oldact, 0, sizeof(oldact));
+
   child = fork ();
   if (child == (pid_t) -1)
     {
@@ -408,6 +410,9 @@ create_watching_parent (void)
           sigaction(SIGQUIT, &oldact[2], NULL);
           break;
         default:
+	  /* just in case that signal stuff initialization failed and
+	   * caught_signal = true */
+          caught_signal = SIGKILL;
           break;
       }
       kill(0, caught_signal);
