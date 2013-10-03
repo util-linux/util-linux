@@ -161,7 +161,7 @@ struct menu menu_sun = {
 	.label = FDISK_DISKLABEL_SUN,
 	.entries = {
 		MENU_BSEP(N_("Sun")),
-		MENU_ENT('a', N_("toggle a read only flag")),
+		MENU_ENT('a', N_("toggle the read-only flag")),
 		MENU_ENT('c', N_("toggle the mountable flag")),
 
 		MENU_XENT('a', N_("change number of alternate cylinders")),
@@ -458,7 +458,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		if (rc)
 			fdisk_warnx(cxt, _("Could not delete partition %d"), n + 1);
 		else
-			fdisk_info(cxt, _("Partition %d is deleted"), n + 1);
+			fdisk_info(cxt, _("Partition %d has been deleted."), n + 1);
 		break;
 	case 'l':
 		list_partition_types(cxt);
@@ -569,7 +569,7 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 				fdisk_free_context(bsd);
 			else {
 				*cxt0 = cxt = bsd;
-				fdisk_info(cxt, _("Entering nested BSD disklabel"));
+				fdisk_info(cxt, _("Entering nested BSD disklabel."));
 			}
 			break;
 		}
