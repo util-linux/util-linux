@@ -124,7 +124,7 @@
 #include "nls.h"
 #include "closestream.h"
 
-#if __GNU_LIBRARY__ < 5
+#if defined(__GNU_LIBRARY__) && __GNU_LIBRARY__ < 5
 #ifndef __alpha__
 # include <linux/unistd.h>
 #define __NR_klogctl __NR_syslog
