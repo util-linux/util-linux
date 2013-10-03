@@ -144,14 +144,14 @@ Control the CLOCAL line flag.  The optional \fImode\fP argument is 'auto', 'alwa
 If the \fImode\fP argument is omitted, then the default is 'always'.  If the
 \-\-local\-line option is not given at all, then the default is 'auto'.
 
-The \fImode\fP 'always' forces the line to be a local line with no need for carrier detect. This can
-be useful when you have a locally attached terminal where the serial line
+The \fImode\fP 'always' forces the line to be a local line with no need for carrier detect.
+This can be useful when you have a locally attached terminal where the serial line
 does not set the carrier-detect signal.
 
-The \fImode\fP 'never' explicitly clears CLOCAL flags from line setting and
+The \fImode\fP 'never' explicitly clears the CLOCAL flag from the line setting and
 the carrier-detect signal is expected on the line.
 
-The \fImode\fP 'auto' (agetty default) does not modify CLOCAL setting
+The \fImode\fP 'auto' (agetty default) does not modify the CLOCAL setting
 and follows the setting enabled by the kernel.
 .TP
 \-m, \-\-extract\-baud
