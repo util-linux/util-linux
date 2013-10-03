@@ -456,12 +456,6 @@ static int do_monthly(int day, int month, long year,
 
 	day_array(day, month, year, days);
 
-	/*
-	 * %s is the month name, %d the year number.
-	 * you can change the order and/or add something here; eg for
-	 * Basque the translation should be: "%2$dko %1$s", and
-	 * the Vietnamese should be "%s na(m %d", etc.
-	 */
 	if (header_hint < 0)
 		header_hint = two_header_lines(month, year);
 	if (header_hint) {
@@ -472,6 +466,10 @@ static int do_monthly(int day, int month, long year,
 		center_str(lineout, out->s[pos], ARRAY_SIZE(out->s[pos]), width);
 		pos++;
 	} else {
+		/* TRANSLATORS: %s is the month name, %ld the year number.
+		 * You can change the order and/or add something here;
+		 * e.g. for Basque the translation should be "%2$ldko %1$s",
+		 * and the Vietnamese should be "%s năm %d", and so on. */
 		snprintf(lineout, sizeof(lineout), _("%s %ld"),
 			full_month[month - 1], year);
 		center_str(lineout, out->s[pos], ARRAY_SIZE(out->s[pos]), width);
