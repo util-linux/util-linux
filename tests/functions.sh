@@ -245,7 +245,7 @@ function ts_init_suid {
 function ts_init_py {
 	LIBNAME="$1"
 
-	[ -f "$TS_TOPDIR/../$LIBNAME.la" ] || ts_skip "py$LIBNAME not compiled"
+	[ -f "$TS_TOPDIR/../py${LIBNAME}.la" ] || ts_skip "py${LIBNAME} not compiled"
 
 	export LD_LIBRARY_PATH="$TS_TOPDIR/../.libs"
 	export PYTHONPATH="$TS_TOPDIR/../$LIBNAME/python:$TS_TOPDIR/../.libs"
