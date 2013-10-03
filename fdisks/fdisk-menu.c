@@ -413,7 +413,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 	case 'w':
 		rc = fdisk_write_disklabel(cxt);
 		if (rc)
-			err(EXIT_FAILURE, _("failed to write disk label"));
+			err(EXIT_FAILURE, _("failed to write disklabel"));
 		if (cxt->parent)
 			break; /* nested PT, don't leave */
 		fdisk_info(cxt, _("The partition table has been altered."));
@@ -486,7 +486,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		if (cxt->parent) {
 			*cxt0 = cxt->parent;
 
-			fdisk_info(cxt, _("Leaving nested disk label."));
+			fdisk_info(cxt, _("Leaving nested disklabel."));
 			fdisk_free_context(cxt);
 			cxt = *cxt0;
 		}
@@ -569,7 +569,7 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 				fdisk_free_context(bsd);
 			else {
 				*cxt0 = cxt = bsd;
-				fdisk_info(cxt, _("Entering to nested BSD disk label"));
+				fdisk_info(cxt, _("Entering nested BSD disklabel"));
 			}
 			break;
 		}

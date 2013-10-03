@@ -220,7 +220,7 @@ void list_disk_geometry(struct fdisk_context *cxt)
 		fdisk_colon(cxt, _("Alignment offset: %lu bytes"),
 				cxt->alignment_offset);
 	if (fdisk_dev_has_disklabel(cxt))
-		fdisk_colon(cxt, _("Disk label type: %s"), cxt->label->name);
+		fdisk_colon(cxt, _("Disklabel type: %s"), cxt->label->name);
 
 	if (fdisk_get_disklabel_id(cxt, &id) == 0 && id)
 		fdisk_colon(cxt, _("Disk identifier: %s"), id);

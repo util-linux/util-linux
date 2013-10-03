@@ -576,7 +576,7 @@ int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt)
 	for (p = dp; p < dp + sizeof(struct bsd_disklabel); p++) {
 		if (!*p)
 			continue;
-		fdisk_warnx(cxt, _("Bootstrap overlaps with disk label!"));
+		fdisk_warnx(cxt, _("Bootstrap overlaps with disklabel!"));
 		return -EINVAL;
 	}
 
