@@ -204,6 +204,7 @@ AC_CHECK_HEADERS([ \
 	sys/swap.h \
 	sys/syscall.h \
 	sys/time.h \
+	sys/ttydefaults.h \
 	sys/types.h \
 	sys/un.h \
 	unistd.h \

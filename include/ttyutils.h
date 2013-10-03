@@ -13,6 +13,9 @@
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
+#ifdef HAVE_SYS_TTYDEFAULTS_H
+#include <sys/ttydefaults.h>
+#endif
 
 /* Some shorthands for control characters. */
 #define CTL(x)		((x) ^ 0100)	/* Assumes ASCII dialect */
