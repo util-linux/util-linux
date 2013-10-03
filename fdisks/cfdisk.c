@@ -2760,7 +2760,7 @@ copyright(void) {
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
     fputs(USAGE_HEADER, out);
-    fprintf(out, _(" %s [options] device\n"), program_invocation_short_name);
+    fprintf(out, _(" %s [options] <device>\n"), program_invocation_short_name);
     fputs(USAGE_OPTIONS, out);
     fputs(_(" -c, --cylinders <number>  set the number of cylinders to use\n"), out);
     fputs(_(" -h, --heads <number>      set the number of heads to use\n"), out);
