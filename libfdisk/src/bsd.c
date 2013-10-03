@@ -749,12 +749,12 @@ static int bsd_write_disklabel(struct fdisk_context *cxt)
 	d->d_checksum = 0;
 	d->d_checksum = bsd_dkcksum(d);
 
-	/* Update label with in boot block. */
+	/* Update label within boot block. */
 	memmove(&l->bsdbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE
 			   + BSD_LABELOFFSET], d, sizeof(*d));
 
 #if defined (__alpha__) && BSD_LABELSECTOR == 0
-	/* write the check sum to the end of the first sector */
+	/* Write the checksum to the end of the first sector. */
 	alpha_bootblock_checksum(l->bsdbuffer);
 #endif
 	if (lseek(cxt->dev_fd, offset, SEEK_SET) == -1) {
