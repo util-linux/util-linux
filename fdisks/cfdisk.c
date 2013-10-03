@@ -324,7 +324,11 @@ int num_parts = 0;
 int logical = 0;
 long long logical_sectors[MAXIMUM_PARTS];
 
-__sighandler_t old_SIGINT, old_SIGTERM;
+#ifdef HAVE_SIGHANDLER_T
+sighandler_t old_SIGINT, old_SIGTERM;
+#else
+void (* old_SIGINT)(int), (* old_SIGTERM)(int);
+#endif
 
 int arrow_cursor = FALSE;
 int display_units = MEGABYTES;

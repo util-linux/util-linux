@@ -497,6 +497,10 @@ AC_CHECK_TYPES([cpu_set_t], [have_cpu_set_t=yes], [], [[
 
 AM_CONDITIONAL([HAVE_CPU_SET_T], [test "x$have_cpu_set_t" = xyes])
 
+AC_CHECK_TYPES([sighandler_t], [], [], [[
+#include <signal.h>
+]])
+
 AC_CHECK_DECLS([CPU_ALLOC], [], [], [[
 #include <sched.h>
 ]])
