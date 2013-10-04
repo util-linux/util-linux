@@ -541,8 +541,8 @@ static void setup_tables(void) {
 		err(MKFS_EX_ERROR, _("%s: unable to allocate buffer for inodes"),
 				device_name);
 	memset(inode_buffer,0, get_inode_buffer_size());
-	printf(_("%lu inodes\n"), inodes);
-	printf(_("%lu blocks\n"), zones);
+	printf(P_("%lu inode\n", "%lu inodes\n", inodes), inodes);
+	printf(P_("%lu block\n", "%lu blocks\n", zones), zones);
 	printf(_("Firstdatazone=%jd (%jd)\n"), get_first_zone(), first_zone_data());
 	printf(_("Zonesize=%zu\n"), (size_t) MINIX_BLOCK_SIZE << get_zone_size());
 	printf(_("Maxsize=%zu\n\n"),get_max_size());
@@ -614,10 +614,8 @@ static void check_blocks(void) {
 		badblocks++;
 		currently_testing++;
 	}
-	if (badblocks > 1)
-		printf(_("%d bad blocks\n"), badblocks);
-	else if (badblocks == 1)
-		printf(_("one bad block\n"));
+	if (badblocks > 0)
+		printf(P_("%d bad block\n", "%d bad blocks\n", badblocks), badblocks);
 }
 
 static void get_list_blocks(char *filename) {
@@ -640,10 +638,8 @@ static void get_list_blocks(char *filename) {
 	}
 	fclose(listfile);
 
-	if(badblocks > 1)
-		printf(_("%d bad blocks\n"), badblocks);
-	else if (badblocks == 1)
-		printf(_("one bad block\n"));
+	if (badblocks > 0)
+		printf(P_("%d bad block\n", "%d bad blocks\n", badblocks), badblocks);
 }
 
 int main(int argc, char ** argv) {
