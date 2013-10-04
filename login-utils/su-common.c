@@ -807,7 +807,9 @@ su_main (int argc, char **argv, int mode)
 	  num_supp_groups++;
 	  if (num_supp_groups >= NGROUPS_MAX)
 	     errx(EXIT_FAILURE,
-		  _("can't specify more than %d supplemental groups"),
+		  P_("specifying more than %d supplemental group is not possible",
+		     "specifying more than %d supplemental groups is not possible",
+		     NGROUPS_MAX - 1),
 		  NGROUPS_MAX - 1);
 	  gr = getgrnam(optarg);
 	  if (!gr)
