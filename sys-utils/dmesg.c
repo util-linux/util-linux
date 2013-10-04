@@ -115,7 +115,7 @@ static const struct dmesg_name facility_names[] =
 	[FAC_BASE(LOG_UUCP)]     = { "uucp",     N_("UUCP subsystem") },
 	[FAC_BASE(LOG_CRON)]     = { "cron",     N_("clock daemon") },
 	[FAC_BASE(LOG_AUTHPRIV)] = { "authpriv", N_("security/authorization messages (private)") },
-	[FAC_BASE(LOG_FTP)]      = { "ftp",      N_("ftp daemon") },
+	[FAC_BASE(LOG_FTP)]      = { "ftp",      N_("FTP daemon") },
 };
 
 /* supported methods to read message buffer

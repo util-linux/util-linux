@@ -257,8 +257,8 @@ static struct lscpu_coldesc coldescs[] =
 	[COL_ADDRESS]      = { "ADDRESS", N_("physical address of a CPU") },
 	[COL_CONFIGURED]   = { "CONFIGURED", N_("shows if the hypervisor has allocated the CPU") },
 	[COL_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU") },
-	[COL_MAXMHZ]	   = { "MAXMHZ", N_("shows the maximum mhz of the CPU") },
-	[COL_MINMHZ]	   = { "MINMHZ", N_("shows the minimum mhz of the CPU") }
+	[COL_MAXMHZ]	   = { "MAXMHZ", N_("shows the maximum MHz of the CPU") },
+	[COL_MINMHZ]	   = { "MINMHZ", N_("shows the minimum MHz of the CPU") }
 };
 
 static int
