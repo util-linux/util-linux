@@ -53,7 +53,7 @@ if BUILD_PG
 usrbin_exec_PROGRAMS += pg
 dist_man_MANS += text-utils/pg.1
 pg_SOURCES = text-utils/pg.c
-pg_CFLAGS = $(AM_CFLAGS) $(BSD_WARN_CFLAGS) $(NCURSES_CFLAGS)
+pg_CFLAGS = $(AM_CFLAGS) $(BSD_WARN_CFLAGS) $(NCURSES_CFLAGS) $(TINFO_CFLAGS)
 pg_LDADD = $(LDADD) libcommon.la $(NCURSES_LIBS) $(TINFO_LIBS)
 endif # BUILD_PG
 
@@ -62,8 +62,15 @@ if BUILD_UL
 usrbin_exec_PROGRAMS += ul
 dist_man_MANS += text-utils/ul.1
 ul_SOURCES = text-utils/ul.c
-ul_CFLAGS = $(AM_CFLAGS) $(NCURSES_CFLAGS)
-ul_LDADD = $(LDADD) $(NCURSES_LIBS) $(TINFO_LIBS)
+ul_CFLAGS = $(AM_CFLAGS)
+ul_LDADD = $(LDADD)
+if HAVE_TINFO
+ul_LDADD += $(TINFO_LIBS)
+ul_LDADD += $(TINFO_CFLAGS)
+else
+ul_CFLAGS += $(NCURSES_CFLAGS)
+ul_LDADD += $(NCURSES_LIBS)
+endif
 endif # BUILD_UL
 
 
@@ -71,8 +78,16 @@ if BUILD_MORE
 bin_PROGRAMS += more
 dist_man_MANS += text-utils/more.1
 more_SOURCES = text-utils/more.c
-more_CFLAGS = $(AM_CFLAGS) $(BSD_WARN_CFLAGS) $(NCURSES_CFLAGS)
-more_LDADD = $(LDADD) $(NCURSES_LIBS) $(TINFO_LIBS)
+more_CFLAGS = $(AM_CFLAGS) $(BSD_WARN_CFLAGS)
+more_LDADD = $(LDADD)
+if HAVE_TINFO
+more_LDADD += $(TINFO_LIBS)
+more_LDADD += $(TINFO_CFLAGS)
+else
+more_CFLAGS += $(NCURSES_CFLAGS)
+more_LDADD += $(NCURSES_LIBS)
+endif
+
 if HAVE_TERMCAP
 more_LDADD += -ltermcap
 endif

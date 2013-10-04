@@ -28,8 +28,15 @@ if BUILD_SETTERM
 usrbin_exec_PROGRAMS += setterm
 dist_man_MANS += term-utils/setterm.1
 setterm_SOURCES = term-utils/setterm.c
-setterm_CFLAGS = $(AM_CFLAGS) $(NCURSES_CFLAGS)
-setterm_LDADD = $(LDADD) $(NCURSES_LIBS) $(TINFO_LIBS)
+setterm_CFLAGS = $(AM_CFLAGS)
+setterm_LDADD = $(LDADD)
+if HAVE_TINFO
+setterm_LDADD += $(TINFO_LIBS)
+setterm_CFLAGS += $(TINFO_CFLAGS)
+else
+setterm_LDADD += $(NCURSES_LIBS)
+setterm_CFLAGS += $(NCURSES_CFLAGS)
+endif
 endif
 
 

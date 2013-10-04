@@ -674,15 +674,20 @@ AS_IF([test "x$with_slang" = xyes], [
 ])
 AM_CONDITIONAL([HAVE_SLANG], [test "x$have_slang" = xyes])
 
-
 AM_CONDITIONAL([BUILD_CFDISK], [test "x$have_slang" = xyes -o "x$have_ncurses" = xyes])
 
 
-AC_CHECK_LIB([tinfo], [tgetent], [have_tinfo=yes])
-AS_IF([test "x$have_tinfo" = xyes], [
-  TINFO_LIBS="-ltinfo"
+dnl Try pkg-config for libtinfo
+PKG_CHECK_MODULES(TINFO, [tinfo], [have_tinfo=yes], [
+    dnl If that failed, fall back to classic searching.
+    AC_CHECK_LIB([tinfo], [tgetent], [
+       have_tinfo=yes
+       TINFO_LIBS="-ltinfo"
+       TINFO_CFLAGS=""])
 ])
 AC_SUBST([TINFO_LIBS])
+AC_SUBST([TINFO_CFLAGS])
+AM_CONDITIONAL([HAVE_TINFO], [test "x$have_tinfo" = xxyes])
 
 
 AC_ARG_WITH([utempter],
