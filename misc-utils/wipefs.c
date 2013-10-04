@@ -308,8 +308,10 @@ static void do_wipe_real(blkid_probe pr, const char *devname,
 	if (flags & WP_FL_QUIET)
 		return;
 
-	printf(_("%s: %zd bytes were erased at offset 0x%08jx (%s): "),
-		devname, w->len, w->offset, w->type);
+	printf(P_("%s: %zd byte was erased at offset 0x%08jx (%s): ",
+		  "%s: %zd bytes were erased at offset 0x%08jx (%s): ",
+		  w->len),
+	       devname, w->len, w->offset, w->type);
 
 	for (i = 0; i < w->len; i++) {
 		printf("%02x", w->magic[i]);
