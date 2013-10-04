@@ -518,12 +518,12 @@ static int bsd_get_bootstrap(struct fdisk_context *cxt,
 	int fd;
 
 	if ((fd = open(path, O_RDONLY)) < 0) {
-		fdisk_warn(cxt, _("open failed %s"), path);
+		fdisk_warn(cxt, _("cannot open %s"), path);
 		return -errno;
 	}
 
 	if (read_all(fd, ptr, size) != size) {
-		fdisk_warn(cxt, _("read failed %s"), path);
+		fdisk_warn(cxt, _("cannot read %s"), path);
 		close(fd);
 		return -errno;
 	}
@@ -590,12 +590,12 @@ int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt)
 	alpha_bootblock_checksum(l->bsdbuffer);
 #endif
 	if (lseek(cxt->dev_fd, (off_t) sector * DEFAULT_SECTOR_SIZE, SEEK_SET) == -1) {
-		fdisk_warn(cxt, _("seek failed %s"), cxt->dev_path);
+		fdisk_warn(cxt, _("seek on %s failed"), cxt->dev_path);
 		rc = -errno;
 		goto done;
 	}
 	if (write_all(cxt->dev_fd, l->bsdbuffer, BSD_BBSIZE)) {
-		fdisk_warn(cxt, _("write failed %s"), cxt->dev_path);
+		fdisk_warn(cxt, _("cannot write %s"), cxt->dev_path);
 		rc = -errno;
 		goto done;
 	}
@@ -758,11 +758,11 @@ static int bsd_write_disklabel(struct fdisk_context *cxt)
 	alpha_bootblock_checksum(l->bsdbuffer);
 #endif
 	if (lseek(cxt->dev_fd, offset, SEEK_SET) == -1) {
-		fdisk_warn(cxt, _("seek failed: %d"), cxt->dev_path);
+		fdisk_warn(cxt, _("seek on %s failed"), cxt->dev_path);
 		return -errno;
 	}
 	if (write_all(cxt->dev_fd, l->bsdbuffer, sizeof(l->bsdbuffer))) {
-		fdisk_warn(cxt, _("write failed: %d"), cxt->dev_path);
+		fdisk_warn(cxt, _("cannot write %s"), cxt->dev_path);
 		return -errno;
 	}
 	sync_disks(cxt);
