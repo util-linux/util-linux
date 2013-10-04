@@ -147,8 +147,9 @@ int main(int argc, char **argv)
 			count = hash_file(&ctx, fd);
 			if (verbose)
 				fprintf(stderr,
-					_("Got %d bytes from %s\n"), count,
-					file);
+					P_("Got %d byte from %s\n",
+					   "Got %d bytes from %s\n", count),
+					count, file);
 
 			if (fd != STDIN_FILENO)
 				if (close(fd))
@@ -171,8 +172,9 @@ int main(int argc, char **argv)
 			close(fd);
 			if (verbose)
 				fprintf(stderr,
-					_("Got %d bytes from %s\n"), r,
-					rngs[i].path);
+					P_("Got %d byte from %s\n",
+					   "Got %d bytes from %s\n", r),
+					r, rngs[i].path);
 			if (rngs[i].minlength && r >= rngs[i].minlength)
 				break;
 		} else if (verbose)
