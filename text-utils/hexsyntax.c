@@ -147,7 +147,7 @@ void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -d, --two-bytes-decimal   two-byte decimal display\n"), out);
 	fputs(_(" -o, --two-bytes-octal     two-byte octal display\n"), out);
 	fputs(_(" -x, --two-bytes-hex       two-byte hexadecimal display\n"), out);
-	fputs(_(" -e, --format format       format string to be used for displaying data\n"), out);
+	fputs(_(" -e, --format <format>     format string to be used for displaying data\n"), out);
 	fputs(_(" -f, --format-file <file>  file that contains format strings\n"), out);
 	fputs(_(" -n, --length <length>     interpret only length bytes of input\n"), out);
 	fputs(_(" -s, --skip <offset>       skip offset bytes from the beginning\n"), out);
