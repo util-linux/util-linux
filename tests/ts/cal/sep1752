@@ -91,5 +91,6 @@ ts_log "Julian - Sunday-based year"
 if [ "$USETERM" == "yes" ]; then
 	$TS_CMD_CAL -1sj $MYYEAR
 fi
+$TS_CMD_CAL -1sj $MYYEAR >> $TS_OUTPUT
 
 ts_finalize
