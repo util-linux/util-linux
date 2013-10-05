@@ -523,7 +523,9 @@ static int list_parts(blkid_partlist ls, int lower, int upper)
 		start = blkid_partition_get_start(par);
 		size =  blkid_partition_get_size(par);
 
-		printf(_("#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"),
+		printf(P_("#%2d: %9ju-%9ju (%9ju sector, %6ju MB)\n",
+			  "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n",
+			  size),
 		       n, start, start + size -1,
 		       size, (size << 9) / 1000000);
 	}
