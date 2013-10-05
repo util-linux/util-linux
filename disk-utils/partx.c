@@ -86,7 +86,7 @@ struct colinfo infos[] = {
 	[COL_UUID]     = { "UUID",    36, 0, N_("partition UUID")},
 	[COL_SCHEME]   = { "SCHEME",  0.1, TT_FL_TRUNC, N_("partition table type (dos, gpt, ...)")},
 	[COL_FLAGS]    = { "FLAGS",   0.1, TT_FL_TRUNC, N_("partition flags")},
-	[COL_TYPE]     = { "TYPE",    1, TT_FL_RIGHT, N_("partition type hex or uuid")},
+	[COL_TYPE]     = { "TYPE",    1, TT_FL_RIGHT, N_("partition type (a string, a UUID, or hex)")},
 };
 
 #define NCOLS ARRAY_SIZE(infos)
@@ -121,7 +121,7 @@ static void assoc_loopdev(const char *fname)
 	rc = loopcxt_setup_device(&lc);
 
 	if (rc == -EBUSY)
-		err(EXIT_FAILURE, _("%s: failed to setup loop device"), fname);
+		err(EXIT_FAILURE, _("%s: failed to set up loop device"), fname);
 
 	loopdev = 1;
 }
@@ -700,12 +700,12 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --add            add specified partitions or all of them\n"), out);
 	fputs(_(" -d, --delete         delete specified partitions or all of them\n"), out);
-	fputs(_(" -s, --show           list partitions\n\n"), out);
 	fputs(_(" -u, --update         update specified partitions or all of them\n"), out);
+	fputs(_(" -s, --show           list partitions\n\n"), out);
 	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -g, --noheadings     don't print headings for --show\n"), out);
 	fputs(_(" -n, --nr <n:m>       specify the range of partitions (e.g. --nr 2:4)\n"), out);
-	fputs(_(" -o, --output <type>  define which output columns to use\n"), out);
+	fputs(_(" -o, --output <list>  define which output columns to use\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
 	fputs(_(" -t, --type <type>    specify the partition type (dos, bsd, solaris, etc.)\n"), out);
