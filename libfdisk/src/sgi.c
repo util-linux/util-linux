@@ -3,12 +3,12 @@
  * Copyright (C) 2012 Davidlohr Bueso <dave@gnu.org>
  *               2013 Karel Zak <kzak@redhat.com>
  *
- * This is re-written version for libfdisk, the original was fdisksgilabel.c
+ * This is a re-written version for libfdisk, the original was fdisksgilabel.c
  * from util-linux fdisk, by:
  *
- *               Andreas Neuper, Sep 1998.
- *               Arnaldo Carvalho de Melo <acme@conectiva.com.br>, Mar 1999
- *               Phillip Kesling <pkesling@sgi.com>, Mar 2003
+ *               Andreas Neuper, Sep 1998,
+ *               Arnaldo Carvalho de Melo <acme@conectiva.com.br>, Mar 1999,
+ *               Phillip Kesling <pkesling@sgi.com>, Mar 2003.
  */
 #include "c.h"
 #include "nls.h"
@@ -62,7 +62,7 @@ static unsigned int sgi_get_num_sectors(struct fdisk_context *cxt, int i );
 static int sgi_get_bootpartition(struct fdisk_context *cxt);
 static int sgi_get_swappartition(struct fdisk_context *cxt);
 
-/* return poiter buffer with on-disk data */
+/* Returns a pointer buffer with on-disk data. */
 static inline struct sgi_disklabel *self_disklabel(struct fdisk_context *cxt)
 {
 	assert(cxt);
@@ -72,7 +72,7 @@ static inline struct sgi_disklabel *self_disklabel(struct fdisk_context *cxt)
 	return ((struct fdisk_sgi_label *) cxt->label)->header;
 }
 
-/* return in-memory fdisk data */
+/* Returns in-memory fdisk data. */
 static inline struct fdisk_sgi_label *self_label(struct fdisk_context *cxt)
 {
 	assert(cxt);
@@ -433,8 +433,7 @@ static int sgi_check_bootfile(struct fdisk_context *cxt, const char *name)
 		fdisk_warnx(cxt, _("Be aware, that the bootfile is not checked "
 			"for existence. SGI's default is \"/unix\" and for "
 			"backup \"/unix.save\"."));
-		/* filename is correct and did change */
-		return 0;
+		return 0;	/* filename is correct and did change */
 	}
 
 	return 1;	/* filename did not change */
@@ -493,8 +492,8 @@ static int sgi_write_disklabel(struct fdisk_context *cxt)
 		goto err;
 	if (!strncmp((char *) sgilabel->volume[0].name, "sgilabel", 8)) {
 		/*
-		 * keep this habit of first writing the "sgilabel".
-		 * I never tested whether it works without (AN 981002).
+		 * Keep this habit of first writing the "sgilabel".
+		 * I never tested whether it works without. (AN 1998-10-02)
 		 */
 		int infostartblock
 			= be32_to_cpu(sgilabel->volume[0].block_num);
@@ -520,8 +519,8 @@ static int compare_start(struct fdisk_context *cxt,
 			 const void *x, const void *y)
 {
 	/*
-	 * sort according to start sectors and prefers largest partition: entry
-	 * zero is entire disk entry
+	 * Sort according to start sectors and prefer the largest partition:
+	 * entry zero is the entire-disk entry.
 	 */
 	unsigned int i = *(int *) x;
 	unsigned int j = *(int *) y;
@@ -656,6 +655,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 		/* We cannot handle several "entire disk" entries. */
 		if (sgi_get_sysid(cxt, Index[i]) == SGI_TYPE_ENTIRE_DISK)
 			continue;
+
 		if (start > sgi_get_start_sector(cxt, Index[i])) {
 			if (verbose)
 				fdisk_info(cxt,
@@ -681,7 +681,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 		}
 		start = sgi_get_start_sector(cxt, Index[i])
 			+ sgi_get_num_sectors(cxt, Index[i]);
-		/* Align free space on cylinder boundary */
+		/* Align free space on cylinder boundary. */
 		if (cylsize && start % cylsize)
 			start += cylsize - (start % cylsize);
 
@@ -700,7 +700,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 		add_to_freelist(cxt, start, lastblock);
 	}
 	/*
-	 * Done with arithmetics. Go for details now
+	 * Done with arithmetics. Go for details now.
 	 */
 	if (verbose) {
 		if (sgi_get_bootpartition(cxt) < 0
@@ -739,7 +739,7 @@ static int sgi_gaps(struct fdisk_context *cxt)
 	return verify_disklabel(cxt, 0);
 }
 
-/* returns partition index of first entry marked as entire disk */
+/* Returns partition index of first entry marked as entire disk. */
 static int sgi_entire(struct fdisk_context *cxt)
 {
 	size_t i;
@@ -794,10 +794,7 @@ static void sgi_set_volhdr(struct fdisk_context *cxt)
 
 	for (n = 8; n < cxt->label->nparts_max; n++) {
 		if (!sgi_get_num_sectors(cxt, n)) {
-			/*
-			 * Choose same default volume header size
-			 * as IRIX fx uses.
-			 */
+			/* Choose same default volume header size as IRIX fx uses. */
 			if (4096 < sgi_get_lastblock(cxt))
 				sgi_set_partition(cxt, n, 0, 4096, SGI_TYPE_VOLHDR);
 			break;
@@ -1103,7 +1100,6 @@ static int sgi_get_partition_status(
 		size_t i,
 		int *status)
 {
-
 	assert(cxt);
 	assert(fdisk_is_disklabel(cxt, SGI));
 
@@ -1166,9 +1162,7 @@ static const struct fdisk_label_operations sgi_operations =
 	.part_toggle_flag = sgi_toggle_partition_flag
 };
 
-/*
- * allocates SGI label driver
- */
+/* Allocates an SGI label driver. */
 struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt)
 {
 	struct fdisk_label *lb;
