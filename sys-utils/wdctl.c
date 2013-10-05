@@ -450,11 +450,14 @@ static void print_oneline(struct wdinfo *wd, uint32_t wanted,
 static void show_timeouts(struct wdinfo *wd)
 {
 	if (wd->has_timeout)
-		printf(_("%-15s%2i seconds\n"), _("Timeout:"), wd->timeout);
+		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->timeout),
+			  _("Timeout:"), wd->timeout);
 	if (wd->has_pretimeout)
-		printf(_("%-15s%2i seconds\n"), _("Pre-timeout:"), wd->pretimeout);
+		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->pretimeout),
+			  _("Pre-timeout:"), wd->pretimeout);
 	if (wd->has_timeleft)
-		printf(_("%-15s%2i seconds\n"), _("Timeleft:"), wd->timeleft);
+		printf(P_("%-14s %2i second\n", "%-14s %2i seconds\n", wd->timeleft),
+			  _("Timeleft:"), wd->timeleft);
 }
 
 int main(int argc, char *argv[])
