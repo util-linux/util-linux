@@ -238,7 +238,7 @@ static int sgi_probe_label(struct fdisk_context *cxt)
 	 * test for correct checksum
 	 */
 	if (sgi_pt_checksum(sgilabel) != 0)
-		fdisk_warnx(cxt, _("Detected sgi disklabel with wrong checksum."));
+		fdisk_warnx(cxt, _("Detected an SGI disklabel with wrong checksum."));
 
 	clear_freelist(cxt);
 	cxt->label->nparts_max = SGI_MAXPARTITIONS;
@@ -411,9 +411,9 @@ static int sgi_check_bootfile(struct fdisk_context *cxt, const char *name)
 
 	if (sz < 3) {
 		/* "/a\n" is minimum */
-		fdisk_warnx(cxt, _("Invalid Bootfile! "
-			 "The bootfile must be an absolute non-zero pathname,"
-			 "e.g. \"/unix\" or \"/unix.save\"."));
+		fdisk_warnx(cxt, _("Invalid bootfile!  The bootfile must "
+				   "be an absolute non-zero pathname, "
+				   "e.g. \"/unix\" or \"/unix.save\"."));
 		return -EINVAL;
 
 	} else if (sz > sizeof(sgilabel->boot_file)) {
@@ -430,9 +430,9 @@ static int sgi_check_bootfile(struct fdisk_context *cxt, const char *name)
 
 	if (strncmp(name, (char *) sgilabel->boot_file,
 				sizeof(sgilabel->boot_file))) {
-		fdisk_warnx(cxt, _("Be aware, that the bootfile is not checked "
-			"for existence. SGI's default is \"/unix\" and for "
-			"backup \"/unix.save\"."));
+		fdisk_warnx(cxt, _("Be aware that the bootfile is not checked "
+				   "for existence.  SGI's default is \"/unix\", "
+				   "and for backup \"/unix.save\"."));
 		return 0;	/* filename is correct and did change */
 	}
 
@@ -453,7 +453,7 @@ int fdisk_sgi_set_bootfile(struct fdisk_context *cxt)
 		rc = sgi_check_bootfile(cxt, name);
 	if (rc) {
 		if (rc == 1)
-			fdisk_info(cxt, _("Boot file unchanged"));
+			fdisk_info(cxt, _("Boot file is unchanged."));
 		goto done;
 	}
 
@@ -465,7 +465,7 @@ int fdisk_sgi_set_bootfile(struct fdisk_context *cxt)
 	memcpy(sgilabel->boot_file, name, sz);
 
 	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Bootfile is changed to \"%s\"."), name);
+			_("Bootfile has been changed to \"%s\"."), name);
 done:
 	free(name);
 	return rc;
@@ -612,7 +612,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 	}
 	if (sortcount == 0) {
 		if (verbose)
-			fdisk_info(cxt, _("No partitions defined"));
+			fdisk_info(cxt, _("No partitions defined."));
 		return (lastblock > 0) ? 1 : (lastblock == 0) ? 0 : -1;
 	}
 
@@ -620,13 +620,13 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 
 	if (sgi_get_sysid(cxt, Index[0]) == SGI_TYPE_ENTIRE_DISK) {
 		if (verbose && Index[0] != 10)
-			fdisk_info(cxt, _("IRIX likes when Partition 11 "
+			fdisk_info(cxt, _("IRIX likes it when partition 11 "
 					  "covers the entire disk."));
 
 		if (verbose && sgi_get_start_sector(cxt, Index[0]) != 0)
 			fdisk_info(cxt, _("The entire disk partition should "
-				"start at block 0, not at diskblock %d."),
-			       sgi_get_start_sector(cxt, Index[0]));
+					  "start at block 0, not at block %d."),
+				   sgi_get_start_sector(cxt, Index[0]));
 
 		if (verbose && sgi_get_num_sectors(cxt, Index[0]) != lastblock)
 			DBG(LABEL, dbgprint(
@@ -716,8 +716,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 			fdisk_info(cxt, _("The swap partition has no swap type."));
 
 		if (sgi_check_bootfile(cxt, "/unix"))
-			fdisk_info(cxt, _("You have chosen an unusual boot "
-					  "file name."));
+			fdisk_info(cxt, _("You have chosen an unusual bootfile name."));
 	}
 
 	return (gap > 0) ? 1 : (gap == 0) ? 0 : -1;
@@ -842,8 +841,8 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 	sgi = self_label(cxt);
 
 	if (sgi_get_num_sectors(cxt, n)) {
-		fdisk_warnx(cxt, _("Partition %zd is already defined.  Delete "
-			 "it before re-adding it."), n + 1);
+		fdisk_warnx(cxt, _("Partition %zd is already defined.  "
+				   "Delete it before re-adding it."), n + 1);
 		return -EINVAL;
 	}
 	if (sgi_entire(cxt) == -1 &&  sys != SGI_TYPE_ENTIRE_DISK) {
@@ -890,9 +889,9 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 			return rc;
 
 		if (first && sys == SGI_TYPE_ENTIRE_DISK)
-			fdisk_info(cxt, _("It is highly recommended that "
-					"eleventh partition covers the entire "
-					"disk and is of type `SGI volume'"));
+			fdisk_info(cxt, _("It is highly recommended that the "
+					  "eleventh partition covers the entire "
+					  "disk and is of type 'SGI volume'."));
 
 		if (fdisk_context_use_cylinders(cxt))
 			first *= fdisk_context_get_units_per_sector(cxt);
@@ -902,7 +901,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 			last = is_in_freelist(cxt, first);
 		if (last == 0)
 			fdisk_warnx(cxt, _("You will get a partition overlap "
-				"on the disk. Fix it first!"));
+					   "on the disk. Fix it first!"));
 		else
 			break;
 	}
@@ -943,9 +942,9 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 
 	if (sys == SGI_TYPE_ENTIRE_DISK
 	    && (first != 0 || last != sgi_get_lastblock(cxt)))
-		fdisk_info(cxt, _("It is highly recommended that eleventh "
-			"partition covers the entire disk and is of type "
-			"`SGI volume'"));
+		fdisk_info(cxt, _("It is highly recommended that the "
+				  "eleventh partition covers the entire "
+				  "disk and is of type 'SGI volume'."));
 
 	sgi_set_partition(cxt, n, first, last - first, sys);
 	cxt->label->nparts_cur = count_used_partitions(cxt);
@@ -1073,8 +1072,8 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 	if ((i == 10 && t->type != SGI_TYPE_ENTIRE_DISK)
 	    || (i == 8 && t->type != 0))
 		fdisk_info(cxt, _("Consider leaving partition 9 as volume header (0), "
-			 "and partition 11 as entire volume (6), as IRIX "
-			 "expects it."));
+				  "and partition 11 as entire volume (6), "
+				  "as IRIX expects it."));
 
 	if (((t->type != SGI_TYPE_ENTIRE_DISK) && (t->type != SGI_TYPE_VOLHDR))
 	    && (sgi_get_start_sector(cxt, i) < 1)) {
