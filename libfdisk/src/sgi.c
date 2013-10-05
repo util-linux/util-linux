@@ -417,8 +417,10 @@ static int sgi_check_bootfile(struct fdisk_context *cxt, const char *name)
 		return -EINVAL;
 
 	} else if (sz > sizeof(sgilabel->boot_file)) {
-		fdisk_warnx(cxt, _("Name of Bootfile too long: %zu bytes maximum."),
-				sizeof(sgilabel->boot_file));
+		fdisk_warnx(cxt, P_("Name of bootfile is too long: %zu byte maximum.",
+				    "Name of bootfile is too long: %zu bytes maximum.",
+				    sizeof(sgilabel->boot_file)),
+			    sizeof(sgilabel->boot_file));
 		return -EINVAL;
 
 	} else if (*name != '/') {
@@ -656,19 +658,23 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 			continue;
 		if (start > sgi_get_start_sector(cxt, Index[i])) {
 			if (verbose)
-				fdisk_info(cxt, _("The Partition %d and %d overlap "
-					  "by %d sectors."),
-				       Index[i-1]+1, Index[i]+1,
-				       start - sgi_get_start_sector(cxt, Index[i]));
+				fdisk_info(cxt,
+					   P_("Partitions %d and %d overlap by %d sector.",
+					      "Partitions %d and %d overlap by %d sectors.",
+					      start - sgi_get_start_sector(cxt, Index[i])),
+					   Index[i-1]+1, Index[i]+1,
+					   start - sgi_get_start_sector(cxt, Index[i]));
 			if (gap >  0) gap = -gap;
 			if (gap == 0) gap = -1;
 		}
 		if (start < sgi_get_start_sector(cxt, Index[i])) {
 			if (verbose)
-				fdisk_info(cxt, _("Unused gap of %8u sectors "
-					    "- sectors %8u-%u"),
-				       sgi_get_start_sector(cxt, Index[i]) - start,
-				       start, sgi_get_start_sector(cxt, Index[i])-1);
+				fdisk_info(cxt,
+					   P_("Unused gap of %8u sector: sector %8u",
+					      "Unused gap of %8u sectors: sectors %8u-%u",
+					      sgi_get_start_sector(cxt, Index[i]) - start),
+					   sgi_get_start_sector(cxt, Index[i]) - start,
+					   start, sgi_get_start_sector(cxt, Index[i])-1);
 			gap += sgi_get_start_sector(cxt, Index[i]) - start;
 			add_to_freelist(cxt, start,
 					sgi_get_start_sector(cxt, Index[i]));
@@ -686,8 +692,10 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 	}
 	if (start < lastblock) {
 		if (verbose)
-			fdisk_info(cxt, _("Unused gap of %8u sectors - sectors %8u-%u"),
-				lastblock - start, start, lastblock-1);
+			fdisk_info(cxt, P_("Unused gap of %8u sector: sector %8u",
+					   "Unused gap of %8u sectors: sectors %8u-%u",
+					   lastblock - start),
+				   lastblock - start, start, lastblock-1);
 		gap += lastblock - start;
 		add_to_freelist(cxt, start, lastblock);
 	}
