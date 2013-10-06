@@ -1,0 +1,87 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2007 Karel Zak <kzak@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="week number corner cases"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+
+set -o pipefail
+
+USETERM=$( ts_has_option "useterm" "$*" )
+
+[ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
+ts_log ""
+
+for x in 2001 2002 2003 2009 2010 2011 2012 ; do 
+MYTIME="1 $x"
+
+ts_log "Gregorian - Monday-based week with week numbers - year $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -ymw $MYTIME
+fi
+$TS_CMD_CAL -ymw $MYTIME >> $TS_OUTPUT
+
+ts_log "Gregorian - Sunday-based week with week numbers - year $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -ysw $MYTIME
+fi
+$TS_CMD_CAL -ysw $MYTIME >> $TS_OUTPUT
+
+
+ts_log "Julian - Monday-based week with week numbers - year $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -ymjw $MYTIME
+fi
+$TS_CMD_CAL -ymjw $MYTIME >> $TS_OUTPUT
+
+ts_log "Julian - Sunday-based week with week numbers - year $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -ysjw $MYTIME
+fi
+$TS_CMD_CAL -ysjw $MYTIME >> $TS_OUTPUT
+
+ts_log "Gregorian - Monday-based week with week numbers - 3 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -3mw $MYTIME
+fi
+$TS_CMD_CAL -3mw $MYTIME >> $TS_OUTPUT
+
+ts_log "Gregorian - Sunday-based week with week numbers - 3 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -3sw $MYTIME
+fi
+$TS_CMD_CAL -3sw $MYTIME >> $TS_OUTPUT
+
+
+ts_log "Julian - Monday-based week with week numbers - 3 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -3mjw $MYTIME
+fi
+$TS_CMD_CAL -3mjw $MYTIME >> $TS_OUTPUT
+
+ts_log "Julian - Sunday-based week with week numbers - 3 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -3sjw $MYTIME
+fi
+$TS_CMD_CAL -3sjw $MYTIME >> $TS_OUTPUT
+
+done
+
+ts_finalize
+
