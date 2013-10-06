@@ -11,7 +11,7 @@ _cal_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="--one --three --sunday --monday --julian --year --version --help"
+			OPTS="--one --three --sunday --monday --julian --year --week --version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

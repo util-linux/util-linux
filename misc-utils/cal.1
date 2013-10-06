@@ -65,6 +65,9 @@ Display Julian dates (days one-based, numbered from January 1).
 \fB\-y\fR, \fB\-\-year\fR
 Display a calendar for the whole year.
 .TP
+\fB\-w\fR, \fB\-\-week\fR
+Display week numbers in the calendar (US or ISO-8601).
+.TP
 \fB\-\-color\fR [\fIwhen\fR]
 Colorize output.  The
 .I when
@@ -104,6 +107,12 @@ September. By this time, most countries had recognized the reformation
 (although a few did not recognize it until the early 1900's). Ten days
 following that date were eliminated by the reformation, so the calendar for
 that month is a bit unusual.
+.PP
+The week numbering depends on the first day of the week. If Sunday (the
+default) is used for the first day of the week, then the customary North
+American numbering will be used, i.e. first Sunday of the week starts the
+first week. If Monday is selected, then the ISO-8601 standard week numbering
+is used, where the first Thursday is in week number 1.
 .SH HISTORY
 A cal command appeared in Version 6 AT&T UNIX.
 .SH AVAILABILITY
