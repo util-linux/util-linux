@@ -1525,9 +1525,11 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 
 		free_sectors = get_free_sectors(cxt, gpt->pheader, gpt->ents,
 						&nsegments, &largest_segment);
-		fdisk_info(cxt, _("A total of %ld free sectors available in %d segment(s) "
-			 "(largest %ld)."),
-		       free_sectors, nsegments, largest_segment);
+		fdisk_info(cxt,
+			   P_("A total of %ld free sectors is available in %d segment.",
+			      "A total of %ld free sectors is available in %d segments "
+			      "(the largest is %ld).", nsegments),
+			   free_sectors, nsegments, largest_segment);
 	} else
 		fdisk_warnx(cxt,
 			P_("%d error detected.", "%s errors detected.", nerror),
