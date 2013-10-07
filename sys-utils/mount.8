@@ -2887,7 +2887,7 @@ some mount succeeded
 The command mount -a returns 0 (all success), 32 (all failed) or 64 (some
 failed, some success).
 
-.SH NOTES
+.SH "EXTERNAL HELPERS"
 The syntax of external mount helpers is:
 
 .RS
@@ -2903,6 +2903,26 @@ The syntax of external mount helpers is:
 where the <type> is filesystem type and \-sfnvo options have same meaning like
 standard mount options. The \-t option is used  for filesystems with subtypes
 support (for example /sbin/mount.fuse -t fuse.sshfs).
+
+The command mount does not pass mount options
+.BR unbindable ,
+.BR runbindable ,
+.BR private ,
+.BR rprivate ,
+.BR slave ,
+.BR rslave ,
+.BR shared ,
+.BR rshared ,
+.BR auto ,
+.BR noauto ,
+.BR comment ,
+.BR x-*,
+.BR loop ,
+.BR offset
+and
+.BR sizelimit
+to mount.<suffix> helpers. The all others options are
+used in comma delimited list as argument for the option -o.
 
 .SH FILES
 .TP 18n
