@@ -339,7 +339,7 @@ int main(int argc, char **argv)
 	}
 #endif
 
-	while ((ch = getopt_long(argc, argv, "13mjsyw::Vh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "13mjsywVh", longopts, NULL)) != -1)
 		switch(ch) {
 		case '1':
 			num_months = 1;		/* default */
@@ -983,7 +983,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -m, --monday          Monday as first day of week\n"), out);
 	fputs(_(" -j, --julian          output Julian dates\n"), out);
 	fputs(_(" -y, --year            show the whole year\n"), out);
-	fputs(_(" -w, --week            show US or ISO-8601 week numbers\n"), out);
+	fputs(_(" -w, --week[=<num>]    show US or ISO-8601 week numbers\n"), out);
 	fputs(_("     --color[=<when>]  colorize messages (auto, always or never)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
