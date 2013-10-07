@@ -1180,9 +1180,9 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 	}
 
 	if (l->ext_offset) {
+		sector_t e_last;
 		p = self_partition(cxt, l->ext_index);
-
-		sector_t e_last = dos_partition_get_start(p)
+		e_last = dos_partition_get_start(p)
 				  + dos_partition_get_size(p) - 1;
 
 		for (i = 4; i < cxt->label->nparts_max; i++) {
@@ -1612,7 +1612,7 @@ static int dos_list_disklabel(struct fdisk_context *cxt)
 	for (i = 0; i < cxt->label->nparts_max; i++) {
 		struct pte *pe = self_pte(cxt, i);
 		struct dos_partition *p = pe->pt_entry;
-		unsigned int psects, pblocks, podd = 0;;
+		unsigned int psects, pblocks, podd = 0;
 		struct fdisk_parttype *type;
 		struct tt_line *ln;
 		char *str;

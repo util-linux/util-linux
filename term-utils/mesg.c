@@ -88,17 +88,17 @@ int main(int argc, char *argv[])
 	char *tty;
 	int ch, verbose = FALSE;
 
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-	atexit(close_stdout);
-
 	static const struct option longopts[] = {
 		{ "verbose",    no_argument,       0, 'v' },
 		{ "version",    no_argument,       0, 'V' },
 		{ "help",       no_argument,       0, 'h' },
 		{ NULL,         0, 0, 0 }
 	};
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((ch = getopt_long(argc, argv, "vVh", longopts, NULL)) != -1)
 		switch (ch) {

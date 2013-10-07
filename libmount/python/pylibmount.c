@@ -90,6 +90,7 @@ PyObject *PyObjectResultInt(int i)
 
 PyObject *PyObjectResultStr(const char *s)
 {
+	PyObject *result;
 	if (!s)
 		/* TODO: maybe lie about it and return "":
 		 * which would allow for
@@ -97,7 +98,7 @@ PyObject *PyObjectResultStr(const char *s)
 		 * fs.comment += "comment"
 		return Py_BuildValue("s", ""); */
 		Py_RETURN_NONE;
-	PyObject *result = Py_BuildValue("s", s);
+	result = Py_BuildValue("s", s);
 	if (!result)
 		PyErr_SetString(PyExc_RuntimeError, CONSTRUCT_ERR);
 	return result;

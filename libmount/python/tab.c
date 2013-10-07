@@ -600,9 +600,10 @@ static int Table_init(TableObject *self, PyObject *args, PyObject *kwds)
 		self->iter = mnt_new_iter(MNT_ITER_FORWARD);
 
 	if (errcb) {
+		PyObject *tmp;
 		if (!PyCallable_Check(errcb))
 			return -1;
-		PyObject *tmp = self->errcb;
+		tmp = self->errcb;
 		Py_INCREF(errcb);
 		self->errcb = errcb;
 		Py_XDECREF(tmp);
