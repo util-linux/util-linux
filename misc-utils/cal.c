@@ -185,6 +185,7 @@ enum {
 #define	WEEK_LEN		(DAYS_IN_WEEK * DAY_LEN)
 #define	HEAD_SEP		2
 #define MONTH_COLS		3		/* month columns in year view */
+#define WNUM_LEN                3
 
 #define	J_DAY_LEN		4		/* 4 spaces per day */
 #define	J_WEEK_LEN		(DAYS_IN_WEEK * J_DAY_LEN)
@@ -226,8 +227,9 @@ static const int d_sep1752[MAXDAYS / 2] = {
 
 enum {
 	WEEK_NUM_DISABLED = 0,
-	WEEK_NUM_ISO,
-	WEEK_NUM_US
+	WEEK_NUM_MASK=0xff,
+	WEEK_NUM_ISO=0x100,
+	WEEK_NUM_US=0x200,
 };
 
 /* utf-8 can have up to 6 bytes per char; and an extra byte for ending \0 */
@@ -242,12 +244,14 @@ static int julian;
 /* function prototypes */
 static int leap_year(long year);
 static char * ascii_day(char *, int);
+static char * ascii_wnum(char *, int,int);
 static int center_str(const char* src, char* dest, size_t dest_size, size_t width);
 static void center(const char *, size_t, int);
 static void day_array(int, int, long, int *);
 static int day_in_week(int, int, long);
 static int day_in_year(int, int, long);
 static int week_number(int, int, long, int);
+static int week_to_day(int, long, int);
 static void yearly(int, long, int, int);
 static int do_monthly(int, int, long, int, struct fmt_st*, int);
 static void monthly(int, int, long, int);
@@ -263,7 +267,7 @@ int main(int argc, char **argv)
 	int ch, day = 0, month = 0, yflag = 0, wflag = WEEK_NUM_DISABLED;
 	long year;
 	int num_months = NUM_MONTHS;
-	int colormode = UL_COLORMODE_AUTO;
+	int colormode = UL_COLORMODE_AUTO, wnum = 0;
 
 	enum {
 		OPT_COLOR = CHAR_MAX + 1
@@ -276,7 +280,7 @@ int main(int argc, char **argv)
 		{"monday", no_argument, NULL, 'm'},
 		{"julian", no_argument, NULL, 'j'},
 		{"year", no_argument, NULL, 'y'},
-		{"week", no_argument, NULL, 'w'},
+		{"week", optional_argument, NULL, 'w'},
 		{"color", optional_argument, NULL, OPT_COLOR},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -335,7 +339,7 @@ int main(int argc, char **argv)
 	}
 #endif
 
-	while ((ch = getopt_long(argc, argv, "13mjsywVh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "13mjsyw::Vh", longopts, NULL)) != -1)
 		switch(ch) {
 		case '1':
 			num_months = 1;		/* default */
@@ -356,6 +360,12 @@ int main(int argc, char **argv)
 			yflag = 1;
 			break;
 		case 'w':
+			if (optarg) {
+				wnum = strtos32_or_err(optarg,
+						_("invalid week argument"));
+				if (wnum < 1 || wnum > 53)
+					errx(EXIT_FAILURE,_("illegal week value: use 1-53"));
+			}
 			wflag = WEEK_NUM_US;	/* default per weekstart */
 			break;
 		case OPT_COLOR:
@@ -375,8 +385,10 @@ int main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	if (wflag)
-		wflag = (weekstart == MONDAY ? WEEK_NUM_ISO : WEEK_NUM_US);
+	if (wflag) {
+		wflag = wnum & WEEK_NUM_MASK;
+		wflag |= (weekstart == MONDAY ? WEEK_NUM_ISO : WEEK_NUM_US);
+	}
 
 	time(&now);
 	local_time = localtime(&now);
@@ -404,7 +416,7 @@ int main(int argc, char **argv)
 		} else if ((long) (local_time->tm_year + 1900) == year) {
 			day = local_time->tm_yday + 1;
 		}
-		if (!month)
+		if (!month && !wnum)
 			yflag=1;
 		break;
 	case 0:
@@ -415,10 +427,36 @@ int main(int argc, char **argv)
 	default:
 		usage(stderr);
 	}
+
+	if (wnum>0) {
+		int yday = week_to_day(wnum,year,wflag);
+		if (yday < 1)
+			errx(EXIT_FAILURE, _("illegal week value: year %ld doesn't have week %d"),year,wnum);
+		//day = yday; /* hightlight the first day of the week */
+		month = 1;
+		int leap = leap_year(year);
+		while (month <= 12 && yday > days_in_month[leap][month])
+			yday -= days_in_month[leap][month++];
+		if (month > 12) {
+			/* In some years (e.g. 2010 in ISO mode) it's possible to
+			 * have a remnant of week 53 starting the year yet the year
+			 * in question ends during 52, in this case we're assuming
+			 * that early remnant is being referred to if 53 is given as
+			 * argument. */
+			if (wnum == week_number(31,12,year-1,wflag)) {
+				month = 1;
+			} else
+				errx(EXIT_FAILURE, _("illegal week value: year %ld doesn't have week %d"),year,wnum);
+		}
+		//printf("%d %d %ld : %d : %d\n",day,month,year,wflag,wflag&WEEK_NUM_MASK);
+	}
+
 	headers_init(julian);
 
-	if (!colors_init(colormode))
+	if (!colors_init(colormode)) {
 		day = 0;
+		wflag &= ~WEEK_NUM_MASK;
+	}
 
 	if (yflag)
 		yearly(day, year, julian, wflag);
@@ -467,7 +505,7 @@ static int do_monthly(int day, int month, long year, int wflag,
 {
 	int col, row, days[MAXDAYS];
 	char *p, lineout[FMT_ST_CHARS];
-	size_t width = (julian ? J_WEEK_LEN : WEEK_LEN) - 1 + (wflag?3:0);
+	size_t width = (julian ? J_WEEK_LEN : WEEK_LEN) - 1 + (wflag?WNUM_LEN:0);
 	int pos = 0;
 
 	day_array(day, month, year, days);
@@ -500,9 +538,21 @@ static int do_monthly(int day, int month, long year, int wflag,
 			for (col = 0; col < DAYS_IN_WEEK; col++) {
 				int xd = days[row * DAYS_IN_WEEK + col];
 				if (xd != SPACE) {
-					p += sprintf(p,"%2d ",
-						week_number(xd & ~TODAY_FLAG,month,year,wflag));
+					int wnum = week_number(xd&~TODAY_FLAG,month,year,wflag);
+					p = ascii_wnum(p,wnum,(wflag & WEEK_NUM_MASK)==wnum);
 					break;
+					/*
+					int wnum = week_number(xd & ~TODAY_FLAG,month,year,wflag);
+					int highlight = 0;
+					if ((wflag&WEEK_NUM_MASK)==wnum) {
+						p += sprintf(p, "%s", Senter);
+						highlight = 1;
+					}
+					p += sprintf(p,"%2d",wnum);
+					if (highlight)
+						p += sprintf(p, "%s", Sexit);
+					p += sprintf(p," ");
+					break; */
 				} else if (col+1 == DAYS_IN_WEEK)
 					p += sprintf(p,"   ");
 			}
@@ -617,7 +667,7 @@ static void yearly(int day, long year, int julian, int wflag)
 	int days[MONTHS_IN_YEAR][MAXDAYS];
 	char *p;
 	/* three weeks + separators + \0 */
-	int wnumlen = (wflag?3:0);
+	int wnumlen = (wflag?WNUM_LEN:0);
 	char lineout[ wnumlen + sizeof(day_headings) + 2 +
 		      wnumlen + sizeof(day_headings) + 2 +
 		      wnumlen + sizeof(day_headings) + 1 ];
@@ -669,8 +719,8 @@ static void yearly(int day, long year, int julian, int wflag)
 					for (col = 0; col < DAYS_IN_WEEK; col++) {
 						int xd = days[month + which_cal][row * DAYS_IN_WEEK + col];
 						if (xd != SPACE) {
-							p += sprintf(p,"%2d ",
-								week_number(xd & ~TODAY_FLAG,month + which_cal + 1,year,wflag));
+							int wnum = week_number(xd&~TODAY_FLAG,month+which_cal+1,year,wflag);
+							p = ascii_wnum(p,wnum,(wflag & WEEK_NUM_MASK)==wnum);
 							break;
 						} else if (col+1 == DAYS_IN_WEEK)
 							p += sprintf(p,"   ");
@@ -779,7 +829,7 @@ static int day_in_week(int d, int m, long y)
 static int week_number(int day, int month, long year, int wflag) {
 	int fday = 0,wday,yday;
 	wday = day_in_week(1,1,year);
-	if (wflag == WEEK_NUM_ISO)
+	if (wflag & WEEK_NUM_ISO)
 		fday = wday + (wday>=FRIDAY?-2:5);
 	else	/* WEEK_NUM_US */
 		/* according to gcal, the first Sun is in the first week */
@@ -809,6 +859,27 @@ static int week_number(int day, int month, long year, int wflag) {
 		return  week_number(1,1,year+1,wflag);
 	}
 	return (yday+fday) / 7;
+}
+
+/*
+ * week_to_day
+ *      return the yday of the first day in a given week inside
+ *      the given year. This may be something other than Monday
+ *      for ISO-8601 modes. For North American numbering this
+ *      always returns a Sunday.
+ */
+static int week_to_day(int wnum, long year, int wflag) {
+	int yday, wday;
+	wday = day_in_week(1,1,year);
+	yday = wnum * 7 - wday;
+	if (wflag & WEEK_NUM_ISO)
+		yday -= (wday>=FRIDAY?-2:5);
+	else	/* WEEK_NUM_US */
+		yday -= (wday==SUNDAY?6:-1);
+	if (yday<=0)
+		return 1;
+
+	return yday;
 }
 
 static char *ascii_day(char *p, int day)
@@ -856,6 +927,18 @@ static char *ascii_day(char *p, int day)
 	if (highlight)
 		p += sprintf(p, "%s", Sexit);
 	*p++ = ' ';
+	return p;
+}
+
+static char * ascii_wnum(char *p, int wnum,int highlight)
+{
+	if (highlight)
+		p += sprintf(p,"%s",Senter);
+	p += sprintf(p,"%2d",wnum);
+	if (highlight)
+		p += sprintf(p,"%s ",Sexit);
+	else
+		p += sprintf(p," ");
 	return p;
 }
 

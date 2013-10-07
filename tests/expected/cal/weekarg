@@ -1,0 +1,127 @@
+
+Gregorian - Monday-based, week 40, 3 month 
+      August 2013             September 2013            October 2013     
+   Mo Tu We Th Fr Sa Su     Mo Tu We Th Fr Sa Su     Mo Tu We Th Fr Sa Su
+31           1  2  3  4  35                    1  40     1  2  3  4  5  6 
+32  5  6  7  8  9 10 11  36  2  3  4  5  6  7  8  41  7  8  9 10 11 12 13 
+33 12 13 14 15 16 17 18  37  9 10 11 12 13 14 15  42 14 15 16 17 18 19 20 
+34 19 20 21 22 23 24 25  38 16 17 18 19 20 21 22  43 21 22 23 24 25 26 27 
+35 26 27 28 29 30 31     39 23 24 25 26 27 28 29  44 28 29 30 31          
+                         40 30                                            
+Gregorian - Sunday-based, week 40, 3 month 
+     September 2013            October 2013            November 2013     
+   Su Mo Tu We Th Fr Sa     Su Mo Tu We Th Fr Sa     Su Mo Tu We Th Fr Sa
+35  1  2  3  4  5  6  7  39        1  2  3  4  5  43                 1  2 
+36  8  9 10 11 12 13 14  40  6  7  8  9 10 11 12  44  3  4  5  6  7  8  9 
+37 15 16 17 18 19 20 21  41 13 14 15 16 17 18 19  45 10 11 12 13 14 15 16 
+38 22 23 24 25 26 27 28  42 20 21 22 23 24 25 26  46 17 18 19 20 21 22 23 
+39 29 30                 43 27 28 29 30 31        47 24 25 26 27 28 29 30 
+                                                                          
+Julian - Monday-based, week 40, 3 month 
+          August 2013                   September 2013                   October 2013         
+   Mon Tue Wed Thu Fri Sat Sun     Mon Tue Wed Thu Fri Sat Sun     Mon Tue Wed Thu Fri Sat Sun
+31             213 214 215 216  35                         244  40     274 275 276 277 278 279 
+32 217 218 219 220 221 222 223  36 245 246 247 248 249 250 251  41 280 281 282 283 284 285 286 
+33 224 225 226 227 228 229 230  37 252 253 254 255 256 257 258  42 287 288 289 290 291 292 293 
+34 231 232 233 234 235 236 237  38 259 260 261 262 263 264 265  43 294 295 296 297 298 299 300 
+35 238 239 240 241 242 243      39 266 267 268 269 270 271 272  44 301 302 303 304             
+                                40 273                                                         
+Julian - Sunday-based, week 40, 3 month 
+        September 2013                   October 2013                    November 2013        
+   Sun Mon Tue Wed Thu Fri Sat     Sun Mon Tue Wed Thu Fri Sat     Sun Mon Tue Wed Thu Fri Sat
+35 244 245 246 247 248 249 250  39         274 275 276 277 278  43                     305 306 
+36 251 252 253 254 255 256 257  40 279 280 281 282 283 284 285  44 307 308 309 310 311 312 313 
+37 258 259 260 261 262 263 264  41 286 287 288 289 290 291 292  45 314 315 316 317 318 319 320 
+38 265 266 267 268 269 270 271  42 293 294 295 296 297 298 299  46 321 322 323 324 325 326 327 
+39 272 273                      43 300 301 302 303 304          47 328 329 330 331 332 333 334 
+                                                                                               
+Gregorian - Monday-based, week 40, 1 month 
+     September 2013    
+   Mo Tu We Th Fr Sa Su
+35                    1 
+36  2  3  4  5  6  7  8 
+37  9 10 11 12 13 14 15 
+38 16 17 18 19 20 21 22 
+39 23 24 25 26 27 28 29 
+40 30                   
+Gregorian - Sunday-based, week 40, 1 month 
+      October 2013     
+   Su Mo Tu We Th Fr Sa
+39        1  2  3  4  5 
+40  6  7  8  9 10 11 12 
+41 13 14 15 16 17 18 19 
+42 20 21 22 23 24 25 26 
+43 27 28 29 30 31       
+                        
+Julian - Monday-based, week 40, 1 month 
+        September 2013        
+   Mon Tue Wed Thu Fri Sat Sun
+35                         244 
+36 245 246 247 248 249 250 251 
+37 252 253 254 255 256 257 258 
+38 259 260 261 262 263 264 265 
+39 266 267 268 269 270 271 272 
+40 273                         
+Julian - Sunday-based, week 40, 1 month 
+         October 2013         
+   Sun Mon Tue Wed Thu Fri Sat
+39         274 275 276 277 278 
+40 279 280 281 282 283 284 285 
+41 286 287 288 289 290 291 292 
+42 293 294 295 296 297 298 299 
+43 300 301 302 303 304         
+                               
+Gregorian - Monday-based, week 53, 1 month 
+      January 2010     
+   Mo Tu We Th Fr Sa Su
+53              1  2  3 
+ 1  4  5  6  7  8  9 10 
+ 2 11 12 13 14 15 16 17 
+ 3 18 19 20 21 22 23 24 
+ 4 25 26 27 28 29 30 31 
+                        
+Julian - Monday-based, week 53, 1 month 
+         January 2010         
+   Mon Tue Wed Thu Fri Sat Sun
+53                   1   2   3 
+ 1   4   5   6   7   8   9  10 
+ 2  11  12  13  14  15  16  17 
+ 3  18  19  20  21  22  23  24 
+ 4  25  26  27  28  29  30  31 
+                               
+Gregorian - Monday-based, week 53 with colors, 1 month 
+      January 2010     
+   Mo Tu We Th Fr Sa Su
+[7m53[27m              1  2  3 
+ 1  4  5  6  7  8  9 10 
+ 2 11 12 13 14 15 16 17 
+ 3 18 19 20 21 22 23 24 
+ 4 25 26 27 28 29 30 31 
+                        
+Julian - Monday-based, week 53 with colors, 1 month 
+         January 2010         
+   Mon Tue Wed Thu Fri Sat Sun
+[7m53[27m                   1   2   3 
+ 1   4   5   6   7   8   9  10 
+ 2  11  12  13  14  15  16  17 
+ 3  18  19  20  21  22  23  24 
+ 4  25  26  27  28  29  30  31 
+                               
+Gregorian - Monday-based, week 40 with colors, 3 month 
+      August 2013             September 2013            October 2013     
+   Mo Tu We Th Fr Sa Su     Mo Tu We Th Fr Sa Su     Mo Tu We Th Fr Sa Su
+31           1  2  3  4  35                    1  [7m40[27m     1  2  3  4  5  6 
+32  5  6  7  8  9 10 11  36  2  3  4  5  6  7  8  41 [7m 7[27m  8  9 10 11 12 13 
+33 12 13 14 15 16 17 18  37  9 10 11 12 13 14 15  42 14 15 16 17 18 19 20 
+34 19 20 21 22 23 24 25  38 16 17 18 19 20 21 22  43 21 22 23 24 25 26 27 
+35 26 27 28 29 30 31     39 23 24 25 26 27 28 29  44 28 29 30 31          
+                         [7m40[27m 30                                            
+Julian - Monday-based, week 40 with colors, 3 month 
+          August 2013                   September 2013                   October 2013         
+   Mon Tue Wed Thu Fri Sat Sun     Mon Tue Wed Thu Fri Sat Sun     Mon Tue Wed Thu Fri Sat Sun
+31             213 214 215 216  35                         244  [7m40[27m     274 275 276 277 278 279 
+32 217 218 219 220 221 222 223  36 245 246 247 248 249 250 251  41 [7m280[27m 281 282 283 284 285 286 
+33 224 225 226 227 228 229 230  37 252 253 254 255 256 257 258  42 287 288 289 290 291 292 293 
+34 231 232 233 234 235 236 237  38 259 260 261 262 263 264 265  43 294 295 296 297 298 299 300 
+35 238 239 240 241 242 243      39 266 267 268 269 270 271 272  44 301 302 303 304             
+                                [7m40[27m 273                                                         

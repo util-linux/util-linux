@@ -1,0 +1,131 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2007 Karel Zak <kzak@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="week number given as argument"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+
+set -o pipefail
+
+USETERM=$( ts_has_option "useterm" "$*" )
+
+[ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
+ts_log ""
+
+MYTIME="7 10 2013"
+PWEEK="week 40"
+WEEK="--week=40"
+ts_log "Gregorian - Monday-based, $PWEEK, 3 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -3m $WEEK $MYTIME
+fi
+$TS_CMD_CAL -3m $WEEK $MYTIME >> $TS_OUTPUT
+
+ts_log "Gregorian - Sunday-based, $PWEEK, 3 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -3s $WEEK $MYTIME
+fi
+$TS_CMD_CAL -3s $WEEK $MYTIME >> $TS_OUTPUT
+
+
+ts_log "Julian - Monday-based, $PWEEK, 3 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -3mj $WEEK $MYTIME
+fi
+$TS_CMD_CAL -3mj $WEEK $MYTIME >> $TS_OUTPUT
+
+ts_log "Julian - Sunday-based, $PWEEK, 3 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -3sj $WEEK $MYTIME
+fi
+$TS_CMD_CAL -3sj $WEEK $MYTIME >> $TS_OUTPUT
+
+ts_log "Gregorian - Monday-based, $PWEEK, 1 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -m $WEEK $MYTIME
+fi
+$TS_CMD_CAL -m $WEEK $MYTIME >> $TS_OUTPUT
+
+ts_log "Gregorian - Sunday-based, $PWEEK, 1 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -s $WEEK $MYTIME
+fi
+$TS_CMD_CAL -s $WEEK $MYTIME >> $TS_OUTPUT
+
+
+ts_log "Julian - Monday-based, $PWEEK, 1 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -mj $WEEK $MYTIME
+fi
+$TS_CMD_CAL -mj $WEEK $MYTIME >> $TS_OUTPUT
+
+ts_log "Julian - Sunday-based, $PWEEK, 1 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -sj $WEEK $MYTIME
+fi
+$TS_CMD_CAL -sj $WEEK $MYTIME >> $TS_OUTPUT
+
+# tricky year, starts with a bit of 53 yet ends during 52
+MYTIME="2010"
+PWEEK="week 53"
+WEEK="--week=53"
+ts_log "Gregorian - Monday-based, $PWEEK, 1 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -1m $WEEK $MYTIME
+fi
+$TS_CMD_CAL -1m $WEEK $MYTIME >> $TS_OUTPUT
+
+ts_log "Julian - Monday-based, $PWEEK, 1 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -1mj $WEEK $MYTIME
+fi
+$TS_CMD_CAL -1mj $WEEK $MYTIME >> $TS_OUTPUT
+
+MYTIME="2010"
+PWEEK="week 53 with colors"
+WEEK="--week=53 --color=always"
+ts_log "Gregorian - Monday-based, $PWEEK, 1 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -1m $WEEK $MYTIME
+fi
+$TS_CMD_CAL -1m $WEEK $MYTIME >> $TS_OUTPUT
+
+ts_log "Julian - Monday-based, $PWEEK, 1 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -1mj $WEEK $MYTIME
+fi
+$TS_CMD_CAL -1mj $WEEK $MYTIME >> $TS_OUTPUT
+
+MYTIME="7 10 2013"
+PWEEK="week 40 with colors"
+WEEK="--week=40 --color=always"
+ts_log "Gregorian - Monday-based, $PWEEK, 3 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -3m $WEEK $MYTIME
+fi
+$TS_CMD_CAL -3m $WEEK $MYTIME >> $TS_OUTPUT
+
+ts_log "Julian - Monday-based, $PWEEK, 3 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -3mj $WEEK $MYTIME
+fi
+$TS_CMD_CAL -3mj $WEEK $MYTIME >> $TS_OUTPUT
+
+ts_finalize
+
