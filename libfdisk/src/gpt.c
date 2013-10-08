@@ -1532,7 +1532,7 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 			   free_sectors, nsegments, largest_segment);
 	} else
 		fdisk_warnx(cxt,
-			P_("%d error detected.", "%s errors detected.", nerror),
+			P_("%d error detected.", "%d errors detected.", nerror),
 			nerror);
 
 	return 0;
