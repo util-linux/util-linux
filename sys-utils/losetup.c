@@ -368,12 +368,13 @@ static void usage(FILE *out)
 		program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all                     list all used devices\n"
-		" -d, --detach <loopdev> [...]  detach one or more devices\n"
-		" -D, --detach-all              detach all used devices\n"
-		" -f, --find                    find first unused device\n"
-		" -c, --set-capacity <loopdev>  resize device\n"
-		" -j, --associated <file>       list all devices associated with <file>\n"), out);
+	fputs(_(" -a, --all                     list all used devices\n"), out);
+	fputs(_(" -d, --detach <loopdev> [...]  detach one or more devices\n"), out);
+	fputs(_(" -D, --detach-all              detach all used devices\n"), out);
+	fputs(_(" -f, --find                    find first unused device\n"), out);
+	fputs(_(" -c, --set-capacity <loopdev>  resize device\n"), out);
+	fputs(_(" -j, --associated <file>       list all devices associated with <file>\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 
 	fputs(_(" -o, --offset <num>            start at offset <num> into file\n"), out);
