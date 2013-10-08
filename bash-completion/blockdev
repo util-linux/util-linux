@@ -19,7 +19,6 @@ _blockdev_module()
 		--getalignoff
 		--getmaxsect
 		--getbsz
-		--setbsz
 		--getsize64
 		--setra
 		--getra
@@ -29,11 +28,7 @@ _blockdev_module()
 		--rereadpt
 		$DEVS"
 	case $prev in
-		'--setbsz')
-			COMPREPLY=( $(compgen -W "bytes" -- $cur) )
-			return 0
-			;;
-		'--setbsz'|'--setfra')
+		'--setfra')
 			COMPREPLY=( $(compgen -W "sectors" -- $cur) )
 			return 0
 			;;

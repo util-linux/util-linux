@@ -122,13 +122,6 @@ static const struct bdc bdcms[] =
 		.argval = -1,
 		.help = N_("get blocksize")
 	},{
-		IOCTL_ENTRY(BLKBSZSET),
-		.name = "--setbsz",
-		.argname = "<bytes>",
-		.argtype = ARG_INT,
-		.flags = FL_NORESULT,
-	        .help = N_("set blocksize")
-	},{
 		IOCTL_ENTRY(BLKGETSIZE),
 		.name = "--getsize",
 		.argtype = ARG_ULONG,
