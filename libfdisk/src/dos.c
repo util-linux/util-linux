@@ -1322,7 +1322,7 @@ static int write_sector(struct fdisk_context *cxt, sector_t secno,
 
 	rc = seek_sector(cxt, secno);
 	if (rc != 0) {
-		fdisk_warn(cxt, _("Write sector %jd failed: seek failed"),
+		fdisk_warn(cxt, _("Cannot write sector %jd: seek failed"),
 				(uintmax_t) secno);
 		return rc;
 	}
