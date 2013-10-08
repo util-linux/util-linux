@@ -8,7 +8,7 @@ Geometry: 1 heads, 63 sectors/track, 325 cylinders
 Units: cylinders of 63 * 512 = 32256 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: sun
+Disklabel type: sun
 
 
 Create first partition
@@ -19,7 +19,7 @@ Geometry: 1 heads, 63 sectors/track, 325 cylinders
 Units: cylinders of 63 * 512 = 32256 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: sun
+Disklabel type: sun
 
 Device     Flag Start       End Blocks  Id System
 <removed>1          0       128   4032  83 Linux native
@@ -32,7 +32,7 @@ Geometry: 1 heads, 63 sectors/track, 325 cylinders
 Units: cylinders of 63 * 512 = 32256 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: sun
+Disklabel type: sun
 
 Device     Flag Start       End Blocks  Id System
 <removed>1          0       128   4032   4 SunOS usr
@@ -45,7 +45,7 @@ Geometry: 1 heads, 63 sectors/track, 325 cylinders
 Units: cylinders of 63 * 512 = 32256 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: sun
+Disklabel type: sun
 
 Device     Flag Start       End Blocks  Id System
 <removed>1    r     0       128   4032   4 SunOS usr
@@ -58,7 +58,7 @@ Geometry: 1 heads, 63 sectors/track, 325 cylinders
 Units: cylinders of 63 * 512 = 32256 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: sun
+Disklabel type: sun
 
 Device     Flag Start       End Blocks  Id System
 <removed>1   ur     0       128   4032   4 SunOS usr
@@ -83,7 +83,7 @@ Geometry: 1 heads, 63 sectors/track, 325 cylinders
 Units: cylinders of 63 * 512 = 32256 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: sun
+Disklabel type: sun
 
 Device     Flag Start       End Blocks  Id System
 <removed>1   ur     0       128   4032   4 SunOS usr

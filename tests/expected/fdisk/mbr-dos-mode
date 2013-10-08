@@ -9,7 +9,7 @@ Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: dos
+Disklabel type: dos
 Disk identifier: <removed>
 
 
@@ -24,7 +24,7 @@ Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: dos
+Disklabel type: dos
 Disk identifier: <removed>
 
 Device     Boot Start End Blocks  Id System
@@ -41,7 +41,7 @@ Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: dos
+Disklabel type: dos
 Disk identifier: <removed>
 
 Device     Boot Start End Blocks  Id System
@@ -58,7 +58,7 @@ Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: dos
+Disklabel type: dos
 Disk identifier: <removed>
 
 Device     Boot Start End Blocks  Id System
@@ -75,7 +75,7 @@ Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: dos
+Disklabel type: dos
 Disk identifier: <removed>
 
 Device     Boot Start End Blocks  Id System
@@ -92,7 +92,7 @@ Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: dos
+Disklabel type: dos
 Disk identifier: <removed>
 
 Device     Boot Start End Blocks  Id System
@@ -110,7 +110,7 @@ Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: dos
+Disklabel type: dos
 Disk identifier: <removed>
 
 Device     Boot Start End Blocks  Id System
@@ -132,7 +132,7 @@ Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: dos
+Disklabel type: dos
 Disk identifier: <removed>
 
 Device     Boot Start End Blocks  Id System
@@ -151,7 +151,7 @@ Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: dos
+Disklabel type: dos
 Disk identifier: <removed>
 
 Device     Boot Start End Blocks  Id System
@@ -173,7 +173,7 @@ Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: dos
+Disklabel type: dos
 Disk identifier: <removed>
 
 Device     Boot Start End Blocks  Id System
@@ -194,7 +194,7 @@ Geometry: 255 heads, 63 sectors/track, 1024 cylinders
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disk label type: dos
+Disklabel type: dos
 Disk identifier: <removed>
 
 

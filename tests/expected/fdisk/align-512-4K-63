@@ -58,7 +58,7 @@ Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 4096 bytes
 I/O size (minimum/optimal): 4096 bytes / 32768 bytes
 Alignment offset: 3584 bytes
-Disk label type: dos
+Disklabel type: dos
 Disk identifier: <removed>
 
 Device     Boot     Start       End Blocks  Id System
