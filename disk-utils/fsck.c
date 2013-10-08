@@ -304,7 +304,7 @@ static int is_irrotational_disk(dev_t disk)
 	rc = fscanf(f, "%d", &x);
 	if (rc != 1) {
 		if (ferror(f))
-			warn(_("failed to read: %s"), path);
+			warn(_("cannot read %s"), path);
 		else
 			warnx(_("parse error: %s"), path);
 	}

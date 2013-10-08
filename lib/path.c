@@ -97,7 +97,7 @@ path_read_str(char *result, size_t len, const char *path, ...)
 	va_end(ap);
 
 	if (!fgets(result, len, fd))
-		err(EXIT_FAILURE, _("failed to read: %s"), pathbuf);
+		err(EXIT_FAILURE, _("cannot read %s"), pathbuf);
 	fclose(fd);
 
 	len = strlen(result);
@@ -118,7 +118,7 @@ path_read_s32(const char *path, ...)
 
 	if (fscanf(fd, "%d", &result) != 1) {
 		if (ferror(fd))
-			err(EXIT_FAILURE, _("failed to read: %s"), pathbuf);
+			err(EXIT_FAILURE, _("cannot read %s"), pathbuf);
 		else
 			errx(EXIT_FAILURE, _("parse error: %s"), pathbuf);
 	}
@@ -139,7 +139,7 @@ path_read_u64(const char *path, ...)
 
 	if (fscanf(fd, "%"SCNu64, &result) != 1) {
 		if (ferror(fd))
-			err(EXIT_FAILURE, _("failed to read: %s"), pathbuf);
+			err(EXIT_FAILURE, _("cannot read %s"), pathbuf);
 		else
 			errx(EXIT_FAILURE, _("parse error: %s"), pathbuf);
 	}
@@ -187,7 +187,7 @@ path_cpuparse(int maxcpus, int islist, const char *path, va_list ap)
 	fd = path_vfopen("r" UL_CLOEXECSTR, 1, path, ap);
 
 	if (!fgets(buf, len, fd))
-		err(EXIT_FAILURE, _("failed to read: %s"), pathbuf);
+		err(EXIT_FAILURE, _("cannot read %s"), pathbuf);
 	fclose(fd);
 
 	len = strlen(buf);

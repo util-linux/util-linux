@@ -186,12 +186,12 @@ static int uread(const struct last_control *ctl, FILE *fp, struct utmp *u,
 			return 0;
 		o = ((fpos - 1) / UCHUNKSIZE) * UCHUNKSIZE;
 		if (fseeko(fp, o, SEEK_SET) < 0) {
-			warn(_("seek failed: %s"), ctl->altv[ctl->alti]);
+			warn(_("seek on %s failed"), ctl->altv[ctl->alti]);
 			return 0;
 		}
 		bpos = (int)(fpos - o);
 		if (fread(buf, bpos, 1, fp) != 1) {
-			warn(_("read failed: %s"), ctl->altv[ctl->alti]);
+			warn(_("cannot read %s"), ctl->altv[ctl->alti]);
 			return 0;
 		}
 		fpos = o;
@@ -220,7 +220,7 @@ static int uread(const struct last_control *ctl, FILE *fp, struct utmp *u,
 	 */
 	memcpy(tmp + (-bpos), buf, utsize + bpos);
 	if (fseeko(fp, fpos, SEEK_SET) < 0) {
-		warn(_("seek failed: %s"), ctl->altv[ctl->alti]);
+		warn(_("seek on %s failed"), ctl->altv[ctl->alti]);
 		return 0;
 	}
 
@@ -228,7 +228,7 @@ static int uread(const struct last_control *ctl, FILE *fp, struct utmp *u,
 	 *	Read another UCHUNKSIZE bytes.
 	 */
 	if (fread(buf, UCHUNKSIZE, 1, fp) != 1) {
-		warn(_("read failed: %s"), ctl->altv[ctl->alti]);
+		warn(_("cannot read %s"), ctl->altv[ctl->alti]);
 		return 0;
 	}
 

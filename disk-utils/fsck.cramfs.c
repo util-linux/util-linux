@@ -166,14 +166,14 @@ static void test_super(int *start, size_t * length)
 
 	/* find superblock */
 	if (read(fd, &super, sizeof(super)) != sizeof(super))
-		err(FSCK_EX_ERROR, _("read failed: %s"), filename);
+		err(FSCK_EX_ERROR, _("cannot read %s"), filename);
 	if (get_superblock_endianness(super.magic) != -1)
 		*start = 0;
 	else if (*length >= (PAD_SIZE + sizeof(super))) {
 		if (lseek(fd, PAD_SIZE, SEEK_SET) == (off_t) -1)
-			err(FSCK_EX_ERROR, _("seek failed: %s"), filename);
+			err(FSCK_EX_ERROR, _("seek on %s failed"), filename);
 		if (read(fd, &super, sizeof(super)) != sizeof(super))
-			err(FSCK_EX_ERROR, _("read failed: %s"), filename);
+			err(FSCK_EX_ERROR, _("cannot read %s"), filename);
 		if (get_superblock_endianness(super.magic) != -1)
 			*start = PAD_SIZE;
 		else
@@ -228,9 +228,9 @@ static void test_crc(int start)
 			 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 		if (buf != MAP_FAILED) {
 			if (lseek(fd, 0, SEEK_SET) == (off_t) -1)
-				err(FSCK_EX_ERROR, _("seek failed: %s"), filename);
+				err(FSCK_EX_ERROR, _("seek on %s failed"), filename);
 			if (read(fd, buf, super.size) < 0)
-				err(FSCK_EX_ERROR, _("read failed: %s"), filename);
+				err(FSCK_EX_ERROR, _("cannot read %s"), filename);
 		}
 	}
 	if (buf != MAP_FAILED) {
@@ -244,11 +244,11 @@ static void test_crc(int start)
 
 		buf = xmalloc(4096);
 		if (lseek(fd, start, SEEK_SET) == (off_t) -1)
-			err(FSCK_EX_ERROR, _("seek failed: %s"), filename);
+			err(FSCK_EX_ERROR, _("seek on %s failed"), filename);
 		for (;;) {
 			retval = read(fd, buf, 4096);
 			if (retval < 0)
-				err(FSCK_EX_ERROR, _("read failed: %s"), filename);
+				err(FSCK_EX_ERROR, _("cannot read %s"), filename);
 			else if (retval == 0)
 				break;
 			if (length == 0)

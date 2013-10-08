@@ -602,7 +602,7 @@ static char *getpasswd(struct console *con)
 			case ENOENT:
 				break;
 			default:
-				warn(_("%s: read failed"), con->tty);
+				warn(_("cannot read %s"), con->tty);
 				break;
 			}
 			goto quit;

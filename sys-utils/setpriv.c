@@ -230,7 +230,7 @@ static void dump_label(const char *name)
 	close(fd);
 	if (len < 0) {
 		errno = e;
-		warn(_("read failed: %s"), name);
+		warn(_("cannot read %s"), name);
 		return;
 	}
 	if (sizeof(buf) - 1 <= (size_t)len) {
