@@ -566,7 +566,7 @@ static int dos_set_disklabel_id(struct fdisk_context *cxt)
 	l = self_label(cxt);
 	old = mbr_get_id(cxt->firstsector);
 	rc = fdisk_ask_string(cxt,
-			_("Enter of the new disk identifier"), &str);
+			_("Enter the new disk identifier"), &str);
 	if (rc)
 		return rc;
 
