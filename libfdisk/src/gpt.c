@@ -1811,7 +1811,7 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 	guid_to_string(&gpt->pheader->disk_guid, str);
 	fdisk_label_set_changed(cxt->label, 1);
 	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Created a new GPT disklabel (GUID: %s)"), str);
+			_("Created a new GPT disklabel (GUID: %s)."), str);
 done:
 	return rc;
 }
@@ -1998,7 +1998,7 @@ int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
 	fdisk_label_set_changed(cxt->label, 1);
 
 	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Partition UUID changed from %s to %s"),
+			_("Partition UUID changed from %s to %s."),
 			old_u, new_u);
 	return 0;
 }
@@ -2043,7 +2043,7 @@ int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i)
 	fdisk_label_set_changed(cxt->label, 1);
 
 	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Partition name changed from '%s' to '%.*s'"),
+			_("Partition name changed from '%s' to '%.*s'."),
 			old, GPT_PART_NAME_LEN, str);
 	free(str);
 	free(old);
