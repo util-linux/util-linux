@@ -89,11 +89,11 @@ ts_finalize_subtest
 if [ -x "/sbin/mkfs.btrfs" ]; then
 	$TS_CMD_WIPEFS -a  $DEVICE &> /dev/null
 	ts_log "Create filesystem [btrfs]"
-	/sbin/mkfs.btrfs -L "$LABEL" $DEVICE &> /dev/null
+	mkfs.btrfs -L "$LABEL" $DEVICE &> /dev/null
 	udevadm settle
 
 	mount -t btrfs $DEVICE $MOUNTPOINT &> /dev/null
-	/sbin/btrfsctl -S sub $MOUNTPOINT &> /dev/null
+	btrfs subvolume create $MOUNTPOINT/sub &> /dev/null
 	umount $MOUNTPOINT &> /dev/null
 
 	udevadm settle
