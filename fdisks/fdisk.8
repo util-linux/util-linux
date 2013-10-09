@@ -92,6 +92,11 @@ Print the size (in blocks) of each given partition. This option is DEPRECATED
 in favour of
 .B blockdev (1).
 .TP
+.BI "\-t " type
+Disable support for all disklabels and enable support only for specified \fItype\fP.
+This is necessary for example to access protective or hybrid MBR on devices
+with GPT.
+.TP
 .BI "\-u"[=unit]
 When listing partition tables, show sizes in 'sectors' or in 'cylinders'.  The
 default is to show sizes in sectors.  For backward compatibility, it is possible

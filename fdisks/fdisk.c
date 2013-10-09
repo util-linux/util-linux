@@ -60,6 +60,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -h                print this help text\n"), out);
 	fputs(_(" -c[=<mode>]       compatible mode: 'dos' or 'nondos' (default)\n"), out);
 	fputs(_(" -L[=<when>]       colorize output (auto, always or never)\n"), out);
+	fputs(_(" -t <type>         force fdisk to recognize specified partition table type only\n"), out);
 	fputs(_(" -u[=<unit>]       display units: 'cylinders' or 'sectors' (default)\n"), out);
 	fputs(_(" -v                print program version\n"), out);
 	fputs(_(" -C <number>       specify the number of cylinders\n"), out);
@@ -410,7 +411,7 @@ int main(int argc, char **argv)
 
 	fdisk_context_set_ask(cxt, ask_callback, NULL);
 
-	while ((c = getopt(argc, argv, "b:c::C:hH:lL::sS:u::vV")) != -1) {
+	while ((c = getopt(argc, argv, "b:c::C:hH:lL::sS:t:u::vV")) != -1) {
 		switch (c) {
 		case 'b':
 		{
@@ -465,6 +466,18 @@ int main(int argc, char **argv)
 		case 's':
 			act = ACT_SHOWSIZE;
 			break;
+		case 't':
+		{
+			struct fdisk_label *lb = NULL;
+
+			while (fdisk_context_next_label(cxt, &lb) == 0)
+				fdisk_label_set_disabled(lb, 1);
+
+			lb = fdisk_context_get_label(cxt, optarg);
+			if (!lb)
+				errx(EXIT_FAILURE, _("unsupported disklabel: %s"), optarg);
+			fdisk_label_set_disabled(lb, 0);
+		}
 		case 'u':
 			if (optarg && *optarg == '=')
 				optarg++;
