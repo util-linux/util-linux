@@ -95,7 +95,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out, _(" -g, --get-threshold                display current threshold value\n"));
 	fprintf(out, _(" -S, --set-default-threshold <num>  set default threshold value\n"));
 	fprintf(out, _(" -t, --set-flush <num>              set flush timeout to value\n"));
-	fprintf(out, _(" -G, --get-glush                    display default flush timeout value\n"));
+	fprintf(out, _(" -G, --get-flush                    display default flush timeout value\n"));
 	fprintf(out, _(" -T, --set-default-flush <num>      set the default flush timeout to value\n"));
 	fprintf(out, _(" -q, --stats                        display statistics about the tty\n"));
 	fprintf(out, _(" -i, --interval <seconds>           gather statistics every <seconds> interval\n"));
