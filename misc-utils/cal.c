@@ -805,13 +805,17 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [[[day] month] year]\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Display a calendar, or some part of it.\n"), out);
+	fputs(_("Without any arguments, display the current month.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -1, --one             show only current month (default)\n"), out);
-	fputs(_(" -3, --three           show previous, current and next month\n"), out);
+	fputs(_(" -1, --one             show only a single month (default)\n"), out);
+	fputs(_(" -3, --three           show three months spanning the date\n"), out);
 	fputs(_(" -s, --sunday          Sunday as first day of week\n"), out);
 	fputs(_(" -m, --monday          Monday as first day of week\n"), out);
 	fputs(_(" -j, --julian          output Julian dates\n"), out);
-	fputs(_(" -y, --year            show whole current year\n"), out);
+	fputs(_(" -y, --year            show the whole year\n"), out);
 	fputs(_("     --color[=<when>]  colorize messages (auto, always or never)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
