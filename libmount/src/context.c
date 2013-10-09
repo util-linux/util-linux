@@ -229,7 +229,7 @@ int mnt_context_is_restricted(struct libmnt_context *cxt)
 /**
  * mnt_context_set_optsmode
  * @cxt: mount context
- * @mode: MNT_OMASK_* flags
+ * @mode: MNT_OMODE_* flags
  *
  * Controls how to use mount optionssource and target paths from fstab/mtab.
  *
@@ -276,7 +276,7 @@ int mnt_context_set_optsmode(struct libmnt_context *cxt, int mode)
  * mnt_context_get_optsmode
  * @cxt: mount context
  *
- * Returns: MNT_OMASK_* mask or zero.
+ * Returns: MNT_OMODE_* mask or zero.
  */
 
 int mnt_context_get_optsmode(struct libmnt_context *cxt)
