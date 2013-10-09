@@ -102,11 +102,38 @@ struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt, const cha
 	return NULL;
 }
 
+int fdisk_context_next_label(struct fdisk_context *cxt, struct fdisk_label **lb)
+{
+	size_t i;
+	struct fdisk_label *res = NULL;
+
+	if (!lb || !cxt)
+		return -EINVAL;
+
+	if (!*lb)
+		res = cxt->labels[0];
+	else {
+		for (i = 1; i < cxt->nlabels; i++) {
+			if (*lb == cxt->labels[i - 1]) {
+				res = cxt->labels[i];
+				break;
+			}
+		}
+	}
+
+	*lb = res;
+	return res ? 0 : 1;
+}
+
 int __fdisk_context_switch_label(struct fdisk_context *cxt,
 				 struct fdisk_label *lb)
 {
-	if (!lb)
+	if (!lb || !cxt)
 		return -EINVAL;
+	if (lb->disabled) {
+		DBG(LABEL, dbgprint("*** attempt to switch to disabled label %s -- ignore!", lb->name));
+		return -EINVAL;
+	}
 	cxt->label = lb;
 	DBG(LABEL, dbgprint("--> switching context to %s!", lb->name));
 	return 0;

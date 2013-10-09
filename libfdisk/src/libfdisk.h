@@ -87,6 +87,7 @@ extern int fdisk_context_deassign_device(struct fdisk_context *cxt);
 
 extern struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt,
 				const char *name);
+extern int fdisk_context_next_label(struct fdisk_context *cxt, struct fdisk_label **lb);
 
 extern int fdisk_context_switch_label(struct fdisk_context *cxt,
 				const char *name);
@@ -141,6 +142,9 @@ extern int fdisk_set_partition_type(struct fdisk_context *cxt, size_t partnum,
 
 extern void fdisk_label_set_changed(struct fdisk_label *lb, int changed);
 extern int fdisk_label_is_changed(struct fdisk_label *lb);
+
+extern void fdisk_label_set_disabled(struct fdisk_label *lb, int disabled);
+extern int fdisk_label_is_disabled(struct fdisk_label *lb);
 
 extern int fdisk_partition_get_status(struct fdisk_context *cxt, size_t partnum, int *status);
 extern int fdisk_partition_is_used(struct fdisk_context *cxt, size_t partnum);

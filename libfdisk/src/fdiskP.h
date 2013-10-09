@@ -202,7 +202,8 @@ struct fdisk_label {
 
 	int			flags;		/* FDISK_LABEL_FL_* flags */
 
-	unsigned int		changed:1;	/* label has been modified */
+	unsigned int		changed:1,	/* label has been modified */
+				disabled:1;	/* this driver is disabled at all */
 
 	const struct fdisk_label_operations *op;
 };

@@ -17,7 +17,10 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
 
 		if (!lb->op->probe)
 			continue;
-
+		if (lb->disabled) {
+			DBG(LABEL, dbgprint("%s disabled -- ignore", lb->name));
+			continue;
+		}
 		DBG(LABEL, dbgprint("probing for %s", lb->name));
 
 		cxt->label = lb;
@@ -230,7 +233,7 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 	}
 
 	lb = fdisk_context_get_label(cxt, name);
-	if (!lb)
+	if (!lb || lb->disabled)
 		return -EINVAL;
 	if (!lb->op->create)
 		return -ENOSYS;
@@ -435,4 +438,20 @@ int fdisk_label_is_changed(struct fdisk_label *lb)
 {
 	assert(lb);
 	return lb ? lb->changed : 0;
+}
+
+void fdisk_label_set_disabled(struct fdisk_label *lb, int disabled)
+{
+	assert(lb);
+
+	DBG(LABEL, dbgprint("%s label %s",
+				lb->name,
+				disabled ? "DISABLED" : "ENABLED"));
+	lb->disabled = disabled ? 1 : 0;
+}
+
+int fdisk_label_is_disabled(struct fdisk_label *lb)
+{
+	assert(lb);
+	return lb ? lb->disabled : 0;
 }
