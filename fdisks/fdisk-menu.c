@@ -20,6 +20,7 @@ struct menu_entry {
 
 	enum fdisk_labeltype	label;		/* only for this label */
 	enum fdisk_labeltype	exclude;	/* all labels except this */
+	enum fdisk_labeltype	parent;		/* for nested PT */
 };
 
 #define IS_MENU_SEP(e)	((e)->key == '-')
@@ -28,6 +29,8 @@ struct menu_entry {
 struct menu {
 	enum fdisk_labeltype	label;		/* only for this label */
 	enum fdisk_labeltype	exclude;	/* all labels except this */
+
+	unsigned int		nonested : 1;	/* don't make this menu active in nested PT */
 
 	int (*callback)(struct fdisk_context **,
 			const struct menu *,
@@ -82,6 +85,8 @@ DECLARE_MENU_CB(generic_menu_cb);
 #define MENU_BENT(k, t)		{ .title = t, .key = k, .expert = 1, .normal = 1 }
 #define MENU_BENT_E(k, t, l)	{ .title = t, .key = k, .expert = 1, .normal = 1, .exclude = l }
 
+#define MENU_ENT_NEST(k, t, l, p)	{ .title = t, .key = k, .normal = 1, .label = l, .parent = p }
+#define MENU_XENT_NEST(k, t, l, p)	{ .title = t, .key = k, .expert = 1, .label = l, .parent = p }
 
 /* Generic menu */
 struct menu menu_generic = {
@@ -108,7 +113,8 @@ struct menu menu_generic = {
 		MENU_ENT_L('w', N_("write table to disk"), FDISK_DISKLABEL_BSD),
 		MENU_BENT ('q', N_("quit without saving changes")),
 		MENU_XENT ('r', N_("return to main menu")),
-		MENU_ENT_L('r', N_("return to main menu"), FDISK_DISKLABEL_BSD),
+
+		MENU_ENT_NEST('r', N_("return from BSD to DOS"), FDISK_DISKLABEL_BSD, FDISK_DISKLABEL_DOS),
 
 		{ 0, NULL }
 	}
@@ -117,6 +123,7 @@ struct menu menu_generic = {
 struct menu menu_createlabel = {
 	.callback = createlabel_menu_cb,
 	.exclude = FDISK_DISKLABEL_BSD,
+	.nonested = 1,
 	.entries = {
 		MENU_SEP(N_("Create a new label")),
 		MENU_ENT('g', N_("create a new empty GPT partition table")),
@@ -151,7 +158,7 @@ struct menu menu_gpt = {
 		MENU_XENT('i', N_("change disk GUID")),
 		MENU_XENT('n', N_("change partition name")),
 		MENU_XENT('u', N_("change partition UUID")),
-
+		MENU_XENT('M', N_("enter protective/hybrid MBR")),
 		{ 0, NULL }
 	}
 };
@@ -199,6 +206,9 @@ struct menu menu_dos = {
 		MENU_XENT('e', N_("list extended partitions")),
 		MENU_XENT('f', N_("fix partition order")),
 		MENU_XENT('i', N_("change the disk identifier")),
+
+		MENU_XENT_NEST('M', N_("return from protective/hybrid MBR to GPT"),
+					FDISK_DISKLABEL_DOS, FDISK_DISKLABEL_GPT),
 		{ 0, NULL }
 	}
 };
@@ -235,10 +245,16 @@ static const struct menu_entry *next_menu_entry(
 		const struct menu *m = menus[mc->menu_idx];
 		const struct menu_entry *e = &(m->entries[mc->entry_idx]);
 
+		/*
+		 * whole-menu filter
+		 */
+
 		/* no more entries */
 		if (e->title == NULL ||
 		/* menu wanted for specified labels only */
 		    (m->label && cxt->label && !(m->label & cxt->label->id)) ||
+		/* unwanted for nested PT */
+		    (m->nonested && cxt->parent) ||
 		/* menu excluded for specified labels */
 		    (m->exclude && cxt->label && (m->exclude & cxt->label->id))) {
 			mc->menu_idx++;
@@ -246,12 +262,18 @@ static const struct menu_entry *next_menu_entry(
 			continue;
 		}
 
+		/*
+		 * per entry filter
+		 */
+
 		/* excluded for the current label */
 		if ((e->exclude && cxt->label && e->exclude & cxt->label->id) ||
 		/* entry wanted for specified labels only */
 		    (e->label && cxt->label && !(e->label & cxt->label->id)) ||
 		/* exclude non-expert entries in expect mode */
 		    (e->expert == 0 && fdisk_context_display_details(cxt)) ||
+		/* nested only */
+		    (e->parent && (!cxt->parent || cxt->parent->label->id != e->parent)) ||
 		/* exclude non-normal entries in normal mode */
 		    (e->normal == 0 && !fdisk_context_display_details(cxt))) {
 
@@ -336,6 +358,12 @@ static int print_fdisk_menu(struct fdisk_context *cxt)
 			printf("   %c   %s\n", e->key, _(e->title));
 	}
 	fputc('\n', stdout);
+
+	if (cxt->parent)
+		fdisk_info(cxt, _("You're editing nested '%s' partition table, "
+				  "primary partition table is '%s'."),
+				cxt->label->name,
+				cxt->parent->label->name);
 
 	return 0;
 }
@@ -482,7 +510,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		fdisk_context_enable_details(cxt, 1);
 		break;
 	case 'r':
-		/* return from nested PT (e.g. BSD) */
+		/* return from nested BSD to DOS */
 		if (cxt->parent) {
 			*cxt0 = cxt->parent;
 
@@ -506,8 +534,9 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 		       const struct menu_entry *ent)
 {
 	struct fdisk_context *cxt = *cxt0;
+	struct fdisk_context *mbr;
 	size_t n;
-	int rc;
+	int rc = 0;
 
 	assert(cxt);
 	assert(ent);
@@ -515,20 +544,34 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 
 	DBG(FRONTEND, dbgprint("enter GPT menu"));
 
-	if (ent->key == 'i')
-		return fdisk_set_disklabel_id(cxt);
+	if (ent->expert) {
+		switch (ent->key) {
+		case 'i':
+			return fdisk_set_disklabel_id(cxt);
+		case 'M':
+			mbr = fdisk_new_nested_context(cxt, "dos");
+			if (!mbr)
+				return -ENOMEM;
+			*cxt0 = cxt = mbr;
+			fdisk_context_enable_details(cxt, 1);	/* keep us in expert mode */
+			fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+					_("Entering protective/hybrid MBR disklabel."));
+			return 0;
+		}
 
-	rc = fdisk_ask_partnum(cxt, &n, FALSE);
-	if (rc)
-		return rc;
+		/* actions where is necessary partnum */
+		rc = fdisk_ask_partnum(cxt, &n, FALSE);
+		if (rc)
+			return rc;
 
-	switch(ent->key) {
-	case 'u':
-		rc = fdisk_gpt_partition_set_uuid(cxt, n);
-		break;
-	case 'n':
-		rc = fdisk_gpt_partition_set_name(cxt, n);
-		break;
+		switch(ent->key) {
+		case 'u':
+			rc = fdisk_gpt_partition_set_uuid(cxt, n);
+			break;
+		case 'n':
+			rc = fdisk_gpt_partition_set_name(cxt, n);
+			break;
+		}
 	}
 	return rc;
 }
@@ -569,7 +612,8 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 				fdisk_free_context(bsd);
 			else {
 				*cxt0 = cxt = bsd;
-				fdisk_info(cxt, _("Entering nested BSD disklabel."));
+				fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+						_("Entering nested BSD disklabel."));
 			}
 			break;
 		}
@@ -598,6 +642,16 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 		break;
 	case 'i':
 		rc = fdisk_set_disklabel_id(cxt);
+		break;
+	case 'M':
+		/* return from nested MBR to GPT */
+		if (cxt->parent) {
+			*cxt0 = cxt->parent;
+
+			fdisk_info(cxt, _("Leaving nested disklabel."));
+			fdisk_free_context(cxt);
+			cxt = *cxt0;
+		}
 		break;
 	}
 	return rc;
