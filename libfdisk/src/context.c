@@ -27,7 +27,6 @@ struct fdisk_context *fdisk_new_context(void)
 	return cxt;
 }
 
-/* only BSD is supported now */
 struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 				const char *name)
 {
@@ -53,14 +52,19 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 	cxt->grain =            parent->grain;
 	cxt->first_lba =        parent->first_lba;
 	cxt->total_sectors =    parent->total_sectors;
+	cxt->firstsector =	parent->firstsector;
 
 	cxt->ask_cb =		parent->ask_cb;
 	cxt->ask_data =		parent->ask_data;
 
 	cxt->geom = parent->geom;
 
-	if (name && strcmp(name, "bsd") == 0)
-		lb = cxt->labels[ cxt->nlabels++ ] = fdisk_new_bsd_label(cxt);
+	if (name) {
+		if (strcmp(name, "bsd") == 0)
+			lb = cxt->labels[ cxt->nlabels++ ] = fdisk_new_bsd_label(cxt);
+		else if (strcmp(name, "dos") == 0)
+			lb = cxt->labels[ cxt->nlabels++ ] = fdisk_new_dos_label(cxt);
+	}
 
 	if (lb) {
 		DBG(LABEL, dbgprint("probing for nested %s", lb->name));
@@ -160,7 +164,9 @@ static void reset_context(struct fdisk_context *cxt)
 	if (!cxt->parent && cxt->dev_fd > -1)
 		close(cxt->dev_fd);
 	free(cxt->dev_path);
-	free(cxt->firstsector);
+
+	if (cxt->parent == NULL || cxt->parent->firstsector != cxt->firstsector)
+		free(cxt->firstsector);
 
 	/* initialize */
 	cxt->dev_fd = -1;
