@@ -383,10 +383,13 @@ int mnt_context_is_parent(struct libmnt_context *cxt)
  * mnt_context_is_child:
  * @cxt: mount context
  *
- * Return: 1 if mount -F enabled and the current context is child, or 0
+ * Return: 1 f the current context is child, or 0
  */
 int mnt_context_is_child(struct libmnt_context *cxt)
 {
+	/* See mnt_fork_context(), the for fork flag is always disabled
+	 * for children to avoid recursive forking.
+	 */
 	return !mnt_context_is_fork(cxt) && cxt->pid;
 }
 
