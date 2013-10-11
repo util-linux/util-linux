@@ -808,8 +808,8 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 	sys = t ? t->type : MBR_LINUX_DATA_PARTITION;
 
 	if (p && p->sys_ind) {
-		fdisk_warnx(cxt, _("Partition %d is already defined.  Delete "
-			 "it before re-adding it."), n + 1);
+		fdisk_warnx(cxt, _("Partition %zd is already defined.  "
+			           "Delete it before re-adding it."), n + 1);
 		return -EINVAL;
 	}
 	fill_bounds(cxt, first, last);

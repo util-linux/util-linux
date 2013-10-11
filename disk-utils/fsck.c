@@ -713,7 +713,7 @@ static struct fsck_instance *wait_one(int flags)
 				warnx(_("wait: no more child process?!?"));
 				return NULL;
 			}
-			warn(_("waidpid failed"));
+			warn(_("waitpid failed"));
 			continue;
 		}
 		for (prev = 0, inst = instance_list;

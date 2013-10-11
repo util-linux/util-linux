@@ -1658,8 +1658,8 @@ static int gpt_add_partition(
 	ents = gpt->ents;
 
 	if (!partition_unused(&ents[partnum])) {
-		fdisk_warnx(cxt, _("Partition %zd is already defined. "
-			 "Delete it before re-adding it."), partnum +1);
+		fdisk_warnx(cxt, _("Partition %zd is already defined.  "
+			           "Delete it before re-adding it."), partnum +1);
 		return -EINVAL;
 	}
 	if (le32_to_cpu(pheader->npartition_entries) ==
