@@ -509,11 +509,18 @@ check_hybrid:
 	 * the disk size.
 	 *
 	 * Hybrid MBRs do not necessarily comply with this.
+	 *
+	 * Consider a bad value here to be a warning to support dd-ing
+	 * an image from a smaller disk to a bigger disk.
 	 */
 	if (ret == GPT_MBR_PROTECTIVE) {
 		sz_lba = le32_to_cpu(pmbr->partition_record[part].size_in_lba);
-		if (sz_lba != (uint32_t) cxt->total_sectors - 1 && sz_lba != 0xFFFFFFFF)
-			ret = 0;
+		if (sz_lba != (uint32_t) cxt->total_sectors - 1 && sz_lba != 0xFFFFFFFF) {
+			fdisk_warnx(cxt, _("GPT PMBR size mismatch (%u != %u) "
+					   "will be corrected by w(rite)."),
+					sz_lba,
+					(uint32_t) cxt->total_sectors - 1);
+		}
 	}
 done:
 	return ret;
