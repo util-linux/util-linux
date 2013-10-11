@@ -68,7 +68,9 @@ Get size in 512-byte sectors.
 .IP "\fB\-\-rereadpt\fP"
 Reread partition table
 .IP "\fB\-\-setbsz\fP \fIbytes\fP"
-Set blocksize.
+Set blocksize. Note that the block size is specific to the current file
+descriptor opening the block device, so the change of block size only persists
+for as long as blockdev has the device open, and is lost once blockdev exits.
 .IP "\fB\-\-setfra\fP \fIsectors\fP"
 Set filesystem readahead (same like --setra on 2.6 kernels).
 .IP "\fB\-\-setra\fP \fIsectors\fP"
