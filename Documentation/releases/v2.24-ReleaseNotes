@@ -2,6 +2,9 @@
 Util-linux 2.24 Release Notes
 =============================
 
+This is the last release where the old non-libmount mount(8) implementation
+is supported and maintained.
+
 Release highlights
 ------------------
 
@@ -87,7 +90,6 @@ Changes between v2.23 and v2.24
  ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.24/
 
 agetty:
-   - unrecognized option '--loginpause'"  [kernc]
    - -L accepts optional argument  [Karel Zak]
    - add \S to output /etc/os-release data  [Karel Zak]
    - add baud rates available from glibc that are not already supported  [James Buren]
@@ -101,9 +103,12 @@ agetty:
    - only use EXTA/EXTB macros if B19200/B38400 macros are not present  [James Buren]
    - update man page and usage()  [Karel Zak]
    - use O_NONBLOCK only for serial lines with CLOCAL  [Karel Zak]
+   - use standard angular brackets in usage message  [Benno Schulenberg]
+   - unrecognized option '--loginpause'"  [kernc]
 bash-completion:
    - add mount and umount  [Sami Kerola]
    - fix typos in mkfs.bfs logic  [Mike Frysinger]
+   - use '\n' as IFS when ask for filenames  [Karel Zak]
 blkdiscard:
    - use fstat() rather than stat() [coverity scan]  [Karel Zak]
 blkid:
@@ -111,7 +116,12 @@ blkid:
    - fix typo in ID_FS_AMBIVALEN=  [Karel Zak]
 blkid, hwclock, ldattach:
    - use program_invocation_short_name  [Sami Kerola]
+blockdev:
+   - add note about --setbsz usability  [Karel Zak]
 build-sys:
+   - Check for type sighandler_t and use if present  [Michael Forney]
+   - Fix check for __GNU_LIBRARY__  [Michael Forney]
+   - Use _POSIX_VERSION to determine support for %m  [Michael Forney]
    - add *vim and clang_complete to gitignore  [Karel Zak]
    - add --disable-setterm  [Karel Zak]
    - add CFLAGS and LDFLAGS for daemons and shared libs  [Karel Zak]
@@ -132,12 +142,15 @@ build-sys:
    - prefer AS_CASE rather than shell 'case'  [Sami Kerola]
    - prefer AS_IF rather than shell 'if'  [Sami Kerola]
    - pylibmount will not work when python3 is present  [Sami Kerola]
+   - release++ (v2.24-rc1)  [Karel Zak]
    - remove deprecated elvtune command  [Karel Zak]
    - remove unnecessary environment variable  [Sami Kerola]
+   - simplify python detection  [Sami Kerola]
    - support --with-python[={2,3}]  [Karel Zak]
    - use -Wno-clobbered for some BSD crap  [Karel Zak]
    - use backticks rather than $() for commands in configure  [Sami Kerola]
    - use m4 quoting consistently  [Sami Kerola]
+   - use tinfo *or* ncurses for more(1), ul(1) and setterm(1)  [Karel Zak]
 cal:
    - add --color to usage()  [Sami Kerola]
    - clean up use of constants  [Sami Kerola]
@@ -145,8 +158,10 @@ cal:
    - de-duplicate julian specific functions  [Sami Kerola]
    - fix -y output for UTF8  [Karel Zak]
    - fix few type mismatches  [Sami Kerola]
+   - fix gettext warning  [Karel Zak]
    - fix preprocessor directive indendation  [Sami Kerola]
    - improve coding style  [Karel Zak]
+   - improve the help text and man page  [Pádraig Brady]
    - mark all functions static  [Sami Kerola]
    - remove arbitrary limit of maxium year being 9999  [Sami Kerola]
    - remove unnecessary initializations  [Sami Kerola]
@@ -169,6 +184,8 @@ chfn:
 column:
    - dereference of null pointer [clang-analyzer]  [Sami Kerola]
    - use variable lenght printf field width to wprint blanks  [Sami Kerola]
+cytune:
+   - fix glush typo in cytune  [Rafael Ferreira]
 dmesg:
    - add --time-format option  [Sami Kerola]
    - add iso-8601 time format  [Sami Kerola]
@@ -182,6 +199,7 @@ dmesg:
    - regroup time related options close to each other  [Sami Kerola]
    - support --color[={auto,always,never}]  [Karel Zak]
 docs:
+   - fix grammar of referring phrase, and indicate location better  [Benno Schulenberg]
    - add --present to last(1) manual page  [Sami Kerola]
    - add --since and time option formats to last(1) manual  [Sami Kerola]
    - add --time-format option and ISO-8601 format to manual  [Sami Kerola]
@@ -198,12 +216,16 @@ docs:
    - fix wording and formatting of man page for dmesg  [Benno Schulenberg]
    - improve formatting and wording of man pages for fdisk and cfdisk  [Benno Schulenberg]
    - improve grammar and consistency of comments in login.c  [Benno Schulenberg]
+   - improve grammar and wording of the release-schedule text  [Benno Schulenberg]
    - make description of --activate clearer on man page of sfdisk  [Benno Schulenberg]
    - normalize the formatting of man pages for nsenter and unshare  [Benno Schulenberg]
    - note ddate removal  [Mike Frysinger]
    - slightly correct the man page of column  [Benno Schulenberg]
+   - tweak the grammar of an agetty man-page fragment  [Benno Schulenberg]
    - update AUTHORS file  [Karel Zak]
+   - update TODO  [Karel Zak]
    - update TODO  [Sami Kerola]
+   - update v2.24-ReleaseNotes  [Karel Zak]
 eject:
    - Check host_status and driver_status when using SG_IO.  [Karel Zak]
    - assigned value is never read [clang-analyzer]  [Sami Kerola]
@@ -288,6 +310,7 @@ fdisk:
    - (sun) use tt.c to list disk label  [Karel Zak]
    - -l refactoring  [Karel Zak]
    - add -L to colorize output  [Karel Zak]
+   - add -t <type> to enable only specified type  [Karel Zak]
    - add GPT specific callback to menu  [Karel Zak]
    - add asktype "string" and support UUID partition change  [Karel Zak]
    - add bsd, dos and sgi menus  [Karel Zak]
@@ -313,6 +336,7 @@ fdisk:
    - don't use ptes[] in generic code  [Karel Zak]
    - fix 'r' in BSD menu  [Karel Zak]
    - fix -l  [Karel Zak]
+   - fix possible memleak [coverity scan]  [Karel Zak]
    - improve info output  [Karel Zak]
    - improve menus to make it more usable for BSD label  [Karel Zak]
    - main() refactoring  [Karel Zak]
@@ -348,11 +372,13 @@ fdisk:
    - use remove read_int() usage from fdisk.c  [Karel Zak]
    - use xalloc stuff  [Karel Zak]
 findmnt:
+   - always allocate memory for cell value  [Dave Reisner]
    - avoid unused parameter warning  [Karel Zak]
    - make udev usage more robust  [Karel Zak]
    - test for fstype/options/maj min before source and target  [Karel Zak]
    - use TT_FL_FREEDATA for tt table  [Karel Zak]
 fsck:
+   - don't print warning if there is no /etc/fstab at all  [Karel Zak]
    - use libmount fs reference counter  [Karel Zak]
 fsck.cramfs:
    - check writing to a file descriptor was successful  [Sami Kerola]
@@ -364,10 +390,13 @@ hexdump:
    - add long options to the command  [Sami Kerola]
    - remove unnecessary global variables  [Sami Kerola]
    - revert global exitval variable change  [Sami Kerola]
+hexsyntax:
+   - in help text, wrap argument of option -e in angular brackets  [Benno Schulenberg]
 hwclock:
    - remove references to adjtimex from man page  [Karel Zak]
    - use warn() to print cmos errors  [Karel Zak]
 include:
+   - Add missing includes  [Michael Forney]
    - add close_fd() for noticing write errors before close()  [Sami Kerola]
    - carefulput  print determined char when unprintable char is found  [Sami Kerola]
 include/pt-mbr:
@@ -385,6 +414,7 @@ last:
    - add long options, improve usage()  [Karel Zak]
    - allow --file to be defined multiple times  [Sami Kerola]
    - check expected numeric user input is number  [Sami Kerola]
+   - check fstat() return [coverity scan]  [Karel Zak]
    - clean up the begin of the file  [Karel Zak]
    - coding style clean up  [Karel Zak]
    - consolidate btmp/wtmp file paths  [Karel Zak]
@@ -461,20 +491,26 @@ libblkid:
    - split blkid_parttable_set_id()  [Karel Zak]
    - support pseudo PARTUUID= for MBR  [Karel Zak]
    - update docs  [Karel Zak]
+   - use proper type in xfs log checker [coverity scan]  [Karel Zak]
    - use separate function to verify checksums  [Karel Zak]
 libfdisk:
    - (bds) cleanup includes  [Karel Zak]
+   - (dos) correct the grammar of the disk-identifier prompt  [Benno Schulenberg]
    - (dos) cosmetic changes  [Karel Zak]
+   - (dos) improve the grammar of an error message  [Benno Schulenberg]
    - (gpt) cleanup structs members names  [Karel Zak]
+   - (gpt) fix warning  [Karel Zak]
    - (gpt) more robust PMBR partition size check  [Karel Zak]
    - (gpt) print UUID and NAME in expert mode only  [Karel Zak]
    - (gpt) support for disklabel dump  [Karel Zak]
+   - (gpt) use consistent final period in status messages  [Benno Schulenberg]
    - (gpt) use generic 'created partition' message  [Karel Zak]
    - (gpt) use lib/tt.c to list partitions  [Karel Zak]
    - (sgi) add driver  [Karel Zak]
    - (sun) make it more obvious why the first sector moved  [Karel Zak]
    - (sun) move driver from fdisk to library  [Karel Zak]
    - (sun) remove duplicate code  [Karel Zak]
+   - add API to disable specified label  [Karel Zak]
    - add FDISK_DEBUG_FRONTEND  [Karel Zak]
    - add FDISK_LABEL_FL_REQUIRE_GEOMETRY  [Karel Zak]
    - add asktype "string" and support UUID partition change  [Karel Zak]
@@ -491,6 +527,7 @@ libfdisk:
    - allow to address partition by chars  [Karel Zak]
    - clean up sun geometry stuff  [Karel Zak]
    - cleanup SGI functions names  [Karel Zak]
+   - cleanup warning messages  [Karel Zak]
    - copy ask callback from parental context  [Karel Zak]
    - do not use va_list in the Ask API  [Karel Zak]
    - don't re-allocate range string in Ask API  [Karel Zak]
@@ -503,24 +540,36 @@ libfdisk:
    - gpt  loosen check fot pmbr size in lba  [Davidlohr Bueso]
    - improve fdisk_save_user_geometry()  [Karel Zak]
    - improve nested context initialization  [Karel Zak]
+   - improve spelling of two comments  [Benno Schulenberg]
    - make default geom usage more robust  [Karel Zak]
    - make it possible to reset device properties  [Karel Zak]
    - make the library usable with tests  [Karel Zak]
+   - mark label modified for PMBR mismatch  [Karel Zak]
    - move mbr code to the library  [Karel Zak]
    - move sync() and reread PT code from fdisk to libfdisk  [Karel Zak]
    - provide more details about GPT  [Karel Zak]
    - remove "gpt support is new" warning  [Karel Zak]
    - remove unnecessary code from test_fdisk_ask  [Karel Zak]
    - support GPT partition name (label) change  [Karel Zak]
+   - treat size mismatch as a warning, not an error  [Karel Zak]
    - update test_ranges() code  [Karel Zak]
    - use context geometry in SGI and SUN  [Karel Zak]
    - use fdisk_colon() and fdisk_sinfo()  [Karel Zak]
    - use fdisk_warnx() in fdisk_ask_partnum()  [Karel Zak]
+libfdisk/gpt:
+   - partly pluralize one message  [Benno Schulenberg]
+libfdisk/sgi:
+   - properly pluralize three messages  [Benno Schulenberg]
+   - tweak and harmonize some comments  [Benno Schulenberg]
+   - tweak and harmonize some message strings  [Benno Schulenberg]
 libmount:
+   - (docs) make it obvious how we call mount.<type> helpers  [Karel Zak]
    - (test) check writing to a file was successful  [Sami Kerola]
+   - Fix typo in comment  [Namhyung Kim]
    - Free splitted optstr's when error occurred  [Namhyung Kim]
    - Get rid of an unnecessary check  [Namhyung Kim]
    - Remove stale comment on mnt_context_mount()  [Namhyung Kim]
+   - Save errno if mkostemp() failed  [Namhyung Kim]
    - Set each optstr's to NULL if failed  [Namhyung Kim]
    - add a generic append_string() function  [Karel Zak]
    - add function for context userdata  [Karel Zak]
@@ -544,10 +593,13 @@ libmount:
    - compose mount.<type> helpers paths more carefully  [Karel Zak]
    - don't ignore root fs on umount -a  [Karel Zak]
    - fix memory leak [clang-analyzer]  [Karel Zak]
+   - fix mnt_context_is_child() comment  [Karel Zak]
    - fix typos  [Ondrej Oprala]
    - free username after check  [Dave Reisner]
    - make mnt_fs_{ap,pre}pend_options() more robust  [Karel Zak]
+   - make mnt_table_replace_file() more robust [coverity scan]  [Karel Zak]
    - more robust options string parsing  [Karel Zak]
+   - remove dead code [coverity scan]  [Karel Zak]
    - small cleanup in umount code  [Karel Zak]
    - update docs  [Karel Zak]
    - use MS_SILENT for /{proc,etc}/filesystems  [Karel Zak]
@@ -561,6 +613,8 @@ login:
    - use TCSANOW to remove HUPCL  [Karel Zak]
 losetup:
    - add --raw and --noheadings  [Karel Zak]
+   - cut the remaining little block of help text into slices too  [Benno Schulenberg]
+   - don't require 512-byte aligned offsets  [Karel Zak]
    - fix loop device name usage  [Karel Zak]
    - make -j <path> more robust  [Karel Zak]
    - set errno for misaligned offsets  [Karel Zak]
@@ -575,13 +629,18 @@ lsblk:
 lscpu:
    - add max MHz value to make cpu governor effects more visible  [Sami Kerola]
    - add virtualization types  [Karel Zak]
+   - check strchr() result [coverity scan]  [Karel Zak]
+   - cleanup DMI code [coverity scan]  [Karel Zak]
    - detect more hypervisor vendors  [Ondrej Oprala]
+   - don't pass null pointer to string functions [coverity scan]  [Karel Zak]
    - fix memory leak [clang-analyzer]  [Sami Kerola]
    - fix shadow declaration [smatch scan]  [Sami Kerola]
    - report cpu min mhz  [Davidlohr Bueso]
    - use TT_FL_FREEDATA for tt table  [Karel Zak]
 lslocks:
    - use TT_FL_FREEDATA for tt table  [Karel Zak]
+mcookie:
+   - pluralize two messages  [Benno Schulenberg]
 mesg:
    - sync usage() with howto-usage-function.txt  [Sami Kerola]
 misc:
@@ -596,6 +655,7 @@ mkfs.cramfs:
    - use standard error message  [Karel Zak]
 mkfs.minix:
    - check writing to a file descriptor was successful  [Sami Kerola]
+   - properly pluralize four messages  [Benno Schulenberg]
 mkswap:
    - add note about swap header limit to the man page  [Karel Zak]
    - unify write check to a file descriptor  [Sami Kerola]
@@ -612,10 +672,14 @@ mount:
    - fix mistaken word and some grammar in man page of mount  [Benno Schulenberg]
    - fix repeating words in the man page  [Karel Zak]
    - update xfs docs  [Karel Zak]
+nologin:
+   - add new command  [Karel Zak]
 nsenter:
    - Allow selecting the uid and gid to be used in the entered userns  [Richard Weinberger]
 partx:
    - check writing to a file descriptor was successful  [Sami Kerola]
+   - correct three messages  [Benno Schulenberg]
+   - pluralize one message  [Benno Schulenberg]
    - use TT_FL_FREEDATA for tt table  [Karel Zak]
 pg:
    - check writing to a file was successful  [Sami Kerola]
@@ -640,6 +704,7 @@ po:
    - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
    - update nl.po (from translationproject.org)  [Benno Schulenberg]
    - update pl.po (from translationproject.org)  [Jakub Bogusz]
+   - update pt_BR.po (from translationproject.org)  [Rafael Ferreira]
    - update pt_BR.po (from translationproject.org)  [Rodrigo Stulzer Lopes]
    - update ru.po (from translationproject.org)  [Pavel Maryanov]
    - update sl.po (from translationproject.org)  [Simon Mihevc]
@@ -658,6 +723,7 @@ pylibmount:
    - add debug messages  [Karel Zak]
    - add regression tests  [Ondrej Oprala]
    - basic code  [Ondrej Oprala]
+   - check for mnt_fs_get_tag() return value [coverity scan]  [Karel Zak]
    - cleanup *_HELP strings formatting  [Karel Zak]
    - cleanup cxt usage  [Karel Zak]
    - cleanup object names  [Karel Zak]
@@ -667,6 +733,7 @@ pylibmount:
    - coding style changes, don't touch Context() status  [Karel Zak]
    - fs.c - cleanup, remove libmount private stuff  [Karel Zak]
    - improve helps strings formatting  [Karel Zak]
+   - make tab parsers more robust [coverity scan]  [Karel Zak]
    - remove Context_get_table()  [Karel Zak]
    - remove bindsrc from fs API  [Karel Zak]
    - remove unnecessary code  [Karel Zak]
@@ -697,6 +764,8 @@ setpriv:
 setsid:
    - add an option to wait child return value  [Daniel Kahn Gillmor]
    - exit when control terminal cannot be set  [Sami Kerola]
+setterm:
+   - fix term.h/ncurses.h include ordering  [Mike Frysinger]
 sfdisk:
    - assigned value is never read [clang-analyzer]  [Sami Kerola]
    - check writing to a file descriptor was successful  [Sami Kerola]
@@ -712,10 +781,13 @@ sfdisk:
    - use program_invocation_short_name to determine program name  [Sami Kerola]
 su:
    - consistent angular brackets and lowercase in help text of 'su'  [Benno Schulenberg]
+   - fix caught_signal logic and initialize oldact [coverity scan]  [Karel Zak]
    - fix exit status if terminated by signal  [Ondrej Oprala]
    - fix lastlog and btmp logging  [Karel Zak]
    - ignore --preserve-environment, it's mutually exclusive to --login  [Karel Zak]
    - suppress PAM info messages for -c or non-login sessions  [Karel Zak]
+su-common:
+   - pluralize one message  [Benno Schulenberg]
 sulogin:
    - clean up error messages  [Karel Zak]
    - fix compiler warning  [Karel Zak]
@@ -752,16 +824,26 @@ tests:
    - update lscpu tests  [Karel Zak]
    - update odd output fdisk test  [Karel Zak]
    - update sun label test  [Karel Zak]
+   - use 'btrfs' rather than 'btrfsctl'  [Karel Zak]
    - use stable MBR ID  [Karel Zak]
 textual:
+   - change spelling of "disk label" to the more abundant "disklabel"  [Benno Schulenberg]
+   - end both the singular and the plural message with a period  [Benno Schulenberg]
+   - fix misspelled words in -rc1  [Karel Zak]
    - fix several typos and angular brackets in messages  [Benno Schulenberg]
    - fix typo in error message and uniformize their use of period  [Benno Schulenberg]
    - fixing typos in a warning and an error message  [Benno Schulenberg]
    - harmonize some loop-device error messages  [Benno Schulenberg]
    - improve clarity of some error messages  [Benno Schulenberg]
+   - make two messages somewhat easier to understand  [Benno Schulenberg]
+   - properly use uppercase in certain abbreviations  [Benno Schulenberg]
+   - standardize some "cannot read" and "seek failed" error messages  [Benno Schulenberg]
    - standardize synopsis for login, and improve an error message  [Benno Schulenberg]
    - standardize the spelling of "superuser"  [Benno Schulenberg]
+   - tag a translator comment and put it in proper place  [Benno Schulenberg]
    - tiny alphabetical and grammatical tweak  [Benno Schulenberg]
+   - use consistent wording and punctuation in fdisk stuff  [Benno Schulenberg]
+   - use the standard angular brackets for non-literal arguments  [Benno Schulenberg]
 tools:
    - generate autotools files if missing  [Sami Kerola]
 ul:
@@ -777,9 +859,12 @@ utmpdump:
    - add option to write to a file  [Sami Kerola]
    - assigned values are never read [clang-analyzer]  [Sami Kerola]
    - make IPv6 addresses work  [Sami Kerola]
+   - make analyzers happy  [Karel Zak]
 uuidd:
    - add missing initializer [clang-analyzer]  [Karel Zak]
    - clean up error messages  [Karel Zak]
+various:
+   - fix mixing declarations and code compiler warnings [smatch]  [Sami Kerola]
 wall:
    - allow to specify <message> on command line  [Karel Zak]
    - check writing to a file descriptor was successful  [Sami Kerola]
@@ -789,11 +874,14 @@ wall:
    - sync usage() with howto-usage-function.txt  [Sami Kerola]
 wdctl:
    - check writing to a file descriptor was successful  [Sami Kerola]
+   - gettextize and pluralize one forgotten message  [Benno Schulenberg]
+   - pluralize one thrice-repeated message  [Benno Schulenberg]
    - use TT_FL_FREEDATA for tt table  [Karel Zak]
 wipefs:
    - Also wipe superblocks with bad checksums  [Gabriel de Perthuis]
    - add --backup  [Ondrej Oprala]
    - clean up code  [Karel Zak]
+   - pluralize one message  [Benno Schulenberg]
 write:
    - change determination can user write to a terminal  [Sami Kerola]
 
