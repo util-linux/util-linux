@@ -468,8 +468,8 @@ static int do_monthly(int day, int month, long year,
 	} else {
 		/* TRANSLATORS: %s is the month name, %ld the year number.
 		 * You can change the order and/or add something here;
-		 * e.g. for Basque the translation should be "%2$ldko %1$s",
-		 * and the Vietnamese should be "%s năm %d", and so on. */
+		 * e.g. for Basque the translation should be "%2$ldko %1$s".
+		 */
 		snprintf(lineout, sizeof(lineout), _("%s %ld"),
 			full_month[month - 1], year);
 		center_str(lineout, out->s[pos], ARRAY_SIZE(out->s[pos]), width);
