@@ -520,6 +520,7 @@ check_hybrid:
 					   "will be corrected by w(rite)."),
 					sz_lba,
 					(uint32_t) cxt->total_sectors - 1);
+			fdisk_label_set_changed(cxt->label, 1);
 		}
 	}
 done:
