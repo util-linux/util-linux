@@ -1,14 +1,16 @@
-.TH SU "1" "June 2012" "util-linux" "User Commands"
+.TH SU "1" "October 2013" "util-linux" "User Commands"
 .SH NAME
 su \- run a command with substitute user and group ID
 .SH SYNOPSIS
 .B su
-[options...] [\-] [user [args...]]
+.RI [ options ]
+.RB [ \- ]
+.RI [ user " [" argument ...]]
 .SH DESCRIPTION
 .B su
-allows to run commands with substitute user and group ID.
+allows to run commands with a substitute user and group ID.
 .PP
-When called without arguments
+When called without arguments,
 .B su
 defaults to running an interactive shell as
 .IR root .
@@ -28,7 +30,7 @@ if the target
 .I user
 is not root).  It is recommended to always use the
 .B \-\-login
-option (instead it's shortcut
+option (instead of its shortcut
 .BR \- )
 to avoid side effects caused by mixing environments.
 .PP
@@ -37,11 +39,11 @@ This version of
 uses PAM for authentication, account and session management.  Some
 configuration options found in other
 .B su
-implementations such as e.g. support of a wheel group have to be
+implementations, such as support of a wheel group, have to be
 configured via PAM.
 .SH OPTIONS
 .TP
-\fB\-c\fR \fIcommand\fR, \fB\-\-command\fR=\fIcommand\fR
+\fB\-c\fR, \fB\-\-command\fR=\fIcommand\fR
 Pass
 .I command
 to the shell with the
@@ -56,14 +58,13 @@ but do not create a new session (discouraged).
 \fB\-f\fR, \fB\-\-fast\fR
 Pass
 .B \-f
-to the shell which may or may not be useful depending on the
-shell.
+to the shell, which may or may not be useful, depending on the shell.
 .TP
 \fB\-g\fR, \fB\-\-group\fR=\fIgroup\fR\fR
-specify the primary group, this option is allowed for root user only
+Specify the primary group.  This option is available for the root user only.
 .TP
 \fB\-G\fR, \fB\-\-supp-group\fR=\fIgroup\fR\fR
-specify a supplemental group, this option is allowed for root user only
+Specify a supplemental group.  This option is available for the root user only.
 .TP
 \fB\-\fR, \fB\-l\fR, \fB\-\-login\fR
 Starts the shell as login shell with an environment similar to a real
@@ -71,7 +72,7 @@ login:
 .RS 10
 .TP
 o
-clears all environment variables except for
+clears all environment variables except
 .B TERM
 .TP
 o
@@ -79,7 +80,7 @@ initializes the environment variables
 .BR HOME ,
 .BR SHELL ,
 .BR USER ,
-.BR LOGNAME ,
+.BR LOGNAME ", and"
 .B PATH
 .TP
 o
@@ -92,17 +93,17 @@ in order to make the shell a login shell
 .RE
 .TP
 \fB\-m\fR, \fB\-p\fR, \fB\-\-preserve-environment\fR
-Preserves the whole environment, ie does not set
+Preserves the whole environment, i.e. it does not set
 .BR HOME ,
 .BR SHELL ,
 .B USER
 nor
 .BR LOGNAME .
-The option is ignored if the option \fB\-\-login\fR is specified.
+This option is ignored if the option \fB\-\-login\fR is specified.
 .TP
-\fB\-s\fR \fISHELL\fR, \fB\-\-shell\fR=\fISHELL\fR
-Runs the specified shell instead of the default.  The shell to run is
-selected according to the following rules in order:
+\fB\-s\fR, \fB\-\-shell\fR=\fIshell\fR
+Runs the specified \fIshell\fR instead of the default.  The shell to run is
+selected according to the following rules, in order:
 .RS 10
 .TP
 o
@@ -110,11 +111,11 @@ the shell specified with
 .B \-\-shell
 .TP
 o
-The shell specified in the environment variable
-.B SHELL
+the shell specified in the environment variable
+.BR SHELL ,
 if the
 .B \-\-preserve-environment
-option is used.
+option is used
 .TP
 o
 the shell listed in the passwd entry of the target user
@@ -124,7 +125,7 @@ o
 .RE
 .IP
 If the target user has a restricted shell (i.e. not listed in
-/etc/shells) the
+/etc/shells), the
 .B \-\-shell
 option and the
 .B SHELL
@@ -142,7 +143,7 @@ Upon receiving either
 or
 .BR SIGTERM ,
 .BR su
-terminates it's child and afterwards terminates itself with
+terminates its child and afterwards terminates itself with
 the received signal.
 .SH CONFIG FILES
 .B su
@@ -175,7 +176,7 @@ default value is
 .B ENV_SUPATH
 (string)
 .RS 4
-Defines the PATH environment variable for root. The default value is
+Defines the PATH environment variable for root.  The default value is
 .IR /usr/local/sbin:\:/usr/local/bin:\:/sbin:\:/bin:\:/usr/sbin:\:/usr/bin .
 .RE
 .PP
