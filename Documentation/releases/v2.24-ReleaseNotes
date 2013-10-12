@@ -10,19 +10,19 @@ Release highlights
 
 fdisk(8):
  - the code has been completely refactored and moved to libfdisk
-   (the library does not have stable API yet)
+   (the library does not have a stable API yet)
  - user interface has been unified for all label types and it supports colors
  - GPT disk UUID, partition UUID and partition name modification is supported now
 
 pylibmount:
- - this new library provides PYTHON BINDING for libmount; use 
-   --with-python[=2|3] to enable the binding
+ - this new library provides PYTHON BINDINGS for libmount;
+   use --with-python[=2|3] to enable the bindings
 
 last(1) and lastb(1):
  - the NEW IMPLEMENTATION has been merged from sysvinit to util-linux and
-   extended; now it supports command line options --present, --since and
+   extended; now it supports command line options --present, --since, and
    --time-format
- - use --enable-deprecated-last to enable old util-linux last(1) implementation
+ - use --enable-deprecated-last to enable the old util-linux last(1) implementation
 
 swapon(8):
  - the option --discard= and fstab mount option discard= allow to explicitly
@@ -31,7 +31,7 @@ swapon(8):
 
 libblkid and blkid(8):
  - supports LOGUUID= for external logs (e.g. extN and XFS)
- - generates pseudo PARTUUID= for MBR partitions (based on MBR Id, Linux kernel 
+ - generates a pseudo PARTUUID= for MBR partitions (based on MBR Id, Linux kernel
    supports the same concept for root= command line option)
 
 agetty(8):
@@ -56,17 +56,17 @@ lscpu(1):
    and Min CPU Mhz
 
 unshare(8):
- - supportes new command line options --fork and --mount-proc for
+ - supports new command line options --fork and --mount-proc for
    pid namespaces
 
 wipefs(8):
-  - now wipes superblock with incorrect checksums too
+  - now wipes superblocks with incorrect checksums too
   - supports new command line option --backup to backup erased data to
     $HOME/wipefs-<devname>-<offset>.bak
 
 nologin(8):
   - this command has been merged into util-linux, the command politely
-    refuse a login.
+    refuses a login.
 
 
 Stable maintenance releases between v2.23 and v2.24
