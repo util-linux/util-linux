@@ -14,7 +14,7 @@
 .\" along with this program; if not, write to the Free Software
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 .\"
-.TH "LAST,LASTB" "1" "August 2013" "util-linux" "User Commands"
+.TH "LAST, LASTB" "1" "October 2013" "util-linux" "User Commands"
 .SH NAME
 last, lastb \- show listing of last logged in users
 .SH SYNOPSIS
@@ -67,7 +67,17 @@ except that by default it shows a log of the file
 which contains all the bad login attempts.
 .SH OPTIONS
 .TP
-\fB\-f\fR, \fB\-\-file\fR \fIfile\fR
+.BR \-a , " \-\-hostlast"
+Display the hostname in the last column.  Useful in combination with the
+.B \-\-dns
+option.
+.TP
+.BR \-d , " \-\-dns"
+For non-local logins, Linux stores not only the host name of the remote
+host but its IP number as well.  This option translates the IP number
+back into a hostname.
+.TP
+.BR \-f , " \-\-file " \fIfile\fR
 Tell
 .B last
 to use a specific \fIfile\fR instead of
@@ -77,78 +87,68 @@ The
 option can be given multiple times, and all of the specified files will be
 processed.
 .TP
-\fB\-\fInumber\fR
+.BR \-F , " \-\-fulltimes"
+Print full login and logout times and dates.
+.TP
+.BR \-i , " \-\-ip"
+Like
+.B \-\-dns
+but displays the host's IP number instead of name.
+.TP
+.BI \- number
 .TQ
-\fB\-n\fR, \fB\-\-limit\fR \fInumber\fR
+.BR \-n , " -\-limit " \fInumber\fR
 This is a count telling
 .B last
 how many lines to show.
 .TP
-\fB\-s\fR, \fB\-\-since\fR \fItime\fR
+.BR \-p , " \-\-present " \fItime\fR
+Display the users who were present at the specified time.  This is
+like using the options
+.TP
+.BR \-R , " \-\-nohostname"
+Suppresses the display of the hostname field.
+.BR \-\-since " and " \-\-until
+together with the same \fItime\fR.
+.TP
+.BR \-s , " \-\-since " \fItime\fR
 Display the state of logins since specified
 .IR time .
 This is useful, e.g., to determine easily who was logged in at a
 particular time.  The option is often combined with
 .BR \-\-until .
 .TP
-\fB\-t\fR, \fB\-\-until\fR \fItime\fR
+.BR \-t , " \-\-until " \fItime\fR
 Display the state of logins until the specified
 .IR time .
 .TP
-\fB\-p\fR, \fB\-\-present\fR \fItime\fR
-Display the users who were present at the specified time.  This is
-like using the options
-.BR \-\-since " and " \-\-until
-together with the same \fItime\fR.
-.TP
-\fB\-\-time\-format\fR \fIformat\fR
-Define output timestamp
+.BI \-\-time\-format " format"
+Define the output timestamp
 .I format
-to be one of the
+to be one of
 .IR notime ,
 .IR short ,
 .IR full ,
 or
 .IR iso .
+The
 .I notime
-will not print timestamp at all.
+variant will not print any timestamp at all,
 .I short
-is default, and
+is the default, and
 .I full
-is same as
+is the same as the
 .B \-\-fulltimes
 option.  The
 .I iso
-will display time stamp in ISO-8601 format.  The iso format contains
-timezone information making it to be preferrable when print outs are
+variant will display the timestamp in ISO-8601 format.  The ISO format
+contains timezone information, making it preferrable when printouts are
 investigated outside of the system.
 .TP
-\fB\-F\fR, \fB\-\-fulltimes\fR
-Print full login and logout times and dates.
+.BR \-w , " \-\-fullnames"
+Display full user names and domain names in the output.
 .TP
-\fB\-R\fR, \fB\-\-nohostname\fR
-Suppresses the display of the hostname field.
-.TP
-\fB\-a\fR, \fB\-\-hostlast\fR
-Display the hostname in the last column.  Useful in combination with the
-.B \-\-dns
-option.
-.TP
-\fB\-d\fR, \fB\-\-dns\fR
-For non-local logins, Linux stores not only the host name of the remote
-host but its IP number as well.  This option translates the IP number
-back into a hostname.
-.TP
-\fB\-i\fR, \fB\-\-ip\fR
-This option is like
-.B \-\-dns
-in that it displays the remote host, but it displays the host in IP
-number notation.
-.TP
-\fB\-w\fR, \fB\-\-fullnames\fR
-Display full user and domain names in the output.
-.TP
-\fB\-x\fR, \fB\-\-system\fR
+.BR \-x , " \-\-system"
 Display the system shutdown entries and run level changes.
 .SH TIME FORMATS
 The options that take the
