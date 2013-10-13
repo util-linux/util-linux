@@ -38,7 +38,7 @@
 logger \- a shell command interface to the syslog(3) system log module
 .SH SYNOPSIS
 .B logger
-[options] [message]
+.RI [ options "] [" message ]
 .SH DESCRIPTION
 .B logger
 makes entries in the system log.  It provides a shell command
@@ -54,17 +54,17 @@ instead of to the builtin syslog routines.  Unless
 .B \-\-udp
 or
 .B \-\-tcp
-is specified the logger will first try to use UDP, but if it fails a TCP
-connection is attempted.
+is specified, \fBlogger\fR will first try to use UDP,
+but if thist fails a TCP connection is attempted.
 .TP
 \fB\-d\fR, \fB\-\-udp\fR
-Use datagram (UDP) only.  By default the connection is tried to
+Use datagram (UDP) only.  By default the connection is tried to the
 .I syslog
 port defined in /etc/services, which is often
 .IR 514 .
 .TP
 \fB\-T\fR, \fB\-\-tcp\fR
-Use stream (TCP) only.  By default the connection is tried to
+Use stream (TCP) only.  By default the connection is tried to the
 .I syslog-conn
 port defined in /etc/services, which is often
 .IR 601 .
@@ -110,15 +110,15 @@ Write to the specified
 instead of to the builtin syslog routines.
 .TP
 \fB\-\-prio\-prefix\fR
-Look for a syslog prefix on every line read from standard input, a
-number contained within angle brackets that contain both the facility
-and level. The decimal prefix is constructed by multiplying the
-facility by 8 and then adding the level, thus \fIlocal0.info\fR,
+Look for a syslog prefix on every line read from standard input.
+This prefix is a number within angle brackets that contains both the facility
+and the level.  This decimal prefix is constructed by multiplying the
+facility by 8 and then adding the level.  Thus, for example, \fIlocal0.info\fR,
 facility=16 and level=6, becomes \fI<134>\fR.
 
 If the prefix contains no facility, the facility defaults to what is
-specified by \fB\-p\fR option, similarly if no prefix is provided the
-line is logged using the \fB\-p\fR \fIpriority\fR.
+specified by the \fB\-p\fR option.  Similarly, if no prefix is provided,
+the line is logged using the \fB\-p\fR \fIpriority\fR.
 
 This option doesn't affect a command-line message.
 .TP
@@ -131,8 +131,8 @@ End the argument list.  This is to allow the
 to start with a hyphen (\-).
 .TP
 .I message
-Write the message to log; if not specified, and the
-.I \-f
+Write this \fImessage\fR to the log; if not specified, and the
+.B \-f
 flag is not provided, standard input is logged.
 .PP
 The
