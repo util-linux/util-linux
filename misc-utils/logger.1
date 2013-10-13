@@ -47,6 +47,19 @@ interface to the
 system log module.
 .SH OPTIONS
 .TP
+\fB\-d\fR, \fB\-\-udp\fR
+Use datagram (UDP) only.  By default the connection is tried to the
+.I syslog
+port defined in /etc/services, which is often
+.IR 514 .
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display a help text and exit.
+.TP
+\fB\-i\fR, \fB\-\-id\fR
+Log the process ID of the logger process with each line.
+.TP
+.TP
 \fB\-n\fR, \fB\-\-server\fR \fIserver\fR
 Write to the specified remote syslog
 .I server
@@ -57,32 +70,13 @@ or
 is specified, \fBlogger\fR will first try to use UDP,
 but if thist fails a TCP connection is attempted.
 .TP
-\fB\-d\fR, \fB\-\-udp\fR
-Use datagram (UDP) only.  By default the connection is tried to the
-.I syslog
-port defined in /etc/services, which is often
-.IR 514 .
-.TP
-\fB\-T\fR, \fB\-\-tcp\fR
-Use stream (TCP) only.  By default the connection is tried to the
-.I syslog-conn
-port defined in /etc/services, which is often
-.IR 601 .
-.TP
 \fB\-P\fR, \fB\-\-port\fR \fIport\fR
 Use the specified
 .IR port .
-.TP
-\fB\-i\fR, \fB\-\-id\fR
-Log the process ID of the logger process with each line.
-.TP
 \fB\-f\fR, \fB\-\-file\fR \fIfile\fR
 Log the contents of the specified
 .IR file .
 This option cannot be combined with a command-line message.
-.TP
-\fB\-h\fR, \fB\-\-help\fR
-Display a help text and exit.
 .TP
 \fB\-p\fR, \fB\-\-priority\fR \fIpriority\fR
 Enter the message into the log with the specified
@@ -97,18 +91,6 @@ logs the message as informational in the local3 facility.
 The default is
 .IR user.notice .
 .TP
-\fB\-s\fR, \fB\-\-stderr\fR
-Output the message to standard error as well as to the system log.
-.TP
-\fB\-t\fR, \fB\-\-tag\fR \fItag\fR
-Mark every line to be logged with the specified
-.IR tag .
-.TP
-\fB\-u\fR, \fB\-\-socket\fR \fIsocket\fR
-Write to the specified
-.I socket
-instead of to the builtin syslog routines.
-.TP
 \fB\-\-prio\-prefix\fR
 Look for a syslog prefix on every line read from standard input.
 This prefix is a number within angle brackets that contains both the facility
@@ -121,6 +103,24 @@ specified by the \fB\-p\fR option.  Similarly, if no prefix is provided,
 the line is logged using the \fB\-p\fR \fIpriority\fR.
 
 This option doesn't affect a command-line message.
+.TP
+\fB\-s\fR, \fB\-\-stderr\fR
+Output the message to standard error as well as to the system log.
+.TP
+\fB\-T\fR, \fB\-\-tcp\fR
+Use stream (TCP) only.  By default the connection is tried to the
+.I syslog-conn
+port defined in /etc/services, which is often
+.IR 601 .
+.TP
+\fB\-t\fR, \fB\-\-tag\fR \fItag\fR
+Mark every line to be logged with the specified
+.IR tag .
+.TP
+\fB\-u\fR, \fB\-\-socket\fR \fIsocket\fR
+Write to the specified
+.I socket
+instead of to the builtin syslog routines.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
