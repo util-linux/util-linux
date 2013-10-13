@@ -2,11 +2,20 @@
 .SH NAME
 getopt \- parse command options (enhanced)
 .SH SYNOPSIS
-getopt optstring parameters
+.BI getopt
+.I optstring parameters
 .br
-getopt [options] [\-\-] optstring parameters
+.B getopt
+.RI [ options ]
+.RB [ \-\- ]
+.I optstring parameters
 .br
-getopt [options] \-o|\-\-options optstring [options] [\-\-]
+.B getopt
+.RI [ options ]
+.BR \-o | \-\-options
+.I optstring
+.RI [ options ]
+.RB [ \-\- ]
 .I parameters
 .SH DESCRIPTION
 .B getopt
@@ -21,10 +30,11 @@ routines to do this.
 The parameters
 .B getopt
 is called with can be divided into two parts: options which modify
-the way getopt will parse
-.RI ( options
-and
-.BR \-o | \-\-options
+the way
+.B getopt
+will do the parsing
+.RI "(the " options
+and the
 .I optstring
 in the
 .BR SYNOPSIS ),
@@ -44,10 +54,10 @@ part is used as the short options string.
 .PP
 If the environment variable
 .B GETOPT_COMPATIBLE
-is set, or if its first parameter is not an option (does not start
+is set, or if the first \fIparameter\fR is not an option (does not start
 with a
 .RB ' \- ',
-this is the first format in the
+the first format in the
 .BR SYNOPSIS ),
 .B getopt
 will generate output that is compatible with that of other versions of
@@ -129,11 +139,11 @@ Disable error reporting by getopt(3).
 Do not generate normal output.  Errors are still reported by
 .BR getopt (3),
 unless you also use
-.IR \-q .
+.BR \-q .
 .TP
 .BR \-s , " \-\-shell \fIshell\fP"
-Set quoting conventions to those of shell.  If no \-s argument is
-found, the
+Set quoting conventions to those of \fIshell\fR.
+If the \fB\-s\fR option is not given, the
 .SM BASH
 conventions are used.  Valid arguments are currently
 .RB ' sh '
@@ -193,7 +203,7 @@ A simple short option is a
 .RB ' \- '
 followed by a short option character.  If the option has a required
 argument, it may be written directly after the option character or as
-the next parameter (ie.  separated by whitespace on the command
+the next parameter (i.e. separated by whitespace on the command
 line).  If the option has an optional argument, it must be written
 directly after the option character if present.
 .PP
@@ -340,8 +350,8 @@ If the first character is
 .RB ' + ',
 or if the environment variable
 .B POSIXLY_CORRECT
-is set, parsing stops as soon as the first non\-option parameter (ie.
-a parameter that does not start with a
+is set, parsing stops as soon as the first non\-option parameter
+(i.e. a parameter that does not start with a
 .RB ' \- ')
 is found that is not an option argument.  The remaining parameters
 are all interpreted as non\-option parameters.
@@ -365,10 +375,11 @@ modifications, and with some advantages.
 .PP
 If the first character of the first parameter of getopt is not a
 .RB ' \- ',
-getopt goes into compatibility mode.  It will interpret its first
+.B getopt
+goes into compatibility mode.  It will interpret its first
 parameter as the string of short options, and all other arguments
-will be parsed.  It will still do parameter shuffling (ie.  all
-non\-option parameters are outputted at the end), unless the
+will be parsed.  It will still do parameter shuffling (i.e. all
+non\-option parameters are output at the end), unless the
 environment variable
 .B POSIXLY_CORRECT
 is set.
@@ -407,10 +418,10 @@ if it is called with
 Example scripts for (ba)sh and (t)csh are provided with the
 .BR getopt (1)
 distribution, and are optionally installed in
-.BR /usr/share/getopt/ 
-or 
+.BR /usr/share/getopt/
+or
 .BR /usr/share/docs/
-in util-linux subdirectory.
+in the util-linux subdirectory.
 .SH ENVIRONMENT
 .IP POSIXLY_CORRECT
 This environment variable is examined by the
