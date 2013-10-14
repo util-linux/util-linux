@@ -38,17 +38,20 @@
 wall \- write a message to users
 .SH SYNOPSIS
 .B wall
-[-n] [-t TIMEOUT] [file | message]
+.RB [ \-n ]
+.RB [ \-t
+.IR timeout ]
+.RI [ message " | " file ]
 .SH DESCRIPTION
-.B Wall
+.B wall
 displays a
 .I message
-or contents of
+or the contents of a
 .I file
 or, by default, its standard input, on the terminals of all currently logged
-in users.  The command will cut over 79 character long lines to new lines.
-Short lines are white space padded to have 79 characters.  The command will
-always put carriage return and new line at the end of each line.
+in users.  The command will wrap lines that are longer than 79 characters.
+Short lines are whitespace padded to have 79 characters.  The command will
+always put a carriage return and new line at the end of each line.
 .PP
 Only the superuser can write on the terminals of users who have chosen to
 deny messages or are using a program which automatically denies messages.
@@ -58,25 +61,24 @@ Reading from a
 is refused when the invoker is not superuser and the program is suid or sgid.
 .SH OPTIONS
 .TP
-\fB\-n\fR, \fB\-\-nobanner\fR
-Suppress banner
+.BR \-n , " \-\-nobanner"
+Suppress the banner.
 .TP
-\fB\-t\fR, \fB\-\-timeout\fR \fItimeout\fR
-Write
-.I timeout
-to terminals in seconds.  Argument must be positive integer.  Default value
-is 300 seconds, which is a legacy from time when people ran terminals over
+.BR \-t , " \-\-timeout " \fItimeout\fR
+Abandon the write attempt to the terminals after \fItimeout\fR seconds.
+This \fItimeout\fR must be a positive integer.  The default value
+is 300 seconds, which is a legacy from the time when people ran terminals over
 modem lines.
 .TP
-\fB\-V\fR, \fB\-\-version\fR
-Output version and exit.
+.BR \-V , " \-\-version"
+Display version information and exit.
 .TP
-\fB\-h\fR, \fB\-\-help\fR
-Output help and exit.
+.BR \-h , " \-\-help"
+Display help text and exit.
 .SH NOTES
-Some sessions, such as wdm, that has in beginning of
+Some sessions, such as wdm, that have in the beginning of
 .BR utmp (5)
-ut_type data ':' character will not get message from
+ut_type data a ':' character will not get the message from
 .BR wall .
 This is done to avoid write errors.
 .SH SEE ALSO
