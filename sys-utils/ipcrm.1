@@ -5,13 +5,13 @@
 ipcrm \- remove a message queue, semaphore set or shared memory id
 .SH SYNOPSIS
 .B ipcrm
-[options]
+.RI [ options ]
 .br
 .B ipcrm
 .RB { shm | msg | sem } 
 .IR id ...
 .SH DESCRIPTION
-.I ipcrm
+.B ipcrm
 removes System V interprocess communication (IPC) objects
 and associated data structures from the system.
 In order to delete such objects, you must be superuser, or
@@ -28,65 +28,65 @@ after all currently attached processes have detached
 the object from their virtual address space.
 .PP
 Two syntax styles are supported.  The old Linux historical syntax specifies
-a three letter keyword indicating which class of object is to be deleted,
+a three-letter keyword indicating which class of object is to be deleted,
 followed by one or more IPC identifiers for objects of this type.
 .PP
 The SUS-compliant syntax allows the specification of
 zero or more objects of all three types in a single command line,
-with objects specified either by key or by identifier. (See below.)
+with objects specified either by key or by identifier (see below).
 Both keys and identifiers may be specified in decimal, hexadecimal
 (specified with an initial '0x' or '0X'), or octal (specified with
 an initial '0').
 .SH OPTIONS
 .TP
 \fB\-M\fR, \fB\-\-shmem\-key\fR \fIshmkey\fR
-removes the shared memorysegment created with
+Remove the shared memory segment created with
 .I shmkey
 after the last detach is performed.
 .TP
 \fB\-m\fR, \fB\-\-shmem\-id\fR \fIshmid\fR
-removes the shared memory segment identified by
+Remove the shared memory segment identified by
 .I shmid
 after the last detach is performed.
 .TP
 \fB\-Q\fR, \fB\-\-queue\-key\fR \fImsgkey\fR
-removes the message queue created with
+Remove the message queue created with
 .IR msgkey .
 .TP
 \fB\-q\fR, \fB\-\-queue\-id\fR \fImsgid\fR
-removes the message queue identified by
+Remove the message queue identified by
 .IR msgid .
 .TP
 \fB\-S\fR, \fB\-\-semaphore\-key\fR \fIsemkey\fR
-removes the semaphore created with
+Remove the semaphore created with
 .IR semkey .
 .TP
 \fB\-s\fR, \fB\-\-semaphore\-id\fR \fIsemid\fR
-removes the semaphore identified by
+Remove the semaphore identified by
 .IR semid .
 .TP
-\fB-a\fR, \fB\-\-all\fR [\fIshm msg sem\fR]
-Remove all resources. When option argument is provided the removal is
-performed only to for the specified resource types. Warning! Do not use
+\fB-a\fR, \fB\-\-all\fR [\fBshm\fR] [\fBmsg\fR] [\fBsem\fR]
+Remove all resources.  When an option argument is provided, the removal is
+performed only for the specified resource types.  \fIWarning!\fR  Do not use
 .B \-a
-if you are unsure how the software using resources might react on missing
-objects. Some programs create these resources at start up and may not have
-any code to deal unexpected disappearance.
+if you are unsure how the software using the resources might react to missing
+objects.  Some programs create these resources at startup and may not have
+any code to deal with an unexpected disappearance.
 .LP
 The details of the removes are described in
-.IR msgctl (2),
-.IR shmctl (2),
+.BR msgctl (2),
+.BR shmctl (2),
 and
-.IR semctl (2).
+.BR semctl (2).
 The identifiers and keys may be found by using
-.IR ipcs (1).
+.BR ipcs (1).
 .SH NOTES
-In its first Linux implementation, ipcrm used the deprecated syntax
+In its first Linux implementation, \fBipcrm\fR used the deprecated syntax
 shown in the
 .BR SYNOPSIS .
-Functionality present in other *nix implementations of ipcrm has since
+Functionality present in other *nix implementations of \fBipcrm\fR has since
 been added, namely the ability to delete resources by key (not just
-identifier), and to respect the same command-line syntax. For backward
+identifier), and to respect the same command-line syntax.  For backward
 compatibility the previous syntax is still supported.
 .\" .SH AUTHORS
 .\" Andre C. Mazzone (linuxdev@karagee.com)
