@@ -146,7 +146,7 @@ endif
 usrbin_exec_PROGRAMS += getopt
 dist_man_MANS += misc-utils/getopt.1
 getopt_SOURCES = misc-utils/getopt.c
-getoptexampledir = $(datadir)/getopt/
+getoptexampledir = $(docdir)/getopt/
 dist_getoptexample_SCRIPTS = \
 	misc-utils/getopt-parse.bash \
 	misc-utils/getopt-parse.tcsh
