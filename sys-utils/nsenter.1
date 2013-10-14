@@ -1,9 +1,9 @@
-.TH NSENTER 1 "May 2013" "util-linux" "User Commands"
+.TH NSENTER 1 "June 2013" "util-linux" "User Commands"
 .SH NAME
 nsenter \- run program with namespaces of other processes
 .SH SYNOPSIS
 .B nsenter
-.RB [ options ]
+.RI [ options ]
 .RI [ program
 .RI [ arguments ]]
 .SH DESCRIPTION
@@ -123,13 +123,13 @@ file.
 \fB\-U\fR, \fB\-\-user\fR[=\fIfile\fR]
 Enter the user namespace.  If no file is specified, enter the user namespace of
 the target process.  If file is specified, enter the user namespace specified by
-file. See also \fB\-\-setuid\fR and \fB\-\-setgid\fR options.
+file.  See also the \fB\-\-setuid\fR and \fB\-\-setgid\fR options.
 .TP
 \fB\-G\fR, \fB\-\-setgid\fR \fIgid\fR
-Set group ID which will be used in the entered user namespace.
+Set the group ID which will be used in the entered user namespace.
 .TP
 \fB\-S\fR, \fB\-\-setuid\fR \fIuid\fR
-Set user ID which will be used in the entered user namespace.
+Set the user ID which will be used in the entered user namespace.
 .TP
 \fB\-r\fR, \fB\-\-root\fR[=\fIdirectory\fR]
 Set the root directory.  If no directory is specified, set the root directory to
