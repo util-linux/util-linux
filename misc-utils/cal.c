@@ -135,10 +135,12 @@ static void my_putstring(char *s)
 
 #endif	/* end of LIBTERMCAP / NCURSES */
 
-
+#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW) || defined(HAVE_LIBTERMCAP)
 static const char	*term="";
-static const char	*Senter="", *Sexit="";/* enter and exit standout mode */
 static int		Slen;		/* strlen of Senter+Sexit */
+#endif
+
+static const char	*Senter="", *Sexit="";/* enter and exit standout mode */
 static char		*Hrow;		/* pointer to highlighted row in month */
 
 #include "widechar.h"
