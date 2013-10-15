@@ -200,7 +200,9 @@ void list_disk_geometry(struct fdisk_context *cxt)
 					   | SIZE_SUFFIX_3LETTER, bytes);
 
 	fdisk_colon(cxt,	_("Disk %s: %s, %llu bytes, %llu sectors"),
-			cxt->dev_path, strsz, bytes, cxt->total_sectors);
+			cxt->dev_path, strsz,
+			(unsigned long long) bytes,
+			(unsigned long long) cxt->total_sectors);
 	free(strsz);
 
 	if (fdisk_require_geometry(cxt) || fdisk_context_use_cylinders(cxt))

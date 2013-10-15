@@ -237,15 +237,15 @@ static char *mk_string_list(char *ptr, size_t *len, size_t *begin,
 					/* add to the list */
 	if (!*run)
 		rlen = inchar ? snprintf(ptr, *len, "%c,", tochar(*begin)) :
-				snprintf(ptr, *len, "%zd,", *begin);
+				snprintf(ptr, *len, "%zu,", *begin);
 	else if (*run == 1)
 		rlen = inchar ?
 			snprintf(ptr, *len, "%c,%c,", tochar(*begin), tochar(*begin + 1)) :
-			snprintf(ptr, *len, "%zd,%zd,", *begin, *begin + 1);
+			snprintf(ptr, *len, "%zu,%zu,", *begin, *begin + 1);
 	else
 		rlen = inchar ?
 			snprintf(ptr, *len, "%c-%c,", tochar(*begin), tochar(*begin + *run)) :
-			snprintf(ptr, *len, "%zd-%zd,", *begin, *begin + *run);
+			snprintf(ptr, *len, "%zu-%zu,", *begin, *begin + *run);
 
 	if (rlen < 0 || (size_t) rlen + 1 > *len)
 		return NULL;
@@ -286,7 +286,7 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 		inchar = 1;
 
 	DBG(ASK, dbgprint("%s: asking for %s partition number "
-			  "(max: %zd, inchar: %s)",
+			  "(max: %zu, inchar: %s)",
 			cxt->label->name,
 			wantnew ? "new" : "used",
 			cxt->label->nparts_max,
@@ -324,14 +324,14 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 		}
 	}
 
-	DBG(ASK, dbgprint("ask limits: low: %zd, high: %zd, default: %zd",
+	DBG(ASK, dbgprint("ask limits: low: %ju, high: %ju, default: %ju",
 				num->low, num->hig, num->dfl));
 
 	if (!rc && !wantnew && num->low == num->hig) {
 		if (num->low > 0) {
 			/* only one existing partiton, don't ask, return the number */
 			fdisk_ask_number_set_result(ask, num->low);
-			fdisk_info(cxt, _("Selected partition %d"), num->low);
+			fdisk_info(cxt, _("Selected partition %d"), (int) num->low);
 
 		} else if (num->low == 0) {
 			fdisk_warnx(cxt, _("No partition is defined yet!"));
@@ -343,7 +343,7 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 		if (num->low > 0) {
 			/* only one free partition, don't ask, return the number */
 			fdisk_ask_number_set_result(ask, num->low);
-			fdisk_info(cxt, _("Selected partition %d"), num->low);
+			fdisk_info(cxt, _("Selected partition %d"), (int) num->low);
 		}
 		if (num->low == 0) {
 			fdisk_warnx(cxt, _("No free partition available!"));
@@ -366,7 +366,7 @@ dont_ask:
 		if (*partnum)
 			*partnum -= 1;
 	}
-	DBG(ASK, dbgprint("result: %zd [rc=%d]\n", fdisk_ask_number_get_result(ask), rc));
+	DBG(ASK, dbgprint("result: %ju [rc=%d]\n", fdisk_ask_number_get_result(ask), rc));
 	fdisk_free_ask(ask);
 	return rc;
 }
@@ -403,7 +403,7 @@ int fdisk_ask_number(struct fdisk_context *cxt,
 		*result = fdisk_ask_number_get_result(ask);
 
 	fdisk_free_ask(ask);
-	DBG(ASK, dbgprint("result: %zd [rc=%d]\n", *result, rc));
+	DBG(ASK, dbgprint("result: %ju [rc=%d]\n", *result, rc));
 	return rc;
 }
 

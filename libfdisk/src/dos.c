@@ -296,8 +296,8 @@ static void dos_init(struct fdisk_context *cxt)
 		  "partition table format can not be used on drives for "
 		  "volumes larger than (%llu bytes) for %ld-byte "
 		  "sectors. Use GUID partition table format (GPT)."),
-			szstr, bytes,
-			(sector_t ) UINT_MAX * cxt->sector_size,
+			szstr, (unsigned long long) bytes,
+			(unsigned long long) UINT_MAX * cxt->sector_size,
 			cxt->sector_size);
 		free(szstr);
 	}
@@ -809,7 +809,8 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 
 	if (p && p->sys_ind) {
 		fdisk_warnx(cxt, _("Partition %zd is already defined.  "
-			           "Delete it before re-adding it."), n + 1);
+			           "Delete it before re-adding it."),
+				(ssize_t) n + 1);
 		return -EINVAL;
 	}
 	fill_bounds(cxt, first, last);
@@ -1926,7 +1927,7 @@ static int dos_toggle_partition_flag(
 	case DOS_FLAG_ACTIVE:
 		if (IS_EXTENDED(p->sys_ind) && !p->boot_ind)
 			fdisk_warnx(cxt, _("Partition %d: is an extended "
-					"partition."), i + 1);
+					"partition."), (int) i + 1);
 
 		p->boot_ind = (p->boot_ind ? 0 : ACTIVE_FLAG);
 		partition_set_changed(cxt, i, 1);

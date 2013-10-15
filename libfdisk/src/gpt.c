@@ -42,7 +42,7 @@
 
 #define EFI_PMBR_OSTYPE     0xEE
 #define MSDOS_MBR_SIGNATURE 0xAA55
-#define GPT_PART_NAME_LEN   72 / sizeof(uint16_t)
+#define GPT_PART_NAME_LEN   (72 / sizeof(uint16_t))
 #define GPT_NPARTITIONS     128
 
 /* Globally unique identifier */
@@ -1202,7 +1202,7 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 		fdisk_colon(cxt, _("Last LBA: %ju"), h->last_usable_lba);
 		fdisk_colon(cxt, _("Alternative LBA: %ju"), h->alternative_lba);
 		fdisk_colon(cxt, _("Partitions entries LBA: %ju"), h->partition_entry_lba);
-		fdisk_colon(cxt, _("Allocated partition entries: %ju"), h->npartition_entries);
+		fdisk_colon(cxt, _("Allocated partition entries: %ju"), (uintmax_t) h->npartition_entries);
 	}
 	tt_define_column(tb, _("Device"), 0.1, 0);
 	tt_define_column(tb, _("Start"),   12, TT_FL_RIGHT);
@@ -2052,7 +2052,7 @@ int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i)
 
 	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
 			_("Partition name changed from '%s' to '%.*s'."),
-			old, GPT_PART_NAME_LEN, str);
+			old, (int) GPT_PART_NAME_LEN, str);
 	free(str);
 	free(old);
 

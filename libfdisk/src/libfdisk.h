@@ -255,12 +255,17 @@ extern int fdisk_ask_yesno(struct fdisk_context *cxt, const char *query, int *re
 extern uint64_t fdisk_ask_yesno_get_result(struct fdisk_ask *ask);
 extern int fdisk_ask_yesno_set_result(struct fdisk_ask *ask, uint64_t result);
 
-extern int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...);
-extern int fdisk_colon(struct fdisk_context *cxt, const char *fmt, ...);
-extern int fdisk_sinfo(struct fdisk_context *cxt, unsigned int flags, const char *fmt, ...);
+extern int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...)
+			__attribute__ ((__format__ (__printf__, 2, 3)));
+extern int fdisk_colon(struct fdisk_context *cxt, const char *fmt, ...)
+			__attribute__ ((__format__ (__printf__, 2, 3)));
+extern int fdisk_sinfo(struct fdisk_context *cxt, unsigned int flags, const char *fmt, ...)
+			__attribute__ ((__format__ (__printf__, 3, 4)));
 
-extern int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...);
-extern int fdisk_warn(struct fdisk_context *cxt, const char *fmt, ...);
+extern int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...)
+			__attribute__ ((__format__ (__printf__, 2, 3)));
+extern int fdisk_warn(struct fdisk_context *cxt, const char *fmt, ...)
+			__attribute__ ((__format__ (__printf__, 2, 3)));
 
 extern int fdisk_ask_print_get_errno(struct fdisk_ask *ask);
 extern int fdisk_ask_print_set_errno(struct fdisk_ask *ask, int errnum);

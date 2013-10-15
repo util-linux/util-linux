@@ -618,8 +618,8 @@ static int sun_add_partition(
    _("You haven't covered the whole disk with the 3rd partition, but your value\n"
      "%d %s covers some other partition. Your entry has been changed\n"
      "to %d %s"),
-			fdisk_scround(cxt, last), fdisk_context_get_unit(cxt, SINGULAR),
-			fdisk_scround(cxt, stop), fdisk_context_get_unit(cxt, SINGULAR));
+			(int) fdisk_scround(cxt, last), fdisk_context_get_unit(cxt, SINGULAR),
+			(int) fdisk_scround(cxt, stop), fdisk_context_get_unit(cxt, SINGULAR));
 		    last = stop;
 		}
 	} else if (!whole_disk && last > stop)

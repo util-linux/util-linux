@@ -838,7 +838,7 @@ int fdisk_bsd_link_partition(struct fdisk_context *cxt)
 
 	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
 			_("BSD partition '%c' linked to DOS partition %d."),
-			'a' + i, k + 1);
+			'a' + (int) i, (int) k + 1);
 	return 0;
 }
 
