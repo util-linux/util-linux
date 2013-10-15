@@ -331,7 +331,7 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 		if (num->low > 0) {
 			/* only one existing partiton, don't ask, return the number */
 			fdisk_ask_number_set_result(ask, num->low);
-			fdisk_info(cxt, _("Selected partition %d"), (int) num->low);
+			fdisk_info(cxt, _("Selected partition %ju"), num->low);
 
 		} else if (num->low == 0) {
 			fdisk_warnx(cxt, _("No partition is defined yet!"));
@@ -343,7 +343,7 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 		if (num->low > 0) {
 			/* only one free partition, don't ask, return the number */
 			fdisk_ask_number_set_result(ask, num->low);
-			fdisk_info(cxt, _("Selected partition %d"), (int) num->low);
+			fdisk_info(cxt, _("Selected partition %ju"), num->low);
 		}
 		if (num->low == 0) {
 			fdisk_warnx(cxt, _("No free partition available!"));

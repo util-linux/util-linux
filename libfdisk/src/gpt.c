@@ -1204,7 +1204,7 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 		fdisk_colon(cxt, _("Last LBA: %ju"), h->last_usable_lba);
 		fdisk_colon(cxt, _("Alternative LBA: %ju"), h->alternative_lba);
 		fdisk_colon(cxt, _("Partitions entries LBA: %ju"), h->partition_entry_lba);
-		fdisk_colon(cxt, _("Allocated partition entries: %ju"), (uintmax_t) h->npartition_entries);
+		fdisk_colon(cxt, _("Allocated partition entries: %u"), h->npartition_entries);
 	}
 	tt_define_column(tb, _("Device"), 0.1, 0);
 	tt_define_column(tb, _("Start"),   12, TT_FL_RIGHT);
@@ -1536,8 +1536,8 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 		free_sectors = get_free_sectors(cxt, gpt->pheader, gpt->ents,
 						&nsegments, &largest_segment);
 		fdisk_info(cxt,
-			   P_("A total of %ju free sectors is available in %d segment.",
-			      "A total of %ju free sectors is available in %d segments "
+			   P_("A total of %ju free sectors is available in %u segment.",
+			      "A total of %ju free sectors is available in %u segments "
 			      "(the largest is %ju).", nsegments),
 			   free_sectors, nsegments, largest_segment);
 	} else
@@ -1660,7 +1660,7 @@ static int gpt_add_partition(
 	ents = gpt->ents;
 
 	if (!partition_unused(&ents[partnum])) {
-		fdisk_warnx(cxt, _("Partition %zd is already defined.  "
+		fdisk_warnx(cxt, _("Partition %zu is already defined.  "
 			           "Delete it before re-adding it."), partnum +1);
 		return -EINVAL;
 	}
@@ -1737,7 +1737,7 @@ static int gpt_add_partition(
 
 	if (gpt_create_new_partition(cxt, partnum,
 				     user_f, user_l, &typeid, ents) != 0)
-		fdisk_warnx(cxt, _("Could not create partition %zd"), partnum + 1);
+		fdisk_warnx(cxt, _("Could not create partition %ju"), partnum + 1);
 	else {
 		struct fdisk_parttype *t;
 
@@ -1978,7 +1978,7 @@ int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, GPT));
 
-	DBG(LABEL, dbgprint("UUID change requested partno=%zd", i));
+	DBG(LABEL, dbgprint("UUID change requested partno=%zu", i));
 
 	gpt = self_label(cxt);
 
@@ -2024,7 +2024,7 @@ int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, GPT));
 
-	DBG(LABEL, dbgprint("NAME change requested partno=%zd", i));
+	DBG(LABEL, dbgprint("NAME change requested partno=%zu", i));
 
 	gpt = self_label(cxt);
 

@@ -841,7 +841,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 	sgi = self_label(cxt);
 
 	if (sgi_get_num_sectors(cxt, n)) {
-		fdisk_warnx(cxt, _("Partition %zd is already defined.  "
+		fdisk_warnx(cxt, _("Partition %zu is already defined.  "
 				   "Delete it before re-adding it."), n + 1);
 		return -EINVAL;
 	}

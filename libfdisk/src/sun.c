@@ -391,9 +391,8 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
 
     for (k = 0; k < 7; k++) {
 	for (i = 0; i < SUN_MAXPARTITIONS; i++) {
-	    if (k && (lens[i] % (cxt->geom.heads * cxt->geom.sectors))) {
-	        fdisk_warnx(cxt, _("Partition %d doesn't end on cylinder boundary."), i+1);
-	    }
+	    if (k && (lens[i] % (cxt->geom.heads * cxt->geom.sectors)))
+	        fdisk_warnx(cxt, _("Partition %u doesn't end on cylinder boundary."), i+1);
 	    if (lens[i]) {
 	        for (j = 0; j < i; j++)
 	            if (lens[j]) {
@@ -412,8 +411,8 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
 	                        endo = starts[i]+lens[i];
 	                        if (starts[j]+lens[j] < endo)
 					endo = starts[j]+lens[j];
-	                        fdisk_warnx(cxt, _("Partition %d overlaps with others in "
-				       "sectors %d-%d."), i+1, starto, endo);
+	                        fdisk_warnx(cxt, _("Partition %u overlaps with others in "
+				       "sectors %u-%u."), i+1, starto, endo);
 	                    }
 	                }
 	            }
@@ -437,15 +436,15 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
     }
     stop = cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors;
     if (starts[array[0]])
-        fdisk_warnx(cxt, _("Unused gap - sectors 0-%d."), starts[array[0]]);
+        fdisk_warnx(cxt, _("Unused gap - sectors 0-%u."), starts[array[0]]);
     for (i = 0; i < 7 && array[i+1] != -1; i++) {
-        fdisk_warnx(cxt, _("Unused gap - sectors %d-%d."),
+        fdisk_warnx(cxt, _("Unused gap - sectors %u-%u."),
 	       (starts[array[i]] + lens[array[i]]),
 	       starts[array[i+1]]);
     }
     start = (starts[array[i]] + lens[array[i]]);
     if (start < stop)
-        fdisk_warnx(cxt, _("Unused gap - sectors %d-%d."), start, stop);
+        fdisk_warnx(cxt, _("Unused gap - sectors %u-%u."), start, stop);
     return 0;
 }
 
@@ -468,7 +467,7 @@ static int sun_add_partition(
 	unsigned int first, last;
 
 	if (part->num_sectors && be16_to_cpu(info->id) != SUN_TAG_UNASSIGNED) {
-		fdisk_info(cxt, _("Partition %zd is already defined.  Delete "
+		fdisk_info(cxt, _("Partition %zu is already defined.  Delete "
 			"it before re-adding it."), n + 1);
 		return -EINVAL;
 	}
@@ -616,10 +615,10 @@ static int sun_add_partition(
 		} else if (last > stop) {
 		    fdisk_warnx(cxt,
    _("You haven't covered the whole disk with the 3rd partition, but your value\n"
-     "%d %s covers some other partition. Your entry has been changed\n"
-     "to %d %s"),
-			(int) fdisk_scround(cxt, last), fdisk_context_get_unit(cxt, SINGULAR),
-			(int) fdisk_scround(cxt, stop), fdisk_context_get_unit(cxt, SINGULAR));
+     "%lu %s covers some other partition. Your entry has been changed\n"
+     "to %lu %s"),
+			(unsigned long) fdisk_scround(cxt, last), fdisk_context_get_unit(cxt, SINGULAR),
+			(unsigned long) fdisk_scround(cxt, stop), fdisk_context_get_unit(cxt, SINGULAR));
 		    last = stop;
 		}
 	} else if (!whole_disk && last > stop)
