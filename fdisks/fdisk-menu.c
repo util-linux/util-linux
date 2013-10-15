@@ -456,9 +456,9 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		if (!rc)
 			rc = fdisk_delete_partition(cxt, n);
 		if (rc)
-			fdisk_warnx(cxt, _("Could not delete partition %d"), (int) n + 1);
+			fdisk_warnx(cxt, _("Could not delete partition %zu"), n + 1);
 		else
-			fdisk_info(cxt, _("Partition %d has been deleted."), (int) n + 1);
+			fdisk_info(cxt, _("Partition %zu has been deleted."), n + 1);
 		break;
 	case 'l':
 		list_partition_types(cxt);
