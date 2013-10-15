@@ -1374,6 +1374,39 @@ done:
 	return rc;
 }
 
+static int dos_locate_disklabel(struct fdisk_context *cxt, int n,
+		const char **name, off_t *offset, size_t *size)
+{
+	assert(cxt);
+
+	*name = NULL;
+	*offset = 0;
+	*size = 0;
+
+	switch (n) {
+	case 0:
+		*name = "MBR";
+		*offset = 0;
+		*size = 512;
+		break;
+	default:
+		/* extended partitions */
+		if (n - 1 + 4 < cxt->label->nparts_max) {
+			struct pte *pe = self_pte(cxt, n - 1 + 4);
+
+			assert(pe->private_sectorbuffer);
+
+			*name = "EBR";
+			*offset = pe->offset * cxt->sector_size;
+			*size = 512;
+		} else
+			return 1;
+		break;
+	}
+
+	return 0;
+}
+
 static struct fdisk_parttype *dos_get_parttype(
 		struct fdisk_context *cxt,
 		size_t partnum)
@@ -1911,6 +1944,7 @@ static const struct fdisk_label_operations dos_operations =
 	.write		= dos_write_disklabel,
 	.verify		= dos_verify_disklabel,
 	.create		= dos_create_disklabel,
+	.locate		= dos_locate_disklabel,
 	.list		= dos_list_disklabel,
 	.get_id		= dos_get_disklabel_id,
 	.set_id		= dos_set_disklabel_id,
