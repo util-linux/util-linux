@@ -286,7 +286,7 @@ static void my_putstring(char *s)
 	tputs(s, fileno(stdout), putchar);
 }
 
-static void my_setupterm(char *term, int fildes, int *errret)
+static void my_setupterm(char *term, int fildes __attribute__((__unused__)), int *errret)
 {
 	*errret = tgetent(tcbuffer, term);
 }
