@@ -107,7 +107,7 @@ static char termbuffer[4096];
 static char tcbuffer[4096];
 static char *strbuf = termbuffer;
 
-static void my_setupterm(const char *term, int fildes, int *errret)
+static void my_setupterm(const char *term, int fildes __attribute__((__unused__)), int *errret)
 {
 	*errret = tgetent(tcbuffer, term);
 }
