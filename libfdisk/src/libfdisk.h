@@ -190,6 +190,13 @@ extern int fdisk_sgi_set_bootfile(struct fdisk_context *cxt);
 extern int fdisk_sgi_create_info(struct fdisk_context *cxt);
 
 /* gpt */
+enum {
+	GPT_FLAG_REQUIRED = 1,
+	GPT_FLAG_NOBLOCK,
+	GPT_FLAG_LEGACYBOOT,
+	GPT_FLAG_GUIDSPECIFIC
+};
+
 extern int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i);
 extern int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i);
 

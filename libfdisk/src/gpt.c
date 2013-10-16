@@ -75,6 +75,9 @@ struct gpt_attr {
 	uint64_t            guid_secific:16;
 }  __attribute__ ((packed));
 
+
+
+
 /* The GPT Partition entry array contains an array of GPT entries. */
 struct gpt_entry {
 	struct gpt_guid     type; /* purpose and type of the partition */
@@ -1168,6 +1171,36 @@ static char *encode_to_utf8(unsigned char *src, size_t count)
 	return dest;
 }
 
+/* convert GUID Specific attributes to string, result is a list of the enabled
+ * bits (e.g. "60,62,63" for enabled bits 60, 62 and 63).
+ *
+ * Returns newly allocated string or NULL in case of error.
+ *
+ * see struct gpt_attr definition for more details.
+ */
+static char *guid_attrs_to_string(struct gpt_attr *attr, char **res)
+{
+	char *bits = (char *) attr, *end;
+	size_t i, count = 0, len;
+
+	end = *res = calloc(1, 16 * 3 + 6);	/* three bytes for one bit + \0 */
+	if (!*res)
+		return NULL;
+
+	for (i = 48; i < 64; i++) {
+		if (!isset(bits, i))
+			continue;
+		count++;
+		if (count > 1)
+			len = snprintf(end, 4, ",%zu", i);
+		else
+			len = snprintf(end, 8, "GUID:%zu", i);
+		end += len;
+	}
+
+	return *res;
+}
+
 /*
  * List label partitions.
  * This function must currently exist to comply with standard fdisk
@@ -1215,6 +1248,7 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 	if (fdisk_context_display_details(cxt)) {
 		tt_define_column(tb, _("UUID"),  36, 0);
 		tt_define_column(tb, _("Name"), 0.2, trunc);
+		tt_define_column(tb, _("Attributes"), 0, 0);
 	}
 
 	for (i = 0; i < le32_to_cpu(h->npartition_entries); i++) {
@@ -1258,6 +1292,7 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 
 		/* expert menu column(s) */
 		if (fdisk_context_display_details(cxt)) {
+			char *buf = NULL;
 			char *name = encode_to_utf8(
 					(unsigned char *)e->name,
 					sizeof(e->name));
@@ -1266,6 +1301,13 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 				tt_line_set_data(ln, 5, strdup(u_str));
 			if (name)
 				tt_line_set_data(ln, 6, name);
+			if (asprintf(&p, "%s%s%s%s",
+					e->attr.required_to_function ? "Required " : "",
+					e->attr.legacy_bios_bootable ? "LegacyBoot " : "",
+					e->attr.no_blockio_protocol  ? "NoBlockIO " : "",
+					guid_attrs_to_string(&e->attr, &buf)) > 0)
+				tt_line_set_data(ln, 7, p);
+			free(buf);
 		}
 
 		fdisk_warn_alignment(cxt, start, i);
@@ -2061,6 +2103,86 @@ int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i)
 	return 0;
 }
 
+static int gpt_toggle_partition_flag(
+		struct fdisk_context *cxt,
+		size_t i,
+		unsigned long flag)
+{
+	struct fdisk_gpt_label *gpt;
+	struct gpt_entry *e;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, GPT));
+
+	DBG(LABEL, dbgprint("GPT entry attribute change requested partno=%zu", i));
+
+	gpt = self_label(cxt);
+
+	if ((uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries))
+		return -EINVAL;
+
+	e = &gpt->ents[i];
+
+	switch (flag) {
+	case GPT_FLAG_REQUIRED:
+		e->attr.required_to_function = !e->attr.required_to_function;
+		fdisk_label_set_changed(cxt->label, 1);
+		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			e->attr.required_to_function ?
+			_("The RequiredPartiton flag on partition %zu is enabled now.") :
+			_("The RequiredPartiton flag on partition %zu is disabled now."),
+			i + 1);
+		break;
+	case GPT_FLAG_NOBLOCK:
+		e->attr.no_blockio_protocol = !e->attr.no_blockio_protocol;
+		fdisk_label_set_changed(cxt->label, 1);
+		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			e->attr.no_blockio_protocol ?
+			_("The NoBlockIOProtocol flag on partition %zu is enabled now.") :
+			_("The NoBlockIOProtocol flag on partition %zu is disabled now."),
+			i + 1);
+		break;
+	case GPT_FLAG_LEGACYBOOT:
+		e->attr.legacy_bios_bootable = !e->attr.legacy_bios_bootable;
+		fdisk_label_set_changed(cxt->label, 1);
+		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			e->attr.legacy_bios_bootable ?
+			_("The LegacyBIOSBootable flag on partition %zu is enabled now.") :
+			_("The LegacyBIOSBootable flag on partition %zu is disabled now."),
+			i + 1);
+		break;
+	case GPT_FLAG_GUIDSPECIFIC:
+	{
+		char *attrs = (char *) &e->attr;
+		uint64_t bit = 0;
+		int rc = fdisk_ask_number(cxt, 48, 48, 63,
+				_("Enter GUID specific bit"),
+				&bit);
+		if (rc)
+			return rc;
+		if (!isset(attrs, bit))
+			setbit(attrs, bit);
+		else
+			clrbit(attrs, bit);
+
+		fdisk_label_set_changed(cxt->label, 1);
+		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			isset(attrs, bit) ?
+			_("The GUID specific bit %ju on partition %zu is enabled now.") :
+			_("The GUID specific bit %ju on partition %zu is disabled now."),
+			bit, i + 1);
+		break;
+	}
+	default:
+		return 1;
+	}
+
+	gpt_recompute_crc(gpt->pheader, gpt->ents);
+	gpt_recompute_crc(gpt->bheader, gpt->ents);
+
+	return 0;
+}
 
 /*
  * Deinitialize fdisk-specific variables
@@ -2096,6 +2218,7 @@ static const struct fdisk_label_operations gpt_operations =
 	.part_delete	= gpt_delete_partition,
 	.part_get_type	= gpt_get_partition_type,
 	.part_set_type	= gpt_set_partition_type,
+	.part_toggle_flag = gpt_toggle_partition_flag,
 
 	.part_get_status = gpt_get_partition_status,
 
