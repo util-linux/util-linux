@@ -282,9 +282,10 @@ static int bsd_create_disklabel(struct fdisk_context *cxt)
 	rc = fdisk_ask_yesno(cxt,
 			_("Do you want to create a BSD disklabel?"),
 			&yes);
-
-	if (rc || !yes)
+	if (rc)
 		return rc;
+	if (!yes)
+		return 1;
 	if (cxt->parent) {
 		rc = bsd_assign_dos_partition(cxt);
 		if (rc == 1)
