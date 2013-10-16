@@ -1931,6 +1931,11 @@ static int dos_toggle_partition_flag(
 
 		p->boot_ind = (p->boot_ind ? 0 : ACTIVE_FLAG);
 		partition_set_changed(cxt, i, 1);
+		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			p->boot_ind ?
+			_("The bootable flag on partition %zu is enabled now.") :
+			_("The bootable flag on partition %zu is disabled now."),
+			i + 1);
 		break;
 	default:
 		return 1;
