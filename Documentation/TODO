@@ -75,8 +75,16 @@ libblkid
 
  - (!) add support for dasd PT (used for example on s390)
 
-fdisk(s)
---------
+fdisk(s)/libfdisk
+-----------------
+
+ - (!) add dialog to modify GPT partition attributes (strutct gpt_attr)
+
+ - (!) improve gpt_write_disklabel() to support hybrid GPT. We don't want 
+   to generate hybrid GPT, but it would be nice to support manual MBR 
+   modification ('M' expert command). The function gpt_write_disklabel() 
+   has to detect hybrid PMBR and then print warning and write GPT, but
+   keep PMBR unchanged. 
 
  - (!) add 'I'nfo fommand to print all details about specified partition
    (like offset, size, name, uuid, type, C/H/S, fstype)
