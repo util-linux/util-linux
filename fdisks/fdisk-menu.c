@@ -159,6 +159,13 @@ struct menu menu_gpt = {
 		MENU_XENT('n', N_("change partition name")),
 		MENU_XENT('u', N_("change partition UUID")),
 		MENU_XENT('M', N_("enter protective/hybrid MBR")),
+
+		MENU_XSEP(""),
+		MENU_XENT('A', N_("toggle the legacy BIOS bootable flag")),
+		MENU_XENT('B', N_("toggle the no block IO protocol flag")),
+		MENU_XENT('R', N_("toggle the required partition flag")),
+		MENU_XENT('S', N_("toggle the GUID specific bits")),
+
 		{ 0, NULL }
 	}
 };
@@ -350,7 +357,9 @@ static int print_fdisk_menu(struct fdisk_context *cxt)
 	while ((e = next_menu_entry(cxt, &mc))) {
 		if (IS_MENU_HID(e))
 			continue;	/* hidden entry */
-		if (IS_MENU_SEP(e)) {
+		if (IS_MENU_SEP(e) && (!e->title || !*e->title))
+			printf("\n");
+		else if (IS_MENU_SEP(e)) {
 			color_enable(UL_COLOR_BOLD);
 			printf("\n  %s\n", _(e->title));
 			color_disable();
@@ -570,6 +579,18 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 			break;
 		case 'n':
 			rc = fdisk_gpt_partition_set_name(cxt, n);
+			break;
+		case 'A':
+			rc = fdisk_partition_toggle_flag(cxt, n, GPT_FLAG_LEGACYBOOT);
+			break;
+		case 'B':
+			rc = fdisk_partition_toggle_flag(cxt, n, GPT_FLAG_NOBLOCK);
+			break;
+		case 'R':
+			rc = fdisk_partition_toggle_flag(cxt, n, GPT_FLAG_REQUIRED);
+			break;
+		case 'S':
+			rc = fdisk_partition_toggle_flag(cxt, n, GPT_FLAG_GUIDSPECIFIC);
 			break;
 		}
 	}
