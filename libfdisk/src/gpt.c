@@ -142,6 +142,8 @@ static struct fdisk_parttype gpt_parttypes[] =
 	DEF_GUID("C12A7328-F81F-11D2-BA4B-00A0C93EC93B", N_("EFI System")),
 
 	DEF_GUID("024DEE41-33E7-11D3-9D69-0008C781F39F", N_("MBR partition scheme")),
+	DEF_GUID("D3BFE2DE-3DAF-11DF-BA40-E3A556D89593", N_("Intel Fast Flash")),
+
 	/* Hah!IdontneedEFI */
 	DEF_GUID("21686148-6449-6E6F-744E-656564454649", N_("BIOS boot partition")),
 
