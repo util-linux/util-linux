@@ -1522,7 +1522,7 @@ int main(int argc, char **argv)
 		  _("%s %s Copyright (c) 2000-2001 Gunnar Ritter. All rights reserved.\n"),
 		  program_invocation_short_name, PACKAGE_VERSION);
 
-	setlocale(LC_MESSAGES, "");
+	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
