@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 		{NULL, no_argument, 0, '0'},
 	};
 
-	setlocale(LC_MESSAGES, "");
+	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
