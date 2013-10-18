@@ -1,3 +1,6 @@
+#ifdef HAVE_LIBBLKID
+# include <blkid.h>
+#endif
 
 #include "fdiskP.h"
 
@@ -178,6 +181,59 @@ static void reset_context(struct fdisk_context *cxt)
 	cxt->label = NULL;
 }
 
+/*
+ * This function prints a warning if the device is not wiped (e.g. wipefs(8).
+ * Please don't call this function if there is already a PT.
+ *
+ * Returns: 0 if nothing found, < 0 on error, 1 if found a signature
+ */
+static int warn_wipe(struct fdisk_context *cxt)
+{
+#ifdef HAVE_LIBBLKID
+	blkid_probe pr;
+#endif
+	int rc = 0;
+
+	assert(cxt);
+
+	if (fdisk_dev_has_disklabel(cxt) || cxt->dev_fd < 0)
+		return -EINVAL;
+#ifdef HAVE_LIBBLKID
+	DBG(LABEL, dbgprint("wipe check: initialize libblkid prober"));
+
+	pr = blkid_new_probe();
+	if (!pr)
+		return -ENOMEM;
+	rc = blkid_probe_set_device(pr, cxt->dev_fd, 0, 0);
+	if (rc)
+		return rc;
+
+	blkid_probe_enable_superblocks(pr, 1);
+	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_TYPE);
+	blkid_probe_enable_partitions(pr, 1);
+
+	/* we care about the first found FS/raid, so don't call blkid_do_probe()
+	 * in loop or don't use blkid_do_fullprobe() ... */
+	rc = blkid_do_probe(pr);
+	if (rc == 0) {
+		const char *name = NULL;
+
+		if (blkid_probe_lookup_value(pr, "TYPE", &name, 0) == 0 ||
+		    blkid_probe_lookup_value(pr, "PTTYPE", &name, 0) == 0) {
+			fdisk_warnx(cxt, _(
+				"%s: device contains a valid '%s' signature, it's "
+				"strongly recommended to wipe the device by command wipefs(8) "
+				"if this setup is unexpected to avoid "
+				"possible collisions."), cxt->dev_path, name);
+			rc = 1;
+		}
+	}
+
+	blkid_free_probe(pr);
+#endif
+	return rc;
+}
+
 /**
  * fdisk_context_assign_device:
  * @fname: path to the device to be handled
@@ -223,6 +279,11 @@ int fdisk_context_assign_device(struct fdisk_context *cxt,
 	/* let's apply user geometry *after* label prober
 	 * to make it possible to override in-label setting */
 	fdisk_apply_user_device_properties(cxt);
+
+	/* warn about obsolete stuff on the device if we aren't in
+	 * list-only mode and there is not PT yet */
+	if (!fdisk_context_listonly(cxt) && !fdisk_dev_has_disklabel(cxt))
+		warn_wipe(cxt);
 
 	DBG(CONTEXT, dbgprint("context %p initialized for %s [%s]",
 			      cxt, fname,
