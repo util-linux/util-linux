@@ -531,19 +531,20 @@ int main(int argc, char **argv)
 		if (argc-optind != 1)
 			usage(stderr);
 
-		if (fdisk_context_assign_device(cxt, argv[optind], 0) != 0)
-			err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
-
 		/* Here starts interactive mode, use fdisk_{warn,info,..} functions */
 		color_enable(UL_COLOR_GREEN);
 		fdisk_info(cxt, _("Welcome to fdisk (%s)."), PACKAGE_STRING);
 		color_disable();
 		fdisk_info(cxt, _("Changes will remain in memory only, until you decide to write them.\n"
 				  "Be careful before using the write command.\n"));
+
+		if (fdisk_context_assign_device(cxt, argv[optind], 0) != 0)
+			err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
+
 		fflush(stdout);
 
 		if (!fdisk_dev_has_disklabel(cxt)) {
-			fdisk_warnx(cxt, _("Device does not contain a recognized partition table."));
+			fdisk_info(cxt, _("Device does not contain a recognized partition table."));
 			fdisk_create_disklabel(cxt, NULL);
 		}
 
