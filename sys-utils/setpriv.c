@@ -630,7 +630,7 @@ int main(int argc, char **argv)
 	int total_opts = 0;
 	int list_caps = 0;
 
-	setlocale(LC_MESSAGES, "");
+	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
