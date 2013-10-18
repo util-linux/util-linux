@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
 	uid_t uid = 0;
 	gid_t gid = 0;
 
-	setlocale(LC_MESSAGES, "");
+	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);

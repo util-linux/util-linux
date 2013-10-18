@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 	int c, forkit = 0;
 	const char *procmnt = NULL;
 
-	setlocale(LC_MESSAGES, "");
+	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
