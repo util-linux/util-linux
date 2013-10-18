@@ -78,9 +78,6 @@ libblkid
 fdisk(s)/libfdisk
 -----------------
 
- - (!) use libblkid to inform user that there is old obsolete LVM/raid/PT
-   on the device and add command to wipe the device
-
  - (!) add dialog to modify GPT partition attributes (strutct gpt_attr)
 
  - (!) improve gpt_write_disklabel() to support hybrid GPT. We don't want 
