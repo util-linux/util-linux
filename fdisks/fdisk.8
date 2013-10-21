@@ -206,7 +206,7 @@ clear the first 512 bytes of the data area of a partition whenever a size
 change occurs.  DOS FORMAT will look at this extra information even if the /U
 flag is given -- we consider this a bug in DOS FORMAT and DOS FDISK.
 
-The bottom line is that if you use \fBfdisk\fR or \fBcfdisk\R to change the
+The bottom line is that if you use \fBfdisk\fR or \fBcfdisk\fR to change the
 size of a DOS partition table entry, then you must also use
 .BR dd "(1) to " "zero the first 512 bytes"
 of that partition before using DOS FORMAT to format the partition.  For
