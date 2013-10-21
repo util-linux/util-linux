@@ -72,6 +72,7 @@ mkfs.minix:
 more:  libtinfo 
 namei:  
 newgrp:  rypt 
+nologin:  
 nsenter:  
 pg:  libncursesw libtinfo 
 pivot_root:  

@@ -71,6 +71,7 @@ mkfs.minix:
 more:  libtinfo 
 mount.static: STATIC
 namei:  
+nologin:  
 nsenter:  
 pg:  libncursesw libtinfo 
 pivot_root:  

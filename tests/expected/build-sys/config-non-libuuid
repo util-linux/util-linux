@@ -63,6 +63,7 @@ mkfs.cramfs:  libz
 mkfs.minix:  
 more:  libtinfo 
 namei:  
+nologin:  
 nsenter:  
 pg:  libncursesw libtinfo 
 pivot_root:  

@@ -44,6 +44,7 @@ mkfs.minix:
 mkswap:  
 more:  libtinfo 
 namei:  
+nologin:  
 nsenter:  
 pg:  libncursesw libtinfo 
 pivot_root:  
