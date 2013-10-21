@@ -1,3 +1,7 @@
+util-linux 2.24: Oct 21 2013
+* see Documentation/releases/v2.24-ReleaseNotes or complete changelog at
+  ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.24/v2.24-ChangeLog
+
 util-linux 2.24-rc2: Oct 11 2013
 * see Documentation/releases/v2.24-ReleaseNotes or complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.24/v2.24-rc2-ChangeLog
