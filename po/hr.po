@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-10-11 12:54+0200\n"
+"POT-Creation-Date: 2013-10-21 12:54+0200\n"
 "PO-Revision-Date: 2013-04-18 16:36+0200\n"
 "Last-Translator: Tomislav Krznar <tomislav.krznar@gmail.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
@@ -33,8 +33,8 @@ msgstr " %s <uređaj diska> <broj particije> <početak> <duljina>\n"
 #: disk-utils/mkfs.cramfs.c:791 disk-utils/mkfs.minix.c:753
 #: disk-utils/partx.c:933 disk-utils/resizepart.c:97
 #: disk-utils/swaplabel.c:105 fdisks/cfdisk.c:1831 fdisks/cfdisk.c:1953
-#: fdisks/cfdisk.c:2041 fdisks/fdisk.c:331 fdisks/fdisk.c:347
-#: fdisks/fdisk.c:381 fdisks/fdisk.c:534 libfdisk/src/bsd.c:521 lib/path.c:60
+#: fdisks/cfdisk.c:2041 fdisks/fdisk.c:333 fdisks/fdisk.c:349
+#: fdisks/fdisk.c:383 fdisks/fdisk.c:536 libfdisk/src/bsd.c:522 lib/path.c:60
 #: lib/path.c:72 login-utils/islocal.c:87 login-utils/last.c:613
 #: login-utils/last-deprecated.c:245 login-utils/sulogin.c:399
 #: login-utils/sulogin.c:437 login-utils/utmpdump.c:125
@@ -332,7 +332,7 @@ msgstr "%s nije montiran\n"
 
 #: disk-utils/fsck.c:307 disk-utils/fsck.cramfs.c:169
 #: disk-utils/fsck.cramfs.c:176 disk-utils/fsck.cramfs.c:233
-#: disk-utils/fsck.cramfs.c:251 libfdisk/src/bsd.c:526 lib/path.c:100
+#: disk-utils/fsck.cramfs.c:251 libfdisk/src/bsd.c:527 lib/path.c:100
 #: lib/path.c:121 lib/path.c:142 lib/path.c:190 login-utils/last.c:194
 #: login-utils/last.c:231 login-utils/sulogin.c:605 sys-utils/setpriv.c:233
 #, fuzzy, c-format
@@ -399,9 +399,10 @@ msgstr "%s: izvršavanje nije uspjelo"
 msgid "wait: no more child process?!?"
 msgstr "wait: nema više djece procesa?!?"
 
-#: disk-utils/fsck.c:716
-msgid "waidpid failed"
-msgstr "waidpid nije uspio"
+#: disk-utils/fsck.c:716 sys-utils/flock.c:309 sys-utils/swapon.c:303
+#: sys-utils/unshare.c:141
+msgid "waitpid failed"
+msgstr ""
 
 #: disk-utils/fsck.c:734
 #, c-format
@@ -605,7 +606,7 @@ msgid "file length too short"
 msgstr "duljina datoteke je prekratka"
 
 #: disk-utils/fsck.cramfs.c:174 disk-utils/fsck.cramfs.c:231
-#: disk-utils/fsck.cramfs.c:247 libfdisk/src/bsd.c:593 libfdisk/src/bsd.c:761
+#: disk-utils/fsck.cramfs.c:247 libfdisk/src/bsd.c:594 libfdisk/src/bsd.c:762
 #: login-utils/last.c:189 login-utils/last.c:223
 #, fuzzy, c-format
 msgid "seek on %s failed"
@@ -821,11 +822,11 @@ msgstr ""
 msgid "invalid file data offset"
 msgstr "neispravan pomak podataka datoteke"
 
-#: disk-utils/fsck.cramfs.c:686
+#: disk-utils/fsck.cramfs.c:687
 msgid "compiled without -x support"
 msgstr "kompajlirano bez podrške za -x"
 
-#: disk-utils/fsck.cramfs.c:706
+#: disk-utils/fsck.cramfs.c:707
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: u redu\n"
@@ -2234,13 +2235,13 @@ msgstr[2] ""
 msgid "failed to add line to output"
 msgstr ""
 
-#: disk-utils/partx.c:621 misc-utils/findmnt.c:1435 misc-utils/lsblk.c:1583
+#: disk-utils/partx.c:621 misc-utils/findmnt.c:1435 misc-utils/lsblk.c:1582
 #: misc-utils/lslocks.c:455 sys-utils/losetup.c:311 sys-utils/lscpu.c:1152
 #: sys-utils/prlimit.c:290 sys-utils/swapon.c:242 sys-utils/wdctl.c:250
 msgid "failed to initialize output table"
 msgstr ""
 
-#: disk-utils/partx.c:629 misc-utils/findmnt.c:1453 misc-utils/lsblk.c:1593
+#: disk-utils/partx.c:629 misc-utils/findmnt.c:1453 misc-utils/lsblk.c:1592
 #: misc-utils/lslocks.c:463 sys-utils/losetup.c:317 sys-utils/prlimit.c:298
 #: sys-utils/swapon.c:250 sys-utils/wdctl.c:259
 msgid "failed to initialize output column"
@@ -2307,11 +2308,11 @@ msgstr ""
 msgid " -o, --output <list>  define which output columns to use\n"
 msgstr ""
 
-#: disk-utils/partx.c:709 misc-utils/lsblk.c:1383
+#: disk-utils/partx.c:709 misc-utils/lsblk.c:1382
 msgid " -P, --pairs          use key=\"value\" output format\n"
 msgstr ""
 
-#: disk-utils/partx.c:710 misc-utils/lsblk.c:1384
+#: disk-utils/partx.c:710 misc-utils/lsblk.c:1383
 msgid " -r, --raw            use raw output format\n"
 msgstr ""
 
@@ -2657,8 +2658,8 @@ msgstr ""
 msgid "Add partition at beginning of free space"
 msgstr ""
 
-#: fdisks/cfdisk.c:1317 libfdisk/src/bsd.c:395 libfdisk/src/dos.c:1606
-#: libfdisk/src/gpt.c:1209 libfdisk/src/sgi.c:278 libfdisk/src/sun.c:703
+#: fdisks/cfdisk.c:1317 libfdisk/src/bsd.c:396 libfdisk/src/dos.c:1640
+#: libfdisk/src/gpt.c:1211 libfdisk/src/sgi.c:278 libfdisk/src/sun.c:703
 msgid "End"
 msgstr ""
 
@@ -2800,11 +2801,11 @@ msgstr ""
 
 #: fdisks/cfdisk.c:1919 fdisks/fdisk.c:182 fdisks/fdisk.c:183
 #: fdisks/fdisk.c:188 fdisks/sfdisk.c:585 libfdisk/src/ask.c:660
-#: libfdisk/src/dos.c:1661
+#: libfdisk/src/dos.c:1695
 msgid "Unknown"
 msgstr ""
 
-#: fdisks/cfdisk.c:1925 fdisks/cfdisk.c:2401 libfdisk/src/dos.c:1604
+#: fdisks/cfdisk.c:1925 fdisks/cfdisk.c:2401 libfdisk/src/dos.c:1638
 #: libfdisk/src/sun.c:33
 msgid "Boot"
 msgstr ""
@@ -3134,7 +3135,7 @@ msgstr ""
 msgid "Heads: %d   Sectors per Track: %d   Cylinders: %lld"
 msgstr ""
 
-#: fdisks/cfdisk.c:2519 libfdisk/src/gpt.c:1215 libfdisk/src/sgi.c:335
+#: fdisks/cfdisk.c:2519 libfdisk/src/gpt.c:1217 libfdisk/src/sgi.c:335
 #: login-utils/chfn.c:235 login-utils/chfn.c:315
 msgid "Name"
 msgstr ""
@@ -3239,7 +3240,7 @@ msgstr ""
 msgid "Quit program without writing partition table"
 msgstr ""
 
-#: fdisks/cfdisk.c:2594 libfdisk/src/bsd.c:397 libfdisk/src/gpt.c:1211
+#: fdisks/cfdisk.c:2594 libfdisk/src/bsd.c:398 libfdisk/src/gpt.c:1213
 msgid "Type"
 msgstr ""
 
@@ -3483,120 +3484,120 @@ msgstr ""
 msgid "Disk %s: %s, %llu bytes, %llu sectors"
 msgstr ""
 
-#: fdisks/fdisk.c:207
+#: fdisks/fdisk.c:209
 #, c-format
 msgid "Geometry: %d heads, %llu sectors/track, %llu cylinders"
 msgstr ""
 
-#: fdisks/fdisk.c:210
+#: fdisks/fdisk.c:212
 #, c-format
 msgid "Units: %s of %d * %ld = %ld bytes"
 msgstr ""
 
-#: fdisks/fdisk.c:216
+#: fdisks/fdisk.c:218
 #, c-format
 msgid "Sector size (logical/physical): %lu bytes / %lu bytes"
 msgstr ""
 
-#: fdisks/fdisk.c:218
+#: fdisks/fdisk.c:220
 #, c-format
 msgid "I/O size (minimum/optimal): %lu bytes / %lu bytes"
 msgstr ""
 
-#: fdisks/fdisk.c:221
+#: fdisks/fdisk.c:223
 #, fuzzy, c-format
 msgid "Alignment offset: %lu bytes"
 msgstr "otkrij pomak poravnanja u bajtovima"
 
-#: fdisks/fdisk.c:224
+#: fdisks/fdisk.c:226
 #, c-format
 msgid "Disklabel type: %s"
 msgstr ""
 
-#: fdisks/fdisk.c:227
+#: fdisks/fdisk.c:229
 #, c-format
 msgid "Disk identifier: %s"
 msgstr ""
 
-#: fdisks/fdisk.c:275
+#: fdisks/fdisk.c:277
 #, c-format
 msgid ""
 "\n"
 "%s: offset = %ju, size = %zu bytes."
 msgstr ""
 
-#: fdisks/fdisk.c:279
+#: fdisks/fdisk.c:281
 #, fuzzy
 msgid "cannot seek"
 msgstr "ne mogu zatvoriti datoteku %s"
 
-#: fdisks/fdisk.c:284
+#: fdisks/fdisk.c:286
 #, fuzzy
 msgid "cannot read"
 msgstr "ne mogu otvoriti %s"
 
-#: fdisks/fdisk.c:298 libfdisk/src/bsd.c:215 libfdisk/src/dos.c:876
-#: libfdisk/src/gpt.c:1696
+#: fdisks/fdisk.c:300 libfdisk/src/bsd.c:215 libfdisk/src/dos.c:877
+#: libfdisk/src/gpt.c:1698
 msgid "First sector"
 msgstr ""
 
-#: fdisks/fdisk.c:384
+#: fdisks/fdisk.c:386
 #, c-format
 msgid "BLKGETSIZE ioctl failed on %s"
 msgstr ""
 
-#: fdisks/fdisk.c:410
+#: fdisks/fdisk.c:412
 #, fuzzy
 msgid "failed to allocate libfdisk context"
 msgstr "nisam uspio alocirati iterator"
 
-#: fdisks/fdisk.c:419
+#: fdisks/fdisk.c:421
 msgid "invalid sector size argument"
 msgstr ""
 
-#: fdisks/fdisk.c:428 fdisks/sfdisk.c:2597
+#: fdisks/fdisk.c:430 fdisks/sfdisk.c:2597
 msgid "invalid cylinders argument"
 msgstr ""
 
-#: fdisks/fdisk.c:437
+#: fdisks/fdisk.c:439
 msgid "not found DOS label driver"
 msgstr ""
 
-#: fdisks/fdisk.c:450 fdisks/sfdisk.c:2606
+#: fdisks/fdisk.c:452 fdisks/sfdisk.c:2606
 msgid "invalid heads argument"
 msgstr ""
 
-#: fdisks/fdisk.c:456 fdisks/sfdisk.c:2624
+#: fdisks/fdisk.c:458 fdisks/sfdisk.c:2624
 msgid "invalid sectors argument"
 msgstr ""
 
-#: fdisks/fdisk.c:464 misc-utils/cal.c:351 sys-utils/dmesg.c:1286
+#: fdisks/fdisk.c:466 misc-utils/cal.c:353 sys-utils/dmesg.c:1286
 msgid "unsupported color mode"
 msgstr ""
 
-#: fdisks/fdisk.c:478
+#: fdisks/fdisk.c:480
 #, fuzzy, c-format
 msgid "unsupported disklabel: %s"
 msgstr "nepodržane mogućnosti datotečnog sustava"
 
-#: fdisks/fdisk.c:499
+#: fdisks/fdisk.c:501
 msgid ""
 "The device properties (sector size and geometry) should be used with one "
 "specified device only."
 msgstr ""
 
-#: fdisks/fdisk.c:538
+#: fdisks/fdisk.c:540
 #, c-format
 msgid "Welcome to fdisk (%s)."
 msgstr ""
 
-#: fdisks/fdisk.c:540
+#: fdisks/fdisk.c:542
 msgid ""
 "Changes will remain in memory only, until you decide to write them.\n"
 "Be careful before using the write command.\n"
 msgstr ""
 
-#: fdisks/fdisk.c:545
+#: fdisks/fdisk.c:547
 msgid "Device does not contain a recognized partition table."
 msgstr ""
 
@@ -4074,7 +4075,7 @@ msgstr ""
 msgid "unimplemented format - using %s"
 msgstr ""
 
-#: fdisks/sfdisk.c:891 libfdisk/src/bsd.c:496
+#: fdisks/sfdisk.c:891 libfdisk/src/bsd.c:497
 msgid "cylinders"
 msgstr ""
 
@@ -5018,7 +5019,7 @@ msgstr ""
 msgid "Linux plaintext"
 msgstr ""
 
-#: include/pt-mbr-partnames.h:59 libfdisk/src/gpt.c:164 libfdisk/src/sgi.c:55
+#: include/pt-mbr-partnames.h:59 libfdisk/src/gpt.c:166 libfdisk/src/sgi.c:55
 #: libfdisk/src/sun.c:46
 msgid "Linux LVM"
 msgstr ""
@@ -5079,7 +5080,7 @@ msgstr ""
 msgid "Boot Wizard hidden"
 msgstr ""
 
-#: include/pt-mbr-partnames.h:74 libfdisk/src/gpt.c:186
+#: include/pt-mbr-partnames.h:74 libfdisk/src/gpt.c:188
 msgid "Solaris boot"
 msgstr ""
 
@@ -5229,15 +5230,15 @@ msgstr ""
 msgid "There is no *BSD partition on %s."
 msgstr ""
 
-#: libfdisk/src/bsd.c:213 libfdisk/src/dos.c:874
+#: libfdisk/src/bsd.c:213 libfdisk/src/dos.c:875
 msgid "First cylinder"
 msgstr ""
 
-#: libfdisk/src/bsd.c:240 libfdisk/src/dos.c:936
+#: libfdisk/src/bsd.c:240 libfdisk/src/dos.c:937
 msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgstr ""
 
-#: libfdisk/src/bsd.c:245 libfdisk/src/dos.c:941 libfdisk/src/gpt.c:1717
+#: libfdisk/src/bsd.c:245 libfdisk/src/dos.c:942 libfdisk/src/gpt.c:1719
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr ""
 
@@ -5250,209 +5251,209 @@ msgstr ""
 msgid "Do you want to create a BSD disklabel?"
 msgstr ""
 
-#: libfdisk/src/bsd.c:346
+#: libfdisk/src/bsd.c:347
 #, c-format
 msgid "type: %s"
 msgstr ""
 
-#: libfdisk/src/bsd.c:348
+#: libfdisk/src/bsd.c:349
 #, c-format
 msgid "type: %d"
 msgstr ""
 
-#: libfdisk/src/bsd.c:350
+#: libfdisk/src/bsd.c:351
 #, c-format
 msgid "disk: %.*s"
 msgstr ""
 
-#: libfdisk/src/bsd.c:351
+#: libfdisk/src/bsd.c:352
 #, c-format
 msgid "label: %.*s"
 msgstr ""
 
-#: libfdisk/src/bsd.c:353
+#: libfdisk/src/bsd.c:354
 #, c-format
 msgid "flags: %s"
 msgstr ""
 
-#: libfdisk/src/bsd.c:354
+#: libfdisk/src/bsd.c:355
 msgid " removable"
 msgstr ""
 
-#: libfdisk/src/bsd.c:355
+#: libfdisk/src/bsd.c:356
 msgid " ecc"
 msgstr ""
 
-#: libfdisk/src/bsd.c:356
+#: libfdisk/src/bsd.c:357
 msgid " badsect"
-msgstr ""
-
-#: libfdisk/src/bsd.c:360
-#, c-format
-msgid "bytes/sector: %ld"
 msgstr ""
 
 #: libfdisk/src/bsd.c:361
 #, c-format
-msgid "sectors/track: %ld"
+msgid "bytes/sector: %ld"
 msgstr ""
 
 #: libfdisk/src/bsd.c:362
 #, c-format
-msgid "tracks/cylinder: %ld"
+msgid "sectors/track: %ld"
 msgstr ""
 
 #: libfdisk/src/bsd.c:363
 #, c-format
-msgid "sectors/cylinder: %ld"
+msgid "tracks/cylinder: %ld"
 msgstr ""
 
 #: libfdisk/src/bsd.c:364
 #, c-format
-msgid "cylinders: %ld"
+msgid "sectors/cylinder: %ld"
 msgstr ""
 
 #: libfdisk/src/bsd.c:365
 #, c-format
-msgid "rpm: %d"
+msgid "cylinders: %ld"
 msgstr ""
 
 #: libfdisk/src/bsd.c:366
 #, c-format
-msgid "interleave: %d"
+msgid "rpm: %d"
 msgstr ""
 
 #: libfdisk/src/bsd.c:367
 #, c-format
-msgid "trackskew: %d"
+msgid "interleave: %d"
 msgstr ""
 
 #: libfdisk/src/bsd.c:368
 #, c-format
-msgid "cylinderskew: %d"
+msgid "trackskew: %d"
 msgstr ""
 
 #: libfdisk/src/bsd.c:369
 #, c-format
-msgid "headswitch: %ld (milliseconds)"
+msgid "cylinderskew: %d"
 msgstr ""
 
 #: libfdisk/src/bsd.c:370
 #, c-format
+msgid "headswitch: %ld (milliseconds)"
+msgstr ""
+
+#: libfdisk/src/bsd.c:371
+#, c-format
 msgid "track-to-track seek: %ld (milliseconds)"
 msgstr ""
 
-#: libfdisk/src/bsd.c:383
+#: libfdisk/src/bsd.c:384
 #, fuzzy, c-format
 msgid "partitions: %d"
 msgstr "ponovo pročitaj particijsku tablicu"
 
-#: libfdisk/src/bsd.c:393 libfdisk/src/sgi.c:334
+#: libfdisk/src/bsd.c:394 libfdisk/src/sgi.c:334
 msgid "#"
 msgstr ""
 
-#: libfdisk/src/bsd.c:394 libfdisk/src/dos.c:1512 libfdisk/src/dos.c:1605
-#: libfdisk/src/gpt.c:1208 libfdisk/src/sgi.c:277 libfdisk/src/sun.c:702
+#: libfdisk/src/bsd.c:395 libfdisk/src/dos.c:1546 libfdisk/src/dos.c:1639
+#: libfdisk/src/gpt.c:1210 libfdisk/src/sgi.c:277 libfdisk/src/sun.c:702
 msgid "Start"
 msgstr ""
 
-#: libfdisk/src/bsd.c:396 libfdisk/src/dos.c:1513 libfdisk/src/gpt.c:1210
+#: libfdisk/src/bsd.c:397 libfdisk/src/dos.c:1547 libfdisk/src/gpt.c:1212
 #: libfdisk/src/sgi.c:337
 msgid "Size"
 msgstr ""
 
-#: libfdisk/src/bsd.c:398
+#: libfdisk/src/bsd.c:399
 msgid "fsize"
 msgstr ""
 
-#: libfdisk/src/bsd.c:399
+#: libfdisk/src/bsd.c:400
 msgid "bsize"
 msgstr ""
 
-#: libfdisk/src/bsd.c:400
+#: libfdisk/src/bsd.c:401
 msgid "cpg"
 msgstr ""
 
-#: libfdisk/src/bsd.c:491
+#: libfdisk/src/bsd.c:492
 msgid "bytes/sector"
 msgstr ""
 
-#: libfdisk/src/bsd.c:494
+#: libfdisk/src/bsd.c:495
 msgid "sectors/track"
 msgstr ""
 
-#: libfdisk/src/bsd.c:495
+#: libfdisk/src/bsd.c:496
 msgid "tracks/cylinder"
 msgstr ""
 
-#: libfdisk/src/bsd.c:500
+#: libfdisk/src/bsd.c:501
 msgid "sectors/cylinder"
 msgstr ""
 
-#: libfdisk/src/bsd.c:503
+#: libfdisk/src/bsd.c:504
 msgid "rpm"
 msgstr ""
 
-#: libfdisk/src/bsd.c:504
+#: libfdisk/src/bsd.c:505
 msgid "interleave"
 msgstr ""
 
-#: libfdisk/src/bsd.c:505
+#: libfdisk/src/bsd.c:506
 msgid "trackskew"
 msgstr ""
 
-#: libfdisk/src/bsd.c:506
+#: libfdisk/src/bsd.c:507
 msgid "cylinderskew"
 msgstr ""
 
-#: libfdisk/src/bsd.c:508
+#: libfdisk/src/bsd.c:509
 msgid "headswitch"
 msgstr ""
 
-#: libfdisk/src/bsd.c:509
+#: libfdisk/src/bsd.c:510
 msgid "track-to-track seek"
 msgstr ""
 
-#: libfdisk/src/bsd.c:532
+#: libfdisk/src/bsd.c:533
 #, c-format
 msgid "The bootstrap file %s successfully loaded."
 msgstr ""
 
-#: libfdisk/src/bsd.c:548
+#: libfdisk/src/bsd.c:549
 #, c-format
 msgid "Bootstrap: %1$sboot -> boot%1$s (default %1$s)"
 msgstr ""
 
-#: libfdisk/src/bsd.c:579
+#: libfdisk/src/bsd.c:580
 msgid "Bootstrap overlaps with disklabel!"
 msgstr ""
 
-#: libfdisk/src/bsd.c:598 libfdisk/src/bsd.c:765 sys-utils/hwclock.c:155
+#: libfdisk/src/bsd.c:599 libfdisk/src/bsd.c:766 sys-utils/hwclock.c:155
 #: sys-utils/hwclock.c:157
 #, c-format
 msgid "cannot write %s"
 msgstr ""
 
-#: libfdisk/src/bsd.c:604
+#: libfdisk/src/bsd.c:605
 #, c-format
 msgid "Bootstrap installed on %s."
 msgstr ""
 
-#: libfdisk/src/bsd.c:771
+#: libfdisk/src/bsd.c:772
 #, c-format
 msgid "Disklabel written to %s."
 msgstr ""
 
-#: libfdisk/src/bsd.c:777 libfdisk/src/context.c:240
+#: libfdisk/src/bsd.c:778 libfdisk/src/context.c:240
 #, fuzzy
 msgid "Syncing disks."
 msgstr "Zaključavam disk %s ... "
 
-#: libfdisk/src/bsd.c:811
+#: libfdisk/src/bsd.c:812
 msgid "BSD label is not nested within a DOS partition"
 msgstr ""
 
-#: libfdisk/src/bsd.c:840
+#: libfdisk/src/bsd.c:841
 #, c-format
 msgid "BSD partition '%c' linked to DOS partition %d."
 msgstr ""
@@ -5562,118 +5563,119 @@ msgid ""
 "Invalid flag 0x%02x%02x of partition table %zd will be corrected by w(rite)"
 msgstr ""
 
-#: libfdisk/src/dos.c:811
+#: libfdisk/src/dos.c:811 libfdisk/src/gpt.c:1663 libfdisk/src/sgi.c:844
+#: libfdisk/src/sun.c:471
 #, c-format
-msgid "Partition %d is already defined.  Delete it before re-adding it."
+msgid "Partition %zd is already defined.  Delete it before re-adding it."
 msgstr ""
 
-#: libfdisk/src/dos.c:863
+#: libfdisk/src/dos.c:864
 #, c-format
 msgid "Sector %llu is already allocated."
 msgstr ""
 
-#: libfdisk/src/dos.c:920 libfdisk/src/gpt.c:1672
+#: libfdisk/src/dos.c:921 libfdisk/src/gpt.c:1674
 msgid "No free sectors available."
 msgstr ""
 
-#: libfdisk/src/dos.c:1029
+#: libfdisk/src/dos.c:1030
 #, fuzzy, c-format
 msgid "Adding logical partition %zd"
 msgstr "nisam uspio ukloniti particiju"
 
-#: libfdisk/src/dos.c:1045
+#: libfdisk/src/dos.c:1046
 #, c-format
 msgid "Partition %zd: contains sector 0"
 msgstr ""
 
-#: libfdisk/src/dos.c:1047
+#: libfdisk/src/dos.c:1048
 #, c-format
 msgid "Partition %zd: head %d greater than maximum %d"
 msgstr ""
 
-#: libfdisk/src/dos.c:1050
+#: libfdisk/src/dos.c:1051
 #, c-format
 msgid "Partition %zd: sector %d greater than maximum %llu"
 msgstr ""
 
-#: libfdisk/src/dos.c:1053
+#: libfdisk/src/dos.c:1054
 #, c-format
 msgid "Partition %zd: cylinder %d greater than maximum %llu"
 msgstr ""
 
-#: libfdisk/src/dos.c:1059
+#: libfdisk/src/dos.c:1060
 #, c-format
 msgid "Partition %zd: previous sectors %d disagrees with total %d"
 msgstr ""
 
-#: libfdisk/src/dos.c:1112
+#: libfdisk/src/dos.c:1113
 #, c-format
 msgid ""
 "Partition %zd: different physical/logical beginnings (non-Linux?): phys=(%d, "
 "%d, %d), logical=(%d, %d, %d)"
 msgstr ""
 
-#: libfdisk/src/dos.c:1123
+#: libfdisk/src/dos.c:1124
 #, c-format
 msgid ""
 "Partition %zd: different physical/logical endings: phys=(%d, %d, %d), "
 "logical=(%d, %d, %d)"
 msgstr ""
 
-#: libfdisk/src/dos.c:1132
+#: libfdisk/src/dos.c:1133
 #, c-format
 msgid "Partition %zd: does not end on cylinder boundary."
 msgstr ""
 
-#: libfdisk/src/dos.c:1159
+#: libfdisk/src/dos.c:1160
 #, c-format
 msgid "Partition %zd: bad start-of-data."
 msgstr ""
 
-#: libfdisk/src/dos.c:1169
+#: libfdisk/src/dos.c:1170
 #, c-format
 msgid "Partition %zd: overlaps partition %zd."
 msgstr ""
 
-#: libfdisk/src/dos.c:1195
+#: libfdisk/src/dos.c:1196
 #, c-format
 msgid "Partition %zd: empty."
 msgstr ""
 
-#: libfdisk/src/dos.c:1200
+#: libfdisk/src/dos.c:1201
 #, fuzzy, c-format
 msgid "Logical partition %zd: not entirely in partition %zd."
 msgstr "nisam uspio ukloniti particiju"
 
-#: libfdisk/src/dos.c:1208
+#: libfdisk/src/dos.c:1209
 #, c-format
 msgid "Total allocated sectors %llu greater than the maximum %llu."
 msgstr ""
 
-#: libfdisk/src/dos.c:1211
+#: libfdisk/src/dos.c:1212
 #, c-format
 msgid "Remaining %lld unallocated %ld-byte sectors."
 msgstr ""
 
-#: libfdisk/src/dos.c:1242
+#: libfdisk/src/dos.c:1243
 msgid "The maximum number of partitions has been created."
 msgstr ""
 
-#: libfdisk/src/dos.c:1250
+#: libfdisk/src/dos.c:1251
 msgid "All primary partitions are in use."
 msgstr ""
 
-#: libfdisk/src/dos.c:1253
+#: libfdisk/src/dos.c:1254
 msgid ""
 "If you want to create more than four partitions, you must replace a primary "
 "partition with an extended partition first."
 msgstr ""
 
-#: libfdisk/src/dos.c:1261
+#: libfdisk/src/dos.c:1262
 msgid "All logical partitions are in use. Adding a primary partition."
 msgstr ""
 
-#: libfdisk/src/dos.c:1274
+#: libfdisk/src/dos.c:1275
 #, c-format
 msgid ""
 "Partition type:\n"
@@ -5682,110 +5684,110 @@ msgid ""
 "Select (default %c)"
 msgstr ""
 
-#: libfdisk/src/dos.c:1280
+#: libfdisk/src/dos.c:1281
 msgid "   l   logical (numbered from 5)"
 msgstr ""
 
-#: libfdisk/src/dos.c:1280
+#: libfdisk/src/dos.c:1281
 msgid "   e   extended"
 msgstr ""
 
-#: libfdisk/src/dos.c:1288
+#: libfdisk/src/dos.c:1289
 #, c-format
 msgid "Using default response %c."
 msgstr ""
 
-#: libfdisk/src/dos.c:1310
+#: libfdisk/src/dos.c:1311
 #, fuzzy, c-format
 msgid "Invalid partition type `%c'."
 msgstr "neispravan broj particije kao argument"
 
-#: libfdisk/src/dos.c:1325
+#: libfdisk/src/dos.c:1326
 #, fuzzy, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "ne mogu zatvoriti datoteku %s"
 
-#: libfdisk/src/dos.c:1417
+#: libfdisk/src/dos.c:1451
 msgid ""
 "You cannot change a partition into an extended one or vice versa. Delete it "
 "first."
 msgstr ""
 
-#: libfdisk/src/dos.c:1423
+#: libfdisk/src/dos.c:1457
 msgid ""
 "If you have created or modified any DOS 6.x partitions, please see the fdisk "
 "documentation for additional information."
 msgstr ""
 
-#: libfdisk/src/dos.c:1501
+#: libfdisk/src/dos.c:1535
 msgid "Nr"
 msgstr ""
 
-#: libfdisk/src/dos.c:1502
+#: libfdisk/src/dos.c:1536
 msgid "AF"
 msgstr ""
 
-#: libfdisk/src/dos.c:1504 libfdisk/src/dos.c:1508
+#: libfdisk/src/dos.c:1538 libfdisk/src/dos.c:1542
 msgid "Hd"
 msgstr ""
 
-#: libfdisk/src/dos.c:1505 libfdisk/src/dos.c:1509
+#: libfdisk/src/dos.c:1539 libfdisk/src/dos.c:1543
 #, fuzzy
 msgid "Sec"
 msgstr "Postavi"
 
-#: libfdisk/src/dos.c:1506 libfdisk/src/dos.c:1510
+#: libfdisk/src/dos.c:1540 libfdisk/src/dos.c:1544
 msgid "Cyl"
 msgstr ""
 
-#: libfdisk/src/dos.c:1514 libfdisk/src/dos.c:1609 libfdisk/src/sgi.c:280
+#: libfdisk/src/dos.c:1548 libfdisk/src/dos.c:1643 libfdisk/src/sgi.c:280
 #: libfdisk/src/sun.c:706
 msgid "Id"
 msgstr ""
 
-#: libfdisk/src/dos.c:1588
+#: libfdisk/src/dos.c:1622
 msgid ""
 "This doesn't look like a partition table. Probably you selected the wrong "
 "device."
 msgstr ""
 
-#: libfdisk/src/dos.c:1603 libfdisk/src/gpt.c:1207 libfdisk/src/sgi.c:275
+#: libfdisk/src/dos.c:1637 libfdisk/src/gpt.c:1209 libfdisk/src/sgi.c:275
 #: libfdisk/src/sun.c:700
 msgid "Device"
 msgstr ""
 
 #. TRANSLATORS: keep one blank space behind 'Blocks'
-#: libfdisk/src/dos.c:1608 libfdisk/src/sun.c:705
+#: libfdisk/src/dos.c:1642 libfdisk/src/sun.c:705
 #, fuzzy
 msgid "Blocks "
 msgstr "Blokovi: %lld\n"
 
-#: libfdisk/src/dos.c:1610 libfdisk/src/sgi.c:281 libfdisk/src/sun.c:707
+#: libfdisk/src/dos.c:1644 libfdisk/src/sgi.c:281 libfdisk/src/sun.c:707
 msgid "System"
 msgstr ""
 
-#: libfdisk/src/dos.c:1677
+#: libfdisk/src/dos.c:1711
 msgid "Partition table entries are not in disk order."
 msgstr ""
 
-#: libfdisk/src/dos.c:1754
+#: libfdisk/src/dos.c:1788
 msgid "Nothing to do. Ordering is correct already."
 msgstr ""
 
-#: libfdisk/src/dos.c:1783
+#: libfdisk/src/dos.c:1817
 msgid "Done."
 msgstr ""
 
-#: libfdisk/src/dos.c:1803
+#: libfdisk/src/dos.c:1837
 #, c-format
 msgid "Partition %d: no data area."
 msgstr ""
 
-#: libfdisk/src/dos.c:1833
+#: libfdisk/src/dos.c:1867
 msgid "New beginning of data"
 msgstr ""
 
-#: libfdisk/src/dos.c:1895
+#: libfdisk/src/dos.c:1929
 #, c-format
 msgid "Partition %d: is an extended partition."
 msgstr ""
@@ -5798,347 +5800,351 @@ msgstr ""
 msgid "MBR partition scheme"
 msgstr ""
 
-#: libfdisk/src/gpt.c:146
+#: libfdisk/src/gpt.c:145
+msgid "Intel Fast Flash"
+msgstr ""
+
+#: libfdisk/src/gpt.c:148
 msgid "BIOS boot partition"
 msgstr ""
 
-#: libfdisk/src/gpt.c:149
+#: libfdisk/src/gpt.c:151
 msgid "Microsoft reserved"
 msgstr ""
 
-#: libfdisk/src/gpt.c:150
+#: libfdisk/src/gpt.c:152
 msgid "Microsoft basic data"
 msgstr ""
 
-#: libfdisk/src/gpt.c:151
+#: libfdisk/src/gpt.c:153
 msgid "Microsoft LDM metadata"
 msgstr ""
 
-#: libfdisk/src/gpt.c:152
+#: libfdisk/src/gpt.c:154
 msgid "Microsoft LDM data"
 msgstr ""
 
-#: libfdisk/src/gpt.c:153
+#: libfdisk/src/gpt.c:155
 msgid "Windows recovery environment"
 msgstr ""
 
-#: libfdisk/src/gpt.c:154
+#: libfdisk/src/gpt.c:156
 msgid "IBM General Parallel Fs"
 msgstr ""
 
-#: libfdisk/src/gpt.c:157
+#: libfdisk/src/gpt.c:159
 #, fuzzy
 msgid "HP-UX data partition"
 msgstr "nisam uspio dodati particiju"
 
-#: libfdisk/src/gpt.c:158
+#: libfdisk/src/gpt.c:160
 msgid "HP-UX service partition"
 msgstr ""
 
-#: libfdisk/src/gpt.c:161
+#: libfdisk/src/gpt.c:163
 #, fuzzy
 msgid "Linux filesystem"
 msgstr "Provjeravam sve datotečne sustave.\n"
 
-#: libfdisk/src/gpt.c:162 libfdisk/src/sgi.c:56
+#: libfdisk/src/gpt.c:164 libfdisk/src/sgi.c:56
 msgid "Linux RAID"
 msgstr ""
 
-#: libfdisk/src/gpt.c:163 libfdisk/src/sgi.c:53 libfdisk/src/sun.c:44
+#: libfdisk/src/gpt.c:165 libfdisk/src/sgi.c:53 libfdisk/src/sun.c:44
 msgid "Linux swap"
 msgstr ""
 
-#: libfdisk/src/gpt.c:165
+#: libfdisk/src/gpt.c:167
 msgid "Linux reserved"
 msgstr ""
 
-#: libfdisk/src/gpt.c:168
+#: libfdisk/src/gpt.c:170
 msgid "FreeBSD data"
 msgstr ""
 
-#: libfdisk/src/gpt.c:169
+#: libfdisk/src/gpt.c:171
 msgid "FreeBSD boot"
 msgstr ""
 
-#: libfdisk/src/gpt.c:170
+#: libfdisk/src/gpt.c:172
 msgid "FreeBSD swap"
 msgstr ""
 
-#: libfdisk/src/gpt.c:171
+#: libfdisk/src/gpt.c:173
 msgid "FreeBSD UFS"
 msgstr ""
 
-#: libfdisk/src/gpt.c:172
+#: libfdisk/src/gpt.c:174
 msgid "FreeBSD ZFS"
 msgstr ""
 
-#: libfdisk/src/gpt.c:173
+#: libfdisk/src/gpt.c:175
 msgid "FreeBSD Vinum"
 msgstr ""
 
-#: libfdisk/src/gpt.c:176
+#: libfdisk/src/gpt.c:178
 msgid "Apple HFS/HFS+"
 msgstr ""
 
-#: libfdisk/src/gpt.c:177
+#: libfdisk/src/gpt.c:179
 msgid "Apple UFS"
 msgstr ""
 
-#: libfdisk/src/gpt.c:178
+#: libfdisk/src/gpt.c:180
 msgid "Apple RAID"
 msgstr ""
 
-#: libfdisk/src/gpt.c:179
+#: libfdisk/src/gpt.c:181
 msgid "Apple RAID offline"
 msgstr ""
 
-#: libfdisk/src/gpt.c:180
+#: libfdisk/src/gpt.c:182
 msgid "Apple boot"
 msgstr ""
 
-#: libfdisk/src/gpt.c:181
+#: libfdisk/src/gpt.c:183
 msgid "Apple label"
 msgstr ""
 
-#: libfdisk/src/gpt.c:182
+#: libfdisk/src/gpt.c:184
 msgid "Apple TV recovery"
 msgstr ""
 
-#: libfdisk/src/gpt.c:183
+#: libfdisk/src/gpt.c:185
 msgid "Apple Core storage"
 msgstr ""
 
-#: libfdisk/src/gpt.c:187
+#: libfdisk/src/gpt.c:189
 msgid "Solaris root"
 msgstr ""
 
-#: libfdisk/src/gpt.c:189
+#: libfdisk/src/gpt.c:191
 msgid "Solaris /usr & Apple ZFS"
 msgstr ""
 
-#: libfdisk/src/gpt.c:190
+#: libfdisk/src/gpt.c:192
 msgid "Solaris swap"
 msgstr ""
 
-#: libfdisk/src/gpt.c:191
+#: libfdisk/src/gpt.c:193
 msgid "Solaris backup"
 msgstr ""
 
-#: libfdisk/src/gpt.c:192
+#: libfdisk/src/gpt.c:194
 msgid "Solaris /var"
 msgstr ""
 
-#: libfdisk/src/gpt.c:193
+#: libfdisk/src/gpt.c:195
 msgid "Solaris /home"
 msgstr ""
 
-#: libfdisk/src/gpt.c:194
+#: libfdisk/src/gpt.c:196
 msgid "Solaris alternate sector"
 msgstr ""
 
-#: libfdisk/src/gpt.c:195
+#: libfdisk/src/gpt.c:197
 msgid "Solaris reserved 1"
 msgstr ""
 
-#: libfdisk/src/gpt.c:196
+#: libfdisk/src/gpt.c:198
 msgid "Solaris reserved 2"
 msgstr ""
 
-#: libfdisk/src/gpt.c:197
+#: libfdisk/src/gpt.c:199
 msgid "Solaris reserved 3"
 msgstr ""
 
-#: libfdisk/src/gpt.c:198
+#: libfdisk/src/gpt.c:200
 msgid "Solaris reserved 4"
 msgstr ""
 
-#: libfdisk/src/gpt.c:199
+#: libfdisk/src/gpt.c:201
 msgid "Solaris reserved 5"
 msgstr ""
 
-#: libfdisk/src/gpt.c:202
+#: libfdisk/src/gpt.c:204
 msgid "NetBSD swap"
 msgstr ""
 
-#: libfdisk/src/gpt.c:203
+#: libfdisk/src/gpt.c:205
 msgid "NetBSD FFS"
 msgstr ""
 
-#: libfdisk/src/gpt.c:204
+#: libfdisk/src/gpt.c:206
 msgid "NetBSD LFS"
 msgstr ""
 
-#: libfdisk/src/gpt.c:205
+#: libfdisk/src/gpt.c:207
 msgid "NetBSD concatenated"
 msgstr ""
 
-#: libfdisk/src/gpt.c:206
+#: libfdisk/src/gpt.c:208
 msgid "NetBSD encrypted"
 msgstr ""
 
-#: libfdisk/src/gpt.c:207
+#: libfdisk/src/gpt.c:209
 msgid "NetBSD RAID"
 msgstr ""
 
-#: libfdisk/src/gpt.c:210
+#: libfdisk/src/gpt.c:212
 msgid "ChromeOS kernel"
 msgstr ""
 
-#: libfdisk/src/gpt.c:211
+#: libfdisk/src/gpt.c:213
 msgid "ChromeOS root fs"
 msgstr ""
 
-#: libfdisk/src/gpt.c:212
+#: libfdisk/src/gpt.c:214
 msgid "ChromeOS reserved"
 msgstr ""
 
-#: libfdisk/src/gpt.c:215
+#: libfdisk/src/gpt.c:217
 msgid "MidnightBSD data"
 msgstr ""
 
-#: libfdisk/src/gpt.c:216
+#: libfdisk/src/gpt.c:218
 msgid "MidnightBSD boot"
 msgstr ""
 
-#: libfdisk/src/gpt.c:217
+#: libfdisk/src/gpt.c:219
 msgid "MidnightBSD swap"
 msgstr ""
 
-#: libfdisk/src/gpt.c:218
+#: libfdisk/src/gpt.c:220
 msgid "MidnightBSD UFS"
 msgstr ""
 
-#: libfdisk/src/gpt.c:219
+#: libfdisk/src/gpt.c:221
 msgid "MidnightBSD ZFS"
 msgstr ""
 
-#: libfdisk/src/gpt.c:220
+#: libfdisk/src/gpt.c:222
 msgid "MidnightBSD Vinum"
 msgstr ""
 
-#: libfdisk/src/gpt.c:519
+#: libfdisk/src/gpt.c:521
 #, c-format
 msgid "GPT PMBR size mismatch (%u != %u) will be corrected by w(rite)."
 msgstr ""
 
-#: libfdisk/src/gpt.c:536
+#: libfdisk/src/gpt.c:538
 #, fuzzy
 msgid "gpt: stat() failed"
 msgstr "stat nije uspio %s"
 
-#: libfdisk/src/gpt.c:546
+#: libfdisk/src/gpt.c:548
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr ""
 
-#: libfdisk/src/gpt.c:803
+#: libfdisk/src/gpt.c:805
 msgid "GPT Header"
 msgstr ""
 
-#: libfdisk/src/gpt.c:808
+#: libfdisk/src/gpt.c:810
 msgid "GPT Entries"
-msgstr ""
-
-#: libfdisk/src/gpt.c:1201
-#, c-format
-msgid "First LBA: %ju"
-msgstr ""
-
-#: libfdisk/src/gpt.c:1202
-#, c-format
-msgid "Last LBA: %ju"
 msgstr ""
 
 #: libfdisk/src/gpt.c:1203
 #, c-format
-msgid "Alternative LBA: %ju"
+msgid "First LBA: %ju"
 msgstr ""
 
 #: libfdisk/src/gpt.c:1204
 #, c-format
-msgid "Partitions entries LBA: %ju"
+msgid "Last LBA: %ju"
 msgstr ""
 
 #: libfdisk/src/gpt.c:1205
+#, c-format
+msgid "Alternative LBA: %ju"
+msgstr ""
+
+#: libfdisk/src/gpt.c:1206
+#, c-format
+msgid "Partitions entries LBA: %ju"
+msgstr ""
+
+#: libfdisk/src/gpt.c:1207
 #, fuzzy, c-format
 msgid "Allocated partition entries: %ju"
 msgstr "ponovo pročitaj particijsku tablicu"
 
-#: libfdisk/src/gpt.c:1214
+#: libfdisk/src/gpt.c:1216
 msgid "UUID"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1453
+#: libfdisk/src/gpt.c:1455
 msgid "Disk does not contain a valid backup header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1458
+#: libfdisk/src/gpt.c:1460
 msgid "Invalid primary header CRC checksum."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1462
+#: libfdisk/src/gpt.c:1464
 msgid "Invalid backup header CRC checksum."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1467
+#: libfdisk/src/gpt.c:1469
 #, fuzzy
 msgid "Invalid partition entry checksum."
 msgstr "neispravan broj particije kao argument"
 
-#: libfdisk/src/gpt.c:1472
+#: libfdisk/src/gpt.c:1474
 msgid "Invalid primary header LBA sanity checks."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1476
+#: libfdisk/src/gpt.c:1478
 msgid "Invalid backup header LBA sanity checks."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1481
+#: libfdisk/src/gpt.c:1483
 msgid "MyLBA mismatch with real position at primary header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1485
+#: libfdisk/src/gpt.c:1487
 msgid "MyLBA mismatch with real position at backup header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1490
+#: libfdisk/src/gpt.c:1492
 msgid "Disk is too small to hold all data."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1500
+#: libfdisk/src/gpt.c:1502
 msgid "Primary and backup header mismatch."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1506
+#: libfdisk/src/gpt.c:1508
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1513
+#: libfdisk/src/gpt.c:1515
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1520
+#: libfdisk/src/gpt.c:1522
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1528
+#: libfdisk/src/gpt.c:1530
 msgid "No errors detected."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1529
+#: libfdisk/src/gpt.c:1531
 #, c-format
 msgid "Header version: %s"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1530
+#: libfdisk/src/gpt.c:1532
 #, fuzzy, c-format
 msgid "Using %u out of %d partitions."
 msgstr "nisam uspio dodati particiju"
 
-#: libfdisk/src/gpt.c:1537
+#: libfdisk/src/gpt.c:1539
 #, c-format
 msgid "A total of %ld free sectors is available in %d segment."
 msgid_plural ""
@@ -6147,7 +6153,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: libfdisk/src/gpt.c:1543
+#: libfdisk/src/gpt.c:1545
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
@@ -6155,58 +6161,53 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: libfdisk/src/gpt.c:1661
-#, c-format
-msgid "Partition %zd is already defined. Delete it before re-adding it."
-msgstr ""
-
-#: libfdisk/src/gpt.c:1667
+#: libfdisk/src/gpt.c:1669
 msgid "All partitions are already in use."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1708
+#: libfdisk/src/gpt.c:1710
 #, c-format
 msgid "Sector %ju already used."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1738
+#: libfdisk/src/gpt.c:1740
 #, fuzzy, c-format
 msgid "Could not create partition %zd"
 msgstr "nisam uspio ukloniti particiju"
 
-#: libfdisk/src/gpt.c:1822
+#: libfdisk/src/gpt.c:1824
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1859
+#: libfdisk/src/gpt.c:1861
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1866 libfdisk/src/gpt.c:1994
+#: libfdisk/src/gpt.c:1868 libfdisk/src/gpt.c:1996
 #, fuzzy
 msgid "Failed to parse your UUID."
 msgstr "%s: nisam uspio analizirati fstab"
 
-#: libfdisk/src/gpt.c:1881
+#: libfdisk/src/gpt.c:1883
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1987
+#: libfdisk/src/gpt.c:1989
 msgid "New UUID (in 8-4-4-4-12 format)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2009
+#: libfdisk/src/gpt.c:2011
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2032
+#: libfdisk/src/gpt.c:2034
 msgid "New name"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2054
+#: libfdisk/src/gpt.c:2056
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr ""
@@ -6413,11 +6414,6 @@ msgstr ""
 msgid "Partition overlap on the disk."
 msgstr ""
 
-#: libfdisk/src/sgi.c:844 libfdisk/src/sun.c:471
-#, c-format
-msgid "Partition %zd is already defined.  Delete it before re-adding it."
-msgstr ""
-
 #: libfdisk/src/sgi.c:849
 msgid "Attempting to generate entire disk entry automatically."
 msgstr ""
@@ -6450,11 +6446,11 @@ msgstr ""
 msgid "Last %s or +%s or +size{K,M,G,T,P}"
 msgstr ""
 
-#: libfdisk/src/sgi.c:980
+#: libfdisk/src/sgi.c:980 libfdisk/src/sun.c:229
 #, c-format
 msgid ""
-"Warning:  BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of "
-"%llu. This value may be truncated for devices > 33.8 GB."
+"BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of %llu. This "
+"value may be truncated for devices > 33.8 GB."
 msgstr ""
 
 #: libfdisk/src/sgi.c:1041
@@ -6553,13 +6549,6 @@ msgstr ""
 
 #: libfdisk/src/sun.c:185
 msgid "Sectors/track"
-msgstr ""
-
-#: libfdisk/src/sun.c:229
-#, c-format
-msgid ""
-"BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of %llu. This "
-"value may be truncated for devices > 33.8 GB."
 msgstr ""
 
 #: libfdisk/src/sun.c:282
@@ -7701,33 +7690,33 @@ msgstr ""
 msgid "Would you like to edit %s now [y/n]? "
 msgstr ""
 
-#: misc-utils/cal.c:370
+#: misc-utils/cal.c:372
 msgid "illegal day value"
 msgstr ""
 
-#: misc-utils/cal.c:372 misc-utils/cal.c:386
+#: misc-utils/cal.c:374 misc-utils/cal.c:388
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr ""
 
-#: misc-utils/cal.c:375 misc-utils/cal.c:377
+#: misc-utils/cal.c:377 misc-utils/cal.c:379
 msgid "illegal month value: use 1-12"
 msgstr ""
 
-#: misc-utils/cal.c:380
+#: misc-utils/cal.c:382
 msgid "illegal year value"
 msgstr ""
 
-#: misc-utils/cal.c:382
+#: misc-utils/cal.c:384
 msgid "illegal year value: use positive integer"
 msgstr ""
 
-#: misc-utils/cal.c:462
+#: misc-utils/cal.c:464
 #, c-format
 msgid "%s"
 msgstr ""
 
-#: misc-utils/cal.c:465
+#: misc-utils/cal.c:467
 #, c-format
 msgid "%ld"
 msgstr ""
@@ -7736,52 +7725,52 @@ msgstr ""
 #. * You can change the order and/or add something here;
 #. * e.g. for Basque the translation should be "%2$ldko %1$s".
 #.
-#: misc-utils/cal.c:473
+#: misc-utils/cal.c:475
 #, c-format
 msgid "%s %ld"
 msgstr ""
 
-#: misc-utils/cal.c:806
+#: misc-utils/cal.c:808
 #, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr ""
 
-#: misc-utils/cal.c:809
+#: misc-utils/cal.c:811
 msgid "Display a calendar, or some part of it.\n"
 msgstr ""
 
-#: misc-utils/cal.c:810
+#: misc-utils/cal.c:812
 msgid "Without any arguments, display the current month.\n"
 msgstr ""
 
-#: misc-utils/cal.c:813
+#: misc-utils/cal.c:815
 #, fuzzy
 msgid " -1, --one             show only a single month (default)\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
-#: misc-utils/cal.c:814
+#: misc-utils/cal.c:816
 #, fuzzy
 msgid " -3, --three           show three months spanning the date\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
-#: misc-utils/cal.c:815
+#: misc-utils/cal.c:817
 msgid " -s, --sunday          Sunday as first day of week\n"
 msgstr ""
 
-#: misc-utils/cal.c:816
+#: misc-utils/cal.c:818
 msgid " -m, --monday          Monday as first day of week\n"
 msgstr ""
 
-#: misc-utils/cal.c:817
+#: misc-utils/cal.c:819
 msgid " -j, --julian          output Julian dates\n"
 msgstr ""
 
-#: misc-utils/cal.c:818
+#: misc-utils/cal.c:820
 #, fuzzy
 msgid " -y, --year            show the whole year\n"
 msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
-#: misc-utils/cal.c:819
+#: misc-utils/cal.c:821
 msgid "     --color[=<when>]  colorize messages (auto, always or never)\n"
 msgstr ""
 
@@ -8524,19 +8513,19 @@ msgid ""
 msgstr ""
 
 #: misc-utils/lsblk.c:1374
-msgid " -I, --include <list> show only devices with specified major numbers\n"
-msgstr ""
-
-#: misc-utils/lsblk.c:1375
 msgid " -f, --fs             output info about filesystems\n"
 msgstr ""
 
+#: misc-utils/lsblk.c:1375
+msgid " -i, --ascii          use ascii characters only\n"
+msgstr ""
+
 #: misc-utils/lsblk.c:1376
-msgid " -h, --help           usage information (this)\n"
+msgid " -I, --include <list> show only devices with specified major numbers\n"
 msgstr ""
 
 #: misc-utils/lsblk.c:1377
-msgid " -i, --ascii          use ascii characters only\n"
+msgid " -l, --list           use list format output\n"
 msgstr ""
 
 #: misc-utils/lsblk.c:1378
@@ -8544,41 +8533,37 @@ msgid " -m, --perms          output info about permissions\n"
 msgstr ""
 
 #: misc-utils/lsblk.c:1379
-msgid " -l, --list           use list format output\n"
-msgstr ""
-
-#: misc-utils/lsblk.c:1380
 msgid " -n, --noheadings     don't print headings\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1381
+#: misc-utils/lsblk.c:1380
 msgid " -o, --output <list>  output columns\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1382
+#: misc-utils/lsblk.c:1381
 msgid " -p, --paths          print complete device path\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1385
+#: misc-utils/lsblk.c:1384
 msgid " -s, --inverse        inverse dependencies\n"
+msgstr ""
+
+#: misc-utils/lsblk.c:1385
+msgid " -S, --scsi           output info about SCSI devices\n"
 msgstr ""
 
 #: misc-utils/lsblk.c:1386
 msgid " -t, --topology       output info about topology\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1387
-msgid " -S, --scsi           output info about SCSI devices\n"
-msgstr ""
-
-#: misc-utils/lsblk.c:1392 misc-utils/lslocks.c:510 sys-utils/prlimit.c:186
+#: misc-utils/lsblk.c:1391 misc-utils/lslocks.c:510 sys-utils/prlimit.c:186
 #, c-format
 msgid ""
 "\n"
 "Available columns (for --output):\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1405
+#: misc-utils/lsblk.c:1404
 #, c-format
 msgid "failed to access sysfs directory: %s"
 msgstr ""
@@ -11201,10 +11186,6 @@ msgstr ""
 
 #: sys-utils/flock.c:224
 msgid "requires file descriptor, file or directory"
-msgstr ""
-
-#: sys-utils/flock.c:309 sys-utils/swapon.c:303 sys-utils/unshare.c:141
-msgid "waitpid failed"
 msgstr ""
 
 #: sys-utils/fsfreeze.c:50
@@ -16918,6 +16899,9 @@ msgstr ""
 #: text-utils/ul.c:647
 msgid "Input line too long."
 msgstr ""
+
+#~ msgid "waidpid failed"
+#~ msgstr "waidpid nije uspio"
 
 #~ msgid "set blocksize"
 #~ msgstr "postavi veličinu bloka"

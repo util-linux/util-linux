@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-10-11 12:54+0200\n"
+"POT-Creation-Date: 2013-10-21 12:54+0200\n"
 "PO-Revision-Date: 2006-03-07 12:42+0200\n"
 "Last-Translator: Pavel Maryanov <acid_jack@ukr.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -32,8 +32,8 @@ msgstr ""
 #: disk-utils/mkfs.cramfs.c:791 disk-utils/mkfs.minix.c:753
 #: disk-utils/partx.c:933 disk-utils/resizepart.c:97
 #: disk-utils/swaplabel.c:105 fdisks/cfdisk.c:1831 fdisks/cfdisk.c:1953
-#: fdisks/cfdisk.c:2041 fdisks/fdisk.c:331 fdisks/fdisk.c:347
-#: fdisks/fdisk.c:381 fdisks/fdisk.c:534 libfdisk/src/bsd.c:521 lib/path.c:60
+#: fdisks/cfdisk.c:2041 fdisks/fdisk.c:333 fdisks/fdisk.c:349
+#: fdisks/fdisk.c:383 fdisks/fdisk.c:536 libfdisk/src/bsd.c:522 lib/path.c:60
 #: lib/path.c:72 login-utils/islocal.c:87 login-utils/last.c:613
 #: login-utils/last-deprecated.c:245 login-utils/sulogin.c:399
 #: login-utils/sulogin.c:437 login-utils/utmpdump.c:125
@@ -339,7 +339,7 @@ msgstr "umount: %s: не найден"
 
 #: disk-utils/fsck.c:307 disk-utils/fsck.cramfs.c:169
 #: disk-utils/fsck.cramfs.c:176 disk-utils/fsck.cramfs.c:233
-#: disk-utils/fsck.cramfs.c:251 libfdisk/src/bsd.c:526 lib/path.c:100
+#: disk-utils/fsck.cramfs.c:251 libfdisk/src/bsd.c:527 lib/path.c:100
 #: lib/path.c:121 lib/path.c:142 lib/path.c:190 login-utils/last.c:194
 #: login-utils/last.c:231 login-utils/sulogin.c:605 sys-utils/setpriv.c:233
 #, fuzzy, c-format
@@ -409,9 +409,10 @@ msgstr "openpty завершился неудачей\n"
 msgid "wait: no more child process?!?"
 msgstr ""
 
-#: disk-utils/fsck.c:716
+#: disk-utils/fsck.c:716 sys-utils/flock.c:309 sys-utils/swapon.c:303
+#: sys-utils/unshare.c:141
 #, fuzzy
-msgid "waidpid failed"
+msgid "waitpid failed"
 msgstr "setuid() завершился неудачей"
 
 #: disk-utils/fsck.c:734
@@ -621,7 +622,7 @@ msgid "file length too short"
 msgstr "%s: неверный cramfs - размер файла слишком мал\n"
 
 #: disk-utils/fsck.cramfs.c:174 disk-utils/fsck.cramfs.c:231
-#: disk-utils/fsck.cramfs.c:247 libfdisk/src/bsd.c:593 libfdisk/src/bsd.c:761
+#: disk-utils/fsck.cramfs.c:247 libfdisk/src/bsd.c:594 libfdisk/src/bsd.c:762
 #: login-utils/last.c:189 login-utils/last.c:223
 #, fuzzy, c-format
 msgid "seek on %s failed"
@@ -841,12 +842,12 @@ msgstr ""
 msgid "invalid file data offset"
 msgstr "%s: неверный cramfs - ошибочное смещение данных файла\n"
 
-#: disk-utils/fsck.cramfs.c:686
+#: disk-utils/fsck.cramfs.c:687
 #, fuzzy
 msgid "compiled without -x support"
 msgstr "%s: откомпилирован без поддержки -x\n"
 
-#: disk-utils/fsck.cramfs.c:706
+#: disk-utils/fsck.cramfs.c:707
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: ОК\n"
@@ -2310,14 +2311,14 @@ msgstr[1] ""
 msgid "failed to add line to output"
 msgstr "Невозможно выделить буфер.\n"
 
-#: disk-utils/partx.c:621 misc-utils/findmnt.c:1435 misc-utils/lsblk.c:1583
+#: disk-utils/partx.c:621 misc-utils/findmnt.c:1435 misc-utils/lsblk.c:1582
 #: misc-utils/lslocks.c:455 sys-utils/losetup.c:311 sys-utils/lscpu.c:1152
 #: sys-utils/prlimit.c:290 sys-utils/swapon.c:242 sys-utils/wdctl.c:250
 #, fuzzy
 msgid "failed to initialize output table"
 msgstr "Невозможно выделить буфер.\n"
 
-#: disk-utils/partx.c:629 misc-utils/findmnt.c:1453 misc-utils/lsblk.c:1593
+#: disk-utils/partx.c:629 misc-utils/findmnt.c:1453 misc-utils/lsblk.c:1592
 #: misc-utils/lslocks.c:463 sys-utils/losetup.c:317 sys-utils/prlimit.c:298
 #: sys-utils/swapon.c:250 sys-utils/wdctl.c:259
 #, fuzzy
@@ -2387,12 +2388,12 @@ msgstr ""
 msgid " -o, --output <list>  define which output columns to use\n"
 msgstr "  -o, --options=строка_опций   Короткие опции для распознавания\n"
 
-#: disk-utils/partx.c:709 misc-utils/lsblk.c:1383
+#: disk-utils/partx.c:709 misc-utils/lsblk.c:1382
 #, fuzzy
 msgid " -P, --pairs          use key=\"value\" output format\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: disk-utils/partx.c:710 misc-utils/lsblk.c:1384
+#: disk-utils/partx.c:710 misc-utils/lsblk.c:1383
 #, fuzzy
 msgid " -r, --raw            use raw output format\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
@@ -2757,8 +2758,8 @@ msgstr "Начало"
 msgid "Add partition at beginning of free space"
 msgstr "Добавить раздел в начало свободного пространства"
 
-#: fdisks/cfdisk.c:1317 libfdisk/src/bsd.c:395 libfdisk/src/dos.c:1606
-#: libfdisk/src/gpt.c:1209 libfdisk/src/sgi.c:278 libfdisk/src/sun.c:703
+#: fdisks/cfdisk.c:1317 libfdisk/src/bsd.c:396 libfdisk/src/dos.c:1640
+#: libfdisk/src/gpt.c:1211 libfdisk/src/sgi.c:278 libfdisk/src/sun.c:703
 msgid "End"
 msgstr "Конец"
 
@@ -2908,11 +2909,11 @@ msgstr "   Логический"
 
 #: fdisks/cfdisk.c:1919 fdisks/fdisk.c:182 fdisks/fdisk.c:183
 #: fdisks/fdisk.c:188 fdisks/sfdisk.c:585 libfdisk/src/ask.c:660
-#: libfdisk/src/dos.c:1661
+#: libfdisk/src/dos.c:1695
 msgid "Unknown"
 msgstr "Неизвестный"
 
-#: fdisks/cfdisk.c:1925 fdisks/cfdisk.c:2401 libfdisk/src/dos.c:1604
+#: fdisks/cfdisk.c:1925 fdisks/cfdisk.c:2401 libfdisk/src/dos.c:1638
 #: libfdisk/src/sun.c:33
 msgid "Boot"
 msgstr "Загрузочный"
@@ -3252,7 +3253,7 @@ msgstr "Размер: %lld байт, %lld.%lld ГБ"
 msgid "Heads: %d   Sectors per Track: %d   Cylinders: %lld"
 msgstr "Головок: %d   Секторов на дорожку: %d   Цилиндров: %lld"
 
-#: fdisks/cfdisk.c:2519 libfdisk/src/gpt.c:1215 libfdisk/src/sgi.c:335
+#: fdisks/cfdisk.c:2519 libfdisk/src/gpt.c:1217 libfdisk/src/sgi.c:335
 #: login-utils/chfn.c:235 login-utils/chfn.c:315
 msgid "Name"
 msgstr "Имя"
@@ -3358,7 +3359,7 @@ msgstr "Выход"
 msgid "Quit program without writing partition table"
 msgstr "Выйти из программы без записи таблицы разделов"
 
-#: fdisks/cfdisk.c:2594 libfdisk/src/bsd.c:397 libfdisk/src/gpt.c:1211
+#: fdisks/cfdisk.c:2594 libfdisk/src/bsd.c:398 libfdisk/src/gpt.c:1213
 msgid "Type"
 msgstr "Тип"
 
@@ -3627,112 +3628,112 @@ msgstr ""
 "\n"
 "Диск %s: %lu цилиндров, %lu головок, %lu секторов/дорожку\n"
 
-#: fdisks/fdisk.c:207
+#: fdisks/fdisk.c:209
 #, fuzzy, c-format
 msgid "Geometry: %d heads, %llu sectors/track, %llu cylinders"
 msgstr "%d головок, %d секторов/дорожку, %d цилиндров"
 
-#: fdisks/fdisk.c:210
+#: fdisks/fdisk.c:212
 #, fuzzy, c-format
 msgid "Units: %s of %d * %ld = %ld bytes"
 msgstr ""
 "Единицы = %s по %d * %d = %d байт\n"
 "\n"
 
-#: fdisks/fdisk.c:216
+#: fdisks/fdisk.c:218
 #, c-format
 msgid "Sector size (logical/physical): %lu bytes / %lu bytes"
 msgstr ""
 
-#: fdisks/fdisk.c:218
+#: fdisks/fdisk.c:220
 #, c-format
 msgid "I/O size (minimum/optimal): %lu bytes / %lu bytes"
 msgstr ""
 
-#: fdisks/fdisk.c:221
+#: fdisks/fdisk.c:223
 #, fuzzy, c-format
 msgid "Alignment offset: %lu bytes"
 msgstr "неверный размер inode"
 
-#: fdisks/fdisk.c:224
+#: fdisks/fdisk.c:226
 #, fuzzy, c-format
 msgid "Disklabel type: %s"
 msgstr "Дисковый накопитель: %s\n"
 
-#: fdisks/fdisk.c:227
+#: fdisks/fdisk.c:229
 #, fuzzy, c-format
 msgid "Disk identifier: %s"
 msgstr "Дисковый накопитель: %s"
 
-#: fdisks/fdisk.c:275
+#: fdisks/fdisk.c:277
 #, c-format
 msgid ""
 "\n"
 "%s: offset = %ju, size = %zu bytes."
 msgstr ""
 
-#: fdisks/fdisk.c:279
+#: fdisks/fdisk.c:281
 #, fuzzy
 msgid "cannot seek"
 msgstr "невозможно создать дочерний процесс"
 
-#: fdisks/fdisk.c:284
+#: fdisks/fdisk.c:286
 #, fuzzy
 msgid "cannot read"
 msgstr "%s: невозможно прочитать %s.\n"
 
-#: fdisks/fdisk.c:298 libfdisk/src/bsd.c:215 libfdisk/src/dos.c:876
-#: libfdisk/src/gpt.c:1696
+#: fdisks/fdisk.c:300 libfdisk/src/bsd.c:215 libfdisk/src/dos.c:877
+#: libfdisk/src/gpt.c:1698
 #, fuzzy
 msgid "First sector"
 msgstr "Первый %s"
 
-#: fdisks/fdisk.c:384
+#: fdisks/fdisk.c:386
 #, fuzzy, c-format
 msgid "BLKGETSIZE ioctl failed on %s"
 msgstr "BLKGETSIZE ioctl завершился неудачей на %s\n"
 
-#: fdisks/fdisk.c:410
+#: fdisks/fdisk.c:412
 #, fuzzy
 msgid "failed to allocate libfdisk context"
 msgstr "Невозможно выделить буфер.\n"
 
-#: fdisks/fdisk.c:419
+#: fdisks/fdisk.c:421
 #, fuzzy
 msgid "invalid sector size argument"
 msgstr "неверный id"
 
-#: fdisks/fdisk.c:428 fdisks/sfdisk.c:2597
+#: fdisks/fdisk.c:430 fdisks/sfdisk.c:2597
 #, fuzzy
 msgid "invalid cylinders argument"
 msgstr "неверный id"
 
-#: fdisks/fdisk.c:437
+#: fdisks/fdisk.c:439
 #, fuzzy
 msgid "not found DOS label driver"
 msgstr "%s: невозможно найти устройство для %s\n"
 
-#: fdisks/fdisk.c:450 fdisks/sfdisk.c:2606
+#: fdisks/fdisk.c:452 fdisks/sfdisk.c:2606
 #, fuzzy
 msgid "invalid heads argument"
 msgstr "неверный id"
 
-#: fdisks/fdisk.c:456 fdisks/sfdisk.c:2624
+#: fdisks/fdisk.c:458 fdisks/sfdisk.c:2624
 #, fuzzy
 msgid "invalid sectors argument"
 msgstr "неверный id"
 
-#: fdisks/fdisk.c:464 misc-utils/cal.c:351 sys-utils/dmesg.c:1286
+#: fdisks/fdisk.c:466 misc-utils/cal.c:353 sys-utils/dmesg.c:1286
 #, fuzzy
 msgid "unsupported color mode"
 msgstr "нет команды?\n"
 
-#: fdisks/fdisk.c:478
+#: fdisks/fdisk.c:480
 #, fuzzy, c-format
 msgid "unsupported disklabel: %s"
 msgstr "%s: неизвестный аргумент: %s\n"
 
-#: fdisks/fdisk.c:499
+#: fdisks/fdisk.c:501
 #, fuzzy
 msgid ""
 "The device properties (sector size and geometry) should be used with one "
@@ -3741,12 +3742,12 @@ msgstr ""
 "Предупреждение: опция -b (установка размера сектора) должна быть "
 "использована с одним указанным устройством\n"
 
-#: fdisks/fdisk.c:538
+#: fdisks/fdisk.c:540
 #, c-format
 msgid "Welcome to fdisk (%s)."
 msgstr ""
 
-#: fdisks/fdisk.c:540
+#: fdisks/fdisk.c:542
 #, fuzzy
 msgid ""
 "Changes will remain in memory only, until you decide to write them.\n"
@@ -3758,7 +3759,7 @@ msgstr ""
 "восстановить.\n"
 "\n"
 
-#: fdisks/fdisk.c:545
+#: fdisks/fdisk.c:547
 #, fuzzy
 msgid "Device does not contain a recognized partition table."
 msgstr "На диске %s отсутствует верная таблица разделов\n"
@@ -4313,7 +4314,7 @@ msgstr "нераспознанный формат - используются секторы\n"
 msgid "unimplemented format - using %s"
 msgstr "необслуживаемый формат - используется %s\n"
 
-#: fdisks/sfdisk.c:891 libfdisk/src/bsd.c:496
+#: fdisks/sfdisk.c:891 libfdisk/src/bsd.c:497
 msgid "cylinders"
 msgstr "цилиндры"
 
@@ -5365,7 +5366,7 @@ msgstr "NTFS набор томов"
 msgid "Linux plaintext"
 msgstr "Linux plaintext"
 
-#: include/pt-mbr-partnames.h:59 libfdisk/src/gpt.c:164 libfdisk/src/sgi.c:55
+#: include/pt-mbr-partnames.h:59 libfdisk/src/gpt.c:166 libfdisk/src/sgi.c:55
 #: libfdisk/src/sun.c:46
 msgid "Linux LVM"
 msgstr "Linux LVM"
@@ -5427,7 +5428,7 @@ msgstr "BSDI своп"
 msgid "Boot Wizard hidden"
 msgstr "Boot Wizard скрытый"
 
-#: include/pt-mbr-partnames.h:74 libfdisk/src/gpt.c:186
+#: include/pt-mbr-partnames.h:74 libfdisk/src/gpt.c:188
 msgid "Solaris boot"
 msgstr "Solaris загр."
 
@@ -5584,17 +5585,17 @@ msgstr "Раздел %s содержит неверный начальный нулевой сектор.\n"
 msgid "There is no *BSD partition on %s."
 msgstr "На %s нет раздела *BSD.\n"
 
-#: libfdisk/src/bsd.c:213 libfdisk/src/dos.c:874
+#: libfdisk/src/bsd.c:213 libfdisk/src/dos.c:875
 #, fuzzy
 msgid "First cylinder"
 msgstr "цилиндр"
 
-#: libfdisk/src/bsd.c:240 libfdisk/src/dos.c:936
+#: libfdisk/src/bsd.c:240 libfdisk/src/dos.c:937
 #, fuzzy
 msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgstr "Последний %s или +size или +sizeM или +sizeK"
 
-#: libfdisk/src/bsd.c:245 libfdisk/src/dos.c:941 libfdisk/src/gpt.c:1717
+#: libfdisk/src/bsd.c:245 libfdisk/src/dos.c:942 libfdisk/src/gpt.c:1719
 #, fuzzy
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr "Последний %s или +size или +sizeM или +sizeK"
@@ -5609,215 +5610,215 @@ msgstr "%s не содержит метки диска.\n"
 msgid "Do you want to create a BSD disklabel?"
 msgstr "Хотите создать метку диска? (д/н) "
 
-#: libfdisk/src/bsd.c:346
+#: libfdisk/src/bsd.c:347
 #, fuzzy, c-format
 msgid "type: %s"
 msgstr "тип: %s\n"
 
-#: libfdisk/src/bsd.c:348
+#: libfdisk/src/bsd.c:349
 #, fuzzy, c-format
 msgid "type: %d"
 msgstr "тип: %d\n"
 
-#: libfdisk/src/bsd.c:350
+#: libfdisk/src/bsd.c:351
 #, fuzzy, c-format
 msgid "disk: %.*s"
 msgstr "диск: %.*s\n"
 
-#: libfdisk/src/bsd.c:351
+#: libfdisk/src/bsd.c:352
 #, fuzzy, c-format
 msgid "label: %.*s"
 msgstr "метка: %.*s\n"
 
-#: libfdisk/src/bsd.c:353
+#: libfdisk/src/bsd.c:354
 #, fuzzy, c-format
 msgid "flags: %s"
 msgstr "флаги:"
 
-#: libfdisk/src/bsd.c:354
+#: libfdisk/src/bsd.c:355
 msgid " removable"
 msgstr " съемный"
 
-#: libfdisk/src/bsd.c:355
+#: libfdisk/src/bsd.c:356
 msgid " ecc"
 msgstr " ecc"
 
-#: libfdisk/src/bsd.c:356
+#: libfdisk/src/bsd.c:357
 msgid " badsect"
 msgstr " bad-сектор"
 
-#: libfdisk/src/bsd.c:360
+#: libfdisk/src/bsd.c:361
 #, fuzzy, c-format
 msgid "bytes/sector: %ld"
 msgstr "байт/сектор: %ld\n"
 
-#: libfdisk/src/bsd.c:361
+#: libfdisk/src/bsd.c:362
 #, fuzzy, c-format
 msgid "sectors/track: %ld"
 msgstr "секторы/дорожка: %ld\n"
 
-#: libfdisk/src/bsd.c:362
+#: libfdisk/src/bsd.c:363
 #, fuzzy, c-format
 msgid "tracks/cylinder: %ld"
 msgstr "дорожки/цилиндр: %ld\n"
 
-#: libfdisk/src/bsd.c:363
+#: libfdisk/src/bsd.c:364
 #, fuzzy, c-format
 msgid "sectors/cylinder: %ld"
 msgstr "секторы/цилиндр: %ld\n"
 
-#: libfdisk/src/bsd.c:364
+#: libfdisk/src/bsd.c:365
 #, fuzzy, c-format
 msgid "cylinders: %ld"
 msgstr "цилиндры: %ld\n"
 
-#: libfdisk/src/bsd.c:365
+#: libfdisk/src/bsd.c:366
 #, fuzzy, c-format
 msgid "rpm: %d"
 msgstr "об/мин: %d\n"
 
-#: libfdisk/src/bsd.c:366
+#: libfdisk/src/bsd.c:367
 #, fuzzy, c-format
 msgid "interleave: %d"
 msgstr "чередование: %d\n"
 
-#: libfdisk/src/bsd.c:367
+#: libfdisk/src/bsd.c:368
 #, fuzzy, c-format
 msgid "trackskew: %d"
 msgstr "перекос дорожки: %d\n"
 
-#: libfdisk/src/bsd.c:368
+#: libfdisk/src/bsd.c:369
 #, fuzzy, c-format
 msgid "cylinderskew: %d"
 msgstr "перекос цилиндра: %d\n"
 
-#: libfdisk/src/bsd.c:369
+#: libfdisk/src/bsd.c:370
 #, fuzzy, c-format
 msgid "headswitch: %ld (milliseconds)"
 msgstr "переключение головки: %ld\t\t# миллисекунд\n"
 
-#: libfdisk/src/bsd.c:370
+#: libfdisk/src/bsd.c:371
 #, fuzzy, c-format
 msgid "track-to-track seek: %ld (milliseconds)"
 msgstr "поиск дорожки: %ld\t# миллисекунд\n"
 
-#: libfdisk/src/bsd.c:383
+#: libfdisk/src/bsd.c:384
 #, fuzzy, c-format
 msgid "partitions: %d"
 msgstr ""
 "\n"
 "%d разделы:\n"
 
-#: libfdisk/src/bsd.c:393 libfdisk/src/sgi.c:334
+#: libfdisk/src/bsd.c:394 libfdisk/src/sgi.c:334
 msgid "#"
 msgstr ""
 
-#: libfdisk/src/bsd.c:394 libfdisk/src/dos.c:1512 libfdisk/src/dos.c:1605
-#: libfdisk/src/gpt.c:1208 libfdisk/src/sgi.c:277 libfdisk/src/sun.c:702
+#: libfdisk/src/bsd.c:395 libfdisk/src/dos.c:1546 libfdisk/src/dos.c:1639
+#: libfdisk/src/gpt.c:1210 libfdisk/src/sgi.c:277 libfdisk/src/sun.c:702
 #, fuzzy
 msgid "Start"
 msgstr "начало"
 
-#: libfdisk/src/bsd.c:396 libfdisk/src/dos.c:1513 libfdisk/src/gpt.c:1210
+#: libfdisk/src/bsd.c:397 libfdisk/src/dos.c:1547 libfdisk/src/gpt.c:1212
 #: libfdisk/src/sgi.c:337
 msgid "Size"
 msgstr ""
 
-#: libfdisk/src/bsd.c:398
+#: libfdisk/src/bsd.c:399
 #, fuzzy
 msgid "fsize"
 msgstr "Макс. размер=%ld\n"
 
-#: libfdisk/src/bsd.c:399
+#: libfdisk/src/bsd.c:400
 #, fuzzy
 msgid "bsize"
 msgstr "Макс. размер=%ld\n"
 
-#: libfdisk/src/bsd.c:400
+#: libfdisk/src/bsd.c:401
 msgid "cpg"
 msgstr ""
 
-#: libfdisk/src/bsd.c:491
+#: libfdisk/src/bsd.c:492
 msgid "bytes/sector"
 msgstr "байт/сектор"
 
-#: libfdisk/src/bsd.c:494
+#: libfdisk/src/bsd.c:495
 msgid "sectors/track"
 msgstr "секторы/дорожка"
 
-#: libfdisk/src/bsd.c:495
+#: libfdisk/src/bsd.c:496
 msgid "tracks/cylinder"
 msgstr "дорожки/цилиндр"
 
-#: libfdisk/src/bsd.c:500
+#: libfdisk/src/bsd.c:501
 msgid "sectors/cylinder"
 msgstr "секторы/цилиндр"
 
-#: libfdisk/src/bsd.c:503
+#: libfdisk/src/bsd.c:504
 msgid "rpm"
 msgstr "об/мин"
 
-#: libfdisk/src/bsd.c:504
+#: libfdisk/src/bsd.c:505
 msgid "interleave"
 msgstr "чередование"
 
-#: libfdisk/src/bsd.c:505
+#: libfdisk/src/bsd.c:506
 msgid "trackskew"
 msgstr "перекос дорожки"
 
-#: libfdisk/src/bsd.c:506
+#: libfdisk/src/bsd.c:507
 msgid "cylinderskew"
 msgstr "перекос цилиндра"
 
-#: libfdisk/src/bsd.c:508
+#: libfdisk/src/bsd.c:509
 msgid "headswitch"
 msgstr "переключение головки"
 
-#: libfdisk/src/bsd.c:509
+#: libfdisk/src/bsd.c:510
 msgid "track-to-track seek"
 msgstr "поиск дорожки"
 
-#: libfdisk/src/bsd.c:532
+#: libfdisk/src/bsd.c:533
 #, c-format
 msgid "The bootstrap file %s successfully loaded."
 msgstr ""
 
-#: libfdisk/src/bsd.c:548
+#: libfdisk/src/bsd.c:549
 #, fuzzy, c-format
 msgid "Bootstrap: %1$sboot -> boot%1$s (default %1$s)"
 msgstr "Bootstrap: %sboot -> boot%s (%s): "
 
-#: libfdisk/src/bsd.c:579
+#: libfdisk/src/bsd.c:580
 #, fuzzy
 msgid "Bootstrap overlaps with disklabel!"
 msgstr "Bootstrap перекрывается с меткой диска!\n"
 
-#: libfdisk/src/bsd.c:598 libfdisk/src/bsd.c:765 sys-utils/hwclock.c:155
+#: libfdisk/src/bsd.c:599 libfdisk/src/bsd.c:766 sys-utils/hwclock.c:155
 #: sys-utils/hwclock.c:157
 #, fuzzy, c-format
 msgid "cannot write %s"
 msgstr "невозможно открыть %s"
 
-#: libfdisk/src/bsd.c:604
+#: libfdisk/src/bsd.c:605
 #, fuzzy, c-format
 msgid "Bootstrap installed on %s."
 msgstr "Bootstrap установлен на %s.\n"
 
-#: libfdisk/src/bsd.c:771
+#: libfdisk/src/bsd.c:772
 #, fuzzy, c-format
 msgid "Disklabel written to %s."
 msgstr "Дисковый накопитель: %s\n"
 
-#: libfdisk/src/bsd.c:777 libfdisk/src/context.c:240
+#: libfdisk/src/bsd.c:778 libfdisk/src/context.c:240
 #, fuzzy
 msgid "Syncing disks."
 msgstr "Синхронизируются диски.\n"
 
-#: libfdisk/src/bsd.c:811
+#: libfdisk/src/bsd.c:812
 msgid "BSD label is not nested within a DOS partition"
 msgstr ""
 
-#: libfdisk/src/bsd.c:840
+#: libfdisk/src/bsd.c:841
 #, fuzzy, c-format
 msgid "BSD partition '%c' linked to DOS partition %d."
 msgstr "   x   связывание раздела BSD с разделом не-BSD"
@@ -5940,124 +5941,125 @@ msgstr ""
 "Предупреждение: неверный флаг 0x%04x таблицы разделов %d будет исправлен "
 "записью\n"
 
-#: libfdisk/src/dos.c:811
+#: libfdisk/src/dos.c:811 libfdisk/src/gpt.c:1663 libfdisk/src/sgi.c:844
+#: libfdisk/src/sun.c:471
 #, fuzzy, c-format
-msgid "Partition %d is already defined.  Delete it before re-adding it."
+msgid "Partition %zd is already defined.  Delete it before re-adding it."
 msgstr ""
 "Раздел %d уже определен.  Удалите его перед тем, как снова добавить его.\n"
 
-#: libfdisk/src/dos.c:863
+#: libfdisk/src/dos.c:864
 #, fuzzy, c-format
 msgid "Sector %llu is already allocated."
 msgstr "Сектор %d уже выделен\n"
 
-#: libfdisk/src/dos.c:920 libfdisk/src/gpt.c:1672
+#: libfdisk/src/dos.c:921 libfdisk/src/gpt.c:1674
 #, fuzzy
 msgid "No free sectors available."
 msgstr "Отсутствуют доступные свободные секторы\n"
 
-#: libfdisk/src/dos.c:1029
+#: libfdisk/src/dos.c:1030
 #, fuzzy, c-format
 msgid "Adding logical partition %zd"
 msgstr "Плохой логический раздел"
 
-#: libfdisk/src/dos.c:1045
+#: libfdisk/src/dos.c:1046
 #, fuzzy, c-format
 msgid "Partition %zd: contains sector 0"
 msgstr "Предупреждение: раздел %d содержит нулевой сектор\n"
 
-#: libfdisk/src/dos.c:1047
+#: libfdisk/src/dos.c:1048
 #, fuzzy, c-format
 msgid "Partition %zd: head %d greater than maximum %d"
 msgstr "Раздел %d: головка %d больше, чем максимум %d\n"
 
-#: libfdisk/src/dos.c:1050
+#: libfdisk/src/dos.c:1051
 #, fuzzy, c-format
 msgid "Partition %zd: sector %d greater than maximum %llu"
 msgstr "Раздел %d: сектор %d больше, чем максимум %d\n"
 
-#: libfdisk/src/dos.c:1053
+#: libfdisk/src/dos.c:1054
 #, fuzzy, c-format
 msgid "Partition %zd: cylinder %d greater than maximum %llu"
 msgstr "Раздел %d: цилиндр %d больше, чем максимум %d\n"
 
-#: libfdisk/src/dos.c:1059
+#: libfdisk/src/dos.c:1060
 #, fuzzy, c-format
 msgid "Partition %zd: previous sectors %d disagrees with total %d"
 msgstr "Раздел %d: предыдущие секторы %d противоречат суммарному значению %d\n"
 
-#: libfdisk/src/dos.c:1112
+#: libfdisk/src/dos.c:1113
 #, fuzzy, c-format
 msgid ""
 "Partition %zd: different physical/logical beginnings (non-Linux?): phys=(%d, "
 "%d, %d), logical=(%d, %d, %d)"
 msgstr "Раздел %d имеет различные физические/логические начала (не-Linux?):\n"
 
-#: libfdisk/src/dos.c:1123
+#: libfdisk/src/dos.c:1124
 #, fuzzy, c-format
 msgid ""
 "Partition %zd: different physical/logical endings: phys=(%d, %d, %d), "
 "logical=(%d, %d, %d)"
 msgstr "Раздел %d имеет различные физические/логические окончания:\n"
 
-#: libfdisk/src/dos.c:1132
+#: libfdisk/src/dos.c:1133
 #, fuzzy, c-format
 msgid "Partition %zd: does not end on cylinder boundary."
 msgstr "Раздел %d не заканчивается на границе цилиндра.\n"
 
-#: libfdisk/src/dos.c:1159
+#: libfdisk/src/dos.c:1160
 #, fuzzy, c-format
 msgid "Partition %zd: bad start-of-data."
 msgstr "Раздел %d не имеет области с данными\n"
 
-#: libfdisk/src/dos.c:1169
+#: libfdisk/src/dos.c:1170
 #, fuzzy, c-format
 msgid "Partition %zd: overlaps partition %zd."
 msgstr "Предупреждение: раздел %d перекрывает раздел %d.\n"
 
-#: libfdisk/src/dos.c:1195
+#: libfdisk/src/dos.c:1196
 #, fuzzy, c-format
 msgid "Partition %zd: empty."
 msgstr "Предупреждение: раздел %d пуст\n"
 
-#: libfdisk/src/dos.c:1200
+#: libfdisk/src/dos.c:1201
 #, fuzzy, c-format
 msgid "Logical partition %zd: not entirely in partition %zd."
 msgstr "Логический раздел %d не находится целиком в разделе %d\n"
 
-#: libfdisk/src/dos.c:1208
+#: libfdisk/src/dos.c:1209
 #, fuzzy, c-format
 msgid "Total allocated sectors %llu greater than the maximum %llu."
 msgstr ""
 "Суммарное количество выделенных секторов %d больше, чем максимум %lld\n"
 
-#: libfdisk/src/dos.c:1211
+#: libfdisk/src/dos.c:1212
 #, fuzzy, c-format
 msgid "Remaining %lld unallocated %ld-byte sectors."
 msgstr "%lld незанятых секторов\n"
 
-#: libfdisk/src/dos.c:1242
+#: libfdisk/src/dos.c:1243
 #, fuzzy
 msgid "The maximum number of partitions has been created."
 msgstr "Было создано максимально возможное количество разделов\n"
 
-#: libfdisk/src/dos.c:1250
+#: libfdisk/src/dos.c:1251
 #, fuzzy
 msgid "All primary partitions are in use."
 msgstr "Задействованы все логические разделы\n"
 
-#: libfdisk/src/dos.c:1253
+#: libfdisk/src/dos.c:1254
 msgid ""
 "If you want to create more than four partitions, you must replace a primary "
 "partition with an extended partition first."
 msgstr ""
 
-#: libfdisk/src/dos.c:1261
+#: libfdisk/src/dos.c:1262
 #, fuzzy
 msgid "All logical partitions are in use. Adding a primary partition."
 msgstr "Задействованы все логические разделы\n"
 
-#: libfdisk/src/dos.c:1274
+#: libfdisk/src/dos.c:1275
 #, c-format
 msgid ""
 "Partition type:\n"
@@ -6066,32 +6068,32 @@ msgid ""
 "Select (default %c)"
 msgstr ""
 
-#: libfdisk/src/dos.c:1280
+#: libfdisk/src/dos.c:1281
 #, fuzzy
 msgid "   l   logical (numbered from 5)"
 msgstr "l   логический (5 или более)"
 
-#: libfdisk/src/dos.c:1280
+#: libfdisk/src/dos.c:1281
 #, fuzzy
 msgid "   e   extended"
 msgstr "e   расширенный"
 
-#: libfdisk/src/dos.c:1288
+#: libfdisk/src/dos.c:1289
 #, fuzzy, c-format
 msgid "Using default response %c."
 msgstr "Используется значение по умолчанию %u\n"
 
-#: libfdisk/src/dos.c:1310
+#: libfdisk/src/dos.c:1311
 #, fuzzy, c-format
 msgid "Invalid partition type `%c'."
 msgstr "Неверный номер раздела для типа `%c'\n"
 
-#: libfdisk/src/dos.c:1325
+#: libfdisk/src/dos.c:1326
 #, fuzzy, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "%s: невозможно найти устройство для %s\n"
 
-#: libfdisk/src/dos.c:1417
+#: libfdisk/src/dos.c:1451
 #, fuzzy
 msgid ""
 "You cannot change a partition into an extended one or vice versa. Delete it "
@@ -6100,7 +6102,7 @@ msgstr ""
 "Вы не можете изменить раздел на расширенный или наоборот\n"
 "Сначала удалите его.\n"
 
-#: libfdisk/src/dos.c:1423
+#: libfdisk/src/dos.c:1457
 #, fuzzy
 msgid ""
 "If you have created or modified any DOS 6.x partitions, please see the fdisk "
@@ -6112,34 +6114,34 @@ msgstr ""
 "оперативную страницу руководства cfdisk для\n"
 "получения дополнительной информации.\n"
 
-#: libfdisk/src/dos.c:1501
+#: libfdisk/src/dos.c:1535
 #, fuzzy
 msgid "Nr"
 msgstr "NC"
 
-#: libfdisk/src/dos.c:1502
+#: libfdisk/src/dos.c:1536
 msgid "AF"
 msgstr ""
 
-#: libfdisk/src/dos.c:1504 libfdisk/src/dos.c:1508
+#: libfdisk/src/dos.c:1538 libfdisk/src/dos.c:1542
 msgid "Hd"
 msgstr ""
 
-#: libfdisk/src/dos.c:1505 libfdisk/src/dos.c:1509
+#: libfdisk/src/dos.c:1539 libfdisk/src/dos.c:1543
 #, fuzzy
 msgid "Sec"
 msgstr "Присвоить"
 
-#: libfdisk/src/dos.c:1506 libfdisk/src/dos.c:1510
+#: libfdisk/src/dos.c:1540 libfdisk/src/dos.c:1544
 msgid "Cyl"
 msgstr ""
 
-#: libfdisk/src/dos.c:1514 libfdisk/src/dos.c:1609 libfdisk/src/sgi.c:280
+#: libfdisk/src/dos.c:1548 libfdisk/src/dos.c:1643 libfdisk/src/sgi.c:280
 #: libfdisk/src/sun.c:706
 msgid "Id"
 msgstr ""
 
-#: libfdisk/src/dos.c:1588
+#: libfdisk/src/dos.c:1622
 #, fuzzy
 msgid ""
 "This doesn't look like a partition table. Probably you selected the wrong "
@@ -6149,52 +6151,52 @@ msgstr ""
 "Возможно, вы выбрали неверное устройство.\n"
 "\n"
 
-#: libfdisk/src/dos.c:1603 libfdisk/src/gpt.c:1207 libfdisk/src/sgi.c:275
+#: libfdisk/src/dos.c:1637 libfdisk/src/gpt.c:1209 libfdisk/src/sgi.c:275
 #: libfdisk/src/sun.c:700
 msgid "Device"
 msgstr "Устр-во"
 
 #. TRANSLATORS: keep one blank space behind 'Blocks'
-#: libfdisk/src/dos.c:1608 libfdisk/src/sun.c:705
+#: libfdisk/src/dos.c:1642 libfdisk/src/sun.c:705
 #, fuzzy
 msgid "Blocks "
 msgstr "%ld блоков\n"
 
-#: libfdisk/src/dos.c:1610 libfdisk/src/sgi.c:281 libfdisk/src/sun.c:707
+#: libfdisk/src/dos.c:1644 libfdisk/src/sgi.c:281 libfdisk/src/sun.c:707
 msgid "System"
 msgstr ""
 
-#: libfdisk/src/dos.c:1677
+#: libfdisk/src/dos.c:1711
 #, fuzzy
 msgid "Partition table entries are not in disk order."
 msgstr ""
 "\n"
 "Пункты таблицы разделов расположены не в дисковом порядке\n"
 
-#: libfdisk/src/dos.c:1754
+#: libfdisk/src/dos.c:1788
 #, fuzzy
 msgid "Nothing to do. Ordering is correct already."
 msgstr ""
 "Нечего выполнять. Очередность уже в порядке.\n"
 "\n"
 
-#: libfdisk/src/dos.c:1783
+#: libfdisk/src/dos.c:1817
 #, fuzzy
 msgid "Done."
 msgstr ""
 "Готово\n"
 "\n"
 
-#: libfdisk/src/dos.c:1803
+#: libfdisk/src/dos.c:1837
 #, fuzzy, c-format
 msgid "Partition %d: no data area."
 msgstr "Раздел %d не имеет области с данными\n"
 
-#: libfdisk/src/dos.c:1833
+#: libfdisk/src/dos.c:1867
 msgid "New beginning of data"
 msgstr "Новое начало данных"
 
-#: libfdisk/src/dos.c:1895
+#: libfdisk/src/dos.c:1929
 #, fuzzy, c-format
 msgid "Partition %d: is an extended partition."
 msgstr "ПРЕДУПРЕЖДЕНИЕ: Раздел %d не является расширенным разделом\n"
@@ -6208,375 +6210,379 @@ msgstr ""
 msgid "MBR partition scheme"
 msgstr "Номер раздела"
 
-#: libfdisk/src/gpt.c:146
+#: libfdisk/src/gpt.c:145
+msgid "Intel Fast Flash"
+msgstr ""
+
+#: libfdisk/src/gpt.c:148
 #, fuzzy
 msgid "BIOS boot partition"
 msgstr "   a   выбор загрузочного раздела"
 
-#: libfdisk/src/gpt.c:149
+#: libfdisk/src/gpt.c:151
 msgid "Microsoft reserved"
 msgstr ""
 
-#: libfdisk/src/gpt.c:150
+#: libfdisk/src/gpt.c:152
 msgid "Microsoft basic data"
 msgstr ""
 
-#: libfdisk/src/gpt.c:151
+#: libfdisk/src/gpt.c:153
 msgid "Microsoft LDM metadata"
 msgstr ""
 
-#: libfdisk/src/gpt.c:152
+#: libfdisk/src/gpt.c:154
 msgid "Microsoft LDM data"
 msgstr ""
 
-#: libfdisk/src/gpt.c:153
+#: libfdisk/src/gpt.c:155
 msgid "Windows recovery environment"
 msgstr ""
 
-#: libfdisk/src/gpt.c:154
+#: libfdisk/src/gpt.c:156
 msgid "IBM General Parallel Fs"
 msgstr ""
 
-#: libfdisk/src/gpt.c:157
+#: libfdisk/src/gpt.c:159
 #, fuzzy
 msgid "HP-UX data partition"
 msgstr "   d   удаление раздела"
 
-#: libfdisk/src/gpt.c:158
+#: libfdisk/src/gpt.c:160
 #, fuzzy
 msgid "HP-UX service partition"
 msgstr "Разделов больше нет"
 
-#: libfdisk/src/gpt.c:161
+#: libfdisk/src/gpt.c:163
 #, fuzzy
 msgid "Linux filesystem"
 msgstr "Введите тип файловой системы:"
 
-#: libfdisk/src/gpt.c:162 libfdisk/src/sgi.c:56
+#: libfdisk/src/gpt.c:164 libfdisk/src/sgi.c:56
 msgid "Linux RAID"
 msgstr "Linux RAID"
 
-#: libfdisk/src/gpt.c:163 libfdisk/src/sgi.c:53 libfdisk/src/sun.c:44
+#: libfdisk/src/gpt.c:165 libfdisk/src/sgi.c:53 libfdisk/src/sun.c:44
 msgid "Linux swap"
 msgstr "Linux своп"
 
-#: libfdisk/src/gpt.c:165
+#: libfdisk/src/gpt.c:167
 #, fuzzy
 msgid "Linux reserved"
 msgstr "SunOS usr"
 
-#: libfdisk/src/gpt.c:168
+#: libfdisk/src/gpt.c:170
 #, fuzzy
 msgid "FreeBSD data"
 msgstr "FreeBSD"
 
-#: libfdisk/src/gpt.c:169
+#: libfdisk/src/gpt.c:171
 #, fuzzy
 msgid "FreeBSD boot"
 msgstr "FreeBSD"
 
-#: libfdisk/src/gpt.c:170
+#: libfdisk/src/gpt.c:172
 #, fuzzy
 msgid "FreeBSD swap"
 msgstr "BSDI своп"
 
-#: libfdisk/src/gpt.c:171
+#: libfdisk/src/gpt.c:173
 #, fuzzy
 msgid "FreeBSD UFS"
 msgstr "FreeBSD"
 
-#: libfdisk/src/gpt.c:172
+#: libfdisk/src/gpt.c:174
 #, fuzzy
 msgid "FreeBSD ZFS"
 msgstr "FreeBSD"
 
-#: libfdisk/src/gpt.c:173
+#: libfdisk/src/gpt.c:175
 #, fuzzy
 msgid "FreeBSD Vinum"
 msgstr "FreeBSD"
 
-#: libfdisk/src/gpt.c:176
+#: libfdisk/src/gpt.c:178
 #, fuzzy
 msgid "Apple HFS/HFS+"
 msgstr "OS/2 HPFS"
 
-#: libfdisk/src/gpt.c:177
+#: libfdisk/src/gpt.c:179
 msgid "Apple UFS"
 msgstr ""
 
-#: libfdisk/src/gpt.c:178
+#: libfdisk/src/gpt.c:180
 msgid "Apple RAID"
 msgstr ""
 
-#: libfdisk/src/gpt.c:179
+#: libfdisk/src/gpt.c:181
 msgid "Apple RAID offline"
 msgstr ""
 
-#: libfdisk/src/gpt.c:180
+#: libfdisk/src/gpt.c:182
 msgid "Apple boot"
 msgstr ""
 
-#: libfdisk/src/gpt.c:181
+#: libfdisk/src/gpt.c:183
 msgid "Apple label"
 msgstr ""
 
-#: libfdisk/src/gpt.c:182
+#: libfdisk/src/gpt.c:184
 msgid "Apple TV recovery"
 msgstr ""
 
-#: libfdisk/src/gpt.c:183
+#: libfdisk/src/gpt.c:185
 msgid "Apple Core storage"
 msgstr ""
 
-#: libfdisk/src/gpt.c:187
+#: libfdisk/src/gpt.c:189
 #, fuzzy
 msgid "Solaris root"
 msgstr "Solaris загр."
 
-#: libfdisk/src/gpt.c:189
+#: libfdisk/src/gpt.c:191
 msgid "Solaris /usr & Apple ZFS"
 msgstr ""
 
-#: libfdisk/src/gpt.c:190
+#: libfdisk/src/gpt.c:192
 #, fuzzy
 msgid "Solaris swap"
 msgstr "Solaris"
 
-#: libfdisk/src/gpt.c:191
+#: libfdisk/src/gpt.c:193
 #, fuzzy
 msgid "Solaris backup"
 msgstr "Solaris загр."
 
-#: libfdisk/src/gpt.c:192
+#: libfdisk/src/gpt.c:194
 #, fuzzy
 msgid "Solaris /var"
 msgstr "Solaris"
 
-#: libfdisk/src/gpt.c:193
+#: libfdisk/src/gpt.c:195
 #, fuzzy
 msgid "Solaris /home"
 msgstr "Solaris загр."
 
-#: libfdisk/src/gpt.c:194
+#: libfdisk/src/gpt.c:196
 #, fuzzy
 msgid "Solaris alternate sector"
 msgstr "слишком много альтернативных скоростей"
 
-#: libfdisk/src/gpt.c:195
+#: libfdisk/src/gpt.c:197
 #, fuzzy
 msgid "Solaris reserved 1"
 msgstr "SunOS usr"
 
-#: libfdisk/src/gpt.c:196
+#: libfdisk/src/gpt.c:198
 #, fuzzy
 msgid "Solaris reserved 2"
 msgstr "SunOS usr"
 
-#: libfdisk/src/gpt.c:197
+#: libfdisk/src/gpt.c:199
 #, fuzzy
 msgid "Solaris reserved 3"
 msgstr "SunOS usr"
 
-#: libfdisk/src/gpt.c:198
+#: libfdisk/src/gpt.c:200
 #, fuzzy
 msgid "Solaris reserved 4"
 msgstr "SunOS usr"
 
-#: libfdisk/src/gpt.c:199
+#: libfdisk/src/gpt.c:201
 #, fuzzy
 msgid "Solaris reserved 5"
 msgstr "SunOS usr"
 
-#: libfdisk/src/gpt.c:202
+#: libfdisk/src/gpt.c:204
 #, fuzzy
 msgid "NetBSD swap"
 msgstr "BSDI своп"
 
-#: libfdisk/src/gpt.c:203
+#: libfdisk/src/gpt.c:205
 #, fuzzy
 msgid "NetBSD FFS"
 msgstr "NetBSD"
 
-#: libfdisk/src/gpt.c:204
+#: libfdisk/src/gpt.c:206
 #, fuzzy
 msgid "NetBSD LFS"
 msgstr "NetBSD"
 
-#: libfdisk/src/gpt.c:205
+#: libfdisk/src/gpt.c:207
 msgid "NetBSD concatenated"
 msgstr ""
 
-#: libfdisk/src/gpt.c:206
+#: libfdisk/src/gpt.c:208
 msgid "NetBSD encrypted"
 msgstr ""
 
-#: libfdisk/src/gpt.c:207
+#: libfdisk/src/gpt.c:209
 #, fuzzy
 msgid "NetBSD RAID"
 msgstr "NetBSD"
 
-#: libfdisk/src/gpt.c:210
+#: libfdisk/src/gpt.c:212
 msgid "ChromeOS kernel"
 msgstr ""
 
-#: libfdisk/src/gpt.c:211
+#: libfdisk/src/gpt.c:213
 msgid "ChromeOS root fs"
 msgstr ""
 
-#: libfdisk/src/gpt.c:212
+#: libfdisk/src/gpt.c:214
 #, fuzzy
 msgid "ChromeOS reserved"
 msgstr "SunOS usr"
 
-#: libfdisk/src/gpt.c:215
+#: libfdisk/src/gpt.c:217
 msgid "MidnightBSD data"
 msgstr ""
 
-#: libfdisk/src/gpt.c:216
+#: libfdisk/src/gpt.c:218
 msgid "MidnightBSD boot"
 msgstr ""
 
-#: libfdisk/src/gpt.c:217
+#: libfdisk/src/gpt.c:219
 #, fuzzy
 msgid "MidnightBSD swap"
 msgstr "BSDI своп"
 
-#: libfdisk/src/gpt.c:218
+#: libfdisk/src/gpt.c:220
 msgid "MidnightBSD UFS"
 msgstr ""
 
-#: libfdisk/src/gpt.c:219
+#: libfdisk/src/gpt.c:221
 msgid "MidnightBSD ZFS"
 msgstr ""
 
-#: libfdisk/src/gpt.c:220
+#: libfdisk/src/gpt.c:222
 msgid "MidnightBSD Vinum"
 msgstr ""
 
-#: libfdisk/src/gpt.c:519
+#: libfdisk/src/gpt.c:521
 #, c-format
 msgid "GPT PMBR size mismatch (%u != %u) will be corrected by w(rite)."
 msgstr ""
 
-#: libfdisk/src/gpt.c:536
+#: libfdisk/src/gpt.c:538
 #, fuzzy
 msgid "gpt: stat() failed"
 msgstr "поиск завершился неудачей"
 
-#: libfdisk/src/gpt.c:546
+#: libfdisk/src/gpt.c:548
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr ""
 
-#: libfdisk/src/gpt.c:803
+#: libfdisk/src/gpt.c:805
 msgid "GPT Header"
 msgstr ""
 
-#: libfdisk/src/gpt.c:808
+#: libfdisk/src/gpt.c:810
 msgid "GPT Entries"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1201
+#: libfdisk/src/gpt.c:1203
 #, fuzzy, c-format
 msgid "First LBA: %ju"
 msgstr "Первый %s"
 
-#: libfdisk/src/gpt.c:1202
+#: libfdisk/src/gpt.c:1204
 #, c-format
 msgid "Last LBA: %ju"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1203
+#: libfdisk/src/gpt.c:1205
 #, c-format
 msgid "Alternative LBA: %ju"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1204
+#: libfdisk/src/gpt.c:1206
 #, c-format
 msgid "Partitions entries LBA: %ju"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1205
+#: libfdisk/src/gpt.c:1207
 #, fuzzy, c-format
 msgid "Allocated partition entries: %ju"
 msgstr "Выбранный раздел %d\n"
 
-#: libfdisk/src/gpt.c:1214
+#: libfdisk/src/gpt.c:1216
 msgid "UUID"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1453
+#: libfdisk/src/gpt.c:1455
 #, fuzzy
 msgid "Disk does not contain a valid backup header."
 msgstr "На диске %s отсутствует верная таблица разделов\n"
 
-#: libfdisk/src/gpt.c:1458
+#: libfdisk/src/gpt.c:1460
 msgid "Invalid primary header CRC checksum."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1462
+#: libfdisk/src/gpt.c:1464
 msgid "Invalid backup header CRC checksum."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1467
+#: libfdisk/src/gpt.c:1469
 #, fuzzy
 msgid "Invalid partition entry checksum."
 msgstr "Неверный номер раздела для типа `%c'\n"
 
-#: libfdisk/src/gpt.c:1472
+#: libfdisk/src/gpt.c:1474
 msgid "Invalid primary header LBA sanity checks."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1476
+#: libfdisk/src/gpt.c:1478
 msgid "Invalid backup header LBA sanity checks."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1481
+#: libfdisk/src/gpt.c:1483
 msgid "MyLBA mismatch with real position at primary header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1485
+#: libfdisk/src/gpt.c:1487
 msgid "MyLBA mismatch with real position at backup header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1490
+#: libfdisk/src/gpt.c:1492
 msgid "Disk is too small to hold all data."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1500
+#: libfdisk/src/gpt.c:1502
 msgid "Primary and backup header mismatch."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1506
+#: libfdisk/src/gpt.c:1508
 #, fuzzy, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "Предупреждение: раздел %d перекрывает раздел %d.\n"
 
-#: libfdisk/src/gpt.c:1513
+#: libfdisk/src/gpt.c:1515
 #, fuzzy, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "Вы получили перекрывание разделов на диске. Сначала исправьте это!\n"
 
-#: libfdisk/src/gpt.c:1520
+#: libfdisk/src/gpt.c:1522
 #, fuzzy, c-format
 msgid "Partition %u ends before it starts."
 msgstr "Раздел заканчивается до сектора 0"
 
-#: libfdisk/src/gpt.c:1528
+#: libfdisk/src/gpt.c:1530
 msgid "No errors detected."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1529
+#: libfdisk/src/gpt.c:1531
 #, fuzzy, c-format
 msgid "Header version: %s"
 msgstr "ошибка поиска"
 
-#: libfdisk/src/gpt.c:1530
+#: libfdisk/src/gpt.c:1532
 #, fuzzy, c-format
 msgid "Using %u out of %d partitions."
 msgstr "странно, определены только разделы %d.\n"
 
-#: libfdisk/src/gpt.c:1537
+#: libfdisk/src/gpt.c:1539
 #, fuzzy, c-format
 msgid "A total of %ld free sectors is available in %d segment."
 msgid_plural ""
@@ -6584,68 +6590,62 @@ msgid_plural ""
 msgstr[0] "Отсутствуют доступные свободные секторы\n"
 msgstr[1] "Отсутствуют доступные свободные секторы\n"
 
-#: libfdisk/src/gpt.c:1543
+#: libfdisk/src/gpt.c:1545
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] ""
 msgstr[1] ""
 
-#: libfdisk/src/gpt.c:1661
-#, fuzzy, c-format
-msgid "Partition %zd is already defined. Delete it before re-adding it."
-msgstr ""
-"Раздел %d уже определен.  Удалите его перед тем, как снова добавить его.\n"
-
-#: libfdisk/src/gpt.c:1667
+#: libfdisk/src/gpt.c:1669
 #, fuzzy
 msgid "All partitions are already in use."
 msgstr "Этот раздел уже используется"
 
-#: libfdisk/src/gpt.c:1708
+#: libfdisk/src/gpt.c:1710
 #, fuzzy, c-format
 msgid "Sector %ju already used."
 msgstr "Сектор %d уже выделен\n"
 
-#: libfdisk/src/gpt.c:1738
+#: libfdisk/src/gpt.c:1740
 #, fuzzy, c-format
 msgid "Could not create partition %zd"
 msgstr "Не создавать раздел"
 
-#: libfdisk/src/gpt.c:1822
+#: libfdisk/src/gpt.c:1824
 #, fuzzy, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "   s   создание новой чистой метки диска Sun"
 
-#: libfdisk/src/gpt.c:1859
+#: libfdisk/src/gpt.c:1861
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:1866 libfdisk/src/gpt.c:1994
+#: libfdisk/src/gpt.c:1868 libfdisk/src/gpt.c:1996
 #, fuzzy
 msgid "Failed to parse your UUID."
 msgstr "%s: невозможно открыть : %s\n"
 
-#: libfdisk/src/gpt.c:1881
+#: libfdisk/src/gpt.c:1883
 #, fuzzy, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "Ошибка записи раздела на %s\n"
 
-#: libfdisk/src/gpt.c:1987
+#: libfdisk/src/gpt.c:1989
 msgid "New UUID (in 8-4-4-4-12 format)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2009
+#: libfdisk/src/gpt.c:2011
 #, fuzzy, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "Ошибка записи раздела на %s\n"
 
-#: libfdisk/src/gpt.c:2032
+#: libfdisk/src/gpt.c:2034
 #, fuzzy
 msgid "New name"
 msgstr "Запрещенное имя пользователя"
 
-#: libfdisk/src/gpt.c:2054
+#: libfdisk/src/gpt.c:2056
 #, fuzzy, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "Ошибка записи раздела на %s\n"
@@ -6896,12 +6896,6 @@ msgstr "\tВы выбрали необычное имя boot-файла.\n"
 msgid "Partition overlap on the disk."
 msgstr "Вы получили перекрывание разделов на диске. Сначала исправьте это!\n"
 
-#: libfdisk/src/sgi.c:844 libfdisk/src/sun.c:471
-#, fuzzy, c-format
-msgid "Partition %zd is already defined.  Delete it before re-adding it."
-msgstr ""
-"Раздел %d уже определен.  Удалите его перед тем, как снова добавить его.\n"
-
 #: libfdisk/src/sgi.c:849
 #, fuzzy
 msgid "Attempting to generate entire disk entry automatically."
@@ -6941,11 +6935,11 @@ msgstr "Вы получите перекрывание разделов на диске. Сначала исправьте это!\n"
 msgid "Last %s or +%s or +size{K,M,G,T,P}"
 msgstr "Последний %s или +size или +sizeM или +sizeK"
 
-#: libfdisk/src/sgi.c:980
+#: libfdisk/src/sgi.c:980 libfdisk/src/sun.c:229
 #, fuzzy, c-format
 msgid ""
-"Warning:  BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of "
-"%llu. This value may be truncated for devices > 33.8 GB."
+"BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of %llu. This "
+"value may be truncated for devices > 33.8 GB."
 msgstr ""
 "Предупреждение: BLKGETSIZE ioctl завершился неудачей на %s. Используется "
 "значение геометрии цилиндра %d.\n"
@@ -7074,16 +7068,6 @@ msgstr ""
 #: libfdisk/src/sun.c:185
 msgid "Sectors/track"
 msgstr "Секторы/дорожка"
-
-#: libfdisk/src/sun.c:229
-#, fuzzy, c-format
-msgid ""
-"BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of %llu. This "
-"value may be truncated for devices > 33.8 GB."
-msgstr ""
-"Предупреждение: BLKGETSIZE ioctl завершился неудачей на %s. Используется "
-"значение геометрии цилиндра %d.\n"
-"Это значение может быть уменьшено для устройств > 33.8 ГБ.\n"
 
 #: libfdisk/src/sun.c:282
 #, fuzzy
@@ -8348,36 +8332,36 @@ msgstr "Вы используете теневые пароли на этой системе.\n"
 msgid "Would you like to edit %s now [y/n]? "
 msgstr "Хотите ли вы сейчас отредактировать %s [д/н]? "
 
-#: misc-utils/cal.c:370
+#: misc-utils/cal.c:372
 #, fuzzy
 msgid "illegal day value"
 msgstr "Неверное значение головок"
 
-#: misc-utils/cal.c:372 misc-utils/cal.c:386
+#: misc-utils/cal.c:374 misc-utils/cal.c:388
 #, fuzzy, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "запрещенное значение года: используйте 1-9999"
 
-#: misc-utils/cal.c:375 misc-utils/cal.c:377
+#: misc-utils/cal.c:377 misc-utils/cal.c:379
 msgid "illegal month value: use 1-12"
 msgstr "запрещенное значение месяца: используйте 1-12"
 
-#: misc-utils/cal.c:380
+#: misc-utils/cal.c:382
 #, fuzzy
 msgid "illegal year value"
 msgstr "Неверное значение головок"
 
-#: misc-utils/cal.c:382
+#: misc-utils/cal.c:384
 #, fuzzy
 msgid "illegal year value: use positive integer"
 msgstr "запрещенное значение года: используйте 1-9999"
 
-#: misc-utils/cal.c:462
+#: misc-utils/cal.c:464
 #, c-format
 msgid "%s"
 msgstr ""
 
-#: misc-utils/cal.c:465
+#: misc-utils/cal.c:467
 #, c-format
 msgid "%ld"
 msgstr ""
@@ -8386,54 +8370,54 @@ msgstr ""
 #. * You can change the order and/or add something here;
 #. * e.g. for Basque the translation should be "%2$ldko %1$s".
 #.
-#: misc-utils/cal.c:473
+#: misc-utils/cal.c:475
 #, fuzzy, c-format
 msgid "%s %ld"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:806
+#: misc-utils/cal.c:808
 #, fuzzy, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr "использование: cal [-13smjyV] [[месяц] год]\n"
 
-#: misc-utils/cal.c:809
+#: misc-utils/cal.c:811
 msgid "Display a calendar, or some part of it.\n"
 msgstr ""
 
-#: misc-utils/cal.c:810
+#: misc-utils/cal.c:812
 msgid "Without any arguments, display the current month.\n"
 msgstr ""
 
-#: misc-utils/cal.c:813
+#: misc-utils/cal.c:815
 #, fuzzy
 msgid " -1, --one             show only a single month (default)\n"
 msgstr ""
 "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: misc-utils/cal.c:814
+#: misc-utils/cal.c:816
 #, fuzzy
 msgid " -3, --three           show three months spanning the date\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: misc-utils/cal.c:815
+#: misc-utils/cal.c:817
 msgid " -s, --sunday          Sunday as first day of week\n"
 msgstr ""
 
-#: misc-utils/cal.c:816
+#: misc-utils/cal.c:818
 msgid " -m, --monday          Monday as first day of week\n"
 msgstr ""
 
-#: misc-utils/cal.c:817
+#: misc-utils/cal.c:819
 #, fuzzy
 msgid " -j, --julian          output Julian dates\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: misc-utils/cal.c:818
+#: misc-utils/cal.c:820
 #, fuzzy
 msgid " -y, --year            show the whole year\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
-#: misc-utils/cal.c:819
+#: misc-utils/cal.c:821
 msgid "     --color[=<when>]  colorize messages (auto, always or never)\n"
 msgstr ""
 
@@ -9247,24 +9231,24 @@ msgid ""
 msgstr ""
 
 #: misc-utils/lsblk.c:1374
-msgid " -I, --include <list> show only devices with specified major numbers\n"
-msgstr ""
-
-#: misc-utils/lsblk.c:1375
 #, fuzzy
 msgid " -f, --fs             output info about filesystems\n"
 msgstr ""
 "  -u, --unqote                 Не заключать в кавычки выходные данные\n"
 
-#: misc-utils/lsblk.c:1376
-#, fuzzy
-msgid " -h, --help           usage information (this)\n"
-msgstr "  -V, --version                Вывод информации о версии\n"
-
-#: misc-utils/lsblk.c:1377
+#: misc-utils/lsblk.c:1375
 #, fuzzy
 msgid " -i, --ascii          use ascii characters only\n"
 msgstr "  -T, --test                   Проверка версии getopt(1)\n"
+
+#: misc-utils/lsblk.c:1376
+msgid " -I, --include <list> show only devices with specified major numbers\n"
+msgstr ""
+
+#: misc-utils/lsblk.c:1377
+#, fuzzy
+msgid " -l, --list           use list format output\n"
+msgstr "  -Q, --quiet-output           Без обычных выходных данных\n"
 
 #: misc-utils/lsblk.c:1378
 #, fuzzy
@@ -9272,46 +9256,41 @@ msgid " -m, --perms          output info about permissions\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
 #: misc-utils/lsblk.c:1379
-#, fuzzy
-msgid " -l, --list           use list format output\n"
-msgstr "  -Q, --quiet-output           Без обычных выходных данных\n"
-
-#: misc-utils/lsblk.c:1380
 msgid " -n, --noheadings     don't print headings\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1381
+#: misc-utils/lsblk.c:1380
 msgid " -o, --output <list>  output columns\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1382
+#: misc-utils/lsblk.c:1381
 #, fuzzy
 msgid " -p, --paths          print complete device path\n"
 msgstr ""
 "  -h, --help                   Это небольшое руководство по использованию\n"
 
-#: misc-utils/lsblk.c:1385
+#: misc-utils/lsblk.c:1384
 #, fuzzy
 msgid " -s, --inverse        inverse dependencies\n"
+msgstr "  -V, --version                Вывод информации о версии\n"
+
+#: misc-utils/lsblk.c:1385
+#, fuzzy
+msgid " -S, --scsi           output info about SCSI devices\n"
 msgstr "  -V, --version                Вывод информации о версии\n"
 
 #: misc-utils/lsblk.c:1386
 msgid " -t, --topology       output info about topology\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1387
-#, fuzzy
-msgid " -S, --scsi           output info about SCSI devices\n"
-msgstr "  -V, --version                Вывод информации о версии\n"
-
-#: misc-utils/lsblk.c:1392 misc-utils/lslocks.c:510 sys-utils/prlimit.c:186
+#: misc-utils/lsblk.c:1391 misc-utils/lslocks.c:510 sys-utils/prlimit.c:186
 #, fuzzy, c-format
 msgid ""
 "\n"
 "Available columns (for --output):\n"
 msgstr "Доступные команды:\n"
 
-#: misc-utils/lsblk.c:1405
+#: misc-utils/lsblk.c:1404
 #, fuzzy, c-format
 msgid "failed to access sysfs directory: %s"
 msgstr "%s: невозможно открыть : %s\n"
@@ -12095,11 +12074,6 @@ msgstr "Для %s требуется аргумент\n"
 #, fuzzy
 msgid "requires file descriptor, file or directory"
 msgstr "корневой inode не является каталогом"
-
-#: sys-utils/flock.c:309 sys-utils/swapon.c:303 sys-utils/unshare.c:141
-#, fuzzy
-msgid "waitpid failed"
-msgstr "setuid() завершился неудачей"
 
 #: sys-utils/fsfreeze.c:50
 #, fuzzy, c-format
@@ -18271,6 +18245,33 @@ msgstr "Неизвестная escape-последовательность во входных данных: %o, %o\n"
 #, fuzzy
 msgid "Input line too long."
 msgstr "Строка входных данных слишком длинная.\n"
+
+#, fuzzy
+#~ msgid "waidpid failed"
+#~ msgstr "setuid() завершился неудачей"
+
+#, fuzzy
+#~ msgid "Partition %d is already defined.  Delete it before re-adding it."
+#~ msgstr ""
+#~ "Раздел %d уже определен.  Удалите его перед тем, как снова добавить его.\n"
+
+#, fuzzy
+#~ msgid "Partition %zd is already defined. Delete it before re-adding it."
+#~ msgstr ""
+#~ "Раздел %d уже определен.  Удалите его перед тем, как снова добавить его.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "Warning:  BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of "
+#~ "%llu. This value may be truncated for devices > 33.8 GB."
+#~ msgstr ""
+#~ "Предупреждение: BLKGETSIZE ioctl завершился неудачей на %s. Используется "
+#~ "значение геометрии цилиндра %d.\n"
+#~ "Это значение может быть уменьшено для устройств > 33.8 ГБ.\n"
+
+#, fuzzy
+#~ msgid " -h, --help           usage information (this)\n"
+#~ msgstr "  -V, --version                Вывод информации о версии\n"
 
 #~ msgid "set blocksize"
 #~ msgstr "установить размер блока"
