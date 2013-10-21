@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.18-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-10-21 12:54+0200\n"
+"POT-Creation-Date: 2013-10-21 13:14+0200\n"
 "PO-Revision-Date: 2010-07-02 10:44+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -6561,9 +6561,9 @@ msgstr "furcsa, csak %d partíció van megadva.\n"
 
 #: libfdisk/src/gpt.c:1539
 #, fuzzy, c-format
-msgid "A total of %ld free sectors is available in %d segment."
+msgid "A total of %ju free sectors is available in %d segment."
 msgid_plural ""
-"A total of %ld free sectors is available in %d segments (the largest is %ld)."
+"A total of %ju free sectors is available in %d segments (the largest is %ju)."
 msgstr[0] "Nem érhető el szabad szektor\n"
 msgstr[1] "Nem érhető el szabad szektor\n"
 

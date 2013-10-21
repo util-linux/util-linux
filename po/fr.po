@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.24-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-10-21 12:54+0200\n"
+"POT-Creation-Date: 2013-10-21 13:14+0200\n"
 "PO-Revision-Date: 2013-10-11 18:49-0400\n"
 "Last-Translator: David Prévot <david@tilapin.org>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -6490,10 +6490,10 @@ msgid "Using %u out of %d partitions."
 msgstr "Utilisation de %u partitions sur %d."
 
 #: libfdisk/src/gpt.c:1539
-#, c-format
-msgid "A total of %ld free sectors is available in %d segment."
+#, fuzzy, c-format
+msgid "A total of %ju free sectors is available in %d segment."
 msgid_plural ""
-"A total of %ld free sectors is available in %d segments (the largest is %ld)."
+"A total of %ju free sectors is available in %d segments (the largest is %ju)."
 msgstr[0] "Un total de %ld secteurs libres est disponible sur %d segment."
 msgstr[1] ""
 "Un total de %ld secteurs libres est disponible sur %d segments (le plus "

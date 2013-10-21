@@ -50,7 +50,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.21-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-10-21 12:54+0200\n"
+"POT-Creation-Date: 2013-10-21 13:14+0200\n"
 "PO-Revision-Date: 2012-05-10 20:05-0700\n"
 "Last-Translator: Arun Persaud <arun@nubati.net>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -6662,9 +6662,9 @@ msgstr "Merkwürdig, es sind nur %d Partitionen definiert.\n"
 
 #: libfdisk/src/gpt.c:1539
 #, fuzzy, c-format
-msgid "A total of %ld free sectors is available in %d segment."
+msgid "A total of %ju free sectors is available in %d segment."
 msgid_plural ""
-"A total of %ld free sectors is available in %d segments (the largest is %ld)."
+"A total of %ju free sectors is available in %d segments (the largest is %ju)."
 msgstr[0] "Es sind keine freien Sektoren verfügbar\n"
 msgstr[1] "Es sind keine freien Sektoren verfügbar\n"
 

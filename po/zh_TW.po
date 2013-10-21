@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23.1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-10-21 12:54+0200\n"
+"POT-Creation-Date: 2013-10-21 13:14+0200\n"
 "PO-Revision-Date: 2013-06-07 23:29+0800\n"
 "Last-Translator: Wei-Lun Chao <bluebat@member.fsf.org>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -6622,9 +6622,9 @@ msgstr "怪異的，只有 %d 分割區定義。"
 
 #: libfdisk/src/gpt.c:1539
 #, fuzzy, c-format
-msgid "A total of %ld free sectors is available in %d segment."
+msgid "A total of %ju free sectors is available in %d segment."
 msgid_plural ""
-"A total of %ld free sectors is available in %d segments (the largest is %ld)."
+"A total of %ju free sectors is available in %d segments (the largest is %ju)."
 msgstr[0] "沒有可用的磁區存在\n"
 
 #: libfdisk/src/gpt.c:1545
