@@ -226,6 +226,20 @@ command specific logindef config file
 /etc/login.defs
 global logindef config file
 .PD 1
+.SH NOTES
+For security reasons
+.B su
+always logs failed log-in attempts to the btmp file, but it does not write to
+the lastlog file at all.  This solution allows to control
+.B su
+behavior by PAM configuration.  If you want to use the pam_lastlog module to
+print warning message about failed log-in attempts then the pam_lastlog has to
+be configured to update lastlog file too. For example by:
+
+.RS
+.br
+session  required  pam_lastlog.so nowtmp
+.RE
 .SH "SEE ALSO"
 .BR runuser (8),
 .BR pam (8),
