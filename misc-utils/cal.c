@@ -428,27 +428,31 @@ int main(int argc, char **argv)
 		usage(stderr);
 	}
 
-	if (wnum>0) {
-		int yday = week_to_day(wnum,year,wflag);
-		if (yday < 1)
-			errx(EXIT_FAILURE, _("illegal week value: year %ld doesn't have week %d"),year,wnum);
-		//day = yday; /* hightlight the first day of the week */
-		month = 1;
+	if (wnum > 0) {
+		int yday = week_to_day(wnum, year, wflag);
 		int leap = leap_year(year);
+
+		if (yday < 1)
+			errx(EXIT_FAILURE, _("illegal week value: year %ld "
+					     "doesn't have week %d"),
+					year, wnum);
+		month = 1;
 		while (month <= 12 && yday > days_in_month[leap][month])
 			yday -= days_in_month[leap][month++];
 		if (month > 12) {
-			/* In some years (e.g. 2010 in ISO mode) it's possible to
-			 * have a remnant of week 53 starting the year yet the year
-			 * in question ends during 52, in this case we're assuming
-			 * that early remnant is being referred to if 53 is given as
-			 * argument. */
-			if (wnum == week_number(31,12,year-1,wflag)) {
+			/* In some years (e.g. 2010 in ISO mode) it's possible
+			 * to have a remnant of week 53 starting the year yet
+			 * the year in question ends during 52, in this case
+			 * we're assuming that early remnant is being referred
+			 * to if 53 is given as argument. */
+			if (wnum == week_number(31, 12, year - 1, wflag))
 				month = 1;
-			} else
-				errx(EXIT_FAILURE, _("illegal week value: year %ld doesn't have week %d"),year,wnum);
+			else
+				errx(EXIT_FAILURE,
+					_("illegal week value: year %ld "
+					  "doesn't have week %d"),
+					year, wnum);
 		}
-		//printf("%d %d %ld : %d : %d\n",day,month,year,wflag,wflag&WEEK_NUM_MASK);
 	}
 
 	headers_init(julian);
@@ -505,7 +509,8 @@ static int do_monthly(int day, int month, long year, int wflag,
 {
 	int col, row, days[MAXDAYS];
 	char *p, lineout[FMT_ST_CHARS];
-	size_t width = (julian ? J_WEEK_LEN : WEEK_LEN) - 1 + (wflag?WNUM_LEN:0);
+	size_t width = (julian ? J_WEEK_LEN : WEEK_LEN) - 1
+		       + (wflag ? WNUM_LEN : 0);
 	int pos = 0;
 
 	day_array(day, month, year, days);
@@ -530,7 +535,10 @@ static int do_monthly(int day, int month, long year, int wflag,
 		pos++;
 	}
 
-	snprintf(out->s[pos++], FMT_ST_CHARS, "%s%s",(wflag?"   ":""), day_headings);
+	snprintf(out->s[pos++], FMT_ST_CHARS, "%s%s",
+				(wflag ? "   " : ""),
+				day_headings);
+
 	for (row = 0; row < DAYS_IN_WEEK - 1; row++) {
 		int has_hl = 0;
 		p = lineout;
@@ -538,21 +546,11 @@ static int do_monthly(int day, int month, long year, int wflag,
 			for (col = 0; col < DAYS_IN_WEEK; col++) {
 				int xd = days[row * DAYS_IN_WEEK + col];
 				if (xd != SPACE) {
-					int wnum = week_number(xd&~TODAY_FLAG,month,year,wflag);
-					p = ascii_wnum(p,wnum,(wflag & WEEK_NUM_MASK)==wnum);
+					int wnum = week_number(xd & ~TODAY_FLAG,
+							month, year, wflag);
+					p = ascii_wnum(p, wnum,
+							(wflag & WEEK_NUM_MASK) == wnum);
 					break;
-					/*
-					int wnum = week_number(xd & ~TODAY_FLAG,month,year,wflag);
-					int highlight = 0;
-					if ((wflag&WEEK_NUM_MASK)==wnum) {
-						p += sprintf(p, "%s", Senter);
-						highlight = 1;
-					}
-					p += sprintf(p,"%2d",wnum);
-					if (highlight)
-						p += sprintf(p, "%s", Sexit);
-					p += sprintf(p," ");
-					break; */
 				} else if (col+1 == DAYS_IN_WEEK)
 					p += sprintf(p,"   ");
 			}
@@ -660,14 +658,34 @@ static void monthly3(int day, int month, long year, int wflag)
 	}
 }
 
+static char *append_wnum(char *p, int *dp,
+			 int month, long year, int cal,
+			 int row, int wflag)
+{
+	int col;
+
+	for (col = 0; col < DAYS_IN_WEEK; col++) {
+		int xd = dp[row * DAYS_IN_WEEK + col];
+
+		if (xd != SPACE) {
+			int wnum = week_number(xd & ~TODAY_FLAG,
+					       month + cal + 1, year, wflag);
+			p = ascii_wnum(p, wnum, (wflag & WEEK_NUM_MASK) == wnum);
+			break;
+		} else if (col+1 == DAYS_IN_WEEK)
+			p += sprintf(p,"   ");
+	}
+	return p;
+}
+
 static void yearly(int day, long year, int julian, int wflag)
 {
-	int col, *dp, i, month, row, which_cal;
+	int col, i, month, row, which_cal;
 	int maxrow, sep_len, week_len;
 	int days[MONTHS_IN_YEAR][MAXDAYS];
 	char *p;
 	/* three weeks + separators + \0 */
-	int wnumlen = (wflag?WNUM_LEN:0);
+	int wnumlen = (wflag ? WNUM_LEN : 0);
 	char lineout[ wnumlen + sizeof(day_headings) + 2 +
 		      wnumlen + sizeof(day_headings) + 2 +
 		      wnumlen + sizeof(day_headings) + 1 ];
@@ -681,9 +699,10 @@ static void yearly(int day, long year, int julian, int wflag)
 		week_len = WEEK_LEN + wnumlen;
 	}
 	snprintf(lineout, sizeof(lineout), "%ld", year);
-	/* 2013-04-28: The -1 near sep_len makes year header to be
-	 * aligned exactly how it has been aligned for long time, but it
-	 * is unexplainable.  */
+
+	/* 2013-04-28: The -1 near sep_len makes year header to be aligned
+	 * exactly how it has been aligned for long time, but it is
+	 * unexplainable.  */
 	center(lineout, (week_len + sep_len) * maxrow - sep_len - 1, 0);
 	my_putstring("\n\n");
 
@@ -714,18 +733,13 @@ static void yearly(int day, long year, int julian, int wflag)
 		for (row = 0; row < DAYS_IN_WEEK - 1; row++) {
 			p = lineout;
 			for (which_cal = 0; which_cal < maxrow; which_cal++) {
-				dp = &days[month + which_cal][row * DAYS_IN_WEEK];
-				if (wflag) {
-					for (col = 0; col < DAYS_IN_WEEK; col++) {
-						int xd = days[month + which_cal][row * DAYS_IN_WEEK + col];
-						if (xd != SPACE) {
-							int wnum = week_number(xd&~TODAY_FLAG,month+which_cal+1,year,wflag);
-							p = ascii_wnum(p,wnum,(wflag & WEEK_NUM_MASK)==wnum);
-							break;
-						} else if (col+1 == DAYS_IN_WEEK)
-							p += sprintf(p,"   ");
-					}
-				}
+				int *dp = &days[month + which_cal][row * DAYS_IN_WEEK];
+
+				if (wflag)
+					p = append_wnum(p, days[month + which_cal],
+							month, year, which_cal,
+							row, wflag);
+
 				for (col = 0; col < DAYS_IN_WEEK; col++)
 					p = ascii_day(p, *dp++);
 				p += sprintf(p, "  ");
@@ -764,6 +778,7 @@ static void day_array(int day, int month, long year, int *days)
 	dw = (day_in_week(1, month, year) - weekstart + DAYS_IN_WEEK) % DAYS_IN_WEEK;
 	julday = day_in_year(1, month, year);
 	daynum = julian ? julday : 1;
+
 	while (dm--) {
 		days[dw] = daynum++;
 		if (julday++ == day)
@@ -826,39 +841,47 @@ static int day_in_week(int d, int m, long y)
  *      Day may be given as Julian day of the year mode, in which
  *      case the month is disregarded entirely.
  */
-static int week_number(int day, int month, long year, int wflag) {
-	int fday = 0,wday,yday;
-	wday = day_in_week(1,1,year);
+static int week_number(int day, int month, long year, int wflag)
+{
+	int fday = 0, yday;
+	int wday = day_in_week(1, 1, year);
+
 	if (wflag & WEEK_NUM_ISO)
-		fday = wday + (wday>=FRIDAY?-2:5);
-	else	/* WEEK_NUM_US */
-		/* according to gcal, the first Sun is in the first week */
-		fday = wday + (wday==SUNDAY?6:-1);
-		/* according to wikipedia, i.e. the first Sat is in the first week */
-		/* fday = wday + 6; */
-	/* For julian dates the month can be set to 1, the global julian variable
-	 * cannot be relied upon here, because we may recurse internally for
-	 * 31.12. which would not work. */
-	if (day > 31) month = 1;
+		fday = wday + (wday >= FRIDAY ? -2 : 5);
+	else
+		/* WEEK_NUM_US
+		 * - according to gcal, the first Sun is in the first week
+		 * - according to wikipedia, the first Sat is in the first week
+		 */
+		fday = wday + (wday == SUNDAY ? 6 : -1);
+
+	/* For julian dates the month can be set to 1, the global julian
+	 * variable cannot be relied upon here, because we may recurse
+	 * internally for 31.12. which would not work. */
+	if (day > 31)
+		month = 1;
+
 	yday = day_in_year(day,month,year);
-	if (year == REFORMATION_YEAR)
+	if (year == REFORMATION_YEAR) {
 		if (yday >= YDAY_AFTER_MISSING)
 			fday -= NUMBER_MISSING_DAYS;
-	/* Last year is last year */
-	if (yday+fday < 7)
-		return week_number(31,12,year-1,wflag);
-	/* Or it could be part of the next year.
-	 * The reformation year had less days than 365 making this check
-	 * invalid, but reformation year ended on Sunday and in week 51,
-	 * so it's ok here. */
-	if (wflag == WEEK_NUM_ISO && yday >= 363 &&
-		day_in_week(day,month,year) >= MONDAY &&
-		day_in_week(day,month,year) <= WEDNESDAY &&
-		day_in_week(31,12,year) >= MONDAY &&
-		day_in_week(31,12,year) <= WEDNESDAY) {
-		return  week_number(1,1,year+1,wflag);
 	}
-	return (yday+fday) / 7;
+
+	/* Last year is last year */
+	if (yday + fday < 7)
+		return week_number(31, 12, year - 1, wflag);
+
+	/* Or it could be part of the next year.  The reformation year had less
+	 * days than 365 making this check invalid, but reformation year ended
+	 * on Sunday and in week 51, so it's ok here. */
+	if (wflag == WEEK_NUM_ISO && yday >= 363
+	    && day_in_week(day, month, year) >= MONDAY
+	    && day_in_week(day, month, year) <= WEDNESDAY
+	    && day_in_week(31, 12, year) >= MONDAY
+	    && day_in_week(31, 12, year) <= WEDNESDAY)
+		return  week_number(1, 1, year + 1, wflag);
+
+	return (yday + fday) / 7;
 }
 
 /*
@@ -868,15 +891,18 @@ static int week_number(int day, int month, long year, int wflag) {
  *      for ISO-8601 modes. For North American numbering this
  *      always returns a Sunday.
  */
-static int week_to_day(int wnum, long year, int wflag) {
+static int week_to_day(int wnum, long year, int wflag)
+{
 	int yday, wday;
-	wday = day_in_week(1,1,year);
+
+	wday = day_in_week(1, 1, year);
 	yday = wnum * 7 - wday;
+
 	if (wflag & WEEK_NUM_ISO)
-		yday -= (wday>=FRIDAY?-2:5);
-	else	/* WEEK_NUM_US */
-		yday -= (wday==SUNDAY?6:-1);
-	if (yday<=0)
+		yday -= (wday >= FRIDAY ? -2 : 5);
+	else
+		yday -= (wday == SUNDAY ? 6 : -1);	/* WEEK_NUM_US */
+	if (yday <= 0)
 		return 1;
 
 	return yday;
