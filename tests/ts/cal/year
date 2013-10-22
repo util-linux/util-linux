@@ -22,6 +22,7 @@ TS_DESC="year"
 ts_init "$*"
 
 set -o pipefail
+export TERM=linux
 
 USETERM=$( ts_has_option "useterm" "$*" )
 MYTIME="29 11 2006"

@@ -19,6 +19,7 @@ TS_DESC="September 1752 with week numbers"
 ts_init "$*"
 
 set -o pipefail
+export TERM=linux
 
 USETERM=$( ts_has_option "useterm" "$*" )
 MYMONTH="09 1752"

@@ -22,6 +22,7 @@ TS_DESC="week number given as argument"
 ts_init "$*"
 
 set -o pipefail
+export TERM=linux
 
 USETERM=$( ts_has_option "useterm" "$*" )
 
