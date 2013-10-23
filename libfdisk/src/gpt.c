@@ -410,6 +410,46 @@ static int gpt_mknew_header_from_bkp(struct fdisk_context *cxt,
 	return 0;
 }
 
+static struct gpt_header *gpt_copy_header(struct fdisk_context *cxt,
+			   struct gpt_header *src)
+{
+	struct gpt_header *res;
+
+	if (!cxt || !src)
+		return NULL;
+
+	res = calloc(1, sizeof(*res));
+	if (!res) {
+		fdisk_warn(cxt, _("failed to allocate GPT header"));
+		return NULL;
+	}
+
+	res->my_lba                 = src->alternative_lba;
+	res->alternative_lba        = src->my_lba;
+
+	res->signature              = src->signature;
+	res->revision               = src->revision;
+	res->size                   = src->size;
+	res->npartition_entries     = src->npartition_entries;
+	res->sizeof_partition_entry = src->sizeof_partition_entry;
+	res->first_usable_lba       = src->first_usable_lba;
+	res->last_usable_lba        = src->last_usable_lba;
+
+	memcpy(&res->disk_guid, &src->disk_guid, sizeof(src->disk_guid));
+
+
+	if (res->my_lba == GPT_PRIMARY_PARTITION_TABLE_LBA)
+		res->partition_entry_lba = cpu_to_le64(2);
+	else {
+		uint64_t esz = le32_to_cpu(src->npartition_entries) * sizeof(struct gpt_entry);
+		uint64_t esects = (esz + cxt->sector_size - 1) / cxt->sector_size;
+
+		res->partition_entry_lba = cpu_to_le64(cxt->total_sectors - 1 - esects);
+	}
+
+	return res;
+}
+
 /*
  * Builds a clean new GPT header (currently under revision 1.0).
  *
@@ -776,10 +816,13 @@ static struct gpt_header *gpt_read_header(struct fdisk_context *cxt,
 	else
 		free(ents);
 
+	DBG(LABEL, dbgprint("found valid GPT Header on LBA %ju", lba));
 	return header;
 invalid:
 	free(header);
 	free(ents);
+
+	DBG(LABEL, dbgprint("read GPT Header on LBA %ju failed", lba));
 	return NULL;
 }
 
@@ -1103,9 +1146,15 @@ static int gpt_probe_label(struct fdisk_context *cxt)
 	/* primary header */
 	gpt->pheader = gpt_read_header(cxt, GPT_PRIMARY_PARTITION_TABLE_LBA,
 				       &gpt->ents);
-	/* backup header */
-	gpt->bheader = gpt_read_header(cxt, last_lba(cxt),
-					gpt->pheader ? NULL : &gpt->ents);
+
+	if (gpt->pheader)
+		/* primary OK, try backup from alternative LBA */
+		gpt->bheader = gpt_read_header(cxt,
+					le64_to_cpu(gpt->pheader->alternative_lba),
+					NULL);
+	else
+		/* primary corrupted -- try last LBA */
+		gpt->bheader = gpt_read_header(cxt, last_lba(cxt), &gpt->ents);
 
 	if (!gpt->pheader && !gpt->bheader)
 		goto failed;
@@ -1114,26 +1163,18 @@ static int gpt_probe_label(struct fdisk_context *cxt)
 	if (gpt->pheader && !gpt->bheader) {
 		fdisk_warnx(cxt, _("The backup GPT table is corrupt, but the "
 				  "primary appears OK, so that will be used."));
-		gpt->bheader = calloc(1, sizeof(*gpt->bheader));
-		if (!gpt->bheader) {
-			fdisk_warn(cxt, _("failed to allocate GPT header"));
+		gpt->bheader = gpt_copy_header(cxt, gpt->pheader);
+		if (!gpt->bheader)
 			goto failed;
-		}
-		gpt_mknew_header_from_bkp(cxt, gpt->bheader,
-				last_lba(cxt), gpt->pheader);
 		gpt_recompute_crc(gpt->bheader, gpt->ents);
 
 	/* primary corrupted, backup OK -- recovery */
 	} else if (!gpt->pheader && gpt->bheader) {
 		fdisk_warnx(cxt, _("The primary GPT table is corrupt, but the "
 				  "backup appears OK, so that will be used."));
-		gpt->pheader = calloc(1, sizeof(*gpt->bheader));
-		if (!gpt->pheader) {
-			fdisk_warn(cxt, _("failed to allocate GPT header"));
+		gpt->pheader = gpt_copy_header(cxt, gpt->bheader);
+		if (!gpt->pheader)
 			goto failed;
-		}
-		gpt_mknew_header_from_bkp(cxt, gpt->pheader,
-				GPT_PRIMARY_PARTITION_TABLE_LBA, gpt->bheader);
 		gpt_recompute_crc(gpt->pheader, gpt->ents);
 	}
 
