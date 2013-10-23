@@ -815,7 +815,11 @@ static int add_partition(struct fdisk_context *cxt, size_t n, struct fdisk_partt
 	}
 	fill_bounds(cxt, first, last);
 	if (n < 4) {
-		start = cxt->first_lba;
+		if (cxt->parent && fdisk_is_disklabel(cxt->parent, GPT))
+			start = 1;		/* Bad boy modifies hybrid MBR */
+		else
+			start = cxt->first_lba;
+
 		if (fdisk_context_use_cylinders(cxt) || !cxt->total_sectors)
 			limit = cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders - 1;
 		else

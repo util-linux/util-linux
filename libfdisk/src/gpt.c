@@ -1476,16 +1476,14 @@ fail:
 static int gpt_write_disklabel(struct fdisk_context *cxt)
 {
 	struct fdisk_gpt_label *gpt;
+	int mbr_type;
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, GPT));
 
 	gpt = self_label(cxt);
-
-	/* we do not want to mess up hybrid MBRs by creating a valid pmbr */
-	if (valid_pmbr(cxt) == GPT_MBR_HYBRID)
-		goto err0;
+	mbr_type = valid_pmbr(cxt);
 
 	/* check that disk is big enough to handle the backup header */
 	if (le64_to_cpu(gpt->pheader->alternative_lba) > cxt->total_sectors)
@@ -1522,7 +1520,11 @@ static int gpt_write_disklabel(struct fdisk_context *cxt)
 		goto err1;
 	if (gpt_write_header(cxt, gpt->pheader, GPT_PRIMARY_PARTITION_TABLE_LBA) != 0)
 		goto err1;
-	if (gpt_write_pmbr(cxt) != 0)
+
+	if (mbr_type == GPT_MBR_HYBRID)
+		fdisk_warnx(cxt, _("The device contains hybrid MBR -- writing GPT only. "
+				   "You have to sync the MBR manually."));
+	else if (gpt_write_pmbr(cxt) != 0)
 		goto err1;
 
 	DBG(LABEL, dbgprint("GPT write success"));
@@ -2162,6 +2164,12 @@ int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i)
 	free(old);
 
 	return 0;
+}
+
+int fdisk_gpt_is_hybrid(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return valid_pmbr(cxt) == GPT_MBR_HYBRID;
 }
 
 static int gpt_toggle_partition_flag(
