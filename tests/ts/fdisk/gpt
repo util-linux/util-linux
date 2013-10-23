@@ -34,7 +34,7 @@ FDISK_CMD_CREATE_PART="n\n2\n\n\n"           # create 2nd partition
 
 function print_layout {
 	echo -ne "\n---layout----------" >> $TS_OUTPUT
-	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} >> $TS_OUTPUT
+	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} &>> $TS_OUTPUT
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
 }
 
@@ -74,6 +74,19 @@ print_layout
 ts_log "Create again partition"
 echo -e "${FDISK_CMD_CREATE_PART}${FDISK_CMD_WRITE_CLOSE}" \
 	 | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+
+print_layout
+
+ts_log "Corrupt primary table"
+dd if=/dev/zero of=${TEST_IMAGE_NAME} bs=512 count=1 seek=1 conv=notrunc &> /dev/null
+echo -e "w\n" | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+
+print_layout
+
+ts_log "Corrupt backup table"
+dd if=/dev/zero of=${TEST_IMAGE_NAME} bs=512 count=1 \
+	seek=$(( 1024 * 1024 * 10 / 512 - 1)) conv=notrunc &> /dev/null
+echo -e "w\n" | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 
 print_layout
 
