@@ -609,10 +609,9 @@ file. This option can be used together with the
 .B \-f
 flag for already canonicalized absolute paths.
 .IP "\fB\-s\fP"
-Tolerate sloppy mount options rather than failing. This will ignore
-mount options not supported by a filesystem type. Not all filesystems
-support this option. This option exists for support of the Linux
-autofs\-based automounter.
+Tolerate sloppy mount options rather than failing. This will ignore mount
+options not supported by a filesystem type. Not all filesystems support this
+option. Currently it's supported by the mount.nfs mount helper only.
 .IP "\fB\-\-source \fIsrc\fP"
 If only one argument for the mount command is given then the argument might be
 interpreted as target (mountpoint) or source (device). This option allows to
