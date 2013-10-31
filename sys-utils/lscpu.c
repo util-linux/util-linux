@@ -160,6 +160,7 @@ struct lscpu_desc {
 	int		ncpus;		/* number of present CPUs */
 	cpu_set_t	*present;	/* mask with present CPUs */
 	cpu_set_t	*online;	/* mask with online CPUs */
+	int		*idx2cpunum;	/* mapping index to CPU num */
 
 	int		nnodes;		/* number of NUMA modes */
 	cpu_set_t	**nodemaps;	/* array with NUMA nodes */
@@ -417,7 +418,15 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	if (path_exist(_PATH_SYS_SYSTEM "/cpu/possible")) {
 		cpu_set_t *tmp = path_read_cpulist(maxcpus, _PATH_SYS_SYSTEM "/cpu/possible");
+                int num, idx = 0;
 		desc->ncpuspos = CPU_COUNT_S(setsize, tmp);
+
+		desc->idx2cpunum = xcalloc(desc->ncpuspos, sizeof(int));
+		for (num = 0; num < maxcpus; num++) {
+			if (CPU_ISSET(num, tmp)) {
+				desc->idx2cpunum[idx++] = num;
+			}
+		}
 		cpuset_free(tmp);
 	} else
 		err(EXIT_FAILURE, _("failed to determine number of CPUs: %s"),
@@ -1112,12 +1121,13 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 	 */
 	for (i = 0; i < desc->ncpuspos; i++) {
 		int c;
+		int cpu = desc->idx2cpunum[i];
 
-		if (!mod->offline && desc->online && !is_cpu_online(desc, i))
+		if (!mod->offline && desc->online && !is_cpu_online(desc, cpu))
 			continue;
-		if (!mod->online && desc->online && is_cpu_online(desc, i))
+		if (!mod->online && desc->online && is_cpu_online(desc, cpu))
 			continue;
-		if (desc->present && !is_cpu_present(desc, i))
+		if (desc->present && !is_cpu_present(desc, cpu))
 			continue;
 		for (c = 0; c < ncols; c++) {
 			if (mod->compat && cols[c] == COL_CACHE) {
@@ -1129,7 +1139,7 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 			if (c > 0)
 				putchar(',');
 
-			data = get_cell_data(desc, i, cols[c], mod,
+			data = get_cell_data(desc, cpu, cols[c], mod,
 					     buf, sizeof(buf));
 			fputs(data && *data ? data : "", stdout);
 		}
@@ -1159,18 +1169,19 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 	for (i = 0; i < desc->ncpuspos; i++) {
 		int c;
 		struct tt_line *line;
+		int cpu = desc->idx2cpunum[i];
 
-		if (!mod->offline && desc->online && !is_cpu_online(desc, i))
+		if (!mod->offline && desc->online && !is_cpu_online(desc, cpu))
 			continue;
-		if (!mod->online && desc->online && is_cpu_online(desc, i))
+		if (!mod->online && desc->online && is_cpu_online(desc, cpu))
 			continue;
-		if (desc->present && !is_cpu_present(desc, i))
+		if (desc->present && !is_cpu_present(desc, cpu))
 			continue;
 
 		line = tt_add_line(tt, NULL);
 
 		for (c = 0; c < ncols; c++) {
-			data = get_cell_data(desc, i, cols[c], mod,
+			data = get_cell_data(desc, cpu, cols[c], mod,
 					     buf, sizeof(buf));
 			tt_line_set_data(line, c,
 					xstrdup(data && *data ? data : "-"));
@@ -1252,8 +1263,9 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 			err(EXIT_FAILURE, _("failed to callocate cpu set"));
 		CPU_ZERO_S(setsize, set);
 		for (i = 0; i < desc->ncpuspos; i++) {
-			if (!is_cpu_online(desc, i) && is_cpu_present(desc, i))
-				CPU_SET_S(i, setsize, set);
+			int cpu = desc->idx2cpunum[i];
+			if (!is_cpu_online(desc, cpu) && is_cpu_present(desc, cpu))
+				CPU_SET_S(cpu, setsize, set);
 		}
 		print_cpuset(mod->hex ? _("Off-line CPU(s) mask:") :
 					_("Off-line CPU(s) list:"),
@@ -1478,13 +1490,14 @@ int main(int argc, char *argv[])
 	read_basicinfo(desc, mod);
 
 	for (i = 0; i < desc->ncpuspos; i++) {
-		read_topology(desc, i);
-		read_cache(desc, i);
-		read_polarization(desc, i);
-		read_address(desc, i);
-		read_configured(desc, i);
-		read_max_mhz(desc, i);
-		read_min_mhz(desc, i);
+		int cpu = desc->idx2cpunum[i];
+		read_topology(desc, cpu);
+		read_cache(desc, cpu);
+		read_polarization(desc, cpu);
+		read_address(desc, cpu);
+		read_configured(desc, cpu);
+		read_max_mhz(desc, cpu);
+		read_min_mhz(desc, cpu);
 	}
 
 	if (desc->caches)
