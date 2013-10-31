@@ -168,6 +168,7 @@ static struct fdisk_parttype gpt_parttypes[] =
 	DEF_GUID("0657FD6D-A4AB-43C4-84E5-0933C84B4F4F", N_("Linux swap")),
 	DEF_GUID("E6D6D379-F507-44C2-A23C-238F2A3DF928", N_("Linux LVM")),
 	DEF_GUID("8DA63339-0007-60C0-C436-083AC8230908", N_("Linux reserved")),
+	DEF_GUID("933AC7E1-2EB4-4F13-B844-0E14E2AEF915", N_("Linux /home partition")),
 
 	/* FreeBSD */
 	DEF_GUID("516E7CB4-6ECF-11D6-8FF8-00022D09712B", N_("FreeBSD data")),
