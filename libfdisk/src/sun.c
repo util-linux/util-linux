@@ -737,7 +737,7 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 			tt_line_set_data(ln, 1, p);	/* flags */
 		if (asprintf(&p, "%ju", (uintmax_t) fdisk_scround(cxt, start)) > 0)
 			tt_line_set_data(ln, 2, p);	/* start */
-		if (asprintf(&p, "%ju",	(uintmax_t) fdisk_scround(cxt, start + len)) > 0)
+		if (asprintf(&p, "%ju",	(uintmax_t) fdisk_scround(cxt, start + len - 1)) > 0)
 			tt_line_set_data(ln, 3, p);	/* end */
 		if (asprintf(&p, "%lu%c",
 				(unsigned long) len / 2,
