@@ -70,8 +70,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 int main(int argc, char **argv)
 {
 	char *path;
-	int c, fd, verbose = 0, secure = 0;
-	uint64_t end, blksize, secsize, range[2];
+	int c, fd, verbose = 0, secure = 0, secsize;
+	uint64_t end, blksize, range[2];
 	struct stat sb;
 
 	static const struct option longopts[] = {
