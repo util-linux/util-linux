@@ -286,6 +286,7 @@ int mnt_update_force_rdonly(struct libmnt_update *upd, int rdonly)
 	return rc;
 }
 
+
 /*
  * Allocates an utab entry (upd->fs) for mount/remount. This function should be
  * called *before* mount(2) syscall. The @fs is used as a read-only template.
@@ -872,6 +873,67 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 		 mnt_free_lock(lc);
 	return rc;
 }
+
+int mnt_update_already_done(struct libmnt_update *upd, struct libmnt_lock *lc)
+{
+	struct libmnt_table *tb = NULL;
+	struct libmnt_lock *lc0 = lc;
+	int rc = 0;
+
+	if (!upd || !upd->filename || (!upd->fs && !upd->target))
+		return -EINVAL;
+
+	DBG(UPDATE, mnt_debug_h(upd, "%s: checking for previous update", upd->filename));
+
+	if (!lc) {
+		lc = mnt_new_lock(upd->filename, 0);
+		if (lc)
+			mnt_lock_block_signals(lc, TRUE);
+	}
+	if (lc && upd->userspace_only)
+		mnt_lock_use_simplelock(lc, TRUE);	/* use flock */
+	if (lc)
+		rc = mnt_lock_file(lc);
+	if (rc)
+		goto done;
+
+	tb = __mnt_new_table_from_file(upd->filename,
+			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
+	if (lc)
+		mnt_unlock_file(lc);
+	if (!tb)
+		goto done;
+
+	if (upd->fs) {
+		/* mount */
+		const char *tgt = mnt_fs_get_target(upd->fs);
+		const char *src = mnt_fs_get_bindsrc(upd->fs) ?
+					mnt_fs_get_bindsrc(upd->fs) :
+					mnt_fs_get_source(upd->fs);
+
+		if (mnt_table_find_pair(tb, src, tgt, MNT_ITER_BACKWARD)) {
+			DBG(UPDATE, mnt_debug_h(upd, "%s: found %s %s",
+						upd->filename, src, tgt));
+			rc = 1;
+		}
+	} else if (upd->target) {
+		/* umount */
+		if (!mnt_table_find_target(tb, upd->target, MNT_ITER_BACKWARD)) {
+			DBG(UPDATE, mnt_debug_h(upd, "%s: not-found (umounted) %s",
+						upd->filename, upd->target));
+			rc = 1;
+		}
+	}
+
+	mnt_unref_table(tb);
+done:
+	if (lc && lc != lc0)
+		mnt_free_lock(lc);
+	DBG(UPDATE, mnt_debug_h(upd, "%s: previous update check done [rc=%d]",
+				upd->filename, rc));
+	return rc;
+}
+
 
 #ifdef TEST_PROGRAM
 

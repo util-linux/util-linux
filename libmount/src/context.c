@@ -1725,10 +1725,6 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 		DBG(CXT, mnt_debug_h(cxt, "skip update: NOMTAB flag"));
 		return 0;
 	}
-	if (cxt->helper) {
-		DBG(CXT, mnt_debug_h(cxt, "skip update: external helper"));
-		return 0;
-	}
 	if (!cxt->mtab_writable && !cxt->utab_writable) {
 		DBG(CXT, mnt_debug_h(cxt, "skip update: no writable destination"));
 		return 0;
@@ -1777,16 +1773,30 @@ int mnt_context_update_tabs(struct libmnt_context *cxt)
 		DBG(CXT, mnt_debug_h(cxt, "don't update: NOMTAB flag"));
 		return 0;
 	}
-	if (cxt->helper) {
-		DBG(CXT, mnt_debug_h(cxt, "don't update: external helper"));
-		return 0;
-	}
 	if (!cxt->update || !mnt_update_is_ready(cxt->update)) {
 		DBG(CXT, mnt_debug_h(cxt, "don't update: no update prepared"));
 		return 0;
 	}
-	if (cxt->syscall_status) {
-		DBG(CXT, mnt_debug_h(cxt, "don't update: syscall failed/not called"));
+
+	/* check utab update when external helper executed */
+	if (mnt_context_helper_executed(cxt)
+	    && mnt_context_get_helper_status(cxt) == 0
+	    && cxt->utab_writable) {
+
+		if (mnt_update_already_done(cxt->update, cxt->lock)) {
+			DBG(CXT, mnt_debug_h(cxt, "don't update: error evaluate or already updated"));
+			return 0;
+		}
+	} else if (cxt->helper) {
+		DBG(CXT, mnt_debug_h(cxt, "don't update: external helper"));
+		return 0;
+	}
+
+	if (cxt->syscall_status != 0
+	    && !(mnt_context_helper_executed(cxt) &&
+		 mnt_context_get_helper_status(cxt) == 0)) {
+
+		DBG(CXT, mnt_debug_h(cxt, "don't update: syscall/helper failed/not called"));
 		return 0;
 	}
 

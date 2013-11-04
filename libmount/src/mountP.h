@@ -460,5 +460,7 @@ extern int mnt_context_set_tabfilter(struct libmnt_context *cxt,
 /* tab_update.c */
 extern int mnt_update_set_filename(struct libmnt_update *upd,
 				   const char *filename, int userspace_only);
+extern int mnt_update_already_done(struct libmnt_update *upd,
+				   struct libmnt_lock *lc);
 
 #endif /* _LIBMOUNT_PRIVATE_H */
