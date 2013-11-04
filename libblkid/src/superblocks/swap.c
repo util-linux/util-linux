@@ -47,7 +47,7 @@ static int swap_set_info(blkid_probe pr, const char *version)
 		return -1;
 
 	/* SWAPSPACE2 - check for wrong version or zeroed pagecount */
-        if (strcmp(version, "2") == 0) {
+        if (strcmp(version, "1") == 0) {
 		if (hdr->version != 1 && swab32(hdr->version) != 1) {
 			DBG(LOWPROBE, blkid_debug("incorrect swap version"));
 			return -1;
@@ -88,11 +88,11 @@ static int probe_swap(blkid_probe pr, const struct blkid_idmag *mag)
 
 	if (!memcmp(mag->magic, "SWAP-SPACE", mag->len)) {
 		/* swap v0 doesn't support LABEL or UUID */
-		blkid_probe_set_version(pr, "1");
+		blkid_probe_set_version(pr, "0");
 		return 0;
 
 	} else if (!memcmp(mag->magic, "SWAPSPACE2", mag->len))
-		return swap_set_info(pr, "2");
+		return swap_set_info(pr, "1");
 
 	return -1;
 }
