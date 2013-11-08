@@ -195,7 +195,7 @@ int main(int argc, char **argv)
 
 	/* rewrite the rules, do syntax checking */
 	list_for_each(p, &fshead)
-		rewrite(list_entry(p, FS, fslist));
+		rewrite_rules(list_entry(p, FS, fslist));
 
 	next(argv);
 	display();

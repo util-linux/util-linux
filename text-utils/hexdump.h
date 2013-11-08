@@ -84,7 +84,7 @@ extern enum _vflag vflag;
 
 int block_size(FS *);
 void add_fmt(const char *);
-void rewrite(FS *);
+void rewrite_rules(FS *);
 void addfile(char *);
 void display(void);
 void __attribute__((__noreturn__)) usage(FILE *out);

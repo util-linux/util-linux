@@ -201,7 +201,7 @@ int block_size(FS *fs)
 	return(cursize);
 }
 
-void rewrite(FS *fs)
+void rewrite_rules(FS *fs)
 {
 	enum { NOTOKAY, USEBCNT, USEPREC } sokay;
 	PR *pr;
