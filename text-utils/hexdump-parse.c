@@ -83,11 +83,11 @@ void addfile(char *name)
 void add_fmt(const char *fmt)
 {
 	const char *p, *savep;
-	FS *tfs;
+	struct hexdump_fs *tfs;
 	struct hexdump_fu *tfu;
 
 	/* Start new linked list of format units. */
-	tfs = xcalloc(1, sizeof(FS));
+	tfs = xcalloc(1, sizeof(struct hexdump_fs));
 	INIT_LIST_HEAD(&tfs->fslist);
 	INIT_LIST_HEAD(&tfs->fulist);
 	list_add_tail(&tfs->fslist, &fshead);
@@ -154,7 +154,7 @@ void add_fmt(const char *fmt)
 
 static const char *spec = ".#-+ 0123456789";
 
-int block_size(FS *fs)
+int block_size(struct hexdump_fs *fs)
 {
 	struct hexdump_fu *fu;
 	int bcnt, prec, cursize = 0;
@@ -201,7 +201,7 @@ int block_size(FS *fs)
 	return(cursize);
 }
 
-void rewrite_rules(FS *fs)
+void rewrite_rules(struct hexdump_fs *fs)
 {
 	enum { NOTOKAY, USEBCNT, USEPREC } sokay;
 	struct hexdump_pr *pr;

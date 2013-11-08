@@ -178,7 +178,7 @@ static void bpad(struct hexdump_pr *pr)
 void display(void)
 {
 	register struct list_head *fs;
-	register FS *fss;
+	register struct hexdump_fs *fss;
 	register struct hexdump_fu *fu;
 	register struct hexdump_pr *pr;
 	register int cnt;
@@ -191,7 +191,7 @@ void display(void)
 		fs = &fshead; savebp = bp; saveaddress = address;
 
 		list_for_each(p, fs) {
-			fss = list_entry(p, FS, fslist);
+			fss = list_entry(p, struct hexdump_fs, fslist);
 
 			list_for_each(q, &fss->fulist) {
 				fu = list_entry(q, struct hexdump_fu, fulist);

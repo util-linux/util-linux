@@ -170,7 +170,7 @@ void __attribute__((__noreturn__)) usage(FILE *out)
 int main(int argc, char **argv)
 {
 	struct list_head *p;
-	FS *tfs;
+	struct hexdump_fs *tfs;
 	char *c;
 	INIT_LIST_HEAD(&fshead);
 
@@ -188,14 +188,14 @@ int main(int argc, char **argv)
 	/* figure out the data block size */
 	blocksize = 0;
 	list_for_each(p, &fshead) {
-		tfs = list_entry(p, FS, fslist);
+		tfs = list_entry(p, struct hexdump_fs, fslist);
 		if ((tfs->bcnt = block_size(tfs)) > blocksize)
 			blocksize = tfs->bcnt;
 	}
 
 	/* rewrite the rules, do syntax checking */
 	list_for_each(p, &fshead)
-		rewrite_rules(list_entry(p, FS, fslist));
+		rewrite_rules(list_entry(p, struct hexdump_fs, fslist));
 
 	next(argv);
 	display();
@@ -206,11 +206,11 @@ int main(int argc, char **argv)
 void hex_free(void)
 {
 	struct list_head *p, *pn, *q, *qn, *r, *rn;
-	FS *fs;
+	struct hexdump_fs *fs;
 	struct hexdump_fu *fu;
 	struct hexdump_pr *pr;
 	list_for_each_safe(p, pn, &fshead) {
-		fs = list_entry(p, FS, fslist);
+		fs = list_entry(p, struct hexdump_fs, fslist);
 		list_for_each_safe(q, qn, &fs->fulist) {
 			fu = list_entry(q, struct hexdump_fu, fulist);
 			list_for_each_safe(r, rn, &fu->prlist) {

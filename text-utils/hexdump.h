@@ -66,11 +66,11 @@ struct hexdump_fu {
 	char *fmt;			/* format string */
 };
 
-typedef struct _fs {			/* format strings */
+struct hexdump_fs {			/* format strings */
 	struct list_head fslist;		/* linked list of format strings */
 	struct list_head fulist;		/* linked list of format units */
 	int bcnt;
-} FS;
+};
 
 extern struct hexdump_fu *endfu;
 extern struct list_head fshead;			/* head of format strings list */
@@ -82,9 +82,9 @@ extern off_t skip;                      /* bytes to skip */
 enum _vflag { ALL, DUP, FIRST, WAIT };	/* -v values */
 extern enum _vflag vflag;
 
-int block_size(FS *);
+int block_size(struct hexdump_fs *);
 void add_fmt(const char *);
-void rewrite_rules(FS *);
+void rewrite_rules(struct hexdump_fs *);
 void addfile(char *);
 void display(void);
 void __attribute__((__noreturn__)) usage(FILE *out);
