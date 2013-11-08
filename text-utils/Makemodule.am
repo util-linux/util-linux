@@ -29,12 +29,12 @@ column_SOURCES = text-utils/column.c
 column_LDADD = $(LDADD) libcommon.la
 
 hexdump_SOURCES = \
-	text-utils/conv.c \
-	text-utils/display.c \
+	text-utils/hexdump-conv.c \
+	text-utils/hexdump-display.c \
 	text-utils/hexdump.c \
 	text-utils/hexdump.h \
 	text-utils/hexsyntax.c \
-	text-utils/parse.c
+	text-utils/hexdump-parse.c
 hexdump_LDADD = $(LDADD) libcommon.la
 
 rev_SOURCES = text-utils/rev.c
