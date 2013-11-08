@@ -47,10 +47,26 @@
 #include "strutils.h"
 
 static void escape(char *p1);
-static void badcnt(const char *s);
-static void badsfmt(void);
-static void badfmt(const char *fmt);
-static void badconv(const char *ch);
+
+static void __attribute__ ((__noreturn__)) badcnt(const char *s)
+{
+        errx(EXIT_FAILURE, _("bad byte count for conversion character %s"), s);
+}
+
+static void __attribute__ ((__noreturn__)) badsfmt(void)
+{
+        errx(EXIT_FAILURE, _("%%s requires a precision or a byte count"));
+}
+
+static void __attribute__ ((__noreturn__)) badfmt(const char *fmt)
+{
+        errx(EXIT_FAILURE, _("bad format {%s}"), fmt);
+}
+
+static void __attribute__ ((__noreturn__)) badconv(const char *ch)
+{
+        errx(EXIT_FAILURE, _("bad conversion character %%%s"), ch);
+}
 
 #define first_letter(s,f) strchr(f, *(s))
 
@@ -473,24 +489,4 @@ static void escape(char *p1)
 			}
 		++p1; ++p2;
 	}
-}
-
-static void badcnt(const char *s)
-{
-        errx(EXIT_FAILURE, _("bad byte count for conversion character %s"), s);
-}
-
-static void badsfmt(void)
-{
-        errx(EXIT_FAILURE, _("%%s requires a precision or a byte count"));
-}
-
-static void badfmt(const char *fmt)
-{
-        errx(EXIT_FAILURE, _("bad format {%s}"), fmt);
-}
-
-static void badconv(const char *ch)
-{
-        errx(EXIT_FAILURE, _("bad conversion character %%%s"), ch);
 }
