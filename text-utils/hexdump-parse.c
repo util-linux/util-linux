@@ -72,7 +72,7 @@ static void __attribute__ ((__noreturn__)) badconv(const char *ch)
 
 struct hexdump_fu *endfu;					/* format at end-of-data */
 
-void addfile(char *name)
+void addfile(char *name, struct hexdump *hex)
 {
 	char *fmt, *buf = NULL;
 	FILE *fp;
@@ -89,14 +89,14 @@ void addfile(char *name)
 		if (!*fmt || *fmt == '#')
 			continue;
 
-		add_fmt(fmt);
+		add_fmt(fmt, hex);
 	}
 
 	free(buf);
 	fclose(fp);
 }
 
-void add_fmt(const char *fmt)
+void add_fmt(const char *fmt, struct hexdump *hex)
 {
 	const char *p, *savep;
 	struct hexdump_fs *tfs;
@@ -106,7 +106,7 @@ void add_fmt(const char *fmt)
 	tfs = xcalloc(1, sizeof(struct hexdump_fs));
 	INIT_LIST_HEAD(&tfs->fslist);
 	INIT_LIST_HEAD(&tfs->fulist);
-	list_add_tail(&tfs->fslist, &fshead);
+	list_add_tail(&tfs->fslist, &hex->fshead);
 
 	/* Take the format string and break it up into format units. */
 	p = fmt;
@@ -217,7 +217,7 @@ int block_size(struct hexdump_fs *fs)
 	return(cursize);
 }
 
-void rewrite_rules(struct hexdump_fs *fs)
+void rewrite_rules(struct hexdump_fs *fs, struct hexdump *hex)
 {
 	enum { NOTOKAY, USEBCNT, USEPREC } sokay;
 	struct hexdump_pr *pr;
@@ -431,9 +431,9 @@ isint:				cs[2] = '\0';
 		fu = list_entry(p, struct hexdump_fu, fulist);
 
 		if (list_entry_is_last(&fu->fulist, &fs->fulist) &&
-			fs->bcnt < blocksize &&
+			fs->bcnt < hex->blocksize &&
 			!(fu->flags&F_SETREP) && fu->bcnt)
-				fu->reps += (blocksize - fs->bcnt) / fu->bcnt;
+				fu->reps += (hex->blocksize - fs->bcnt) / fu->bcnt;
 		if (fu->reps > 1) {
 			if (!list_empty(&fu->prlist)) {
 				pr = list_last_entry(&fu->prlist,

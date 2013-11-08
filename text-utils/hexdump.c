@@ -52,16 +52,10 @@
 #include "strutils.h"
 #include "closestream.h"
 
-struct list_head fshead;				/* head of format strings */
-ssize_t blocksize;			/* data block size */
-int exitval;				/* final exit value */
-ssize_t length = -1;			/* max bytes to read */
-void hex_free(void);
-
-off_t skip;				/* bytes to skip */
+void hex_free(struct hexdump *);
 
 int
-parse_args(int argc, char **argv)
+parse_args(int argc, char **argv, struct hexdump *hex)
 {
 	int ch;
 	char *hex_offt = "\"%07.7_Ax\n\"";
@@ -86,44 +80,44 @@ parse_args(int argc, char **argv)
 	while ((ch = getopt_long(argc, argv, "bcCde:f:L::n:os:vxhV", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'b':
-			add_fmt(hex_offt);
-			add_fmt("\"%07.7_ax \" 16/1 \"%03o \" \"\\n\"");
+			add_fmt(hex_offt, hex);
+			add_fmt("\"%07.7_ax \" 16/1 \"%03o \" \"\\n\"", hex);
 			break;
 		case 'c':
-			add_fmt(hex_offt);
-			add_fmt("\"%07.7_ax \" 16/1 \"%3_c \" \"\\n\"");
+			add_fmt(hex_offt, hex);
+			add_fmt("\"%07.7_ax \" 16/1 \"%3_c \" \"\\n\"", hex);
 			break;
 		case 'C':
-			add_fmt("\"%08.8_Ax\n\"");
-			add_fmt("\"%08.8_ax  \" 8/1 \"%02x \" \"  \" 8/1 \"%02x \" ");
-			add_fmt("\"  |\" 16/1 \"%_p\" \"|\\n\"");
+			add_fmt("\"%08.8_Ax\n\"", hex);
+			add_fmt("\"%08.8_ax  \" 8/1 \"%02x \" \"  \" 8/1 \"%02x \" ", hex);
+			add_fmt("\"  |\" 16/1 \"%_p\" \"|\\n\"", hex);
 			break;
 		case 'd':
-			add_fmt(hex_offt);
-			add_fmt("\"%07.7_ax \" 8/2 \"  %05u \" \"\\n\"");
+			add_fmt(hex_offt, hex);
+			add_fmt("\"%07.7_ax \" 8/2 \"  %05u \" \"\\n\"", hex);
 			break;
 		case 'e':
-			add_fmt(optarg);
+			add_fmt(optarg, hex);
 			break;
 		case 'f':
-			addfile(optarg);
+			addfile(optarg, hex);
 			break;
 		case 'n':
-			length = strtosize_or_err(optarg, _("failed to parse length"));
+			hex->length = strtosize_or_err(optarg, _("failed to parse length"));
 			break;
 		case 'o':
-			add_fmt(hex_offt);
-			add_fmt("\"%07.7_ax \" 8/2 \" %06o \" \"\\n\"");
+			add_fmt(hex_offt, hex);
+			add_fmt("\"%07.7_ax \" 8/2 \" %06o \" \"\\n\"", hex);
 			break;
 		case 's':
-			skip = strtosize_or_err(optarg, _("failed to parse offset"));
+			hex->skip = strtosize_or_err(optarg, _("failed to parse offset"));
 			break;
 		case 'v':
 			vflag = ALL;
 			break;
 		case 'x':
-			add_fmt(hex_offt);
-			add_fmt("\"%07.7_ax \" 8/2 \"   %04x \" \"\\n\"");
+			add_fmt(hex_offt, hex);
+			add_fmt("\"%07.7_ax \" 8/2 \"   %04x \" \"\\n\"", hex);
 			break;
 		case 'h':
 			usage(stdout);
@@ -136,9 +130,9 @@ parse_args(int argc, char **argv)
 		}
 	}
 
-	if (list_empty(&fshead)) {
-		add_fmt(hex_offt);
-		add_fmt("\"%07.7_ax \" 8/2 \"%04x \" \"\\n\"");
+	if (list_empty(&hex->fshead)) {
+		add_fmt(hex_offt, hex);
+		add_fmt("\"%07.7_ax \" 8/2 \"%04x \" \"\\n\"", hex);
 	}
 	return optind;
 }
@@ -172,7 +166,10 @@ int main(int argc, char **argv)
 	struct list_head *p;
 	struct hexdump_fs *tfs;
 	char *c;
-	INIT_LIST_HEAD(&fshead);
+
+	struct hexdump *hex = malloc (sizeof (struct hexdump));
+	hex->length = -1;
+	INIT_LIST_HEAD(&hex->fshead);
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -180,36 +177,36 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	if (!(c = strrchr(argv[0], 'o')) || strcmp(c, "od")) {
-		argv += parse_args(argc, argv);
+		argv += parse_args(argc, argv, hex);
 	} else
 		errx(EXIT_FAILURE, _("calling hexdump as od has been deprecated "
 				     "in favour to GNU coreutils od."));
 
 	/* figure out the data block size */
-	blocksize = 0;
-	list_for_each(p, &fshead) {
+	hex->blocksize = 0;
+	list_for_each(p, &hex->fshead) {
 		tfs = list_entry(p, struct hexdump_fs, fslist);
-		if ((tfs->bcnt = block_size(tfs)) > blocksize)
-			blocksize = tfs->bcnt;
+		if ((tfs->bcnt = block_size(tfs)) > hex->blocksize)
+			hex->blocksize = tfs->bcnt;
 	}
 
 	/* rewrite the rules, do syntax checking */
-	list_for_each(p, &fshead)
-		rewrite_rules(list_entry(p, struct hexdump_fs, fslist));
+	list_for_each(p, &hex->fshead)
+		rewrite_rules(list_entry(p, struct hexdump_fs, fslist), hex);
 
-	next(argv);
-	display();
-	hex_free();
-	return exitval;
+	next(argv, hex);
+	display(hex);
+	hex_free(hex);
+	return hex->exitval;
 }
 
-void hex_free(void)
+void hex_free(struct hexdump *hex)
 {
 	struct list_head *p, *pn, *q, *qn, *r, *rn;
 	struct hexdump_fs *fs;
 	struct hexdump_fu *fu;
 	struct hexdump_pr *pr;
-	list_for_each_safe(p, pn, &fshead) {
+	list_for_each_safe(p, pn, &hex->fshead) {
 		fs = list_entry(p, struct hexdump_fs, fslist);
 		list_for_each_safe(q, qn, &fs->fulist) {
 			fu = list_entry(q, struct hexdump_fu, fulist);
@@ -223,4 +220,5 @@ void hex_free(void)
 		}
 		free(fs);
 	}
+	free (hex);
 }

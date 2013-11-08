@@ -45,8 +45,8 @@
 #include "c.h"
 #include "nls.h"
 
-static void doskip(const char *, int);
-static u_char *get(void);
+static void doskip(const char *, int, struct hexdump *);
+static u_char *get(struct hexdump *);
 
 enum _vflag vflag = FIRST;
 
@@ -175,7 +175,7 @@ static void bpad(struct hexdump_pr *pr)
 		;
 }
 
-void display(void)
+void display(struct hexdump *hex)
 {
 	register struct list_head *fs;
 	register struct hexdump_fs *fss;
@@ -187,8 +187,8 @@ void display(void)
 	unsigned char savech = 0, *savebp;
 	struct list_head *p, *q, *r;
 
-	while ((bp = get()) != NULL) {
-		fs = &fshead; savebp = bp; saveaddress = address;
+	while ((bp = get(hex)) != NULL) {
+		fs = &hex->fshead; savebp = bp; saveaddress = address;
 
 		list_for_each(p, fs) {
 			fss = list_entry(p, struct hexdump_fs, fslist);
@@ -254,7 +254,7 @@ void display(void)
 static char **_argv;
 
 static u_char *
-get(void)
+get(struct hexdump *hex)
 {
 	static int ateof = 1;
 	static u_char *curp, *savp;
@@ -262,23 +262,23 @@ get(void)
 	u_char *tmpp;
 
 	if (!curp) {
-		curp = xcalloc(1, blocksize);
-		savp = xcalloc(1, blocksize);
+		curp = xcalloc(1, hex->blocksize);
+		savp = xcalloc(1, hex->blocksize);
 	} else {
 		tmpp = curp;
 		curp = savp;
 		savp = tmpp;
-		address += blocksize;
+		address += hex->blocksize;
 	}
-	need = blocksize, nread = 0;
+	need = hex->blocksize, nread = 0;
 	while (TRUE) {
 		/*
 		 * if read the right number of bytes, or at EOF for one file,
 		 * and no other files are available, zero-pad the rest of the
 		 * block and set the end flag.
 		 */
-		if (!length || (ateof && !next(NULL))) {
-			if (need == blocksize)
+		if (!hex->length || (ateof && !next(NULL, hex))) {
+			if (need == hex->blocksize)
 				goto retnul;
 			if (!need && vflag != ALL &&
 			    !memcmp(curp, savp, nread)) {
@@ -296,7 +296,7 @@ get(void)
 			goto retnul;
 		}
 		n = fread((char *)curp + nread, sizeof(unsigned char),
-		    length == -1 ? need : min(length, need), stdin);
+		    hex->length == -1 ? need : min(hex->length, need), stdin);
 		if (!n) {
 			if (ferror(stdin))
 				warn("%s", _argv[-1]);
@@ -304,11 +304,11 @@ get(void)
 			continue;
 		}
 		ateof = 0;
-		if (length != -1)
-			length -= n;
+		if (hex->length != -1)
+			hex->length -= n;
 		if (!(need -= n)) {
 			if (vflag == ALL || vflag == FIRST ||
-			    memcmp(curp, savp, blocksize)) {
+			    memcmp(curp, savp, hex->blocksize)) {
 				if (vflag == DUP || vflag == FIRST)
 					vflag = WAIT;
 				return(curp);
@@ -316,8 +316,8 @@ get(void)
 			if (vflag == WAIT)
 				printf("*\n");
 			vflag = DUP;
-			address += blocksize;
-			need = blocksize;
+			address += hex->blocksize;
+			need = hex->blocksize;
 			nread = 0;
 		}
 		else
@@ -329,7 +329,7 @@ retnul:
 	return NULL;
 }
 
-int next(char **argv)
+int next(char **argv, struct hexdump *hex)
 {
 	static int done;
 	int statok;
@@ -342,7 +342,7 @@ int next(char **argv)
 		if (*_argv) {
 			if (!(freopen(*_argv, "r", stdin))) {
 				warn("%s", *_argv);
-				exitval = EXIT_FAILURE;
+				hex->exitval = EXIT_FAILURE;
 				++_argv;
 				continue;
 			}
@@ -352,34 +352,34 @@ int next(char **argv)
 				return(0);
 			statok = 0;
 		}
-		if (skip)
-			doskip(statok ? *_argv : "stdin", statok);
+		if (hex->skip)
+			doskip(statok ? *_argv : "stdin", statok, hex);
 		if (*_argv)
 			++_argv;
-		if (!skip)
+		if (!hex->skip)
 			return(1);
 	}
 	/* NOTREACHED */
 }
 
 static void
-doskip(const char *fname, int statok)
+doskip(const char *fname, int statok, struct hexdump *hex)
 {
 	struct stat sbuf;
 
 	if (statok) {
 		if (fstat(fileno(stdin), &sbuf))
 		        err(EXIT_FAILURE, "%s", fname);
-		if (S_ISREG(sbuf.st_mode) && skip > sbuf.st_size) {
+		if (S_ISREG(sbuf.st_mode) && hex->skip > sbuf.st_size) {
 		  /* If size valid and skip >= size */
-			skip -= sbuf.st_size;
+			hex->skip -= sbuf.st_size;
 			address += sbuf.st_size;
 			return;
 		}
 	}
 	/* sbuf may be undefined here - do not test it */
-	if (fseek(stdin, skip, SEEK_SET))
+	if (fseek(stdin, hex->skip, SEEK_SET))
 	        err(EXIT_FAILURE, "%s", fname);
-	address += skip;
-	skip = 0;
+	address += hex->skip;
+	hex->skip = 0;
 }

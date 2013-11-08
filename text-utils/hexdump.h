@@ -72,23 +72,26 @@ struct hexdump_fs {			/* format strings */
 	int bcnt;
 };
 
+struct hexdump {
+  struct list_head fshead;				/* head of format strings */
+  ssize_t blocksize;			/* data block size */
+  int exitval;				/* final exit value */
+  ssize_t length;			/* max bytes to read */
+  off_t skip;				/* bytes to skip */
+};
+
 extern struct hexdump_fu *endfu;
-extern struct list_head fshead;			/* head of format strings list */
-extern ssize_t blocksize;		/* data block size */
-extern int exitval;			/* final exit value */
-extern ssize_t length;			/* max bytes to read */
-extern off_t skip;                      /* bytes to skip */
 
 enum _vflag { ALL, DUP, FIRST, WAIT };	/* -v values */
 extern enum _vflag vflag;
 
 int block_size(struct hexdump_fs *);
-void add_fmt(const char *);
-void rewrite_rules(struct hexdump_fs *);
-void addfile(char *);
-void display(void);
+void add_fmt(const char *, struct hexdump *);
+void rewrite_rules(struct hexdump_fs *, struct hexdump *);
+void addfile(char *, struct hexdump *);
+void display(struct hexdump *);
 void __attribute__((__noreturn__)) usage(FILE *out);
 void conv_c(struct hexdump_pr *, u_char *);
 void conv_u(struct hexdump_pr *, u_char *);
-int  next(char **);
-int parse_args(int, char **);
+int  next(char **, struct hexdump *);
+int parse_args(int, char **, struct hexdump *);
