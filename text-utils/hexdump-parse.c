@@ -54,7 +54,7 @@ static void badconv(const char *ch);
 
 #define first_letter(s,f) strchr(f, *(s))
 
-FU *endfu;					/* format at end-of-data */
+struct hexdump_fu *endfu;					/* format at end-of-data */
 
 void addfile(char *name)
 {
@@ -84,7 +84,7 @@ void add_fmt(const char *fmt)
 {
 	const char *p, *savep;
 	FS *tfs;
-	FU *tfu;
+	struct hexdump_fu *tfu;
 
 	/* Start new linked list of format units. */
 	tfs = xcalloc(1, sizeof(FS));
@@ -100,7 +100,7 @@ void add_fmt(const char *fmt)
 			break;
 
 		/* Allocate a new format unit and link it in. */
-		tfu = xcalloc(1, sizeof(FU));
+		tfu = xcalloc(1, sizeof(struct hexdump_fu));
 		tfu->reps = 1;
 
 		INIT_LIST_HEAD(&tfu->fulist);
@@ -156,14 +156,14 @@ static const char *spec = ".#-+ 0123456789";
 
 int block_size(FS *fs)
 {
-	FU *fu;
+	struct hexdump_fu *fu;
 	int bcnt, prec, cursize = 0;
 	char *fmt;
 	struct list_head *p;
 
 	/* figure out the data block size needed for each format unit */
 	list_for_each (p, &fs->fulist) {
-		fu = list_entry(p, FU, fulist);
+		fu = list_entry(p, struct hexdump_fu, fulist);
 		if (fu->bcnt) {
 			cursize += fu->bcnt * fu->reps;
 			continue;
@@ -205,14 +205,14 @@ void rewrite_rules(FS *fs)
 {
 	enum { NOTOKAY, USEBCNT, USEPREC } sokay;
 	struct hexdump_pr *pr;
-	FU *fu;
+	struct hexdump_fu *fu;
 	struct list_head *p, *q;
 	char *p1, *p2, *fmtp;
 	char savech, cs[3];
 	int nconv, prec = 0;
 
 	list_for_each (p, &fs->fulist) {
-		fu = list_entry(p, FU, fulist);
+		fu = list_entry(p, struct hexdump_fu, fulist);
 		/*
 		 * Break each format unit into print units; each
 		 * conversion character gets its own.
@@ -412,7 +412,7 @@ isint:				cs[2] = '\0';
 	 * gets output from the last iteration of the format unit.
 	 */
 	list_for_each (p, &fs->fulist) {
-		fu = list_entry(p, FU, fulist);
+		fu = list_entry(p, struct hexdump_fu, fulist);
 
 		if (list_entry_is_last(&fu->fulist, &fs->fulist) &&
 			fs->bcnt < blocksize &&

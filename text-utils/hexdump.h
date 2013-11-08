@@ -55,7 +55,7 @@ struct hexdump_pr {
 	char *nospace;			/* no whitespace version */
 };
 
-typedef struct _fu {
+struct hexdump_fu {
 	struct list_head fulist;		/* next format unit */
 	struct list_head prlist;		/* next print unit */
 #define	F_IGNORE	0x01		/* %_A */
@@ -64,7 +64,7 @@ typedef struct _fu {
 	int reps;			/* repetition count */
 	int bcnt;			/* byte count */
 	char *fmt;			/* format string */
-} FU;
+};
 
 typedef struct _fs {			/* format strings */
 	struct list_head fslist;		/* linked list of format strings */
@@ -72,7 +72,7 @@ typedef struct _fs {			/* format strings */
 	int bcnt;
 } FS;
 
-extern FU *endfu;
+extern struct hexdump_fu *endfu;
 extern struct list_head fshead;			/* head of format strings list */
 extern ssize_t blocksize;		/* data block size */
 extern int exitval;			/* final exit value */

@@ -179,7 +179,7 @@ void display(void)
 {
 	register struct list_head *fs;
 	register FS *fss;
-	register FU *fu;
+	register struct hexdump_fu *fu;
 	register struct hexdump_pr *pr;
 	register int cnt;
 	register unsigned char *bp;
@@ -194,7 +194,7 @@ void display(void)
 			fss = list_entry(p, FS, fslist);
 
 			list_for_each(q, &fss->fulist) {
-				fu = list_entry(q, FU, fulist);
+				fu = list_entry(q, struct hexdump_fu, fulist);
 
 				if (fu->flags&F_IGNORE)
 					break;

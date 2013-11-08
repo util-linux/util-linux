@@ -207,12 +207,12 @@ void hex_free(void)
 {
 	struct list_head *p, *pn, *q, *qn, *r, *rn;
 	FS *fs;
-	FU *fu;
+	struct hexdump_fu *fu;
 	struct hexdump_pr *pr;
 	list_for_each_safe(p, pn, &fshead) {
 		fs = list_entry(p, FS, fslist);
 		list_for_each_safe(q, qn, &fs->fulist) {
-			fu = list_entry(q, FU, fulist);
+			fu = list_entry(q, struct hexdump_fu, fulist);
 			list_for_each_safe(r, rn, &fu->prlist) {
 				pr = list_entry(r, struct hexdump_pr, prlist);
 				free(pr->fmt);
