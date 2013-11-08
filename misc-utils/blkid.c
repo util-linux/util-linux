@@ -599,7 +599,7 @@ static int list_to_usage(const char *list, int *flag)
 	return mask;
 err:
 	*flag = 0;
-	fprintf(stderr, "unknown kerword in -u <list> argument: '%s'\n",
+	fprintf(stderr, "unknown keyword in -u <list> argument: '%s'\n",
 			word ? word : list);
 	exit(BLKID_EXIT_OTHER);
 }
