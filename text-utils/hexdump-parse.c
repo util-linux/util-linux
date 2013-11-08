@@ -73,14 +73,14 @@ void addfile(char *name)
 		if (!*fmt || *fmt == '#')
 			continue;
 
-		add(fmt);
+		add_fmt(fmt);
 	}
 
 	free(buf);
 	fclose(fp);
 }
 
-void add(const char *fmt)
+void add_fmt(const char *fmt)
 {
 	const char *p, *savep;
 	FS *tfs;

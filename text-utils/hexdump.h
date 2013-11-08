@@ -83,7 +83,7 @@ enum _vflag { ALL, DUP, FIRST, WAIT };	/* -v values */
 extern enum _vflag vflag;
 
 int block_size(FS *);
-void add(const char *);
+void add_fmt(const char *);
 void rewrite(FS *);
 void addfile(char *);
 void display(void);

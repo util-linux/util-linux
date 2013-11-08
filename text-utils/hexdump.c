@@ -86,24 +86,24 @@ parse_args(int argc, char **argv)
 	while ((ch = getopt_long(argc, argv, "bcCde:f:L::n:os:vxhV", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'b':
-			add(hex_offt);
-			add("\"%07.7_ax \" 16/1 \"%03o \" \"\\n\"");
+			add_fmt(hex_offt);
+			add_fmt("\"%07.7_ax \" 16/1 \"%03o \" \"\\n\"");
 			break;
 		case 'c':
-			add(hex_offt);
-			add("\"%07.7_ax \" 16/1 \"%3_c \" \"\\n\"");
+			add_fmt(hex_offt);
+			add_fmt("\"%07.7_ax \" 16/1 \"%3_c \" \"\\n\"");
 			break;
 		case 'C':
-			add("\"%08.8_Ax\n\"");
-			add("\"%08.8_ax  \" 8/1 \"%02x \" \"  \" 8/1 \"%02x \" ");
-			add("\"  |\" 16/1 \"%_p\" \"|\\n\"");
+			add_fmt("\"%08.8_Ax\n\"");
+			add_fmt("\"%08.8_ax  \" 8/1 \"%02x \" \"  \" 8/1 \"%02x \" ");
+			add_fmt("\"  |\" 16/1 \"%_p\" \"|\\n\"");
 			break;
 		case 'd':
-			add(hex_offt);
-			add("\"%07.7_ax \" 8/2 \"  %05u \" \"\\n\"");
+			add_fmt(hex_offt);
+			add_fmt("\"%07.7_ax \" 8/2 \"  %05u \" \"\\n\"");
 			break;
 		case 'e':
-			add(optarg);
+			add_fmt(optarg);
 			break;
 		case 'f':
 			addfile(optarg);
@@ -112,8 +112,8 @@ parse_args(int argc, char **argv)
 			length = strtosize_or_err(optarg, _("failed to parse length"));
 			break;
 		case 'o':
-			add(hex_offt);
-			add("\"%07.7_ax \" 8/2 \" %06o \" \"\\n\"");
+			add_fmt(hex_offt);
+			add_fmt("\"%07.7_ax \" 8/2 \" %06o \" \"\\n\"");
 			break;
 		case 's':
 			skip = strtosize_or_err(optarg, _("failed to parse offset"));
@@ -122,8 +122,8 @@ parse_args(int argc, char **argv)
 			vflag = ALL;
 			break;
 		case 'x':
-			add(hex_offt);
-			add("\"%07.7_ax \" 8/2 \"   %04x \" \"\\n\"");
+			add_fmt(hex_offt);
+			add_fmt("\"%07.7_ax \" 8/2 \"   %04x \" \"\\n\"");
 			break;
 		case 'h':
 			usage(stdout);
@@ -137,8 +137,8 @@ parse_args(int argc, char **argv)
 	}
 
 	if (list_empty(&fshead)) {
-		add(hex_offt);
-		add("\"%07.7_ax \" 8/2 \"%04x \" \"\\n\"");
+		add_fmt(hex_offt);
+		add_fmt("\"%07.7_ax \" 8/2 \"%04x \" \"\\n\"");
 	}
 	return optind;
 }
