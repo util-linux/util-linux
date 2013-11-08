@@ -35,7 +35,7 @@
 #include "c.h"
 #include "list.h"
 
-typedef struct _pr {
+struct hexdump_pr {
 	struct list_head prlist;		/* next print unit */
 #define	F_ADDRESS	0x001		/* print offset */
 #define	F_BPAD		0x002		/* blank pad */
@@ -53,7 +53,7 @@ typedef struct _pr {
 	char *cchar;			/* conversion character */
 	char *fmt;			/* printf format */
 	char *nospace;			/* no whitespace version */
-} PR;
+};
 
 typedef struct _fu {
 	struct list_head fulist;		/* next format unit */
@@ -88,7 +88,7 @@ void rewrite_rules(FS *);
 void addfile(char *);
 void display(void);
 void __attribute__((__noreturn__)) usage(FILE *out);
-void conv_c(PR *, u_char *);
-void conv_u(PR *, u_char *);
+void conv_c(struct hexdump_pr *, u_char *);
+void conv_u(struct hexdump_pr *, u_char *);
 int  next(char **);
 int parse_args(int, char **);

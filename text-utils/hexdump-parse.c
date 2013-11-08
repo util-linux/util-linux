@@ -204,7 +204,7 @@ int block_size(FS *fs)
 void rewrite_rules(FS *fs)
 {
 	enum { NOTOKAY, USEBCNT, USEPREC } sokay;
-	PR *pr;
+	struct hexdump_pr *pr;
 	FU *fu;
 	struct list_head *p, *q;
 	char *p1, *p2, *fmtp;
@@ -220,7 +220,7 @@ void rewrite_rules(FS *fs)
 		nconv = 0;
 		fmtp = fu->fmt;
 		while (*fmtp) {
-			pr = xcalloc(1, sizeof(PR));
+			pr = xcalloc(1, sizeof(struct hexdump_pr));
 			INIT_LIST_HEAD(&pr->prlist);
 			list_add_tail(&pr->prlist, &fu->prlist);
 
@@ -376,7 +376,7 @@ isint:				cs[2] = '\0';
 			}
 
 			/*
-			 * Copy to PR format string, set conversion character
+			 * Copy to hexdump_pr format string, set conversion character
 			 * pointer, update original.
 			 */
 			savech = *p2;
@@ -399,7 +399,8 @@ isint:				cs[2] = '\0';
 		 */
 		if (!fu->bcnt)
 			list_for_each(q, &fu->prlist)
-				fu->bcnt += (list_entry(q, PR, prlist))->bcnt;
+				fu->bcnt
+				  += (list_entry(q, struct hexdump_pr, prlist))->bcnt;
 	}
 	/*
 	 * If the format string interprets any data at all, and it's
@@ -419,7 +420,8 @@ isint:				cs[2] = '\0';
 				fu->reps += (blocksize - fs->bcnt) / fu->bcnt;
 		if (fu->reps > 1) {
 			if (!list_empty(&fu->prlist)) {
-				pr = list_last_entry(&fu->prlist, PR, prlist);
+				pr = list_last_entry(&fu->prlist,
+				  struct hexdump_pr, prlist);
 				for (p1 = pr->fmt, p2 = NULL; *p1; ++p1)
 					p2 = isspace(*p1) ? p1 : NULL;
 				if (p2)

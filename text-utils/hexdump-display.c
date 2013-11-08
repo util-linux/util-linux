@@ -54,7 +54,7 @@ static off_t address;			/* address/offset in stream */
 static off_t eaddress;			/* end address */
 
 static inline void
-print(PR *pr, unsigned char *bp) {
+print(struct hexdump_pr *pr, unsigned char *bp) {
 
 	switch(pr->flags) {
 	case F_ADDRESS:
@@ -150,7 +150,7 @@ print(PR *pr, unsigned char *bp) {
 	}
 }
 
-static void bpad(PR *pr)
+static void bpad(struct hexdump_pr *pr)
 {
 	static const char *spec = " -0+#";
 	char *p1, *p2;
@@ -180,7 +180,7 @@ void display(void)
 	register struct list_head *fs;
 	register FS *fss;
 	register FU *fu;
-	register PR *pr;
+	register struct hexdump_pr *pr;
 	register int cnt;
 	register unsigned char *bp;
 	off_t saveaddress;
@@ -203,7 +203,7 @@ void display(void)
 
 				while (cnt) {
 					list_for_each(r, &fu->prlist) {
-						pr = list_entry(r, PR, prlist);
+						pr = list_entry(r, struct hexdump_pr, prlist);
 
 						if (eaddress && address >= eaddress
 						    && !(pr->flags&(F_TEXT|F_BPAD)))
@@ -238,7 +238,7 @@ void display(void)
 			eaddress = address;
 		}
 		list_for_each (p, &endfu->prlist) {
-			pr = list_entry(p, PR, prlist);
+			pr = list_entry(p, struct hexdump_pr, prlist);
 			switch(pr->flags) {
 			case F_ADDRESS:
 				printf(pr->fmt, eaddress);

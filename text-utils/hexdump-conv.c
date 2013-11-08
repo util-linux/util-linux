@@ -38,7 +38,7 @@
 #include "xalloc.h"
 
 void
-conv_c(PR *pr, u_char *p)
+conv_c(struct hexdump_pr *pr, u_char *p)
 {
 	char *buf = NULL;
 	char const *str;
@@ -85,7 +85,7 @@ strpr:		*pr->cchar = 's';
 }
 
 void
-conv_u(PR *pr, u_char *p)
+conv_u(struct hexdump_pr *pr, u_char *p)
 {
 	static const char *list[] = {
 		"nul", "soh", "stx", "etx", "eot", "enq", "ack", "bel",
