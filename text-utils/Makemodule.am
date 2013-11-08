@@ -33,7 +33,6 @@ hexdump_SOURCES = \
 	text-utils/hexdump-display.c \
 	text-utils/hexdump.c \
 	text-utils/hexdump.h \
-	text-utils/hexsyntax.c \
 	text-utils/hexdump-parse.c
 hexdump_LDADD = $(LDADD) libcommon.la
 
