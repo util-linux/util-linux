@@ -970,12 +970,9 @@ static char *ascii_day(char *p, int day, const struct cal_control *ctl)
 static char *ascii_weeknum(char *p, int weeknum, const struct cal_control *ctl)
 {
 	if ((ctl->weektype & WEEK_NUM_MASK) == weeknum)
-		p += sprintf(p,"%s",Senter);
-	p += sprintf(p,"%2d",weeknum);
-	if ((ctl->weektype & WEEK_NUM_MASK) == weeknum)
-		p += sprintf(p,"%s ",Sexit);
+		p += sprintf(p, "%s%2d%s ", Senter, weeknum, Sexit);
 	else
-		p += sprintf(p," ");
+		p += sprintf(p, "%2d ", weeknum);
 	return p;
 }
 
