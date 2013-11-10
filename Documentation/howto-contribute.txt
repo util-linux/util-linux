@@ -88,6 +88,29 @@ Coding style
 	  something is not quite right, and you are unwilling to fix the
 	  issue.
 
+Patching process
+
+	* Tell in mail list when you are going to work with some particular
+	  piece of code for long time.  This helps other to avoid massive
+	  merge conflicts.  Small or quick work does not need to be
+	  announced.
+
+	* Submit only changes that you think are ready to merge.  If you only
+	  want change review tell your intention clearly in change cover
+	  letter, and/or in each patch subject to review-only.
+
+	* When getting comments align the changes with them.  Resubmission
+	  without changes is as good as ignoring advice, and is neither
+	  recommended nor polite.
+
+	* Resubmission can be partial or complete.  If only few alterations
+	  are needed here and there resubmit particular patches.  When
+	  comments cause greater effect resubmit everything again.
+
+	* All patch submissions, big or small, are either commented, reject,
+	  or merge.  When maintainer rejects a patch (series) it is pointless
+	  to resubmit.
+
 Various notes
 
 	* The util-linux does not use kernel headers for file system super
