@@ -249,7 +249,7 @@ struct cal_control {
 /* function prototypes */
 static int leap_year(long year);
 static char *ascii_day(char *, int, const struct cal_control *ctl);
-static char *ascii_wnum(char *p, int wn, const struct cal_control *ctl);
+static char *ascii_weeknum(char *p, int wn, const struct cal_control *ctl);
 static int center_str(const char* src, char* dest, size_t dest_size, size_t width);
 static void center(const char *, size_t, int);
 static void day_array(int, int, long, int *, const struct cal_control *ctl);
@@ -558,7 +558,7 @@ static int do_monthly(int day, int month, long year, struct fmt_st *out,
 				if (xd != SPACE) {
 					int wn = week_number(xd & ~TODAY_FLAG,
 							month, year, ctl);
-					p = ascii_wnum(p, wn, ctl);
+					p = ascii_weeknum(p, wn, ctl);
 					break;
 				} else if (col+1 == DAYS_IN_WEEK)
 					p += sprintf(p,"   ");
@@ -679,7 +679,7 @@ static char *append_weeknum(char *p, int *dp,
 		if (xd != SPACE) {
 			int weeknum = week_number(xd & ~TODAY_FLAG,
 					       month + cal + 1, year, ctl);
-			p = ascii_wnum(p, weeknum, ctl);
+			p = ascii_weeknum(p, weeknum, ctl);
 			break;
 		} else if (col+1 == DAYS_IN_WEEK)
 			p += sprintf(p,"   ");
@@ -965,7 +965,7 @@ static char *ascii_day(char *p, int day, const struct cal_control *ctl)
 	return p;
 }
 
-static char *ascii_wnum(char *p, int weeknum, const struct cal_control *ctl)
+static char *ascii_weeknum(char *p, int weeknum, const struct cal_control *ctl)
 {
 	if ((ctl->weektype & WEEK_NUM_MASK) == weeknum)
 		p += sprintf(p,"%s",Senter);
