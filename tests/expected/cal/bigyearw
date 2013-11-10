@@ -20,8 +20,7 @@ Gregorian - Sunday-based month with week numbers
 52 24 25 26 27 28 29 30 
 53 31                   
 Julian - Monday-based month with week numbers
-           December           
-      1234567890123456789     
+ December 1234567890123456789
    Mon Tue Wed Thu Fri Sat Sun
 48                 335 336 337 
 49 338 339 340 341 342 343 344 
@@ -30,8 +29,7 @@ Julian - Monday-based month with week numbers
 52 359 360 361 362 363 364 365 
                                
 Julian - Sunday-based month with week numbers
-           December           
-      1234567890123456789     
+ December 1234567890123456789
    Sun Mon Tue Wed Thu Fri Sat
 48                     335 336 
 49 337 338 339 340 341 342 343 
@@ -60,8 +58,7 @@ Gregorian - Sunday-based three months with week numbers
 48 26 27 28 29 30        52 24 25 26 27 28 29 30   4 28 29 30 31          
                          53 31                                            
 Julian - Monday-based three months with week numbers
-           November                        December                         January           
-      1234567890123456789             1234567890123456789             1234567890123456790     
+ November 1234567890123456789    December 1234567890123456789     January 1234567890123456790
    Mon Tue Wed Thu Fri Sat Sun     Mon Tue Wed Thu Fri Sat Sun     Mon Tue Wed Thu Fri Sat Sun
 44         305 306 307 308 309  48                 335 336 337   1   1   2   3   4   5   6   7 
 45 310 311 312 313 314 315 316  49 338 339 340 341 342 343 344   2   8   9  10  11  12  13  14 
@@ -70,8 +67,7 @@ Julian - Monday-based three months with week numbers
 48 331 332 333 334              52 359 360 361 362 363 364 365   5  29  30  31                 
                                                                                                
 Julian - Sunday-based three months with week numbers
-           November                        December                         January           
-      1234567890123456789             1234567890123456789             1234567890123456790     
+ November 1234567890123456789    December 1234567890123456789     January 1234567890123456790
    Sun Mon Tue Wed Thu Fri Sat     Sun Mon Tue Wed Thu Fri Sat     Sun Mon Tue Wed Thu Fri Sat
 44             305 306 307 308  48                     335 336  53       1   2   3   4   5   6 
 45 309 310 311 312 313 314 315  49 337 338 339 340 341 342 343   1   7   8   9  10  11  12  13 
