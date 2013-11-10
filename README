@@ -19,7 +19,7 @@ DOWNLOAD:
 SOURCE CODE:
 
       Web interface:
-          http://git.kernel.org/?p=utils/util-linux/util-linux.git
+          http://git.kernel.org/cgit/utils/util-linux/util-linux.git
           https://github.com/karelzak/util-linux
       Checkout:
           git clone git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git util-linux

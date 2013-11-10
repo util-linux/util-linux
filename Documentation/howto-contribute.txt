@@ -82,7 +82,7 @@ Coding style
 	* the preferred coding style is based on the linux kernel
 	  Documentation/CodingStyle. For more details see:
 
-	  http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=blob_plain;f=Documentation/CodingStyle
+	  http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/plain/Documentation/CodingStyle
 
 	* Use `FIXME:' and a good description if want to inform others
 	  something is not quite right, and you are unwilling to fix the
