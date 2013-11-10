@@ -248,23 +248,25 @@ struct cal_control {
 
 /* function prototypes */
 static int leap_year(long year);
-static char *ascii_day(char *, int, const struct cal_control *ctl);
-static char *ascii_weeknum(char *p, int wn, const struct cal_control *ctl);
-static int center_str(const char* src, char* dest, size_t dest_size, size_t width);
-static void center(const char *, size_t, int);
-static void day_array(int, int, long, int *, const struct cal_control *ctl);
-static int day_in_week(int, int, long);
-static int day_in_year(int, int, long);
-static int week_number(int, int, long, const struct cal_control *ctl);
-static int week_to_day(long, const struct cal_control *ctl);
-static void yearly(int, long, const struct cal_control *ctl);
-static int do_monthly(int day, int month, long year, struct fmt_st *out,
-		      int header_hint, const struct cal_control *ctl);
-static void monthly(int, int, long, const struct cal_control *ctl);
-static int two_header_lines(int month, long year, const struct cal_control *ctl);
-static void monthly3(int, int, long, const struct cal_control *ctl);
-static void __attribute__ ((__noreturn__)) usage(FILE * out);
 static void headers_init(struct cal_control *ctl);
+static int do_monthly(int day, int month, long year, struct fmt_st *out, int header_hint,
+		      const struct cal_control *ctl);
+static void monthly(int day, int month, long year, const struct cal_control *ctl);
+static int two_header_lines(int month, long year, const struct cal_control *ctl);
+static void monthly3(int day, int month, long year, const struct cal_control *ctl);
+static char *append_weeknum(char *p, int *dp, int month, long year, int cal, int row,
+			    const struct cal_control *ctl);
+static void yearly(int day, long year, const struct cal_control *ctl);
+static void day_array(int day, int month, long year, int *days, const struct cal_control *ctl);
+static int day_in_year(int day, int month, long year);
+static int day_in_week(int d, int m, long y);
+static int week_number(int day, int month, long year, const struct cal_control *ctl);
+static int week_to_day(long year, const struct cal_control *ctl);
+static char *ascii_day(char *p, int day, const struct cal_control *ctl);
+static char *ascii_weeknum(char *p, int weeknum, const struct cal_control *ctl);
+static int center_str(const char *src, char *dest, size_t dest_size, size_t width);
+static void center(const char *str, size_t len, int separate);
+static void __attribute__((__noreturn__)) usage(FILE *out);
 
 int main(int argc, char **argv)
 {
