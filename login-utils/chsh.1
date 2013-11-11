@@ -29,8 +29,9 @@ If a shell is not given on the command line,
 prompts for one.
 
 .B chsh
-is used to change local entries only. Use ypchsh, lchsh or any other
-implementation for non-local entries.
+supports non-local entries (kerberos, LDAP, etc.) if linked with libuser,
+otherwise use ypchsh, lchsh or any other implementation for non-local
+entries.
 .SH OPTIONS
 .TP
 .BI "\-s, \-\-shell " shell
