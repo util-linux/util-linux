@@ -40,8 +40,9 @@ command will display four pieces of information that can be changed by
 your real name, your work room and phone, and your home phone.
 
 .B chfn
-is used to change local entries only. Use ypchfn, lchfn or any other
-implementation for non-local entries.
+supports non-local entries (kerberos, LDAP, etc.) if linked with libuser,
+otherwise use ypchsh, lchsh or any other implementation for non-local
+entries.
 .SS COMMAND LINE
 Any of the four pieces of information can be specified on the command
 line.  If no information is given on the command line,
