@@ -115,6 +115,10 @@ static int fix_optstr(struct libmnt_context *cxt)
 #ifdef HAVE_LIBSELINUX
 	int se_fix = 0, se_rem = 0;
 #endif
+#ifdef HAVE_SMACK
+	int sm_rem = 0;
+#endif
+
 	assert(cxt);
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
@@ -206,6 +210,10 @@ static int fix_optstr(struct libmnt_context *cxt)
 		mnt_optstr_deduplicate_option(&fs->fs_optstr, "seclabel");
 	}
 #endif
+#ifdef HAVE_SMACK
+	if (access("sys/fs/smackfs", F_OK) != 0)
+		sm_rem = 1;
+#endif
 	while (!mnt_optstr_next_option(&next, &name, &namesz, &val, &valsz)) {
 
 		if (namesz == 3 && !strncmp(name, "uid", 3))
@@ -230,6 +238,20 @@ static int fix_optstr(struct libmnt_context *cxt)
 				/* translate selinux contexts */
 				rc = mnt_optstr_fix_secontext(&fs->fs_optstr,
 							val, valsz, &next);
+		}
+#endif
+#ifdef HAVE_SMACK
+		else if (sm_rem && namesz >= 10
+			 && (!strncmp(name, "smackfsdef", 10) ||
+		             !strncmp(name, "smackfsfloor", 12) ||
+		             !strncmp(name, "smackfshat", 10) ||
+			     !strncmp(name, "smackfsroot", 11) ||
+			     !strncmp(name, "smackfstransmute", 16))) {
+
+			next = name;
+			rc = mnt_optstr_remove_option_at(&fs->fs_optstr,
+					name,
+					val ? val + valsz : name + namesz);
 		}
 #endif
 		if (rc)
