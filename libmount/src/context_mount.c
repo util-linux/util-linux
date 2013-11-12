@@ -211,7 +211,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 	}
 #endif
 #ifdef HAVE_SMACK
-	if (access("sys/fs/smackfs", F_OK) != 0)
+	if (access("/sys/fs/smackfs", F_OK) != 0)
 		sm_rem = 1;
 #endif
 	while (!mnt_optstr_next_option(&next, &name, &namesz, &val, &valsz)) {
