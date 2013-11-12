@@ -242,6 +242,11 @@ char* scandev(DIR *dir, dev_t comparedev)
 	while ((dent = readdir(dir))) {
 		char path[PATH_MAX];
 		struct stat st;
+
+#ifdef _DIRENT_HAVE_D_TYPE
+		if (dent->d_type != DT_UNKNOWN && dent->d_type != DT_CHR)
+			continue;
+#endif
 		if (fstatat(fd, dent->d_name, &st, 0) < 0)
 			continue;
 		if (!S_ISCHR(st.st_mode))
