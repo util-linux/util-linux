@@ -1407,6 +1407,15 @@ AS_IF([test "x$with_systemdsystemunitdir" != "xno"], [
 AM_CONDITIONAL([HAVE_SYSTEMD], [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != "xno" ])
 
 
+AC_ARG_WITH([smack],
+  AS_HELP_STRING([--with-smack], [build with SMACK support]),
+  [], [with_smack=no]
+)
+AS_IF([test "x$with_smack" = xyes], [
+  AC_DEFINE([HAVE_SMACK], [1], [Add SMACK support])
+])
+
+
 AC_ARG_WITH([bashcompletiondir],
   AS_HELP_STRING([--with-bashcompletiondir=DIR], [Bash completions directory]),
   [],
