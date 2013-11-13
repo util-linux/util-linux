@@ -103,21 +103,13 @@ Display version information and exit.
 .SH NOTES
 The maximum useful size of a swap area depends on the architecture and
 the kernel version.
-It is roughly 2GiB on i386, PPC, m68k and ARM, 1GiB on sparc, 512MiB on mips,
-128GiB on alpha, and 3TiB on sparc64.  For kernels after 2.3.3 (May 1999) there is no
-such limitation.
 
 The maximum number of the pages that is possible to address by swap area header
 is 4294967295 (UINT_MAX). The remaining space on the swap device is ignored.
 
-Note that before version 2.1.117 the kernel allocated one byte for each page,
-while it now allocates two bytes, so that taking into use a swap area of 2 GiB
-might require 2 MiB of kernel memory.
-
-Presently, Linux allows 32 swap areas (this was 8 before Linux 2.4.10 (Sep 2001)).
+Presently, Linux allows 32 swap areas.
 The areas in use can be seen in the file
 .I /proc/swaps
-(since 2.1.25 (Sep 1997)).
 
 .B mkswap
 refuses areas smaller than 10 pages.
