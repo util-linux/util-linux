@@ -308,7 +308,12 @@ doinput(void) {
 			}
 		}
 		else if (cc < 0 && errno == EINTR && resized)
+		{
+			/* transmit window change information to the child */
+			ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&win);
+			ioctl(slave, TIOCSWINSZ, (char *)&win);
 			resized = 0;
+		}
 		else
 			break;
 	}
@@ -333,9 +338,6 @@ finish(int dummy __attribute__ ((__unused__))) {
 void
 resize(int dummy __attribute__ ((__unused__))) {
 	resized = 1;
-	/* transmit window change information to the child */
-	ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&win);
-	ioctl(slave, TIOCSWINSZ, (char *)&win);
 }
 
 /*
