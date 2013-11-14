@@ -327,12 +327,15 @@ void
 finish(int dummy __attribute__ ((__unused__))) {
 	int status;
 	pid_t pid;
+	int errsv = errno;
 
 	while ((pid = wait3(&status, WNOHANG, 0)) > 0)
 		if (pid == child) {
 			childstatus = status;
 			die = 1;
 		}
+
+	errno = errsv;
 }
 
 void
