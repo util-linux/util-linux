@@ -628,7 +628,7 @@ static void get_list_blocks(char *filename) {
 				device_name);
 
 	while (!feof(listfile)) {
-		if (fscanf(listfile,"%ld\n", &blockno) != 1) {
+		if (fscanf(listfile,"%lu\n", &blockno) != 1) {
 			printf(_("badblock number input error on line %d\n"), badblocks + 1);
 			errx(MKFS_EX_ERROR, _("%s: cannot read badblocks file"),
 					device_name);
