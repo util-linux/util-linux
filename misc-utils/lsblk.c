@@ -903,7 +903,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		if (cxt->discard && p)
 			tt_line_set_data(ln, col, p);
 		else
-			tt_line_set_data(ln, col, "0");
+			tt_line_set_data(ln, col, xstrdup("0"));
 		break;
 	case COL_DGRAN:
 		if (lsblk->bytes)
@@ -936,7 +936,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		if (cxt->discard && p)
 			tt_line_set_data(ln, col, p);
 		else
-			tt_line_set_data(ln, col, "0");
+			tt_line_set_data(ln, col, xstrdup("0"));
 		break;
 	case COL_WSAME:
 		if (lsblk->bytes)
@@ -948,7 +948,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 					   "queue/write_same_max_bytes", &x) == 0)
 				p = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
 		}
-		tt_line_set_data(ln, col, p ? p : "0");
+		tt_line_set_data(ln, col, p ? p : xstrdup("0"));
 		break;
 	};
 }
