@@ -19,6 +19,10 @@ Mounting and unmounting filesystems will not affect the rest of the system
 (\fBCLONE_NEWNS\fP flag), except for filesystems which are explicitly marked as
 shared (with \fBmount --make-shared\fP; see \fI/proc/self/mountinfo\fP for the
 \fBshared\fP flags).
+
+It's recommended to use \fBmount --make-rprivate\fP or \fBmount --make-rslave\fP
+after \fBunshare --mount\fP to make sure that mountpoints in the new namespace
+are really unshared from parental namespace.
 .TP
 .BR "UTS namespace"
 Setting hostname or domainname will not affect the rest of the system.
@@ -74,10 +78,12 @@ running it directly.  This is useful when creating a new pid namespace.
 Just before running the program, mount the proc filesystem at the \fImountpoint\fP
 (default is /proc).  This is useful when creating a new pid namespace.  It also
 implies creating a new mount namespace since the /proc mount would otherwise
-mess up existing programs on the system.
+mess up existing programs on the system. The new proc filesystem is explicitly
+mounted as private (by MS_PRIVATE|MS_REC).
 .SH SEE ALSO
 .BR unshare (2),
-.BR clone (2)
+.BR clone (2),
+.BR mount (8)
 .SH BUGS
 None known so far.
 .SH AUTHOR
