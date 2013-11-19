@@ -287,3 +287,7 @@ global:
 	mnt_unref_fs;
 	mnt_unref_table;
 } MOUNT_2.23;
+
+MOUNT_2.25 {
+	mnt_tag_is_valid;
+} MOUNT_2.24;

@@ -370,6 +370,7 @@ mnt_has_regular_mtab
 mnt_mangle
 mnt_match_fstype
 mnt_match_options
+mnt_tag_is_valid
 mnt_unmangle
 </SECTION>
 

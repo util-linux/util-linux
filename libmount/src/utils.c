@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <pwd.h>
 #include <grp.h>
+#include <blkid.h>
 
 #include "strutils.h"
 #include "pathnames.h"
@@ -69,6 +70,22 @@ int mnt_valid_tagname(const char *tagname)
 		return 1;
 
 	return 0;
+}
+
+/**
+ * mnt_tag_is_valid:
+ * @tag: NAME=value string
+ *
+ * Returns: 1 if the @tag is parsable and tag NAME= is supported by libmount, or 0.
+ */
+int mnt_tag_is_valid(const char *tag)
+{
+	char *t = NULL;
+	int rc = tag && blkid_parse_tag_string(tag, &t, NULL) == 0
+		     && mnt_valid_tagname(t);
+
+	free(t);
+	return rc;
 }
 
 int mnt_parse_offset(const char *str, size_t len, uintmax_t *res)

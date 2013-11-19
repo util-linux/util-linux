@@ -197,6 +197,7 @@ extern char *mnt_mangle(const char *str)
 extern char *mnt_unmangle(const char *str)
 			__ul_attribute__((warn_unused_result));
 
+extern int mnt_tag_is_valid(const char *tag);
 extern int mnt_fstype_is_netfs(const char *type);
 extern int mnt_fstype_is_pseudofs(const char *type);
 
