@@ -237,14 +237,18 @@ int blkid_parse_tag_string(const char *token, char **ret_type, char **ret_val)
 			goto errout; /* missing closing quote */
 		*cp = '\0';
 	}
-	value = value && *value ? strdup(value) : NULL;
-	if (!value)
-		goto errout;
+
+	if (ret_val) {
+		value = value && *value ? strdup(value) : NULL;
+		if (!value)
+			goto errout;
+		*ret_val = value;
+	}
 
 	if (ret_type)
 		*ret_type = name;
-	if (ret_val)
-		*ret_val = value;
+	else
+		free(name);
 
 	return 0;
 
