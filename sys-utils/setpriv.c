@@ -106,8 +106,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" --keep-groups            keep supplementary groups\n"), out);
 	fputs(_(" --groups <group,...>     set supplementary groups\n"), out);
 	fputs(_(" --securebits <bits>      set securebits\n"), out);
-	fputs(_(" --selinux-label <label>  set SELinux label (requires process:transition)\n"), out);
-	fputs(_(" --apparmor-profile <pr>  set AppArmor profile (requires onexec permission)\n"), out);
+	fputs(_(" --selinux-label <label>  set SELinux label\n"), out);
+	fputs(_(" --apparmor-profile <pr>  set AppArmor profile\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
