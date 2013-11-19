@@ -253,7 +253,7 @@ static int sgi_list_table(struct fdisk_context *cxt)
 	struct sgi_device_parameter *sgiparam = &sgilabel->devparam;
 	size_t i, used;
 	char *p;
-	int rc;
+	int rc = 0;
 
 	if (fdisk_context_display_details(cxt))
 		fdisk_colon(cxt, _(
@@ -280,7 +280,7 @@ static int sgi_list_table(struct fdisk_context *cxt)
 	tt_define_column(tb, _("Id"),       2, TT_FL_RIGHT);
 	tt_define_column(tb, _("System"), 0.2, TT_FL_TRUNC);
 
-	for (i = 0, used = 1; i < cxt->label->nparts_max; i++) {
+	for (i = 0, used = 0; i < cxt->label->nparts_max; i++) {
 		uint32_t start, len;
 		struct fdisk_parttype *t;
 		struct tt_line *ln;
@@ -297,7 +297,7 @@ static int sgi_list_table(struct fdisk_context *cxt)
 
 		if (asprintf(&p, "%zu:", i + 1) > 0)
 			tt_line_set_data(ln, 0, p);	/* # */
-		p = fdisk_partname(cxt->dev_path, used++);
+		p = fdisk_partname(cxt->dev_path, i + 1);
 		if (p)
 			tt_line_set_data(ln, 1, p);	/* Device */
 
@@ -317,9 +317,11 @@ static int sgi_list_table(struct fdisk_context *cxt)
 		if (t->name)
 			tt_line_set_data(ln, 7, strdup(t->name)); /* type Name */
 		fdisk_free_parttype(t);
+		used++;
 	}
 
-	rc = fdisk_print_table(cxt, tb);
+	if (used)
+		rc = fdisk_print_table(cxt, tb);
 	tt_free_table(tb);
 	if (rc)
 		return rc;
