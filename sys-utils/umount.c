@@ -627,15 +627,17 @@ int main(int argc, char **argv)
 			rc += umount_recursive(cxt, *argv++);
 	} else {
 		while (argc--) {
-			char *path = *argv++;
+			char *path = *argv;
 
-			if (mnt_context_is_restricted(cxt))
+			if (mnt_context_is_restricted(cxt)
+			    && !mnt_tag_is_valid(path))
 				path = sanitize_path(path);
 
 			rc += umount_one(cxt, path);
 
-			if (mnt_context_is_restricted(cxt))
+			if (path != *argv)
 				free(path);
+			argv++;
 		}
 	}
 
