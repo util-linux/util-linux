@@ -466,8 +466,7 @@ int main(int argc, char **argv)
 			log_warn(_("%s: can't change process priority: %m"),
 				options.tty);
 	}
-	if (options.osrelease)
-		free(options.osrelease);
+	free(options.osrelease);
 #ifdef DEBUGGING
 	fprintf(dbf, "read %c\n", ch);
 	if (close_stream(dbf) != 0)
@@ -1383,8 +1382,7 @@ static char *read_os_release(struct options *op, const char *varname)
 			}
 			break;
 		}
-		if (ret)
-			free(ret);
+		free(ret);
 		ret = strdup(p);
 		if (!ret)
 			log_err(_("failed to allocate memory: %m"));

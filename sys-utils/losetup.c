@@ -184,8 +184,7 @@ static int show_all_loops(struct loopdev_cxt *lc, const char *file,
 		printf_loopdev(lc);
 	}
 	loopcxt_deinit_iterator(lc);
-	if (cn_file)
-		free(cn_file);
+	free(cn_file);
 	return 0;
 }
 
@@ -351,8 +350,7 @@ static int make_table(struct loopdev_cxt *lc,
 	}
 
 	loopcxt_deinit_iterator(lc);
-	if (cn_file)
-		free(cn_file);
+	free(cn_file);
 	return 0;
 }
 
