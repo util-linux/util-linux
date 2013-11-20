@@ -10,4 +10,4 @@ f: namei1/namei2/a/b
  d namei1
  d namei2
  - a
-b - No such file or directory
+   b - No such file or directory

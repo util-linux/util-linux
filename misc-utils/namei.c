@@ -367,6 +367,15 @@ print_namei(struct namei *nm, char *path)
 		char md[11];
 
 		if (nm->noent) {
+			int blanks = 1;
+			if (flags & NAMEI_MODES)
+				blanks += 9;
+			if (flags & NAMEI_OWNERS)
+				blanks += uwidth + gwidth + 2;
+			if (!(flags & NAMEI_VERTICAL))
+				blanks += 1;
+			blanks += nm->level * 2;
+			printf("%*s ", blanks, "");
 			printf(_("%s - No such file or directory\n"), nm->name);
 			return -1;
 		}
