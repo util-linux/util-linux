@@ -1,2 +1,2 @@
-from pylibmount import *
+from .pylibmount import *
 
