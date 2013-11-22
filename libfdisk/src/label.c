@@ -108,6 +108,57 @@ int fdisk_missing_geometry(struct fdisk_context *cxt)
 }
 
 /**
+ * fdisk_get_columns:
+ * @cxt: fdisk context
+ * @cols: returns allocated array with FDISK_COL_*
+ * @ncols: returns number of items in cols
+ *
+ * Returns 0 on success, otherwise, a corresponding error.
+ */
+int fdisk_get_columns(struct fdisk_context *cxt, int **cols, size_t *ncols)
+{
+	size_t i, n;
+	int *c;
+
+	assert(cxt);
+
+	if (!cxt->label)
+		return -EINVAL;
+	if (!cxt->label->columns || !cxt->label->ncolumns)
+		return -ENOSYS;
+	c = calloc(cxt->label->ncolumns, sizeof(int));
+	if (!c)
+		return -ENOMEM;
+	for (n = 0, i = 0; i < cxt->label->ncolumns; i++) {
+		if (cxt->label->columns[i].detail
+		    && !fdisk_context_display_details(cxt))
+			continue;
+		c[n++] = cxt->label->columns[i].id;
+	}
+	if (cols)
+		*cols = c;
+	if (ncols)
+		*ncols = n;
+	return 0;
+}
+
+static const struct fdisk_column *fdisk_label_get_column(
+					struct fdisk_label *lb, int id)
+{
+	size_t i;
+
+	assert(lb);
+	assert(id > 0);
+
+	for (i = 0; i < lb->ncolumns; i++) {
+		if (lb->columns[i].id == id)
+			return &lb->columns[i];
+	}
+
+	return NULL;
+}
+
+/**
  * fdisk_verify_disklabel:
  * @cxt: fdisk context
  *
@@ -128,10 +179,38 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
 }
 
 /**
+ * fdisk_partition_get_data:
+ * @cxt: fdisk context
+ * @id: column (FDISK_COL_*)
+ * @partnum: partition number
+ * @data: return allocated data
+ *
+ * For exmaple
+ *	fdisk_partition_get_data(cxt, FDISK_COL_UUID, 0, &data);
+ * returns UUID for the first partition.
+ *
+ * Returns 0 on success, otherwise, a corresponding error.
+ */
+int fdisk_partition_get_data(struct fdisk_context *cxt, int id,
+			     size_t partnum, char **data)
+{
+	if (!cxt || !cxt->label)
+		return -EINVAL;
+	if (!cxt->label->op->part_get_data)
+		return -ENOSYS;
+
+	return cxt->label->op->part_get_data(cxt, id, partnum, data);
+}
+
+/**
  * fdisk_list_disklabel:
  * @cxt: fdisk context
  *
- * Lists in-memory partition table
+ * Lists in-memory partition table and all related details.
+ *
+ * This function uses libfdisk ASK interface to print data. The details about
+ * partitions table are printed by FDISK_ASKTYPE_INFO and partitions by
+ * FDISK_ASKTYPE_TABLE. The default columns are printed.
  *
  * Returns 0 on success, otherwise, a corresponding error.
  */
@@ -143,6 +222,89 @@ int fdisk_list_disklabel(struct fdisk_context *cxt)
 		return -ENOSYS;
 
 	return cxt->label->op->list(cxt);
+}
+
+/**
+ * fdisk_list_partitions
+ * @cxt: fdisk context
+ * @cols: array with wanted FDISK_COL_* columns
+ * @ncols: number of items in the cols array
+ *
+ * This is subset of fdisk_list_disklabel(), this function lists really
+ * only partitons by FDISK_ASKTYPE_TABLE interface.
+ *
+ * If no @cols are specified then the default is printed (see
+ * fdisk_label_get_columns() for the default columns).
+
+ * Returns 0 on success, otherwise, a corresponding error.
+ */
+
+int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
+{
+	int *org = cols, rc = 0;
+	struct tt *tb = NULL;
+	const struct fdisk_column *col;
+	size_t i, j;
+
+	if (!cxt || !cxt->label)
+		return -EINVAL;
+	if (!cxt->label->op->part_get_data)
+		return -ENOSYS;
+
+	if (!cols || !ncols) {
+		rc = fdisk_get_columns(cxt, &cols, &ncols);
+		if (rc)
+			return rc;
+	}
+
+	tb = tt_new_table(TT_FL_FREEDATA);
+	if (!tb) {
+		rc = -ENOMEM;
+		goto done;
+	}
+
+	/* define table columns */
+	for (j = 0; j < ncols; j++) {
+		col = fdisk_label_get_column(cxt->label, cols[j]);
+		if (!col)
+			continue;
+		tt_define_column(tb, col->name, col->width, col->flags);
+	}
+
+	/* generate per-partition lines into table */
+	for (i = 0; i < cxt->label->nparts_max; i++) {
+		int status = 0;
+		struct tt_line *ln;
+
+		rc = fdisk_partition_get_status(cxt, i, &status);
+		if (rc || !(status & FDISK_PARTSTAT_USED))
+			continue;
+
+		ln = tt_add_line(tb, NULL);
+		if (!ln)
+			continue;
+
+		/* set data for the columns */
+		for (j = 0; j < ncols; j++) {
+			char *data = NULL;
+
+			col = fdisk_label_get_column(cxt->label, cols[j]);
+			if (!col)
+				continue;
+			rc = fdisk_partition_get_data(cxt, col->id, i, &data);
+			if (rc)
+				goto done;
+			tt_line_set_data(ln, j, data);
+		}
+	}
+
+	if (!tt_is_empty(tb))
+		rc = fdisk_print_table(cxt, tb);
+done:
+	if (org != cols)
+		free(cols);
+	tt_free_table(tb);
+	return rc;
 }
 
 /**
