@@ -1263,123 +1263,113 @@ static char *guid_attrs_to_string(struct gpt_attr *attr, char **res)
 	return *res;
 }
 
-/*
- * List label partitions.
- * This function must currently exist to comply with standard fdisk
- * requirements, but once partition semantics are added to the fdisk
- * API it can be removed for custom implementation (see gpt_label struct).
- */
-static int gpt_list_disklabel(struct fdisk_context *cxt)
+static int gpt_get_partition_data(struct fdisk_context *cxt, int id, size_t n, char **data)
 {
-	int rc, trunc = TT_FL_TRUNC;
-	uint32_t i;
 	struct fdisk_gpt_label *gpt;
-	struct gpt_header *h;
-	uint64_t fu;
-	uint64_t lu;
-	struct tt *tb = NULL;
+	struct gpt_entry *e;
+	char *p = NULL;
+	int rc = 0;
 
 	assert(cxt);
+	assert(data);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, GPT));
 
 	gpt = self_label(cxt);
-	h = gpt->pheader;
-	fu = le64_to_cpu(gpt->pheader->first_usable_lba);
-	lu = le64_to_cpu(gpt->pheader->last_usable_lba);
 
-	tb = tt_new_table(TT_FL_FREEDATA);
-	if (!tb)
-		return -ENOMEM;
+	if ((uint32_t) n >= le32_to_cpu(gpt->pheader->npartition_entries))
+		return -EINVAL;
 
-	/* don't trunc anything in expert mode */
+	gpt = self_label(cxt);
+	e = &gpt->ents[n];
+
+	switch (id) {
+	case FDISK_COL_DEVICE:
+		p = fdisk_partname(cxt->dev_path, n + 1);
+		break;
+	case FDISK_COL_START:
+		if (asprintf(&p, "%ju", gpt_partition_start(e)) < 0)
+			rc = -ENOMEM;
+		break;
+	case FDISK_COL_END:
+		if (asprintf(&p, "%ju", gpt_partition_end(e)) < 0)
+			rc = -ENOMEM;
+		break;
+	case FDISK_COL_SIZE:
+		if (fdisk_context_display_details(cxt)) {
+			if (asprintf(&p, "%ju", gpt_partition_size(e) *
+						cxt->sector_size) < 0)
+				rc = -ENOMEM;
+		} else {
+			p = size_to_human_string(SIZE_SUFFIX_1LETTER,
+					       gpt_partition_size(e) * cxt->sector_size);
+			if (!p)
+				rc = -ENOMEM;
+		}
+		break;
+	case FDISK_COL_TYPE:
+	{
+		struct fdisk_parttype *t = fdisk_get_partition_type(cxt, n);
+		if (t && t->name)
+			p = strdup(t->name);
+		fdisk_free_parttype(t);
+		break;
+	}
+	case FDISK_COL_UUID:
+	{
+		char u_str[37];
+		if (guid_to_string(&e->partition_guid, u_str)) {
+			p = strdup(u_str);
+			if (!p)
+				rc = -ENOMEM;
+		}
+		break;
+	}
+	case FDISK_COL_ATTR:
+	{
+		char *buf = NULL;
+
+		if (asprintf(&p, "%s%s%s%s",
+				e->attr.required_to_function ? "Required " : "",
+				e->attr.legacy_bios_bootable ? "LegacyBoot " : "",
+				e->attr.no_blockio_protocol  ? "NoBlockIO " : "",
+				guid_attrs_to_string(&e->attr, &buf)) < 0)
+			rc = -ENOMEM;
+		free(buf);
+		break;
+	}
+	case FDISK_COL_NAME:
+		p = encode_to_utf8((unsigned char *)e->name, sizeof(e->name));
+		break;
+	} /* switch */
+
+
+	if (rc == 0)
+		*data = p;
+	return rc;
+
+}
+
+/*
+ * List label partitions.
+ */
+static int gpt_list_disklabel(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, GPT));
+
 	if (fdisk_context_display_details(cxt)) {
-		trunc = 0;
+		struct gpt_header *h = self_label(cxt)->pheader;
+
 		fdisk_colon(cxt, _("First LBA: %ju"), h->first_usable_lba);
 		fdisk_colon(cxt, _("Last LBA: %ju"), h->last_usable_lba);
 		fdisk_colon(cxt, _("Alternative LBA: %ju"), h->alternative_lba);
 		fdisk_colon(cxt, _("Partitions entries LBA: %ju"), h->partition_entry_lba);
 		fdisk_colon(cxt, _("Allocated partition entries: %u"), h->npartition_entries);
 	}
-	tt_define_column(tb, _("Device"), 0.1, 0);
-	tt_define_column(tb, _("Start"),   12, TT_FL_RIGHT);
-	tt_define_column(tb, _("End"),     12, TT_FL_RIGHT);
-	tt_define_column(tb, _("Size"),     6, TT_FL_RIGHT);
-	tt_define_column(tb, _("Type"),   0.1, trunc);
 
-	if (fdisk_context_display_details(cxt)) {
-		tt_define_column(tb, _("UUID"),  36, 0);
-		tt_define_column(tb, _("Name"), 0.2, trunc);
-		tt_define_column(tb, _("Attributes"), 0, 0);
-	}
-
-	for (i = 0; i < le32_to_cpu(h->npartition_entries); i++) {
-		struct gpt_entry *e = &gpt->ents[i];
-		char *sizestr = NULL, *p;
-		uint64_t start = gpt_partition_start(e);
-		uint64_t size = gpt_partition_size(e);
-		struct fdisk_parttype *t;
-		struct tt_line *ln;
-		char u_str[37];
-
-		if (partition_unused(&gpt->ents[i]) || start == 0)
-			continue;
-		/* the partition has to inside usable range */
-		if (start < fu || start + size - 1 > lu)
-			continue;
-		ln = tt_add_line(tb, NULL);
-		if (!ln)
-			continue;
-
-		if (fdisk_context_display_details(cxt) &&
-		    asprintf(&p, "%ju", size * cxt->sector_size) > 0)
-			sizestr = p;
-		else
-			sizestr = size_to_human_string(SIZE_SUFFIX_1LETTER,
-					       size * cxt->sector_size);
-		t = fdisk_get_partition_type(cxt, i);
-
-		/* basic columns */
-		p = fdisk_partname(cxt->dev_path, i + 1);
-		if (p)
-			tt_line_set_data(ln, 0, p);
-		if (asprintf(&p, "%ju", start) > 0)
-			tt_line_set_data(ln, 1, p);
-		if (asprintf(&p, "%ju", gpt_partition_end(e)) > 0)
-			tt_line_set_data(ln, 2, p);
-		if (sizestr)
-			tt_line_set_data(ln, 3, sizestr);
-		if (t && t->name)
-			tt_line_set_data(ln, 4, strdup(t->name));
-
-		/* expert menu column(s) */
-		if (fdisk_context_display_details(cxt)) {
-			char *buf = NULL;
-			char *name = encode_to_utf8(
-					(unsigned char *)e->name,
-					sizeof(e->name));
-
-			if (guid_to_string(&e->partition_guid, u_str))
-				tt_line_set_data(ln, 5, strdup(u_str));
-			if (name)
-				tt_line_set_data(ln, 6, name);
-			if (asprintf(&p, "%s%s%s%s",
-					e->attr.required_to_function ? "Required " : "",
-					e->attr.legacy_bios_bootable ? "LegacyBoot " : "",
-					e->attr.no_blockio_protocol  ? "NoBlockIO " : "",
-					guid_attrs_to_string(&e->attr, &buf)) > 0)
-				tt_line_set_data(ln, 7, p);
-			free(buf);
-		}
-
-		fdisk_warn_alignment(cxt, start, i);
-		fdisk_free_parttype(t);
-	}
-
-	rc = fdisk_print_table(cxt, tb);
-	tt_free_table(tb);
-
-	return rc;
+	return fdisk_list_partitions(cxt, NULL, 0);
 }
 
 /*
@@ -2298,8 +2288,23 @@ static const struct fdisk_label_operations gpt_operations =
 	.part_toggle_flag = gpt_toggle_partition_flag,
 
 	.part_get_status = gpt_get_partition_status,
+	.part_get_data = gpt_get_partition_data,
 
 	.deinit		= gpt_deinit
+};
+
+static const struct fdisk_column gpt_columns[] =
+{
+	/* basic */
+	{ FDISK_COL_DEVICE,	N_("Device"),	 10,	0 },
+	{ FDISK_COL_START,	N_("Start"),	  5,	TT_FL_RIGHT },
+	{ FDISK_COL_END,	N_("End"),	  5,	TT_FL_RIGHT },
+	{ FDISK_COL_SIZE,	N_("Size"),	  5,	TT_FL_RIGHT },
+	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	TT_FL_TRUNC },
+	/* expert */
+	{ FDISK_COL_UUID,	N_("UUID"),	 36,	0,           1 },
+	{ FDISK_COL_NAME,	N_("Name"),	0.2,	TT_FL_TRUNC, 1 },
+	{ FDISK_COL_ATTR,	N_("Attributes"), 0,	0,           1 }
 };
 
 /*
@@ -2323,6 +2328,9 @@ struct fdisk_label *fdisk_new_gpt_label(struct fdisk_context *cxt)
 	lb->op = &gpt_operations;
 	lb->parttypes = gpt_parttypes;
 	lb->nparttypes = ARRAY_SIZE(gpt_parttypes);
+
+	lb->columns = gpt_columns;
+	lb->ncolumns = ARRAY_SIZE(gpt_columns);
 
 	return lb;
 }
