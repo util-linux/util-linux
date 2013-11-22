@@ -33,6 +33,7 @@ enum {
 };
 
 struct tt {
+	FILE	*out;		/* output stream */
 	size_t	ncols;		/* number of columns */
 	size_t	termwidth;	/* terminal width */
 	int	is_term;	/* is a tty? */
@@ -79,6 +80,7 @@ extern struct tt *tt_new_table(int flags);
 extern void tt_free_table(struct tt *tb);
 extern void tt_remove_lines(struct tt *tb);
 extern int tt_print_table(struct tt *tb);
+extern void tt_set_stream(struct tt *tb, FILE *out);
 
 extern struct tt_column *tt_define_column(struct tt *tb, const char *name,
 						double whint, int flags);

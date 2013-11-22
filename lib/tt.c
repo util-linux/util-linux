@@ -201,6 +201,7 @@ struct tt *tt_new_table(int flags)
 		return NULL;
 
 	tb->flags = flags;
+	tb->out = stdout;
 	INIT_LIST_HEAD(&tb->tb_lines);
 	INIT_LIST_HEAD(&tb->tb_columns);
 
@@ -213,6 +214,13 @@ struct tt *tt_new_table(int flags)
 
 	tb->first_run = TRUE;
 	return tb;
+}
+
+void tt_set_stream(struct tt *tb, FILE *out)
+{
+	if (!tb)
+		return;
+	tb->out = out;
 }
 
 void tt_remove_lines(struct tt *tb)
@@ -721,18 +729,18 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 
 	/* raw mode */
 	if (tb->flags & TT_FL_RAW) {
-		tt_fputs_nonblank(data, stdout);
+		tt_fputs_nonblank(data, tb->out);
 		if (!is_last_column(tb, cl))
-			fputc(' ', stdout);
+			fputc(' ', tb->out);
 		return;
 	}
 
 	/* NAME=value mode */
 	if (tb->flags & TT_FL_EXPORT) {
-		fprintf(stdout, "%s=", cl->name);
-		tt_fputs_quoted(data, stdout);
+		fprintf(tb->out, "%s=", cl->name);
+		tt_fputs_quoted(data, tb->out);
 		if (!is_last_column(tb, cl))
-			fputc(' ', stdout);
+			fputc(' ', tb->out);
 		return;
 	}
 
@@ -763,25 +771,25 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 	if (data) {
 		if (!(tb->flags & TT_FL_RAW) && (cl->flags & TT_FL_RIGHT)) {
 			size_t xw = cl->width;
-			fprintf(stdout, "%*s", (int) xw, data);
+			fprintf(tb->out, "%*s", (int) xw, data);
 			if (len < xw)
 				len = xw;
 		}
 		else
-			fputs(data, stdout);
+			fputs(data, tb->out);
 	}
 	for (i = len; i < width; i++)
-		fputc(' ', stdout);		/* padding */
+		fputc(' ', tb->out);		/* padding */
 
 	if (!is_last_column(tb, cl)) {
 		if (len > width && !(cl->flags & TT_FL_TRUNC)) {
-			fputc('\n', stdout);
+			fputc('\n', tb->out);
 			for (i = 0; i <= (size_t) cl->seqnum; i++) {
 				struct tt_column *x = tt_get_column(tb, i);
 				printf("%*s ", -((int)x->width), " ");
 			}
 		} else
-			fputc(' ', stdout);	/* columns separator */
+			fputc(' ', tb->out);	/* columns separator */
 	}
 
 	free(buf);
@@ -799,7 +807,7 @@ static void print_line(struct tt_line *ln, char *buf, size_t bufsz)
 
 		print_data(ln->table, cl, line_get_data(ln, cl, buf, bufsz));
 	}
-	fputc('\n', stdout);
+	fputc('\n', ln->table->out);
 }
 
 static void print_header(struct tt *tb, char *buf, size_t bufsz)
@@ -822,7 +830,7 @@ static void print_header(struct tt *tb, char *buf, size_t bufsz)
 		buf[bufsz - 1] = '\0';
 		print_data(tb, cl, buf);
 	}
-	fputc('\n', stdout);
+	fputc('\n', tb->out);
 }
 
 static void print_table(struct tt *tb, char *buf, size_t bufsz)
@@ -874,7 +882,7 @@ static void print_tree(struct tt *tb, char *buf, size_t bufsz)
 /*
  * @tb: table
  *
- * Prints the table to stdout
+ * Prints the table to tb->out
  */
 int tt_print_table(struct tt *tb)
 {
