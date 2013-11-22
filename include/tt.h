@@ -95,6 +95,8 @@ extern int tt_line_set_userdata(struct tt_line *ln, void *data);
 extern void tt_fputs_quoted(const char *data, FILE *out);
 extern void tt_fputs_nonblank(const char *data, FILE *out);
 
+extern size_t tb_get_nlines(struct tt *tb);
+
 static inline int tt_is_empty(struct tt *tb)
 {
 	return !tb || list_empty(&tb->tb_lines);

@@ -223,6 +223,19 @@ void tt_set_stream(struct tt *tb, FILE *out)
 	tb->out = out;
 }
 
+size_t tb_get_nlines(struct tt *tb)
+{
+	struct list_head *p;
+	size_t ct = 0;
+
+	if (tt_is_empty(tb))
+		return 0;
+
+	list_for_each(p, &tb->tb_lines)
+		ct++;
+	return ct;
+}
+
 void tt_remove_lines(struct tt *tb)
 {
 	if (!tb)
