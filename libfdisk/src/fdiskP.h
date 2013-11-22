@@ -176,6 +176,12 @@ struct fdisk_label_operations {
 						size_t partnum,
 						int *status);
 
+	/* get data according to id (FDISK_COL_*) */
+	int (*part_get_data)(struct fdisk_context *cxt,
+						int id,
+						size_t n,
+						char **data);
+
 	int (*part_toggle_flag)(struct fdisk_context *cxt, size_t i, unsigned long flag);
 
 	/* refresh alignment setting */
@@ -186,6 +192,18 @@ struct fdisk_label_operations {
 
 	/* deinit in-memory label stuff */
 	void (*deinit)(struct fdisk_label *lb);
+};
+
+/*
+ * fdisk_label_operations->list() output column
+ */
+struct fdisk_column {
+	int		id;		/* FDISK_COL_* */
+	const char	*name;		/* column header */
+	double		width;
+	int		flags;		/* TT_FL_* */
+
+	unsigned int	detail;		/* if fdisk_context_display_details() */
 };
 
 /*
@@ -205,8 +223,12 @@ struct fdisk_label {
 	unsigned int		changed:1,	/* label has been modified */
 				disabled:1;	/* this driver is disabled at all */
 
+	const struct fdisk_column *columns;	/* all possible columns */
+	size_t			ncolumns;
+
 	const struct fdisk_label_operations *op;
 };
+
 
 /* label driver flags */
 enum {

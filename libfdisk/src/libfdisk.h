@@ -116,6 +116,18 @@ extern size_t fdisk_get_nparttypes(struct fdisk_context *cxt);
 extern int fdisk_is_parttype_string(struct fdisk_context *cxt);
 
 /* label.c */
+enum {
+	FDISK_COL_NONE = 0,
+	FDISK_COL_DEVICE,
+	FDISK_COL_START,
+	FDISK_COL_END,
+	FDISK_COL_SIZE,
+	FDISK_COL_TYPE,
+	FDISK_COL_UUID,
+	FDISK_COL_NAME,
+	FDISK_COL_ATTR
+};
+
 extern int fdisk_require_geometry(struct fdisk_context *cxt);
 extern int fdisk_missing_geometry(struct fdisk_context *cxt);
 
@@ -132,6 +144,7 @@ extern int fdisk_locate_disklabel(struct fdisk_context *cxt, int n, const char *
 
 extern int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id);
 extern int fdisk_set_disklabel_id(struct fdisk_context *cxt);
+extern int fdisk_partition_get_data(struct fdisk_context *cxt, int id, size_t partnum, char **data);
 
 extern int fdisk_add_partition(struct fdisk_context *cxt, struct fdisk_parttype *t);
 extern int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum);
@@ -139,6 +152,9 @@ extern int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum);
 extern struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, size_t partnum);
 extern int fdisk_set_partition_type(struct fdisk_context *cxt, size_t partnum,
 			     struct fdisk_parttype *t);
+
+extern int fdisk_get_columns(struct fdisk_context *cxt, int **cols, size_t *ncols);
+extern int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols);
 
 extern void fdisk_label_set_changed(struct fdisk_label *lb, int changed);
 extern int fdisk_label_is_changed(struct fdisk_label *lb);
