@@ -19,17 +19,18 @@ enum {
 	TT_FL_ASCII       = (1 << 2),
 	TT_FL_NOHEADINGS  = (1 << 3),
 	TT_FL_EXPORT      = (1 << 4),
+	TT_FL_MAX	  = (1 << 5),	/* maximalize column width if possible */
 
 	/*
 	 * Column flags
 	 */
-	TT_FL_TRUNC       = (1 << 5),	/* truncate fields data if necessary */
-	TT_FL_TREE        = (1 << 6),	/* use tree "ascii art" */
-	TT_FL_RIGHT	  = (1 << 7),	/* align to the right */
-	TT_FL_STRICTWIDTH = (1 << 8),	/* don't reduce width if column is empty */
-	TT_FL_NOEXTREMES  = (1 << 9),   /* ignore extreme fields when count column width*/
+	TT_FL_TRUNC       = (1 << 10),	/* truncate fields data if necessary */
+	TT_FL_TREE        = (1 << 11),	/* use tree "ascii art" */
+	TT_FL_RIGHT	  = (1 << 12),	/* align to the right */
+	TT_FL_STRICTWIDTH = (1 << 13),	/* don't reduce width if column is empty */
+	TT_FL_NOEXTREMES  = (1 << 14),   /* ignore extreme fields when count column width*/
 
-	TT_FL_FREEDATA	  = (1 << 10),	/* free() data in tt_free_table() */
+	TT_FL_FREEDATA	  = (1 << 15),	/* free() data in tt_free_table() */
 };
 
 struct tt {
@@ -77,6 +78,8 @@ struct tt_line {
 };
 
 extern struct tt *tt_new_table(int flags);
+extern int tt_get_flags(struct tt *tb);
+extern void tt_set_flags(struct tt *tb, int flags);
 extern void tt_free_table(struct tt *tb);
 extern void tt_remove_lines(struct tt *tb);
 extern int tt_print_table(struct tt *tb);

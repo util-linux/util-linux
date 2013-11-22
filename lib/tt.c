@@ -216,6 +216,22 @@ struct tt *tt_new_table(int flags)
 	return tb;
 }
 
+/*
+ * Be careful, the best way is to use:
+ *
+ *	tt_set_flags(tb, tb_get_flags(tb) | TT_FL_xxx));
+ */
+void tt_set_flags(struct tt *tb, int flags)
+{
+	if (tb)
+		tb->flags = flags;
+}
+
+int tt_get_flags(struct tt *tb)
+{
+	return tb ? tb->flags : 0;
+}
+
 void tt_set_stream(struct tt *tb, FILE *out)
 {
 	if (!tb)
@@ -587,6 +603,7 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 		}
 	}
 
+	/* Cool, we have extra space, use it! */
 	if (width < tb->termwidth) {
 		/* try to found extreme column which fits into available space
 		 */
@@ -617,7 +634,20 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 					break;
 			}
 		}
-		if (width < tb->termwidth) {
+
+		if (width < tb->termwidth && (tb->flags & TT_FL_MAX)) {
+			/* try enlarge all columns */
+			while (width < tb->termwidth) {
+				list_for_each(p, &tb->tb_columns) {
+					struct tt_column *cl =
+						list_entry(p, struct tt_column, cl_columns);
+					cl->width++;
+					width++;
+					if (width == tb->termwidth)
+						break;
+				}
+			}
+		} else if (width < tb->termwidth) {
 			/* enalarge the last column */
 			struct tt_column *cl = list_entry(
 				tb->tb_columns.prev, struct tt_column, cl_columns);
@@ -769,7 +799,7 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 	}
 	width = cl->width;
 
-	if (is_last_column(tb, cl) && len < width)
+	if (is_last_column(tb, cl) && len < width && !(tb->flags & TT_FL_MAX))
 		width = len;
 
 	/* truncate data */
