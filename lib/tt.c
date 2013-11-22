@@ -239,6 +239,17 @@ void tt_set_stream(struct tt *tb, FILE *out)
 	tb->out = out;
 }
 
+/*
+ * Reduce terminal size, the final table size will be
+ * termwidth - termreduce.
+ */
+void tt_set_termreduce(struct tt *tb, size_t re)
+{
+	if (!tb)
+		return;
+	tb->termreduce = re;
+}
+
 size_t tb_get_nlines(struct tt *tb)
 {
 	struct list_head *p;
@@ -943,6 +954,8 @@ int tt_print_table(struct tt *tb)
 			tb->termwidth = get_terminal_width();
 		if (tb->termwidth <= 0)
 			tb->termwidth = 80;
+
+		tb->termwidth -= tb->termreduce;
 	}
 
 	line_sz = tb->termwidth;

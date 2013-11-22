@@ -37,6 +37,7 @@ struct tt {
 	FILE	*out;		/* output stream */
 	size_t	ncols;		/* number of columns */
 	size_t	termwidth;	/* terminal width */
+	size_t  termreduce;	/* reduce the original termwidth */
 	int	is_term;	/* is a tty? */
 	int	flags;
 	int	first_run;
@@ -80,6 +81,7 @@ struct tt_line {
 extern struct tt *tt_new_table(int flags);
 extern int tt_get_flags(struct tt *tb);
 extern void tt_set_flags(struct tt *tb, int flags);
+extern void tt_set_termreduce(struct tt *tb, size_t re);
 extern void tt_free_table(struct tt *tb);
 extern void tt_remove_lines(struct tt *tb);
 extern int tt_print_table(struct tt *tb);
