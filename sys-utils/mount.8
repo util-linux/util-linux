@@ -1,3 +1,4 @@
+'\" t
 .\" Copyright (c) 1996-2004 Andries Brouwer
 .\" Copyright (C) 2006-2012 Karel Zak <kzak@redhat.com> 
 .\"
@@ -359,7 +360,7 @@ or fstab entry is:
 .br
 .I /olddir
 .I /newdir
-.B  none  bind
+.B none bind
 .RE
 
 After this call the same contents is accessible in two places.
@@ -621,7 +622,7 @@ Mount the filesystem read-only. A synonym is
 .BR "\-o ro" .
 
 Note that, depending on the filesystem type, state and kernel behavior, the
-system may still write to the device. For example, Ext3 or ext4 will replay its
+system may still write to the device. For example, ext3 or ext4 will replay its
 journal if the filesystem is dirty. To prevent this kind of write access, you
 may want to mount ext3 or ext4 filesystem with "ro,noload" mount options or
 set the block device to read-only mode, see command
@@ -1361,16 +1362,25 @@ field the total number of blocks of the filesystem, while the
 .B bsddf
 behaviour (which is the default) is to subtract the overhead blocks
 used by the ext2 filesystem and not available for file storage. Thus
-.nf
-
+.sp 1
 % mount /k -o minixdf; df /k; umount /k
-Filesystem   1024-blocks  Used Available Capacity Mounted on
-/dev/sda6      2630655   86954  2412169      3%   /k
+.TS
+tab(#);
+l2 l2 r2 l2 l2 l
+l c r c c l.
+Filesystem#1024-blocks#Used#Available#Capacity#Mounted on
+/dev/sda6#2630655#86954#2412169#3%#/k
+.TE
+.sp 1
 % mount /k -o bsddf; df /k; umount /k
-Filesystem   1024-blocks  Used Available Capacity Mounted on
-/dev/sda6      2543714      13  2412169      0%   /k
-
-.fi
+.TS
+tab(#);
+l2 l2 r2 l2 l2 l
+l c r c c l.
+Filesystem#1024-blocks#Used#Available#Capacity#Mounted on
+/dev/sda6#2543714#13#2412169#0%#/k
+.TE
+.sp 1
 (Note that this example shows that one can add command line options
 to the options given in
 .IR /etc/fstab .)
@@ -1439,8 +1449,8 @@ superblocks, and since version 1.15 this is the default. Note
 that this may mean that ext2 filesystems created by a recent
 .B mke2fs
 cannot be mounted r/w under Linux 2.0.*.)
-The block number here uses 1k units. Thus, if you want to use logical
-block 32768 on a filesystem with 4k blocks, use "sb=131072".
+The block number here uses 1\ k units. Thus, if you want to use logical
+block 32768 on a filesystem with 4\ k blocks, use "sb=131072".
 .TP
 .BR user_xattr | nouser_xattr
 Support "user." extended attributes (or not).
@@ -1461,7 +1471,7 @@ Update the ext3 filesystem's journal to the current format.
 .BR journal=inum
 When a journal already exists, this option is ignored. Otherwise, it
 specifies the number of the inode which will represent the ext3 filesystem's
-journal file;  ext3 will create a new journal, overwriting the old contents
+journal file; ext3 will create a new journal, overwriting the old contents
 of the file whose inode number is
 .IR inum .
 .TP
@@ -1483,7 +1493,7 @@ lead to any number of problems.
 Specifies the journaling mode for file data.  Metadata is always journaled.
 To use modes other than
 .B ordered
-on the root filesystem, pass the mode to the kernel as boot parameter, e.g.
+on the root filesystem, pass the mode to the kernel as boot parameter, e.g.\&
 .IR rootflags=data=journal .
 .RS
 .TP
@@ -1503,7 +1513,7 @@ internal filesystem integrity, however it can allow old data to appear
 in files after a crash and journal recovery.
 .RE
 .TP
-.BR barrier=0 " / "  barrier=1 "
+.BR barrier=0 " / " barrier=1 "
 This enables/disables barriers.  barrier=0 disables it, barrier=1 enables it.
 Write barriers enforce proper on-disk ordering of journal commits, making
 volatile disk write caches safe to use, at some performance penalty.  The ext3
@@ -1556,7 +1566,7 @@ Commit block can be written to disk without waiting for descriptor blocks. If
 enabled older kernels cannot mount the device.
 This will enable 'journal_checksum' internally.
 .TP
-.BR barrier=0 " / "  barrier=1 " / " barrier " / " nobarrier
+.BR barrier=0 " / " barrier=1 " / " barrier " / " nobarrier
 This enables/disables the use of write barriers in the jbd code.  barrier=0
 disables, barrier=1 enables.  This also requires an IO stack which can support
 barriers, and if jbd gets an error on a barrier write, it will disable again
@@ -1598,7 +1608,7 @@ takes to finish committing a transaction. Call this time the "commit time".
 If the time that the transaction has been running is less than the commit time,
 ext4 will try sleeping for the commit time to see if other operations will join
 the transaction. The commit time is capped by the max_batch_time, which
-defaults to 15000us (15ms). This optimization can be turned off entirely by
+defaults to 15000\ \[mc]s (15\ ms). This optimization can be turned off entirely by
 setting max_batch_time to 0.
 .TP
 .BI min_batch_time= usec
@@ -1736,7 +1746,7 @@ Three different levels of pickyness can be chosen:
 .TP
 .BR r [ elaxed ]
 Upper and lower case are accepted and equivalent, long name parts are
-truncated (e.g.
+truncated (e.g.\&
 .I verylongname.foobar
 becomes
 .IR verylong.foo ),
@@ -2004,7 +2014,7 @@ possibly leading to silent data corruption.)
 .B cruft
 If the high byte of the file length contains other garbage,
 set this mount option to ignore the high order bits of the file length.
-This implies that a file cannot be larger than 16MB.
+This implies that a file cannot be larger than 16\ MB.
 .TP
 .BI session= x
 Select number of session on multisession CD. (Since 2.3.4.)
@@ -2173,7 +2183,7 @@ unusual file-name patterns.
 Instructs
 .IR mount
 to detect which hash function is in use by examining
-the filesystem being mounted,  and to write this information into
+the filesystem being mounted, and to write this information into
 the reiserfs superblock. This is only useful on the first mount of
 an old format filesystem.
 .RE
@@ -2232,7 +2242,7 @@ Enable POSIX Access Control Lists. See the
 .BR acl (5)
 manual page.
 .TP
-.BR barrier=none " / "  barrier=flush "
+.BR barrier=none " / " barrier=flush "
 This enables/disables the use of write barriers in the journaling code.
 barrier=none disables it, barrier=flush enables it. Write barriers enforce
 proper on-disk ordering of journal commits, making volatile disk write caches
@@ -2602,9 +2612,9 @@ None.
 .TP
 .BR allocsize=size
 Sets the buffered I/O end-of-file preallocation size when
-doing delayed allocation writeout (default size is 64KiB).
-Valid values for this option are page size (typically 4KiB)
-through to 1GiB, inclusive, in power-of-2 increments.
+doing delayed allocation writeout (default size is 64\ KiB).
+Valid values for this option are page size (typically 4\ KiB)
+through to 1\ GiB, inclusive, in power-of-2 increments.
 .sp
 The default behaviour is for dynamic end-of-file
 preallocation size, which uses a set of heuristics to
@@ -2712,9 +2722,9 @@ this case.
 .BR logbsize=value
 Set the size of each in-memory log buffer.  The size may be
 specified in bytes, or in kilobytes with a "k" suffix.
-Valid sizes for version 1 and version 2 logs are 16384 (16k)
-and 32768 (32k).  Valid sizes for version 2 logs also
-include 65536 (64k), 131072 (128k) and 262144 (256k). The
+Valid sizes for version 1 and version 2 logs are 16384 (16\ k)
+and 32768 (32\ k).  Valid sizes for version 2 logs also
+include 65536 (64\ k), 131072 (128\ k) and 262144 (256\ k). The
 logbsize must be an integer multiple of the log
 stripe unit configured at mkfs time.
 .sp
@@ -2978,7 +2988,7 @@ The
 may not be able to change mount parameters (all
 .IR ext2fs -specific
 parameters, except
-.BR  sb ,
+.BR sb ,
 are changeable with a remount, for example, but you can't change
 .B gid
 or
@@ -2991,7 +3001,7 @@ It is possible that files
 and
 .IR /proc/mounts
 don't match. The first file is based only on the mount command options, but the
-content of the second file also depends on the kernel and others settings (e.g.
+content of the second file also depends on the kernel and others settings (e.g.\&
 remote NFS server. In particular case the mount command may reports unreliable
 information about a NFS mount point and the /proc/mounts file usually contains
 more reliable information.)
