@@ -1632,6 +1632,7 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 	if (!nerror) { /* yay :-) */
 		uint32_t nsegments = 0;
 		uint64_t free_sectors = 0, largest_segment = 0;
+		char *strsz = NULL;
 
 		fdisk_info(cxt, _("No errors detected."));
 		fdisk_info(cxt, _("Header version: %s"), gpt_get_header_revstr(gpt->pheader));
@@ -1641,11 +1642,17 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 
 		free_sectors = get_free_sectors(cxt, gpt->pheader, gpt->ents,
 						&nsegments, &largest_segment);
+		if (largest_segment)
+			strsz = size_to_human_string(SIZE_SUFFIX_SPACE | SIZE_SUFFIX_3LETTER,
+					largest_segment * cxt->sector_size);
+
 		fdisk_info(cxt,
 			   P_("A total of %ju free sectors is available in %u segment.",
 			      "A total of %ju free sectors is available in %u segments "
-			      "(the largest is %ju).", nsegments),
-			   free_sectors, nsegments, largest_segment);
+			      "(the largest is %s).", nsegments),
+			   free_sectors, nsegments, strsz);
+		free(strsz);
+
 	} else
 		fdisk_warnx(cxt,
 			P_("%d error detected.", "%d errors detected.", nerror),
