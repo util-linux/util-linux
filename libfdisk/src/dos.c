@@ -452,7 +452,10 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 
 		q = p = mbr_get_partition(pe->sectorbuffer, 0);
 
-		for (i = 0; i < 4; i++, p++) if (dos_partition_get_size(p)) {
+		for (i = 0; i < 4; i++, p++) {
+			if (!dos_partition_get_size(p))
+				continue;
+
 			if (IS_EXTENDED (p->sys_ind)) {
 				if (pe->ex_entry)
 					fdisk_warnx(cxt, _(
