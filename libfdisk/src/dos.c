@@ -148,6 +148,15 @@ static sector_t get_abs_partition_start(struct pte *pe)
 	return pe->offset + dos_partition_get_start(pe->pt_entry);
 }
 
+/*
+ * Linux kernel cares about partition size only. Things like
+ * partition type or so are completely irrelevant -- kzak Nov-2013
+ */
+static int is_used_partition(struct dos_partition *p)
+{
+	return p && dos_partition_get_size(p) != 0;
+}
+
 static int is_cleared_partition(struct dos_partition *p)
 {
 	return !(!p || p->boot_ind || p->bh || p->bs || p->bc ||
@@ -672,7 +681,7 @@ static int dos_probe_label(struct fdisk_context *cxt)
 	for (i = 0; i < 4; i++) {
 		struct pte *pe = self_pte(cxt, i);
 
-		if (!is_cleared_partition(pe->pt_entry))
+		if (is_used_partition(pe->pt_entry))
 			cxt->label->nparts_cur++;
 
 		if (IS_EXTENDED (pe->pt_entry->sys_ind)) {
@@ -784,7 +793,7 @@ static void fill_bounds(struct fdisk_context *cxt,
 
 	for (i = 0; i < cxt->label->nparts_max; pe++,i++) {
 		p = pe->pt_entry;
-		if (!p->sys_ind || IS_EXTENDED (p->sys_ind)) {
+		if (is_cleared_partition(p) || IS_EXTENDED (p->sys_ind)) {
 			first[i] = 0xffffffff;
 			last[i] = 0;
 		} else {
@@ -810,7 +819,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n, struct fdisk_partt
 
 	sys = t ? t->type : MBR_LINUX_DATA_PARTITION;
 
-	if (p && p->sys_ind) {
+	if (is_used_partition(p)) {
 		fdisk_warnx(cxt, _("Partition %zu is already defined.  "
 			           "Delete it before re-adding it."),
 				n + 1);
@@ -1019,7 +1028,7 @@ static int add_logical(struct fdisk_context *cxt)
 	assert(cxt);
 	assert(cxt->label);
 
-	if (cxt->label->nparts_max > 5 || p4->sys_ind) {
+	if (cxt->label->nparts_max > 5 || !is_cleared_partition(p4)) {
 		struct pte *pe = self_pte(cxt, cxt->label->nparts_max);
 
 		pe->sectorbuffer = calloc(1, cxt->sector_size);
@@ -1159,7 +1168,7 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 		struct pte *pe = self_pte(cxt, i);
 
 		p = self_partition(cxt, i);
-		if (p->sys_ind && !IS_EXTENDED(p->sys_ind)) {
+		if (is_used_partition(p) && !IS_EXTENDED(p->sys_ind)) {
 			check_consistency(cxt, p, i);
 			fdisk_warn_alignment(cxt, get_abs_partition_start(pe), i);
 			if (get_abs_partition_start(pe) < first[i])
@@ -1243,7 +1252,7 @@ static int dos_add_partition(
 
 	for (i = 0; i < 4; i++) {
 		struct dos_partition *p = self_partition(cxt, i);
-		free_primary += !p->sys_ind;
+		free_primary += is_used_partition(p);
 	}
 
 	if (!free_primary && cxt->label->nparts_max >= MAXIMUM_PARTS) {
@@ -1490,7 +1499,7 @@ static int wrong_p_order(struct fdisk_context *cxt, size_t *prev)
 			last_i = 4;
 			last_p_start_pos = 0;
 		}
-		if (p->sys_ind) {
+		if (is_used_partition(p)) {
 			p_start_pos = get_abs_partition_start(pe);
 
 			if (last_p_start_pos > p_start_pos) {
@@ -1596,11 +1605,8 @@ static int dos_fulllist_disklabel(struct fdisk_context *cxt, int ext)
 		if (asprintf(&str, "%02x", p->sys_ind) > 0)
 			tt_line_set_data(ln, 10, str);		/* Id */
 
-		if (p->sys_ind) {
-			check_consistency(cxt, p, i);
-			fdisk_warn_alignment(cxt,
-					get_abs_partition_start(pe), i);
-		}
+		check_consistency(cxt, p, i);
+		fdisk_warn_alignment(cxt, get_abs_partition_start(pe), i);
 	}
 
 	rc = fdisk_print_table(cxt, tb);
@@ -1658,7 +1664,7 @@ static int dos_list_disklabel(struct fdisk_context *cxt)
 		struct tt_line *ln;
 		char *str;
 
-		if (!p || is_cleared_partition(p))
+		if (!is_used_partition(p))
 			continue;
 		ln = tt_add_line(tb, NULL);
 		if (!ln)
@@ -1840,7 +1846,7 @@ int fdisk_dos_move_begin(struct fdisk_context *cxt, size_t i)
 	pe = self_pte(cxt, i);
 	p = pe->pt_entry;
 
-	if (!p->sys_ind || !dos_partition_get_size(p) || IS_EXTENDED (p->sys_ind)) {
+	if (!is_used_partition(p) || IS_EXTENDED (p->sys_ind)) {
 		fdisk_warnx(cxt, _("Partition %zu: no data area."), i + 1);
 		return 0;
 	}
@@ -1863,7 +1869,7 @@ int fdisk_dos_move_begin(struct fdisk_context *cxt, size_t i)
 		end = get_abs_partition_start(prev_pe)
 		      + dos_partition_get_size(prev_p);
 
-		if (!is_cleared_partition(prev_p) &&
+		if (is_used_partition(prev_p) &&
 		    end > free_start && end <= curr_start)
 			free_start = end;
 	}
@@ -1906,7 +1912,7 @@ static int dos_get_partition_status(
 
 	p = self_partition(cxt, i);
 
-	if (p && !is_cleared_partition(p))
+	if (is_used_partition(p))
 		*status = FDISK_PARTSTAT_USED;
 	else
 		*status = FDISK_PARTSTAT_NONE;
