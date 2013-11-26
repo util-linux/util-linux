@@ -164,7 +164,7 @@ static const struct fdisk_column *fdisk_label_get_column(
  *
  * Verifies the partition table.
  *
- * Returns 0.
+ * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_verify_disklabel(struct fdisk_context *cxt)
 {
@@ -179,27 +179,45 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
 }
 
 /**
- * fdisk_partition_get_data:
- * @cxt: fdisk context
- * @id: column (FDISK_COL_*)
- * @partnum: partition number
- * @data: return allocated data
+ * fdisk_get_partition:
+ * @cxt:
+ * @partno:
+ * @pa: pointer to partition struct
  *
- * For exmaple
- *	fdisk_partition_get_data(cxt, FDISK_COL_UUID, 0, &data);
- * returns UUID for the first partition.
+ * Fills in @pa with data about partition @n.
  *
- * Returns 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, otherwise, a corresponding error.
  */
-int fdisk_partition_get_data(struct fdisk_context *cxt, int id,
-			     size_t partnum, char **data)
+int fdisk_get_partition(struct fdisk_context *cxt, size_t partno,
+			struct fdisk_partition *pa)
+{
+	int rc;
+
+	if (!cxt || !cxt->label || !pa)
+		return -EINVAL;
+	if (!cxt->label->op->get_part)
+		return -ENOSYS;
+
+	fdisk_reset_partition(pa);
+	pa->cxt = cxt;
+
+	rc = cxt->label->op->get_part(cxt, partno, pa);
+	if (rc == 0 && fdisk_partition_is_used(pa))
+		DBG(LABEL, dbgprint("get partition %zu", partno));
+	return rc;
+}
+
+/*
+ * This is faster than fdisk_get_partition() + fdisk_partition_is_used()
+ */
+int fdisk_is_partition_used(struct fdisk_context *cxt, size_t n)
 {
 	if (!cxt || !cxt->label)
 		return -EINVAL;
-	if (!cxt->label->op->part_get_data)
+	if (!cxt->label->op->part_is_used)
 		return -ENOSYS;
 
-	return cxt->label->op->part_get_data(cxt, id, partnum, data);
+	return cxt->label->op->part_is_used(cxt, n);
 }
 
 /**
@@ -244,12 +262,15 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 	int *org = cols, rc = 0;
 	struct tt *tb = NULL;
 	const struct fdisk_column *col;
+	struct fdisk_partition *pa = NULL;
 	size_t i, j;
 
 	if (!cxt || !cxt->label)
 		return -EINVAL;
-	if (!cxt->label->op->part_get_data)
+	if (!cxt->label->op->get_part)
 		return -ENOSYS;
+
+	DBG(LABEL, dbgprint("list partitions"));
 
 	if (!cols || !ncols) {
 		rc = fdisk_get_columns(cxt, &cols, &ncols);
@@ -259,6 +280,11 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 
 	tb = tt_new_table(TT_FL_FREEDATA);
 	if (!tb) {
+		rc = -ENOMEM;
+		goto done;
+	}
+	pa = fdisk_new_partition();
+	if (!pa) {
 		rc = -ENOMEM;
 		goto done;
 	}
@@ -273,13 +299,13 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 
 	/* generate per-partition lines into table */
 	for (i = 0; i < cxt->label->nparts_max; i++) {
-		int status = 0;
 		struct tt_line *ln;
 
-		rc = fdisk_partition_get_status(cxt, i, &status);
-		if (rc || !(status & FDISK_PARTSTAT_USED))
+		rc = fdisk_get_partition(cxt, i, pa);
+		if (rc)
+			goto done;
+		if (!fdisk_partition_is_used(pa))
 			continue;
-
 		ln = tt_add_line(tb, NULL);
 		if (!ln)
 			continue;
@@ -291,7 +317,7 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 			col = fdisk_label_get_column(cxt->label, cols[j]);
 			if (!col)
 				continue;
-			rc = fdisk_partition_get_data(cxt, col->id, i, &data);
+			rc = fdisk_partition_to_string(pa, col->id, &data);
 			if (rc)
 				goto done;
 			tt_line_set_data(ln, j, data);
@@ -304,6 +330,7 @@ done:
 	if (org != cols)
 		free(cols);
 	tt_free_table(tb);
+	fdisk_free_partition(pa);
 	return rc;
 }
 
@@ -511,48 +538,6 @@ size_t fdisk_get_nparttypes(struct fdisk_context *cxt)
 }
 
 /**
- * fdisk_partition_is_used:
- * @cxt: fdisk context
- * @partnum: partition number
- * @status: returns FDISK_PARTSTAT_* flags
- *
- * Returns 0 on success, otherwise, a corresponding error.
- */
-int fdisk_partition_get_status(struct fdisk_context *cxt,
-			       size_t partnum,
-			       int *status)
-{
-	int rc;
-
-	if (!cxt || !cxt->label)
-		return -EINVAL;
-	if (!cxt->label->op->part_get_status)
-		return -ENOSYS;
-
-	rc = cxt->label->op->part_get_status(cxt, partnum, status);
-
-	DBG(LABEL, dbgprint("partition: %zd: status: 0x%04x [rc=%d]", partnum, *status, rc));
-	return rc;
-}
-
-/**
- * @cxt: fdisk context
- * @partnum: partition number
- *
- * Returns: 1 on success if partition used otherwise 0.
- */
-int fdisk_partition_is_used(struct fdisk_context *cxt, size_t partnum)
-{
-	int status, rc;
-
-	rc = fdisk_partition_get_status(cxt, partnum, &status);
-	if (rc)
-		return 0;
-
-	return status & FDISK_PARTSTAT_USED;
-}
-
-/**
  * fdisk_partition_taggle_flag:
  * @cxt: fdisk context
  * @partnum: partition number
@@ -576,7 +561,6 @@ int fdisk_partition_toggle_flag(struct fdisk_context *cxt,
 	DBG(LABEL, dbgprint("partition: %zd: toggle: 0x%04lx [rc=%d]", partnum, flag, rc));
 	return rc;
 }
-
 
 /*
  * Resets the current used label driver to initial state

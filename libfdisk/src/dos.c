@@ -1899,10 +1899,9 @@ int fdisk_dos_move_begin(struct fdisk_context *cxt, size_t i)
 	return rc;
 }
 
-static int dos_get_partition_status(
+static int dos_partition_is_used(
 		struct fdisk_context *cxt,
-		size_t i,
-		int *status)
+		size_t i)
 {
 	struct dos_partition *p;
 
@@ -1910,17 +1909,12 @@ static int dos_get_partition_status(
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
-	if (!status || i >= cxt->label->nparts_max)
-		return -EINVAL;
+	if (i >= cxt->label->nparts_max)
+		return 0;
 
 	p = self_partition(cxt, i);
 
-	if (is_used_partition(p))
-		*status = FDISK_PARTSTAT_USED;
-	else
-		*status = FDISK_PARTSTAT_NONE;
-
-	return 0;
+	return p && !is_cleared_partition(p);
 }
 
 static int dos_toggle_partition_flag(
@@ -1977,7 +1971,7 @@ static const struct fdisk_label_operations dos_operations =
 	.part_set_type	= dos_set_parttype,
 
 	.part_toggle_flag = dos_toggle_partition_flag,
-	.part_get_status = dos_get_partition_status,
+	.part_is_used	= dos_partition_is_used,
 
 	.reset_alignment = dos_reset_alignment,
 

@@ -302,12 +302,9 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 	ask->data.num.inchars = inchar ? 1 : 0;
 
 	for (i = 0; i < cxt->label->nparts_max; i++) {
-		int status = 0;
+		int used = fdisk_is_partition_used(cxt, i);
 
-		rc = fdisk_partition_get_status(cxt, i, &status);
-		if (rc)
-			break;
-		if (wantnew && !(status & FDISK_PARTSTAT_USED)) {
+		if (wantnew && !used) {
 			ptr = mk_string_list(ptr, &len, &begin, &run, i, inchar);
 			if (!ptr) {
 				rc = -EINVAL;
@@ -316,7 +313,7 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 			if (!num->low)
 				num->dfl = num->low = i + 1;
 			num->hig = i + 1;
-		} else if (!wantnew && (status & FDISK_PARTSTAT_USED)) {
+		} else if (!wantnew && used) {
 			ptr = mk_string_list(ptr, &len, &begin, &run, i, inchar);
 			if (!num->low)
 				num->low = i + 1;

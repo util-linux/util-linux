@@ -1096,23 +1096,16 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 }
 
 
-static int sgi_get_partition_status(
+static int sgi_partition_is_used(
 		struct fdisk_context *cxt,
-		size_t i,
-		int *status)
+		size_t i)
 {
 	assert(cxt);
 	assert(fdisk_is_disklabel(cxt, SGI));
 
-	if (!status || i >= cxt->label->nparts_max)
-		return -EINVAL;
-
-	*status = FDISK_PARTSTAT_NONE;
-
-	if (sgi_get_num_sectors(cxt, i))
-		*status = FDISK_PARTSTAT_USED;
-
-	return 0;
+	if (i >= cxt->label->nparts_max)
+		return 0;
+	return sgi_get_num_sectors(cxt, i) ? 1 : 0;
 }
 
 static int sgi_toggle_partition_flag(struct fdisk_context *cxt, size_t i, unsigned long flag)
@@ -1159,7 +1152,7 @@ static const struct fdisk_label_operations sgi_operations =
 	.part_get_type	= sgi_get_parttype,
 	.part_set_type	= sgi_set_parttype,
 
-	.part_get_status = sgi_get_partition_status,
+	.part_is_used	= sgi_partition_is_used,
 	.part_toggle_flag = sgi_toggle_partition_flag
 };
 

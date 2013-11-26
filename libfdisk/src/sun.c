@@ -948,10 +948,9 @@ static int sun_reset_alignment(struct fdisk_context *cxt __attribute__((__unused
 }
 
 
-static int sun_get_partition_status(
+static int sun_partition_is_used(
 		struct fdisk_context *cxt,
-		size_t i,
-		int *status)
+		size_t i)
 {
 	struct sun_disklabel *sunlabel;
 
@@ -959,16 +958,11 @@ static int sun_get_partition_status(
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SUN));
 
-	if (!status || i >= cxt->label->nparts_max)
-		return -EINVAL;
+	if (i >= cxt->label->nparts_max)
+		return 0;
 
 	sunlabel = self_disklabel(cxt);
-	*status = FDISK_PARTSTAT_NONE;
-
-	if (sunlabel->partitions[i].num_sectors)
-		*status = FDISK_PARTSTAT_USED;
-
-	return 0;
+	return sunlabel->partitions[i].num_sectors ? 1 : 0;
 }
 
 
@@ -984,7 +978,7 @@ const struct fdisk_label_operations sun_operations =
 	.part_get_type	= sun_get_parttype,
 	.part_set_type	= sun_set_parttype,
 
-	.part_get_status = sun_get_partition_status,
+	.part_is_used	= sun_partition_is_used,
 	.part_toggle_flag = sun_toggle_partition_flag,
 
 	.reset_alignment = sun_reset_alignment,

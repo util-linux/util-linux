@@ -31,6 +31,7 @@ extern "C" {
 struct fdisk_context;
 struct fdisk_label;
 struct fdisk_parttype;
+struct fdisk_partition;
 struct fdisk_ask;
 struct tt;
 
@@ -43,11 +44,6 @@ enum fdisk_labeltype {
 	FDISK_DISKLABEL_SGI = (1 << 3),
 	FDISK_DISKLABEL_BSD = (1 << 4),
 	FDISK_DISKLABEL_GPT = (1 << 5)
-};
-
-enum {
-	FDISK_PARTSTAT_NONE = 0,
-	FDISK_PARTSTAT_USED	/* partition used */
 };
 
 enum {
@@ -144,7 +140,8 @@ extern int fdisk_locate_disklabel(struct fdisk_context *cxt, int n, const char *
 
 extern int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id);
 extern int fdisk_set_disklabel_id(struct fdisk_context *cxt);
-extern int fdisk_partition_get_data(struct fdisk_context *cxt, int id, size_t partnum, char **data);
+
+extern int fdisk_get_partition(struct fdisk_context *cxt, size_t partno, struct fdisk_partition *pa);
 
 extern int fdisk_add_partition(struct fdisk_context *cxt, struct fdisk_parttype *t);
 extern int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum);
@@ -162,9 +159,32 @@ extern int fdisk_label_is_changed(struct fdisk_label *lb);
 extern void fdisk_label_set_disabled(struct fdisk_label *lb, int disabled);
 extern int fdisk_label_is_disabled(struct fdisk_label *lb);
 
-extern int fdisk_partition_get_status(struct fdisk_context *cxt, size_t partnum, int *status);
-extern int fdisk_partition_is_used(struct fdisk_context *cxt, size_t partnum);
+extern int fdisk_is_partition_used(struct fdisk_context *cxt, size_t n);
+
 extern int fdisk_partition_toggle_flag(struct fdisk_context *cxt, size_t partnum, unsigned long flag);
+
+extern struct fdisk_partition *fdisk_new_partition(void);
+extern void fdisk_reset_partition(struct fdisk_partition *pa);
+extern void fdisk_free_partition(struct fdisk_partition *pa);
+extern int fdisk_partition_set_start(struct fdisk_partition *pa, uint64_t off);
+extern uint64_t fdisk_partition_get_start(struct fdisk_partition *pa);
+extern int fdisk_partition_set_end(struct fdisk_partition *pa, uint64_t off, int isrel);
+extern uint64_t fdisk_partition_get_end(struct fdisk_partition *pa);
+extern int fdisk_partition_set_size(struct fdisk_partition *pa, uint64_t size);
+extern uint64_t fdisk_partition_get_size(struct fdisk_partition *pa);
+extern int fdisk_partition_set_partno(struct fdisk_partition *pa, size_t n);
+extern size_t fdisk_partition_get_partno(struct fdisk_partition *pa);
+extern int fdisk_partition_set_type(struct fdisk_partition *pa, struct fdisk_parttype *type);
+extern const struct fdisk_parttype *fdisk_partition_get_type(struct fdisk_partition *pa);
+extern int fdisk_partition_set_name(struct fdisk_partition *pa, const char *name);
+extern const char *fdisk_partition_get_name(struct fdisk_partition *pa);
+extern int fdisk_partition_set_uuid(struct fdisk_partition *pa, const char *uuid);
+extern const char *fdisk_partition_get_uuid(struct fdisk_partition *pa);
+extern const char *fdisk_partition_get_attrs(struct fdisk_partition *pa);
+extern int fdisk_partition_set_nested(struct fdisk_partition *pa, int nested);
+extern int fdisk_partition_is_nested(struct fdisk_partition *pa);
+extern int fdisk_partition_is_used(struct fdisk_partition *pa);
+extern int fdisk_partition_to_string(struct fdisk_partition *pa, int id, char **data);
 
 /* alignment.c */
 extern int fdisk_reset_alignment(struct fdisk_context *cxt);

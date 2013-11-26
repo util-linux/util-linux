@@ -879,24 +879,16 @@ static int bsd_set_parttype(
 	return 0;
 }
 
-static int bsd_get_partition_status(
+static int bsd_partition_is_used(
 		struct fdisk_context *cxt,
-		size_t partnum,
-		int *status)
+		size_t partnum)
 {
-	struct bsd_partition *p;
 	struct bsd_disklabel *d = self_disklabel(cxt);
 
-	if (!status || partnum >= BSD_MAXPARTITIONS)
-		return -EINVAL;
+	if (partnum >= BSD_MAXPARTITIONS)
+		return 0;
 
-	p = &d->d_partitions[partnum];
-	*status = FDISK_PARTSTAT_NONE;
-
-	if (p->p_size)
-		*status = FDISK_PARTSTAT_USED;
-
-	return 0;
+	return d->d_partitions[partnum].p_size ? 1 : 0;
 }
 
 
@@ -910,7 +902,7 @@ static const struct fdisk_label_operations bsd_operations =
 	.part_delete	= bsd_delete_part,
 	.part_get_type	= bsd_get_parttype,
 	.part_set_type	= bsd_set_parttype,
-	.part_get_status= bsd_get_partition_status,
+	.part_is_used   = bsd_partition_is_used,
 };
 
 

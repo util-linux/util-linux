@@ -50,6 +50,7 @@
 #define FDISK_DEBUG_LABEL       (1 << 5)
 #define FDISK_DEBUG_ASK         (1 << 6)
 #define FDISK_DEBUG_FRONTEND	(1 << 7)
+#define FDISK_DEBUG_PART	(1 << 8)
 #define FDISK_DEBUG_ALL		0xFFFF
 
 # define ON_DBG(m, x)	do { \
@@ -125,6 +126,25 @@ enum {
 #define fdisk_parttype_is_invisible(_x)	((_x) && ((_x)->flags & FDISK_PARTTYPE_INVISIBLE))
 #define fdisk_parttype_is_allocated(_x)	((_x) && ((_x)->flags & FDISK_PARTTYPE_ALLOCATED))
 
+struct fdisk_partition {
+	struct fdisk_context	*cxt;
+
+	size_t		partno;
+	uint64_t	start;
+	uint64_t	end;
+	uint64_t	size;
+	char		*name;
+	char		*uuid;
+	char		*attrs;
+
+	struct fdisk_parttype	*type;
+
+	unsigned int	nested : 1,		/* logical partition */
+			used   : 1,		/* partition used */
+			endrel : 1;		/* end is specified as relative number */
+};
+
+
 /*
  * Legacy CHS based geometry
  */
@@ -171,16 +191,13 @@ struct fdisk_label_operations {
 						size_t partnum,
 						struct fdisk_parttype *t);
 
-	/* returns FDISK_PARTSTAT_* flags */
-	int (*part_get_status)(struct fdisk_context *cxt,
-						size_t partnum,
-						int *status);
+	/* return state of the partition */
+	int (*part_is_used)(struct fdisk_context *cxt, size_t partnum);
 
-	/* get data according to id (FDISK_COL_*) */
-	int (*part_get_data)(struct fdisk_context *cxt,
-						int id,
+	/* fill in partition struct */
+	int (*get_part)(struct fdisk_context *cxt,
 						size_t n,
-						char **data);
+						struct fdisk_partition *pa);
 
 	int (*part_toggle_flag)(struct fdisk_context *cxt, size_t i, unsigned long flag);
 

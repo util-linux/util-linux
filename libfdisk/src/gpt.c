@@ -1263,15 +1263,14 @@ static char *guid_attrs_to_string(struct gpt_attr *attr, char **res)
 	return *res;
 }
 
-static int gpt_get_partition_data(struct fdisk_context *cxt, int id, size_t n, char **data)
+static int gpt_get_partition(struct fdisk_context *cxt, size_t n,
+			     struct fdisk_partition *pa)
 {
 	struct fdisk_gpt_label *gpt;
 	struct gpt_entry *e;
-	char *p = NULL;
-	int rc = 0;
+	char u_str[37], *buf = NULL;
 
 	assert(cxt);
-	assert(data);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, GPT));
 
@@ -1283,71 +1282,35 @@ static int gpt_get_partition_data(struct fdisk_context *cxt, int id, size_t n, c
 	gpt = self_label(cxt);
 	e = &gpt->ents[n];
 
-	switch (id) {
-	case FDISK_COL_DEVICE:
-		p = fdisk_partname(cxt->dev_path, n + 1);
-		break;
-	case FDISK_COL_START:
-		if (asprintf(&p, "%ju", gpt_partition_start(e)) < 0)
-			rc = -ENOMEM;
-		break;
-	case FDISK_COL_END:
-		if (asprintf(&p, "%ju", gpt_partition_end(e)) < 0)
-			rc = -ENOMEM;
-		break;
-	case FDISK_COL_SIZE:
-		if (fdisk_context_display_details(cxt)) {
-			if (asprintf(&p, "%ju", gpt_partition_size(e) *
-						cxt->sector_size) < 0)
-				rc = -ENOMEM;
-		} else {
-			p = size_to_human_string(SIZE_SUFFIX_1LETTER,
-					       gpt_partition_size(e) * cxt->sector_size);
-			if (!p)
-				rc = -ENOMEM;
-		}
-		break;
-	case FDISK_COL_TYPE:
-	{
-		struct fdisk_parttype *t = fdisk_get_partition_type(cxt, n);
-		if (t && t->name)
-			p = strdup(t->name);
-		fdisk_free_parttype(t);
-		break;
-	}
-	case FDISK_COL_UUID:
-	{
-		char u_str[37];
-		if (guid_to_string(&e->partition_guid, u_str)) {
-			p = strdup(u_str);
-			if (!p)
-				rc = -ENOMEM;
-		}
-		break;
-	}
-	case FDISK_COL_ATTR:
-	{
-		char *buf = NULL;
+	pa->used = !partition_unused(e) || gpt_partition_start(e);
+	if (!pa->used)
+		return 0;
 
-		if (asprintf(&p, "%s%s%s%s",
-				e->attr.required_to_function ? "Required " : "",
-				e->attr.legacy_bios_bootable ? "LegacyBoot " : "",
-				e->attr.no_blockio_protocol  ? "NoBlockIO " : "",
-				guid_attrs_to_string(&e->attr, &buf)) < 0)
-			rc = -ENOMEM;
-		free(buf);
-		break;
-	}
-	case FDISK_COL_NAME:
-		p = encode_to_utf8((unsigned char *)e->name, sizeof(e->name));
-		break;
-	} /* switch */
+	pa->start = gpt_partition_start(e);
+	pa->end = gpt_partition_end(e);
+	pa->size = gpt_partition_size(e) * cxt->sector_size;
+	pa->type = fdisk_get_partition_type(cxt, n);
 
+	if (guid_to_string(&e->partition_guid, u_str)) {
+		pa->uuid = strdup(u_str);
+		if (!pa->uuid)
+			goto nomem;
+	} else
+		pa->uuid = NULL;
 
-	if (rc == 0)
-		*data = p;
-	return rc;
+	if (asprintf(&pa->attrs, "%s%s%s%s",
+			e->attr.required_to_function ? "Required " : "",
+			e->attr.legacy_bios_bootable ? "LegacyBoot " : "",
+			e->attr.no_blockio_protocol  ? "NoBlockIO " : "",
+			guid_attrs_to_string(&e->attr, &buf)) < 0)
+		goto nomem;
 
+	pa->name = encode_to_utf8((unsigned char *)e->name, sizeof(e->name));
+
+	return 0;
+nomem:
+	fdisk_reset_partition(pa);
+	return -ENOMEM;
 }
 
 /*
@@ -2043,10 +2006,7 @@ static int gpt_set_partition_type(
 	return 0;
 }
 
-static int gpt_get_partition_status(
-		struct fdisk_context *cxt,
-		size_t i,
-		int *status)
+static int gpt_part_is_used(struct fdisk_context *cxt, size_t i)
 {
 	struct fdisk_gpt_label *gpt;
 	struct gpt_entry *e;
@@ -2057,16 +2017,11 @@ static int gpt_get_partition_status(
 
 	gpt = self_label(cxt);
 
-	if (!status || (uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries))
-		return -EINVAL;
-
+	if ((uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries))
+		return 0;
 	e = &gpt->ents[i];
-	*status = FDISK_PARTSTAT_NONE;
 
-	if (!partition_unused(e) || gpt_partition_start(e))
-		*status = FDISK_PARTSTAT_USED;
-
-	return 0;
+	return !partition_unused(e) || gpt_partition_start(e);
 }
 
 int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
@@ -2281,14 +2236,15 @@ static const struct fdisk_label_operations gpt_operations =
 	.get_id		= gpt_get_disklabel_id,
 	.set_id		= gpt_set_disklabel_id,
 
+	.get_part	= gpt_get_partition,
+
 	.part_add	= gpt_add_partition,
 	.part_delete	= gpt_delete_partition,
+
+	.part_is_used	= gpt_part_is_used,
 	.part_get_type	= gpt_get_partition_type,
 	.part_set_type	= gpt_set_partition_type,
 	.part_toggle_flag = gpt_toggle_partition_flag,
-
-	.part_get_status = gpt_get_partition_status,
-	.part_get_data = gpt_get_partition_data,
 
 	.deinit		= gpt_deinit
 };
