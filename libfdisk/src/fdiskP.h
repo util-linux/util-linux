@@ -130,14 +130,25 @@ struct fdisk_partition {
 	struct fdisk_context	*cxt;
 
 	size_t		partno;
+
 	uint64_t	start;
 	uint64_t	end;
 	uint64_t	size;
+
 	char		*name;
 	char		*uuid;
 	char		*attrs;
 
 	struct fdisk_parttype	*type;
+
+	/* private fields */
+	char		start_post;
+	char		end_post;
+	char		size_post;
+	uint64_t	fsize;
+	uint64_t	bsize;
+	uint64_t	cpg;
+
 
 	unsigned int	nested : 1,		/* logical partition */
 			used   : 1,		/* partition used */

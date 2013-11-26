@@ -200,6 +200,7 @@ int fdisk_get_partition(struct fdisk_context *cxt, size_t partno,
 
 	fdisk_reset_partition(pa);
 	pa->cxt = cxt;
+	pa->partno = partno;
 
 	rc = cxt->label->op->get_part(cxt, partno, pa);
 	if (rc == 0 && fdisk_partition_is_used(pa))
@@ -303,7 +304,7 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 
 		rc = fdisk_get_partition(cxt, i, pa);
 		if (rc)
-			goto done;
+			continue;
 		if (!fdisk_partition_is_used(pa))
 			continue;
 		ln = tt_add_line(tb, NULL);
@@ -319,13 +320,15 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 				continue;
 			rc = fdisk_partition_to_string(pa, col->id, &data);
 			if (rc)
-				goto done;
+				continue;
 			tt_line_set_data(ln, j, data);
 		}
 	}
 
 	if (!tt_is_empty(tb))
 		rc = fdisk_print_table(cxt, tb);
+	else
+		DBG(LABEL, dbgprint("table empty, not list"));
 done:
 	if (org != cols)
 		free(cols);

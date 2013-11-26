@@ -121,7 +121,10 @@ enum {
 	FDISK_COL_TYPE,
 	FDISK_COL_UUID,
 	FDISK_COL_NAME,
-	FDISK_COL_ATTR
+	FDISK_COL_ATTR,
+	FDISK_COL_FSIZE,
+	FDISK_COL_BSIZE,
+	FDISK_COL_CPG
 };
 
 extern int fdisk_require_geometry(struct fdisk_context *cxt);

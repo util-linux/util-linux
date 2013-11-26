@@ -203,25 +203,40 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 
 	switch (id) {
 	case FDISK_COL_DEVICE:
-		p = fdisk_partname(pa->cxt->dev_path, pa->partno + 1);
+		if (pa->cxt->label->flags & FDISK_LABEL_FL_INCHARS_PARTNO)
+			rc = asprintf(&p, "%c", (int) pa->partno + 'a');
+		else
+			p = fdisk_partname(pa->cxt->dev_path, pa->partno + 1);
 		break;
 	case FDISK_COL_START:
-		if (asprintf(&p, "%ju", pa->start) < 0)
-			rc = -ENOMEM;
+		rc = pa->start_post ?
+				asprintf(&p, "%ju%c", pa->start, pa->start_post) :
+				asprintf(&p, "%ju", pa->start);
 		break;
 	case FDISK_COL_END:
-		if (asprintf(&p, "%ju", pa->end) < 0)
-			rc = -ENOMEM;
+		rc = pa->end_post ?
+				asprintf(&p, "%ju%c", pa->end, pa->end_post) :
+				asprintf(&p, "%ju", pa->end);
 		break;
 	case FDISK_COL_SIZE:
 		if (fdisk_context_display_details(pa->cxt)) {
-			if (asprintf(&p, "%ju", pa->size))
-				rc = -ENOMEM;
+			rc = pa->size_post ?
+					asprintf(&p, "%ju%c", pa->size, pa->size_post) :
+					asprintf(&p, "%ju", pa->size);
 		} else {
 			p = size_to_human_string(SIZE_SUFFIX_1LETTER, pa->size);
 			if (!p)
 				rc = -ENOMEM;
 		}
+		break;
+	case FDISK_COL_BSIZE:
+		rc = asprintf(&p, "%ju", pa->bsize);
+		break;
+	case FDISK_COL_FSIZE:
+		rc = asprintf(&p, "%ju", pa->fsize);
+		break;
+	case FDISK_COL_CPG:
+		rc = asprintf(&p, "%ju", pa->cpg);
 		break;
 	case FDISK_COL_TYPE:
 		p = pa->type && pa->type->name ? strdup(pa->type->name) : NULL;
@@ -238,6 +253,11 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 	default:
 		return -EINVAL;
 	}
+
+	if (rc < 0)
+		rc = -ENOMEM;
+	else if (rc > 0)
+		rc = 0;
 
 	if (data)
 		*data = p;
