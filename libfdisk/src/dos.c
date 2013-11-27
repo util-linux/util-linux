@@ -1245,7 +1245,7 @@ static int dos_add_partition(
 
 	for (i = 0; i < 4; i++) {
 		struct dos_partition *p = self_partition(cxt, i);
-		free_primary += is_used_partition(p);
+		free_primary += !is_used_partition(p);
 	}
 
 	if (!free_primary && cxt->label->nparts_max >= MAXIMUM_PARTS) {
