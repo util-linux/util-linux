@@ -264,67 +264,8 @@ static int sgi_list_table(struct fdisk_context *cxt)
 			cxt->geom.cylinders, be16_to_cpu(sgiparam->pcylcount),
 			(int) sgiparam->sparecyl, be16_to_cpu(sgiparam->ilfact));
 
-	/*
-	 * Partitions
-	 */
-	tb = tt_new_table(TT_FL_FREEDATA);
-	if (!tb)
-		return -ENOMEM;
 
-	tt_define_column(tb, _("Pt#"),      3, TT_FL_RIGHT);
-	tt_define_column(tb, _("Device"), 0.2, 0);
-	tt_define_column(tb, _("Info"),     2, 0);
-	tt_define_column(tb, _("Start"),    9, TT_FL_RIGHT);
-	tt_define_column(tb, _("End"),      9, TT_FL_RIGHT);
-	tt_define_column(tb, _("Sectors"),  9, TT_FL_RIGHT);
-	tt_define_column(tb, _("Id"),       2, TT_FL_RIGHT);
-	tt_define_column(tb, _("System"), 0.2, TT_FL_TRUNC);
-
-	for (i = 0, used = 0; i < cxt->label->nparts_max; i++) {
-		uint32_t start, len;
-		struct fdisk_parttype *t;
-		struct tt_line *ln;
-
-		if (sgi_get_num_sectors(cxt, i) == 0)
-			continue;
-
-		ln = tt_add_line(tb, NULL);
-		if (!ln)
-			continue;
-		start = sgi_get_start_sector(cxt, i);
-		len = sgi_get_num_sectors(cxt, i);
-		t = fdisk_get_partition_type(cxt, i);
-
-		if (asprintf(&p, "%zu:", i + 1) > 0)
-			tt_line_set_data(ln, 0, p);	/* # */
-		p = fdisk_partname(cxt->dev_path, i + 1);
-		if (p)
-			tt_line_set_data(ln, 1, p);	/* Device */
-
-		p = sgi_get_swappartition(cxt) == (int) i ? "swap" :
-		    sgi_get_bootpartition(cxt) == (int) i ? "boot" : NULL;
-		if (p)
-			tt_line_set_data(ln, 2, strdup(p));	/* Info */
-
-		if (asprintf(&p, "%ju", (uintmax_t) fdisk_scround(cxt, start)) > 0)
-			tt_line_set_data(ln, 3, p);	/* Start */
-		if (asprintf(&p, "%ju",	(uintmax_t) fdisk_scround(cxt, start + len) - 1) > 0)
-			tt_line_set_data(ln, 4, p);	/* End */
-		if (asprintf(&p, "%ju",	(uintmax_t) len) > 0)
-			tt_line_set_data(ln, 5, p);	/* Sectors*/
-		if (asprintf(&p, "%2x", t->type) > 0)
-			tt_line_set_data(ln, 6, p);	/* type ID */
-		if (t->name)
-			tt_line_set_data(ln, 7, strdup(t->name)); /* type Name */
-		fdisk_free_parttype(t);
-		used++;
-	}
-
-	if (used)
-		rc = fdisk_print_table(cxt, tb);
-	tt_free_table(tb);
-	if (rc)
-		return rc;
+	fdisk_list_partitions(cxt, NULL, 0);
 
 	/*
 	 * Volumes
@@ -367,6 +308,30 @@ static int sgi_list_table(struct fdisk_context *cxt)
 	fdisk_colon(cxt, _("Bootfile: %s"), sgilabel->boot_file);
 
 	return rc;
+}
+
+static int sgi_get_partition(struct fdisk_context *cxt, size_t n, struct fdisk_partition *pa)
+{
+	uint64_t start, len;
+
+	pa->used = sgi_get_num_sectors(cxt, n) > 0;
+	if (!pa->used)
+		return 0;
+
+	start = sgi_get_start_sector(cxt, n);
+	len = sgi_get_num_sectors(cxt, n);
+
+	pa->type = fdisk_get_partition_type(cxt, n);
+	pa->size = len * cxt->sector_size;
+	pa->start = fdisk_scround(cxt, start);
+	pa->end = fdisk_scround(cxt, start + len) - 1;
+
+	pa->attrs = sgi_get_swappartition(cxt) == (int) n ? "swap" :
+		    sgi_get_bootpartition(cxt) == (int) n ? "boot" : NULL;
+	if (pa->attrs)
+		pa->attrs = strdup(pa->attrs);
+
+	return 0;
 }
 
 static unsigned int sgi_get_start_sector(struct fdisk_context *cxt, int i)
@@ -1140,6 +1105,19 @@ static int sgi_toggle_partition_flag(struct fdisk_context *cxt, size_t i, unsign
 	return 0;
 }
 
+static const struct fdisk_column sgi_columns[] =
+{
+	/* basic */
+	{ FDISK_COL_DEVICE,	N_("Device"),	 10,	0 },
+	{ FDISK_COL_START,	N_("Start"),	  5,	TT_FL_RIGHT },
+	{ FDISK_COL_END,	N_("End"),	  5,	TT_FL_RIGHT },
+	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	TT_FL_RIGHT },
+	{ FDISK_COL_SIZE,	N_("Size"),	  5,	TT_FL_RIGHT, FDISK_COLFL_EYECANDY },
+	{ FDISK_COL_TYPEID,	N_("Id"),	  2,	TT_FL_RIGHT },
+	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	TT_FL_TRUNC, FDISK_COLFL_EYECANDY },
+	{ FDISK_COL_ATTR,	N_("Attrs"),	  0,	TT_FL_RIGHT }
+};
+
 static const struct fdisk_label_operations sgi_operations =
 {
 	.probe		= sgi_probe_label,
@@ -1147,6 +1125,9 @@ static const struct fdisk_label_operations sgi_operations =
 	.verify		= sgi_verify_disklabel,
 	.create		= sgi_create_disklabel,
 	.list		= sgi_list_table,
+
+	.get_part	= sgi_get_partition,
+
 	.part_add	= sgi_add_partition,
 	.part_delete	= sgi_delete_partition,
 	.part_get_type	= sgi_get_parttype,
@@ -1175,6 +1156,8 @@ struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt)
 	lb->op = &sgi_operations;
 	lb->parttypes = sgi_parttypes;
 	lb->nparttypes = ARRAY_SIZE(sgi_parttypes);
+	lb->columns = sgi_columns;
+	lb->ncolumns = ARRAY_SIZE(sgi_columns);
 
 	lb->flags |= FDISK_LABEL_FL_REQUIRE_GEOMETRY;
 
