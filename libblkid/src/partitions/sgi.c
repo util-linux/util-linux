@@ -52,8 +52,7 @@ static int probe_sgi_pt(blkid_probe pr,
 		uint32_t type = be32_to_cpu(p->type);
 		blkid_partition par;
 
-		if (size == 0 || type == SGI_TYPE_ENTIRE_DISK ||
-			         type == SGI_TYPE_VOLHDR) {
+		if (!size) {
 			blkid_partlist_increment_partno(ls);
 			continue;
 		}
