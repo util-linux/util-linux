@@ -866,13 +866,11 @@ static const struct fdisk_label_operations bsd_operations =
 
 static const struct fdisk_column bsd_columns[] =
 {
-	/* basic */
 	{ FDISK_COL_DEVICE,	N_("Slice"),	  1,	0 },
 	{ FDISK_COL_START,	N_("Start"),	  9,	TT_FL_RIGHT },
 	{ FDISK_COL_END,	N_("End"),	  9,	TT_FL_RIGHT },
 	{ FDISK_COL_SIZE,	N_("Size"),	  9,	TT_FL_RIGHT },
 	{ FDISK_COL_TYPE,	N_("Type"),	  8,	0 },
-	/* expert */
 	{ FDISK_COL_FSIZE,	N_("Fsize"),	  5,	TT_FL_RIGHT },
 	{ FDISK_COL_BSIZE,	N_("Bsize"),	  5,	TT_FL_RIGHT },
 	{ FDISK_COL_CPG,	N_("Cpg"),	  5,	TT_FL_RIGHT }

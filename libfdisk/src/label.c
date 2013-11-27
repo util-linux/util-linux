@@ -110,12 +110,19 @@ int fdisk_missing_geometry(struct fdisk_context *cxt)
 /**
  * fdisk_get_columns:
  * @cxt: fdisk context
- * @cols: returns allocated array with FDISK_COL_*
+ * @all: 1 or 0
+ * @cols: returns allocated array with FDISK_COL_* IDs
  * @ncols: returns number of items in cols
+ *
+ * This function returns the default or all columns for the current label.  The
+ * library uses the columns for list operations (see fdisk_list_disklabel() and
+ * fdisk_list_partitions()). Note that the set of the default columns depends
+ * on fdisk_context_enable_details() function. If the details are eanable then
+ * this function usually returns more columns.
  *
  * Returns 0 on success, otherwise, a corresponding error.
  */
-int fdisk_get_columns(struct fdisk_context *cxt, int **cols, size_t *ncols)
+int fdisk_get_columns(struct fdisk_context *cxt, int all, int **cols, size_t *ncols)
 {
 	size_t i, n;
 	int *c;
@@ -130,8 +137,11 @@ int fdisk_get_columns(struct fdisk_context *cxt, int **cols, size_t *ncols)
 	if (!c)
 		return -ENOMEM;
 	for (n = 0, i = 0; i < cxt->label->ncolumns; i++) {
-		if (cxt->label->columns[i].detail
-		    && !fdisk_context_display_details(cxt))
+		if (!all &&
+		    ((fdisk_context_display_details(cxt) &&
+				(cxt->label->columns[i].flags & FDISK_COLFL_EYECANDY))
+		     || (!fdisk_context_display_details(cxt) &&
+				(cxt->label->columns[i].flags & FDISK_COLFL_DETAIL))))
 			continue;
 		c[n++] = cxt->label->columns[i].id;
 	}
@@ -253,7 +263,7 @@ int fdisk_list_disklabel(struct fdisk_context *cxt)
  * only partitons by FDISK_ASKTYPE_TABLE interface.
  *
  * If no @cols are specified then the default is printed (see
- * fdisk_label_get_columns() for the default columns).
+ * fdisk_get_columns() for the default columns).
 
  * Returns 0 on success, otherwise, a corresponding error.
  */
@@ -274,7 +284,7 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 	DBG(LABEL, dbgprint("list partitions"));
 
 	if (!cols || !ncols) {
-		rc = fdisk_get_columns(cxt, &cols, &ncols);
+		rc = fdisk_get_columns(cxt, 0, &cols, &ncols);
 		if (rc)
 			return rc;
 	}
@@ -295,7 +305,7 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 		col = fdisk_label_get_column(cxt->label, cols[j]);
 		if (!col)
 			continue;
-		tt_define_column(tb, col->name, col->width, col->flags);
+		tt_define_column(tb, col->name, col->width, col->tt_flags);
 	}
 
 	/* generate per-partition lines into table */

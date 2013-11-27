@@ -114,17 +114,26 @@ extern int fdisk_is_parttype_string(struct fdisk_context *cxt);
 /* label.c */
 enum {
 	FDISK_COL_NONE = 0,
+
+	/* generic */
 	FDISK_COL_DEVICE,
 	FDISK_COL_START,
 	FDISK_COL_END,
+	FDISK_COL_SECTORS,
 	FDISK_COL_SIZE,
 	FDISK_COL_TYPE,
-	FDISK_COL_UUID,
-	FDISK_COL_NAME,
+	FDISK_COL_TYPEID,
+
+	/* label specific */
 	FDISK_COL_ATTR,
-	FDISK_COL_FSIZE,
+	FDISK_COL_BOOT,
 	FDISK_COL_BSIZE,
-	FDISK_COL_CPG
+	FDISK_COL_CPG,
+	FDISK_COL_EADDR,
+	FDISK_COL_FSIZE,
+	FDISK_COL_NAME,
+	FDISK_COL_SADDR,
+	FDISK_COL_UUID,
 };
 
 extern int fdisk_require_geometry(struct fdisk_context *cxt);
@@ -153,7 +162,7 @@ extern struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt
 extern int fdisk_set_partition_type(struct fdisk_context *cxt, size_t partnum,
 			     struct fdisk_parttype *t);
 
-extern int fdisk_get_columns(struct fdisk_context *cxt, int **cols, size_t *ncols);
+extern int fdisk_get_columns(struct fdisk_context *cxt, int all, int **cols, size_t *ncols);
 extern int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols);
 
 extern void fdisk_label_set_changed(struct fdisk_label *lb, int changed);

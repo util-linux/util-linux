@@ -208,6 +208,9 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 		else
 			p = fdisk_partname(pa->cxt->dev_path, pa->partno + 1);
 		break;
+	case FDISK_COL_BOOT:
+		rc = asprintf(&p, "%c", pa->boot);
+		break;
 	case FDISK_COL_START:
 		rc = pa->start_post ?
 				asprintf(&p, "%ju%c", pa->start, pa->start_post) :
@@ -229,6 +232,9 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 				rc = -ENOMEM;
 		}
 		break;
+	case FDISK_COL_SECTORS:
+		rc = asprintf(&p, "%ju", pa->size / pa->cxt->sector_size);
+		break;
 	case FDISK_COL_BSIZE:
 		rc = asprintf(&p, "%ju", pa->bsize);
 		break;
@@ -241,6 +247,12 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 	case FDISK_COL_TYPE:
 		p = pa->type && pa->type->name ? strdup(pa->type->name) : NULL;
 		break;
+	case FDISK_COL_TYPEID:
+		if (pa->type && pa->type->typestr)
+			rc = asprintf(&p, "%s", pa->type->typestr);
+		else if (pa->type)
+			rc = asprintf(&p, "%x", pa->type->type);
+		break;
 	case FDISK_COL_UUID:
 		p = pa->uuid ? strdup(pa->uuid) : NULL;
 		break;
@@ -249,6 +261,12 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 		break;
 	case FDISK_COL_ATTR:
 		p = pa->attrs ? strdup(pa->attrs) : NULL;
+		break;
+	case FDISK_COL_SADDR:
+		p = pa->start_addr ? strdup(pa->start_addr) : NULL;
+		break;
+	case FDISK_COL_EADDR:
+		p = pa->end_addr ? strdup(pa->end_addr) : NULL;
 		break;
 	default:
 		return -EINVAL;

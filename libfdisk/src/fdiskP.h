@@ -149,6 +149,9 @@ struct fdisk_partition {
 	uint64_t	bsize;
 	uint64_t	cpg;
 
+	char		boot;
+	char		*start_addr;
+	char		*end_addr;
 
 	unsigned int	nested : 1,		/* logical partition */
 			used   : 1,		/* partition used */
@@ -229,9 +232,15 @@ struct fdisk_column {
 	int		id;		/* FDISK_COL_* */
 	const char	*name;		/* column header */
 	double		width;
-	int		flags;		/* TT_FL_* */
+	int		tt_flags;	/* TT_FL_* */
 
-	unsigned int	detail;		/* if fdisk_context_display_details() */
+	int		flags;		/* FDISK_COLFL_* */
+};
+
+/* note that the defauls is to display a column always */
+enum {
+	FDISK_COLFL_DETAIL	= (1 << 1),	/* only display if fdisk_context_display_details() */
+	FDISK_COLFL_EYECANDY	= (1 << 2),	/* don't display if fdisk_context_display_details() */
 };
 
 /*
