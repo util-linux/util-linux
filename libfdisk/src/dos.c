@@ -1518,26 +1518,11 @@ static int wrong_p_order(struct fdisk_context *cxt, size_t *prev)
 	return 0;
 }
 
-static int is_garbage_table(struct fdisk_context *cxt)
-{
-	size_t i;
-
-	for (i = 0; i < 4; i++) {
-		struct dos_partition *p = self_partition(cxt, i);
-
-		if (p->boot_ind != 0 && p->boot_ind != 0x80)
-			return 1;
-	}
-	return 0;
-}
-
 /*
- * List all PT fields.
- *
- * This is useful for PT debugging (or for 70's Hippies
- * who are on permanent LSD trip).
+ * This is so crazy that it's exported by separate function and not exported by
+ * regular fdisk_list_disable() libfdisk API.
  */
-static int dos_fulllist_disklabel(struct fdisk_context *cxt, int ext)
+int fdisk_dos_list_extended(struct fdisk_context *cxt)
 {
 	int rc;
 	size_t i;
@@ -1572,7 +1557,7 @@ static int dos_fulllist_disklabel(struct fdisk_context *cxt, int ext)
 		struct tt_line *ln;
 		char *str;
 
-		p = ext ? pe->ex_entry : pe->pt_entry;
+		p = pe->ex_entry;
 		if (!p)
 			continue;
 		ln = tt_add_line(tb, NULL);
@@ -1618,116 +1603,59 @@ static int dos_fulllist_disklabel(struct fdisk_context *cxt, int ext)
 	return rc;
 }
 
-int fdisk_dos_list_extended(struct fdisk_context *cxt)
-{
-	return dos_fulllist_disklabel(cxt, 1);
-}
-
 static int dos_list_disklabel(struct fdisk_context *cxt)
 {
-	int rc = 0, trunc = TT_FL_TRUNC;
-	size_t i;
-	struct tt *tb = NULL;
-
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
-	if (is_garbage_table(cxt)) {
-		fdisk_warnx(cxt, _(
-			"This doesn't look like a partition table. "
-			"Probably you selected the wrong device."));
-	}
+	return fdisk_list_partitions(cxt, NULL, 0);
+}
 
-	if (fdisk_context_display_details(cxt))
-		return dos_fulllist_disklabel(cxt, 0);
+static int dos_get_partition(struct fdisk_context *cxt, size_t n,
+			     struct fdisk_partition *pa)
+{
+	struct dos_partition *p;
+	struct pte *pe;
+	unsigned int psects;
 
-	tb = tt_new_table(TT_FL_FREEDATA);
-	if (!tb)
+	assert(cxt);
+	assert(pa);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, DOS));
+
+	pe = self_pte(cxt, n);
+	p = pe->pt_entry;
+	pa->used = !is_cleared_partition(p);
+	if (!pa->used)
+		return 0;
+
+	psects = dos_partition_get_size(p);
+
+	pa->type = fdisk_get_parttype_from_code(cxt, p->sys_ind);
+	pa->boot = p->boot_ind ? p->boot_ind == ACTIVE_FLAG ? '*' : '?' : ' ';
+	pa->start = cround(cxt, get_abs_partition_start(pe));
+	pa->end = cround(cxt, get_abs_partition_start(pe) + psects - (psects ? 1 : 0));
+	pa->size = psects * cxt->sector_size;
+
+	if (asprintf(&pa->attrs, "%02x", p->boot_ind) < 0)
 		return -ENOMEM;
 
-	/* don't trunc anything in expert mode */
-	if (fdisk_context_display_details(cxt))
-		trunc = 0;
+	/* start C/H/S */
+	if (asprintf(&pa->start_addr, "%d/%d/%d",
+				cylinder(p->bs, p->bc),
+				sector(p->bs),
+				p->bh) < 0)
+		return -ENOMEM;
 
-	tt_define_column(tb, _("Device"), 0.1, 0);
-	tt_define_column(tb, _("Boot"),     1, 0);
-	tt_define_column(tb, _("Start"),    9, TT_FL_RIGHT);
-	tt_define_column(tb, _("End"),      9, TT_FL_RIGHT);
-	/* TRANSLATORS: keep one blank space behind 'Blocks' */
-	tt_define_column(tb, _("Blocks "),  5, TT_FL_RIGHT);
-	tt_define_column(tb, _("Id"),       2, TT_FL_RIGHT);
-	tt_define_column(tb, _("System"), 0.1, trunc);
+	/* end C/H/S */
+	if (asprintf(&pa->end_addr, "%d/%d/%d",
+				cylinder(p->es, p->ec),
+				sector(p->es),
+				p->eh) < 0)
+		return -ENOMEM;
 
-	for (i = 0; i < cxt->label->nparts_max; i++) {
-		struct pte *pe = self_pte(cxt, i);
-		struct dos_partition *p = pe->pt_entry;
-		unsigned int psects, pblocks, podd = 0;
-		struct fdisk_parttype *type;
-		struct tt_line *ln;
-		char *str;
-
-		if (!is_used_partition(p))
-			continue;
-		ln = tt_add_line(tb, NULL);
-		if (!ln)
-			continue;
-
-		pblocks = psects = dos_partition_get_size(p);
-		type = fdisk_get_parttype_from_code(cxt, p->sys_ind);
-
-		if (cxt->sector_size < 1024) {
-			pblocks /= (1024 / cxt->sector_size);
-			podd = psects % (1024 / cxt->sector_size);
-		}
-		if (cxt->sector_size > 1024)
-			pblocks *= (cxt->sector_size / 1024);
-
-		str = fdisk_partname(cxt->dev_path, i + 1);
-		if (str)
-			tt_line_set_data(ln, 0, str);		/* device */
-
-		str = strdup(p->boot_ind ?
-			     p->boot_ind == ACTIVE_FLAG ? "*" : "?" : " ");
-		if (str)
-			tt_line_set_data(ln, 1,	str);		/* boot flag */
-
-		if (asprintf(&str, "%lu", (unsigned long) cround(cxt,
-					get_abs_partition_start(pe))) > 0)
-			tt_line_set_data(ln, 2, str);		/* start */
-
-		if (asprintf(&str, "%lu", (unsigned long) cround(cxt,
-				get_abs_partition_start(pe)
-				+ psects - (psects ? 1 : 0))) > 0)
-			tt_line_set_data(ln, 3, str);		/* end */
-
-		if (asprintf(&str, "%lu%c", (unsigned long) pblocks,
-				podd ? '+' : ' ') > 0)
-			tt_line_set_data(ln, 4, str);		/* blocks<flag> */
-
-		if (asprintf(&str, "%x",  p->sys_ind) > 0)
-			tt_line_set_data(ln, 5, str);		/* id */
-
-		str = strdup(type ? type->name : _("Unknown"));
-		if (str)
-			tt_line_set_data(ln, 6, str);
-
-		check_consistency(cxt, p, i);
-		fdisk_warn_alignment(cxt, get_abs_partition_start(pe), i);
-		fdisk_free_parttype(type);
-	}
-
-	rc = fdisk_print_table(cxt, tb);
-	tt_free_table(tb);
-
-	/* Is partition table in disk order? It need not be, but... */
-	/* partition table entries are not checked for correct order if this
-	   is a sgi, sun labeled disk... */
-	if (wrong_p_order(cxt, NULL))
-		fdisk_info(cxt, _("Partition table entries are not in "
-				  "disk order."));
-
-	return rc;
+	return 0;
 }
 
 
@@ -1954,6 +1882,25 @@ static int dos_toggle_partition_flag(
 	return 0;
 }
 
+static const struct fdisk_column dos_columns[] =
+{
+	/* basic */
+	{ FDISK_COL_DEVICE,	N_("Device"),	 10,	0 },
+	{ FDISK_COL_BOOT,	N_("Boot"),	  1,	0 },
+	{ FDISK_COL_START,	N_("Start"),	  5,	TT_FL_RIGHT },
+	{ FDISK_COL_END,	N_("End"),	  5,	TT_FL_RIGHT },
+	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	TT_FL_RIGHT },
+	{ FDISK_COL_SIZE,	N_("Size"),	  5,	TT_FL_RIGHT, FDISK_COLFL_EYECANDY },
+	{ FDISK_COL_TYPEID,	N_("Id"),	  2,	TT_FL_RIGHT },
+	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	TT_FL_TRUNC },
+
+	/* expert mode */
+	{ FDISK_COL_SADDR,	N_("Start-C/H/S"), 1,   TT_FL_RIGHT, FDISK_COLFL_DETAIL },
+	{ FDISK_COL_EADDR,	N_("End-C/H/S"),   1,   TT_FL_RIGHT, FDISK_COLFL_DETAIL },
+	{ FDISK_COL_ATTR,	N_("Attrs"),	   2,   TT_FL_RIGHT, FDISK_COLFL_DETAIL }
+
+};
+
 static const struct fdisk_label_operations dos_operations =
 {
 	.probe		= dos_probe_label,
@@ -1964,6 +1911,8 @@ static const struct fdisk_label_operations dos_operations =
 	.list		= dos_list_disklabel,
 	.get_id		= dos_get_disklabel_id,
 	.set_id		= dos_set_disklabel_id,
+
+	.get_part	= dos_get_partition,
 
 	.part_add	= dos_add_partition,
 	.part_delete	= dos_delete_partition,
@@ -1999,6 +1948,8 @@ struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt)
 	lb->op = &dos_operations;
 	lb->parttypes = dos_parttypes;
 	lb->nparttypes = ARRAY_SIZE(dos_parttypes);
+	lb->columns = dos_columns;
+	lb->ncolumns = ARRAY_SIZE(dos_columns);
 
 	lb->flags |= FDISK_LABEL_FL_ADDPART_NOPARTNO;
 
