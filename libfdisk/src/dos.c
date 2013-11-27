@@ -1467,6 +1467,9 @@ static int dos_set_parttype(
 		"partitions, please see the fdisk documentation for additional "
 		"information."));
 
+	if (!t->type)
+		fdisk_warnx(cxt, _("Type 0 means free space to many systems. "
+				   "Having partitions of type 0 is probably unwise."));
 	p->sys_ind = t->type;
 
 	partition_set_changed(cxt, partnum, 1);
