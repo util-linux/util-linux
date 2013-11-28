@@ -123,6 +123,15 @@ struct dos_partition *fdisk_dos_get_partition(
 	return self_partition(cxt, i);
 }
 
+static struct fdisk_parttype *dos_partition_parttype(
+		struct fdisk_context *cxt,
+		struct dos_partition *p)
+{
+	struct fdisk_parttype *t
+			= fdisk_get_parttype_from_code(cxt, p->sys_ind);
+	return t ? : fdisk_new_unknown_parttype(p->sys_ind, NULL);
+}
+
 static void partition_set_changed(
 				struct fdisk_context *cxt,
 				size_t i,
@@ -1424,27 +1433,6 @@ static int dos_locate_disklabel(struct fdisk_context *cxt, int n,
 	return 0;
 }
 
-static struct fdisk_parttype *dos_get_parttype(
-		struct fdisk_context *cxt,
-		size_t partnum)
-{
-	struct fdisk_parttype *t;
-	struct dos_partition *p;
-
-	assert(cxt);
-	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
-
-	if (partnum >= cxt->label->nparts_max)
-		return NULL;
-
-	p = self_partition(cxt, partnum);
-	t = fdisk_get_parttype_from_code(cxt, p->sys_ind);
-	if (!t)
-		t = fdisk_new_unknown_parttype(p->sys_ind, NULL);
-	return t;
-}
-
 static int dos_set_parttype(
 		struct fdisk_context *cxt,
 		size_t partnum,
@@ -1632,7 +1620,7 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 
 	psects = dos_partition_get_size(p);
 
-	pa->type = fdisk_get_parttype_from_code(cxt, p->sys_ind);
+	pa->type = dos_partition_parttype(cxt, p);
 	pa->boot = p->boot_ind ? p->boot_ind == ACTIVE_FLAG ? '*' : '?' : ' ';
 	pa->start = cround(cxt, get_abs_partition_start(pe));
 	pa->end = cround(cxt, get_abs_partition_start(pe) + psects - (psects ? 1 : 0));
@@ -1916,7 +1904,6 @@ static const struct fdisk_label_operations dos_operations =
 
 	.part_add	= dos_add_partition,
 	.part_delete	= dos_delete_partition,
-	.part_get_type	= dos_get_parttype,
 	.part_set_type	= dos_set_parttype,
 
 	.part_toggle_flag = dos_toggle_partition_flag,
