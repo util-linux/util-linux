@@ -243,7 +243,6 @@ struct fdisk_gpt_label {
 };
 
 static void gpt_deinit(struct fdisk_label *lb);
-static struct fdisk_parttype *gpt_get_partition_type(struct fdisk_context *cxt, size_t i);
 
 static inline struct fdisk_gpt_label *self_label(struct fdisk_context *cxt)
 {
@@ -297,7 +296,7 @@ static int string_to_guid(const char *in, struct gpt_guid *guid)
 	return 0;
 }
 
-static char *guid_to_string(struct gpt_guid *guid, char *out)
+static char *guid_to_string(const struct gpt_guid *guid, char *out)
 {
 	struct gpt_guid u = *guid;	/* LE */
 
@@ -306,6 +305,20 @@ static char *guid_to_string(struct gpt_guid *guid, char *out)
 
 	return out;
 }
+
+static struct fdisk_parttype *gpt_partition_parttype(
+		struct fdisk_context *cxt,
+		const struct gpt_entry *e)
+{
+	struct fdisk_parttype *t;
+	char str[37];
+
+	guid_to_string(&e->type, str);
+	t = fdisk_get_parttype_from_string(cxt, str);
+	return t ? : fdisk_new_unknown_parttype(0, str);
+}
+
+
 
 static const char *gpt_get_header_revstr(struct gpt_header *header)
 {
@@ -1289,7 +1302,7 @@ static int gpt_get_partition(struct fdisk_context *cxt, size_t n,
 	pa->start = gpt_partition_start(e);
 	pa->end = gpt_partition_end(e);
 	pa->size = gpt_partition_size(e) * cxt->sector_size;
-	pa->type = fdisk_get_partition_type(cxt, n);
+	pa->type = gpt_partition_parttype(cxt, e);
 
 	if (guid_to_string(&e->partition_guid, u_str)) {
 		pa->uuid = strdup(u_str);
@@ -1810,7 +1823,7 @@ static int gpt_add_partition(
 		cxt->label->nparts_cur++;
 		fdisk_label_set_changed(cxt->label, 1);
 
-		t = gpt_get_partition_type(cxt, partnum);
+		t = gpt_partition_parttype(cxt, &ents[partnum]);
 		fdisk_info_new_partition(cxt, partnum + 1, user_f, user_l, t);
 		fdisk_free_parttype(t);
 	}
@@ -1953,33 +1966,6 @@ static int gpt_set_disklabel_id(struct fdisk_context *cxt)
 	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
 }
-
-
-static struct fdisk_parttype *gpt_get_partition_type(
-		struct fdisk_context *cxt,
-		size_t i)
-{
-	struct fdisk_parttype *t;
-	char str[37];
-	struct fdisk_gpt_label *gpt;
-
-	assert(cxt);
-	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
-
-	gpt = self_label(cxt);
-
-	if ((uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries))
-		return NULL;
-
-	guid_to_string(&gpt->ents[i].type, str);
-	t = fdisk_get_parttype_from_string(cxt, str);
-	if (!t)
-		t = fdisk_new_unknown_parttype(0, str);
-
-	return t;
-}
-
 
 static int gpt_set_partition_type(
 		struct fdisk_context *cxt,
@@ -2242,7 +2228,6 @@ static const struct fdisk_label_operations gpt_operations =
 	.part_delete	= gpt_delete_partition,
 
 	.part_is_used	= gpt_part_is_used,
-	.part_get_type	= gpt_get_partition_type,
 	.part_set_type	= gpt_set_partition_type,
 	.part_toggle_flag = gpt_toggle_partition_flag,
 
