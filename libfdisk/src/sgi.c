@@ -310,30 +310,6 @@ static int sgi_list_table(struct fdisk_context *cxt)
 	return rc;
 }
 
-static int sgi_get_partition(struct fdisk_context *cxt, size_t n, struct fdisk_partition *pa)
-{
-	uint64_t start, len;
-
-	pa->used = sgi_get_num_sectors(cxt, n) > 0;
-	if (!pa->used)
-		return 0;
-
-	start = sgi_get_start_sector(cxt, n);
-	len = sgi_get_num_sectors(cxt, n);
-
-	pa->type = fdisk_get_partition_type(cxt, n);
-	pa->size = len * cxt->sector_size;
-	pa->start = fdisk_scround(cxt, start);
-	pa->end = fdisk_scround(cxt, start + len) - 1;
-
-	pa->attrs = sgi_get_swappartition(cxt) == (int) n ? "swap" :
-		    sgi_get_bootpartition(cxt) == (int) n ? "boot" : NULL;
-	if (pa->attrs)
-		pa->attrs = strdup(pa->attrs);
-
-	return 0;
-}
-
 static unsigned int sgi_get_start_sector(struct fdisk_context *cxt, int i)
 {
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
@@ -368,6 +344,43 @@ static unsigned int sgi_get_lastblock(struct fdisk_context *cxt)
 {
 	return cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders;
 }
+
+static struct fdisk_parttype *sgi_get_parttype(struct fdisk_context *cxt, size_t n)
+{
+	struct fdisk_parttype *t;
+
+	if (n >= cxt->label->nparts_max)
+		return NULL;
+
+	t = fdisk_get_parttype_from_code(cxt, sgi_get_sysid(cxt, n));
+	return t ? : fdisk_new_unknown_parttype(sgi_get_sysid(cxt, n), NULL);
+}
+
+/* fdisk_get_partition() backend */
+static int sgi_get_partition(struct fdisk_context *cxt, size_t n, struct fdisk_partition *pa)
+{
+	uint64_t start, len;
+
+	pa->used = sgi_get_num_sectors(cxt, n) > 0;
+	if (!pa->used)
+		return 0;
+
+	start = sgi_get_start_sector(cxt, n);
+	len = sgi_get_num_sectors(cxt, n);
+
+	pa->type = sgi_get_parttype(cxt, n);
+	pa->size = len * cxt->sector_size;
+	pa->start = fdisk_scround(cxt, start);
+	pa->end = fdisk_scround(cxt, start + len) - 1;
+
+	pa->attrs = sgi_get_swappartition(cxt) == (int) n ? "swap" :
+		    sgi_get_bootpartition(cxt) == (int) n ? "boot" : NULL;
+	if (pa->attrs)
+		pa->attrs = strdup(pa->attrs);
+
+	return 0;
+}
+
 
 static int sgi_check_bootfile(struct fdisk_context *cxt, const char *name)
 {
@@ -1009,19 +1022,6 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	return 0;
 }
 
-static struct fdisk_parttype *sgi_get_parttype(struct fdisk_context *cxt, size_t n)
-{
-	struct fdisk_parttype *t;
-
-	if (n >= cxt->label->nparts_max)
-		return NULL;
-
-	t = fdisk_get_parttype_from_code(cxt, sgi_get_sysid(cxt, n));
-	if (!t)
-		t = fdisk_new_unknown_parttype(sgi_get_sysid(cxt, n), NULL);
-	return t;
-}
-
 static int sgi_set_parttype(struct fdisk_context *cxt,
 		size_t i,
 		struct fdisk_parttype *t)
@@ -1129,7 +1129,6 @@ static const struct fdisk_label_operations sgi_operations =
 
 	.part_add	= sgi_add_partition,
 	.part_delete	= sgi_delete_partition,
-	.part_get_type	= sgi_get_parttype,
 	.part_set_type	= sgi_set_parttype,
 
 	.part_is_used	= sgi_partition_is_used,
