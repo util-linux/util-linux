@@ -199,7 +199,7 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
  * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_get_partition(struct fdisk_context *cxt, size_t partno,
-			struct fdisk_partition *pa)
+			struct fdisk_partition **pa)
 {
 	int rc;
 
@@ -208,12 +208,17 @@ int fdisk_get_partition(struct fdisk_context *cxt, size_t partno,
 	if (!cxt->label->op->get_part)
 		return -ENOSYS;
 
-	fdisk_reset_partition(pa);
-	pa->cxt = cxt;
-	pa->partno = partno;
+	if (!*pa) {
+		*pa = fdisk_new_partition();
+		if (!*pa)
+			return -ENOMEM;
+	} else
+		fdisk_reset_partition(*pa);
+	(*pa)->cxt = cxt;
+	(*pa)->partno = partno;
 
-	rc = cxt->label->op->get_part(cxt, partno, pa);
-	if (rc == 0 && fdisk_partition_is_used(pa))
+	rc = cxt->label->op->get_part(cxt, partno, *pa);
+	if (rc == 0 && fdisk_partition_is_used(*pa))
 		DBG(LABEL, dbgprint("get partition %zu", partno));
 	return rc;
 }
@@ -294,11 +299,6 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 		rc = -ENOMEM;
 		goto done;
 	}
-	pa = fdisk_new_partition();
-	if (!pa) {
-		rc = -ENOMEM;
-		goto done;
-	}
 
 	/* define table columns */
 	for (j = 0; j < ncols; j++) {
@@ -312,7 +312,7 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 	for (i = 0; i < cxt->label->nparts_max; i++) {
 		struct tt_line *ln;
 
-		rc = fdisk_get_partition(cxt, i, pa);
+		rc = fdisk_get_partition(cxt, i, &pa);
 		if (rc)
 			continue;
 		if (!fdisk_partition_is_used(pa))
@@ -496,23 +496,6 @@ int fdisk_set_disklabel_id(struct fdisk_context *cxt)
 
 	DBG(LABEL, dbgprint("setting %s disk ID", cxt->label->name));
 	return cxt->label->op->set_id(cxt);
-}
-
-/**
- * fdisk_get_partition_type:
- * @cxt: fdisk context
- * @partnum: partition number
- *
- * Returns partition type or NULL upon failure.
- */
-struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt,
-						size_t partnum)
-{
-	if (!cxt || !cxt->label || !cxt->label->op->part_get_type)
-		return NULL;
-
-	DBG(LABEL, dbgprint("partition: %zd: get type", partnum));
-	return cxt->label->op->part_get_type(cxt, partnum);
 }
 
 /**

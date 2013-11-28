@@ -160,7 +160,9 @@ void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 void change_partition_type(struct fdisk_context *cxt)
 {
 	size_t i;
-	struct fdisk_parttype *t = NULL, *org_t = NULL;
+	struct fdisk_parttype *t = NULL;
+	struct fdisk_partition *pa = NULL;
+	const char *old = NULL;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -168,28 +170,30 @@ void change_partition_type(struct fdisk_context *cxt)
 	if (fdisk_ask_partnum(cxt, &i, FALSE))
 		return;
 
-	org_t = t = fdisk_get_partition_type(cxt, i);
-	if (!t)
-                fdisk_warnx(cxt, _("Partition %zu does not exist yet!"), i + 1);
-        else {
-		do {
-			t = ask_partition_type(cxt);
-		} while (!t);
+	if (fdisk_get_partition(cxt, i, &pa)) {
+		fdisk_warnx(cxt, _("Partition %zu does not exist yet!"), i + 1);
+		return;
+	}
 
-		if (fdisk_set_partition_type(cxt, i, t) == 0)
-			fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-				_("Changed type of partition '%s' to '%s'."),
-				org_t ? org_t->name : _("Unknown"),
-				    t ?     t->name : _("Unknown"));
-		else
-			fdisk_info(cxt,
-				_("Type of partition %zu is unchanged: %s."),
-				i + 1,
-				org_t ? org_t->name : _("Unknown"));
-        }
+	t = (struct fdisk_parttype *) fdisk_partition_get_type(pa);
+	old = t ? t->name : _("Unknown");
 
-	fdisk_free_parttype(t);
-	fdisk_free_parttype(org_t);
+	do {
+		t = ask_partition_type(cxt);
+	} while (!t);
+
+	fdisk_partition_set_type(pa, t);
+
+	if (fdisk_set_partition_type(cxt, i, t) == 0)
+		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("Changed type of partition '%s' to '%s'."),
+			old, t ? t->name : _("Unknown"));
+	else
+		fdisk_info(cxt,
+			_("Type of partition %zu is unchanged: %s."),
+			i + 1, old);
+
+	fdisk_free_partition(pa);
 }
 
 void list_disk_geometry(struct fdisk_context *cxt)

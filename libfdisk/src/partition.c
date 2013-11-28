@@ -92,6 +92,7 @@ int fdisk_partition_set_type(struct fdisk_partition *pa, struct fdisk_parttype *
 {
 	if (!pa)
 		return -EINVAL;
+	fdisk_free_parttype(pa->type);
 	pa->type = type;
 	return 0;
 }
