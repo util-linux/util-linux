@@ -107,6 +107,16 @@ static inline struct bsd_disklabel *self_disklabel(struct fdisk_context *cxt)
 	return &((struct fdisk_bsd_label *) cxt->label)->bsd;
 }
 
+static struct fdisk_parttype *bsd_partition_parttype(
+		struct fdisk_context *cxt,
+		struct bsd_partition *p)
+{
+	struct fdisk_parttype *t
+			= fdisk_get_parttype_from_code(cxt, p->p_fstype);
+	return t ? : fdisk_new_unknown_parttype(p->p_fstype, NULL);
+}
+
+
 #if defined (__alpha__)
 static void alpha_bootblock_checksum (char *boot)
 {
@@ -404,7 +414,7 @@ static int bsd_get_partition(struct fdisk_context *cxt, size_t n,
 	}
 
 	pa->size = p->p_size * cxt->sector_size;
-	pa->type = fdisk_get_partition_type(cxt, n);
+	pa->type = bsd_partition_parttype(cxt, p);
 
 	if (p->p_fstype == BSD_FS_UNUSED || p->p_fstype == BSD_FS_BSDFFS) {
 		pa->fsize = p->p_fsize;
@@ -799,22 +809,6 @@ int fdisk_bsd_link_partition(struct fdisk_context *cxt)
 	return 0;
 }
 
-static struct fdisk_parttype *bsd_get_parttype(
-		struct fdisk_context *cxt,
-		size_t n)
-{
-	struct fdisk_parttype *t;
-	struct bsd_disklabel *d = self_disklabel(cxt);
-
-	if (n >= d->d_npartitions)
-		return NULL;
-
-	t = fdisk_get_parttype_from_code(cxt, d->d_partitions[n].p_fstype);
-	if (!t)
-		t = fdisk_new_unknown_parttype(d->d_partitions[n].p_fstype, NULL);
-	return t;
-}
-
 static int bsd_set_parttype(
 		struct fdisk_context *cxt,
 		size_t partnum,
@@ -859,7 +853,6 @@ static const struct fdisk_label_operations bsd_operations =
 
 	.get_part	= bsd_get_partition,
 
-	.part_get_type	= bsd_get_parttype,
 	.part_set_type	= bsd_set_parttype,
 	.part_is_used   = bsd_partition_is_used,
 };
