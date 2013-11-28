@@ -692,6 +692,21 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 	return fdisk_list_partitions(cxt, NULL, 0);
 }
 
+static struct fdisk_parttype *sun_get_parttype(
+		struct fdisk_context *cxt,
+		size_t n)
+{
+	struct sun_disklabel *sunlabel = self_disklabel(cxt);
+	struct fdisk_parttype *t;
+
+	if (n >= cxt->label->nparts_max)
+		return NULL;
+
+	t = fdisk_get_parttype_from_code(cxt, be16_to_cpu(sunlabel->vtoc.infos[n].id));
+	return t ? : fdisk_new_unknown_parttype(be16_to_cpu(sunlabel->vtoc.infos[n].id), NULL);
+}
+
+
 static int sun_get_partition(struct fdisk_context *cxt, size_t n,
 			      struct fdisk_partition *pa)
 {
@@ -719,7 +734,7 @@ static int sun_get_partition(struct fdisk_context *cxt, size_t n,
 			* cxt->geom.heads * cxt->geom.sectors;
 	len = be32_to_cpu(part->num_sectors);
 
-	pa->type = fdisk_get_partition_type(cxt, n);
+	pa->type = sun_get_parttype(cxt, n);
 
 	if (flags & SUN_FLAG_UNMNT || flags & SUN_FLAG_RONLY) {
 		if (asprintf(&pa->attrs, "%c%c",
@@ -846,26 +861,6 @@ static int sun_write_disklabel(struct fdisk_context *cxt)
 	return 0;
 }
 
-static struct fdisk_parttype *sun_get_parttype(
-		struct fdisk_context *cxt,
-		size_t n)
-{
-	struct sun_disklabel *sunlabel = self_disklabel(cxt);
-	struct fdisk_parttype *t;
-
-	assert(cxt);
-	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SUN));
-
-	if (n >= cxt->label->nparts_max)
-		return NULL;
-
-	t = fdisk_get_parttype_from_code(cxt, be16_to_cpu(sunlabel->vtoc.infos[n].id));
-	if (!t)
-		t = fdisk_new_unknown_parttype(be16_to_cpu(sunlabel->vtoc.infos[n].id), NULL);
-	return t;
-}
-
 static int sun_set_parttype(
 		struct fdisk_context *cxt,
 		size_t i,
@@ -969,7 +964,6 @@ const struct fdisk_label_operations sun_operations =
 
 	.part_add	= sun_add_partition,
 	.part_delete	= sun_delete_partition,
-	.part_get_type	= sun_get_parttype,
 	.part_set_type	= sun_set_parttype,
 
 	.part_is_used	= sun_partition_is_used,
