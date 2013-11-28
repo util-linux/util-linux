@@ -668,9 +668,6 @@ static int sun_delete_partition(struct fdisk_context *cxt,
 static int sun_list_disklabel(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel;
-	struct tt *tb = NULL;
-	size_t i;
-	int rc;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -692,68 +689,50 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 		       *sunlabel->vtoc.volume_id ? sunlabel->vtoc.volume_id : _("<none>"));
 	}
 
-	tb = tt_new_table(TT_FL_FREEDATA);
-	if (!tb)
-		return -ENOMEM;
+	return fdisk_list_partitions(cxt, NULL, 0);
+}
 
-	tt_define_column(tb, _("Device"), 0.2, 0);
-	tt_define_column(tb, _("Flag"),     2, TT_FL_RIGHT);
-	tt_define_column(tb, _("Start"),    9, TT_FL_RIGHT);
-	tt_define_column(tb, _("End"),      9, TT_FL_RIGHT);
-	/* TRANSLATORS: keep one blank space behind 'Blocks' */
-	tt_define_column(tb, _("Blocks "),  9, TT_FL_RIGHT);
-	tt_define_column(tb, _("Id"),       2, TT_FL_RIGHT);
-	tt_define_column(tb, _("System"), 0.2, TT_FL_TRUNC);
+static int sun_get_partition(struct fdisk_context *cxt, size_t n,
+			      struct fdisk_partition *pa)
+{
+	struct sun_disklabel *sunlabel;
+	struct sun_partition *part;
+	uint16_t flags;
+	uint32_t start, len;
 
-	for (i = 0 ; i < cxt->label->nparts_max; i++) {
-		struct sun_partition *part = &sunlabel->partitions[i];
-		uint16_t flags = be16_to_cpu(sunlabel->vtoc.infos[i].flags);
-		uint32_t start, len;
-		struct fdisk_parttype *t;
-		struct tt_line *ln;
-		char *p;
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, SUN));
 
-		if (!part->num_sectors)
-			continue;
-		ln = tt_add_line(tb, NULL);
-		if (!ln)
-			continue;
+	if (n >= cxt->label->nparts_max)
+		return -EINVAL;
 
-		start = be32_to_cpu(part->start_cylinder)
-				* cxt->geom.heads
-				* cxt->geom.sectors;
+	sunlabel = self_disklabel(cxt);
+	part = &sunlabel->partitions[n];
 
-		len = be32_to_cpu(part->num_sectors);
-		t = fdisk_get_partition_type(cxt, i);
+	pa->used = part->num_sectors ? 1 : 0;
+	if (!pa->used)
+		return 0;
 
-		p = fdisk_partname(cxt->dev_path, i + 1);
-		if (p)
-			tt_line_set_data(ln, 0, p);	/* devname */
-		if ((flags & SUN_FLAG_UNMNT || flags & SUN_FLAG_RONLY)
-		    && asprintf(&p, "%c%c",
+	flags = be16_to_cpu(sunlabel->vtoc.infos[n].flags);
+	start = be32_to_cpu(part->start_cylinder)
+			* cxt->geom.heads * cxt->geom.sectors;
+	len = be32_to_cpu(part->num_sectors);
+
+	pa->type = fdisk_get_partition_type(cxt, n);
+
+	if (flags & SUN_FLAG_UNMNT || flags & SUN_FLAG_RONLY) {
+		if (asprintf(&pa->attrs, "%c%c",
 				flags & SUN_FLAG_UNMNT ? 'u' : ' ',
-				flags & SUN_FLAG_RONLY ? 'r' : ' ') > 0)
-			tt_line_set_data(ln, 1, p);	/* flags */
-		if (asprintf(&p, "%ju", (uintmax_t) fdisk_scround(cxt, start)) > 0)
-			tt_line_set_data(ln, 2, p);	/* start */
-		if (asprintf(&p, "%ju",	(uintmax_t) fdisk_scround(cxt, start + len - 1)) > 0)
-			tt_line_set_data(ln, 3, p);	/* end */
-		if (asprintf(&p, "%lu%c",
-				(unsigned long) len / 2,
-				len & 1 ? '+' : ' ') > 0)
-			tt_line_set_data(ln, 4, p);	/* blocks + flag */
-		if (asprintf(&p, "%2x", t->type) > 0)
-			tt_line_set_data(ln, 5, p);	/* type ID */
-		if (t->name)
-			tt_line_set_data(ln, 6, strdup(t->name)); /* type Name */
-
-		fdisk_free_parttype(t);
+				flags & SUN_FLAG_RONLY ? 'r' : ' ') < 0)
+			return -ENOMEM;
 	}
 
-	rc = fdisk_print_table(cxt, tb);
-	tt_free_table(tb);
+	pa->start = fdisk_scround(cxt, start);
+	pa->end = fdisk_scround(cxt, start + len - 1);
+	pa->size = len * cxt->sector_size;
 
-	return rc;
+	return 0;
 }
 
 
@@ -966,6 +945,18 @@ static int sun_partition_is_used(
 }
 
 
+static const struct fdisk_column sun_columns[] =
+{
+	{ FDISK_COL_DEVICE,	N_("Device"),	 10,	0 },
+	{ FDISK_COL_START,	N_("Start"),	  5,	TT_FL_RIGHT },
+	{ FDISK_COL_END,	N_("End"),	  5,	TT_FL_RIGHT },
+	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	TT_FL_RIGHT },
+	{ FDISK_COL_SIZE,	N_("Size"),	  5,	TT_FL_RIGHT },
+	{ FDISK_COL_TYPEID,	N_("Id"),	  2,	TT_FL_RIGHT },
+	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	TT_FL_TRUNC },
+	{ FDISK_COL_ATTR,	N_("Flags"),	  0,	TT_FL_RIGHT }
+};
+
 const struct fdisk_label_operations sun_operations =
 {
 	.probe		= sun_probe_label,
@@ -973,6 +964,9 @@ const struct fdisk_label_operations sun_operations =
 	.verify		= sun_verify_disklabel,
 	.create		= sun_create_disklabel,
 	.list		= sun_list_disklabel,
+
+	.get_part	= sun_get_partition,
+
 	.part_add	= sun_add_partition,
 	.part_delete	= sun_delete_partition,
 	.part_get_type	= sun_get_parttype,
@@ -1005,7 +999,8 @@ struct fdisk_label *fdisk_new_sun_label(struct fdisk_context *cxt)
 	lb->op = &sun_operations;
 	lb->parttypes = sun_parttypes;
 	lb->nparttypes = ARRAY_SIZE(sun_parttypes);
-
+	lb->columns = sun_columns;
+	lb->ncolumns = ARRAY_SIZE(sun_columns);
 	lb->flags |= FDISK_LABEL_FL_REQUIRE_GEOMETRY;
 
 	return lb;

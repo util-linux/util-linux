@@ -1107,7 +1107,6 @@ static int sgi_toggle_partition_flag(struct fdisk_context *cxt, size_t i, unsign
 
 static const struct fdisk_column sgi_columns[] =
 {
-	/* basic */
 	{ FDISK_COL_DEVICE,	N_("Device"),	 10,	0 },
 	{ FDISK_COL_START,	N_("Start"),	  5,	TT_FL_RIGHT },
 	{ FDISK_COL_END,	N_("End"),	  5,	TT_FL_RIGHT },
