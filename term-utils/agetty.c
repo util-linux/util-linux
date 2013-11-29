@@ -49,6 +49,10 @@
 #  ifndef DEFAULT_VCTERM
 #    define DEFAULT_VCTERM "linux"
 #  endif
+#  if defined (__s390__) || defined (__s390x__)
+#    define DEFAULT_TTYS0  "ibm327x"
+#    define DEFAULT_TTYS1  "vt220"
+#  endif
 #  ifndef DEFAULT_STERM
 #    define DEFAULT_STERM  "vt102"
 #  endif
@@ -1052,6 +1056,20 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 	if (tcgetattr(STDIN_FILENO, tp) < 0)
 		log_err(_("%s: failed to get terminal attributes: %m"), tty);
 
+#if defined (__s390__) || defined (__s390x__)
+	if (!op->term) {
+	        /*
+		 * Special terminal on first serial line on a S/390(x) which
+		 * is due legacy reasons a block terminal of type 3270 or
+		 * higher.  Whereas the second serial line on a S/390(x) is
+		 * a real character terminal which is compatible with VT220.
+		 */
+		if (strcmp(op->tty, "ttyS0") == 0)
+			op->term = DEFAULT_TTYS0;
+		else if (strcmp(op->tty, "ttyS1") == 0)
+			op->term = DEFAULT_TTYS1;
+	}
+#endif
 	/*
 	 * Detect if this is a virtual console or serial/modem line.
 	 * In case of a virtual console the ioctl TIOCMGET fails and
