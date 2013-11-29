@@ -153,11 +153,15 @@ struct fdisk_partition {
 	char		*start_addr;
 	char		*end_addr;
 
-	unsigned int	nested : 1,		/* logical partition */
+	unsigned int	partno_follow_default : 1,
+			start_follow_default : 1,
+			end_follow_default : 1,
+			nested : 1,		/* logical partition */
 			used   : 1,		/* partition used */
 			endrel : 1;		/* end is specified as relative number */
 };
 
+#define FDISK_EMPTY_PARTNO	((size_t) -1)
 
 /*
  * Legacy CHS based geometry
@@ -191,9 +195,8 @@ struct fdisk_label_operations {
 	int (*set_id)(struct fdisk_context *cxt);
 
 	/* new partition */
-	int (*part_add)(struct fdisk_context *cxt,
-						size_t partnum,
-						struct fdisk_parttype *t);
+	int (*add_part)(struct fdisk_context *cxt, struct fdisk_partition *pa);
+
 	/* delete partition */
 	int (*part_delete)(struct fdisk_context *cxt,
 						size_t partnum);
@@ -269,7 +272,6 @@ struct fdisk_label {
 
 /* label driver flags */
 enum {
-	FDISK_LABEL_FL_ADDPART_NOPARTNO = (1 << 1),
 	FDISK_LABEL_FL_REQUIRE_GEOMETRY = (1 << 2),
 	FDISK_LABEL_FL_INCHARS_PARTNO   = (1 << 3)
 };

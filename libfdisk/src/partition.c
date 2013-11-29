@@ -8,6 +8,7 @@ struct fdisk_partition *fdisk_new_partition(void)
 {
 	struct fdisk_partition *pa = calloc(1, sizeof(*pa));
 
+	pa->partno = FDISK_EMPTY_PARTNO;
 	DBG(PART, dbgprint("new %p", pa));
 	return pa;
 }
@@ -21,6 +22,7 @@ void fdisk_reset_partition(struct fdisk_partition *pa)
 	free(pa->uuid);
 	free(pa->attrs);
 	memset(pa, 0, sizeof(*pa));
+	pa->partno = FDISK_EMPTY_PARTNO;
 }
 
 void fdisk_free_partition(struct fdisk_partition *pa)
@@ -168,6 +170,32 @@ int fdisk_partition_is_used(struct fdisk_partition *pa)
 	return pa && pa->used;
 }
 
+int fdisk_partition_next_partno(
+		struct fdisk_context *cxt,
+		struct fdisk_partition *pa,
+		size_t *n)
+{
+	assert(cxt);
+	assert(n);
+
+	if (pa && pa->partno_follow_default) {
+		size_t i;
+
+		for (i = 0; i < pa->cxt->label->nparts_max; i++) {
+			if (!fdisk_is_partition_used(cxt, i)) {
+				*n = i;
+				break;
+			}
+		}
+	} else if (pa && pa->partno != FDISK_EMPTY_PARTNO) {
+		if (pa->partno >= pa->cxt->label->nparts_max)
+			return -ERANGE;
+		*n = pa->partno;
+	} else
+		return fdisk_ask_partnum(cxt, n, 1);
+
+	return 0;
+}
 
 /**
  * fdisk_partition_to_string:
@@ -198,6 +226,7 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 {
 	char *p = NULL;
 	int rc = 0;
+	uint64_t x;
 
 	if (!pa || !pa->cxt)
 		return -EINVAL;
@@ -213,28 +242,38 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 		rc = asprintf(&p, "%c", pa->boot);
 		break;
 	case FDISK_COL_START:
+		x = fdisk_cround(pa->cxt, pa->start);
 		rc = pa->start_post ?
-				asprintf(&p, "%ju%c", pa->start, pa->start_post) :
-				asprintf(&p, "%ju", pa->start);
+				asprintf(&p, "%ju%c", x, pa->start_post) :
+				asprintf(&p, "%ju", x);
 		break;
 	case FDISK_COL_END:
+		x = fdisk_cround(pa->cxt, pa->end);
 		rc = pa->end_post ?
-				asprintf(&p, "%ju%c", pa->end, pa->end_post) :
-				asprintf(&p, "%ju", pa->end);
+				asprintf(&p, "%ju%c", x, pa->end_post) :
+				asprintf(&p, "%ju", x);
 		break;
 	case FDISK_COL_SIZE:
+	{
+		uint64_t sz = pa->size * pa->cxt->sector_size;
+
 		if (fdisk_context_display_details(pa->cxt)) {
 			rc = pa->size_post ?
-					asprintf(&p, "%ju%c", pa->size, pa->size_post) :
-					asprintf(&p, "%ju", pa->size);
+					asprintf(&p, "%ju%c", sz, pa->size_post) :
+					asprintf(&p, "%ju", sz);
 		} else {
-			p = size_to_human_string(SIZE_SUFFIX_1LETTER, pa->size);
+			p = size_to_human_string(SIZE_SUFFIX_1LETTER, sz);
 			if (!p)
 				rc = -ENOMEM;
 		}
 		break;
+	}
+	case FDISK_COL_CYLINDERS:
+		rc = asprintf(&p, "%ju", (uintmax_t)
+				fdisk_cround(pa->cxt, pa->size));
+		break;
 	case FDISK_COL_SECTORS:
-		rc = asprintf(&p, "%ju", pa->size / pa->cxt->sector_size);
+		rc = asprintf(&p, "%ju", pa->size);
 		break;
 	case FDISK_COL_BSIZE:
 		rc = asprintf(&p, "%ju", pa->bsize);

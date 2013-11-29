@@ -1301,7 +1301,7 @@ static int gpt_get_partition(struct fdisk_context *cxt, size_t n,
 
 	pa->start = gpt_partition_start(e);
 	pa->end = gpt_partition_end(e);
-	pa->size = gpt_partition_size(e) * cxt->sector_size;
+	pa->size = gpt_partition_size(e);
 	pa->type = gpt_partition_parttype(cxt, e);
 
 	if (guid_to_string(&e->partition_guid, u_str)) {
@@ -1713,8 +1713,7 @@ static int gpt_create_new_partition(struct fdisk_context *cxt,
 /* Performs logical checks to add a new partition entry */
 static int gpt_add_partition(
 		struct fdisk_context *cxt,
-		size_t partnum,
-		struct fdisk_parttype *t)
+		struct fdisk_partition *pa)
 {
 	uint64_t user_f, user_l;	/* user input ranges for first and last sectors */
 	uint64_t disk_f, disk_l;	/* first and last available sector ranges on device*/
@@ -1724,6 +1723,7 @@ static int gpt_add_partition(
 	struct gpt_header *pheader;
 	struct gpt_entry *ents;
 	struct fdisk_ask *ask = NULL;
+	size_t partnum;
 	int rc;
 
 	assert(cxt);
@@ -1731,28 +1731,31 @@ static int gpt_add_partition(
 	assert(fdisk_is_disklabel(cxt, GPT));
 
 	gpt = self_label(cxt);
-
-	if (partnum >= cxt->label->nparts_max)
-		return -EINVAL;
-
 	pheader = gpt->pheader;
 	ents = gpt->ents;
+
+	rc = fdisk_partition_next_partno(cxt, pa, &partnum);
+	if (rc)
+		return rc;
 
 	if (!partition_unused(&ents[partnum])) {
 		fdisk_warnx(cxt, _("Partition %zu is already defined.  "
 			           "Delete it before re-adding it."), partnum +1);
-		return -EINVAL;
+		return -ERANGE;
 	}
 	if (le32_to_cpu(pheader->npartition_entries) ==
 			partitions_in_use(pheader, ents)) {
 		fdisk_warnx(cxt, _("All partitions are already in use."));
-		return -EINVAL;
+		return -ENOSPC;
 	}
-
 	if (!get_free_sectors(cxt, pheader, ents, NULL, NULL)) {
 		fdisk_warnx(cxt, _("No free sectors available."));
 		return -ENOSPC;
 	}
+
+	string_to_guid(pa && pa->type && pa->type->typestr ?
+				pa->type->typestr:
+				GPT_DEFAULT_ENTRY_TYPE, &typeid);
 
 	disk_f = find_first_available(pheader, ents, 0);
 	disk_l = find_last_free_sector(pheader, ents);
@@ -1764,54 +1767,79 @@ static int gpt_add_partition(
 	/* align the default in range <dflt_f,dflt_l>*/
 	dflt_f = fdisk_align_lba_in_range(cxt, dflt_f, dflt_f, dflt_l);
 
-	string_to_guid(t && t->typestr ? t->typestr : GPT_DEFAULT_ENTRY_TYPE, &typeid);
-
-	/* get user input for first and last sectors of the new partition */
-	for (;;) {
-		if (!ask)
-			ask = fdisk_new_ask();
-		else
-			fdisk_reset_ask(ask);
-
-		/* First sector */
-		fdisk_ask_set_query(ask, _("First sector"));
-		fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
-		fdisk_ask_number_set_low(ask,     disk_f);	/* minimal */
-		fdisk_ask_number_set_default(ask, dflt_f);	/* default */
-		fdisk_ask_number_set_high(ask,    disk_l);	/* maximal */
-
-		rc = fdisk_do_ask(cxt, ask);
-		if (rc)
-			goto done;
-
-		user_f = fdisk_ask_number_get_result(ask);
-		if (user_f != find_first_available(pheader, ents, user_f)) {
-			fdisk_warnx(cxt, _("Sector %ju already used."), user_f);
-			continue;
+	/* first sector */
+	if (pa && pa->start) {
+		if (pa->start != find_first_available(pheader, ents, pa->start)) {
+			fdisk_warnx(cxt, _("Sector %ju already used."), pa->start);
+			return -ERANGE;
 		}
+		user_f = pa->start;
+	} else if (pa && pa->start_follow_default) {
+		user_f = dflt_f;
+	} else {
+		/*  ask by dialog */
+		for (;;) {
+			if (!ask)
+				ask = fdisk_new_ask();
+			else
+				fdisk_reset_ask(ask);
 
-		fdisk_reset_ask(ask);
+			/* First sector */
+			fdisk_ask_set_query(ask, _("First sector"));
+			fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
+			fdisk_ask_number_set_low(ask,     disk_f);	/* minimal */
+			fdisk_ask_number_set_default(ask, dflt_f);	/* default */
+			fdisk_ask_number_set_high(ask,    disk_l);	/* maximal */
 
-		/* Last sector */
-		dflt_l = find_last_free(pheader, ents, user_f);
+			rc = fdisk_do_ask(cxt, ask);
+			if (rc)
+				goto done;
 
-		fdisk_ask_set_query(ask, _("Last sector, +sectors or +size{K,M,G,T,P}"));
-		fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
-		fdisk_ask_number_set_low(ask,     user_f);	/* minimal */
-		fdisk_ask_number_set_default(ask, dflt_l);	/* default */
-		fdisk_ask_number_set_high(ask,    dflt_l);	/* maximal */
-		fdisk_ask_number_set_base(ask,    user_f);	/* base for relative input */
-		fdisk_ask_number_set_unit(ask,    cxt->sector_size);
-
-		rc = fdisk_do_ask(cxt, ask);
-		if (rc)
-			goto done;
-
-		user_l = fdisk_ask_number_get_result(ask);
-		if (fdisk_ask_number_is_relative(ask))
-			user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l) - 1;
-		if (user_l > user_f && user_l <= disk_l)
+			user_f = fdisk_ask_number_get_result(ask);
+			if (user_f != find_first_available(pheader, ents, user_f)) {
+				fdisk_warnx(cxt, _("Sector %ju already used."), user_f);
+				continue;
+			}
 			break;
+		}
+	}
+
+	/* Last sector */
+	dflt_l = find_last_free(pheader, ents, user_f);
+
+	if (pa && pa->size) {
+		if (pa->size + user_f > dflt_l)
+			return -ERANGE;
+		user_l = user_f + pa->size;
+		user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l) - 1;
+
+	} else if (pa && pa->end_follow_default) {
+		user_l = dflt_l;
+	} else {
+		for (;;) {
+			if (!ask)
+				ask = fdisk_new_ask();
+			else
+				fdisk_reset_ask(ask);
+
+			fdisk_ask_set_query(ask, _("Last sector, +sectors or +size{K,M,G,T,P}"));
+			fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
+			fdisk_ask_number_set_low(ask,     user_f);	/* minimal */
+			fdisk_ask_number_set_default(ask, dflt_l);	/* default */
+			fdisk_ask_number_set_high(ask,    dflt_l);	/* maximal */
+			fdisk_ask_number_set_base(ask,    user_f);	/* base for relative input */
+			fdisk_ask_number_set_unit(ask,    cxt->sector_size);
+
+			rc = fdisk_do_ask(cxt, ask);
+			if (rc)
+				goto done;
+
+			user_l = fdisk_ask_number_get_result(ask);
+			if (fdisk_ask_number_is_relative(ask))
+				user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l) - 1;
+			if (user_l > user_f && user_l <= disk_l)
+				break;
+		}
 	}
 
 	if (gpt_create_new_partition(cxt, partnum,
@@ -2223,8 +2251,8 @@ static const struct fdisk_label_operations gpt_operations =
 	.set_id		= gpt_set_disklabel_id,
 
 	.get_part	= gpt_get_partition,
+	.add_part	= gpt_add_partition,
 
-	.part_add	= gpt_add_partition,
 	.part_delete	= gpt_delete_partition,
 
 	.part_is_used	= gpt_part_is_used,

@@ -305,7 +305,11 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 		col = fdisk_label_get_column(cxt->label, cols[j]);
 		if (!col)
 			continue;
-		tt_define_column(tb, col->name, col->width, col->tt_flags);
+		tt_define_column(tb,
+			col->id == FDISK_COL_SECTORS &&
+			fdisk_context_use_cylinders(cxt) ?
+				_("Cylinders") : col->name,
+			col->width, col->tt_flags);
 	}
 
 	/* generate per-partition lines into table */
@@ -324,11 +328,17 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 		/* set data for the columns */
 		for (j = 0; j < ncols; j++) {
 			char *data = NULL;
+			int id;
 
 			col = fdisk_label_get_column(cxt->label, cols[j]);
 			if (!col)
 				continue;
-			rc = fdisk_partition_to_string(pa, col->id, &data);
+			id = (col->id == FDISK_COL_SECTORS &&
+			      fdisk_context_use_cylinders(cxt)) ?
+					FDISK_COL_CYLINDERS :
+					col->id;
+
+			rc = fdisk_partition_to_string(pa, id, &data);
 			if (rc)
 				continue;
 			tt_line_set_data(ln, j, data);
@@ -350,35 +360,30 @@ done:
 /**
  * fdisk_add_partition:
  * @cxt: fdisk context
- * @t: partition type to create or NULL for label-specific default
+ * @pa: template for the partition
  *
- * Creates a new partition with type @parttype.
+ * If @pa is not specified or any @pa item is missiong the libfdisk will ask by
+ * fdisk_ask_ API.
+ *
+ * Creates a new partition.
  *
  * Returns 0.
  */
 int fdisk_add_partition(struct fdisk_context *cxt,
-			struct fdisk_parttype *t)
+			struct fdisk_partition *pa)
 {
-	size_t partnum = 0;
-
 	assert(cxt);
 	assert(cxt->label);
 
 	if (!cxt || !cxt->label)
 		return -EINVAL;
-	if (!cxt->label->op->part_add)
+	if (!cxt->label->op->add_part)
 		return -ENOSYS;
 	if (fdisk_missing_geometry(cxt))
 		return -EINVAL;
 
-	if (!(cxt->label->flags & FDISK_LABEL_FL_ADDPART_NOPARTNO)) {
-		int rc = fdisk_ask_partnum(cxt, &partnum, 1);
-		if (rc)
-			return rc;
-	}
-
-	DBG(LABEL, dbgprint("adding new partition number %zd", partnum));
-	cxt->label->op->part_add(cxt, partnum, t);
+	DBG(LABEL, dbgprint("adding new partition"));
+	cxt->label->op->add_part(cxt, pa);
 	return 0;
 }
 

@@ -120,6 +120,7 @@ enum {
 	FDISK_COL_START,
 	FDISK_COL_END,
 	FDISK_COL_SECTORS,
+	FDISK_COL_CYLINDERS,
 	FDISK_COL_SIZE,
 	FDISK_COL_TYPE,
 	FDISK_COL_TYPEID,
@@ -155,7 +156,7 @@ extern int fdisk_set_disklabel_id(struct fdisk_context *cxt);
 
 extern int fdisk_get_partition(struct fdisk_context *cxt, size_t partno, struct fdisk_partition **pa);
 
-extern int fdisk_add_partition(struct fdisk_context *cxt, struct fdisk_parttype *t);
+extern int fdisk_add_partition(struct fdisk_context *cxt, struct fdisk_partition *pa);
 extern int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum);
 
 extern int fdisk_set_partition_type(struct fdisk_context *cxt, size_t partnum,
@@ -196,6 +197,9 @@ extern int fdisk_partition_set_nested(struct fdisk_partition *pa, int nested);
 extern int fdisk_partition_is_nested(struct fdisk_partition *pa);
 extern int fdisk_partition_is_used(struct fdisk_partition *pa);
 extern int fdisk_partition_to_string(struct fdisk_partition *pa, int id, char **data);
+
+extern int fdisk_partition_next_partno(	struct fdisk_context *cxt,
+			struct fdisk_partition *pa, size_t *n);
 
 /* alignment.c */
 extern int fdisk_reset_alignment(struct fdisk_context *cxt);

@@ -369,9 +369,9 @@ static int sgi_get_partition(struct fdisk_context *cxt, size_t n, struct fdisk_p
 	len = sgi_get_num_sectors(cxt, n);
 
 	pa->type = sgi_get_parttype(cxt, n);
-	pa->size = len * cxt->sector_size;
-	pa->start = fdisk_scround(cxt, start);
-	pa->end = fdisk_scround(cxt, start + len) - 1;
+	pa->size = len;
+	pa->start = start;
+	pa->end = start + len - (len ? 1 : 0);
 
 	pa->attrs = sgi_get_swappartition(cxt) == (int) n ? "swap" :
 		    sgi_get_bootpartition(cxt) == (int) n ? "boot" : NULL;
@@ -799,20 +799,23 @@ static int sgi_delete_partition(struct fdisk_context *cxt, size_t partnum)
 }
 
 static int sgi_add_partition(struct fdisk_context *cxt,
-		size_t n,
-		struct fdisk_parttype *t)
+			     struct fdisk_partition *pa)
 {
 	struct fdisk_sgi_label *sgi;
 	char mesg[256];
 	unsigned int first = 0, last = 0;
 	struct fdisk_ask *ask;
-	int sys = t ? t->type : SGI_TYPE_XFS;
+	int sys = pa && pa->type ? pa->type->type : SGI_TYPE_XFS;
 	int rc;
+	size_t n;
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SGI));
 
+	rc = fdisk_partition_next_partno(cxt, pa, &n);
+	if (rc)
+		return rc;
 	if (n == 10)
 		sys = SGI_TYPE_ENTIRE_DISK;
 	else if (n == 8)
@@ -839,9 +842,26 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		return -EINVAL;
 	}
 
-	snprintf(mesg, sizeof(mesg), _("First %s"),
-			fdisk_context_get_unit(cxt, SINGULAR));
-	for (;;) {
+	if (sys == SGI_TYPE_ENTIRE_DISK) {
+		first = 0;
+		last = sgi_get_lastblock(cxt);
+	} else {
+		first = sgi->freelist[0].first;
+		last  = sgi->freelist[0].last;
+	}
+
+	/* first sector */
+	if (pa && pa->start_follow_default)
+		;
+	else if (pa && pa->start) {
+		first = pa->start;
+		last = is_in_freelist(cxt, first);
+
+		if (sys != SGI_TYPE_ENTIRE_DISK && !last)
+			return -ERANGE;
+	} else {
+		snprintf(mesg, sizeof(mesg), _("First %s"),
+				fdisk_context_get_unit(cxt, SINGULAR));
 		ask = fdisk_new_ask();
 		if (!ask)
 			return -ENOMEM;
@@ -849,76 +869,68 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		fdisk_ask_set_query(ask, mesg);
 		fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
 
-		if (sys == SGI_TYPE_ENTIRE_DISK) {
-			last = sgi_get_lastblock(cxt);
-			fdisk_ask_number_set_low(ask,     0);	/* minimal */
-			fdisk_ask_number_set_default(ask, 0);	/* default */
-			fdisk_ask_number_set_high(ask, last - 1); /* maximal */
-		} else {
-			first = sgi->freelist[0].first;
-			last  = sgi->freelist[0].last;
-			fdisk_ask_number_set_low(ask,     fdisk_scround(cxt, first));	/* minimal */
-			fdisk_ask_number_set_default(ask, fdisk_scround(cxt, first));	/* default */
-			fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, last) - 1); /* maximal */
-		}
+		fdisk_ask_number_set_low(ask,     fdisk_scround(cxt, first));	/* minimal */
+		fdisk_ask_number_set_default(ask, fdisk_scround(cxt, first));	/* default */
+		fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, last) - 1); /* maximal */
+
 		rc = fdisk_do_ask(cxt, ask);
 		first = fdisk_ask_number_get_result(ask);
 		fdisk_free_ask(ask);
 
 		if (rc)
 			return rc;
-
-		if (first && sys == SGI_TYPE_ENTIRE_DISK)
-			fdisk_info(cxt, _("It is highly recommended that the "
-					  "eleventh partition covers the entire "
-					  "disk and is of type 'SGI volume'."));
-
 		if (fdisk_context_use_cylinders(cxt))
 			first *= fdisk_context_get_units_per_sector(cxt);
-		/*else
-			first = first; * align to cylinder if you know how ... */
-		if (!last)
-			last = is_in_freelist(cxt, first);
-		if (last == 0)
-			fdisk_warnx(cxt, _("You will get a partition overlap "
-					   "on the disk. Fix it first!"));
-		else
-			break;
 	}
 
-	snprintf(mesg, sizeof(mesg),
-		 _("Last %s or +%s or +size{K,M,G,T,P}"),
-		 fdisk_context_get_unit(cxt, SINGULAR),
-		 fdisk_context_get_unit(cxt, PLURAL));
+	if (first && sys == SGI_TYPE_ENTIRE_DISK)
+		fdisk_info(cxt, _("It is highly recommended that the "
+				  "eleventh partition covers the entire "
+				  "disk and is of type 'SGI volume'."));
+	if (!last)
+		last = is_in_freelist(cxt, first);
 
-	ask = fdisk_new_ask();
-	if (!ask)
-		return -ENOMEM;
+	/* last sector */
+	if (pa && pa->end_follow_default)
+		last -= 1;
+	else if (pa && pa->size) {
+		if (first + pa->size > last)
+			return -ERANGE;
+		last = first + pa->size;
+	} else {
+		snprintf(mesg, sizeof(mesg),
+			 _("Last %s or +%s or +size{K,M,G,T,P}"),
+			 fdisk_context_get_unit(cxt, SINGULAR),
+			 fdisk_context_get_unit(cxt, PLURAL));
 
-	fdisk_ask_set_query(ask, mesg);
-	fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
+		ask = fdisk_new_ask();
+		if (!ask)
+			return -ENOMEM;
 
-	fdisk_ask_number_set_low(ask,     fdisk_scround(cxt, first));	/* minimal */
-	fdisk_ask_number_set_default(ask, fdisk_scround(cxt, last) - 1);/* default */
-	fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, last) - 1);/* maximal */
-	fdisk_ask_number_set_base(ask,    fdisk_scround(cxt, first));
+		fdisk_ask_set_query(ask, mesg);
+		fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 
-	if (fdisk_context_use_cylinders(cxt))
-		fdisk_ask_number_set_unit(ask,
-			     cxt->sector_size *
-			     fdisk_context_get_units_per_sector(cxt));
-	else
-		fdisk_ask_number_set_unit(ask,cxt->sector_size);
+		fdisk_ask_number_set_low(ask,     fdisk_scround(cxt, first));	/* minimal */
+		fdisk_ask_number_set_default(ask, fdisk_scround(cxt, last) - 1);/* default */
+		fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, last) - 1);/* maximal */
+		fdisk_ask_number_set_base(ask,    fdisk_scround(cxt, first));
 
-	rc = fdisk_do_ask(cxt, ask);
-	last = fdisk_ask_number_get_result(ask) + 1;
+		if (fdisk_context_use_cylinders(cxt))
+			fdisk_ask_number_set_unit(ask,
+				     cxt->sector_size *
+				     fdisk_context_get_units_per_sector(cxt));
+		else
+			fdisk_ask_number_set_unit(ask,cxt->sector_size);
 
-	fdisk_free_ask(ask);
-	if (rc)
-		return rc;
+		rc = fdisk_do_ask(cxt, ask);
+		last = fdisk_ask_number_get_result(ask) + 1;
 
-	if (fdisk_context_use_cylinders(cxt))
-		last *= fdisk_context_get_units_per_sector(cxt);
+		fdisk_free_ask(ask);
+		if (rc)
+			return rc;
+		if (fdisk_context_use_cylinders(cxt))
+			last *= fdisk_context_get_units_per_sector(cxt);
+	}
 
 	if (sys == SGI_TYPE_ENTIRE_DISK
 	    && (first != 0 || last != sgi_get_lastblock(cxt)))
@@ -1126,8 +1138,8 @@ static const struct fdisk_label_operations sgi_operations =
 	.list		= sgi_list_table,
 
 	.get_part	= sgi_get_partition,
+	.add_part	= sgi_add_partition,
 
-	.part_add	= sgi_add_partition,
 	.part_delete	= sgi_delete_partition,
 	.part_set_type	= sgi_set_parttype,
 

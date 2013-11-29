@@ -173,15 +173,15 @@ static int is_cleared_partition(struct dos_partition *p)
 		 dos_partition_get_start(p) || dos_partition_get_size(p));
 }
 
-static int get_partition_unused_primary(struct fdisk_context *cxt)
+static int get_partition_unused_primary(struct fdisk_context *cxt,
+					struct fdisk_partition *pa)
 {
-	size_t orgmax = cxt->label->nparts_max;
-	size_t n;
+	size_t org = cxt->label->nparts_max, n;
 	int rc;
 
 	cxt->label->nparts_max = 4;
-	rc = fdisk_ask_partnum(cxt, &n, TRUE);
-	cxt->label->nparts_max = orgmax;
+	rc = fdisk_partition_next_partno(cxt, pa, &n);
+	cxt->label->nparts_max = org;
 
 	switch (rc) {
 	case 1:
@@ -812,9 +812,58 @@ static void fill_bounds(struct fdisk_context *cxt,
 	}
 }
 
-static int add_partition(struct fdisk_context *cxt, size_t n, struct fdisk_parttype *t)
+static int get_start_from_user(	struct fdisk_context *cxt,
+				sector_t *start,
+				sector_t low,
+				sector_t dflt,
+				sector_t limit,
+				struct fdisk_partition *pa)
 {
-	int sys, read = 0, rc;
+	assert(start);
+
+	/* try to use tepmlate from 'pa' */
+	if (pa && pa->start_follow_default)
+		*start = dflt;
+
+	else if (pa && pa->start) {
+		*start = pa->start;
+		if (*start < low || *start > limit)
+			return -ERANGE;
+	} else {
+		/* ask user by dialog */
+		struct fdisk_ask *ask = fdisk_new_ask();
+		int rc;
+
+		if (!ask)
+			return -ENOMEM;
+		fdisk_ask_set_query(ask,
+			fdisk_context_use_cylinders(cxt) ?
+				_("First cylinder") : _("First sector"));
+		fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
+		fdisk_ask_number_set_low(ask, fdisk_cround(cxt, low));
+		fdisk_ask_number_set_default(ask, fdisk_cround(cxt, dflt));
+		fdisk_ask_number_set_high(ask, fdisk_cround(cxt, limit));
+
+		rc = fdisk_do_ask(cxt, ask);
+		*start = fdisk_ask_number_get_result(ask);
+		fdisk_free_ask(ask);
+		if (rc)
+			return rc;
+		if (fdisk_context_use_cylinders(cxt)) {
+		        *start = (*start - 1)
+				* fdisk_context_get_units_per_sector(cxt);
+			if (*start < low)
+				*start = low;
+		}
+	}
+
+	return 0;
+}
+
+static int add_partition(struct fdisk_context *cxt, size_t n,
+			 struct fdisk_partition *pa)
+{
+	int sys, read = 0, rc, isrel = 0;
 	size_t i;
 	struct fdisk_dos_label *l = self_label(cxt);
 	struct dos_partition *p = self_partition(cxt, n);
@@ -826,7 +875,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n, struct fdisk_partt
 
 	DBG(LABEL, dbgprint("DOS: adding partition %zu", n));
 
-	sys = t ? t->type : MBR_LINUX_DATA_PARTITION;
+	sys = pa ? pa->type->type : MBR_LINUX_DATA_PARTITION;
 
 	if (is_used_partition(p)) {
 		fdisk_warnx(cxt, _("Partition %zu is already defined.  "
@@ -861,7 +910,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n, struct fdisk_partt
 	}
 	if (fdisk_context_use_cylinders(cxt))
 		for (i = 0; i < cxt->label->nparts_max; i++) {
-			first[i] = (cround(cxt, first[i]) - 1)
+			first[i] = (fdisk_cround(cxt, first[i]) - 1)
 				* fdisk_context_get_units_per_sector(cxt);
 		}
 
@@ -893,32 +942,9 @@ static int add_partition(struct fdisk_context *cxt, size_t n, struct fdisk_partt
 		}
 
 		if (!read && start == temp) {
-			sector_t j = start;
-			struct fdisk_ask *ask = fdisk_new_ask();
-
-			if (fdisk_context_use_cylinders(cxt))
-				fdisk_ask_set_query(ask, _("First cylinder"));
-			else
-				fdisk_ask_set_query(ask, _("First sector"));
-
-			fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
-			fdisk_ask_number_set_low(ask, cround(cxt, j));
-			fdisk_ask_number_set_default(ask, cround(cxt, dflt));
-			fdisk_ask_number_set_high(ask, cround(cxt, limit));
-
-			rc = fdisk_do_ask(cxt, ask);
-			if (!rc)
-				start = fdisk_ask_number_get_result(ask);
-			fdisk_free_ask(ask);
+			rc = get_start_from_user(cxt, &start, temp, dflt, limit, pa);
 			if (rc)
 				return rc;
-
-			if (fdisk_context_use_cylinders(cxt)) {
-				start = (start - 1)
-					* fdisk_context_get_units_per_sector(cxt);
-				if (start < j)
-					start = j;
-			}
 			read = 1;
 		}
 	} while (start != temp || !read);
@@ -948,14 +974,25 @@ static int add_partition(struct fdisk_context *cxt, size_t n, struct fdisk_partt
 			cxt->label->nparts_max--;
 		return -ENOSPC;
 	}
-	if (cround(cxt, start) == cround(cxt, limit)) {
+
+	/*
+	 * Ask for last sector
+	 */
+	if (fdisk_cround(cxt, start) == fdisk_cround(cxt, limit))
 		stop = limit;
+	else if (pa && pa->end_follow_default)
+		stop = limit;
+	else if (pa && pa->size) {
+		stop = start + pa->size;
+		if (stop > limit)
+			return -ERANGE;
+		isrel = 1;
 	} else {
-		/*
-		 * Ask for last sector
-		 */
+		/* ask user by dialog */
 		struct fdisk_ask *ask = fdisk_new_ask();
 
+		if (!ask)
+			return -ENOMEM;
 		fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 
 		if (fdisk_context_use_cylinders(cxt)) {
@@ -968,26 +1005,29 @@ static int add_partition(struct fdisk_context *cxt, size_t n, struct fdisk_partt
 			fdisk_ask_number_set_unit(ask,cxt->sector_size);
 		}
 
-		fdisk_ask_number_set_low(ask, cround(cxt, start));
-		fdisk_ask_number_set_default(ask, cround(cxt, limit));
-		fdisk_ask_number_set_high(ask, cround(cxt, limit));
-		fdisk_ask_number_set_base(ask, cround(cxt, start));	/* base for relative input */
+		fdisk_ask_number_set_low(ask, fdisk_cround(cxt, start));
+		fdisk_ask_number_set_default(ask, fdisk_cround(cxt, limit));
+		fdisk_ask_number_set_high(ask, fdisk_cround(cxt, limit));
+		fdisk_ask_number_set_base(ask, fdisk_cround(cxt, start));	/* base for relative input */
 
 		rc = fdisk_do_ask(cxt, ask);
-		if (rc) {
-			fdisk_free_ask(ask);
-			return rc;
-		}
-
 		stop = fdisk_ask_number_get_result(ask);
-
+		isrel = fdisk_ask_number_is_relative(ask);
+		fdisk_free_ask(ask);
+		if (rc)
+			return rc;
 		if (fdisk_context_use_cylinders(cxt)) {
 			stop = stop * fdisk_context_get_units_per_sector(cxt) - 1;
-                        if (stop >limit)
-                                stop = limit;
+			if (stop >limit)
+				stop = limit;
 		}
-		if (fdisk_ask_number_is_relative(ask)
-		    && alignment_required(cxt)) {
+	}
+
+	if (stop > limit)
+		stop = limit;
+
+	if (stop < limit) {
+		if (isrel && alignment_required(cxt)) {
 			/* the last sector has not been exactly requested (but
 			 * defined by +size{K,M,G} convention), so be smart and
 			 * align the end of the partition. The next partition
@@ -997,7 +1037,6 @@ static int add_partition(struct fdisk_context *cxt, size_t n, struct fdisk_partt
 			if (stop > limit)
 				stop = limit;
 		}
-		fdisk_free_ask(ask);
 	}
 
 	set_partition(cxt, n, 0, start, stop, sys);
@@ -1030,7 +1069,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n, struct fdisk_partt
 	return 0;
 }
 
-static int add_logical(struct fdisk_context *cxt)
+static int add_logical(struct fdisk_context *cxt, struct fdisk_partition *pa)
 {
 	struct dos_partition *p4 = self_partition(cxt, 4);
 
@@ -1054,7 +1093,7 @@ static int add_logical(struct fdisk_context *cxt)
 	}
 	fdisk_info(cxt, _("Adding logical partition %zu"),
 			cxt->label->nparts_max);
-	return add_partition(cxt, cxt->label->nparts_max - 1, NULL);
+	return add_partition(cxt, cxt->label->nparts_max - 1, pa);
 }
 
 static void check(struct fdisk_context *cxt, size_t n,
@@ -1246,10 +1285,8 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
  *
  * API callback.
  */
-static int dos_add_partition(
-			struct fdisk_context *cxt,
-			size_t partnum __attribute__ ((__unused__)),
-			struct fdisk_parttype *t)
+static int dos_add_partition(struct fdisk_context *cxt,
+			     struct fdisk_partition *pa)
 {
 	size_t i, free_primary = 0;
 	int rc = 0;
@@ -1274,7 +1311,7 @@ static int dos_add_partition(
 	if (!free_primary) {
 		if (l->ext_offset) {
 			fdisk_info(cxt, _("All primary partitions are in use."));
-			rc = add_logical(cxt);
+			rc = add_logical(cxt, pa);
 		} else
 			fdisk_info(cxt, _("If you want to create more than "
 				"four partitions, you must replace a "
@@ -1286,9 +1323,9 @@ static int dos_add_partition(
 
 		fdisk_info(cxt, _("All logical partitions are in use. "
 				  "Adding a primary partition."));
-		j = get_partition_unused_primary(cxt);
+		j = get_partition_unused_primary(cxt, pa);
 		if (j >= 0)
-			rc = add_partition(cxt, j, t);
+			rc = add_partition(cxt, j, pa);
 	} else {
 		char *buf;
 		char c, prompt[BUFSIZ];
@@ -1317,19 +1354,25 @@ static int dos_add_partition(
 		free(buf);
 
 		if (c == 'p') {
-			int j = get_partition_unused_primary(cxt);
+			int j = get_partition_unused_primary(cxt, pa);
 			if (j >= 0)
-				rc = add_partition(cxt, j, t);
+				rc = add_partition(cxt, j, pa);
 			goto done;
 		} else if (c == 'l' && l->ext_offset) {
-			rc = add_logical(cxt);
+			rc = add_logical(cxt, pa);
 			goto done;
 		} else if (c == 'e' && !l->ext_offset) {
-			int j = get_partition_unused_primary(cxt);
+			int j = get_partition_unused_primary(cxt, pa);
 			if (j >= 0) {
+				struct fdisk_partition xpa = { .type = NULL };
+				struct fdisk_parttype *t;
+
 				t = fdisk_get_parttype_from_code(cxt,
 						MBR_DOS_EXTENDED_PARTITION);
-				rc = add_partition(cxt, j, t);
+				if (!pa)
+					pa = &xpa;
+				fdisk_partition_set_type(pa, t);
+				rc = add_partition(cxt, j, pa);
 			}
 			goto done;
 		} else
@@ -1622,9 +1665,9 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 
 	pa->type = dos_partition_parttype(cxt, p);
 	pa->boot = p->boot_ind ? p->boot_ind == ACTIVE_FLAG ? '*' : '?' : ' ';
-	pa->start = cround(cxt, get_abs_partition_start(pe));
-	pa->end = cround(cxt, get_abs_partition_start(pe) + psects - (psects ? 1 : 0));
-	pa->size = psects * cxt->sector_size;
+	pa->start = get_abs_partition_start(pe);
+	pa->end = get_abs_partition_start(pe) + psects - (psects ? 1 : 0);
+	pa->size = psects;
 
 	if (asprintf(&pa->attrs, "%02x", p->boot_ind) < 0)
 		return -ENOMEM;
@@ -1901,8 +1944,8 @@ static const struct fdisk_label_operations dos_operations =
 	.set_id		= dos_set_disklabel_id,
 
 	.get_part	= dos_get_partition,
+	.add_part	= dos_add_partition,
 
-	.part_add	= dos_add_partition,
 	.part_delete	= dos_delete_partition,
 	.part_set_type	= dos_set_parttype,
 
@@ -1937,8 +1980,6 @@ struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt)
 	lb->nparttypes = ARRAY_SIZE(dos_parttypes);
 	lb->columns = dos_columns;
 	lb->ncolumns = ARRAY_SIZE(dos_columns);
-
-	lb->flags |= FDISK_LABEL_FL_ADDPART_NOPARTNO;
 
 	return lb;
 }
