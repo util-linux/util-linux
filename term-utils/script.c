@@ -58,10 +58,13 @@
 #include <limits.h>
 #include <locale.h>
 #include <stddef.h>
+#include <sys/wait.h>
+#include <poll.h>
 
 #include "closestream.h"
 #include "nls.h"
 #include "c.h"
+#include "ttyutils.h"
 
 #if defined(HAVE_LIBUTIL) && defined(HAVE_PTY_H)
 # include <pty.h>
@@ -107,6 +110,7 @@ int	fflg = 0;
 int	qflg = 0;
 int	tflg = 0;
 int	forceflg = 0;
+int	isterm;
 
 int die;
 int resized;
@@ -230,9 +234,6 @@ main(int argc, char **argv) {
 		die_if_link(fname);
 	}
 
-	if (!isatty(STDIN_FILENO))
-		errx(EXIT_FAILURE, _("The stdin is not a terminal."));
-
 	if ((fscript = fopen(fname, aflg ? "a" : "w")) == NULL) {
 		warn(_("cannot open %s"), fname);
 		fail();
@@ -295,9 +296,18 @@ main(int argc, char **argv) {
 	return EXIT_SUCCESS;
 }
 
+static void wait_for_empty_fd(int fd)
+{
+	struct pollfd fds[] = {
+		{ .fd = fd, .events = POLLIN }
+	};
+
+	while (poll(fds, 1, 50) == 1);
+}
+
 void
 doinput(void) {
-	ssize_t cc;
+	ssize_t cc = 0;
 	char ibuf[BUFSIZ];
 
 	if (close_stream(fscript) != 0)
@@ -314,18 +324,45 @@ doinput(void) {
 		else if (cc < 0 && errno == EINTR && resized)
 		{
 			/* transmit window change information to the child */
-			ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&win);
-			ioctl(slave, TIOCSWINSZ, (char *)&win);
+			if (isterm) {
+				ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&win);
+				ioctl(slave, TIOCSWINSZ, (char *)&win);
+			}
 			resized = 0;
-		}
-		else
+
+		} else
 			break;
 	}
 
+	/* To be sure that we don't miss any data */
+	wait_for_empty_fd(slave);
+	wait_for_empty_fd(master);
+
+	if (cc == 0 && errno == 0) {
+		/*
+		 * Forward EOF from stdin (detected by read() above) to slave
+		 * (shell) to correctly terminate the session. It seems we have
+		 * to wait for empty terminal FDs otherwise EOF maybe ignored
+		 * (why?) and typescript is incomplete.      -- kzak Dec-2013
+		 *
+		 * We usually use this when stdin is not a tty, for example:
+		 * echo "ps" | script
+		 */
+		int c = DEF_EOF;
+
+		if (write(master, &c, 1) < 0) {
+			warn (_("write failed"));
+			fail();
+		}
+
+		/* wait for "exit" message from shell before we print "Script
+		 * done" in done() */
+		wait_for_empty_fd(master);
+	}
+
+	finish(0);	/* wait for childern */
 	done();
 }
-
-#include <sys/wait.h>
 
 void
 finish(int dummy __attribute__ ((__unused__))) {
@@ -473,6 +510,9 @@ void
 fixtty(void) {
 	struct termios rtt;
 
+	if (!isterm)
+		return;
+
 	rtt = tt;
 	cfmakeraw(&rtt);
 	rtt.c_lflag &= ~ECHO;
@@ -491,6 +531,7 @@ done(void) {
 	time_t tvec;
 
 	if (subchild) {
+		/* output process */
 		if (!qflg) {
 			char buf[BUFSIZ];
 			tvec = time((time_t *)NULL);
@@ -503,13 +544,16 @@ done(void) {
 
 		master = -1;
 	} else {
-		tcsetattr(STDIN_FILENO, TCSADRAIN, &tt);
+		/* input process */
+		if (isterm)
+			tcsetattr(STDIN_FILENO, TCSADRAIN, &tt);
 		if (!qflg)
 			printf(_("Script done, file is %s\n"), fname);
 #ifdef HAVE_LIBUTEMPTER
 		if (master >= 0)
 			utempter_remove_record(master);
 #endif
+		kill(child, SIGTERM);	/* make sure we don't create orphans */
 	}
 
 	if(eflg) {
@@ -524,15 +568,27 @@ done(void) {
 void
 getmaster(void) {
 #if defined(HAVE_LIBUTIL) && defined(HAVE_PTY_H)
-	tcgetattr(STDIN_FILENO, &tt);
-	ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&win);
-	if (openpty(&master, &slave, NULL, &tt, &win) < 0) {
+	int rc;
+
+	isterm = isatty(STDIN_FILENO);
+
+	if (isterm) {
+		if (tcgetattr(STDIN_FILENO, &tt) != 0)
+			err(EXIT_FAILURE, _("failed to get terminal attributes"));
+		ioctl(STDIN_FILENO, TIOCGWINSZ, (char *) &win);
+		rc = openpty(&master, &slave, NULL, &tt, &win);
+	} else
+		rc = openpty(&master, &slave, NULL, NULL, NULL);
+
+	if (rc < 0) {
 		warn(_("openpty failed"));
 		fail();
 	}
 #else
 	char *pty, *bank, *cp;
 	struct stat stb;
+
+	isterm = isatty(STDIN_FILENO);
 
 	pty = &line[strlen("/dev/ptyp")];
 	for (bank = "pqrs"; *bank; bank++) {
@@ -552,9 +608,11 @@ getmaster(void) {
 				ok = access(line, R_OK|W_OK) == 0;
 				*tp = 'p';
 				if (ok) {
-					tcgetattr(STDIN_FILENO, &tt);
-					ioctl(STDIN_FILENO, TIOCGWINSZ,
-						(char *)&win);
+					if (isterm) {
+						tcgetattr(STDIN_FILENO, &tt);
+						ioctl(STDIN_FILENO, TIOCGWINSZ,
+								(char *)&win);
+					}
 					return;
 				}
 				close(master);
@@ -577,8 +635,10 @@ getslave(void) {
 		warn(_("cannot open %s"), line);
 		fail();
 	}
-	tcsetattr(slave, TCSANOW, &tt);
-	ioctl(slave, TIOCSWINSZ, (char *)&win);
+	if (isterm) {
+		tcsetattr(slave, TCSANOW, &tt);
+		ioctl(slave, TIOCSWINSZ, (char *)&win);
+	}
 #endif
 	setsid();
 	ioctl(slave, TIOCSCTTY, 0);
