@@ -18,7 +18,6 @@
 #endif
 #include <time.h>
 
-#include "linux_version.h"
 #include "superblocks.h"
 
 struct ext2_super_block {
@@ -132,140 +131,11 @@ struct ext2_super_block {
 #define EXT3_FEATURE_RO_COMPAT_UNSUPPORTED	~EXT3_FEATURE_RO_COMPAT_SUPP
 
 /*
- * Check to see if a filesystem is in /proc/filesystems.
- * Returns 1 if found, 0 if not
- */
-static int fs_proc_check(const char *fs_name)
-{
-	FILE	*f;
-	char	buf[80], *cp, *t;
-
-	f = fopen("/proc/filesystems", "r" UL_CLOEXECSTR);
-	if (!f)
-		return 0;
-	while (!feof(f)) {
-		if (!fgets(buf, sizeof(buf), f))
-			break;
-		cp = buf;
-		if (!isspace(*cp)) {
-			while (*cp && !isspace(*cp))
-				cp++;
-		}
-		while (*cp && isspace(*cp))
-			cp++;
-		if ((t = strchr(cp, '\n')) != NULL)
-			*t = 0;
-		if ((t = strchr(cp, '\t')) != NULL)
-			*t = 0;
-		if ((t = strchr(cp, ' ')) != NULL)
-			*t = 0;
-		if (!strcmp(fs_name, cp)) {
-			fclose(f);
-			return 1;
-		}
-	}
-	fclose(f);
-	return (0);
-}
-
-/*
- * Check to see if a filesystem is available as a module
- * Returns 1 if found, 0 if not
- */
-static int check_for_modules(const char *fs_name)
-{
-#ifdef __linux__
-	struct utsname	uts;
-	FILE		*f;
-	char		buf[1024], *cp;
-	int		namesz;
-
-	if (uname(&uts))
-		return 0;
-	snprintf(buf, sizeof(buf), "/lib/modules/%s/modules.dep", uts.release);
-
-	f = fopen(buf, "r" UL_CLOEXECSTR);
-	if (!f)
-		return 0;
-
-	namesz = strlen(fs_name);
-
-	while (!feof(f)) {
-		if (!fgets(buf, sizeof(buf), f))
-			break;
-		if ((cp = strchr(buf, ':')) != NULL)
-			*cp = 0;
-		else
-			continue;
-		if ((cp = strrchr(buf, '/')) == NULL)
-			continue;
-		cp++;
-
-		if (!strncmp(cp, fs_name, namesz) &&
-		    (!strcmp(cp + namesz, ".ko") ||
-		     !strcmp(cp + namesz, ".ko.gz"))) {
-			fclose(f);
-			return 1;
-		}
-	}
-	fclose(f);
-#endif /* __linux__ */
-	return 0;
-}
-
-/*
  * Starting in 2.6.29, ext4 can be used to support filesystems
  * without a journal.
  */
 #define EXT4_SUPPORTS_EXT2 KERNEL_VERSION(2, 6, 29)
 
-static int system_supports_ext2(void)
-{
-	static time_t	last_check = 0;
-	static int	ret = -1;
-	time_t		now = time(0);
-
-	if (ret != -1 || (now - last_check) < 5)
-		return ret;
-	last_check = now;
-	ret = (fs_proc_check("ext2") || check_for_modules("ext2"));
-	return ret;
-}
-
-static int system_supports_ext4(void)
-{
-	static time_t	last_check = 0;
-	static int	ret = -1;
-	time_t		now = time(0);
-
-	if (ret != -1 || (now - last_check) < 5)
-		return ret;
-	last_check = now;
-	ret = (fs_proc_check("ext4") || check_for_modules("ext4"));
-	return ret;
-}
-
-static int system_supports_ext4dev(void)
-{
-	static time_t	last_check = 0;
-	static int	ret = -1;
-	time_t		now = time(0);
-
-	if (ret != -1 || (now - last_check) < 5)
-		return ret;
-	last_check = now;
-	ret = (fs_proc_check("ext4dev") || check_for_modules("ext4dev"));
-	return ret;
-}
-
-static int system_supports_ext4_ext2(void)
-{
-#ifdef __linux__
-	return get_linux_version() >= EXT4_SUPPORTS_EXT2;
-#else
-	return 0;
-#endif
-}
 /*
  * reads superblock and returns:
  *	fc = feature_compat
@@ -357,15 +227,6 @@ static int probe_ext2(blkid_probe pr,
 	    (fi  & EXT2_FEATURE_INCOMPAT_UNSUPPORTED))
 		return -BLKID_ERR_PARAM;
 
-	/*
-	 * If ext2 is not present, but ext4 or ext4dev are, then
-	 * disclaim we are ext2
-	 */
-	if (!system_supports_ext2() &&
-	    (system_supports_ext4() || system_supports_ext4dev()) &&
-	    system_supports_ext4_ext2())
-		return -BLKID_ERR_PARAM;
-
 	ext_get_info(pr, 2, es);
 	return 0;
 }
@@ -408,34 +269,9 @@ static int probe_ext4dev(blkid_probe pr,
 	if (fi & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV)
 		return -BLKID_ERR_PARAM;
 
-	/*
-	 * If the filesystem does not have a journal and ext2 and ext4
-	 * is not present, then force this to be detected as an
-	 * ext4dev filesystem.
-	 */
-	if (!(fc & EXT3_FEATURE_COMPAT_HAS_JOURNAL) &&
-	    !system_supports_ext2() && !system_supports_ext4() &&
-	    system_supports_ext4dev() &&
-	    system_supports_ext4_ext2())
-		goto force_ext4dev;
-
-	/*
-	 * If the filesystem is marked as OK for use by in-development
-	 * filesystem code, but ext4dev is not supported, and ext4 is,
-	 * then don't call ourselves ext4dev, since we should be
-	 * detected as ext4 in that case.
-	 *
-	 * If the filesystem is marked as in use by production
-	 * filesystem, then it can only be used by ext4 and NOT by
-	 * ext4dev, so always disclaim we are ext4dev in that case.
-	 */
-	if (le32_to_cpu(es->s_flags) & EXT2_FLAGS_TEST_FILESYS) {
-		if (!system_supports_ext4dev() && system_supports_ext4())
-			return -BLKID_ERR_PARAM;
-	} else
+	if (!(le32_to_cpu(es->s_flags) & EXT2_FLAGS_TEST_FILESYS))
 		return -BLKID_ERR_PARAM;
 
-force_ext4dev:
 	ext_get_info(pr, 4, es);
 	return 0;
 }
@@ -454,22 +290,11 @@ static int probe_ext4(blkid_probe pr,
 	if (fi & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV)
 		return -BLKID_ERR_PARAM;
 
-	/*
-	 * If the filesystem does not have a journal and ext2 is not
-	 * present, then force this to be detected as an ext2
-	 * filesystem.
-	 */
-	if (!(fc & EXT3_FEATURE_COMPAT_HAS_JOURNAL) &&
-	    !system_supports_ext2() && system_supports_ext4() &&
-	    system_supports_ext4_ext2())
-		goto force_ext4;
-
 	/* Ext4 has at least one feature which ext3 doesn't understand */
 	if (!(frc & EXT3_FEATURE_RO_COMPAT_UNSUPPORTED) &&
 	    !(fi  & EXT3_FEATURE_INCOMPAT_UNSUPPORTED))
 		return -BLKID_ERR_PARAM;
 
-force_ext4:
 	/*
 	 * If the filesystem is a OK for use by in-development
 	 * filesystem code, and ext4dev is supported or ext4 is not
@@ -480,10 +305,8 @@ force_ext4:
 	 * filesystem, then it can only be used by ext4 and NOT by
 	 * ext4dev.
 	 */
-	if (le32_to_cpu(es->s_flags) & EXT2_FLAGS_TEST_FILESYS) {
-		if (system_supports_ext4dev() || !system_supports_ext4())
-			return -BLKID_ERR_PARAM;
-	}
+	if (le32_to_cpu(es->s_flags) & EXT2_FLAGS_TEST_FILESYS)
+		return -BLKID_ERR_PARAM;
 
 	ext_get_info(pr, 4, es);
 	return 0;
