@@ -102,10 +102,11 @@ Or set it:
 .B taskset \-p
 .I mask pid
 .SH PERMISSIONS
+A user can change the CPU affinity of a process belonging to the same user.
 A user must possess
 .B CAP_SYS_NICE
-to change the CPU affinity of a process.  Any user can retrieve the affinity
-mask.
+to change the CPU affinity of a process belonging to another user.
+A user can retrieve the affinity mask of any process.
 .SH AUTHOR
 Written by Robert M. Love.
 .SH COPYRIGHT
