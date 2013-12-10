@@ -41,6 +41,11 @@
 #include "strutils.h"
 #include "c.h"
 #include "closestream.h"
+#include "pathnames.h"
+#include "sysfs.h"
+#include "exitcodes.h"
+
+#include <libmount.h>
 
 #ifndef FITRIM
 struct fstrim_range {
@@ -51,12 +56,166 @@ struct fstrim_range {
 #define FITRIM		_IOWR('X', 121, struct fstrim_range)
 #endif
 
+/* returns: 0 = success, 1 = unsupported, < 0 = error */
+static int fstrim_filesystem(const char *path, struct fstrim_range *rangetpl,
+			    int verbose)
+{
+	int fd;
+	struct stat sb;
+	struct fstrim_range range;
+
+	/* kernel modifies the range */
+	memcpy(&range, rangetpl, sizeof(range));
+
+	if (stat(path, &sb) == -1) {
+		warn(_("stat failed %s"), path);
+		return -1;
+	}
+	if (!S_ISDIR(sb.st_mode)) {
+		warnx(_("%s: not a directory"), path);
+		return -1;
+	}
+
+	fd = open(path, O_RDONLY);
+	if (fd < 0) {
+		warn(_("cannot open %s"), path);
+		return -1;
+	}
+	errno = 0;
+	if (ioctl(fd, FITRIM, &range)) {
+		int rc = errno == EOPNOTSUPP || errno == ENOTTY ? 1 : -1;
+
+		if (rc != 1)
+			warn(_("%s: FITRIM ioctl failed"), path);
+		close(fd);
+		return rc;
+	}
+
+	if (verbose) {
+		char *str = size_to_human_string(
+				SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
+				(uint64_t) range.len);
+		/* TRANSLATORS: The standard value here is a very large number. */
+		printf(_("%s: %s (%" PRIu64 " bytes) trimmed\n"),
+				path, str, (uint64_t) range.len);
+		free(str);
+	}
+	close(fd);
+	return 0;
+}
+
+static int has_discard(const char *devname, struct sysfs_cxt *wholedisk)
+{
+	struct sysfs_cxt cxt, *parent = NULL;
+	uint64_t dg = 0;
+	dev_t disk = 0, dev;
+	int rc;
+
+	dev = sysfs_devname_to_devno(devname, NULL);
+	if (!dev)
+		return 1;
+	/*
+	 * This is tricky to read the info from sys/, because the queue
+	 * atrributes are provided for whole devices (disk) only. We're trying
+	 * to reuse the whole-disk sysfs context to optimize this stuff (as
+	 * system usualy have just one disk only).
+	 */
+	if (sysfs_devno_to_wholedisk(dev, NULL, 0, &disk) || !disk)
+		return 1;
+	if (dev != disk) {
+		if (wholedisk->devno != disk) {
+			sysfs_deinit(wholedisk);
+			if (sysfs_init(wholedisk, disk, NULL))
+				return 1;
+		}
+		parent = wholedisk;
+	}
+
+	rc = sysfs_init(&cxt, dev, parent);
+	if (!rc)
+		rc = sysfs_read_u64(&cxt, "queue/discard_granularity", &dg);
+
+	sysfs_deinit(&cxt);
+	return rc == 0 && dg > 0;
+}
+
+/*
+ * fstrim --all follows "mount -a" return codes:
+ *
+ * 0  = all success
+ * 32 = all failed
+ * 64 = some failed, some success
+ */
+static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
+{
+	struct libmnt_fs *fs;
+	struct libmnt_iter *itr;
+	struct libmnt_table *tab;
+	struct sysfs_cxt wholedisk = UL_SYSFSCXT_EMPTY;
+	int cnt = 0, cnt_err = 0;
+
+	itr = mnt_new_iter(MNT_ITER_BACKWARD);
+	if (!itr)
+		err(MOUNT_EX_FAIL, _("failed to initialize libmount iterator"));
+
+	tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
+	if (!tab)
+		err(MOUNT_EX_FAIL, _("failed to parse %s"), _PATH_PROC_MOUNTINFO);
+
+	while (mnt_table_next_fs(tab, itr, &fs) == 0) {
+		const char *src = mnt_fs_get_srcpath(fs),
+			   *tgt = mnt_fs_get_target(fs);
+		char *path;
+		int rc = 1;
+
+		if (!src || !tgt || *src != '/' ||
+		    mnt_fs_is_pseudofs(fs) ||
+		    mnt_fs_is_netfs(fs))
+			continue;
+
+		/* Is it really accessible mountpoint? Not all mountpoints are
+		 * accessible (maybe over mounted by another fylesystem) */
+		path = mnt_get_mountpoint(tgt);
+		if (path && strcmp(path, tgt) == 0)
+			rc = 0;
+		free(path);
+		if (rc)
+			continue;	/* overlaying mount */
+
+		if (!has_discard(src, &wholedisk))
+			continue;
+		cnt++;
+
+		/*
+		 * We're able to detect that the device supports discard, but
+		 * things also depend on filesystem or device mapping, for
+		 * example vfat or LUKS (by default) does not support FSTRIM.
+		 *
+		 * This is reason why we ignore EOPNOTSUPP and ENOTTY errors
+		 * from discard ioctl.
+		 */
+		if (fstrim_filesystem(tgt, rangetpl, verbose) < 0)
+		       cnt_err++;
+	}
+
+	sysfs_deinit(&wholedisk);
+	mnt_free_table(tab);
+
+	if (cnt && cnt == cnt_err)
+		return MOUNT_EX_FAIL;		/* all failed */
+	if (cnt && cnt_err)
+		return MOUNT_EX_SOMEOK;		/* some ok */
+
+	return EXIT_SUCCESS;
+}
+
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <mount point>\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -a, --all           discard all mounted supported filesystems\n"), out);
 	fputs(_(" -o, --offset <num>  offset in bytes to discard from\n"), out);
 	fputs(_(" -l, --length <num>  length of bytes to discard from the offset\n"), out);
 	fputs(_(" -m, --minimum <num> minimum extent length to discard\n"), out);
@@ -72,11 +231,11 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 int main(int argc, char **argv)
 {
 	char *path;
-	int c, fd, verbose = 0;
+	int c, rc, verbose = 0, all = 0;
 	struct fstrim_range range;
-	struct stat sb;
 
 	static const struct option longopts[] = {
+	    { "all",       0, 0, 'a' },
 	    { "help",      0, 0, 'h' },
 	    { "version",   0, 0, 'V' },
 	    { "offset",    1, 0, 'o' },
@@ -94,8 +253,11 @@ int main(int argc, char **argv)
 	memset(&range, 0, sizeof(range));
 	range.len = ULLONG_MAX;
 
-	while ((c = getopt_long(argc, argv, "hVo:l:m:v", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "ahVo:l:m:v", longopts, NULL)) != -1) {
 		switch(c) {
+		case 'a':
+			all = 1;
+			break;
 		case 'h':
 			usage(stdout);
 			break;
@@ -123,38 +285,26 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (optind == argc)
-		errx(EXIT_FAILURE, _("no mountpoint specified"));
-
-	path = argv[optind++];
+	if (!all) {
+		if (optind == argc)
+			errx(EXIT_FAILURE, _("no mountpoint specified"));
+		path = argv[optind++];
+	}
 
 	if (optind != argc) {
 		warnx(_("unexpected number of arguments"));
 		usage(stderr);
 	}
 
-	if (stat(path, &sb) == -1)
-		err(EXIT_FAILURE, _("stat failed %s"), path);
-	if (!S_ISDIR(sb.st_mode))
-		errx(EXIT_FAILURE, _("%s: not a directory"), path);
-
-	fd = open(path, O_RDONLY);
-	if (fd < 0)
-		err(EXIT_FAILURE, _("cannot open %s"), path);
-
-	if (ioctl(fd, FITRIM, &range))
-		err(EXIT_FAILURE, _("%s: FITRIM ioctl failed"), path);
-
-	if (verbose) {
-		char *str = size_to_human_string(SIZE_SUFFIX_3LETTER |
-						 SIZE_SUFFIX_SPACE,
-						 (uint64_t) range.len);
-		/* TRANSLATORS: The standard value here is a very large number. */
-		printf(_("%s: %s (%" PRIu64 " bytes) trimmed\n"),
-						path, str,
-						(uint64_t) range.len);
-		free(str);
+	if (all)
+		rc = fstrim_all(&range, verbose);
+	else {
+		rc = fstrim_filesystem(path, &range, verbose);
+		if (rc == 1) {
+			warnx(_("%s: discard operation not supported."), path);
+			rc = EXIT_FAILURE;
+		}
 	}
-	close(fd);
-	return EXIT_SUCCESS;
+
+	return rc;
 }
