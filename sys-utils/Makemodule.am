@@ -68,7 +68,8 @@ fsfreeze_SOURCES = sys-utils/fsfreeze.c
 sbin_PROGRAMS += fstrim
 dist_man_MANS += sys-utils/fstrim.8
 fstrim_SOURCES = sys-utils/fstrim.c
-fstrim_LDADD = $(LDADD) libcommon.la
+fstrim_LDADD = $(LDADD) libcommon.la libmount.la
+fstrim_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 
 sbin_PROGRAMS += blkdiscard
 dist_man_MANS += sys-utils/blkdiscard.8

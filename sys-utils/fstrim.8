@@ -4,6 +4,7 @@
 fstrim \- discard unused blocks on a mounted filesystem
 .SH SYNOPSIS
 .B fstrim
+.RB [ \-a ]
 .RB [ \-o
 .IR offset ]
 .RB [ \-l
@@ -35,6 +36,11 @@ followed by the multiplicative suffixes KiB=1024, MiB=1024*1024, and so on for
 GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g. "K" has the same
 meaning as "KiB") or the suffixes KB=1000, MB=1000*1000, and so on for GB, TB,
 PB, EB, ZB and YB.
+.IP "\fB\-a, \-\-all\fP"
+Discard all mounted filesystem on devices that support discard operation. The
+another options like offset, length and minimum are applied to all the devices.
+The errors from filesystems that do not support discard operation are silently
+ignored.
 .IP "\fB\-h, \-\-help\fP"
 Display help text and exit.
 .IP "\fB\-o, \-\-offset\fP \fIoffset\fP"
@@ -72,6 +78,20 @@ LVM setup, etc.  These reductions would not be reflected in fstrim_range.len
 (the
 .B --length
 option).
+
+.SH RETURN CODES
+.IP 0
+success
+.IP 1
+failure
+.IP 32
+all failed
+.IP 64
+some filestems discard succeeded, some failed
+.PP
+The command
+.B fstrim --all
+returns 0 (all success), 32 (all failed) or 64 (some failed, some success).
 
 .SH AUTHOR
 .nf
