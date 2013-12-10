@@ -57,10 +57,11 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out,
 	      _(" %s [options] <mount point>\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -o, --offset <num>  offset in bytes to discard from\n"
-		" -l, --length <num>  length of bytes to discard from the offset\n"
-		" -m, --minimum <num> minimum extent length to discard\n"
-		" -v, --verbose       print number of discarded bytes\n"), out);
+	fputs(_(" -o, --offset <num>  offset in bytes to discard from\n"), out);
+	fputs(_(" -l, --length <num>  length of bytes to discard from the offset\n"), out);
+	fputs(_(" -m, --minimum <num> minimum extent length to discard\n"), out);
+	fputs(_(" -v, --verbose       print number of discarded bytes\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
