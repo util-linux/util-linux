@@ -37,9 +37,10 @@ GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g. "K" has the same
 meaning as "KiB") or the suffixes KB=1000, MB=1000*1000, and so on for GB, TB,
 PB, EB, ZB and YB.
 .IP "\fB\-a, \-\-all\fP"
-Discard all mounted filesystem on devices that support discard operation. The
-another options like offset, length and minimum are applied to all the devices.
-The errors from filesystems that do not support discard operation are silently
+Trim all mounted filesystems on devices that support the discard operation.
+The other supplied options, like \fB\-\-offset\fR, \fB\-\-length\fR and
+\fB-\-minimum\fR, are applied to all these devices.
+Errors from filesystems that do not support the discard operation are silently
 ignored.
 .IP "\fB\-h, \-\-help\fP"
 Display help text and exit.
@@ -87,7 +88,7 @@ failure
 .IP 32
 all failed
 .IP 64
-some filestems discard succeeded, some failed
+some filesystem discards have succeeded, some failed
 .PP
 The command
 .B fstrim --all
