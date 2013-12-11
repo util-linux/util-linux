@@ -449,6 +449,15 @@ extern int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **roo
 extern int mnt_table_set_iter(struct libmnt_table *tb, struct libmnt_iter *itr,
 			      struct libmnt_fs *fs);
 
+enum {
+	MNT_UNIQ_FORWARD  = (1 << 1),	/* default is backward */
+	MNT_UNIQ_KEEPTREE = (1 << 2)
+};
+extern int mnt_table_uniq_fs(struct libmnt_table *tb, int flags,
+				int (*cmp)(struct libmnt_table *,
+					   struct libmnt_fs *,
+					   struct libmnt_fs *));
+
 extern struct libmnt_fs *mnt_table_find_mountpoint(struct libmnt_table *tb,
 				const char *path, int direction);
 extern struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb,

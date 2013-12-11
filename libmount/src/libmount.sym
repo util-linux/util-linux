@@ -289,5 +289,6 @@ global:
 } MOUNT_2.23;
 
 MOUNT_2.25 {
+	mnt_table_uniq_fs;
 	mnt_tag_is_valid;
 } MOUNT_2.24;

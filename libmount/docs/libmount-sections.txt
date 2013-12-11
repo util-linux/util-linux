@@ -331,6 +331,7 @@ mnt_table_set_parser_errcb
 mnt_table_set_trailing_comment
 mnt_table_set_userdata
 mnt_table_with_comments
+mnt_table_uniq_fs
 </SECTION>
 
 <SECTION>

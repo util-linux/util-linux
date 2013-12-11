@@ -47,6 +47,20 @@
 #include "strutils.h"
 #include "loopdev.h"
 
+static int is_mountinfo(struct libmnt_table *tb)
+{
+	struct libmnt_fs *fs;
+
+	if (!tb)
+		return 0;
+
+	fs = list_first_entry(&tb->ents, struct libmnt_fs, ents);
+	if (fs && mnt_fs_is_kernel(fs) && mnt_fs_get_root(fs))
+		return 1;
+
+	return 0;
+}
+
 /**
  * mnt_new_table:
  *
@@ -697,6 +711,98 @@ int mnt_table_find_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 	return 1;
 }
 
+static int mnt_table_move_parent(struct libmnt_table *tb, int oldid, int newid)
+{
+	struct libmnt_iter itr;
+	struct libmnt_fs *fs;
+
+	assert(tb);
+
+	if (!tb)
+		return -EINVAL;
+	if (list_empty(&tb->ents))
+		return 0;
+
+	DBG(TAB, mnt_debug_h(tb, "moving parent ID from %d -> %d", oldid, newid));
+	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+
+	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
+		if (fs->parent == oldid)
+			fs->parent = newid;
+	}
+	return 0;
+}
+
+/**
+ * mnt_table_uniq_fs:
+ * @tb: table
+ * @direction: MNT_UNIQ_*
+ * @cmp: function to compare filesystems
+ *
+ * This function de-duplicate the @tb, but does not change order of the
+ * filesystems. The @cmp function has to return 0 if the filesystems are
+ * equal, otherwise non-zero.
+ *
+ * The default is to keep in the table later mounted filesystems (function uses
+ * backward mode iterator).
+ *
+ * @MNT_UNIQ_FORWARD:  remove later mounted filesystems
+ * @MNT_UNIQ_KEEPTREE: keep parent->id relation ship stil valid
+ *
+ * Returns: negative number in case of error, or 0 o success.
+ */
+int mnt_table_uniq_fs(struct libmnt_table *tb, int flags,
+				int (*cmp)(struct libmnt_table *,
+					   struct libmnt_fs *,
+					   struct libmnt_fs *))
+{
+	struct libmnt_iter itr;
+	struct libmnt_fs *fs;
+	int direction = MNT_ITER_BACKWARD;
+
+	assert(tb);
+	assert(cmp);
+
+	if (!tb || !cmp)
+		return -EINVAL;
+	if (list_empty(&tb->ents))
+		return 0;
+
+	if (flags & MNT_UNIQ_FORWARD)
+		direction = MNT_ITER_FORWARD;
+
+	DBG(TAB, mnt_debug_h(tb, "de-duplicate"));
+	mnt_reset_iter(&itr, direction);
+
+	if ((flags & MNT_UNIQ_KEEPTREE) && !is_mountinfo(tb))
+		flags &= ~MNT_UNIQ_KEEPTREE;
+
+	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
+		int want = 1;
+		struct libmnt_iter xtr;
+		struct libmnt_fs *x;
+
+		mnt_reset_iter(&xtr, direction);
+		while (want && mnt_table_next_fs(tb, &xtr, &x) == 0) {
+			if (fs == x)
+				break;
+			want = cmp(tb, x, fs) != 0;
+		}
+
+		if (!want) {
+			if (flags & MNT_UNIQ_KEEPTREE)
+				mnt_table_move_parent(tb, mnt_fs_get_id(fs),
+							  mnt_fs_get_parent_id(fs));
+
+			DBG(TAB, mnt_debug_h(tb, "remove duplicate %s",
+						mnt_fs_get_target(fs)));
+			mnt_table_remove_fs(tb, fs);
+		}
+	}
+
+	return 0;
+}
+
 /**
  * mnt_table_set_iter:
  * @tb: tab pointer
@@ -1229,20 +1335,6 @@ err:
 	return NULL;
 }
 
-static int is_mountinfo(struct libmnt_table *tb)
-{
-	struct libmnt_fs *fs;
-
-	if (!tb)
-		return 0;
-
-	fs = list_first_entry(&tb->ents, struct libmnt_fs, ents);
-	if (fs && mnt_fs_is_kernel(fs) && mnt_fs_get_root(fs))
-		return 1;
-
-	return 0;
-}
-
 /**
  * mnt_table_is_fs__mounted:
  * @tb: /proc/self/mountinfo file
@@ -1633,12 +1725,53 @@ done:
 	return rc;
 }
 
+/* returns 0 if @a and @b targets are the same */
+static int test_uniq_cmp(struct libmnt_table *tb __attribute__((__unused__)),
+			 struct libmnt_fs *a,
+			 struct libmnt_fs *b)
+{
+	assert(a);
+	assert(b);
+
+	return mnt_fs_streq_target(a, mnt_fs_get_target(b)) ? 0 : 1;
+}
+
+static int test_uniq(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_table *tb;
+	int rc = -1;
+
+	if (argc != 2) {
+		fprintf(stderr, "try --help\n");
+		return -EINVAL;
+	}
+
+	tb = create_table(argv[1], FALSE);
+	if (!tb)
+		goto done;
+
+	if (mnt_table_uniq_fs(tb, 0, test_uniq_cmp) == 0) {
+		struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_FORWARD);
+		struct libmnt_fs *fs;
+		if (!itr)
+			goto done;
+		while (mnt_table_next_fs(tb, itr, &fs) == 0)
+			mnt_fs_print_debug(fs, stdout);
+		mnt_free_iter(itr);
+		rc = 0;
+	}
+done:
+	mnt_unref_table(tb);
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
 	{ "--parse",    test_parse,        "<file> [--comments] parse and print tab" },
 	{ "--find-forward",  test_find_fw, "<file> <source|target> <string>" },
 	{ "--find-backward", test_find_bw, "<file> <source|target> <string>" },
+	{ "--uniq-target",   test_uniq,    "<file>" },
 	{ "--find-pair",     test_find_pair, "<file> <source> <target>" },
 	{ "--find-mountpoint", test_find_mountpoint, "<path>" },
 	{ "--copy-fs",       test_copy_fs, "<file>  copy root FS from the file" },
