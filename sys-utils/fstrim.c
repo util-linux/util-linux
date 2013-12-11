@@ -139,6 +139,15 @@ static int has_discard(const char *devname, struct sysfs_cxt *wholedisk)
 	return rc == 0 && dg > 0;
 }
 
+
+static int uniq_fs_target_cmp(
+		struct libmnt_table *tb __attribute__((__unused__)),
+		struct libmnt_fs *a,
+		struct libmnt_fs *b)
+{
+	return !mnt_fs_streq_target(a, mnt_fs_get_target(b));
+}
+
 /*
  * fstrim --all follows "mount -a" return codes:
  *
@@ -154,6 +163,8 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 	struct sysfs_cxt wholedisk = UL_SYSFSCXT_EMPTY;
 	int cnt = 0, cnt_err = 0;
 
+	mnt_init_debug(0);
+
 	itr = mnt_new_iter(MNT_ITER_BACKWARD);
 	if (!itr)
 		err(MOUNT_EX_FAIL, _("failed to initialize libmount iterator"));
@@ -161,6 +172,9 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 	tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
 	if (!tab)
 		err(MOUNT_EX_FAIL, _("failed to parse %s"), _PATH_PROC_MOUNTINFO);
+
+	/* de-duplicate the table */
+	mnt_table_uniq_fs(tab, 0, uniq_fs_target_cmp);
 
 	while (mnt_table_next_fs(tab, itr, &fs) == 0) {
 		const char *src = mnt_fs_get_srcpath(fs),
@@ -199,7 +213,7 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 	}
 
 	sysfs_deinit(&wholedisk);
-	mnt_free_table(tab);
+	mnt_unref_table(tab);
 
 	if (cnt && cnt == cnt_err)
 		return MOUNT_EX_FAIL;		/* all failed */
