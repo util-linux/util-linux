@@ -58,7 +58,8 @@ enum {
 	FL_SUBMOUNTS	= (1 << 8),
 	FL_POLL		= (1 << 9),
 	FL_DF		= (1 << 10),
-	FL_ALL		= (1 << 11)
+	FL_ALL		= (1 << 11),
+	FL_UNIQ		= (1 << 12)
 };
 
 /* column IDs */
@@ -1090,6 +1091,14 @@ done:
 	return rc;
 }
 
+static int uniq_fs_target_cmp(
+		struct libmnt_table *tb __attribute__((__unused__)),
+		struct libmnt_fs *a,
+		struct libmnt_fs *b)
+{
+	return !mnt_fs_match_target(a, mnt_fs_get_target(b), cache);
+}
+
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	int i;
@@ -1125,6 +1134,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -l, --list             use list format output\n"), out);
 	fputs(_(" -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"), out);
 	fputs(_(" -n, --noheadings       don't print column headings\n"), out);
+	fputs(_(" -U, --uniq             ignore filesystems with duplicate target\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
 	fputs(_(" -O, --options <list>   limit the set of filesystems by mount options\n"), out);
 	fputs(_(" -o, --output <list>    the output columns to be shown\n"), out);
@@ -1191,6 +1201,7 @@ int main(int argc, char *argv[])
 	    { "task",         1, 0, 'N' },
 	    { "target",       1, 0, 'T' },
 	    { "timeout",      1, 0, 'w' },
+	    { "uniq",         0, 0, 'U' },
 	    { "version",      0, 0, 'V' },
 
 	    { NULL,           0, 0, 0 }
@@ -1215,7 +1226,7 @@ int main(int argc, char *argv[])
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"AacDd:ehifF:o:O:p::PklmnN:rst:uvRS:T:w:V",
+				"AacDd:ehifF:o:O:p::PklmnN:rst:uvRS:T:Uw:V",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1326,6 +1337,9 @@ int main(int argc, char *argv[])
 			set_match(COL_TARGET, optarg);
 			flags |= FL_NOSWAPMATCH;
 			break;
+		case 'U':
+			flags |= FL_UNIQ;
+			break;
 		case 'w':
 			timeout = strtos32_or_err(optarg, _("invalid timeout argument"));
 			break;
@@ -1421,6 +1435,8 @@ int main(int argc, char *argv[])
 	}
 	mnt_table_set_cache(tb, cache);
 
+	if (flags & FL_UNIQ)
+		mnt_table_uniq_fs(tb, MNT_UNIQ_KEEPTREE, uniq_fs_target_cmp);
 
 	/*
 	 * initialize output formatting (tt.h)
