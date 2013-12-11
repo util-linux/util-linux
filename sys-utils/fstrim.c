@@ -229,10 +229,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out,
 	      _(" %s [options] <mount point>\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all           discard all mounted supported filesystems\n"), out);
-	fputs(_(" -o, --offset <num>  offset in bytes to discard from\n"), out);
-	fputs(_(" -l, --length <num>  length of bytes to discard from the offset\n"), out);
-	fputs(_(" -m, --minimum <num> minimum extent length to discard\n"), out);
+	fputs(_(" -a, --all           trim all mounted filesystems that are supported\n"), out);
+	fputs(_(" -o, --offset <num>  the offset in bytes to start discarding from\n"), out);
+	fputs(_(" -l, --length <num>  the number of bytes to discard\n"), out);
+	fputs(_(" -m, --minimum <num> the minimum extent length to discard\n"), out);
 	fputs(_(" -v, --verbose       print number of discarded bytes\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
