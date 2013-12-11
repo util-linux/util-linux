@@ -1102,45 +1102,40 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" %1$s [options] [--source <device>] [--target <mountpoint>]\n"),
 		program_invocation_short_name);
 
-	fprintf(out, _(
-	"\nOptions:\n"
-	" -s, --fstab            search in static table of filesystems\n"
-	" -m, --mtab             search in table of mounted filesystems\n"
-	" -k, --kernel           search in kernel table of mounted\n"
-        "                          filesystems (default)\n\n"));
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -s, --fstab            search in static table of filesystems\n"), out);
+	fputs(_(" -m, --mtab             search in table of mounted filesystems\n"), out);
+	fputs(_(" -k, --kernel           search in kernel table of mounted\n"
+              "                          filesystems (default)\n"), out);
+	fputc('\n', out);
+	fputs(_(" -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"), out);
+	fputs(_(" -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"), out);
+	fputc('\n', out);
 
-	fprintf(out, _(
-	" -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
-	" -w, --timeout <num>    upper limit in milliseconds that --poll will block\n\n"));
-
-	fprintf(out, _(
-	" -A, --all              disable all built-in filters, print all filesystems\n"
-	" -a, --ascii            use ASCII chars for tree formatting\n"
-	" -c, --canonicalize     canonicalize printed paths\n"
-	" -D, --df               imitate the output of df(1)\n"
-	" -d, --direction <word> direction of search, 'forward' or 'backward'\n"
-	" -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
-	"                          to device names\n"
-	" -F, --tab-file <path>  alternative file for --fstab, --mtab or --kernel options\n"
-	" -f, --first-only       print the first found filesystem only\n"));
-
-	fprintf(out, _(
-	" -i, --invert           invert the sense of matching\n"
-	" -l, --list             use list format output\n"
-	" -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
-	" -n, --noheadings       don't print column headings\n"
-	" -u, --notruncate       don't truncate text in columns\n"));
-fputs (_(" -O, --options <list>   limit the set of filesystems by mount options\n"), out);
-fputs (_(" -o, --output <list>    the output columns to be shown\n"), out);
-fputs (_(" -P, --pairs            use key=\"value\" output format\n"), out);
-fputs (_(" -r, --raw              use raw output format\n"), out);
-fputs (_(" -t, --types <list>     limit the set of filesystems by FS types\n"), out);
-	fprintf(out, _(
-	" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
-	" -R, --submounts        print all submounts for the matching filesystems\n"
-	" -S, --source <string>  the device to mount (by name, maj:min, \n"
-	"                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
-	" -T, --target <string>  the mountpoint to use\n"));
+	fputs(_(" -A, --all              disable all built-in filters, print all filesystems\n"), out);
+	fputs(_(" -a, --ascii            use ASCII chars for tree formatting\n"), out);
+	fputs(_(" -c, --canonicalize     canonicalize printed paths\n"), out);
+	fputs(_(" -D, --df               imitate the output of df(1)\n"), out);
+	fputs(_(" -d, --direction <word> direction of search, 'forward' or 'backward'\n"), out);
+	fputs(_(" -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
+	        "                          to device names\n"), out);
+	fputs(_(" -F, --tab-file <path>  alternative file for -s, -m or -k options\n"), out);
+	fputs(_(" -f, --first-only       print the first found filesystem only\n"), out);
+	fputs(_(" -i, --invert           invert the sense of matching\n"), out);
+	fputs(_(" -l, --list             use list format output\n"), out);
+	fputs(_(" -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"), out);
+	fputs(_(" -n, --noheadings       don't print column headings\n"), out);
+	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
+	fputs(_(" -O, --options <list>   limit the set of filesystems by mount options\n"), out);
+	fputs(_(" -o, --output <list>    the output columns to be shown\n"), out);
+	fputs(_(" -P, --pairs            use key=\"value\" output format\n"), out);
+	fputs(_(" -r, --raw              use raw output format\n"), out);
+	fputs(_(" -t, --types <list>     limit the set of filesystems by FS types\n"), out);
+	fputs(_(" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"), out);
+	fputs(_(" -R, --submounts        print all submounts for the matching filesystems\n"), out);
+	fputs(_(" -S, --source <string>  the device to mount (by name, maj:min, \n"
+	        "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"), out);
+	fputs(_(" -T, --target <string>  the mountpoint to use\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
