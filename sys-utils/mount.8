@@ -561,7 +561,10 @@ Display help text and exit.
 Verbose mode.
 .IP "\fB\-a, \-\-all\fP"
 Mount all filesystems (of the given types) mentioned in
-.IR fstab .
+.IR fstab
+(except for those whose line contains the
+.B noauto
+keyword).
 .IP "\fB\-F, \-\-fork\fP"
 (Used in conjunction with
 .BR \-a .)
