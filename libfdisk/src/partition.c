@@ -170,6 +170,11 @@ int fdisk_partition_is_used(struct fdisk_partition *pa)
 	return pa && pa->used;
 }
 
+int fdisk_partition_is_freespace(struct fdisk_partition *pa)
+{
+	return pa && pa->freespace;
+}
+
 int fdisk_partition_next_partno(
 		struct fdisk_context *cxt,
 		struct fdisk_partition *pa,
@@ -233,7 +238,9 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 
 	switch (id) {
 	case FDISK_COL_DEVICE:
-		if (pa->cxt->label->flags & FDISK_LABEL_FL_INCHARS_PARTNO)
+		if (pa->freespace)
+			p = strdup(_("Free space"));
+		else if (pa->cxt->label->flags & FDISK_LABEL_FL_INCHARS_PARTNO)
 			rc = asprintf(&p, "%c", (int) pa->partno + 'a');
 		else
 			p = fdisk_partname(pa->cxt->dev_path, pa->partno + 1);

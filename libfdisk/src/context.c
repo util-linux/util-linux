@@ -382,6 +382,28 @@ int fdisk_context_display_details(struct fdisk_context *cxt)
 }
 
 /**
+ * fdisk_context_enable_freespace
+ * cxt: context
+ * enable: true/flase
+ *
+ * Enables or disables "free space" in list() output
+ *
+ * Returns: 0 on success, < 0 on error.
+ */
+int fdisk_context_enable_freespace(struct fdisk_context *cxt, int enable)
+{
+	assert(cxt);
+	cxt->display_freespace = enable ? 1 : 0;
+	return 0;
+}
+
+int fdisk_context_display_freespace(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->display_freespace == 1;
+}
+
+/**
  * fdisk_context_enable_listonly:
  * cxt: context
  * enable: true/flase

@@ -97,6 +97,10 @@ extern const char *fdisk_context_get_unit(struct fdisk_context *cxt, int n);
 extern unsigned int fdisk_context_get_units_per_sector(struct fdisk_context *cxt);
 
 extern int fdisk_context_enable_details(struct fdisk_context *cxt, int enable);
+extern int fdisk_context_enable_freespace(struct fdisk_context *cxt, int enable);
+extern int fdisk_context_use_cylinders(struct fdisk_context *cxt);
+extern int fdisk_context_display_details(struct fdisk_context *cxt);
+extern int fdisk_context_display_freespace(struct fdisk_context *cxt);
 
 /* parttype.c */
 extern struct fdisk_parttype *fdisk_get_parttype_from_code(struct fdisk_context *cxt,
@@ -178,6 +182,7 @@ extern int fdisk_partition_toggle_flag(struct fdisk_context *cxt, size_t partnum
 extern struct fdisk_partition *fdisk_new_partition(void);
 extern void fdisk_reset_partition(struct fdisk_partition *pa);
 extern void fdisk_free_partition(struct fdisk_partition *pa);
+extern int fdisk_partition_is_freespace(struct fdisk_partition *pa);
 extern int fdisk_partition_set_start(struct fdisk_partition *pa, uint64_t off);
 extern uint64_t fdisk_partition_get_start(struct fdisk_partition *pa);
 extern int fdisk_partition_set_end(struct fdisk_partition *pa, uint64_t off, int isrel);

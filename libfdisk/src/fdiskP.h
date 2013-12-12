@@ -156,12 +156,14 @@ struct fdisk_partition {
 	unsigned int	partno_follow_default : 1,
 			start_follow_default : 1,
 			end_follow_default : 1,
+			freespace : 1,		/* describes gap between partitions*/
 			nested : 1,		/* logical partition */
 			used   : 1,		/* partition used */
 			endrel : 1;		/* end is specified as relative number */
 };
 
 #define FDISK_EMPTY_PARTNO	((size_t) -1)
+#define FDISK_EMPTY_PARTITION	{ .partno = FDISK_EMPTY_PARTNO }
 
 /*
  * Legacy CHS based geometry
@@ -338,6 +340,7 @@ struct fdisk_context {
 
 	unsigned int display_in_cyl_units : 1,	/* for obscure labels */
 		     display_details : 1,	/* expert display mode */
+		     display_freespace : 1,	/* freesapce in list() output */
 		     listonly : 1;		/* list partition, nothing else */
 
 	/* alignment */
@@ -369,8 +372,6 @@ struct fdisk_context {
 extern int __fdisk_context_switch_label(struct fdisk_context *cxt,
 				    struct fdisk_label *lb);
 
-extern int fdisk_context_use_cylinders(struct fdisk_context *cxt);
-extern int fdisk_context_display_details(struct fdisk_context *cxt);
 extern int fdisk_context_enable_listonly(struct fdisk_context *cxt, int enable);
 extern int fdisk_context_listonly(struct fdisk_context *cxt);
 

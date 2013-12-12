@@ -258,6 +258,64 @@ int fdisk_list_disklabel(struct fdisk_context *cxt)
 	return cxt->label->op->list(cxt);
 }
 
+static int add_partition_to_tt(struct fdisk_context *cxt,
+				 struct tt *tb,
+				 int *cols,
+				 size_t ncols,
+				 struct fdisk_partition *pa)
+{
+	size_t j;
+	struct tt_line *ln = tt_add_line(tb, NULL);
+	const struct fdisk_column *col;
+
+	if (!ln)
+		return -ENOMEM;
+
+	/* set data for the columns */
+	for (j = 0; j < ncols; j++) {
+		char *data = NULL;
+		int id;
+
+		col = fdisk_label_get_column(cxt->label, cols[j]);
+		if (!col)
+			continue;
+		id = (col->id == FDISK_COL_SECTORS &&
+		      fdisk_context_use_cylinders(cxt)) ?
+				FDISK_COL_CYLINDERS :
+				col->id;
+
+		if (fdisk_partition_to_string(pa, id, &data))
+			continue;
+		tt_line_set_data(ln, j, data);
+	}
+
+	return 0;
+}
+
+static void gap_to_freespace(
+			struct fdisk_context *cxt,
+			struct tt *tb,
+			int *cols,
+			size_t ncols,
+			uint64_t start,
+			uint64_t end)
+{
+	struct fdisk_partition pa = FDISK_EMPTY_PARTITION;
+
+	pa.freespace = 1;
+	pa.cxt = cxt;
+
+	pa.start = start;
+	pa.end = end;
+	pa.size = pa.end - pa.start + 1ULL;
+
+	DBG(LABEL, dbgprint("gap->freespace [%ju, size=%ju]",
+			pa.start, pa.size));
+
+	add_partition_to_tt(cxt, tb, cols, ncols, &pa);
+}
+
+
 /**
  * fdisk_list_partitions
  * @cxt: fdisk context
@@ -280,13 +338,15 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 	const struct fdisk_column *col;
 	struct fdisk_partition *pa = NULL;
 	size_t i, j;
+	uint64_t last, grain;
 
 	if (!cxt || !cxt->label)
 		return -EINVAL;
 	if (!cxt->label->op->get_part)
 		return -ENOSYS;
 
-	DBG(LABEL, dbgprint("list partitions"));
+	DBG(LABEL, dbgprint("list partitions%s",
+		fdisk_context_display_freespace(cxt) ? " and free-space" : ""));
 
 	if (!cols || !ncols) {
 		rc = fdisk_get_columns(cxt, 0, &cols, &ncols);
@@ -299,6 +359,9 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 		rc = -ENOMEM;
 		goto done;
 	}
+
+	last = cxt->first_lba;
+	grain = cxt->grain / cxt->sector_size;
 
 	/* define table columns */
 	for (j = 0; j < ncols; j++) {
@@ -314,35 +377,31 @@ int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols)
 
 	/* generate per-partition lines into table */
 	for (i = 0; i < cxt->label->nparts_max; i++) {
-		struct tt_line *ln;
-
 		rc = fdisk_get_partition(cxt, i, &pa);
 		if (rc)
 			continue;
 		if (!fdisk_partition_is_used(pa))
 			continue;
-		ln = tt_add_line(tb, NULL);
-		if (!ln)
-			continue;
 
-		/* set data for the columns */
-		for (j = 0; j < ncols; j++) {
-			char *data = NULL;
-			int id;
-
-			col = fdisk_label_get_column(cxt->label, cols[j]);
-			if (!col)
-				continue;
-			id = (col->id == FDISK_COL_SECTORS &&
-			      fdisk_context_use_cylinders(cxt)) ?
-					FDISK_COL_CYLINDERS :
-					col->id;
-
-			rc = fdisk_partition_to_string(pa, id, &data);
-			if (rc)
-				continue;
-			tt_line_set_data(ln, j, data);
+		/* add free-space (before partition) to the list */
+		if (fdisk_context_display_freespace(cxt) &&
+		    last + grain < pa->start) {
+			gap_to_freespace(cxt, tb, cols, ncols,
+				last + (last > cxt->first_lba ? 1 : 0),
+				pa->start - 1);
 		}
+		last = pa->end;
+
+		/* add partition to the list */
+		add_partition_to_tt(cxt, tb, cols, ncols, pa);
+	}
+
+	/* add free-space (behind last partition) to the list */
+	if (fdisk_context_display_freespace(cxt) &&
+	    last + grain < cxt->total_sectors - 1) {
+		gap_to_freespace(cxt, tb, cols, ncols,
+			last + (last > cxt->first_lba ? 1 : 0),
+			cxt->total_sectors - 1);
 	}
 
 	if (!tt_is_empty(tb))
