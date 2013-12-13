@@ -207,6 +207,16 @@ extern int fdisk_partition_to_string(struct fdisk_partition *pa, int id, char **
 extern int fdisk_partition_next_partno(	struct fdisk_context *cxt,
 			struct fdisk_partition *pa, size_t *n);
 
+/* table.c */
+extern struct fdisk_table *fdisk_new_table(void);
+extern int fdisk_reset_table(struct fdisk_table *tb);
+extern void fdisk_ref_table(struct fdisk_table *tb);
+extern void fdisk_unref_table(struct fdisk_table *tb);
+extern int fdisk_table_is_empty(struct fdisk_table *tb);
+extern int fdisk_table_add_partition(struct fdisk_table *tb, struct fdisk_partition *pa);
+extern int fdisk_table_remove_partition(struct fdisk_table *tb, struct fdisk_partition *pa);
+
+
 /* alignment.c */
 extern int fdisk_reset_alignment(struct fdisk_context *cxt);
 extern int fdisk_reset_device_properties(struct fdisk_context *cxt);

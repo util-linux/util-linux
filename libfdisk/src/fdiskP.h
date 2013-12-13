@@ -22,6 +22,7 @@
 
 #include "nls.h"		/* temporary before dialog API will be implamented */
 #include "tt.h"
+#include "list.h"
 
 /* features */
 #define CONFIG_LIBFDISK_ASSERT
@@ -51,6 +52,7 @@
 #define FDISK_DEBUG_ASK         (1 << 6)
 #define FDISK_DEBUG_FRONTEND	(1 << 7)
 #define FDISK_DEBUG_PART	(1 << 8)
+#define FDISK_DEBUG_TAB		(1 << 9)
 #define FDISK_DEBUG_ALL		0xFFFF
 
 # define ON_DBG(m, x)	do { \
@@ -127,44 +129,51 @@ enum {
 #define fdisk_parttype_is_allocated(_x)	((_x) && ((_x)->flags & FDISK_PARTTYPE_ALLOCATED))
 
 struct fdisk_partition {
-	struct fdisk_context	*cxt;
+	struct fdisk_context	*cxt;		/* the current context */
 
-	int		refcount;
-	size_t		partno;
+	int		refcount;		/* reference counter */
+	size_t		partno;			/* partition number */
 
-	uint64_t	start;
-	uint64_t	end;
-	uint64_t	size;
+	uint64_t	start;			/* first sectors */
+	uint64_t	end;			/* last sector */
+	uint64_t	size;			/* size in sectors */
 
-	char		*name;
-	char		*uuid;
-	char		*attrs;
+	char		*name;			/* partition name */
+	char		*uuid;			/* partition UUID */
+	char		*attrs;			/* partition flags/attributes converted to string */
+	struct fdisk_parttype	*type;		/* partition type */
 
-	struct fdisk_parttype	*type;
+	struct list_head	parts;		/* list of partitions */
 
-	/* private fields */
-	char		start_post;
-	char		end_post;
-	char		size_post;
-	uint64_t	fsize;
+	/* extra fields for partition_to_string() */
+	char		start_post;		/* start postfix  (e.g. '+') */
+	char		end_post;		/* end postfix */
+	char		size_post;		/* size postfix */
+
+	uint64_t	fsize;			/* bsd junk */
 	uint64_t	bsize;
 	uint64_t	cpg;
 
-	char		boot;
-	char		*start_addr;
-	char		*end_addr;
+	char		boot;			/* is bootable (MBS only) */
+	char		*start_addr;		/* start C/H/S in string */
+	char		*end_addr;		/* end C/H/S in string */
 
-	unsigned int	partno_follow_default : 1,
-			start_follow_default : 1,
-			end_follow_default : 1,
-			freespace : 1,		/* describes gap between partitions*/
+	unsigned int	partno_follow_default : 1,	/* use default partno */
+			start_follow_default : 1,	/* use default start */
+			end_follow_default : 1,		/* use default end */
+			freespace : 1,		/* dthis is not partition, this is free space */
 			nested : 1,		/* logical partition */
-			used   : 1,		/* partition used */
-			endrel : 1;		/* end is specified as relative number */
+			used   : 1,		/* partition already used */
+			endrel : 1;		/* end  is specified as relative number */
 };
 
 #define FDISK_EMPTY_PARTNO	((size_t) -1)
 #define FDISK_EMPTY_PARTITION	{ .partno = FDISK_EMPTY_PARTNO }
+
+struct fdisk_table {
+	struct list_head	parts;		/* partitions */
+	int			refcount;
+};
 
 /*
  * Legacy CHS based geometry
