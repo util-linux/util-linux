@@ -412,7 +412,7 @@ done:
 	if (org != cols)
 		free(cols);
 	tt_free_table(tb);
-	fdisk_free_partition(pa);
+	fdisk_unref_partition(pa);
 	return rc;
 }
 

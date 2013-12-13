@@ -181,7 +181,8 @@ extern int fdisk_partition_toggle_flag(struct fdisk_context *cxt, size_t partnum
 
 extern struct fdisk_partition *fdisk_new_partition(void);
 extern void fdisk_reset_partition(struct fdisk_partition *pa);
-extern void fdisk_free_partition(struct fdisk_partition *pa);
+extern void fdisk_ref_partition(struct fdisk_partition *pa);
+extern void fdisk_unref_partition(struct fdisk_partition *pa);
 extern int fdisk_partition_is_freespace(struct fdisk_partition *pa);
 extern int fdisk_partition_set_start(struct fdisk_partition *pa, uint64_t off);
 extern uint64_t fdisk_partition_get_start(struct fdisk_partition *pa);

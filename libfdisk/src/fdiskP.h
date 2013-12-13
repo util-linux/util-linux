@@ -129,6 +129,7 @@ enum {
 struct fdisk_partition {
 	struct fdisk_context	*cxt;
 
+	int		refcount;
 	size_t		partno;
 
 	uint64_t	start;

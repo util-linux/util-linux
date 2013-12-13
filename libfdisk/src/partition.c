@@ -8,6 +8,7 @@ struct fdisk_partition *fdisk_new_partition(void)
 {
 	struct fdisk_partition *pa = calloc(1, sizeof(*pa));
 
+	pa->refcount = 1;
 	pa->partno = FDISK_EMPTY_PARTNO;
 	DBG(PART, dbgprint("new %p", pa));
 	return pa;
@@ -15,23 +16,38 @@ struct fdisk_partition *fdisk_new_partition(void)
 
 void fdisk_reset_partition(struct fdisk_partition *pa)
 {
+	int ref;
+
 	if (!pa)
 		return;
+
+	ref = pa->refcount;
 	fdisk_free_parttype(pa->type);
 	free(pa->name);
 	free(pa->uuid);
 	free(pa->attrs);
 	memset(pa, 0, sizeof(*pa));
 	pa->partno = FDISK_EMPTY_PARTNO;
+	pa->refcount = ref;
 }
 
-void fdisk_free_partition(struct fdisk_partition *pa)
+void fdisk_ref_partition(struct fdisk_partition *pa)
+{
+	if (pa)
+		pa->refcount++;
+}
+
+void fdisk_unref_partition(struct fdisk_partition *pa)
 {
 	if (!pa)
 		return;
-	fdisk_reset_partition(pa);
-	DBG(PART, dbgprint("free %p", pa));
-	free(pa);
+
+	pa->refcount--;
+	if (pa->refcount <= 0) {
+		fdisk_reset_partition(pa);
+		DBG(PART, dbgprint("free %p", pa));
+		free(pa);
+	}
 }
 
 int fdisk_partition_set_start(struct fdisk_partition *pa, uint64_t off)
@@ -212,13 +228,13 @@ int fdisk_partition_next_partno(
  *
  * For exmaple
  *
- *      struct fdisk_parition *pa = fdisk_new_partition();
+ *      struct fdisk_parition *pa;
  *
  *      fdisk_get_partition(cxt, 0, &pa);
  *	fdisk_partition_to_string(pa, FDISK_COL_UUID, &data);
  *	printf("first partition uuid: %s\n", data);
  *	free(data);
- *	fdisk_free_partition(pa);
+ *	fdisk_unref_partition(pa);
  *
  * returns UUID for the first partition.
  *

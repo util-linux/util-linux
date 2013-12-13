@@ -193,7 +193,7 @@ void change_partition_type(struct fdisk_context *cxt)
 			_("Type of partition %zu is unchanged: %s."),
 			i + 1, old);
 
-	fdisk_free_partition(pa);
+	fdisk_unref_partition(pa);
 }
 
 void list_disk_geometry(struct fdisk_context *cxt)
