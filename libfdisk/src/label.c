@@ -188,53 +188,7 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
 	return cxt->label->op->verify(cxt);
 }
 
-/**
- * fdisk_get_partition:
- * @cxt:
- * @partno:
- * @pa: pointer to partition struct
- *
- * Fills in @pa with data about partition @n.
- *
- * Returns: 0 on success, otherwise, a corresponding error.
- */
-int fdisk_get_partition(struct fdisk_context *cxt, size_t partno,
-			struct fdisk_partition **pa)
-{
-	int rc;
 
-	if (!cxt || !cxt->label || !pa)
-		return -EINVAL;
-	if (!cxt->label->op->get_part)
-		return -ENOSYS;
-
-	if (!*pa) {
-		*pa = fdisk_new_partition();
-		if (!*pa)
-			return -ENOMEM;
-	} else
-		fdisk_reset_partition(*pa);
-	(*pa)->cxt = cxt;
-	(*pa)->partno = partno;
-
-	rc = cxt->label->op->get_part(cxt, partno, *pa);
-	if (rc == 0 && fdisk_partition_is_used(*pa))
-		DBG(LABEL, dbgprint("get partition %zu", partno));
-	return rc;
-}
-
-/*
- * This is faster than fdisk_get_partition() + fdisk_partition_is_used()
- */
-int fdisk_is_partition_used(struct fdisk_context *cxt, size_t n)
-{
-	if (!cxt || !cxt->label)
-		return -EINVAL;
-	if (!cxt->label->op->part_is_used)
-		return -ENOSYS;
-
-	return cxt->label->op->part_is_used(cxt, n);
-}
 
 /**
  * fdisk_list_disklabel:
@@ -416,56 +370,7 @@ done:
 	return rc;
 }
 
-/**
- * fdisk_add_partition:
- * @cxt: fdisk context
- * @pa: template for the partition
- *
- * If @pa is not specified or any @pa item is missiong the libfdisk will ask by
- * fdisk_ask_ API.
- *
- * Creates a new partition.
- *
- * Returns 0.
- */
-int fdisk_add_partition(struct fdisk_context *cxt,
-			struct fdisk_partition *pa)
-{
-	assert(cxt);
-	assert(cxt->label);
 
-	if (!cxt || !cxt->label)
-		return -EINVAL;
-	if (!cxt->label->op->add_part)
-		return -ENOSYS;
-	if (fdisk_missing_geometry(cxt))
-		return -EINVAL;
-
-	DBG(LABEL, dbgprint("adding new partition"));
-	cxt->label->op->add_part(cxt, pa);
-	return 0;
-}
-
-/**
- * fdisk_delete_partition:
- * @cxt: fdisk context
- * @partnum: partition number to delete
- *
- * Deletes a @partnum partition.
- *
- * Returns 0 on success, otherwise, a corresponding error.
- */
-int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum)
-{
-	if (!cxt || !cxt->label)
-		return -EINVAL;
-	if (!cxt->label->op->part_delete)
-		return -ENOSYS;
-
-	DBG(LABEL, dbgprint("deleting %s partition number %zd",
-				cxt->label->name, partnum));
-	return cxt->label->op->part_delete(cxt, partnum);
-}
 
 /**
  * fdisk_create_disklabel:
