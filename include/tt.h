@@ -85,6 +85,7 @@ extern void tt_set_termreduce(struct tt *tb, size_t re);
 extern void tt_free_table(struct tt *tb);
 extern void tt_remove_lines(struct tt *tb);
 extern int tt_print_table(struct tt *tb);
+extern int tt_print_table_to_string(struct tt *tb, char **data);
 extern void tt_set_stream(struct tt *tb, FILE *out);
 
 extern struct tt_column *tt_define_column(struct tt *tb, const char *name,

@@ -986,6 +986,32 @@ int tt_print_table(struct tt *tb)
 	return 0;
 }
 
+
+/*
+ * @tb: table
+ *
+ * Prints the table to string
+ */
+int tt_print_table_to_string(struct tt *tb, char **data)
+{
+	FILE *stream;
+	size_t sz;
+
+	if (!tb)
+		return -EINVAL;
+
+	/* create a streem for output */
+	stream = open_memstream(data, &sz);
+	if (!stream)
+		return -ENOMEM;
+
+	tt_set_stream(tb, stream);
+	tt_print_table(tb);
+	fclose(stream);
+
+	return 0;
+}
+
 #ifdef TEST_PROGRAM
 #include <errno.h>
 
