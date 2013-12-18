@@ -248,11 +248,8 @@ static int sgi_probe_label(struct fdisk_context *cxt)
 
 static int sgi_list_table(struct fdisk_context *cxt)
 {
-	struct tt *tb = NULL;
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 	struct sgi_device_parameter *sgiparam = &sgilabel->devparam;
-	size_t i, used;
-	char *p;
 	int rc = 0;
 
 	if (fdisk_context_display_details(cxt))
@@ -264,8 +261,10 @@ static int sgi_list_table(struct fdisk_context *cxt)
 			cxt->geom.cylinders, be16_to_cpu(sgiparam->pcylcount),
 			(int) sgiparam->sparecyl, be16_to_cpu(sgiparam->ilfact));
 
-
-	fdisk_list_partitions(cxt, NULL, 0);
+#ifdef UNWANTED
+	char *p;
+	size_t i, used;
+	struct tt *tb = NULL;
 
 	/*
 	 * Volumes
@@ -304,9 +303,8 @@ static int sgi_list_table(struct fdisk_context *cxt)
 	if (used)
 		rc = fdisk_print_table(cxt, tb);
 	tt_free_table(tb);
-
+#endif
 	fdisk_colon(cxt, _("Bootfile: %s"), sgilabel->boot_file);
-
 	return rc;
 }
 
@@ -813,7 +811,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SGI));
 
-	rc = fdisk_partition_next_partno(cxt, pa, &n);
+	rc = fdisk_partition_next_partno(pa, cxt, &n);
 	if (rc)
 		return rc;
 	if (n == 10)

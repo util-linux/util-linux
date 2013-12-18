@@ -107,6 +107,33 @@ extern int fdisk_run_test(struct fdisk_test *tests, int argc, char *argv[]);
 
 typedef unsigned long long sector_t;
 
+
+/*
+ * Generic iterator
+ */
+struct fdisk_iter {
+        struct list_head        *p;		/* current position */
+        struct list_head        *head;		/* start position */
+	int			direction;	/* FDISK_ITER_{FOR,BACK}WARD */
+};
+
+#define IS_ITER_FORWARD(_i)	((_i)->direction == FDISK_ITER_FORWARD)
+#define IS_ITER_BACKWARD(_i)	((_i)->direction == FDISK_ITER_BACKWARD)
+
+#define FDISK_ITER_INIT(itr, list) \
+	do { \
+		(itr)->p = IS_ITER_FORWARD(itr) ? \
+				(list)->next : (list)->prev; \
+		(itr)->head = (list); \
+	} while(0)
+
+#define FDISK_ITER_ITERATE(itr, res, restype, member) \
+	do { \
+		res = list_entry((itr)->p, restype, member); \
+		(itr)->p = IS_ITER_FORWARD(itr) ? \
+				(itr)->p->next : (itr)->p->prev; \
+	} while(0)
+
 /*
  * Partition types
  */
@@ -129,8 +156,6 @@ enum {
 #define fdisk_parttype_is_allocated(_x)	((_x) && ((_x)->flags & FDISK_PARTTYPE_ALLOCATED))
 
 struct fdisk_partition {
-	struct fdisk_context	*cxt;		/* the current context */
-
 	int		refcount;		/* reference counter */
 	size_t		partno;			/* partition number */
 
@@ -424,7 +449,8 @@ extern char *fdisk_partname(const char *dev, size_t partno);
 /* label.c */
 extern int fdisk_probe_labels(struct fdisk_context *cxt);
 extern void fdisk_deinit_label(struct fdisk_label *lb);
-
+extern const struct fdisk_column *fdisk_label_get_column(
+					struct fdisk_label *lb, int id);
 
 /* ask.c */
 extern int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew);

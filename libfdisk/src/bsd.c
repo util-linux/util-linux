@@ -202,7 +202,7 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 	unsigned int begin = 0, end;
 	int rc = 0;
 
-	rc = fdisk_partition_next_partno(cxt, pa, &i);
+	rc = fdisk_partition_next_partno(pa, cxt, &i);
 	if (rc)
 		return rc;
 	if (i >= BSD_MAXPARTITIONS)
@@ -398,7 +398,7 @@ static int bsd_list_disklabel(struct fdisk_context *cxt)
 
 	fdisk_colon(cxt, _("partitions: %d"), d->d_npartitions);
 
-	return fdisk_list_partitions(cxt, NULL, 0);
+	return 0;
 }
 
 static int bsd_get_partition(struct fdisk_context *cxt, size_t n,

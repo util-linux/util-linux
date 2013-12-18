@@ -180,7 +180,7 @@ static int get_partition_unused_primary(struct fdisk_context *cxt,
 	int rc;
 
 	cxt->label->nparts_max = 4;
-	rc = fdisk_partition_next_partno(cxt, pa, &n);
+	rc = fdisk_partition_next_partno(pa, cxt, &n);
 	cxt->label->nparts_max = org;
 
 	switch (rc) {
@@ -1549,98 +1549,13 @@ static int wrong_p_order(struct fdisk_context *cxt, size_t *prev)
 	return 0;
 }
 
-/*
- * This is so crazy that it's exported by separate function and not exported by
- * regular fdisk_list_disable() libfdisk API.
- */
-int fdisk_dos_list_extended(struct fdisk_context *cxt)
-{
-	int rc;
-	size_t i;
-	struct tt *tb = NULL;
-
-	assert(cxt);
-	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
-
-	tb = tt_new_table(TT_FL_FREEDATA);
-	if (!tb)
-		return -ENOMEM;
-
-	tt_define_column(tb, _("Nr"), 2, TT_FL_RIGHT);
-	tt_define_column(tb, _("AF"), 2, TT_FL_RIGHT);
-
-	tt_define_column(tb, _("Hd"),  4, TT_FL_RIGHT);
-	tt_define_column(tb, _("Sec"), 4, TT_FL_RIGHT);
-	tt_define_column(tb, _("Cyl"), 5, TT_FL_RIGHT);
-
-	tt_define_column(tb, _("Hd"),  4, TT_FL_RIGHT);
-	tt_define_column(tb, _("Sec"), 4, TT_FL_RIGHT);
-	tt_define_column(tb, _("Cyl"), 5, TT_FL_RIGHT);
-
-	tt_define_column(tb, _("Start"), 9, TT_FL_RIGHT);
-	tt_define_column(tb, _("Size"),  9, TT_FL_RIGHT);
-	tt_define_column(tb, _("Id"),    2, TT_FL_RIGHT);
-
-	for (i = 0 ; i < cxt->label->nparts_max; i++) {
-		struct pte *pe = self_pte(cxt, i);
-		struct dos_partition *p;
-		struct tt_line *ln;
-		char *str;
-
-		p = pe->ex_entry;
-		if (!p)
-			continue;
-		ln = tt_add_line(tb, NULL);
-		if (!ln)
-			continue;
-
-		if (asprintf(&str, "%zu",  i + 1) > 0)
-			tt_line_set_data(ln, 0, str);		/* Nr */
-		if (asprintf(&str, "%02x", p->boot_ind) > 0)
-			tt_line_set_data(ln, 1, str);		/* AF */
-
-		if (asprintf(&str, "%d", p->bh) > 0)
-			tt_line_set_data(ln, 2, str);		/* Hd */
-		if (asprintf(&str, "%d", sector(p->bs)) > 0)
-			tt_line_set_data(ln, 3, str);		/* Sec */
-		if (asprintf(&str, "%d", cylinder(p->bs, p->bc)) > 0)
-			tt_line_set_data(ln, 4, str);		/* Cyl */
-
-		if (asprintf(&str, "%d", p->eh) > 0)
-			tt_line_set_data(ln, 5, str);		/* Hd */
-		if (asprintf(&str, "%d", sector(p->es)) > 0)
-			tt_line_set_data(ln, 6, str);		/* Sec */
-		if (asprintf(&str, "%d", cylinder(p->es, p->ec)) > 0)
-			tt_line_set_data(ln, 7, str);		/* Cyl */
-
-		if (asprintf(&str, "%lu",
-			(unsigned long) dos_partition_get_start(p)) > 0)
-			tt_line_set_data(ln, 8, str);		/* Start */
-		if (asprintf(&str, "%lu",
-			(unsigned long) dos_partition_get_size(p)) > 0)
-			tt_line_set_data(ln, 9, str);		/* End */
-
-		if (asprintf(&str, "%02x", p->sys_ind) > 0)
-			tt_line_set_data(ln, 10, str);		/* Id */
-
-		check_consistency(cxt, p, i);
-		fdisk_warn_alignment(cxt, get_abs_partition_start(pe), i);
-	}
-
-	rc = fdisk_print_table(cxt, tb);
-	tt_free_table(tb);
-
-	return rc;
-}
-
 static int dos_list_disklabel(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
-	return fdisk_list_partitions(cxt, NULL, 0);
+	return 0;
 }
 
 static int dos_get_partition(struct fdisk_context *cxt, size_t n,

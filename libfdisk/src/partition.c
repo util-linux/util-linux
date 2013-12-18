@@ -9,6 +9,7 @@ struct fdisk_partition *fdisk_new_partition(void)
 	struct fdisk_partition *pa = calloc(1, sizeof(*pa));
 
 	pa->refcount = 1;
+	INIT_LIST_HEAD(&pa->parts);
 	pa->partno = FDISK_EMPTY_PARTNO;
 	DBG(PART, dbgprint("new %p", pa));
 	return pa;
@@ -29,6 +30,7 @@ void fdisk_reset_partition(struct fdisk_partition *pa)
 	memset(pa, 0, sizeof(*pa));
 	pa->partno = FDISK_EMPTY_PARTNO;
 	pa->refcount = ref;
+	INIT_LIST_HEAD(&pa->parts);
 }
 
 void fdisk_ref_partition(struct fdisk_partition *pa)
@@ -44,8 +46,9 @@ void fdisk_unref_partition(struct fdisk_partition *pa)
 
 	pa->refcount--;
 	if (pa->refcount <= 0) {
-		fdisk_reset_partition(pa);
 		DBG(PART, dbgprint("free %p", pa));
+		fdisk_reset_partition(pa);
+		list_del(&pa->parts);
 		free(pa);
 	}
 }
@@ -192,8 +195,8 @@ int fdisk_partition_is_freespace(struct fdisk_partition *pa)
 }
 
 int fdisk_partition_next_partno(
-		struct fdisk_context *cxt,
 		struct fdisk_partition *pa,
+		struct fdisk_context *cxt,
 		size_t *n)
 {
 	assert(cxt);
@@ -202,14 +205,14 @@ int fdisk_partition_next_partno(
 	if (pa && pa->partno_follow_default) {
 		size_t i;
 
-		for (i = 0; i < pa->cxt->label->nparts_max; i++) {
+		for (i = 0; i < cxt->label->nparts_max; i++) {
 			if (!fdisk_is_partition_used(cxt, i)) {
 				*n = i;
 				break;
 			}
 		}
 	} else if (pa && pa->partno != FDISK_EMPTY_PARTNO) {
-		if (pa->partno >= pa->cxt->label->nparts_max)
+		if (pa->partno >= cxt->label->nparts_max)
 			return -ERANGE;
 		*n = pa->partno;
 	} else
@@ -242,6 +245,7 @@ int fdisk_partition_next_partno(
  */
 
 int fdisk_partition_to_string(struct fdisk_partition *pa,
+			      struct fdisk_context *cxt,
 			      int id,
 			      char **data)
 {
@@ -249,38 +253,38 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 	int rc = 0;
 	uint64_t x;
 
-	if (!pa || !pa->cxt)
+	if (!pa || !cxt)
 		return -EINVAL;
 
 	switch (id) {
 	case FDISK_COL_DEVICE:
 		if (pa->freespace)
 			p = strdup(_("Free space"));
-		else if (pa->cxt->label->flags & FDISK_LABEL_FL_INCHARS_PARTNO)
+		else if (cxt->label->flags & FDISK_LABEL_FL_INCHARS_PARTNO)
 			rc = asprintf(&p, "%c", (int) pa->partno + 'a');
 		else
-			p = fdisk_partname(pa->cxt->dev_path, pa->partno + 1);
+			p = fdisk_partname(cxt->dev_path, pa->partno + 1);
 		break;
 	case FDISK_COL_BOOT:
 		rc = asprintf(&p, "%c", pa->boot);
 		break;
 	case FDISK_COL_START:
-		x = fdisk_cround(pa->cxt, pa->start);
+		x = fdisk_cround(cxt, pa->start);
 		rc = pa->start_post ?
 				asprintf(&p, "%ju%c", x, pa->start_post) :
 				asprintf(&p, "%ju", x);
 		break;
 	case FDISK_COL_END:
-		x = fdisk_cround(pa->cxt, pa->end);
+		x = fdisk_cround(cxt, pa->end);
 		rc = pa->end_post ?
 				asprintf(&p, "%ju%c", x, pa->end_post) :
 				asprintf(&p, "%ju", x);
 		break;
 	case FDISK_COL_SIZE:
 	{
-		uint64_t sz = pa->size * pa->cxt->sector_size;
+		uint64_t sz = pa->size * cxt->sector_size;
 
-		if (fdisk_context_display_details(pa->cxt)) {
+		if (fdisk_context_display_details(cxt)) {
 			rc = pa->size_post ?
 					asprintf(&p, "%ju%c", sz, pa->size_post) :
 					asprintf(&p, "%ju", sz);
@@ -293,7 +297,7 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 	}
 	case FDISK_COL_CYLINDERS:
 		rc = asprintf(&p, "%ju", (uintmax_t)
-				fdisk_cround(pa->cxt, pa->size));
+				fdisk_cround(cxt, pa->size));
 		break;
 	case FDISK_COL_SECTORS:
 		rc = asprintf(&p, "%ju", pa->size);
@@ -359,23 +363,32 @@ int fdisk_get_partition(struct fdisk_context *cxt, size_t partno,
 			struct fdisk_partition **pa)
 {
 	int rc;
+	struct fdisk_partition *np = NULL;
 
 	if (!cxt || !cxt->label || !pa)
 		return -EINVAL;
 	if (!cxt->label->op->get_part)
 		return -ENOSYS;
+	if (!fdisk_is_partition_used(cxt, partno))
+		return -EINVAL;
 
 	if (!*pa) {
-		*pa = fdisk_new_partition();
+		np = *pa = fdisk_new_partition();
 		if (!*pa)
 			return -ENOMEM;
 	} else
 		fdisk_reset_partition(*pa);
-	(*pa)->cxt = cxt;
+
 	(*pa)->partno = partno;
 	rc = cxt->label->op->get_part(cxt, partno, *pa);
-	if (rc == 0 && fdisk_partition_is_used(*pa))
-		DBG(PART, dbgprint("get partition %zu", partno));
+
+	if (rc) {
+		if (np) {
+			fdisk_unref_partition(np);
+			*pa = NULL;
+		} else
+			fdisk_reset_partition(*pa);
+	}
 	return rc;
 }
 

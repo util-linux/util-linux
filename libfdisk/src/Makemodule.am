@@ -19,6 +19,7 @@ libfdisk_la_SOURCES = \
 	libfdisk/src/parttype.c \
 	libfdisk/src/partition.c \
 	libfdisk/src/table.c \
+	libfdisk/src/iter.c \
 	\
 	libfdisk/src/sun.c \
 	libfdisk/src/sgi.c \

@@ -33,6 +33,7 @@ struct fdisk_label;
 struct fdisk_parttype;
 struct fdisk_partition;
 struct fdisk_ask;
+struct libfdisk_iter;
 struct tt;
 
 /*
@@ -167,7 +168,6 @@ extern int fdisk_set_partition_type(struct fdisk_context *cxt, size_t partnum,
 			     struct fdisk_parttype *t);
 
 extern int fdisk_get_columns(struct fdisk_context *cxt, int all, int **cols, size_t *ncols);
-extern int fdisk_list_partitions(struct fdisk_context *cxt, int *cols, size_t ncols);
 
 extern void fdisk_label_set_changed(struct fdisk_label *lb, int changed);
 extern int fdisk_label_is_changed(struct fdisk_label *lb);
@@ -202,10 +202,13 @@ extern const char *fdisk_partition_get_attrs(struct fdisk_partition *pa);
 extern int fdisk_partition_set_nested(struct fdisk_partition *pa, int nested);
 extern int fdisk_partition_is_nested(struct fdisk_partition *pa);
 extern int fdisk_partition_is_used(struct fdisk_partition *pa);
-extern int fdisk_partition_to_string(struct fdisk_partition *pa, int id, char **data);
+extern int fdisk_partition_to_string(struct fdisk_partition *pa,
+				     struct fdisk_context *cxt,
+				     int id, char **data);
 
-extern int fdisk_partition_next_partno(	struct fdisk_context *cxt,
-			struct fdisk_partition *pa, size_t *n);
+extern int fdisk_partition_next_partno(struct fdisk_partition *pa,
+				       struct fdisk_context *cxt,
+				       size_t *n);
 
 /* table.c */
 extern struct fdisk_table *fdisk_new_table(void);
@@ -216,6 +219,10 @@ extern int fdisk_table_is_empty(struct fdisk_table *tb);
 extern int fdisk_table_add_partition(struct fdisk_table *tb, struct fdisk_partition *pa);
 extern int fdisk_table_remove_partition(struct fdisk_table *tb, struct fdisk_partition *pa);
 
+extern int fdisk_get_table(struct fdisk_context *cxt, struct fdisk_table **tb);
+extern int fdisk_table_to_string(struct fdisk_table *tb,
+			  struct fdisk_context *cxt,
+			  int *cols, size_t ncols,  char **data);
 
 /* alignment.c */
 extern int fdisk_reset_alignment(struct fdisk_context *cxt);
@@ -233,6 +240,18 @@ extern int fdisk_save_user_sector_size(struct fdisk_context *cxt,
 extern int fdisk_has_user_device_properties(struct fdisk_context *cxt);
 
 extern int fdisk_reread_partition_table(struct fdisk_context *cxt);
+
+/* iter.c */
+enum {
+
+	FDISK_ITER_FORWARD = 0,
+	FDISK_ITER_BACKWARD
+};
+extern struct fdisk_iter *fdisk_new_iter(int direction);
+extern void fdisk_free_iter(struct fdisk_iter *itr);
+extern void fdisk_reset_iter(struct fdisk_iter *itr, int direction);
+extern int fdisk_iter_get_direction(struct fdisk_iter *itr);
+
 
 /* dos.c */
 extern int fdisk_dos_enable_compatible(struct fdisk_label *lb, int enable);
@@ -275,7 +294,6 @@ extern struct dos_partition *fdisk_dos_get_partition(
 
 extern int fdisk_dos_fix_order(struct fdisk_context *cxt);
 extern int fdisk_dos_move_begin(struct fdisk_context *cxt, size_t i);
-extern int fdisk_dos_list_extended(struct fdisk_context *cxt);
 
 #define DOS_FLAG_ACTIVE	1
 

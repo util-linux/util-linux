@@ -1345,7 +1345,7 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 		fdisk_colon(cxt, _("Allocated partition entries: %u"), h->npartition_entries);
 	}
 
-	return fdisk_list_partitions(cxt, NULL, 0);
+	return 0;
 }
 
 /*
@@ -1734,7 +1734,7 @@ static int gpt_add_partition(
 	pheader = gpt->pheader;
 	ents = gpt->ents;
 
-	rc = fdisk_partition_next_partno(cxt, pa, &partnum);
+	rc = fdisk_partition_next_partno(pa, cxt, &partnum);
 	if (rc)
 		return rc;
 

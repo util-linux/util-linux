@@ -480,7 +480,7 @@ static int sun_add_partition(
 	size_t i;
 	unsigned int first, last;
 
-	rc = fdisk_partition_next_partno(cxt, pa, &n);
+	rc = fdisk_partition_next_partno(pa, cxt, &n);
 	if (rc)
 		return rc;
 
@@ -731,7 +731,7 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 		       *sunlabel->vtoc.volume_id ? sunlabel->vtoc.volume_id : _("<none>"));
 	}
 
-	return fdisk_list_partitions(cxt, NULL, 0);
+	return 0;
 }
 
 static struct fdisk_parttype *sun_get_parttype(
