@@ -21,8 +21,8 @@
 #include "libfdisk.h"
 
 #include "nls.h"		/* temporary before dialog API will be implamented */
-#include "tt.h"
 #include "list.h"
+#include "tt.h"
 
 /* features */
 #define CONFIG_LIBFDISK_ASSERT
@@ -355,8 +355,6 @@ struct fdisk_ask {
 		struct ask_string {
 			char		*result;	/* allocated */
 		} str;
-		/* FDISK_ASKTYPE_TABLE, see include/tt.h  */
-		struct tt *table;
 	} data;
 };
 
@@ -454,9 +452,6 @@ extern const struct fdisk_column *fdisk_label_get_column(
 
 /* ask.c */
 extern int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew);
-
-extern struct tt *fdisk_ask_get_table(struct fdisk_ask *ask);
-extern int fdisk_print_table(struct fdisk_context *cxt, struct tt *tb);
 
 extern int fdisk_info_new_partition(
 			struct fdisk_context *cxt,

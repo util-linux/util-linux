@@ -232,6 +232,24 @@ void list_disk_geometry(struct fdisk_context *cxt)
 		fdisk_colon(cxt, _("Disk identifier: %s"), id);
 }
 
+void list_disklabel(struct fdisk_context *cxt)
+{
+	struct fdisk_table *tb = NULL;
+	char *str;
+
+	/* print label specific stuff by libfdisk FDISK_ASK_INFO API */
+	fdisk_list_disklabel(cxt);
+
+	/* print partitions */
+	if (fdisk_get_table(cxt, &tb))
+		return;
+	if (fdisk_table_to_string(tb, cxt, NULL, 0, &str) == 0) {
+		fputc('\n', stdout);
+		fputs(str, stdout);
+	}
+	fdisk_unref_table(tb);
+}
+
 static size_t skip_empty(const unsigned char *buf, size_t i, size_t sz)
 {
 	size_t next;
@@ -338,7 +356,7 @@ static void print_device_pt(struct fdisk_context *cxt, char *device)
 	list_disk_geometry(cxt);
 
 	if (fdisk_dev_has_disklabel(cxt))
-		fdisk_list_disklabel(cxt);
+		list_disklabel(cxt);
 	fputc('\n', stdout);
 }
 

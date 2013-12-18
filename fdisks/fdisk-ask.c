@@ -279,10 +279,6 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 			fdisk_ask_yesno_set_result(ask, rpmatch(buf));
 		DBG(ASK, dbgprint("yes-no ask: reply '%s' [rc=%d]", buf, rc));
 		break;
-	case FDISK_ASKTYPE_TABLE:
-		fputc('\n', stdout);
-		tt_print_table(fdisk_ask_get_table(ask));
-		break;
 	case FDISK_ASKTYPE_STRING:
 	{
 		char prmt[BUFSIZ];

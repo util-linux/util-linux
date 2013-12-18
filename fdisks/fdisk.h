@@ -27,6 +27,7 @@ extern void dump_disklabel(struct fdisk_context *cxt);
 
 extern void list_partition_types(struct fdisk_context *cxt);
 extern void list_disk_geometry(struct fdisk_context *cxt);
+extern void list_disklabel(struct fdisk_context *cxt);
 extern void change_partition_type(struct fdisk_context *cxt);
 extern struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt);
 

@@ -210,7 +210,6 @@ struct menu menu_dos = {
 		MENU_ENT('c', N_("toggle the dos compatibility flag")),
 
 		MENU_XENT('b', N_("move beginning of data in a partition")),
-		MENU_XENT('e', N_("list extended partitions")),
 		MENU_XENT('f', N_("fix partition order")),
 		MENU_XENT('i', N_("change the disk identifier")),
 
@@ -445,7 +444,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 	switch (ent->key) {
 	case 'p':
 		list_disk_geometry(cxt);
-		rc = fdisk_list_disklabel(cxt);
+		list_disklabel(cxt);
 		break;
 	case 'w':
 		rc = fdisk_write_disklabel(cxt);
@@ -655,9 +654,6 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 			rc = fdisk_dos_move_begin(cxt, n);
 		break;
 	}
-	case 'e':
-		rc = fdisk_dos_list_extended(cxt);
-		break;
 	case 'f':
 		rc = fdisk_dos_fix_order(cxt);
 		break;
@@ -799,7 +795,7 @@ static int bsd_menu_cb(struct fdisk_context **cxt0,
 		org = fdisk_context_display_details(cxt);
 
 		fdisk_context_enable_details(cxt, 1);
-		fdisk_list_disklabel(cxt);
+		list_disklabel(cxt);
 		fdisk_context_enable_details(cxt, org);
 		break;
 	case 'x':
