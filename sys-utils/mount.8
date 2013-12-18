@@ -2673,7 +2673,7 @@ Make the data allocator use the filestreams allocation mode
 across the entire filesystem rather than just on directories
 configured to use it.
 .TP
-.BP ikeep | noikeep
+.BR ikeep | noikeep
 When ikeep is specified, XFS does not delete empty inode
 clusters and keeps them around on disk.  When noikeep is
 specified, empty inode clusters are returned to the free
@@ -2719,7 +2719,7 @@ The default value is 8 buffers.
 If the memory cost of 8 log buffers is too high on small
 systems, then it may be reduced at some cost to performance
 on metadata intensive workloads. The logbsize option below
-controls the size of each buffer and so is also relevent to
+controls the size of each buffer and so is also relevant to
 this case.
 .TP
 .BR logbsize=value
