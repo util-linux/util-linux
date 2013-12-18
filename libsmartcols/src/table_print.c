@@ -581,3 +581,28 @@ int scols_print_table(struct libscols_table *tb)
 	free(line);
 	return 0;
 }
+
+int scols_print_table_to_string(struct libscols_table *tb, char **data)
+{
+#ifdef HAVE_OPEN_MEMSTREAM
+	FILE *stream;
+	size_t sz;
+
+	if (!tb)
+		return -EINVAL;
+
+	/* create a streem for output */
+	stream = open_memstream(data, &sz);
+	if (!stream)
+		return -ENOMEM;
+
+	scols_table_set_stream(tb, stream);
+	scols_print_table(tb);
+	fclose(stream);
+
+	return 0;
+#else
+	return -ENOSYS;
+#endif
+}
+

@@ -307,6 +307,7 @@ AC_CHECK_FUNCS([ \
 	lseek64 \
 	mempcpy \
 	nanosleep \
+	open_memstream \
 	personality \
 	posix_fadvise \
 	prctl \

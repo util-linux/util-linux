@@ -138,6 +138,7 @@ extern int scols_table_reduce_termwidth(struct libscols_table *tb, size_t reduce
 
 /* table_print.c */
 extern int scols_print_table(struct libscols_table *tb);
+extern int scols_print_table_to_string(struct libscols_table *tb, char **data);
 
 #ifdef __cplusplus
 }
