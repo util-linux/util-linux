@@ -322,13 +322,8 @@ int fdisk_table_to_string(struct fdisk_table *tb,
 	/* define columns */
 	for (j = 0; j < ncols; j++) {
 		col = fdisk_label_get_column(cxt->label, cols[j]);
-		if (!col)
-			continue;
-		tt_define_column(tt,
-			col->id == FDISK_COL_SECTORS &&
-			fdisk_context_use_cylinders(cxt) ?
-				_("Cylinders") : col->name,
-			col->width, col->tt_flags);
+		if (col)
+			tt_define_column(tt, col->name, col->width, col->tt_flags);
 	}
 
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);

@@ -137,13 +137,20 @@ int fdisk_get_columns(struct fdisk_context *cxt, int all, int **cols, size_t *nc
 	if (!c)
 		return -ENOMEM;
 	for (n = 0, i = 0; i < cxt->label->ncolumns; i++) {
+		int id = cxt->label->columns[i].id;
+
 		if (!all &&
 		    ((fdisk_context_display_details(cxt) &&
 				(cxt->label->columns[i].flags & FDISK_COLFL_EYECANDY))
 		     || (!fdisk_context_display_details(cxt) &&
-				(cxt->label->columns[i].flags & FDISK_COLFL_DETAIL))))
+				(cxt->label->columns[i].flags & FDISK_COLFL_DETAIL))
+		     || (id == FDISK_COL_SECTORS &&
+			         fdisk_context_use_cylinders(cxt))
+		     || (id == FDISK_COL_CYLINDERS &&
+			         !fdisk_context_use_cylinders(cxt))))
 			continue;
-		c[n++] = cxt->label->columns[i].id;
+
+		c[n++] = id;
 	}
 	if (cols)
 		*cols = c;

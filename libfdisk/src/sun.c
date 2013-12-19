@@ -988,6 +988,7 @@ static const struct fdisk_column sun_columns[] =
 	{ FDISK_COL_START,	N_("Start"),	  5,	TT_FL_RIGHT },
 	{ FDISK_COL_END,	N_("End"),	  5,	TT_FL_RIGHT },
 	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	TT_FL_RIGHT },
+	{ FDISK_COL_CYLINDERS,	N_("Cylinders"),  5,	TT_FL_RIGHT },
 	{ FDISK_COL_SIZE,	N_("Size"),	  5,	TT_FL_RIGHT },
 	{ FDISK_COL_TYPEID,	N_("Id"),	  2,	TT_FL_RIGHT },
 	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	TT_FL_TRUNC },
