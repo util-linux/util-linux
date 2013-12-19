@@ -340,19 +340,12 @@ int fdisk_table_to_string(struct fdisk_table *tb,
 
 		/* set data for the columns */
 		for (j = 0; j < ncols; j++) {
-			const struct fdisk_column *col;
 			char *cdata = NULL;
-			int id;
 
 			col = fdisk_label_get_column(cxt->label, cols[j]);
 			if (!col)
 				continue;
-			id = (col->id == FDISK_COL_SECTORS &&
-			      fdisk_context_use_cylinders(cxt)) ?
-					FDISK_COL_CYLINDERS :
-					col->id;
-
-			if (fdisk_partition_to_string(pa, cxt, id, &cdata))
+			if (fdisk_partition_to_string(pa, cxt, col->id, &cdata))
 				continue;
 			tt_line_set_data(ln, j, cdata);
 		}
