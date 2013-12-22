@@ -18,6 +18,8 @@ TS_DESC="last ipv6"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+[ -x $TS_CMD_LAST ] || ts_skip "last not enabled"
+
 export LANG=C
 export TZ=GMT
 
