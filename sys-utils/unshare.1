@@ -80,6 +80,14 @@ Just before running the program, mount the proc filesystem at the \fImountpoint\
 implies creating a new mount namespace since the /proc mount would otherwise
 mess up existing programs on the system. The new proc filesystem is explicitly
 mounted as private (by MS_PRIVATE|MS_REC).
+.TP
+.BR \-r , " \-\-map-root-user"
+Run the program only after current effective user and group ID have been mapped to
+superuser UID and GID in newly created user namespace. This makes it possible to
+conveniently gain capabilities needed to manage various aspects of newly created
+namespaces (such as configure interfaces in network namespace or mount filesystems in
+mount) even when run unprivileged. As a convenience feature, it does not support
+more sophisticated use cases, such as mapping multiple ranges of UIDs and GIDs.
 .SH SEE ALSO
 .BR unshare (2),
 .BR clone (2),

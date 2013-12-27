@@ -32,6 +32,25 @@
 #include "closestream.h"
 #include "namespace.h"
 #include "exec_shell.h"
+#include "xalloc.h"
+#include "pathnames.h"
+#include "all-io.h"
+
+static void map_id(const char *file, uint32_t from, uint32_t to)
+{
+	char *buf;
+	int fd;
+
+	fd = open(file, O_WRONLY);
+	if (fd < 0)
+		 err(EXIT_FAILURE, _("cannot open %s"), file);
+
+	xasprintf(&buf, "%u %u 1", from, to);
+	if (write_all(fd, buf, strlen(buf)))
+		err(EXIT_FAILURE, _("write failed %s"), file);
+	free(buf);
+	close(fd);
+}
 
 static void usage(int status)
 {
@@ -50,6 +69,7 @@ static void usage(int status)
 	fputs(_(" -U, --user                unshare user namespace\n"), out);
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
 	fputs(_("     --mount-proc[=<dir>]  mount proc filesystem first (implies --mount)\n"), out);
+	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -75,19 +95,22 @@ int main(int argc, char *argv[])
 		{ "user", no_argument, 0, 'U' },
 		{ "fork", no_argument, 0, 'f' },
 		{ "mount-proc", optional_argument, 0, OPT_MOUNTPROC },
+		{ "map-root-user", no_argument, 0, 'r' },
 		{ NULL, 0, 0, 0 }
 	};
 
 	int unshare_flags = 0;
-	int c, forkit = 0;
+	int c, forkit = 0, maproot = 0;
 	const char *procmnt = NULL;
+	uid_t real_euid = geteuid();
+	gid_t real_egid = getegid();;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "fhVmuinpU", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "fhVmuinpUr", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'f':
 			forkit = 1;
@@ -119,6 +142,10 @@ int main(int argc, char *argv[])
 			unshare_flags |= CLONE_NEWNS;
 			procmnt = optarg ? optarg : "/proc";
 			break;
+		case 'r':
+			unshare_flags |= CLONE_NEWUSER;
+			maproot = 1;
+			break;
 		default:
 			usage(EXIT_FAILURE);
 		}
@@ -145,6 +172,11 @@ int main(int argc, char *argv[])
 				kill(getpid(), WTERMSIG(status));
 			err(EXIT_FAILURE, _("child exit failed"));
 		}
+	}
+
+	if (maproot) {
+		map_id(_PATH_PROC_UIDMAP, 0, real_euid);
+		map_id(_PATH_PROC_GIDMAP, 0, real_egid);
 	}
 
 	if (procmnt &&
