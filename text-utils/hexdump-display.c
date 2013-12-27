@@ -93,15 +93,15 @@ print(struct hexdump_pr *pr, unsigned char *bp) {
 
 		switch(pr->bcnt) {
 		case 1:
-			printf(pr->fmt, *bp);
+			printf(pr->fmt, (unsigned long long) *bp);
 			break;
 		case 2:
 			memmove(&sval, bp, sizeof(sval));
-			printf(pr->fmt, sval);
+			printf(pr->fmt, (unsigned long long) sval);
 			break;
 		case 4:
 			memmove(&ival, bp, sizeof(ival));
-			printf(pr->fmt, ival);
+			printf(pr->fmt, (unsigned long long) ival);
 			break;
 		case 8:
 			memmove(&Lval, bp, sizeof(Lval));
@@ -130,15 +130,15 @@ print(struct hexdump_pr *pr, unsigned char *bp) {
 
 		switch(pr->bcnt) {
 		case 1:
-			printf(pr->fmt, *bp);
+			printf(pr->fmt, (unsigned long long) *bp);
 			break;
 		case 2:
 			memmove(&sval, bp, sizeof(sval));
-			printf(pr->fmt, sval);
+			printf(pr->fmt, (unsigned long long) sval);
 			break;
 		case 4:
 			memmove(&ival, bp, sizeof(ival));
-			printf(pr->fmt, ival);
+			printf(pr->fmt, (unsigned long long) ival);
 			break;
 		case 8:
 			memmove(&Lval, bp, sizeof(Lval));
