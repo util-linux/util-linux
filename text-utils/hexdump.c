@@ -166,6 +166,7 @@ int main(int argc, char **argv)
 {
 	struct list_head *p;
 	struct hexdump_fs *tfs;
+	int ret;
 	char *c;
 
 	struct hexdump *hex = xcalloc(1, sizeof (struct hexdump));
@@ -197,8 +198,11 @@ int main(int argc, char **argv)
 
 	next(argv, hex);
 	display(hex);
+
+	ret = hex->exitval;
 	hex_free(hex);
-	return hex->exitval;
+
+	return ret;
 }
 
 void hex_free(struct hexdump *hex)
