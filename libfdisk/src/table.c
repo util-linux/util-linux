@@ -46,6 +46,7 @@ int fdisk_reset_table(struct fdisk_table *tb)
 		fdisk_table_remove_partition(tb, pa);
 	}
 
+	tb->nents = 0;
 	return 0;
 }
 
@@ -94,6 +95,16 @@ int fdisk_table_is_empty(struct fdisk_table *tb)
 	return tb == NULL || list_empty(&tb->parts) ? 1 : 0;
 }
 
+/**
+ * fdisk_table_get_nents:
+ * @tb: pointer to tab
+ *
+ * Returns: number of entries in table.
+ */
+int fdisk_table_get_nents(struct fdisk_table *tb)
+{
+	return tb ? tb->nents : 0;
+}
 
 /**
  * fdisk_table_next_partition:
@@ -158,6 +169,7 @@ int fdisk_table_add_partition(struct fdisk_table *tb, struct fdisk_partition *pa
 
 	fdisk_ref_partition(pa);
 	list_add_tail(&pa->parts, &tb->parts);
+	tb->nents++;
 
 	DBG(TAB, dbgprint("add entry %p [start=%ju, size=%ju, freespace=%s]",
 				pa, pa->start, pa->size,
@@ -190,6 +202,8 @@ int fdisk_table_remove_partition(struct fdisk_table *tb, struct fdisk_partition 
 	INIT_LIST_HEAD(&pa->parts);
 
 	fdisk_unref_partition(pa);
+	tb->nents--;
+
 	return 0;
 }
 

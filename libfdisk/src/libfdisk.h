@@ -33,8 +33,8 @@ struct fdisk_label;
 struct fdisk_parttype;
 struct fdisk_partition;
 struct fdisk_ask;
-struct libfdisk_iter;
-struct tt;
+struct fdisk_iter;
+struct fdisk_table;
 
 /*
  * Supported partition table types (labels)
@@ -214,6 +214,7 @@ extern struct fdisk_table *fdisk_new_table(void);
 extern int fdisk_reset_table(struct fdisk_table *tb);
 extern void fdisk_ref_table(struct fdisk_table *tb);
 extern void fdisk_unref_table(struct fdisk_table *tb);
+extern int fdisk_table_get_nents(struct fdisk_table *tb);
 extern int fdisk_table_is_empty(struct fdisk_table *tb);
 extern int fdisk_table_add_partition(struct fdisk_table *tb, struct fdisk_partition *pa);
 extern int fdisk_table_remove_partition(struct fdisk_table *tb, struct fdisk_partition *pa);
@@ -223,6 +224,10 @@ extern int fdisk_table_to_string(struct fdisk_table *tb,
 			  struct fdisk_context *cxt,
 			  int *cols, size_t ncols,  char **data);
 
+extern int fdisk_table_next_partition(
+			struct fdisk_table *tb,
+			struct fdisk_iter *itr,
+			struct fdisk_partition **pa);
 /* alignment.c */
 extern int fdisk_reset_alignment(struct fdisk_context *cxt);
 extern int fdisk_reset_device_properties(struct fdisk_context *cxt);

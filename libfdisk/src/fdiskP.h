@@ -198,6 +198,7 @@ struct fdisk_partition {
 struct fdisk_table {
 	struct list_head	parts;		/* partitions */
 	int			refcount;
+	size_t			nents;		/* number of partitions */
 };
 
 /*
