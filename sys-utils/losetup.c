@@ -442,7 +442,6 @@ int main(int argc, char **argv)
 		{ "set-capacity", 1, 0, 'c' },
 		{ "detach", 1, 0, 'd' },
 		{ "detach-all", 0, 0, 'D' },
-		{ "encryption", 1, 0, 'e' },
 		{ "find", 0, 0, 'f' },
 		{ "help", 0, 0, 'h' },
 		{ "associated", 1, 0, 'j' },
@@ -476,7 +475,7 @@ int main(int argc, char **argv)
 	if (loopcxt_init(&lc, 0))
 		err(EXIT_FAILURE, _("failed to initialize loopcxt"));
 
-	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:lno:O:PrvV",
+	while ((c = getopt_long(argc, argv, "ac:d:Dfhj:lno:O:PrvV",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -504,10 +503,6 @@ int main(int argc, char **argv)
 			break;
 		case 'D':
 			act = A_DELETE_ALL;
-			break;
-		case 'E':
-		case 'e':
-			errx(EXIT_FAILURE, _("encryption not supported, use cryptsetup(8) instead"));
 			break;
 		case 'f':
 			act = A_FIND_FREE;
