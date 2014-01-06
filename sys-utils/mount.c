@@ -803,7 +803,6 @@ int main(int argc, char **argv)
 		{ "rw", 0, 0, 'w' },
 		{ "options", 1, 0, 'o' },
 		{ "test-opts", 1, 0, 'O' },
-		{ "pass-fd", 1, 0, 'p' },
 		{ "types", 1, 0, 't' },
 		{ "uuid", 1, 0, 'U' },
 		{ "label", 1, 0, 'L'},
@@ -846,12 +845,12 @@ int main(int argc, char **argv)
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
-	while ((c = getopt_long(argc, argv, "aBcfFhilL:Mno:O:p:rRsU:vVwt:T:",
+	while ((c = getopt_long(argc, argv, "aBcfFhilL:Mno:O:rRsU:vVwt:T:",
 					longopts, NULL)) != -1) {
 
 		/* only few options are allowed for non-root users */
 		if (mnt_context_is_restricted(cxt) &&
-		    !strchr("hlLUVvprist", c) &&
+		    !strchr("hlLUVvrist", c) &&
 		    c != MOUNT_OPT_TARGET &&
 		    c != MOUNT_OPT_SOURCE)
 			exit_non_root(option_to_longopt(c, longopts));
@@ -900,9 +899,6 @@ int main(int argc, char **argv)
 		case 'O':
 			if (mnt_context_set_options_pattern(cxt, optarg))
 				err(MOUNT_EX_SYSERR, _("failed to set options pattern"));
-			break;
-		case 'p':
-                        warnx(_("--pass-fd is no longer supported"));
 			break;
 		case 'L':
 			xasprintf(&srcbuf, "LABEL=\"%s\"", optarg);

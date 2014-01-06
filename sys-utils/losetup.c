@@ -451,7 +451,6 @@ int main(int argc, char **argv)
 		{ "offset", 1, 0, 'o' },
 		{ "output", 1, 0, 'O' },
 		{ "sizelimit", 1, 0, OPT_SIZELIMIT },
-		{ "pass-fd", 1, 0, 'p' },
 		{ "partscan", 0, 0, 'P' },
 		{ "read-only", 0, 0, 'r' },
 		{ "raw", 0, 0, OPT_RAW },
@@ -477,7 +476,7 @@ int main(int argc, char **argv)
 	if (loopcxt_init(&lc, 0))
 		err(EXIT_FAILURE, _("failed to initialize loopcxt"));
 
-	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:lno:O:p:PrvV",
+	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:lno:O:PrvV",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -536,9 +535,6 @@ int main(int argc, char **argv)
 		case 'O':
 			outarg = optarg;
 			list = 1;
-			break;
-		case 'p':
-                        warn(_("--pass-fd is no longer supported"));
 			break;
 		case 'P':
 			lo_flags |= LO_FLAGS_PARTSCAN;
