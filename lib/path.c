@@ -49,6 +49,19 @@ path_vcreate(const char *path, va_list ap)
 	return pathbuf;
 }
 
+char *
+path_strdup(const char *path, ...)
+{
+	const char *p;
+	va_list ap;
+
+	va_start(ap, path);
+	p = path_vcreate(path, ap);
+	va_end(ap);
+
+	return p ? strdup(p) : NULL;
+}
+
 static FILE *
 path_vfopen(const char *mode, int exit_on_error, const char *path, va_list ap)
 {

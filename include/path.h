@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
+extern char *path_strdup(const char *path, ...)
+			__attribute__ ((__format__ (__printf__, 1, 2)));
 extern FILE *path_fopen(const char *mode, int exit_on_err, const char *path, ...)
 			__attribute__ ((__format__ (__printf__, 3, 4)));
 extern void path_read_str(char *result, size_t len, const char *path, ...)
