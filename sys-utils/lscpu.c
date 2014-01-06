@@ -50,6 +50,7 @@
 /* /sys paths */
 #define _PATH_SYS_SYSTEM	"/sys/devices/system"
 #define _PATH_SYS_CPU		_PATH_SYS_SYSTEM "/cpu"
+#define _PATH_SYS_NODE		_PATH_SYS_SYSTEM "/node"
 #define _PATH_PROC_XEN		"/proc/xen"
 #define _PATH_PROC_XENCAP	_PATH_PROC_XEN "/capabilities"
 #define _PATH_PROC_CPUINFO	"/proc/cpuinfo"
@@ -177,6 +178,7 @@ struct lscpu_desc {
 	int		*idx2cpunum;	/* mapping index to CPU num */
 
 	int		nnodes;		/* number of NUMA modes */
+	int		*idx2nodenum;	/* Support for discontinuous nodes */
 	cpu_set_t	**nodemaps;	/* array with NUMA nodes */
 
 	/* books -- based on book_siblings (internal kernel map of cpuX's
@@ -912,25 +914,59 @@ read_cache(struct lscpu_desc *desc, int idx)
 	}
 }
 
+static inline int is_node_dirent(struct dirent *d)
+{
+	return
+		d &&
+#ifdef _DIRENT_HAVE_D_TYPE
+		d->d_type == DT_DIR &&
+#endif
+		strncmp(d->d_name, "node", 4) == 0 &&
+		isdigit_string(d->d_name + 4);
+}
+
 static void
 read_nodes(struct lscpu_desc *desc)
 {
-	int i;
+	int i = 0;
+	DIR *dir;
+	struct dirent *d;
+	char *path;
 
 	/* number of NUMA node */
-	while (path_exist(_PATH_SYS_SYSTEM "/node/node%d", desc->nnodes))
-		desc->nnodes++;
+	path = path_strdup(_PATH_SYS_NODE);
+	dir = opendir(path);
+	free(path);
 
-	if (!desc->nnodes)
+	while (dir && (d = readdir(dir))) {
+		if (is_node_dirent(d))
+			desc->nnodes++;
+	}
+
+	if (!desc->nnodes) {
+		if (dir)
+			closedir(dir);
 		return;
+	}
 
 	desc->nodemaps = xcalloc(desc->nnodes, sizeof(cpu_set_t *));
+	desc->idx2nodenum = xmalloc(desc->nnodes * sizeof(int));
+
+	if (dir) {
+		rewinddir(dir);
+		while ((d = readdir(dir)) && i < desc->nnodes) {
+			if (is_node_dirent(d))
+				desc->idx2nodenum[i++] = strtol_or_err(((d->d_name) + 4),
+							_("Failed to extract the node number"));
+		}
+		closedir(dir);
+	}
 
 	/* information about how nodes share different CPUs */
 	for (i = 0; i < desc->nnodes; i++)
 		desc->nodemaps[i] = path_read_cpuset(maxcpus,
 					_PATH_SYS_SYSTEM "/node/node%d/cpumap",
-					i);
+					desc->idx2nodenum[i]);
 }
 
 static char *
@@ -961,7 +997,7 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 	case COL_NODE:
 		if (cpuset_ary_isset(cpu, desc->nodemaps,
 				     desc->nnodes, setsize, &i) == 0)
-			snprintf(buf, bufsz, "%zd", i);
+			snprintf(buf, bufsz, "%d", desc->idx2nodenum[i]);
 		break;
 	case COL_BOOK:
 		if (cpuset_ary_isset(cpu, desc->bookmaps,
@@ -1378,7 +1414,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	}
 
 	for (i = 0; i < desc->nnodes; i++) {
-		snprintf(buf, sizeof(buf), _("NUMA node%d CPU(s):"), i);
+		snprintf(buf, sizeof(buf), _("NUMA node%d CPU(s):"), desc->idx2nodenum[i]);
 		print_cpuset(buf, desc->nodemaps[i], mod->hex);
 	}
 }
