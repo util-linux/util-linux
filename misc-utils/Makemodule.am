@@ -72,11 +72,9 @@ uuidd_LDADD = $(LDADD) libuuid.la libcommon.la
 uuidd_CFLAGS = $(DAEMON_CFLAGS) $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 uuidd_LDFLAGS = $(DAEMON_LDFLAGS) $(AM_LDFLAGS)
 uuidd_SOURCES = misc-utils/uuidd.c
-if USE_SOCKET_ACTIVATION
-uuidd_SOURCES += misc-utils/sd-daemon.c misc-utils/sd-daemon.h
-uuidd_LDADD += -lrt
-endif
-if HAVE_SYSTEMD
+if HAVE_SYSTEMD_DAEMON
+uuidd_LDADD += $(SYSTEMD_DAEMON_LIBS)
+uuidd_CFLAGS += $(SYSTEMD_DAEMON_CFLAGS)
 systemdsystemunit_DATA += \
 	misc-utils/uuidd.service \
 	misc-utils/uuidd.socket

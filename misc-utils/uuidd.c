@@ -38,8 +38,8 @@ extern int optind;
 #include "closestream.h"
 #include "strutils.h"
 
-#ifdef USE_SOCKET_ACTIVATION
-#include "sd-daemon.h"
+#ifdef HAVE_LIBSYSTEMD_DAEMON
+#include <systemd/sd-daemon.h>
 #endif
 
 #include "nls.h"
@@ -304,7 +304,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	int			fd_pidfile = -1;
 	int			ret;
 
-#ifdef USE_SOCKET_ACTIVATION
+#ifdef HAVE_LIBSYSTEMD_DAEMON
 	if (!uuidd_cxt->no_sock)	/* no_sock implies no_fork and no_pid */
 #endif
 	{
@@ -352,7 +352,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	signal(SIGALRM, terminate_intr);
 	signal(SIGPIPE, SIG_IGN);
 
-#ifdef USE_SOCKET_ACTIVATION
+#ifdef HAVE_LIBSYSTEMD_DAEMON
 	if (uuidd_cxt->no_sock) {
 		if (sd_listen_fds(0) != 1)
 			errx(EXIT_FAILURE, _("no or too many file descriptors received"));
@@ -538,7 +538,7 @@ int main(int argc, char **argv)
 			uuidd_cxt.no_fork = 1;
 			break;
 		case 'S':
-#ifdef USE_SOCKET_ACTIVATION
+#ifdef HAVE_LIBSYSTEMD_DAEMON
 			uuidd_cxt.no_sock = 1;
 			uuidd_cxt.no_fork = 1;
 			no_pid = 1;

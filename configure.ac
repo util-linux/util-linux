@@ -1389,12 +1389,15 @@ AC_ARG_ENABLE([socket-activation],
   AS_HELP_STRING([--enable-socket-activation], [build uuidd with support for systemd socket activation]),
   [], [enable_socket_activation=no]
 )
-
-AM_CONDITIONAL([USE_SOCKET_ACTIVATION], [test "x$enable_socket_activation" = xyes])
-
+have_systemd_daemon=no
 AS_IF([test "x$enable_socket_activation" = xyes], [
-  AC_DEFINE([USE_SOCKET_ACTIVATION], [1], [Should uuidd support socket activation?])
+  PKG_CHECK_MODULES([SYSTEMD_DAEMON], [libsystemd-daemon], [], [
+    AC_MSG_ERROR([cannot find libsystemd-daemon support])
+  ])
+  have_systemd_daemon=yes
+  AC_DEFINE([HAVE_LIBSYSTEMD_DAEMON], [1], [Define if libsystemd-daemon is available])
 ])
+AM_CONDITIONAL([HAVE_SYSTEMD_DAEMON], [test "x$have_systemd_daemon" = xyes])
 
 AC_ARG_WITH([systemdsystemunitdir],
   AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [directory for systemd service files]),
@@ -1403,8 +1406,6 @@ AC_ARG_WITH([systemdsystemunitdir],
 AS_IF([test "x$with_systemdsystemunitdir" != "xno"], [
   AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
 ])
-
-AM_CONDITIONAL([HAVE_SYSTEMD], [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != "xno" ])
 
 
 AC_ARG_WITH([smack],
