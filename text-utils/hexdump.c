@@ -50,6 +50,7 @@
 #include "nls.h"
 #include "c.h"
 #include "strutils.h"
+#include "xalloc.h"
 #include "closestream.h"
 
 void hex_free(struct hexdump *);
@@ -167,7 +168,7 @@ int main(int argc, char **argv)
 	struct hexdump_fs *tfs;
 	char *c;
 
-	struct hexdump *hex = malloc (sizeof (struct hexdump));
+	struct hexdump *hex = xcalloc(1, sizeof (struct hexdump));
 	hex->length = -1;
 	INIT_LIST_HEAD(&hex->fshead);
 
