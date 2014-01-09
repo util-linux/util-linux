@@ -56,8 +56,13 @@ if BUILD_CFDISK
 sbin_PROGRAMS += cfdisk
 dist_man_MANS += fdisks/cfdisk.8
 cfdisk_SOURCES = fdisks/cfdisk.c
-cfdisk_CFLAGS = $(AM_CFLAGS)
-cfdisk_LDADD = $(LDADD) libcommon.la
+cfdisk_LDADD = $(LDADD) libcommon.la libfdisk.la
+cfdisk_CFLAGS = $(AM_CFLAGS) -I$(ul_libfdisk_incdir)
+
+if BUILD_LIBUUID
+cfdisk_CFLAGS += -I$(ul_libuuid_incdir)
+cfdisk_LDADD += libuuid.la
+endif
 
 if BUILD_LIBBLKID
 cfdisk_CFLAGS += -I$(ul_libblkid_incdir)
