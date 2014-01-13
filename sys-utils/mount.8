@@ -1478,12 +1478,12 @@ journal file; ext3 will create a new journal, overwriting the old contents
 of the file whose inode number is
 .IR inum .
 .TP
-.BR journal_dev=devnum
+.BR journal_dev=devnum / journal_path=path
 When the external journal device's major/minor numbers
-have changed, this option allows the user to specify
+have changed, these options allow the user to specify
 the new journal location.  The journal device is
-identified through its new major/minor numbers encoded
-in devnum.
+identified either through its new major/minor numbers encoded
+in devnum, or via a path to the device.
 .TP
 .BR norecovery / noload
 Don't load the journal on mounting.  Note that
@@ -1515,6 +1515,13 @@ This is rumoured to be the highest-throughput option.  It guarantees
 internal filesystem integrity, however it can allow old data to appear
 in files after a crash and journal recovery.
 .RE
+.TP
+.BR data_err=ignore
+Just print an error message if an error occurs in a file data buffer in
+ordered mode.
+.TP
+.BR data_err=abort
+Abort the journal if an error occurs in a file data buffer in ordered mode.
 .TP
 .BR barrier=0 " / " barrier=1 "
 This enables/disables barriers.  barrier=0 disables it, barrier=1 enables it.
@@ -1553,7 +1560,7 @@ incorporates scalability and reliability enhancements for supporting large
 filesystem.
 
 The options
-.B journal_dev, noload, data, commit, orlov, oldalloc, [no]user_xattr
+.B journal_dev, norecovery, noload, data, commit, orlov, oldalloc, [no]user_xattr
 .B [no]acl, bsddf, minixdf, debug, errors, data_err, grpid, bsdgroups, nogrpid
 .B sysvgroups, resgid, resuid, sb, quota, noquota, grpquota, usrquota
 .B usrjquota, grpjquota and jqfmt
@@ -1649,6 +1656,17 @@ operation is committed.  This provides roughly the same level of guarantees as
 ext3, and avoids the "zero-length" problem that can happen when a system
 crashes before the delayed allocation blocks are forced to disk.
 .TP
+.BR noinit_itable
+Do not initialize any uninitialized inode table blocks in the background. This
+feature may be used by installation CD's so that the install process can
+complete as quickly as possible; the inode table initialization process would
+then be deferred until the next time the filesystem is mounted.
+.TP
+.BR init_itable=n
+The lazy itable init code will wait n times the number of milliseconds it took
+to zero out the previous block group's inode table. This minimizes the impact on
+system performance while the filesystem's inode table is being initialized.
+.TP
 .BR discard / nodiscard
 Controls whether ext4 should issue discard/TRIM commands to the underlying
 block device when blocks are freed.  This is useful for SSD devices and
@@ -1659,12 +1677,6 @@ testing has been done.
 Disables 32-bit UIDs and GIDs.  This is for
 interoperability  with  older kernels which only
 store and expect 16-bit values.
-.TP
-.BR resize
-Allows to resize filesystem to the end of the last
-existing block group, further resize has to be done
-with resize2fs either online, or offline. It can be
-used only with conjunction with remount.
 .TP
 .BR block_validity / noblock_validity
 This options allows to enables/disables the in-kernel facility for tracking
@@ -1683,6 +1695,14 @@ journaling and dioread_nolock option will be ignored with kernel warning.
 Note that dioread_nolock code path is only used for extent-based files.
 Because of the restrictions this options comprises it is off by default
 (e.g. dioread_lock).
+.TP
+.BR max_dir_size_kb=n
+This limits the size of the directories so that any attempt to expand them
+beyond the specified limit in kilobytes will cause an ENOSPC error. This is
+useful in memory-constrained environments, where a very large directory can
+cause severe performance problems or even provoke the Out Of Memory killer. (For
+example, if there is only 512mb memory available, a 176mb directory may
+seriously cramp the system's style.)
 .TP
 .BR i_version
 Enable 64-bit inode version support. This option is off by default.
