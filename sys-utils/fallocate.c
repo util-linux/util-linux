@@ -36,8 +36,9 @@
 # include <sys/syscall.h>
 #endif
 
-#ifdef HAVE_LINUX_FALLOC_H
-# include <linux/falloc.h>	/* for FALLOC_FL_* flags */
+#if defined(HAVE_LINUX_FALLOC_H) && \
+    (!defined(FALLOC_FL_KEEP_SIZE) || !defined(FALLOC_FL_PUNCH_HOLE))
+# include <linux/falloc.h>	/* non-libc fallback for FALLOC_FL_* flags */
 #endif
 
 #ifndef FALLOC_FL_KEEP_SIZE
