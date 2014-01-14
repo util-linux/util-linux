@@ -2,7 +2,9 @@ import os
 import sys
 import stat
 import errno
-import libmount as mnt
+
+# use "import libmount" for in a standard way installed python binding
+import pylibmount as mnt
 
 def usage(tss):
 	print("\nUsage:\n\t{:s} <test> [testoptions]\nTests:\n".format(sys.argv[0]))
