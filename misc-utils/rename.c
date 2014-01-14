@@ -49,8 +49,10 @@ static int do_rename(char *from, char *to, char *s, int verbose, int symtarget)
 	} else
 		where = strstr(s, from);
 
-	if (where == NULL)
+	if (where == NULL) {
+		free(target);
 		return 0;
+	}
 
 	flen = strlen(from);
 	tlen = strlen(to);
