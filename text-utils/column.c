@@ -421,8 +421,10 @@ static wchar_t *mbs_to_wcs(const char *s)
 		return NULL;
 	wcs = xmalloc((n + 1) * sizeof(wchar_t));
 	n = mbstowcs(wcs, s, n + 1);
-	if (n < 0)
+	if (n < 0) {
+		free(wcs);
 		return NULL;
+	}
 	return wcs;
 }
 #endif
