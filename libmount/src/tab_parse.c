@@ -127,8 +127,8 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 	unsigned int maj, min;
 	char *fstype = NULL, *src = NULL, *p;
 
-	rc = sscanf(s,	"%u "		/* (1) id */
-			"%u "		/* (2) parent */
+	rc = sscanf(s,	"%d "		/* (1) id */
+			"%d "		/* (2) parent */
 			"%u:%u "	/* (3) maj:min */
 			UL_SCNsA" "	/* (4) mountroot */
 			UL_SCNsA" "	/* (5) target */
@@ -272,8 +272,8 @@ static int mnt_parse_swaps_line(struct libmnt_fs *fs, char *s)
 
 	rc = sscanf(s,	UL_SCNsA" "	/* (1) source */
 			UL_SCNsA" "	/* (2) type */
-			"%jd"		/* (3) size */
-			"%jd"		/* (4) used */
+			"%ju"		/* (3) size */
+			"%ju"		/* (4) used */
 			"%d",		/* priority */
 
 			&src,
