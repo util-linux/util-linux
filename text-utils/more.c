@@ -604,8 +604,10 @@ FILE *checkf(register char *fs, int *clearfirst)
 		perror(fs);
 		return ((FILE *)NULL);
 	}
-	if (magic(f, fs))
+	if (magic(f, fs)) {
+		fclose(f);
 		return ((FILE *)NULL);
+	}
 	fcntl(fileno(f), F_SETFD, FD_CLOEXEC);
 	c = Getc(f);
 	*clearfirst = (c == '\f');
