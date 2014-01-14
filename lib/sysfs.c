@@ -659,7 +659,7 @@ int sysfs_scsi_get_hctl(struct sysfs_cxt *cxt, int *h, int *c, int *t, int *l)
 		return -1;
 	hctl++;
 
-	if (sscanf(hctl, "%d:%d:%d:%d", &cxt->scsi_host, &cxt->scsi_channel,
+	if (sscanf(hctl, "%u:%u:%u:%u", &cxt->scsi_host, &cxt->scsi_channel,
 				&cxt->scsi_target, &cxt->scsi_lun) != 4)
 		return -1;
 
