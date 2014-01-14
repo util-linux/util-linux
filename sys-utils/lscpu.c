@@ -925,6 +925,13 @@ static inline int is_node_dirent(struct dirent *d)
 		isdigit_string(d->d_name + 4);
 }
 
+static int
+nodecmp(const void *ap, const void *bp)
+{
+	int *a = (int *) ap, *b = (int *) bp;
+	return *a - *b;
+}
+
 static void
 read_nodes(struct lscpu_desc *desc)
 {
@@ -960,6 +967,7 @@ read_nodes(struct lscpu_desc *desc)
 							_("Failed to extract the node number"));
 		}
 		closedir(dir);
+		qsort(desc->idx2nodenum, desc->nnodes, sizeof(int), nodecmp);
 	}
 
 	/* information about how nodes share different CPUs */
