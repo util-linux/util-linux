@@ -71,6 +71,7 @@ enum {
 	COL_TARGET,
 	COL_LABEL,
 	COL_UUID,
+	COL_PARTTYPE,
 	COL_PARTLABEL,
 	COL_PARTUUID,
 	COL_RA,
@@ -125,6 +126,7 @@ static struct colinfo infos[] = {
 	[COL_LABEL]  = { "LABEL",   0.1, 0, N_("filesystem LABEL") },
 	[COL_UUID]   = { "UUID",    36,  0, N_("filesystem UUID") },
 
+	[COL_PARTTYPE]  = { "PARTTYPE",  36,  0, N_("partition type UUID") },
 	[COL_PARTLABEL] = { "PARTLABEL", 0.1, 0, N_("partition LABEL") },
 	[COL_PARTUUID]  = { "PARTUUID",  36,  0, N_("partition UUID") },
 
@@ -208,6 +210,7 @@ struct blkdev_cxt {
 	char *fstype;		/* detected fs, NULL or "?" if cannot detect */
 	char *uuid;		/* filesystem UUID (or stack uuid) */
 	char *label;		/* filesystem label */
+	char *parttype;		/* partiton type UUID */
 	char *partuuid;		/* partition UUID */
 	char *partlabel;	/* partiton label */
 	char *wwn;		/* storage WWN */
@@ -291,6 +294,7 @@ static void reset_blkdev_cxt(struct blkdev_cxt *cxt)
 	free(cxt->fstype);
 	free(cxt->uuid);
 	free(cxt->label);
+	free(cxt->parttype);
 	free(cxt->partuuid);
 	free(cxt->partlabel);
 	free(cxt->wwn);
@@ -441,6 +445,8 @@ static int get_udev_properties(struct blkdev_cxt *cxt)
 		}
 		if ((data = udev_device_get_property_value(dev, "ID_FS_TYPE")))
 			cxt->fstype = xstrdup(data);
+		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_TYPE")))
+			cxt->parttype = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_UUID")))
 			cxt->partuuid = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_WWN")))
@@ -496,6 +502,8 @@ static void probe_device(struct blkdev_cxt *cxt)
 			cxt->uuid = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "LABEL", &data, NULL))
 			cxt->label = xstrdup(data);
+		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_TYPE", &data, NULL))
+			cxt->parttype = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_UUID", &data, NULL))
 			cxt->partuuid = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_NAME", &data, NULL))
@@ -751,6 +759,11 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		probe_device(cxt);
 		if (cxt->uuid)
 			tt_line_set_data(ln, col, xstrdup(cxt->uuid));
+		break;
+	case COL_PARTTYPE:
+		probe_device(cxt);
+		if (cxt->parttype)
+			tt_line_set_data(ln, col, xstrdup(cxt->parttype));
 		break;
 	case COL_PARTLABEL:
 		probe_device(cxt);
