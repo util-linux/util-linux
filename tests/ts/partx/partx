@@ -88,6 +88,16 @@ ts_finalize_subtest
 
 udevadm settle
 
+ts_init_subtest "update-one"
+#read DEVICE and update second partition
+$TS_CMD_PARTX --update ${DEVICE}2 &> $TS_OUTPUT
+[ $(ls -d /sys/block/${DEVNAME}/${DEVNAME}* 2>/dev/null | wc -l) -eq $PARTS ] &&
+   echo "partitions updated" >> $TS_OUTPUT 2>&1  ||
+   echo "Unable to update 2nd partition for $DEVICE" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+udevadm settle
+
 ts_init_subtest "delete-one"
 #remove last partition only
 $TS_CMD_PARTX -d --nr -1 $DEVICE >> $TS_OUTPUT 2>&1
