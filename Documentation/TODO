@@ -1,6 +1,17 @@
 
  Note that items with (!) have high priority.
 
+
+lslogins(1)
+----------
+ - a new command to list information about accounts
+ - based on lib/tt.c
+ - see passwd -S and solarix/aux logins commands
+ - use infor from libc passwd struct, lastlog and wtmp/btmp logs
+ - expected columns USERNAME, UID, GID, STATUS, GROUPS, SHELL, HOME,
+   FULLNAME, LAST-LOGIN, LAST-TTY, LAST-HOSTNAME, FAILED-LOGIN, FAILED-TTY,
+   HUSH-STATUS ...
+
 hwlock
 ------
  - use /var/lib/hwclock/drift to store hw-clock drift numbers.
