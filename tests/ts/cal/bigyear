@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 
 TS_TOPDIR="$(dirname $0)/../.."
-TS_DESC="Year 1234567890123456789"
+TS_DESC="Year 2147483646"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
@@ -22,8 +22,8 @@ set -o pipefail
 export TERM=linux
 
 USETERM=$( ts_has_option "useterm" "$*" )
-MYMONTH="12 1234567890123456789"
-MYYEAR="1234567890123456789"
+MYMONTH="12 2147483646"
+MYYEAR="2147483646"
 
 [ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
 ts_log ""
