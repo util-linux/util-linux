@@ -902,6 +902,35 @@ blkid_partition blkid_partlist_get_partition(blkid_partlist ls, int n)
 }
 
 /**
+ * blkid_partlist_get_partition_by_partno
+ * @ls: partitions list
+ * @n: the partition number (e.g. 'N' from sda'N')
+ *
+ * This does not assume any order of the input blkid_partlist.  And correctly
+ * handles "out of order" partition tables.  partition N is located after
+ * partition N+1 on the disk.
+ *
+ * Returns: partition object or NULL in case or error.
+ */
+blkid_partition blkid_partlist_get_partition_by_partno(blkid_partlist ls, int n)
+{
+	int i, nparts;
+	blkid_partition par;
+
+	if (!ls)
+		return NULL;
+
+	nparts = blkid_partlist_numof_partitions(ls);
+	for (i = 0; i < nparts; i++) {
+		par = blkid_partlist_get_partition(ls, i);
+		if (n == blkid_partition_get_partno(par))
+			return par;
+	}
+	return NULL;
+}
+
+
+/**
  * blkid_partlist_devno_to_partition:
  * @ls: partitions list
  * @devno: requested partition
@@ -1000,6 +1029,7 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 	DBG(LOWPROBE, blkid_debug("not found partition for device"));
 	return NULL;
 }
+
 
 int blkid_parttable_set_uuid(blkid_parttable tab, const unsigned char *id)
 {

@@ -155,3 +155,10 @@ global:
 	blkid_parttable_get_id;
 	blkid_init_debug;
 } BLKID_2.21;
+
+/*
+ * symbols since util-linux 2.25
+ */
+BLKID_2.25 {
+	blkid_partlist_get_partition_by_partno;
+} BLKID_2.23;

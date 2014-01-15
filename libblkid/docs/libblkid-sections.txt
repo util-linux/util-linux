@@ -100,6 +100,7 @@ blkid_partition_is_logical
 blkid_partition_is_primary
 <SUBSECTION>
 blkid_partlist_get_partition
+blkid_partlist_get_partition_by_partno
 blkid_partlist_numof_partitions
 blkid_partlist_devno_to_partition
 blkid_partlist_get_table
