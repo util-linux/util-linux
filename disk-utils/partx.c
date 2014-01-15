@@ -412,37 +412,6 @@ static void upd_parts_warnx(const char *device, int first, int last)
 				device, first, last);
 }
 
-/**
- * get_partition_by_partno:
- * @ls: partitions list
- * @n: the partition number (e.g. 'N' from sda'N')
- *
- * This does not assume any order of the input blkid_partlist.
- * And correctly handles "out of order" partition tables.
- * partition N is located after partition N+1 on the disk.
- *
- * Returns: partition object or NULL in case or error.
- */
-blkid_partition get_partition_by_partno(blkid_partlist ls, int n)
-{
-	int i, nparts;
-	blkid_partition par;
-	if (!ls)
-		return NULL;
-
-	nparts = blkid_partlist_numof_partitions(ls);
-	if (nparts < 0)
-		return NULL;
-
-	for (i = 0; i < nparts; i++) {
-		par = blkid_partlist_get_partition(ls, i);
-		if (n == blkid_partition_get_partno(par)) {
-			return par;
-		}
-	}
-	return NULL;
-}
-
 static int upd_parts(int fd, const char *device, dev_t devno,
 		     blkid_partlist ls, int lower, int upper)
 {
@@ -473,7 +442,7 @@ static int upd_parts(int fd, const char *device, dev_t devno,
 	}
 
 	for (n = lower; n <= upper; n++) {
-		par = get_partition_by_partno(ls, n);
+		par = blkid_partlist_get_partition_by_partno(ls, n);
 		if (!par) {
 			if (verbose)
 				warn(_("%s: no partition #%d"), device, n);
