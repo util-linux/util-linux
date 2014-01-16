@@ -229,10 +229,6 @@ main(int argc, char **argv) {
 		fname = DEFAULT_OUTPUT;
 		die_if_link(fname);
 	}
-
-	if (!isatty(STDIN_FILENO))
-		errx(EXIT_FAILURE, _("The stdin is not a terminal."));
-
 	if ((fscript = fopen(fname, aflg ? "a" : "w")) == NULL) {
 		warn(_("cannot open %s"), fname);
 		fail();
