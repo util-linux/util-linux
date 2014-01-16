@@ -246,10 +246,13 @@ new_probe(const char *devname, int mode)
 		goto error;
 
 	blkid_probe_enable_superblocks(pr, 1);
-	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_MAGIC |
-			BLKID_SUBLKS_TYPE | BLKID_SUBLKS_USAGE |
-			BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID |
-			BLKID_SUBLKS_BADCSUM);
+	blkid_probe_set_superblocks_flags(pr,
+			BLKID_SUBLKS_MAGIC |	/* return magic string and offset */
+			BLKID_SUBLKS_TYPE |	/* return superblock type */
+			BLKID_SUBLKS_USAGE |	/* return USAGE= */
+			BLKID_SUBLKS_LABEL |	/* return LABEL= */
+			BLKID_SUBLKS_UUID |	/* return UUID= */
+			BLKID_SUBLKS_BADCSUM);	/* accept bad checksums */
 
 	blkid_probe_enable_partitions(pr, 1);
 	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_MAGIC);
