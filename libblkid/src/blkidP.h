@@ -224,9 +224,6 @@ struct blkid_struct_probe
 
 /* private per-probing flags */
 #define BLKID_PROBE_FL_IGNORE_PT (1 << 1)	/* ignore partition table */
-#define BLKID_PROBE_FL_IGNORE_BACKUP (1 << 2)	/* ignore backup superblocks or PT */
-
-extern int blkid_probe_ignore_backup(blkid_probe pr);
 
 extern blkid_probe blkid_clone_probe(blkid_probe parent);
 extern blkid_probe blkid_probe_get_wholedisk_probe(blkid_probe pr);

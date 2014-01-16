@@ -934,7 +934,8 @@ int blkid_do_probe(blkid_probe pr)
  *
  * This function erases the current signature detected by @pr. The @pr has to
  * be open in O_RDWR mode, BLKID_SUBLKS_MAGIC or/and BLKID_PARTS_MAGIC flags
- * has to be enabled.
+ * has to be enabled (if you want to errase also superblock with broken check
+ * sums then use BLKID_SUBLKS_BADCSUM too).
  *
  * After successful signature removing the @pr prober will be moved one step
  * back and the next blkid_do_probe() call will again call previously called
@@ -1134,8 +1135,6 @@ int blkid_do_safeprobe(blkid_probe pr)
 		return -1;
 
 	blkid_probe_start(pr);
-
-	pr->prob_flags |= BLKID_PROBE_FL_IGNORE_BACKUP;
 
 	for (i = 0; i < BLKID_NCHAINS; i++) {
 		struct blkid_chain *chn;
@@ -1808,9 +1807,4 @@ void blkid_probe_use_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
 		blkid_probe_set_wiper(pr, 0, 0);
 		blkid_probe_chain_reset_vals(pr, chn);
 	}
-}
-
-int blkid_probe_ignore_backup(blkid_probe pr)
-{
-	return pr && (pr->prob_flags & BLKID_PROBE_FL_IGNORE_BACKUP);
 }

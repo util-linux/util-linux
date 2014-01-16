@@ -63,11 +63,6 @@ static int probe_btrfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct btrfs_super_block *bfs;
 
-	if (mag->kboff > 64 && blkid_probe_ignore_backup(pr)) {
-		DBG(LOWPROBE, blkid_debug("btrfs: found backup superblock, ignore"));
-		return 1;
-	}
-
 	bfs = blkid_probe_get_sb(pr, mag, struct btrfs_super_block);
 	if (!bfs)
 		return -1;
@@ -92,8 +87,6 @@ const struct blkid_idinfo btrfs_idinfo =
 	.magics		=
 	{
 	  { .magic = "_BHRfS_M", .len = 8, .sboff = 0x40, .kboff = 64 },
-	  { .magic = "_BHRfS_M", .len = 8, .sboff = 0x40, .kboff = 64 * 1024 },
-	  { .magic = "_BHRfS_M", .len = 8, .sboff = 0x40, .kboff = 256 * 1024 * 1024 },
 	  { NULL }
 	}
 };
