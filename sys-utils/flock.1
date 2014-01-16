@@ -152,11 +152,11 @@ also sets the FLOCKER env var to the right value so it doesn't run again.
 .SH "EXIT STATUS"
 The command uses
 .B sysexits.h
-return values for everything else but an options
+return values for everything, except when using either of the options
 .I \-n
 or
 .I \-w
-failures which return either the value given by the
+which report a failure to acquire the lock with a return value given by the
 .I \-E
 option, or 1 by default.
 .SH AUTHOR
