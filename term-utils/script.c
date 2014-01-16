@@ -65,6 +65,7 @@
 #include "nls.h"
 #include "c.h"
 #include "ttyutils.h"
+#include "all-io.h"
 
 #if defined(HAVE_LIBUTIL) && defined(HAVE_PTY_H)
 # include <pty.h>
@@ -316,8 +317,7 @@ doinput(void) {
 
 	while (die == 0) {
 		if ((cc = read(STDIN_FILENO, ibuf, BUFSIZ)) > 0) {
-			ssize_t wrt = write(master, ibuf, cc);
-			if (wrt < 0) {
+			if (write_all(master, ibuf, cc)) {
 				warn (_("write failed"));
 				fail();
 			}
@@ -353,7 +353,7 @@ doinput(void) {
 		 */
 		int c = DEF_EOF;
 
-		if (write(master, &c, 1) < 0) {
+		if (write_all(master, &c, 1)) {
 			warn (_("write failed"));
 			fail();
 		}
@@ -404,8 +404,6 @@ dooutput(FILE *timingfd) {
 	char obuf[BUFSIZ];
 	struct timeval tv;
 	double oldtime=time(NULL), newtime;
-	ssize_t wrt;
-	ssize_t fwrt;
 	int errsv = 0;
 
 	close(STDIN_FILENO);
@@ -438,15 +436,13 @@ dooutput(FILE *timingfd) {
 			fprintf(timingfd, "%f %zd\n", newtime - oldtime, cc);
 			oldtime = newtime;
 		}
-		fwrt = fwrite(obuf, 1, cc, fscript);
-		if (fwrt < cc) {
+		if (fwrite_all(obuf, 1, cc, fscript)) {
 			warn (_("cannot write script file"));
 			fail();
 		}
 		if (fflg)
 			fflush(fscript);
-		wrt = write(STDOUT_FILENO, obuf, cc);
-		if (wrt < 0) {
+		if (write_all(STDOUT_FILENO, obuf, cc)) {
 			warn (_("write failed"));
 			fail();
 		}
