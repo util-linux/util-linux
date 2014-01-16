@@ -302,11 +302,12 @@ static void wait_for_empty_fd(int fd)
 		{ .fd = fd, .events = POLLIN }
 	};
 
-	while (poll(fds, 1, 50) == 1);
+	while (die == 0 && poll(fds, 1, 100) == 1);
 }
 
 void
 doinput(void) {
+	int errsv = 0;
 	ssize_t cc = 0;
 	char ibuf[BUFSIZ];
 
@@ -330,15 +331,17 @@ doinput(void) {
 			}
 			resized = 0;
 
-		} else
+		} else {
+			errsv = errno;
 			break;
+		}
 	}
 
 	/* To be sure that we don't miss any data */
 	wait_for_empty_fd(slave);
 	wait_for_empty_fd(master);
 
-	if (cc == 0 && errno == 0) {
+	if (die == 0 && cc == 0 && errsv == 0) {
 		/*
 		 * Forward EOF from stdin (detected by read() above) to slave
 		 * (shell) to correctly terminate the session. It seems we have
@@ -360,7 +363,8 @@ doinput(void) {
 		wait_for_empty_fd(master);
 	}
 
-	finish(0);	/* wait for childern */
+	if (!die)
+		finish(0);	/* wait for childern */
 	done();
 }
 
