@@ -1002,6 +1002,12 @@ UL_REQUIRES_HAVE([hwclock], [io, linuxdummy], [ioperm iopl function or Linux])
 AM_CONDITIONAL([BUILD_HWCLOCK], [test "x$build_hwclock" = xyes])
 
 
+UL_BUILD_INIT([fstrim], [check])
+UL_REQUIRES_LINUX([fstrim])
+UL_REQUIRES_BUILD([fstrim], [libmount])
+AM_CONDITIONAL([BUILD_FSTRIM], [test "x$build_fstrim" = xyes])
+
+
 UL_BUILD_INIT([swapon], [check])
 UL_REQUIRES_LINUX([swapon])
 UL_REQUIRES_BUILD([swapon], [libblkid])

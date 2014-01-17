@@ -47,6 +47,14 @@ cytune_SOURCES = sys-utils/cytune.c sys-utils/cyclades.h
 cytune_LDADD = $(LDADD) libcommon.la
 endif
 
+if BUILD_FSTRIM
+sbin_PROGRAMS += fstrim
+dist_man_MANS += sys-utils/fstrim.8
+fstrim_SOURCES = sys-utils/fstrim.c
+fstrim_LDADD = $(LDADD) libcommon.la libmount.la
+fstrim_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+endif
+
 if LINUX
 #
 # Linux-only utils with no another dependencies. All another dependencies have
@@ -64,12 +72,6 @@ ctrlaltdel_SOURCES = sys-utils/ctrlaltdel.c
 sbin_PROGRAMS += fsfreeze
 dist_man_MANS += sys-utils/fsfreeze.8
 fsfreeze_SOURCES = sys-utils/fsfreeze.c
-
-sbin_PROGRAMS += fstrim
-dist_man_MANS += sys-utils/fstrim.8
-fstrim_SOURCES = sys-utils/fstrim.c
-fstrim_LDADD = $(LDADD) libcommon.la libmount.la
-fstrim_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 
 sbin_PROGRAMS += blkdiscard
 dist_man_MANS += sys-utils/blkdiscard.8
