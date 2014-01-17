@@ -399,7 +399,6 @@ wipe_device(int fd, const char *devname, int force)
 		 * Wipe boodbits
 		 */
 		char buf[1024];
-		const char *data = NULL;
 
 		if (lseek(fd, 0, SEEK_SET) != 0)
 			errx(EXIT_FAILURE, _("unable to rewind swap-device"));
@@ -419,6 +418,8 @@ wipe_device(int fd, const char *devname, int force)
 		blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_MAGIC|BLKID_SUBLKS_TYPE);
 
 		while (blkid_do_probe(pr) == 0) {
+			const char *data = NULL;
+
 			if (blkid_probe_lookup_value(pr, "TYPE", &data, NULL) == 0 && data)
 				warnx(_("%s: warning: wiping old %s signature."), devname, data);
 			blkid_do_wipe(pr, 0);
