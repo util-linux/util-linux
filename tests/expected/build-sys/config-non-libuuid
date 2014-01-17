@@ -4,6 +4,7 @@ eject:  libblkid libmount
 findfs:  libblkid 
 findmnt:  libblkid libmount libudev 
 fsck:  libblkid libmount 
+fstrim:  libblkid libmount 
 libblkid.so.1.1.0:  
 libmount.so.1.1.0:  libblkid 
 lsblk:  libblkid libmount libudev 
@@ -38,7 +39,6 @@ flock:
 fsck.cramfs:  libz 
 fsck.minix:  
 fsfreeze:  
-fstrim:  
 getopt:  
 hexdump:  
 hwclock:  

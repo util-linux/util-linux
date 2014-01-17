@@ -5,6 +5,7 @@ fdisk:  libblkid libuuid
 findfs:  libblkid libuuid 
 findmnt:  libblkid libmount libudev libuuid 
 fsck:  libblkid libmount libuuid 
+fstrim:  libblkid libmount libuuid 
 libblkid.so.1.1.0:  libuuid 
 libmount.so.1.1.0:  libblkid libuuid 
 libuuid.so.1.3.0:  
@@ -45,7 +46,6 @@ flock:
 fsck.cramfs:  libz 
 fsck.minix:  
 fsfreeze:  
-fstrim:  
 getopt:  
 hexdump:  
 hwclock:  
