@@ -31,7 +31,6 @@ flock:
 fsck.cramfs:  libz 
 fsck.minix:  
 fsfreeze:  
-fstrim:  
 getopt:  
 hexdump:  
 hwclock:  
