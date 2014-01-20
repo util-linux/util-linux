@@ -40,21 +40,24 @@
 #include "c.h"
 #include "closestream.h"
 #include "optutils.h"
+#include "blkdev.h"
 
 struct wipe_desc {
 	loff_t		offset;		/* magic string offset */
 	size_t		len;		/* length of magic string */
 	unsigned char	*magic;		/* magic string */
 
-	int		zap;		/* zap this offset? */
 	char		*usage;		/* raid, filesystem, ... */
 	char		*type;		/* FS type */
 	char		*label;		/* FS label */
 	char		*uuid;		/* FS uuid */
 
-	int		on_disk;
-
 	struct wipe_desc	*next;
+
+	unsigned int	zap : 1,
+			on_disk : 1,
+			is_parttable : 1;
+
 };
 
 enum {
@@ -80,7 +83,7 @@ print_pretty(struct wipe_desc *wp, int line)
 		printf("----------------------------------------------------------------\n");
 	}
 
-	printf("0x%-17jx  %s   [%s]", wp->offset, wp->type, wp->usage);
+	printf("0x%-17jx  %s   [%s]", wp->offset, wp->type, _(wp->usage));
 
 	if (wp->label && *wp->label)
 		printf("\n%27s %s", "LABEL:", wp->label);
@@ -149,7 +152,7 @@ add_offset(struct wipe_desc *wp0, loff_t offset, int zap)
 	wp = xcalloc(1, sizeof(struct wipe_desc));
 	wp->offset = offset;
 	wp->next = wp0;
-	wp->zap = zap;
+	wp->zap = zap ? 1 : 0;
 	return wp;
 }
 
@@ -172,7 +175,7 @@ get_desc_for_probe(struct wipe_desc *wp, blkid_probe pr)
 	const char *off, *type, *mag, *p, *usage = NULL;
 	size_t len;
 	loff_t offset;
-	int rc;
+	int rc, ispt = 0;
 
 	/* superblocks */
 	if (blkid_probe_lookup_value(pr, "TYPE", &type, NULL) == 0) {
@@ -189,7 +192,8 @@ get_desc_for_probe(struct wipe_desc *wp, blkid_probe pr)
 			rc = blkid_probe_lookup_value(pr, "PTMAGIC", &mag, &len);
 		if (rc)
 			return wp;
-		usage = "partition table";
+		usage = N_("partition table");
+		ispt = 1;
 	} else
 		return wp;
 
@@ -207,6 +211,7 @@ get_desc_for_probe(struct wipe_desc *wp, blkid_probe pr)
 
 	wp->type = xstrdup(type);
 	wp->on_disk = 1;
+	wp->is_parttable = ispt ? 1 : 0;
 
 	wp->magic = xmalloc(len);
 	memcpy(wp->magic, mag, len);
@@ -343,10 +348,24 @@ err:
 	err(EXIT_FAILURE, _("%s: failed to create a signature backup"), fname);
 }
 
+static void rereadpt(int fd, const char *devname)
+{
+#ifdef BLKRRPART
+	struct stat st;
+
+	if (fstat(fd, &st) || !S_ISBLK(st.st_mode))
+		return;
+
+	errno = 0;
+	ioctl(fd, BLKRRPART);
+	printf(_("%s: calling ioclt to re-read partition table: %m\n"), devname);
+#endif
+}
+
 static struct wipe_desc *
 do_wipe(struct wipe_desc *wp, const char *devname, int flags)
 {
-	int mode = O_RDWR;
+	int mode = O_RDWR, reread = 0;
 	blkid_probe pr;
 	struct wipe_desc *w, *wp0;
 	int zap = (flags & WP_FL_ALL) ? 1 : wp->zap;
@@ -390,6 +409,8 @@ do_wipe(struct wipe_desc *wp, const char *devname, int flags)
 			if (backup)
 				do_backup(wp, backup);
 			do_wipe_real(pr, devname, wp, flags);
+			if (wp->is_parttable)
+				reread = 1;
 		}
 	}
 
@@ -399,6 +420,10 @@ do_wipe(struct wipe_desc *wp, const char *devname, int flags)
 	}
 
 	fsync(blkid_probe_get_fd(pr));
+
+	if (reread)
+		rereadpt(blkid_probe_get_fd(pr), devname);
+
 	close(blkid_probe_get_fd(pr));
 	blkid_free_probe(pr);
 	free_wipe(wp0);

@@ -23,6 +23,9 @@ does not erase the filesystem itself nor any other data from the device.
 When used without options \fB-a\fR or \fB-o\fR, it lists all visible filesystems
 and the offsets of their basic signatures.
 
+.B wipefs
+calls BLKRRPART ioctl when erase partition table to inform kernel about the change.
+
 Note that some filesystems or some partition tables store more magic strings on
 the devices.  The
 .B wipefs
