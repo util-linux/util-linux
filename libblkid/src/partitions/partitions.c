@@ -127,6 +127,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&sun_pt_idinfo,
 	&dos_pt_idinfo,
 	&gpt_pt_idinfo,
+	&pmbr_pt_idinfo,	/* always after GPT */
 	&mac_pt_idinfo,
 	&ultrix_pt_idinfo,
 	&bsd_pt_idinfo,
