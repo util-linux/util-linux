@@ -155,13 +155,15 @@ static int last_lba(blkid_probe pr, uint64_t *lba)
  * Note that the PMBR detection is optional (enabled by default) and could be
  * disabled by BLKID_PARTS_FOPCE_GPT flag (see also blkid_paertitions_set_flags()).
  */
-static int is_pmbr_valid(blkid_probe pr)
+static int is_pmbr_valid(blkid_probe pr, int *has)
 {
 	int flags = blkid_partitions_get_flags(pr);
 	unsigned char *data;
 	struct dos_partition *p;
 	int i;
 
+	if (has)
+		*has = 0;
 	if (flags & BLKID_PARTS_FORCE_GPT)
 		goto ok;			/* skip PMBR check */
 
@@ -179,6 +181,8 @@ static int is_pmbr_valid(blkid_probe pr)
 failed:
 	return 0;
 ok:
+	if (has)
+		*has = 1;
 	return 1;
 }
 
@@ -302,7 +306,7 @@ static int probe_gpt_pt(blkid_probe pr,
 	if (last_lba(pr, &lastlba))
 		goto nothing;
 
-	if (!is_pmbr_valid(pr))
+	if (!is_pmbr_valid(pr, NULL))
 		goto nothing;
 
 	h = get_gpt_header(pr, &hdr, &e, (lba = GPT_PRIMARY_LBA), lastlba);
@@ -409,5 +413,41 @@ const struct blkid_idinfo gpt_pt_idinfo =
 	 * It means we have to always call probe_gpt_pt().
 	 */
 	.magics		= BLKID_NONE_MAGIC
+};
+
+
+
+/* probe for *alone* protective MBR */
+static int probe_pmbr_pt(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
+{
+	int has = 0;
+	struct gpt_entry *e;
+	uint64_t lastlba = 0;
+	struct gpt_header hdr;
+
+	if (last_lba(pr, &lastlba))
+		goto nothing;
+
+	is_pmbr_valid(pr, &has);
+	if (!has)
+		goto nothing;
+
+	if (!get_gpt_header(pr, &hdr, &e, GPT_PRIMARY_LBA, lastlba) &&
+	    !get_gpt_header(pr, &hdr, &e, lastlba, lastlba))
+		return 0;
+nothing:
+	return 1;
+}
+
+const struct blkid_idinfo pmbr_pt_idinfo =
+{
+	.name		= "PMBR",
+	.probefunc	= probe_pmbr_pt,
+	.magics		=
+	{
+		{ .magic = "\x55\xAA", .len = 2, .sboff = 510 },
+		{ NULL }
+	}
 };
 
