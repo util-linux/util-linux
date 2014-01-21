@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <utmp.h>
+#include <pwd.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -572,6 +573,26 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+static int is_phantom(struct utmp *ut)
+{
+	struct passwd *pw;
+	char path[32];
+	FILE *f;
+	unsigned int loginuid, ret = 0;
+
+	pw = getpwnam(ut->ut_name);
+	if (!pw)
+		return 1;
+	sprintf(path, "/proc/%u/loginuid", ut->ut_pid);
+	if (!(f = fopen(path, "r")))
+		return 1;
+	if (fscanf(f, "%u", &loginuid) != 1)
+		ret = 1;
+	fclose(f);
+	if (!ret && pw->pw_uid != loginuid)
+		return 1;
+	return ret;
+}
 
 static void process_wtmp_file(const struct last_control *ctl)
 {
@@ -766,9 +787,7 @@ static void process_wtmp_file(const struct last_control *ctl)
 				if (!lastboot) {
 					c = R_NOW;
 					/* Is process still alive? */
-					if (ut.ut_pid > 0 &&
-					    kill(ut.ut_pid, 0) != 0 &&
-					    errno == ESRCH)
+					if (is_phantom(&ut))
 						c = R_PHANTOM;
 				} else
 					c = whydown;
