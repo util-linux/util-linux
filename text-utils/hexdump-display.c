@@ -44,6 +44,7 @@
 #include "xalloc.h"
 #include "c.h"
 #include "nls.h"
+#include "colors.h"
 
 static void doskip(const char *, int, struct hexdump *);
 static u_char *get(struct hexdump *);
@@ -53,8 +54,66 @@ enum _vflag vflag = FIRST;
 static off_t address;			/* address/offset in stream */
 static off_t eaddress;			/* end address */
 
+static const char *color_cond(struct hexdump_pr *pr, unsigned char *bp, int bcnt)
+{
+	register struct list_head *p;
+	register struct hexdump_clr *clr;
+	off_t offt;
+	int match;
+
+	list_for_each(p, pr->colorlist) {
+		clr = list_entry(p, struct hexdump_clr, colorlist);
+		offt = clr->offt;
+		match = 0;
+
+		/* no offset or offset outside this print unit */
+		if (offt < 0)
+			offt = address;
+		if (offt < address || offt + clr->range > address + bcnt)
+			continue;
+
+		/* match a string */
+		if (clr->str) {
+			if (pr->flags == F_ADDRESS) {
+				/* TODO */
+			}
+			else if (!strncmp(clr->str, (char *)bp + offt
+				- address, clr->range))
+				match = 1;
+		/* match a value */
+		} else if (clr->val != -1) {
+			int val = 0;
+			/* addresses are not part of the input, so we can't
+			 * compare with the contents of bp */
+			if (pr->flags == F_ADDRESS) {
+				if (clr->val == address)
+					match = 1;
+			} else {
+				memcpy(&val, bp + offt - address, clr->range);
+				if (val == clr->val)
+					match = 1;
+			}
+		/* no conditions, only a color was specified */
+		} else
+			return clr->fmt;
+
+		/* return the format string or check for another */
+		if (match ^ clr->invert)
+			return clr->fmt;
+		continue;
+	}
+
+	/* no match */
+	return NULL;
+}
+
 static inline void
 print(struct hexdump_pr *pr, unsigned char *bp) {
+
+	const char *color = NULL;
+
+	if (pr->colorlist && (color = color_cond(pr, bp, pr->bcnt)))
+		color_enable(color);
 
 	switch(pr->flags) {
 	case F_ADDRESS:
@@ -148,6 +207,8 @@ print(struct hexdump_pr *pr, unsigned char *bp) {
 		break;
 	    }
 	}
+	if (color) /* did we colorize something? */
+		color_disable();
 }
 
 static void bpad(struct hexdump_pr *pr)
@@ -239,6 +300,13 @@ void display(struct hexdump *hex)
 		}
 		list_for_each (p, &endfu->prlist) {
 			pr = list_entry(p, struct hexdump_pr, prlist);
+
+			const char *color = NULL;
+			if (colors_wanted() && pr->colorlist
+			    && (color = color_cond(pr, bp, pr->bcnt))) {
+				color_enable(color);
+			}
+
 			switch(pr->flags) {
 			case F_ADDRESS:
 				printf(pr->fmt, eaddress);
@@ -247,6 +315,8 @@ void display(struct hexdump *hex)
 				printf("%s", pr->fmt);
 				break;
 			}
+			if (color) /* did we highlight something? */
+				color_disable();
 		}
 	}
 }

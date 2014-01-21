@@ -49,6 +49,7 @@
 #include "list.h"
 #include "nls.h"
 #include "c.h"
+#include "colors.h"
 #include "strutils.h"
 #include "xalloc.h"
 #include "closestream.h"
@@ -59,7 +60,9 @@ int
 parse_args(int argc, char **argv, struct hexdump *hex)
 {
 	int ch;
+	int colormode = UL_COLORMODE_NEVER;
 	char *hex_offt = "\"%07.7_Ax\n\"";
+
 
 	static const struct option longopts[] = {
 		{"one-byte-octal", no_argument, NULL, 'b'},
@@ -70,6 +73,7 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 		{"two-bytes-hex", no_argument, NULL, 'x'},
 		{"format", required_argument, NULL, 'e'},
 		{"format-file", required_argument, NULL, 'f'},
+		{"color", optional_argument, NULL, 'L'},
 		{"length", required_argument, NULL, 'n'},
 		{"skip", required_argument, NULL, 's'},
 		{"no-squeezing", no_argument, NULL, 'v'},
@@ -103,6 +107,12 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 		case 'f':
 			addfile(optarg, hex);
 			break;
+                case 'L':
+			colormode = UL_COLORMODE_AUTO;
+			if (optarg)
+				colormode = colormode_or_err(optarg,
+						_("unsupported color mode"));
+                        break;
 		case 'n':
 			hex->length = strtosize_or_err(optarg, _("failed to parse length"));
 			break;
@@ -135,6 +145,7 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 		add_fmt(hex_offt, hex);
 		add_fmt("\"%07.7_ax \" 8/2 \"%04x \" \"\\n\"", hex);
 	}
+	colors_init (colormode);
 	return optind;
 }
 
@@ -149,6 +160,7 @@ void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -d, --two-bytes-decimal   two-byte decimal display\n"), out);
 	fputs(_(" -o, --two-bytes-octal     two-byte octal display\n"), out);
 	fputs(_(" -x, --two-bytes-hex       two-byte hexadecimal display\n"), out);
+	fputs(_(" -L, --color[=<mode>]      interpret color formatting specifiers\n"), out);
 	fputs(_(" -e, --format <format>     format string to be used for displaying data\n"), out);
 	fputs(_(" -f, --format-file <file>  file that contains format strings\n"), out);
 	fputs(_(" -n, --length <length>     interpret only length bytes of input\n"), out);
@@ -207,16 +219,25 @@ int main(int argc, char **argv)
 
 void hex_free(struct hexdump *hex)
 {
-	struct list_head *p, *pn, *q, *qn, *r, *rn;
+	struct list_head *p, *pn, *q, *qn, *r, *rn, *s, *sn;
 	struct hexdump_fs *fs;
 	struct hexdump_fu *fu;
 	struct hexdump_pr *pr;
+	struct hexdump_clr *clr;
+
 	list_for_each_safe(p, pn, &hex->fshead) {
 		fs = list_entry(p, struct hexdump_fs, fslist);
 		list_for_each_safe(q, qn, &fs->fulist) {
 			fu = list_entry(q, struct hexdump_fu, fulist);
 			list_for_each_safe(r, rn, &fu->prlist) {
 				pr = list_entry(r, struct hexdump_pr, prlist);
+				if (pr->colorlist) {
+					list_for_each_safe(s, sn, pr->colorlist) {
+						clr = list_entry (s, struct hexdump_clr, colorlist);
+						free(clr->str);
+						free(clr);
+					}
+				}
 				free(pr->fmt);
 				free(pr);
 			}

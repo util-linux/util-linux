@@ -35,6 +35,16 @@
 #include "c.h"
 #include "list.h"
 
+struct hexdump_clr {
+	struct list_head colorlist;	/* next color unit */
+	const char *fmt;		/* the color, UL_COLOR_* */
+	off_t offt;			/* offset where unit is valid... */
+	int range;			/* ... and it's range */
+	int val;			/* value ... */
+	char *str;			/* ... or string to match */
+	int invert;			/* invert condition? */
+};
+
 struct hexdump_pr {
 	struct list_head prlist;		/* next print unit */
 #define	F_ADDRESS	0x001		/* print offset */
@@ -51,6 +61,7 @@ struct hexdump_pr {
 	unsigned int flags;		/* flag values */
 	int bcnt;			/* byte count */
 	char *cchar;			/* conversion character */
+	struct list_head *colorlist;	/* color settings */
 	char *fmt;			/* printf format */
 	char *nospace;			/* no whitespace version */
 };

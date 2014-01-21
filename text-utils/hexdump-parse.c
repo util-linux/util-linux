@@ -45,8 +45,10 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "strutils.h"
+#include "colors.h"
 
 static void escape(char *p1);
+static struct list_head *color_fmt(char *cfmt, int bcnt);
 
 static void __attribute__ ((__noreturn__)) badcnt(const char *s)
 {
@@ -391,6 +393,28 @@ isint:				cs[2] = '\0';
 				badconv(p1);
 			}
 
+			/* Color unit(s) specified */
+			if (*p2 == '_' && p2[1] == 'L') {
+				if (colors_wanted()) {
+					char *a;
+
+					/* "cut out" the color_unit(s) */
+					a = strchr(p2, '[');
+					p2 = strrchr(p2, ']');
+					if (a++ && p2)
+						pr->colorlist = color_fmt(xstrndup(a, p2++ - a), pr->bcnt);
+					else
+						badconv(p2);
+				}
+				/* we don't want colors, quietly skip over them */
+				else {
+					p2 = strrchr(p2, ']');
+					/* be a bit louder if we don't know how to skip over them */
+					if (!p2)
+						badconv("_L");
+					++p2;
+				}
+			}
 			/*
 			 * Copy to hexdump_pr format string, set conversion character
 			 * pointer, update original.
@@ -447,6 +471,122 @@ isint:				cs[2] = '\0';
 	}
 }
 
+/* [!]color[:string|:hex_number|:oct_number][@offt|@offt_start-offt_end],... */
+static struct list_head *color_fmt(char *cfmt, int bcnt)
+{
+	struct hexdump_clr *hc, *hcnext;
+	struct list_head *ret_head;
+	char *clr, *fmt;
+
+	ret_head = xmalloc(sizeof(struct list_head));
+	hcnext = hc = xcalloc(1, sizeof(struct hexdump_clr));
+
+	INIT_LIST_HEAD(&hc->colorlist);
+	INIT_LIST_HEAD(ret_head);
+	list_add_tail(&hc->colorlist, ret_head);
+
+	fmt = cfmt;
+	while (cfmt && *cfmt) {
+		char *end;
+		/* invert this condition */
+		if (*cfmt == '!') {
+			hcnext->invert = 1;
+			++cfmt;
+		}
+
+		clr = xstrndup(cfmt, strcspn(cfmt, ":@,"));
+		cfmt += strlen(clr);
+		hcnext->fmt = colorscheme_from_string(clr);
+		free(clr);
+
+		if (!hcnext->fmt)
+			return NULL;
+
+		/* only colorize this specific value */
+		if (*cfmt == ':') {
+			++cfmt;
+			/* a hex or oct value */
+			if (*cfmt == '0') {
+				/* hex */
+				errno = 0;
+				end = NULL;
+				if (cfmt[1] == 'x' || cfmt[1] == 'X')
+					hcnext->val = strtoul(cfmt + 2, &end, 16);
+				else
+					hcnext->val = strtoul(cfmt, &end, 8);
+				if (errno || end == cfmt)
+					badfmt(fmt);
+				cfmt = end;
+			/* a string */
+			} else {
+				off_t fmt_end;
+				char endchar;
+				char *endstr;
+
+				hcnext->val = -1;
+				/* temporarily null-delimit the format, so we can reverse-search
+				 * for the start of an offset specifier */
+				fmt_end = strcspn(cfmt, ",");
+				endchar = cfmt[fmt_end];
+				cfmt[fmt_end] = '\0';
+				endstr = strrchr(cfmt, '@');
+
+				if (endstr) {
+					if (endstr[1] != '\0')
+						--endstr;
+					hcnext->str = xstrndup(cfmt, endstr - cfmt + 1);
+				} else
+					hcnext->str = xstrndup(cfmt, fmt_end);
+
+				/* restore the character */
+				cfmt[fmt_end] = endchar;
+				cfmt += strlen(hcnext->str);
+			}
+
+		/* no specific value */
+		} else
+			hcnext->val = -1;
+
+		/* only colorize at this offset */
+		hcnext->range = bcnt;
+		if (cfmt && *cfmt == '@') {
+			errno = 0;
+			hcnext->offt = strtoul(++cfmt, &cfmt, 10);
+			if (errno)
+				badfmt(fmt);
+
+			/* offset range */
+			if (*cfmt == '-') {
+				++cfmt;
+				errno = 0;
+
+				hcnext->range =
+				  strtoul(cfmt, &cfmt, 10) - hcnext->offt + 1;
+				if (errno)
+					badfmt(fmt);
+				/* offset range must be between 0 and format byte count */
+				if (!(hcnext->range >= 0 && hcnext->range <= bcnt))
+					badcnt("_L");
+			}
+		/* no specific offset */
+		} else
+			hcnext->offt = (off_t)-1;
+
+		/* check if the string we're looking for is the same length as the range */
+		if (hcnext->str && (int)strlen(hcnext->str) != hcnext->range)
+			badcnt("_L");
+
+		/* link in another condition */
+		if (cfmt && *cfmt == ',') {
+			++cfmt;
+
+			hcnext = xcalloc(1, sizeof(struct hexdump_clr));
+			INIT_LIST_HEAD(&hcnext->colorlist);
+			list_add_tail(&hcnext->colorlist, ret_head);
+		}
+	}
+	return ret_head;
+}
 
 static void escape(char *p1)
 {
