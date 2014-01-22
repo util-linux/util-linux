@@ -228,6 +228,11 @@ extern int fdisk_table_next_partition(
 			struct fdisk_table *tb,
 			struct fdisk_iter *itr,
 			struct fdisk_partition **pa);
+
+extern struct fdisk_partition *fdisk_table_get_partition(
+			struct fdisk_table *tb,
+			size_t n);
+
 /* alignment.c */
 extern int fdisk_reset_alignment(struct fdisk_context *cxt);
 extern int fdisk_reset_device_properties(struct fdisk_context *cxt);
