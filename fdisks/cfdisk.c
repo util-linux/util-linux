@@ -42,11 +42,23 @@
 #define MENU_PADDING		2
 #define TABLE_START_LINE	4
 #define MENU_START_LINE		(LINES - 5)
+#define INFO_LINE		(LINES - 2)
+
+/* colors */
+enum {
+	CFDISK_CL_NONE = 0,
+	CFDISK_CL_WARNING
+};
+static const int color_pairs[][2] = {
+	/* color            foreground, background */
+	[CFDISK_CL_WARNING] = { COLOR_RED, -1 },
+};
 
 struct cfdisk;
 typedef int (menu_callback_t)(struct cfdisk *, int);
 
 static int menu_cb_main(struct cfdisk *cf, int key);
+static int ui_refresh(struct cfdisk *cf);
 
 
 struct cfdisk_menudesc {
@@ -201,7 +213,7 @@ static int lines_refresh(struct cfdisk *cf)
 
 	assert(cf);
 
-	DBG(FRONTEND, dbgprint("refresing buffer"));
+	DBG(FRONTEND, dbgprint("refreshing buffer"));
 
 	free(cf->linesbuf);
 	free(cf->lines);
@@ -211,6 +223,7 @@ static int lines_refresh(struct cfdisk *cf)
 	cf->nlines = 0;
 
 	fdisk_unref_table(cf->table);
+	cf->table = NULL;
 	fdisk_context_enable_freespace(cf->cxt, 1);
 
 	rc = fdisk_get_table(cf->cxt, &cf->table);
@@ -295,24 +308,53 @@ static int ui_end(struct cfdisk *cf)
 	return 0;
 }
 
-static void ui_print_center(int line, const char *fmt, ...)
+static void ui_vprint_center(int line, int attrs, const char *fmt, va_list ap)
 {
 	size_t width;
-	va_list ap;
 	char *buf = NULL;
 
 	move(line, 0);
 	clrtoeol();
 
-	va_start(ap, fmt);
 	xvasprintf(&buf, fmt, ap);
-	va_end(ap);
 
 	width = strlen(buf);			/* TODO: count cells! */
+
+	attron(attrs);
 	mvaddstr(line, (COLS - width) / 2, buf);
+	attroff(attrs);
 	free(buf);
 }
 
+static void ui_center(int line, const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	ui_vprint_center(line, 0, fmt, ap);
+	va_end(ap);
+}
+
+static void ui_warning(const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	ui_vprint_center(INFO_LINE, COLOR_PAIR(CFDISK_CL_WARNING), fmt, ap);
+	va_end(ap);
+}
+
+static void ui_info(const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	ui_vprint_center(INFO_LINE, A_BOLD, fmt, ap);
+	va_end(ap);
+}
+
+static void ui_clean_info(void)
+{
+	move(INFO_LINE, 0);
+	clrtoeol();
+}
 
 static void die_on_signal(int dummy __attribute__((__unused__)))
 {
@@ -414,8 +456,21 @@ static struct cfdisk_menu *menu_pop(struct cfdisk *cf)
 /* returns: error: < 0, success: 0, quit: 1 */
 static int menu_cb_main(struct cfdisk *cf, int key)
 {
+	int rc;
+
+	assert(cf);
+	assert(cf->cxt);
+	assert(key);
+
 	switch (key) {
 	case 'd': /* Delete */
+		rc = fdisk_delete_partition(cf->cxt, cf->lines_idx);
+		lines_refresh(cf);
+		ui_refresh(cf);
+		if (rc)
+			ui_warning(_("Could not delete partition %zu."), cf->lines_idx + 1);
+		else
+			ui_info(_("Partition %zu has been deleted."), cf->lines_idx + 1);
 		break;
 	case 'n': /* New */
 		break;
@@ -425,8 +480,6 @@ static int menu_cb_main(struct cfdisk *cf, int key)
 		break;
 	case 'W': /* Write */
 		break;
-	default:
-	       return -EINVAL;
 	}
 	return 0;
 }
@@ -446,6 +499,16 @@ static int ui_init(struct cfdisk *cf)
 
 	cf->ui_enabled = 1;
 	initscr();
+
+	if (has_colors()) {
+		size_t i;
+
+		start_color();
+		use_default_colors();
+
+		for (i = 1; i < ARRAY_SIZE(color_pairs); i++)		/* yeah, start from 1! */
+			init_pair(i, color_pairs[i][0], color_pairs[i][1]);
+	}
 
 	cbreak();
 	noecho();
@@ -517,7 +580,7 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 		mvprintw(ln, cl, "[%s]", buf);
 		standend();
 		if (d->desc)
-			ui_print_center(LINES - 1, d->desc);
+			ui_center(LINES - 1, d->desc);
 	} else
 		mvprintw(ln, cl, "[%s]", buf);
 }
@@ -557,6 +620,8 @@ static void ui_menu_goto(struct cfdisk *cf, int where)
 		where = 0;
 	if ((size_t) where == cf->menu_idx)
 		return;
+
+	ui_clean_info();
 
 	old = cf->menu_idx;
 	cf->menu_idx = where;
@@ -655,6 +720,7 @@ static int ui_table_goto(struct cfdisk *cf, int where)
 
 	ui_draw_partition(cf, old);	/* cleanup old */
 	ui_draw_partition(cf, where);	/* draw new */
+	ui_clean_info();
 	ui_draw_menu(cf);
 	refresh();
 	return 0;
@@ -673,15 +739,15 @@ static int ui_refresh(struct cfdisk *cf)
 
 	/* header */
 	attron(A_BOLD);
-	ui_print_center(0, _("Disk: %s"), cf->cxt->dev_path);
+	ui_center(0, _("Disk: %s"), cf->cxt->dev_path);
 	attroff(A_BOLD);
-	ui_print_center(1, _("Size: %s, %ju bytes, %ju sectors"),
+	ui_center(1, _("Size: %s, %ju bytes, %ju sectors"),
 			strsz, bytes, (uintmax_t) cf->cxt->total_sectors);
 	if (fdisk_get_disklabel_id(cf->cxt, &id) == 0 && id)
-		ui_print_center(2, _("Label: %s, identifier: %s"),
+		ui_center(2, _("Label: %s, identifier: %s"),
 				cf->cxt->label->name, id);
 	else
-		ui_print_center(2, _("Label: %s"));
+		ui_center(2, _("Label: %s"));
 	free(strsz);
 
 	ui_draw_table(cf);
