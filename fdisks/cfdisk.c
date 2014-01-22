@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <signal.h>
+#include <ctype.h>
 
 #ifdef HAVE_SLANG_H
 #include <slang.h>
@@ -192,7 +193,6 @@ done:
 	return res;
 }
 
-
 static int lines_refresh(struct cfdisk *cf)
 {
 	int rc;
@@ -238,6 +238,14 @@ static int lines_refresh(struct cfdisk *cf)
 	}
 
 	return 0;
+}
+
+static struct fdisk_partition *get_current_partition(struct cfdisk *cf)
+{
+	assert(cf);
+	assert(cf->table);
+
+	return fdisk_table_get_partition(cf->table, cf->lines_idx);
 }
 
 static int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
@@ -314,7 +322,9 @@ static void die_on_signal(int dummy __attribute__((__unused__)))
 
 static void menu_update_ignore(struct cfdisk *cf)
 {
-	char *ignore = NULL;
+	char ignore[128] = { 0 };
+	int i = 0;
+	struct fdisk_partition *pa;
 	struct cfdisk_menu *m;
 	struct cfdisk_menudesc *d;
 
@@ -325,12 +335,24 @@ static void menu_update_ignore(struct cfdisk *cf)
 
 	switch (m->id) {
 	case CFDISK_MENU_MAIN:
+		pa = get_current_partition(cf);
+		if (!pa)
+			break;
+		if (fdisk_partition_is_freespace(pa)) {
+			ignore[i++] = 'd';	/* delete */
+			ignore[i++] = 't';	/* set type */
+			ignore[i++] = 'b';      /* set bootable */
+		} else
+			ignore[i++] = 'n';
+
 		break;
 	}
 
+	ignore[i] = '\0';
+
 	/* return if no change */
-	if (   (!m->ignore && (!ignore || !*ignore))
-	    || (m->ignore && ignore && strcmp(m->ignore, ignore) == 0)) {
+	if (   (!m->ignore && !*ignore)
+	    || (m->ignore && *ignore && strcmp(m->ignore, ignore) == 0)) {
 		    return;
 	}
 
@@ -510,8 +532,14 @@ static void ui_draw_menu(struct cfdisk *cf)
 
 	DBG(FRONTEND, dbgprint("ui: menu: draw start"));
 
+	for (i = MENU_START_LINE; i < (size_t) LINES - 1; i++) {
+		move(i, 0);
+		clrtoeol();
+	}
+
 	menu_update_ignore(cf);
 
+	i = 0;
 	while ((d = menu_get_menuitem(cf, i)))
 		ui_draw_menuitem(cf, d, i++);
 
@@ -552,7 +580,9 @@ static int ui_menu_action(struct cfdisk *cf, int key)
 		if (!d)
 			return 0;
 		key = d->key;
-	}
+
+	} else if (key != 'w' && key != 'W')
+		key = tolower(key);	/* case insensitive except 'W'rite */
 
 	DBG(FRONTEND, dbgprint("ui: menu action: key=%c", key));
 
