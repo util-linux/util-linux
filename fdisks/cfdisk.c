@@ -42,6 +42,11 @@
 #define TABLE_START_LINE	4
 #define MENU_START_LINE		(LINES - 5)
 
+struct cfdisk;
+typedef int (menu_callback_t)(struct cfdisk *, int);
+
+static int menu_cb_main(struct cfdisk *cf, int key);
+
 
 struct cfdisk_menudesc {
 	int		key;		/* keyboard shortcut */
@@ -55,6 +60,9 @@ struct cfdisk_menu {
 	size_t			id;
 	size_t			width;
 	size_t			nitems;
+
+	menu_callback_t		*callback;
+
 	struct cfdisk_menu	*prev;
 };
 
@@ -80,6 +88,11 @@ enum {
 static struct cfdisk_menudesc *menus[] = {
 	[CFDISK_MENU_MAIN] = menu_main
 };
+
+static menu_callback_t *menu_callbacks[] = {
+	[CFDISK_MENU_MAIN] = menu_cb_main
+};
+
 
 struct cfdisk {
 	struct fdisk_context	*cxt;	/* libfdisk context */
@@ -180,7 +193,7 @@ done:
 }
 
 
-static int lines_refresh_buffer(struct cfdisk *cf)
+static int lines_refresh(struct cfdisk *cf)
 {
 	int rc;
 	char *p;
@@ -318,17 +331,17 @@ static void menu_update_ignore(struct cfdisk *cf)
 	/* return if no change */
 	if (   (!m->ignore && (!ignore || !*ignore))
 	    || (m->ignore && ignore && strcmp(m->ignore, ignore) == 0)) {
-		    free(ignore);
 		    return;
 	}
 
 	free(m->ignore);
-	m->ignore = ignore;
+	m->ignore = xstrdup(ignore);
 	m->nitems = 0;
 
 	for (d = m->desc; d->name; d++) {
 		if (m->ignore && strchr(m->ignore, d->key))
-			m->nitems++;
+			continue;
+		m->nitems++;
 	}
 }
 
@@ -345,6 +358,7 @@ static struct cfdisk_menu *menu_push(struct cfdisk *cf, size_t id)
 	m->prev = cf->menu;
 	m->id = id;
 	m->desc = menus[id];
+	m->callback = menu_callbacks[id];
 
 	for (d = m->desc; d->name; d++) {
 		const char *name = _(d->name);
@@ -375,6 +389,25 @@ static struct cfdisk_menu *menu_pop(struct cfdisk *cf)
 	return cf->menu;
 }
 
+/* returns: error: < 0, success: 0, quit: 1 */
+static int menu_cb_main(struct cfdisk *cf, int key)
+{
+	switch (key) {
+	case 'd': /* Delete */
+		break;
+	case 'n': /* New */
+		break;
+	case 'q': /* Quit */
+		return 1;
+	case 't': /* Type */
+		break;
+	case 'W': /* Write */
+		break;
+	default:
+	       return -EINVAL;
+	}
+	return 0;
+}
 
 static int ui_init(struct cfdisk *cf)
 {
@@ -507,9 +540,28 @@ static void ui_menu_goto(struct cfdisk *cf, int where)
 	ui_draw_menuitem(cf, d, where);
 }
 
+/* returns: error: < 0, success: 0, quit: 1 */
 static int ui_menu_action(struct cfdisk *cf, int key)
 {
-	return 0;
+	assert(cf);
+	assert(cf->menu);
+	assert(cf->menu->callback);
+
+	if (key == 0) {
+		struct cfdisk_menudesc *d = menu_get_menuitem(cf, cf->menu_idx);
+		if (!d)
+			return 0;
+		key = d->key;
+	}
+
+	DBG(FRONTEND, dbgprint("ui: menu action: key=%c", key));
+
+	if (cf->menu->ignore && strchr(cf->menu->ignore, key)) {
+		DBG(FRONTEND, dbgprint("  ignore '%c'", key));
+		return 0;
+	}
+
+	return cf->menu->callback(cf, key);
 }
 
 static void ui_draw_partition(struct cfdisk *cf, size_t i)
@@ -621,10 +673,7 @@ static int ui_run(struct cfdisk *cf)
 		return rc;
 
 	do {
-		int key = getch();
-
-		if (key == 'q')
-			break;
+		int rc = 0, key = getch();
 
 		switch (key) {
 		case KEY_DOWN:
@@ -658,13 +707,17 @@ static int ui_run(struct cfdisk *cf)
 		case KEY_ENTER:
 		case '\n':
 		case '\r':
-			ui_menu_action(cf, 0);
+			rc = ui_menu_action(cf, 0);
 			break;
 		default:
-			if (ui_menu_action(cf, key) != 0)
+			rc = ui_menu_action(cf, key);
+			if (rc < 0)
 				beep();
 			break;
 		}
+
+		if (rc == 1)
+			break; /* quit */
 	} while (1);
 
 	menu_pop(cf);
@@ -700,7 +753,7 @@ int main(int argc, char *argv[])
 
 	cols_init(cf);
 
-	if (lines_refresh_buffer(cf))
+	if (lines_refresh(cf))
 		errx(EXIT_FAILURE, _("failed to read partitions"));
 
 	/* Don't use err(), warn() from this point */
