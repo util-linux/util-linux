@@ -58,8 +58,15 @@ struct cfdisk;
 typedef int (menu_callback_t)(struct cfdisk *, int);
 
 static int menu_cb_main(struct cfdisk *cf, int key);
-static int ui_refresh(struct cfdisk *cf);
+static struct cfdisk_menudesc *menu_get_menuitem(struct cfdisk *cf, size_t idx);
+static struct cfdisk_menudesc *menu_get_menuitem_by_key(struct cfdisk *cf, int key, size_t *idx);
 
+static int ui_refresh(struct cfdisk *cf);
+static void ui_warnx(const char *fmt, ...);
+static void ui_warn(const char *fmt, ...);
+static void ui_info(const char *fmt, ...);
+
+static int ui_enabled;
 
 struct cfdisk_menudesc {
 	int		key;		/* keyboard shortcut */
@@ -123,8 +130,6 @@ struct cfdisk {
 	char	**lines;	/* array with lines */
 	size_t	nlines;		/* number of lines */
 	size_t	lines_idx;		/* current line <0..N>, exclude header */
-
-	unsigned int	ui_enabled : 1;
 };
 
 static int cols_init(struct cfdisk *cf)
@@ -271,20 +276,17 @@ static int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 
 	switch(fdisk_ask_get_type(ask)) {
 	case FDISK_ASKTYPE_INFO:
-		fputs(fdisk_ask_print_get_mesg(ask), stdout);
-		fputc('\n', stdout);
+		ui_info(fdisk_ask_print_get_mesg(ask));
 		break;
 	case FDISK_ASKTYPE_WARNX:
-		fputs(fdisk_ask_print_get_mesg(ask), stderr);
-		fputc('\n', stderr);
+		ui_warnx(fdisk_ask_print_get_mesg(ask));
 		break;
 	case FDISK_ASKTYPE_WARN:
-		fputs(fdisk_ask_print_get_mesg(ask), stderr);
-		errno = fdisk_ask_print_get_errno(ask);
-		fprintf(stderr, ": %m\n");
+		ui_warn(fdisk_ask_print_get_mesg(ask));
 		break;
 	default:
-		warnx(_("internal error: unsupported dialog type %d"), fdisk_ask_get_type(ask));
+		ui_warnx(_("internal error: unsupported dialog type %d"),
+			fdisk_ask_get_type(ask));
 		return -EINVAL;
 	}
 	return rc;
@@ -293,7 +295,7 @@ static int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 
 static int ui_end(struct cfdisk *cf)
 {
-	if (cf && !cf->ui_enabled)
+	if (cf && !ui_enabled)
 		return -EINVAL;
 
 #if defined(HAVE_SLCURSES_H) || defined(HAVE_SLANG_SLCURSES_H)
@@ -334,19 +336,41 @@ static void ui_center(int line, const char *fmt, ...)
 	va_end(ap);
 }
 
-static void ui_warning(const char *fmt, ...)
+static void ui_warnx(const char *fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
-	ui_vprint_center(INFO_LINE, COLOR_PAIR(CFDISK_CL_WARNING), fmt, ap);
+	if (ui_enabled)
+		ui_vprint_center(INFO_LINE, COLOR_PAIR(CFDISK_CL_WARNING), fmt, ap);
+	else
+		vfprintf(stderr, fmt, ap);
 	va_end(ap);
+}
+
+static void ui_warn(const char *fmt, ...)
+{
+	char *fmt_m;
+	va_list ap;
+
+	xasprintf(&fmt_m, "%s: %m", fmt);
+
+	va_start(ap, fmt);
+	if (ui_enabled)
+		ui_vprint_center(INFO_LINE, COLOR_PAIR(CFDISK_CL_WARNING), fmt_m, ap);
+	else
+		vfprintf(stderr, fmt_m, ap);
+	va_end(ap);
+	free(fmt_m);
 }
 
 static void ui_info(const char *fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
-	ui_vprint_center(INFO_LINE, A_BOLD, fmt, ap);
+	if (ui_enabled)
+		ui_vprint_center(INFO_LINE, A_BOLD, fmt, ap);
+	else
+		vfprintf(stdout, fmt, ap);
 	va_end(ap);
 }
 
@@ -368,11 +392,14 @@ static void menu_update_ignore(struct cfdisk *cf)
 	int i = 0;
 	struct fdisk_partition *pa;
 	struct cfdisk_menu *m;
-	struct cfdisk_menudesc *d;
+	struct cfdisk_menudesc *d, *org;
+	size_t idx;
 
 	assert(cf);
 
 	m = cf->menu;
+	org = menu_get_menuitem(cf, cf->menu_idx);
+
 	DBG(FRONTEND, dbgprint("menu: update menu ignored keys"));
 
 	switch (m->id) {
@@ -384,8 +411,12 @@ static void menu_update_ignore(struct cfdisk *cf)
 			ignore[i++] = 'd';	/* delete */
 			ignore[i++] = 't';	/* set type */
 			ignore[i++] = 'b';      /* set bootable */
-		} else
+		} else {
 			ignore[i++] = 'n';
+			if (!fdisk_is_disklabel(cf->cxt, DOS) &&
+			    !fdisk_is_disklabel(cf->cxt, SGI))
+				ignore[i++] = 'b';
+		}
 
 		break;
 	}
@@ -407,6 +438,12 @@ static void menu_update_ignore(struct cfdisk *cf)
 			continue;
 		m->nitems++;
 	}
+
+	/* refresh menu index to be at the same menuitem or go to the first */
+	if (org && menu_get_menuitem_by_key(cf, org->key, &idx))
+		cf->menu_idx = idx;
+	else
+		cf->menu_idx = 0;
 }
 
 static struct cfdisk_menu *menu_push(struct cfdisk *cf, size_t id)
@@ -456,21 +493,34 @@ static struct cfdisk_menu *menu_pop(struct cfdisk *cf)
 /* returns: error: < 0, success: 0, quit: 1 */
 static int menu_cb_main(struct cfdisk *cf, int key)
 {
-	int rc;
+	size_t n;
+	int ref = 0;
+	const char *info = NULL, *warn = NULL;
 
 	assert(cf);
 	assert(cf->cxt);
 	assert(key);
 
+	n = cf->lines_idx;	/* the current partition */
+
 	switch (key) {
+	case 'b': /* Bootable flag */
+	{
+		int fl = fdisk_is_disklabel(cf->cxt, DOS) ? DOS_FLAG_ACTIVE :
+			 fdisk_is_disklabel(cf->cxt, SGI) ? SGI_FLAG_BOOT : 0;
+
+		if (fl && fdisk_partition_toggle_flag(cf->cxt, n, fl))
+			warn = _("Could not toggle the flag.");
+		else if (fl)
+			ref = 1;
+		break;
+	}
 	case 'd': /* Delete */
-		rc = fdisk_delete_partition(cf->cxt, cf->lines_idx);
-		lines_refresh(cf);
-		ui_refresh(cf);
-		if (rc)
-			ui_warning(_("Could not delete partition %zu."), cf->lines_idx + 1);
+		if (fdisk_delete_partition(cf->cxt, n) != 0)
+			warn = _("Could not delete partition %zu.");
 		else
-			ui_info(_("Partition %zu has been deleted."), cf->lines_idx + 1);
+			info = _("Partition %zu has been deleted.");
+		ref = 1;
 		break;
 	case 'n': /* New */
 		break;
@@ -481,6 +531,16 @@ static int menu_cb_main(struct cfdisk *cf, int key)
 	case 'W': /* Write */
 		break;
 	}
+
+	if (ref) {
+		lines_refresh(cf);
+		ui_refresh(cf);
+	}
+	if (warn)
+		ui_warnx(warn, n);
+	else if (info)
+		ui_info(info, n);
+
 	return 0;
 }
 
@@ -497,7 +557,7 @@ static int ui_init(struct cfdisk *cf)
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGTERM, &sa, NULL);
 
-	cf->ui_enabled = 1;
+	ui_enabled = 1;
 	initscr();
 
 	if (has_colors()) {
@@ -552,6 +612,22 @@ static struct cfdisk_menudesc *menu_get_menuitem(struct cfdisk *cf, size_t idx)
 			continue;
 		if (i++ == idx)
 			return d;
+	}
+
+	return NULL;
+}
+
+static struct cfdisk_menudesc *menu_get_menuitem_by_key(struct cfdisk *cf,
+							int key, size_t *idx)
+{
+	struct cfdisk_menudesc *d;
+
+	for (*idx = 0, d = cf->menu->desc; d->name; d++) {
+		if (cf->menu->ignore && strchr(cf->menu->ignore, d->key))
+			continue;
+		if (key == d->key)
+			return d;
+		(*idx)++;
 	}
 
 	return NULL;
@@ -734,7 +810,7 @@ static int ui_refresh(struct cfdisk *cf)
 				| SIZE_SUFFIX_3LETTER, bytes);
 	erase();
 
-	if (!cf->ui_enabled)
+	if (!ui_enabled)
 		return -EINVAL;
 
 	/* header */
