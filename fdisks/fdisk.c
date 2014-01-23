@@ -397,7 +397,7 @@ enum {
 int main(int argc, char **argv)
 {
 	int i, c, act = ACT_FDISK;
-	int colormode = UL_COLORMODE_AUTO;
+	int colormode = UL_COLORMODE_UNDEF;
 	struct fdisk_context *cxt;
 
 	setlocale(LC_ALL, "");
@@ -500,7 +500,7 @@ int main(int argc, char **argv)
 		warnx(_("The device properties (sector size and geometry) should"
 			" be used with one specified device only."));
 
-	colors_init(colormode);
+	colors_init(colormode, "fdisk");
 
 	switch (act) {
 	case ACT_LIST:

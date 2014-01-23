@@ -60,7 +60,7 @@ int
 parse_args(int argc, char **argv, struct hexdump *hex)
 {
 	int ch;
-	int colormode = UL_COLORMODE_NEVER;
+	int colormode = UL_COLORMODE_UNDEF;
 	char *hex_offt = "\"%07.7_Ax\n\"";
 
 
@@ -145,7 +145,7 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 		add_fmt(hex_offt, hex);
 		add_fmt("\"%07.7_ax \" 8/2 \"%04x \" \"\\n\"", hex);
 	}
-	colors_init (colormode);
+	colors_init (colormode, "hexdump");
 	return optind;
 }
 

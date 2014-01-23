@@ -266,7 +266,7 @@ int main(int argc, char **argv)
 	static struct cal_control ctl = {
 		.weekstart = SUNDAY,
 		.num_months = NUM_MONTHS,
-		.colormode = UL_COLORMODE_AUTO,
+		.colormode = UL_COLORMODE_UNDEF,
 		.weektype = WEEK_NUM_DISABLED,
 		.day_width = DAY_LEN,
 		.gutter_width = 2,
@@ -469,7 +469,7 @@ int main(int argc, char **argv)
 
 	headers_init(&ctl);
 
-	if (!colors_init(ctl.colormode)) {
+	if (!colors_init(ctl.colormode, "cal")) {
 		ctl.req.day = 0;
 		ctl.weektype &= ~WEEK_NUM_MASK;
 	}

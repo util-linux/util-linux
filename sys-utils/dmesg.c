@@ -1187,7 +1187,7 @@ int main(int argc, char *argv[])
 		.kmsg = -1,
 		.time_fmt = DMESG_TIMEFTM_TIME,
 	};
-	int colormode = UL_COLORMODE_NEVER;
+	int colormode = UL_COLORMODE_UNDEF;
 	enum {
 		OPT_TIME_FORMAT = CHAR_MAX + 1,
 	};
@@ -1377,7 +1377,7 @@ int main(int argc, char *argv[])
 		}
 
 
-	ctl.color = colors_init(colormode) ? 1 : 0;
+	ctl.color = colors_init(colormode, "dmesg") ? 1 : 0;
 	if (ctl.follow)
 		nopager = 1;
 	ctl.pager = nopager ? 0 : ctl.pager;

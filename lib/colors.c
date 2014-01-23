@@ -6,14 +6,33 @@
  */
 #include <c.h>
 #include <assert.h>
+#include <sys/stat.h>
 
 #include "colors.h"
+#include "xalloc.h"
+#include "pathnames.h"
 
 static int ul_color_term_ok;
 
-int colors_init(int mode)
+int colors_init(int mode, const char *name)
 {
 	switch (mode) {
+	case UL_COLORMODE_UNDEF:
+		if (access(_PATH_TERMCOLORS_DISABLE, F_OK) == 0) {
+			ul_color_term_ok = 0;
+			break;
+		} else {
+			char path[PATH_MAX];
+
+			snprintf(path, sizeof(path), "%s%s%s",
+				_PATH_TERMCOLORS_DIR, name, ".disable");
+
+			if (access(path, F_OK) == 0) {
+				ul_color_term_ok = 0;
+				break;
+			}
+		}
+		/* fallthrough */
 	case UL_COLORMODE_AUTO:
 		ul_color_term_ok = isatty(STDOUT_FILENO);
 		break;
@@ -50,7 +69,8 @@ int colormode_from_string(const char *str)
 	static const char *modes[] = {
 		[UL_COLORMODE_AUTO]   = "auto",
 		[UL_COLORMODE_NEVER]  = "never",
-		[UL_COLORMODE_ALWAYS] = "always"
+		[UL_COLORMODE_ALWAYS] = "always",
+		[UL_COLORMODE_UNDEF] = ""
 	};
 
 	if (!str || !*str)
@@ -144,8 +164,9 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	colors_init(mode);
-	color_enable(colorscheme_from_string(scheme));
+	colors_init(mode, program_invocation_short_name);
+	color_enable(UL_COLOR_RED);
+
 	printf("Hello World!");
 	color_disable();
 	return EXIT_SUCCESS;
