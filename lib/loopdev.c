@@ -291,9 +291,8 @@ int loopcxt_get_fd(struct loopdev_cxt *lc)
 	if (lc->fd < 0) {
 		lc->mode = lc->flags & LOOPDEV_FL_RDWR ? O_RDWR : O_RDONLY;
 		lc->fd = open(lc->device, lc->mode | O_CLOEXEC);
-		DBG(lc, loopdev_debug("open %s [%s]: %s", lc->device,
-				lc->flags & LOOPDEV_FL_RDWR ? "rw" : "ro",
-				lc->fd < 0 ? "failed" : "ok"));
+		DBG(lc, loopdev_debug("open %s [%s]: %m", lc->device,
+				lc->flags & LOOPDEV_FL_RDWR ? "rw" : "ro"));
 	}
 	return lc->fd;
 }
@@ -1182,7 +1181,7 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
  */
 int loopcxt_setup_device(struct loopdev_cxt *lc)
 {
-	int file_fd, dev_fd, mode = O_RDWR, rc = -1;
+	int file_fd, dev_fd, mode = O_RDWR, rc = -1, cnt = 0;
 
 	if (!lc || !*lc->device || !lc->filename)
 		return -EINVAL;
@@ -1222,7 +1221,19 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 		lc->flags &= ~LOOPDEV_FL_RDONLY;
 	}
 
-	dev_fd = loopcxt_get_fd(lc);
+	do {
+		errno = 0;
+		dev_fd = loopcxt_get_fd(lc);
+		if (dev_fd >= 0 || lc->control_ok == 0)
+			break;
+		if (errno != EACCES && errno != ENOENT)
+			break;
+		/* We have permissions to open /dev/loop-control, but open
+		 * /dev/loopN failed with EACCES, it's probably because udevd
+		 * does not applied chown yet. Let's wait a moment. */
+		xusleep(25000);
+	} while (cnt++ < 16);
+
 	if (dev_fd < 0) {
 		rc = -errno;
 		goto err;
@@ -1328,6 +1339,7 @@ int loopcxt_add_device(struct loopdev_cxt *lc)
 		rc = ioctl(ctl, LOOP_CTL_ADD, nr);
 		close(ctl);
 	}
+	lc->control_ok = rc >= 0 ? 1 : 0;
 done:
 	DBG(lc, loopdev_debug("add_device done [rc=%d]", rc));
 	return rc;
@@ -1356,6 +1368,7 @@ int loopcxt_find_unused(struct loopdev_cxt *lc)
 
 			rc = loopiter_set_device(lc, name);
 		}
+		lc->control_ok = ctl >= 0 && rc == 0 ? 1 : 0;
 		if (ctl >= 0)
 			close(ctl);
 		DBG(lc, loopdev_debug("find_unused by loop-control [rc=%d]", rc));

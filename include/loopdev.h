@@ -99,6 +99,7 @@ struct loopdev_cxt {
 	unsigned int	extra_check:1;	/* unusual stuff for iterator */
 	unsigned int	debug:1;	/* debug mode ON/OFF */
 	unsigned int	info_failed:1;	/* LOOP_GET_STATUS ioctl failed */
+	unsigned int    control_ok:1;	/* /dev/loop-control success */
 
 	struct sysfs_cxt	sysfs;	/* pointer to /sys/dev/block/<maj:min>/ */
 	struct loop_info64	info;	/* for GET/SET ioctl */
