@@ -538,12 +538,12 @@ static void do_apparmor_profile(const char *label)
 	if (access(_PATH_SYS_APPARMOR, F_OK) != 0)
 		errx(SETPRIV_EXIT_PRIVERR, _("AppArmor is not running"));
 
-	f = fopen(_PATH_PROC_ATTR_EXEC, "wx");
+	f = fopen(_PATH_PROC_ATTR_EXEC, "r+");
 	if (!f)
 		err(SETPRIV_EXIT_PRIVERR,
 		    _("cannot open %s"), _PATH_PROC_ATTR_EXEC);
 
-	fprintf(f, "changeprofile %s", label);
+	fprintf(f, "exec %s", label);
 
 	if (close_stream(f) != 0)
 		err(SETPRIV_EXIT_PRIVERR,
