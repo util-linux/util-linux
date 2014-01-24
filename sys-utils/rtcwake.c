@@ -560,7 +560,7 @@ int main(int argc, char **argv)
 				program_invocation_short_name, suspend, devname,
 				ctime(&alarm));
 		fflush(stdout);
-		usleep(10 * 1000);
+		xusleep(10 * 1000);
 	}
 
 	if (strcmp(suspend, "no") == 0) {

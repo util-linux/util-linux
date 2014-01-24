@@ -590,7 +590,7 @@ static char *getpasswd(struct console *con)
 	while (cp->eol == '\0') {
 		if (read(fd, &c, 1) < 1) {
 			if (errno == EINTR || errno == EAGAIN) {
-				usleep(1000);
+				xusleep(250000);
 				continue;
 			}
 			ret = (char*)0;
@@ -993,7 +993,7 @@ int main(int argc, char **argv)
 			if (*usemask & (1<<con->id))
 				continue;
 			kill(con->pid, SIGHUP);
-			usleep(5000);
+			usleep(50000);
 			kill(con->pid, SIGKILL);
 		}
 	}

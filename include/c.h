@@ -253,20 +253,27 @@ static inline size_t get_hostname_max(void)
 	return 64;
 }
 
-#ifndef HAVE_USLEEP
 /*
- * This function is marked obsolete in POSIX.1-2001 and removed in
- * POSIX.1-2008. It is replaced with nanosleep().
+ * The usleep function is marked obsolete in POSIX.1-2001 and removed in
+ * POSIX.1-2008. This is replaced with nanosleep() that provides more
+ * advantages (like no interaction with signals and other timer functions.
  */
-static inline int usleep(useconds_t usec)
+#include <time.h>
+
+static inline int xusleep(useconds_t usec)
 {
+#ifdef HAVE_NANOSLEEP
 	struct timespec waittime = {
 		.tv_sec   =  usec / 1000000L,
 		.tv_nsec  = (usec % 1000000L) * 1000
 	};
 	return nanosleep(&waittime, NULL);
-}
+#elif defined(HAVE_USLEEP)
+	return usleep(usec);
+#else
+# error	"System with usleep() or nanosleep() required!"
 #endif
+}
 
 /*
  * Constant strings for usage() functions. For more info see

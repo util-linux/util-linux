@@ -133,7 +133,7 @@ watch_file(const char *filename, off_t *size)
 {
 	do {
 		roll_file(filename, size);
-		usleep(250000);
+		xusleep(250000);
 	} while(1);
 }
 

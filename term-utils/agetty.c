@@ -1589,7 +1589,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 				/* The terminal could be open with O_NONBLOCK when
 				 * -L (force CLOCAL) is specified...  */
 				if (errno == EINTR || errno == EAGAIN) {
-					usleep(250000);
+					xusleep(250000);
 					continue;
 				}
 				switch (errno) {

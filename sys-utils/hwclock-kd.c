@@ -66,7 +66,7 @@ static int synchronize_to_clock_tick_kd(void)
 		 *  A2000 RTCs and simply hangs after some time. Inserting a
 		 *  sleep helps."
 		 */
-		usleep(1);
+		xusleep(1);
 
 		if (ioctl(con_fd, KDGHWCLK, &nowtime) == -1) {
 			warn(_("KDGHWCLK ioctl to read time failed in loop"));

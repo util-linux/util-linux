@@ -650,7 +650,7 @@ int test_lock(struct libmnt_test *ts, int argc, char *argv[])
 		if (synctime && synctime - tv.tv_sec > 1) {
 			usecs = ((synctime - tv.tv_sec) * 1000000UL) -
 						(1000000UL - tv.tv_usec);
-			usleep(usecs);
+			xusleep(usecs);
 		}
 	}
 
@@ -676,7 +676,7 @@ int test_lock(struct libmnt_test *ts, int argc, char *argv[])
 		 * concurrent processes happy.
 		 */
 		if (synctime)
-			usleep(25000);
+			xusleep(25000);
 	}
 
 	return 0;
