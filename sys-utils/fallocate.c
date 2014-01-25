@@ -61,8 +61,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -n, --keep-size     don't modify the length of the file\n"
 		" -p, --punch-hole    punch holes in the file\n"
-		" -o, --offset <num>  offset of the allocation, in bytes\n"
-		" -l, --length <num>  length of the allocation, in bytes\n"), out);
+		" -o, --offset <num>  offset of the (de)allocation, in bytes\n"
+		" -l, --length <num>  length of the (de)allocation, in bytes\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);

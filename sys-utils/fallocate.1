@@ -1,7 +1,7 @@
 .\" -*- nroff -*-
 .TH FALLOCATE 1 "September 2011" "util-linux" "User Commands"
 .SH NAME
-fallocate \- preallocate space to a file
+fallocate \- preallocate or deallocate space to a file
 .SH SYNOPSIS
 .B fallocate
 .RB [ \-n ]
@@ -13,10 +13,11 @@ fallocate \- preallocate space to a file
 .I filename
 .SH DESCRIPTION
 .B fallocate
-is used to preallocate blocks to a file.  For filesystems which support the
-fallocate system call, this is done quickly by allocating blocks and marking
-them as uninitialized, requiring no IO to the data blocks.  This is much faster
-than creating a file by filling it with zeros.
+is used to manipulate the allocated disk space for a file, either to deallocate
+or preallocate it. For filesystems which support the fallocate system call,
+preallocation is done quickly by allocating blocks and marking them as
+uninitialized, requiring no IO to the data blocks. This is much faster than
+creating a file by filling it with zeros.
 .PP
 As of the Linux Kernel v2.6.31, the fallocate system call is supported by the
 btrfs, ext4, ocfs2, and xfs filesystems.
