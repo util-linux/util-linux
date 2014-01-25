@@ -82,6 +82,30 @@ static loff_t cvtnum(char *s)
 	return x;
 }
 
+static int xfallocate(int fd, int mode, off_t offset, off_t length)
+{
+	int error;
+
+#ifdef HAVE_FALLOCATE
+	error = fallocate(fd, mode, offset, length);
+#else
+	error = syscall(SYS_fallocate, fd, mode, offset, length);
+#endif
+	/*
+	 * EOPNOTSUPP: The FALLOC_FL_KEEP_SIZE is unsupported
+	 * ENOSYS: The filesystem does not support sys_fallocate
+	 */
+	if (error < 0) {
+		if ((mode & FALLOC_FL_KEEP_SIZE) && errno == EOPNOTSUPP) {
+			fputs(_("keep size mode (-n option) unsupported\n"),
+			      stderr);
+		} else {
+			fputs(_("fallocate failed\n"), stderr);
+		}
+	}
+	return error;
+}
+
 int main(int argc, char **argv)
 {
 	char	*fname;
@@ -153,21 +177,10 @@ int main(int argc, char **argv)
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), fname);
 
-#ifdef HAVE_FALLOCATE
-	error = fallocate(fd, mode, offset, length);
-#else
-	error = syscall(SYS_fallocate, fd, mode, offset, length);
-#endif
-	/*
-	 * EOPNOTSUPP: The FALLOC_FL_KEEP_SIZE is unsupported
-	 * ENOSYS: The filesystem does not support sys_fallocate
-	 */
-	if (error < 0) {
-		if ((mode & FALLOC_FL_KEEP_SIZE) && errno == EOPNOTSUPP)
-			errx(EXIT_FAILURE,
-				_("keep size mode (-n option) unsupported"));
-		err(EXIT_FAILURE, _("%s: fallocate failed"), fname);
-	}
+	error = xfallocate(fd, mode, offset, length);
+
+	if (error < 0)
+		exit(EXIT_FAILURE);
 
 	if (close_fd(fd) != 0)
 		err(EXIT_FAILURE, _("write failed: %s"), fname);
