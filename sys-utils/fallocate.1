@@ -11,6 +11,12 @@ fallocate \- preallocate or deallocate space to a file
 .B \-l
 .IR length
 .I filename
+.PP
+.B fallocate
+.RB \-d
+.RB [ \-l
+.IR length ]
+.I filename
 .SH DESCRIPTION
 .B fallocate
 is used to manipulate the allocated disk space for a file, either to deallocate
@@ -20,7 +26,8 @@ uninitialized, requiring no IO to the data blocks. This is much faster than
 creating a file by filling it with zeros.
 .PP
 As of the Linux Kernel v2.6.31, the fallocate system call is supported by the
-btrfs, ext4, ocfs2, and xfs filesystems.
+btrfs, ext4, ocfs2, and xfs filesystems. Support for options needed to run with
+\fI\-\-punch-hole\fR or \fI\-\-detect-holes\fR was added in Linux 2.6.38.
 .PP
 The exit code returned by
 .B fallocate
@@ -36,6 +43,16 @@ Do not modify the apparent length of the file.  This may effectively allocate
 blocks past EOF, which can be removed with a truncate.
 .IP "\fB\-p, \-\-punch-hole\fP"
 Punch holes in the file, the range should not exceed the length of the file.
+.IP "\fB\-d, \-\-dig-holes\fP"
+Detect and dig holes of, at least, \fIlength\fR size. If \fIlength\fR is not
+specified, it defaults to 32k. Makes the file sparse in-place, without using
+extra disk space. You can think of this as doing a "\fBcp --sparse\fP" and
+renaming the dest file as the original, without the need for extra disk space.
+.PP
+.IP
+Note that too small values for \fIlength\fR might be ignored. And too big values
+might use lot of RAM and not detect many holes. Also, when using this option,
+\fI\-\-keep-size\fP is implied.
 .IP "\fB\-o, \-\-offset\fP \fIoffset\fP
 Specifies the beginning offset of the allocation, in bytes.
 .IP "\fB\-l, \-\-length\fP \fIlength\fP

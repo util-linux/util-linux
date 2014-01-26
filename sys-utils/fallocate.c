@@ -23,6 +23,7 @@
  */
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -31,6 +32,7 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <limits.h>
+#include <string.h>
 
 #ifndef HAVE_FALLOCATE
 # include <sys/syscall.h>
@@ -53,6 +55,7 @@
 #include "strutils.h"
 #include "c.h"
 #include "closestream.h"
+#include "xalloc.h"
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -62,6 +65,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -n, --keep-size     don't modify the length of the file\n"
 		" -p, --punch-hole    punch holes in the file\n"
+		" -d, --dig-holes     detect and dig holes\n"
 		" -o, --offset <num>  offset of the (de)allocation, in bytes\n"
 		" -l, --length <num>  length of the (de)allocation, in bytes\n"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -82,7 +86,7 @@ static loff_t cvtnum(char *s)
 	return x;
 }
 
-static int xfallocate(int fd, int mode, off_t offset, off_t length)
+static void xfallocate(int fd, int mode, off_t offset, off_t length)
 {
 	int error;
 
@@ -96,34 +100,74 @@ static int xfallocate(int fd, int mode, off_t offset, off_t length)
 	 * ENOSYS: The filesystem does not support sys_fallocate
 	 */
 	if (error < 0) {
-		if ((mode & FALLOC_FL_KEEP_SIZE) && errno == EOPNOTSUPP) {
-			fputs(_("keep size mode (-n option) unsupported\n"),
-			      stderr);
-		} else {
-			fputs(_("fallocate failed\n"), stderr);
-		}
+		if ((mode & FALLOC_FL_KEEP_SIZE) && errno == EOPNOTSUPP)
+			errx(EXIT_FAILURE, _("keep size mode (-n option) unsupported"));
+		err(EXIT_FAILURE, _("fallocate failed"));
 	}
-	return error;
+}
+
+/*
+ * Look for chunks of '\0's with size hole_size and when we find them, dig a
+ * hole on that offset with that size
+ */
+static void detect_holes(int fd, size_t hole_size)
+{
+	void *zeros;
+	ssize_t bufsz = hole_size;
+	void *buf;
+	off_t offset, end;
+
+	/* Create a buffer of '\0's to compare against */
+	/* XXX: Use mmap() with MAP_PRIVATE so Linux can avoid this allocation */
+	zeros = mmap(NULL, hole_size, PROT_READ, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+	if (zeros == MAP_FAILED)
+		err(EXIT_FAILURE, _("mmap failed"));
+
+	/* buffer to read the file */
+	buf = xmalloc(bufsz);
+
+	end = lseek(fd, 0, SEEK_END);
+	if (end < 0)
+		err(EXIT_FAILURE, _("seek failed"));
+
+	for (offset = 0; offset + (ssize_t) hole_size <= end; offset += bufsz) {
+		/* Try to read hole_size bytes */
+		bufsz = pread(fd, buf, hole_size, offset);
+		if (bufsz == -1)
+			err(EXIT_FAILURE, _("read failed"));
+
+		/* Always use bufsz, as we may read less than hole_size bytes */
+		if (memcmp(buf, zeros, bufsz))
+			continue;
+
+		xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
+				offset, bufsz);
+	}
+
+	if (munmap(zeros, hole_size))
+		err(EXIT_FAILURE, _("munmap failed"));
+	free(buf);
 }
 
 int main(int argc, char **argv)
 {
 	char	*fname;
 	int	c;
-	int	error;
 	int	fd;
 	int	mode = 0;
+	int	dig_holes = 0;
 	loff_t	length = -2LL;
 	loff_t	offset = 0;
 
 	static const struct option longopts[] = {
-	    { "help",      0, 0, 'h' },
-	    { "version",   0, 0, 'V' },
-	    { "keep-size", 0, 0, 'n' },
+	    { "help",       0, 0, 'h' },
+	    { "version",    0, 0, 'V' },
+	    { "keep-size",  0, 0, 'n' },
 	    { "punch-hole", 0, 0, 'p' },
-	    { "offset",    1, 0, 'o' },
-	    { "length",    1, 0, 'l' },
-	    { NULL,        0, 0, 0 }
+	    { "dig-holes",  0, 0, 'd' },
+	    { "offset",     1, 0, 'o' },
+	    { "length",     1, 0, 'l' },
+	    { NULL,         0, 0, 0 }
 	};
 
 	setlocale(LC_ALL, "");
@@ -131,7 +175,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "hVnpl:o:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hVnpdl:o:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 			usage(stdout);
@@ -145,6 +189,9 @@ int main(int argc, char **argv)
 		case 'n':
 			mode |= FALLOC_FL_KEEP_SIZE;
 			break;
+		case 'd':
+			dig_holes = 1;
+			break;
 		case 'l':
 			length = cvtnum(optarg);
 			break;
@@ -156,8 +203,13 @@ int main(int argc, char **argv)
 			break;
 		}
 	}
-
-	if (length == -2LL)
+	if (dig_holes && mode != 0)
+		errx(EXIT_FAILURE, _("Can't use -p or -n with --dig-holes"));
+	if (dig_holes && offset != 0)
+		errx(EXIT_FAILURE, _("Can't use -o with --dig-holes"));
+	if (length == -2LL && dig_holes)
+		length = 32 * 1024;
+	if (length == -2LL && !dig_holes)
 		errx(EXIT_FAILURE, _("no length argument specified"));
 	if (length <= 0)
 		errx(EXIT_FAILURE, _("invalid length value specified"));
@@ -173,16 +225,17 @@ int main(int argc, char **argv)
 		usage(stderr);
 	}
 
-	fd = open(fname, O_WRONLY|O_CREAT, 0644);
+	fd = open(fname, O_RDWR|O_CREAT, 0644);
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), fname);
 
-	error = xfallocate(fd, mode, offset, length);
-
-	if (error < 0)
-		exit(EXIT_FAILURE);
+	if (dig_holes)
+		detect_holes(fd, length);
+	else
+		xfallocate(fd, mode, offset, length);
 
 	if (close_fd(fd) != 0)
 		err(EXIT_FAILURE, _("write failed: %s"), fname);
+
 	return EXIT_SUCCESS;
 }
