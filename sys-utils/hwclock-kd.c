@@ -143,7 +143,7 @@ static int get_permissions_kd(void)
 }
 
 static struct clock_ops kd = {
-	"KDGHWCLK interface to m68k clock",
+	N_("Using the KDGHWCLK interface to m68k clock."),
 	get_permissions_kd,
 	read_hardware_clock_kd,
 	set_hardware_clock_kd,

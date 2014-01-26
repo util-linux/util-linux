@@ -649,7 +649,7 @@ static int get_permissions_cmos(void)
 }
 
 static struct clock_ops cmos = {
-	"direct I/O instructions to ISA clock",
+	N_("Using direct I/O instructions to ISA clock."),
 	get_permissions_cmos,
 	read_hardware_clock_cmos,
 	set_hardware_clock_cmos,

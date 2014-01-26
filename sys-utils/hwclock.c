@@ -1140,7 +1140,7 @@ static void determine_clock_access_method(const bool user_requests_ISA)
 
 	if (debug) {
 		if (ur)
-			printf(_("Using %s.\n"), ur->interface_name);
+			puts(_(ur->interface_name));
 		else
 			printf(_("No usable clock interface found.\n"));
 	}
