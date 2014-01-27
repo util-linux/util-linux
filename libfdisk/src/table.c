@@ -317,7 +317,7 @@ int fdisk_get_table(struct fdisk_context *cxt, struct fdisk_table **tb)
  * @cxt: fdisk context
  * @cols: array with wanted FDISK_COL_* columns
  * @ncols: number of items in the cols array
- * @data: returns table as a newlly allocated string
+ * @data: returns table as a newlly allocated string or NULL for empty PT
  *
  * If no @cols are specified then the default is printed (see
  * fdisk_get_columns() for the default columns).
@@ -341,6 +341,10 @@ int fdisk_table_to_string(struct fdisk_table *tb,
 		return -EINVAL;
 
 	DBG(TAB, dbgprint("generate string"));
+	*data = NULL;
+
+	if (!fdisk_table_get_nents(tb))
+		return 0;
 
 	if (!cols || !ncols) {
 		rc = fdisk_get_columns(cxt, 0, &cols, &ncols);
@@ -387,7 +391,6 @@ int fdisk_table_to_string(struct fdisk_table *tb,
 	}
 
 	rc = 0;
-	*data = NULL;
 	if (!tt_is_empty(tt))
 		rc = tt_print_table_to_string(tt, data);
 	else
