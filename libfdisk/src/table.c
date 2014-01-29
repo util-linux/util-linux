@@ -192,8 +192,8 @@ int fdisk_table_add_partition(struct fdisk_table *tb, struct fdisk_partition *pa
 	list_add_tail(&pa->parts, &tb->parts);
 	tb->nents++;
 
-	DBG(TAB, dbgprint("add entry %p [start=%ju, size=%ju, freespace=%s]",
-				pa, pa->start, pa->size,
+	DBG(TAB, dbgprint("add entry %p [start=%ju, end=%ju, size=%ju, freespace=%s]",
+				pa, pa->start, pa->end, pa->size,
 				pa->freespace ? "yes" : "no"));
 	return 0;
 }
@@ -229,6 +229,7 @@ int fdisk_table_remove_partition(struct fdisk_table *tb, struct fdisk_partition 
 }
 
 static int fdisk_table_add_freespace(
+			struct fdisk_context *cxt,
 			struct fdisk_table *tb,
 			uint64_t start,
 			uint64_t end)
@@ -243,7 +244,7 @@ static int fdisk_table_add_freespace(
 
 	pa->freespace = 1;
 
-	pa->start = start;
+	pa->start = fdisk_align_lba_in_range(cxt, start, start, end);
 	pa->end = end;
 	pa->size = pa->end - pa->start + 1ULL;
 
@@ -290,7 +291,7 @@ int fdisk_get_table(struct fdisk_context *cxt, struct fdisk_table **tb)
 		/* add free-space (before partition) to the list */
 		if (fdisk_context_display_freespace(cxt) &&
 		    last + grain < pa->start) {
-			fdisk_table_add_freespace(*tb,
+			fdisk_table_add_freespace(cxt, *tb,
 				last + (last > cxt->first_lba ? 1 : 0),
 				pa->start - 1);
 		}
@@ -303,9 +304,9 @@ int fdisk_get_table(struct fdisk_context *cxt, struct fdisk_table **tb)
 	/* add free-space (behind last partition) to the list */
 	if (fdisk_context_display_freespace(cxt) &&
 	    last + grain < cxt->total_sectors - 1) {
-		fdisk_table_add_freespace(*tb,
+		fdisk_table_add_freespace(cxt, *tb,
 			last + (last > cxt->first_lba ? 1 : 0),
-			cxt->total_sectors - 1);
+			cxt->last_lba);
 	}
 
 	return 0;
