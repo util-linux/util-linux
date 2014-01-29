@@ -78,7 +78,7 @@ int fdisk_partition_set_end(struct fdisk_partition *pa, uint64_t off, int isrel)
 
 uint64_t fdisk_partition_get_end(struct fdisk_partition *pa)
 {
-	return pa ? pa->start : 0;
+	return pa ? pa->end : 0;
 }
 
 
@@ -160,6 +160,30 @@ int fdisk_partition_set_uuid(struct fdisk_partition *pa, const char *uuid)
 	return 0;
 }
 
+int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int enable)
+{
+	if (!pa)
+		return -EINVAL;
+	pa->partno_follow_default = enable ? 1 : 0;
+	return 0;
+}
+
+int fdisk_partition_start_follow_default(struct fdisk_partition *pa, int enable)
+{
+	if (!pa)
+		return -EINVAL;
+	pa->start_follow_default = enable ? 1 : 0;
+	return 0;
+}
+
+int fdisk_partition_end_follow_default(struct fdisk_partition *pa, int enable)
+{
+	if (!pa)
+		return -EINVAL;
+	pa->end_follow_default = enable ? 1 : 0;
+	return 0;
+}
+
 const char *fdisk_partition_get_uuid(struct fdisk_partition *pa)
 {
 	return pa ? pa->uuid : NULL;
@@ -205,13 +229,20 @@ int fdisk_partition_next_partno(
 	if (pa && pa->partno_follow_default) {
 		size_t i;
 
+		DBG(LABEL, dbgprint("next partno (follow default)"));
+
 		for (i = 0; i < cxt->label->nparts_max; i++) {
 			if (!fdisk_is_partition_used(cxt, i)) {
 				*n = i;
-				break;
+				return 0;
 			}
 		}
+		return -ERANGE;
+
 	} else if (pa && pa->partno != FDISK_EMPTY_PARTNO) {
+
+		DBG(LABEL, dbgprint("next partno (specified=%zu)", pa->partno));
+
 		if (pa->partno >= cxt->label->nparts_max)
 			return -ERANGE;
 		*n = pa->partno;
@@ -420,6 +451,8 @@ int fdisk_is_partition_used(struct fdisk_context *cxt, size_t n)
 int fdisk_add_partition(struct fdisk_context *cxt,
 			struct fdisk_partition *pa)
 {
+	int rc;
+
 	assert(cxt);
 	assert(cxt->label);
 
@@ -430,9 +463,19 @@ int fdisk_add_partition(struct fdisk_context *cxt,
 	if (fdisk_missing_geometry(cxt))
 		return -EINVAL;
 
-	DBG(LABEL, dbgprint("adding new partition"));
-	cxt->label->op->add_part(cxt, pa);
-	return 0;
+	DBG(LABEL, dbgprint("adding new partition (start=%ju, end=%ju, size=%ju, "
+			    "defaults(start=%s, end=%s, partno=%s)",
+			    pa ? pa->start : 0,
+			    pa ? pa->end : 0,
+			    pa ? pa->size : 0,
+			    pa && pa->start_follow_default ? "yes" : "no",
+			    pa && pa->end_follow_default ? "yes" : "no",
+			    pa && pa->partno_follow_default ? "yes" : "no"));
+
+	rc = cxt->label->op->add_part(cxt, pa);
+
+	DBG(LABEL, dbgprint("add partition done (rc=%d)", rc));
+	return rc;
 }
 
 /**
