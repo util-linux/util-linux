@@ -826,9 +826,13 @@ static int get_start_from_user(	struct fdisk_context *cxt,
 		*start = dflt;
 
 	else if (pa && pa->start) {
+		DBG(LABEL, dbgprint("DOS: start: wanted=%ju, low=%ju, limit=%ju",
+				(uintmax_t) pa->start, (uintmax_t) low, (uintmax_t) limit));
 		*start = pa->start;
-		if (*start < low || *start > limit)
+		if (*start < low || *start > limit) {
+			fdisk_warnx(cxt, _("Start sector out of range."));
 			return -ERANGE;
+		}
 	} else {
 		/* ask user by dialog */
 		struct fdisk_ask *ask = fdisk_new_ask();
@@ -875,7 +879,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 
 	DBG(LABEL, dbgprint("DOS: adding partition %zu", n));
 
-	sys = pa ? pa->type->type : MBR_LINUX_DATA_PARTITION;
+	sys = pa && pa->type ? pa->type->type : MBR_LINUX_DATA_PARTITION;
 
 	if (is_used_partition(p)) {
 		fdisk_warnx(cxt, _("Partition %zu is already defined.  "
@@ -984,8 +988,6 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		stop = limit;
 	else if (pa && pa->size) {
 		stop = start + pa->size;
-		if (stop > limit)
-			return -ERANGE;
 		isrel = 1;
 	} else {
 		/* ask user by dialog */
@@ -1296,6 +1298,8 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
+	/* TODO: use pa->type */
+
 	for (i = 0; i < 4; i++) {
 		struct dos_partition *p = self_partition(cxt, i);
 		free_primary += !is_used_partition(p);
@@ -1327,31 +1331,34 @@ static int dos_add_partition(struct fdisk_context *cxt,
 		if (j >= 0)
 			rc = add_partition(cxt, j, pa);
 	} else {
-		char *buf;
-		char c, prompt[BUFSIZ];
-		int dflt;
+		char hint[BUFSIZ];
+		struct fdisk_ask *ask;
+		int c;
 
-		dflt = (free_primary == 1 && !l->ext_offset) ? 'e' : 'p';
+		ask = fdisk_new_ask();
+		if (!ask)
+			return -ENOMEM;
+		fdisk_ask_set_type(ask, FDISK_ASKTYPE_MENU);
+		fdisk_ask_set_query(ask, _("Partition type"));
+		fdisk_ask_menu_set_default(ask, free_primary == 1
+						&& !l->ext_offset ? 'e' : 'p');
+		snprintf(hint, sizeof(hint),
+				_("%zu primary, %d extended, %zu free"),
+				4 - (l->ext_offset ? 1 : 0) - free_primary,
+				l->ext_offset ? 1 : 0,
+				free_primary);
 
-		snprintf(prompt, sizeof(prompt),
-			 _("Partition type:\n"
-			   "   p   primary (%zu primary, %d extended, %zu free)\n"
-			   "%s\n"
-			   "Select (default %c)"),
-			 4 - (l->ext_offset ? 1 : 0) - free_primary,
-			 l->ext_offset ? 1 : 0, free_primary,
-			 l->ext_offset ? _("   l   logical (numbered from 5)") : _("   e   extended"),
-			 dflt);
+		fdisk_ask_menu_add_item(ask, 'p', _("primary"), hint);
+		if (!l->ext_offset)
+			fdisk_ask_menu_add_item(ask, 'e', _("extended"), _("container for logical partitions"));
+		else
+			fdisk_ask_menu_add_item(ask, 'l', _("logical"), _("numbered from 5"));
 
-		rc = fdisk_ask_string(cxt, prompt, &buf);
+		rc = fdisk_do_ask(cxt, ask);
 		if (rc)
 			return rc;
-		if (!buf[0]) {
-			c = dflt;
-			fdisk_info(cxt, _("Using default response %c."), c);
-		} else
-			c = tolower(buf[0]);
-		free(buf);
+		fdisk_ask_menu_get_result(ask, &c);
+		fdisk_free_ask(ask);
 
 		if (c == 'p') {
 			int j = get_partition_unused_primary(cxt, pa);

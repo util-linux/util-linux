@@ -322,6 +322,14 @@ extern struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt);
 extern struct fdisk_label *fdisk_new_sun_label(struct fdisk_context *cxt);
 
 
+struct ask_menuitem {
+	char	key;
+	const char	*name;
+	const char	*desc;
+
+	struct ask_menuitem *next;
+};
+
 /* fdisk dialog -- note that nothing from this stuff will be directly exported,
  * we will have get/set() function for everything.
  */
@@ -356,6 +364,12 @@ struct fdisk_ask {
 		struct ask_string {
 			char		*result;	/* allocated */
 		} str;
+		/* FDISK_ASKTYPE_MENU */
+		struct ask_menu {
+			int		dfl;		/* default meni item */
+			int		result;
+			struct ask_menuitem *first;
+		} menu;
 	} data;
 };
 
@@ -380,6 +394,7 @@ struct fdisk_context {
 	/* alignment */
 	unsigned long grain;		/* alignment unit */
 	sector_t first_lba;		/* recommended begin of the first partition */
+	sector_t last_lba;		/* recomennded end of last partition */
 
 	/* geometry */
 	sector_t total_sectors;	/* in logical sectors */

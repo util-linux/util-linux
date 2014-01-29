@@ -3,6 +3,9 @@
 
 #include "fdiskP.h"
 
+static void fdisk_ask_menu_reset_items(struct fdisk_ask *ask);
+
+
 struct fdisk_ask *fdisk_new_ask(void)
 {
 	return calloc(1, sizeof(struct fdisk_ask));
@@ -12,6 +15,9 @@ void fdisk_reset_ask(struct fdisk_ask *ask)
 {
 	assert(ask);
 	free(ask->query);
+
+	if (fdisk_is_ask(ask, MENU))
+		fdisk_ask_menu_reset_items(ask);
 
 	memset(ask, 0, sizeof(*ask));
 }
@@ -489,6 +495,130 @@ int fdisk_ask_yesno_set_result(struct fdisk_ask *ask, uint64_t result)
 	ask->data.yesno.result = result;
 	return 0;
 }
+
+/*
+ * menu
+ */
+int fdisk_ask_menu_set_default(struct fdisk_ask *ask, int dfl)
+{
+	assert(ask);
+	assert(fdisk_is_ask(ask, MENU));
+	ask->data.menu.dfl = dfl;
+	return 0;
+}
+
+int fdisk_ask_menu_get_default(struct fdisk_ask *ask)
+{
+	assert(ask);
+	assert(fdisk_is_ask(ask, MENU));
+	return ask->data.menu.dfl;
+}
+
+int fdisk_ask_menu_set_result(struct fdisk_ask *ask, int key)
+{
+	assert(ask);
+	assert(fdisk_is_ask(ask, MENU));
+	ask->data.menu.result = key;
+	DBG(ASK, dbgprint("menu result: %c\n", key));
+	return 0;
+
+}
+
+int fdisk_ask_menu_get_result(struct fdisk_ask *ask, int *key)
+{
+	assert(ask);
+	assert(fdisk_is_ask(ask, MENU));
+	if (key)
+		*key =  ask->data.menu.result;
+	return 0;
+}
+
+/* returns: 0 = success, <0 = error, >0 = idx out-of-range */
+int fdisk_ask_menu_get_item(struct fdisk_ask *ask, size_t idx, int *key,
+			    const char **name, const char **desc)
+{
+	size_t i;
+	struct ask_menuitem *mi;
+
+	assert(ask);
+	assert(fdisk_is_ask(ask, MENU));
+
+	for (i = 0, mi = ask->data.menu.first; mi; mi = mi->next, i++) {
+		if (i == idx)
+			break;
+	}
+
+	if (!mi)
+		return 1;	/* no more items */
+	if (key)
+		*key = mi->key;
+	if (name)
+		*name = mi->name;
+	if (desc)
+		*desc = mi->desc;
+	return 0;
+}
+
+static void fdisk_ask_menu_reset_items(struct fdisk_ask *ask)
+{
+	struct ask_menuitem *mi;
+
+	assert(ask);
+	assert(fdisk_is_ask(ask, MENU));
+
+	for (mi = ask->data.menu.first; mi; ) {
+		struct ask_menuitem *next = mi->next;
+		free(mi);
+		mi = next;
+	}
+}
+
+size_t fdisk_ask_menu_get_nitems(struct fdisk_ask *ask)
+{
+	struct ask_menuitem *mi;
+	size_t n;
+
+	assert(ask);
+	assert(fdisk_is_ask(ask, MENU));
+
+	for (n = 0, mi = ask->data.menu.first; mi; mi = mi->next, n++);
+
+	return n;
+}
+
+int fdisk_ask_menu_add_item(struct fdisk_ask *ask, int key,
+			const char *name, const char *desc)
+{
+	struct ask_menuitem *mi;
+
+	assert(ask);
+	assert(fdisk_is_ask(ask, MENU));
+
+	mi = calloc(1, sizeof(*mi));
+	if (!mi)
+		return -ENOMEM;
+	mi->key = key;
+	mi->name = name;
+	mi->desc = desc;
+
+	if (!ask->data.menu.first)
+		ask->data.menu.first = mi;
+	else {
+	        struct ask_menuitem *last = ask->data.menu.first;
+
+		while (last->next)
+			last = last->next;
+		last->next = mi;
+	}
+
+	DBG(ASK, dbgprint("new menu item: %c, \"%s\" (%s)\n", mi->key, mi->name, mi->desc));
+	return 0;
+}
+
+
+/*
+ * print-like
+ */
 
 #define is_print_ask(a) (fdisk_is_ask(a, WARN) || fdisk_is_ask(a, WARNX) || fdisk_is_ask(a, INFO))
 

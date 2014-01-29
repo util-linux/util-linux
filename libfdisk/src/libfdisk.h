@@ -55,7 +55,8 @@ enum {
 	FDISK_ASKTYPE_WARNX,
 	FDISK_ASKTYPE_INFO,
 	FDISK_ASKTYPE_YESNO,
-	FDISK_ASKTYPE_STRING
+	FDISK_ASKTYPE_STRING,
+	FDISK_ASKTYPE_MENU
 };
 
 /* extra flags for info massages (see fdisk_sinfo() */
@@ -208,6 +209,10 @@ extern int fdisk_partition_to_string(struct fdisk_partition *pa,
 extern int fdisk_partition_next_partno(struct fdisk_partition *pa,
 				       struct fdisk_context *cxt,
 				       size_t *n);
+
+extern int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int enable);
+extern int fdisk_partition_start_follow_default(struct fdisk_partition *pa, int enable);
+extern int fdisk_partition_end_follow_default(struct fdisk_partition *pa, int enable);
 
 /* table.c */
 extern struct fdisk_table *fdisk_new_table(void);
@@ -373,6 +378,18 @@ extern int fdisk_ask_print_get_errno(struct fdisk_ask *ask);
 extern int fdisk_ask_print_set_errno(struct fdisk_ask *ask, int errnum);
 extern const char *fdisk_ask_print_get_mesg(struct fdisk_ask *ask);
 extern int fdisk_ask_print_set_mesg(struct fdisk_ask *ask, const char *mesg);
+
+
+extern size_t fdisk_ask_menu_get_nitems(struct fdisk_ask *ask);
+extern int fdisk_ask_menu_set_default(struct fdisk_ask *ask, int dfl);
+extern int fdisk_ask_menu_get_default(struct fdisk_ask *ask);
+extern int fdisk_ask_menu_set_result(struct fdisk_ask *ask, int key);
+extern int fdisk_ask_menu_get_result(struct fdisk_ask *ask, int *key);
+extern int fdisk_ask_menu_get_item(struct fdisk_ask *ask, size_t idx, int *key,
+			    const char **name, const char **desc);
+extern int fdisk_ask_menu_add_item(struct fdisk_ask *ask, int key,
+			const char *name, const char *desc);
+
 
 #ifdef __cplusplus
 }
