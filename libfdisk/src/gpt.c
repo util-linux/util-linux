@@ -467,6 +467,22 @@ static struct gpt_header *gpt_copy_header(struct fdisk_context *cxt,
 	return res;
 }
 
+static void count_first_last_lba(struct fdisk_context *cxt,
+				 uint64_t *first, uint64_t *last)
+{
+	uint64_t esz = 0;
+
+	assert(cxt);
+
+	esz = sizeof(struct gpt_entry) * GPT_NPARTITIONS / cxt->sector_size;
+	*last = cxt->total_sectors - 2 - esz;
+	*first = esz + 2;
+
+	if (*first < cxt->first_lba && cxt->first_lba < *last)
+		/* Align according to topology */
+		*first = cxt->first_lba;
+}
+
 /*
  * Builds a clean new GPT header (currently under revision 1.0).
  *
@@ -478,12 +494,10 @@ static struct gpt_header *gpt_copy_header(struct fdisk_context *cxt,
 static int gpt_mknew_header(struct fdisk_context *cxt,
 			    struct gpt_header *header, uint64_t lba)
 {
-	uint64_t esz = 0, first, last;
+	uint64_t first, last;
 
 	if (!cxt || !header)
 		return -ENOSYS;
-
-	esz = sizeof(struct gpt_entry) * GPT_NPARTITIONS / cxt->sector_size;
 
 	header->signature = cpu_to_le64(GPT_HEADER_SIGNATURE);
 	header->revision  = cpu_to_le32(GPT_HEADER_REVISION_V1_00);
@@ -496,13 +510,7 @@ static int gpt_mknew_header(struct fdisk_context *cxt,
 	header->npartition_entries     = cpu_to_le32(GPT_NPARTITIONS);
 	header->sizeof_partition_entry = cpu_to_le32(sizeof(struct gpt_entry));
 
-	last = cxt->total_sectors - 2 - esz;
-	first = esz + 2;
-
-	if (first < cxt->first_lba && cxt->first_lba < last)
-		/* Align according to topology */
-		first = cxt->first_lba;
-
+	count_first_last_lba(cxt, &first, &last);
 	header->first_usable_lba = cpu_to_le64(first);
 	header->last_usable_lba  = cpu_to_le64(last);
 
@@ -1680,6 +1688,9 @@ static int gpt_create_new_partition(struct fdisk_context *cxt,
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, GPT));
 
+	DBG(LABEL, dbgprint("GPT new partition: partno=%zu, start=%ju, end=%ju",
+				partnum, fsect, lsect));
+
 	gpt = self_label(cxt);
 
 	if (fsect > lsect || partnum >= cxt->label->nparts_max)
@@ -1735,9 +1746,10 @@ static int gpt_add_partition(
 	ents = gpt->ents;
 
 	rc = fdisk_partition_next_partno(pa, cxt, &partnum);
-	if (rc)
+	if (rc) {
+		DBG(LABEL, dbgprint("GPT failed to get next partno"));
 		return rc;
-
+	}
 	if (!partition_unused(&ents[partnum])) {
 		fdisk_warnx(cxt, _("Partition %zu is already defined.  "
 			           "Delete it before re-adding it."), partnum +1);
@@ -1804,14 +1816,16 @@ static int gpt_add_partition(
 		}
 	}
 
+
 	/* Last sector */
 	dflt_l = find_last_free(pheader, ents, user_f);
 
 	if (pa && pa->size) {
-		if (pa->size + user_f > dflt_l)
-			return -ERANGE;
 		user_l = user_f + pa->size;
 		user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l) - 1;
+
+		if (user_l + (cxt->grain / cxt->sector_size) > dflt_l)
+			user_l = dflt_l;	/* no space for anything useful, use all space */
 
 	} else if (pa && pa->end_follow_default) {
 		user_l = dflt_l;
@@ -1835,17 +1849,20 @@ static int gpt_add_partition(
 				goto done;
 
 			user_l = fdisk_ask_number_get_result(ask);
-			if (fdisk_ask_number_is_relative(ask))
+			if (fdisk_ask_number_is_relative(ask)) {
 				user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l) - 1;
-			if (user_l > user_f && user_l <= disk_l)
+				if (user_l + (cxt->grain / cxt->sector_size) > dflt_l)
+					user_l = dflt_l;	/* no space for anything useful, use all space */
+			} if (user_l > user_f && user_l <= disk_l)
 				break;
 		}
 	}
 
-	if (gpt_create_new_partition(cxt, partnum,
-				     user_f, user_l, &typeid, ents) != 0)
+	if ((rc = gpt_create_new_partition(cxt, partnum,
+				     user_f, user_l, &typeid, ents) != 0)) {
 		fdisk_warnx(cxt, _("Could not create partition %ju"), partnum + 1);
-	else {
+		goto done;
+	} else {
 		struct fdisk_parttype *t;
 
 		cxt->label->nparts_cur++;
@@ -2220,6 +2237,36 @@ static int gpt_toggle_partition_flag(
 	return 0;
 }
 
+static int gpt_reset_alignment(struct fdisk_context *cxt)
+{
+	struct fdisk_gpt_label *gpt;
+	struct gpt_header *h;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, GPT));
+
+	gpt = self_label(cxt);
+	h = gpt ? gpt->pheader : NULL;
+
+	if (h) {
+		/* always follow existing table */
+		cxt->first_lba = h->first_usable_lba;
+		cxt->last_lba  = h->last_usable_lba;
+	} else {
+		/* estimate ranges for GPT */
+		uint64_t first, last;
+
+		count_first_last_lba(cxt, &first, &last);
+
+		if (cxt->first_lba < first)
+			cxt->first_lba = first;
+		if (cxt->last_lba > last)
+			cxt->last_lba = last;
+	}
+
+	return 0;
+}
 /*
  * Deinitialize fdisk-specific variables
  */
@@ -2259,7 +2306,9 @@ static const struct fdisk_label_operations gpt_operations =
 	.part_set_type	= gpt_set_partition_type,
 	.part_toggle_flag = gpt_toggle_partition_flag,
 
-	.deinit		= gpt_deinit
+	.deinit		= gpt_deinit,
+
+	.reset_alignment = gpt_reset_alignment
 };
 
 static const struct fdisk_column gpt_columns[] =
