@@ -49,6 +49,52 @@ int get_user_reply(struct fdisk_context *cxt, const char *prompt,
 	return 0;
 }
 
+static int ask_menu(struct fdisk_context *cxt, struct fdisk_ask *ask,
+		    char *buf, size_t bufsz)
+
+{
+	const char *q = fdisk_ask_get_query(ask);
+	int dft = fdisk_ask_menu_get_default(ask);
+
+	if (q) {
+		fputs(q, stdout);		/* print header */
+		fputc('\n', stdout);
+	}
+
+	do {
+		char prompt[128];
+		int key, c;
+		const char *name, *desc;
+		size_t i = 0;
+
+		/* print menu items */
+		while (fdisk_ask_menu_get_item(ask, i++, &key, &name, &desc) == 0)
+			fprintf(stdout, "   %c   %s (%s)\n", key, name, desc);
+
+		/* ask for key */
+		snprintf(prompt, sizeof(prompt), _("Select (default %c): "), dft);
+		get_user_reply(cxt, prompt, buf, bufsz);
+		if (!*buf) {
+			fdisk_info(cxt, _("Using default response %c."), dft);
+			c = dft;
+		} else
+			c = tolower(buf[0]);
+
+		/* check result */
+		i = 0;
+		while (fdisk_ask_menu_get_item(ask, i++, &key, NULL, NULL) == 0) {
+			if (c == key) {
+				fdisk_ask_menu_set_result(ask, c);
+				return 0;	/* success */
+			}
+		}
+		fdisk_warnx(cxt, _("Value out of range."));
+	} while (1);
+
+	return -EINVAL;
+}
+
+
 #define tochar(num)	((int) ('a' + num - 1))
 static int ask_number(struct fdisk_context *cxt,
 		      struct fdisk_ask *ask,
@@ -250,6 +296,8 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		info_count = 0;
 
 	switch(fdisk_ask_get_type(ask)) {
+	case FDISK_ASKTYPE_MENU:
+		return ask_menu(cxt, ask, buf, sizeof(buf));
 	case FDISK_ASKTYPE_NUMBER:
 		return ask_number(cxt, ask, buf, sizeof(buf));
 	case FDISK_ASKTYPE_OFFSET:
