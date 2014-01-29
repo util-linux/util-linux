@@ -43,6 +43,16 @@
 #define TABLE_START_LINE	4
 #define MENU_START_LINE		(LINES - 5)
 #define INFO_LINE		(LINES - 2)
+#define HINT_LINE		(LINES - 1)
+
+#define CFDISK_ERR_ESC		5000
+
+#ifndef KEY_ESC
+# define KEY_ESC	'\033'
+#endif
+#ifndef KEY_DELETE
+# define KEY_DELETE	'\177'
+#endif
 
 /* colors */
 enum {
@@ -60,11 +70,17 @@ typedef int (menu_callback_t)(struct cfdisk *, int);
 static int menu_cb_main(struct cfdisk *cf, int key);
 static struct cfdisk_menudesc *menu_get_menuitem(struct cfdisk *cf, size_t idx);
 static struct cfdisk_menudesc *menu_get_menuitem_by_key(struct cfdisk *cf, int key, size_t *idx);
+static struct cfdisk_menu *menu_push(struct cfdisk *cf, size_t id, struct cfdisk_menudesc *desc);
+static struct cfdisk_menu *menu_pop(struct cfdisk *cf);
 
 static int ui_refresh(struct cfdisk *cf);
 static void ui_warnx(const char *fmt, ...);
 static void ui_warn(const char *fmt, ...);
 static void ui_info(const char *fmt, ...);
+static void ui_draw_menu(struct cfdisk *cf);
+static void ui_menu_goto(struct cfdisk *cf, int where);
+static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
+		       uintmax_t low, uintmax_t up);
 
 static int ui_enabled;
 
@@ -102,7 +118,11 @@ static struct cfdisk_menudesc menu_main[] = {
 };
 
 enum {
+	CFDISK_MENU_GENERATED	= -1,	/* used in libfdisk callback */
+
+	/* built-in menus */
 	CFDISK_MENU_MAIN	= 0,
+
 };
 
 static struct cfdisk_menudesc *menus[] = {
@@ -266,6 +286,70 @@ static struct fdisk_partition *get_current_partition(struct cfdisk *cf)
 	return fdisk_table_get_partition(cf->table, cf->lines_idx);
 }
 
+/* converts libfdisk FDISK_ASKTYPE_MENU to cfdisk menu and returns user's
+ * responseback to libfdisk
+ */
+static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
+{
+	struct cfdisk_menudesc *d, *cm;
+	int key;
+	size_t i = 0, nitems;
+	const char *name, *desc;
+
+	assert(ask);
+	assert(cf);
+
+	/* create cfdisk menu according to libfdisk ask-menu, note that the
+	 * last cm[] item has to be empty -- so nitems + 1 */
+	nitems = fdisk_ask_menu_get_nitems(ask);
+	cm = calloc(nitems + 1, sizeof(struct cfdisk_menudesc));
+	if (!cm)
+		return -ENOMEM;
+
+	for (i = 0; i < nitems; i++) {
+		if (fdisk_ask_menu_get_item(ask, i, &key, &name, &desc))
+			break;
+		cm[i].key = key;
+		cm[i].desc = desc;
+		cm[i].name = name;
+	}
+
+	/* make the new menu active */
+	menu_push(cf, CFDISK_MENU_GENERATED, cm);
+	ui_draw_menu(cf);
+	refresh();
+
+	/* wait for keys */
+	do {
+		switch (getch()) {
+		case KEY_LEFT:
+#ifdef KEY_BTAB
+		case KEY_BTAB:
+#endif
+			ui_menu_goto(cf, cf->menu_idx - 1);
+			break;
+		case KEY_RIGHT:
+		case '\t':
+			ui_menu_goto(cf, cf->menu_idx + 1);
+			break;
+		case KEY_ENTER:
+		case '\n':
+		case '\r':
+			d = menu_get_menuitem(cf, cf->menu_idx);
+			if (d)
+				fdisk_ask_menu_set_result(ask, d->key);
+			menu_pop(cf);
+			free(cm);
+			return 0;
+		}
+	} while (1);
+
+	menu_pop(cf);
+	free(cm);
+	return -1;
+}
+
+
 static int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		    void *data __attribute__((__unused__)))
 {
@@ -283,6 +367,9 @@ static int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		break;
 	case FDISK_ASKTYPE_WARN:
 		ui_warn(fdisk_ask_print_get_mesg(ask));
+		break;
+	case FDISK_ASKTYPE_MENU:
+		ask_menu(ask, (struct cfdisk *) data);
 		break;
 	default:
 		ui_warnx(_("internal error: unsupported dialog type %d"),
@@ -320,7 +407,7 @@ static void ui_vprint_center(int line, int attrs, const char *fmt, va_list ap)
 
 	xvasprintf(&buf, fmt, ap);
 
-	width = strlen(buf);			/* TODO: count cells! */
+	width = mbs_safe_width(buf);
 
 	attron(attrs);
 	mvaddstr(line, (COLS - width) / 2, buf);
@@ -377,6 +464,23 @@ static void ui_info(const char *fmt, ...)
 static void ui_clean_info(void)
 {
 	move(INFO_LINE, 0);
+	clrtoeol();
+}
+
+static void ui_hint(const char *fmt, ...)
+{
+	va_list ap;
+	va_start(ap, fmt);
+	if (ui_enabled)
+		ui_vprint_center(HINT_LINE, A_BOLD, fmt, ap);
+	else
+		vfprintf(stdout, fmt, ap);
+	va_end(ap);
+}
+
+static void ui_clean_hint(void)
+{
+	move(HINT_LINE, 0);
 	clrtoeol();
 }
 
@@ -446,24 +550,26 @@ static void menu_update_ignore(struct cfdisk *cf)
 		cf->menu_idx = 0;
 }
 
-static struct cfdisk_menu *menu_push(struct cfdisk *cf, size_t id)
+static struct cfdisk_menu *menu_push(
+			struct cfdisk *cf,
+			size_t id,
+			struct cfdisk_menudesc *desc)
 {
 	struct cfdisk_menu *m = xcalloc(1, sizeof(*m));
 	struct cfdisk_menudesc *d;
 
 	assert(cf);
-	assert(id < ARRAY_SIZE(menus));
 
 	DBG(FRONTEND, dbgprint("menu: new menu"));
 
 	m->prev = cf->menu;
 	m->id = id;
-	m->desc = menus[id];
+	m->desc = desc ? desc : menus[id];
 	m->callback = menu_callbacks[id];
 
 	for (d = m->desc; d->name; d++) {
 		const char *name = _(d->name);
-		size_t len = strlen(name);	/* TODO: we care about cells! */
+		size_t len = mbs_safe_width(name);
 		if (len > m->width)
 			m->width = len;
 		m->nitems++;
@@ -494,14 +600,16 @@ static struct cfdisk_menu *menu_pop(struct cfdisk *cf)
 static int menu_cb_main(struct cfdisk *cf, int key)
 {
 	size_t n;
-	int ref = 0;
+	int ref = 0, rc;
 	const char *info = NULL, *warn = NULL;
+	struct fdisk_partition *pa;
 
 	assert(cf);
 	assert(cf->cxt);
 	assert(key);
 
 	n = cf->lines_idx;	/* the current partition */
+	pa = get_current_partition(cf);
 
 	switch (key) {
 	case 'b': /* Bootable flag */
@@ -523,7 +631,34 @@ static int menu_cb_main(struct cfdisk *cf, int key)
 		ref = 1;
 		break;
 	case 'n': /* New */
+	{
+		uint64_t start, size;
+		struct fdisk_partition *npa;	/* the new partition */
+
+		if (!pa || !fdisk_partition_is_freespace(pa))
+			return -EINVAL;
+		npa = fdisk_new_partition();
+		if (!npa)
+			return -ENOMEM;
+		/* free space range */
+		start = fdisk_partition_get_start(pa);
+		size = fdisk_partition_get_size(pa) * cf->cxt->sector_size;
+
+		if (ui_get_size(cf, _("Partition size: "), &size, 1, size)
+				== -CFDISK_ERR_ESC)
+			break;
+		size /= cf->cxt->sector_size; 
+		/* properties of the new partition */
+		fdisk_partition_set_start(npa, start);
+		fdisk_partition_set_size(npa, size);
+		fdisk_partition_partno_follow_default(npa, 1);
+		/* add to disk label -- libfdisk will ask for missing details */
+		rc = fdisk_add_partition(cf->cxt, npa);
+		fdisk_unref_partition(npa);
+		if (rc == 0)
+			ref = 1;
 		break;
+	}
 	case 'q': /* Quit */
 		return 1;
 	case 't': /* Type */
@@ -544,7 +679,7 @@ static int menu_cb_main(struct cfdisk *cf, int key)
 	return 0;
 }
 
-static int ui_init(struct cfdisk *cf)
+static int ui_init(struct cfdisk *cf __attribute__((__unused__)))
 {
 	struct sigaction sa;
 
@@ -656,7 +791,7 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 		mvprintw(ln, cl, "[%s]", buf);
 		standend();
 		if (d->desc)
-			ui_center(LINES - 1, d->desc);
+			ui_hint(d->desc);
 	} else
 		mvprintw(ln, cl, "[%s]", buf);
 }
@@ -832,13 +967,177 @@ static int ui_refresh(struct cfdisk *cf)
 	return 0;
 }
 
+static ssize_t ui_get_string(struct cfdisk *cf, const char *prompt,
+			     const char *hint, char *buf, size_t len)
+{
+	size_t cells = 0;
+	ssize_t i = 0, rc = -1;
+	wint_t c;
+	int ln = MENU_START_LINE, cl = 1;
+
+	assert(cf);
+	assert(buf);
+	assert(len);
+
+	move(ln, 0);
+	clrtoeol();
+
+	if (prompt) {
+		mvaddstr(ln, cl, prompt);
+		cl += mbs_safe_width(prompt);
+	}
+
+	/* default value */
+	if (*buf) {
+		i = strlen(buf);
+		cells = mbs_safe_width(buf);
+		mvaddstr(ln, cl, buf);
+	}
+
+	if (hint)
+		ui_hint(hint);
+	else
+		ui_clean_hint();
+
+	move(ln, cl + cells);
+	curs_set(1);
+	refresh();
+
+	while (1) {
+#if !defined(HAVE_SLCURSES_H) && !defined(HAVE_SLANG_SLCURSES_H) && \
+    defined(HAVE_LIBNCURSESW) && defined(HAVE_WIDECHAR)
+		if (get_wch(&c) == ERR) {
+#else
+		if ((c = getch()) == ERR) {
+#endif
+			if (!isatty(STDIN_FILENO))
+				exit(2);
+			else
+				goto done;
+		}
+		if (c == '\r' || c == '\n' || c == KEY_ENTER)
+			break;
+
+		switch (c) {
+		case KEY_ESC:
+			rc = -CFDISK_ERR_ESC;
+			goto done;
+		case KEY_DELETE:
+		case '\b':
+		case KEY_BACKSPACE:
+			if (i > 0) {
+				cells--;
+				i = mbs_truncate(buf, &cells);
+				if (i < 0)
+					goto done;
+				mvaddch(ln, cl + cells, ' ');
+				move(ln, cl + cells);
+			} else
+				beep();
+			break;
+		default:
+#if defined(HAVE_LIBNCURSESW) && defined(HAVE_WIDECHAR)
+			if (i + 1 < (ssize_t) len && iswprint(c)) {
+				wchar_t wc = (wchar_t) c;
+				char s[MB_CUR_MAX + 1];
+				int sz = wctomb(s, wc);
+
+				if (sz > 0 && sz + i < (ssize_t) len) {
+					s[sz] = '\0';
+					mvaddnstr(ln, cl + cells, s, sz);
+					memcpy(buf + i, s, sz);
+					i += sz;
+					buf[i] = '\0';
+					cells += wcwidth(wc);
+				} else
+					beep();
+			}
+#else
+			if (i + 1 < (ssize_t) len && isprint(c)) {
+				mvaddch(ln, cl + cells, c);
+				str[i++] = c;
+				str[i] = '\0';
+				cells++;
+			}
+#endif
+			else
+				beep();
+		}
+		refresh();
+	}
+
+	rc = i;		/* success */
+done:
+	move(ln, 0);
+	clrtoeol();
+	curs_set(0);
+	refresh();
+
+	return rc;
+}
+
+/* @res is default value as well as result in bytes */
+static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
+		       uintmax_t low, uintmax_t up)
+{
+	char buf[128];
+	uintmax_t user = 0;
+	ssize_t rc;
+	char *dflt = size_to_human_string(0, *res);
+
+	DBG(FRONTEND, dbgprint("ui: get_size (default=%ju)", *res));
+
+	ui_clean_info();
+
+	do {
+		int pwr = 0;
+
+		snprintf(buf, sizeof(buf), "%s", dflt);
+		rc = ui_get_string(cf, prompt,
+				_("The size may be followed by MiB, GiB or TiB suffix "
+				  "(the \"iB\" is optional)."),
+				buf, sizeof(buf));
+		if (rc == 0) {
+			ui_warnx(_("Please, specify size."));
+			continue;			/* nothing specified */
+		} else if (rc == -CFDISK_ERR_ESC)
+			break;				/* cancel dialog */
+
+		rc = parse_size(buf, &user, &pwr);	/* response, parse */
+		if (rc == 0) {
+			DBG(FRONTEND, dbgprint("ui: get_size user=%ju, power=%d", user, pwr));
+			if (user < low) {
+				ui_warnx(_("Minimal size is %ju"), low);
+				rc = -ERANGE;
+			}
+			if (user > up && pwr && user < up + (1ULL << pwr * 10))
+				/* ignore when the user specified size overflow
+				 * with in range specified by suffix (e.g. MiB) */
+				user = up;
+
+			if (user > up) {
+				ui_warnx(_("Maximal size is %ju bytes."), up);
+				rc = -ERANGE;
+			}
+		}
+	} while (rc != 0);
+
+	if (rc == 0)
+		*res = user;
+	free(dflt);
+
+	DBG(FRONTEND, dbgprint("ui: get_size (result=%ju, rc=%zd)", *res, rc));
+	return rc;
+}
+
+
 static int ui_run(struct cfdisk *cf)
 {
 	int rc;
 
 	DBG(FRONTEND, dbgprint("ui: start COLS=%d, LINES=%d", COLS, LINES));
 
-	menu_push(cf, CFDISK_MENU_MAIN);
+	menu_push(cf, CFDISK_MENU_MAIN, NULL);
 
 	rc = ui_refresh(cf);
 	if (rc)
