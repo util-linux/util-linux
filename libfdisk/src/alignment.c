@@ -263,6 +263,7 @@ void fdisk_zeroize_device_properties(struct fdisk_context *cxt)
 	cxt->alignment_offset = 0;
 	cxt->grain = 0;
 	cxt->first_lba = 0;
+	cxt->last_lba = 0;
 	cxt->total_sectors = 0;
 
 	memset(&cxt->geom, 0, sizeof(struct fdisk_geometry));
@@ -477,15 +478,16 @@ int fdisk_reset_alignment(struct fdisk_context *cxt)
 	/* default */
 	cxt->grain = fdisk_topology_get_grain(cxt);
 	cxt->first_lba = fdisk_topology_get_first_lba(cxt);
+	cxt->last_lba = cxt->total_sectors - 1;
 
 	/* overwrite default by label stuff */
 	if (cxt->label && cxt->label->op->reset_alignment)
 		rc = cxt->label->op->reset_alignment(cxt);
 
 	DBG(TOPOLOGY, dbgprint("%s alignment reseted to: "
-			    "first LBA=%ju, grain=%lu [rc=%d]",
+			    "first LBA=%ju, last LBA=%ju, grain=%lu [rc=%d]",
 			    cxt->label ? cxt->label->name : NULL,
-			    (uintmax_t) cxt->first_lba,
+			    (uintmax_t) cxt->first_lba, (uintmax_t) cxt->last_lba,
 			    cxt->grain,	rc));
 	return rc;
 }
