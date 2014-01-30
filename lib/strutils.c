@@ -47,14 +47,18 @@ static int do_scale_by_power (uintmax_t *x, int base, int power)
  * The optinal 'power' variable returns number associated with used suffix
  * {K,M,G,T,P,E,Z,Y}  = {1,2,3,4,5,6,7,8}.
  *
+ * The funtion also supports decimal point, for example:
+ *              0.5MB   = 500000
+ *              0.5MiB  = 512000
+ *
  * Note that the function does not accept numbers with '-' (negative sign)
  * prefix.
  */
 int parse_size(const char *str, uintmax_t *res, int *power)
 {
 	char *p;
-	uintmax_t x;
-	int base = 1024, rc = 0, pwr = 0;
+	uintmax_t x, frac = 0;
+	int base = 1024, rc = 0, pwr = 0, frac_zeros = 0;
 
 	static const char *suf  = "KMGTPEYZ";
 	static const char *suf2 = "kmgtpeyz";
@@ -94,14 +98,38 @@ int parse_size(const char *str, uintmax_t *res, int *power)
 	/*
 	 * Check size suffixes
 	 */
+check_suffix:
 	if (*(p + 1) == 'i' && *(p + 2) == 'B' && !*(p + 3))
 		base = 1024;			/* XiB, 2^N */
 	else if (*(p + 1) == 'B' && !*(p + 2))
 		base = 1000;			/* XB, 10^N */
 	else if (*(p + 1)) {
+		struct lconv const *l = localeconv();
+		char *dp = l ? l->decimal_point : NULL;
+		size_t dpsz = dp ? strlen(dp) : 0;
+
+		if (frac == 0 && *p && dp && strncmp(dp, p, dpsz) == 0) {
+			char *fstr = p + dpsz;
+
+			for (p = fstr; *p && *p == '0'; p++)
+				frac_zeros++;
+			errno = 0, p = NULL;
+			frac = strtoumax(fstr, &p, 0);
+			if (p == fstr ||
+			    (errno != 0 && (frac == UINTMAX_MAX || frac == 0))) {
+				rc = errno ? -errno : -1;
+				goto err;
+			}
+			if (frac && (!p  || !*p)) {
+				rc = -EINVAL;
+				goto err;		/* without suffix, but with frac */
+			}
+			goto check_suffix;
+		}
 		rc = -EINVAL;
 		goto err;			/* unexpected suffix */
 	}
+
 	sp = strchr(suf, *p);
 	if (sp)
 		pwr = (sp - suf) + 1;
@@ -118,6 +146,19 @@ int parse_size(const char *str, uintmax_t *res, int *power)
 	rc = do_scale_by_power(&x, base, pwr);
 	if (power)
 		*power = pwr;
+	if (frac && pwr) {
+		int zeros_in_pwr = frac_zeros % 3;
+		int frac_pwr = pwr - (frac_zeros / 3) - 1;
+		uintmax_t y = frac * (zeros_in_pwr == 0 ? 100 :
+				      zeros_in_pwr == 1 ?  10 : 1);
+
+		if (frac_pwr < 0) {
+			rc = -EINVAL;
+			goto err;
+		}
+		do_scale_by_power(&y, base, frac_pwr);
+		x += y;
+	}
 done:
 	*res = x;
 err:
