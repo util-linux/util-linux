@@ -17,6 +17,24 @@ ionice \- set or get process I/O scheduling class and priority
 .RB [ \-n
 .IR level ]
 .RB [ \-t ]
+.B \-P
+.IR PGID ...
+.br
+.B ionice
+.RB [ \-c
+.IR class ]
+.RB [ \-n
+.IR level ]
+.RB [ \-t ]
+.B \-u
+.IR UID ...
+.br
+.B ionice
+.RB [ \-c
+.IR class ]
+.RB [ \-n
+.IR level ]
+.RB [ \-t ]
 .IR "command " [ argument ...]
 .SH DESCRIPTION
 This program sets or gets the I/O scheduling class and priority for a program.
@@ -77,6 +95,10 @@ accepts an argument.  For realtime and best-effort, \fI0-7\fR are valid data
 Specify the process IDs of running processes for which to get or set the
 scheduling parameters.
 .TP
+.BR \-P , " \-\-pgid " \fIPGID\fR...
+Specify the process group IDs of running processes for which to get or set the
+scheduling parameters.
+.TP
 .BR \-t , " \-\-ignore"
 Ignore failure to set the requested priority.  If \fIcommand\fR was specified,
 run it even in case it was not possible to set the desired scheduling priority,
@@ -84,6 +106,10 @@ which can happen due to insufficient privileges or an old kernel version.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
+.TP
+.BR \-u , " \-\-uid " \fIUID\fR...
+Specify the user IDs of running processes for which to get or set the
+scheduling parameters.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
