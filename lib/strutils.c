@@ -21,7 +21,7 @@ static int do_scale_by_power (uintmax_t *x, int base, int power)
 {
 	while (power--) {
 		if (UINTMAX_MAX / base < *x)
-			return -2;
+			return -ERANGE;
 		*x *= base;
 	}
 	return 0;
@@ -74,17 +74,20 @@ int parse_size(const char *str, uintmax_t *res, int *power)
 	p = (char *) str;
 	while (isspace((unsigned char) *p))
 		p++;
-	if (*p == '-')
+	if (*p == '-') {
+		rc = -EINVAL;
 		goto err;
+	}
 	p = NULL;
 
 	errno = 0;
 	x = strtoumax(str, &p, 0);
 
 	if (p == str ||
-	    (errno != 0 && (x == UINTMAX_MAX || x == 0)))
+	    (errno != 0 && (x == UINTMAX_MAX || x == 0))) {
+		rc = errno ? -errno : -1;
 		goto err;
-
+	}
 	if (!p || !*p)
 		goto done;			/* without suffix */
 
@@ -95,9 +98,10 @@ int parse_size(const char *str, uintmax_t *res, int *power)
 		base = 1024;			/* XiB, 2^N */
 	else if (*(p + 1) == 'B' && !*(p + 2))
 		base = 1000;			/* XB, 10^N */
-	else if (*(p + 1))
+	else if (*(p + 1)) {
+		rc = -EINVAL;
 		goto err;			/* unexpected suffix */
-
+	}
 	sp = strchr(suf, *p);
 	if (sp)
 		pwr = (sp - suf) + 1;
@@ -105,8 +109,10 @@ int parse_size(const char *str, uintmax_t *res, int *power)
 		sp = strchr(suf2, *p);
 		if (sp)
 			pwr = (sp - suf2) + 1;
-		else
+		else {
+			rc = -EINVAL;
 			goto err;
+		}
 	}
 
 	rc = do_scale_by_power(&x, base, pwr);
@@ -114,9 +120,8 @@ int parse_size(const char *str, uintmax_t *res, int *power)
 		*power = pwr;
 done:
 	*res = x;
-	return rc;
 err:
-	return -1;
+	return rc;
 }
 
 int strtosize(const char *str, uintmax_t *res)
