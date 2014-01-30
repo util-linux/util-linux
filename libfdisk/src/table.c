@@ -198,6 +198,28 @@ int fdisk_table_add_partition(struct fdisk_table *tb, struct fdisk_partition *pa
 	return 0;
 }
 
+/* inserts @pa after @poz */
+static int table_insert_partition(
+			struct fdisk_table *tb,
+			struct fdisk_partition *poz,
+			struct fdisk_partition *pa)
+{
+	assert(tb);
+	assert(pa);
+
+	fdisk_ref_partition(pa);
+	if (poz)
+		list_add(&pa->parts, &poz->parts);
+	else
+		list_add(&pa->parts, &tb->parts);
+	tb->nents++;
+
+	DBG(TAB, dbgprint("insert entry %p [start=%ju, end=%ju, size=%ju, freespace=%s]",
+				pa, pa->start, pa->end, pa->size,
+				pa->freespace ? "yes" : "no"));
+	return 0;
+}
+
 /**
  * fdisk_table_remove_partition
  * @tb: tab pointer
@@ -228,88 +250,141 @@ int fdisk_table_remove_partition(struct fdisk_table *tb, struct fdisk_partition 
 	return 0;
 }
 
-static int fdisk_table_add_freespace(
-			struct fdisk_context *cxt,
-			struct fdisk_table *tb,
-			uint64_t start,
-			uint64_t end)
-{
-	struct fdisk_partition *pa = fdisk_new_partition();
-	int rc;
-
-	if (!pa)
-		return -ENOMEM;
-
-	assert(tb);
-
-	pa->freespace = 1;
-
-	pa->start = fdisk_align_lba_in_range(cxt, start, start, end);
-	pa->end = end;
-	pa->size = pa->end - pa->start + 1ULL;
-
-	rc = fdisk_table_add_partition(tb, pa);
-	fdisk_unref_partition(pa);
-	return rc;
-}
 /**
- * fdisk_get_table
+ * fdisk_get_partitions
  * @cxt: fdisk context
- * @tb: returns table (allocate a new if not allocate yet)
+ * @tb: returns table
+ *
+ * This function adds partitions from disklabel to @table, it allocates a new
+ * table if if @table points to NULL.
  *
  * Returns 0 on success, otherwise, a corresponding error.
  */
-int fdisk_get_table(struct fdisk_context *cxt, struct fdisk_table **tb)
+int fdisk_get_partitions(struct fdisk_context *cxt, struct fdisk_table **tb)
 {
-	struct fdisk_partition *pa = NULL;
 	size_t i;
-	uint64_t last, grain;
 
 	if (!cxt || !cxt->label || !tb)
 		return -EINVAL;
 	if (!cxt->label->op->get_part)
 		return -ENOSYS;
 
-	DBG(LABEL, dbgprint("get table [freespace=%s]",
-		fdisk_context_display_freespace(cxt) ? "yes" : "no"));
+	DBG(LABEL, dbgprint("get table"));
 
-	if (!*tb) {
-		*tb = fdisk_new_table();
-		if (!*tb)
-			return -ENOMEM;
-	}
-
-	last = cxt->first_lba;
-	grain = cxt->grain / cxt->sector_size;
+	if (!*tb && !(*tb = fdisk_new_table()))
+		return -ENOMEM;
 
 	for (i = 0; i < cxt->label->nparts_max; i++) {
-		if (fdisk_get_partition(cxt, i, &pa))
-			continue;
-		if (!fdisk_partition_is_used(pa))
-			continue;
+		struct fdisk_partition *pa = NULL;
 
-		/* add free-space (before partition) to the list */
-		if (fdisk_context_display_freespace(cxt) &&
-		    last + grain < pa->start) {
-			fdisk_table_add_freespace(cxt, *tb,
-				last + (last > cxt->first_lba ? 1 : 0),
-				pa->start - 1);
-		}
-		last = pa->end;
-		fdisk_table_add_partition(*tb, pa);
+		if (fdisk_get_partition(cxt, i, &pa) != 0)
+			continue;
+		if (fdisk_partition_is_used(pa))
+			fdisk_table_add_partition(*tb, pa);
 		fdisk_unref_partition(pa);
-		pa = NULL;
-	}
-
-	/* add free-space (behind last partition) to the list */
-	if (fdisk_context_display_freespace(cxt) &&
-	    last + grain < cxt->total_sectors - 1) {
-		fdisk_table_add_freespace(cxt, *tb,
-			last + (last > cxt->first_lba ? 1 : 0),
-			cxt->last_lba);
 	}
 
 	return 0;
+}
+
+int fdisk_table_add_freespace(
+			struct fdisk_context *cxt,
+			struct fdisk_table *tb,
+			uint64_t start,
+			uint64_t end,
+			int dosort)
+{
+	struct fdisk_partition *pa = fdisk_new_partition();
+	int rc = 0;
+
+	assert(tb);
+
+	if (!pa)
+		return -ENOMEM;
+	pa->freespace = 1;
+	pa->start = fdisk_align_lba_in_range(cxt, start, start, end);
+	pa->end = end;
+	pa->size = pa->end - pa->start + 1ULL;
+
+	if (!dosort)
+		rc = fdisk_table_add_partition(tb, pa);
+	else {
+		struct fdisk_partition *x, *best = NULL;
+		struct fdisk_iter itr;
+
+		fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
+		while (fdisk_table_next_partition(tb, &itr, &x) == 0) {
+			if (x->end < pa->start && (!best || best->end < x->end))
+				best = x;
+		}
+		rc = table_insert_partition(tb, best, pa);
+	}
+	fdisk_unref_partition(pa);
+	return rc;
+}
+
+
+/**
+ * fdisk_get_freespaces
+ * @cxt: fdisk context
+ * @tb: returns table
+ *
+ * This function adds freespace (described by fdisk_partition) to @table, it
+ * allocates a new table if if @table points to NULL.
+
+ * Returns 0 on success, otherwise, a corresponding error.
+ */
+int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
+{
+	int dosort, rc = 0;
+	size_t i;
+	uint64_t last, grain;
+
+	DBG(LABEL, dbgprint("get freespace"));
+
+	if (!cxt || !cxt->label || !tb)
+		return -EINVAL;
+	if (!*tb && !(*tb = fdisk_new_table()))
+		return -ENOMEM;
+
+	/* label specific way */
+	if (cxt->label->op->get_freespace)
+		return cxt->label->op->get_freespace(cxt, *tb);
+
+	/* generic way -- check for gaps betten partitions */
+	dosort = !fdisk_table_is_empty(*tb);
+	last = cxt->first_lba;
+	grain = cxt->grain / cxt->sector_size;
+
+	for (i = 0; rc == 0 && i < cxt->label->nparts_max; i++) {
+		struct fdisk_partition *pa = NULL;
+
+		if (fdisk_get_partition(cxt, i, &pa))
+			continue;
+		if (!fdisk_partition_is_used(pa)) {
+			fdisk_unref_partition(pa);
+			continue;
+		}
+
+		/* add free-space (before partition) to the list */
+		if (last + grain < pa->start) {
+			rc = fdisk_table_add_freespace(cxt, *tb,
+				last + (last > cxt->first_lba ? 1 : 0),
+				pa->start - 1,
+				dosort);
+		}
+
+		last = pa->end;
+		fdisk_unref_partition(pa);
+	}
+
+	/* add free-space (behind last partition) to the list */
+	if (rc == 0 && last + grain < cxt->total_sectors - 1)
+		rc = fdisk_table_add_freespace(cxt, *tb,
+			last + (last > cxt->first_lba ? 1 : 0),
+			cxt->last_lba,
+			dosort);
+	return rc;
 }
 
 /**

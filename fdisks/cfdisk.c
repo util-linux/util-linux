@@ -249,9 +249,11 @@ static int lines_refresh(struct cfdisk *cf)
 
 	fdisk_unref_table(cf->table);
 	cf->table = NULL;
-	fdisk_context_enable_freespace(cf->cxt, 1);
 
-	rc = fdisk_get_table(cf->cxt, &cf->table);
+	/* read partitions and free spaces into cf->table */
+	rc = fdisk_get_partitions(cf->cxt, &cf->table);
+	if (!rc)
+		rc = fdisk_get_freespaces(cf->cxt, &cf->table);
 	if (rc)
 		return rc;
 
@@ -1119,7 +1121,8 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 				ui_warnx(_("Maximal size is %ju bytes."), up);
 				rc = -ERANGE;
 			}
-		}
+		} else
+			ui_warnx(_("Failed to parse size."));
 	} while (rc != 0);
 
 	if (rc == 0)
@@ -1214,7 +1217,6 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));
 
 	fdisk_context_set_ask(cf->cxt, ask_callback, (void *) cf);
-	fdisk_context_enable_freespace(cf->cxt, 1);
 
 	if (argc != 2)
 		err(EXIT_FAILURE, "usage: %s <device>", argv[0]);

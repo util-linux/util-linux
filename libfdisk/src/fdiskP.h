@@ -201,6 +201,13 @@ struct fdisk_table {
 	size_t			nents;		/* number of partitions */
 };
 
+extern int fdisk_table_add_freespace(
+			struct fdisk_context *cxt,
+			struct fdisk_table *tb,
+			uint64_t start,
+			uint64_t end,
+			int dosort);
+
 /*
  * Legacy CHS based geometry
  */
@@ -253,6 +260,8 @@ struct fdisk_label_operations {
 	int (*get_part)(struct fdisk_context *cxt,
 						size_t n,
 						struct fdisk_partition *pa);
+	/* add all gaps to table */
+	int (*get_freespace)(struct fdisk_context *cxt, struct fdisk_table *tb);
 
 	int (*part_toggle_flag)(struct fdisk_context *cxt, size_t i, unsigned long flag);
 
@@ -388,7 +397,6 @@ struct fdisk_context {
 
 	unsigned int display_in_cyl_units : 1,	/* for obscure labels */
 		     display_details : 1,	/* expert display mode */
-		     display_freespace : 1,	/* freesapce in list() output */
 		     listonly : 1;		/* list partition, nothing else */
 
 	/* alignment */

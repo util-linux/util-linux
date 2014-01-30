@@ -241,7 +241,7 @@ void list_disklabel(struct fdisk_context *cxt)
 	fdisk_list_disklabel(cxt);
 
 	/* print partitions */
-	if (fdisk_get_table(cxt, &tb))
+	if (fdisk_get_partitions(cxt, &tb))
 		return;
 	if (fdisk_table_to_string(tb, cxt, NULL, 0, &str) == 0) {
 		fputc('\n', stdout);
