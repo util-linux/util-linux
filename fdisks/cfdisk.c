@@ -410,10 +410,22 @@ static void ui_vprint_center(int line, int attrs, const char *fmt, va_list ap)
 	xvasprintf(&buf, fmt, ap);
 
 	width = mbs_safe_width(buf);
-
-	attron(attrs);
-	mvaddstr(line, (COLS - width) / 2, buf);
-	attroff(attrs);
+	if (width > (size_t) COLS) {
+		char *p = strrchr(buf + COLS, ' ');
+		if (!p)
+			p = buf + COLS;
+		*p = '\0';
+		if (line + 1 >= LINES)
+			line--;
+		attron(attrs);
+		mvaddstr(line, 0, buf);
+		mvaddstr(line + 1, 0, p+1);
+		attroff(attrs);
+	} else {
+		attron(attrs);
+		mvaddstr(line, (COLS - width) / 2, buf);
+		attroff(attrs);
+	}
 	free(buf);
 }
 
@@ -1092,12 +1104,12 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 	ui_clean_info();
 
 	do {
-		int pwr = 0;
+		int pwr = 0, insec = 0;
 
 		snprintf(buf, sizeof(buf), "%s", dflt);
 		rc = ui_get_string(cf, prompt,
-				_("The size may be followed by MiB, GiB or TiB suffix "
-				  "(the \"iB\" is optional)."),
+				_("The size may be followed by {M,B,G,T}iB "
+				  "(the \"iB\" is optional) or S for sectors."),
 				buf, sizeof(buf));
 		if (rc == 0) {
 			ui_warnx(_("Please, specify size."));
@@ -1105,9 +1117,22 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 		} else if (rc == -CFDISK_ERR_ESC)
 			break;				/* cancel dialog */
 
-		rc = parse_size(buf, &user, &pwr);	/* response, parse */
+		if (strcmp(buf, dflt) == 0)
+			user = *res, rc = 0;		/* no change, use default */
+		else {
+			size_t len = strlen(buf);
+			if (buf[len - 1] == 'S') {
+				insec = 1;
+				buf[len - 1] = '\0';
+			}
+			rc = parse_size(buf, &user, &pwr);	/* parse */
+		}
+
 		if (rc == 0) {
-			DBG(FRONTEND, dbgprint("ui: get_size user=%ju, power=%d", user, pwr));
+			DBG(FRONTEND, dbgprint("ui: get_size user=%ju, power=%d, sectors=%s",
+						user, pwr, insec ? "yes" : "no"));
+			if (insec)
+				user *= cf->cxt->sector_size;
 			if (user < low) {
 				ui_warnx(_("Minimal size is %ju"), low);
 				rc = -ERANGE;
