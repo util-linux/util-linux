@@ -622,8 +622,8 @@ static int menu_cb_main(struct cfdisk *cf, int key)
 	assert(cf->cxt);
 	assert(key);
 
-	n = cf->lines_idx;	/* the current partition */
 	pa = get_current_partition(cf);
+	n = fdisk_partition_get_partno(pa);
 
 	switch (key) {
 	case 'b': /* Bootable flag */
