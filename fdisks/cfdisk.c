@@ -57,11 +57,13 @@
 /* colors */
 enum {
 	CFDISK_CL_NONE = 0,
-	CFDISK_CL_WARNING
+	CFDISK_CL_WARNING,
+	CFDISK_CL_FREESPACE,
 };
 static const int color_pairs[][2] = {
 	/* color            foreground, background */
-	[CFDISK_CL_WARNING] = { COLOR_RED, -1 },
+	[CFDISK_CL_WARNING]   = { COLOR_RED, -1 },
+	[CFDISK_CL_FREESPACE] = { COLOR_GREEN, -1 }
 };
 
 struct cfdisk;
@@ -173,8 +175,10 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	struct fdisk_label *lb;
 	struct fdisk_iter *itr = NULL;
 	struct tt *tt = NULL;
+	struct tt_line *ln_cont = NULL;
 	char *res = NULL;
-	size_t i;
+	size_t i, cont;
+	int tree = 0;
 
 	DBG(FRONTEND, dbgprint("table: convert to string"));
 
@@ -186,25 +190,41 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	lb = fdisk_context_get_label(cf->cxt, NULL);
 	assert(lb);
 
-	tt = tt_new_table(TT_FL_FREEDATA | TT_FL_MAX);
-	if (!tt)
-		goto done;
 	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
 	if (!itr)
+		goto done;
+
+	/* get container (e.g. extended partition) */
+	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
+		if (fdisk_partition_is_nested(pa)) {
+			DBG(FRONTEND, dbgprint("table: nested detected, using tree"));
+			fdisk_partition_get_parent(pa, &cont);
+			tree = TT_FL_TREE;
+			break;
+		}
+	}
+	fdisk_reset_iter(itr, FDISK_ITER_FORWARD);
+
+	tt = tt_new_table(TT_FL_FREEDATA | TT_FL_MAX | tree);
+	if (!tt)
 		goto done;
 
 	/* headers */
 	for (i = 0; i < cf->ncols; i++) {
 		col = fdisk_label_get_column(lb, cf->cols[i]);
-		if (col)
-			tt_define_column(tt, col->name,
-					     col->width,
-					     col->tt_flags);
+		if (col) {
+			int fl = col->tt_flags;
+
+			if (tree && col->id == FDISK_COL_DEVICE)
+				fl |= TT_FL_TREE;
+			tt_define_column(tt, col->name, col->width, fl);
+		}
 	}
 
 	/* data */
 	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
-		struct tt_line *ln = tt_add_line(tt, NULL);
+		struct tt_line *ln = tt_add_line(tt,
+				fdisk_partition_is_nested(pa) ? ln_cont : NULL);
 		if (!ln)
 			goto done;
 		for (i = 0; i < cf->ncols; i++) {
@@ -217,6 +237,8 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 				continue;
 			tt_line_set_data(ln, i, cdata);
 		}
+		if (!ln_cont && tree && fdisk_partition_get_partno(pa) == cont)
+			ln_cont = ln;
 	}
 
 	if (!tt_is_empty(tt)) {
@@ -286,6 +308,17 @@ static struct fdisk_partition *get_current_partition(struct cfdisk *cf)
 	assert(cf->table);
 
 	return fdisk_table_get_partition(cf->table, cf->lines_idx);
+}
+
+static int is_freespace(struct cfdisk *cf, size_t i)
+{
+	struct fdisk_partition *pa;
+
+	assert(cf);
+	assert(cf->table);
+
+	pa = fdisk_table_get_partition(cf->table, i);
+	return fdisk_partition_is_freespace(pa);
 }
 
 /* converts libfdisk FDISK_ASKTYPE_MENU to cfdisk menu and returns user's
@@ -900,8 +933,16 @@ static void ui_draw_partition(struct cfdisk *cf, size_t i)
 		mvaddstr(ln, cl, cf->lines[i + 1]);
 		standend();
 	} else {
+		int at = 0;
+
+		if (is_freespace(cf, i)) {
+			attron(COLOR_PAIR(CFDISK_CL_FREESPACE));
+			at = 1;
+		}
 		mvaddstr(ln, 0, ARROW_CURSOR_DUMMY);
 		mvaddstr(ln, cl, cf->lines[i + 1]);
+		if (at)
+                        attroff(COLOR_PAIR(CFDISK_CL_FREESPACE));
 	}
 
 }
