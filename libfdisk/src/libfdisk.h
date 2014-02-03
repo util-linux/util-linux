@@ -182,14 +182,22 @@ extern void fdisk_reset_partition(struct fdisk_partition *pa);
 extern void fdisk_ref_partition(struct fdisk_partition *pa);
 extern void fdisk_unref_partition(struct fdisk_partition *pa);
 extern int fdisk_partition_is_freespace(struct fdisk_partition *pa);
+
 extern int fdisk_partition_set_start(struct fdisk_partition *pa, uint64_t off);
 extern uint64_t fdisk_partition_get_start(struct fdisk_partition *pa);
+extern int fdisk_partition_cmp_start(struct fdisk_partition *a,
+			      struct fdisk_partition *b);
+
 extern int fdisk_partition_set_end(struct fdisk_partition *pa, uint64_t off, int isrel);
 extern uint64_t fdisk_partition_get_end(struct fdisk_partition *pa);
 extern int fdisk_partition_set_size(struct fdisk_partition *pa, uint64_t size);
 extern uint64_t fdisk_partition_get_size(struct fdisk_partition *pa);
+
 extern int fdisk_partition_set_partno(struct fdisk_partition *pa, size_t n);
 extern size_t fdisk_partition_get_partno(struct fdisk_partition *pa);
+extern int fdisk_partition_cmp_partno(struct fdisk_partition *a,
+			      struct fdisk_partition *b);
+
 extern int fdisk_partition_set_type(struct fdisk_partition *pa, struct fdisk_parttype *type);
 extern const struct fdisk_parttype *fdisk_partition_get_type(struct fdisk_partition *pa);
 extern int fdisk_partition_set_name(struct fdisk_partition *pa, const char *name);
@@ -224,6 +232,10 @@ extern int fdisk_table_remove_partition(struct fdisk_table *tb, struct fdisk_par
 
 extern int fdisk_get_partitions(struct fdisk_context *cxt, struct fdisk_table **tb);
 extern int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb);
+
+extern int fdisk_table_sort_partitions(struct fdisk_table *tb,
+			int (*cmp)(struct fdisk_partition *,
+				   struct fdisk_partition *));
 
 extern int fdisk_table_to_string(struct fdisk_table *tb,
 			  struct fdisk_context *cxt,

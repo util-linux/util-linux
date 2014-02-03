@@ -66,6 +66,12 @@ uint64_t fdisk_partition_get_start(struct fdisk_partition *pa)
 	return pa ? pa->start : 0;
 }
 
+int fdisk_partition_cmp_start(struct fdisk_partition *a,
+			      struct fdisk_partition *b)
+{
+	return a->start - b->start;
+}
+
 int fdisk_partition_set_end(struct fdisk_partition *pa, uint64_t off, int isrel)
 {
 	if (!pa)
@@ -107,6 +113,12 @@ int fdisk_partition_set_partno(struct fdisk_partition *pa, size_t n)
 size_t fdisk_partition_get_partno(struct fdisk_partition *pa)
 {
 	return pa ? pa->partno : (size_t) -1;
+}
+
+int fdisk_partition_cmp_partno(struct fdisk_partition *a,
+			       struct fdisk_partition *b)
+{
+	return a->partno - b->partno;
 }
 
 int fdisk_partition_set_type(struct fdisk_partition *pa, struct fdisk_parttype *type)
