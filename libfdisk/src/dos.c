@@ -142,7 +142,8 @@ static void partition_set_changed(
 	if (!pe)
 		return;
 
-	DBG(LABEL, dbgprint("DOS: setting %zu partition changed", i));
+	DBG(LABEL, dbgprint("DOS: setting %zu partition to %s", i,
+				changed ? "changed" : "unchnaged"));
 
 	pe->changed = changed ? 1 : 0;
 	if (changed)
@@ -357,7 +358,8 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 	if (!pe)
 		return -EINVAL;
 
-	DBG(LABEL, dbgprint("DOS: delete partiton %zu", partnum));
+	DBG(LABEL, dbgprint("DOS: delete partiton %zu (max=%zu)", partnum,
+				cxt->label->nparts_max));
 
 	l = self_label(cxt);
 	p = pe->pt_entry;
@@ -381,19 +383,20 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 		clear_partition(l->ptes[partnum].ex_entry);
 		partition_set_changed(cxt, partnum, 1);
 	} else {
-		DBG(LABEL, dbgprint("--> delete logical [non-last, move down]"));
+		DBG(LABEL, dbgprint("--> delete logical [move down]"));
 		if (partnum > 4) {
-			/* delete this link in the chain */
+			DBG(LABEL, dbgprint(" --> delete %zu logical link", partnum));
 			p = l->ptes[partnum - 1].ex_entry;
 			*p = *q;
 			dos_partition_set_start(p, dos_partition_get_start(q));
 			dos_partition_set_size(p, dos_partition_get_size(q));
 			partition_set_changed(cxt, partnum - 1, 1);
-		} else if (cxt->label->nparts_max > 5) {    /* 5 will be moved to 4 */
-			/* the first logical in a longer chain */
-			pe = &l->ptes[5];
 
-			if (pe->pt_entry) /* prevent SEGFAULT */
+		} else if (cxt->label->nparts_max > 5) {
+			DBG(LABEL, dbgprint(" --> delete first logical link"));
+			pe = &l->ptes[5];	/* second logical */
+
+			if (pe->pt_entry)	/* prevent SEGFAULT */
 				dos_partition_set_start(pe->pt_entry,
 					       get_abs_partition_start(pe) -
 					       l->ext_offset);
@@ -402,21 +405,35 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 		}
 
 		if (cxt->label->nparts_max > 5) {
+			DBG(LABEL, dbgprint(" --> move ptes"));
 			cxt->label->nparts_max--;
 			if (l->ptes[partnum].private_sectorbuffer) {
-				DBG(LABEL, dbgprint("--> freeing pte %zu sector buffer %p",
+				DBG(LABEL, dbgprint("  --> freeing pte %zu sector buffer %p",
 							partnum, l->ptes[partnum].sectorbuffer));
 				free(l->ptes[partnum].sectorbuffer);
 			}
 			while (partnum < cxt->label->nparts_max) {
-				DBG(LABEL, dbgprint("--> moving pte %zu <-- %zu", partnum, partnum + 1));
+				DBG(LABEL, dbgprint("  --> moving pte %zu <-- %zu", partnum, partnum + 1));
 				l->ptes[partnum] = l->ptes[partnum + 1];
 				partnum++;
 			}
 			memset(&l->ptes[partnum], 0, sizeof(struct pte));
-		} else
-			/* the only logical: clear only */
+		} else {
+			DBG(LABEL, dbgprint(" --> the only logical: clear only"));
 			clear_partition(l->ptes[partnum].pt_entry);
+			cxt->label->nparts_max--;
+
+			if (partnum == 4) {
+				DBG(LABEL, dbgprint("  --> clear last logical"));
+				if (l->ptes[partnum].private_sectorbuffer) {
+					DBG(LABEL, dbgprint("  --> freeing pte %zu sector buffer %p",
+							partnum, l->ptes[partnum].sectorbuffer));
+					free(l->ptes[partnum].sectorbuffer);
+				}
+				memset(&l->ptes[partnum], 0, sizeof(struct pte));
+				partition_set_changed(cxt, l->ext_index, 1);
+			}
+		}
 	}
 
 	fdisk_label_set_changed(cxt->label, 1);
@@ -440,7 +457,7 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 		return;
 	}
 
-	DBG(LABEL, dbgprint("DOS: REading extended %zu", ext));
+	DBG(LABEL, dbgprint("DOS: Reading extended %zu", ext));
 
 	while (IS_EXTENDED (p->sys_ind)) {
 		struct pte *pe = self_pte(cxt, cxt->label->nparts_max);
@@ -705,15 +722,20 @@ static int dos_probe_label(struct fdisk_context *cxt)
 
 	for (i = 3; i < cxt->label->nparts_max; i++) {
 		struct pte *pe = self_pte(cxt, i);
+		struct fdisk_dos_label *l = self_label(cxt);
 
 		if (!mbr_is_valid_magic(pe->sectorbuffer)) {
 			fdisk_info(cxt, _(
-			"Invalid flag 0x%02x%02x of partition table %zu will "
-			"be corrected by w(rite)"),
+			"Invalid flag 0x%02x%02x of EBR (for partition %zu) will "
+			"be corrected by w(rite)."),
 				pe->sectorbuffer[510],
 				pe->sectorbuffer[511],
 				i + 1);
-			partition_set_changed(cxt, 1, 1);
+			partition_set_changed(cxt, i, 1);
+
+			/* mark also extended as changed to update the first EBR
+			 * in situation that there is no logical partitions at all */
+			partition_set_changed(cxt, l->ext_index, 1);
 		}
 	}
 
@@ -1423,6 +1445,9 @@ static int write_sector(struct fdisk_context *cxt, sector_t secno,
 				(uintmax_t) secno);
 		return rc;
 	}
+
+	DBG(LABEL, dbgprint("DOS: writting to sector %ju", (uintmax_t) secno));
+
 	if (write(cxt->dev_fd, buf, cxt->sector_size) != (ssize_t) cxt->sector_size)
 		return -errno;
 	return 0;
@@ -1453,6 +1478,19 @@ static int dos_write_disklabel(struct fdisk_context *cxt)
 		rc = write_sector(cxt, 0, cxt->firstsector);
 		if (rc)
 			goto done;
+	}
+
+	if (cxt->label->nparts_max <= 4 && l->ext_offset) {
+		/* we have empty extended partition, check if the partition has
+		 * been modified and then cleanup possible remaining EBR  */
+		struct pte *pe = self_pte(cxt, l->ext_index);
+		unsigned char empty[512] = { 0 };
+		sector_t off = pe ? get_abs_partition_start(pe) : 0;
+
+		if (off && pe->changed) {
+			mbr_set_magic(empty);
+			write_sector(cxt, off, empty);
+		}
 	}
 
 	/* EBR (logical partitions) */
