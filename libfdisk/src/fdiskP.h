@@ -158,6 +158,7 @@ enum {
 struct fdisk_partition {
 	int		refcount;		/* reference counter */
 	size_t		partno;			/* partition number */
+	size_t		parent_partno;		/* for logical partitions */
 
 	uint64_t	start;			/* first sectors */
 	uint64_t	end;			/* last sector */
@@ -188,8 +189,7 @@ struct fdisk_partition {
 			end_follow_default : 1,		/* use default end */
 			freespace : 1,		/* dthis is not partition, this is free space */
 			nested : 1,		/* logical partition */
-			used   : 1,		/* partition already used */
-			endrel : 1;		/* end  is specified as relative number */
+			used   : 1;		/* partition already used */
 };
 
 #define FDISK_EMPTY_PARTNO	((size_t) -1)
@@ -200,13 +200,6 @@ struct fdisk_table {
 	int			refcount;
 	size_t			nents;		/* number of partitions */
 };
-
-extern int fdisk_table_add_freespace(
-			struct fdisk_context *cxt,
-			struct fdisk_table *tb,
-			uint64_t start,
-			uint64_t end,
-			int dosort);
 
 /*
  * Legacy CHS based geometry

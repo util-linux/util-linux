@@ -310,12 +310,13 @@ int fdisk_table_sort_partitions(struct fdisk_table *tb,
 	return 0;
 }
 
-int fdisk_table_add_freespace(
+static int table_add_freespace(
 			struct fdisk_context *cxt,
 			struct fdisk_table *tb,
 			uint64_t start,
 			uint64_t end,
-			int dosort)
+			int dosort,
+			struct fdisk_partition **res)
 {
 	struct fdisk_partition *pa;
 	int rc = 0;
@@ -346,6 +347,8 @@ int fdisk_table_add_freespace(
 		}
 		rc = table_insert_partition(tb, best, pa);
 	}
+	if (res)
+		*res = pa;
 	fdisk_unref_partition(pa);
 	return rc;
 }
@@ -368,6 +371,7 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 	struct fdisk_table *parts = NULL;
 	struct fdisk_partition *pa;
 	struct fdisk_iter itr;
+	size_t cont = FDISK_EMPTY_PARTNO;
 
 	DBG(LABEL, dbgprint("get freespace"));
 
@@ -390,31 +394,79 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 
 	dosort = !fdisk_table_is_empty(*tb);
 	last = cxt->first_lba;
-	grain = cxt->grain / cxt->sector_size;
+	grain = cxt->grain > cxt->sector_size ?	cxt->grain / cxt->sector_size : 1;
 
 	/* analyze gaps between partitions */
 	while (fdisk_table_next_partition(parts, &itr, &pa) == 0) {
-
+		if (pa->nested)
+			cont = (int) pa->parent_partno;
+		if (!pa->used || pa->nested)
+			continue;
 		DBG(LABEL, dbgprint("freespace analyze: partno=%zu, start=%ju, end=%ju",
 					pa->partno, pa->start, pa->end));
-
-		if (!fdisk_partition_is_used(pa))
-			continue;
 		if (last + grain < pa->start) {
-			rc = fdisk_table_add_freespace(cxt, *tb,
+			rc = table_add_freespace(cxt, *tb,
 				last + (last > cxt->first_lba ? 1 : 0),
 				pa->start - 1,
-				dosort);
+				dosort, NULL);
 		}
 		last = pa->end;
 	}
 
-	/* add free-space (behind last partition) to the list */
+	/* add free-space behind last partition to the list */
 	if (rc == 0 && last + grain < cxt->total_sectors - 1)
-		rc = fdisk_table_add_freespace(cxt, *tb,
+		rc = table_add_freespace(cxt, *tb,
 			last + (last > cxt->first_lba ? 1 : 0),
 			cxt->last_lba,
-			dosort);
+			dosort, NULL);
+
+	/* add gaps between logical partitions */
+	if (cont != FDISK_EMPTY_PARTNO) {
+		uint64_t x;
+		struct fdisk_partition *fr;
+		struct fdisk_partition *parent =
+				fdisk_table_get_partition(parts, cont);
+		if (!parent)
+			goto done;
+		last = fdisk_partition_get_start(parent) + cxt->first_lba;
+
+		DBG(LABEL, dbgprint("check container freespace last=%ju, "
+				    "grain=%ju, partno=%zu, start=%ju, end=%ju",
+				    last, grain, parent->partno, parent->start,
+				    parent->end));
+
+		fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
+
+		while (fdisk_table_next_partition(parts, &itr, &pa) == 0) {
+			uint64_t lastfree = pa->start - 1 - cxt->first_lba;
+
+			if (!pa->used || !pa->nested)
+				continue;
+			if (last + grain < lastfree) {
+				rc = table_add_freespace(cxt, *tb,
+						last + grain, lastfree,
+						dosort, &fr);
+				if (rc == 0 && fr) {
+					fr->parent_partno = parent->partno;
+					fr->nested = 1;
+				}
+			}
+			last = pa->end;
+		}
+
+		/* free-space remaining in extended partition */
+		x = fdisk_partition_get_start(parent)
+					+ fdisk_partition_get_size(parent) - 1;
+		if (last + grain < x)
+			rc = table_add_freespace(cxt, *tb,
+					last + grain, x - 1,
+					dosort, &fr);
+			if (rc == 0 && fr) {
+				fr->parent_partno = parent->partno;
+				fr->nested = 1;
+			}
+		}
+
 done:
 	fdisk_unref_table(parts);
 	return rc;

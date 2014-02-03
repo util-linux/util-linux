@@ -188,7 +188,7 @@ extern uint64_t fdisk_partition_get_start(struct fdisk_partition *pa);
 extern int fdisk_partition_cmp_start(struct fdisk_partition *a,
 			      struct fdisk_partition *b);
 
-extern int fdisk_partition_set_end(struct fdisk_partition *pa, uint64_t off, int isrel);
+extern int fdisk_partition_set_end(struct fdisk_partition *pa, uint64_t off);
 extern uint64_t fdisk_partition_get_end(struct fdisk_partition *pa);
 extern int fdisk_partition_set_size(struct fdisk_partition *pa, uint64_t size);
 extern uint64_t fdisk_partition_get_size(struct fdisk_partition *pa);
@@ -207,6 +207,7 @@ extern const char *fdisk_partition_get_uuid(struct fdisk_partition *pa);
 extern const char *fdisk_partition_get_attrs(struct fdisk_partition *pa);
 extern int fdisk_partition_set_nested(struct fdisk_partition *pa, int nested);
 extern int fdisk_partition_is_nested(struct fdisk_partition *pa);
+extern int fdisk_partition_get_parent(struct fdisk_partition *pa, size_t *parent);
 extern int fdisk_partition_is_used(struct fdisk_partition *pa);
 extern int fdisk_partition_to_string(struct fdisk_partition *pa,
 				     struct fdisk_context *cxt,

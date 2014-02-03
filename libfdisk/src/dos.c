@@ -1612,6 +1612,11 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 	pa->end = get_abs_partition_start(pe) + psects - (psects ? 1 : 0);
 	pa->size = psects;
 
+	if (n >= 4) {
+		pa->parent_partno = self_label(cxt)->ext_index;
+		pa->nested = 1;
+	}
+
 	if (asprintf(&pa->attrs, "%02x", p->boot_ind) < 0)
 		return -ENOMEM;
 

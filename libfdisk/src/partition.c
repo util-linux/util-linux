@@ -72,13 +72,12 @@ int fdisk_partition_cmp_start(struct fdisk_partition *a,
 	return a->start - b->start;
 }
 
-int fdisk_partition_set_end(struct fdisk_partition *pa, uint64_t off, int isrel)
+int fdisk_partition_set_end(struct fdisk_partition *pa, uint64_t off)
 {
 	if (!pa)
 		return -EINVAL;
 	pa->end = off;
 	pa->size = 0;
-	pa->endrel = isrel ? 1 : 0;
 	return 0;
 }
 
@@ -218,6 +217,15 @@ int fdisk_partition_set_nested(struct fdisk_partition *pa, int nested)
 int fdisk_partition_is_nested(struct fdisk_partition *pa)
 {
 	return pa && pa->nested;
+}
+
+int fdisk_partition_get_parent(struct fdisk_partition *pa, size_t *parent)
+{
+	if (pa && parent)
+		*parent = pa->parent_partno;
+	else
+		return -EINVAL;
+	return 0;
 }
 
 int fdisk_partition_is_used(struct fdisk_partition *pa)
