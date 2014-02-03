@@ -646,7 +646,7 @@ static int menu_cb_main(struct cfdisk *cf, int key)
 		break;
 	case 'n': /* New */
 	{
-		uint64_t start, size;
+		uint64_t start, size, dflt_size;
 		struct fdisk_partition *npa;	/* the new partition */
 
 		if (!pa || !fdisk_partition_is_freespace(pa))
@@ -656,16 +656,19 @@ static int menu_cb_main(struct cfdisk *cf, int key)
 			return -ENOMEM;
 		/* free space range */
 		start = fdisk_partition_get_start(pa);
-		size = fdisk_partition_get_size(pa) * cf->cxt->sector_size;
+		size = dflt_size = fdisk_partition_get_size(pa) * cf->cxt->sector_size;
 
 		if (ui_get_size(cf, _("Partition size: "), &size, 1, size)
 				== -CFDISK_ERR_ESC)
 			break;
-		size /= cf->cxt->sector_size; 
-		/* properties of the new partition */
+
+		if (dflt_size == size)	/* default is to fillin all free space */
+			fdisk_partition_end_follow_default(npa, 1);
+		else /* set relative size of the partition */
+			fdisk_partition_set_size(npa, size / cf->cxt->sector_size);
+
 		fdisk_partition_set_start(npa, start);
-		fdisk_partition_set_size(npa, size);
-		fdisk_partition_partno_follow_default(npa, 1);
+				fdisk_partition_partno_follow_default(npa, 1);
 		/* add to disk label -- libfdisk will ask for missing details */
 		rc = fdisk_add_partition(cf->cxt, npa);
 		fdisk_unref_partition(npa);
