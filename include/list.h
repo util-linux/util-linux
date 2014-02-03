@@ -212,14 +212,16 @@ _INLINE_ void list_splice(struct list_head *list, struct list_head *head)
  * sentinel head node, "prev" links not maintained.
  */
 _INLINE_ struct list_head *merge(int (*cmp)(struct list_head *a,
-					  struct list_head *b),
+					  struct list_head *b,
+					  void *data),
+			       void *data,
 			       struct list_head *a, struct list_head *b)
 {
 	struct list_head head, *tail = &head;
 
 	while (a && b) {
 		/* if equal, take 'a' -- important for sort stability */
-		if ((*cmp)(a, b) <= 0) {
+		if ((*cmp)(a, b, data) <= 0) {
 			tail->next = a;
 			a = a->next;
 		} else {
@@ -240,7 +242,9 @@ _INLINE_ struct list_head *merge(int (*cmp)(struct list_head *a,
  * throughout.
  */
 _INLINE_ void merge_and_restore_back_links(int (*cmp)(struct list_head *a,
-						    struct list_head *b),
+						    struct list_head *b,
+						    void *data),
+					 void *data,
 					 struct list_head *head,
 					 struct list_head *a, struct list_head *b)
 {
@@ -248,7 +252,7 @@ _INLINE_ void merge_and_restore_back_links(int (*cmp)(struct list_head *a,
 
 	while (a && b) {
 		/* if equal, take 'a' -- important for sort stability */
-		if ((*cmp)(a, b) <= 0) {
+		if ((*cmp)(a, b, data) <= 0) {
 			tail->next = a;
 			a->prev = tail;
 			a = a->next;
@@ -268,7 +272,7 @@ _INLINE_ void merge_and_restore_back_links(int (*cmp)(struct list_head *a,
 		 * element comparison is needed, so the client's cmp()
 		 * routine can invoke cond_resched() periodically.
 		 */
-		(*cmp)(tail->next, tail->next);
+		(*cmp)(tail->next, tail->next, data);
 
 		tail->next->prev = tail;
 		tail = tail->next;
@@ -294,7 +298,9 @@ _INLINE_ void merge_and_restore_back_links(int (*cmp)(struct list_head *a,
  */
 _INLINE_ void list_sort(struct list_head *head,
 			int (*cmp)(struct list_head *a,
-				   struct list_head *b))
+				   struct list_head *b,
+				   void *data),
+			void *data)
 {
 	struct list_head *part[MAX_LIST_LENGTH_BITS+1]; /* sorted partial lists
 							   -- last slot is a sentinel */
@@ -316,7 +322,7 @@ _INLINE_ void list_sort(struct list_head *head,
 		cur->next = NULL;
 
 		for (lev = 0; part[lev]; lev++) {
-			cur = merge(cmp, part[lev], cur);
+			cur = merge(cmp, data, part[lev], cur);
 			part[lev] = NULL;
 		}
 		if (lev > max_lev) {
@@ -330,9 +336,9 @@ _INLINE_ void list_sort(struct list_head *head,
 
 	for (lev = 0; lev < max_lev; lev++)
 		if (part[lev])
-			list = merge(cmp, part[lev], list);
+			list = merge(cmp, data, part[lev], list);
 
-	merge_and_restore_back_links(cmp, head, part[max_lev], list);
+	merge_and_restore_back_links(cmp, data, head, part[max_lev], list);
 }
 
 #undef _INLINE_
