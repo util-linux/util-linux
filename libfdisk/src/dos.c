@@ -830,7 +830,8 @@ static int get_start_from_user(	struct fdisk_context *cxt,
 				(uintmax_t) pa->start, (uintmax_t) low, (uintmax_t) limit));
 		*start = pa->start;
 		if (*start < low || *start > limit) {
-			fdisk_warnx(cxt, _("Start sector out of range."));
+			fdisk_warnx(cxt, _("Start sector %ju out of range."),
+					(uintmax_t) *start);
 			return -ERANGE;
 		}
 	} else {
@@ -1293,12 +1294,32 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	size_t i, free_primary = 0;
 	int rc = 0;
 	struct fdisk_dos_label *l = self_label(cxt);
+	struct dos_partition *ext = l->ext_offset ?
+			self_partition(cxt, l->ext_index) : NULL;
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
-	/* TODO: use pa->type */
+
+	/* pa specifies start within extended partition, add logical */
+	if (pa && pa->start
+	    && pa->start >= l->ext_offset
+	    && pa->start <= l->ext_offset + dos_partition_get_size(ext)) {
+		rc = add_logical(cxt, pa);
+		goto done;
+
+	/* pa specifies start, but outside extended partition */
+	} else if (pa && pa->start && l->ext_offset) {
+		int j;
+
+		j = get_partition_unused_primary(cxt, pa);
+		if (j >= 0) {
+			rc = add_partition(cxt, j, pa);
+			goto done;
+		}
+
+	}
 
 	for (i = 0; i < 4; i++) {
 		struct dos_partition *p = self_partition(cxt, i);
@@ -1610,7 +1631,6 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 
 	return 0;
 }
-
 
 /*
  * Fix the chain of logicals.
