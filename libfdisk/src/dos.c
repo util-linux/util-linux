@@ -132,6 +132,15 @@ static struct fdisk_parttype *dos_partition_parttype(
 	return t ? : fdisk_new_unknown_parttype(p->sys_ind, NULL);
 }
 
+/*
+ * Linux kernel cares about partition size only. Things like
+ * partition type or so are completely irrelevant -- kzak Nov-2013
+ */
+static int is_used_partition(struct dos_partition *p)
+{
+	return p && dos_partition_get_size(p) != 0;
+}
+
 static void partition_set_changed(
 				struct fdisk_context *cxt,
 				size_t i,
@@ -158,13 +167,15 @@ static sector_t get_abs_partition_start(struct pte *pe)
 	return pe->offset + dos_partition_get_start(pe->pt_entry);
 }
 
-/*
- * Linux kernel cares about partition size only. Things like
- * partition type or so are completely irrelevant -- kzak Nov-2013
- */
-static int is_used_partition(struct dos_partition *p)
+static sector_t get_abs_partition_end(struct pte *pe)
 {
-	return p && dos_partition_get_size(p) != 0;
+	sector_t size;
+
+	assert(pe);
+	assert(pe->pt_entry);
+
+	size = dos_partition_get_size(pe->pt_entry);
+	return get_abs_partition_start(pe) + size - (size ? 1 : 0);
 }
 
 static int is_cleared_partition(struct dos_partition *p)
@@ -830,7 +841,7 @@ static void fill_bounds(struct fdisk_context *cxt,
 			last[i] = 0;
 		} else {
 			first[i] = get_abs_partition_start(pe);
-			last[i] = first[i] + dos_partition_get_size(p) - 1;
+			last[i]  = get_abs_partition_end(pe);
 		}
 	}
 }
@@ -895,8 +906,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	size_t i;
 	struct fdisk_dos_label *l = self_label(cxt);
 	struct dos_partition *p = self_partition(cxt, n);
-	struct dos_partition *q = l->ext_offset ?
-				  self_partition(cxt, l->ext_index) : NULL;
+	struct pte *ext_pe = l->ext_offset ? self_pte(cxt, l->ext_index) : NULL;
 
 	sector_t start, stop = 0, limit, temp,
 		first[cxt->label->nparts_max],
@@ -928,16 +938,14 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			limit = UINT_MAX;
 
 		if (l->ext_offset) {
-			assert(q);
+			assert(ext_pe);
 			first[l->ext_index] = l->ext_offset;
-			last[l->ext_index] = dos_partition_get_start(q) +
-				dos_partition_get_size(q) - 1;
+			last[l->ext_index] = get_abs_partition_end(ext_pe);
 		}
 	} else {
-		assert(q);
+		assert(ext_pe);
 		start = l->ext_offset + cxt->first_lba;
-		limit = dos_partition_get_start(q)
-			+ dos_partition_get_size(q) - 1;
+		limit = get_abs_partition_end(ext_pe);
 	}
 	if (fdisk_context_use_cylinders(cxt))
 		for (i = 0; i < cxt->label->nparts_max; i++) {
@@ -1275,9 +1283,9 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 
 	if (l->ext_offset) {
 		sector_t e_last;
-		p = self_partition(cxt, l->ext_index);
-		e_last = dos_partition_get_start(p)
-				  + dos_partition_get_size(p) - 1;
+		struct pte *ext_pe = self_pte(cxt, l->ext_index);
+
+		e_last = get_abs_partition_end(ext_pe);
 
 		for (i = 4; i < cxt->label->nparts_max; i++) {
 			total++;
@@ -1320,19 +1328,19 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	size_t i, free_primary = 0;
 	int rc = 0;
 	struct fdisk_dos_label *l;
-	struct dos_partition *ext;
+	struct pte *ext_pe;
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
 	l = self_label(cxt);
-	ext = l->ext_offset ? self_partition(cxt, l->ext_index) : NULL;
+	ext_pe = l->ext_offset ? self_pte(cxt, l->ext_index) : NULL;
 
 	/* pa specifies start within extended partition, add logical */
-	if (pa && pa->start && ext
+	if (pa && pa->start && ext_pe
 	    && pa->start >= l->ext_offset
-	    && pa->start <= l->ext_offset + dos_partition_get_size(ext)) {
+	    && pa->start <= get_abs_partition_end(ext_pe)) {
 		rc = add_logical(cxt, pa);
 		goto done;
 
@@ -1634,7 +1642,6 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 {
 	struct dos_partition *p;
 	struct pte *pe;
-	unsigned int psects;
 	struct fdisk_dos_label *lb;
 
 	assert(cxt);
@@ -1649,13 +1656,11 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 	if (!pa->used)
 		return 0;
 
-	psects = dos_partition_get_size(p);
-
 	pa->type = dos_partition_parttype(cxt, p);
 	pa->boot = p->boot_ind ? p->boot_ind == ACTIVE_FLAG ? '*' : '?' : ' ';
 	pa->start = get_abs_partition_start(pe);
-	pa->end = get_abs_partition_start(pe) + psects - (psects ? 1 : 0);
-	pa->size = psects;
+	pa->end = get_abs_partition_end(pe);
+	pa->size = dos_partition_get_size(p);
 	pa->container = lb->ext_offset && n == lb->ext_index;
 
 	if (n >= 4)
@@ -1827,7 +1832,7 @@ int fdisk_dos_move_begin(struct fdisk_context *cxt, size_t i)
 			free_start = end;
 	}
 
-	last = get_abs_partition_start(pe) + dos_partition_get_size(p) - 1;
+	last = get_abs_partition_end(pe);
 
 	rc = fdisk_ask_number(cxt, free_start, curr_start, last,
 			_("New beginning of data"), &res);
