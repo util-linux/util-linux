@@ -11,6 +11,7 @@ struct fdisk_partition *fdisk_new_partition(void)
 	pa->refcount = 1;
 	INIT_LIST_HEAD(&pa->parts);
 	pa->partno = FDISK_EMPTY_PARTNO;
+	pa->parent_partno = FDISK_EMPTY_PARTNO;
 	DBG(PART, dbgprint("new %p", pa));
 	return pa;
 }
@@ -29,6 +30,7 @@ void fdisk_reset_partition(struct fdisk_partition *pa)
 	free(pa->attrs);
 	memset(pa, 0, sizeof(*pa));
 	pa->partno = FDISK_EMPTY_PARTNO;
+	pa->parent_partno = FDISK_EMPTY_PARTNO;
 	pa->refcount = ref;
 	INIT_LIST_HEAD(&pa->parts);
 }
@@ -205,18 +207,14 @@ const char *fdisk_partition_get_attrs(struct fdisk_partition *pa)
 	return pa ? pa->attrs : NULL;
 }
 
-/* nested partition means logical (within extended partition) */
-int fdisk_partition_set_nested(struct fdisk_partition *pa, int nested)
-{
-	if (!pa)
-		return -EINVAL;
-	pa->nested = nested ? 1 : 0;
-	return 0;
-}
-
 int fdisk_partition_is_nested(struct fdisk_partition *pa)
 {
-	return pa && pa->nested;
+	return pa && pa->parent_partno != FDISK_EMPTY_PARTNO;
+}
+
+int fdisk_partition_is_container(struct fdisk_partition *pa)
+{
+	return pa && pa->container;
 }
 
 int fdisk_partition_get_parent(struct fdisk_partition *pa, size_t *parent)

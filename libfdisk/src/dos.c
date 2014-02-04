@@ -1630,12 +1630,14 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 	struct dos_partition *p;
 	struct pte *pe;
 	unsigned int psects;
+	struct fdisk_dos_label *lb;
 
 	assert(cxt);
 	assert(pa);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
+	lb = self_label(cxt);
 	pe = self_pte(cxt, n);
 	p = pe->pt_entry;
 	pa->used = !is_cleared_partition(p);
@@ -1649,11 +1651,10 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 	pa->start = get_abs_partition_start(pe);
 	pa->end = get_abs_partition_start(pe) + psects - (psects ? 1 : 0);
 	pa->size = psects;
+	pa->container = n == lb->ext_index;
 
-	if (n >= 4) {
-		pa->parent_partno = self_label(cxt)->ext_index;
-		pa->nested = 1;
-	}
+	if (n >= 4)
+		pa->parent_partno = lb->ext_index;
 
 	if (asprintf(&pa->attrs, "%02x", p->boot_ind) < 0)
 		return -ENOMEM;

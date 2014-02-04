@@ -205,8 +205,8 @@ extern const char *fdisk_partition_get_name(struct fdisk_partition *pa);
 extern int fdisk_partition_set_uuid(struct fdisk_partition *pa, const char *uuid);
 extern const char *fdisk_partition_get_uuid(struct fdisk_partition *pa);
 extern const char *fdisk_partition_get_attrs(struct fdisk_partition *pa);
-extern int fdisk_partition_set_nested(struct fdisk_partition *pa, int nested);
 extern int fdisk_partition_is_nested(struct fdisk_partition *pa);
+extern int fdisk_partition_is_container(struct fdisk_partition *pa);
 extern int fdisk_partition_get_parent(struct fdisk_partition *pa, size_t *parent);
 extern int fdisk_partition_is_used(struct fdisk_partition *pa);
 extern int fdisk_partition_to_string(struct fdisk_partition *pa,

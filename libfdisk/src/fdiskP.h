@@ -187,8 +187,8 @@ struct fdisk_partition {
 	unsigned int	partno_follow_default : 1,	/* use default partno */
 			start_follow_default : 1,	/* use default start */
 			end_follow_default : 1,		/* use default end */
-			freespace : 1,		/* dthis is not partition, this is free space */
-			nested : 1,		/* logical partition */
+			freespace : 1,		/* this is free space */
+			container : 1,		/* container partition (e.g. extended partition) */
 			used   : 1;		/* partition already used */
 };
 
@@ -253,8 +253,6 @@ struct fdisk_label_operations {
 	int (*get_part)(struct fdisk_context *cxt,
 						size_t n,
 						struct fdisk_partition *pa);
-	/* add all gaps to table */
-	int (*get_freespace)(struct fdisk_context *cxt, struct fdisk_table *tb);
 
 	int (*part_toggle_flag)(struct fdisk_context *cxt, size_t i, unsigned long flag);
 
