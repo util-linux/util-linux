@@ -178,7 +178,7 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	char *res = NULL;
 	size_t i;
 	int tree = 0;
-	struct tt_line *ln_cont = NULL;
+	struct tt_line *ln, *ln_cont = NULL;
 
 	DBG(FRONTEND, dbgprint("table: convert to string"));
 
@@ -222,7 +222,6 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	fdisk_reset_iter(itr, FDISK_ITER_FORWARD);
 
 	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
-		struct tt_line *ln;
 		struct tt_line *parent = fdisk_partition_is_nested(pa) ? ln_cont : NULL;
 
 		ln = tt_add_line(tt, parent);
@@ -239,11 +238,33 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 		}
 		if (tree && fdisk_partition_is_container(pa))
 			ln_cont = ln;
+
+		tt_line_set_userdata(ln, (void *) pa);
+		fdisk_ref_partition(pa);
 	}
 
-	if (!tt_is_empty(tt)) {
-		tt_set_termreduce(tt, ARROW_CURSOR_WIDTH);
-		tt_print_table_to_string(tt, &res);
+	if (tt_is_empty(tt))
+		goto done;
+
+	tt_set_termreduce(tt, ARROW_CURSOR_WIDTH);
+	tt_print_table_to_string(tt, &res);
+
+	/* tt_* code might to reorder lines, let's reorder @tb according to the
+	 * final output (it's no problem because partitions are addressed by
+	 * parno stored within struct fdisk_partition)  */
+
+	/* remove all */
+	fdisk_reset_iter(itr, FDISK_ITER_FORWARD);
+	while (fdisk_table_next_partition(tb, itr, &pa) == 0)
+		fdisk_table_remove_partition(tb, pa);
+
+	/* add all in the right order */
+	i = 0;
+	while (tt_get_output_line(tt, i++, &ln) == 0) {
+		struct fdisk_partition *pa = tt_line_get_userdata(ln);
+
+		fdisk_table_add_partition(tb, pa);
+		fdisk_unref_partition(pa);
 	}
 done:
 	tt_free_table(tt);
