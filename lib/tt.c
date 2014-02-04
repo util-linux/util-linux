@@ -68,6 +68,7 @@ struct tt *tt_new_table(int flags)
 	tb->flags = flags;
 	tb->out = stdout;
 	INIT_LIST_HEAD(&tb->tb_lines);
+	INIT_LIST_HEAD(&tb->tb_output);
 	INIT_LIST_HEAD(&tb->tb_columns);
 
 #if defined(HAVE_WIDECHAR)
@@ -242,6 +243,7 @@ struct tt_line *tt_add_line(struct tt *tb, struct tt_line *parent)
 	ln->table = tb;
 	ln->parent = parent;
 	INIT_LIST_HEAD(&ln->ln_lines);
+	INIT_LIST_HEAD(&ln->ln_output);
 	INIT_LIST_HEAD(&ln->ln_children);
 	INIT_LIST_HEAD(&ln->ln_branch);
 
@@ -722,6 +724,7 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 static void print_line(struct tt_line *ln, char *buf, size_t bufsz)
 {
 	struct list_head *p;
+	struct tt *tb = ln->table;
 
 	/* set width according to the size of data
 	 */
@@ -731,7 +734,8 @@ static void print_line(struct tt_line *ln, char *buf, size_t bufsz)
 
 		print_data(ln->table, cl, line_get_data(ln, cl, buf, bufsz));
 	}
-	fputc('\n', ln->table->out);
+	fputc('\n', tb->out);
+	list_add_tail(&ln->ln_output, &tb->tb_output);
 }
 
 static void print_header(struct tt *tb, char *buf, size_t bufsz)
@@ -856,6 +860,21 @@ int tt_print_table(struct tt *tb)
 	return 0;
 }
 
+int tt_get_output_line(struct tt *tb, int i, struct tt_line **ln)
+{
+	struct list_head *p;
+
+	if (!tb || !ln)
+		return -EINVAL;
+
+	list_for_each(p, &tb->tb_output) {
+		*ln = list_entry(p, struct tt_line, ln_output);
+		if (i-- == 0)
+			return 0;
+	}
+
+	return -1;
+}
 
 /*
  * @tb: table

@@ -43,7 +43,8 @@ struct tt {
 	int	first_run;
 
 	struct list_head	tb_columns;
-	struct list_head	tb_lines;
+	struct list_head	tb_lines;	/* lines as specified by user */
+	struct list_head	tb_output;	/* lines in output order */
 
 	const struct tt_symbols	*symbols;
 };
@@ -71,6 +72,7 @@ struct tt_line {
 	size_t		data_sz;		/* strlen of all data */
 
 	struct list_head	ln_lines;	/* table lines */
+	struct list_head	ln_output;	/* lines in output order */
 
 	struct list_head	ln_branch;	/* begin of branch (head of ln_children) */
 	struct list_head	ln_children;
@@ -94,6 +96,7 @@ extern struct tt_column *tt_define_column(struct tt *tb, const char *name,
 extern struct tt_column *tt_get_column(struct tt *tb, size_t colnum);
 
 extern struct tt_line *tt_add_line(struct tt *tb, struct tt_line *parent);
+extern int tt_get_output_line(struct tt *tb, int i, struct tt_line **ln);
 
 extern int tt_line_set_data(struct tt_line *ln, int colnum, char *data);
 extern int tt_line_set_userdata(struct tt_line *ln, void *data);
