@@ -170,15 +170,15 @@ static int cols_init(struct cfdisk *cf)
  */
 static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 {
-	struct fdisk_partition *pa;
 	const struct fdisk_column *col;
+	struct fdisk_partition *pa;
 	struct fdisk_label *lb;
 	struct fdisk_iter *itr = NULL;
 	struct tt *tt = NULL;
-	struct tt_line *ln_cont = NULL;
 	char *res = NULL;
-	size_t i, cont;
+	size_t i;
 	int tree = 0;
+	struct tt_line *ln_cont = NULL;
 
 	DBG(FRONTEND, dbgprint("table: convert to string"));
 
@@ -198,12 +198,10 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
 		if (fdisk_partition_is_nested(pa)) {
 			DBG(FRONTEND, dbgprint("table: nested detected, using tree"));
-			fdisk_partition_get_parent(pa, &cont);
 			tree = TT_FL_TREE;
 			break;
 		}
 	}
-	fdisk_reset_iter(itr, FDISK_ITER_FORWARD);
 
 	tt = tt_new_table(TT_FL_FREEDATA | TT_FL_MAX | tree);
 	if (!tt)
@@ -214,7 +212,6 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 		col = fdisk_label_get_column(lb, cf->cols[i]);
 		if (col) {
 			int fl = col->tt_flags;
-
 			if (tree && col->id == FDISK_COL_DEVICE)
 				fl |= TT_FL_TREE;
 			tt_define_column(tt, col->name, col->width, fl);
@@ -222,14 +219,17 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	}
 
 	/* data */
+	fdisk_reset_iter(itr, FDISK_ITER_FORWARD);
+
 	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
-		struct tt_line *ln = tt_add_line(tt,
-				fdisk_partition_is_nested(pa) ? ln_cont : NULL);
+		struct tt_line *ln;
+		struct tt_line *parent = fdisk_partition_is_nested(pa) ? ln_cont : NULL;
+
+		ln = tt_add_line(tt, parent);
 		if (!ln)
 			goto done;
 		for (i = 0; i < cf->ncols; i++) {
 			char *cdata = NULL;
-
 			col = fdisk_label_get_column(lb, cf->cols[i]);
 			if (!col)
 				continue;
@@ -237,7 +237,7 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 				continue;
 			tt_line_set_data(ln, i, cdata);
 		}
-		if (!ln_cont && tree && fdisk_partition_get_partno(pa) == cont)
+		if (tree && fdisk_partition_is_container(pa))
 			ln_cont = ln;
 	}
 
