@@ -192,9 +192,11 @@ int fdisk_table_add_partition(struct fdisk_table *tb, struct fdisk_partition *pa
 	list_add_tail(&pa->parts, &tb->parts);
 	tb->nents++;
 
-	DBG(TAB, dbgprint("add entry %p [start=%ju, end=%ju, size=%ju, freespace=%s]",
-				pa, pa->start, pa->end, pa->size,
-				pa->freespace ? "yes" : "no"));
+	DBG(TAB, dbgprint("add entry %p [start=%ju, end=%ju, size=%ju, %s %s %s]",
+			pa, pa->start, pa->end, pa->size,
+			fdisk_partition_is_freespace(pa) ? "freespace" : "",
+			fdisk_partition_is_nested(pa)    ? "nested"    : "",
+			fdisk_partition_is_container(pa) ? "container" : ""));
 	return 0;
 }
 

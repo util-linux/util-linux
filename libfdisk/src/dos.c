@@ -50,8 +50,8 @@ struct fdisk_dos_label {
 	struct fdisk_label	head;		/* generic part */
 
 	struct pte	ptes[MAXIMUM_PARTS];	/* partition */
-	sector_t	ext_offset;
-	size_t		ext_index;
+	sector_t	ext_offset;		/* start of the ext.partition */
+	size_t		ext_index;		/* ext.partition index (if ext_offset is set) */
 	unsigned int	compatible : 1,		/* is DOS compatible? */
 			non_pt_changed : 1;	/* MBR, but no PT changed */
 };
@@ -373,6 +373,7 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 			cxt->label->nparts_max = 4;
 			l->ptes[l->ext_index].ex_entry = NULL;
 			l->ext_offset = 0;
+			l->ext_index = 0;
 		}
 		partition_set_changed(cxt, partnum, 1);
 		clear_partition(p);
@@ -894,7 +895,8 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	size_t i;
 	struct fdisk_dos_label *l = self_label(cxt);
 	struct dos_partition *p = self_partition(cxt, n);
-	struct dos_partition *q = self_partition(cxt, l->ext_index);
+	struct dos_partition *q = l->ext_offset ?
+				  self_partition(cxt, l->ext_index) : NULL;
 
 	sector_t start, stop = 0, limit, temp,
 		first[cxt->label->nparts_max],
@@ -926,11 +928,13 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			limit = UINT_MAX;
 
 		if (l->ext_offset) {
+			assert(q);
 			first[l->ext_index] = l->ext_offset;
 			last[l->ext_index] = dos_partition_get_start(q) +
 				dos_partition_get_size(q) - 1;
 		}
 	} else {
+		assert(q);
 		start = l->ext_offset + cxt->first_lba;
 		limit = dos_partition_get_start(q)
 			+ dos_partition_get_size(q) - 1;
@@ -1315,17 +1319,18 @@ static int dos_add_partition(struct fdisk_context *cxt,
 {
 	size_t i, free_primary = 0;
 	int rc = 0;
-	struct fdisk_dos_label *l = self_label(cxt);
-	struct dos_partition *ext = l->ext_offset ?
-			self_partition(cxt, l->ext_index) : NULL;
+	struct fdisk_dos_label *l;
+	struct dos_partition *ext;
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
+	l = self_label(cxt);
+	ext = l->ext_offset ? self_partition(cxt, l->ext_index) : NULL;
 
 	/* pa specifies start within extended partition, add logical */
-	if (pa && pa->start
+	if (pa && pa->start && ext
 	    && pa->start >= l->ext_offset
 	    && pa->start <= l->ext_offset + dos_partition_get_size(ext)) {
 		rc = add_logical(cxt, pa);
@@ -1651,7 +1656,7 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 	pa->start = get_abs_partition_start(pe);
 	pa->end = get_abs_partition_start(pe) + psects - (psects ? 1 : 0);
 	pa->size = psects;
-	pa->container = n == lb->ext_index;
+	pa->container = lb->ext_offset && n == lb->ext_index;
 
 	if (n >= 4)
 		pa->parent_partno = lb->ext_index;
