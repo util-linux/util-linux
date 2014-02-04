@@ -196,7 +196,7 @@ int fdisk_table_add_partition(struct fdisk_table *tb, struct fdisk_partition *pa
 			pa, pa->start, pa->end, pa->size,
 			fdisk_partition_is_freespace(pa) ? "freespace" : "",
 			fdisk_partition_is_nested(pa)    ? "nested"    : "",
-			fdisk_partition_is_container(pa) ? "container" : ""));
+			fdisk_partition_is_container(pa) ? "container" : "primary"));
 	return 0;
 }
 
@@ -216,9 +216,11 @@ static int table_insert_partition(
 		list_add(&pa->parts, &tb->parts);
 	tb->nents++;
 
-	DBG(TAB, dbgprint("insert entry %p [start=%ju, end=%ju, size=%ju, freespace=%s]",
-				pa, pa->start, pa->end, pa->size,
-				pa->freespace ? "yes" : "no"));
+	DBG(TAB, dbgprint("insert entry %p pre=%p [start=%ju, end=%ju, size=%ju, %s %s %s]",
+			pa, poz ? poz : NULL, pa->start, pa->end, pa->size,
+			fdisk_partition_is_freespace(pa) ? "freespace" : "",
+			fdisk_partition_is_nested(pa)    ? "nested"    : "",
+			fdisk_partition_is_container(pa) ? "container" : "primary"));
 	return 0;
 }
 
@@ -289,6 +291,27 @@ int fdisk_get_partitions(struct fdisk_context *cxt, struct fdisk_table **tb)
 	return 0;
 }
 
+int fdisk_dump_table(struct fdisk_table *tb, FILE *f)
+{
+	struct fdisk_partition *pa;
+	struct fdisk_iter itr;
+	int i = 0;
+
+	assert(tb);
+	assert(f);
+
+	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
+
+	fprintf(f, "--table--%p\n", tb);
+	while (fdisk_table_next_partition(tb, &itr, &pa) == 0) {
+		fprintf(f, "%d: ", i++);
+		fdisk_dump_partition(pa, f);
+	}
+	fputs("-----\n", f);
+	return 0;
+}
+
+
 typedef	int (*fdisk_partcmp_t)(struct fdisk_partition *, struct fdisk_partition *);
 
 static int cmp_parts_wrapper(struct list_head *a, struct list_head *b, void *data)
@@ -312,6 +335,35 @@ int fdisk_table_sort_partitions(struct fdisk_table *tb,
 	return 0;
 }
 
+/* allocates a new freespace description */
+static int new_freespace(struct fdisk_context *cxt,
+			 uint64_t start,
+			 uint64_t end,
+			 struct fdisk_partition *parent,
+			 struct fdisk_partition **pa)
+{
+	assert(cxt);
+	assert(pa);
+
+	*pa = NULL;
+
+	if (start == end)
+		return 0;
+	*pa = fdisk_new_partition();
+	if (!*pa)
+		return -ENOMEM;
+
+	(*pa)->freespace = 1;
+	(*pa)->start = fdisk_align_lba_in_range(cxt, start, start, end);
+	(*pa)->end = end;
+	(*pa)->size = (*pa)->end - (*pa)->start + 1ULL;
+
+	if (parent)
+		(*pa)->parent_partno = parent->partno;
+	return 0;
+}
+
+/* add freespace description to the right place within @tb */
 static int table_add_freespace(
 			struct fdisk_context *cxt,
 			struct fdisk_table *tb,
@@ -321,26 +373,17 @@ static int table_add_freespace(
 {
 	struct fdisk_partition *pa, *x, *real_parent = NULL, *best = NULL;
 	struct fdisk_iter itr;
-	int rc;
+	int rc = 0;
 
 	assert(tb);
 
-	if (start == end)
-		return 0;
-
-	pa = fdisk_new_partition();
-	if (!pa)
+	rc = new_freespace(cxt, start, end, parent, &pa);
+	if (rc)
 		return -ENOMEM;
-	pa->freespace = 1;
-	pa->start = fdisk_align_lba_in_range(cxt, start, start, end);
-	pa->end = end;
-	pa->size = pa->end - pa->start + 1ULL;
-
+	if (!pa)
+		return 0;
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
-
 	if (parent) {
-		pa->parent_partno = parent->partno;
-
 		while (fdisk_table_next_partition(tb, &itr, &x) == 0) {
 			if (x->partno == parent->partno) {
 				real_parent = x;
@@ -367,6 +410,46 @@ static int table_add_freespace(
 	return rc;
 }
 
+/* analyze @cont(ainer) in @parts and add all detected freespace into @tb, note
+ * that @parts has to be sorted by partition starts */
+static int check_container_freespace(struct fdisk_context *cxt,
+				     struct fdisk_table *parts,
+				     struct fdisk_table *tb,
+				     struct fdisk_partition *cont)
+{
+	struct fdisk_iter itr;
+	struct fdisk_partition *pa;
+	uint64_t x, last, grain;
+	int rc = 0;
+
+	assert(cxt);
+	assert(parts);
+	assert(tb);
+	assert(cont);
+
+	last = fdisk_partition_get_start(cont) + cxt->first_lba;
+	grain = cxt->grain > cxt->sector_size ?	cxt->grain / cxt->sector_size : 1;
+	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
+
+	while (fdisk_table_next_partition(parts, &itr, &pa) == 0) {
+		uint64_t lastfree;
+		if (!pa->used || !fdisk_partition_is_nested(pa))
+			continue;
+		lastfree = pa->start - 1 - cxt->first_lba;
+		if (last + grain < lastfree)
+			rc = table_add_freespace(cxt, tb, last + grain, lastfree, cont);
+		if (rc)
+			return rc;
+		last = pa->end;
+	}
+
+	/* free-space remaining in extended partition */
+	x = fdisk_partition_get_start(cont) + fdisk_partition_get_size(cont) - 1;
+	if (last + grain < x)
+		rc = table_add_freespace(cxt, tb, last + grain, x - 1, cont);
+	return rc;
+}
+
 
 /**
  * fdisk_get_freespaces
@@ -374,7 +457,7 @@ static int table_add_freespace(
  * @tb: returns table
  *
  * This function adds freespace (described by fdisk_partition) to @table, it
- * allocates a new table if if @table points to NULL.
+ * allocates a new table if the @table points to NULL.
 
  * Returns 0 on success, otherwise, a corresponding error.
  */
@@ -383,7 +466,7 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 	int rc = 0;
 	uint64_t last, grain;
 	struct fdisk_table *parts = NULL;
-	struct fdisk_partition *pa, *cont = NULL;
+	struct fdisk_partition *pa;
 	struct fdisk_iter itr;
 
 	DBG(LABEL, dbgprint("get freespace"));
@@ -392,22 +475,19 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 		return -EINVAL;
 	if (!*tb && !(*tb = fdisk_new_table()))
 		return -ENOMEM;
-	/* generic way */
+
 	rc = fdisk_get_partitions(cxt, &parts);
 	if (rc)
 		goto done;
-
 	fdisk_table_sort_partitions(parts, fdisk_partition_cmp_start);
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 	last = cxt->first_lba;
 	grain = cxt->grain > cxt->sector_size ?	cxt->grain / cxt->sector_size : 1;
 
 	/* analyze gaps between partitions */
-	while (fdisk_table_next_partition(parts, &itr, &pa) == 0) {
+	while (rc == 0 && fdisk_table_next_partition(parts, &itr, &pa) == 0) {
 		if (!pa->used || fdisk_partition_is_nested(pa))
 			continue;
-		if (fdisk_partition_is_container(pa))
-			cont = pa;
 		DBG(LABEL, dbgprint("freespace analyze: partno=%zu, start=%ju, end=%ju",
 					pa->partno, pa->start, pa->end));
 		if (last + grain < pa->start) {
@@ -415,48 +495,25 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 				last + (last > cxt->first_lba ? 1 : 0),
 				pa->start - 1, NULL);
 		}
+		/* add gaps between logical partitions */
+		if (fdisk_partition_is_container(pa))
+			rc = check_container_freespace(cxt, parts, *tb, pa);
 		last = pa->end;
 	}
 
-	/* add free-space behind last partition to the list */
-	if (rc == 0 && last + grain < cxt->total_sectors - 1)
-		rc = table_add_freespace(cxt, *tb,
+	/* add free-space behind last partition to the end of the table (so
+	 * don't use table_add_freespace()) */
+	if (rc == 0 && last + grain < cxt->total_sectors - 1) {
+		rc = new_freespace(cxt,
 			last + (last > cxt->first_lba ? 1 : 0),
-			cxt->last_lba, NULL);
-
-	/* add gaps between logical partitions */
-	if (cont) {
-		uint64_t x;
-
-		last = fdisk_partition_get_start(cont) + cxt->first_lba;
-
-		DBG(LABEL, dbgprint("check container freespace last=%ju, "
-				    "grain=%ju, partno=%zu, start=%ju, end=%ju",
-				    last, grain, cont->partno, cont->start,
-				    cont->end));
-
-		fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
-
-		while (fdisk_table_next_partition(parts, &itr, &pa) == 0) {
-			uint64_t lastfree;
-
-			if (!pa->used || !fdisk_partition_is_nested(pa))
-				continue;
-			lastfree = pa->start - 1 - cxt->first_lba;
-			if (last + grain < lastfree)
-				rc = table_add_freespace(cxt, *tb,
-						last + grain, lastfree, cont);
-			last = pa->end;
+			cxt->last_lba, NULL, &pa);
+		if (pa) {
+			fdisk_table_add_partition(*tb, pa);
+			fdisk_unref_partition(pa);
 		}
-
-		/* free-space remaining in extended partition */
-		x = fdisk_partition_get_start(cont)
-					+ fdisk_partition_get_size(cont) - 1;
-		if (last + grain < x)
-			rc = table_add_freespace(cxt, *tb,
-					last + grain, x - 1, cont);
 	}
 
+	DBG(LABEL, fdisk_dump_table(*tb, stderr));
 done:
 	fdisk_unref_table(parts);
 	return rc;

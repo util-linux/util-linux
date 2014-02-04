@@ -658,6 +658,8 @@ static int menu_cb_main(struct cfdisk *cf, int key)
 	pa = get_current_partition(cf);
 	n = fdisk_partition_get_partno(pa);
 
+	DBG(FRONTEND, dbgprint("menu action on %p", pa));
+
 	switch (key) {
 	case 'b': /* Bootable flag */
 	{
@@ -1152,7 +1154,7 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 
 		snprintf(buf, sizeof(buf), "%s", dflt);
 		rc = ui_get_string(cf, prompt,
-				_("The size may be followed by {M,B,G,T}iB "
+				_("May be followed by {M,B,G,T}iB "
 				  "(the \"iB\" is optional) or S for sectors."),
 				buf, sizeof(buf));
 		if (rc == 0) {

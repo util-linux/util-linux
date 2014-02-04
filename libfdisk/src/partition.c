@@ -55,6 +55,30 @@ void fdisk_unref_partition(struct fdisk_partition *pa)
 	}
 }
 
+int fdisk_dump_partition(struct fdisk_partition *pa, FILE *f)
+{
+	assert(pa);
+	assert(f);
+
+	if (pa->partno == FDISK_EMPTY_PARTNO)
+		fputs("#  ", f);
+	else
+		fprintf(f, "#%zu ", pa->partno);
+
+	fprintf(f, "[%p] start=%ju, end=%ju, size=%ju",
+		pa, pa->start, pa->end, pa->size);
+	if (pa->parent_partno != FDISK_EMPTY_PARTNO)
+		fprintf(f, ", parent=%zu", pa->parent_partno);
+	if (fdisk_partition_is_freespace(pa))
+		fputs(" freespace", f);
+	if (fdisk_partition_is_container(pa))
+		fputs(" container", f);
+	if (fdisk_partition_is_nested(pa))
+		fputs(" nested", f);
+	fputc('\n', f);
+	return 0;
+}
+
 int fdisk_partition_set_start(struct fdisk_partition *pa, uint64_t off)
 {
 	if (!pa)

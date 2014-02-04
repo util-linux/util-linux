@@ -221,11 +221,14 @@ extern int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int
 extern int fdisk_partition_start_follow_default(struct fdisk_partition *pa, int enable);
 extern int fdisk_partition_end_follow_default(struct fdisk_partition *pa, int enable);
 
+extern int fdisk_dump_partition(struct fdisk_partition *pa, FILE *f);
+
 /* table.c */
 extern struct fdisk_table *fdisk_new_table(void);
 extern int fdisk_reset_table(struct fdisk_table *tb);
 extern void fdisk_ref_table(struct fdisk_table *tb);
 extern void fdisk_unref_table(struct fdisk_table *tb);
+extern int fdisk_dump_table(struct fdisk_table *b, FILE *f);
 extern int fdisk_table_get_nents(struct fdisk_table *tb);
 extern int fdisk_table_is_empty(struct fdisk_table *tb);
 extern int fdisk_table_add_partition(struct fdisk_table *tb, struct fdisk_partition *pa);
