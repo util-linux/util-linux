@@ -97,6 +97,7 @@ extern struct tt_line *tt_add_line(struct tt *tb, struct tt_line *parent);
 
 extern int tt_line_set_data(struct tt_line *ln, int colnum, char *data);
 extern int tt_line_set_userdata(struct tt_line *ln, void *data);
+extern void *tt_line_get_userdata(struct tt_line *ln);
 
 extern void tt_fputs_quoted(const char *data, FILE *out);
 extern void tt_fputs_nonblank(const char *data, FILE *out);

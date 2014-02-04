@@ -310,6 +310,11 @@ int tt_line_set_userdata(struct tt_line *ln, void *data)
 	return 0;
 }
 
+void *tt_line_get_userdata(struct tt_line *ln)
+{
+	return ln ? ln->userdata : NULL;
+}
+
 static char *line_get_ascii_art(struct tt_line *ln, char *buf, size_t *bufsz)
 {
 	const char *art;

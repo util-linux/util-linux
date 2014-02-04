@@ -702,7 +702,7 @@ static int has_line(struct tt *tt, struct libmnt_fs *fs)
 
 	list_for_each(p, &tt->tb_lines) {
 		struct tt_line *ln = list_entry(p, struct tt_line, ln_lines);
-		if ((struct libmnt_fs *) ln->userdata == fs)
+		if ((struct libmnt_fs *) tt_line_get_userdata(ln) == fs)
 			return 1;
 	}
 	return 0;
