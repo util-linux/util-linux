@@ -79,9 +79,7 @@ static const char *really_wanted[] = {
 	"ext4dev",
 	"jfs",
 	"reiserfs",
-	"xiafs",
-	"xfs",
-	NULL
+	"xiafs"
 };
 
 /*
@@ -165,6 +163,19 @@ static int string_to_int(const char *s)
 		return -1;
 	else
 		return (int) l;
+}
+
+/* Do we really really want to check this fs? */
+static int fs_check_required(const char *type)
+{
+	size_t i;
+
+	for(i = 0; i < ARRAY_SIZE(really_wanted); i++) {
+		if (strcmp(type, really_wanted[i]) == 0)
+			return 1;
+	}
+
+	return 0;
 }
 
 static int is_mounted(struct libmnt_fs *fs)
@@ -549,17 +560,17 @@ static void print_stats(struct fsck_instance *inst)
  * Execute a particular fsck program, and link it into the list of
  * child processes we are waiting for.
  */
-static int execute(const char *type, struct libmnt_fs *fs, int interactive)
+static int execute(const char *progname, const char *progpath,
+		   const char *type, struct libmnt_fs *fs, int interactive)
 {
-	char *s, *argv[80], prog[80];
+	char *argv[80];
 	int  argc, i;
 	struct fsck_instance *inst, *p;
 	pid_t	pid;
 
 	inst = xcalloc(1, sizeof(*inst));
 
-	sprintf(prog, "fsck.%s", type);
-	argv[0] = xstrdup(prog);
+	argv[0] = xstrdup(progname);
 	argc = 1;
 
 	for (i=0; i <num_args; i++)
@@ -586,19 +597,12 @@ static int execute(const char *type, struct libmnt_fs *fs, int interactive)
 	argv[argc++] = xstrdup(fs_get_device(fs));
 	argv[argc] = 0;
 
-	s = find_fsck(prog);
-	if (s == NULL) {
-		warnx(_("%s: not found"), prog);
-		free_instance(inst);
-		return ENOENT;
-	}
-
 	if (verbose || noexecute) {
 		const char *tgt = mnt_fs_get_target(fs);
 
 		if (!tgt)
 			tgt = fs_get_device(fs);
-		printf("[%s (%d) -- %s] ", s, num_running, tgt);
+		printf("[%s (%d) -- %s] ", progpath, num_running, tgt);
 		for (i=0; i < argc; i++)
 			printf("%s ", argv[i]);
 		printf("\n");
@@ -621,15 +625,15 @@ static int execute(const char *type, struct libmnt_fs *fs, int interactive)
 	} else if (pid == 0) {
 		if (!interactive)
 			close(0);
-		execv(s, argv);
-		err(FSCK_EX_ERROR, _("%s: execute failed"), s);
+		execv(progpath, argv);
+		err(FSCK_EX_ERROR, _("%s: execute failed"), progpath);
 	}
 
 	for (i=0; i < argc; i++)
 		free(argv[i]);
 
 	inst->pid = pid;
-	inst->prog = xstrdup(prog);
+	inst->prog = xstrdup(progname);
 	inst->type = xstrdup(type);
 	gettimeofday(&inst->start_time, NULL);
 	inst->next = NULL;
@@ -826,6 +830,7 @@ static int wait_many(int flags)
  */
 static int fsck_device(struct libmnt_fs *fs, int interactive)
 {
+	char progname[80], *progpath;
 	const char *type;
 	int retval;
 
@@ -842,15 +847,27 @@ static int fsck_device(struct libmnt_fs *fs, int interactive)
 	else
 		type = DEFAULT_FSTYPE;
 
+	sprintf(progname, "fsck.%s", type);
+	progpath = find_fsck(progname);
+	if (progpath == NULL) {
+		if (fs_check_required(type)) {
+			retval = ENOENT;
+			goto err;
+		}
+		return 0;
+	}
+
 	num_running++;
-	retval = execute(type, fs, interactive);
+	retval = execute(progname, progpath, type, fs, interactive);
 	if (retval) {
-		warnx(_("error %d while executing fsck.%s for %s"),
-			retval, type, fs_get_device(fs));
 		num_running--;
-		return FSCK_EX_ERROR;
+		goto err;
 	}
 	return 0;
+err:
+	warnx(_("error %d (%m) while executing fsck.%s for %s"),
+			retval, type, fs_get_device(fs));
+	return FSCK_EX_ERROR;
 }
 
 
@@ -1018,8 +1035,7 @@ static int fs_ignored_type(struct libmnt_fs *fs)
 /* Check if we should ignore this filesystem. */
 static int ignore(struct libmnt_fs *fs)
 {
-	const char **ip, *type;
-	int wanted = 0;
+	const char *type;
 
 	/*
 	 * If the pass number is 0, ignore it.
@@ -1074,16 +1090,11 @@ static int ignore(struct libmnt_fs *fs)
 	if (fs_ignored_type(fs))
 		return 1;
 
-	/* Do we really really want to check this fs? */
-	for(ip = really_wanted; *ip; ip++)
-		if (strcmp(type, *ip) == 0) {
-			wanted = 1;
-			break;
-		}
+
 
 	/* See if the <fsck.fs> program is available. */
 	if (find_fsck(type) == NULL) {
-		if (wanted)
+		if (fs_check_required(type))
 			warnx(_("cannot check %s: fsck.%s not found"),
 				fs_get_device(fs), type);
 		return 1;
@@ -1561,7 +1572,6 @@ int main(int argc, char *argv[])
 			fs = add_dummy_fs(devices[i]);
 		else if (fs_ignored_type(fs))
 			continue;
-
 		if (ignore_mounted && is_mounted(fs))
 			continue;
 		status |= fsck_device(fs, interactive);
