@@ -1010,6 +1010,8 @@ static int init_kmsg(struct dmesg_control *ctl)
 
 	if (!ctl->follow)
 		mode |= O_NONBLOCK;
+	else
+		setlinebuf(stdout);
 
 	ctl->kmsg = open("/dev/kmsg", mode);
 	if (ctl->kmsg < 0)
