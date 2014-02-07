@@ -53,8 +53,6 @@ If not specified, the default filesystem type
 .TP
 .I fs-options
 Filesystem-specific options to be passed to the real filesystem builder.
-Although not guaranteed, the following options are supported
-by most filesystem builders.
 .TP
 .BR \-V , " \-\-verbose"
 Produce verbose output, including all filesystem-specific commands
@@ -73,10 +71,7 @@ Display help text and exit.
 .SH BUGS
 All generic options must precede and not be combined with
 filesystem-specific options.
-Some filesystem-specific programs do not support the
-.B -V
-(verbose) option, nor return meaningful exit codes.
-Also, some filesystem-specific programs do not automatically
+Some filesystem-specific programs do not automatically
 detect the device size and require the
 .I size
 parameter to be specified.

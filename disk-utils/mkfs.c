@@ -73,6 +73,7 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{"type", required_argument, NULL, 't'},
 		{"version", no_argument, NULL, VERSION_OPTION},
+		{"verbose", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
 	};
