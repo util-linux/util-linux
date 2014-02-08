@@ -85,15 +85,11 @@ PIDs 987 and 32, plus all processes owned by the users daemon and root:
 .SH NOTES
 Users other than the superuser may only alter the priority of processes they
 own, and can only monotonically increase their ``nice value'' (for security
-reasons) within the range 0 to
-.BR PRIO_MAX \ (20),
+reasons) within the range 0 to 19,
 unless a nice resource limit is set (Linux 2.6.12 and higher).  The
 superuser may alter the priority of any process and set the priority to any
-value in the range
-.BR PRIO_MIN \ (\-20)
-to
-.BR PRIO_MAX .
-Useful priorities are: 20 (the affected processes will run only when nothing
+value in the range \-20 to 19.
+Useful priorities are: 19 (the affected processes will run only when nothing
 else in the system wants to), 0 (the ``base'' scheduling priority), anything
 negative (to make things go very fast).
 .SH FILES
