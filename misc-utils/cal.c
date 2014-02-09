@@ -200,25 +200,6 @@ static const int days_in_month[2][13] = {
 	{0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
 };
 
-/* September 1752 is special, and has static assignments for both date
- * and Julian representations.  */
-static const int d_sep1752[MAXDAYS / 2] = {
-	SPACE,	SPACE,	1,	2,	14,	15,	16,
-	17,	18,	19,	20,	21,	22,	23,
-	24,	25,	26,	27,	28,	29,	30
-}, j_sep1752[MAXDAYS / 2] = {
-	SPACE,	SPACE,	245,	246,	258,	259,	260,
-	261,	262,	263,	264,	265,	266,	267,
-	268,	269,	270,	271,	272,	273,	274
-}, empty[MAXDAYS] = {
-	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE
-};
-
 enum {
 	WEEK_NUM_DISABLED = 0,
 	WEEK_NUM_MASK=0xff,
