@@ -37,12 +37,13 @@
 .\" conform with the more 5.19 currently in use by the Linux community.
 .\"
 .\" .Dd July 29, 1991 (Modified December 25, 1992)
-.TH MORE "1" "September 2011" "util-linux" "User Commands"
+.TH MORE "1" "February 2014" "util-linux" "User Commands"
 .SH NAME
 more \- file perusal filter for crt viewing
 .SH SYNOPSIS
 .B more
-[options] file [...]
+[options]
+.IR file ...
 .SH DESCRIPTION
 .B more
 is a filter for paging through text one screenful at a time.  This version is
@@ -58,11 +59,6 @@ environment variable
 (make sure to precede them with a dash (``-'')) but command line options will
 override them.
 .It Fl num
-.TP
-.B \-number
-This option specifies an integer
-.I number
-which is the screen size (in lines).
 .TP
 .B \-d
 .B more
@@ -100,15 +96,19 @@ Squeeze multiple blank lines into one.
 .B \-u
 Suppress underlining.
 .TP
-.B +/
-The
-.B +/
-option specifies a string that will be searched for before each file is
-displayed.
+.BI \- number
+The screen size to use, in
+.I number
+of lines.
 .TP
-.B +number
-Start at line
+.BI + number
+Start displaying each file at line
 .IR number .
+.TP
+.BI +/ string
+The
+.I string
+to be searched in each file before starting to display it.
 .SH COMMANDS
 Interactive commands for
 .B more
@@ -203,7 +203,9 @@ Display current file name and line number.
 .B \&.
 Repeat previous command.
 .SH ENVIRONMENT
-More utilizes the following environment variables, if they exist:
+The
+.B more
+command respects the following environment variables, if they exist:
 .TP
 .B MORE
 This variable may be set with favored options to
@@ -213,16 +215,16 @@ This variable may be set with favored options to
 Current shell in use (normally set by the shell at login time).
 .TP
 .B TERM
-Specifies terminal type, used by more to get the terminal
+The terminal type used by \fBmore\fR to get the terminal
 characteristics necessary to manipulate the screen.
 .TP
 .B VISUAL
-Editor the user is preferring.  Used when key command
+The editor the user prefers.  Invoked when command key
 .I v
 is pressed.
 .TP
 .B EDITOR
-Editor of choise when
+The editor of choice when
 .B VISUAL
 is not specified.
 .SH SEE ALSO

@@ -315,22 +315,21 @@ static char *my_tgoto(char *cap, int col, int row)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out,
-		_("Usage: %s [options] file...\n\n"),
-		program_invocation_short_name);
-	fprintf(out,
-		_("Options:\n"
-		  "  -d        display help instead of ring bell\n"
-		  "  -f        count logical, rather than screen lines\n"
-		  "  -l        suppress pause after form feed\n"
-		  "  -p        do not scroll, clean screen and display text\n"
-		  "  -c        do not scroll, display text and clean line ends\n"
-		  "  -u        suppress underlining\n"
-		  "  -s        squeeze multiple blank lines into one\n"
-		  "  -NUM      specify the number of lines per screenful\n"
-		  "  +NUM      display file beginning from line number NUM\n"
-		  "  +/STRING  display file beginning from search string match\n"
-		  "  -V        output version information and exit\n"));
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] <file>...\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -d          display help instead of ringing bell\n"), out);
+	fputs(_(" -f          count logical rather than screen lines\n"), out);
+	fputs(_(" -l          suppress pause after form feed\n"), out);
+	fputs(_(" -c          do not scroll, display text and clean line ends\n"), out);
+	fputs(_(" -p          do not scroll, clean screen and display text\n"), out);
+	fputs(_(" -s          squeeze multiple blank lines into one\n"), out);
+	fputs(_(" -u          suppress underlining\n"), out);
+	fputs(_(" -<number>   the number of lines per screenful\n"), out);
+	fputs(_(" +<number>   display file beginning from line number\n"), out);
+	fputs(_(" +/<string>  display file beginning from search string match\n"), out);
+	fputs(_(" -V          display version information and exit\n"), out);
+	fprintf(out, USAGE_MAN_TAIL("more(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
