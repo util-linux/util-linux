@@ -78,6 +78,46 @@ int colormode_or_err(const char *str, const char *errmsg)
 	return colormode;
 }
 
+struct colorscheme {
+	const char *name, *scheme;
+};
+
+static int cmp_colorscheme_name(const void *a0, const void *b0)
+{
+	struct colorscheme *a = (struct colorscheme *) a0,
+			   *b = (struct colorscheme *) b0;
+	return strcmp(a->name, b->name);
+}
+
+const char *colorscheme_from_string(const char *str)
+{
+	static const struct colorscheme basic_schemes[] = {
+		{ "black",	UL_COLOR_BLACK           },
+		{ "blue",	UL_COLOR_BLUE            },
+		{ "brown",	UL_COLOR_BROWN           },
+		{ "cyan",	UL_COLOR_CYAN            },
+		{ "darkgray",	UL_COLOR_DARK_GRAY       },
+		{ "gray",	UL_COLOR_GRAY            },
+		{ "green",	UL_COLOR_GREEN           },
+		{ "lightblue",	UL_COLOR_BOLD_BLUE       },
+		{ "lightcyan",	UL_COLOR_BOLD_CYAN       },
+		{ "lightgray,",	UL_COLOR_GRAY            },
+		{ "lightgreen", UL_COLOR_BOLD_GREEN      },
+		{ "lightmagenta", UL_COLOR_BOLD_MAGENTA  },
+		{ "lightred",	UL_COLOR_BOLD_RED        },
+		{ "magenta",	UL_COLOR_MAGENTA         },
+		{ "red",	UL_COLOR_RED             },
+		{ "yellow",	UL_COLOR_BOLD_YELLOW     },
+	};
+	struct colorscheme key = { .name = str }, *res;
+	if (!str)
+		return NULL;
+
+	res = bsearch(&key, basic_schemes, ARRAY_SIZE(basic_schemes),
+				sizeof(struct colorscheme),
+				cmp_colorscheme_name);
+	return res ? res->scheme : NULL;
+}
 
 #ifdef TEST_PROGRAM
 # include <getopt.h>
@@ -85,22 +125,27 @@ int main(int argc, char *argv[])
 {
 	static const struct option longopts[] = {
 		{ "colors", optional_argument, 0, 'c' },
+		{ "scheme", required_argument, 0, 's' },
 		{ NULL, 0, 0, 0 }
 	};
 	int c, mode = UL_COLORMODE_NEVER;	/* default */
+	const char *scheme = "red";
 
-	while ((c = getopt_long(argc, argv, "c::", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "c::s:", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'c':
 			mode = UL_COLORMODE_AUTO;
 			if (optarg)
 				mode = colormode_or_err(optarg, "unsupported color mode");
 			break;
+		case 's':
+			scheme = optarg;
+			break;
 		}
 	}
 
 	colors_init(mode);
-	color_enable(UL_COLOR_RED);
+	color_enable(colorscheme_from_string(scheme));
 	printf("Hello World!");
 	color_disable();
 	return EXIT_SUCCESS;

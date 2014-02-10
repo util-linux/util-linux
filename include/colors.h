@@ -72,6 +72,7 @@ static inline void color_disable(void)
 	color_fdisable(stdout);
 }
 
+extern const char *colorscheme_from_string(const char *str);
 
 
 #endif /* UTIL_LINUX_COLORS_H */
