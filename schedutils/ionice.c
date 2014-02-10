@@ -78,7 +78,7 @@ static void ioprio_print(int pid)
 		int ioclass = IOPRIO_PRIO_CLASS(ioprio);
 		const char *name = _("unknown");
 
-		if (ioclass > 0 && (size_t) ioclass < ARRAY_SIZE(to_prio))
+		if (ioclass >= 0 && (size_t) ioclass < ARRAY_SIZE(to_prio))
 			name = to_prio[ioclass];
 
 		if (ioclass != IOPRIO_CLASS_IDLE)
