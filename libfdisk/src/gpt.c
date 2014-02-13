@@ -1865,7 +1865,7 @@ static int gpt_add_partition(
 
 	if ((rc = gpt_create_new_partition(cxt, partnum,
 				     user_f, user_l, &typeid, ents) != 0)) {
-		fdisk_warnx(cxt, _("Could not create partition %ju"), partnum + 1);
+		fdisk_warnx(cxt, _("Could not create partition %zu"), partnum + 1);
 		goto done;
 	} else {
 		struct fdisk_parttype *t;

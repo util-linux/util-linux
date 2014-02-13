@@ -324,7 +324,7 @@ static void dos_init(struct fdisk_context *cxt)
 		fdisk_warnx(cxt,
 		_("The size of this disk is %s (%ju bytes). DOS "
 		  "partition table format can not be used on drives for "
-		  "volumes larger than %ju bytes for %lu-byte "
+		  "volumes larger than %lu bytes for %lu-byte "
 		  "sectors. Use GUID partition table format (GPT)."),
 			szstr, bytes,
 			UINT_MAX * cxt->sector_size,
