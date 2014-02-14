@@ -57,17 +57,22 @@
 #include "closestream.h"
 #include "xalloc.h"
 
+static int verbose;
+static char *filename;
+
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <filename>\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -n, --keep-size     don't modify the length of the file\n"
-		" -p, --punch-hole    punch holes in the file\n"
-		" -d, --dig-holes     detect and dig holes\n"
-		" -o, --offset <num>  offset of the (de)allocation, in bytes\n"
-		" -l, --length <num>  length of the (de)allocation, in bytes\n"), out);
+	fputs(_(" -d, --dig-holes     detect and dig holes\n"), out);
+	fputs(_(" -l, --length <num>  length of the (de)allocation, in bytes\n"), out);
+	fputs(_(" -n, --keep-size     don't modify the length of the file\n"), out);
+	fputs(_(" -o, --offset <num>  offset of the (de)allocation, in bytes\n"), out);
+	fputs(_(" -p, --punch-hole    punch holes in the file\n"), out);
+	fputs(_(" -v, --verbose       verbose mode\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -140,6 +145,10 @@ static void detect_holes(int fd, size_t hole_size)
 		if (memcmp(buf, zeros, bufsz))
 			continue;
 
+		if (verbose)
+			fprintf(stdout, "%s: detected hole at offset %ju (size %ju)\n",
+				filename, (uintmax_t) offset, (uintmax_t) bufsz);
+
 		xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
 				offset, bufsz);
 	}
@@ -151,7 +160,6 @@ static void detect_holes(int fd, size_t hole_size)
 
 int main(int argc, char **argv)
 {
-	char	*fname;
 	int	c;
 	int	fd;
 	int	mode = 0;
@@ -167,6 +175,7 @@ int main(int argc, char **argv)
 	    { "dig-holes",  0, 0, 'd' },
 	    { "offset",     1, 0, 'o' },
 	    { "length",     1, 0, 'l' },
+	    { "verbose",    0, 0, 'v' },
 	    { NULL,         0, 0, 0 }
 	};
 
@@ -175,7 +184,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "hVnpdl:o:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hvVnpdl:o:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 			usage(stdout);
@@ -198,6 +207,9 @@ int main(int argc, char **argv)
 		case 'o':
 			offset = cvtnum(optarg);
 			break;
+		case 'v':
+			verbose++;
+			break;
 		default:
 			usage(stderr);
 			break;
@@ -218,24 +230,29 @@ int main(int argc, char **argv)
 	if (optind == argc)
 		errx(EXIT_FAILURE, _("no filename specified."));
 
-	fname = argv[optind++];
+	filename = argv[optind++];
 
 	if (optind != argc) {
 		warnx(_("unexpected number of arguments"));
 		usage(stderr);
 	}
 
-	fd = open(fname, O_RDWR|O_CREAT, 0644);
+	fd = open(filename, O_RDWR|O_CREAT, 0644);
 	if (fd < 0)
-		err(EXIT_FAILURE, _("cannot open %s"), fname);
+		err(EXIT_FAILURE, _("cannot open %s"), filename);
 
 	if (dig_holes)
 		detect_holes(fd, length);
-	else
+	else {
+		if (verbose)
+			fprintf(stdout, "%s: fallocate offset=%ju, length=%ju\n",
+					filename, (uintmax_t) offset,
+					(uintmax_t) length);
 		xfallocate(fd, mode, offset, length);
+	}
 
 	if (close_fd(fd) != 0)
-		err(EXIT_FAILURE, _("write failed: %s"), fname);
+		err(EXIT_FAILURE, _("write failed: %s"), filename);
 
 	return EXIT_SUCCESS;
 }
