@@ -16,6 +16,17 @@ die() {
 	exit 1
 }
 
+usage() {
+	echo "Usage:"
+	echo " $0 <top_srcdir> <srcfile> [<srcfile> ...]"
+	echo "Example:"
+	echo " find . -name '*.c' | xargs $0 \$(git rev-parse --show-toplevel)"
+}
+
+if [ $# -eq 0 ]; then
+	usage
+	exit 1
+fi
 srcdir=$1
 config="$srcdir/config.h.in"
 
