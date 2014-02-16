@@ -21,6 +21,8 @@ TS_DESC="week number given as argument"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_CAL"
+
 set -o pipefail
 export TERM=linux
 

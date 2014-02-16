@@ -24,9 +24,12 @@ PARTS=3
 . $TS_TOPDIR/functions.sh
 
 ts_init "$*"
-ts_skip_nonroot
 
-[ ! -x "$TS_CMD_PARTX" ] && ts_skip "partx disabled"
+ts_check_test_command "$TS_CMD_PARTX"
+ts_check_test_command "$TS_CMD_ADDPART"
+ts_check_test_command "$TS_CMD_DELPART"
+
+ts_skip_nonroot
 
 mkdir -p $TS_OUTDIR/images-pt
 for img in $(ls $TS_IMGDIR/*.img.bz2 | sort); do

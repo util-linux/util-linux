@@ -22,7 +22,7 @@ FILES="$TS_TOPDIR/ts/hexdump/files"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-[ -x $TS_CMD_HEXDUMP ] || ts_skip "hexdump not compiled"
+ts_check_test_command "$TS_CMD_HEXDUMP"
 
 #885314
 ts_init_subtest "empty-format"

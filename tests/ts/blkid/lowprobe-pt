@@ -23,9 +23,7 @@ TS_DESC="partitions probing"
 
 ts_init "$*"
 
-if [ ! -x "$TS_HELPER_PARTITIONS" ]; then
-	ts_skip "blkid disabled"
-fi
+ts_check_test_command "$TS_HELPER_PARTITIONS"
 
 mkdir -p $TS_OUTDIR/images-pt
 

@@ -21,6 +21,8 @@ TS_DESC="multibyte input"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_COL"
+
 cat $TS_SELF/multibyte.data | $TS_CMD_COL > /dev/null  2> $TS_OUTPUT
 
 ts_finalize

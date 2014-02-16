@@ -21,6 +21,8 @@ TS_DESC="headers"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_IPCS"
+
 ts_log "test: shm headers"
 $TS_CMD_IPCS -m -t | grep --after-context=1 "^---"  >> $TS_OUTPUT
 $TS_CMD_IPCS -m -p | grep --after-context=1 "^---"  >> $TS_OUTPUT

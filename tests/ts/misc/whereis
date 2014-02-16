@@ -18,6 +18,8 @@ TS_DESC="whereis"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_WHEREIS"
+
 LS_COUNT=$($TS_CMD_WHEREIS ls | wc -w)
 if [ $LS_COUNT -lt 2 ]; then
 	echo "ls binary nor manual not found?" > $TS_OUTPUT

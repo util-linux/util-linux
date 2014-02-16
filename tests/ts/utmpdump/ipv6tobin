@@ -18,6 +18,8 @@ TS_DESC="IPv6 to binary"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_UTMPDUMP"
+
 export LANG=C
 export TZ=GMT
 $TS_CMD_UTMPDUMP -r $TS_SELF/ipv6txt >| $TS_OUTPUT 2>/dev/null

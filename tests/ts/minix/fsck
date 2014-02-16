@@ -19,11 +19,12 @@ TS_DESC="mkfs checksums"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+
+ts_check_test_command "$TS_CMD_MKMINIX"
+
 ts_skip_nonroot
 
 set -o pipefail
-
-[ -x $TS_CMD_FSCKMINIX ] || ts_skip "fsck.minix not compiled"
 
 IMAGE="$TS_OUTDIR/${TS_TESTNAME}-loop.img"
 DEVICE=$(ts_device_init)

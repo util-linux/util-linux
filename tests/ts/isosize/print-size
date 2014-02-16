@@ -18,6 +18,8 @@ TS_DESC="print-size"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_ISOSIZE"
+
 gzip -cd $TS_SELF/sample.iso.gz >| $TS_OUTDIR/sample.iso
 
 ts_init_subtest "default_output"

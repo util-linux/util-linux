@@ -22,6 +22,8 @@ TS_TOPDIR="${0%/*}/../.."
 
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_LSCPU"
+
 for dump in $(ls $TS_SELF/dumps/*.tar.gz | sort); do
 	name=$(basename $dump .tar.gz)
 	dumpdir="$TS_OUTDIR/dumps"
@@ -29,7 +31,7 @@ for dump in $(ls $TS_SELF/dumps/*.tar.gz | sort); do
 	ts_init_subtest $name
 	mkdir -p $dumpdir
 
-	tar -C $dumpdir -zxf $dump 
+	tar -C $dumpdir -zxf $dump
 
 	# Architecture information is not applicable with -s.
 	"${TS_CMD_LSCPU}" -s "${dumpdir}/${name}" | \

@@ -21,6 +21,9 @@ MOUNTER="/sbin/mount.mytest"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+
+ts_check_test_command "$TS_CMD_MOUNT"
+
 ts_skip_nonroot
 
 cat > $MOUNTER <<\EOF

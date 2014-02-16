@@ -21,6 +21,8 @@ TS_DESC="swap bytes"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_HELPER_BYTESWAP"
+
 $TS_HELPER_BYTESWAP >> $TS_OUTPUT
 
 ts_finalize

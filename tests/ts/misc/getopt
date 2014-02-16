@@ -21,6 +21,8 @@ TS_DESC="getopt"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_GETOPT"
+
 TEMP=$($TS_CMD_GETOPT -o ab:c:: --long a-long,b-long:,c-long:: -n 'example.bash' -- -a -b 1 -c2  --a-long --b-long 3 --c-long foo bar)
 
 if [ $? != 0 ] ; then echo "Terminating..." >&2 ; exit 1 ; fi

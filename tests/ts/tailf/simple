@@ -18,6 +18,8 @@ TS_DESC="simple"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_TAILF"
+
 INPUT=$TS_OUTDIR/$TS_TESTNAME.input
 
 rm -f $INPUT

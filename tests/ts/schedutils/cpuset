@@ -20,6 +20,8 @@ TS_DESC="cpuset"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_CPUSET"
+
 MASKS=" 0x00000001 \
 	0x00000002 \
 	0x00000003 \

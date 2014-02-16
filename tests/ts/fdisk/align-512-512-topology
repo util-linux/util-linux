@@ -25,6 +25,9 @@ TS_DESC="align 512/512 +topology"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+
+ts_check_test_command "$TS_CMD_FDISK"
+
 ts_skip_nonroot
 
 

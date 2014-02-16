@@ -20,6 +20,9 @@ TS_DESC="non canonical path"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+
+ts_check_test_command "$TS_CMD_MOUNT"
+
 ts_skip_nonroot
 
 [ ! -e "/etc" ] && ts_skip "/etc not such file of directory"

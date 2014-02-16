@@ -18,7 +18,7 @@ TS_DESC="last"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-[ -x $TS_CMD_LAST ] || ts_skip "last not enabled"
+ts_check_test_command "$TS_CMD_LAST"
 
 export LANG=C
 export TZ=GMT

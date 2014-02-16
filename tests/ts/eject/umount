@@ -5,10 +5,14 @@ TS_DESC="umount"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+
+ts_check_test_command "$TS_CMD_FDISK"
+ts_check_test_command "$TS_CMD_EJECT"
+
 ts_skip_nonroot
 
 #
-# Note that eject --force is required because scsi_debug is 
+# Note that eject --force is required because scsi_debug is
 # not removable device.
 #
 
@@ -35,7 +39,7 @@ p
 w
 EOF
 	udevadm settle
-	mkfs.ext2 -q ${dev}1 
+	mkfs.ext2 -q ${dev}1
 	mkfs.ext2 -q ${dev}2
 	udevadm settle
 }

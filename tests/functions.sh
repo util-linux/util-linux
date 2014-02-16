@@ -37,7 +37,12 @@ function ts_report {
 	else
 		echo "$1"
 	fi
+}
 
+function ts_check_test_command {
+	if [ ! -x "$1" ]; then
+		ts_skip "${1##*/} not found"
+	fi
 }
 
 function ts_skip_subtest {
@@ -371,7 +376,7 @@ function ts_die {
 	ts_log "$1"
 	if [ -n "$2" ] && [ -b "$2" ]; then
 		ts_device_deinit "$2"
-		ts_fstab_clean		# for sure... 
+		ts_fstab_clean		# for sure...
 	fi
 	ts_finalize
 }
@@ -384,7 +389,7 @@ function ts_image_md5sum {
 function ts_image_init {
 	local mib=${1:-"5"}	# size in MiBs
 	local img=${2:-"$TS_OUTDIR/${TS_TESTNAME}.img"}
-	
+
 	dd if=/dev/zero of="$img" bs=1M count=$mib &> /dev/null
 	echo "$img"
 	return 0

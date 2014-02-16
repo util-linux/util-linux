@@ -19,6 +19,10 @@ TS_DESC="is mounted"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+
+ts_check_test_command "$TS_CMD_FDISK"
+ts_check_test_command "$TS_CMD_MOUNT"
+
 ts_skip_nonroot
 
 set -o pipefail

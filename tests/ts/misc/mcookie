@@ -18,6 +18,8 @@ TS_DESC="mcookie"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_MCOOKIE"
+
 $TS_CMD_MCOOKIE -f /etc/services |
 	# The sed will convert only 32 characters long hexadecimal string
 	# to expected string, but nothing else.

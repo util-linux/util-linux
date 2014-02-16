@@ -21,6 +21,8 @@ TS_DESC="3 months with week numbers"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_CAL"
+
 set -o pipefail
 
 USETERM=$( ts_has_option "useterm" "$*" )

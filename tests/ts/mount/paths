@@ -20,6 +20,9 @@ TS_DESC="basic paths"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+
+ts_check_test_command "$TS_CMD_MOUNT"
+
 ts_skip_nonroot
 
 $TS_CMD_MOUNT -V | grep -q "libmount"

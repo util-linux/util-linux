@@ -20,6 +20,10 @@ TS_DESC="remount"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_FINDMNT"
+
 ts_skip_nonroot
 
 # mountpoint

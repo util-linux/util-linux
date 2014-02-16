@@ -22,6 +22,8 @@ TS_DESC="race conditions"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_SCRIPT"
+
 bingofile="$TS_OUTDIR/${TS_TESTNAME}-bingo"
 
 set -o pipefail

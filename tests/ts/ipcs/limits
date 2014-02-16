@@ -22,6 +22,9 @@ TS_DESC="limits overflow"
 . $TS_TOPDIR/functions.sh
 
 ts_init "$*"
+
+ts_check_test_command "$TS_CMD_IPCS"
+
 ts_skip_nonroot
 type bc >/dev/null 2>&1 || ts_skip "cannot find bc command"
 

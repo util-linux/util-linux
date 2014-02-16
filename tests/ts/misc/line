@@ -18,9 +18,7 @@ TS_DESC="line"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-if [ ! -x "$TS_CMD_LINE" ]; then
-	ts_skip "line disabled"
-fi
+ts_check_test_command "$TS_CMD_LINE"
 
 printf "a\nb\n" |
 	$TS_CMD_LINE > $TS_OUTPUT 2>&1

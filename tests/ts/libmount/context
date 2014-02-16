@@ -7,8 +7,13 @@ TS_DESC="context"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
-ts_skip_nonroot
 
+ts_check_test_command "$TS_CMD_FDISK"
+ts_check_test_command "$TS_CMD_FINDMNT"
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
+
+ts_skip_nonroot
 TESTPROG="$TS_HELPER_LIBMOUNT_CONTEXT"
 LABEL=libmount-test
 UUID=$(uuidgen)

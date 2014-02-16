@@ -34,6 +34,8 @@ TS_DESC="separator"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_LOOK"
+
 $TS_CMD_LOOK apple-pie $TS_TOPDIR/ts/look/words >> $TS_OUTPUT
 ts_finalize
 

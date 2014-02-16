@@ -20,6 +20,8 @@ TS_DESC="invalid input tests"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_FDISK"
+
 #set -x
 
 ts_log "Initialize empty image"

@@ -18,6 +18,8 @@ TS_DESC="fallocate"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_FALLOCATE"
+
 IMAGE=${TS_OUTDIR}/${TS_TESTNAME}.file
 rm -f $IMAGE
 

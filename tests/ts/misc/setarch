@@ -18,6 +18,8 @@ TS_DESC="setarch"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_SETARCH"
+
 $TS_CMD_SETARCH $(uname -m) -vRFZLXBIST3 --uname-2.6 echo "success" >$TS_OUTPUT 2>&1
 
 ts_finalize

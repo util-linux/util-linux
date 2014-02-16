@@ -20,6 +20,8 @@ TS_DESC="color"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_CAL"
+
 # --color output depends on terminal type
 export TERM=linux
 

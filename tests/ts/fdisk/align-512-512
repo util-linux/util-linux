@@ -24,6 +24,9 @@ TS_DESC="align 512/512"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+
+ts_check_test_command "$TS_CMD_FDISK"
+
 ts_skip_nonroot
 
 DEVICE=$(ts_device_init 50)
