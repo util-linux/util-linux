@@ -23,7 +23,7 @@
 # calls are successful.
 #
 
-TS_TOPDIR="$(dirname $0)/../.."
+TS_TOPDIR="${0%/*}/../.."
 TS_DESC="rlimit-fsize"
 
 . $TS_TOPDIR/functions.sh

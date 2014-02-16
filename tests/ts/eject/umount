@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TS_TOPDIR="$(dirname $0)/../.."
+TS_TOPDIR="${0%/*}/../.."
 TS_DESC="umount"
 
 . $TS_TOPDIR/functions.sh

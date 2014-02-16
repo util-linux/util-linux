@@ -16,7 +16,7 @@
 # GNU General Public License for more details.
 #
 
-TS_TOPDIR=$(cd $(dirname $0) && pwd)
+TS_TOPDIR=$(cd ${0%/*} && pwd)
 SUBTESTS=
 OPTS=
 

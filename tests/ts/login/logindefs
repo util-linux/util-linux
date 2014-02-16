@@ -4,7 +4,7 @@
 #
 # This file is part of util-linux.
 #
-TS_TOPDIR="$(dirname $0)/../.."
+TS_TOPDIR="${0%/*}/../.."
 TS_DESC="defs"
 
 . $TS_TOPDIR/functions.sh

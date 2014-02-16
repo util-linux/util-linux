@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Copyright (C) 2010 Karel Zak <kzak@redhat.com>
-TS_TOPDIR="$(dirname $0)/../.."
+TS_TOPDIR="${0%/*}/../.."
 TS_DESC="context-py (utab)"
 
 . $TS_TOPDIR/functions.sh

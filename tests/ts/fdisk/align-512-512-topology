@@ -20,7 +20,7 @@
 # I/O size (32KiB)
 #
 
-TS_TOPDIR="$(dirname $0)/../.."
+TS_TOPDIR="${0%/*}/../.."
 TS_DESC="align 512/512 +topology"
 
 . $TS_TOPDIR/functions.sh

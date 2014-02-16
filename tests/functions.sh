@@ -117,7 +117,7 @@ function ts_init_core_subtest_env {
 }
 
 function ts_init_env {
-	local mydir=$(ts_abspath $(dirname $0))
+	local mydir=$(ts_abspath ${0%/*})
 
 	LANG="POSIX"
 	LANGUAGE="POSIX"

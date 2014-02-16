@@ -19,7 +19,7 @@
 # topology.
 #
 
-TS_TOPDIR="$(dirname $0)/../.."
+TS_TOPDIR="${0%/*}/../.."
 TS_DESC="align 512/512"
 
 . $TS_TOPDIR/functions.sh

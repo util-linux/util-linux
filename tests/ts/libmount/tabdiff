@@ -2,7 +2,7 @@
 
 # Copyright (C) 2011 Karel Zak <kzak@redhat.com>
 
-TS_TOPDIR="$(dirname $0)/../.."
+TS_TOPDIR="${0%/*}/../.."
 TS_DESC="table diffs"
 
 . $TS_TOPDIR/functions.sh
