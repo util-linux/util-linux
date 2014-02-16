@@ -18,7 +18,18 @@ TS_DESC="print-size"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-gzip -cd $TS_SELF/sample.iso.gz > $TS_OUTDIR/sample.iso
+gzip -cd $TS_SELF/sample.iso.gz >| $TS_OUTDIR/sample.iso
+
+ts_init_subtest "default_output"
 $TS_CMD_ISOSIZE $TS_OUTDIR/sample.iso >| $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "sector_output"
+$TS_CMD_ISOSIZE --sectors $TS_OUTDIR/sample.iso &> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "divisor_output"
+$TS_CMD_ISOSIZE --divisor=9 $TS_OUTDIR/sample.iso &> $TS_OUTPUT 2>&1
+ts_finalize_subtest
 
 ts_finalize
