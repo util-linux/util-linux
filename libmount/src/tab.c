@@ -510,6 +510,8 @@ int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
 
 	DBG(TAB, mnt_debug_h(tb, "lookup root fs"));
 
+	*root = NULL;
+
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 		int id = mnt_fs_get_parent_id(fs);
