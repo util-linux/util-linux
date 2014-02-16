@@ -186,7 +186,7 @@ int main(int argc, char **argv)
 	long divisor = 0;
 
 	static const struct option longopts[] = {
-		{"divisor", no_argument, 0, 'd'},
+		{"divisor", required_argument, 0, 'd'},
 		{"sectors", no_argument, 0, 'x'},
 		{"version", no_argument, 0, 'V'},
 		{"help", no_argument, 0, 'h'},
