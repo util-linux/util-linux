@@ -12,6 +12,15 @@ test -f sys-utils/mount.c || {
 
 . tools/config-gen-functions.sh
 
+if [ $# -eq 0 ]; then
+	echo "This script requires at least one of the folloving arguments:"
+	cd tools/config-gen.d
+	for i in *.conf; do
+		echo "  ${i%%.conf}"
+	done
+	exit 1
+fi
+
 while [ -n "$1" ]; do
 	opts="$opts $(ul_get_configuration tools/config-gen.d/$1.conf)"
 	shift
