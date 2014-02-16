@@ -31,8 +31,17 @@ function ts_canonicalize {
 	fi
 }
 
+function ts_report {
+	if [ "$TS_PARALLEL" == "yes" ]; then
+		echo "$TS_TITLE $1"
+	else
+		echo "$1"
+	fi
+
+}
+
 function ts_skip_subtest {
-	echo " IGNORE ($1)"
+	ts_report " IGNORE ($1)"
 }
 
 function ts_skip {
@@ -51,9 +60,9 @@ function ts_skip_nonroot {
 
 function ts_failed_subtest {
 	if [ x"$1" == x"" ]; then
-		echo " FAILED ($TS_NS)"
+		ts_report " FAILED ($TS_NS)"
 	else
-		echo " FAILED ($1)"
+		ts_report " FAILED ($1)"
 	fi
 }
 
@@ -64,9 +73,9 @@ function ts_failed {
 
 function ts_ok_subtest {
 	if [ x"$1" == x"" ]; then
-		echo " OK"
+		ts_report " OK"
 	else
-		echo " OK ($1)"
+		ts_report " OK ($1)"
 	fi
 }
 
@@ -162,6 +171,7 @@ function ts_init_env {
 	ts_init_core_env
 
 	TS_VERBOSE=$(ts_has_option "verbose" "$*")
+	TS_PARALLEL=$(ts_has_option "parallel" "$*")
 
 	BLKID_FILE="$TS_OUTDIR/${TS_TESTNAME}.blkidtab"
 
@@ -209,7 +219,12 @@ function ts_init_subtest {
 	[ $TS_NSUBTESTS -eq 0 ] && echo
 	TS_NSUBTESTS=$(( $TS_NSUBTESTS + 1 ))
 
-	printf "%16s: %-27s ..." "" "$TS_SUBNAME"
+	if [ "$TS_PARALLEL" == "yes" ]; then
+		TS_TITLE=$(printf "%13s: %-30s ...\n%16s: %-27s ..." "$TS_COMPONENT" "$TS_DESC" "" "$TS_SUBNAME")
+	else
+		TS_TITLE=$(printf "%16s: %-27s ..." "" "$TS_SUBNAME")
+		echo -n "$TS_TITLE"
+	fi
 }
 
 function ts_init {
@@ -223,7 +238,12 @@ function ts_init {
 
 	ts_init_env "$*"
 
-	printf "%13s: %-30s ..." "$TS_COMPONENT" "$TS_DESC"
+	if [ "$TS_PARALLEL" == "yes" ]; then
+		TS_TITLE=$(printf "%13s: %-30s ..." "$TS_COMPONENT" "$TS_DESC")
+	else
+		TS_TITLE=$(printf "%13s: %-30s ..." "$TS_COMPONENT" "$TS_DESC")
+		echo -n "$TS_TITLE"
+	fi
 
 	[ "$is_fake" == "yes" ] && ts_skip "fake mode"
 	[ "$TS_OPTIONAL" == "yes" -a "$is_force" != "yes" ] && ts_skip "optional"
