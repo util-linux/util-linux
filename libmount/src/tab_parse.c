@@ -174,8 +174,19 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 			&fs->fs_optstr);
 
 	if (rc >= 10) {
+		size_t sz;
+
 		fs->flags |= MNT_FS_KERNEL;
 		fs->devno = makedev(maj, min);
+
+		/* remove "(deleted)" suffix */
+		sz = strlen(fs->target);
+		if (sz > PATH_DELETED_SUFFIX_SZ) {
+			char *p = fs->target + (sz - PATH_DELETED_SUFFIX_SZ);
+
+			if (strcmp(p, PATH_DELETED_SUFFIX) == 0)
+				*p = '\0';
+		}
 
 		unmangle_string(fs->root);
 		unmangle_string(fs->target);
