@@ -123,6 +123,7 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
  */
 static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 {
+	size_t sz;
 	int rc, end = 0;
 	unsigned int maj, min;
 	char *fstype = NULL, *src = NULL, *p;
@@ -145,6 +146,15 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 
 	if (rc >= 7 && end > 0)
 		s += end;
+
+	/* remove "(deleted)" suffix */
+	sz = strlen(fs->target);
+	if (sz > PATH_DELETED_SUFFIX_SZ) {
+		char *p = fs->target + (sz - PATH_DELETED_SUFFIX_SZ);
+
+		if (strcmp(p, PATH_DELETED_SUFFIX) == 0)
+			*p = '\0';
+	}
 
 	/* (7) optional fields, terminated by " - " */
 	p = strstr(s, " - ");
