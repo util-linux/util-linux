@@ -6,4 +6,4 @@ ionice: ioprio_set failed: Invalid argument
 ionice: unknown prio class 8
 ionice: ioprio_set failed: Invalid argument
 /etc/passwd
-unknown: prio 0
+none: prio 0
