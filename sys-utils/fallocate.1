@@ -44,15 +44,14 @@ blocks past EOF, which can be removed with a truncate.
 .IP "\fB\-p, \-\-punch-hole\fP"
 Punch holes in the file, the range should not exceed the length of the file.
 .IP "\fB\-d, \-\-dig-holes\fP"
-Detect and dig holes of, at least, \fIlength\fR size. If \fIlength\fR is not
-specified, it defaults to 32k. Makes the file sparse in-place, without using
-extra disk space. You can think of this as doing a "\fBcp --sparse\fP" and
-renaming the dest file as the original, without the need for extra disk space.
+Detect and dig holes. Makes the file sparse in-place, without using extra disk
+space. The minimal size of the hole depends on filesystem I/O block size
+(usually 4096 bytes). Also, when using this option, \fI\-\-keep-size\fP is
+implied.
 .PP
 .IP
-Note that too small values for \fIlength\fR might be ignored. And too big values
-might use lot of RAM and not detect many holes. Also, when using this option,
-\fI\-\-keep-size\fP is implied.
+You can think of this as doing a "\fBcp --sparse\fP" and
+renaming the dest file as the original, without the need for extra disk space.
 .IP "\fB\-o, \-\-offset\fP \fIoffset\fP
 Specifies the beginning offset of the allocation, in bytes.
 .IP "\fB\-l, \-\-length\fP \fIlength\fP

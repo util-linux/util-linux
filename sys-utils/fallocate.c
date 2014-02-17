@@ -94,7 +94,6 @@ static loff_t cvtnum(char *s)
 static void xfallocate(int fd, int mode, off_t offset, off_t length)
 {
 	int error;
-
 #ifdef HAVE_FALLOCATE
 	error = fallocate(fd, mode, offset, length);
 #else
@@ -111,51 +110,70 @@ static void xfallocate(int fd, int mode, off_t offset, off_t length)
 	}
 }
 
-/*
- * Look for chunks of '\0's with size hole_size and when we find them, dig a
- * hole on that offset with that size
- */
-static void detect_holes(int fd, size_t hole_size)
+static void dig_holes(int fd, off_t off, off_t len)
 {
-	void *zeros;
-	ssize_t bufsz = hole_size;
-	void *buf;
-	off_t offset, end;
+	off_t end = len ? off + len : 0;
+	off_t hole_start = 0, hole_sz = 0;
+	uintmax_t ct = 0;
+	size_t bufsz;
+	char *buf, *empty;
+	struct stat st;
 
-	/* Create a buffer of '\0's to compare against */
-	/* XXX: Use mmap() with MAP_PRIVATE so Linux can avoid this allocation */
-	zeros = mmap(NULL, hole_size, PROT_READ, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
-	if (zeros == MAP_FAILED)
-		err(EXIT_FAILURE, _("mmap failed"));
+	if (fstat(fd, &st) != 0)
+		err(EXIT_FAILURE, _("stat failed %s"), filename);
+	bufsz = st.st_blksize;
 
-	/* buffer to read the file */
+	if (verbose && st.st_blocks * 512 < st.st_size)
+		fprintf(stdout, _("%s: already has holes!\n"), filename);
+	if (lseek(fd, off, SEEK_SET) < 0)
+		err(EXIT_FAILURE, _("seek on %s failed"), filename);
+
 	buf = xmalloc(bufsz);
+	empty = xcalloc(1, bufsz);
 
-	end = lseek(fd, 0, SEEK_END);
-	if (end < 0)
-		err(EXIT_FAILURE, _("seek failed"));
+#if defined(POSIX_FADV_SEQUENTIAL) && defined(POSIX_FADV_NOREUSE) && defined(HAVE_POSIX_FADVISE)
+	posix_fadvise(fd, off, 0, POSIX_FADV_SEQUENTIAL | POSIX_FADV_NOREUSE);
+#endif
 
-	for (offset = 0; offset + (ssize_t) hole_size <= end; offset += bufsz) {
-		/* Try to read hole_size bytes */
-		bufsz = pread(fd, buf, hole_size, offset);
-		if (bufsz == -1)
-			err(EXIT_FAILURE, _("read failed"));
+	while (end == 0 || off < end) {
+		ssize_t rsz;
 
-		/* Always use bufsz, as we may read less than hole_size bytes */
-		if (memcmp(buf, zeros, bufsz))
-			continue;
+		rsz = pread(fd, buf, bufsz, off);
+		if (rsz < 0 && errno)
+			err(EXIT_FAILURE, _("%s: read failed"), filename);
+		if (end && rsz > 0 && off + rsz > end)
+			rsz = end - off;
+		if (rsz <= 0)
+			break;
 
-		if (verbose)
-			fprintf(stdout, "%s: detected hole at offset %ju (size %ju)\n",
-				filename, (uintmax_t) offset, (uintmax_t) bufsz);
-
-		xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
-				offset, bufsz);
+		if (memcmp(buf, empty, rsz) == 0) {
+			if (hole_sz == 0)
+				hole_start = off;
+			hole_sz += rsz;
+		 } else if (hole_sz) {
+			xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
+				   hole_start, hole_sz);
+			ct += hole_sz;
+			hole_sz = hole_start = 0;
+		}
+		off += rsz;
 	}
 
-	if (munmap(zeros, hole_size))
-		err(EXIT_FAILURE, _("munmap failed"));
+	if (hole_sz) {
+		xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
+				hole_start, hole_sz);
+		ct += hole_sz;
+	}
+
 	free(buf);
+	free(empty);
+
+	if (verbose) {
+		char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE, ct);
+		fprintf(stdout, _("%s: %s (%ju bytes) converted to sparse holes.\n"),
+				filename, str, ct);
+		free(str);
+	}
 }
 
 int main(int argc, char **argv)
@@ -163,7 +181,7 @@ int main(int argc, char **argv)
 	int	c;
 	int	fd;
 	int	mode = 0;
-	int	dig_holes = 0;
+	int	dig = 0;
 	loff_t	length = -2LL;
 	loff_t	offset = 0;
 
@@ -199,7 +217,7 @@ int main(int argc, char **argv)
 			mode |= FALLOC_FL_KEEP_SIZE;
 			break;
 		case 'd':
-			dig_holes = 1;
+			dig = 1;
 			break;
 		case 'l':
 			length = cvtnum(optarg);
@@ -215,16 +233,19 @@ int main(int argc, char **argv)
 			break;
 		}
 	}
-	if (dig_holes && mode != 0)
-		errx(EXIT_FAILURE, _("Can't use -p or -n with --dig-holes"));
-	if (dig_holes && offset != 0)
-		errx(EXIT_FAILURE, _("Can't use -o with --dig-holes"));
-	if (length == -2LL && dig_holes)
-		length = 32 * 1024;
-	if (length == -2LL && !dig_holes)
-		errx(EXIT_FAILURE, _("no length argument specified"));
-	if (length <= 0)
-		errx(EXIT_FAILURE, _("invalid length value specified"));
+	if (dig) {
+		if (mode != 0)
+			errx(EXIT_FAILURE, _("Can't use -p or -n with --dig-holes"));
+		if (length == -2LL)
+			length = 0;
+		if (length < 0)
+			errx(EXIT_FAILURE, _("invalid length value specified"));
+	} else {
+		if (length == -2LL)
+			errx(EXIT_FAILURE, _("no length argument specified"));
+		if (length <= 0)
+			errx(EXIT_FAILURE, _("invalid length value specified"));
+	}
 	if (offset < 0)
 		errx(EXIT_FAILURE, _("invalid offset value specified"));
 	if (optind == argc)
@@ -241,15 +262,10 @@ int main(int argc, char **argv)
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), filename);
 
-	if (dig_holes)
-		detect_holes(fd, length);
-	else {
-		if (verbose)
-			fprintf(stdout, "%s: fallocate offset=%ju, length=%ju\n",
-					filename, (uintmax_t) offset,
-					(uintmax_t) length);
+	if (dig)
+		dig_holes(fd, offset, length);
+	else
 		xfallocate(fd, mode, offset, length);
-	}
 
 	if (close_fd(fd) != 0)
 		err(EXIT_FAILURE, _("write failed: %s"), filename);
