@@ -15,6 +15,6 @@ CLEAN_LOCALS += clean-local-tests
 
 
 check-local-tests: $(check_PROGRAMS)
-	$(top_srcdir)/tests/run.sh --srcdir=$(abs_top_srcdir) --builddir=$(abs_top_builddir) --nonroot
+	$(top_srcdir)/tests/run.sh --parallel --srcdir=$(abs_top_srcdir) --builddir=$(abs_top_builddir) --nonroot
 
 CHECK_LOCALS += check-local-tests
