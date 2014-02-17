@@ -415,7 +415,7 @@ create_watching_parent (void)
           caught_signal = SIGKILL;
           break;
       }
-      kill(0, caught_signal);
+      kill(getpid(), caught_signal);
     }
   exit (status);
 }
