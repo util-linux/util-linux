@@ -399,8 +399,11 @@ dooutput(FILE *timingfd) {
 			warn (_("cannot write script file"));
 			fail();
 		}
-		if (fflg)
+		if (fflg) {
 			fflush(fscript);
+			if (tflg)
+				fflush(timingfd);
+		}
 		wrt = write(STDOUT_FILENO, obuf, cc);
 		if (wrt < 0) {
 			warn (_("write failed"));
