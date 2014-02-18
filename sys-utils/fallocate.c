@@ -134,15 +134,27 @@ static void dig_holes(int fd, off_t off, off_t len)
 {
 	off_t end = len ? off + len : 0;
 	off_t hole_start = 0, hole_sz = 0;
+	off_t cache_start = 0;
 	uintmax_t ct = 0;
-	size_t bufsz;
+	size_t bufsz, cachesz;
 	char *buf, *empty;
 	struct stat st;
 	int sparse = 0;
 
 	if (fstat(fd, &st) != 0)
 		err(EXIT_FAILURE, _("stat failed %s"), filename);
+
 	bufsz = st.st_blksize;
+
+	/*
+	 * We don't want to call POSIX_FADV_DONTNEED to discard cached
+	 * data in PAGE_SIZE steps. IMHO it's overkill (too many syscalls).
+	 *
+	 * Let's assume that 1MiB (on system with 4K page size) is just
+	 * a good compromise.
+	 *					    -- kzak Feb-2014
+	 */
+	cachesz = getpagesize() * 256;
 
 	if (st.st_blocks * 512 < st.st_size) {
 		if (verbose)
@@ -154,9 +166,10 @@ static void dig_holes(int fd, off_t off, off_t len)
 
 	buf = xmalloc(bufsz);
 	empty = xcalloc(1, bufsz);
+	cache_start = off;
 
-#if defined(POSIX_FADV_SEQUENTIAL) && defined(POSIX_FADV_NOREUSE) && defined(HAVE_POSIX_FADVISE)
-	posix_fadvise(fd, off, 0, POSIX_FADV_SEQUENTIAL | POSIX_FADV_NOREUSE);
+#if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
+	posix_fadvise(fd, off, 0, POSIX_FADV_SEQUENTIAL);
 #endif
 
 	while (end == 0 || off < end) {
@@ -188,6 +201,17 @@ static void dig_holes(int fd, off_t off, off_t len)
 			ct += hole_sz;
 			hole_sz = hole_start = 0;
 		}
+
+#if defined(POSIX_FADV_DONTNEED) && defined(HAVE_POSIX_FADVISE)
+		/* discard cached data */
+		if (off - cache_start > (off_t) cachesz) {
+			size_t clen = off - cache_start;
+
+			clen = (clen / cachesz) * cachesz;
+			posix_fadvise(fd, cache_start, clen, POSIX_FADV_DONTNEED);
+			cache_start = cache_start + clen;
+		}
+#endif
 		off += rsz;
 	}
 
