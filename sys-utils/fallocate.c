@@ -110,6 +110,26 @@ static void xfallocate(int fd, int mode, off_t offset, off_t length)
 	}
 }
 
+
+static int skip_hole(int fd, off_t *off)
+{
+	off_t newoff;
+
+	errno = 0;
+	newoff	= lseek(fd, *off, SEEK_DATA);
+
+	/* ENXIO means that there is no more data -- probably sparse hole at
+	 * the end of the file */
+	if (newoff < 0 && errno == ENXIO)
+		return 1;
+
+	if (newoff > *off) {
+		*off = newoff;
+		return 0;	/* success */
+	}
+	return -1;		/* no hole */
+}
+
 static void dig_holes(int fd, off_t off, off_t len)
 {
 	off_t end = len ? off + len : 0;
@@ -118,13 +138,17 @@ static void dig_holes(int fd, off_t off, off_t len)
 	size_t bufsz;
 	char *buf, *empty;
 	struct stat st;
+	int sparse = 0;
 
 	if (fstat(fd, &st) != 0)
 		err(EXIT_FAILURE, _("stat failed %s"), filename);
 	bufsz = st.st_blksize;
 
-	if (verbose && st.st_blocks * 512 < st.st_size)
-		fprintf(stdout, _("%s: already has holes!\n"), filename);
+	if (st.st_blocks * 512 < st.st_size) {
+		if (verbose)
+			fprintf(stdout, _("%s: already has holes.\n"), filename);
+		sparse = 1;
+	}
 	if (lseek(fd, off, SEEK_SET) < 0)
 		err(EXIT_FAILURE, _("seek on %s failed"), filename);
 
@@ -147,8 +171,16 @@ static void dig_holes(int fd, off_t off, off_t len)
 			break;
 
 		if (memcmp(buf, empty, rsz) == 0) {
-			if (hole_sz == 0)
+			if (!hole_sz) {				/* new hole detected */
+				if (sparse) {
+					int rc = skip_hole(fd, &off);
+					if (rc == 0)
+						continue;	/* hole skipped */
+					else if (rc == 1)
+						break;		/* end of file */
+				}
 				hole_start = off;
+			}
 			hole_sz += rsz;
 		 } else if (hole_sz) {
 			xfallocate(fd, FALLOC_FL_PUNCH_HOLE|FALLOC_FL_KEEP_SIZE,
