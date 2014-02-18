@@ -440,8 +440,11 @@ dooutput(FILE *timingfd) {
 			warn (_("cannot write script file"));
 			fail();
 		}
-		if (fflg)
+		if (fflg) {
 			fflush(fscript);
+			if (tflg)
+				fflush(timingfd);
+		}
 		if (write_all(STDOUT_FILENO, obuf, cc)) {
 			warn (_("write failed"));
 			fail();
