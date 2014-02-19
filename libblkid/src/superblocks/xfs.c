@@ -21,19 +21,142 @@
 #include "superblocks.h"
 
 struct xfs_super_block {
-	unsigned char	xs_magic[4];
-	uint32_t	xs_blocksize;
-	uint64_t	xs_dblocks;
-	uint64_t	xs_rblocks;
-	uint32_t	xs_dummy1[2];
-	unsigned char	xs_uuid[16];
-	uint32_t	xs_dummy2[15];
-	char		xs_fname[12];
-	uint32_t	xs_dummy3[2];
-	uint64_t	xs_icount;
-	uint64_t	xs_ifree;
-	uint64_t	xs_fdblocks;
+	uint32_t	sb_magicnum;	/* magic number == XFS_SB_MAGIC */
+	uint32_t	sb_blocksize;	/* logical block size, bytes */
+	uint64_t	sb_dblocks;	/* number of data blocks */
+	uint64_t	sb_rblocks;	/* number of realtime blocks */
+	uint64_t	sb_rextents;	/* number of realtime extents */
+	unsigned char	sb_uuid[16];	/* file system unique id */
+	uint64_t	sb_logstart;	/* starting block of log if internal */
+	uint64_t	sb_rootino;	/* root inode number */
+	uint64_t	sb_rbmino;	/* bitmap inode for realtime extents */
+	uint64_t	sb_rsumino;	/* summary inode for rt bitmap */
+	uint32_t	sb_rextsize;	/* realtime extent size, blocks */
+	uint32_t	sb_agblocks;	/* size of an allocation group */
+	uint32_t	sb_agcount;	/* number of allocation groups */
+	uint32_t	sb_rbmblocks;	/* number of rt bitmap blocks */
+	uint32_t	sb_logblocks;	/* number of log blocks */
+
+	uint16_t	sb_versionnum;	/* header version == XFS_SB_VERSION */
+	uint16_t	sb_sectsize;	/* volume sector size, bytes */
+	uint16_t	sb_inodesize;	/* inode size, bytes */
+	uint16_t	sb_inopblock;	/* inodes per block */
+	char		sb_fname[12];	/* file system name */
+	uint8_t		sb_blocklog;	/* log2 of sb_blocksize */
+	uint8_t		sb_sectlog;	/* log2 of sb_sectsize */
+	uint8_t		sb_inodelog;	/* log2 of sb_inodesize */
+	uint8_t		sb_inopblog;	/* log2 of sb_inopblock */
+	uint8_t		sb_agblklog;	/* log2 of sb_agblocks (rounded up) */
+	uint8_t		sb_rextslog;	/* log2 of sb_rextents */
+	uint8_t		sb_inprogress;	/* mkfs is in progress, don't mount */
+	uint8_t		sb_imax_pct;	/* max % of fs for inode space */
+					/* statistics */
+	uint64_t	sb_icount;	/* allocated inodes */
+	uint64_t	sb_ifree;	/* free inodes */
+	uint64_t	sb_fdblocks;	/* free data blocks */
+	uint64_t	sb_frextents;	/* free realtime extents */
+
+	/* this is not all... but enough for libblkid */
+
 } __attribute__((packed));
+
+#define XFS_MIN_BLOCKSIZE_LOG	9	/* i.e. 512 bytes */
+#define XFS_MAX_BLOCKSIZE_LOG	16	/* i.e. 65536 bytes */
+#define XFS_MIN_BLOCKSIZE	(1 << XFS_MIN_BLOCKSIZE_LOG)
+#define XFS_MAX_BLOCKSIZE	(1 << XFS_MAX_BLOCKSIZE_LOG)
+#define XFS_MIN_SECTORSIZE_LOG	9	/* i.e. 512 bytes */
+#define XFS_MAX_SECTORSIZE_LOG	15	/* i.e. 32768 bytes */
+#define XFS_MIN_SECTORSIZE	(1 << XFS_MIN_SECTORSIZE_LOG)
+#define XFS_MAX_SECTORSIZE	(1 << XFS_MAX_SECTORSIZE_LOG)
+
+#define	XFS_DINODE_MIN_LOG	8
+#define	XFS_DINODE_MAX_LOG	11
+#define	XFS_DINODE_MIN_SIZE	(1 << XFS_DINODE_MIN_LOG)
+#define	XFS_DINODE_MAX_SIZE	(1 << XFS_DINODE_MAX_LOG)
+
+#define	XFS_MAX_RTEXTSIZE	(1024 * 1024 * 1024)	/* 1GB */
+#define	XFS_DFL_RTEXTSIZE	(64 * 1024)	        /* 64kB */
+#define	XFS_MIN_RTEXTSIZE	(4 * 1024)		/* 4kB */
+
+#define XFS_MIN_AG_BLOCKS	64
+#define XFS_MAX_DBLOCKS(s) ((uint64_t)(s)->sb_agcount * (s)->sb_agblocks)
+#define XFS_MIN_DBLOCKS(s) ((uint64_t)((s)->sb_agcount - 1) *	\
+			 (s)->sb_agblocks + XFS_MIN_AG_BLOCKS)
+
+
+static void sb_from_disk(struct xfs_super_block *from,
+			 struct xfs_super_block *to)
+{
+
+	to->sb_magicnum = be32_to_cpu(from->sb_magicnum);
+	to->sb_blocksize = be32_to_cpu(from->sb_blocksize);
+	to->sb_dblocks = be64_to_cpu(from->sb_dblocks);
+	to->sb_rblocks = be64_to_cpu(from->sb_rblocks);
+	to->sb_rextents = be64_to_cpu(from->sb_rextents);
+	to->sb_logstart = be64_to_cpu(from->sb_logstart);
+	to->sb_rootino = be64_to_cpu(from->sb_rootino);
+	to->sb_rbmino = be64_to_cpu(from->sb_rbmino);
+	to->sb_rsumino = be64_to_cpu(from->sb_rsumino);
+	to->sb_rextsize = be32_to_cpu(from->sb_rextsize);
+	to->sb_agblocks = be32_to_cpu(from->sb_agblocks);
+	to->sb_agcount = be32_to_cpu(from->sb_agcount);
+	to->sb_rbmblocks = be32_to_cpu(from->sb_rbmblocks);
+	to->sb_logblocks = be32_to_cpu(from->sb_logblocks);
+	to->sb_versionnum = be16_to_cpu(from->sb_versionnum);
+	to->sb_sectsize = be16_to_cpu(from->sb_sectsize);
+	to->sb_inodesize = be16_to_cpu(from->sb_inodesize);
+	to->sb_inopblock = be16_to_cpu(from->sb_inopblock);
+	to->sb_blocklog = from->sb_blocklog;
+	to->sb_sectlog = from->sb_sectlog;
+	to->sb_inodelog = from->sb_inodelog;
+	to->sb_inopblog = from->sb_inopblog;
+	to->sb_agblklog = from->sb_agblklog;
+	to->sb_rextslog = from->sb_rextslog;
+	to->sb_inprogress = from->sb_inprogress;
+	to->sb_imax_pct = from->sb_imax_pct;
+	to->sb_icount = be64_to_cpu(from->sb_icount);
+	to->sb_ifree = be64_to_cpu(from->sb_ifree);
+	to->sb_fdblocks = be64_to_cpu(from->sb_fdblocks);
+	to->sb_frextents = be64_to_cpu(from->sb_frextents);
+}
+
+static int xfs_verify_sb(struct xfs_super_block *ondisk)
+{
+	struct xfs_super_block sb, *sbp = &sb;
+
+	/* beXX_to_cpu(), but don't convert UUID and fsname! */
+	sb_from_disk(ondisk, sbp);
+
+	/* sanity checks, we don't want to rely on magic string only */
+	if (sbp->sb_agcount <= 0					||
+	    sbp->sb_sectsize < XFS_MIN_SECTORSIZE			||
+	    sbp->sb_sectsize > XFS_MAX_SECTORSIZE			||
+	    sbp->sb_sectlog < XFS_MIN_SECTORSIZE_LOG			||
+	    sbp->sb_sectlog > XFS_MAX_SECTORSIZE_LOG			||
+	    sbp->sb_sectsize != (1 << sbp->sb_sectlog)			||
+	    sbp->sb_blocksize < XFS_MIN_BLOCKSIZE			||
+	    sbp->sb_blocksize > XFS_MAX_BLOCKSIZE			||
+	    sbp->sb_blocklog < XFS_MIN_BLOCKSIZE_LOG			||
+	    sbp->sb_blocklog > XFS_MAX_BLOCKSIZE_LOG			||
+	    sbp->sb_blocksize != (1 << sbp->sb_blocklog)		||
+	    sbp->sb_inodesize < XFS_DINODE_MIN_SIZE			||
+	    sbp->sb_inodesize > XFS_DINODE_MAX_SIZE			||
+	    sbp->sb_inodelog < XFS_DINODE_MIN_LOG			||
+	    sbp->sb_inodelog > XFS_DINODE_MAX_LOG			||
+	    sbp->sb_inodesize != (1 << sbp->sb_inodelog)		||
+	    (sbp->sb_blocklog - sbp->sb_inodelog != sbp->sb_inopblog)	||
+	    (sbp->sb_rextsize * sbp->sb_blocksize > XFS_MAX_RTEXTSIZE)	||
+	    (sbp->sb_rextsize * sbp->sb_blocksize < XFS_MIN_RTEXTSIZE)	||
+	    (sbp->sb_imax_pct > 100 /* zero sb_imax_pct is valid */)	||
+	    sbp->sb_dblocks == 0					||
+	    sbp->sb_dblocks > XFS_MAX_DBLOCKS(sbp)			||
+	    sbp->sb_dblocks < XFS_MIN_DBLOCKS(sbp))
+		return 0;
+
+	/* TODO: version 5 has also checksum CRC32, maybe we can check it too */
+
+	return 1;
+}
 
 static int probe_xfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
@@ -43,10 +166,13 @@ static int probe_xfs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!xs)
 		return -1;
 
-	if (strlen(xs->xs_fname))
-		blkid_probe_set_label(pr, (unsigned char *) xs->xs_fname,
-				sizeof(xs->xs_fname));
-	blkid_probe_set_uuid(pr, xs->xs_uuid);
+	if (!xfs_verify_sb(xs))
+		return 1;
+
+	if (strlen(xs->sb_fname))
+		blkid_probe_set_label(pr, (unsigned char *) xs->sb_fname,
+				sizeof(xs->sb_fname));
+	blkid_probe_set_uuid(pr, xs->sb_uuid);
 	return 0;
 }
 
