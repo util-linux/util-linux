@@ -130,12 +130,16 @@ static int skip_hole(int fd, off_t *off)
 	return -1;		/* no hole */
 }
 
-static int is_nul(void const *buf, size_t bufsize)
+/* The real buffer size has to be bufsize + sizeof(uintptr_t) */
+static int is_nul(void *buf, size_t bufsize)
 {
 	typedef uintptr_t word;
 	void const *vp;
 	char const *cbuf = buf, *cp;
 	word const *wp = buf;
+
+	/* set sentinel */
+	memset((char *) buf + bufsize, '\1', sizeof(word));
 
 	/* Find first nonzero *word*, or the word with the sentinel.  */
 	while (*wp++ == 0)
@@ -179,7 +183,8 @@ static void dig_holes(int fd, off_t off, off_t len)
 	if (lseek(fd, off, SEEK_SET) < 0)
 		err(EXIT_FAILURE, _("seek on %s failed"), filename);
 
-	buf = xmalloc(bufsz);
+	/* buffer + extra space for is_nul() sentinel */
+	buf = xmalloc(bufsz + sizeof(uintptr_t));
 	cache_start = off;
 
 #if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
