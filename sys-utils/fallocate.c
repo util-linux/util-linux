@@ -130,6 +130,27 @@ static int skip_hole(int fd, off_t *off)
 	return -1;		/* no hole */
 }
 
+static int is_nul(void const *buf, size_t bufsize)
+{
+	typedef uintptr_t word;
+	void const *vp;
+	char const *cbuf = buf, *cp;
+	word const *wp = buf;
+
+	/* Find first nonzero *word*, or the word with the sentinel.  */
+	while (*wp++ == 0)
+		continue;
+
+	/* Find the first nonzero *byte*, or the sentinel.  */
+	vp = wp - 1;
+	cp = vp;
+
+	while (*cp++ == 0)
+		continue;
+
+	  return cbuf + bufsize < cp;
+}
+
 static void dig_holes(int fd, off_t off, off_t len)
 {
 	off_t end = len ? off + len : 0;
@@ -137,9 +158,8 @@ static void dig_holes(int fd, off_t off, off_t len)
 	off_t cache_start = 0;
 	uintmax_t ct = 0;
 	size_t bufsz, cachesz;
-	char *buf, *empty;
+	char *buf;
 	struct stat st;
-	int sparse = 0;
 
 	if (fstat(fd, &st) != 0)
 		err(EXIT_FAILURE, _("stat failed %s"), filename);
@@ -156,16 +176,10 @@ static void dig_holes(int fd, off_t off, off_t len)
 	 */
 	cachesz = getpagesize() * 256;
 
-	if (st.st_blocks * 512 < st.st_size) {
-		if (verbose)
-			fprintf(stdout, _("%s: already has holes.\n"), filename);
-		sparse = 1;
-	}
 	if (lseek(fd, off, SEEK_SET) < 0)
 		err(EXIT_FAILURE, _("seek on %s failed"), filename);
 
 	buf = xmalloc(bufsz);
-	empty = xcalloc(1, bufsz);
 	cache_start = off;
 
 #if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
@@ -178,20 +192,18 @@ static void dig_holes(int fd, off_t off, off_t len)
 		rsz = pread(fd, buf, bufsz, off);
 		if (rsz < 0 && errno)
 			err(EXIT_FAILURE, _("%s: read failed"), filename);
-		if (end && rsz > 0 && off + rsz > end)
+		if (end && rsz > 0 && off > end - rsz)
 			rsz = end - off;
 		if (rsz <= 0)
 			break;
 
-		if (memcmp(buf, empty, rsz) == 0) {
+		if (is_nul(buf, rsz)) {
 			if (!hole_sz) {				/* new hole detected */
-				if (sparse) {
-					int rc = skip_hole(fd, &off);
-					if (rc == 0)
-						continue;	/* hole skipped */
-					else if (rc == 1)
-						break;		/* end of file */
-				}
+				int rc = skip_hole(fd, &off);
+				if (rc == 0)
+					continue;	/* hole skipped */
+				else if (rc == 1)
+					break;		/* end of file */
 				hole_start = off;
 			}
 			hole_sz += rsz;
@@ -222,7 +234,6 @@ static void dig_holes(int fd, off_t off, off_t len)
 	}
 
 	free(buf);
-	free(empty);
 
 	if (verbose) {
 		char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE, ct);
