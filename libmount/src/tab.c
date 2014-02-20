@@ -47,6 +47,8 @@
 #include "strutils.h"
 #include "loopdev.h"
 
+static int is_mountinfo(struct libmnt_table *tb);
+
 /**
  * mnt_new_table:
  *
@@ -491,7 +493,7 @@ int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
 	assert(tb);
 	assert(root);
 
-	if (!tb || !root)
+	if (!tb || !root || !is_mountinfo(tb))
 		return -EINVAL;
 
 	DBG(TAB, mnt_debug_h(tb, "lookup root fs"));
@@ -501,8 +503,6 @@ int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 		int id = mnt_fs_get_parent_id(fs);
-		if (!id)
-			break;		/* @tab is not a mountinfo file? */
 
 		if (!*root || id < root_id) {
 			*root = fs;
@@ -510,7 +510,7 @@ int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
 		}
 	}
 
-	return root_id ? 0 : -EINVAL;
+	return *root ? 0 : -EINVAL;
 }
 
 /**
@@ -531,15 +531,13 @@ int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 	struct libmnt_fs *fs;
 	int parent_id, lastchld_id = 0, chld_id = 0;
 
-	if (!tb || !itr || !parent)
+	if (!tb || !itr || !parent || !is_mountinfo(tb))
 		return -EINVAL;
 
 	DBG(TAB, mnt_debug_h(tb, "lookup next child of '%s'",
 				mnt_fs_get_target(parent)));
 
 	parent_id = mnt_fs_get_id(parent);
-	if (!parent_id)
-		return -EINVAL;
 
 	/* get ID of the previously returned child */
 	if (itr->head && itr->p != itr->head) {
@@ -570,7 +568,7 @@ int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 		}
 	}
 
-	if (!chld_id)
+	if (!*chld)
 		return 1;	/* end of iterator */
 
 	/* set the iterator to the @chld for the next call */
