@@ -85,11 +85,12 @@ void fixtty(void);
 void getmaster(void);
 void getslave(void);
 void doinput(void);
-void dooutput(FILE *timingfd);
+void dooutput(void);
 void doshell(void);
 
 char	*shell;
 FILE	*fscript;
+FILE	*timingfd;
 int	master = -1;
 int	slave;
 pid_t	child;
@@ -164,7 +165,6 @@ main(int argc, char **argv) {
 	sigset_t block_mask, unblock_mask;
 	struct sigaction sa;
 	int ch;
-	FILE *timingfd = NULL;
 
 	enum { FORCE_OPTION = CHAR_MAX + 1 };
 
@@ -208,9 +208,8 @@ main(int argc, char **argv) {
 			qflg = 1;
 			break;
 		case 't':
-			if (optarg)
-				if ((timingfd = fopen(optarg, "w")) == NULL)
-					err(EXIT_FAILURE, _("cannot open %s"), optarg);
+			if (optarg && !(timingfd = fopen(optarg, "w")))
+				err(EXIT_FAILURE, _("cannot open %s"), optarg);
 			tflg = 1;
 			break;
 		case 'V':
@@ -280,11 +279,9 @@ main(int argc, char **argv) {
 			warn(_("fork failed"));
 			fail();
 		}
-		if (child) {
-			if (!timingfd)
-				timingfd = fdopen(STDERR_FILENO, "w");
-			dooutput(timingfd);
-		} else
+		if (child)
+			dooutput();
+		else
 			doshell();
 	} else {
 		sa.sa_handler = resize;
@@ -292,8 +289,6 @@ main(int argc, char **argv) {
 	}
 	doinput();
 
-	if (close_stream(timingfd) != 0)
-		errx(EXIT_FAILURE, _("write error"));
 	return EXIT_SUCCESS;
 }
 
@@ -312,8 +307,12 @@ doinput(void) {
 	ssize_t cc = 0;
 	char ibuf[BUFSIZ];
 
-	if (close_stream(fscript) != 0)
-		errx(EXIT_FAILURE, _("write error"));
+	/* close things irrelevant for this process */
+	if (fscript)
+		fclose(fscript);
+	if (timingfd)
+		fclose(timingfd);
+	fscript = timingfd = NULL;
 
 	while (die == 0) {
 		if ((cc = read(STDIN_FILENO, ibuf, BUFSIZ)) > 0) {
@@ -398,7 +397,7 @@ my_strftime(char *buf, size_t len, const char *fmt, const struct tm *tm) {
 }
 
 void
-dooutput(FILE *timingfd) {
+dooutput(void) {
 	ssize_t cc;
 	time_t tvec;
 	char obuf[BUFSIZ];
@@ -410,6 +409,9 @@ dooutput(FILE *timingfd) {
 #ifdef HAVE_LIBUTIL
 	close(slave);
 #endif
+	if (tflg && !timingfd)
+		timingfd = fdopen(STDERR_FILENO, "w");
+
 	tvec = time((time_t *)NULL);
 	my_strftime(obuf, sizeof obuf, "%c\n", localtime(&tvec));
 	fprintf(fscript, _("Script started on %s"), obuf);
@@ -431,7 +433,7 @@ dooutput(FILE *timingfd) {
 			continue;	/* try it again */
 		if (cc <= 0)
 			break;
-		if (tflg) {
+		if (tflg && timingfd) {
 			newtime = tv.tv_sec + (double) tv.tv_usec / 1000000;
 			fprintf(timingfd, "%f %zd\n", newtime - oldtime, cc);
 			oldtime = newtime;
@@ -442,7 +444,7 @@ dooutput(FILE *timingfd) {
 		}
 		if (fflg) {
 			fflush(fscript);
-			if (tflg)
+			if (tflg && timingfd)
 				fflush(timingfd);
 		}
 		if (write_all(STDOUT_FILENO, obuf, cc)) {
@@ -451,8 +453,6 @@ dooutput(FILE *timingfd) {
 		}
 	} while(1);
 
-	if (close_stream(timingfd) != 0)
-		errx(EXIT_FAILURE, _("write error"));
 	done();
 }
 
@@ -461,9 +461,15 @@ doshell(void) {
 	char *shname;
 
 	getslave();
+
+	/* close things irrelevant for this process */
 	close(master);
-	if (close_stream(fscript) != 0)
-		errx(EXIT_FAILURE, _("write error"));
+	if (fscript)
+		fclose(fscript);
+	if (timingfd)
+		fclose(timingfd);
+	fscript = timingfd = NULL;
+
 	dup2(slave, STDIN_FILENO);
 	dup2(slave, STDOUT_FILENO);
 	dup2(slave, STDERR_FILENO);
@@ -528,15 +534,21 @@ done(void) {
 
 	if (subchild) {
 		/* output process */
-		char buf[BUFSIZ];
-		tvec = time((time_t *)NULL);
-		my_strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
-		fprintf(fscript, _("\nScript done on %s"), buf);
+		if (fscript) {
+			char buf[BUFSIZ];
+			tvec = time((time_t *)NULL);
+			my_strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
+			fprintf(fscript, _("\nScript done on %s"), buf);
 
-		if (close_stream(fscript) != 0)
+			if (close_stream(fscript) != 0)
+				errx(EXIT_FAILURE, _("write error"));
+			fscript = NULL;
+		}
+		if (timingfd && close_stream(timingfd) != 0)
 			errx(EXIT_FAILURE, _("write error"));
-		close(master);
+		timingfd = NULL;
 
+		close(master);
 		master = -1;
 	} else {
 		/* input process */
