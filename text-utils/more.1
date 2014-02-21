@@ -32,11 +32,9 @@
 .\"
 .\"	@(#)more.1	5.15 (Berkeley) 7/29/91
 .\"
-.\" Revised: Fri Dec 25 15:27:27 1992 by root
 .\" 25Dec92: Extensive changes made by Rik Faith (faith@cs.unc.edu) to
 .\" conform with the more 5.19 currently in use by the Linux community.
 .\"
-.\" .Dd July 29, 1991 (Modified December 25, 1992)
 .TH MORE "1" "February 2014" "util-linux" "User Commands"
 .SH NAME
 more \- file perusal filter for crt viewing
@@ -53,32 +51,24 @@ provides
 .BR more (1)
 emulation plus extensive enhancements.
 .SH OPTIONS
-Command-line options are described below.  Options are also taken from the
-environment variable
+Options are also taken from the environment variable
 .B MORE
-(make sure to precede them with a dash (``-'')) but command line options will
-override them.
-.It Fl num
+(make sure to precede them with a dash
+.RB ( \- ))
+but command-line options will override those.
 .TP
 .B \-d
-.B more
-will prompt the user with the message "[Press space to continue, 'q' to
-quit.]" and will display "[Press 'h' for instructions.]" instead of ringing
+Prompt with "[Press space to continue, 'q' to quit.]",
+and display "[Press 'h' for instructions.]" instead of ringing
 the bell when an illegal key is pressed.
 .TP
 .B \-l
-.B more
-usually treats
+Do not pause after any line containing a
 .B \&^L
-(form feed) as a special character, and will pause after any line that
-contains a form feed.  The
-.B \-l
-option will prevent this behavior.
+(form feed).
 .TP
-.B -f
-Causes
-.B more
-to count logical, rather than screen lines (i.e., long lines are not folded).
+.B \-f
+Count logical lines, rather than screen lines (i.e., long lines are not folded).
 .TP
 .B \-p
 Do not scroll.  Instead, clear the whole screen and then display the text.
@@ -124,7 +114,7 @@ means
 .PD 1
 .TP 10
 .BR h \ or \ ?
-Help: display a summary of these commands.  If you forget all the other
+Help; display a summary of these commands.  If you forget all other
 commands, remember this one.
 .TP
 .B SPACE
@@ -154,8 +144,8 @@ Skip forward k screenfuls of text.  Defaults to 1.
 Skip backwards k screenfuls of text.  Defaults to 1.  Only works with files,
 not pipes.
 .TP
-.B \'
-Go to place where previous search started.
+.B '
+Go to the place where the last search started.
 .TP
 .B =
 Display current line number.
@@ -194,7 +184,7 @@ Redraw screen.
 .B :n
 Go to kth next file.  Defaults to 1.
 .TP
-.B :P
+.B :p
 Go to kth previous file.  Defaults to 1.
 .TP
 .B :f
