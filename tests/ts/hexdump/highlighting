@@ -67,7 +67,7 @@ $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	$FILES/ascii.in &> $TS_OUTPUT
 ts_finalize_subtest
 
-# highlight a range longer than the byte count of %o - error
+# highlight a range longer than the byte count of %o
 ts_init_subtest "1b_octal-6"
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 16/1 "%03o_L[red@193-194] " "\n"' \
@@ -150,7 +150,6 @@ $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 ts_finalize_subtest
 
 # color the current print unit if some or all of the bytes it prints are at offsets 98 and 99
-# (false - range longer than format byte count)
 ts_init_subtest "2b_dec-3"
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/2 "  %05u_L[red@97-99] " "\n"' \
@@ -182,6 +181,13 @@ ts_finalize_subtest
 ts_init_subtest "2b_dec-7"
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/2 "  %05u_L[red:A@131-130] " "\n"' \
+	$FILES/ascii.in &> $TS_OUTPUT
+ts_finalize_subtest
+
+# color the current print unit if of the bytes it prints are at offsets 98-102 (multiple print units)
+ts_init_subtest "2b_dec-8"
+$TS_CMD_HEXDUMP $OPTS $ADDRFMT \
+	-e '"%07.7_ax " 8/2 "  %05u_L[red@98-102] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
 ts_finalize_subtest
 

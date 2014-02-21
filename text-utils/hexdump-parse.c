@@ -565,8 +565,22 @@ static struct list_head *color_fmt(char *cfmt, int bcnt)
 				if (errno)
 					badfmt(fmt);
 				/* offset range must be between 0 and format byte count */
-				if (!(hcnext->range >= 0 && hcnext->range <= bcnt))
+				if (hcnext->range < 0)
 					badcnt("_L");
+				/* the offset extends over several print units, clone
+				 * the condition, link it in and adjust the address/offset */
+				while (hcnext->range > bcnt) {
+					hc = xcalloc(1, sizeof(struct hexdump_clr));
+					memcpy(hc, hcnext, sizeof(struct hexdump_clr));
+
+					hc->range = bcnt;
+
+					INIT_LIST_HEAD(&hc->colorlist);
+					list_add_tail(&hc->colorlist, ret_head);
+
+					hcnext->offt += bcnt;
+					hcnext->range -= bcnt;
+				}
 			}
 		/* no specific offset */
 		} else
