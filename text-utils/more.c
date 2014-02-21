@@ -639,7 +639,6 @@ static int magic(FILE *f, char *fs)
 		case 0x457f:	/* simple ELF detection */
 			printf(_("\n******** %s: Not a text file ********\n\n"),
 			       fs);
-			fclose(f);
 			return 1;
 		}
 	}
