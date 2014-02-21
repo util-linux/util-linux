@@ -5,7 +5,7 @@ _logger_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-f'|'--file')
+		'-f'|'--file'|'--journald')
 			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -f -- $cur) )
@@ -37,7 +37,7 @@ _logger_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="--udp --id --file --help --server --port --priority --stderr --tag --socket --version"
+			OPTS="--journald --udp --id --file --help --server --port --priority --stderr --tag --socket --version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

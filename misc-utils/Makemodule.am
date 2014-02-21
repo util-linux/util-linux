@@ -20,6 +20,10 @@ endif
 usrbin_exec_PROGRAMS += logger
 dist_man_MANS += misc-utils/logger.1
 logger_SOURCES = misc-utils/logger.c lib/strutils.c
+if HAVE_JOURNALD
+logger_LDADD = $(SYSTEMD_JOURNAL_LIBS)
+logger_CFLAGS = $(SYSTEMD_JOURNAL_CFLAGS)
+endif
 
 usrbin_exec_PROGRAMS += look
 dist_man_MANS += misc-utils/look.1

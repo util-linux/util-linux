@@ -716,6 +716,7 @@ AS_IF([test "x$enable_most_builds" = xyes], [
   enable_newgrp=yes
   enable_reset=yes
   enable_socket_activation=yes
+  enable_journald=yes
   enable_tunelp=yes
   enable_vipw=yes
   enable_write=yes
@@ -1412,6 +1413,21 @@ AC_ARG_WITH([systemdsystemunitdir],
 AS_IF([test "x$with_systemdsystemunitdir" != "xno"], [
   AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
 ])
+
+
+AC_ARG_ENABLE([journald],
+  AS_HELP_STRING([--enable-journald], [add journald support to logger]),
+  [], [enable_journald=no]
+)
+have_journald=no
+AS_IF([test "x$enable_journald" = xyes], [
+  PKG_CHECK_MODULES([SYSTEMD_JOURNAL], [libsystemd-journal], [], [
+    AC_MSG_ERROR([cannot find libsystemd-journal support])
+  ])
+  have_journald=yes
+  AC_DEFINE([HAVE_JOURNALD], [1], [Define if journald is available])
+])
+AM_CONDITIONAL([HAVE_JOURNALD], [test "x$have_journald" = xyes])
 
 
 AC_ARG_WITH([smack],

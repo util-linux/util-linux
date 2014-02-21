@@ -54,9 +54,14 @@
 #include "closestream.h"
 #include "nls.h"
 #include "strutils.h"
+#include "xalloc.h"
 
 #define	SYSLOG_NAMES
 #include <syslog.h>
+
+#ifdef HAVE_JOURNALD
+# include <systemd/sd-journal.h>
+#endif
 
 enum {
 	TYPE_UDP = (1 << 1),
@@ -65,7 +70,8 @@ enum {
 };
 
 enum {
-	OPT_PRIO_PREFIX = CHAR_MAX + 1
+	OPT_PRIO_PREFIX = CHAR_MAX + 1,
+	OPT_JOURNALD
 };
 
 
@@ -204,6 +210,40 @@ static int inet_socket(const char *servername, const char *port,
 	return fd;
 }
 
+#ifdef HAVE_JOURNALD
+static int journald_entry(FILE *fp)
+{
+	struct iovec *iovec;
+	char *buf = NULL;
+	ssize_t sz;
+	int n, lines, vectors = 8, ret;
+	size_t dummy = 0;
+
+	iovec = xmalloc(vectors * sizeof(struct iovec));
+	for (lines = 0; /* nothing */ ; lines++) {
+		buf = NULL;
+		sz = getline(&buf, &dummy, fp);
+		if (sz == -1)
+			break;
+		if (0 < sz && buf[sz - 1] == '\n') {
+			sz--;
+			buf[sz] = '\0';
+		}
+		if (lines == vectors) {
+			vectors *= 2;
+			iovec = xrealloc(iovec, vectors * sizeof(struct iovec));
+		}
+		iovec[lines].iov_base = buf;
+		iovec[lines].iov_len = sz;
+	}
+	ret = sd_journal_sendv(iovec, lines);
+	for (n = 0; n < lines; n++)
+		free(iovec[n].iov_base);
+	free(iovec);
+	return ret;
+}
+#endif
+
 static void mysyslog(int fd, int logflags, int pri, char *tag, char *msg)
 {
        char buf[1000], pid[30], *cp, *tp;
@@ -249,6 +289,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -s, --stderr          output message to standard error as well\n"), out);
 	fputs(_(" -t, --tag <tag>       mark every line with this tag\n"), out);
 	fputs(_(" -u, --socket <socket> write to this Unix socket\n"), out);
+#ifdef HAVE_JOURNALD
+	fputs(_("     --journald[=<file>]  write journald entry\n"), out);
+#endif
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -272,7 +315,9 @@ int main(int argc, char **argv)
 	char *server = NULL;
 	char *port = NULL;
 	int LogSock = -1, socket_type = ALL_TYPES;
-
+#ifdef HAVE_JOURNALD
+	FILE *jfd = NULL;
+#endif
 	static const struct option longopts[] = {
 		{ "id",		no_argument,	    0, 'i' },
 		{ "stderr",	no_argument,	    0, 's' },
@@ -287,6 +332,9 @@ int main(int argc, char **argv)
 		{ "version",	no_argument,	    0, 'V' },
 		{ "help",	no_argument,	    0, 'h' },
 		{ "prio-prefix", no_argument, 0, OPT_PRIO_PREFIX },
+#ifdef HAVE_JOURNALD
+		{ "journald",   optional_argument,  0, OPT_JOURNALD },
+#endif
 		{ NULL,		0, 0, 0 }
 	};
 
@@ -342,6 +390,17 @@ int main(int argc, char **argv)
 		case OPT_PRIO_PREFIX:
 			prio_prefix = 1;
 			break;
+#ifdef HAVE_JOURNALD
+		case OPT_JOURNALD:
+			if (optarg) {
+				jfd = fopen(optarg, "r");
+				if (!jfd)
+					err(EXIT_FAILURE, _("cannot open %s"),
+					    optarg);
+			} else
+				jfd = stdin;
+			break;
+#endif
 		case '?':
 		default:
 			usage(stderr);
@@ -351,6 +410,14 @@ int main(int argc, char **argv)
 	argv += optind;
 
 	/* setup for logging */
+#ifdef HAVE_JOURNALD
+	if (jfd) {
+		int ret = journald_entry(jfd);
+		if (stdin != jfd)
+			fclose(jfd);
+		return ret ? EXIT_FAILURE : EXIT_SUCCESS;
+	}
+#endif
 	if (server)
 		LogSock = inet_socket(server, port, socket_type);
 	else if (usock)

@@ -122,6 +122,31 @@ Write to the specified
 .I socket
 instead of to the builtin syslog routines.
 .TP
+\fB\-\-journald\fR [\fIfile\fR]
+Write systemd journal entry.  The entry is read from
+.I stdin
+or input
+.IR file .
+Each new line must begin with a field that is accepted by journald, see
+.IR systemd.journal-fields (7)
+for details.  Use of MESSAGE_ID field is generally good idea, as they
+make finding entries easy.
+.IP
+.nf
+$ printf "%s\\n%s\\n%s\\n" MESSAGE_ID=86184c3b1aa444f58ebe7b30fec1438b DOGS=bark "CARAVAN=goes on" | logger --journald
+$ logger --journald=entry.txt
+.fi
+.IP
+Notice that
+.B \-\-journald
+will ignore values of other options, such as priority.  If priority is
+needed it must be within input, and use PRIORITY field.  The simple
+execution of
+.B journalctl
+will display MESSAGE field.  Use
+.B journalctl --output json-pretty
+to see rest of the fields.
+.TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
 .TP
@@ -169,7 +194,9 @@ logger \-p local0.notice \-t HOSTIDM \-f /dev/idmc
 logger \-n loghost.example.com System rebooted
 .SH SEE ALSO
 .BR syslog (3),
-.BR syslogd (8)
+.BR syslogd (8),
+.BR journalctl (1),
+.BR systemd.journal-fields (7)
 .SH STANDARDS
 The
 .B logger
