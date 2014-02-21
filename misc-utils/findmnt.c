@@ -59,7 +59,8 @@ enum {
 	FL_POLL		= (1 << 9),
 	FL_DF		= (1 << 10),
 	FL_ALL		= (1 << 11),
-	FL_UNIQ		= (1 << 12)
+	FL_UNIQ		= (1 << 12),
+	FL_BYTES	= (1 << 13)
 };
 
 /* column IDs */
@@ -478,8 +479,14 @@ static char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 		return sizestr;
 	}
 
-	return vfs_attr == 0 ? xstrdup("0") :
-		size_to_human_string(SIZE_SUFFIX_1LETTER, vfs_attr);
+	if (!vfs_attr)
+		sizestr = xstrdup("0");
+	else if (flags & FL_BYTES)
+		xasprintf(&sizestr, "%ju", vfs_attr);
+	else
+		sizestr = size_to_human_string(SIZE_SUFFIX_1LETTER, vfs_attr);
+
+	return sizestr;
 }
 
 /* reads FS data from libmount
@@ -1124,6 +1131,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fputs(_(" -A, --all              disable all built-in filters, print all filesystems\n"), out);
 	fputs(_(" -a, --ascii            use ASCII chars for tree formatting\n"), out);
+	fputs(_(" -b, --bytes            print sizes in bytes rather than in human readable format\n"), out);
 	fputs(_(" -c, --canonicalize     canonicalize printed paths\n"), out);
 	fputs(_(" -D, --df               imitate the output of df(1)\n"), out);
 	fputs(_(" -d, --direction <word> direction of search, 'forward' or 'backward'\n"), out);
@@ -1176,6 +1184,7 @@ int main(int argc, char *argv[])
 	static const struct option longopts[] = {
 	    { "all",          0, 0, 'A' },
 	    { "ascii",        0, 0, 'a' },
+	    { "bytes",        0, 0, 'b' },
 	    { "canonicalize", 0, 0, 'c' },
 	    { "direction",    1, 0, 'd' },
 	    { "df",           0, 0, 'D' },
@@ -1227,7 +1236,7 @@ int main(int argc, char *argv[])
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"AacDd:ehifF:o:O:p::PklmnN:rst:uvRS:T:Uw:V",
+				"AabcDd:ehifF:o:O:p::PklmnN:rst:uvRS:T:Uw:V",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1238,6 +1247,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'a':
 			tt_flags |= TT_FL_ASCII;
+			break;
+		case 'b':
+			flags |= FL_BYTES;
 			break;
 		case 'c':
 			flags |= FL_CANONICALIZE;
