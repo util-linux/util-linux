@@ -93,6 +93,7 @@ struct cfdisk_menudesc {
 };
 
 struct cfdisk_menu {
+	char			*title;
 	struct cfdisk_menudesc	*desc;
 	char			*ignore;
 	size_t			id;
@@ -102,6 +103,8 @@ struct cfdisk_menu {
 	menu_callback_t		*callback;
 
 	struct cfdisk_menu	*prev;
+
+	unsigned int		vertical : 1;
 };
 
 static struct cfdisk_menudesc menu_main[] = {
@@ -658,11 +661,26 @@ static struct cfdisk_menu *menu_pop(struct cfdisk *cf)
 	if (cf->menu) {
 		m = cf->menu->prev;
 		free(cf->menu->ignore);
+		free(cf->menu->title);
 		free(cf->menu);
 	}
 	cf->menu = m;
 	return cf->menu;
 }
+
+static void menu_set_title(struct cfdisk_menu *m, const char *title)
+{
+	char *str = NULL;
+
+	if (title) {
+		size_t len =  mbs_safe_width(title);
+		if (len + 3 > m->width)
+			m->width = len + 3;
+		str = xstrdup(title);
+	}
+	m->title = str;
+}
+
 
 /* returns: error: < 0, success: 0, quit: 1 */
 static int menu_cb_main(struct cfdisk *cf, int key)
@@ -789,25 +807,41 @@ static int ui_init(struct cfdisk *cf __attribute__((__unused__)))
 
 static size_t menuitem_get_line(struct cfdisk *cf, size_t idx)
 {
-	size_t len = cf->menu->width + 4 + MENU_PADDING;	/* item width */
-	size_t items = COLS / len;				/* items per line */
+	if (cf->menu->vertical) {
+		size_t ni = (cf->menu->nitems + 1) / 2;
+		size_t l = LINES / 2;
 
-	return MENU_START_LINE + ((idx / items));
+		ni = ni > l ? l - 1 : ni;
+		return l - ni + idx;
+	} else {
+		size_t len = cf->menu->width + 4 + MENU_PADDING;	/* item width */
+		size_t items = COLS / len;				/* items per line */
+
+		return MENU_START_LINE + ((idx / items));
+	}
 }
 
 static int menuitem_get_column(struct cfdisk *cf, size_t idx)
 {
-	size_t len = cf->menu->width + 4 + MENU_PADDING;	/* item width */
-	size_t items = COLS / len;				/* items per line */
-	size_t extra = items < cf->menu->nitems ?		/* extra space on line */
-			COLS % len :				/* - multi-line menu */
-			COLS - (cf->menu->nitems * len);	/* - one line menu */
+	if (cf->menu->vertical) {
+		size_t nc = cf->menu->width + MENU_PADDING;
+		size_t c = COLS / 2;
 
-	extra += MENU_PADDING;		/* add padding after last item to extra */
+		nc = nc > c ? c - 1 : nc;
+		return c - nc;
+	} else {
+		size_t len = cf->menu->width + 4 + MENU_PADDING;	/* item width */
+		size_t items = COLS / len;				/* items per line */
+		size_t extra = items < cf->menu->nitems ?		/* extra space on line */
+				COLS % len :				/* - multi-line menu */
+				COLS - (cf->menu->nitems * len);	/* - one line menu */
 
-	if (idx < items)
-		return (idx * len) + (extra / 2);
-	return ((idx % items) * len) + (extra / 2);
+		extra += MENU_PADDING;		/* add padding after last item to extra */
+
+		if (idx < items)
+			return (idx * len) + (extra / 2);
+		return ((idx % items) * len) + (extra / 2);
+	}
 }
 
 static struct cfdisk_menudesc *menu_get_menuitem(struct cfdisk *cf, size_t idx)
@@ -848,10 +882,12 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 	char buf[80 * MB_CUR_MAX];
 	const char *name;
 	size_t width = cf->menu->width + 2;	/* 2 = blank around string */
-	int ln, cl;
+	int ln, cl, vert = cf->menu->vertical;
 
 	name = _(d->name);
-	mbsalign(name, buf, sizeof(buf), &width, MBS_ALIGN_CENTER, 0);
+	mbsalign(name, buf, sizeof(buf), &width,
+			vert ? MBS_ALIGN_LEFT : MBS_ALIGN_CENTER,
+			0);
 
 	ln = menuitem_get_line(cf, idx);
 	cl = menuitem_get_column(cf, idx);
@@ -859,25 +895,33 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 	DBG(FRONTEND, dbgprint("ui: menuitem: cl=%d, ln=%d, item='%s'",
 			cl, ln, buf));
 
+	if (vert) {
+		mvaddch(ln, cl - 1, ACS_VLINE);
+		mvaddch(ln, cl + cf->menu->width + 4, ACS_VLINE);
+	}
+
 	if (cf->menu_idx == idx) {
 		standout();
-		mvprintw(ln, cl, "[%s]", buf);
+		mvprintw(ln, cl, vert ? " %s " : "[%s]", buf);
 		standend();
 		if (d->desc)
 			ui_hint(d->desc);
 	} else
-		mvprintw(ln, cl, "[%s]", buf);
+		mvprintw(ln, cl, vert ? " %s " : "[%s]", buf);
 }
 
 static void ui_draw_menu(struct cfdisk *cf)
 {
 	struct cfdisk_menudesc *d;
+	struct cfdisk_menu *m;
 	size_t i = 0;
 
 	assert(cf);
 	assert(cf->menu);
 
 	DBG(FRONTEND, dbgprint("ui: menu: draw start"));
+
+	m = cf->menu;
 
 	for (i = MENU_START_LINE; i < (size_t) LINES - 1; i++) {
 		move(i, 0);
@@ -889,6 +933,29 @@ static void ui_draw_menu(struct cfdisk *cf)
 	i = 0;
 	while ((d = menu_get_menuitem(cf, i)))
 		ui_draw_menuitem(cf, d, i++);
+
+	if (m->vertical) {
+		size_t ln = menuitem_get_line(cf, 0);
+		size_t cl = menuitem_get_column(cf, 0);
+		size_t nlines = i;
+
+		mvaddch(ln - 1, cl - 1, ACS_ULCORNER);
+		mvaddch(ln + nlines, cl - 1, ACS_LLCORNER);
+
+		for (i = 0; i < m->width + 4; i++) {
+			mvaddch(ln - 1, cl + i, ACS_HLINE);
+			mvaddch(ln + nlines, cl + i, ACS_HLINE);
+		}
+		mvaddch(ln - 1, cl + i, ACS_URCORNER);
+		mvaddch(ln + nlines, cl + i, ACS_LRCORNER);
+
+		if (m->title) {
+			attron(A_BOLD);
+			mvprintw(ln - 1, cl, " %s ", m->title);
+			attroff(A_BOLD);
+		}
+
+	}
 
 	DBG(FRONTEND, dbgprint("ui: menu: draw end."));
 }
