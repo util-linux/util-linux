@@ -80,7 +80,8 @@ static void ui_warnx(const char *fmt, ...);
 static void ui_warn(const char *fmt, ...);
 static void ui_info(const char *fmt, ...);
 static void ui_draw_menu(struct cfdisk *cf);
-static void ui_menu_goto(struct cfdisk *cf, int where);
+static int ui_menu_move(struct cfdisk *cf, int key);
+
 static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 		       uintmax_t low, uintmax_t up);
 
@@ -380,17 +381,12 @@ static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 
 	/* wait for keys */
 	do {
-		switch (getch()) {
-		case KEY_LEFT:
-#ifdef KEY_BTAB
-		case KEY_BTAB:
-#endif
-			ui_menu_goto(cf, cf->menu_idx - 1);
-			break;
-		case KEY_RIGHT:
-		case '\t':
-			ui_menu_goto(cf, cf->menu_idx + 1);
-			break;
+		int key = getch();
+
+		if (ui_menu_move(cf, key) == 0)
+			continue;
+
+		switch (key) {
 		case KEY_ENTER:
 		case '\n':
 		case '\r':
@@ -437,7 +433,6 @@ static int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 	}
 	return rc;
 }
-
 
 static int ui_end(struct cfdisk *cf)
 {
@@ -984,6 +979,49 @@ static void ui_menu_goto(struct cfdisk *cf, int where)
 	ui_draw_menuitem(cf, d, where);
 }
 
+static int ui_menu_move(struct cfdisk *cf, int key)
+{
+	assert(cf);
+	assert(cf->menu);
+
+	if (cf->menu->vertical)
+	{
+		switch (key) {
+		case KEY_DOWN:
+		case '\016':	/* ^N */
+		case 'j':	/* Vi-like alternative */
+			ui_menu_goto(cf, cf->menu_idx + 1);
+			return 0;
+		case KEY_UP:
+		case '\020':	/* ^P */
+		case 'k':	/* Vi-like alternative */
+			ui_menu_goto(cf, cf->menu_idx - 1);
+			return 0;
+		case KEY_HOME:
+			ui_menu_goto(cf, 0);
+			return 0;
+		case KEY_END:
+			ui_menu_goto(cf, cf->menu->nitems);
+			return 0;
+		}
+	} else {
+		switch (key) {
+		case KEY_RIGHT:
+		case '\t':
+			ui_menu_goto(cf, cf->menu_idx + 1);
+			return 0;
+		case KEY_LEFT:
+#ifdef KEY_BTAB
+		case KEY_BTAB:
+#endif
+			ui_menu_goto(cf, cf->menu_idx - 1);
+			return 0;
+		}
+	}
+
+	return 1;	/* key irrelevant for menu move */
+}
+
 /* returns: error: < 0, success: 0, quit: 1 */
 static int ui_menu_action(struct cfdisk *cf, int key)
 {
@@ -1292,7 +1330,6 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 	return rc;
 }
 
-
 static int ui_run(struct cfdisk *cf)
 {
 	int rc;
@@ -1307,6 +1344,9 @@ static int ui_run(struct cfdisk *cf)
 
 	do {
 		int rc = 0, key = getch();
+
+		if (ui_menu_move(cf, key) == 0)
+			continue;
 
 		switch (key) {
 		case KEY_DOWN:
@@ -1326,16 +1366,6 @@ static int ui_run(struct cfdisk *cf)
 			ui_table_goto(cf, cf->nlines - 1);
 			break;
 			ui_menu_action(cf, 0);
-			break;
-		case KEY_LEFT:
-#ifdef KEY_BTAB
-		case KEY_BTAB:
-#endif
-			ui_menu_goto(cf, cf->menu_idx - 1);
-			break;
-		case KEY_RIGHT:
-		case '\t':
-			ui_menu_goto(cf, cf->menu_idx + 1);
 			break;
 		case KEY_ENTER:
 		case '\n':
