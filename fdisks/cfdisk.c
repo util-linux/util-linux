@@ -70,7 +70,7 @@ struct cfdisk;
 
 static struct cfdisk_menudesc *menu_get_menuitem(struct cfdisk *cf, size_t idx);
 static struct cfdisk_menudesc *menu_get_menuitem_by_key(struct cfdisk *cf, int key, size_t *idx);
-static struct cfdisk_menu *menu_push(struct cfdisk *cf, size_t id, struct cfdisk_menudesc *desc);
+static struct cfdisk_menu *menu_push(struct cfdisk *cf, struct cfdisk_menudesc *desc);
 static struct cfdisk_menu *menu_pop(struct cfdisk *cf);
 
 static int ui_refresh(struct cfdisk *cf);
@@ -100,11 +100,12 @@ struct cfdisk_menu {
 	size_t			nitems;
 
 	struct cfdisk_menu	*prev;
+	int (*ignore_cb)	(struct cfdisk *, char *, size_t);
 
 	unsigned int		vertical : 1;
 };
 
-static struct cfdisk_menudesc menu_main[] = {
+static struct cfdisk_menudesc main_menudesc[] = {
 	{ 'b', N_("Bootable"), N_("Toggle bootable flag of the current partition") },
 	{ 'd', N_("Delete"), N_("Delete the current partition") },
 //	{ 'g', N_("Geometry"), N_("Change disk geometry (experts only)") },
@@ -117,18 +118,6 @@ static struct cfdisk_menudesc menu_main[] = {
 //	{ 'u', N_("Units"), N_("Change units of the partition size display (MB, sect, cyl)") },
 	{ 'W', N_("Write"), N_("Write partition table to disk (this might destroy data)") },
 	{ 0, NULL, NULL }
-};
-
-enum {
-	CFDISK_MENU_GENERATED	= -1,	/* used in libfdisk callback */
-
-	/* built-in menus */
-	CFDISK_MENU_MAIN	= 0,
-
-};
-
-static struct cfdisk_menudesc *menus[] = {
-	[CFDISK_MENU_MAIN] = menu_main
 };
 
 struct cfdisk {
@@ -366,7 +355,7 @@ static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 	}
 
 	/* make the new menu active */
-	menu_push(cf, CFDISK_MENU_GENERATED, cm);
+	menu_push(cf, cm);
 	ui_draw_menu(cf);
 	refresh();
 
@@ -566,37 +555,20 @@ static void menu_update_ignore(struct cfdisk *cf)
 {
 	char ignore[128] = { 0 };
 	int i = 0;
-	struct fdisk_partition *pa;
 	struct cfdisk_menu *m;
 	struct cfdisk_menudesc *d, *org;
 	size_t idx;
 
 	assert(cf);
+	assert(cf->menu);
+	assert(cf->menu->ignore_cb);
 
 	m = cf->menu;
 	org = menu_get_menuitem(cf, cf->menu_idx);
 
 	DBG(FRONTEND, dbgprint("menu: update menu ignored keys"));
 
-	switch (m->id) {
-	case CFDISK_MENU_MAIN:
-		pa = get_current_partition(cf);
-		if (!pa)
-			break;
-		if (fdisk_partition_is_freespace(pa)) {
-			ignore[i++] = 'd';	/* delete */
-			ignore[i++] = 't';	/* set type */
-			ignore[i++] = 'b';      /* set bootable */
-		} else {
-			ignore[i++] = 'n';
-			if (!fdisk_is_disklabel(cf->cxt, DOS) &&
-			    !fdisk_is_disklabel(cf->cxt, SGI))
-				ignore[i++] = 'b';
-		}
-
-		break;
-	}
-
+	i = m->ignore_cb(cf, ignore, sizeof(ignore));
 	ignore[i] = '\0';
 
 	/* return if no change */
@@ -624,7 +596,6 @@ static void menu_update_ignore(struct cfdisk *cf)
 
 static struct cfdisk_menu *menu_push(
 			struct cfdisk *cf,
-			size_t id,
 			struct cfdisk_menudesc *desc)
 {
 	struct cfdisk_menu *m = xcalloc(1, sizeof(*m));
@@ -635,8 +606,7 @@ static struct cfdisk_menu *menu_push(
 	DBG(FRONTEND, dbgprint("menu: new menu"));
 
 	m->prev = cf->menu;
-	m->id = id;
-	m->desc = desc ? desc : menus[id];
+	m->desc = desc;
 
 	for (d = m->desc; d->name; d++) {
 		const char *name = _(d->name);
@@ -839,8 +809,8 @@ static void ui_draw_menu(struct cfdisk *cf)
 		clrtoeol();
 	}
 
-	menu_update_ignore(cf);
-
+	if (m->ignore_cb)
+		menu_update_ignore(cf);
 	i = 0;
 	while ((d = menu_get_menuitem(cf, i)))
 		ui_draw_menuitem(cf, d, i++);
@@ -1252,7 +1222,7 @@ static int ui_create_label(struct cfdisk *cf)
 		_("Please, select a type to create a new disk label."));
 
 	/* make the new menu active */
-	menu_push(cf, CFDISK_MENU_GENERATED, cm);
+	menu_push(cf, cm);
 	cf->menu->vertical = 1;
 	menu_set_title(cf->menu, _("Select label type"));
 	ui_draw_menu(cf);
@@ -1282,6 +1252,29 @@ done:
 	DBG(FRONTEND, dbgprint("ui: create label done [rc=%d] ", rc));
 	return rc;
 }
+
+/* TODO: use @sz, now 128bytes */
+static int main_menu_ignore_keys(struct cfdisk *cf, char *ignore,
+		size_t sz __attribute__((__unused__)))
+{
+	struct fdisk_partition *pa = get_current_partition(cf);
+	size_t i = 0;
+
+	if (!pa)
+		return 0;
+	if (fdisk_partition_is_freespace(pa)) {
+		ignore[i++] = 'd';	/* delete */
+		ignore[i++] = 't';	/* set type */
+		ignore[i++] = 'b';      /* set bootable */
+	} else {
+		ignore[i++] = 'n';
+		if (!fdisk_is_disklabel(cf->cxt, DOS) &&
+		    !fdisk_is_disklabel(cf->cxt, SGI))
+			ignore[i++] = 'b';
+	}
+	return i;
+}
+
 
 /* returns: error: < 0, success: 0, quit: 1 */
 static int main_menu_action(struct cfdisk *cf, int key)
@@ -1413,7 +1406,9 @@ static int ui_run(struct cfdisk *cf)
 	if (rc)
 		ui_errx(EXIT_FAILURE, _("failed to read partitions"));
 
-	menu_push(cf, CFDISK_MENU_MAIN, NULL);
+	menu_push(cf, main_menudesc);
+	cf->menu->ignore_cb = main_menu_ignore_keys;
+
 	rc = ui_refresh(cf);
 	if (rc)
 		return rc;
