@@ -132,6 +132,11 @@ int fdisk_context_next_label(struct fdisk_context *cxt, struct fdisk_label **lb)
 	return res ? 0 : 1;
 }
 
+size_t fdisk_context_get_nlabels(struct fdisk_context *cxt)
+{
+	return cxt ? cxt->nlabels : 0;
+}
+
 int __fdisk_context_switch_label(struct fdisk_context *cxt,
 				 struct fdisk_label *lb)
 {

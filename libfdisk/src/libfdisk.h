@@ -85,6 +85,7 @@ extern int fdisk_context_deassign_device(struct fdisk_context *cxt);
 extern struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt,
 				const char *name);
 extern int fdisk_context_next_label(struct fdisk_context *cxt, struct fdisk_label **lb);
+extern size_t fdisk_context_get_nlabels(struct fdisk_context *cxt);
 
 extern int fdisk_context_switch_label(struct fdisk_context *cxt,
 				const char *name);
