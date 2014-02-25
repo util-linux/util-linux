@@ -67,9 +67,7 @@ static const int color_pairs[][2] = {
 };
 
 struct cfdisk;
-typedef int (menu_callback_t)(struct cfdisk *, int);
 
-static int menu_cb_main(struct cfdisk *cf, int key);
 static struct cfdisk_menudesc *menu_get_menuitem(struct cfdisk *cf, size_t idx);
 static struct cfdisk_menudesc *menu_get_menuitem_by_key(struct cfdisk *cf, int key, size_t *idx);
 static struct cfdisk_menu *menu_push(struct cfdisk *cf, size_t id, struct cfdisk_menudesc *desc);
@@ -100,8 +98,6 @@ struct cfdisk_menu {
 	size_t			id;
 	size_t			width;
 	size_t			nitems;
-
-	menu_callback_t		*callback;
 
 	struct cfdisk_menu	*prev;
 
@@ -134,11 +130,6 @@ enum {
 static struct cfdisk_menudesc *menus[] = {
 	[CFDISK_MENU_MAIN] = menu_main
 };
-
-static menu_callback_t *menu_callbacks[] = {
-	[CFDISK_MENU_MAIN] = menu_cb_main
-};
-
 
 struct cfdisk {
 	struct fdisk_context	*cxt;	/* libfdisk context */
@@ -646,7 +637,6 @@ static struct cfdisk_menu *menu_push(
 	m->prev = cf->menu;
 	m->id = id;
 	m->desc = desc ? desc : menus[id];
-	m->callback = menu_callbacks[id];
 
 	for (d = m->desc; d->name; d++) {
 		const char *name = _(d->name);
@@ -691,94 +681,6 @@ static void menu_set_title(struct cfdisk_menu *m, const char *title)
 	m->title = str;
 }
 
-
-/* returns: error: < 0, success: 0, quit: 1 */
-static int menu_cb_main(struct cfdisk *cf, int key)
-{
-	size_t n;
-	int ref = 0, rc;
-	const char *info = NULL, *warn = NULL;
-	struct fdisk_partition *pa;
-
-	assert(cf);
-	assert(cf->cxt);
-	assert(key);
-
-	pa = get_current_partition(cf);
-	n = fdisk_partition_get_partno(pa);
-
-	DBG(FRONTEND, dbgprint("menu action on %p", pa));
-
-	switch (key) {
-	case 'b': /* Bootable flag */
-	{
-		int fl = fdisk_is_disklabel(cf->cxt, DOS) ? DOS_FLAG_ACTIVE :
-			 fdisk_is_disklabel(cf->cxt, SGI) ? SGI_FLAG_BOOT : 0;
-
-		if (fl && fdisk_partition_toggle_flag(cf->cxt, n, fl))
-			warn = _("Could not toggle the flag.");
-		else if (fl)
-			ref = 1;
-		break;
-	}
-	case 'd': /* Delete */
-		if (fdisk_delete_partition(cf->cxt, n) != 0)
-			warn = _("Could not delete partition %zu.");
-		else
-			info = _("Partition %zu has been deleted.");
-		ref = 1;
-		break;
-	case 'n': /* New */
-	{
-		uint64_t start, size, dflt_size;
-		struct fdisk_partition *npa;	/* the new partition */
-
-		if (!pa || !fdisk_partition_is_freespace(pa))
-			return -EINVAL;
-		npa = fdisk_new_partition();
-		if (!npa)
-			return -ENOMEM;
-		/* free space range */
-		start = fdisk_partition_get_start(pa);
-		size = dflt_size = fdisk_partition_get_size(pa) * cf->cxt->sector_size;
-
-		if (ui_get_size(cf, _("Partition size: "), &size, 1, size)
-				== -CFDISK_ERR_ESC)
-			break;
-
-		if (dflt_size == size)	/* default is to fillin all free space */
-			fdisk_partition_end_follow_default(npa, 1);
-		else /* set relative size of the partition */
-			fdisk_partition_set_size(npa, size / cf->cxt->sector_size);
-
-		fdisk_partition_set_start(npa, start);
-				fdisk_partition_partno_follow_default(npa, 1);
-		/* add to disk label -- libfdisk will ask for missing details */
-		rc = fdisk_add_partition(cf->cxt, npa);
-		fdisk_unref_partition(npa);
-		if (rc == 0)
-			ref = 1;
-		break;
-	}
-	case 'q': /* Quit */
-		return 1;
-	case 't': /* Type */
-		break;
-	case 'W': /* Write */
-		break;
-	}
-
-	if (ref) {
-		lines_refresh(cf);
-		ui_refresh(cf);
-	}
-	if (warn)
-		ui_warnx(warn, n);
-	else if (info)
-		ui_info(info, n);
-
-	return 0;
-}
 
 static int ui_init(struct cfdisk *cf __attribute__((__unused__)))
 {
@@ -1034,32 +936,6 @@ static int ui_menu_move(struct cfdisk *cf, int key)
 	}
 
 	return 1;	/* key irrelevant for menu move */
-}
-
-/* returns: error: < 0, success: 0, quit: 1 */
-static int ui_menu_action(struct cfdisk *cf, int key)
-{
-	assert(cf);
-	assert(cf->menu);
-	assert(cf->menu->callback);
-
-	if (key == 0) {
-		struct cfdisk_menudesc *d = menu_get_menuitem(cf, cf->menu_idx);
-		if (!d)
-			return 0;
-		key = d->key;
-
-	} else if (key != 'w' && key != 'W')
-		key = tolower(key);	/* case insensitive except 'W'rite */
-
-	DBG(FRONTEND, dbgprint("ui: menu action: key=%c", key));
-
-	if (cf->menu->ignore && strchr(cf->menu->ignore, key)) {
-		DBG(FRONTEND, dbgprint("  ignore '%c'", key));
-		return 0;
-	}
-
-	return cf->menu->callback(cf, key);
 }
 
 static void ui_draw_partition(struct cfdisk *cf, size_t i)
@@ -1407,6 +1283,116 @@ done:
 	return rc;
 }
 
+/* returns: error: < 0, success: 0, quit: 1 */
+static int main_menu_action(struct cfdisk *cf, int key)
+{
+	size_t n;
+	int ref = 0, rc;
+	const char *info = NULL, *warn = NULL;
+	struct fdisk_partition *pa;
+
+	assert(cf);
+	assert(cf->cxt);
+	assert(cf->menu);
+
+	if (key == 0) {
+		struct cfdisk_menudesc *d = menu_get_menuitem(cf, cf->menu_idx);
+		if (!d)
+			return 0;
+		key = d->key;
+
+	} else if (key != 'w' && key != 'W')
+		key = tolower(key);	/* case insensitive except 'W'rite */
+
+	DBG(FRONTEND, dbgprint("ui: main menu action: key=%c", key));
+
+	if (cf->menu->ignore && strchr(cf->menu->ignore, key)) {
+		DBG(FRONTEND, dbgprint("  ignore '%c'", key));
+		return 0;
+	}
+
+	pa = get_current_partition(cf);
+	n = fdisk_partition_get_partno(pa);
+
+	DBG(FRONTEND, dbgprint("menu action on %p", pa));
+
+	switch (key) {
+	case 'b': /* Bootable flag */
+	{
+		int fl = fdisk_is_disklabel(cf->cxt, DOS) ? DOS_FLAG_ACTIVE :
+			 fdisk_is_disklabel(cf->cxt, SGI) ? SGI_FLAG_BOOT : 0;
+
+		if (fl && fdisk_partition_toggle_flag(cf->cxt, n, fl))
+			warn = _("Could not toggle the flag.");
+		else if (fl)
+			ref = 1;
+		break;
+	}
+	case 'd': /* Delete */
+		if (fdisk_delete_partition(cf->cxt, n) != 0)
+			warn = _("Could not delete partition %zu.");
+		else
+			info = _("Partition %zu has been deleted.");
+		ref = 1;
+		break;
+	case 'n': /* New */
+	{
+		uint64_t start, size, dflt_size;
+		struct fdisk_partition *npa;	/* the new partition */
+
+		if (!pa || !fdisk_partition_is_freespace(pa))
+			return -EINVAL;
+		npa = fdisk_new_partition();
+		if (!npa)
+			return -ENOMEM;
+		/* free space range */
+		start = fdisk_partition_get_start(pa);
+		size = dflt_size = fdisk_partition_get_size(pa) * cf->cxt->sector_size;
+
+		if (ui_get_size(cf, _("Partition size: "), &size, 1, size)
+				== -CFDISK_ERR_ESC)
+			break;
+
+		if (dflt_size == size)	/* default is to fillin all free space */
+			fdisk_partition_end_follow_default(npa, 1);
+		else /* set relative size of the partition */
+			fdisk_partition_set_size(npa, size / cf->cxt->sector_size);
+
+		fdisk_partition_set_start(npa, start);
+				fdisk_partition_partno_follow_default(npa, 1);
+		/* add to disk label -- libfdisk will ask for missing details */
+		rc = fdisk_add_partition(cf->cxt, npa);
+		fdisk_unref_partition(npa);
+		if (rc == 0)
+			ref = 1;
+		break;
+	}
+	case 'q': /* Quit */
+		return 1;
+	case 't': /* Type */
+		break;
+	case 'W': /* Write */
+		rc = fdisk_write_disklabel(cf->cxt);
+		if (rc)
+			ui_errx(EXIT_FAILURE, _("failed to write disklabel"));
+		fdisk_reread_partition_table(cf->cxt);
+		ui_info(_("The partition table has been altered."));
+		break;
+	}
+
+	if (ref) {
+		lines_refresh(cf);
+		ui_refresh(cf);
+	}
+	if (warn)
+		ui_warnx(warn, n);
+	else if (info)
+		ui_info(info, n);
+
+	return 0;
+}
+
+
 static int ui_run(struct cfdisk *cf)
 {
 	int rc = 0;
@@ -1455,15 +1441,13 @@ static int ui_run(struct cfdisk *cf)
 		case KEY_END:
 			ui_table_goto(cf, cf->nlines - 1);
 			break;
-			ui_menu_action(cf, 0);
-			break;
 		case KEY_ENTER:
 		case '\n':
 		case '\r':
-			rc = ui_menu_action(cf, 0);
+			rc = main_menu_action(cf, 0);
 			break;
 		default:
-			rc = ui_menu_action(cf, key);
+			rc = main_menu_action(cf, key);
 			if (rc < 0)
 				beep();
 			break;
@@ -1482,6 +1466,7 @@ static int ui_run(struct cfdisk *cf)
 
 int main(int argc, char *argv[])
 {
+	int rc;
 	struct cfdisk _cf = { .lines_idx = 0 },
 		      *cf = &_cf;
 
@@ -1511,7 +1496,9 @@ int main(int argc, char *argv[])
 	free(cf->lines);
 	free(cf->linesbuf);
 	fdisk_unref_table(cf->table);
+
+	rc = fdisk_context_deassign_device(cf->cxt);
 	fdisk_free_context(cf->cxt);
-	DBG(FRONTEND, dbgprint("bye!"));
-	return EXIT_SUCCESS;
+	DBG(FRONTEND, dbgprint("bye! [rc=%d]", rc));
+	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
