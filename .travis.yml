@@ -1,0 +1,27 @@
+language: c
+
+compiler:
+  - gcc
+  - clang
+
+before_install:
+  - sudo apt-get -qq update
+
+install:
+  - sudo apt-get install -qq autopoint
+  - sudo apt-get install -qq bc
+  - sudo apt-get install -qq gtk-doc-tools
+
+before_script:
+  - ./autogen.sh
+
+script:
+  - ./configure
+    && make
+    && ( make check || echo "non-root checks failed" )
+    && make dist
+
+after_script:
+  - test -d tests/diff
+    && echo "cat test diffs:"
+    && find tests/diff -type f | xargs -r cat
