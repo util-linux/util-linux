@@ -182,8 +182,6 @@ void change_partition_type(struct fdisk_context *cxt)
 		t = ask_partition_type(cxt);
 	} while (!t);
 
-	fdisk_partition_set_type(pa, t);
-
 	if (fdisk_set_partition_type(cxt, i, t) == 0)
 		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
 			_("Changed type of partition '%s' to '%s'."),
