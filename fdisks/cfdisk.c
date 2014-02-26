@@ -89,6 +89,7 @@ struct cfdisk_menudesc {
 	int		key;		/* keyboard shortcut */
 	const char	*name;		/* item name */
 	const char	*desc;		/* item description */
+	void		*userdata;
 };
 
 struct cfdisk_menu {
@@ -98,6 +99,8 @@ struct cfdisk_menu {
 	size_t			id;
 	size_t			width;
 	size_t			nitems;
+	size_t			page_sz;
+	size_t			idx;
 
 	struct cfdisk_menu	*prev;
 	int (*ignore_cb)	(struct cfdisk *, char *, size_t);
@@ -125,7 +128,6 @@ struct cfdisk {
 	struct fdisk_table	*table;	/* partition table */
 
 	struct cfdisk_menu	*menu;	/* the current menu */ 
-	size_t			menu_idx;
 
 	int	*cols;		/* output columns */
 	size_t	ncols;		/* number of columns */
@@ -370,7 +372,7 @@ static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 		case KEY_ENTER:
 		case '\n':
 		case '\r':
-			d = menu_get_menuitem(cf, cf->menu_idx);
+			d = menu_get_menuitem(cf, cf->menu->idx);
 			if (d)
 				fdisk_ask_menu_set_result(ask, d->key);
 			menu_pop(cf);
@@ -564,7 +566,7 @@ static void menu_update_ignore(struct cfdisk *cf)
 	assert(cf->menu->ignore_cb);
 
 	m = cf->menu;
-	org = menu_get_menuitem(cf, cf->menu_idx);
+	org = menu_get_menuitem(cf, m->idx);
 
 	DBG(FRONTEND, dbgprint("menu: update menu ignored keys"));
 
@@ -589,9 +591,11 @@ static void menu_update_ignore(struct cfdisk *cf)
 
 	/* refresh menu index to be at the same menuitem or go to the first */
 	if (org && menu_get_menuitem_by_key(cf, org->key, &idx))
-		cf->menu_idx = idx;
+		m->idx = idx;
 	else
-		cf->menu_idx = 0;
+		m->idx = 0;
+
+	m->page_sz = m->nitems / (LINES - 4) ? LINES - 4 : 0;
 }
 
 static struct cfdisk_menu *menu_push(
@@ -617,6 +621,7 @@ static struct cfdisk_menu *menu_push(
 	}
 
 	cf->menu = m;
+	m->page_sz = m->nitems / (LINES - 4) ? LINES - 4 : 0;
 	return m;
 }
 
@@ -689,14 +694,15 @@ static int ui_init(struct cfdisk *cf __attribute__((__unused__)))
 
 static size_t menuitem_get_line(struct cfdisk *cf, size_t idx)
 {
-	if (cf->menu->vertical) {
-		size_t ni = cf->menu->nitems + 1;
-		if ((size_t) LINES < ni)
-			return 0;
-		return (LINES - ni) / 2 + idx;
+	struct cfdisk_menu *m = cf->menu;
+
+	if (m->vertical) {
+		if (!m->page_sz)				/* small menu */
+			return (LINES - (cf->menu->nitems + 1)) / 2 + idx;
+		return (idx % m->page_sz) + 1;
 	} else {
-		size_t len = cf->menu->width + 4 + MENU_PADDING;	/* item width */
-		size_t items = COLS / len;				/* items per line */
+		size_t len = m->width + 4 + MENU_PADDING;	/* item width */
+		size_t items = COLS / len;			/* items per line */
 
 		return MENU_START_LINE + ((idx / items));
 	}
@@ -722,6 +728,16 @@ static int menuitem_get_column(struct cfdisk *cf, size_t idx)
 			return (idx * len) + (extra / 2);
 		return ((idx % items) * len) + (extra / 2);
 	}
+}
+
+static int menuitem_on_page(struct cfdisk *cf, size_t idx)
+{
+	struct cfdisk_menu *m = cf->menu;
+
+	if (m->page_sz == 0 ||
+	    m->idx / m->page_sz == idx / m->page_sz)
+		return 1;
+	return 0;
 }
 
 static struct cfdisk_menudesc *menu_get_menuitem(struct cfdisk *cf, size_t idx)
@@ -764,13 +780,15 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 	size_t width = cf->menu->width + 2;	/* 2 = blank around string */
 	int ln, cl, vert = cf->menu->vertical;
 
+	if (!menuitem_on_page(cf, idx))
+		return;		/* no visible item */
+	ln = menuitem_get_line(cf, idx);
+	cl = menuitem_get_column(cf, idx);
+
 	name = _(d->name);
 	mbsalign(name, buf, sizeof(buf), &width,
 			vert ? MBS_ALIGN_LEFT : MBS_ALIGN_CENTER,
 			0);
-
-	ln = menuitem_get_line(cf, idx);
-	cl = menuitem_get_column(cf, idx);
 
 	DBG(FRONTEND, dbgprint("ui: menuitem: cl=%d, ln=%d, item='%s'",
 			cl, ln, buf));
@@ -780,7 +798,7 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 		mvaddch(ln, cl + cf->menu->width + 4, ACS_VLINE);
 	}
 
-	if (cf->menu_idx == idx) {
+	if (cf->menu->idx == idx) {
 		standout();
 		mvprintw(ln, cl, vert ? " %s " : "[%s]", buf);
 		standend();
@@ -794,7 +812,9 @@ static void ui_draw_menu(struct cfdisk *cf)
 {
 	struct cfdisk_menudesc *d;
 	struct cfdisk_menu *m;
-	size_t i = 0, maxi;
+	size_t i = 0;
+	size_t ln = menuitem_get_line(cf, 0);
+	size_t nlines;
 
 	assert(cf);
 	assert(cf->menu);
@@ -802,9 +822,13 @@ static void ui_draw_menu(struct cfdisk *cf)
 	DBG(FRONTEND, dbgprint("ui: menu: draw start"));
 
 	m = cf->menu;
-	maxi = menuitem_get_line(cf, m->nitems);
 
-	for (i = menuitem_get_line(cf, 0); i <= maxi; i++) {
+	if (m->vertical)
+		nlines = m->page_sz ? m->page_sz : m->nitems;
+	else
+		nlines = menuitem_get_line(cf, m->nitems);
+
+	for (i = ln; i <= ln + nlines; i++) {
 		move(i, 0);
 		clrtoeol();
 	}
@@ -816,10 +840,10 @@ static void ui_draw_menu(struct cfdisk *cf)
 		ui_draw_menuitem(cf, d, i++);
 
 	if (m->vertical) {
-		size_t ln = menuitem_get_line(cf, 0);
 		size_t cl = menuitem_get_column(cf, 0);
-		size_t nlines = i;
+		size_t curpg = m->page_sz ? m->idx / m->page_sz : 0;
 
+		/* corners and horizontal lines */
 		mvaddch(ln - 1, cl - 1, ACS_ULCORNER);
 		mvaddch(ln + nlines, cl - 1, ACS_LLCORNER);
 
@@ -827,15 +851,27 @@ static void ui_draw_menu(struct cfdisk *cf)
 			mvaddch(ln - 1, cl + i, ACS_HLINE);
 			mvaddch(ln + nlines, cl + i, ACS_HLINE);
 		}
+
 		mvaddch(ln - 1, cl + i, ACS_URCORNER);
 		mvaddch(ln + nlines, cl + i, ACS_LRCORNER);
 
+		/* draw also lines around empty lines on last page */
+		if (m->page_sz &&
+		    m->nitems / m->page_sz == m->idx / m->page_sz) {
+			for (i = m->nitems % m->page_sz + 1; i <= m->page_sz; i++) {
+				mvaddch(i, cl - 1, ACS_VLINE);
+				mvaddch(i, cl + cf->menu->width + 4, ACS_VLINE);
+			}
+		}
 		if (m->title) {
 			attron(A_BOLD);
 			mvprintw(ln - 1, cl, " %s ", m->title);
 			attroff(A_BOLD);
 		}
-
+		if (curpg != 0)
+			mvaddch(ln - 1, cl + m->width + 3, ACS_UARROW);
+		if (m->page_sz && curpg < m->nitems / m->page_sz)
+			mvaddch(ln + nlines, cl + m->width + 3, ACS_DARROW);
 	}
 
 	DBG(FRONTEND, dbgprint("ui: menu: draw end."));
@@ -846,17 +882,28 @@ static void ui_menu_goto(struct cfdisk *cf, int where)
 	struct cfdisk_menudesc *d;
 	size_t old;
 
+	/* stop and begin/end fr vertical menus */
+	if (cf->menu->vertical
+	    && (where < 0 || (size_t) where > cf->menu->nitems - 1))
+		return;
+
+	/* continue from begin/end */
 	if (where < 0)
 		where = cf->menu->nitems - 1;
 	else if ((size_t) where > cf->menu->nitems - 1)
 		where = 0;
-	if ((size_t) where == cf->menu_idx)
+	if ((size_t) where == cf->menu->idx)
 		return;
 
 	ui_clean_info();
 
-	old = cf->menu_idx;
-	cf->menu_idx = where;
+	old = cf->menu->idx;
+	cf->menu->idx = where;
+
+	if (!menuitem_on_page(cf, old)) {
+		ui_draw_menu(cf);
+		return;
+	}
 
 	d = menu_get_menuitem(cf, old);
 	ui_draw_menuitem(cf, d, old);
@@ -876,12 +923,12 @@ static int ui_menu_move(struct cfdisk *cf, int key)
 		case KEY_DOWN:
 		case '\016':	/* ^N */
 		case 'j':	/* Vi-like alternative */
-			ui_menu_goto(cf, cf->menu_idx + 1);
+			ui_menu_goto(cf, cf->menu->idx + 1);
 			return 0;
 		case KEY_UP:
 		case '\020':	/* ^P */
 		case 'k':	/* Vi-like alternative */
-			ui_menu_goto(cf, cf->menu_idx - 1);
+			ui_menu_goto(cf, cf->menu->idx - 1);
 			return 0;
 		case KEY_HOME:
 			ui_menu_goto(cf, 0);
@@ -894,13 +941,13 @@ static int ui_menu_move(struct cfdisk *cf, int key)
 		switch (key) {
 		case KEY_RIGHT:
 		case '\t':
-			ui_menu_goto(cf, cf->menu_idx + 1);
+			ui_menu_goto(cf, cf->menu->idx + 1);
 			return 0;
 		case KEY_LEFT:
 #ifdef KEY_BTAB
 		case KEY_BTAB:
 #endif
-			ui_menu_goto(cf, cf->menu_idx - 1);
+			ui_menu_goto(cf, cf->menu->idx - 1);
 			return 0;
 		}
 	}
@@ -1190,6 +1237,60 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 	return rc;
 }
 
+static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf)
+{
+	struct cfdisk_menudesc *d, *cm;
+	size_t i = 0, nitems;
+	struct fdisk_parttype *t = NULL;
+
+	DBG(FRONTEND, dbgprint("ui: asking for parttype."));
+
+	/* create cfdisk menu according to label types, note that the
+	 * last cm[] item has to be empty -- so nitems + 1 */
+	nitems = cf->cxt->label->nparttypes;
+	cm = calloc(nitems + 1, sizeof(struct cfdisk_menudesc));
+	if (!cm)
+		return NULL;
+
+	for (i = 0; i < nitems; i++) {
+		struct fdisk_parttype *x = &cf->cxt->label->parttypes[i];
+
+		cm[i].userdata = x;
+		cm[i].name = x->name;
+	}
+
+	/* make the new menu active */
+	menu_push(cf, cm);
+	cf->menu->vertical = 1;
+	menu_set_title(cf->menu, _("Select partition type"));
+	ui_draw_menu(cf);
+	refresh();
+
+	do {
+		int key = getch();
+		if (ui_menu_move(cf, key) == 0)
+			continue;
+		switch (key) {
+		case KEY_ENTER:
+		case '\n':
+		case '\r':
+			d = menu_get_menuitem(cf, cf->menu->idx);
+			if (d)
+				t = (struct fdisk_parttype *) d->userdata;
+			goto done;
+		case 'q':
+		case 'Q':
+			goto done;
+		}
+	} while (1);
+
+done:
+	menu_pop(cf);
+	free(cm);
+	DBG(FRONTEND, dbgprint("ui: get parrtype done [type=%s] ", t ? t->name : NULL));
+	return t;
+}
+
 /* prints menu with libfdisk labels and waits for users response */
 static int ui_create_label(struct cfdisk *cf)
 {
@@ -1236,7 +1337,7 @@ static int ui_create_label(struct cfdisk *cf)
 		case KEY_ENTER:
 		case '\n':
 		case '\r':
-			d = menu_get_menuitem(cf, cf->menu_idx);
+			d = menu_get_menuitem(cf, cf->menu->idx);
 			if (d)
 				rc = fdisk_create_disklabel(cf->cxt, d->name);
 			goto done;
@@ -1289,7 +1390,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	assert(cf->menu);
 
 	if (key == 0) {
-		struct cfdisk_menudesc *d = menu_get_menuitem(cf, cf->menu_idx);
+		struct cfdisk_menudesc *d = menu_get_menuitem(cf, cf->menu->idx);
 		if (!d)
 			return 0;
 		key = d->key;
@@ -1363,7 +1464,26 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	case 'q': /* Quit */
 		return 1;
 	case 't': /* Type */
+	{
+		const char *old;
+		struct fdisk_parttype *t;
+
+		if (!pa || fdisk_partition_is_freespace(pa))
+			return -EINVAL;
+		t = (struct fdisk_parttype *) fdisk_partition_get_type(pa);
+		old = t ? t->name : _("Unknown");
+
+		t = ui_get_parttype(cf);
+		ref = 1;
+
+		if (t && fdisk_set_partition_type(cf->cxt, n, t) == 0)
+			ui_info(_("Changed type of partition '%s' to '%s'."),
+				old, t ? t->name : _("Unknown"));
+		else
+			ui_info(_("Type of partition %zu is unchanged: %s."),
+				n + 1, old);
 		break;
+	}
 	case 'W': /* Write */
 		rc = fdisk_write_disklabel(cf->cxt);
 		if (rc)
