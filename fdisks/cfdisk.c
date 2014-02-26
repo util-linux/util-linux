@@ -1372,7 +1372,6 @@ done:
 static int ui_help(void)
 {
 	size_t i;
-
 	static const char *help[] = {
 		N_("Help Screen for cfdisk"),
 		"",
@@ -1408,7 +1407,6 @@ static int ui_help(void)
 	};
 
 	erase();
-
 	for (i = 0; i < ARRAY_SIZE(help); i++)
 		mvaddstr(i, 1, _(help[i]));
 
@@ -1472,6 +1470,8 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	n = fdisk_partition_get_partno(pa);
 
 	DBG(FRONTEND, dbgprint("menu action on %p", pa));
+	ui_clean_hint();
+	ui_clean_info();
 
 	switch (key) {
 	case 'b': /* Bootable flag */
@@ -1532,31 +1532,45 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		return 1;
 	case 't': /* Type */
 	{
-		const char *old;
 		struct fdisk_parttype *t;
 
 		if (!pa || fdisk_partition_is_freespace(pa))
 			return -EINVAL;
 		t = (struct fdisk_parttype *) fdisk_partition_get_type(pa);
-		old = t ? t->name : _("Unknown");
-
 		t = ui_get_parttype(cf, t);
 		ref = 1;
 
 		if (t && fdisk_set_partition_type(cf->cxt, n, t) == 0)
-			ui_info(_("Changed type of partition '%s' to '%s'."),
-				old, t ? t->name : _("Unknown"));
+			info = _("Changed type of the partition %zu.");
 		else
-			ui_info(_("Type of partition %zu is unchanged: %s."),
-				n + 1, old);
+			info = _("Type of the partition %zu is unchanged.");
 		break;
 	}
 	case 'W': /* Write */
+	{
+		char buf[64] = { 0 };
+		int rc = ui_get_string(cf,
+			  _("Are you sure you want to write the partition "
+			    "table to disk? "),
+			  _("Type \"yes\" or \"no\" or press ESC to left dialog."),
+			  buf, sizeof(buf));
+
+		ref = 1;
+		if (rc <= 0 || strcasecmp(buf, "yes") != 0
+			    || strcasecmp(buf, _("yes")) != 0) {
+			info = _("Did not write partition table to disk");
+			break;
+		}
 		rc = fdisk_write_disklabel(cf->cxt);
 		if (rc)
-			ui_errx(EXIT_FAILURE, _("failed to write disklabel"));
-		fdisk_reread_partition_table(cf->cxt);
-		ui_info(_("The partition table has been altered."));
+			warn = _("Failed to write disklabel");
+		else {
+			fdisk_reread_partition_table(cf->cxt);
+			info = _("The partition table has been altered.");
+		}
+		break;
+	}
+	default:
 		break;
 	}
 
@@ -1564,10 +1578,12 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		lines_refresh(cf);
 		ui_refresh(cf);
 	}
+
+	ui_clean_hint();
 	if (warn)
-		ui_warnx(warn, n);
+		ui_warnx(warn, n + 1);
 	else if (info)
-		ui_info(info, n);
+		ui_info(info, n + 1);
 
 	return 0;
 }
