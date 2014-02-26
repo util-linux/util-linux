@@ -111,12 +111,12 @@ struct cfdisk_menu {
 static struct cfdisk_menudesc main_menudesc[] = {
 	{ 'b', N_("Bootable"), N_("Toggle bootable flag of the current partition") },
 	{ 'd', N_("Delete"), N_("Delete the current partition") },
-//	{ 'h', N_("Help"), N_("Print help screen") },
 //	{ 'm', N_("Maximize"), N_("Maximize disk usage of the current partition (experts only)") },
 	{ 'n', N_("New"), N_("Create new partition from free space") },
 //	{ 'p', N_("Print"), N_("Print partition table to the screen or to a file") },
 	{ 'q', N_("Quit"), N_("Quit program without writing partition table") },
 	{ 't', N_("Type"), N_("Change the partition type") },
+	{ 'h', N_("Help"), N_("Print help screen") },
 	{ 'W', N_("Write"), N_("Write partition table to disk (this might destroy data)") },
 	{ 0, NULL, NULL }
 };
@@ -1369,6 +1369,54 @@ done:
 	return rc;
 }
 
+static int ui_help(void)
+{
+	size_t i;
+
+	static const char *help[] = {
+		N_("Help Screen for cfdisk"),
+		"",
+		N_("This is cfdisk, a curses based disk partitioning program, which"),
+		N_("allows you to create, delete and modify partitions on your hard"),
+		N_("disk drive."),
+		"",
+		N_("Copyright (C) 2014 Karel Zak <kzak@redhat.com> "),
+		N_("Based on the original cfdisk from Kevin E. Martin & aeb."),
+		"",
+		N_("Command      Meaning"),
+		N_("-------      -------"),
+		N_("  b          Toggle bootable flag of the current partition"),
+		N_("  d          Delete the current partition"),
+		N_("  h          Print this screen"),
+		N_("  n          Create new partition from free space"),
+		N_("  q          Quit program without writing partition table"),
+		N_("  t          Change the partition type"),
+		N_("  W          Write partition table to disk (must enter upper case W)"),
+		N_("             Since this might destroy data on the disk, you must"),
+		N_("             either confirm or deny the write by entering `yes' or"),
+		N_("             `no'"),
+		N_("Up Arrow     Move cursor to the previous partition"),
+		N_("Down Arrow   Move cursor to the next partition"),
+		N_("Left Arrow   Move cursor to the previous menu item"),
+		N_("Right Arrow  Move cursor to the next menu item"),
+
+		"",
+		N_("Note: All of the commands can be entered with either upper or lower"),
+		N_("case letters (except for Writes)."),
+		"",
+		N_("Use lsblk(8) or partx(8) to see more details about the device.")
+	};
+
+	erase();
+
+	for (i = 0; i < ARRAY_SIZE(help); i++)
+		mvaddstr(i, 1, _(help[i]));
+
+	ui_info(_("Press a key to continue."));
+	getch();
+	return 0;
+}
+
 /* TODO: use @sz, now 128bytes */
 static int main_menu_ignore_keys(struct cfdisk *cf, char *ignore,
 		size_t sz __attribute__((__unused__)))
@@ -1442,6 +1490,10 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			warn = _("Could not delete partition %zu.");
 		else
 			info = _("Partition %zu has been deleted.");
+		ref = 1;
+		break;
+	case 'h': /* help */
+		ui_help();
 		ref = 1;
 		break;
 	case 'n': /* New */
@@ -1519,7 +1571,6 @@ static int main_menu_action(struct cfdisk *cf, int key)
 
 	return 0;
 }
-
 
 static int ui_run(struct cfdisk *cf)
 {
