@@ -111,14 +111,12 @@ struct cfdisk_menu {
 static struct cfdisk_menudesc main_menudesc[] = {
 	{ 'b', N_("Bootable"), N_("Toggle bootable flag of the current partition") },
 	{ 'd', N_("Delete"), N_("Delete the current partition") },
-//	{ 'g', N_("Geometry"), N_("Change disk geometry (experts only)") },
 //	{ 'h', N_("Help"), N_("Print help screen") },
 //	{ 'm', N_("Maximize"), N_("Maximize disk usage of the current partition (experts only)") },
 	{ 'n', N_("New"), N_("Create new partition from free space") },
 //	{ 'p', N_("Print"), N_("Print partition table to the screen or to a file") },
 	{ 'q', N_("Quit"), N_("Quit program without writing partition table") },
 	{ 't', N_("Type"), N_("Change the partition type") },
-//	{ 'u', N_("Units"), N_("Change units of the partition size display (MB, sect, cyl)") },
 	{ 'W', N_("Write"), N_("Write partition table to disk (this might destroy data)") },
 	{ 0, NULL, NULL }
 };
@@ -293,9 +291,7 @@ static int lines_refresh(struct cfdisk *cf)
 	cf->linesbufsz = strlen(cf->linesbuf);
 	cf->nlines = fdisk_table_get_nents(cf->table) + 1;	/* 1 for header line */
 
-	cf->lines = calloc(cf->nlines, sizeof(char *));
-	if (!cf->lines)
-		return -ENOMEM;
+	cf->lines = xcalloc(cf->nlines, sizeof(char *));
 
 	for (p = cf->linesbuf, i = 0; p && i < cf->nlines; i++) {
 		cf->lines[i] = p;
@@ -344,9 +340,7 @@ static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 	/* create cfdisk menu according to libfdisk ask-menu, note that the
 	 * last cm[] item has to be empty -- so nitems + 1 */
 	nitems = fdisk_ask_menu_get_nitems(ask);
-	cm = calloc(nitems + 1, sizeof(struct cfdisk_menudesc));
-	if (!cm)
-		return -ENOMEM;
+	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menudesc));
 
 	for (i = 0; i < nitems; i++) {
 		if (fdisk_ask_menu_get_item(ask, i, &key, &name, &desc))
@@ -1237,31 +1231,50 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 	return rc;
 }
 
-static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf)
+static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
+					struct fdisk_parttype *cur)
 {
 	struct cfdisk_menudesc *d, *cm;
-	size_t i = 0, nitems;
+	size_t i = 0, nitems, idx = 0;
 	struct fdisk_parttype *t = NULL;
+	int has_typestr = 0;
 
 	DBG(FRONTEND, dbgprint("ui: asking for parttype."));
 
 	/* create cfdisk menu according to label types, note that the
 	 * last cm[] item has to be empty -- so nitems + 1 */
 	nitems = cf->cxt->label->nparttypes;
-	cm = calloc(nitems + 1, sizeof(struct cfdisk_menudesc));
+	if (!nitems)
+		return NULL;
+	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menudesc));
 	if (!cm)
 		return NULL;
 
+	has_typestr = cf->cxt->label->parttypes[0].typestr &&
+		      *cf->cxt->label->parttypes[0].typestr;
+
 	for (i = 0; i < nitems; i++) {
 		struct fdisk_parttype *x = &cf->cxt->label->parttypes[i];
+		char *name;
 
+		if (!x || !x->name)
+			continue;
 		cm[i].userdata = x;
-		cm[i].name = x->name;
+		if (!has_typestr)
+			xasprintf(&name, "%2x %s", x->type, x->name);
+		else {
+			name = (char *) x->name;
+			cm[i].desc = x->typestr;
+		}
+		cm[i].name = name;
+		if (x == cur)
+			idx = i;
 	}
 
 	/* make the new menu active */
 	menu_push(cf, cm);
 	cf->menu->vertical = 1;
+	cf->menu->idx = idx;
 	menu_set_title(cf->menu, _("Select partition type"));
 	ui_draw_menu(cf);
 	refresh();
@@ -1286,6 +1299,10 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf)
 
 done:
 	menu_pop(cf);
+	if (!has_typestr) {
+		for (i = 0; i < nitems; i++)
+			free((char *) cm[i].name);
+	}
 	free(cm);
 	DBG(FRONTEND, dbgprint("ui: get parrtype done [type=%s] ", t ? t->name : NULL));
 	return t;
@@ -1306,9 +1323,7 @@ static int ui_create_label(struct cfdisk *cf)
 	/* create cfdisk menu according to libfdisk labels, note that the
 	 * last cm[] item has to be empty -- so nitems + 1 */
 	nitems = fdisk_context_get_nlabels(cf->cxt);
-	cm = calloc(nitems + 1, sizeof(struct cfdisk_menudesc));
-	if (!cm)
-		return -ENOMEM;
+	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menudesc));
 
 	for (i = 0; i < nitems; i++) {
 		if (fdisk_context_next_label(cf->cxt, &lb))
@@ -1473,7 +1488,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		t = (struct fdisk_parttype *) fdisk_partition_get_type(pa);
 		old = t ? t->name : _("Unknown");
 
-		t = ui_get_parttype(cf);
+		t = ui_get_parttype(cf, t);
 		ref = 1;
 
 		if (t && fdisk_set_partition_type(cf->cxt, n, t) == 0)
