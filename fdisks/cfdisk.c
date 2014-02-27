@@ -35,15 +35,15 @@
 
 #include "fdiskP.h"
 
-#define ARROW_CURSOR_STRING	">>> "
+#define ARROW_CURSOR_STRING	" >> "
 #define ARROW_CURSOR_DUMMY	"    "
 #define ARROW_CURSOR_WIDTH	(sizeof(ARROW_CURSOR_STRING) - 1)
 
 #define MENU_PADDING		2
 #define TABLE_START_LINE	4
-#define MENU_START_LINE		(LINES - 5)
-#define INFO_LINE		(LINES - 2)
-#define HINT_LINE		(LINES - 1)
+#define MENU_START_LINE		((size_t) LINES - 5)
+#define INFO_LINE		((size_t) LINES - 2)
+#define HINT_LINE		((size_t) LINES - 1)
 
 #define CFDISK_ERR_ESC		5000
 
@@ -125,7 +125,7 @@ struct cfdisk {
 	struct fdisk_context	*cxt;	/* libfdisk context */
 	struct fdisk_table	*table;	/* partition table */
 
-	struct cfdisk_menu	*menu;	/* the current menu */ 
+	struct cfdisk_menu	*menu;	/* the current menu */
 
 	int	*cols;		/* output columns */
 	size_t	ncols;		/* number of columns */
@@ -135,7 +135,8 @@ struct cfdisk {
 
 	char	**lines;	/* array with lines */
 	size_t	nlines;		/* number of lines */
-	size_t	lines_idx;		/* current line <0..N>, exclude header */
+	size_t	lines_idx;	/* current line <0..N>, exclude header */
+	size_t  page_sz;
 };
 
 static int cols_init(struct cfdisk *cf)
@@ -290,6 +291,10 @@ static int lines_refresh(struct cfdisk *cf)
 
 	cf->linesbufsz = strlen(cf->linesbuf);
 	cf->nlines = fdisk_table_get_nents(cf->table) + 1;	/* 1 for header line */
+	cf->page_sz = 0;
+
+	if (MENU_START_LINE - TABLE_START_LINE < cf->nlines)
+		cf->page_sz = MENU_START_LINE - TABLE_START_LINE - 1;
 
 	cf->lines = xcalloc(cf->nlines, sizeof(char *));
 
@@ -949,18 +954,38 @@ static int ui_menu_move(struct cfdisk *cf, int key)
 	return 1;	/* key irrelevant for menu move */
 }
 
+static int partition_on_page(struct cfdisk *cf, size_t i)
+{
+	if (cf->page_sz == 0 ||
+	    cf->lines_idx / cf->page_sz == i / cf->page_sz)
+		return 1;
+	return 0;
+}
+
 static void ui_draw_partition(struct cfdisk *cf, size_t i)
 {
 	int ln = TABLE_START_LINE + 1 + i;	/* skip table header */
 	int cl = ARROW_CURSOR_WIDTH;		/* we need extra space for cursor */
+	int cur = cf->lines_idx == i;
+	size_t curpg = 0;
 
-	DBG(FRONTEND, dbgprint("ui: draw partition %zu", i));
+	if (cf->page_sz) {
+		if (!partition_on_page(cf, i))
+			return;
+		ln = TABLE_START_LINE + (i % cf->page_sz) + 1;
+		curpg = cf->lines_idx / cf->page_sz;
+	}
 
-	if (cf->lines_idx == i) {
-		standout();
+	DBG(FRONTEND, dbgprint(
+			"ui: draw partition %zu [page_sz=%zu, "
+			"line=%d, idx=%zu]",
+			i, cf->page_sz, ln, cf->lines_idx));
+
+	if (cur) {
+		attron(A_REVERSE);
 		mvaddstr(ln, 0, ARROW_CURSOR_STRING);
 		mvaddstr(ln, cl, cf->lines[i + 1]);
-		standend();
+		attroff(A_REVERSE);
 	} else {
 		int at = 0;
 
@@ -974,17 +999,29 @@ static void ui_draw_partition(struct cfdisk *cf, size_t i)
                         attroff(COLOR_PAIR(CFDISK_CL_FREESPACE));
 	}
 
+	if ((size_t) ln == MENU_START_LINE - 1 &&
+	    cf->page_sz && curpg < cf->nlines / cf->page_sz) {
+		if (cur)
+			attron(A_REVERSE);
+		mvaddch(ln, COLS - 1, ACS_DARROW);
+		mvaddch(ln, 0, ACS_DARROW);
+		if (cur)
+			attroff(A_REVERSE);
+	}
 }
 
 static int ui_draw_table(struct cfdisk *cf)
 {
 	int cl = ARROW_CURSOR_WIDTH;
 	size_t i, nparts = fdisk_table_get_nents(cf->table);
+	size_t curpg = cf->page_sz ? cf->lines_idx / cf->page_sz : 0;
 
 	DBG(FRONTEND, dbgprint("ui: draw table"));
 
-	if (cf->nlines - 2 < cf->lines_idx)
-		cf->lines_idx = cf->nlines - 2;	/* don't count header */
+	for (i = TABLE_START_LINE; i <= TABLE_START_LINE + cf->page_sz; i++) {
+		move(i, 0);
+		clrtoeol();
+	}
 
 	/* print header */
 	attron(A_BOLD);
@@ -995,6 +1032,14 @@ static int ui_draw_table(struct cfdisk *cf)
 	for (i = 0; i < nparts; i++)
 		ui_draw_partition(cf, i);
 
+	if (curpg != 0) {
+		mvaddch(TABLE_START_LINE, COLS - 1, ACS_UARROW);
+		mvaddch(TABLE_START_LINE, 0, ACS_UARROW);
+	}
+	if (cf->page_sz && curpg < cf->nlines / cf->page_sz) {
+		mvaddch(MENU_START_LINE - 1, COLS - 1, ACS_DARROW);
+		mvaddch(MENU_START_LINE - 1, 0, ACS_DARROW);
+	}
 	return 0;
 }
 
@@ -1016,8 +1061,12 @@ static int ui_table_goto(struct cfdisk *cf, int where)
 	old = cf->lines_idx;
 	cf->lines_idx = where;
 
-	ui_draw_partition(cf, old);	/* cleanup old */
-	ui_draw_partition(cf, where);	/* draw new */
+	if (!partition_on_page(cf, old) ||!partition_on_page(cf, where))
+		ui_draw_table(cf);
+	else {
+		ui_draw_partition(cf, old);	/* cleanup old */
+		ui_draw_partition(cf, where);	/* draw new */
+	}
 	ui_clean_info();
 	ui_draw_menu(cf);
 	refresh();
