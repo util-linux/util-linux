@@ -125,7 +125,7 @@ struct adjtime {
  * We are running in debug mode, wherein we put a lot of information about
  * what we're doing to standard output.
  */
-bool debug;
+int debug;
 
 /* Workaround for Award 4.50g BIOS bug: keep the year in a file. */
 bool badyear;
@@ -526,43 +526,141 @@ set_hardware_clock_exact(const time_t sethwtime,
 			 const struct timeval refsystime,
 			 const bool universal, const bool testing)
 {
-	time_t newhwtime = sethwtime;
-	struct timeval beginsystime, nowsystime;
-	double tdiff;
-	int time_resync = 1;
-
 	/*
-	 * Now delay some more until Hardware Clock time newhwtime arrives.
-	 * The 0.5 s is because the Hardware Clock always sets to your set
-	 * time plus 500 ms (because it is designed to update to the next
-	 * second precisely 500 ms after you finish the setting).
+	 * The Hardware Clock can only be set to any integer time plus one
+	 * half second.	 The integer time is required because there is no
+	 * interface to set or get a fractional second.	 The additional half
+	 * second is because the Hardware Clock updates to the following
+	 * second precisely 500 ms (not 1 second!) after you release the
+	 * divider reset (after setting the new time) - see description of
+	 * DV2, DV1, DV0 in Register A in the MC146818A data sheet (and note
+	 * that although that document doesn't say so, real-world code seems
+	 * to expect that the SET bit in Register B functions the same way).
+	 * That means that, e.g., when you set the clock to 1:02:03, it
+	 * effectively really sets it to 1:02:03.5, because it will update to
+	 * 1:02:04 only half a second later.  Our caller passes the desired
+	 * integer Hardware Clock time in sethwtime, and the corresponding
+	 * system time (which may have a fractional part, and which may or may
+	 * not be the same!) in refsystime.  In an ideal situation, we would
+	 * then apply sethwtime to the Hardware Clock at refsystime+500ms, so
+	 * that when the Hardware Clock ticks forward to sethwtime+1s half a
+	 * second later at refsystime+1000ms, everything is in sync.  So we
+	 * spin, waiting for gettimeofday() to return a time at or after that
+	 * time (refsystime+500ms) up to a tolerance value, initially 1ms.  If
+	 * we miss that time due to being preempted for some other process,
+	 * then we increase the margin a little bit (initially 1ms, doubling
+	 * each time), add 1 second (or more, if needed to get a time that is
+	 * in the future) to both the time for which we are waiting and the
+	 * time that we will apply to the Hardware Clock, and start waiting
+	 * again.
+	 * 
+	 * For example, the caller requests that we set the Hardware Clock to
+	 * 1:02:03, with reference time (current system time) = 6:07:08.250.
+	 * We want the Hardware Clock to update to 1:02:04 at 6:07:09.250 on
+	 * the system clock, and the first such update will occur 0.500
+	 * seconds after we write to the Hardware Clock, so we spin until the
+	 * system clock reads 6:07:08.750.  If we get there, great, but let's
+	 * imagine the system is so heavily loaded that our process is
+	 * preempted and by the time we get to run again, the system clock
+	 * reads 6:07:11.990.  We now want to wait until the next xx:xx:xx.750
+	 * time, which is 6:07:12.750 (4.5 seconds after the reference time),
+	 * at which point we will set the Hardware Clock to 1:02:07 (4 seconds
+	 * after the originally requested time).  If we do that successfully,
+	 * then at 6:07:13.250 (5 seconds after the reference time), the
+	 * Hardware Clock will update to 1:02:08 (5 seconds after the
+	 * originally requested time), and all is well thereafter.
 	 */
-	do {
-		if (time_resync) {
-			gettimeofday(&beginsystime, NULL);
-			tdiff = time_diff(beginsystime, refsystime);
-			newhwtime = sethwtime + (int)(tdiff + 0.5);
-			if (debug)
-				printf(_
-				       ("Time elapsed since reference time has been %.6f seconds.\n"
-					"Delaying further to reach the new time.\n"),
-				       tdiff);
-			time_resync = 0;
+
+	time_t newhwtime = sethwtime;
+	double target_time_tolerance_secs = 0.001;  /* initial value */
+	double tolerance_incr_secs = 0.001;	    /* initial value */
+	const double RTC_SET_DELAY_SECS = 0.5;	    /* 500 ms */
+	const struct timeval RTC_SET_DELAY_TV = { 0, RTC_SET_DELAY_SECS * 1E6 };
+
+	struct timeval targetsystime;
+	struct timeval nowsystime;
+	struct timeval prevsystime = refsystime;
+	double deltavstarget;
+
+	timeradd(&refsystime, &RTC_SET_DELAY_TV, &targetsystime);
+
+	while (1) {
+		double ticksize;
+
+		/* FOR TESTING ONLY: inject random delays of up to 1000ms */
+		if (debug >= 10) {
+			int usec = random() % 1000000;
+			printf(_("sleeping ~%d usec\n"), usec);
+			usleep(usec);
 		}
 
 		gettimeofday(&nowsystime, NULL);
-		tdiff = time_diff(nowsystime, beginsystime);
-		if (tdiff < 0) {
-			time_resync = 1;	/* probably backward time reset */
-			continue;
+		deltavstarget = time_diff(nowsystime, targetsystime);
+		ticksize = time_diff(nowsystime, prevsystime);
+		prevsystime = nowsystime;
+
+		if (ticksize < 0) {
+			if (debug)
+				printf(_("time jumped backward %.6f seconds "
+					 "to %ld.%06d - retargeting\n"),
+				       ticksize, (long)nowsystime.tv_sec,
+				       (int)nowsystime.tv_usec);
+			/* The retarget is handled at the end of the loop. */
+		} else if (deltavstarget < 0) {
+			/* deltavstarget < 0 if current time < target time */
+			if (debug >= 2)
+				printf(_("%ld.%06d < %ld.%06d (%.6f)\n"),
+				       (long)nowsystime.tv_sec,
+				       (int)nowsystime.tv_usec,
+				       (long)targetsystime.tv_sec,
+				       (int)targetsystime.tv_usec,
+				       deltavstarget);
+			continue;  /* not there yet - keep spinning */
+		} else if (deltavstarget <= target_time_tolerance_secs) {
+			/* Close enough to the target time; done waiting. */
+			break;
+		} else /* (deltavstarget > target_time_tolerance_secs) */ {
+			/*
+			 * We missed our window.  Increase the tolerance and
+			 * aim for the next opportunity.
+			 */
+			if (debug)
+				printf(_("missed it - %ld.%06d is too far "
+					 "past %ld.%06d (%.6f > %.6f)\n"),
+				       (long)nowsystime.tv_sec,
+				       (int)nowsystime.tv_usec,
+				       (long)targetsystime.tv_sec,
+				       (int)targetsystime.tv_usec,
+				       deltavstarget,
+				       target_time_tolerance_secs);
+			target_time_tolerance_secs += tolerance_incr_secs;
+			tolerance_incr_secs *= 2;
 		}
-		if (tdiff > 0.1) {
-			time_resync = 1;	/* probably forward time reset */
-			continue;
-		}
-		beginsystime = nowsystime;
-		tdiff = time_diff(nowsystime, refsystime);
-	} while (newhwtime == sethwtime + (int)(tdiff + 0.5));
+
+		/*
+		 * Aim for the same offset (tv_usec) within the second in
+		 * either the current second (if that offset hasn't arrived
+		 * yet), or the next second.
+		 */
+		if (nowsystime.tv_usec < targetsystime.tv_usec)
+			targetsystime.tv_sec = nowsystime.tv_sec;
+		else
+			targetsystime.tv_sec = nowsystime.tv_sec + 1;
+	}
+
+	newhwtime = sethwtime
+		    + (int)(time_diff(nowsystime, refsystime)
+			    - RTC_SET_DELAY_SECS /* don't count this */
+			    + 0.5 /* for rounding */);
+	if (debug)
+		printf(_("%ld.%06d is close enough to %ld.%06d (%.6f < %.6f)\n"
+			 "Set RTC to %ld (%ld + %d; refsystime = %ld.%06d)\n"),
+		       (long)nowsystime.tv_sec, (int)nowsystime.tv_usec,
+		       (long)targetsystime.tv_sec, (int)targetsystime.tv_usec,
+		       deltavstarget, target_time_tolerance_secs,
+		       (long)newhwtime, (long)sethwtime,
+		       (int)(newhwtime - sethwtime),
+		       (long)refsystime.tv_sec, (int)refsystime.tv_usec);
 
 	set_hardware_clock(newhwtime, universal, testing);
 }
@@ -1636,7 +1734,7 @@ int main(int argc, char **argv)
 
 		switch (c) {
 		case 'D':
-			debug = TRUE;
+			++debug;
 			break;
 		case 'a':
 			adjust = TRUE;
@@ -1953,10 +2051,4 @@ void __attribute__((__noreturn__)) hwaudit_exit(int status)
  *
  * hwclock uses this method, and considers the Hardware Clock to have
  * infinite precision.
- *
- * TODO: Enhancements needed:
- *
- *  - When waiting for whole second boundary in set_hardware_clock_exact,
- *    fail if we miss the goal by more than .1 second, as could happen if we
- *    get pre-empted (by the kernel dispatcher).
  */
