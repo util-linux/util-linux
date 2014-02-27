@@ -6,6 +6,7 @@ fallocate \- preallocate or deallocate space to a file
 .B fallocate
 .RB [ \-n ]
 .RB [ \-p ]
+.RB [ \-c ]
 .RB [ \-o
 .IR offset ]
 .B \-l
@@ -54,6 +55,12 @@ implied.
 .IP
 You can think of this as doing a "\fBcp --sparse\fP" and
 renaming the dest file as the original, without the need for extra disk space.
+.IP "\fB\-c, \-\-collapse-range\fP"
+Collapse a particular file range to nullify the hole. Extents beyond the range
+[offset, offset+length] will be shifted to the beginning of hole. Hence this
+command does not leave a hole, while \fI\-\-punch-hole\fP leaves a hole
+instead of shifting extents. Both offset and length should be aligned to
+the block size of filesystem.
 .IP "\fB\-o, \-\-offset\fP \fIoffset\fP
 Specifies the beginning offset of the allocation, in bytes.
 .IP "\fB\-l, \-\-length\fP \fIlength\fP

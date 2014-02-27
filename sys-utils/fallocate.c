@@ -39,7 +39,8 @@
 #endif
 
 #if defined(HAVE_LINUX_FALLOC_H) && \
-    (!defined(FALLOC_FL_KEEP_SIZE) || !defined(FALLOC_FL_PUNCH_HOLE))
+    (!defined(FALLOC_FL_KEEP_SIZE) || !defined(FALLOC_FL_PUNCH_HOLE) || \
+     !defined(FALLOC_FL_COLLAPSE_RANGE))
 # include <linux/falloc.h>	/* non-libc fallback for FALLOC_FL_* flags */
 #endif
 
@@ -49,6 +50,10 @@
 
 #ifndef FALLOC_FL_PUNCH_HOLE
 # define FALLOC_FL_PUNCH_HOLE 2
+#endif
+
+#ifndef FALLOC_FL_COLLAPSE_RANGE
+# define FALLOC_FL_COLLAPSE_RANGE 8
 #endif
 
 #include "nls.h"
@@ -66,12 +71,13 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out,
 	      _(" %s [options] <filename>\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -d, --dig-holes     detect and dig holes\n"), out);
-	fputs(_(" -l, --length <num>  length of the (de)allocation, in bytes\n"), out);
-	fputs(_(" -n, --keep-size     don't modify the length of the file\n"), out);
-	fputs(_(" -o, --offset <num>  offset of the (de)allocation, in bytes\n"), out);
-	fputs(_(" -p, --punch-hole    punch holes in the file\n"), out);
-	fputs(_(" -v, --verbose       verbose mode\n"), out);
+	fputs(_(" -c, --collapse-range collapse space in the file\n"), out);
+	fputs(_(" -d, --dig-holes      detect and dig holes\n"), out);
+	fputs(_(" -l, --length <num>   length of the (de)allocation, in bytes\n"), out);
+	fputs(_(" -n, --keep-size      don't modify the length of the file\n"), out);
+	fputs(_(" -o, --offset <num>   offset of the (de)allocation, in bytes\n"), out);
+	fputs(_(" -p, --punch-hole     punch holes in the file\n"), out);
+	fputs(_(" -v, --verbose        verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -258,15 +264,16 @@ int main(int argc, char **argv)
 	loff_t	offset = 0;
 
 	static const struct option longopts[] = {
-	    { "help",       0, 0, 'h' },
-	    { "version",    0, 0, 'V' },
-	    { "keep-size",  0, 0, 'n' },
-	    { "punch-hole", 0, 0, 'p' },
-	    { "dig-holes",  0, 0, 'd' },
-	    { "offset",     1, 0, 'o' },
-	    { "length",     1, 0, 'l' },
-	    { "verbose",    0, 0, 'v' },
-	    { NULL,         0, 0, 0 }
+	    { "help",           0, 0, 'h' },
+	    { "version",        0, 0, 'V' },
+	    { "keep-size",      0, 0, 'n' },
+	    { "punch-hole",     0, 0, 'p' },
+	    { "collapse-range", 0, 0, 'c' },
+	    { "dig-holes",      0, 0, 'd' },
+	    { "offset",         1, 0, 'o' },
+	    { "length",         1, 0, 'l' },
+	    { "verbose",        0, 0, 'v' },
+	    { NULL,             0, 0, 0 }
 	};
 
 	setlocale(LC_ALL, "");
@@ -274,7 +281,8 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "hvVnpdl:o:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hvVncpdl:o:", longopts, NULL))
+			!= -1) {
 		switch(c) {
 		case 'h':
 			usage(stdout);
@@ -282,6 +290,9 @@ int main(int argc, char **argv)
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
+		case 'c':
+			mode |= FALLOC_FL_COLLAPSE_RANGE;
+			break;
 		case 'p':
 			mode |= FALLOC_FL_PUNCH_HOLE;
 			/* fall through */
