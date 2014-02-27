@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <ctype.h>
+#include <getopt.h>
 
 #ifdef HAVE_SLANG_H
 #include <slang.h>
@@ -32,6 +33,7 @@
 #include "strutils.h"
 #include "xalloc.h"
 #include "mbsalign.h"
+#include "colors.h"
 
 #include "fdiskP.h"
 
@@ -672,7 +674,7 @@ static int ui_init(struct cfdisk *cf __attribute__((__unused__)))
 	ui_enabled = 1;
 	initscr();
 
-	if (has_colors()) {
+	if (colors_wanted() && has_colors()) {
 		size_t i;
 
 		start_color();
@@ -1744,16 +1746,61 @@ static int ui_run(struct cfdisk *cf)
 	return 0;
 }
 
+static void __attribute__ ((__noreturn__)) usage(FILE *out)
+{
+	fputs(USAGE_HEADER, out);
+
+	fprintf(out,
+	      _(" %1$s [options] <disk>\n"), program_invocation_short_name);
+
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -L --color[=<when>]     colorize output (auto, always or never)\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+
+	fprintf(out, USAGE_MAN_TAIL("cfdisk(8)"));
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 int main(int argc, char *argv[])
 {
-	int rc;
+	int rc, c, colormode = UL_COLORMODE_AUTO;
 	struct cfdisk _cf = { .lines_idx = 0 },
 		      *cf = &_cf;
+
+	static const struct option longopts[] = {
+		{ "color",   optional_argument, NULL, 'L' },
+		{ "help",    no_argument,       NULL, 'h' },
+		{ "version", no_argument,       NULL, 'V' },
+		{ NULL, 0, 0, 0 },
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
+
+	while((c = getopt_long(argc, argv, "L::hV", longopts, NULL)) != -1) {
+		switch(c) {
+		case 'h':
+			usage(stdout);
+			break;
+		case 'L':
+			colormode = UL_COLORMODE_AUTO;
+			if (optarg)
+				colormode = colormode_or_err(optarg,
+						_("unsupported color mode"));
+			break;
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+						  PACKAGE_STRING);
+			return EXIT_SUCCESS;
+		}
+	}
+
+	colors_init(colormode);
 
 	fdisk_init_debug(0);
 	cf->cxt = fdisk_new_context();
@@ -1762,8 +1809,8 @@ int main(int argc, char *argv[])
 
 	fdisk_context_set_ask(cf->cxt, ask_callback, (void *) cf);
 
-	if (argc != 2)
-		err(EXIT_FAILURE, "usage: %s <device>", argv[0]);
+	if (optind == argc)
+		usage(stderr);
 
 	if (fdisk_context_assign_device(cf->cxt, argv[optind], 0) != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
