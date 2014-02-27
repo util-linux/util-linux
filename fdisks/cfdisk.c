@@ -881,16 +881,19 @@ static void ui_menu_goto(struct cfdisk *cf, int where)
 	struct cfdisk_menudesc *d;
 	size_t old;
 
-	/* stop and begin/end fr vertical menus */
-	if (cf->menu->vertical
-	    && (where < 0 || (size_t) where > cf->menu->nitems - 1))
-		return;
-
-	/* continue from begin/end */
-	if (where < 0)
-		where = cf->menu->nitems - 1;
-	else if ((size_t) where > cf->menu->nitems - 1)
-		where = 0;
+	/* stop and begin/end for vertical menus */
+	if (cf->menu->vertical) {
+		if (where < 0)
+			where = 0;
+		else if (where > (int) cf->menu->nitems - 1)
+			where = cf->menu->nitems - 1;
+	} else {
+		/* continue from begin/end */
+		if (where < 0)
+			where = cf->menu->nitems - 1;
+		else if ((size_t) where > cf->menu->nitems - 1)
+			where = 0;
+	}
 	if ((size_t) where == cf->menu->idx)
 		return;
 
@@ -913,40 +916,56 @@ static void ui_menu_goto(struct cfdisk *cf, int where)
 
 static int ui_menu_move(struct cfdisk *cf, int key)
 {
+	struct cfdisk_menu *m;
+
 	assert(cf);
 	assert(cf->menu);
 
-	if (cf->menu->vertical)
+	m = cf->menu;
+
+	DBG(FRONTEND, dbgprint("ui: menu move key >%c<.", key));
+
+	if (m->vertical)
 	{
 		switch (key) {
 		case KEY_DOWN:
 		case '\016':	/* ^N */
 		case 'j':	/* Vi-like alternative */
-			ui_menu_goto(cf, cf->menu->idx + 1);
+			ui_menu_goto(cf, m->idx + 1);
 			return 0;
 		case KEY_UP:
 		case '\020':	/* ^P */
 		case 'k':	/* Vi-like alternative */
-			ui_menu_goto(cf, cf->menu->idx - 1);
+			ui_menu_goto(cf, (int) m->idx - 1);
 			return 0;
+		case KEY_PPAGE:
+			if (m->page_sz) {
+				ui_menu_goto(cf, (int) m->idx - m->page_sz);
+				return 0;
+			}
 		case KEY_HOME:
 			ui_menu_goto(cf, 0);
 			return 0;
+		case KEY_NPAGE:
+			if (m->page_sz) {
+				ui_menu_goto(cf, m->idx + m->page_sz);
+				return 0;
+			}
 		case KEY_END:
-			ui_menu_goto(cf, cf->menu->nitems);
+			ui_menu_goto(cf, m->nitems);
 			return 0;
 		}
 	} else {
 		switch (key) {
 		case KEY_RIGHT:
 		case '\t':
-			ui_menu_goto(cf, cf->menu->idx + 1);
+			ui_menu_goto(cf, m->idx + 1);
 			return 0;
 		case KEY_LEFT:
 #ifdef KEY_BTAB
 		case KEY_BTAB:
 #endif
-			ui_menu_goto(cf, cf->menu->idx - 1);
+			ui_menu_goto(cf, (int) m->idx - 1);
 			return 0;
 		}
 	}
@@ -1330,8 +1349,10 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 
 	do {
 		int key = getch();
+
 		if (ui_menu_move(cf, key) == 0)
 			continue;
+
 		switch (key) {
 		case KEY_ENTER:
 		case '\n':
@@ -1534,6 +1555,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			ref = 1;
 		break;
 	}
+	case KEY_DC:
 	case 'd': /* Delete */
 		if (fdisk_delete_partition(cf->cxt, n) != 0)
 			warn = _("Could not delete partition %zu.");
@@ -1670,6 +1692,8 @@ static int ui_run(struct cfdisk *cf)
 		if (ui_menu_move(cf, key) == 0)
 			continue;
 
+		DBG(FRONTEND, dbgprint("ui: main action key >%c<.", key));
+
 		switch (key) {
 		case KEY_DOWN:
 		case '\016':	/* ^N */
@@ -1679,13 +1703,23 @@ static int ui_run(struct cfdisk *cf)
 		case KEY_UP:
 		case '\020':	/* ^P */
 		case 'k':	/* Vi-like alternative */
-			ui_table_goto(cf, cf->lines_idx - 1);
+			ui_table_goto(cf, (int) cf->lines_idx - 1);
 			break;
+		case KEY_PPAGE:
+			if (cf->page_sz) {
+				ui_table_goto(cf, (int) cf->lines_idx - cf->page_sz);
+				break;
+			}
 		case KEY_HOME:
 			ui_table_goto(cf, 0);
 			break;
+		case KEY_NPAGE:
+			if (cf->page_sz) {
+				ui_table_goto(cf, cf->lines_idx + cf->page_sz);
+				break;
+			}
 		case KEY_END:
-			ui_table_goto(cf, cf->nlines - 1);
+			ui_table_goto(cf, (int) cf->nlines - 1);
 			break;
 		case KEY_ENTER:
 		case '\n':
