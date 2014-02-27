@@ -46,8 +46,6 @@ partx
 
  - support mapping by device-mapper if argv[0] is "kpartx" or --dm option is used.
      
- - (!) add regression tests for partx, addpart and delpart
-
 
 docs
 ----
@@ -89,13 +87,7 @@ libblkid
 fdisk(s)/libfdisk
 -----------------
 
- - (!) add dialog to modify GPT partition attributes (strutct gpt_attr)
-
- - (!) improve gpt_write_disklabel() to support hybrid GPT. We don't want 
-   to generate hybrid GPT, but it would be nice to support manual MBR 
-   modification ('M' expert command). The function gpt_write_disklabel() 
-   has to detect hybrid PMBR and then print warning and write GPT, but
-   keep PMBR unchanged. 
+   [always check libfdisk branch at github!]
 
  - (!) add 'I'nfo fommand to print all details about specified partition
    (like offset, size, name, uuid, type, C/H/S, fstype)
@@ -104,6 +96,8 @@ fdisk(s)/libfdisk
    gaps (free areas) to make it more user friendly if you want to skip
    any useless (small) areas between existing partitions. 
    See https://bugzilla.redhat.com/show_bug.cgi?id=715114
+
+   (Note that libfdisk already supports freespace lists.)
 
  - add "move end" command to move end of the last primary/extended partition.
    This feature seems very attractive to users who resizing their disks 
