@@ -1036,23 +1036,10 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 	return fs;
 }
 
-/**
- * mnt_table_parse_mtab:
- * @tb: table
- * @filename: overwrites default (/etc/mtab or $LIBMOUNT_MTAB) or NULL
- *
- * This function parses /etc/mtab or /proc/self/mountinfo +
- * /run/mount/utabs or /proc/mounts.
- *
- * See also mnt_table_set_parser_errcb().
- *
- * Returns: 0 on success or negative number in case of error.
- */
-int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename)
+int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
+			   struct libmnt_table *u_tb)
 {
-	int rc;
-	const char *utab = NULL;
-	struct libmnt_table *u_tb;
+	int rc = 0, priv_utab = 0;
 
 	assert(tb);
 
@@ -1083,18 +1070,23 @@ int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename)
 	/*
 	 * try to read the user specific information from /run/mount/utabs
 	 */
-	utab = mnt_get_utab_path();
-	if (!utab || is_file_empty(utab))
-		return 0;
+	if (!u_tb) {
+		const char *utab = mnt_get_utab_path();
+		if (!utab || is_file_empty(utab))
+			return 0;
 
-	u_tb = mnt_new_table();
-	if (!u_tb)
-		return -ENOMEM;
+		u_tb = mnt_new_table();
+		if (!u_tb)
+			return -ENOMEM;
 
-	u_tb->fmt = MNT_FMT_UTAB;
-	mnt_table_set_parser_fltrcb(u_tb, tb->fltrcb, tb->fltrcb_data);
+		u_tb->fmt = MNT_FMT_UTAB;
+		mnt_table_set_parser_fltrcb(u_tb, tb->fltrcb, tb->fltrcb_data);
 
-	if (mnt_table_parse_file(u_tb, utab) == 0) {
+		rc = mnt_table_parse_file(u_tb, utab);
+		priv_utab = 1;
+	}
+
+	if (rc == 0) {
 		struct libmnt_fs *u_fs;
 		struct libmnt_iter itr;
 
@@ -1105,6 +1097,24 @@ int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename)
 			mnt_table_merge_user_fs(tb, u_fs);
 	}
 
-	mnt_unref_table(u_tb);
+
+	if (priv_utab)
+		mnt_unref_table(u_tb);
 	return 0;
+}
+/**
+ * mnt_table_parse_mtab:
+ * @tb: table
+ * @filename: overwrites default (/etc/mtab or $LIBMOUNT_MTAB) or NULL
+ *
+ * This function parses /etc/mtab or /proc/self/mountinfo +
+ * /run/mount/utabs or /proc/mounts.
+ *
+ * See also mnt_table_set_parser_errcb().
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename)
+{
+	return __mnt_table_parse_mtab(tb, filename, NULL);
 }

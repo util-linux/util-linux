@@ -15,6 +15,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/vfs.h>
 #include <unistd.h>
 
 #include "c.h"
@@ -142,6 +143,7 @@ extern char *stripoff_last_component(char *path);
 extern int mnt_valid_tagname(const char *tagname);
 extern int append_string(char **a, const char *b);
 
+extern const char *mnt_statfs_get_fstype(struct statfs *vfs);
 extern int is_file_empty(const char *name);
 
 extern int mkdir_p(const char *path, mode_t mode);
@@ -178,6 +180,11 @@ extern struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
                                         struct libmnt_fs *fs,
                                         unsigned long mountflags,
                                         char **fsroot);
+extern int __mnt_table_parse_mtab(struct libmnt_table *tb,
+					const char *filename,
+					struct libmnt_table *u_tb);
+
+
 /*
  * Generic iterator
  */
@@ -327,6 +334,7 @@ struct libmnt_context
 
 	struct libmnt_table *fstab;	/* fstab (or mtab for some remounts) entries */
 	struct libmnt_table *mtab;	/* mtab entries */
+	struct libmnt_table *utab;	/* rarely used by umount only */
 
 	int	(*table_errcb)(struct libmnt_table *tb,	/* callback for libmnt_table structs */
 			 const char *filename, int line);

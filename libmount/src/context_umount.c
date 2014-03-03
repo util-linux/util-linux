@@ -98,7 +98,6 @@ int mnt_context_find_umount_fs(struct libmnt_context *cxt,
 		struct stat st;
 
 		if (stat(tgt, &st) == 0 && S_ISDIR(st.st_mode)) {
-			/* we'll canonicalize /proc/self/mountinfo */
 			cache = mnt_context_get_cache(cxt);
 			cn_tgt = mnt_resolve_path(tgt, cache);
 			if (cn_tgt)
@@ -190,14 +189,52 @@ err:
 	return rc;
 }
 
+/* Check if there is something important in the utab file. The parsed utab is
+ * stored in context->utab and deallocated by mnt_free_context().
+ */
+static int has_utab_entry(struct libmnt_context *cxt, const char *target)
+{
+	struct libmnt_cache *cache = NULL;
+	struct libmnt_fs *fs;
+	struct libmnt_iter itr;
+	char *cn = NULL;
+
+	assert(cxt);
+
+	if (!cxt->utab) {
+		const char *path = mnt_get_utab_path();
+
+		if (!path || is_file_empty(path))
+			return 0;
+		cxt->utab = mnt_new_table();
+		if (!cxt->utab)
+			return 0;
+		cxt->utab->fmt = MNT_FMT_UTAB;
+		if (mnt_table_parse_file(cxt->utab, path))
+			return 0;
+	}
+
+	/* paths in utab are canonicalized */
+	cache = mnt_context_get_cache(cxt);
+	cn = mnt_resolve_path(target, cache);
+	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
+
+	while (mnt_table_next_fs(cxt->utab, &itr, &fs) == 0) {
+		if (mnt_fs_streq_target(fs, cn))
+			return 1;
+	}
+	return 0;
+}
+
 /* this is umount replacement to mnt_context_apply_fstab(), use
  * mnt_context_tab_applied() to check result.
  */
 static int lookup_umount_fs(struct libmnt_context *cxt)
 {
 	const char *tgt;
+	struct stat st;
 	struct libmnt_fs *fs = NULL;
-	int rc;
+	int rc = 0;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -208,9 +245,53 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 		return -EINVAL;
 	}
 
+	/*
+	 * Let's try to avoid mountinfo usage at all to minimize performance
+	 * degradation. Don't forget that kernel has to compose *whole*
+	 * mountinfo about all mountpoints although we look for only one entry.
+	 *
+	 * All we need is fstype and to check if there is no userspace mount
+	 * options for the target (e.g. helper=udisks to call /sbin/umount.udisks).
+	 *
+	 * So, let's use statfs() if possible (it's bad idea for --lazy/--force
+	 * umounts as target is probably unreachable NFS).
+	 */
+	if (!mnt_context_is_restricted(cxt)
+	    && *tgt == '/'
+	    && !(cxt->flags & MNT_FL_HELPER)
+	    && !cxt->mtab_writable
+	    && !mnt_context_is_force(cxt)
+	    && !mnt_context_is_lazy(cxt)
+	    && stat(tgt, &st) == 0 && S_ISDIR(st.st_mode)
+	    && !has_utab_entry(cxt, tgt)) {
+
+		const char *type = mnt_fs_get_fstype(cxt->fs);
+
+		/* !cxt->mtab_writable && has_utab_entry() verified that there
+		 * is no stuff in utab, so disable all mtab/utab related actions */
+		mnt_context_disable_mtab(cxt, TRUE);
+
+		if (!type) {
+			struct statfs vfs;
+			if (statfs(tgt, &vfs) == 0)
+				type = mnt_statfs_get_fstype(&vfs);
+			if (type) {
+				rc = mnt_fs_set_fstype(cxt->fs, type);
+				if (rc)
+					return rc;
+			}
+		}
+		if (type) {
+			DBG(CXT, mnt_debug_h(cxt,
+				"umount: mountinfo unnecessary [type=%s]", type));
+			return 0;
+		}
+	}
+
 	rc = mnt_context_find_umount_fs(cxt, tgt, &fs);
 	if (rc < 0)
 		return rc;
+
 	if (rc == 1 || !fs) {
 		DBG(CXT, mnt_debug_h(cxt, "umount: cannot find '%s' in mtab", tgt));
 		return 0;	/* this is correct! */

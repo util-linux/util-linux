@@ -15,6 +15,7 @@
 #include <pwd.h>
 #include <grp.h>
 #include <blkid.h>
+#include <linux/magic.h>
 
 #include "strutils.h"
 #include "pathnames.h"
@@ -319,6 +320,92 @@ int mnt_fstype_is_netfs(const char *type)
 		return 1;
 	return 0;
 }
+
+#ifndef CIFS_SUPER_MAGIC
+# define CIFS_SUPER_MAGIC	0xFF534D42
+#endif
+#ifndef XFS_SUPER_MAGIC
+# define XFS_SUPER_MAGIC	0x58465342
+#endif
+#ifndef CGROUP_SUPER_MAGIC
+# define CGROUP_SUPER_MAGIC	0x1021994
+#endif
+#ifndef MQUEUE_SUPER_MAGIC
+# define MQUEUE_SUPER_MAGIC	0x19800202
+#endif
+#ifndef CONFIGFS_SUPER_MAGIC
+# define CONFIGFS_SUPER_MAGIC	0x62656570
+#endif
+
+const char *mnt_statfs_get_fstype(struct statfs *vfs)
+{
+	assert(vfs);
+
+	switch (vfs->f_type) {
+	case ADFS_SUPER_MAGIC:		return "adfs";
+	case AFFS_SUPER_MAGIC:		return "affs";
+	case AFS_SUPER_MAGIC:		return "afs";
+	case AUTOFS_SUPER_MAGIC:	return "autofs";
+	case CIFS_SUPER_MAGIC:		return "cifs";
+	case CODA_SUPER_MAGIC:		return "coda";
+	case CRAMFS_MAGIC:		return "cramfs";
+	case DEBUGFS_MAGIC:		return "debugfs";
+	case SECURITYFS_MAGIC:		return "securityfs";
+	case SELINUX_MAGIC:		return "selinuxfs";
+	case SMACK_MAGIC:		return "smackfs";
+	case RAMFS_MAGIC:		return "ramfs";
+	case TMPFS_MAGIC:		return "tmpfs";
+	case HUGETLBFS_MAGIC:		return "hugetlbfs";
+	case SQUASHFS_MAGIC:		return "squashfs";
+	case ECRYPTFS_SUPER_MAGIC:	return "ecryptfs";
+	case EFS_SUPER_MAGIC:		return "efs";
+	case EXT4_SUPER_MAGIC:		return "ext4";
+	case BTRFS_SUPER_MAGIC:		return "btrfs";
+	case NILFS_SUPER_MAGIC:		return "nilfs2";
+	case F2FS_SUPER_MAGIC:		return "f2fs";
+	case HPFS_SUPER_MAGIC:		return "hpfs";
+	case ISOFS_SUPER_MAGIC:		return "iso9660";
+	case JFFS2_SUPER_MAGIC:		return "jffs";
+	case EFIVARFS_MAGIC:		return "efivarfs";
+	case HOSTFS_SUPER_MAGIC:	return "hostfs";
+
+	case MINIX_SUPER_MAGIC:
+	case MINIX_SUPER_MAGIC2:
+	case MINIX2_SUPER_MAGIC:	return "minix";
+
+	case MSDOS_SUPER_MAGIC:		return "vfat";
+	case NCP_SUPER_MAGIC:		return "ncp";
+	case NFS_SUPER_MAGIC:		return "nfs";
+	case OPENPROM_SUPER_MAGIC:	return "openprom";
+	case PROC_SUPER_MAGIC:		return "proc";
+	case SOCKFS_MAGIC:		return "sockfs";
+	case SYSFS_MAGIC:		return "sysfs";
+	case USBDEVICE_SUPER_MAGIC:	return "usbdevice";
+	case CGROUP_SUPER_MAGIC:	return "cgroup";
+	case PSTOREFS_MAGIC:		return "pstore";
+	case BINFMTFS_MAGIC:		return "binfmt_misc";
+	case XENFS_SUPER_MAGIC:		return "xenfs";
+
+	case QNX4_SUPER_MAGIC:		return "qnx4";
+	case QNX6_SUPER_MAGIC:		return "qnx4";
+	case REISERFS_SUPER_MAGIC:	return "reiser4";
+	case SMB_SUPER_MAGIC:		return "smb";
+
+	case DEVPTS_SUPER_MAGIC:	return "devpts";
+	case FUTEXFS_SUPER_MAGIC:	return "futexfs";
+	case PIPEFS_MAGIC:		return "pipefs";
+	case MQUEUE_SUPER_MAGIC:	return "mqueue";
+	case CONFIGFS_SUPER_MAGIC:	return "configfs";
+
+	case BTRFS_TEST_MAGIC:		return "btrfs";
+	case XFS_SUPER_MAGIC:		return "xfs";
+	default:
+		break;
+	}
+
+	return NULL;
+}
+
 
 /**
  * mnt_match_fstype:
@@ -1195,6 +1282,21 @@ int test_mkdir(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
+int test_statfs_type(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct statfs vfs;
+	int rc;
+
+	rc = statfs(argv[1], &vfs);
+	if (rc)
+		printf("%s: statfs failed: %m\n", argv[1]);
+	else
+		printf("%-30s: statfs type: %-12s [0x%lx]\n", argv[1],
+				mnt_statfs_get_fstype(&vfs),
+				(long) vfs.f_type);
+	return rc;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -1210,6 +1312,7 @@ int main(int argc, char *argv[])
 	{ "--cd-parent",     test_chdir,           "<path>" },
 	{ "--kernel-cmdline",test_kernel_cmdline,  "<option> | <option>=" },
 	{ "--mkdir",         test_mkdir,           "<path>" },
+	{ "--statfs-type",   test_statfs_type,     "<path>" },
 
 	{ NULL }
 	};
