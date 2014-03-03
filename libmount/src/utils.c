@@ -327,9 +327,6 @@ int mnt_fstype_is_netfs(const char *type)
 #ifndef XFS_SUPER_MAGIC
 # define XFS_SUPER_MAGIC	0x58465342
 #endif
-#ifndef CGROUP_SUPER_MAGIC
-# define CGROUP_SUPER_MAGIC	0x1021994
-#endif
 #ifndef MQUEUE_SUPER_MAGIC
 # define MQUEUE_SUPER_MAGIC	0x19800202
 #endif
