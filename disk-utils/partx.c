@@ -234,7 +234,7 @@ static int get_max_partno(const char *disk, dev_t devno)
 		    !strcmp(d->d_name, ".."))
 			continue;
 #ifdef _DIRENT_HAVE_D_TYPE
-		if (d->d_type != DT_DIR)
+		if (d->d_type != DT_DIR && d->d_type != DT_UNKNOWN)
 			continue;
 #endif
 		if (strncmp(parent, d->d_name, strlen(parent)))
