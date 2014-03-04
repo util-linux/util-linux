@@ -258,6 +258,7 @@ int read_hypervisor_dmi(void)
 	free(buf);
 
 memory_scan:
+#if defined(__x86_64__) || defined(__i386__)
 	/* Fallback to memory scan (x86, x86_64) */
 	buf = get_mem_chunk(0xF0000, 0x10000, _PATH_DEV_MEM);
 	if (!buf)
@@ -275,7 +276,7 @@ memory_scan:
 		if (rc >= 0)
 			break;
 	}
-
+#endif
 done:
 	free(buf);
 	return rc;
