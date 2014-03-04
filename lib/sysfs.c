@@ -290,7 +290,8 @@ int sysfs_is_partition_dirent(DIR *dir, struct dirent *d, const char *parent_nam
 
 #ifdef _DIRENT_HAVE_D_TYPE
 	if (d->d_type != DT_DIR &&
-	    d->d_type != DT_LNK)
+	    d->d_type != DT_LNK &&
+	    d->d_type != DT_UNKNOWN)
 		return 0;
 #endif
 	if (parent_name) {
