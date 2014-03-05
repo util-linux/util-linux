@@ -333,6 +333,27 @@ int mnt_fstype_is_netfs(const char *type)
 #ifndef CONFIGFS_SUPER_MAGIC
 # define CONFIGFS_SUPER_MAGIC	0x62656570
 #endif
+#ifndef SMACK_MAGIC
+# define SMACK_MAGIC		0x43415d53
+#endif
+#ifndef F2FS_SUPER_MAGIC
+# define F2FS_SUPER_MAGIC	0xF2F52010
+#endif
+#ifndef EFIVARFS_MAGIC
+# define EFIVARFS_MAGIC		0xde5e81e4
+#endif
+#ifndef HOSTFS_SUPER_MAGIC
+# define HOSTFS_SUPER_MAGIC	0x00c0ffee
+#endif
+#ifndef QNX6_SUPER_MAGIC
+# define QNX6_SUPER_MAGIC	0x68191122
+#endif
+#ifndef BINFMTFS_MAGIC
+# define BINFMTFS_MAGIC		0x42494e4d
+#endif
+#ifndef PIPEFS_MAGIC
+# define PIPEFS_MAGIC		0x50495045
+#endif
 #ifndef BTRFS_TEST_MAGIC
 # define BTRFS_TEST_MAGIC	0x73727279
 #endif
