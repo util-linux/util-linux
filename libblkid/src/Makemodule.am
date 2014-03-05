@@ -110,6 +110,10 @@ endif
 nodist_libblkid_la_SOURCES = libblkid/src/blkid.h
 libblkid_la_LIBADD = libcommon.la
 
+libblkid_la_DEPENDENCIES = \
+	libcommon.la \
+	libblkid/src/blkid.sym \
+	libblkid/src/blkid.h.in
 
 libblkid_la_CFLAGS = \
 	$(SOLIB_CFLAGS) \
@@ -118,14 +122,9 @@ libblkid_la_CFLAGS = \
 
 if BUILD_LIBUUID
 libblkid_la_LIBADD += libuuid.la
+libblkid_la_DEPENDENCIES += libuuid.la
 libblkid_la_CFLAGS += -I$(ul_libuuid_incdir)
 endif
-
-
-libblkid_la_DEPENDENCIES = \
-	$(libblkid_la_LIBADD) \
-	libblkid/src/blkid.sym \
-	libblkid/src/blkid.h.in
 
 libblkid_la_LDFLAGS = \
 	$(SOLIB_LDFLAGS) \
