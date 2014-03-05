@@ -83,7 +83,6 @@ include schedutils/Makemodule.am
 include text-utils/Makemodule.am
 include term-utils/Makemodule.am
 include login-utils/Makemodule.am
-include mount-deprecated/Makemodule.am
 include sys-utils/Makemodule.am
 include misc-utils/Makemodule.am
 include disk-utils/Makemodule.am

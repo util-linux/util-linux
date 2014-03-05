@@ -791,23 +791,12 @@ UL_REQUIRES_BUILD([fdisk], [libfdisk])
 AM_CONDITIONAL([BUILD_FDISK], [test "x$build_fdisk" = xyes])
 
 
-AC_ARG_ENABLE([deprecated-mount],
-  AS_HELP_STRING([--enable-deprecated-mount], [build old mount utilities]),
-  [], [enable_deprecated_mount=no]
-)
-UL_BUILD_INIT([deprecated_mount])
-UL_REQUIRES_LINUX([deprecated_mount])
-UL_REQUIRES_BUILD([deprecated_mount], [libblkid])
-AM_CONDITIONAL([BUILD_DEPRECATED_MOUNT], [test "x$build_deprecated_mount" = xyes])
-
-
 AC_ARG_ENABLE([mount],
   AS_HELP_STRING([--disable-mount], [do not build mount(8) and umount(8)]),
   [], [enable_mount=check]
 )
 UL_BUILD_INIT([mount])
 UL_REQUIRES_BUILD([mount], [libmount])
-UL_CONFLICTS_BUILD([mount], [deprecated_mount], [old deprecated mount version])
 AM_CONDITIONAL([BUILD_MOUNT], [test "x$build_mount" = xyes])
 
 
