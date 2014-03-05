@@ -84,12 +84,12 @@ static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 		if (!CPU_ISSET(cpu, cpu_set))
 			continue;
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d", cpu)) {
-			printf(_("CPU %d does not exist\n"), cpu);
+			warnx(_("CPU %d does not exist"), cpu);
 			fails++;
 			continue;
 		}
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d/online", cpu)) {
-			printf(_("CPU %d is not hot pluggable\n"), cpu);
+			warnx(_("CPU %d is not hot pluggable"), cpu);
 			fails++;
 			continue;
 		}
@@ -107,8 +107,7 @@ static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 		if (enable) {
 			rc = path_write_str("1", _PATH_SYS_CPU "/cpu%d/online", cpu);
 			if ((rc == -1) && (configured == 0)) {
-				warnx(_("CPU %d enable failed "
-					 "(CPU is deconfigured)"), cpu);
+				warn(_("CPU %d enable failed (CPU is deconfigured)"), cpu);
 				fails++;
 			} else if (rc == -1) {
 				warn(_("CPU %d enable failed"), cpu);
@@ -117,8 +116,7 @@ static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 				printf(_("CPU %d enabled\n"), cpu);
 		} else {
 			if (onlinecpus && num_online_cpus() == 1) {
-				printf(_("CPU %d disable failed "
-					 "(last enabled CPU)\n"), cpu);
+				warnx(_("CPU %d disable failed (last enabled CPU)"), cpu);
 				fails++;
 				continue;
 			}
@@ -178,12 +176,12 @@ static int cpu_configure(cpu_set_t *cpu_set, size_t setsize, int configure)
 		if (!CPU_ISSET(cpu, cpu_set))
 			continue;
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d", cpu)) {
-			printf(_("CPU %d does not exist\n"), cpu);
+			warnx(_("CPU %d does not exist"), cpu);
 			fails++;
 			continue;
 		}
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d/configure", cpu)) {
-			printf(_("CPU %d is not configurable\n"), cpu);
+			warnx(_("CPU %d is not configurable"), cpu);
 			fails++;
 			continue;
 		}
@@ -198,8 +196,7 @@ static int cpu_configure(cpu_set_t *cpu_set, size_t setsize, int configure)
 		}
 		if ((current == 1) && (configure == 0) && onlinecpus &&
 		    is_cpu_online(cpu)) {
-			printf(_("CPU %d deconfigure failed "
-				 "(CPU is enabled)\n"), cpu);
+			warnx(_("CPU %d deconfigure failed (CPU is enabled)"), cpu);
 			fails++;
 			continue;
 		}
