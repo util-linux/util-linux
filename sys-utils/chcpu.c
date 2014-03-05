@@ -45,6 +45,9 @@
 
 #define EXCL_ERROR "--{configure,deconfigure,disable,dispatch,enable}"
 
+/* partial success, otherwise we return regular EXIT_{SUCCESS,FAILURE} */
+#define CHCPU_EXIT_SOMEOK	64
+
 #define _PATH_SYS_CPU		"/sys/devices/system/cpu"
 #define _PATH_SYS_CPU_ONLINE	_PATH_SYS_CPU "/online"
 #define _PATH_SYS_CPU_RESCAN	_PATH_SYS_CPU "/rescan"
@@ -66,21 +69,28 @@ enum {
 	CMD_CPU_DISPATCH_VERTICAL,
 };
 
+/* returns:   0 = success
+ *          < 0 = failure
+ *          > 0 = partial success
+ */
 static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 {
 	unsigned int cpu;
 	int online, rc;
 	int configured = -1;
+	size_t fails = 0;
 
 	for (cpu = 0; cpu < setsize; cpu++) {
 		if (!CPU_ISSET(cpu, cpu_set))
 			continue;
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d", cpu)) {
 			printf(_("CPU %d does not exist\n"), cpu);
+			fails++;
 			continue;
 		}
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d/online", cpu)) {
 			printf(_("CPU %d is not hot pluggable\n"), cpu);
+			fails++;
 			continue;
 		}
 		online = path_read_s32(_PATH_SYS_CPU "/cpu%d/online", cpu);
@@ -96,30 +106,35 @@ static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 			configured = path_read_s32(_PATH_SYS_CPU "/cpu%d/configure", cpu);
 		if (enable) {
 			rc = path_write_str("1", _PATH_SYS_CPU "/cpu%d/online", cpu);
-			if ((rc == -1) && (configured == 0))
+			if ((rc == -1) && (configured == 0)) {
 				warnx(_("CPU %d enable failed "
 					 "(CPU is deconfigured)"), cpu);
-			else if (rc == -1)
+				fails++;
+			} else if (rc == -1) {
 				warn(_("CPU %d enable failed"), cpu);
-			else
+				fails++;
+			} else
 				printf(_("CPU %d enabled\n"), cpu);
 		} else {
 			if (onlinecpus && num_online_cpus() == 1) {
 				printf(_("CPU %d disable failed "
 					 "(last enabled CPU)\n"), cpu);
+				fails++;
 				continue;
 			}
 			rc = path_write_str("0", _PATH_SYS_CPU "/cpu%d/online", cpu);
-			if (rc == -1)
+			if (rc == -1) {
 				warn(_("CPU %d disable failed"), cpu);
-			else {
+				fails++;
+			} else {
 				printf(_("CPU %d disabled\n"), cpu);
 				if (onlinecpus)
 					CPU_CLR(cpu, onlinecpus);
 			}
 		}
 	}
-	return EXIT_SUCCESS;
+
+	return fails == 0 ? 0 : fails == setsize ? -1 : 1;
 }
 
 static int cpu_rescan(void)
@@ -129,7 +144,7 @@ static int cpu_rescan(void)
 	if (path_write_str("1", _PATH_SYS_CPU_RESCAN) == -1)
 		err(EXIT_FAILURE, _("Failed to trigger rescan of CPUs"));
 	printf(_("Triggered rescan of CPUs\n"));
-	return EXIT_SUCCESS;
+	return 0;
 }
 
 static int cpu_set_dispatch(int mode)
@@ -146,23 +161,30 @@ static int cpu_set_dispatch(int mode)
 			err(EXIT_FAILURE, _("Failed to set vertical dispatch mode"));
 		printf(_("Successfully set vertical dispatching mode\n"));
 	}
-	return EXIT_SUCCESS;
+	return 0;
 }
 
+/* returns:   0 = success
+ *          < 0 = failure
+ *          > 0 = partial success
+ */
 static int cpu_configure(cpu_set_t *cpu_set, size_t setsize, int configure)
 {
 	unsigned int cpu;
 	int rc, current;
+	size_t fails = 0;
 
 	for (cpu = 0; cpu < setsize; cpu++) {
 		if (!CPU_ISSET(cpu, cpu_set))
 			continue;
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d", cpu)) {
 			printf(_("CPU %d does not exist\n"), cpu);
+			fails++;
 			continue;
 		}
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d/configure", cpu)) {
 			printf(_("CPU %d is not configurable\n"), cpu);
+			fails++;
 			continue;
 		}
 		current = path_read_s32(_PATH_SYS_CPU "/cpu%d/configure", cpu);
@@ -178,23 +200,27 @@ static int cpu_configure(cpu_set_t *cpu_set, size_t setsize, int configure)
 		    is_cpu_online(cpu)) {
 			printf(_("CPU %d deconfigure failed "
 				 "(CPU is enabled)\n"), cpu);
+			fails++;
 			continue;
 		}
 		if (configure) {
 			rc = path_write_str("1", _PATH_SYS_CPU "/cpu%d/configure", cpu);
-			if (rc == -1)
+			if (rc == -1) {
 				warn(_("CPU %d configure failed"), cpu);
-			else
+				fails++;
+			} else
 				printf(_("CPU %d configured\n"), cpu);
 		} else {
 			rc = path_write_str("0", _PATH_SYS_CPU "/cpu%d/configure", cpu);
-			if (rc == -1)
+			if (rc == -1) {
 				warn(_("CPU %d deconfigure failed"), cpu);
-			else
+				fails++;
+			} else
 				printf(_("CPU %d deconfigured\n"), cpu);
 		}
 	}
-	return EXIT_SUCCESS;
+
+	return fails == 0 ? 0 : fails == setsize ? -1 : 1;
 }
 
 static void cpu_parse(char *cpu_string, cpu_set_t *cpu_set, size_t setsize)
@@ -233,7 +259,7 @@ int main(int argc, char *argv[])
 	cpu_set_t *cpu_set;
 	size_t setsize;
 	int cmd = -1;
-	int c;
+	int c, rc;
 
 	static const struct option longopts[] = {
 		{ "configure",	required_argument, 0, 'c' },
@@ -317,19 +343,31 @@ int main(int argc, char *argv[])
 
 	switch (cmd) {
 	case CMD_CPU_ENABLE:
-		return cpu_enable(cpu_set, maxcpus, 1);
+		rc = cpu_enable(cpu_set, maxcpus, 1);
+		break;
 	case CMD_CPU_DISABLE:
-		return cpu_enable(cpu_set, maxcpus, 0);
+		rc = cpu_enable(cpu_set, maxcpus, 0);
+		break;
 	case CMD_CPU_CONFIGURE:
-		return cpu_configure(cpu_set, maxcpus, 1);
+		rc = cpu_configure(cpu_set, maxcpus, 1);
+		break;
 	case CMD_CPU_DECONFIGURE:
-		return cpu_configure(cpu_set, maxcpus, 0);
+		rc = cpu_configure(cpu_set, maxcpus, 0);
+		break;
 	case CMD_CPU_RESCAN:
-		return cpu_rescan();
+		rc = cpu_rescan();
+		break;
 	case CMD_CPU_DISPATCH_HORIZONTAL:
-		return cpu_set_dispatch(0);
+		rc = cpu_set_dispatch(0);
+		break;
 	case CMD_CPU_DISPATCH_VERTICAL:
-		return cpu_set_dispatch(1);
+		rc = cpu_set_dispatch(1);
+		break;
+	default:
+		rc = -EINVAL;
+		break;
 	}
-	return EXIT_SUCCESS;
+
+	return rc == 0 ? EXIT_SUCCESS :
+	        rc < 0 ? EXIT_FAILURE : CHCPU_EXIT_SOMEOK;
 }
