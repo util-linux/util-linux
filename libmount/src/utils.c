@@ -333,6 +333,9 @@ int mnt_fstype_is_netfs(const char *type)
 #ifndef CONFIGFS_SUPER_MAGIC
 # define CONFIGFS_SUPER_MAGIC	0x62656570
 #endif
+#ifndef BTRFS_TEST_MAGIC
+# define BTRFS_TEST_MAGIC	0x73727279
+#endif
 
 const char *mnt_statfs_get_fstype(struct statfs *vfs)
 {
