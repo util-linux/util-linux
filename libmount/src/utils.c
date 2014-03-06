@@ -15,7 +15,6 @@
 #include <pwd.h>
 #include <grp.h>
 #include <blkid.h>
-#include <linux/magic.h>
 
 #include "strutils.h"
 #include "pathnames.h"
@@ -24,6 +23,7 @@
 #include "canonicalize.h"
 #include "env.h"
 #include "match.h"
+#include "statfs_magic.h"
 
 int append_string(char **a, const char *b)
 {
@@ -321,84 +321,84 @@ int mnt_fstype_is_netfs(const char *type)
 	return 0;
 }
 
-#ifndef CIFS_SUPER_MAGIC
-# define CIFS_SUPER_MAGIC	0xFF534D42
-#endif
-#ifndef XFS_SUPER_MAGIC
-# define XFS_SUPER_MAGIC	0x58465342
-#endif
-#ifndef MQUEUE_SUPER_MAGIC
-# define MQUEUE_SUPER_MAGIC	0x19800202
-#endif
-#ifndef CONFIGFS_SUPER_MAGIC
-# define CONFIGFS_SUPER_MAGIC	0x62656570
-#endif
-#ifndef BTRFS_TEST_MAGIC
-# define BTRFS_TEST_MAGIC	0x73727279
-#endif
-
 const char *mnt_statfs_get_fstype(struct statfs *vfs)
 {
 	assert(vfs);
 
 	switch (vfs->f_type) {
-	case ADFS_SUPER_MAGIC:		return "adfs";
-	case AFFS_SUPER_MAGIC:		return "affs";
-	case AFS_SUPER_MAGIC:		return "afs";
-	case AUTOFS_SUPER_MAGIC:	return "autofs";
-	case CIFS_SUPER_MAGIC:		return "cifs";
-	case CODA_SUPER_MAGIC:		return "coda";
-	case CRAMFS_MAGIC:		return "cramfs";
-	case DEBUGFS_MAGIC:		return "debugfs";
-	case SECURITYFS_MAGIC:		return "securityfs";
-	case SELINUX_MAGIC:		return "selinuxfs";
-	case SMACK_MAGIC:		return "smackfs";
-	case RAMFS_MAGIC:		return "ramfs";
-	case TMPFS_MAGIC:		return "tmpfs";
-	case HUGETLBFS_MAGIC:		return "hugetlbfs";
-	case SQUASHFS_MAGIC:		return "squashfs";
-	case ECRYPTFS_SUPER_MAGIC:	return "ecryptfs";
-	case EFS_SUPER_MAGIC:		return "efs";
-	case EXT4_SUPER_MAGIC:		return "ext4";
-	case BTRFS_SUPER_MAGIC:		return "btrfs";
-	case NILFS_SUPER_MAGIC:		return "nilfs2";
-	case F2FS_SUPER_MAGIC:		return "f2fs";
-	case HPFS_SUPER_MAGIC:		return "hpfs";
-	case ISOFS_SUPER_MAGIC:		return "iso9660";
-	case JFFS2_SUPER_MAGIC:		return "jffs";
-	case EFIVARFS_MAGIC:		return "efivarfs";
-	case HOSTFS_SUPER_MAGIC:	return "hostfs";
-
-	case MINIX_SUPER_MAGIC:
-	case MINIX_SUPER_MAGIC2:
-	case MINIX2_SUPER_MAGIC:	return "minix";
-
-	case MSDOS_SUPER_MAGIC:		return "vfat";
-	case NCP_SUPER_MAGIC:		return "ncp";
-	case NFS_SUPER_MAGIC:		return "nfs";
-	case OPENPROM_SUPER_MAGIC:	return "openprom";
-	case PROC_SUPER_MAGIC:		return "proc";
-	case SOCKFS_MAGIC:		return "sockfs";
-	case SYSFS_MAGIC:		return "sysfs";
-	case USBDEVICE_SUPER_MAGIC:	return "usbdevice";
-	case CGROUP_SUPER_MAGIC:	return "cgroup";
-	case PSTOREFS_MAGIC:		return "pstore";
-	case BINFMTFS_MAGIC:		return "binfmt_misc";
-	case XENFS_SUPER_MAGIC:		return "xenfs";
-
-	case QNX4_SUPER_MAGIC:		return "qnx4";
-	case QNX6_SUPER_MAGIC:		return "qnx4";
-	case REISERFS_SUPER_MAGIC:	return "reiser4";
-	case SMB_SUPER_MAGIC:		return "smb";
-
-	case DEVPTS_SUPER_MAGIC:	return "devpts";
-	case FUTEXFS_SUPER_MAGIC:	return "futexfs";
-	case PIPEFS_MAGIC:		return "pipefs";
-	case MQUEUE_SUPER_MAGIC:	return "mqueue";
-	case CONFIGFS_SUPER_MAGIC:	return "configfs";
-
-	case BTRFS_TEST_MAGIC:		return "btrfs";
-	case XFS_SUPER_MAGIC:		return "xfs";
+	case STATFS_ADFS_MAGIC:		return "adfs";
+	case STATFS_AFFS_MAGIC:		return "affs";
+	case STATFS_AFS_MAGIC:		return "afs";
+	case STATFS_AUTOFS_MAGIC:	return "autofs";
+	case STATFS_BDEVFS_MAGIC:	return "bdev";
+	case STATFS_BEFS_MAGIC:		return "befs";
+	case STATFS_BFS_MAGIC:		return "befs";
+	case STATFS_BINFMTFS_MAGIC:	return "binfmt_misc";
+	case STATFS_BTRFS_MAGIC:	return "btrfs";
+	case STATFS_CEPH_MAGIC:		return "ceph";
+	case STATFS_CGROUP_MAGIC:	return "cgroup";
+	case STATFS_CIFS_MAGIC:		return "cifs";
+	case STATFS_CODA_MAGIC:		return "coda";
+	case STATFS_CONFIGFS_MAGIC:	return "configfs";
+	case STATFS_CRAMFS_MAGIC:	return "cramfs";
+	case STATFS_DEBUGFS_MAGIC:	return "debugfs";
+	case STATFS_DEVPTS_MAGIC:	return "devpts";
+	case STATFS_ECRYPTFS_MAGIC:	return "ecryptfs";
+	case STATFS_EFIVARFS_MAGIC:	return "efivarfs";
+	case STATFS_EFS_MAGIC:		return "efs";
+	case STATFS_EXOFS_MAGIC:	return "exofs";
+	case STATFS_EXT4_MAGIC:		return "ext4";	   /* all extN use the same magic */
+	case STATFS_F2FS_MAGIC:		return "f2fs";
+	case STATFS_FUSE_MAGIC:		return "fuse";
+	case STATFS_FUTEXFS_MAGIC:	return "futexfs";
+	case STATFS_GFS2_MAGIC:		return "gfs2";
+	case STATFS_HFSPLUS_MAGIC:	return "hfsplus";
+	case STATFS_HOSTFS_MAGIC:	return "hostfs";
+	case STATFS_HPFS_MAGIC:		return "hpfs";
+	case STATFS_HPPFS_MAGIC:	return "hppfs";
+	case STATFS_HUGETLBFS_MAGIC:	return "hugetlbfs";
+	case STATFS_ISOFS_MAGIC:	return "iso9660";
+	case STATFS_JFFS2_MAGIC:	return "jffs2";
+	case STATFS_JFS_MAGIC:		return "jfs";
+	case STATFS_LOGFS_MAGIC:	return "logfs";
+	case STATFS_MINIX2_MAGIC:
+	case STATFS_MINIX2_MAGIC2:
+	case STATFS_MINIX3_MAGIC:
+	case STATFS_MINIX_MAGIC:
+	case STATFS_MINIX_MAGIC2:	return "minix";
+	case STATFS_MQUEUE_MAGIC:	return "mqueue";
+	case STATFS_MSDOS_MAGIC:	return "vfat";
+	case STATFS_NCP_MAGIC:		return "ncp";
+	case STATFS_NFS_MAGIC:		return "nfs";
+	case STATFS_NILFS_MAGIC:	return "nilfs2";
+	case STATFS_NTFS_MAGIC:		return "ntfs";
+	case STATFS_OCFS2_MAGIC:	return "ocfs2";
+	case STATFS_OMFS_MAGIC:		return "omfs";
+	case STATFS_OPENPROMFS_MAGIC:	return "openpromfs";
+	case STATFS_PIPEFS_MAGIC:	return "pipefs";
+	case STATFS_PROC_MAGIC:		return "proc";
+	case STATFS_PSTOREFS_MAGIC:	return "pstore";
+	case STATFS_QNX4_MAGIC:		return "qnx4";
+	case STATFS_QNX6_MAGIC:		return "qnx6";
+	case STATFS_RAMFS_MAGIC:	return "ramfs";
+	case STATFS_REISERFS_MAGIC:	return "reiser4";
+	case STATFS_ROMFS_MAGIC:	return "romfs";
+	case STATFS_SECURITYFS_MAGIC:	return "securityfs";
+	case STATFS_SELINUXFS_MAGIC:	return "selinuxfs";
+	case STATFS_SMACKFS_MAGIC:	return "smackfs";
+	case STATFS_SMB_MAGIC:		return "smb";
+	case STATFS_SOCKFS_MAGIC:	return "sockfs";
+	case STATFS_SQUASHFS_MAGIC:	return "squashfs";
+	case STATFS_SYSFS_MAGIC:	return "sysfs";
+	case STATFS_TMPFS_MAGIC:	return "tmpfs";
+	case STATFS_UBIFS_MAGIC:	return "ubifs";
+	case STATFS_UDF_MAGIC:		return "udf";
+	case STATFS_UFS2_MAGIC:
+	case STATFS_UFS_MAGIC:		return "ufs";
+	case STATFS_V9FS_MAGIC:		return "9p";
+	case STATFS_VXFS_MAGIC:		return "vxfs";
+	case STATFS_XENFS_MAGIC:	return "xenfs";
+	case STATFS_XFS_MAGIC:		return "xfs";
 	default:
 		break;
 	}

@@ -52,4 +52,5 @@ dist_noinst_HEADERS += \
 	include/pt-bsd.h \
 	include/pt-mbr.h \
 	include/pt-mbr-partnames.h \
-	include/pt-sun.h
+	include/pt-sun.h \
+	include/statfs_magic.h
