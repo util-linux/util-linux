@@ -6,25 +6,25 @@
 #include <getopt.h>
 
 #ifdef HAVE_SLANG_H
-#include <slang.h>
+# include <slang.h>
 #elif defined(HAVE_SLANG_SLANG_H)
-#include <slang/slang.h>
+# include <slang/slang.h>
 #endif
 
 #ifdef HAVE_SLCURSES_H
-#include <slcurses.h>
+# include <slcurses.h>
 #elif defined(HAVE_SLANG_SLCURSES_H)
-#include <slang/slcurses.h>
+# include <slang/slcurses.h>
 #elif defined(HAVE_NCURSESW_NCURSES_H) && defined(HAVE_WIDECHAR)
-#include <ncursesw/ncurses.h>
+# include <ncursesw/ncurses.h>
 #elif defined(HAVE_NCURSES_H)
-#include <ncurses.h>
+# include <ncurses.h>
 #elif defined(HAVE_NCURSES_NCURSES_H)
-#include <ncurses/ncurses.h>
+# include <ncurses/ncurses.h>
 #endif
 
 #ifdef HAVE_WIDECHAR
-#include <wctype.h>
+# include <wctype.h>
 #endif
 
 #include "c.h"
@@ -70,9 +70,9 @@ static const int color_pairs[][2] = {
 
 struct cfdisk;
 
-static struct cfdisk_menudesc *menu_get_menuitem(struct cfdisk *cf, size_t idx);
-static struct cfdisk_menudesc *menu_get_menuitem_by_key(struct cfdisk *cf, int key, size_t *idx);
-static struct cfdisk_menu *menu_push(struct cfdisk *cf, struct cfdisk_menudesc *desc);
+static struct cfdisk_menuitem *menu_get_menuitem(struct cfdisk *cf, size_t idx);
+static struct cfdisk_menuitem *menu_get_menuitem_by_key(struct cfdisk *cf, int key, size_t *idx);
+static struct cfdisk_menu *menu_push(struct cfdisk *cf, struct cfdisk_menuitem *item);
 static struct cfdisk_menu *menu_pop(struct cfdisk *cf);
 
 static int ui_refresh(struct cfdisk *cf);
@@ -87,7 +87,7 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 
 static int ui_enabled;
 
-struct cfdisk_menudesc {
+struct cfdisk_menuitem {
 	int		key;		/* keyboard shortcut */
 	const char	*name;		/* item name */
 	const char	*desc;		/* item description */
@@ -96,7 +96,7 @@ struct cfdisk_menudesc {
 
 struct cfdisk_menu {
 	char			*title;
-	struct cfdisk_menudesc	*desc;
+	struct cfdisk_menuitem	*items;
 	char			*ignore;
 	size_t			id;
 	size_t			width;
@@ -110,12 +110,10 @@ struct cfdisk_menu {
 	unsigned int		vertical : 1;
 };
 
-static struct cfdisk_menudesc main_menudesc[] = {
+static struct cfdisk_menuitem main_menuitems[] = {
 	{ 'b', N_("Bootable"), N_("Toggle bootable flag of the current partition") },
 	{ 'd', N_("Delete"), N_("Delete the current partition") },
-//	{ 'm', N_("Maximize"), N_("Maximize disk usage of the current partition (experts only)") },
 	{ 'n', N_("New"), N_("Create new partition from free space") },
-//	{ 'p', N_("Print"), N_("Print partition table to the screen or to a file") },
 	{ 'q', N_("Quit"), N_("Quit program without writing partition table") },
 	{ 't', N_("Type"), N_("Change the partition type") },
 	{ 'h', N_("Help"), N_("Print help screen") },
@@ -336,7 +334,7 @@ static int is_freespace(struct cfdisk *cf, size_t i)
  */
 static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 {
-	struct cfdisk_menudesc *d, *cm;
+	struct cfdisk_menuitem *d, *cm;
 	int key;
 	size_t i = 0, nitems;
 	const char *name, *desc;
@@ -347,7 +345,7 @@ static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 	/* create cfdisk menu according to libfdisk ask-menu, note that the
 	 * last cm[] item has to be empty -- so nitems + 1 */
 	nitems = fdisk_ask_menu_get_nitems(ask);
-	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menudesc));
+	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menuitem));
 
 	for (i = 0; i < nitems; i++) {
 		if (fdisk_ask_menu_get_item(ask, i, &key, &name, &desc))
@@ -559,7 +557,7 @@ static void menu_update_ignore(struct cfdisk *cf)
 	char ignore[128] = { 0 };
 	int i = 0;
 	struct cfdisk_menu *m;
-	struct cfdisk_menudesc *d, *org;
+	struct cfdisk_menuitem *d, *org;
 	size_t idx;
 
 	assert(cf);
@@ -584,7 +582,7 @@ static void menu_update_ignore(struct cfdisk *cf)
 	m->ignore = xstrdup(ignore);
 	m->nitems = 0;
 
-	for (d = m->desc; d->name; d++) {
+	for (d = m->items; d->name; d++) {
 		if (m->ignore && strchr(m->ignore, d->key))
 			continue;
 		m->nitems++;
@@ -601,19 +599,19 @@ static void menu_update_ignore(struct cfdisk *cf)
 
 static struct cfdisk_menu *menu_push(
 			struct cfdisk *cf,
-			struct cfdisk_menudesc *desc)
+			struct cfdisk_menuitem *items)
 {
 	struct cfdisk_menu *m = xcalloc(1, sizeof(*m));
-	struct cfdisk_menudesc *d;
+	struct cfdisk_menuitem *d;
 
 	assert(cf);
 
 	DBG(FRONTEND, dbgprint("menu: new menu"));
 
 	m->prev = cf->menu;
-	m->desc = desc;
+	m->items = items;
 
-	for (d = m->desc; d->name; d++) {
+	for (d = m->items; d->name; d++) {
 		const char *name = _(d->name);
 		size_t len = mbs_safe_width(name);
 		if (len > m->width)
@@ -741,12 +739,12 @@ static int menuitem_on_page(struct cfdisk *cf, size_t idx)
 	return 0;
 }
 
-static struct cfdisk_menudesc *menu_get_menuitem(struct cfdisk *cf, size_t idx)
+static struct cfdisk_menuitem *menu_get_menuitem(struct cfdisk *cf, size_t idx)
 {
-	struct cfdisk_menudesc *d;
+	struct cfdisk_menuitem *d;
 	size_t i;
 
-	for (i = 0, d = cf->menu->desc; d->name; d++) {
+	for (i = 0, d = cf->menu->items; d->name; d++) {
 		if (cf->menu->ignore && strchr(cf->menu->ignore, d->key))
 			continue;
 		if (i++ == idx)
@@ -756,12 +754,12 @@ static struct cfdisk_menudesc *menu_get_menuitem(struct cfdisk *cf, size_t idx)
 	return NULL;
 }
 
-static struct cfdisk_menudesc *menu_get_menuitem_by_key(struct cfdisk *cf,
+static struct cfdisk_menuitem *menu_get_menuitem_by_key(struct cfdisk *cf,
 							int key, size_t *idx)
 {
-	struct cfdisk_menudesc *d;
+	struct cfdisk_menuitem *d;
 
-	for (*idx = 0, d = cf->menu->desc; d->name; d++) {
+	for (*idx = 0, d = cf->menu->items; d->name; d++) {
 		if (cf->menu->ignore && strchr(cf->menu->ignore, d->key))
 			continue;
 		if (key == d->key)
@@ -773,7 +771,7 @@ static struct cfdisk_menudesc *menu_get_menuitem_by_key(struct cfdisk *cf,
 }
 
 static void ui_draw_menuitem(struct cfdisk *cf,
-			     struct cfdisk_menudesc *d,
+			     struct cfdisk_menuitem *d,
 			     size_t idx)
 {
 	char buf[80 * MB_CUR_MAX];
@@ -811,7 +809,7 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 
 static void ui_draw_menu(struct cfdisk *cf)
 {
-	struct cfdisk_menudesc *d;
+	struct cfdisk_menuitem *d;
 	struct cfdisk_menu *m;
 	size_t i = 0;
 	size_t ln = menuitem_get_line(cf, 0);
@@ -880,7 +878,7 @@ static void ui_draw_menu(struct cfdisk *cf)
 
 static void ui_menu_goto(struct cfdisk *cf, int where)
 {
-	struct cfdisk_menudesc *d;
+	struct cfdisk_menuitem *d;
 	size_t old;
 
 	/* stop and begin/end for vertical menus */
@@ -1304,7 +1302,7 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 					struct fdisk_parttype *cur)
 {
-	struct cfdisk_menudesc *d, *cm;
+	struct cfdisk_menuitem *d, *cm;
 	size_t i = 0, nitems, idx = 0;
 	struct fdisk_parttype *t = NULL;
 	int has_typestr = 0;
@@ -1316,7 +1314,7 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 	nitems = cf->cxt->label->nparttypes;
 	if (!nitems)
 		return NULL;
-	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menudesc));
+	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menuitem));
 	if (!cm)
 		return NULL;
 
@@ -1383,7 +1381,7 @@ done:
 /* prints menu with libfdisk labels and waits for users response */
 static int ui_create_label(struct cfdisk *cf)
 {
-	struct cfdisk_menudesc *d, *cm;
+	struct cfdisk_menuitem *d, *cm;
 	int rc = 1;
 	size_t i = 0, nitems;
 	struct fdisk_label *lb = NULL;
@@ -1395,7 +1393,7 @@ static int ui_create_label(struct cfdisk *cf)
 	/* create cfdisk menu according to libfdisk labels, note that the
 	 * last cm[] item has to be empty -- so nitems + 1 */
 	nitems = fdisk_context_get_nlabels(cf->cxt);
-	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menudesc));
+	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menuitem));
 
 	for (i = 0; i < nitems; i++) {
 		if (fdisk_context_next_label(cf->cxt, &lb))
@@ -1523,7 +1521,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	assert(cf->menu);
 
 	if (key == 0) {
-		struct cfdisk_menudesc *d = menu_get_menuitem(cf, cf->menu->idx);
+		struct cfdisk_menuitem *d = menu_get_menuitem(cf, cf->menu->idx);
 		if (!d)
 			return 0;
 		key = d->key;
@@ -1681,7 +1679,7 @@ static int ui_run(struct cfdisk *cf)
 	if (rc)
 		ui_errx(EXIT_FAILURE, _("failed to read partitions"));
 
-	menu_push(cf, main_menudesc);
+	menu_push(cf, main_menuitems);
 	cf->menu->ignore_cb = main_menu_ignore_keys;
 
 	rc = ui_refresh(cf);
