@@ -87,29 +87,32 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 
 static int ui_enabled;
 
+/* menu item */
 struct cfdisk_menuitem {
 	int		key;		/* keyboard shortcut */
 	const char	*name;		/* item name */
-	const char	*desc;		/* item description */
+	const char	*desc;		/* item description (hint) */
 	void		*userdata;
 };
 
+/* menu */
 struct cfdisk_menu {
-	char			*title;
-	struct cfdisk_menuitem	*items;
-	char			*ignore;
-	size_t			id;
-	size_t			width;
-	size_t			nitems;
-	size_t			page_sz;
-	size_t			idx;
-
+	char			*title;	/* optional menu title */
+	struct cfdisk_menuitem	*items;	/* array with menu items */
+	char			*ignore;/* string with keys to ignore */
+	size_t			width;	/* maximal width of the menu item */
+	size_t			nitems;	/* number of the active menu items */
+	size_t			page_sz;/* when menu longer than screen */
+	size_t			idx;	/* the current menu item */
 	struct cfdisk_menu	*prev;
+
+	/* @ignore keys generator */
 	int (*ignore_cb)	(struct cfdisk *, char *, size_t);
 
-	unsigned int		vertical : 1;
+	unsigned int		vertical : 1;	/* enable vertical mode */
 };
 
+/* main menu */
 static struct cfdisk_menuitem main_menuitems[] = {
 	{ 'b', N_("Bootable"), N_("Toggle bootable flag of the current partition") },
 	{ 'd', N_("Delete"), N_("Delete the current partition") },
@@ -121,10 +124,10 @@ static struct cfdisk_menuitem main_menuitems[] = {
 	{ 0, NULL, NULL }
 };
 
+/* top level control struct */
 struct cfdisk {
 	struct fdisk_context	*cxt;	/* libfdisk context */
 	struct fdisk_table	*table;	/* partition table */
-
 	struct cfdisk_menu	*menu;	/* the current menu */
 
 	int	*cols;		/* output columns */
@@ -139,6 +142,9 @@ struct cfdisk {
 	size_t  page_sz;
 };
 
+/* Initialize output columns -- we follow libcfdisk columns (usually specific
+ * to the label type.
+ */
 static int cols_init(struct cfdisk *cf)
 {
 	assert(cf);
@@ -258,6 +264,9 @@ done:
 	return res;
 }
 
+/*
+ * Read data about partitions from libfdisk and prepare output lines.
+ */
 static int lines_refresh(struct cfdisk *cf)
 {
 	int rc;
@@ -385,7 +394,8 @@ static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 	return -1;
 }
 
-
+/* libfdisk callback
+ */
 static int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		    void *data __attribute__((__unused__)))
 {
