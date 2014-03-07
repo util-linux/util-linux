@@ -486,7 +486,7 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 
 	/* analyze gaps between partitions */
 	while (rc == 0 && fdisk_table_next_partition(parts, &itr, &pa) == 0) {
-		if (!pa->used || fdisk_partition_is_nested(pa))
+		if (!pa->used || pa->wholedisk || fdisk_partition_is_nested(pa))
 			continue;
 		DBG(LABEL, dbgprint("freespace analyze: partno=%zu, start=%ju, end=%ju",
 					pa->partno, pa->start, pa->end));

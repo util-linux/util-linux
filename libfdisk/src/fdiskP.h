@@ -189,6 +189,7 @@ struct fdisk_partition {
 			end_follow_default : 1,		/* use default end */
 			freespace : 1,		/* this is free space */
 			container : 1,		/* container partition (e.g. extended partition) */
+			wholedisk : 1,		/* special system partition */
 			used   : 1;		/* partition already used */
 };
 
