@@ -261,49 +261,6 @@ static int sgi_list_table(struct fdisk_context *cxt)
 			cxt->geom.cylinders, be16_to_cpu(sgiparam->pcylcount),
 			(int) sgiparam->sparecyl, be16_to_cpu(sgiparam->ilfact));
 
-#ifdef UNWANTED
-	char *p;
-	size_t i, used;
-	struct tt *tb = NULL;
-
-	/*
-	 * Volumes
-	 */
-	tb = tt_new_table(TT_FL_FREEDATA);
-	if (!tb)
-		return -ENOMEM;
-
-	tt_define_column(tb, _("#"),       3, TT_FL_RIGHT);
-	tt_define_column(tb, _("Name"),  0.2, 0);
-	tt_define_column(tb, _("Sector"),  2, TT_FL_RIGHT);
-	tt_define_column(tb, _("Size"),    9, TT_FL_RIGHT);
-
-	for (i = 0, used = 0; i < SGI_MAXVOLUMES; i++) {
-		struct tt_line *ln;
-		uint32_t start = be32_to_cpu(sgilabel->volume[i].block_num),
-			 len = be32_to_cpu(sgilabel->volume[i].num_bytes);
-		if (!len)
-			continue;
-		ln = tt_add_line(tb, NULL);
-		if (!ln)
-			continue;
-		if (asprintf(&p, "%zu:", i) > 0)
-			tt_line_set_data(ln, 0, p);		/* # */
-		if (*sgilabel->volume[i].name)
-			tt_line_set_data(ln, 1,
-				strndup((char *) sgilabel->volume[i].name,
-				        sizeof(sgilabel->volume[i].name)));	/* Name */
-		if (asprintf(&p, "%ju", (uintmax_t) start) > 0)
-			tt_line_set_data(ln, 2, p);	/* Sector */
-		if (asprintf(&p, "%ju",	(uintmax_t) len) > 0)
-			tt_line_set_data(ln, 3, p);	/* Size */
-		used++;
-	}
-
-	if (used)
-		rc = fdisk_print_table(cxt, tb);
-	tt_free_table(tb);
-#endif
 	fdisk_colon(cxt, _("Bootfile: %s"), sgilabel->boot_file);
 	return rc;
 }
@@ -370,6 +327,9 @@ static int sgi_get_partition(struct fdisk_context *cxt, size_t n, struct fdisk_p
 	pa->size = len;
 	pa->start = start;
 	pa->end = start + len - (len ? 1 : 0);
+
+	if (pa->type && pa->type->type == SGI_TYPE_ENTIRE_DISK)
+		pa->wholedisk = 1;
 
 	pa->attrs = sgi_get_swappartition(cxt) == (int) n ? "swap" :
 		    sgi_get_bootpartition(cxt) == (int) n ? "boot" : NULL;
