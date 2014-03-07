@@ -777,6 +777,8 @@ static int sun_get_partition(struct fdisk_context *cxt, size_t n,
 	len = be32_to_cpu(part->num_sectors);
 
 	pa->type = sun_get_parttype(cxt, n);
+	if (pa->type && pa->type->type == SUN_TAG_WHOLEDISK)
+		pa->wholedisk = 1;
 
 	if (flags & SUN_FLAG_UNMNT || flags & SUN_FLAG_RONLY) {
 		if (asprintf(&pa->attrs, "%c%c",
