@@ -74,6 +74,7 @@ enum {
 	COL_PARTTYPE,
 	COL_PARTLABEL,
 	COL_PARTUUID,
+	COL_PARTFLAGS,
 	COL_RA,
 	COL_RO,
 	COL_RM,
@@ -129,6 +130,7 @@ static struct colinfo infos[] = {
 	[COL_PARTTYPE]  = { "PARTTYPE",  36,  0, N_("partition type UUID") },
 	[COL_PARTLABEL] = { "PARTLABEL", 0.1, 0, N_("partition LABEL") },
 	[COL_PARTUUID]  = { "PARTUUID",  36,  0, N_("partition UUID") },
+	[COL_PARTFLAGS] = { "PARTFLAGS",  36,  0, N_("partition flags") },
 
 	[COL_RA]     = { "RA",      3, TT_FL_RIGHT, N_("read-ahead of the device") },
 	[COL_RO]     = { "RO",      1, TT_FL_RIGHT, N_("read-only device") },
@@ -213,6 +215,7 @@ struct blkdev_cxt {
 	char *parttype;		/* partiton type UUID */
 	char *partuuid;		/* partition UUID */
 	char *partlabel;	/* partiton label */
+	char *partflags;	/* partition flags */
 	char *wwn;		/* storage WWN */
 	char *serial;		/* disk serial number */
 
@@ -449,6 +452,8 @@ static int get_udev_properties(struct blkdev_cxt *cxt)
 			cxt->parttype = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_UUID")))
 			cxt->partuuid = xstrdup(data);
+		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_FLAGS")))
+			cxt->partflags = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_WWN")))
 			cxt->wwn = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_SERIAL_SHORT")))
@@ -508,7 +513,8 @@ static void probe_device(struct blkdev_cxt *cxt)
 			cxt->partuuid = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_NAME", &data, NULL))
 			cxt->partlabel = xstrdup(data);
-
+		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_FLAGS", &data, NULL))
+			cxt->partflags = xstrdup(data);
 	}
 
 	blkid_free_probe(pr);
@@ -776,6 +782,11 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		probe_device(cxt);
 		if (cxt->partuuid)
 			tt_line_set_data(ln, col, xstrdup(cxt->partuuid));
+		break;
+	case COL_PARTFLAGS:
+		probe_device(cxt);
+		if (cxt->partflags)
+			tt_line_set_data(ln, col, xstrdup(cxt->partflags));
 		break;
 	case COL_WWN:
 		get_udev_properties(cxt);
