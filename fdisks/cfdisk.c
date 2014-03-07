@@ -1123,7 +1123,7 @@ static int ui_refresh(struct cfdisk *cf)
 		ui_center(2, _("Label: %s, identifier: %s"),
 				cf->cxt->label->name, id);
 	else
-		ui_center(2, _("Label: %s"));
+		ui_center(2, _("Label: %s"), cf->cxt->label->name);
 	free(strsz);
 
 	ui_draw_table(cf);
