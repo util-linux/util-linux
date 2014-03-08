@@ -15,7 +15,9 @@
 
 #include <sys/syscall.h>
 
+#include "c.h"
 #include "randutils.h"
+#include "nls.h"
 
 #ifdef HAVE_TLS
 #define THREAD_LOCAL static __thread
@@ -106,6 +108,26 @@ void random_get_bytes(void *buf, size_t nbytes)
 #endif
 
 	return;
+}
+
+
+/*
+ * Tell source of randomness.
+ */
+const char *random_tell_source(void)
+{
+	size_t i;
+	static const char *random_sources[] = {
+		"/dev/urandom",
+		"/dev/random"
+	};
+
+	for (i = 0; i < ARRAY_SIZE(random_sources); i++) {
+		if (!access(random_sources[i], R_OK))
+			return random_sources[i];
+	}
+
+	return _("libc pseudo-random functions");
 }
 
 #ifdef TEST_PROGRAM

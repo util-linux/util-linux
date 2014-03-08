@@ -22,6 +22,7 @@
 #include "md5.h"
 #include "nls.h"
 #include "closestream.h"
+#include "randutils.h"
 
 #include <fcntl.h>
 #include <getopt.h>
@@ -31,20 +32,10 @@
 #include <sys/time.h>
 #include <unistd.h>
 
-#define BUFFERSIZE	4096
-
-struct rngs {
-	const char *path;
-	int minlength, maxlength;
-} rngs[] = {
-	{"/dev/random",		16, 16},  /* 16 bytes = 128 bits suffice */
-	{"/proc/interrupts",	 0,  0},
-	{"/proc/slabinfo",	 0,  0},
-	{"/proc/stat",		 0,  0},
-	{"/dev/urandom",	32, 64},
+enum {
+	BUFFERSIZE = 4096,
+	RAND_BYTES = 128
 };
-
-#define RNGS (sizeof(rngs)/sizeof(struct rngs))
 
 /* The basic function to hash a file */
 static off_t hash_file(struct MD5Context *ctx, int fd)
@@ -83,15 +74,11 @@ int main(int argc, char **argv)
 	size_t i;
 	struct MD5Context ctx;
 	unsigned char digest[MD5LENGTH];
-	unsigned char buf[BUFFERSIZE];
+	unsigned char buf[RAND_BYTES];
 	int fd;
 	int c;
-	pid_t pid;
 	char *file = NULL;
 	int verbose = 0;
-	int r;
-	struct timeval tv;
-	struct timezone tz;
 
 	static const struct option longopts[] = {
 		{"file", required_argument, NULL, 'f'},
@@ -125,13 +112,6 @@ int main(int argc, char **argv)
 		}
 
 	MD5Init(&ctx);
-	gettimeofday(&tv, &tz);
-	MD5Update(&ctx, (unsigned char *) &tv, sizeof(tv));
-
-	pid = getppid();
-	MD5Update(&ctx, (unsigned char *) &pid, sizeof(pid));
-	pid = getpid();
-	MD5Update(&ctx, (unsigned char *) &pid, sizeof(pid));
 
 	if (file) {
 		int count = 0;
@@ -158,28 +138,11 @@ int main(int argc, char **argv)
 		}
 	}
 
-	for (i = 0; i < RNGS; i++) {
-		if ((fd = open(rngs[i].path, O_RDONLY | O_NONBLOCK)) >= 0) {
-			int count = sizeof(buf);
-
-			if (rngs[i].maxlength && count > rngs[i].maxlength)
-				count = rngs[i].maxlength;
-			r = read(fd, buf, count);
-			if (r > 0)
-				MD5Update(&ctx, buf, r);
-			else
-				r = 0;
-			close(fd);
-			if (verbose)
-				fprintf(stderr,
-					P_("Got %d byte from %s\n",
-					   "Got %d bytes from %s\n", r),
-					r, rngs[i].path);
-			if (rngs[i].minlength && r >= rngs[i].minlength)
-				break;
-		} else if (verbose)
-			warn(_("cannot open %s"), rngs[i].path);
-	}
+	random_get_bytes(&buf, RAND_BYTES);
+	MD5Update(&ctx, buf, RAND_BYTES);
+	if (verbose)
+		fprintf(stderr,
+			_("Got %d bytes from %s\n"), RAND_BYTES, random_tell_source());
 
 	MD5Final(digest, &ctx);
 	for (i = 0; i < MD5LENGTH; i++)

@@ -32,6 +32,7 @@ look_SOURCES = misc-utils/look.c
 usrbin_exec_PROGRAMS += mcookie
 dist_man_MANS += misc-utils/mcookie.1
 mcookie_SOURCES = misc-utils/mcookie.c lib/md5.c
+mcookie_LDADD = $(LDADD) libcommon.la
 
 usrbin_exec_PROGRAMS += namei
 dist_man_MANS += misc-utils/namei.1

@@ -8,5 +8,6 @@
 
 extern int random_get_fd(void);
 extern void random_get_bytes(void *buf, size_t nbytes);
+extern const char *random_tell_source(void);
 
 #endif
