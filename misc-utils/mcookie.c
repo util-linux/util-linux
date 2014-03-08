@@ -23,7 +23,9 @@
 #include "nls.h"
 #include "closestream.h"
 #include "randutils.h"
+#include "strutils.h"
 #include "xalloc.h"
+#include "all-io.h"
 
 #include <fcntl.h>
 #include <getopt.h>
@@ -42,18 +44,29 @@ struct mcookie_control {
 	struct	MD5Context ctx;
 	char	**files;
 	size_t	nfiles;
+	uint64_t maxsz;
 
 	unsigned int verbose:1;
 };
 
 /* The basic function to hash a file */
-static size_t hash_file(struct mcookie_control *ctl, int fd)
+static uint64_t hash_file(struct mcookie_control *ctl, int fd)
 {
-	size_t count = 0;
-	ssize_t r;
 	unsigned char buf[BUFFERSIZE];
+	uint64_t wanted, count;
 
-	while ((r = read(fd, buf, sizeof(buf))) > 0) {
+	wanted = ctl->maxsz ? ctl->maxsz : sizeof(buf);
+
+	for (count = 0; count < wanted; ) {
+		size_t rdsz = sizeof(buf);
+		ssize_t r;
+
+		if (wanted - count < rdsz)
+			rdsz = wanted - count;
+
+		r = read_all(fd, (char *) buf, rdsz);
+		if (r < 0)
+			break;
 		MD5Update(&ctl->ctx, buf, r);
 		count += r;
 	}
@@ -70,6 +83,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -f, --file <file>     use file as a cookie seed\n"), out);
+	fputs(_(" -m, --max-size <num>  limit how much is read from seed files\n"), out);
 	fputs(_(" -v, --verbose         explain what is being done\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -122,6 +136,7 @@ int main(int argc, char **argv)
 
 	static const struct option longopts[] = {
 		{"file", required_argument, NULL, 'f'},
+		{"max-size", required_argument, NULL, 'm'},
 		{"verbose", no_argument, NULL, 'v'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -136,13 +151,17 @@ int main(int argc, char **argv)
 	if (2 < argc)
 		ctl.files = xmalloc(sizeof(char *) * argc);
 
-	while ((c = getopt_long(argc, argv, "f:vVh", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "f:m:vVh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'v':
 			ctl.verbose = 1;
 			break;
 		case 'f':
 			ctl.files[ctl.nfiles++] = optarg;
+			break;
+		case 'm':
+			ctl.maxsz = strtosize_or_err(optarg,
+						     _("failed to parse length"));
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -153,6 +172,9 @@ int main(int argc, char **argv)
 			usage(stderr);
 		}
 	}
+
+	if (ctl.maxsz && ctl.nfiles == 0)
+		warnx(_("--max-size ignored when used without --file."));
 
 	randomness_from_files(&ctl);
 	free(ctl.files);
