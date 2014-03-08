@@ -39,9 +39,9 @@ enum {
 };
 
 /* The basic function to hash a file */
-static off_t hash_file(struct MD5Context *ctx, int fd)
+static size_t hash_file(struct MD5Context *ctx, int fd)
 {
-	off_t count = 0;
+	size_t count = 0;
 	ssize_t r;
 	unsigned char buf[BUFFERSIZE];
 
@@ -74,7 +74,7 @@ static void randomness_from_files(char **files, int nfiles,
 				  struct MD5Context *ctx, int verbose)
 {
 	int fd, i;
-	int count = 0;
+	size_t count = 0;
 
 	for (i = 0; i < nfiles; i++) {
 		if (files[i][0] == '-' && !files[i][1])
@@ -88,8 +88,8 @@ static void randomness_from_files(char **files, int nfiles,
 			count = hash_file(ctx, fd);
 			if (verbose)
 				fprintf(stderr,
-					P_("Got %d byte from %s\n",
-					   "Got %d bytes from %s\n", count),
+					P_("Got %zu byte from %s\n",
+					   "Got %zu bytes from %s\n", count),
 					count, files[i]);
 
 			if (fd != STDIN_FILENO)
