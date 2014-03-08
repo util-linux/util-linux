@@ -545,18 +545,16 @@ main(int argc, char **argv) {
 	sz = get_size(device_name);
 	if (!PAGES)
 		PAGES = sz;
-	else if (PAGES > sz && !force) {
+	else if (PAGES > sz && !force)
 		errx(EXIT_FAILURE,
 			_("error: "
 			  "size %llu KiB is larger than device size %llu KiB"),
 			PAGES*(pagesize/1024), sz*(pagesize/1024));
-	}
 
-	if (PAGES < MIN_GOODPAGES) {
-		warnx(_("error: swap area needs to be at least %ld KiB"),
-			(long)(MIN_GOODPAGES * pagesize/1024));
-		usage(stderr);
-	}
+	if (PAGES < MIN_GOODPAGES)
+		errx(EXIT_FAILURE,
+		     _("error: swap area needs to be at least %ld KiB"),
+		     (long)(MIN_GOODPAGES * pagesize / 1024));
 
 #ifdef __linux__
 	if (get_linux_version() >= KERNEL_VERSION(2,3,4))
