@@ -14,6 +14,12 @@
 #include "nls.h"
 #include "closestream.h"
 #include "c.h"
+#include "exitcodes.h"
+
+/* Exit codes used by findfs. */
+#define FINDFS_SUCCESS		0	/* no errors */
+#define FINDFS_NOT_FOUND	1	/* label or uuid cannot be found */
+#define FINDFS_USAGE_ERROR	2	/* user did something unexpected */
 
 static void __attribute__((__noreturn__)) usage(int rc)
 {
@@ -41,7 +47,7 @@ int main(int argc, char **argv)
 	if (argc != 2)
 		/* we return '2' for backward compatibility
 		 * with version from e2fsprogs */
-		usage(2);
+		usage(FINDFS_USAGE_ERROR);
 
 	if (!strncmp(argv[1], "LABEL=", 6)) {
 		tk = "LABEL";
@@ -52,18 +58,18 @@ int main(int argc, char **argv)
 	} else if (strcmp(argv[1], "-V") == 0 ||
 		   strcmp(argv[1], "--version") == 0) {
 		printf(UTIL_LINUX_VERSION);
-		return EXIT_SUCCESS;
+		return FINDFS_SUCCESS;
 	} else if (strcmp(argv[1], "-h") == 0 ||
 		   strcmp(argv[1], "--help") == 0) {
-		usage(EXIT_SUCCESS);
+		usage(FINDFS_SUCCESS);
 	} else
-		usage(2);
+		usage(FINDFS_USAGE_ERROR);
 
 	dev = blkid_evaluate_tag(tk, vl, NULL);
 	if (!dev)
-		errx(EXIT_FAILURE, _("unable to resolve '%s'"),	argv[1]);
+		errx(FINDFS_NOT_FOUND, _("unable to resolve '%s'"), argv[1]);
 
 	puts(dev);
-	exit(EXIT_SUCCESS);
+	return FINDFS_SUCCESS;
 }
 

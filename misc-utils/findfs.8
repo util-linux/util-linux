@@ -2,7 +2,7 @@
 .\" Copyright 1993, 1994, 1995 by Theodore Ts'o.  All Rights Reserved.
 .\" This file may be copied under the terms of the GNU Public License.
 .\"
-.TH FINDFS 8 "February 2009" "util-linux" "System Administration"
+.TH FINDFS 8 "March 2014" "util-linux" "System Administration"
 .SH NAME
 findfs \- find a filesystem by label or UUID
 .SH SYNOPSIS
@@ -21,10 +21,30 @@ or a UUID equal to
 If the filesystem is found, the device name for the filesystem will
 be printed on stdout.
 .PP
+.SH "EXIT STATUS"
+.RS
+.PD 0
+.TP
+.B 0
+success
+.TP
+.B 1
+label or uuid cannot be found
+.TP
+.B 2
+usage error, wrong number of arguments or unknown option
+.PD
+.RE
 .SH AUTHOR
 .B findfs
-was originally written by Theodore Ts'o (tytso@mit.edu) and re-written for
-the util-linux package by Karel Zak (kzak@redhat.com).
+was originally written by
+.MT tytso@mit.edu
+Theodore Ts'o
+.ME
+and re-written for the util-linux package by
+.MT kzak@redhat.com
+Karel Zak
+.ME .
 .SH ENVIRONMENT
 .IP LIBBLKID_DEBUG=0xffff
 enables debug output.
@@ -33,4 +53,6 @@ enables debug output.
 .BR fsck (8)
 .SH AVAILABILITY
 The findfs command is part of the util-linux package and is available from
-ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
+.UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .
