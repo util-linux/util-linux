@@ -57,6 +57,11 @@
 #include "ttyutils.h"
 #include "xalloc.h"
 
+enum {
+	KILL_FIELD_WIDTH = 11,
+	KILL_OUTPUT_WIDTH = 72
+};
+
 struct signv {
 	const char *name;
 	int val;
@@ -388,15 +393,14 @@ static void printsig(int sig)
 	printf("%d\n", sig);
 }
 
-#define FIELD_WIDTH 11
 static void pretty_print_signal(FILE *fp, size_t term_width, size_t *lpos,
 				int signum, const char *name)
 {
-	if (term_width < (*lpos + FIELD_WIDTH)) {
+	if (term_width < (*lpos + KILL_FIELD_WIDTH)) {
 		fputc('\n', fp);
 		*lpos = 0;
 	}
-	*lpos += FIELD_WIDTH;
+	*lpos += KILL_FIELD_WIDTH;
 	fprintf(fp, "%2d %-8s", signum, name);
 }
 
@@ -407,7 +411,7 @@ static void printsignals(FILE *fp, int pretty)
 	if (!pretty) {
 		for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
 			lth = 1 + strlen(sys_signame[n].name);
-			if (72 < lpos + lth) {
+			if (KILL_OUTPUT_WIDTH < lpos + lth) {
 				fputc('\n', fp);
 				lpos = 0;
 			} else if (lpos)
@@ -424,7 +428,7 @@ static void printsignals(FILE *fp, int pretty)
 	/* pretty print */
 	width = get_terminal_width();
 	if (width == 0)
-		width = 72;
+		width = KILL_OUTPUT_WIDTH;
 	else
 		width -= 1;
 	for (n = 0; n < ARRAY_SIZE(sys_signame); n++)
