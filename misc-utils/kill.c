@@ -155,6 +155,7 @@ struct signv {
 #endif
 };
 
+static char **parse_arguments(int argc, char **argv, struct kill_control *ctl);
 static int arg_to_signum(char *arg, int mask);
 static void nosig(char *name);
 static void printsig(const struct kill_control *ctl);
@@ -170,7 +171,6 @@ static union sigval sigdata;
 int main(int argc, char **argv)
 {
 	struct kill_control ctl;
-	char *arg;
 	int errors = EXIT_SUCCESS;
 
 	setlocale(LC_ALL, "");
@@ -183,111 +183,7 @@ int main(int argc, char **argv)
 	ctl.do_pid = (!strcmp(program_invocation_short_name, "pid"));	/* Yecch */
 	if (ctl.do_pid)	/* FIXME: remove in March 2016.  */
 		warnx(_("use of 'kill --pid' option as command name is deprecated"));
-	/* Loop through the arguments.  Actually, -a is the only option
-	 * can be used with other options.  The 'kill' is basically a
-	 * one-option-at-most program. */
-	for (argc--, argv++; 0 < argc; argc--, argv++) {
-		arg = *argv;
-		if (*arg != '-')
-			break;
-		if (!strcmp(arg, "--")) {
-			argc--, argv++;
-			break;
-		}
-		if (!strcmp(arg, "-v") || !strcmp(arg, "-V") ||
-		    !strcmp(arg, "--version")) {
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
-		}
-		if (!strcmp(arg, "-h") || !strcmp(arg, "--help"))
-			usage(stdout);
-
-		if (!strcmp(arg, "-a") || !strcmp(arg, "--all")) {
-			ctl.check_all = 1;
-			continue;
-		}
-		if (!strcmp(arg, "-l") || !strcmp(arg, "--list")) {
-			if (argc < 2) {
-				printsignals(stdout, 0);
-				return EXIT_SUCCESS;
-			}
-			if (2 < argc)
-				errx(EXIT_FAILURE, _("too many arguments"));
-			/* argc == 2, accept "kill -l $?" */
-			arg = argv[1];
-			if ((ctl.numsig = arg_to_signum(arg, 1)) < 0)
-				errx(EXIT_FAILURE, _("unknown signal: %s"),
-				     arg);
-			printsig(&ctl);
-			return EXIT_SUCCESS;
-		}
-		/* for compatibility with procps kill(1) */
-		if (!strncmp(arg, "--list=", 7) || !strncmp(arg, "-l=", 3)) {
-			char *p = strchr(arg, '=') + 1;
-			if ((ctl.numsig = arg_to_signum(p, 1)) < 0)
-				errx(EXIT_FAILURE, _("unknown signal: %s"), p);
-			printsig(&ctl);
-			return EXIT_SUCCESS;
-		}
-		if (!strcmp(arg, "-L") || !strcmp(arg, "--table")) {
-			printsignals(stdout, 1);
-			return EXIT_SUCCESS;
-		}
-		if (!strcmp(arg, "-p") || !strcmp(arg, "--pid")) {
-			ctl.do_pid = 1;
-			if (ctl.do_kill)
-				errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--signal");
-			continue;
-		}
-		if (!strcmp(arg, "-s") || !strcmp(arg, "--signal")) {
-			if (argc < 2)
-				errx(EXIT_FAILURE, _("not enough arguments"));
-			ctl.do_kill = 1;
-			if (ctl.do_pid)
-				errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--signal");
-			argc--, argv++;
-			arg = *argv;
-			if ((ctl.numsig = arg_to_signum(arg, 0)) < 0) {
-				nosig(arg);
-				return EXIT_FAILURE;
-			}
-			continue;
-		}
-		if (!strcmp(arg, "-q") || !strcmp(arg, "--queue")) {
-			if (argc < 2)
-				errx(EXIT_FAILURE, _("option '%s' requires an argument"), arg);
-			argc--, argv++;
-			arg = *argv;
-#ifdef HAVE_SIGQUEUE
-			sigdata.sival_int =
-			    strtos32_or_err(arg, _("invalid sigval argument"));
-			use_sigval = 1;
-#endif
-			continue;
-		}
-		/* 'arg' begins with a dash but is not a known option.
-		 * So it's probably something like -HUP, or -1/-n try to
-		 * deal with it.
-		 *
-		 * -n could be signal n, or pid -n (i.e., process group
-		 * number).  In case of doubt POSIX tells us to assume a
-		 * signal.  If a signal has been parsed, assume it is a
-		 * pid, break.  */
-		if (ctl.do_kill)
-			break;
-		arg++;
-		if ((ctl.numsig = arg_to_signum(arg, 0)) < 0)
-			errx(EXIT_FAILURE, _("invalid sigval argument"));
-		ctl.do_kill = 1;
-		if (ctl.do_pid)
-			errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--signal");
-		continue;
-	}
-	if (!*argv)
-		errx(EXIT_FAILURE, _("not enough arguments"));
-	if (ctl.do_pid)
-		ctl.numsig = -1;
-
+	argv = parse_arguments(argc, argv, &ctl);
 	/* We are done with the options.  The rest of the arguments
 	 * should be process ids and names, kill them.  */
 	for (/* nothing */; (ctl.arg = *argv) != NULL; argv++) {
@@ -317,6 +213,117 @@ int main(int argc, char **argv)
 		}
 	}
 	return errors;
+}
+
+static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
+{
+	char *arg;
+
+	/* Loop through the arguments.  Actually, -a is the only option
+	 * can be used with other options.  The 'kill' is basically a
+	 * one-option-at-most program. */
+	for (argc--, argv++; 0 < argc; argc--, argv++) {
+		arg = *argv;
+		if (*arg != '-')
+			break;
+		if (!strcmp(arg, "--")) {
+			argc--, argv++;
+			break;
+		}
+		if (!strcmp(arg, "-v") || !strcmp(arg, "-V") ||
+		    !strcmp(arg, "--version")) {
+			printf(UTIL_LINUX_VERSION);
+			exit(EXIT_SUCCESS);
+		}
+		if (!strcmp(arg, "-h") || !strcmp(arg, "--help"))
+			usage(stdout);
+
+		if (!strcmp(arg, "-a") || !strcmp(arg, "--all")) {
+			ctl->check_all = 1;
+			continue;
+		}
+		if (!strcmp(arg, "-l") || !strcmp(arg, "--list")) {
+			if (argc < 2) {
+				printsignals(stdout, 0);
+				exit(EXIT_SUCCESS);
+			}
+			if (2 < argc)
+				errx(EXIT_FAILURE, _("too many arguments"));
+			/* argc == 2, accept "kill -l $?" */
+			arg = argv[1];
+			if ((ctl->numsig = arg_to_signum(arg, 1)) < 0)
+				errx(EXIT_FAILURE, _("unknown signal: %s"),
+				     arg);
+			printsig(ctl);
+			exit(EXIT_SUCCESS);
+		}
+		/* for compatibility with procps kill(1) */
+		if (!strncmp(arg, "--list=", 7) || !strncmp(arg, "-l=", 3)) {
+			char *p = strchr(arg, '=') + 1;
+			if ((ctl->numsig = arg_to_signum(p, 1)) < 0)
+				errx(EXIT_FAILURE, _("unknown signal: %s"), p);
+			printsig(ctl);
+			exit(EXIT_SUCCESS);
+		}
+		if (!strcmp(arg, "-L") || !strcmp(arg, "--table")) {
+			printsignals(stdout, 1);
+			exit(EXIT_SUCCESS);
+		}
+		if (!strcmp(arg, "-p") || !strcmp(arg, "--pid")) {
+			ctl->do_pid = 1;
+			if (ctl->do_kill)
+				errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--signal");
+			continue;
+		}
+		if (!strcmp(arg, "-s") || !strcmp(arg, "--signal")) {
+			if (argc < 2)
+				errx(EXIT_FAILURE, _("not enough arguments"));
+			ctl->do_kill = 1;
+			if (ctl->do_pid)
+				errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--signal");
+			argc--, argv++;
+			arg = *argv;
+			if ((ctl->numsig = arg_to_signum(arg, 0)) < 0) {
+				nosig(arg);
+				exit(EXIT_FAILURE);
+			}
+			continue;
+		}
+		if (!strcmp(arg, "-q") || !strcmp(arg, "--queue")) {
+			if (argc < 2)
+				errx(EXIT_FAILURE, _("option '%s' requires an argument"), arg);
+			argc--, argv++;
+			arg = *argv;
+#ifdef HAVE_SIGQUEUE
+			sigdata.sival_int =
+			    strtos32_or_err(arg, _("invalid sigval argument"));
+			use_sigval = 1;
+#endif
+			continue;
+		}
+		/* 'arg' begins with a dash but is not a known option.
+		 * So it's probably something like -HUP, or -1/-n try to
+		 * deal with it.
+		 *
+		 * -n could be signal n, or pid -n (i.e., process group
+		 * number).  In case of doubt POSIX tells us to assume a
+		 * signal.  If a signal has been parsed, assume it is a
+		 * pid, break.  */
+		if (ctl->do_kill)
+			break;
+		arg++;
+		if ((ctl->numsig = arg_to_signum(arg, 0)) < 0)
+			errx(EXIT_FAILURE, _("invalid sigval argument"));
+		ctl->do_kill = 1;
+		if (ctl->do_pid)
+			errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--signal");
+		continue;
+	}
+	if (!*argv)
+		errx(EXIT_FAILURE, _("not enough arguments"));
+	if (ctl->do_pid)
+		ctl->numsig = -1;
+	return argv;
 }
 
 #ifdef SIGRTMIN
