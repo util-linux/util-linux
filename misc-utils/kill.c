@@ -170,6 +170,8 @@ int main(int argc, char **argv)
 
 	numsig = SIGTERM;
 	do_pid = (!strcmp(program_invocation_short_name, "pid"));	/* Yecch */
+	if (do_pid)	/* FIXME: remove in March 2016.  */
+		warnx(_("use of 'kill --pid' option as command name is deprecated"));
 	do_kill = 0;
 	check_all = 0;
 	/* Loop through the arguments.  Actually, -a is the only option
