@@ -212,7 +212,7 @@ int main(int argc, char **argv)
 				return EXIT_SUCCESS;
 			}
 			if (2 < argc)
-				usage(stderr);
+				errx(EXIT_FAILURE, _("too many arguments"));
 			/* argc == 2, accept "kill -l $?" */
 			arg = argv[1];
 			if ((ctl.numsig = arg_to_signum(arg, 1)) < 0)
@@ -236,15 +236,15 @@ int main(int argc, char **argv)
 		if (!strcmp(arg, "-p") || !strcmp(arg, "--pid")) {
 			ctl.do_pid = 1;
 			if (ctl.do_kill)
-				usage(stderr);
+				errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--signal");
 			continue;
 		}
 		if (!strcmp(arg, "-s") || !strcmp(arg, "--signal")) {
 			if (argc < 2)
-				usage(stderr);
+				errx(EXIT_FAILURE, _("not enough arguments"));
 			ctl.do_kill = 1;
 			if (ctl.do_pid)
-				usage(stderr);
+				errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--signal");
 			argc--, argv++;
 			arg = *argv;
 			if ((ctl.numsig = arg_to_signum(arg, 0)) < 0) {
@@ -255,7 +255,7 @@ int main(int argc, char **argv)
 		}
 		if (!strcmp(arg, "-q") || !strcmp(arg, "--queue")) {
 			if (argc < 2)
-				usage(stderr);
+				errx(EXIT_FAILURE, _("option '%s' requires an argument"), arg);
 			argc--, argv++;
 			arg = *argv;
 #ifdef HAVE_SIGQUEUE
@@ -277,14 +277,14 @@ int main(int argc, char **argv)
 			break;
 		arg++;
 		if ((ctl.numsig = arg_to_signum(arg, 0)) < 0)
-			usage(stderr);
+			errx(EXIT_FAILURE, _("invalid sigval argument"));
 		ctl.do_kill = 1;
 		if (ctl.do_pid)
-			usage(stderr);
+			errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--signal");
 		continue;
 	}
 	if (!*argv)
-		usage(stderr);
+		errx(EXIT_FAILURE, _("not enough arguments"));
 	if (ctl.do_pid)
 		ctl.numsig = -1;
 
