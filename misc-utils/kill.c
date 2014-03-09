@@ -149,7 +149,7 @@ static int arg_to_signum(char *arg, int mask);
 static void nosig(char *name);
 static void printsig(int sig);
 static void printsignals(FILE *fp, int pretty);
-static int usage(int status);
+static void __attribute__((__noreturn__)) usage(FILE *out);
 static int kill_verbose(char *procname, int pid, int sig);
 
 #ifdef HAVE_SIGQUEUE
@@ -189,7 +189,7 @@ int main(int argc, char **argv)
 			return EXIT_SUCCESS;
 		}
 		if (!strcmp(arg, "-h") || !strcmp(arg, "--help"))
-			return usage(EXIT_FAILURE);
+			usage(stdout);
 
 		if (!strcmp(arg, "-a") || !strcmp(arg, "--all")) {
 			check_all++;
@@ -201,7 +201,7 @@ int main(int argc, char **argv)
 				return EXIT_SUCCESS;
 			}
 			if (2 < argc)
-				return usage(EXIT_FAILURE);
+				usage(stderr);
 			/* argc == 2, accept "kill -l $?" */
 			arg = argv[1];
 			if ((numsig = arg_to_signum(arg, 1)) < 0)
@@ -225,15 +225,15 @@ int main(int argc, char **argv)
 		if (!strcmp(arg, "-p") || !strcmp(arg, "--pid")) {
 			do_pid++;
 			if (do_kill)
-				return usage(EXIT_FAILURE);
+				usage(stderr);
 			continue;
 		}
 		if (!strcmp(arg, "-s") || !strcmp(arg, "--signal")) {
 			if (argc < 2)
-				return usage(EXIT_FAILURE);
+				usage(stderr);
 			do_kill++;
 			if (do_pid)
-				return usage(EXIT_FAILURE);
+				usage(stderr);
 			argc--, argv++;
 			arg = *argv;
 			if ((numsig = arg_to_signum(arg, 0)) < 0) {
@@ -244,7 +244,7 @@ int main(int argc, char **argv)
 		}
 		if (!strcmp(arg, "-q") || !strcmp(arg, "--queue")) {
 			if (argc < 2)
-				return usage(EXIT_FAILURE);
+				usage(stderr);
 			argc--, argv++;
 			arg = *argv;
 #ifdef HAVE_SIGQUEUE
@@ -266,14 +266,14 @@ int main(int argc, char **argv)
 			break;
 		arg++;
 		if ((numsig = arg_to_signum(arg, 0)) < 0)
-			return usage(EXIT_FAILURE);
+			usage(stderr);
 		do_kill++;
 		if (do_pid)
-			return usage(EXIT_FAILURE);
+			usage(stderr);
 		continue;
 	}
 	if (!*argv)
-		return usage(EXIT_FAILURE);
+		usage(stderr);
 	if (do_pid)
 		numsig = -1;
 
@@ -441,10 +441,8 @@ static void printsignals(FILE *fp, int pretty)
 	fputc('\n', fp);
 }
 
-static int usage(int status)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	FILE *out = (status == 0 ? stdout : stderr);
-
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <pid|name> [...]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
@@ -459,7 +457,7 @@ static int usage(int status)
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("kill(1)"));
-	return status;
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 static int kill_verbose(char *procname, pid_t pid, int sig)
