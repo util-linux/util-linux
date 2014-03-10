@@ -86,7 +86,6 @@ include login-utils/Makemodule.am
 include sys-utils/Makemodule.am
 include misc-utils/Makemodule.am
 include disk-utils/Makemodule.am
-include fdisks/Makemodule.am
 
 include bash-completion/Makemodule.am
 
