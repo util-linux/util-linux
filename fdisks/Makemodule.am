@@ -7,7 +7,6 @@ dist_man_MANS += fdisks/fdisk.8
 fdisk_SOURCES = \
 	fdisks/fdisk.c \
 	fdisks/fdisk.h \
-	fdisks/fdisk-ask.c \
 	fdisks/fdisk-menu.c
 
 fdisk_LDADD = $(LDADD) libcommon.la libfdisk.la
