@@ -1052,6 +1052,9 @@ static int ui_draw_table(struct cfdisk *cf)
 		clrtoeol();
 	}
 
+	if ((size_t) cf->lines_idx > nparts - 1)
+		cf->lines_idx = nparts ? nparts - 1 : 0;
+
 	/* print header */
 	attron(A_BOLD);
 	mvaddstr(TABLE_START_LINE, cl, cf->lines[0]);
