@@ -25,6 +25,7 @@
 
 #ifdef HAVE_WIDECHAR
 # include <wctype.h>
+# include <wchar.h>
 #endif
 
 #include "c.h"
@@ -486,7 +487,9 @@ static void ui_warnx(const char *fmt, ...)
 	va_list ap;
 	va_start(ap, fmt);
 	if (ui_enabled)
-		ui_vprint_center(INFO_LINE, COLOR_PAIR(CFDISK_CL_WARNING), fmt, ap);
+		ui_vprint_center(INFO_LINE,
+			colors_wanted() ? COLOR_PAIR(CFDISK_CL_WARNING) : 0,
+			fmt, ap);
 	else
 		vfprintf(stderr, fmt, ap);
 	va_end(ap);
@@ -501,7 +504,9 @@ static void ui_warn(const char *fmt, ...)
 
 	va_start(ap, fmt);
 	if (ui_enabled)
-		ui_vprint_center(INFO_LINE, COLOR_PAIR(CFDISK_CL_WARNING), fmt_m, ap);
+		ui_vprint_center(INFO_LINE,
+			colors_wanted() ? COLOR_PAIR(CFDISK_CL_WARNING) : 0,
+			fmt_m, ap);
 	else
 		vfprintf(stderr, fmt_m, ap);
 	va_end(ap);
@@ -682,15 +687,18 @@ static int ui_init(struct cfdisk *cf __attribute__((__unused__)))
 	ui_enabled = 1;
 	initscr();
 
+#ifdef HAVE_USE_DEFAULT_COLORS
 	if (colors_wanted() && has_colors()) {
 		size_t i;
 
 		start_color();
 		use_default_colors();
-
 		for (i = 1; i < ARRAY_SIZE(color_pairs); i++)		/* yeah, start from 1! */
 			init_pair(i, color_pairs[i][0], color_pairs[i][1]);
 	}
+#else
+	colors_init(UL_COLORMODE_NEVER);
+#endif
 
 	cbreak();
 	noecho();
@@ -1018,7 +1026,7 @@ static void ui_draw_partition(struct cfdisk *cf, size_t i)
 	} else {
 		int at = 0;
 
-		if (is_freespace(cf, i)) {
+		if (colors_wanted() && is_freespace(cf, i)) {
 			attron(COLOR_PAIR(CFDISK_CL_FREESPACE));
 			at = 1;
 		}
@@ -1151,7 +1159,7 @@ static ssize_t ui_get_string(struct cfdisk *cf, const char *prompt,
 	clrtoeol();
 
 	if (prompt) {
-		mvaddstr(ln, cl, prompt);
+		mvaddstr(ln, cl, (char *) prompt);
 		cl += mbs_safe_width(prompt);
 	}
 
@@ -1568,7 +1576,9 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			ref = 1;
 		break;
 	}
+#ifdef KEY_DC
 	case KEY_DC:
+#endif
 	case 'd': /* Delete */
 		if (fdisk_delete_partition(cf->cxt, n) != 0)
 			warn = _("Could not delete partition %zu.");
@@ -1810,6 +1820,8 @@ int main(int argc, char *argv[])
 			return EXIT_SUCCESS;
 		}
 	}
+
+
 
 	colors_init(colormode);
 

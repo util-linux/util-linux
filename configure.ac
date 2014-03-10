@@ -613,10 +613,12 @@ AS_IF([test "x$with_ncurses" != xno], [
     NCURSES_LIBS=${NCURSESW_LIBS}
     NCURSES_CFLAGS=${NCURSESW_CFLAGS}
     AC_DEFINE([HAVE_LIBNCURSESW])
+    CURSES_LIB_NAME="ncursesw"
   ], [
     PKG_CHECK_MODULES(NCURSES, [ncurses], [
       have_ncurses=yes
       AC_DEFINE([HAVE_LIBNCURSES])
+      CURSES_LIB_NAME="ncursesw"
     ], [:])
   ])
 
@@ -634,12 +636,14 @@ AS_IF([test "x$with_ncurses" != xno], [
 	AS_IF([test "x$have_ncurses" = xyes], [
 	  AC_CHECK_HEADERS([ncursesw/ncurses.h])
 	  NCURSES_LIBS="-lncursesw"
+	  CURSES_LIB_NAME="ncursesw"
 	])
       ])
       AS_IF([test "x$have_ncurses" = xno], [
 	UL_CHECK_LIB(ncurses, initscr)
 	AS_IF([test "x$have_ncurses" = xyes], [
 	  NCURSES_LIBS="-lncurses"
+	  CURSES_LIB_NAME="ncurses"
 	])
       ])
     ])
@@ -669,12 +673,20 @@ AS_IF([test "x$with_slang" = xyes], [
 #endif
 ])
   AS_IF([test "x$have_slang" = xno], [
-    AC_MSG_ERROR([slang selected but slcurses.h not found])
+    AC_MSG_ERROR([slang selected but slcurses.h not found])],
+    [CURSES_LIB_NAME=slang
   ])
 ])
 AM_CONDITIONAL([HAVE_SLANG], [test "x$have_slang" = xyes])
 
 AM_CONDITIONAL([BUILD_CFDISK], [test "x$have_slang" = xyes -o "x$have_ncurses" = xyes])
+
+AS_IF([test "x$have_slang" = xyes -o "x$have_ncurses" = xyes], [
+	AC_CHECK_LIB([$CURSES_LIB_NAME], use_default_colors, [
+		     AC_DEFINE(HAVE_USE_DEFAULT_COLORS, 1,
+			       [Define if curses library has the use_default_colors command.])
+	])
+])
 
 
 dnl Try pkg-config for libtinfo
