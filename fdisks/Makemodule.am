@@ -38,10 +38,7 @@ if !ARCH_SPARC
 
 sbin_PROGRAMS += sfdisk
 dist_man_MANS += fdisks/sfdisk.8
-sfdisk_SOURCES = \
-	fdisks/partname.c \
-	fdisks/sfdisk.c \
-	fdisks/partname.h
+sfdisk_SOURCES = fdisks/sfdisk.c
 sfdisk_LDADD = $(LDADD) libcommon.la
 
 if HAVE_STATIC_SFDISK
