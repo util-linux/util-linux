@@ -66,8 +66,10 @@ int parse_size(const char *str, uintmax_t *res, int *power)
 
 	*res = 0;
 
-	if (!str || !*str)
+	if (!str || !*str) {
+		rc = -EINVAL;
 		goto err;
+	}
 
 	/* Only positive numbers are acceptable
 	 *
