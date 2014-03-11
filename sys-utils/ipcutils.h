@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <grp.h>
 #include <pwd.h>
+#include <stdint.h>
 
 /*
  * SHM_DEST and SHM_LOCKED are defined in kernel headers, but inside
@@ -118,7 +119,7 @@ struct ipc_stat {
 };
 
 extern void ipc_print_perms(FILE *f, struct ipc_stat *is);
-extern void ipc_print_size(int unit, char *msg, size_t size, const char *end, int width);
+extern void ipc_print_size(int unit, char *msg, uint64_t size, const char *end, int width);
 
 /* See 'struct shmid_kernel' in kernel sources
  */

@@ -201,7 +201,7 @@ static void do_shm (char format, int unit)
 			       _("max seg size"), lim.shmmax, "\n", 0);
 		ipc_print_size(unit == IPC_UNIT_DEFAULT ? IPC_UNIT_KB : unit,
 			       _("max total shared memory"),
-			       lim.shmall * getpagesize(), "\n", 0);
+			       (uint64_t) lim.shmall * getpagesize(), "\n", 0);
 		ipc_print_size(unit == IPC_UNIT_DEFAULT ? IPC_UNIT_BYTES : unit,
 			       _("min seg size"), lim.shmmin, "\n", 0);
 		return;

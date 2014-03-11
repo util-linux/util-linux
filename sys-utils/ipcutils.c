@@ -508,10 +508,10 @@ void ipc_print_perms(FILE *f, struct ipc_stat *is)
 		fprintf(f, " %-10u\n", is->gid);
 }
 
-void ipc_print_size(int unit, char *msg, size_t size, const char *end,
+void ipc_print_size(int unit, char *msg, uint64_t size, const char *end,
 		    int width)
 {
-	char format[16];
+	char format[32];
 
 	if (!msg)
 		/* NULL */ ;
@@ -527,11 +527,11 @@ void ipc_print_size(int unit, char *msg, size_t size, const char *end,
 	switch (unit) {
 	case IPC_UNIT_DEFAULT:
 	case IPC_UNIT_BYTES:
-		sprintf(format, "%%%dzu", width);
+		sprintf(format, "%%%dju", width);
 		printf(format, size);
 		break;
 	case IPC_UNIT_KB:
-		sprintf(format, "%%%dzu", width);
+		sprintf(format, "%%%dju", width);
 		printf(format, size / 1024);
 		break;
 	case IPC_UNIT_HUMAN:
