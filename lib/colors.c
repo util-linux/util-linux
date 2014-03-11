@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
 	}
 
 	colors_init(mode, program_invocation_short_name);
-	color_enable(UL_COLOR_RED);
+	color_enable(colorscheme_from_string(scheme));
 
 	printf("Hello World!");
 	color_disable();
