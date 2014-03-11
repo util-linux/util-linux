@@ -1,0 +1,25 @@
+.\" terminal-colors.d.5 --
+.\" Copyright 2014 Ondrej Oprala <ooprala@redhat.com>
+.\" Copyright (C) 2014 Karel Zak <kzak@redhat.com>
+.\" Copyright 2014 Red Hat, Inc.
+.\" May be distributed under the GNU General Public License
+.TH "TERMINAL_COLORS\&.D" "5" "January 2014" "util-linux" "terminal-colors.d"
+.SH "NAME"
+terminal-colors.d \- Configure output colorization for various utilities
+.SH "SYNOPSIS"
+.PP
+/etc/terminal-colors\&.d/[util-name\&.]disable
+.SH "DESCRIPTION"
+Files in this directory determine the default behaviour for utilities
+when coloring output.
+
+The file
+.B disable
+turns off output colorization for all utilities compatible with config files in
+.B /etc/terminal-colors\&.d.
+.PP
+.SH AVAILABILITY
+terminal-colors.d is part of the util-linux package and is available from
+.UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .

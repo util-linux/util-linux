@@ -43,6 +43,8 @@ if HAVE_CPU_SET_T
 libcommon_la_SOURCES += lib/cpuset.c
 endif
 
+dist_man_MANS += lib/terminal-colors.d.5
+
 check_PROGRAMS += \
 	test_at \
 	test_blkdev \
