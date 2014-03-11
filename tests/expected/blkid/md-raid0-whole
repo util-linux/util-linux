@@ -7,20 +7,17 @@ Changes will remain in memory only, until you decide to write them.
 Be careful before using the write command.
 
 Device does not contain a recognized partition table.
-
 Created a new <removed>.
 
-Command (m for help): 
-Partition type:
+Command (m for help): Partition type
    p   primary (0 primary, 0 extended, 4 free)
-   e   extended
+   e   extended (container for logical partitions)
 Select (default p): Partition number (1-4, default 1): First sector (2048-204543, default 2048): Last sector, +sectors or +size{K,M,G,T,P} (2048-204543, default 204543): 
 Created a new <removed>.
 
-Command (m for help): 
-Partition type:
+Command (m for help): Partition type
    p   primary (1 primary, 0 extended, 3 free)
-   e   extended
+   e   extended (container for logical partitions)
 Select (default p): Partition number (2-4, default 2): First sector (22528-204543, default 22528): Last sector, +sectors or +size{K,M,G,T,P} (22528-204543, default 204543): 
 Created a new <removed>.
 
@@ -31,12 +28,11 @@ I/O size (minimum/optimal): 65536 bytes / 131072 bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
-Device     Boot     Start       End Blocks  Id System
-<removed>p1           2048     22527  10240  83 Linux
-<removed>p2          22528    204543  91008  83 Linux
+Device     Boot Start    End Sectors  Size Id Type
+<removed>p1       2048  22527   20480   10M 83 Linux
+<removed>p2      22528 204543  182016 88.9M 83 Linux
 
-Command (m for help): 
-The partition table has been altered.
+Command (m for help): The partition table has been altered.
 Calling ioctl() to re-read partition table.
 Syncing disks.
 
