@@ -425,6 +425,8 @@ static int bsd_get_partition(struct fdisk_context *cxt, size_t n,
 		pa->end_post = (p->p_offset + p->p_size) % d->d_secpercyl ? '*' : ' ';
 	}
 
+	pa->start = p->p_offset;
+	pa->end = p->p_offset + p->p_size - 1;
 	pa->size = p->p_size;
 	pa->type = bsd_partition_parttype(cxt, p);
 
@@ -879,9 +881,9 @@ static const struct fdisk_column bsd_columns[] =
 	{ FDISK_COL_DEVICE,	N_("Slice"),	  1,	0 },
 	{ FDISK_COL_START,	N_("Start"),	  5,	TT_FL_RIGHT },
 	{ FDISK_COL_END,	N_("End"),	  5,	TT_FL_RIGHT },
-	{ FDISK_COL_SIZE,	N_("Size"),	  5,	TT_FL_RIGHT },
 	{ FDISK_COL_SECTORS,	N_("Sectors"),    5,	TT_FL_RIGHT },
 	{ FDISK_COL_CYLINDERS,	N_("Cylinders"),  5,	TT_FL_RIGHT },
+	{ FDISK_COL_SIZE,	N_("Size"),	  5,	TT_FL_RIGHT },
 	{ FDISK_COL_TYPE,	N_("Type"),	  8,	0 },
 	{ FDISK_COL_FSIZE,	N_("Fsize"),	  5,	TT_FL_RIGHT },
 	{ FDISK_COL_BSIZE,	N_("Bsize"),	  5,	TT_FL_RIGHT },
