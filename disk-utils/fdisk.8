@@ -244,7 +244,17 @@ this is unlikely to cause difficulty unless you have OS/2 on your machine.
 For best results, you should always use an OS-specific partition table
 program.  For example, you should make DOS partitions with the DOS FDISK
 program and Linux partitions with the Linux fdisk or Linux cfdisk programs.
+.SH COLORS
+Implicit coloring can be disabled as follows:
+.RS
 
+.br
+.BI "touch /etc/terminal-colors.d/fdisk.disable"
+.br
+
+.RE
+For more details see
+.BR terminal-colors.d (5).
 .SH AUTHORS
 .MT kzak@redhat.com
 Karel Zak
