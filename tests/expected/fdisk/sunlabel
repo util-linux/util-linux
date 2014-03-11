@@ -21,8 +21,8 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: sun
 
-Device     Flag Start       End Blocks  Id System
-<removed>1          0       128   4032  83 Linux native
+Device             Start   End Cylinders Size Id Type         Flags
+<removed>1     1   128       129   4M 83 Linux native 
 
 Set partition sysid
 df75defdb97fbd56222aed18631a22d0 sunlabel.img
@@ -34,8 +34,8 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: sun
 
-Device     Flag Start       End Blocks  Id System
-<removed>1          0       128   4032   4 SunOS usr
+Device             Start   End Cylinders Size Id Type      Flags
+<removed>1     1   128       129   4M  4 SunOS usr 
 
 Set first partition readonly
 da23f66698d9a553162887621d4c7490 sunlabel.img
@@ -47,8 +47,8 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: sun
 
-Device     Flag Start       End Blocks  Id System
-<removed>1    r     0       128   4032   4 SunOS usr
+Device             Start   End Cylinders Size Id Type      Flags
+<removed>1     1   128       129   4M  4 SunOS usr     r
 
 Set first partition mountable
 3ab76e8491b103eab52b2ae1856c1e30 sunlabel.img
@@ -60,8 +60,8 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: sun
 
-Device     Flag Start       End Blocks  Id System
-<removed>1   ur     0       128   4032   4 SunOS usr
+Device             Start   End Cylinders Size Id Type      Flags
+<removed>1     1   128       129   4M  4 SunOS usr    ur
 
 Create second partition
 
@@ -85,9 +85,9 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: sun
 
-Device     Flag Start       End Blocks  Id System
-<removed>1   ur     0       128   4032   4 SunOS usr
-<removed>2        128       325   6205+ 83 Linux native
+Device             Start   End Cylinders  Size Id Type         Flags
+<removed>1     1   128       129    4M  4 SunOS usr       ur
+<removed>2   129   325       198  6.1M 83 Linux native 
 
 Delete all partitions
 502ba7a0cfdce2849c3a99881f0590c3 sunlabel.img
