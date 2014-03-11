@@ -8,16 +8,32 @@
 terminal-colors.d \- Configure output colorization for various utilities
 .SH "SYNOPSIS"
 .PP
-/etc/terminal-colors\&.d/[util-name\&.]disable
+/etc/terminal-colors\&.d/[name\&.]disable
+.sp
+/etc/terminal-colors\&.d/name\&.enable
 .SH "DESCRIPTION"
 Files in this directory determine the default behaviour for utilities
-when coloring output.
+when coloring output. The
+.B name
+is an utility name. Supported files:
 
-The file
+.TP
 .B disable
-turns off output colorization for all utilities compatible with config files in
-.B /etc/terminal-colors\&.d.
-.PP
+Turns off output colorization for all compatible utilities.
+.TP
+.B name\&.disable
+Turns off output colorization for specified utility.
+.TP
+.B name\&.enable
+Turns on output colorization on terminal for specified utility, all another
+.B disable
+files are ignored.
+
+.SH COMPATIBILITY
+The terminal-colors\&.d functionality is currently supported by all util-linux
+utilities which provides colorized output. For more details always see the
+COLORS section in the man page for the utility.
+
 .SH AVAILABILITY
 terminal-colors.d is part of the util-linux package and is available from
 .UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/

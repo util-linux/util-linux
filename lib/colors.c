@@ -16,23 +16,27 @@ static int ul_color_term_ok;
 
 int colors_init(int mode, const char *name)
 {
-	switch (mode) {
-	case UL_COLORMODE_UNDEF:
-		if (access(_PATH_TERMCOLORS_DISABLE, F_OK) == 0) {
-			ul_color_term_ok = 0;
-			break;
-		} else {
-			char path[PATH_MAX];
+	if (mode == UL_COLORMODE_UNDEF)	{
+		char path[PATH_MAX];
 
+		snprintf(path, sizeof(path), "%s%s%s",
+				_PATH_TERMCOLORS_DIR, name, ".enable");
+
+		if (access(path, F_OK) == 0)
+			mode = UL_COLORMODE_AUTO;
+		else {
 			snprintf(path, sizeof(path), "%s%s%s",
 				_PATH_TERMCOLORS_DIR, name, ".disable");
 
-			if (access(path, F_OK) == 0) {
-				ul_color_term_ok = 0;
-				break;
-			}
+			if (access(_PATH_TERMCOLORS_DISABLE, F_OK) == 0 ||
+			    access(path, F_OK) == 0)
+				mode = UL_COLORMODE_NEVER;
+			else
+				mode = UL_COLORMODE_AUTO;
 		}
-		/* fallthrough */
+	}
+
+	switch (mode) {
 	case UL_COLORMODE_AUTO:
 		ul_color_term_ok = isatty(STDOUT_FILENO);
 		break;
