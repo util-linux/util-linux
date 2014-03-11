@@ -23,15 +23,15 @@ I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: gpt
 Disk identifier: <removed>
 
-Device             Start          End Size Type
-<removed>1         2048         4095   1M EFI System
-<removed>2         4096         6143   1M Linux filesystem
-<removed>3         6144         8191   1M Linux filesystem
-<removed>4         8192        10239   1M Linux filesystem
-<removed>5        10240        12287   1M Linux filesystem
-<removed>6        12288        14335   1M Linux filesystem
-<removed>7        14336        16383   1M Linux filesystem
-<removed>8        16384        18431   1M Linux filesystem
+Device             Start   End Sectors Size Type
+<removed>1  2048  4095    2048   1M EFI System
+<removed>2  4096  6143    2048   1M Linux filesystem
+<removed>3  6144  8191    2048   1M Linux filesystem
+<removed>4  8192 10239    2048   1M Linux filesystem
+<removed>5 10240 12287    2048   1M Linux filesystem
+<removed>6 12288 14335    2048   1M Linux filesystem
+<removed>7 14336 16383    2048   1M Linux filesystem
+<removed>8 16384 18431    2048   1M Linux filesystem
 
 -------------------
 
@@ -45,15 +45,15 @@ I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: gpt
 Disk identifier: <removed>
 
-Device             Start          End Size Type
-<removed>1         2048         4095   1M EFI System
-<removed>2         4096         6143   1M Linux filesystem
-<removed>3         6144         8191   1M Linux filesystem
-<removed>4         8192        10239   1M Linux filesystem
-<removed>5        10240        12287   1M Linux swap
-<removed>6        12288        14335   1M Linux filesystem
-<removed>7        14336        16383   1M Linux filesystem
-<removed>8        16384        18431   1M Linux filesystem
+Device             Start   End Sectors Size Type
+<removed>1  2048  4095    2048   1M EFI System
+<removed>2  4096  6143    2048   1M Linux filesystem
+<removed>3  6144  8191    2048   1M Linux filesystem
+<removed>4  8192 10239    2048   1M Linux filesystem
+<removed>5 10240 12287    2048   1M Linux swap
+<removed>6 12288 14335    2048   1M Linux filesystem
+<removed>7 14336 16383    2048   1M Linux filesystem
+<removed>8 16384 18431    2048   1M Linux filesystem
 
 -------------------
 
@@ -67,14 +67,14 @@ I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: gpt
 Disk identifier: <removed>
 
-Device             Start          End Size Type
-<removed>1         2048         4095   1M EFI System
-<removed>3         6144         8191   1M Linux filesystem
-<removed>4         8192        10239   1M Linux filesystem
-<removed>5        10240        12287   1M Linux swap
-<removed>6        12288        14335   1M Linux filesystem
-<removed>7        14336        16383   1M Linux filesystem
-<removed>8        16384        18431   1M Linux filesystem
+Device             Start   End Sectors Size Type
+<removed>1  2048  4095    2048   1M EFI System
+<removed>3  6144  8191    2048   1M Linux filesystem
+<removed>4  8192 10239    2048   1M Linux filesystem
+<removed>5 10240 12287    2048   1M Linux swap
+<removed>6 12288 14335    2048   1M Linux filesystem
+<removed>7 14336 16383    2048   1M Linux filesystem
+<removed>8 16384 18431    2048   1M Linux filesystem
 
 -------------------
 
@@ -88,15 +88,15 @@ I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: gpt
 Disk identifier: <removed>
 
-Device             Start          End Size Type
-<removed>1         2048         4095   1M EFI System
-<removed>2         4096         6143   1M Linux filesystem
-<removed>3         6144         8191   1M Linux filesystem
-<removed>4         8192        10239   1M Linux filesystem
-<removed>5        10240        12287   1M Linux swap
-<removed>6        12288        14335   1M Linux filesystem
-<removed>7        14336        16383   1M Linux filesystem
-<removed>8        16384        18431   1M Linux filesystem
+Device             Start   End Sectors Size Type
+<removed>1  2048  4095    2048   1M EFI System
+<removed>2  4096  6143    2048   1M Linux filesystem
+<removed>3  6144  8191    2048   1M Linux filesystem
+<removed>4  8192 10239    2048   1M Linux filesystem
+<removed>5 10240 12287    2048   1M Linux swap
+<removed>6 12288 14335    2048   1M Linux filesystem
+<removed>7 14336 16383    2048   1M Linux filesystem
+<removed>8 16384 18431    2048   1M Linux filesystem
 
 -------------------
 
@@ -110,15 +110,15 @@ I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: gpt
 Disk identifier: <removed>
 
-Device             Start          End Size Type
-<removed>1         2048         4095   1M EFI System
-<removed>2         4096         6143   1M Linux filesystem
-<removed>3         6144         8191   1M Linux filesystem
-<removed>4         8192        10239   1M Linux filesystem
-<removed>5        10240        12287   1M Linux swap
-<removed>6        12288        14335   1M Linux filesystem
-<removed>7        14336        16383   1M Linux filesystem
-<removed>8        16384        18431   1M Linux filesystem
+Device             Start   End Sectors Size Type
+<removed>1  2048  4095    2048   1M EFI System
+<removed>2  4096  6143    2048   1M Linux filesystem
+<removed>3  6144  8191    2048   1M Linux filesystem
+<removed>4  8192 10239    2048   1M Linux filesystem
+<removed>5 10240 12287    2048   1M Linux swap
+<removed>6 12288 14335    2048   1M Linux filesystem
+<removed>7 14336 16383    2048   1M Linux filesystem
+<removed>8 16384 18431    2048   1M Linux filesystem
 
 -------------------
 
@@ -132,15 +132,15 @@ I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: gpt
 Disk identifier: <removed>
 
-Device             Start          End Size Type
-<removed>1         2048         4095   1M EFI System
-<removed>2         4096         6143   1M Linux filesystem
-<removed>3         6144         8191   1M Linux filesystem
-<removed>4         8192        10239   1M Linux filesystem
-<removed>5        10240        12287   1M Linux swap
-<removed>6        12288        14335   1M Linux filesystem
-<removed>7        14336        16383   1M Linux filesystem
-<removed>8        16384        18431   1M Linux filesystem
+Device             Start   End Sectors Size Type
+<removed>1  2048  4095    2048   1M EFI System
+<removed>2  4096  6143    2048   1M Linux filesystem
+<removed>3  6144  8191    2048   1M Linux filesystem
+<removed>4  8192 10239    2048   1M Linux filesystem
+<removed>5 10240 12287    2048   1M Linux swap
+<removed>6 12288 14335    2048   1M Linux filesystem
+<removed>7 14336 16383    2048   1M Linux filesystem
+<removed>8 16384 18431    2048   1M Linux filesystem
 
 -------------------
 

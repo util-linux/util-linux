@@ -1787,7 +1787,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char *argv[])
 {
-	int rc, c, colormode = UL_COLORMODE_AUTO;
+	int rc, c, colormode = UL_COLORMODE_UNDEF;
 	struct cfdisk _cf = { .lines_idx = 0 },
 		      *cf = &_cf;
 
