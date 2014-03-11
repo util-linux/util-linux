@@ -1823,7 +1823,7 @@ int main(int argc, char *argv[])
 
 
 
-	colors_init(colormode);
+	colors_init(colormode, "cfdisk");
 
 	fdisk_init_debug(0);
 	cf->cxt = fdisk_new_context();
