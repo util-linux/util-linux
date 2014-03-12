@@ -43,7 +43,7 @@
  *
  * @PART_ENTRY_NAME: partition name (gpt and mac only)
  *
- * @PART_ENTRY_UUID: partition UUID (gpt only)
+ * @PART_ENTRY_UUID: partition UUID (gpt, or pseudo IDs for MBR)
  *
  * @PART_ENTRY_TYPE: partition type, 0xNN (e.g 0x82) or type UUID (gpt only) or type string (mac)
  *
