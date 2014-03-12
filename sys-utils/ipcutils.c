@@ -423,26 +423,20 @@ int ipc_msg_get_info(int id, struct msg_data **msgds)
 
 	/* Fallback; /proc or /sys file(s) missing. */
 msg_fallback:
-	i = id < 0 ? 0 : id;
-
-	maxid = msgctl(id, MSG_STAT, &dummy);
+	maxid = msgctl(0, MSG_INFO, &dummy);
 	if (maxid < 0)
 		return 0;
 
-	while (i <= maxid) {
+	for (int j = 0; j <= maxid; j++) {
 		int msgid;
 		struct ipc_perm *ipcp = &msgseg.msg_perm;
 
-		msgid = msgctl(i, MSG_STAT, &msgseg);
-		if (msgid < 0) {
-			if (-1 < id) {
-				free(*msgds);
-				return 0;
-			}
-			i++;
+		msgid = msgctl(j, MSG_STAT, &msgseg);
+		if (msgid < 0 || (id > -1 && msgid != id)) {
 			continue;
 		}
 
+		i++;
 		p->msg_perm.key = ipcp->KEY;
 		p->msg_perm.id = msgid;
 		p->msg_perm.mode = ipcp->mode;
@@ -463,11 +457,12 @@ msg_fallback:
 			p->next = xcalloc(1, sizeof(struct msg_data));
 			p = p->next;
 			p->next = NULL;
-			i++;
 		} else
-			return 1;
+			break;
 	}
 
+	if (i == 0)
+		free(*msgds);
 	return i;
 }
 
