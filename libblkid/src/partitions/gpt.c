@@ -386,7 +386,7 @@ static int probe_gpt_pt(blkid_probe pr,
 		swap_efi_guid(&guid);
 		blkid_partition_set_type_uuid(par, (const unsigned char *) &guid);
 
-		blkid_partition_set_flags(par, e->attributes);
+		blkid_partition_set_flags(par, le64_to_cpu(e->attributes));
 	}
 
 	return 0;
