@@ -20,6 +20,7 @@
 
 #include "c.h"
 #include "list.h"
+#include "debug.h"
 #include "libmount.h"
 
 /* features */
@@ -56,6 +57,9 @@
 # include <stdio.h>
 # include <stdarg.h>
 
+#define DBG(m, x) do { __UL_DBG(libmount, MNT_DEBUG_, m, x); } while (0)
+#define INIT_DBG(m) do { __UL_INIT_DEBUG(libmount, MNT_DEBUG_, m, LIBMOUNT_DEBUG); } while (0)
+
 # define WARN_REFCOUNT(m, o, r) \
 			do { \
 				if ((MNT_DEBUG_ ## m) & libmount_debug_mask && r != 0) \
@@ -65,13 +69,6 @@
 
 # define ON_DBG(m, x)	do { \
 				if ((MNT_DEBUG_ ## m) & libmount_debug_mask) { \
-					x; \
-				} \
-			} while (0)
-
-# define DBG(m, x)	do { \
-				if ((MNT_DEBUG_ ## m) & libmount_debug_mask) { \
-					fprintf(stderr, "%d: libmount: %8s: ", getpid(), # m); \
 					x; \
 				} \
 			} while (0)
