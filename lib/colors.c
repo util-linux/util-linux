@@ -16,7 +16,9 @@ static int ul_color_term_ok;
 
 int colors_init(int mode, const char *name)
 {
-	if (mode == UL_COLORMODE_UNDEF)	{
+	int atty = -1;
+
+	if (mode == UL_COLORMODE_UNDEF && (atty = isatty(STDOUT_FILENO))) {
 		char path[PATH_MAX];
 
 		snprintf(path, sizeof(path), "%s%s%s",
@@ -38,7 +40,7 @@ int colors_init(int mode, const char *name)
 
 	switch (mode) {
 	case UL_COLORMODE_AUTO:
-		ul_color_term_ok = isatty(STDOUT_FILENO);
+		ul_color_term_ok = atty == -1 ? isatty(STDOUT_FILENO) : atty;
 		break;
 	case UL_COLORMODE_ALWAYS:
 		ul_color_term_ok = 1;
