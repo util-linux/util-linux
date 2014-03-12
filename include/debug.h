@@ -12,6 +12,13 @@
 
 #include <stdarg.h>
 
+#define UL_DEBUG_DEFINE_MASK(m) int m ## _debug_mask
+#define UL_DEBUG_DECLARE_MASK(m) extern UL_DEBUG_DEFINE_MASK(m)
+
+/* p - flag prefix, m - flag postfix */
+#define UL_DEBUG_DEFINE_FLAG(p, m) p ## m
+
+/* l - library name, p - flag prefix, m - flag postfix, x - function */
 # define __UL_DBG(l, p, m, x) \
 			do { \
 				if ((p ## m) & l ## _debug_mask) { \
