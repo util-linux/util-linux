@@ -154,27 +154,21 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 
 	/* Fallback; /proc or /sys file(s) missing. */
 shm_fallback:
-	i = id < 0 ? 0 : id;
-
 	maxid = shmctl(0, SHM_INFO, (struct shmid_ds *) &dummy);
 	if (maxid < 0)
 		return 0;
 
-	while (i <= maxid) {
+	for (int j = 0; j <= maxid; j++) {
 		int shmid;
 		struct shmid_ds shmseg;
 		struct ipc_perm *ipcp = &shmseg.shm_perm;
 
-		shmid = shmctl(i, SHM_STAT, &shmseg);
-		if (shmid < 0) {
-			if (-1 < id) {
-				free(*shmds);
-				return 0;
-			}
-			i++;
+		shmid = shmctl(j, SHM_STAT, &shmseg);
+		if (shmid < 0 || (id > -1 && shmid != id)) {
 			continue;
 		}
 
+		i++;
 		p->shm_perm.key = ipcp->KEY;
 		p->shm_perm.id = shmid;
 		p->shm_perm.mode = ipcp->mode;
@@ -196,11 +190,12 @@ shm_fallback:
 			p->next = xcalloc(1, sizeof(struct shm_data));
 			p = p->next;
 			p->next = NULL;
-			i++;
 		} else
-			return 1;
+			break;
 	}
 
+	if (i == 0)
+		free(*shmds);
 	return i;
 }
 
