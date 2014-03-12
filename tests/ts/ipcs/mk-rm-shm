@@ -30,10 +30,10 @@ $TS_CMD_IPCRM -m $(cat $TS_OUTDIR/id-shm) >>$TS_OUTPUT 2>&1
 rm -f $TS_OUTDIR/id-shm
 
 $TS_CMD_IPCMK -M 1 2>>$TS_OUTPUT | ipcmk_output_handler $TS_OUTPUT $TS_OUTDIR/id-shm
-$TS_CMD_IPCRM -M $(
+$TS_CMD_IPCRM -M "$(
 	$TS_CMD_IPCS -m |
 	awk -v id=$(cat $TS_OUTDIR/id-shm) '{if ($2 == id){print $1}}'
-) >>$TS_OUTPUT 2>&1
+)" >>$TS_OUTPUT 2>&1
 
 rm -f $TS_OUTDIR/id-shm
 
