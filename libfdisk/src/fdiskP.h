@@ -23,6 +23,7 @@
 #include "nls.h"		/* temporary before dialog API will be implamented */
 #include "list.h"
 #include "tt.h"
+#include "debug.h"
 
 /* features */
 #define CONFIG_LIBFDISK_ASSERT
@@ -55,22 +56,20 @@
 #define FDISK_DEBUG_TAB		(1 << 9)
 #define FDISK_DEBUG_ALL		0xFFFF
 
+#define FDISK_DEF_FLAG(m) UL_DEFINE_FLAG(FDISK_DEBUG_, m)
+
+#define DBG(m, x) do { __UL_DBG(libfdisk, FDISK_DEBUG_, m, x); } while (0)
+#define INIT_DBG(m) do { __UL_INIT_DEBUG(libfdisk, FDISK_DEBUG_, m, LIBFDISK_DEBUG); } while (0)
+
 # define ON_DBG(m, x)	do { \
-				if ((FDISK_DEBUG_ ## m) & fdisk_debug_mask) { \
+				if ((FDISK_DEBUG_ ## m) & libfdisk_debug_mask) { \
 					x; \
 				}	   \
 			} while (0)
 
-# define DBG(m, x)	do { \
-				if ((FDISK_DEBUG_ ## m) & fdisk_debug_mask) { \
-					fprintf(stderr, "%d: fdisk: %8s: ", getpid(), # m); \
-					x;				\
-				} \
-			} while (0)
-
 # define DBG_FLUSH	do { \
-				if (fdisk_debug_mask && \
-				    fdisk_debug_mask != FDISK_DEBUG_INIT) \
+				if (libfdisk_debug_mask && \
+				    libfdisk_debug_mask != FDISK_DEBUG_INIT) \
 					fflush(stderr);			\
 			} while(0)
 
@@ -84,11 +83,12 @@ dbgprint(const char *mesg, ...)
 	fputc('\n', stderr);
 }
 
-extern int fdisk_debug_mask;
+UL_DEBUG_DECLARE_MASK(libfdisk);
 
 #else /* !CONFIG_LIBFDISK_DEBUG */
 # define ON_DBG(m,x) do { ; } while (0)
 # define DBG(m,x) do { ; } while (0)
+# define INIT_DBG(m,x) do { ; } while (0)
 # define DBG_FLUSH do { ; } while(0)
 #endif
 
