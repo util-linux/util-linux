@@ -15,7 +15,7 @@
 
 #include "mountP.h"
 
-int libmount_debug_mask;
+UL_DEBUG_DEFINE_MASK(libmount);
 
 /**
  * mnt_init_debug:
@@ -29,23 +29,11 @@ int libmount_debug_mask;
  */
 void mnt_init_debug(int mask)
 {
-	if (libmount_debug_mask & MNT_DEBUG_INIT)
-		return;
-	if (!mask) {
-		char *str = getenv("LIBMOUNT_DEBUG");
-		if (str)
-			libmount_debug_mask = strtoul(str, 0, 0);
-	} else
-		libmount_debug_mask = mask;
-
-	libmount_debug_mask |= MNT_DEBUG_INIT;
+	INIT_DBG(mask);
 
 	if (libmount_debug_mask != MNT_DEBUG_INIT) {
 		const char *ver = NULL;
 		const char **features = NULL, **p;
-
-		DBG(INIT, mnt_debug("library debug mask: 0x%04x",
-				libmount_debug_mask));
 
 		mnt_get_library_version(&ver);
 		mnt_get_library_features(&features);
