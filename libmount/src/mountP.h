@@ -55,12 +55,10 @@
 
 #define MNT_DEF_FLAG(m) UL_DEFINE_FLAG(MNT_DEBUG_, m)
 
-#ifdef CONFIG_LIBMOUNT_DEBUG
 # include <stdio.h>
 # include <stdarg.h>
 
 #define DBG(m, x) do { __UL_DBG(libmount, MNT_DEBUG_, m, x); } while (0)
-#define INIT_DBG(m) do { __UL_INIT_DEBUG(libmount, MNT_DEBUG_, m, LIBMOUNT_DEBUG); } while (0)
 
 # define WARN_REFCOUNT(m, o, r) \
 			do { \
@@ -105,14 +103,6 @@ mnt_debug_h(void *handler, const char *mesg, ...)
 	va_end(ap);
 	fputc('\n', stderr);
 }
-
-#else /* !CONFIG_LIBMOUNT_DEBUG */
-# define WARN_REFCOUNT(m,o,r)  do { ; } while (0)
-# define ON_DBG(m,x) do { ; } while (0)
-# define DBG(m,x) do { ; } while (0)
-# define INIT_DBG(m,x) do { ; } while (0)
-# define DBG_FLUSH do { ; } while(0)
-#endif
 
 /* extension for files in the directory */
 #define MNT_MNTTABDIR_EXT	".fstab"

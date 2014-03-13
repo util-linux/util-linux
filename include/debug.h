@@ -7,9 +7,6 @@
 #ifndef UTIL_LINUX_DEBUG_H
 #define UTIL_LINUX_DEBUG_H
 
-#define _UL_DEBUG
-#ifdef _UL_DEBUG
-
 #include <stdarg.h>
 
 #define UL_DEBUG_DEFINE_MASK(m) int m ## _debug_mask
@@ -65,10 +62,5 @@ ul_debugobj(void *handler, const char *mesg, ...)
 	va_end(ap);
 	fputc('\n', stderr);
 }
-
-#else /* !_UL_DEBUG */
-# define __UL_DBG(l, p, m, x) do { ; } while (0)
-#define __UL_INIT_DEBUG(lib, pref, mask, env) do { ; } while (0)
-#endif
 
 #endif /* UTIL_LINUX_DEBUG_H */

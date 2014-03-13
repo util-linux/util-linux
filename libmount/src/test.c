@@ -31,7 +31,7 @@ int mnt_run_test(struct libmnt_test *tests, int argc, char *argv[])
 	    strcmp(argv[1], "-h") == 0)
 		goto usage;
 
-	INIT_DBG(0);
+	mnt_init_debug(0);
 
 	for (ts = tests; ts->name; ts++) {
 		if (strcmp(ts->name, argv[1]) == 0) {

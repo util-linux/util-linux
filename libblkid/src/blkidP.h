@@ -337,15 +337,11 @@ struct blkid_struct_cache
 
 #define BLKID_DEF_FLAG(m) UL_DEFINE_FLAG(BLKID_DEBUG_, m)
 
-#ifdef CONFIG_BLKID_DEBUG
-
 UL_DEBUG_DECLARE_MASK(libblkid);
 extern void blkid_debug_dump_dev(blkid_dev dev);
 extern void blkid_debug_dump_tag(blkid_tag tag);
 
 #define DBG(m, x) do { __UL_DBG(libblkid, BLKID_DEBUG_, m, x); } while (0)
-#define INIT_DBG(m) do { __UL_INIT_DEBUG(libblkid, BLKID_DEBUG_, m, LIBBLKID_DEBUG); } while (0)
-
 
 static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
 blkid_debug(const char *mesg, ...)
@@ -356,11 +352,6 @@ blkid_debug(const char *mesg, ...)
 	va_end(ap);
 	fputc('\n', stderr);
 }
-
-#else /* !CONFIG_BLKID_DEBUG */
-# define DBG(m,x) do { ; } while (0)
-# define INIT_DBG(m) do { ; } while (0)
-#endif /* CONFIG_BLKID_DEBUG */
 
 /* devno.c */
 struct dir_list {

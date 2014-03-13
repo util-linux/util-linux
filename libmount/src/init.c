@@ -29,7 +29,7 @@ UL_DEBUG_DEFINE_MASK(libmount);
  */
 void mnt_init_debug(int mask)
 {
-	INIT_DBG(mask);
+	__UL_INIT_DEBUG(libmount, MNT_DEBUG_, mask, LIBMOUNT_DEBUG);
 
 	if (libmount_debug_mask != MNT_DEBUG_INIT) {
 		const char *ver = NULL;

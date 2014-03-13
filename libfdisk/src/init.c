@@ -15,5 +15,5 @@ UL_DEBUG_DEFINE_MASK(libfdisk);
  */
 void fdisk_init_debug(int mask)
 {
-	INIT_DBG(mask);
+	__UL_INIT_DEBUG(libfdisk, FDISK_DEBUG_, mask, LIBFDISK_DEBUG);
 }

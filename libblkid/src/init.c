@@ -29,7 +29,7 @@ UL_DEBUG_DEFINE_MASK(libblkid);
  */
 void blkid_init_debug(int mask)
 {
-	INIT_DBG(mask);
+	__UL_INIT_DEBUG(libblkid, BLKID_DEBUG_, mask, LIBBLKID_DEBUG);
 
 	if (libblkid_debug_mask != BLKID_DEBUG_INIT) {
 		const char *ver = NULL;
