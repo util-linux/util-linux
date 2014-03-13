@@ -155,8 +155,6 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 	/* Fallback; /proc or /sys file(s) missing. */
 shm_fallback:
 	maxid = shmctl(0, SHM_INFO, (struct shmid_ds *) &dummy);
-	if (maxid < 0)
-		return 0;
 
 	for (int j = 0; j <= maxid; j++) {
 		int shmid;
@@ -297,8 +295,6 @@ int ipc_sem_get_info(int id, struct sem_data **semds)
 sem_fallback:
 	arg.array = (ushort *) (void *)&dummy;
 	maxid = semctl(0, 0, SEM_INFO, arg);
-	if (maxid < 0)
-		return 0;
 
 	for (int j = 0; j <= maxid; j++) {
 		int semid;
@@ -415,8 +411,6 @@ int ipc_msg_get_info(int id, struct msg_data **msgds)
 	/* Fallback; /proc or /sys file(s) missing. */
 msg_fallback:
 	maxid = msgctl(0, MSG_INFO, &dummy);
-	if (maxid < 0)
-		return 0;
 
 	for (int j = 0; j <= maxid; j++) {
 		int msgid;
