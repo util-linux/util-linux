@@ -140,7 +140,7 @@ printf "%s\n" ${comps[*]} |
 	xargs -I '{}' -P $paraller_jobs -n 1 bash -c "'{}' \"$OPTS\" ||
 		echo 1 >> $top_builddir/tests/failures"
 declare -a fail_file
-fail_file=( $( < $top_builddir/tests/failures ) )
+fail_file=( $( < $top_builddir/tests/failures ) ) || exit 1
 rm -f $top_builddir/tests/failures
 echo
 echo "---------------------------------------------------------------------"
