@@ -67,16 +67,20 @@ struct gpt_guid {
 /*
  * Attribute bits
  */
-struct gpt_attr {
-	uint64_t            required_to_function:1;
-	uint64_t            no_blockio_protocol:1;
-	uint64_t            legacy_bios_bootable:1;
-	uint64_t            reserved:45;
-	uint64_t            guid_secific:16;
-}  __attribute__ ((packed));
+enum {
+	/* UEFI specific */
+	GPT_ATTRBIT_REQ      = 0,
+	GPT_ATTRBIT_NOBLOCK  = 1,
+	GPT_ATTRBIT_LEGACY   = 2,
 
+	/* GUID specific (range 48..64)*/
+	GPT_ATTRBIT_GUID_FIRST	= 48,
+	GPT_ATTRBIT_GUID_COUNT	= 16
+};
 
-
+#define GPT_ATTRSTR_REQ		"RequiredPartiton"
+#define GPT_ATTRSTR_NOBLOCK	"NoBlockIOProtocol"
+#define GPT_ATTRSTR_LEGACY	"LegacyBIOSBootable"
 
 /* The GPT Partition entry array contains an array of GPT entries. */
 struct gpt_entry {
@@ -84,7 +88,7 @@ struct gpt_entry {
 	struct gpt_guid     partition_guid;
 	uint64_t            lba_start;
 	uint64_t            lba_end;
-	struct gpt_attr     attr;
+	uint64_t            attrs;
 	uint16_t            name[GPT_PART_NAME_LEN];
 }  __attribute__ ((packed));
 
@@ -1258,34 +1262,65 @@ static char *encode_to_utf8(unsigned char *src, size_t count)
 	return dest;
 }
 
-/* convert GUID Specific attributes to string, result is a list of the enabled
- * bits (e.g. "60,62,63" for enabled bits 60, 62 and 63).
- *
- * Returns newly allocated string or NULL in case of error.
- *
- * see struct gpt_attr definition for more details.
- */
-static char *guid_attrs_to_string(struct gpt_attr *attr, char **res)
+static int gpt_entry_attrs_to_string(struct gpt_entry *e, char **res)
 {
-	char *bits = (char *) attr, *end;
-	size_t i, count = 0, len;
+	unsigned int n, count = 0;
+	size_t l;
+	char *bits, *p;
+	uint64_t attrs;
 
-	end = *res = calloc(1, 16 * 3 + 6);	/* three bytes for one bit + \0 */
+	assert(e);
+	assert(res);
+
+	*res = NULL;
+	attrs = le64_to_cpu(e->attrs);
+	if (!attrs)
+		return 0;	/* no attributes at all */
+
+	bits = (char *) &attrs;
+
+	/* Note that sizeof() is correct here, we need separators between
+	 * the strings so also count \0 is correct */
+	*res = calloc(1, sizeof(GPT_ATTRSTR_NOBLOCK) +
+			 sizeof(GPT_ATTRSTR_REQ) +
+			 sizeof(GPT_ATTRSTR_LEGACY) +
+			 sizeof("GUID:") + (GPT_ATTRBIT_GUID_COUNT * 3));
 	if (!*res)
-		return NULL;
+		return -errno;
 
-	for (i = 48; i < 64; i++) {
-		if (!isset(bits, i))
-			continue;
-		count++;
-		if (count > 1)
-			len = snprintf(end, 4, ",%zu", i);
-		else
-			len = snprintf(end, 8, "GUID:%zu", i);
-		end += len;
+	p = *res;
+	if (isset(bits, GPT_ATTRBIT_REQ)) {
+		memcpy(p, GPT_ATTRSTR_REQ, (l = sizeof(GPT_ATTRSTR_REQ)));
+		p += l - 1;
+	}
+	if (isset(bits, GPT_ATTRBIT_NOBLOCK)) {
+		if (p > *res)
+			*p++ = ' ';
+		memcpy(p, GPT_ATTRSTR_NOBLOCK, (l = sizeof(GPT_ATTRSTR_NOBLOCK)));
+		p += l - 1;
+	}
+	if (isset(bits, GPT_ATTRBIT_LEGACY)) {
+		if (p > *res)
+			*p++ = ' ';
+		memcpy(p, GPT_ATTRSTR_LEGACY, (l = sizeof(GPT_ATTRSTR_LEGACY)));
+		p += l - 1;
 	}
 
-	return *res;
+	for (n = GPT_ATTRBIT_GUID_FIRST;
+	     n < GPT_ATTRBIT_GUID_FIRST + GPT_ATTRBIT_GUID_COUNT; n++) {
+
+		if (!isset(bits, n))
+			continue;
+		if (!count) {
+			if (p > *res)
+				*p++ = ' ';
+			p += sprintf(p, "GUID:%u", n);
+		} else
+			p += sprintf(p, ",%u", n);
+		count++;
+	}
+
+	return 0;
 }
 
 static int gpt_get_partition(struct fdisk_context *cxt, size_t n,
@@ -1293,7 +1328,8 @@ static int gpt_get_partition(struct fdisk_context *cxt, size_t n,
 {
 	struct fdisk_gpt_label *gpt;
 	struct gpt_entry *e;
-	char u_str[37], *buf = NULL;
+	char u_str[37];
+	int rc = 0;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -1318,24 +1354,22 @@ static int gpt_get_partition(struct fdisk_context *cxt, size_t n,
 
 	if (guid_to_string(&e->partition_guid, u_str)) {
 		pa->uuid = strdup(u_str);
-		if (!pa->uuid)
-			goto nomem;
+		if (!pa->uuid) {
+			rc = -errno;
+			goto done;
+		}
 	} else
 		pa->uuid = NULL;
 
-	if (asprintf(&pa->attrs, "%s%s%s%s",
-			e->attr.required_to_function ? "Required " : "",
-			e->attr.legacy_bios_bootable ? "LegacyBoot " : "",
-			e->attr.no_blockio_protocol  ? "NoBlockIO " : "",
-			guid_attrs_to_string(&e->attr, &buf)) < 0)
-		goto nomem;
+	rc = gpt_entry_attrs_to_string(e, &pa->attrs);
+	if (rc)
+		goto done;
 
 	pa->name = encode_to_utf8((unsigned char *)e->name, sizeof(e->name));
-
 	return 0;
-nomem:
+done:
 	fdisk_reset_partition(pa);
-	return -ENOMEM;
+	return rc;
 }
 
 /*
@@ -2171,78 +2205,71 @@ static int gpt_toggle_partition_flag(
 		unsigned long flag)
 {
 	struct fdisk_gpt_label *gpt;
-	struct gpt_entry *e;
+	uint64_t attrs, tmp;
+	char *bits;
+	const char *name = NULL;
+	int bit = -1, rc;
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, GPT));
 
 	DBG(LABEL, dbgprint("GPT entry attribute change requested partno=%zu", i));
-
 	gpt = self_label(cxt);
 
 	if ((uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries))
 		return -EINVAL;
 
-	e = &gpt->ents[i];
+	attrs = le64_to_cpu(gpt->ents[i].attrs);
+	bits = (char *) &attrs;
 
 	switch (flag) {
 	case GPT_FLAG_REQUIRED:
-		e->attr.required_to_function = !e->attr.required_to_function;
-		fdisk_label_set_changed(cxt->label, 1);
-		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			e->attr.required_to_function ?
-			_("The RequiredPartiton flag on partition %zu is enabled now.") :
-			_("The RequiredPartiton flag on partition %zu is disabled now."),
-			i + 1);
+		bit = GPT_ATTRBIT_REQ;
+		name = GPT_ATTRSTR_REQ;
 		break;
 	case GPT_FLAG_NOBLOCK:
-		e->attr.no_blockio_protocol = !e->attr.no_blockio_protocol;
-		fdisk_label_set_changed(cxt->label, 1);
-		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			e->attr.no_blockio_protocol ?
-			_("The NoBlockIOProtocol flag on partition %zu is enabled now.") :
-			_("The NoBlockIOProtocol flag on partition %zu is disabled now."),
-			i + 1);
+		bit = GPT_ATTRBIT_NOBLOCK;
+		name = GPT_ATTRSTR_NOBLOCK;
 		break;
 	case GPT_FLAG_LEGACYBOOT:
-		e->attr.legacy_bios_bootable = !e->attr.legacy_bios_bootable;
-		fdisk_label_set_changed(cxt->label, 1);
-		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			e->attr.legacy_bios_bootable ?
-			_("The LegacyBIOSBootable flag on partition %zu is enabled now.") :
-			_("The LegacyBIOSBootable flag on partition %zu is disabled now."),
-			i + 1);
+		bit = GPT_ATTRBIT_LEGACY;
+		name = GPT_ATTRSTR_LEGACY;
 		break;
 	case GPT_FLAG_GUIDSPECIFIC:
-	{
-		char *attrs = (char *) &e->attr;
-		uint64_t bit = 0;
-		int rc = fdisk_ask_number(cxt, 48, 48, 63,
-				_("Enter GUID specific bit"),
-				&bit);
+		rc = fdisk_ask_number(cxt, 48, 48, 63, _("Enter GUID specific bit"), &tmp);
 		if (rc)
 			return rc;
-		if (!isset(attrs, bit))
-			setbit(attrs, bit);
-		else
-			clrbit(attrs, bit);
-
-		fdisk_label_set_changed(cxt->label, 1);
-		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			isset(attrs, bit) ?
-			_("The GUID specific bit %ju on partition %zu is enabled now.") :
-			_("The GUID specific bit %ju on partition %zu is disabled now."),
-			bit, i + 1);
+		bit = tmp;
 		break;
 	}
-	default:
-		return 1;
-	}
+
+	if (bit < 0)
+		return -EINVAL;
+
+	if (!isset(bits, bit))
+		setbit(bits, bit);
+	else
+		clrbit(bits, bit);
+
+	gpt->ents[i].attrs = cpu_to_le64(attrs);
+
+	if (flag == GPT_FLAG_GUIDSPECIFIC)
+		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			isset(bits, bit) ?
+			_("The GUID specific bit %d on partition %zu is enabled now.") :
+			_("The GUID specific bit %d on partition %zu is disabled now."),
+			bit, i + 1);
+	else
+		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			isset(bits, bit) ?
+			_("The %s flag on partition %zu is enabled now.") :
+			_("The %s flag on partition %zu is disabled now."),
+			name, i + 1);
 
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
-
+	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
 }
 
