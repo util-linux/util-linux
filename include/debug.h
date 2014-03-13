@@ -38,11 +38,8 @@
 		lib ## _debug_mask = mask; \
 	lib ## _debug_mask |= pref ## INIT; \
 	if (lib ## _debug_mask != pref ## INIT) { \
-		const char *ver = NULL; \
 		__UL_DBG(lib, pref, INIT, ul_debug("library debug mask: 0x%04x", \
 				lib ## _debug_mask)); \
-		/* ul_get_library_version(&ver); \
-		__UL_DBG(lib, pref, INIT, ul_debug("library version: %s", ver));*/ \
 	} \
 } while (0)
 
