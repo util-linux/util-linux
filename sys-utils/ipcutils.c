@@ -295,29 +295,23 @@ int ipc_sem_get_info(int id, struct sem_data **semds)
 
 	/* Fallback; /proc or /sys file(s) missing. */
 sem_fallback:
-	i = id < 0 ? 0 : id;
-
 	arg.array = (ushort *) (void *)&dummy;
 	maxid = semctl(0, 0, SEM_INFO, arg);
 	if (maxid < 0)
 		return 0;
 
-	while (i <= maxid) {
+	for (int j = 0; j <= maxid; j++) {
 		int semid;
 		struct semid_ds semseg;
 		struct ipc_perm *ipcp = &semseg.sem_perm;
 		arg.buf = (struct semid_ds *)&semseg;
 
-		semid = semctl(i, 0, SEM_STAT, arg);
-		if (semid < 0) {
-			if (-1 < id) {
-				free(*semds);
-				return 0;
-			}
-			i++;
+		semid = semctl(j, 0, SEM_STAT, arg);
+		if (semid < 0 || (id > -1 && semid != id)) {
 			continue;
 		}
 
+		i++;
 		p->sem_perm.key = ipcp->KEY;
 		p->sem_perm.id = semid;
 		p->sem_perm.mode = ipcp->mode;
@@ -336,10 +330,12 @@ sem_fallback:
 			i++;
 		} else {
 			get_sem_elements(p);
-			return 1;
+			break;
 		}
 	}
 
+	if (i == 0)
+		free(*semds);
 	return i;
 }
 
