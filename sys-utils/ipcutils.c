@@ -105,7 +105,7 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 
 	f = path_fopen("r", 0, _PATH_PROC_SYSV_SHM);
 	if (!f)
-		goto fallback;
+		goto shm_fallback;
 
 	while (fgetc(f) != '\n');		/* skip header */
 
@@ -153,7 +153,7 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 	return i;
 
 	/* Fallback; /proc or /sys file(s) missing. */
-fallback:
+shm_fallback:
 	i = id < 0 ? 0 : id;
 
 	maxid = shmctl(0, SHM_INFO, (struct shmid_ds *) &dummy);
@@ -299,7 +299,7 @@ int ipc_sem_get_info(int id, struct sem_data **semds)
 	return i;
 
 	/* Fallback; /proc or /sys file(s) missing. */
- sem_fallback:
+sem_fallback:
 	i = id < 0 ? 0 : id;
 
 	arg.array = (ushort *) (void *)&dummy;
@@ -422,7 +422,7 @@ int ipc_msg_get_info(int id, struct msg_data **msgds)
 	return i;
 
 	/* Fallback; /proc or /sys file(s) missing. */
- msg_fallback:
+msg_fallback:
 	i = id < 0 ? 0 : id;
 
 	maxid = msgctl(id, MSG_STAT, &dummy);
