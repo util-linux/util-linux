@@ -639,8 +639,11 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 			rc = fwrite_hex(p, len, out);
 		else
 			rc = fwrite(p, 1, len, out) != len;
-		if (rc != 0)
-			err(EXIT_FAILURE, _("write failed"));
+		if (rc != 0) {
+			if (errno != EPIPE)
+				err(EXIT_FAILURE, _("write failed"));
+			exit(EXIT_SUCCESS);
+		}
 	}
 }
 
