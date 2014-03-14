@@ -31,20 +31,28 @@ function fallocate_or_skip()
 
 IMAGE=${TS_OUTDIR}/${TS_TESTNAME}.file
 
-rm -f $IMAGE
+PAGE_SIZE=$($TS_HELPER_SYSINFO pagesize)
+PAGE_SIZE_KB=$(( $PAGE_SIZE / 1024 ))
+MIN_SWAP_SIZE=$(( 10 * $PAGE_SIZE ))
+MIN_SWAP_SIZE_KB=$(( MIN_SWAP_SIZE / 1024 ))
 
-fallocate_or_skip 40959 $IMAGE
+rm -f $IMAGE
+fallocate_or_skip $(( $MIN_SWAP_SIZE - 1 )) $IMAGE
 $TS_CMD_MKSWAP \
 	--label 1234567890abcdef \
 	--uuid 12345678-abcd-abcd-abcd-1234567890ab \
-	$IMAGE >> $TS_OUTPUT 2>&1
+	$IMAGE 2>&1 |\
+	sed "s/ $MIN_SWAP_SIZE_KB KiB/ 10 pages/" \
+	>> $TS_OUTPUT 2>&1
 
 rm -f $IMAGE
-fallocate_or_skip 40960 $IMAGE
+fallocate_or_skip $MIN_SWAP_SIZE $IMAGE
 $TS_CMD_MKSWAP \
 	--label 1234567890abcdef \
 	--uuid 12345678-abcd-abcd-abcd-1234567890ab \
-	$IMAGE >> $TS_OUTPUT 2>&1
+	$IMAGE 2>&1 |\
+	sed "s/ $(( $MIN_SWAP_SIZE_KB - $PAGE_SIZE_KB )) KiB/ 9 pages/" \
+	>> $TS_OUTPUT 2>&1
 $TS_CMD_SWAPLABEL $IMAGE >> $TS_OUTPUT 2>&1
 
 #rm -f $IMAGE
