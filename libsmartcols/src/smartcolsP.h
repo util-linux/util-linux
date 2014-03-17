@@ -24,4 +24,13 @@
 # define assert(x)
 #endif
 
+/*
+ * Generic iterator
+ */
+struct libscols_iter {
+	struct list_head        *p;		/* current position */
+	struct list_head        *head;		/* start position */
+	int			direction;	/* SCOLS_ITER_{FOR,BACK}WARD */
+};
+
 #endif /* _LIBSMARTCOLS_PRIVATE_H */

@@ -19,6 +19,20 @@ extern "C" {
 
 #define LIBSMARTCOLS_VERSION   "@LIBSMARTCOLS_VERSION@"
 
+struct libscols_iter;
+
+
+/* iter.c */
+enum {
+
+	SCOLS_ITER_FORWARD = 0,
+	SCOLS_ITER_BACKWARD
+};
+
+extern struct libscols_iter *scols_new_iter(int direction);
+extern void scols_free_iter(struct libscols_iter *itr);
+extern void scols_reset_iter(struct libscols_iter *itr, int direction);
+extern int scols_iter_get_direction(struct libscols_iter *itr);
 
 #ifdef __cplusplus
 }
