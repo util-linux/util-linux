@@ -296,6 +296,7 @@ usrbin_exec_PROGRAMS += unshare
 dist_man_MANS += sys-utils/unshare.1
 unshare_SOURCES = sys-utils/unshare.c
 unshare_LDADD = $(LDADD) libcommon.la
+unshare_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 endif
 
 if BUILD_NSENTER
