@@ -27,6 +27,9 @@
 #include <sys/wait.h>
 #include <sys/mount.h>
 
+/* we only need some defines missing in sys/mount.h, no libmount linkage */
+#include <libmount.h>
+
 #include "nls.h"
 #include "c.h"
 #include "closestream.h"
