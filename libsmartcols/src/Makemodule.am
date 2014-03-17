@@ -11,6 +11,7 @@ libsmartcols_la_SOURCES= \
 	libsmartcols/src/smartcolsP.h \
 	libsmartcols/src/iter.c \
 	libsmartcols/src/symbols.c \
+	libsmartcols/src/cell.c \
 	$(smartcolsinc_HEADERS)
 
 nodist_libsmartcols_la_SOURCES = libsmartcols/src/smartcolsP.h

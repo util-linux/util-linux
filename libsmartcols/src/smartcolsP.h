@@ -42,4 +42,12 @@ struct libscols_symbols {
 	char *right;
 };
 
+/*
+ * Table cells
+ */
+struct libscols_cell {
+	char	*data;
+	char	*color;
+};
+
 #endif /* _LIBSMARTCOLS_PRIVATE_H */

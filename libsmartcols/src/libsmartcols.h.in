@@ -21,6 +21,7 @@ extern "C" {
 
 struct libscols_iter;
 struct libscols_symbols;
+struct libscols_cell;
 
 
 /* iter.c */
@@ -42,6 +43,12 @@ extern void scols_free_symbols(struct libscols_symbols *sb);
 extern int scols_symbols_set_branch(struct libscols_symbols *sb, const char *str);
 extern int scols_symbols_set_vertical(struct libscols_symbols *sb, const char *str);
 extern int scols_symbols_set_right(struct libscols_symbols *sb, const char *str);
+
+/* cell.c */
+extern int scols_cell_set_data(struct libscols_cell *ce, const char *str);
+extern const char *scols_cell_get_data(const struct libscols_cell *ce);
+extern int scols_cell_set_color(struct libscols_cell *ce, const char *color);
+extern const char *scols_cell_get_color(const struct libscols_cell *ce);
 
 #ifdef __cplusplus
 }
