@@ -1,0 +1,9 @@
+/*
+ * symbols since util-linux 2.25
+ */
+SMARTCOLS_2.25 {
+global:
+	*;
+local:
+	*;
+};

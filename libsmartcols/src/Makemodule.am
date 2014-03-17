@@ -1,0 +1,53 @@
+
+
+# smartcols.h is generated, so it's stored in builddir!
+smartcolsincdir = $(includedir)/libsmartcols
+nodist_smartcolsinc_HEADERS = $(top_builddir)/libsmartcols/src/libsmartcols.h
+
+usrlib_exec_LTLIBRARIES += libsmartcols.la
+libsmartcols_la_SOURCES= \
+	include/list.h \
+	\
+	libsmartcols/src/smartcolsP.h \
+	$(smartcolsinc_HEADERS)
+
+nodist_libsmartcols_la_SOURCES = libsmartcols/src/smartcolsP.h
+
+libsmartcols_la_LIBADD = libcommon.la
+
+libsmartcols_la_CFLAGS = \
+	$(SOLIB_CFLAGS) \
+	-I$(ul_libsmartcols_incdir) \
+	-I$(top_srcdir)/libsmartcols/src
+
+libsmartcols_la_DEPENDENCIES = \
+	libsmartcols/src/libsmartcols.sym \
+	libsmartcols/src/libsmartcols.h.in
+
+libsmartcols_la_LDFLAGS = \
+	$(SOLIB_LDFLAGS) \
+	-Wl,--version-script=$(top_srcdir)/libsmartcols/src/libsmartcols.sym \
+	-version-info $(LIBSMARTCOLS_VERSION_INFO)
+
+EXTRA_DIST += \
+	libsmartcols/src/libsmartcols.sym \
+	libsmartcols/src/libsmartcols.h.in
+
+
+# move lib from $(usrlib_execdir) to $(libdir) if needed
+install-exec-hook-libsmartcols:
+	if test "$(usrlib_execdir)" != "$(libdir)"; then \
+		mkdir -p $(DESTDIR)$(libdir); \
+		mv $(DESTDIR)$(usrlib_execdir)/libsmartcols.so.* $(DESTDIR)$(libdir); \
+		so_img_name=$$(readlink $(DESTDIR)$(usrlib_execdir)/libsmartcols.so); \
+		so_img_rel_target=$$(echo $(usrlib_execdir) | sed 's,\(^/\|\)[^/][^/]*,..,g'); \
+		(cd $(DESTDIR)$(usrlib_execdir) && \
+			rm -f libsmartcols.so && \
+			$(LN_S) $$so_img_rel_target$(libdir)/$$so_img_name libsmartcols.so); \
+	fi
+
+uninstall-hook-libsmartcols:
+	rm -f $(DESTDIR)$(libdir)/libsmartcols.so*
+
+INSTALL_EXEC_HOOKS += install-exec-hook-libsmartcols
+UNINSTALL_HOOKS += uninstall-hook-libsmartcols

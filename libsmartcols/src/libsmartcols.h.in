@@ -1,0 +1,27 @@
+/*
+ * Prints table or tree.
+ *
+ * Copyright (C) 2014 Ondrej Oprala <ooprala@redhat.com>
+ * Copyright (C) 2014 Karel Zak <kzak@redhat.com>
+ *
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
+ */
+#ifndef _LIBSMARTCOLS_H
+#define _LIBSMARTCOLS_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <stdlib.h>
+#include <sys/types.h>
+
+#define LIBSMARTCOLS_VERSION   "@LIBSMARTCOLS_VERSION@"
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _LIBSMARTCOLS_H */

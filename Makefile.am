@@ -17,11 +17,13 @@ LDADD = $(LTLIBINTL)
 # Work the bug around until it is fixed:
 dist_noinst_DATA = $(dist_man_MANS)
 
-# Paths to in-tree libraries (use ul_ prefix to avoid possible collisions)
-# Note that blkid.h and libmount.h are generated and stored in build dirs.
+# Paths to in-tree libraries (use ul_ prefix to avoid possible collisions) Note
+# that blkid.h, libmount.h and libsmartcols.h are generated and stored in build
+# dirs.
 #
 ul_libblkid_incdir = $(top_builddir)/libblkid/src
 ul_libmount_incdir = $(top_builddir)/libmount/src
+ul_libsmartcols_incdir = $(top_builddir)/libsmartcols/src
 ul_libuuid_incdir  = $(top_srcdir)/libuuid/src
 ul_libfdisk_incdir  = $(top_srcdir)/libfdisk/src
 
@@ -78,6 +80,7 @@ include libuuid/Makemodule.am
 include libblkid/Makemodule.am
 include libmount/Makemodule.am
 include libfdisk/Makemodule.am
+include libsmartcols/Makemodule.am
 
 include schedutils/Makemodule.am
 include text-utils/Makemodule.am
