@@ -20,6 +20,7 @@ extern "C" {
 #define LIBSMARTCOLS_VERSION   "@LIBSMARTCOLS_VERSION@"
 
 struct libscols_iter;
+struct libscols_symbols;
 
 
 /* iter.c */
@@ -33,6 +34,14 @@ extern struct libscols_iter *scols_new_iter(int direction);
 extern void scols_free_iter(struct libscols_iter *itr);
 extern void scols_reset_iter(struct libscols_iter *itr, int direction);
 extern int scols_iter_get_direction(struct libscols_iter *itr);
+
+/* symbols.c */
+extern struct libscols_symbols *scols_new_symbols(void);
+struct libscols_symbols *scols_copy_symbols(const struct libscols_symbols *sb);
+extern void scols_free_symbols(struct libscols_symbols *sb);
+extern int scols_symbols_set_branch(struct libscols_symbols *sb, const char *str);
+extern int scols_symbols_set_vertical(struct libscols_symbols *sb, const char *str);
+extern int scols_symbols_set_right(struct libscols_symbols *sb, const char *str);
 
 #ifdef __cplusplus
 }

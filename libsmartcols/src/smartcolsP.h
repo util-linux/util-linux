@@ -33,4 +33,13 @@ struct libscols_iter {
 	int			direction;	/* SCOLS_ITER_{FOR,BACK}WARD */
 };
 
+/*
+ * Tree symbols
+ */
+struct libscols_symbols {
+	char *branch;
+	char *vert;
+	char *right;
+};
+
 #endif /* _LIBSMARTCOLS_PRIVATE_H */
