@@ -80,3 +80,16 @@ const char *scols_cell_get_color(const struct libscols_cell *ce)
 	return ce ? ce->color : NULL;
 }
 
+int scols_cell_copy_content(struct libscols_cell *dest,
+			    const struct libscols_cell *src)
+{
+	int rc;
+
+	assert(dest);
+	assert(src);
+
+	rc = scols_cell_set_data(dest, scols_cell_get_data(src));
+	if (!rc)
+		rc = scols_cell_set_color(dest, scols_cell_get_color(src));
+	return rc;
+}

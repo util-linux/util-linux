@@ -54,15 +54,10 @@ struct libscols_column *scols_copy_column(const struct libscols_column *cl)
 	ret = scols_new_column();
 	if (!ret)
 		return NULL;
-	if (cl->color) {
-		ret->color = strdup(cl->color);
-		if (!ret->color)
-			goto err;
-	}
 
-	if (scols_cell_set_data(&ret->header, scols_cell_get_data(&cl->header)))
+	if (scols_column_set_color(ret, cl->color))
 		goto err;
-	if (scols_cell_set_color(&ret->header, scols_cell_get_color(&cl->header)))
+	if (scols_cell_copy_content(&ret->header, &cl->header))
 		goto err;
 
 	ret->width	= cl->width;
@@ -113,7 +108,7 @@ int scols_column_get_flags(struct libscols_column *cl)
 	return cl ? cl->flags : -EINVAL;
 }
 
-const struct libscols_cell *scols_column_get_header(struct libscols_column *cl)
+struct libscols_cell *scols_column_get_header(struct libscols_column *cl)
 {
 	assert(cl);
 	return cl ? &cl->header : NULL;

@@ -46,6 +46,8 @@ extern int scols_symbols_set_right(struct libscols_symbols *sb, const char *str)
 
 /* cell.c */
 extern int scols_reset_cell(struct libscols_cell *ce);
+extern int scols_cell_copy_content(struct libscols_cell *dest,
+				   const struct libscols_cell *src);
 extern int scols_cell_set_data(struct libscols_cell *ce, const char *str);
 extern const char *scols_cell_get_data(const struct libscols_cell *ce);
 extern int scols_cell_set_color(struct libscols_cell *ce, const char *color);
@@ -60,7 +62,7 @@ extern int scols_column_set_whint(struct libscols_column *cl, double whint);
 extern double scols_column_get_whint(struct libscols_column *cl);
 extern int scols_column_set_flags(struct libscols_column *cl, int flags);
 extern int scols_column_get_flags(struct libscols_column *cl);
-extern const struct libscols_cell *scols_column_get_header(struct libscols_column *cl);
+extern struct libscols_cell *scols_column_get_header(struct libscols_column *cl);
 extern int scols_column_set_color(struct libscols_column *cl, const char *color);
 extern const char *scols_column_get_color(struct libscols_column *cl);
 

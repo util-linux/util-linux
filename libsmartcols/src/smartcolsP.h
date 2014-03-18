@@ -72,5 +72,23 @@ struct libscols_column {
 	struct list_head	cl_columns;
 };
 
+/*
+ * Table line
+ */
+struct libscols_line {
+	int	refcount;
+	void	*userdata;
+	size_t	data_sz;	/* strlen of all data */
+	char	*color;		/* default line color */
+
+	struct libscols_cell	**cells;	/* array with data */
+	size_t			ncells;		/* number of cells */
+
+	struct list_head	ln_lines;	/* table lines */
+	struct list_head	ln_branch;	/* begin of branch (head of ln_children) */
+	struct list_head	ln_children;
+
+	struct libscols_line	*parent;
+};
 
 #endif /* _LIBSMARTCOLS_PRIVATE_H */
