@@ -50,4 +50,27 @@ struct libscols_cell {
 	char	*color;
 };
 
+
+/*
+ * Table column
+ */
+struct libscols_column {
+	int	refcount;	/* reference counter */
+	size_t	seqnum;		/* column index */
+
+	size_t	width;		/* real column width */
+	size_t	width_min;	/* minimal width (usually header width) */
+	size_t  width_max;	/* maximal width */
+	size_t  width_avg;	/* average width, used to detect extreme fields */
+	double	width_hint;	/* hint (N < 1 is in percent of termwidth) */
+
+	int	flags;
+	int	is_extreme;
+	char	*color;		/* default column color */
+
+	struct libscols_cell	header;
+	struct list_head	cl_columns;
+};
+
+
 #endif /* _LIBSMARTCOLS_PRIVATE_H */

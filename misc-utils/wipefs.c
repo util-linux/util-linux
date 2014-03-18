@@ -421,7 +421,7 @@ do_wipe(struct wipe_desc *wp, const char *devname, int flags)
 
 	fsync(blkid_probe_get_fd(pr));
 
-	if (reread)
+	if (reread && (mode & O_EXCL))
 		rereadpt(blkid_probe_get_fd(pr), devname);
 
 	close(blkid_probe_get_fd(pr));

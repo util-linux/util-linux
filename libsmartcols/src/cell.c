@@ -19,6 +19,18 @@
  * The cell has no ref-counting, free() and new() functions. All is
  * handled by libscols_line.
  */
+int scols_reset_cell(struct libscols_cell *ce)
+{
+	assert(ce);
+
+	if (!ce)
+		return -EINVAL;
+
+	free(ce->data);
+	free(ce->color);
+	memset(ce, 0, sizeof(*ce));
+	return 0;
+}
 
 int scols_cell_set_data(struct libscols_cell *ce, const char *str)
 {
