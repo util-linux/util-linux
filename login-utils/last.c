@@ -528,7 +528,7 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 	 *	Print out "final" string safely.
 	 */
 	for (s = final; *s; s++)
-		carefulputc(*s, stdout, '*');
+		fputc_careful(*s, stdout, '*');
 
 	if (len < 0 || (size_t)len >= sizeof(final))
 		putchar('\n');

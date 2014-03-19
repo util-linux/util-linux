@@ -373,7 +373,7 @@ void wr_fputs(char *s)
 {
 	char c;
 
-#define	PUTC(c)	if (carefulputc(c, stdout, '^') == EOF) \
+#define	PUTC(c)	if (fputc_careful(c, stdout, '^') == EOF) \
     err(EXIT_FAILURE, _("carefulputc failed"));
 	while (*s) {
 		c = *s++;

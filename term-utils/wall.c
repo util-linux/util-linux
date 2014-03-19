@@ -284,7 +284,7 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 				if (ch == '\t')
 					cnt += (7 - (cnt % 8));
 				if (ch != '\n')
-					carefulputc(ch, fp, '^');
+					fputc_careful(ch, fp, '^');
 			}
 		}
 	}
