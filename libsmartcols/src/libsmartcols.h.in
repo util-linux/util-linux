@@ -42,15 +42,16 @@ enum {
 	SCOLS_FL_ASCII       = (1 << 2),
 	SCOLS_FL_NOHEADINGS  = (1 << 3),
 	SCOLS_FL_EXPORT      = (1 << 4),
+	SCOLS_FL_MAX	     = (1 << 5),
 
 	/*
 	 * Column flags
 	 */
-	SCOLS_FL_TRUNC       = (1 << 5),   /* truncate fields data if necessary */
-	SCOLS_FL_TREE        = (1 << 6),   /* use tree "ascii art" */
-	SCOLS_FL_RIGHT	     = (1 << 7),   /* align to the right */
-	SCOLS_FL_STRICTWIDTH = (1 << 8),   /* don't reduce width if column is empty */
-	SCOLS_FL_NOEXTREMES  = (1 << 9),   /* ignore extreme fields when count column width*/
+	SCOLS_FL_TRUNC       = (1 << 15),   /* truncate fields data if necessary */
+	SCOLS_FL_TREE        = (1 << 16),   /* use tree "ascii art" */
+	SCOLS_FL_RIGHT	     = (1 << 17),   /* align to the right */
+	SCOLS_FL_STRICTWIDTH = (1 << 18),   /* don't reduce width if column is empty */
+	SCOLS_FL_NOEXTREMES  = (1 << 19),   /* ignore extreme fields when count column width*/
 };
 
 extern struct libscols_iter *scols_new_iter(int direction);

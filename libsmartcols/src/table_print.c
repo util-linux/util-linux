@@ -77,7 +77,7 @@ static void print_data(struct libscols_table *tb,
 	}
 	width = cl->width;
 
-	if (is_last_column(tb, cl) && len < width)
+	if (is_last_column(tb, cl) && len < width && !(tb->flags & SCOLS_FL_MAX))
 		width = len;
 
 	/* truncate data */
@@ -436,8 +436,20 @@ static void recount_widths(struct libscols_table *tb, char *buf, size_t bufsz)
 					break;
 			}
 		}
-		if (width < tb->termwidth) {
-			/* enalarge the last column */
+
+		if (width < tb->termwidth && (tb->flags & SCOLS_FL_MAX)) {
+			/* try enlarge all columns */
+			while (width < tb->termwidth) {
+				scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+				while (scols_table_next_column(tb, &itr, &cl) == 0) {
+					cl->width++;
+					width++;
+					if (width == tb->termwidth)
+						break;
+				}
+			}
+		} else if (width < tb->termwidth) {
+			/* enlarge the last column */
 			struct libscols_column *cl = list_entry(
 				tb->tb_columns.prev, struct libscols_column, cl_columns);
 

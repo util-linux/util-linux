@@ -37,9 +37,12 @@ int main(int argc, char *argv[])
 	int flags = 0, notree = 0, clone = 0, i, color = 0;
 
 	if (argc == 2 && !strcmp(argv[1], "--help")) {
-		printf("%s [--ascii | --raw | --list | --clone | --clonetree]\n",
+		printf("%s [--max | --ascii | --raw | --export | --list | "
+		       "--color | --colortree | --clone | --clonetree]\n",
 				program_invocation_short_name);
 		return EXIT_SUCCESS;
+	} else if (argc == 2 && !strcmp(argv[1], "--max")) {
+		flags |= SCOLS_FL_MAX;
 	} else if (argc == 2 && !strcmp(argv[1], "--ascii")) {
 		flags |= SCOLS_FL_ASCII;
 	} else if (argc == 2 && !strcmp(argv[1], "--raw")) {
