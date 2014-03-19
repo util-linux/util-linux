@@ -558,6 +558,7 @@ int scols_print_table(struct libscols_table *tb)
 			tb->termwidth = get_terminal_width();
 		if (tb->termwidth <= 0)
 			tb->termwidth = 80;
+		tb->termwidth -= tb->termreduce;
 	}
 
 	line_sz = tb->termwidth;

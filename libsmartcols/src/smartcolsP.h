@@ -104,6 +104,7 @@ struct libscols_table {
 	size_t	ncols;		/* number of columns */
 	size_t	nlines;		/* number of lines */
 	size_t	termwidth;	/* terminal width */
+	size_t  termreduce;	/* extra blank space */
 	int	is_term;	/* is a tty? */
 	int	flags;
 	int	first_run;

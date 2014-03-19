@@ -134,6 +134,7 @@ extern int scols_table_set_symbols(struct libscols_table *tb, struct libscols_sy
 
 extern int scols_table_set_stream(struct libscols_table *tb, FILE *stream);
 extern FILE *scols_table_get_stream(struct libscols_table *tb);
+extern int scols_table_reduce_termwidth(struct libscols_table *tb, size_t reduce);
 
 /* table_print.c */
 extern int scols_print_table(struct libscols_table *tb);

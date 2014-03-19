@@ -270,6 +270,16 @@ FILE *scols_table_get_stream(struct libscols_table *tb)
 	return tb ? tb->out: NULL;
 }
 
+int scols_table_reduce_termwidth(struct libscols_table *tb, size_t reduce)
+{
+	assert(tb);
+	if (!tb)
+		return -EINVAL;
+
+	tb->termreduce = reduce;
+	return 0;
+}
+
 /*
  * @tb: table
  * @: number of column (0..N)
