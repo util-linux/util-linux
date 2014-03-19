@@ -47,6 +47,7 @@ struct libscols_table *scols_new_table(int flags, struct libscols_symbols *syms)
 	tb->flags = flags;
 	tb->refcount = 1;
 	tb->first_run = TRUE;
+	tb->out = stdout;
 
 	INIT_LIST_HEAD(&tb->tb_lines);
 	INIT_LIST_HEAD(&tb->tb_columns);
@@ -251,6 +252,22 @@ int scols_table_get_flags(struct libscols_table *tb)
 {
 	assert(tb);
 	return tb ? tb->flags: -EINVAL;
+}
+
+int scols_table_set_stream(struct libscols_table *tb, FILE *stream)
+{
+	assert(tb);
+	if (!tb)
+		return -EINVAL;
+
+	tb->out = stream;
+	return 0;
+}
+
+FILE *scols_table_get_stream(struct libscols_table *tb)
+{
+	assert(tb);
+	return tb ? tb->out: NULL;
 }
 
 /*

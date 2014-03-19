@@ -41,18 +41,18 @@ static void print_data(struct libscols_table *tb,
 
 	/* raw mode */
 	if (tb->flags & SCOLS_FL_RAW) {
-		fputs_nonblank(data, stdout);
+		fputs_nonblank(data, tb->out);
 		if (!is_last_column(tb, cl))
-			fputc(' ', stdout);
+			fputc(' ', tb->out);
 		return;
 	}
 
 	/* NAME=value mode */
 	if (tb->flags & SCOLS_FL_EXPORT) {
-		fprintf(stdout, "%s=", scols_cell_get_data(&cl->header));
-		fputs_quoted(data, stdout);
+		fprintf(tb->out, "%s=", scols_cell_get_data(&cl->header));
+		fputs_quoted(data, tb->out);
 		if (!is_last_column(tb, cl))
-			fputc(' ', stdout);
+			fputc(' ', tb->out);
 		return;
 	}
 
@@ -93,33 +93,33 @@ static void print_data(struct libscols_table *tb,
 		if (!(tb->flags & SCOLS_FL_RAW) && (cl->flags & SCOLS_FL_RIGHT)) {
 			size_t xw = cl->width;
 			if (color)
-				fputs(color, stdout);
-			fprintf(stdout, "%*s", (int) xw, data);
+				fputs(color, tb->out);
+			fprintf(tb->out, "%*s", (int) xw, data);
 			if (color)
-				fputs(UL_COLOR_RESET, stdout);
+				fputs(UL_COLOR_RESET, tb->out);
 			if (len < xw)
 				len = xw;
 		}
 		else {
 			if (color)
-				fputs(color, stdout);
-			fputs(data, stdout);
+				fputs(color, tb->out);
+			fputs(data, tb->out);
 			if (color)
-				fputs(UL_COLOR_RESET, stdout);
+				fputs(UL_COLOR_RESET, tb->out);
 		}
 	}
 	for (i = len; i < width; i++)
-		fputc(' ', stdout);		/* padding */
+		fputc(' ', tb->out);		/* padding */
 
 	if (!is_last_column(tb, cl)) {
 		if (len > width && !(cl->flags & SCOLS_FL_TRUNC)) {
-			fputc('\n', stdout);
+			fputc('\n', tb->out);
 			for (i = 0; i <= (size_t) cl->seqnum; i++) {
 				struct libscols_column *x = scols_table_get_column(tb, i);
-				printf("%*s ", -((int)x->width), " ");
+				fprintf(tb->out, "%*s ", -((int)x->width), " ");
 			}
 		} else
-			fputc(' ', stdout);	/* columns separator */
+			fputc(' ', tb->out);	/* columns separator */
 	}
 
 	free(buf);
@@ -221,7 +221,7 @@ static void print_line(struct libscols_table *tb,
 		print_data(tb, cl, ln,
 				scols_line_get_cell(ln, cl->seqnum),
 				line_get_data(tb, ln, cl, buf, bufsz));
-	fputc('\n', stdout);
+	fputc('\n', tb->out);
 }
 
 static void print_header(struct libscols_table *tb, char *buf, size_t bufsz)
@@ -245,7 +245,7 @@ static void print_header(struct libscols_table *tb, char *buf, size_t bufsz)
 		buf[bufsz - 1] = '\0';
 		print_data(tb, cl, NULL, &cl->header, buf);
 	}
-	fputc('\n', stdout);
+	fputc('\n', tb->out);
 }
 
 static void print_table(struct libscols_table *tb, char *buf, size_t bufsz)
@@ -526,7 +526,7 @@ static size_t strlen_line(struct libscols_line *ln)
 /*
  * @tb: table
  *
- * Prints the table to stdout
+ * Prints the table to the output stream.
  */
 int scols_print_table(struct libscols_table *tb)
 {
