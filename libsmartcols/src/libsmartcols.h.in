@@ -101,6 +101,9 @@ extern int scols_line_set_userdata(struct libscols_line *ln, void *data);
 extern void *scols_line_get_userdata(struct libscols_line *ln);
 extern int scols_line_remove_child(struct libscols_line *ln, struct libscols_line *child);
 extern int scols_line_add_child(struct libscols_line *ln, struct libscols_line *child);
+extern int scols_line_has_children(struct libscols_line *ln);
+extern int scols_line_next_child(struct libscols_line *ln,
+			  struct libscols_iter *itr, struct libscols_line **chld);
 extern struct libscols_line *scols_line_get_parent(struct libscols_line *ln);
 extern int scols_line_set_color(struct libscols_line *ln, const char *color);
 extern const char *scols_line_get_color(struct libscols_line *ln);

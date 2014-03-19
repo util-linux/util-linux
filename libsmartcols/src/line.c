@@ -158,6 +158,32 @@ struct libscols_line *scols_line_get_parent(struct libscols_line *ln)
 	return ln ? ln->parent : NULL;
 }
 
+int scols_line_has_children(struct libscols_line *ln)
+{
+	assert(ln);
+	return ln ? !list_empty(&ln->ln_branch) : 0;
+}
+
+int scols_line_next_child(struct libscols_line *ln,
+			  struct libscols_iter *itr,
+			  struct libscols_line **chld)
+{
+	int rc = 1;
+
+	if (!ln || !itr || !chld)
+		return -EINVAL;
+	*chld = NULL;
+
+	if (!itr->head)
+		SCOLS_ITER_INIT(itr, &ln->ln_branch);
+	if (itr->p != itr->head) {
+		SCOLS_ITER_ITERATE(itr, *chld, struct libscols_line, ln_children);
+		rc = 0;
+	}
+
+	return rc;
+}
+
 /*
  * The default line color, used when cell color unspecified.
  */
