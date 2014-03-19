@@ -107,7 +107,6 @@ struct libscols_table {
 	size_t  termreduce;	/* extra blank space */
 	int	is_term;	/* is a tty? */
 	int	flags;
-	int	first_run;
 	FILE	*out;		/* output stream */
 
 	struct list_head	tb_columns;

@@ -231,8 +231,7 @@ static void print_header(struct libscols_table *tb, char *buf, size_t bufsz)
 
 	assert(tb);
 
-	if (!tb->first_run ||
-	    (tb->flags & SCOLS_FL_NOHEADINGS) ||
+	if ((tb->flags & SCOLS_FL_NOHEADINGS) ||
 	    (tb->flags & SCOLS_FL_EXPORT) ||
 	    list_empty(&tb->tb_lines))
 		return;
@@ -551,15 +550,11 @@ int scols_print_table(struct libscols_table *tb)
 	if (!tb)
 		return -1;
 
-	if (tb->first_run) {
-		tb->is_term = isatty(STDOUT_FILENO);
-
-		if (tb->is_term && !tb->termwidth)
-			tb->termwidth = get_terminal_width();
-		if (tb->termwidth <= 0)
-			tb->termwidth = 80;
-		tb->termwidth -= tb->termreduce;
-	}
+	tb->is_term = isatty(STDOUT_FILENO);
+	tb->termwidth = tb->is_term ? get_terminal_width() : 0;
+	if (tb->termwidth <= 0)
+		tb->termwidth = 80;
+	tb->termwidth -= tb->termreduce;
 
 	line_sz = tb->termwidth;
 
@@ -575,8 +570,7 @@ int scols_print_table(struct libscols_table *tb)
 	if (!line)
 		return -ENOMEM;
 
-	if (tb->first_run &&
-	    !((tb->flags & SCOLS_FL_RAW) || (tb->flags & SCOLS_FL_EXPORT)))
+	if (!((tb->flags & SCOLS_FL_RAW) || (tb->flags & SCOLS_FL_EXPORT)))
 		recount_widths(tb, line, line_sz);
 
 	if (tb->flags & SCOLS_FL_TREE)
@@ -585,6 +579,5 @@ int scols_print_table(struct libscols_table *tb)
 		print_table(tb, line, line_sz);
 
 	free(line);
-	tb->first_run = FALSE;
 	return 0;
 }

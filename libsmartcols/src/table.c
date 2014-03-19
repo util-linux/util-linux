@@ -46,7 +46,6 @@ struct libscols_table *scols_new_table(int flags, struct libscols_symbols *syms)
 
 	tb->flags = flags;
 	tb->refcount = 1;
-	tb->first_run = TRUE;
 	tb->out = stdout;
 
 	INIT_LIST_HEAD(&tb->tb_lines);
