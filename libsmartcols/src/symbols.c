@@ -7,8 +7,31 @@
 
 struct libscols_symbols *scols_new_symbols(void)
 {
-	return calloc(1, sizeof(struct libscols_symbols));
+	struct libscols_symbols *sy = calloc(1, sizeof(struct libscols_symbols));
+
+	if (!sy)
+		return NULL;
+	sy->refcount = 1;
+	return sy;
 }
+
+
+void scols_ref_symbols(struct libscols_symbols *sy)
+{
+	if (sy)
+		sy->refcount++;
+}
+
+void scols_unref_symbols(struct libscols_symbols *sy)
+{
+	if (sy && --sy->refcount <= 0) {
+		free(sy->branch);
+		free(sy->vert);
+		free(sy->right);
+		free(sy);
+	}
+}
+
 
 int scols_symbols_set_branch(struct libscols_symbols *sb, const char *str)
 {
@@ -86,18 +109,9 @@ struct libscols_symbols *scols_copy_symbols(const struct libscols_symbols *sb)
 	if (!rc)
 		return ret;
 
-	scols_free_symbols(ret);
+	scols_unref_symbols(ret);
 	return NULL;
 
 }
 
-void scols_free_symbols(struct libscols_symbols *sb)
-{
-	if (!sb)
-		return;
 
-	free(sb->branch);
-	free(sb->vert);
-	free(sb->right);
-	free(sb);
-}

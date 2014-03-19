@@ -26,12 +26,14 @@ int scols_reset_cell(struct libscols_cell *ce)
 	if (!ce)
 		return -EINVAL;
 
-	free(ce->data);
+	if (!ce->is_ref)
+		free(ce->data);
 	free(ce->color);
 	memset(ce, 0, sizeof(*ce));
 	return 0;
 }
 
+/* stores copy of the @str to cell */
 int scols_cell_set_data(struct libscols_cell *ce, const char *str)
 {
 	char *p = NULL;
@@ -45,8 +47,26 @@ int scols_cell_set_data(struct libscols_cell *ce, const char *str)
 		if (!p)
 			return -ENOMEM;
 	}
-	free(ce->data);
+	if (!ce->is_ref)
+		free(ce->data);
 	ce->data = p;
+	ce->is_ref = 0;
+	return 0;
+}
+
+/* add reference to @str to cell */
+int scols_cell_refer_data(struct libscols_cell *ce, char *str)
+{
+	char *p = NULL;
+
+	assert(ce);
+
+	if (!ce)
+		return -EINVAL;
+	if (!ce->is_ref)
+		free(ce->data);
+	ce->data = p;
+	ce->is_ref = 1;
 	return 0;
 }
 

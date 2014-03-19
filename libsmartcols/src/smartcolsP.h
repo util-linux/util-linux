@@ -24,6 +24,7 @@
 # define assert(x)
 #endif
 
+
 /*
  * Generic iterator
  */
@@ -37,9 +38,10 @@ struct libscols_iter {
  * Tree symbols
  */
 struct libscols_symbols {
-	char *branch;
-	char *vert;
-	char *right;
+	int	refcount;
+	char	*branch;
+	char	*vert;
+	char	*right;
 };
 
 /*
@@ -48,6 +50,8 @@ struct libscols_symbols {
 struct libscols_cell {
 	char	*data;
 	char	*color;
+
+	unsigned int is_ref;	/* data is reference to foreign pointer */
 };
 
 
@@ -77,11 +81,12 @@ struct libscols_column {
  */
 struct libscols_line {
 	int	refcount;
+	size_t	seqnum;
+
 	void	*userdata;
-	size_t	data_sz;	/* strlen of all data */
 	char	*color;		/* default line color */
 
-	struct libscols_cell	**cells;	/* array with data */
+	struct libscols_cell	*cells;		/* array with data */
 	size_t			ncells;		/* number of cells */
 
 	struct list_head	ln_lines;	/* table lines */
@@ -90,5 +95,39 @@ struct libscols_line {
 
 	struct libscols_line	*parent;
 };
+
+/*
+ * The table
+ */
+struct libscols_table {
+	int	refcount;
+	size_t	ncols;		/* number of columns */
+	size_t	nlines;		/* number of lines */
+	size_t	termwidth;	/* terminal width */
+	int	is_term;	/* is a tty? */
+	int	flags;
+	int	first_run;
+
+	struct list_head	tb_columns;
+	struct list_head	tb_lines;
+	struct libscols_symbols	*symbols;
+};
+
+#define IS_ITER_FORWARD(_i)	((_i)->direction == SCOLS_ITER_FORWARD)
+#define IS_ITER_BACKWARD(_i)	((_i)->direction == SCOLS_ITER_BACKWARD)
+
+#define SCOLS_ITER_INIT(itr, list) \
+	do { \
+		(itr)->p = IS_ITER_FORWARD(itr) ? \
+				(list)->next : (list)->prev; \
+		(itr)->head = (list); \
+	} while(0)
+
+#define SCOLS_ITER_ITERATE(itr, res, restype, member) \
+	do { \
+		res = list_entry((itr)->p, restype, member); \
+		(itr)->p = IS_ITER_FORWARD(itr) ? \
+				(itr)->p->next : (itr)->p->prev; \
+	} while(0)
 
 #endif /* _LIBSMARTCOLS_PRIVATE_H */
