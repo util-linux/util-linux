@@ -422,12 +422,13 @@ dooutput(void) {
 			if (poll(fds, 1, 50) <= 0)
 				break;
 		}
-		if (tflg)
-			gettimeofday(&tv, NULL);
 
 		errno = 0;
 		cc = read(master, obuf, sizeof (obuf));
 		errsv = errno;
+
+		if (tflg)
+			gettimeofday(&tv, NULL);
 
 		if (errsv == EINTR && cc <= 0)
 			continue;	/* try it again */
