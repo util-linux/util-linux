@@ -335,9 +335,10 @@ int blkid_superblocks_get_name(size_t idx, const char **name, int *usage)
 static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 {
 	size_t i;
+	int rc = BLKID_PROBE_NONE;
 
 	if (!pr || chn->idx < -1)
-		return -1;
+		return -EINVAL;
 	blkid_probe_chain_reset_vals(pr, chn);
 
 	DBG(LOWPROBE, blkid_debug("--> starting probing loop [SUBLKS idx=%d]",
@@ -355,38 +356,50 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		const struct blkid_idinfo *id;
 		const struct blkid_idmag *mag = NULL;
 		blkid_loff_t off = 0;
-		int rc = 0;
 
 		chn->idx = i;
 		id = idinfos[i];
 
 		if (chn->fltr && blkid_bmp_get_item(chn->fltr, i)) {
 			DBG(LOWPROBE, blkid_debug("filter out: %s", id->name));
+			rc = BLKID_PROBE_NONE;
 			continue;
 		}
 
-		if (id->minsz && id->minsz > pr->size)
+		if (id->minsz && id->minsz > pr->size) {
+			rc = BLKID_PROBE_NONE;
 			continue;	/* the device is too small */
+		}
 
 		/* don't probe for RAIDs, swap or journal on CD/DVDs */
 		if ((id->usage & (BLKID_USAGE_RAID | BLKID_USAGE_OTHER)) &&
-		    blkid_probe_is_cdrom(pr))
+		    blkid_probe_is_cdrom(pr)) {
+			rc = BLKID_PROBE_NONE;
 			continue;
+		}
 
 		/* don't probe for RAIDs on floppies */
-		if ((id->usage & BLKID_USAGE_RAID) && blkid_probe_is_tiny(pr))
+		if ((id->usage & BLKID_USAGE_RAID) && blkid_probe_is_tiny(pr)) {
+			rc = BLKID_PROBE_NONE;
 			continue;
+		}
 
 		DBG(LOWPROBE, blkid_debug("[%zd] %s:", i, id->name));
 
-		if (blkid_probe_get_idmag(pr, id, &off, &mag))
+		rc = blkid_probe_get_idmag(pr, id, &off, &mag);
+		if (rc < 0)
+			break;
+		if (rc != BLKID_PROBE_OK)
 			continue;
 
 		/* final check by probing function */
 		if (id->probefunc) {
 			DBG(LOWPROBE, blkid_debug("\tcall probefunc()"));
-			if (id->probefunc(pr, mag) != 0) {
+			rc = id->probefunc(pr, mag);
+			if (rc != BLKID_PROBE_OK) {
 				blkid_probe_chain_reset_vals(pr, chn);
+				if (rc < 0)
+					break;
 				continue;
 			}
 		}
@@ -411,13 +424,13 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 
 		DBG(LOWPROBE, blkid_debug("<-- leaving probing loop (type=%s) [SUBLKS idx=%d]",
 			id->name, chn->idx));
-		return 0;
+		return BLKID_PROBE_OK;
 	}
 
 nothing:
-	DBG(LOWPROBE, blkid_debug("<-- leaving probing loop (failed) [SUBLKS idx=%d]",
-		chn->idx));
-	return 1;
+	DBG(LOWPROBE, blkid_debug("<-- leaving probing loop (failed=%d) [SUBLKS idx=%d]",
+			rc, chn->idx));
+	return rc;
 }
 
 /*

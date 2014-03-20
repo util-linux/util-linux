@@ -569,13 +569,17 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 	if (!bf) {
 		ssize_t ret;
 
-		if (blkid_llseek(pr->fd, pr->off + off, SEEK_SET) < 0)
+		if (blkid_llseek(pr->fd, pr->off + off, SEEK_SET) < 0) {
+			errno = 0;
 			return NULL;
+		}
 
 		/* allocate info and space for data by why call */
 		bf = calloc(1, sizeof(struct blkid_bufinfo) + len);
-		if (!bf)
+		if (!bf) {
+			errno = ENOMEM;
 			return NULL;
+		}
 
 		bf->data = ((unsigned char *) bf) + sizeof(struct blkid_bufinfo);
 		bf->len = len;
@@ -587,7 +591,10 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 
 		ret = read(pr->fd, bf->data, len);
 		if (ret != (ssize_t) len) {
+			DBG(LOWPROBE, blkid_debug("\tbuffer read: return %zd error %m", ret));
 			free(bf);
+			if (ret >= 0)
+				errno = 0;
 			return NULL;
 		}
 		list_add_tail(&bf->bufs, &pr->buffers);
@@ -776,6 +783,17 @@ int blkid_probe_set_dimension(blkid_probe pr,
 	return 0;
 }
 
+/**
+ * blkid_probe_get_idmag:
+ * @pr: probe
+ * @id: id information
+ * @offset: begin of probing area
+ * @res: found id information
+ *
+ * Check for matching magic value.
+ * Returns BLKID_PROBE_OK if found, BLKID_PROBE_NONE if not found
+ * or no magic present, or negative value on error.
+ */
 int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 			blkid_loff_t *offset, const struct blkid_idmag **res)
 {
@@ -794,6 +812,8 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 		off = (mag->kboff + (mag->sboff >> 10)) << 10;
 		buf = blkid_probe_get_buffer(pr, off, 1024);
 
+		if (!buf && errno)
+			return -errno;
 		if (buf && !memcmp(mag->magic,
 				buf + (mag->sboff & 0x3ff), mag->len)) {
 			DBG(LOWPROBE, blkid_debug("\tmagic sboff=%u, kboff=%ld",
@@ -802,16 +822,16 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 				*offset = off + (mag->sboff & 0x3ff);
 			if (res)
 				*res = mag;
-			return 0;
+			return BLKID_PROBE_OK;
 		}
 		mag++;
 	}
 
 	if (id && id->magics[0].magic)
 		/* magic string(s) defined, but not found */
-		return 1;
+		return BLKID_PROBE_NONE;
 
-	return 0;
+	return BLKID_PROBE_OK;
 }
 
 static inline void blkid_probe_start(blkid_probe pr)

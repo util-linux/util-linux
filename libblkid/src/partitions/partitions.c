@@ -535,12 +535,13 @@ static int idinfo_probe(blkid_probe pr, const struct blkid_idinfo *id,
 {
 	const struct blkid_idmag *mag = NULL;
 	blkid_loff_t off;
-	int rc = 1;		/* = nothing detected */
+	int rc = BLKID_PROBE_NONE;		/* = nothing detected */
 
 	if (pr->size <= 0 || (id->minsz && id->minsz > pr->size))
 		goto nothing;	/* the device is too small */
 
-	if (blkid_probe_get_idmag(pr, id, &off, &mag))
+	rc = blkid_probe_get_idmag(pr, id, &off, &mag);
+	if (rc != BLKID_PROBE_OK)
 		goto nothing;
 
 	/* final check by probing function */
@@ -548,14 +549,15 @@ static int idinfo_probe(blkid_probe pr, const struct blkid_idinfo *id,
 		DBG(LOWPROBE, blkid_debug(
 			"%s: ---> call probefunc()", id->name));
 		rc = id->probefunc(pr, mag);
-	        if (rc == -1) {
+		if (rc < 0) {
 			/* reset after error */
 			reset_partlist(blkid_probe_get_partlist(pr));
 			if (chn && !chn->binary)
 				blkid_probe_chain_reset_vals(pr, chn);
-			DBG(LOWPROBE, blkid_debug("%s probefunc failed", id->name));
+			DBG(LOWPROBE, blkid_debug("%s probefunc failed, rc %d",
+						  id->name, rc));
 		}
-		if (rc == 0 && mag && chn && !chn->binary)
+		if (rc == BLKID_PROBE_OK && mag && chn && !chn->binary)
 			rc = blkid_probe_set_magic(pr, off, mag->len,
 					(unsigned char *) mag->magic);
 
@@ -571,11 +573,11 @@ nothing:
  */
 static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 {
-	int rc = 1;
+	int rc = BLKID_PROBE_NONE;
 	size_t i;
 
 	if (!pr || chn->idx < -1)
-		return -1;
+		return -EINVAL;
 	blkid_probe_chain_reset_vals(pr, chn);
 
 	if (chn->binary)
@@ -599,7 +601,10 @@ static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 			continue;
 
 		/* apply checks from idinfo */
-		if (idinfo_probe(pr, idinfos[i], chn) != 0)
+		rc = idinfo_probe(pr, idinfos[i], chn);
+		if (rc < 0)
+			break;
+		if (rc != BLKID_PROBE_OK)
 			continue;
 
 		name = idinfos[i]->name;
@@ -620,20 +625,19 @@ static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 		break;
 	}
 
-	if (rc == 1) {
-		DBG(LOWPROBE, blkid_debug("<-- leaving probing loop (failed) [PARTS idx=%d]",
-			chn->idx));
+	if (rc != BLKID_PROBE_OK) {
+		DBG(LOWPROBE, blkid_debug("<-- leaving probing loop (failed=%d) [PARTS idx=%d]",
+			rc, chn->idx));
 	}
 
 details_only:
 	/*
 	 * Gather PART_ENTRY_* values if the current device is a partition.
 	 */
-	if (!chn->binary &&
+	if (rc == BLKID_PROBE_OK && !chn->binary &&
 	    (blkid_partitions_get_flags(pr) & BLKID_PARTS_ENTRY_DETAILS)) {
 
-		if (!blkid_partitions_probe_partition(pr))
-			rc = 0;
+		rc = blkid_partitions_probe_partition(pr);
 	}
 
 	return rc;
@@ -644,7 +648,7 @@ int blkid_partitions_do_subprobe(blkid_probe pr, blkid_partition parent,
 		const struct blkid_idinfo *id)
 {
 	blkid_probe prc;
-	int rc = 1;
+	int rc;
 	blkid_partlist ls;
 	blkid_loff_t sz, off;
 
@@ -653,7 +657,7 @@ int blkid_partitions_do_subprobe(blkid_probe pr, blkid_partition parent,
 		id->name, parent));
 
 	if (!pr || !parent || !parent->size)
-		return -1;
+		return -EINVAL;
 
 	/* range defined by parent */
 	sz = ((blkid_loff_t) parent->size) << 9;
@@ -663,13 +667,13 @@ int blkid_partitions_do_subprobe(blkid_probe pr, blkid_partition parent,
 		DBG(LOWPROBE, blkid_debug(
 			"ERROR: parts: <---- '%s' subprobe: overflow detected.",
 			id->name));
-		return -1;
+		return -ENOSPC;
 	}
 
 	/* create private prober */
 	prc = blkid_clone_probe(pr);
 	if (!prc)
-		return -1;
+		return -ENOMEM;
 
 	blkid_probe_set_dimension(prc, off, sz);
 
@@ -702,7 +706,7 @@ int blkid_partitions_do_subprobe(blkid_probe pr, blkid_partition parent,
 
 static int blkid_partitions_probe_partition(blkid_probe pr)
 {
-	int rc = 1;
+	int rc = BLKID_PROBE_NONE;
 	blkid_probe disk_pr = NULL;
 	blkid_partlist ls;
 	blkid_partition par;
@@ -768,7 +772,7 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 		blkid_probe_sprintf_value(pr, "PART_ENTRY_DISK", "%u:%u",
 				major(disk), minor(disk));
 	}
-	rc = 0;
+	rc = BLKID_PROBE_OK;
 nothing:
 	return rc;
 }
