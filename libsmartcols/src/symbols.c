@@ -1,3 +1,11 @@
+/*
+ * symbols.c - routines for symbol handling
+ *
+ * Copyright (C) 2014 Ondrej Oprala <ooprala@redhat.com>
+ *
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009-2014 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2014 Ondrej Oprala <ooprala@redhat.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
