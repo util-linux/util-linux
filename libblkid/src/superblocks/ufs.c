@@ -185,7 +185,7 @@ static int probe_ufs(blkid_probe pr,
 					offsets[i] * 1024,
 					sizeof(struct ufs_super_block));
 		if (!ufs)
-			return -1;
+			return errno ? -errno : 1;
 
 		magBE = be32_to_cpu(ufs->fs_magic);
 		magLE = le32_to_cpu(ufs->fs_magic);
@@ -231,7 +231,7 @@ found:
 				offsetof(struct ufs_super_block, fs_magic),
 			sizeof(ufs->fs_magic),
 			(unsigned char *) &ufs->fs_magic))
-		return -1;
+		return 1;
 
 	return 0;
 }

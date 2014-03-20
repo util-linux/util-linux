@@ -65,7 +65,7 @@ static int probe_btrfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	bfs = blkid_probe_get_sb(pr, mag, struct btrfs_super_block);
 	if (!bfs)
-		return -1;
+		return errno ? -errno : 1;
 
 	if (*bfs->label)
 		blkid_probe_set_label(pr,

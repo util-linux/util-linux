@@ -27,8 +27,11 @@ static int probe_sun_pt(blkid_probe pr,
 	int i, use_vtoc;
 
 	l = (struct sun_disklabel *) blkid_probe_get_sector(pr, 0);
-	if (!l)
+	if (!l) {
+		if (errno)
+			return -errno;
 		goto nothing;
+	}
 
 	if (sun_pt_checksum(l)) {
 		DBG(LOWPROBE, blkid_debug(
@@ -38,11 +41,11 @@ static int probe_sun_pt(blkid_probe pr,
 
 	if (blkid_partitions_need_typeonly(pr))
 		/* caller does not ask for details about partitions */
-		return 0;
+		return BLKID_PROBE_OK;
 
 	ls = blkid_probe_get_partlist(pr);
 	if (!ls)
-		goto err;
+		goto nothing;
 
 	tab = blkid_partlist_new_parttable(ls, "sun", 0);
 	if (!tab)
@@ -76,7 +79,7 @@ static int probe_sun_pt(blkid_probe pr,
 		uint16_t type = 0, flags = 0;
 		blkid_partition par;
 
-                start = be32_to_cpu(p->start_cylinder) * spc;
+		start = be32_to_cpu(p->start_cylinder) * spc;
 		size = be32_to_cpu(p->num_sectors);
 		if (use_vtoc) {
 			type = be16_to_cpu(l->vtoc.infos[i].id);
@@ -96,12 +99,12 @@ static int probe_sun_pt(blkid_probe pr,
 		if (flags)
 			blkid_partition_set_flags(par, flags);
 	}
-	return 0;
+	return BLKID_PROBE_OK;
 
 nothing:
-	return 1;
+	return BLKID_PROBE_NONE;
 err:
-	return -1;
+	return -ENOMEM;
 }
 
 

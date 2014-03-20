@@ -185,7 +185,7 @@ static int probe_zfs(blkid_probe pr,
 			blkid_probe_get_buffer(pr, offset,
 					       sizeof(struct zfs_uberblock));
 		if (ub == NULL)
-			return -1;
+			return errno ? -errno : 1;
 
 		if (ub->ub_magic == UBERBLOCK_MAGIC) {
 			ub_offset = offset;
@@ -202,7 +202,7 @@ static int probe_zfs(blkid_probe pr,
 	}
 
 	if (found < 4)
-		return -1;
+		return 1;
 
 	/* If we found the 4th uberblock, then we will have exited from the
 	 * scanning loop immediately, and ub will be a valid uberblock. */
@@ -214,7 +214,7 @@ static int probe_zfs(blkid_probe pr,
 	if (blkid_probe_set_magic(pr, ub_offset,
 				sizeof(ub->ub_magic),
 				(unsigned char *) &ub->ub_magic))
-		return -1;
+		return 1;
 
 	return 0;
 }

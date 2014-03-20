@@ -44,8 +44,11 @@ static int probe_ultrix_pt(blkid_probe pr,
 	int i;
 
 	data = blkid_probe_get_sector(pr, ULTRIX_SECTOR);
-	if (!data)
+	if (!data) {
+		if (errno)
+			return -errno;
 		goto nothing;
+	}
 
 	l = (struct ultrix_disklabel *) (data + ULTRIX_OFFSET);
 
@@ -59,11 +62,11 @@ static int probe_ultrix_pt(blkid_probe pr,
 
 	if (blkid_partitions_need_typeonly(pr))
 		/* caller does not ask for details about partitions */
-		return 0;
+		return BLKID_PROBE_OK;
 
 	ls = blkid_probe_get_partlist(pr);
 	if (!ls)
-		goto err;
+		goto nothing;
 
 	tab = blkid_partlist_new_parttable(ls, "ultrix", 0);
 	if (!tab)
@@ -80,11 +83,11 @@ static int probe_ultrix_pt(blkid_probe pr,
 		}
 	}
 
-	return 0;
+	return BLKID_PROBE_OK;
 nothing:
-	return 1;
+	return BLKID_PROBE_NONE;
 err:
-	return -1;
+	return -ENOMEM;
 }
 
 const struct blkid_idinfo ultrix_pt_idinfo =

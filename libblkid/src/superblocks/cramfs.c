@@ -40,7 +40,7 @@ static int probe_cramfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	cs = blkid_probe_get_sb(pr, mag, struct cramfs_super);
 	if (!cs)
-		return -1;
+		return errno ? -errno : 1;
 
 	blkid_probe_set_label(pr, cs->name, sizeof(cs->name));
 	return 0;

@@ -261,10 +261,10 @@ int blkid_probe_is_vfat(blkid_probe pr)
 
 	ms = blkid_probe_get_sb(pr, mag, struct msdos_super_block);
 	if (!ms)
-		return 0;
+		return errno ? -errno : 0;
 	vs = blkid_probe_get_sb(pr, mag, struct vfat_super_block);
 	if (!vs)
-		return 0;
+		return errno ? -errno : 0;
 
 	return fat_valid_superblock(mag, ms, vs, NULL, NULL);
 }
@@ -283,10 +283,12 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 
 	ms = blkid_probe_get_sb(pr, mag, struct msdos_super_block);
 	if (!ms)
-		return 0;
+		return errno ? -errno : 1;
+
 	vs = blkid_probe_get_sb(pr, mag, struct vfat_super_block);
 	if (!vs)
-		return 0;
+		return errno ? -errno : 1;
+
 	if (!fat_valid_superblock(mag, ms, vs, &cluster_count, &fat_size))
 		return 1;
 
@@ -376,16 +378,16 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 					(blkid_loff_t) fsinfo_sect * sector_size,
 					sizeof(struct fat32_fsinfo));
 			if (buf == NULL)
-				return -1;
+				return errno ? -errno : 1;
 
 			fsinfo = (struct fat32_fsinfo *) buf;
 			if (memcmp(fsinfo->signature1, "\x52\x52\x61\x41", 4) != 0 &&
 			    memcmp(fsinfo->signature1, "\x52\x52\x64\x41", 4) != 0 &&
 			    memcmp(fsinfo->signature1, "\x00\x00\x00\x00", 4) != 0)
-				return -1;
+				return 1;
 			if (memcmp(fsinfo->signature2, "\x72\x72\x41\x61", 4) != 0 &&
 			    memcmp(fsinfo->signature2, "\x00\x00\x00\x00", 4) != 0)
-				return -1;
+				return 1;
 		}
 	}
 

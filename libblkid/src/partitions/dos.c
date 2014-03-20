@@ -52,10 +52,13 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 		uint32_t start, size;
 
 		if (++ct_nodata > 100)
-			return 0;
+			return BLKID_PROBE_OK;
 		data = blkid_probe_get_sector(pr, cur_start);
-		if (!data)
+		if (!data) {
+			if (errno)
+				return -errno;
 			goto leave;	/* malformed partition? */
+		}
 
 		if (!mbr_is_valid_magic(data))
 			goto leave;
@@ -98,7 +101,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 
 			par = blkid_partlist_add_partition(ls, tab, abs_start, size);
 			if (!par)
-				goto err;
+				return -ENOMEM;
 
 			blkid_partition_set_type(par, p->sys_ind);
 			blkid_partition_set_flags(par, p->boot_ind);
@@ -123,9 +126,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 		cur_size = size;
 	}
 leave:
-	return 0;
-err:
-	return -1;
+	return BLKID_PROBE_OK;
 }
 
 static int probe_dos_pt(blkid_probe pr,
@@ -142,8 +143,11 @@ static int probe_dos_pt(blkid_probe pr,
 
 
 	data = blkid_probe_get_sector(pr, 0);
-	if (!data)
+	if (!data) {
+		if (errno)
+			return -errno;
 		goto nothing;
+	}
 
 	/* ignore disks with AIX magic number -- for more details see aix.c */
 	if (memcmp(data, BLKID_AIX_MAGIC_STRING, BLKID_AIX_MAGIC_STRLEN) == 0)
@@ -198,6 +202,8 @@ static int probe_dos_pt(blkid_probe pr,
 	}
 
 	ls = blkid_probe_get_partlist(pr);
+	if (!ls)
+		goto nothing;
 
 	/* sector size factor (the start and size are in the real sectors, but
 	 * we need to convert all sizes to 512 logical sectors
@@ -207,7 +213,7 @@ static int probe_dos_pt(blkid_probe pr,
 	/* allocate a new partition table */
 	tab = blkid_partlist_new_parttable(ls, "dos", MBR_PT_OFFSET);
 	if (!tab)
-		goto err;
+		return -ENOMEM;
 
 	if (id)
 		blkid_parttable_set_id(tab, (unsigned char *) idstr);
@@ -227,7 +233,7 @@ static int probe_dos_pt(blkid_probe pr,
 		}
 		par = blkid_partlist_add_partition(ls, tab, start, size);
 		if (!par)
-			goto err;
+			return -ENOMEM;
 
 		blkid_partition_set_type(par, p->sys_ind);
 		blkid_partition_set_flags(par, p->boot_ind);
@@ -248,13 +254,14 @@ static int probe_dos_pt(blkid_probe pr,
 			continue;
 		if (is_extended(p) &&
 		    parse_dos_extended(pr, tab, start, size, ssf) == -1)
-			goto err;
+			goto nothing;
 	}
 
 	/* Parse subtypes (nested partitions) on large disks */
 	if (!blkid_probe_is_tiny(pr)) {
 		for (p = p0, i = 0; i < 4; i++, p++) {
 			size_t n;
+			int rc;
 
 			if (!dos_partition_get_size(p) || is_extended(p))
 				continue;
@@ -263,20 +270,19 @@ static int probe_dos_pt(blkid_probe pr,
 				if (dos_nested[n].type != p->sys_ind)
 					continue;
 
-				if (blkid_partitions_do_subprobe(pr,
+				rc = blkid_partitions_do_subprobe(pr,
 						blkid_partlist_get_partition(ls, i),
-						dos_nested[n].id) == -1)
-					goto err;
+						dos_nested[n].id);
+				if (rc < 0)
+					return rc;
 				break;
 			}
 		}
 	}
-	return 0;
+	return BLKID_PROBE_OK;
 
 nothing:
-	return 1;
-err:
-	return -1;
+	return BLKID_PROBE_NONE;
 }
 
 

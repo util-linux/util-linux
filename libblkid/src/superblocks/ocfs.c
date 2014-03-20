@@ -109,14 +109,14 @@ static int probe_ocfs(blkid_probe pr, const struct blkid_idmag *mag)
 	buf = blkid_probe_get_buffer(pr, mag->kboff << 10,
 			sizeof(struct ocfs_volume_header));
 	if (!buf)
-		return -1;
+		return errno ? -errno : 1;
 	memcpy(&ovh, buf, sizeof(ovh));
 
 	/* label */
 	buf = blkid_probe_get_buffer(pr, (mag->kboff << 10) + 512,
 			sizeof(struct ocfs_volume_label));
 	if (!buf)
-		return -1;
+		return errno ? -errno : 1;
 	memcpy(&ovl, buf, sizeof(ovl));
 
 	maj = ocfsmajor(ovh);
@@ -144,7 +144,7 @@ static int probe_ocfs2(blkid_probe pr, const struct blkid_idmag *mag)
 
 	osb = blkid_probe_get_sb(pr, mag, struct ocfs2_super_block);
 	if (!osb)
-		return -1;
+		return errno ? -errno : 1;
 
 	blkid_probe_set_label(pr, (unsigned char *) osb->s_label, sizeof(osb->s_label));
 	blkid_probe_set_uuid(pr, osb->s_uuid);
@@ -162,7 +162,7 @@ static int probe_oracleasm(blkid_probe pr, const struct blkid_idmag *mag)
 
 	dl = blkid_probe_get_sb(pr, mag, struct oracle_asm_disk_label);
 	if (!dl)
-		return -1;
+		return errno ? -errno : 1;
 
 	blkid_probe_set_label(pr, (unsigned char *) dl->dl_id, sizeof(dl->dl_id));
 	return 0;

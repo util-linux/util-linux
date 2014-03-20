@@ -44,27 +44,27 @@ static int swap_set_info(blkid_probe pr, const char *version)
 	hdr = (struct swap_header_v1_2 *) blkid_probe_get_buffer(pr, 1024,
 				sizeof(struct swap_header_v1_2));
 	if (!hdr)
-		return -1;
+		return errno ? -errno : 1;
 
 	/* SWAPSPACE2 - check for wrong version or zeroed pagecount */
-        if (strcmp(version, "1") == 0) {
+	if (strcmp(version, "1") == 0) {
 		if (hdr->version != 1 && swab32(hdr->version) != 1) {
 			DBG(LOWPROBE, blkid_debug("incorrect swap version"));
-			return -1;
+			return 1;
 		}
 		if (hdr->lastpage == 0) {
 			DBG(LOWPROBE, blkid_debug("not set last swap page"));
-			return -1;
+			return 1;
 		}
-        }
+	}
 
 	/* arbitrary sanity check.. is there any garbage down there? */
 	if (hdr->padding[32] == 0 && hdr->padding[33] == 0) {
 		if (hdr->volume[0] && blkid_probe_set_label(pr, hdr->volume,
 				sizeof(hdr->volume)) < 0)
-			return -1;
+			return 1;
 		if (blkid_probe_set_uuid(pr, hdr->uuid) < 0)
-			return -1;
+			return 1;
 	}
 
 	blkid_probe_set_version(pr, version);
@@ -76,12 +76,12 @@ static int probe_swap(blkid_probe pr, const struct blkid_idmag *mag)
 	unsigned char *buf;
 
 	if (!mag)
-		return -1;
+		return 1;
 
 	/* TuxOnIce keeps valid swap header at the end of the 1st page */
 	buf = blkid_probe_get_buffer(pr, 0, TOI_MAGIC_STRLEN);
 	if (!buf)
-		return -1;
+		return errno ? -errno : 1;
 
 	if (memcmp(buf, TOI_MAGIC_STRING, TOI_MAGIC_STRLEN) == 0)
 		return 1;	/* Ignore swap signature, it's TuxOnIce */
@@ -94,13 +94,13 @@ static int probe_swap(blkid_probe pr, const struct blkid_idmag *mag)
 	} else if (!memcmp(mag->magic, "SWAPSPACE2", mag->len))
 		return swap_set_info(pr, "1");
 
-	return -1;
+	return 1;
 }
 
 static int probe_swsuspend(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	if (!mag)
-		return -1;
+		return 1;
 	if (!memcmp(mag->magic, "S1SUSPEND", mag->len))
 		return swap_set_info(pr, "s1suspend");
 	if (!memcmp(mag->magic, "S2SUSPEND", mag->len))
@@ -112,7 +112,7 @@ static int probe_swsuspend(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!memcmp(mag->magic, "LINHIB0001", mag->len))
 		return swap_set_info(pr, "linhib0001");
 
-	return -1;	/* no signature detected */
+	return 1;	/* no signature detected */
 }
 
 const struct blkid_idinfo swap_idinfo =

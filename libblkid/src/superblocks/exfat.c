@@ -115,12 +115,14 @@ static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 
 	sb = blkid_probe_get_sb(pr, mag, struct exfat_super_block);
 	if (!sb)
-		return -1;
+		return errno ? -errno : BLKID_PROBE_NONE;
 
 	label = find_label(pr, sb);
 	if (label)
 		blkid_probe_set_utf8label(pr, label->name,
 				min(label->length * 2, 30), BLKID_ENC_UTF16LE);
+	else if (errno)
+		return -errno;
 
 	blkid_probe_sprintf_uuid(pr, sb->volume_serial, 4,
 			"%02hhX%02hhX-%02hhX%02hhX",
@@ -130,7 +132,7 @@ static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 	blkid_probe_sprintf_version(pr, "%u.%u",
 			sb->version.major, sb->version.minor);
 
-	return 0;
+	return BLKID_PROBE_OK;
 }
 
 const struct blkid_idinfo exfat_idinfo =

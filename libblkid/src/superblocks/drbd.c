@@ -75,18 +75,18 @@ static int probe_drbd(blkid_probe pr,
 
 	/* Small devices cannot be drbd (?) */
 	if (pr->size < 0x10000)
-		return -1;
+		return 1;
 
 	md = (struct md_on_disk_08 *)
 			blkid_probe_get_buffer(pr,
 					off,
 					sizeof(struct md_on_disk_08));
 	if (!md)
-		return -1;
+		return errno ? -errno : 1;
 
 	if (be32_to_cpu(md->magic) != DRBD_MD_MAGIC_08 &&
 			be32_to_cpu(md->magic) != DRBD_MD_MAGIC_84_UNCLEAN)
-		return -1;
+		return 1;
 
 	/*
 	 * DRBD does not have "real" uuids; the following resembles DRBD's
@@ -102,7 +102,7 @@ static int probe_drbd(blkid_probe pr,
 				off + offsetof(struct md_on_disk_08, magic),
 				sizeof(md->magic),
 				(unsigned char *) &md->magic))
-		return -1;
+		return 1;
 
 	return 0;
 }

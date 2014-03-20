@@ -154,7 +154,7 @@ static int probe_hfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	hfs = blkid_probe_get_sb(pr, mag, struct hfs_mdb);
 	if (!hfs)
-		return -1;
+		return errno ? -errno : 1;
 
 	if ((memcmp(hfs->embed_sig, "H+", 2) == 0) ||
 	    (memcmp(hfs->embed_sig, "HX", 2) == 0))
@@ -193,7 +193,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 
 	sbd = blkid_probe_get_sb(pr, mag, struct hfs_mdb);
 	if (!sbd)
-		return -1;
+		return errno ? -errno : 1;
 
 	/* Check for a HFS+ volume embedded in a HFS volume */
 	if (memcmp(sbd->signature, "BD", 2) == 0) {
@@ -218,7 +218,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 				struct hfsplus_vol_header);
 
 	if (!hfsplus)
-		return -1;
+		return errno ? -errno : 1;
 
 	if ((memcmp(hfsplus->signature, "H+", 2) != 0) &&
 	    (memcmp(hfsplus->signature, "HX", 2) != 0))
@@ -228,7 +228,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 
 	blocksize = be32_to_cpu(hfsplus->blocksize);
 	if (blocksize < HFSPLUS_SECTOR_SIZE)
-		return -1;
+		return 1;
 
 	memcpy(extents, hfsplus->cat_file.extents, sizeof(extents));
 	cat_block = be32_to_cpu(extents[0].start_block);
@@ -236,7 +236,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	buf = blkid_probe_get_buffer(pr,
 			off + ((blkid_loff_t) cat_block * blocksize), 0x2000);
 	if (!buf)
-		return 0;
+		return errno ? -errno : 0;
 
 	bnode = (struct hfsplus_bheader_record *)
 		&buf[sizeof(struct hfsplus_bnode_descriptor)];
@@ -271,7 +271,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 				(blkid_loff_t) off + leaf_off,
 				leaf_node_size);
 	if (!buf)
-		return 0;
+		return errno ? -errno : 0;
 
 	descr = (struct hfsplus_bnode_descriptor *) buf;
 	record_count = be16_to_cpu(descr->num_recs);

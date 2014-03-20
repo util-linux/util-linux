@@ -64,7 +64,7 @@ static int probe_gfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	sbd = blkid_probe_get_sb(pr, mag, struct gfs2_sb);
 	if (!sbd)
-		return -1;
+		return errno ? -errno : 1;
 
 	if (be32_to_cpu(sbd->sb_fs_format) == GFS_FORMAT_FS &&
 	    be32_to_cpu(sbd->sb_multihost_format) == GFS_FORMAT_MULTI)
@@ -78,7 +78,7 @@ static int probe_gfs(blkid_probe pr, const struct blkid_idmag *mag)
 		return 0;
 	}
 
-	return -1;
+	return 1;
 }
 
 static int probe_gfs2(blkid_probe pr, const struct blkid_idmag *mag)
@@ -87,7 +87,7 @@ static int probe_gfs2(blkid_probe pr, const struct blkid_idmag *mag)
 
 	sbd = blkid_probe_get_sb(pr, mag, struct gfs2_sb);
 	if (!sbd)
-		return -1;
+		return errno ? -errno : 1;
 
 	if (be32_to_cpu(sbd->sb_fs_format) == GFS2_FORMAT_FS &&
 	    be32_to_cpu(sbd->sb_multihost_format) == GFS2_FORMAT_MULTI)
@@ -100,7 +100,7 @@ static int probe_gfs2(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_probe_set_version(pr, "1");
 		return 0;
 	}
-	return -1;
+	return 1;
 }
 
 const struct blkid_idinfo gfs_idinfo =

@@ -87,8 +87,11 @@ static int probe_mac_pt(blkid_probe pr,
 	 * the first block on the disk.
 	 */
 	md = (struct mac_driver_desc *) blkid_probe_get_sector(pr, 0);
-	if (!md)
+	if (!md) {
+		if (errno)
+			return -errno;
 		goto nothing;
+	}
 
 	block_size = be16_to_cpu(md->block_size);
 
@@ -96,8 +99,11 @@ static int probe_mac_pt(blkid_probe pr,
 	 * the second block on the disk.
 	 */
 	p = (struct mac_partition *) get_mac_block(pr, block_size, 1);
-	if (!p)
+	if (!p) {
+		if (errno)
+			return -errno;
 		goto nothing;
+	}
 
 	/* check the first partition signature */
 	if (!has_part_signature(p))
@@ -109,7 +115,7 @@ static int probe_mac_pt(blkid_probe pr,
 
 	ls = blkid_probe_get_partlist(pr);
 	if (!ls)
-		goto err;
+		goto nothing;
 
 	tab = blkid_partlist_new_parttable(ls, "mac", 0);
 	if (!tab)
@@ -124,15 +130,18 @@ static int probe_mac_pt(blkid_probe pr,
 		uint32_t size;
 
 		p = (struct mac_partition *) get_mac_block(pr, block_size, i);
-		if (!p)
+		if (!p) {
+			if (errno)
+				return -errno;
 			goto nothing;
+		}
 		if (!has_part_signature(p))
 			goto nothing;
 
 		if (be32_to_cpu(p->map_count) != nblks) {
 			DBG(LOWPROBE, blkid_debug(
 				"mac: inconsisten map_count in partition map, "
-			        "entry[0]: %d, entry[%d]: %d",
+				"entry[0]: %d, entry[%d]: %d",
 				nblks, i - 1,
 				be32_to_cpu(p->map_count)));
 		}
@@ -157,12 +166,12 @@ static int probe_mac_pt(blkid_probe pr,
 						sizeof(p->type));
 	}
 
-	return 0;
+	return BLKID_PROBE_OK;
 
 nothing:
-	return 1;
+	return BLKID_PROBE_NONE;
 err:
-	return -1;
+	return -ENOMEM;
 }
 
 /*

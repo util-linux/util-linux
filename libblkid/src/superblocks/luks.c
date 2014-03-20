@@ -45,7 +45,7 @@ static int probe_luks(blkid_probe pr, const struct blkid_idmag *mag)
 
 	header = blkid_probe_get_sb(pr, mag, struct luks_phdr);
 	if (header == NULL)
-		return -1;
+		return errno ? -errno : 1;
 
 	blkid_probe_strncpy_uuid(pr, (unsigned char *) header->uuid,
 			sizeof(header->uuid));

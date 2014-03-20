@@ -106,19 +106,22 @@ static int probe_unixware_pt(blkid_probe pr,
 
 	l = (struct unixware_disklabel *)
 			blkid_probe_get_sector(pr, UNIXWARE_SECTOR);
-	if (!l)
+	if (!l) {
+		if (errno)
+			return -errno;
 		goto nothing;
+	}
 
 	if (le32_to_cpu(l->vtoc.v_magic) != UNIXWARE_VTOCMAGIC)
 		goto nothing;
 
 	if (blkid_partitions_need_typeonly(pr))
 		/* caller does not ask for details about partitions */
-		return 0;
+		return BLKID_PROBE_OK;
 
 	ls = blkid_probe_get_partlist(pr);
 	if (!ls)
-		goto err;
+		goto nothing;
 
 	parent = blkid_partlist_get_parent(ls);
 
@@ -161,12 +164,12 @@ static int probe_unixware_pt(blkid_probe pr,
 		blkid_partition_set_flags(par, flg);
 	}
 
-	return 0;
+	return BLKID_PROBE_OK;
 
 nothing:
-	return 1;
+	return BLKID_PROBE_NONE;
 err:
-	return -1;
+	return -ENOMEM;
 }
 
 

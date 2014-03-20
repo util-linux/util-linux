@@ -62,7 +62,7 @@ static int probe_f2fs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	sb = blkid_probe_get_sb(pr, mag, struct f2fs_super_block);
 	if (!sb)
-		return -1;
+		return errno ? -errno : 1;
 
 	major = le16_to_cpu(sb->major_ver);
 	minor = le16_to_cpu(sb->minor_ver);

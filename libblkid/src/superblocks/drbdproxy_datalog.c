@@ -33,7 +33,7 @@ static int probe_drbdproxy_datalog(blkid_probe pr,
 
 	lh = (struct log_header_t *) blkid_probe_get_buffer(pr, 0, sizeof(*lh));
 	if (!lh)
-		return -1;
+		return errno ? -errno : 1;
 
 	blkid_probe_set_uuid(pr, lh->uuid);
 	blkid_probe_sprintf_version(pr, "v%jd", le64_to_cpu(lh->version));

@@ -110,13 +110,13 @@ static int probe_raid0(blkid_probe pr, blkid_loff_t off)
 	uint64_t size;
 
 	if (pr->size < MD_RESERVED_BYTES)
-		return -1;
+		return 1;
 	mdp0 = (struct mdp0_super_block *)
 			blkid_probe_get_buffer(pr,
 				off,
 				sizeof(struct mdp0_super_block));
 	if (!mdp0)
-		return -1;
+		return errno ? -errno : 1;
 
 	memset(uuid.ints, 0, sizeof(uuid.ints));
 
@@ -173,12 +173,12 @@ static int probe_raid0(blkid_probe pr, blkid_loff_t off)
 	}
 
 	if (blkid_probe_sprintf_version(pr, "%u.%u.%u", ma, mi, pa) != 0)
-		return -1;
+		return 1;
 	if (blkid_probe_set_uuid(pr, (unsigned char *) uuid.bytes) != 0)
-		return -1;
+		return 1;
 	if (blkid_probe_set_magic(pr, off, sizeof(mdp0->md_magic),
 				(unsigned char *) &mdp0->md_magic))
-		return -1;
+		return 1;
 	return 0;
 }
 
@@ -191,24 +191,24 @@ static int probe_raid1(blkid_probe pr, off_t off)
 				off,
 				sizeof(struct mdp1_super_block));
 	if (!mdp1)
-		return -1;
+		return errno ? -errno : 1;
 	if (le32_to_cpu(mdp1->magic) != MD_SB_MAGIC)
-		return -1;
+		return 1;
 	if (le32_to_cpu(mdp1->major_version) != 1U)
-		return -1;
+		return 1;
 	if (le64_to_cpu(mdp1->super_offset) != (uint64_t) off >> 9)
-		return -1;
+		return 1;
 	if (blkid_probe_set_uuid(pr, (unsigned char *) mdp1->set_uuid) != 0)
-		return -1;
+		return 1;
 	if (blkid_probe_set_uuid_as(pr,
 			(unsigned char *) mdp1->device_uuid, "UUID_SUB") != 0)
-		return -1;
+		return 1;
 	if (blkid_probe_set_label(pr, mdp1->set_name,
 				sizeof(mdp1->set_name)) != 0)
-		return -1;
+		return 1;
 	if (blkid_probe_set_magic(pr, off, sizeof(mdp1->magic),
 				(unsigned char *) &mdp1->magic))
-		return -1;
+		return 1;
 	return 0;
 }
 
@@ -216,35 +216,44 @@ int probe_raid(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	const char *ver = NULL;
+	int ret = BLKID_PROBE_NONE;
 
 	if (pr->size > MD_RESERVED_BYTES) {
 		/* version 0 at the end of the device */
 		uint64_t sboff = (pr->size & ~(MD_RESERVED_BYTES - 1))
-			         - MD_RESERVED_BYTES;
-		if (probe_raid0(pr, sboff) == 0)
-			return 0;
+			- MD_RESERVED_BYTES;
+		ret = probe_raid0(pr, sboff);
+		if (ret < 1)
+			return ret;	/* error */
 
 		/* version 1.0 at the end of the device */
 		sboff = (pr->size & ~(0x1000 - 1)) - 0x2000;
-		if (probe_raid1(pr, sboff) == 0)
+		ret = probe_raid1(pr, sboff);
+		if (ret < 0)
+			return ret;	/* error */
+		if (ret == 0)
 			ver = "1.0";
 	}
 
 	if (!ver) {
 		/* version 1.1 at the start of the device */
-		if (probe_raid1(pr, 0) == 0)
+		ret = probe_raid1(pr, 0);
+		if (ret == 0)
 			ver = "1.1";
 
 		/* version 1.2 at 4k offset from the start */
-		else if (probe_raid1(pr, 0x1000) == 0)
-			ver = "1.2";
+		else if (ret == BLKID_PROBE_NONE) {
+			ret = probe_raid1(pr, 0x1000);
+			if (ret == 0)
+				ver = "1.2";
+		}
 	}
 
 	if (ver) {
 		blkid_probe_set_version(pr, ver);
-		return 0;
+		return BLKID_PROBE_OK;
 	}
-	return -1;
+	return ret;
 }
 
 

@@ -80,10 +80,10 @@ static int probe_adraid(blkid_probe pr,
 	struct adaptec_metadata *ad;
 
 	if (pr->size < 0x10000)
-		return -1;
+		return BLKID_PROBE_NONE;
 
 	if (!S_ISREG(pr->mode) && !blkid_probe_is_wholedisk(pr))
-		return -1;
+		return BLKID_PROBE_NONE;
 
 	off = ((pr->size / 0x200)-1) * 0x200;
 	ad = (struct adaptec_metadata *)
@@ -91,17 +91,19 @@ static int probe_adraid(blkid_probe pr,
 					off,
 					sizeof(struct adaptec_metadata));
 	if (!ad)
-		return -1;
+		return errno ? -errno : BLKID_PROBE_NONE;;
+
 	if (ad->smagic != be32_to_cpu(AD_SIGNATURE))
-		return -1;
+		return BLKID_PROBE_NONE;
 	if (ad->b0idcode != be32_to_cpu(AD_MAGIC))
-		return -1;
+		return BLKID_PROBE_NONE;
 	if (blkid_probe_sprintf_version(pr, "%u", ad->resver) != 0)
-		return -1;
+		return BLKID_PROBE_NONE;
 	if (blkid_probe_set_magic(pr, off, sizeof(ad->b0idcode),
 				(unsigned char *) &ad->b0idcode))
-		return -1;
-	return 0;
+		return BLKID_PROBE_NONE;
+
+	return BLKID_PROBE_OK;
 }
 
 const struct blkid_idinfo adraid_idinfo = {

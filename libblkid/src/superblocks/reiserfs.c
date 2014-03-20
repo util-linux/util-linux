@@ -45,17 +45,17 @@ static int probe_reiser(blkid_probe pr, const struct blkid_idmag *mag)
 
 	rs = blkid_probe_get_sb(pr, mag, struct reiserfs_super_block);
 	if (!rs)
-		return -1;
+		return errno ? -errno : 1;
 
 	blocksize = le16_to_cpu(rs->rs_blocksize);
 
 	/* The blocksize must be at least 512B */
 	if ((blocksize >> 9) == 0)
-		return -BLKID_ERR_PARAM;
+		return 1;
 
 	/* If the superblock is inside the journal, we have the wrong one */
 	if (mag->kboff / (blocksize >> 9) > le32_to_cpu(rs->rs_journal_block) / 2)
-		return -BLKID_ERR_BIG;
+		return 1;
 
 	/* LABEL/UUID are only valid for later versions of Reiserfs v3.6. */
 	if (mag->magic[6] == '2' || mag->magic[6] == '3') {
@@ -82,7 +82,7 @@ static int probe_reiser4(blkid_probe pr, const struct blkid_idmag *mag)
 
 	rs4 = blkid_probe_get_sb(pr, mag, struct reiser4_super_block);
 	if (!rs4)
-		return -1;
+		return errno ? -errno : 1;
 
 	if (*rs4->rs4_label)
 		blkid_probe_set_label(pr, rs4->rs4_label, sizeof(rs4->rs4_label));

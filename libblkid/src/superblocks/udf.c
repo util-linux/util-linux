@@ -85,11 +85,11 @@ static int probe_udf(blkid_probe pr,
 					UDF_VSD_OFFSET + b,
 					sizeof(*vsd));
 		if (!vsd)
-			return 1;
+			return errno ? -errno : 1;
 		if (vsd->id[0] != '\0')
 			goto nsr;
 	}
-	return -1;
+	return 1;
 
 nsr:
 	/* search the list of VSDs for a NSR descriptor */
@@ -99,15 +99,15 @@ nsr:
 					UDF_VSD_OFFSET + ((blkid_loff_t) b * 0x800),
 					sizeof(*vsd));
 		if (!vsd)
-			return -1;
+			return errno ? -errno : 1;
 		if (vsd->id[0] == '\0')
-			return -1;
+			return 1;
 		if (memcmp(vsd->id, "NSR02", 5) == 0)
 			goto anchor;
 		if (memcmp(vsd->id, "NSR03", 5) == 0)
 			goto anchor;
 	}
-	return -1;
+	return 1;
 
 anchor:
 	/* read Anchor Volume Descriptor (AVDP), checking block size */
@@ -115,7 +115,7 @@ anchor:
 		vd = (struct volume_descriptor *)
 			blkid_probe_get_buffer(pr, 256 * pbs[i], sizeof(*vd));
 		if (!vd)
-			return -1;
+			return errno ? -errno : 1;
 
 		type = le16_to_cpu(vd->tag.id);
 		if (type == 2) /* TAG_ID_AVDP */
@@ -138,7 +138,7 @@ real_blksz:
 					(blkid_loff_t) (loc + b) * bs,
 					sizeof(*vd));
 		if (!vd)
-			return -1;
+			return errno ? -errno : 1;
 	}
 
 	/* Try extract all possible ISO9660 information -- if there is
@@ -155,7 +155,7 @@ real_blksz:
 					(blkid_loff_t) (loc + b) * bs,
 					sizeof(*vd));
 		if (!vd)
-			return -1;
+			return errno ? -errno : 1;
 		type = le16_to_cpu(vd->tag.id);
 		if (type == 0)
 			break;

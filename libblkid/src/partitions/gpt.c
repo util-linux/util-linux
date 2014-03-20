@@ -168,8 +168,11 @@ static int is_pmbr_valid(blkid_probe pr, int *has)
 		goto ok;			/* skip PMBR check */
 
 	data = blkid_probe_get_sector(pr, 0);
-	if (!data)
+	if (!data) {
+		if (errno)
+			return -errno;
 		goto failed;
+	}
 
 	if (!mbr_is_valid_magic(data))
 		goto failed;
@@ -302,19 +305,27 @@ static int probe_gpt_pt(blkid_probe pr,
 	uint64_t fu, lu;
 	uint32_t ssf, i;
 	efi_guid_t guid;
+	int ret;
 
 	if (last_lba(pr, &lastlba))
 		goto nothing;
 
-	if (!is_pmbr_valid(pr, NULL))
+	ret = is_pmbr_valid(pr, NULL);
+	if (ret < 0)
+		return ret;
+	else if (ret == 0)
 		goto nothing;
 
+	errno = 0;
 	h = get_gpt_header(pr, &hdr, &e, (lba = GPT_PRIMARY_LBA), lastlba);
-	if (!h)
+	if (!h && !errno)
 		h = get_gpt_header(pr, &hdr, &e, (lba = lastlba), lastlba);
 
-	if (!h)
+	if (!h) {
+		if (errno)
+			return -errno;
 		goto nothing;
+	}
 
 	blkid_probe_use_wiper(pr, lba * blkid_probe_get_size(pr), 8);
 
@@ -330,12 +341,12 @@ static int probe_gpt_pt(blkid_probe pr,
 		/* Non-binary interface -- caller does not ask for details
 		 * about partitions, just set generic varibles only. */
 		blkid_partitions_set_ptuuid(pr, (unsigned char *) &guid);
-		return 0;
+		return BLKID_PROBE_OK;
 	}
 
 	ls = blkid_probe_get_partlist(pr);
 	if (!ls)
-		goto err;
+		goto nothing;
 
 	tab = blkid_partlist_new_parttable(ls, "gpt", lba << 9);
 	if (!tab)
@@ -389,12 +400,13 @@ static int probe_gpt_pt(blkid_probe pr,
 		blkid_partition_set_flags(par, le64_to_cpu(e->attributes));
 	}
 
-	return 0;
+	return BLKID_PROBE_OK;
 
 nothing:
-	return 1;
+	return BLKID_PROBE_NONE;
+
 err:
-	return -1;
+	return -ENOMEM;
 }
 
 

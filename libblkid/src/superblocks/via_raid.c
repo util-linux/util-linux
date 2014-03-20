@@ -63,7 +63,7 @@ static int probe_viaraid(blkid_probe pr,
 				off,
 				sizeof(struct via_metadata));
 	if (!v)
-		return -1;
+		return errno ? -errno : 1;
 
 	if (le16_to_cpu(v->signature) != VIA_SIGNATURE)
 		return 1;
@@ -73,11 +73,11 @@ static int probe_viaraid(blkid_probe pr,
 		return 1;
 
 	if (blkid_probe_sprintf_version(pr, "%u", v->version_number) != 0)
-		return -1;
+		return 1;
 	if (blkid_probe_set_magic(pr, off,
 				sizeof(v->signature),
 				(unsigned char *) &v->signature))
-		return -1;
+		return 1;
 	return 0;
 }
 

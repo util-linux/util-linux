@@ -20,7 +20,7 @@ static int probe_vxfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	vxs = blkid_probe_get_sb(pr, mag, struct vxfs_super_block);
 	if (!vxs)
-		return -1;
+		return errno ? -errno : 1;
 
 	blkid_probe_sprintf_version(pr, "%u", (unsigned int) vxs->vs_version);
 	return 0;

@@ -80,17 +80,17 @@ static int probe_minix(blkid_probe pr, const struct blkid_idmag *mag)
 			max(sizeof(struct minix_super_block),
 			    sizeof(struct minix3_super_block)));
 	if (!data)
-		return -1;
+		return errno ? -errno : 1;
 	version = get_minix_version(data, &swabme);
 	if (version < 1)
-		return -1;
+		return 1;
 
 	if (version <= 2) {
 		struct minix_super_block *sb = (struct minix_super_block *) data;
 		int zones, ninodes, imaps, zmaps, firstz;
 
 		if (sb->s_imap_blocks == 0 || sb->s_zmap_blocks == 0)
-			return -1;
+			return 1;
 
 		zones = version == 2 ? minix_swab32(swabme, sb->s_zones) :
 				       minix_swab16(swabme, sb->s_nzones);
@@ -101,15 +101,15 @@ static int probe_minix(blkid_probe pr, const struct blkid_idmag *mag)
 
 		/* sanity checks to be sure that the FS is really minix */
 		if (imaps * MINIX_BLOCK_SIZE * 8 < ninodes + 1)
-			return -1;
+			return 1;
 		if (zmaps * MINIX_BLOCK_SIZE * 8 < zones - firstz + 1)
-			return -1;
+			return 1;
 
 	} else if (version == 3) {
 		struct minix3_super_block *sb = (struct minix3_super_block *) data;
 
 		if (sb->s_imap_blocks == 0 || sb->s_zmap_blocks == 0)
-			return -1;
+			return 1;
 	}
 
 	/* unfortunately, some parts of ext3 is sometimes possible to
@@ -117,8 +117,10 @@ static int probe_minix(blkid_probe pr, const struct blkid_idmag *mag)
 	 * string. (For extN magic string and offsets see ext.c.)
 	 */
 	ext = blkid_probe_get_buffer(pr, 0x400 + 0x38, 2);
-	if (ext && memcmp(ext, "\123\357", 2) == 0)
-		return -1;
+	if (!ext)
+		return errno ? -errno : 1;
+	else if (memcmp(ext, "\123\357", 2) == 0)
+		return 1;
 
 	blkid_probe_sprintf_version(pr, "%d", version);
 	return 0;

@@ -34,7 +34,7 @@ static int probe_squashfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	sq = blkid_probe_get_sb(pr, mag, struct sqsh_super_block);
 	if (!sq)
-		return -1;
+		return errno ? -errno : 1;
 
 	if (strcmp(mag->magic, "sqsh") == 0 ||
 	    strcmp(mag->magic, "qshs") == 0)

@@ -28,7 +28,7 @@ static int probe_vmfs_fs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	header = blkid_probe_get_sb(pr, mag, struct vmfs_fs_info);
 	if (header == NULL)
-		return -1;
+		return errno ? -errno : 1;
 
 	blkid_probe_sprintf_uuid(pr, (unsigned char *) header->uuid, 16,
 		"%02x%02x%02x%02x-%02x%02x%02x%02x-"
@@ -53,7 +53,7 @@ static int probe_vmfs_volume(blkid_probe pr, const struct blkid_idmag *mag)
 
 	header = blkid_probe_get_sb(pr, mag, struct vmfs_volume_info);
 	if (header == NULL)
-		return -1;
+		return errno ? -errno : 1;
 
 	blkid_probe_sprintf_value(pr, "UUID_SUB",
 		"%02x%02x%02x%02x-%02x%02x%02x%02x-"

@@ -25,8 +25,11 @@ static int probe_sgi_pt(blkid_probe pr,
 	int i;
 
 	l = (struct sgi_disklabel *) blkid_probe_get_sector(pr, 0);
-	if (!l)
+	if (!l) {
+		if (errno)
+			return -errno;
 		goto nothing;
+	}
 
 	if (sgi_pt_checksum(l)) {
 		DBG(LOWPROBE, blkid_debug(
@@ -36,11 +39,11 @@ static int probe_sgi_pt(blkid_probe pr,
 
 	if (blkid_partitions_need_typeonly(pr))
 		/* caller does not ask for details about partitions */
-		return 0;
+		return BLKID_PROBE_OK;
 
 	ls = blkid_probe_get_partlist(pr);
 	if (!ls)
-		goto err;
+		goto nothing;
 
 	tab = blkid_partlist_new_parttable(ls, "sgi", 0);
 	if (!tab)
@@ -63,12 +66,12 @@ static int probe_sgi_pt(blkid_probe pr,
 		blkid_partition_set_type(par, type);
 	}
 
-	return 0;
+	return BLKID_PROBE_OK;
 
 nothing:
-	return 1;
+	return BLKID_PROBE_NONE;
 err:
-	return -1;
+	return -ENOMEM;
 }
 
 const struct blkid_idinfo sgi_pt_idinfo =

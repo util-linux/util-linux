@@ -32,9 +32,9 @@ static int probe_jmraid(blkid_probe pr,
 	struct jm_metadata *jm;
 
 	if (pr->size < 0x10000)
-		return -1;
+		return 1;
 	if (!S_ISREG(pr->mode) && !blkid_probe_is_wholedisk(pr))
-		return -1;
+		return 1;
 
 	off = ((pr->size / 0x200) - 1) * 0x200;
 	jm = (struct jm_metadata *)
@@ -42,15 +42,16 @@ static int probe_jmraid(blkid_probe pr,
 				off,
 				sizeof(struct jm_metadata));
 	if (!jm)
-		return -1;
+		return errno ? -errno : 1;
+
 	if (memcmp(jm->signature, JM_SIGNATURE, sizeof(JM_SIGNATURE) - 1) != 0)
-		return -1;
+		return 1;
 	if (blkid_probe_sprintf_version(pr, "%u.%u",
 				jm->major_version, jm->minor_version) != 0)
-		return -1;
+		return 1;
 	if (blkid_probe_set_magic(pr, off, sizeof(jm->signature),
 				(unsigned char *) jm->signature))
-		return -1;
+		return 1;
 	return 0;
 }
 

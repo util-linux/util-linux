@@ -22,19 +22,17 @@ static int probe_aix_pt(blkid_probe pr,
 
 	if (blkid_partitions_need_typeonly(pr))
 		/* caller does not ask for details about partitions */
-		return 0;
+		return BLKID_PROBE_OK;
 
 	ls = blkid_probe_get_partlist(pr);
 	if (!ls)
-		goto err;
+		return BLKID_PROBE_NONE;
 
 	tab = blkid_partlist_new_parttable(ls, "aix", 0);
 	if (!tab)
-		goto err;
+		return -ENOMEM;
 
-	return 0;
-err:
-	return -1;
+	return BLKID_PROBE_OK;
 }
 
 /*

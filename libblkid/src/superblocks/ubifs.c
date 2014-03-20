@@ -99,7 +99,7 @@ static int probe_ubifs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	sb = blkid_probe_get_sb(pr, mag, struct ubifs_sb_node);
 	if (!sb)
-		return -1;
+		return errno ? -errno : 1;
 
 	blkid_probe_set_uuid(pr, sb->uuid);
 	blkid_probe_sprintf_version(pr, "w%dr%d",

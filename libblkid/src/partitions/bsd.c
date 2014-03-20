@@ -36,20 +36,24 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 	blkid_partlist ls;
 	int i, nparts = BSD_MAXPARTITIONS;
 	unsigned char *data;
+	int rc = BLKID_PROBE_NONE;
 
 	if (blkid_partitions_need_typeonly(pr))
 		/* caller does not ask for details about partitions */
-		return 0;
+		return rc;
 
 	data = blkid_probe_get_sector(pr, BLKID_MAG_SECTOR(mag));
-	if (!data)
+	if (!data) {
+		if (errno)
+			rc = -errno;
 		goto nothing;
+	}
 
 	l = (struct bsd_disklabel *) data + BLKID_MAG_LASTOFFSET(mag);
 
 	ls = blkid_probe_get_partlist(pr);
 	if (!ls)
-		goto err;
+		goto nothing;
 
 	/* try to determine the real type of BSD system according to
 	 * (parental) primary partition */
@@ -75,8 +79,10 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 	}
 
 	tab = blkid_partlist_new_parttable(ls, name, BLKID_MAG_OFFSET(mag));
-	if (!tab)
-		goto err;
+	if (!tab) {
+		rc = -ENOMEM;
+		goto nothing;
+	}
 
 	if (le16_to_cpu(l->d_npartitions) < BSD_MAXPARTITIONS)
 		nparts = le16_to_cpu(l->d_npartitions);
@@ -112,18 +118,18 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		}
 
 		par = blkid_partlist_add_partition(ls, tab, start, size);
-		if (!par)
-			goto err;
+		if (!par) {
+			rc = -ENOMEM;
+			goto nothing;
+		}
 
 		blkid_partition_set_type(par, p->p_fstype);
 	}
 
-	return 0;
+	return BLKID_PROBE_OK;
 
 nothing:
-	return 1;
-err:
-	return -1;
+	return rc;
 }
 
 

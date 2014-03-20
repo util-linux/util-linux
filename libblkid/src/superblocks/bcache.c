@@ -104,17 +104,17 @@ static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 
 	bcs = blkid_probe_get_sb(pr, mag, struct bcache_super_block);
 	if (!bcs)
-		return -1;
+		return errno ? -errno : BLKID_PROBE_NONE;
 
 	if (le64_to_cpu(bcs->offset) != BCACHE_SB_OFF / 512)
-		return 1;
+		return BLKID_PROBE_NONE;
 	if (!blkid_probe_verify_csum(pr, bcache_crc64(bcs), le64_to_cpu(bcs->csum)))
-		return 1;
+		return BLKID_PROBE_NONE;
 
 	if (blkid_probe_set_uuid(pr, bcs->uuid) < 0)
-		return -1;
+		return BLKID_PROBE_NONE;
 
-	return 0;
+	return BLKID_PROBE_OK;
 };
 
 const struct blkid_idinfo bcache_idinfo =

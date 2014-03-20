@@ -91,7 +91,7 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	ns = blkid_probe_get_sb(pr, mag, struct ntfs_super_block);
 	if (!ns)
-		return -1;
+		return errno ? -errno : 1;
 
 	/*
 	 * Check bios parameters block
@@ -158,7 +158,7 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	buf_mft = blkid_probe_get_buffer(pr, off, mft_record_size);
 	if (!buf_mft)
-		return 1;
+		return errno ? -errno : 1;
 
 	if (memcmp(buf_mft, "FILE", 4))
 		return 1;
@@ -167,7 +167,7 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	buf_mft = blkid_probe_get_buffer(pr, off, mft_record_size);
 	if (!buf_mft)
-		return 1;
+		return errno ? -errno : 1;
 
 	if (memcmp(buf_mft, "FILE", 4))
 		return 1;

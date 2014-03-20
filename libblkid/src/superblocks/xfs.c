@@ -164,7 +164,7 @@ static int probe_xfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	xs = blkid_probe_get_sb(pr, mag, struct xfs_super_block);
 	if (!xs)
-		return -1;
+		return errno ? -errno : 1;
 
 	if (!xfs_verify_sb(xs))
 		return 1;
@@ -249,7 +249,7 @@ static int probe_xfs_log(blkid_probe pr, const struct blkid_idmag *mag)
 
 	buf = blkid_probe_get_buffer(pr, 0, 256*1024);
 	if (!buf)
-		return -1;
+		return errno ? -errno : 1;
 
 	if (memcmp(buf, "XFSB", 4) == 0)
 		return 1;			/* this is regular XFS, ignore */
@@ -264,7 +264,7 @@ static int probe_xfs_log(blkid_probe pr, const struct blkid_idmag *mag)
 		}
 	}
 
-	return -1;
+	return 1;
 }
 
 const struct blkid_idinfo xfs_log_idinfo =

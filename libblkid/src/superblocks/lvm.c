@@ -82,7 +82,7 @@ static int probe_lvm2(blkid_probe pr, const struct blkid_idmag *mag)
 			mag->kboff << 10,
 			512 + sizeof(struct lvm2_pv_label_header));
 	if (!buf)
-		return -1;
+		return errno ? -errno : 1;
 
 	/* buf is at 0k or 1k offset; find label inside */
 	if (memcmp(buf, "LABELONE", 8) == 0) {
@@ -128,7 +128,7 @@ static int probe_lvm1(blkid_probe pr, const struct blkid_idmag *mag)
 
 	label = blkid_probe_get_sb(pr, mag, struct lvm1_pv_label_header);
 	if (!label)
-		return -1;
+		return errno ? -errno : 1;
 
 	version = le16_to_cpu(label->version);
 	if (version != 1 && version != 2)
@@ -163,7 +163,7 @@ static int probe_verity(blkid_probe pr, const struct blkid_idmag *mag)
 
 	sb = blkid_probe_get_sb(pr, mag, struct verity_sb);
 	if (sb == NULL)
-		return -1;
+		return errno ? -errno : 1;
 
 	version = le32_to_cpu(sb->version);
 	if (version != 1)

@@ -69,8 +69,11 @@ static int probe_solaris_pt(blkid_probe pr,
 	uint16_t nparts;
 
 	l = (struct solaris_vtoc *) blkid_probe_get_sector(pr, SOLARIS_SECTOR);
-	if (!l)
+	if (!l) {
+		if (errno)
+			return -errno;
 		goto nothing;
+	}
 
 	if (le32_to_cpu(l->v_version) != 1) {
 		DBG(LOWPROBE, blkid_debug(
@@ -81,11 +84,11 @@ static int probe_solaris_pt(blkid_probe pr,
 
 	if (blkid_partitions_need_typeonly(pr))
 		/* caller does not ask for details about partitions */
-		return 0;
+		return BLKID_PROBE_OK;
 
 	ls = blkid_probe_get_partlist(pr);
 	if (!ls)
-		goto err;
+		goto nothing;
 
 	parent = blkid_partlist_get_parent(ls);
 
@@ -126,12 +129,12 @@ static int probe_solaris_pt(blkid_probe pr,
 		blkid_partition_set_flags(par, le16_to_cpu(p->s_flag));
 	}
 
-	return 0;
+	return BLKID_PROBE_OK;
 
 nothing:
-	return 1;
+	return BLKID_PROBE_NONE;
 err:
-	return -1;
+	return -ENOMEM;
 }
 
 const struct blkid_idinfo solaris_x86_pt_idinfo =
