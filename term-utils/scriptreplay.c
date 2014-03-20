@@ -133,7 +133,6 @@ main(int argc, char *argv[])
 	double divi = 1;
 	int c, diviopt = FALSE, idx;
 	unsigned long line;
-	size_t oldblk = 0;
 	char ch;
 
 	static const struct option longopts[] = {
@@ -222,9 +221,7 @@ main(int argc, char *argv[])
 		if (delay > SCRIPT_MIN_DELAY)
 			delay_for(delay);
 
-		if (oldblk)
-			emit(sfile, sname, oldblk);
-		oldblk = blk;
+		emit(sfile, sname, blk);
 	}
 
 	fclose(sfile);
