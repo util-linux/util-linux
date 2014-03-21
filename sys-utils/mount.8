@@ -1523,12 +1523,13 @@ ordered mode.
 Abort the journal if an error occurs in a file data buffer in ordered mode.
 .TP
 .BR barrier=0 " / " barrier=1 "
-This enables/disables barriers.  barrier=0 disables it, barrier=1 enables it.
-Write barriers enforce proper on-disk ordering of journal commits, making
-volatile disk write caches safe to use, at some performance penalty.  The ext3
-filesystem does not enable write barriers by default.  Be sure to enable
-barriers unless your disks are battery-backed one way or another.  Otherwise
-you risk filesystem corruption in case of power failure.
+This disables / enables the use of write barriers in the jbd code.  barrier=0
+disables, barrier=1 enables (default). This also requires an IO stack which can
+support barriers, and if jbd gets an error on a barrier write, it will disable
+barriers again with a warning.  Write barriers enforce proper on-disk ordering
+of journal commits, making volatile disk write caches safe to use, at some
+performance penalty.  If your disks are battery-backed in one way or another,
+disabling barriers may safely improve performance.
 .TP
 .BI commit= nrsec
 Sync all data and metadata every
@@ -1576,15 +1577,9 @@ enabled older kernels cannot mount the device.
 This will enable 'journal_checksum' internally.
 .TP
 .BR barrier=0 " / " barrier=1 " / " barrier " / " nobarrier
-This enables/disables the use of write barriers in the jbd code.  barrier=0
-disables, barrier=1 enables.  This also requires an IO stack which can support
-barriers, and if jbd gets an error on a barrier write, it will disable again
-with a warning.  Write barriers enforce proper on-disk ordering of journal
-commits, making volatile disk write caches safe to use, at some performance
-penalty.  If your disks are battery-backed in one way or another, disabling
-barriers may safely improve performance.  The mount options "barrier" and
-"nobarrier" can also be used to enable or disable barriers, for consistency
-with other ext4 mount options.
+These mount options have the same effect as in ext3.  The mount options
+"barrier" and "nobarrier" are added for consistency with other ext4 mount
+options.
 
 The ext4 filesystem enables write barriers by default.
 .TP
@@ -2265,13 +2260,13 @@ Enable POSIX Access Control Lists. See the
 manual page.
 .TP
 .BR barrier=none " / " barrier=flush "
-This enables/disables the use of write barriers in the journaling code.
-barrier=none disables it, barrier=flush enables it. Write barriers enforce
+This disables / enables the use of write barriers in the journaling code.
+barrier=none disables, barrier=flush enables (default). This also requires an
+IO stack which can support barriers, and if reiserfs gets an error on a barrier
+write, it will disable barriers again with a warning.  Write barriers enforce
 proper on-disk ordering of journal commits, making volatile disk write caches
-safe to use, at some performance penalty. The reiserfs filesystem does not
-enable write barriers by default. Be sure to enable barriers unless your disks
-are battery-backed one way or another. Otherwise you risk filesystem
-corruption in case of power failure.
+safe to use, at some performance penalty.  If your disks are battery-backed in
+one way or another, disabling barriers may safely improve performance.
 
 .SH "Mount options for romfs"
 None.
