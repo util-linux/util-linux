@@ -22,12 +22,13 @@ static const char *lib_features[] = {
 #ifdef HAVE_LIBSELINUX
 	"selinux",
 #endif
-#ifdef CONFIG_LIBMOUNT_DEBUG
-	"debug",
+#ifdef HAVE_SMACK
+	"smack",
 #endif
 #ifdef CONFIG_LIBMOUNT_ASSERT
 	"assert",
 #endif
+	"debug",	/* always enabled */
 	NULL
 };
 

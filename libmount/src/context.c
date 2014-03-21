@@ -61,7 +61,7 @@ struct libmnt_context *mnt_new_context(void)
 	/* if we're really root and aren't running setuid */
 	cxt->restricted = (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
 
-	DBG(CXT, mnt_debug_h(cxt, "----> allocate %s",
+	DBG(CXT, ul_debugobj(cxt, "----> allocate %s",
 				cxt->restricted ? "[RESTRICTED]" : ""));
 
 	mnt_has_regular_mtab(&cxt->mtab_path, &cxt->mtab_writable);
@@ -98,7 +98,7 @@ void mnt_free_context(struct libmnt_context *cxt)
 
 	free(cxt->children);
 
-	DBG(CXT, mnt_debug_h(cxt, "<---- free"));
+	DBG(CXT, ul_debugobj(cxt, "<---- free"));
 	free(cxt);
 }
 
@@ -129,7 +129,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	if (!cxt)
 		return -EINVAL;
 
-	DBG(CXT, mnt_debug_h(cxt, "<---- reset [status=%d] ---->",
+	DBG(CXT, ul_debugobj(cxt, "<---- reset [status=%d] ---->",
 				mnt_context_get_status(cxt)));
 
 	fl = cxt->flags;
@@ -210,10 +210,10 @@ static int set_flag(struct libmnt_context *cxt, int flag, int enable)
 	if (!cxt)
 		return -EINVAL;
 	if (enable) {
-		DBG(CXT, mnt_debug_h(cxt, "enabling flag %04x", flag));
+		DBG(CXT, ul_debugobj(cxt, "enabling flag %04x", flag));
 		cxt->flags |= flag;
 	} else {
-		DBG(CXT, mnt_debug_h(cxt, "disabling flag %04x", flag));
+		DBG(CXT, ul_debugobj(cxt, "disabling flag %04x", flag));
 		cxt->flags &= ~flag;
 	}
 	return 0;
@@ -997,7 +997,7 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 	if (tb)
 		*tb = cxt->mtab;
 
-	DBG(CXT, mnt_debug_h(cxt, "mtab requested [nents=%d]",
+	DBG(CXT, ul_debugobj(cxt, "mtab requested [nents=%d]",
 				mnt_table_get_nents(cxt->mtab)));
 	return 0;
 }
@@ -1022,7 +1022,7 @@ int mnt_context_set_tabfilter(struct libmnt_context *cxt,
 				cxt->table_fltrcb,
 				cxt->table_fltrcb_data);
 
-	DBG(CXT, mnt_debug_h(cxt, "tabfilter %s", fltr ? "ENABLED!" : "disabled"));
+	DBG(CXT, ul_debugobj(cxt, "tabfilter %s", fltr ? "ENABLED!" : "disabled"));
 	return 0;
 }
 
@@ -1394,7 +1394,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 	if (!cxt || !cxt->fs)
 		return -EINVAL;
 
-	DBG(CXT, mnt_debug_h(cxt, "preparing source path"));
+	DBG(CXT, ul_debugobj(cxt, "preparing source path"));
 
 	src = mnt_fs_get_source(cxt->fs);
 
@@ -1408,7 +1408,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 	if (!src || mnt_fs_is_netfs(cxt->fs))
 		return 0;
 
-	DBG(CXT, mnt_debug_h(cxt, "srcpath '%s'", src));
+	DBG(CXT, ul_debugobj(cxt, "srcpath '%s'", src));
 
 	cache = mnt_context_get_cache(cxt);
 
@@ -1431,7 +1431,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 	 }
 
 	if (rc) {
-		DBG(CXT, mnt_debug_h(cxt, "failed to prepare srcpath [rc=%d]", rc));
+		DBG(CXT, ul_debugobj(cxt, "failed to prepare srcpath [rc=%d]", rc));
 		return rc;
 	}
 
@@ -1440,7 +1440,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 
 	if ((cxt->mountflags & (MS_BIND | MS_MOVE | MS_REMOUNT))
 	    || mnt_fs_is_pseudofs(cxt->fs)) {
-		DBG(CXT, mnt_debug_h(cxt, "REMOUNT/BIND/MOVE/pseudo FS source: %s", path));
+		DBG(CXT, ul_debugobj(cxt, "REMOUNT/BIND/MOVE/pseudo FS source: %s", path));
 		return rc;
 	}
 
@@ -1453,7 +1453,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 			return rc;
 	}
 
-	DBG(CXT, mnt_debug_h(cxt, "final srcpath '%s'",
+	DBG(CXT, ul_debugobj(cxt, "final srcpath '%s'",
 				mnt_fs_get_source(cxt->fs)));
 	return 0;
 }
@@ -1482,7 +1482,7 @@ static int mkdir_target(const char *tgt, struct libmnt_fs *fs)
 		mode = strtol(mstr, &end, 8);
 
 		if (errno || !end || mstr + mstr_sz != end) {
-			DBG(CXT, mnt_debug("failed to parse mkdir mode '%s'", mstr));
+			DBG(CXT, ul_debug("failed to parse mkdir mode '%s'", mstr));
 			return -MNT_ERR_MOUNTOPT;
 		}
 	}
@@ -1494,7 +1494,7 @@ static int mkdir_target(const char *tgt, struct libmnt_fs *fs)
 
 	rc = mkdir_p(tgt, mode);
 	if (rc)
-		DBG(CXT, mnt_debug("mkdir %s failed: %m", tgt));
+		DBG(CXT, ul_debug("mkdir %s failed: %m", tgt));
 
 	return rc;
 }
@@ -1512,7 +1512,7 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	if (!cxt || !cxt->fs)
 		return -EINVAL;
 
-	DBG(CXT, mnt_debug_h(cxt, "preparing target path"));
+	DBG(CXT, ul_debugobj(cxt, "preparing target path"));
 
 	tgt = mnt_fs_get_target(cxt->fs);
 	if (!tgt)
@@ -1537,9 +1537,9 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	}
 
 	if (rc)
-		DBG(CXT, mnt_debug_h(cxt, "failed to prepare target '%s'", tgt));
+		DBG(CXT, ul_debugobj(cxt, "failed to prepare target '%s'", tgt));
 	else
-		DBG(CXT, mnt_debug_h(cxt, "final target '%s'",
+		DBG(CXT, ul_debugobj(cxt, "final target '%s'",
 					mnt_fs_get_target(cxt->fs)));
 	return 0;
 }
@@ -1595,7 +1595,7 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 		if (ambi)
 			rc = -MNT_ERR_AMBIFS;
 	} else {
-		DBG(CXT, mnt_debug_h(cxt, "access(%s) failed [%m]", dev));
+		DBG(CXT, ul_debugobj(cxt, "access(%s) failed [%m]", dev));
 		if (strchr(dev, ':') != NULL)
 			rc = mnt_fs_set_fstype(cxt->fs, "nfs");
 		else if (!strncmp(dev, "//", 2))
@@ -1603,7 +1603,7 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 	}
 
 done:
-	DBG(CXT, mnt_debug_h(cxt, "FS type: %s [rc=%d]",
+	DBG(CXT, ul_debugobj(cxt, "FS type: %s [rc=%d]",
 				mnt_fs_get_fstype(cxt->fs), rc));
 	return rc;
 none:
@@ -1662,7 +1662,7 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 			rc = stat(helper, &st);
 		}
 
-		DBG(CXT, mnt_debug_h(cxt, "%-25s ... %s", helper,
+		DBG(CXT, ul_debugobj(cxt, "%-25s ... %s", helper,
 					rc ? "not found" : "found"));
 		if (rc)
 			continue;
@@ -1684,7 +1684,7 @@ int mnt_context_merge_mflags(struct libmnt_context *cxt)
 
 	assert(cxt);
 
-	DBG(CXT, mnt_debug_h(cxt, "merging mount flags"));
+	DBG(CXT, ul_debugobj(cxt, "merging mount flags"));
 
 	rc = mnt_context_get_mflags(cxt, &fl);
 	if (rc)
@@ -1697,7 +1697,7 @@ int mnt_context_merge_mflags(struct libmnt_context *cxt)
 		return rc;
 	cxt->user_mountflags = fl;
 
-	DBG(CXT, mnt_debug_h(cxt, "final flags: VFS=%08lx user=%08lx",
+	DBG(CXT, ul_debugobj(cxt, "final flags: VFS=%08lx user=%08lx",
 			cxt->mountflags, cxt->user_mountflags));
 
 	cxt->flags |= MNT_FL_MOUNTFLAGS_MERGED;
@@ -1717,10 +1717,10 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 	assert(cxt->action);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	DBG(CXT, mnt_debug_h(cxt, "prepare update"));
+	DBG(CXT, ul_debugobj(cxt, "prepare update"));
 
 	if (mnt_context_propagation_only(cxt)) {
-		DBG(CXT, mnt_debug_h(cxt, "skip update: only MS_PROPAGATION"));
+		DBG(CXT, ul_debugobj(cxt, "skip update: only MS_PROPAGATION"));
 		return 0;
 	}
 
@@ -1731,16 +1731,16 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 		mnt_context_disable_mtab(cxt, TRUE);
 
 	if (mnt_context_is_nomtab(cxt)) {
-		DBG(CXT, mnt_debug_h(cxt, "skip update: NOMTAB flag"));
+		DBG(CXT, ul_debugobj(cxt, "skip update: NOMTAB flag"));
 		return 0;
 	}
 	if (!cxt->mtab_writable && !cxt->utab_writable) {
-		DBG(CXT, mnt_debug_h(cxt, "skip update: no writable destination"));
+		DBG(CXT, ul_debugobj(cxt, "skip update: no writable destination"));
 		return 0;
 	}
 	/* 0 = success, 1 = not called yet */
 	if (cxt->syscall_status != 1 && cxt->syscall_status != 0) {
-		DBG(CXT, mnt_debug_h(cxt,
+		DBG(CXT, ul_debugobj(cxt,
 				"skip update: syscall failed [status=%d]",
 				cxt->syscall_status));
 		return 0;
@@ -1750,7 +1750,7 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 		const char *name = cxt->mtab_writable ? cxt->mtab_path : cxt->utab_path;
 
 		if (cxt->action == MNT_ACT_UMOUNT && is_file_empty(name)) {
-			DBG(CXT, mnt_debug_h(cxt,
+			DBG(CXT, ul_debugobj(cxt,
 				"skip update: umount, no table"));
 			return 0;
 		}
@@ -1779,11 +1779,11 @@ int mnt_context_update_tabs(struct libmnt_context *cxt)
 	assert(cxt);
 
 	if (mnt_context_is_nomtab(cxt)) {
-		DBG(CXT, mnt_debug_h(cxt, "don't update: NOMTAB flag"));
+		DBG(CXT, ul_debugobj(cxt, "don't update: NOMTAB flag"));
 		return 0;
 	}
 	if (!cxt->update || !mnt_update_is_ready(cxt->update)) {
-		DBG(CXT, mnt_debug_h(cxt, "don't update: no update prepared"));
+		DBG(CXT, ul_debugobj(cxt, "don't update: no update prepared"));
 		return 0;
 	}
 
@@ -1793,11 +1793,11 @@ int mnt_context_update_tabs(struct libmnt_context *cxt)
 	    && cxt->utab_writable) {
 
 		if (mnt_update_already_done(cxt->update, cxt->lock)) {
-			DBG(CXT, mnt_debug_h(cxt, "don't update: error evaluate or already updated"));
+			DBG(CXT, ul_debugobj(cxt, "don't update: error evaluate or already updated"));
 			return 0;
 		}
 	} else if (cxt->helper) {
-		DBG(CXT, mnt_debug_h(cxt, "don't update: external helper"));
+		DBG(CXT, ul_debugobj(cxt, "don't update: external helper"));
 		return 0;
 	}
 
@@ -1805,7 +1805,7 @@ int mnt_context_update_tabs(struct libmnt_context *cxt)
 	    && !(mnt_context_helper_executed(cxt) &&
 		 mnt_context_get_helper_status(cxt) == 0)) {
 
-		DBG(CXT, mnt_debug_h(cxt, "don't update: syscall/helper failed/not called"));
+		DBG(CXT, ul_debugobj(cxt, "don't update: syscall/helper failed/not called"));
 		return 0;
 	}
 
@@ -1863,7 +1863,7 @@ static int apply_table(struct libmnt_context *cxt, struct libmnt_table *tb,
 	if (!fs)
 		return -MNT_ERR_NOFSTAB;	/* not found */
 
-	DBG(CXT, mnt_debug_h(cxt, "apply entry:"));
+	DBG(CXT, ul_debugobj(cxt, "apply entry:"));
 	DBG(CXT, mnt_fs_print_debug(fs, stderr));
 
 	/* copy from tab to our FS description
@@ -1918,10 +1918,10 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		return 0;
 
 	if (mnt_context_is_restricted(cxt)) {
-		DBG(CXT, mnt_debug_h(cxt, "force fstab usage for non-root users!"));
+		DBG(CXT, ul_debugobj(cxt, "force fstab usage for non-root users!"));
 		cxt->optsmode = MNT_OMODE_USER;
 	} else if (cxt->optsmode == 0) {
-		DBG(CXT, mnt_debug_h(cxt, "use default optsmode"));
+		DBG(CXT, ul_debugobj(cxt, "use default optsmode"));
 		cxt->optsmode = MNT_OMODE_AUTO;
 	} else if (cxt->optsmode & MNT_OMODE_NOTAB) {
 		cxt->optsmode &= ~MNT_OMODE_FSTAB;
@@ -1934,7 +1934,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		tgt = mnt_fs_get_target(cxt->fs);
 	}
 
-	DBG(CXT, mnt_debug_h(cxt, "OPTSMODE: ignore=%d, append=%d, prepend=%d, "
+	DBG(CXT, ul_debugobj(cxt, "OPTSMODE: ignore=%d, append=%d, prepend=%d, "
 				  "replace=%d, force=%d, fstab=%d, mtab=%d",
 				  cxt->optsmode & MNT_OMODE_IGNORE ? 1 : 0,
 				  cxt->optsmode & MNT_OMODE_APPEND ? 1 : 0,
@@ -1946,19 +1946,19 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 
 	/* fstab is not required if source and target are specified */
 	if (src && tgt && !(cxt->optsmode & MNT_OMODE_FORCE)) {
-		DBG(CXT, mnt_debug_h(cxt, "fstab not required -- skip"));
+		DBG(CXT, ul_debugobj(cxt, "fstab not required -- skip"));
 		return 0;
 	}
 
 	if (!src && tgt
 	    && !(cxt->optsmode & MNT_OMODE_FSTAB)
 	    && !(cxt->optsmode & MNT_OMODE_MTAB)) {
-		DBG(CXT, mnt_debug_h(cxt, "only target; fstab/mtab not required "
+		DBG(CXT, ul_debugobj(cxt, "only target; fstab/mtab not required "
 					  "-- skip, probably MS_PROPAGATION"));
 		return 0;
 	}
 
-	DBG(CXT, mnt_debug_h(cxt,
+	DBG(CXT, ul_debugobj(cxt,
 		"trying to apply fstab (src=%s, target=%s)", src, tgt));
 
 	/* let's initialize cxt->fs */
@@ -1973,13 +1973,13 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 
 	/* try mtab */
 	if (rc < 0 && (cxt->optsmode & MNT_OMODE_MTAB)) {
-		DBG(CXT, mnt_debug_h(cxt, "trying to apply from mtab"));
+		DBG(CXT, ul_debugobj(cxt, "trying to apply from mtab"));
 		rc = mnt_context_get_mtab(cxt, &tab);
 		if (!rc)
 			rc = apply_table(cxt, tab, MNT_ITER_BACKWARD);
 	}
 	if (rc)
-		DBG(CXT, mnt_debug_h(cxt, "failed to find entry in fstab/mtab"));
+		DBG(CXT, ul_debugobj(cxt, "failed to find entry in fstab/mtab"));
 	return rc;
 }
 
@@ -2109,7 +2109,7 @@ int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status)
 	if (!cxt)
 		return -EINVAL;
 
-	DBG(CXT, mnt_debug_h(cxt, "syscall status set to: %d", status));
+	DBG(CXT, ul_debugobj(cxt, "syscall status set to: %d", status));
 	cxt->syscall_status = status;
 	return 0;
 }
@@ -2162,7 +2162,7 @@ int mnt_context_init_helper(struct libmnt_context *cxt, int action,
 	if (!rc)
 		cxt->action = action;
 
-	DBG(CXT, mnt_debug_h(cxt, "initialized for [u]mount.<type> helper [rc=%d]", rc));
+	DBG(CXT, ul_debugobj(cxt, "initialized for [u]mount.<type> helper [rc=%d]", rc));
 	return rc;
 }
 
@@ -2231,7 +2231,7 @@ static int mnt_context_add_child(struct libmnt_context *cxt, pid_t pid)
 	if (!pids)
 		return -ENOMEM;
 
-	DBG(CXT, mnt_debug_h(cxt, "add new child %d", pid));
+	DBG(CXT, ul_debugobj(cxt, "add new child %d", pid));
 	cxt->children = pids;
 	cxt->children[cxt->nchildren++] = pid;
 
@@ -2247,7 +2247,7 @@ int mnt_fork_context(struct libmnt_context *cxt)
 	if (!mnt_context_is_parent(cxt))
 		return -EINVAL;
 
-	DBG(CXT, mnt_debug_h(cxt, "forking context"));
+	DBG(CXT, ul_debugobj(cxt, "forking context"));
 
 	DBG_FLUSH;
 
@@ -2255,13 +2255,13 @@ int mnt_fork_context(struct libmnt_context *cxt)
 
 	switch (pid) {
 	case -1: /* error */
-		DBG(CXT, mnt_debug_h(cxt, "fork failed %m"));
+		DBG(CXT, ul_debugobj(cxt, "fork failed %m"));
 		return -errno;
 
 	case 0: /* child */
 		cxt->pid = getpid();
 		mnt_context_enable_fork(cxt, FALSE);
-		DBG(CXT, mnt_debug_h(cxt, "child created"));
+		DBG(CXT, ul_debugobj(cxt, "child created"));
 		break;
 
 	default:
@@ -2290,7 +2290,7 @@ int mnt_context_wait_for_children(struct libmnt_context *cxt,
 		if (!pid)
 			continue;
 		do {
-			DBG(CXT, mnt_debug_h(cxt,
+			DBG(CXT, ul_debugobj(cxt,
 					"waiting for child (%d/%d): %d",
 					i + 1, cxt->nchildren, pid));
 			errno = 0;

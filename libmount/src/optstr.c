@@ -106,7 +106,7 @@ static int mnt_optstr_parse_next(char **optstr,	 char **name, size_t *namesz,
 	return 1;				/* end of optstr */
 
 error:
-	DBG(OPTIONS, mnt_debug("parse error: \"%s\"", optstr0));
+	DBG(OPTIONS, ul_debug("parse error: \"%s\"", optstr0));
 	return -EINVAL;
 }
 
@@ -268,7 +268,7 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
 	free(*optstr);
 	*optstr = tmp;
 
-	DBG(OPTIONS, mnt_debug("failed to prepend '%s[=%s]' to '%s'",
+	DBG(OPTIONS, ul_debug("failed to prepend '%s[=%s]' to '%s'",
 				name, value, *optstr));
 	return rc;
 }
@@ -746,7 +746,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 	if (!optstr || !map)
 		return -EINVAL;
 
-	DBG(CXT, mnt_debug("applying 0x%08lu flags to '%s'", flags, *optstr));
+	DBG(CXT, ul_debug("applying 0x%08lu flags to '%s'", flags, *optstr));
 
 	maps[0] = map;
 	next = *optstr;
@@ -845,10 +845,10 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 		}
 	}
 
-	DBG(CXT, mnt_debug("new optstr '%s'", *optstr));
+	DBG(CXT, ul_debug("new optstr '%s'", *optstr));
 	return rc;
 err:
-	DBG(CXT, mnt_debug("failed to apply flags [rc=%d]", rc));
+	DBG(CXT, ul_debug("failed to apply flags [rc=%d]", rc));
 	return rc;
 }
 
@@ -887,7 +887,7 @@ int mnt_optstr_fix_secontext(char **optstr,
 	if (!optstr || !*optstr || !value || !valsz)
 		return -EINVAL;
 
-	DBG(CXT, mnt_debug("fixing SELinux context"));
+	DBG(CXT, ul_debug("fixing SELinux context"));
 
 	begin = value;
 	end = value + valsz;
@@ -908,7 +908,7 @@ int mnt_optstr_fix_secontext(char **optstr,
 	/* translate the context */
 	rc = selinux_trans_to_raw_context((security_context_t) p, &raw);
 
-	DBG(CXT, mnt_debug("SELinux context '%s' translated to '%s'",
+	DBG(CXT, ul_debug("SELinux context '%s' translated to '%s'",
 			p, rc == -1 ? "FAILED" : (char *) raw));
 
 	free(p);
@@ -974,7 +974,7 @@ int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next)
 	if (!optstr || !*optstr || !value || !valsz)
 		return -EINVAL;
 
-	DBG(CXT, mnt_debug("fixing uid"));
+	DBG(CXT, ul_debug("fixing uid"));
 
 	end = value + valsz;
 
@@ -1021,7 +1021,7 @@ int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next)
 	if (!optstr || !*optstr || !value || !valsz)
 		return -EINVAL;
 
-	DBG(CXT, mnt_debug("fixing gid"));
+	DBG(CXT, ul_debug("fixing gid"));
 
 	end = value + valsz;
 
@@ -1060,7 +1060,7 @@ int mnt_optstr_fix_user(char **optstr)
 	struct libmnt_optloc ol;
 	int rc = 0;
 
-	DBG(CXT, mnt_debug("fixing user"));
+	DBG(CXT, ul_debug("fixing user"));
 
 	mnt_init_optloc(&ol);
 

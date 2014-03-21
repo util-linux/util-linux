@@ -143,7 +143,7 @@ int mnt_chdir_to_parent(const char *target, char **filename)
 	if (!target || *target != '/')
 		return -EINVAL;
 
-	DBG(UTILS, mnt_debug("moving to %s parent", target));
+	DBG(UTILS, ul_debug("moving to %s parent", target));
 
 	buf = strdup(target);
 	if (!buf)
@@ -158,22 +158,22 @@ int mnt_chdir_to_parent(const char *target, char **filename)
 	parent = buf && *buf ? buf : "/";
 
 	if (chdir(parent) == -1) {
-		DBG(UTILS, mnt_debug("failed to chdir to %s: %m", parent));
+		DBG(UTILS, ul_debug("failed to chdir to %s: %m", parent));
 		rc = -errno;
 		goto err;
 	}
 	if (!getcwd(cwd, sizeof(cwd))) {
-		DBG(UTILS, mnt_debug("failed to obtain current directory: %m"));
+		DBG(UTILS, ul_debug("failed to obtain current directory: %m"));
 		rc = -errno;
 		goto err;
 	}
 	if (strcmp(cwd, parent) != 0) {
-		DBG(UTILS, mnt_debug(
+		DBG(UTILS, ul_debug(
 		    "unexpected chdir (expected=%s, cwd=%s)", parent, cwd));
 		goto err;
 	}
 
-	DBG(CXT, mnt_debug(
+	DBG(CXT, ul_debug(
 		"current directory moved to %s [last_component='%s']",
 		parent, last));
 
@@ -582,7 +582,7 @@ static int get_filesystems(const char *filename, char ***filesystems, const char
 	if (!f)
 		return 1;
 
-	DBG(UTILS, mnt_debug("reading filesystems list from: %s", filename));
+	DBG(UTILS, ul_debug("reading filesystems list from: %s", filename));
 
 	while (fgets(line, sizeof(line), f)) {
 		char name[sizeof(line)];
@@ -687,7 +687,7 @@ int mnt_get_uid(const char *username, uid_t *uid)
 		*uid= pw->pw_uid;
 		rc = 0;
 	} else {
-		DBG(UTILS, mnt_debug(
+		DBG(UTILS, ul_debug(
 			"cannot convert '%s' username to UID", username));
 		rc = errno ? -errno : -EINVAL;
 	}
@@ -715,7 +715,7 @@ int mnt_get_gid(const char *groupname, gid_t *gid)
 		*gid= gr->gr_gid;
 		rc = 0;
 	} else {
-		DBG(UTILS, mnt_debug(
+		DBG(UTILS, ul_debug(
 			"cannot convert '%s' groupname to GID", groupname));
 		rc = errno ? -errno : -EINVAL;
 	}
@@ -791,7 +791,7 @@ int mnt_has_regular_mtab(const char **mtab, int *writable)
 	if (mtab && !*mtab)
 		*mtab = filename;
 
-	DBG(UTILS, mnt_debug("mtab: %s", filename));
+	DBG(UTILS, ul_debug("mtab: %s", filename));
 
 	rc = lstat(filename, &st);
 
@@ -813,7 +813,7 @@ int mnt_has_regular_mtab(const char **mtab, int *writable)
 	}
 
 done:
-	DBG(UTILS, mnt_debug("%s: irregular/non-writable", filename));
+	DBG(UTILS, ul_debug("%s: irregular/non-writable", filename));
 	return 0;
 }
 
@@ -837,7 +837,7 @@ int mnt_has_regular_utab(const char **utab, int *writable)
 	if (utab && !*utab)
 		*utab = filename;
 
-	DBG(UTILS, mnt_debug("utab: %s", filename));
+	DBG(UTILS, ul_debug("utab: %s", filename));
 
 	rc = lstat(filename, &st);
 
@@ -871,7 +871,7 @@ int mnt_has_regular_utab(const char **utab, int *writable)
 			return 1;
 	}
 done:
-	DBG(UTILS, mnt_debug("%s: irregular/non-writable file", filename));
+	DBG(UTILS, ul_debug("%s: irregular/non-writable file", filename));
 	return 0;
 }
 
@@ -1011,7 +1011,7 @@ char *mnt_get_mountpoint(const char *path)
 
 	memcpy(mnt, "/", 2);
 done:
-	DBG(UTILS, mnt_debug("%s mountpoint is %s", path, mnt));
+	DBG(UTILS, ul_debug("%s mountpoint is %s", path, mnt));
 	return mnt;
 err:
 	free(mnt);
@@ -1036,7 +1036,7 @@ char *mnt_get_fs_root(const char *path, const char *mnt)
 		free(m);
 
 	res = *p ? strdup(p) : strdup("/");
-	DBG(UTILS, mnt_debug("%s fs-root is %s", path, res));
+	DBG(UTILS, ul_debug("%s fs-root is %s", path, res));
 	return res;
 }
 
@@ -1141,7 +1141,7 @@ int mkdir_p(const char *path, mode_t mode)
 		p = e + 1;
 	}
 
-	DBG(UTILS, mnt_debug("%s mkdir %s", path, rc ? "FAILED" : "SUCCESS"));
+	DBG(UTILS, ul_debug("%s mkdir %s", path, rc ? "FAILED" : "SUCCESS"));
 
 	free(dir);
 	return rc;

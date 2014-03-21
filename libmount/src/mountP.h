@@ -17,6 +17,8 @@
 #include <sys/types.h>
 #include <sys/vfs.h>
 #include <unistd.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 #include "c.h"
 #include "list.h"
@@ -25,7 +27,6 @@
 
 /* features */
 #define CONFIG_LIBMOUNT_ASSERT
-#define CONFIG_LIBMOUNT_DEBUG
 
 #ifdef CONFIG_LIBMOUNT_ASSERT
 # include <assert.h>
@@ -36,10 +37,6 @@
 /*
  * Debug
  */
-#if defined(TEST_PROGRAM) && !defined(LIBMOUNT_DEBUG)
-#define CONFIG_LIBMOUNT_DEBUG
-#endif
-
 #define MNT_DEBUG_INIT		(1 << 1)
 #define MNT_DEBUG_CACHE		(1 << 2)
 #define MNT_DEBUG_OPTIONS	(1 << 3)
@@ -53,56 +50,10 @@
 #define MNT_DEBUG_DIFF		(1 << 11)
 #define MNT_DEBUG_ALL		0xFFFF
 
-#define MNT_DEF_FLAG(m) UL_DEFINE_FLAG(MNT_DEBUG_, m)
-
-# include <stdio.h>
-# include <stdarg.h>
-
-#define DBG(m, x) do { __UL_DBG(libmount, MNT_DEBUG_, m, x); } while (0)
-
-# define WARN_REFCOUNT(m, o, r) \
-			do { \
-				if ((MNT_DEBUG_ ## m) & libmount_debug_mask && r != 0) \
-					fprintf(stderr, "%d: libmount: %8s: [%p]: *** deallocates with refcount=%d\n", \
-							getpid(), # m, o, r); \
-			} while (0)
-
-# define ON_DBG(m, x)	do { \
-				if ((MNT_DEBUG_ ## m) & libmount_debug_mask) { \
-					x; \
-				} \
-			} while (0)
-
-# define DBG_FLUSH	do { \
-				if (libmount_debug_mask && \
-				    libmount_debug_mask != MNT_DEBUG_INIT) \
-					fflush(stderr); \
-			} while(0)
-
 UL_DEBUG_DECLARE_MASK(libmount);
-
-static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
-mnt_debug(const char *mesg, ...)
-{
-	va_list ap;
-	va_start(ap, mesg);
-	vfprintf(stderr, mesg, ap);
-	va_end(ap);
-	fputc('\n', stderr);
-}
-
-static inline void __attribute__ ((__format__ (__printf__, 2, 3)))
-mnt_debug_h(void *handler, const char *mesg, ...)
-{
-	va_list ap;
-
-	if (handler)
-		fprintf(stderr, "[%p]: ", handler);
-	va_start(ap, mesg);
-	vfprintf(stderr, mesg, ap);
-	va_end(ap);
-	fputc('\n', stderr);
-}
+#define DBG(m, x)	__UL_DBG(libmount, MNT_DEBUG_, m, x)
+#define ON_DBG(m, x)	__UL_DBG_CALL(libmount, MNT_DEBUG_, m, x)
+#define DBG_FLUSH	__UL_DBG_FLUSH(libmount, MNT_DEBUG_)
 
 /* extension for files in the directory */
 #define MNT_MNTTABDIR_EXT	".fstab"

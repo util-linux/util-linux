@@ -87,7 +87,7 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
 		free(optstr);
 		optstr = NULL;
 	} else {
-		DBG(TAB, mnt_debug("tab parse error: [sscanf rc=%d]: '%s'", rc, s));
+		DBG(TAB, ul_debug("tab parse error: [sscanf rc=%d]: '%s'", rc, s));
 		rc = -EINVAL;
 	}
 
@@ -95,7 +95,7 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
 		free(src);
 		free(fstype);
 		free(optstr);
-		DBG(TAB, mnt_debug("tab parse error: [set vars, rc=%d]\n", rc));
+		DBG(TAB, ul_debug("tab parse error: [set vars, rc=%d]\n", rc));
 		return rc;	/* error */
 	}
 
@@ -106,11 +106,11 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
 	if (xrc == 4 && *s) {
 		if (next_number(&s, &fs->freq) != 0) {
 			if (*s) {
-				DBG(TAB, mnt_debug("tab parse error: [freq]"));
+				DBG(TAB, ul_debug("tab parse error: [freq]"));
 				rc = -EINVAL;
 			}
 		} else if (next_number(&s, &fs->passno) != 0 && *s) {
-			DBG(TAB, mnt_debug("tab parse error: [passno]"));
+			DBG(TAB, ul_debug("tab parse error: [passno]"));
 			rc = -EINVAL;
 		}
 	}
@@ -149,7 +149,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 	/* (7) optional fields, terminated by " - " */
 	p = strstr(s, " - ");
 	if (!p) {
-		DBG(TAB, mnt_debug("mountinfo parse error: separator not found"));
+		DBG(TAB, ul_debug("mountinfo parse error: separator not found"));
 		return -EINVAL;
 	}
 	if (p > s + 1)
@@ -201,7 +201,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 	} else {
 		free(fstype);
 		free(src);
-		DBG(TAB, mnt_debug(
+		DBG(TAB, ul_debug(
 			"mountinfo parse error [sscanf rc=%d]: '%s'", rc, s));
 		rc = -EINVAL;
 	}
@@ -268,7 +268,7 @@ static int mnt_parse_utab_line(struct libmnt_fs *fs, const char *s)
 
 	return 0;
 enomem:
-	DBG(TAB, mnt_debug("utab parse error: ENOMEM"));
+	DBG(TAB, ul_debug("utab parse error: ENOMEM"));
 	return -ENOMEM;
 }
 
@@ -314,7 +314,7 @@ static int mnt_parse_swaps_line(struct libmnt_fs *fs, char *s)
 			mnt_fs_set_fstype(fs, "swap");
 		free(src);
 	} else {
-		DBG(TAB, mnt_debug("tab parse error: [sscanf rc=%d]: '%s'", rc, s));
+		DBG(TAB, ul_debug("tab parse error: [sscanf rc=%d]: '%s'", rc, s));
 		rc = -EINVAL;
 	}
 
@@ -335,7 +335,7 @@ static int guess_table_format(char *line)
 {
 	unsigned int a, b;
 
-	DBG(TAB, mnt_debug("trying to guess table type"));
+	DBG(TAB, ul_debug("trying to guess table type"));
 
 	if (sscanf(line, "%u %u", &a, &b) == 2)
 		return MNT_FMT_MOUNTINFO;
@@ -400,7 +400,7 @@ static int append_comment(struct libmnt_table *tb,
 	if (intro && is_terminated_by_blank(mnt_table_get_intro_comment(tb)))
 		intro = 0;
 
-	DBG(TAB, mnt_debug_h(tb, "appending %s comment",
+	DBG(TAB, ul_debugobj(tb, "appending %s comment",
 			intro ? "intro" :
 			eof ? "trailing" : "fs"));
 	if (intro)
@@ -443,11 +443,11 @@ next_line:
 			/* Missing final newline?  Otherwise an extremely */
 			/* long line - assume file was corrupted */
 			if (feof(f)) {
-				DBG(TAB, mnt_debug_h(tb,
+				DBG(TAB, ul_debugobj(tb,
 					"%s: no final newline",	filename));
 				s = strchr (buf, '\0');
 			} else {
-				DBG(TAB, mnt_debug_h(tb,
+				DBG(TAB, ul_debugobj(tb,
 					"%s:%d: missing newline at line",
 					filename, *nlines));
 				goto err;
@@ -508,7 +508,7 @@ next_line:
 	if (rc == 0)
 		return 0;
 err:
-	DBG(TAB, mnt_debug_h(tb, "%s:%d: %s parse error", filename, *nlines,
+	DBG(TAB, ul_debugobj(tb, "%s:%d: %s parse error", filename, *nlines,
 				tb->fmt == MNT_FMT_MOUNTINFO ? "mountinfo" :
 				tb->fmt == MNT_FMT_SWAPS ? "swaps" :
 				tb->fmt == MNT_FMT_FSTAB ? "tab" : "utab"));
@@ -542,7 +542,7 @@ static pid_t path_to_tid(const char *filename)
 		tid = 0;
 		goto done;
 	}
-	DBG(TAB, mnt_debug("TID for %s is %d", filename, tid));
+	DBG(TAB, ul_debug("TID for %s is %d", filename, tid));
 done:
 	free(path);
 	return tid;
@@ -570,11 +570,11 @@ static int kernel_fs_postparse(struct libmnt_table *tb,
 		char *spec = mnt_get_kernel_cmdline_option("root=");
 		char *real = NULL;
 
-		DBG(TAB, mnt_debug_h(tb, "root FS: %s", spec));
+		DBG(TAB, ul_debugobj(tb, "root FS: %s", spec));
 		if (spec)
 			real = mnt_resolve_spec(spec, tb->cache);
 		if (real) {
-			DBG(TAB, mnt_debug_h(tb, "canonical root FS: %s", real));
+			DBG(TAB, ul_debugobj(tb, "canonical root FS: %s", real));
 			rc = mnt_fs_set_source(fs, real);
 			if (!tb->cache)
 				free(real);
@@ -604,7 +604,7 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 	assert(f);
 	assert(filename);
 
-	DBG(TAB, mnt_debug_h(tb, "%s: start parsing [entries=%d, filter=%s]",
+	DBG(TAB, ul_debugobj(tb, "%s: start parsing [entries=%d, filter=%s]",
 				filename, mnt_table_get_nents(tb),
 				tb->fltrcb ? "yes" : "not"));
 
@@ -643,11 +643,11 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 		}
 	}
 
-	DBG(TAB, mnt_debug_h(tb, "%s: stop parsing (%d entries)",
+	DBG(TAB, ul_debugobj(tb, "%s: stop parsing (%d entries)",
 				filename, mnt_table_get_nents(tb)));
 	return 0;
 err:
-	DBG(TAB, mnt_debug_h(tb, "%s: parse error (rc=%d)", filename, rc));
+	DBG(TAB, ul_debugobj(tb, "%s: parse error (rc=%d)", filename, rc));
 	return rc;
 }
 
@@ -906,7 +906,7 @@ int mnt_table_set_parser_fltrcb(struct libmnt_table *tb,
 	if (!tb)
 		return -EINVAL;
 
-	DBG(TAB, mnt_debug_h(tb, "%s table parser filter", cb ? "set" : "unset"));
+	DBG(TAB, ul_debugobj(tb, "%s table parser filter", cb ? "set" : "unset"));
 	tb->fltrcb = cb;
 	tb->fltrcb_data = data;
 	return 0;
@@ -998,7 +998,7 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 	if (!tb || !uf)
 		return NULL;
 
-	DBG(TAB, mnt_debug_h(tb, "merging user fs"));
+	DBG(TAB, ul_debugobj(tb, "merging user fs"));
 
 	src = mnt_fs_get_srcpath(uf);
 	target = mnt_fs_get_target(uf);
@@ -1024,13 +1024,13 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 	}
 
 	if (fs) {
-		DBG(TAB, mnt_debug_h(tb, "found fs -- appending user optstr"));
+		DBG(TAB, ul_debugobj(tb, "found fs -- appending user optstr"));
 		mnt_fs_append_options(fs, optstr);
 		mnt_fs_append_attributes(fs, attrs);
 		mnt_fs_set_bindsrc(fs, mnt_fs_get_bindsrc(uf));
 		fs->flags |= MNT_FS_MERGED;
 
-		DBG(TAB, mnt_debug_h(tb, "found fs:"));
+		DBG(TAB, ul_debugobj(tb, "found fs:"));
 		DBG(TAB, mnt_fs_print_debug(fs, stderr));
 	}
 	return fs;
@@ -1045,7 +1045,7 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 
 	if (mnt_has_regular_mtab(&filename, NULL)) {
 
-		DBG(TAB, mnt_debug_h(tb, "force %s usage", filename));
+		DBG(TAB, ul_debugobj(tb, "force %s usage", filename));
 
 		rc = mnt_table_parse_file(tb, filename);
 		if (!rc)

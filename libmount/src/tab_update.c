@@ -53,7 +53,7 @@ struct libmnt_update *mnt_new_update(void)
 	if (!upd)
 		return NULL;
 
-	DBG(UPDATE, mnt_debug_h(upd, "allocate"));
+	DBG(UPDATE, ul_debugobj(upd, "allocate"));
 	return upd;
 }
 
@@ -68,7 +68,7 @@ void mnt_free_update(struct libmnt_update *upd)
 	if (!upd)
 		return;
 
-	DBG(UPDATE, mnt_debug_h(upd, "free"));
+	DBG(UPDATE, ul_debugobj(upd, "free"));
 
 	mnt_unref_fs(upd->fs);
 	mnt_unref_table(upd->mountinfo);
@@ -172,11 +172,11 @@ int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 	if (target && fs)
 		return -EINVAL;
 
-	DBG(UPDATE, mnt_debug_h(upd,
+	DBG(UPDATE, ul_debugobj(upd,
 			"resetting FS [fs=0x%p, target=%s, flags=0x%08lx]",
 			fs, target, mountflags));
 	if (fs) {
-		DBG(UPDATE, mnt_debug_h(upd, "FS template:"));
+		DBG(UPDATE, ul_debugobj(upd, "FS template:"));
 		DBG(UPDATE, mnt_fs_print_debug(fs, stderr));
 	}
 
@@ -194,7 +194,7 @@ int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 
 	rc = mnt_update_set_filename(upd, NULL, 0);
 	if (rc) {
-		DBG(UPDATE, mnt_debug_h(upd, "no writable file available [rc=%d]", rc));
+		DBG(UPDATE, ul_debugobj(upd, "no writable file available [rc=%d]", rc));
 		return rc;	/* error or no file available (rc = 1) */
 	}
 	if (target) {
@@ -216,7 +216,7 @@ int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 	}
 
 
-	DBG(UPDATE, mnt_debug_h(upd, "ready"));
+	DBG(UPDATE, ul_debugobj(upd, "ready"));
 	upd->ready = TRUE;
 	return 0;
 }
@@ -306,7 +306,7 @@ static int utab_new_entry(struct libmnt_update *upd, struct libmnt_fs *fs,
 	assert(upd->fs == NULL);
 	assert(!(mountflags & MS_MOVE));
 
-	DBG(UPDATE, mnt_debug("prepare utab entry"));
+	DBG(UPDATE, ul_debug("prepare utab entry"));
 
 	o = mnt_fs_get_user_options(fs);
 	a = mnt_fs_get_attributes(fs);
@@ -322,7 +322,7 @@ static int utab_new_entry(struct libmnt_update *upd, struct libmnt_fs *fs,
 	}
 
 	if (!u && !a) {
-		DBG(UPDATE, mnt_debug("utab entry unnecessary (no options)"));
+		DBG(UPDATE, ul_debug("utab entry unnecessary (no options)"));
 		return 1;
 	}
 
@@ -347,7 +347,7 @@ static int utab_new_entry(struct libmnt_update *upd, struct libmnt_fs *fs,
 	}
 
 	free(u);
-	DBG(UPDATE, mnt_debug("utab entry OK"));
+	DBG(UPDATE, ul_debug("utab entry OK"));
 	return 0;
 err:
 	free(u);
@@ -369,7 +369,7 @@ static int set_fs_root(struct libmnt_update *upd, struct libmnt_fs *fs,
 	const char *src;
 	int rc = 0;
 
-	DBG(UPDATE, mnt_debug("setting FS root"));
+	DBG(UPDATE, ul_debug("setting FS root"));
 
 	assert(upd);
 	assert(upd->fs);
@@ -518,7 +518,7 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 	if (!tb || !upd->filename)
 		return -EINVAL;
 
-	DBG(UPDATE, mnt_debug_h(upd, "%s: updating", upd->filename));
+	DBG(UPDATE, ul_debugobj(upd, "%s: updating", upd->filename));
 
 	fd = mnt_open_uniq_filename(upd->filename, &uq);
 	if (fd < 0)
@@ -541,7 +541,7 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 			else
 				rc = fprintf_mtab_fs(f, fs);
 			if (rc) {
-				DBG(UPDATE, mnt_debug_h(upd,
+				DBG(UPDATE, ul_debugobj(upd,
 					"%s: write entry failed: %m", uq));
 				goto leave;
 			}
@@ -551,7 +551,7 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 
 		if (fflush(f) != 0) {
 			rc = -errno;
-			DBG(UPDATE, mnt_debug_h(upd, "%s: fflush failed: %m", uq));
+			DBG(UPDATE, ul_debugobj(upd, "%s: fflush failed: %m", uq));
 			goto leave;
 		}
 
@@ -610,7 +610,7 @@ int mnt_table_write_file(struct libmnt_table *tb, FILE *file)
 	if (fflush(file) != 0)
 		rc = -errno;
 
-	DBG(TAB, mnt_debug_h(tb, "write file done [rc=%d]", rc));
+	DBG(TAB, ul_debugobj(tb, "write file done [rc=%d]", rc));
 	return rc;
 }
 
@@ -629,7 +629,7 @@ int mnt_table_replace_file(struct libmnt_table *tb, const char *filename)
 	FILE *f;
 	char *uq = NULL;
 
-	DBG(TAB, mnt_debug_h(tb, "%s: replacing", filename));
+	DBG(TAB, ul_debugobj(tb, "%s: replacing", filename));
 
 	fd = mnt_open_uniq_filename(filename, &uq);
 	if (fd < 0)
@@ -643,7 +643,7 @@ int mnt_table_replace_file(struct libmnt_table *tb, const char *filename)
 
 		if (fflush(f) != 0) {
 			rc = -errno;
-			DBG(UPDATE, mnt_debug("%s: fflush failed: %m", uq));
+			DBG(UPDATE, ul_debug("%s: fflush failed: %m", uq));
 			goto leave;
 		}
 
@@ -669,7 +669,7 @@ leave:
 	unlink(uq);
 	free(uq);
 
-	DBG(TAB, mnt_debug_h(tb, "replace done [rc=%d]", rc));
+	DBG(TAB, ul_debugobj(tb, "replace done [rc=%d]", rc));
 	return rc;
 }
 
@@ -697,7 +697,7 @@ static int update_add_entry(struct libmnt_update *upd, struct libmnt_lock *lc)
 	assert(upd);
 	assert(upd->fs);
 
-	DBG(UPDATE, mnt_debug_h(upd, "%s: add entry", upd->filename));
+	DBG(UPDATE, ul_debugobj(upd, "%s: add entry", upd->filename));
 
 	if (lc)
 		rc = mnt_lock_file(lc);
@@ -723,7 +723,7 @@ static int update_remove_entry(struct libmnt_update *upd, struct libmnt_lock *lc
 	assert(upd);
 	assert(upd->target);
 
-	DBG(UPDATE, mnt_debug_h(upd, "%s: remove entry", upd->filename));
+	DBG(UPDATE, ul_debugobj(upd, "%s: remove entry", upd->filename));
 
 	if (lc)
 		rc = mnt_lock_file(lc);
@@ -752,7 +752,7 @@ static int update_modify_target(struct libmnt_update *upd, struct libmnt_lock *l
 	int rc = 0;
 
 	assert(upd);
-	DBG(UPDATE, mnt_debug_h(upd, "%s: modify target", upd->filename));
+	DBG(UPDATE, ul_debugobj(upd, "%s: modify target", upd->filename));
 
 	if (lc)
 		rc = mnt_lock_file(lc);
@@ -787,7 +787,7 @@ static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *
 	assert(upd);
 	assert(upd->fs);
 
-	DBG(UPDATE, mnt_debug_h(upd, "%s: modify options", upd->filename));
+	DBG(UPDATE, ul_debugobj(upd, "%s: modify options", upd->filename));
 
 	fs = upd->fs;
 
@@ -845,7 +845,7 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 	if (!upd->ready)
 		return 0;
 
-	DBG(UPDATE, mnt_debug_h(upd, "%s: update tab", upd->filename));
+	DBG(UPDATE, ul_debugobj(upd, "%s: update tab", upd->filename));
 	if (upd->fs) {
 		DBG(UPDATE, mnt_fs_print_debug(upd->fs, stderr));
 	}
@@ -867,7 +867,7 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 		rc = update_add_entry(upd, lc);	/* mount */
 
 	upd->ready = FALSE;
-	DBG(UPDATE, mnt_debug_h(upd, "%s: update tab: done [rc=%d]",
+	DBG(UPDATE, ul_debugobj(upd, "%s: update tab: done [rc=%d]",
 				upd->filename, rc));
 	if (lc != lc0)
 		 mnt_free_lock(lc);
@@ -883,7 +883,7 @@ int mnt_update_already_done(struct libmnt_update *upd, struct libmnt_lock *lc)
 	if (!upd || !upd->filename || (!upd->fs && !upd->target))
 		return -EINVAL;
 
-	DBG(UPDATE, mnt_debug_h(upd, "%s: checking for previous update", upd->filename));
+	DBG(UPDATE, ul_debugobj(upd, "%s: checking for previous update", upd->filename));
 
 	if (!lc) {
 		lc = mnt_new_lock(upd->filename, 0);
@@ -912,14 +912,14 @@ int mnt_update_already_done(struct libmnt_update *upd, struct libmnt_lock *lc)
 					mnt_fs_get_source(upd->fs);
 
 		if (mnt_table_find_pair(tb, src, tgt, MNT_ITER_BACKWARD)) {
-			DBG(UPDATE, mnt_debug_h(upd, "%s: found %s %s",
+			DBG(UPDATE, ul_debugobj(upd, "%s: found %s %s",
 						upd->filename, src, tgt));
 			rc = 1;
 		}
 	} else if (upd->target) {
 		/* umount */
 		if (!mnt_table_find_target(tb, upd->target, MNT_ITER_BACKWARD)) {
-			DBG(UPDATE, mnt_debug_h(upd, "%s: not-found (umounted) %s",
+			DBG(UPDATE, ul_debugobj(upd, "%s: not-found (umounted) %s",
 						upd->filename, upd->target));
 			rc = 1;
 		}
@@ -929,7 +929,7 @@ int mnt_update_already_done(struct libmnt_update *upd, struct libmnt_lock *lc)
 done:
 	if (lc && lc != lc0)
 		mnt_free_lock(lc);
-	DBG(UPDATE, mnt_debug_h(upd, "%s: previous update check done [rc=%d]",
+	DBG(UPDATE, ul_debugobj(upd, "%s: previous update check done [rc=%d]",
 				upd->filename, rc));
 	return rc;
 }
@@ -942,7 +942,7 @@ static int update(const char *target, struct libmnt_fs *fs, unsigned long mountf
 	int rc;
 	struct libmnt_update *upd;
 
-	DBG(UPDATE, mnt_debug("update test"));
+	DBG(UPDATE, ul_debug("update test"));
 
 	upd = mnt_new_update();
 	if (!upd)

@@ -38,9 +38,9 @@ void mnt_init_debug(int mask)
 		mnt_get_library_version(&ver);
 		mnt_get_library_features(&features);
 
-		DBG(INIT, mnt_debug("library version: %s", ver));
+		DBG(INIT, ul_debug("library version: %s", ver));
 		p = features;
 		while (p && *p)
-			DBG(INIT, mnt_debug("    feature: %s", *p++));
+			DBG(INIT, ul_debug("    feature: %s", *p++));
 	}
 }

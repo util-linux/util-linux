@@ -79,7 +79,7 @@ struct libmnt_lock *mnt_new_lock(const char *datafile, pid_t id)
 	ml->linkfile = ln;
 	ml->lockfile = lo;
 
-	DBG(LOCKS, mnt_debug_h(ml, "alloc: default linkfile=%s, lockfile=%s", ln, lo));
+	DBG(LOCKS, ul_debugobj(ml, "alloc: default linkfile=%s, lockfile=%s", ln, lo));
 	return ml;
 err:
 	free(lo);
@@ -99,7 +99,7 @@ void mnt_free_lock(struct libmnt_lock *ml)
 {
 	if (!ml)
 		return;
-	DBG(LOCKS, mnt_debug_h(ml, "free%s", ml->locked ? " !!! LOCKED !!!" : ""));
+	DBG(LOCKS, ul_debugobj(ml, "free%s", ml->locked ? " !!! LOCKED !!!" : ""));
 	free(ml->lockfile);
 	free(ml->linkfile);
 	free(ml);
@@ -119,7 +119,7 @@ int mnt_lock_block_signals(struct libmnt_lock *ml, int enable)
 {
 	if (!ml)
 		return -EINVAL;
-	DBG(LOCKS, mnt_debug_h(ml, "signals: %s", enable ? "BLOCKED" : "UNBLOCKED"));
+	DBG(LOCKS, ul_debugobj(ml, "signals: %s", enable ? "BLOCKED" : "UNBLOCKED"));
 	ml->sigblock = enable ? 1 : 0;
 	return 0;
 }
@@ -135,7 +135,7 @@ int mnt_lock_use_simplelock(struct libmnt_lock *ml, int enable)
 
 	assert(ml->lockfile);
 
-	DBG(LOCKS, mnt_debug_h(ml, "flock: %s", enable ? "ENABLED" : "DISABLED"));
+	DBG(LOCKS, ul_debugobj(ml, "flock: %s", enable ? "ENABLED" : "DISABLED"));
 	ml->simplelock = enable ? 1 : 0;
 
 	sz = strlen(ml->lockfile);
@@ -155,7 +155,7 @@ int mnt_lock_use_simplelock(struct libmnt_lock *ml, int enable)
 	else if (!ml->simplelock && endswith(ml->lockfile, ".lock"))
 		 memcpy(ml->lockfile + sz - 5, "~", 2);
 
-	DBG(LOCKS, mnt_debug_h(ml, "new lock filename: '%s'", ml->lockfile));
+	DBG(LOCKS, ul_debugobj(ml, "new lock filename: '%s'", ml->lockfile));
 	return 0;
 }
 
@@ -187,7 +187,7 @@ static void unlock_simplelock(struct libmnt_lock *ml)
 	assert(ml->simplelock);
 
 	if (ml->lockfile_fd >= 0) {
-		DBG(LOCKS, mnt_debug_h(ml, "%s: unflocking",
+		DBG(LOCKS, ul_debugobj(ml, "%s: unflocking",
 					mnt_lock_get_lockfile(ml)));
 		close(ml->lockfile_fd);
 	}
@@ -203,7 +203,7 @@ static int lock_simplelock(struct libmnt_lock *ml)
 
 	lfile = mnt_lock_get_lockfile(ml);
 
-	DBG(LOCKS, mnt_debug_h(ml, "%s: locking", lfile));
+	DBG(LOCKS, ul_debugobj(ml, "%s: locking", lfile));
 
 	if (ml->sigblock) {
 		sigset_t sigs;
@@ -270,7 +270,7 @@ static int mnt_wait_mtab_lock(struct libmnt_lock *ml, struct flock *fl, time_t m
 
 	sigaction(SIGALRM, &sa, &osa);
 
-	DBG(LOCKS, mnt_debug_h(ml, "(%d) waiting for F_SETLKW", getpid()));
+	DBG(LOCKS, ul_debugobj(ml, "(%d) waiting for F_SETLKW", getpid()));
 
 	alarm(maxtime - now.tv_sec);
 	if (fcntl(ml->lockfile_fd, F_SETLKW, fl) == -1)
@@ -280,7 +280,7 @@ static int mnt_wait_mtab_lock(struct libmnt_lock *ml, struct flock *fl, time_t m
 	/* restore old sigaction */
 	sigaction(SIGALRM, &osa, NULL);
 
-	DBG(LOCKS, mnt_debug_h(ml, "(%d) leaving mnt_wait_setlkw(), rc=%d",
+	DBG(LOCKS, ul_debugobj(ml, "(%d) leaving mnt_wait_setlkw(), rc=%d",
 				getpid(), ret));
 	return ret;
 }
@@ -360,7 +360,7 @@ static void unlock_mtab(struct libmnt_lock *ml)
 		close(ml->lockfile_fd);
 	if (ml->locked && ml->lockfile) {
 		unlink(ml->lockfile);
-		DBG(LOCKS, mnt_debug_h(ml, "unlink %s", ml->lockfile));
+		DBG(LOCKS, ul_debugobj(ml, "unlink %s", ml->lockfile));
 	}
 }
 
@@ -452,7 +452,7 @@ static int lock_mtab(struct libmnt_lock *ml)
 		if (ml->locked) {
 			/* We made the link. Now claim the lock. */
 			if (fcntl (ml->lockfile_fd, F_SETLK, &flock) == -1) {
-				DBG(LOCKS, mnt_debug_h(ml,
+				DBG(LOCKS, ul_debugobj(ml,
 					"%s: can't F_SETLK lockfile, errno=%d\n",
 					lockfile, errno));
 				/* proceed, since it was us who created the lockfile anyway */
@@ -463,7 +463,7 @@ static int lock_mtab(struct libmnt_lock *ml)
 			int err = mnt_wait_mtab_lock(ml, &flock, maxtime.tv_sec);
 
 			if (err == 1) {
-				DBG(LOCKS, mnt_debug_h(ml,
+				DBG(LOCKS, ul_debugobj(ml,
 					"%s: can't create link: time out (perhaps "
 					"there is a stale lock file?)", lockfile));
 				rc = -ETIMEDOUT;
@@ -478,7 +478,7 @@ static int lock_mtab(struct libmnt_lock *ml)
 			ml->lockfile_fd = -1;
 		}
 	}
-	DBG(LOCKS, mnt_debug_h(ml, "%s: (%d) successfully locked",
+	DBG(LOCKS, ul_debugobj(ml, "%s: (%d) successfully locked",
 					lockfile, getpid()));
 	unlink(linkfile);
 	return 0;
@@ -531,7 +531,7 @@ void mnt_unlock_file(struct libmnt_lock *ml)
 	if (!ml)
 		return;
 
-	DBG(LOCKS, mnt_debug_h(ml, "(%d) %s", getpid(),
+	DBG(LOCKS, ul_debugobj(ml, "(%d) %s", getpid(),
 			ml->locked ? "unlocking" : "cleaning"));
 
 	if (ml->simplelock)
@@ -543,7 +543,7 @@ void mnt_unlock_file(struct libmnt_lock *ml)
 	ml->lockfile_fd = -1;
 
 	if (ml->sigblock) {
-		DBG(LOCKS, mnt_debug_h(ml, "restoring sigmask"));
+		DBG(LOCKS, ul_debugobj(ml, "restoring sigmask"));
 		sigprocmask(SIG_SETMASK, &ml->oldsigmask, NULL);
 	}
 }

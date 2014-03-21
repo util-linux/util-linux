@@ -36,7 +36,7 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 				    MNT_MS_OFFSET |
 				    MNT_MS_SIZELIMIT)) {
 
-		DBG(CXT, mnt_debug_h(cxt, "loopdev specific options detected"));
+		DBG(CXT, ul_debugobj(cxt, "loopdev specific options detected"));
 		return 1;
 	}
 
@@ -62,7 +62,7 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 
 		if (stat(src, &st) == 0 && S_ISREG(st.st_mode) &&
 		    st.st_size > 1024) {
-			DBG(CXT, mnt_debug_h(cxt, "automatically enabling loop= option"));
+			DBG(CXT, ul_debugobj(cxt, "automatically enabling loop= option"));
 			cxt->user_mountflags |= MNT_MS_LOOP;
 			mnt_optstr_append_option(&cxt->fs->user_optstr, "loop", NULL);
 			return 1;
@@ -96,7 +96,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 	if (!target || !backing_file || mnt_context_get_mtab(cxt, &tb))
 		return 0;
 
-	DBG(CXT, mnt_debug_h(cxt, "checking if %s mounted on %s",
+	DBG(CXT, ul_debugobj(cxt, "checking if %s mounted on %s",
 				backing_file, target));
 
 	cache = mnt_context_get_cache(cxt);
@@ -130,7 +130,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 		}
 	}
 	if (rc)
-		DBG(CXT, mnt_debug_h(cxt, "%s already mounted", backing_file));
+		DBG(CXT, ul_debugobj(cxt, "%s already mounted", backing_file));
 	return rc;
 }
 
@@ -153,10 +153,10 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	if (!backing_file)
 		return -EINVAL;
 
-	DBG(CXT, mnt_debug_h(cxt, "trying to setup loopdev for %s", backing_file));
+	DBG(CXT, ul_debugobj(cxt, "trying to setup loopdev for %s", backing_file));
 
 	if (cxt->mountflags & MS_RDONLY) {
-		DBG(CXT, mnt_debug_h(cxt, "enabling READ-ONLY flag"));
+		DBG(CXT, ul_debugobj(cxt, "enabling READ-ONLY flag"));
 		lo_flags |= LO_FLAGS_READ_ONLY;
 	}
 
@@ -189,7 +189,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	    mnt_optstr_get_option(optstr, "offset", &val, &len) == 0) {
 		rc = mnt_parse_offset(val, len, &offset);
 		if (rc) {
-			DBG(CXT, mnt_debug_h(cxt, "failed to parse offset="));
+			DBG(CXT, ul_debugobj(cxt, "failed to parse offset="));
 			rc = -MNT_ERR_MOUNTOPT;
 		}
 	}
@@ -201,7 +201,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	    mnt_optstr_get_option(optstr, "sizelimit", &val, &len) == 0) {
 		rc = mnt_parse_offset(val, len, &sizelimit);
 		if (rc) {
-			DBG(CXT, mnt_debug_h(cxt, "failed to parse sizelimit="));
+			DBG(CXT, ul_debugobj(cxt, "failed to parse sizelimit="));
 			rc = -MNT_ERR_MOUNTOPT;
 		}
 	}
@@ -211,7 +211,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	 */
 	if (rc == 0 && (cxt->user_mountflags & MNT_MS_ENCRYPTION) &&
 	    mnt_optstr_get_option(optstr, "encryption", &val, &len) == 0) {
-		DBG(CXT, mnt_debug_h(cxt, "encryption no longer supported"));
+		DBG(CXT, ul_debugobj(cxt, "encryption no longer supported"));
 		rc = -MNT_ERR_MOUNTOPT;
 	}
 
@@ -228,7 +228,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	 */
 	if (get_linux_version() >= KERNEL_VERSION(2, 6, 37) ||
 	    !cxt->mtab_writable) {
-		DBG(CXT, mnt_debug_h(cxt, "enabling AUTOCLEAR flag"));
+		DBG(CXT, ul_debugobj(cxt, "enabling AUTOCLEAR flag"));
 		lo_flags |= LO_FLAGS_AUTOCLEAR;
 	}
 
@@ -238,7 +238,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 			rc = loopcxt_find_unused(&lc);
 			if (rc)
 				goto done;
-			DBG(CXT, mnt_debug_h(cxt, "trying to use %s",
+			DBG(CXT, ul_debugobj(cxt, "trying to use %s",
 						loopcxt_get_device(&lc)));
 		}
 
@@ -254,7 +254,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 		if (!rc)
 			loopcxt_set_flags(&lc, lo_flags);
 		if (rc) {
-			DBG(CXT, mnt_debug_h(cxt, "failed to set loopdev attributes"));
+			DBG(CXT, ul_debugobj(cxt, "failed to set loopdev attributes"));
 			goto done;
 		}
 
@@ -264,11 +264,11 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 			break;		/* success */
 
 		if (loopdev || rc != -EBUSY) {
-			DBG(CXT, mnt_debug_h(cxt, "failed to setup device"));
+			DBG(CXT, ul_debugobj(cxt, "failed to setup device"));
 			rc = -MNT_ERR_LOOPDEV;
 			goto done;
 		}
-		DBG(CXT, mnt_debug_h(cxt, "loopdev stolen...trying again"));
+		DBG(CXT, ul_debugobj(cxt, "loopdev stolen...trying again"));
 	} while (1);
 
 	if (!rc)
@@ -332,7 +332,7 @@ int mnt_context_delete_loopdev(struct libmnt_context *cxt)
 	cxt->flags &= ~MNT_FL_LOOPDEV_READY;
 	cxt->loopdev_fd = -1;
 
-	DBG(CXT, mnt_debug_h(cxt, "loopdev deleted [rc=%d]", rc));
+	DBG(CXT, ul_debugobj(cxt, "loopdev deleted [rc=%d]", rc));
 	return rc;
 }
 
@@ -358,7 +358,7 @@ int mnt_context_clear_loopdev(struct libmnt_context *cxt)
 		/*
 		 * mount(2) success, close the device
 		 */
-		DBG(CXT, mnt_debug_h(cxt, "closing loopdev FD"));
+		DBG(CXT, ul_debugobj(cxt, "closing loopdev FD"));
 		close(cxt->loopdev_fd);
 	}
 	cxt->loopdev_fd = -1;
