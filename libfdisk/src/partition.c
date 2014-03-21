@@ -12,7 +12,7 @@ struct fdisk_partition *fdisk_new_partition(void)
 	INIT_LIST_HEAD(&pa->parts);
 	pa->partno = FDISK_EMPTY_PARTNO;
 	pa->parent_partno = FDISK_EMPTY_PARTNO;
-	DBG(PART, ul_debug("new %p", pa));
+	DBG(PART, ul_debugobj(pa, "alloc"));
 	return pa;
 }
 
@@ -23,6 +23,7 @@ void fdisk_reset_partition(struct fdisk_partition *pa)
 	if (!pa)
 		return;
 
+	DBG(PART, ul_debugobj(pa, "reset"));
 	ref = pa->refcount;
 	fdisk_free_parttype(pa->type);
 	free(pa->name);
@@ -48,7 +49,7 @@ void fdisk_unref_partition(struct fdisk_partition *pa)
 
 	pa->refcount--;
 	if (pa->refcount <= 0) {
-		DBG(PART, ul_debug("free %p", pa));
+		DBG(PART, ul_debugobj(pa, "free"));
 		fdisk_reset_partition(pa);
 		list_del(&pa->parts);
 		free(pa);
@@ -271,7 +272,7 @@ int fdisk_partition_next_partno(
 	if (pa && pa->partno_follow_default) {
 		size_t i;
 
-		DBG(LABEL, ul_debug("next partno (follow default)"));
+		DBG(PART, ul_debugobj(pa, "next partno (follow default)"));
 
 		for (i = 0; i < cxt->label->nparts_max; i++) {
 			if (!fdisk_is_partition_used(cxt, i)) {
@@ -283,7 +284,7 @@ int fdisk_partition_next_partno(
 
 	} else if (pa && pa->partno != FDISK_EMPTY_PARTNO) {
 
-		DBG(LABEL, ul_debug("next partno (specified=%zu)", pa->partno));
+		DBG(PART, ul_debugobj(pa, "next partno (specified=%zu)", pa->partno));
 
 		if (pa->partno >= cxt->label->nparts_max)
 			return -ERANGE;
@@ -505,7 +506,7 @@ int fdisk_add_partition(struct fdisk_context *cxt,
 	if (fdisk_missing_geometry(cxt))
 		return -EINVAL;
 
-	DBG(LABEL, ul_debug("adding new partition (start=%ju, end=%ju, size=%ju, "
+	DBG(CXT, ul_debugobj(cxt, "adding new partition (start=%ju, end=%ju, size=%ju, "
 			    "defaults(start=%s, end=%s, partno=%s)",
 			    pa ? pa->start : 0,
 			    pa ? pa->end : 0,
@@ -516,7 +517,7 @@ int fdisk_add_partition(struct fdisk_context *cxt,
 
 	rc = cxt->label->op->add_part(cxt, pa);
 
-	DBG(LABEL, ul_debug("add partition done (rc=%d)", rc));
+	DBG(CXT, ul_debugobj(cxt, "add partition done (rc=%d)", rc));
 	return rc;
 }
 
@@ -536,7 +537,7 @@ int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum)
 	if (!cxt->label->op->part_delete)
 		return -ENOSYS;
 
-	DBG(LABEL, ul_debug("deleting %s partition number %zd",
+	DBG(CXT, ul_debugobj(cxt, "deleting %s partition number %zd",
 				cxt->label->name, partnum));
 	return cxt->label->op->part_delete(cxt, partnum);
 }

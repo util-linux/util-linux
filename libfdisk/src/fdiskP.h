@@ -38,14 +38,13 @@
  * Debug
  */
 #define FDISK_DEBUG_INIT	(1 << 1)
-#define FDISK_DEBUG_CONTEXT	(1 << 2)
-#define FDISK_DEBUG_TOPOLOGY    (1 << 3)
-#define FDISK_DEBUG_GEOMETRY    (1 << 4)
-#define FDISK_DEBUG_LABEL       (1 << 5)
-#define FDISK_DEBUG_ASK         (1 << 6)
-#define FDISK_DEBUG_FRONTEND	(1 << 7)
-#define FDISK_DEBUG_PART	(1 << 8)
-#define FDISK_DEBUG_TAB		(1 << 9)
+#define FDISK_DEBUG_CXT		(1 << 2)
+#define FDISK_DEBUG_LABEL       (1 << 3)
+#define FDISK_DEBUG_ASK         (1 << 4)
+#define FDISK_DEBUG_FRONTEND	(1 << 5)
+#define FDISK_DEBUG_PART	(1 << 6)
+#define FDISK_DEBUG_PARTTYPE	(1 << 7)
+#define FDISK_DEBUG_TAB		(1 << 8)
 #define FDISK_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libfdisk);

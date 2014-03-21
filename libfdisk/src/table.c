@@ -18,7 +18,7 @@ struct fdisk_table *fdisk_new_table(void)
 	if (!tb)
 		return NULL;
 
-	DBG(TAB, ul_debug("alloc"));
+	DBG(TAB, ul_debugobj(tb, "alloc"));
 	tb->refcount = 1;
 	INIT_LIST_HEAD(&tb->parts);
 	return tb;
@@ -38,7 +38,7 @@ int fdisk_reset_table(struct fdisk_table *tb)
 	if (!tb)
 		return -EINVAL;
 
-	DBG(TAB, ul_debug("reset"));
+	DBG(TAB, ul_debugobj(tb, "reset"));
 
 	while (!list_empty(&tb->parts)) {
 		struct fdisk_partition *pa = list_entry(tb->parts.next,
@@ -78,7 +78,7 @@ void fdisk_unref_table(struct fdisk_table *tb)
 	if (tb->refcount <= 0) {
 		fdisk_reset_table(tb);
 
-		DBG(TAB, ul_debug("free"));
+		DBG(TAB, ul_debugobj(tb, "free"));
 		free(tb);
 	}
 }
@@ -192,7 +192,7 @@ int fdisk_table_add_partition(struct fdisk_table *tb, struct fdisk_partition *pa
 	list_add_tail(&pa->parts, &tb->parts);
 	tb->nents++;
 
-	DBG(TAB, ul_debug("add entry %p [start=%ju, end=%ju, size=%ju, %s %s %s]",
+	DBG(TAB, ul_debugobj(tb, "add entry %p [start=%ju, end=%ju, size=%ju, %s %s %s]",
 			pa, pa->start, pa->end, pa->size,
 			fdisk_partition_is_freespace(pa) ? "freespace" : "",
 			fdisk_partition_is_nested(pa)    ? "nested"    : "",
@@ -216,7 +216,7 @@ static int table_insert_partition(
 		list_add(&pa->parts, &tb->parts);
 	tb->nents++;
 
-	DBG(TAB, ul_debug("insert entry %p pre=%p [start=%ju, end=%ju, size=%ju, %s %s %s]",
+	DBG(TAB, ul_debugobj(tb, "insert entry %p pre=%p [start=%ju, end=%ju, size=%ju, %s %s %s]",
 			pa, poz ? poz : NULL, pa->start, pa->end, pa->size,
 			fdisk_partition_is_freespace(pa) ? "freespace" : "",
 			fdisk_partition_is_nested(pa)    ? "nested"    : "",
@@ -244,7 +244,7 @@ int fdisk_table_remove_partition(struct fdisk_table *tb, struct fdisk_partition 
 	if (!tb || !pa)
 		return -EINVAL;
 
-	DBG(TAB, ul_debug("remove entry %p", pa));
+	DBG(TAB, ul_debugobj(tb, "remove entry %p", pa));
 	list_del(&pa->parts);
 	INIT_LIST_HEAD(&pa->parts);
 
@@ -273,7 +273,7 @@ int fdisk_get_partitions(struct fdisk_context *cxt, struct fdisk_table **tb)
 	if (!cxt->label->op->get_part)
 		return -ENOSYS;
 
-	DBG(LABEL, ul_debug("get table"));
+	DBG(CXT, ul_debugobj(cxt, "get table"));
 
 	if (!*tb && !(*tb = fdisk_new_table()))
 		return -ENOMEM;
@@ -391,7 +391,7 @@ static int table_add_freespace(
 			}
 		}
 		if (!real_parent) {
-			DBG(LABEL, ul_debug("not found freespace parent (partno=%ju)",
+			DBG(TAB, ul_debugobj(tb, "not found freespace parent (partno=%ju)",
 					parent->partno));
 			fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 		}
@@ -469,7 +469,7 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 	struct fdisk_partition *pa;
 	struct fdisk_iter itr;
 
-	DBG(LABEL, ul_debug("get freespace"));
+	DBG(CXT, ul_debugobj(cxt, "get freespace"));
 
 	if (!cxt || !cxt->label || !tb)
 		return -EINVAL;
@@ -488,7 +488,7 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 	while (rc == 0 && fdisk_table_next_partition(parts, &itr, &pa) == 0) {
 		if (!pa->used || pa->wholedisk || fdisk_partition_is_nested(pa))
 			continue;
-		DBG(LABEL, ul_debug("freespace analyze: partno=%zu, start=%ju, end=%ju",
+		DBG(CXT, ul_debugobj(cxt, "freespace analyze: partno=%zu, start=%ju, end=%ju",
 					pa->partno, pa->start, pa->end));
 		if (last + grain < pa->start) {
 			rc = table_add_freespace(cxt, *tb,
@@ -548,7 +548,7 @@ int fdisk_table_to_string(struct fdisk_table *tb,
 	if (!cxt || !tb || !data)
 		return -EINVAL;
 
-	DBG(TAB, ul_debug("generate string"));
+	DBG(TAB, ul_debugobj(tb, "generate string"));
 	*data = NULL;
 
 	if (!fdisk_table_get_nents(tb))
@@ -583,7 +583,8 @@ int fdisk_table_to_string(struct fdisk_table *tb,
 			goto done;
 		}
 
-		DBG(TAB, ul_debug("  string from part #%zu", pa->partno + 1));
+		DBG(TAB, ul_debugobj(tb, "  string from part #%zu [%p]",
+					pa->partno + 1, pa));
 
 		/* set data for the columns */
 		for (j = 0; j < ncols; j++) {
@@ -602,7 +603,7 @@ int fdisk_table_to_string(struct fdisk_table *tb,
 	if (!tt_is_empty(tt))
 		rc = tt_print_table_to_string(tt, data);
 	else
-		DBG(TAB, ul_debug("tt empty"));
+		DBG(TAB, ul_debugobj(tb, "tt empty"));
 done:
 	if (org_cols != cols)
 		free(cols);

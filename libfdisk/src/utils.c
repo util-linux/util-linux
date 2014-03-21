@@ -13,7 +13,7 @@ void fdisk_zeroize_firstsector(struct fdisk_context *cxt)
 	if (!cxt || !cxt->firstsector)
 		return;
 
-	DBG(CONTEXT, ul_debug("zeroize in-memory first sector buffer"));
+	DBG(CXT, ul_debugobj(cxt, "zeroize in-memory first sector buffer"));
 	memset(cxt->firstsector, 0, cxt->sector_size);
 }
 
@@ -24,7 +24,7 @@ int fdisk_read_firstsector(struct fdisk_context *cxt)
 	assert(cxt);
 	assert(cxt->sector_size);
 
-	DBG(TOPOLOGY, ul_debug("initialize first sector "
+	DBG(CXT, ul_debugobj(cxt, "initialize first sector "
 				"buffer [sector_size=%lu]", cxt->sector_size));
 
 	if (!cxt->firstsector) {
@@ -39,7 +39,7 @@ int fdisk_read_firstsector(struct fdisk_context *cxt)
 	if (r != cxt->sector_size) {
 		if (!errno)
 			errno = EINVAL;	/* probably too small file/device */
-		DBG(TOPOLOGY, ul_debug("failed to read first sector %m"));
+		DBG(CXT, ul_debugobj(cxt, "failed to read first sector %m"));
 		return -errno;
 	}
 
