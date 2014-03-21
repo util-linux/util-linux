@@ -86,7 +86,7 @@ struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int type,
 	t->type = type;
 	t->flags |= FDISK_PARTTYPE_UNKNOWN | FDISK_PARTTYPE_ALLOCATED;
 
-	DBG(LABEL, dbgprint("allocated new unknown type [%p]", t));
+	DBG(LABEL, ul_debug("allocated new unknown type [%p]", t));
 	return t;
 }
 
@@ -110,7 +110,7 @@ struct fdisk_parttype *fdisk_parse_parttype(
 	if (!fdisk_get_nparttypes(cxt))
 		return NULL;
 
-	DBG(LABEL, dbgprint("parsing '%s' partition type", str));
+	DBG(LABEL, ul_debug("parsing '%s' partition type", str));
 
 	types = cxt->label->parttypes;
 
@@ -120,7 +120,7 @@ struct fdisk_parttype *fdisk_parse_parttype(
 		code = strtol(str, &end, 16);
 
 		if (errno || *end != '\0') {
-			DBG(LABEL, dbgprint("parsing failed: %m"));
+			DBG(LABEL, ul_debug("parsing failed: %m"));
 			return NULL;
 		}
 		ret = fdisk_get_parttype_from_code(cxt, code);
@@ -146,7 +146,7 @@ struct fdisk_parttype *fdisk_parse_parttype(
 
 	ret = fdisk_new_unknown_parttype(code, typestr);
 done:
-	DBG(LABEL, dbgprint("returns '%s' partition type", ret->name));
+	DBG(LABEL, ul_debug("returns '%s' partition type", ret->name));
 	return ret;
 }
 
@@ -159,7 +159,7 @@ done:
 void fdisk_free_parttype(struct fdisk_parttype *t)
 {
 	if (t && (t->flags & FDISK_PARTTYPE_ALLOCATED)) {
-		DBG(LABEL, dbgprint("freeing %p partition type", t));
+		DBG(LABEL, ul_debug("freeing %p partition type", t));
 		free(t->typestr);
 		free(t);
 	}

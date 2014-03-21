@@ -151,7 +151,7 @@ static void partition_set_changed(
 	if (!pe)
 		return;
 
-	DBG(LABEL, dbgprint("DOS: setting %zu partition to %s", i,
+	DBG(LABEL, ul_debug("DOS: setting %zu partition to %s", i,
 				changed ? "changed" : "unchnaged"));
 
 	pe->changed = changed ? 1 : 0;
@@ -235,7 +235,7 @@ static int read_pte(struct fdisk_context *cxt, size_t pno, sector_t offset)
 	if (!buf)
 		return -ENOMEM;
 
-	DBG(LABEL, dbgprint("DOS: reading pte %zu sector buffer %p", pno, buf));
+	DBG(LABEL, ul_debug("DOS: reading pte %zu sector buffer %p", pno, buf));
 
 	pe->offset = offset;
 	pe->sectorbuffer = buf;
@@ -275,7 +275,7 @@ static void dos_init(struct fdisk_context *cxt)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
-	DBG(LABEL, dbgprint("DOS: initialize, first sector buffer %p", cxt->firstsector));
+	DBG(LABEL, ul_debug("DOS: initialize, first sector buffer %p", cxt->firstsector));
 
 	cxt->label->nparts_max = 4;	/* default, unlimited number of logical */
 
@@ -343,7 +343,7 @@ static void dos_deinit(struct fdisk_label *lb)
 		struct pte *pe = &l->ptes[i];
 
 		if (pe->private_sectorbuffer && pe->sectorbuffer) {
-			DBG(LABEL, dbgprint("DOS: freeing pte %zu sector buffer %p",
+			DBG(LABEL, ul_debug("DOS: freeing pte %zu sector buffer %p",
 						i, pe->sectorbuffer));
 			free(pe->sectorbuffer);
 		}
@@ -369,7 +369,7 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 	if (!pe)
 		return -EINVAL;
 
-	DBG(LABEL, dbgprint("DOS: delete partiton %zu (max=%zu)", partnum,
+	DBG(LABEL, ul_debug("DOS: delete partiton %zu (max=%zu)", partnum,
 				cxt->label->nparts_max));
 
 	l = self_label(cxt);
@@ -379,7 +379,7 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 	/* Note that for the fifth partition (partnum == 4) we don't actually
 	   decrement partitions. */
 	if (partnum < 4) {
-		DBG(LABEL, dbgprint("--> delete primary"));
+		DBG(LABEL, ul_debug("--> delete primary"));
 		if (IS_EXTENDED(p->sys_ind) && partnum == l->ext_index) {
 			cxt->label->nparts_max = 4;
 			l->ptes[l->ext_index].ex_entry = NULL;
@@ -389,15 +389,15 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 		partition_set_changed(cxt, partnum, 1);
 		clear_partition(p);
 	} else if (!q->sys_ind && partnum > 4) {
-		DBG(LABEL, dbgprint("--> delete logical [last in the chain]"));
+		DBG(LABEL, ul_debug("--> delete logical [last in the chain]"));
 		--cxt->label->nparts_max;
 		--partnum;
 		clear_partition(l->ptes[partnum].ex_entry);
 		partition_set_changed(cxt, partnum, 1);
 	} else {
-		DBG(LABEL, dbgprint("--> delete logical [move down]"));
+		DBG(LABEL, ul_debug("--> delete logical [move down]"));
 		if (partnum > 4) {
-			DBG(LABEL, dbgprint(" --> delete %zu logical link", partnum));
+			DBG(LABEL, ul_debug(" --> delete %zu logical link", partnum));
 			p = l->ptes[partnum - 1].ex_entry;
 			*p = *q;
 			dos_partition_set_start(p, dos_partition_get_start(q));
@@ -405,7 +405,7 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 			partition_set_changed(cxt, partnum - 1, 1);
 
 		} else if (cxt->label->nparts_max > 5) {
-			DBG(LABEL, dbgprint(" --> delete first logical link"));
+			DBG(LABEL, ul_debug(" --> delete first logical link"));
 			pe = &l->ptes[5];	/* second logical */
 
 			if (pe->pt_entry)	/* prevent SEGFAULT */
@@ -417,28 +417,28 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 		}
 
 		if (cxt->label->nparts_max > 5) {
-			DBG(LABEL, dbgprint(" --> move ptes"));
+			DBG(LABEL, ul_debug(" --> move ptes"));
 			cxt->label->nparts_max--;
 			if (l->ptes[partnum].private_sectorbuffer) {
-				DBG(LABEL, dbgprint("  --> freeing pte %zu sector buffer %p",
+				DBG(LABEL, ul_debug("  --> freeing pte %zu sector buffer %p",
 							partnum, l->ptes[partnum].sectorbuffer));
 				free(l->ptes[partnum].sectorbuffer);
 			}
 			while (partnum < cxt->label->nparts_max) {
-				DBG(LABEL, dbgprint("  --> moving pte %zu <-- %zu", partnum, partnum + 1));
+				DBG(LABEL, ul_debug("  --> moving pte %zu <-- %zu", partnum, partnum + 1));
 				l->ptes[partnum] = l->ptes[partnum + 1];
 				partnum++;
 			}
 			memset(&l->ptes[partnum], 0, sizeof(struct pte));
 		} else {
-			DBG(LABEL, dbgprint(" --> the only logical: clear only"));
+			DBG(LABEL, ul_debug(" --> the only logical: clear only"));
 			clear_partition(l->ptes[partnum].pt_entry);
 			cxt->label->nparts_max--;
 
 			if (partnum == 4) {
-				DBG(LABEL, dbgprint("  --> clear last logical"));
+				DBG(LABEL, ul_debug("  --> clear last logical"));
 				if (l->ptes[partnum].private_sectorbuffer) {
-					DBG(LABEL, dbgprint("  --> freeing pte %zu sector buffer %p",
+					DBG(LABEL, ul_debug("  --> freeing pte %zu sector buffer %p",
 							partnum, l->ptes[partnum].sectorbuffer));
 					free(l->ptes[partnum].sectorbuffer);
 				}
@@ -469,7 +469,7 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 		return;
 	}
 
-	DBG(LABEL, dbgprint("DOS: Reading extended %zu", ext));
+	DBG(LABEL, ul_debug("DOS: Reading extended %zu", ext));
 
 	while (IS_EXTENDED (p->sys_ind)) {
 		struct pte *pe = self_pte(cxt, cxt->label->nparts_max);
@@ -579,7 +579,7 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
-	DBG(LABEL, dbgprint("DOS: creating new disklabel"));
+	DBG(LABEL, ul_debug("DOS: creating new disklabel"));
 
 	/* random disk signature */
 	random_get_bytes(&id, sizeof(id));
@@ -611,7 +611,7 @@ static int dos_set_disklabel_id(struct fdisk_context *cxt)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
-	DBG(LABEL, dbgprint("DOS: setting Id"));
+	DBG(LABEL, ul_debug("DOS: setting Id"));
 
 	l = self_label(cxt);
 	old = mbr_get_id(cxt->firstsector);
@@ -667,7 +667,7 @@ static void get_partition_table_geometry(struct fdisk_context *cxt,
 		*ps = ss;
 	}
 
-	DBG(LABEL, dbgprint("DOS PT geometry: heads=%u, sectors=%u", *ph, *ps));
+	DBG(LABEL, ul_debug("DOS PT geometry: heads=%u, sectors=%u", *ph, *ps));
 }
 
 static int dos_reset_alignment(struct fdisk_context *cxt)
@@ -678,7 +678,7 @@ static int dos_reset_alignment(struct fdisk_context *cxt)
 
 	/* overwrite necessary stuff by DOS deprecated stuff */
 	if (is_dos_compatible(cxt)) {
-		DBG(LABEL, dbgprint("DOS: reseting alignemnt for DOS-comaptiblem PT"));
+		DBG(LABEL, ul_debug("DOS: reseting alignemnt for DOS-comaptiblem PT"));
 		if (cxt->geom.sectors)
 			cxt->first_lba = cxt->geom.sectors;	/* usually 63 */
 
@@ -777,7 +777,7 @@ static void set_partition(struct fdisk_context *cxt,
 	struct dos_partition *p;
 	sector_t offset;
 
-	DBG(LABEL, dbgprint("DOS: setting partition %d%s, start=%zu, stop=%zu, sysid=%02x",
+	DBG(LABEL, ul_debug("DOS: setting partition %d%s, start=%zu, stop=%zu, sysid=%02x",
 				i, doext ? " [extended]" : "",
 				(size_t) start, (size_t) stop, sysid));
 
@@ -860,7 +860,7 @@ static int get_start_from_user(	struct fdisk_context *cxt,
 		*start = dflt;
 
 	else if (pa && pa->start) {
-		DBG(LABEL, dbgprint("DOS: start: wanted=%ju, low=%ju, limit=%ju",
+		DBG(LABEL, ul_debug("DOS: start: wanted=%ju, low=%ju, limit=%ju",
 				(uintmax_t) pa->start, (uintmax_t) low, (uintmax_t) limit));
 		*start = pa->start;
 		if (*start < low || *start > limit) {
@@ -912,7 +912,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		first[cxt->label->nparts_max],
 		last[cxt->label->nparts_max];
 
-	DBG(LABEL, dbgprint("DOS: adding partition %zu", n));
+	DBG(LABEL, ul_debug("DOS: adding partition %zu", n));
 
 	sys = pa && pa->type ? pa->type->type : MBR_LINUX_DATA_PARTITION;
 
@@ -1093,7 +1093,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		pe4->sectorbuffer = calloc(1, cxt->sector_size);
 		if (!pe4->sectorbuffer)
 			return -ENOMEM;
-		DBG(LABEL, dbgprint("DOS: add partition, sector buffer %p", pe4->sectorbuffer));
+		DBG(LABEL, ul_debug("DOS: add partition, sector buffer %p", pe4->sectorbuffer));
 		pe4->private_sectorbuffer = 1;
 		pe4->pt_entry = mbr_get_partition(pe4->sectorbuffer, 0);
 		pe4->ex_entry = pe4->pt_entry + 1;
@@ -1119,7 +1119,7 @@ static int add_logical(struct fdisk_context *cxt, struct fdisk_partition *pa)
 		pe->sectorbuffer = calloc(1, cxt->sector_size);
 		if (!pe->sectorbuffer)
 			return -ENOMEM;
-		DBG(LABEL, dbgprint("DOS: add logical, sector buffer %p", pe->sectorbuffer));
+		DBG(LABEL, ul_debug("DOS: add logical, sector buffer %p", pe->sectorbuffer));
 		pe->private_sectorbuffer = 1;
 		pe->pt_entry = mbr_get_partition(pe->sectorbuffer, 0);
 		pe->ex_entry = pe->pt_entry + 1;
@@ -1459,7 +1459,7 @@ static int write_sector(struct fdisk_context *cxt, sector_t secno,
 		return rc;
 	}
 
-	DBG(LABEL, dbgprint("DOS: writting to sector %ju", (uintmax_t) secno));
+	DBG(LABEL, ul_debug("DOS: writting to sector %ju", (uintmax_t) secno));
 
 	if (write(cxt->dev_fd, buf, cxt->sector_size) != (ssize_t) cxt->sector_size)
 		return -errno;

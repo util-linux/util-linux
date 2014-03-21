@@ -168,7 +168,7 @@ static int bsd_assign_dos_partition(struct fdisk_context *cxt)
 						cxt->parent->dev_path, i + 1);
 		}
 
-		DBG(LABEL, dbgprint("partition %zu assigned to BSD", i + 1));
+		DBG(LABEL, ul_debug("partition %zu assigned to BSD", i + 1));
 		return 0;
 	}
 
@@ -697,7 +697,7 @@ static int bsd_readlabel(struct fdisk_context *cxt)
 			      + BSD_LABELOFFSET], sizeof(*d));
 
 	if (d->d_magic != BSD_DISKMAGIC || d->d_magic2 != BSD_DISKMAGIC) {
-		DBG(LABEL, dbgprint("not found magic"));
+		DBG(LABEL, ul_debug("not found magic"));
 		return -1;
 	}
 
@@ -718,7 +718,7 @@ static int bsd_readlabel(struct fdisk_context *cxt)
 
 	cxt->label->nparts_cur = d->d_npartitions;
 	cxt->label->nparts_max = BSD_MAXPARTITIONS;
-	DBG(LABEL, dbgprint("read BSD label"));
+	DBG(LABEL, ul_debug("read BSD label"));
 	return 0;
 }
 

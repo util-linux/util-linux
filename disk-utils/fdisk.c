@@ -104,7 +104,7 @@ int get_user_reply(struct fdisk_context *cxt, const char *prompt,
 	if (sz && *(buf + sz - 1) == '\n')
 		*(buf + sz - 1) = '\0';
 
-	DBG(ASK, dbgprint("user's reply: >>>%s<<<", buf));
+	DBG(ASK, ul_debug("user's reply: >>>%s<<<", buf));
 	return 0;
 }
 
@@ -170,7 +170,7 @@ static int ask_number(struct fdisk_context *cxt,
 
 	assert(q);
 
-	DBG(ASK, dbgprint("asking for number "
+	DBG(ASK, ul_debug("asking for number "
 			"['%s', <%ju,%ju>, default=%ju, range: %s]",
 			q, low, high, dflt, range));
 
@@ -241,7 +241,7 @@ static int ask_offset(struct fdisk_context *cxt,
 
 	assert(q);
 
-	DBG(ASK, dbgprint("asking for offset ['%s', <%ju,%ju>, base=%ju, default=%ju, range: %s]",
+	DBG(ASK, ul_debug("asking for offset ['%s', <%ju,%ju>, base=%ju, default=%ju, range: %s]",
 				q, low, high, base, dflt, range));
 
 	if (range && dflt >= low && dflt <= high)
@@ -271,7 +271,7 @@ static int ask_offset(struct fdisk_context *cxt,
 		rc = parse_size(p, &num, &pwr);
 		if (rc)
 			continue;
-		DBG(ASK, dbgprint("parsed size: %ju", num));
+		DBG(ASK, ul_debug("parsed size: %ju", num));
 		if (sig && pwr) {
 			/* +{size}{K,M,...} specified, the "num" is in bytes */
 			uint64_t unit = fdisk_ask_number_get_unit(ask);
@@ -283,7 +283,7 @@ static int ask_offset(struct fdisk_context *cxt,
 		else if (sig == '-')
 			num = base - num;
 
-		DBG(ASK, dbgprint("final offset: %ju [sig: %c, power: %d, %s]",
+		DBG(ASK, ul_debug("final offset: %ju [sig: %c, power: %d, %s]",
 				num, sig, pwr,
 				sig ? "relative" : "absolute"));
 		if (num >= low && num <= high) {
@@ -386,7 +386,7 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		rc = get_user_reply(cxt, _(" [Y]es/[N]o: "), buf, sizeof(buf));
 		if (rc == 0)
 			fdisk_ask_yesno_set_result(ask, rpmatch(buf));
-		DBG(ASK, dbgprint("yes-no ask: reply '%s' [rc=%d]", buf, rc));
+		DBG(ASK, ul_debug("yes-no ask: reply '%s' [rc=%d]", buf, rc));
 		break;
 	case FDISK_ASKTYPE_STRING:
 	{
@@ -396,7 +396,7 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		rc = get_user_reply(cxt, prmt, buf, sizeof(buf));
 		if (rc == 0)
 			fdisk_ask_string_set_result(ask, xstrdup(buf));
-		DBG(ASK, dbgprint("string ask: reply '%s' [rc=%d]", buf, rc));
+		DBG(ASK, ul_debug("string ask: reply '%s' [rc=%d]", buf, rc));
 		break;
 	}
 	default:
@@ -731,7 +731,7 @@ static void print_all_devices_pt(struct fdisk_context *cxt)
 		return;
 	}
 
-	DBG(FRONTEND, dbgprint("reading "_PATH_PROC_PARTITIONS));
+	DBG(FRONTEND, ul_debug("reading "_PATH_PROC_PARTITIONS));
 
 	while (fgets(line, sizeof(line), f)) {
 		char ptname[128 + 1], devname[256];
@@ -741,7 +741,7 @@ static void print_all_devices_pt(struct fdisk_context *cxt)
 
 		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
 
-		DBG(FRONTEND, dbgprint("listing %s", devname));
+		DBG(FRONTEND, ul_debug("listing %s", devname));
 
 		if (is_whole_disk(devname)) {
 			char *cn = canonicalize_path(devname);

@@ -24,10 +24,11 @@
 #include "list.h"
 #include "tt.h"
 #include "debug.h"
+#include <stdio.h>
+#include <stdarg.h>
 
 /* features */
 #define CONFIG_LIBFDISK_ASSERT
-#define CONFIG_LIBFDISK_DEBUG
 
 #ifdef CONFIG_LIBFDISK_ASSERT
 #include <assert.h>
@@ -36,14 +37,6 @@
 /*
  * Debug
  */
-#if defined(TEST_PROGRAM) && !defined(LIBFDISK_DEBUG)
-#define CONFIG_LIBFDISK_DEBUG
-#endif
-
-# include <stdio.h>
-# include <stdarg.h>
-
-/* fdisk debugging flags/options */
 #define FDISK_DEBUG_INIT	(1 << 1)
 #define FDISK_DEBUG_CONTEXT	(1 << 2)
 #define FDISK_DEBUG_TOPOLOGY    (1 << 3)
@@ -55,33 +48,10 @@
 #define FDISK_DEBUG_TAB		(1 << 9)
 #define FDISK_DEBUG_ALL		0xFFFF
 
-#define FDISK_DEF_FLAG(m) UL_DEFINE_FLAG(FDISK_DEBUG_, m)
-
-#define DBG(m, x) do { __UL_DBG(libfdisk, FDISK_DEBUG_, m, x); } while (0)
-
-# define ON_DBG(m, x)	do { \
-				if ((FDISK_DEBUG_ ## m) & libfdisk_debug_mask) { \
-					x; \
-				}	   \
-			} while (0)
-
-# define DBG_FLUSH	do { \
-				if (libfdisk_debug_mask && \
-				    libfdisk_debug_mask != FDISK_DEBUG_INIT) \
-					fflush(stderr);			\
-			} while(0)
-
-static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
-dbgprint(const char *mesg, ...)
-{
-	va_list ap;
-	va_start(ap, mesg);
-	vfprintf(stderr, mesg, ap);
-	va_end(ap);
-	fputc('\n', stderr);
-}
-
 UL_DEBUG_DECLARE_MASK(libfdisk);
+#define DBG(m, x)	__UL_DBG(libfdisk, FDISK_DEBUG_, m, x)
+#define ON_DBG(m, x)	__UL_DBG_CALL(libfdisk, FDISK_DEBUG_, m, x)
+#define DBG_FLUSH	__UL_DBG_FLUSH(libfdisk, FDISK_DEBUG_)
 
 #ifdef TEST_PROGRAM
 struct fdisk_test {

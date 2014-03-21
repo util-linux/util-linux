@@ -567,14 +567,14 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 				   sgi_get_start_sector(cxt, Index[0]));
 
 		if (verbose && sgi_get_num_sectors(cxt, Index[0]) != lastblock)
-			DBG(LABEL, dbgprint(
+			DBG(LABEL, ul_debug(
 				"entire disk partition=%ds, but disk=%ds",
 				sgi_get_num_sectors(cxt, Index[0]),
 				lastblock));
 		lastblock = sgi_get_num_sectors(cxt, Index[0]);
 	} else if (verbose) {
 		fdisk_info(cxt, _("Partition 11 should cover the entire disk."));
-		DBG(LABEL, dbgprint("sysid=%d\tpartition=%d",
+		DBG(LABEL, ul_debug("sysid=%d\tpartition=%d",
 			       sgi_get_sysid(cxt, Index[0]), Index[0]+1));
 	}
 	for (i=1, start=0; i<sortcount; i++) {
@@ -582,12 +582,12 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 
 		if (verbose && cylsize
 		    && (sgi_get_start_sector(cxt, Index[i]) % cylsize) != 0)
-			DBG(LABEL, dbgprint("partition %d does not start on "
+			DBG(LABEL, ul_debug("partition %d does not start on "
 					"cylinder boundary.", Index[i]+1));
 
 		if (verbose && cylsize
 		    && sgi_get_num_sectors(cxt, Index[i]) % cylsize != 0)
-			DBG(LABEL, dbgprint("partition %d does not end on "
+			DBG(LABEL, ul_debug("partition %d does not end on "
 					"cylinder boundary.", Index[i]+1));
 
 		/* We cannot handle several "entire disk" entries. */
@@ -623,7 +623,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 		if (cylsize && start % cylsize)
 			start += cylsize - (start % cylsize);
 
-		DBG(LABEL, dbgprint("%2d:%12d\t%12d\t%12d", Index[i],
+		DBG(LABEL, ul_debug("%2d:%12d\t%12d\t%12d", Index[i],
 				       sgi_get_start_sector(cxt, Index[i]),
 				       sgi_get_num_sectors(cxt, Index[i]),
 				       sgi_get_sysid(cxt, Index[i])));

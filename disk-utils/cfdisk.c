@@ -172,7 +172,7 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	int tree = 0;
 	struct tt_line *ln, *ln_cont = NULL;
 
-	DBG(FRONTEND, dbgprint("table: convert to string"));
+	DBG(FRONTEND, ul_debug("table: convert to string"));
 
 	assert(cf);
 	assert(cf->cxt);
@@ -189,7 +189,7 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	/* get container (e.g. extended partition) */
 	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
 		if (fdisk_partition_is_nested(pa)) {
-			DBG(FRONTEND, dbgprint("table: nested detected, using tree"));
+			DBG(FRONTEND, ul_debug("table: nested detected, using tree"));
 			tree = TT_FL_TREE;
 			break;
 		}
@@ -276,7 +276,7 @@ static int lines_refresh(struct cfdisk *cf)
 
 	assert(cf);
 
-	DBG(FRONTEND, dbgprint("refreshing buffer"));
+	DBG(FRONTEND, ul_debug("refreshing buffer"));
 
 	free(cf->linesbuf);
 	free(cf->lines);
@@ -562,7 +562,7 @@ static void ui_clean_hint(void)
 
 static void die_on_signal(int dummy __attribute__((__unused__)))
 {
-	DBG(FRONTEND, dbgprint("die on signal."));
+	DBG(FRONTEND, ul_debug("die on signal."));
 	ui_end();
 	exit(EXIT_FAILURE);
 }
@@ -582,7 +582,7 @@ static void menu_update_ignore(struct cfdisk *cf)
 	m = cf->menu;
 	org = menu_get_menuitem(cf, m->idx);
 
-	DBG(FRONTEND, dbgprint("menu: update menu ignored keys"));
+	DBG(FRONTEND, ul_debug("menu: update menu ignored keys"));
 
 	i = m->ignore_cb(cf, ignore, sizeof(ignore));
 	ignore[i] = '\0';
@@ -621,7 +621,7 @@ static struct cfdisk_menu *menu_push(
 
 	assert(cf);
 
-	DBG(FRONTEND, dbgprint("menu: new menu"));
+	DBG(FRONTEND, ul_debug("menu: new menu"));
 
 	m->prev = cf->menu;
 	m->items = items;
@@ -645,7 +645,7 @@ static struct cfdisk_menu *menu_pop(struct cfdisk *cf)
 
 	assert(cf);
 
-	DBG(FRONTEND, dbgprint("menu: rem menu"));
+	DBG(FRONTEND, ul_debug("menu: rem menu"));
 
 	if (cf->menu) {
 		m = cf->menu->prev;
@@ -675,7 +675,7 @@ static int ui_init(struct cfdisk *cf __attribute__((__unused__)))
 {
 	struct sigaction sa;
 
-	DBG(FRONTEND, dbgprint("ui: init"));
+	DBG(FRONTEND, ul_debug("ui: init"));
 
 	/* setup SIGCHLD handler */
 	sigemptyset(&sa.sa_mask);
@@ -807,7 +807,7 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 			vert ? MBS_ALIGN_LEFT : MBS_ALIGN_CENTER,
 			0);
 
-	DBG(FRONTEND, dbgprint("ui: menuitem: cl=%d, ln=%d, item='%s'",
+	DBG(FRONTEND, ul_debug("ui: menuitem: cl=%d, ln=%d, item='%s'",
 			cl, ln, buf));
 
 	if (vert) {
@@ -836,7 +836,7 @@ static void ui_draw_menu(struct cfdisk *cf)
 	assert(cf);
 	assert(cf->menu);
 
-	DBG(FRONTEND, dbgprint("ui: menu: draw start"));
+	DBG(FRONTEND, ul_debug("ui: menu: draw start"));
 
 	m = cf->menu;
 
@@ -891,7 +891,7 @@ static void ui_draw_menu(struct cfdisk *cf)
 			mvaddch(ln + nlines, cl + m->width + 3, ACS_DARROW);
 	}
 
-	DBG(FRONTEND, dbgprint("ui: menu: draw end."));
+	DBG(FRONTEND, ul_debug("ui: menu: draw end."));
 }
 
 static void ui_menu_goto(struct cfdisk *cf, int where)
@@ -941,7 +941,7 @@ static int ui_menu_move(struct cfdisk *cf, int key)
 
 	m = cf->menu;
 
-	DBG(FRONTEND, dbgprint("ui: menu move key >%c<.", key));
+	DBG(FRONTEND, ul_debug("ui: menu move key >%c<.", key));
 
 	if (m->vertical)
 	{
@@ -1013,7 +1013,7 @@ static void ui_draw_partition(struct cfdisk *cf, size_t i)
 		curpg = cf->lines_idx / cf->page_sz;
 	}
 
-	DBG(FRONTEND, dbgprint(
+	DBG(FRONTEND, ul_debug(
 			"ui: draw partition %zu [page_sz=%zu, "
 			"line=%d, idx=%zu]",
 			i, cf->page_sz, ln, cf->lines_idx));
@@ -1053,7 +1053,7 @@ static int ui_draw_table(struct cfdisk *cf)
 	size_t i, nparts = fdisk_table_get_nents(cf->table);
 	size_t curpg = cf->page_sz ? cf->lines_idx / cf->page_sz : 0;
 
-	DBG(FRONTEND, dbgprint("ui: draw table"));
+	DBG(FRONTEND, ul_debug("ui: draw table"));
 
 	for (i = TABLE_START_LINE; i <= TABLE_START_LINE + cf->page_sz; i++) {
 		move(i, 0);
@@ -1088,7 +1088,7 @@ static int ui_table_goto(struct cfdisk *cf, int where)
 	size_t old;
 	size_t nparts = fdisk_table_get_nents(cf->table);
 
-	DBG(FRONTEND, dbgprint("ui: goto table %d", where));
+	DBG(FRONTEND, ul_debug("ui: goto table %d", where));
 
 	if (where < 0)
 		where = 0;
@@ -1261,7 +1261,7 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 	ssize_t rc;
 	char *dflt = size_to_human_string(0, *res);
 
-	DBG(FRONTEND, dbgprint("ui: get_size (default=%ju)", *res));
+	DBG(FRONTEND, ul_debug("ui: get_size (default=%ju)", *res));
 
 	ui_clean_info();
 
@@ -1291,7 +1291,7 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 		}
 
 		if (rc == 0) {
-			DBG(FRONTEND, dbgprint("ui: get_size user=%ju, power=%d, sectors=%s",
+			DBG(FRONTEND, ul_debug("ui: get_size user=%ju, power=%d, sectors=%s",
 						user, pwr, insec ? "yes" : "no"));
 			if (insec)
 				user *= cf->cxt->sector_size;
@@ -1316,7 +1316,7 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 		*res = user;
 	free(dflt);
 
-	DBG(FRONTEND, dbgprint("ui: get_size (result=%ju, rc=%zd)", *res, rc));
+	DBG(FRONTEND, ul_debug("ui: get_size (result=%ju, rc=%zd)", *res, rc));
 	return rc;
 }
 
@@ -1328,7 +1328,7 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 	struct fdisk_parttype *t = NULL;
 	int has_typestr = 0;
 
-	DBG(FRONTEND, dbgprint("ui: asking for parttype."));
+	DBG(FRONTEND, ul_debug("ui: asking for parttype."));
 
 	/* create cfdisk menu according to label types, note that the
 	 * last cm[] item has to be empty -- so nitems + 1 */
@@ -1395,7 +1395,7 @@ done:
 			free((char *) cm[i].name);
 	}
 	free(cm);
-	DBG(FRONTEND, dbgprint("ui: get parrtype done [type=%s] ", t ? t->name : NULL));
+	DBG(FRONTEND, ul_debug("ui: get parrtype done [type=%s] ", t ? t->name : NULL));
 	return t;
 }
 
@@ -1409,7 +1409,7 @@ static int ui_create_label(struct cfdisk *cf)
 
 	assert(cf);
 
-	DBG(FRONTEND, dbgprint("ui: asking for new disklabe."));
+	DBG(FRONTEND, ul_debug("ui: asking for new disklabe."));
 
 	/* create cfdisk menu according to libfdisk labels, note that the
 	 * last cm[] item has to be empty -- so nitems + 1 */
@@ -1456,7 +1456,7 @@ static int ui_create_label(struct cfdisk *cf)
 done:
 	menu_pop(cf);
 	free(cm);
-	DBG(FRONTEND, dbgprint("ui: create label done [rc=%d] ", rc));
+	DBG(FRONTEND, ul_debug("ui: create label done [rc=%d] ", rc));
 	return rc;
 }
 
@@ -1550,17 +1550,17 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	} else if (key != 'w' && key != 'W')
 		key = tolower(key);	/* case insensitive except 'W'rite */
 
-	DBG(FRONTEND, dbgprint("ui: main menu action: key=%c", key));
+	DBG(FRONTEND, ul_debug("ui: main menu action: key=%c", key));
 
 	if (cf->menu->ignore && strchr(cf->menu->ignore, key)) {
-		DBG(FRONTEND, dbgprint("  ignore '%c'", key));
+		DBG(FRONTEND, ul_debug("  ignore '%c'", key));
 		return 0;
 	}
 
 	pa = get_current_partition(cf);
 	n = fdisk_partition_get_partno(pa);
 
-	DBG(FRONTEND, dbgprint("menu action on %p", pa));
+	DBG(FRONTEND, ul_debug("menu action on %p", pa));
 	ui_clean_hint();
 	ui_clean_info();
 
@@ -1686,7 +1686,7 @@ static int ui_run(struct cfdisk *cf)
 {
 	int rc = 0;
 
-	DBG(FRONTEND, dbgprint("ui: start COLS=%d, LINES=%d", COLS, LINES));
+	DBG(FRONTEND, ul_debug("ui: start COLS=%d, LINES=%d", COLS, LINES));
 
 	if (!fdisk_dev_has_disklabel(cf->cxt)) {
 		rc = ui_create_label(cf);
@@ -1715,7 +1715,7 @@ static int ui_run(struct cfdisk *cf)
 		if (ui_menu_move(cf, key) == 0)
 			continue;
 
-		DBG(FRONTEND, dbgprint("ui: main action key >%c<.", key));
+		DBG(FRONTEND, ul_debug("ui: main action key >%c<.", key));
 
 		switch (key) {
 		case KEY_DOWN:
@@ -1762,7 +1762,7 @@ static int ui_run(struct cfdisk *cf)
 
 	menu_pop(cf);
 
-	DBG(FRONTEND, dbgprint("ui: end"));
+	DBG(FRONTEND, ul_debug("ui: end"));
 
 	return 0;
 }
@@ -1849,6 +1849,6 @@ int main(int argc, char *argv[])
 
 	rc = fdisk_context_deassign_device(cf->cxt);
 	fdisk_free_context(cf->cxt);
-	DBG(FRONTEND, dbgprint("bye! [rc=%d]", rc));
+	DBG(FRONTEND, ul_debug("bye! [rc=%d]", rc));
 	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }

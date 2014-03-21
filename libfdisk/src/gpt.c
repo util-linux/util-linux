@@ -268,9 +268,8 @@ static uint64_t gpt_partition_size(const struct gpt_entry *e)
 	return start > end ? 0 : end - start + 1ULL;
 }
 
-#ifdef CONFIG_LIBFDISK_DEBUG
 /* prints UUID in the real byte order! */
-static void dbgprint_uuid(const char *mesg, struct gpt_guid *guid)
+static void gpt_debug_uuid(const char *mesg, struct gpt_guid *guid)
 {
 	const unsigned char *uuid = (unsigned char *) guid;
 
@@ -283,7 +282,6 @@ static void dbgprint_uuid(const char *mesg, struct gpt_guid *guid)
 		uuid[8], uuid[9],
 		uuid[10], uuid[11], uuid[12], uuid[13], uuid[14],uuid[15]);
 }
-#endif
 
 /*
  * UUID is traditionally 16 byte big-endian array, except Intel EFI
@@ -766,20 +764,20 @@ static int gpt_check_lba_sanity(struct fdisk_context *cxt, struct gpt_header *he
 
 	/* check if first and last usable LBA make sense */
 	if (lu < fu) {
-		DBG(LABEL, dbgprint("error: header last LBA is before first LBA"));
+		DBG(LABEL, ul_debug("error: header last LBA is before first LBA"));
 		goto done;
 	}
 
 	/* check if first and last usable LBAs with the disk's last LBA */
 	if (fu > lastlba || lu > lastlba) {
-		DBG(LABEL, dbgprint("error: header LBAs are after the disk's last LBA"));
+		DBG(LABEL, ul_debug("error: header LBAs are after the disk's last LBA"));
 		goto done;
 	}
 
 	/* the header has to be outside usable range */
 	if (fu < GPT_PRIMARY_PARTITION_TABLE_LBA &&
 	    GPT_PRIMARY_PARTITION_TABLE_LBA < lu) {
-		DBG(LABEL, dbgprint("error: header outside of usable range"));
+		DBG(LABEL, ul_debug("error: header outside of usable range"));
 		goto done;
 	}
 
@@ -849,13 +847,13 @@ static struct gpt_header *gpt_read_header(struct fdisk_context *cxt,
 	else
 		free(ents);
 
-	DBG(LABEL, dbgprint("found valid GPT Header on LBA %ju", lba));
+	DBG(LABEL, ul_debug("found valid GPT Header on LBA %ju", lba));
 	return header;
 invalid:
 	free(header);
 	free(ents);
 
-	DBG(LABEL, dbgprint("read GPT Header on LBA %ju failed", lba));
+	DBG(LABEL, ul_debug("read GPT Header on LBA %ju failed", lba));
 	return NULL;
 }
 
@@ -978,7 +976,7 @@ static uint32_t partition_check_overlaps(struct gpt_header *header, struct gpt_e
 			    partition_unused(&e[j]))
 				continue;
 			if (partition_overlap(&e[i], &e[j])) {
-				DBG(LABEL, dbgprint("GPT partitions overlap detected [%u vs. %u]", i, j));
+				DBG(LABEL, ul_debug("GPT partitions overlap detected [%u vs. %u]", i, j));
 				return i + 1;
 			}
 		}
@@ -1173,7 +1171,7 @@ static int gpt_probe_label(struct fdisk_context *cxt)
 	if (!mbr_type)
 		goto failed;
 
-	DBG(LABEL, dbgprint("found a %s MBR", mbr_type == GPT_MBR_PROTECTIVE ?
+	DBG(LABEL, ul_debug("found a %s MBR", mbr_type == GPT_MBR_PROTECTIVE ?
 			    "protective" : "hybrid"));
 
 	/* primary header */
@@ -1215,7 +1213,7 @@ static int gpt_probe_label(struct fdisk_context *cxt)
 	cxt->label->nparts_cur = partitions_in_use(gpt->pheader, gpt->ents);
 	return 1;
 failed:
-	DBG(LABEL, dbgprint("GPT probe failed"));
+	DBG(LABEL, ul_debug("GPT probe failed"));
 	gpt_deinit(cxt->label);
 	return 0;
 }
@@ -1540,14 +1538,14 @@ static int gpt_write_disklabel(struct fdisk_context *cxt)
 	else if (gpt_write_pmbr(cxt) != 0)
 		goto err1;
 
-	DBG(LABEL, dbgprint("GPT write success"));
+	DBG(LABEL, ul_debug("GPT write success"));
 	return 0;
 err0:
-	DBG(LABEL, dbgprint("GPT write failed: incorrect input"));
+	DBG(LABEL, ul_debug("GPT write failed: incorrect input"));
 	errno = EINVAL;
 	return -EINVAL;
 err1:
-	DBG(LABEL, dbgprint("GPT write failed: %m"));
+	DBG(LABEL, ul_debug("GPT write failed: %m"));
 	return -errno;
 }
 
@@ -1706,7 +1704,7 @@ static int gpt_delete_partition(struct fdisk_context *cxt,
 static void gpt_entry_set_type(struct gpt_entry *e, struct gpt_guid *uuid)
 {
 	e->type = *uuid;
-	DBG(LABEL, dbgprint_uuid("new type", &(e->type)));
+	DBG(LABEL, gpt_debug_uuid("new type", &(e->type)));
 }
 
 /*
@@ -1726,7 +1724,7 @@ static int gpt_create_new_partition(struct fdisk_context *cxt,
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, GPT));
 
-	DBG(LABEL, dbgprint("GPT new partition: partno=%zu, start=%ju, end=%ju",
+	DBG(LABEL, ul_debug("GPT new partition: partno=%zu, start=%ju, end=%ju",
 				partnum, fsect, lsect));
 
 	gpt = self_label(cxt);
@@ -1785,7 +1783,7 @@ static int gpt_add_partition(
 
 	rc = fdisk_partition_next_partno(pa, cxt, &partnum);
 	if (rc) {
-		DBG(LABEL, dbgprint("GPT failed to get next partno"));
+		DBG(LABEL, ul_debug("GPT failed to get next partno"));
 		return rc;
 	}
 	if (!partition_unused(&ents[partnum])) {
@@ -2110,7 +2108,7 @@ int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, GPT));
 
-	DBG(LABEL, dbgprint("UUID change requested partno=%zu", i));
+	DBG(LABEL, ul_debug("UUID change requested partno=%zu", i));
 
 	gpt = self_label(cxt);
 
@@ -2156,7 +2154,7 @@ int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, GPT));
 
-	DBG(LABEL, dbgprint("NAME change requested partno=%zu", i));
+	DBG(LABEL, ul_debug("NAME change requested partno=%zu", i));
 
 	gpt = self_label(cxt);
 
@@ -2214,7 +2212,7 @@ static int gpt_toggle_partition_flag(
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, GPT));
 
-	DBG(LABEL, dbgprint("GPT entry attribute change requested partno=%zu", i));
+	DBG(LABEL, ul_debug("GPT entry attribute change requested partno=%zu", i));
 	gpt = self_label(cxt);
 
 	if ((uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries))

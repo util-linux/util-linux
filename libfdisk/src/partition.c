@@ -12,7 +12,7 @@ struct fdisk_partition *fdisk_new_partition(void)
 	INIT_LIST_HEAD(&pa->parts);
 	pa->partno = FDISK_EMPTY_PARTNO;
 	pa->parent_partno = FDISK_EMPTY_PARTNO;
-	DBG(PART, dbgprint("new %p", pa));
+	DBG(PART, ul_debug("new %p", pa));
 	return pa;
 }
 
@@ -48,7 +48,7 @@ void fdisk_unref_partition(struct fdisk_partition *pa)
 
 	pa->refcount--;
 	if (pa->refcount <= 0) {
-		DBG(PART, dbgprint("free %p", pa));
+		DBG(PART, ul_debug("free %p", pa));
 		fdisk_reset_partition(pa);
 		list_del(&pa->parts);
 		free(pa);
@@ -271,7 +271,7 @@ int fdisk_partition_next_partno(
 	if (pa && pa->partno_follow_default) {
 		size_t i;
 
-		DBG(LABEL, dbgprint("next partno (follow default)"));
+		DBG(LABEL, ul_debug("next partno (follow default)"));
 
 		for (i = 0; i < cxt->label->nparts_max; i++) {
 			if (!fdisk_is_partition_used(cxt, i)) {
@@ -283,7 +283,7 @@ int fdisk_partition_next_partno(
 
 	} else if (pa && pa->partno != FDISK_EMPTY_PARTNO) {
 
-		DBG(LABEL, dbgprint("next partno (specified=%zu)", pa->partno));
+		DBG(LABEL, ul_debug("next partno (specified=%zu)", pa->partno));
 
 		if (pa->partno >= cxt->label->nparts_max)
 			return -ERANGE;
@@ -505,7 +505,7 @@ int fdisk_add_partition(struct fdisk_context *cxt,
 	if (fdisk_missing_geometry(cxt))
 		return -EINVAL;
 
-	DBG(LABEL, dbgprint("adding new partition (start=%ju, end=%ju, size=%ju, "
+	DBG(LABEL, ul_debug("adding new partition (start=%ju, end=%ju, size=%ju, "
 			    "defaults(start=%s, end=%s, partno=%s)",
 			    pa ? pa->start : 0,
 			    pa ? pa->end : 0,
@@ -516,7 +516,7 @@ int fdisk_add_partition(struct fdisk_context *cxt,
 
 	rc = cxt->label->op->add_part(cxt, pa);
 
-	DBG(LABEL, dbgprint("add partition done (rc=%d)", rc));
+	DBG(LABEL, ul_debug("add partition done (rc=%d)", rc));
 	return rc;
 }
 
@@ -536,7 +536,7 @@ int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum)
 	if (!cxt->label->op->part_delete)
 		return -ENOSYS;
 
-	DBG(LABEL, dbgprint("deleting %s partition number %zd",
+	DBG(LABEL, ul_debug("deleting %s partition number %zd",
 				cxt->label->name, partnum));
 	return cxt->label->op->part_delete(cxt, partnum);
 }

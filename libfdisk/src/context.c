@@ -12,7 +12,7 @@ struct fdisk_context *fdisk_new_context(void)
 	if (!cxt)
 		return NULL;
 
-	DBG(LABEL, dbgprint("new context %p allocated", cxt));
+	DBG(LABEL, ul_debug("new context %p allocated", cxt));
 	cxt->dev_fd = -1;
 
 	/*
@@ -42,7 +42,7 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 	if (!cxt)
 		return NULL;
 
-	DBG(LABEL, dbgprint("new context %p allocated", cxt));
+	DBG(LABEL, ul_debug("new context %p allocated", cxt));
 	cxt->dev_fd = parent->dev_fd;
 	cxt->parent = parent;
 
@@ -70,14 +70,14 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 	}
 
 	if (lb) {
-		DBG(LABEL, dbgprint("probing for nested %s", lb->name));
+		DBG(LABEL, ul_debug("probing for nested %s", lb->name));
 
 		cxt->label = lb;
 
 		if (lb->op->probe(cxt) == 1)
 			__fdisk_context_switch_label(cxt, lb);
 		else {
-			DBG(LABEL, dbgprint("not found %s label", lb->name));
+			DBG(LABEL, ul_debug("not found %s label", lb->name));
 			if (lb->op->deinit)
 				lb->op->deinit(lb);
 			cxt->label = NULL;
@@ -105,7 +105,7 @@ struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt, const cha
 		    && strcmp(cxt->labels[i]->name, name) == 0)
 			return cxt->labels[i];
 
-	DBG(LABEL, dbgprint("failed to found %s label driver\n", name));
+	DBG(LABEL, ul_debug("failed to found %s label driver\n", name));
 	return NULL;
 }
 
@@ -143,11 +143,11 @@ int __fdisk_context_switch_label(struct fdisk_context *cxt,
 	if (!lb || !cxt)
 		return -EINVAL;
 	if (lb->disabled) {
-		DBG(LABEL, dbgprint("*** attempt to switch to disabled label %s -- ignore!", lb->name));
+		DBG(LABEL, ul_debug("*** attempt to switch to disabled label %s -- ignore!", lb->name));
 		return -EINVAL;
 	}
 	cxt->label = lb;
-	DBG(LABEL, dbgprint("--> switching context to %s!", lb->name));
+	DBG(LABEL, ul_debug("--> switching context to %s!", lb->name));
 	return 0;
 }
 
@@ -162,7 +162,7 @@ static void reset_context(struct fdisk_context *cxt)
 {
 	size_t i;
 
-	DBG(CONTEXT, dbgprint("*** resetting context %p", cxt));
+	DBG(CONTEXT, ul_debug("*** resetting context %p", cxt));
 
 	/* reset drives' private data */
 	for (i = 0; i < cxt->nlabels; i++)
@@ -204,7 +204,7 @@ static int warn_wipe(struct fdisk_context *cxt)
 	if (fdisk_dev_has_disklabel(cxt) || cxt->dev_fd < 0)
 		return -EINVAL;
 #ifdef HAVE_LIBBLKID
-	DBG(LABEL, dbgprint("wipe check: initialize libblkid prober"));
+	DBG(LABEL, ul_debug("wipe check: initialize libblkid prober"));
 
 	pr = blkid_new_probe();
 	if (!pr)
@@ -255,7 +255,7 @@ int fdisk_context_assign_device(struct fdisk_context *cxt,
 {
 	int fd;
 
-	DBG(CONTEXT, dbgprint("assigning device %s", fname));
+	DBG(CONTEXT, ul_debug("assigning device %s", fname));
 	assert(cxt);
 
 	reset_context(cxt);
@@ -290,12 +290,12 @@ int fdisk_context_assign_device(struct fdisk_context *cxt,
 	if (!fdisk_context_listonly(cxt) && !fdisk_dev_has_disklabel(cxt))
 		warn_wipe(cxt);
 
-	DBG(CONTEXT, dbgprint("context %p initialized for %s [%s]",
+	DBG(CONTEXT, ul_debug("context %p initialized for %s [%s]",
 			      cxt, fname,
 			      readonly ? "READ-ONLY" : "READ-WRITE"));
 	return 0;
 fail:
-	DBG(CONTEXT, dbgprint("failed to assign device"));
+	DBG(CONTEXT, ul_debug("failed to assign device"));
 	return -errno;
 }
 
@@ -329,7 +329,7 @@ void fdisk_free_context(struct fdisk_context *cxt)
 	if (!cxt)
 		return;
 
-	DBG(CONTEXT, dbgprint("freeing context %p for %s", cxt, cxt->dev_path));
+	DBG(CONTEXT, ul_debug("freeing context %p for %s", cxt, cxt->dev_path));
 	reset_context(cxt);
 
 	/* deallocate label's private stuff */
@@ -430,7 +430,7 @@ int fdisk_context_set_unit(struct fdisk_context *cxt, const char *str)
 	else if (strcmp(str, "sector") == 0 || strcmp(str, "sectors") == 0)
 		cxt->display_in_cyl_units = 0;
 
-	DBG(CONTEXT, dbgprint("display unit: %s", fdisk_context_get_unit(cxt, 0)));
+	DBG(CONTEXT, ul_debug("display unit: %s", fdisk_context_get_unit(cxt, 0)));
 	return 0;
 }
 
