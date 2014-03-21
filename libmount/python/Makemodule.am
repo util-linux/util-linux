@@ -1,3 +1,4 @@
+EXTRA_DIST += libmount/python/__init__.py
 
 if BUILD_PYLIBMOUNT
 
@@ -8,8 +9,6 @@ pylibmountexecdir = $(pyexecdir)/libmount
 # not possible to install 32-bit and 64-bit version on the same system.
 pylibmountexec_LTLIBRARIES = pylibmount.la
 pylibmountexec_SCRIPTS = libmount/python/__init__.py
-
-EXTRA_DIST += $(pylibmountexec_SCRIPTS)
 
 pylibmount_la_SOURCES = \
 	libmount/python/pylibmount.c \
