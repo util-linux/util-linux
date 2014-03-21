@@ -1525,6 +1525,10 @@ static int main_menu_ignore_keys(struct cfdisk *cf, char *ignore,
 		    !fdisk_is_disklabel(cf->cxt, SGI))
 			ignore[i++] = 'b';
 	}
+
+
+	if (fdisk_context_is_readonly(cf->cxt))
+		ignore[i++] = 'W';
 	return i;
 }
 
@@ -1643,7 +1647,14 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	case 'W': /* Write */
 	{
 		char buf[64] = { 0 };
-		int rc = ui_get_string(cf,
+		int rc;
+
+		if (fdisk_context_is_readonly(cf->cxt)) {
+			ui_warnx(_("Device open in read-only mode"));
+			break;
+		}
+
+		rc = ui_get_string(cf,
 			  _("Are you sure you want to write the partition "
 			    "table to disk? "),
 			  _("Type \"yes\" or \"no\" or press ESC to left dialog."),
@@ -1708,6 +1719,9 @@ static int ui_run(struct cfdisk *cf)
 	rc = ui_refresh(cf);
 	if (rc)
 		return rc;
+
+	if (fdisk_context_is_readonly(cf->cxt))
+		ui_warnx(_("Device open in read-only mode."));
 
 	do {
 		int rc = 0, key = getch();
@@ -1835,7 +1849,10 @@ int main(int argc, char *argv[])
 	if (optind == argc)
 		usage(stderr);
 
-	if (fdisk_context_assign_device(cf->cxt, argv[optind], 0) != 0)
+	rc = fdisk_context_assign_device(cf->cxt, argv[optind], 0);
+	if (rc == -EACCES)
+		rc = fdisk_context_assign_device(cf->cxt, argv[optind], 1);
+	if (rc != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
 
 	/* Don't use err(), warn() from this point */

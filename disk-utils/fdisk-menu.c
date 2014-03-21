@@ -447,6 +447,10 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		list_disklabel(cxt);
 		break;
 	case 'w':
+		if (fdisk_context_is_readonly(cxt)) {
+			fdisk_warnx(cxt, _("Device open in read-only mode."));
+			break;
+		}
 		rc = fdisk_write_disklabel(cxt);
 		if (rc)
 			err(EXIT_FAILURE, _("failed to write disklabel"));

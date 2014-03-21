@@ -778,7 +778,7 @@ enum {
 
 int main(int argc, char **argv)
 {
-	int i, c, act = ACT_FDISK;
+	int rc, i, c, act = ACT_FDISK;
 	int colormode = UL_COLORMODE_UNDEF;
 	struct fdisk_context *cxt;
 
@@ -920,7 +920,13 @@ int main(int argc, char **argv)
 		fdisk_info(cxt, _("Changes will remain in memory only, until you decide to write them.\n"
 				  "Be careful before using the write command.\n"));
 
-		if (fdisk_context_assign_device(cxt, argv[optind], 0) != 0)
+		rc = fdisk_context_assign_device(cxt, argv[optind], 0);
+		if (rc == -EACCES) {
+			rc = fdisk_context_assign_device(cxt, argv[optind], 1);
+			if (rc == 0)
+				fdisk_warnx(cxt, _("Device open in read-only mode."));
+		}
+		if (rc)
 			err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
 
 		fflush(stdout);

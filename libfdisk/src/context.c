@@ -260,12 +260,11 @@ int fdisk_context_assign_device(struct fdisk_context *cxt,
 
 	reset_context(cxt);
 
-	if (readonly == 1 || (fd = open(fname, O_RDWR|O_CLOEXEC)) < 0) {
-		if ((fd = open(fname, O_RDONLY|O_CLOEXEC)) < 0)
-			return -errno;
-		readonly = 1;
-	}
+	fd = open(fname, (readonly ? O_RDONLY : O_RDWR ) | O_CLOEXEC);
+	if (fd < 0)
+		return -errno;
 
+	cxt->readonly = readonly;
 	cxt->dev_fd = fd;
 	cxt->dev_path = strdup(fname);
 	if (!cxt->dev_path)
@@ -313,6 +312,12 @@ int fdisk_context_deassign_device(struct fdisk_context *cxt)
 
 	cxt->dev_fd = -1;
 	return 0;
+}
+
+int fdisk_context_is_readonly(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->readonly;
 }
 
 /**
