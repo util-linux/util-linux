@@ -396,7 +396,7 @@ enum {
 
 int main(int argc, char **argv)
 {
-	int i, c, act = ACT_FDISK;
+	int rc, i, c, act = ACT_FDISK;
 	int colormode = UL_COLORMODE_AUTO;
 	struct fdisk_context *cxt;
 
@@ -531,7 +531,13 @@ int main(int argc, char **argv)
 		if (argc-optind != 1)
 			usage(stderr);
 
-		if (fdisk_context_assign_device(cxt, argv[optind], 0) != 0)
+		rc = fdisk_context_assign_device(cxt, argv[optind], 0);
+		if (rc == -EACCES) {
+			rc = fdisk_context_assign_device(cxt, argv[optind], 1);
+			if (rc == 0)
+				fdisk_warnx(cxt, _("Device open in read-only mode."));
+		}
+		if (rc)
 			err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
 
 		/* Here starts interactive mode, use fdisk_{warn,info,..} functions */

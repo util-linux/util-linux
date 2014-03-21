@@ -275,7 +275,8 @@ struct fdisk_context {
 	unsigned long sector_size;	/* logical size */
 	unsigned long alignment_offset;
 
-	unsigned int display_in_cyl_units : 1,	/* for obscure labels */
+	unsigned int readonly : 1,		/* don't write to the device */
+		     display_in_cyl_units : 1,	/* for obscure labels */
 		     display_details : 1,	/* expert display mode */
 		     listonly : 1;		/* list partition, nothing else */
 

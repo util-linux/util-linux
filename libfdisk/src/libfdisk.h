@@ -81,6 +81,7 @@ extern int fdisk_context_set_ask(struct fdisk_context *cxt,
 			int (*ask_cb)(struct fdisk_context *, struct fdisk_ask *, void *),
 			void *data);
 
+extern int fdisk_context_is_readonly(struct fdisk_context *cxt);
 extern int fdisk_context_assign_device(struct fdisk_context *cxt,
 				const char *fname, int readonly);
 extern int fdisk_context_deassign_device(struct fdisk_context *cxt);
