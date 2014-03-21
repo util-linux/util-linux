@@ -1231,8 +1231,8 @@ static ssize_t ui_get_string(struct cfdisk *cf, const char *prompt,
 #else
 			if (i + 1 < (ssize_t) len && isprint(c)) {
 				mvaddch(ln, cl + cells, c);
-				str[i++] = c;
-				str[i] = '\0';
+				buf[i++] = c;
+				buf[i] = '\0';
 				cells++;
 			}
 #endif
