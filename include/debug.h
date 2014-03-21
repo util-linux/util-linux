@@ -16,13 +16,29 @@
 #define UL_DEBUG_DEFINE_FLAG(p, m) p ## m
 
 /* l - library name, p - flag prefix, m - flag postfix, x - function */
-# define __UL_DBG(l, p, m, x) \
+#define __UL_DBG(l, p, m, x) \
 	do { \
 		if ((p ## m) & l ## _debug_mask) { \
 			fprintf(stderr, "%d: %s: %8s: ", getpid(), # l, # m); \
 			x; \
 		} \
 	} while (0)
+
+#define __UL_DBG_CALL(l, p, m, x) \
+	do { \
+		if ((p ## m) & l ## _debug_mask) { \
+			x; \
+		} \
+	} while (0)
+
+#define __UL_DBG_FLUSH(l, p) \
+	do { \
+		if (l ## _debug_mask && \
+		    l ## _debug_mask != p ## INIT) { \
+			fflush(stderr); \
+		} \
+	} while (0)
+
 
 #define __UL_INIT_DEBUG(lib, pref, mask, env) \
 	do { \
