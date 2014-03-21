@@ -143,7 +143,7 @@ blkid_probe blkid_new_probe(void)
 	if (!pr)
 		return NULL;
 
-	DBG(LOWPROBE, blkid_debug("allocate a new probe %p", pr));
+	DBG(LOWPROBE, ul_debug("allocate a new probe %p", pr));
 
 	/* initialize chains */
 	for (i = 0; i < BLKID_NCHAINS; i++) {
@@ -168,7 +168,7 @@ blkid_probe blkid_clone_probe(blkid_probe parent)
 	if (!parent)
 		return NULL;
 
-	DBG(LOWPROBE, blkid_debug("allocate a probe clone"));
+	DBG(LOWPROBE, ul_debug("allocate a probe clone"));
 
 	pr = blkid_new_probe();
 	if (!pr)
@@ -258,7 +258,7 @@ void blkid_free_probe(blkid_probe pr)
 	blkid_probe_reset_buffer(pr);
 	blkid_free_probe(pr->disk_probe);
 
-	DBG(LOWPROBE, blkid_debug("free probe %p", pr));
+	DBG(LOWPROBE, ul_debug("free probe %p", pr));
 	free(pr);
 }
 
@@ -378,7 +378,7 @@ void *blkid_probe_get_binary_data(blkid_probe pr, struct blkid_chain *chn)
 	if (rc != 0)
 		return NULL;
 
-	DBG(LOWPROBE, blkid_debug("returning %s binary data", chn->driver->name));
+	DBG(LOWPROBE, ul_debug("returning %s binary data", chn->driver->name));
 	return chn->data;
 }
 
@@ -424,7 +424,7 @@ static int blkid_probe_dump_filter(blkid_probe pr, int chain)
 	for (i = 0; i < chn->driver->nidinfos; i++) {
 		const struct blkid_idinfo *id = chn->driver->idinfos[i];
 
-		DBG(LOWPROBE, blkid_debug("%d: %s: %s",
+		DBG(LOWPROBE, ul_debug("%d: %s: %s",
 			i,
 			id->name,
 			blkid_bmp_get_item(chn->fltr, i)
@@ -483,7 +483,7 @@ int __blkid_probe_invert_filter(blkid_probe pr, int chain)
 	for (i = 0; i < blkid_bmp_nwords(chn->driver->nidinfos); i++)
 		chn->fltr[i] = ~chn->fltr[i];
 
-	DBG(LOWPROBE, blkid_debug("probing filter inverted"));
+	DBG(LOWPROBE, ul_debug("probing filter inverted"));
 	/* blkid_probe_dump_filter(pr, chain); */
 	return 0;
 }
@@ -525,7 +525,7 @@ int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[
 		}
 	}
 
-	DBG(LOWPROBE, blkid_debug("%s: a new probing type-filter initialized",
+	DBG(LOWPROBE, ul_debug("%s: a new probing type-filter initialized",
 		chn->driver->name));
 	/* blkid_probe_dump_filter(pr, chain); */
 	return 0;
@@ -560,7 +560,7 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 				list_entry(p, struct blkid_bufinfo, bufs);
 
 		if (x->off <= off && off + len <= x->off + x->len) {
-			DBG(LOWPROBE, blkid_debug("\treuse buffer: off=%jd len=%jd pr=%p",
+			DBG(LOWPROBE, ul_debug("\treuse buffer: off=%jd len=%jd pr=%p",
 							x->off, x->len, pr));
 			bf = x;
 			break;
@@ -586,12 +586,12 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 		bf->off = off;
 		INIT_LIST_HEAD(&bf->bufs);
 
-		DBG(LOWPROBE, blkid_debug("\tbuffer read: off=%jd len=%jd pr=%p",
+		DBG(LOWPROBE, ul_debug("\tbuffer read: off=%jd len=%jd pr=%p",
 				off, len, pr));
 
 		ret = read(pr->fd, bf->data, len);
 		if (ret != (ssize_t) len) {
-			DBG(LOWPROBE, blkid_debug("\tbuffer read: return %zd error %m", ret));
+			DBG(LOWPROBE, ul_debug("\tbuffer read: return %zd error %m", ret));
 			free(bf);
 			if (ret >= 0)
 				errno = 0;
@@ -611,7 +611,7 @@ static void blkid_probe_reset_buffer(blkid_probe pr)
 	if (!pr || list_empty(&pr->buffers))
 		return;
 
-	DBG(LOWPROBE, blkid_debug("reseting probing buffers pr=%p", pr));
+	DBG(LOWPROBE, ul_debug("reseting probing buffers pr=%p", pr));
 
 	while (!list_empty(&pr->buffers)) {
 		struct blkid_bufinfo *bf = list_entry(pr->buffers.next,
@@ -622,7 +622,7 @@ static void blkid_probe_reset_buffer(blkid_probe pr)
 		free(bf);
 	}
 
-	DBG(LOWPROBE, blkid_debug("buffers summary: %"PRIu64" bytes "
+	DBG(LOWPROBE, ul_debug("buffers summary: %"PRIu64" bytes "
 			"by %"PRIu64" read() call(s)",
 			len_ct, read_ct));
 
@@ -705,7 +705,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	else {
 		if (S_ISBLK(sb.st_mode)) {
 			if (blkdev_get_size(fd, (unsigned long long *) &pr->size)) {
-				DBG(LOWPROBE, blkid_debug("failed to get device size"));
+				DBG(LOWPROBE, ul_debug("failed to get device size"));
 				goto err;
 			}
 		} else if (S_ISCHR(sb.st_mode))
@@ -732,15 +732,15 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		pr->flags |= BLKID_FL_CDROM_DEV;
 #endif
 
-	DBG(LOWPROBE, blkid_debug("ready for low-probing, offset=%jd, size=%jd",
+	DBG(LOWPROBE, ul_debug("ready for low-probing, offset=%jd, size=%jd",
 				pr->off, pr->size));
-	DBG(LOWPROBE, blkid_debug("whole-disk: %s, regfile: %s",
+	DBG(LOWPROBE, ul_debug("whole-disk: %s, regfile: %s",
 		blkid_probe_is_wholedisk(pr) ?"YES" : "NO",
 		S_ISREG(pr->mode) ? "YES" : "NO"));
 
 	return 0;
 err:
-	DBG(LOWPROBE, blkid_debug("failed to prepare a device for low-probing"));
+	DBG(LOWPROBE, ul_debug("failed to prepare a device for low-probing"));
 	return -1;
 
 }
@@ -762,7 +762,7 @@ int blkid_probe_set_dimension(blkid_probe pr,
 	if (!pr)
 		return -1;
 
-	DBG(LOWPROBE, blkid_debug(
+	DBG(LOWPROBE, ul_debug(
 		"changing probing area pr=%p: size=%llu, off=%llu "
 		"-to-> size=%llu, off=%llu",
 		pr,
@@ -816,7 +816,7 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 			return -errno;
 		if (buf && !memcmp(mag->magic,
 				buf + (mag->sboff & 0x3ff), mag->len)) {
-			DBG(LOWPROBE, blkid_debug("\tmagic sboff=%u, kboff=%ld",
+			DBG(LOWPROBE, ul_debug("\tmagic sboff=%u, kboff=%ld",
 				mag->sboff, mag->kboff));
 			if (offset)
 				*offset = off + (mag->sboff & 0x3ff);
@@ -837,7 +837,7 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 static inline void blkid_probe_start(blkid_probe pr)
 {
 	if (pr) {
-		DBG(LOWPROBE, blkid_debug("%p: start probe", pr));
+		DBG(LOWPROBE, ul_debug("%p: start probe", pr));
 		pr->cur_chain = NULL;
 		pr->prob_flags = 0;
 		blkid_probe_set_wiper(pr, 0, 0);
@@ -847,7 +847,7 @@ static inline void blkid_probe_start(blkid_probe pr)
 static inline void blkid_probe_end(blkid_probe pr)
 {
 	if (pr) {
-		DBG(LOWPROBE, blkid_debug("%p: end probe", pr));
+		DBG(LOWPROBE, ul_debug("%p: end probe", pr));
 		pr->cur_chain = NULL;
 		pr->prob_flags = 0;
 		blkid_probe_set_wiper(pr, 0, 0);
@@ -931,7 +931,7 @@ int blkid_do_probe(blkid_probe pr)
 
 		chn->binary = FALSE;		/* for sure... */
 
-		DBG(LOWPROBE, blkid_debug("chain probe %s %s (idx=%d)",
+		DBG(LOWPROBE, ul_debug("chain probe %s %s (idx=%d)",
 				chn->driver->name,
 				chn->enabled? "ENABLED" : "DISABLED",
 				chn->idx));
@@ -1022,7 +1022,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	if (len > sizeof(buf))
 		len = sizeof(buf);
 
-	DBG(LOWPROBE, blkid_debug(
+	DBG(LOWPROBE, ul_debug(
 	    "do_wipe [offset=0x%jx, len=%zd, chain=%s, idx=%d, dryrun=%s]\n",
 	    offset, len, chn->driver->name, chn->idx, dryrun ? "yes" : "not"));
 
@@ -1106,7 +1106,7 @@ int blkid_probe_step_back(blkid_probe pr)
 
 	if (chn->idx >= 0) {
 		chn->idx--;
-		DBG(LOWPROBE, blkid_debug("step back: moving %s chain index to %d",
+		DBG(LOWPROBE, ul_debug("step back: moving %s chain index to %d",
 			chn->driver->name,
 			chn->idx));
 	}
@@ -1118,7 +1118,7 @@ int blkid_probe_step_back(blkid_probe pr)
 		 */
 		size_t idx = chn->driver->id > 0 ? chn->driver->id - 1 : 0;
 
-		DBG(LOWPROBE, blkid_debug("step back: moving to previous chain"));
+		DBG(LOWPROBE, ul_debug("step back: moving to previous chain"));
 
 		if (idx > 0)
 			pr->cur_chain = &pr->chains[idx];
@@ -1162,7 +1162,7 @@ int blkid_do_safeprobe(blkid_probe pr)
 		chn = pr->cur_chain = &pr->chains[i];
 		chn->binary = FALSE;		/* for sure... */
 
-		DBG(LOWPROBE, blkid_debug("chain safeprobe %s %s",
+		DBG(LOWPROBE, ul_debug("chain safeprobe %s %s",
 				chn->driver->name,
 				chn->enabled? "ENABLED" : "DISABLED"));
 
@@ -1216,7 +1216,7 @@ int blkid_do_fullprobe(blkid_probe pr)
 		chn = pr->cur_chain = &pr->chains[i];
 		chn->binary = FALSE;		/* for sure... */
 
-		DBG(LOWPROBE, blkid_debug("chain fullprobe %s: %s",
+		DBG(LOWPROBE, ul_debug("chain fullprobe %s: %s",
 				chn->driver->name,
 				chn->enabled? "ENABLED" : "DISABLED"));
 
@@ -1265,7 +1265,7 @@ struct blkid_prval *blkid_probe_assign_value(
 	v->chain = pr->cur_chain;
 	pr->nvals++;
 
-	DBG(LOWPROBE, blkid_debug("assigning %s [%s]", name, v->chain->driver->name));
+	DBG(LOWPROBE, ul_debug("assigning %s [%s]", name, v->chain->driver->name));
 	return v;
 }
 
@@ -1278,7 +1278,7 @@ int blkid_probe_reset_last_value(blkid_probe pr)
 
 	v = &pr->vals[pr->nvals - 1];
 
-	DBG(LOWPROBE, blkid_debug("un-assigning %s [%s]", v->name, v->chain->driver->name));
+	DBG(LOWPROBE, ul_debug("un-assigning %s [%s]", v->name, v->chain->driver->name));
 
 	memset(v, 0, sizeof(struct blkid_prval));
 	pr->nvals--;
@@ -1375,7 +1375,7 @@ int blkid_probe_verify_csum(blkid_probe pr, uint64_t csum, uint64_t expected)
 	if (csum != expected) {
 		struct blkid_chain *chn = blkid_probe_get_chain(pr);
 
-		DBG(LOWPROBE, blkid_debug(
+		DBG(LOWPROBE, ul_debug(
 				"incorrect checksum for type %s,"
 				" got %jX, expected %jX",
 				blkid_probe_get_probername(pr),
@@ -1474,7 +1474,7 @@ blkid_probe blkid_probe_get_wholedisk_probe(blkid_probe pr)
 		if (!disk_path)
 			return NULL;
 
-		DBG(LOWPROBE, blkid_debug("allocate a wholedisk probe"));
+		DBG(LOWPROBE, ul_debug("allocate a wholedisk probe"));
 
 		pr->disk_probe = blkid_new_probe_from_filename(disk_path);
 
@@ -1599,7 +1599,7 @@ int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
 	if (len)
 		*len = v->len;
 
-	DBG(LOWPROBE, blkid_debug("returning %s value", v->name));
+	DBG(LOWPROBE, ul_debug("returning %s value", v->name));
 	return 0;
 }
 
@@ -1662,7 +1662,7 @@ struct blkid_prval *__blkid_probe_lookup_value(blkid_probe pr, const char *name)
 		struct blkid_prval *v = &pr->vals[i];
 
 		if (v->name && strcmp(name, v->name) == 0) {
-			DBG(LOWPROBE, blkid_debug("returning %s value", v->name));
+			DBG(LOWPROBE, ul_debug("returning %s value", v->name));
 			return v;
 		}
 	}
@@ -1772,7 +1772,7 @@ void blkid_probe_set_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
 		return;
 
 	if (!size) {
-		DBG(LOWPROBE, blkid_debug("zeroize wiper"));
+		DBG(LOWPROBE, ul_debug("zeroize wiper"));
 		pr->wipe_size = pr->wipe_off = 0;
 		pr->wipe_chain = NULL;
 		return;
@@ -1789,7 +1789,7 @@ void blkid_probe_set_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
 	pr->wipe_chain = chn;
 
 	DBG(LOWPROBE,
-		blkid_debug("wiper set to %s::%s off=%jd size=%jd",
+		ul_debug("wiper set to %s::%s off=%jd size=%jd",
 			chn->driver->name,
 			chn->driver->idinfos[chn->idx]->name,
 			pr->wipe_off, pr->wipe_size));
@@ -1822,7 +1822,7 @@ void blkid_probe_use_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
 	struct blkid_chain *chn = NULL;
 
 	if (blkid_probe_is_wiped(pr, &chn, off, size) && chn) {
-		DBG(LOWPROBE, blkid_debug("previously wiped area modified "
+		DBG(LOWPROBE, ul_debug("previously wiped area modified "
 				       " -- ignore previous results"));
 		blkid_probe_set_wiper(pr, 0, 0);
 		blkid_probe_chain_reset_vals(pr, chn);

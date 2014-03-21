@@ -34,7 +34,7 @@ static int probe_sun_pt(blkid_probe pr,
 	}
 
 	if (sun_pt_checksum(l)) {
-		DBG(LOWPROBE, blkid_debug(
+		DBG(LOWPROBE, ul_debug(
 			"detected corrupted sun disk label -- ignore"));
 		goto nothing;
 	}
@@ -54,7 +54,7 @@ static int probe_sun_pt(blkid_probe pr,
 	/* sectors per cylinder (partition offset is in cylinders...) */
 	spc = be16_to_cpu(l->nhead) * be16_to_cpu(l->nsect);
 
-	DBG(LOWPROBE, blkid_debug("Sun VTOC sanity=%u version=%u nparts=%u",
+	DBG(LOWPROBE, ul_debug("Sun VTOC sanity=%u version=%u nparts=%u",
 			be32_to_cpu(l->vtoc.sanity),
 			be32_to_cpu(l->vtoc.version),
 			be16_to_cpu(l->vtoc.nparts)));

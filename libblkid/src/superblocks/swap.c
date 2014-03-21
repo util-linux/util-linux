@@ -49,11 +49,11 @@ static int swap_set_info(blkid_probe pr, const char *version)
 	/* SWAPSPACE2 - check for wrong version or zeroed pagecount */
 	if (strcmp(version, "1") == 0) {
 		if (hdr->version != 1 && swab32(hdr->version) != 1) {
-			DBG(LOWPROBE, blkid_debug("incorrect swap version"));
+			DBG(LOWPROBE, ul_debug("incorrect swap version"));
 			return 1;
 		}
 		if (hdr->lastpage == 0) {
-			DBG(LOWPROBE, blkid_debug("not set last swap page"));
+			DBG(LOWPROBE, ul_debug("not set last swap page"));
 			return 1;
 		}
 	}

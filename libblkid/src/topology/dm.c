@@ -57,7 +57,7 @@ static int probe_dm_tp(blkid_probe pr,
 	if (!cmd)
 		goto nothing;
 	if (pipe(dmpipe) < 0) {
-		DBG(LOWPROBE, blkid_debug("Failed to open pipe: errno=%d", errno));
+		DBG(LOWPROBE, ul_debug("Failed to open pipe: errno=%d", errno));
 		goto nothing;
 	}
 
@@ -91,11 +91,11 @@ static int probe_dm_tp(blkid_probe pr,
 
 		execv(dmargv[0], dmargv);
 
-		DBG(LOWPROBE, blkid_debug("Failed to execute %s: errno=%d", cmd, errno));
+		DBG(LOWPROBE, ul_debug("Failed to execute %s: errno=%d", cmd, errno));
 		exit(1);
 	}
 	case -1:
-		DBG(LOWPROBE, blkid_debug("Failed to forking: errno=%d", errno));
+		DBG(LOWPROBE, ul_debug("Failed to forking: errno=%d", errno));
 		goto nothing;
 	default:
 		break;

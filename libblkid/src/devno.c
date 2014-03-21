@@ -131,7 +131,7 @@ void blkid__scan_dir(char *dirname, dev_t devno, struct dir_list **list,
 
 		if (S_ISBLK(st.st_mode) && st.st_rdev == devno) {
 			*devname = blkid_strconcat(dirname, "/", dp->d_name);
-			DBG(DEVNO, blkid_debug("found 0x%llx at %s", (long long)devno,
+			DBG(DEVNO, ul_debug("found 0x%llx at %s", (long long)devno,
 				   *devname));
 			break;
 		}
@@ -193,7 +193,7 @@ static char *scandev_devno_to_devpath(dev_t devno)
 		struct dir_list *current = list;
 
 		list = list->next;
-		DBG(DEVNO, blkid_debug("directory %s", current->name));
+		DBG(DEVNO, ul_debug("directory %s", current->name));
 		blkid__scan_dir(current->name, devno, &new_list, &devname);
 		free(current->name);
 		free(current);
@@ -236,10 +236,10 @@ char *blkid_devno_to_devname(dev_t devno)
 		path = scandev_devno_to_devpath(devno);
 
 	if (!path) {
-		DBG(DEVNO, blkid_debug("blkid: couldn't find devno 0x%04lx",
+		DBG(DEVNO, ul_debug("blkid: couldn't find devno 0x%04lx",
 			   (unsigned long) devno));
 	} else {
-		DBG(DEVNO, blkid_debug("found devno 0x%04llx as %s", (long long)devno, path));
+		DBG(DEVNO, ul_debug("found devno 0x%04llx as %s", (long long)devno, path));
 	}
 
 	return path;
@@ -321,7 +321,7 @@ int blkid_driver_has_major(const char *drvname, int major)
 
 	fclose(f);
 
-	DBG(DEVNO, blkid_debug("major %d %s associated with '%s' driver",
+	DBG(DEVNO, ul_debug("major %d %s associated with '%s' driver",
 			major, match ? "is" : "is NOT", drvname));
 	return match;
 }

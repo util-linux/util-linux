@@ -36,6 +36,6 @@ void blkid_init_debug(int mask)
 		const char *date = NULL;
 
 		blkid_get_library_version(&ver, &date);
-		DBG(INIT, blkid_debug("library version: %s [%s]", ver, date));
+		DBG(INIT, ul_debug("library version: %s [%s]", ver, date));
 	}
 }

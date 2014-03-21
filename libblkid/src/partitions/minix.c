@@ -66,7 +66,7 @@ static int probe_minix_pt(blkid_probe pr,
 		size = dos_partition_get_size(p);
 
 		if (parent && !blkid_is_nested_dimension(parent, start, size)) {
-			DBG(LOWPROBE, blkid_debug(
+			DBG(LOWPROBE, ul_debug(
 				"WARNING: minix partition (%d) overflow "
 				"detected, ignore", i));
 			continue;

@@ -84,7 +84,7 @@ static int verify_tag(const char *devname, const char *name, const char *value)
 	if (!rc)
 		rc = memcmp(value, data, len);
 done:
-	DBG(EVALUATE, blkid_debug("%s: %s verification %s",
+	DBG(EVALUATE, ul_debug("%s: %s verification %s",
 			devname, name, rc == 0 ? "PASS" : "FAILED"));
 	if (fd >= 0)
 		close(fd);
@@ -109,7 +109,7 @@ int blkid_send_uevent(const char *devname, const char *action)
 	FILE *f;
 	int rc = -1;
 
-	DBG(EVALUATE, blkid_debug("%s: uevent '%s' requested", devname, action));
+	DBG(EVALUATE, ul_debug("%s: uevent '%s' requested", devname, action));
 
 	if (!devname || !action)
 		return -1;
@@ -125,9 +125,9 @@ int blkid_send_uevent(const char *devname, const char *action)
 		if (fputs(action, f) >= 0)
 			rc = 0;
 		if (close_stream(f) != 0)
-			DBG(EVALUATE, blkid_debug("write failed: %s", uevent));
+			DBG(EVALUATE, ul_debug("write failed: %s", uevent));
 	}
-	DBG(EVALUATE, blkid_debug("%s: send uevent %s",
+	DBG(EVALUATE, ul_debug("%s: send uevent %s",
 			uevent, rc == 0 ? "SUCCES" : "FAILED"));
 	return rc;
 }
@@ -139,7 +139,7 @@ static char *evaluate_by_udev(const char *token, const char *value, int uevent)
 	size_t len;
 	struct stat st;
 
-	DBG(EVALUATE, blkid_debug("evaluating by udev %s=%s", token, value));
+	DBG(EVALUATE, ul_debug("evaluating by udev %s=%s", token, value));
 
 	if (!strcmp(token, "UUID"))
 		strcpy(dev, _PATH_DEV_BYUUID "/");
@@ -150,7 +150,7 @@ static char *evaluate_by_udev(const char *token, const char *value, int uevent)
 	else if (!strcmp(token, "PARTUUID"))
 		strcpy(dev, _PATH_DEV_BYPARTUUID "/");
 	else {
-		DBG(EVALUATE, blkid_debug("unsupported token %s", token));
+		DBG(EVALUATE, ul_debug("unsupported token %s", token));
 		return NULL;	/* unsupported tag */
 	}
 
@@ -158,7 +158,7 @@ static char *evaluate_by_udev(const char *token, const char *value, int uevent)
 	if (blkid_encode_string(value, &dev[len], sizeof(dev) - len) != 0)
 		return NULL;
 
-	DBG(EVALUATE, blkid_debug("expected udev link: %s", dev));
+	DBG(EVALUATE, ul_debug("expected udev link: %s", dev));
 
 	if (stat(dev, &st))
 		goto failed;	/* link or device does not exist */
@@ -177,7 +177,7 @@ static char *evaluate_by_udev(const char *token, const char *value, int uevent)
 	return path;
 
 failed:
-	DBG(EVALUATE, blkid_debug("failed to evaluate by udev"));
+	DBG(EVALUATE, ul_debug("failed to evaluate by udev"));
 
 	if (uevent && path)
 		blkid_send_uevent(path, "change");
@@ -191,7 +191,7 @@ static char *evaluate_by_scan(const char *token, const char *value,
 	blkid_cache c = cache ? *cache : NULL;
 	char *res;
 
-	DBG(EVALUATE, blkid_debug("evaluating by blkid scan %s=%s", token, value));
+	DBG(EVALUATE, ul_debug("evaluating by blkid scan %s=%s", token, value));
 
 	if (!c) {
 		char *cachefile = blkid_get_cache_filename(conf);
@@ -232,7 +232,7 @@ char *blkid_evaluate_tag(const char *token, const char *value, blkid_cache *cach
 	if (!cache || !*cache)
 		blkid_init_debug(0);
 
-	DBG(EVALUATE, blkid_debug("evaluating  %s%s%s", token, value ? "=" : "",
+	DBG(EVALUATE, ul_debug("evaluating  %s%s%s", token, value ? "=" : "",
 		   value ? value : ""));
 
 	if (!value) {
@@ -260,7 +260,7 @@ char *blkid_evaluate_tag(const char *token, const char *value, blkid_cache *cach
 			break;
 	}
 
-	DBG(EVALUATE, blkid_debug("%s=%s evaluated as %s", token, value, ret));
+	DBG(EVALUATE, ul_debug("%s=%s evaluated as %s", token, value, ret));
 out:
 	blkid_free_config(conf);
 	free(t);

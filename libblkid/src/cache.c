@@ -99,7 +99,7 @@ int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
 
 	blkid_init_debug(0);
 
-	DBG(CACHE, blkid_debug("creating blkid cache (using %s)",
+	DBG(CACHE, ul_debug("creating blkid cache (using %s)",
 				filename ? filename : "default cache"));
 
 	if (!(cache = (blkid_cache) calloc(1, sizeof(struct blkid_struct_cache))))
@@ -133,9 +133,9 @@ void blkid_put_cache(blkid_cache cache)
 
 	(void) blkid_flush_cache(cache);
 
-	DBG(CACHE, blkid_debug("freeing cache struct"));
+	DBG(CACHE, ul_debug("freeing cache struct"));
 
-	/* DBG(CACHE, blkid_debug_dump_cache(cache)); */
+	/* DBG(CACHE, ul_debug_dump_cache(cache)); */
 
 	while (!list_empty(&cache->bic_devs)) {
 		blkid_dev dev = list_entry(cache->bic_devs.next,
@@ -154,7 +154,7 @@ void blkid_put_cache(blkid_cache cache)
 						   struct blkid_struct_tag,
 						   bit_names);
 
-			DBG(CACHE, blkid_debug("warning: unfreed tag %s=%s",
+			DBG(CACHE, ul_debug("warning: unfreed tag %s=%s",
 						bad->bit_name, bad->bit_val));
 			blkid_free_tag(bad);
 		}
@@ -184,11 +184,11 @@ void blkid_gc_cache(blkid_cache cache)
 	list_for_each_safe(p, pnext, &cache->bic_devs) {
 		blkid_dev dev = list_entry(p, struct blkid_struct_dev, bid_devs);
 		if (stat(dev->bid_name, &st) < 0) {
-			DBG(CACHE, blkid_debug("freeing %s", dev->bid_name));
+			DBG(CACHE, ul_debug("freeing %s", dev->bid_name));
 			blkid_free_dev(dev);
 			cache->bic_flags |= BLKID_BIC_FL_CHANGED;
 		} else {
-			DBG(CACHE, blkid_debug("Device %s exists", dev->bid_name));
+			DBG(CACHE, ul_debug("Device %s exists", dev->bid_name));
 		}
 	}
 }

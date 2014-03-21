@@ -50,7 +50,7 @@ static int parse_evaluate(struct blkid_config *conf, char *s)
 	}
 	return 0;
 err:
-	DBG(CONFIG, blkid_debug(
+	DBG(CONFIG, ul_debug(
 		"config file: unknown evaluation method '%s'.", s));
 	return -1;
 }
@@ -71,7 +71,7 @@ static int parse_next(FILE *fd, struct blkid_config *conf)
 			if (feof(fd))
 				s = strchr (buf, '\0');
 			else {
-				DBG(CONFIG, blkid_debug(
+				DBG(CONFIG, ul_debug(
 					"config file: missing newline at line '%s'.",
 					buf));
 				return -1;
@@ -102,7 +102,7 @@ static int parse_next(FILE *fd, struct blkid_config *conf)
 		if (*s && parse_evaluate(conf, s) == -1)
 			return -1;
 	} else {
-		DBG(CONFIG, blkid_debug(
+		DBG(CONFIG, ul_debug(
 			"config file: unknown option '%s'.", s));
 		return -1;
 	}
@@ -125,16 +125,16 @@ struct blkid_config *blkid_read_config(const char *filename)
 		return NULL;
 	conf->uevent = -1;
 
-	DBG(CONFIG, blkid_debug("reading config file: %s.", filename));
+	DBG(CONFIG, ul_debug("reading config file: %s.", filename));
 
 	f = fopen(filename, "r" UL_CLOEXECSTR);
 	if (!f) {
-		DBG(CONFIG, blkid_debug("%s: does not exist, using built-in default", filename));
+		DBG(CONFIG, ul_debug("%s: does not exist, using built-in default", filename));
 		goto dflt;
 	}
 	while (!feof(f)) {
 		if (parse_next(f, conf)) {
-			DBG(CONFIG, blkid_debug("%s: parse error", filename));
+			DBG(CONFIG, ul_debug("%s: parse error", filename));
 			goto err;
 		}
 	}

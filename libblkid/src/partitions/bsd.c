@@ -70,7 +70,7 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 			name = "openbsd";
 			break;
 		default:
-			DBG(LOWPROBE, blkid_debug(
+			DBG(LOWPROBE, ul_debug(
 				"WARNING: BSD label detected on unknown (0x%x) "
 				"primary partition",
 				blkid_partition_get_type(parent)));
@@ -88,7 +88,7 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		nparts = le16_to_cpu(l->d_npartitions);
 
 	else if (le16_to_cpu(l->d_npartitions) > BSD_MAXPARTITIONS)
-		DBG(LOWPROBE, blkid_debug(
+		DBG(LOWPROBE, ul_debug(
 			"WARNING: ignore %d more BSD partitions",
 			le16_to_cpu(l->d_npartitions) - BSD_MAXPARTITIONS));
 
@@ -105,13 +105,13 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 
 		if (parent && blkid_partition_get_start(parent) == start
 			   && blkid_partition_get_size(parent) == size) {
-			DBG(LOWPROBE, blkid_debug(
+			DBG(LOWPROBE, ul_debug(
 				"WARNING: BSD partition (%d) same like parent, "
 				"ignore", i));
 			continue;
 		}
 		if (parent && !blkid_is_nested_dimension(parent, start, size)) {
-			DBG(LOWPROBE, blkid_debug(
+			DBG(LOWPROBE, ul_debug(
 				"WARNING: BSD partition (%d) overflow "
 				"detected, ignore", i));
 			continue;

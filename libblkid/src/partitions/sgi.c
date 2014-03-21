@@ -32,7 +32,7 @@ static int probe_sgi_pt(blkid_probe pr,
 	}
 
 	if (sgi_pt_checksum(l)) {
-		DBG(LOWPROBE, blkid_debug(
+		DBG(LOWPROBE, ul_debug(
 			"detected corrupted sgi disk label -- ignore"));
 		goto nothing;
 	}

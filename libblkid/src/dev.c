@@ -49,7 +49,7 @@ void blkid_free_dev(blkid_dev dev)
 		return;
 
 	DBG(DEV,
-	    blkid_debug("  freeing dev %s (%s)", dev->bid_name, dev->bid_type ?
+	    ul_debug("  freeing dev %s (%s)", dev->bid_name, dev->bid_type ?
 		   dev->bid_type : "(null)"));
 	DBG(DEV, blkid_debug_dump_dev(dev));
 
@@ -72,7 +72,6 @@ const char *blkid_dev_devname(blkid_dev dev)
 	return dev ? dev->bid_name : NULL;
 }
 
-#ifdef CONFIG_BLKID_DEBUG
 void blkid_debug_dump_dev(blkid_dev dev)
 {
 	struct list_head *p;
@@ -97,7 +96,6 @@ void blkid_debug_dump_dev(blkid_dev dev)
 			fprintf(stderr, "    tag: NULL\n");
 	}
 }
-#endif
 
 /*
  * dev iteration routines for the public libblkid interface.

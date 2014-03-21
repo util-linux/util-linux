@@ -60,7 +60,7 @@ static int get_minix_version(const unsigned char *data, int *other_endian)
 	if (!version)
 		return -1;
 
-	DBG(LOWPROBE, blkid_debug("minix version %d detected [%s]", version,
+	DBG(LOWPROBE, ul_debug("minix version %d detected [%s]", version,
 #if defined(WORDS_BIGENDIAN)
 	*other_endian ? "LE" : "BE"
 #else

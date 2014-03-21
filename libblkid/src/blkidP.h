@@ -13,9 +13,6 @@
 #ifndef _BLKID_BLKIDP_H
 #define _BLKID_BLKIDP_H
 
-/* support debug output if LIBBLKID_DEBUG env. variable is set */
-#define CONFIG_BLKID_DEBUG 1
-
 /* Always confirm that /dev/disk-by symlinks match with LABEL/UUID on device */
 /* #define CONFIG_BLKID_VERIFY_UDEV 1 */
 
@@ -318,10 +315,6 @@ struct blkid_struct_cache
 #define BLKID_PRI_LVM	20
 #define BLKID_PRI_MD	10
 
-#if defined(TEST_PROGRAM) && !defined(CONFIG_BLKID_DEBUG)
-#define CONFIG_BLKID_DEBUG
-#endif
-
 #define BLKID_DEBUG_CACHE	0x0001
 #define BLKID_DEBUG_DUMP	0x0002
 #define BLKID_DEBUG_DEV		0x0004
@@ -338,23 +331,12 @@ struct blkid_struct_cache
 #define BLKID_DEBUG_INIT	0x8000
 #define BLKID_DEBUG_ALL		0xFFFF
 
-#define BLKID_DEF_FLAG(m) UL_DEFINE_FLAG(BLKID_DEBUG_, m)
-
 UL_DEBUG_DECLARE_MASK(libblkid);
+#define DBG(m, x) __UL_DBG(libblkid, BLKID_DEBUG_, m, x)
+
 extern void blkid_debug_dump_dev(blkid_dev dev);
 extern void blkid_debug_dump_tag(blkid_tag tag);
 
-#define DBG(m, x) do { __UL_DBG(libblkid, BLKID_DEBUG_, m, x); } while (0)
-
-static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
-blkid_debug(const char *mesg, ...)
-{
-	va_list ap;
-	va_start(ap, mesg);
-	vfprintf(stderr, mesg, ap);
-	va_end(ap);
-	fputc('\n', stderr);
-}
 
 /* devno.c */
 struct dir_list {

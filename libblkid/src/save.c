@@ -33,7 +33,7 @@ static int save_dev(blkid_dev dev, FILE *file)
 	if (!dev || dev->bid_name[0] != '/')
 		return 0;
 
-	DBG(SAVE, blkid_debug("device %s, type %s", dev->bid_name, dev->bid_type ?
+	DBG(SAVE, ul_debug("device %s, type %s", dev->bid_name, dev->bid_type ?
 		   dev->bid_type : "(null)"));
 
 	fprintf(file, "<device DEVNO=\"0x%04lx\" TIME=\"%ld.%ld\"",
@@ -70,7 +70,7 @@ int blkid_flush_cache(blkid_cache cache)
 
 	if (list_empty(&cache->bic_devs) ||
 	    !(cache->bic_flags & BLKID_BIC_FL_CHANGED)) {
-		DBG(SAVE, blkid_debug("skipping cache file write"));
+		DBG(SAVE, ul_debug("skipping cache file write"));
 		return 0;
 	}
 
@@ -89,7 +89,7 @@ int blkid_flush_cache(blkid_cache cache)
 						S_IRUSR|S_IRGRP|S_IROTH|
 						S_IXUSR|S_IXGRP|S_IXOTH) != 0
 		    && errno != EEXIST) {
-			DBG(SAVE, blkid_debug("can't create %s directory for cache file",
+			DBG(SAVE, ul_debug("can't create %s directory for cache file",
 					BLKID_RUNTIME_DIR));
 			return 0;
 		}
@@ -98,7 +98,7 @@ int blkid_flush_cache(blkid_cache cache)
 	/* If we can't write to the cache file, then don't even try */
 	if (((ret = stat(filename, &st)) < 0 && errno != ENOENT) ||
 	    (ret == 0 && access(filename, W_OK) < 0)) {
-		DBG(SAVE, blkid_debug("can't write to cache file %s", filename));
+		DBG(SAVE, ul_debug("can't write to cache file %s", filename));
 		return 0;
 	}
 
@@ -116,7 +116,7 @@ int blkid_flush_cache(blkid_cache cache)
 			fd = mkostemp(tmp, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
 			if (fd >= 0) {
 				if (fchmod(fd, 0644) != 0)
-					DBG(SAVE, blkid_debug("%s: fchmod failed", filename));
+					DBG(SAVE, ul_debug("%s: fchmod failed", filename));
 				else if ((file = fdopen(fd, "w" UL_CLOEXECSTR)))
 					opened = tmp;
 				if (!file)
@@ -130,7 +130,7 @@ int blkid_flush_cache(blkid_cache cache)
 		opened = filename;
 	}
 
-	DBG(SAVE, blkid_debug("writing cache file %s (really %s)",
+	DBG(SAVE, ul_debug("writing cache file %s (really %s)",
 		   filename, opened));
 
 	if (!file) {
@@ -152,12 +152,12 @@ int blkid_flush_cache(blkid_cache cache)
 	}
 
 	if (close_stream(file) != 0)
-		DBG(SAVE, blkid_debug("write failed: %s", filename));
+		DBG(SAVE, ul_debug("write failed: %s", filename));
 
 	if (opened != filename) {
 		if (ret < 0) {
 			unlink(opened);
-			DBG(SAVE, blkid_debug("unlinked temp cache %s", opened));
+			DBG(SAVE, ul_debug("unlinked temp cache %s", opened));
 		} else {
 			char *backup;
 
@@ -166,17 +166,17 @@ int blkid_flush_cache(blkid_cache cache)
 				sprintf(backup, "%s.old", filename);
 				unlink(backup);
 				if (link(filename, backup)) {
-					DBG(SAVE, blkid_debug("can't link %s to %s",
+					DBG(SAVE, ul_debug("can't link %s to %s",
 							filename, backup));
 				}
 				free(backup);
 			}
 			if (rename(opened, filename)) {
 				ret = errno;
-				DBG(SAVE, blkid_debug("can't rename %s to %s",
+				DBG(SAVE, ul_debug("can't rename %s to %s",
 						opened, filename));
 			} else {
-				DBG(SAVE, blkid_debug("moved temp cache %s", opened));
+				DBG(SAVE, ul_debug("moved temp cache %s", opened));
 			}
 		}
 	}

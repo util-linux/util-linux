@@ -114,7 +114,7 @@ static int probe_nilfs2(blkid_probe pr, const struct blkid_idmag *mag)
 			   le64_to_cpu(sbb->s_last_cno));
 	sb = swp ? sbb : sbp;
 
-	DBG(LOWPROBE, blkid_debug("nilfs2: primary=%d, backup=%d, swap=%d",
+	DBG(LOWPROBE, ul_debug("nilfs2: primary=%d, backup=%d, swap=%d",
 				valid[0], valid[1], swp));
 
 	if (strlen(sb->s_volume_name))
