@@ -24,7 +24,6 @@
 # define assert(x)
 #endif
 
-
 /*
  * Generic iterator
  */
@@ -68,12 +67,17 @@ struct libscols_column {
 	size_t  width_avg;	/* average width, used to detect extreme fields */
 	double	width_hint;	/* hint (N < 1 is in percent of termwidth) */
 
-	int	flags;
 	int	is_extreme;
 	char	*color;		/* default column color */
 
 	struct libscols_cell	header;
 	struct list_head	cl_columns;
+
+	unsigned int 	trunc		:1; /* truncate fields data if necessary */
+	unsigned int 	tree		:1; /* use tree "ascii art" */
+	unsigned int 	right		:1; /* align to the right */
+	unsigned int 	strict_width	:1; /* don't reduce width if column is empty */
+	unsigned int 	no_extremes	:1; /* ignore extreme fields when count column width*/
 };
 
 /*
@@ -106,12 +110,20 @@ struct libscols_table {
 	size_t	termwidth;	/* terminal width */
 	size_t  termreduce;	/* extra blank space */
 	int	is_term;	/* is a tty? */
-	int	flags;
 	FILE	*out;		/* output stream */
 
 	struct list_head	tb_columns;
 	struct list_head	tb_lines;
 	struct libscols_symbols	*symbols;
+
+	/* flags */
+	unsigned int	colors_wanted	:1;
+	unsigned int 	raw		:1;
+	unsigned int 	ascii		:1;
+	unsigned int 	no_headings	:1;
+	unsigned int 	export		:1;
+	unsigned int 	max		:1;
+	unsigned int 	tree		:1;
 };
 
 #define IS_ITER_FORWARD(_i)	((_i)->direction == SCOLS_ITER_FORWARD)

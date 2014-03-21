@@ -34,22 +34,27 @@ int main(int argc, char *argv[])
 {
 	struct libscols_table *tb;
 	struct libscols_column *cl;
-	int flags = 0, notree = 0, clone = 0, i, color = 0;
+	int notree = 0, clone = 0, i, color = 0;
+
+	tb = scols_new_table(NULL);
+	if (!tb)
+		err(EXIT_FAILURE, "table initialization failed");
 
 	if (argc == 2 && !strcmp(argv[1], "--help")) {
 		printf("%s [--max | --ascii | --raw | --export | --list | "
 		       "--color | --colortree | --clone | --clonetree]\n",
 				program_invocation_short_name);
+		scols_unref_table(tb);
 		return EXIT_SUCCESS;
 	} else if (argc == 2 && !strcmp(argv[1], "--max")) {
-		flags |= SCOLS_FL_MAX;
+		scols_table_set_max(tb, 1);
 	} else if (argc == 2 && !strcmp(argv[1], "--ascii")) {
-		flags |= SCOLS_FL_ASCII;
+		scols_table_set_ascii(tb, 1);
 	} else if (argc == 2 && !strcmp(argv[1], "--raw")) {
-		flags |= SCOLS_FL_RAW;
+		scols_table_set_raw(tb, 1);
 		notree = 1;
 	} else if (argc == 2 && !strcmp(argv[1], "--export")) {
-		flags |= SCOLS_FL_EXPORT;
+		scols_table_set_export(tb, 1);
 		notree = 1;
 	} else if (argc == 2 && !strcmp(argv[1], "--list")) {
 		notree = 1;
@@ -71,23 +76,23 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	tb = scols_new_table(flags, NULL);
-	if (!tb)
-		err(EXIT_FAILURE, "table initialization failed");
+	cl = scols_table_new_column(tb, "NAME", 0.3);
+	scols_table_set_tree(tb, !notree);
+	scols_table_enable_colors(tb, color);
 
-	cl = scols_table_new_column(tb, "NAME", 0.3, notree ? 0 : SCOLS_FL_TREE);
 	if (color)
 		scols_column_set_color(cl, UL_COLOR_RED);
 
-	cl = scols_table_new_column(tb, "FOO", 0.3, SCOLS_FL_TRUNC);
+	cl = scols_table_new_column(tb, "FOO", 0.3);
+	scols_column_set_trunc(cl, 1);
 	if (color) {
 		struct libscols_cell *h = scols_column_get_header(cl);
 
 		scols_column_set_color(cl, UL_COLOR_BOLD_GREEN);
 		scols_cell_set_color(h, UL_COLOR_GREEN);
 	}
-	scols_table_new_column(tb, "BAR", 0.3, 0);
-	scols_table_new_column(tb, "PATH", 0.3, 0);
+	scols_table_new_column(tb, "BAR", 0.3);
+	scols_table_new_column(tb, "PATH", 0.3);
 
 	for (i = 0; i < 2; i++) {
 		struct libscols_line *ln = scols_table_new_line(tb, NULL);

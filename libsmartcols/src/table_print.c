@@ -40,7 +40,7 @@ static void print_data(struct libscols_table *tb,
 		data = "";
 
 	/* raw mode */
-	if (tb->flags & SCOLS_FL_RAW) {
+	if (scols_table_is_raw(tb)) {
 		fputs_nonblank(data, tb->out);
 		if (!is_last_column(tb, cl))
 			fputc(' ', tb->out);
@@ -48,7 +48,7 @@ static void print_data(struct libscols_table *tb,
 	}
 
 	/* NAME=value mode */
-	if (tb->flags & SCOLS_FL_EXPORT) {
+	if (scols_table_is_export(tb)) {
 		fprintf(tb->out, "%s=", scols_cell_get_data(&cl->header));
 		fputs_quoted(data, tb->out);
 		if (!is_last_column(tb, cl))
@@ -56,7 +56,7 @@ static void print_data(struct libscols_table *tb,
 		return;
 	}
 
-	if (tb->is_term) {
+	if (tb->colors_wanted) {
 		if (ce && !color)
 			color = ce->color;
 		if (ln && !color)
@@ -77,11 +77,11 @@ static void print_data(struct libscols_table *tb,
 	}
 	width = cl->width;
 
-	if (is_last_column(tb, cl) && len < width && !(tb->flags & SCOLS_FL_MAX))
+	if (is_last_column(tb, cl) && len < width && !scols_table_is_max(tb))
 		width = len;
 
 	/* truncate data */
-	if (len > width && (cl->flags & SCOLS_FL_TRUNC)) {
+	if (len > width && scols_column_is_trunc(cl)) {
 		if (data)
 			len = mbs_truncate(data, &width);
 		if (!data || len == (size_t) -1) {
@@ -90,7 +90,7 @@ static void print_data(struct libscols_table *tb,
 		}
 	}
 	if (data) {
-		if (!(tb->flags & SCOLS_FL_RAW) && (cl->flags & SCOLS_FL_RIGHT)) {
+		if (!scols_table_is_raw(tb) && scols_column_is_right(cl)) {
 			size_t xw = cl->width;
 			if (color)
 				fputs(color, tb->out);
@@ -112,7 +112,7 @@ static void print_data(struct libscols_table *tb,
 		fputc(' ', tb->out);		/* padding */
 
 	if (!is_last_column(tb, cl)) {
-		if (len > width && !(cl->flags & SCOLS_FL_TRUNC)) {
+		if (len > width && !scols_column_is_trunc(cl)) {
 			fputc('\n', tb->out);
 			for (i = 0; i <= (size_t) cl->seqnum; i++) {
 				struct libscols_column *x = scols_table_get_column(tb, i);
@@ -177,7 +177,7 @@ static char *line_get_data(struct libscols_table *tb,
 	if (!data)
 		return NULL;
 
-	if (!(cl->flags & SCOLS_FL_TREE)) {
+	if (!scols_column_is_tree(cl)) {
 		strncpy(buf, data, bufsz);
 		buf[bufsz - 1] = '\0';
 		return buf;
@@ -231,8 +231,8 @@ static void print_header(struct libscols_table *tb, char *buf, size_t bufsz)
 
 	assert(tb);
 
-	if ((tb->flags & SCOLS_FL_NOHEADINGS) ||
-	    (tb->flags & SCOLS_FL_EXPORT) ||
+	if (scols_table_is_no_headings(tb) ||
+	    scols_table_is_export(tb) ||
 	    list_empty(&tb->tb_lines))
 		return;
 
@@ -333,7 +333,7 @@ static void count_column_width(struct libscols_table *tb,
 
 		if (cl->is_extreme && len > cl->width_avg * 2)
 			continue;
-		else if (cl->flags & SCOLS_FL_NOEXTREMES) {
+		else if (scols_column_is_no_extremes(cl)) {
 			sum += len;
 			count++;
 		}
@@ -353,7 +353,7 @@ static void count_column_width(struct libscols_table *tb,
 		cl->width_min = mbs_safe_width(scols_cell_get_data(&cl->header));
 
 	/* enlarge to minimal width */
-	if (cl->width < cl->width_min && !(cl->flags & SCOLS_FL_STRICTWIDTH))
+	if (cl->width < cl->width_min && !scols_column_is_strict_width(cl))
 		cl->width = cl->width_min;
 
 	/* use relative size for large columns */
@@ -436,7 +436,7 @@ static void recount_widths(struct libscols_table *tb, char *buf, size_t bufsz)
 			}
 		}
 
-		if (width < tb->termwidth && (tb->flags & SCOLS_FL_MAX)) {
+		if (width < tb->termwidth && scols_table_is_max(tb)) {
 			/* try enlarge all columns */
 			while (width < tb->termwidth) {
 				scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
@@ -452,7 +452,7 @@ static void recount_widths(struct libscols_table *tb, char *buf, size_t bufsz)
 			struct libscols_column *cl = list_entry(
 				tb->tb_columns.prev, struct libscols_column, cl_columns);
 
-			if (!(cl->flags & SCOLS_FL_RIGHT) && tb->termwidth - width > 0) {
+			if (!scols_column_is_right(cl) && tb->termwidth - width > 0) {
 				cl->width += tb->termwidth - width;
 				width = tb->termwidth;
 			}
@@ -471,11 +471,11 @@ static void recount_widths(struct libscols_table *tb, char *buf, size_t bufsz)
 		while (scols_table_next_column(tb, &itr, &cl) == 0) {
 			if (width <= tb->termwidth)
 				break;
-			if (cl->width_hint > 1 && !(cl->flags & SCOLS_FL_TRUNC))
+			if (cl->width_hint > 1 && !scols_column_is_trunc(cl))
 				continue;	/* never truncate columns with absolute sizes */
-			if (cl->flags & SCOLS_FL_TREE)
+			if (scols_column_is_tree(cl))
 				continue;	/* never truncate the tree */
-			if (trunc_only && !(cl->flags & SCOLS_FL_TRUNC))
+			if (trunc_only && !scols_column_is_trunc(cl))
 				continue;
 			if (cl->width == cl->width_min)
 				continue;
@@ -570,10 +570,10 @@ int scols_print_table(struct libscols_table *tb)
 	if (!line)
 		return -ENOMEM;
 
-	if (!((tb->flags & SCOLS_FL_RAW) || (tb->flags & SCOLS_FL_EXPORT)))
+	if (!(scols_table_is_raw(tb) || scols_table_is_export(tb)))
 		recount_widths(tb, line, line_sz);
 
-	if (tb->flags & SCOLS_FL_TREE)
+	if (scols_table_is_tree(tb))
 		print_tree(tb, line, line_sz);
 	else
 		print_table(tb, line, line_sz);
