@@ -17,28 +17,29 @@
 
 /* l - library name, p - flag prefix, m - flag postfix, x - function */
 # define __UL_DBG(l, p, m, x) \
-			do { \
-				if ((p ## m) & l ## _debug_mask) { \
-					fprintf(stderr, "%d: %s: %8s: ", getpid(), # l, # m); \
-					x; \
-				} \
-			} while (0)
+	do { \
+		if ((p ## m) & l ## _debug_mask) { \
+			fprintf(stderr, "%d: %s: %8s: ", getpid(), # l, # m); \
+			x; \
+		} \
+	} while (0)
 
-#define __UL_INIT_DEBUG(lib, pref, mask, env) do { \
-	if (lib ## _debug_mask & pref ## INIT) \
-	; \
-	else if (!mask) { \
-		char *str = getenv(# env); \
-		if (str) \
-			lib ## _debug_mask = strtoul(str, 0, 0); \
-	} else \
-		lib ## _debug_mask = mask; \
-	lib ## _debug_mask |= pref ## INIT; \
-	if (lib ## _debug_mask != pref ## INIT) { \
-		__UL_DBG(lib, pref, INIT, ul_debug("library debug mask: 0x%04x", \
-				lib ## _debug_mask)); \
-	} \
-} while (0)
+#define __UL_INIT_DEBUG(lib, pref, mask, env) \
+	do { \
+		if (lib ## _debug_mask & pref ## INIT) \
+		; \
+		else if (!mask) { \
+			char *str = getenv(# env); \
+			if (str) \
+				lib ## _debug_mask = strtoul(str, 0, 0); \
+		} else \
+			lib ## _debug_mask = mask; \
+		lib ## _debug_mask |= pref ## INIT; \
+		if (lib ## _debug_mask != pref ## INIT) { \
+			__UL_DBG(lib, pref, INIT, ul_debug("library debug mask: 0x%04x", \
+					lib ## _debug_mask)); \
+		} \
+	} while (0)
 
 static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
 ul_debug(const char *mesg, ...)
