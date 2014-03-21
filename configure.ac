@@ -145,7 +145,7 @@ UL_SET_ARCH([HPPA], [hppa*])
 
 AC_SYS_LARGEFILE
 
-AM_GNU_GETTEXT_VERSION([0.18])
+AM_GNU_GETTEXT_VERSION([0.18.2])
 AM_GNU_GETTEXT([external])
 
 AS_IF([test -d "$srcdir/po"], [
