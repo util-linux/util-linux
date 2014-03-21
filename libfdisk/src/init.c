@@ -1,8 +1,7 @@
 
 #include "fdiskP.h"
 
-int fdisk_debug_mask;
-
+UL_DEBUG_DEFINE_MASK(libfdisk);
 
 /**
  * fdisk_init_debug:
@@ -16,18 +15,5 @@ int fdisk_debug_mask;
  */
 void fdisk_init_debug(int mask)
 {
-	if (fdisk_debug_mask & FDISK_DEBUG_INIT)
-		return;
-	if (!mask) {
-		char *str = getenv("LIBFDISK_DEBUG");
-		if (str)
-			fdisk_debug_mask = strtoul(str, 0, 0);
-	} else
-		fdisk_debug_mask = mask;
-
-	if (fdisk_debug_mask)
-		fprintf(stderr, "libfdisk: debug mask set to 0x%04x.\n",
-		       fdisk_debug_mask);
-
-	fdisk_debug_mask |= FDISK_DEBUG_INIT;
+	__UL_INIT_DEBUG(libfdisk, FDISK_DEBUG_, mask, LIBFDISK_DEBUG);
 }

@@ -15,7 +15,7 @@
 
 #include "blkidP.h"
 
-int libblkid_debug_mask;
+UL_DEBUG_DEFINE_MASK(libblkid);
 
 /**
  * blkid_init_debug:
@@ -29,23 +29,11 @@ int libblkid_debug_mask;
  */
 void blkid_init_debug(int mask)
 {
-	if (libblkid_debug_mask & BLKID_DEBUG_INIT)
-		return;
-	if (!mask) {
-		char *str = getenv("LIBBLKID_DEBUG");
-		if (str)
-			libblkid_debug_mask = strtoul(str, 0, 0);
-	} else
-		libblkid_debug_mask = mask;
-
-	libblkid_debug_mask |= BLKID_DEBUG_INIT;
+	__UL_INIT_DEBUG(libblkid, BLKID_DEBUG_, mask, LIBBLKID_DEBUG);
 
 	if (libblkid_debug_mask != BLKID_DEBUG_INIT) {
 		const char *ver = NULL;
 		const char *date = NULL;
-
-		DBG(INIT, blkid_debug("library debug mask: 0x%04x",
-				libblkid_debug_mask));
 
 		blkid_get_library_version(&ver, &date);
 		DBG(INIT, blkid_debug("library version: %s [%s]", ver, date));

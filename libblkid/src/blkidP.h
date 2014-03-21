@@ -30,6 +30,7 @@
 #include "bitops.h"	/* $(top_srcdir)/include/ */
 #include "blkdev.h"
 
+#include "debug.h"
 #include "blkid.h"
 #include "list.h"
 
@@ -337,17 +338,13 @@ struct blkid_struct_cache
 #define BLKID_DEBUG_INIT	0x8000
 #define BLKID_DEBUG_ALL		0xFFFF
 
-#ifdef CONFIG_BLKID_DEBUG
-extern int libblkid_debug_mask;
+#define BLKID_DEF_FLAG(m) UL_DEFINE_FLAG(BLKID_DEBUG_, m)
+
+UL_DEBUG_DECLARE_MASK(libblkid);
 extern void blkid_debug_dump_dev(blkid_dev dev);
 extern void blkid_debug_dump_tag(blkid_tag tag);
 
-# define DBG(m,x)	do { \
-				if ((BLKID_DEBUG_ ## m) & libblkid_debug_mask) { \
-					fprintf(stderr, "%d: libblkid: %8s: ", getpid(), # m); \
-					x; \
-				} \
-			} while (0)
+#define DBG(m, x) do { __UL_DBG(libblkid, BLKID_DEBUG_, m, x); } while (0)
 
 static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
 blkid_debug(const char *mesg, ...)
@@ -358,10 +355,6 @@ blkid_debug(const char *mesg, ...)
 	va_end(ap);
 	fputc('\n', stderr);
 }
-
-#else /* !CONFIG_BLKID_DEBUG */
-# define DBG(m,x) do { ; } while (0)
-#endif /* CONFIG_BLKID_DEBUG */
 
 /* devno.c */
 struct dir_list {

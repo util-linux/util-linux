@@ -20,6 +20,7 @@
 
 #include "c.h"
 #include "list.h"
+#include "debug.h"
 #include "libmount.h"
 
 /* features */
@@ -52,9 +53,12 @@
 #define MNT_DEBUG_DIFF		(1 << 11)
 #define MNT_DEBUG_ALL		0xFFFF
 
-#ifdef CONFIG_LIBMOUNT_DEBUG
+#define MNT_DEF_FLAG(m) UL_DEFINE_FLAG(MNT_DEBUG_, m)
+
 # include <stdio.h>
 # include <stdarg.h>
+
+#define DBG(m, x) do { __UL_DBG(libmount, MNT_DEBUG_, m, x); } while (0)
 
 # define WARN_REFCOUNT(m, o, r) \
 			do { \
@@ -69,20 +73,13 @@
 				} \
 			} while (0)
 
-# define DBG(m, x)	do { \
-				if ((MNT_DEBUG_ ## m) & libmount_debug_mask) { \
-					fprintf(stderr, "%d: libmount: %8s: ", getpid(), # m); \
-					x; \
-				} \
-			} while (0)
-
 # define DBG_FLUSH	do { \
 				if (libmount_debug_mask && \
 				    libmount_debug_mask != MNT_DEBUG_INIT) \
 					fflush(stderr); \
 			} while(0)
 
-extern int libmount_debug_mask;
+UL_DEBUG_DECLARE_MASK(libmount);
 
 static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
 mnt_debug(const char *mesg, ...)
@@ -106,13 +103,6 @@ mnt_debug_h(void *handler, const char *mesg, ...)
 	va_end(ap);
 	fputc('\n', stderr);
 }
-
-#else /* !CONFIG_LIBMOUNT_DEBUG */
-# define WARN_REFCOUNT(m,o,r)  do { ; } while (0)
-# define ON_DBG(m,x) do { ; } while (0)
-# define DBG(m,x) do { ; } while (0)
-# define DBG_FLUSH do { ; } while(0)
-#endif
 
 /* extension for files in the directory */
 #define MNT_MNTTABDIR_EXT	".fstab"
