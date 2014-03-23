@@ -20,45 +20,52 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_LAST"
 
+WTMP_FILE=${TS_OUTDIR}/wtmp
+rm -f $WTMP_FILE
+BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
+ln -s ${TS_SELF}/wtmp.${BYTE_ORDER} $WTMP_FILE
+
 export LANG=C
 export TZ=GMT
 
 >| $TS_OUTPUT
 
 ts_log "~~~ basic output ~~~"
-$TS_CMD_LAST -f $TS_SELF/wtmp >> $TS_OUTPUT 2>/dev/null
+$TS_CMD_LAST -f $WTMP_FILE >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ include system ~~~"
-$TS_CMD_LAST -f $TS_SELF/wtmp -x >> $TS_OUTPUT 2>/dev/null
+$TS_CMD_LAST -f $WTMP_FILE -x >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ dns short ~~~"
-$TS_CMD_LAST -f $TS_SELF/wtmp -d root >> $TS_OUTPUT 2>/dev/null
+$TS_CMD_LAST -f $WTMP_FILE -d root >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ dns long ~~~"
-$TS_CMD_LAST -f $TS_SELF/wtmp -w -d root >> $TS_OUTPUT 2>/dev/null
+$TS_CMD_LAST -f $WTMP_FILE -w -d root >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ dns host last ~~~"
-$TS_CMD_LAST -f $TS_SELF/wtmp -a -d root >> $TS_OUTPUT 2>/dev/null
+$TS_CMD_LAST -f $WTMP_FILE -a -d root >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ show ip ~~~"
-$TS_CMD_LAST -f $TS_SELF/wtmp -i torvalds >> $TS_OUTPUT 2>/dev/null
+$TS_CMD_LAST -f $WTMP_FILE -i torvalds >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ no host ~~~"
-$TS_CMD_LAST -f $TS_SELF/wtmp -R torvalds >> $TS_OUTPUT 2>/dev/null
+$TS_CMD_LAST -f $WTMP_FILE -R torvalds >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ full times ~~~"
-$TS_CMD_LAST -f $TS_SELF/wtmp -F >> $TS_OUTPUT 2>/dev/null
+$TS_CMD_LAST -f $WTMP_FILE -F >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ no time ~~~"
-$TS_CMD_LAST -f $TS_SELF/wtmp --time-format=notime >> $TS_OUTPUT 2>/dev/null
+$TS_CMD_LAST -f $WTMP_FILE --time-format=notime >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ iso-8601 time ~~~"
-$TS_CMD_LAST -f $TS_SELF/wtmp --time-format=iso -w >> $TS_OUTPUT 2>/dev/null
+$TS_CMD_LAST -f $WTMP_FILE --time-format=iso -w >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ since and until ~~~"
-$TS_CMD_LAST -f $TS_SELF/wtmp -s "2013-08-28 02:20" -t "2013-08-28 08:20" >> $TS_OUTPUT 2>/dev/null
+$TS_CMD_LAST -f $WTMP_FILE -s "2013-08-28 02:20" -t "2013-08-28 08:20" >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ present ~~~"
-$TS_CMD_LAST -f $TS_SELF/wtmp -p "2013-08-28 11:20" >> $TS_OUTPUT 2>/dev/null
+$TS_CMD_LAST -f $WTMP_FILE -p "2013-08-28 11:20" >> $TS_OUTPUT 2>/dev/null
+
+rm -f $WTMP_FILE
 
 ts_finalize
