@@ -250,6 +250,7 @@ int main(int argc, char *argv[])
 			/* otherwise try again */
 			continue;
 		case EIO:
+		case EBADF:		/* since Linux 3.4 (commit 55725513) */
 			/* Probably NFSv4 where flock() is emulated by fcntl().
 			 * Let's try to reopen in read-write mode.
 			 */
