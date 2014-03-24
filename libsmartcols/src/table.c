@@ -159,7 +159,8 @@ int scols_table_remove_columns(struct libscols_table *tb)
  */
 struct libscols_column *scols_table_new_column(struct libscols_table *tb,
 					       const char *name,
-					       double whint)
+					       double whint,
+					       int flags)
 {
 	struct libscols_column *cl;
 	struct libscols_cell *hr;
@@ -179,6 +180,10 @@ struct libscols_column *scols_table_new_column(struct libscols_table *tb,
 		goto err;
 
 	scols_column_set_whint(cl, whint);
+	scols_column_set_flags(cl, flags);
+
+	if (flags & SCOLS_FL_TREE)
+		scols_table_set_tree(tb, 1);
 
 	if (scols_table_add_column(tb, cl))	/* this increments column ref-counter */
 		goto err;

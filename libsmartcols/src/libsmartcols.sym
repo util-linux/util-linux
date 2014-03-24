@@ -10,6 +10,7 @@ global:
 	scols_cell_set_color;
 	scols_cell_set_data;
 	scols_column_get_color;
+	scols_column_get_flags;
 	scols_column_get_header;
 	scols_column_get_whint;
 	scols_column_is_no_extremes;
@@ -18,11 +19,7 @@ global:
 	scols_column_is_tree;
 	scols_column_is_trunc;
 	scols_column_set_color;
-	scols_column_set_no_extremes;
-	scols_column_set_right;
-	scols_column_set_strict_width;
-	scols_column_set_tree;
-	scols_column_set_trunc;
+	scols_column_set_flags;
 	scols_column_set_whint;
 	scols_copy_column;
 	scols_copy_line;

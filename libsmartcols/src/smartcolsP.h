@@ -67,17 +67,12 @@ struct libscols_column {
 	size_t  width_avg;	/* average width, used to detect extreme fields */
 	double	width_hint;	/* hint (N < 1 is in percent of termwidth) */
 
+	int	flags;
 	int	is_extreme;
 	char	*color;		/* default column color */
 
 	struct libscols_cell	header;
 	struct list_head	cl_columns;
-
-	unsigned int 	trunc		:1; /* truncate fields data if necessary */
-	unsigned int 	tree		:1; /* use tree "ascii art" */
-	unsigned int 	right		:1; /* align to the right */
-	unsigned int 	strict_width	:1; /* don't reduce width if column is empty */
-	unsigned int 	no_extremes	:1; /* ignore extreme fields when count column width*/
 };
 
 /*

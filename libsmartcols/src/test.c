@@ -76,23 +76,21 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	cl = scols_table_new_column(tb, "NAME", 0.3);
-	scols_table_set_tree(tb, !notree);
+	cl = scols_table_new_column(tb, "NAME", 0.3, notree ? 0 : SCOLS_FL_TREE);
 	scols_table_enable_colors(tb, color);
 
 	if (color)
 		scols_column_set_color(cl, UL_COLOR_RED);
 
-	cl = scols_table_new_column(tb, "FOO", 0.3);
-	scols_column_set_trunc(cl, 1);
+	cl = scols_table_new_column(tb, "FOO", 0.3, SCOLS_FL_TRUNC);
 	if (color) {
 		struct libscols_cell *h = scols_column_get_header(cl);
 
 		scols_column_set_color(cl, UL_COLOR_BOLD_GREEN);
 		scols_cell_set_color(h, "green"); /* a human-readable string is also legal */
 	}
-	scols_table_new_column(tb, "BAR", 0.3);
-	scols_table_new_column(tb, "PATH", 0.3);
+	scols_table_new_column(tb, "BAR", 0.3, 0);
+	scols_table_new_column(tb, "PATH", 0.3, 0);
 
 	for (i = 0; i < 2; i++) {
 		struct libscols_line *ln = scols_table_new_line(tb, NULL);
@@ -122,6 +120,7 @@ int main(int argc, char *argv[])
 		scols_line_set_data(ln, MYCOL_FOO, "a.b-foo-foo");
 		scols_line_set_data(ln, MYCOL_BAR, "barBar-A.B");
 		scols_line_set_data(ln, MYCOL_PATH, "/mnt/AAA/B");
+
 		if (color)
 			scols_cell_set_color(scols_line_get_cell(ln, MYCOL_FOO),
 					     UL_COLOR_MAGENTA);

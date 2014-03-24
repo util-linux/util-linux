@@ -33,6 +33,17 @@ enum {
 	SCOLS_ITER_BACKWARD
 };
 
+enum {
+	/*
+	 * Column flags
+	 */
+	SCOLS_FL_TRUNC       = (1 << 15),   /* truncate fields data if necessary */
+	SCOLS_FL_TREE        = (1 << 16),   /* use tree "ascii art" */
+	SCOLS_FL_RIGHT	     = (1 << 17),   /* align to the right */
+	SCOLS_FL_STRICTWIDTH = (1 << 18),   /* don't reduce width if column is empty */
+	SCOLS_FL_NOEXTREMES  = (1 << 19),   /* ignore extreme fields when count column width*/
+};
+
 extern struct libscols_iter *scols_new_iter(int direction);
 extern void scols_free_iter(struct libscols_iter *itr);
 extern void scols_reset_iter(struct libscols_iter *itr, int direction);
@@ -59,16 +70,13 @@ extern const char *scols_cell_get_color(const struct libscols_cell *ce);
 
 /* column.c */
 extern int scols_column_is_tree(struct libscols_column *cl);
-extern int scols_column_set_tree(struct libscols_column *cl, int enable);
 extern int scols_column_is_trunc(struct libscols_column *cl);
-extern int scols_column_set_trunc(struct libscols_column *cl, int enable);
 extern int scols_column_is_right(struct libscols_column *cl);
-extern int scols_column_set_right(struct libscols_column *cl, int enable);
 extern int scols_column_is_strict_width(struct libscols_column *cl);
-extern int scols_column_set_strict_width(struct libscols_column *cl, int enable);
 extern int scols_column_is_no_extremes(struct libscols_column *cl);
-extern int scols_column_set_no_extremes(struct libscols_column *cl, int enable);
 
+extern int scols_column_set_flags(struct libscols_column *cl, int flags);
+extern int scols_column_get_flags(struct libscols_column *cl);
 extern struct libscols_column *scols_new_column(void);
 extern void scols_ref_column(struct libscols_column *cl);
 extern void scols_unref_column(struct libscols_column *cl);
@@ -124,7 +132,7 @@ extern void scols_unref_table(struct libscols_table *tb);
 extern int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl);
 extern int scols_table_remove_column(struct libscols_table *tb, struct libscols_column *cl);
 extern int scols_table_remove_columns(struct libscols_table *tb);
-extern struct libscols_column *scols_table_new_column(struct libscols_table *tb, const char *name, double whint);
+extern struct libscols_column *scols_table_new_column(struct libscols_table *tb, const char *name, double whint, int flags);
 extern int scols_table_next_column(struct libscols_table *tb, struct libscols_iter *itr, struct libscols_column **cl);
 extern int scols_table_get_ncols(struct libscols_table *tb);
 extern int scols_table_get_nlines(struct libscols_table *tb);
