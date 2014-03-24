@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 		struct libscols_cell *h = scols_column_get_header(cl);
 
 		scols_column_set_color(cl, UL_COLOR_BOLD_GREEN);
-		scols_cell_set_color(h, UL_COLOR_GREEN);
+		scols_cell_set_color(h, "green"); /* a human-readable string is also legal */
 	}
 	scols_table_new_column(tb, "BAR", 0.3);
 	scols_table_new_column(tb, "PATH", 0.3);

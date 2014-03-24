@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "smartcolsP.h"
 
@@ -85,6 +86,12 @@ int scols_cell_set_color(struct libscols_cell *ce, const char *color)
 	if (!ce)
 		return -EINVAL;
 	if (color) {
+		if (isalnum(*color)) {
+			color = colorscheme_from_string(color);
+
+			if (!color)
+				return -EINVAL;
+		}
 		p = strdup(color);
 		if (!p)
 			return -ENOMEM;

@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "smartcolsP.h"
 
@@ -196,6 +197,12 @@ int scols_line_set_color(struct libscols_line *ln, const char *color)
 	if (!ln)
 		return -EINVAL;
 	if (color) {
+		if (isalnum(*color)) {
+			color = colorscheme_from_string(color);
+
+			if (!color)
+				return -EINVAL;
+		}
 		p = strdup(color);
 		if (!p)
 			return -ENOMEM;
