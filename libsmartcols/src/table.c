@@ -7,6 +7,15 @@
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  */
+
+/**
+ * SECTION: table 
+ * @title: Table
+ * @short_description: table API
+ *
+ * Table manipulation API.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -29,12 +38,13 @@
 		list_entry_is_last(&(_cl)->cl_columns, &(_tb)->tb_columns)
 
 
-/*
+/**
+ * scols_new_table:
  * @syms: tree symbols or NULL for default
  *
- * Note that this function add a new reference to @syms
+ * Note that this function add a new reference to @syms.
  *
- * Returns: newly allocated table
+ * Returns: A newly allocated table.
  */
 struct libscols_table *scols_new_table(struct libscols_symbols *syms)
 {
@@ -57,12 +67,24 @@ struct libscols_table *scols_new_table(struct libscols_symbols *syms)
 	return NULL;
 }
 
+/**
+ * scols_ref_table:
+ * @tb: a pointer to a struct libscols_table instance
+ *
+ * Increases the refcount of @tb.
+ */
 void scols_ref_table(struct libscols_table *tb)
 {
 	if (tb)
 		tb->refcount++;
 }
 
+/**
+ * scols_unref_table:
+ * @tb: a pointer to a struct libscols_table instance
+ *
+ * Decreases the refcount of @tb.
+ */
 void scols_unref_table(struct libscols_table *tb)
 {
 	if (tb && (--tb->refcount <= 0)) {
@@ -73,6 +95,16 @@ void scols_unref_table(struct libscols_table *tb)
 	}
 }
 
+/**
+ * scols_table_add_column:
+ * @tb: a pointer to a struct libscols_table instance
+ * @cl: a pointer to a struct libscols_column instance
+ * @flags: a flag mask integer
+ *
+ * Adds @cl to @tb's column list, setting the appropriate flags to @flags.
+ *
+ * Returns: 0, a negative number in case of an error.
+ */
 int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl, int flags)
 {
 	assert(tb);
@@ -97,6 +129,15 @@ int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl
 	return 0;
 }
 
+/**
+ * scols_table_remove_column:
+ * @tb: a pointer to a struct libscols_table instance
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Removes @cl from @tb.
+ *
+ * Returns: 0, a negative number in case of an error.
+ */
 int scols_table_remove_column(struct libscols_table *tb,
 			      struct libscols_column *cl)
 {
@@ -112,6 +153,14 @@ int scols_table_remove_column(struct libscols_table *tb,
 	return 0;
 }
 
+/**
+ * scols_table_remove_columns:
+ * @tb: a pointer to a struct libscols_table instance
+ *
+ * Removes all of @tb's columns.
+ *
+ * Returns: 0, a negative number in case of an error.
+ */
 int scols_table_remove_columns(struct libscols_table *tb)
 {
 	assert(tb);
@@ -128,10 +177,12 @@ int scols_table_remove_columns(struct libscols_table *tb)
 }
 
 
-/*
+/**
+ * scols_table_new_column:
  * @tb: table
  * @name: column header
  * @whint: column width hint (absolute width: N > 1; relative width: N < 1)
+ * @flags: flags integer
  *
  * This is shortcut for
  *
@@ -148,7 +199,7 @@ int scols_table_remove_columns(struct libscols_table *tb)
  *
  *  @whint = 1..N
  *
- * The column is necessary to address (for example for scols_line_set_cell_data()) by
+ * The column is necessary to address by
  * sequential number. The first defined column has the colnum = 0. For example:
  *
  *	scols_table_new_column(tab, "FOO", 0.5, 0);		// colnum = 0
@@ -195,6 +246,16 @@ err:
 	return NULL;
 }
 
+/**
+ * scols_table_next_column:
+ * @tb: a pointer to a struct libscols_table instance
+ * @itr: a pointer to a struct libscols_iter instance
+ * @cl: a pointer to a pointer to a struct libscols_column instance
+ *
+ * Returns the next column of @tb via @cl.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_table_next_column(struct libscols_table *tb,
 			    struct libscols_iter *itr,
 			    struct libscols_column **cl)
@@ -216,10 +277,11 @@ int scols_table_next_column(struct libscols_table *tb,
 }
 
 
-/*
+/**
+ * scols_table_get_ncols:
  * @tb: table
  *
- * Returns: ncols integer
+ * Returns: the ncols table member, a negative number in case of an error.
  */
 int scols_table_get_ncols(struct libscols_table *tb)
 {
@@ -228,9 +290,10 @@ int scols_table_get_ncols(struct libscols_table *tb)
 }
 
 /*
+ * scols_table_get_nlines:
  * @tb: table
  *
- * Returns: nlines integer
+ * Returns: the nlines table member, a negative number in case of an error.
  */
 int scols_table_get_nlines(struct libscols_table *tb)
 {
@@ -238,6 +301,15 @@ int scols_table_get_nlines(struct libscols_table *tb)
 	return tb ? tb->nlines : -EINVAL;
 }
 
+/**
+ * scols_table_set_stream:
+ * @tb: table
+ * @stream: output stream
+ *
+ * Sets the output stream for table @tb.
+ *
+ * Returns: 0, a negative number in case of an error.
+ */
 int scols_table_set_stream(struct libscols_table *tb, FILE *stream)
 {
 	assert(tb);
@@ -248,12 +320,29 @@ int scols_table_set_stream(struct libscols_table *tb, FILE *stream)
 	return 0;
 }
 
+/**
+ * scols_table_get_stream:
+ * @tb: table
+ *
+ * Gets the output stream for table @tb.
+ *
+ * Returns: stream pointer, NULL in case of an error or an unset stream.
+ */
 FILE *scols_table_get_stream(struct libscols_table *tb)
 {
 	assert(tb);
 	return tb ? tb->out: NULL;
 }
 
+/**
+ * scols_table_reduce_termwidth:
+ * @tb: table
+ * @reduce: width
+ *
+ * Reduce the output width to @reduce.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_table_reduce_termwidth(struct libscols_table *tb, size_t reduce)
 {
 	assert(tb);
@@ -264,9 +353,10 @@ int scols_table_reduce_termwidth(struct libscols_table *tb, size_t reduce)
 	return 0;
 }
 
-/*
+/**
+ * scols_table_get_column:
  * @tb: table
- * @: number of column (0..N)
+ * @n: number of column (0..N)
  *
  * Returns: pointer to column or NULL
  */
@@ -290,9 +380,15 @@ struct libscols_column *scols_table_get_column(struct libscols_table *tb,
 	return NULL;
 }
 
-/*
- * Note that this functiion calls scols_line_alloc_cells() if number
+/**
+ * scols_table_add_line:
+ * @tb: table
+ * @ln: line
+ *
+ * Note that this function calls scols_line_alloc_cells() if number
  * of the cells in the line is too small for @tb.
+ *
+ * Returns: 0, a negative value in case of an error.
  */
 int scols_table_add_line(struct libscols_table *tb, struct libscols_line *ln)
 {
@@ -315,8 +411,15 @@ int scols_table_add_line(struct libscols_table *tb, struct libscols_line *ln)
 	return 0;
 }
 
-/* Note that this function does not destroy parent->child relation between lines.
+/**
+ * scols_table_remove_line:
+ * @tb: table
+ * @ln: line
+ *
+ * Note that this function does not destroy the parent<->child relationship between lines.
  * You have to call scols_line_remove_child()
+ *
+ * Returns: 0, a negative value in case of an error.
  */
 int scols_table_remove_line(struct libscols_table *tb,
 			    struct libscols_line *ln)
@@ -333,7 +436,12 @@ int scols_table_remove_line(struct libscols_table *tb,
 	return 0;
 }
 
-/* This make the table empty and also destroy all parent<->child relations */
+/**
+ * scols_table_remove_lines:
+ * @tb: table
+ *
+ * This empties the table and also destroys all the parent<->child relationships.
+ */
 void scols_table_remove_lines(struct libscols_table *tb)
 {
 	assert(tb);
@@ -349,6 +457,16 @@ void scols_table_remove_lines(struct libscols_table *tb)
 	}
 }
 
+/**
+ * scols_table_next_line:
+ * @tb: a pointer to a struct libscols_table instance
+ * @itr: a pointer to a struct libscols_iter instance
+ * @ln: a pointer to a pointer to a struct libscols_line instance
+ *
+ * Finds the next line and returns a pointer to it via @ln.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_table_next_line(struct libscols_table *tb,
 			  struct libscols_iter *itr,
 			  struct libscols_line **ln)
@@ -369,13 +487,14 @@ int scols_table_next_line(struct libscols_table *tb,
 	return rc;
 }
 
-/*
+/**
+ * scols_table_new_line:
  * @tb: table
  * @parent: parental line or NULL
  *
  * This is shortcut for
  *
- *   ln = scols_new_linen();
+ *   ln = scols_new_line();
  *   scols_line_set_....(cl, ...);
  *   scols_table_add_line(tb, ln);
 
@@ -408,7 +527,19 @@ err:
 	return NULL;
 }
 
-
+/**
+ * scols_table_get_line:
+ * @tb: table
+ * @n: column number (0..N)
+ *
+ * This is a shortcut for
+ *
+ *   ln = scols_new_line();
+ *   scols_line_set_....(cl, ...);
+ *   scols_table_add_line(tb, ln);
+ *
+ * Returns: a newly allocate line
+ */
 struct libscols_line *scols_table_get_line(struct libscols_table *tb,
 					   size_t n)
 {
@@ -429,9 +560,14 @@ struct libscols_line *scols_table_get_line(struct libscols_table *tb,
 	return NULL;
 }
 
-/*
+/**
+ * scols_copy_table:
+ * @tb: table
+ *
  * Creates a new independent table copy, except struct libscols_symbols that
  * are shared between the tables.
+ *
+ * Returns: a newly allocated copy of @tb
  */
 struct libscols_table *scols_copy_table(struct libscols_table *tb)
 {
@@ -481,6 +617,13 @@ err:
 	return NULL;
 }
 
+/**
+ * scols_table_set_symbols:
+ * @tb: table
+ * @sy: symbols
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_table_set_symbols(struct libscols_table *tb,
 			    struct libscols_symbols *sy)
 {
@@ -639,7 +782,7 @@ int scols_table_set_tree(struct libscols_table *tb, int enable)
  * scols_table_colors_wanted:
  * @tb: table
  *
- * Get the value of colors_wanted
+ * Gets the value of the colors_wanted flag.
  *
  * Returns: colors_wanted flag value, negative value in case of an error.
  */
@@ -654,7 +797,7 @@ int scols_table_colors_wanted(struct libscols_table *tb)
  * scols_table_is_raw:
  * @tb: table
  *
- * Get the value of raw
+ * Gets the value of the raw flag.
  *
  * Returns: raw flag value, negative value in case of an error.
  */
@@ -669,7 +812,7 @@ int scols_table_is_raw(struct libscols_table *tb)
  * scols_table_is_ascii:
  * @tb: table
  *
- * Get the value of ascii
+ * Gets the value of the ascii flag.
  *
  * Returns: ascii flag value, negative value in case of an error.
  */
@@ -684,7 +827,7 @@ int scols_table_is_ascii(struct libscols_table *tb)
  * scols_table_is_no_headings:
  * @tb: table
  *
- * Get the value of no_headings
+ * Gets the value of the no_headings flag.
  *
  * Returns: no_headings flag value, negative value in case of an error.
  */
@@ -699,7 +842,7 @@ int scols_table_is_no_headings(struct libscols_table *tb)
  * scols_table_is_export:
  * @tb: table
  *
- * Get the value of export
+ * Gets the value of the export flag.
  *
  * Returns: export flag value, negative value in case of an error.
  */
@@ -714,7 +857,7 @@ int scols_table_is_export(struct libscols_table *tb)
  * scols_table_is_max:
  * @tb: table
  *
- * Get the value of max
+ * Gets the value of the max flag.
  *
  * Returns: max flag value, negative value in case of an error.
  */
@@ -729,7 +872,7 @@ int scols_table_is_max(struct libscols_table *tb)
  * scols_table_is_tree:
  * @tb: table
  *
- * Get the value of tree
+ * Gets the value of the tree flag.
  *
  * Returns: tree flag value, negative value in case of an error.
  */

@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
+               "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd"
+[
+  <!ENTITY version SYSTEM "version.xml">
+]>
+<book id="index" xmlns:xi="http://www.w3.org/2003/XInclude">
+  <bookinfo>
+    <title>libsmartcols Reference Manual</title>
+    <releaseinfo>for libsmartcols version &version;</releaseinfo>
+    <copyright>
+      <year>2014</year>
+      <holder>Karel Zak &lt;kzak@redhat.com&gt;</holder>
+    </copyright>
+  </bookinfo>
+
+  <part id="gtk">
+    <title>libsmartcols Overview</title>
+    <partintro>
+    <para>
+The libsmartcols library is used for smart adaptive formatting of tabular data.
+    </para>
+    <para>
+The library is part of the util-linux package since version 2.25 and is
+available from ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
+    </para>
+  </partintro>
+ </part>
+
+  <part>
+    <title>Data manipulation</title>
+    <xi:include href="xml/table.xml"/>
+    <xi:include href="xml/column.xml"/>
+    <xi:include href="xml/line.xml"/>
+    <xi:include href="xml/cell.xml"/>
+    <xi:include href="xml/symbols.xml"/>
+  </part>
+  <part>
+    <title>Printing</title>
+    <xi:include href="xml/table_print.xml"/>
+  </part>
+  <part>
+    <title>Misc</title>
+    <xi:include href="xml/iter.xml"/>
+  </part>
+  <index id="api-index-full">
+    <title>API Index</title>
+    <xi:include href="xml/api-index-full.xml"><xi:fallback /></xi:include>
+  </index>
+</book>

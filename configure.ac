@@ -1618,6 +1618,8 @@ libblkid/src/blkid.h
 libmount/docs/Makefile
 libmount/docs/version.xml
 libmount/src/libmount.h
+libsmartcols/docs/Makefile
+libsmartcols/docs/version.xml
 libsmartcols/src/libsmartcols.h
 po/Makefile.in
 ])

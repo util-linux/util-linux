@@ -8,6 +8,14 @@
  * GNU Lesser General Public License.
  */
 
+/**
+ * SECTION: column
+ * @title: Column
+ * @short_description: column API
+ *
+ * An API to access and modify per-column data and information.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -16,6 +24,13 @@
 
 #include "smartcolsP.h"
 
+/**
+ * scols_new_column:
+ *
+ * Allocates space for a new column.
+ *
+ * Returns: a pointer to a new struct libscols_cell instance, NULL in case of an ENOMEM error.
+ */
 struct libscols_column *scols_new_column(void)
 {
 	struct libscols_column *cl;
@@ -29,12 +44,24 @@ struct libscols_column *scols_new_column(void)
 	return cl;
 }
 
+/**
+ * scols_ref_column:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Increases the refcount of @cl.
+ */
 void scols_ref_column(struct libscols_column *cl)
 {
 	if (cl)
 		cl->refcount++;
 }
 
+/**
+ * scols_unref_column:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Decreases the refcount of @cl.
+ */
 void scols_unref_column(struct libscols_column *cl)
 {
 	if (cl && --cl->refcount <= 0) {
@@ -45,6 +72,14 @@ void scols_unref_column(struct libscols_column *cl)
 	}
 }
 
+/**
+ * scols_copy_column:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Creates a new column and copies @cl's data over to it. 
+ *
+ * Returns: a pointer to a new struct libscols_column instance.
+ */
 struct libscols_column *scols_copy_column(const struct libscols_column *cl)
 {
 	struct libscols_column *ret;
@@ -75,6 +110,15 @@ err:
 	return NULL;
 }
 
+/**
+ * scols_column_set_whint:
+ * @cl: a pointer to a struct libscols_column instance
+ * @whint: a width hint
+ *
+ * Sets the width hint of column @cl to @whint.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_column_set_whint(struct libscols_column *cl, double whint)
 {
 	assert(cl);
@@ -86,12 +130,27 @@ int scols_column_set_whint(struct libscols_column *cl, double whint)
 	return 0;
 }
 
+/**
+ * scols_column_get_whint:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Returns: The width hint of column @cl, a negative value in case of an error.
+ */
 double scols_column_get_whint(struct libscols_column *cl)
 {
 	assert(cl);
 	return cl ? cl->width_hint : -EINVAL;
 }
 
+/**
+ * scols_column_set_flags:
+ * @cl: a pointer to a struct libscols_column instance
+ * @flags: a flag mask
+ *
+ * Sets the flags of @cl to @flags.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_column_set_flags(struct libscols_column *cl, int flags)
 {
 	assert(cl);
@@ -103,19 +162,36 @@ int scols_column_set_flags(struct libscols_column *cl, int flags)
 	return 0;
 }
 
+/**
+ * scols_column_get_flags:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Returns: The flag mask of @cl, a negative value in case of an error.
+ */
 int scols_column_get_flags(struct libscols_column *cl)
 {
 	assert(cl);
 	return cl ? cl->flags : -EINVAL;
 }
 
+/**
+ * scols_column_get_flags:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Returns: A pointer to a struct libscols_cell instance, representing the
+ * header info of column @cl or NULL in case of an error.
+ */
 struct libscols_cell *scols_column_get_header(struct libscols_column *cl)
 {
 	assert(cl);
 	return cl ? &cl->header : NULL;
 }
 
-/*
+/**
+ * scols_column_set_color:
+ * @cl: a pointer to a struct libscols_column instance
+ * @color: a color string
+ *
  * The default color for data cells and column header.
  *
  * If you want to set header specific color then use scols_column_get_header()
@@ -123,6 +199,8 @@ struct libscols_cell *scols_column_get_header(struct libscols_column *cl)
  *
  * If you want to set data cell specific color the use scols_line_get_cell() +
  * scols_cell_set_color().
+ *
+ * Returns: 0, a negative value in case of an error.
  */
 int scols_column_set_color(struct libscols_column *cl, const char *color)
 {
@@ -148,6 +226,12 @@ int scols_column_set_color(struct libscols_column *cl, const char *color)
 	return 0;
 }
 
+/**
+ * scols_column_get_color:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Returns: The current color setting of the column @cl.
+ */
 const char *scols_column_get_color(struct libscols_column *cl)
 {
 	assert(cl);
@@ -156,9 +240,9 @@ const char *scols_column_get_color(struct libscols_column *cl)
 
 /**
  * scols_column_is_trunc:
- * @cl: column
+ * @cl: a pointer to a struct libscols_column instance
  *
- * Get the value of trunc
+ * Gets the value of @cl's flag trunc.
  *
  * Returns: trunc flag value, negative value in case of an error.
  */
@@ -171,9 +255,9 @@ int scols_column_is_trunc(struct libscols_column *cl)
 }
 /**
  * scols_column_is_tree:
- * @cl: column
+ * @cl: a pointer to a struct libscols_column instance
  *
- * Get the value of tree
+ * Gets the value of @cl's flag tree.
  *
  * Returns: tree flag value, negative value in case of an error.
  */
@@ -186,9 +270,9 @@ int scols_column_is_tree(struct libscols_column *cl)
 }
 /**
  * scols_column_is_right:
- * @cl: column
+ * @cl: a pointer to a struct libscols_column instance
  *
- * Get the value of right
+ * Gets the value of @cl's flag right.
  *
  * Returns: right flag value, negative value in case of an error.
  */
@@ -201,9 +285,9 @@ int scols_column_is_right(struct libscols_column *cl)
 }
 /**
  * scols_column_is_strict_width:
- * @cl: column
+ * @cl: a pointer to a struct libscols_column instance
  *
- * Get the value of strict_width
+ * Gets the value of @cl's flag strict_width.
  *
  * Returns: strict_width flag value, negative value in case of an error.
  */
@@ -216,9 +300,9 @@ int scols_column_is_strict_width(struct libscols_column *cl)
 }
 /**
  * scols_column_is_no_extremes:
- * @cl: column
+ * @cl: a pointer to a struct libscols_column instance
  *
- * Get the value of no_extremes
+ * Gets the value of @cl's flag no_extremes.
  *
  * Returns: no_extremes flag value, negative value in case of an error.
  */

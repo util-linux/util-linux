@@ -535,9 +535,12 @@ static size_t strlen_line(struct libscols_line *ln)
 }
 
 /*
+ * scols_print_table:
  * @tb: table
  *
  * Prints the table to the output stream.
+ *
+ * Returns: 0, a negative value in case of an error.
  */
 int scols_print_table(struct libscols_table *tb)
 {
@@ -582,6 +585,15 @@ int scols_print_table(struct libscols_table *tb)
 	return 0;
 }
 
+/*
+ * scols_print_table_to_string:
+ * @tb: table
+ * @data: pointer to the beginning of a memory area to print to
+ *
+ * Prints the table to @data.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_print_table_to_string(struct libscols_table *tb, char **data)
 {
 #ifdef HAVE_OPEN_MEMSTREAM
@@ -591,7 +603,7 @@ int scols_print_table_to_string(struct libscols_table *tb, char **data)
 	if (!tb)
 		return -EINVAL;
 
-	/* create a streem for output */
+	/* create a stream for output */
 	stream = open_memstream(data, &sz);
 	if (!stream)
 		return -ENOMEM;

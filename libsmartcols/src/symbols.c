@@ -6,6 +6,15 @@
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  */
+
+/**
+ * SECTION: symbols
+ * @title: Symbols
+ * @short_description: symbols API
+ *
+ * An API to access and modify data and information per symbol/symbol group.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -13,6 +22,11 @@
 
 #include "smartcolsP.h"
 
+/**
+ * scols_new_symbols:
+ *
+ * Returns: a pointer to a newly allocated struct libscols_symbols instance.
+ */
 struct libscols_symbols *scols_new_symbols(void)
 {
 	struct libscols_symbols *sy = calloc(1, sizeof(struct libscols_symbols));
@@ -23,13 +37,24 @@ struct libscols_symbols *scols_new_symbols(void)
 	return sy;
 }
 
-
+/**
+ * scols_ref_symbols:
+ * @sy: a pointer to a struct libscols_symbols instance
+ *
+ * Increases the refcount of @sy.
+ */
 void scols_ref_symbols(struct libscols_symbols *sy)
 {
 	if (sy)
 		sy->refcount++;
 }
 
+/**
+ * scols_unref_symbols:
+ * @sy: a pointer to a struct libscols_symbols instance
+ *
+ * Decreases the refcount of @sy.
+ */
 void scols_unref_symbols(struct libscols_symbols *sy)
 {
 	if (sy && --sy->refcount <= 0) {
@@ -40,7 +65,13 @@ void scols_unref_symbols(struct libscols_symbols *sy)
 	}
 }
 
-
+/**
+ * scols_symbols_set_branch:
+ * @sb: a pointer to a struct libscols_symbols instance
+ * @str: a string which will represent the branch part of a tree output
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_symbols_set_branch(struct libscols_symbols *sb, const char *str)
 {
 	char *p = NULL;
@@ -59,6 +90,13 @@ int scols_symbols_set_branch(struct libscols_symbols *sb, const char *str)
 	return 0;
 }
 
+/**
+ * scols_symbols_set_vertical:
+ * @sb: a pointer to a struct libscols_symbols instance
+ * @str: a string which will represent the vertical part of a tree output
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_symbols_set_vertical(struct libscols_symbols *sb, const char *str)
 {
 	char *p = NULL;
@@ -77,6 +115,13 @@ int scols_symbols_set_vertical(struct libscols_symbols *sb, const char *str)
 	return 0;
 }
 
+/**
+ * scols_symbols_set_right:
+ * @sb: a pointer to a struct libscols_symbols instance
+ * @str: a string which will represent the right part of a tree output
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_symbols_set_right(struct libscols_symbols *sb, const char *str)
 {
 	char *p = NULL;
@@ -95,7 +140,12 @@ int scols_symbols_set_right(struct libscols_symbols *sb, const char *str)
 	return 0;
 }
 
-
+/**
+ * scols_copy_symbols:
+ * @sb: a pointer to a struct libscols_symbols instance
+ *
+ * Returns: a newly allocated copy of the @sb symbol group or NULL in caes of an error.
+ */
 struct libscols_symbols *scols_copy_symbols(const struct libscols_symbols *sb)
 {
 	struct libscols_symbols *ret;

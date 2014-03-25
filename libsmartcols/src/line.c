@@ -8,6 +8,14 @@
  * GNU Lesser General Public License.
  */
 
+/**
+ * SECTION: line
+ * @title: Line
+ * @short_description: line API
+ *
+ * An API to access and modify per-line data and information.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -16,11 +24,15 @@
 
 #include "smartcolsP.h"
 
-/*
+/**
+ * scols_new_line:
+ *
  * Note that the line is allocated without cells, the cells will be allocated
  * later when you add the line to the table. If you want to use the line
  * without table then you have to explicitly allocate the cells by
  * scols_line_alloc_cells().
+ *
+ * Returns: a pointer to a new struct libscols_line instance.
  */
 struct libscols_line *scols_new_line(void)
 {
@@ -36,12 +48,24 @@ struct libscols_line *scols_new_line(void)
 	return ln;
 }
 
+/**
+ * scols_ref_line:
+ * @ln: a pointer to a struct libscols_line instance
+ *
+ * Increases the refcount of @ln.
+ */
 void scols_ref_line(struct libscols_line *ln)
 {
 	if (ln)
 		ln->refcount++;
 }
 
+/**
+ * scols_unref_line:
+ * @ln: a pointer to a struct libscols_line instance
+ *
+ * Decreases the refcount of @ln.
+ */
 void scols_unref_line(struct libscols_line *ln)
 {
 
@@ -56,6 +80,12 @@ void scols_unref_line(struct libscols_line *ln)
 	}
 }
 
+/**
+ * scols_line_free_cells:
+ * @ln: a pointer to a struct libscols_line instance
+ *
+ * Frees the allocated cells referenced to by @ln.
+ */
 void scols_line_free_cells(struct libscols_line *ln)
 {
 	size_t i;
@@ -71,7 +101,15 @@ void scols_line_free_cells(struct libscols_line *ln)
 	ln->cells = NULL;
 }
 
-
+/**
+ * scols_line_alloc_cells:
+ * @ln: a pointer to a struct libscols_line instance
+ * @n: the number of elements
+ *
+ * Allocates space for @n cells.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_line_alloc_cells(struct libscols_line *ln, size_t n)
 {
 	struct libscols_cell *ce;
@@ -101,6 +139,15 @@ int scols_line_alloc_cells(struct libscols_line *ln, size_t n)
 	return 0;
 }
 
+/**
+ * scols_line_set_userdata:
+ * @ln: a pointer to a struct libscols_line instance
+ * @data: user data
+ *
+ * Binds @data to @ln.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_line_set_userdata(struct libscols_line *ln, void *data)
 {
 	assert(ln);
@@ -110,12 +157,27 @@ int scols_line_set_userdata(struct libscols_line *ln, void *data)
 	return 0;
 }
 
+/**
+ * scols_line_get_userdata:
+ * @ln: a pointer to a struct libscols_line instance
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 void *scols_line_get_userdata(struct libscols_line *ln)
 {
 	assert(ln);
 	return ln ? ln->userdata : NULL;
 }
 
+/**
+ * scols_line_remove_child:
+ * @ln: a pointer to a struct libscols_line instance
+ * @child: a pointer to a struct libscols_line instance
+ *
+ * Removes @child as a child of @ln.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_line_remove_child(struct libscols_line *ln, struct libscols_line *child)
 {
 	assert(ln);
@@ -131,6 +193,15 @@ int scols_line_remove_child(struct libscols_line *ln, struct libscols_line *chil
 	return 0;
 }
 
+/**
+ * scols_line_add_child:
+ * @ln: a pointer to a struct libscols_line instance
+ * @child: a pointer to a struct libscols_line instance
+ *
+ * Sets @child as a child of @ln.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_line_add_child(struct libscols_line *ln, struct libscols_line *child)
 {
 	assert(ln);
@@ -154,18 +225,40 @@ int scols_line_add_child(struct libscols_line *ln, struct libscols_line *child)
 	return 0;
 }
 
+/**
+ * scols_line_get_parent:
+ * @ln: a pointer to a struct libscols_line instance
+ *
+ * Returns: a pointer to @ln's parent, NULL in case it has no parent or if there was an error.
+ */
 struct libscols_line *scols_line_get_parent(struct libscols_line *ln)
 {
 	assert(ln);
 	return ln ? ln->parent : NULL;
 }
 
+/**
+ * scols_line_has_children:
+ * @ln: a pointer to a struct libscols_line instance
+ *
+ * Returns: 1 if @ln has any children, otherwise 0.
+ */
 int scols_line_has_children(struct libscols_line *ln)
 {
 	assert(ln);
 	return ln ? !list_empty(&ln->ln_branch) : 0;
 }
 
+/**
+ * scols_line_next_child:
+ * @ln: a pointer to a struct libscols_line instance
+ * @itr: a pointer to a struct libscols_iter instance
+ * @chld: a pointer to a pointer to a struct libscols_line instance
+ *
+ * Finds the next child and returns a pointer to it via @chld.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_line_next_child(struct libscols_line *ln,
 			  struct libscols_iter *itr,
 			  struct libscols_line **chld)
@@ -186,8 +279,12 @@ int scols_line_next_child(struct libscols_line *ln,
 	return rc;
 }
 
-/*
- * The default line color, used when cell color unspecified.
+/**
+ * scols_line_set_color:
+ * @ln: a pointer to a struct libscols_line instance
+ * @color: a color string
+ *
+ * Returns: 0, a negative value in case of an error.
  */
 int scols_line_set_color(struct libscols_line *ln, const char *color)
 {
@@ -213,18 +310,37 @@ int scols_line_set_color(struct libscols_line *ln, const char *color)
 	return 0;
 }
 
+/**
+ * scols_line_get_color:
+ * @ln: a pointer to a struct libscols_line instance
+ *
+ * Returns: @ln's color string, NULL in case of an error.
+ */
 const char *scols_line_get_color(struct libscols_line *ln)
 {
 	assert(ln);
 	return ln ? ln->color : NULL;
 }
 
+/**
+ * scols_line_get_ncells:
+ * @ln: a pointer to a struct libscols_line instance
+ *
+ * Returns: @ln's number of cells
+ */
 size_t scols_line_get_ncells(struct libscols_line *ln)
 {
 	assert(ln);
 	return ln ? ln->ncells : 0;
 }
 
+/**
+ * scols_line_get_cell:
+ * @ln: a pointer to a struct libscols_line instance
+ * @n: cell number to retrieve
+ *
+ * Returns: the @n-th cell in @ln, NULL in case of an error.
+ */
 struct libscols_cell *scols_line_get_cell(struct libscols_line *ln,
 					  size_t n)
 {
@@ -235,7 +351,14 @@ struct libscols_cell *scols_line_get_cell(struct libscols_line *ln,
 	return &ln->cells[n];
 }
 
-/* just shortcut */
+/**
+ * scols_line_set_data:
+ * @ln: a pointer to a struct libscols_cell instance
+ * @n: number of the cell, whose data is to be set
+ * @data: actual data to set
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_line_set_data(struct libscols_line *ln, size_t n, const char *data)
 {
 	struct libscols_cell *ce = scols_line_get_cell(ln, n);
@@ -245,7 +368,14 @@ int scols_line_set_data(struct libscols_line *ln, size_t n, const char *data)
 	return scols_cell_set_data(ce, data);
 }
 
-/* just shortcut */
+/**
+ * scols_line_set_data:
+ * @ln: a pointer to a struct libscols_cell instance
+ * @n: number of the cell which will refer to @data
+ * @data: actual data to refer to
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
 int scols_line_refer_data(struct libscols_line *ln, size_t n, char *data)
 {
 	struct libscols_cell *ce = scols_line_get_cell(ln, n);
@@ -255,6 +385,12 @@ int scols_line_refer_data(struct libscols_line *ln, size_t n, char *data)
 	return scols_cell_refer_data(ce, data);
 }
 
+/**
+ * scols_copy_line:
+ * @ln: a pointer to a struct libscols_cell instance
+ *
+ * Returns: A newly allocated copy of @ln, NULL in case of an error.
+ */
 struct libscols_line *scols_copy_line(struct libscols_line *ln)
 {
 	struct libscols_line *ret;

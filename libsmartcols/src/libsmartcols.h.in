@@ -19,11 +19,46 @@ extern "C" {
 
 #define LIBSMARTCOLS_VERSION   "@LIBSMARTCOLS_VERSION@"
 
+/**
+ * libscols_iter:
+ *
+ * Generic iterator
+ */
 struct libscols_iter;
+
+/**
+ * libscols_symbols:
+ *
+ * Symbol groups for printing tree hierarchies
+ */
 struct libscols_symbols;
+
+/**
+ * libscols_cell:
+ *
+ * A cell - the smallest library object
+ */
 struct libscols_cell;
+
+/**
+ * libscols_line:
+ *
+ * A line - an array of cells
+ */
 struct libscols_line;
+
+/**
+ * libscols_table:
+ *
+ * A table - The most abstract object, encapsulating lines, columns, symbols and cells
+ */
 struct libscols_table;
+
+/**
+ * libscols_column:
+ *
+ * A column - defines the number of columns and column names
+ */
 struct libscols_column;
 
 /* iter.c */
@@ -33,10 +68,10 @@ enum {
 	SCOLS_ITER_BACKWARD
 };
 
+/*
+ * Column flags
+ */
 enum {
-	/*
-	 * Column flags
-	 */
 	SCOLS_FL_TRUNC       = (1 << 15),   /* truncate fields data if necessary */
 	SCOLS_FL_TREE        = (1 << 16),   /* use tree "ascii art" */
 	SCOLS_FL_RIGHT	     = (1 << 17),   /* align to the right */
