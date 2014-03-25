@@ -73,13 +73,16 @@ void scols_unref_table(struct libscols_table *tb)
 	}
 }
 
-int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl)
+int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl, int flags)
 {
 	assert(tb);
 	assert(cl);
 
 	if (!tb || !cl || !list_empty(&tb->tb_lines))
 		return -EINVAL;
+
+	if (flags & SCOLS_FL_TREE)
+		scols_table_set_tree(tb, 1);
 
 	list_add_tail(&cl->cl_columns, &tb->tb_columns);
 	cl->seqnum = tb->ncols++;
@@ -182,10 +185,7 @@ struct libscols_column *scols_table_new_column(struct libscols_table *tb,
 	scols_column_set_whint(cl, whint);
 	scols_column_set_flags(cl, flags);
 
-	if (flags & SCOLS_FL_TREE)
-		scols_table_set_tree(tb, 1);
-
-	if (scols_table_add_column(tb, cl))	/* this increments column ref-counter */
+	if (scols_table_add_column(tb, cl, flags))	/* this increments column ref-counter */
 		goto err;
 
 	scols_unref_column(cl);
@@ -453,7 +453,7 @@ struct libscols_table *scols_copy_table(struct libscols_table *tb)
 		cl = scols_copy_column(cl);
 		if (!cl)
 			goto err;
-		if (scols_table_add_column(ret, cl))
+		if (scols_table_add_column(ret, cl, tb->tree ? SCOLS_FL_TREE : 0))
 			goto err;
 		scols_unref_column(cl);
 	}

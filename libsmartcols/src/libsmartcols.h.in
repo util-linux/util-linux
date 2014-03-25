@@ -129,7 +129,7 @@ extern int scols_table_set_tree(struct libscols_table *tb, int enable);
 extern struct libscols_table *scols_new_table(struct libscols_symbols *syms);
 extern void scols_ref_table(struct libscols_table *tb);
 extern void scols_unref_table(struct libscols_table *tb);
-extern int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl);
+extern int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl, int flags);
 extern int scols_table_remove_column(struct libscols_table *tb, struct libscols_column *cl);
 extern int scols_table_remove_columns(struct libscols_table *tb);
 extern struct libscols_column *scols_table_new_column(struct libscols_table *tb, const char *name, double whint, int flags);
