@@ -897,10 +897,13 @@ read_cache(struct lscpu_desc *desc, int idx)
 			ca->name = xstrdup(buf);
 
 			/* cache size */
-			path_read_str(buf, sizeof(buf),
-					_PATH_SYS_CPU "/cpu%d/cache/index%d/size",
-					num, i);
-			ca->size = xstrdup(buf);
+			if (path_exist(_PATH_SYS_CPU "/cpu%d/cache/index%d/size",num, i)) {
+				path_read_str(buf, sizeof(buf),
+					_PATH_SYS_CPU "/cpu%d/cache/index%d/size", num, i);
+				ca->size = xstrdup(buf);
+			} else {
+				ca->size = xstrdup("unknown size");
+			}
 		}
 
 		/* information about how CPUs share different caches */
