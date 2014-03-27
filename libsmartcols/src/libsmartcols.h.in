@@ -149,6 +149,7 @@ extern int scols_table_colors_wanted(struct libscols_table *tb);
 extern int scols_table_is_raw(struct libscols_table *tb);
 extern int scols_table_is_ascii(struct libscols_table *tb);
 extern int scols_table_is_no_headings(struct libscols_table *tb);
+extern int scols_table_is_empty(struct libscols_table *tb);
 extern int scols_table_is_export(struct libscols_table *tb);
 extern int scols_table_is_max(struct libscols_table *tb);
 extern int scols_table_is_tree(struct libscols_table *tb);

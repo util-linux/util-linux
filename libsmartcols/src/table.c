@@ -793,6 +793,17 @@ int scols_table_colors_wanted(struct libscols_table *tb)
 		return -EINVAL;
 	return tb->colors_wanted;
 }
+
+/**
+ * scols_table_is_empty:
+ * @tb: table
+ *
+ * Returns: 1 if empty, 0 if not (or in case of an error).
+ */
+int scols_table_is_empty(struct libscols_table *tb)
+{
+	return !tb || !tb->nlines;
+}
 /**
  * scols_table_is_raw:
  * @tb: table

@@ -68,6 +68,7 @@ global:
 	scols_table_get_nlines;
 	scols_table_get_stream;
 	scols_table_is_ascii;
+	scols_table_is_empty;
 	scols_table_is_export;
 	scols_table_is_max;
 	scols_table_is_no_headings;
