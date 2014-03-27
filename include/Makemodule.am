@@ -43,7 +43,6 @@ dist_noinst_HEADERS += \
 	include/sysfs.h \
 	include/timer.h \
 	include/timeutils.h \
-	include/tt.h \
 	include/ttyutils.h \
 	include/wholedisk.h \
 	include/widechar.h \

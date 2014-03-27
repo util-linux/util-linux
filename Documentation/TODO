@@ -5,7 +5,7 @@
 lslogins(1)
 ----------
  - a new command to list information about accounts
- - based on lib/tt.c
+ - based on libsmartcols
  - see passwd -S and solarix/aux logins commands
  - use infor from libc passwd struct, lastlog and wtmp/btmp logs
  - expected columns USERNAME, UID, GID, STATUS, GROUPS, SHELL, HOME,
@@ -55,11 +55,10 @@ docs
  - (!) add API documentation to libuuid
 
 
-lib/tt.c
+libsmartcols
 --------
 
  - allows to sort columns, for example sort lsblk(8) output by SIZE
- - support colors (per column, per line, per field)
 
 login-utils:
 -----------

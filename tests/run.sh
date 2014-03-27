@@ -118,7 +118,7 @@ if [ -n "$SUBTESTS" ]; then
 		fi
 	done
 else
-	if [ ! -f "$top_builddir/test_tt" ]; then
+	if [ ! -f "$top_builddir/test_ttyutils" ]; then
 		echo "Tests not compiled! Run 'make check' to fix the problem."
 		exit 1
 	fi
