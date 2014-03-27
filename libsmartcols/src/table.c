@@ -495,9 +495,9 @@ int scols_table_next_line(struct libscols_table *tb,
  * This is shortcut for
  *
  *   ln = scols_new_line();
- *   scols_line_set_....(cl, ...);
  *   scols_table_add_line(tb, ln);
-
+ *   scols_line_add_child(parent, ln);
+ *
  *
  * Returns: newly allocate line
  */
