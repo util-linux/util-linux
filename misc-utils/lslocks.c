@@ -33,15 +33,16 @@
 #include <sys/types.h>
 
 #include <libmount.h>
+#include <libsmartcols.h>
 
 #include "pathnames.h"
 #include "canonicalize.h"
 #include "nls.h"
-#include "tt.h"
 #include "xalloc.h"
 #include "at.h"
 #include "strutils.h"
 #include "c.h"
+#include "list.h"
 #include "closestream.h"
 
 /* column IDs */
@@ -62,28 +63,32 @@ enum {
 struct colinfo {
 	const char *name; /* header */
 	double	   whint; /* width hint (N < 1 is in percent of termwidth) */
-	int	   flags; /* TT_FL_* */
+	int	   flags; /* SCOLS_FL_* */
 	const char *help;
 };
 
 /* columns descriptions */
 static struct colinfo infos[] = {
 	[COL_SRC]  = { "COMMAND",15, 0, N_("command of the process holding the lock") },
-	[COL_PID]  = { "PID",     5, TT_FL_RIGHT, N_("PID of the process holding the lock") },
-	[COL_TYPE] = { "TYPE",    5, TT_FL_RIGHT, N_("kind of lock: FL_FLOCK or FL_POSIX.") },
-	[COL_SIZE] = { "SIZE",    4, TT_FL_RIGHT, N_("size of the lock") },
+	[COL_PID]  = { "PID",     5, SCOLS_FL_RIGHT, N_("PID of the process holding the lock") },
+	[COL_TYPE] = { "TYPE",    5, SCOLS_FL_RIGHT, N_("kind of lock: FL_FLOCK or FL_POSIX.") },
+	[COL_SIZE] = { "SIZE",    4, SCOLS_FL_RIGHT, N_("size of the lock") },
 	[COL_MODE] = { "MODE",    5, 0, N_("lock access mode") },
 	[COL_M]    = { "M",       1, 0, N_("mandatory state of the lock: 0 (none), 1 (set)")},
-	[COL_START] = { "START", 10, TT_FL_RIGHT, N_("relative byte offset of the lock")},
-	[COL_END]  = { "END",    10, TT_FL_RIGHT, N_("ending offset of the lock")},
-	[COL_PATH] = { "PATH",    0, TT_FL_TRUNC, N_("path of the locked file")},
-	[COL_BLOCKER] = { "BLOCKER", 0, TT_FL_RIGHT, N_("PID of the process blocking the lock") }
+	[COL_START] = { "START", 10, SCOLS_FL_RIGHT, N_("relative byte offset of the lock")},
+	[COL_END]  = { "END",    10, SCOLS_FL_RIGHT, N_("ending offset of the lock")},
+	[COL_PATH] = { "PATH",    0, SCOLS_FL_TRUNC, N_("path of the locked file")},
+	[COL_BLOCKER] = { "BLOCKER", 0, SCOLS_FL_RIGHT, N_("PID of the process blocking the lock") }
 };
 #define NCOLS ARRAY_SIZE(infos)
 static int columns[NCOLS], ncolumns;
 static pid_t pid = 0;
 
 static struct libmnt_table *tab;		/* /proc/self/mountinfo */
+
+/* basic output flags */
+static int no_headings;
+static int raw;
 
 struct lock {
 	struct list_head locks;
@@ -106,7 +111,7 @@ static void disable_columns_truncate(void)
 	size_t i;
 
 	for (i = 0; i < NCOLS; i++)
-		infos[i].flags &= ~TT_FL_TRUNC;
+		infos[i].flags &= ~SCOLS_FL_TRUNC;
 }
 
 /*
@@ -377,10 +382,10 @@ static pid_t get_blocker(int id, struct list_head *locks)
 	return 0;
 }
 
-static void add_tt_line(struct tt *tt, struct lock *l, struct list_head *locks)
+static void add_scols_line(struct libscols_table *table, struct lock *l, struct list_head *locks)
 {
 	int i;
-	struct tt_line *line;
+	struct libscols_line *line;
 	/*
 	 * Whenever cmdname or filename is NULL it is most
 	 * likely  because there's no read permissions
@@ -389,9 +394,9 @@ static void add_tt_line(struct tt *tt, struct lock *l, struct list_head *locks)
 	const char *notfnd = "";
 
 	assert(l);
-	assert(tt);
+	assert(table);
 
-	line = tt_add_line(tt, NULL);
+	line = scols_table_new_line(table, NULL);
 	if (!line) {
 		warn(_("failed to add line to output"));
 		return;
@@ -440,26 +445,28 @@ static void add_tt_line(struct tt *tt, struct lock *l, struct list_head *locks)
 		}
 
 		if (str)
-			tt_line_set_data(line, i, str);
+			scols_line_set_data(line, i, str);
 	}
 }
 
-static int show_locks(struct list_head *locks, int tt_flags)
+static int show_locks(struct list_head *locks)
 {
 	int i, rc = 0;
 	struct list_head *p, *pnext;
-	struct tt *tt;
+	struct libscols_table *table;
 
-	tt = tt_new_table(tt_flags | TT_FL_FREEDATA);
-	if (!tt) {
+	table = scols_new_table(NULL);
+	if (!table) {
 		warn(_("failed to initialize output table"));
 		return -1;
 	}
+	scols_table_set_raw(table, raw);
+	scols_table_set_no_headings(table, no_headings);
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *col = get_column_info(i);
 
-		if (!tt_define_column(tt, col->name, col->whint, col->flags)) {
+		if (!scols_table_new_column(table, col->name, col->whint, col->flags)) {
 			warnx(_("failed to initialize output column"));
 			rc = -1;
 			goto done;
@@ -473,7 +480,7 @@ static int show_locks(struct list_head *locks, int tt_flags)
 		if (pid && pid != l->pid)
 			continue;
 
-		add_tt_line(tt, l, locks);
+		add_scols_line(table, l, locks);
 	}
 
 	/* destroy the list */
@@ -482,9 +489,9 @@ static int show_locks(struct list_head *locks, int tt_flags)
 		rem_lock(l);
 	}
 
-	tt_print_table(tt);
+	scols_print_table(table);
 done:
-	tt_free_table(tt);
+	scols_unref_table(table);
 	return rc;
 }
 
@@ -519,7 +526,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 int main(int argc, char *argv[])
 {
-	int c, tt_flags = 0, rc = 0;
+	int c, rc = 0;
 	struct list_head locks;
 	char *outarg = NULL;
 	static const struct option long_opts[] = {
@@ -554,10 +561,10 @@ int main(int argc, char *argv[])
 		case 'h':
 			usage(stdout);
 		case 'n':
-			tt_flags |= TT_FL_NOHEADINGS;
+			no_headings = 1;
 			break;
 		case 'r':
-			tt_flags |= TT_FL_RAW;
+			raw = 1;
 			break;
 		case 'u':
 			disable_columns_truncate();
@@ -590,7 +597,7 @@ int main(int argc, char *argv[])
 	rc = get_local_locks(&locks);
 
 	if (!rc && !list_empty(&locks))
-		rc = show_locks(&locks, tt_flags);
+		rc = show_locks(&locks);
 
 	mnt_unref_table(tab);
 	return rc;
