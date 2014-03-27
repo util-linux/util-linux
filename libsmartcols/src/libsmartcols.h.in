@@ -15,6 +15,7 @@ extern "C" {
 #endif
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <sys/types.h>
 
 #define LIBSMARTCOLS_VERSION   "@LIBSMARTCOLS_VERSION@"

@@ -6,7 +6,7 @@
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  */
-#include <stdio.h>
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>

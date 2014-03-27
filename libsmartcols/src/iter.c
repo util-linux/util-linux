@@ -14,7 +14,7 @@
  * The iterator keeps the direction and the last position
  * for access to the internal library tables/lists.
  */
-#include <stdio.h>
+
 #include <string.h>
 #include <stdlib.h>
 
