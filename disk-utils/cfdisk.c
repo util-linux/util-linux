@@ -4,6 +4,7 @@
 #include <signal.h>
 #include <ctype.h>
 #include <getopt.h>
+#include <libsmartcols.h>
 
 #ifdef HAVE_SLANG_H
 # include <slang.h>
@@ -166,11 +167,12 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	struct fdisk_partition *pa;
 	struct fdisk_label *lb;
 	struct fdisk_iter *itr = NULL;
-	struct tt *tt = NULL;
+	struct libscols_table *table = NULL;
+	struct libscols_iter *s_itr = NULL;
 	char *res = NULL;
 	size_t i;
 	int tree = 0;
-	struct tt_line *ln, *ln_cont = NULL;
+	struct libscols_line *ln, *ln_cont = NULL;
 
 	DBG(FRONTEND, ul_debug("table: convert to string"));
 
@@ -190,23 +192,26 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
 		if (fdisk_partition_is_nested(pa)) {
 			DBG(FRONTEND, ul_debug("table: nested detected, using tree"));
-			tree = TT_FL_TREE;
+			tree = SCOLS_FL_TREE;
 			break;
 		}
 	}
 
-	tt = tt_new_table(TT_FL_FREEDATA | TT_FL_MAX | tree);
-	if (!tt)
+	table = scols_new_table(NULL);
+	if (!table)
 		goto done;
+	scols_table_set_max(table, 1);
+	scols_table_set_tree(table, tree);
 
 	/* headers */
 	for (i = 0; i < cf->ncols; i++) {
 		col = fdisk_label_get_column(lb, cf->cols[i]);
 		if (col) {
-			int fl = col->tt_flags;
+			int fl = col->scols_flags;
 			if (tree && col->id == FDISK_COL_DEVICE)
-				fl |= TT_FL_TREE;
-			tt_define_column(tt, col->name, col->width, fl);
+				fl |= SCOLS_FL_TREE;
+			if (!scols_table_new_column(table, col->name, col->width, fl))
+				goto done;
 		}
 	}
 
@@ -214,9 +219,9 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	fdisk_reset_iter(itr, FDISK_ITER_FORWARD);
 
 	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
-		struct tt_line *parent = fdisk_partition_is_nested(pa) ? ln_cont : NULL;
+		struct libscols_line *parent = fdisk_partition_is_nested(pa) ? ln_cont : NULL;
 
-		ln = tt_add_line(tt, parent);
+		ln = scols_table_new_line(table, parent);
 		if (!ln)
 			goto done;
 		for (i = 0; i < cf->ncols; i++) {
@@ -226,22 +231,22 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 				continue;
 			if (fdisk_partition_to_string(pa, cf->cxt, col->id, &cdata))
 				continue;
-			tt_line_set_data(ln, i, cdata);
+			scols_line_set_data(ln, i, cdata);
 		}
 		if (tree && fdisk_partition_is_container(pa))
 			ln_cont = ln;
 
-		tt_line_set_userdata(ln, (void *) pa);
+		scols_line_set_userdata(ln, (void *) pa);
 		fdisk_ref_partition(pa);
 	}
 
-	if (tt_is_empty(tt))
+	if (scols_table_is_empty(table))
 		goto done;
 
-	tt_set_termreduce(tt, ARROW_CURSOR_WIDTH);
-	tt_print_table_to_string(tt, &res);
+	scols_table_reduce_termwidth(table, ARROW_CURSOR_WIDTH);
+	scols_print_table_to_string(table, &res);
 
-	/* tt_* code might to reorder lines, let's reorder @tb according to the
+	/* scols_* code might reorder lines, let's reorder @tb according to the
 	 * final output (it's no problem because partitions are addressed by
 	 * parno stored within struct fdisk_partition)  */
 
@@ -251,15 +256,19 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 		fdisk_table_remove_partition(tb, pa);
 
 	/* add all in the right order */
-	i = 0;
-	while (tt_get_output_line(tt, i++, &ln) == 0) {
-		struct fdisk_partition *pa = tt_line_get_userdata(ln);
+	s_itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!s_itr)
+		goto done;
+
+	while (scols_table_next_line(table, s_itr, &ln) == 0) {
+		struct fdisk_partition *pa = scols_line_get_userdata(ln);
 
 		fdisk_table_add_partition(tb, pa);
 		fdisk_unref_partition(pa);
 	}
 done:
-	tt_free_table(tt);
+	scols_unref_table(table);
+	scols_free_iter(s_itr);
 	fdisk_free_iter(itr);
 
 	return res;

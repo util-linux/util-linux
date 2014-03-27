@@ -1,4 +1,5 @@
 
+#include <libsmartcols.h>
 #include "fdiskP.h"
 
 /**
@@ -539,7 +540,7 @@ int fdisk_table_to_string(struct fdisk_table *tb,
 			  char **data)
 {
 	int *org_cols = cols, rc = 0;
-	struct tt *tt = NULL;
+	struct libscols_table *table = NULL;
 	const struct fdisk_column *col;
 	struct fdisk_partition *pa = NULL;
 	struct fdisk_iter itr;
@@ -560,8 +561,8 @@ int fdisk_table_to_string(struct fdisk_table *tb,
 			return rc;
 	}
 
-	tt = tt_new_table(TT_FL_FREEDATA);
-	if (!tt) {
+	table = scols_new_table(NULL);
+	if (!table) {
 		rc = -ENOMEM;
 		goto done;
 	}
@@ -570,14 +571,15 @@ int fdisk_table_to_string(struct fdisk_table *tb,
 	for (j = 0; j < ncols; j++) {
 		col = fdisk_label_get_column(cxt->label, cols[j]);
 		if (col)
-			tt_define_column(tt, col->name, col->width, col->tt_flags);
+			if (!scols_table_new_column(table, col->name, col->width, col->scols_flags))
+				goto done;
 	}
 
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 
-	/* convert partition to string and add to tt */
+	/* convert partition to string and add to table */
 	while (fdisk_table_next_partition(tb, &itr, &pa) == 0) {
-		struct tt_line *ln = tt_add_line(tt, NULL);
+		struct libscols_line *ln = scols_table_new_line(table, NULL);
 		if (!ln) {
 			rc = -ENOMEM;
 			goto done;
@@ -595,18 +597,18 @@ int fdisk_table_to_string(struct fdisk_table *tb,
 				continue;
 			if (fdisk_partition_to_string(pa, cxt, col->id, &cdata))
 				continue;
-			tt_line_set_data(ln, j, cdata);
+			scols_line_set_data(ln, j, cdata);
 		}
 	}
 
 	rc = 0;
-	if (!tt_is_empty(tt))
-		rc = tt_print_table_to_string(tt, data);
+	if (!scols_table_is_empty(table))
+		rc = scols_print_table_to_string(table, data);
 	else
-		DBG(TAB, ul_debugobj(tb, "tt empty"));
+		DBG(TAB, ul_debugobj(tb, "table empty"));
 done:
 	if (org_cols != cols)
 		free(cols);
-	tt_free_table(tt);
+	scols_unref_table(table);
 	return rc;
 }

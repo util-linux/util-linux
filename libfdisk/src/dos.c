@@ -15,6 +15,7 @@
 #include "fdiskP.h"
 
 #include <ctype.h>
+#include <libsmartcols.h>
 
 #define MAXIMUM_PARTS	60
 #define ACTIVE_FLAG     0x80
@@ -1914,18 +1915,18 @@ static const struct fdisk_column dos_columns[] =
 	/* basic */
 	{ FDISK_COL_DEVICE,	N_("Device"),	 10,	0 },
 	{ FDISK_COL_BOOT,	N_("Boot"),	  1,	0 },
-	{ FDISK_COL_START,	N_("Start"),	  5,	TT_FL_RIGHT },
-	{ FDISK_COL_END,	N_("End"),	  5,	TT_FL_RIGHT },
-	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	TT_FL_RIGHT },
-	{ FDISK_COL_CYLINDERS,	N_("Cylinders"),  5,	TT_FL_RIGHT },
-	{ FDISK_COL_SIZE,	N_("Size"),	  5,	TT_FL_RIGHT, FDISK_COLFL_EYECANDY },
-	{ FDISK_COL_TYPEID,	N_("Id"),	  2,	TT_FL_RIGHT },
-	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	TT_FL_TRUNC },
+	{ FDISK_COL_START,	N_("Start"),	  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_END,	N_("End"),	  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_CYLINDERS,	N_("Cylinders"),  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_SIZE,	N_("Size"),	  5,	SCOLS_FL_RIGHT, FDISK_COLFL_EYECANDY },
+	{ FDISK_COL_TYPEID,	N_("Id"),	  2,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	SCOLS_FL_TRUNC },
 
 	/* expert mode */
-	{ FDISK_COL_SADDR,	N_("Start-C/H/S"), 1,   TT_FL_RIGHT, FDISK_COLFL_DETAIL },
-	{ FDISK_COL_EADDR,	N_("End-C/H/S"),   1,   TT_FL_RIGHT, FDISK_COLFL_DETAIL },
-	{ FDISK_COL_ATTR,	N_("Attrs"),	   2,   TT_FL_RIGHT, FDISK_COLFL_DETAIL }
+	{ FDISK_COL_SADDR,	N_("Start-C/H/S"), 1,   SCOLS_FL_RIGHT, FDISK_COLFL_DETAIL },
+	{ FDISK_COL_EADDR,	N_("End-C/H/S"),   1,   SCOLS_FL_RIGHT, FDISK_COLFL_DETAIL },
+	{ FDISK_COL_ATTR,	N_("Attrs"),	   2,   SCOLS_FL_RIGHT, FDISK_COLFL_DETAIL }
 
 };
 

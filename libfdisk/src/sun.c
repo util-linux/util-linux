@@ -12,6 +12,8 @@
 #include <unistd.h>		/* write */
 #include <sys/ioctl.h>		/* ioctl */
 
+#include <libsmartcols.h>
+
 #include "nls.h"
 #include "blkdev.h"
 #include "bitops.h"
@@ -987,14 +989,14 @@ static int sun_partition_is_used(
 static const struct fdisk_column sun_columns[] =
 {
 	{ FDISK_COL_DEVICE,	N_("Device"),	 10,	0 },
-	{ FDISK_COL_START,	N_("Start"),	  5,	TT_FL_RIGHT },
-	{ FDISK_COL_END,	N_("End"),	  5,	TT_FL_RIGHT },
-	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	TT_FL_RIGHT },
-	{ FDISK_COL_CYLINDERS,	N_("Cylinders"),  5,	TT_FL_RIGHT },
-	{ FDISK_COL_SIZE,	N_("Size"),	  5,	TT_FL_RIGHT },
-	{ FDISK_COL_TYPEID,	N_("Id"),	  2,	TT_FL_RIGHT },
-	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	TT_FL_TRUNC },
-	{ FDISK_COL_ATTR,	N_("Flags"),	  0,	TT_FL_RIGHT }
+	{ FDISK_COL_START,	N_("Start"),	  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_END,	N_("End"),	  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_CYLINDERS,	N_("Cylinders"),  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_SIZE,	N_("Size"),	  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_TYPEID,	N_("Id"),	  2,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	SCOLS_FL_TRUNC },
+	{ FDISK_COL_ATTR,	N_("Flags"),	  0,	SCOLS_FL_RIGHT }
 };
 
 const struct fdisk_label_operations sun_operations =

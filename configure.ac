@@ -817,10 +817,11 @@ AC_DEFINE_UNQUOTED([LIBSMARTCOLS_VERSION], ["$LIBSMARTCOLS_VERSION"], [libsmartc
 
 
 dnl
-dnl libfdisk is enabled all time if possible
+dnl libfdisk is enabled at all times if possible
 dnl
 UL_BUILD_INIT([libfdisk], [check])
 UL_REQUIRES_BUILD([libfdisk], [libuuid])
+UL_REQUIRES_BUILD([libfdisk], [libsmartcols])
 AM_CONDITIONAL([BUILD_LIBFDISK], [test "x$build_libfdisk" = xyes])
 
 UL_BUILD_INIT([fdisk], [check])

@@ -17,12 +17,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+
 #include "c.h"
 #include "libfdisk.h"
 
 #include "nls.h"		/* temporary before dialog API will be implamented */
 #include "list.h"
-#include "tt.h"
 #include "debug.h"
 #include <stdio.h>
 #include <stdarg.h>
@@ -233,7 +233,7 @@ struct fdisk_column {
 	int		id;		/* FDISK_COL_* */
 	const char	*name;		/* column header */
 	double		width;
-	int		tt_flags;	/* TT_FL_* */
+	int		scols_flags;	/* SCOLS_FL_* */
 
 	int		flags;		/* FDISK_COLFL_* */
 };

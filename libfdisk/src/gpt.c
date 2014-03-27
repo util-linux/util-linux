@@ -18,6 +18,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <uuid.h>
+#include <libsmartcols.h>
 
 #include "fdiskP.h"
 
@@ -2349,16 +2350,16 @@ static const struct fdisk_column gpt_columns[] =
 {
 	/* basic */
 	{ FDISK_COL_DEVICE,	N_("Device"),	 10,	0 },
-	{ FDISK_COL_START,	N_("Start"),	  5,	TT_FL_RIGHT },
-	{ FDISK_COL_END,	N_("End"),	  5,	TT_FL_RIGHT },
-	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	TT_FL_RIGHT },
-	{ FDISK_COL_CYLINDERS,	N_("Cylinders"),  5,	TT_FL_RIGHT },
-	{ FDISK_COL_SIZE,	N_("Size"),	  5,	TT_FL_RIGHT, FDISK_COLFL_EYECANDY },
-	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	TT_FL_TRUNC, FDISK_COLFL_EYECANDY },
+	{ FDISK_COL_START,	N_("Start"),	  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_END,	N_("End"),	  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_CYLINDERS,	N_("Cylinders"),  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_SIZE,	N_("Size"),	  5,	SCOLS_FL_RIGHT, FDISK_COLFL_EYECANDY },
+	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	SCOLS_FL_TRUNC, FDISK_COLFL_EYECANDY },
 	/* expert */
 	{ FDISK_COL_TYPEID,	N_("Type-UUID"), 36,	0,           FDISK_COLFL_DETAIL },
 	{ FDISK_COL_UUID,	N_("UUID"),	 36,	0,           FDISK_COLFL_DETAIL },
-	{ FDISK_COL_NAME,	N_("Name"),	0.2,	TT_FL_TRUNC, FDISK_COLFL_DETAIL },
+	{ FDISK_COL_NAME,	N_("Name"),	0.2,	SCOLS_FL_TRUNC, FDISK_COLFL_DETAIL },
 	{ FDISK_COL_ATTR,	N_("Attrs"),	  0,	0,           FDISK_COLFL_DETAIL }
 };
 

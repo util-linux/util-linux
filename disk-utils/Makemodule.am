@@ -176,6 +176,11 @@ cfdisk_CFLAGS += -I$(ul_libblkid_incdir)
 cfdisk_LDADD += libblkid.la
 endif
 
+if BUILD_LIBSMARTCOLS
+cfdisk_CFLAGS += -I$(ul_libsmartcols_incdir)
+cfdisk_LDADD += libsmartcols.la
+endif
+
 if HAVE_SLANG
 cfdisk_LDADD += -lslang
 else

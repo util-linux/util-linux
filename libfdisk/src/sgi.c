@@ -10,6 +10,8 @@
  *               Arnaldo Carvalho de Melo <acme@conectiva.com.br>, Mar 1999,
  *               Phillip Kesling <pkesling@sgi.com>, Mar 2003.
  */
+
+#include <libsmartcols.h>
 #include "c.h"
 #include "nls.h"
 #include "all-io.h"
@@ -1078,14 +1080,14 @@ static int sgi_toggle_partition_flag(struct fdisk_context *cxt, size_t i, unsign
 static const struct fdisk_column sgi_columns[] =
 {
 	{ FDISK_COL_DEVICE,	N_("Device"),	 10,	0 },
-	{ FDISK_COL_START,	N_("Start"),	  5,	TT_FL_RIGHT },
-	{ FDISK_COL_END,	N_("End"),	  5,	TT_FL_RIGHT },
-	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	TT_FL_RIGHT },
-	{ FDISK_COL_CYLINDERS,	N_("Cylinders"),  5,	TT_FL_RIGHT },
-	{ FDISK_COL_SIZE,	N_("Size"),	  5,	TT_FL_RIGHT, FDISK_COLFL_EYECANDY },
-	{ FDISK_COL_TYPEID,	N_("Id"),	  2,	TT_FL_RIGHT },
-	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	TT_FL_TRUNC, FDISK_COLFL_EYECANDY },
-	{ FDISK_COL_ATTR,	N_("Attrs"),	  0,	TT_FL_RIGHT }
+	{ FDISK_COL_START,	N_("Start"),	  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_END,	N_("End"),	  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_CYLINDERS,	N_("Cylinders"),  5,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_SIZE,	N_("Size"),	  5,	SCOLS_FL_RIGHT, FDISK_COLFL_EYECANDY },
+	{ FDISK_COL_TYPEID,	N_("Id"),	  2,	SCOLS_FL_RIGHT },
+	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	SCOLS_FL_TRUNC, FDISK_COLFL_EYECANDY },
+	{ FDISK_COL_ATTR,	N_("Attrs"),	  0,	SCOLS_FL_RIGHT }
 };
 
 static const struct fdisk_label_operations sgi_operations =

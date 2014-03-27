@@ -79,8 +79,8 @@ include lib/Makemodule.am
 include libuuid/Makemodule.am
 include libblkid/Makemodule.am
 include libmount/Makemodule.am
-include libfdisk/Makemodule.am
 include libsmartcols/Makemodule.am
+include libfdisk/Makemodule.am
 
 include schedutils/Makemodule.am
 include text-utils/Makemodule.am
