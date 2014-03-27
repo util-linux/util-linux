@@ -15,8 +15,9 @@
 #include <inttypes.h>
 #include <getopt.h>
 
+#include <libsmartcols.h>
+
 #include "c.h"
-#include "tt.h"
 #include "nls.h"
 #include "strutils.h"
 #include "loopdev.h"
@@ -48,7 +49,11 @@ enum {
 	COL_SIZELIMIT,
 };
 
-struct tt *tt;
+struct libscols_table *table;
+
+/* basic output flags */
+static int no_headings;
+static int raw;
 
 struct colinfo {
 	const char *name;
@@ -58,15 +63,15 @@ struct colinfo {
 };
 
 static struct colinfo infos[] = {
-	[COL_AUTOCLR]     = { "AUTOCLEAR",    1, TT_FL_RIGHT, N_("autoclear flag set")},
+	[COL_AUTOCLR]     = { "AUTOCLEAR",    1, SCOLS_FL_RIGHT, N_("autoclear flag set")},
 	[COL_BACK_FILE]   = { "BACK-FILE",  0.3, 0, N_("device backing file")},
-	[COL_BACK_INO]    = { "BACK-INO",     4, TT_FL_RIGHT, N_("backing file inode number")},
+	[COL_BACK_INO]    = { "BACK-INO",     4, SCOLS_FL_RIGHT, N_("backing file inode number")},
 	[COL_BACK_MAJMIN] = { "BACK-MAJ:MIN", 6, 0, N_("backing file major:minor device number")},
 	[COL_NAME]        = { "NAME",      0.25, 0, N_("loop device name")},
-	[COL_OFFSET]      = { "OFFSET",       5, TT_FL_RIGHT, N_("offset from the beginning")},
-	[COL_PARTSCAN]    = { "PARTSCAN",     1, TT_FL_RIGHT, N_("partscan flag set")},
-	[COL_RO]          = { "RO",           1, TT_FL_RIGHT, N_("read-only device")},
-	[COL_SIZELIMIT]   = { "SIZELIMIT",    5, TT_FL_RIGHT, N_("size limit of the file in bytes")},
+	[COL_OFFSET]      = { "OFFSET",       5, SCOLS_FL_RIGHT, N_("offset from the beginning")},
+	[COL_PARTSCAN]    = { "PARTSCAN",     1, SCOLS_FL_RIGHT, N_("partscan flag set")},
+	[COL_RO]          = { "RO",           1, SCOLS_FL_RIGHT, N_("read-only device")},
+	[COL_SIZELIMIT]   = { "SIZELIMIT",    5, SCOLS_FL_RIGHT, N_("size limit of the file in bytes")},
 	[COL_MAJMIN]      = { "MAJ:MIN",      3, 0, N_("loop device major:minor number")},
 };
 
@@ -212,7 +217,7 @@ static int delete_all_loops(struct loopdev_cxt *lc)
 	return res;
 }
 
-static int set_tt_data(struct loopdev_cxt *lc, struct tt_line *ln)
+static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 {
 	int i;
 
@@ -225,24 +230,24 @@ static int set_tt_data(struct loopdev_cxt *lc, struct tt_line *ln)
 		case COL_NAME:
 			p = loopcxt_get_device(lc);
 			if (p)
-				tt_line_set_data(ln, i, xstrdup(p));
+				scols_line_set_data(ln, i, xstrdup(p));
 			break;
 		case COL_BACK_FILE:
 			p = loopcxt_get_backing_file(lc);
 			if (p)
-				tt_line_set_data(ln, i, xstrdup(p));
+				scols_line_set_data(ln, i, xstrdup(p));
 			break;
 		case COL_OFFSET:
 			if (loopcxt_get_offset(lc, &x) == 0)
 				xasprintf(&np, "%jd", x);
 			if (np)
-				tt_line_set_data(ln, i, np);
+				scols_line_set_data(ln, i, np);
 			break;
 		case COL_SIZELIMIT:
 			if (loopcxt_get_sizelimit(lc, &x) == 0)
 				xasprintf(&np, "%jd", x);
 			if (np)
-				tt_line_set_data(ln, i, np);
+				scols_line_set_data(ln, i, np);
 			break;
 		case COL_BACK_MAJMIN:
 		{
@@ -250,7 +255,7 @@ static int set_tt_data(struct loopdev_cxt *lc, struct tt_line *ln)
 			if (loopcxt_get_backing_devno(lc, &dev) == 0 && dev)
 				xasprintf(&np, "%8u:%-3u", major(dev), minor(dev));
 			if (np)
-				tt_line_set_data(ln, i, np);
+				scols_line_set_data(ln, i, np);
 			break;
 		}
 		case COL_MAJMIN:
@@ -264,7 +269,7 @@ static int set_tt_data(struct loopdev_cxt *lc, struct tt_line *ln)
 				xasprintf(&np, "%3u:%-3u", major(st.st_rdev),
 						           minor(st.st_rdev));
 			if (np)
-				tt_line_set_data(ln, i, np);
+				scols_line_set_data(ln, i, np);
 			break;
 		}
 		case COL_BACK_INO:
@@ -273,19 +278,19 @@ static int set_tt_data(struct loopdev_cxt *lc, struct tt_line *ln)
 			if (loopcxt_get_backing_inode(lc, &ino) == 0 && ino)
 				xasprintf(&np, "%ju", ino);
 			if (np)
-				tt_line_set_data(ln, i, np);
+				scols_line_set_data(ln, i, np);
 			break;
 		}
 		case COL_AUTOCLR:
-			tt_line_set_data(ln, i,
+			scols_line_set_data(ln, i,
 				xstrdup(loopcxt_is_autoclear(lc) ? "1" : "0"));
 			break;
 		case COL_RO:
-			tt_line_set_data(ln, i,
+			scols_line_set_data(ln, i,
 				xstrdup(loopcxt_is_readonly(lc) ? "1" : "0"));
 			break;
 		case COL_PARTSCAN:
-			tt_line_set_data(ln, i,
+			scols_line_set_data(ln, i,
 				xstrdup(loopcxt_is_partscan(lc) ? "1" : "0"));
 			break;
 		default:
@@ -298,28 +303,31 @@ static int set_tt_data(struct loopdev_cxt *lc, struct tt_line *ln)
 static int make_table(struct loopdev_cxt *lc,
 		      const char *file,
 		      uint64_t offset,
-		      int flags,
-		      int tt_flags)
+		      int flags)
 {
 	struct stat sbuf, *st = &sbuf;
-	struct tt_line *ln;
+	struct libscols_line *ln;
 	char *cn_file = NULL;
 	int i;
 
-	if (!(tt = tt_new_table(tt_flags | TT_FL_FREEDATA)))
+	if (!(table = scols_new_table(NULL)))
 		errx(EXIT_FAILURE, _("failed to initialize output table"));
+	scols_table_set_raw(table, raw);
+	scols_table_set_no_headings(table, no_headings);
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *ci = get_column_info(i);
 
-		if (!tt_define_column(tt, ci->name, ci->whint, ci->flags))
+		if (!scols_table_new_column(table, ci->name, ci->whint, ci->flags))
 			warn(_("failed to initialize output column"));
 	}
 
 	/* only one loopdev requested (already assigned to loopdev_cxt) */
 	if (loopcxt_get_device(lc)) {
-		ln = tt_add_line(tt, NULL);
-		if (set_tt_data(lc, ln))
+		ln = scols_table_new_line(table, NULL);
+		if (!ln)
+			return -ENOMEM;
+		if (set_scols_data(lc, ln))
 			return -EINVAL;
 		return 0;
 	}
@@ -344,8 +352,10 @@ static int make_table(struct loopdev_cxt *lc,
 				continue;
 		}
 
-		ln = tt_add_line(tt, NULL);
-		if (set_tt_data(lc, ln))
+		ln = scols_table_new_line(table, NULL);
+		if (!ln)
+			return -ENOMEM;
+		if (set_scols_data(lc, ln))
 			return -EINVAL;
 	}
 
@@ -428,7 +438,7 @@ int main(int argc, char **argv)
 	int act = 0, flags = 0, c;
 	char *file = NULL;
 	uint64_t offset = 0, sizelimit = 0;
-	int res = 0, showdev = 0, lo_flags = 0, tt_flags = 0;
+	int res = 0, showdev = 0, lo_flags = 0;
 	char *outarg = NULL;
 	int list = 0;
 
@@ -518,10 +528,10 @@ int main(int argc, char **argv)
 			list = 1;
 			break;
 		case 'n':
-			tt_flags |= TT_FL_NOHEADINGS;
+			no_headings = 1;
 			break;
 		case OPT_RAW:
-			tt_flags |= TT_FL_RAW;
+			raw = 1;
 			break;
 		case 'o':
 			offset = strtosize_or_err(optarg, _("failed to parse offset"));
@@ -696,13 +706,13 @@ int main(int argc, char **argv)
 		break;
 	case A_SHOW:
 		if (list)
-			res = make_table(&lc, file, offset, flags, tt_flags);
+			res = make_table(&lc, file, offset, flags);
 		else
 			res = show_all_loops(&lc, file, offset, flags);
 		break;
 	case A_SHOW_ONE:
 		if (list)
-			res = make_table( &lc, NULL, 0, 0, tt_flags);
+			res = make_table( &lc, NULL, 0, 0);
 		else
 			res = printf_loopdev(&lc);
 		if (res)
@@ -718,10 +728,10 @@ int main(int argc, char **argv)
 		usage(stderr);
 		break;
 	}
-	if (tt) {
+	if (table) {
 		if (!res)
-			tt_print_table(tt);
-		tt_free_table(tt);
+			scols_print_table(table);
+		scols_unref_table(table);
 	}
 
 	loopcxt_deinit(&lc);

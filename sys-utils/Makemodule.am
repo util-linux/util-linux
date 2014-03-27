@@ -155,14 +155,15 @@ if BUILD_LOSETUP
 sbin_PROGRAMS += losetup
 dist_man_MANS += sys-utils/losetup.8
 losetup_SOURCES = sys-utils/losetup.c
-losetup_LDADD = $(LDADD) libcommon.la
-
+losetup_LDADD = $(LDADD) libcommon.la libsmartcols.la
+losetup_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 
 if HAVE_STATIC_LOSETUP
 bin_PROGRAMS += losetup.static
 losetup_static_SOURCES = $(losetup_SOURCES)
 losetup_static_LDFLAGS = -all-static
 losetup_static_LDADD = $(losetup_LDADD)
+losetup_static_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 endif
 endif # BUILD_LOSETUP
 
