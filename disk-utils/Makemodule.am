@@ -216,7 +216,7 @@ resizepart_LDADD = $(LDADD) libcommon.la
 partx_SOURCES = \
 	disk-utils/partx.c \
 	disk-utils/partx.h
-partx_CFLAGS = -I$(ul_libblkid_incdir)
-partx_LDADD = $(LDADD) libblkid.la libcommon.la
+partx_CFLAGS = -I$(ul_libblkid_incdir) -I$(ul_libsmartcols_incdir)
+partx_LDADD = $(LDADD) libblkid.la libcommon.la libsmartcols.la
 
 endif # BUILD_PARTX
