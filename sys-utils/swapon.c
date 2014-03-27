@@ -13,6 +13,7 @@
 #include <ctype.h>
 
 #include <libmount.h>
+#include <libsmartcols.h>
 
 #include "c.h"
 #include "nls.h"
@@ -25,7 +26,6 @@
 #include "swapheader.h"
 #include "swapon-common.h"
 #include "strutils.h"
-#include "tt.h"
 
 #define PATH_MKSWAP	"/sbin/mkswap"
 
@@ -92,16 +92,21 @@ static int verbose;
 struct colinfo {
         const char *name; /* header */
         double     whint; /* width hint (N < 1 is in percent of termwidth) */
-        int        flags; /* TT_FL_* */
+	int        flags; /* SCOLS_FL_* */
         const char *help;
 };
+
+/* basic output flags */
+static int no_headings;
+static int raw;
+
 enum { COL_PATH, COL_TYPE, COL_SIZE, COL_USED, COL_PRIO };
 struct colinfo infos[] = {
 	[COL_PATH]     = { "NAME",	0.20, 0, N_("device file or partition path") },
-	[COL_TYPE]     = { "TYPE",	0.20, TT_FL_TRUNC, N_("type of the device")},
-	[COL_SIZE]     = { "SIZE",	0.20, TT_FL_RIGHT, N_("size of the swap area")},
-	[COL_USED]     = { "USED",	0.20, TT_FL_RIGHT, N_("bytes in use")},
-	[COL_PRIO]     = { "PRIO",	0.20, TT_FL_RIGHT, N_("swap priority")},
+	[COL_TYPE]     = { "TYPE",	0.20, SCOLS_FL_TRUNC, N_("type of the device")},
+	[COL_SIZE]     = { "SIZE",	0.20, SCOLS_FL_RIGHT, N_("size of the swap area")},
+	[COL_USED]     = { "USED",	0.20, SCOLS_FL_RIGHT, N_("bytes in use")},
+	[COL_PRIO]     = { "PRIO",	0.20, SCOLS_FL_RIGHT, N_("swap priority")},
 };
 #define NCOLS ARRAY_SIZE(infos)
 static int columns[NCOLS], ncolumns;
@@ -136,15 +141,15 @@ static inline struct colinfo *get_column_info(unsigned num)
 	return &infos[get_column_id(num)];
 }
 
-static void add_tt_line(struct tt *tt, struct libmnt_fs *fs, int bytes)
+static void add_scols_line(struct libscols_table *table, struct libmnt_fs *fs, int bytes)
 {
 	int i;
-	struct tt_line *line;
+	struct libscols_line *line;
 
-	assert(tt);
+	assert(table);
 	assert(fs);
 
-	line = tt_add_line(tt, NULL);
+	line = scols_table_new_line(table, NULL);
 	if (!line) {
 		warn(_("failed to add line to output"));
 		return;
@@ -185,7 +190,7 @@ static void add_tt_line(struct tt *tt, struct libmnt_fs *fs, int bytes)
 		}
 
 		if (str)
-			tt_line_set_data(line, i, str);
+			scols_line_set_data(line, i, str);
 	}
 	return;
 }
@@ -221,14 +226,14 @@ static int display_summary(void)
 	return 0;
 }
 
-static int show_table(int tt_flags, int bytes)
+static int show_table(int bytes)
 {
 	struct libmnt_table *st = get_swaps();
 	struct libmnt_iter *itr = NULL;
 	struct libmnt_fs *fs;
 
 	int i, rc = 0;
-	struct tt *tt = NULL;
+	struct libscols_table *table = NULL;
 
 	if (!st)
 		return -1;
@@ -237,16 +242,18 @@ static int show_table(int tt_flags, int bytes)
 	if (!itr)
 		err(EXIT_FAILURE, _("failed to initialize libmount iterator"));
 
-	tt = tt_new_table(tt_flags | TT_FL_FREEDATA);
-	if (!tt) {
+	table = scols_new_table(NULL);
+	if (!table) {
 		warn(_("failed to initialize output table"));
 		goto done;
 	}
+	scols_table_set_raw(table, raw);
+	scols_table_set_no_headings(table, no_headings);
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *col = get_column_info(i);
 
-		if (!tt_define_column(tt, col->name, col->whint, col->flags)) {
+		if (!scols_table_new_column(table, col->name, col->whint, col->flags)) {
 			warnx(_("failed to initialize output column"));
 			rc = -1;
 			goto done;
@@ -254,12 +261,12 @@ static int show_table(int tt_flags, int bytes)
 	}
 
 	while (mnt_table_next_fs(st, itr, &fs) == 0)
-		add_tt_line(tt, fs, bytes);
+		add_scols_line(table, fs, bytes);
 
-	tt_print_table(tt);
+	scols_print_table(table);
  done:
 	mnt_free_iter(itr);
-	tt_free_table(tt);
+	scols_unref_table(table);
 	return rc;
 }
 
@@ -725,7 +732,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 int main(int argc, char *argv[])
 {
 	int status = 0, c;
-	int show = 0, tt_flags = 0;
+	int show = 0;
 	int bytes = 0;
 	size_t i;
 
@@ -818,10 +825,10 @@ int main(int argc, char *argv[])
 			show = 1;
 			break;
 		case NOHEADINGS_OPTION:
-			tt_flags |= TT_FL_NOHEADINGS;
+			no_headings = 1;
 			break;
 		case RAW_OPTION:
-			tt_flags |= TT_FL_RAW;
+			raw = 1;
 			break;
 		case BYTES_OPTION:
 			bytes = 1;
@@ -847,7 +854,7 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_USED;
 			columns[ncolumns++] = COL_PRIO;
 		}
-		status = show_table(tt_flags, bytes);
+		status = show_table(bytes);
 		return status;
 	}
 

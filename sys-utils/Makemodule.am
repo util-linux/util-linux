@@ -234,8 +234,8 @@ swapon_SOURCES = \
 	sys-utils/swapon-common.c \
 	sys-utils/swapon-common.h
 
-swapon_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
-swapon_LDADD = $(LDADD) libcommon.la libmount.la
+swapon_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir) -I$(ul_libsmartcols_incdir)
+swapon_LDADD = $(LDADD) libcommon.la libmount.la libsmartcols.la
 
 swapoff_SOURCES = sys-utils/swapoff.c sys-utils/swapon-common.c
 swapoff_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
