@@ -33,13 +33,14 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include <libsmartcols.h>
+
 #include "cpuset.h"
 #include "nls.h"
 #include "xalloc.h"
 #include "c.h"
 #include "strutils.h"
 #include "bitops.h"
-#include "tt.h"
 #include "path.h"
 #include "closestream.h"
 #include "optutils.h"
@@ -1226,19 +1227,20 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 {
 	int i;
 	char buf[BUFSIZ], *data;
-	struct tt *tt = tt_new_table(TT_FL_FREEDATA);
+	struct libscols_table *table = scols_new_table(NULL);
 
-	if (!tt)
+	if (!table)
 		 err(EXIT_FAILURE, _("failed to initialize output table"));
 
 	for (i = 0; i < ncols; i++) {
 		data = get_cell_header(desc, cols[i], mod, buf, sizeof(buf));
-		tt_define_column(tt, xstrdup(data), 0, 0);
+		if (!scols_table_new_column(table, xstrdup(data), 0, 0))
+			return;
 	}
 
 	for (i = 0; i < desc->ncpuspos; i++) {
 		int c;
-		struct tt_line *line;
+		struct libscols_line *line;
 		int cpu = real_cpu_num(desc, i);
 
 		if (!mod->offline && desc->online && !is_cpu_online(desc, cpu))
@@ -1248,18 +1250,23 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 		if (desc->present && !is_cpu_present(desc, cpu))
 			continue;
 
-		line = tt_add_line(tt, NULL);
+		line = scols_table_new_line(table, NULL);
+		if (!line) {
+			scols_unref_table(table);
+			return;
+		}
+
 
 		for (c = 0; c < ncols; c++) {
 			data = get_cell_data(desc, i, cols[c], mod,
 					     buf, sizeof(buf));
-			tt_line_set_data(line, c,
+			scols_line_set_data(line, c,
 					xstrdup(data && *data ? data : "-"));
 		}
 	}
 
-	tt_print_table(tt);
-	tt_free_table(tt);
+	scols_print_table(table);
+	scols_unref_table(table);
 }
 
 /* output formats "<key>  <value>"*/
