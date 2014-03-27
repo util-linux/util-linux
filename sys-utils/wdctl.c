@@ -26,6 +26,8 @@
 #include <assert.h>
 #include <linux/watchdog.h>
 
+#include <libsmartcols.h>
+
 #include "nls.h"
 #include "c.h"
 #include "xalloc.h"
@@ -33,7 +35,7 @@
 #include "optutils.h"
 #include "pathnames.h"
 #include "strutils.h"
-#include "tt.h"
+#include "carefulputc.h"
 
 /*
  * since 2.6.18
@@ -56,6 +58,10 @@
 # define WDIOF_ALARMONLY	0x0400	/* Watchdog triggers a management or
 					   other external alarm not a reboot */
 #endif
+
+/* basic output flags */
+static int no_headings;
+static int raw;
 
 struct wdflag {
 	uint32_t	flag;
@@ -83,7 +89,7 @@ static const struct wdflag wdflags[] = {
 struct colinfo {
 	const char *name; /* header */
 	double	   whint; /* width hint (N < 1 is in percent of termwidth) */
-	int	   flags; /* TT_FL_* */
+	int	   flags; /* SCOLS_FL_* */
 	const char *help;
 };
 
@@ -92,9 +98,9 @@ enum { COL_FLAG, COL_DESC, COL_STATUS, COL_BSTATUS, COL_DEVICE };
 /* columns descriptions */
 static struct colinfo infos[] = {
 	[COL_FLAG]    = { "FLAG",        14,  0, N_("flag name") },
-	[COL_DESC]    = { "DESCRIPTION", 0.1, TT_FL_TRUNC, N_("flag description") },
-	[COL_STATUS]  = { "STATUS",      1,   TT_FL_RIGHT, N_("flag status") },
-	[COL_BSTATUS] = { "BOOT-STATUS", 1,   TT_FL_RIGHT, N_("flag boot status") },
+	[COL_DESC]    = { "DESCRIPTION", 0.1, SCOLS_FL_TRUNC, N_("flag description") },
+	[COL_STATUS]  = { "STATUS",      1,   SCOLS_FL_RIGHT, N_("flag status") },
+	[COL_BSTATUS] = { "BOOT-STATUS", 1,   SCOLS_FL_RIGHT, N_("flag boot status") },
 	[COL_DEVICE]  = { "DEVICE",      0.1, 0, N_("watchdog device name") }
 
 };
@@ -198,12 +204,12 @@ static void usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static void add_flag_line(struct tt *tt, struct wdinfo *wd, const struct wdflag *fl)
+static void add_flag_line(struct libscols_table *table, struct wdinfo *wd, const struct wdflag *fl)
 {
 	int i;
-	struct tt_line *line;
+	struct libscols_line *line;
 
-	line = tt_add_line(tt, NULL);
+	line = scols_table_new_line(table, NULL);
 	if (!line) {
 		warn(_("failed to add line to output"));
 		return;
@@ -233,29 +239,31 @@ static void add_flag_line(struct tt *tt, struct wdinfo *wd, const struct wdflag 
 		}
 
 		if (str)
-			tt_line_set_data(line, i, xstrdup(str));
+			scols_line_set_data(line, i, xstrdup(str));
 	}
 }
 
-static int show_flags(struct wdinfo *wd, int tt_flags, uint32_t wanted)
+static int show_flags(struct wdinfo *wd, uint32_t wanted)
 {
 	size_t i;
 	int rc = -1;
-	struct tt *tt;
+	struct libscols_table *table;
 	uint32_t flags;
 
 	/* create output table */
-	tt = tt_new_table(tt_flags | TT_FL_FREEDATA);
-	if (!tt) {
+	table = scols_new_table(NULL);
+	if (!table) {
 		warn(_("failed to initialize output table"));
 		return -1;
 	}
+	scols_table_set_raw(table, raw);
+	scols_table_set_no_headings(table, no_headings);
 
 	/* define columns */
 	for (i = 0; i < (size_t) ncolumns; i++) {
 		struct colinfo *col = get_column_info(i);
 
-		if (!tt_define_column(tt, col->name, col->whint, col->flags)) {
+		if (!scols_table_new_column(table, col->name, col->whint, col->flags)) {
 			warnx(_("failed to initialize output column"));
 			goto done;
 		}
@@ -269,7 +277,7 @@ static int show_flags(struct wdinfo *wd, int tt_flags, uint32_t wanted)
 		if (wanted && !(wanted & wdflags[i].flag))
 			; /* ignore */
 		else if (flags & wdflags[i].flag)
-			add_flag_line(tt, wd, &wdflags[i]);
+			add_flag_line(table, wd, &wdflags[i]);
 
 		flags &= ~wdflags[i].flag;
 	}
@@ -277,10 +285,10 @@ static int show_flags(struct wdinfo *wd, int tt_flags, uint32_t wanted)
 	if (flags)
 		warnx(_("%s: unknown flags 0x%x\n"), wd->device, flags);
 
-	tt_print_table(tt);
+	scols_print_table(table);
 	rc = 0;
 done:
-	tt_free_table(tt);
+	scols_unref_table(table);
 	return rc;
 }
 /*
@@ -412,7 +420,7 @@ static void print_oneline(struct wdinfo *wd, uint32_t wanted,
 		printf(" VERSION=\"%x\"", wd->ident.firmware_version);
 
 		printf(" IDENTITY=");
-		tt_fputs_quoted((char *) wd->ident.identity, stdout);
+		fputs_quoted((char *) wd->ident.identity, stdout);
 	}
 	if (!notimeouts) {
 		if (wd->has_timeout)
@@ -463,7 +471,7 @@ static void show_timeouts(struct wdinfo *wd)
 int main(int argc, char *argv[])
 {
 	struct wdinfo wd;
-	int c, tt_flags = 0, res = EXIT_SUCCESS, count = 0;
+	int c, res = EXIT_SUCCESS, count = 0;
 	char noflags = 0, noident = 0, notimeouts = 0, oneline = 0;
 	uint32_t wanted = 0;
 	int timeout = 0;
@@ -530,10 +538,10 @@ int main(int argc, char *argv[])
 			notimeouts = 1;
 			break;
 		case 'n':
-			tt_flags |= TT_FL_NOHEADINGS;
+			no_headings = 1;
 			break;
 		case 'r':
-			tt_flags |= TT_FL_RAW;
+			raw = 1;
 			break;
 		case 'O':
 			oneline = 1;
@@ -601,7 +609,7 @@ int main(int argc, char *argv[])
 		if (!notimeouts)
 			show_timeouts(&wd);
 		if (!noflags)
-			show_flags(&wd, tt_flags, wanted);
+			show_flags(&wd, wanted);
 	} while (optind < argc);
 
 	return res;

@@ -264,7 +264,8 @@ if BUILD_WDCTL
 bin_PROGRAMS += wdctl
 dist_man_MANS += sys-utils/wdctl.8
 wdctl_SOURCES = sys-utils/wdctl.c
-wdctl_LDADD = $(LDADD) libcommon.la
+wdctl_LDADD = $(LDADD) libcommon.la libsmartcols.la
+wdctl_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 endif
 
 if BUILD_MOUNTPOINT
