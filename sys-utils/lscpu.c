@@ -414,9 +414,9 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	fclose(fp);
 
-	if (path_exist(_PATH_SYS_SYSTEM "/cpu/kernel_max"))
+	if (path_exist(_PATH_SYS_CPU "/kernel_max"))
 		/* note that kernel_max is maximum index [NR_CPUS-1] */
-		maxcpus = path_read_s32(_PATH_SYS_SYSTEM "/cpu/kernel_max") + 1;
+		maxcpus = path_read_s32(_PATH_SYS_CPU "/kernel_max") + 1;
 
 	else if (mod->system == SYSTEM_LIVE)
 		/* the root is '/' so we are working with data from the current kernel */
@@ -429,8 +429,8 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	setsize = CPU_ALLOC_SIZE(maxcpus);
 
-	if (path_exist(_PATH_SYS_SYSTEM "/cpu/possible")) {
-		cpu_set_t *tmp = path_read_cpulist(maxcpus, _PATH_SYS_SYSTEM "/cpu/possible");
+	if (path_exist(_PATH_SYS_CPU "/possible")) {
+		cpu_set_t *tmp = path_read_cpulist(maxcpus, _PATH_SYS_CPU "/possible");
 		int num, idx;
 
 		desc->ncpuspos = CPU_COUNT_S(setsize, tmp);
@@ -443,24 +443,24 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		cpuset_free(tmp);
 	} else
 		err(EXIT_FAILURE, _("failed to determine number of CPUs: %s"),
-				_PATH_SYS_SYSTEM "/cpu/possible");
+				_PATH_SYS_CPU "/possible");
 
 
 	/* get mask for present CPUs */
-	if (path_exist(_PATH_SYS_SYSTEM "/cpu/present")) {
-		desc->present = path_read_cpulist(maxcpus, _PATH_SYS_SYSTEM "/cpu/present");
+	if (path_exist(_PATH_SYS_CPU "/present")) {
+		desc->present = path_read_cpulist(maxcpus, _PATH_SYS_CPU "/present");
 		desc->ncpus = CPU_COUNT_S(setsize, desc->present);
 	}
 
 	/* get mask for online CPUs */
-	if (path_exist(_PATH_SYS_SYSTEM "/cpu/online")) {
-		desc->online = path_read_cpulist(maxcpus, _PATH_SYS_SYSTEM "/cpu/online");
+	if (path_exist(_PATH_SYS_CPU "/online")) {
+		desc->online = path_read_cpulist(maxcpus, _PATH_SYS_CPU "/online");
 		desc->nthreads = CPU_COUNT_S(setsize, desc->online);
 	}
 
 	/* get dispatching mode */
-	if (path_exist(_PATH_SYS_SYSTEM "/cpu/dispatching"))
-		desc->dispatching = path_read_s32(_PATH_SYS_SYSTEM "/cpu/dispatching");
+	if (path_exist(_PATH_SYS_CPU "/dispatching"))
+		desc->dispatching = path_read_s32(_PATH_SYS_CPU "/dispatching");
 	else
 		desc->dispatching = -1;
 }
@@ -856,7 +856,7 @@ read_cache(struct lscpu_desc *desc, int idx)
 	int num = real_cpu_num(desc, idx);
 
 	if (!desc->ncaches) {
-		while(path_exist(_PATH_SYS_SYSTEM "/cpu/cpu%d/cache/index%d",
+		while(path_exist(_PATH_SYS_CPU "/cpu%d/cache/index%d",
 					num, desc->ncaches))
 			desc->ncaches++;
 
@@ -869,7 +869,7 @@ read_cache(struct lscpu_desc *desc, int idx)
 		struct cpu_cache *ca = &desc->caches[i];
 		cpu_set_t *map;
 
-		if (!path_exist(_PATH_SYS_SYSTEM "/cpu/cpu%d/cache/index%d",
+		if (!path_exist(_PATH_SYS_CPU "/cpu%d/cache/index%d",
 				num, i))
 			continue;
 		if (!ca->name) {
@@ -976,7 +976,7 @@ read_nodes(struct lscpu_desc *desc)
 	/* information about how nodes share different CPUs */
 	for (i = 0; i < desc->nnodes; i++)
 		desc->nodemaps[i] = path_read_cpuset(maxcpus,
-					_PATH_SYS_SYSTEM "/node/node%d/cpumap",
+					_PATH_SYS_NODE "/node%d/cpumap",
 					desc->idx2nodenum[i]);
 }
 
