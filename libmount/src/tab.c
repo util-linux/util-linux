@@ -732,7 +732,7 @@ static int mnt_table_move_parent(struct libmnt_table *tb, int oldid, int newid)
 /**
  * mnt_table_uniq_fs:
  * @tb: table
- * @direction: MNT_UNIQ_*
+ * @flags: MNT_UNIQ_*
  * @cmp: function to compare filesystems
  *
  * This function de-duplicate the @tb, but does not change order of the

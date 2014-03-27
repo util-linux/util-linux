@@ -1,5 +1,5 @@
 /*
- * version.c - Return the version of the blkid library
+ * version.c - Return the version of the libmount library
  *
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
  * [Based on libblkid/version.c by Theodore Ts'o]
