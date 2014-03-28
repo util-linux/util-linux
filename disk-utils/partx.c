@@ -533,10 +533,10 @@ static int list_parts(blkid_partlist ls, int lower, int upper)
 	return 0;
 }
 
-static void add_scols_line(struct libscols_table *table, blkid_partition par)
+static int add_scols_line(struct libscols_table *table, blkid_partition par)
 {
 	struct libscols_line *line;
-	int i;
+	int i, rc = 0;
 
 	assert(table);
 	assert(par);
@@ -544,11 +544,12 @@ static void add_scols_line(struct libscols_table *table, blkid_partition par)
 	line = scols_table_new_line(table, NULL);
 	if (!line) {
 		warn(_("failed to add line to output"));
-		return;
+		return -ENOMEM;
 	}
 
 	for (i = 0; i < ncolumns; i++) {
-		char *str = NULL;
+		char *str = NULL;			/* allocated string */
+		const char *cstr = NULL;		/* foreign string */
 
 		switch (get_column_id(i)) {
 		case COL_PARTNO:
@@ -574,14 +575,14 @@ static void add_scols_line(struct libscols_table *table, blkid_partition par)
 					blkid_partition_get_size(par) << 9);
 			break;
 		case COL_NAME:
-			str = xstrdup(blkid_partition_get_name(par));
+			cstr = blkid_partition_get_name(par);
 			break;
 		case COL_UUID:
-			str = xstrdup(blkid_partition_get_uuid(par));
+			cstr = blkid_partition_get_uuid(par);
 			break;
 		case COL_TYPE:
 			if (blkid_partition_get_type_string(par))
-				str = xstrdup(blkid_partition_get_type_string(par));
+				cstr = blkid_partition_get_type_string(par);
 			else
 				xasprintf(&str, "0x%x",
 					blkid_partition_get_type(par));
@@ -593,16 +594,24 @@ static void add_scols_line(struct libscols_table *table, blkid_partition par)
 		{
 			blkid_parttable tab = blkid_partition_get_table(par);
 			if (tab)
-				str = xstrdup(blkid_parttable_get_type(tab));
+				cstr = blkid_parttable_get_type(tab);
 			break;
 		}
 		default:
 			break;
 		}
 
-		if (str)
-			scols_line_set_data(line, i, str);
+		if (cstr)
+			rc = scols_line_set_data(line, i, cstr);
+		else if (str)
+			rc = scols_line_refer_data(line, i, str);
+		if (rc) {
+			warn(_("failed to add data to output table"));
+			break;
+		}
 	}
+
+	return rc;
 }
 
 static int show_parts(blkid_partlist ls, int scols_flags, int lower, int upper)
@@ -644,7 +653,9 @@ static int show_parts(blkid_partlist ls, int scols_flags, int lower, int upper)
 		if (upper && n > upper)
 			continue;
 
-		add_scols_line(table, par);
+		rc = add_scols_line(table, par);
+		if (rc)
+			break;
 	}
 
 	rc = 0;
