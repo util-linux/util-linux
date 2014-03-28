@@ -158,7 +158,7 @@ static int probe_dos_pt(blkid_probe pr,
 	 * either the boot sector of a FAT filesystem or a DOS-type
 	 * partition table.
 	 */
-	if (blkid_probe_is_vfat(pr)) {
+	if (blkid_probe_is_vfat(pr) == 1) {
 		DBG(LOWPROBE, ul_debug("probably FAT -- ignore"));
 		goto nothing;
 	}

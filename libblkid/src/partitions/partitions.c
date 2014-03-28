@@ -634,10 +634,12 @@ details_only:
 	/*
 	 * Gather PART_ENTRY_* values if the current device is a partition.
 	 */
-	if (rc == BLKID_PROBE_OK && !chn->binary &&
+	if ((rc == BLKID_PROBE_OK || rc == BLKID_PROBE_NONE) && !chn->binary &&
 	    (blkid_partitions_get_flags(pr) & BLKID_PARTS_ENTRY_DETAILS)) {
 
-		rc = blkid_partitions_probe_partition(pr);
+		int xrc = blkid_partitions_probe_partition(pr);
+		if (xrc < 0)
+			rc = xrc;	/* optional, care about errors only */
 	}
 
 	return rc;

@@ -255,8 +255,12 @@ int blkid_probe_is_vfat(blkid_probe pr)
 	struct vfat_super_block *vs;
 	struct msdos_super_block *ms;
 	const struct blkid_idmag *mag = NULL;
+	int rc;
 
-	if (blkid_probe_get_idmag(pr, &vfat_idinfo, NULL, &mag) || !mag)
+	rc = blkid_probe_get_idmag(pr, &vfat_idinfo, NULL, &mag);
+	if (rc < 0)
+		return rc;	/* error */
+	if (rc != BLKID_PROBE_OK || !mag)
 		return 0;
 
 	ms = blkid_probe_get_sb(pr, mag, struct msdos_super_block);

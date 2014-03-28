@@ -40,7 +40,7 @@ static int probe_minix_pt(blkid_probe pr,
 	 */
 	parent = blkid_partlist_get_parent(ls);
 	if (!parent)
-		goto err;
+		goto nothing;
 
 	if (blkid_partition_get_type(parent) != MBR_MINIX_PARTITION)
 		goto nothing;
