@@ -18,7 +18,7 @@ before_script:
 script:
   - ./configure
     && make
-    && ( make check || echo "non-root checks failed" )
+    && make check
     && make dist
 
 after_script:
