@@ -1,7 +1,7 @@
 /*
  * findmnt(8)
  *
- * Copyright (C) 2010,2011 Red Hat, Inc. All rights reserved.
+ * Copyright (C) 2010-2014 Red Hat, Inc. All rights reserved.
  * Written by Karel Zak <kzak@redhat.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -60,7 +60,14 @@ enum {
 	FL_DF		= (1 << 10),
 	FL_ALL		= (1 << 11),
 	FL_UNIQ		= (1 << 12),
-	FL_BYTES	= (1 << 13)
+	FL_BYTES	= (1 << 13),
+
+	/* basic table settings */
+	FL_ASCII	= (1 << 20),
+	FL_RAW		= (1 << 21),
+	FL_NOHEADINGS	= (1 << 22),
+	FL_EXPORT	= (1 << 23),
+	FL_TREE		= (1 << 24)
 };
 
 /* column IDs */
@@ -100,14 +107,6 @@ enum {
 	TABTYPE_KERNEL
 };
 
-/* basic table settings */
-enum {
-	FMNT_ASCII =		(1 << 0),
-	FMNT_RAW =		(1 << 1),
-	FMNT_NOHEADINGS =	(1 << 2),
-	FMNT_EXPORT = 		(1 << 3),
-	FMNT_TREE = 		(1 << 4),
-};
 /* column names */
 struct colinfo {
 	const char	*name;		/* header */
@@ -149,7 +148,6 @@ static struct colinfo infos[FINDMNT_NCOLUMNS] = {
 
 /* global flags */
 static int flags;
-static int scols_flags;
 
 /* array with IDs of enabled columns */
 static int columns[FINDMNT_NCOLUMNS];
@@ -561,7 +559,7 @@ static char *get_data(struct libmnt_fs *fs, int num)
 		if (!devno)
 			break;
 
-		if ((scols_flags & FMNT_RAW) || (scols_flags & FMNT_EXPORT))
+		if ((flags & FL_RAW) || (flags & FL_EXPORT))
 			xasprintf(&str, "%u:%u", major(devno), minor(devno));
 		else
 			xasprintf(&str, "%3u:%-3u", major(devno), minor(devno));
@@ -681,7 +679,7 @@ static struct libscols_line *add_line(struct libscols_table *table, struct libmn
 		return NULL;
 	}
 	for (i = 0; i < ncolumns; i++)
-		scols_line_set_data(line, i, get_data(fs, i));
+		scols_line_refer_data(line, i, get_data(fs, i));
 
 	scols_line_set_userdata(line, fs);
 	return line;
@@ -698,7 +696,7 @@ static struct libscols_line *add_tabdiff_line(struct libscols_table *table, stru
 		return NULL;
 	}
 	for (i = 0; i < ncolumns; i++)
-		scols_line_set_data(line, i,
+		scols_line_refer_data(line, i,
 				get_tabdiff_data(old_fs, new_fs, change, i));
 
 	return line;
@@ -960,7 +958,7 @@ static int add_matching_lines(struct libmnt_table *tb,
 	}
 
 	while((fs = get_next_fs(tb, itr))) {
-		if ((scols_flags & FMNT_TREE) || (flags & FL_SUBMOUNTS))
+		if ((flags & FL_TREE) || (flags & FL_SUBMOUNTS))
 			rc = create_treenode(table, tb, fs, NULL);
 		else
 			rc = !add_line(table, fs, NULL);
@@ -1245,7 +1243,7 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	/* default output format */
-	scols_flags |= FMNT_TREE;
+	flags |= FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
 				"AabcDd:ehifF:o:O:p::PklmnN:rst:uvRS:T:Uw:V",
@@ -1258,7 +1256,7 @@ int main(int argc, char *argv[])
 			flags |= FL_ALL;
 			break;
 		case 'a':
-			scols_flags |= FMNT_ASCII;
+			flags |= FL_ASCII;
 			break;
 		case 'b':
 			flags |= FL_BYTES;
@@ -1267,7 +1265,7 @@ int main(int argc, char *argv[])
 			flags |= FL_CANONICALIZE;
 			break;
 		case 'D':
-			scols_flags &= ~FMNT_TREE;
+			flags &= ~FL_TREE;
 			flags |= FL_DF;
 			break;
 		case 'd':
@@ -1312,19 +1310,19 @@ int main(int argc, char *argv[])
 					exit(EXIT_FAILURE);
 			}
 			flags |= FL_POLL;
-			scols_flags &= ~FMNT_TREE;
+			flags &= ~FL_TREE;
 			break;
 		case 'P':
-			scols_flags |= FMNT_EXPORT;
-			scols_flags &= ~FMNT_TREE;
+			flags |= FL_EXPORT;
+			flags &= ~FL_TREE;
 			break;
 		case 'm':		/* mtab */
 			tabtype = TABTYPE_MTAB;
-			scols_flags &= ~FMNT_TREE;
+			flags &= ~FL_TREE;
 			break;
 		case 's':		/* fstab */
 			tabtype = TABTYPE_FSTAB;
-			scols_flags &= ~FMNT_TREE;
+			flags &= ~FL_TREE;
 			break;
 		case 'k':		/* kernel (mountinfo) */
 			tabtype = TABTYPE_KERNEL;
@@ -1333,14 +1331,14 @@ int main(int argc, char *argv[])
 			set_match(COL_FSTYPE, optarg);
 			break;
 		case 'r':
-			scols_flags &= ~FMNT_TREE;	/* disable the default */
-			scols_flags |= FMNT_RAW;		/* enable raw */
+			flags &= ~FL_TREE;	/* disable the default */
+			flags |= FL_RAW;	/* enable raw */
 			break;
 		case 'l':
-			scols_flags &= ~FMNT_TREE; /* disable the default */
+			flags &= ~FL_TREE;	/* disable the default */
 			break;
 		case 'n':
-			scols_flags |= FMNT_NOHEADINGS;
+			flags |= FL_NOHEADINGS;
 			break;
 		case 'N':
 			tabtype = TABTYPE_KERNEL;
@@ -1426,7 +1424,7 @@ int main(int argc, char *argv[])
 	    || get_match(COL_TARGET)
 	    || get_match(COL_SOURCE)
 	    || get_match(COL_MAJMIN)))
-		scols_flags &= ~FMNT_TREE;
+		flags &= ~FL_TREE;
 
 	if (!(flags & FL_NOSWAPMATCH) &&
 	    !get_match(COL_TARGET) && get_match(COL_SOURCE)) {
@@ -1450,8 +1448,8 @@ int main(int argc, char *argv[])
 	if (!tb)
 		goto leave;
 
-	if ((scols_flags & FMNT_TREE) && (ntabfiles > 1 || !tab_is_tree(tb)))
-		scols_flags &= ~FMNT_TREE;
+	if ((flags & FL_TREE) && (ntabfiles > 1 || !tab_is_tree(tb)))
+		flags &= ~FL_TREE;
 
 	cache = mnt_new_cache();
 	if (!cache) {
@@ -1471,17 +1469,16 @@ int main(int argc, char *argv[])
 		warn(_("failed to initialize output table"));
 		goto leave;
 	}
-	scols_table_set_raw(table, !!(scols_flags & FMNT_RAW));
-	scols_table_set_export(table, !!(scols_flags & FMNT_EXPORT));
-	scols_table_set_ascii(table, !!(scols_flags & FMNT_ASCII));
-	scols_table_set_no_headings(table, !!(scols_flags & FMNT_NOHEADINGS));
-	scols_table_set_tree(table, !!(scols_flags & FMNT_TREE));
+	scols_table_set_raw(table,         !!(flags & FL_RAW));
+	scols_table_set_export(table,      !!(flags & FL_EXPORT));
+	scols_table_set_ascii(table,       !!(flags & FL_ASCII));
+	scols_table_set_no_headings(table, !!(flags & FL_NOHEADINGS));
 
 	for (i = 0; i < ncolumns; i++) {
 		int fl = get_column_flags(i);
 		int id = get_column_id(i);
 
-		if (!(scols_flags & FMNT_TREE))
+		if (!(flags & FL_TREE))
 			fl &= ~SCOLS_FL_TREE;
 
 		if (!(flags & FL_POLL) && is_tabdiff_column(id)) {
@@ -1503,7 +1500,7 @@ int main(int argc, char *argv[])
 		/* poll mode (accept the first tabfile only) */
 		rc = poll_table(tb, tabfiles ? *tabfiles : _PATH_PROC_MOUNTINFO, timeout, table, direction);
 
-	} else if ((scols_flags & FMNT_TREE) && !(flags & FL_SUBMOUNTS)) {
+	} else if ((flags & FL_TREE) && !(flags & FL_SUBMOUNTS)) {
 		/* whole tree */
 		rc = create_treenode(table, tb, NULL, NULL);
 	} else {
