@@ -105,7 +105,7 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 
 	f = path_fopen("r", 0, _PATH_PROC_SYSV_SHM);
 	if (!f)
-		goto fallback;
+		goto shm_fallback;
 
 	while (fgetc(f) != '\n');		/* skip header */
 
@@ -153,28 +153,20 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 	return i;
 
 	/* Fallback; /proc or /sys file(s) missing. */
-fallback:
-	i = id < 0 ? 0 : id;
-
+shm_fallback:
 	maxid = shmctl(0, SHM_INFO, (struct shmid_ds *) &dummy);
-	if (maxid < 0)
-		return 0;
 
-	while (i <= maxid) {
+	for (int j = 0; j <= maxid; j++) {
 		int shmid;
 		struct shmid_ds shmseg;
 		struct ipc_perm *ipcp = &shmseg.shm_perm;
 
-		shmid = shmctl(i, SHM_STAT, &shmseg);
-		if (shmid < 0) {
-			if (-1 < id) {
-				free(*shmds);
-				return 0;
-			}
-			i++;
+		shmid = shmctl(j, SHM_STAT, &shmseg);
+		if (shmid < 0 || (id > -1 && shmid != id)) {
 			continue;
 		}
 
+		i++;
 		p->shm_perm.key = ipcp->KEY;
 		p->shm_perm.id = shmid;
 		p->shm_perm.mode = ipcp->mode;
@@ -196,11 +188,12 @@ fallback:
 			p->next = xcalloc(1, sizeof(struct shm_data));
 			p = p->next;
 			p->next = NULL;
-			i++;
 		} else
-			return 1;
+			break;
 	}
 
+	if (i == 0)
+		free(*shmds);
 	return i;
 }
 
@@ -299,30 +292,22 @@ int ipc_sem_get_info(int id, struct sem_data **semds)
 	return i;
 
 	/* Fallback; /proc or /sys file(s) missing. */
- sem_fallback:
-	i = id < 0 ? 0 : id;
-
+sem_fallback:
 	arg.array = (ushort *) (void *)&dummy;
 	maxid = semctl(0, 0, SEM_INFO, arg);
-	if (maxid < 0)
-		return 0;
 
-	while (i <= maxid) {
+	for (int j = 0; j <= maxid; j++) {
 		int semid;
 		struct semid_ds semseg;
 		struct ipc_perm *ipcp = &semseg.sem_perm;
 		arg.buf = (struct semid_ds *)&semseg;
 
-		semid = semctl(i, 0, SEM_STAT, arg);
-		if (semid < 0) {
-			if (-1 < id) {
-				free(*semds);
-				return 0;
-			}
-			i++;
+		semid = semctl(j, 0, SEM_STAT, arg);
+		if (semid < 0 || (id > -1 && semid != id)) {
 			continue;
 		}
 
+		i++;
 		p->sem_perm.key = ipcp->KEY;
 		p->sem_perm.id = semid;
 		p->sem_perm.mode = ipcp->mode;
@@ -341,10 +326,12 @@ int ipc_sem_get_info(int id, struct sem_data **semds)
 			i++;
 		} else {
 			get_sem_elements(p);
-			return 1;
+			break;
 		}
 	}
 
+	if (i == 0)
+		free(*semds);
 	return i;
 }
 
@@ -422,27 +409,19 @@ int ipc_msg_get_info(int id, struct msg_data **msgds)
 	return i;
 
 	/* Fallback; /proc or /sys file(s) missing. */
- msg_fallback:
-	i = id < 0 ? 0 : id;
+msg_fallback:
+	maxid = msgctl(0, MSG_INFO, &dummy);
 
-	maxid = msgctl(id, MSG_STAT, &dummy);
-	if (maxid < 0)
-		return 0;
-
-	while (i <= maxid) {
+	for (int j = 0; j <= maxid; j++) {
 		int msgid;
 		struct ipc_perm *ipcp = &msgseg.msg_perm;
 
-		msgid = msgctl(i, MSG_STAT, &msgseg);
-		if (msgid < 0) {
-			if (-1 < id) {
-				free(*msgds);
-				return 0;
-			}
-			i++;
+		msgid = msgctl(j, MSG_STAT, &msgseg);
+		if (msgid < 0 || (id > -1 && msgid != id)) {
 			continue;
 		}
 
+		i++;
 		p->msg_perm.key = ipcp->KEY;
 		p->msg_perm.id = msgid;
 		p->msg_perm.mode = ipcp->mode;
@@ -463,11 +442,12 @@ int ipc_msg_get_info(int id, struct msg_data **msgds)
 			p->next = xcalloc(1, sizeof(struct msg_data));
 			p = p->next;
 			p->next = NULL;
-			i++;
 		} else
-			return 1;
+			break;
 	}
 
+	if (i == 0)
+		free(*msgds);
 	return i;
 }
 
