@@ -49,8 +49,6 @@ struct libscols_symbols {
 struct libscols_cell {
 	char	*data;
 	char	*color;
-
-	unsigned int is_ref;	/* data is reference to foreign pointer */
 };
 
 

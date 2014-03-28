@@ -44,8 +44,7 @@ int scols_reset_cell(struct libscols_cell *ce)
 	if (!ce)
 		return -EINVAL;
 
-	if (!ce->is_ref)
-		free(ce->data);
+	free(ce->data);
 	free(ce->color);
 	memset(ce, 0, sizeof(*ce));
 	return 0;
@@ -73,10 +72,8 @@ int scols_cell_set_data(struct libscols_cell *ce, const char *str)
 		if (!p)
 			return -ENOMEM;
 	}
-	if (!ce->is_ref)
-		free(ce->data);
+	free(ce->data);
 	ce->data = p;
-	ce->is_ref = 0;
 	return 0;
 }
 
@@ -85,22 +82,21 @@ int scols_cell_set_data(struct libscols_cell *ce, const char *str)
  * @ce: a pointer to a struct libscols_cell instance
  * @str: user data
  *
- * Adds a reference to @str to @ce.
+ * Adds a reference to @str to @ce. The pointer is deallocated by
+ * scols_reset_cell() or scols_unref_line(). This function is mostly designed
+ * for situations when the data for the cell are already composed in allocated
+ * memory (e.g. asprintf()) to avoid extra unnecessary strdup().
  *
  * Returns: 0, a negative value in case of an error.
  */
 int scols_cell_refer_data(struct libscols_cell *ce, char *str)
 {
-	char *p = NULL;
-
 	assert(ce);
 
 	if (!ce)
 		return -EINVAL;
-	if (!ce->is_ref)
-		free(ce->data);
-	ce->data = p;
-	ce->is_ref = 1;
+	free(ce->data);
+	ce->data = str;
 	return 0;
 }
 
