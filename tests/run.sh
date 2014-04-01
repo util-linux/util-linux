@@ -24,6 +24,15 @@ top_srcdir=
 top_builddir=
 paraller_jobs=1
 
+function num_cpus()
+{
+	if lscpu -p &>/dev/null; then
+		lscpu -p | grep -cv '^#'
+	else
+		echo 1
+	fi
+}
+
 while [ -n "$1" ]; do
 	case "$1" in
 	--force)
@@ -55,7 +64,7 @@ while [ -n "$1" ]; do
 		OPTS="$OPTS --parallel"
 		;;
 	--parallel)
-		paraller_jobs=$(lscpu -bp | grep -cv '^#')
+		paraller_jobs=$(num_cpus)
 		OPTS="$OPTS --parallel"
 		;;
 	--*)
