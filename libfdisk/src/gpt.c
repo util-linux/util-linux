@@ -1382,11 +1382,11 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 	if (fdisk_context_display_details(cxt)) {
 		struct gpt_header *h = self_label(cxt)->pheader;
 
-		fdisk_colon(cxt, _("First LBA: %ju"), h->first_usable_lba);
-		fdisk_colon(cxt, _("Last LBA: %ju"), h->last_usable_lba);
-		fdisk_colon(cxt, _("Alternative LBA: %ju"), h->alternative_lba);
-		fdisk_colon(cxt, _("Partitions entries LBA: %ju"), h->partition_entry_lba);
-		fdisk_colon(cxt, _("Allocated partition entries: %u"), h->npartition_entries);
+		fdisk_info(cxt, _("First LBA: %ju"), h->first_usable_lba);
+		fdisk_info(cxt, _("Last LBA: %ju"), h->last_usable_lba);
+		fdisk_info(cxt, _("Alternative LBA: %ju"), h->alternative_lba);
+		fdisk_info(cxt, _("Partitions entries LBA: %ju"), h->partition_entry_lba);
+		fdisk_info(cxt, _("Allocated partition entries: %u"), h->npartition_entries);
 	}
 
 	return 0;

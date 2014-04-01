@@ -718,7 +718,7 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 	sunlabel = self_disklabel(cxt);
 
 	if (fdisk_context_display_details(cxt)) {
-		fdisk_colon(cxt,
+		fdisk_info(cxt,
 		_("Label geometry: %d rpm, %d alternate and %d physical cylinders,\n"
 		  "                %d extra sects/cyl, interleave %d:1"),
 		       be16_to_cpu(sunlabel->rpm),
@@ -726,8 +726,8 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 		       be16_to_cpu(sunlabel->pcyl),
 		       be16_to_cpu(sunlabel->apc),
 		       be16_to_cpu(sunlabel->intrlv));
-		fdisk_colon(cxt, _("Label ID: %s"), sunlabel->label_id);
-		fdisk_colon(cxt, _("Volume ID: %s"),
+		fdisk_info(cxt, _("Label ID: %s"), sunlabel->label_id);
+		fdisk_info(cxt, _("Volume ID: %s"),
 		       *sunlabel->vtoc.volume_id ? sunlabel->vtoc.volume_id : _("<none>"));
 	}
 

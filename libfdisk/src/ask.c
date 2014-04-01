@@ -713,19 +713,6 @@ int fdisk_sinfo(struct fdisk_context *cxt,
 
 }
 
-int fdisk_colon(struct fdisk_context *cxt, const char *fmt, ...)
-{
-	int rc;
-	va_list ap;
-
-	assert(cxt);
-	va_start(ap, fmt);
-	rc = do_vprint(cxt, -1, FDISK_ASKTYPE_INFO, FDISK_INFO_COLON, fmt, ap);
-	va_end(ap);
-	return rc;
-
-}
-
 int fdisk_warn(struct fdisk_context *cxt, const char *fmt, ...)
 {
 	int rc;

@@ -61,8 +61,7 @@ enum {
 
 /* extra flags for info massages (see fdisk_sinfo() */
 enum {
-	FDISK_INFO_COLON = 1,	/* colorize "foo bar:" prefix in the message */
-	FDISK_INFO_SUCCESS,	/* info after successful action */
+	FDISK_INFO_SUCCESS	/* info after successful action */
 };
 
 /* init.c */

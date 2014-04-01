@@ -299,48 +299,18 @@ static int ask_offset(struct fdisk_context *cxt,
 
 static unsigned int info_count;
 
-static void fputs_info(struct fdisk_ask *ask, FILE *out, char *buf, size_t bufsz)
+static void fputs_info(struct fdisk_ask *ask, FILE *out)
 {
 	const char *msg;
-	unsigned int flags;
-
 	assert(ask);
 
 	msg = fdisk_ask_print_get_mesg(ask);
-	flags = fdisk_ask_get_flags(ask);
-
 	if (!msg)
 		return;
 	if (info_count == 1)
 		fputc('\n', out);
-	if (flags == 0 || !colors_wanted())
-		goto simple;
 
-	if (flags & FDISK_INFO_COLON) {
-		size_t sz;
-		char *sep = _(": ");
-		char *p = strstr(msg, sep);
-
-		if (!p)
-			goto simple;
-
-		sz = strlen(sep);
-		strncpy(buf, msg, bufsz);
-		buf[p - msg + sz] = '\0';
-
-		color_enable(UL_COLOR_BROWN);
-		fputs(buf, out);
-		color_disable();
-		fputs(p + sz, out);
-
-	} else if (flags & FDISK_INFO_SUCCESS) {
-		color_enable(UL_COLOR_BOLD);
-		fputs(msg, out);
-		color_disable();
-	} else {
-simple:
-		fputs(msg, out);
-	}
+	fputs(msg, out);
 	fputc('\n', out);
 }
 
@@ -365,7 +335,7 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		return ask_offset(cxt, ask, buf, sizeof(buf));
 	case FDISK_ASKTYPE_INFO:
 		info_count++;
-		fputs_info(ask, stdout, buf, sizeof(buf));
+		fputs_info(ask, stdout);
 		break;
 	case FDISK_ASKTYPE_WARNX:
 		color_fenable(UL_COLOR_RED, stderr);
@@ -562,33 +532,33 @@ void list_disk_geometry(struct fdisk_context *cxt)
 	char *strsz = size_to_human_string(SIZE_SUFFIX_SPACE
 					   | SIZE_SUFFIX_3LETTER, bytes);
 
-	fdisk_colon(cxt,	_("Disk %s: %s, %ju bytes, %ju sectors"),
+	fdisk_info(cxt,	_("Disk %s: %s, %ju bytes, %ju sectors"),
 			cxt->dev_path, strsz,
 			bytes, (uintmax_t) cxt->total_sectors);
 	free(strsz);
 
 	if (fdisk_require_geometry(cxt) || fdisk_context_use_cylinders(cxt))
-		fdisk_colon(cxt, _("Geometry: %d heads, %llu sectors/track, %llu cylinders"),
+		fdisk_info(cxt, _("Geometry: %d heads, %llu sectors/track, %llu cylinders"),
 			       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
 
-	fdisk_colon(cxt, _("Units: %s of %d * %ld = %ld bytes"),
+	fdisk_info(cxt, _("Units: %s of %d * %ld = %ld bytes"),
 	       fdisk_context_get_unit(cxt, PLURAL),
 	       fdisk_context_get_units_per_sector(cxt),
 	       cxt->sector_size,
 	       fdisk_context_get_units_per_sector(cxt) * cxt->sector_size);
 
-	fdisk_colon(cxt, _("Sector size (logical/physical): %lu bytes / %lu bytes"),
+	fdisk_info(cxt, _("Sector size (logical/physical): %lu bytes / %lu bytes"),
 				cxt->sector_size, cxt->phy_sector_size);
-	fdisk_colon(cxt, _("I/O size (minimum/optimal): %lu bytes / %lu bytes"),
+	fdisk_info(cxt, _("I/O size (minimum/optimal): %lu bytes / %lu bytes"),
 				cxt->min_io_size, cxt->io_size);
 	if (cxt->alignment_offset)
-		fdisk_colon(cxt, _("Alignment offset: %lu bytes"),
+		fdisk_info(cxt, _("Alignment offset: %lu bytes"),
 				cxt->alignment_offset);
 	if (fdisk_dev_has_disklabel(cxt))
-		fdisk_colon(cxt, _("Disklabel type: %s"), cxt->label->name);
+		fdisk_info(cxt, _("Disklabel type: %s"), cxt->label->name);
 
 	if (fdisk_get_disklabel_id(cxt, &id) == 0 && id)
-		fdisk_colon(cxt, _("Disk identifier: %s"), id);
+		fdisk_info(cxt, _("Disk identifier: %s"), id);
 }
 
 void list_disklabel(struct fdisk_context *cxt)
@@ -655,7 +625,7 @@ static void dump_buffer(off_t base, unsigned char *buf, size_t sz, int all)
 static void dump_blkdev(struct fdisk_context *cxt, const char *name,
 			off_t offset, size_t size, int all)
 {
-	fdisk_colon(cxt, _("\n%s: offset = %ju, size = %zu bytes."),
+	fdisk_info(cxt, _("\n%s: offset = %ju, size = %zu bytes."),
 			name, offset, size);
 
 	if (lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1)

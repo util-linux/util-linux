@@ -253,7 +253,7 @@ static int sgi_list_table(struct fdisk_context *cxt)
 	int rc = 0;
 
 	if (fdisk_context_display_details(cxt))
-		fdisk_colon(cxt, _(
+		fdisk_info(cxt, _(
 			"Label geometry: %d heads, %llu sectors\n"
 			"                %llu cylinders, %d physical cylinders\n"
 			"                %d extra sects/cyl, interleave %d:1\n"),
@@ -261,7 +261,7 @@ static int sgi_list_table(struct fdisk_context *cxt)
 			cxt->geom.cylinders, be16_to_cpu(sgiparam->pcylcount),
 			(int) sgiparam->sparecyl, be16_to_cpu(sgiparam->ilfact));
 
-	fdisk_colon(cxt, _("Bootfile: %s"), sgilabel->boot_file);
+	fdisk_info(cxt, _("Bootfile: %s"), sgilabel->boot_file);
 	return rc;
 }
 
