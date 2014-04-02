@@ -7,6 +7,7 @@ fallocate \- preallocate or deallocate space to a file
 .RB [ \-n ]
 .RB [ \-p ]
 .RB [ \-c ]
+.RB [ \-z ]
 .RB [ \-o
 .IR offset ]
 .B \-l
@@ -46,6 +47,9 @@ Do not modify the apparent length of the file.  This may effectively allocate
 blocks past EOF, which can be removed with a truncate.
 .IP "\fB\-p, \-\-punch-hole\fP"
 Punch holes in the file, the range should not exceed the length of the file.
+This option may not be specified at the same time as the
+.B \-z
+option.
 .IP "\fB\-d, \-\-dig-holes\fP"
 Detect and dig holes. Makes the file sparse in-place, without using extra disk
 space. The minimal size of the hole depends on filesystem I/O block size
@@ -61,6 +65,16 @@ Collapse a particular file range to nullify the hole. Extents beyond the range
 command does not leave a hole, while \fI\-\-punch-hole\fP leaves a hole
 instead of shifting extents. Both offset and length should be aligned to
 the block size of filesystem.
+.IP "\fB\-z, \-\-zero-range\fP"
+Zero range in the file. Regions that span holes in the file will be
+preallocated, this includes areas past EOF. Option
+.B \-n
+can be specified to prevent file length modification. Reads from the range
+will return zeros. This option may not be specified at the same time as the
+.B \-p
+or
+.B \-c
+option.
 .IP "\fB\-o, \-\-offset\fP \fIoffset\fP
 Specifies the beginning offset of the allocation, in bytes.
 .IP "\fB\-l, \-\-length\fP \fIlength\fP

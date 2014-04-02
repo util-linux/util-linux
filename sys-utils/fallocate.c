@@ -40,20 +40,24 @@
 
 #if defined(HAVE_LINUX_FALLOC_H) && \
     (!defined(FALLOC_FL_KEEP_SIZE) || !defined(FALLOC_FL_PUNCH_HOLE) || \
-     !defined(FALLOC_FL_COLLAPSE_RANGE))
+     !defined(FALLOC_FL_COLLAPSE_RANGE) || !defined(FALLOC_FL_ZERO_RANGE))
 # include <linux/falloc.h>	/* non-libc fallback for FALLOC_FL_* flags */
 #endif
 
 #ifndef FALLOC_FL_KEEP_SIZE
-# define FALLOC_FL_KEEP_SIZE 1
+# define FALLOC_FL_KEEP_SIZE		0x1
 #endif
 
 #ifndef FALLOC_FL_PUNCH_HOLE
-# define FALLOC_FL_PUNCH_HOLE 2
+# define FALLOC_FL_PUNCH_HOLE		0x2
 #endif
 
 #ifndef FALLOC_FL_COLLAPSE_RANGE
-# define FALLOC_FL_COLLAPSE_RANGE 8
+# define FALLOC_FL_COLLAPSE_RANGE	0x8
+#endif
+
+#ifndef FALLOC_FL_ZERO_RANGE
+# define FALLOC_FL_ZERO_RANGE		0x10
 #endif
 
 #include "nls.h"
@@ -77,6 +81,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -n, --keep-size      don't modify the length of the file\n"), out);
 	fputs(_(" -o, --offset <num>   offset of the (de)allocation, in bytes\n"), out);
 	fputs(_(" -p, --punch-hole     punch holes in the file\n"), out);
+	fputs(_(" -z, --zero-range     zeroes a range in the file\n"), out);
 	fputs(_(" -v, --verbose        verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -270,6 +275,7 @@ int main(int argc, char **argv)
 	    { "punch-hole",     0, 0, 'p' },
 	    { "collapse-range", 0, 0, 'c' },
 	    { "dig-holes",      0, 0, 'd' },
+	    { "zero-range",     0, 0, 'z' },
 	    { "offset",         1, 0, 'o' },
 	    { "length",         1, 0, 'l' },
 	    { "verbose",        0, 0, 'v' },
@@ -281,7 +287,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "hvVncpdl:o:", longopts, NULL))
+	while ((c = getopt_long(argc, argv, "hvVncpdzl:o:", longopts, NULL))
 			!= -1) {
 		switch(c) {
 		case 'h':
@@ -302,6 +308,9 @@ int main(int argc, char **argv)
 		case 'd':
 			dig = 1;
 			break;
+		case 'z':
+			mode |= FALLOC_FL_ZERO_RANGE;
+			break;
 		case 'l':
 			length = cvtnum(optarg);
 			break;
@@ -318,7 +327,8 @@ int main(int argc, char **argv)
 	}
 	if (dig) {
 		if (mode != 0)
-			errx(EXIT_FAILURE, _("Can't use -p or -n with --dig-holes"));
+			errx(EXIT_FAILURE,
+			     _("Can't use other modes with --dig-holes"));
 		if (length == -2LL)
 			length = 0;
 		if (length < 0)
@@ -333,6 +343,9 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("invalid offset value specified"));
 	if (optind == argc)
 		errx(EXIT_FAILURE, _("no filename specified."));
+	if (mode & ~(FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE))
+		errx(EXIT_FAILURE, _("only -n mode can be used with "
+				     "--zero-range"));
 
 	filename = argv[optind++];
 
