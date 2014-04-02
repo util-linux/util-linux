@@ -10,14 +10,14 @@ blockdev \- call block device ioctls from the command line
 .B blockdev
 .RB [ \-q ]
 .RB [ \-v ]
-.IR command
-.RI [ command ...]
-.IR device
-.RI [ device ...]
+.I command
+.RI [ command \&...\&]
+.I device
+.RI [ device \&...\&]
 .br
 .B blockdev
 .B \-\-report
-.RI [ device ...]
+.RI [ device \&...\&]
 .SH DESCRIPTION
 The utility
 .B blockdev
@@ -60,9 +60,9 @@ Get read-only. Print 1 if the device is read-only, 0 otherwise.
 .IP "\fB\-\-getsize64\fP"
 Print device size in bytes.
 .IP "\fB\-\-getsize\fP"
-Print device size (32-bit!) in sectors. Deprecated in favor of the --getsz option.
+Print device size (32-bit!) in sectors. Deprecated in favor of the \-\-getsz option.
 .IP "\fB\-\-getss\fP"
-Print sectorsize in bytes - usually 512.
+Print sectorsize in bytes \(en usually 512.
 .IP "\fB\-\-getsz\fP"
 Get size in 512-byte sectors.
 .IP "\fB\-\-rereadpt\fP"
@@ -72,7 +72,7 @@ Set blocksize. Note that the block size is specific to the current file
 descriptor opening the block device, so the change of block size only persists
 for as long as blockdev has the device open, and is lost once blockdev exits.
 .IP "\fB\-\-setfra\fP \fIsectors\fP"
-Set filesystem readahead (same like --setra on 2.6 kernels).
+Set filesystem readahead (same like \-\-setra on 2.6 kernels).
 .IP "\fB\-\-setra\fP \fIsectors\fP"
 Set readahead (in 512-byte sectors).
 .IP "\fB\-\-setro\fP"
@@ -80,7 +80,7 @@ Set read-only.
 .IP "\fB\-\-setrw\fP"
 Set read-write.
 .SH AUTHOR
-blockdev was written by Andries E. Brouwer and rewritten by Karel Zak.
+blockdev was written by Andries E.\& Brouwer and rewritten by Karel Zak.
 .SH AVAILABILITY
 The blockdev command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
