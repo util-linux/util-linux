@@ -113,8 +113,8 @@ enum {
 	LSBLK_ASCII =		(1 << 0),
 	LSBLK_RAW =		(1 << 1),
 	LSBLK_NOHEADINGS =	(1 << 2),
-	LSBLK_EXPORT = 		(1 << 3),
-	LSBLK_TREE = 		(1 << 4),
+	LSBLK_EXPORT =		(1 << 3),
+	LSBLK_TREE =		(1 << 4),
 };
 
 /* column names */
@@ -701,8 +701,8 @@ static char *mk_dm_name(const char *name)
 
 static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libscols_line *ln)
 {
-	char *p = NULL;
 	int st_rc = 0;
+	char *str = NULL;
 
 	if (!cxt->st.st_rdev && (id == COL_OWNER || id == COL_GROUP ||
 				 id == COL_MODE))
@@ -710,29 +710,27 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 
 	switch(id) {
 	case COL_NAME:
-		scols_line_set_data(ln, col, cxt->dm_name ?
-				mk_dm_name(cxt->dm_name) :
-				mk_name(cxt->name));
+		str = cxt->dm_name ? mk_dm_name(cxt->dm_name) :	mk_name(cxt->name);
 		break;
 	case COL_KNAME:
-		scols_line_set_data(ln, col, mk_name(cxt->name));
+		str = mk_name(cxt->name);
 		break;
 	case COL_PKNAME:
 		if (cxt->parent)
-			scols_line_set_data(ln, col, mk_name(cxt->parent->name));
+			str = mk_name(cxt->parent->name);
 		break;
 	case COL_OWNER:
 	{
 		struct passwd *pw = st_rc ? NULL : getpwuid(cxt->st.st_uid);
 		if (pw)
-			scols_line_set_data(ln, col, xstrdup(pw->pw_name));
+			str = xstrdup(pw->pw_name);
 		break;
 	}
 	case COL_GROUP:
 	{
 		struct group *gr = st_rc ? NULL : getgrgid(cxt->st.st_gid);
 		if (gr)
-			scols_line_set_data(ln, col, xstrdup(gr->gr_name));
+			str = xstrdup(gr->gr_name);
 		break;
 	}
 	case COL_MODE:
@@ -741,249 +739,196 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 
 		if (!st_rc) {
 			strmode(cxt->st.st_mode, md);
-			scols_line_set_data(ln, col, xstrdup(md));
+			str = xstrdup(md);
 		}
 		break;
 	}
 	case COL_MAJMIN:
 		if (is_parsable(lsblk))
-			xasprintf(&p, "%u:%u", cxt->maj, cxt->min);
+			xasprintf(&str, "%u:%u", cxt->maj, cxt->min);
 		else
-			xasprintf(&p, "%3u:%-3u", cxt->maj, cxt->min);
-		scols_line_set_data(ln, col, p);
+			xasprintf(&str, "%3u:%-3u", cxt->maj, cxt->min);
 		break;
 	case COL_FSTYPE:
 		probe_device(cxt);
 		if (cxt->fstype)
-			scols_line_set_data(ln, col, xstrdup(cxt->fstype));
+			str = xstrdup(cxt->fstype);
 		break;
 	case COL_TARGET:
-		if (!(cxt->nholders + cxt->npartitions)) {
-			if ((p = get_device_mountpoint(cxt)))
-				scols_line_set_data(ln, col, p);
-		}
+		if (!(cxt->nholders + cxt->npartitions))
+			str = get_device_mountpoint(cxt);
 		break;
 	case COL_LABEL:
 		probe_device(cxt);
-		if (!cxt->label)
-			break;
-
-		scols_line_set_data(ln, col, xstrdup(cxt->label));
+		if (cxt->label)
+			str = xstrdup(cxt->label);
 		break;
 	case COL_UUID:
 		probe_device(cxt);
 		if (cxt->uuid)
-			scols_line_set_data(ln, col, xstrdup(cxt->uuid));
+			str = xstrdup(cxt->uuid);
 		break;
 	case COL_PARTTYPE:
 		probe_device(cxt);
 		if (cxt->parttype)
-			scols_line_set_data(ln, col, xstrdup(cxt->parttype));
+			str = xstrdup(cxt->parttype);
 		break;
 	case COL_PARTLABEL:
 		probe_device(cxt);
-		if (!cxt->partlabel)
-			break;
-
-		scols_line_set_data(ln, col, xstrdup(cxt->partlabel));
+		if (cxt->partlabel)
+			str = xstrdup(cxt->partlabel);
 		break;
 	case COL_PARTUUID:
 		probe_device(cxt);
 		if (cxt->partuuid)
-			scols_line_set_data(ln, col, xstrdup(cxt->partuuid));
+			str = xstrdup(cxt->partuuid);
 		break;
 	case COL_PARTFLAGS:
 		probe_device(cxt);
 		if (cxt->partflags)
-			scols_line_set_data(ln, col, xstrdup(cxt->partflags));
+			str = xstrdup(cxt->partflags);
 		break;
 	case COL_WWN:
 		get_udev_properties(cxt);
 		if (cxt->wwn)
-			scols_line_set_data(ln, col, xstrdup(cxt->wwn));
+			str = xstrdup(cxt->wwn);
 		break;
 	case COL_RA:
-		p = sysfs_strdup(&cxt->sysfs, "queue/read_ahead_kb");
-		if (p)
-			scols_line_set_data(ln, col, p);
+		str = sysfs_strdup(&cxt->sysfs, "queue/read_ahead_kb");
 		break;
 	case COL_RO:
-		scols_line_set_data(ln, col, is_readonly_device(cxt) ?
-					xstrdup("1") : xstrdup("0"));
+		str = xstrdup(is_readonly_device(cxt) ? "1" : "0");
 		break;
 	case COL_RM:
-		p = sysfs_strdup(&cxt->sysfs, "removable");
-		if (!p && cxt->sysfs.parent)
-			p = sysfs_strdup(cxt->sysfs.parent, "removable");
-		if (p)
-			scols_line_set_data(ln, col, p);
+		str = sysfs_strdup(&cxt->sysfs, "removable");
+		if (!str && cxt->sysfs.parent)
+			str = sysfs_strdup(cxt->sysfs.parent, "removable");
 		break;
 	case COL_ROTA:
-		p = sysfs_strdup(&cxt->sysfs, "queue/rotational");
-		if (p)
-			scols_line_set_data(ln, col, p);
+		str = sysfs_strdup(&cxt->sysfs, "queue/rotational");
 		break;
 	case COL_RAND:
-		p = sysfs_strdup(&cxt->sysfs, "queue/add_random");
-		if (p)
-			scols_line_set_data(ln, col, p);
+		str = sysfs_strdup(&cxt->sysfs, "queue/add_random");
 		break;
 	case COL_MODEL:
-		if (!cxt->partition && cxt->nslaves == 0) {
-			p = sysfs_strdup(&cxt->sysfs, "device/model");
-			if (p)
-				scols_line_set_data(ln, col, p);
-		}
+		if (!cxt->partition && cxt->nslaves == 0)
+			str = sysfs_strdup(&cxt->sysfs, "device/model");
 		break;
 	case COL_SERIAL:
 		if (!cxt->partition && cxt->nslaves == 0) {
 			get_udev_properties(cxt);
 			if (cxt->serial)
-				scols_line_set_data(ln, col, xstrdup(cxt->serial));
+				str = xstrdup(cxt->serial);
 		}
 		break;
 	case COL_REV:
-		if (!cxt->partition && cxt->nslaves == 0) {
-			p = sysfs_strdup(&cxt->sysfs, "device/rev");
-			if (p)
-				scols_line_set_data(ln, col, p);
-		}
+		if (!cxt->partition && cxt->nslaves == 0)
+			str = sysfs_strdup(&cxt->sysfs, "device/rev");
 		break;
 	case COL_VENDOR:
-		if (!cxt->partition && cxt->nslaves == 0) {
-			p = sysfs_strdup(&cxt->sysfs, "device/vendor");
-			if (p)
-				scols_line_set_data(ln, col, p);
-		}
+		if (!cxt->partition && cxt->nslaves == 0)
+			str = sysfs_strdup(&cxt->sysfs, "device/vendor");
 		break;
 	case COL_SIZE:
-		if (cxt->size) {
-			if (lsblk->bytes)
-				xasprintf(&p, "%jd", cxt->size);
-			else
-				p = size_to_human_string(SIZE_SUFFIX_1LETTER, cxt->size);
-			if (p)
-				scols_line_set_data(ln, col, p);
-		}
+		if (!cxt->size)
+			break;
+		if (lsblk->bytes)
+			xasprintf(&str, "%jd", cxt->size);
+		else
+			str = size_to_human_string(SIZE_SUFFIX_1LETTER, cxt->size);
 		break;
 	case COL_STATE:
-		if (!cxt->partition && !cxt->dm_name) {
-			p = sysfs_strdup(&cxt->sysfs, "device/state");
-		} else if (cxt->dm_name) {
+		if (!cxt->partition && !cxt->dm_name)
+			str = sysfs_strdup(&cxt->sysfs, "device/state");
+		else if (cxt->dm_name) {
 			int x = 0;
 			if (sysfs_read_int(&cxt->sysfs, "dm/suspended", &x) == 0)
-				p = x ? xstrdup("suspended") : xstrdup("running");
+				str = xstrdup(x ? "suspended" : "running");
 		}
-		if (p)
-			scols_line_set_data(ln, col, p);
 		break;
 	case COL_ALIOFF:
-		p = sysfs_strdup(&cxt->sysfs, "alignment_offset");
-		if (p)
-			scols_line_set_data(ln, col, p);
+		str = sysfs_strdup(&cxt->sysfs, "alignment_offset");
 		break;
 	case COL_MINIO:
-		p = sysfs_strdup(&cxt->sysfs, "queue/minimum_io_size");
-		if (p)
-			scols_line_set_data(ln, col, p);
+		str = sysfs_strdup(&cxt->sysfs, "queue/minimum_io_size");
 		break;
 	case COL_OPTIO:
-		p = sysfs_strdup(&cxt->sysfs, "queue/optimal_io_size");
-		if (p)
-			scols_line_set_data(ln, col, p);
+		str = sysfs_strdup(&cxt->sysfs, "queue/optimal_io_size");
 		break;
 	case COL_PHYSEC:
-		p = sysfs_strdup(&cxt->sysfs, "queue/physical_block_size");
-		if (p)
-			scols_line_set_data(ln, col, p);
+		str = sysfs_strdup(&cxt->sysfs, "queue/physical_block_size");
 		break;
 	case COL_LOGSEC:
-		p = sysfs_strdup(&cxt->sysfs, "queue/logical_block_size");
-		if (p)
-			scols_line_set_data(ln, col, p);
+		str = sysfs_strdup(&cxt->sysfs, "queue/logical_block_size");
 		break;
 	case COL_SCHED:
-		p = get_scheduler(cxt);
-		if (p)
-			scols_line_set_data(ln, col, p);
+		str = get_scheduler(cxt);
 		break;
 	case COL_RQ_SIZE:
-		p = sysfs_strdup(&cxt->sysfs, "queue/nr_requests");
-		if (p)
-			scols_line_set_data(ln, col, p);
+		str = sysfs_strdup(&cxt->sysfs, "queue/nr_requests");
 		break;
 	case COL_TYPE:
-		p = get_type(cxt);
-		if (p)
-			scols_line_set_data(ln, col, p);
+		str = get_type(cxt);
 		break;
 	case COL_HCTL:
 	{
 		int h, c, t, l;
-		if (sysfs_scsi_get_hctl(&cxt->sysfs, &h, &c, &t, &l) == 0) {
-			xasprintf(&p, "%d:%d:%d:%d", h, c, t, l);
-			scols_line_set_data(ln, col, p);
-		}
+		if (sysfs_scsi_get_hctl(&cxt->sysfs, &h, &c, &t, &l) == 0)
+			xasprintf(&str, "%d:%d:%d:%d", h, c, t, l);
 		break;
 	}
 	case COL_TRANSPORT:
-		p = get_transport(cxt);
-		if (p)
-			scols_line_set_data(ln, col, p);
+		str = get_transport(cxt);
 		break;
 	case COL_DALIGN:
-		p = sysfs_strdup(&cxt->sysfs, "discard_alignment");
-		if (cxt->discard && p)
-			scols_line_set_data(ln, col, p);
-		else
-			scols_line_set_data(ln, col, xstrdup("0"));
+		if (cxt->discard)
+			str = sysfs_strdup(&cxt->sysfs, "discard_alignment");
+		if (!str)
+			str = xstrdup("0");
 		break;
 	case COL_DGRAN:
 		if (lsblk->bytes)
-			p = sysfs_strdup(&cxt->sysfs, "queue/discard_granularity");
+			str = sysfs_strdup(&cxt->sysfs, "queue/discard_granularity");
 		else {
 			uint64_t x;
-
 			if (sysfs_read_u64(&cxt->sysfs,
 					   "queue/discard_granularity", &x) == 0)
-				p = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
+				str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
 		}
-		if (p)
-			scols_line_set_data(ln, col, p);
 		break;
 	case COL_DMAX:
 		if (lsblk->bytes)
-			p = sysfs_strdup(&cxt->sysfs, "queue/discard_max_bytes");
+			str = sysfs_strdup(&cxt->sysfs, "queue/discard_max_bytes");
 		else {
 			uint64_t x;
-
 			if (sysfs_read_u64(&cxt->sysfs,
 					   "queue/discard_max_bytes", &x) == 0)
-				p = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
+				str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
 		}
-		if (p)
-			scols_line_set_data(ln, col, p);
 		break;
 	case COL_DZERO:
-		p = sysfs_strdup(&cxt->sysfs, "queue/discard_zeroes_data");
-		if (cxt->discard && p)
-			scols_line_set_data(ln, col, p);
-		else
-			scols_line_set_data(ln, col, xstrdup("0"));
+		if (cxt->discard)
+			str = sysfs_strdup(&cxt->sysfs, "queue/discard_zeroes_data");
+		if (!str)
+			str = xstrdup("0");
 		break;
 	case COL_WSAME:
 		if (lsblk->bytes)
-			p = sysfs_strdup(&cxt->sysfs, "queue/write_same_max_bytes");
+			str = sysfs_strdup(&cxt->sysfs, "queue/write_same_max_bytes");
 		else {
 			uint64_t x;
 
 			if (sysfs_read_u64(&cxt->sysfs,
 					   "queue/write_same_max_bytes", &x) == 0)
-				p = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
+				str = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
 		}
-		scols_line_set_data(ln, col, p ? p : xstrdup("0"));
+		if (!str)
+			str = xstrdup("0");
 		break;
 	};
+
+	if (str)
+		scols_line_refer_data(ln, col, str);
 }
 
 static void print_device(struct blkdev_cxt *cxt, struct libscols_line *scols_parent)
