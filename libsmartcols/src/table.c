@@ -60,9 +60,11 @@ struct libscols_table *scols_new_table(struct libscols_symbols *syms)
 	INIT_LIST_HEAD(&tb->tb_lines);
 	INIT_LIST_HEAD(&tb->tb_columns);
 
-	if (scols_table_set_symbols(tb, syms) == 0)
-		return tb;
+	if (syms && scols_table_set_symbols(tb, syms) != 0)
+		goto err;
 
+	return tb;
+err:
 	scols_unref_table(tb);
 	return NULL;
 }
