@@ -23,6 +23,7 @@
 #include <sys/mount.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/statfs.h>
 #include <sys/param.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -36,6 +37,7 @@
 #include "c.h"
 #include "nls.h"
 #include "closestream.h"
+#include "statfs_magic.h"
 
 #ifndef MS_MOVE
 #define MS_MOVE 8192
@@ -177,12 +179,12 @@ static int switchroot(const char *newroot)
 	if (cfd >= 0) {
 		pid = fork();
 		if (pid <= 0) {
-			if (fstat(cfd, &sb) == 0) {
-				if (sb.st_dev == makedev(0, 1))
-					recursiveRemove(cfd);
-				else
-					warn(_("old root filesystem is not an initramfs"));
-			}
+			struct statfs stfs;
+			if (fstatfs(cfd, &stfs) == 0 &&
+			    (stfs.f_type == STATFS_RAMFS_MAGIC || stfs.f_type == STATFS_TMPFS_MAGIC))
+				recursiveRemove(cfd);
+			else
+				warn(_("old root filesystem is not an initramfs"));
 
 			if (pid == 0)
 				exit(EXIT_SUCCESS);
