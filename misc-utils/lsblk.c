@@ -1564,7 +1564,6 @@ int main(int argc, char *argv[])
 	scols_table_set_export(lsblk->table, !!(scols_flags & LSBLK_EXPORT));
 	scols_table_set_ascii(lsblk->table, !!(scols_flags & LSBLK_ASCII));
 	scols_table_set_no_headings(lsblk->table, !!(scols_flags & LSBLK_NOHEADINGS));
-	scols_table_set_tree(lsblk->table, !!(scols_flags & LSBLK_TREE));
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *ci = get_column_info(i);
