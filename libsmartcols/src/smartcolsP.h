@@ -93,30 +93,36 @@ struct libscols_line {
 	struct libscols_line	*parent;
 };
 
+enum {
+	SCOLS_FMT_HUMAN = 0,		/* default, human readable */
+	SCOLS_FMT_RAW,			/* space separated */
+	SCOLS_FMT_EXPORT		/* COLNAME="data" ... */
+};
+
 /*
  * The table
  */
 struct libscols_table {
 	int	refcount;
 	size_t	ncols;		/* number of columns */
+	size_t  ntreecols;	/* number of columns with SCOLS_FL_TREE */
 	size_t	nlines;		/* number of lines */
 	size_t	termwidth;	/* terminal width */
 	size_t  termreduce;	/* extra blank space */
-	int	is_term;	/* is a tty? */
 	FILE	*out;		/* output stream */
 
 	struct list_head	tb_columns;
 	struct list_head	tb_lines;
 	struct libscols_symbols	*symbols;
 
+	int	format;		/* SCOLS_FMT_* */
+
 	/* flags */
-	unsigned int	colors_wanted	:1;
-	unsigned int 	raw		:1;
-	unsigned int 	ascii		:1;
-	unsigned int 	no_headings	:1;
-	unsigned int 	export		:1;
-	unsigned int 	max		:1;
-	unsigned int 	tree		:1;
+	unsigned int	ascii		:1,	/* don't use unicode */
+			colors_wanted	:1,	/* enable colors */
+			is_term		:1,	/* isatty() */
+			maxout		:1,	/* maximalize output */
+			no_headings	:1;	/* don't print header */
 };
 
 #define IS_ITER_FORWARD(_i)	((_i)->direction == SCOLS_ITER_FORWARD)

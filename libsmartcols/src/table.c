@@ -40,13 +40,10 @@
 
 /**
  * scols_new_table:
- * @syms: tree symbols or NULL for default
- *
- * Note that this function add a new reference to @syms.
  *
  * Returns: A newly allocated table.
  */
-struct libscols_table *scols_new_table(struct libscols_symbols *syms)
+struct libscols_table *scols_new_table(void)
 {
 	struct libscols_table *tb;
 
@@ -60,13 +57,7 @@ struct libscols_table *scols_new_table(struct libscols_symbols *syms)
 	INIT_LIST_HEAD(&tb->tb_lines);
 	INIT_LIST_HEAD(&tb->tb_columns);
 
-	if (syms && scols_table_set_symbols(tb, syms) != 0)
-		goto err;
-
 	return tb;
-err:
-	scols_unref_table(tb);
-	return NULL;
 }
 
 /**
@@ -107,7 +98,7 @@ void scols_unref_table(struct libscols_table *tb)
  *
  * Returns: 0, a negative number in case of an error.
  */
-int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl, int flags)
+int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl)
 {
 	assert(tb);
 	assert(cl);
@@ -115,8 +106,8 @@ int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl
 	if (!tb || !cl || !list_empty(&tb->tb_lines))
 		return -EINVAL;
 
-	if (flags & SCOLS_FL_TREE)
-		scols_table_set_tree(tb, 1);
+	if (cl->flags & SCOLS_FL_TREE)
+		tb->ntreecols++;
 
 	list_add_tail(&cl->cl_columns, &tb->tb_columns);
 	cl->seqnum = tb->ncols++;
@@ -148,6 +139,9 @@ int scols_table_remove_column(struct libscols_table *tb,
 
 	if (!tb || !cl || !list_empty(&tb->tb_lines))
 		return -EINVAL;
+
+	if (cl->flags & SCOLS_FL_TREE)
+		tb->ntreecols--;
 
 	list_del_init(&cl->cl_columns);
 	tb->ncols--;
@@ -238,7 +232,7 @@ struct libscols_column *scols_table_new_column(struct libscols_table *tb,
 	scols_column_set_whint(cl, whint);
 	scols_column_set_flags(cl, flags);
 
-	if (scols_table_add_column(tb, cl, flags))	/* this increments column ref-counter */
+	if (scols_table_add_column(tb, cl))	/* this increments column ref-counter */
 		goto err;
 
 	scols_unref_column(cl);
@@ -581,9 +575,12 @@ struct libscols_table *scols_copy_table(struct libscols_table *tb)
 	assert(tb);
 	if (!tb)
 		return NULL;
-	ret = scols_new_table(tb->symbols);
+	ret = scols_new_table();
 	if (!ret)
 		return NULL;
+
+	if (tb->symbols)
+		scols_table_set_symbols(ret, tb->symbols);
 
 	/* columns */
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
@@ -591,7 +588,7 @@ struct libscols_table *scols_copy_table(struct libscols_table *tb)
 		cl = scols_copy_column(cl);
 		if (!cl)
 			goto err;
-		if (scols_table_add_column(ret, cl, tb->tree ? SCOLS_FL_TREE : 0))
+		if (scols_table_add_column(ret, cl))
 			goto err;
 		scols_unref_column(cl);
 	}
@@ -622,7 +619,12 @@ err:
 /**
  * scols_table_set_symbols:
  * @tb: table
- * @sy: symbols
+ * @sy: symbols or NULL
+ *
+ * Add a reference to @sy from the table. The symbols are used by library to
+ * draw tree output. If no symbols are specified then library checks the
+ * current environment to select ASCII or UTF8 symbols. This default behavior
+ * could be controlled by scols_table_enable_ascii().
  *
  * Returns: 0, a negative value in case of an error.
  */
@@ -665,7 +667,7 @@ int scols_table_set_symbols(struct libscols_table *tb,
  * @tb: table
  * @enable: 1 or 0
  *
- * Enable/disable colors
+ * Enable/disable colors.
  *
  * Returns: 0 on success, negative number in case of an error.
  */
@@ -678,221 +680,204 @@ int scols_table_enable_colors(struct libscols_table *tb, int enable)
 	return 0;
 }
 /**
- * scols_table_set_raw:
+ * scols_table_enable_raw:
  * @tb: table
  * @enable: 1 or 0
  *
- * Enable/disable raw
+ * Enable/disable raw output format. The parsable output formats
+ * (export and raw) are mutually exclusive.
  *
  * Returns: 0 on success, negative number in case of an error.
  */
-int scols_table_set_raw(struct libscols_table *tb, int enable)
+int scols_table_enable_raw(struct libscols_table *tb, int enable)
 {
 	assert(tb);
 	if (!tb)
 		return -EINVAL;
-	tb->raw = enable;
-	return 0;
-}
-/**
- * scols_table_set_ascii:
- * @tb: table
- * @enable: 1 or 0
- *
- * Enable/disable ascii
- *
- * Returns: 0 on success, negative number in case of an error.
- */
-int scols_table_set_ascii(struct libscols_table *tb, int enable)
-{
-	assert(tb);
-	if (!tb)
-		return -EINVAL;
-	tb->ascii = enable;
-	return 0;
-}
-/**
- * scols_table_set_no_headings:
- * @tb: table
- * @enable: 1 or 0
- *
- * Enable/disable no_headings
- *
- * Returns: 0 on success, negative number in case of an error.
- */
-int scols_table_set_no_headings(struct libscols_table *tb, int enable)
-{
-	assert(tb);
-	if (!tb)
-		return -EINVAL;
-	tb->no_headings = enable;
-	return 0;
-}
-/**
- * scols_table_set_export:
- * @tb: table
- * @enable: 1 or 0
- *
- * Enable/disable export
- *
- * Returns: 0 on success, negative number in case of an error.
- */
-int scols_table_set_export(struct libscols_table *tb, int enable)
-{
-	assert(tb);
-	if (!tb)
-		return -EINVAL;
-	tb->export = enable;
-	return 0;
-}
-/**
- * scols_table_set_max:
- * @tb: table
- * @enable: 1 or 0
- *
- * Enable/disable max
- *
- * Returns: 0 on success, negative number in case of an error.
- */
-int scols_table_set_max(struct libscols_table *tb, int enable)
-{
-	assert(tb);
-	if (!tb)
-		return -EINVAL;
-	tb->max = enable;
+
+	if (enable)
+		tb->format = SCOLS_FMT_RAW;
+	else if (tb->format == SCOLS_FMT_RAW)
+		tb->format = 0;
 	return 0;
 }
 
 /**
- * scols_table_set_tree:
+ * scols_table_enable_export:
  * @tb: table
  * @enable: 1 or 0
  *
- * Enable/disable tree
+ * Enable/disable export output format (COLUMNAME="value" ...).
+ * The parsable output formats (export and raw) are mutually exclusive.
  *
  * Returns: 0 on success, negative number in case of an error.
  */
-int scols_table_set_tree(struct libscols_table *tb, int enable)
+int scols_table_enable_export(struct libscols_table *tb, int enable)
 {
 	assert(tb);
 	if (!tb)
 		return -EINVAL;
-	tb->tree = enable;
+	if (enable)
+		tb->format = SCOLS_FMT_EXPORT;
+	else if (tb->format == SCOLS_FMT_EXPORT)
+		tb->format = 0;
 	return 0;
 }
+
+/**
+ * scols_table_enable_ascii:
+ * @tb: table
+ * @enable: 1 or 0
+ *
+ * The ASCII-only output is relevant for tree-like outputs. The library
+ * checks if the current environment is UTF8 compatible by default. This
+ * function overrides this check and force the library to use ASCII chars
+ * for the tree.
+ *
+ * If a custom libcols_symbols are specified (see scols_table_set_symbols()
+ * then ASCII flag setting is ignored.
+ *
+ * Returns: 0 on success, negative number in case of an error.
+ */
+int scols_table_enable_ascii(struct libscols_table *tb, int enable)
+{
+	assert(tb);
+	if (!tb)
+		return -EINVAL;
+	tb->ascii = enable ? 1 : 0;
+	return 0;
+}
+
+/**
+ * scols_table_enable_noheadings:
+ * @tb: table
+ * @enable: 1 or 0
+ *
+ * Enable/disable header line.
+ *
+ * Returns: 0 on success, negative number in case of an error.
+ */
+int scols_table_enable_noheadings(struct libscols_table *tb, int enable)
+{
+	assert(tb);
+	if (!tb)
+		return -EINVAL;
+	tb->no_headings = enable ? 1 : 0;
+	return 0;
+}
+
+/**
+ * scols_table_enable_maxout:
+ * @tb: table
+ * @enable: 1 or 0
+ *
+ * The extra space after last column is ignored by default. The output
+ * maximization use the extra space for all columns.
+ *
+ * Returns: 0 on success, negative number in case of an error.
+ */
+int scols_table_enable_maxout(struct libscols_table *tb, int enable)
+{
+	assert(tb);
+	if (!tb)
+		return -EINVAL;
+	tb->maxout = enable ? 1 : 0;
+	return 0;
+}
+
 /**
  * scols_table_colors_wanted:
  * @tb: table
  *
- * Gets the value of the colors_wanted flag.
- *
- * Returns: colors_wanted flag value, negative value in case of an error.
+ * Returns: 1 if colors are enabled.
  */
 int scols_table_colors_wanted(struct libscols_table *tb)
 {
 	assert(tb);
-	if (!tb)
-		return -EINVAL;
-	return tb->colors_wanted;
+	return tb && tb->colors_wanted;
 }
 
 /**
  * scols_table_is_empty:
  * @tb: table
  *
- * Returns: 1 if empty, 0 if not (or in case of an error).
+ * Returns: 1  if the table is empty.
  */
 int scols_table_is_empty(struct libscols_table *tb)
 {
+	assert(tb);
 	return !tb || !tb->nlines;
 }
-/**
- * scols_table_is_raw:
- * @tb: table
- *
- * Gets the value of the raw flag.
- *
- * Returns: raw flag value, negative value in case of an error.
- */
-int scols_table_is_raw(struct libscols_table *tb)
-{
-	assert(tb);
-	if (!tb)
-		return -EINVAL;
-	return tb->raw;
-}
+
 /**
  * scols_table_is_ascii:
  * @tb: table
  *
- * Gets the value of the ascii flag.
- *
- * Returns: ascii flag value, negative value in case of an error.
+ * Returns: 1 if ASCII tree is enabled.
  */
 int scols_table_is_ascii(struct libscols_table *tb)
 {
 	assert(tb);
-	if (!tb)
-		return -EINVAL;
-	return tb->ascii;
+	return tb && tb->ascii;
 }
+
 /**
- * scols_table_is_no_headings:
+ * scols_table_is_noheadings:
  * @tb: table
  *
- * Gets the value of the no_headings flag.
- *
- * Returns: no_headings flag value, negative value in case of an error.
+ * Returns: 1 if header output is disabled.
  */
-int scols_table_is_no_headings(struct libscols_table *tb)
+int scols_table_is_noheadings(struct libscols_table *tb)
 {
 	assert(tb);
-	if (!tb)
-		return -EINVAL;
-	return tb->no_headings;
+	return tb && tb->no_headings;
 }
+
 /**
  * scols_table_is_export:
  * @tb: table
  *
- * Gets the value of the export flag.
- *
- * Returns: export flag value, negative value in case of an error.
+ * Returns: 1 if export output format is enabled.
  */
 int scols_table_is_export(struct libscols_table *tb)
 {
 	assert(tb);
-	if (!tb)
-		return -EINVAL;
-	return tb->export;
+	return tb && tb->format == SCOLS_FMT_EXPORT;
 }
+
 /**
- * scols_table_is_max:
+ * scols_table_is_raw:
  * @tb: table
  *
- * Gets the value of the max flag.
- *
- * Returns: max flag value, negative value in case of an error.
+ * Returns: 1 if raw output format is enabled.
  */
-int scols_table_is_max(struct libscols_table *tb)
+int scols_table_is_raw(struct libscols_table *tb)
 {
 	assert(tb);
-	if (!tb)
-		return -EINVAL;
-	return tb->max;
+	return tb && tb->format == SCOLS_FMT_RAW;
 }
+
+
+/**
+ * scols_table_is_maxout
+ * @tb: table
+ *
+ * Returns: 1 if output maximization is enabled, negative value in case of an error.
+ */
+int scols_table_is_maxout(struct libscols_table *tb)
+{
+	assert(tb);
+	return tb && tb->maxout;
+}
+
 /**
  * scols_table_is_tree:
  * @tb: table
  *
- * Gets the value of the tree flag.
- *
- * Returns: tree flag value, negative value in case of an error.
+ * Returns: returns 1 tree-like output is expected.
  */
 int scols_table_is_tree(struct libscols_table *tb)
 {
 	assert(tb);
-	if (!tb)
-		return -EINVAL;
-	return tb->tree;
+	return tb && tb->ntreecols > 0;
 }

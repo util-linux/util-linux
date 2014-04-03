@@ -626,14 +626,14 @@ static int show_parts(blkid_partlist ls, int scols_flags, int lower, int upper)
 	if (!nparts)
 		return 0;
 
-	table = scols_new_table(NULL);
+	table = scols_new_table();
 	if (!table) {
 		warn(_("failed to initialize output table"));
 		return -1;
 	}
-	scols_table_set_raw(table, !!(scols_flags & PARTX_RAW));
-	scols_table_set_export(table, !!(scols_flags & PARTX_EXPORT));
-	scols_table_set_no_headings(table, !!(scols_flags & PARTX_NOHEADINGS));
+	scols_table_enable_raw(table, !!(scols_flags & PARTX_RAW));
+	scols_table_enable_export(table, !!(scols_flags & PARTX_EXPORT));
+	scols_table_enable_noheadings(table, !!(scols_flags & PARTX_NOHEADINGS));
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *col = get_column_info(i);

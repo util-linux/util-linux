@@ -298,10 +298,10 @@ static int show_table(struct loopdev_cxt *lc,
 	struct libscols_line *ln;
 	int i, rc = 0;
 
-	if (!(tb = scols_new_table(NULL)))
+	if (!(tb = scols_new_table()))
 		err(EXIT_FAILURE, _("failed to initialize output table"));
-	scols_table_set_raw(tb, raw);
-	scols_table_set_no_headings(tb, no_headings);
+	scols_table_enable_raw(tb, raw);
+	scols_table_enable_noheadings(tb, no_headings);
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *ci = get_column_info(i);

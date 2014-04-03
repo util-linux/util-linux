@@ -251,13 +251,13 @@ static int show_flags(struct wdinfo *wd, uint32_t wanted)
 	uint32_t flags;
 
 	/* create output table */
-	table = scols_new_table(NULL);
+	table = scols_new_table();
 	if (!table) {
 		warn(_("failed to initialize output table"));
 		return -1;
 	}
-	scols_table_set_raw(table, raw);
-	scols_table_set_no_headings(table, no_headings);
+	scols_table_enable_raw(table, raw);
+	scols_table_enable_noheadings(table, no_headings);
 
 	/* define columns */
 	for (i = 0; i < (size_t) ncolumns; i++) {

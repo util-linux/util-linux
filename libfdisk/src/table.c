@@ -566,7 +566,7 @@ int fdisk_table_to_string(struct fdisk_table *tb,
 			return rc;
 	}
 
-	table = scols_new_table(NULL);
+	table = scols_new_table();
 	if (!table) {
 		rc = -ENOMEM;
 		goto done;

@@ -77,7 +77,7 @@ static void print_data(struct libscols_table *tb,
 	}
 	width = cl->width;
 
-	if (is_last_column(tb, cl) && len < width && !scols_table_is_max(tb))
+	if (is_last_column(tb, cl) && len < width && !scols_table_is_maxout(tb))
 		width = len;
 
 	/* truncate data */
@@ -231,7 +231,7 @@ static void print_header(struct libscols_table *tb, char *buf, size_t bufsz)
 
 	assert(tb);
 
-	if (scols_table_is_no_headings(tb) ||
+	if (scols_table_is_noheadings(tb) ||
 	    scols_table_is_export(tb) ||
 	    list_empty(&tb->tb_lines))
 		return;
@@ -333,7 +333,7 @@ static void count_column_width(struct libscols_table *tb,
 
 		if (cl->is_extreme && len > cl->width_avg * 2)
 			continue;
-		else if (scols_column_is_no_extremes(cl)) {
+		else if (scols_column_is_noextremes(cl)) {
 			sum += len;
 			count++;
 		}
@@ -436,7 +436,7 @@ static void recount_widths(struct libscols_table *tb, char *buf, size_t bufsz)
 			}
 		}
 
-		if (width < tb->termwidth && scols_table_is_max(tb)) {
+		if (width < tb->termwidth && scols_table_is_maxout(tb)) {
 			/* try enlarge all columns */
 			while (width < tb->termwidth) {
 				scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
@@ -556,7 +556,7 @@ int scols_print_table(struct libscols_table *tb)
 	if (!tb->symbols)
 		scols_table_set_symbols(tb, NULL);	/* use default */
 
-	tb->is_term = isatty(STDOUT_FILENO);
+	tb->is_term = isatty(STDOUT_FILENO) ? 1 : 0;
 	tb->termwidth = tb->is_term ? get_terminal_width() : 0;
 	if (tb->termwidth <= 0)
 		tb->termwidth = 80;

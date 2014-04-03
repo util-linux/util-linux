@@ -1558,12 +1558,12 @@ int main(int argc, char *argv[])
 	/*
 	 * initialize output columns
 	 */
-	if (!(lsblk->table = scols_new_table(NULL)))
+	if (!(lsblk->table = scols_new_table()))
 		errx(EXIT_FAILURE, _("failed to initialize output table"));
-	scols_table_set_raw(lsblk->table, !!(scols_flags & LSBLK_RAW));
-	scols_table_set_export(lsblk->table, !!(scols_flags & LSBLK_EXPORT));
-	scols_table_set_ascii(lsblk->table, !!(scols_flags & LSBLK_ASCII));
-	scols_table_set_no_headings(lsblk->table, !!(scols_flags & LSBLK_NOHEADINGS));
+	scols_table_enable_raw(lsblk->table, !!(scols_flags & LSBLK_RAW));
+	scols_table_enable_export(lsblk->table, !!(scols_flags & LSBLK_EXPORT));
+	scols_table_enable_ascii(lsblk->table, !!(scols_flags & LSBLK_ASCII));
+	scols_table_enable_noheadings(lsblk->table, !!(scols_flags & LSBLK_NOHEADINGS));
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *ci = get_column_info(i);

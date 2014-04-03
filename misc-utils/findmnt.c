@@ -1464,15 +1464,15 @@ int main(int argc, char *argv[])
 	/*
 	 * initialize output formatting (libsmartcols.h)
 	 */
-	table = scols_new_table(NULL);
+	table = scols_new_table();
 	if (!table) {
 		warn(_("failed to initialize output table"));
 		goto leave;
 	}
-	scols_table_set_raw(table,         !!(flags & FL_RAW));
-	scols_table_set_export(table,      !!(flags & FL_EXPORT));
-	scols_table_set_ascii(table,       !!(flags & FL_ASCII));
-	scols_table_set_no_headings(table, !!(flags & FL_NOHEADINGS));
+	scols_table_enable_raw(table,        !!(flags & FL_RAW));
+	scols_table_enable_export(table,     !!(flags & FL_EXPORT));
+	scols_table_enable_ascii(table,      !!(flags & FL_ASCII));
+	scols_table_enable_noheadings(table, !!(flags & FL_NOHEADINGS));
 
 	for (i = 0; i < ncolumns; i++) {
 		int fl = get_column_flags(i);

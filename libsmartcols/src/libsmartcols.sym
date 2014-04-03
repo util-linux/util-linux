@@ -13,7 +13,7 @@ global:
 	scols_column_get_flags;
 	scols_column_get_header;
 	scols_column_get_whint;
-	scols_column_is_no_extremes;
+	scols_column_is_noextremes;
 	scols_column_is_right;
 	scols_column_is_strict_width;
 	scols_column_is_tree;
@@ -61,7 +61,12 @@ global:
 	scols_table_add_column;
 	scols_table_add_line;
 	scols_table_colors_wanted;
+	scols_table_enable_ascii;
 	scols_table_enable_colors;
+	scols_table_enable_export;
+	scols_table_enable_maxout;
+	scols_table_enable_noheadings;
+	scols_table_enable_raw;
 	scols_table_get_column;
 	scols_table_get_line;
 	scols_table_get_ncols;
@@ -70,8 +75,8 @@ global:
 	scols_table_is_ascii;
 	scols_table_is_empty;
 	scols_table_is_export;
-	scols_table_is_max;
-	scols_table_is_no_headings;
+	scols_table_is_maxout;
+	scols_table_is_noheadings;
 	scols_table_is_raw;
 	scols_table_is_tree;
 	scols_table_new_column;
@@ -83,14 +88,8 @@ global:
 	scols_table_remove_columns;
 	scols_table_remove_line;
 	scols_table_remove_lines;
-	scols_table_set_ascii;
-	scols_table_set_export;
-	scols_table_set_max;
-	scols_table_set_no_headings;
-	scols_table_set_raw;
 	scols_table_set_stream;
 	scols_table_set_symbols;
-	scols_table_set_tree;
 	scols_unref_column;
 	scols_unref_line;
 	scols_unref_symbols;

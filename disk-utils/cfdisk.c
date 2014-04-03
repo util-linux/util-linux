@@ -219,11 +219,10 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 		}
 	}
 
-	table = scols_new_table(NULL);
+	table = scols_new_table();
 	if (!table)
 		goto done;
-	scols_table_set_max(table, 1);
-	scols_table_set_tree(table, tree);
+	scols_table_enable_maxout(table, 1);
 
 	/* headers */
 	for (i = 0; i < cf->ncols; i++) {

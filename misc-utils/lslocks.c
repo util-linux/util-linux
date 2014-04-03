@@ -455,13 +455,13 @@ static int show_locks(struct list_head *locks)
 	struct list_head *p, *pnext;
 	struct libscols_table *table;
 
-	table = scols_new_table(NULL);
+	table = scols_new_table();
 	if (!table) {
 		warn(_("failed to initialize output table"));
 		return -1;
 	}
-	scols_table_set_raw(table, raw);
-	scols_table_set_no_headings(table, no_headings);
+	scols_table_enable_raw(table, raw);
+	scols_table_enable_noheadings(table, no_headings);
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *col = get_column_info(i);

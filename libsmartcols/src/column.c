@@ -299,14 +299,14 @@ int scols_column_is_strict_width(struct libscols_column *cl)
 	return cl->flags & SCOLS_FL_STRICTWIDTH;
 }
 /**
- * scols_column_is_no_extremes:
+ * scols_column_is_noextremes:
  * @cl: a pointer to a struct libscols_column instance
  *
  * Gets the value of @cl's flag no_extremes.
  *
  * Returns: no_extremes flag value, negative value in case of an error.
  */
-int scols_column_is_no_extremes(struct libscols_column *cl)
+int scols_column_is_noextremes(struct libscols_column *cl)
 {
 	assert(cl);
 	if (!cl)

@@ -239,12 +239,12 @@ static int show_table(int bytes)
 	if (!itr)
 		err(EXIT_FAILURE, _("failed to initialize libmount iterator"));
 
-	table = scols_new_table(NULL);
+	table = scols_new_table();
 	if (!table)
 		err(EXIT_FAILURE, _("failed to initialize output table"));
 
-	scols_table_set_raw(table, raw);
-	scols_table_set_no_headings(table, no_headings);
+	scols_table_enable_raw(table, raw);
+	scols_table_enable_noheadings(table, no_headings);
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *col = get_column_info(i);
