@@ -150,10 +150,8 @@ static void add_scols_line(struct libscols_table *table, struct libmnt_fs *fs, i
 	assert(fs);
 
 	line = scols_table_new_line(table, NULL);
-	if (!line) {
-		warn(_("failed to add line to output"));
-		return;
-	}
+	if (!line)
+		err(EXIT_FAILURE, _("failed to initialize output line"));
 
 	for (i = 0; i < ncolumns; i++) {
 		char *str = NULL;
@@ -190,7 +188,7 @@ static void add_scols_line(struct libscols_table *table, struct libmnt_fs *fs, i
 		}
 
 		if (str)
-			scols_line_set_data(line, i, str);
+			scols_line_refer_data(line, i, str);
 	}
 	return;
 }
@@ -231,8 +229,7 @@ static int show_table(int bytes)
 	struct libmnt_table *st = get_swaps();
 	struct libmnt_iter *itr = NULL;
 	struct libmnt_fs *fs;
-
-	int i, rc = 0;
+	int i;
 	struct libscols_table *table = NULL;
 
 	if (!st)
@@ -243,31 +240,26 @@ static int show_table(int bytes)
 		err(EXIT_FAILURE, _("failed to initialize libmount iterator"));
 
 	table = scols_new_table(NULL);
-	if (!table) {
-		warn(_("failed to initialize output table"));
-		goto done;
-	}
+	if (!table)
+		err(EXIT_FAILURE, _("failed to initialize output table"));
+
 	scols_table_set_raw(table, raw);
 	scols_table_set_no_headings(table, no_headings);
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *col = get_column_info(i);
 
-		if (!scols_table_new_column(table, col->name, col->whint, col->flags)) {
-			warnx(_("failed to initialize output column"));
-			rc = -1;
-			goto done;
-		}
+		if (!scols_table_new_column(table, col->name, col->whint, col->flags))
+			err(EXIT_FAILURE, _("failed to initialize output column"));
 	}
 
 	while (mnt_table_next_fs(st, itr, &fs) == 0)
 		add_scols_line(table, fs, bytes);
 
 	scols_print_table(table);
- done:
-	mnt_free_iter(itr);
 	scols_unref_table(table);
-	return rc;
+	mnt_free_iter(itr);
+	return 0;
 }
 
 /* calls mkswap */
