@@ -574,8 +574,20 @@ void list_disklabel(struct fdisk_context *cxt)
 		return;
 	if (fdisk_table_to_string(tb, cxt, NULL, 0, &str) == 0) {
 		fputc('\n', stdout);
-		if (str && *str)
-			fputs(str, stdout);
+		if (str) {
+			char *p = str;
+			char *next = strchr(str, '\n');
+			if (next && colors_wanted()) {
+				*next = '\0';
+				color_enable(UL_COLOR_BOLD);
+				fputs(p, stdout);
+				color_disable();
+				fputc('\n', stdout);
+				p = ++next;
+			}
+			fputs(p, stdout);
+			free(str);
+		}
 	}
 	fdisk_unref_table(tb);
 }
