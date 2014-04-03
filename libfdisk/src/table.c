@@ -421,6 +421,7 @@ static int check_container_freespace(struct fdisk_context *cxt,
 	struct fdisk_iter itr;
 	struct fdisk_partition *pa;
 	uint64_t x, last, grain;
+	uint64_t lastplusoff;
 	int rc = 0;
 
 	assert(cxt);
@@ -428,17 +429,17 @@ static int check_container_freespace(struct fdisk_context *cxt,
 	assert(tb);
 	assert(cont);
 
-	last = fdisk_partition_get_start(cont) + cxt->first_lba;
+	last = fdisk_partition_get_start(cont);
 	grain = cxt->grain > cxt->sector_size ?	cxt->grain / cxt->sector_size : 1;
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 
 	while (fdisk_table_next_partition(parts, &itr, &pa) == 0) {
-		uint64_t lastfree;
 		if (!pa->used || !fdisk_partition_is_nested(pa))
 			continue;
-		lastfree = pa->start - 1 - cxt->first_lba;
-		if (last + grain <= lastfree)
-			rc = table_add_freespace(cxt, tb, last + grain, lastfree, cont);
+
+		lastplusoff = last + cxt->first_lba;
+		if (pa->start > lastplusoff && pa->start - lastplusoff > grain)
+			rc = table_add_freespace(cxt, tb, lastplusoff, pa->start, cont);
 		if (rc)
 			return rc;
 		last = pa->end;
@@ -446,8 +447,9 @@ static int check_container_freespace(struct fdisk_context *cxt,
 
 	/* free-space remaining in extended partition */
 	x = fdisk_partition_get_start(cont) + fdisk_partition_get_size(cont) - 1;
-	if (last + grain < x)
-		rc = table_add_freespace(cxt, tb, last + grain, x - 1, cont);
+	lastplusoff = last + cxt->first_lba;
+	if (lastplusoff < x && x - lastplusoff > grain)
+		rc = table_add_freespace(cxt, tb, lastplusoff, x, cont);
 	return rc;
 }
 
