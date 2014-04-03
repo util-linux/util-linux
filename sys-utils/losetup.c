@@ -49,8 +49,6 @@ enum {
 	COL_SIZELIMIT,
 };
 
-struct libscols_table *table;
-
 /* basic output flags */
 static int no_headings;
 static int raw;
@@ -222,40 +220,30 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 	int i;
 
 	for (i = 0; i < ncolumns; i++) {
-		const char *p = NULL;
-		char *np = NULL;
+		const char *p = NULL;			/* external data */
+		char *np = NULL;			/* allocated here */
 		uint64_t x = 0;
 
 		switch(get_column_id(i)) {
 		case COL_NAME:
 			p = loopcxt_get_device(lc);
-			if (p)
-				scols_line_set_data(ln, i, xstrdup(p));
 			break;
 		case COL_BACK_FILE:
 			p = loopcxt_get_backing_file(lc);
-			if (p)
-				scols_line_set_data(ln, i, xstrdup(p));
 			break;
 		case COL_OFFSET:
 			if (loopcxt_get_offset(lc, &x) == 0)
 				xasprintf(&np, "%jd", x);
-			if (np)
-				scols_line_set_data(ln, i, np);
 			break;
 		case COL_SIZELIMIT:
 			if (loopcxt_get_sizelimit(lc, &x) == 0)
 				xasprintf(&np, "%jd", x);
-			if (np)
-				scols_line_set_data(ln, i, np);
 			break;
 		case COL_BACK_MAJMIN:
 		{
 			dev_t dev = 0;
 			if (loopcxt_get_backing_devno(lc, &dev) == 0 && dev)
 				xasprintf(&np, "%8u:%-3u", major(dev), minor(dev));
-			if (np)
-				scols_line_set_data(ln, i, np);
 			break;
 		}
 		case COL_MAJMIN:
@@ -268,8 +256,6 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 			    && major(st.st_rdev) == LOOPDEV_MAJOR)
 				xasprintf(&np, "%3u:%-3u", major(st.st_rdev),
 						           minor(st.st_rdev));
-			if (np)
-				scols_line_set_data(ln, i, np);
 			break;
 		}
 		case COL_BACK_INO:
@@ -277,91 +263,100 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 			ino_t ino = 0;
 			if (loopcxt_get_backing_inode(lc, &ino) == 0 && ino)
 				xasprintf(&np, "%ju", ino);
-			if (np)
-				scols_line_set_data(ln, i, np);
 			break;
 		}
 		case COL_AUTOCLR:
-			scols_line_set_data(ln, i,
-				xstrdup(loopcxt_is_autoclear(lc) ? "1" : "0"));
+			p = loopcxt_is_autoclear(lc) ? "1" : "0";
 			break;
 		case COL_RO:
-			scols_line_set_data(ln, i,
-				xstrdup(loopcxt_is_readonly(lc) ? "1" : "0"));
+			p = loopcxt_is_readonly(lc) ? "1" : "0";
 			break;
 		case COL_PARTSCAN:
-			scols_line_set_data(ln, i,
-				xstrdup(loopcxt_is_partscan(lc) ? "1" : "0"));
+			p = loopcxt_is_partscan(lc) ? "1" : "0";
 			break;
 		default:
 			return -EINVAL;
 		}
+
+
+		if (p)
+			scols_line_set_data(ln, i, p);		/* calls strdup() */
+		else if (np)
+			scols_line_refer_data(ln, i, np);	/* only refers */
 	}
+
 	return 0;
 }
 
-static int make_table(struct loopdev_cxt *lc,
+static int show_table(struct loopdev_cxt *lc,
 		      const char *file,
 		      uint64_t offset,
 		      int flags)
 {
 	struct stat sbuf, *st = &sbuf;
+	struct libscols_table *tb;
 	struct libscols_line *ln;
-	char *cn_file = NULL;
-	int i;
+	int i, rc = 0;
 
-	if (!(table = scols_new_table(NULL)))
-		errx(EXIT_FAILURE, _("failed to initialize output table"));
-	scols_table_set_raw(table, raw);
-	scols_table_set_no_headings(table, no_headings);
+	if (!(tb = scols_new_table(NULL)))
+		err(EXIT_FAILURE, _("failed to initialize output table"));
+	scols_table_set_raw(tb, raw);
+	scols_table_set_no_headings(tb, no_headings);
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *ci = get_column_info(i);
 
-		if (!scols_table_new_column(table, ci->name, ci->whint, ci->flags))
-			warn(_("failed to initialize output column"));
+		if (!scols_table_new_column(tb, ci->name, ci->whint, ci->flags))
+			err(EXIT_FAILURE, _("failed to initialize output column"));
 	}
 
 	/* only one loopdev requested (already assigned to loopdev_cxt) */
 	if (loopcxt_get_device(lc)) {
-		ln = scols_table_new_line(table, NULL);
+		ln = scols_table_new_line(tb, NULL);
 		if (!ln)
-			return -ENOMEM;
-		if (set_scols_data(lc, ln))
-			return -EINVAL;
-		return 0;
-	}
+			err(EXIT_FAILURE, _("failed to initialize output line"));
+		rc = set_scols_data(lc, ln);
 
 	/* list all loopdevs */
-	if (loopcxt_init_iterator(lc, LOOPITER_FL_USED))
-		return -1;
-	if (!file || stat(file, st))
-		st = NULL;
+	} else {
+		char *cn_file = NULL;
 
-	while (loopcxt_next(lc) == 0) {
-		if (file) {
-			int used;
-			const char *bf = cn_file ? cn_file : file;
+		rc = loopcxt_init_iterator(lc, LOOPITER_FL_USED);
+		if (rc)
+			goto done;
+		if (!file || stat(file, st))
+			st = NULL;
 
-			used = loopcxt_is_used(lc, st, bf, offset, flags);
-			if (!used && !cn_file) {
-				bf = cn_file = canonicalize_path(file);
+		while (loopcxt_next(lc) == 0) {
+			if (file) {
+				int used;
+				const char *bf = cn_file ? cn_file : file;
+
 				used = loopcxt_is_used(lc, st, bf, offset, flags);
+				if (!used && !cn_file) {
+					bf = cn_file = canonicalize_path(file);
+					used = loopcxt_is_used(lc, st, bf, offset, flags);
+				}
+				if (!used)
+					continue;
 			}
-			if (!used)
-				continue;
+
+			ln = scols_table_new_line(tb, NULL);
+			if (!ln)
+				err(EXIT_FAILURE, _("failed to initialize output column"));
+			rc = set_scols_data(lc, ln);
+			if (rc)
+				break;
 		}
 
-		ln = scols_table_new_line(table, NULL);
-		if (!ln)
-			return -ENOMEM;
-		if (set_scols_data(lc, ln))
-			return -EINVAL;
+		loopcxt_deinit_iterator(lc);
+		free(cn_file);
 	}
-
-	loopcxt_deinit_iterator(lc);
-	free(cn_file);
-	return 0;
+done:
+	if (rc == 0)
+		rc = scols_print_table(tb);
+	scols_unref_table(tb);
+	return rc;
 }
 
 static void usage(FILE *out)
@@ -706,13 +701,13 @@ int main(int argc, char **argv)
 		break;
 	case A_SHOW:
 		if (list)
-			res = make_table(&lc, file, offset, flags);
+			res = show_table(&lc, file, offset, flags);
 		else
 			res = show_all_loops(&lc, file, offset, flags);
 		break;
 	case A_SHOW_ONE:
 		if (list)
-			res = make_table( &lc, NULL, 0, 0);
+			res = show_table(&lc, NULL, 0, 0);
 		else
 			res = printf_loopdev(&lc);
 		if (res)
@@ -727,11 +722,6 @@ int main(int argc, char **argv)
 	default:
 		usage(stderr);
 		break;
-	}
-	if (table) {
-		if (!res)
-			scols_print_table(table);
-		scols_unref_table(table);
 	}
 
 	loopcxt_deinit(&lc);
