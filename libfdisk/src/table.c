@@ -597,7 +597,7 @@ int fdisk_table_to_string(struct fdisk_table *tb,
 				continue;
 			if (fdisk_partition_to_string(pa, cxt, col->id, &cdata))
 				continue;
-			scols_line_set_data(ln, j, cdata);
+			scols_line_refer_data(ln, j, cdata);
 		}
 	}
 
