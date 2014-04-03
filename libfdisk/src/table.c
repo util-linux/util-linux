@@ -437,7 +437,7 @@ static int check_container_freespace(struct fdisk_context *cxt,
 		if (!pa->used || !fdisk_partition_is_nested(pa))
 			continue;
 		lastfree = pa->start - 1 - cxt->first_lba;
-		if (last + grain < lastfree)
+		if (last + grain <= lastfree)
 			rc = table_add_freespace(cxt, tb, last + grain, lastfree, cont);
 		if (rc)
 			return rc;
@@ -459,6 +459,9 @@ static int check_container_freespace(struct fdisk_context *cxt,
  *
  * This function adds freespace (described by fdisk_partition) to @table, it
  * allocates a new table if the @table points to NULL.
+ *
+ * Note that free space smaller than grain (see fdisk_topology_get_grain()) is
+ * ignored.
 
  * Returns 0 on success, otherwise, a corresponding error.
  */
@@ -491,7 +494,7 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 			continue;
 		DBG(CXT, ul_debugobj(cxt, "freespace analyze: partno=%zu, start=%ju, end=%ju",
 					pa->partno, pa->start, pa->end));
-		if (last + grain < pa->start) {
+		if (last + grain <= pa->start) {
 			rc = table_add_freespace(cxt, *tb,
 				last + (last > cxt->first_lba ? 1 : 0),
 				pa->start - 1, NULL);

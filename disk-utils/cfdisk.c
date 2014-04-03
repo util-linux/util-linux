@@ -39,7 +39,7 @@
 
 #include "fdiskP.h"
 
-#define ARROW_CURSOR_STRING	" >> "
+#define ARROW_CURSOR_STRING	">>  "
 #define ARROW_CURSOR_DUMMY	"    "
 #define ARROW_CURSOR_WIDTH	(sizeof(ARROW_CURSOR_STRING) - 1)
 
@@ -158,6 +158,28 @@ static int cols_init(struct cfdisk *cf)
 	return fdisk_get_columns(cf->cxt, 0, &cf->cols, &cf->ncols);
 }
 
+/* Reads partition in tree-like order from scols
+ */
+static int partition_from_scols(struct fdisk_table *tb,
+				struct libscols_line *ln)
+{
+	struct fdisk_partition *pa = scols_line_get_userdata(ln);
+
+	fdisk_table_add_partition(tb, pa);
+	fdisk_unref_partition(pa);
+
+	if (scols_line_has_children(ln)) {
+		struct libscols_line *chln;
+		struct libscols_iter *itr = scols_new_iter(SCOLS_ITER_FORWARD);
+
+		if (!itr)
+			return -EINVAL;
+		while (scols_line_next_child(ln, itr, &chln) == 0)
+			partition_from_scols(tb, chln);
+	}
+	return 0;
+}
+
 /* It would be possible to use fdisk_table_to_string(), but we want some
  * extension to the output format, so let's do it without libfdisk
  */
@@ -231,7 +253,7 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 				continue;
 			if (fdisk_partition_to_string(pa, cf->cxt, col->id, &cdata))
 				continue;
-			scols_line_set_data(ln, i, cdata);
+			scols_line_refer_data(ln, i, cdata);
 		}
 		if (tree && fdisk_partition_is_container(pa))
 			ln_cont = ln;
@@ -255,16 +277,16 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	while (fdisk_table_next_partition(tb, itr, &pa) == 0)
 		fdisk_table_remove_partition(tb, pa);
 
-	/* add all in the right order */
 	s_itr = scols_new_iter(SCOLS_ITER_FORWARD);
 	if (!s_itr)
 		goto done;
 
+	/* add all in the right order (don't forget the output is tree) */
 	while (scols_table_next_line(table, s_itr, &ln) == 0) {
-		struct fdisk_partition *pa = scols_line_get_userdata(ln);
-
-		fdisk_table_add_partition(tb, pa);
-		fdisk_unref_partition(pa);
+		if (scols_line_get_parent(ln))
+			continue;
+		if (partition_from_scols(tb, ln))
+			break;
 	}
 done:
 	scols_unref_table(table);
