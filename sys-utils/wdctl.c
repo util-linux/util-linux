@@ -211,7 +211,7 @@ static void add_flag_line(struct libscols_table *table, struct wdinfo *wd, const
 
 	line = scols_table_new_line(table, NULL);
 	if (!line) {
-		warn(_("failed to add line to output"));
+		warn(_("failed to initialize output line"));
 		return;
 	}
 
@@ -239,7 +239,7 @@ static void add_flag_line(struct libscols_table *table, struct wdinfo *wd, const
 		}
 
 		if (str)
-			scols_line_set_data(line, i, xstrdup(str));
+			scols_line_set_data(line, i, str);
 	}
 }
 
