@@ -1226,7 +1226,8 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 	       struct lscpu_modifier *mod)
 {
 	int i;
-	char buf[BUFSIZ], *data;
+	char buf[BUFSIZ];
+	const char *data;
 	struct libscols_table *table = scols_new_table(NULL);
 
 	if (!table)
@@ -1235,7 +1236,7 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 	for (i = 0; i < ncols; i++) {
 		data = get_cell_header(desc, cols[i], mod, buf, sizeof(buf));
 		if (!scols_table_new_column(table, xstrdup(data), 0, 0))
-			return;
+			err(EXIT_FAILURE, _("failed to initialize output column"));
 	}
 
 	for (i = 0; i < desc->ncpuspos; i++) {
@@ -1251,17 +1252,15 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 			continue;
 
 		line = scols_table_new_line(table, NULL);
-		if (!line) {
-			scols_unref_table(table);
-			return;
-		}
-
+		if (!line)
+			err(EXIT_FAILURE, _("failed to initialize output line"));
 
 		for (c = 0; c < ncols; c++) {
 			data = get_cell_data(desc, i, cols[c], mod,
 					     buf, sizeof(buf));
-			scols_line_set_data(line, c,
-					xstrdup(data && *data ? data : "-"));
+			if (!data || !*data)
+				data = "-";
+			scols_line_set_data(line, c, data);
 		}
 	}
 
