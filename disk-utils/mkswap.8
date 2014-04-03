@@ -32,14 +32,14 @@ parameter is superfluous but retained for backwards compatibility.
 (It specifies the desired size of the swap area in 1024-byte blocks.
 .B mkswap
 will use the entire partition or file if it is omitted.
-Specifying it is unwise -- a typo may destroy your disk.)
+Specifying it is unwise \(en a typo may destroy your disk.)
 
 After creating the swap area, you need the
 .B swapon
 command to start using it.  Usually swap areas are listed in
 .I /etc/fstab
 so that they can be taken into use at boot time by a
-.B swapon -a
+.B swapon \-a
 command in some boot script.
 
 .SH WARNING
@@ -54,7 +54,7 @@ like many others mkfs-like utils,
 However,
 .B mkswap
 refuses to erase the first block on a device with a disk
-label (SUN, BSD, ...).
+label (SUN, BSD, \&...\&).
 
 .SH OPTIONS
 .TP
@@ -105,7 +105,7 @@ The maximum useful size of a swap area depends on the architecture and
 the kernel version.
 
 The maximum number of the pages that is possible to address by swap area header
-is 4294967295 (UINT_MAX). The remaining space on the swap device is ignored.
+is 4294967295 (UINT_MAX).  The remaining space on the swap device is ignored.
 
 Presently, Linux allows 32 swap areas.
 The areas in use can be seen in the file
@@ -115,17 +115,17 @@ The areas in use can be seen in the file
 refuses areas smaller than 10 pages.
 
 If you don't know the page size that your machine uses, you may be
-able to look it up with "cat /proc/cpuinfo" (or you may not --
+able to look it up with "cat /proc/cpuinfo" (or you may not \(en
 the contents of this file depend on architecture and kernel version).
 
 To set up a swap file, it is necessary to create that file before
 initializing it with
 .BR mkswap ,
-e.g. using a command like
+e.g.\& using a command like
 
 .nf
 .RS
-# fallocate --length 8GiB swapfile
+# fallocate \-\-length 8GiB swapfile
 .RE
 .fi
 
