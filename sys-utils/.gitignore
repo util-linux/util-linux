@@ -18,3 +18,4 @@ sparc32.8
 sparc32bash.8
 sparc64.8
 x86_64.8
+fstrim.service

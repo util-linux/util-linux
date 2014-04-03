@@ -1,0 +1,10 @@
+[Unit]
+Description=Discard unused blocks once a day
+
+[Timer]
+OnCalendar=daily
+AccuracySec=1h
+Persistent=true
+
+[Install]
+WantedBy=multi-user.target
