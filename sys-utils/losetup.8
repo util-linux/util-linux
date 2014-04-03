@@ -63,10 +63,11 @@ Resize loop device:
 is used to associate loop devices with regular files or block devices,
 to detach loop devices and to query the status of a loop device. If only the
 \fIloopdev\fP argument is given, the status of the corresponding loop
-device is shown.
+device is shown. If no option is given, all loop devices are shown.
 
 Note that the old output format (e.g. losetup -a) with comma delimited strings is
-deprecated in favour of the --list output format (e.g. losetup -a -l).
+deprecated in favour of the --list output format.
+
 .SH OPTIONS
 +The \fIsize\fR and \fIoffset\fR arguments may be followed by the multiplicative
 +suffixes KiB=1024, MiB=1024*1024, and so on for GiB, TiB, PiB, EiB, ZiB and YiB
