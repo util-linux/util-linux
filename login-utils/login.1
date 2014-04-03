@@ -41,7 +41,7 @@ The user and group ID will be set according to their values in the
 .I /etc/passwd
 file.  There is one exception if the user ID is zero: in this case,
 only the primary group ID of the account is set.  This should allow
-the system adminitrator to login even in case of network problems.
+the system administrator to login even in case of network problems.
 The value for
 .BR $HOME ,
 .BR $USER ,
@@ -56,14 +56,14 @@ defaults to
 .I /usr\:/local\:/bin:\:/bin:\:/usr\:/bin
 for normal users, and to
 .I /usr\:/local\:/sbin:\:/usr\:/local\:/bin:\:/sbin:\:/bin:\:/usr\:/sbin:\:/usr\:/bin
-for root if not other configured.
+for root, if not otherwise configured.
 .P
 The environment variable
 .B $TERM
 will be preserved, if it exists (other environment variables are
 preserved if the
 .B \-p
-option is given) or be initialize to the terminal type on your tty.
+option is given), else it will be initialized to the terminal type on your tty.
 .PP
 Then the user's shell is started.  If no shell is specified for the
 user in
@@ -119,7 +119,7 @@ with the
 .B \-h
 option the name is
 .IR remote .
-It is necessary to create a proper PAM config files (e.g.
+It is necessary to create proper PAM config files (e.g.
 .I /etc\:/pam.d\:/login
 and
 .IR /etc\:/pam.d\:/remote ).
@@ -145,12 +145,12 @@ configuration items are relevant for
 .B MOTD_FILE
 (string)
 .RS 4
-If defined, ":" delimited list of "message of the day" files to be
+If defined, a ":" delimited list of "message of the day" files to be
 displayed upon login.  The default value is
 .IR /etc\:/motd .
 If the
 .B MOTD_FILE
-item is empty or quiet login is enabled then the message of the day
+item is empty or a quiet login is enabled, then the message of the day
 is not displayed.  Note that the same functionality is also provided
 by
 .BR pam_motd (8)
@@ -167,7 +167,7 @@ Max time in seconds for login.  The default value is
 .B LOGIN_RETRIES
 (number)
 .RS 4
-Maximum number of login retries in case of bad password.  The default
+Maximum number of login retries in case of a bad password.  The default
 value is
 .IR 3 .
 .RE
@@ -199,7 +199,7 @@ The default value is
 .IR tty .
 If the
 .B TTYGROUP
-does not exist then the ownership of the terminal is set to the
+does not exist, then the ownership of the terminal is set to the
 user\'s primary group.
 .PP
 The
@@ -217,17 +217,17 @@ is specified, then hushed mode will be enabled if the user\'s name or
 shell are found in the file.  If this global hush login file is empty
 then the hushed mode will be enabled for all users.
 .PP
-If not a full pathname is specified, then hushed mode will be enabled
+If a full pathname is not specified, then hushed mode will be enabled
 if the file exists in the user\'s home directory.
 .PP
 The default is to check
 .I /etc\:/hushlogins
-and if does not exist then
+and if it does not exist then
 .I ~/.hushlogin
 .PP
 If the
 .B HUSHLOGIN_FILE
-item is empty then all checks are disabled.
+item is empty, then all the checks are disabled.
 .RE
 .PP
 .B DEFAULT_HOME
@@ -248,15 +248,15 @@ Enable display of unknown usernames when login failures are recorded.
 The default value is
 .IR no .
 .PP
-Note that logging unknown usernames may be a security issue if an
-user enter her password instead of her login name.
+Note that logging unknown usernames may be a security issue if a
+user enters her password instead of her login name.
 .RE
 .PP
 .B ENV_PATH
 (string)
 .RS 4
 If set, it will be used to define the PATH environment variable when
-a regular user login.  The default value is
+a regular user logs in.  The default value is
 .I /usr\:/local\:/bin:\:/bin:\:/usr\:/bin
 .RE
 .PP
@@ -267,7 +267,7 @@ a regular user login.  The default value is
 (string)
 .RS 4
 If set, it will be used to define the PATH environment variable when
-the superuser login.  The default value is
+the superuser logs in.  The default value is
 .I /usr\:/local\:/sbin:\:/usr\:/local\:/bin:\:/sbin:\:/bin:\:/usr\:/sbin:\:/usr\:/bin
 .RE
 .SH FILES
@@ -323,7 +323,7 @@ Ported to Linux 0.12:
 Peter Orbaek
 .ME
 .br
-Rewritten to PAM-only version by
+Rewritten to a PAM-only version by
 .MT kzak@\:redhat.\:com
 Karel Zak
 .ME
