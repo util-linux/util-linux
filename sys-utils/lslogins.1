@@ -1,0 +1,118 @@
+.\" Copyright 2014 Ondrej Oprala (ondrej.oprala@gmail.com)
+.\" May be distributed under the GNU General Public License
+.TH LSLOGINS "1" "April 2014" "util-linux" "User Commands"
+.SH NAME
+lslogins \- display information about known users in the system
+.SH SYNOPSIS
+.B lslogins
+[\fI-adehmoptvx\fR] [-s|-u[\fI=UID\fR]] [-g \fIGROUPS\fR] [-l \fILOGINS\fR]
+.SH DESCRIPTION
+.PP
+Examine the wtmp and btmp logs, /etc/shadow (if necessary) and /etc/passwd
+and output the desired data.
+.PP
+Mandatory arguments to long options are mandatory for short options too.
+.PP
+The default action is to list info about all the users in the system.
+.SH OPTIONS
+.PP
+Display info about existing users.
+.TP
+\fB\-a\fR, \fB\-\-acc\-expiration\fR
+Display data about the date of last password change and the account expiration date (see shadow(5) for more info).
+.TP
+\fB\-c\fR, \fB\-\-colon\fR
+Separate info about each user with a colon instead of a newline.
+.TP
+\fB\-d\fR, \fB\-\-duplicates\fR
+Show users with duplicate UIDs.
+.TP
+\fB\-e\fR, \fB\-\-export\fR
+Output data in the format of NAME=VALUE.
+.TP
+\fB\-f\fR, \fB\-\-failed\fR
+Display data about the users' last failed login attempts.
+.TP
+\fB\-g\fR, \fB\-\-groups\fR=\fIGROUPS\fR
+Only show data of users belonging to \fIGROUPS\fR. More than one group may be specified; the list has to be comma-separated.
+.TP
+\fB\-\-last\fR
+Display data containing information about the users' last login sessions.
+.TP
+\fB\-l\fR, \fB\-\-logins\fR=\fILOGINS\fR
+Only show data of users with a login specified in \fILOGINS\fR. More than one login may be specified; the list has to be comma-separated.
+.TP
+\fB\-m\fR, \fB\-\-more\fR
+Show secondary groups as well.
+.TP
+\fB\-n\fR, \fB\-\-newline\fR
+Display each piece of information on a separate line.
+.TP
+\fB\-p\fR, \fB\-\-no\-password\fR
+Show users without a password.
+.TP
+\fB\-r\fR, \fB\-\-raw\fR
+Raw output (no columnation).
+.TP
+\fB\-s\fR, \fB\-\-sys\-accs\fR[=\fIUID\fR]
+Show system accounts. These are by the default all accounts with UID below 1000 (non-inclusive), with the exception of either nobody or nfsnobody (UID 65534). The UID
+treshold can also be specified explicitly (necessary for some distributions that allocate UIDs
+starting from 100, 500 - or an entirely different value - rather than 1000).
+.TP
+\fB\-t\fR, \fB\-\-sort\fR
+Sort by user name, rather than UID.
+.TP
+\fB\-u\fR, \fB\-\-user\-accs\fR[=\fIUID\fR]
+Show user accounts. These are by the default all accounts with UID above 1000 (inclusive), with the exception of either nobody or nfsnobody (UID 65534). The UID
+treshold can also be specified explicitly (necessary for some distributions that allocate UIDs
+starting from 100, 500 - or an entirely different value - rather than 1000).
+.TP
+\fB\-x\fR, \fB\-\-extra\fR
+Show extra information about users - home diretory, default login shell, password age and expiry information.
+.TP
+\fB\-z\fR, \fB\-\-print0\fR
+Delimit user entries with a nul character, instead of a newline.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display help information and exit.
+\fB\-v\fR, \fB\-\-version\fR
+Display version information and exit.
+
+
+
+Note that switches -a and -x require root priviliges. Otherwise their fields will state <unknown> for each entry.
+.sp
+.SH COLORS
+Implicit coloring can be disabled as follows:
+.RS
+
+.br
+.BI "touch /etc/terminal-colors.d/lslogins.disable"
+.br
+
+.RE
+For more details see
+.BR terminal-colors.d (5).
+.SH EXIT STATUS
+.TP
+0
+if OK,
+.TP
+1
+if incorrect arguments specified,
+.TP
+2
+if a serious error occurs (e.g. a corrupt log).
+.SH SEE ALSO
+\fBgroup\fP(5), \fBpasswd\fP(5), \fBshadow\fP(5), \fButmp\fP(5)
+.SH HISTORY
+The \fBlslogins\fP utility is inspired by the \fBlogins\fP utility, which first appeared in FreeBSD 4.10.
+.SH AUTHORS
+.MT ondrej.oprala@gmail.com
+Ondrej Oprala
+.ME
+.SH AVAILABILITY
+The lslogins command is part of the util-linux package and is available from
+.UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .

@@ -1047,6 +1047,11 @@ UL_REQUIRES_HAVE([lscpu], [cpu_set_t], [cpu_set_t type])
 AM_CONDITIONAL([BUILD_LSCPU], [test "x$build_lscpu" = xyes])
 
 
+UL_BUILD_INIT([lslogins], [check])
+UL_REQUIRES_BUILD([lslogins], [libsmartcols])
+AM_CONDITIONAL([BUILD_LSLOGINS], [test "x$build_lslogins" = xyes])
+
+
 UL_BUILD_INIT([chcpu], [check])
 UL_REQUIRES_LINUX([chcpu])
 UL_REQUIRES_HAVE([chcpu], [cpu_set_t], [cpu_set_t type])
