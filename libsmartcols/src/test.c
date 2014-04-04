@@ -36,7 +36,11 @@ int main(int argc, char *argv[])
 	struct libscols_column *cl;
 	int notree = 0, clone = 0, i, color = 0;
 
-	tb = scols_new_table(NULL);
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
+	tb = scols_new_table();
 	if (!tb)
 		err(EXIT_FAILURE, "table initialization failed");
 
@@ -47,14 +51,14 @@ int main(int argc, char *argv[])
 		scols_unref_table(tb);
 		return EXIT_SUCCESS;
 	} else if (argc == 2 && !strcmp(argv[1], "--max")) {
-		scols_table_set_max(tb, 1);
+		scols_table_enable_maxout(tb, 1);
 	} else if (argc == 2 && !strcmp(argv[1], "--ascii")) {
-		scols_table_set_ascii(tb, 1);
+		scols_table_enable_ascii(tb, 1);
 	} else if (argc == 2 && !strcmp(argv[1], "--raw")) {
-		scols_table_set_raw(tb, 1);
+		scols_table_enable_raw(tb, 1);
 		notree = 1;
 	} else if (argc == 2 && !strcmp(argv[1], "--export")) {
-		scols_table_set_export(tb, 1);
+		scols_table_enable_export(tb, 1);
 		notree = 1;
 	} else if (argc == 2 && !strcmp(argv[1], "--list")) {
 		notree = 1;
@@ -71,10 +75,6 @@ int main(int argc, char *argv[])
 		notree = 0;
 		clone = 1;
 	}
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
 
 	cl = scols_table_new_column(tb, "NAME", 0.3, notree ? 0 : SCOLS_FL_TREE);
 	scols_table_enable_colors(tb, color);
