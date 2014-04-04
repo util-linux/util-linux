@@ -804,10 +804,9 @@ dnl libsmartcols
 dnl
 AC_ARG_ENABLE([libsmartcols],
   AS_HELP_STRING([--disable-libsmartcols], [do not build libsmartcols]),
-  [], [enable_libsmartcols=check]
+  [], [enable_libsmartcols=yes]
 )
 UL_BUILD_INIT([libsmartcols])
-UL_REQUIRES_LINUX([libsmartcols])
 AM_CONDITIONAL([BUILD_LIBSMARTCOLS], [test "x$build_libsmartcols" = xyes])
 AM_CONDITIONAL([BUILD_LIBSMARTCOLS_TESTS], [test "x$build_libsmartcols" = xyes -a "x$enable_static" = xyes])
 

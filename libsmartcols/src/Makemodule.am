@@ -28,6 +28,7 @@ libsmartcols_la_CFLAGS = \
 	-I$(top_srcdir)/libsmartcols/src
 
 libsmartcols_la_DEPENDENCIES = \
+	libcommon.la \
 	libsmartcols/src/libsmartcols.sym \
 	libsmartcols/src/libsmartcols.h.in
 
