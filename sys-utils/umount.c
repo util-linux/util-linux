@@ -80,7 +80,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all               unmount all filesystems\n"), out);
-	fputs(_(" -A, --all-targets       unmount all mountpoins for the given device in the\n"
+	fputs(_(" -A, --all-targets       unmount all mountpoints for the given device in the\n"
 	        "                           current namespace\n"), out);
 	fputs(_(" -c, --no-canonicalize   don't canonicalize paths\n"), out);
 	fputs(_(" -d, --detach-loop       if mounted loop device, also free this loop device\n"), out);
