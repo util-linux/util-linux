@@ -363,6 +363,7 @@ static void fetch_sun(struct fdisk_context *cxt,
 	}
 }
 
+#ifdef HAVE_QSORT_R
 static int verify_sun_cmp(int *a, int *b, void *data)
 {
     unsigned int *verify_sun_starts = (unsigned int *) data;
@@ -375,19 +376,19 @@ static int verify_sun_cmp(int *a, int *b, void *data)
 	    return 1;
     return -1;
 }
+#endif
 
 static int sun_verify_disklabel(struct fdisk_context *cxt)
 {
     uint32_t starts[SUN_MAXPARTITIONS], lens[SUN_MAXPARTITIONS], start, stop;
     uint32_t i,j,k,starto,endo;
+#ifdef HAVE_QSORT_R
     int array[SUN_MAXPARTITIONS];
     unsigned int *verify_sun_starts;
-
+#endif
     assert(cxt);
     assert(cxt->label);
     assert(fdisk_is_disklabel(cxt, SUN));
-
-    verify_sun_starts = starts;
 
     fetch_sun(cxt, starts, lens, &start, &stop);
 
@@ -422,12 +423,15 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
 	}
     }
 
+#ifdef HAVE_QSORT_R
     for (i = 0; i < SUN_MAXPARTITIONS; i++) {
         if (lens[i])
             array[i] = i;
         else
             array[i] = -1;
     }
+    verify_sun_starts = starts;
+
     qsort_r(array,ARRAY_SIZE(array),sizeof(array[0]),
 	  (int (*)(const void *,const void *,void *)) verify_sun_cmp,
 	  verify_sun_starts);
@@ -447,6 +451,7 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
     start = (starts[array[i]] + lens[array[i]]);
     if (start < stop)
         fdisk_warnx(cxt, _("Unused gap - sectors %u-%u."), start, stop);
+#endif
     return 0;
 }
 

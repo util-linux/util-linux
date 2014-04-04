@@ -311,6 +311,7 @@ AC_CHECK_FUNCS([ \
 	personality \
 	posix_fadvise \
 	prctl \
+	qsort_r \
 	rpmatch \
 	scandirat \
 	setresgid \
