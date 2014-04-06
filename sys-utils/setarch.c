@@ -149,11 +149,17 @@ set_arch(const char *pers, unsigned long options, int list)
     {PER_LINUX32, "linux32", NULL},
     {PER_LINUX, "linux64", NULL},
 #if defined(__powerpc__) || defined(__powerpc64__)
+#ifdef __BIG_ENDIAN__
     {PER_LINUX32, "ppc32", "ppc"},
     {PER_LINUX32, "ppc", "ppc"},
     {PER_LINUX, "ppc64", "ppc64"},
     {PER_LINUX, "ppc64pseries", "ppc64"},
     {PER_LINUX, "ppc64iseries", "ppc64"},
+#else
+    {PER_LINUX32, "ppc32le", "ppcle"},
+    {PER_LINUX32, "ppcle", "ppcle"},
+    {PER_LINUX, "ppc64le", "ppc64le"},
+#endif
 #endif
 #if defined(__x86_64__) || defined(__i386__) || defined(__ia64__)
     {PER_LINUX32, "i386", "i386"},
