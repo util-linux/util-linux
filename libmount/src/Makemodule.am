@@ -26,7 +26,7 @@ libmount_la_SOURCES = \
 	libmount/src/test.c \
 	libmount/src/utils.c \
 	libmount/src/version.c \
-	$(mountinc_HEADERS)
+	$(nodist_mountinc_HEADERS)
 
 nodist_libmount_la_SOURCES = libmount/src/mountP.h
 
