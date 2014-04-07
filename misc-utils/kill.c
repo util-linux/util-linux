@@ -486,7 +486,7 @@ int main(int argc, char **argv)
 
 			if (!ps)
 				continue;
-			if (ctl.check_all)
+			if (!ctl.check_all)
 				proc_processes_filter_by_uid(ps, getuid());
 
 			proc_processes_filter_by_name(ps, ctl.arg);
