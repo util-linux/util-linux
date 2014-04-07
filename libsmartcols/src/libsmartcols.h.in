@@ -18,6 +18,11 @@ extern "C" {
 #include <stdio.h>
 #include <sys/types.h>
 
+/**
+ * LIBSMARTCOLS_VERSION:
+ *
+ * Library version string
+ */
 #define LIBSMARTCOLS_VERSION   "@LIBSMARTCOLS_VERSION@"
 
 /**

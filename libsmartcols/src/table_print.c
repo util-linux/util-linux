@@ -7,6 +7,14 @@
  * GNU Lesser General Public License.
  */
 
+/**
+ * SECTION: table_print
+ * @title: Table print
+ * @short_description: table print API
+ *
+ * Table output API.
+ */
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -534,7 +542,7 @@ static size_t strlen_line(struct libscols_line *ln)
 	return sz;
 }
 
-/*
+/**
  * scols_print_table:
  * @tb: table
  *
@@ -588,7 +596,7 @@ int scols_print_table(struct libscols_table *tb)
 	return 0;
 }
 
-/*
+/**
  * scols_print_table_to_string:
  * @tb: table
  * @data: pointer to the beginning of a memory area to print to

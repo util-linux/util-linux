@@ -106,7 +106,10 @@ void scols_line_free_cells(struct libscols_line *ln)
  * @ln: a pointer to a struct libscols_line instance
  * @n: the number of elements
  *
- * Allocates space for @n cells.
+ * Allocates space for @n cells. This function is optional,
+ * and libsmartcols automatically allocates necessary cells
+ * according to number of columns in the table when you add
+ * the line to the table. See scols_table_add_line().
  *
  * Returns: 0, a negative value in case of an error.
  */
@@ -369,7 +372,7 @@ int scols_line_set_data(struct libscols_line *ln, size_t n, const char *data)
 }
 
 /**
- * scols_line_set_data:
+ * scols_line_refer_data:
  * @ln: a pointer to a struct libscols_cell instance
  * @n: number of the cell which will refer to @data
  * @data: actual data to refer to

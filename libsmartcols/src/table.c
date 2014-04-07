@@ -9,11 +9,11 @@
  */
 
 /**
- * SECTION: table 
+ * SECTION: table
  * @title: Table
- * @short_description: table API
+ * @short_description: table data API
  *
- * Table manipulation API.
+ * Table data manipulation API.
  */
 
 
@@ -284,7 +284,7 @@ int scols_table_get_ncols(struct libscols_table *tb)
 	return tb ? tb->ncols : -EINVAL;
 }
 
-/*
+/**
  * scols_table_get_nlines:
  * @tb: table
  *

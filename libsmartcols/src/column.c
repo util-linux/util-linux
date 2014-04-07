@@ -175,7 +175,7 @@ int scols_column_get_flags(struct libscols_column *cl)
 }
 
 /**
- * scols_column_get_flags:
+ * scols_column_get_header:
  * @cl: a pointer to a struct libscols_column instance
  *
  * Returns: A pointer to a struct libscols_cell instance, representing the

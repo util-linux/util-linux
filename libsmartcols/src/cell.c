@@ -13,7 +13,9 @@
  * @title: Cell
  * @short_description: cell API
  *
- * An API to access and modify per-cell data and information.
+ * An API to access and modify per-cell data and information. Note that cell is
+ * always part of the line. If you destroy (un-reference) a line than it
+ * destroys all line cells too.
  */
 
 
@@ -146,7 +148,7 @@ int scols_cell_set_color(struct libscols_cell *ce, const char *color)
 }
 
 /**
- * scols_cell_get_data:
+ * scols_cell_get_color:
  * @ce: a pointer to a struct libscols_cell instance
  *
  * Returns: the current color of @ce.

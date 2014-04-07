@@ -9,6 +9,8 @@
  * SECTION: init
  * @title: Library initialization
  * @short_description: initialize debugging
+ *
+ * The library debug stuff.
  */
 
 #include <stdarg.h>
