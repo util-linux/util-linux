@@ -40,6 +40,8 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
+	scols_init_debug(0);
+
 	tb = scols_new_table();
 	if (!tb)
 		err(EXIT_FAILURE, "table initialization failed");

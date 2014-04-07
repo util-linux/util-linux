@@ -14,8 +14,11 @@
 #include "c.h"
 #include "list.h"
 #include "colors.h"
+#include "debug.h"
+
 #include "libsmartcols.h"
 
+/* features */
 #define CONFIG_LIBSMARTCOLS_ASSERT
 
 #ifdef CONFIG_LIBSMARTCOLS_ASSERT
@@ -23,6 +26,17 @@
 #else
 # define assert(x)
 #endif
+
+/*
+ * Debug
+ */
+#define SCOLS_DEBUG_INIT	(1 << 1)
+#define SCOLS_DEBUG_ALL		0xFFFF
+
+UL_DEBUG_DECLARE_MASK(libsmartcols);
+#define DBG(m, x)	__UL_DBG(libsmartcols, SCOLS_DEBUG_, m, x)
+#define ON_DBG(m, x)	__UL_DBG_CALL(libsmartcols, SCOLS_DEBUG_, m, x)
+#define DBG_FLUSH	__UL_DBG_FLUSH(libsmartcols, SCOLS_DEBUG_)
 
 /*
  * Generic iterator

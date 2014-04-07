@@ -26,6 +26,8 @@ global:
 	scols_copy_symbols;
 	scols_copy_table;
 	scols_free_iter;
+	scols_get_library_version;
+	scols_init_debug;
 	scols_iter_get_direction;
 	scols_line_add_child;
 	scols_line_alloc_cells;
@@ -47,6 +49,7 @@ global:
 	scols_new_line;
 	scols_new_symbols;
 	scols_new_table;
+	scols_parse_version_string;
 	scols_print_table;
 	scols_print_table_to_string;
 	scols_ref_column;

@@ -92,9 +92,8 @@ void scols_unref_table(struct libscols_table *tb)
  * scols_table_add_column:
  * @tb: a pointer to a struct libscols_table instance
  * @cl: a pointer to a struct libscols_column instance
- * @flags: a flag mask integer
  *
- * Adds @cl to @tb's column list, setting the appropriate flags to @flags.
+ * Adds @cl to @tb's column list.
  *
  * Returns: 0, a negative number in case of an error.
  */

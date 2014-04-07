@@ -85,6 +85,13 @@ extern void scols_free_iter(struct libscols_iter *itr);
 extern void scols_reset_iter(struct libscols_iter *itr, int direction);
 extern int scols_iter_get_direction(struct libscols_iter *itr);
 
+/* init.c */
+extern void scols_init_debug(int mask);
+
+/* version.c */
+extern int scols_parse_version_string(const char *ver_string);
+extern int scols_get_library_version(const char **ver_string);
+
 /* symbols.c */
 extern struct libscols_symbols *scols_new_symbols(void);
 extern void scols_ref_symbols(struct libscols_symbols *sy);

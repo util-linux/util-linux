@@ -85,6 +85,7 @@ scols_ref_table
 scols_table_add_column
 scols_table_add_line
 scols_table_colors_wanted
+scols_table_enable_ascii
 scols_table_enable_colors
 scols_table_enable_export
 scols_table_enable_maxout
@@ -111,7 +112,6 @@ scols_table_remove_column
 scols_table_remove_columns
 scols_table_remove_line
 scols_table_remove_lines
-scols_table_set_ascii
 scols_table_set_stream
 scols_table_set_symbols
 scols_unref_table
@@ -121,4 +121,16 @@ scols_unref_table
 <FILE>table_print</FILE>
 scols_print_table
 scols_print_table_to_string
+</SECTION>
+
+<SECTION>
+<FILE>version</FILE>
+scols_parse_version_string
+scols_get_library_version
+LIBSMARTCOLS_VERSION
+</SECTION>
+
+<SECTION>
+<FILE>init</FILE>
+scols_init_debug
 </SECTION>
