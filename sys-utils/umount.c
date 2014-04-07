@@ -281,10 +281,12 @@ static int umount_all(struct libmnt_context *cxt)
 			if (mnt_context_is_verbose(cxt))
 				printf(_("%-25s: ignored\n"), tgt);
 		} else {
-			rc |= mk_exit_code(cxt, mntrc);
+			int xrc = mk_exit_code(cxt, mntrc);
 
-			if (mnt_context_is_verbose(cxt))
+			if (xrc == MOUNT_EX_SUCCESS
+			    && mnt_context_is_verbose(cxt))
 				printf("%-25s: successfully unmounted\n", tgt);
+			rc |= xrc;
 		}
 	}
 
