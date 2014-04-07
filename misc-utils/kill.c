@@ -434,8 +434,6 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 	}
 	if (!*argv)
 		errx(EXIT_FAILURE, _("not enough arguments"));
-	if (ctl->do_pid)
-		ctl->numsig = -1;
 	return argv;
 }
 
@@ -444,7 +442,7 @@ static int kill_verbose(const struct kill_control *ctl)
 {
 	int rc = 0;
 
-	if (ctl->numsig < 0) {
+	if (ctl->do_pid) {
 		printf("%ld\n", (long) ctl->pid);
 		return 0;
 	}
