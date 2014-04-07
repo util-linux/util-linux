@@ -12,7 +12,7 @@ kill \- terminate a process
 .IR sigval ]
 .RB [ \-a ]
 .RB [ \-\- ]
-.IR pid ...
+.IR pid|name ...
 .br
 .B kill -l
 .RI [ signal ]
@@ -25,8 +25,8 @@ processes which do not catch this signal.  For other processes, it may be
 necessary to use the KILL (9) signal, since this signal cannot be caught.
 .PP
 Most modern shells have a builtin kill function, with a usage rather similar to
-that of the command described here.  The '-a' and '-p' options, and the
-possibility to specify processes by command name are a local extension.
+that of the command described here.  The \-\-all, \-\-pid, and \-\-queue options,
+and the possibility to specify processes by command name are a local extension.
 .PP
 If sig is 0, then no signal is sent, but error checking is still performed.
 .SH OPTIONS
@@ -36,7 +36,7 @@ Specify the list of processes that
 .B kill
 should signal.  Each
 .I pid
-can be one of five things:
+can be one of four things:
 .RS
 .TP
 .I n
@@ -61,10 +61,10 @@ are signaled.  When an argument of the form '-n' is given, and it is meant to
 denote a process group, either the signal must be specified first, or the
 argument must be preceded by a '--' option, otherwise it will be taken as the
 signal to send.
-.TP
-.I commandname
-All processes invoked using that name will be signaled.
 .RE
+.TP
+.I name
+All processes invoked using that name will be signaled.
 .TP
 \fB\-s\fR, \fB\-\-signal\fR \fIsignal\fR
 Specify the signal to send.  The signal may be given as a signal name or
