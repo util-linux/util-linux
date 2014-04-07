@@ -431,6 +431,8 @@ try_readonly:
 				warnx(_("you must specify the filesystem type"));
 			return MOUNT_EX_USAGE;
 		case -MNT_ERR_NOSOURCE:
+			if (uflags & MNT_MS_NOFAIL)
+				return MOUNT_EX_SUCCESS;
 			if (src)
 				warnx(_("can't find %s"), src);
 			else
