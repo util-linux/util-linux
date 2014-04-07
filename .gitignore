@@ -116,6 +116,7 @@ update.log
 /lsblk
 /lscpu
 /lslocks
+/lslogins
 /mcookie
 /mesg
 /mkfs

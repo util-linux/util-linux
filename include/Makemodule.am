@@ -37,6 +37,7 @@ dist_noinst_HEADERS += \
 	include/pathnames.h \
 	include/procutils.h \
 	include/randutils.h \
+	include/readutmp.h \
 	include/rpmatch.h \
 	include/setproctitle.h \
 	include/strutils.h \

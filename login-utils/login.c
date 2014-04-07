@@ -1248,7 +1248,7 @@ int main(int argc, char **argv)
 
 	endpwent();
 
-	cxt.quiet = get_hushlogin_status(pwd);
+	cxt.quiet = get_hushlogin_status(pwd, 1);
 
 	log_utmp(&cxt);
 	log_audit(&cxt, 1);

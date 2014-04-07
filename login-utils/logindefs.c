@@ -307,7 +307,7 @@ int effective_access(const char *path, int mode)
  * BSD setreuid().
  */
 
-int get_hushlogin_status(struct passwd *pwd)
+int get_hushlogin_status(struct passwd *pwd, int force_check)
 {
 	const char *files[] = { _PATH_HUSHLOGINS, _PATH_HUSHLOGIN, NULL };
 	const char *file;
@@ -358,11 +358,12 @@ int get_hushlogin_status(struct passwd *pwd)
 		/* per-account setting */
 		if (strlen(pwd->pw_dir) + sizeof(file) + 2 > sizeof(buf))
 			continue;
-		else {
+
+		sprintf(buf, "%s/%s", pwd->pw_dir, file);
+
+		if (force_check) {
 			uid_t ruid = getuid();
 			gid_t egid = getegid();
-
-			sprintf(buf, "%s/%s", pwd->pw_dir, file);
 
 			if (setregid(-1, pwd->pw_gid) == 0 &&
 			    setreuid(0, pwd->pw_uid) == 0)
@@ -377,6 +378,15 @@ int get_hushlogin_status(struct passwd *pwd)
 			if (ok)
 				return 1;	/* enabled by user */
 		}
+		else {
+			int rc;
+			rc = effective_access(buf, O_RDONLY);
+			if (rc == 0)
+				return 1;
+			else if (rc == -1 && errno == EACCES)
+					return -1;
+		}
+
 	}
 
 	return 0;
