@@ -210,6 +210,7 @@ static void print_all_signals(FILE *fp, int pretty)
 		fputc('\n', fp);
 		return;
 	}
+
 	/* pretty print */
 	width = get_terminal_width();
 	if (width == 0)
@@ -226,10 +227,11 @@ static void print_all_signals(FILE *fp, int pretty)
 	fputc('\n', fp);
 }
 
-static void nosig(char *name)
+static void err_nosig(char *name)
 {
 	warnx(_("unknown signal %s; valid signals:"), name);
 	print_all_signals(stderr, 1);
+	exit(EXIT_FAILURE);
 }
 
 #ifdef SIGRTMIN
@@ -257,8 +259,6 @@ static int rtsig_to_signum(char *sig)
 }
 #endif
 
-
-
 static int signame_to_signum(char *sig)
 {
 	size_t n;
@@ -275,7 +275,7 @@ static int signame_to_signum(char *sig)
 		if (!strcasecmp(sys_signame[n].name, sig))
 			return sys_signame[n].val;
 	}
-	return (-1);
+	return -1;
 }
 
 static int arg_to_signum(char *arg, int maskbit)
@@ -288,8 +288,8 @@ static int arg_to_signum(char *arg, int maskbit)
 		if (NSIG <= numsig && maskbit && (numsig & 128) != 0)
 			numsig -= 128;
 		if (*ep != 0 || numsig < 0 || NSIG <= numsig)
-			return (-1);
-		return (numsig);
+			return -1;
+		return numsig;
 	}
 	return signame_to_signum(arg);
 }
@@ -298,6 +298,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <pid|name> [...]\n"), program_invocation_short_name);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all              do not restrict the name-to-pid conversion to processes\n"
 		"                        with the same uid as the present process\n"), out);
@@ -308,13 +309,14 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -p, --pid              print pids without signaling them\n"), out);
 	fputs(_(" -l, --list [=<signal>] list signal names, or convert one to a name\n"), out);
 	fputs(_(" -L, --table            list signal names and numbers\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("kill(1)"));
+
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
-
 
 static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 {
@@ -384,10 +386,8 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 				errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--signal");
 			argc--, argv++;
 			arg = *argv;
-			if ((ctl->numsig = arg_to_signum(arg, 0)) < 0) {
-				nosig(arg);
-				exit(EXIT_FAILURE);
-			}
+			if ((ctl->numsig = arg_to_signum(arg, 0)) < 0)
+				err_nosig(arg);
 			continue;
 		}
 #ifdef HAVE_SIGQUEUE
@@ -396,10 +396,8 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 				errx(EXIT_FAILURE, _("option '%s' requires an argument"), arg);
 			argc--, argv++;
 			arg = *argv;
-			if ((ctl->numsig = arg_to_signum(arg, 0)) < 0) {
-				nosig(arg);
-				exit(EXIT_FAILURE);
-			}
+			if ((ctl->numsig = arg_to_signum(arg, 0)) < 0)
+				err_nosig(arg);
 			ctl->sigdata.sival_int = ctl->numsig;
 			ctl->use_sigval = 1;
 			continue;
