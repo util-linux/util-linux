@@ -783,13 +783,7 @@ int blkid_probe_set_dimension(blkid_probe pr,
 	return 0;
 }
 
-/**
- * blkid_probe_get_idmag:
- * @pr: probe
- * @id: id information
- * @offset: begin of probing area
- * @res: found id information
- *
+/*
  * Check for matching magic value.
  * Returns BLKID_PROBE_OK if found, BLKID_PROBE_NONE if not found
  * or no magic present, or negative value on error.
