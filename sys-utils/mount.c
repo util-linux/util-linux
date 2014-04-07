@@ -197,12 +197,14 @@ static int mount_all(struct libmnt_context *cxt)
 			if (mnt_context_is_verbose(cxt))
 				printf("%-25s: mount successfully forked\n", tgt);
 		} else {
-			mk_exit_code(cxt, mntrc);	/* to print warnings */
-
-			if (mnt_context_get_status(cxt)) {
+			if (mk_exit_code(cxt, mntrc) == MOUNT_EX_SUCCESS) {
 				nsucc++;
 
-				if (mnt_context_is_verbose(cxt))
+				/* Note that MOUNT_EX_SUCCESS return code does
+				 * not mean that FS has been really mounted
+				 * (e.g. nofail option) */
+				if (mnt_context_get_status(cxt) 
+				    && mnt_context_is_verbose(cxt))
 					printf("%-25s: successfully mounted\n", tgt);
 			} else
 				nerrs++;
