@@ -126,7 +126,21 @@ accepts TID (thread ID, see
 .BR gettid (2))
 as argument.  In this case the kill behavior is not changed and the signal is
 also delivered to the thread group rather than to the specified thread.
-.SH "SEE ALSO"
+
+.SH RETURN CODES
+.B kill
+has the following return codes:
+.TP
+.BR 0
+success
+.TP
+.BR 1
+failure
+.TP
+.BR 64
+partial success (when more than one process specified)
+
+.SH SEE ALSO
 .BR bash (1),
 .BR tcsh (1),
 .BR kill (2),

@@ -57,6 +57,9 @@
 #include "ttyutils.h"
 #include "xalloc.h"
 
+/* partial success, otherwise we return regular EXIT_{SUCCESS,FAILURE} */
+#define KILL_EXIT_SOMEOK	64
+
 enum {
 	KILL_FIELD_WIDTH = 11,
 	KILL_OUTPUT_WIDTH = 72
@@ -443,57 +446,68 @@ static int kill_verbose(const struct kill_control *ctl)
 	else
 #endif
 		rc = kill(ctl->pid, ctl->numsig);
-	if (rc < 0) {
+
+	if (rc < 0)
 		warn(_("sending signal to %s failed"), ctl->arg);
-		return EXIT_FAILURE;
-	}
-	return EXIT_SUCCESS;
+	return rc;
 }
 
 int main(int argc, char **argv)
 {
-	struct kill_control ctl;
-	int errors = EXIT_SUCCESS;
+	struct kill_control ctl = { .numsig = SIGTERM };
+	int nerrs = 0, ct = 0;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
-	memset(&ctl, 0, sizeof(ctl));
 
-	ctl.numsig = SIGTERM;
 	ctl.do_pid = (!strcmp(program_invocation_short_name, "pid"));	/* Yecch */
 	if (ctl.do_pid)	/* FIXME: remove in March 2016.  */
 		warnx(_("use of 'kill --pid' option as command name is deprecated"));
-	argv = parse_arguments(argc, argv, &ctl);
-	/* We are done with the options.  The rest of the arguments
-	 * should be process ids and names, kill them.  */
-	for (/* nothing */; (ctl.arg = *argv) != NULL; argv++) {
-		char *ep;
 
+	argv = parse_arguments(argc, argv, &ctl);
+
+	/* The rest of the arguments should be process ids and names. */
+	for ( ; (ctl.arg = *argv) != NULL; argv++) {
+		char *ep = NULL;
+
+		errno = 0;
 		ctl.pid = strtol(ctl.arg, &ep, 10);
-		if (!*ep)
-			errors |= kill_verbose(&ctl);
-		else {
+		if (errno == 0 && ep && *ep == '\0' && ctl.arg < ep) {
+			if (kill_verbose(&ctl) != 0)
+				nerrs++;
+			ct++;
+		} else {
 			struct proc_processes *ps = proc_open_processes();
-			int ct = 0;
+			int found = 0;
 
 			if (!ps)
 				continue;
 			if (ctl.check_all)
 				proc_processes_filter_by_uid(ps, getuid());
+
 			proc_processes_filter_by_name(ps, ctl.arg);
-			while (proc_next_pid(ps, &(ctl.pid)) == 0) {
-				errors |= kill_verbose(&ctl);
+			while (proc_next_pid(ps, &ctl.pid) == 0) {
+				if (kill_verbose(&ctl) != 0)
+					nerrs++;
 				ct++;
-			}
-			if (!ct) {
-				errors = EXIT_FAILURE;
-				warnx(_("cannot find process \"%s\""), ctl.arg);
+				found = 1;
 			}
 			proc_close_processes(ps);
+
+			if (!found) {
+				nerrs++, ct++;
+				warnx(_("cannot find process \"%s\"."), ctl.arg);
+			}
 		}
 	}
-	return errors;
+
+	if (ct && nerrs == 0)
+		return EXIT_SUCCESS;	/* full success */
+	else if (ct == nerrs)
+		return EXIT_FAILURE;	/* all failed */
+
+	return KILL_EXIT_SOMEOK;	/* partial success */
 }
 
