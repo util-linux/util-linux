@@ -40,6 +40,8 @@
  *
  *  1999-11-13 aeb Accept signal numers 128+s.
  *
+ * Copyright (C) 2014 Sami Kerola <kerolasa@iki.fi>
+ * Copyright (C) 2014 Karel Zak <kzak@redhat.com>
  */
 
 #include <ctype.h>		/* for isdigit() */
