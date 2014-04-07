@@ -159,61 +159,162 @@ struct signv {
 #endif
 };
 
-static char **parse_arguments(int argc, char **argv, struct kill_control *ctl);
-static int arg_to_signum(char *arg, int mask);
-static void nosig(char *name);
-static void printsig(const struct kill_control *ctl);
-static void printsignals(FILE *fp, int pretty);
-static void __attribute__((__noreturn__)) usage(FILE *out);
-static int kill_verbose(const struct kill_control *ctl);
-
-
-int main(int argc, char **argv)
+static void printsig(const struct kill_control *ctl)
 {
-	struct kill_control ctl;
-	int errors = EXIT_SUCCESS;
+	size_t n;
 
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-	atexit(close_stdout);
-	memset(&ctl, 0, sizeof(ctl));
-
-	ctl.numsig = SIGTERM;
-	ctl.do_pid = (!strcmp(program_invocation_short_name, "pid"));	/* Yecch */
-	if (ctl.do_pid)	/* FIXME: remove in March 2016.  */
-		warnx(_("use of 'kill --pid' option as command name is deprecated"));
-	argv = parse_arguments(argc, argv, &ctl);
-	/* We are done with the options.  The rest of the arguments
-	 * should be process ids and names, kill them.  */
-	for (/* nothing */; (ctl.arg = *argv) != NULL; argv++) {
-		char *ep;
-
-		ctl.pid = strtol(ctl.arg, &ep, 10);
-		if (!*ep)
-			errors |= kill_verbose(&ctl);
-		else {
-			struct proc_processes *ps = proc_open_processes();
-			int ct = 0;
-
-			if (!ps)
-				continue;
-			if (ctl.check_all)
-				proc_processes_filter_by_uid(ps, getuid());
-			proc_processes_filter_by_name(ps, ctl.arg);
-			while (proc_next_pid(ps, &(ctl.pid)) == 0) {
-				errors |= kill_verbose(&ctl);
-				ct++;
-			}
-			if (!ct) {
-				errors = EXIT_FAILURE;
-				warnx(_("cannot find process \"%s\""), ctl.arg);
-			}
-			proc_close_processes(ps);
+	for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
+		if (sys_signame[n].val == ctl->numsig) {
+			printf("%s\n", sys_signame[n].name);
+			return;
 		}
 	}
-	return errors;
+#ifdef SIGRTMIN
+	if (SIGRTMIN <= ctl->numsig && ctl->numsig <= SIGRTMAX) {
+		printf("RT%d\n", ctl->numsig - SIGRTMIN);
+		return;
+	}
+#endif
+	printf("%d\n", ctl->numsig);
 }
+
+static void pretty_print_signal(FILE *fp, size_t term_width, size_t *lpos,
+				int signum, const char *name)
+{
+	if (term_width < (*lpos + KILL_FIELD_WIDTH)) {
+		fputc('\n', fp);
+		*lpos = 0;
+	}
+	*lpos += KILL_FIELD_WIDTH;
+	fprintf(fp, "%2d %-8s", signum, name);
+}
+
+static void printsignals(FILE *fp, int pretty)
+{
+	size_t n, lth, lpos = 0, width;
+
+	if (!pretty) {
+		for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
+			lth = 1 + strlen(sys_signame[n].name);
+			if (KILL_OUTPUT_WIDTH < lpos + lth) {
+				fputc('\n', fp);
+				lpos = 0;
+			} else if (lpos)
+				fputc(' ', fp);
+			lpos += lth;
+			fputs(sys_signame[n].name, fp);
+		}
+#ifdef SIGRTMIN
+		fputs(" RT<N> RTMIN+<N> RTMAX-<N>", fp);
+#endif
+		fputc('\n', fp);
+		return;
+	}
+	/* pretty print */
+	width = get_terminal_width();
+	if (width == 0)
+		width = KILL_OUTPUT_WIDTH;
+	else
+		width -= 1;
+	for (n = 0; n < ARRAY_SIZE(sys_signame); n++)
+		pretty_print_signal(fp, width, &lpos,
+				    sys_signame[n].val, sys_signame[n].name);
+#ifdef SIGRTMIN
+	pretty_print_signal(fp, width, &lpos, SIGRTMIN, "RTMIN");
+	pretty_print_signal(fp, width, &lpos, SIGRTMAX, "RTMAX");
+#endif
+	fputc('\n', fp);
+}
+
+static void nosig(char *name)
+{
+	warnx(_("unknown signal %s; valid signals:"), name);
+	printsignals(stderr, 1);
+}
+
+#ifdef SIGRTMIN
+static int rtsig_to_signum(char *sig)
+{
+	int num, maxi = 0;
+	char *ep = NULL;
+
+	if (strncasecmp(sig, "min+", 4) == 0)
+		sig += 4;
+	else if (strncasecmp(sig, "max-", 4) == 0) {
+		sig += 4;
+		maxi = 1;
+	}
+	if (!isdigit(*sig))
+		return -1;
+	errno = 0;
+	num = strtol(sig, &ep, 10);
+	if (!ep || sig == ep || errno || num < 0)
+		return -1;
+	num = maxi ? SIGRTMAX - num : SIGRTMIN + num;
+	if (num < SIGRTMIN || SIGRTMAX < num)
+		return -1;
+	return num;
+}
+#endif
+
+
+
+static int signame_to_signum(char *sig)
+{
+	size_t n;
+
+	if (!strncasecmp(sig, "sig", 3))
+		sig += 3;
+#ifdef SIGRTMIN
+	/* RT signals */
+	if (!strncasecmp(sig, "rt", 2))
+		return rtsig_to_signum(sig + 2);
+#endif
+	/* Normal sugnals */
+	for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
+		if (!strcasecmp(sys_signame[n].name, sig))
+			return sys_signame[n].val;
+	}
+	return (-1);
+}
+
+static int arg_to_signum(char *arg, int maskbit)
+{
+	int numsig;
+	char *ep;
+
+	if (isdigit(*arg)) {
+		numsig = strtol(arg, &ep, 10);
+		if (NSIG <= numsig && maskbit && (numsig & 128) != 0)
+			numsig -= 128;
+		if (*ep != 0 || numsig < 0 || NSIG <= numsig)
+			return (-1);
+		return (numsig);
+	}
+	return signame_to_signum(arg);
+}
+
+static void __attribute__((__noreturn__)) usage(FILE *out)
+{
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] <pid|name> [...]\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -a, --all              do not restrict the name-to-pid conversion to processes\n"
+		"                        with the same uid as the present process\n"), out);
+	fputs(_(" -s, --signal <sig>     send specified signal\n"), out);
+#ifdef HAVE_SIGQUEUE
+	fputs(_(" -q, --queue <sig>      use sigqueue(2) rather than kill(2)\n"), out);
+#endif
+	fputs(_(" -p, --pid              print pids without signaling them\n"), out);
+	fputs(_(" -l, --list [=<signal>] list signal names, or convert one to a name\n"), out);
+	fputs(_(" -L, --table            list signal names and numbers\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("kill(1)"));
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 
 static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 {
@@ -329,159 +430,6 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 	return argv;
 }
 
-#ifdef SIGRTMIN
-static int rtsig_to_signum(char *sig)
-{
-	int num, maxi = 0;
-	char *ep = NULL;
-
-	if (strncasecmp(sig, "min+", 4) == 0)
-		sig += 4;
-	else if (strncasecmp(sig, "max-", 4) == 0) {
-		sig += 4;
-		maxi = 1;
-	}
-	if (!isdigit(*sig))
-		return -1;
-	errno = 0;
-	num = strtol(sig, &ep, 10);
-	if (!ep || sig == ep || errno || num < 0)
-		return -1;
-	num = maxi ? SIGRTMAX - num : SIGRTMIN + num;
-	if (num < SIGRTMIN || SIGRTMAX < num)
-		return -1;
-	return num;
-}
-#endif
-
-static int signame_to_signum(char *sig)
-{
-	size_t n;
-
-	if (!strncasecmp(sig, "sig", 3))
-		sig += 3;
-#ifdef SIGRTMIN
-	/* RT signals */
-	if (!strncasecmp(sig, "rt", 2))
-		return rtsig_to_signum(sig + 2);
-#endif
-	/* Normal sugnals */
-	for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
-		if (!strcasecmp(sys_signame[n].name, sig))
-			return sys_signame[n].val;
-	}
-	return (-1);
-}
-
-static int arg_to_signum(char *arg, int maskbit)
-{
-	int numsig;
-	char *ep;
-
-	if (isdigit(*arg)) {
-		numsig = strtol(arg, &ep, 10);
-		if (NSIG <= numsig && maskbit && (numsig & 128) != 0)
-			numsig -= 128;
-		if (*ep != 0 || numsig < 0 || NSIG <= numsig)
-			return (-1);
-		return (numsig);
-	}
-	return signame_to_signum(arg);
-}
-
-static void nosig(char *name)
-{
-	warnx(_("unknown signal %s; valid signals:"), name);
-	printsignals(stderr, 1);
-}
-
-static void printsig(const struct kill_control *ctl)
-{
-	size_t n;
-
-	for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
-		if (sys_signame[n].val == ctl->numsig) {
-			printf("%s\n", sys_signame[n].name);
-			return;
-		}
-	}
-#ifdef SIGRTMIN
-	if (SIGRTMIN <= ctl->numsig && ctl->numsig <= SIGRTMAX) {
-		printf("RT%d\n", ctl->numsig - SIGRTMIN);
-		return;
-	}
-#endif
-	printf("%d\n", ctl->numsig);
-}
-
-static void pretty_print_signal(FILE *fp, size_t term_width, size_t *lpos,
-				int signum, const char *name)
-{
-	if (term_width < (*lpos + KILL_FIELD_WIDTH)) {
-		fputc('\n', fp);
-		*lpos = 0;
-	}
-	*lpos += KILL_FIELD_WIDTH;
-	fprintf(fp, "%2d %-8s", signum, name);
-}
-
-static void printsignals(FILE *fp, int pretty)
-{
-	size_t n, lth, lpos = 0, width;
-
-	if (!pretty) {
-		for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
-			lth = 1 + strlen(sys_signame[n].name);
-			if (KILL_OUTPUT_WIDTH < lpos + lth) {
-				fputc('\n', fp);
-				lpos = 0;
-			} else if (lpos)
-				fputc(' ', fp);
-			lpos += lth;
-			fputs(sys_signame[n].name, fp);
-		}
-#ifdef SIGRTMIN
-		fputs(" RT<N> RTMIN+<N> RTMAX-<N>", fp);
-#endif
-		fputc('\n', fp);
-		return;
-	}
-	/* pretty print */
-	width = get_terminal_width();
-	if (width == 0)
-		width = KILL_OUTPUT_WIDTH;
-	else
-		width -= 1;
-	for (n = 0; n < ARRAY_SIZE(sys_signame); n++)
-		pretty_print_signal(fp, width, &lpos,
-				    sys_signame[n].val, sys_signame[n].name);
-#ifdef SIGRTMIN
-	pretty_print_signal(fp, width, &lpos, SIGRTMIN, "RTMIN");
-	pretty_print_signal(fp, width, &lpos, SIGRTMAX, "RTMAX");
-#endif
-	fputc('\n', fp);
-}
-
-static void __attribute__((__noreturn__)) usage(FILE *out)
-{
-	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] <pid|name> [...]\n"), program_invocation_short_name);
-	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all              do not restrict the name-to-pid conversion to processes\n"
-		"                        with the same uid as the present process\n"), out);
-	fputs(_(" -s, --signal <sig>     send specified signal\n"), out);
-#ifdef HAVE_SIGQUEUE
-	fputs(_(" -q, --queue <sig>      use sigqueue(2) rather than kill(2)\n"), out);
-#endif
-	fputs(_(" -p, --pid              print pids without signaling them\n"), out);
-	fputs(_(" -l, --list [=<signal>] list signal names, or convert one to a name\n"), out);
-	fputs(_(" -L, --table            list signal names and numbers\n"), out);
-	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
-	fprintf(out, USAGE_MAN_TAIL("kill(1)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
-}
 
 static int kill_verbose(const struct kill_control *ctl)
 {
@@ -503,3 +451,51 @@ static int kill_verbose(const struct kill_control *ctl)
 	}
 	return EXIT_SUCCESS;
 }
+
+int main(int argc, char **argv)
+{
+	struct kill_control ctl;
+	int errors = EXIT_SUCCESS;
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	atexit(close_stdout);
+	memset(&ctl, 0, sizeof(ctl));
+
+	ctl.numsig = SIGTERM;
+	ctl.do_pid = (!strcmp(program_invocation_short_name, "pid"));	/* Yecch */
+	if (ctl.do_pid)	/* FIXME: remove in March 2016.  */
+		warnx(_("use of 'kill --pid' option as command name is deprecated"));
+	argv = parse_arguments(argc, argv, &ctl);
+	/* We are done with the options.  The rest of the arguments
+	 * should be process ids and names, kill them.  */
+	for (/* nothing */; (ctl.arg = *argv) != NULL; argv++) {
+		char *ep;
+
+		ctl.pid = strtol(ctl.arg, &ep, 10);
+		if (!*ep)
+			errors |= kill_verbose(&ctl);
+		else {
+			struct proc_processes *ps = proc_open_processes();
+			int ct = 0;
+
+			if (!ps)
+				continue;
+			if (ctl.check_all)
+				proc_processes_filter_by_uid(ps, getuid());
+			proc_processes_filter_by_name(ps, ctl.arg);
+			while (proc_next_pid(ps, &(ctl.pid)) == 0) {
+				errors |= kill_verbose(&ctl);
+				ct++;
+			}
+			if (!ct) {
+				errors = EXIT_FAILURE;
+				warnx(_("cannot find process \"%s\""), ctl.arg);
+			}
+			proc_close_processes(ps);
+		}
+	}
+	return errors;
+}
+
