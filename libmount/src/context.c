@@ -716,6 +716,11 @@ void *mnt_context_get_mtab_userdata(struct libmnt_context *cxt)
  * @cxt: mount context
  * @source: mount source (device, directory, UUID, LABEL, ...)
  *
+ * Note that libmount does not interpret "nofail" (MNT_MS_NOFAIL)
+ * mount option. The real return code is always returned, when
+ * the device does not exist then it's usually MNT_ERR_NOSOURCE
+ * from libmount or ENOENT, ENOTDIR, ENOTBLK, ENXIO from moun(2).
+ *
  * Returns: 0 on success, negative number in case of error.
  */
 int mnt_context_set_source(struct libmnt_context *cxt, const char *source)
