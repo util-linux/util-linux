@@ -159,23 +159,23 @@ struct signv {
 #endif
 };
 
-static void printsig(const struct kill_control *ctl)
+static void print_signal_name(int signum)
 {
 	size_t n;
 
 	for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
-		if (sys_signame[n].val == ctl->numsig) {
+		if (sys_signame[n].val == signum) {
 			printf("%s\n", sys_signame[n].name);
 			return;
 		}
 	}
 #ifdef SIGRTMIN
-	if (SIGRTMIN <= ctl->numsig && ctl->numsig <= SIGRTMAX) {
-		printf("RT%d\n", ctl->numsig - SIGRTMIN);
+	if (SIGRTMIN <= signum && signum <= SIGRTMAX) {
+		printf("RT%d\n", signum - SIGRTMIN);
 		return;
 	}
 #endif
-	printf("%d\n", ctl->numsig);
+	printf("%d\n", signum);
 }
 
 static void pretty_print_signal(FILE *fp, size_t term_width, size_t *lpos,
@@ -355,7 +355,7 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 			if ((ctl->numsig = arg_to_signum(arg, 1)) < 0)
 				errx(EXIT_FAILURE, _("unknown signal: %s"),
 				     arg);
-			printsig(ctl);
+			print_signal_name(ctl->numsig);
 			exit(EXIT_SUCCESS);
 		}
 		/* for compatibility with procps kill(1) */
@@ -363,7 +363,7 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 			char *p = strchr(arg, '=') + 1;
 			if ((ctl->numsig = arg_to_signum(p, 1)) < 0)
 				errx(EXIT_FAILURE, _("unknown signal: %s"), p);
-			printsig(ctl);
+			print_signal_name(ctl->numsig);
 			exit(EXIT_SUCCESS);
 		}
 		if (!strcmp(arg, "-L") || !strcmp(arg, "--table")) {
