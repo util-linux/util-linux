@@ -2,8 +2,15 @@ The following is a list of commands or features that are deprecated.  All
 deprecated utils are in maintenance mode and we keep them in source tree for
 backward compatibility only.
 
+what: "pid" as binary name for "kill --pid"
+why:   too ugly, too obscure
+
+--------------------------
+
 What:   mkfs
 Why:    use filesystem specific mkfs.<type>.
+
+--------------------------
 
 What:   fdisk -s <device>
 Why:    this does not belong to fdisk, use "blockdev --getsz"
