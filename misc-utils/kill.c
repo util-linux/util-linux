@@ -189,7 +189,7 @@ static void pretty_print_signal(FILE *fp, size_t term_width, size_t *lpos,
 	fprintf(fp, "%2d %-8s", signum, name);
 }
 
-static void printsignals(FILE *fp, int pretty)
+static void print_all_signals(FILE *fp, int pretty)
 {
 	size_t n, lth, lpos = 0, width;
 
@@ -229,7 +229,7 @@ static void printsignals(FILE *fp, int pretty)
 static void nosig(char *name)
 {
 	warnx(_("unknown signal %s; valid signals:"), name);
-	printsignals(stderr, 1);
+	print_all_signals(stderr, 1);
 }
 
 #ifdef SIGRTMIN
@@ -345,7 +345,7 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 		}
 		if (!strcmp(arg, "-l") || !strcmp(arg, "--list")) {
 			if (argc < 2) {
-				printsignals(stdout, 0);
+				print_all_signals(stdout, 0);
 				exit(EXIT_SUCCESS);
 			}
 			if (2 < argc)
@@ -367,7 +367,7 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 			exit(EXIT_SUCCESS);
 		}
 		if (!strcmp(arg, "-L") || !strcmp(arg, "--table")) {
-			printsignals(stdout, 1);
+			print_all_signals(stdout, 1);
 			exit(EXIT_SUCCESS);
 		}
 		if (!strcmp(arg, "-p") || !strcmp(arg, "--pid")) {
