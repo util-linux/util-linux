@@ -2,13 +2,13 @@
 .\" Copyright (C) 2010 Michael Krapp
 .\"
 .\" This program is free software; you can redistribute it and/or modify
-.\" it under the terms of the GNU General Public License as published by 
+.\" it under the terms of the GNU General Public License as published by
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
 .\"
 .\" This program is distributed in the hope that it will be useful,
 .\" but WITHOUT ANY WARRANTY; without even the implied warranty of
-.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 .\" GNU General Public License for more details.
 .\"
 .\" You should have received a copy of the GNU General Public License
@@ -25,16 +25,16 @@ utmpdump [\-frohV] [ filename ]
 is a simple program to dump UTMP and WTMP files in raw format, so they
 can be examined.
 .B utmpdump
-eads from stdin unless a 
+reads from stdin unless a
 .I filename
 is passed.
 .SH OPTIONS
 .IP "\fB\-f\fR, \fB\-\-follow\fP"
 Output appended data as the file grows.
 .IP "\fB\-r\fR, \fB\-\-reverse\fP
-Undump, write back edited login information into utmp or wtmp files.
+Undump, write back edited login information into the utmp or wtmp files.
 .IP "\fB\-o\fR, \fB\-\-output\fP \fIfile\fR
-Write command output to file instead of standard output.
+Write command output to \fIfile\fR instead of standard output.
 .IP "\fB\-h\fR, \fB\-\-help\fP"
 Display help text and exit.
 .IP "\fB\-V\fR, \fB\-\-version\fP"
@@ -42,25 +42,25 @@ Display version information and exit.
 .SH NOTES
 .B utmpdump
 can be useful in cases of corrupted utmp or wtmp entries.  It can dump
-out utmp/wtmp to an ASCII file, then that file can be edited to remove
+out utmp/wtmp to an ASCII file, whic can then be edited to remove
 bogus entries and reintegrated, using
-.PP 
+.PP
 .RS
 utmpdump -r < ascii_file > wtmp
 .RE
 .PP
-but be warned as
+but be warned, as
 .B utmpdump
-was written for debugging purpose only.
+was written for debugging purposes only.
 .SH BUGS
 You may
 .B not
-use the option
+use the
 .B \-r
-as the format for the utmp/wtmp files strongly depends on the input
+option, as the format for the utmp/wtmp files strongly depends on the input
 format.  This tool was
 .B not
-written for normal use but for debugging.
+written for normal use, but for debugging only.
 .SH AUTHOR
 Michael Krapp
 .SH "SEE ALSO"
