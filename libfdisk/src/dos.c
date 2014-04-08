@@ -218,17 +218,23 @@ static int read_sector(struct fdisk_context *cxt, sector_t secno,
 			unsigned char *buf)
 {
 	int rc = seek_sector(cxt, secno);
+	ssize_t r;
 
 	if (rc < 0)
 		return rc;
 
-	return read(cxt->dev_fd, buf, cxt->sector_size) !=
-			(ssize_t) cxt->sector_size ? -errno : 0;
+	r = read(cxt->dev_fd, buf, cxt->sector_size);
+	if (r == (ssize_t) cxt->sector_size)
+		return 0;
+	if (r < 0)
+		return -errno;
+	return -1;
 }
 
 /* Allocate a buffer and read a partition table sector */
 static int read_pte(struct fdisk_context *cxt, size_t pno, sector_t offset)
 {
+	int rc;
 	unsigned char *buf;
 	struct pte *pe = self_pte(cxt, pno);
 
@@ -242,9 +248,13 @@ static int read_pte(struct fdisk_context *cxt, size_t pno, sector_t offset)
 	pe->sectorbuffer = buf;
 	pe->private_sectorbuffer = 1;
 
-	if (read_sector(cxt, offset, pe->sectorbuffer) != 0)
+	rc = read_sector(cxt, offset, pe->sectorbuffer);
+	if (rc) {
 		fdisk_warn(cxt, _("Failed to read extended partition table "
 				"(offset=%ju)"), (uintmax_t) offset);
+		return rc;
+	}
+
 	pe->changed = 0;
 	pe->pt_entry = pe->ex_entry = NULL;
 	return 0;
@@ -492,8 +502,9 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 			return;
 		}
 
-		read_pte(cxt, cxt->label->nparts_max,
-			 l->ext_offset + dos_partition_get_start(p));
+		if (read_pte(cxt, cxt->label->nparts_max, l->ext_offset +
+						dos_partition_get_start(p)))
+			return;
 
 		if (!l->ext_offset)
 			l->ext_offset = dos_partition_get_start(p);
