@@ -14,7 +14,7 @@
 .\" " for hilit mode
 .TH CFDISK 8 "March 2014" "util-linux" "System Administration"
 .SH NAME
-cfdisk \- display or manipulate disk partition table
+cfdisk \- display or manipulate a disk partition table
 .SH SYNOPSIS
 .B cfdisk
 .RB [ options ]
@@ -26,13 +26,13 @@ The default device is /dev/sda.
 
 Note that
 .B cfdisk
-provides basic partitioning functionality by user friendly interface. If you
-need advanced features then use 
+provides basic partitioning functionality by a user friendly interface. If you
+need advanced features, use 
 .BR fdisk (8).
 
 Since version 2.25
 .BR cfdisk (8)
-supports MBR (DOS), GPT, SUN and SGI disk labels, but it does not provides any
+supports MBR (DOS), GPT, SUN and SGI disk labels, but it does not provide any
 functionality in regards to CHS (Cylinder-Head-Sector) addressing. CHS has
 never been important for Linux and this addressing concept does not make any
 sense for new devices.
@@ -44,9 +44,9 @@ utils
 .BR partx (8)
 and
 .BR lsblk (8)
-in very comfortable and rich way.
+in a very comfortable and rich way.
 
-If you want to remove an old partition table from device than use
+If you want to remove an old partition table from a device, use
 .BR wipefs (8).
 
 .SH OPTIONS
@@ -55,7 +55,7 @@ Display help text and exit.
 .IP "\fB\-L\fR, \fB\-\-color\fR[=\fIwhen\fR]"
 Colorize output, enabled by default.  The optional argument \fIwhen\fP can be
 \fBauto\fR, \fBnever\fR or \fBalways\fR.  If the \fIwhen\fR argument is omitted,
-then it defaults to \fBauto\fR.
+it defaults to \fBauto\fR.
 .IP "\fB-V, \-\-version"
 Display version information and exit.
 
@@ -67,9 +67,9 @@ after the command is not necessary).  Here is a list of the available
 commands:
 .TP
 .B b
-Toggle bootable flag of the current partition.  This allows you to
-select which primary partition is bootable on the drive. This command does not
-have to available for all partition label types.
+Toggle the bootable flag of the current partition.  This allows you to
+select which primary partition is bootable on the drive. This command may not
+be available for all partition label types.
 .TP
 .B d
 Delete the current partition.  This will convert the current partition
@@ -92,8 +92,8 @@ MiB=1024*1024, and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB"
 is optional, e.g. "K" has the same meaning as  "KiB")
 .TP
 .B q
-Quit program.  This will exit the program without writing any data to
-disk.
+Quit the program.  This will exit the program without writing any data to
+the disk.
 .TP
 .B t
 Change the partition type.  By default, new partitions are created as
