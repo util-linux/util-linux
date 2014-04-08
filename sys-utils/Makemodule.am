@@ -53,13 +53,15 @@ dist_man_MANS += sys-utils/fstrim.8
 fstrim_SOURCES = sys-utils/fstrim.c
 fstrim_LDADD = $(LDADD) libcommon.la libmount.la
 fstrim_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+if HAVE_SYSTEMD_DAEMON
 systemdsystemunit_DATA += \
-	sys-utils/fstrim.service \
-	sys-utils/fstrim.timer
+		sys-utils/fstrim.service \
+		sys-utils/fstrim.timer
 endif
+endif # BUILD_FSTRIM
 
-PATHFILES += \
-	sys-utils/fstrim.service
+PATHFILES += sys-utils/fstrim.service
+EXTRA_DIST += sys-utils/fstrim.timer
 
 if LINUX
 #
