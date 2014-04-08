@@ -27,6 +27,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/syslog.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 #include "c.h"
 #include "closestream.h"
@@ -259,6 +262,125 @@ int logindefs_setenv(const char *name, const char *conf, const char *dflt)
 	return val ? setenv(name, val, 1) : -1;
 }
 
+/*
+ * We need to check the effective UID/GID. For example, $HOME could be on a
+ * root-squashed NFS or on an NFS with UID mapping, and access(2) uses the
+ * real UID/GID.  Then open(2) seems as the surest solution.
+ * -- kzak@redhat.com (10-Apr-2009)
+ */
+int effective_access(const char *path, int mode)
+{
+	int fd = open(path, mode);
+	if (fd != -1)
+		close(fd);
+	return fd == -1 ? -1 : 0;
+}
+
+
+/*
+ * Check the per-account or the global hush-login setting.
+ *
+ * Hushed mode is enabled:
+ *
+ * a) if a global (e.g. /etc/hushlogins) hush file exists:
+ *     1) for ALL ACCOUNTS if the file is empty
+ *     2) for the current user if the username or shell is found in the file
+ *
+ * b) if a ~/.hushlogin file exists
+ *
+ * The ~/.hushlogin file is ignored if the global hush file exists.
+ *
+ * The HUSHLOGIN_FILE login.def variable overrides the default hush filename.
+ *
+ * Note that shadow-utils login(1) does not support "a1)". The "a1)" is
+ * necessary if you want to use PAM for "Last login" message.
+ *
+ * -- Karel Zak <kzak@redhat.com> (26-Aug-2011)
+ *
+ *
+ * The per-account check requires some explanation: As root we may not be able
+ * to read the directory of the user if it is on an NFS-mounted filesystem. We
+ * temporarily set our effective uid to the user-uid, making sure that we keep
+ * root privileges in the real uid.
+ *
+ * A portable solution would require a fork(), but we rely on Linux having the
+ * BSD setreuid().
+ */
+
+int get_hushlogin_status(struct passwd *pwd)
+{
+	const char *files[] = { _PATH_HUSHLOGINS, _PATH_HUSHLOGIN, NULL };
+	const char *file;
+	char buf[BUFSIZ];
+	int i;
+
+	file = getlogindefs_str("HUSHLOGIN_FILE", NULL);
+	if (file) {
+		if (!*file)
+			return 0;	/* empty HUSHLOGIN_FILE defined */
+
+		files[0] = file;
+		files[1] = NULL;
+	}
+
+	for (i = 0; files[i]; i++) {
+		int ok = 0;
+
+		file = files[i];
+
+		/* global hush-file */
+		if (*file == '/') {
+			struct stat st;
+			FILE *f;
+
+			if (stat(file, &st) != 0)
+				continue;	/* file does not exist */
+
+			if (st.st_size == 0)
+				return 1;	/* for all accounts */
+
+			f = fopen(file, "r");
+			if (!f)
+				continue;	/* ignore errors... */
+
+			while (ok == 0 && fgets(buf, sizeof(buf), f)) {
+				buf[strlen(buf) - 1] = '\0';
+				ok = !strcmp(buf, *buf == '/' ? pwd->pw_shell :
+								pwd->pw_name);
+			}
+			fclose(f);
+			if (ok)
+				return 1;	/* found username/shell */
+
+			return 0;		/* ignore per-account files */
+		}
+
+		/* per-account setting */
+		if (strlen(pwd->pw_dir) + sizeof(file) + 2 > sizeof(buf))
+			continue;
+		else {
+			uid_t ruid = getuid();
+			gid_t egid = getegid();
+
+			sprintf(buf, "%s/%s", pwd->pw_dir, file);
+
+			if (setregid(-1, pwd->pw_gid) == 0 &&
+			    setreuid(0, pwd->pw_uid) == 0)
+				ok = effective_access(buf, O_RDONLY) == 0;
+
+			if (setuid(0) != 0 ||
+			    setreuid(ruid, 0) != 0 ||
+			    setregid(-1, egid) != 0) {
+				syslog(LOG_ALERT, _("hush login status: restore original IDs failed"));
+				exit(EXIT_FAILURE);
+			}
+			if (ok)
+				return 1;	/* enabled by user */
+		}
+	}
+
+	return 0;
+}
 #ifdef TEST_PROGRAM
 int main(int argc, char *argv[])
 {
