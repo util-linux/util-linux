@@ -9,7 +9,7 @@ nologin \- politely refuse a login
 .SH DESCRIPTION
 .B nologin
 displays a message that an account is not available and exits non-zero.  It is
-intended as a replacement shell field to deny login access to account.
+intended as a replacement shell field to deny login access to an account.
 .PP
 If the file /etc/nologin.txt exists, nologin displays its contents to the 
 user instead of the default message.
@@ -25,15 +25,15 @@ Display help text and exit.
 Display version information and exit.
 .SH NOTES
 .B nologin
-is per-account way to disable login (usually used for system accounts like http or ftp).
+is a per-account way to disable login (usually used for system accounts like http or ftp).
 .BR nologin (8)
-uses /etc/nologin.txt as optional source for non-default message, the login
-access is always refused independently on the file.
+uses /etc/nologin.txt as an optional source for a non-default message, the login
+access is always refused independently of the file.
 .PP
 .BR pam_nologin (8)
 PAM module usually prevents all non-root users from logging into the system.
 .BR pam_nologin (8)
-functionality is controlled by /var/run/nologin or /etc/nologin file.
+functionality is controlled by /var/run/nologin or the /etc/nologin file.
 .SH AUTHORS
 .UR kzak@redhat.com
 Karel Zak
