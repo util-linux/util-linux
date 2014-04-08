@@ -334,13 +334,3 @@ dist_man_MANS += sys-utils/setpriv.1
 setpriv_SOURCES = sys-utils/setpriv.c
 setpriv_LDADD = $(LDADD) -lcap-ng libcommon.la
 endif
-
-if BUILD_LSLOGINS
-usrbin_exec_PROGRAMS += lslogins
-dist_man_MANS += sys-utils/lslogins.1
-lslogins_SOURCES = \
-	sys-utils/lslogins.c \
-	sys-utils/lslogins.h
-lslogins_LDADD = $(LDADD) libcommon.la libsmartcols.la
-lslogins_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
-endif

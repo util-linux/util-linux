@@ -207,3 +207,16 @@ endif
 if BUILD_VIPW
 	cd $(DESTDIR)$(usrsbin_execdir) && ln -sf vipw vigr
 endif
+
+if BUILD_LSLOGINS
+usrbin_exec_PROGRAMS += lslogins
+dist_man_MANS += login-utils/lslogins.1
+lslogins_SOURCES = \
+	login-utils/lslogins.c \
+	login-utils/lslogins.h
+lslogins_LDADD = $(LDADD) libcommon.la libsmartcols.la
+lslogins_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
+if HAVE_SELINUX
+lslogins_LDADD += -lselinux
+endif
+endif # BUILD_LSLOGINS
