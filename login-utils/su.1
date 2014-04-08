@@ -39,7 +39,7 @@ This version of
 uses PAM for authentication, account and session management.  Some
 configuration options found in other
 .B su
-implementations, such as support of a wheel group, have to be
+implementations, such as support for a wheel group, have to be
 configured via PAM.
 .SH OPTIONS
 .TP
@@ -61,18 +61,18 @@ Pass
 to the shell, which may or may not be useful, depending on the shell.
 .TP
 \fB\-g\fR, \fB\-\-group\fR=\fIgroup\fR\fR
-Specify the primary group.  This option is available for the root user only.
+Specify the primary group.  This option is available to the root user only.
 .TP
 \fB\-G\fR, \fB\-\-supp-group\fR=\fIgroup\fR\fR
-Specify a supplemental group.  This option is available for the root user only.
+Specify a supplemental group.  This option is available to the root user only.
 .TP
 \fB\-\fR, \fB\-l\fR, \fB\-\-login\fR
-Starts the shell as login shell with an environment similar to a real
+Starts the shell as a login shell with an environment similar to a real
 login:
 .RS 10
 .TP
 o
-clears all environment variables except
+clears all the environment variables except
 .B TERM
 .TP
 o
@@ -93,7 +93,7 @@ in order to make the shell a login shell
 .RE
 .TP
 \fB\-m\fR, \fB\-p\fR, \fB\-\-preserve-environment\fR
-Preserves the whole environment, i.e. it does not set
+Preserves the entire environment, i.e. it does not set
 .BR HOME ,
 .BR SHELL ,
 .B USER
@@ -158,7 +158,7 @@ for
 .B FAIL_DELAY
 (number)
 .RS 4
-Delay in seconds in case of authentication failure.  Number must be
+Delay in seconds in case of an authentication failure. The number must be
 a non-negative integer.
 .RE
 .PP
@@ -209,7 +209,7 @@ Generic error before executing the requested command
 The requested command could not be executed
 .TP
 127
-The requested command could was not found
+The requested command was not found
 .RE
 .SH FILES
 .PD 0
@@ -234,7 +234,7 @@ the lastlog file at all.  This solution allows to control
 .B su
 behavior by PAM configuration.  If you want to use the pam_lastlog module to
 print warning message about failed log-in attempts then the pam_lastlog has to
-be configured to update lastlog file too. For example by:
+be configured to update the lastlog file as well. For example by:
 
 .RS
 .br
@@ -246,7 +246,7 @@ session  required  pam_lastlog.so nowtmp
 .BR shells (5),
 .BR login.defs (5)
 .SH AUTHOR
-Derived from coreutils' su which was based on an implementation from
+Derived from coreutils' su which was based on an implementation by
 David MacKenzie.
 .SH AVAILABILITY
 The su command is part of the util-linux package and is
