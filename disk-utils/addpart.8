@@ -5,15 +5,15 @@
 .TH ADDPART 8 "January 2007" "util-linux" "System Administration"
 .SH NAME
 addpart \-
-simple wrapper around the "add partition" ioctl
+a simple wrapper around the "add partition" ioctl
 .SH SYNOPSIS
 .B addpart
 .I device partition start length
 .SH DESCRIPTION
 .B addpart
-is a program that informs the Linux kernel of new partition.
+is a program that informs the Linux kernel of a new partition.
 
-This command doesn't manipulate partitions on hard drive.
+This command doesn't manipulate partitions on the hard drive.
 
 .SH PARAMETERS
 .TP
@@ -24,7 +24,7 @@ Specify the disk device.
 Specify the partition number.
 .TP
 .I start
-Specify the begin of the partition (in 512-byte sectors).
+Specify the beginning of the partition (in 512-byte sectors).
 .TP
 .I length
 Specify the length of the partition (in 512-byte sectors).
