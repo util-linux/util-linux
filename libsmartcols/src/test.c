@@ -157,6 +157,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -n, --noheadings     don't print headings\n"), out);
 	fputs(_(" -p, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
+	fputs(_(" -c, --csv            display a csv-like output\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -175,9 +176,9 @@ int main(int argc, char *argv[])
 		{ "noheadings",	0, 0, 'n' },
 		{ "list",       0, 0, 'l' },
 		{ "ascii",	0, 0, 'i' },
-		{ "raw",        0, 0, 'r' },
 		{ "pairs",      0, 0, 'p' },
 		{ "clone",      0, 0, 'C' },
+		{ "csv",        0, 0, 'c' },
 		{ NULL, 0, 0, 0 },
 	};
 
@@ -191,7 +192,7 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "faild to create output table");
 
-	while((c = getopt_long(argc, argv, "nlirpC", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "nlirpCc", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 			usage(stdout);
@@ -212,6 +213,12 @@ int main(int argc, char *argv[])
 		case 'r':
 			scols_table_enable_raw(tb, 1);
 			notree = 1;
+			break;
+		case 'c':
+			scols_table_set_line_separator(tb, ",");
+			/* a column separator should always take up one cell */
+			scols_table_set_column_separator(tb, ":");
+			scols_table_enable_raw(tb, 1);
 			break;
 		case 'C':
 			clonetb = 1;

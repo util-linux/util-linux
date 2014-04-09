@@ -31,6 +31,8 @@
 #define is_last_column(_tb, _cl) \
 		list_entry_is_last(&(_cl)->cl_columns, &(_tb)->tb_columns)
 
+#define colsep(tb) ((tb)->colsep ? (tb)->colsep : " ")
+#define linesep(tb) ((tb)->linesep ? (tb)->linesep : "\n")
 static void print_data(struct libscols_table *tb,
 		       struct libscols_column *cl,
 		       struct libscols_line *ln,	/* optional */
@@ -51,7 +53,7 @@ static void print_data(struct libscols_table *tb,
 	if (scols_table_is_raw(tb)) {
 		fputs_nonblank(data, tb->out);
 		if (!is_last_column(tb, cl))
-			fputc(' ', tb->out);
+			fputs(colsep(tb), tb->out);
 		return;
 	}
 
@@ -60,7 +62,7 @@ static void print_data(struct libscols_table *tb,
 		fprintf(tb->out, "%s=", scols_cell_get_data(&cl->header));
 		fputs_quoted(data, tb->out);
 		if (!is_last_column(tb, cl))
-			fputc(' ', tb->out);
+			fputs(colsep(tb), tb->out);
 		return;
 	}
 
@@ -117,17 +119,17 @@ static void print_data(struct libscols_table *tb,
 		}
 	}
 	for (i = len; i < width; i++)
-		fputc(' ', tb->out);		/* padding */
+		fputs(colsep(tb), tb->out);		/* padding */
 
 	if (!is_last_column(tb, cl)) {
 		if (len > width && !scols_column_is_trunc(cl)) {
-			fputc('\n', tb->out);
+			fputs(linesep(tb), tb->out);
 			for (i = 0; i <= (size_t) cl->seqnum; i++) {
 				struct libscols_column *x = scols_table_get_column(tb, i);
 				fprintf(tb->out, "%*s ", -((int)x->width), " ");
 			}
 		} else
-			fputc(' ', tb->out);	/* columns separator */
+			fputs(colsep(tb), tb->out);	/* columns separator */
 	}
 
 	free(buf);
@@ -229,7 +231,7 @@ static void print_line(struct libscols_table *tb,
 		print_data(tb, cl, ln,
 				scols_line_get_cell(ln, cl->seqnum),
 				line_get_data(tb, ln, cl, buf, bufsz));
-	fputc('\n', tb->out);
+	fputs(linesep(tb), tb->out);
 }
 
 static void print_header(struct libscols_table *tb, char *buf, size_t bufsz)
@@ -252,7 +254,7 @@ static void print_header(struct libscols_table *tb, char *buf, size_t bufsz)
 		buf[bufsz - 1] = '\0';
 		print_data(tb, cl, NULL, &cl->header, buf);
 	}
-	fputc('\n', tb->out);
+	fputs(linesep(tb), tb->out);
 }
 
 static void print_table(struct libscols_table *tb, char *buf, size_t bufsz)

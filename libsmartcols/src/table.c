@@ -84,6 +84,8 @@ void scols_unref_table(struct libscols_table *tb)
 		scols_table_remove_lines(tb);
 		scols_table_remove_columns(tb);
 		scols_unref_symbols(tb->symbols);
+		free(tb->linesep);
+		free(tb->colsep);
 		free(tb);
 	}
 }
@@ -609,6 +611,11 @@ struct libscols_table *scols_copy_table(struct libscols_table *tb)
 		scols_unref_line(newln);
 	}
 
+	/* separators */
+	if (scols_table_set_column_separator(ret, tb->colsep) ||
+	    scols_table_set_line_separator(ret, tb->linesep))
+		goto err;
+
 	return ret;
 err:
 	scols_unref_table(ret);
@@ -879,4 +886,88 @@ int scols_table_is_tree(struct libscols_table *tb)
 {
 	assert(tb);
 	return tb && tb->ntreecols > 0;
+}
+
+/**
+ * scols_table_set_column_separator:
+ * @tb: table
+ * @sep: separator
+ *
+ * Sets the column separator of @tb to @sep.
+ * Please note that @sep should always take up a single cell in the output.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_table_set_column_separator(struct libscols_table *tb, char *sep)
+{
+	assert (tb);
+
+	if (!tb)
+		return -EINVAL;
+
+	sep = strdup(sep);
+	if (!sep)
+		return -ENOMEM;
+
+	free(tb->colsep);
+	tb->colsep = sep;
+
+	return 0;
+}
+
+/**
+ * scols_table_set_line_separator:
+ * @tb: table
+ * @sep: separator
+ *
+ * Sets the line separator of @tb to @sep.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_table_set_line_separator(struct libscols_table *tb, char *sep)
+{
+	assert (tb);
+
+	if (!tb)
+		return -EINVAL;
+
+	sep = strdup(sep);
+	if (!sep)
+		return -ENOMEM;
+
+	free(tb->linesep);
+	tb->linesep = sep;
+
+	return 0;
+}
+
+/**
+ * scols_table_get_column_separator:
+ * @tb: table
+ *
+ * Returns: @tb column separator, NULL in case of an error
+ */
+char *scols_table_get_column_separator(struct libscols_table *tb)
+{
+	assert (tb);
+
+	if (!tb)
+		return NULL;
+	return tb->colsep;
+}
+
+/**
+ * scols_table_get_line_separator:
+ * @tb: table
+ *
+ * Returns: @tb line separator, NULL in case of an error
+ */
+char *scols_table_get_line_separator(struct libscols_table *tb)
+{
+	assert (tb);
+
+	if (!tb)
+		return NULL;
+	return tb->linesep;
+
 }

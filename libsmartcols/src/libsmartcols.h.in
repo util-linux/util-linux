@@ -174,6 +174,9 @@ extern int scols_table_enable_noheadings(struct libscols_table *tb, int enable);
 extern int scols_table_enable_export(struct libscols_table *tb, int enable);
 extern int scols_table_enable_maxout(struct libscols_table *tb, int enable);
 
+extern int scols_table_set_column_separator(struct libscols_table *tb, char *sep);
+extern int scols_table_set_line_separator(struct libscols_table *tb, char *sep);
+
 extern struct libscols_table *scols_new_table(void);
 extern void scols_ref_table(struct libscols_table *tb);
 extern void scols_unref_table(struct libscols_table *tb);
@@ -182,6 +185,8 @@ extern int scols_table_remove_column(struct libscols_table *tb, struct libscols_
 extern int scols_table_remove_columns(struct libscols_table *tb);
 extern struct libscols_column *scols_table_new_column(struct libscols_table *tb, const char *name, double whint, int flags);
 extern int scols_table_next_column(struct libscols_table *tb, struct libscols_iter *itr, struct libscols_column **cl);
+extern char *scols_table_get_column_separator(struct libscols_table *tb);
+extern char *scols_table_get_line_separator(struct libscols_table *tb);
 extern int scols_table_get_ncols(struct libscols_table *tb);
 extern int scols_table_get_nlines(struct libscols_table *tb);
 extern struct libscols_column *scols_table_get_column(struct libscols_table *tb, size_t n);
