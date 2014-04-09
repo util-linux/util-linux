@@ -1419,19 +1419,33 @@ UL_BUILD_INIT([write])
 AM_CONDITIONAL([BUILD_WRITE], [test "x$build_write" = xyes])
 
 
-AC_ARG_ENABLE([socket-activation],
-  AS_HELP_STRING([--enable-socket-activation], [build uuidd with support for systemd socket activation]),
-  [], [enable_socket_activation=no]
+AC_ARG_WITH([systemd],
+  AS_HELP_STRING([--with-systemd], [build with support for systemd]),
+  [], [with_systemd=check]
 )
-have_systemd_daemon=no
-AS_IF([test "x$enable_socket_activation" = xyes], [
-  PKG_CHECK_MODULES([SYSTEMD_DAEMON], [libsystemd-daemon], [], [
-    AC_MSG_ERROR([cannot find libsystemd-daemon support])
+
+have_systemd=no
+AS_IF([test "x$with_systemd" != xno], [
+  # new version -- all libsystemd-* libs merged into libsystemd
+  PKG_CHECK_MODULES([SYSTEMD], [libsystemd], [have_systemd=yes], [have_systemd=no])
+  # old versions
+  AS_IF([test "x$have_systemd" != "xyes"], [
+    PKG_CHECK_MODULES([SYSTEMD_DAEMON], [libsystemd-daemon],
+		      [have_systemd_daemon=yes], [have_systemd_daemon=no])
+    PKG_CHECK_MODULES([SYSTEMD_JOURNAL], [libsystemd-journal],
+		      [have_systemd_journal=yes], [have_systemd_journal=no])
+    AS_IF([test "x$have_systemd_daemon" = "xyes" -a "x$have_systemd_journal" = "xyes" ],[
+	   have_systemd=yes])
   ])
-  have_systemd_daemon=yes
-  AC_DEFINE([HAVE_LIBSYSTEMD_DAEMON], [1], [Define if libsystemd-daemon is available])
+  AS_CASE([$with_systemd:$have_systemd],
+    [yes:no],
+      [AC_MSG_ERROR([systemd expected but libsystemd not found])],
+    [*:yes],
+       AC_DEFINE([HAVE_LIBSYSTEMD], [1], [Define if libsystemd is available])
+  )
 ])
-AM_CONDITIONAL([HAVE_SYSTEMD_DAEMON], [test "x$have_systemd_daemon" = xyes])
+AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$have_systemd" = xyes])
+
 
 AC_ARG_WITH([systemdsystemunitdir],
   AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [directory for systemd service files]),
@@ -1440,21 +1454,6 @@ AC_ARG_WITH([systemdsystemunitdir],
 AS_IF([test "x$with_systemdsystemunitdir" != "xno"], [
   AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
 ])
-
-
-AC_ARG_ENABLE([journald],
-  AS_HELP_STRING([--enable-journald], [add journald support to logger]),
-  [], [enable_journald=no]
-)
-have_journald=no
-AS_IF([test "x$enable_journald" = xyes], [
-  PKG_CHECK_MODULES([SYSTEMD_JOURNAL], [libsystemd-journal], [], [
-    AC_MSG_ERROR([cannot find libsystemd-journal support])
-  ])
-  have_journald=yes
-  AC_DEFINE([HAVE_JOURNALD], [1], [Define if journald is available])
-])
-AM_CONDITIONAL([HAVE_JOURNALD], [test "x$have_journald" = xyes])
 
 
 AC_ARG_WITH([smack],
@@ -1653,6 +1652,7 @@ AC_MSG_RESULT([
 	Python libs:       ${pyexecdir}
 
 	Bash completions:  ${with_bashcompletiondir}
+	Systemd support:   ${have_systemd}
 
 	warnings:
 

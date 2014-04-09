@@ -59,7 +59,7 @@
 #define	SYSLOG_NAMES
 #include <syslog.h>
 
-#ifdef HAVE_JOURNALD
+#ifdef HAVE_LIBSYSTEMD
 # include <systemd/sd-journal.h>
 #endif
 
@@ -210,7 +210,7 @@ static int inet_socket(const char *servername, const char *port,
 	return fd;
 }
 
-#ifdef HAVE_JOURNALD
+#ifdef HAVE_LIBSYSTEMD
 static int journald_entry(FILE *fp)
 {
 	struct iovec *iovec;
@@ -289,7 +289,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -s, --stderr          output message to standard error as well\n"), out);
 	fputs(_(" -t, --tag <tag>       mark every line with this tag\n"), out);
 	fputs(_(" -u, --socket <socket> write to this Unix socket\n"), out);
-#ifdef HAVE_JOURNALD
+#ifdef HAVE_LIBSYSTEMD
 	fputs(_("     --journald[=<file>]  write journald entry\n"), out);
 #endif
 
@@ -315,7 +315,7 @@ int main(int argc, char **argv)
 	char *server = NULL;
 	char *port = NULL;
 	int LogSock = -1, socket_type = ALL_TYPES;
-#ifdef HAVE_JOURNALD
+#ifdef HAVE_LIBSYSTEMD
 	FILE *jfd = NULL;
 #endif
 	static const struct option longopts[] = {
@@ -332,7 +332,7 @@ int main(int argc, char **argv)
 		{ "version",	no_argument,	    0, 'V' },
 		{ "help",	no_argument,	    0, 'h' },
 		{ "prio-prefix", no_argument, 0, OPT_PRIO_PREFIX },
-#ifdef HAVE_JOURNALD
+#ifdef HAVE_LIBSYSTEMD
 		{ "journald",   optional_argument,  0, OPT_JOURNALD },
 #endif
 		{ NULL,		0, 0, 0 }
@@ -390,7 +390,7 @@ int main(int argc, char **argv)
 		case OPT_PRIO_PREFIX:
 			prio_prefix = 1;
 			break;
-#ifdef HAVE_JOURNALD
+#ifdef HAVE_LIBSYSTEMD
 		case OPT_JOURNALD:
 			if (optarg) {
 				jfd = fopen(optarg, "r");
@@ -410,7 +410,7 @@ int main(int argc, char **argv)
 	argv += optind;
 
 	/* setup for logging */
-#ifdef HAVE_JOURNALD
+#ifdef HAVE_LIBSYSTEMD
 	if (jfd) {
 		int ret = journald_entry(jfd);
 		if (stdin != jfd)

@@ -53,7 +53,7 @@ dist_man_MANS += sys-utils/fstrim.8
 fstrim_SOURCES = sys-utils/fstrim.c
 fstrim_LDADD = $(LDADD) libcommon.la libmount.la
 fstrim_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
-if HAVE_SYSTEMD_DAEMON
+if HAVE_SYSTEMD
 systemdsystemunit_DATA += \
 		sys-utils/fstrim.service \
 		sys-utils/fstrim.timer

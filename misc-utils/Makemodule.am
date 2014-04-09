@@ -20,9 +20,9 @@ endif
 usrbin_exec_PROGRAMS += logger
 dist_man_MANS += misc-utils/logger.1
 logger_SOURCES = misc-utils/logger.c lib/strutils.c
-if HAVE_JOURNALD
-logger_LDADD = $(SYSTEMD_JOURNAL_LIBS)
-logger_CFLAGS = $(SYSTEMD_JOURNAL_CFLAGS)
+if HAVE_SYSTEMD
+logger_LDADD = $(SYSTEMD_LIBS) $(SYSTEMD_JOURNAL_LIBS)
+logger_CFLAGS = $(SYSTEMD_CFLAGS) $(SYSTEMD_JOURNAL_CFLAGS)
 endif
 
 usrbin_exec_PROGRAMS += look
@@ -77,9 +77,9 @@ uuidd_LDADD = $(LDADD) libuuid.la libcommon.la
 uuidd_CFLAGS = $(DAEMON_CFLAGS) $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 uuidd_LDFLAGS = $(DAEMON_LDFLAGS) $(AM_LDFLAGS)
 uuidd_SOURCES = misc-utils/uuidd.c
-if HAVE_SYSTEMD_DAEMON
-uuidd_LDADD += $(SYSTEMD_DAEMON_LIBS)
-uuidd_CFLAGS += $(SYSTEMD_DAEMON_CFLAGS)
+if HAVE_SYSTEMD
+uuidd_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_DAEMON_LIBS)
+uuidd_CFLAGS += $(SYSTEMD_CFLAGS) $(SYSTEMD_DAEMON_CFLAGS)
 systemdsystemunit_DATA += \
 	misc-utils/uuidd.service \
 	misc-utils/uuidd.socket
