@@ -29,6 +29,15 @@ The
 .I mountpoint
 argument is the pathname of the directory where the filesystem
 is mounted.
+.PP
+Running
+.B fstrim
+more frequently or even using
+.B mount -o discard
+might affect lifetime of the poor quality SSD devices. The usual sufficient
+frequency is once a week for most desktop and server systems. Note that not all
+devices support queued trim, so each trim command incur a performance penalty
+to whatever else might be trying to use the disk at the time.
 
 .SH OPTIONS
 The \fIoffset\fR, \fIlength\fR, and \fIminimum-free-extent\fR arguments may be
