@@ -1,5 +1,5 @@
 # Misc settings
-TS_TESTUSER=${TS_TESTUSER:-"test"}
+TS_TESTUSER=${TS_TESTUSER:-"nobody"}
 
 # helpers
 TS_HELPER_BYTESWAP="$top_builddir/test_byteswap"

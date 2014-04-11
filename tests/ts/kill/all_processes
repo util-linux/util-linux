@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="all_processes"
+
+. "$TS_TOPDIR/functions.sh"
+ts_init "$*"
+
+ts_skip_nonroot
+
+ts_check_test_command "$TS_CMD_KILL"
+ts_check_test_command "$TS_HELPER_SIGRECEIVE"
+
+HELPER_SYMLINK="$TS_CWD/$(mktemp -u XXXXXXXXXXXXXXX)"
+ln -s "$TS_HELPER_SIGRECEIVE" "$HELPER_SYMLINK"
+trap "rm -f $HELPER_SYMLINK" 0
+
+"$HELPER_SYMLINK" -s "$TS_TESTUSER" >> "$TS_OUTPUT" 2>&1 &
+TEST_PID=$!
+
+# test_sigreceive needs time to start up
+for i in 0.01 0.1 1 1 1 1; do
+	awk 'BEGIN { retval=1 }
+	$1 ~ /^SigCgt/ {
+		lbyte = strtonum("0x" substr($2, 16, 16))
+		if (and(lbyte, 1)) {
+			retval=0
+		}
+	} END {
+		exit retval
+	}' /proc/$TEST_PID/status &&
+		up=1 &&
+		break
+	sleep $i
+done
+echo "test 1" >> "$TS_OUTPUT"
+"$TS_CMD_KILL" ${HELPER_SYMLINK##*/} >> "$TS_OUTPUT" 2>&1
+if [ $? -ne 1 ]; then
+	echo "kill did not return 1" >> "$TS_OUTPUT"
+fi
+echo "test 2" >> "$TS_OUTPUT"
+"$TS_CMD_KILL" -a ${HELPER_SYMLINK##*/} >> "$TS_OUTPUT" 2>&1
+if [ $? -ne 0 ]; then
+	echo "kill did not return 0" >> "$TS_OUTPUT"
+fi
+echo "test 3" >> "$TS_OUTPUT"
+"$TS_CMD_KILL" -a -p ${HELPER_SYMLINK##*/} >> "$TS_OUTPUT" 2>&1
+if [ $? -ne 1 ]; then
+	echo "kill -a -p did not return 1" >> "$TS_OUTPUT"
+fi
+
+sed -i "s/${HELPER_SYMLINK##*/}/${TS_HELPER_SIGRECEIVE##*/}/" "$TS_OUTPUT"
+
+ts_finalize
