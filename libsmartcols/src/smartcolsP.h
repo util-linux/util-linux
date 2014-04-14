@@ -125,6 +125,9 @@ struct libscols_table {
 	size_t  termreduce;	/* extra blank space */
 	FILE	*out;		/* output stream */
 
+	char	*colsep;	/* column separator */
+	char	*linesep;	/* line separator */
+
 	struct list_head	tb_columns;
 	struct list_head	tb_lines;
 	struct libscols_symbols	*symbols;

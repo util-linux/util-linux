@@ -92,7 +92,9 @@ scols_table_enable_maxout
 scols_table_enable_noheadings
 scols_table_enable_raw
 scols_table_get_column
+scols_table_get_column_separator
 scols_table_get_line
+scols_table_get_line_separator
 scols_table_get_ncols
 scols_table_get_nlines
 scols_table_get_stream
@@ -112,6 +114,8 @@ scols_table_remove_column
 scols_table_remove_columns
 scols_table_remove_line
 scols_table_remove_lines
+scols_table_set_column_separator
+scols_table_set_line_separator
 scols_table_set_stream
 scols_table_set_symbols
 scols_unref_table
