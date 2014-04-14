@@ -28,24 +28,92 @@
 #include "carefulputc.h"
 #include "smartcolsP.h"
 
+/* This is private struct to work with output data */
+struct libscols_buffer {
+	char	*begin;		/* begin of the buffer */
+	char	*cur;		/* current end of  the buffer */
+
+	size_t	bufsz;		/* size of the buffer */
+};
+
+static struct libscols_buffer *new_buffer(size_t sz)
+{
+	struct libscols_buffer *buf = malloc(sz + sizeof(struct libscols_buffer));
+
+	if (!buf)
+		return NULL;
+
+	buf->cur = buf->begin = ((char *) buf) + sizeof(struct libscols_buffer);
+	buf->bufsz = sz;
+	return buf;
+}
+
+static void free_buffer(struct libscols_buffer *buf)
+{
+	free(buf);
+}
+
+static int buffer_reset_data(struct libscols_buffer *buf)
+{
+	if (!buf)
+		return -EINVAL;
+
+	buf->begin[0] = '\0';
+	buf->cur = buf->begin;
+	return 0;
+}
+
+static int buffer_append_data(struct libscols_buffer *buf, const char *str)
+{
+	size_t maxsz, sz;
+
+	if (!buf)
+		return -EINVAL;
+	if (!str || !*str)
+		return 0;
+
+	sz = strlen(str);
+	maxsz = buf->bufsz - (buf->cur - buf->begin);
+
+	if (maxsz <= sz)
+		return -EINVAL;
+
+	memcpy(buf->cur, str, sz + 1);
+	buf->cur += sz;
+	return 0;
+}
+
+static int buffer_set_data(struct libscols_buffer *buf, const char *str)
+{
+	int rc = buffer_reset_data(buf);
+	return rc ? rc : buffer_append_data(buf, str);
+}
+
+static char *buffer_get_data(struct libscols_buffer *buf)
+{
+	return buf ? buf->begin : NULL;
+}
+
 #define is_last_column(_tb, _cl) \
 		list_entry_is_last(&(_cl)->cl_columns, &(_tb)->tb_columns)
 
 #define colsep(tb) ((tb)->colsep ? (tb)->colsep : " ")
 #define linesep(tb) ((tb)->linesep ? (tb)->linesep : "\n")
-static void print_data(struct libscols_table *tb,
-		       struct libscols_column *cl,
-		       struct libscols_line *ln,	/* optional */
-		       struct libscols_cell *ce,	/* optional */
-		       char *data)
+
+static int print_data(struct libscols_table *tb,
+		      struct libscols_column *cl,
+		      struct libscols_line *ln,	/* optional */
+		      struct libscols_cell *ce,	/* optional */
+		      struct libscols_buffer *buf)
 {
 	size_t len = 0, i, width;
-	char *buf;
 	const char *color = NULL;
+	char *data, *data_enc = NULL;
 
 	assert(tb);
 	assert(cl);
 
+	data = buffer_get_data(buf);
 	if (!data)
 		data = "";
 
@@ -54,7 +122,7 @@ static void print_data(struct libscols_table *tb,
 		fputs_nonblank(data, tb->out);
 		if (!is_last_column(tb, cl))
 			fputs(colsep(tb), tb->out);
-		return;
+		return 0;
 	}
 
 	/* NAME=value mode */
@@ -63,7 +131,7 @@ static void print_data(struct libscols_table *tb,
 		fputs_quoted(data, tb->out);
 		if (!is_last_column(tb, cl))
 			fputs(colsep(tb), tb->out);
-		return;
+		return 0;
 	}
 
 	if (tb->colors_wanted) {
@@ -76,8 +144,7 @@ static void print_data(struct libscols_table *tb,
 	}
 
 	/* note that 'len' and 'width' are number of cells, not bytes */
-	buf = mbs_safe_encode(data, &len);
-	data = buf;
+	data_enc = data = mbs_safe_encode(data, &len);
 	if (!data)
 		data = "";
 
@@ -132,110 +199,109 @@ static void print_data(struct libscols_table *tb,
 			fputs(colsep(tb), tb->out);	/* columns separator */
 	}
 
-	free(buf);
+	free(data_enc);
+	return 0;
 }
 
-static char *line_get_ascii_art(struct libscols_table *tb,
-				struct libscols_line *ln,
-				char *buf, size_t *bufsz)
+/* returns pointer to the end of used data */
+static int line_ascii_art_to_buffer(struct libscols_table *tb,
+				    struct libscols_line *ln,
+				    struct libscols_buffer *buf)
 {
 	const char *art;
-	size_t len;
+	int rc;
 
 	assert(ln);
+	assert(buf);
 
 	if (!ln->parent)
-		return buf;
+		return 0;
 
-	buf = line_get_ascii_art(tb, ln->parent, buf, bufsz);
-	if (!buf)
-		return NULL;
+	rc = line_ascii_art_to_buffer(tb, ln->parent, buf);
+	if (rc)
+		return rc;
 
 	if (list_entry_is_last(&ln->ln_children, &ln->parent->ln_branch))
 		art = "  ";
 	else
 		art = tb->symbols->vert;
 
-	len = strlen(art);
-	if (*bufsz < len)
-		return NULL;	/* no space, internal error */
-
-	memcpy(buf, art, len);
-	*bufsz -= len;
-	return buf + len;
+	return buffer_append_data(buf, art);
 }
 
-static char *line_get_data(struct libscols_table *tb,
-			   struct libscols_line *ln,
-			   struct libscols_column *cl,
-			   char *buf, size_t bufsz)
+static int cell_to_buffer(struct libscols_table *tb,
+			  struct libscols_line *ln,
+			  struct libscols_column *cl,
+			  struct libscols_buffer *buf)
 {
 	const char *data;
-	struct libscols_symbols *sym;
 	struct libscols_cell *ce;
-	char *p = buf;
+	int rc = 0;
 
 	assert(tb);
 	assert(ln);
 	assert(cl);
+	assert(buf);
 	assert(cl->seqnum <= tb->ncols);
-
-	memset(buf, 0, bufsz);
 
 	ce = scols_line_get_cell(ln, cl->seqnum);
 	data = ce ? scols_cell_get_data(ce) : NULL;
 	if (!data)
-		return NULL;
+		return 0;
 
-	if (!scols_column_is_tree(cl)) {
-		strncpy(buf, data, bufsz);
-		buf[bufsz - 1] = '\0';
-		return buf;
-	}
+	if (!scols_column_is_tree(cl))
+		return buffer_set_data(buf, data);
 
 	/*
 	 * Tree stuff
 	 */
+	buffer_reset_data(buf);
+
 	if (ln->parent) {
-		p = line_get_ascii_art(tb, ln->parent, buf, &bufsz);
-		if (!p)
-			return NULL;
+		rc = line_ascii_art_to_buffer(tb, ln->parent, buf);
+
+		if (!rc && list_entry_is_last(&ln->ln_children, &ln->parent->ln_branch))
+			rc = buffer_append_data(buf, tb->symbols->right);
+		else if (!rc)
+			rc = buffer_append_data(buf, tb->symbols->branch);
 	}
 
-	sym = tb->symbols;
-
-	if (!ln->parent)
-		snprintf(p, bufsz, "%s", data);			/* root node */
-	else if (list_entry_is_last(&ln->ln_children, &ln->parent->ln_branch))
-		snprintf(p, bufsz, "%s%s", sym->right, data);	/* last chaild */
-	else
-		snprintf(p, bufsz, "%s%s", sym->branch, data);	/* any child */
-
-	return buf;
+	if (!rc)
+		rc = buffer_append_data(buf, data);
+	return rc;
 }
 
 /*
  * Prints data, data maybe be printed in more formats (raw, NAME=xxx pairs) and
  * control and non-printable chars maybe encoded in \x?? hex encoding.
  */
-static void print_line(struct libscols_table *tb,
-		       struct libscols_line *ln, char *buf, size_t bufsz)
+static int print_line(struct libscols_table *tb,
+		      struct libscols_line *ln,
+		      struct libscols_buffer *buf)
 {
+	int rc = 0;
 	struct libscols_column *cl;
 	struct libscols_iter itr;
 
 	assert(ln);
 
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-	while (scols_table_next_column(tb, &itr, &cl) == 0)
-		print_data(tb, cl, ln,
-				scols_line_get_cell(ln, cl->seqnum),
-				line_get_data(tb, ln, cl, buf, bufsz));
-	fputs(linesep(tb), tb->out);
+	while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
+		rc = cell_to_buffer(tb, ln, cl, buf);
+		if (!rc)
+			rc = print_data(tb, cl, ln,
+					scols_line_get_cell(ln, cl->seqnum),
+					buf);
+	}
+
+	if (rc == 0)
+		fputs(linesep(tb), tb->out);
+	return 0;
 }
 
-static void print_header(struct libscols_table *tb, char *buf, size_t bufsz)
+static int print_header(struct libscols_table *tb, struct libscols_buffer *buf)
 {
+	int rc = 0;
 	struct libscols_column *cl;
 	struct libscols_iter itr;
 
@@ -244,67 +310,82 @@ static void print_header(struct libscols_table *tb, char *buf, size_t bufsz)
 	if (scols_table_is_noheadings(tb) ||
 	    scols_table_is_export(tb) ||
 	    list_empty(&tb->tb_lines))
-		return;
+		return 0;
 
 	/* set width according to the size of data
 	 */
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-	while (scols_table_next_column(tb, &itr, &cl) == 0) {
-		strncpy(buf, scols_cell_get_data(&cl->header), bufsz);
-		buf[bufsz - 1] = '\0';
-		print_data(tb, cl, NULL, &cl->header, buf);
+	while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
+		rc = buffer_set_data(buf, scols_cell_get_data(&cl->header));
+		if (!rc)
+			rc = print_data(tb, cl, NULL, &cl->header, buf);
 	}
-	fputs(linesep(tb), tb->out);
+
+	if (rc == 0)
+		fputs(linesep(tb), tb->out);
+	return rc;
 }
 
-static void print_table(struct libscols_table *tb, char *buf, size_t bufsz)
+static int print_table(struct libscols_table *tb, struct libscols_buffer *buf)
 {
+	int rc;
 	struct libscols_line *ln;
 	struct libscols_iter itr;
 
 	assert(tb);
 
-	print_header(tb, buf, bufsz);
+	rc = print_header(tb, buf);
 
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-	while (scols_table_next_line(tb, &itr, &ln) == 0)
-		print_line(tb, ln, buf, bufsz);
+	while (rc == 0 && scols_table_next_line(tb, &itr, &ln) == 0)
+		rc = print_line(tb, ln, buf);
+
+	return rc;
 }
 
-static void print_tree_line(struct libscols_table *tb,
-			    struct libscols_line *ln,
-			    char *buf, size_t bufsz)
+static int print_tree_line(struct libscols_table *tb,
+			   struct libscols_line *ln,
+			   struct libscols_buffer *buf)
 {
+	int rc;
 	struct list_head *p;
 
-	print_line(tb, ln, buf, bufsz);
-
+	rc = print_line(tb, ln, buf);
+	if (rc)
+		return rc;
 	if (list_empty(&ln->ln_branch))
-		return;
+		return 0;
 
 	/* print all children */
 	list_for_each(p, &ln->ln_branch) {
 		struct libscols_line *chld =
 				list_entry(p, struct libscols_line, ln_children);
-		print_tree_line(tb, chld, buf, bufsz);
+		rc = print_tree_line(tb, chld, buf);
+		if (rc)
+			break;
 	}
+
+	return rc;
 }
 
-static void print_tree(struct libscols_table *tb, char *buf, size_t bufsz)
+static int print_tree(struct libscols_table *tb, struct libscols_buffer *buf)
 {
+	int rc;
 	struct libscols_line *ln;
 	struct libscols_iter itr;
 
 	assert(tb);
 
-	print_header(tb, buf, bufsz);
+	rc = print_header(tb, buf);
 
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-	while (scols_table_next_line(tb, &itr, &ln) == 0) {
+	while (rc == 0 && scols_table_next_line(tb, &itr, &ln) == 0) {
 		if (ln->parent)
 			continue;
-		print_tree_line(tb, ln, buf, bufsz);
+		rc = print_tree_line(tb, ln, buf);
 	}
+
+	return rc;
 }
 
 /*
@@ -316,14 +397,13 @@ static void print_tree(struct libscols_table *tb, char *buf, size_t bufsz)
  * is marked as "extreme". In the second pass all extreme fields are ignored
  * and column width is counted from non-extreme fields only.
  */
-static void count_column_width(struct libscols_table *tb,
-			       struct libscols_column *cl,
-			       char *buf,
-			       size_t bufsz)
+static int count_column_width(struct libscols_table *tb,
+			      struct libscols_column *cl,
+			      struct libscols_buffer *buf)
 {
 	struct libscols_line *ln;
 	struct libscols_iter itr;
-	int count = 0;
+	int count = 0, rc = 0;
 	size_t sum = 0;
 
 	assert(tb);
@@ -333,8 +413,15 @@ static void count_column_width(struct libscols_table *tb,
 
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (scols_table_next_line(tb, &itr, &ln) == 0) {
-		char *data = line_get_data(tb, ln, cl, buf, bufsz);
-		size_t len = data ? mbs_safe_width(data) : 0;
+		size_t len;
+		char *data;
+
+		rc = cell_to_buffer(tb, ln, cl, buf);
+		if (rc)
+			return rc;
+
+		data = buffer_get_data(buf);
+		len = data ? mbs_safe_width(data) : 0;
 
 		if (len == (size_t) -1)		/* ignore broken multibyte strings */
 			len = 0;
@@ -371,30 +458,35 @@ static void count_column_width(struct libscols_table *tb,
 		 && cl->width_min < (size_t) cl->width_hint)
 
 		cl->width = (size_t) cl->width_hint;
+
+	return rc;
 }
 
 /*
  * This is core of the scols_* voodo...
  */
-static void recount_widths(struct libscols_table *tb, char *buf, size_t bufsz)
+static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf)
 {
 	struct libscols_column *cl;
 	struct libscols_iter itr;
 	size_t width = 0;		/* output width */
-	int trunc_only;
+	int trunc_only, rc = 0;
 	int extremes = 0;
 
 	/* set basic columns width
 	 */
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (scols_table_next_column(tb, &itr, &cl) == 0) {
-		count_column_width(tb, cl, buf, bufsz);
+		rc = count_column_width(tb, cl, buf);
+		if (rc)
+			return rc;
+
 		width += cl->width + (is_last_column(tb, cl) ? 0 : 1);
 		extremes += cl->is_extreme;
 	}
 
 	if (!tb->is_term)
-		return;
+		return 0;
 
 	/* reduce columns with extreme fields
 	 */
@@ -407,7 +499,9 @@ static void recount_widths(struct libscols_table *tb, char *buf, size_t bufsz)
 				continue;
 
 			org_width = cl->width;
-			count_column_width(tb, cl, buf, bufsz);
+			rc = count_column_width(tb, cl, buf);
+			if (rc)
+				return rc;
 
 			if (org_width > cl->width)
 				width -= org_width - cl->width;
@@ -526,8 +620,9 @@ static void recount_widths(struct libscols_table *tb, char *buf, size_t bufsz)
 			cl->is_extreme ? "yes" : "not");
 	}
 */
-	return;
+	return rc;
 }
+
 static size_t strlen_line(struct libscols_line *ln)
 {
 	size_t i, sz = 0;
@@ -544,6 +639,8 @@ static size_t strlen_line(struct libscols_line *ln)
 	return sz;
 }
 
+
+
 /**
  * scols_print_table:
  * @tb: table
@@ -554,10 +651,11 @@ static size_t strlen_line(struct libscols_line *ln)
  */
 int scols_print_table(struct libscols_table *tb)
 {
-	char *line;
-	size_t line_sz;
+	int rc = 0;
+	size_t bufsz;
 	struct libscols_line *ln;
 	struct libscols_iter itr;
+	struct libscols_buffer *buf;
 
 	assert(tb);
 	if (!tb)
@@ -572,30 +670,29 @@ int scols_print_table(struct libscols_table *tb)
 		tb->termwidth = 80;
 	tb->termwidth -= tb->termreduce;
 
-	line_sz = tb->termwidth;
+	bufsz = tb->termwidth;
 
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (scols_table_next_line(tb, &itr, &ln) == 0) {
 		size_t sz = strlen_line(ln);
-		if (sz > line_sz)
-			line_sz = sz;
+		if (sz > bufsz)
+			bufsz = sz;
 	}
 
-	line_sz++;			/* make a space for \0 */
-	line = malloc(line_sz);
-	if (!line)
+	buf = new_buffer(bufsz + 1);	/* data + space for \0 */
+	if (!buf)
 		return -ENOMEM;
 
 	if (!(scols_table_is_raw(tb) || scols_table_is_export(tb)))
-		recount_widths(tb, line, line_sz);
+		rc = recount_widths(tb, buf);
 
 	if (scols_table_is_tree(tb))
-		print_tree(tb, line, line_sz);
+		rc = print_tree(tb, buf);
 	else
-		print_table(tb, line, line_sz);
+		rc = print_table(tb, buf);
 
-	free(line);
-	return 0;
+	free_buffer(buf);
+	return rc;
 }
 
 /**
@@ -612,6 +709,7 @@ int scols_print_table_to_string(struct libscols_table *tb, char **data)
 #ifdef HAVE_OPEN_MEMSTREAM
 	FILE *stream;
 	size_t sz;
+	int rc;
 
 	if (!tb)
 		return -EINVAL;
@@ -622,10 +720,10 @@ int scols_print_table_to_string(struct libscols_table *tb, char **data)
 		return -ENOMEM;
 
 	scols_table_set_stream(tb, stream);
-	scols_print_table(tb);
+	rc = scols_print_table(tb);
 	fclose(stream);
 
-	return 0;
+	return rc;
 #else
 	return -ENOSYS;
 #endif
