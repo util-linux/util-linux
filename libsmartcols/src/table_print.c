@@ -186,7 +186,7 @@ static int print_data(struct libscols_table *tb,
 		}
 	}
 	for (i = len; i < width; i++)
-		fputs(colsep(tb), tb->out);		/* padding */
+		fputs(" ", tb->out);		/* padding */
 
 	if (!is_last_column(tb, cl)) {
 		if (len > width && !scols_column_is_trunc(cl)) {
