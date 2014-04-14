@@ -215,10 +215,9 @@ int main(int argc, char *argv[])
 			notree = 1;
 			break;
 		case 'c':
-			scols_table_set_line_separator(tb, ",");
-			/* a column separator should always take up one cell */
-			scols_table_set_column_separator(tb, ":");
+			scols_table_set_column_separator(tb, ",");
 			scols_table_enable_raw(tb, 1);
+			notree = 1;
 			break;
 		case 'C':
 			clonetb = 1;

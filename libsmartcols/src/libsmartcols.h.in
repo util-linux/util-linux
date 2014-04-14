@@ -174,8 +174,8 @@ extern int scols_table_enable_noheadings(struct libscols_table *tb, int enable);
 extern int scols_table_enable_export(struct libscols_table *tb, int enable);
 extern int scols_table_enable_maxout(struct libscols_table *tb, int enable);
 
-extern int scols_table_set_column_separator(struct libscols_table *tb, char *sep);
-extern int scols_table_set_line_separator(struct libscols_table *tb, char *sep);
+extern int scols_table_set_column_separator(struct libscols_table *tb, const char *sep);
+extern int scols_table_set_line_separator(struct libscols_table *tb, const char *sep);
 
 extern struct libscols_table *scols_new_table(void);
 extern void scols_ref_table(struct libscols_table *tb);

@@ -898,20 +898,23 @@ int scols_table_is_tree(struct libscols_table *tb)
  *
  * Returns: 0, a negative value in case of an error.
  */
-int scols_table_set_column_separator(struct libscols_table *tb, char *sep)
+int scols_table_set_column_separator(struct libscols_table *tb, const char *sep)
 {
+	char *p = NULL;
+
 	assert (tb);
 
 	if (!tb)
 		return -EINVAL;
 
-	sep = strdup(sep);
-	if (!sep)
-		return -ENOMEM;
+	if (sep) {
+		p = strdup(sep);
+		if (!p)
+			return -ENOMEM;
+	}
 
 	free(tb->colsep);
-	tb->colsep = sep;
-
+	tb->colsep = p;
 	return 0;
 }
 
@@ -924,20 +927,23 @@ int scols_table_set_column_separator(struct libscols_table *tb, char *sep)
  *
  * Returns: 0, a negative value in case of an error.
  */
-int scols_table_set_line_separator(struct libscols_table *tb, char *sep)
+int scols_table_set_line_separator(struct libscols_table *tb, const char *sep)
 {
+	char *p = NULL;
+
 	assert (tb);
 
 	if (!tb)
 		return -EINVAL;
 
-	sep = strdup(sep);
-	if (!sep)
-		return -ENOMEM;
+	if (sep) {
+		p = strdup(sep);
+		if (!p)
+			return -ENOMEM;
+	}
 
 	free(tb->linesep);
-	tb->linesep = sep;
-
+	tb->linesep = p;
 	return 0;
 }
 
