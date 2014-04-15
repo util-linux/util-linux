@@ -32,6 +32,7 @@
 struct libscols_buffer {
 	char	*begin;		/* begin of the buffer */
 	char	*cur;		/* current end of  the buffer */
+	char	*encdata;	/* encoded buffer mbs_safe_encode() */
 
 	size_t	bufsz;		/* size of the buffer */
 };
@@ -44,12 +45,14 @@ static struct libscols_buffer *new_buffer(size_t sz)
 		return NULL;
 
 	buf->cur = buf->begin = ((char *) buf) + sizeof(struct libscols_buffer);
+	buf->encdata = NULL;
 	buf->bufsz = sz;
 	return buf;
 }
 
 static void free_buffer(struct libscols_buffer *buf)
 {
+	free(buf->encdata);
 	free(buf);
 }
 
@@ -94,6 +97,30 @@ static char *buffer_get_data(struct libscols_buffer *buf)
 	return buf ? buf->begin : NULL;
 }
 
+static char *buffer_get_safe_data(struct libscols_buffer *buf, size_t *cells)
+{
+	char *data = buffer_get_data(buf);
+	char *res = NULL;
+
+	if (!data)
+		goto nothing;
+
+	if (!buf->encdata) {
+		buf->encdata = malloc(mbs_safe_encode_size(buf->bufsz) + 1);
+		if (!buf->encdata)
+			goto nothing;
+	}
+
+	res = mbs_safe_encode_to_buffer(data, cells, buf->encdata);
+	if (!res || !*cells || *cells == (size_t) -1)
+		goto nothing;
+
+	return res;
+nothing:
+	*cells = 0;
+	return NULL;
+}
+
 #define is_last_column(_tb, _cl) \
 		list_entry_is_last(&(_cl)->cl_columns, &(_tb)->tb_columns)
 
@@ -108,7 +135,7 @@ static int print_data(struct libscols_table *tb,
 {
 	size_t len = 0, i, width;
 	const char *color = NULL;
-	char *data, *data_enc = NULL;
+	char *data;
 
 	assert(tb);
 	assert(cl);
@@ -143,15 +170,10 @@ static int print_data(struct libscols_table *tb,
 			color = cl->color;
 	}
 
-	/* note that 'len' and 'width' are number of cells, not bytes */
-	data_enc = data = mbs_safe_encode(data, &len);
+	/* encode, note that 'len' and 'width' are number of cells, not bytes */
+	data = buffer_get_safe_data(buf, &len);
 	if (!data)
 		data = "";
-
-	if (!len || len == (size_t) -1) {
-		len = 0;
-		data = NULL;
-	}
 	width = cl->width;
 
 	if (is_last_column(tb, cl) && len < width && !scols_table_is_maxout(tb))
@@ -199,7 +221,6 @@ static int print_data(struct libscols_table *tb,
 			fputs(colsep(tb), tb->out);	/* columns separator */
 	}
 
-	free(data_enc);
 	return 0;
 }
 
