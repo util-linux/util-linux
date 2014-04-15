@@ -46,6 +46,7 @@ extern size_t mbsalign (const char *src, char *dest,
 			size_t dest_size,  size_t *width,
 			mbs_align_t align, int flags);
 
+extern size_t mbs_safe_nwidth(const char *buf, size_t bufsz, size_t *sz);
 extern size_t mbs_safe_width(const char *s);
 
 extern char *mbs_safe_encode(const char *s, size_t *width);

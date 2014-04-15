@@ -38,18 +38,23 @@
  * Counts number of cells in multibyte string. For all control and
  * non-printable chars is the result width enlarged to store \x?? hex
  * sequence. See mbs_safe_encode().
+ *
+ * Returns: number of cells, @sz returns number of bytes.
  */
-size_t mbs_safe_width(const char *s)
+size_t mbs_safe_nwidth(const char *buf, size_t bufsz, size_t *sz)
 {
 	mbstate_t st;
-	const char *p = s;
-	size_t width = 0;
+	const char *p = buf, *last = buf;
+	size_t width = 0, bytes = 0;
 
 	memset(&st, 0, sizeof(st));
 
-	while (p && *p) {
+	if (p && *p && bufsz)
+		last = p + (bufsz - 1);
+
+	while (p && *p && p <= last) {
 		if (iscntrl((unsigned char) *p)) {
-			width += 4;			/* *p encoded to \x?? */
+			width += 4, bytes += 4;		/* *p encoded to \x?? */
 			p++;
 		}
 #ifdef HAVE_WIDECHAR
@@ -62,26 +67,41 @@ size_t mbs_safe_width(const char *s)
 
 			if (len == (size_t) -1 || len == (size_t) -2) {
 				len = 1;
-				width += (isprint((unsigned char) *p) ? 1 : 4);
+				if (isprint((unsigned char) *p))
+					width += 1, bytes += 1;
+				else
+					width += 4, bytes += 4;
 
-			} if (!iswprint(wc))
+			} else if (!iswprint(wc)) {
 				width += len * 4;	/* hex encode whole sequence */
-			else
+				bytes += len * 4;
+			} else {
 				width += wcwidth(wc);	/* number of cells */
+				bytes += len;		/* number of bytes */
+			}
 			p += len;
 		}
 #else
 		else if (!isprint((unsigned char) *p)) {
-			width += 4;			/* *p encoded to \x?? */
+			width += 4, bytes += 4;		/* *p encoded to \x?? */
 			p++;
 		} else {
-			width++;
+			width++, bytes++;
 			p++;
 		}
 #endif
 	}
 
+	if (sz)
+		*sz = bytes;
 	return width;
+}
+
+size_t mbs_safe_width(const char *s)
+{
+	if (!s || !*s)
+		return 0;
+	return mbs_safe_nwidth(s, strlen(s), NULL);
 }
 
 /*
