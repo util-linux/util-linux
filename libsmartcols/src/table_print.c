@@ -35,6 +35,7 @@ struct libscols_buffer {
 	char	*encdata;	/* encoded buffer mbs_safe_encode() */
 
 	size_t	bufsz;		/* size of the buffer */
+	size_t	art_idx;	/* begin of the tree ascii art or zero */
 };
 
 static struct libscols_buffer *new_buffer(size_t sz)
@@ -63,6 +64,7 @@ static int buffer_reset_data(struct libscols_buffer *buf)
 
 	buf->begin[0] = '\0';
 	buf->cur = buf->begin;
+	buf->art_idx = 0;
 	return 0;
 }
 
@@ -92,11 +94,19 @@ static int buffer_set_data(struct libscols_buffer *buf, const char *str)
 	return rc ? rc : buffer_append_data(buf, str);
 }
 
+/* save the current buffer possition to art_idx */
+static void buffer_set_art_index(struct libscols_buffer *buf)
+{
+	if (buf)
+		buf->art_idx = buf->cur - buf->begin;
+}
+
 static char *buffer_get_data(struct libscols_buffer *buf)
 {
 	return buf ? buf->begin : NULL;
 }
 
+/* encode data by mbs_safe_encode() to avoid control and non-printable chars */
 static char *buffer_get_safe_data(struct libscols_buffer *buf, size_t *cells)
 {
 	char *data = buffer_get_data(buf);
@@ -114,11 +124,23 @@ static char *buffer_get_safe_data(struct libscols_buffer *buf, size_t *cells)
 	res = mbs_safe_encode_to_buffer(data, cells, buf->encdata);
 	if (!res || !*cells || *cells == (size_t) -1)
 		goto nothing;
-
 	return res;
 nothing:
 	*cells = 0;
 	return NULL;
+}
+
+/* returns size in bytes of the ascii art (according to art_idx) in safe encoding */
+static size_t buffer_get_safe_art_size(struct libscols_buffer *buf)
+{
+	char *data = buffer_get_data(buf);
+	size_t bytes = 0;
+
+	if (!data || !buf->art_idx)
+		return 0;
+
+	mbs_safe_nwidth(data, buf->art_idx, &bytes);
+	return bytes;
 }
 
 #define is_last_column(_tb, _cl) \
@@ -192,7 +214,7 @@ static int print_data(struct libscols_table *tb,
 	}
 
 	if (data) {
-		if (!scols_table_is_raw(tb) && scols_column_is_right(cl)) {
+		if (scols_column_is_right(cl)) {
 			size_t xw = cl->width;
 			if (color)
 				fputs(color, tb->out);
@@ -201,13 +223,21 @@ static int print_data(struct libscols_table *tb,
 				fputs(UL_COLOR_RESET, tb->out);
 			if (len < xw)
 				len = xw;
-		} else {
-			if (color)
-				fputs(color, tb->out);
+		} else if (color) {
+			char *p = data;
+			size_t art = buffer_get_safe_art_size(buf);
+
+			/* we don't want to colorize tree ascii art */
+			if (scols_column_is_tree(cl) && art && art < bytes) {
+				fwrite(p, 1, art, tb->out);
+				p += art;
+			}
+
+			fputs(color, tb->out);
+			fputs(p, tb->out);
+			fputs(UL_COLOR_RESET, tb->out);
+		} else
 			fputs(data, tb->out);
-			if (color)
-				fputs(UL_COLOR_RESET, tb->out);
-		}
 	}
 	for (i = len; i < width; i++)
 		fputs(" ", tb->out);		/* padding */
@@ -287,6 +317,8 @@ static int cell_to_buffer(struct libscols_table *tb,
 			rc = buffer_append_data(buf, tb->symbols->right);
 		else if (!rc)
 			rc = buffer_append_data(buf, tb->symbols->branch);
+		if (!rc)
+			buffer_set_art_index(buf);
 	}
 
 	if (!rc)
