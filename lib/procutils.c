@@ -86,7 +86,7 @@ int proc_next_tid(struct proc_tasks *tasks, pid_t *tid)
 
 		if (!isdigit((unsigned char) *d->d_name))
 			continue;
-
+		errno = 0;
 		*tid = (pid_t) strtol(d->d_name, &end, 10);
 		if (errno || d->d_name == end || (end && *end))
 			return -1;
@@ -183,6 +183,7 @@ int proc_next_pid(struct proc_processes *ps, pid_t *pid)
 		}
 
 		p = NULL;
+		errno = 0;
 		*pid = (pid_t) strtol(d->d_name, &p, 10);
 		if (errno || d->d_name == p || (p && *p))
 			return errno ? -errno : -1;
