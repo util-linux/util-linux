@@ -78,7 +78,8 @@ struct kill_control {
 		check_all:1,
 		do_kill:1,
 		do_pid:1,
-		use_sigval:1;
+		use_sigval:1,
+		verbose:1;
 };
 
 struct signv {
@@ -314,6 +315,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -p, --pid              print pids without signaling them\n"), out);
 	fputs(_(" -l, --list [=<signal>] list signal names, or convert one to a name\n"), out);
 	fputs(_(" -L, --table            list signal names and numbers\n"), out);
+	fputs(_("     --verbose          print pids that will be signaled\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -345,7 +347,10 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 		}
 		if (!strcmp(arg, "-h") || !strcmp(arg, "--help"))
 			usage(stdout);
-
+		if (!strcmp(arg, "--verbose")) {
+			ctl->verbose = 1;
+			continue;
+		}
 		if (!strcmp(arg, "-a") || !strcmp(arg, "--all")) {
 			ctl->check_all = 1;
 			continue;
@@ -442,6 +447,8 @@ static int kill_verbose(const struct kill_control *ctl)
 {
 	int rc = 0;
 
+	if (ctl->verbose)
+		printf(_("sending signal %d to pid %d\n"), ctl->numsig, ctl->pid);
 	if (ctl->do_pid) {
 		printf("%ld\n", (long) ctl->pid);
 		return 0;
