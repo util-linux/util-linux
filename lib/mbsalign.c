@@ -85,27 +85,25 @@ size_t mbs_safe_width(const char *s)
 }
 
 /*
- * Returns allocated string where all control and non-printable chars are
- * replaced with \x?? hex sequence.
+ * Copy @s to @buf and replace control and non-printable chars with
+ * \x?? hex sequence. The @width returns number of cells.
+ *
+ * The @buf has to be big enough to store mbs_safe_encode_size(strlen(s)))
+ * bytes.
  */
-char *mbs_safe_encode(const char *s, size_t *width)
+char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf)
 {
 	mbstate_t st;
 	const char *p = s;
-	char *res, *r;
+	char *r;
 	size_t sz = s ? strlen(s) : 0;
 
-
-	if (!sz)
+	if (!sz || !buf)
 		return NULL;
 
 	memset(&st, 0, sizeof(st));
 
-	res = malloc((sz * 4) + 1);
-	if (!res)
-		return NULL;
-
-	r = res;
+	r = buf;
 	*width = 0;
 
 	while (p && *p) {
@@ -166,7 +164,30 @@ char *mbs_safe_encode(const char *s, size_t *width)
 
 	*r = '\0';
 
-	return res;
+	return buf;
+}
+
+size_t mbs_safe_encode_size(size_t bytes)
+{
+	return (bytes * 4) + 1;
+}
+
+/*
+ * Returns allocated string where all control and non-printable chars are
+ * replaced with \x?? hex sequence.
+ */
+char *mbs_safe_encode(const char *s, size_t *width)
+{
+	size_t sz = s ? strlen(s) : 0;
+	char *buf;
+
+	if (!sz)
+		return NULL;
+	buf = malloc(mbs_safe_encode_size(sz));
+	if (!buf)
+		return NULL;
+
+	return mbs_safe_encode_to_buffer(s, width, buf);
 }
 
 static bool

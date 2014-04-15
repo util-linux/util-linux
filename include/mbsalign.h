@@ -47,6 +47,9 @@ extern size_t mbsalign (const char *src, char *dest,
 			mbs_align_t align, int flags);
 
 extern size_t mbs_safe_width(const char *s);
+
 extern char *mbs_safe_encode(const char *s, size_t *width);
+extern char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf);
+extern size_t mbs_safe_encode_size(size_t bytes);
 
 #endif /* UTIL_LINUX_MBSALIGN_H */
