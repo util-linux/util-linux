@@ -638,10 +638,17 @@ details_only:
 	    (blkid_partitions_get_flags(pr) & BLKID_PARTS_ENTRY_DETAILS)) {
 
 		int xrc = blkid_partitions_probe_partition(pr);
+
+		/* partition entry probing is optional, and "not-found" from
+		 * this sub-probing must not to overwrite previous success. */
 		if (xrc < 0)
-			rc = xrc;	/* optional, care about errors only */
+			rc = xrc;			/* always propagate errors */
+		else if (rc == BLKID_PROBE_NONE)
+			rc = xrc;
 	}
 
+
+	DBG(LOWPROBE, ul_debug("partitions probe done [rc=%d]",	rc));
 	return rc;
 }
 
@@ -714,6 +721,8 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 	blkid_partition par;
 	dev_t devno;
 
+	DBG(LOWPROBE, ul_debug("parts: start probing for partition entry"));
+
 	devno = blkid_probe_get_devno(pr);
 	if (!devno)
 		goto nothing;
@@ -776,6 +785,7 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 	}
 	rc = BLKID_PROBE_OK;
 nothing:
+	DBG(LOWPROBE, ul_debug("parts: end probing for partition entry [rc=%d]", rc));
 	return rc;
 }
 
