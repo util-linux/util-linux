@@ -526,6 +526,29 @@ done:
 }
 
 /**
+ * fdisk_table_wrong_order:
+ * @tb: table
+ *
+ * Returns: 1 of the table is not in disk order
+ */
+int fdisk_table_wrong_order(struct fdisk_table *tb)
+{
+	struct fdisk_partition *pa;
+	struct fdisk_iter itr;
+	sector_t last = 0;
+
+	DBG(TAB, ul_debugobj(tb, "wrong older check"));
+
+	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
+	while (tb && fdisk_table_next_partition(tb, &itr, &pa) == 0) {
+		if (pa->start < last)
+			return 1;
+		last = pa->start;
+	}
+	return 0;
+}
+
+/**
  * fdisk_table_to_string
  * @tb: table
  * @cxt: fdisk context

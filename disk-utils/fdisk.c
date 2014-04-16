@@ -589,6 +589,12 @@ void list_disklabel(struct fdisk_context *cxt)
 			free(str);
 		}
 	}
+
+	if (fdisk_table_wrong_order(tb)) {
+		fputc('\n', stdout);
+		fdisk_info(cxt, _("Partition table entries are not in disk order."));
+	}
+
 	fdisk_unref_table(tb);
 }
 

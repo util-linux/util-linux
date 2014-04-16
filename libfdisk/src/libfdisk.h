@@ -238,6 +238,7 @@ extern int fdisk_table_remove_partition(struct fdisk_table *tb, struct fdisk_par
 extern int fdisk_get_partitions(struct fdisk_context *cxt, struct fdisk_table **tb);
 extern int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb);
 
+extern int fdisk_table_wrong_order(struct fdisk_table *tb);
 extern int fdisk_table_sort_partitions(struct fdisk_table *tb,
 			int (*cmp)(struct fdisk_partition *,
 				   struct fdisk_partition *));
