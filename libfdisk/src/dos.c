@@ -789,9 +789,6 @@ static void set_partition(struct fdisk_context *cxt,
 	struct dos_partition *p;
 	sector_t offset;
 
-	DBG(LABEL, ul_debug("DOS: setting partition %d%s, start=%zu, stop=%zu, sysid=%02x",
-				i, doext ? " [extended]" : "",
-				(size_t) start, (size_t) stop, sysid));
 
 	if (doext) {
 		struct fdisk_dos_label *l = self_label(cxt);
@@ -801,6 +798,11 @@ static void set_partition(struct fdisk_context *cxt,
 		p = pe->pt_entry;
 		offset = pe->offset;
 	}
+
+	DBG(LABEL, ul_debug("DOS: setting partition %d%s, start=%zu, stop=%zu, sysid=%02x",
+				i, doext ? " [extended]" : "",
+				(size_t) (start -  offset), (size_t) stop, sysid));
+
 	p->boot_ind = 0;
 	p->sys_ind = sysid;
 	dos_partition_set_start(p, start - offset);
@@ -1698,68 +1700,107 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 	return 0;
 }
 
+static void print_chain_of_logicals(struct fdisk_context *cxt)
+{
+	size_t i;
+
+	fputc('\n', stdout);
+
+	for (i = 4; i < cxt->label->nparts_max; i++) {
+		struct pte *pe = self_pte(cxt, i);
+
+		printf("#%02zu EBR [%10ju], "
+			"data[start=%ju, size=%10ju], "
+			"link[start=%10ju, size=%10ju]\n",
+			i, (uintmax_t) pe->offset,
+			(uintmax_t) dos_partition_get_start(pe->pt_entry),
+			(uintmax_t) dos_partition_get_size(pe->pt_entry),
+			(uintmax_t) dos_partition_get_start(pe->ex_entry),
+			(uintmax_t) dos_partition_get_size(pe->ex_entry));
+	}
+}
+
 /*
  * Fix the chain of logicals.
- * ext_offset is unchanged, the set of sectors used is unchanged
- * The chain is sorted so that sectors increase, and so that
- * starting sectors increase.
  *
- * After this it may still be that cfdisk doesn't like the table.
- * (This is because cfdisk considers expanded parts, from link to
- * end of partition, and these may still overlap.)
- * Now
- *   sfdisk /dev/hda > ohda; sfdisk /dev/hda < ohda
- * may help.
+ * The function does not modify data partitions within EBR tables
+ * (pte->pt_entry). It sorts the chain by EBR offsets and then update links
+ * (pte->ex_entry) between EBR tables.
+ *
  */
 static void fix_chain_of_logicals(struct fdisk_context *cxt)
 {
 	struct fdisk_dos_label *l = self_label(cxt);
-	size_t j, oj, ojj, sj, sjj;
-	struct dos_partition *pj,*pjj,tmp;
+	size_t i;
 
-	/* Stage 1: sort sectors but leave sector of part 4 */
-	/* (Its sector is the global ext_offset.) */
-stage1:
-	for (j = 5; j < cxt->label->nparts_max - 1; j++) {
-		oj = l->ptes[j].offset;
-		ojj = l->ptes[j + 1].offset;
-		if (oj > ojj) {
-			l->ptes[j].offset = ojj;
-			l->ptes[j + 1].offset = oj;
-			pj = l->ptes[j].pt_entry;
-			dos_partition_set_start(pj, dos_partition_get_start(pj)+oj-ojj);
-			pjj = l->ptes[j + 1].pt_entry;
-			dos_partition_set_start(pjj, dos_partition_get_start(pjj)+ojj-oj);
-			dos_partition_set_start(l->ptes[j - 1].ex_entry,
-				       ojj - l->ext_offset);
-			dos_partition_set_start(l->ptes[j].ex_entry,
-				       oj - l->ext_offset);
-			goto stage1;
-		}
+
+	DBG(LABEL, print_chain_of_logicals(cxt));
+
+	/* fix within memory EBR chain */
+again:
+	for (i = 4; i < cxt->label->nparts_max - 1; i++) {
+		struct pte *cur = self_pte(cxt, i),
+			   *nxt = self_pte(cxt, i + 1);
+		unsigned char *buf;
+		sector_t off;
+		struct dos_partition *p;
+
+		if (cur->offset < nxt->offset)
+			continue;
+
+		DBG(LABEL, ul_debug("DOS: sort EBR [%10ju] %zu -> %zu",
+					(uintmax_t) cur->offset, i, i + 1));
+
+		/* Move pointer to EBR sector */
+		buf = cur->sectorbuffer;
+		cur->sectorbuffer = nxt->sectorbuffer;
+		nxt->sectorbuffer = buf;
+
+		/* Move EBR offset */
+		off = cur->offset;
+		cur->offset = nxt->offset;
+		nxt->offset = off;
+
+		/* Move pointers to EBR data partition */
+		p = cur->pt_entry;
+		cur->pt_entry = nxt->pt_entry;
+		nxt->pt_entry = p;
+
+		/* Move pointers to EBR extended partition */
+		p = cur->ex_entry;
+		cur->ex_entry = nxt->ex_entry;
+		nxt->ex_entry = p;
+
+		partition_set_changed(cxt, i, 1);
+		partition_set_changed(cxt, i + 1, 1);
+		goto again;
 	}
 
-	/* Stage 2: sort starting sectors */
-stage2:
-	for (j = 4; j < cxt->label->nparts_max - 1; j++) {
-		pj = l->ptes[j].pt_entry;
-		pjj = l->ptes[j + 1].pt_entry;
-		sj = dos_partition_get_start(pj);
-		sjj = dos_partition_get_start(pjj);
-		oj = l->ptes[j].offset;
-		ojj = l->ptes[j+1].offset;
-		if (oj+sj > ojj+sjj) {
-			tmp = *pj;
-			*pj = *pjj;
-			*pjj = tmp;
-			dos_partition_set_start(pj, ojj+sjj-oj);
-			dos_partition_set_start(pjj, oj+sj-ojj);
-			goto stage2;
-		}
-	}
+	/* update EBR links */
+	for (i = 4; i < cxt->label->nparts_max - 1; i++) {
+		struct pte *cur = self_pte(cxt, i),
+			   *nxt = self_pte(cxt, i + 1);
 
-	/* Probably something was changed */
-	for (j = 4; j < cxt->label->nparts_max; j++)
-		l->ptes[j].changed = 1;
+		sector_t noff = nxt->offset - l->ext_offset,
+			 ooff = dos_partition_get_start(cur->ex_entry);
+
+		if (i + 1 == cxt->label->nparts_max - 1) {
+			clear_partition(nxt->ex_entry);
+			partition_set_changed(cxt, i + 1, 1);
+			break;
+		}
+
+		if (noff == ooff)
+			continue;
+
+		DBG(LABEL, ul_debug("DOS: fix EBR [%10ju] link %ju -> %ju",
+			(uintmax_t) cur->offset,
+			(uintmax_t) ooff, (uintmax_t) noff));
+
+		set_partition(cxt, i, 1, nxt->offset,
+				get_abs_partition_end(nxt), MBR_DOS_EXTENDED_PARTITION);
+	}
+	DBG(LABEL, print_chain_of_logicals(cxt));
 }
 
 int fdisk_dos_fix_order(struct fdisk_context *cxt)
