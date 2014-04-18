@@ -297,6 +297,8 @@ static int cell_to_buffer(struct libscols_table *tb,
 	assert(buf);
 	assert(cl->seqnum <= tb->ncols);
 
+	buffer_reset_data(buf);
+
 	ce = scols_line_get_cell(ln, cl->seqnum);
 	data = ce ? scols_cell_get_data(ce) : NULL;
 	if (!data)
@@ -308,8 +310,6 @@ static int cell_to_buffer(struct libscols_table *tb,
 	/*
 	 * Tree stuff
 	 */
-	buffer_reset_data(buf);
-
 	if (ln->parent) {
 		rc = line_ascii_art_to_buffer(tb, ln->parent, buf);
 
