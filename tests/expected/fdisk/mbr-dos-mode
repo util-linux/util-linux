@@ -160,6 +160,8 @@ Device     Boot Start End Cylinders  Size Id Type
 <removed>5          6   7         2 15.7M 83 Linux
 <removed>6          2   3         2 15.7M 83 Linux
 
+Partition table entries are not in disk order.
+
 -------------------
 
 Delete primary partition
@@ -178,6 +180,8 @@ Device     Boot Start End Cylinders  Size Id Type
 <removed>2          2  12        12 86.3M  5 Extended
 <removed>5          6   7         2 15.7M 83 Linux
 <removed>6          2   3         2 15.7M 83 Linux
+
+Partition table entries are not in disk order.
 
 -------------------
 
