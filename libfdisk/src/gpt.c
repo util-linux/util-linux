@@ -1371,6 +1371,7 @@ done:
 	return rc;
 }
 
+
 /*
  * List label partitions.
  */
@@ -2272,6 +2273,47 @@ static int gpt_toggle_partition_flag(
 	return 0;
 }
 
+static int gpt_entry_cmp_start(const void *a, const void *b)
+{
+	struct gpt_entry *ae = (struct gpt_entry *) a,
+			 *be = (struct gpt_entry *) b;
+	int au = partition_unused(ae),
+	    bu = partition_unused(be);
+
+	if (au && bu)
+		return 0;
+	if (au)
+		return 1;
+	if (bu)
+		return -1;
+
+	return gpt_partition_start(ae) - gpt_partition_start(be);
+}
+
+/* sort partition by start sector */
+static int gpt_reorder(struct fdisk_context *cxt)
+{
+	struct fdisk_gpt_label *gpt;
+	size_t nparts;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, GPT));
+
+	gpt = self_label(cxt);
+	nparts = le32_to_cpu(gpt->pheader->npartition_entries);
+
+	qsort(gpt->ents, nparts, sizeof(struct gpt_entry),
+			gpt_entry_cmp_start);
+
+	gpt_recompute_crc(gpt->pheader, gpt->ents);
+	gpt_recompute_crc(gpt->bheader, gpt->ents);
+	fdisk_label_set_changed(cxt->label, 1);
+
+	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS, _("Done."));
+	return 0;
+}
+
 static int gpt_reset_alignment(struct fdisk_context *cxt)
 {
 	struct fdisk_gpt_label *gpt;
@@ -2329,6 +2371,7 @@ static const struct fdisk_label_operations gpt_operations =
 	.create		= gpt_create_disklabel,
 	.list		= gpt_list_disklabel,
 	.locate		= gpt_locate_disklabel,
+	.reorder	= gpt_reorder,
 	.get_id		= gpt_get_disklabel_id,
 	.set_id		= gpt_set_disklabel_id,
 
