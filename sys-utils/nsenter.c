@@ -193,7 +193,7 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	while ((c =
-		getopt_long(argc, argv, "hVt:m::u::i::n::p::U::S:G:r::w::F",
+		getopt_long(argc, argv, "+hVt:m::u::i::n::p::U::S:G:r::w::F",
 			    longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
