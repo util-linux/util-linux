@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "fhVmuinpUr", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+fhVmuinpUr", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'f':
 			forkit = 1;
