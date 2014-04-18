@@ -1803,7 +1803,7 @@ again:
 	DBG(LABEL, print_chain_of_logicals(cxt));
 }
 
-int fdisk_dos_fix_order(struct fdisk_context *cxt)
+static int dos_reorder(struct fdisk_context *cxt)
 {
 	struct pte *pei, *pek;
 	size_t i,k;
@@ -1990,6 +1990,7 @@ static const struct fdisk_label_operations dos_operations =
 	.create		= dos_create_disklabel,
 	.locate		= dos_locate_disklabel,
 	.list		= dos_list_disklabel,
+	.reorder	= dos_reorder,
 	.get_id		= dos_get_disklabel_id,
 	.set_id		= dos_set_disklabel_id,
 

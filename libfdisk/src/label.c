@@ -372,6 +372,24 @@ int fdisk_partition_toggle_flag(struct fdisk_context *cxt,
 	return rc;
 }
 
+/**
+ * fdisk_reorder_partitions
+ * @cxt: fdisk context
+ *
+ * Sort partitions according to the partition start sector.
+ *
+ * Returns 0 on success, otherwise, a corresponding error.
+ */
+int fdisk_reorder_partitions(struct fdisk_context *cxt)
+{
+	if (!cxt || !cxt->label)
+		return -EINVAL;
+	if (!cxt->label->op->reorder)
+		return -ENOSYS;
+
+	return cxt->label->op->reorder(cxt);
+}
+
 /*
  * Resets the current used label driver to initial state
  */

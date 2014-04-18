@@ -224,6 +224,8 @@ extern int fdisk_partition_end_follow_default(struct fdisk_partition *pa, int en
 
 extern int fdisk_dump_partition(struct fdisk_partition *pa, FILE *f);
 
+extern int fdisk_reorder_partitions(struct fdisk_context *cxt);
+
 /* table.c */
 extern struct fdisk_table *fdisk_new_table(void);
 extern int fdisk_reset_table(struct fdisk_table *tb);
@@ -324,7 +326,6 @@ extern struct dos_partition *fdisk_dos_get_partition(
 				struct fdisk_context *cxt,
 				size_t i);
 
-extern int fdisk_dos_fix_order(struct fdisk_context *cxt);
 extern int fdisk_dos_move_begin(struct fdisk_context *cxt, size_t i);
 
 #define DOS_FLAG_ACTIVE	1

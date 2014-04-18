@@ -102,6 +102,7 @@ struct menu menu_generic = {
 
 		MENU_XENT('d', N_("print the raw data of the first sector from the device")),
 		MENU_XENT('D', N_("print the raw data of the disklabel from the device")),
+		MENU_XENT('f', N_("fix partitions order")),
 
 		MENU_SEP(N_("Misc")),
 		MENU_BENT ('m', N_("print this menu")),
@@ -210,7 +211,6 @@ struct menu menu_dos = {
 		MENU_ENT('c', N_("toggle the dos compatibility flag")),
 
 		MENU_XENT('b', N_("move beginning of data in a partition")),
-		MENU_XENT('f', N_("fix partition order")),
 		MENU_XENT('i', N_("change the disk identifier")),
 
 		MENU_XENT_NEST('M', N_("return from protective/hybrid MBR to GPT"),
@@ -482,6 +482,9 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		case 'D':
 			dump_disklabel(cxt);
 			break;
+		case 'f':
+			rc = fdisk_reorder_partitions(cxt);
+			break;
 		case 'r':
 			rc = fdisk_context_enable_details(cxt, 0);
 			break;
@@ -658,9 +661,6 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 			rc = fdisk_dos_move_begin(cxt, n);
 		break;
 	}
-	case 'f':
-		rc = fdisk_dos_fix_order(cxt);
-		break;
 	case 'i':
 		rc = fdisk_set_disklabel_id(cxt);
 		break;
