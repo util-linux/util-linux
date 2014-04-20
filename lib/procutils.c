@@ -151,13 +151,11 @@ int proc_next_pid(struct proc_processes *ps, pid_t *pid)
 		if (!isdigit((unsigned char) *d->d_name))
 			continue;
 
-		snprintf(buf, sizeof(buf), "%s/stat", d->d_name);
-
 		/* filter out by UID */
 		if (ps->has_fltr_uid) {
 			struct stat st;
 
-			if (fstat_at(dirfd(ps->dir), "/proc", buf, &st, 0))
+			if (fstat_at(dirfd(ps->dir), "/proc", d->d_name, &st, 0))
 				continue;
 			if (ps->fltr_uid != st.st_uid)
 				continue;
@@ -166,7 +164,10 @@ int proc_next_pid(struct proc_processes *ps, pid_t *pid)
 		/* filter out by NAME */
 		if (ps->has_fltr_name) {
 			char procname[256];
-			FILE *f = fopen_at(dirfd(ps->dir), "/proc", buf,
+			FILE *f;
+
+			snprintf(buf, sizeof(buf), "%s/stat", d->d_name);
+			f = fopen_at(dirfd(ps->dir), "/proc", buf,
 						O_CLOEXEC|O_RDONLY, "r");
 			if (!f)
 				continue;
