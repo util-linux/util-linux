@@ -8,9 +8,9 @@
 partx \- tell the Linux kernel about the presence and numbering of
 on-disk partitions
 .SH SYNOPSIS
-partx [\-a|\-d|\-s|\-u] [\-t TYPE] [\-n M:N] [\-] disk
+partx [\-a | \-d | \-s | \-u] [\-t TYPE] [\-n M:N] [\-] disk
 .br
-partx [\-a|\-d|\-s|\-u] [\-t TYPE] partition [disk]
+partx [\-a | \-d | \-s | \-u] [\-t TYPE] partition [disk]
 .SH DESCRIPTION
 Given a device or disk-image,
 .B partx
@@ -22,7 +22,7 @@ The
 argument is optional when a
 .I partition
 argument is provided.  To force scanning a partition as if it were a whole disk
-(for example to list nested subpartitions), use the argument "-".  For example:
+(for example to list nested subpartitions), use the argument "\-" (hyphen-minus).  For example:
 
 .RS 7
 .TP
@@ -33,7 +33,7 @@ This will see sda3 as a whole-disk rather than a partition.
 .PP
 The
 .B partx is not an fdisk program
-\-\- adding and removing partitions does not change the disk, it just
+\(en adding and removing partitions does not change the disk, it just
 tells the kernel about the presence and numbering of on-disk
 partitions.
 .SH OPTIONS
@@ -66,7 +66,7 @@ to get
 .I list
 of all supported columns.  This option cannot be combined with
 .BR \-\-add ,
-.B \-\-delete
+.BR \-\-delete ,
 or
 .B \-\-list
 options.
@@ -75,7 +75,7 @@ Output using key="value" format.
 .IP "\fB\-n\fR, \fB\-\-nr \fIM:N\fP"
 Specify the range of partitions.  For backward compatibility also the
 format
-.I M-N
+.I M\(enN
 is supported.  The range may contain negative numbers, for example
 .BI \-\-nr \ :\-1
 means the last partition, and
@@ -84,21 +84,21 @@ means the last two partitions.  Supported range specifications are:
 .RS 14
 .TP
 .I M
-Specifies just one partition (e.g. \fB\-\-nr\fR
+Specifies just one partition (e.g.\& \fB\-\-nr\fR
 .IR 3 ).
 .TP
 .I M:
-Specifies lower limit only (e.g. \fB\-\-nr\fR
+Specifies lower limit only (e.g.\& \fB\-\-nr\fR
 .IR 2: ).
 .TP
 .I :N
-Specifies upper limit only (e.g. \fB\-\-nr\fR
+Specifies upper limit only (e.g.\& \fB\-\-nr\fR
 .IR :4 ).
 .TP
 .IR M:N \ or
 .TQ
-.I M-N
-Specifies lower and upper limits (e.g. \fB--nr\fR
+.I M\(enN
+Specifies lower and upper limits (e.g.\& \fB\-\-nr\fR
 .IR 2:4 ).
 .RE
 .IP "\fB\-r\fR, \fB\-\-raw\fP"
@@ -119,7 +119,7 @@ Specify the partition table type
 .IR sgi ,
 .IR solaris_x86 ,
 .IR sun ,
-.I ultrix
+.IR ultrix ,
 or
 .IR unixware .
 .IP "\fB\-v\fR, \fB\-\-verbose\fP"
@@ -128,7 +128,7 @@ Verbose mode.
 .TP
 partx \-\-show /dev/sdb3
 .TQ
-partx \-\-show --nr 3 /dev/sdb
+partx \-\-show \-\-nr 3 /dev/sdb
 .TQ
 partx \-\-show /dev/sdb3 /dev/sdb
 All three commands list partition 3 of /dev/sdb.
@@ -137,17 +137,17 @@ partx \-\-show \- /dev/sdb3
 Lists all subpartitions on /dev/sdb3 (the device is used as
 whole-disk).
 .TP
-partx \-o START -g --nr 5 /dev/sdb
+partx \-o START \-g \-\-nr 5 /dev/sdb
 Prints the start sector of partition 5 on /dev/sdb without header.
 .TP
 partx \-o SECTORS,SIZE /dev/sda5 /dev/sda
 Lists the length in sectors and human-readable size of partition 5 on
 /dev/sda.
 .TP
-partx \-\-add --nr 3:5 /dev/sdd
+partx \-\-add \-\-nr 3:5 /dev/sdd
 Adds all available partitions from 3 to 5 (inclusive) on /dev/sdd.
 .TP
-partx \-d --nr :-1 /dev/sdd
+partx \-d \-\-nr :\-1 /dev/sdd
 Removes the last partition on /dev/sdd.
 .SH SEE ALSO
 .BR addpart (8),
@@ -166,7 +166,7 @@ Karel Zak
 .PP
 The original version was written by
 .MT aeb@cwi.nl
-Andries E. Brouwer
+Andries E.\& Brouwer
 .ME .
 .SH ENVIRONMENT
 .IP LIBBLKID_DEBUG=0xffff
