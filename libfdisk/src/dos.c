@@ -1703,6 +1703,7 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 static void print_chain_of_logicals(struct fdisk_context *cxt)
 {
 	size_t i;
+	struct fdisk_dos_label *l = self_label(cxt);
 
 	fputc('\n', stdout);
 
@@ -1710,12 +1711,16 @@ static void print_chain_of_logicals(struct fdisk_context *cxt)
 		struct pte *pe = self_pte(cxt, i);
 
 		printf("#%02zu EBR [%10ju], "
-			"data[start=%ju, size=%10ju], "
-			"link[start=%10ju, size=%10ju]\n",
+			"data[start=%10ju (%10ju), size=%10ju], "
+			"link[start=%10ju (%10ju), size=%10ju]\n",
 			i, (uintmax_t) pe->offset,
+			/* data */
 			(uintmax_t) dos_partition_get_start(pe->pt_entry),
+			(uintmax_t) get_abs_partition_start(pe),
 			(uintmax_t) dos_partition_get_size(pe->pt_entry),
+			/* link */
 			(uintmax_t) dos_partition_get_start(pe->ex_entry),
+			(uintmax_t) l->ext_offset + dos_partition_get_start(pe->ex_entry),
 			(uintmax_t) dos_partition_get_size(pe->ex_entry));
 	}
 }
@@ -1784,11 +1789,6 @@ again:
 		sector_t noff = nxt->offset - l->ext_offset,
 			 ooff = dos_partition_get_start(cur->ex_entry);
 
-		if (i + 1 == cxt->label->nparts_max - 1) {
-			clear_partition(nxt->ex_entry);
-			partition_set_changed(cxt, i + 1, 1);
-			break;
-		}
 
 		if (noff == ooff)
 			continue;
@@ -1799,6 +1799,12 @@ again:
 
 		set_partition(cxt, i, 1, nxt->offset,
 				get_abs_partition_end(nxt), MBR_DOS_EXTENDED_PARTITION);
+
+		if (i + 1 == cxt->label->nparts_max - 1) {
+			clear_partition(nxt->ex_entry);
+			partition_set_changed(cxt, i + 1, 1);
+		}
+
 	}
 	DBG(LABEL, print_chain_of_logicals(cxt));
 }
