@@ -1725,6 +1725,21 @@ static void print_chain_of_logicals(struct fdisk_context *cxt)
 	}
 }
 
+static int cmp_ebr_offsets(const void *a, const void *b)
+{
+	struct pte *ae = (struct pte *) a,
+		   *be = (struct pte *) b;
+
+	if (ae->offset == 0 && ae->offset == 0)
+		return 0;
+	if (ae->offset == 0)
+		return 1;
+	if (be->offset == 0)
+		return -1;
+
+	return ae->offset - be->offset;
+}
+
 /*
  * Fix the chain of logicals.
  *
@@ -1738,57 +1753,47 @@ static void fix_chain_of_logicals(struct fdisk_context *cxt)
 	struct fdisk_dos_label *l = self_label(cxt);
 	size_t i;
 
-
 	DBG(LABEL, print_chain_of_logicals(cxt));
 
-	/* fix within memory EBR chain */
+	/* Sort chain by EBR offsets */
+	qsort(&l->ptes[4], cxt->label->nparts_max - 4, sizeof(struct pte),
+			cmp_ebr_offsets);
+
 again:
+	/* Sort data partitions by start */
 	for (i = 4; i < cxt->label->nparts_max - 1; i++) {
 		struct pte *cur = self_pte(cxt, i),
 			   *nxt = self_pte(cxt, i + 1);
-		unsigned char *buf;
-		sector_t off;
-		struct dos_partition *p;
 
-		if (cur->offset < nxt->offset)
-			continue;
+		if (get_abs_partition_start(cur) >
+		    get_abs_partition_start(nxt)) {
 
-		DBG(LABEL, ul_debug("DOS: sort EBR [%10ju] %zu -> %zu",
-					(uintmax_t) cur->offset, i, i + 1));
+			struct dos_partition tmp = *cur->pt_entry;
+			sector_t cur_start = get_abs_partition_start(cur),
+				 nxt_start = get_abs_partition_start(nxt);
 
-		/* Move pointer to EBR sector */
-		buf = cur->sectorbuffer;
-		cur->sectorbuffer = nxt->sectorbuffer;
-		nxt->sectorbuffer = buf;
+			/* swap data partitions */
+			*cur->pt_entry = *nxt->pt_entry;
+			*nxt->pt_entry = tmp;
 
-		/* Move EBR offset */
-		off = cur->offset;
-		cur->offset = nxt->offset;
-		nxt->offset = off;
+			/* Recount starts according to EBR offsets, the absolute
+			 * address tas to be still the same! */
+			dos_partition_set_start(cur->pt_entry, nxt_start - cur->offset);
+			dos_partition_set_start(nxt->pt_entry, cur_start - nxt->offset);
 
-		/* Move pointers to EBR data partition */
-		p = cur->pt_entry;
-		cur->pt_entry = nxt->pt_entry;
-		nxt->pt_entry = p;
-
-		/* Move pointers to EBR extended partition */
-		p = cur->ex_entry;
-		cur->ex_entry = nxt->ex_entry;
-		nxt->ex_entry = p;
-
-		partition_set_changed(cxt, i, 1);
-		partition_set_changed(cxt, i + 1, 1);
-		goto again;
+			partition_set_changed(cxt, i, 1);
+			partition_set_changed(cxt, i + 1, 1);
+			goto again;
+		}
 	}
 
-	/* update EBR links */
+	/* Update EBR links */
 	for (i = 4; i < cxt->label->nparts_max - 1; i++) {
 		struct pte *cur = self_pte(cxt, i),
 			   *nxt = self_pte(cxt, i + 1);
 
 		sector_t noff = nxt->offset - l->ext_offset,
 			 ooff = dos_partition_get_start(cur->ex_entry);
-
 
 		if (noff == ooff)
 			continue;
