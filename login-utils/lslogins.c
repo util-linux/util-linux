@@ -35,6 +35,8 @@
 #include <err.h>
 #include <limits.h>
 
+#include <search.h>
+
 #include <libsmartcols.h>
 #ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>
@@ -61,14 +63,20 @@ struct lslogins_coldesc {
 	double whint;	/* width hint */
 };
 
-static struct list_head userlist;
+void *usertree;
+int (*cmp_fn) (const void *a, const void *b);
 /* the most uber of flags */
 static int uberflag;
 
+FILE *PWDFILE;
+FILE *GRPFILE;
 struct utmp *wtmp, *btmp;
 size_t wtmp_size, btmp_size;
 int want_wtmp, want_btmp;
 
+struct libscols_table *tb;
+
+char *PASSWD_PATH = _PATH_PASSWD;
 #define UL_UID_MIN "1000"
 #define UL_UID_MAX "60000"
 #define UL_SYS_UID_MIN "201"
@@ -129,7 +137,6 @@ struct lslogins_user {
 	char *pwd_status;
 	int   hushed;
 
-	struct list_head ulist;
 };
 /*
  * flags
@@ -202,6 +209,9 @@ static struct lslogins_coldesc coldescs[] =
 	[COL_SELINUX]		= { "CONTEXT",	N_("the user's security context"), 0.4 },
 };
 
+int columns[ARRAY_SIZE(coldescs)];
+int ncolumns;
+
 static int
 column_name_to_id(const char *name, size_t namesz)
 {
@@ -252,7 +262,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -g, --groups=<GROUPS>    Display users belonging to a group in GROUPS\n"), out);
 	fputs(_(" -l, --logins=<LOGINS>    Display only users from LOGINS\n"), out);
 	fputs(_(" --last                   Show info about the users' last login sessions\n"), out);
-	fputs(_(" -m, --more               Display secondary groups as well\n"), out);
+	fputs(_(" -m, --supp-groups         Display supplementary groups as well\n"), out);
 	fputs(_(" -n, --newline            Display each piece of information on a new line\n"), out);
 	fputs(_(" -o, --output[=<LIST>]    Define the columns to output\n"), out);
 	fputs(_(" -r, --raw                Display the raw table\n"), out);
@@ -262,6 +272,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -x, --extra              Display extra information\n"), out);
 	fputs(_(" -z, --print0             Delimit user entries with a nul character\n"), out);
 	fputs(_(" -Z, --context            Display the users' security context\n"), out);
+	fputs(_("--path-wtmp               Set an alternate path for wtmp\n"), out);
+	fputs(_("--path-btmp               Set an alternate path for btmp\n"), out);
+	fputs(_("--path-passwd             Set an alternate path for passwd\n"), out);
+	fputs(_("--path-shadow             Set an alternate path for shadow\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -406,24 +420,13 @@ static struct utmp *get_recent_btmp(const char *username)
 
 }
 
-static int parse_wtmp(void)
+static int parse_utmp(char *path)
 {
 	int rc = 0;
 
-	rc = read_utmp(_PATH_WTMP, &wtmp_size, &wtmp);
+	rc = read_utmp(path, &wtmp_size, &wtmp);
 	if (rc < 0 && errno != EACCES)
 		err(EXIT_FAILURE, "%s: %s", _PATH_WTMP, strerror(errno));
-		return rc;
-
-	return rc;
-}
-static int parse_btmp(void)
-{
-	int rc = 0;
-
-	rc = read_utmp(_PATH_BTMP, &btmp_size, &btmp);
-	if (rc < 0 && errno != EACCES)
-		err(EXIT_FAILURE, "%s: %s", _PATH_BTMP, strerror(errno));
 		return rc;
 
 	return rc;
@@ -478,10 +481,9 @@ static struct lslogins_user *get_user_info(const char *username, const int *colu
 		errno = ENOMEM;
 		return NULL;
 	}
-	INIT_LIST_HEAD(&user->ulist);
 
 	errno = 0;
-	pwd = username ? getpwnam(username) : getpwent();
+	pwd = username ? getpwnam(username) : fgetpwent(PWDFILE);
 	if (!pwd)
 		return NULL;
 
@@ -723,26 +725,25 @@ static int get_user(struct lslogins_user **user,
 	return 0;
 }
 
-static int user_in_list(struct list_head *head, char *uname)
+static void *user_in_tree(void **rootp, struct lslogins_user *u)
 {
-	struct list_head *p;
-	list_for_each(p, head) {
-		if (!strcmp(uname, list_entry(p, struct lslogins_user, ulist)->login))
-			return 1;
-	}
-	return 0;
+	void *rc;
+	rc = tfind(u, rootp, cmp_fn);
+	if (!rc)
+		tdelete(u, rootp, cmp_fn);
+	return rc;
 }
 
-static int create_userlist(char *logins, char *groups, const int *const columns, const int ncolumns)
+static int create_usertree(char *logins, char *groups, const int *const columns, const int ncolumns)
 {
 	char *username, *gname;
-	struct lslogins_user *user = NULL;
+	struct lslogins_user *user = NULL, tmpuser;
 	struct group *grp;
 	int n = 0;
 
 	if (!logins && !groups) {
 		while ((user = get_next_user(columns, ncolumns)))
-			list_add(&user->ulist, &userlist);
+			tsearch(user, &usertree, cmp_fn);
 
 		HANDLE_ERROR(errno);
 	}
@@ -752,7 +753,7 @@ static int create_userlist(char *logins, char *groups, const int *const columns,
 			if (get_user(&user, username, columns, ncolumns))
 				return -1;
 			if (user) /* otherwise an invalid user name has probably been given */
-				list_add(&user->ulist, &userlist);
+				tsearch(user, &usertree, cmp_fn);
 		}
 	}
 	if (groups) {
@@ -766,36 +767,30 @@ static int create_userlist(char *logins, char *groups, const int *const columns,
 			}
 
 			while ((username = grp->gr_mem[n++])) {
-
-				if (!user_in_list(&userlist, username)) {
+				tmpuser.login = username;
+				if (!user_in_tree(&usertree, &tmpuser)) {
 					if (get_user(&user, username, columns, ncolumns))
 						return -1;
 					if (user) /* otherwise an invalid user name has probably been given */
-						list_add(&user->ulist, &userlist);
+						tsearch(user, &usertree, cmp_fn);
 				}
 			}
 		}
 	}
 	return 0;
 }
-static int cmp_uname(struct list_head *a, struct list_head *b, void *data __attribute__((unused)))
+static int cmp_uname(const void *a, const void *b)
 {
-	return strcmp(list_entry(a,struct lslogins_user,ulist)->login,
-		      list_entry(b,struct lslogins_user,ulist)->login);
+	return strcmp(((struct lslogins_user *)a)->login,
+		      ((struct lslogins_user *)b)->login);
 }
-static int cmp_uid(struct list_head *a, struct list_head *b, void *data __attribute__((unused)))
+static int cmp_uid(const void *a, const void *b)
 {
-	return bcmp(&list_entry(a,struct lslogins_user,ulist)->uid,
-		    &list_entry(b,struct lslogins_user,ulist)->uid,
-		    sizeof(uid_t));
+	uid_t x = ((struct lslogins_user *)a)->uid;
+	uid_t z = ((struct lslogins_user *)b)->uid;
+	return x > z ? 1 : (x < z ? -1 : 0);
 }
-static void sort_userlist(void)
-{
-	if (uberflag & F_SORT)
-		list_sort(&userlist,cmp_uname, NULL);
-	else
-		list_sort(&userlist,cmp_uid, NULL);
-}
+
 static struct libscols_table *setup_table(const int *const columns, const int ncolumns)
 {
 	struct libscols_table *tb = scols_new_table();
@@ -836,149 +831,155 @@ fail:
 	scols_unref_table(tb);
 	return NULL;
 }
-
-static int print_user_table(const int *const columns, const int ncolumns)
+static void fill_table(const void *u, const VISIT which, const int depth __attribute__((unused)))
 {
-	int n;
-	struct list_head *p;
-	struct libscols_table *tb;
 	struct libscols_line *ln;
-	struct lslogins_user *user;
+	struct lslogins_user *user = *(struct lslogins_user **)u;
+	int n = 0;
 
+	if ((which == preorder) || (which == endorder))
+		return;
+
+	ln = scols_table_new_line(tb, NULL);
+	while (n < ncolumns) {
+		switch (columns[n]) {
+			case COL_LOGIN:
+				if (scols_line_set_data(ln, n, user->login))
+					goto fail;
+				break;
+			case COL_UID:
+				{
+					char *str_uid = uidtostr(user->uid);
+					if (!str_uid || scols_line_set_data(ln, n, str_uid))
+						goto fail;
+					break;
+				}
+			case COL_NOPASSWD:
+				if (scols_line_set_data(ln, n, status[user->nopasswd]))
+					goto fail;
+				break;
+			case COL_NOLOGIN:
+				if (scols_line_set_data(ln, n, status[user->nologin]))
+					goto fail;
+				break;
+			case COL_LOCKED:
+				if (scols_line_set_data(ln, n, status[user->locked]))
+					goto fail;
+				break;
+			case COL_PGRP:
+				if (scols_line_set_data(ln, n, user->group))
+					goto fail;
+				break;
+			case COL_PGID:
+				{
+					char *str_gid = gidtostr(user->gid);
+					if (!str_gid || scols_line_set_data(ln, n, str_gid))
+						goto fail;
+					break;
+				}
+			case COL_SGRPS:
+				if (scols_line_set_data(ln, n, user->sgroups))
+					goto fail;
+				break;
+			case COL_HOME:
+				if (scols_line_set_data(ln, n, user->homedir))
+					goto fail;
+				break;
+			case COL_SHELL:
+				if (scols_line_set_data(ln, n, user->shell))
+					goto fail;
+				break;
+			case COL_FULLNAME:
+				if (scols_line_set_data(ln, n, user->gecos))
+					goto fail;
+				break;
+			case COL_LAST_LOGIN:
+				if (scols_line_set_data(ln, n, user->last_login))
+					goto fail;
+				break;
+			case COL_LAST_TTY:
+				if (scols_line_set_data(ln, n, user->last_tty))
+					goto fail;
+				break;
+			case COL_LAST_HOSTNAME:
+				if (scols_line_set_data(ln, n, user->last_hostname))
+					goto fail;
+				break;
+			case COL_FAILED_LOGIN:
+				if (scols_line_set_data(ln, n, user->failed_login))
+					goto fail;
+				break;
+			case COL_FAILED_TTY:
+				if (scols_line_set_data(ln, n, user->failed_tty))
+					goto fail;
+				break;
+			case COL_HUSH_STATUS:
+				if (scols_line_set_data(ln, n, status[user->hushed]))
+					goto fail;
+				break;
+#define PWD_TIME(S,L,T) strftime((S),(L), "%a %b %d %Y", (T))
+			case COL_PWD_EXPIR:
+				if (scols_line_set_data(ln, n, user->pwd_expir))
+					goto fail;
+				break;
+			case COL_PWD_CTIME:
+				if (scols_line_set_data(ln, n, user->pwd_ctime))
+					goto fail;
+				break;
+			case COL_PWD_CTIME_MIN:
+				if (scols_line_set_data(ln, n, user->pwd_ctime_min))
+					goto fail;
+				break;
+			case COL_PWD_CTIME_MAX:
+				if (scols_line_set_data(ln, n, user->pwd_ctime_max))
+					goto fail;
+				break;
+#ifdef HAVE_LIBSELINUX
+			case COL_SELINUX:
+				if (scols_line_set_data(ln, n, user->context))
+					goto fail;
+				break;
+#endif
+			default:
+				/* something went very wrong here */
+				err(EXIT_FAILURE, "fatal: unknown error");
+		}
+		++n;
+	}
+	return;
+fail:
+	exit(1);
+}
+static int print_user_table(void)
+{
 	tb = setup_table(columns, ncolumns);
 	if (!tb)
 		return -1;
 
-	sort_userlist();
-
-	list_for_each(p, &userlist) {
-		user = list_entry(p, struct lslogins_user, ulist);
-		n = 0;
-		ln = scols_table_new_line(tb, NULL);
-		while (n < ncolumns) {
-			switch (columns[n]) {
-				case COL_LOGIN:
-					if (scols_line_set_data(ln, n, user->login))
-						goto fail;
-					break;
-				case COL_UID:
-					{
-						char *str_uid = uidtostr(user->uid);
-						if (!str_uid || scols_line_set_data(ln, n, str_uid))
-							goto fail;
-						break;
-					}
-				case COL_NOPASSWD:
-					if (scols_line_set_data(ln, n, status[user->nopasswd]))
-						goto fail;
-					break;
-				case COL_NOLOGIN:
-					if (scols_line_set_data(ln, n, status[user->nologin]))
-						goto fail;
-					break;
-				case COL_LOCKED:
-					if (scols_line_set_data(ln, n, status[user->locked]))
-						goto fail;
-					break;
-				case COL_PGRP:
-					if (scols_line_set_data(ln, n, user->group))
-						goto fail;
-					break;
-				case COL_PGID:
-					{
-						char *str_gid = gidtostr(user->gid);
-						if (!str_gid || scols_line_set_data(ln, n, str_gid))
-							goto fail;
-						break;
-					}
-				case COL_SGRPS:
-					if (scols_line_set_data(ln, n, user->sgroups))
-						goto fail;
-					break;
-				case COL_HOME:
-					if (scols_line_set_data(ln, n, user->homedir))
-						goto fail;
-					break;
-				case COL_SHELL:
-					if (scols_line_set_data(ln, n, user->shell))
-						goto fail;
-					break;
-				case COL_FULLNAME:
-					if (scols_line_set_data(ln, n, user->gecos))
-						goto fail;
-					break;
-				case COL_LAST_LOGIN:
-					if (scols_line_set_data(ln, n, user->last_login))
-						goto fail;
-					break;
-				case COL_LAST_TTY:
-					if (scols_line_set_data(ln, n, user->last_tty))
-						goto fail;
-					break;
-				case COL_LAST_HOSTNAME:
-					if (scols_line_set_data(ln, n, user->last_hostname))
-						goto fail;
-					break;
-				case COL_FAILED_LOGIN:
-					if (scols_line_set_data(ln, n, user->failed_login))
-						goto fail;
-					break;
-				case COL_FAILED_TTY:
-					if (scols_line_set_data(ln, n, user->failed_tty))
-						goto fail;
-					break;
-				case COL_HUSH_STATUS:
-					if (scols_line_set_data(ln, n, status[user->hushed]))
-						goto fail;
-					break;
-#define PWD_TIME(S,L,T) strftime((S),(L), "%a %b %d %Y", (T))
-				case COL_PWD_EXPIR:
-					if (scols_line_set_data(ln, n, user->pwd_expir))
-						goto fail;
-					break;
-				case COL_PWD_CTIME:
-					if (scols_line_set_data(ln, n, user->pwd_ctime))
-						goto fail;
-					break;
-				case COL_PWD_CTIME_MIN:
-					if (scols_line_set_data(ln, n, user->pwd_ctime_min))
-						goto fail;
-					break;
-				case COL_PWD_CTIME_MAX:
-					if (scols_line_set_data(ln, n, user->pwd_ctime_max))
-						goto fail;
-					break;
-#ifdef HAVE_LIBSELINUX
-				case COL_SELINUX:
-					if (scols_line_set_data(ln, n, user->context))
-						goto fail;
-					break;
-#endif
-				default:
-					/* something went very wrong here */
-					err(EXIT_FAILURE, "fatal: unknown error");
-			}
-			++n;
-		}
-	}
+	twalk(usertree, fill_table);
 	scols_print_table(tb);
 	scols_unref_table(tb);
 	return 0;
-fail:
-	return -1;
 }
 
-
+static void free_user(void *u)
+{
+	free(u);
+}
 int main(int argc, char *argv[])
 {
 	int c;
-	int columns[ARRAY_SIZE(coldescs)], ncolumns = 0;
 	char *logins = NULL, *groups = NULL;
+	char *path_wtmp = _PATH_WTMP, *path_btmp = _PATH_BTMP;
 
 	/* long only options. */
 	enum {
 		OPT_LAST = CHAR_MAX + 1,
 		OPT_VER,
+		OPT_WTMP,
+		OPT_BTMP,
+		OPT_PASSWD,
+		OPT_SHADOW,
 	};
 	static const struct option longopts[] = {
 		{ "acc-expiration", no_argument,	0, 'a' },
@@ -988,17 +989,21 @@ int main(int argc, char *argv[])
 		{ "groups",         required_argument,	0, 'g' },
 		{ "help",           no_argument,	0, 'h' },
 		{ "logins",         required_argument,	0, 'l' },
-		{ "more",           no_argument,	0, 'm' },
+		{ "supp-groups",     no_argument,	0, 'm' },
 		{ "newline",        no_argument,	0, 'n' },
 		{ "output",         required_argument,	0, 'o' },
 		{ "last",           no_argument,	0, OPT_LAST },
 		{ "raw",            no_argument,	0, 'r' },
-		{ "sys-accs",       no_argument,	0, 's' },
-		{ "sort",           no_argument,	0, 't' },
+		{ "system-accs",    no_argument,	0, 's' },
+		{ "sort-by-name",   no_argument,	0, 't' },
 		{ "user-accs",      no_argument,	0, 'u' },
 		{ "version",        no_argument,	0, OPT_VER },
 		{ "extra",          no_argument,	0, 'x' },
 		{ "print0",         no_argument,	0, 'z' },
+		{ "path-wtmp",      required_argument,	0, OPT_WTMP },
+		{ "path-btmp",      required_argument,	0, OPT_BTMP },
+		{ "path-passwd",    required_argument,	0, OPT_PASSWD },
+		{ "path-shadow",    required_argument,	0, OPT_SHADOW },
 #ifdef HAVE_LIBSELINUX
 		{ "context",        no_argument,	0, 'Z' },
 #endif
@@ -1015,6 +1020,8 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
+
+	cmp_fn = cmp_uid;
 
 	while ((c = getopt_long(argc, argv, "acefg:hl:mno:rstuxzZ",
 				longopts, NULL)) != -1) {
@@ -1077,6 +1084,7 @@ int main(int argc, char *argv[])
 				uberflag |= F_SYSAC;
 				break;
 			case 't':
+				cmp_fn = cmp_uname;
 				uberflag |= F_SORT;
 				break;
 			case 'u':
@@ -1093,6 +1101,17 @@ int main(int argc, char *argv[])
 				break;
 			case 'z':
 				outmode = out_nul;
+				break;
+			case OPT_WTMP:
+				path_wtmp = optarg;
+				break;
+			case OPT_BTMP:
+				path_btmp = optarg;
+				break;
+			case OPT_PASSWD:
+				PASSWD_PATH = optarg;
+				break;
+			case OPT_SHADOW:
 				break;
 			case 'Z':
 #ifdef HAVE_LIBSELINUX
@@ -1156,15 +1175,16 @@ int main(int argc, char *argv[])
 	}
 
 	if (want_wtmp)
-		parse_wtmp();
+		parse_utmp(path_wtmp);
 	if (want_btmp)
-		parse_btmp();
+		parse_utmp(path_btmp);
 
-	INIT_LIST_HEAD(&userlist);
-	if (create_userlist(logins, groups, columns, ncolumns))
+	PWDFILE = fopen(PASSWD_PATH,"r");
+	if (create_usertree(logins, groups, columns, ncolumns))
 		return EXIT_FAILURE;
 
-	print_user_table(columns, ncolumns);
+	print_user_table();
+	tdestroy(usertree, free_user);
 
 	return EXIT_SUCCESS;
 }
