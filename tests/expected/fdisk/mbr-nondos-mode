@@ -156,6 +156,8 @@ Device     Boot Start   End Sectors Size Id Type
 <removed>5      26624 30719    4096   2M 83 Linux
 <removed>6      14336 18431    4096   2M 83 Linux
 
+Partition table entries are not in disk order.
+
 -------------------
 
 Delete primary partition
@@ -175,6 +177,8 @@ Device     Boot Start   End Sectors Size Id Type
 <removed>5      26624 30719    4096   2M 83 Linux
 <removed>6      14336 18431    4096   2M 83 Linux
 
+Partition table entries are not in disk order.
+
 -------------------
 
 Delete primary partition
@@ -192,6 +196,8 @@ Device     Boot Start   End Sectors Size Id Type
 <removed>3      12288 40959   28672  14M  5 Extended
 <removed>5      26624 30719    4096   2M 83 Linux
 <removed>6      14336 18431    4096   2M 83 Linux
+
+Partition table entries are not in disk order.
 
 -------------------
 
