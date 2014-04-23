@@ -245,7 +245,7 @@ static char *make_time(struct tm *tm)
 
 	if (*(t = s + strlen(s) - 1) == '\n')
 		*t = '\0';
-	return strdup(s);
+	return xstrdup(s);
 }
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -311,11 +311,15 @@ static struct lslogins_sgroups *build_sgroups_list(int len, gid_t *list, int *sl
 {
 	int n = 0;
 	struct lslogins_sgroups *sgrps, *retgrps;
+	struct group grpbuf, *grp;
+	size_t buflen = 1024;
+	char *buf = NULL;
 
 	*slen = 0;
 
 	if (!len || !list)
 		return NULL;
+	buf = xcalloc(1, sizeof(char) * buflen);
 
 	retgrps = sgrps = calloc(1, sizeof(struct lslogins_sgroups));
 	while (n < len) {
@@ -323,7 +327,8 @@ static struct lslogins_sgroups *build_sgroups_list(int len, gid_t *list, int *sl
 			sgrps = sgrps->next;
 
 		sgrps->gid = gidtostr(list[n]);
-		sgrps->uname = strdup(getgrgid(list[n])->gr_name);
+		getgrgid_r((list[n]), &grpbuf, buf, buflen, &grp);
+		sgrps->uname = xstrdup(grp->gr_name);
 
 		*slen += strlen(sgrps->gid) + strlen(sgrps->uname);
 
@@ -335,6 +340,7 @@ static struct lslogins_sgroups *build_sgroups_list(int len, gid_t *list, int *sl
 	/* a pair of parentheses for each group + (n - 1) commas in between */
 	slen += 3 * n - 1;
 
+	free(buf);
 	free (sgrps->next);
 	sgrps->next = NULL;
 
@@ -467,23 +473,26 @@ static int get_sgroups(int *len, gid_t **list, struct passwd *pwd)
 static struct lslogins_user *get_user_info(const char *username, const int *columns, const int ncolumns)
 {
 	struct lslogins_user *user;
-	struct passwd *pwd;
-	struct group *grp;
-	struct spwd *shadow;
+	struct passwd pwdbuf, *pwd;
+	struct group grpbuf, *grp;
+	struct spwd shadowbuf, *shadow;
 	struct utmp *user_wtmp = NULL, *user_btmp = NULL;
 	int n = 0;
 	time_t time;
 	struct tm tm;
 	uid_t uid;
+	size_t buflen = 1024;
+	char *buf = NULL, *spbuf = NULL, *gbuf = NULL;
 
 	user = xcalloc(1, sizeof(struct lslogins_user));
-	if (!user) {
-		errno = ENOMEM;
-		return NULL;
-	}
 
-	errno = 0;
-	pwd = username ? getpwnam(username) : fgetpwent(PWDFILE);
+	buf = xcalloc(1, sizeof(char) * buflen);
+
+	if (username)
+		getpwnam_r(username, &pwdbuf, buf, buflen, &pwd);
+	else
+		fgetpwent_r(PWDFILE, &pwdbuf, buf, buflen, &pwd);
+
 	if (!pwd)
 		return NULL;
 
@@ -501,8 +510,8 @@ static struct lslogins_user *get_user_info(const char *username, const int *colu
 			return NULL;
 		}
 	}
-
-	grp = getgrgid(pwd->pw_gid);
+	gbuf = xcalloc(1, sizeof(char) * buflen);
+	getgrgid_r(pwd->pw_gid, &grpbuf, gbuf, buflen, &grp);
 	if (!grp)
 		return NULL;
 
@@ -513,8 +522,9 @@ static struct lslogins_user *get_user_info(const char *username, const int *colu
 
 	/* sufficient permissions to get a shadow entry? */
 	errno = 0;
+	spbuf = xcalloc(1, sizeof(char) * buflen);
 	lckpwdf();
-	shadow = getspnam(pwd->pw_name);
+	getspnam_r(pwd->pw_name, &shadowbuf, spbuf, buflen, &shadow);
 	ulckpwdf();
 	if (!shadow && errno != EACCES)
 		err(EXIT_FAILURE, "%s", strerror(errno));
@@ -532,13 +542,13 @@ static struct lslogins_user *get_user_info(const char *username, const int *colu
 	while (n < ncolumns) {
 		switch (columns[n++]) {
 			case COL_LOGIN:
-				user->login = strdup(pwd->pw_name);
+				user->login = xstrdup(pwd->pw_name);
 				break;
 			case COL_UID:
 				/* just a placeholder, see above*/
 				break;
 			case COL_PGRP:
-				user->group = strdup(grp->gr_name);
+				user->group = xstrdup(grp->gr_name);
 				break;
 			case COL_PGID:
 				user->gid = (pwd->pw_gid);
@@ -556,15 +566,15 @@ static struct lslogins_user *get_user_info(const char *username, const int *colu
 					break;
 				}
 			case COL_HOME:
-				user->homedir = strdup(pwd->pw_dir);
+				user->homedir = xstrdup(pwd->pw_dir);
 				break;
 			case COL_SHELL:
-				user->shell = strdup(pwd->pw_shell);
+				user->shell = xstrdup(pwd->pw_shell);
 				break;
 			case COL_FULLNAME:
-				user->gecos = strdup(pwd->pw_gecos);
+				user->gecos = xstrdup(pwd->pw_gecos);
 				break;
-				/* strdup us? ? */
+				/* xstrdup us? ? */
 			case COL_LAST_LOGIN:
 				if (user_wtmp) {
 					time = user_wtmp->ut_tv.tv_sec;
@@ -694,6 +704,8 @@ static struct lslogins_user *get_user_info(const char *username, const int *colu
 		}
 	}
 
+	free(buf);
+	free(spbuf);
 	return user;
 }
 /* some UNIX implementations set errno iff a passwd/grp/...
@@ -736,10 +748,12 @@ static void *user_in_tree(void **rootp, struct lslogins_user *u)
 
 static int create_usertree(char *logins, char *groups, const int *const columns, const int ncolumns)
 {
-	char *username, *gname;
+	char *username, *gname, *buf;
 	struct lslogins_user *user = NULL, tmpuser;
-	struct group *grp;
+	struct group grpbuf, *grp;
 	int n = 0;
+	size_t buflen = 1024;
+	char *saveptr;
 
 	if (!logins && !groups) {
 		while ((user = get_next_user(columns, ncolumns)))
@@ -748,7 +762,7 @@ static int create_usertree(char *logins, char *groups, const int *const columns,
 		HANDLE_ERROR(errno);
 	}
 	if (logins) {
-		while ((username = strtok(logins, ",")) != NULL) {
+		while ((username = strtok_r(logins, ",", &saveptr)) != NULL) {
 			logins = NULL;
 			if (get_user(&user, username, columns, ncolumns))
 				return -1;
@@ -757,10 +771,12 @@ static int create_usertree(char *logins, char *groups, const int *const columns,
 		}
 	}
 	if (groups) {
-		while ((gname = strtok(groups, ",")) != NULL) {
+		while ((gname = strtok_r(groups, ",", &saveptr)) != NULL) {
 			groups = NULL;
 			errno = 0;
-			grp = getgrnam(gname);
+
+			buf = xcalloc(1, sizeof(char) * buflen);
+			getgrnam_r(gname, &grpbuf, buf, buflen, &grp);
 			if (!grp) {
 				HANDLE_ERROR(errno);
 				continue; /* not a "real" errno */
@@ -1044,14 +1060,14 @@ int main(int argc, char *argv[])
 				uberflag |= F_FAIL;
 				break;
 			case 'g':
-				groups = strdup(optarg);
+				groups = xstrdup(optarg);
 				if (!groups)
 					return EXIT_FAILURE;
 				break;
 			case 'h':
 				usage(stdout);
 			case 'l':
-				logins = strdup(optarg);
+				logins = xstrdup(optarg);
 				if (!logins)
 					return EXIT_FAILURE;
 				break;
