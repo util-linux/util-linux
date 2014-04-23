@@ -94,6 +94,7 @@ struct last_control {
 	unsigned int altc;	/* Number of alternative files */
 	unsigned int alti;	/* Index number of the alternative file */
 
+	struct timeval boot_time; /* system boot time */
 	time_t since;		/* at what time to start displaying the file */
 	time_t until;		/* at what time to stop displaying the file */
 	time_t present;		/* who where present at time_t */
@@ -573,19 +574,24 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static int is_phantom(struct utmp *ut)
+static int is_phantom(const struct last_control *ctl, struct utmp *ut)
 {
 	struct passwd *pw;
 	char path[32];
 	FILE *f;
-	unsigned int loginuid, ret = 0;
+	unsigned int loginuid;
+	int ret = 0;
 
+	if (ut->UL_UT_TIME < ctl->boot_time.tv_sec)
+		return 1;
 	pw = getpwnam(ut->ut_name);
 	if (!pw)
 		return 1;
 	sprintf(path, "/proc/%u/loginuid", ut->ut_pid);
-	if (!(f = fopen(path, "r")))
+	if (access(path, R_OK) == 0 && !(f = fopen(path, "r")))
 		return 1;
+	else
+		return ret;
 	if (fscanf(f, "%u", &loginuid) != 1)
 		ret = 1;
 	fclose(f);
@@ -787,7 +793,7 @@ static void process_wtmp_file(const struct last_control *ctl)
 				if (!lastboot) {
 					c = R_NOW;
 					/* Is process still alive? */
-					if (is_phantom(&ut))
+					if (is_phantom(ctl, &ut))
 						c = R_PHANTOM;
 				} else
 					c = whydown;
@@ -980,6 +986,7 @@ int main(int argc, char **argv)
 	}
 
 	for (; ctl.alti < ctl.altc; ctl.alti++) {
+		get_boot_time(&ctl.boot_time);
 		process_wtmp_file(&ctl);
 		free(ctl.altv[ctl.alti]);
 	}
