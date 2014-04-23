@@ -20,8 +20,6 @@ TS_DESC="MBR - sort"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-ts_check_test_command "$TS_CMD_FDISK"
-
 # cmd to changes system id to 0x1
 FDISK_CMD_WRITE_CLOSE="w\nq\n"
 FDISK_CMD_CREATE_DOSLABEL="o\n" #create dos label
