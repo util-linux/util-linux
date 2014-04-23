@@ -2,7 +2,7 @@
  Note that items with (!) have high priority.
 
 
-lslogins(1)
+lslogins(1) [assigned: Ondrej Oprala]
 ----------
  - a new command to list information about accounts
  - based on libsmartcols
