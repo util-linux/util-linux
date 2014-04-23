@@ -12,8 +12,6 @@ ts_init_py libmount
 PYDBG="$PYTHON -m pdb"
 TESTPROG="$TS_HELPER_PYLIBMOUNT_TAB"
 
-$PYTHON -c 'import libmount' 2>/dev/null || ts_skip "pylibmount not compiled"
-
 ts_init_subtest "parse-fstab"
 $PYTHON $TESTPROG --parse "$TS_SELF/files/fstab" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
