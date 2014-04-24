@@ -96,6 +96,7 @@ CONTRIBUTORS:
       Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
       Andy Lutomirski <luto@amacapital.net>
       Anthony Rumble <arumble@extro.ucc.su.OZ.AU>
+      Anton Blanchard <anton@samba.org>
       Anton V. Boyarshinov <boyarsh@altlinux.org>
       Arif E. Nugroho <arif_endro@yahoo.com>
       Arkadiusz Miśkiewicz <arekm@maven.pl>
@@ -112,6 +113,7 @@ CONTRIBUTORS:
       Bernhard Walle <bwalle@suse.de>
       Bill Pemberton <wfp5p@virginia.edu>
       Bill Reynolds <bill@goshawk.lanl.gov>
+      Bjarni Ingi Gislason <bjarniig@rhi.hi.is>
       Björn Jacke <bj@sernet.de>
       Bjørn Mork <bjorn@mork.no>
       Bob Proulx <rwp@hprwp.fc.hp.com>
@@ -123,6 +125,7 @@ CONTRIBUTORS:
       chas williams - CONTRACTOR <chas@cmf.nrl.navy.mil>
       Chow Loong Jin <hyperair@ubuntu.com>
       Chris Frost <chris@frostnet.net>
+      Chris MacGregor <chrismacgregor@google.com>
       Christian von Roques <roques@juliet.ka.sub.org>
       Christian Wiese <chris@opensde.org>
       Christophe Blaess <Christophe@Blaess.fr>
@@ -231,6 +234,7 @@ CONTRIBUTORS:
       Jeremy Fitzhardinge <jeremy@suite.sw.oz.au>
       Jeremy Huntwork <jhuntwork@lightcubesolutions.com>
       Jeroen Oortwijn <oortwijn@gmail.com>
+      Jesper Dahl Nyerup <nyerup@one.com>
       Jesse Thilo <jesse.thilo@pobox.com>
       Jim Meyering <jim@meyering.net>
       Jindrich Makovicka <makovick@gmail.com>
@@ -239,6 +243,7 @@ CONTRIBUTORS:
       John Keeping <john.keeping@lineone.net>
       John Lindgren <john.lindgren@tds.net>
       John Paul Morrison <jmorriso@rflab.ee.ubc.ca>
+      Jonathan Liu <net147@gmail.com>
       Jon Grant <jg@jguk.org>
       Jon Ringle <jon@ringle.org>
       Joseph Parmelee <jparmele@wildbear.com>
@@ -368,11 +373,13 @@ CONTRIBUTORS:
       Rik van Riel <riel@redhat.com>
       Robert Förster <Dessa@gmake.de>
       Robert Millan <rmh@aybabtu.com>
+      Rodrigo Campos <rodrigo@sdfg.com.ar>
       Rodrigo Stulzer Lopes <rodrigo@conectiva.com.br>
       Rolf Fokkens <rolf@rolffokkens.nl>
       Ron Sommeling <sommel@sci.kun.nl>
       Ross Biro <biro@yggdrasil.com>
       Roy Peled <the.roy.peled@gmail.com>
+      Ruediger Meier <ruediger.meier@ga-group.nl>
       Sami Kerola <kerolasa@iki.fi>
       Sami Liedes <sami.liedes@iki.fi>
       Samuel Thibault <samuel.thibault@ens-lyon.org>
@@ -398,12 +405,14 @@ CONTRIBUTORS:
       Steven J. Magnani <steve@digidescorp.com>
       Steven S. Dick <ssd@nevets.oau.org>
       Steve Philp
+      Stewart Smith <stewart@linux.vnet.ibm.com>
       Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
       Sven Eckelmann <sven.eckelmann@gmx.de>
       Sven Jost <sven.jost@googlemail.com>
       Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>
       Theodore Ts'o <tytso@mit.edu>
       Thierry Reding <thierry.reding@avionic-design.de>
+      Thomas Bächler <thomas@archlinux.org>
       Thomas Fehr <fehr@suse.de>
       Thomas Schwinge <thomas@codesourcery.com>
       Thorsten Glaser <tg@mirbsd.org>
@@ -432,6 +441,7 @@ CONTRIBUTORS:
       Werner Fink <werner@suse.de>
       Wieland Hoffmann <themineo@gmail.com>
       William Pitcock <nenolod@dereferenced.org>
+      Wolfgang Richter <wolf@cs.cmu.edu>
       WUEBBELS, Josef <Josef.WUEBBELS@mtu.de>
       Wylmer Wang <wantinghard@gmail.com>
       W.Z. Venema
