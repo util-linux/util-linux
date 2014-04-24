@@ -37,6 +37,11 @@ table will still be visible by another magic string on another offset.
 When used with option \fB-a\fR, all magic strings that are visible for libblkid are
 erased.
 
+Note that by default
+.B wipefs
+does not erase nested partition tables on non-whole disk devices. The option 
+\-\-force is required.
+
 .SH OPTIONS
 .TP
 .BR \-a , " \-\-all"
