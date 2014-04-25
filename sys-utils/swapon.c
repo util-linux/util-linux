@@ -344,8 +344,7 @@ err:
 
 static int swap_detect_signature(const char *buf, int *sig)
 {
-	if (memcmp(buf, "SWAP-SPACE", 10) == 0 ||
-            memcmp(buf, "SWAPSPACE2", 10) == 0)
+	if (memcmp(buf, SWAP_SIGNATURE, SWAP_SIGNATURE_SZ) == 0)
 		*sig = SIG_SWAPSPACE;
 
 	else if (memcmp(buf, "S1SUSPEND", 9) == 0 ||
