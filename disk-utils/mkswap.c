@@ -177,7 +177,7 @@ write_signature(char *sig)
 {
 	char *sp = (char *) signature_page;
 
-	strncpy(sp + pagesize - 10, sig, 10);
+	strncpy(sp + pagesize - SWAP_SIGNATURE_SZ, sig, SWAP_SIGNATURE_SZ);
 }
 
 static void
@@ -611,7 +611,7 @@ main(int argc, char **argv) {
 	printf(_("Setting up swapspace version %d, size = %llu KiB\n"),
 		version, goodpages * pagesize / 1024);
 
-	write_signature("SWAPSPACE2");
+	write_signature(SWAP_SIGNATURE);
 	write_uuid_and_label(uuid, opt_label);
 
 	offset = 1024;

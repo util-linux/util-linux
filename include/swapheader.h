@@ -4,6 +4,8 @@
 #define SWAP_VERSION 1
 #define SWAP_UUID_LENGTH 16
 #define SWAP_LABEL_LENGTH 16
+#define SWAP_SIGNATURE "SWAPSPACE2"
+#define SWAP_SIGNATURE_SZ (sizeof(SWAP_SIGNATURE) - 1)
 
 #include <stdint.h>
 

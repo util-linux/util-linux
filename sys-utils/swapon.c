@@ -76,9 +76,6 @@ enum {
 	SIG_SWSUSPEND
 };
 
-#define SWAP_SIGNATURE		"SWAPSPACE2"
-#define SWAP_SIGNATURE_SZ	(sizeof(SWAP_SIGNATURE) - 1)
-
 static int all;
 static int priority = -1;	/* non-prioritized swap by default */
 static int discard;		/* don't send swap discards by default */
