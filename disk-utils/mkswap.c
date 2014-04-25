@@ -449,7 +449,7 @@ main(int argc, char **argv) {
 	unsigned long long sz;
 	off_t offset;
 	int force = 0;
-	int version = 1;
+	int version = SWAP_VERSION;
 	char *block_count = 0;
 	char *opt_label = NULL;
 	unsigned char *uuid = NULL;
@@ -517,7 +517,7 @@ main(int argc, char **argv) {
 		usage(stderr);
 	}
 
-	if (version != 1)
+	if (version != SWAP_VERSION)
 		errx(EXIT_FAILURE,
 			_("swapspace version %d is not supported"), version);
 
@@ -601,7 +601,7 @@ main(int argc, char **argv) {
 	wipe_device(DEV, device_name, force);
 
 	hdr = (struct swap_header_v1_2 *) signature_page;
-	hdr->version = 1;
+	hdr->version = version;
 	hdr->last_page = PAGES - 1;
 	hdr->nr_badpages = badpages;
 
@@ -609,8 +609,8 @@ main(int argc, char **argv) {
 		errx(EXIT_FAILURE, _("Unable to set up swap-space: unreadable"));
 
 	goodpages = PAGES - badpages - 1;
-	printf(_("Setting up swapspace version 1, size = %llu KiB\n"),
-		goodpages * pagesize / 1024);
+	printf(_("Setting up swapspace version %d, size = %llu KiB\n"),
+		version, goodpages * pagesize / 1024);
 
 	write_signature("SWAPSPACE2");
 	write_uuid_and_label(uuid, opt_label);

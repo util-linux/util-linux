@@ -402,21 +402,19 @@ static unsigned long long swap_get_size(const char *hdr, const char *devname,
 					unsigned int pagesize)
 {
 	unsigned int last_page = 0;
-	int swap_version = 0;
+	const unsigned int swap_version = SWAP_VERSION;
 	int flip = 0;
 	struct swap_header_v1_2 *s;
 
 	s = (struct swap_header_v1_2 *) hdr;
-	if (s->version == 1) {
-		swap_version = 1;
+	if (s->version == swap_version) {
 		last_page = s->last_page;
-	} else if (swab32(s->version) == 1) {
+	} else if (swab32(s->version) == swap_version) {
 		flip = 1;
-		swap_version = 1;
 		last_page = swab32(s->last_page);
 	}
 	if (verbose)
-		warnx(_("%s: found swap signature: version %d, "
+		warnx(_("%s: found swap signature: version %ud, "
 			"page-size %d, %s byte order"),
 			devname,
 			swap_version,

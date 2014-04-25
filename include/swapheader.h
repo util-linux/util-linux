@@ -11,6 +11,7 @@ struct swap_header_v1 {
 };
 
 
+#define SWAP_VERSION 1
 #define SWAP_UUID_LENGTH 16
 #define SWAP_LABEL_LENGTH 16
 

@@ -67,10 +67,10 @@ static blkid_probe get_swap_prober(const char *devname)
 		warnx(_("%s: not a valid swap partition"), devname);
 
 	if (rc == 0) {
-		/* supported is SWAPSPACE2 only */
+		/* Only the SWAPSPACE2 is supported. */
 		if (blkid_probe_lookup_value(pr, "VERSION", &version, NULL) == 0
 		    && version
-		    && strcmp(version, "1"))
+		    && strcmp(version, stringify_value(SWAP_VERSION)))
 			warnx(_("%s: unsupported swap version '%s'"),
 						devname, version);
 		else
