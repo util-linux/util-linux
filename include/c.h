@@ -307,4 +307,13 @@ static inline int xusleep(useconds_t usec)
 # define SEEK_HOLE	4
 #endif
 
+
+/*
+ * Macros to convert #define'itions to strings, for example
+ * #define XYXXY 42
+ * printf ("%s=%s\n", stringify(XYXXY), stringify_value(XYXXY));
+ */
+#define stringify_value(s) stringify(s)
+#define stringify(s) #s
+
 #endif /* UTIL_LINUX_C_H */
