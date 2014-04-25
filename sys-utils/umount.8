@@ -75,7 +75,7 @@ all nested mounts within the filesystem are recursively unmounted.
 \fB\-c\fR, \fB\-\-no\-canonicalize\fR
 Do not canonicalize paths.  For more details about this option see the
 .BR mount (8)
-man page.
+man page. Note that umount(8) does not pass this option to /sbin/umount.<type> helpers.
 .TP
 \fB\-d\fR, \fB\-\-detach\-loop\fR
 In case the unmounted device was a loop device, also free this loop

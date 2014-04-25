@@ -551,6 +551,10 @@ argument, and finally applying a
 .BR \-r " or " \-w
 option, when present.
 
+The command mount does not pass all command line options to the
+/sbin/mount.<suffix> mount helpers. The interface between the mount and the
+mount helpers is described below in the section EXTERNAL HELPERS.
+
 Command line options available for the
 .B mount
 command:
@@ -608,11 +612,14 @@ This is necessary for example when
 is on a read-only filesystem.
 .IP "\fB\-c, \-\-no-canonicalize\fP"
 Don't canonicalize paths. The mount command canonicalizes all paths
-(from command line or fstab) and stores canonicalized paths to the
-.I /etc/mtab
-file. This option can be used together with the
+(from command line or fstab) by default. This option can be used
+together with the
 .B \-f
-flag for already canonicalized absolute paths.
+flag for already canonicalized absolute paths. The option is designed for mount
+helpers which call mount -i. It's strongly recommended do not use this command
+line option for standard mount operations.
+
+Note that mount(8) does not pass this option to /sbin/mount.<type> helpers.
 .IP "\fB\-s\fP"
 Tolerate sloppy mount options rather than failing. This will ignore mount
 options not supported by a filesystem type. Not all filesystems support this
