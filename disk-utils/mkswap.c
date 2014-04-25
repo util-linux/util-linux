@@ -186,8 +186,7 @@ write_uuid_and_label(unsigned char *uuid, char *volume_name)
 	struct swap_header_v1_2 *h;
 
 	/* Sanity check */
-	if (sizeof(struct swap_header_v1) !=
-	    sizeof(struct swap_header_v1_2)) {
+	if (sizeof(struct swap_header_v1_2) != SWAP_HEADER_SIZE) {
 		warnx(_("Bad swap header size, no label written."));
 		return;
 	}
