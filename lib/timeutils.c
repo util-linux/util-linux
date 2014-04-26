@@ -239,6 +239,7 @@ int parse_timestamp(const char *t, usec_t *usec)
 			return -ENOMEM;
 
 		r = parse_sec(z, &minus);
+		free(z);
 		if (r < 0)
 			return r;
 
