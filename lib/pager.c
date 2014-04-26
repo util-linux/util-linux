@@ -63,10 +63,10 @@ static int start_command(struct child_process *cmd)
 	cmd->pid = fork();
 	if (!cmd->pid) {
 		if (need_in) {
-			dup2(fdin[0], 0);
+			dup2(fdin[0], STDIN_FILENO);
 			close_pair(fdin);
 		} else if (cmd->in > 0) {
-			dup2(cmd->in, 0);
+			dup2(cmd->in, STDIN_FILENO);
 			close(cmd->in);
 		}
 
@@ -134,7 +134,7 @@ static void pager_preexec(void)
 	fd_set in;
 
 	FD_ZERO(&in);
-	FD_SET(0, &in);
+	FD_SET(STDIN_FILENO, &in);
 	select(1, &in, NULL, &in, NULL);
 
 	setenv("LESS", "FRSX", 0);
@@ -145,8 +145,8 @@ static void wait_for_pager(void)
 	fflush(stdout);
 	fflush(stderr);
 	/* signal EOF to pager */
-	close(1);
-	close(2);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
 	finish_command(&pager_process);
 }
 
@@ -160,7 +160,7 @@ void setup_pager(void)
 {
 	const char *pager = getenv("PAGER");
 
-	if (!isatty(1))
+	if (!isatty(STDOUT_FILENO))
 		return;
 
 	if (!pager)
@@ -178,9 +178,9 @@ void setup_pager(void)
 		return;
 
 	/* original process continues, but writes to the pipe */
-	dup2(pager_process.in, 1);
-	if (isatty(2))
-		dup2(pager_process.in, 2);
+	dup2(pager_process.in, STDOUT_FILENO);
+	if (isatty(STDERR_FILENO))
+		dup2(pager_process.in, STDERR_FILENO);
 	close(pager_process.in);
 
 	/* this makes sure that the parent terminates after the pager */
