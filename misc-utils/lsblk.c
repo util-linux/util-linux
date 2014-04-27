@@ -1358,6 +1358,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 	fputs(_(" -m, --perms          output info about permissions\n"), out);
 	fputs(_(" -n, --noheadings     don't print headings\n"), out);
 	fputs(_(" -o, --output <list>  output columns\n"), out);
+	fputs(_(" -O, --output-all     output all columns\n"), out);
 	fputs(_(" -p, --paths          print complete device path\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
@@ -1399,6 +1400,7 @@ int main(int argc, char *argv[])
 		{ "discard",    0, 0, 'D' },
 		{ "help",	0, 0, 'h' },
 		{ "output",     1, 0, 'o' },
+		{ "output-all", 0, 0, 'O' },
 		{ "perms",      0, 0, 'm' },
 		{ "noheadings",	0, 0, 'n' },
 		{ "list",       0, 0, 'l' },
@@ -1417,7 +1419,12 @@ int main(int argc, char *argv[])
 	};
 
 	static const ul_excl_t excl[] = {       /* rows and cols in in ASCII order */
+		{ 'D','O' },
 		{ 'I','e' },
+		{ 'O','S' },
+		{ 'O','f' },
+		{ 'O','m' },
+		{ 'O','t' },
 		{ 'P','l','r' },
 		{ 0 }
 	};
@@ -1432,7 +1439,7 @@ int main(int argc, char *argv[])
 	memset(lsblk, 0, sizeof(*lsblk));
 
 	while((c = getopt_long(argc, argv,
-			       "abdDe:fhlnmo:pPiI:rstVS", longopts, NULL)) != -1) {
+			       "abdDe:fhlnmo:OpPiI:rstVS", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1467,6 +1474,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case 'O':
+			for (ncolumns = 0 ; ncolumns < (int) NCOLS; ncolumns++)
+				columns[ncolumns] = ncolumns;
 			break;
 		case 'p':
 			lsblk->paths = 1;
