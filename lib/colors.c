@@ -4,10 +4,10 @@
  * This file may be distributed under the terms of the
  * GNU Lesser General Public License.
  */
-#include <c.h>
 #include <assert.h>
 #include <sys/stat.h>
 
+#include "c.h"
 #include "colors.h"
 #include "xalloc.h"
 #include "pathnames.h"
