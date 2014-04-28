@@ -1,5 +1,5 @@
 # Misc settings
-TS_TESTUSER=${TS_TESTUSER:-"test"}
+TS_TESTUSER=${TS_TESTUSER:-"nobody"}
 
 # helpers
 TS_HELPER_BYTESWAP="$top_builddir/test_byteswap"
@@ -21,6 +21,7 @@ TS_HELPER_MD5="$top_builddir/test_md5"
 TS_HELPER_MORE=${TS_HELPER_MORE-"$top_builddir/test_more"}
 TS_HELPER_PARTITIONS="$top_builddir/sample-partitions"
 TS_HELPER_PATHS="$top_builddir/test_pathnames"
+TS_HELPER_SIGRECEIVE="$top_builddir/test_sigreceive"
 TS_HELPER_STRUTILS="$top_builddir/test_strutils"
 TS_HELPER_SYSINFO="$top_builddir/test_sysinfo"
 
@@ -47,6 +48,7 @@ TS_CMD_IPCMK=${TS_CMD_IPCMK-"$top_builddir/ipcmk"}
 TS_CMD_IPCRM=${TS_CMD_IPCRM-"$top_builddir/ipcrm"}
 TS_CMD_IPCS=${TS_CMD_IPCS:-"$top_builddir/ipcs"}
 TS_CMD_ISOSIZE=${TS_CMD_ISOSIZE-"$top_builddir/isosize"}
+TS_CMD_KILL=${TS_CMD_KILL-"$top_builddir/kill"}
 TS_CMD_LAST=${TS_CMD_LAST-"$top_builddir/last"}
 TS_CMD_LINE=${TS_CMD_LINE-"$top_builddir/line"}
 TS_CMD_LOOK=${TS_CMD_LOOK-"$top_builddir/look"}

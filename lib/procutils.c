@@ -86,7 +86,7 @@ int proc_next_tid(struct proc_tasks *tasks, pid_t *tid)
 
 		if (!isdigit((unsigned char) *d->d_name))
 			continue;
-
+		errno = 0;
 		*tid = (pid_t) strtol(d->d_name, &end, 10);
 		if (errno || d->d_name == end || (end && *end))
 			return -1;
@@ -151,13 +151,11 @@ int proc_next_pid(struct proc_processes *ps, pid_t *pid)
 		if (!isdigit((unsigned char) *d->d_name))
 			continue;
 
-		snprintf(buf, sizeof(buf), "%s/stat", d->d_name);
-
 		/* filter out by UID */
 		if (ps->has_fltr_uid) {
 			struct stat st;
 
-			if (fstat_at(dirfd(ps->dir), "/proc", buf, &st, 0))
+			if (fstat_at(dirfd(ps->dir), "/proc", d->d_name, &st, 0))
 				continue;
 			if (ps->fltr_uid != st.st_uid)
 				continue;
@@ -166,7 +164,10 @@ int proc_next_pid(struct proc_processes *ps, pid_t *pid)
 		/* filter out by NAME */
 		if (ps->has_fltr_name) {
 			char procname[256];
-			FILE *f = fopen_at(dirfd(ps->dir), "/proc", buf,
+			FILE *f;
+
+			snprintf(buf, sizeof(buf), "%s/stat", d->d_name);
+			f = fopen_at(dirfd(ps->dir), "/proc", buf,
 						O_CLOEXEC|O_RDONLY, "r");
 			if (!f)
 				continue;
@@ -183,6 +184,7 @@ int proc_next_pid(struct proc_processes *ps, pid_t *pid)
 		}
 
 		p = NULL;
+		errno = 0;
 		*pid = (pid_t) strtol(d->d_name, &p, 10);
 		if (errno || d->d_name == p || (p && *p))
 			return errno ? -errno : -1;

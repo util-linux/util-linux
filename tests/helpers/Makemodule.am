@@ -10,3 +10,7 @@ test_pathnames_SOURCES = tests/helpers/test_pathnames.c
 
 check_PROGRAMS += test_sysinfo
 test_sysinfo_SOURCES = tests/helpers/test_sysinfo.c
+
+check_PROGRAMS += test_sigreceive
+test_sigreceive_SOURCES = tests/helpers/test_sigreceive.c
+test_sigreceive_LDADD = $(LDADD) libcommon.la

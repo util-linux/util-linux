@@ -78,7 +78,8 @@ struct kill_control {
 		check_all:1,
 		do_kill:1,
 		do_pid:1,
-		use_sigval:1;
+		use_sigval:1,
+		verbose:1;
 };
 
 struct signv {
@@ -314,6 +315,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -p, --pid              print pids without signaling them\n"), out);
 	fputs(_(" -l, --list [=<signal>] list signal names, or convert one to a name\n"), out);
 	fputs(_(" -L, --table            list signal names and numbers\n"), out);
+	fputs(_("     --verbose          print pids that will be signaled\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -345,7 +347,10 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 		}
 		if (!strcmp(arg, "-h") || !strcmp(arg, "--help"))
 			usage(stdout);
-
+		if (!strcmp(arg, "--verbose")) {
+			ctl->verbose = 1;
+			continue;
+		}
 		if (!strcmp(arg, "-a") || !strcmp(arg, "--all")) {
 			ctl->check_all = 1;
 			continue;
@@ -381,6 +386,10 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 			ctl->do_pid = 1;
 			if (ctl->do_kill)
 				errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--signal");
+#ifdef HAVE_SIGQUEUE
+			if (ctl->use_sigval)
+				errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--queue");
+#endif
 			continue;
 		}
 		if (!strcmp(arg, "-s") || !strcmp(arg, "--signal")) {
@@ -399,6 +408,8 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 		if (!strcmp(arg, "-q") || !strcmp(arg, "--queue")) {
 			if (argc < 2)
 				errx(EXIT_FAILURE, _("option '%s' requires an argument"), arg);
+			if (ctl->do_pid)
+				errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--queue");
 			argc--, argv++;
 			arg = *argv;
 			if ((ctl->numsig = arg_to_signum(arg, 0)) < 0)
@@ -428,8 +439,6 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 	}
 	if (!*argv)
 		errx(EXIT_FAILURE, _("not enough arguments"));
-	if (ctl->do_pid)
-		ctl->numsig = -1;
 	return argv;
 }
 
@@ -438,7 +447,9 @@ static int kill_verbose(const struct kill_control *ctl)
 {
 	int rc = 0;
 
-	if (ctl->numsig < 0) {
+	if (ctl->verbose)
+		printf(_("sending signal %d to pid %d\n"), ctl->numsig, ctl->pid);
+	if (ctl->do_pid) {
 		printf("%ld\n", (long) ctl->pid);
 		return 0;
 	}
