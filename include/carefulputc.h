@@ -1,11 +1,12 @@
 #ifndef UTIL_LINUX_CAREFUULPUTC_H
 #define UTIL_LINUX_CAREFUULPUTC_H
 
-/* putc() for use in write and wall (that sometimes are sgid tty) */
-/* Avoid control characters in our locale, and also ASCII control characters.
-   Note that the locale of the recipient is unknown. */
+/*
+ * A putc() for use in write and wall (that sometimes are sgid tty).
+ * It avoids control characters in our locale, and also ASCII control
+ * characters.   Note that the locale of the recipient is unknown.
+*/
 #include <stdio.h>
-#include <ctype.h>
 #include <string.h>
 #include <ctype.h>
 
