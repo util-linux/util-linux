@@ -23,6 +23,8 @@ ts_skip_nonroot
 ts_check_test_command "$TS_CMD_KILL"
 ts_check_test_command "$TS_HELPER_SIGRECEIVE"
 
+. "$TS_SELF/kill_functions.sh"
+
 HELPER_SYMLINK="$TS_CWD/$(mktemp -u XXXXXXXXXXXXXXX)"
 ln -s "$TS_HELPER_SIGRECEIVE" "$HELPER_SYMLINK"
 trap "rm -f $HELPER_SYMLINK" 0
@@ -30,21 +32,9 @@ trap "rm -f $HELPER_SYMLINK" 0
 "$HELPER_SYMLINK" -s "$TS_TESTUSER" >> "$TS_OUTPUT" 2>&1 &
 TEST_PID=$!
 
-# test_sigreceive needs time to start up
-for i in 0.01 0.1 1 1 1 1; do
-	awk 'BEGIN { retval=1 }
-	$1 ~ /^SigCgt/ {
-		lbyte = strtonum("0x" substr($2, 16, 16))
-		if (and(lbyte, 1)) {
-			retval=0
-		}
-	} END {
-		exit retval
-	}' /proc/$TEST_PID/status &&
-		up=1 &&
-		break
-	sleep $i
-done
+check_test_sigreceive $TEST_PID
+[ $? -eq 1 ] || echo "${HELPER_SYMLINK##*/} helper did not start" >> "$TS_OUTPUT"
+
 echo "test 1" >> "$TS_OUTPUT"
 "$TS_CMD_KILL" ${HELPER_SYMLINK##*/} >> "$TS_OUTPUT" 2>&1
 if [ $? -ne 1 ]; then

@@ -21,6 +21,8 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_KILL"
 ts_check_test_command "$TS_HELPER_SIGRECEIVE"
 
+. "$TS_SELF/kill_functions.sh"
+
 all_ok=true
 HELPER_SYMLINK="$TS_OUTDIR/$(mktemp -u XXXXXXXXXXXXXXX)"
 ln -s "$TS_HELPER_SIGRECEIVE" "$HELPER_SYMLINK"
@@ -39,25 +41,12 @@ for SIG in $($TS_CMD_KILL -L); do
 	if [ "x$SIG" = "xRTMAX" ]; then
 		SIG="$SIG-0"
 	fi
+
 	"$HELPER_SYMLINK" >> "$TS_OUTPUT" 2>&1 &
 	TEST_PID=$!
-	# test_sigreceive needs time to start up
-	up=0
-	for i in 0.01 0.1 1 1 1 1; do
-		awk 'BEGIN { retval=1 }
-		$1 ~ /^SigCgt/ {
-			lbyte = strtonum("0x" substr($2, 16, 16))
-			if (and(lbyte, 1)) {
-				retval=0
-			}
-		} END {
-			exit retval
-		}' /proc/$TEST_PID/status &&
-			up=1 &&
-			break
-		sleep $i
-	done
-	test $up = 0 && echo "$SIG sigreceive ${HELPER_SYMLINK##*/} helper did not start" >> "$TS_OUTPUT"
+	check_test_sigreceive $TEST_PID
+	[ $? -eq 1 ] || echo "${HELPER_SYMLINK##*/} helper did not start" >> "$TS_OUTPUT"
+
 	"$TS_CMD_KILL" -$SIG ${HELPER_SYMLINK##*/} >> "$TS_OUTPUT" 2>&1
 	wait $TEST_PID
 	if [ $? -ne $EXPECTED ]; then
