@@ -19,12 +19,8 @@
 # include <err.h>
 #endif
 
-#ifndef HAVE_USLEEP
-# include <time.h>
-#endif
-
 /*
- * Compiler specific stuff
+ * Compiler-specific stuff
  */
 #ifndef __GNUC_PREREQ
 # if defined __GNUC__ && defined __GNUC_MINOR__
@@ -70,9 +66,10 @@
 # endif
 #endif
 
-/* Force a compilation error if condition is true, but also produce a
+/*
+ * Force a compilation error if condition is true, but also produce a
  * result (of value 0 and type size_t), so the expression can be used
- * e.g. in a structure initializer (or where-ever else comma expressions
+ * e.g. in a structure initializer (or wherever else comma expressions
  * aren't permitted).
  */
 #define UL_BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:-!!(e); }))
@@ -254,9 +251,9 @@ static inline size_t get_hostname_max(void)
 }
 
 /*
- * The usleep function is marked obsolete in POSIX.1-2001 and removed in
- * POSIX.1-2008. This is replaced with nanosleep() that provides more
- * advantages (like no interaction with signals and other timer functions.
+ * The usleep function was marked obsolete in POSIX.1-2001 and was removed
+ * in POSIX.1-2008.  It was replaced with nanosleep() that provides more
+ * advantages (like no interaction with signals and other timer functions).
  */
 #include <time.h>
 
