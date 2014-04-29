@@ -54,7 +54,7 @@ Show users without a password.
 \fB\-r\fR, \fB\-\-raw\fR
 Raw output (no columnation).
 .TP
-\fB\-s\fR, \fB\-\-sys\-accs\fR[=\fIUID\fR]
+\fB\-s\fR, \fB\-\-sys\-accs\fR
 Show system accounts. These are by the default all accounts with UID below 1000 (non-inclusive), with the exception of either nobody or nfsnobody (UID 65534). The UID
 treshold can also be specified explicitly (necessary for some distributions that allocate UIDs
 starting from 100, 500 - or an entirely different value - rather than 1000).
@@ -62,7 +62,7 @@ starting from 100, 500 - or an entirely different value - rather than 1000).
 \fB\-t\fR, \fB\-\-sort\fR
 Sort by user name, rather than UID.
 .TP
-\fB\-u\fR, \fB\-\-user\-accs\fR[=\fIUID\fR]
+\fB\-u\fR, \fB\-\-user\-accs\fR
 Show user accounts. These are by the default all accounts with UID above 1000 (inclusive), with the exception of either nobody or nfsnobody (UID 65534). The UID
 treshold can also be specified explicitly (necessary for some distributions that allocate UIDs
 starting from 100, 500 - or an entirely different value - rather than 1000).
@@ -82,20 +82,20 @@ Display help information and exit.
 Display version information and exit.
 
 
-
-Note that switches -a and -x require root priviliges. Otherwise their fields will state <unknown> for each entry.
+Note that the default UID tresholds are read from /etc/login.defs.
+Note that switches -a and -x require root priviliges. Otherwise their fields will state "-" for each entry.
 .sp
-.SH COLORS
-Implicit coloring can be disabled as follows:
-.RS
+.\".SH COLORS
+.\"Implicit coloring can be disabled as follows:
+.\".RS
 
-.br
-.BI "touch /etc/terminal-colors.d/lslogins.disable"
-.br
-
-.RE
-For more details see
-.BR terminal-colors.d (5).
+.\".br
+.\".BI "touch /etc/terminal-colors.d/lslogins.disable"
+.\".br
+.\"
+.\".RE
+.\"For more details see
+.\".BR terminal-colors.d (5).
 .SH EXIT STATUS
 .TP
 0
