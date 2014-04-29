@@ -1,41 +1,41 @@
 Well-known options
 ------------------
 
-Following options are well-known, and they should not be used for any
-other purpose.
+The following options are well-known, and should not be used for any
+other purpose:
 
  -h, --help     display usage and exit
  -V, --version  display version and exit
 
-Rule of thumb with other options is that once they exist you may not
-change how they work, or remove them.
+The rule of thumb with other options is that once they exist, you may
+not change them, nor change how they work, nor remove them.
 
-Notice that `-?' is not expected to be synonym of --help, but an unknown
-options resulting to a usage print out due getopt failure.
+Notice that '-?' is not expected to be a synonym of '--help', but is an
+unknown option resulting in a usage print-out due to a getopt failure.
 
 
-How usage is supposed to look
------------------------------
+How a usage text is supposed to look
+------------------------------------
 
-The usage output begins with empty line followed by `Usage:' and synopsis
-beginning on the next line. Synopsis and all other lines which vary are
-indented by one space (0x40).
+The usage output begins with an empty line, followed by 'Usage:', and
+then the synopsis on the line after that.  The synopsis and option-
+description lines are all indented by one space (0x40).
 
-The synopsis line describes how to execute the command. Sometimes you may
-need multiple synopsis lines, this is documented separately under Synopsis
-title.
+The synopsis line describes how to compose the command.  Sometimes you
+may need multiple synopsis lines -- this is documented separately in the
+Synopsis section.
 
-Notations; Diamond brackets markup an argument. Anything optional is
-marked with square brackets, such as optional command arguments, or
-optional option arguments. In the later case `=' character in front of
-the option argument, because one has to use it. Square brackets with
-three dots inside mean unlimited repetition of previous.
+Notations.  Diamond brackets are used to mark an argument to be filled in.
+Square brackets are used to mark anything that is optional, such as optional
+command arguments, or optional option arguments.  In the later case the '='
+character is needed in front of the option argument, because one has to use
+it.  Three consecutive dots mean the unlimited repetition of the preceding.
 
-Short option are always written first followed by long option. Options are
-separated with comma and one space. Lonely short or long option do not
-affect where writing of the option begins.
+The short option is always written first, followed by the long option.  They
+are separated with a comma and one space.  Lonely short or long options do
+not affect where the writing of the option begins.
 
-Below, in between snips, is an example of how the usage output should
+Below, in between the snips, is an example of what the usage output should
 look like.
 
 -- snip
@@ -44,7 +44,6 @@ Usage:
  program [options] <file> [...]
 
 Options:
-
  -n, --no-argument       option does not use argument
  -o, --optional[=<arg>]  option argument is optional
  -r, --required <arg>    option requires an argument
@@ -54,7 +53,7 @@ Options:
                          use next line for description when needed
  -l, --long-explanation  an example of very verbose, and chatty option
                            description on two, or multiple lines, where the
-                           consecutive lines are intended by two spaces
+                           continuation lines are indented by two spaces
  -f, --foobar            next option description resets indent
 
  -h, --help     display this help and exit
@@ -63,95 +62,94 @@ Options:
 For more details see program(1).
 -- snip
 
-Notice that there are usage function definitions in c.h include file
-which you must use. Location of example is mentioned at the end of this
-file.
+Note that there are usage-function definitions in the 'c.h' include file
+which you must use.  The location of an example file is mentioned at the
+end of this text.
 
 
-Option description
-------------------
+Option descriptions
+-------------------
 
-Option description should not exceed width of 80 characters. If you need
-longer description use multiple lines and indentation.
+An option description should not exceed the width of 80 characters.  If
+you need a longer description, use multiple lines and indentation.
 
-The description begins from the point of longest option plus two spaces.
-In case adding a new option would cause a description re-indentation
-need it either has to be done, or the new option should begin description
-from next line. Usually the later is better. The --help and --version
-will not follow this rule, since they are defined as constants to ease
-translation work.
+The description text begins from the point of the longest option plus two
+spaces.  In case adding a new option would necessitate a re-indentation of
+the descriptions, it either has to be done, or the new option should begin
+its description on the next line.  Usually the later is better.  The --help
+and --version options do not follow this rule, since they are defined as
+constants to ease translation work.
 
-The argument, e.g. `arg', can be better. For example if an option is
-expecting number as argument a `num' is suitable argument description.
+An argument is preferably worded appropriately.  For example, if an option
+expects a number as argument, '<num>' is a suitable argument indicator.
 
-Order of the options has no special meaning, with a exception of --help and
---version which are expected to be last ones of the list.
+The order of the options has no special meaning, with the exception of
+--help and --version which are expected to be last ones in the list.
 
-Last line of the usage print out is either empty, or a message informing
-about manual page. For example: `For more details see example(1).' In
-between man page message and options there is empty line.
+The last line of the usage text is either empty, or a message informing
+about the manual page.  For example: 'For more details see example(1).'.
+Between the options and the man-page message there is an empty line.
 
 
 Usage function
 --------------
 
-Standard usage function takes either stderr or stdout as an argument. The
-argument will determine whether the program will exit with error or
-success. Usage function will never return.
+The standard usage() function takes either stderr or stdout as an argument.
+The argument will determine whether the program will exit with an error or
+with success.  The usage() function will never return.
 
-In the code all strings with options have to start at the same position. See
-bellow what that means.
+In the code all the strings with options have to start at the same position.
+See here what this means:
 
 	fprintf(out, _(" -x[=<foo>]  default foo is %s"), x);
 	fputs(       _(" -y          some text"), out);
 
-Be nice to translators. One gettext entry should be one option, no more,
-no less. For example:
+Be nice to translators.  One gettext entry should be one option, no more,
+no less.  For example:
 
 	fputs(_(" --you-there  be nice\n"), out);
 	fputs(_(" -2 <whom>    translators\n"), out);
-	fputs(_(" -t, --hey    are doing job that we probably cannot,"
+	fputs(_(" -t, --hey    are doing a job that we probably cannot,"
 		"                or how is your klingon?\n"), out);
 
-When existing usage output is changed, and it happens to be one big
-output, split it to chunks size of an option.  The extra work for
-translators will pay off at the time of the next change when they do not
-need to search from fuzzy markup what has changed, where, how, and was it
-the only change.
+When existing usage output is changed, and it happens to be one big text,
+split it into chunks the size of one option.  The extra work this will
+entail for translators will pay off later, at the time of the next change,
+when they will not need to search in the long fuzzy text what was changed,
+where, how, and whether it was the only change.
 
 Synopsis
 --------
 
-You may need to use multiple synopsis lines to tell that a command does
-fundamentally different things depending on options and/or arguments. For
-example ionice either changes priority of a running command, or executes
-a program with a defined priority. Therefore it is reasonable to have two
-synopsis lines.
+You may need to use multiple synopsis lines to show that a command does
+fundamentally different things depending on options and/or arguments.
+For example, ionice either changes the priority of a running command, or
+executes a program with a defined priority.  Therefore it is reasonable
+to have two synopsis lines:
 
- ionice [options] -p <pid> [...]
- ionice [options] <command> [<args>] [...]
+ ionice [options] -p <pid> ...
+ ionice [options] <command> [<arg> ...]
 
-Notice that the synopsis is not meant to be repetition of options segment.
-The fundamental difference in execution is a bit difficult to define
-other than usually command author, package maintainer or patch submitter
-will know when it should be done that way.
+Note that the synopsis is not meant to be a repetition of the options
+segment.  The fundamental difference in execution is a bit difficult to
+define other than that usually the command author, package maintainer
+or patch submitter will know when it should be done that way.
 
 
 Legacy options
 --------------
 
-Some commands use peculiar options and arguments. These are supported,
-but such will not be accepted in future. See list bellow for a hint what
-are meant this.
+Some commands use peculiar options and arguments.  These will continue
+to be supported, but anything like them will not be accepted as new
+additions.  A short list of examples:
 
-- Other than `-' used to define an option. See `+' for `more'
-  commands.
-- Option string used as an option argument. See `more' command and `-num'.
-- Short long option. See `setterm'.
+- Other characters than '-' to start an option.  See '+' in 'more'.
+- Using a number as an option argument.  See '-<number>' in 'more'.
+- Long options that start with a single '-'.  See 'setterm'.
 
 
-Example
--------
+Example file
+------------
 
-Command disk-utils/delpart.c is a minimal example how to do write usage
-function, setup option parsing, version printing and so on.
+The file disk-utils/delpart.c is a minimal example of how to write
+a usage function, set up option parsing, version printing and so on.
