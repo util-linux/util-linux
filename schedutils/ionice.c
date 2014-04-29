@@ -100,28 +100,29 @@ static void ioprio_setid(int which, int ioclass, int data, int who)
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out,
-	       _("\n"
-		 "%1$s - sets or gets process io scheduling class and priority.\n"
-		 "\n"
-		 "Usage:\n"
-		 "  %1$s [OPTION] -p PID [PID...]\n"
-		 "  %1$s [OPTION] -P PGID [PGID...]\n"
-		 "  %1$s [OPTION] -u UID [UID...]\n"
-		 "  %1$s [OPTION] COMMAND\n"
-		 "\n"
-		 "Options:\n"
-		 "  -c, --class <class>   scheduling class name or number\n"
-		 "                           0: none, 1: realtime, 2: best-effort, 3: idle\n"
-		 "  -n, --classdata <num> scheduling class data\n"
-		 "                           0-7 for realtime and best-effort classes\n"
-		 "  -p, --pid <pid>       view or modify already running process\n"
-		 "  -P, --pgid <pgrp>     view or modify already running process group\n"
-		 "  -t, --ignore          ignore failures\n"
-		 "  -u, --uid <uid>       view or modify already running processes owned by a user\n"
-		 "  -V, --version         output version information and exit\n"
-		 "  -h, --help            display this help and exit\n\n"),
-		program_invocation_short_name);
+	fputs(_("\nSets or gets the IO scheduling class and priority of processes.\n"), out);
+
+	fputs(USAGE_HEADER, out);
+	fprintf(out,  _(" %1$s [options] -p <pid>...\n"
+			" %1$s [options] -P <pgid>...\n"
+			" %1$s [options] -u <uid>...\n"
+			" %1$s [options] <command>\n"), program_invocation_short_name);
+
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -c, --class <class>    name or number of scheduling class,\n"
+		"                          0: none, 1: realtime, 2: best-effort, 3: idle\n"), out);
+	fputs(_(" -n, --classdata <num>  priority (0..7) in the specified scheduling class,\n"
+		"                          only for the realtime and best-effort classes\n"), out);
+	fputs(_(" -p, --pid <pid>...     act on these already running processes\n"), out);
+	fputs(_(" -P, --pgid <pgrp>...   act on already running processes in these groups\n"), out);
+	fputs(_(" -t, --ignore           ignore failures\n"), out);
+	fputs(_(" -u, --uid <uid>...     act on already running processes owned by these users\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+
+	fprintf(out, USAGE_MAN_TAIL("ionice(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -171,7 +172,7 @@ int main(int argc, char **argv)
 		case 'p':
 			if (who)
 				errx(EXIT_FAILURE,
-				     _("can handle one of pid, pgid or uid at once"));
+				     _("can handle only one of pid, pgid or uid at once"));
 			invalid_msg = _("invalid PID argument");
 			which = strtos32_or_err(optarg, invalid_msg);
 			who = IOPRIO_WHO_PROCESS;
@@ -179,7 +180,7 @@ int main(int argc, char **argv)
 		case 'P':
 			if (who)
 				errx(EXIT_FAILURE,
-				     _("can handle one of pid, pgid or uid at once"));
+				     _("can handle only one of pid, pgid or uid at once"));
 			invalid_msg = _("invalid PGID argument");
 			which = strtos32_or_err(optarg, invalid_msg);
 			who = IOPRIO_WHO_PGRP;
@@ -187,7 +188,7 @@ int main(int argc, char **argv)
 		case 'u':
 			if (who)
 				errx(EXIT_FAILURE,
-				     _("can handle one of pid, pgid or uid at once"));
+				     _("can handle only one of pid, pgid or uid at once"));
 			invalid_msg = _("invalid UID argument");
 			which = strtos32_or_err(optarg, invalid_msg);
 			who = IOPRIO_WHO_USER;
@@ -196,8 +197,7 @@ int main(int argc, char **argv)
 			tolerant = 1;
 			break;
 		case 'V':
-			printf(_("%s from %s\n"),
-				program_invocation_short_name, PACKAGE_STRING);
+			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
 			usage(stdout);
