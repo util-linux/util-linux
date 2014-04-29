@@ -188,6 +188,7 @@ int main(int argc, char **argv)
 			if (who)
 				errx(EXIT_FAILURE,
 				     _("can handle one of pid, pgid or uid at once"));
+			invalid_msg = _("invalid UID argument");
 			which = strtos32_or_err(optarg, invalid_msg);
 			who = IOPRIO_WHO_USER;
 			break;
