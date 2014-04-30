@@ -520,7 +520,8 @@ static int get_sgroups(int *len, gid_t **list, struct passwd *pwd)
 	}
 	(*list)[n] = (*list)[--(*len)];
 
-	*list = xrealloc(*list, *len * sizeof(gid_t));
+	/* probably too costly to do for sizeof(gid_t) worth of memory */
+	//*list = xrealloc(*list, *len * sizeof(gid_t));
 
 	return 0;
 }
