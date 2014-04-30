@@ -50,8 +50,8 @@
 #define _PATH_SECURE		"/etc/securesingle"
 #define _PATH_USERTTY           "/etc/usertty"
 
-#define _PATH_TERMCOLORS_DIR	"/etc/terminal-colors.d/"
-#define _PATH_TERMCOLORS_DISABLE _PATH_TERMCOLORS_DIR "disable"
+#define _PATH_TERMCOLORS_DIRNAME "terminal-colors.d"
+#define _PATH_TERMCOLORS_DIR	"/etc/" _PATH_TERMCOLORS_DIRNAME
 
 /* used in login-utils/shutdown.c */
 
