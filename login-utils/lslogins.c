@@ -1210,7 +1210,7 @@ int main(int argc, char *argv[])
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'c','e','n','r','z' },
-		{ 'i', OPT_TIME_FMT, OPT_FULLT },
+		{ 'i', OPT_FULLT, OPT_TIME_FMT  },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
