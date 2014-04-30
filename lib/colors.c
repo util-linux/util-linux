@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Ondrej Oprala <ooprala@redhat.com>
+ * Copyright (C) 2014 Karel Zak <kzak@redhat.com>
  *
  * This file may be distributed under the terms of the
  * GNU Lesser General Public License.
@@ -14,6 +15,9 @@
 #include "xalloc.h"
 #include "pathnames.h"
 
+/*
+ * terminal-colors.d file types
+ */
 enum {
 	UL_COLORFILE_DISABLE,		/* .disable */
 	UL_COLORFILE_ENABLE,		/* .enable */
@@ -22,6 +26,20 @@ enum {
 	__UL_COLORFILE_COUNT
 };
 
+/*
+ * Global colors control struct
+ *
+ * The terminal-colors.d/ evaluation is based on "scores":
+ *
+ *  filename                    score
+ *  ---------------------------------------
+ *  type			1
+ *  @termname.type		10 + 1
+ *  utilname.type		20 + 1
+ *  utilname@termname.type	20 + 10 + 1
+ *
+ * the match with higher score wins. The score is per type.
+ */
 struct ul_color_ctl {
 	const char	*utilname;	/* util name */
 	const char	*termname;	/* terminal name ($TERM) */
@@ -29,13 +47,18 @@ struct ul_color_ctl {
 	char		*scheme;	/* path to scheme */
 
 	int		mode;		/* UL_COLORMODE_* */
-	int		use_colors;	/* based on mode and scores[] */
-	int		scores[__UL_COLORFILE_COUNT];
+	unsigned int	has_colors : 1,	/* based on mode and scores[] */
+			disabled   : 1, /* disable colors */
+			configured : 1; /* terminal-colors.d parsed */
+
+	int		scores[__UL_COLORFILE_COUNT];	/* the best match */
 };
 
 static struct ul_color_ctl ul_colors;
 
-
+/*
+ * Reset control struct (note that we don't allocate the struct)
+ */
 static void colors_reset(struct ul_color_ctl *cc)
 {
 	if (!cc)
@@ -79,6 +102,9 @@ static void colors_debug(struct ul_color_ctl *cc)
 
 #endif
 
+/*
+ * Parses [[<utilname>][@<termname>].]<type>
+ */
 static int filename_to_tokens(const char *str,
 			      const char **name, size_t *namesz,
 			      const char **term, size_t *termsz,
@@ -123,16 +149,10 @@ static int filename_to_tokens(const char *str,
 	return 0;
 }
 
-
 /*
- * Checks for:
- *
- *  filename                    score
- *  ---------------------------------
- *  type			1
- *  @termname.type		10 + 1
- *  utilname.type		20 + 1
- *  utilname@termname.type	20 + 10 + 1
+ * Scans @dirname and select the best matches for UL_COLORFILE_* types.
+ * The result is stored to cc->scores. The path to the best "scheme"
+ * file is stored to cc->scheme.
  */
 static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
 {
@@ -205,11 +225,15 @@ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
 	return rc;
 }
 
+/* atexit() wrapper */
 static void colors_deinit(void)
 {
 	colors_reset(&ul_colors);
 }
 
+/*
+ * Returns path to $XDG_CONFIG_HOME/terminal-colors.d
+ */
 static char *colors_get_homedir(char *buf, size_t bufsz)
 {
 	char *p = getenv("XDG_CONFIG_HOME");
@@ -228,6 +252,27 @@ static char *colors_get_homedir(char *buf, size_t bufsz)
 	return NULL;
 }
 
+static int colors_read_configuration(struct ul_color_ctl *cc)
+{
+	int rc = -ENOENT;
+	char *dirname, buf[PATH_MAX];
+
+	cc->termname = getenv("TERM");
+
+	dirname = colors_get_homedir(buf, sizeof(buf));
+	if (dirname)
+		rc = colors_readdir(cc, dirname);		/* ~/.config */
+	if (rc == -EPERM || rc == -EACCES || rc == -ENOENT)
+		rc = colors_readdir(cc, _PATH_TERMCOLORS_DIR);	/* /etc */
+
+	cc->configured = 1;
+	return rc;
+}
+
+/*
+ * Initialize private color control struct, @mode is UL_COLORMODE_*
+ * and @name is util argv[0]
+ */
 int colors_init(int mode, const char *name)
 {
 	int atty = -1;
@@ -237,17 +282,7 @@ int colors_init(int mode, const char *name)
 	cc->mode = mode;
 
 	if (mode == UL_COLORMODE_UNDEF && (atty = isatty(STDOUT_FILENO))) {
-		int rc = -ENOENT;
-		char *dirname, buf[PATH_MAX];
-
-		cc->termname = getenv("TERM");
-
-		dirname = colors_get_homedir(buf, sizeof(buf));
-		if (dirname)
-			rc = colors_readdir(cc, dirname);		/* ~/.config */
-		if (rc == -EPERM || rc == -EACCES || rc == -ENOENT)
-			rc = colors_readdir(cc, _PATH_TERMCOLORS_DIR);	/* /etc */
-
+		int rc = colors_read_configuration(cc);
 		if (rc)
 			cc->mode = UL_COLORMODE_AUTO;
 		else {
@@ -264,32 +299,42 @@ int colors_init(int mode, const char *name)
 
 	switch (cc->mode) {
 	case UL_COLORMODE_AUTO:
-		cc->use_colors = atty == -1 ? isatty(STDOUT_FILENO) : atty;
+		cc->has_colors = atty == -1 ? isatty(STDOUT_FILENO) : atty;
 		break;
 	case UL_COLORMODE_ALWAYS:
-		cc->use_colors = 1;
+		cc->has_colors = 1;
 		break;
 	case UL_COLORMODE_NEVER:
 	default:
-		cc->use_colors = 0;
+		cc->has_colors = 0;
 	}
-	return cc->use_colors;
+	return cc->has_colors;
+}
+
+void colors_off(void)
+{
+	ul_colors.disabled = 1;
+}
+
+void colors_on(void)
+{
+	ul_colors.disabled = 0;
 }
 
 int colors_wanted(void)
 {
-	return ul_colors.use_colors;
+	return !ul_colors.disabled && ul_colors.has_colors;
 }
 
 void color_fenable(const char *color_scheme, FILE *f)
 {
-	if (ul_colors.use_colors && color_scheme)
+	if (!ul_colors.disabled && ul_colors.has_colors && color_scheme)
 		fputs(color_scheme, f);
 }
 
 void color_fdisable(FILE *f)
 {
-	if (ul_colors.use_colors)
+	if (!ul_colors.disabled && ul_colors.has_colors)
 		fputs(UL_COLOR_RESET, f);
 }
 

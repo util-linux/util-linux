@@ -727,7 +727,7 @@ static int ui_init(struct cfdisk *cf __attribute__((__unused__)))
 			init_pair(i, color_pairs[i][0], color_pairs[i][1]);
 	}
 #else
-	colors_init(UL_COLORMODE_NEVER, "cfdisk");
+	colors_off();
 #endif
 
 	cbreak();

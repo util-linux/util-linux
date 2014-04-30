@@ -57,6 +57,11 @@ extern int colors_init(int mode, const char *util_name);
 /* Returns 1 or 0 */
 extern int colors_wanted(void);
 
+/* temporary enable/disable colors */
+extern void colors_off(void);
+extern void colors_on(void);
+
+
 /* Set the color to CLR_SCHEME */
 extern void color_fenable(const char *clr_scheme, FILE *f);
 
@@ -72,6 +77,7 @@ static inline void color_disable(void)
 {
 	color_fdisable(stdout);
 }
+
 
 extern const char *colorscheme_from_string(const char *str);
 
