@@ -89,14 +89,14 @@ static char ***global_argv;
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fprintf(out, USAGE_HEADER);
-	fprintf(out, _(" %s [options] <tty> [...]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] <tty>...\n"), program_invocation_short_name);
 	fprintf(out, USAGE_OPTIONS);
 	fprintf(out, _(" -s, --set-threshold <num>          set interruption threshold value\n"));
-	fprintf(out, _(" -g, --get-threshold                display current threshold value\n"));
-	fprintf(out, _(" -S, --set-default-threshold <num>  set default threshold value\n"));
-	fprintf(out, _(" -t, --set-flush <num>              set flush timeout to value\n"));
-	fprintf(out, _(" -G, --get-flush                    display default flush timeout value\n"));
-	fprintf(out, _(" -T, --set-default-flush <num>      set the default flush timeout to value\n"));
+	fprintf(out, _(" -g, --get-threshold                display the current values\n"));
+	fprintf(out, _(" -S, --set-default-threshold <num>  set the default threshold value\n"));
+	fprintf(out, _(" -t, --set-flush <num>              set the flush timeout\n"));
+	fprintf(out, _(" -G, --get-flush                    display the default values\n"));
+	fprintf(out, _(" -T, --set-default-flush <num>      set the default flush timeout\n"));
 	fprintf(out, _(" -q, --stats                        display statistics about the tty\n"));
 	fprintf(out, _(" -i, --interval <seconds>           gather statistics every <seconds> interval\n"));
 	fprintf(out, USAGE_SEPARATOR);

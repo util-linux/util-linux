@@ -303,7 +303,7 @@ static int arg_to_signum(char *arg, int maskbit)
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] <pid|name> [...]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] <pid|name>...\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all              do not restrict the name-to-pid conversion to processes\n"

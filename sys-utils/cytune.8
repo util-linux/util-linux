@@ -29,7 +29,7 @@
 cytune \- tune driver parameters for Cyclades-Z multiport serial card
 .SH SYNOPSIS
 .B cytune
-[options] tty [...]
+.RI [options] tty ...
 .SH DESCRIPTION
 .B cytune
 queries and modifies the interruption threshold for the Cyclades driver.
@@ -136,8 +136,8 @@ next open.  Only values between 0 and 255, inclusive, are permitted.  Setting
 to zero forces the default, currently 0x20 (160ms), but soon to be 0x02
 (10ms).  Units are 5 ms.
 .TP
-\fB\-g\fR, \fB\-\-get\-threshold\fR
-Get the current threshold and timeout.
+\fB\-g\fR, \fB\-\-get-threshold\fR
+Get the current threshold and flush timeout values.
 .TP
 \fB\-S\fR, \fB\-\-set\-default\-threshold\fR \fIvalue\fR
 Set the default threshold to
@@ -157,7 +157,7 @@ is next opened, this value will be used instead of the default.  If
 is zero, then the value will default to 0x20 (160ms), soon to be 0x02
 (10ms).
 .TP
-\fB\-G\fR, \fB\-\-get\-glush\fR
+\fB\-G\fR, \fB\-\-get-flush\fR
 Get the default threshold and flush timeout values.
 .TP
 \fB\-q\fR, \fB\-\-stats\fR

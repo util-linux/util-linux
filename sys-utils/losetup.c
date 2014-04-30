@@ -372,18 +372,18 @@ static void usage(FILE *out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all                     list all used devices\n"), out);
-	fputs(_(" -d, --detach <loopdev> [...]  detach one or more devices\n"), out);
+	fputs(_(" -d, --detach <loopdev>...     detach one or more devices\n"), out);
 	fputs(_(" -D, --detach-all              detach all used devices\n"), out);
 	fputs(_(" -f, --find                    find first unused device\n"), out);
-	fputs(_(" -c, --set-capacity <loopdev>  resize device\n"), out);
+	fputs(_(" -c, --set-capacity <loopdev>  resize the device\n"), out);
 	fputs(_(" -j, --associated <file>       list all devices associated with <file>\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 
 	fputs(_(" -o, --offset <num>            start at offset <num> into file\n"), out);
-	fputs(_("     --sizelimit <num>         device limited to <num> bytes of the file\n"), out);
-	fputs(_(" -P, --partscan                create partitioned loop device\n"), out);
-	fputs(_(" -r, --read-only               setup read-only loop device\n"), out);
+	fputs(_("     --sizelimit <num>         device is limited to <num> bytes of the file\n"), out);
+	fputs(_(" -P, --partscan                create a partitioned loop device\n"), out);
+	fputs(_(" -r, --read-only               set up a read-only loop device\n"), out);
 	fputs(_("     --show                    print device name after setup (with -f)\n"), out);
 	fputs(_(" -v, --verbose                 verbose mode\n"), out);
 

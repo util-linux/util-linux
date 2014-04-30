@@ -2346,7 +2346,7 @@ static void usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		_(" %s [options] <device> [...]\n"),  program_invocation_short_name);
+		_(" %s [options] <device>...\n"),  program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -s, --show-size           list size of a partition\n"
@@ -2378,8 +2378,8 @@ static void usage(FILE * out)
 		" -L, --Linux               do not complain about things irrelevant for Linux\n"), out);
 	fputs(_(" -g, --show-geometry       print the kernel's idea of the geometry\n"
 		" -G, --show-pt-geometry    print geometry guessed from the partition table\n"), out);
-	fputs(_(" -A, --activate[=<device>] activate bootable flag\n"
-		" -U, --unhide[=<dev>]      set partition unhidden\n"
+	fputs(_(" -A, --activate[=<device>] activate the bootable flag\n"
+		" -U, --unhide[=<device>]   set partition as unhidden\n"
 		" -x, --show-extended       also list extended partitions in the output,\n"
 		"                             or expect descriptors for them in the input\n"), out);
 	fputs(_("     --leave-last          do not allocate the last cylinder\n"
