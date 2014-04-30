@@ -130,6 +130,7 @@ struct lslogins_user {
  * time modes
  * */
 enum {
+	TIME_INVALID = 0,
 	TIME_SHORT_RELATIVE,
 	TIME_SHORT,
 	TIME_FULL,
@@ -285,6 +286,8 @@ static char *make_time(int mode, time_t time)
 		case TIME_ISO:
 			strftime(buf, 32, "%Y-%m-%dT%H:%M:%S%z", &tm);
 			break;
+		default:
+			exit(1);
 	}
 	return xstrdup(buf);
 }
@@ -1143,6 +1146,15 @@ static void free_user(void *f)
 #endif
 	free(u);
 }
+struct lslogins_timefmt {
+	const char *name;
+	int val;
+};
+static struct lslogins_timefmt timefmts[] = {
+	{ "short", TIME_SHORT_RELATIVE },
+	{ "full", TIME_FULL },
+	{ "iso", TIME_ISO },
+};
 
 int main(int argc, char *argv[])
 {
@@ -1159,6 +1171,7 @@ int main(int argc, char *argv[])
 		OPT_BTMP,
 		OPT_NOTRUNC,
 		OPT_FULLT,
+		OPT_TIME_FMT,
 	};
 
 	static const struct option longopts[] = {
@@ -1179,6 +1192,7 @@ int main(int argc, char *argv[])
 		{ "raw",            no_argument,	0, 'r' },
 		{ "system-accs",    no_argument,	0, 's' },
 		{ "sort-by-name",   no_argument,	0, 't' },
+		{ "time-format",    required_argument,	0, OPT_TIME_FMT },
 		{ "user-accs",      no_argument,	0, 'u' },
 		{ "version",        no_argument,	0, OPT_VER },
 		{ "extra",          no_argument,	0, 'x' },
@@ -1196,6 +1210,7 @@ int main(int argc, char *argv[])
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'c','e','n','r','z' },
+		{ 'i', OPT_TIME_FMT, OPT_FULLT },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -1206,6 +1221,7 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	ctl->cmp_fn = cmp_uid;
+	ctl->time_mode = TIME_SHORT_RELATIVE;
 
 	while ((c = getopt_long(argc, argv, "acefg:hil:mno:rstuxzZ",
 				longopts, NULL)) != -1) {
@@ -1295,6 +1311,20 @@ int main(int argc, char *argv[])
 			case OPT_FULLT:
 				ctl->time_mode = TIME_FULL;
 				break;
+			case OPT_TIME_FMT:
+				{
+					size_t i;
+
+					for (i = 0; i < ARRAY_SIZE(timefmts); i++) {
+						if (strcmp(timefmts[i].name, optarg) == 0) {
+							ctl->time_mode = timefmts[i].val;
+							break;
+						}
+					}
+					if (ctl->time_mode == TIME_INVALID)
+						usage(stderr);
+				}
+				break;
 			case 'Z':
 #ifdef HAVE_LIBSELINUX
 				lslogins_flag |= F_SELINUX;
@@ -1307,6 +1337,7 @@ int main(int argc, char *argv[])
 				usage(stderr);
 		}
 	}
+
 	if (argc - optind == 1) {
 		if (strchr(argv[optind], ','))
 			err(EXIT_FAILURE, "%s", "Only one user may be specified. Use -l for multiple users");
