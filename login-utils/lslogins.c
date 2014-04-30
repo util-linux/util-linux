@@ -105,6 +105,7 @@ struct lslogins_user {
 
 	char *pwd_ctime;
 	char *pwd_warn;
+	char *pwd_expire;
 	char *pwd_ctime_min;
 	char *pwd_ctime_max;
 
@@ -124,6 +125,16 @@ struct lslogins_user {
 	int   hushed;
 
 };
+
+/*
+ * time modes
+ * */
+enum {
+	TIME_SHORT_RELATIVE,
+	TIME_SHORT,
+	TIME_FULL,
+};
+
 /*
  * flags
  */
@@ -165,6 +176,7 @@ enum {
 	COL_PWD_CTIME,
 	COL_PWD_CTIME_MIN,
 	COL_PWD_CTIME_MAX,
+	COL_PWD_EXPIR,
 	COL_SELINUX,
 };
 
@@ -176,7 +188,7 @@ static struct lslogins_coldesc coldescs[] =
 	[COL_NOPASSWD]		= { "NOPASSWD",		N_("account has a password?"), "No password", 1 },
 	[COL_NOLOGIN]		= { "NOLOGIN",		N_("account has a password?"), "No login", 1 },
 	[COL_LOCKED]		= { "LOCKED",		N_("account has a password?"), "Locked", 1 },
-	[COL_PGRP]		= { "GROUPS",		N_("primary group name"), "Primary group", 0.2 },
+	[COL_PGRP]		= { "GROUP",		N_("primary group name"), "Primary group", 0.2 },
 	[COL_PGID]		= { "GID",		N_("primary group GID"), "GID", 0.05, SCOLS_FL_RIGHT },
 	[COL_SGRPS]		= { "SUPP-GROUPS",	N_("secondary group names and GIDs"), "Secondary groups", 0.5 },
 	[COL_HOME]		= { "HOMEDIR",		N_("home directory"), "Home directory", 0.3 },
@@ -189,6 +201,7 @@ static struct lslogins_coldesc coldescs[] =
 	[COL_FAILED_TTY]	= { "FAILED-TTY",	N_("where did the login fail?"), "Failed login terminal", 0.05 },
 	[COL_HUSH_STATUS]	= { "HUSHED",		N_("User's hush settings"), "Hushed", 1 },
 	[COL_PWD_WARN]		= { "PWD-WARN",		N_("password warn interval"), "Days to passwd warning", 24 },
+	[COL_PWD_EXPIR]		= { "PWD-EXPIR",	N_("password expiration date"), "Password expiration", 24 },
 	[COL_PWD_CTIME]		= { "PWD-CHANGE",	N_("date of last password change"), "Password changed", 24 },
 	[COL_PWD_CTIME_MIN]	= { "PWD-MIN",		N_("number of days required between changes"), "Minimal change time", 24 },
 	[COL_PWD_CTIME_MAX]	= { "PWD-MAX",		N_("max number of days a password may remain unchanged"), "Maximal change time", 24 },
@@ -216,6 +229,7 @@ struct lslogins_control {
 	size_t ulsiz;
 
 	int sel_enabled;
+	unsigned int time_mode;
 };
 /* these have to remain global since there's no other
  * reasonable way to pass them for each call of fill_table()
@@ -223,6 +237,13 @@ struct lslogins_control {
 static struct libscols_table *tb;
 static int columns[ARRAY_SIZE(coldescs)];
 static int ncolumns;
+
+static int date_is_today(time_t t)
+{
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	return t / 86400 == tv.tv_sec / 86400;
+}
 
 static int
 column_name_to_id(const char *name, size_t namesz)
@@ -239,21 +260,29 @@ column_name_to_id(const char *name, size_t namesz)
 	warnx(_("unknown column: %s"), name);
 	return -1;
 }
-
-static char *make_time(struct tm *tm)
+static char *make_time(int mode, time_t time)
 {
-	char *t, *s;
+	char *s;
+	struct tm tm;
+	char buf[32] = {0};
 
-	if (!tm)
-		return NULL;
+	localtime_r(&time, &tm);
 
-	s = asctime(tm);
-	if (!s)
-		return NULL;
-
-	if (*(t = s + strlen(s) - 1) == '\n')
-		*t = '\0';
-	return xstrdup(s);
+	switch(mode) {
+		case TIME_FULL:
+			asctime_r(&tm, buf);
+			if (*(s = buf + strlen(buf) - 1) == '\n')
+				*s = '\0';
+			break;
+		case TIME_SHORT_RELATIVE:
+			if (date_is_today(time))
+				strftime(buf, 32, "%H:%M:%S", &tm);
+			else /*fallthrough*/
+		case TIME_SHORT:
+			strftime(buf, 32, "%a %b %d %Y", &tm);
+			break;
+	}
+	return xstrdup(buf);
 }
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
@@ -268,12 +297,13 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -c, --colon-separate     Display data in a format similar to /etc/passwd\n"), out);
 	fputs(_(" -e, --export             Display in an export-able output format\n"), out);
 	fputs(_(" -f, --failed             Display data about the last users' failed logins\n"), out);
+	fputs(_(" -fulltimes               Show dates in a long format\n"), out);
 	fputs(_(" -g, --groups=<groups>    Display users belonging to a group in GROUPS\n"), out);
 	fputs(_(" -l, --logins=<logins>    Display only users from LOGINS\n"), out);
 	fputs(_(" --last                   Show info about the users' last login sessions\n"), out);
 	fputs(_(" -m, --supp-groups        Display supplementary groups as well\n"), out);
 	fputs(_(" -n, --newline            Display each piece of information on a new line\n"), out);
-	fputs(_(" --notrunc                Don't truncate output\n"), out);
+	fputs(_(" --notruncate             Don't truncate output\n"), out);
 	fputs(_(" -o, --output[=<list>]    Define the columns to output\n"), out);
 	fputs(_(" -r, --raw                Display the raw table\n"), out);
 	fputs(_(" -s, --system-accs        Display system accounts\n"), out);
@@ -349,7 +379,7 @@ static struct lslogins_sgroups *build_sgroups_list(int len, gid_t *list, int *sl
 	}
 
 	/* space for a pair of parentheses for each gname + (n - 1) commas in between */
-	slen += 3 * n - 1;
+	*slen += 3 * n - 1;
 
 	free(buf);
 	free(sgrps->next);
@@ -486,12 +516,14 @@ static int get_sgroups(int *len, gid_t **list, struct passwd *pwd)
 	}
 	(*list)[n] = (*list)[--(*len)];
 
-	safelist = xrealloc(*list, *len * sizeof(gid_t));
+	*list = xrealloc(*list, *len * sizeof(gid_t));
+#if 0
 	if (!safelist && *len) {
 		free(*list);
 		return -1;
 	}
 	*list = safelist;
+#endif
 
 	return 0;
 }
@@ -505,7 +537,6 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	struct utmp *user_wtmp = NULL, *user_btmp = NULL;
 	int n = 0;
 	time_t time;
-	struct tm tm;
 	uid_t uid;
 	errno = 0;
 
@@ -559,6 +590,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	else {
 		/* we want these dates in seconds */
 		shadow->sp_lstchg *= 86400;
+		shadow->sp_expire *= 86400;
 	}
 
 	while (n < ncolumns) {
@@ -601,8 +633,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			case COL_LAST_LOGIN:
 				if (user_wtmp) {
 					time = user_wtmp->ut_tv.tv_sec;
-					localtime_r(&time, &tm);
-					user->last_login = make_time(&tm);
+					user->last_login = make_time(ctl->time_mode, time);
 				}
 				else
 					user->last_login = xstrdup(status[2]);
@@ -622,8 +653,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			case COL_FAILED_LOGIN:
 				if (user_btmp) {
 					time = user_btmp->ut_tv.tv_sec;
-					localtime_r(&time, &tm);
-					user->failed_login = make_time(&tm);
+					user->failed_login = make_time(ctl->time_mode, time);
 				}
 				else
 					user->failed_login = xstrdup(status[2]);
@@ -662,23 +692,23 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 					user->locked = 2;
 				break;
 			case COL_PWD_WARN:
-				if (shadow && shadow->sp_warn!= -1) {
+				if (shadow && shadow->sp_warn >= 0) {
 					xasprintf(&user->pwd_warn, "%ld", shadow->sp_warn);
 				}
 				else
 					user->pwd_warn = xstrdup(status[2]);
 				break;
+			case COL_PWD_EXPIR:
+				if (shadow && shadow->sp_expire >= 0)
+					user->pwd_expire = make_time(TIME_SHORT, shadow->sp_expire);
+				else
+					user->pwd_expire = xstrdup(status[2]);
+				break;
 			case COL_PWD_CTIME:
 				/* sp_lstchg is specified in days, showing hours (especially in non-GMT
 				 * timezones) would only serve to confuse */
-				if (shadow) {
-					const int date_len = 16;
-
-					user->pwd_ctime = xcalloc(1, sizeof(char) * date_len);
-
-					localtime_r(&shadow->sp_lstchg, &tm);
-					strftime(user->pwd_ctime, date_len, "%a %b %d %Y", &tm);
-				}
+				if (shadow)
+					user->pwd_ctime = make_time(TIME_SHORT, shadow->sp_lstchg);
 				else
 					user->pwd_ctime = xstrdup(status[2]);
 				break;
@@ -1020,6 +1050,10 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 				if (scols_line_set_data(ln, n, user->pwd_warn))
 					goto fail;
 				break;
+			case COL_PWD_EXPIR:
+				if (scols_line_set_data(ln, n, user->pwd_expire))
+					goto fail;
+				break;
 			case COL_PWD_CTIME:
 				if (scols_line_set_data(ln, n, user->pwd_ctime))
 					goto fail;
@@ -1126,6 +1160,7 @@ int main(int argc, char *argv[])
 		OPT_WTMP,
 		OPT_BTMP,
 		OPT_NOTRUNC,
+		OPT_FULLT,
 	};
 
 	static const struct option longopts[] = {
@@ -1133,6 +1168,7 @@ int main(int argc, char *argv[])
 		{ "colon",          no_argument,	0, 'c' },
 		{ "export",         no_argument,	0, 'e' },
 		{ "failed",         no_argument,	0, 'f' },
+		{ "fulltimes",      no_argument,	0, OPT_FULLT },
 		{ "groups",         required_argument,	0, 'g' },
 		{ "help",           no_argument,	0, 'h' },
 		{ "logins",         required_argument,	0, 'l' },
@@ -1254,6 +1290,9 @@ int main(int argc, char *argv[])
 			case OPT_NOTRUNC:
 				coldescs[COL_GECOS].flag = 0;
 				break;
+			case OPT_FULLT:
+				ctl->time_mode = TIME_FULL;
+				break;
 			case 'Z':
 #ifdef HAVE_LIBSELINUX
 				lslogins_flag |= F_SELINUX;
@@ -1302,7 +1341,7 @@ int main(int argc, char *argv[])
 		}
 		if (lslogins_flag & F_EXPIR) {
 			columns[ncolumns++] = COL_PWD_CTIME;
-			columns[ncolumns++] = COL_PWD_WARN;
+			columns[ncolumns++] = COL_PWD_EXPIR;
 		}
 		if (lslogins_flag & F_LAST) {
 			columns[ncolumns++] = COL_LAST_TTY;
@@ -1316,13 +1355,14 @@ int main(int argc, char *argv[])
 		if (lslogins_flag & F_EXTRA) {
 			columns[ncolumns++] = COL_HOME;
 			columns[ncolumns++] = COL_SHELL;
+			columns[ncolumns++] = COL_GECOS;
 			columns[ncolumns++] = COL_NOPASSWD;
 			columns[ncolumns++] = COL_NOLOGIN;
 			columns[ncolumns++] = COL_LOCKED;
 			columns[ncolumns++] = COL_HUSH_STATUS;
-			columns[ncolumns++] = COL_PWD_CTIME_MIN;
-			columns[ncolumns++] = COL_PWD_CTIME_MAX;
-			columns[ncolumns++] = COL_GECOS;
+			columns[ncolumns++] = COL_PWD_WARN;
+			columns[ncolumns++] = COL_PWD_CTIME_MIN; /*?*/
+			columns[ncolumns++] = COL_PWD_CTIME_MAX; /*?*/
 		}
 		if (lslogins_flag & F_SELINUX)
 			columns[ncolumns++] = COL_SELINUX;
