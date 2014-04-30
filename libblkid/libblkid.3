@@ -37,11 +37,11 @@ environment variable BLKID_FILE.
 .P
 In situations where one is getting information about a single known device, it
 does not impact performance whether the cache is used or not (unless you are
-not able to read the block device directly). 
+not able to read the block device directly).
 .P
 The high-level part of the library supports two methods to evaluate LABEL/UUID.
 It reads information directly from a block device or read information from
-/dev/disk/by-* udev symlinks. The udev is preferred method by default.
+/dev/disk/by-* udev symlinks.  The udev is preferred method by default.
 .P
 If you are dealing with
 multiple devices, use of the cache is highly recommended (even if empty) as
@@ -57,7 +57,7 @@ in this situation.
 .SH CONFIGURATION FILE
 The standard location of the
 .I /etc/blkid.conf
-config file can be overridden by the environment variable BLKID_CONF. For more
+config file can be overridden by the environment variable BLKID_CONF.  For more
 details about the config file see
 .BR blkid (8)
 man page.
