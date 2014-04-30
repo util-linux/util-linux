@@ -133,6 +133,7 @@ enum {
 	TIME_SHORT_RELATIVE,
 	TIME_SHORT,
 	TIME_FULL,
+	TIME_ISO,
 };
 
 /*
@@ -281,6 +282,9 @@ static char *make_time(int mode, time_t time)
 		case TIME_SHORT:
 			strftime(buf, 32, "%a %b %d %Y", &tm);
 			break;
+		case TIME_ISO:
+			strftime(buf, 32, "%Y-%m-%dT%H:%M:%S%z", &tm);
+			break;
 	}
 	return xstrdup(buf);
 }
@@ -299,6 +303,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -f, --failed             Display data about the last users' failed logins\n"), out);
 	fputs(_(" -fulltimes               Show dates in a long format\n"), out);
 	fputs(_(" -g, --groups=<groups>    Display users belonging to a group in GROUPS\n"), out);
+	fputs(_(" -i, --iso                Display dates in the ISO-8601 format\n"), out);
 	fputs(_(" -l, --logins=<logins>    Display only users from LOGINS\n"), out);
 	fputs(_(" --last                   Show info about the users' last login sessions\n"), out);
 	fputs(_(" -m, --supp-groups        Display supplementary groups as well\n"), out);
@@ -492,7 +497,6 @@ static int parse_btmp(struct lslogins_control *ctl, char *path)
 static int get_sgroups(int *len, gid_t **list, struct passwd *pwd)
 {
 	int n = 0;
-	gid_t *safelist;
 
 	*len = 0;
 	*list = NULL;
@@ -517,13 +521,6 @@ static int get_sgroups(int *len, gid_t **list, struct passwd *pwd)
 	(*list)[n] = (*list)[--(*len)];
 
 	*list = xrealloc(*list, *len * sizeof(gid_t));
-#if 0
-	if (!safelist && *len) {
-		free(*list);
-		return -1;
-	}
-	*list = safelist;
-#endif
 
 	return 0;
 }
@@ -1171,6 +1168,7 @@ int main(int argc, char *argv[])
 		{ "fulltimes",      no_argument,	0, OPT_FULLT },
 		{ "groups",         required_argument,	0, 'g' },
 		{ "help",           no_argument,	0, 'h' },
+		{ "iso",            no_argument,	0, 'i' },
 		{ "logins",         required_argument,	0, 'l' },
 		{ "supp-groups",    no_argument,	0, 'm' },
 		{ "newline",        no_argument,	0, 'n' },
@@ -1208,7 +1206,7 @@ int main(int argc, char *argv[])
 
 	ctl->cmp_fn = cmp_uid;
 
-	while ((c = getopt_long(argc, argv, "acefg:hl:mno:rstuxzZ",
+	while ((c = getopt_long(argc, argv, "acefg:hil:mno:rstuxzZ",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1231,6 +1229,9 @@ int main(int argc, char *argv[])
 				break;
 			case 'h':
 				usage(stdout);
+			case 'i':
+				ctl->time_mode = TIME_ISO;
+				break;
 			case 'l':
 				logins = optarg;
 				break;
