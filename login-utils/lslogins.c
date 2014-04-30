@@ -304,7 +304,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -c, --colon-separate     Display data in a format similar to /etc/passwd\n"), out);
 	fputs(_(" -e, --export             Display in an export-able output format\n"), out);
 	fputs(_(" -f, --failed             Display data about the last users' failed logins\n"), out);
-	fputs(_(" -fulltimes               Show dates in a long format\n"), out);
+	fputs(_(" --fulltimes              Show dates in a long format\n"), out);
 	fputs(_(" -g, --groups=<groups>    Display users belonging to a group in GROUPS\n"), out);
 	fputs(_(" -i, --iso                Display dates in the ISO-8601 format\n"), out);
 	fputs(_(" -l, --logins=<logins>    Display only users from LOGINS\n"), out);
@@ -316,6 +316,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -r, --raw                Display the raw table\n"), out);
 	fputs(_(" -s, --system-accs        Display system accounts\n"), out);
 	fputs(_(" -t, --sort               Sort output by login instead of UID\n"), out);
+	fputs(_(" --time-format=<type>     Display dates in type <type>, where type is one of short|full|iso\n"), out);
 	fputs(_(" -u, --user-accs          Display user accounts\n"), out);
 	fputs(_(" -x, --extra              Display extra information\n"), out);
 	fputs(_(" -z, --print0             Delimit user entries with a nul character\n"), out);
