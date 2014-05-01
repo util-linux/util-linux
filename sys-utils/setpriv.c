@@ -526,9 +526,9 @@ static void do_selinux_label(const char *label)
 		err(SETPRIV_EXIT_PRIVERR,
 		    _("write failed: %s"), _PATH_PROC_ATTR_EXEC);
 
-	if (close_fd(fd) != 0)
+	if (close(fd) != 0)
 		err(SETPRIV_EXIT_PRIVERR,
-		    _("write failed: %s"), _PATH_PROC_ATTR_EXEC);
+		    _("close failed: %s"), _PATH_PROC_ATTR_EXEC);
 }
 
 static void do_apparmor_profile(const char *label)
