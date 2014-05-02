@@ -46,7 +46,7 @@ function converts the UUID string given by
 into the binary representation.  The input UUID is a string of the form
 1b4e28ba\-2fa1\-11d2\-883f\-b9a761bde3fb (in
 .BR printf (3)
-format "%08x\-%04x\-%04x\-%04x\-%012x", 36 bytes plus the trailing '\\0').
+format "%08x\-%04x\-%04x\-%04x\-%012x", 36 bytes plus the trailing '\e0').
 .SH RETURN VALUE
 Upon successfully parsing the input string, 0 is returned, and the UUID is
 stored in the location pointed to by
@@ -55,11 +55,12 @@ otherwise \-1 is returned.
 .SH "CONFORMING TO"
 OSF DCE 1.1
 .SH AUTHOR
-Theodore Y. Ts'o
+Theodore Y.\& Ts'o
 .SH AVAILABILITY
 .B libuuid
 is part of the util-linux package since version 2.15.1 and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
+.na
 .SH "SEE ALSO"
 .BR uuid (3),
 .BR uuid_clear (3),
@@ -69,3 +70,4 @@ ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
 .BR uuid_is_null (3),
 .BR uuid_time (3),
 .BR uuid_unparse (3)
+.ad
