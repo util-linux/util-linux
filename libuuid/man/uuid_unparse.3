@@ -45,7 +45,7 @@ The
 .B uuid_unparse
 function converts the supplied UUID
 .I uu
-from the binary representation into a 36\-byte string (plus tailing '\\0')
+from the binary representation into a 36-byte string (plus tailing '\e0')
 of the form 1b4e28ba\-2fa1\-11d2\-883f\-0016d3cca427 and stores this
 value in the character string pointed to by
 .IR out .
@@ -63,11 +63,12 @@ may be used.
 .SH "CONFORMING TO"
 OSF DCE 1.1
 .SH AUTHOR
-Theodore Y. Ts'o
+Theodore Y.\& Ts'o
 .SH AVAILABILITY
 .B libuuid
 is part of the util-linux package since version 2.15.1 and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
+.na
 .SH "SEE ALSO"
 .BR uuid (3),
 .BR uuid_clear (3),
@@ -77,3 +78,4 @@ ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
 .BR uuid_time (3),
 .BR uuid_is_null (3),
 .BR uuid_parse (3)
+.ad
