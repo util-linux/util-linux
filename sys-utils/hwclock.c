@@ -91,6 +91,11 @@ struct clock_ops *ur;
 
 #define FLOOR(arg) ((arg >= 0 ? (int) arg : ((int) arg) - 1));
 
+/* Maximal clock adjustment in seconds per day.
+   (adjtime() glibc call has 2145 seconds limit on i386, so it is good enough for us as well,
+   43219 is a maximal safe value preventing exact_adjustment overflow.) */
+#define MAX_DRIFT 2145.0
+
 const char *adj_file_name = NULL;
 
 struct adjtime {
@@ -1008,6 +1013,7 @@ adjust_drift_factor(struct adjtime *adjtime_p,
 		double adj_days, cal_days;
 		double exp_drift, unc_drift;
 		double factor_adjust;
+		double drift_factor;
 
 		/* Adjusted time units per hardware time unit */
 		atime_per_htime = 1.0 + adjtime_p->drift_factor / sec_per_day;
@@ -1033,16 +1039,28 @@ adjust_drift_factor(struct adjtime *adjtime_p,
 		/* Amount to add to previous drift factor */
 		factor_adjust = unc_drift / cal_days;
 
-		if (debug)
-			printf(_("Clock drifted %.1f seconds in the past "
-				 "%d seconds in spite of a drift factor of "
-				 "%f seconds/day.\n"
-				 "Adjusting drift factor by %f seconds/day\n"),
-			       unc_drift,
-			       (int)(nowtime - adjtime_p->last_calib_time),
-			       adjtime_p->drift_factor, factor_adjust);
+		/* New drift factor */
+		drift_factor = adjtime_p->drift_factor + factor_adjust;
 
-		adjtime_p->drift_factor += factor_adjust;
+		if (abs(drift_factor) > MAX_DRIFT) {
+			if (debug)
+				printf(_("Clock drift factor was calculated as "
+					 "%f seconds/day.\n"
+					 "It is far too much. Resetting to zero.\n"),
+				       drift_factor);
+			drift_factor = 0;
+		} else {
+			if (debug)
+				printf(_("Clock drifted %.1f seconds in the past "
+					 "%d seconds in spite of a drift factor of "
+					 "%f seconds/day.\n"
+					 "Adjusting drift factor by %f seconds/day\n"),
+				       unc_drift,
+				       (int)(nowtime - adjtime_p->last_calib_time),
+				       adjtime_p->drift_factor, factor_adjust);
+		}
+
+		adjtime_p->drift_factor = drift_factor;
 	}
 	adjtime_p->last_calib_time = nowtime;
 
