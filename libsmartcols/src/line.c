@@ -285,7 +285,7 @@ int scols_line_next_child(struct libscols_line *ln,
 /**
  * scols_line_set_color:
  * @ln: a pointer to a struct libscols_line instance
- * @color: a color string
+ * @color: color name or ESC sequence
  *
  * Returns: 0, a negative value in case of an error.
  */
@@ -298,7 +298,7 @@ int scols_line_set_color(struct libscols_line *ln, const char *color)
 		return -EINVAL;
 	if (color) {
 		if (isalnum(*color)) {
-			color = colorscheme_from_string(color);
+			color = color_sequence_from_colorname(color);
 
 			if (!color)
 				return -EINVAL;

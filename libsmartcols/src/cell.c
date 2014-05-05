@@ -117,7 +117,7 @@ const char *scols_cell_get_data(const struct libscols_cell *ce)
 /**
  * scols_cell_set_color:
  * @ce: a pointer to a struct libscols_cell instance
- * @color: a color string
+ * @color: color name or ESC sequence
  *
  * Set the color of @ce to @color.
  *
@@ -132,8 +132,8 @@ int scols_cell_set_color(struct libscols_cell *ce, const char *color)
 	if (!ce)
 		return -EINVAL;
 	if (color) {
-		if (isalnum(*color)) {
-			color = colorscheme_from_string(color);
+		if (isalpha(*color)) {
+			color = color_sequence_from_colorname(color);
 
 			if (!color)
 				return -EINVAL;
