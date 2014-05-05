@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Ondrej Oprala <ooprala@redhat.com>
- * Copyright (C) 2014 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2012-2014 Karel Zak <kzak@redhat.com>
  *
  * This file may be distributed under the terms of the
  * GNU Lesser General Public License.
@@ -9,11 +9,12 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <ctype.h>
 
 #include "c.h"
 #include "colors.h"
-#include "xalloc.h"
 #include "pathnames.h"
+#include "strutils.h"
 
 /*
  * terminal-colors.d file types
@@ -24,6 +25,11 @@ enum {
 	UL_COLORFILE_SCHEME,		/* .scheme */
 
 	__UL_COLORFILE_COUNT
+};
+
+struct ul_color_scheme {
+	char *name;
+	char *seq;
 };
 
 /*
@@ -44,11 +50,16 @@ struct ul_color_ctl {
 	const char	*utilname;	/* util name */
 	const char	*termname;	/* terminal name ($TERM) */
 
-	char		*scheme;	/* path to scheme */
+	char		*sfile;	/* path to scheme */
+
+	struct ul_color_scheme	*schemes;	/* array with color schemes */
+	size_t			nschemes;	/* number of the items */
+	size_t			schemes_sz;	/* number of the allocated items */
 
 	int		mode;		/* UL_COLORMODE_* */
 	unsigned int	has_colors : 1,	/* based on mode and scores[] */
 			disabled   : 1, /* disable colors */
+			cs_configured : 1, /* color schemes read */
 			configured : 1; /* terminal-colors.d parsed */
 
 	int		scores[__UL_COLORFILE_COUNT];	/* the best match */
@@ -56,17 +67,67 @@ struct ul_color_ctl {
 
 static struct ul_color_ctl ul_colors;
 
+static void colors_free_schemes(struct ul_color_ctl *cc);
+static int colors_read_schemes(struct ul_color_ctl *cc);
+
 /*
- * Reset control struct (note that we don't allocate the struct)
+ * qsort/bsearch buddy
+ */
+static int cmp_scheme_name(const void *a0, const void *b0)
+{
+	struct ul_color_scheme	*a = (struct ul_color_scheme *) a0,
+				*b = (struct ul_color_scheme *) b0;
+	return strcmp(a->name, b->name);
+}
+
+/*
+ * Maintains human readable color names
+ */
+const char *color_sequence_from_colorname(const char *str)
+{
+	static const struct ul_color_scheme basic_schemes[] = {
+		{ "black",	UL_COLOR_BLACK           },
+		{ "blue",	UL_COLOR_BLUE            },
+		{ "brown",	UL_COLOR_BROWN           },
+		{ "cyan",	UL_COLOR_CYAN            },
+		{ "darkgray",	UL_COLOR_DARK_GRAY       },
+		{ "gray",	UL_COLOR_GRAY            },
+		{ "green",	UL_COLOR_GREEN           },
+		{ "lightblue",	UL_COLOR_BOLD_BLUE       },
+		{ "lightcyan",	UL_COLOR_BOLD_CYAN       },
+		{ "lightgray,",	UL_COLOR_GRAY            },
+		{ "lightgreen", UL_COLOR_BOLD_GREEN      },
+		{ "lightmagenta", UL_COLOR_BOLD_MAGENTA  },
+		{ "lightred",	UL_COLOR_BOLD_RED        },
+		{ "magenta",	UL_COLOR_MAGENTA         },
+		{ "red",	UL_COLOR_RED             },
+		{ "yellow",	UL_COLOR_BOLD_YELLOW     },
+	};
+	struct ul_color_scheme key = { .name = (char *) str }, *res;
+
+	if (!str)
+		return NULL;
+
+	res = bsearch(&key, basic_schemes, ARRAY_SIZE(basic_schemes),
+				sizeof(struct ul_color_scheme),
+				cmp_scheme_name);
+	return res ? res->seq : NULL;
+}
+
+
+/*
+ * Resets control struct (note that we don't allocate the struct)
  */
 static void colors_reset(struct ul_color_ctl *cc)
 {
 	if (!cc)
 		return;
 
-	free(cc->scheme);
+	colors_free_schemes(cc);
 
-	cc->scheme = NULL;
+	free(cc->sfile);
+
+	cc->sfile = NULL;
 	cc->utilname = NULL;
 	cc->termname = NULL;
 	cc->mode = UL_COLORMODE_UNDEF;
@@ -85,12 +146,18 @@ static void colors_debug(struct ul_color_ctl *cc)
 	printf("Colors:\n");
 	printf("\tutilname = '%s'\n", cc->utilname);
 	printf("\ttermname = '%s'\n", cc->termname);
-	printf("\tscheme = '%s'\n", cc->scheme);
+	printf("\tscheme file = '%s'\n", cc->sfile);
 	printf("\tmode = %s\n",
 			cc->mode == UL_COLORMODE_UNDEF ? "undefined" :
 			cc->mode == UL_COLORMODE_AUTO ?  "auto" :
 			cc->mode == UL_COLORMODE_NEVER ? "never" :
 			cc->mode == UL_COLORMODE_ALWAYS ? "always" : "???");
+	printf("\thas_colors = %d\n", cc->has_colors);
+	printf("\tdisabled = %d\n", cc->disabled);
+	printf("\tconfigured = %d\n", cc->configured);
+	printf("\tcs configured = %d\n", cc->cs_configured);
+
+	fputc('\n', stdout);
 
 	for (i = 0; i < ARRAY_SIZE(cc->scores); i++)
 		printf("\tscore %s = %d\n",
@@ -98,6 +165,17 @@ static void colors_debug(struct ul_color_ctl *cc)
 				i == UL_COLORFILE_ENABLE ? "enable" :
 				i == UL_COLORFILE_SCHEME ? "scheme" : "???",
 				cc->scores[i]);
+
+	fputc('\n', stdout);
+
+	for (i = 0; i < cc->nschemes; i++) {
+		printf("\tscheme #%02d ", i);
+		color_scheme_enable(cc->schemes[i].name, NULL);
+		fputs(cc->schemes[i].name, stdout);
+		color_disable();
+		fputc('\n', stdout);
+	}
+	fputc('\n', stdout);
 }
 
 #endif
@@ -159,7 +237,7 @@ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
 	DIR *dir;
 	int rc = 0;
 	struct dirent *d;
-	char scheme[PATH_MAX] = { '\0' };
+	char sfile[PATH_MAX] = { '\0' };
 	size_t namesz, termsz;
 
 	if (!dirname || !cc || !cc->utilname || !*cc->utilname)
@@ -194,10 +272,12 @@ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
 			score += 20;
 		if (tk_term)
 			score += 10;
+
 		/*
 		fprintf(stderr, "%20s score: %2d [cur max: %2d]\n",
 				d->d_name, score, cc->scores[type]);
 		*/
+
 		if (score < cc->scores[type])
 			continue;
 
@@ -205,19 +285,19 @@ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
 		if (tk_namesz != namesz
 		    || strncmp(tk_name, cc->utilname, namesz) != 0)
 			continue;
-		if (tk_termsz != termsz
-		    || termsz == 0
-		    || strncmp(tk_term, cc->termname, termsz) != 0)
+
+		if (tk_termsz && (termsz == 0 || tk_termsz != termsz ||
+				  strncmp(tk_term, cc->termname, termsz) != 0))
 			continue;
 
 		cc->scores[type] = score;
 		if (type == UL_COLORFILE_SCHEME)
-			strncpy(scheme, d->d_name, sizeof(scheme));
+			strncpy(sfile, d->d_name, sizeof(sfile));
 	}
 
-	if (*scheme) {
-		scheme[sizeof(scheme) - 1] = '\0';
-		if (asprintf(&cc->scheme, "%s/%s", dirname, scheme) <= 0)
+	if (*sfile) {
+		sfile[sizeof(sfile) - 1] = '\0';
+		if (asprintf(&cc->sfile, "%s/%s", dirname, sfile) <= 0)
 			rc = -ENOMEM;
 	}
 
@@ -252,6 +332,194 @@ static char *colors_get_homedir(char *buf, size_t bufsz)
 	return NULL;
 }
 
+/* canonicalize sequence */
+static int cn_sequence(const char *str, char **seq)
+{
+	char *in, *out;
+
+	if (!str)
+		return -EINVAL;
+
+	*seq = NULL;
+
+	/* convert logical names like "red" to the real sequence */
+	if (*str != '\\' && isalpha(*str)) {
+		const char *s = color_sequence_from_colorname(str);
+		*seq = strdup(s ? s : str);
+
+		return *seq ? 0 : -ENOMEM;
+	}
+
+	/* convert xx;yy sequences to "\033[xx;yy" */
+	if (asprintf(seq, "\033[%sm", str) < 1)
+		return -ENOMEM;
+
+	for (in = *seq, out = *seq; in && *in; in++) {
+		if (*in != '\\') {
+			*out++ = *in;
+			continue;
+		}
+		switch(*(in + 1)) {
+		case 'a':
+			*out++ = '\a';	/* Bell */
+			break;
+		case 'b':
+			*out++ = '\b';	/* Backspace */
+			break;
+		case 'e':
+			*out++ = '\033';	/* Escape */
+			break;
+		case 'f':
+			*out++ = '\f';	/* Form Feed */
+			break;
+		case 'n':
+			*out++ = '\n';	/* Newline */
+			break;
+		case 'r':
+			*out++ = '\r';	/* Carriage Return */
+			break;
+		case 't':
+			*out++ = '\t';	/* Tab */
+			break;
+		case 'v':
+			*out++ = '\v';	/* Vertical Tab */
+			break;
+		case '\\':
+			*out++ = '\\';	/* Backslash */
+			break;
+		case '_':
+			*out++ = ' ';	/* Space */
+			break;
+		case '#':
+			*out++ = '#';	/* Hash mark */
+			break;
+		case '?':
+			*out++ = '?';	/* Qestion mark */
+			break;
+		default:
+			*out++ = *in;
+			*out++ = *(in + 1);
+			break;
+		}
+		in++;
+	}
+	*out = '\0';
+
+	return 0;
+}
+
+
+/*
+ * Adds one color sequence to array with color scheme,
+ * @seq and @name have to be allocated strings
+ */
+static int colors_add_scheme(struct ul_color_ctl *cc,
+			     char *name,
+			     char *seq0)
+{
+	struct ul_color_scheme *cs;
+	char *seq;
+	int rc;
+
+	if (!cc || !name || !*name || !seq0 || !*seq0)
+		return -EINVAL;
+
+	rc = cn_sequence(seq0, &seq);
+	if (rc)
+		return rc;
+	free(seq0);
+
+	/* convert logical name (e.g. "red") to real ESC code */
+	if (isalpha(*seq)) {
+		const char *s = color_sequence_from_colorname(seq);
+		char *p;
+
+		if (!s)
+			return -EINVAL;
+		p = strdup(s);
+		if (!p)
+			return -ENOMEM;
+		free(seq);
+		seq = p;
+	}
+
+	/* enlarge the array */
+	if (cc->nschemes == cc->schemes_sz) {
+		void *tmp = realloc(cc->schemes, (cc->nschemes + 10)
+					* sizeof(struct ul_color_scheme));
+		if (!tmp)
+			return -ENOMEM;
+		cc->schemes = tmp;
+		cc->schemes_sz = cc->nschemes + 10;
+	}
+
+	/* add a new item */
+	cs = &cc->schemes[cc->nschemes++];
+	cs->name = name;
+	cs->seq = seq;
+
+	return 0;
+}
+
+/*
+ * Deallocates all regards to color schemes
+ */
+static void colors_free_schemes(struct ul_color_ctl *cc)
+{
+	size_t i;
+
+	for (i = 0; i < cc->nschemes; i++) {
+		free(cc->schemes[i].name);
+		free(cc->schemes[i].seq);
+	}
+
+	free(cc->schemes);
+	cc->schemes = NULL;
+	cc->nschemes = 0;
+	cc->schemes_sz = 0;
+}
+
+/*
+ * The scheme configuration has to be sorted for bsearch
+ */
+static void colors_sort_schemes(struct ul_color_ctl *cc)
+{
+	if (!cc->nschemes)
+		return;
+
+	qsort(cc->schemes, cc->nschemes,
+	      sizeof(struct ul_color_scheme), cmp_scheme_name);
+}
+
+/*
+ * Returns just one color scheme
+ */
+static struct ul_color_scheme *colors_get_scheme(struct ul_color_ctl *cc,
+						 const char *name)
+{
+	struct ul_color_scheme key = { .name = (char *) name}, *res;
+
+	if (!cc || !name || !*name)
+		return NULL;
+
+	if (!cc->cs_configured) {
+		int rc = colors_read_schemes(cc);
+		if (rc)
+			return NULL;
+	}
+	if (!cc->nschemes)
+		return NULL;
+
+	res = bsearch(&key, cc->schemes, cc->nschemes,
+				sizeof(struct ul_color_scheme),
+				cmp_scheme_name);
+
+	return res && res->seq ? res  : NULL;
+}
+
+/*
+ * Parses filenames in terminal-colors.d
+ */
 static int colors_read_configuration(struct ul_color_ctl *cc)
 {
 	int rc = -ENOENT;
@@ -270,8 +538,71 @@ static int colors_read_configuration(struct ul_color_ctl *cc)
 }
 
 /*
- * Initialize private color control struct, @mode is UL_COLORMODE_*
- * and @name is util argv[0]
+ * Reads terminal-colors.d/ scheme file into array schemes
+ */
+static int colors_read_schemes(struct ul_color_ctl *cc)
+{
+	int rc = 0;
+	FILE *f = NULL;
+	char buf[BUFSIZ];
+
+	if (!cc->configured)
+		rc = colors_read_configuration(cc);
+
+	cc->cs_configured = 1;
+
+	if (rc || !cc->sfile)
+		goto done;
+
+	f = fopen(cc->sfile, "r");
+	if (!f) {
+		rc = -errno;
+		goto done;
+	}
+
+	while (fgets(buf, sizeof(buf), f)) {
+		char *cn = NULL, *seq = NULL;
+		char *p = strchr(buf, '\n');
+
+		if (!p) {
+			if (feof(f))
+				p = strchr(buf, '\0');
+			else {
+				rc = -errno;
+				goto done;
+			}
+		}
+		*p = '\0';
+		p = (char *) skip_blank(buf);
+		if (*p == '\0' || *p == '#')
+			continue;
+
+		rc = sscanf(p,  UL_SCNsA" "	/* name */
+				UL_SCNsA,	/* color */
+				&cn, &seq);
+		if (rc == 2 && cn && seq)
+			rc = colors_add_scheme(cc, cn, seq);	/* set rc=0 on success */
+		if (rc) {
+			free(cn);
+			free(seq);
+		}
+		rc = 0;
+	}
+
+done:
+	if (f)
+		fclose(f);
+	colors_sort_schemes(cc);
+
+	return rc;
+}
+
+/*
+ * Initialize private color control struct and initialize the colors
+ * status. The color schemes are parsed on demand by colors_get_scheme().
+ *
+ * @mode: UL_COLORMODE_*
+ * @name: util argv[0]
  */
 int colors_init(int mode, const char *name)
 {
@@ -311,33 +642,65 @@ int colors_init(int mode, const char *name)
 	return cc->has_colors;
 }
 
+/*
+ * Temporary disable colors (this setting is independent on terminal-colors.d/)
+ */
 void colors_off(void)
 {
 	ul_colors.disabled = 1;
 }
 
+/*
+ * Enable colors
+ */
 void colors_on(void)
 {
 	ul_colors.disabled = 0;
 }
 
+/*
+ * Is terminal-colors.d/ configured to use colors?
+ */
 int colors_wanted(void)
 {
-	return !ul_colors.disabled && ul_colors.has_colors;
+	return ul_colors.has_colors;
 }
 
-void color_fenable(const char *color_scheme, FILE *f)
+/*
+ * Enable @seq color
+ */
+void color_fenable(const char *seq, FILE *f)
 {
-	if (!ul_colors.disabled && ul_colors.has_colors && color_scheme)
-		fputs(color_scheme, f);
+	if (!ul_colors.disabled && ul_colors.has_colors && seq)
+		fputs(seq, f);
 }
 
+/*
+ * Enable color by logical @name
+ */
+void color_scheme_fenable(const char *name, const char *dflt, FILE *f)
+{
+	struct ul_color_scheme *cs;
+
+	if (ul_colors.disabled || !ul_colors.has_colors)
+		return;
+
+	cs = colors_get_scheme(&ul_colors, name);
+	color_fenable(cs && cs->seq ? cs->seq : dflt, f);
+}
+
+/*
+ * Disable previously enabled color
+ */
 void color_fdisable(FILE *f)
 {
 	if (!ul_colors.disabled && ul_colors.has_colors)
 		fputs(UL_COLOR_RESET, f);
 }
 
+/*
+ * Parses @str to return UL_COLORMODE_*
+ */
 int colormode_from_string(const char *str)
 {
 	size_t i;
@@ -361,6 +724,9 @@ int colormode_from_string(const char *str)
 	return -EINVAL;
 }
 
+/*
+ * Parses @str and exit(EXIT_FAILURE) on error
+ */
 int colormode_or_err(const char *str, const char *errmsg)
 {
 	const char *p = str && *str == '=' ? str + 1 : str;
@@ -373,89 +739,59 @@ int colormode_or_err(const char *str, const char *errmsg)
 	return colormode;
 }
 
-struct colorscheme {
-	const char *name, *scheme;
-};
-
-static int cmp_colorscheme_name(const void *a0, const void *b0)
-{
-	struct colorscheme *a = (struct colorscheme *) a0,
-			   *b = (struct colorscheme *) b0;
-	return strcmp(a->name, b->name);
-}
-
-const char *colorscheme_from_string(const char *str)
-{
-	static const struct colorscheme basic_schemes[] = {
-		{ "black",	UL_COLOR_BLACK           },
-		{ "blue",	UL_COLOR_BLUE            },
-		{ "brown",	UL_COLOR_BROWN           },
-		{ "cyan",	UL_COLOR_CYAN            },
-		{ "darkgray",	UL_COLOR_DARK_GRAY       },
-		{ "gray",	UL_COLOR_GRAY            },
-		{ "green",	UL_COLOR_GREEN           },
-		{ "lightblue",	UL_COLOR_BOLD_BLUE       },
-		{ "lightcyan",	UL_COLOR_BOLD_CYAN       },
-		{ "lightgray,",	UL_COLOR_GRAY            },
-		{ "lightgreen", UL_COLOR_BOLD_GREEN      },
-		{ "lightmagenta", UL_COLOR_BOLD_MAGENTA  },
-		{ "lightred",	UL_COLOR_BOLD_RED        },
-		{ "magenta",	UL_COLOR_MAGENTA         },
-		{ "red",	UL_COLOR_RED             },
-		{ "yellow",	UL_COLOR_BOLD_YELLOW     },
-	};
-	struct colorscheme key = { .name = str }, *res;
-	if (!str)
-		return NULL;
-
-	res = bsearch(&key, basic_schemes, ARRAY_SIZE(basic_schemes),
-				sizeof(struct colorscheme),
-				cmp_colorscheme_name);
-	return res ? res->scheme : NULL;
-}
-
 #ifdef TEST_PROGRAM
 # include <getopt.h>
 int main(int argc, char *argv[])
 {
 	static const struct option longopts[] = {
-		{ "mode",     optional_argument, 0, 'm' },
-		{ "color",    required_argument, 0, 'c' },
-		{ "read-dir", required_argument, 0, 'd' },
+		{ "mode",	required_argument, 0, 'm' },
+		{ "color",	required_argument, 0, 'c' },
+		{ "color-scheme", required_argument, 0, 'C' },
+		{ "name",	required_argument, 0, 'n' },
 		{ NULL, 0, 0, 0 }
 	};
 	int c, mode = UL_COLORMODE_UNDEF;	/* default */
-	const char *color = "red", *dir = NULL;
+	const char *color = "red", *name = NULL, *color_scheme = NULL;
+	const char *seq = NULL;
 
-	while ((c = getopt_long(argc, argv, "m::c:d:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "C:c:m:n:", longopts, NULL)) != -1) {
 		switch (c) {
-		case 'm':
-			if (optarg)
-				mode = colormode_or_err(optarg, "unsupported color mode");
-			break;
 		case 'c':
 			color = optarg;
 			break;
-		case 'd':
-			dir = optarg;
+		case 'C':
+			color_scheme = optarg;
 			break;
+		case 'm':
+			mode = colormode_or_err(optarg, "unsupported color mode");
+			break;
+		case 'n':
+			name = optarg;
+			break;
+		default:
+			fprintf(stderr, "usage: %s [options]\n"
+			" -m, --mode <auto|never|always>  default is undefined\n"
+			" -c, --color <red|blue|...>      color for the test message\n"
+			" -C, --color-scheme <name>       color for the test message\n"
+			" -n, --name <utilname>           util name\n",
+			program_invocation_short_name);
+			return EXIT_FAILURE;
 		}
 	}
 
-	if (dir) {
-		struct ul_color_ctl cc = { .utilname = "foo",
-					   .termname = "footerm" };
+	colors_init(mode, name ? name : program_invocation_short_name);
 
-		colors_readdir(&cc, dir);
-		colors_debug(&cc);
-		colors_reset(&cc);
-	}
+	seq = color_sequence_from_colorname(color);
 
-	colors_init(mode, program_invocation_short_name);
-
-	color_enable(colorscheme_from_string(color));
+	if (color_scheme)
+		color_scheme_enable(color_scheme, seq);
+	else
+		color_enable(seq);
 	printf("Hello World!");
 	color_disable();
+	fputc('\n', stdout);
+
+	colors_debug(&ul_colors);
 
 	return EXIT_SUCCESS;
 }
