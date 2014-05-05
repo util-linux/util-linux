@@ -496,7 +496,7 @@ static struct list_head *color_fmt(char *cfmt, int bcnt)
 
 		clr = xstrndup(cfmt, strcspn(cfmt, ":@,"));
 		cfmt += strlen(clr);
-		hcnext->fmt = colorscheme_from_string(clr);
+		hcnext->fmt = color_sequence_from_colorname(clr);
 		free(clr);
 
 		if (!hcnext->fmt)
