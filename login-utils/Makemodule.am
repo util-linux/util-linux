@@ -4,8 +4,8 @@ usrbin_exec_PROGRAMS += last
 dist_man_MANS += \
 	login-utils/last.1 \
 	login-utils/lastb.1
-last_SOURCES = login-utils/last.c lib/strutils.c
-last_LDADD = $(LDADD) libcommon.la
+last_SOURCES = login-utils/last.c lib/boottime.c
+last_LDADD = $(LDADD) libcommon.la -lrt
 
 install-exec-hook-last:
 	cd $(DESTDIR)$(usrbin_execdir) && ln -sf last lastb

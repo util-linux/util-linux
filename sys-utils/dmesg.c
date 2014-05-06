@@ -33,6 +33,7 @@
 #include "closestream.h"
 #include "optutils.h"
 #include "timeutils.h"
+#include "boottime.h"
 #include "mangle.h"
 #include "pager.h"
 

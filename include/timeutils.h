@@ -51,6 +51,5 @@ typedef uint64_t nsec_t;
 #define FORMAT_TIMESPAN_MAX 64
 
 int parse_timestamp(const char *t, usec_t *usec);
-int get_boot_time(struct timeval *boot_time);
 
 #endif /* UTIL_LINUX_TIME_UTIL_H */
