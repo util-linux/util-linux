@@ -1,6 +1,7 @@
 
 noinst_LTLIBRARIES += libcommon.la
 libcommon_la_CFLAGS = $(AM_CFLAGS)
+libcommon_la_LIBADD = -lrt
 libcommon_la_SOURCES = \
 	lib/at.c \
 	lib/blkdev.c \
