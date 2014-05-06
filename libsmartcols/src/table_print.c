@@ -738,14 +738,18 @@ int scols_print_table(struct libscols_table *tb)
 	if (!buf)
 		return -ENOMEM;
 
-	if (!(scols_table_is_raw(tb) || scols_table_is_export(tb)))
+	if (!(scols_table_is_raw(tb) || scols_table_is_export(tb))) {
 		rc = recount_widths(tb, buf);
+		if (rc != 0)
+			goto done;
+	}
 
 	if (scols_table_is_tree(tb))
 		rc = print_tree(tb, buf);
 	else
 		rc = print_table(tb, buf);
 
+done:
 	free_buffer(buf);
 	return rc;
 }
