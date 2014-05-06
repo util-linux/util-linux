@@ -1208,13 +1208,12 @@ do_adjustment(struct adjtime *adjtime_p,
 		adjtime_p->dirty = TRUE;
 	} else if (adjtime_p->last_adj_time == 0) {
 		if (debug)
-			printf(_
-			       ("Not setting clock because last adjustment time is zero, "
-				"so history is bad."));
+			printf(_("Not setting clock because last adjustment time is zero, "
+				 "so history is bad.\n"));
 	} else if (abs(adjtime_p->drift_factor) > MAX_DRIFT) {
 		if (debug)
-		printf(_("Not setting clock because drift factor %f is far too high.\n"),
-		       adjtime_p->drift_factor);
+			printf(_("Not setting clock because drift factor %f is far too high.\n"),
+				adjtime_p->drift_factor);
 	} else {
 		int adjustment;
 		/* Number of seconds we must insert in the Hardware Clock */
