@@ -71,7 +71,7 @@ if LINUX
 bin_PROGRAMS += dmesg
 dist_man_MANS += sys-utils/dmesg.1
 dmesg_SOURCES = sys-utils/dmesg.c
-dmesg_LDADD = $(LDADD) libcommon.la -lrt
+dmesg_LDADD = $(LDADD) libcommon.la
 
 sbin_PROGRAMS += ctrlaltdel
 dist_man_MANS += sys-utils/ctrlaltdel.8
