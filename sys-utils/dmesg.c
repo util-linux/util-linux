@@ -32,6 +32,7 @@
 #include "bitops.h"
 #include "closestream.h"
 #include "optutils.h"
+#include "timeutils.h"
 #include "mangle.h"
 #include "pager.h"
 
