@@ -434,9 +434,10 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 
 	epoch = time(NULL);
 	if (t == epoch) {
-		if (ctl->fulltime)
+		if (ctl->fulltime) {
 			sprintf(logouttime, "  still running");
-		else {
+			length[0] = 0;
+		} else {
 			sprintf(logouttime, "  still");
 			sprintf(length, "running");
 		}
