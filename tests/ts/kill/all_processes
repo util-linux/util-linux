@@ -25,9 +25,8 @@ ts_check_test_command "$TS_HELPER_SIGRECEIVE"
 
 . "$TS_SELF/kill_functions.sh"
 
-HELPER_SYMLINK="$TS_CWD/$(mktemp -u XXXXXXXXXXXXXXX)"
-ln -s "$TS_HELPER_SIGRECEIVE" "$HELPER_SYMLINK"
-trap "rm -f $HELPER_SYMLINK" 0
+HELPER_SYMLINK="$(mktemp "${TS_OUTDIR}/alXXXXXXXXXXXXX")"
+ln -sf "$TS_HELPER_SIGRECEIVE" "$HELPER_SYMLINK"
 
 "$HELPER_SYMLINK" -s "$TS_TESTUSER" >> "$TS_OUTPUT" 2>&1 &
 TEST_PID=$!
@@ -52,5 +51,7 @@ if [ $? -ne 1 ]; then
 fi
 
 sed -i "s/${HELPER_SYMLINK##*/}/${TS_HELPER_SIGRECEIVE##*/}/" "$TS_OUTPUT"
+
+rm -f "$HELPER_SYMLINK"
 
 ts_finalize

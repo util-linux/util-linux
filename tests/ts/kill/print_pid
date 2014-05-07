@@ -25,9 +25,8 @@ ts_check_test_command "$TS_HELPER_SIGRECEIVE"
 
 all_ok=true
 
-HELPER_SYMLINK="$TS_OUTDIR/$(mktemp -u XXXXXXXXXXXXXXX)"
-ln -s "$TS_HELPER_SIGRECEIVE" "$HELPER_SYMLINK"
-trap "rm -f $HELPER_SYMLINK" 0
+HELPER_SYMLINK="$(mktemp "${TS_OUTDIR}/prXXXXXXXXXXXXX")"
+ln -sf "$TS_HELPER_SIGRECEIVE" "$HELPER_SYMLINK"
 
 "$HELPER_SYMLINK" >> "$TS_OUTPUT" 2>&1 &
 TEST_PID=$!
@@ -54,5 +53,6 @@ fi
 if $all_ok; then
 	echo 'all ok' >> "$TS_OUTPUT"
 fi
+rm -f "$HELPER_SYMLINK"
 
 ts_finalize

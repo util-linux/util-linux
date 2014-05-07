@@ -24,8 +24,9 @@ ts_check_test_command "$TS_HELPER_SIGRECEIVE"
 . "$TS_SELF/kill_functions.sh"
 
 all_ok=true
-HELPER_SYMLINK="$TS_OUTDIR/$(mktemp -u XXXXXXXXXXXXXXX)"
-ln -s "$TS_HELPER_SIGRECEIVE" "$HELPER_SYMLINK"
+
+HELPER_SYMLINK="$(mktemp "${TS_OUTDIR}/naXXXXXXXXXXXXX")"
+ln -sf "$TS_HELPER_SIGRECEIVE" "$HELPER_SYMLINK"
 
 for SIG in $($TS_CMD_KILL -L); do
 	if [ "x${SIG//[0-9]/}" = "x" ]; then
@@ -56,7 +57,7 @@ for SIG in $($TS_CMD_KILL -L); do
 done
 
 if $all_ok; then
-	echo 'all ok' >> $TS_OUTPUT
+	echo 'all ok' >> "$TS_OUTPUT"
 fi
 rm -f "$HELPER_SYMLINK"
 
