@@ -129,8 +129,8 @@ scols_print_table_to_string
 
 <SECTION>
 <FILE>version</FILE>
-scols_parse_version_string
 scols_get_library_version
+scols_parse_version_string
 LIBSMARTCOLS_VERSION
 </SECTION>
 
