@@ -140,6 +140,7 @@ struct options {
 	int nice;			/* Run login with this priority */
 	int numspeed;			/* number of baud rates to try */
 	int clocal;			/* CLOCAL_MODE_* */
+	int kbmode;			/* Keyboard mode if virtual console */
 	speed_t speeds[MAX_SPEED];	/* baud rates to be tried */
 };
 
@@ -936,7 +937,7 @@ static void update_utmp(struct options *op)
 static void open_tty(char *tty, struct termios *tp, struct options *op)
 {
 	const pid_t pid = getpid();
-	int serial, closed = 0;
+	int closed = 0;
 
 	/* Set up new standard input, unless we are given an already opened port. */
 
@@ -1082,15 +1083,18 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 #endif
 	/*
 	 * Detect if this is a virtual console or serial/modem line.
-	 * In case of a virtual console the ioctl TIOCMGET fails and
-	 * the error number will be set to EINVAL.
+	 * In case of a virtual console the ioctl KDGKBMODE succeeds
+	 * whereas on other lines it will fails.
 	 */
-	if (ioctl(STDIN_FILENO, TIOCMGET, &serial) < 0 && (errno == EINVAL)) {
+	if (ioctl(STDIN_FILENO, KDGKBMODE, &op->kbmode) == 0) {
 		op->flags |= F_VCONSOLE;
 		if (!op->term)
 			op->term = DEFAULT_VCTERM;
-	} else if (!op->term)
-		op->term = DEFAULT_STERM;
+	} else {
+		op->kbmode = K_RAW;
+		if (!op->term)
+			op->term = DEFAULT_STERM;
+	}
 
 	setenv("TERM", op->term, 1);
 }
@@ -1124,12 +1128,7 @@ static void termio_init(struct options *op, struct termios *tp)
 
 	if (op->flags & F_VCONSOLE) {
 #if defined(IUTF8) && defined(KDGKBMODE)
-		int mode;
-
-		/* Detect mode of current keyboard setup, e.g. for UTF-8 */
-		if (ioctl(STDIN_FILENO, KDGKBMODE, &mode) < 0)
-			mode = K_RAW;
-		switch(mode) {
+		switch(op->kbmode) {
 		case K_UNICODE:
 			setlocale(LC_CTYPE, "C.UTF-8");
 			op->flags |= F_UTF8;

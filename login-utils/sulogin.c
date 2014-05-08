@@ -49,6 +49,11 @@
 # include <selinux/get_context_list.h>
 #endif
 
+#ifdef __linux__
+# include <sys/kd.h>
+# include <sys/param.h>
+#endif
+
 #include "c.h"
 #include "closestream.h"
 #include "nls.h"
@@ -142,10 +147,14 @@ static void tcinit(struct console *con)
 		return;
 	}
 
-	/* Handle serial lines here */
-	if (ioctl(fd, TIOCMGET, (char *) &mode) == 0) {
+	/* Handle lines other than virtual consoles here */
+#if defined(KDGKBMODE)
+	if (ioctl(fd, KDGKBMODE, &mode) < 0)
+#endif
+	{
 		speed_t ispeed, ospeed;
 		struct winsize ws;
+		errno = 0;
 
 		/* this is a modem line */
 		con->flags |= CON_SERIAL;
@@ -191,9 +200,7 @@ static void tcinit(struct console *con)
 		goto setattr;
 	}
 #if defined(IUTF8) && defined(KDGKBMODE)
-	/* Detect mode of current keyboard setup, e.g. for UTF-8 */
-	if (ioctl(fd, KDGKBMODE, &mode) < 0)
-		mode = K_RAW;
+	/* Handle mode of current keyboard setup, e.g. for UTF-8 */
 	switch(mode) {
 	case K_UNICODE:
 		setlocale(LC_CTYPE, "C.UTF-8");
