@@ -54,7 +54,24 @@ wtmp begins Wed Aug 28 03:00:00 2013
 torvalds linux        Mon Aug 26 00:57    gone - no logout
 
 wtmp begins Wed Aug 28 03:00:00 2013
-~~~ full times ~~~
+~~~ full times shortopt ~~~
+rick     long         never-gonna-logo Thu Jan  1 00:00:00 1970 - Tue Jan 19 03:14:07 2038 (24855+03:14)
+torvalds linux        hobby            Mon Aug 26 00:57:08 1991   gone - no logout
+reboot   system boot  system-name      Wed Aug 28 18:00:00 2013   still running
+reboot   system boot  system-name      Wed Aug 28 16:00:00 2013 - Wed Aug 28 17:00:00 2013  (01:00)
+IPv4     root         dns-server       Wed Aug 28 13:00:00 2013 - Wed Aug 28 14:00:00 2013  (01:00)
+nonvalid foo          zero             Wed Aug 28 12:00:00 2013 - down                      (03:00)
+runlevel foo          one              Wed Aug 28 11:00:00 2013 - Wed Aug 28 12:00:00 2013  (01:00)
+sysboot  foo          two              Wed Aug 28 10:00:00 2013 - Wed Aug 28 11:00:00 2013  (01:00)
+newtime  foo          three            Wed Aug 28 09:00:00 2013 - Wed Aug 28 10:00:00 2013  (01:00)
+oldtime  foo          four             Wed Aug 28 08:00:00 2013 - Wed Aug 28 09:00:00 2013  (01:00)
+init     foo          five             Wed Aug 28 07:00:00 2013 - Wed Aug 28 08:00:00 2013  (01:00)
+login    foo          six              Wed Aug 28 06:00:00 2013 - Wed Aug 28 07:00:00 2013  (01:00)
+user_pro foo          seven            Wed Aug 28 05:00:00 2013 - Wed Aug 28 06:00:00 2013  (01:00)
+accounti foo          nine             Wed Aug 28 03:00:00 2013 - Wed Aug 28 04:00:00 2013  (01:00)
+
+wtmp begins Wed Aug 28 03:00:00 2013
+~~~ full times longopt ~~~
 rick     long         never-gonna-logo Thu Jan  1 00:00:00 1970 - Tue Jan 19 03:14:07 2038 (24855+03:14)
 torvalds linux        hobby            Mon Aug 26 00:57:08 1991   gone - no logout
 reboot   system boot  system-name      Wed Aug 28 18:00:00 2013   still running
