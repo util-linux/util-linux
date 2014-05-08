@@ -453,19 +453,19 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 			sprintf(logouttime, "- down ");
 			break;
 		case R_NOW:
-			length[0] = 0;
-			if (ctl->time_fmt > LAST_TIMEFTM_SHORT_CTIME)
+			if (ctl->time_fmt > LAST_TIMEFTM_SHORT_CTIME) {
 				sprintf(logouttime, "  still logged in");
-			else {
+				length[0] = 0;
+			} else {
 				sprintf(logouttime, "  still");
 				sprintf(length, "logged in");
 			}
 			break;
 		case R_PHANTOM:
-			length[0] = 0;
-			if (ctl->time_fmt > LAST_TIMEFTM_SHORT_CTIME)
+			if (ctl->time_fmt > LAST_TIMEFTM_SHORT_CTIME) {
 				sprintf(logouttime, "  gone - no logout");
-			else {
+				length[0] = 0;
+			} else {
 				sprintf(logouttime, "   gone");
 				sprintf(length, "- no logout");
 			}
