@@ -465,9 +465,12 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 			if (ctl->time_fmt > LAST_TIMEFTM_SHORT_CTIME) {
 				sprintf(logouttime, "  gone - no logout");
 				length[0] = 0;
-			} else {
+			} else if (ctl->time_fmt == LAST_TIMEFTM_SHORT_CTIME) {
 				sprintf(logouttime, "   gone");
 				sprintf(length, "- no logout");
+			} else {
+				logouttime[0] = 0;
+				sprintf(length, "no logout");
 			}
 			break;
 		case R_REBOOT:

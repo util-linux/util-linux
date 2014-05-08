@@ -90,7 +90,7 @@ accounti foo          nine             Wed Aug 28 03:00:00 2013 - Wed Aug 28 04:
 wtmp begins Wed Aug 28 03:00:00 2013
 ~~~ no time ~~~
 rick     long         never-gonna-logo   (24855+03:14)
-torvalds linux        hobby              - no logout
+torvalds linux        hobby              no logout
 reboot   system boot  system-name        running
 reboot   system boot  system-name         (01:00)
 IPv4     root         dns-server          (01:00)
