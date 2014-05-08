@@ -77,13 +77,62 @@ static volatile sig_atomic_t sigchild;
 #endif
 
 /*
+ * For the case plymouth is found on this system
+ */
+static int plymouth_command(const char* arg)
+{
+	const char *cmd = "/usr/bin/plymouth";
+	static int has_plymouth = 1;
+	pid_t pid;
+
+	if (!has_plymouth)
+		return 127;
+
+	pid = fork();
+	if (!pid) {
+		int fd = open("/dev/null", O_RDWR);
+		dup2(fd, 0);
+		dup2(fd, 1);
+		dup2(fd, 2);
+		close(fd);
+		execl(cmd, cmd, arg, (char *) NULL);
+		exit(127);
+	} else if (pid > 0) {
+		int status;
+		waitpid(pid, &status, 0);
+		if (status == 127)
+			has_plymouth = 0;
+		return status;
+	}
+	return 1;
+}
+
+/*
  * Fix the tty modes and set reasonable defaults.
  */
 static void tcinit(struct console *con)
 {
 	int mode = 0, flags = 0;
 	struct termios *tio = &con->tio;
-	int fd = con->fd;
+	struct termios lock;
+	int fd = con->fd, i = (plymouth_command("--ping")) ? 20 : 0;
+
+	while (i-- > 0) {
+		/*
+		 * With plymouth the termios flags become changed after this
+		 * function had changed the termios.
+		 */
+		memset(&lock, 0, sizeof(struct termios));
+		if (ioctl(fd, TIOCGLCKTRMIOS, &lock) < 0)
+			break;
+		if (!lock.c_iflag && !lock.c_oflag && !lock.c_cflag && !lock.c_lflag)
+			break;
+		if (i == 15 && plymouth_command("quit") != 0)
+			break;
+		sleep(1);
+	}
+	memset(&lock, 0, sizeof(struct termios));
+	ioctl(fd, TIOCSLCKTRMIOS, &lock);
 
 	errno = 0;
 
