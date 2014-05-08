@@ -51,7 +51,8 @@
 #    define DEFAULT_VCTERM "linux"
 #  endif
 #  if defined (__s390__) || defined (__s390x__)
-#    define DEFAULT_TTYS0  "ibm327x"
+#    define DEFAULT_TTYS0  "dumb"
+#    define DEFAULT_TTY32  "ibm327x"
 #    define DEFAULT_TTYS1  "vt220"
 #  endif
 #  ifndef DEFAULT_STERM
@@ -569,6 +570,8 @@ static void login_options_to_argv(char *argv[], int *argc,
 	*argc = i;
 }
 
+#define is_speed(str) (strlen((str)) == strspn((str), "0123456789,"))
+
 /* Parse command-line arguments. */
 static void parse_args(int argc, char **argv, struct options *op)
 {
@@ -747,7 +750,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 	}
 
 	/* Accept "tty", "baudrate tty", and "tty baudrate". */
-	if ('0' <= argv[optind][0] && argv[optind][0] <= '9') {
+	if (is_speed(argv[optind])) {
 		/* Assume BSD style speed. */
 		parse_speeds(op, argv[optind++]);
 		if (argc < optind + 1) {
@@ -759,7 +762,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		op->tty = argv[optind++];
 		if (argc > optind) {
 			char *v = argv[optind++];
-			if ('0' <= *v && *v <= '9')
+			if (is_speed(v))
 				parse_speeds(op, v);
 			else
 				op->speeds[op->numspeed++] = bcode("9600");
@@ -1069,9 +1072,11 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 		 * higher.  Whereas the second serial line on a S/390(x) is
 		 * a real character terminal which is compatible with VT220.
 		 */
-		if (strcmp(op->tty, "ttyS0") == 0)
+		if (strcmp(op->tty, "ttyS0") == 0)		/* linux/drivers/s390/char/con3215.c */
 			op->term = DEFAULT_TTYS0;
-		else if (strcmp(op->tty, "ttyS1") == 0)
+		else if (strncmp(op->tty, "3270/tty", 8) == 0)	/* linux/drivers/s390/char/con3270.c */
+			op->term = DEFAULT_TTY32;
+		else if (strcmp(op->tty, "ttyS1") == 0)		/* linux/drivers/s390/char/sclp_vt220.c */
 			op->term = DEFAULT_TTYS1;
 	}
 #endif

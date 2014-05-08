@@ -231,10 +231,16 @@ static void tcfinal(struct console *con)
 		setenv("TERM", "linux", 1);
 		return;
 	}
-	if (con->flags & CON_NOTTY)
+	if (con->flags & CON_NOTTY) {
+		setenv("TERM", "dumb", 1);
 		return;
+	}
 
+#if defined (__s390__) || defined (__s390x__)
+	setenv("TERM", "dumb", 1);
+#else
 	setenv("TERM", "vt102", 1);
+#endif
 	tio = &con->tio;
 	fd = con->fd;
 
