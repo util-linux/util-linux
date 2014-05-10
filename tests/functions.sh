@@ -97,6 +97,21 @@ function ts_log {
 function ts_has_option {
 	NAME="$1"
 	ALL="$2"
+
+	# user may set options by env for a single test or whole component
+	# e.g. TS_OPT_ipcs_limits2_fake="yes" or TS_OPT_ipcs_fake="yes"
+	eval local env_opt_test=\$TS_OPT_${TS_COMPONENT}_${TS_TESTNAME}_${NAME}
+	eval local env_opt_comp=\$TS_OPT_${TS_COMPONENT}_${NAME}
+	if [ "$env_opt_test" = "yes" \
+		-o "$env_opt_comp" = "yes" -a "$env_opt_test" != "no" ]; then
+		echo "yes"
+		return
+	elif [ "$env_opt_test" = "no" \
+		-o "$env_opt_comp" = "no" -a "$env_opt_test" != "yes" ]; then
+		return
+	fi
+
+	# or just check the global command line options
 	echo -n $ALL | sed 's/ //g' | awk 'BEGIN { FS="="; RS="--" } /('$NAME'$|'$NAME'=)/ { print "yes" }'
 }
 
