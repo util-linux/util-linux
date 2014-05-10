@@ -51,8 +51,11 @@ $TS_CMD_LAST -f $WTMP_FILE -i torvalds >> $TS_OUTPUT 2>/dev/null
 ts_log "~~~ no host ~~~"
 $TS_CMD_LAST -f $WTMP_FILE -R torvalds >> $TS_OUTPUT 2>/dev/null
 
-ts_log "~~~ full times ~~~"
+ts_log "~~~ full times shortopt ~~~"
 $TS_CMD_LAST -f $WTMP_FILE -F >> $TS_OUTPUT 2>/dev/null
+
+ts_log "~~~ full times longopt ~~~"
+$TS_CMD_LAST -f $WTMP_FILE --time-format=full >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ no time ~~~"
 $TS_CMD_LAST -f $WTMP_FILE --time-format=notime >> $TS_OUTPUT 2>/dev/null

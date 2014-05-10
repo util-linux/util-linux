@@ -82,8 +82,7 @@ struct last_control {
 		     showhost :1, /* Show hostname */
 		     altlist :1,  /* Hostname at the end */
 		     usedns :1,	  /* Use DNS to lookup the hostname */
-		     useip :1,	  /* Print IP address in number format */
-		     fulltime :1; /* Print full dates and times */
+		     useip :1;    /* Print IP address in number format */
 
 	unsigned int name_len;	/* Number of login name characters to print */
 	unsigned int domain_len; /* Number of domain name characters to print */
@@ -434,9 +433,10 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 
 	epoch = time(NULL);
 	if (t == epoch) {
-		if (ctl->fulltime)
+		if (ctl->time_fmt > LAST_TIMEFTM_SHORT_CTIME) {
 			sprintf(logouttime, "  still running");
-		else {
+			length[0] = 0;
+		} else {
 			sprintf(logouttime, "  still");
 			sprintf(length, "running");
 		}
@@ -453,21 +453,24 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 			sprintf(logouttime, "- down ");
 			break;
 		case R_NOW:
-			length[0] = 0;
-			if (ctl->fulltime)
+			if (ctl->time_fmt > LAST_TIMEFTM_SHORT_CTIME) {
 				sprintf(logouttime, "  still logged in");
-			else {
+				length[0] = 0;
+			} else {
 				sprintf(logouttime, "  still");
 				sprintf(length, "logged in");
 			}
 			break;
 		case R_PHANTOM:
-			length[0] = 0;
-			if (ctl->fulltime)
+			if (ctl->time_fmt > LAST_TIMEFTM_SHORT_CTIME) {
 				sprintf(logouttime, "  gone - no logout");
-			else {
+				length[0] = 0;
+			} else if (ctl->time_fmt == LAST_TIMEFTM_SHORT_CTIME) {
 				sprintf(logouttime, "   gone");
 				sprintf(length, "- no logout");
+			} else {
+				logouttime[0] = 0;
+				sprintf(length, "no logout");
 			}
 			break;
 		case R_REBOOT:
@@ -931,7 +934,6 @@ int main(int argc, char **argv)
 			ctl.altlist = 1;
 			break;
 		case 'F':
-			ctl.fulltime = 1;
 			ctl.time_fmt = LAST_TIMEFTM_FULL_CTIME;
 			break;
 		case 'p':
@@ -961,8 +963,6 @@ int main(int argc, char **argv)
 			break;
 		case OPT_TIME_FORMAT:
 			ctl.time_fmt = which_time_format(optarg);
-			if (ctl.time_fmt == LAST_TIMEFTM_ISO8601)
-				ctl.fulltime = 1;
 			break;
 		default:
 			usage(stderr);
