@@ -76,6 +76,15 @@ function ts_failed {
 	exit 1
 }
 
+function ts_known_failed {
+	if [ x"$1" == x"" ]; then
+		ts_report " KNOWN FAILED ($TS_NS)"
+	else
+		ts_report " KNOWN FAILED ($1)"
+	fi
+	exit 0
+}
+
 function ts_ok_subtest {
 	if [ x"$1" == x"" ]; then
 		ts_report " OK"
@@ -196,6 +205,7 @@ function ts_init_env {
 
 	TS_VERBOSE=$(ts_has_option "verbose" "$*")
 	TS_PARALLEL=$(ts_has_option "parallel" "$*")
+	TS_KNOWN_FAIL=$(ts_has_option "known-fail" "$*")
 
 	tmp=$( ts_has_option "memcheck" "$*")
 	if [ "$tmp" == "yes" -a -f /usr/bin/valgrind ]; then
@@ -383,6 +393,9 @@ function ts_finalize {
 	if [ -s $TS_EXPECTED ]; then
 		ts_gen_diff
 		if [ $? -eq 1 ]; then
+			if [ "$TS_KNOWN_FAIL" = "yes" ]; then
+				ts_known_failed "$1"
+			fi
 			ts_failed "$1"
 		fi
 		ts_ok "$1"
