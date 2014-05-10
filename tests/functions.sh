@@ -132,6 +132,7 @@ function ts_init_core_subtest_env {
 
 function ts_init_env {
 	local mydir=$(ts_abspath ${0%/*})
+	local tmp
 
 	LANG="POSIX"
 	LANGUAGE="POSIX"
@@ -177,6 +178,11 @@ function ts_init_env {
 
 	TS_VERBOSE=$(ts_has_option "verbose" "$*")
 	TS_PARALLEL=$(ts_has_option "parallel" "$*")
+
+	tmp=$( ts_has_option "memcheck" "$*")
+	if [ "$tmp" == "yes" -a -f /usr/bin/valgrind ]; then
+		TS_VALGRIND_CMD="/usr/bin/valgrind"
+	fi
 
 	BLKID_FILE="$TS_OUTDIR/${TS_TESTNAME}.blkidtab"
 
@@ -233,15 +239,10 @@ function ts_init_subtest {
 }
 
 function ts_init {
+	ts_init_env "$*"
+
 	local is_fake=$( ts_has_option "fake" "$*")
 	local is_force=$( ts_has_option "force" "$*")
-	local is_memcheck=$( ts_has_option "memcheck" "$*")
-
-	if [ "$is_memcheck" == "yes" -a -f /usr/bin/valgrind ]; then
-		TS_VALGRIND_CMD="/usr/bin/valgrind"
-	fi
-
-	ts_init_env "$*"
 
 	if [ "$TS_PARALLEL" == "yes" ]; then
 		TS_TITLE=$(printf "%13s: %-30s ..." "$TS_COMPONENT" "$TS_DESC")
