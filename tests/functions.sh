@@ -100,8 +100,11 @@ function ts_has_option {
 
 	# user may set options by env for a single test or whole component
 	# e.g. TS_OPT_ipcs_limits2_fake="yes" or TS_OPT_ipcs_fake="yes"
-	eval local env_opt_test=\$TS_OPT_${TS_COMPONENT}_${TS_TESTNAME}_${NAME}
-	eval local env_opt_comp=\$TS_OPT_${TS_COMPONENT}_${NAME}
+	local v_test=${TS_TESTNAME//[-.]/_}
+	local v_comp=${TS_COMPONENT//[-.]/_}
+	local v_name=${NAME//[-.]/_}
+	eval local env_opt_test=\$TS_OPT_${v_comp}_${v_test}_${v_name}
+	eval local env_opt_comp=\$TS_OPT_${v_comp}_${v_name}
 	if [ "$env_opt_test" = "yes" \
 		-o "$env_opt_comp" = "yes" -a "$env_opt_test" != "no" ]; then
 		echo "yes"
