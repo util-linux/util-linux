@@ -12,6 +12,7 @@ ts_check_test_command "$TS_CMD_FDISK"
 ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_CMD_UUIDGEN"
 
 ts_init_py libmount
 ts_skip_nonroot
@@ -20,7 +21,7 @@ TESTPROG="$TS_HELPER_PYLIBMOUNT_CONTEXT"
 
 PYDBG="$PYTHON -m pdb"
 LABEL=libmount-test
-UUID=$(uuidgen)
+UUID=$($TS_CMD_UUIDGEN)
 MOUNTPOINT="$TS_MOUNTPOINT"
 TS_NOEXIST="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-noex"
 [ -d $TS_NOEXIST ] && rmdir $TS_NOEXIST
