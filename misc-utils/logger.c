@@ -275,7 +275,7 @@ static void mysyslog(int fd, int logflags, int pri, char *tag, char *msg)
 		       if (!cp)
 			       cp = "<someone>";
 	       }
-               (void)time(&now);
+	       time(&now);
 	       tp = ctime(&now)+4;
 
                snprintf(buf, sizeof(buf), "<%d>%.15s %.200s%s: %.400s",

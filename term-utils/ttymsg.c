@@ -85,10 +85,10 @@ ttymsg(struct iovec *iov, size_t iovcnt, char *line, int tmout) {
 	   also wrong since people use /dev/pts/xxx. */
 
 	if (strlen(line) + sizeof(_PATH_DEV) + 1 > sizeof(device)) {
-		(void) sprintf(errbuf, _("excessively long line arg"));
+		sprintf(errbuf, _("excessively long line arg"));
 		return (errbuf);
 	}
-	(void) sprintf(device, "%s%s", _PATH_DEV, line);
+	sprintf(device, "%s%s", _PATH_DEV, line);
 
 	/*
 	 * open will fail on slip lines or exclusive-use lines
@@ -99,7 +99,7 @@ ttymsg(struct iovec *iov, size_t iovcnt, char *line, int tmout) {
 			return (NULL);
 		if (strlen(strerror(errno)) > 1000)
 			return (NULL);
-		(void) sprintf(errbuf, "%s: %m", device);
+		sprintf(errbuf, "%s: %m", device);
 		errbuf[1024] = 0;
 		return (errbuf);
 	}
@@ -134,32 +134,32 @@ ttymsg(struct iovec *iov, size_t iovcnt, char *line, int tmout) {
 			sigset_t sigmask;
 
 			if (forked) {
-				(void) close(fd);
+				close(fd);
 				_exit(EXIT_FAILURE);
 			}
 			cpid = fork();
 			if (cpid < 0) {
 				if (strlen(strerror(errno)) > 1000)
-					(void) sprintf(errbuf, _("cannot fork"));
+					sprintf(errbuf, _("cannot fork"));
 				else {
 					errsv = errno;
-					(void) sprintf(errbuf,
+					sprintf(errbuf,
 						 _("fork: %s"), strerror(errsv));
 				}
-				(void) close(fd);
+				close(fd);
 				return (errbuf);
 			}
 			if (cpid) {	/* parent */
-				(void) close(fd);
+				close(fd);
 				return (NULL);
 			}
 			forked++;
 			/* wait at most tmout seconds */
-			(void) signal(SIGALRM, SIG_DFL);
-			(void) signal(SIGTERM, SIG_DFL); /* XXX */
+			signal(SIGALRM, SIG_DFL);
+			signal(SIGTERM, SIG_DFL); /* XXX */
 			sigemptyset(&sigmask);
 			sigprocmask (SIG_SETMASK, &sigmask, NULL);
-			(void) alarm((u_int)tmout);
+			alarm((u_int)tmout);
 			flags = fcntl(fd, F_GETFL);
 			fcntl(flags, F_SETFL, (long) (flags & ~O_NONBLOCK));
 			continue;
@@ -175,11 +175,11 @@ ttymsg(struct iovec *iov, size_t iovcnt, char *line, int tmout) {
 		if (forked)
 			_exit(EXIT_FAILURE);
 		if (strlen(strerror(errno)) > 1000)
-			(void) sprintf(errbuf, _("%s: BAD ERROR, message is "
+			sprintf(errbuf, _("%s: BAD ERROR, message is "
 						 "far too long"), device);
 		else {
 			errsv = errno;
-			(void) sprintf(errbuf, "%s: %s", device,
+			sprintf(errbuf, "%s: %s", device,
 				       strerror(errsv));
 		}
 		errbuf[1024] = 0;
