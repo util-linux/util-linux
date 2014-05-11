@@ -27,7 +27,8 @@ ts_check_test_command "$TS_CMD_BLKID"
 
 ts_skip_nonroot
 
-DEVICE=$(ts_scsi_debug_init dev_size_mb=51 sector_size=512)
+# set global variable DEVICE
+ts_scsi_debug_init dev_size_mb=51 sector_size=512
 
 ts_log "Create partitions"
 $TS_CMD_FDISK ${DEVICE} >> $TS_OUTPUT 2>&1 <<EOF

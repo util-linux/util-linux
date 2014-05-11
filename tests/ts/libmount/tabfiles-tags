@@ -11,7 +11,8 @@ TESTPROG="$TS_HELPER_LIBMOUNT_TAB"
 
 [ -x $TESTPROG ] || ts_skip "test not compiled"
 
-DEVICE=$(ts_scsi_debug_init dev_size_mb=50 sector_size=512)
+# set global variable DEVICE
+ts_scsi_debug_init dev_size_mb=50 sector_size=512
 LABEL="testLibmount"
 UUID="de1bc6e9-34ab-4151-a1d7-900042eee8d9"
 
