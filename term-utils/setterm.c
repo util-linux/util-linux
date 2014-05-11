@@ -141,28 +141,34 @@ extern int klogctl(int type, char *buf, int len);
 #define EXIT_DUMPFILE	-1
 
 /* Colors. */
-#define BLACK   0
-#define RED     1
-#define GREEN   2
-#define YELLOW  3
-#define BLUE    4
-#define MAGENTA 5
-#define CYAN    6
-#define WHITE   7
-#define GREY	8
-#define DEFAULT 9
+enum {
+	BLACK = 0,
+	RED,
+	GREEN,
+	YELLOW,
+	BLUE,
+	MAGENTA,
+	CYAN,
+	WHITE,
+	GREY,
+	DEFAULT
+};
 
 /* Blank commands */
-#define BLANKSCREEN	-1
-#define UNBLANKSCREEN	-2
-#define BLANKEDSCREEN	-3
+enum {
+	BLANKSCREEN	= -1,
+	UNBLANKSCREEN	= -2,
+	BLANKEDSCREEN	= -3
+};
 
 /* <linux/tiocl.h> fallback */
 #ifndef TIOCL_BLANKSCREEN
-# define TIOCL_UNBLANKSCREEN	4       /* unblank screen */
-# define TIOCL_SETVESABLANK	10      /* set vesa blanking mode */
-# define TIOCL_BLANKSCREEN	14	/* keep screen blank even if a key is pressed */
-# define TIOCL_BLANKEDSCREEN	15	/* return which vt was blanked */
+enum {
+	TIOCL_UNBLANKSCREEN	=  4,	/* unblank screen */
+	TIOCL_SETVESABLANK	= 10,	/* set vesa blanking mode */
+	TIOCL_BLANKSCREEN	= 14,	/* keep screen blank even if a key is pressed */
+	TIOCL_BLANKEDSCREEN	= 15	/* return which vt was blanked */
+};
 #endif
 
 /* Option flags.  Set if the option is to be invoked. */
@@ -296,7 +302,7 @@ par_color(int argc, char **argv, int *option, int *opt_color, int *bad_arg) {
 		else
 			*bad_arg = TRUE;
 
-		if(*opt_color < 0 || *opt_color > 9 || *opt_color == 8)
+		if(*opt_color < BLACK || DEFAULT < *opt_color || *opt_color == GREY)
 			*bad_arg = TRUE;
 	}
 }
@@ -317,7 +323,7 @@ par_color2(int argc, char **argv, int *option, int *opt_color, int *bad_arg) {
 	*opt_color = 0;
 	if (argc == 2) {
 		if (strcmp(argv[0], "bright") == 0)
-			*opt_color = 8;
+			*opt_color = GREY;
 		else {
 			*bad_arg = TRUE;
 			return;
@@ -352,7 +358,7 @@ par_color2(int argc, char **argv, int *option, int *opt_color, int *bad_arg) {
 			*opt_color = atoi(argv[argc-1]);
 		else
 			*bad_arg = TRUE;
-		if(*opt_color < 0 || *opt_color > 15)
+		if(*opt_color < BLACK || DEFAULT < *opt_color )
 			*bad_arg = TRUE;
 	}
 }
