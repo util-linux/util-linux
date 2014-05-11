@@ -558,21 +558,21 @@ function ts_fdisk_clean {
 }
 
 function ts_scsi_debug_init {
+	local devname
+	DEVICE="none"
 
-	modprobe --dry-run --quiet scsi_debug
+	modprobe --dry-run --quiet scsi_debug &>/dev/null
 	[ "$?" == 0 ] || ts_skip "missing scsi_debug module"
 
 	rmmod scsi_debug &> /dev/null
 	modprobe scsi_debug $*
 	[ "$?" == 0 ] || ts_die "Cannot init device"
 
-	DEVNAME=$(grep --with-filename scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
-	[ "x${DEVNAME}" == "x" ] && ts_die "Cannot find device"
-
-	DEVICE="/dev/${DEVNAME}"
+	devname=$(grep --with-filename scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
+	[ "x${devname}" == "x" ] && ts_die "Cannot find device"
 
 	sleep 1
 	udevadm settle
 
-	echo $DEVICE
+	DEVICE="/dev/${devname}"
 }
