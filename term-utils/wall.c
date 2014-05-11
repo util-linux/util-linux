@@ -69,7 +69,8 @@
 #include "fileutils.h"
 #include "closestream.h"
 
-#define WRITE_TIME_OUT	300		/* in seconds */
+#define	TERM_WIDTH	79
+#define	WRITE_TIME_OUT	300		/* in seconds */
 
 /* Function prototypes */
 static char *makemsg(char *fname, char **mvec, int mvecsz,
@@ -225,14 +226,14 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		 */
 		/* snprintf is not always available, but the sprintf's here
 		   will not overflow as long as %d takes at most 100 chars */
-		fprintf(fp, "\r%79s\r\n", " ");
+		fprintf(fp, "\r%*s\r\n", TERM_WIDTH, " ");
 		sprintf(lbuf, _("Broadcast message from %s@%s (%s) (%s):"),
 			      whom, hostname, where, date);
-		fprintf(fp, "%-79.79s\007\007\r\n", lbuf);
+		fprintf(fp, "%-*.*s\007\007\r\n", TERM_WIDTH, TERM_WIDTH, lbuf);
 		free(hostname);
 		free(date);
 	}
-	fprintf(fp, "%79s\r\n", " ");
+	fprintf(fp, "%*s\r\n", TERM_WIDTH, " ");
 
 	 if (mvec) {
 		/*
@@ -274,8 +275,8 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		 */
 		while (fgets(lbuf, line_max, stdin)) {
 			for (cnt = 0, p = lbuf; (ch = *p) != '\0'; ++p, ++cnt) {
-				if (cnt == 79 || ch == '\n') {
-					for (; cnt < 79; ++cnt)
+				if (cnt == TERM_WIDTH || ch == '\n') {
+					for (; cnt < TERM_WIDTH; ++cnt)
 						putc(' ', fp);
 					putc('\r', fp);
 					putc('\n', fp);
@@ -288,7 +289,7 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 			}
 		}
 	}
-	fprintf(fp, "%79s\r\n", " ");
+	fprintf(fp, "%*s\r\n", TERM_WIDTH, " ");
 
 	free(lbuf);
 	rewind(fp);
