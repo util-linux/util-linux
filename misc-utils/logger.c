@@ -99,9 +99,20 @@ static int decode(char *name, CODE *codetab)
 {
 	register CODE *c;
 
-	if (isdigit(*name))
-		return (atoi(name));
+	if (name == NULL || *name == '\0')
+		return -1;
+	if (isdigit(*name)) {
+		int num;
+		char *end = NULL;
 
+		num = strtol(name, &end, 10);
+		if (errno || name == end || (end && *end))
+			return -1;
+		for (c = codetab; c->c_name; c++)
+			if (num == c->c_val)
+				return num;
+		return -1;
+	}
 	for (c = codetab; c->c_name; c++)
 		if (!strcasecmp(name, c->c_name))
 			return (c->c_val);
