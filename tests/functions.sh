@@ -428,16 +428,13 @@ function ts_image_init {
 }
 
 function ts_device_init {
-	local img=$(ts_image_init $1 $2)
-	local dev=$($TS_CMD_LOSETUP --show -f "$img")
+	local img
+	local dev
 
-	if [ -z "$dev" ]; then
-		ts_device_deinit $dev
-		return 1		# error
-	fi
+	img=$(ts_image_init $1 $2)
+	dev=$($TS_CMD_LOSETUP --show -f "$img")
 
 	echo $dev
-	return 0			# succes
 }
 
 function ts_device_deinit {
