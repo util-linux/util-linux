@@ -10,6 +10,7 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_FDISK"
 ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_CMD_WIPEFS"
+ts_check_test_command "$TS_CMD_UUIDGEN"
 
 ts_init_py libmount
 ts_skip_nonroot
@@ -17,7 +18,7 @@ ts_skip_nonroot
 
 TESTPROG="$TS_HELPER_PYLIBMOUNT_CONTEXT"
 LABEL=libmount-test
-UUID=$(uuidgen)
+UUID=$($TS_CMD_UUIDGEN)
 MOUNTPOINT="$TS_MOUNTPOINT"
 
 # set global variable TS_DEVICE
