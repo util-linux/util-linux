@@ -35,7 +35,8 @@ ts_skip_nonroot
 ts_check_losetup
 
 
-DEVICE=$(ts_scsi_debug_init dev_size_mb=11)
+# set global variable TS_DEVICE
+ts_scsi_debug_init dev_size_mb=11
 REFILE=$(ts_image_init 10)
 
 function lo_print {
@@ -93,7 +94,7 @@ rm -rf $BACKFILE
 #
 # Backing file is a block device
 #
-BACKFILE="$DEVICE"
+BACKFILE="$TS_DEVICE"
 
 ts_init_subtest "blkdev"
 LODEV=$( $TS_CMD_LOSETUP --find --show $BACKFILE )
