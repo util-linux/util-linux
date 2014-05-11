@@ -37,7 +37,6 @@ colcrt:
 colrm:  
 column:  
 ctrlaltdel:  
-cytune:  
 delpart:  
 dmesg:  librt 
 fallocate:  

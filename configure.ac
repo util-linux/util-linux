@@ -847,15 +847,6 @@ UL_REQUIRES_LINUX([losetup])
 AM_CONDITIONAL([BUILD_LOSETUP], [test "x$build_losetup" = xyes])
 
 
-AC_ARG_ENABLE([cytune],
-  AS_HELP_STRING([--disable-cytune], [do not build cytune]),
-  [], [enable_cytune=check]
-)
-UL_BUILD_INIT([cytune])
-UL_REQUIRES_LINUX([cytune])
-AM_CONDITIONAL([BUILD_CYTUNE], [test "x$build_cytune" = xyes])
-
-
 AC_ARG_ENABLE([fsck],
   AS_HELP_STRING([--disable-fsck], [do not build fsck]),
   [], [enable_fsck=check]

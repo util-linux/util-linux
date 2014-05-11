@@ -73,7 +73,6 @@ mountpoint:  libblkid libmount libselinux libsepol libuuid
 arch:  
 chcpu:  
 ctrlaltdel:  
-cytune:  
 dmesg:  
 fallocate:  
 flock:  

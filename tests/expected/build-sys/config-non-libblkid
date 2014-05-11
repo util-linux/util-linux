@@ -15,7 +15,6 @@ colcrt:
 colrm:  
 column:  
 ctrlaltdel:  
-cytune:  
 dmesg:  librt 
 fallocate:  
 fdformat:  
