@@ -37,6 +37,7 @@
  */
 
 #include <errno.h>
+#include <limits.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <time.h>
@@ -231,6 +232,8 @@ static int journald_entry(FILE *fp)
 		}
 		if (lines == vectors) {
 			vectors *= 2;
+			if (IOV_MAX < vectors)
+				errx(EXIT_FAILURE, _("maximum input lines (%d) exceeded"), IOV_MAX);
 			iovec = xrealloc(iovec, vectors * sizeof(struct iovec));
 		}
 		iovec[lines].iov_base = buf;
@@ -415,7 +418,9 @@ int main(int argc, char **argv)
 		int ret = journald_entry(jfd);
 		if (stdin != jfd)
 			fclose(jfd);
-		return ret ? EXIT_FAILURE : EXIT_SUCCESS;
+		if (ret)
+			errx(EXIT_FAILURE, "journald entry could not be wrote");
+		return EXIT_SUCCESS;
 	}
 #endif
 	if (server)
