@@ -129,16 +129,15 @@ When in a sub-menu or at a prompt to enter a filename, you can hit the
 key to return to the main command line.
 
 .SH COLORS
-Implicit coloring can be disabled as follows:
-.RS
+Implicit coloring can be disabled by an empty file \fI/etc/terminal-colors.d/cfdisk.disable\fR.
 
-.br
-.BI "touch /etc/terminal-colors.d/cfdisk.disable"
-.br
+See
+.BR terminal-colors.d (5)
+for more details about colorization configuration.
 
-.RE
-For more details see
-.BR terminal-colors.d (5).
+.B cfdisk
+does not support colors customization by color scheme file.
+
 .SH "SEE ALSO"
 .BR fdisk (8),
 .BR sfdisk (8),
