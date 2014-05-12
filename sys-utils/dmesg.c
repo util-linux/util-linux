@@ -61,16 +61,36 @@
 #define SYSLOG_ACTION_SIZE_BUFFER   10
 
 /*
- * Colors
+ * Color scheme
  */
-#define DMESG_COLOR_SUBSYS	UL_COLOR_BROWN
-#define DMESG_COLOR_TIME	UL_COLOR_GREEN
-#define DMESG_COLOR_RELTIME	UL_COLOR_BOLD_GREEN
-#define DMESG_COLOR_ALERT	UL_COLOR_REVERSE UL_COLOR_RED
-#define DMESG_COLOR_CRIT	UL_COLOR_BOLD_RED
-#define DMESG_COLOR_ERR		UL_COLOR_RED
-#define DMESG_COLOR_WARN	UL_COLOR_BOLD
-#define DMESG_COLOR_SEGFAULT	UL_COLOR_HALFBRIGHT UL_COLOR_RED
+struct dmesg_color {
+	const char *scheme;	/* name used in termina-colors.d/dmesg.scheme */
+	const char *dflt;	/* default color ESC sequence */
+};
+
+enum {
+	DMESG_COLOR_SUBSYS,
+	DMESG_COLOR_TIME,
+	DMESG_COLOR_ALERT,
+	DMESG_COLOR_CRIT,
+	DMESG_COLOR_ERR,
+	DMESG_COLOR_WARN,
+	DMESG_COLOR_SEGFAULT
+};
+
+static const struct dmesg_color colors[] =
+{
+	[DMESG_COLOR_SUBSYS]    = { "subsys",	UL_COLOR_BROWN },
+	[DMESG_COLOR_TIME]	= { "time",     UL_COLOR_GREEN },
+	[DMESG_COLOR_ALERT]	= { "alert",    UL_COLOR_REVERSE UL_COLOR_RED },
+	[DMESG_COLOR_CRIT]	= { "crit",     UL_COLOR_BOLD UL_COLOR_RED },
+	[DMESG_COLOR_ERR]       = { "err",      UL_COLOR_RED },
+	[DMESG_COLOR_WARN]	= { "warn",     UL_COLOR_BOLD },
+	[DMESG_COLOR_SEGFAULT]	= { "segfault", UL_COLOR_HALFBRIGHT UL_COLOR_RED }
+};
+
+#define dmesg_enable_color(_id) \
+		color_scheme_enable(colors[_id].scheme, colors[_id].dflt);
 
 /*
  * Priority and facility names
@@ -202,19 +222,21 @@ static int read_kmsg(struct dmesg_control *ctl);
 
 static int set_level_color(int log_level, const char *mesg, size_t mesgsz)
 {
+	int id = -1;
+
 	switch (log_level) {
 	case LOG_ALERT:
-		color_enable(DMESG_COLOR_ALERT);
-		return 0;
+		id = DMESG_COLOR_ALERT;
+		break;
 	case LOG_CRIT:
-		color_enable(DMESG_COLOR_CRIT);
-		return 0;
+		id = DMESG_COLOR_CRIT;
+		break;
 	case LOG_ERR:
-		color_enable(DMESG_COLOR_ERR);
-		return 0;
+		id = DMESG_COLOR_ERR;
+		break;
 	case LOG_WARNING:
-		color_enable(DMESG_COLOR_WARN);
-		return 0;
+		id = DMESG_COLOR_WARN;
+		break;
 	default:
 		break;
 	}
@@ -222,12 +244,13 @@ static int set_level_color(int log_level, const char *mesg, size_t mesgsz)
 	/* well, sometimes the messges contains important keywords, but in
 	 * non-warning/error messages
 	 */
-	if (memmem(mesg, mesgsz, "segfault at", 11)) {
-		color_enable(DMESG_COLOR_SEGFAULT);
-		return 0;
-	}
+	if (id < 0 && memmem(mesg, mesgsz, "segfault at", 11))
+		id = DMESG_COLOR_SEGFAULT;
 
-	return 1;
+	if (id >= 0)
+		dmesg_enable_color(id);
+
+	return id >= 0 ? 0 : -1;
 }
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
@@ -873,7 +896,7 @@ static void print_record(struct dmesg_control *ctl,
 				      level_names[rec->level].name);
 
 	if (ctl->color)
-		color_enable(DMESG_COLOR_TIME);
+		dmesg_enable_color(DMESG_COLOR_TIME);
 
 	switch (ctl->time_fmt) {
 		double delta;
@@ -932,7 +955,7 @@ mesg:
 		/* subsystem prefix */
 		const char *subsys = get_subsys_delimiter(mesg, mesg_size);
 		if (subsys) {
-			color_enable(DMESG_COLOR_SUBSYS);
+			dmesg_enable_color(DMESG_COLOR_SUBSYS);
 			safe_fwrite(mesg, subsys - mesg, stdout);
 			color_disable();
 

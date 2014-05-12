@@ -64,8 +64,8 @@ Display help text and exit.
 .IP "\fB\-k\fR, \fB\-\-kernel\fR"
 Print kernel messages.
 .IP "\fB\-L\fR, \fB\-\-color\fR[=\fIwhen\fR]"
-Colorize important messages.  The optional argument \fIwhen\fP can be \fBauto\fR,
-\fBnever\fR or \fBalways\fR.  If the \fIwhen\fR argument is omitted,
+Colorize important messages (enabled by default).  The optional argument \fIwhen\fP
+can be \fBauto\fR, \fBnever\fR or \fBalways\fR.  If the \fIwhen\fR argument is omitted,
 then it defaults to \fBauto\fR.
 .IP  "\fB\-l\fR, \fB\-\-level \fIlist\fR"
 Restrict output to the given (comma-separated)
@@ -178,23 +178,47 @@ format has the same issue as
 .BR ctime :
 the time may be inaccurate when a system is suspended and resumed.
 .SH COLORS
-Implicit coloring can be disabled as follows:
-.RS
+Implicit coloring can be disabled by an empty file \fI/etc/terminal-colors.d/dmesg.disable\fR.
 
-.br
-.BI "touch /etc/terminal-colors.d/dmesg.disable"
-.br
+See
+.BR terminal-colors.d (5)
+for more details about colorization configuration. The logical color names
+support by
+.B dmesg
+are:
+.TP
+.B subsys
+The message sub-system prefix (e.g. "ACPI:").
+.TP
+.B time
+The message timestamp.
+.TP
+.B alert
+The text of the message with the alert log priority.
+.TP
+.B crit
+The text of the message with the critical log priority.
+.TP
+.B err
+The text of the message with the error log priority.
+.TP
+.B warn
+The text of the message with the warning log priority.
+.TP
+.B segfault
+The text of the message that inform about segmentation fault.
 
-.RE
-For more details see
-.BR terminal-colors.d (5).
 .SH SEE ALSO
 .BR syslogd (8)
+.BR terminal-colors.d (5)
 .SH AUTHORS
 .MT kzak@redhat.com
 Karel Zak
 .ME
+
 .br
+.B dmesg
+was originally written by
 .MT tytso@athena.mit.edu
 Theodore Ts'o
 .ME
