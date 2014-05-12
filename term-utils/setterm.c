@@ -165,11 +165,6 @@ extern int klogctl(int type, char *buf, int len);
 # define TIOCL_BLANKEDSCREEN	15	/* return which vt was blanked */
 #endif
 
-/* Control sequences. */
-#define ESC "\033"
-
-/* Static variables. */
-
 /* Option flags.  Set if the option is to be invoked. */
 int opt_term, opt_reset, opt_initialize, opt_cursor;
 int opt_linewrap, opt_default, opt_foreground;
@@ -820,28 +815,16 @@ perform_sequence(int vcterm) {
 	}
 
 	/* -linewrap [on|off]. Vc only (vt102) */
-	if (opt_linewrap && vcterm) {
-		if (opt_li_on)
-			printf("\033[?7h");
-		else
-			printf("\033[?7l");
-	}
+	if (opt_linewrap && vcterm)
+		fputs(opt_li_on ? "\033[?7h" : "\033[?7l", stdout);
 
 	/* -repeat [on|off]. Vc only (vt102) */
-	if (opt_repeat && vcterm) {
-		if (opt_rep_on)
-			printf("\033[?8h");
-		else
-			printf("\033[?8l");
-	}
+	if (opt_repeat && vcterm)
+		fputs(opt_rep_on ? "\033[?8h" : "\033[?8l", stdout);
 
 	/* -appcursorkeys [on|off]. Vc only (vt102) */
-	if (opt_appcursorkeys && vcterm) {
-		if (opt_appck_on)
-			printf("\033[?1h");
-		else
-			printf("\033[?1l");
-	}
+	if (opt_appcursorkeys && vcterm)
+		fputs(opt_appck_on ? "\033[?1h" : "\033[?1l", stdout);
 
 	/* -default.  Vc sets default rendition, otherwise clears all
 	 * attributes.
@@ -856,16 +839,14 @@ perform_sequence(int vcterm) {
 	/* -foreground black|red|green|yellow|blue|magenta|cyan|white|default.
 	 * Vc only (ANSI).
 	 */
-	if (opt_foreground && vcterm) {
-		printf("%s%s%c%s", ESC, "[3", '0' + opt_fo_color, "m");
-	}
+	if (opt_foreground && vcterm)
+		printf("\033[3%c%s", '0' + opt_fo_color, "m");
 
 	/* -background black|red|green|yellow|blue|magenta|cyan|white|default.
 	 * Vc only (ANSI).
 	 */
-	if (opt_background && vcterm) {
-		printf("%s%s%c%s", ESC, "[4", '0' + opt_ba_color, "m");
-	}
+	if (opt_background && vcterm)
+		printf("\033[4%c%s", '0' + opt_ba_color, "m");
 
 	/* -ulcolor black|red|green|yellow|blue|magenta|cyan|white|default.
 	 * Vc only.
@@ -883,14 +864,8 @@ perform_sequence(int vcterm) {
 
 	/* -inversescreen [on|off].  Vc only (vt102).
 	 */
-	if (opt_inversescreen) {
-		if (vcterm) {
-			if (opt_invsc_on)
-				printf("\033[?5h");
-			else
-				printf("\033[?5l");
-		}
-	}
+	if (opt_inversescreen && vcterm)
+		fputs(opt_invsc_on ? "\033[?5h" : "\033[?5l", stdout);
 
 	/* -bold [on|off].  Vc behaves as expected, otherwise off turns off
 	 * all attributes.
@@ -900,7 +875,7 @@ perform_sequence(int vcterm) {
 			putp(ti_entry("bold"));
 		else {
 			if (vcterm)
-				printf("%s%s", ESC, "[22m");
+				fputs("\033[22m", stdout);
 			else
 				putp(ti_entry("sgr0"));
 		}
@@ -914,7 +889,7 @@ perform_sequence(int vcterm) {
 			putp(ti_entry("dim"));
 		else {
 			if (vcterm)
-				printf("%s%s", ESC, "[22m");
+				fputs("\033[22m", stdout);
 			else
 				putp(ti_entry("sgr0"));
 		}
@@ -928,7 +903,7 @@ perform_sequence(int vcterm) {
 			putp(ti_entry("blink"));
 		else {
 			if (vcterm)
-				printf("%s%s", ESC, "[25m");
+				fputs("\033[25m", stdout);
 			else
 				putp(ti_entry("sgr0"));
 		}
@@ -942,32 +917,23 @@ perform_sequence(int vcterm) {
 			putp(ti_entry("rev"));
 		else {
 			if (vcterm)
-				printf("%s%s", ESC, "[27m");
+				fputs("\033[27m", stdout);
 			else
 				putp(ti_entry("sgr0"));
 		}
 	}
 
 	/* -underline [on|off]. */
-	if (opt_underline) {
-		if (opt_un_on)
-			putp(ti_entry("smul"));
-		else
-			putp(ti_entry("rmul"));
-	}
+	if (opt_underline)
+		putp(ti_entry(opt_un_on ? "smul" : "rmul"));
 
 	/* -store.  Vc only. */
-	if (opt_store && vcterm) {
-		printf("\033[8]");
-	}
+	if (opt_store && vcterm)
+		fputs("\033[8]", stdout);
 
 	/* -clear [all|rest]. */
-	if (opt_clear) {
-		if (opt_cl_all)
-			putp(ti_entry("clear"));
-		else
-			putp(ti_entry("ed"));
-	}
+	if (opt_clear)
+		putp(ti_entry(opt_cl_all ? "clear" : "ed"));
 
 	/* -tabs Vc only. */
 	if (opt_tabs && vcterm) {
@@ -987,7 +953,7 @@ perform_sequence(int vcterm) {
 		int i;
 
 		if (opt_tb_array[0] == -1)
-			printf("\033[3g");
+			fputs("\033[3g", stdout);
 		else
 			for(i=0; opt_tb_array[i] > 0; i++)
 				printf("\033[%dG\033[g", opt_tb_array[i]);
@@ -998,7 +964,7 @@ perform_sequence(int vcterm) {
 	if (opt_regtabs && vcterm) {
 		int i;
 
-		printf("\033[3g\r");
+		fputs("\033[3g\r", stdout);
 		for(i=opt_rt_len+1; i<=160; i+=opt_rt_len)
 			printf("\033[%dC\033H",opt_rt_len);
 		putchar('\r');
