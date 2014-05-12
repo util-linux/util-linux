@@ -33,6 +33,7 @@ ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
 
 ts_skip_nonroot
+ts_check_losetup
 
 [ -L /etc/mtab ] && ts_skip "mtab is symlink"
 [ "$(stat --format '%s' /etc/mtab)" -gt "1024" ] || ts_skip "mtab is too small"
