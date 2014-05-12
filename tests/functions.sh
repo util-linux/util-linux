@@ -76,6 +76,15 @@ function ts_failed {
 	exit 1
 }
 
+function ts_known_failed {
+	if [ x"$1" == x"" ]; then
+		ts_report " KNOWN FAILED ($TS_NS)"
+	else
+		ts_report " KNOWN FAILED ($1)"
+	fi
+	exit 0
+}
+
 function ts_ok_subtest {
 	if [ x"$1" == x"" ]; then
 		ts_report " OK"
@@ -97,6 +106,24 @@ function ts_log {
 function ts_has_option {
 	NAME="$1"
 	ALL="$2"
+
+	# user may set options by env for a single test or whole component
+	# e.g. TS_OPT_ipcs_limits2_fake="yes" or TS_OPT_ipcs_fake="yes"
+	local v_test=${TS_TESTNAME//[-.]/_}
+	local v_comp=${TS_COMPONENT//[-.]/_}
+	local v_name=${NAME//[-.]/_}
+	eval local env_opt_test=\$TS_OPT_${v_comp}_${v_test}_${v_name}
+	eval local env_opt_comp=\$TS_OPT_${v_comp}_${v_name}
+	if [ "$env_opt_test" = "yes" \
+		-o "$env_opt_comp" = "yes" -a "$env_opt_test" != "no" ]; then
+		echo "yes"
+		return
+	elif [ "$env_opt_test" = "no" \
+		-o "$env_opt_comp" = "no" -a "$env_opt_test" != "yes" ]; then
+		return
+	fi
+
+	# or just check the global command line options
 	echo -n $ALL | sed 's/ //g' | awk 'BEGIN { FS="="; RS="--" } /('$NAME'$|'$NAME'=)/ { print "yes" }'
 }
 
@@ -132,6 +159,7 @@ function ts_init_core_subtest_env {
 
 function ts_init_env {
 	local mydir=$(ts_abspath ${0%/*})
+	local tmp
 
 	LANG="POSIX"
 	LANGUAGE="POSIX"
@@ -177,6 +205,12 @@ function ts_init_env {
 
 	TS_VERBOSE=$(ts_has_option "verbose" "$*")
 	TS_PARALLEL=$(ts_has_option "parallel" "$*")
+	TS_KNOWN_FAIL=$(ts_has_option "known-fail" "$*")
+
+	tmp=$( ts_has_option "memcheck" "$*")
+	if [ "$tmp" == "yes" -a -f /usr/bin/valgrind ]; then
+		TS_VALGRIND_CMD="/usr/bin/valgrind"
+	fi
 
 	BLKID_FILE="$TS_OUTDIR/${TS_TESTNAME}.blkidtab"
 
@@ -233,15 +267,10 @@ function ts_init_subtest {
 }
 
 function ts_init {
+	ts_init_env "$*"
+
 	local is_fake=$( ts_has_option "fake" "$*")
 	local is_force=$( ts_has_option "force" "$*")
-	local is_memcheck=$( ts_has_option "memcheck" "$*")
-
-	if [ "$is_memcheck" == "yes" -a -f /usr/bin/valgrind ]; then
-		TS_VALGRIND_CMD="/usr/bin/valgrind"
-	fi
-
-	ts_init_env "$*"
 
 	if [ "$TS_PARALLEL" == "yes" ]; then
 		TS_TITLE=$(printf "%13s: %-30s ..." "$TS_COMPONENT" "$TS_DESC")
@@ -364,6 +393,9 @@ function ts_finalize {
 	if [ -s $TS_EXPECTED ]; then
 		ts_gen_diff
 		if [ $? -eq 1 ]; then
+			if [ "$TS_KNOWN_FAIL" = "yes" ]; then
+				ts_known_failed "$1"
+			fi
 			ts_failed "$1"
 		fi
 		ts_ok "$1"
