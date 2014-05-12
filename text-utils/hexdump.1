@@ -67,6 +67,10 @@ by the same sixteen bytes in
 format enclosed in
 .RB ' | '
 characters.
+.IP "\fB\-L\fR, \fB\-\-color\fR[=\fIwhen\fR]"
+Accept color units for the output  (enabled by default). The optional argument \fIwhen\fP
+can be \fBauto\fR, \fBnever\fR or \fBalways\fR.  If the \fIwhen\fR argument is omitted,
+then it defaults to \fBauto\fR.
 .TP
 \fB\-d\fR, \fB\-\-two\-bytes\-decimal\fR
 \fITwo-byte decimal display\fR.  Display the input offset in hexadecimal,
@@ -351,16 +355,11 @@ offsets 510 and 511 green if their value is 0xAA55, red otherwise.
    "%07.7_ax_L[cyan]  " 8/2 "   %04x_L[green:0xAA55@510-511,!red:0xAA55@510-511] " "\en"
 .nf
 .SH COLORS
-Implicit coloring can be disabled as follows:
-.RS
+Implicit coloring can be disabled by an empty file \fI/etc/terminal-colors.d/hexdump.disable\fR.
 
-.br
-.BI "touch /etc/terminal-colors.d/hexdump.disable"
-.br
-
-.RE
-For more details see
-.BR terminal-colors.d (5).
+See
+.BR terminal-colors.d (5)
+for more details about colorization configuration.
 .SH STANDARDS
 The
 .B hexdump
