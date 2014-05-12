@@ -239,3 +239,5 @@ $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/4 "  %05u_L[red:@@@@2-4] " "\n"' \
 	&> $TS_OUTPUT <<< "@@@@"
 ts_finalize_subtest
+
+ts_finalize
