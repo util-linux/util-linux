@@ -7,6 +7,10 @@ compiler:
   - gcc
   - clang
 
+env:
+  - MAKE_CHECK="nonroot"
+  - MAKE_CHECK="root"
+
 install:
   # install some packages from Ubuntu's default sources
   - sudo apt-get -qq update
@@ -34,9 +38,14 @@ script:
       --enable-write
     ; err=$?; cat config.log; exit $err)
     && $MAKE
-    && $MAKE check
-    && $MAKE install DESTDIR=/tmp/dest
-    && $MAKE dist
+    && if [ "$MAKE_CHECK" = "nonroot" ]; then
+         $MAKE check
+         && $MAKE install DESTDIR=/tmp/dest
+         && $MAKE dist;
+       elif [ "$MAKE_CHECK" = "root" ]; then
+         $MAKE check TS_COMMAND="true"
+         && sudo -E $MAKE check TS_OPTS='--parallel=1';
+       fi
 
 after_script:
   - test -d tests/diff
