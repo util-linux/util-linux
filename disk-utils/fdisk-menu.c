@@ -359,7 +359,7 @@ static int print_fdisk_menu(struct fdisk_context *cxt)
 		if (IS_MENU_SEP(e) && (!e->title || !*e->title))
 			printf("\n");
 		else if (IS_MENU_SEP(e)) {
-			color_enable(UL_COLOR_BOLD);
+			color_scheme_enable("help-title", UL_COLOR_BOLD);
 			printf("\n  %s\n", _(e->title));
 			color_disable();
 		} else

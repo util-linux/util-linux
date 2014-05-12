@@ -245,16 +245,27 @@ For best results, you should always use an OS-specific partition table
 program.  For example, you should make DOS partitions with the DOS FDISK
 program and Linux partitions with the Linux fdisk or Linux cfdisk programs.
 .SH COLORS
-Implicit coloring can be disabled as follows:
-.RS
+Implicit coloring can be disabled by an empty file \fI/etc/terminal-colors.d/fdisk.disable\fR.
 
-.br
-.BI "touch /etc/terminal-colors.d/fdisk.disable"
-.br
+See
+.BR terminal-colors.d (5)
+for more details about colorization configuration. The logical color names
+supported by
+.B fdisk
+are:
+.TP
+.B header
+The header of the output tables.
+.TP
+.B help-title
+The help section titles.
+.TP
+.B warn
+The warning messages.
+.TP
+.B welcome
+The welcome message.
 
-.RE
-For more details see
-.BR terminal-colors.d (5).
 .SH AUTHORS
 .MT kzak@redhat.com
 Karel Zak

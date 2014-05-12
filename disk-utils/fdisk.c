@@ -338,13 +338,13 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		fputs_info(ask, stdout);
 		break;
 	case FDISK_ASKTYPE_WARNX:
-		color_fenable(UL_COLOR_RED, stderr);
+		color_scheme_fenable("warn", UL_COLOR_RED, stderr);
 		fputs(fdisk_ask_print_get_mesg(ask), stderr);
 		color_fdisable(stderr);
 		fputc('\n', stderr);
 		break;
 	case FDISK_ASKTYPE_WARN:
-		color_fenable(UL_COLOR_RED, stderr);
+		color_scheme_fenable("warn", UL_COLOR_RED, stderr);
 		fputs(fdisk_ask_print_get_mesg(ask), stderr);
 		errno = fdisk_ask_print_get_errno(ask);
 		fprintf(stderr, ": %m\n");
@@ -579,7 +579,7 @@ void list_disklabel(struct fdisk_context *cxt)
 			char *next = strchr(str, '\n');
 			if (next && colors_wanted()) {
 				*next = '\0';
-				color_enable(UL_COLOR_BOLD);
+				color_scheme_enable("header", UL_COLOR_BOLD);
 				fputs(p, stdout);
 				color_disable();
 				fputc('\n', stdout);
@@ -902,7 +902,7 @@ int main(int argc, char **argv)
 			usage(stderr);
 
 		/* Here starts interactive mode, use fdisk_{warn,info,..} functions */
-		color_enable(UL_COLOR_GREEN);
+		color_scheme_enable("welcome", UL_COLOR_GREEN);
 		fdisk_info(cxt, _("Welcome to fdisk (%s)."), PACKAGE_STRING);
 		color_disable();
 		fdisk_info(cxt, _("Changes will remain in memory only, until you decide to write them.\n"
