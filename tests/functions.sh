@@ -45,6 +45,18 @@ function ts_check_test_command {
 	fi
 }
 
+function ts_check_losetup {
+	local tmp
+	ts_check_test_command "$TS_CMD_LOSETUP"
+
+	# assuming that losetup -f works ... to be checked somewhere else
+	tmp=$($TS_CMD_LOSETUP -f 2>/dev/null)
+	if test -b "$tmp"; then
+		return 0
+	fi
+	ts_skip "no loop device support"
+}
+
 function ts_skip_subtest {
 	ts_report " IGNORE ($1)"
 }
