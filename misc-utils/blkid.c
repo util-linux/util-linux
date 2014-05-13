@@ -366,7 +366,7 @@ static void print_tags(blkid_dev dev, char *show[], int output)
 
 static int append_str(char **res, size_t *sz, const char *a, const char *b)
 {
-	char *str;
+	char *str = *res;
 	size_t asz = a ? strlen(a) : 0;
 	size_t bsz = b ? strlen(b) : 0;
 	size_t len = *sz + asz + bsz;
@@ -374,7 +374,7 @@ static int append_str(char **res, size_t *sz, const char *a, const char *b)
 	if (!len)
 		return -1;
 
-	str = xrealloc(str, len + 1);
+	*res = str = xrealloc(str, len + 1);
 	str += *sz;
 
 	if (a) {
