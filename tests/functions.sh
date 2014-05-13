@@ -575,5 +575,4 @@ function ts_scsi_debug_init {
 	udevadm settle
 
 	TS_DEVICE="/dev/${devname}"
-	echo "$TS_DEVICE"
 }
