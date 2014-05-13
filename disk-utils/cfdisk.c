@@ -1178,7 +1178,6 @@ static ssize_t ui_get_string(struct cfdisk *cf, const char *prompt,
 {
 	size_t cells = 0;
 	ssize_t i = 0, rc = -1;
-	wint_t c;
 	int ln = MENU_START_LINE, cl = 1;
 
 	assert(cf);
@@ -1212,8 +1211,10 @@ static ssize_t ui_get_string(struct cfdisk *cf, const char *prompt,
 	while (1) {
 #if !defined(HAVE_SLCURSES_H) && !defined(HAVE_SLANG_SLCURSES_H) && \
     defined(HAVE_LIBNCURSESW) && defined(HAVE_WIDECHAR)
+		wint_t c;
 		if (get_wch(&c) == ERR) {
 #else
+		int c;
 		if ((c = getch()) == ERR) {
 #endif
 			if (!isatty(STDIN_FILENO))
