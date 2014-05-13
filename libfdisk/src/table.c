@@ -392,7 +392,7 @@ static int table_add_freespace(
 			}
 		}
 		if (!real_parent) {
-			DBG(TAB, ul_debugobj(tb, "not found freespace parent (partno=%ju)",
+			DBG(TAB, ul_debugobj(tb, "not found freespace parent (partno=%zu)",
 					parent->partno));
 			fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 		}
