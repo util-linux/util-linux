@@ -34,6 +34,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <ifaddrs.h>
+#include <net/if.h>
 
 #include "strutils.h"
 #include "all-io.h"
@@ -1952,41 +1953,70 @@ static void log_warn(const char *fmt, ...)
 	va_end(ap);
 }
 
-static void output_iface_ip(struct ifaddrs *addrs, const char *iface, sa_family_t family)
+static void print_addr(sa_family_t family, void *addr)
 {
-	if (!iface)
-		return;
+	char buff[INET6_ADDRSTRLEN + 1];
 
-	if (addrs->ifa_name
-	    && strcmp(addrs->ifa_name, iface) == 0
-	    && addrs->ifa_addr
-	    && addrs->ifa_addr->sa_family == family) {
-
-		void *addr = NULL;
-		char buff[INET6_ADDRSTRLEN + 1];
-
-		switch (addrs->ifa_addr->sa_family) {
-		case AF_INET:
-			addr = &((struct sockaddr_in *)	addrs->ifa_addr)->sin_addr;
-			break;
-		case AF_INET6:
-			addr = &((struct sockaddr_in6 *) addrs->ifa_addr)->sin6_addr;
-			break;
-		}
-		if (addr) {
-			inet_ntop(addrs->ifa_addr->sa_family, addr, buff, sizeof(buff));
-			printf("%s", buff);
-		}
-
-	} else if (addrs->ifa_next)
-		output_iface_ip(addrs->ifa_next, iface, family);
+	inet_ntop(family, addr, buff, sizeof(buff));
+	printf("%s", buff);
 }
 
-static void output_ip(sa_family_t family)
+/*
+ * Prints IP for the specified interface (@iface), if the interface is not
+ * specified then prints the "best" one (UP, RUNNING, non-LOOPBACK). If not
+ * found the "best" interface then prints at least host IP.
+ */
+static void output_iface_ip(struct ifaddrs *addrs,
+			    const char *iface,
+			    sa_family_t family)
 {
-	char *host;
+	struct ifaddrs *p;
 	struct addrinfo hints, *info = NULL;
+	char *host = NULL;
+	void *addr = NULL;
 
+	if (!addrs)
+		return;
+
+	for (p = addrs; p; p = p->ifa_next) {
+
+		if (!p->ifa_name ||
+		    !p->ifa_addr ||
+		    p->ifa_addr->sa_family != family)
+			continue;
+
+		if (iface) {
+			/* Filter out by interface name */
+		       if (strcmp(p->ifa_name, iface) != 0)
+				continue;
+		} else {
+			/* Select the "best" interface */
+			if ((p->ifa_flags & IFF_LOOPBACK) ||
+			    !(p->ifa_flags & IFF_UP) ||
+			    !(p->ifa_flags & IFF_RUNNING))
+				continue;
+		}
+
+		addr = NULL;
+		switch (p->ifa_addr->sa_family) {
+		case AF_INET:
+			addr = &((struct sockaddr_in *)	p->ifa_addr)->sin_addr;
+			break;
+		case AF_INET6:
+			addr = &((struct sockaddr_in6 *) p->ifa_addr)->sin6_addr;
+			break;
+		}
+
+		if (addr) {
+			print_addr(family, addr);
+			return;
+		}
+	}
+
+	if (iface)
+		return;
+
+	/* Hmm.. not found the best interface, print host IP at least */
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = family;
 	if (family == AF_INET6)
@@ -1994,9 +2024,6 @@ static void output_ip(sa_family_t family)
 
 	host = xgethostname();
 	if (host && getaddrinfo(host, NULL, &hints, &info) == 0 && info) {
-
-		void *addr = NULL;
-
 		switch (info->ai_family) {
 		case AF_INET:
 			addr = &((struct sockaddr_in *) info->ai_addr)->sin_addr;
@@ -2005,12 +2032,8 @@ static void output_ip(sa_family_t family)
 			addr = &((struct sockaddr_in6 *) info->ai_addr)->sin6_addr;
 			break;
 		}
-		if (addr) {
-			char buff[INET6_ADDRSTRLEN + 1];
-
-			inet_ntop(info->ai_family, (void *) addr, buff, sizeof(buff));
-			printf("%s", buff);
-		}
+		if (addr)
+			print_addr(family, addr);
 
 		freeaddrinfo(info);
 	}
@@ -2175,17 +2198,18 @@ static void output_special_char(unsigned char c, struct options *op,
 	case '6':
 	{
 		sa_family_t family = c == '4' ? AF_INET : AF_INET6;
+		struct ifaddrs *addrs = NULL;
 		char iface[128];
 
-		if (get_escape_argument(fp, iface, sizeof(iface))) {	/* interface IP */
-			struct ifaddrs *addrs;
-			int status = getifaddrs(&addrs);
-			if (status != 0)
-				break;
+		if (getifaddrs(&addrs))
+			break;
+
+		if (get_escape_argument(fp, iface, sizeof(iface)))
 			output_iface_ip(addrs, iface, family);
-			freeifaddrs(addrs);
-		} else							/* host IP */
-			output_ip(family);
+		else
+			output_iface_ip(addrs, NULL, family);
+
+		freeifaddrs(addrs);
 		break;
 	}
 	default:

@@ -305,12 +305,13 @@ followed by one of the letters explained below.
 
 .TP
 4 or 4{interface}
-Insert the IPv4 address of the machine hostname or IPv4 address the configured
-network interface if the interface argument is specified (e.g. \\4{eth0}).
+Insert the IPv4 address the specified network interface (e.g. \\4{eth0})
+and if the interface argument is not specified then select the first fully 
+configured (UP, non-LOCALBACK, RUNNING) interface. If not found any 
+configured interface fall back to IP address of the machine hostname.
 .TP
 6 or 6{interface}
-Insert the IPv6 address of the machine hostname or IPv6 address the configured
-network interface if the interface argument is specified (e.g. \\6{eth0}}
+The same as \\4 but for IPv6.
 .TP
 b
 Insert the baudrate of the current line.
