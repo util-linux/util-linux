@@ -24,8 +24,13 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_HEXDUMP"
 
+# on big endian systems some of the subtests have different expected output
+BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
+BE_EXT=$(test "$BYTE_ORDER" = "BE" && echo ".BE")
+
 #885314
 ts_init_subtest "empty-format"
+TS_EXPECTED+=$BE_EXT
 INPUT=$(printf \\1)
 $TS_CMD_HEXDUMP -n1 -ve '2 "" "%x"' <<< $INPUT 2>&1 >> $TS_OUTPUT
 
@@ -46,14 +51,17 @@ $TS_CMD_HEXDUMP -C $FILES/ascii.in &> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "2b_dec"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP -d $FILES/ascii.in &> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "2b_octal"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP -o $FILES/ascii.in &> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "2b_hex"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP -x $FILES/ascii.in &> $TS_OUTPUT
 ts_finalize_subtest
 
