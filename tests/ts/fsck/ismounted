@@ -24,6 +24,7 @@ ts_check_test_command "$TS_CMD_FDISK"
 ts_check_test_command "$TS_CMD_MOUNT"
 
 ts_skip_nonroot
+ts_check_losetup
 
 set -o pipefail
 

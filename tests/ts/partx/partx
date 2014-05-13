@@ -44,8 +44,8 @@ for img in $(ls $TS_IMGDIR/*.img.bz2 | sort); do
 	ts_finalize_subtest
 done
 
-
-DEVICE=$(ts_scsi_debug_init dev_size_mb=50)
+# set global variable DEVICE
+ts_scsi_debug_init dev_size_mb=50
 
 ts_init_subtest "addpart"
 $TS_CMD_ADDPART ${DEVICE} 1 0 1
@@ -62,7 +62,8 @@ ts_finalize_subtest
 udevadm settle
 rmmod scsi_debug &> /dev/null
 
-DEVICE=$(ts_scsi_debug_init dev_size_mb=50 num_parts=$PARTS)
+# set global variable DEVICE
+ts_scsi_debug_init dev_size_mb=50 num_parts=$PARTS
 DEVNAME=$(basename $DEVICE)
 
 ts_init_subtest "detect-parts"

@@ -12,11 +12,13 @@ ts_check_test_command "$TS_CMD_FDISK"
 ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_CMD_UUIDGEN"
 
 ts_skip_nonroot
 TESTPROG="$TS_HELPER_LIBMOUNT_CONTEXT"
 LABEL=libmount-test
-UUID=$(uuidgen)
+UUID=$($TS_CMD_UUIDGEN)
+
 MOUNTPOINT="$TS_MOUNTPOINT"
 TS_NOEXIST="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-noex"
 [ -d $TS_NOEXIST ] && rmdir $TS_NOEXIST
@@ -26,7 +28,8 @@ TS_NOEXIST="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-noex"
 ts_log "Init device"
 umount $MOUNTPOINT &> /dev/null
 
-DEVICE=$(ts_scsi_debug_init dev_size_mb=100)
+# set global variable DEVICE
+ts_scsi_debug_init dev_size_mb=100
 DEVNAME=$(basename $DEVICE)
 
 ts_log "Create partitions"
