@@ -44,6 +44,12 @@ specific filename wins. For example filename "@xterm.scheme" has less
 priority than "dmesg@xterm.scheme". The lowest priority have files without
 utility name and terminal identifier (e.g. "disable").
 
+The user specific
+.IR  $XDG_CONFIG_HOME/terminal-colors.d
+or
+.IR $HOME/.config/terminal-colors.d
+overrides the global setting.
+
 .SH EXAMPLES
 Disable colors for all compatible utilities:
 .RS
@@ -156,7 +162,12 @@ output use:
 .br
 .RE
 
-
+.SH FILES
+.IR $XDG_CONFIG_HOME/terminal-colors.d
+.br
+.IR $HOME/.config/terminal-colors.d
+.br
+.IR /etc/terminal-colors.d
 
 .SH COMPATIBILITY
 The terminal-colors.d functionality is currently supported by all util-linux
