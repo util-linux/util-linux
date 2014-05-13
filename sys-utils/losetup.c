@@ -694,7 +694,8 @@ int main(int argc, char **argv)
 		res = delete_all_loops(&lc);
 		break;
 	case A_FIND_FREE:
-		if (loopcxt_find_unused(&lc))
+		res = loopcxt_find_unused(&lc);
+		if (res)
 			warn(_("cannot find an unused loop device"));
 		else
 			printf("%s\n", loopcxt_get_device(&lc));
