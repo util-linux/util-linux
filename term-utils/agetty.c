@@ -975,12 +975,12 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
 
 		/* Sanity checks... */
-		if (!isatty(fd))
-			log_err(_("/dev/%s: not a character device"), tty);
 		if (fstat(fd, &st) < 0)
 			log_err("%s: %m", buf);
 		if ((st.st_mode & S_IFMT) != S_IFCHR)
 			log_err(_("/dev/%s: not a character device"), tty);
+		if (!isatty(fd))
+			log_err(_("/dev/%s: not a tty"), tty);
 
 		if (((tid = tcgetsid(fd)) < 0) || (pid != tid)) {
 			if (ioctl(fd, TIOCSCTTY, 1) == -1)
