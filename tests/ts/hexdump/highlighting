@@ -24,7 +24,11 @@ ADDRFMT='-e "%07.7_Ax\n"'
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-[ -x $TS_CMD_HEXDUMP ] || ts_skip "hexdump not compiled"
+ts_check_test_command "$TS_CMD_HEXDUMP"
+
+# on big endian systems some of the subtests have different expected output
+BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
+BE_EXT=$(test "$BYTE_ORDER" = "BE" && echo ".BE")
 
 #
 # basic formats /w some highlighting tweaks
@@ -39,6 +43,7 @@ ts_finalize_subtest
 
 # highlight bytes with the value of 0x41 (A) and 0x61 (a)
 ts_init_subtest "1b_octal-2"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 16/1 "%03o_L[red:0x41,red:0x61] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
@@ -54,6 +59,7 @@ ts_finalize_subtest
 # highlight the byte at offset 194 if it's value is 0x61 (a)
 # and the byte at offset 130 if it's value is A (0x41)
 ts_init_subtest "1b_octal-4"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 16/1 "%03o_L[red:A@130,red:0x61@194] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
@@ -62,6 +68,7 @@ ts_finalize_subtest
 # highlight the byte at offset 194 if it's value is 0x61 (a)
 # and the byte at offset 130 if it's value is C (0x41) (false)
 ts_init_subtest "1b_octal-5"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 16/1 "%03o_L[red:C@130,red:0x61@194] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
@@ -76,6 +83,7 @@ ts_finalize_subtest
 
 # highlight bytes with the value of 0101 (A) and 0141 (a)
 ts_init_subtest "1b_octal-7"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 16/1 "%03o_L[red:0101,red:0141] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
@@ -83,6 +91,7 @@ ts_finalize_subtest
 
 # highlight bytes with the value of 0101 (A), 0x61 (a), or if the character is a caret
 ts_init_subtest "1b_octal-8"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 16/1 "%03o_L[red:0101,blue:0x61,green:^] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
@@ -90,6 +99,7 @@ ts_finalize_subtest
 
 # highlight bytes with the value of 0101 (A), 0x61 (a), or if the character at 196 is not 'c'
 ts_init_subtest "1b_octal-9"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 16/1 "%03o_L[red:0101,blue:0x61,!green:c@196] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
@@ -118,6 +128,7 @@ ts_finalize_subtest
 
 # color last address gray, the null byte blue, the spaces brown(-ish) and the text cyan
 ts_init_subtest "canon-1"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS \
 	-e '"%08.8_Ax_L[gray]\n"' \
 	-e '"%08.8_ax  " 8/1 "%02x_L[blue:0x0,brown:0x20] " "  " 8/1 "%02x_L[brown:0x20] " ' \
@@ -137,6 +148,7 @@ ts_finalize_subtest
 
 # color the current print unit if one of the bytes it prints is at offset 100 (0x64)
 ts_init_subtest "2b_dec-1"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/2 "  %05u_L[red@100] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
@@ -144,6 +156,7 @@ ts_finalize_subtest
 
 # color the current print unit if of the bytes it prints are at offsets 98 and 99
 ts_init_subtest "2b_dec-2"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/2 "  %05u_L[red@98-99] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
@@ -151,6 +164,7 @@ ts_finalize_subtest
 
 # color the current print unit if some or all of the bytes it prints are at offsets 98 and 99
 ts_init_subtest "2b_dec-3"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/2 "  %05u_L[red@97-99] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
@@ -158,6 +172,7 @@ ts_finalize_subtest
 
 # color the current print unit if it prints "A " at 130-131
 ts_init_subtest "2b_dec-4"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/2 "  %05u_L[red:A @130-131] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
@@ -165,6 +180,7 @@ ts_finalize_subtest
 
 # color the current print unit if it doesn't print "B " at 130-131
 ts_init_subtest "2b_dec-5"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/2 "  %05u_L[!red:B @130-131] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
@@ -186,6 +202,7 @@ ts_finalize_subtest
 
 # color the current print unit if of the bytes it prints are at offsets 98-102 (multiple print units)
 ts_init_subtest "2b_dec-8"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/2 "  %05u_L[red@98-102] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
@@ -193,6 +210,7 @@ ts_finalize_subtest
 
 # color the current print unit if some or all of the bytes it prints are at offsets 97 and 99 (true)
 ts_init_subtest "4b_dec-1"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/4 "  %05u_L[red@97-99] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
@@ -200,6 +218,7 @@ ts_finalize_subtest
 
 # color the current print unit if some or all of the bytes it prints are at offsets 96-99
 ts_init_subtest "4b_dec-2"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/4 "  %05u_L[red@96-99] " "\n"' \
 	$FILES/ascii.in &> $TS_OUTPUT
@@ -207,6 +226,7 @@ ts_finalize_subtest
 
 # look for @@@@
 ts_init_subtest "4b_dec-3"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/4 "  %05u_L[red:@@@@] " "\n"' \
 	&> $TS_OUTPUT <<< "@@@@"
@@ -214,6 +234,7 @@ ts_finalize_subtest
 
 # look for @@@@ at 0-3
 ts_init_subtest "4b_dec-4"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/4 "  %05u_L[red:@@@@@0-3] " "\n"' \
 	&> $TS_OUTPUT <<< "@@@@"
@@ -228,6 +249,7 @@ ts_finalize_subtest
 
 # look for @@@ at 1-3 - in the format boundaries - correct
 ts_init_subtest "4b_dec-6"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/4 "  %05u_L[red:@@@@1-3] " "\n"' \
 	&> $TS_OUTPUT <<< "@@@@"
@@ -235,7 +257,10 @@ ts_finalize_subtest
 
 # look for @@@ at 2-4 - correct range length, however steps over 2 print units - no colors
 ts_init_subtest "4b_dec-7"
+TS_EXPECTED+=$BE_EXT
 $TS_CMD_HEXDUMP $OPTS $ADDRFMT \
 	-e '"%07.7_ax " 8/4 "  %05u_L[red:@@@@2-4] " "\n"' \
 	&> $TS_OUTPUT <<< "@@@@"
 ts_finalize_subtest
+
+ts_finalize
