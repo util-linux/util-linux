@@ -45,6 +45,18 @@ function ts_check_test_command {
 	fi
 }
 
+function ts_check_losetup {
+	local tmp
+	ts_check_test_command "$TS_CMD_LOSETUP"
+
+	# assuming that losetup -f works ... to be checked somewhere else
+	tmp=$($TS_CMD_LOSETUP -f 2>/dev/null)
+	if test -b "$tmp"; then
+		return 0
+	fi
+	ts_skip "no loop device support"
+}
+
 function ts_skip_subtest {
 	ts_report " IGNORE ($1)"
 }
@@ -425,16 +437,13 @@ function ts_image_init {
 }
 
 function ts_device_init {
-	local img=$(ts_image_init $1 $2)
-	local dev=$($TS_CMD_LOSETUP --show -f "$img")
+	local img
+	local dev
 
-	if [ -z "$dev" ]; then
-		ts_device_deinit $dev
-		return 1		# error
-	fi
+	img=$(ts_image_init $1 $2)
+	dev=$($TS_CMD_LOSETUP --show -f "$img")
 
 	echo $dev
-	return 0			# succes
 }
 
 function ts_device_deinit {
@@ -546,21 +555,21 @@ function ts_fdisk_clean {
 }
 
 function ts_scsi_debug_init {
+	local devname
+	TS_DEVICE="none"
 
-	modprobe --dry-run --quiet scsi_debug
+	modprobe --dry-run --quiet scsi_debug &>/dev/null
 	[ "$?" == 0 ] || ts_skip "missing scsi_debug module"
 
 	rmmod scsi_debug &> /dev/null
 	modprobe scsi_debug $*
 	[ "$?" == 0 ] || ts_die "Cannot init device"
 
-	DEVNAME=$(grep --with-filename scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
-	[ "x${DEVNAME}" == "x" ] && ts_die "Cannot find device"
-
-	DEVICE="/dev/${DEVNAME}"
+	devname=$(grep --with-filename scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
+	[ "x${devname}" == "x" ] && ts_die "Cannot find device"
 
 	sleep 1
 	udevadm settle
 
-	echo $DEVICE
+	TS_DEVICE="/dev/${devname}"
 }

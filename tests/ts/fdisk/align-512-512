@@ -28,6 +28,7 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_FDISK"
 
 ts_skip_nonroot
+ts_check_losetup
 
 DEVICE=$(ts_device_init 50)
 [ "$?" == 0 ] || ts_die "Cannot init device"
