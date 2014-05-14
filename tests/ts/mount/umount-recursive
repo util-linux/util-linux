@@ -18,10 +18,11 @@ $TS_CMD_UMOUNT --help | grep -q recursive
 [ $? -eq 1 ] && ts_skip "recursive unsupported"
 
 ts_log "Init device"
-DEVICE=$(ts_scsi_debug_init dev_size_mb=50)
+# set global variable TS_DEVICE
+ts_scsi_debug_init dev_size_mb=50
 
 ts_log "Create partitions"
-$TS_CMD_FDISK ${DEVICE} &> /dev/null <<EOF
+$TS_CMD_FDISK ${TS_DEVICE} &> /dev/null <<EOF
 n
 p
 1
@@ -48,13 +49,13 @@ EOF
 udevadm settle
 
 ts_log "Create filesystem A"
-mkfs.ext2 ${DEVICE}1 &> /dev/null
+mkfs.ext2 ${TS_DEVICE}1 &> /dev/null
 ts_log "Create filesystem B"
-mkfs.ext2 ${DEVICE}2 &> /dev/null
+mkfs.ext2 ${TS_DEVICE}2 &> /dev/null
 ts_log "Create filesystem C"
-mkfs.ext2 ${DEVICE}3 &> /dev/null
+mkfs.ext2 ${TS_DEVICE}3 &> /dev/null
 ts_log "Create filesystem D"
-mkfs.ext2 ${DEVICE}4 &> /dev/null
+mkfs.ext2 ${TS_DEVICE}4 &> /dev/null
 
 udevadm settle
 
@@ -63,12 +64,12 @@ ts_log "Do tests..."
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 
 ts_log "A) Mount root"
-$TS_CMD_MOUNT ${DEVICE}1 $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
+$TS_CMD_MOUNT ${TS_DEVICE}1 $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 $TS_CMD_MOUNT --make-shared $TS_MOUNTPOINT
 
 ts_log "B) Mount child"
 mkdir -p $TS_MOUNTPOINT/mntB
-$TS_CMD_MOUNT ${DEVICE}2 $TS_MOUNTPOINT/mntB >> $TS_OUTPUT 2>&1
+$TS_CMD_MOUNT ${TS_DEVICE}2 $TS_MOUNTPOINT/mntB >> $TS_OUTPUT 2>&1
 
 ts_log "B2) Mount child-bind"
 mkdir -p $TS_MOUNTPOINT/bindB
@@ -76,10 +77,10 @@ $TS_CMD_MOUNT --bind $TS_MOUNTPOINT/mntB $TS_MOUNTPOINT/bindB >> $TS_OUTPUT 2>&1
 
 ts_log "C) Mount child/child"
 mkdir -p $TS_MOUNTPOINT/mntB/mnt{C,D}
-$TS_CMD_MOUNT ${DEVICE}3 $TS_MOUNTPOINT/mntB/mntC >> $TS_OUTPUT 2>&1
+$TS_CMD_MOUNT ${TS_DEVICE}3 $TS_MOUNTPOINT/mntB/mntC >> $TS_OUTPUT 2>&1
 
 ts_log "D) Mount child/child"
-$TS_CMD_MOUNT ${DEVICE}4 $TS_MOUNTPOINT/mntB/mntD >> $TS_OUTPUT 2>&1
+$TS_CMD_MOUNT ${TS_DEVICE}4 $TS_MOUNTPOINT/mntB/mntD >> $TS_OUTPUT 2>&1
 
 ts_log "E) Mount child-bind"
 mkdir -p $TS_MOUNTPOINT/bindC

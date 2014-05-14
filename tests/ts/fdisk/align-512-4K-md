@@ -30,11 +30,12 @@ ts_check_test_command "$TS_CMD_FDISK"
 
 ts_skip_nonroot
 
-DEVICE=$(ts_scsi_debug_init dev_size_mb=50 sector_size=512 physblk_exp=3)
-DEVNAME=$(basename $DEVICE)
+# set global variable TS_DEVICE
+ts_scsi_debug_init dev_size_mb=50 sector_size=512 physblk_exp=3
+DEVNAME=$(basename $TS_DEVICE)
 
 ts_log "Create partitions"
-$TS_CMD_FDISK ${DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_FDISK ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
 n
 p
 1
@@ -59,7 +60,7 @@ MD_DEVICE=/dev/${MD_DEVNAME}
 
 /sbin/mdadm -q -S ${MD_DEVICE} &> /dev/null
 /sbin/mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 \
-	    --level=0 --raid-devices=2 ${DEVICE}1 ${DEVICE}2 >> $TS_OUTPUT 2>&1
+	    --level=0 --raid-devices=2 ${TS_DEVICE}1 ${TS_DEVICE}2 >> $TS_OUTPUT 2>&1
 
 udevadm settle
 ts_log "Create partitions (MD)"
@@ -88,7 +89,7 @@ cat /sys/block/${MD_DEVNAME}/${MD_DEVNAME}p{1,2}/alignment_offset >> $TS_OUTPUT 
 udevadm settle
 rmmod scsi_debug
 
-ts_fdisk_clean $DEVICE
+ts_fdisk_clean $TS_DEVICE
 ts_fdisk_clean $MD_DEVICE
 
 ts_finalize

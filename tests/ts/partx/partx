@@ -44,94 +44,95 @@ for img in $(ls $TS_IMGDIR/*.img.bz2 | sort); do
 	ts_finalize_subtest
 done
 
-
-DEVICE=$(ts_scsi_debug_init dev_size_mb=50)
+# set global variable TS_DEVICE
+ts_scsi_debug_init dev_size_mb=50
 
 ts_init_subtest "addpart"
-$TS_CMD_ADDPART ${DEVICE} 1 0 1
+$TS_CMD_ADDPART ${TS_DEVICE} 1 0 1
 [ "$?" == 0 ] && echo OK &>$TS_OUTPUT || ts_die "Unable to add partition"a &>$TS_OUTPUT
 ts_finalize_subtest
 
 udevadm settle
 
 ts_init_subtest "delpart"
-$TS_CMD_DELPART ${DEVICE} 1
+$TS_CMD_DELPART ${TS_DEVICE} 1
 [ "$?" == 0 ] && echo OK >> $TS_OUTPUT 2>&1 || ts_die "Unable to remove partition" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 udevadm settle
 rmmod scsi_debug &> /dev/null
 
-DEVICE=$(ts_scsi_debug_init dev_size_mb=50 num_parts=$PARTS)
-DEVNAME=$(basename $DEVICE)
+# set global variable TS_DEVICE
+ts_scsi_debug_init dev_size_mb=50 num_parts=$PARTS
+DEVNAME=$(basename $TS_DEVICE)
 
 ts_init_subtest "detect-parts"
-$TS_CMD_PARTX --show $DEVICE &> $TS_OUTPUT
+$TS_CMD_PARTX --show $TS_DEVICE &> $TS_OUTPUT
 ts_finalize_subtest
 
 udevadm settle
 
 ts_init_subtest "delete-all"
 #delete partinfo
-$TS_CMD_PARTX --delete $DEVICE &> $TS_OUTPUT
+$TS_CMD_PARTX --delete $TS_DEVICE &> $TS_OUTPUT
 [ $? -eq 0 ] && echo "partitions deleted" &> $TS_OUTPUT ||
-    echo "Unable to delete partitions on $DEVICE" &> $TS_OUTPUT
+    echo "Unable to delete partitions on $TS_DEVICE" &> $TS_OUTPUT
 ls -d "/sys/block/${DEVNAME}/${DEVNAME}*" 2>/dev/null && ts_die
 ts_finalize_subtest
 
 udevadm settle
 
 ts_init_subtest "add-all"
-#read DEVICE and restore the partinfo
-$TS_CMD_PARTX --add $DEVICE &> $TS_OUTPUT
+#read TS_DEVICE and restore the partinfo
+$TS_CMD_PARTX --add $TS_DEVICE &> $TS_OUTPUT
 [ $(ls -d /sys/block/${DEVNAME}/${DEVNAME}* 2>/dev/null | wc -l) -eq $PARTS ] &&
    echo "partitions added" >> $TS_OUTPUT 2>&1  ||
-   echo "Unable to add partitions for $DEVICE" >> $TS_OUTPUT 2>&1
+   echo "Unable to add partitions for $TS_DEVICE" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 udevadm settle
 
 ts_init_subtest "update-one"
-#read DEVICE and update second partition
-$TS_CMD_PARTX --update ${DEVICE}2 &> $TS_OUTPUT
+#read TS_DEVICE and update second partition
+$TS_CMD_PARTX --update ${TS_DEVICE}2 &> $TS_OUTPUT
 [ $(ls -d /sys/block/${DEVNAME}/${DEVNAME}* 2>/dev/null | wc -l) -eq $PARTS ] &&
    echo "partitions updated" >> $TS_OUTPUT 2>&1  ||
-   echo "Unable to update 2nd partition for $DEVICE" >> $TS_OUTPUT 2>&1
+   echo "Unable to update 2nd partition for $TS_DEVICE" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 udevadm settle
 
 ts_init_subtest "delete-one"
 #remove last partition only
-$TS_CMD_PARTX -d --nr -1 $DEVICE >> $TS_OUTPUT 2>&1
+$TS_CMD_PARTX -d --nr -1 $TS_DEVICE >> $TS_OUTPUT 2>&1
 [ $(ls -d /sys/block/${DEVNAME}/${DEVNAME}* 2>/dev/null |
 wc -l) -eq $((PARTS-1)) ] &&
     echo "last partition removed" >> $TS_OUTPUT 2>&1 ||
-    echo "Unable to remove a partition on $DEVICE" >> $TS_OUTPUT 2>&1
+    echo "Unable to remove a partition on $TS_DEVICE" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 udevadm settle
 
 ts_init_subtest "delete-non-existent"
 #attempt to remove it again
-$TS_CMD_PARTX -d $PARTS $DEVICE && echo "partx failed: removed non-existing partition" &>$TS_OUTPUT || echo "partx: OK" &>$TS_OUTPUT
+$TS_CMD_PARTX -d $PARTS $TS_DEVICE && echo "partx failed: removed non-existing partition" &>$TS_OUTPUT || echo "partx: OK" &>$TS_OUTPUT
 ts_finalize_subtest
 
 udevadm settle
 
 ts_init_subtest "add-existing"
 #try adding an existing partition
-$TS_CMD_PARTX -a --nr 1 $DEVICE &>/dev/null && echo "partx failed: re-added an existing partition" &> $TS_OUTPUT || echo "partx: OK" &> $TS_OUTPUT
+$TS_CMD_PARTX -a --nr 1 $TS_DEVICE &>/dev/null && echo "partx failed: re-added an existing partition" &> $TS_OUTPUT || echo "partx: OK" &> $TS_OUTPUT
 ts_finalize_subtest
 
 udevadm settle
 
 ts_init_subtest "change-by-range"
 # {-a|-d} --nr 0 should handle all partitions
-$TS_CMD_PARTX -d --nr 0 $DEVICE
-ls -d /sys/block/${DEVNAME}/${DEVNAME}* 2>/dev/null && echo "Unable to delete partitions on $DEVICE" >> $TS_OUTPUT 2>&1 || echo "partitions deleted" >> $TS_OUTPUT 2>&1
-$TS_CMD_PARTX -a --nr 0 $DEVICE
-[ $(ls -d /sys/block/${DEVNAME}/${DEVNAME}* 2>/dev/null | wc -l) -eq $PARTS ] && echo "partitions added" >> $TS_OUTPUT 2>&1 || echo "Failed to add $DEVICE partitions" >> $TS_OUTPUT 2>&1
+$TS_CMD_PARTX -d --nr 0 $TS_DEVICE
+ls -d /sys/block/${DEVNAME}/${DEVNAME}* 2>/dev/null && echo "Unable to delete partitions on $TS_DEVICE" >> $TS_OUTPUT 2>&1 || echo "partitions deleted" >> $TS_OUTPUT 2>&1
+$TS_CMD_PARTX -a --nr 0 $TS_DEVICE
+[ $(ls -d /sys/block/${DEVNAME}/${DEVNAME}* 2>/dev/null | wc -l) -eq $PARTS ] && echo "partitions added" >> $TS_OUTPUT 2>&1 || echo "Failed to add $TS_DEVICE partitions" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 udevadm settle

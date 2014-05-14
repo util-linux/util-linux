@@ -27,10 +27,11 @@ ts_check_test_command "$TS_CMD_BLKID"
 
 ts_skip_nonroot
 
-DEVICE=$(ts_scsi_debug_init dev_size_mb=51 sector_size=512)
+# set global variable TS_DEVICE
+ts_scsi_debug_init dev_size_mb=51 sector_size=512
 
 ts_log "Create partitions"
-$TS_CMD_FDISK ${DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+$TS_CMD_FDISK ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
 n
 p
 1
@@ -47,7 +48,7 @@ q
 EOF
 
 # replace generated ID with something stable
-$TS_CMD_FDISK ${DEVICE} &> /dev/null <<EOF
+$TS_CMD_FDISK ${TS_DEVICE} &> /dev/null <<EOF
 x
 i
 0x1
@@ -63,24 +64,24 @@ MD_DEVICE=/dev/${MD_DEVNAME}
 ts_log "Create RAID1 device"
 /sbin/mdadm -q -S ${MD_DEVICE} &> /dev/null
 /sbin/mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 --level=1 \
-	    --raid-devices=2 ${DEVICE}1 ${DEVICE}2 >> $TS_OUTPUT 2>&1
+	    --raid-devices=2 ${TS_DEVICE}1 ${TS_DEVICE}2 >> $TS_OUTPUT 2>&1
 udevadm settle
 
 ts_log "Probe whole-disk"
-$TS_CMD_BLKID -p -o udev ${DEVICE} 2>&1 | sort >> $TS_OUTPUT
+$TS_CMD_BLKID -p -o udev ${TS_DEVICE} 2>&1 | sort >> $TS_OUTPUT
 
 ts_log "Probe first RAID member"
-$TS_CMD_BLKID -p -o udev ${DEVICE}1 2>&1 | sort >> $TS_OUTPUT
+$TS_CMD_BLKID -p -o udev ${TS_DEVICE}1 2>&1 | sort >> $TS_OUTPUT
 
 ts_log "Probe second RAID member"
-$TS_CMD_BLKID -p -o udev ${DEVICE}2 2>&1 | sort >> $TS_OUTPUT
+$TS_CMD_BLKID -p -o udev ${TS_DEVICE}2 2>&1 | sort >> $TS_OUTPUT
 
 /sbin/mdadm -q -S ${MD_DEVICE} >> $TS_OUTPUT 2>&1
 
 udevadm settle
 rmmod scsi_debug
 
-ts_fdisk_clean $DEVICE
+ts_fdisk_clean $TS_DEVICE
 # substitue UUIDs and major/minor number before comparison
 sed -i \
   -e         's/^\(ID_FS_UUID\)=.*/\1=__ts_uuid__/' \
