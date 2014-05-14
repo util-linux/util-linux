@@ -45,6 +45,11 @@ function ts_check_test_command {
 	fi
 }
 
+function ts_check_prog {
+	local cmd=$1
+	type "$cmd" >/dev/null 2>&1 || ts_skip "missing in PATH: $cmd"
+}
+
 function ts_check_losetup {
 	local tmp
 	ts_check_test_command "$TS_CMD_LOSETUP"
