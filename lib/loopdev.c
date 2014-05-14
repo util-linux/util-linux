@@ -84,6 +84,8 @@ loopdev_debug(const char *mesg, ...)
  * names ("loop<N>") are converted to the path (/dev/loop<N> or to
  * /dev/loop/<N>)
  *
+ * This sets the device name, but does not check if the device exists!
+ *
  * Returns: <0 on error, 0 on success
  */
 int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
@@ -120,7 +122,7 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 			strncpy(lc->device, device, sizeof(lc->device));
 			lc->device[sizeof(lc->device) - 1] = '\0';
 		}
-		DBG(lc, loopdev_debug("%s successfully assigned", device));
+		DBG(lc, loopdev_debug("%s name assigned", device));
 	}
 
 	sysfs_deinit(&lc->sysfs);
@@ -394,6 +396,13 @@ static int loopiter_set_device(struct loopdev_cxt *lc, const char *device)
 	    !(lc->iter.flags & LOOPITER_FL_FREE))
 		return 0;	/* caller does not care about device status */
 
+	if (!is_loopdev(lc->device)) {
+		DBG(lc, loopdev_debug("iter: %s does not exist", lc->device));
+		return -errno;
+	}
+
+	DBG(lc, loopdev_debug("iter: %s exist", lc->device));
+
 	used = loopcxt_get_offset(lc, NULL) == 0;
 
 	if ((lc->iter.flags & LOOPITER_FL_USED) && used)
@@ -402,7 +411,7 @@ static int loopiter_set_device(struct loopdev_cxt *lc, const char *device)
 	if ((lc->iter.flags & LOOPITER_FL_FREE) && !used)
 		return 0;
 
-	DBG(lc, loopdev_debug("iter: unset device"));
+	DBG(lc, loopdev_debug("iter: failed to use %s device", lc->device));
 	ignore_result( loopcxt_set_device(lc, NULL) );
 	return 1;
 }
@@ -653,8 +662,11 @@ struct loop_info64 *loopcxt_get_info(struct loopdev_cxt *lc)
 {
 	int fd;
 
-	if (!lc || lc->info_failed)
+	if (!lc || lc->info_failed) {
+		errno = EINVAL;
 		return NULL;
+	}
+	errno = 0;
 	if (lc->has_info)
 		return &lc->info;
 
@@ -667,10 +679,10 @@ struct loop_info64 *loopcxt_get_info(struct loopdev_cxt *lc)
 		lc->info_failed = 0;
 		DBG(lc, loopdev_debug("reading loop_info64 OK"));
 		return &lc->info;
-	} else {
-		lc->info_failed = 1;
-		DBG(lc, loopdev_debug("reading loop_info64 FAILED"));
 	}
+
+	lc->info_failed = 1;
+	DBG(lc, loopdev_debug("reading loop_info64 FAILED"));
 
 	return NULL;
 }
@@ -727,7 +739,8 @@ int loopcxt_get_offset(struct loopdev_cxt *lc, uint64_t *offset)
 			if (offset)
 				*offset = lo->lo_offset;
 			rc = 0;
-		}
+		} else
+			rc = -errno;
 	}
 
 	DBG(lc, loopdev_debug("get_offset [rc=%d]", rc));
@@ -754,7 +767,8 @@ int loopcxt_get_sizelimit(struct loopdev_cxt *lc, uint64_t *size)
 			if (size)
 				*size = lo->lo_sizelimit;
 			rc = 0;
-		}
+		} else
+			rc = -errno;
 	}
 
 	DBG(lc, loopdev_debug("get_sizelimit [rc=%d]", rc));
@@ -772,13 +786,16 @@ int loopcxt_get_sizelimit(struct loopdev_cxt *lc, uint64_t *size)
 int loopcxt_get_encrypt_type(struct loopdev_cxt *lc, uint32_t *type)
 {
 	struct loop_info64 *lo = loopcxt_get_info(lc);
-	int rc = -EINVAL;
+	int rc;
 
+	/* not provided by sysfs */
 	if (lo) {
 		if (type)
 			*type = lo->lo_encrypt_type;
 		rc = 0;
-	}
+	} else
+		rc = -errno;
+
 	DBG(lc, loopdev_debug("get_encrypt_type [rc=%d]", rc));
 	return rc;
 }
@@ -811,13 +828,15 @@ const char *loopcxt_get_crypt_name(struct loopdev_cxt *lc)
 int loopcxt_get_backing_devno(struct loopdev_cxt *lc, dev_t *devno)
 {
 	struct loop_info64 *lo = loopcxt_get_info(lc);
-	int rc = -EINVAL;
+	int rc;
 
 	if (lo) {
 		if (devno)
 			*devno = lo->lo_device;
 		rc = 0;
-	}
+	} else
+		rc = -errno;
+
 	DBG(lc, loopdev_debug("get_backing_devno [rc=%d]", rc));
 	return rc;
 }
@@ -831,13 +850,15 @@ int loopcxt_get_backing_devno(struct loopdev_cxt *lc, dev_t *devno)
 int loopcxt_get_backing_inode(struct loopdev_cxt *lc, ino_t *ino)
 {
 	struct loop_info64 *lo = loopcxt_get_info(lc);
-	int rc = -EINVAL;
+	int rc;
 
 	if (lo) {
 		if (ino)
 			*ino = lo->lo_inode;
 		rc = 0;
-	}
+	} else
+		rc = -errno;
+
 	DBG(lc, loopdev_debug("get_backing_inode [rc=%d]", rc));
 	return rc;
 }
