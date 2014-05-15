@@ -182,7 +182,18 @@ enum {
 	COL_SELINUX,
 };
 
-static const char *const status[] = { "0", "1", "-" };
+enum {
+	STATUS_FALSE = 0,
+	STATUS_TRUE,
+	STATUS_UNKNOWN
+};
+
+static const char *const status[] = {
+	[STATUS_FALSE]	= "0",
+	[STATUS_TRUE]	= "1",
+	[STATUS_UNKNOWN]= NULL
+};
+
 static struct lslogins_coldesc coldescs[] =
 {
 	[COL_LOGIN]		= { "LOGIN",		N_("user/system login"), "Login", 0.2, SCOLS_FL_NOEXTREMES },
@@ -620,9 +631,6 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 						err(1, NULL);
 
 					user->sgroups = build_sgroups_string(n, list);
-
-					if (!user->sgroups)
-						user->sgroups = xstrdup(status[2]);
 					break;
 				}
 			case COL_HOME:
@@ -639,47 +647,36 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 					time = user_wtmp->ut_tv.tv_sec;
 					user->last_login = make_time(ctl->time_mode, time);
 				}
-				else
-					user->last_login = xstrdup(status[2]);
 				break;
 			case COL_LAST_TTY:
 				if (user_wtmp)
 					user->last_tty = xstrdup(user_wtmp->ut_line);
-				else
-					user->last_tty = xstrdup(status[2]);
 				break;
 			case COL_LAST_HOSTNAME:
 				if (user_wtmp)
 					user->last_hostname = xstrdup(user_wtmp->ut_host);
-				else
-					user->last_hostname = xstrdup(status[2]);
 				break;
 			case COL_FAILED_LOGIN:
 				if (user_btmp) {
 					time = user_btmp->ut_tv.tv_sec;
 					user->failed_login = make_time(ctl->time_mode, time);
 				}
-				else
-					user->failed_login = xstrdup(status[2]);
 				break;
 			case COL_FAILED_TTY:
 				if (user_btmp)
 					user->failed_tty = xstrdup(user_btmp->ut_line);
-				else
-					user->failed_tty = xstrdup(status[2]);
 				break;
 			case COL_HUSH_STATUS:
 				user->hushed = get_hushlogin_status(pwd, 0);
 				if (user->hushed == -1)
-					user->hushed = 2;
+					user->hushed = STATUS_UNKNOWN;
 				break;
 			case COL_NOPASSWD:
 				if (shadow) {
 					if (!*shadow->sp_pwdp) /* '\0' */
-						user->nopasswd = 1;
-				}
-				else
-					user->nopasswd = 2;
+						user->nopasswd = STATUS_TRUE;
+				} else
+					user->nopasswd = STATUS_UNKNOWN;
 				break;
 			case COL_NOLOGIN:
 				if ((pwd->pw_uid && !(close(open("/etc/nologin", O_RDONLY)))) ||
@@ -690,31 +687,23 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			case COL_LOCKED:
 				if (shadow) {
 					if (*shadow->sp_pwdp == '!')
-						user->locked = 1;
-				}
-				else
-					user->locked = 2;
+						user->locked = STATUS_TRUE;
+				} else
+					user->locked = STATUS_UNKNOWN;
 				break;
 			case COL_PWD_WARN:
-				if (shadow && shadow->sp_warn >= 0) {
+				if (shadow && shadow->sp_warn >= 0)
 					xasprintf(&user->pwd_warn, "%ld", shadow->sp_warn);
-				}
-				else
-					user->pwd_warn = xstrdup(status[2]);
 				break;
 			case COL_PWD_EXPIR:
 				if (shadow && shadow->sp_expire >= 0)
 					user->pwd_expire = make_time(TIME_SHORT, shadow->sp_expire);
-				else
-					user->pwd_expire = xstrdup(status[2]);
 				break;
 			case COL_PWD_CTIME:
 				/* sp_lstchg is specified in days, showing hours (especially in non-GMT
 				 * timezones) would only serve to confuse */
 				if (shadow)
 					user->pwd_ctime = make_time(TIME_SHORT, shadow->sp_lstchg);
-				else
-					user->pwd_ctime = xstrdup(status[2]);
 				break;
 			case COL_PWD_CTIME_MIN:
 				if (shadow) {
@@ -723,8 +712,6 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 					else
 						xasprintf(&user->pwd_ctime_min, "%ld", shadow->sp_min);
 				}
-				else
-					user->pwd_ctime_min = xstrdup(status[2]);
 				break;
 			case COL_PWD_CTIME_MAX:
 				if (shadow) {
@@ -733,20 +720,16 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 					else
 						xasprintf(&user->pwd_ctime_max, "%ld", shadow->sp_max);
 				}
-				else
-					user->pwd_ctime_max = xstrdup(status[2]);
 				break;
 			case COL_SELINUX:
-				{
+			{
 #ifdef HAVE_LIBSELINUX
 					/* typedefs and pointers are pure evil */
-					security_context_t con = NULL;
-					if (getcon(&con))
-						user->context = xstrdup(status[2]);
-					else
-						user->context = con;
+				security_context_t con = NULL;
+				if (getcon(&con) == 0)
+					user->context = con;
 #endif
-				}
+			}
 				break;
 			default:
 				/* something went very wrong here */
