@@ -496,6 +496,8 @@ function ts_mount {
 	local result
 	local msg
 	local fs
+	local fs_exp=$1
+	shift
 
 	out=$($TS_CMD_MOUNT "$@" 2>&1)
 	result=$?
@@ -506,7 +508,7 @@ function ts_mount {
 	then
 		# skip only if reported fs correctly and if it's not available
 		fs=$(echo "$msg" | sed -n "s/.*type '\(.*\)'$/\1/p")
-		[ -n "$fs" ] \
+		[ "$fs" = "fs_exp" ] \
 		 && grep -qe "[[:space:]]${fs}$" /proc/filesystems &>/dev/null \
 		 || ts_skip "$msg"
 	fi
