@@ -491,6 +491,22 @@ function ts_device_has_uuid {
 	return $?
 }
 
+function ts_mount {
+	local out
+	local result
+	local msg
+
+	out=$($TS_CMD_MOUNT "$@" 2>&1)
+	result=$?
+	echo -n "$out" >> $TS_OUTPUT
+
+	if [ $result != 0 ]; then
+		msg=$(echo "$out" | grep -m1 "unknown filesystem type") \
+			&& ts_skip "$msg"
+	fi
+	return $result
+}
+
 function ts_is_mounted {
 	local DEV=$(ts_canonicalize "$1")
 
