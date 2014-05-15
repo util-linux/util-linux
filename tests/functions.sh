@@ -495,14 +495,20 @@ function ts_mount {
 	local out
 	local result
 	local msg
+	local fs
 
 	out=$($TS_CMD_MOUNT "$@" 2>&1)
 	result=$?
 	echo -n "$out" >> $TS_OUTPUT
 
-	if [ $result != 0 ]; then
-		msg=$(echo "$out" | grep -m1 "unknown filesystem type") \
-			&& ts_skip "$msg"
+	if [ $result != 0 ] \
+		&& msg=$(echo "$out" | grep -m1 "unknown filesystem type")
+	then
+		# skip only if reported fs correctly and if it's not available
+		fs=$(echo "$msg" | sed -n "s/.*type '\(.*\)'$/\1/p")
+		[ -n "$fs" ] \
+		 && grep -qe "[[:space:]]${fs}$" /proc/filesystems &>/dev/null \
+		 || ts_skip "$msg"
 	fi
 	return $result
 }
