@@ -345,13 +345,15 @@ struct lslogins_sgroups {
 static char *uidtostr(uid_t uid)
 {
 	char *str_uid = NULL;
-	return (0 > xasprintf(&str_uid, "%u", uid)) ? NULL : str_uid;
+	xasprintf(&str_uid, "%u", uid);
+	return str_uid;
 }
 
 static char *gidtostr(gid_t gid)
 {
 	char *str_gid = NULL;
-	return (0 > xasprintf(&str_gid, "%u", gid)) ? NULL : str_gid;
+	xasprintf(&str_gid, "%u", gid);
+	return str_gid;
 }
 
 static struct lslogins_sgroups *build_sgroups_list(int len, gid_t *list, int *slen)
@@ -966,123 +968,95 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 	struct lslogins_user *user = *(struct lslogins_user **)u;
 	int n = 0;
 
-	if ((which == preorder) || (which == endorder))
+	if (which == preorder || which == endorder)
 		return;
 
 	ln = scols_table_new_line(tb, NULL);
 	while (n < ncolumns) {
+		int rc = 0;
+
 		switch (columns[n]) {
 			case COL_LOGIN:
-				if (scols_line_set_data(ln, n, user->login))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->login);
 				break;
 			case COL_UID:
-				{
-					char *str_uid = uidtostr(user->uid);
-					if (!str_uid || scols_line_set_data(ln, n, str_uid))
-						goto fail;
-					free(str_uid);
-					break;
-				}
+				rc = scols_line_refer_data(ln, n, uidtostr(user->uid));
+				break;
 			case COL_NOPASSWD:
-				if (scols_line_set_data(ln, n, status[user->nopasswd]))
-					goto fail;
+				rc = scols_line_set_data(ln, n, status[user->nopasswd]);
 				break;
 			case COL_NOLOGIN:
-				if (scols_line_set_data(ln, n, status[user->nologin]))
-					goto fail;
+				rc = scols_line_set_data(ln, n, status[user->nologin]);
 				break;
 			case COL_LOCKED:
-				if (scols_line_set_data(ln, n, status[user->locked]))
-					goto fail;
+				rc = scols_line_set_data(ln, n, status[user->locked]);
 				break;
 			case COL_PGRP:
-				if (scols_line_set_data(ln, n, user->group))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->group);
 				break;
 			case COL_PGID:
-				{
-					char *str_gid = gidtostr(user->gid);
-					if (!str_gid || scols_line_set_data(ln, n, str_gid))
-						goto fail;
-					free(str_gid);
-					break;
-				}
+				rc = scols_line_refer_data(ln, n, gidtostr(user->gid));
+				break;
 			case COL_SGRPS:
-				if (scols_line_set_data(ln, n, user->sgroups))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->sgroups);
 				break;
 			case COL_HOME:
-				if (scols_line_set_data(ln, n, user->homedir))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->homedir);
 				break;
 			case COL_SHELL:
-				if (scols_line_set_data(ln, n, user->shell))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->shell);
 				break;
 			case COL_GECOS:
-				if (scols_line_set_data(ln, n, user->gecos))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->gecos);
 				break;
 			case COL_LAST_LOGIN:
-				if (scols_line_set_data(ln, n, user->last_login))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->last_login);
 				break;
 			case COL_LAST_TTY:
-				if (scols_line_set_data(ln, n, user->last_tty))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->last_tty);
 				break;
 			case COL_LAST_HOSTNAME:
-				if (scols_line_set_data(ln, n, user->last_hostname))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->last_hostname);
 				break;
 			case COL_FAILED_LOGIN:
-				if (scols_line_set_data(ln, n, user->failed_login))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->failed_login);
 				break;
 			case COL_FAILED_TTY:
-				if (scols_line_set_data(ln, n, user->failed_tty))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->failed_tty);
 				break;
 			case COL_HUSH_STATUS:
-				if (scols_line_set_data(ln, n, status[user->hushed]))
-					goto fail;
+				rc= scols_line_set_data(ln, n, status[user->hushed]);
 				break;
 			case COL_PWD_WARN:
-				if (scols_line_set_data(ln, n, user->pwd_warn))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->pwd_warn);
 				break;
 			case COL_PWD_EXPIR:
-				if (scols_line_set_data(ln, n, user->pwd_expire))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->pwd_expire);
 				break;
 			case COL_PWD_CTIME:
-				if (scols_line_set_data(ln, n, user->pwd_ctime))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->pwd_ctime);
 				break;
 			case COL_PWD_CTIME_MIN:
-				if (scols_line_set_data(ln, n, user->pwd_ctime_min))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->pwd_ctime_min);
 				break;
 			case COL_PWD_CTIME_MAX:
-				if (scols_line_set_data(ln, n, user->pwd_ctime_max))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->pwd_ctime_max);
 				break;
 #ifdef HAVE_LIBSELINUX
 			case COL_SELINUX:
-				if (scols_line_set_data(ln, n, user->context))
-					goto fail;
+				rc = scols_line_set_data(ln, n, user->context);
 				break;
 #endif
 			default:
 				/* something went very wrong here */
-				err(EXIT_FAILURE, "fatal: unknown error");
+				err(EXIT_FAILURE, _("internal error: unknown column"));
 		}
+
+		if (rc != 0)
+			err(EXIT_FAILURE, _("failed to set data"));
 		++n;
 	}
 	return;
-fail:
-	exit(1);
 }
 static int print_pretty(struct libscols_table *tb)
 {
