@@ -315,50 +315,6 @@ static char *make_time(int mode, time_t time)
 	return xstrdup(buf);
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
-{
-	size_t i;
-
-	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
-
-	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --acc-expiration     Display data\n"), out);
-	fputs(_(" -c, --colon-separate     Display data in a format similar to /etc/passwd\n"), out);
-	fputs(_(" -e, --export             Display in an export-able output format\n"), out);
-	fputs(_(" -f, --failed             Display data about the last users' failed logins\n"), out);
-	fputs(_(" --fulltimes              Show dates in a long format\n"), out);
-	fputs(_(" -g, --groups=<groups>    Display users belonging to a group in GROUPS\n"), out);
-	fputs(_(" -i, --iso                Display dates in the ISO-8601 format\n"), out);
-	fputs(_(" -l, --logins=<logins>    Display only users from LOGINS\n"), out);
-	fputs(_(" --last                   Show info about the users' last login sessions\n"), out);
-	fputs(_(" -m, --supp-groups        Display supplementary groups as well\n"), out);
-	fputs(_(" -n, --newline            Display each piece of information on a new line\n"), out);
-	fputs(_(" --notruncate             Don't truncate output\n"), out);
-	fputs(_(" -o, --output[=<list>]    Define the columns to output\n"), out);
-	fputs(_(" -r, --raw                Display the raw table\n"), out);
-	fputs(_(" -s, --system-accs        Display system accounts\n"), out);
-	fputs(_(" -t, --sort               Sort output by login instead of UID\n"), out);
-	fputs(_(" --time-format=<type>     Display dates in type <type>, where type is one of short|full|iso\n"), out);
-	fputs(_(" -u, --user-accs          Display user accounts\n"), out);
-	fputs(_(" -x, --extra              Display extra information\n"), out);
-	fputs(_(" -z, --print0             Delimit user entries with a nul character\n"), out);
-	fputs(_(" -Z, --context            Display the users' security context\n"), out);
-	fputs(_(" --wtmp-file              Set an alternate path for wtmp\n"), out);
-	fputs(_(" --btmp-file              Set an alternate path for btmp\n"), out);
-	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
-
-	fprintf(out, _("\nAvailable columns:\n"));
-
-	for (i = 0; i < ARRAY_SIZE(coldescs); i++)
-		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
-
-	fprintf(out, _("\nFor more details see lslogins(1).\n"));
-
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
-}
 
 static char *uidtostr(uid_t uid)
 {
@@ -1083,6 +1039,50 @@ static struct lslogins_timefmt timefmts[] = {
 	{ "iso", TIME_ISO },
 };
 
+static void __attribute__((__noreturn__)) usage(FILE *out)
+{
+	size_t i;
+
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
+
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -a, --acc-expiration     Display data\n"), out);
+	fputs(_(" -c, --colon-separate     Display data in a format similar to /etc/passwd\n"), out);
+	fputs(_(" -e, --export             Display in an export-able output format\n"), out);
+	fputs(_(" -f, --failed             Display data about the last users' failed logins\n"), out);
+	fputs(_(" --fulltimes              Show dates in a long format\n"), out);
+	fputs(_(" -g, --groups=<groups>    Display users belonging to a group in <groups>\n"), out);
+	fputs(_(" -l, --logins=<logins>    Display only users from <logins>\n"), out);
+	fputs(_(" --last                   Show info about the users' last login sessions\n"), out);
+	fputs(_(" -m, --supp-groups        Display supplementary groups as well\n"), out);
+	fputs(_(" -n, --newline            Display each piece of information on a new line\n"), out);
+	fputs(_(" --notruncate             Don't truncate output\n"), out);
+	fputs(_(" -o, --output[=<list>]    Define the columns to output\n"), out);
+	fputs(_(" -r, --raw                Display the raw table\n"), out);
+	fputs(_(" -s, --system-accs        Display system accounts\n"), out);
+	fputs(_(" -t, --sort-by-name       Sort output by login instead of UID\n"), out);
+	fputs(_(" --time-format=<type>     Display dates in type <type>, where type is one of short|full|iso\n"), out);
+	fputs(_(" -u, --user-accs          Display user accounts\n"), out);
+	fputs(_(" -x, --extra              Display extra information\n"), out);
+	fputs(_(" -z, --print0             Delimit user entries with a nul character\n"), out);
+	fputs(_(" -Z, --context            Display the users' security context\n"), out);
+	fputs(_(" --wtmp-file <path>       Set an alternate path for wtmp\n"), out);
+	fputs(_(" --btmp-file <path>       Set an alternate path for btmp\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+
+	fprintf(out, _("\nAvailable columns:\n"));
+
+	for (i = 0; i < ARRAY_SIZE(coldescs); i++)
+		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
+
+	fprintf(out, _("\nFor more details see lslogins(1).\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 int main(int argc, char *argv[])
 {
 	int c, want_wtmp = 0, want_btmp = 0;
@@ -1103,13 +1103,12 @@ int main(int argc, char *argv[])
 
 	static const struct option longopts[] = {
 		{ "acc-expiration", no_argument,	0, 'a' },
-		{ "colon",          no_argument,	0, 'c' },
+		{ "colon-separate", no_argument,	0, 'c' },
 		{ "export",         no_argument,	0, 'e' },
 		{ "failed",         no_argument,	0, 'f' },
 		{ "fulltimes",      no_argument,	0, OPT_FULLT },
 		{ "groups",         required_argument,	0, 'g' },
 		{ "help",           no_argument,	0, 'h' },
-		{ "iso",            no_argument,	0, 'i' },
 		{ "logins",         required_argument,	0, 'l' },
 		{ "supp-groups",    no_argument,	0, 'm' },
 		{ "newline",        no_argument,	0, 'n' },
@@ -1150,7 +1149,7 @@ int main(int argc, char *argv[])
 	ctl->cmp_fn = cmp_uid;
 	ctl->time_mode = TIME_SHORT_RELATIVE;
 
-	while ((c = getopt_long(argc, argv, "acefg:hil:mno:rstuxzZ",
+	while ((c = getopt_long(argc, argv, "acefg:hl:mno:rstuxzZ",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1173,8 +1172,6 @@ int main(int argc, char *argv[])
 			break;
 		case 'h':
 			usage(stdout);
-		case 'i':
-			ctl->time_mode = TIME_ISO;
 			break;
 		case 'l':
 			logins = optarg;
