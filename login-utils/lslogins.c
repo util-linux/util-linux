@@ -1062,7 +1062,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -r, --raw                Display the raw table\n"), out);
 	fputs(_(" -s, --system-accs        Display system accounts\n"), out);
 	fputs(_(" -t, --sort-by-name       Sort output by login instead of UID\n"), out);
-	fputs(_(" --time-format=<type>     Display dates in type <type>, where type is one of short|full|iso\n"), out);
+	fputs(_(" --time-format=<type>     Display dates in short, full or iso format\n"), out);
 	fputs(_(" -u, --user-accs          Display user accounts\n"), out);
 	fputs(_(" -x, --extra              Display extra information\n"), out);
 	fputs(_(" -z, --print0             Delimit user entries with a nul character\n"), out);
@@ -1277,6 +1277,7 @@ int main(int argc, char *argv[])
 	if (!ncolumns && outmode == OUT_PRETTY) {
 		size_t i;
 		want_wtmp = 1;
+		want_btmp = 1;
 
 		for (i = 0; i < ARRAY_SIZE(coldescs); i++)
 			 columns[ncolumns++] = i;
