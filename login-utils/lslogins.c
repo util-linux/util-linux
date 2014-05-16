@@ -83,12 +83,12 @@ static int outmode;
  * output modes
  */
 enum {
-	out_colon = 1,
-	out_export,
-	out_newline,
-	out_raw,
-	out_nul,
-	out_pretty,
+	OUT_COLON = 1,
+	OUT_EXPORT,
+	OUT_NEWLINE,
+	OUT_RAW,
+	OUT_NUL,
+	OUT_PRETTY
 };
 
 struct lslogins_user {
@@ -161,13 +161,13 @@ enum {
 enum {
 	COL_LOGIN = 0,
 	COL_UID,
+	COL_GECOS,
+	COL_HOME,
+	COL_SHELL,
 	COL_PGRP,
 	COL_PGID,
 	COL_SGRPS,
 	COL_SGIDS,
-	COL_HOME,
-	COL_SHELL,
-	COL_GECOS,
 	COL_LAST_LOGIN,
 	COL_LAST_TTY,
 	COL_LAST_HOSTNAME,
@@ -196,6 +196,14 @@ static const char *const status[] = {
 	[STATUS_TRUE]	= "1",
 	[STATUS_UNKNOWN]= NULL
 };
+
+static const char *const pretty_status[] = {
+	[STATUS_FALSE]	= N_("no"),
+	[STATUS_TRUE]	= N_("yes"),
+	[STATUS_UNKNOWN]= NULL
+};
+
+#define get_status(x)	(outmode == OUT_PRETTY ? pretty_status[(x)] : status[(x)])
 
 static struct lslogins_coldesc coldescs[] =
 {
@@ -857,23 +865,23 @@ static struct libscols_table *setup_table(void)
 		return NULL;
 
 	switch(outmode) {
-	case out_colon:
+	case OUT_COLON:
 		scols_table_enable_raw(tb, 1);
 		scols_table_set_column_separator(tb, ":");
 		break;
-	case out_newline:
+	case OUT_NEWLINE:
 		scols_table_set_column_separator(tb, "\n");
 		/* fallthrough */
-	case out_export:
+	case OUT_EXPORT:
 		scols_table_enable_export(tb, 1);
 		break;
-	case out_nul:
+	case OUT_NUL:
 		scols_table_set_line_separator(tb, "\0");
 		/* fallthrough */
-	case out_raw:
+	case OUT_RAW:
 		scols_table_enable_raw(tb, 1);
 		break;
-	case out_pretty:
+	case OUT_PRETTY:
 		scols_table_enable_noheadings(tb, 1);
 	default:
 		break;
@@ -913,13 +921,13 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 			rc = scols_line_refer_data(ln, n, uidtostr(user->uid));
 			break;
 		case COL_NOPASSWD:
-			rc = scols_line_set_data(ln, n, status[user->nopasswd]);
+			rc = scols_line_set_data(ln, n, get_status(user->nopasswd));
 			break;
 		case COL_NOLOGIN:
-			rc = scols_line_set_data(ln, n, status[user->nologin]);
+			rc = scols_line_set_data(ln, n, get_status(user->nologin));
 			break;
 		case COL_LOCKED:
-			rc = scols_line_set_data(ln, n, status[user->locked]);
+			rc = scols_line_set_data(ln, n, get_status(user->locked));
 			break;
 		case COL_PGRP:
 			rc = scols_line_set_data(ln, n, user->group);
@@ -964,7 +972,7 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 			rc = scols_line_set_data(ln, n, user->failed_tty);
 			break;
 		case COL_HUSH_STATUS:
-			rc= scols_line_set_data(ln, n, status[user->hushed]);
+			rc = scols_line_set_data(ln, n, get_status(user->hushed));
 			break;
 		case COL_PWD_WARN:
 			rc = scols_line_set_data(ln, n, user->pwd_warn);
@@ -1015,7 +1023,8 @@ static int print_pretty(struct libscols_table *tb)
 		hstr = _(coldescs[columns[n]].pretty_name);
 		dstr = scols_cell_get_data(data);
 
-		printf("%s:%*c%-36s\n", hstr, 26 - (int)strlen(hstr), ' ', dstr);
+		if (dstr)
+			printf("%s:%*c%-36s\n", hstr, 26 - (int)strlen(hstr), ' ', dstr);
 		++n;
 	}
 
@@ -1031,7 +1040,7 @@ static int print_user_table(struct lslogins_control *ctl)
 		return -1;
 
 	twalk(ctl->usertree, fill_table);
-	if (outmode == out_pretty)
+	if (outmode == OUT_PRETTY)
 		print_pretty(tb);
 	else
 		scols_print_table(tb);
@@ -1151,10 +1160,10 @@ int main(int argc, char *argv[])
 			lslogins_flag |= F_EXPIR;
 			break;
 		case 'c':
-			outmode = out_colon;
+			outmode = OUT_COLON;
 			break;
 		case 'e':
-			outmode = out_export;
+			outmode = OUT_EXPORT;
 			break;
 		case 'f':
 			lslogins_flag |= F_FAIL;
@@ -1174,7 +1183,7 @@ int main(int argc, char *argv[])
 			lslogins_flag |= F_MORE;
 			break;
 		case 'n':
-			outmode = out_newline;
+			outmode = OUT_NEWLINE;
 			break;
 		case 'o':
 			if (optarg) {
@@ -1188,7 +1197,7 @@ int main(int argc, char *argv[])
 			}
 			break;
 		case 'r':
-			outmode = out_raw;
+			outmode = OUT_RAW;
 			break;
 		case OPT_LAST:
 			lslogins_flag |= F_LAST;
@@ -1215,7 +1224,7 @@ int main(int argc, char *argv[])
 			lslogins_flag |= F_EXTRA;
 			break;
 		case 'z':
-			outmode = out_nul;
+			outmode = OUT_NUL;
 			break;
 		case OPT_WTMP:
 			path_wtmp = optarg;
@@ -1260,7 +1269,7 @@ int main(int argc, char *argv[])
 		if (strchr(argv[optind], ','))
 			errx(EXIT_FAILURE, _("Only one user may be specified. Use -l for multiple users."));
 		logins = argv[optind];
-		outmode = out_pretty;
+		outmode = OUT_PRETTY;
 	} else if (argc != optind)
 		usage(stderr);
 
@@ -1268,7 +1277,14 @@ int main(int argc, char *argv[])
 	if (lslogins_flag & F_USRAC && lslogins_flag & F_SYSAC)
 		lslogins_flag &= ~(F_USRAC | F_SYSAC);
 
-	if (!ncolumns) {
+	if (!ncolumns && outmode == OUT_PRETTY) {
+		size_t i;
+		want_wtmp = 1;
+
+		for (i = 0; i < ARRAY_SIZE(coldescs); i++)
+			 columns[ncolumns++] = i;
+
+	} else if (!ncolumns) {
 		if (lslogins_flag & F_SORT) {
 			columns[ncolumns++] = COL_LOGIN;
 			columns[ncolumns++] = COL_UID;
