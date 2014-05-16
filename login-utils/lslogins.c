@@ -2,6 +2,7 @@
  * lslogins - List information about users on the system
  *
  * Copyright (C) 2014 Ondrej Oprala <ooprala@redhat.com>
+ * Copyright (C) 2014 Karel Zak <kzak@redhat.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +40,7 @@
 
 #include <libsmartcols.h>
 #ifdef HAVE_LIBSELINUX
-#include <selinux/selinux.h>
+# include <selinux/selinux.h>
 #endif
 
 #include "c.h"
@@ -408,7 +409,6 @@ again:
 	return res;
 }
 
-
 static struct utmp *get_last_wtmp(struct lslogins_control *ctl, const char *username)
 {
 	size_t n = 0;
@@ -427,6 +427,7 @@ static struct utmp *get_last_wtmp(struct lslogins_control *ctl, const char *user
 	return NULL;
 
 }
+
 static struct utmp *get_last_btmp(struct lslogins_control *ctl, const char *username)
 {
 	size_t n = 0;
@@ -465,6 +466,7 @@ static int parse_btmp(struct lslogins_control *ctl, char *path)
 		err(EXIT_FAILURE, "%s", path);
 	return rc;
 }
+
 static int get_sgroups(gid_t **list, size_t *len, struct passwd *pwd)
 {
 	size_t n = 0;
@@ -489,11 +491,8 @@ static int get_sgroups(gid_t **list, size_t *len, struct passwd *pwd)
 			break;
 		++n;
 	}
+
 	(*list)[n] = (*list)[--(*len)];
-
-	/* probably too costly to do for sizeof(gid_t) worth of memory */
-	//*list = xrealloc(*list, *len * sizeof(gid_t));
-
 	return 0;
 }
 
@@ -527,8 +526,8 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			errno = EAGAIN;
 			return NULL;
 		}
-	}
-	else if (lslogins_flag & F_SYSAC) {
+
+	} else if (lslogins_flag & F_SYSAC) {
 		if (uid < ctl->SYS_UID_MIN || uid > ctl->SYS_UID_MAX) {
 			errno = EAGAIN;
 			return NULL;
@@ -555,8 +554,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	if (!shadow) {
 		if (errno != EACCES)
 			err(EXIT_FAILURE, "%s", strerror(errno));
-	}
-	else {
+	} else {
 		/* we want these dates in seconds */
 		shadow->sp_lstchg *= 86400;
 		shadow->sp_expire *= 86400;
@@ -564,132 +562,131 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 
 	while (n < ncolumns) {
 		switch (columns[n++]) {
-			case COL_LOGIN:
-				user->login = xstrdup(pwd->pw_name);
-				break;
-			case COL_UID:
-				user->uid = pwd->pw_uid;
-				break;
-			case COL_PGRP:
-				user->group = xstrdup(grp->gr_name);
-				break;
-			case COL_PGID:
-				user->gid = pwd->pw_gid;
-				break;
-			case COL_SGRPS:
-			case COL_SGIDS:
-				if (get_sgroups(&user->sgroups, &user->nsgroups, pwd))
-					err(EXIT_FAILURE, _("failed to get supplementary groups"));
-				break;
-			case COL_HOME:
-				user->homedir = xstrdup(pwd->pw_dir);
-				break;
-			case COL_SHELL:
-				user->shell = xstrdup(pwd->pw_shell);
-				break;
-			case COL_GECOS:
-				user->gecos = xstrdup(pwd->pw_gecos);
-				break;
-			case COL_LAST_LOGIN:
-				if (user_wtmp) {
-					time = user_wtmp->ut_tv.tv_sec;
-					user->last_login = make_time(ctl->time_mode, time);
-				}
-				break;
-			case COL_LAST_TTY:
-				if (user_wtmp)
-					user->last_tty = xstrdup(user_wtmp->ut_line);
-				break;
-			case COL_LAST_HOSTNAME:
-				if (user_wtmp)
-					user->last_hostname = xstrdup(user_wtmp->ut_host);
-				break;
-			case COL_FAILED_LOGIN:
-				if (user_btmp) {
-					time = user_btmp->ut_tv.tv_sec;
-					user->failed_login = make_time(ctl->time_mode, time);
-				}
-				break;
-			case COL_FAILED_TTY:
-				if (user_btmp)
-					user->failed_tty = xstrdup(user_btmp->ut_line);
-				break;
-			case COL_HUSH_STATUS:
-				user->hushed = get_hushlogin_status(pwd, 0);
-				if (user->hushed == -1)
-					user->hushed = STATUS_UNKNOWN;
-				break;
-			case COL_NOPASSWD:
-				if (shadow) {
-					if (!*shadow->sp_pwdp) /* '\0' */
-						user->nopasswd = STATUS_TRUE;
-				} else
-					user->nopasswd = STATUS_UNKNOWN;
-				break;
-			case COL_NOLOGIN:
-				if ((pwd->pw_uid && !(close(open("/etc/nologin", O_RDONLY)))) ||
-				    strstr(pwd->pw_shell, "nologin")) {
-					user->nologin = 1;
-				}
-				break;
-			case COL_LOCKED:
-				if (shadow) {
-					if (*shadow->sp_pwdp == '!')
-						user->locked = STATUS_TRUE;
-				} else
-					user->locked = STATUS_UNKNOWN;
-				break;
-			case COL_PWD_WARN:
-				if (shadow && shadow->sp_warn >= 0)
-					xasprintf(&user->pwd_warn, "%ld", shadow->sp_warn);
-				break;
-			case COL_PWD_EXPIR:
-				if (shadow && shadow->sp_expire >= 0)
-					user->pwd_expire = make_time(TIME_SHORT, shadow->sp_expire);
-				break;
-			case COL_PWD_CTIME:
-				/* sp_lstchg is specified in days, showing hours (especially in non-GMT
-				 * timezones) would only serve to confuse */
-				if (shadow)
-					user->pwd_ctime = make_time(TIME_SHORT, shadow->sp_lstchg);
-				break;
-			case COL_PWD_CTIME_MIN:
-				if (shadow) {
-					if (shadow->sp_min <= 0)
-						user->pwd_ctime_min = xstrdup("unlimited");
-					else
-						xasprintf(&user->pwd_ctime_min, "%ld", shadow->sp_min);
-				}
-				break;
-			case COL_PWD_CTIME_MAX:
-				if (shadow) {
-					if (shadow->sp_max <= 0)
-						user->pwd_ctime_max = xstrdup("unlimited");
-					else
-						xasprintf(&user->pwd_ctime_max, "%ld", shadow->sp_max);
-				}
-				break;
-			case COL_SELINUX:
-			{
-#ifdef HAVE_LIBSELINUX
-					/* typedefs and pointers are pure evil */
-				security_context_t con = NULL;
-				if (getcon(&con) == 0)
-					user->context = con;
-#endif
+		case COL_LOGIN:
+			user->login = xstrdup(pwd->pw_name);
+			break;
+		case COL_UID:
+			user->uid = pwd->pw_uid;
+			break;
+		case COL_PGRP:
+			user->group = xstrdup(grp->gr_name);
+			break;
+		case COL_PGID:
+			user->gid = pwd->pw_gid;
+			break;
+		case COL_SGRPS:
+		case COL_SGIDS:
+			if (get_sgroups(&user->sgroups, &user->nsgroups, pwd))
+				err(EXIT_FAILURE, _("failed to get supplementary groups"));
+			break;
+		case COL_HOME:
+			user->homedir = xstrdup(pwd->pw_dir);
+			break;
+		case COL_SHELL:
+			user->shell = xstrdup(pwd->pw_shell);
+			break;
+		case COL_GECOS:
+			user->gecos = xstrdup(pwd->pw_gecos);
+			break;
+		case COL_LAST_LOGIN:
+			if (user_wtmp) {
+				time = user_wtmp->ut_tv.tv_sec;
+				user->last_login = make_time(ctl->time_mode, time);
 			}
-				break;
-			default:
-				/* something went very wrong here */
-				err(EXIT_FAILURE, "fatal: unknown error");
+			break;
+		case COL_LAST_TTY:
+			if (user_wtmp)
+				user->last_tty = xstrdup(user_wtmp->ut_line);
+			break;
+		case COL_LAST_HOSTNAME:
+			if (user_wtmp)
+				user->last_hostname = xstrdup(user_wtmp->ut_host);
+			break;
+		case COL_FAILED_LOGIN:
+			if (user_btmp) {
+				time = user_btmp->ut_tv.tv_sec;
+				user->failed_login = make_time(ctl->time_mode, time);
+			}
+			break;
+		case COL_FAILED_TTY:
+			if (user_btmp)
+				user->failed_tty = xstrdup(user_btmp->ut_line);
+			break;
+		case COL_HUSH_STATUS:
+			user->hushed = get_hushlogin_status(pwd, 0);
+			if (user->hushed == -1)
+				user->hushed = STATUS_UNKNOWN;
+			break;
+		case COL_NOPASSWD:
+			if (shadow) {
+				if (!*shadow->sp_pwdp) /* '\0' */
+					user->nopasswd = STATUS_TRUE;
+			} else
+				user->nopasswd = STATUS_UNKNOWN;
+			break;
+		case COL_NOLOGIN:
+			if ((pwd->pw_uid && !(close(open("/etc/nologin", O_RDONLY)))) ||
+			    strstr(pwd->pw_shell, "nologin")) {
+				user->nologin = 1;
+			}
+			break;
+		case COL_LOCKED:
+			if (shadow) {
+				if (*shadow->sp_pwdp == '!')
+					user->locked = STATUS_TRUE;
+			} else
+				user->locked = STATUS_UNKNOWN;
+			break;
+		case COL_PWD_WARN:
+			if (shadow && shadow->sp_warn >= 0)
+				xasprintf(&user->pwd_warn, "%ld", shadow->sp_warn);
+			break;
+		case COL_PWD_EXPIR:
+			if (shadow && shadow->sp_expire >= 0)
+				user->pwd_expire = make_time(TIME_SHORT, shadow->sp_expire);
+			break;
+		case COL_PWD_CTIME:
+			/* sp_lstchg is specified in days, showing hours (especially in non-GMT
+			 * timezones) would only serve to confuse */
+			if (shadow)
+				user->pwd_ctime = make_time(TIME_SHORT, shadow->sp_lstchg);
+			break;
+		case COL_PWD_CTIME_MIN:
+			if (shadow) {
+				if (shadow->sp_min <= 0)
+					user->pwd_ctime_min = xstrdup("unlimited");
+				else
+					xasprintf(&user->pwd_ctime_min, "%ld", shadow->sp_min);
+			}
+			break;
+		case COL_PWD_CTIME_MAX:
+			if (shadow) {
+				if (shadow->sp_max <= 0)
+					user->pwd_ctime_max = xstrdup("unlimited");
+				else
+					xasprintf(&user->pwd_ctime_max, "%ld", shadow->sp_max);
+			}
+			break;
+		case COL_SELINUX:
+		{
+#ifdef HAVE_LIBSELINUX
+				/* typedefs and pointers are pure evil */
+			security_context_t con = NULL;
+			if (getcon(&con) == 0)
+				user->context = con;
+#endif
+		}
+			break;
+		default:
+			/* something went very wrong here */
+			err(EXIT_FAILURE, "fatal: unknown error");
 		}
 	}
 	/* check if we have the info needed to sort */
 	if (lslogins_flag & F_SORT) { /* sorting by username */
 		if (!user->login)
 			user->login = xstrdup(pwd->pw_name);
-	}
-	else /* sorting by UID */
+	} else /* sorting by UID */
 		user->uid = pwd->pw_uid;
 
 	return user;
@@ -723,6 +720,7 @@ static int str_to_uint(char *s, unsigned int *ul)
 		return 0;
 	return 1;
 }
+
 static int get_ulist(struct lslogins_control *ctl, char *logins, char *groups)
 {
 	char *u, *g;
@@ -816,6 +814,7 @@ static int get_user(struct lslogins_control *ctl, struct lslogins_user **user, c
 			return -1;
 	return 0;
 }
+
 static int create_usertree(struct lslogins_control *ctl)
 {
 	struct lslogins_user *user = NULL;
@@ -829,8 +828,7 @@ static int create_usertree(struct lslogins_control *ctl)
 				tsearch(user, &ctl->usertree, ctl->cmp_fn);
 			++n;
 		}
-	}
-	else {
+	} else {
 		while ((user = get_next_user(ctl)))
 			tsearch(user, &ctl->usertree, ctl->cmp_fn);
 	}
@@ -858,26 +856,26 @@ static struct libscols_table *setup_table(void)
 		return NULL;
 
 	switch(outmode) {
-		case out_colon:
-			scols_table_enable_raw(tb, 1);
-			scols_table_set_column_separator(tb, ":");
-			break;
-		case out_newline:
-			scols_table_set_column_separator(tb, "\n");
-			/* fallthrough */
-		case out_export:
-			scols_table_enable_export(tb, 1);
-			break;
-		case out_nul:
-			scols_table_set_line_separator(tb, "\0");
-			/* fallthrough */
-		case out_raw:
-			scols_table_enable_raw(tb, 1);
-			break;
-		case out_pretty:
-			scols_table_enable_noheadings(tb, 1);
-		default:
-			break;
+	case out_colon:
+		scols_table_enable_raw(tb, 1);
+		scols_table_set_column_separator(tb, ":");
+		break;
+	case out_newline:
+		scols_table_set_column_separator(tb, "\n");
+		/* fallthrough */
+	case out_export:
+		scols_table_enable_export(tb, 1);
+		break;
+	case out_nul:
+		scols_table_set_line_separator(tb, "\0");
+		/* fallthrough */
+	case out_raw:
+		scols_table_enable_raw(tb, 1);
+		break;
+	case out_pretty:
+		scols_table_enable_noheadings(tb, 1);
+	default:
+		break;
 	}
 
 	while (n < ncolumns) {
@@ -907,89 +905,89 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 		int rc = 0;
 
 		switch (columns[n]) {
-			case COL_LOGIN:
-				rc = scols_line_set_data(ln, n, user->login);
-				break;
-			case COL_UID:
-				rc = scols_line_refer_data(ln, n, uidtostr(user->uid));
-				break;
-			case COL_NOPASSWD:
-				rc = scols_line_set_data(ln, n, status[user->nopasswd]);
-				break;
-			case COL_NOLOGIN:
-				rc = scols_line_set_data(ln, n, status[user->nologin]);
-				break;
-			case COL_LOCKED:
-				rc = scols_line_set_data(ln, n, status[user->locked]);
-				break;
-			case COL_PGRP:
-				rc = scols_line_set_data(ln, n, user->group);
-				break;
-			case COL_PGID:
-				rc = scols_line_refer_data(ln, n, gidtostr(user->gid));
-				break;
-			case COL_SGRPS:
-				rc = scols_line_refer_data(ln, n,
-					build_sgroups_string(user->sgroups,
-							     user->nsgroups,
-							     TRUE));
-				break;
-			case COL_SGIDS:
-				rc = scols_line_refer_data(ln, n,
-					build_sgroups_string(user->sgroups,
-							     user->nsgroups,
-							     FALSE));
-				break;
-			case COL_HOME:
-				rc = scols_line_set_data(ln, n, user->homedir);
-				break;
-			case COL_SHELL:
-				rc = scols_line_set_data(ln, n, user->shell);
-				break;
-			case COL_GECOS:
-				rc = scols_line_set_data(ln, n, user->gecos);
-				break;
-			case COL_LAST_LOGIN:
-				rc = scols_line_set_data(ln, n, user->last_login);
-				break;
-			case COL_LAST_TTY:
-				rc = scols_line_set_data(ln, n, user->last_tty);
-				break;
-			case COL_LAST_HOSTNAME:
-				rc = scols_line_set_data(ln, n, user->last_hostname);
-				break;
-			case COL_FAILED_LOGIN:
-				rc = scols_line_set_data(ln, n, user->failed_login);
-				break;
-			case COL_FAILED_TTY:
-				rc = scols_line_set_data(ln, n, user->failed_tty);
-				break;
-			case COL_HUSH_STATUS:
-				rc= scols_line_set_data(ln, n, status[user->hushed]);
-				break;
-			case COL_PWD_WARN:
-				rc = scols_line_set_data(ln, n, user->pwd_warn);
-				break;
-			case COL_PWD_EXPIR:
-				rc = scols_line_set_data(ln, n, user->pwd_expire);
-				break;
-			case COL_PWD_CTIME:
-				rc = scols_line_set_data(ln, n, user->pwd_ctime);
-				break;
-			case COL_PWD_CTIME_MIN:
-				rc = scols_line_set_data(ln, n, user->pwd_ctime_min);
-				break;
-			case COL_PWD_CTIME_MAX:
-				rc = scols_line_set_data(ln, n, user->pwd_ctime_max);
-				break;
+		case COL_LOGIN:
+			rc = scols_line_set_data(ln, n, user->login);
+			break;
+		case COL_UID:
+			rc = scols_line_refer_data(ln, n, uidtostr(user->uid));
+			break;
+		case COL_NOPASSWD:
+			rc = scols_line_set_data(ln, n, status[user->nopasswd]);
+			break;
+		case COL_NOLOGIN:
+			rc = scols_line_set_data(ln, n, status[user->nologin]);
+			break;
+		case COL_LOCKED:
+			rc = scols_line_set_data(ln, n, status[user->locked]);
+			break;
+		case COL_PGRP:
+			rc = scols_line_set_data(ln, n, user->group);
+			break;
+		case COL_PGID:
+			rc = scols_line_refer_data(ln, n, gidtostr(user->gid));
+			break;
+		case COL_SGRPS:
+			rc = scols_line_refer_data(ln, n,
+				build_sgroups_string(user->sgroups,
+						     user->nsgroups,
+						     TRUE));
+			break;
+		case COL_SGIDS:
+			rc = scols_line_refer_data(ln, n,
+				build_sgroups_string(user->sgroups,
+						     user->nsgroups,
+						     FALSE));
+			break;
+		case COL_HOME:
+			rc = scols_line_set_data(ln, n, user->homedir);
+			break;
+		case COL_SHELL:
+			rc = scols_line_set_data(ln, n, user->shell);
+			break;
+		case COL_GECOS:
+			rc = scols_line_set_data(ln, n, user->gecos);
+			break;
+		case COL_LAST_LOGIN:
+			rc = scols_line_set_data(ln, n, user->last_login);
+			break;
+		case COL_LAST_TTY:
+			rc = scols_line_set_data(ln, n, user->last_tty);
+			break;
+		case COL_LAST_HOSTNAME:
+			rc = scols_line_set_data(ln, n, user->last_hostname);
+			break;
+		case COL_FAILED_LOGIN:
+			rc = scols_line_set_data(ln, n, user->failed_login);
+			break;
+		case COL_FAILED_TTY:
+			rc = scols_line_set_data(ln, n, user->failed_tty);
+			break;
+		case COL_HUSH_STATUS:
+			rc= scols_line_set_data(ln, n, status[user->hushed]);
+			break;
+		case COL_PWD_WARN:
+			rc = scols_line_set_data(ln, n, user->pwd_warn);
+			break;
+		case COL_PWD_EXPIR:
+			rc = scols_line_set_data(ln, n, user->pwd_expire);
+			break;
+		case COL_PWD_CTIME:
+			rc = scols_line_set_data(ln, n, user->pwd_ctime);
+			break;
+		case COL_PWD_CTIME_MIN:
+			rc = scols_line_set_data(ln, n, user->pwd_ctime_min);
+			break;
+		case COL_PWD_CTIME_MAX:
+			rc = scols_line_set_data(ln, n, user->pwd_ctime_max);
+			break;
 #ifdef HAVE_LIBSELINUX
-			case COL_SELINUX:
-				rc = scols_line_set_data(ln, n, user->context);
-				break;
+		case COL_SELINUX:
+			rc = scols_line_set_data(ln, n, user->context);
+			break;
 #endif
-			default:
-				/* something went very wrong here */
-				err(EXIT_FAILURE, _("internal error: unknown column"));
+		default:
+			/* something went very wrong here */
+			err(EXIT_FAILURE, _("internal error: unknown column"));
 		}
 
 		if (rc != 0)
@@ -998,6 +996,7 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 	}
 	return;
 }
+
 static int print_pretty(struct libscols_table *tb)
 {
 	struct libscols_iter *itr = scols_new_iter(SCOLS_ITER_FORWARD);
@@ -1023,6 +1022,7 @@ static int print_pretty(struct libscols_table *tb)
 	return 0;
 
 }
+
 static int print_user_table(struct lslogins_control *ctl)
 {
 	tb = setup_table();
@@ -1061,10 +1061,12 @@ static void free_user(void *f)
 #endif
 	free(u);
 }
+
 struct lslogins_timefmt {
 	const char *name;
 	int val;
 };
+
 static struct lslogins_timefmt timefmts[] = {
 	{ "short", TIME_SHORT_RELATIVE },
 	{ "full", TIME_FULL },
@@ -1144,112 +1146,112 @@ int main(int argc, char *argv[])
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch (c) {
-			case 'a':
-				lslogins_flag |= F_EXPIR;
-				break;
-			case 'c':
-				outmode = out_colon;
-				break;
-			case 'e':
-				outmode = out_export;
-				break;
-			case 'f':
-				lslogins_flag |= F_FAIL;
-				break;
-			case 'g':
-				groups = optarg;
-				break;
-			case 'h':
-				usage(stdout);
-			case 'i':
-				ctl->time_mode = TIME_ISO;
-				break;
-			case 'l':
-				logins = optarg;
-				break;
-			case 'm':
-				lslogins_flag |= F_MORE;
-				break;
-			case 'n':
-				outmode = out_newline;
-				break;
-			case 'o':
-				if (optarg) {
-					if (*optarg == '=')
-						optarg++;
-					ncolumns = string_to_idarray(optarg,
-							columns, ARRAY_SIZE(columns),
-							column_name_to_id);
-					if (ncolumns < 0)
-						return EXIT_FAILURE;
-				}
-				break;
-			case 'r':
-				outmode = out_raw;
-				break;
-			case OPT_LAST:
-				lslogins_flag |= F_LAST;
-				break;
-			case 's':
-				ctl->SYS_UID_MIN = getlogindefs_num("SYS_UID_MIN", UL_SYS_UID_MIN);
-				ctl->SYS_UID_MAX = getlogindefs_num("SYS_UID_MAX", UL_SYS_UID_MAX);
-				lslogins_flag |= F_SYSAC;
-				break;
-			case 't':
-				ctl->cmp_fn = cmp_uname;
-				lslogins_flag |= F_SORT;
-				break;
-			case 'u':
-				ctl->UID_MIN = getlogindefs_num("UID_MIN", UL_UID_MIN);
-				ctl->UID_MAX = getlogindefs_num("UID_MAX", UL_UID_MAX);
-				lslogins_flag |= F_USRAC;
-				break;
-			case OPT_VER:
-				printf(_("%s from %s\n"), program_invocation_short_name,
-				       PACKAGE_STRING);
-				return EXIT_SUCCESS;
-			case 'x':
-				lslogins_flag |= F_EXTRA;
-				break;
-			case 'z':
-				outmode = out_nul;
-				break;
-			case OPT_WTMP:
-				path_wtmp = optarg;
-				break;
-			case OPT_BTMP:
-				path_btmp = optarg;
-				break;
-			case OPT_NOTRUNC:
-				coldescs[COL_GECOS].flag = 0;
-				break;
-			case OPT_FULLT:
-				ctl->time_mode = TIME_FULL;
-				break;
-			case OPT_TIME_FMT:
-				{
-					size_t i;
+		case 'a':
+			lslogins_flag |= F_EXPIR;
+			break;
+		case 'c':
+			outmode = out_colon;
+			break;
+		case 'e':
+			outmode = out_export;
+			break;
+		case 'f':
+			lslogins_flag |= F_FAIL;
+			break;
+		case 'g':
+			groups = optarg;
+			break;
+		case 'h':
+			usage(stdout);
+		case 'i':
+			ctl->time_mode = TIME_ISO;
+			break;
+		case 'l':
+			logins = optarg;
+			break;
+		case 'm':
+			lslogins_flag |= F_MORE;
+			break;
+		case 'n':
+			outmode = out_newline;
+			break;
+		case 'o':
+			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
+				ncolumns = string_to_idarray(optarg,
+						columns, ARRAY_SIZE(columns),
+						column_name_to_id);
+				if (ncolumns < 0)
+					return EXIT_FAILURE;
+			}
+			break;
+		case 'r':
+			outmode = out_raw;
+			break;
+		case OPT_LAST:
+			lslogins_flag |= F_LAST;
+			break;
+		case 's':
+			ctl->SYS_UID_MIN = getlogindefs_num("SYS_UID_MIN", UL_SYS_UID_MIN);
+			ctl->SYS_UID_MAX = getlogindefs_num("SYS_UID_MAX", UL_SYS_UID_MAX);
+			lslogins_flag |= F_SYSAC;
+			break;
+		case 't':
+			ctl->cmp_fn = cmp_uname;
+			lslogins_flag |= F_SORT;
+			break;
+		case 'u':
+			ctl->UID_MIN = getlogindefs_num("UID_MIN", UL_UID_MIN);
+			ctl->UID_MAX = getlogindefs_num("UID_MAX", UL_UID_MAX);
+			lslogins_flag |= F_USRAC;
+			break;
+		case OPT_VER:
+			printf(_("%s from %s\n"), program_invocation_short_name,
+			       PACKAGE_STRING);
+			return EXIT_SUCCESS;
+		case 'x':
+			lslogins_flag |= F_EXTRA;
+			break;
+		case 'z':
+			outmode = out_nul;
+			break;
+		case OPT_WTMP:
+			path_wtmp = optarg;
+			break;
+		case OPT_BTMP:
+			path_btmp = optarg;
+			break;
+		case OPT_NOTRUNC:
+			coldescs[COL_GECOS].flag = 0;
+			break;
+		case OPT_FULLT:
+			ctl->time_mode = TIME_FULL;
+			break;
+		case OPT_TIME_FMT:
+			{
+				size_t i;
 
-					for (i = 0; i < ARRAY_SIZE(timefmts); i++) {
-						if (strcmp(timefmts[i].name, optarg) == 0) {
-							ctl->time_mode = timefmts[i].val;
-							break;
-						}
+				for (i = 0; i < ARRAY_SIZE(timefmts); i++) {
+					if (strcmp(timefmts[i].name, optarg) == 0) {
+						ctl->time_mode = timefmts[i].val;
+						break;
 					}
-					if (ctl->time_mode == TIME_INVALID)
-						usage(stderr);
 				}
-				break;
-			case 'Z':
+				if (ctl->time_mode == TIME_INVALID)
+					usage(stderr);
+			}
+			break;
+		case 'Z':
 #ifdef HAVE_LIBSELINUX
-				lslogins_flag |= F_SELINUX;
-				ctl->sel_enabled = is_selinux_enabled();
-				if (ctl->sel_enabled == -1)
-					exit(1);
+			lslogins_flag |= F_SELINUX;
+			ctl->sel_enabled = is_selinux_enabled();
+			if (ctl->sel_enabled == -1)
+				exit(1);
 #endif
-				break;
-			default:
-				usage(stderr);
+			break;
+		default:
+			usage(stderr);
 		}
 	}
 
@@ -1258,8 +1260,7 @@ int main(int argc, char *argv[])
 			err(EXIT_FAILURE, "%s", "Only one user may be specified. Use -l for multiple users");
 		logins = argv[optind];
 		outmode = out_pretty;
-	}
-	else if (argc != optind)
+	} else if (argc != optind)
 		usage(stderr);
 
 	/* lslogins -u -s == lslogins */
@@ -1270,8 +1271,7 @@ int main(int argc, char *argv[])
 		if (lslogins_flag & F_SORT) {
 			columns[ncolumns++] = COL_LOGIN;
 			columns[ncolumns++] = COL_UID;
-		}
-		else {
+		} else {
 			columns[ncolumns++] = COL_UID;
 			columns[ncolumns++] = COL_LOGIN;
 		}
@@ -1281,12 +1281,10 @@ int main(int argc, char *argv[])
 
 		want_wtmp = 1;
 
-		if (lslogins_flag & F_NOPWD) {
+		if (lslogins_flag & F_NOPWD)
 			columns[ncolumns++] = COL_NOPASSWD;
-		}
-		if (lslogins_flag & F_MORE) {
+		if (lslogins_flag & F_MORE)
 			columns[ncolumns++] = COL_SGRPS;
-		}
 		if (lslogins_flag & F_EXPIR) {
 			columns[ncolumns++] = COL_PWD_CTIME;
 			columns[ncolumns++] = COL_PWD_EXPIR;
@@ -1314,8 +1312,7 @@ int main(int argc, char *argv[])
 		}
 		if (lslogins_flag & F_SELINUX)
 			columns[ncolumns++] = COL_SELINUX;
-	}
-	else {
+	} else {
 		int n = 0, i;
 		while (n < ncolumns) {
 			i = columns[n++];
