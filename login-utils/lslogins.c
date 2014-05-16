@@ -199,30 +199,30 @@ static const char *const status[] = {
 
 static struct lslogins_coldesc coldescs[] =
 {
-	[COL_LOGIN]		= { "LOGIN",		N_("user/system login"), "Login", 0.2, SCOLS_FL_NOEXTREMES },
-	[COL_UID]		= { "UID",		N_("user ID"), "UID", 0.05, SCOLS_FL_RIGHT},
-	[COL_NOPASSWD]		= { "NOPASSWD",		N_("account has a password?"), "No password", 1, SCOLS_FL_RIGHT },
-	[COL_NOLOGIN]		= { "NOLOGIN",		N_("account has a password?"), "No login", 1, SCOLS_FL_RIGHT },
-	[COL_LOCKED]		= { "LOCKED",		N_("account has a password?"), "Locked", 1, SCOLS_FL_RIGHT },
-	[COL_PGRP]		= { "GROUP",		N_("primary group name"), "Primary group", 0.2 },
-	[COL_PGID]		= { "GID",		N_("primary group ID"), "GID", 0.05, SCOLS_FL_RIGHT },
-	[COL_SGRPS]		= { "SUPP-GROUPS",	N_("supplementary group names"), "Supplementary groups", 0.1 },
-	[COL_SGIDS]             = { "SUPP-GIDS",        N_("supplementary group IDs"), "Supplementary group IDs", 0.1 },
-	[COL_HOME]		= { "HOMEDIR",		N_("home directory"), "Home directory", 0.3 },
-	[COL_SHELL]		= { "SHELL",		N_("login shell"), "Shell", 0.1 },
-	[COL_GECOS]		= { "GECOS",		N_("full user name"), "Comment field", 0.3, SCOLS_FL_TRUNC },
-	[COL_LAST_LOGIN]	= { "LAST-LOGIN",	N_("date of last login"), "Last login", 24 },
-	[COL_LAST_TTY]		= { "LAST-TTY",		N_("last tty used"), "Last terminal", 0.05 },
-	[COL_LAST_HOSTNAME]	= { "LAST-HOSTNAME",	N_("hostname during the last session"), "Last hostname",  0.2},
-	[COL_FAILED_LOGIN]	= { "FAILED-LOGIN",	N_("date of last failed login"), "Failed login", 24 },
-	[COL_FAILED_TTY]	= { "FAILED-TTY",	N_("where did the login fail?"), "Failed login terminal", 0.05 },
-	[COL_HUSH_STATUS]	= { "HUSHED",		N_("User's hush settings"), "Hushed", 1, SCOLS_FL_RIGHT },
-	[COL_PWD_WARN]		= { "PWD-WARN",		N_("password warn interval"), "Days to passwd warning", 24 },
-	[COL_PWD_EXPIR]		= { "PWD-EXPIR",	N_("password expiration date"), "Password expiration", 24 },
-	[COL_PWD_CTIME]		= { "PWD-CHANGE",	N_("date of last password change"), "Password changed", 24 },
-	[COL_PWD_CTIME_MIN]	= { "PWD-MIN",		N_("number of days required between changes"), "Minimal change time", 24 },
-	[COL_PWD_CTIME_MAX]	= { "PWD-MAX",		N_("max number of days a password may remain unchanged"), "Maximal change time", 24 },
-	[COL_SELINUX]		= { "CONTEXT",		N_("the user's security context"), "Selinux context", 0.4 },
+	[COL_LOGIN]         = { "LOGIN",	N_("user/system login"), N_("Login"), 0.2, SCOLS_FL_NOEXTREMES },
+	[COL_UID]           = { "UID",		N_("user ID"), "UID", 0.05, SCOLS_FL_RIGHT},
+	[COL_NOPASSWD]      = { "NOPASSWD",	N_("account has a password?"), N_("No password"), 1, SCOLS_FL_RIGHT },
+	[COL_NOLOGIN]       = { "NOLOGIN",	N_("account has a password?"), N_("No login"), 1, SCOLS_FL_RIGHT },
+	[COL_LOCKED]        = { "LOCKED",	N_("account has a password?"), N_("Locked"), 1, SCOLS_FL_RIGHT },
+	[COL_PGRP]          = { "GROUP",	N_("primary group name"), N_("Primary group"), 0.2 },
+	[COL_PGID]          = { "GID",		N_("primary group ID"), "GID", 0.05, SCOLS_FL_RIGHT },
+	[COL_SGRPS]         = { "SUPP-GROUPS",	N_("supplementary group names"), N_("Supplementary groups"), 0.1 },
+	[COL_SGIDS]         = { "SUPP-GIDS",    N_("supplementary group IDs"), N_("Supplementary group IDs"), 0.1 },
+	[COL_HOME]          = { "HOMEDIR",	N_("home directory"), N_("Home directory"), 0.3 },
+	[COL_SHELL]         = { "SHELL",	N_("login shell"), N_("Shell"), 0.1 },
+	[COL_GECOS]         = { "GECOS",	N_("full user name"), N_("Gecos field"), 0.3, SCOLS_FL_TRUNC },
+	[COL_LAST_LOGIN]    = { "LAST-LOGIN",	N_("date of last login"), N_("Last login"), 24 },
+	[COL_LAST_TTY]      = { "LAST-TTY",	N_("last tty used"), N_("Last terminal"), 0.05 },
+	[COL_LAST_HOSTNAME] = { "LAST-HOSTNAME",N_("hostname during the last session"), N_("Last hostname"),  0.2},
+	[COL_FAILED_LOGIN]  = { "FAILED-LOGIN",	N_("date of last failed login"), N_("Failed login"), 24 },
+	[COL_FAILED_TTY]    = { "FAILED-TTY",	N_("where did the login fail?"), N_("Failed login terminal"), 0.05 },
+	[COL_HUSH_STATUS]   = { "HUSHED",	N_("User's hush settings"), N_("Hushed"), 1, SCOLS_FL_RIGHT },
+	[COL_PWD_WARN]      = { "PWD-WARN",	N_("password warn interval"), N_("Days to passwd warning"), 24 },
+	[COL_PWD_EXPIR]     = { "PWD-EXPIR",	N_("password expiration date"), N_("Password expiration"), 24 },
+	[COL_PWD_CTIME]     = { "PWD-CHANGE",	N_("date of last password change"), N_("Password changed"), 24 },
+	[COL_PWD_CTIME_MIN] = { "PWD-MIN",	N_("number of days required between changes"), N_("Minimal change time"), 24 },
+	[COL_PWD_CTIME_MAX] = { "PWD-MAX",	N_("max number of days a password may remain unchanged"), N_("Maximal change time"), 24 },
+	[COL_SELINUX]       = { "CONTEXT",	N_("the user's security context"), N_("Selinux context"), 0.4 },
 };
 
 struct lslogins_control {
@@ -806,7 +806,8 @@ static struct lslogins_user *get_next_user(struct lslogins_control *ctl)
 	return u;
 }
 
-static int get_user(struct lslogins_control *ctl, struct lslogins_user **user, const char *username)
+static int get_user(struct lslogins_control *ctl, struct lslogins_user **user,
+		    const char *username)
 {
 	*user = get_user_info(ctl, username);
 	if (!*user && errno)
@@ -1011,7 +1012,7 @@ static int print_pretty(struct libscols_table *tb)
 
 		data = scols_line_get_cell(ln, n);
 
-		hstr = coldescs[columns[n]].pretty_name;
+		hstr = _(coldescs[columns[n]].pretty_name);
 		dstr = scols_cell_get_data(data);
 
 		printf("%s:%*c%-36s\n", hstr, 26 - (int)strlen(hstr), ' ', dstr);
@@ -1257,7 +1258,7 @@ int main(int argc, char *argv[])
 
 	if (argc - optind == 1) {
 		if (strchr(argv[optind], ','))
-			err(EXIT_FAILURE, "%s", "Only one user may be specified. Use -l for multiple users");
+			errx(EXIT_FAILURE, _("Only one user may be specified. Use -l for multiple users."));
 		logins = argv[optind];
 		outmode = out_pretty;
 	} else if (argc != optind)
