@@ -101,7 +101,8 @@ struct lslogins_user {
 	int nologin;
 	int locked;
 
-	char *sgroups;
+	gid_t *sgroups;
+	size_t nsgroups;
 
 	char *pwd_ctime;
 	char *pwd_warn;
@@ -162,6 +163,7 @@ enum {
 	COL_PGRP,
 	COL_PGID,
 	COL_SGRPS,
+	COL_SGIDS,
 	COL_HOME,
 	COL_SHELL,
 	COL_GECOS,
@@ -197,13 +199,14 @@ static const char *const status[] = {
 static struct lslogins_coldesc coldescs[] =
 {
 	[COL_LOGIN]		= { "LOGIN",		N_("user/system login"), "Login", 0.2, SCOLS_FL_NOEXTREMES },
-	[COL_UID]		= { "UID",		N_("user UID"), "UID", 0.05, SCOLS_FL_RIGHT},
+	[COL_UID]		= { "UID",		N_("user ID"), "UID", 0.05, SCOLS_FL_RIGHT},
 	[COL_NOPASSWD]		= { "NOPASSWD",		N_("account has a password?"), "No password", 1, SCOLS_FL_RIGHT },
 	[COL_NOLOGIN]		= { "NOLOGIN",		N_("account has a password?"), "No login", 1, SCOLS_FL_RIGHT },
 	[COL_LOCKED]		= { "LOCKED",		N_("account has a password?"), "Locked", 1, SCOLS_FL_RIGHT },
 	[COL_PGRP]		= { "GROUP",		N_("primary group name"), "Primary group", 0.2 },
-	[COL_PGID]		= { "GID",		N_("primary group GID"), "GID", 0.05, SCOLS_FL_RIGHT },
-	[COL_SGRPS]		= { "SUPP-GROUPS",	N_("secondary group names and GIDs"), "Secondary groups", 0.5 },
+	[COL_PGID]		= { "GID",		N_("primary group ID"), "GID", 0.05, SCOLS_FL_RIGHT },
+	[COL_SGRPS]		= { "SUPP-GROUPS",	N_("supplementary group names"), "Supplementary groups", 0.1 },
+	[COL_SGIDS]             = { "SUPP-GIDS",        N_("supplementary group IDs"), "Supplementary group IDs", 0.1 },
 	[COL_HOME]		= { "HOMEDIR",		N_("home directory"), "Home directory", 0.3 },
 	[COL_SHELL]		= { "SHELL",		N_("login shell"), "Shell", 0.1 },
 	[COL_GECOS]		= { "GECOS",		N_("full user name"), "Comment field", 0.3, SCOLS_FL_TRUNC },
@@ -347,11 +350,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
-struct lslogins_sgroups {
-	char *gid;
-	char *uname;
-	struct lslogins_sgroups *next;
-};
 
 static char *uidtostr(uid_t uid)
 {
@@ -367,93 +365,49 @@ static char *gidtostr(gid_t gid)
 	return str_gid;
 }
 
-static struct lslogins_sgroups *build_sgroups_list(int len, gid_t *list, int *slen)
+static char *build_sgroups_string(gid_t *sgroups, size_t nsgroups, int want_names)
 {
-	int n = 0;
-	struct lslogins_sgroups *sgrps, *retgrps;
-	struct group *grp;
-	char *buf = NULL;
+	size_t n = 0, maxlen, len;
+	char *res, *p;
 
-	if (!len || !list)
-		return NULL;
+	len = maxlen = nsgroups * 10;
+	res = p = xmalloc(maxlen);
 
-	*slen = 0;
-
-	retgrps = sgrps = xcalloc(1, sizeof(struct lslogins_sgroups));
-	while (n < len) {
-		if (sgrps->next)
-			sgrps = sgrps->next;
-		/* TODO: rewrite */
-		sgrps->gid = gidtostr(list[n]);
-
-		grp = getgrgid(list[n]);
-		if (!grp) {
-			free(retgrps);
-			return NULL;
+	while (n < nsgroups) {
+		int x;
+again:
+		if (!want_names)
+			x = snprintf(p, len, "%u,", sgroups[n]);
+		else {
+			struct group *grp = getgrgid(sgroups[n]);
+			if (!grp) {
+				free(res);
+				return NULL;
+			}
+			x = snprintf(p, len, "%s,", grp->gr_name);
 		}
-		sgrps->uname = xstrdup(grp->gr_name);
 
-		*slen += strlen(sgrps->gid) + strlen(sgrps->uname);
+		if (x < 0 || (size_t) x + 1 > len) {
+			size_t cur = p - res;
 
-		sgrps->next = xcalloc(1, sizeof(struct lslogins_sgroups));
+			maxlen *= 2;
+			res = xrealloc(res, maxlen);
+			p = res + cur;
+			len = maxlen - cur;
+			goto again;
+		}
 
+		len -= x;
+		p += x;
 		++n;
 	}
 
-	/* space for a pair of parentheses for each gname + (n - 1) commas in between */
-	*slen += 3 * n - 1;
+	if (p > res)
+		*(p - 1) = '\0';
 
-	free(buf);
-	free(sgrps->next);
-	sgrps->next = NULL;
-
-	return retgrps;
+	return res;
 }
 
-static void free_sgroups_list(struct lslogins_sgroups *sgrps)
-{
-	struct lslogins_sgroups *tmp;
-
-	if (!sgrps)
-		return;
-
-	tmp = sgrps->next;
-	while (tmp) {
-		free(sgrps->gid);
-		free(sgrps->uname);
-		free(sgrps);
-		sgrps = tmp;
-		tmp = tmp->next;
-	}
-}
-
-static char *build_sgroups_string(int len, gid_t *list)
-{
-	char *ret = NULL, *slist;
-	int slen, prlen;
-	struct lslogins_sgroups *sgrps;
-
-	sgrps = build_sgroups_list(len, list, &slen);
-
-	if (!sgrps)
-		return NULL;
-
-	ret = slist = xcalloc(1, sizeof(char) * (slen + 1));
-
-	while (sgrps->next) {
-		prlen = sprintf(slist, "%s(%s),", sgrps->gid, sgrps->uname);
-		if (prlen < 0) {
-			free_sgroups_list(sgrps);
-			return NULL;
-		}
-		slist += prlen;
-		sgrps = sgrps->next;
-	}
-	prlen = sprintf(slist, "%s(%s)", sgrps->gid, sgrps->uname);
-
-	free_sgroups_list(sgrps);
-	return ret;
-}
 
 static struct utmp *get_last_wtmp(struct lslogins_control *ctl, const char *username)
 {
@@ -511,22 +465,22 @@ static int parse_btmp(struct lslogins_control *ctl, char *path)
 		err(EXIT_FAILURE, "%s", path);
 	return rc;
 }
-static int get_sgroups(int *len, gid_t **list, struct passwd *pwd)
+static int get_sgroups(gid_t **list, size_t *len, struct passwd *pwd)
 {
-	int n = 0;
+	size_t n = 0;
 
 	*len = 0;
 	*list = NULL;
 
 	/* first let's get a supp. group count */
-	getgrouplist(pwd->pw_name, pwd->pw_gid, *list, len);
+	getgrouplist(pwd->pw_name, pwd->pw_gid, *list, (int *) len);
 	if (!*len)
 		return -1;
 
 	*list = xcalloc(1, *len * sizeof(gid_t));
 
 	/* now for the actual list of GIDs */
-	if (-1 == getgrouplist(pwd->pw_name, pwd->pw_gid, *list, len))
+	if (-1 == getgrouplist(pwd->pw_name, pwd->pw_gid, *list, (int *) len))
 		return -1;
 
 	/* getgroups also returns the user's primary GID - dispose of it */
@@ -623,16 +577,10 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 				user->gid = pwd->pw_gid;
 				break;
 			case COL_SGRPS:
-				{
-					int n = 0;
-					gid_t *list = NULL;
-
-					if (get_sgroups(&n, &list, pwd))
-						err(1, NULL);
-
-					user->sgroups = build_sgroups_string(n, list);
-					break;
-				}
+			case COL_SGIDS:
+				if (get_sgroups(&user->sgroups, &user->nsgroups, pwd))
+					err(EXIT_FAILURE, _("failed to get supplementary groups"));
+				break;
 			case COL_HOME:
 				user->homedir = xstrdup(pwd->pw_dir);
 				break;
@@ -981,7 +929,16 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 				rc = scols_line_refer_data(ln, n, gidtostr(user->gid));
 				break;
 			case COL_SGRPS:
-				rc = scols_line_set_data(ln, n, user->sgroups);
+				rc = scols_line_refer_data(ln, n,
+					build_sgroups_string(user->sgroups,
+							     user->nsgroups,
+							     TRUE));
+				break;
+			case COL_SGIDS:
+				rc = scols_line_refer_data(ln, n,
+					build_sgroups_string(user->sgroups,
+							     user->nsgroups,
+							     FALSE));
 				break;
 			case COL_HOME:
 				rc = scols_line_set_data(ln, n, user->homedir);
