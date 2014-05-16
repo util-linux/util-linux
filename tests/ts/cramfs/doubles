@@ -46,7 +46,7 @@ ts_log "create cramfs image"
 $TS_CMD_MKCRAMFS $IMAGE_SRC $IMAGE_PATH 2>&1 >> $TS_OUTPUT
 [ -s "$IMAGE_PATH" ] || ts_die "Cannot create $IMAGE_PATH"
 
-$TS_CMD_MOUNT -r $IMAGE_PATH $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
+ts_mount "cramfs" -r $IMAGE_PATH $TS_MOUNTPOINT
 
 # check it
 ts_is_mounted $TS_MOUNTPOINT || ts_die "Cannot find $TS_MOUNTPOINT in /proc/mounts"
