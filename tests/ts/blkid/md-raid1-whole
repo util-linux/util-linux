@@ -27,7 +27,7 @@ ts_check_test_command "$TS_CMD_BLKID"
 
 ts_skip_nonroot
 ts_check_losetup
-[ -x /sbin/mdadm ] || ts_skip "missing mdadm"
+ts_check_prog "mdadm"
 
 set -o pipefail
 
@@ -43,10 +43,10 @@ DEVICE2=$(ts_device_init 50 ${IMGNAME}2.img)
 MD_DEVNAME=md8
 MD_DEVICE=/dev/${MD_DEVNAME}
 
-/sbin/mdadm -q -S ${MD_DEVICE} &> /dev/null
+mdadm -q -S ${MD_DEVICE} &> /dev/null
 
 ts_log "Create RAID device"
-/sbin/mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 --level=1 \
+mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 --level=1 \
 	    --raid-devices=2 ${DEVICE1} ${DEVICE2} >> $TS_OUTPUT 2>&1
 
 ts_log "Create partitions on RAID device"
@@ -75,7 +75,7 @@ ts_log "Probe second RAID member"
 $TS_CMD_BLKID -p -o udev $DEVICE1 2>&1 | sort >> $TS_OUTPUT
 
 ts_log "Stop RAID device"
-/sbin/mdadm -q -S ${MD_DEVICE} >> $TS_OUTPUT 2>&1
+mdadm -q -S ${MD_DEVICE} >> $TS_OUTPUT 2>&1
 
 udevadm settle
 

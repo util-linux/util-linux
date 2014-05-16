@@ -26,9 +26,7 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_HWCLOCK"
 
 ts_skip_nonroot
-
-PATH='/usr/sbin:/usr/bin:/sbin:/bin'
-type ntpdate >/dev/null 2>&1 || ts_skip "cannot find ntpdate command"
+ts_check_prog "ntpdate"
 
 set -o pipefail
 
