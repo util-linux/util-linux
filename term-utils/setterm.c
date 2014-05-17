@@ -19,52 +19,6 @@
  * 1999-02-22 Arkadiusz Miśkiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
- *
- * Syntax:
- *
- * setterm
- *   [ -term terminal_name ]
- *   [ -reset ]
- *   [ -initialize ]
- *   [ -cursor [on|off] ]
- *   [ -repeat [on|off] ]
- *   [ -appcursorkeys [on|off] ]
- *   [ -linewrap [on|off] ]
- *   [ -snow [on|off] ]
- *   [ -softscroll [on|off] ]
- *   [ -defaults ]
- *   [ -foreground black|red|green|yellow|blue|magenta|cyan|white|default ]
- *   [ -background black|red|green|yellow|blue|magenta|cyan|white|default ]
- *   [ -ulcolor black|grey|red|green|yellow|blue|magenta|cyan|white ]
- *   [ -ulcolor bright red|green|yellow|blue|magenta|cyan|white ]
- *   [ -hbcolor black|grey|red|green|yellow|blue|magenta|cyan|white ]
- *   [ -hbcolor bright red|green|yellow|blue|magenta|cyan|white ]
- *   [ -inversescreen [on|off] ]
- *   [ -bold [on|off] ]
- *   [ -half-bright [on|off] ]
- *   [ -blink [on|off] ]
- *   [ -reverse [on|off] ]
- *   [ -underline [on|off] ]
- *   [ -store ]
- *   [ -clear [ all|rest ] ]
- *   [ -tabs [tab1 tab2 tab3 ... ] ]     (tabn = 1-160)
- *   [ -clrtabs [ tab1 tab2 tab3 ... ]   (tabn = 1-160)
- *   [ -regtabs [1-160] ]
- *   [ -blank [0-60|force|poke|] ]
- *   [ -dump   [1-NR_CONS ] ]
- *   [ -append [1-NR_CONS ] ]
- *   [ -file dumpfilename ]
- *   [ -standout [attr] ]
- *   [ -msg [on|off] ]
- *   [ -msglevel [0-8] ]
- *   [ -powersave [on|vsync|hsync|powerdown|off] ]
- *   [ -powerdown [0-60] ]
- *   [ -blength [0-2000] ]
- *   [ -bfreq freq ]
- *   [ -version ]
- *   [ -help ]
- *
- *
  * Semantics:
  *
  * Setterm writes to standard output a character string that will
