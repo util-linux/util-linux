@@ -124,6 +124,7 @@
 #include "c.h"
 #include "closestream.h"
 #include "nls.h"
+#include "strutils.h"
 #include "xalloc.h"
 
 /* Constants. */
@@ -238,6 +239,8 @@ static int parse_switch(const char *arg, const char *t, const char *f)
 
 static int parse_febg_color(const char *arg)
 {
+	int color;
+
 	if (strcmp(arg, "black") == 0)
 		return BLACK;
 	else if (strcmp(arg, "red") == 0)
@@ -256,15 +259,11 @@ static int parse_febg_color(const char *arg)
 		return WHITE;
 	else if (strcmp(arg, "default") == 0)
 		return DEFAULT;
-	else if (isdigit(arg[0])) {
-		int color;
-
-		color = atoi(arg);
-		if (color < BLACK || DEFAULT < color || color == GREY)
-			errx(EXIT_FAILURE, _("argument error: %s"), arg);
-		return color;
-	}
-	errx(EXIT_FAILURE, _("argument error: %s"), arg);
+	else
+		color = strtos32_or_err(arg, _("argument error"));
+	if (color < BLACK || DEFAULT < color || color == GREY)
+		errx(EXIT_FAILURE, _("argument error: %s"), arg);
+	return color;
 }
 
 static int parse_ulhb_color(char **argv, int *optind)
@@ -298,11 +297,11 @@ static int parse_ulhb_color(char **argv, int *optind)
 		color = CYAN;
 	else if (strcmp(color_name, "white") == 0)
 		color = WHITE;
-	else if (isdigit(color_name[0]))
-		color = atoi(color_name);
-
-	if (color < BLACK || DEFAULT < color)
-		errx(EXIT_FAILURE, _("argument error: %s"), color_name);
+	else {
+		color = strtos32_or_err(color_name, _("argument error"));
+		if (color < BLACK || DEFAULT < color)
+			errx(EXIT_FAILURE, _("argument error"));
+	}
 	if (bright && (color == BLACK || color == GREY))
 		errx(EXIT_FAILURE, _("argument error: bright %s is not supported"), color_name);
 
@@ -335,10 +334,9 @@ static int parse_blank(char **argv, char *optarg, int *optind)
 	else if (!strcmp(arg, "poke"))
 		return UNBLANKSCREEN;
 	else {
-		int ret = -1;
+		int ret;
 
-		if (isdigit(arg[0]))
-			ret = atoi(arg);
+		ret = strtos32_or_err(arg, _("argument error"));
 		if (ret < 0 || BLANK_MAX < ret)
 			errx(EXIT_FAILURE, _("argument error: %s"), arg);
 		return ret;
@@ -364,10 +362,9 @@ static int parse_powersave(const char *arg)
 
 static int parse_msglevel(const char *arg)
 {
-	int ret = CONSOLE_LEVEL_MIN - 1;
+	int ret;
 
-	if (isdigit(arg[0]))
-		ret = atoi(arg);
+	ret = strtos32_or_err(arg, _("argument error"));
 	if (ret < CONSOLE_LEVEL_MIN || CONSOLE_LEVEL_MAX < ret)
 		errx(EXIT_FAILURE, _("argument error: %s"), arg);
 	return ret;
@@ -375,14 +372,13 @@ static int parse_msglevel(const char *arg)
 
 static int parse_snap(char **argv, char *optarg, int *optind)
 {
-	int ret = 0;
+	int ret;
 	char *arg;
 
 	arg = find_optional_arg(argv, optarg, optind);
 	if (!arg)
 		return 0;
-	if (isdigit(arg[0]))
-		ret = atoi(arg);
+	ret = strtos32_or_err(arg, _("argument error"));
 	if (ret < 1)
 		errx(EXIT_FAILURE, _("argument error: %s"), arg);
 	return ret;
@@ -393,7 +389,7 @@ static void parse_tabs(char **argv, char *optarg, int *optind, int *tab_array)
 	int i = 0;
 
 	if (optarg) {
-		tab_array[i] = atoi(optarg);
+		tab_array[i] = strtos32_or_err(optarg, _("argument error"));
 		i++;
 	}
 	while (argv[*optind]) {
@@ -401,10 +397,7 @@ static void parse_tabs(char **argv, char *optarg, int *optind, int *tab_array)
 			errx(EXIT_FAILURE, _("too many tabs"));
 		if (argv[*optind][0] == '-')
 			break;
-		if (isdigit(argv[*optind][0]))
-			tab_array[i] = atoi(argv[*optind]);
-		else
-			break;
+		tab_array[i] = strtos32_or_err(argv[*optind], _("argument error"));
 		(*optind)++;
 		i++;
 	}
@@ -419,7 +412,7 @@ static int parse_regtabs(char **argv, char *optarg, int *optind)
 	arg = find_optional_arg(argv, optarg, optind);
 	if (!arg)
 		return DEFAULT_TAB_LEN;
-	ret = atoi(arg);
+	ret = strtos32_or_err(arg, _("argument error"));
 	if (ret < 1 || TABS_MAX < ret)
 		errx(EXIT_FAILURE, _("argument error: %s"), arg);
 	return ret;
@@ -433,8 +426,7 @@ static int parse_blength(char **argv, char *optarg, int *optind)
 	arg = find_optional_arg(argv, optarg, optind);
 	if (!arg)
 		return 0;
-	if (isdigit(arg[0]))
-		ret = atoi(arg);
+	ret = strtos32_or_err(arg, _("argument error"));
 	if (ret < 0 || BLENGTH_MAX < ret)
 		errx(EXIT_FAILURE, _("argument error: %s"), arg);
 	return ret;
@@ -447,9 +439,7 @@ static int parse_bfreq(char **argv, char *optarg, int *optind)
 	arg = find_optional_arg(argv, optarg, optind);
 	if (!arg)
 		return 0;
-	if (isdigit(arg[0]))
-		return atoi(arg);
-	return 0;
+	return strtos32_or_err(arg, _("argument error"));
 }
 
 static void
@@ -717,8 +707,7 @@ static void parse_option(int argc, char **argv)
 			break;
 		case OPT_FILE:
 			set_opt_flag(&opt_snapfile);
-			strncpy(opt_sn_name, optarg, PATH_MAX);	/* FIXME: should use xstrncpy() */
-			opt_sn_name[PATH_MAX - 1] = 0;
+			xstrncpy(opt_sn_name, optarg, PATH_MAX);
 			break;
 		case OPT_MSG:
 			set_opt_flag(&opt_msg);
