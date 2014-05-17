@@ -98,11 +98,12 @@ static z_stream stream;
 
 /* Prototypes */
 static void expand_fs(char *, struct cramfs_inode *);
-#endif /* INCLUDE_FS_TESTS */
 
 static char *outbuffer;
 
 static size_t page_size;
+
+#endif /* INCLUDE_FS_TESTS */
 
 /* Input status of 0 to print help and exit without an error. */
 static void __attribute__((__noreturn__)) usage(int status)
@@ -663,10 +664,6 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	page_size = getpagesize();
-
-	outbuffer = xmalloc(page_size * 2);
-
 	/* command line options */
 	while ((c = getopt_long(argc, argv, "ayx:vVh", longopts, NULL)) != EOF)
 		switch (c) {
@@ -701,6 +698,8 @@ int main(int argc, char **argv)
 	test_super(&start, &length);
 	test_crc(start);
 #ifdef INCLUDE_FS_TESTS
+	page_size = getpagesize();
+	outbuffer = xmalloc(page_size * 2);
 	test_fs(start);
 #endif
 
