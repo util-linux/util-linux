@@ -47,7 +47,8 @@ test_image() {
 	$TS_CMD_FSCKCRAMFS -v -x $IMAGE_DATA $FROM_IMAGE | head -n1 | cut -d" " -f4 2>&1 >> $TS_OUTPUT
 
 	ts_log "create $TO_ENDIANNESS endian"
-	$TS_CMD_MKCRAMFS -N "$TO_ENDIANNESS" "$IMAGE_DATA" "$IMAGE_CREATED" 2>&1 >> $TS_OUTPUT
+	$TS_CMD_MKCRAMFS -N "$TO_ENDIANNESS" -b 4096 "$IMAGE_DATA" \
+		"$IMAGE_CREATED" >> $TS_OUTPUT 2>&1
 
 	md5sum $IMAGE_CREATED | cut -d" " -f1 >> $TS_OUTPUT
 
