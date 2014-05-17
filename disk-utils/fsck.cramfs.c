@@ -59,6 +59,7 @@
 #include "blkdev.h"
 #include "c.h"
 #include "exitcodes.h"
+#include "strutils.h"
 #include "closestream.h"
 
 #define XALLOC_EXIT_CODE FSCK_EX_ERROR
@@ -101,7 +102,7 @@ static void expand_fs(char *, struct cramfs_inode *);
 
 static char *outbuffer;
 
-static size_t blksize;
+static size_t blksize = 0;
 
 #endif /* INCLUDE_FS_TESTS */
 
@@ -118,6 +119,7 @@ static void __attribute__((__noreturn__)) usage(int status)
 	fputs(_(" -v, --verbose            be more verbose\n"), stream);
 	fputs(_(" -x, --destination <dir>  extract into directory\n"), stream);
 	fputs(_(" -y                       for compatibility only, ignored\n"), stream);
+	fputs(_(" -b, --blocksize SIZE     use this blocksize, defaults to page size\n"), stream);
 	fputs(USAGE_SEPARATOR, stream);
 	fputs(USAGE_HELP, stream);
 	fputs(USAGE_VERSION, stream);
@@ -655,6 +657,7 @@ int main(int argc, char **argv)
 		{"verbose", no_argument, 0, 'v'},
 		{"version", no_argument, 0, 'V'},
 		{"help", no_argument, 0, 'h'},
+		{"blocksize", required_argument, 0, 'b'},
 		{NULL, no_argument, 0, '0'},
 	};
 
@@ -665,7 +668,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	/* command line options */
-	while ((c = getopt_long(argc, argv, "ayx:vVh", longopts, NULL)) != EOF)
+	while ((c = getopt_long(argc, argv, "ayx:vVhb:", longopts, NULL)) != EOF)
 		switch (c) {
 		case 'a':		/* ignore */
 		case 'y':
@@ -687,6 +690,11 @@ int main(int argc, char **argv)
 		case 'v':
 			opt_verbose++;
 			break;
+		case 'b':
+#ifdef INCLUDE_FS_TESTS
+			blksize = strtou32_or_err(optarg, _("invalid blocksize argument"));
+#endif
+			break;
 		default:
 			usage(FSCK_EX_USAGE);
 		}
@@ -698,7 +706,8 @@ int main(int argc, char **argv)
 	test_super(&start, &length);
 	test_crc(start);
 #ifdef INCLUDE_FS_TESTS
-	blksize = getpagesize();
+	if (blksize == 0)
+		blksize = getpagesize();
 	outbuffer = xmalloc(blksize * 2);
 	test_fs(start);
 #endif
