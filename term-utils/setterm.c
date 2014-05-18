@@ -395,18 +395,15 @@ static int parse_bfreq(char **argv, char *optarg, int *optind)
 	return strtos32_or_err(arg, _("argument error"));
 }
 
-static void __attribute__ ((__noreturn__))
-usage(FILE *out) {
-/* Print error message about arguments, and the command's syntax. */
-
+static void __attribute__((__noreturn__)) usage(FILE *out)
+{
 	if (out == stderr)
-		warnx(_("Argument error."));
+		warnx(_("argument error"));
 
-	fputs(_("\nUsage:\n"), out);
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options]\n"), program_invocation_short_name);
-
-	fputs(_("\nOptions:\n"), out);
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" --term <terminal_name>\n"), out);
 	fputs(_(" --reset\n"), out);
 	fputs(_(" --initialize\n"), out);
@@ -415,12 +412,13 @@ usage(FILE *out) {
 	fputs(_(" --appcursorkeys <on|off>\n"), out);
 	fputs(_(" --linewrap <on|off>\n"), out);
 	fputs(_(" --default\n"), out);
-	fputs(_(" --foreground <default|black|blue|cyan|green|magenta|red|white|yellow>\n"), out);
-	fputs(_(" --background <default|black|blue|cyan|green|magenta|red|white|yellow>\n"), out);
-	fputs(_(" --ulcolor <black|blue|bright|cyan|green|grey|magenta|red|white|yellow>\n"), out);
-	fputs(_(" --ulcolor <black|blue|bright|cyan|green|grey|magenta|red|white|yellow>\n"), out);
-	fputs(_(" --hbcolor <black|blue|bright|cyan|green|grey|magenta|red|white|yellow>\n"), out);
-	fputs(_(" --hbcolor <black|blue|bright|cyan|green|grey|magenta|red|white|yellow>\n"), out);
+	fputs(_(" --foreground <default|color>\n"), out);
+	fputs(_(" --background <default|color>\n"), out);
+	fputs(_(" --ulcolor <bright> <color>\n"), out);
+	fputs(_(" --ulcolor <bright> <color>\n"), out);
+	fputs(_(" --hbcolor <bright> <color>\n"), out);
+	fputs(_(" --hbcolor <bright> <color>\n"), out);
+	fputs(_(" <color>: black blue cyan green grey magenta red white yellow\n"), out);
 	fputs(_(" --inversescreen <on|off>\n"), out);
 	fputs(_(" --bold <on|off>\n"), out);
 	fputs(_(" --half-bright <on|off>\n"), out);

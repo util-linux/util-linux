@@ -1,6 +1,6 @@
 _setterm_module()
 {
-	local cur prev OPTS
+	local bright cur prev OPTS
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
@@ -14,8 +14,17 @@ _setterm_module()
 			COMPREPLY=( $(compgen -W "$TERM_LIST" -- $cur) )
 			return 0
 			;;
-		'--foreground'|'--background'|'--ulcolor'|'--hbcolor')
-			COMPREPLY=( $(compgen -W "default black blue cyan green magenta red white yellow" -- $cur) )
+		'--foreground'|'--background')
+			COMPREPLY=( $(compgen -W "black blue cyan default green magenta red white yellow" -- $cur) )
+			return 0
+			;;
+		'--ulcolor'|'--hbcolor'|'bright')
+			if [ $prev != 'bright' ]; then
+				bright='bright black grey'
+			else
+				bright=''
+			fi
+			COMPREPLY=( $(compgen -W "$bright blue cyan green magenta red white yellow" -- $cur) )
 			return 0
 			;;
 		'--cursor'|'--repeat'|'--appcursorkeys'|'--linewrap'|'--inversescreen'|'--bold'|'--half-bright'|'--blink'|'--reverse'|'--underline'|'--msg')
