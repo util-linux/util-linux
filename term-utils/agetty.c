@@ -690,6 +690,9 @@ static void parse_args(int argc, char **argv, struct options *op)
 		case 'n':
 			op->flags |= F_NOPROMPT;
 			break;
+		case 'N':
+			op->flags |= F_NONL;
+			break;
 		case 'o':
 			op->logopt = optarg;
 			break;
