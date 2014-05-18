@@ -811,7 +811,7 @@ static void perform_sequence(struct setterm_control *ctl)
 	}
 
 	/* -linewrap [on|off]. */
-	if (ctl->opt_linewrap && vc_only(ctl, "--linewrap"))
+	if (ctl->opt_linewrap)
 		fputs(ctl->opt_li_on ? "\033[?7h" : "\033[?7l", stdout);
 
 	/* -repeat [on|off]. */
@@ -832,11 +832,11 @@ static void perform_sequence(struct setterm_control *ctl)
 	}
 
 	/* -foreground black|red|green|yellow|blue|magenta|cyan|white|default. */
-	if (ctl->opt_foreground && vc_only(ctl, "--foreground"))
+	if (ctl->opt_foreground)
 		printf("\033[3%c%s", '0' + ctl->opt_fo_color, "m");
 
 	/* -background black|red|green|yellow|blue|magenta|cyan|white|default. */
-	if (ctl->opt_background && vc_only(ctl, "--background"))
+	if (ctl->opt_background)
 		printf("\033[4%c%s", '0' + ctl->opt_ba_color, "m");
 
 	/* -ulcolor black|red|green|yellow|blue|magenta|cyan|white|default. */
@@ -844,11 +844,11 @@ static void perform_sequence(struct setterm_control *ctl)
 		printf("\033[1;%d]", ctl->opt_ul_color);
 
 	/* -hbcolor black|red|green|yellow|blue|magenta|cyan|white|default. */
-	if (ctl->opt_hbcolor && vc_only(ctl, "--hbcolor"))
+	if (ctl->opt_hbcolor)
 		printf("\033[2;%d]", ctl->opt_hb_color);
 
 	/* -inversescreen [on|off]. */
-	if (ctl->opt_inversescreen && vc_only(ctl, "--inversescreen"))
+	if (ctl->opt_inversescreen)
 		fputs(ctl->opt_invsc_on ? "\033[?5h" : "\033[?5l", stdout);
 
 	/* -bold [on|off].  Vc behaves as expected, otherwise off turns off
@@ -916,12 +916,12 @@ static void perform_sequence(struct setterm_control *ctl)
 		putp(ti_entry(ctl->opt_cl_all ? "clear" : "ed"));
 
 	/* -tabs. */
-	if (ctl->opt_tabs && vc_only(ctl, "--tabs")) {
-		int i;
-
+	if (ctl->opt_tabs) {
 		if (ctl->opt_tb_array[0] == -1)
 			show_tabs();
 		else {
+			int i;
+
 			for (i = 0; ctl->opt_tb_array[i] > 0; i++)
 				printf("\033[%dG\033H", ctl->opt_tb_array[i]);
 			putchar('\r');
