@@ -733,6 +733,40 @@ static int open_snapshot_device(struct setterm_control *ctl)
 	return fd;
 }
 
+static void set_blanking(struct setterm_control *ctl)
+{
+	char ioctlarg;
+	int ret;
+
+	if (0 <= ctl->opt_bl_min) {
+		printf("\033[9;%d]", ctl->opt_bl_min);
+		return;
+	}
+	switch (ctl->opt_bl_min) {
+	case BLANKSCREEN:
+		ioctlarg = TIOCL_BLANKSCREEN;
+		if (ioctl(STDIN_FILENO, TIOCLINUX, &ioctlarg))
+			warn(_("cannot force blank"));
+		break;
+	case UNBLANKSCREEN:
+		ioctlarg = TIOCL_UNBLANKSCREEN;
+		if (ioctl(STDIN_FILENO, TIOCLINUX, &ioctlarg))
+			warn(_("cannot force unblank"));
+		break;
+	case BLANKEDSCREEN:
+		ioctlarg = TIOCL_BLANKEDSCREEN;
+		ret = ioctl(STDIN_FILENO, TIOCLINUX, &ioctlarg);
+		if (ret < 0)
+			warn(_("cannot get blank status"));
+		else
+			printf("%d\n", ret);
+		break;
+	default:		/* should be impossible to reach */
+		abort();
+	}
+	return;
+}
+
 static void screendump(struct setterm_control *ctl)
 {
 	unsigned char header[4];
@@ -960,27 +994,8 @@ static void perform_sequence(struct setterm_control *ctl)
 	}
 
 	/* -blank [0-60]. */
-	if (ctl->opt_blank && vc_only(ctl, "--blank")) {
-		if (ctl->opt_bl_min >= 0)
-			printf("\033[9;%d]", ctl->opt_bl_min);
-		else if (ctl->opt_bl_min == BLANKSCREEN) {
-			char ioctlarg = TIOCL_BLANKSCREEN;
-			if (ioctl(STDIN_FILENO, TIOCLINUX, &ioctlarg))
-				warn(_("cannot force blank"));
-		} else if (ctl->opt_bl_min == UNBLANKSCREEN) {
-			char ioctlarg = TIOCL_UNBLANKSCREEN;
-			if (ioctl(STDIN_FILENO, TIOCLINUX, &ioctlarg))
-				warn(_("cannot force unblank"));
-		} else if (ctl->opt_bl_min == BLANKEDSCREEN) {
-			char ioctlarg = TIOCL_BLANKEDSCREEN;
-			int ret;
-			ret = ioctl(STDIN_FILENO, TIOCLINUX, &ioctlarg);
-			if (ret < 0)
-				warn(_("cannot get blank status"));
-			else
-				printf("%d\n", ret);
-		}
-	}
+	if (ctl->opt_blank && vc_only(ctl, "--blank"))
+		set_blanking(ctl);
 
 	/* -powersave [on|vsync|hsync|powerdown|off] (console) */
 	if (ctl->opt_powersave) {
