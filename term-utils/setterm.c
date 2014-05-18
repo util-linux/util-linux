@@ -1051,10 +1051,36 @@ static void perform_sequence(struct setterm_control *ctl)
 
 }
 
+static void init_terminal(struct setterm_control *ctl)
+{
+	int term_errno;
+
+	if (!ctl->opt_te_terminal_name) {
+		ctl->opt_te_terminal_name = getenv("TERM");
+		if (ctl->opt_te_terminal_name == NULL)
+			errx(EXIT_FAILURE, _("$TERM is not defined."));
+	}
+
+	/* Find terminfo entry. */
+	if (setupterm(ctl->opt_te_terminal_name, STDOUT_FILENO, &term_errno))
+		switch (term_errno) {
+		case -1:
+			errx(EXIT_FAILURE, _("terminfo database cannot be found"));
+		case 0:
+			errx(EXIT_FAILURE, _("%s: unknown terminal type"), ctl->opt_te_terminal_name);
+		case 1:
+			errx(EXIT_FAILURE, _("terminal is hardcopy"));
+		}
+
+	/* See if the terminal is a virtual console terminal. */
+	ctl->vcterm = (!strncmp(ctl->opt_te_terminal_name, "con", 3) ||
+		       !strncmp(ctl->opt_te_terminal_name, "linux", 5));
+}
+
+
 int main(int argc, char **argv)
 {
 	struct setterm_control ctl = { 0 };
-	int term_errno;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -1064,32 +1090,8 @@ int main(int argc, char **argv)
 	if (argc < 2)
 		usage(stderr);
 
-	/* Parse arguments. */
 	parse_option(&ctl, argc, argv);
-
-	/* Find out terminal name. */
-	if (!ctl.opt_te_terminal_name) {
-		ctl.opt_te_terminal_name = getenv("TERM");
-		if (ctl.opt_te_terminal_name == NULL)
-			errx(EXIT_FAILURE, _("$TERM is not defined."));
-	}
-
-	/* Find terminfo entry. */
-	if (setupterm(ctl.opt_te_terminal_name, 1, &term_errno))
-		switch(term_errno) {
-		case -1:
-			errx(EXIT_FAILURE, _("terminfo database cannot be found"));
-		case 0:
-			errx(EXIT_FAILURE, _("%s: unknown terminal type"), ctl.opt_te_terminal_name);
-		case 1:
-			errx(EXIT_FAILURE, _("terminal is hardcopy"));
-		}
-
-	/* See if the terminal is a virtual console terminal. */
-	ctl.vcterm = (!strncmp(ctl.opt_te_terminal_name, "con", 3) ||
-		      !strncmp(ctl.opt_te_terminal_name, "linux", 5));
-
-	/* Perform the selected options. */
+	init_terminal(&ctl);
 	perform_sequence(&ctl);
 
 	return EXIT_SUCCESS;
