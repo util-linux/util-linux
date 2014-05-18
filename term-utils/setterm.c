@@ -78,6 +78,7 @@
 #include "c.h"
 #include "closestream.h"
 #include "nls.h"
+#include "optutils.h"
 #include "strutils.h"
 #include "xalloc.h"
 
@@ -533,8 +534,16 @@ static void parse_option(struct setterm_control *ctl, int argc, char **argv)
 		{"help", no_argument, NULL, OPT_HELP},
 		{NULL, 0, NULL, 0}
 	};
+	static const ul_excl_t excl[] = {
+		{ OPT_DEFAULT, OPT_STORE },
+		{ OPT_TABS, OPT_CLRTABS, OPT_REGTABS },
+		{ OPT_MSG, OPT_MSGLEVEL },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	while ((c = getopt_long_only(argc, argv, "", longopts, NULL)) != -1) {
+		err_exclusive_options(c, longopts, excl, excl_st);
 		switch (c) {
 		case OPT_TERM:
 			ctl->opt_term = set_opt_flag(ctl->opt_term);
