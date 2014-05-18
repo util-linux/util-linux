@@ -253,7 +253,7 @@ static int parse_ulhb_color(char **argv, int *optind)
 	else {
 		color = strtos32_or_err(color_name, _("argument error"));
 		if (color < BLACK || DEFAULT < color)
-			errx(EXIT_FAILURE, _("argument error"));
+			errx(EXIT_FAILURE, _("argument error: %s"), color_name);
 	}
 	if (bright && (color == BLACK || color == GREY))
 		errx(EXIT_FAILURE, _("argument error: bright %s is not supported"), color_name);
@@ -720,7 +720,7 @@ static int open_snapshot_device(struct setterm_control *ctl)
 		xasprintf(&ctl->in_device, "/dev/vcsa");
 	fd = open(ctl->in_device, O_RDONLY);
 	if (fd < 0)
-		err(EXIT_DUMPFILE, _("Couldn't read %s"), ctl->in_device);
+		err(EXIT_DUMPFILE, _("cannot read %s"), ctl->in_device);
 	return fd;
 }
 
@@ -744,18 +744,18 @@ static void screendump(struct setterm_control *ctl)
 		err(EXIT_DUMPFILE, _("can not open dump file %s for output"), ctl->opt_sn_name);
 	/* determine snapshot size */
 	if (read(fd, header, 4) != 4)
-		err(EXIT_DUMPFILE, _("Couldn't read %s"), ctl->in_device);
+		err(EXIT_DUMPFILE, _("cannot read %s"), ctl->in_device);
 	rows = header[0];
 	cols = header[1];
 	if (rows * cols == 0)
-		err(EXIT_DUMPFILE, _("Couldn't read %s"), ctl->in_device);
+		err(EXIT_DUMPFILE, _("cannot read %s"), ctl->in_device);
 	/* allocate buffers */
 	inbuf = xmalloc(rows * cols * 2);
 	outbuf = xmalloc(rows * (cols + 1));
 	/* read input */
 	rc = read(fd, inbuf, rows * cols * 2);
 	if (rc < 0 || (size_t)rc != rows * cols * 2)
-		err(EXIT_DUMPFILE, _("Couldn't read %s"), ctl->in_device);
+		err(EXIT_DUMPFILE, _("cannot read %s"), ctl->in_device);
 	p = inbuf;
 	q = outbuf;
 	/* copy inbuf to outbuf */
