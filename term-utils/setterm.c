@@ -713,35 +713,17 @@ static void show_tabs(void)
 	}
 }
 
-static void __attribute__((__noreturn__)) read_error(struct setterm_control *ctl)
-{
-	if (ctl->opt_sn_num != 0)
-		errx(EXIT_DUMPFILE, _("Couldn't read %s"), ctl->in_device);
-	else
-		errx(EXIT_DUMPFILE, _("Couldn't read neither /dev/vcsa0 nor /dev/vcsa"));
-}
-
 static int open_snapshot_device(struct setterm_control *ctl)
 {
-	char infile[MAXPATHLEN];
 	int fd;
 
-	sprintf(infile, "/dev/vcsa%d", ctl->opt_sn_num);
-	fd = open(infile, O_RDONLY);
-	if (fd < 0 && ctl->opt_sn_num == 0) {
-		/* vcsa0 is often called vcsa */
-		sprintf(infile, "/dev/vcsa");
-		fd = open(infile, O_RDONLY);
-	}
-	if (fd < 0) {
-		/* try devfs name - for zero ctl->opt_sn_num just /dev/vcc/a */
-		/* some gcc's warn for %.u - add 0 */
-		sprintf(infile, "/dev/vcc/a%.0u", ctl->opt_sn_num);
-		fd = open(infile, O_RDONLY);
-	}
-	ctl->in_device = infile;
+	if (ctl->opt_sn_num)
+		xasprintf(&ctl->in_device, "/dev/vcsa%d", ctl->opt_sn_num);
+	else
+		xasprintf(&ctl->in_device, "/dev/vcsa");
+	fd = open(ctl->in_device, O_RDONLY);
 	if (fd < 0)
-		read_error(ctl);
+		err(EXIT_DUMPFILE, _("Couldn't read %s"), ctl->in_device);
 	return fd;
 }
 
@@ -765,18 +747,18 @@ static void screendump(struct setterm_control *ctl)
 		err(EXIT_DUMPFILE, _("can not open dump file %s for output"), ctl->opt_sn_name);
 	/* determine snapshot size */
 	if (read(fd, header, 4) != 4)
-		read_error(ctl);
+		err(EXIT_DUMPFILE, _("Couldn't read %s"), ctl->in_device);
 	rows = header[0];
 	cols = header[1];
 	if (rows * cols == 0)
-		read_error(ctl);
+		err(EXIT_DUMPFILE, _("Couldn't read %s"), ctl->in_device);
 	/* allocate buffers */
 	inbuf = xmalloc(rows * cols * 2);
 	outbuf = xmalloc(rows * (cols + 1));
 	/* read input */
 	rc = read(fd, inbuf, rows * cols * 2);
 	if (rc < 0 || (size_t)rc != rows * cols * 2)
-		read_error(ctl);
+		err(EXIT_DUMPFILE, _("Couldn't read %s"), ctl->in_device);
 	p = inbuf;
 	q = outbuf;
 	/* copy inbuf to outbuf */
@@ -794,6 +776,7 @@ static void screendump(struct setterm_control *ctl)
 	close(fd);
 	free(inbuf);
 	free(outbuf);
+	free(ctl->in_device);
 	if (close_stream(out) != 0)
 		errx(EXIT_FAILURE, _("write error"));
 	return;

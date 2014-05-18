@@ -40,7 +40,7 @@ _setterm_module()
 			;;
 		'--dump'|'--append')
 			local NUM_CONS
-			NUM_CONS=(/sys/class/tty/*)
+			NUM_CONS=(/dev/vcsa?*)
 			COMPREPLY=( $(compgen -W "{1..${#NUM_CONS[*]}}" -- $cur) )
 			return 0
 			;;
