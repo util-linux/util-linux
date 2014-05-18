@@ -51,7 +51,7 @@ _setterm_module()
 			return 0
 			;;
 		'--msglevel')
-			COMPREPLY=( $(compgen -W "{1..8}" -- $cur) )
+			COMPREPLY=( $(compgen -W "{0..8}" -- $cur) )
 			return 0
 			;;
 		'--powersave')

@@ -134,7 +134,7 @@ enum {
 
 /* Console log levels */
 enum {
-	CONSOLE_LEVEL_MIN = 1,
+	CONSOLE_LEVEL_MIN = 0,
 	CONSOLE_LEVEL_MAX = 8
 };
 
@@ -437,16 +437,14 @@ usage(FILE *out) {
 	fputs(_(" --append <1-NR_CONSOLES>\n"), out);
 	fputs(_(" --file dumpfilename\n"), out);
 	fputs(_(" --msg <on|off>\n"), out);
-	fputs(_(" --msglevel <0-8>\n"), out);	/* FIXME: klogctl console_log range is 1-8 */
+	fputs(_(" --msglevel <0-8>\n"), out);
 	fputs(_(" --powersave <on|vsync|hsync|powerdown|off>\n"), out);
 	fputs(_(" --powerdown <0-60>\n"), out);
 	fputs(_(" --blength <0-2000>\n"), out);
 	fputs(_(" --bfreq freqnumber\n"), out);
 	fputs(_(" --version\n"), out);
 	fputs(_(" --help\n"), out);
-
 	fprintf(out, USAGE_MAN_TAIL("setterm(1)"));
-
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
@@ -651,6 +649,10 @@ static void parse_option(struct setterm_control *ctl, int argc, char **argv)
 		case OPT_MSGLEVEL:
 			ctl->opt_msglevel = set_opt_flag(ctl->opt_msglevel);
 			ctl->opt_msglevel_num = parse_msglevel(optarg);
+			if (ctl->opt_msglevel_num == 0) {
+				ctl->opt_msg = set_opt_flag(ctl->opt_msg);
+				ctl->opt_msg_on |= 1;
+			}
 			break;
 		case OPT_POWERSAVE:
 			ctl->opt_powersave = set_opt_flag(ctl->opt_powersave);
@@ -1017,7 +1019,7 @@ static void perform_sequence(struct setterm_control *ctl)
 	}
 
 	/* -msglevel [0-8] */
-	if (ctl->opt_msglevel && ctl->vcterm) {
+	if (ctl->opt_msglevel_num && ctl->vcterm) {
 		/* 8 -- Set level of messages printed to console */
 		result = klogctl(SYSLOG_ACTION_CONSOLE_LEVEL, NULL, ctl->opt_msglevel_num);
 		if (result != 0)
