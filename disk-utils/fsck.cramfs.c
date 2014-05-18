@@ -101,7 +101,7 @@ static void expand_fs(char *, struct cramfs_inode *);
 
 static char *outbuffer;
 
-static size_t page_size;
+static size_t blksize;
 
 #endif /* INCLUDE_FS_TESTS */
 
@@ -353,11 +353,11 @@ static int uncompress_block(void *src, size_t len)
 	stream.avail_in = len;
 
 	stream.next_out = (unsigned char *)outbuffer;
-	stream.avail_out = page_size * 2;
+	stream.avail_out = blksize * 2;
 
 	inflateReset(&stream);
 
-	if (len > page_size * 2)
+	if (len > blksize * 2)
 		errx(FSCK_EX_UNCORRECTED, _("data block too large"));
 
 	err = inflate(&stream, Z_FINISH);
@@ -374,10 +374,10 @@ static int uncompress_block(void *src, size_t len)
 static void do_uncompress(char *path, int fd, unsigned long offset,
 			  unsigned long size)
 {
-	unsigned long curr = offset + 4 * ((size + page_size - 1) / page_size);
+	unsigned long curr = offset + 4 * ((size + blksize - 1) / blksize);
 
 	do {
-		unsigned long out = page_size;
+		unsigned long out = blksize;
 		unsigned long next = u32_toggle_endianness(cramfs_is_big_endian,
 							   *(uint32_t *)
 							   romfs_read(offset));
@@ -389,8 +389,8 @@ static void do_uncompress(char *path, int fd, unsigned long offset,
 		if (curr == next) {
 			if (opt_verbose > 1)
 				printf(_("  hole at %ld (%zd)\n"), curr,
-				       page_size);
-			if (size < page_size)
+				       blksize);
+			if (size < blksize)
 				out = size;
 			memset(outbuffer, 0x00, out);
 		} else {
@@ -399,8 +399,8 @@ static void do_uncompress(char *path, int fd, unsigned long offset,
 				       curr, next, next - curr);
 			out = uncompress_block(romfs_read(curr), next - curr);
 		}
-		if (size >= page_size) {
-			if (out != page_size)
+		if (size >= blksize) {
+			if (out != blksize)
 				errx(FSCK_EX_UNCORRECTED,
 				     _("non-block (%ld) bytes"), out);
 		} else {
@@ -698,8 +698,8 @@ int main(int argc, char **argv)
 	test_super(&start, &length);
 	test_crc(start);
 #ifdef INCLUDE_FS_TESTS
-	page_size = getpagesize();
-	outbuffer = xmalloc(page_size * 2);
+	blksize = getpagesize();
+	outbuffer = xmalloc(blksize * 2);
 	test_fs(start);
 #endif
 
