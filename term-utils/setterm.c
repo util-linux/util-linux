@@ -416,8 +416,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" --foreground <default|color>\n"), out);
 	fputs(_(" --background <default|color>\n"), out);
 	fputs(_(" --ulcolor <bright> <color>\n"), out);
-	fputs(_(" --ulcolor <bright> <color>\n"), out);
-	fputs(_(" --hbcolor <bright> <color>\n"), out);
 	fputs(_(" --hbcolor <bright> <color>\n"), out);
 	fputs(_(" <color>: black blue cyan green grey magenta red white yellow\n"), out);
 	fputs(_(" --inversescreen <on|off>\n"), out);
@@ -506,8 +504,6 @@ static void parse_option(struct setterm_control *ctl, int argc, char **argv)
 		{"foreground", required_argument, NULL, OPT_FOREGROUND},
 		{"background", required_argument, NULL, OPT_BACKGROUND},
 		{"ulcolor", required_argument, NULL, OPT_ULCOLOR},
-		{"ulcolor", required_argument, NULL, OPT_ULCOLOR},
-		{"hbcolor", required_argument, NULL, OPT_HBCOLOR},
 		{"hbcolor", required_argument, NULL, OPT_HBCOLOR},
 		{"inversescreen", required_argument, NULL, OPT_INVERSESCREEN},
 		{"bold", required_argument, NULL, OPT_BOLD},
