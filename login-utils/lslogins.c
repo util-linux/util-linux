@@ -53,6 +53,7 @@
 #include "pathnames.h"
 #include "logindefs.h"
 #include "readutmp.h"
+#include "procutils.h"
 
 /*
  * column description
@@ -125,6 +126,7 @@ struct lslogins_user {
 	char *shell;
 	char *pwd_status;
 	int   hushed;
+	char *nprocs;
 
 };
 
@@ -183,6 +185,7 @@ enum {
 	COL_PWD_CTIME_MAX,
 	COL_PWD_EXPIR,
 	COL_SELINUX,
+	COL_NPROCS,
 };
 
 enum {
@@ -231,6 +234,7 @@ static struct lslogins_coldesc coldescs[] =
 	[COL_PWD_CTIME_MIN] = { "PWD-MIN",	N_("number of days required between changes"), N_("Minimal change time"), 24 },
 	[COL_PWD_CTIME_MAX] = { "PWD-MAX",	N_("max number of days a password may remain unchanged"), N_("Maximal change time"), 24 },
 	[COL_SELINUX]       = { "CONTEXT",	N_("the user's security context"), N_("Selinux context"), 0.4 },
+	[COL_NPROCS]        = { "PROC",         N_("Number of processes run by the user"), N_("Process count"), 1, SCOLS_FL_RIGHT },
 };
 
 struct lslogins_control {
@@ -255,6 +259,7 @@ struct lslogins_control {
 
 	int sel_enabled;
 	unsigned int time_mode;
+
 };
 /* these have to remain global since there's no other
  * reasonable way to pass them for each call of fill_table()
@@ -460,6 +465,21 @@ static int get_sgroups(gid_t **list, size_t *len, struct passwd *pwd)
 	return 0;
 }
 
+static int get_nprocs(const uid_t uid)
+{
+	int nprocs = 0;
+	pid_t pid;
+	struct proc_processes *proc = proc_open_processes();
+
+	proc_processes_filter_by_uid(proc, uid);
+
+	while (!proc_next_pid(proc, &pid))
+		++nprocs;
+
+	proc_close_processes(proc);
+	return nprocs;
+}
+
 static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const char *username)
 {
 	struct lslogins_user *user;
@@ -639,11 +659,15 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			if (getcon(&con) == 0)
 				user->context = con;
 #endif
+			break;
 		}
+		case COL_NPROCS:
+			xasprintf(&user->nprocs, "%d", get_nprocs(pwd->pw_uid));
 			break;
 		default:
 			/* something went very wrong here */
 			err(EXIT_FAILURE, "fatal: unknown error");
+			break;
 		}
 	}
 	/* check if we have the info needed to sort */
@@ -655,6 +679,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 
 	return user;
 }
+
 /* some UNIX implementations set errno iff a passwd/grp/...
  * entry was not found. The original UNIX logins(1) utility always
  * ignores invalid login/group names, so we're going to as well.*/
@@ -950,6 +975,9 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 			rc = scols_line_set_data(ln, n, user->context);
 			break;
 #endif
+		case COL_NPROCS:
+			rc = scols_line_set_data(ln, n, user->nprocs);
+			break;
 		default:
 			/* something went very wrong here */
 			err(EXIT_FAILURE, _("internal error: unknown column"));
@@ -1324,6 +1352,7 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_PWD_WARN;
 			columns[ncolumns++] = COL_PWD_CTIME_MIN; /*?*/
 			columns[ncolumns++] = COL_PWD_CTIME_MAX; /*?*/
+			columns[ncolumns++] = COL_NPROCS;
 		}
 		if (lslogins_flag & F_SELINUX)
 			columns[ncolumns++] = COL_SELINUX;
