@@ -33,9 +33,6 @@
  *                            use read if mmap fails, standardize messages)
  */
 
-/* compile-time options */
-//#define INCLUDE_FS_TESTS	/* include cramfs checking and extraction */
-
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -70,14 +67,10 @@ static char *filename;		/* ROM image filename */
 struct cramfs_super super;	/* just find the cramfs superblock once */
 static int cramfs_is_big_endian = 0;	/* source is big endian */
 static int opt_verbose = 0;	/* 1 = verbose (-v), 2+ = very verbose (-vv) */
-
-char *extract_dir = "";		/* extraction directory (-x) */
+static int opt_extract = 0;	/* extract cramfs (-x) */
+char *extract_dir = "";		/* optional extraction directory (-x) */
 
 #define PAD_SIZE 512
-
-#ifdef INCLUDE_FS_TESTS
-
-static int opt_extract = 0;	/* extract cramfs (-x) */
 
 static uid_t euid;		/* effective UID */
 
@@ -104,7 +97,6 @@ static char *outbuffer;
 
 static size_t blksize = 0;
 
-#endif /* INCLUDE_FS_TESTS */
 
 /* Input status of 0 to print help and exit without an error. */
 static void __attribute__((__noreturn__)) usage(int status)
@@ -215,11 +207,9 @@ static void test_crc(int start)
 	uint32_t crc;
 
 	if (!(super.flags & CRAMFS_FLAG_FSID_VERSION_2)) {
-#ifdef INCLUDE_FS_TESTS
+		fprintf(stderr,
+			_("warning: unable to test CRC: old cramfs format"));
 		return;
-#else
-		errx(FSCK_EX_USAGE, _("unable to test CRC: old cramfs format"));
-#endif
 	}
 
 	crc = crc32(0L, Z_NULL, 0);
@@ -274,7 +264,6 @@ static void test_crc(int start)
 		errx(FSCK_EX_UNCORRECTED, _("crc error"));
 }
 
-#ifdef INCLUDE_FS_TESTS
 static void print_node(char type, struct cramfs_inode *i, char *name)
 {
 	char info[10];
@@ -644,7 +633,6 @@ static void test_fs(int start)
 
 	iput(root);		/* free(root) */
 }
-#endif /* INCLUDE_FS_TESTS */
 
 int main(int argc, char **argv)
 {
@@ -680,21 +668,15 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'x':
-#ifdef INCLUDE_FS_TESTS
 			opt_extract = 1;
 			if(optarg)
 				extract_dir = optarg;
 			break;
-#else
-			errx(FSCK_EX_USAGE, _("compiled without -x support"));
-#endif
 		case 'v':
 			opt_verbose++;
 			break;
 		case 'b':
-#ifdef INCLUDE_FS_TESTS
 			blksize = strtou32_or_err(optarg, _("invalid blocksize argument"));
-#endif
 			break;
 		default:
 			usage(FSCK_EX_USAGE);
@@ -706,14 +688,13 @@ int main(int argc, char **argv)
 
 	test_super(&start, &length);
 	test_crc(start);
-#ifdef INCLUDE_FS_TESTS
+
 	if(opt_extract) {
 		if (blksize == 0)
 			blksize = getpagesize();
 		outbuffer = xmalloc(blksize * 2);
 		test_fs(start);
 	}
-#endif
 
 	if (opt_verbose)
 		printf(_("%s: OK\n"), filename);
