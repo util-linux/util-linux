@@ -51,6 +51,8 @@ char *canonicalize_dm_name(const char *ptname)
 char *canonicalize_path(const char *path)
 {
 	char *canonical, *p;
+	int isblk;
+	struct stat sb;
 
 	if (!path || !*path)
 		return NULL;
@@ -59,8 +61,9 @@ char *canonicalize_path(const char *path)
 	if (!canonical)
 		return strdup(path);
 
+	isblk = (stat(canonical, &sb) == 0 && (sb.st_mode & S_IFMT) == S_IFBLK);
 	p = strrchr(canonical, '/');
-	if (p && strncmp(p, "/dm-", 4) == 0 && isdigit(*(p + 4))) {
+	if (p && strncmp(p, "/dm-", 4) == 0 && isdigit(*(p + 4)) && isblk) {
 		char *dm = canonicalize_dm_name(p + 1);
 		if (dm) {
 			free(canonical);
