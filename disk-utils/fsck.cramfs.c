@@ -117,9 +117,9 @@ static void __attribute__((__noreturn__)) usage(int status)
 	fputs(USAGE_OPTIONS, stream);
 	fputs(_(" -a                       for compatibility only, ignored\n"), stream);
 	fputs(_(" -v, --verbose            be more verbose\n"), stream);
-	fputs(_(" -x, --destination <dir>  extract into directory\n"), stream);
 	fputs(_(" -y                       for compatibility only, ignored\n"), stream);
 	fputs(_(" -b, --blocksize SIZE     use this blocksize, defaults to page size\n"), stream);
+	fputs(_("     --extract [DIR]      test uncompression, optionally extract into DIR\n"), stream);
 	fputs(USAGE_SEPARATOR, stream);
 	fputs(USAGE_HELP, stream);
 	fputs(USAGE_VERSION, stream);
@@ -412,7 +412,7 @@ static void do_uncompress(char *path, int fd, unsigned long offset,
 				     size);
 		}
 		size -= out;
-		if (opt_extract)
+		if (*extract_dir != '\0')
 			if (write(fd, outbuffer, out) < 0)
 				err(FSCK_EX_ERROR, _("write failed: %s"),
 				    path);
@@ -460,7 +460,7 @@ static void do_directory(char *path, struct cramfs_inode *i)
 	if (opt_verbose)
 		print_node('d', i, path);
 
-	if (opt_extract) {
+	if (*extract_dir != '\0') {
 		if (mkdir(path, i->mode) < 0)
 			err(FSCK_EX_ERROR, _("mkdir failed: %s"), path);
 		change_file_status(path, i);
@@ -509,14 +509,14 @@ static void do_file(char *path, struct cramfs_inode *i)
 		start_data = offset;
 	if (opt_verbose)
 		print_node('f', i, path);
-	if (opt_extract) {
+	if (*extract_dir != '\0') {
 		fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, i->mode);
 		if (fd < 0)
 			err(FSCK_EX_ERROR, _("cannot open %s"), path);
 	}
 	if (i->size)
 		do_uncompress(path, fd, offset, i->size);
-	if (opt_extract) {
+	if ( *extract_dir != '\0') {
 		if (close_fd(fd) != 0)
 			err(FSCK_EX_ERROR, _("write failed: %s"), path);
 		change_file_status(path, i);
@@ -556,7 +556,7 @@ static void do_symlink(char *path, struct cramfs_inode *i)
 			       curr, next, next - curr);
 		free(str);
 	}
-	if (opt_extract) {
+	if (*extract_dir != '\0') {
 		if (symlink(outbuffer, path) < 0)
 			err(FSCK_EX_ERROR, _("symlink failed: %s"), path);
 		change_file_status(path, i);
@@ -597,7 +597,7 @@ static void do_special_inode(char *path, struct cramfs_inode *i)
 	if (opt_verbose)
 		print_node(type, i, path);
 
-	if (opt_extract) {
+	if (*extract_dir != '\0') {
 		if (mknod(path, i->mode, devtype) < 0)
 			err(FSCK_EX_ERROR, _("mknod failed: %s"), path);
 		change_file_status(path, i);
@@ -653,11 +653,11 @@ int main(int argc, char **argv)
 	size_t length = 0;
 
 	static const struct option longopts[] = {
-		{"destination", required_argument, 0, 'x'},
 		{"verbose", no_argument, 0, 'v'},
 		{"version", no_argument, 0, 'V'},
 		{"help", no_argument, 0, 'h'},
 		{"blocksize", required_argument, 0, 'b'},
+		{"extract", optional_argument, 0, 'x'},
 		{NULL, no_argument, 0, '0'},
 	};
 
@@ -668,7 +668,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	/* command line options */
-	while ((c = getopt_long(argc, argv, "ayx:vVhb:", longopts, NULL)) != EOF)
+	while ((c = getopt_long(argc, argv, "ayvVhb:", longopts, NULL)) != EOF)
 		switch (c) {
 		case 'a':		/* ignore */
 		case 'y':
@@ -682,7 +682,8 @@ int main(int argc, char **argv)
 		case 'x':
 #ifdef INCLUDE_FS_TESTS
 			opt_extract = 1;
-			extract_dir = optarg;
+			if(optarg)
+				extract_dir = optarg;
 			break;
 #else
 			errx(FSCK_EX_USAGE, _("compiled without -x support"));
@@ -706,10 +707,12 @@ int main(int argc, char **argv)
 	test_super(&start, &length);
 	test_crc(start);
 #ifdef INCLUDE_FS_TESTS
-	if (blksize == 0)
-		blksize = getpagesize();
-	outbuffer = xmalloc(blksize * 2);
-	test_fs(start);
+	if(opt_extract) {
+		if (blksize == 0)
+			blksize = getpagesize();
+		outbuffer = xmalloc(blksize * 2);
+		test_fs(start);
+	}
 #endif
 
 	if (opt_verbose)

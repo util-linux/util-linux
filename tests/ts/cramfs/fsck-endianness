@@ -28,9 +28,6 @@ ts_skip_nonroot
 
 set -o pipefail
 
-($TS_CMD_FSCKCRAMFS -x TEST_X_FLAG 2>&1 || true) \
-	| grep -q "compiled without -x support" && ts_skip "fsck: compiled without -x support"
-
 IMAGE_LITTLE="$TS_SELF/cramfs-little.img"	#Known good little endian image
 IMAGE_BIG="$TS_SELF/cramfs-big.img"		#Known good big endian image
 
@@ -44,7 +41,7 @@ test_image() {
 
 	rm -rf "$IMAGE_DATA"
 	ts_log "extract from $FROM_ENDIANNESS endian"
-	$TS_CMD_FSCKCRAMFS -v -b 4096 -x $IMAGE_DATA $FROM_IMAGE | head -n1 | cut -d" " -f4 2>&1 >> $TS_OUTPUT
+	$TS_CMD_FSCKCRAMFS -v -b 4096 --extract=$IMAGE_DATA $FROM_IMAGE | head -n1 | cut -d" " -f4 2>&1 >> $TS_OUTPUT
 
 	ts_log "create $TO_ENDIANNESS endian"
 	$TS_CMD_MKCRAMFS -N "$TO_ENDIANNESS" -b 4096 "$IMAGE_DATA" \
