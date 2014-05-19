@@ -131,7 +131,10 @@ anything else.  This may be used to initialize a modem.  Non-printable
 characters may be sent by writing their octal code preceded by a
 backslash (\\).  For example, to send a linefeed character (ASCII 10,
 octal 012), write \\012.
-.PP
+.TP
+\-J,\-\-noclear
+Do not clear the screen before prompting for the login name
+(the screen is normally cleared).
 .TP
 \-l, \-\-login\-program \fIlogin_program\fP
 Invoke the specified \fIlogin_program\fP instead of /bin/login.
@@ -176,6 +179,9 @@ space parity, 7 bit characters, and ASCII CR (13) end-of-line character.
 Beware that the program that \fBagetty\fR starts (usually /bin/login)
 is run as root.
 .TP
+\-N, \-\-nonewline
+Do not print a newline before writing out /etc/issue.
+.TP
 \-o, \-\-login\-options "\fIlogin_options\fP"
 Options  that  are passed to the login program.  \\u is replaced
 by the login name. The default \fB/bin/login\fP command line
@@ -213,15 +219,8 @@ Wait for the user or the modem to send a carriage-return or a
 linefeed character before sending the \fI/etc/issue\fP (or other) file
 and the login prompt. Very useful in connection with the \-I option.
 .TP
-\-\-noclear
-Do not clear the screen before prompting for the login name
-(the screen is normally cleared).
-.TP
 \-\-nohints
 Do not print hints about Num, Caps and Scroll Locks.
-.TP
-\-\-nonewline
-Do not print a newline before writing out /etc/issue.
 .TP
 \-\-nohostname
 By default the hostname will be printed.  With this option enabled,
@@ -243,6 +242,15 @@ This option specifies additional characters that should be interpreted as a
 kill ("ignore all previous characters") when the user types the login name.
 The default additional \'kill\' has been \'@\', but since util-linux 2.23
 no additional kill characters are enabled by default.
+.TP
+\-\-chdir \fIdirectory\fP
+Change directory before the login.
+.TP
+\-\-delay \fInumber\fP
+Sleep seconds before open tty.
+.TP
+\-\-nice \fInumber\fP
+Run login with this priority.
 .TP
 \-\-version
 Display version information and exit.
