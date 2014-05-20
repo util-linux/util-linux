@@ -48,9 +48,27 @@ char *canonicalize_dm_name(const char *ptname)
 	return res;
 }
 
+static int is_dm_devname(char *canonical, char **name)
+{
+	struct stat sb;
+	char *p = strrchr(canonical, '/');
+
+	*name = NULL;
+
+	if (!p
+	    || strncmp(p, "/dm-", 4) != 0
+	    || !isdigit(*(p + 4))
+	    || stat(canonical, &sb) != 0
+	    || !S_ISBLK(sb.st_mode))
+		return 0;
+
+	*name = p + 1;
+	return 1;
+}
+
 char *canonicalize_path(const char *path)
 {
-	char *canonical, *p;
+	char *canonical, *dmname;
 
 	if (!path || !*path)
 		return NULL;
@@ -59,9 +77,8 @@ char *canonicalize_path(const char *path)
 	if (!canonical)
 		return strdup(path);
 
-	p = strrchr(canonical, '/');
-	if (p && strncmp(p, "/dm-", 4) == 0 && isdigit(*(p + 4))) {
-		char *dm = canonicalize_dm_name(p + 1);
+	if (is_dm_devname(canonical, &dmname)) {
+		char *dm = canonicalize_dm_name(dmname);
 		if (dm) {
 			free(canonical);
 			return dm;
@@ -73,7 +90,7 @@ char *canonicalize_path(const char *path)
 
 char *canonicalize_path_restricted(const char *path)
 {
-	char *canonical, *p = NULL;
+	char *canonical, *dmname;
 	int errsv;
 	uid_t euid;
 	gid_t egid;
@@ -91,17 +108,15 @@ char *canonicalize_path_restricted(const char *path)
 	errsv = errno = 0;
 
 	canonical = realpath(path, NULL);
-	if (canonical) {
-		p = strrchr(canonical, '/');
-		if (p && strncmp(p, "/dm-", 4) == 0 && isdigit(*(p + 4))) {
-			char *dm = canonicalize_dm_name(p + 1);
-			if (dm) {
-				free(canonical);
-				canonical = dm;
-			}
-		}
-	} else
+	if (!canonical)
 		errsv = errno;
+	else if (is_dm_devname(canonical, &dmname)) {
+		char *dm = canonicalize_dm_name(dmname);
+		if (dm) {
+			free(canonical);
+			canonical = dm;
+		}
+	}
 
 	/* restore */
 	if (setegid(egid) < 0 || seteuid(euid) < 0) {
