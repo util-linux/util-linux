@@ -110,8 +110,8 @@ static void __attribute__((__noreturn__)) usage(int status)
 	fputs(_(" -a                       for compatibility only, ignored\n"), stream);
 	fputs(_(" -v, --verbose            be more verbose\n"), stream);
 	fputs(_(" -y                       for compatibility only, ignored\n"), stream);
-	fputs(_(" -b, --blocksize SIZE     use this blocksize, defaults to page size\n"), stream);
-	fputs(_("     --extract [DIR]      test uncompression, optionally extract into DIR\n"), stream);
+	fputs(_(" -b, --blocksize <size>   use this blocksize, defaults to page size\n"), stream);
+	fputs(_("     --extract[=<dir>]    test uncompression, optionally extract into <dir>\n"), stream);
 	fputs(USAGE_SEPARATOR, stream);
 	fputs(USAGE_HELP, stream);
 	fputs(USAGE_VERSION, stream);
@@ -195,10 +195,9 @@ static void test_super(int *start, size_t * length)
 		if (*length < super.size)
 			errx(FSCK_EX_UNCORRECTED, _("file length too short"));
 		else if (*length > super.size)
-			fprintf(stderr,
-				_("warning: file extends past end of filesystem\n"));
+			warnx(_("file extends past end of filesystem"));
 	} else
-		fprintf(stderr, _("warning: old cramfs format\n"));
+		warnx(_("old cramfs format"));
 }
 
 static void test_crc(int start)
@@ -207,8 +206,7 @@ static void test_crc(int start)
 	uint32_t crc;
 
 	if (!(super.flags & CRAMFS_FLAG_FSID_VERSION_2)) {
-		fprintf(stderr,
-			_("warning: unable to test CRC: old cramfs format"));
+		warnx(_("unable to test CRC: old cramfs format"));
 		return;
 	}
 
