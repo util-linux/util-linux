@@ -34,6 +34,20 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#if defined(__x86_64__) || defined(__i386__)
+# define INCLUDE_VMWARE_BDOOR
+#endif
+
+#ifdef INCLUDE_VMWARE_BDOOR
+# include <stdint.h>
+# include <signal.h>
+# include <strings.h>
+# include <setjmp.h>
+# ifdef HAVE_sys_io_h
+#  include <sys/io.h>
+# endif
+#endif
+
 #include <libsmartcols.h>
 
 #include "cpuset.h"
@@ -574,7 +588,7 @@ read_hypervisor_cpuid(struct lscpu_desc *desc)
 		desc->hyper = HYPER_VMWARE;
 }
 
-#else	/* ! __x86_64__ */
+#else /* ! (__x86_64__ || __i386__) */
 static void
 read_hypervisor_cpuid(struct lscpu_desc *desc __attribute__((__unused__)))
 {
@@ -636,6 +650,71 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 	return desc->hyper;
 }
 
+#ifdef INCLUDE_VMWARE_BDOOR
+
+#define VMWARE_BDOOR_MAGIC          0x564D5868
+#define VMWARE_BDOOR_PORT           0x5658
+#define VMWARE_BDOOR_CMD_GETVERSION 10
+
+#define VMWARE_BDOOR(eax, ebx, ecx, edx)                                  \
+        __asm__("inl (%%dx), %%eax" :                                     \
+               "=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :               \
+               "0"(VMWARE_BDOOR_MAGIC), "1"(VMWARE_BDOOR_CMD_GETVERSION), \
+               "2"(VMWARE_BDOOR_PORT), "3"(0) :                           \
+               "memory");
+
+static jmp_buf segv_handler_env;
+
+static void
+segv_handler(__attribute__((__unused__)) int sig,
+             __attribute__((__unused__)) siginfo_t *info,
+             __attribute__((__unused__)) void *ignored)
+{
+	siglongjmp(segv_handler_env, 1);
+}
+
+static int
+is_vmware_platform(void)
+{
+	uint32_t eax, ebx, ecx, edx;
+	struct sigaction act, oact;
+
+	/*
+	 * The assembly routine for vmware detection works
+	 * fine under vmware, even if ran as regular user. But
+	 * on real HW or under other hypervisors, it segfaults (which is
+	 * expected). So we temporarily install SIGSEGV handler to catch
+	 * the signal. All this magic is needed because lscpu
+	 * isn't supposed to require root privileges.
+	 */
+	if (sigsetjmp(segv_handler_env, 1))
+		return 0;
+
+	bzero(&act, sizeof(act));
+	act.sa_sigaction = segv_handler;
+	act.sa_flags = SA_SIGINFO;
+
+	if (sigaction(SIGSEGV, &act, &oact))
+		err(EXIT_FAILURE, _("error: can not set signal handler"));
+
+	VMWARE_BDOOR(eax, ebx, ecx, edx);
+
+	if (sigaction(SIGSEGV, &oact, NULL))
+		err(EXIT_FAILURE, _("error: can not restore signal handler"));
+
+	return eax != (uint32_t)-1 && ebx == VMWARE_BDOOR_MAGIC;
+}
+
+#else /* ! INCLUDE_VMWARE_BDOOR */
+
+static int
+is_vmware_platform(void)
+{
+	return 0;
+}
+
+#endif /* INCLUDE_VMWARE_BDOOR */
+
 static void
 read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 {
@@ -645,6 +724,8 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		read_hypervisor_cpuid(desc);
 		if (!desc->hyper)
 			desc->hyper = read_hypervisor_dmi();
+		if (!desc->hyper && is_vmware_platform())
+			desc->hyper = HYPER_VMWARE;
 	}
 
 	if (desc->hyper)
