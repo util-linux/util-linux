@@ -34,14 +34,16 @@ test_image() {
 	local TO_ENDIANNESS="$1"; shift
 	ts_log "create $TO_ENDIANNESS endian"
 
-	$TS_CMD_MKCRAMFS -N "$TO_ENDIANNESS" "$IMAGE_DATA" "$IMAGE_CREATED" 2>&1 >> $TS_OUTPUT
+	$TS_CMD_MKCRAMFS -N "$TO_ENDIANNESS" -b 4096 "$IMAGE_DATA" \
+		"$IMAGE_CREATED" >> $TS_OUTPUT 2>&1
 
 	md5sum $IMAGE_CREATED | cut -d" " -f1 >> $TS_OUTPUT
 
 	rm "$IMAGE_CREATED"
 }
 
-#generate test data
+#generate test data, must be owner root
+rm -rf "$IMAGE_DATA"
 mkdir -p $IMAGE_DATA/dirA/dirB
 yes "Testing cramfs 1234567890 Endianness check 1234567890 Endianness check" \
 	| dd of=$IMAGE_DATA/dirA/dirB/a bs=512 count=1 &> /dev/null

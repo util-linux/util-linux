@@ -2,19 +2,23 @@
 .SH NAME
 fsck.cramfs \- fsck compressed ROM file system
 .SH SYNOPSIS
-.B mkfs.cramfs
+.B fsck.cramfs
 [options]
 .I file
 .SH DESCRIPTION
-.I mkfs.cramfs
+.I fsck.cramfs
 is used to check the cramfs file system.
 .SH OPTIONS
 .TP
 \fB\-v\fR, \fB\-\-verbose\fR
 Enable verbose messaging.
 .TP
-\fB\-x\fR, \fB\-\-destination\fR [\fIdirectory\fR]
-Extract contents of the
+\fB\-b\fR, \fB\-\-blocksize\fR \fIblocksize\fR
+Use this blocksize, defaults to page size. Must be equal to what was set at
+creation time. Only used for \-\-extract.
+.TP
+\fB\-\-extract\fR[=\fIdirectory\fR]
+Test to uncompress the whole file system. Optionally extract contents of the
 .I file
 to
 .IR directory .
@@ -49,7 +53,7 @@ usage information was printed
 .RE
 .SH "SEE ALSO"
 .BR mount (8),
-.BR fsck.cramfs (8)
+.BR mkfs.cramfs (8)
 .SH AVAILABILITY
 The example command is part of the util-linux package and is available from
 .UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
