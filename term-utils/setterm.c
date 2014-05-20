@@ -398,9 +398,6 @@ static int parse_bfreq(char **argv, char *optarg, int *optind)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	if (out == stderr)
-		warnx(_("argument error"));
-
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options]\n"), program_invocation_short_name);
@@ -415,8 +412,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" --default\n"), out);
 	fputs(_(" --foreground <default|color>\n"), out);
 	fputs(_(" --background <default|color>\n"), out);
-	fputs(_(" --ulcolor <bright> <color>\n"), out);
-	fputs(_(" --hbcolor <bright> <color>\n"), out);
+	fputs(_(" --ulcolor [bright] <color>\n"), out);
+	fputs(_(" --hbcolor [bright] <color>\n"), out);
 	fputs(_(" <color>: black blue cyan green grey magenta red white yellow\n"), out);
 	fputs(_(" --inversescreen <on|off>\n"), out);
 	fputs(_(" --bold <on|off>\n"), out);
