@@ -33,9 +33,6 @@
  *                            use read if mmap fails, standardize messages)
  */
 
-/* compile-time options */
-//#define INCLUDE_FS_TESTS	/* include cramfs checking and extraction */
-
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -59,6 +56,7 @@
 #include "blkdev.h"
 #include "c.h"
 #include "exitcodes.h"
+#include "strutils.h"
 #include "closestream.h"
 
 #define XALLOC_EXIT_CODE FSCK_EX_ERROR
@@ -69,14 +67,10 @@ static char *filename;		/* ROM image filename */
 struct cramfs_super super;	/* just find the cramfs superblock once */
 static int cramfs_is_big_endian = 0;	/* source is big endian */
 static int opt_verbose = 0;	/* 1 = verbose (-v), 2+ = very verbose (-vv) */
-
-char *extract_dir = "";		/* extraction directory (-x) */
+static int opt_extract = 0;	/* extract cramfs (-x) */
+char *extract_dir = "";		/* optional extraction directory (-x) */
 
 #define PAD_SIZE 512
-
-#ifdef INCLUDE_FS_TESTS
-
-static int opt_extract = 0;	/* extract cramfs (-x) */
 
 static uid_t euid;		/* effective UID */
 
@@ -98,11 +92,11 @@ static z_stream stream;
 
 /* Prototypes */
 static void expand_fs(char *, struct cramfs_inode *);
-#endif /* INCLUDE_FS_TESTS */
 
 static char *outbuffer;
 
-static size_t page_size;
+static size_t blksize = 0;
+
 
 /* Input status of 0 to print help and exit without an error. */
 static void __attribute__((__noreturn__)) usage(int status)
@@ -115,8 +109,9 @@ static void __attribute__((__noreturn__)) usage(int status)
 	fputs(USAGE_OPTIONS, stream);
 	fputs(_(" -a                       for compatibility only, ignored\n"), stream);
 	fputs(_(" -v, --verbose            be more verbose\n"), stream);
-	fputs(_(" -x, --destination <dir>  extract into directory\n"), stream);
 	fputs(_(" -y                       for compatibility only, ignored\n"), stream);
+	fputs(_(" -b, --blocksize SIZE     use this blocksize, defaults to page size\n"), stream);
+	fputs(_("     --extract [DIR]      test uncompression, optionally extract into DIR\n"), stream);
 	fputs(USAGE_SEPARATOR, stream);
 	fputs(USAGE_HELP, stream);
 	fputs(USAGE_VERSION, stream);
@@ -189,7 +184,8 @@ static void test_super(int *start, size_t * length)
 	if (super.flags & ~CRAMFS_SUPPORTED_FLAGS)
 		errx(FSCK_EX_ERROR, _("unsupported filesystem features"));
 
-	if (super.size < page_size)
+	/* What are valid superblock sizes? */
+	if (super.size < sizeof(struct cramfs_super))
 		errx(FSCK_EX_UNCORRECTED, _("superblock size (%d) too small"),
 		     super.size);
 
@@ -211,11 +207,9 @@ static void test_crc(int start)
 	uint32_t crc;
 
 	if (!(super.flags & CRAMFS_FLAG_FSID_VERSION_2)) {
-#ifdef INCLUDE_FS_TESTS
+		fprintf(stderr,
+			_("warning: unable to test CRC: old cramfs format"));
 		return;
-#else
-		errx(FSCK_EX_USAGE, _("unable to test CRC: old cramfs format"));
-#endif
 	}
 
 	crc = crc32(0L, Z_NULL, 0);
@@ -270,7 +264,6 @@ static void test_crc(int start)
 		errx(FSCK_EX_UNCORRECTED, _("crc error"));
 }
 
-#ifdef INCLUDE_FS_TESTS
 static void print_node(char type, struct cramfs_inode *i, char *name)
 {
 	char info[10];
@@ -351,11 +344,11 @@ static int uncompress_block(void *src, size_t len)
 	stream.avail_in = len;
 
 	stream.next_out = (unsigned char *)outbuffer;
-	stream.avail_out = page_size * 2;
+	stream.avail_out = blksize * 2;
 
 	inflateReset(&stream);
 
-	if (len > page_size * 2)
+	if (len > blksize * 2)
 		errx(FSCK_EX_UNCORRECTED, _("data block too large"));
 
 	err = inflate(&stream, Z_FINISH);
@@ -372,10 +365,10 @@ static int uncompress_block(void *src, size_t len)
 static void do_uncompress(char *path, int fd, unsigned long offset,
 			  unsigned long size)
 {
-	unsigned long curr = offset + 4 * ((size + page_size - 1) / page_size);
+	unsigned long curr = offset + 4 * ((size + blksize - 1) / blksize);
 
 	do {
-		unsigned long out = page_size;
+		unsigned long out = blksize;
 		unsigned long next = u32_toggle_endianness(cramfs_is_big_endian,
 							   *(uint32_t *)
 							   romfs_read(offset));
@@ -387,8 +380,8 @@ static void do_uncompress(char *path, int fd, unsigned long offset,
 		if (curr == next) {
 			if (opt_verbose > 1)
 				printf(_("  hole at %ld (%zd)\n"), curr,
-				       page_size);
-			if (size < page_size)
+				       blksize);
+			if (size < blksize)
 				out = size;
 			memset(outbuffer, 0x00, out);
 		} else {
@@ -397,8 +390,8 @@ static void do_uncompress(char *path, int fd, unsigned long offset,
 				       curr, next, next - curr);
 			out = uncompress_block(romfs_read(curr), next - curr);
 		}
-		if (size >= page_size) {
-			if (out != page_size)
+		if (size >= blksize) {
+			if (out != blksize)
 				errx(FSCK_EX_UNCORRECTED,
 				     _("non-block (%ld) bytes"), out);
 		} else {
@@ -408,7 +401,7 @@ static void do_uncompress(char *path, int fd, unsigned long offset,
 				     size);
 		}
 		size -= out;
-		if (opt_extract)
+		if (*extract_dir != '\0')
 			if (write(fd, outbuffer, out) < 0)
 				err(FSCK_EX_ERROR, _("write failed: %s"),
 				    path);
@@ -456,7 +449,7 @@ static void do_directory(char *path, struct cramfs_inode *i)
 	if (opt_verbose)
 		print_node('d', i, path);
 
-	if (opt_extract) {
+	if (*extract_dir != '\0') {
 		if (mkdir(path, i->mode) < 0)
 			err(FSCK_EX_ERROR, _("mkdir failed: %s"), path);
 		change_file_status(path, i);
@@ -505,14 +498,14 @@ static void do_file(char *path, struct cramfs_inode *i)
 		start_data = offset;
 	if (opt_verbose)
 		print_node('f', i, path);
-	if (opt_extract) {
+	if (*extract_dir != '\0') {
 		fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, i->mode);
 		if (fd < 0)
 			err(FSCK_EX_ERROR, _("cannot open %s"), path);
 	}
 	if (i->size)
 		do_uncompress(path, fd, offset, i->size);
-	if (opt_extract) {
+	if ( *extract_dir != '\0') {
 		if (close_fd(fd) != 0)
 			err(FSCK_EX_ERROR, _("write failed: %s"), path);
 		change_file_status(path, i);
@@ -552,7 +545,7 @@ static void do_symlink(char *path, struct cramfs_inode *i)
 			       curr, next, next - curr);
 		free(str);
 	}
-	if (opt_extract) {
+	if (*extract_dir != '\0') {
 		if (symlink(outbuffer, path) < 0)
 			err(FSCK_EX_ERROR, _("symlink failed: %s"), path);
 		change_file_status(path, i);
@@ -593,7 +586,7 @@ static void do_special_inode(char *path, struct cramfs_inode *i)
 	if (opt_verbose)
 		print_node(type, i, path);
 
-	if (opt_extract) {
+	if (*extract_dir != '\0') {
 		if (mknod(path, i->mode, devtype) < 0)
 			err(FSCK_EX_ERROR, _("mknod failed: %s"), path);
 		change_file_status(path, i);
@@ -640,7 +633,6 @@ static void test_fs(int start)
 
 	iput(root);		/* free(root) */
 }
-#endif /* INCLUDE_FS_TESTS */
 
 int main(int argc, char **argv)
 {
@@ -649,10 +641,11 @@ int main(int argc, char **argv)
 	size_t length = 0;
 
 	static const struct option longopts[] = {
-		{"destination", required_argument, 0, 'x'},
 		{"verbose", no_argument, 0, 'v'},
 		{"version", no_argument, 0, 'V'},
 		{"help", no_argument, 0, 'h'},
+		{"blocksize", required_argument, 0, 'b'},
+		{"extract", optional_argument, 0, 'x'},
 		{NULL, no_argument, 0, '0'},
 	};
 
@@ -662,12 +655,8 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	page_size = getpagesize();
-
-	outbuffer = xmalloc(page_size * 2);
-
 	/* command line options */
-	while ((c = getopt_long(argc, argv, "ayx:vVh", longopts, NULL)) != EOF)
+	while ((c = getopt_long(argc, argv, "ayvVhb:", longopts, NULL)) != EOF)
 		switch (c) {
 		case 'a':		/* ignore */
 		case 'y':
@@ -679,15 +668,15 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'x':
-#ifdef INCLUDE_FS_TESTS
 			opt_extract = 1;
-			extract_dir = optarg;
+			if(optarg)
+				extract_dir = optarg;
 			break;
-#else
-			errx(FSCK_EX_USAGE, _("compiled without -x support"));
-#endif
 		case 'v':
 			opt_verbose++;
+			break;
+		case 'b':
+			blksize = strtou32_or_err(optarg, _("invalid blocksize argument"));
 			break;
 		default:
 			usage(FSCK_EX_USAGE);
@@ -699,9 +688,13 @@ int main(int argc, char **argv)
 
 	test_super(&start, &length);
 	test_crc(start);
-#ifdef INCLUDE_FS_TESTS
-	test_fs(start);
-#endif
+
+	if(opt_extract) {
+		if (blksize == 0)
+			blksize = getpagesize();
+		outbuffer = xmalloc(blksize * 2);
+		test_fs(start);
+	}
 
 	if (opt_verbose)
 		printf(_("%s: OK\n"), filename);
