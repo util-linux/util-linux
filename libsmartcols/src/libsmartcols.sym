@@ -6,9 +6,12 @@ global:
 	scols_cell_copy_content;
 	scols_cell_get_color;
 	scols_cell_get_data;
+	scols_cell_get_userdata;
 	scols_cell_refer_data;
 	scols_cell_set_color;
 	scols_cell_set_data;
+	scols_cell_set_userdata;
+	scols_cmpstr_cells;
 	scols_column_get_color;
 	scols_column_get_flags;
 	scols_column_get_header;
@@ -18,6 +21,7 @@ global:
 	scols_column_is_strict_width;
 	scols_column_is_tree;
 	scols_column_is_trunc;
+	scols_column_set_cmpfunc;
 	scols_column_set_color;
 	scols_column_set_flags;
 	scols_column_set_whint;
@@ -34,6 +38,7 @@ global:
 	scols_line_free_cells;
 	scols_line_get_cell;
 	scols_line_get_color;
+	scols_line_get_column_cell;
 	scols_line_get_ncells;
 	scols_line_get_parent;
 	scols_line_get_userdata;
@@ -58,6 +63,7 @@ global:
 	scols_ref_table;
 	scols_reset_cell;
 	scols_reset_iter;
+	scols_sort_table;
 	scols_symbols_set_branch;
 	scols_symbols_set_right;
 	scols_symbols_set_vertical;

@@ -116,6 +116,11 @@ extern const char *scols_cell_get_data(const struct libscols_cell *ce);
 extern int scols_cell_set_color(struct libscols_cell *ce, const char *color);
 extern const char *scols_cell_get_color(const struct libscols_cell *ce);
 
+extern void *scols_cell_get_userdata(struct libscols_cell *ce);
+extern int scols_cell_set_userdata(struct libscols_cell *ce, void *data);
+
+extern int scols_cmpstr_cells(struct libscols_cell *a,
+			      struct libscols_cell *b, void *data);
 /* column.c */
 extern int scols_column_is_tree(struct libscols_column *cl);
 extern int scols_column_is_trunc(struct libscols_column *cl);
@@ -135,6 +140,11 @@ extern struct libscols_cell *scols_column_get_header(struct libscols_column *cl)
 extern int scols_column_set_color(struct libscols_column *cl, const char *color);
 extern const char *scols_column_get_color(struct libscols_column *cl);
 
+extern int scols_column_set_cmpfunc(struct libscols_column *cl,
+			int (*cmp)(struct libscols_cell *a,
+				   struct libscols_cell *b, void *),
+			void *data);
+
 /* line.c */
 extern struct libscols_line *scols_new_line(void);
 extern void scols_ref_line(struct libscols_line *ln);
@@ -153,6 +163,9 @@ extern int scols_line_set_color(struct libscols_line *ln, const char *color);
 extern const char *scols_line_get_color(struct libscols_line *ln);
 extern size_t scols_line_get_ncells(struct libscols_line *ln);
 extern struct libscols_cell *scols_line_get_cell(struct libscols_line *ln, size_t n);
+extern struct libscols_cell *scols_line_get_column_cell(
+		                        struct libscols_line *ln,
+		                        struct libscols_column *cl);
 extern int scols_line_set_data(struct libscols_line *ln, size_t n, const char *data);
 extern int scols_line_refer_data(struct libscols_line *ln, size_t n, char *data);
 extern struct libscols_line *scols_copy_line(struct libscols_line *ln);
@@ -202,6 +215,8 @@ extern int scols_table_set_symbols(struct libscols_table *tb, struct libscols_sy
 extern int scols_table_set_stream(struct libscols_table *tb, FILE *stream);
 extern FILE *scols_table_get_stream(struct libscols_table *tb);
 extern int scols_table_reduce_termwidth(struct libscols_table *tb, size_t reduce);
+
+extern int scols_sort_table(struct libscols_table *tb, struct libscols_column *cl);
 
 /* table_print.c */
 extern int scols_print_table(struct libscols_table *tb);

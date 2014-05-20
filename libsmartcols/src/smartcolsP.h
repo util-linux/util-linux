@@ -63,6 +63,7 @@ struct libscols_symbols {
 struct libscols_cell {
 	char	*data;
 	char	*color;
+	void    *userdata;
 };
 
 
@@ -82,6 +83,11 @@ struct libscols_column {
 	int	flags;
 	int	is_extreme;
 	char	*color;		/* default column color */
+
+	int (*cmpfunc)(struct libscols_cell *,
+		       struct libscols_cell *,
+		       void *);			/* cells comparison function */
+	void *cmpfunc_data;
 
 	struct libscols_cell	header;
 	struct list_head	cl_columns;

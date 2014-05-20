@@ -355,6 +355,25 @@ struct libscols_cell *scols_line_get_cell(struct libscols_line *ln,
 }
 
 /**
+ * scols_line_get_column_cell:
+ * @ln: a pointer to a struct libscols_line instance
+ * @cl: pointer to cell
+ *
+ * Like scols_line_get_cell() by cell is referenced by column.
+ *
+ * Returns: the @n-th cell in @ln, NULL in case of an error.
+ */
+struct libscols_cell *scols_line_get_column_cell(
+			struct libscols_line *ln,
+			struct libscols_column *cl)
+{
+	assert(ln);
+	assert(cl);
+
+	return scols_line_get_cell(ln, cl->seqnum);
+}
+
+/**
  * scols_line_set_data:
  * @ln: a pointer to a struct libscols_cell instance
  * @n: number of the cell, whose data is to be set

@@ -977,3 +977,42 @@ char *scols_table_get_line_separator(struct libscols_table *tb)
 	return tb->linesep;
 
 }
+
+static int cells_cmp_wrapper(struct list_head *a, struct list_head *b, void *data)
+{
+	struct libscols_column *cl = (struct libscols_column *) data;
+	struct libscols_line *ra, *rb;
+	struct libscols_cell *ca, *cb;
+
+	assert(a);
+	assert(b);
+	assert(cl);
+
+	ra = list_entry(a, struct libscols_line, ln_lines);
+	rb = list_entry(b, struct libscols_line, ln_lines);
+	ca = scols_line_get_cell(ra, cl->seqnum);
+	cb = scols_line_get_cell(rb, cl->seqnum);
+
+	return cl->cmpfunc(ca, cb, cl->cmpfunc_data);
+}
+
+/**
+ * scols_sort_table:
+ * @tb: table
+ * @cl: order by this column
+ *
+ * Orders the table by the column. See also scols_column_set_cmpfunc().
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_sort_table(struct libscols_table *tb, struct libscols_column *cl)
+{
+	assert(tb);
+	assert(cl);
+
+	if (!tb || !cl)
+		return -EINVAL;
+
+	list_sort(&tb->tb_lines, cells_cmp_wrapper, cl);
+	return 0;
+}

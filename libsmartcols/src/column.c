@@ -238,6 +238,30 @@ const char *scols_column_get_color(struct libscols_column *cl)
 	return cl ? cl->color : NULL;
 }
 
+
+/**
+ * scols_column_set_cmpfunc:
+ * @cl: column
+ * @cmp: pointer to compare function
+ * @data: private data for cmp function
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_column_set_cmpfunc(struct libscols_column *cl,
+			int (*cmp)(struct libscols_cell *,
+				   struct libscols_cell *,
+				   void *),
+			void *data)
+{
+	assert(cl);
+	if (!cl)
+		return -EINVAL;
+
+	cl->cmpfunc = cmp;
+	cl->cmpfunc_data = data;
+	return 0;
+}
+
 /**
  * scols_column_is_trunc:
  * @cl: a pointer to a struct libscols_column instance

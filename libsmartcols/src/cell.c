@@ -55,7 +55,7 @@ int scols_reset_cell(struct libscols_cell *ce)
 /**
  * scols_cell_set_data:
  * @ce: a pointer to a struct libscols_cell instance
- * @str: user data
+ * @str: data (used for scols_printtable())
  *
  * Stores a copy of the @str in @ce.
  *
@@ -82,7 +82,7 @@ int scols_cell_set_data(struct libscols_cell *ce, const char *str)
 /**
  * scols_cell_refer_data:
  * @ce: a pointer to a struct libscols_cell instance
- * @str: user data
+ * @str: data (used for scols_printtable())
  *
  * Adds a reference to @str to @ce. The pointer is deallocated by
  * scols_reset_cell() or scols_unref_line(). This function is mostly designed
@@ -112,6 +112,66 @@ const char *scols_cell_get_data(const struct libscols_cell *ce)
 {
 	assert(ce);
 	return ce ? ce->data : NULL;
+}
+
+/**
+ * scols_cell_set_userdata:
+ * @ce: a pointer to a struct libscols_cell instance
+ * @data: private user data
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_cell_set_userdata(struct libscols_cell *ce, void *data)
+{
+	assert(ce);
+
+	if (!ce)
+		return -EINVAL;
+	ce->userdata = data;
+	return 0;
+}
+
+/**
+ * scols_cell_get_userdata
+ *
+ * @ce: a pointer to a struct libscols_cell instance
+ *
+ * Returns: user data
+ */
+void *scols_cell_get_userdata(struct libscols_cell *ce)
+{
+	return ce ? ce->userdata : NULL;
+}
+
+/**
+ * scols_cmpstr_cells:
+ * @a: pointer to cell
+ * @b: pointer to cell
+ *
+ * Compares cells data by strcmp(). The function is designed for
+ * scols_column_set_cmpfunc() and scols_sort_table().
+ *
+ * Returns: follows strcmp() return values.
+ */
+int scols_cmpstr_cells(struct libscols_cell *a,
+		       struct libscols_cell *b,
+		       __attribute__((__unused__)) void *data)
+{
+	const char *adata, *bdata;
+
+	if (a == b)
+		return 0;
+
+	adata = scols_cell_get_data(a);
+	bdata = scols_cell_get_data(b);
+
+	if (adata == NULL && bdata == NULL)
+		return 0;
+	if (adata == NULL)
+		return -1;
+	if (bdata == NULL)
+		return 1;
+	return strcmp(adata, bdata);
 }
 
 /**
@@ -179,5 +239,7 @@ int scols_cell_copy_content(struct libscols_cell *dest,
 	rc = scols_cell_set_data(dest, scols_cell_get_data(src));
 	if (!rc)
 		rc = scols_cell_set_color(dest, scols_cell_get_color(src));
+	if (!rc)
+		dest->userdata = src->userdata;
 	return rc;
 }
