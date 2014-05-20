@@ -15,6 +15,8 @@ enum {
 	HYPER_HITACHI,
 	HYPER_PARALLELS,	/* OpenVZ/VIrtuozzo */
 	HYPER_VBOX,
+	HYPER_OS400,
+	HYPER_PHYP,
 };
 
 extern int read_hypervisor_dmi(void);

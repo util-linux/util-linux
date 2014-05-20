@@ -19,6 +19,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <assert.h>
 #include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
@@ -60,6 +61,7 @@
 #define _PATH_PROC_STATUS	"/proc/self/status"
 #define _PATH_PROC_VZ	"/proc/vz"
 #define _PATH_PROC_BC	"/proc/bc"
+#define _PATH_PROC_DEVICETREE	"/proc/device-tree"
 #define _PATH_DEV_MEM 		"/dev/mem"
 
 /* virtualization types */
@@ -89,6 +91,8 @@ const char *hv_vendors[] = {
 	[HYPER_HITACHI]	= "Hitachi",
 	[HYPER_PARALLELS] = "Parallels",
 	[HYPER_VBOX]	= "Oracle",
+	[HYPER_OS400]	= "OS/400",
+	[HYPER_PHYP]	= "pHyp",
 };
 
 const int hv_vendor_pci[] = {
@@ -577,6 +581,61 @@ read_hypervisor_cpuid(struct lscpu_desc *desc __attribute__((__unused__)))
 }
 #endif
 
+static int
+read_hypervisor_powerpc(struct lscpu_desc *desc)
+{
+	assert(!desc->hyper);
+
+	/* powerpc:
+	 * IBM iSeries: legacy, if /proc/iSeries exists, its para-virtualized on top of OS/400
+	 * IBM pSeries: always has a hypervisor
+	 *              if partition-name is "full", its kind of "bare-metal": full-system-partition
+	 *              otherwise its some partition created by Hardware Management Console
+	 *              in any case, its always some sort of HVM
+	 *              Note that pSeries could also be emulated by qemu/KVM.
+	 * KVM: "linux,kvm" in /hypervisor/compatible indicates a KVM guest
+	 * Xen: not in use, not detected
+	 */
+	if (path_exist("/proc/iSeries")) {
+		desc->hyper = HYPER_OS400;
+		desc->virtype = VIRT_PARA;
+	} else if (path_exist(_PATH_PROC_DEVICETREE "/ibm,partition-name")
+		   && path_exist(_PATH_PROC_DEVICETREE "/hmc-managed?")
+		   && !path_exist(_PATH_PROC_DEVICETREE "/chosen/qemu,graphic-width")) {
+		FILE *fd;
+		desc->hyper = HYPER_PHYP;
+		desc->virtype = VIRT_PARA;
+		fd = path_fopen("r", 0, _PATH_PROC_DEVICETREE "/ibm,partition-name");
+		if (fd) {
+			char buf[256];
+			if (fscanf(fd, "%s", buf) == 1 && !strcmp(buf, "full"))
+				desc->virtype = VIRT_NONE;
+			fclose(fd);
+		}
+	} else if (path_exist(_PATH_PROC_DEVICETREE "/hypervisor/compatible")) {
+		FILE *fd;
+		fd = path_fopen("r", 0, _PATH_PROC_DEVICETREE "/hypervisor/compatible");
+		if (fd) {
+			char buf[256];
+			size_t i, len;
+			memset(buf, 0, sizeof(buf));
+			len = fread(buf, 1, sizeof(buf) - 1, fd);
+			fclose(fd);
+			for (i = 0; i < len;) {
+				if (!strcmp(&buf[i], "linux,kvm")) {
+					desc->hyper = HYPER_KVM;
+					desc->virtype = VIRT_FULL;
+					break;
+				}
+				i += strlen(&buf[i]);
+				i++;
+			}
+		}
+	}
+
+	return desc->hyper;
+}
+
 static void
 read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 {
@@ -590,6 +649,8 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	if (desc->hyper)
 		desc->virtype = VIRT_FULL;
+
+	else if (read_hypervisor_powerpc(desc) > 0) {}
 
 	/* Xen para-virt or dom0 */
 	else if (path_exist(_PATH_PROC_XEN)) {
