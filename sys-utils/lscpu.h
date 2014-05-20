@@ -13,7 +13,8 @@ enum {
 	HYPER_UML,
 	HYPER_INNOTEK,		/* VBOX */
 	HYPER_HITACHI,
-	HYPER_PARALLELS		/* OpenVZ/VIrtuozzo */
+	HYPER_PARALLELS,	/* OpenVZ/VIrtuozzo */
+	HYPER_VBOX,
 };
 
 extern int read_hypervisor_dmi(void);
