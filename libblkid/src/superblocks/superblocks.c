@@ -146,6 +146,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&oracleasm_idinfo,
 	&vxfs_idinfo,
 	&squashfs_idinfo,
+	&squashfs3_idinfo,
 	&netware_idinfo,
 	&btrfs_idinfo,
 	&ubifs_idinfo,
