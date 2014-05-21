@@ -887,6 +887,23 @@ UL_BUILD_INIT([uuidgen], [check])
 UL_REQUIRES_BUILD([uuidgen], [libuuid])
 AM_CONDITIONAL([BUILD_UUIDGEN], [test "x$build_uuidgen" = xyes])
 
+UL_BUILD_INIT([blkid], [check])
+UL_REQUIRES_BUILD([blkid], [libblkid])
+AM_CONDITIONAL([BUILD_BLKID], [test "x$build_blkid" = xyes])
+
+UL_BUILD_INIT([findfs], [check])
+UL_REQUIRES_BUILD([findfs], [libblkid])
+AM_CONDITIONAL([BUILD_FINDFS], [test "x$build_findfs" = xyes])
+
+UL_BUILD_INIT([wipefs], [check])
+UL_REQUIRES_BUILD([wipefs], [libblkid])
+AM_CONDITIONAL([BUILD_WIPEFS], [test "x$build_wipefs" = xyes])
+
+UL_BUILD_INIT([findmnt], [check])
+UL_REQUIRES_BUILD([findmnt], [libmount])
+UL_REQUIRES_BUILD([findmnt], [libsmartcols])
+AM_CONDITIONAL([BUILD_FINDMNT], [test "x$build_findmnt" = xyes])
+
 
 AC_ARG_ENABLE([mountpoint],
   AS_HELP_STRING([--disable-mountpoint], [do not build mountpoint]),

@@ -104,24 +104,12 @@ PATHFILES += \
 	misc-utils/uuidd.service \
 	misc-utils/uuidd.socket
 
-if BUILD_LIBBLKID
+if BUILD_BLKID
 sbin_PROGRAMS += blkid
 dist_man_MANS += misc-utils/blkid.8
 blkid_SOURCES = misc-utils/blkid.c
 blkid_LDADD = $(LDADD) libblkid.la libcommon.la
 blkid_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
-
-sbin_PROGRAMS += findfs
-dist_man_MANS += misc-utils/findfs.8
-findfs_LDADD = $(LDADD) libblkid.la
-findfs_SOURCES = misc-utils/findfs.c
-findfs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
-
-sbin_PROGRAMS += wipefs
-dist_man_MANS += misc-utils/wipefs.8
-wipefs_SOURCES = misc-utils/wipefs.c
-wipefs_LDADD = $(LDADD) libblkid.la libcommon.la
-wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 
 if HAVE_STATIC_BLKID
 sbin_PROGRAMS += blkid.static
@@ -130,10 +118,26 @@ blkid_static_LDFLAGS = -all-static
 blkid_static_LDADD = $(LDADD) libblkid.la
 blkid_static_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 endif
-endif # BUILD_LIBBLKID
+endif # BUILD_BLKID
 
 
-if BUILD_LIBMOUNT
+if BUILD_FINDFS
+sbin_PROGRAMS += findfs
+dist_man_MANS += misc-utils/findfs.8
+findfs_LDADD = $(LDADD) libblkid.la
+findfs_SOURCES = misc-utils/findfs.c
+findfs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+endif
+
+if BUILD_WIPEFS
+sbin_PROGRAMS += wipefs
+dist_man_MANS += misc-utils/wipefs.8
+wipefs_SOURCES = misc-utils/wipefs.c
+wipefs_LDADD = $(LDADD) libblkid.la libcommon.la
+wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+endif
+
+if BUILD_FINDMNT
 bin_PROGRAMS += findmnt
 dist_man_MANS += misc-utils/findmnt.8
 findmnt_LDADD = $(LDADD) libmount.la libcommon.la libsmartcols.la
@@ -142,7 +146,7 @@ findmnt_SOURCES = misc-utils/findmnt.c
 if HAVE_UDEV
 findmnt_LDADD += -ludev
 endif
-endif # BUILD_LIBMOUNT
+endif # BUILD_FINDMNT
 
 
 if BUILD_KILL
