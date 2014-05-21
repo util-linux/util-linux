@@ -829,6 +829,10 @@ UL_REQUIRES_BUILD([fdisk], [libfdisk])
 AM_CONDITIONAL([BUILD_FDISK], [test "x$build_fdisk" = xyes])
 
 
+UL_BUILD_INIT([sfdisk], [yes])
+AM_CONDITIONAL([BUILD_SFDISK], [test "x$build_sfdisk" = xyes])
+
+
 AC_ARG_ENABLE([mount],
   AS_HELP_STRING([--disable-mount], [do not build mount(8) and umount(8)]),
   [], [enable_mount=check]
@@ -1029,6 +1033,12 @@ UL_REQUIRES_HAVE([hwclock], [io, linuxdummy], [ioperm iopl function or Linux])
 AM_CONDITIONAL([BUILD_HWCLOCK], [test "x$build_hwclock" = xyes])
 
 
+UL_BUILD_INIT([mkfs], [yes])
+AM_CONDITIONAL([BUILD_MKFS], [test "x$build_mkfs" = xyes])
+
+UL_BUILD_INIT([isosize], [yes])
+AM_CONDITIONAL([BUILD_ISOSIZE], [test "x$build_isosize" = xyes])
+
 
 UL_BUILD_INIT([fstrim], [check])
 UL_REQUIRES_LINUX([fstrim])
@@ -1080,6 +1090,15 @@ AM_CONDITIONAL([BUILD_WDCTL], [test "x$build_wdctl" = xyes])
 UL_BUILD_INIT([swaplabel], [check])
 UL_REQUIRES_BUILD([swaplabel], [libblkid])
 AM_CONDITIONAL([BUILD_SWAPLABEL], [test "x$build_swaplabel" = xyes])
+
+
+UL_BUILD_INIT([mkswap], [yes])
+AM_CONDITIONAL([BUILD_MKSWAP], [test "x$build_mkswap" = xyes])
+
+
+UL_BUILD_INIT([blockdev], [check])
+UL_REQUIRES_LINUX([blockdev])
+AM_CONDITIONAL([BUILD_BLOCKDEV], [test "x$build_blockdev" = xyes])
 
 
 UL_BUILD_INIT([prlimit], [check])

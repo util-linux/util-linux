@@ -15,14 +15,21 @@ mkfs_minix_SOURCES = \
 mkfs_minix_LDADD = $(LDADD) libcommon.la
 endif
 
+
+if BUILD_MKFS
 sbin_PROGRAMS += mkfs
 dist_man_MANS += disk-utils/mkfs.8
 mkfs_SOURCES = disk-utils/mkfs.c
+endif
 
+
+if BUILD_ISOSIZE
 usrbin_exec_PROGRAMS += isosize
 dist_man_MANS += disk-utils/isosize.8
 isosize_SOURCES = disk-utils/isosize.c
 isosize_LDADD = $(LDADD) libcommon.la
+endif
+
 
 if BUILD_BFS
 sbin_PROGRAMS += mkfs.bfs
@@ -32,6 +39,8 @@ mkfs_bfs_SOURCES = \
 mkfs_bfs_LDADD = $(LDADD) libcommon.la
 endif
 
+
+if BUILD_MKSWAP
 sbin_PROGRAMS += mkswap
 dist_man_MANS += disk-utils/mkswap.8
 mkswap_SOURCES = \
@@ -50,6 +59,7 @@ endif
 if HAVE_SELINUX
 mkswap_LDADD += -lselinux
 endif
+endif # BUILD_MKSWAP
 
 
 if BUILD_SWAPLABEL
@@ -102,7 +112,7 @@ dist_man_MANS += disk-utils/fdformat.8
 fdformat_SOURCES = disk-utils/fdformat.c
 endif
 
-if LINUX
+if BUILD_BLOCKDEV
 sbin_PROGRAMS += blockdev
 dist_man_MANS += disk-utils/blockdev.8
 blockdev_SOURCES = disk-utils/blockdev.c
@@ -141,7 +151,7 @@ endif
 endif # BUILD_FDISK
 
 
-if !ARCH_SPARC
+if BUILD_SFDISK
 sbin_PROGRAMS += sfdisk
 dist_man_MANS += disk-utils/sfdisk.8
 sfdisk_SOURCES = disk-utils/sfdisk.c
@@ -153,7 +163,7 @@ sfdisk_static_SOURCES = $(sfdisk_SOURCES)
 sfdisk_static_LDFLAGS = -all-static
 sfdisk_static_LDADD = $(sfdisk_LDADD)
 endif
-endif # ARCH_SPARC
+endif # BUILD_SFDISK
 
 
 if BUILD_CFDISK
