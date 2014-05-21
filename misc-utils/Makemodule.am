@@ -162,6 +162,7 @@ dist_man_MANS += misc-utils/rename.1
 rename_SOURCES = misc-utils/rename.c
 endif
 
+if BUILD_GETOPT
 usrbin_exec_PROGRAMS += getopt
 dist_man_MANS += misc-utils/getopt.1
 getopt_SOURCES = misc-utils/getopt.c
@@ -169,3 +170,4 @@ getoptexampledir = $(docdir)/getopt/
 dist_getoptexample_SCRIPTS = \
 	misc-utils/getopt-parse.bash \
 	misc-utils/getopt-parse.tcsh
+endif

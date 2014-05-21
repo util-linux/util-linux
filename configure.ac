@@ -1136,6 +1136,9 @@ AM_CONDITIONAL([BUILD_NAMEI], [test "x$build_namei" = xyes])
 UL_BUILD_INIT([whereis], [yes])
 AM_CONDITIONAL([BUILD_WHEREIS], [test "x$build_whereis" = xyes])
 
+UL_BUILD_INIT([getopt], [yes])
+AM_CONDITIONAL([BUILD_GETOPT], [test "x$build_getopt" = xyes])
+
 
 UL_BUILD_INIT([blockdev], [check])
 UL_REQUIRES_LINUX([blockdev])
