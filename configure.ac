@@ -1180,6 +1180,56 @@ UL_REQUIRES_SYSCALL_CHECK([pivot_root], [UL_CHECK_SYSCALL([pivot_root])])
 AM_CONDITIONAL([BUILD_PIVOT_ROOT], [test "x$build_pivot_root" = xyes])
 
 
+UL_BUILD_INIT([flock], [yes])
+AM_CONDITIONAL([BUILD_FLOCK], [test "x$build_flock" = xyes])
+
+UL_BUILD_INIT([ipcmk], [yes])
+AM_CONDITIONAL([BUILD_IPCMK], [test "x$build_ipcmk" = xyes])
+
+UL_BUILD_INIT([ipcrm], [yes])
+AM_CONDITIONAL([BUILD_IPCRM], [test "x$build_ipcrm" = xyes])
+
+UL_BUILD_INIT([ipcs], [yes])
+AM_CONDITIONAL([BUILD_IPCS], [test "x$build_ipcs" = xyes])
+
+UL_BUILD_INIT([renice], [yes])
+AM_CONDITIONAL([BUILD_RENICE], [test "x$build_renice" = xyes])
+
+UL_BUILD_INIT([setsid], [yes])
+AM_CONDITIONAL([BUILD_SETSID], [test "x$build_setsid" = xyes])
+
+UL_BUILD_INIT([readprofile], [check])
+UL_REQUIRES_LINUX([readprofile])
+AM_CONDITIONAL([BUILD_READPROFILE], [test "x$build_readprofile" = xyes])
+
+UL_BUILD_INIT([dmesg], [check])
+UL_REQUIRES_LINUX([dmesg])
+AM_CONDITIONAL([BUILD_DMESG], [test "x$build_dmesg" = xyes])
+
+UL_BUILD_INIT([ctrlaltdel], [check])
+UL_REQUIRES_LINUX([ctrlaltdel])
+AM_CONDITIONAL([BUILD_CTRLALTDEL], [test "x$build_ctrlaltdel" = xyes])
+
+UL_BUILD_INIT([fsfreeze], [check])
+UL_REQUIRES_LINUX([fsfreeze])
+AM_CONDITIONAL([BUILD_FSFREEZE], [test "x$build_fsfreeze" = xyes])
+
+UL_BUILD_INIT([blkdiscard], [check])
+UL_REQUIRES_LINUX([blkdiscard])
+AM_CONDITIONAL([BUILD_BLKDISCARD], [test "x$build_blkdiscard" = xyes])
+
+UL_BUILD_INIT([ldattach], [check])
+UL_REQUIRES_LINUX([ldattach])
+AM_CONDITIONAL([BUILD_LDATTACH], [test "x$build_ldattach" = xyes])
+
+UL_BUILD_INIT([rtcwake], [check])
+UL_REQUIRES_LINUX([rtcwake])
+AM_CONDITIONAL([BUILD_RTCWAKE], [test "x$build_rtcwake" = xyes])
+
+UL_BUILD_INIT([setarch], [check])
+UL_REQUIRES_LINUX([setarch])
+AM_CONDITIONAL([BUILD_SETARCH], [test "x$build_setarch" = xyes])
+
 AC_ARG_ENABLE([tunelp],
   AS_HELP_STRING([--enable-tunelp], [build tunelp]),
   [], [enable_tunelp=no]

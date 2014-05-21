@@ -1,38 +1,50 @@
-
+if BUILD_FLOCK
 usrbin_exec_PROGRAMS += flock
 dist_man_MANS += sys-utils/flock.1
 flock_SOURCES = sys-utils/flock.c
 flock_LDADD = $(LDADD) libcommon.la
+endif
 
+if BUILD_IPCMK
 usrbin_exec_PROGRAMS += ipcmk
 dist_man_MANS += sys-utils/ipcmk.1
 ipcmk_SOURCES = sys-utils/ipcmk.c
 ipcmk_LDADD = $(LDADD) libcommon.la
+endif
 
+if BUILD_IPCRM
 usrbin_exec_PROGRAMS += ipcrm
 dist_man_MANS += sys-utils/ipcrm.1
 ipcrm_SOURCES = sys-utils/ipcrm.c
 ipcrm_LDADD = $(LDADD) libcommon.la
+endif
 
+if BUILD_IPCS
 usrbin_exec_PROGRAMS += ipcs
 dist_man_MANS += sys-utils/ipcs.1
 ipcs_SOURCES =	sys-utils/ipcs.c \
 		sys-utils/ipcutils.c \
 		sys-utils/ipcutils.h
 ipcs_LDADD = $(LDADD) libcommon.la
+endif
 
-
+if BUILD_RENICE
 usrbin_exec_PROGRAMS += renice
 dist_man_MANS += sys-utils/renice.1
 renice_SOURCES = sys-utils/renice.c
+endif
 
+if BUILD_SETSID
 usrbin_exec_PROGRAMS += setsid
 dist_man_MANS += sys-utils/setsid.1
 setsid_SOURCES = sys-utils/setsid.c
+endif
 
+if BUILD_READPROFILE
 usrsbin_exec_PROGRAMS += readprofile
 dist_man_MANS += sys-utils/readprofile.8
 readprofile_SOURCES = sys-utils/readprofile.c
+endif
 
 if BUILD_TUNELP
 usrsbin_exec_PROGRAMS += tunelp
@@ -56,39 +68,47 @@ endif # BUILD_FSTRIM
 PATHFILES += sys-utils/fstrim.service
 EXTRA_DIST += sys-utils/fstrim.timer
 
-if LINUX
-#
-# Linux-only utils with no another dependencies. All another dependencies have
-# to be resolved in configure.ac end exported to makefiles by BUILD_*.
-#
+if BUILD_DMESG
 bin_PROGRAMS += dmesg
 dist_man_MANS += sys-utils/dmesg.1
 dmesg_SOURCES = sys-utils/dmesg.c lib/boottime.c
 dmesg_LDADD = $(LDADD) libcommon.la -lrt
+endif
 
+if BUILD_CTRLALTDEL
 sbin_PROGRAMS += ctrlaltdel
 dist_man_MANS += sys-utils/ctrlaltdel.8
 ctrlaltdel_SOURCES = sys-utils/ctrlaltdel.c
+endif
 
+if BUILD_FSFREEZE
 sbin_PROGRAMS += fsfreeze
 dist_man_MANS += sys-utils/fsfreeze.8
 fsfreeze_SOURCES = sys-utils/fsfreeze.c
+endif
 
+if BUILD_BLKDISCARD
 sbin_PROGRAMS += blkdiscard
 dist_man_MANS += sys-utils/blkdiscard.8
 blkdiscard_SOURCES = sys-utils/blkdiscard.c
 blkdiscard_LDADD = $(LDADD) libcommon.la
+endif
 
+if BUILD_LDATTACH
 usrsbin_exec_PROGRAMS += ldattach
 dist_man_MANS += sys-utils/ldattach.8
 ldattach_SOURCES = sys-utils/ldattach.c
 ldattach_LDADD = $(LDADD) libcommon.la
+endif
 
+if BUILD_RTCWAKE
 usrsbin_exec_PROGRAMS += rtcwake
 dist_man_MANS += sys-utils/rtcwake.8
 rtcwake_SOURCES = sys-utils/rtcwake.c
 rtcwake_LDADD = $(LDADD) libcommon.la
+endif
 
+if BUILD_SETARCH
 usrbin_exec_PROGRAMS += setarch
 dist_man_MANS += sys-utils/setarch.8
 setarch_SOURCES = sys-utils/setarch.c
@@ -140,7 +160,7 @@ uninstall-hook-setarch:
 INSTALL_EXEC_HOOKS += install-exec-hook-setarch
 UNINSTALL_HOOKS += uninstall-hook-setarch
 
-endif # LINUX
+endif # BUILD_SETARCH
 
 
 if BUILD_EJECT
