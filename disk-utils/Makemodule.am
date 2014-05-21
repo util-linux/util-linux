@@ -1,4 +1,5 @@
 
+if BUILD_MINIX
 sbin_PROGRAMS += fsck.minix
 dist_man_MANS += disk-utils/fsck.minix.8
 fsck_minix_SOURCES = \
@@ -12,6 +13,7 @@ mkfs_minix_SOURCES = \
 	disk-utils/minix_programs.h \
 	disk-utils/mkfs.minix.c
 mkfs_minix_LDADD = $(LDADD) libcommon.la
+endif
 
 sbin_PROGRAMS += mkfs
 dist_man_MANS += disk-utils/mkfs.8

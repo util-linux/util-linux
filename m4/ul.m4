@@ -296,7 +296,7 @@ AC_DEFUN([UL_REQUIRES_SYSCALL_CHECK], [
   fi
 ])
 
-dnl UL_INIT_BUILD(NAME, [ENABLE_STATE], [VARSUFFIX = $1])
+dnl UL_BUILD_INIT(NAME, [ENABLE_STATE], [VARSUFFIX = $1])
 dnl
 dnl Initializes $build_<name>  variable according to $enable_<name>. If
 dnl $enable_<name> is undefined then ENABLE_STATE is used and $enable_<name> is

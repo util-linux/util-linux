@@ -1001,6 +1001,14 @@ UL_BUILD_INIT([bfs])
 AM_CONDITIONAL([BUILD_BFS], [test "x$build_bfs" = xyes])
 
 
+AC_ARG_ENABLE([minix],
+  AS_HELP_STRING([--disable-minix], [do not build fsck.minix, mkfs.minix]),
+  [], [enable_minix=yes]
+)
+UL_BUILD_INIT([minix])
+AM_CONDITIONAL([BUILD_MINIX], [test "x$build_minix" = xyes])
+
+
 AC_ARG_ENABLE([fdformat],
   AS_HELP_STRING([--disable-fdformat], [do not build fdformat]),
   [], [enable_fdformat=check]
@@ -1019,6 +1027,7 @@ have_linuxdummy=$linux_os
 UL_BUILD_INIT([hwclock])
 UL_REQUIRES_HAVE([hwclock], [io, linuxdummy], [ioperm iopl function or Linux])
 AM_CONDITIONAL([BUILD_HWCLOCK], [test "x$build_hwclock" = xyes])
+
 
 
 UL_BUILD_INIT([fstrim], [check])
