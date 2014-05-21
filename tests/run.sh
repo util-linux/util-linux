@@ -146,6 +146,7 @@ fi
 count=0
 >| $top_builddir/tests/failures
 printf "%s\n" ${comps[*]} |
+	sort |
 	xargs -I '{}' -P $paraller_jobs -n 1 bash -c "'{}' \"$OPTS\" ||
 		echo 1 >> $top_builddir/tests/failures"
 declare -a fail_file
