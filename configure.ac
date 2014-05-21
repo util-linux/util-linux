@@ -1230,6 +1230,13 @@ UL_BUILD_INIT([setarch], [check])
 UL_REQUIRES_LINUX([setarch])
 AM_CONDITIONAL([BUILD_SETARCH], [test "x$build_setarch" = xyes])
 
+UL_BUILD_INIT([script], [yes])
+AM_CONDITIONAL([BUILD_SCRIPT], [test "x$build_script" = xyes])
+
+UL_BUILD_INIT([scriptreplay], [yes])
+AM_CONDITIONAL([BUILD_SCRIPTREPLAY], [test "x$build_scriptreplay" = xyes])
+
+
 AC_ARG_ENABLE([tunelp],
   AS_HELP_STRING([--enable-tunelp], [build tunelp]),
   [], [enable_tunelp=no]

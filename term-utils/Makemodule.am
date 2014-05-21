@@ -1,4 +1,4 @@
-
+if BUILD_SCRIPT
 usrbin_exec_PROGRAMS += script
 dist_man_MANS += term-utils/script.1
 script_SOURCES = term-utils/script.c
@@ -9,11 +9,13 @@ endif
 if HAVE_UTEMPTER
 script_LDADD += -lutempter
 endif
+endif # BUILD_SCRIPT
 
-
+if BUILD_SCRIPTREPLAY
 usrbin_exec_PROGRAMS += scriptreplay
 dist_man_MANS += term-utils/scriptreplay.1
 scriptreplay_SOURCES = term-utils/scriptreplay.c
+endif # BUILD_SCRIPTREPLAY
 
 
 if BUILD_AGETTY
