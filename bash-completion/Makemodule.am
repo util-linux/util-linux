@@ -141,9 +141,10 @@ endif
 # ...misc-utils
 
 # schedutils...
-if BUILD_SCHEDUTILS
+if BUILD_CHRT
 dist_bashcompletion_DATA += \
 	bash-completion/chrt
+endif
 if BUILD_IONICE
 dist_bashcompletion_DATA += \
 	bash-completion/ionice
@@ -152,7 +153,6 @@ if BUILD_TASKSET
 dist_bashcompletion_DATA += \
 	bash-completion/taskset
 endif
-endif # BUILD_SCHEDUTILS
 # ...schedutils
 
 # sys-utils...

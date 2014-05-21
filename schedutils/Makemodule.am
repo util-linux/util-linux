@@ -1,9 +1,9 @@
-if BUILD_SCHEDUTILS
-
+if BUILD_CHRT
 usrbin_exec_PROGRAMS += chrt
 dist_man_MANS += schedutils/chrt.1
 chrt_SOURCES = schedutils/chrt.c
 chrt_LDADD = $(LDADD) libcommon.la
+endif
 
 if BUILD_IONICE
 usrbin_exec_PROGRAMS += ionice
@@ -18,5 +18,3 @@ dist_man_MANS += schedutils/taskset.1
 taskset_SOURCES = schedutils/taskset.c
 taskset_LDADD = $(LDADD) libcommon.la
 endif
-
-endif # BUILD_SCHEDUTILS

@@ -1426,13 +1426,13 @@ UL_REQUIRES_LINUX([setterm])
 UL_REQUIRES_HAVE([setterm], [ncurses], [ncurses library])
 AM_CONDITIONAL([BUILD_SETTERM], [test "x$build_setterm" = xyes])
 
-
+# build_schedutils= is just configure-only variable to control
+# ionice, taskset and chrt
 AC_ARG_ENABLE([schedutils],
   AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, taskset]),
   [], [enable_schedutils=yes]
 )
 UL_BUILD_INIT([schedutils])
-AM_CONDITIONAL([BUILD_SCHEDUTILS], [test "x$build_schedutils" = xyes])
 
 UL_BUILD_INIT([ionice], [check])
 UL_REQUIRES_BUILD([ionice], [schedutils])
@@ -1469,6 +1469,10 @@ UL_REQUIRES_SYSCALL_CHECK([taskset],
 	[UL_CHECK_SYSCALL([sched_getaffinity])],
 	[sched_getaffinity])
 AM_CONDITIONAL([BUILD_TASKSET], [test "x$build_taskset" = xyes])
+
+UL_BUILD_INIT([chrt], [check])
+UL_REQUIRES_BUILD([chrt], [schedutils])
+AM_CONDITIONAL([BUILD_CHRT], [test "x$build_chrt" = xyes])
 
 
 AC_ARG_ENABLE([wall],
