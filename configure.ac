@@ -1236,6 +1236,27 @@ AM_CONDITIONAL([BUILD_SCRIPT], [test "x$build_script" = xyes])
 UL_BUILD_INIT([scriptreplay], [yes])
 AM_CONDITIONAL([BUILD_SCRIPTREPLAY], [test "x$build_scriptreplay" = xyes])
 
+UL_BUILD_INIT([col], [yes])
+AM_CONDITIONAL([BUILD_COL], [test "x$build_col" = xyes])
+
+UL_BUILD_INIT([colcrt], [yes])
+AM_CONDITIONAL([BUILD_COLCRT], [test "x$build_colcrt" = xyes])
+
+UL_BUILD_INIT([colrm], [yes])
+AM_CONDITIONAL([BUILD_COLRM], [test "x$build_colrm" = xyes])
+
+UL_BUILD_INIT([column], [yes])
+AM_CONDITIONAL([BUILD_COLUMN], [test "x$build_column" = xyes])
+
+UL_BUILD_INIT([hexdump], [yes])
+AM_CONDITIONAL([BUILD_HEXDUMP], [test "x$build_hexdump" = xyes])
+
+UL_BUILD_INIT([rev], [yes])
+AM_CONDITIONAL([BUILD_REV], [test "x$build_rev" = xyes])
+
+UL_BUILD_INIT([tailf], [yes])
+AM_CONDITIONAL([BUILD_TAILF], [test "x$build_tailf" = xyes])
+
 
 AC_ARG_ENABLE([tunelp],
   AS_HELP_STRING([--enable-tunelp], [build tunelp]),
