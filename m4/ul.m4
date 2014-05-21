@@ -154,6 +154,35 @@ AC_DEFUN([UL_REQUIRES_LINUX], [
   fi
 ])
 
+
+dnl UL_EXCLUDE_ARCH(NAME, ARCH, VARSUFFIX = $1])
+dnl
+dnl Modifies $build_<name>  variable according to $enable_<name> and $host. The
+dnl $enable_<name> could be "yes", "no" and "check". If build_<name> is "no" then
+dnl all checks are skiped.
+dnl
+dnl The default <name> for $build_ and $enable_ could be overwrited by option $3.
+dnl
+AC_DEFUN([UL_EXCLUDE_ARCH], [
+  m4_define([suffix], m4_default([$3],$1))
+  if test "x$[build_]suffix" != xno; then
+    AC_REQUIRE([AC_CANONICAL_HOST])
+    case $[enable_]suffix:"$host" in #(
+    no:*)
+      [build_]suffix=no ;;
+    yes:$2)
+      AC_MSG_ERROR([$1 selected for unsupported architecture]);;
+    yes:*)
+      [build_]suffix=yes ;;
+    check:$2)
+      AC_MSG_WARN([exclude for $host architecture; do not build $1])
+      [build_]suffix=no ;;
+    check:*)
+      [build_]suffix=yes ;;
+    esac
+  fi
+])
+
 dnl UL_REQUIRES_HAVE(NAME, HAVENAME, HAVEDESC [VARSUFFIX=$1])
 dnl
 dnl Modifies $build_<name> variable according to $enable_<name> and
