@@ -883,6 +883,11 @@ AS_IF([test "x$build_uuidd" = xyes], [
 AM_CONDITIONAL([BUILD_UUIDD], [test "x$build_uuidd" = xyes])
 
 
+UL_BUILD_INIT([uuidgen], [check])
+UL_REQUIRES_BUILD([uuidgen], [libuuid])
+AM_CONDITIONAL([BUILD_UUIDGEN], [test "x$build_uuidgen" = xyes])
+
+
 AC_ARG_ENABLE([mountpoint],
   AS_HELP_STRING([--disable-mountpoint], [do not build mountpoint]),
   [], [enable_mountpoint=check]
@@ -1095,6 +1100,24 @@ AM_CONDITIONAL([BUILD_SWAPLABEL], [test "x$build_swaplabel" = xyes])
 
 UL_BUILD_INIT([mkswap], [yes])
 AM_CONDITIONAL([BUILD_MKSWAP], [test "x$build_mkswap" = xyes])
+
+UL_BUILD_INIT([cal], [yes])
+AM_CONDITIONAL([BUILD_CAL], [test "x$build_cal" = xyes])
+
+UL_BUILD_INIT([logger], [yes])
+AM_CONDITIONAL([BUILD_LOGGER], [test "x$build_logger" = xyes])
+
+UL_BUILD_INIT([loop], [yes])
+AM_CONDITIONAL([BUILD_LOOK], [test "x$build_look" = xyes])
+
+UL_BUILD_INIT([mcookie], [yes])
+AM_CONDITIONAL([BUILD_MCOOKIE], [test "x$build_mcookie" = xyes])
+
+UL_BUILD_INIT([namei], [yes])
+AM_CONDITIONAL([BUILD_NAMEI], [test "x$build_namei" = xyes])
+
+UL_BUILD_INIT([whereis], [yes])
+AM_CONDITIONAL([BUILD_WHEREIS], [test "x$build_whereis" = xyes])
 
 
 UL_BUILD_INIT([blockdev], [check])

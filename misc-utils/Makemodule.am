@@ -1,4 +1,4 @@
-
+if BUILD_CAL
 usrbin_exec_PROGRAMS += cal
 dist_man_MANS += misc-utils/cal.1
 cal_SOURCES = \
@@ -15,8 +15,10 @@ cal_LDADD = $(LDADD) libcommon.la $(NCURSES_LIBS) $(TINFO_LIBS)
 if HAVE_TERMCAP
 cal_LDADD += -ltermcap
 endif
+endif # BUILD_CAL
 
 
+if BUILD_LOGGER
 usrbin_exec_PROGRAMS += logger
 dist_man_MANS += misc-utils/logger.1
 logger_SOURCES = misc-utils/logger.c lib/strutils.c
@@ -24,24 +26,34 @@ if HAVE_SYSTEMD
 logger_LDADD = $(SYSTEMD_LIBS) $(SYSTEMD_JOURNAL_LIBS)
 logger_CFLAGS = $(SYSTEMD_CFLAGS) $(SYSTEMD_JOURNAL_CFLAGS)
 endif
+endif # BUILD_LOGGER
 
+
+if BUILD_LOOK
 usrbin_exec_PROGRAMS += look
 dist_man_MANS += misc-utils/look.1
 look_SOURCES = misc-utils/look.c
+endif
 
+if BUILD_MCOOKIE
 usrbin_exec_PROGRAMS += mcookie
 dist_man_MANS += misc-utils/mcookie.1
 mcookie_SOURCES = misc-utils/mcookie.c lib/md5.c
 mcookie_LDADD = $(LDADD) libcommon.la
+endif
 
+if BUILD_NAMEI
 usrbin_exec_PROGRAMS += namei
 dist_man_MANS += misc-utils/namei.1
 namei_SOURCES = misc-utils/namei.c lib/strutils.c
+endif
 
+if BUILD_WHEREIS
 usrbin_exec_PROGRAMS += whereis
 dist_man_MANS += misc-utils/whereis.1
 whereis_SOURCES = misc-utils/whereis.c
 whereis_LDADD = $(LDADD) libcommon.la
+endif
 
 if BUILD_LSLOCKS
 usrbin_exec_PROGRAMS += lslocks
@@ -60,9 +72,9 @@ lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libmount_incdir) -I$(
 if HAVE_UDEV
 lsblk_LDADD += -ludev
 endif
-endif
+endif # BUILD_LSBLK
 
-if BUILD_LIBUUID
+if BUILD_UUIDGEN
 usrbin_exec_PROGRAMS += uuidgen
 dist_man_MANS += misc-utils/uuidgen.1
 uuidgen_SOURCES = misc-utils/uuidgen.c
