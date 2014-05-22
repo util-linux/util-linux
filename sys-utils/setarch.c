@@ -356,6 +356,9 @@ int main(int argc, char *argv[])
   if (set_arch(p, options, 0))
     err(EXIT_FAILURE, _("Failed to set personality to %s"), p);
 
+  /* flush all output streams before exec */
+  fflush(NULL);
+
   if (!argc) {
     execl("/bin/sh", "-sh", NULL);
     err(EXIT_FAILURE, _("failed to execute %s"), "/bin/sh");
