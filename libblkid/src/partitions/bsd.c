@@ -158,7 +158,7 @@ nothing:
  * alpha luna88k mac68k    |      0      |     64
  * sparc(OpenBSD) vax      |             |
  * ------------------------+-------------+------------
- * spark64 sparc(NetBSD)   |      0      |    128
+ * sparc64 sparc(NetBSD)   |      0      |    128
  * ------------------------+-------------+------------
  *
  * ...and more (see http://fxr.watson.org/fxr/ident?v=NETBSD;i=LABELSECTOR)
