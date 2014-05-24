@@ -37,6 +37,7 @@ extern int optind;
 #include "c.h"
 #include "closestream.h"
 #include "strutils.h"
+#include "optutils.h"
 
 #ifdef HAVE_LIBSYSTEMD
 # include <systemd/sd-daemon.h>
@@ -510,6 +511,13 @@ int main(int argc, char **argv)
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
 	};
+	static const ul_excl_t excl[] = {
+		{ 'P', 'p' },
+		{ 'd', 'q' },
+		{ 'r', 't' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -519,6 +527,7 @@ int main(int argc, char **argv)
 	while ((c =
 		getopt_long(argc, argv, "p:s:T:krtn:PFSdqVh", longopts,
 			    NULL)) != -1) {
+		err_exclusive_options(c, longopts, excl, excl_st);
 		switch (c) {
 		case 'd':
 			uuidd_cxt.debug = 1;
@@ -575,9 +584,6 @@ int main(int argc, char **argv)
 			usage(stderr);
 		}
 	}
-
-	if (no_pid && pidfile_path_param && !uuidd_cxt.quiet)
-		warnx(_("Both --pid and --no-pid specified. Ignoring --no-pid."));
 
 	if (!no_pid && !pidfile_path_param)
 		pidfile_path = UUIDD_PIDFILE_PATH;
