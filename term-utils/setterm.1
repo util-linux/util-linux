@@ -8,7 +8,7 @@
 .\" Undocumented: -snow, -softscroll, -standout; these are
 .\" commented out in the source
 .\"
-.TH SETTERM 1 "January 2000" "util-linux" "User Commands"
+.TH SETTERM 1 "May 2014" "util-linux" "User Commands"
 .SH NAME
 setterm \- set terminal attributes
 .SH SYNOPSIS
@@ -196,6 +196,16 @@ Display version information and exit.
 .TP
 .BR \-\-help
 Display help text and exit.
+.SH COMPATIBILITY
+Since version 2.25 the
+.B setterm
+has support for long options with two hyphens, for example
+.BR \-\-help ,
+beside the historical long options with a single hyphen, for example
+.BR \-help .
+In scripts it is better to use the backward compatible single hyphen
+rather than the double hyphen.  Currently there are no plans or good
+reasons to discontinue single hyphen compatibility.
 .SH "SEE ALSO"
 .BR tput (1),
 .BR stty (1),
