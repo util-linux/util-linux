@@ -59,7 +59,7 @@ extern int optind;
 
 /* server loop control structure */
 struct uuidd_cxt_t {
-	int	timeout;
+	uint32_t	timeout;
 	unsigned int	debug: 1,
 			quiet: 1,
 			no_fork: 1,
@@ -366,7 +366,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 
 	while (1) {
 		fromlen = sizeof(from_addr);
-		if (uuidd_cxt->timeout > 0)
+		if (uuidd_cxt->timeout != 0)
 			alarm(uuidd_cxt->timeout);
 		ns = accept(s, (struct sockaddr *) &from_addr, &fromlen);
 		alarm(0);
