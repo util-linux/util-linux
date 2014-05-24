@@ -338,10 +338,12 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 
 		if (pidfile_path) {
 			sprintf(reply_buf, "%8d\n", getpid());
-			ignore_result( ftruncate(fd_pidfile, 0) );
+			if (ftruncate(fd_pidfile, 0))
+				err(EXIT_FAILURE, _("could not truncate file: %s"), pidfile_path);
 			write_all(fd_pidfile, reply_buf, strlen(reply_buf));
 			if (fd_pidfile > 1)
-				close(fd_pidfile); /* Unlock the pid file */
+				if (close_fd(fd_pidfile) != 0) /* Unlock the pid file */
+					err(EXIT_FAILURE, _("write failed: %s"), pidfile_path);
 		}
 
 	}
