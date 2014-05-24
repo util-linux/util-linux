@@ -52,6 +52,9 @@ cause problems for vi users.
 Like \fB\-\-dump\fP, but appends to the snapshot file instead of overwriting
 it.  Only works if no \fB\-\-dump\fP options are given.
 .TP
+\fB\-\-foreground\fP \fI8-color\fP|\fBdefault\fP (virtual consoles only)
+Sets the foreground text color.
+.TP
 \fB\-\-background\fP \fI8-color\fP|\fBdefault\fP (virtual consoles only)
 Sets the background text color.
 .TP
@@ -106,15 +109,24 @@ specified in the \fB\-\-file\fP option, overwriting its contents; the default
 is screen.dump.  Without an argument, dumps the current virtual console.
 Overrides \fB\-\-append\fP.
 .TP
-.BR \-\-append " [\fI1-NR_CONS\fP]"
-Like \fB\-\-dump\fP, but appends to the snapshot file instead of overwriting
-it.  Only works if no \fB\-\-dump\fP options are given.
-.TP
 .BI \-\-file " dumpfilename"
 Sets the snapshot file name for any \fB\-\-dump\fP or \fB\-\-append\fP options
 on the same command line.  If this option is not present, the default is
 screen.dump in the current directory.  A path name that exceeds system
 maximum will be truncated, see PATH_MAX from linux/limits.h for the value.
+.TP
+\fB\-\-hbcolor\fP \fI16-color\fP (virtual consoles only)
+Sets the color for bold characters.
+.TP
+.B \-\-initialize
+Displays the terminal initialization string, which typically sets the
+terminal's rendering options, and other attributes to the default values.
+.TP
+.BR \-\-inversescreen " [" on | off "]"
+Swap foreground and background colors for the whole screen.
+.TP
+.BR \-\-linewrap " [" on | off "]"
+Continue on a new line when a line is full.
 .TP
 .BR \-\-msg " [" on | off "] (virtual consoles only)"
 Enables or disables the sending of kernel \fBprintk()\fP messages to the
