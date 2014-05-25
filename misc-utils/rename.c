@@ -46,9 +46,14 @@ static int do_rename(char *from, char *to, char *s, int verbose, int symtarget)
 
 		target[sb.st_size] = '\0';
 		where = strstr(target, from);
-	} else
-		where = strstr(s, from);
+	} else {
+		char *file;
 
+		file = rindex(s, '/');
+		if (file == NULL)
+			file = s;
+		where = strstr(file, from);
+	}
 	if (where == NULL) {
 		free(target);
 		return 0;
