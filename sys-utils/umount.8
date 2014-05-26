@@ -70,7 +70,9 @@ filesystem is not unmounted.)
 Unmount all mountpoints in the current namespace for the specified filesystem.
 The filesystem could be specified by one of the mountpoints or device name (or
 UUID, etc.). This option could be used together with \fB\-\-recursive\fR then
-all nested mounts within the filesystem are recursively unmounted.
+all nested mounts within the filesystem are recursively unmounted. The 
+\fB\-\-all-targets\fR is only supported on systems where /etc/mtab is a symlink
+to /proc/mounts.
 .TP
 \fB\-c\fR, \fB\-\-no\-canonicalize\fR
 Do not canonicalize paths.  For more details about this option see the

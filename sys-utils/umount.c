@@ -435,7 +435,9 @@ static int umount_alltargets(struct libmnt_context *cxt, const char *spec, int r
 		return mk_exit_code(cxt, rc);		/* error */
 
 	if (!mnt_fs_get_srcpath(fs) || !mnt_fs_get_devno(fs))
-		err(MOUNT_EX_USAGE, _("%s: failed to determine source"), spec);
+		errx(MOUNT_EX_USAGE, _("%s: failed to determine source "
+				"(--all-targets is unsupported on systems with "
+				"regular mtab file)."), spec);
 
 	itr = mnt_new_iter(MNT_ITER_BACKWARD);
 	if (!itr)
