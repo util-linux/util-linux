@@ -830,7 +830,7 @@ AM_CONDITIONAL([BUILD_FDISK], [test "x$build_fdisk" = xyes])
 
 
 UL_BUILD_INIT([sfdisk], [check])
-UL_EXCLUDE_ARCH([sfdisk], [spark*])
+UL_EXCLUDE_ARCH([sfdisk], [sparc*])
 AM_CONDITIONAL([BUILD_SFDISK], [test "x$build_sfdisk" = xyes])
 
 
@@ -1124,7 +1124,7 @@ AM_CONDITIONAL([BUILD_CAL], [test "x$build_cal" = xyes])
 UL_BUILD_INIT([logger], [yes])
 AM_CONDITIONAL([BUILD_LOGGER], [test "x$build_logger" = xyes])
 
-UL_BUILD_INIT([loop], [yes])
+UL_BUILD_INIT([look], [yes])
 AM_CONDITIONAL([BUILD_LOOK], [test "x$build_look" = xyes])
 
 UL_BUILD_INIT([mcookie], [yes])
