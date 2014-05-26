@@ -146,6 +146,7 @@ set_arch(const char *pers, unsigned long options, int list)
     int perval;
     const char *target_arch, *result_arch;
   } transitions[] = {
+    {UNAME26, "uname26", NULL},
     {PER_LINUX32, "linux32", NULL},
     {PER_LINUX, "linux64", NULL},
 #if defined(__powerpc__) || defined(__powerpc64__)
@@ -355,6 +356,9 @@ int main(int argc, char *argv[])
 
   if (set_arch(p, options, 0))
     err(EXIT_FAILURE, _("Failed to set personality to %s"), p);
+
+  /* flush all output streams before exec */
+  fflush(NULL);
 
   if (!argc) {
     execl("/bin/sh", "-sh", NULL);

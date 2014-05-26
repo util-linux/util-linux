@@ -113,7 +113,7 @@ usrbin_exec_PROGRAMS += setarch
 dist_man_MANS += sys-utils/setarch.8
 setarch_SOURCES = sys-utils/setarch.c
 
-SETARCH_LINKS = linux32 linux64
+SETARCH_LINKS = uname26 linux32 linux64
 
 if ARCH_S390
 SETARCH_LINKS += s390 s390x
