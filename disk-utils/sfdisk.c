@@ -1383,7 +1383,7 @@ extended_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z)
 		      "from %lld to %lld\n"
 		      "(For listing purposes only. "
 		      "Do not change its contents.)"), ep->start, start);
-	} else {
+	} else if (!Linux) {
 	    warnx(_("Warning: extended partition does not start at a "
 		      "cylinder boundary.\n"
 		      "DOS and Linux will interpret the contents differently."));
