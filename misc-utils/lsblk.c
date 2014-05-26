@@ -1560,7 +1560,6 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	lsblk = &_ls;
-	memset(lsblk, 0, sizeof(*lsblk));
 
 	while((c = getopt_long(argc, argv,
 			       "abdDe:fhlnmo:OpPiI:rstVSx:", longopts, NULL)) != -1) {
