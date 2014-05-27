@@ -415,6 +415,20 @@ m4_foreach([UL_PRG], m4_defn([UL_STATIC_PROGRAMS]), [
     [test "x$static_[]UL_PRG" = xyes])
 ])
 
+
+AC_ARG_ENABLE([all-programs],
+  AS_HELP_STRING([--disable-all-programs], [disable everything, might be overridden by --enable-<name>]),
+  [], [enable_all_programs=undefined]
+)
+
+AS_CASE([$enable_all_programs],
+  [yes], [ul_default_estate=check],
+  [no],  [AC_MSG_WARN([disable all programs by default])
+          ul_default_estate=no],
+  [*],   [ul_default_estate=""]
+)
+
+
 AX_CHECK_TLS
 
 AC_DEFUN([UL_SCANF_TYPE_MODIFIER], [dnl
@@ -688,7 +702,6 @@ AS_IF([test "x$with_slang" = xyes], [
 ])
 AM_CONDITIONAL([HAVE_SLANG], [test "x$have_slang" = xyes])
 
-AM_CONDITIONAL([BUILD_CFDISK], [test "x$have_slang" = xyes -o "x$have_ncurses" = xyes])
 
 AS_IF([test "x$have_slang" = xyes -o "x$have_ncurses" = xyes], [
 	AC_CHECK_LIB([$CURSES_LIB_NAME], use_default_colors, [
@@ -726,30 +739,13 @@ AS_IF([test "x$with_utempter" = xyes], [
 ])
 
 
-AC_ARG_ENABLE([most-builds],
-  AS_HELP_STRING([--enable-most-builds], [build everything other than experimental code]),
-  [], [enable_most_builds=no]
-)
-AS_IF([test "x$enable_most_builds" = xyes], [
-  enable_chfn_chsh=yes
-  enable_line=yes
-  enable_mesg=yes
-  enable_newgrp=yes
-  enable_reset=yes
-  enable_socket_activation=yes
-  enable_journald=yes
-  enable_tunelp=yes
-  enable_vipw=yes
-  enable_write=yes
-  with_python=yes
-])
 
 dnl
 dnl libuuid
 dnl
 AC_ARG_ENABLE([libuuid],
   AS_HELP_STRING([--disable-libuuid], [do not build libuuid and uuid utilities]),
-  [], [enable_libuuid=yes]
+  [], [UL_DEFAULT_ENABLE([libuuid], [yes])]
 )
 UL_BUILD_INIT([libuuid])
 AC_SUBST([LIBUUID_VERSION])
@@ -758,8 +754,6 @@ AM_CONDITIONAL(BUILD_LIBUUID, test "x$build_libuuid" = xyes)
 
 AS_IF([test "x$enable_libuuid" = xyes], [
   AC_DEFINE(HAVE_LIBUUID, 1, [Define to 1 if you have the -luuid.])
-], [
-  AC_MSG_WARN([uuid library is not found; mkswap(8) will not generate UUIDs])
 ])
 
 dnl
@@ -767,7 +761,7 @@ dnl libblkid
 dnl
 AC_ARG_ENABLE([libblkid],
   AS_HELP_STRING([--disable-libblkid], [do not build libblkid and many related utilities]),
-  [], [enable_libblkid=yes]
+  [], [UL_DEFAULT_ENABLE([libblkid], [yes])]
 )
 UL_BUILD_INIT([libblkid])
 AC_SUBST([LIBBLKID_DATE])
@@ -786,7 +780,7 @@ dnl libmount
 dnl
 AC_ARG_ENABLE([libmount],
   AS_HELP_STRING([--disable-libmount], [do not build libmount]),
-  [], [enable_libmount=check]
+  [], [UL_DEFAULT_ENABLE([libmount], [check])]
 )
 UL_BUILD_INIT([libmount])
 UL_REQUIRES_LINUX([libmount])
@@ -805,7 +799,7 @@ dnl libsmartcols
 dnl
 AC_ARG_ENABLE([libsmartcols],
   AS_HELP_STRING([--disable-libsmartcols], [do not build libsmartcols]),
-  [], [enable_libsmartcols=yes]
+  [], [UL_DEFAULT_ENABLE([libsmartcols], [yes])]
 )
 UL_BUILD_INIT([libsmartcols])
 AM_CONDITIONAL([BUILD_LIBSMARTCOLS], [test "x$build_libsmartcols" = xyes])
@@ -834,9 +828,16 @@ UL_EXCLUDE_ARCH([sfdisk], [sparc*])
 AM_CONDITIONAL([BUILD_SFDISK], [test "x$build_sfdisk" = xyes])
 
 
+UL_BUILD_INIT([cfdisk], [check])
+UL_REQUIRES_BUILD([cfdisk], [libfdisk])
+UL_REQUIRES_BUILD([cfdisk], [libsmartcols])
+UL_REQUIRES_HAVE([cfdisk], [ncurses,slang], [ncurses or slang library])
+AM_CONDITIONAL([BUILD_CFDISK], [test "x$build_cfdisk" = xyes])
+
+
 AC_ARG_ENABLE([mount],
   AS_HELP_STRING([--disable-mount], [do not build mount(8) and umount(8)]),
-  [], [enable_mount=check]
+  [], [UL_DEFAULT_ENABLE([mount], [check])]
 )
 UL_BUILD_INIT([mount])
 UL_REQUIRES_BUILD([mount], [libmount])
@@ -845,7 +846,7 @@ AM_CONDITIONAL([BUILD_MOUNT], [test "x$build_mount" = xyes])
 
 AC_ARG_ENABLE([losetup],
   AS_HELP_STRING([--disable-losetup], [do not build losetup]),
-  [], [enable_losetup=check]
+  [], [UL_DEFAULT_ENABLE([losetup], [check])]
 )
 UL_BUILD_INIT([losetup])
 UL_REQUIRES_LINUX([losetup])
@@ -854,7 +855,7 @@ AM_CONDITIONAL([BUILD_LOSETUP], [test "x$build_losetup" = xyes])
 
 AC_ARG_ENABLE([fsck],
   AS_HELP_STRING([--disable-fsck], [do not build fsck]),
-  [], [enable_fsck=check]
+  [], [UL_DEFAULT_ENABLE([fsck], [check])]
 )
 UL_BUILD_INIT([fsck])
 UL_REQUIRES_BUILD([fsck], [libmount])
@@ -863,17 +864,18 @@ AM_CONDITIONAL([BUILD_FSCK], [test "x$build_fsck" = xyes])
 
 AC_ARG_ENABLE([partx],
   AS_HELP_STRING([--disable-partx], [do not build addpart, delpart, partx]),
-  [], [enable_partx=check]
+  [], [UL_DEFAULT_ENABLE([partx], [check])]
 )
 UL_BUILD_INIT([partx])
 UL_REQUIRES_LINUX([partx])
 UL_REQUIRES_BUILD([partx], [libblkid])
+UL_REQUIRES_BUILD([partx], [libsmartcols])
 AM_CONDITIONAL([BUILD_PARTX], [test "x$build_partx" = xyes])
 
 
 AC_ARG_ENABLE([uuidd],
   AS_HELP_STRING([--disable-uuidd], [do not build the uuid daemon]),
-  [], [enable_uuidd=check]
+  [], [UL_DEFAULT_ENABLE([uuidd], [check])]
 )
 UL_BUILD_INIT([uuidd])
 UL_REQUIRES_BUILD([uuidd], [libuuid])
@@ -907,7 +909,7 @@ AM_CONDITIONAL([BUILD_FINDMNT], [test "x$build_findmnt" = xyes])
 
 AC_ARG_ENABLE([mountpoint],
   AS_HELP_STRING([--disable-mountpoint], [do not build mountpoint]),
-  [], [enable_mountpoint=check]
+  [], [UL_DEFAULT_ENABLE([mountpoint], [check])]
 )
 UL_BUILD_INIT([mountpoint])
 UL_REQUIRES_BUILD([mountpoint], [libmount])
@@ -916,7 +918,7 @@ AM_CONDITIONAL([BUILD_MOUNTPOINT], [test "x$build_mountpoint" = xyes])
 
 AC_ARG_ENABLE([fallocate],
   AS_HELP_STRING([--disable-fallocate], [do not build fallocate]),
-  [], [enable_fallocate=check]
+  [], [UL_DEFAULT_ENABLE([fallocate], [check])]
 )
 UL_BUILD_INIT([fallocate])
 UL_REQUIRES_LINUX([fallocate])
@@ -959,7 +961,7 @@ AS_IF([test "x$build_fallocate" = xyes], [
 
 AC_ARG_ENABLE([unshare],
   AS_HELP_STRING([--disable-unshare], [do not build unshare]),
-  [], [enable_unshare=check]
+  [], [UL_DEFAULT_ENABLE([unshare], [check])]
 )
 UL_BUILD_INIT([unshare])
 UL_REQUIRES_LINUX([unshare])
@@ -969,7 +971,7 @@ AC_CHECK_FUNCS([unshare])
 
 AC_ARG_ENABLE([nsenter],
   AS_HELP_STRING([--disable-nsenter], [do not build nsenter]),
-  [], [enable_nsenter=check]
+  [], [UL_DEFAULT_ENABLE([nsenter], [check])]
 )
 UL_BUILD_INIT([nsenter])
 UL_REQUIRES_LINUX([nsenter])
@@ -983,7 +985,7 @@ dnl but this isn't currently supported.
 UL_CHECK_LIB([cap-ng], [capng_apply], [cap_ng])
 AC_ARG_ENABLE([setpriv],
   AS_HELP_STRING([--disable-setpriv], [do not build setpriv]),
-  [], [enable_setpriv=check]
+  [], [UL_DEFAULT_ENABLE([setpriv], [check])]
 )
 UL_BUILD_INIT([setpriv])
 UL_REQUIRES_LINUX([setpriv])
@@ -994,7 +996,7 @@ AM_CONDITIONAL([BUILD_SETPRIV], [test "x$build_setpriv" = xyes])
 
 AC_ARG_ENABLE([eject],
   AS_HELP_STRING([--disable-eject], [do not build eject]),
-  [], [enable_eject=check]
+  [], [UL_DEFAULT_ENABLE([eject], [check])]
 )
 UL_BUILD_INIT([eject])
 UL_REQUIRES_LINUX([eject])
@@ -1004,7 +1006,7 @@ AM_CONDITIONAL([BUILD_EJECT], [test "x$build_eject" = xyes])
 
 AC_ARG_ENABLE([agetty],
   AS_HELP_STRING([--disable-agetty], [do not build agetty]),
-  [], [enable_agetty=yes]
+  [], [UL_DEFAULT_ENABLE([agetty], [yes])]
 )
 UL_BUILD_INIT([agetty])
 AM_CONDITIONAL([BUILD_AGETTY], [test "x$build_agetty" = xyes])
@@ -1012,7 +1014,7 @@ AM_CONDITIONAL([BUILD_AGETTY], [test "x$build_agetty" = xyes])
 
 AC_ARG_ENABLE([cramfs],
   AS_HELP_STRING([--disable-cramfs], [do not build fsck.cramfs, mkfs.cramfs]),
-  [], [enable_cramfs=check]
+  [], [UL_DEFAULT_ENABLE([cramfs], [check])]
 )
 UL_BUILD_INIT([cramfs])
 AC_CHECK_LIB([z], [crc32], [have_z=yes], [have_z=no])
@@ -1022,7 +1024,7 @@ AM_CONDITIONAL([BUILD_CRAMFS], [test "x$build_cramfs" = xyes])
 
 AC_ARG_ENABLE([bfs],
   AS_HELP_STRING([--disable-bfs], [do not build mkfs.bfs]),
-  [], [enable_bfs=yes]
+  [], [UL_DEFAULT_ENABLE([bfs], [yes])]
 )
 UL_BUILD_INIT([bfs])
 AM_CONDITIONAL([BUILD_BFS], [test "x$build_bfs" = xyes])
@@ -1030,7 +1032,7 @@ AM_CONDITIONAL([BUILD_BFS], [test "x$build_bfs" = xyes])
 
 AC_ARG_ENABLE([minix],
   AS_HELP_STRING([--disable-minix], [do not build fsck.minix, mkfs.minix]),
-  [], [enable_minix=yes]
+  [], [UL_DEFAULT_ENABLE([minix], [yes])]
 )
 UL_BUILD_INIT([minix])
 AM_CONDITIONAL([BUILD_MINIX], [test "x$build_minix" = xyes])
@@ -1038,7 +1040,7 @@ AM_CONDITIONAL([BUILD_MINIX], [test "x$build_minix" = xyes])
 
 AC_ARG_ENABLE([fdformat],
   AS_HELP_STRING([--disable-fdformat], [do not build fdformat]),
-  [], [enable_fdformat=check]
+  [], [UL_DEFAULT_ENABLE([fdformat], [check])]
 )
 UL_BUILD_INIT([fdformat])
 UL_REQUIRES_LINUX([fdformat])
@@ -1047,7 +1049,7 @@ AM_CONDITIONAL([BUILD_FDFORMAT], [test "x$build_fdformat" = xyes])
 
 AC_ARG_ENABLE([hwclock],
   AS_HELP_STRING([--disable-hwclock], [do not build hwclock]),
-  [], [enable_hwclock=check]
+  [], [UL_DEFAULT_ENABLE([hwclock], [check])]
 )
 have_linuxdummy=$linux_os
 
@@ -1102,7 +1104,7 @@ AM_CONDITIONAL([BUILD_CHCPU], [test "x$build_chcpu" = xyes])
 
 AC_ARG_ENABLE([wdctl],
   AS_HELP_STRING([--disable-wdctl], [do not build wdctl]),
-  [], [enable_wdctl=check]
+  [], [UL_DEFAULT_ENABLE([wdctl], [check])]
 )
 UL_BUILD_INIT([wdctl])
 UL_REQUIRES_LINUX([wdctl])
@@ -1117,6 +1119,9 @@ AM_CONDITIONAL([BUILD_SWAPLABEL], [test "x$build_swaplabel" = xyes])
 
 UL_BUILD_INIT([mkswap], [yes])
 AM_CONDITIONAL([BUILD_MKSWAP], [test "x$build_mkswap" = xyes])
+AS_IF([test "x$build_mkswap" = xyes -a "x$build_libuuid" != xyes], [
+  AC_MSG_WARN([uuid library is not found; mkswap(8) will not generate UUIDs])
+])
 
 UL_BUILD_INIT([cal], [yes])
 AM_CONDITIONAL([BUILD_CAL], [test "x$build_cal" = xyes])
@@ -1162,7 +1167,7 @@ AM_CONDITIONAL([BUILD_LSLOCKS], [test "x$build_lslocks" = xyes])
 
 AC_ARG_ENABLE([switch_root],
   AS_HELP_STRING([--disable-switch_root], [do not build switch_root]),
-  [], [enable_switch_root=check]
+  [], [UL_DEFAULT_ENABLE([switch_root], [check])]
 )
 UL_BUILD_INIT([switch_root])
 UL_REQUIRES_LINUX([switch_root])
@@ -1172,7 +1177,7 @@ AM_CONDITIONAL([BUILD_SWITCH_ROOT], [test "x$build_switch_root" = xyes])
 
 AC_ARG_ENABLE([pivot_root],
   AS_HELP_STRING([--disable-pivot_root], [do not build pivot_root]),
-  [], [enable_pivot_root=check]
+  [], [UL_DEFAULT_ENABLE([pivot_root], [check])]
 )
 UL_BUILD_INIT([pivot_root])
 UL_REQUIRES_LINUX([switch_root])
@@ -1260,7 +1265,7 @@ AM_CONDITIONAL([BUILD_TAILF], [test "x$build_tailf" = xyes])
 
 AC_ARG_ENABLE([tunelp],
   AS_HELP_STRING([--enable-tunelp], [build tunelp]),
-  [], [enable_tunelp=no]
+  [], [UL_DEFAULT_ENABLE([tunelp], [no])]
 )
 UL_BUILD_INIT([tunelp])
 UL_REQUIRES_LINUX([tunelp])
@@ -1269,7 +1274,7 @@ AM_CONDITIONAL([BUILD_TUNELP], [test "x$build_tunelp" = xyes])
 
 AC_ARG_ENABLE([kill],
   AS_HELP_STRING([--disable-kill], [do not build kill]),
-  [], [enable_kill=check]
+  [], [UL_DEFAULT_ENABLE([kill], [check])]
 )
 UL_BUILD_INIT([kill])
 UL_REQUIRES_LINUX([kill])
@@ -1278,7 +1283,7 @@ AM_CONDITIONAL([BUILD_KILL], [test "x$build_kill" = xyes])
 
 AC_ARG_ENABLE([deprecated-last],
   AS_HELP_STRING([--enable-deprecated-last], [build old deprecated last]),
-  [], [enable_deprecated_last=no]
+  [], [UL_DEFAULT_ENABLE([deprecated_last], [no])]
 )
 UL_BUILD_INIT([deprecated_last])
 AM_CONDITIONAL([BUILD_DEPRECATED_LAST], [test "x$build_deprecated_last" = xyes])
@@ -1286,7 +1291,7 @@ AM_CONDITIONAL([BUILD_DEPRECATED_LAST], [test "x$build_deprecated_last" = xyes])
 
 AC_ARG_ENABLE([last],
   AS_HELP_STRING([--disable-last], [do not build last]),
-  [], [enable_last=check]
+  [], [UL_DEFAULT_ENABLE([last], [check])]
 )
 UL_BUILD_INIT([last])
 UL_CONFLICTS_BUILD([last], [deprecated_last], [old deprecated last version])
@@ -1295,7 +1300,7 @@ AM_CONDITIONAL([BUILD_LAST], [test "x$build_last" = xyes])
 
 AC_ARG_ENABLE([utmpdump],
   AS_HELP_STRING([--disable-utmpdump], [do not build utmpdump]),
-  [], [enable_utmpdump=yes]
+  [], [UL_DEFAULT_ENABLE([utmpdump], [yes])]
 )
 UL_BUILD_INIT([utmpdump])
 AM_CONDITIONAL([BUILD_UTMPDUMP], [test "x$build_utmpdump" = xyes])
@@ -1303,7 +1308,7 @@ AM_CONDITIONAL([BUILD_UTMPDUMP], [test "x$build_utmpdump" = xyes])
 
 AC_ARG_ENABLE([line],
   AS_HELP_STRING([--enable-line], [build line]),
-  [], [enable_line=no]
+  [], [UL_DEFAULT_ENABLE([line], [no])]
 )
 UL_BUILD_INIT([line])
 AM_CONDITIONAL([BUILD_LINE], [test "x$build_line" = xyes])
@@ -1311,7 +1316,7 @@ AM_CONDITIONAL([BUILD_LINE], [test "x$build_line" = xyes])
 
 AC_ARG_ENABLE([mesg],
 	      AS_HELP_STRING([--disable-mesg], [do not build mesg]),
-  [], [enable_mesg=yes]
+  [], [UL_DEFAULT_ENABLE([mesg], [yes])]
 )
 UL_BUILD_INIT([mesg])
 AM_CONDITIONAL([BUILD_MESG], [test "x$build_mesg" = xyes])
@@ -1319,7 +1324,7 @@ AM_CONDITIONAL([BUILD_MESG], [test "x$build_mesg" = xyes])
 
 AC_ARG_ENABLE([raw],
 	      AS_HELP_STRING([--disable-raw], [do not build raw]),
-  [], [enable_raw=check]
+  [], [UL_DEFAULT_ENABLE([raw], [check])]
 )
 UL_BUILD_INIT([raw])
 UL_REQUIRES_LINUX([raw])
@@ -1329,7 +1334,7 @@ AM_CONDITIONAL([BUILD_RAW], [test "x$build_raw" = xyes])
 
 AC_ARG_ENABLE([rename],
   AS_HELP_STRING([--disable-rename], [do not build rename]),
-  [], [enable_rename=yes]
+  [], [UL_DEFAULT_ENABLE([rename], [yes])]
 )
 UL_BUILD_INIT([rename])
 AM_CONDITIONAL([BUILD_RENAME], [test "x$build_rename" = xyes])
@@ -1337,7 +1342,7 @@ AM_CONDITIONAL([BUILD_RENAME], [test "x$build_rename" = xyes])
 
 AC_ARG_ENABLE([reset],
   AS_HELP_STRING([--enable-reset], [build reset]),
-  [], [enable_reset=no]
+  [], [UL_DEFAULT_ENABLE([reset], [no])]
 )
 UL_BUILD_INIT([reset])
 AM_CONDITIONAL([BUILD_RESET], [test "x$build_reset" = xyes])
@@ -1345,7 +1350,7 @@ AM_CONDITIONAL([BUILD_RESET], [test "x$build_reset" = xyes])
 
 AC_ARG_ENABLE([vipw],
   AS_HELP_STRING([--enable-vipw], [build vipw]),
-  [], [enable_vipw=no]
+  [], [UL_DEFAULT_ENABLE([vipw], [no])]
 )
 UL_BUILD_INIT([vipw])
 AM_CONDITIONAL([BUILD_VIPW], [test "x$build_vipw" = xyes])
@@ -1353,7 +1358,7 @@ AM_CONDITIONAL([BUILD_VIPW], [test "x$build_vipw" = xyes])
 
 AC_ARG_ENABLE([newgrp],
   AS_HELP_STRING([--enable-newgrp], [build newgrp]),
-  [], [enable_newgrp=no]
+  [], [UL_DEFAULT_ENABLE([newgrp], [no])]
 )
 UL_BUILD_INIT([newgrp])
 AM_CONDITIONAL([BUILD_NEWGRP], [test "x$build_newgrp" = xyes])
@@ -1386,7 +1391,7 @@ AC_ARG_ENABLE([chfn-chsh-password],
 
 AC_ARG_ENABLE([chfn-chsh],
   AS_HELP_STRING([--enable-chfn-chsh], [build chfn and chsh]),
-  [], [enable_chfn_chsh=no]
+  [], [UL_DEFAULT_ENABLE([chfn_chsh], [no])]
 )
 UL_BUILD_INIT([chfn_chsh])
 
@@ -1409,7 +1414,7 @@ AS_IF([test "x$enable_chsh_only_listed" = xyes], [
 
 AC_ARG_ENABLE([login],
   AS_HELP_STRING([--disable-login], [do not build login]),
-  [], [enable_login=check]
+  [], [UL_DEFAULT_ENABLE([login], [check])]
 )
 UL_BUILD_INIT([login])
 UL_REQUIRES_HAVE([login], [security_pam_misc_h], [PAM header file])
@@ -1436,7 +1441,7 @@ AS_IF([test "x$enable_login_stat_mail" = xyes], [
 
 AC_ARG_ENABLE([nologin],
   AS_HELP_STRING([--disable-nologin], [do not build nologin]),
-  [], [enable_nologin=yes]
+  [], [UL_DEFAULT_ENABLE([nologin], [yes])]
 )
 UL_BUILD_INIT([nologin])
 AM_CONDITIONAL([BUILD_NOLOGIN], [test "x$build_nologin" = xyes])
@@ -1444,7 +1449,7 @@ AM_CONDITIONAL([BUILD_NOLOGIN], [test "x$build_nologin" = xyes])
 
 AC_ARG_ENABLE([sulogin],
   AS_HELP_STRING([--disable-sulogin], [do not build sulogin]),
-  [], [enable_sulogin=yes]
+  [], [UL_DEFAULT_ENABLE([sulogin], [yes])]
 )
 UL_BUILD_INIT([sulogin])
 AM_CONDITIONAL([BUILD_SULOGIN], [test "x$build_sulogin" = xyes])
@@ -1452,7 +1457,7 @@ AM_CONDITIONAL([BUILD_SULOGIN], [test "x$build_sulogin" = xyes])
 
 AC_ARG_ENABLE([su],
   AS_HELP_STRING([--disable-su], [do not build su]),
-  [], [enable_su=check]
+  [], [UL_DEFAULT_ENABLE([su], [check])]
 )
 UL_BUILD_INIT([su])
 UL_REQUIRES_HAVE([su], [security_pam_misc_h], [PAM header file])
@@ -1461,7 +1466,7 @@ AM_CONDITIONAL([BUILD_SU], [test "x$build_su" = xyes])
 
 AC_ARG_ENABLE([runuser],
   AS_HELP_STRING([--disable-runuser], [do not build runuser]),
-  [], [enable_runuser=check]
+  [], [UL_DEFAULT_ENABLE([runuser], [check])]
 )
 UL_BUILD_INIT([runuser])
 UL_REQUIRES_HAVE([runuser], [security_pam_misc_h], [PAM header file])
@@ -1470,7 +1475,7 @@ AM_CONDITIONAL([BUILD_RUNUSER], [test "x$build_runuser" = xyes])
 
 AC_ARG_ENABLE([ul],
   AS_HELP_STRING([--disable-ul], [do not build ul]),
-  [], [enable_ul=check]
+  [], [UL_DEFAULT_ENABLE([ul], [check])]
 )
 UL_BUILD_INIT([ul])
 UL_REQUIRES_HAVE([ul], [ncurses, tinfo], [ncurses or tinfo libraries])
@@ -1479,7 +1484,7 @@ AM_CONDITIONAL([BUILD_UL], [test "x$build_ul" = xyes])
 
 AC_ARG_ENABLE([more],
   AS_HELP_STRING([--disable-more], [do not build more]),
-  [], [enable_more=check]
+  [], [UL_DEFAULT_ENABLE([more], [check])]
 )
 UL_BUILD_INIT([more])
 UL_REQUIRES_HAVE([more], [ncurses, tinfo, termcap], [ncurses, tinfo or termcap libraries])
@@ -1488,7 +1493,7 @@ AM_CONDITIONAL([BUILD_MORE], [test "x$build_more" = xyes])
 
 AC_ARG_ENABLE([pg],
   AS_HELP_STRING([--disable-pg], [do not build pg]),
-  [], [enable_pg=check]
+  [], [UL_DEFAULT_ENABLE([pg], [check])]
 )
 UL_BUILD_INIT([pg])
 UL_REQUIRES_HAVE([pg], [ncurses], [ncurses or ncursesw library])
@@ -1497,7 +1502,7 @@ AM_CONDITIONAL([BUILD_PG], [test "x$build_pg" = xyes])
 
 AC_ARG_ENABLE([setterm],
   AS_HELP_STRING([--disable-setterm], [do not build setterm]),
-  [], [enable_setterm=check]
+  [], [UL_DEFAULT_ENABLE([setterm], [check])]
 )
 UL_BUILD_INIT([setterm])
 UL_REQUIRES_LINUX([setterm])
@@ -1508,7 +1513,7 @@ AM_CONDITIONAL([BUILD_SETTERM], [test "x$build_setterm" = xyes])
 # ionice, taskset and chrt
 AC_ARG_ENABLE([schedutils],
   AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, taskset]),
-  [], [enable_schedutils=yes]
+  [], [UL_DEFAULT_ENABLE([schedutils], [yes])]
 )
 UL_BUILD_INIT([schedutils])
 
@@ -1555,7 +1560,7 @@ AM_CONDITIONAL([BUILD_CHRT], [test "x$build_chrt" = xyes])
 
 AC_ARG_ENABLE([wall],
   AS_HELP_STRING([--disable-wall], [do not build wall]),
-  [], [enable_wall=yes]
+  [], [UL_DEFAULT_ENABLE([wall], [yes])]
 )
 UL_BUILD_INIT([wall])
 AM_CONDITIONAL([BUILD_WALL], [test "x$build_wall" = xyes])
@@ -1563,7 +1568,7 @@ AM_CONDITIONAL([BUILD_WALL], [test "x$build_wall" = xyes])
 
 AC_ARG_ENABLE([write],
   AS_HELP_STRING([--enable-write], [build write]),
-  [], [enable_write=no]
+  [], [UL_DEFAULT_ENABLE([write], [no])]
 )
 UL_BUILD_INIT([write])
 AM_CONDITIONAL([BUILD_WRITE], [test "x$build_write" = xyes])
