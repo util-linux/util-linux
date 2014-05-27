@@ -335,10 +335,35 @@ dnl The default <name> for $build_ and $enable_ could be overwrited by option $2
 dnl
 AC_DEFUN([UL_BUILD_INIT], [
   m4_define([suffix], m4_default([$3],$1))
-  m4_define([estate], m4_default([$2],$enable_[]suffix))
+  m4_ifblank([$2],
+[build_[]suffix=$enable_[]suffix],
+[
+if test "x$ul_default_estate" != x; then
+  enable_[]suffix=$ul_default_estate
+else[]
+  ifelse(
+      [$2], [check],[
+  build_[]suffix='yes'
+  enable_[]suffix='check'],
+      [$2], [yes],[
+  build_[]suffix='yes'
+  enable_[]suffix='yes'],
+      [$2], [no], [
+  build_[]suffix='no'
+  enable_[]suffix='no'])
+fi])
+])
 
-ifelse(estate, [check], [build_[]suffix='yes' enable_[]suffix='check'],
-       estate, [yes],   [build_[]suffix='yes' enable_[]suffix='yes'],
-       estate, [no],    [build_[]suffix='no'  enable_[]suffix='no'],
-       [build_[]suffix=$enable_[]suffix])
+dnl UL_DEFAULT_ENABLE(NAME, ENABLE_STATE)
+dnl
+dnl Initializes $enable_<name>  variable according to ENABLE_STATE. The default
+dnl setting is possible to override by global $ul_default_estate.
+dnl
+AC_DEFUN([UL_DEFAULT_ENABLE], [
+  m4_define([suffix], $1)
+  if test "x$ul_default_estate" != x; then
+    enable_[]suffix=$ul_default_estate
+  else
+    enable_[]suffix=$2
+  fi
 ])
