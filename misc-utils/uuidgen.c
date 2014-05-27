@@ -26,9 +26,6 @@ extern int optind;
 #include "c.h"
 #include "closestream.h"
 
-#define DO_TYPE_TIME	1
-#define DO_TYPE_RANDOM	2
-
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(_("\nUsage:\n"), out);
@@ -68,10 +65,10 @@ main (int argc, char *argv[])
 	while ((c = getopt_long(argc, argv, "rtVh", longopts, NULL)) != -1)
 		switch (c) {
 		case 't':
-			do_type = DO_TYPE_TIME;
+			do_type = UUID_TYPE_DCE_TIME;
 			break;
 		case 'r':
-			do_type = DO_TYPE_RANDOM;
+			do_type = UUID_TYPE_DCE_RANDOM;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -83,10 +80,10 @@ main (int argc, char *argv[])
 		}
 
 	switch (do_type) {
-	case DO_TYPE_TIME:
+	case UUID_TYPE_DCE_TIME:
 		uuid_generate_time(uu);
 		break;
-	case DO_TYPE_RANDOM:
+	case UUID_TYPE_DCE_RANDOM:
 		uuid_generate_random(uu);
 		break;
 	default:

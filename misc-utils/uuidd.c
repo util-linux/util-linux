@@ -37,6 +37,7 @@ extern int optind;
 #include "c.h"
 #include "closestream.h"
 #include "strutils.h"
+#include "optutils.h"
 
 #ifdef HAVE_LIBSYSTEMD
 # include <systemd/sd-daemon.h>
@@ -58,7 +59,7 @@ extern int optind;
 
 /* server loop control structure */
 struct uuidd_cxt_t {
-	int	timeout;
+	uint32_t	timeout;
 	unsigned int	debug: 1,
 			quiet: 1,
 			no_fork: 1,
@@ -338,10 +339,12 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 
 		if (pidfile_path) {
 			sprintf(reply_buf, "%8d\n", getpid());
-			ignore_result( ftruncate(fd_pidfile, 0) );
+			if (ftruncate(fd_pidfile, 0))
+				err(EXIT_FAILURE, _("could not truncate file: %s"), pidfile_path);
 			write_all(fd_pidfile, reply_buf, strlen(reply_buf));
 			if (fd_pidfile > 1)
-				close(fd_pidfile); /* Unlock the pid file */
+				if (close_fd(fd_pidfile) != 0) /* Unlock the pid file */
+					err(EXIT_FAILURE, _("write failed: %s"), pidfile_path);
 		}
 
 	}
@@ -363,7 +366,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 
 	while (1) {
 		fromlen = sizeof(from_addr);
-		if (uuidd_cxt->timeout > 0)
+		if (uuidd_cxt->timeout != 0)
 			alarm(uuidd_cxt->timeout);
 		ns = accept(s, (struct sockaddr *) &from_addr, &fromlen);
 		alarm(0);
@@ -508,6 +511,13 @@ int main(int argc, char **argv)
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
 	};
+	static const ul_excl_t excl[] = {
+		{ 'P', 'p' },
+		{ 'd', 'q' },
+		{ 'r', 't' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -517,6 +527,7 @@ int main(int argc, char **argv)
 	while ((c =
 		getopt_long(argc, argv, "p:s:T:krtn:PFSdqVh", longopts,
 			    NULL)) != -1) {
+		err_exclusive_options(c, longopts, excl, excl_st);
 		switch (c) {
 		case 'd':
 			uuidd_cxt.debug = 1;
@@ -573,9 +584,6 @@ int main(int argc, char **argv)
 			usage(stderr);
 		}
 	}
-
-	if (no_pid && pidfile_path_param && !uuidd_cxt.quiet)
-		warnx(_("Both --pid and --no-pid specified. Ignoring --no-pid."));
 
 	if (!no_pid && !pidfile_path_param)
 		pidfile_path = UUIDD_PIDFILE_PATH;
