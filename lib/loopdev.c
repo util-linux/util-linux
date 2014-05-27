@@ -1294,7 +1294,7 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 err:
 	if (file_fd >= 0)
 		close(file_fd);
-	if (dev_fd >= 0)
+	if (dev_fd >= 0 && rc != -EBUSY)
 		ioctl(dev_fd, LOOP_CLR_FD, 0);
 
 	DBG(lc, loopdev_debug("setup failed [rc=%d]", rc));
