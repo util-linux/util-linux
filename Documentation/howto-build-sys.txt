@@ -60,6 +60,13 @@ util-linux build system
 
 	"no"	- the util/feature is unwanted
 
+   The default status is always defined by UL_DEFAULT_ENABLE() and it might be
+   globally modified by $ul_default_estate (see AC_ARG_ENABLE([all-programs])).
+
+ - it's possible to disable all programs, but enable just one (or more)
+   explicitly specified, for example:
+
+        ./configure --disable-all-programs --enable-hwclock
 
  - some basic scenarios for the ./configure script are defined in the
    tools/config-gen.d/ directory. If you want to use these predefined scenarios
