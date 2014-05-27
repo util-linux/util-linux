@@ -662,7 +662,7 @@ int main(int argc, char **argv)
 			res = loopcxt_setup_device(&lc);
 			if (res == 0)
 				break;			/* success */
-			if (errno == EBUSY)
+			if (errno == EBUSY && !hasdev)
 				continue;
 
 			/* errors */
