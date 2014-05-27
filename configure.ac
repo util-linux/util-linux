@@ -422,10 +422,10 @@ AC_ARG_ENABLE([all-programs],
 )
 
 AS_CASE([$enable_all_programs],
-  [yes], [ul_default_estate=check],
+  [yes], [AC_MSG_WARN([force to build all programs by default])
+          ul_default_estate=check],
   [no],  [AC_MSG_WARN([disable all programs by default])
-          ul_default_estate=no],
-  [*],   [ul_default_estate=""]
+          ul_default_estate=no]
 )
 
 
@@ -850,6 +850,7 @@ AC_ARG_ENABLE([losetup],
 )
 UL_BUILD_INIT([losetup])
 UL_REQUIRES_LINUX([losetup])
+UL_REQUIRES_BUILD([losetup], [libsmartcols])
 AM_CONDITIONAL([BUILD_LOSETUP], [test "x$build_losetup" = xyes])
 
 
@@ -1075,6 +1076,7 @@ UL_BUILD_INIT([swapon], [check])
 UL_REQUIRES_LINUX([swapon])
 UL_REQUIRES_BUILD([swapon], [libblkid])
 UL_REQUIRES_BUILD([swapon], [libmount])
+UL_REQUIRES_BUILD([swapon], [libsmartcols])
 AM_CONDITIONAL([BUILD_SWAPON], [test "x$build_swapon" = xyes])
 
 
@@ -1082,11 +1084,13 @@ UL_BUILD_INIT([lsblk], [check])
 UL_REQUIRES_LINUX([lsblk])
 UL_REQUIRES_BUILD([lsblk], [libblkid])
 UL_REQUIRES_BUILD([lsblk], [libmount])
+UL_REQUIRES_BUILD([lsblk], [libsmartcols])
 AM_CONDITIONAL([BUILD_LSBLK], [test "x$build_lsblk" = xyes])
 
 
 UL_BUILD_INIT([lscpu], [check])
 UL_REQUIRES_LINUX([lscpu])
+UL_REQUIRES_BUILD([lscpu], [libsmartcols])
 UL_REQUIRES_HAVE([lscpu], [cpu_set_t], [cpu_set_t type])
 AM_CONDITIONAL([BUILD_LSCPU], [test "x$build_lscpu" = xyes])
 
@@ -1108,6 +1112,7 @@ AC_ARG_ENABLE([wdctl],
 )
 UL_BUILD_INIT([wdctl])
 UL_REQUIRES_LINUX([wdctl])
+UL_REQUIRES_BUILD([wdctl], [libsmartcols])
 UL_REQUIRES_HAVE([wdctl], [linux_watchdog_h], [linux/watchdog.h header file])
 AM_CONDITIONAL([BUILD_WDCTL], [test "x$build_wdctl" = xyes])
 
@@ -1152,6 +1157,7 @@ AM_CONDITIONAL([BUILD_BLOCKDEV], [test "x$build_blockdev" = xyes])
 
 UL_BUILD_INIT([prlimit], [check])
 UL_REQUIRES_LINUX([prlimit])
+UL_REQUIRES_BUILD([prlimit], [libsmartcols])
 UL_REQUIRES_SYSCALL_CHECK([prlimit], [UL_CHECK_SYSCALL([prlimit64])], [prlimit64])
 AM_CONDITIONAL([BUILD_PRLIMIT], [test "x$build_prlimit" = xyes])
 AS_IF([test "x$build_prlimit" = xyes], [
@@ -1162,6 +1168,7 @@ AS_IF([test "x$build_prlimit" = xyes], [
 UL_BUILD_INIT([lslocks], [check])
 UL_REQUIRES_LINUX([lslocks])
 UL_REQUIRES_BUILD([lslocks], [libmount])
+UL_REQUIRES_BUILD([lslocks], [libsmartcols])
 AM_CONDITIONAL([BUILD_LSLOCKS], [test "x$build_lslocks" = xyes])
 
 
