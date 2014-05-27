@@ -336,21 +336,24 @@ dnl
 AC_DEFUN([UL_BUILD_INIT], [
   m4_define([suffix], m4_default([$3],$1))
   m4_ifblank([$2],
-[build_[]suffix=$enable_[]suffix],
-[
-if test "x$ul_default_estate" != x; then
+[if test "x$enable_[]suffix" = xno; then
+   build_[]suffix=no
+else
+   build_[]suffix=yes
+fi],
+[if test "x$ul_default_estate" != x; then
   enable_[]suffix=$ul_default_estate
 else[]
   ifelse(
       [$2], [check],[
-  build_[]suffix='yes'
-  enable_[]suffix='check'],
+  build_[]suffix=yes
+  enable_[]suffix=check],
       [$2], [yes],[
-  build_[]suffix='yes'
-  enable_[]suffix='yes'],
+  build_[]suffix=yes
+  enable_[]suffix=yes],
       [$2], [no], [
-  build_[]suffix='no'
-  enable_[]suffix='no'])
+  build_[]suffix=no
+  enable_[]suffix=no])
 fi])
 ])
 
