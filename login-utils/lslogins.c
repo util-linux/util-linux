@@ -43,6 +43,10 @@
 # include <selinux/selinux.h>
 #endif
 
+#ifdef HAVE_LIBSYSTEMD
+# include <systemd/sd-journal.h>
+#endif
+
 #include "c.h"
 #include "nls.h"
 #include "closestream.h"
@@ -246,6 +250,7 @@ struct lslogins_control {
 
 	void *usertree;
 
+	uid_t uid;
 	uid_t UID_MIN;
 	uid_t UID_MAX;
 
@@ -260,7 +265,9 @@ struct lslogins_control {
 	int sel_enabled;
 	unsigned int time_mode;
 
+	const char *journal_path;
 };
+
 /* these have to remain global since there's no other
  * reasonable way to pass them for each call of fill_table()
  * via twalk() */
@@ -339,6 +346,9 @@ static char *build_sgroups_string(gid_t *sgroups, size_t nsgroups, int want_name
 {
 	size_t n = 0, maxlen, len;
 	char *res, *p;
+
+	if (!nsgroups)
+		return NULL;
 
 	len = maxlen = nsgroups * 10;
 	res = p = xmalloc(maxlen);
@@ -461,7 +471,8 @@ static int get_sgroups(gid_t **list, size_t *len, struct passwd *pwd)
 		++n;
 	}
 
-	(*list)[n] = (*list)[--(*len)];
+	if (*len)
+		(*list)[n] = (*list)[--(*len)];
 	return 0;
 }
 
@@ -500,7 +511,8 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	if (!pwd)
 		return NULL;
 
-	uid = pwd->pw_uid;
+	ctl->uid = uid = pwd->pw_uid;
+
 	/* nfsnobody is an exception to the UID_MAX limit.
 	 * This is "nobody" on some systems; the decisive
 	 * point is the UID - 65534 */
@@ -970,11 +982,11 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 		case COL_PWD_CTIME_MAX:
 			rc = scols_line_set_data(ln, n, user->pwd_ctime_max);
 			break;
-#ifdef HAVE_LIBSELINUX
 		case COL_SELINUX:
+#ifdef HAVE_LIBSELINUX
 			rc = scols_line_set_data(ln, n, user->context);
-			break;
 #endif
+			break;
 		case COL_NPROCS:
 			rc = scols_line_set_data(ln, n, user->nprocs);
 			break;
@@ -989,6 +1001,60 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 	}
 	return;
 }
+#ifdef HAVE_LIBSYSTEMD
+static void print_journal_tail(const char *journal_path, uid_t uid, size_t len)
+{
+	sd_journal *j;
+	char *match, *buf;
+	uint64_t x;
+	time_t t;
+	const char *identifier, *pid, *message;
+	size_t identifier_len, pid_len, message_len;
+
+	if (journal_path)
+		sd_journal_open_directory(&j, journal_path, 0);
+	else
+		sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
+
+	buf = xmalloc(sizeof(char) * 16);
+	xasprintf(&match, "_UID=%d", uid);
+
+	sd_journal_add_match(j, match, 0);
+	sd_journal_seek_tail(j);
+	sd_journal_previous_skip(j, len);
+
+	do {
+		if (0 > sd_journal_get_data(j, "SYSLOG_IDENTIFIER",
+				(const void **) &identifier, &identifier_len))
+			return;
+		if (0 > sd_journal_get_data(j, "_PID",
+				(const void **) &pid, &pid_len))
+			return;
+		if (0 > sd_journal_get_data(j, "MESSAGE",
+				(const void **) &message, &message_len))
+			return;
+
+		sd_journal_get_realtime_usec(j, &x);
+		t = x / 1000000;
+		strftime(buf, 16, "%b %d %H:%M:%S", localtime(&t));
+
+		fprintf(stdout, "%s", buf);
+
+		identifier = strchr(identifier, '=') + 1;
+		pid = strchr(pid, '=') + 1		;
+		message = strchr(message, '=') + 1;
+
+		fprintf(stdout, " %s", identifier);
+		fprintf(stdout, "[%s]:", pid);
+		fprintf(stdout, "%s\n", message);
+	} while (sd_journal_next(j));
+
+	free(buf);
+	free(match);
+	sd_journal_flush_matches(j);
+	sd_journal_close(j);
+}
+#endif
 
 static int print_pretty(struct libscols_table *tb)
 {
@@ -1024,9 +1090,14 @@ static int print_user_table(struct lslogins_control *ctl)
 		return -1;
 
 	twalk(ctl->usertree, fill_table);
-	if (outmode == OUT_PRETTY)
+	if (outmode == OUT_PRETTY) {
 		print_pretty(tb);
-	else
+#ifdef HAVE_LIBSYSTEMD
+		fprintf(stdout, _("\nLast logs:\n"));
+		print_journal_tail(ctl->journal_path, ctl->uid, 3);
+		fputc('\n', stdout);
+#endif
+	} else
 		scols_print_table(tb);
 	return 0;
 }
@@ -1382,7 +1453,6 @@ int main(int argc, char *argv[])
 	scols_unref_table(tb);
 	tdestroy(ctl->usertree, free_user);
 	free_ctl(ctl);
-
 
 	return EXIT_SUCCESS;
 }

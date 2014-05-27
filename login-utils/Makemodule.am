@@ -177,6 +177,10 @@ lslogins_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 if HAVE_SELINUX
 lslogins_LDADD += -lselinux
 endif
+if HAVE_SYSTEMD
+lslogins_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_JOURNAL_LIBS)
+lslogins_CFLAGS += $(SYSTEMD_CFLAGS) $(SYSTEMD_JOURNAL_CFLAGS)
+endif
 endif # BUILD_LSLOGINS
 
 if BUILD_VIPW
