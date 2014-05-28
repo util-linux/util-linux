@@ -654,7 +654,7 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 #define VMWARE_BDOOR_CMD_GETVERSION 10
 
 #define VMWARE_BDOOR(eax, ebx, ecx, edx)                                  \
-        __asm__("inl (%%dx)" :                                            \
+        __asm__("inl (%%dx), %%eax" :                                     \
                "=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :               \
                "0"(VMWARE_BDOOR_MAGIC), "1"(VMWARE_BDOOR_CMD_GETVERSION), \
                "2"(VMWARE_BDOOR_PORT), "3"(0) :                           \
