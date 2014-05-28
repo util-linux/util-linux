@@ -1398,7 +1398,7 @@ AC_ARG_ENABLE([chfn-chsh-password],
 
 AC_ARG_ENABLE([chfn-chsh],
   AS_HELP_STRING([--enable-chfn-chsh], [build chfn and chsh]),
-  [], [UL_DEFAULT_ENABLE([chfn_chsh], [no])]
+  [], [UL_DEFAULT_ENABLE([chfn_chsh], [check])]
 )
 UL_BUILD_INIT([chfn_chsh])
 
