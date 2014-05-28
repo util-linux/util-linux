@@ -606,16 +606,19 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 	 *              if partition-name is "full", its kind of "bare-metal": full-system-partition
 	 *              otherwise its some partition created by Hardware Management Console
 	 *              in any case, its always some sort of HVM
+	 *              Note that pSeries could also be emulated by qemu/KVM.
 	 * KVM: "linux,kvm" in /hypervisor/compatible indicates a KVM guest
 	 * Xen: not in use, not detected
 	 */
 	if (path_exist("/proc/iSeries")) {
 		desc->hyper = HYPER_OS400;
-		desc->virtype = VIRT_FULL;
-	} else if (path_exist(_PATH_PROC_DEVICETREE "/ibm,partition-name")) {
+		desc->virtype = VIRT_PARA;
+	} else if (path_exist(_PATH_PROC_DEVICETREE "/ibm,partition-name")
+		   && path_exist(_PATH_PROC_DEVICETREE "/hmc-managed?")
+		   && !path_exist(_PATH_PROC_DEVICETREE "/chosen/qemu,graphic-width")) {
 		FILE *fd;
 		desc->hyper = HYPER_PHYP;
-		desc->virtype = VIRT_FULL;
+		desc->virtype = VIRT_PARA;
 		fd = path_fopen("r", 0, _PATH_PROC_DEVICETREE "/ibm,partition-name");
 		if (fd) {
 			char buf[256];
