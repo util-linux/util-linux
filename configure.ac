@@ -752,7 +752,7 @@ AC_SUBST([LIBUUID_VERSION])
 AC_SUBST([LIBUUID_VERSION_INFO])
 AM_CONDITIONAL(BUILD_LIBUUID, test "x$build_libuuid" = xyes)
 
-AS_IF([test "x$enable_libuuid" = xyes], [
+AS_IF([test "x$build_libuuid" = xyes], [
   AC_DEFINE(HAVE_LIBUUID, 1, [Define to 1 if you have the -luuid.])
 ])
 
