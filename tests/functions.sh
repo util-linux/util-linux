@@ -587,15 +587,23 @@ function ts_scsi_debug_init {
 	local devname
 	TS_DEVICE="none"
 
-	modprobe --dry-run --quiet scsi_debug &>/dev/null
-	[ "$?" == 0 ] || ts_skip "missing scsi_debug module"
+	# dry run is not realy reliable, real modprobe may still fail
+	modprobe --dry-run --quiet scsi_debug &>/dev/null \
+		|| ts_skip "missing scsi_debug module (dry-run)"
 
-	rmmod scsi_debug &> /dev/null
-	modprobe scsi_debug $*
-	[ "$?" == 0 ] || ts_die "Cannot init device"
+	# skip if still in use or removal of modules not supported at all
+	modprobe -r scsi_debug &>/dev/null \
+		|| ts_skip "cannot remove scsi_debug module (rmmod)"
+
+	modprobe -b scsi_debug $* &>/dev/null \
+		|| ts_skip "cannot load scsi_debug module (modprobe)"
+
+	# it might be still not loaded, modprobe.conf or whatever
+	lsmod | grep -q "^scsi_debug " \
+		|| ts_skip "scsi_debug module not loaded (lsmod)"
 
 	devname=$(grep --with-filename scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
-	[ "x${devname}" == "x" ] && ts_die "Cannot find device"
+	[ "x${devname}" == "x" ] && ts_die "cannot find scsi_debug device"
 
 	sleep 1
 	udevadm settle
