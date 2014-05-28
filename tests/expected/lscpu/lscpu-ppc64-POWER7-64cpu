@@ -5,6 +5,8 @@ Core(s) per socket:    1
 Socket(s):             16
 NUMA node(s):          2
 Model:                 IBM,8231-E2B
+Hypervisor vendor:     pHyp
+Virtualization type:   para
 L1d cache:             32K
 L1i cache:             32K
 NUMA node0 CPU(s):     0-63
