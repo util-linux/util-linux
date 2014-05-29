@@ -232,14 +232,14 @@ static struct lslogins_coldesc coldescs[] =
 	[COL_LAST_HOSTNAME] = { "LAST-HOSTNAME",N_("hostname during the last session"), N_("Last hostname"),  0.1},
 	[COL_FAILED_LOGIN]  = { "FAILED-LOGIN",	N_("date of last failed login"), N_("Failed login"), 0.1 },
 	[COL_FAILED_TTY]    = { "FAILED-TTY",	N_("where did the login fail?"), N_("Failed login terminal"), 0.05 },
-	[COL_HUSH_STATUS]   = { "HUSHED",	N_("User's hush settings"), N_("Hushed"), 1, SCOLS_FL_RIGHT },
+	[COL_HUSH_STATUS]   = { "HUSHED",	N_("user's hush settings"), N_("Hushed"), 1, SCOLS_FL_RIGHT },
 	[COL_PWD_WARN]      = { "PWD-WARN",	N_("password warn interval"), N_("Days to passwd warning"), 0.1 },
 	[COL_PWD_EXPIR]     = { "PWD-EXPIR",	N_("password expiration date"), N_("Password expiration"), 0.1 },
 	[COL_PWD_CTIME]     = { "PWD-CHANGE",	N_("date of last password change"), N_("Password changed"), 0.1 },
 	[COL_PWD_CTIME_MIN] = { "PWD-MIN",	N_("number of days required between changes"), N_("Minimal change time"), 0.1 },
 	[COL_PWD_CTIME_MAX] = { "PWD-MAX",	N_("max number of days a password may remain unchanged"), N_("Maximal change time"), 0.1 },
 	[COL_SELINUX]       = { "CONTEXT",	N_("the user's security context"), N_("Selinux context"), 0.1 },
-	[COL_NPROCS]        = { "PROC",         N_("Number of processes run by the user"), N_("Process count"), 1, SCOLS_FL_RIGHT },
+	[COL_NPROCS]        = { "PROC",         N_("number of processes run by the user"), N_("Process count"), 1, SCOLS_FL_RIGHT },
 };
 
 struct lslogins_control {
@@ -1058,7 +1058,7 @@ static int print_pretty(struct libscols_table *tb)
 		dstr = scols_cell_get_data(data);
 
 		if (dstr)
-			printf("%s:%*c%-36s\n", hstr, 26 - (int)strlen(hstr), ' ', dstr);
+			printf("%s:%*c%-36s\n", hstr, 35 - (int)strlen(hstr), ' ', dstr);
 		++n;
 	}
 
@@ -1130,27 +1130,26 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --acc-expiration     Display data\n"), out);
-	fputs(_(" -c, --colon-separate     Display data in a format similar to /etc/passwd\n"), out);
-	fputs(_(" -e, --export             Display in an export-able output format\n"), out);
-	fputs(_(" -f, --failed             Display data about the last users' failed logins\n"), out);
-	fputs(_(" --fulltimes              Show dates in a long format\n"), out);
-	fputs(_(" -g, --groups=<groups>    Display users belonging to a group in <groups>\n"), out);
-	fputs(_(" -l, --logins=<logins>    Display only users from <logins>\n"), out);
-	fputs(_(" --last                   Show info about the users' last login sessions\n"), out);
-	fputs(_(" -m, --supp-groups        Display supplementary groups as well\n"), out);
-	fputs(_(" -n, --newline            Display each piece of information on a new line\n"), out);
-	fputs(_(" --notruncate             Don't truncate output\n"), out);
-	fputs(_(" -o, --output[=<list>]    Define the columns to output\n"), out);
-	fputs(_(" -r, --raw                Display the raw table\n"), out);
-	fputs(_(" -s, --system-accs        Display system accounts\n"), out);
-	fputs(_(" --time-format=<type>     Display dates in short, full or iso format\n"), out);
-	fputs(_(" -u, --user-accs          Display user accounts\n"), out);
-	fputs(_(" -x, --extra              Display extra information\n"), out);
-	fputs(_(" -z, --print0             Delimit user entries with a nul character\n"), out);
-	fputs(_(" -Z, --context            Display the users' security context\n"), out);
-	fputs(_(" --wtmp-file <path>       Set an alternate path for wtmp\n"), out);
-	fputs(_(" --btmp-file <path>       Set an alternate path for btmp\n"), out);
+	fputs(_(" -a, --acc-expiration     display info about passwords expiration\n"), out);
+	fputs(_(" -c, --colon-separate     display data in a format similar to /etc/passwd\n"), out);
+	fputs(_(" -e, --export             display in an export-able output format\n"), out);
+	fputs(_(" -f, --failed             display data about the last users' failed logins\n"), out);
+	fputs(_(" -g, --groups=<groups>    display users belonging to a group in <groups>\n"), out);
+	fputs(_(" -l, --logins=<logins>    display only users from <logins>\n"), out);
+	fputs(_("     --last               show info about the users' last login sessions\n"), out);
+	fputs(_(" -m, --supp-groups        display supplementary groups as well\n"), out);
+	fputs(_(" -n, --newline            display each piece of information on a new line\n"), out);
+	fputs(_("     --notruncate         don't truncate output\n"), out);
+	fputs(_(" -o, --output[=<list>]    define the columns to output\n"), out);
+	fputs(_(" -r, --raw                risplay the raw table\n"), out);
+	fputs(_(" -s, --system-accs        display system accounts\n"), out);
+	fputs(_("     --time-format=<type> display dates in short, full or iso format\n"), out);
+	fputs(_(" -u, --user-accs          display user accounts\n"), out);
+	fputs(_(" -x, --extra              display extra information\n"), out);
+	fputs(_(" -z, --print0             delimit user entries with a nul character\n"), out);
+	fputs(_(" -Z, --context            display SELinux contexts\n"), out);
+	fputs(_("     --wtmp-file <path>   set an alternate path for wtmp\n"), out);
+	fputs(_("     --btmp-file <path>   set an alternate path for btmp\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
