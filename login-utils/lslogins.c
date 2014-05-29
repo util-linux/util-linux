@@ -140,7 +140,6 @@ struct lslogins_user {
  * */
 enum {
 	TIME_INVALID = 0,
-	TIME_SHORT_RELATIVE,
 	TIME_SHORT,
 	TIME_FULL,
 	TIME_ISO,
@@ -215,31 +214,31 @@ static const char *const pretty_status[] = {
 
 static struct lslogins_coldesc coldescs[] =
 {
-	[COL_USER]          = { "USER",		N_("user name"), N_("Username"), 0.2, SCOLS_FL_NOEXTREMES },
-	[COL_UID]           = { "UID",		N_("user ID"), "UID", 0.05, SCOLS_FL_RIGHT},
+	[COL_USER]          = { "USER",		N_("user name"), N_("Username"), 0.1, SCOLS_FL_NOEXTREMES },
+	[COL_UID]           = { "UID",		N_("user ID"), "UID", 1, SCOLS_FL_RIGHT},
 	[COL_PWDEMPTY]      = { "PWD-EMPTY",	N_("password not requiured"), N_("Password no required"), 1, SCOLS_FL_RIGHT },
 	[COL_PWDDENY]       = { "PWD-DENY",	N_("login by password disabled"), N_("Login by password disabled"), 1, SCOLS_FL_RIGHT },
 	[COL_PWDLOCK]       = { "PWD-LOCK",	N_("password defined, but locked"), N_("Password is locked"), 1, SCOLS_FL_RIGHT },
 	[COL_NOLOGIN]       = { "NOLOGIN",	N_("log in disabled by nologin(8) or pam_nologin(8)"), N_("No login"), 1, SCOLS_FL_RIGHT },
-	[COL_PGRP]          = { "GROUP",	N_("primary group name"), N_("Primary group"), 0.2 },
-	[COL_PGID]          = { "GID",		N_("primary group ID"), "GID", 0.05, SCOLS_FL_RIGHT },
+	[COL_PGRP]          = { "GROUP",	N_("primary group name"), N_("Primary group"), 0.1 },
+	[COL_PGID]          = { "GID",		N_("primary group ID"), "GID", 1, SCOLS_FL_RIGHT },
 	[COL_SGRPS]         = { "SUPP-GROUPS",	N_("supplementary group names"), N_("Supplementary groups"), 0.1 },
 	[COL_SGIDS]         = { "SUPP-GIDS",    N_("supplementary group IDs"), N_("Supplementary group IDs"), 0.1 },
-	[COL_HOME]          = { "HOMEDIR",	N_("home directory"), N_("Home directory"), 0.3 },
+	[COL_HOME]          = { "HOMEDIR",	N_("home directory"), N_("Home directory"), 0.1 },
 	[COL_SHELL]         = { "SHELL",	N_("login shell"), N_("Shell"), 0.1 },
-	[COL_GECOS]         = { "GECOS",	N_("full user name"), N_("Gecos field"), 0.3, SCOLS_FL_TRUNC },
-	[COL_LAST_LOGIN]    = { "LAST-LOGIN",	N_("date of last login"), N_("Last login"), 24 },
+	[COL_GECOS]         = { "GECOS",	N_("full user name"), N_("Gecos field"), 0.1, SCOLS_FL_TRUNC },
+	[COL_LAST_LOGIN]    = { "LAST-LOGIN",	N_("date of last login"), N_("Last login"), 0.1, SCOLS_FL_RIGHT },
 	[COL_LAST_TTY]      = { "LAST-TTY",	N_("last tty used"), N_("Last terminal"), 0.05 },
-	[COL_LAST_HOSTNAME] = { "LAST-HOSTNAME",N_("hostname during the last session"), N_("Last hostname"),  0.2},
-	[COL_FAILED_LOGIN]  = { "FAILED-LOGIN",	N_("date of last failed login"), N_("Failed login"), 24 },
+	[COL_LAST_HOSTNAME] = { "LAST-HOSTNAME",N_("hostname during the last session"), N_("Last hostname"),  0.1},
+	[COL_FAILED_LOGIN]  = { "FAILED-LOGIN",	N_("date of last failed login"), N_("Failed login"), 0.1 },
 	[COL_FAILED_TTY]    = { "FAILED-TTY",	N_("where did the login fail?"), N_("Failed login terminal"), 0.05 },
 	[COL_HUSH_STATUS]   = { "HUSHED",	N_("User's hush settings"), N_("Hushed"), 1, SCOLS_FL_RIGHT },
-	[COL_PWD_WARN]      = { "PWD-WARN",	N_("password warn interval"), N_("Days to passwd warning"), 24 },
-	[COL_PWD_EXPIR]     = { "PWD-EXPIR",	N_("password expiration date"), N_("Password expiration"), 24 },
-	[COL_PWD_CTIME]     = { "PWD-CHANGE",	N_("date of last password change"), N_("Password changed"), 24 },
-	[COL_PWD_CTIME_MIN] = { "PWD-MIN",	N_("number of days required between changes"), N_("Minimal change time"), 24 },
-	[COL_PWD_CTIME_MAX] = { "PWD-MAX",	N_("max number of days a password may remain unchanged"), N_("Maximal change time"), 24 },
-	[COL_SELINUX]       = { "CONTEXT",	N_("the user's security context"), N_("Selinux context"), 0.4 },
+	[COL_PWD_WARN]      = { "PWD-WARN",	N_("password warn interval"), N_("Days to passwd warning"), 0.1 },
+	[COL_PWD_EXPIR]     = { "PWD-EXPIR",	N_("password expiration date"), N_("Password expiration"), 0.1 },
+	[COL_PWD_CTIME]     = { "PWD-CHANGE",	N_("date of last password change"), N_("Password changed"), 0.1 },
+	[COL_PWD_CTIME_MIN] = { "PWD-MIN",	N_("number of days required between changes"), N_("Minimal change time"), 0.1 },
+	[COL_PWD_CTIME_MAX] = { "PWD-MAX",	N_("max number of days a password may remain unchanged"), N_("Maximal change time"), 0.1 },
+	[COL_SELINUX]       = { "CONTEXT",	N_("the user's security context"), N_("Selinux context"), 0.1 },
 	[COL_NPROCS]        = { "PROC",         N_("Number of processes run by the user"), N_("Process count"), 1, SCOLS_FL_RIGHT },
 };
 
@@ -298,7 +297,7 @@ static char *make_time(int mode, time_t time)
 {
 	char *s;
 	struct tm tm;
-	char buf[32] = {0};
+	char buf[64] = {0};
 
 	localtime_r(&time, &tm);
 
@@ -308,15 +307,14 @@ static char *make_time(int mode, time_t time)
 		if (*(s = buf + strlen(buf) - 1) == '\n')
 			*s = '\0';
 		break;
-	case TIME_SHORT_RELATIVE:
-		if (date_is_today(time))
-			strftime(buf, 32, "%H:%M:%S", &tm);
-		else /*fallthrough*/
 	case TIME_SHORT:
-		strftime(buf, 32, "%a %b %d %Y", &tm);
+		if (date_is_today(time))
+			strftime(buf, sizeof(buf), "%H:%M:%S", &tm);
+		else
+			strftime(buf, sizeof(buf), "%b%d/%H:%M", &tm);
 		break;
 	case TIME_ISO:
-		strftime(buf, 32, "%Y-%m-%dT%H:%M:%S%z", &tm);
+		strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%S%z", &tm);
 		break;
 	default:
 		errx(EXIT_FAILURE, _("unssupported time type"));
@@ -1119,7 +1117,7 @@ struct lslogins_timefmt {
 };
 
 static struct lslogins_timefmt timefmts[] = {
-	{ "short", TIME_SHORT_RELATIVE },
+	{ "short", TIME_SHORT },
 	{ "full", TIME_FULL },
 	{ "iso", TIME_ISO },
 };
@@ -1181,7 +1179,6 @@ int main(int argc, char *argv[])
 		OPT_WTMP,
 		OPT_BTMP,
 		OPT_NOTRUNC,
-		OPT_FULLT,
 		OPT_TIME_FMT,
 	};
 
@@ -1190,7 +1187,6 @@ int main(int argc, char *argv[])
 		{ "colon-separate", no_argument,	0, 'c' },
 		{ "export",         no_argument,	0, 'e' },
 		{ "failed",         no_argument,	0, 'f' },
-		{ "fulltimes",      no_argument,	0, OPT_FULLT },
 		{ "groups",         required_argument,	0, 'g' },
 		{ "help",           no_argument,	0, 'h' },
 		{ "logins",         required_argument,	0, 'l' },
@@ -1219,7 +1215,6 @@ int main(int argc, char *argv[])
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'c','e','n','r','z' },
-		{ 'i', OPT_FULLT, OPT_TIME_FMT  },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -1229,7 +1224,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	ctl->time_mode = TIME_SHORT_RELATIVE;
+	ctl->time_mode = TIME_SHORT;
 
 	while ((c = getopt_long(argc, argv, "acefg:hl:mno:rsuxzZ",
 				longopts, NULL)) != -1) {
@@ -1309,9 +1304,6 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_NOTRUNC:
 			coldescs[COL_GECOS].flag = 0;
-			break;
-		case OPT_FULLT:
-			ctl->time_mode = TIME_FULL;
 			break;
 		case OPT_TIME_FMT:
 			{
