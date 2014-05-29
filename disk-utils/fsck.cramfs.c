@@ -618,11 +618,11 @@ static void test_fs(int start)
 	if (start_data != ~0UL) {
 		if (start_data < (sizeof(struct cramfs_super) + start))
 			errx(FSCK_EX_UNCORRECTED,
-			     _("directory data start (%ld) < sizeof(struct cramfs_super) + start (%ld)"),
+			     _("directory data start (%lu) < sizeof(struct cramfs_super) + start (%zu)"),
 			     start_data, sizeof(struct cramfs_super) + start);
 		if (end_dir != start_data)
 			errx(FSCK_EX_UNCORRECTED,
-			     _("directory data end (%ld) != file data start (%ld)"),
+			     _("directory data end (%lu) != file data start (%lu)"),
 			     end_dir, start_data);
 	}
 	if (super.flags & CRAMFS_FLAG_FSID_VERSION_2)

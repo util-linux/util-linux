@@ -137,7 +137,6 @@ static void my_putstring(char *s)
 
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW) || defined(HAVE_LIBTERMCAP)
 static const char	*term="";
-static int		Slen;		/* strlen of Senter+Sexit */
 #endif
 
 static const char	*Senter="", *Sexit="";/* enter and exit standout mode */
@@ -304,7 +303,6 @@ int main(int argc, char **argv)
 		if (ret > 0) {
 			Senter = my_tgetstr("so","smso");
 			Sexit = my_tgetstr("se","rmso");
-			Slen = strlen(Senter) + strlen(Sexit);
 		}
 	}
 #endif
