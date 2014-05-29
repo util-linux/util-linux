@@ -192,6 +192,13 @@ enum {
 	COL_NPROCS,
 };
 
+#define is_wtmp_col(x)	((x) == COL_LAST_LOGIN     || \
+			 (x) == COL_LAST_TTY       || \
+			 (x) == COL_LAST_HOSTNAME)
+
+#define is_btmp_col(x)	((x) == COL_FAILED_LOGIN   || \
+			 (x) == COL_FAILED_TTY)
+
 enum {
 	STATUS_FALSE = 0,
 	STATUS_TRUE,
@@ -233,11 +240,11 @@ static struct lslogins_coldesc coldescs[] =
 	[COL_FAILED_LOGIN]  = { "FAILED-LOGIN",	N_("date of last failed login"), N_("Failed login"), 0.1 },
 	[COL_FAILED_TTY]    = { "FAILED-TTY",	N_("where did the login fail?"), N_("Failed login terminal"), 0.05 },
 	[COL_HUSH_STATUS]   = { "HUSHED",	N_("user's hush settings"), N_("Hushed"), 1, SCOLS_FL_RIGHT },
-	[COL_PWD_WARN]      = { "PWD-WARN",	N_("days user is warned of password expiration"), N_("Password expiration warn interval"), 0.1 },
-	[COL_PWD_EXPIR]     = { "PWD-EXPIR",	N_("password expiration date"), N_("Password expiration"), 0.1 },
-	[COL_PWD_CTIME]     = { "PWD-CHANGE",	N_("date of last password change"), N_("Password changed"), 0.1 },
-	[COL_PWD_CTIME_MIN] = { "PWD-MIN",	N_("number of days required between changes"), N_("Minimal change time"), 0.1 },
-	[COL_PWD_CTIME_MAX] = { "PWD-MAX",	N_("max number of days a password may remain unchanged"), N_("Maximal change time"), 0.1 },
+	[COL_PWD_WARN]      = { "PWD-WARN",	N_("days user is warned of password expiration"), N_("Password expiration warn interval"), 0.1, SCOLS_FL_RIGHT },
+	[COL_PWD_EXPIR]     = { "PWD-EXPIR",	N_("password expiration date"), N_("Password expiration"), 0.1, SCOLS_FL_RIGHT },
+	[COL_PWD_CTIME]     = { "PWD-CHANGE",	N_("date of last password change"), N_("Password changed"), 0.1, SCOLS_FL_RIGHT},
+	[COL_PWD_CTIME_MIN] = { "PWD-MIN",	N_("number of days required between changes"), N_("Minimal change time"), 0.1, SCOLS_FL_RIGHT },
+	[COL_PWD_CTIME_MAX] = { "PWD-MAX",	N_("max number of days a password may remain unchanged"), N_("Maximal change time"), 0.1, SCOLS_FL_RIGHT },
 	[COL_SELINUX]       = { "CONTEXT",	N_("the user's security context"), N_("Selinux context"), 0.1 },
 	[COL_NPROCS]        = { "PROC",         N_("number of processes run by the user"), N_("Running process"), 1, SCOLS_FL_RIGHT },
 };
@@ -273,11 +280,20 @@ static struct libscols_table *tb;
 static int columns[ARRAY_SIZE(coldescs)];
 static int ncolumns;
 
+static struct timeval now;
+
 static int date_is_today(time_t t)
 {
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	return t / 86400 == tv.tv_sec / 86400;
+	if (now.tv_sec == 0)
+		gettimeofday(&now, NULL);
+	return t / (3600 * 24) == now.tv_sec / (3600 * 24);
+}
+
+static int date_is_thisyear(time_t t)
+{
+	if (now.tv_sec == 0)
+		gettimeofday(&now, NULL);
+	return t / (3600 * 24 * 365) == now.tv_sec / (3600 * 24 * 365);
 }
 
 static int column_name_to_id(const char *name, size_t namesz)
@@ -293,6 +309,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 	warnx(_("unknown column: %s"), name);
 	return -1;
 }
+
 static char *make_time(int mode, time_t time)
 {
 	char *s;
@@ -310,8 +327,10 @@ static char *make_time(int mode, time_t time)
 	case TIME_SHORT:
 		if (date_is_today(time))
 			strftime(buf, sizeof(buf), "%H:%M:%S", &tm);
-		else
+		else if (date_is_thisyear(time))
 			strftime(buf, sizeof(buf), "%b%d/%H:%M", &tm);
+		else
+			strftime(buf, sizeof(buf), "%Y-%b%d", &tm);
 		break;
 	case TIME_ISO:
 		strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%S%z", &tm);
@@ -400,6 +419,24 @@ static struct utmp *get_last_wtmp(struct lslogins_control *ctl, const char *user
 	} while (n--);
 	return NULL;
 
+}
+
+static int require_wtmp(void)
+{
+	size_t i;
+	for (i = 0; i < (size_t) ncolumns; i++)
+		if (is_wtmp_col(columns[i]))
+			return 1;
+	return 0;
+}
+
+static int require_btmp(void)
+{
+	size_t i;
+	for (i = 0; i < (size_t) ncolumns; i++)
+		if (is_btmp_col(columns[i]))
+			return 1;
+	return 0;
 }
 
 static struct utmp *get_last_btmp(struct lslogins_control *ctl, const char *username)
@@ -652,20 +689,12 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 						shadow->sp_lstchg * 86400);
 			break;
 		case COL_PWD_CTIME_MIN:
-			if (shadow) {
-				if (shadow->sp_min <= 0)
-					user->pwd_ctime_min = xstrdup("unlimited");
-				else
-					xasprintf(&user->pwd_ctime_min, "%ld", shadow->sp_min);
-			}
+			if (shadow && shadow->sp_min > 0)
+				xasprintf(&user->pwd_ctime_min, "%ld", shadow->sp_min);
 			break;
 		case COL_PWD_CTIME_MAX:
-			if (shadow) {
-				if (shadow->sp_max <= 0)
-					user->pwd_ctime_max = xstrdup("unlimited");
-				else
-					xasprintf(&user->pwd_ctime_max, "%ld", shadow->sp_max);
-			}
+			if (shadow && shadow->sp_max > 0)
+				xasprintf(&user->pwd_ctime_max, "%ld", shadow->sp_max);
 			break;
 		case COL_SELINUX:
 		{
@@ -1166,10 +1195,11 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char *argv[])
 {
-	int c, want_wtmp = 0, want_btmp = 0;
+	int c, opt_o = 0;
 	char *logins = NULL, *groups = NULL;
 	char *path_wtmp = _PATH_WTMP, *path_btmp = _PATH_BTMP;
 	struct lslogins_control *ctl = xcalloc(1, sizeof(struct lslogins_control));
+	size_t i;
 
 	/* long only options. */
 	enum {
@@ -1225,6 +1255,10 @@ int main(int argc, char *argv[])
 
 	ctl->time_mode = TIME_SHORT;
 
+	/* very basic default */
+	columns[ncolumns++] = COL_UID;
+	columns[ncolumns++] = COL_USER;
+
 	while ((c = getopt_long(argc, argv, "acefg:hl:mno:rsuxzZ",
 				longopts, NULL)) != -1) {
 
@@ -1232,7 +1266,11 @@ int main(int argc, char *argv[])
 
 		switch (c) {
 		case 'a':
-			lslogins_flag |= F_EXPIR;
+			columns[ncolumns++] = COL_PWD_WARN;
+			columns[ncolumns++] = COL_PWD_CTIME_MIN;
+			columns[ncolumns++] = COL_PWD_CTIME_MAX;
+			columns[ncolumns++] = COL_PWD_CTIME;
+			columns[ncolumns++] = COL_PWD_EXPIR;
 			break;
 		case 'c':
 			outmode = OUT_COLON;
@@ -1268,6 +1306,7 @@ int main(int argc, char *argv[])
 				if (ncolumns < 0)
 					return EXIT_FAILURE;
 			}
+			opt_o = 1;
 			break;
 		case 'r':
 			outmode = OUT_RAW;
@@ -1344,21 +1383,18 @@ int main(int argc, char *argv[])
 		lslogins_flag &= ~(F_USRAC | F_SYSAC);
 
 	if (!ncolumns && outmode == OUT_PRETTY) {
-		size_t i;
-		want_wtmp = 1;
-		want_btmp = 1;
-
 		for (i = 0; i < ARRAY_SIZE(coldescs); i++)
 			 columns[ncolumns++] = i;
 
-	} else if (!ncolumns) {
-		columns[ncolumns++] = COL_UID;
-		columns[ncolumns++] = COL_USER;
-		columns[ncolumns++] = COL_PGRP;
-		columns[ncolumns++] = COL_PGID;
+	} else if (ncolumns == 2 && !opt_o) {
+		/* default colummns */
+		columns[ncolumns++] = COL_NPROCS;
+		columns[ncolumns++] = COL_PWDLOCK;
+		columns[ncolumns++] = COL_PWDDENY;
 		columns[ncolumns++] = COL_LAST_LOGIN;
-
-		want_wtmp = 1;
+		columns[ncolumns++] = COL_GECOS;
+	}
+/*
 
 		if (lslogins_flag & F_NOPWD)
 			columns[ncolumns++] = COL_PWDEMPTY;
@@ -1375,7 +1411,6 @@ int main(int argc, char *argv[])
 		if (lslogins_flag & F_FAIL) {
 			columns[ncolumns++] = COL_FAILED_LOGIN;
 			columns[ncolumns++] = COL_FAILED_TTY;
-			want_btmp = 1;
 		}
 		if (lslogins_flag & F_EXTRA) {
 			columns[ncolumns++] = COL_HOME;
@@ -1386,26 +1421,18 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_PWDLOCK;
 			columns[ncolumns++] = COL_HUSH_STATUS;
 			columns[ncolumns++] = COL_PWD_WARN;
-			columns[ncolumns++] = COL_PWD_CTIME_MIN; /*?*/
-			columns[ncolumns++] = COL_PWD_CTIME_MAX; /*?*/
+			columns[ncolumns++] = COL_PWD_CTIME_MIN;
+			columns[ncolumns++] = COL_PWD_CTIME_MAX;
 			columns[ncolumns++] = COL_NPROCS;
 		}
 		if (lslogins_flag & F_SELINUX)
 			columns[ncolumns++] = COL_SELINUX;
-	} else {
-		int n = 0, i;
-		while (n < ncolumns) {
-			i = columns[n++];
-			if (i <= COL_LAST_HOSTNAME && i >= COL_LAST_LOGIN)
-				want_wtmp = 1;
-			if (i == COL_FAILED_TTY && i >= COL_FAILED_LOGIN)
-				want_btmp = 1;
-		}
-	}
 
-	if (want_wtmp)
+*/
+
+	if (require_wtmp())
 		parse_wtmp(ctl, path_wtmp);
-	if (want_btmp)
+	if (require_btmp())
 		parse_btmp(ctl, path_btmp);
 
 	get_ulist(ctl, logins, groups);
