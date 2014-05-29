@@ -31,6 +31,9 @@ Output data in the format of NAME=VALUE.
 \fB\-f\fR, \fB\-\-failed\fR
 Display data about the users' last failed login attempts.
 .TP
+\fB\-G\fR, \fB\-\-groups\-info\fR
+Show information about groups.
+.TP
 \fB\-g\fR, \fB\-\-groups\fR=\fIGROUPS\fR
 Only show data of users belonging to \fIGROUPS\fR. More than one group may be specified; the list has to be comma-separated.
 .TP
@@ -53,6 +56,9 @@ Don't truncate output.
 Specify which output columns to print.  Use
 .B \-\-help
 to get a list of all supported columns.
+.PT
+\fB\-p , \-\-pwd\fR
+Display information related to login by password (see also \fB\-afR).
 .TP
 \fB\-r\fR, \fB\-\-raw\fR
 Raw output (no columnation).
@@ -70,10 +76,6 @@ format is designed to be space efficient and human readable.
 Show user accounts. These are by the default all accounts with UID above 1000 (inclusive), with the exception of either nobody or nfsnobody (UID 65534). The UID
 treshold can also be specified explicitly (necessary for some distributions that allocate UIDs
 starting from 100, 500 - or an entirely different value - rather than 1000).
-.TP
-\fB\-x\fR, \fB\-\-extra\fR
-Show extra information about users - home diretory, default login shell,
-password age and expiry information.(Requires root priviliges.)
 .TP
 \fB\-z\fR, \fB\-\-print0\fR
 Delimit user entries with a nul character, instead of a newline.

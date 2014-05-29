@@ -149,15 +149,8 @@ enum {
  * flags
  */
 enum {
-	F_EXPIR	= (1 << 0),
-	F_MORE	= (1 << 1),
-	F_NOPWD	= (1 << 2),
 	F_SYSAC	= (1 << 3),
 	F_USRAC	= (1 << 4),
-	F_EXTRA	= (1 << 5),
-	F_FAIL  = (1 << 6),
-	F_LAST  = (1 << 7),
-	F_SELINUX = (1 << 8),
 };
 
 /*
@@ -173,9 +166,9 @@ enum {
 	COL_PWDLOCK,
 	COL_PWDEMPTY,
 	COL_PWDDENY,
-	COL_PGRP,
-	COL_PGID,
-	COL_SGRPS,
+	COL_GROUP,
+	COL_GID,
+	COL_SGROUPS,
 	COL_SGIDS,
 	COL_LAST_LOGIN,
 	COL_LAST_TTY,
@@ -227,9 +220,9 @@ static struct lslogins_coldesc coldescs[] =
 	[COL_PWDDENY]       = { "PWD-DENY",	N_("login by password disabled"), N_("Login by password disabled"), 1, SCOLS_FL_RIGHT },
 	[COL_PWDLOCK]       = { "PWD-LOCK",	N_("password defined, but locked"), N_("Password is locked"), 1, SCOLS_FL_RIGHT },
 	[COL_NOLOGIN]       = { "NOLOGIN",	N_("log in disabled by nologin(8) or pam_nologin(8)"), N_("No login"), 1, SCOLS_FL_RIGHT },
-	[COL_PGRP]          = { "GROUP",	N_("primary group name"), N_("Primary group"), 0.1 },
-	[COL_PGID]          = { "GID",		N_("primary group ID"), "GID", 1, SCOLS_FL_RIGHT },
-	[COL_SGRPS]         = { "SUPP-GROUPS",	N_("supplementary group names"), N_("Supplementary groups"), 0.1 },
+	[COL_GROUP]          = { "GROUP",	N_("primary group name"), N_("Primary group"), 0.1 },
+	[COL_GID]          = { "GID",		N_("primary group ID"), "GID", 1, SCOLS_FL_RIGHT },
+	[COL_SGROUPS]         = { "SUPP-GROUPS",	N_("supplementary group names"), N_("Supplementary groups"), 0.1 },
 	[COL_SGIDS]         = { "SUPP-GIDS",    N_("supplementary group IDs"), N_("Supplementary group IDs"), 0.1 },
 	[COL_HOME]          = { "HOMEDIR",	N_("home directory"), N_("Home directory"), 0.1 },
 	[COL_SHELL]         = { "SHELL",	N_("login shell"), N_("Shell"), 0.1 },
@@ -553,7 +546,9 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 
 	/* nfsnobody is an exception to the UID_MAX limit.  This is "nobody" on
 	 * some systems; the decisive point is the UID - 65534 */
-	if ((lslogins_flag & F_USRAC) && strcmp("nfsnobody", pwd->pw_name)) {
+	if ((lslogins_flag & F_USRAC) &&
+	    strcmp("nfsnobody", pwd->pw_name) != 0 &&
+	    uid != 0) {
 		if (uid < ctl->UID_MIN || uid > ctl->UID_MAX) {
 			errno = EAGAIN;
 			return NULL;
@@ -591,13 +586,13 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 		case COL_UID:
 			user->uid = pwd->pw_uid;
 			break;
-		case COL_PGRP:
+		case COL_GROUP:
 			user->group = xstrdup(grp->gr_name);
 			break;
-		case COL_PGID:
+		case COL_GID:
 			user->gid = pwd->pw_gid;
 			break;
-		case COL_SGRPS:
+		case COL_SGROUPS:
 		case COL_SGIDS:
 			if (get_sgroups(&user->sgroups, &user->nsgroups, pwd))
 				err(EXIT_FAILURE, _("failed to get supplementary groups"));
@@ -935,13 +930,13 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 		case COL_PWDDENY:
 			rc = scols_line_set_data(ln, n, get_status(user->pwd_deny));
 			break;
-		case COL_PGRP:
+		case COL_GROUP:
 			rc = scols_line_set_data(ln, n, user->group);
 			break;
-		case COL_PGID:
+		case COL_GID:
 			rc = scols_line_refer_data(ln, n, gidtostr(user->gid));
 			break;
-		case COL_SGRPS:
+		case COL_SGROUPS:
 			rc = scols_line_refer_data(ln, n,
 				build_sgroups_string(user->sgroups,
 						     user->nsgroups,
@@ -1170,11 +1165,12 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -n, --newline            display each piece of information on a new line\n"), out);
 	fputs(_("     --notruncate         don't truncate output\n"), out);
 	fputs(_(" -o, --output[=<list>]    define the columns to output\n"), out);
-	fputs(_(" -r, --raw                risplay the raw table\n"), out);
+	fputs(_(" -p, --pwd                display information related to login by password.\n"), out);
+	fputs(_(" -r, --raw                display in raw mode\n"), out);
 	fputs(_(" -s, --system-accs        display system accounts\n"), out);
 	fputs(_("     --time-format=<type> display dates in short, full or iso format\n"), out);
 	fputs(_(" -u, --user-accs          display user accounts\n"), out);
-	fputs(_(" -x, --extra              display extra information\n"), out);
+	fputs(_(" -G, --groups-info        display information about groups\n"), out);
 	fputs(_(" -z, --print0             delimit user entries with a nul character\n"), out);
 	fputs(_(" -Z, --context            display SELinux contexts\n"), out);
 	fputs(_("     --wtmp-file <path>   set an alternate path for wtmp\n"), out);
@@ -1219,7 +1215,7 @@ int main(int argc, char *argv[])
 		{ "groups",         required_argument,	0, 'g' },
 		{ "help",           no_argument,	0, 'h' },
 		{ "logins",         required_argument,	0, 'l' },
-		{ "supp-groups",    no_argument,	0, 'm' },
+		{ "supp-groups",    no_argument,	0, 'G' },
 		{ "newline",        no_argument,	0, 'n' },
 		{ "notruncate",     no_argument,	0, OPT_NOTRUNC },
 		{ "output",         required_argument,	0, 'o' },
@@ -1229,7 +1225,7 @@ int main(int argc, char *argv[])
 		{ "time-format",    required_argument,	0, OPT_TIME_FMT },
 		{ "user-accs",      no_argument,	0, 'u' },
 		{ "version",        no_argument,	0, OPT_VER },
-		{ "extra",          no_argument,	0, 'x' },
+		{ "pwd",            no_argument,	0, 'p' },
 		{ "print0",         no_argument,	0, 'z' },
 		/* TODO: find a reasonable way to do this for passwd/group/shadow,
 		 * as libc itself doesn't supply any way to get a specific
@@ -1259,7 +1255,7 @@ int main(int argc, char *argv[])
 	columns[ncolumns++] = COL_UID;
 	columns[ncolumns++] = COL_USER;
 
-	while ((c = getopt_long(argc, argv, "acefg:hl:mno:rsuxzZ",
+	while ((c = getopt_long(argc, argv, "acfGg:hl:no:prsuxzZ",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1279,7 +1275,14 @@ int main(int argc, char *argv[])
 			outmode = OUT_EXPORT;
 			break;
 		case 'f':
-			lslogins_flag |= F_FAIL;
+			columns[ncolumns++] = COL_FAILED_LOGIN;
+			columns[ncolumns++] = COL_FAILED_TTY;
+			break;
+		case 'G':
+			columns[ncolumns++] = COL_GID;
+			columns[ncolumns++] = COL_GROUP;
+			columns[ncolumns++] = COL_SGIDS;
+			columns[ncolumns++] = COL_SGROUPS;
 			break;
 		case 'g':
 			groups = optarg;
@@ -1289,9 +1292,6 @@ int main(int argc, char *argv[])
 			break;
 		case 'l':
 			logins = optarg;
-			break;
-		case 'm':
-			lslogins_flag |= F_MORE;
 			break;
 		case 'n':
 			outmode = OUT_NEWLINE;
@@ -1312,7 +1312,9 @@ int main(int argc, char *argv[])
 			outmode = OUT_RAW;
 			break;
 		case OPT_LAST:
-			lslogins_flag |= F_LAST;
+			columns[ncolumns++] = COL_LAST_TTY;
+			columns[ncolumns++] = COL_LAST_HOSTNAME;
+			columns[ncolumns++] = COL_LAST_LOGIN;
 			break;
 		case 's':
 			ctl->SYS_UID_MIN = getlogindefs_num("SYS_UID_MIN", UL_SYS_UID_MIN);
@@ -1328,8 +1330,12 @@ int main(int argc, char *argv[])
 			printf(_("%s from %s\n"), program_invocation_short_name,
 			       PACKAGE_STRING);
 			return EXIT_SUCCESS;
-		case 'x':
-			lslogins_flag |= F_EXTRA;
+		case 'p':
+			columns[ncolumns++] = COL_PWDEMPTY;
+			columns[ncolumns++] = COL_PWDLOCK;
+			columns[ncolumns++] = COL_PWDDENY;
+			columns[ncolumns++] = COL_NOLOGIN;
+			columns[ncolumns++] = COL_HUSH_STATUS;
 			break;
 		case 'z':
 			outmode = OUT_NUL;
@@ -1358,11 +1364,11 @@ int main(int argc, char *argv[])
 			}
 			break;
 		case 'Z':
+			columns[ncolumns++] = COL_SELINUX;
 #ifdef HAVE_LIBSELINUX
-			lslogins_flag |= F_SELINUX;
 			ctl->sel_enabled = is_selinux_enabled();
 			if (ctl->sel_enabled == -1)
-				exit(1);
+				err(EXIT_FAILURE, _("failed to request selinux state"));
 #endif
 			break;
 		default:
@@ -1383,6 +1389,7 @@ int main(int argc, char *argv[])
 		lslogins_flag &= ~(F_USRAC | F_SYSAC);
 
 	if (!ncolumns && outmode == OUT_PRETTY) {
+		/* all columns for lslogins <username> */
 		for (i = 0; i < ARRAY_SIZE(coldescs); i++)
 			 columns[ncolumns++] = i;
 
@@ -1394,41 +1401,6 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_LAST_LOGIN;
 		columns[ncolumns++] = COL_GECOS;
 	}
-/*
-
-		if (lslogins_flag & F_NOPWD)
-			columns[ncolumns++] = COL_PWDEMPTY;
-		if (lslogins_flag & F_MORE)
-			columns[ncolumns++] = COL_SGRPS;
-		if (lslogins_flag & F_EXPIR) {
-			columns[ncolumns++] = COL_PWD_CTIME;
-			columns[ncolumns++] = COL_PWD_EXPIR;
-		}
-		if (lslogins_flag & F_LAST) {
-			columns[ncolumns++] = COL_LAST_TTY;
-			columns[ncolumns++] = COL_LAST_HOSTNAME;
-		}
-		if (lslogins_flag & F_FAIL) {
-			columns[ncolumns++] = COL_FAILED_LOGIN;
-			columns[ncolumns++] = COL_FAILED_TTY;
-		}
-		if (lslogins_flag & F_EXTRA) {
-			columns[ncolumns++] = COL_HOME;
-			columns[ncolumns++] = COL_SHELL;
-			columns[ncolumns++] = COL_GECOS;
-			columns[ncolumns++] = COL_PWDEMPTY;
-			columns[ncolumns++] = COL_NOLOGIN;
-			columns[ncolumns++] = COL_PWDLOCK;
-			columns[ncolumns++] = COL_HUSH_STATUS;
-			columns[ncolumns++] = COL_PWD_WARN;
-			columns[ncolumns++] = COL_PWD_CTIME_MIN;
-			columns[ncolumns++] = COL_PWD_CTIME_MAX;
-			columns[ncolumns++] = COL_NPROCS;
-		}
-		if (lslogins_flag & F_SELINUX)
-			columns[ncolumns++] = COL_SELINUX;
-
-*/
 
 	if (require_wtmp())
 		parse_wtmp(ctl, path_wtmp);
