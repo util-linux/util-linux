@@ -631,11 +631,11 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 		fd = path_fopen("r", 0, _PATH_PROC_DEVICETREE "/hypervisor/compatible");
 		if (fd) {
 			char buf[256];
-			size_t i;
+			size_t i, len;
 			memset(buf, 0, sizeof(buf));
-			fread(buf, sizeof(buf) - 1, 1, fd);
+			len = fread(buf, 1, sizeof(buf) - 1, fd);
 			fclose(fd);
-			for (i = 0; i < sizeof(buf);) {
+			for (i = 0; i < len;) {
 				if (!strcmp(&buf[i], "linux,kvm")) {
 					desc->hyper = HYPER_KVM;
 					desc->virtype = VIRT_FULL;
