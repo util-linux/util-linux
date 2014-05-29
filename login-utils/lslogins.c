@@ -233,13 +233,13 @@ static struct lslogins_coldesc coldescs[] =
 	[COL_FAILED_LOGIN]  = { "FAILED-LOGIN",	N_("date of last failed login"), N_("Failed login"), 0.1 },
 	[COL_FAILED_TTY]    = { "FAILED-TTY",	N_("where did the login fail?"), N_("Failed login terminal"), 0.05 },
 	[COL_HUSH_STATUS]   = { "HUSHED",	N_("user's hush settings"), N_("Hushed"), 1, SCOLS_FL_RIGHT },
-	[COL_PWD_WARN]      = { "PWD-WARN",	N_("password warn interval"), N_("Days to passwd warning"), 0.1 },
+	[COL_PWD_WARN]      = { "PWD-WARN",	N_("days user is warned of password expiration"), N_("Password expiration warn interval"), 0.1 },
 	[COL_PWD_EXPIR]     = { "PWD-EXPIR",	N_("password expiration date"), N_("Password expiration"), 0.1 },
 	[COL_PWD_CTIME]     = { "PWD-CHANGE",	N_("date of last password change"), N_("Password changed"), 0.1 },
 	[COL_PWD_CTIME_MIN] = { "PWD-MIN",	N_("number of days required between changes"), N_("Minimal change time"), 0.1 },
 	[COL_PWD_CTIME_MAX] = { "PWD-MAX",	N_("max number of days a password may remain unchanged"), N_("Maximal change time"), 0.1 },
 	[COL_SELINUX]       = { "CONTEXT",	N_("the user's security context"), N_("Selinux context"), 0.1 },
-	[COL_NPROCS]        = { "PROC",         N_("number of processes run by the user"), N_("Process count"), 1, SCOLS_FL_RIGHT },
+	[COL_NPROCS]        = { "PROC",         N_("number of processes run by the user"), N_("Running process"), 1, SCOLS_FL_RIGHT },
 };
 
 struct lslogins_control {
