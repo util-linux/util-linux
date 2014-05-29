@@ -103,9 +103,10 @@ struct lslogins_user {
 	gid_t gid;
 	char *gecos;
 
-	int nopasswd;
+	int pwd_empty;
 	int nologin;
-	int locked;
+	int pwd_lock;
+	int pwd_deny;
 
 	gid_t *sgroups;
 	size_t nsgroups;
@@ -164,11 +165,15 @@ enum {
  * IDs
  */
 enum {
-	COL_LOGIN = 0,
+	COL_USER = 0,
 	COL_UID,
 	COL_GECOS,
 	COL_HOME,
 	COL_SHELL,
+	COL_NOLOGIN,
+	COL_PWDLOCK,
+	COL_PWDEMPTY,
+	COL_PWDDENY,
 	COL_PGRP,
 	COL_PGID,
 	COL_SGRPS,
@@ -179,9 +184,6 @@ enum {
 	COL_FAILED_LOGIN,
 	COL_FAILED_TTY,
 	COL_HUSH_STATUS,
-	COL_NOLOGIN,
-	COL_LOCKED,
-	COL_NOPASSWD,
 	COL_PWD_WARN,
 	COL_PWD_CTIME,
 	COL_PWD_CTIME_MIN,
@@ -213,11 +215,12 @@ static const char *const pretty_status[] = {
 
 static struct lslogins_coldesc coldescs[] =
 {
-	[COL_LOGIN]         = { "LOGIN",	N_("user/system login"), N_("Login"), 0.2, SCOLS_FL_NOEXTREMES },
+	[COL_USER]          = { "USER",		N_("user name"), N_("Username"), 0.2, SCOLS_FL_NOEXTREMES },
 	[COL_UID]           = { "UID",		N_("user ID"), "UID", 0.05, SCOLS_FL_RIGHT},
-	[COL_NOPASSWD]      = { "NOPASSWD",	N_("account has a password?"), N_("No password"), 1, SCOLS_FL_RIGHT },
-	[COL_NOLOGIN]       = { "NOLOGIN",	N_("account has a password?"), N_("No login"), 1, SCOLS_FL_RIGHT },
-	[COL_LOCKED]        = { "LOCKED",	N_("account has a password?"), N_("Locked"), 1, SCOLS_FL_RIGHT },
+	[COL_PWDEMPTY]      = { "PWD-EMPTY",	N_("password not requiured"), N_("Password no required"), 1, SCOLS_FL_RIGHT },
+	[COL_PWDDENY]       = { "PWD-DENY",	N_("login by password disabled"), N_("Login by password disabled"), 1, SCOLS_FL_RIGHT },
+	[COL_PWDLOCK]       = { "PWD-LOCK",	N_("password defined, but locked"), N_("Password is locked"), 1, SCOLS_FL_RIGHT },
+	[COL_NOLOGIN]       = { "NOLOGIN",	N_("log in disabled by nologin(8) or pam_nologin(8)"), N_("No login"), 1, SCOLS_FL_RIGHT },
 	[COL_PGRP]          = { "GROUP",	N_("primary group name"), N_("Primary group"), 0.2 },
 	[COL_PGID]          = { "GID",		N_("primary group ID"), "GID", 0.05, SCOLS_FL_RIGHT },
 	[COL_SGRPS]         = { "SUPP-GROUPS",	N_("supplementary group names"), N_("Supplementary groups"), 0.1 },
@@ -485,6 +488,16 @@ static int get_nprocs(const uid_t uid)
 	return nprocs;
 }
 
+static int valid_pwd(const char *str)
+{
+	const char *p;
+
+	for (p = str; p && *p; p++)
+		if (!isalnum((unsigned int) *p))
+			return 0;
+	return p > str ? 1 : 0;
+}
+
 static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const char *username)
 {
 	struct lslogins_user *user;
@@ -537,7 +550,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 
 	while (n < ncolumns) {
 		switch (columns[n++]) {
-		case COL_LOGIN:
+		case COL_USER:
 			user->login = xstrdup(pwd->pw_name);
 			break;
 		case COL_UID:
@@ -592,27 +605,36 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			if (user->hushed == -1)
 				user->hushed = STATUS_UNKNOWN;
 			break;
-		case COL_NOPASSWD:
+		case COL_PWDEMPTY:
 			if (shadow) {
 				if (!*shadow->sp_pwdp) /* '\0' */
-					user->nopasswd = STATUS_TRUE;
+					user->pwd_empty = STATUS_TRUE;
 			} else
-				user->nopasswd = STATUS_UNKNOWN;
+				user->pwd_empty = STATUS_UNKNOWN;
+			break;
+		case COL_PWDDENY:
+			if (shadow) {
+				if ((*shadow->sp_pwdp == '!' ||
+				     *shadow->sp_pwdp == '*') &&
+				    !valid_pwd(shadow->sp_pwdp + 1))
+					user->pwd_deny = STATUS_TRUE;
+			} else
+				user->pwd_deny = STATUS_UNKNOWN;
+			break;
+
+		case COL_PWDLOCK:
+			if (shadow) {
+				if (*shadow->sp_pwdp == '!' && valid_pwd(shadow->sp_pwdp + 1))
+					user->pwd_lock = STATUS_TRUE;
+			} else
+				user->pwd_lock = STATUS_UNKNOWN;
 			break;
 		case COL_NOLOGIN:
 			if (strstr(pwd->pw_shell, "nologin"))
 				user->nologin = 1;
-			else if (pwd->pw_uid) {
+			else if (pwd->pw_uid)
 				user->nologin = access("/etc/nologin", F_OK) ||
 						access("/var/run/nologin", F_OK);
-			}
-			break;
-		case COL_LOCKED:
-			if (shadow) {
-				if (*shadow->sp_pwdp == '!')
-					user->locked = STATUS_TRUE;
-			} else
-				user->locked = STATUS_UNKNOWN;
 			break;
 		case COL_PWD_WARN:
 			if (shadow && shadow->sp_warn >= 0)
@@ -868,20 +890,23 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 		int rc = 0;
 
 		switch (columns[n]) {
-		case COL_LOGIN:
+		case COL_USER:
 			rc = scols_line_set_data(ln, n, user->login);
 			break;
 		case COL_UID:
 			rc = scols_line_refer_data(ln, n, uidtostr(user->uid));
 			break;
-		case COL_NOPASSWD:
-			rc = scols_line_set_data(ln, n, get_status(user->nopasswd));
+		case COL_PWDEMPTY:
+			rc = scols_line_set_data(ln, n, get_status(user->pwd_empty));
 			break;
 		case COL_NOLOGIN:
 			rc = scols_line_set_data(ln, n, get_status(user->nologin));
 			break;
-		case COL_LOCKED:
-			rc = scols_line_set_data(ln, n, get_status(user->locked));
+		case COL_PWDLOCK:
+			rc = scols_line_set_data(ln, n, get_status(user->pwd_lock));
+			break;
+		case COL_PWDDENY:
+			rc = scols_line_set_data(ln, n, get_status(user->pwd_deny));
 			break;
 		case COL_PGRP:
 			rc = scols_line_set_data(ln, n, user->group);
@@ -1337,7 +1362,7 @@ int main(int argc, char *argv[])
 
 	} else if (!ncolumns) {
 		columns[ncolumns++] = COL_UID;
-		columns[ncolumns++] = COL_LOGIN;
+		columns[ncolumns++] = COL_USER;
 		columns[ncolumns++] = COL_PGRP;
 		columns[ncolumns++] = COL_PGID;
 		columns[ncolumns++] = COL_LAST_LOGIN;
@@ -1345,7 +1370,7 @@ int main(int argc, char *argv[])
 		want_wtmp = 1;
 
 		if (lslogins_flag & F_NOPWD)
-			columns[ncolumns++] = COL_NOPASSWD;
+			columns[ncolumns++] = COL_PWDEMPTY;
 		if (lslogins_flag & F_MORE)
 			columns[ncolumns++] = COL_SGRPS;
 		if (lslogins_flag & F_EXPIR) {
@@ -1365,9 +1390,9 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_HOME;
 			columns[ncolumns++] = COL_SHELL;
 			columns[ncolumns++] = COL_GECOS;
-			columns[ncolumns++] = COL_NOPASSWD;
+			columns[ncolumns++] = COL_PWDEMPTY;
 			columns[ncolumns++] = COL_NOLOGIN;
-			columns[ncolumns++] = COL_LOCKED;
+			columns[ncolumns++] = COL_PWDLOCK;
 			columns[ncolumns++] = COL_HUSH_STATUS;
 			columns[ncolumns++] = COL_PWD_WARN;
 			columns[ncolumns++] = COL_PWD_CTIME_MIN; /*?*/
