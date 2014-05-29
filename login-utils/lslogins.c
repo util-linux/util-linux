@@ -1388,9 +1388,9 @@ int main(int argc, char *argv[])
 	if (lslogins_flag & F_USRAC && lslogins_flag & F_SYSAC)
 		lslogins_flag &= ~(F_USRAC | F_SYSAC);
 
-	if (!ncolumns && outmode == OUT_PRETTY) {
+	if (outmode == OUT_PRETTY && !opt_o) {
 		/* all columns for lslogins <username> */
-		for (i = 0; i < ARRAY_SIZE(coldescs); i++)
+		for (ncolumns = 0, i = 0; i < ARRAY_SIZE(coldescs); i++)
 			 columns[ncolumns++] = i;
 
 	} else if (ncolumns == 2 && !opt_o) {
