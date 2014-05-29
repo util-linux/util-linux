@@ -268,9 +268,8 @@ struct lslogins_control {
 	const char *journal_path;
 };
 
-/* these have to remain global since there's no other
- * reasonable way to pass them for each call of fill_table()
- * via twalk() */
+/* these have to remain global since there's no other reasonable way to pass
+ * them for each call of fill_table() via twalk() */
 static struct libscols_table *tb;
 static int columns[ARRAY_SIZE(coldescs)];
 static int ncolumns;
@@ -282,17 +281,15 @@ static int date_is_today(time_t t)
 	return t / 86400 == tv.tv_sec / 86400;
 }
 
-static int
-column_name_to_id(const char *name, size_t namesz)
+static int column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(coldescs); i++) {
 		const char *cn = coldescs[i].name;
 
-		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz)) {
+		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return i;
-		}
 	}
 	warnx(_("unknown column: %s"), name);
 	return -1;
@@ -306,23 +303,23 @@ static char *make_time(int mode, time_t time)
 	localtime_r(&time, &tm);
 
 	switch(mode) {
-		case TIME_FULL:
-			asctime_r(&tm, buf);
-			if (*(s = buf + strlen(buf) - 1) == '\n')
-				*s = '\0';
-			break;
-		case TIME_SHORT_RELATIVE:
-			if (date_is_today(time))
-				strftime(buf, 32, "%H:%M:%S", &tm);
-			else /*fallthrough*/
-		case TIME_SHORT:
-			strftime(buf, 32, "%a %b %d %Y", &tm);
-			break;
-		case TIME_ISO:
-			strftime(buf, 32, "%Y-%m-%dT%H:%M:%S%z", &tm);
-			break;
-		default:
-			exit(1);
+	case TIME_FULL:
+		asctime_r(&tm, buf);
+		if (*(s = buf + strlen(buf) - 1) == '\n')
+			*s = '\0';
+		break;
+	case TIME_SHORT_RELATIVE:
+		if (date_is_today(time))
+			strftime(buf, 32, "%H:%M:%S", &tm);
+		else /*fallthrough*/
+	case TIME_SHORT:
+		strftime(buf, 32, "%a %b %d %Y", &tm);
+		break;
+	case TIME_ISO:
+		strftime(buf, 32, "%Y-%m-%dT%H:%M:%S%z", &tm);
+		break;
+	default:
+		errx(EXIT_FAILURE, _("unssupported time type"));
 	}
 	return xstrdup(buf);
 }
@@ -503,31 +500,24 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	uid_t uid;
 	errno = 0;
 
-	if (username)
-		pwd = getpwnam(username);
-	else
-		pwd = getpwent();
-
+	pwd = username ? getpwnam(username) : getpwent();
 	if (!pwd)
 		return NULL;
 
 	ctl->uid = uid = pwd->pw_uid;
 
-	/* nfsnobody is an exception to the UID_MAX limit.
-	 * This is "nobody" on some systems; the decisive
-	 * point is the UID - 65534 */
-	if ((lslogins_flag & F_USRAC) &&
-	    strcmp("nfsnobody", pwd->pw_name)) {
+	/* nfsnobody is an exception to the UID_MAX limit.  This is "nobody" on
+	 * some systems; the decisive point is the UID - 65534 */
+	if ((lslogins_flag & F_USRAC) && strcmp("nfsnobody", pwd->pw_name)) {
 		if (uid < ctl->UID_MIN || uid > ctl->UID_MAX) {
 			errno = EAGAIN;
 			return NULL;
 		}
 
-	} else if (lslogins_flag & F_SYSAC) {
-		if (uid < ctl->SYS_UID_MIN || uid > ctl->SYS_UID_MAX) {
-			errno = EAGAIN;
-			return NULL;
-		}
+	} else if ((lslogins_flag & F_SYSAC) &&
+		   uid < ctl->SYS_UID_MIN || uid > ctl->SYS_UID_MAX) {
+		errno = EAGAIN;
+		return NULL;
 	}
 
 	user = xcalloc(1, sizeof(struct lslogins_user));
@@ -541,20 +531,9 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	if (ctl->btmp)
 		user_btmp = get_last_btmp(ctl, pwd->pw_name);
 
-	/* sufficient permissions to get a shadow entry? */
-	errno = 0;
 	lckpwdf();
 	shadow = getspnam(pwd->pw_name);
 	ulckpwdf();
-
-	if (!shadow) {
-		if (errno != EACCES)
-			err(EXIT_FAILURE, "%s", strerror(errno));
-	} else {
-		/* we want these dates in seconds */
-		shadow->sp_lstchg *= 86400;
-		shadow->sp_expire *= 86400;
-	}
 
 	while (n < ncolumns) {
 		switch (columns[n++]) {
@@ -621,9 +600,11 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 				user->nopasswd = STATUS_UNKNOWN;
 			break;
 		case COL_NOLOGIN:
-			if ((pwd->pw_uid && !(close(open("/etc/nologin", O_RDONLY)))) ||
-			    strstr(pwd->pw_shell, "nologin")) {
+			if (strstr(pwd->pw_shell, "nologin"))
 				user->nologin = 1;
+			else if (pwd->uid) {
+				user->nologin = access("/etc/nologin", F_OK) ||
+						access("/var/run/nologin", F_OK);
 			}
 			break;
 		case COL_LOCKED:
@@ -639,13 +620,16 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			break;
 		case COL_PWD_EXPIR:
 			if (shadow && shadow->sp_expire >= 0)
-				user->pwd_expire = make_time(TIME_SHORT, shadow->sp_expire);
+				user->pwd_expire = make_time(TIME_SHORT,
+						shadow->sp_expire * 86400);
 			break;
 		case COL_PWD_CTIME:
-			/* sp_lstchg is specified in days, showing hours (especially in non-GMT
-			 * timezones) would only serve to confuse */
+			/* sp_lstchg is specified in days, showing hours
+			 * (especially in non-GMT timezones) would only serve
+			 * to confuse */
 			if (shadow)
-				user->pwd_ctime = make_time(TIME_SHORT, shadow->sp_lstchg);
+				user->pwd_ctime = make_time(TIME_SHORT,
+						shadow->sp_lstchg * 86400);
 			break;
 		case COL_PWD_CTIME_MIN:
 			if (shadow) {
