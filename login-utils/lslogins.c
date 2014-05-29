@@ -1158,9 +1158,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -c, --colon-separate     display data in a format similar to /etc/passwd\n"), out);
 	fputs(_(" -e, --export             display in an export-able output format\n"), out);
 	fputs(_(" -f, --failed             display data about the last users' failed logins\n"), out);
+	fputs(_(" -G, --groups-info        display information about groups\n"), out);
 	fputs(_(" -g, --groups=<groups>    display users belonging to a group in <groups>\n"), out);
+	fputs(_(" -L, --last               show info about the users' last login sessions\n"), out);
 	fputs(_(" -l, --logins=<logins>    display only users from <logins>\n"), out);
-	fputs(_("     --last               show info about the users' last login sessions\n"), out);
 	fputs(_(" -m, --supp-groups        display supplementary groups as well\n"), out);
 	fputs(_(" -n, --newline            display each piece of information on a new line\n"), out);
 	fputs(_("     --notruncate         don't truncate output\n"), out);
@@ -1170,9 +1171,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -s, --system-accs        display system accounts\n"), out);
 	fputs(_("     --time-format=<type> display dates in short, full or iso format\n"), out);
 	fputs(_(" -u, --user-accs          display user accounts\n"), out);
-	fputs(_(" -G, --groups-info        display information about groups\n"), out);
-	fputs(_(" -z, --print0             delimit user entries with a nul character\n"), out);
 	fputs(_(" -Z, --context            display SELinux contexts\n"), out);
+	fputs(_(" -z, --print0             delimit user entries with a nul character\n"), out);
 	fputs(_("     --wtmp-file <path>   set an alternate path for wtmp\n"), out);
 	fputs(_("     --btmp-file <path>   set an alternate path for btmp\n"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -1199,8 +1199,7 @@ int main(int argc, char *argv[])
 
 	/* long only options. */
 	enum {
-		OPT_LAST = CHAR_MAX + 1,
-		OPT_VER,
+		OPT_VER = CHAR_MAX + 1,
 		OPT_WTMP,
 		OPT_BTMP,
 		OPT_NOTRUNC,
@@ -1219,17 +1218,14 @@ int main(int argc, char *argv[])
 		{ "newline",        no_argument,	0, 'n' },
 		{ "notruncate",     no_argument,	0, OPT_NOTRUNC },
 		{ "output",         required_argument,	0, 'o' },
-		{ "last",           no_argument,	0, OPT_LAST },
+		{ "last",           no_argument,	0, 'L', },
 		{ "raw",            no_argument,	0, 'r' },
 		{ "system-accs",    no_argument,	0, 's' },
 		{ "time-format",    required_argument,	0, OPT_TIME_FMT },
 		{ "user-accs",      no_argument,	0, 'u' },
-		{ "version",        no_argument,	0, OPT_VER },
+		{ "version",        no_argument,	0, 'V' },
 		{ "pwd",            no_argument,	0, 'p' },
 		{ "print0",         no_argument,	0, 'z' },
-		/* TODO: find a reasonable way to do this for passwd/group/shadow,
-		 * as libc itself doesn't supply any way to get a specific
-		 * entry from a user-specified file */
 		{ "wtmp-file",      required_argument,	0, OPT_WTMP },
 		{ "btmp-file",      required_argument,	0, OPT_BTMP },
 #ifdef HAVE_LIBSELINUX
@@ -1239,7 +1235,12 @@ int main(int argc, char *argv[])
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
-		{ 'c','e','n','r','z' },
+		{ 'G', 'o' },
+		{ 'L', 'o' },
+		{ 'Z', 'o' },
+		{ 'a', 'o' },
+		{ 'c','n','r','z' },
+		{ 'o', 'p' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -1255,7 +1256,7 @@ int main(int argc, char *argv[])
 	columns[ncolumns++] = COL_UID;
 	columns[ncolumns++] = COL_USER;
 
-	while ((c = getopt_long(argc, argv, "acfGg:hl:no:prsuxzZ",
+	while ((c = getopt_long(argc, argv, "acfGg:hLl:no:prsuVxzZ",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1290,6 +1291,11 @@ int main(int argc, char *argv[])
 		case 'h':
 			usage(stdout);
 			break;
+		case 'L':
+			columns[ncolumns++] = COL_LAST_TTY;
+			columns[ncolumns++] = COL_LAST_HOSTNAME;
+			columns[ncolumns++] = COL_LAST_LOGIN;
+			break;
 		case 'l':
 			logins = optarg;
 			break;
@@ -1311,11 +1317,6 @@ int main(int argc, char *argv[])
 		case 'r':
 			outmode = OUT_RAW;
 			break;
-		case OPT_LAST:
-			columns[ncolumns++] = COL_LAST_TTY;
-			columns[ncolumns++] = COL_LAST_HOSTNAME;
-			columns[ncolumns++] = COL_LAST_LOGIN;
-			break;
 		case 's':
 			ctl->SYS_UID_MIN = getlogindefs_num("SYS_UID_MIN", UL_SYS_UID_MIN);
 			ctl->SYS_UID_MAX = getlogindefs_num("SYS_UID_MAX", UL_SYS_UID_MAX);
@@ -1326,10 +1327,6 @@ int main(int argc, char *argv[])
 			ctl->UID_MAX = getlogindefs_num("UID_MAX", UL_UID_MAX);
 			lslogins_flag |= F_USRAC;
 			break;
-		case OPT_VER:
-			printf(_("%s from %s\n"), program_invocation_short_name,
-			       PACKAGE_STRING);
-			return EXIT_SUCCESS;
 		case 'p':
 			columns[ncolumns++] = COL_PWDEMPTY;
 			columns[ncolumns++] = COL_PWDLOCK;
@@ -1363,6 +1360,9 @@ int main(int argc, char *argv[])
 					usage(stderr);
 			}
 			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		case 'Z':
 			columns[ncolumns++] = COL_SELINUX;
 #ifdef HAVE_LIBSELINUX

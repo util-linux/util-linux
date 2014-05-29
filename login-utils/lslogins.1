@@ -40,7 +40,7 @@ Only show data of users belonging to \fIGROUPS\fR. More than one group may be sp
 \fB\-l\fR, \fB\-\-logins\fR=\fILOGINS\fR
 Only show data of users with a login specified in \fILOGINS\fR. More than one login may be specified; the list has to be comma-separated.
 .TP
-\fB\-\-last\fR
+\fB\-L\fR, \-\-last\fR
 Display data containing information about the users' last login sessions.
 .TP
 \fB\-m\fR, \fB\-\-supp\-groups\fR
@@ -56,7 +56,7 @@ Don't truncate output.
 Specify which output columns to print.  Use
 .B \-\-help
 to get a list of all supported columns.
-.PT
+.TP
 \fB\-p , \-\-pwd\fR
 Display information related to login by password (see also \fB\-afR).
 .TP
@@ -92,7 +92,7 @@ Alternate path for btmp.
 \fB\-h\fR, \fB\-\-help\fR
 Display help information and exit.
 .TP
-\fB\-v\fR, \fB\-\-version\fR
+\fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
 
 .SH NOTES
@@ -113,9 +113,14 @@ if a serious error occurs (e.g. a corrupt log).
 .SH HISTORY
 The \fBlslogins\fP utility is inspired by the \fBlogins\fP utility, which first appeared in FreeBSD 4.10.
 .SH AUTHORS
-.MT ondrej.oprala@gmail.com
+.MT ooprala@redhat.com
 Ondrej Oprala
 .ME
+.br
+.MT kzak@redhat.com
+Karel Zak
+.ME
+
 .SH AVAILABILITY
 The lslogins command is part of the util-linux package and is available from
 .UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
