@@ -39,6 +39,17 @@ FDISK_CMD_BSD_LIST_TYPES="b\nl\nq\n"         # list supported PT types and quit
 
 #set -x
 
+# BSD disklabel depends on endianess
+BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
+function fdisk_bsd_byte_order_clean
+{
+	[ $BYTE_ORDER = "BE" ] || return
+	sed -i \
+	-e "s/c2273b52976351db75596c47c10b0725/2e1cee529cb59c9341afef0443f196a1/" \
+	-e "s/9a234a5b99e37d2ce0d92b65437b93cd/b5c121c2091b2ff26b880551feac7112/" \
+	"$TS_OUTPUT"
+}
+
 function print_layout {
 	echo -ne "\n---layout----------" >> $TS_OUTPUT
 	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME}  >> $TS_OUTPUT
@@ -102,5 +113,6 @@ echo -e "${FDISK_CMD_BSD_LIST_TYPES}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} | \
 	sed 's/Reading .*//g; s/Welcome to fdisk .*//' >> $TS_OUTPUT 2>&1
 
+fdisk_bsd_byte_order_clean
 ts_fdisk_clean ${TEST_IMAGE_NAME}
 ts_finalize
