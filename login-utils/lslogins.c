@@ -154,11 +154,10 @@ enum {
 	F_NOPWD	= (1 << 2),
 	F_SYSAC	= (1 << 3),
 	F_USRAC	= (1 << 4),
-	F_SORT	= (1 << 5),
-	F_EXTRA	= (1 << 6),
-	F_FAIL  = (1 << 7),
-	F_LAST  = (1 << 8),
-	F_SELINUX = (1 << 9),
+	F_EXTRA	= (1 << 5),
+	F_FAIL  = (1 << 6),
+	F_LAST  = (1 << 7),
+	F_SELINUX = (1 << 8),
 };
 
 /*
@@ -256,8 +255,6 @@ struct lslogins_control {
 
 	uid_t SYS_UID_MIN;
 	uid_t SYS_UID_MAX;
-
-	int (*cmp_fn) (const void *a, const void *b);
 
 	char **ulist;
 	size_t ulsiz;
@@ -515,7 +512,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 		}
 
 	} else if ((lslogins_flag & F_SYSAC) &&
-		   uid < ctl->SYS_UID_MIN || uid > ctl->SYS_UID_MAX) {
+		   (uid < ctl->SYS_UID_MIN || uid > ctl->SYS_UID_MAX)) {
 		errno = EAGAIN;
 		return NULL;
 	}
@@ -534,6 +531,9 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	lckpwdf();
 	shadow = getspnam(pwd->pw_name);
 	ulckpwdf();
+
+	/* required  by tseach() stuff */
+	user->uid = pwd->pw_uid;
 
 	while (n < ncolumns) {
 		switch (columns[n++]) {
@@ -602,7 +602,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 		case COL_NOLOGIN:
 			if (strstr(pwd->pw_shell, "nologin"))
 				user->nologin = 1;
-			else if (pwd->uid) {
+			else if (pwd->pw_uid) {
 				user->nologin = access("/etc/nologin", F_OK) ||
 						access("/var/run/nologin", F_OK);
 			}
@@ -666,12 +666,6 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			break;
 		}
 	}
-	/* check if we have the info needed to sort */
-	if (lslogins_flag & F_SORT) { /* sorting by username */
-		if (!user->login)
-			user->login = xstrdup(pwd->pw_name);
-	} else /* sorting by UID */
-		user->uid = pwd->pw_uid;
 
 	return user;
 }
@@ -681,17 +675,6 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
  * ignores invalid login/group names, so we're going to as well.*/
 #define IS_REAL_ERRNO(e) !((e) == ENOENT || (e) == ESRCH || \
 		(e) == EBADF || (e) == EPERM || (e) == EAGAIN)
-
-/*
-static void *user_in_tree(void **rootp, struct lslogins_user *u)
-{
-	void *rc;
-	rc = tfind(u, rootp, ctl->cmp_fn);
-	if (!rc)
-		tdelete(u, rootp, ctl->cmp_fn);
-	return rc;
-}
-*/
 
 /* get a definitive list of users we want info about... */
 
@@ -801,6 +784,13 @@ static int get_user(struct lslogins_control *ctl, struct lslogins_user **user,
 	return 0;
 }
 
+static int cmp_uid(const void *a, const void *b)
+{
+	uid_t x = ((struct lslogins_user *)a)->uid;
+	uid_t z = ((struct lslogins_user *)b)->uid;
+	return x > z ? 1 : (x < z ? -1 : 0);
+}
+
 static int create_usertree(struct lslogins_control *ctl)
 {
 	struct lslogins_user *user = NULL;
@@ -811,27 +801,14 @@ static int create_usertree(struct lslogins_control *ctl)
 			if (get_user(ctl, &user, ctl->ulist[n]))
 				return -1;
 			if (user) /* otherwise an invalid user name has probably been given */
-				tsearch(user, &ctl->usertree, ctl->cmp_fn);
+				tsearch(user, &ctl->usertree, cmp_uid);
 			++n;
 		}
 	} else {
 		while ((user = get_next_user(ctl)))
-			tsearch(user, &ctl->usertree, ctl->cmp_fn);
+			tsearch(user, &ctl->usertree, cmp_uid);
 	}
 	return 0;
-}
-
-static int cmp_uname(const void *a, const void *b)
-{
-	return strcmp(((struct lslogins_user *)a)->login,
-		      ((struct lslogins_user *)b)->login);
-}
-
-static int cmp_uid(const void *a, const void *b)
-{
-	uid_t x = ((struct lslogins_user *)a)->uid;
-	uid_t z = ((struct lslogins_user *)b)->uid;
-	return x > z ? 1 : (x < z ? -1 : 0);
 }
 
 static struct libscols_table *setup_table(void)
@@ -1144,7 +1121,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -o, --output[=<list>]    Define the columns to output\n"), out);
 	fputs(_(" -r, --raw                Display the raw table\n"), out);
 	fputs(_(" -s, --system-accs        Display system accounts\n"), out);
-	fputs(_(" -t, --sort-by-name       Sort output by login instead of UID\n"), out);
 	fputs(_(" --time-format=<type>     Display dates in short, full or iso format\n"), out);
 	fputs(_(" -u, --user-accs          Display user accounts\n"), out);
 	fputs(_(" -x, --extra              Display extra information\n"), out);
@@ -1200,7 +1176,6 @@ int main(int argc, char *argv[])
 		{ "last",           no_argument,	0, OPT_LAST },
 		{ "raw",            no_argument,	0, 'r' },
 		{ "system-accs",    no_argument,	0, 's' },
-		{ "sort-by-name",   no_argument,	0, 't' },
 		{ "time-format",    required_argument,	0, OPT_TIME_FMT },
 		{ "user-accs",      no_argument,	0, 'u' },
 		{ "version",        no_argument,	0, OPT_VER },
@@ -1229,10 +1204,9 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	ctl->cmp_fn = cmp_uid;
 	ctl->time_mode = TIME_SHORT_RELATIVE;
 
-	while ((c = getopt_long(argc, argv, "acefg:hl:mno:rstuxzZ",
+	while ((c = getopt_long(argc, argv, "acefg:hl:mno:rsuxzZ",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1286,10 +1260,6 @@ int main(int argc, char *argv[])
 			ctl->SYS_UID_MIN = getlogindefs_num("SYS_UID_MIN", UL_SYS_UID_MIN);
 			ctl->SYS_UID_MAX = getlogindefs_num("SYS_UID_MAX", UL_SYS_UID_MAX);
 			lslogins_flag |= F_SYSAC;
-			break;
-		case 't':
-			ctl->cmp_fn = cmp_uname;
-			lslogins_flag |= F_SORT;
 			break;
 		case 'u':
 			ctl->UID_MIN = getlogindefs_num("UID_MIN", UL_UID_MIN);
@@ -1366,13 +1336,8 @@ int main(int argc, char *argv[])
 			 columns[ncolumns++] = i;
 
 	} else if (!ncolumns) {
-		if (lslogins_flag & F_SORT) {
-			columns[ncolumns++] = COL_LOGIN;
-			columns[ncolumns++] = COL_UID;
-		} else {
-			columns[ncolumns++] = COL_UID;
-			columns[ncolumns++] = COL_LOGIN;
-		}
+		columns[ncolumns++] = COL_UID;
+		columns[ncolumns++] = COL_LOGIN;
 		columns[ncolumns++] = COL_PGRP;
 		columns[ncolumns++] = COL_PGID;
 		columns[ncolumns++] = COL_LAST_LOGIN;
