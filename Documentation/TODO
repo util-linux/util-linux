@@ -1,17 +1,6 @@
 
  Note that items with (!) have high priority.
 
-
-lslogins(1) [assigned: Ondrej Oprala]
-----------
- - a new command to list information about accounts
- - based on libsmartcols
- - see passwd -S and solarix/aux logins commands
- - use infor from libc passwd struct, lastlog and wtmp/btmp logs
- - expected columns USERNAME, UID, GID, STATUS, GROUPS, SHELL, HOME,
-   FULLNAME, LAST-LOGIN, LAST-TTY, LAST-HOSTNAME, FAILED-LOGIN, FAILED-TTY,
-   HUSH-STATUS ...
-
 hwlock
 ------
  - use /var/lib/hwclock/drift to store hw-clock drift numbers.
@@ -28,10 +17,6 @@ bash completion
 
 libmount (mount/umount)
 -----------------------
-
- Note that the old mount/[u]mount.c code is in MAINTENANCE MODE only. All new
- features should be implemented to libmount or to the new sys-utils/{mount,umount}.c
- utils.
 
  - add options to control fstab/mtab mount options usage, something like:
 
@@ -54,11 +39,6 @@ docs
 
  - (!) add API documentation to libuuid
 
-
-libsmartcols
---------
-
- - allows to sort columns, for example sort lsblk(8) output by SIZE
 
 login-utils:
 -----------
