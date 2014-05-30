@@ -77,7 +77,6 @@ static struct colinfo infos[] = {
 
 static int columns[NCOLS] = {-1};
 static int ncolumns;
-static int verbose;
 
 static int get_column_id(int num)
 {
@@ -543,7 +542,6 @@ int main(int argc, char **argv)
 			showdev = 1;
 			break;
 		case 'v':
-			verbose = 1;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);

@@ -168,6 +168,7 @@ done:
 	return rc;
 }
 
+#if defined(__x86_64__) || defined(__i386__)
 static int hypervisor_decode_legacy(uint8_t *buf, const char *devmem)
 {
 	if (!checksum(buf, 0x0F))
@@ -177,6 +178,7 @@ static int hypervisor_decode_legacy(uint8_t *buf, const char *devmem)
 			 WORD(buf + 0x0C),
 		devmem);
 }
+#endif
 
 static int hypervisor_decode_smbios(uint8_t *buf, const char *devmem)
 {

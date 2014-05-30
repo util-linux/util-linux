@@ -9,8 +9,11 @@
 
 int get_boot_time(struct timeval *boot_time)
 {
+#ifdef CLOCK_BOOTTIME
 	struct timespec hires_uptime;
-	struct timeval lores_uptime, now;
+	struct timeval lores_uptime;
+#endif
+	struct timeval now;
 	struct sysinfo info;
 
 	if (gettimeofday(&now, NULL) != 0) {
