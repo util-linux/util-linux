@@ -19,6 +19,7 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <assert.h>
 #include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
@@ -32,6 +33,20 @@
 #include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
+#if defined(__x86_64__) || defined(__i386__)
+# define INCLUDE_VMWARE_BDOOR
+#endif
+
+#ifdef INCLUDE_VMWARE_BDOOR
+# include <stdint.h>
+# include <signal.h>
+# include <strings.h>
+# include <setjmp.h>
+# ifdef HAVE_sys_io_h
+#  include <sys/io.h>
+# endif
+#endif
 
 #include <libsmartcols.h>
 
@@ -60,6 +75,7 @@
 #define _PATH_PROC_STATUS	"/proc/self/status"
 #define _PATH_PROC_VZ	"/proc/vz"
 #define _PATH_PROC_BC	"/proc/bc"
+#define _PATH_PROC_DEVICETREE	"/proc/device-tree"
 #define _PATH_DEV_MEM 		"/dev/mem"
 
 /* virtualization types */
@@ -87,7 +103,28 @@ const char *hv_vendors[] = {
 	[HYPER_UML]	= "User-mode Linux",
 	[HYPER_INNOTEK]	= "Innotek GmbH",
 	[HYPER_HITACHI]	= "Hitachi",
-	[HYPER_PARALLELS] = "Parallels"
+	[HYPER_PARALLELS] = "Parallels",
+	[HYPER_VBOX]	= "Oracle",
+	[HYPER_OS400]	= "OS/400",
+	[HYPER_PHYP]	= "pHyp",
+};
+
+const int hv_vendor_pci[] = {
+	[HYPER_NONE]	= 0x0000,
+	[HYPER_XEN]	= 0x5853,
+	[HYPER_KVM]	= 0x0000,
+	[HYPER_MSHV]	= 0x1414,
+	[HYPER_VMWARE]	= 0x15ad,
+	[HYPER_VBOX]	= 0x80ee,
+};
+
+const int hv_graphics_pci[] = {
+	[HYPER_NONE]	= 0x0000,
+	[HYPER_XEN]	= 0x0001,
+	[HYPER_KVM]	= 0x0000,
+	[HYPER_MSHV]	= 0x5353,
+	[HYPER_VMWARE]	= 0x0710,
+	[HYPER_VBOX]	= 0xbeef,
 };
 
 /* CPU modes */
@@ -551,12 +588,132 @@ read_hypervisor_cpuid(struct lscpu_desc *desc)
 		desc->hyper = HYPER_VMWARE;
 }
 
-#else	/* ! __x86_64__ */
+#else /* ! (__x86_64__ || __i386__) */
 static void
 read_hypervisor_cpuid(struct lscpu_desc *desc __attribute__((__unused__)))
 {
 }
 #endif
+
+static int
+read_hypervisor_powerpc(struct lscpu_desc *desc)
+{
+	assert(!desc->hyper);
+
+	/* powerpc:
+	 * IBM iSeries: legacy, if /proc/iSeries exists, its para-virtualized on top of OS/400
+	 * IBM pSeries: always has a hypervisor
+	 *              if partition-name is "full", its kind of "bare-metal": full-system-partition
+	 *              otherwise its some partition created by Hardware Management Console
+	 *              in any case, its always some sort of HVM
+	 *              Note that pSeries could also be emulated by qemu/KVM.
+	 * KVM: "linux,kvm" in /hypervisor/compatible indicates a KVM guest
+	 * Xen: not in use, not detected
+	 */
+	if (path_exist("/proc/iSeries")) {
+		desc->hyper = HYPER_OS400;
+		desc->virtype = VIRT_PARA;
+	} else if (path_exist(_PATH_PROC_DEVICETREE "/ibm,partition-name")
+		   && path_exist(_PATH_PROC_DEVICETREE "/hmc-managed?")
+		   && !path_exist(_PATH_PROC_DEVICETREE "/chosen/qemu,graphic-width")) {
+		FILE *fd;
+		desc->hyper = HYPER_PHYP;
+		desc->virtype = VIRT_PARA;
+		fd = path_fopen("r", 0, _PATH_PROC_DEVICETREE "/ibm,partition-name");
+		if (fd) {
+			char buf[256];
+			if (fscanf(fd, "%s", buf) == 1 && !strcmp(buf, "full"))
+				desc->virtype = VIRT_NONE;
+			fclose(fd);
+		}
+	} else if (path_exist(_PATH_PROC_DEVICETREE "/hypervisor/compatible")) {
+		FILE *fd;
+		fd = path_fopen("r", 0, _PATH_PROC_DEVICETREE "/hypervisor/compatible");
+		if (fd) {
+			char buf[256];
+			size_t i, len;
+			memset(buf, 0, sizeof(buf));
+			len = fread(buf, 1, sizeof(buf) - 1, fd);
+			fclose(fd);
+			for (i = 0; i < len;) {
+				if (!strcmp(&buf[i], "linux,kvm")) {
+					desc->hyper = HYPER_KVM;
+					desc->virtype = VIRT_FULL;
+					break;
+				}
+				i += strlen(&buf[i]);
+				i++;
+			}
+		}
+	}
+
+	return desc->hyper;
+}
+
+#ifdef INCLUDE_VMWARE_BDOOR
+
+#define VMWARE_BDOOR_MAGIC          0x564D5868
+#define VMWARE_BDOOR_PORT           0x5658
+#define VMWARE_BDOOR_CMD_GETVERSION 10
+
+#define VMWARE_BDOOR(eax, ebx, ecx, edx)                                  \
+        __asm__("inl (%%dx), %%eax" :                                     \
+               "=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :               \
+               "0"(VMWARE_BDOOR_MAGIC), "1"(VMWARE_BDOOR_CMD_GETVERSION), \
+               "2"(VMWARE_BDOOR_PORT), "3"(0) :                           \
+               "memory");
+
+static jmp_buf segv_handler_env;
+
+static void
+segv_handler(__attribute__((__unused__)) int sig,
+             __attribute__((__unused__)) siginfo_t *info,
+             __attribute__((__unused__)) void *ignored)
+{
+	siglongjmp(segv_handler_env, 1);
+}
+
+static int
+is_vmware_platform(void)
+{
+	uint32_t eax, ebx, ecx, edx;
+	struct sigaction act, oact;
+
+	/*
+	 * The assembly routine for vmware detection works
+	 * fine under vmware, even if ran as regular user. But
+	 * on real HW or under other hypervisors, it segfaults (which is
+	 * expected). So we temporarily install SIGSEGV handler to catch
+	 * the signal. All this magic is needed because lscpu
+	 * isn't supposed to require root privileges.
+	 */
+	if (sigsetjmp(segv_handler_env, 1))
+		return 0;
+
+	bzero(&act, sizeof(act));
+	act.sa_sigaction = segv_handler;
+	act.sa_flags = SA_SIGINFO;
+
+	if (sigaction(SIGSEGV, &act, &oact))
+		err(EXIT_FAILURE, _("error: can not set signal handler"));
+
+	VMWARE_BDOOR(eax, ebx, ecx, edx);
+
+	if (sigaction(SIGSEGV, &oact, NULL))
+		err(EXIT_FAILURE, _("error: can not restore signal handler"));
+
+	return eax != (uint32_t)-1 && ebx == VMWARE_BDOOR_MAGIC;
+}
+
+#else /* ! INCLUDE_VMWARE_BDOOR */
+
+static int
+is_vmware_platform(void)
+{
+	return 0;
+}
+
+#endif /* INCLUDE_VMWARE_BDOOR */
 
 static void
 read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
@@ -567,10 +724,14 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		read_hypervisor_cpuid(desc);
 		if (!desc->hyper)
 			desc->hyper = read_hypervisor_dmi();
+		if (!desc->hyper && is_vmware_platform())
+			desc->hyper = HYPER_VMWARE;
 	}
 
 	if (desc->hyper)
 		desc->virtype = VIRT_FULL;
+
+	else if (read_hypervisor_powerpc(desc) > 0) {}
 
 	/* Xen para-virt or dom0 */
 	else if (path_exist(_PATH_PROC_XEN)) {
@@ -589,8 +750,14 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		desc->hyper = HYPER_XEN;
 
 	/* Xen full-virt on non-x86_64 */
-	} else if (has_pci_device(0x5853, 0x0001)) {
+	} else if (has_pci_device( hv_vendor_pci[HYPER_XEN], hv_graphics_pci[HYPER_XEN])) {
 		desc->hyper = HYPER_XEN;
+		desc->virtype = VIRT_FULL;
+	} else if (has_pci_device( hv_vendor_pci[HYPER_VMWARE], hv_graphics_pci[HYPER_VMWARE])) {
+		desc->hyper = HYPER_VMWARE;
+		desc->virtype = VIRT_FULL;
+	} else if (has_pci_device( hv_vendor_pci[HYPER_VBOX], hv_graphics_pci[HYPER_VBOX])) {
+		desc->hyper = HYPER_VBOX;
 		desc->virtype = VIRT_FULL;
 
 	/* IBM PR/SM */
