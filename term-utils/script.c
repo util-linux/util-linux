@@ -36,6 +36,9 @@
  * - added Native Language Support
  *
  * 2000-07-30 Per Andreas Buer <per@linpro.no> - added "q"-option
+ *
+ * 2014-05-30 Csaba Kos <csaba.kos@gmail.com>
+ * - fixed a rare deadlock after child termination
  */
 
 /*
@@ -114,6 +117,8 @@ int	tflg = 0;
 int	forceflg = 0;
 int	isterm;
 
+sigset_t block_mask, unblock_mask;
+
 int die;
 int resized;
 
@@ -162,7 +167,6 @@ usage(FILE *out)
 
 int
 main(int argc, char **argv) {
-	sigset_t block_mask, unblock_mask;
 	struct sigaction sa;
 	int ch;
 
@@ -306,6 +310,7 @@ doinput(void) {
 	int errsv = 0;
 	ssize_t cc = 0;
 	char ibuf[BUFSIZ];
+	fd_set readfds;
 
 	/* close things irrelevant for this process */
 	if (fscript)
@@ -314,14 +319,27 @@ doinput(void) {
 		fclose(timingfd);
 	fscript = timingfd = NULL;
 
+	FD_ZERO(&readfds);
+
+	/* block SIGCHLD */
+	sigprocmask(SIG_SETMASK, &block_mask, &unblock_mask);
+
 	while (die == 0) {
-		if ((cc = read(STDIN_FILENO, ibuf, BUFSIZ)) > 0) {
-			if (write_all(master, ibuf, cc)) {
-				warn (_("write failed"));
-				fail();
+		FD_SET(STDIN_FILENO, &readfds);
+
+		/* wait for input or signal (including SIGCHLD) */
+		if ((cc = pselect(STDIN_FILENO + 1, &readfds, NULL, NULL, NULL,
+			&unblock_mask)) > 0) {
+
+			if ((cc = read(STDIN_FILENO, ibuf, BUFSIZ)) > 0) {
+				if (write_all(master, ibuf, cc)) {
+					warn (_("write failed"));
+					fail();
+				}
 			}
 		}
-		else if (cc < 0 && errno == EINTR && resized)
+
+		if (cc < 0 && errno == EINTR && resized)
 		{
 			/* transmit window change information to the child */
 			if (isterm) {
@@ -330,11 +348,14 @@ doinput(void) {
 			}
 			resized = 0;
 
-		} else {
+		} else if (cc <= 0) {
 			errsv = errno;
 			break;
 		}
 	}
+
+	/* unblock SIGCHLD */
+	sigprocmask(SIG_SETMASK, &unblock_mask, NULL);
 
 	/* To be sure that we don't miss any data */
 	wait_for_empty_fd(slave);
@@ -404,6 +425,7 @@ dooutput(void) {
 	struct timeval tv;
 	double oldtime=time(NULL), newtime;
 	int errsv = 0;
+	fd_set readfds;
 
 	close(STDIN_FILENO);
 #ifdef HAVE_LIBUTIL
@@ -416,6 +438,8 @@ dooutput(void) {
 	my_strftime(obuf, sizeof obuf, "%c\n", localtime(&tvec));
 	fprintf(fscript, _("Script started on %s"), obuf);
 
+	FD_ZERO(&readfds);
+
 	do {
 		if (die || errsv == EINTR) {
 			struct pollfd fds[] = {{ .fd = master, .events = POLLIN }};
@@ -423,9 +447,22 @@ dooutput(void) {
 				break;
 		}
 
+		/* block SIGCHLD */
+		sigprocmask(SIG_SETMASK, &block_mask, &unblock_mask);
+
+		FD_SET(master, &readfds);
 		errno = 0;
-		cc = read(master, obuf, sizeof (obuf));
+
+		/* wait for input or signal (including SIGCHLD) */
+		if ((cc = pselect(master+1, &readfds, NULL, NULL, NULL,
+			&unblock_mask)) > 0) {
+
+			cc = read(master, obuf, sizeof (obuf));
+		}
 		errsv = errno;
+
+		/* unblock SIGCHLD */
+		sigprocmask(SIG_SETMASK, &unblock_mask, NULL);
 
 		if (tflg)
 			gettimeofday(&tv, NULL);
