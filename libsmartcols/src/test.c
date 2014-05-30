@@ -1,17 +1,9 @@
 /*
- * TT - Table or Tree, features:
- * - column width could be defined as absolute or relative to the terminal width
- * - allows to truncate or wrap data in columns
- * - prints tree if parent->child relation is defined
- * - draws the tree by ASCII or UTF8 lines (depends on terminal setting)
- *
  * Copyright (C) 2010-2014 Karel Zak <kzak@redhat.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  */
-
-
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -23,9 +15,7 @@
 
 #include "c.h"
 #include "nls.h"
-#include "procutils.h"
 #include "strutils.h"
-#include "colors.h"
 
 #include "libsmartcols.h"
 
@@ -35,7 +25,8 @@ static int add_children(struct libscols_table *tb,
 
 enum { COL_MODE, COL_SIZE, COL_NAME };
 
-static void set_columns(struct libscols_table *tb, int notree)
+/* add columns to the @tb */
+static void setup_columns(struct libscols_table *tb, int notree)
 {
 	if (!scols_table_new_column(tb, "MODE", 0.3, 0))
 		goto fail;
@@ -51,6 +42,7 @@ fail:
 	err(EXIT_FAILURE, "faild to create output columns");
 }
 
+/* add a new line to @tb, the content is based on @st */
 static int add_line_from_stat(struct libscols_table *tb,
 			      struct libscols_line *parent,
 			      int parent_fd,
@@ -112,7 +104,7 @@ fail:
 	return -1;
 }
 
-/* read all entrines from directory @fd */
+/* read all entrines from directory addressed by @fd */
 static int add_children(struct libscols_table *tb,
 			struct libscols_line *ln,
 			int fd)
@@ -149,19 +141,13 @@ static void add_lines(struct libscols_table *tb, const char *dirname)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] [<dir> ...]\n"), program_invocation_short_name);
-	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -i, --ascii          use ascii characters only\n"), out);
-	fputs(_(" -l, --list           use list format output\n"), out);
-	fputs(_(" -n, --noheadings     don't print headings\n"), out);
-	fputs(_(" -p, --pairs          use key=\"value\" output format\n"), out);
-	fputs(_(" -r, --raw            use raw output format\n"), out);
-	fputs(_(" -c, --csv            display a csv-like output\n"), out);
-
-	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	fprintf(out, " %s [options] [<dir> ...]\n\n", program_invocation_short_name);
+	fputs(" -c, --csv            display a csv-like output\n", out);
+	fputs(" -i, --ascii          use ascii characters only\n", out);
+	fputs(" -l, --list           use list format output\n", out);
+	fputs(" -n, --noheadings     don't print headings\n", out);
+	fputs(" -p, --pairs          use key=\"value\" output format\n", out);
+	fputs(" -r, --raw            use raw output format\n", out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -169,22 +155,20 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 int main(int argc, char *argv[])
 {
 	struct libscols_table *tb;
-	int c, notree = 0, clonetb = 0;
+	int c, notree = 0;
 
 	static const struct option longopts[] = {
-		{ "help",       0, 0, 'h' },
-		{ "noheadings",	0, 0, 'n' },
-		{ "list",       0, 0, 'l' },
 		{ "ascii",	0, 0, 'i' },
-		{ "pairs",      0, 0, 'p' },
-		{ "clone",      0, 0, 'C' },
 		{ "csv",        0, 0, 'c' },
+		{ "list",       0, 0, 'l' },
+		{ "noheadings",	0, 0, 'n' },
+		{ "pairs",      0, 0, 'p' },
+		{ "raw",      0, 0, 'r' },
+
 		{ NULL, 0, 0, 0 },
 	};
 
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
+	setlocale(LC_ALL, "");	/* just to have enable UTF8 chars */
 
 	scols_init_debug(0);
 
@@ -192,10 +176,15 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "faild to create output table");
 
-	while((c = getopt_long(argc, argv, "nlirpCc", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "cilnpr", longopts, NULL)) != -1) {
 		switch(c) {
-		case 'h':
-			usage(stdout);
+		case 'c':
+			scols_table_set_column_separator(tb, ",");
+			scols_table_enable_raw(tb, 1);
+			notree = 1;
+			break;
+		case 'i':
+			scols_table_enable_ascii(tb, 1);
 			break;
 		case 'l':
 			notree = 1;
@@ -207,39 +196,22 @@ int main(int argc, char *argv[])
 			scols_table_enable_export(tb, 1);
 			notree = 1;
 			break;
-		case 'i':
-			scols_table_enable_ascii(tb, 1);
-			break;
 		case 'r':
 			scols_table_enable_raw(tb, 1);
 			notree = 1;
 			break;
-		case 'c':
-			scols_table_set_column_separator(tb, ",");
-			scols_table_enable_raw(tb, 1);
-			notree = 1;
-			break;
-		case 'C':
-			clonetb = 1;
 		default:
 			usage(stderr);
 		}
 	}
 
 	scols_table_enable_colors(tb, 1);
-	set_columns(tb, notree);
+	setup_columns(tb, notree);
 
 	while (optind < argc)
 		add_lines(tb, argv[optind++]);
 
-	if (clonetb) {
-		struct libscols_table *xtb = scols_copy_table(tb);
-
-		scols_print_table(xtb);
-		scols_unref_table(xtb);
-	} else
-		scols_print_table(tb);
-
+	scols_print_table(tb);
 	scols_unref_table(tb);
 
 	return EXIT_SUCCESS;
