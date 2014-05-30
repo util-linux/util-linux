@@ -327,6 +327,7 @@ doinput(void) {
 	while (die == 0) {
 		FD_SET(STDIN_FILENO, &readfds);
 
+		errno = 0;
 		/* wait for input or signal (including SIGCHLD) */
 		if ((cc = pselect(STDIN_FILENO + 1, &readfds, NULL, NULL, NULL,
 			&unblock_mask)) > 0) {
@@ -348,7 +349,7 @@ doinput(void) {
 			}
 			resized = 0;
 
-		} else if (cc <= 0) {
+		} else if (cc <= 0 && errno != EINTR) {
 			errsv = errno;
 			break;
 		}
