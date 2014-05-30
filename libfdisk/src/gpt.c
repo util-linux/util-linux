@@ -604,6 +604,7 @@ done:
 static uint64_t last_lba(struct fdisk_context *cxt)
 {
 	struct stat s;
+	uint64_t sectors = 0;
 
 	memset(&s, 0, sizeof(s));
 	if (fstat(cxt->dev_fd, &s) == -1) {
@@ -612,13 +613,15 @@ static uint64_t last_lba(struct fdisk_context *cxt)
 	}
 
 	if (S_ISBLK(s.st_mode))
-		return cxt->total_sectors - 1;
-	else if (S_ISREG(s.st_mode)) {
-		uint64_t sectors = s.st_size >> cxt->sector_size;
-		return (sectors / cxt->sector_size) - 1ULL;
-	} else
+		sectors = cxt->total_sectors - 1;
+	else if (S_ISREG(s.st_mode))
+		sectors = ((uint64_t) s.st_size /
+			   (uint64_t) cxt->sector_size) - 1ULL;
+	else
 		fdisk_warnx(cxt, _("gpt: cannot handle files with mode %o"), s.st_mode);
-	return 0;
+
+	DBG(LABEL, ul_debug("GPT last LBA: %ju", sectors));
+	return sectors;
 }
 
 static ssize_t read_lba(struct fdisk_context *cxt, uint64_t lba,
