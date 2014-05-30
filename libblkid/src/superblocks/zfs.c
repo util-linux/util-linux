@@ -168,7 +168,7 @@ static int probe_zfs(blkid_probe pr,
 	uint64_t swab_magic = swab64(UBERBLOCK_MAGIC);
 	struct zfs_uberblock *ub;
 	int swab_endian;
-	loff_t offset, ub_offset;
+	loff_t offset, ub_offset = 0;
 	int tried;
 	int found;
 
