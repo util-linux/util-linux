@@ -10,44 +10,26 @@ compiler:
 env:
   - MAKE_CHECK="nonroot"
   - MAKE_CHECK="root"
+  - MAKE_CHECK="dist"
 
 install:
   # install some packages from Ubuntu's default sources
   - sudo apt-get -qq update
   - sudo apt-get install -qq
     bc
+    dnsutils
+    libcap-ng-dev
     libpam-dev
     libudev-dev
     gtk-doc-tools
+    ntp
 
 before_script:
-  - ./autogen.sh
+  - source ./.travis-functions.sh
+  - travis_before_script
 
 script:
-  - export MAKE="make -j4"
-  # make distcheck still does not work on travis
-  - (./configure
-      --disable-use-tty-group
-      --enable-chfn-chsh
-      --enable-line
-      --enable-mesg
-      --enable-newgrp
-      --enable-reset
-      --enable-tunelp
-      --enable-vipw
-      --enable-write
-    ; err=$?; cat config.log; exit $err)
-    && $MAKE
-    && if [ "$MAKE_CHECK" = "nonroot" ]; then
-         $MAKE check
-         && $MAKE install DESTDIR=/tmp/dest
-         && $MAKE dist;
-       elif [ "$MAKE_CHECK" = "root" ]; then
-         $MAKE check TS_COMMAND="true"
-         && sudo -E $MAKE check TS_OPTS='--parallel=1';
-       fi
+  - travis_script
 
 after_script:
-  - test -d tests/diff
-    && echo "cat test diffs:"
-    && find tests/diff -type f | xargs -r cat
+  - travis_after_script
