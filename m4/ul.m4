@@ -344,6 +344,9 @@ fi],
 [if test "x$ul_default_estate" != x; then
   enable_[]suffix=$ul_default_estate
   build_[]suffix=yes
+  if test "x$ul_default_estate" = xno; then
+    build_[]suffix=no
+  fi
 else[]
   ifelse(
       [$2], [check],[
