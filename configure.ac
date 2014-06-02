@@ -1287,10 +1287,11 @@ UL_BUILD_INIT([kill])
 UL_REQUIRES_LINUX([kill])
 AM_CONDITIONAL([BUILD_KILL], [test "x$build_kill" = xyes])
 
-
+dnl Don't use UL_DEFAULT_ENABLE() here, deprecated stuff has to be insensitive
+dnl to --enable-all-programs.
 AC_ARG_ENABLE([deprecated-last],
   AS_HELP_STRING([--enable-deprecated-last], [build old deprecated last]),
-  [], [UL_DEFAULT_ENABLE([deprecated_last], [no])]
+  [], [enable_deprecated_last=no]
 )
 UL_BUILD_INIT([deprecated_last])
 AM_CONDITIONAL([BUILD_DEPRECATED_LAST], [test "x$build_deprecated_last" = xyes])
