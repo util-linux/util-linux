@@ -19,6 +19,8 @@ TS_DESC="last"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_LAST"
+$TS_CMD_LAST --version 2>&1 | grep -q "invalid option" \
+	&& ts_skip "deprecated last"
 
 WTMP_FILE=${TS_OUTDIR}/wtmp
 rm -f $WTMP_FILE
