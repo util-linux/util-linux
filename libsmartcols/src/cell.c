@@ -133,7 +133,6 @@ int scols_cell_set_userdata(struct libscols_cell *ce, void *data)
 
 /**
  * scols_cell_get_userdata
- *
  * @ce: a pointer to a struct libscols_cell instance
  *
  * Returns: user data
@@ -147,6 +146,7 @@ void *scols_cell_get_userdata(struct libscols_cell *ce)
  * scols_cmpstr_cells:
  * @a: pointer to cell
  * @b: pointer to cell
+ * @data: unused pointer to private data (defined by API)
  *
  * Compares cells data by strcmp(). The function is designed for
  * scols_column_set_cmpfunc() and scols_sort_table().
