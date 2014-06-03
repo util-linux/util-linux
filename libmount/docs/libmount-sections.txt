@@ -376,7 +376,7 @@ mnt_unmangle
 </SECTION>
 
 <SECTION>
-<FILE>version</FILE>
+<FILE>version-utils</FILE>
 mnt_parse_version_string
 mnt_get_library_version
 mnt_get_library_features

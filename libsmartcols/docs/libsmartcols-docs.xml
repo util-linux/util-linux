@@ -42,7 +42,7 @@ available from ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
   <part>
     <title>Misc</title>
     <xi:include href="xml/iter.xml"/>
-    <xi:include href="xml/version.xml"/>
+    <xi:include href="xml/version-utils.xml"/>
     <xi:include href="xml/init.xml"/>
   </part>
   <index id="api-index-full">

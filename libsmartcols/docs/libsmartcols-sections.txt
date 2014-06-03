@@ -134,7 +134,7 @@ scols_print_table_to_string
 </SECTION>
 
 <SECTION>
-<FILE>version</FILE>
+<FILE>version-utils</FILE>
 scols_get_library_version
 scols_parse_version_string
 LIBSMARTCOLS_VERSION

@@ -7,7 +7,7 @@
  */
 
 /**
- * SECTION: version
+ * SECTION: version-utils
  * @title: Version functions
  * @short_description: functions to get the library version.
  *
