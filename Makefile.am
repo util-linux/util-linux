@@ -161,7 +161,7 @@ checkxalloc:
 checkdecl:
 	@ $(top_srcdir)/tools/checkdecl.sh
 
-ENABLE_ALL = --enable-static-programs --enable-most-builds
+ENABLE_ALL = --enable-static-programs --enable-all-programs
 DISTCHECK_CONFIGURE_FLAGS = --disable-use-tty-group \
 			    --disable-silent-rules $(ENABLE_ALL) \
 			    --with-bashcompletiondir=$$dc_install_base/$(bashcompletiondir) \
