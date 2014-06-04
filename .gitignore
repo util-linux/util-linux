@@ -33,6 +33,7 @@ config.rpath
 config.status
 config.sub
 config/ltmain.sh
+config/py-compile
 config/test-driver
 configure
 cscope.out

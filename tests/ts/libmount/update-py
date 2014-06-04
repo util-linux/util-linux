@@ -11,8 +11,7 @@ ts_init_py libmount
 ts_skip_nonroot
 
 TESTPROG="$TS_HELPER_PYLIBMOUNT_UPDATE"
-
-[ -x $TESTPROG ] || ts_skip "test not compiled"
+[ -x $TESTPROG ] || ts_die "test script missing"
 
 #
 # fstab - replace

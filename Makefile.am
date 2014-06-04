@@ -46,6 +46,7 @@ dist_usrbin_exec_SCRIPTS =
 systemdsystemunit_DATA =
 dist_bashcompletion_DATA =
 check_PROGRAMS =
+dist_check_SCRIPTS =
 TESTS =
 
 PATHFILES =
@@ -161,12 +162,15 @@ checkxalloc:
 checkdecl:
 	@ $(top_srcdir)/tools/checkdecl.sh
 
-ENABLE_ALL = --enable-static-programs --enable-all-programs
-DISTCHECK_CONFIGURE_FLAGS = --disable-use-tty-group \
-			    --disable-silent-rules $(ENABLE_ALL) \
-			    --with-bashcompletiondir=$$dc_install_base/$(bashcompletiondir) \
-			    --with-systemdsystemunitdir=$$dc_install_base/$(systemdsystemunitdir)
-
+DISTCHECK_CONFIGURE_FLAGS = \
+	--disable-use-tty-group \
+	--disable-silent-rules \
+	--enable-all-programs \
+	--enable-static-programs \
+	--enable-gtk-doc \
+	--with-python \
+	--with-bashcompletiondir=$$dc_install_base/$(bashcompletiondir) \
+	--with-systemdsystemunitdir=$$dc_install_base/$(systemdsystemunitdir)
 
 BUILT_SOURCES = .version
 .version:

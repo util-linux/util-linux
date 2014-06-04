@@ -9,6 +9,8 @@ ts_init_py libmount
 ts_skip_nonroot
 
 TESTPROG="$TS_HELPER_PYLIBMOUNT_TAB"
+[ -x $TESTPROG ] || ts_die "test script missing"
+
 ts_check_prog "mkfs.ext3"
 
 PYDBG="$PYTHON -m pdb"
