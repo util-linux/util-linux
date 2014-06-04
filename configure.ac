@@ -1648,8 +1648,8 @@ AM_CONDITIONAL([BUILD_BASH_COMPLETION], [test "x$enable_bash_completion" = xyes]
 
 
 AC_ARG_WITH([python],
-  AS_HELP_STRING([--with-python], [generate python bindings, use --with-python={2,3} to force version]),
-  [], [with_python=no]
+	    AS_HELP_STRING([--without-python], [do not build python bindings, use --with-python={2,3} to force version]),
+  [], [with_python=check]
 )
 
 have_python=no
@@ -1666,12 +1666,16 @@ AS_IF([test "x$with_python" != xno], [
       [AC_MSG_ERROR([python selected but libpython not found])]
   )
   PKG_CHECK_MODULES([PYTHON], [python-$PYTHON_VERSION])
-
-  UL_BUILD_INIT([pylibmount], [check])
-  UL_REQUIRES_HAVE([pylibmount], [python], [libpython])
-  UL_REQUIRES_BUILD([pylibmount], [libmount])
 ])
 
+
+AC_ARG_ENABLE([pylibmount],
+  AS_HELP_STRING([--disable-pylibmount], [do not build pylibmount]),
+  [], [UL_DEFAULT_ENABLE([pylibmount], [check])]
+)
+UL_BUILD_INIT([pylibmount])
+UL_REQUIRES_HAVE([pylibmount], [python], [libpython])
+UL_REQUIRES_BUILD([pylibmount], [libmount])
 AM_CONDITIONAL([BUILD_PYLIBMOUNT], [test "x$build_pylibmount" = "xyes"])
 
 
