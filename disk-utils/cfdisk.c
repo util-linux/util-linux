@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <getopt.h>
 #include <libsmartcols.h>
+#include <sys/ioctl.h>
 
 #ifdef HAVE_SLANG_H
 # include <slang.h>
@@ -76,6 +77,7 @@ static struct cfdisk_menuitem *menu_get_menuitem(struct cfdisk *cf, size_t idx);
 static struct cfdisk_menuitem *menu_get_menuitem_by_key(struct cfdisk *cf, int key, size_t *idx);
 static struct cfdisk_menu *menu_push(struct cfdisk *cf, struct cfdisk_menuitem *item);
 static struct cfdisk_menu *menu_pop(struct cfdisk *cf);
+static void menu_refresh_size(struct cfdisk *cf);
 
 static int ui_refresh(struct cfdisk *cf);
 static void ui_warnx(const char *fmt, ...);
@@ -83,11 +85,13 @@ static void ui_warn(const char *fmt, ...);
 static void ui_info(const char *fmt, ...);
 static void ui_draw_menu(struct cfdisk *cf);
 static int ui_menu_move(struct cfdisk *cf, int key);
+static void ui_menu_resize(struct cfdisk *cf);
 
 static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 		       uintmax_t low, uintmax_t up);
 
 static int ui_enabled;
+static int ui_resize;
 
 /* menu item */
 struct cfdisk_menuitem {
@@ -159,6 +163,25 @@ static int cols_init(struct cfdisk *cf)
 	cf->ncols = 0;
 
 	return fdisk_get_columns(cf->cxt, 0, &cf->cols, &cf->ncols);
+}
+
+static void resize(void)
+{
+	struct winsize ws;
+
+	if (ioctl(fileno(stdout), TIOCGWINSZ, &ws) != -1
+	    && ws.ws_row && ws.ws_col) {
+		LINES = ws.ws_row;
+		COLS = ws.ws_col;
+#if HAVE_RESIZETERM
+		resizeterm(ws.ws_row, ws.ws_col);
+#endif
+		clearok(stdscr, TRUE);
+	}
+	touchwin(stdscr);
+
+	DBG(FRONTEND, ul_debug("ui: resize refresh COLS=%d, LINES=%d", COLS, LINES));
+	ui_resize = 0;
 }
 
 /* Reads partition in tree-like order from scols
@@ -408,6 +431,8 @@ static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 	do {
 		int key = getch();
 
+		if (ui_resize)
+			ui_menu_resize(cf);
 		if (ui_menu_move(cf, key) == 0)
 			continue;
 
@@ -601,6 +626,18 @@ static void die_on_signal(int dummy __attribute__((__unused__)))
 	exit(EXIT_FAILURE);
 }
 
+static void resize_on_signal(int dummy __attribute__((__unused__)))
+{
+	DBG(FRONTEND, ul_debug("resize on signal."));
+	ui_resize = 1;
+}
+
+static void menu_refresh_size(struct cfdisk *cf)
+{
+	if (cf->menu && cf->menu->nitems)
+		cf->menu->page_sz = cf->menu->nitems / (LINES - 4) ? LINES - 4 : 0;
+}
+
 static void menu_update_ignore(struct cfdisk *cf)
 {
 	char ignore[128] = { 0 };
@@ -643,7 +680,7 @@ static void menu_update_ignore(struct cfdisk *cf)
 	else
 		m->idx = 0;
 
-	m->page_sz = m->nitems / (LINES - 4) ? LINES - 4 : 0;
+	menu_refresh_size(cf);
 }
 
 static struct cfdisk_menu *menu_push(
@@ -669,7 +706,7 @@ static struct cfdisk_menu *menu_push(
 	}
 
 	cf->menu = m;
-	m->page_sz = m->nitems / (LINES - 4) ? LINES - 4 : 0;
+	menu_refresh_size(cf);
 	return m;
 }
 
@@ -717,6 +754,9 @@ static int ui_init(struct cfdisk *cf __attribute__((__unused__)))
 	sa.sa_handler = die_on_signal;
 	sigaction(SIGINT, &sa, NULL);
 	sigaction(SIGTERM, &sa, NULL);
+
+	sa.sa_handler = resize_on_signal;
+	sigaction(SIGWINCH, &sa, NULL);
 
 	ui_enabled = 1;
 	initscr();
@@ -859,6 +899,29 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 		mvprintw(ln, cl, vert ? " %s " : "[%s]", buf);
 }
 
+static void ui_clean_menu(struct cfdisk *cf)
+{
+	size_t i;
+	size_t nlines;
+	struct cfdisk_menu *m = cf->menu;
+	size_t ln = menuitem_get_line(cf, 0);
+
+	if (m->vertical)
+		nlines = m->page_sz ? m->page_sz : m->nitems;
+	else
+		nlines = menuitem_get_line(cf, m->nitems);
+
+	for (i = ln; i <= ln + nlines; i++) {
+		move(i, 0);
+		clrtoeol();
+	}
+	if (m->vertical) {
+		move(ln - 1, 0);
+		clrtoeol();
+	}
+	ui_clean_hint();
+}
+
 static void ui_draw_menu(struct cfdisk *cf)
 {
 	struct cfdisk_menuitem *d;
@@ -872,17 +935,13 @@ static void ui_draw_menu(struct cfdisk *cf)
 
 	DBG(FRONTEND, ul_debug("ui: menu: draw start"));
 
+	ui_clean_menu(cf);
 	m = cf->menu;
 
 	if (m->vertical)
 		nlines = m->page_sz ? m->page_sz : m->nitems;
 	else
 		nlines = menuitem_get_line(cf, m->nitems);
-
-	for (i = ln; i <= ln + nlines; i++) {
-		move(i, 0);
-		clrtoeol();
-	}
 
 	if (m->ignore_cb)
 		menu_update_ignore(cf);
@@ -973,6 +1032,9 @@ static int ui_menu_move(struct cfdisk *cf, int key)
 	assert(cf);
 	assert(cf->menu);
 
+	if (key == ERR)
+		return 0;	/* ignore errors */
+
 	m = cf->menu;
 
 	DBG(FRONTEND, ul_debug("ui: menu move key >%c<.", key));
@@ -1023,6 +1085,16 @@ static int ui_menu_move(struct cfdisk *cf, int key)
 	}
 
 	return 1;	/* key irrelevant for menu move */
+}
+
+/* but don't call me from ui_run(), this is for pop-up menus only */
+static void ui_menu_resize(struct cfdisk *cf)
+{
+	resize();
+	ui_clean_menu(cf);
+	menu_refresh_size(cf);
+	ui_draw_menu(cf);
+	refresh();
 }
 
 static int partition_on_page(struct cfdisk *cf, size_t i)
@@ -1221,6 +1293,10 @@ static ssize_t ui_get_string(struct cfdisk *cf, const char *prompt,
 		int c;
 		if ((c = getch()) == ERR) {
 #endif
+			if (ui_resize) {
+				resize();
+				continue;
+			}
 			if (!isatty(STDIN_FILENO))
 				exit(2);
 			else
@@ -1406,6 +1482,8 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 	do {
 		int key = getch();
 
+		if (ui_resize)
+			ui_menu_resize(cf);
 		if (ui_menu_move(cf, key) == 0)
 			continue;
 
@@ -1472,6 +1550,9 @@ static int ui_create_label(struct cfdisk *cf)
 
 	do {
 		int key = getch();
+
+		if (ui_resize)
+			ui_menu_resize(cf);
 		if (ui_menu_move(cf, key) == 0)
 			continue;
 		switch (key) {
@@ -1538,6 +1619,7 @@ static int ui_help(void)
 		mvaddstr(i, 1, _(help[i]));
 
 	ui_info(_("Press a key to continue."));
+
 	getch();
 	return 0;
 }
@@ -1738,6 +1820,14 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	return 0;
 }
 
+static void ui_resize_refresh(struct cfdisk *cf)
+{
+	resize();
+	menu_refresh_size(cf);
+	lines_refresh(cf);
+	ui_refresh(cf);
+}
+
 static int ui_run(struct cfdisk *cf)
 {
 	int rc = 0;
@@ -1771,6 +1861,12 @@ static int ui_run(struct cfdisk *cf)
 	do {
 		int rc = 0, key = getch();
 
+		if (ui_resize)
+			/* Note that ncurses getch() returns ERR when interrupted
+			 * by signal, but SLang does not interrupt at all. */
+			ui_resize_refresh(cf);
+		if (key == ERR)
+			continue;
 		if (ui_menu_move(cf, key) == 0)
 			continue;
 

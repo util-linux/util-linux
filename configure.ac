@@ -706,7 +706,11 @@ AM_CONDITIONAL([HAVE_SLANG], [test "x$have_slang" = xyes])
 AS_IF([test "x$have_slang" = xyes -o "x$have_ncurses" = xyes], [
 	AC_CHECK_LIB([$CURSES_LIB_NAME], use_default_colors, [
 		     AC_DEFINE(HAVE_USE_DEFAULT_COLORS, 1,
-			       [Define if curses library has the use_default_colors command.])
+			       [Define if curses library has the use_default_colors().])
+	])
+	AC_CHECK_LIB([$CURSES_LIB_NAME], resizeterm, [
+		     AC_DEFINE(HAVE_RESIZETERM, 1,
+			       [Define if curses library has the resizeterm().])
 	])
 ])
 
