@@ -122,6 +122,7 @@ static struct cfdisk_menuitem main_menuitems[] = {
 	{ 'q', N_("Quit"), N_("Quit program without writing partition table") },
 	{ 't', N_("Type"), N_("Change the partition type") },
 	{ 'h', N_("Help"), N_("Print help screen") },
+	{ 's', N_("Sort"), N_("Fix partitions order") },
 	{ 'W', N_("Write"), N_("Write partition table to disk (this might destroy data)") },
 	{ 0, NULL, NULL }
 };
@@ -142,6 +143,8 @@ struct cfdisk {
 	size_t	nlines;		/* number of lines */
 	size_t	lines_idx;	/* current line <0..N>, exclude header */
 	size_t  page_sz;
+
+	unsigned int	wrong_order :1;		/* PT not in right order */
 };
 
 /* Initialize output columns -- we follow libcfdisk columns (usually specific
@@ -332,6 +335,7 @@ static int lines_refresh(struct cfdisk *cf)
 	cf->linesbufsz = strlen(cf->linesbuf);
 	cf->nlines = fdisk_table_get_nents(cf->table) + 1;	/* 1 for header line */
 	cf->page_sz = 0;
+	cf->wrong_order = fdisk_table_wrong_order(cf->table) ? 1 : 0;
 
 	if (MENU_START_LINE - TABLE_START_LINE < cf->nlines)
 		cf->page_sz = MENU_START_LINE - TABLE_START_LINE - 1;
@@ -1512,6 +1516,7 @@ static int ui_help(void)
 		N_("  n          Create new partition from free space"),
 		N_("  q          Quit program without writing partition table"),
 		N_("  t          Change the partition type"),
+		N_("  s          Fix partitions order"),
 		N_("  W          Write partition table to disk (must enter upper case W)"),
 		N_("             Since this might destroy data on the disk, you must"),
 		N_("             either confirm or deny the write by entering `yes' or"),
@@ -1557,7 +1562,8 @@ static int main_menu_ignore_keys(struct cfdisk *cf, char *ignore,
 			ignore[i++] = 'b';
 	}
 
-
+	if (!cf->wrong_order)
+		ignore[i++] = 's';
 	if (fdisk_context_is_readonly(cf->cxt))
 		ignore[i++] = 'W';
 	return i;
@@ -1568,7 +1574,7 @@ static int main_menu_ignore_keys(struct cfdisk *cf, char *ignore,
 static int main_menu_action(struct cfdisk *cf, int key)
 {
 	size_t n;
-	int ref = 0, rc;
+	int ref = 0, rc, org_order = cf->wrong_order;
 	const char *info = NULL, *warn = NULL;
 	struct fdisk_partition *pa;
 
@@ -1675,6 +1681,12 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			info = _("Type of the partition %zu is unchanged.");
 		break;
 	}
+	case 's': /* fix order */
+		if (cf->wrong_order) {
+			fdisk_reorder_partitions(cf->cxt);
+			ref = 1;
+		}
+		break;
 	case 'W': /* Write */
 	{
 		char buf[64] = { 0 };
@@ -1720,6 +1732,8 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		ui_warnx(warn, n + 1);
 	else if (info)
 		ui_info(info, n + 1);
+	else if (key == 'n' && cf->wrong_order && org_order == 0)
+		 ui_info(_("Note that partition table entries are not in disk order now."));
 
 	return 0;
 }
