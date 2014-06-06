@@ -250,6 +250,8 @@ static int show_flags(struct wdinfo *wd, uint32_t wanted)
 	struct libscols_table *table;
 	uint32_t flags;
 
+	scols_init_debug(0);
+
 	/* create output table */
 	table = scols_new_table();
 	if (!table) {

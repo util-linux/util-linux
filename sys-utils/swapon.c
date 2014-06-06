@@ -236,6 +236,8 @@ static int show_table(int bytes)
 	if (!itr)
 		err(EXIT_FAILURE, _("failed to initialize libmount iterator"));
 
+	scols_init_debug(0);
+
 	table = scols_new_table();
 	if (!table)
 		err(EXIT_FAILURE, _("failed to initialize output table"));

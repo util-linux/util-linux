@@ -41,6 +41,8 @@ struct libscols_line *scols_new_line(void)
 	ln = calloc(1, sizeof(*ln));
 	if (!ln)
 		return NULL;
+
+	DBG(LINE, ul_debugobj(ln, "alloc"));
 	ln->refcount = 1;
 	INIT_LIST_HEAD(&ln->ln_lines);
 	INIT_LIST_HEAD(&ln->ln_children);
@@ -70,9 +72,9 @@ void scols_unref_line(struct libscols_line *ln)
 {
 
 	if (ln && --ln->refcount <= 0) {
+		DBG(CELL, ul_debugobj(ln, "dealloc"));
 		list_del(&ln->ln_lines);
 		list_del(&ln->ln_children);
-
 		scols_line_free_cells(ln);
 		free(ln->color);
 		free(ln);
@@ -92,6 +94,8 @@ void scols_line_free_cells(struct libscols_line *ln)
 
 	if (!ln || !ln->cells)
 		return;
+
+	DBG(LINE, ul_debugobj(ln, "free cells"));
 
 	for (i = 0; i < ln->ncells; i++)
 		scols_reset_cell(&ln->cells[i]);
@@ -128,6 +132,8 @@ int scols_line_alloc_cells(struct libscols_line *ln, size_t n)
 		scols_line_free_cells(ln);
 		return 0;
 	}
+
+	DBG(LINE, ul_debugobj(ln, "alloc %zu cells", n));
 
 	ce = realloc(ln->cells, n * sizeof(struct libscols_cell));
 	if (!ce)
@@ -188,6 +194,9 @@ int scols_line_remove_child(struct libscols_line *ln, struct libscols_line *chil
 
 	if (!ln || !child)
 		return -EINVAL;
+
+	DBG(LINE, ul_debugobj(ln, "remove child %p", child));
+
 	list_del_init(&child->ln_children);
 	scols_unref_line(child);
 
@@ -216,6 +225,8 @@ int scols_line_add_child(struct libscols_line *ln, struct libscols_line *child)
 	/* unref old<->parent */
 	if (child->parent)
 		scols_line_remove_child(child->parent, child);
+
+	DBG(LINE, ul_debugobj(ln, "add child %p", child));
 
 	/* new reference from parent to child */
 	list_add_tail(&child->ln_children, &ln->ln_branch);
@@ -433,6 +444,8 @@ struct libscols_line *scols_copy_line(struct libscols_line *ln)
 	ret->userdata = ln->userdata;
 	ret->ncells   = ln->ncells;
 	ret->seqnum   = ln->seqnum;
+
+	DBG(LINE, ul_debugobj(ln, "copy to %p", ret));
 
 	for (i = 0; i < ret->ncells; ++i) {
 		if (scols_cell_copy_content(&ret->cells[i], &ln->cells[i]))

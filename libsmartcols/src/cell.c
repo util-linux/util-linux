@@ -46,6 +46,7 @@ int scols_reset_cell(struct libscols_cell *ce)
 	if (!ce)
 		return -EINVAL;
 
+	/*DBG(CELL, ul_debugobj(ce, "reset"));*/
 	free(ce->data);
 	free(ce->color);
 	memset(ce, 0, sizeof(*ce));
@@ -241,5 +242,7 @@ int scols_cell_copy_content(struct libscols_cell *dest,
 		rc = scols_cell_set_color(dest, scols_cell_get_color(src));
 	if (!rc)
 		dest->userdata = src->userdata;
+
+	DBG(CELL, ul_debugobj((void *) src, "copy into %p", dest));
 	return rc;
 }

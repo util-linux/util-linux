@@ -1395,8 +1395,11 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 	int i;
 	char buf[BUFSIZ];
 	const char *data;
-	struct libscols_table *table = scols_new_table();
+	struct libscols_table *table;
 
+	scols_init_debug(0);
+
+	table = scols_new_table();
 	if (!table)
 		 err(EXIT_FAILURE, _("failed to initialize output table"));
 

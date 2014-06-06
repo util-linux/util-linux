@@ -31,6 +31,11 @@
  * Debug
  */
 #define SCOLS_DEBUG_INIT	(1 << 1)
+#define SCOLS_DEBUG_CELL	(1 << 2)
+#define SCOLS_DEBUG_LINE	(1 << 3)
+#define SCOLS_DEBUG_TAB		(1 << 4)
+#define SCOLS_DEBUG_COL		(1 << 5)
+#define SCOLS_DEBUG_BUFF	(1 << 6)
 #define SCOLS_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libsmartcols);

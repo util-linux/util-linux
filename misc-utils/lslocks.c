@@ -594,6 +594,8 @@ int main(int argc, char *argv[])
 					 &ncolumns, column_name_to_id) < 0)
 		return EXIT_FAILURE;
 
+	scols_init_debug(0);
+
 	rc = get_local_locks(&locks);
 
 	if (!rc && !list_empty(&locks))

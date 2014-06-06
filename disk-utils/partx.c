@@ -626,6 +626,7 @@ static int show_parts(blkid_partlist ls, int scols_flags, int lower, int upper)
 	if (!nparts)
 		return 0;
 
+	scols_init_debug(0);
 	table = scols_new_table();
 	if (!table) {
 		warn(_("failed to initialize output table"));

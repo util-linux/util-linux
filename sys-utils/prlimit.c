@@ -618,6 +618,8 @@ int main(int argc, char **argv)
 		columns[ncolumns++] = COL_UNITS;
 	}
 
+	scols_init_debug(0);
+
 	if (list_empty(&lims)) {
 		/* default is to print all resources */
 		size_t n;

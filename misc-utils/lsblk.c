@@ -1697,6 +1697,7 @@ int main(int argc, char *argv[])
 		errx(EXIT_FAILURE, _("the sort column has to be between output columns."));
 
 	mnt_init_debug(0);
+	scols_init_debug(0);
 
 	/*
 	 * initialize output columns

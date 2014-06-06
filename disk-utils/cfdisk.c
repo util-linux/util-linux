@@ -1981,6 +1981,8 @@ int main(int argc, char *argv[])
 	colors_init(colormode, "cfdisk");
 
 	fdisk_init_debug(0);
+	scols_init_debug(0);
+
 	cf->cxt = fdisk_new_context();
 	if (!cf->cxt)
 		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));

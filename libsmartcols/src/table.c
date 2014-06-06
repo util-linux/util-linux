@@ -57,6 +57,7 @@ struct libscols_table *scols_new_table(void)
 	INIT_LIST_HEAD(&tb->tb_lines);
 	INIT_LIST_HEAD(&tb->tb_columns);
 
+	DBG(TAB, ul_debugobj(tb, "alloc"));
 	return tb;
 }
 
@@ -81,6 +82,7 @@ void scols_ref_table(struct libscols_table *tb)
 void scols_unref_table(struct libscols_table *tb)
 {
 	if (tb && (--tb->refcount <= 0)) {
+		DBG(TAB, ul_debugobj(tb, "dealloc"));
 		scols_table_remove_lines(tb);
 		scols_table_remove_columns(tb);
 		scols_unref_symbols(tb->symbols);
@@ -110,6 +112,7 @@ int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl
 	if (cl->flags & SCOLS_FL_TREE)
 		tb->ntreecols++;
 
+	DBG(TAB, ul_debugobj(tb, "add column %p", cl));
 	list_add_tail(&cl->cl_columns, &tb->tb_columns);
 	cl->seqnum = tb->ncols++;
 	scols_ref_column(cl);
@@ -144,6 +147,7 @@ int scols_table_remove_column(struct libscols_table *tb,
 	if (cl->flags & SCOLS_FL_TREE)
 		tb->ntreecols--;
 
+	DBG(TAB, ul_debugobj(tb, "remove column %p", cl));
 	list_del_init(&cl->cl_columns);
 	tb->ncols--;
 	scols_unref_column(cl);
@@ -165,6 +169,7 @@ int scols_table_remove_columns(struct libscols_table *tb)
 	if (!tb || !list_empty(&tb->tb_lines))
 		return -EINVAL;
 
+	DBG(TAB, ul_debugobj(tb, "remove all columns"));
 	while (!list_empty(&tb->tb_columns)) {
 		struct libscols_column *cl = list_entry(tb->tb_columns.next,
 					struct libscols_column, cl_columns);
@@ -219,6 +224,9 @@ struct libscols_column *scols_table_new_column(struct libscols_table *tb,
 	assert (tb);
 	if (!tb)
 		return NULL;
+
+	DBG(TAB, ul_debugobj(tb, "new column name=%s, whint=%g, flags=%d",
+				name, whint, flags));
 	cl = scols_new_column();
 	if (!cl)
 		return NULL;
@@ -313,6 +321,7 @@ int scols_table_set_stream(struct libscols_table *tb, FILE *stream)
 	if (!tb)
 		return -EINVAL;
 
+	DBG(TAB, ul_debugobj(tb, "setting alternative stream"));
 	tb->out = stream;
 	return 0;
 }
@@ -346,6 +355,7 @@ int scols_table_reduce_termwidth(struct libscols_table *tb, size_t reduce)
 	if (!tb)
 		return -EINVAL;
 
+	DBG(TAB, ul_debugobj(tb, "reduce terminal width: %zu", reduce));
 	tb->termreduce = reduce;
 	return 0;
 }
@@ -402,6 +412,7 @@ int scols_table_add_line(struct libscols_table *tb, struct libscols_line *ln)
 			return rc;
 	}
 
+	DBG(TAB, ul_debugobj(tb, "add line %p", ln));
 	list_add_tail(&ln->ln_lines, &tb->tb_lines);
 	ln->seqnum = tb->nlines++;
 	scols_ref_line(ln);
@@ -427,6 +438,7 @@ int scols_table_remove_line(struct libscols_table *tb,
 	if (!tb || !ln)
 		return -EINVAL;
 
+	DBG(TAB, ul_debugobj(tb, "remove line %p", ln));
 	list_del_init(&ln->ln_lines);
 	tb->nlines--;
 	scols_unref_line(ln);
@@ -445,6 +457,7 @@ void scols_table_remove_lines(struct libscols_table *tb)
 	if (!tb)
 		return;
 
+	DBG(TAB, ul_debugobj(tb, "remove all lines"));
 	while (!list_empty(&tb->tb_lines)) {
 		struct libscols_line *ln = list_entry(tb->tb_lines.next,
 						struct libscols_line, ln_lines);
@@ -508,6 +521,7 @@ struct libscols_line *scols_table_new_line(struct libscols_table *tb,
 
 	if (!tb || !tb->ncols)
 		return NULL;
+
 	ln = scols_new_line();
 	if (!ln)
 		return NULL;
@@ -580,6 +594,8 @@ struct libscols_table *scols_copy_table(struct libscols_table *tb)
 	if (!ret)
 		return NULL;
 
+	DBG(TAB, ul_debugobj(tb, "copy into %p", ret));
+
 	if (tb->symbols)
 		scols_table_set_symbols(ret, tb->symbols);
 
@@ -642,6 +658,8 @@ int scols_table_set_symbols(struct libscols_table *tb,
 	if (!tb)
 		return -EINVAL;
 
+	DBG(TAB, ul_debugobj(tb, "setting alternative symbols %p", sy));
+
 	if (tb->symbols)				/* unref old */
 		scols_unref_symbols(tb->symbols);
 	if (sy) {					/* ref user defined */
@@ -682,6 +700,8 @@ int scols_table_enable_colors(struct libscols_table *tb, int enable)
 	assert(tb);
 	if (!tb)
 		return -EINVAL;
+
+	DBG(TAB, ul_debugobj(tb, "colors: %s", enable ? "ENABLE" : "DISABLE"));
 	tb->colors_wanted = enable;
 	return 0;
 }
@@ -701,6 +721,7 @@ int scols_table_enable_raw(struct libscols_table *tb, int enable)
 	if (!tb)
 		return -EINVAL;
 
+	DBG(TAB, ul_debugobj(tb, "raw: %s", enable ? "ENABLE" : "DISABLE"));
 	if (enable)
 		tb->format = SCOLS_FMT_RAW;
 	else if (tb->format == SCOLS_FMT_RAW)
@@ -723,6 +744,8 @@ int scols_table_enable_export(struct libscols_table *tb, int enable)
 	assert(tb);
 	if (!tb)
 		return -EINVAL;
+
+	DBG(TAB, ul_debugobj(tb, "export: %s", enable ? "ENABLE" : "DISABLE"));
 	if (enable)
 		tb->format = SCOLS_FMT_EXPORT;
 	else if (tb->format == SCOLS_FMT_EXPORT)
@@ -750,6 +773,8 @@ int scols_table_enable_ascii(struct libscols_table *tb, int enable)
 	assert(tb);
 	if (!tb)
 		return -EINVAL;
+
+	DBG(TAB, ul_debugobj(tb, "ascii: %s", enable ? "ENABLE" : "DISABLE"));
 	tb->ascii = enable ? 1 : 0;
 	return 0;
 }
@@ -768,6 +793,7 @@ int scols_table_enable_noheadings(struct libscols_table *tb, int enable)
 	assert(tb);
 	if (!tb)
 		return -EINVAL;
+	DBG(TAB, ul_debugobj(tb, "noheading: %s", enable ? "ENABLE" : "DISABLE"));
 	tb->no_headings = enable ? 1 : 0;
 	return 0;
 }
@@ -787,6 +813,7 @@ int scols_table_enable_maxout(struct libscols_table *tb, int enable)
 	assert(tb);
 	if (!tb)
 		return -EINVAL;
+	DBG(TAB, ul_debugobj(tb, "maxout: %s", enable ? "ENABLE" : "DISABLE"));
 	tb->maxout = enable ? 1 : 0;
 	return 0;
 }
@@ -913,6 +940,7 @@ int scols_table_set_column_separator(struct libscols_table *tb, const char *sep)
 			return -ENOMEM;
 	}
 
+	DBG(TAB, ul_debugobj(tb, "new columns separator: %s", sep));
 	free(tb->colsep);
 	tb->colsep = p;
 	return 0;
@@ -942,6 +970,7 @@ int scols_table_set_line_separator(struct libscols_table *tb, const char *sep)
 			return -ENOMEM;
 	}
 
+	DBG(TAB, ul_debugobj(tb, "new lines separator: %s", sep));
 	free(tb->linesep);
 	tb->linesep = p;
 	return 0;
@@ -1013,6 +1042,7 @@ int scols_sort_table(struct libscols_table *tb, struct libscols_column *cl)
 	if (!tb || !cl)
 		return -EINVAL;
 
+	DBG(TAB, ul_debugobj(tb, "sorting table"));
 	list_sort(&tb->tb_lines, cells_cmp_wrapper, cl);
 	return 0;
 }

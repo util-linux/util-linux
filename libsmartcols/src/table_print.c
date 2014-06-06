@@ -48,11 +48,16 @@ static struct libscols_buffer *new_buffer(size_t sz)
 	buf->cur = buf->begin = ((char *) buf) + sizeof(struct libscols_buffer);
 	buf->encdata = NULL;
 	buf->bufsz = sz;
+
+	DBG(BUFF, ul_debugobj(buf, "alloc (size=%zu)", sz));
 	return buf;
 }
 
 static void free_buffer(struct libscols_buffer *buf)
 {
+	if (!buf)
+		return;
+	DBG(BUFF, ul_debugobj(buf, "dealloc"));
 	free(buf->encdata);
 	free(buf);
 }
@@ -62,6 +67,7 @@ static int buffer_reset_data(struct libscols_buffer *buf)
 	if (!buf)
 		return -EINVAL;
 
+	/*DBG(BUFF, ul_debugobj(buf, "reset data"));*/
 	buf->begin[0] = '\0';
 	buf->cur = buf->begin;
 	buf->art_idx = 0;
@@ -97,8 +103,10 @@ static int buffer_set_data(struct libscols_buffer *buf, const char *str)
 /* save the current buffer possition to art_idx */
 static void buffer_set_art_index(struct libscols_buffer *buf)
 {
-	if (buf)
+	if (buf) {
 		buf->art_idx = buf->cur - buf->begin;
+		/*DBG(BUFF, ul_debugobj(buf, "art index: %zu", buf->art_idx));*/
+	}
 }
 
 static char *buffer_get_data(struct libscols_buffer *buf)
@@ -161,6 +169,10 @@ static int print_data(struct libscols_table *tb,
 
 	assert(tb);
 	assert(cl);
+
+	DBG(TAB, ul_debugobj(tb,
+			" -> data, column=%p, line=%p, cell=%p, buff=%p",
+			cl, ln, ce, buf));
 
 	data = buffer_get_data(buf);
 	if (!data)
@@ -340,6 +352,8 @@ static int print_line(struct libscols_table *tb,
 
 	assert(ln);
 
+	DBG(TAB, ul_debugobj(tb, "printing line, line=%p, buff=%p", ln, buf));
+
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
 		rc = cell_to_buffer(tb, ln, cl, buf);
@@ -366,6 +380,8 @@ static int print_header(struct libscols_table *tb, struct libscols_buffer *buf)
 	    scols_table_is_export(tb) ||
 	    list_empty(&tb->tb_lines))
 		return 0;
+
+	DBG(TAB, ul_debugobj(tb, "printing header"));
 
 	/* set width according to the size of data
 	 */
@@ -431,6 +447,8 @@ static int print_tree(struct libscols_table *tb, struct libscols_buffer *buf)
 
 	assert(tb);
 
+	DBG(TAB, ul_debugobj(tb, "printing tree"));
+
 	rc = print_header(tb, buf);
 
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
@@ -441,6 +459,31 @@ static int print_tree(struct libscols_table *tb, struct libscols_buffer *buf)
 	}
 
 	return rc;
+}
+
+static void dbg_column(struct libscols_table *tb, struct libscols_column *cl)
+{
+	DBG(COL, ul_debugobj(cl, "%15s seq=%zu, width=%zd, "
+				 "hint=%d, avg=%zu, max=%zu, min=%zu, "
+				 "extreme=%s",
+
+		cl->header.data, cl->seqnum, cl->width,
+		cl->width_hint > 1 ? (int) cl->width_hint :
+				     (int) (cl->width_hint * tb->termwidth),
+		cl->width_avg,
+		cl->width_max,
+		cl->width_min,
+		cl->is_extreme ? "yes" : "not"));
+}
+
+static void dbg_columns(struct libscols_table *tb)
+{
+	struct libscols_iter itr;
+	struct libscols_column *cl;
+
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+	while (scols_table_next_column(tb, &itr, &cl) == 0)
+		dbg_column(tb, cl);
 }
 
 /*
@@ -514,8 +557,10 @@ static int count_column_width(struct libscols_table *tb,
 
 		cl->width = (size_t) cl->width_hint;
 
+	ON_DBG(COL, dbg_column(tb, cl));
 	return rc;
 }
+
 
 /*
  * This is core of the scols_* voodo...
@@ -527,6 +572,9 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 	size_t width = 0;		/* output width */
 	int trunc_only, rc = 0;
 	int extremes = 0;
+
+
+	DBG(TAB, ul_debugobj(tb, "recounting widths (termwidth=%zu)", tb->termwidth));
 
 	/* set basic columns width
 	 */
@@ -546,6 +594,8 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 	/* reduce columns with extreme fields
 	 */
 	if (width > tb->termwidth && extremes) {
+		DBG(TAB, ul_debugobj(tb, "   reduce width (extreme columns)"));
+
 		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 		while (scols_table_next_column(tb, &itr, &cl) == 0) {
 			size_t org_width;
@@ -566,9 +616,9 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 	}
 
 	if (width < tb->termwidth) {
-		/* try to found extreme column which fits into available space
-		 */
 		if (extremes) {
+			DBG(TAB, ul_debugobj(tb, "   enlarge width (extreme columns)"));
+
 			/* enlarge the first extreme column */
 			scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 			while (scols_table_next_column(tb, &itr, &cl) == 0) {
@@ -596,6 +646,8 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 		}
 
 		if (width < tb->termwidth && scols_table_is_maxout(tb)) {
+			DBG(TAB, ul_debugobj(tb, "   enlarge width (max-out)"));
+
 			/* try enlarge all columns */
 			while (width < tb->termwidth) {
 				scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
@@ -611,6 +663,8 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 			struct libscols_column *cl = list_entry(
 				tb->tb_columns.prev, struct libscols_column, cl_columns);
 
+			DBG(TAB, ul_debugobj(tb, "   enlarge width (last column)"));
+
 			if (!scols_column_is_right(cl) && tb->termwidth - width > 0) {
 				cl->width += tb->termwidth - width;
 				width = tb->termwidth;
@@ -625,6 +679,11 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 	trunc_only = 1;
 	while (width > tb->termwidth) {
 		size_t org = width;
+
+		DBG(TAB, ul_debugobj(tb, "   reduce width (current=%zu, "
+					 "wanted=%zu, mode=%s)",
+					width, tb->termwidth,
+					trunc_only ? "trunc-only" : "all-relative"));
 
 		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 		while (scols_table_next_column(tb, &itr, &cl) == 0) {
@@ -661,20 +720,9 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 		}
 	}
 
-/*
-	fprintf(stderr, "terminal: %d, output: %d\n", tb->termwidth, width);
+	DBG(TAB, ul_debugobj(tb, "  result: %zu", width));
+	ON_DBG(TAB, dbg_columns(tb));
 
-	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-	while (scols_table_next_column(tb, &itr, &cl) == 0) {
-		fprintf(stderr, "width: %s=%zd [hint=%d, avg=%zd, max=%zd, extreme=%s]\n",
-			cl->name, cl->width,
-			cl->width_hint > 1 ? (int) cl->width_hint :
-					     (int) (cl->width_hint * tb->termwidth),
-			cl->width_avg,
-			cl->width_max,
-			cl->is_extreme ? "yes" : "not");
-	}
-*/
 	return rc;
 }
 
@@ -716,6 +764,7 @@ int scols_print_table(struct libscols_table *tb)
 	if (!tb)
 		return -1;
 
+	DBG(TAB, ul_debugobj(tb, "printing"));
 	if (!tb->symbols)
 		scols_table_set_symbols(tb, NULL);	/* use default */
 
@@ -772,6 +821,8 @@ int scols_print_table_to_string(struct libscols_table *tb, char **data)
 
 	if (!tb)
 		return -EINVAL;
+
+	DBG(TAB, ul_debugobj(tb, "printing to string"));
 
 	/* create a stream for output */
 	stream = open_memstream(data, &sz);

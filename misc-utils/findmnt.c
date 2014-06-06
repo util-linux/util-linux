@@ -1443,6 +1443,7 @@ int main(int argc, char *argv[])
 	 * initialize libmount
 	 */
 	mnt_init_debug(0);
+	scols_init_debug(0);
 
 	tb = parse_tabfiles(tabfiles, ntabfiles, tabtype);
 	if (!tb)

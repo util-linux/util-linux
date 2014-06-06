@@ -1384,6 +1384,8 @@ int main(int argc, char *argv[])
 	} else if (argc != optind)
 		usage(stderr);
 
+	scols_init_debug(0);
+
 	/* lslogins -u -s == lslogins */
 	if (lslogins_flag & F_USRAC && lslogins_flag & F_SYSAC)
 		lslogins_flag &= ~(F_USRAC | F_SYSAC);

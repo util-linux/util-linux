@@ -38,7 +38,7 @@ struct libscols_column *scols_new_column(void)
 	cl = calloc(1, sizeof(*cl));
 	if (!cl)
 		return NULL;
-
+	DBG(COL, ul_debugobj(cl, "alloc"));
 	cl->refcount = 1;
 	INIT_LIST_HEAD(&cl->cl_columns);
 	return cl;
@@ -65,6 +65,7 @@ void scols_ref_column(struct libscols_column *cl)
 void scols_unref_column(struct libscols_column *cl)
 {
 	if (cl && --cl->refcount <= 0) {
+		DBG(COL, ul_debugobj(cl, "dealloc"));
 		list_del(&cl->cl_columns);
 		scols_reset_cell(&cl->header);
 		free(cl->color);
@@ -76,7 +77,7 @@ void scols_unref_column(struct libscols_column *cl)
  * scols_copy_column:
  * @cl: a pointer to a struct libscols_column instance
  *
- * Creates a new column and copies @cl's data over to it. 
+ * Creates a new column and copies @cl's data over to it.
  *
  * Returns: a pointer to a new struct libscols_column instance.
  */
@@ -90,6 +91,8 @@ struct libscols_column *scols_copy_column(const struct libscols_column *cl)
 	ret = scols_new_column();
 	if (!ret)
 		return NULL;
+
+	DBG(COL, ul_debugobj((void *) cl, "copy to %p", ret));
 
 	if (scols_column_set_color(ret, cl->color))
 		goto err;
