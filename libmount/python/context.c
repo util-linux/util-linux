@@ -627,7 +627,7 @@ static int Context_set_mflags(ContextObjext *self, PyObject *value, void *closur
 	return mnt_context_set_mflags(self->cxt, flags);
 }
 
-/* returns a flags integer (behaviour differs from C API) */
+/* returns a flags integer (behavior differs from C API) */
 static PyObject *Context_get_mflags(ContextObjext *self)
 {
 	unsigned long flags;
@@ -641,7 +641,7 @@ static PyObject *Context_get_mflags(ContextObjext *self)
 	return result;
 
 }
-/* returns a flags integer (behaviour differs from C API) */
+/* returns a flags integer (behavior differs from C API) */
 static PyObject *Context_get_user_mflags(ContextObjext *self)
 {
 	unsigned long flags;

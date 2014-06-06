@@ -73,8 +73,8 @@ Before sending a patch
 	* make sure that after patching source files will compile without
 	  errors.
 
-	* test that previously existed program behaviour is not
-	  unintentionally alterred. If you alter the behaviour tell about in
+	* test that previously existed program behavior is not
+	  unintentionally alterred. If you alter the behavior tell about in
 	  commit message.
 
 Coding style

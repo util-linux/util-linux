@@ -221,7 +221,7 @@ int main(int argc, char **argv)
 	ino_blocks = (ino_bytes + BFS_BLOCKSIZE - 1) / BFS_BLOCKSIZE;
 	data_blocks = total_blocks - ino_blocks - 1;
 
-	/* mimic the behaviour of SCO's mkfs - maybe this limit is needed */
+	/* mimic the behavior of SCO's mkfs - maybe this limit is needed */
 	if (data_blocks < 32)
 		errx(EXIT_FAILURE,
 		     _("not enough space, need at least %llu blocks"),

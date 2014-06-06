@@ -262,7 +262,7 @@ you have to use:
 and then the mount options from command line will be appended to
 the list of options from
 .IR /etc/fstab .
-The usual behaviour is that the last option wins if there is more duplicated
+The usual behavior is that the last option wins if there is more duplicated
 options.
 
 When the
@@ -1081,7 +1081,7 @@ but still allow userspace to override it. For more details about the default
 system mount options see /proc/mounts.
 .TP
 .B nostrictatime
-Use the kernel's default behaviour for inode access time updates.
+Use the kernel's default behavior for inode access time updates.
 .TP
 .B suid
 Allow set-user-identifier or set-group-identifier bits to take
@@ -1365,15 +1365,15 @@ Support POSIX Access Control Lists (or not).
 .\" requires CONFIG_EXT2_FS_POSIX_ACL
 .TP
 .BR bsddf | minixdf
-Set the behaviour for the
+Set the behavior for the
 .I statfs
 system call. The
 .B minixdf
-behaviour is to return in the
+behavior is to return in the
 .I f_blocks
 field the total number of blocks of the filesystem, while the
 .B bsddf
-behaviour (which is the default) is to subtract the overhead blocks
+behavior (which is the default) is to subtract the overhead blocks
 used by the ext2 filesystem and not available for file storage. Thus
 .sp 1
 % mount /k \-o minixdf; df /k; umount /k
@@ -1411,7 +1411,7 @@ don't have to be supported if ext4 kernel driver is used for ext2 and ext3 files
 Print debugging info upon each (re)mount.
 .TP
 .BR errors= { continue | remount-ro | panic }
-Define the behaviour when an error is encountered.
+Define the behavior when an error is encountered.
 (Either ignore errors and just mark the filesystem erroneous and continue,
 or remount the filesystem read-only, or panic and halt the system.)
 The default is set in the filesystem superblock, and can be
@@ -2091,7 +2091,7 @@ a volume where the
 option was previously specified in order to restore normal behavior.
 .TP
 .BR errors= { continue | remount-ro | panic }
-Define the behaviour when an error is encountered.
+Define the behavior when an error is encountered.
 (Either ignore errors and just mark the filesystem erroneous and continue,
 or remount the filesystem read-only, or panic and halt the system.)
 .TP
@@ -2540,7 +2540,7 @@ The same filesystem type is also used by Mac OS X.
 
 .TP
 .BI onerror= value
-Set behaviour on error:
+Set behavior on error:
 .RS
 .TP
 .B panic
@@ -2594,7 +2594,7 @@ disabled.
 .TP
 .BR shortname= { lower | win95 | winnt | mixed }
 
-Defines the behaviour for creation and display of filenames which fit into
+Defines the behavior for creation and display of filenames which fit into
 8.3 characters. If a long name for a file exists, it will always be
 preferred display. There are four modes:
 :
@@ -2644,12 +2644,12 @@ doing delayed allocation writeout. Valid values for this
 option are page size (typically 4KiB) through to 1GiB,
 inclusive, in power-of-2 increments.
 .sp
-The default behaviour is for dynamic end-of-file
+The default behavior is for dynamic end-of-file
 preallocation size, which uses a set of heuristics to
 optimise the preallocation size based on the current
 allocation patterns within the file and the access patterns
 to the file. Specifying a fixed allocsize value turns off
-the dynamic behaviour.
+the dynamic behavior.
 .TP
 .BR attr2 | noattr2
 The options enable/disable an "opportunistic" improvement to
@@ -2659,8 +2659,8 @@ attr2 is selected (either when setting or removing extended
 attributes) the on-disk superblock feature bit field will be
 updated to reflect this format being in use.
 .sp
-The default behaviour is determined by the on-disk feature
-bit indicating that attr2 behaviour is active. If either
+The default behavior is determined by the on-disk feature
+bit indicating that attr2 behavior is active. If either
 mount option it set, then that becomes the new default used
 by the filesystem.
 .sp
@@ -2732,7 +2732,7 @@ If "largeio" specified, a filesystem that was created with a
 "swidth" specified will return the "swidth" value (in bytes)
 in st_blksize. If the filesystem does not have a "swidth"
 specified but does specify an "allocsize" then "allocsize"
-(in bytes) will be returned instead. Otherwise the behaviour
+(in bytes) will be returned instead. Otherwise the behavior
 is the same as if "nolargeio" was specified.
 .TP
 .B logbufs=value

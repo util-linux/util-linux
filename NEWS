@@ -1197,7 +1197,7 @@ util-linux 2.9b:
 
 * split README into INSTALL and HISTORY
 * added a sentence to swapon.8
-* behaviour of write on non-ASCII fixed
+* behavior of write on non-ASCII fixed
 * hwclock adapted to survive a failing mktime()
 
 util-linux 2.9a:

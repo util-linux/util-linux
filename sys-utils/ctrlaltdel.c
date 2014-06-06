@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 
 	if (geteuid())
 		errx(EXIT_FAILURE,
-		     _("You must be root to set the Ctrl-Alt-Del behaviour"));
+		     _("You must be root to set the Ctrl-Alt-Del behavior"));
 
 	if (argc == 2 && !strcmp("hard", argv[1])) {
 		if (my_reboot(LINUX_REBOOT_CMD_CAD_ON) < 0)

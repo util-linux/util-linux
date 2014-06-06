@@ -40,7 +40,7 @@ static int probe_aix_pt(blkid_probe pr,
  * magic number at begin of the disk.
  *
  * Note, Linux kernel is tring to be smart and AIX signature is ignored when
- * there is a valid DOS partitions table. We don't support such behaviour. All
+ * there is a valid DOS partitions table. We don't support such behavior. All
  * fdisk-like programs has to properly wipe the fist sector. Everything other
  * is a bug.
  */

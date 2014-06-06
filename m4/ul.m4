@@ -13,7 +13,7 @@ AC_DEFUN([UL_PKG_STATIC], [
 
 dnl UL_CHECK_LIB(LIBRARY, FUNCTION, [VARSUFFIX = $1]))
 dnl
-dnl The VARSUFFIX is optional and overrides the default behaviour. For example:
+dnl The VARSUFFIX is optional and overrides the default behavior. For example:
 dnl     UL_CHECK_LIB(yyy, func, xxx) generates have_xxx and HAVE_LIBXXX
 dnl     UL_CHECK_LIB(yyy, func)      generates have_yyy and HAVE_LIBYYY
 dnl
