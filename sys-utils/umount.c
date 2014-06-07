@@ -646,6 +646,6 @@ int main(int argc, char **argv)
 	}
 
 	mnt_free_context(cxt);
-	return rc;
+	return (rc < 256) ? rc : 255;
 }
 
