@@ -773,8 +773,10 @@ static int bsd_translate_fstype (int linux_type)
 	case 0x06: /* DOS 16-bit >=32M */
 	case 0xe1: /* DOS access       */
 	case 0xe3: /* DOS R/O          */
+#if !defined (__alpha__)
 	case 0xf2: /* DOS secondary    */
 		return BSD_FS_MSDOS;
+#endif
 	case 0x07: /* OS/2 HPFS        */
 		return BSD_FS_HPFS;
 	default:
