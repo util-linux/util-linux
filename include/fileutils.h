@@ -20,4 +20,6 @@ static inline FILE *xfmkstemp(char **tmpname, char *dir)
 
 extern int get_fd_tabsize(void);
 
+extern int mkdir_p(const char *path, mode_t mode);
+
 #endif /* UTIL_LINUX_FILEUTILS */

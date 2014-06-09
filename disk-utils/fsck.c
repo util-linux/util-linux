@@ -19,7 +19,7 @@
  * Copyright (C) 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
  *	         2001, 2002, 2003, 2004, 2005 by  Theodore Ts'o.
  *
- * Copyright (C) 2009, 2012 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2009-2014 Karel Zak <kzak@redhat.com>
  *
  * This file may be redistributed under the terms of the GNU Public
  * License.

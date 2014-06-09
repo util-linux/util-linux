@@ -32,6 +32,7 @@
  */
 
 #include "mountP.h"
+#include "fileutils.h"
 
 #include <sys/wait.h>
 

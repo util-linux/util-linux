@@ -23,6 +23,7 @@
 #include "canonicalize.h"
 #include "env.h"
 #include "match.h"
+#include "fileutils.h"
 #include "statfs_magic.h"
 
 int append_string(char **a, const char *b)
@@ -1108,43 +1109,6 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 	}
 
 	return res;
-}
-
-int mkdir_p(const char *path, mode_t mode)
-{
-	char *p, *dir;
-	int rc = 0;
-
-	if (!path || !*path)
-		return -EINVAL;
-
-	dir = p = strdup(path);
-	if (!dir)
-		return -ENOMEM;
-
-	if (*p == '/')
-		p++;
-
-	while (p && *p) {
-		char *e = strchr(p, '/');
-		if (e)
-			*e = '\0';
-		if (*p) {
-			rc = mkdir(dir, mode);
-			if (rc && errno != EEXIST)
-				break;
-			rc = 0;
-		}
-		if (!e)
-			break;
-		*e = '/';
-		p = e + 1;
-	}
-
-	DBG(UTILS, ul_debug("%s mkdir %s", path, rc ? "FAILED" : "SUCCESS"));
-
-	free(dir);
-	return rc;
 }
 
 #ifdef TEST_PROGRAM
