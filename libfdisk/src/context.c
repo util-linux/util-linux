@@ -244,10 +244,6 @@ static int warn_wipe(struct fdisk_context *cxt)
  * @fname: path to the device to be handled
  * @readonly: how to open the device
  *
- * If the @readonly flag is set to false, fdisk will attempt to open
- * the device with read-write mode and will fallback to read-only if
- * unsuccessful.
- *
  * Returns: 0 on success, < 0 on error.
  */
 int fdisk_context_assign_device(struct fdisk_context *cxt,
