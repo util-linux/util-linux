@@ -26,34 +26,89 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_HWCLOCK"
 
 ts_skip_nonroot
-ts_check_prog "ntpdate"
+ts_check_prog "bc"
+ts_check_prog "sntp"
 
-set -o pipefail
+function resolve_host
+{
+	local host="$1"
+	local tmp
 
-# sync with server
-(ntpdate $NTP_SERVER | sed "s/^.*offset \([0-9.]*\) sec/\1/g") &> /dev/null
-[ "$?" == "1" ] && ts_skip "cannot sync with $NTP_SERVER"
+	# currently we just resolve default records (might be "A", ipv4 only)
+	if type "dig" >/dev/null 2>&1; then
+		tmp=$(dig "$host" +short 2>/dev/null) || return 1
+	elif type "nslookup" >/dev/null 2>&1; then
+		tmp=$(nslookup "$host" 2>/dev/null) || return 1
+		tmp=$(echo "$tmp"| grep -A1 "^Name:"| grep "^Address:"| cut -d" " -f2)
+	fi
 
-# sync again and check difference
-OFFSET=$( ntpdate $NTP_SERVER 2> /dev/null | sed "s/^.*offset [\-]*\([0-9.]*\) sec/\1/g" )
-[ "$?" == "1" ] && ts_skip "cannot sync with $NTP_SERVER (2nd attempt)"
+	# we return 1 if tmp is empty
+	test -n "$tmp" || return 1
+	echo "$tmp" | sort -R | head -n 1
+}
 
-DIFF=$( echo "$OFFSET > 1" | bc )
-[ "$DIFF" == "1" ] && ts_skip "diff between systime and NTP is greated than 1 second"
+function get_offset_sys_ntp
+{
+	local ip="$@"
+	local out
+
+	# using hostname instead of IP could give us more than one offset
+	out=$(sntp --timeout 1 "$ip") || return 1
+
+	# sed must deliver a signed float or empty string for sure
+	out=$(echo "$out" | \
+		sed -n 's/.* \(\(+\|-\)[0-9]\{1,\}\.[0-9]\{1,\}\).*/\1/1p')
+
+	[ -n "$out" ] || return 1
+	echo "$out"
+}
+
+function check_diff_offset
+{
+	local a=${1#+}
+	local b=${2#+}
+	local max="$3"
+	local tmp
+
+	tmp=$(echo "$a - $b" | bc | tr -d '-')
+	echo "$tmp"
+
+	tmp=$(echo "$tmp < $max" | bc)
+	[ $tmp -eq 1 ]
+}
+
+
+# we need fixed ntp IP to get comparable offsets
+NTP_IP=$(resolve_host "$NTP_SERVER") \
+	|| ts_skip "can't resolve hostname $NTP_SERVER"
+
+OFFSET_A=$(get_offset_sys_ntp "$NTP_IP") \
+	|| ts_skip "can't get ntp offset 1st, $NTP_IP"
+OFFSET_B=$(get_offset_sys_ntp "$NTP_IP") \
+	|| ts_skip "can't get ntp offset 2nd, $NTP_IP"
+
+diff=$(check_diff_offset $OFFSET_A $OFFSET_B 0.02) \
+	|| ts_skip "unreliable ntp or sys clock offsets: $NTP_IP $OFFSET_A $OFFSET_B +/-$diff"
+
+# hwclock --show should work if we have a hw clock
+tmp=$($TS_CMD_HWCLOCK --show 2>&1)
+if [ $? != "0" ]; then
+	echo "$tmp" | grep -q "Cannot access the Hardware Clock via" \
+		&& ts_skip "no hardware clock found"
+	ts_failed "hwclock --show"
+fi
 
 # call hwclock
-for i in `seq 0 10`; do
-	#echo "sync #$i"
-	$TS_CMD_HWCLOCK --systohc
-	$TS_CMD_HWCLOCK --hctosys
+for i in `seq 1 10`; do
+	# only *skip* on failure for now
+	$TS_CMD_HWCLOCK --systohc || ts_skip "hwclock --systohc failed, $i"
+	$TS_CMD_HWCLOCK --hctosys || ts_skip "hwclock --hctosys failed, $i"
 done
 
-# sync with NTP and check new difference
-OFFSET=$( ntpdate $NTP_SERVER 2> /dev/null | sed "s/^.*offset [\-]*\([0-9.]*\) sec/\1/g" )
-[ "$?" == "1" ] && ts_skip "cannot sync with $NTP_SERVER (3rd attempt)"
+OFFSET_C=$(get_offset_sys_ntp "$NTP_IP") \
+	|| ts_skip "can't get ntp offset 3rd, $NTP_IP"
 
-DIFF=$( echo "$OFFSET > 1" | bc )
-[ "$DIFF" == "1" ] && ts_failed "offset is $OFFSET"
+diff=$(check_diff_offset "$OFFSET_B" "$OFFSET_C" 1.0) \
+	|| ts_failed "offsets $NTP_IP: $OFFSET_B $OFFSET_C +/-$diff"
 
-ts_ok "offset is $OFFSET"
-
+ts_ok "offsets $NTP_IP: $OFFSET_B $OFFSET_C +/-$diff"
