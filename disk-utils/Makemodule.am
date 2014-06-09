@@ -81,7 +81,7 @@ if BUILD_FSCK
 sbin_PROGRAMS += fsck
 dist_man_MANS += disk-utils/fsck.8
 fsck_SOURCES = disk-utils/fsck.c
-fsck_LDADD = $(LDADD) libmount.la libblkid.la
+fsck_LDADD = $(LDADD) libmount.la libblkid.la libcommon.la
 fsck_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir) -I$(ul_libblkid_incdir)
 endif
 

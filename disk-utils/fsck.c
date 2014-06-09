@@ -53,6 +53,7 @@
 #include "exitcodes.h"
 #include "c.h"
 #include "closestream.h"
+#include "fileutils.h"
 
 #define XALLOC_EXIT_CODE	FSCK_EX_ERROR
 #include "xalloc.h"
@@ -63,6 +64,8 @@
 
 #define MAX_DEVICES 32
 #define MAX_ARGS 32
+
+#define FSCK_RUNTIME_DIRNAME	"/run/fsck"
 
 static const char *ignored_types[] = {
 	"ignore",
@@ -100,7 +103,10 @@ struct fsck_fs_data
 struct fsck_instance {
 	int	pid;
 	int	flags;		/* FLAG_{DONE|PROGRESS} */
-	int	lock;		/* flock()ed whole disk file descriptor or -1 */
+
+	int	lock;		/* flock()ed lockpath file descriptor or -1 */
+	char	*lockpath;	/* /run/fsck/<diskname>.lock or NULL */
+
 	int	exit_status;
 	struct timeval start_time;
 	struct timeval end_time;
@@ -327,19 +333,40 @@ static int is_irrotational_disk(dev_t disk)
 static void lock_disk(struct fsck_instance *inst)
 {
 	dev_t disk = fs_get_disk(inst->fs, 1);
-	char *diskname;
+	char *diskpath = NULL, *diskname;
+
+	inst->lock = -1;
 
 	if (!disk || is_irrotational_disk(disk))
-		return;
+		goto done;
 
-	diskname = blkid_devno_to_devname(disk);
+	diskpath = blkid_devno_to_devname(disk);
+	if (!diskpath)
+		goto done;
+
+	if (access(FSCK_RUNTIME_DIRNAME, F_OK) != 0) {
+		int rc = mkdir(FSCK_RUNTIME_DIRNAME,
+				    S_IWUSR|
+				    S_IRUSR|S_IRGRP|S_IROTH|
+				    S_IXUSR|S_IXGRP|S_IXOTH);
+		if (rc && errno != EEXIST) {
+			warn(_("cannot create directory %s"),
+					FSCK_RUNTIME_DIRNAME);
+			goto done;
+		}
+	}
+
+	diskname = stripoff_last_component(diskpath);
 	if (!diskname)
-		return;
+		diskname = diskpath;
+
+	xasprintf(&inst->lockpath, FSCK_RUNTIME_DIRNAME "/%s.lock", diskname);
 
 	if (verbose)
-		printf(_("Locking disk %s ... "), diskname);
+		printf(_("Locking disk by %s ... "), inst->lockpath);
 
-	inst->lock = open(diskname, O_CLOEXEC | O_RDONLY);
+	inst->lock = open(inst->lockpath, O_RDONLY|O_CREAT|O_CLOEXEC,
+				    S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);
 	if (inst->lock >= 0) {
 		int rc = -1;
 
@@ -359,21 +386,31 @@ static void lock_disk(struct fsck_instance *inst)
 		/* TRANSLATORS: These are followups to "Locking disk...". */
 		printf("%s.\n", inst->lock >= 0 ? _("succeeded") : _("failed"));
 
-	free(diskname);
+
+done:
+	if (inst->lock < 0) {
+		free(inst->lockpath);
+		inst->lockpath = NULL;
+	}
+	free(diskpath);
 	return;
 }
 
 static void unlock_disk(struct fsck_instance *inst)
 {
-	if (inst->lock >= 0) {
-		/* explicitly unlock, don't rely on close(), maybe some library
-		 * (e.g. liblkid) has still open the device.
-		 */
-		flock(inst->lock, LOCK_UN);
-		close(inst->lock);
+	if (inst->lock < 0)
+		return;
 
-		inst->lock = -1;
-	}
+	if (verbose)
+		printf(_("Unlocking %s.\n"), inst->lockpath);
+
+	close(inst->lock);			/* unlock */
+	unlink(inst->lockpath);
+
+	free(inst->lockpath);
+
+	inst->lock = -1;
+	inst->lockpath = NULL;
 }
 
 static void free_instance(struct fsck_instance *i)
@@ -381,6 +418,7 @@ static void free_instance(struct fsck_instance *i)
 	if (lockdisk)
 		unlock_disk(i);
 	free(i->prog);
+	free(i->lockpath);
 	mnt_unref_fs(i->fs);
 	free(i);
 	return;
