@@ -10,6 +10,7 @@
 #include "at.h"
 #include "pathnames.h"
 #include "sysfs.h"
+#include "fileutils.h"
 
 char *sysfs_devno_attribute_path(dev_t devno, char *buf,
 				 size_t bufsiz, const char *attr)
@@ -508,17 +509,6 @@ char *sysfs_get_devname(struct sysfs_cxt *cxt, char *buf, size_t bufsiz)
 
 	memmove(buf, name, sz + 1);
 	return buf;
-}
-
-/* returns basename and keeps dirname in the @path */
-static char *stripoff_last_component(char *path)
-{
-    char *p = strrchr(path, '/');
-
-    if (!p)
-        return NULL;
-    *p = '\0';
-    return ++p;
 }
 
 static int get_dm_wholedisk(struct sysfs_cxt *cxt, char *diskname,

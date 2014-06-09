@@ -79,15 +79,11 @@ extern int mnt_run_test(struct libmnt_test *tests, int argc, char *argv[]);
 #endif
 
 /* utils.c */
-extern char *stripoff_last_component(char *path);
-
 extern int mnt_valid_tagname(const char *tagname);
 extern int append_string(char **a, const char *b);
 
 extern const char *mnt_statfs_get_fstype(struct statfs *vfs);
 extern int is_file_empty(const char *name);
-
-extern int mkdir_p(const char *path, mode_t mode);
 
 extern int mnt_is_readonly(const char *path)
 			__attribute__((nonnull));

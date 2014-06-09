@@ -46,6 +46,7 @@
 #include "mountP.h"
 #include "strutils.h"
 #include "loopdev.h"
+#include "fileutils.h"
 
 static int is_mountinfo(struct libmnt_table *tb)
 {

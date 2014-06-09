@@ -117,3 +117,15 @@ int mkdir_p(const char *path, mode_t mode)
 	free(dir);
 	return rc;
 }
+
+/* returns basename and keeps dirname in the @path, if @path is "/" (root)
+ * then returns empty string */
+char *stripoff_last_component(char *path)
+{
+	char *p = path ? strrchr(path, '/') : NULL;
+
+	if (!p)
+		return NULL;
+	*p = '\0';
+	return p + 1;
+}

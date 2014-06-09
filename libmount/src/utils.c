@@ -117,18 +117,6 @@ static int fstype_cmp(const void *v1, const void *v2)
 	return strcmp(s1, s2);
 }
 
-/* returns basename and keeps dirname in the @path, if @path is "/" (root)
- * then returns empty string */
-char *stripoff_last_component(char *path)
-{
-	char *p = path ? strrchr(path, '/') : NULL;
-
-	if (!p)
-		return NULL;
-	*p = '\0';
-	return p + 1;
-}
-
 /*
  * Note that the @target has to be an absolute path (so at least "/").  The
  * @filename returns an allocated buffer with the last path component, for example:
