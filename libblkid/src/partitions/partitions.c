@@ -536,7 +536,7 @@ static int idinfo_probe(blkid_probe pr, const struct blkid_idinfo *id,
 {
 	const struct blkid_idmag *mag = NULL;
 	blkid_loff_t off;
-	int rc = BLKID_PROBE_NONE;		/* = nothing detected */
+	int rc = BLKID_PROBE_NONE;		/* default is nothing */
 
 	if (pr->size <= 0 || (id->minsz && id->minsz > pr->size))
 		goto nothing;	/* the device is too small */
@@ -567,8 +567,10 @@ static int idinfo_probe(blkid_probe pr, const struct blkid_idinfo *id,
 		DBG(LOWPROBE, ul_debug("%s: <--- (rc = %d)", id->name, rc));
 	}
 
-nothing:
 	return rc;
+
+nothing:
+	return BLKID_PROBE_NONE;
 }
 
 /*
@@ -581,10 +583,11 @@ static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 
 	if (!pr || chn->idx < -1)
 		return -EINVAL;
-	if (pr->flags & BLKID_FL_NOSCAN_DEV)
-		goto done;			/* nothing */
 
 	blkid_probe_chain_reset_vals(pr, chn);
+
+	if (pr->flags & BLKID_FL_NOSCAN_DEV)
+		return BLKID_PROBE_NONE;
 
 	if (chn->binary)
 		partitions_init_data(chn);
@@ -627,7 +630,7 @@ static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 
 		DBG(LOWPROBE, ul_debug("<-- leaving probing loop (type=%s) [PARTS idx=%d]",
 			name, chn->idx));
-		rc = 0;
+		rc = BLKID_PROBE_OK;
 		break;
 	}
 
@@ -653,7 +656,6 @@ details_only:
 			rc = xrc;
 	}
 
-done:
 	DBG(LOWPROBE, ul_debug("partitions probe done [rc=%d]",	rc));
 	return rc;
 }
@@ -723,7 +725,6 @@ int blkid_partitions_do_subprobe(blkid_probe pr, blkid_partition parent,
 
 static int blkid_partitions_probe_partition(blkid_probe pr)
 {
-	int rc = BLKID_PROBE_NONE;
 	blkid_probe disk_pr = NULL;
 	blkid_partlist ls;
 	blkid_partition par;
@@ -748,7 +749,9 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 		goto nothing;
 
 	par = blkid_partlist_devno_to_partition(ls, devno);
-	if (par) {
+	if (!par)
+		goto nothing;
+	else {
 		const char *v;
 		blkid_parttable tab = blkid_partition_get_table(par);
 		dev_t disk = blkid_probe_get_devno(disk_pr);
@@ -794,10 +797,15 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 		blkid_probe_sprintf_value(pr, "PART_ENTRY_DISK", "%u:%u",
 				major(disk), minor(disk));
 	}
-	rc = BLKID_PROBE_OK;
+
+	DBG(LOWPROBE, ul_debug("parts: end probing for partition entry [success]"));
+	return BLKID_PROBE_OK;
+
 nothing:
-	DBG(LOWPROBE, ul_debug("parts: end probing for partition entry [rc=%d]", rc));
-	return rc;
+	DBG(LOWPROBE, ul_debug("parts: end probing for partition entry [nothing]"));
+	return BLKID_PROBE_NONE;
+
+
 }
 
 /*

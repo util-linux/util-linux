@@ -340,19 +340,20 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 
 	if (!pr || chn->idx < -1)
 		return -EINVAL;
-	if (pr->flags & BLKID_FL_NOSCAN_DEV)
-		goto nothing;
 
 	blkid_probe_chain_reset_vals(pr, chn);
 
-	DBG(LOWPROBE, ul_debug("--> starting probing loop [SUBLKS idx=%d]",
-		chn->idx));
+	if (pr->flags & BLKID_FL_NOSCAN_DEV)
+		return BLKID_PROBE_NONE;
 
 	if (pr->size <= 0 || (pr->size <= 1024 && !S_ISCHR(pr->mode)))
 		/* Ignore very very small block devices or regular files (e.g.
 		 * extended partitions). Note that size of the UBI char devices
 		 * is 1 byte */
-		goto nothing;
+		return BLKID_PROBE_NONE;
+
+	DBG(LOWPROBE, ul_debug("--> starting probing loop [SUBLKS idx=%d]",
+		chn->idx));
 
 	i = chn->idx < 0 ? 0 : chn->idx + 1U;
 
@@ -422,7 +423,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 					(unsigned char *) mag->magic);
 		if (rc) {
 			blkid_probe_chain_reset_vals(pr, chn);
-			DBG(LOWPROBE, ul_debug("failed to set result -- ingnore"));
+			DBG(LOWPROBE, ul_debug("failed to set result -- ignore"));
 			continue;
 		}
 
@@ -431,7 +432,6 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		return BLKID_PROBE_OK;
 	}
 
-nothing:
 	DBG(LOWPROBE, ul_debug("<-- leaving probing loop (failed=%d) [SUBLKS idx=%d]",
 			rc, chn->idx));
 	return rc;
@@ -459,13 +459,12 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 	int rc;
 
 	if (pr->flags & BLKID_FL_NOSCAN_DEV)
-		return 1;				/* nothing */
+		return BLKID_PROBE_NONE;
 
 	while ((rc = superblocks_probe(pr, chn)) == 0) {
 
 		if (blkid_probe_is_tiny(pr) && !count)
-			/* floppy or so -- returns the first result. */
-			return 0;
+			return BLKID_PROBE_OK;	/* floppy or so -- returns the first result. */
 
 		count++;
 
@@ -494,7 +493,7 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 		return -2;		/* error, ambivalent result (more FS) */
 	}
 	if (!count)
-		return 1;		/* nothing detected */
+		return BLKID_PROBE_NONE;
 
 	if (idx != -1) {
 		/* restore the first result */
@@ -511,7 +510,7 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 	if (chn->idx >= 0 && idinfos[chn->idx]->usage & BLKID_USAGE_RAID)
 		pr->prob_flags |= BLKID_PROBE_FL_IGNORE_PT;
 
-	return 0;
+	return BLKID_PROBE_OK;
 }
 
 int blkid_probe_set_version(blkid_probe pr, const char *version)

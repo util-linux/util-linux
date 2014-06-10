@@ -150,7 +150,7 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 		return -1;
 
 	if (!S_ISBLK(pr->mode))
-		return -1;	/* nothing, works with block devices only */
+		return -EINVAL;	/* nothing, works with block devices only */
 
 	if (chn->binary) {
 		DBG(LOWPROBE, ul_debug("initialize topology binary data"));
@@ -163,7 +163,7 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 			chn->data = calloc(1,
 					sizeof(struct blkid_struct_topology));
 			if (!chn->data)
-				return -1;
+				return -ENOMEM;
 		}
 	}
 
@@ -193,12 +193,12 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 
 		DBG(LOWPROBE, ul_debug("<-- leaving probing loop (type=%s) [TOPOLOGY idx=%d]",
 			id->name, chn->idx));
-		return 0;
+		return BLKID_PROBE_OK;
 	}
 
 	DBG(LOWPROBE, ul_debug("<-- leaving probing loop (failed) [TOPOLOGY idx=%d]",
 		chn->idx));
-	return 1;
+	return BLKID_PROBE_NONE;
 }
 
 static void topology_free(blkid_probe pr __attribute__((__unused__)),
