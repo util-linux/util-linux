@@ -696,6 +696,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	if (!S_ISBLK(sb.st_mode) && !S_ISCHR(sb.st_mode) && !S_ISREG(sb.st_mode))
 		goto err;
 
+
 	pr->mode = sb.st_mode;
 	if (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode))
 		pr->devno = sb.st_rdev;
@@ -724,8 +725,13 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	if (pr->size <= 1440 * 1024 && !S_ISCHR(sb.st_mode))
 		pr->flags |= BLKID_FL_TINY_DEV;
 
+	if (S_ISBLK(sb.st_mode) && blkid_lvm_private(sb.st_rdev)) {
+		DBG(LOWPROBE, ul_debug("ignore private LVM device"));
+		pr->flags |= BLKID_FL_NOSCAN_DEV;
+	}
+
 #ifdef CDROM_GET_CAPABILITY
-	if (S_ISBLK(sb.st_mode) &&
+	else if (S_ISBLK(sb.st_mode) &&
 	    !blkid_probe_is_tiny(pr) &&
 	    blkid_probe_is_wholedisk(pr) &&
 	    ioctl(fd, CDROM_GET_CAPABILITY, NULL) >= 0)
@@ -895,6 +901,9 @@ int blkid_do_probe(blkid_probe pr)
 
 	if (!pr)
 		return -1;
+
+	if (pr->flags & BLKID_FL_NOSCAN_DEV)
+		return 1;
 
 	do {
 		struct blkid_chain *chn = pr->cur_chain;
@@ -1147,6 +1156,8 @@ int blkid_do_safeprobe(blkid_probe pr)
 
 	if (!pr)
 		return -1;
+	if (pr->flags & BLKID_FL_NOSCAN_DEV)
+		return 1;
 
 	blkid_probe_start(pr);
 
@@ -1201,6 +1212,8 @@ int blkid_do_fullprobe(blkid_probe pr)
 
 	if (!pr)
 		return -1;
+	if (pr->flags & BLKID_FL_NOSCAN_DEV)
+		return 1;
 
 	blkid_probe_start(pr);
 

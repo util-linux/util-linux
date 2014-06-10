@@ -340,6 +340,9 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 
 	if (!pr || chn->idx < -1)
 		return -EINVAL;
+	if (pr->flags & BLKID_FL_NOSCAN_DEV)
+		goto nothing;
+
 	blkid_probe_chain_reset_vals(pr, chn);
 
 	DBG(LOWPROBE, ul_debug("--> starting probing loop [SUBLKS idx=%d]",
@@ -454,6 +457,9 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 	int count = 0;
 	int intol = 0;
 	int rc;
+
+	if (pr->flags & BLKID_FL_NOSCAN_DEV)
+		return 1;				/* nothing */
 
 	while ((rc = superblocks_probe(pr, chn)) == 0) {
 

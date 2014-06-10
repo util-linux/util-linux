@@ -219,6 +219,7 @@ struct blkid_struct_probe
 #define BLKID_FL_PRIVATE_FD	(1 << 1)	/* see blkid_new_probe_from_filename() */
 #define BLKID_FL_TINY_DEV	(1 << 2)	/* <= 1.47MiB (floppy or so) */
 #define BLKID_FL_CDROM_DEV	(1 << 3)	/* is a CD/DVD drive */
+#define BLKID_FL_NOSCAN_DEV	(1 << 4)	/* do not scan this device */
 
 /* private per-probing flags */
 #define BLKID_PROBE_FL_IGNORE_PT (1 << 1)	/* ignore partition table */
@@ -347,6 +348,7 @@ extern void blkid__scan_dir(char *, dev_t, struct dir_list **, char **)
 			__attribute__((nonnull(1,4)));
 extern int blkid_driver_has_major(const char *drvname, int major)
 			__attribute__((warn_unused_result));
+extern int blkid_lvm_private(dev_t devno);
 
 /* lseek.c */
 extern blkid_loff_t blkid_llseek(int fd, blkid_loff_t offset, int whence);
