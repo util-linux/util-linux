@@ -13,6 +13,34 @@ THEDIR=`pwd`
 cd $srcdir
 DIE=0
 
+autopoint_fun ()
+{
+	# we have to deal with set -e ...
+	rm -f configure.ac.autogenbak
+	ret="0"
+	GT_VER_MIN="0.18"
+	GT_VER_DEF=$(sed -n 's/AM_GNU_GETTEXT_VERSION(\[\(.*\)\])/\1/p' configure.ac)
+	GT_VER_HAVE="$(gettext --version | head -n 1 | sed 's/.* //g')"
+
+	tmp=$(echo -e "$GT_VER_MIN\n$GT_VER_HAVE" | sort -V | tail -n1)
+	tmp=$(echo -e "$GT_VER_DEF\n$tmp" | sort -V | head -n1)
+
+	if [ "$tmp" != "$GT_VER_DEF" ]; then
+		echo "warning, force autopoint to use old gettext $tmp"
+		sed -i.autogenbak configure.ac \
+			-e "s/\(AM_GNU_GETTEXT_VERSION\).*/\1([$tmp])/"
+	fi
+
+	autopoint "$@" || ret=$?
+	ret=$?
+
+	if [ "$tmp" != "$GT_VER_DEF" ]; then
+		mv configure.ac.autogenbak configure.ac
+	fi
+
+	return $ret
+}
+
 test -f sys-utils/mount.c || {
 	echo
 	echo "You must run this script in the top-level util-linux directory"
@@ -66,6 +94,7 @@ fi
 
 echo
 echo "Generate build-system by:"
+
 echo "   autopoint:  $(autopoint --version | head -1)"
 echo "   aclocal:    $(aclocal --version | head -1)"
 echo "   autoconf:   $(autoconf --version | head -1)"
@@ -77,7 +106,7 @@ rm -rf autom4te.cache
 
 set -e
 po/update-potfiles
-autopoint --force $AP_OPTS
+autopoint_fun --force $AP_OPTS
 if ! grep -q datarootdir po/Makefile.in.in; then
 	echo autopoint does not honor dataroot variable, patching.
 	sed -i -e 's/^datadir *=\(.*\)/datarootdir = @datarootdir@\

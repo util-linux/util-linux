@@ -152,7 +152,8 @@ UL_SET_ARCH([HPPA], [hppa*])
 
 AC_SYS_LARGEFILE
 
-AM_GNU_GETTEXT_VERSION([0.18])
+dnl we want this gettext version but still allow older ones via autogen.sh
+AM_GNU_GETTEXT_VERSION([0.18.3])
 AM_GNU_GETTEXT([external])
 
 AS_IF([test -d "$srcdir/po"], [
