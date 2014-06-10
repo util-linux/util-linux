@@ -13,28 +13,26 @@ THEDIR=`pwd`
 cd $srcdir
 DIE=0
 
+# provide simple gettext backward compatibility
 autopoint_fun ()
 {
 	# we have to deal with set -e ...
-	rm -f configure.ac.autogenbak
 	ret="0"
-	GT_VER_MIN="0.18"
-	GT_VER_DEF=$(sed -n 's/AM_GNU_GETTEXT_VERSION(\[\(.*\)\])/\1/p' configure.ac)
-	GT_VER_HAVE="$(gettext --version | head -n 1 | sed 's/.* //g')"
 
-	tmp=$(echo -e "$GT_VER_MIN\n$GT_VER_HAVE" | sort -V | tail -n1)
-	tmp=$(echo -e "$GT_VER_DEF\n$tmp" | sort -V | head -n1)
+	# check against this hardcoded set of alternative gettext versions
+	gt_ver=`gettext --version |\
+		sed -n -e 's/.* \(0\.18\|0\.18\.[1-2]\)$/\1/p'`
 
-	if [ "$tmp" != "$GT_VER_DEF" ]; then
-		echo "warning, force autopoint to use old gettext $tmp"
+	if [ -n "$gt_ver" ]; then
+		echo "warning, force autopoint to use old gettext $gt_ver"
+		rm -f configure.ac.autogenbak
 		sed -i.autogenbak configure.ac \
-			-e "s/\(AM_GNU_GETTEXT_VERSION\).*/\1([$tmp])/"
+			-e "s/\(AM_GNU_GETTEXT_VERSION\).*/\1([$gt_ver])/"
 	fi
 
 	autopoint "$@" || ret=$?
-	ret=$?
 
-	if [ "$tmp" != "$GT_VER_DEF" ]; then
+	if [ -n "$gt_ver" ]; then
 		mv configure.ac.autogenbak configure.ac
 	fi
 
@@ -94,7 +92,6 @@ fi
 
 echo
 echo "Generate build-system by:"
-
 echo "   autopoint:  $(autopoint --version | head -1)"
 echo "   aclocal:    $(aclocal --version | head -1)"
 echo "   autoconf:   $(autoconf --version | head -1)"
