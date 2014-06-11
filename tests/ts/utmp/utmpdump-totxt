@@ -18,9 +18,8 @@ TS_DESC="to text"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-ts_check_test_command "$TS_CMD_UTMPDUMP"
-
-BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
+. "$TS_SELF/utmp_functions.sh"
+[ $SIZEOF_UTMP -eq 384 ] || ts_skip "utmp struct size $SIZEOF_UTMP"
 
 export LANG=C
 export TZ=GMT
