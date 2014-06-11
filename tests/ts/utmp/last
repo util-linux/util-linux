@@ -22,10 +22,10 @@ ts_check_test_command "$TS_CMD_LAST"
 $TS_CMD_LAST --version 2>&1 | grep -q "invalid option" \
 	&& ts_skip "deprecated last"
 
-WTMP_FILE=${TS_OUTDIR}/wtmp
+WTMP_FILE=${TS_OUTDIR}/wtmp-a
 rm -f $WTMP_FILE
 BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
-ln -s ${TS_SELF}/wtmp.${BYTE_ORDER} $WTMP_FILE
+ln -s ${TS_SELF}/wtmp-a.${BYTE_ORDER} $WTMP_FILE
 
 export LANG=C
 export TZ=GMT

@@ -25,8 +25,8 @@ BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
 export LANG=C
 export TZ=GMT
 OUTFILE=${TS_OUTDIR}/${TS_TESTNAME}.file
-$TS_CMD_UTMPDUMP -r $TS_SELF/ipv6txt >| $OUTFILE 2>/dev/null
-if diff -q $TS_SELF/ipv6bin.$BYTE_ORDER $OUTFILE; then
+$TS_CMD_UTMPDUMP -r $TS_SELF/txt-ipv6 >| $OUTFILE 2>/dev/null
+if diff -q $TS_SELF/wtmp-ipv6.$BYTE_ORDER $OUTFILE; then
 	echo "no diff"
 fi > $TS_OUTPUT 2>&1
 

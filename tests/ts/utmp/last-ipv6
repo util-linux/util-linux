@@ -22,10 +22,10 @@ ts_check_test_command "$TS_CMD_LAST"
 $TS_CMD_LAST --version 2>&1 | grep -q "invalid option" \
 	&& ts_skip "deprecated last"
 
-WTMP_FILE=${TS_OUTDIR}/ipv6-input
+WTMP_FILE=${TS_OUTDIR}/wtmp-ipv6
 rm -f $WTMP_FILE
 BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
-ln -s ${TS_SELF}/ipv6-input.${BYTE_ORDER} $WTMP_FILE
+ln -s ${TS_SELF}/wtmp-ipv6.${BYTE_ORDER} $WTMP_FILE
 
 export LANG=C
 export TZ=GMT
