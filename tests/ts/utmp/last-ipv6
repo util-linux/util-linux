@@ -37,8 +37,7 @@ else
 		|| ts_skip "can't create test data"
 fi
 
->| $TS_OUTPUT
-
+ts_init_subtest "dns"
 ts_log "~~~ dns short ~~~"
 $TS_CMD_LAST -f $WTMP_FILE -d >> $TS_OUTPUT 2>/dev/null
 
@@ -47,12 +46,15 @@ $TS_CMD_LAST -f $WTMP_FILE -d -w >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ dns host last ~~~"
 $TS_CMD_LAST -f $WTMP_FILE -d -a >> $TS_OUTPUT 2>/dev/null
+ts_finalize_subtest
 
+ts_init_subtest "nodns"
 ts_log "~~~ show ip ~~~"
 $TS_CMD_LAST -f $WTMP_FILE -i >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ show ip last ~~~"
 $TS_CMD_LAST -f $WTMP_FILE -i -a >> $TS_OUTPUT 2>/dev/null
+ts_finalize_subtest
 
 rm -f $WTMP_FILE
 

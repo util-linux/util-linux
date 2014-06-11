@@ -37,14 +37,7 @@ else
 		|| ts_skip "can't create test data"
 fi
 
->| $TS_OUTPUT
-
-ts_log "~~~ basic output ~~~"
-$TS_CMD_LAST -f $WTMP_FILE >> $TS_OUTPUT 2>/dev/null
-
-ts_log "~~~ include system ~~~"
-$TS_CMD_LAST -f $WTMP_FILE -x >> $TS_OUTPUT 2>/dev/null
-
+ts_init_subtest "dns"
 ts_log "~~~ dns short ~~~"
 $TS_CMD_LAST -f $WTMP_FILE -d root >> $TS_OUTPUT 2>/dev/null
 
@@ -53,6 +46,14 @@ $TS_CMD_LAST -f $WTMP_FILE -w -d root >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ dns host last ~~~"
 $TS_CMD_LAST -f $WTMP_FILE -a -d root >> $TS_OUTPUT 2>/dev/null
+ts_finalize_subtest
+
+ts_init_subtest "nodns"
+ts_log "~~~ basic output ~~~"
+$TS_CMD_LAST -f $WTMP_FILE >> $TS_OUTPUT 2>/dev/null
+
+ts_log "~~~ include system ~~~"
+$TS_CMD_LAST -f $WTMP_FILE -x >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ show ip ~~~"
 $TS_CMD_LAST -f $WTMP_FILE -i torvalds >> $TS_OUTPUT 2>/dev/null
@@ -77,6 +78,7 @@ $TS_CMD_LAST -f $WTMP_FILE -s "2013-08-28 02:20" -t "2013-08-28 08:20" >> $TS_OU
 
 ts_log "~~~ present ~~~"
 $TS_CMD_LAST -f $WTMP_FILE -p "2013-08-28 11:20" >> $TS_OUTPUT 2>/dev/null
+ts_finalize_subtest
 
 rm -f $WTMP_FILE
 
