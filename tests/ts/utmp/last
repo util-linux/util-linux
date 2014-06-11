@@ -22,13 +22,20 @@ ts_check_test_command "$TS_CMD_LAST"
 $TS_CMD_LAST --version 2>&1 | grep -q "invalid option" \
 	&& ts_skip "deprecated last"
 
+. "$TS_SELF/utmp_functions.sh"
+
 WTMP_FILE=${TS_OUTDIR}/wtmp-a
 rm -f $WTMP_FILE
-BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
-ln -s ${TS_SELF}/wtmp-a.${BYTE_ORDER} $WTMP_FILE
 
 export LANG=C
 export TZ=GMT
+
+if [ $SIZEOF_UTMP -eq 384 ]; then
+	ln -s ${TS_SELF}/wtmp-a.${BYTE_ORDER} $WTMP_FILE
+else
+	$TS_CMD_UTMPDUMP -r ${TS_SELF}/txt-a > $WTMP_FILE 2>/dev/null \
+		|| ts_skip "can't create test data"
+fi
 
 >| $TS_OUTPUT
 
