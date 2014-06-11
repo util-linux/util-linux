@@ -610,3 +610,20 @@ function ts_scsi_debug_init {
 
 	TS_DEVICE="/dev/${devname}"
 }
+
+function ts_resolve_host {
+	local host="$1"
+	local tmp
+
+	# currently we just resolve default records (might be "A", ipv4 only)
+	if type "dig" >/dev/null 2>&1; then
+		tmp=$(dig "$host" +short 2>/dev/null) || return 1
+	elif type "nslookup" >/dev/null 2>&1; then
+		tmp=$(nslookup "$host" 2>/dev/null) || return 1
+		tmp=$(echo "$tmp"| grep -A1 "^Name:"| grep "^Address:"| cut -d" " -f2)
+	fi
+
+	# we return 1 if tmp is empty
+	test -n "$tmp" || return 1
+	echo "$tmp" | sort -R | head -n 1
+}

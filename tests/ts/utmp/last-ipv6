@@ -37,7 +37,10 @@ else
 		|| ts_skip "can't create test data"
 fi
 
+# there is no better way yet to skip a subtest
+if ts_resolve_host "a.root-servers.net" >/dev/null; then
 ts_init_subtest "dns"
+
 ts_log "~~~ dns short ~~~"
 $TS_CMD_LAST -f $WTMP_FILE -d >> $TS_OUTPUT 2>/dev/null
 
@@ -46,7 +49,9 @@ $TS_CMD_LAST -f $WTMP_FILE -d -w >> $TS_OUTPUT 2>/dev/null
 
 ts_log "~~~ dns host last ~~~"
 $TS_CMD_LAST -f $WTMP_FILE -d -a >> $TS_OUTPUT 2>/dev/null
+
 ts_finalize_subtest
+fi
 
 ts_init_subtest "nodns"
 ts_log "~~~ show ip ~~~"
