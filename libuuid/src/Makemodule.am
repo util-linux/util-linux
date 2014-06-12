@@ -44,7 +44,7 @@ EXTRA_DIST += libuuid/src/uuid.sym
 
 # move lib from $(usrlib_execdir) to $(libdir) if needed
 install-exec-hook-libuuid:
-	if test "$(usrlib_execdir)" != "$(libdir)"; then \
+	if test "$(usrlib_execdir)" != "$(libdir)" -a -f "$(DESTDIR)$(usrlib_execdir)/libuuid.so"; then \
 		mkdir -p $(DESTDIR)$(libdir); \
 		mv $(DESTDIR)$(usrlib_execdir)/libuuid.so.* $(DESTDIR)$(libdir); \
 		so_img_name=$$(readlink $(DESTDIR)$(usrlib_execdir)/libuuid.so); \

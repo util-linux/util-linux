@@ -220,7 +220,7 @@ endif # BUILD_LIBBLKID_TESTS
 
 # move lib from $(usrlib_execdir) to $(libdir) if needed
 install-exec-hook-libblkid:
-	if test "$(usrlib_execdir)" != "$(libdir)"; then \
+	if test "$(usrlib_execdir)" != "$(libdir)" -a -f "$(DESTDIR)$(usrlib_execdir)/libblkid.so"; then \
 		mkdir -p $(DESTDIR)$(libdir); \
 		mv $(DESTDIR)$(usrlib_execdir)/libblkid.so.* $(DESTDIR)$(libdir); \
 		so_img_name=$$(readlink $(DESTDIR)$(usrlib_execdir)/libblkid.so); \
