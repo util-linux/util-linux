@@ -884,7 +884,9 @@ file.
 
 Some of these options could be enabled or disabled by default
 in the system kernel. To check the current setting see the options
-in /proc/mounts.
+in /proc/mounts. Note that filesystems also have per-filesystem
+specific default mount options (see for example \fBtune2fs \-l\fP
+output for extN filesystems).
 
 The following options apply to any filesystem that is being
 mounted (but not every filesystem actually honors them \(en e.g.\&, the
@@ -993,6 +995,9 @@ For more details, see
 .B defaults
 Use default options:
 .BR rw ", " suid ", " dev ", " exec ", " auto ", " nouser ", and " async.
+
+Note that the real set of the all default mount options depends on kernel
+and filesystem type. See the begin of this section for more details.
 .TP
 .B dev
 Interpret character or block special devices on the filesystem.
