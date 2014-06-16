@@ -13,21 +13,30 @@
 # GNU General Public License for more details.
 
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="to-binary"
+TS_DESC="circle"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+# this test is arch independent, no need for utmp_functions.sh
 ts_check_test_command "$TS_CMD_UTMPDUMP"
-
-BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
 
 export LANG=C
 export TZ=GMT
-OUTFILE=${TS_OUTDIR}/${TS_TESTNAME}.file
-$TS_CMD_UTMPDUMP -r $TS_SELF/text >| $OUTFILE 2>/dev/null
-if diff -q $TS_SELF/binary.$BYTE_ORDER $OUTFILE; then
-	echo "no diff"
-fi > $TS_OUTPUT 2>&1
+OUT_BIN1=${TS_OUTDIR}/${TS_TESTNAME}.bin1
+OUT_BIN2=${TS_OUTDIR}/${TS_TESTNAME}.bin2
+OUT_TXT=${TS_OUTDIR}/${TS_TESTNAME}.txt
+
+echo "no output expected" > $TS_OUTPUT
+for f in txt-a txt-b txt-ipv6; do
+	$TS_CMD_UTMPDUMP -r $TS_SELF/$f > $OUT_BIN1 2>/dev/null &&
+	$TS_CMD_UTMPDUMP $OUT_BIN1 > $OUT_TXT 2>/dev/null &&
+	diff -u $TS_SELF/$f $OUT_TXT &&
+	$TS_CMD_UTMPDUMP -r $OUT_TXT > $OUT_BIN2 2>/dev/null &&
+	diff -q $OUT_BIN1 $OUT_BIN2 ||
+	echo "circle failed for $f"
+done >> $TS_OUTPUT 2>&1
+
+rm -f "$OUT_BIN1" "$OUT_BIN2" "$OUT_TXT"
 
 ts_finalize

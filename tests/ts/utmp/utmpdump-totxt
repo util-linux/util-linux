@@ -13,17 +13,16 @@
 # GNU General Public License for more details.
 
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="to-text"
+TS_DESC="to text"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-ts_check_test_command "$TS_CMD_UTMPDUMP"
-
-BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
+. "$TS_SELF/utmp_functions.sh"
+[ $SIZEOF_UTMP -eq 384 ] || ts_skip "utmp struct size $SIZEOF_UTMP"
 
 export LANG=C
 export TZ=GMT
-$TS_CMD_UTMPDUMP $TS_SELF/binary.$BYTE_ORDER >| $TS_OUTPUT 2>/dev/null
+$TS_CMD_UTMPDUMP $TS_SELF/wtmp-b.$BYTE_ORDER >| $TS_OUTPUT 2>/dev/null
 
 ts_finalize

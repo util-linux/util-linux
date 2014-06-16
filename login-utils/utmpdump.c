@@ -48,9 +48,10 @@
 static char *timetostr(const time_t time)
 {
 	static char s[29];	/* [Sun Sep 01 00:00:00 1998 PST] */
+	struct tm *tmp;
 
-	if (time != 0)
-		strftime(s, 29, "%a %b %d %T %Y %Z", localtime(&time));
+	if (time != 0 && (tmp = localtime(&time)))
+		strftime(s, 29, "%a %b %d %T %Y %Z", tmp);
 	else
 		s[0] = '\0';
 
