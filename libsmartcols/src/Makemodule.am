@@ -58,7 +58,7 @@ endif # BUILD_LIBSMARTCOLS_TESTS
 
 # move lib from $(usrlib_execdir) to $(libdir) if needed
 install-exec-hook-libsmartcols:
-	if test "$(usrlib_execdir)" != "$(libdir)"; then \
+	if test "$(usrlib_execdir)" != "$(libdir)" -a -f "$(DESTDIR)$(usrlib_execdir)/libsmartcols.so"; then \
 		mkdir -p $(DESTDIR)$(libdir); \
 		mv $(DESTDIR)$(usrlib_execdir)/libsmartcols.so.* $(DESTDIR)$(libdir); \
 		so_img_name=$$(readlink $(DESTDIR)$(usrlib_execdir)/libsmartcols.so); \
