@@ -61,6 +61,7 @@ enum {
 	FL_ALL		= (1 << 11),
 	FL_UNIQ		= (1 << 12),
 	FL_BYTES	= (1 << 13),
+	FL_NOCACHE	= (1 << 14),
 
 	/* basic table settings */
 	FL_ASCII	= (1 << 20),
@@ -246,15 +247,19 @@ static void set_source_match(const char *data)
 
 static void enable_extra_target_match(void)
 {
-	char *cn = NULL, *mnt = NULL;
+	const char *cn = NULL, *mnt = NULL;
 
 	/*
 	 * Check if match pattern is mountpoint, if not use the
 	 * real mountpoint.
 	 */
-	cn = mnt_resolve_path(get_match(COL_TARGET), cache);
-	if (!cn)
-		return;
+	if (flags & FL_NOCACHE)
+		cn = get_match(COL_TARGET);
+	else {
+		cn = mnt_resolve_path(get_match(COL_TARGET), cache);
+		if (!cn)
+			return;
+	}
 
 	mnt = mnt_get_mountpoint(cn);
 	if (!mnt || strcmp(mnt, cn) == 0)
@@ -439,7 +444,7 @@ static char *get_tag(struct libmnt_fs *fs, const char *tagname, int col
 	else {
 		const char *dev = mnt_fs_get_source(fs);
 
-		if (dev)
+		if (dev && !(flags & FL_NOCACHE))
 			dev = mnt_resolve_spec(dev, cache);
 #ifdef HAVE_LIBUDEV
 		if (dev)
@@ -1143,6 +1148,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -a, --ascii            use ASCII chars for tree formatting\n"), out);
 	fputs(_(" -b, --bytes            print sizes in bytes rather than in human readable format\n"), out);
 	fputs(_(" -c, --canonicalize     canonicalize printed paths\n"), out);
+	fputs(_(" -C, --nocanonicalize   don't canonicalize when compare paths\n"), out);
 	fputs(_(" -D, --df               imitate the output of df(1)\n"), out);
 	fputs(_(" -d, --direction <word> direction of search, 'forward' or 'backward'\n"), out);
 	fputs(_(" -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
@@ -1214,6 +1220,7 @@ int main(int argc, char *argv[])
 	    { "pairs",        0, 0, 'P' },
 	    { "raw",          0, 0, 'r' },
 	    { "types",        1, 0, 't' },
+	    { "nocanonicalize", 0, 0, 'C' },
 	    { "nofsroot",     0, 0, 'v' },
 	    { "submounts",    0, 0, 'R' },
 	    { "source",       1, 0, 'S' },
@@ -1228,6 +1235,8 @@ int main(int argc, char *argv[])
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
+		{ 'C', 'c'},                    /* [no]canonicalize */
+		{ 'C', 'e' },			/* nocanonicalize, evaluate */
 		{ 'N','k','m','s' },		/* task,kernel,mtab,fstab */
 		{ 'P','l','r' },		/* pairs,list,raw */
 		{ 'm','p','s' },		/* mtab,poll,fstab */
@@ -1246,7 +1255,7 @@ int main(int argc, char *argv[])
 	flags |= FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"AabcDd:ehifF:o:O:p::PklmnN:rst:uvRS:T:Uw:V",
+				"AabCcDd:ehifF:o:O:p::PklmnN:rst:uvRS:T:Uw:V",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1260,6 +1269,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'b':
 			flags |= FL_BYTES;
+			break;
+		case 'C':
+			flags |= FL_NOCACHE;
 			break;
 		case 'c':
 			flags |= FL_CANONICALIZE;
@@ -1452,12 +1464,14 @@ int main(int argc, char *argv[])
 	if ((flags & FL_TREE) && (ntabfiles > 1 || !tab_is_tree(tb)))
 		flags &= ~FL_TREE;
 
-	cache = mnt_new_cache();
-	if (!cache) {
-		warn(_("failed to initialize libmount cache"));
-		goto leave;
+	if (!(flags & FL_NOCACHE)) {
+		cache = mnt_new_cache();
+		if (!cache) {
+			warn(_("failed to initialize libmount cache"));
+			goto leave;
+		}
+		mnt_table_set_cache(tb, cache);
 	}
-	mnt_table_set_cache(tb, cache);
 
 	if (flags & FL_UNIQ)
 		mnt_table_uniq_fs(tb, MNT_UNIQ_KEEPTREE, uniq_fs_target_cmp);
