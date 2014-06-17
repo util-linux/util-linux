@@ -539,6 +539,10 @@ static int get_dm_wholedisk(struct sysfs_cxt *cxt, char *diskname,
     return rc;
 }
 
+/*
+ * Returns by @diskdevno whole disk device devno and (optionaly) by
+ * @diskname the whole disk device name.
+ */
 int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
             size_t len, dev_t *diskdevno)
 {
@@ -656,6 +660,20 @@ int sysfs_devno_is_lvm_private(dev_t devno)
 	sysfs_deinit(&cxt);
 	free(uuid);
 	return rc;
+}
+
+/*
+ * Return 0 or 1, or < 0 in case of error
+ */
+int sysfs_devno_is_wholedisk(dev_t devno)
+{
+	dev_t disk;
+	int rc;
+
+	if (sysfs_devno_to_wholedisk(devno, NULL, 0, &disk) != 0)
+		return -1;
+
+	return devno == disk;
 }
 
 int sysfs_scsi_get_hctl(struct sysfs_cxt *cxt, int *h, int *c, int *t, int *l)
