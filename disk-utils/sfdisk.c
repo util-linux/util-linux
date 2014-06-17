@@ -46,12 +46,12 @@
 #include "xalloc.h"
 #include "blkdev.h"
 #include "linux_version.h"
-#include "wholedisk.h"
 #include "pathnames.h"
 #include "canonicalize.h"
 #include "rpmatch.h"
 #include "closestream.h"
 #include "strutils.h"
+#include "sysfs.h"
 
 struct systypes {
 	unsigned char type;
@@ -2488,25 +2488,37 @@ static int is_ide_cdrom_or_tape(char *device)
 	return ret;
 }
 
-static char *
-nextproc(FILE * procf) {
-    static char devname[256];
-    char line[1024], ptname[128 + 1];
-    int ma, mi;
-    unsigned long long sz;
+static char *nextproc(FILE *f)
+{
+	char line[128 + 1];
 
-    if (procf == NULL)
+	if (!f)
+		return NULL;
+
+	while (fgets(line, sizeof(line), f)) {
+		char buf[PATH_MAX], *cn;
+		dev_t devno;
+
+		if (sscanf(line, " %*d %*d %*d %128[^\n ]", buf) != 1)
+			continue;
+
+		devno = sysfs_devname_to_devno(buf, NULL);
+		if (devno <= 0)
+			continue;
+
+		if (sysfs_devno_is_lvm_private(devno) ||
+		    sysfs_devno_is_wholedisk(devno) <= 0)
+			continue;
+
+		if (!sysfs_devno_to_devpath(devno, buf, sizeof(buf)))
+			continue;
+
+		cn = canonicalize_path(buf);
+		if (cn)
+			return cn;
+	}
+
 	return NULL;
-    while (fgets(line, sizeof(line), procf) != NULL) {
-	if (sscanf(line, " %d %d %llu %128[^\n ]", &ma, &mi, &sz, ptname) != 4)
-	    continue;
-	snprintf(devname, sizeof(devname), "/dev/%s", ptname);
-	if (!is_whole_disk(devname))
-	    continue;
-	return canonicalize_path(devname);
-    }
-
-    return NULL;
 }
 
 static void do_list(char *dev, int silent);
