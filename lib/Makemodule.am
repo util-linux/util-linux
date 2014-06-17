@@ -55,8 +55,7 @@ check_PROGRAMS += \
 	test_procutils \
 	test_randutils \
 	test_strutils \
-	test_ttyutils \
-	test_wholedisk
+	test_ttyutils
 
 if LINUX
 if HAVE_CPU_SET_T
@@ -79,9 +78,6 @@ test_blkdev_LDADD = libcommon.la
 test_ismounted_SOURCES = lib/ismounted.c
 test_ismounted_CFLAGS = -DTEST_PROGRAM
 test_ismounted_LDADD = libcommon.la
-
-test_wholedisk_SOURCES = lib/wholedisk.c
-test_wholedisk_CFLAGS = -DTEST_PROGRAM
 
 test_mangle_SOURCES = lib/mangle.c
 test_mangle_CFLAGS = -DTEST_PROGRAM
