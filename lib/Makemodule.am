@@ -22,7 +22,6 @@ libcommon_la_SOURCES = \
 	lib/setproctitle.c \
 	lib/strutils.c \
 	lib/sysfs.c \
-	lib/wholedisk.c \
 	lib/timeutils.c \
 	lib/ttyutils.c \
 	lib/xgetpass.c \

@@ -53,7 +53,6 @@
 #include "nls.h"
 #include "blkdev.h"
 #include "pathnames.h"
-#include "wholedisk.h"
 #include "all-io.h"
 #include "xalloc.h"
 #include "c.h"

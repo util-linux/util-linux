@@ -46,7 +46,6 @@ dist_noinst_HEADERS += \
 	include/timer.h \
 	include/timeutils.h \
 	include/ttyutils.h \
-	include/wholedisk.h \
 	include/widechar.h \
 	include/xalloc.h \
 	include/xgetpass.h \
