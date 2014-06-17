@@ -340,6 +340,7 @@ struct libmnt_context
 #define MNT_FL_HELPER		(1 << 25)	/* [u]mount.<type> */
 #define MNT_FL_LOOPDEV_READY	(1 << 26)	/* /dev/loop<N> initialized by the library */
 #define MNT_FL_MOUNTOPTS_FIXED  (1 << 27)
+#define MNT_FL_TABPATHS_CHECKED	(1 << 28)
 
 /* default flags */
 #define MNT_FL_DEFAULT		0
@@ -371,6 +372,10 @@ extern int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype)
 			__attribute__((nonnull(1)));
 
 /* context.c */
+extern int mnt_context_mtab_writable(struct libmnt_context *cxt);
+extern int mnt_context_utab_writable(struct libmnt_context *cxt);
+extern const char *mnt_context_get_writable_tabpath(struct libmnt_context *cxt);
+
 extern int mnt_context_prepare_srcpath(struct libmnt_context *cxt);
 extern int mnt_context_prepare_target(struct libmnt_context *cxt);
 extern int mnt_context_guess_fstype(struct libmnt_context *cxt);

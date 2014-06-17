@@ -92,7 +92,7 @@ int mnt_context_find_umount_fs(struct libmnt_context *cxt,
 	 * where LABEL, UUID or symlinks are canonicalized. It means that
 	 * it's usable only for canonicalized stuff (e.g. kernel mountinfo).
 	 */
-	if (!cxt->mtab_writable	&& *tgt == '/' &&
+	if (!mnt_context_mtab_writable(cxt) && *tgt == '/' &&
 	    !mnt_context_is_force(cxt) && !mnt_context_is_lazy(cxt)) {
 
 		struct stat st;
@@ -259,7 +259,7 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 	if (!mnt_context_is_restricted(cxt)
 	    && *tgt == '/'
 	    && !(cxt->flags & MNT_FL_HELPER)
-	    && !cxt->mtab_writable
+	    && !mnt_context_mtab_writable(cxt)
 	    && !mnt_context_is_force(cxt)
 	    && !mnt_context_is_lazy(cxt)
 	    && stat(tgt, &st) == 0 && S_ISDIR(st.st_mode)
@@ -267,7 +267,7 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 
 		const char *type = mnt_fs_get_fstype(cxt->fs);
 
-		/* !cxt->mtab_writable && has_utab_entry() verified that there
+		/* !mnt_context_mtab_writable(cxt) && has_utab_entry() verified that there
 		 * is no stuff in utab, so disable all mtab/utab related actions */
 		mnt_context_disable_mtab(cxt, TRUE);
 
@@ -865,7 +865,7 @@ int mnt_context_do_umount(struct libmnt_context *cxt)
 		    && (cxt->mountflags & MS_REMOUNT)) {
 
 			/* use "remount" instead of "umount" in /etc/mtab */
-			if (!rc && cxt->update && cxt->mtab_writable)
+			if (!rc && cxt->update && mnt_context_mtab_writable(cxt))
 				rc = mnt_update_set_fs(cxt->update,
 						       cxt->mountflags, NULL, cxt->fs);
 		}

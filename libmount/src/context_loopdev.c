@@ -227,7 +227,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	 * because kernel provides the name in /sys.
 	 */
 	if (get_linux_version() >= KERNEL_VERSION(2, 6, 37) ||
-	    !cxt->mtab_writable) {
+	    !mnt_context_mtab_writable(cxt)) {
 		DBG(CXT, ul_debugobj(cxt, "enabling AUTOCLEAR flag"));
 		lo_flags |= LO_FLAGS_AUTOCLEAR;
 	}

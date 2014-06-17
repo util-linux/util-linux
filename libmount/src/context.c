@@ -65,11 +65,6 @@ struct libmnt_context *mnt_new_context(void)
 	DBG(CXT, ul_debugobj(cxt, "----> allocate %s",
 				cxt->restricted ? "[RESTRICTED]" : ""));
 
-	mnt_has_regular_mtab(&cxt->mtab_path, &cxt->mtab_writable);
-
-	if (!cxt->mtab_writable)
-		/* use /run/mount/utab if /etc/mtab is useless */
-		mnt_has_regular_utab(&cxt->utab_path, &cxt->utab_writable);
 
 	return cxt;
 }
@@ -178,6 +173,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->flags |= (fl & MNT_FL_NOCANONICALIZE);
 	cxt->flags |= (fl & MNT_FL_RDONLY_UMOUNT);
 	cxt->flags |= (fl & MNT_FL_NOSWAPMATCH);
+	cxt->flags |= (fl & MNT_FL_TABPATHS_CHECKED);
 	return 0;
 }
 
@@ -204,6 +200,59 @@ int mnt_context_reset_status(struct libmnt_context *cxt)
 	cxt->helper_status = 0;
 	return 0;
 }
+
+static int context_init_paths(struct libmnt_context *cxt, int writable)
+{
+	assert(cxt);
+
+	if (!cxt->mtab_path)
+		cxt->mtab_path = mnt_get_mtab_path();
+	if (!cxt->utab_path)
+		cxt->utab_path = mnt_get_utab_path();
+
+	if (!writable)
+		return 0;		/* only paths wanted */
+	if (mnt_context_is_nomtab(cxt))
+		return 0;		/* write mode overrided by mount -n */
+	if (cxt->flags & MNT_FL_TABPATHS_CHECKED)
+		return 0;
+
+	DBG(CXT, ul_debugobj(cxt, "checking for writable tab files"));
+
+	mnt_has_regular_mtab(&cxt->mtab_path, &cxt->mtab_writable);
+
+	if (!cxt->mtab_writable)
+		/* use /run/mount/utab if /etc/mtab is useless */
+		mnt_has_regular_utab(&cxt->utab_path, &cxt->utab_writable);
+
+	cxt->flags |= MNT_FL_TABPATHS_CHECKED;
+	return 0;
+}
+
+int mnt_context_mtab_writable(struct libmnt_context *cxt)
+{
+	assert(cxt);
+
+	context_init_paths(cxt, 1);
+	return cxt->mtab_writable == 1;
+}
+
+int mnt_context_utab_writable(struct libmnt_context *cxt)
+{
+	assert(cxt);
+
+	context_init_paths(cxt, 1);
+	return cxt->utab_writable == 1;
+}
+
+const char *mnt_context_get_writable_tabpath(struct libmnt_context *cxt)
+{
+	assert(cxt);
+
+	context_init_paths(cxt, 1);
+	return cxt->mtab_writable ? cxt->mtab_path : cxt->utab_path;
+}
+
 
 static int set_flag(struct libmnt_context *cxt, int flag, int enable)
 {
@@ -978,6 +1027,8 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 	if (!cxt->mtab) {
 		int rc;
 
+		context_init_paths(cxt, 0);
+
 		cxt->mtab = mnt_new_table();
 		if (!cxt->mtab)
 			return -ENOMEM;
@@ -1220,8 +1271,8 @@ struct libmnt_lock *mnt_context_get_lock(struct libmnt_context *cxt)
 		return NULL;
 
 	if (!cxt->lock) {
-		cxt->lock = mnt_new_lock(cxt->mtab_writable ?
-				cxt->mtab_path : cxt->utab_path, 0);
+		cxt->lock = mnt_new_lock(
+				mnt_context_get_writable_tabpath(cxt), 0);
 		if (cxt->lock)
 			mnt_lock_block_signals(cxt->lock, TRUE);
 	}
@@ -1740,7 +1791,7 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 		DBG(CXT, ul_debugobj(cxt, "skip update: NOMTAB flag"));
 		return 0;
 	}
-	if (!cxt->mtab_writable && !cxt->utab_writable) {
+	if (!mnt_context_get_writable_tabpath(cxt)) {
 		DBG(CXT, ul_debugobj(cxt, "skip update: no writable destination"));
 		return 0;
 	}
@@ -1753,7 +1804,7 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 	}
 
 	if (!cxt->update) {
-		const char *name = cxt->mtab_writable ? cxt->mtab_path : cxt->utab_path;
+		const char *name = mnt_context_get_writable_tabpath(cxt);
 
 		if (cxt->action == MNT_ACT_UMOUNT && is_file_empty(name)) {
 			DBG(CXT, ul_debugobj(cxt,
@@ -1765,7 +1816,8 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 		if (!cxt->update)
 			return -ENOMEM;
 
-		mnt_update_set_filename(cxt->update, name, !cxt->mtab_writable);
+		mnt_update_set_filename(cxt->update, name,
+				!mnt_context_mtab_writable(cxt));
 	}
 
 	if (cxt->action == MNT_ACT_UMOUNT)
@@ -1796,7 +1848,7 @@ int mnt_context_update_tabs(struct libmnt_context *cxt)
 	/* check utab update when external helper executed */
 	if (mnt_context_helper_executed(cxt)
 	    && mnt_context_get_helper_status(cxt) == 0
-	    && cxt->utab_writable) {
+	    && mnt_context_utab_writable(cxt)) {
 
 		if (mnt_update_already_done(cxt->update, cxt->lock)) {
 			DBG(CXT, ul_debugobj(cxt, "don't update: error evaluate or already updated"));
