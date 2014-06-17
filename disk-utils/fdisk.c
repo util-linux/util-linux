@@ -30,11 +30,11 @@
 #include "blkdev.h"
 #include "mbsalign.h"
 #include "fdisk.h"
-#include "wholedisk.h"
 #include "pathnames.h"
 #include "canonicalize.h"
 #include "strutils.h"
 #include "closestream.h"
+#include "sysfs.h"
 
 #include "pt-sun.h"		/* to toggle flags */
 
@@ -722,23 +722,29 @@ static void print_all_devices_pt(struct fdisk_context *cxt)
 	DBG(FRONTEND, ul_debug("reading "_PATH_PROC_PARTITIONS));
 
 	while (fgets(line, sizeof(line), f)) {
-		char ptname[128 + 1], devname[256];
+		char buf[PATH_MAX], *cn;
+		dev_t devno;
 
-		if (sscanf(line, " %*d %*d %*d %128[^\n ]", ptname) != 1)
+		if (sscanf(line, " %*d %*d %*d %128[^\n ]", buf) != 1)
 			continue;
 
-		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
+		devno = sysfs_devname_to_devno(buf, NULL);
+		if (devno <= 0)
+			continue;
 
-		DBG(FRONTEND, ul_debug("listing %s", devname));
+		if (sysfs_devno_is_lvm_private(devno) ||
+		    sysfs_devno_is_wholedisk(devno) <= 0)
+			continue;
 
-		if (is_whole_disk(devname)) {
-			char *cn = canonicalize_path(devname);
-			if (cn) {
-				if (!is_ide_cdrom_or_tape(cn))
-					print_device_pt(cxt, cn);
-				free(cn);
-			}
-		}
+		if (!sysfs_devno_to_devpath(devno, buf, sizeof(buf)))
+			continue;
+
+		cn = canonicalize_path(buf);
+		if (!cn)
+			continue;
+		if (!is_ide_cdrom_or_tape(cn))
+			print_device_pt(cxt, cn);
+		free(cn);
 	}
 	fclose(f);
 }
