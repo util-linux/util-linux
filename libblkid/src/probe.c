@@ -725,7 +725,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	if (pr->size <= 1440 * 1024 && !S_ISCHR(sb.st_mode))
 		pr->flags |= BLKID_FL_TINY_DEV;
 
-	if (S_ISBLK(sb.st_mode) && blkid_lvm_private(sb.st_rdev)) {
+	if (S_ISBLK(sb.st_mode) && sysfs_devno_is_lvm_private(sb.st_rdev)) {
 		DBG(LOWPROBE, ul_debug("ignore private LVM device"));
 		pr->flags |= BLKID_FL_NOSCAN_DEV;
 	}

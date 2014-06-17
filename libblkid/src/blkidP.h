@@ -348,7 +348,6 @@ extern void blkid__scan_dir(char *, dev_t, struct dir_list **, char **)
 			__attribute__((nonnull(1,4)));
 extern int blkid_driver_has_major(const char *drvname, int major)
 			__attribute__((warn_unused_result));
-extern int blkid_lvm_private(dev_t devno);
 
 /* lseek.c */
 extern blkid_loff_t blkid_llseek(int fd, blkid_loff_t offset, int whence);

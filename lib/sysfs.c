@@ -629,6 +629,34 @@ err:
     return -1;
 }
 
+/*
+ * Returns 1 if the device is private LVM device.
+ */
+int sysfs_devno_is_lvm_private(dev_t devno)
+{
+	struct sysfs_cxt cxt = UL_SYSFSCXT_EMPTY;
+	char *uuid = NULL;
+	int rc = 0;
+
+	if (sysfs_init(&cxt, devno, NULL) != 0)
+		return 0;
+
+	uuid = sysfs_strdup(&cxt, "dm/uuid");
+
+	/* Private LVM devices use "LVM-<uuid>-<name>" uuid format (important
+	 * is the "LVM" prefix and "-<name>" postfix).
+	 */
+	if (uuid && strncmp(uuid, "LVM-", 4) == 0) {
+		char *p = strrchr(uuid + 4, '-');
+
+		if (p && *(p + 1))
+			rc = 1;
+	}
+
+	sysfs_deinit(&cxt);
+	free(uuid);
+	return rc;
+}
 
 int sysfs_scsi_get_hctl(struct sysfs_cxt *cxt, int *h, int *c, int *t, int *l)
 {
