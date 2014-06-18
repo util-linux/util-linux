@@ -12,7 +12,6 @@
 #include "c.h"
 #include "fileutils.h"
 #include "pathnames.h"
-#include "xalloc.h"
 
 /* Create open temporary file in safe way.  Please notice that the
  * file permissions are -rw------- by default. */
@@ -21,7 +20,7 @@ int xmkstemp(char **tmpname, char *dir)
 	char *localtmp;
 	char *tmpenv;
 	mode_t old_mode;
-	int fd;
+	int fd, rc;
 
 	/* Some use cases must be capable of being moved atomically
 	 * with rename(2), which is the reason why dir is here.  */
@@ -31,11 +30,15 @@ int xmkstemp(char **tmpname, char *dir)
 		tmpenv = getenv("TMPDIR");
 
 	if (tmpenv)
-		xasprintf(&localtmp, "%s/%s.XXXXXX", tmpenv,
+		rc = asprintf(&localtmp, "%s/%s.XXXXXX", tmpenv,
 			  program_invocation_short_name);
 	else
-		xasprintf(&localtmp, "%s/%s.XXXXXX", _PATH_TMP,
+		rc = asprintf(&localtmp, "%s/%s.XXXXXX", _PATH_TMP,
 			  program_invocation_short_name);
+
+	if (rc < 0)
+		return -1;
+
 	old_mode = umask(077);
 	fd = mkostemp(localtmp, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
 	umask(old_mode);
