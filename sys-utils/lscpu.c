@@ -43,7 +43,7 @@
 # include <signal.h>
 # include <strings.h>
 # include <setjmp.h>
-# ifdef HAVE_sys_io_h
+# ifdef HAVE_SYS_IO_H
 #  include <sys/io.h>
 # endif
 #endif
