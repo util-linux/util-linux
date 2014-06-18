@@ -1,15 +1,23 @@
-fdisk:  libuuid 
+cfdisk:  libncursesw libsmartcols libtinfo libuuid 
+fdisk:  libsmartcols libuuid 
+libsmartcols.so.1.1.0:  
 libuuid.so.1.3.0:  
+losetup:  libsmartcols 
+lscpu:  libsmartcols 
+lslogins:  libsmartcols libsystemd-id128 libsystemd-journal 
 mkswap:  libuuid 
-uuidd:  libuuid 
+prlimit:  libsmartcols 
+uuidd:  libsystemd-daemon libuuid 
 uuidgen:  libuuid 
+wdctl:  libsmartcols 
 agetty:  
 blkdiscard:  
 blockdev:  
 cal:  libncursesw libtinfo 
-cfdisk:  libncursesw libtinfo 
 chcpu:  
+chfn:  libpam libpam_misc libpthread libuser 
 chrt:  
+chsh:  libpam libpam_misc libpthread libuser 
 col:  
 colcrt:  
 colrm:  
@@ -31,13 +39,11 @@ ipcrm:
 ipcs:  
 isosize:  
 kill:  
-last:  
+last:  librt 
 ldattach:  
-logger:  
+logger:  libsystemd-id128 libsystemd-journal 
 login:  libpam libpam_misc 
 look:  
-losetup:  
-lscpu:  
 mcookie:  
 mesg:  
 mkfs:  
@@ -50,7 +56,6 @@ nologin:
 nsenter:  
 pg:  libncursesw libtinfo 
 pivot_root:  
-prlimit:  
 raw:  
 readprofile:  
 rename:  
@@ -74,5 +79,4 @@ ul:  libtinfo
 unshare:  
 utmpdump:  
 wall:  
-wdctl:  
 whereis:  

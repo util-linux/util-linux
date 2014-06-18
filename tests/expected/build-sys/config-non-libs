@@ -2,9 +2,10 @@ agetty:
 blkdiscard:  
 blockdev:  
 cal:  libncursesw libtinfo 
-cfdisk:  libncursesw libtinfo 
 chcpu:  
+chfn:  libpam libpam_misc libpthread libuser 
 chrt:  
+chsh:  libpam libpam_misc libpthread libuser 
 col:  
 colcrt:  
 colrm:  
@@ -26,13 +27,11 @@ ipcrm:
 ipcs:  
 isosize:  
 kill:  
-last:  
+last:  librt 
 ldattach:  
-logger:  
+logger:  libsystemd-id128 libsystemd-journal 
 login:  libpam libpam_misc 
 look:  
-losetup:  
-lscpu:  
 mcookie:  
 mesg:  
 mkfs:  
@@ -46,7 +45,6 @@ nologin:
 nsenter:  
 pg:  libncursesw libtinfo 
 pivot_root:  
-prlimit:  
 raw:  
 readprofile:  
 rename:  
@@ -70,5 +68,4 @@ ul:  libtinfo
 unshare:  
 utmpdump:  
 wall:  
-wdctl:  
 whereis:  
