@@ -110,6 +110,7 @@
 
 #include "blkidP.h"
 #include "all-io.h"
+#include "sysfs.h"
 
 /* chains */
 extern const struct blkid_chaindrv superblocks_drv;

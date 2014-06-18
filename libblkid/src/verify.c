@@ -19,7 +19,9 @@
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
+
 #include "blkidP.h"
+#include "sysfs.h"
 
 static void blkid_probe_to_tags(blkid_probe pr, blkid_dev dev)
 {
