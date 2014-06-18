@@ -458,6 +458,7 @@ static int loop_scandir(const char *dirname, int **ary, int hasprefix)
 			/* /dev/loop/<N> */
 			char *end = NULL;
 
+			errno = 0;
 			n = strtol(d->d_name, &end, 10);
 			if (d->d_name == end || (end && *end) || errno)
 				continue;
