@@ -668,7 +668,6 @@ int sysfs_devno_is_lvm_private(dev_t devno)
 int sysfs_devno_is_wholedisk(dev_t devno)
 {
 	dev_t disk;
-	int rc;
 
 	if (sysfs_devno_to_wholedisk(devno, NULL, 0, &disk) != 0)
 		return -1;
