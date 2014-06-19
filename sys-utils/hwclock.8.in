@@ -193,7 +193,7 @@ exist, the default is UTC time.
 .TP
 .B \-\-noadjfile
 Disables the facilities provided by
-.IR /etc/adjtime .
+.IR @ADJTIME_PATH@ .
 .B hwclock
 will not read nor write to that file with this option.  Either
 .B \-\-utc
@@ -203,7 +203,7 @@ must be specified when using this option.
 
 .TP
 .BI \-\-adjfile= filename
-Overrides the default /etc/adjtime.
+Overrides the default @ADJTIME_PATH@.
 
 .TP
 .BR \-f , \ \-\-rtc=\fIfilename\fB
@@ -493,7 +493,7 @@ systematic drift.
 It works like this:
 .B hwclock
 keeps a file,
-.IR /etc/adjtime ,
+.IR @ADJTIME_PATH@ ,
 that keeps some historical information.  This is called the adjtime file.
 .PP
 Suppose you start with no adjtime file.  You issue a
@@ -628,7 +628,7 @@ are supported by the hardware.
 .I TZ
 
 .SH FILES
-.I /etc/adjtime
+.I @ADJTIME_PATH@
 .I /usr/share/zoneinfo/
 .RI ( /usr/lib/zoneinfo
 on old systems)

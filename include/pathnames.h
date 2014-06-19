@@ -150,7 +150,11 @@
 #define _PATH_DEV_BYPARTUUID	"/dev/disk/by-partuuid"
 
 /* hwclock paths */
+#ifdef CONFIG_ADJTIME_PATH
+# define _PATH_ADJTIME		CONFIG_ADJTIME_PATH
+#else
 # define _PATH_ADJTIME		"/etc/adjtime"
+#endif
 
 #define _PATH_LASTDATE		"/var/lib/lastdate"
 #ifdef __ia64__

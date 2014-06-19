@@ -61,17 +61,17 @@ Specifies an alternative path to the adjust file.
 .TP
 \fB-a\fP | \fB--auto\fP
 Reads the clock mode (whether the hardware clock is set to UTC or local time)
-from \fI/etc/adjtime\fP. That's the location where the
+from \fIadjtime\fP file. That's the location where the
 .BR hwclock (8)
 stores that information. This is the default.
 .TP
 \fB-l\fP | \fB--local\fP
 Assumes that the hardware clock is set to local time, regardless of the
-contents of \fI/etc/adjtime\fP.
+contents of \fIadjtime\fP file.
 .TP
 \fB-u\fP | \fB--utc\fP
 Assumes that the hardware clock is set to UTC (Universal Time Coordinated),
-regardless of the contents of \fI/etc/adjtime\fP.
+regardless of the contents of \fIadjtime\fP file.
 .TP
 \fB-d\fP \fIdevice\fP | \fB--device\fP \fIdevice\fP
 Uses \fIdevice\fP instead of \fIrtc0\fP as realtime clock. This option
@@ -132,6 +132,8 @@ Print alarm information in format: "alarm: off|on  <time>".
 The time is in ctime() output format, e.g. "alarm: on  Tue Nov 16 04:48:45 2010".
 .RE
 .PP
+.SH FILES
+.I @ADJTIME_PATH@
 .SH NOTES
 Some PC systems can't currently exit sleep states such as \fImem\fP
 using only the kernel code accessed by this driver.

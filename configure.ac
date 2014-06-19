@@ -1776,6 +1776,12 @@ AC_ARG_VAR([SOLIB_CFLAGS],
 AC_ARG_VAR([SOLIB_LDFLAGS],
 	   [LDFLAGS used for shared libraries])
 
+AC_ARG_VAR([ADJTIME_PATH],
+	   [Path to hwclock adjtime file, default /etc/adjtime])
+AS_IF([test "x$ADJTIME_PATH" = x], [ADJTIME_PATH="/etc/adjtime"])
+AC_DEFINE_UNQUOTED([CONFIG_ADJTIME_PATH], "$ADJTIME_PATH", [Path to hwclock adjtime file])
+
+
 LIBS=""
 
 
