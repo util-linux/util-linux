@@ -14,7 +14,9 @@ int get_boot_time(struct timeval *boot_time)
 	struct timeval lores_uptime;
 #endif
 	struct timeval now;
+#ifdef HAVE_SYSINFO
 	struct sysinfo info;
+#endif
 
 	if (gettimeofday(&now, NULL) != 0) {
 		warn(_("gettimeofday failed"));
@@ -27,6 +29,7 @@ int get_boot_time(struct timeval *boot_time)
 		return 0;
 	}
 #endif
+#ifdef HAVE_SYSINFO
 	/* fallback */
 	if (sysinfo(&info) != 0)
 		warn(_("sysinfo failed"));
@@ -34,4 +37,7 @@ int get_boot_time(struct timeval *boot_time)
 	boot_time->tv_sec = now.tv_sec - info.uptime;
 	boot_time->tv_usec = 0;
 	return 0;
+#else
+	return -ENOSYS;
+#endif
 }

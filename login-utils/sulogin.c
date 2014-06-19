@@ -81,6 +81,7 @@ static volatile sig_atomic_t sigchild;
 # define IUCLC		0
 #endif
 
+#ifdef TIOCGLCKTRMIOS
 /*
  * For the case plymouth is found on this system
  */
@@ -111,6 +112,7 @@ static int plymouth_command(const char* arg)
 	}
 	return 1;
 }
+#endif
 
 /*
  * Fix the tty modes and set reasonable defaults.
@@ -120,7 +122,9 @@ static void tcinit(struct console *con)
 	int mode = 0, flags = 0;
 	struct termios *tio = &con->tio;
 	struct termios lock;
-	int fd = con->fd, i = (plymouth_command("--ping")) ? 20 : 0;
+	int fd = con->fd;
+#ifdef TIOCGLCKTRMIOS
+	int i = (plymouth_command("--ping")) ? 20 : 0;
 
 	while (i-- > 0) {
 		/*
@@ -138,6 +142,7 @@ static void tcinit(struct console *con)
 	}
 	memset(&lock, 0, sizeof(struct termios));
 	ioctl(fd, TIOCSLCKTRMIOS, &lock);
+#endif
 
 	errno = 0;
 

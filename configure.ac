@@ -324,6 +324,7 @@ AC_CHECK_FUNCS([ \
 	strnlen \
 	strtoull \
 	sysconf \
+	sysinfo \
 	updwtmp \
 	usleep \
 	warn \

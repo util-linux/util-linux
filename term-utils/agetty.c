@@ -942,6 +942,9 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 {
 	const pid_t pid = getpid();
 	int closed = 0;
+#ifndef KDGKBMODE
+	int serial;
+#endif
 
 	/* Set up new standard input, unless we are given an already opened port. */
 
@@ -1090,12 +1093,19 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 	 * In case of a virtual console the ioctl KDGKBMODE succeeds
 	 * whereas on other lines it will fails.
 	 */
-	if (ioctl(STDIN_FILENO, KDGKBMODE, &op->kbmode) == 0) {
+#ifdef KDGKBMODE
+	if (ioctl(STDIN_FILENO, KDGKBMODE, &op->kbmode) == 0)
+#else
+	if (ioctl(STDIN_FILENO, TIOCMGET, &serial) < 0 && (errno == EINVAL))
+#endif
+	{
 		op->flags |= F_VCONSOLE;
 		if (!op->term)
 			op->term = DEFAULT_VCTERM;
 	} else {
+#ifdef K_RAW
 		op->kbmode = K_RAW;
+#endif
 		if (!op->term)
 			op->term = DEFAULT_STERM;
 	}
@@ -1109,6 +1119,7 @@ static void termio_init(struct options *op, struct termios *tp)
 	speed_t ispeed, ospeed;
 	struct winsize ws;
 	struct termios lock;
+#ifdef TIOCGLCKTRMIOS
 	int i =  (plymouth_command("--ping") == 0) ? 30 : 0;
 
 	while (i-- > 0) {
@@ -1129,6 +1140,7 @@ static void termio_init(struct options *op, struct termios *tp)
 	}
 	memset(&lock, 0, sizeof(struct termios));
 	ioctl(STDIN_FILENO, TIOCSLCKTRMIOS, &lock);
+#endif
 
 	if (op->flags & F_VCONSOLE) {
 #if defined(IUTF8) && defined(KDGKBMODE)
