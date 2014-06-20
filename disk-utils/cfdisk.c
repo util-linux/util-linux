@@ -148,7 +148,8 @@ struct cfdisk {
 	size_t	lines_idx;	/* current line <0..N>, exclude header */
 	size_t  page_sz;
 
-	unsigned int	wrong_order :1;		/* PT not in right order */
+	unsigned int	wrong_order :1,		/* PT not in right order */
+			zero_start :1;		/* ignore existing partition table */
 };
 
 /* Initialize output columns -- we follow libcfdisk columns (usually specific
@@ -1834,7 +1835,7 @@ static int ui_run(struct cfdisk *cf)
 
 	DBG(FRONTEND, ul_debug("ui: start COLS=%d, LINES=%d", COLS, LINES));
 
-	if (!fdisk_dev_has_disklabel(cf->cxt)) {
+	if (!fdisk_dev_has_disklabel(cf->cxt) || cf->zero_start) {
 		rc = ui_create_label(cf);
 		if (rc < 0)
 			ui_errx(EXIT_FAILURE,
@@ -1931,6 +1932,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -L --color[=<when>]     colorize output (auto, always or never)\n"), out);
+	fputs(_(" -z --zero               start with zeroed partition table\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -1950,6 +1952,7 @@ int main(int argc, char *argv[])
 		{ "color",   optional_argument, NULL, 'L' },
 		{ "help",    no_argument,       NULL, 'h' },
 		{ "version", no_argument,       NULL, 'V' },
+		{ "zero",    no_argument,	NULL, 'z' },
 		{ NULL, 0, 0, 0 },
 	};
 
@@ -1958,7 +1961,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while((c = getopt_long(argc, argv, "L::hV", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "L::hVz", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 			usage(stdout);
@@ -1973,6 +1976,9 @@ int main(int argc, char *argv[])
 			printf(_("%s from %s\n"), program_invocation_short_name,
 						  PACKAGE_STRING);
 			return EXIT_SUCCESS;
+		case 'z':
+			cf->zero_start = 1;
+			break;
 		}
 	}
 

@@ -58,6 +58,10 @@ Colorize output, enabled by default.  The optional argument \fIwhen\fP can be
 it defaults to \fBauto\fR.
 .IP "\fB-V, \-\-version"
 Display version information and exit.
+.IP "\fB-z, \-\-zero"
+Start with in-memory zeroed partition table. This option does not zero the
+partition table on the disk; rather, it simply starts the program without
+reading the existing partition table.
 
 .SH COMMANDS
 .B cfdisk
