@@ -1529,10 +1529,10 @@ static int ui_create_label(struct cfdisk *cf)
 	nitems = fdisk_context_get_nlabels(cf->cxt);
 	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menuitem));
 
-	for (i = 0; i < nitems; i++) {
-		if (fdisk_context_next_label(cf->cxt, &lb))
-			break;
-		cm[i].name = lb->name;
+	while (fdisk_context_next_label(cf->cxt, &lb) == 0) {
+		if (fdisk_label_is_disabled(lb) || strcmp(lb->name, "bsd") == 0)
+			continue;
+		cm[i++].name = lb->name;
 	}
 
 	erase();
