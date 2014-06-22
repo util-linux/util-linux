@@ -989,7 +989,7 @@ adjust_drift_factor(struct adjtime *adjtime_p,
 				 "calibration time is zero,\n"
 				 "so history is bad and calibration startover "
 				 "is necessary.\n"));
-	} else if ((hclocktime - adjtime_p->last_calib_time) < 23 * 60 * 60) {
+	} else if ((hclocktime - adjtime_p->last_calib_time) < 24 * 60 * 60) {
 		if (debug)
 			printf(_("Not adjusting drift factor because it has "
 				 "been less than a day since the last "
