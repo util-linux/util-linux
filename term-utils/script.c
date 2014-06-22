@@ -578,7 +578,8 @@ done(void) {
 			char buf[BUFSIZ];
 			tvec = time((time_t *)NULL);
 			my_strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
-			fprintf(fscript, _("\nScript done on %s"), buf);
+			if (!qflg)
+				fprintf(fscript, _("\nScript done on %s"), buf);
 
 			if (close_stream(fscript) != 0)
 				errx(EXIT_FAILURE, _("write error"));
