@@ -19,7 +19,7 @@ config_gen_dir="$top_srcdir/tools"
 
 [ -n "$CFLAGS" ] && export CFLAGS="$CFLAGS"
 
-cd $top_builddir && make -j clean &> /dev/null
+ts_cd $top_builddir && make -j clean &> /dev/null
 
 for conf in $config_gen_dir/config-gen.d/*.conf; do
 	ts_init_subtest $(basename $conf | sed 's/\.conf//')
@@ -27,7 +27,7 @@ for conf in $config_gen_dir/config-gen.d/*.conf; do
 	opts=$(ul_get_configuration $conf)
 
 	olddir=$(pwd)
-	cd $top_builddir
+	ts_cd $top_builddir
 
 	./configure $opts &> /dev/null
 	make -j &> /dev/null
@@ -63,7 +63,7 @@ for conf in $config_gen_dir/config-gen.d/*.conf; do
 	[ -d tests/diff.save ]   && mv tests/diff.save   tests/diff
 	[ -d tests/output.save ] && mv tests/output.save tests/output
 
-	cd $olddir
+	ts_cd $olddir
 	ts_finalize_subtest
 done
 

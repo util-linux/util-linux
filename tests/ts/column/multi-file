@@ -24,7 +24,7 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_COLUMN"
 
-cd $TS_OUTDIR
+ts_cd "$TS_OUTDIR"
 
 $TS_CMD_COLUMN -x -c 50 $TS_SELF/input \
 			$TS_SELF/input \

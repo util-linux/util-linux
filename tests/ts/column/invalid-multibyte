@@ -23,7 +23,7 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_COLUMN"
 
-cd $TS_OUTDIR
+ts_cd "$TS_OUTDIR"
 
 printf "£\n" | LC_ALL=C $TS_CMD_COLUMN >> $TS_OUTPUT 2>&1
 

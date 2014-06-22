@@ -23,7 +23,7 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_NAMEI"
 
-cd $TS_OUTDIR
+ts_cd "$TS_OUTDIR"
 
 mkdir -p namei1/namei2
 touch namei1/namei2/a namei1/namei2/b
