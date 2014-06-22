@@ -50,6 +50,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <getopt.h>
+#include <pwd.h>
 
 #include "all-io.h"
 #include "c.h"
@@ -257,6 +258,16 @@ static int journald_entry(FILE *fp)
 }
 #endif
 
+static char *xgetlogin()
+{
+	char *cp;
+	struct passwd *pw;
+
+	if (!(cp = getlogin()) || !*cp)
+		cp = (pw = getpwuid(geteuid()))? pw->pw_name : "<someone>";
+	return cp;
+}
+
 static void mysyslog(int fd, int logflags, int pri, char *tag, char *msg)
 {
 	char buf[1000], pid[30], *cp, *tp;
@@ -269,11 +280,8 @@ static void mysyslog(int fd, int logflags, int pri, char *tag, char *msg)
 			pid[0] = 0;
 		if (tag)
 			cp = tag;
-		else {
-			cp = getlogin();
-			if (!cp)
-				cp = "<someone>";
-		}
+		else
+			cp = xgetlogin();
 		time(&now);
 		tp = ctime(&now) + 4;
 
@@ -438,7 +446,7 @@ int main(int argc, char **argv)
 	else if (usock)
 		LogSock = unix_socket(usock, socket_type);
 	else
-		openlog(tag ? tag : getlogin(), logflags, 0);
+		openlog(tag ? tag : xgetlogin(), logflags, 0);
 
 	/* log input line if appropriate */
 	if (argc > 0) {
