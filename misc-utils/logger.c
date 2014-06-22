@@ -51,6 +51,7 @@
 #include <netdb.h>
 #include <getopt.h>
 
+#include "all-io.h"
 #include "c.h"
 #include "closestream.h"
 #include "nls.h"
@@ -281,8 +282,8 @@ static void mysyslog(int fd, int logflags, int pri, char *tag, char *msg)
                snprintf(buf, sizeof(buf), "<%d>%.15s %.200s%s: %.400s",
 			pri, tp, cp, pid, msg);
 
-               if (write(fd, buf, strlen(buf)+1) < 0)
-                       return; /* error */
+	       if (write_all(fd, buf, strlen(buf)+1) < 0)
+		       warn(_("write failed"));
        }
 }
 
