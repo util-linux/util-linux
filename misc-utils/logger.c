@@ -273,24 +273,22 @@ static void mysyslog(int fd, int logflags, int pri, char *tag, char *msg)
 	char buf[1000], pid[30], *cp, *tp;
 	time_t now;
 
-	if (fd > -1) {
-		if (logflags & LOG_PID)
-			snprintf(pid, sizeof(pid), "[%d]", getpid());
-		else
-			pid[0] = 0;
-		if (tag)
-			cp = tag;
-		else
-			cp = xgetlogin();
-		time(&now);
-		tp = ctime(&now) + 4;
-
-		snprintf(buf, sizeof(buf), "<%d>%.15s %.200s%s: %.400s",
-			 pri, tp, cp, pid, msg);
-
-		if (write_all(fd, buf, strlen(buf) + 1) < 0)
-			warn(_("write failed"));
-	}
+	if (fd < 0)
+		return;
+	if (logflags & LOG_PID)
+		snprintf(pid, sizeof(pid), "[%d]", getpid());
+	else
+		pid[0] = 0;
+	if (tag)
+		cp = tag;
+	else
+		cp = xgetlogin();
+	time(&now);
+	tp = ctime(&now) + 4;
+	snprintf(buf, sizeof(buf), "<%d>%.15s %.200s%s: %.400s",
+		 pri, tp, cp, pid, msg);
+	if (write_all(fd, buf, strlen(buf) + 1) < 0)
+		warn(_("write failed"));
 }
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
