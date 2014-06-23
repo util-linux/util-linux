@@ -41,7 +41,7 @@ static int probe_squashfs(blkid_probe pr, const struct blkid_idmag *mag)
 	major = le16_to_cpu(sq->s_major);
 	minor = le16_to_cpu(sq->s_minor);
 	if (major < 4)
-		return -1;
+		return 1;
 
 	blkid_probe_sprintf_version(pr, "%u.%u", major, minor);
 
@@ -56,7 +56,7 @@ static int probe_squashfs3(blkid_probe pr, const struct blkid_idmag *mag)
 
 	sq = blkid_probe_get_sb(pr, mag, struct sqsh_super_block);
 	if (!sq)
-		return -1;
+		return errno ? -errno : 1;
 
 	if (strcmp(mag->magic, "sqsh") == 0) {
 		major = be16_to_cpu(sq->s_major);
@@ -67,7 +67,7 @@ static int probe_squashfs3(blkid_probe pr, const struct blkid_idmag *mag)
 	}
 
 	if (major > 3)
-		return -1;
+		return 1;
 
 	blkid_probe_sprintf_version(pr, "%u.%u", major, minor);
 
