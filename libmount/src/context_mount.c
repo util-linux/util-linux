@@ -773,18 +773,36 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 		 */
 		char *p, *p0;
 
-		DBG(CXT, ul_debugobj(cxt, "trying to mount by FS pattern list"));
+		DBG(CXT, ul_debugobj(cxt, "trying to mount by FS pattern list '%s'", pattern));
 
 		p0 = p = strdup(pattern);
 		if (!p)
 			return -ENOMEM;
 		do {
+			char *autotype = NULL;
 			char *end = strchr(p, ',');
+
 			if (end)
 				*end = '\0';
-			rc = do_mount(cxt, p);
-			p = end ? end + 1 : NULL;
 
+			DBG(CXT, ul_debugobj(cxt, "-->trying '%s'", p));
+
+			/* Let's support things like "udf,iso9660,auto" */
+			if (strcmp(p, "auto") == 0) {
+				rc = mnt_context_guess_srcpath_fstype(cxt, &autotype);
+				if (rc) {
+					DBG(CXT, ul_debugobj(cxt, "failed to guess FS type"));
+					free(p0);
+					return rc;
+				}
+				p = autotype;
+				DBG(CXT, ul_debugobj(cxt, "   --> '%s'", p));
+			}
+
+			if (p)
+				rc = do_mount(cxt, p);
+			p = end ? end + 1 : NULL;
+			free(autotype);
 		} while (!mnt_context_get_status(cxt) && p);
 
 		free(p0);

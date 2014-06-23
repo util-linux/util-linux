@@ -1601,6 +1601,40 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	return 0;
 }
 
+/* Guess type, but not set to cxt->fs, use free() for the result. It's no error
+ * when we're not able to guess a filesystem type.
+ */
+int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type)
+{
+	int rc = 0;
+	const char *dev = mnt_fs_get_srcpath(cxt->fs);
+
+	*type = NULL;
+
+	if (!dev)
+		goto done;
+
+	if (access(dev, F_OK) == 0) {
+		struct libmnt_cache *cache = mnt_context_get_cache(cxt);
+		int ambi = 0;
+
+		*type = mnt_get_fstype(dev, &ambi, cache);
+		if (cache && *type)
+			*type = strdup(*type);
+		if (ambi)
+			rc = -MNT_ERR_AMBIFS;
+	} else {
+		DBG(CXT, ul_debugobj(cxt, "access(%s) failed [%m]", dev));
+		if (strchr(dev, ':') != NULL)
+			*type = strdup("nfs");
+		else if (!strncmp(dev, "//", 2))
+			*type = strdup("cifs");
+	}
+
+done:
+	return rc;
+}
+
 /*
  * It's usually no error when we're not able to detect the filesystem type -- we
  * will try to use the types from /{etc,proc}/filesystems.
@@ -1608,7 +1642,6 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 int mnt_context_guess_fstype(struct libmnt_context *cxt)
 {
 	char *type;
-	const char *dev;
 	int rc = 0;
 
 	assert(cxt);
@@ -1635,30 +1668,11 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 	if (cxt->fstype_pattern)
 		goto done;
 
-	dev = mnt_fs_get_srcpath(cxt->fs);
-	if (!dev)
-		goto done;
-
-	if (access(dev, F_OK) == 0) {
-		struct libmnt_cache *cache = mnt_context_get_cache(cxt);
-		int ambi = 0;
-
-		type = mnt_get_fstype(dev, &ambi, cache);
-		if (type) {
-			rc = mnt_fs_set_fstype(cxt->fs, type);
-			if (!cache)
-				free(type);	/* type is not cached */
-		}
-		if (ambi)
-			rc = -MNT_ERR_AMBIFS;
-	} else {
-		DBG(CXT, ul_debugobj(cxt, "access(%s) failed [%m]", dev));
-		if (strchr(dev, ':') != NULL)
-			rc = mnt_fs_set_fstype(cxt->fs, "nfs");
-		else if (!strncmp(dev, "//", 2))
-			rc = mnt_fs_set_fstype(cxt->fs, "cifs");
-	}
-
+	rc = mnt_context_guess_srcpath_fstype(cxt, &type);
+	if (rc == 0 && type)
+		__mnt_fs_set_fstype_ptr(cxt->fs, type);
+	else
+		free(type);
 done:
 	DBG(CXT, ul_debugobj(cxt, "FS type: %s [rc=%d]",
 				mnt_fs_get_fstype(cxt->fs), rc));
