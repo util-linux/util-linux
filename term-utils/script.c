@@ -421,7 +421,6 @@ my_strftime(char *buf, size_t len, const char *fmt, const struct tm *tm) {
 void
 dooutput(void) {
 	ssize_t cc;
-	time_t tvec;
 	char obuf[BUFSIZ];
 	struct timeval tv;
 	double oldtime=time(NULL), newtime;
@@ -435,10 +434,11 @@ dooutput(void) {
 	if (tflg && !timingfd)
 		timingfd = fdopen(STDERR_FILENO, "w");
 
-	tvec = time((time_t *)NULL);
-	my_strftime(obuf, sizeof obuf, "%c\n", localtime(&tvec));
-	if (!qflg)
+	if (!qflg) {
+		time_t tvec = time((time_t *)NULL);
+		my_strftime(obuf, sizeof obuf, "%c\n", localtime(&tvec));
 		fprintf(fscript, _("Script started on %s"), obuf);
+	}
 
 	FD_ZERO(&readfds);
 
@@ -575,12 +575,12 @@ done(void) {
 	if (subchild) {
 		/* output process */
 		if (fscript) {
-			char buf[BUFSIZ];
-			tvec = time((time_t *)NULL);
-			my_strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
-			if (!qflg)
+			if (!qflg) {
+				char buf[BUFSIZ];
+				tvec = time((time_t *)NULL);
+				my_strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
 				fprintf(fscript, _("\nScript done on %s"), buf);
-
+			}
 			if (close_stream(fscript) != 0)
 				errx(EXIT_FAILURE, _("write error"));
 			fscript = NULL;
