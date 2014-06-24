@@ -1153,6 +1153,9 @@ static void check(struct fdisk_context *cxt, size_t n,
 {
 	unsigned int total, real_s, real_c;
 
+	if (!is_dos_compatible(cxt))
+		return;
+
 	real_s = sector(s) - 1;
 	real_c = cylinder(s, c);
 	total = (real_c * cxt->geom.heads + h) * cxt->geom.sectors + real_s;
