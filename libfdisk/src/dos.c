@@ -1155,7 +1155,7 @@ static void check(struct fdisk_context *cxt, size_t n,
 
 	real_s = sector(s) - 1;
 	real_c = cylinder(s, c);
-	total = (real_c * cxt->geom.sectors + real_s) * cxt->geom.heads + h;
+	total = (real_c * cxt->geom.heads + h) * cxt->geom.sectors + real_s;
 
 	if (!total)
 		fdisk_warnx(cxt, _("Partition %zu: contains sector 0"), n);
