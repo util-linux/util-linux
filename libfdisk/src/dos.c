@@ -1281,6 +1281,9 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 			check(cxt, i + 1, p->eh, p->es, p->ec, last[i]);
 			total += last[i] + 1 - first[i];
 
+			if (i == 0)
+				total += get_abs_partition_start(pe) - 1;
+
 			for (j = 0; j < i; j++) {
 				if ((first[i] >= first[j] && first[i] <= last[j])
 				    || ((last[i] <= last[j] && last[i] >= first[j]))) {
