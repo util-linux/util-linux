@@ -5,35 +5,18 @@ _cfdisk_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-c'|'--cylinders')
-			COMPREPLY=( $(compgen -W "cylinders" -- $cur) )
+		'-L'|'--color')
+			COMPREPLY=( $(compgen -W "auto never always" -- $cur) )
 			return 0
 			;;
-		'-h'|'--heads')
-			COMPREPLY=( $(compgen -W "heads" -- $cur) )
-			return 0
-			;;
-		'-s'|'--sectors')
-			COMPREPLY=( $(compgen -W "sectors" -- $cur) )
-			return 0
-			;;
-		'-P'|'--print')
-			COMPREPLY=( $(compgen -W "r s t" -- $cur) )
-			return 0
-			;;
-		'-v'|'-V'|'--version'|'--help')
+		'-V'|'--version'|'h'|'--help')
 			return 0
 			;;
 	esac
 	case $cur in
 		-*)
-			OPTS="	--cylinders
-				--heads
-				--sectors
-				--guess
-				--print
+			OPTS="	--color
 				--zero
-				--arrow
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
