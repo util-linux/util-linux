@@ -45,32 +45,6 @@
 # include <linux/blkpg.h>
 #endif
 
-static void __attribute__ ((__noreturn__)) usage(FILE *out)
-{
-	fputs(USAGE_HEADER, out);
-
-	fprintf(out,
-	      _(" %1$s [options] <disk>      change partition table\n"
-	        " %1$s [options] -l [<disk>] list partition table(s)\n"),
-	       program_invocation_short_name);
-
-	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -b <size>         sector size (512, 1024, 2048 or 4096)\n"), out);
-	fputs(_(" -c[=<mode>]       compatible mode: 'dos' or 'nondos' (default)\n"), out);
-	fputs(_(" -h                print this help text\n"), out);
-	fputs(_(" -c[=<mode>]       compatible mode: 'dos' or 'nondos' (default)\n"), out);
-	fputs(_(" -L[=<when>]       colorize output (auto, always or never)\n"), out);
-	fputs(_(" -t <type>         force fdisk to recognize specified partition table type only\n"), out);
-	fputs(_(" -u[=<unit>]       display units: 'cylinders' or 'sectors' (default)\n"), out);
-	fputs(_(" -v                print program version\n"), out);
-	fputs(_(" -C <number>       specify the number of cylinders\n"), out);
-	fputs(_(" -H <number>       specify the number of heads\n"), out);
-	fputs(_(" -S <number>       specify the number of sectors per track\n"), out);
-
-	fprintf(out, USAGE_MAN_TAIL("fdisk(8)"));
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
-}
-
 
 
 int get_user_reply(struct fdisk_context *cxt, const char *prompt,
@@ -764,6 +738,38 @@ static sector_t get_dev_blocks(char *dev)
 	return size/2;
 }
 
+static void __attribute__ ((__noreturn__)) usage(FILE *out)
+{
+	fputs(USAGE_HEADER, out);
+
+	fprintf(out,
+	      _(" %1$s [options] <disk>      change partition table\n"
+	        " %1$s [options] -l [<disk>] list partition table(s)\n"),
+	       program_invocation_short_name);
+
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -b, --sector-size <size>      physical and logical sector size\n"), out);
+	fputs(_(" -c, --compatibility[=<mode>]  mode is 'dos' or 'nondos' (default)\n"), out);
+	fputs(_(" -L, --color[=<when>]          colorize output (auto, always or never)\n"), out);
+	fputs(_(" -l, --list                    display partitions end exit\n"), out);
+	fputs(_(" -t, --type <type>             recognize specified partition table type only\n"), out);
+	fputs(_(" -u, --units[=<unit>]          display units: 'cylinders' or 'sectors' (default)\n"), out);
+	fputs(_(" -s, --getsz                   display device size in 512-byte sectors [DEPRECATED]\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -C, --geom-cylinders <number> specify the number of cylinders\n"), out);
+	fputs(_(" -H, --geom-heads <number>     specify the number of heads\n"), out);
+	fputs(_(" -S, --geom-sectors <number>   specify the number of sectors per track\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+
+	fprintf(out, USAGE_MAN_TAIL("fdisk(8)"));
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
+
 enum {
 	ACT_FDISK = 0,	/* default */
 	ACT_LIST,
@@ -775,6 +781,22 @@ int main(int argc, char **argv)
 	int rc, i, c, act = ACT_FDISK;
 	int colormode = UL_COLORMODE_UNDEF;
 	struct fdisk_context *cxt;
+
+	static const struct option longopts[] = {
+		{ "color",          optional_argument, NULL, 'L' },
+		{ "compatibility",  optional_argument, NULL, 'c' },
+		{ "geom-cylinders", required_argument, NULL, 'C' },
+		{ "geom-heads",	    required_argument, NULL, 'H' },
+		{ "geom-sectors",   required_argument, NULL, 'S' },
+		{ "getsz",          no_argument,       NULL, 's' },
+		{ "help",           no_argument,       NULL, 'h' },
+		{ "list",           no_argument,       NULL, 'l' },
+		{ "sector-size",    required_argument, NULL, 'b' },
+		{ "type",           required_argument, NULL, 't' },
+		{ "units",          optional_argument, NULL, 'u' },
+		{ "version",        no_argument,       NULL, 'V' },
+		{ NULL, 0, NULL, 0 }
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -788,7 +810,8 @@ int main(int argc, char **argv)
 
 	fdisk_context_set_ask(cxt, ask_callback, NULL);
 
-	while ((c = getopt(argc, argv, "b:c::C:hH:lL::sS:t:u::vV")) != -1) {
+	while ((c = getopt_long(argc, argv, "b:c::C:hH:lL::sS:t:u::vV",
+				longopts, NULL)) != -1) {
 		switch (c) {
 		case 'b':
 		{
@@ -808,16 +831,21 @@ int main(int argc, char **argv)
 		case 'c':
 			if (optarg) {
 				/* this setting is independent on the current
-				 * actively used label */
+				 * actively used label
+				 */
+				char *p = *optarg == '=' ? optarg + 1 : optarg;
 				struct fdisk_label *lb = fdisk_context_get_label(cxt, "dos");
+
 				if (!lb)
 					err(EXIT_FAILURE, _("not found DOS label driver"));
-				if (strcmp(optarg, "=dos") == 0)
+				if (strcmp(p, "dos") == 0)
 					fdisk_dos_enable_compatible(lb, TRUE);
-				else if (strcmp(optarg, "=nondos") == 0)
+				else if (strcmp(p, "nondos") == 0)
 					fdisk_dos_enable_compatible(lb, FALSE);
-				else
+				else {
+					warnx(_("unknown compatibility mode '%s'"), p);
 					usage(stderr);
+				}
 			}
 			/* use default if no optarg specified */
 			break;
@@ -861,8 +889,8 @@ int main(int argc, char **argv)
 			if (fdisk_context_set_unit(cxt, optarg) != 0)
 				usage(stderr);
 			break;
-		case 'V':
-		case 'v':
+		case 'V': /* preferred for util-linux */
+		case 'v': /* for backward compatibility only */
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':

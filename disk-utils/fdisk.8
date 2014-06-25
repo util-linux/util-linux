@@ -46,67 +46,66 @@ is not guaranteed.  The input (the commands) should always be backward compatibl
 
 .SH OPTIONS
 .TP
-.BI "\-b " sectorsize
+\fB\-b\fR, \fB\-\-sector-size\fR \fIsectorsize\fP
 Specify the sector size of the disk.  Valid values are 512, 1024, 2048, and 4096.
 (Recent kernels know the sector size.  Use this option only on old kernels or
 to override the kernel's ideas.)  Since util-linux-2.17, \fBfdisk\fR differentiates
 between logical and physical sector size.  This option changes both sector sizes to
 .IB sectorsize .
 .TP
-.BR "\-c"[=\fImode\fR]
+\fB\-c\fR, \fB\-\-compatibility\fR[\fI=mode\fR]
 Specify the compatibility mode, 'dos' or 'nondos'.  The default is non-DOS
 mode.  For backward compatibility, it is possible to use the option without
 the \fImode\fR argument -- then the default is used.  Note that the optional
 \fImode\fR argument cannot be separated from the \fB-c\fR option by a space,
-the correct form is for example '-c=dos'.  This option is DEPRECATED.
+the correct form is for example '-c=dos'.
 .TP
-.BI "\-C " cylinders
-Specify the number of cylinders of the disk.
-I have no idea why anybody would want to do so.  This option is DEPRECATED.
-.TP
-.BI "\-H " heads
-Specify the number of heads of the disk.  (Not the physical number,
-of course, but the number used for partition tables.)
-Reasonable values are 255 and 16.  This option is DEPRECATED.
-.TP
-.BI "\-S " sectors
-Specify the number of sectors per track of the disk.
-(Not the physical number, of course, but the number used for
-partition tables.)
-A reasonable value is 63.  This option is DEPRECATED.
-.TP
-.BI \-h
+\fB\-h\fR, \fB\-\-help\fR
 Display a help text and exit.
 .TP
-.BR "\-L"[=\fIwhen\fR]
+\fB\-L\fR, \fB\-\-color\fR[\fI=when\fR]
 Colorize the output in interactive mode.  The optional argument \fIwhen\fP can
 be \fBauto\fR, \fBnever\fR or \fBalways\fR.  The default is \fBauto\fR.
 .TP
-.B \-l
+\fB\-l\fR, \fB\-\-list\fR
 List the partition tables for the specified devices and then exit.
 If no devices are given, those mentioned in
 .I /proc/partitions
 (if that file exists) are used.
 .TP
-.BI "\-s " partition...
-Print the size (in blocks) of each given partition.  This option is DEPRECATED
+\fB\-s\fR, \fB\-\-getsz\fR
+Print the size in 512-byte sectors of each given block device.  This option is DEPRECATED
 in favour of
 .BR blockdev (1).
 .TP
-.BI "\-t " type
+\fB\-t\fR, \fB\-\-type\fR \fItype\fR
 Enable support only for disklabels of the specified \fItype\fP, and disable
 support for all other types.
-This is necessary for example to access a protective or hybrid MBR on devices
-with GPT.
 .TP
-.BR "\-u"[=\fIunit\fR]
+\fB\-u\fR, \fB\-\-units\fR[\fI=unit\fR]
 When listing partition tables, show sizes in 'sectors' or in 'cylinders'.  The
 default is to show sizes in sectors.  For backward compatibility, it is possible
 to use the option without the \fIunit\fR argument -- then the default is used.
 Note that the optional \fIunit\fR argument cannot be separated from the \fB-u\fR
 option by a space, the correct form is for example '-u=cylinders'.
+
 .TP
-.B \-v
+\fB\-C\fR, \fB\-\-geom\-cylinders\fR \fInumber\fR
+Specify the number of cylinders of the disk.
+I have no idea why anybody would want to do so.
+.TP
+\fB\-H\fR, \fB\-\-geom\-heads\fR \fInumber\fR
+Specify the number of heads of the disk.  (Not the physical number,
+of course, but the number used for partition tables.)
+Reasonable values are 255 and 16.
+.TP
+\fB\-S\fR, \fB\-\-geom\-sectors\fR \fInumber\fR
+Specify the number of sectors per track of the disk.
+(Not the physical number, of course, but the number used for
+partition tables.) A reasonable value is 63.
+
+.TP
+\fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
 
 .SH DEVICES
