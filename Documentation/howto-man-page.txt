@@ -32,7 +32,7 @@ All manual pages need some sort of description.  Write such here.
 \fB\-n\fR, \fB\-\-no\-argument\fR
 This option does not use argument.
 .TP
-\fB\-o\fR, \fB\-\-optional\fR [\fIargument\fR]
+\fB\-o\fR, \fB\-\-optional\fR[\fI=argument\fR]
 Tell in description an
 .I argument
 is optional, and what happens when is or is not given.  Notice that
