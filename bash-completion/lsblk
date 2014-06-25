@@ -4,6 +4,16 @@ _lsblk_module()
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+	LSBLK_COLS="NAME KNAME MAJ:MIN FSTYPE MOUNTPOINT
+		LABEL UUID PARTTYPE PARTLABEL PARTUUID PARTFLAGS
+		RA RO RM
+		MODEL SIZE STATE OWNER GROUP MODE
+		ALIGNMENT MIN-IO OPT-IO PHY-SEC LOG-SEC
+		ROTA SCHED RQ-SIZE TYPE DISC-ALN
+		DISC-GRAN DISC-MAX DISC-ZERO WSAME WWN
+		RAND PKNAME HCTL TRAN REV VENDOR"
+
 	case $prev in
 		'-e'|'--exclude'|'-I'|'--include')
 			local MAJOR I J
@@ -19,15 +29,13 @@ _lsblk_module()
 			;;
 		'-o'|'--output')
 			# FIXME: how to append to a string with compgen?
-			OUTPUT="NAME KNAME MAJ:MIN FSTYPE MOUNTPOINT
-				LABEL UUID PARTLABEL PARTUUID RA RO RM
-				MODEL SIZE STATE OWNER GROUP MODE
-				ALIGNMENT MIN-IO OPT-IO PHY-SEC LOG-SEC
-				ROTA SCHED RQ-SIZE TYPE DISC-ALN
-				DISC-GRAN DISC-MAX DISC-ZERO WSAME WWN
-				RAND PKNAME HCTL TRAN REV VENDOR"
 			compopt -o nospace
-			COMPREPLY=( $(compgen -W "$OUTPUT" -S ',' -- $cur) )
+			COMPREPLY=( $(compgen -W "$LSBLK_COLS" -S ',' -- $cur) )
+			return 0
+			;;
+		'-x'|'--sort')
+			compopt -o nospace
+			COMPREPLY=( $(compgen -W "$LSBLK_COLS"  -- $cur) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
@@ -54,6 +62,7 @@ _lsblk_module()
 				--inverse
 				--topology
 				--scsi
+				--sort
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
