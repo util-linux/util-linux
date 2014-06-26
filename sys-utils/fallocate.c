@@ -339,6 +339,15 @@ int main(int argc, char **argv)
 			break;
 		}
 	}
+
+	if (optind == argc)
+		errx(EXIT_FAILURE, _("no filename specified."));
+
+	filename = argv[optind++];
+
+	if (optind != argc)
+		errx(EXIT_FAILURE, _("unexpected number of arguments"));
+
 	if (dig) {
 		/* for --dig-holes the default is analyze all file */
 		if (length == -2LL)
@@ -354,15 +363,6 @@ int main(int argc, char **argv)
 	}
 	if (offset < 0)
 		errx(EXIT_FAILURE, _("invalid offset value specified"));
-	if (optind == argc)
-		errx(EXIT_FAILURE, _("no filename specified."));
-
-	filename = argv[optind++];
-
-	if (optind != argc) {
-		warnx(_("unexpected number of arguments"));
-		usage(stderr);
-	}
 
 	fd = open(filename, O_RDWR|O_CREAT, 0644);
 	if (fd < 0)
