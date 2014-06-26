@@ -364,7 +364,9 @@ int main(int argc, char **argv)
 	if (offset < 0)
 		errx(EXIT_FAILURE, _("invalid offset value specified"));
 
-	fd = open(filename, O_RDWR|O_CREAT, 0644);
+	/* O_CREAT makes sense only for the default fallocate(2) behavior
+	 * when mode is no specified and new space is allocated */
+	fd = open(filename, O_RDWR | (!dig && !mode ? O_CREAT : 0), 0644);
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), filename);
 
