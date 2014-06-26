@@ -80,7 +80,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -l, --length <num>   length of the (de)allocation, in bytes\n"), out);
 	fputs(_(" -n, --keep-size      don't modify the length of the file\n"), out);
 	fputs(_(" -o, --offset <num>   offset of the (de)allocation, in bytes\n"), out);
-	fputs(_(" -p, --punch-hole     punch holes in the file\n"), out);
+	fputs(_(" -p, --punch-hole     punch holes in the file (implies --keep-size)\n"), out);
 	fputs(_(" -z, --zero-range     zeroes a range in the file\n"), out);
 	fputs(_(" -v, --verbose        verbose mode\n"), out);
 
@@ -326,6 +326,7 @@ int main(int argc, char **argv)
 		}
 	}
 	if (dig) {
+		/* for --dig-holes the default is analyze all file */
 		if (mode != 0)
 			errx(EXIT_FAILURE,
 			     _("Can't use other modes with --dig-holes"));
@@ -334,6 +335,7 @@ int main(int argc, char **argv)
 		if (length < 0)
 			errx(EXIT_FAILURE, _("invalid length value specified"));
 	} else {
+		/* it's safer to require the range specification (--length --offset) */
 		if (length == -2LL)
 			errx(EXIT_FAILURE, _("no length argument specified"));
 		if (length <= 0)
@@ -343,8 +345,10 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("invalid offset value specified"));
 	if (optind == argc)
 		errx(EXIT_FAILURE, _("no filename specified."));
-	if (mode & ~(FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE))
-		errx(EXIT_FAILURE, _("only -n mode can be used with "
+
+	if ((mode & FALLOC_FL_ZERO_RANGE) &&
+	    (mode & ~(FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE)))
+		errx(EXIT_FAILURE, _("only --keep-size mode can be used with "
 				     "--zero-range"));
 
 	filename = argv[optind++];
