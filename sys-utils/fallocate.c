@@ -77,18 +77,20 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out,
 	      _(" %s [options] <filename>\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -c, --collapse-range collapse space in the file\n"), out);
-	fputs(_(" -d, --dig-holes      detect and dig holes\n"), out);
-	fputs(_(" -l, --length <num>   length of the (de)allocation, in bytes\n"), out);
-	fputs(_(" -n, --keep-size      don't modify the length of the file\n"), out);
-	fputs(_(" -o, --offset <num>   offset of the (de)allocation, in bytes\n"), out);
-	fputs(_(" -p, --punch-hole     punch holes in the file (implies --keep-size)\n"), out);
-	fputs(_(" -z, --zero-range     zeroes a range in the file\n"), out);
+
+	fputs(_(" -c, --collapse-range remove a range from the file\n"), out);
+	fputs(_(" -d, --dig-holes      detect zeroes and replace with holes\n"), out);
+	fputs(_(" -l, --length <num>   length for range operations, in bytes\n"), out);
+	fputs(_(" -n, --keep-size      maintain the apparent size of the file\n"), out);
+	fputs(_(" -o, --offset <num>   offset for range operations, in bytes\n"), out);
+	fputs(_(" -p, --punch-hole     replace a range with a hole (implies -n)\n"), out);
+	fputs(_(" -z, --zero-range     zero and ensure allocation of a range\n"), out);
 	fputs(_(" -v, --verbose        verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
+
 	fprintf(out, USAGE_MAN_TAIL("fallocate(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
