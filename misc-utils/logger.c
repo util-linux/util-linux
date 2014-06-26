@@ -44,6 +44,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <sys/timex.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -74,20 +75,26 @@ enum {
 
 enum {
 	OPT_PRIO_PREFIX = CHAR_MAX + 1,
-	OPT_JOURNALD
+	OPT_JOURNALD,
+	OPT_RFC3164,
+	OPT_RFC5424
 };
 
 struct logger_ctl {
 	int fd;
 	int logflags;
 	int pri;
-	int prio_prefix;
 	char *tag;
 	char *unix_socket;
 	char *server;
 	char *port;
 	int socket_type;
 	void (*syslogfp)(struct logger_ctl *ctl, char *msg);
+	unsigned int
+			prio_prefix:1,	/* read priority from intput */
+			rfc5424_time:1,	/* include time stamp */
+			rfc5424_tq:1,	/* include time quality markup */
+			rfc5424_host:1;	/* include hostname */
 };
 
 static char *get_prio_prefix(char *msg, int *prio)
@@ -304,6 +311,82 @@ static void syslog_rfc3164(struct logger_ctl *ctl, char *msg)
 		warn(_("write failed"));
 }
 
+static void syslog_rfc5424(struct logger_ctl *ctl, char *msg)
+{
+	char *buf, pid[32], *tag;
+	struct ntptimeval ntptv;
+	char fmt[64], time[64], timeq[80], *hostname;
+	struct timeval tv;
+	struct tm *tm;
+
+	if (ctl->fd < 0)
+		return;
+	if (ctl->rfc5424_time) {
+		gettimeofday(&tv, NULL);
+		if ((tm = localtime(&tv.tv_sec)) != NULL) {
+			strftime(fmt, sizeof(fmt), " %Y-%m-%dT%H:%M:%S.%%06u%z",
+				 tm);
+			snprintf(time, sizeof(time), fmt, tv.tv_usec);
+		} else
+			err(EXIT_FAILURE, _("localtime() failed"));
+	} else
+		time[0] = 0;
+	if (ctl->rfc5424_host) {
+		hostname = xgethostname();
+		/* Arbitrary looking 'if (var < strlen()) checks originate from
+		 * RFC 5424 - 6 Syslog Message Format definition.  */
+		if (255 < strlen(hostname))
+			errx(EXIT_FAILURE, _("hostname '%s' is too long"),
+			     hostname);
+	} else
+		hostname = xcalloc(1, sizeof(char));
+	if (ctl->tag)
+		tag = ctl->tag;
+	else
+		tag = xgetlogin();
+	if (48 < strlen(tag))
+		errx(EXIT_FAILURE, _("tag '%s' is too long"), tag);
+	if (ctl->logflags & LOG_PID)
+		snprintf(pid, sizeof(pid), " %d", getpid());
+	else
+		pid[0] = 0;
+	if (ctl->rfc5424_tq) {
+		if (ntp_gettime(&ntptv) == TIME_OK)
+			snprintf(timeq, sizeof(timeq),
+				 " [timeQuality tzKnown=\"1\" isSynced=\"1\" syncAccuracy=\"%ld\"]",
+				 ntptv.maxerror);
+		else
+			snprintf(timeq, sizeof(timeq),
+				 " [timeQuality tzKnown=\"1\" isSynced=\"0\"]");
+	} else
+		timeq[0] = 0;
+	xasprintf(&buf, "<%d>1%s%s%s %s -%s%s %s", ctl->pri, time,
+		  hostname[0] ? " " : "", hostname, tag, pid, timeq, msg);
+	if (write_all(ctl->fd, buf, strlen(buf) + 1) < 0)
+		warn(_("write failed"));
+	free(hostname);
+	free(buf);
+}
+
+static void parse_rfc5424_flags(struct logger_ctl *ctl, char *optarg)
+{
+	char *in, *tok;
+
+	in = optarg;
+	while ((tok = strtok(in, ","))) {
+		in = NULL;
+		if (!strcmp(tok, "notime")) {
+			ctl->rfc5424_time = 0;
+			ctl->rfc5424_tq = 0;
+		} else if (!strcmp(tok, "notq"))
+			ctl->rfc5424_tq = 0;
+		else if (!strcmp(tok, "nohost"))
+			ctl->rfc5424_host = 0;
+		else
+			warnx(_("ignoring unknown option argument: %s"), tok);
+	}
+}
+
 static void syslog_local(struct logger_ctl *ctl, char *msg)
 {
 	syslog(ctl->pri, "%s", msg);
@@ -313,12 +396,14 @@ static void logger_open(struct logger_ctl *ctl)
 {
 	if (ctl->server) {
 		ctl->fd = inet_socket(ctl->server, ctl->port, ctl->socket_type);
-		ctl->syslogfp = syslog_rfc3164;
+		if (!ctl->syslogfp)
+			ctl->syslogfp = syslog_rfc5424;
 		return;
 	}
 	if (ctl->unix_socket) {
 		ctl->fd = unix_socket(ctl->unix_socket, ctl->socket_type);
-		ctl->syslogfp = syslog_rfc3164;
+		if (!ctl->syslogfp)
+			ctl->syslogfp = syslog_rfc5424;
 		return;
 	}
 	openlog(ctl->tag ? ctl->tag : xgetlogin(), ctl->logflags, 0);
@@ -386,16 +471,19 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(" %s [options] [<message>]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -T, --tcp             use TCP only\n"), out);
-	fputs(_(" -d, --udp             use UDP only\n"), out);
 	fputs(_(" -i, --id              log the process ID too\n"), out);
 	fputs(_(" -f, --file <file>     log the contents of this file\n"), out);
-	fputs(_(" -n, --server <name>   write to this remote syslog server\n"), out);
-	fputs(_(" -P, --port <number>   use this UDP port\n"), out);
 	fputs(_(" -p, --priority <prio> mark given message with this priority\n"), out);
 	fputs(_("     --prio-prefix     look for a prefix on every line read from stdin\n"), out);
 	fputs(_(" -s, --stderr          output message to standard error as well\n"), out);
 	fputs(_(" -t, --tag <tag>       mark every line with this tag\n"), out);
+	fputs(_(" -n, --server <name>   write to this remote syslog server\n"), out);
+	fputs(_(" -P, --port <number>   use this UDP port\n"), out);
+	fputs(_(" -T, --tcp             use TCP only\n"), out);
+	fputs(_(" -d, --udp             use UDP only\n"), out);
+	fputs(_("     --rfc3164         use the obsolete BSD syslog protocol\n"), out);
+	fputs(_("     --rfc5424[=<notime,notq,nohost>]\n"), out);
+	fputs(_("                       use the syslog protocol (default)\n"), out);
 	fputs(_(" -u, --socket <socket> write to this Unix socket\n"), out);
 #ifdef HAVE_LIBSYSTEMD
 	fputs(_("     --journald[=<file>]  write journald entry\n"), out);
@@ -426,7 +514,10 @@ int main(int argc, char **argv)
 		.unix_socket = NULL,
 		.server = NULL,
 		.port = NULL,
-		.socket_type = ALL_TYPES
+		.socket_type = ALL_TYPES,
+		.rfc5424_time = 1,
+		.rfc5424_tq = 1,
+		.rfc5424_host = 1,
 	};
 	int ch;
 #ifdef HAVE_LIBSYSTEMD
@@ -446,6 +537,8 @@ int main(int argc, char **argv)
 		{ "version",	no_argument,	    0, 'V' },
 		{ "help",	no_argument,	    0, 'h' },
 		{ "prio-prefix", no_argument, 0, OPT_PRIO_PREFIX },
+		{ "rfc3164",	no_argument,  0, OPT_RFC3164 },
+		{ "rfc5424",	optional_argument,  0, OPT_RFC5424 },
 #ifdef HAVE_LIBSYSTEMD
 		{ "journald",   optional_argument,  0, OPT_JOURNALD },
 #endif
@@ -499,6 +592,14 @@ int main(int argc, char **argv)
 			usage(stdout);
 		case OPT_PRIO_PREFIX:
 			ctl.prio_prefix = 1;
+			break;
+		case OPT_RFC3164:
+			ctl.syslogfp = syslog_rfc3164;
+			break;
+		case OPT_RFC5424:
+			ctl.syslogfp = syslog_rfc5424;
+			if (optarg)
+				parse_rfc5424_flags(&ctl, optarg);
 			break;
 #ifdef HAVE_LIBSYSTEMD
 		case OPT_JOURNALD:
