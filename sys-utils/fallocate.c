@@ -44,6 +44,7 @@
 # include <linux/falloc.h>	/* non-libc fallback for FALLOC_FL_* flags */
 #endif
 
+
 #ifndef FALLOC_FL_KEEP_SIZE
 # define FALLOC_FL_KEEP_SIZE		0x1
 #endif
@@ -65,6 +66,7 @@
 #include "c.h"
 #include "closestream.h"
 #include "xalloc.h"
+#include "optutils.h"
 
 static int verbose;
 static char *filename;
@@ -282,6 +284,13 @@ int main(int argc, char **argv)
 	    { NULL,             0, 0, 0 }
 	};
 
+	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
+		{ 'c', 'd', 'p', 'z' },
+		{ 'c', 'n' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -289,37 +298,40 @@ int main(int argc, char **argv)
 
 	while ((c = getopt_long(argc, argv, "hvVncpdzl:o:", longopts, NULL))
 			!= -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch(c) {
 		case 'h':
 			usage(stdout);
 			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
 		case 'c':
 			mode |= FALLOC_FL_COLLAPSE_RANGE;
-			break;
-		case 'p':
-			mode |= FALLOC_FL_PUNCH_HOLE;
-			/* fall through */
-		case 'n':
-			mode |= FALLOC_FL_KEEP_SIZE;
 			break;
 		case 'd':
 			dig = 1;
 			break;
-		case 'z':
-			mode |= FALLOC_FL_ZERO_RANGE;
-			break;
 		case 'l':
 			length = cvtnum(optarg);
+			break;
+		case 'n':
+			mode |= FALLOC_FL_KEEP_SIZE;
 			break;
 		case 'o':
 			offset = cvtnum(optarg);
 			break;
+		case 'p':
+			mode |= FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE;
+			break;
+		case 'z':
+			mode |= FALLOC_FL_ZERO_RANGE;
+			break;
 		case 'v':
 			verbose++;
 			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		default:
 			usage(stderr);
 			break;
@@ -327,9 +339,6 @@ int main(int argc, char **argv)
 	}
 	if (dig) {
 		/* for --dig-holes the default is analyze all file */
-		if (mode != 0)
-			errx(EXIT_FAILURE,
-			     _("Can't use other modes with --dig-holes"));
 		if (length == -2LL)
 			length = 0;
 		if (length < 0)
@@ -345,11 +354,6 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("invalid offset value specified"));
 	if (optind == argc)
 		errx(EXIT_FAILURE, _("no filename specified."));
-
-	if ((mode & FALLOC_FL_ZERO_RANGE) &&
-	    (mode & ~(FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE)))
-		errx(EXIT_FAILURE, _("only --keep-size mode can be used with "
-				     "--zero-range"));
 
 	filename = argv[optind++];
 

@@ -38,6 +38,10 @@ The \fIlength\fR and \fIoffset\fR arguments may be followed by the multiplicativ
 suffixes KiB=1024, MiB=1024*1024, and so on for GiB, TiB, PiB, EiB, ZiB and YiB
 (the "iB" is optional, e.g. "K" has the same meaning as "KiB") or the suffixes
 KB=1000, MB=1000*1000, and so on for GB, TB, PB, EB, ZB and YB.
+
+The options \fB\-\-collapse-range\fP, \fB\-\-dig-holes\fP, \fB\-\-punch-hole\fP and
+\fB\-\-zero-range\fP are mutually exclusive.
+
 .IP "\fB\-n, \-\-keep-size\fP"
 Do not modify the apparent length of the file.  This may effectively allocate
 blocks past EOF, which can be removed with a truncate.
@@ -68,7 +72,8 @@ Removes a byte range from a file, without leaving a hole.  The byte range
 to be collapsed starts at \fIoffset\fP and continues
 for \fIlength\fR bytes.  At the completion of the operation, the contents of
 the file starting at the location offset+length will be appended at the
-location offset, and the file will be \fIlength\fR bytes smaller.
+location offset, and the file will be \fIlength\fR bytes smaller. The option
+\fB\-\-keep\-size\fR may not be specified for colapse range operation.
 
 Available since Linux 3.15 for ext4 (only for extent-based files) and XFS.
 .IP "\fB\-z, \-\-zero-range\fP"
@@ -84,8 +89,7 @@ partial blocks at the either end of the range), and I/O is
 (otherwise) required only to update metadata.
 
 Option \fB\-\-keep\-size\fP can be specified to prevent file length
-modification. This option may not be specified at the same time as the
-\fB\-\-punch-hole\fP or \fB\-\-collapse-range\fP option.
+modification.
 
 Available since Linux 3.14 for ext4 (only for extent-based files) and XFS.
 .IP "\fB\-o, \-\-offset\fP \fIoffset\fP
