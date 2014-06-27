@@ -1434,7 +1434,7 @@ int mnt_fs_match_target(struct libmnt_fs *fs, const char *target,
 	if (!rc && cache) {
 		/* 2) - canonicalized and non-canonicalized */
 		char *cn = mnt_resolve_path(target, cache);
-		rc = (cn && strcmp(cn, fs->target) == 0);
+		rc = (cn && mnt_fs_streq_target(fs, cn));
 
 		/* 3) - canonicalized and canonicalized */
 		if (!rc && cn && !mnt_fs_is_kernel(fs)) {
