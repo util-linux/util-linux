@@ -833,6 +833,36 @@ static struct libmnt_table *parse_tabfiles(char **files,
 	return tb;
 }
 
+/*
+ * Parses mountinfo and calls mnt_cache_set_targets(cache, mtab). Only
+ * necessary if @tb in main() was read from a non-kernel source.
+ */
+static void cache_set_targets(struct libmnt_cache *cache)
+{
+	struct libmnt_table *tb = NULL;
+	char *path = NULL;
+	int rc = 0;
+
+	tb = mnt_new_table();
+	if (!tb)
+		goto done;
+
+	path = access(_PATH_PROC_MOUNTINFO, R_OK) == 0 ?
+		_PATH_PROC_MOUNTINFO :
+		_PATH_PROC_MOUNTS;
+
+	rc = mnt_table_parse_file(tb, path);
+	if (rc)
+		goto done;
+
+	rc = mnt_cache_set_targets(cache, tb);
+	if (rc)
+		goto done;
+
+done:
+	mnt_unref_table(tb);
+}
+
 /* checks if @tb contains parent->child relations */
 static int tab_is_tree(struct libmnt_table *tb)
 {
@@ -1471,6 +1501,9 @@ int main(int argc, char *argv[])
 			goto leave;
 		}
 		mnt_table_set_cache(tb, cache);
+
+		if (tabtype != TABTYPE_KERNEL)
+			cache_set_targets(cache);
 	}
 
 	if (flags & FL_UNIQ)
