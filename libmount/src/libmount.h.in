@@ -220,6 +220,8 @@ extern void mnt_free_cache(struct libmnt_cache *cache);
 extern void mnt_ref_cache(struct libmnt_cache *cache);
 extern void mnt_unref_cache(struct libmnt_cache *cache);
 
+extern int mnt_cache_set_targets(struct libmnt_cache *cache,
+				struct libmnt_table *mtab);
 extern int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname);
 
 extern int mnt_cache_device_has_tag(struct libmnt_cache *cache,
@@ -234,6 +236,8 @@ extern char *mnt_get_fstype(const char *devname, int *ambi,
 			    struct libmnt_cache *cache)
 			__ul_attribute__((warn_unused_result));
 extern char *mnt_resolve_path(const char *path, struct libmnt_cache *cache)
+			__ul_attribute__((warn_unused_result));
+extern char *mnt_resolve_target(const char *path, struct libmnt_cache *cache)
 			__ul_attribute__((warn_unused_result));
 extern char *mnt_resolve_tag(const char *token, const char *value,
 			     struct libmnt_cache *cache)

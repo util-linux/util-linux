@@ -880,8 +880,10 @@ struct libmnt_fs *mnt_table_find_mountpoint(struct libmnt_table *tb,
  *
  * Try to lookup an entry in the given tab, three iterations are possible, the first
  * with @path, the second with realpath(@path) and the third with realpath(@path)
- * against realpath(fs->target). The 2nd and 3rd iterations are not performed
- * when the @tb cache is not set (see mnt_table_set_cache()).
+ * against realpath(fs->target). The 2nd and 3rd iterations are not performed when
+ * the @tb cache is not set (see mnt_table_set_cache()). If
+ * mnt_cache_set_targets(cache, mtab) was called, the 3rd iteration skips any
+ * @fs->target found in @mtab (see mnt_resolve_target()).
  *
  * Returns: a tab entry or NULL.
  */
@@ -933,7 +935,7 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 		    || (*fs->target == '/' && *(fs->target + 1) == '\0'))
 		       continue;
 
-		p = mnt_resolve_path(fs->target, tb->cache);
+		p = mnt_resolve_target(fs->target, tb->cache);
 		/* both canonicalized, strcmp() is fine here */
 		if (p && strcmp(cn, p) == 0)
 			return fs;

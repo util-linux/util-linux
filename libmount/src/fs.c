@@ -1413,7 +1413,9 @@ int mnt_fs_append_comment(struct libmnt_fs *fs, const char *comm)
  *	1) compare @target with @fs->target
  *	2) realpath(@target) with @fs->target
  *	3) realpath(@target) with realpath(@fs->target) if @fs is not from
- *	   /proc/self/mountinfo.
+ *	   /proc/self/mountinfo. However, if mnt_cache_set_targets(cache,
+ *	   mtab) was called, and the path @fs->target is found in @mtab,
+ *	   this comparison is not performed (see mnt_resolve_target()).
  *
  * The 2nd and 3rd attempts are not performed when @cache is NULL.
  *
@@ -1438,7 +1440,7 @@ int mnt_fs_match_target(struct libmnt_fs *fs, const char *target,
 
 		/* 3) - canonicalized and canonicalized */
 		if (!rc && cn && !mnt_fs_is_kernel(fs) && !mnt_fs_is_swaparea(fs)) {
-			char *tcn = mnt_resolve_path(fs->target, cache);
+			char *tcn = mnt_resolve_target(fs->target, cache);
 			rc = (tcn && strcmp(cn, tcn) == 0);
 		}
 	}
