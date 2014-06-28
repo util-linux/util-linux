@@ -92,6 +92,7 @@ struct logger_ctl {
 	void (*syslogfp)(struct logger_ctl *ctl, char *msg);
 	unsigned int
 			prio_prefix:1,	/* read priority from intput */
+			ppid:1,		/* include PPID instead of PID */
 			rfc5424_time:1,	/* include time stamp */
 			rfc5424_tq:1,	/* include time quality markup */
 			rfc5424_host:1;	/* include hostname */
@@ -288,15 +289,25 @@ static char *xgetlogin()
 	return cp;
 }
 
+static pid_t get_process_id(struct logger_ctl *ctl)
+{
+	pid_t id = 0;
+
+	if (ctl->logflags & LOG_PID)
+		id = ctl->ppid ? getppid() : getpid();
+	return id;
+}
+
 static void syslog_rfc3164(struct logger_ctl *ctl, char *msg)
 {
 	char buf[1000], pid[30], *cp, *tp;
 	time_t now;
+	pid_t process;
 
 	if (ctl->fd < 0)
 		return;
-	if (ctl->logflags & LOG_PID)
-		snprintf(pid, sizeof(pid), "[%d]", getpid());
+	if ((process = get_process_id(ctl)))
+		snprintf(pid, sizeof(pid), "[%d]", process);
 	else
 		pid[0] = 0;
 	if (ctl->tag)
@@ -318,6 +329,7 @@ static void syslog_rfc5424(struct logger_ctl *ctl, char *msg)
 	char fmt[64], time[64], timeq[80], *hostname;
 	struct timeval tv;
 	struct tm *tm;
+	pid_t process;
 
 	if (ctl->fd < 0)
 		return;
@@ -346,8 +358,8 @@ static void syslog_rfc5424(struct logger_ctl *ctl, char *msg)
 		tag = xgetlogin();
 	if (48 < strlen(tag))
 		errx(EXIT_FAILURE, _("tag '%s' is too long"), tag);
-	if (ctl->logflags & LOG_PID)
-		snprintf(pid, sizeof(pid), " %d", getpid());
+	if ((process = get_process_id(ctl)))
+		snprintf(pid, sizeof(pid), " %d", process);
 	else
 		pid[0] = 0;
 	if (ctl->rfc5424_tq) {
@@ -471,7 +483,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(" %s [options] [<message>]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -i, --id              log the process ID too\n"), out);
+	fputs(_(" -i, --id[=pid|ppid]   log PID or PPID (default is PID)\n"), out);
 	fputs(_(" -f, --file <file>     log the contents of this file\n"), out);
 	fputs(_(" -p, --priority <prio> mark given message with this priority\n"), out);
 	fputs(_("     --prio-prefix     look for a prefix on every line read from stdin\n"), out);
@@ -508,6 +520,7 @@ int main(int argc, char **argv)
 	struct logger_ctl ctl = {
 		.fd = -1,
 		.logflags = 0,
+		.ppid = 0,
 		.pri = LOG_NOTICE,
 		.prio_prefix = 0,
 		.tag = NULL,
@@ -524,7 +537,7 @@ int main(int argc, char **argv)
 	FILE *jfd = NULL;
 #endif
 	static const struct option longopts[] = {
-		{ "id",		no_argument,	    0, 'i' },
+		{ "id",		optional_argument,  0, 'i' },
 		{ "stderr",	no_argument,	    0, 's' },
 		{ "file",	required_argument,  0, 'f' },
 		{ "priority",	required_argument,  0, 'p' },
@@ -550,7 +563,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((ch = getopt_long(argc, argv, "f:ip:st:u:dTn:P:Vh",
+	while ((ch = getopt_long(argc, argv, "f:i::p:st:u:dTn:P:Vh",
 					    longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'f':		/* file to log */
@@ -560,6 +573,14 @@ int main(int argc, char **argv)
 			break;
 		case 'i':		/* log process id also */
 			ctl.logflags |= LOG_PID;
+			if (optarg) {
+				if (!strcmp(optarg, "ppid"))
+					ctl.ppid = 1;
+				else if (!strcmp(optarg, "pid"))
+					ctl.ppid = 0;
+				else
+					warnx(_("ignoring unknown option argument: %s"), optarg);
+			}
 			break;
 		case 'p':		/* priority */
 			ctl.pri = pencode(optarg);
