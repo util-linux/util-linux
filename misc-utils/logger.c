@@ -320,6 +320,8 @@ static void syslog_rfc3164(struct logger_ctl *ctl, char *msg)
 		 ctl->pri, tp, cp, pid, msg);
 	if (write_all(ctl->fd, buf, strlen(buf) + 1) < 0)
 		warn(_("write failed"));
+	if (ctl->logflags & LOG_PERROR)
+		fprintf(stderr, "%s\n", buf);
 }
 
 static void syslog_rfc5424(struct logger_ctl *ctl, char *msg)
@@ -377,6 +379,8 @@ static void syslog_rfc5424(struct logger_ctl *ctl, char *msg)
 	if (write_all(ctl->fd, buf, strlen(buf) + 1) < 0)
 		warn(_("write failed"));
 	free(hostname);
+	if (ctl->logflags & LOG_PERROR)
+		fprintf(stderr, "%s\n", buf);
 	free(buf);
 }
 
