@@ -55,6 +55,26 @@ the command will perform the action without any questions.  For example, the
 result can be quite drastic when the command is run as root in the /lib
 directory.  Always make a backup before running the command, unless you truly
 know what you are doing.
+.SH "EXIT STATUS"
+.RS
+.PD 0
+.TP
+.B 0
+all requested rename operations were successful
+.TP
+.B 1
+all rename operations failed
+.TP
+.B 2
+some rename operations failed
+.TP
+.B 4
+nothing was renamed
+.TP
+.B 64
+unanticipated error occurred
+.PD
+.RE
 .SH "SEE ALSO"
 .BR mv (1)
 .SH AVAILABILITY
