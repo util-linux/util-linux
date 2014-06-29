@@ -209,7 +209,7 @@ static int display_summary(void)
 	printf(_("%s\t\t\t\tType\t\tSize\tUsed\tPriority\n"), _("Filename"));
 
 	while (mnt_table_next_fs(st, itr, &fs) == 0) {
-		printf("%-39s\t%s\t%jd\t%jd\t%d\n",
+		printf("%-39s\t%-8s\t%jd\t%jd\t%d\n",
 			mnt_fs_get_source(fs),
 			mnt_fs_get_swaptype(fs),
 			mnt_fs_get_size(fs),
