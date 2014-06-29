@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.TH FINDMNT 8 "April 2010" "util-linux" "System Administration"
+.TH FINDMNT 8 "June 2014" "util-linux" "System Administration"
 .SH NAME
 findmnt \- find a filesystem
 .SH SYNOPSIS
@@ -49,8 +49,8 @@ Use ascii characters for tree formatting.
 Print the SIZE, USED and AVAIL column in bytes rather than in a human-readable format.
 .TP
 .BR \-C , " \-\-nocanonicalize"
-Do not canonicalize paths at all. This option affects paths comparation
-and tags (LABEL, UUID, etc.) evaluation.
+Do not canonicalize paths at all.  This option affects the comparing of paths
+and the evaluation of tags (LABEL, UUID, etc.).
 .TP
 .BR \-c , " \-\-canonicalize"
 Canonicalize all printed paths.
@@ -65,9 +65,9 @@ Use \fB\-\-all\fP to print all filesystems.
 .TP
 .BR \-d , " \-\-direction \fIword\fP"
 The search direction, either
-.IR forward
+.B forward
 or
-.IR backward .
+.BR backward .
 .TP
 .BR \-e , " \-\-evaluate"
 Convert all tags (LABEL, UUID, PARTUUID or PARTLABEL) to the device names.
