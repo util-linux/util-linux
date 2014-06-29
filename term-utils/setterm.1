@@ -27,17 +27,15 @@ that invokes the specified capabilities on the PC Minix virtual console driver
 is output.  Options that are not implemented by the terminal are ignored.
 .SH OPTIONS
 For boolean options
-.RB ( on
-or
-.BR off ),
+.RB ( on " or " off ),
 the default is
 .BR on .
 .P
-For conciseness, an
+Below, an
 .I 8-color
-below is
-.BR  black ,
-.BR  red ,
+can be
+.BR black ,
+.BR red ,
 .BR green ,
 .BR yellow ,
 .BR blue ,
@@ -48,8 +46,9 @@ or
 .P
 A
 .I 16-color
-is an
+can be an
 .IR 8-color ,
+or
 .BR grey ,
 or
 .BR bright
@@ -64,91 +63,90 @@ by
 or
 .BR white .
 .P
-The various color options may be set independently, at least at virtual
+The various color options may be set independently, at least on virtual
 consoles, though the results of setting multiple modes (for example,
 .B \-\-underline
 and
 .BR \-\-half-bright )
 are hardware-dependent.
 .TP
-\fB\-\-appcursorkeys\fP \fBon\fP|\fBoff\fP (virtual consoles only)
+\fB\-\-appcursorkeys\fP [\fBon\fP|\fBoff\fP]  (virtual consoles only)
 Sets Cursor Key Application Mode on or off.  When on, ESC O A, ESC O B, etc.
 will be sent for the cursor keys instead of ESC [ A, ESC [ B, etc.  See the
 .I vi and Cursor-Keys
 section of the
 .I Text-Terminal-HOWTO
-for how this can cause problems for vi users.
+for how this can cause problems for \fBvi\fR users.
 .TP
-\fB\-\-append\fP [\fI1-NR_CONS\fP]
+\fB\-\-append\fP [\fIconsole_number\fP]
 Like
 .BR \-\-dump ,
 but appends to the snapshot file instead of overwriting it.  Only works if no
 .B \-\-dump
 options are given.
 .TP
-\fB\-\-foreground\fP \fI8-color\fP|\fBdefault\fP
-Sets the foreground text color.
-.TP
 \fB\-\-background\fP \fI8-color\fP|\fBdefault\fP
 Sets the background text color.
 .TP
-\fB\-\-blank\fP [\fB0-60\fP|\fBforce\fP|\fBpoke\fP] (virtual consoles only)
+\fB\-\-blank\fP [\fB0-60\fP|\fBforce\fP|\fBpoke\fP]  (virtual consoles only)
 Sets the interval of inactivity, in minutes, after which the screen will be
-automatically blanked (using APM if available).  Without an argument, gets the
-blank status (returns which vt was blanked or zero for unblanked vt).
+automatically blanked (using APM if available).  Without an argument, it gets
+the blank status (returns which vt was blanked, or zero for an unblanked vt).
 .IP
 The
 .B force
-option keeps screen blank even if a key is pressed.
+option keeps the screen blank even if a key is pressed.
 .IP
 The
 .B poke
-option unblank the screen.
+option unblanks the screen.
 .TP
-\fB\-\-bfreq\fP [\fInumber\fP] (virtual consoles only)
-Sets the bell frequency in Hertz.  Without an argument, defaults to
+\fB\-\-bfreq\fP [\fInumber\fP]  (virtual consoles only)
+Sets the bell frequency in Hertz.  Without an argument, it defaults to
 .BR 0 .
 .TP
-\fB\-\-blength\fP [\fB0-2000\fP] (virtual consoles only)
-Sets the bell duration in milliseconds.  Without an argument, defaults to
+\fB\-\-blength\fP [\fB0-2000\fP]  (virtual consoles only)
+Sets the bell duration in milliseconds.  Without an argument, it defaults to
 .BR 0 .
 .TP
-\fB\-\-blink\fP \fBon\fP|\fBoff\fP
-Turns blink mode on or off.  Except at a virtual console,
+.BR \-\-blink " [" on | off ]
+Turns blink mode on or off.  Except on a virtual console,
 .B \-\-blink off
 turns off all attributes (bold, half-brightness, blink, reverse).
 .TP
-\fB\-\-bold\fP \fBon\fP|\fBoff\fP
-Turns bold (extra bright) mode on or off. Except at a virtual console,
+.BR \-\-bold " [" on | off ]
+Turns bold (extra bright) mode on or off.  Except on a virtual console,
 .B \-\-bold off
 turns off all attributes (bold, half-brightness, blink, reverse).
 .TP
-\fB\-\-clear\fP \fBall\fP|\fBrest\fP
-With argument
-.B all
-the cursor is set to home position, and all output is removed from screen,
+\fB\-\-clear\fP [\fBall\fP|\fBrest\fP]
+Without an argument or with the argument
+.BR all ,
+the entire screen is cleared and the cursor is set to the home position,
+just like
 .BR clear (1)
-does.  The argument
-.B rest
-clears from the current cursor position to the end of the screen.
+does.  With the argument
+.BR rest ,
+the screen is cleared from the current cursor position to the end.
 .TP
-\fB\-\-clrtabs\fP [\fItab1 tab2 tab3\fP ...] (virtual consoles only)
+\fB\-\-clrtabs\fP [\fItab1 tab2 tab3\fP ...]  (virtual consoles only)
 Clears tab stops from the given horizontal cursor positions, in the range
 .BR 1-160 .
-Without arguments, clears all tab stops.
+Without arguments, it clears all tab stops.
 .TP
-\fB\-\-cursor\fP \fBon\fP|\fBoff\fP
+.BR \-\-cursor " [" on | off ]
 Turns the terminal's cursor on or off.
 .TP
 \fB\-\-default\fP
 Sets the terminal's rendering options to the default values.
 .TP
-\fB\-\-dump\fP [\fI1-NR_CONS\fP]
-Writes a snapshot of the given virtual console to the file specified in the
+\fB\-\-dump\fP [\fIconsole_number\fP]
+Writes a snapshot of the virtual console with the given number
+to the file specified with the
 .B \-\-file
 option, overwriting its contents; the default is
 .IR screen.dump .
-Without an argument, dumps the current virtual console.  Overrides
+Without an argument, it dumps the current virtual console.  This overrides
 .BR \-\-append .
 .TP
 \fB\-\-file\fP \fIfilename\fP
@@ -159,8 +157,16 @@ or
 options on the same command line.  If this option is not present, the default
 is
 .I screen.dump
-in the current directory.  A path name that exceeds system maximum will be
+in the current directory.  A path name that exceeds the system maximum will be
 truncated, see PATH_MAX from linux/limits.h for the value.
+.TP
+\fB\-\-foreground\fP \fI8-color\fP|\fBdefault\fP
+Sets the foreground text color.
+.TP
+.BR \-\-half-bright " [" on | off ]
+Turns dim (half-brightness) mode on or off.  Except on a virtual console,
+.B \-\-half-bright off
+turns off all attributes (bold, half-brightness, blink, reverse).
 .TP
 \fB\-\-hbcolor\fP \fI16-color\fP
 Sets the color for bold characters.
@@ -169,42 +175,38 @@ Sets the color for bold characters.
 Displays the terminal initialization string, which typically sets the
 terminal's rendering options, and other attributes to the default values.
 .TP
-\fB\-\-inversescreen\fP \fBon\fP|\fBoff\fP
-Swap foreground and background colors for the whole screen.
+.BR \-\-inversescreen " [" on | off ]
+Swaps foreground and background colors for the whole screen.
 .TP
-\fB\-\-linewrap\fP \fBon\fP|\fBoff\fP
-Continue on a new line when a line is full.
+.BR \-\-linewrap " [" on | off ]
+Makes the terminal continue on a new line when a line is full.
 .TP
-\fB\-\-msg\fP \fBon\fP|\fBoff\fP (virtual consoles only)
+.BR \-\-msg " [" on | off "]  (virtual consoles only)"
 Enables or disables the sending of kernel
 .BR printk()
 messages to the console.
 .TP
-\fB\-\-msglevel\fP \fB0-8\fP (virtual consoles only)
+\fB\-\-msglevel\fP \fB0-8\fP  (virtual consoles only)
 Sets the console logging level for kernel
 .B printk()
 messages.  All messages strictly more important than this will be printed, so a
 logging level of
-.I 0
+.B 0
 has the same effect as
 .B \-\-msg on
 and a logging level of
-.I 8
+.B 8
 will print all kernel messages.
 .BR klogd (8)
 may be a more convenient interface to the logging of kernel messages.
 .TP
 \fB\-\-powerdown\fP [\fB0-60\fP]
-Sets the VESA powerdown interval in minutes.  Without an argument, defaults
+Sets the VESA powerdown interval in minutes.  Without an argument, it defaults
 to
-.I 0
+.B 0
 (disable powerdown).  If the console is blanked or the monitor is in suspend
 mode, then the monitor will go into vsync suspend mode or powerdown mode
 respectively after this period of time has elapsed.
-.TP
-\fB\-\-underline\fP \fBon\fP|\fBoff\fP
-Turns underline mode on or off (see
-.BR \-\-ulcolor .
 .TP
 \fB\-\-powersave\fP \fBoff\fP
 Turns off monitor VESA powersaving features.
@@ -218,53 +220,56 @@ Puts the monitor into VESA powerdown mode.
 \fB\-\-powersave\fP \fBhsync\fP
 Puts the monitor into VESA hsync suspend mode.
 .TP
-\fB\-\-regtabs\fP [\fB1-160\fP] (virtual consoles only)
+\fB\-\-regtabs\fP [\fB1-160\fP]  (virtual consoles only)
 Clears all tab stops, then sets a regular tab stop pattern, with one tab every
-specified number of positions.  Without an argument, defaults to
+specified number of positions.  Without an argument, it defaults to
 .BR 8 .
 .TP
-\fB\-\-repeat\fP \fBon\fP|\fBoff\fP (virtual consoles only)
+.BR \-\-repeat " [" on | off "]  (virtual consoles only)"
 Turns keyboard repeat on or off.
 .TP
 \fB\-\-reset\fP
 Displays the terminal reset string, which typically resets the terminal to
-its power on state.
+its power-on state.
 .TP
-\fB\-\-reverse\fP \fBon\fP|\fBoff\fP
-Turns reverse video mode on or off.  Except at a virtual console,
+\fB\-\-reverse\fP [\fBon\fP|\fBoff\fP]
+Turns reverse video mode on or off.  Except on a virtual console,
 .B \-\-reverse off
 turns off all attributes (bold, half-brightness, blink, reverse).
 .TP
-\fB\-\-store\fP (virtual consoles only)
+\fB\-\-store\fP  (virtual consoles only)
 Stores the terminal's current rendering options (foreground and background
 colors) as the values to be used at reset-to-default.
 .TP
 \fB\-\-tabs\fP [\fItab1 tab2 tab3\fP ...]
 Sets tab stops at the given horizontal cursor positions, in the range
 .BR 1-160 .
-Without arguments, shows the current tab stop settings.
+Without arguments, it shows the current tab stop settings.
 .TP
 \fB\-\-term\fP \fIterminal_name\fP
 Overrides the TERM environment variable.
 .TP
-\fB\-\-ulcolor\fP \fB16-color\fP (virtual consoles only)
+\fB\-\-ulcolor\fP \fI16-color\fP  (virtual consoles only)
 Sets the color for underlined characters.
 .TP
+.BR \-\-underline " [" on | off ]
+Turns underline mode on or off.
+.TP
 \fB\-\-version\fP
-Display version information and exit.
+Displays version information and exits.
 .TP
 \fB\-\-help\fP
-Display help text and exit.
+Displays a help text and exits.
 .SH COMPATIBILITY
-Since version 2.25 the
+Since version 2.25
 .B setterm
 has support for long options with two hyphens, for example
 .BR \-\-help ,
 beside the historical long options with a single hyphen, for example
 .BR \-help .
-In scripts it is better to use the backward compatible single hyphen
-rather than the double hyphen.  Currently there are no plans or good
-reasons to discontinue single hyphen compatibility.
+In scripts it is better to use the backward-compatible single hyphen
+rather than the double hyphen.  Currently there are no plans nor good
+reasons to discontinue single-hyphen compatibility.
 .SH "SEE ALSO"
 .BR tput (1),
 .BR stty (1),
