@@ -757,9 +757,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -s, --getsz                   display device size in 512-byte sectors [DEPRECATED]\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" -C, --geom-cylinders <number> specify the number of cylinders\n"), out);
-	fputs(_(" -H, --geom-heads <number>     specify the number of heads\n"), out);
-	fputs(_(" -S, --geom-sectors <number>   specify the number of sectors per track\n"), out);
+	fputs(_(" -C, --cylinders <number>      specify the number of cylinders\n"), out);
+	fputs(_(" -H, --heads <number>          specify the number of heads\n"), out);
+	fputs(_(" -S, --sectors <number>        specify the number of sectors per track\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -785,9 +785,9 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{ "color",          optional_argument, NULL, 'L' },
 		{ "compatibility",  optional_argument, NULL, 'c' },
-		{ "geom-cylinders", required_argument, NULL, 'C' },
-		{ "geom-heads",	    required_argument, NULL, 'H' },
-		{ "geom-sectors",   required_argument, NULL, 'S' },
+		{ "cylinders",      required_argument, NULL, 'C' },
+		{ "heads",	    required_argument, NULL, 'H' },
+		{ "sectors",        required_argument, NULL, 'S' },
 		{ "getsz",          no_argument,       NULL, 's' },
 		{ "help",           no_argument,       NULL, 'h' },
 		{ "list",           no_argument,       NULL, 'l' },
