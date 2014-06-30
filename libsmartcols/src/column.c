@@ -60,7 +60,8 @@ void scols_ref_column(struct libscols_column *cl)
  * scols_unref_column:
  * @cl: a pointer to a struct libscols_column instance
  *
- * Decreases the refcount of @cl.
+ * Decreases the refcount of @cl. When the count falls to zero, the instance
+ * is automatically deallocated.
  */
 void scols_unref_column(struct libscols_column *cl)
 {

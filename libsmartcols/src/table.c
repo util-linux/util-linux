@@ -77,7 +77,8 @@ void scols_ref_table(struct libscols_table *tb)
  * scols_unref_table:
  * @tb: a pointer to a struct libscols_table instance
  *
- * Decreases the refcount of @tb.
+ * Decreases the refcount of @tb. When the count falls to zero, the instance
+ * is automatically deallocated.
  */
 void scols_unref_table(struct libscols_table *tb)
 {

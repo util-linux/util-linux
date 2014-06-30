@@ -66,7 +66,8 @@ void scols_ref_line(struct libscols_line *ln)
  * scols_unref_line:
  * @ln: a pointer to a struct libscols_line instance
  *
- * Decreases the refcount of @ln.
+ * Decreases the refcount of @ln. When the count falls to zero, the instance
+ * is automatically deallocated.
  */
 void scols_unref_line(struct libscols_line *ln)
 {
