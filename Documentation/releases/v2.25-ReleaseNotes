@@ -5,6 +5,9 @@ The command cytune(8) has been REMOVED from util-linux.
 
 The non-libmount mount(8) implementation has been REMOVED from util-linux.
 
+The "swapon --summary" output format is deprecated in favor of the
+"swapon --show[=<columns>]" that provides better control on output formatting.
+
 Release highlights
 ------------------
 

@@ -683,7 +683,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" -e, --ifexists           silently skip devices that do not exist\n"
 		" -f, --fixpgsz            reinitialize the swap space if necessary\n"
 		" -p, --priority <prio>    specify the priority of the swap device\n"
-		" -s, --summary            display summary about used swap devices\n"
+		" -s, --summary            display summary about used swap devices (DEPRECATED)\n"
 		"     --show[=<columns>]   display summary in definable table\n"
 		"     --noheadings         don't print headings, use with --show\n"
 		"     --raw                use the raw output format, use with --show\n"
