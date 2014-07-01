@@ -153,6 +153,8 @@ int fdisk_get_columns(struct fdisk_context *cxt, int all, int **cols, size_t *nc
 	}
 	if (cols)
 		*cols = c;
+	else
+		free(c);
 	if (ncols)
 		*ncols = n;
 	return 0;
