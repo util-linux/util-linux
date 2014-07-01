@@ -712,7 +712,7 @@ static int kill_all(int signum)
  */
 static struct fsck_instance *wait_one(int flags)
 {
-	int	status;
+	int	status = 0;
 	int	sig;
 	struct fsck_instance *inst, *inst2, *prev;
 	pid_t	pid;
