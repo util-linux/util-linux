@@ -839,27 +839,20 @@ static struct libmnt_table *parse_tabfiles(char **files,
  */
 static void cache_set_targets(struct libmnt_cache *cache)
 {
-	struct libmnt_table *tb = NULL;
-	char *path = NULL;
-	int rc = 0;
+	struct libmnt_table *tb;
+	const char *path;
 
 	tb = mnt_new_table();
 	if (!tb)
-		goto done;
+		return;
 
 	path = access(_PATH_PROC_MOUNTINFO, R_OK) == 0 ?
 		_PATH_PROC_MOUNTINFO :
 		_PATH_PROC_MOUNTS;
 
-	rc = mnt_table_parse_file(tb, path);
-	if (rc)
-		goto done;
+	if (mnt_table_parse_file(tb, path) == 0)
+		mnt_cache_set_targets(cache, tb);
 
-	rc = mnt_cache_set_targets(cache, tb);
-	if (rc)
-		goto done;
-
-done:
 	mnt_unref_table(tb);
 }
 
