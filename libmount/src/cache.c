@@ -504,6 +504,7 @@ static char *canonicalize_path_and_cache(const char *path,
 	char *key = NULL;
 	char *value = NULL;
 
+	DBG(CACHE, ul_debugobj(cache, "canonicalize path %s", path));
 	p = canonicalize_path(path);
 
 	if (p && cache) {
