@@ -1,6 +1,7 @@
 #ifndef UTIL_LINUX_SWAPON_COMMON_H
 #define UTIL_LINUX_SWAPON_COMMON_H
 
+#include <blkid.h>
 #include <libmount.h>
 
 extern struct libmnt_cache *mntcache;
@@ -22,5 +23,6 @@ extern void add_uuid(const char *uuid);
 extern const char *get_uuid(size_t i);
 extern size_t numof_uuids(void);
 
+blkid_probe get_swap_prober(const char *devname);
 
 #endif /* UTIL_LINUX_SWAPON_COMMON_H */

@@ -12,6 +12,8 @@
 #include <stdint.h>
 #include <ctype.h>
 
+#include <blkid.h>
+
 #include <libmount.h>
 #include <libsmartcols.h>
 
@@ -97,13 +99,23 @@ struct colinfo {
 static int no_headings;
 static int raw;
 
-enum { COL_PATH, COL_TYPE, COL_SIZE, COL_USED, COL_PRIO };
+enum {
+	COL_PATH,
+	COL_TYPE,
+	COL_SIZE,
+	COL_USED,
+	COL_PRIO,
+	COL_UUID,
+	COL_LABEL
+};
 struct colinfo infos[] = {
 	[COL_PATH]     = { "NAME",	0.20, 0, N_("device file or partition path") },
 	[COL_TYPE]     = { "TYPE",	0.20, SCOLS_FL_TRUNC, N_("type of the device")},
 	[COL_SIZE]     = { "SIZE",	0.20, SCOLS_FL_RIGHT, N_("size of the swap area")},
 	[COL_USED]     = { "USED",	0.20, SCOLS_FL_RIGHT, N_("bytes in use")},
 	[COL_PRIO]     = { "PRIO",	0.20, SCOLS_FL_RIGHT, N_("swap priority")},
+	[COL_UUID]     = { "UUID",	0.20, 0, N_("swap uuid")},
+	[COL_LABEL]    = { "LABEL",	0.20, 0, N_("swap label")},
 };
 
 static int columns[ARRAY_SIZE(infos) * 2];
@@ -142,6 +154,8 @@ static void add_scols_line(struct libscols_table *table, struct libmnt_fs *fs, i
 {
 	int i;
 	struct libscols_line *line;
+	blkid_probe pr = NULL;
+	const char *data;
 
 	assert(table);
 	assert(fs);
@@ -149,7 +163,9 @@ static void add_scols_line(struct libscols_table *table, struct libmnt_fs *fs, i
 	line = scols_table_new_line(table, NULL);
 	if (!line)
 		err(EXIT_FAILURE, _("failed to initialize output line"));
-
+	data = mnt_fs_get_source(fs);
+	if (access(data, R_OK) == 0)
+		pr = get_swap_prober(data);
 	for (i = 0; i < ncolumns; i++) {
 		char *str = NULL;
 		off_t size;
@@ -180,6 +196,22 @@ static void add_scols_line(struct libscols_table *table, struct libmnt_fs *fs, i
 		case COL_PRIO:
 			xasprintf(&str, "%d", mnt_fs_get_priority(fs));
 			break;
+		case COL_UUID:
+			if (pr && !blkid_probe_lookup_value(pr, "UUID", &data, NULL))
+				xasprintf(&str, "%s", data);
+			else if (pr)
+				xasprintf(&str, "");
+			else
+				xasprintf(&str, _("read failed"));
+			break;
+		case COL_LABEL:
+			if (pr && !blkid_probe_lookup_value(pr, "LABEL", &data, NULL))
+				xasprintf(&str, "%s", data);
+			else if (pr)
+				xasprintf(&str, "");
+			else
+				xasprintf(&str, _("read failed"));
+			break;
 		default:
 			break;
 		}
@@ -187,6 +219,8 @@ static void add_scols_line(struct libscols_table *table, struct libmnt_fs *fs, i
 		if (str)
 			scols_line_refer_data(line, i, str);
 	}
+	if (pr)
+		blkid_free_probe(pr);
 	return;
 }
 
