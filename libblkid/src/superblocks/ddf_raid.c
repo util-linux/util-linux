@@ -110,12 +110,11 @@ static int probe_ddf(blkid_probe pr,
 
 		buf = blkid_probe_get_buffer(pr,
 					lba << 9, sizeof(ddf->signature));
-		if (!buf) {
-			if (errno)
-				return -errno;
-			if (memcmp(buf, &ddf->signature, 4))
-				return 1;
-		}
+		if (!buf)
+			return errno ? -errno : 1;
+
+		if (memcmp(buf, &ddf->signature, 4) != 0)
+			return 1;
 	}
 
 	blkid_probe_strncpy_uuid(pr, ddf->guid, sizeof(ddf->guid));
