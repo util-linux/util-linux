@@ -796,6 +796,9 @@ static size_t menuitem_get_line(struct cfdisk *cf, size_t idx)
 		size_t len = m->width + 4 + MENU_PADDING;	/* item width */
 		size_t items = COLS / len;			/* items per line */
 
+		if (items == 0)
+			return 0;
+
 		return MENU_START_LINE + ((idx / items));
 	}
 }
@@ -813,6 +816,9 @@ static int menuitem_get_column(struct cfdisk *cf, size_t idx)
 		size_t extra = items < cf->menu->nitems ?		/* extra space on line */
 				COLS % len :				/* - multi-line menu */
 				COLS - (cf->menu->nitems * len);	/* - one line menu */
+
+		if (items == 0)
+			return 0;					/* hmm... no space */
 
 		extra += MENU_PADDING;		/* add padding after last item to extra */
 
