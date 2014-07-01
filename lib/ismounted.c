@@ -317,7 +317,8 @@ int check_mount_point(const char *device, int *mount_flags,
 
 	if (is_swap_device(device)) {
 		*mount_flags = MF_MOUNTED | MF_SWAP;
-		strncpy(mtpt, "<swap>", mtlen);
+		if (mtpt && mtlen)
+			strncpy(mtpt, "<swap>", mtlen);
 	} else {
 #ifdef HAVE_MNTENT_H
 		retval = check_mntent(device, mount_flags, mtpt, mtlen);
