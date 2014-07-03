@@ -1487,7 +1487,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 	fputs(_(" -s, --inverse        inverse dependencies\n"), out);
 	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
 	fputs(_(" -t, --topology       output info about topology\n"), out);
-	fputs(_(" -x, --sort <column>  sort output by <colum>\n"), out);
+	fputs(_(" -x, --sort <column>  sort output by <column>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
