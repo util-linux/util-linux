@@ -303,6 +303,7 @@ AC_CHECK_FUNCS([ \
 	getmntinfo \
 	getrlimit \
 	inotify_init \
+	inotify_init1 \
 	jrand48 \
 	lchown \
 	llseek \

@@ -113,6 +113,22 @@
 #define LOGIN_ARGV_MAX	16		/* Numbers of args for login */
 
 /*
+ * agetty --reload
+ */
+#define AGETTY_RELOAD			/* enabled by default */
+
+#ifndef HAVE_INOTIFY_INIT1
+# undef AGETTY_RELOAD			/* disable on systems without inotify */
+#endif
+
+#ifdef AGETTY_RELOAD
+# include <sys/inotify.h>
+# define AGETTY_RELOAD_FILENAME "/run/agetty.reload"	/* trigger file */
+# define AGETTY_RELOAD_FDNONE	-2			/* uninitialized fd */
+static int inotify_fd = AGETTY_RELOAD_FDNONE;
+#endif
+
+/*
  * When multiple baud rates are specified on the command line, the first one
  * we will try is the first one specified.
  */
@@ -281,6 +297,7 @@ static ssize_t append(char *dest, size_t len, const char  *sep, const char *src)
 static void check_username (const char* nm);
 static void login_options_to_argv(char *argv[], int *argc, char *str, char *username);
 static int plymouth_command(const char* arg);
+static void reload_agettys(void);
 
 /* Fake hostname for ut_host specified on command line. */
 static char *fakehost;
@@ -587,6 +604,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		HELP_OPTION,
 		ERASE_CHARS_OPTION,
 		KILL_CHARS_OPTION,
+		RELOAD_OPTION,
 	};
 	const struct option longopts[] = {
 		{  "8bits",	     no_argument,	 0,  '8'  },
@@ -618,6 +636,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		{  "nohints",        no_argument,        0,  NOHINTS_OPTION },
 		{  "nohostname",     no_argument,	 0,  NOHOSTNAME_OPTION },
 		{  "long-hostname",  no_argument,	 0,  LONGHOSTNAME_OPTION },
+		{  "reload",         no_argument,        0,  RELOAD_OPTION },
 		{  "version",	     no_argument,	 0,  VERSION_OPTION  },
 		{  "help",	     no_argument,	 0,  HELP_OPTION     },
 		{  "erase-chars",    required_argument,  0,  ERASE_CHARS_OPTION },
@@ -736,6 +755,9 @@ static void parse_args(int argc, char **argv, struct options *op)
 		case KILL_CHARS_OPTION:
 			op->killchars = optarg;
 			break;
+		case RELOAD_OPTION:
+			reload_agettys();
+			exit(EXIT_SUCCESS);
 		case VERSION_OPTION:
 			printf(_("%s from %s\n"), program_invocation_short_name,
 			       PACKAGE_STRING);
@@ -1114,6 +1136,21 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 }
 
 /* Initialize termios settings. */
+static void termio_clear(int fd)
+{
+	/*
+	 * Do not write a full reset (ESC c) because this destroys
+	 * the unicode mode again if the terminal was in unicode
+	 * mode.  Also it clears the CONSOLE_MAGIC features which
+	 * are required for some languages/console-fonts.
+	 * Just put the cursor to the home position (ESC [ H),
+	 * erase everything below the cursor (ESC [ J), and set the
+	 * scrolling region to the full window (ESC [ r)
+	 */
+	write_all(fd, "\033[r\033[H\033[J", 9);
+}
+
+/* Initialize termios settings. */
 static void termio_init(struct options *op, struct termios *tp)
 {
 	speed_t ispeed, ospeed;
@@ -1166,18 +1203,8 @@ static void termio_init(struct options *op, struct termios *tp)
 		if ((tp->c_cflag & (CS8|PARODD|PARENB)) == CS8)
 			op->flags |= F_EIGHTBITS;
 
-		if ((op->flags & F_NOCLEAR) == 0) {
-			/*
-			 * Do not write a full reset (ESC c) because this destroys
-			 * the unicode mode again if the terminal was in unicode
-			 * mode.  Also it clears the CONSOLE_MAGIC features which
-			 * are required for some languages/console-fonts.
-			 * Just put the cursor to the home position (ESC [ H),
-			 * erase everything below the cursor (ESC [ J), and set the
-			 * scrolling region to the full window (ESC [ r)
-			 */
-			write_all(STDOUT_FILENO, "\033[r\033[H\033[J", 9);
-		}
+		if ((op->flags & F_NOCLEAR) == 0)
+			termio_clear(STDOUT_FILENO);
 		return;
 	}
 
@@ -1593,6 +1620,70 @@ static void next_speed(struct options *op, struct termios *tp)
 	tcsetattr(STDIN_FILENO, TCSANOW, tp);
 }
 
+#ifdef AGETTY_RELOAD
+static int wait_for_term_input(int fd)
+{
+	char buffer[sizeof(struct inotify_event) + NAME_MAX + 1];
+	struct termios orig, nonc;
+	fd_set rfds;
+	int count, i;
+
+	/* Our aim here is to fall through if something fails
+         * and not be stuck waiting. On failure assume we have input */
+
+	if (tcgetattr(fd, &orig) != 0)
+		return 1;
+
+	memcpy(&nonc, &orig, sizeof (nonc));
+	nonc.c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHOKE);
+	nonc.c_cc[VMIN] = 1;
+	nonc.c_cc[VTIME] = 0;
+
+	if (tcsetattr(fd, TCSANOW, &nonc) != 0)
+		return 1;
+
+	if (inotify_fd == AGETTY_RELOAD_FDNONE) {
+		/* initialize reload trigger inotify stuff */
+		inotify_fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
+		if (inotify_fd > 0)
+			inotify_add_watch(inotify_fd, AGETTY_RELOAD_FILENAME,
+					  IN_ATTRIB | IN_MODIFY);
+	}
+
+	FD_ZERO(&rfds);
+	FD_SET(fd, &rfds);
+
+	if (inotify_fd >= 0)
+		FD_SET(inotify_fd, &rfds);
+
+	/* If waiting fails, just fall through, presumably reading input will fail */
+	if (select(max(fd, inotify_fd) + 1, &rfds, NULL, NULL, NULL) < 0)
+		return 1;
+
+	if (FD_ISSET(fd, &rfds)) {
+		count = read(fd, buffer, sizeof (buffer));
+
+		tcsetattr(fd, TCSANOW, &orig);
+
+		/* Reinject the bytes we read back into the buffer, usually just one byte */
+		for (i = 0; i < count; i++)
+			ioctl(fd, TIOCSTI, buffer + i);
+
+		/* Have terminal input */
+		return 1;
+
+	} else {
+		tcsetattr(fd, TCSANOW, &orig);
+
+		/* Just drain the inotify buffer */
+		while (read(inotify_fd, buffer, sizeof (buffer)) > 0);
+
+		/* Need to reprompt */
+		return 0;
+	}
+}
+#endif  /* AGETTY_RELOAD */
+
 /* Get user name, establish parity, speed, erase, kill & eol. */
 static char *get_logname(struct options *op, struct termios *tp, struct chardata *cp)
 {
@@ -1628,6 +1719,14 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 		/* Write issue file and prompt */
 		do_prompt(op, tp);
 
+#ifdef AGETTY_RELOAD
+		/* If asked to reprompt *before* terminal input arrives, then do so */
+		if (!wait_for_term_input(STDIN_FILENO)) {
+			if (op->flags & F_VCONSOLE)
+				termio_clear(STDOUT_FILENO);
+			continue;
+		}
+#endif
 		cp->eol = '\0';
 
 		/* Read name, watch for break and end-of-line. */
@@ -1895,6 +1994,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_("     --chdir <directory>    chdir before the login\n"), out);
 	fputs(_("     --delay <number>       sleep seconds before prompt\n"), out);
 	fputs(_("     --nice <number>        run login with this priority\n"), out);
+	fputs(_("     --reload               reload prompts on running agetty instances\n"), out);
 	fputs(_("     --help                 display this help and exit\n"), out);
 	fputs(_("     --version              output version information and exit\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("agetty(8)"));
@@ -2363,4 +2463,21 @@ static int plymouth_command(const char* arg)
 		return status;
 	}
 	return 1;
+}
+
+static void reload_agettys(void)
+{
+#ifdef AGETTY_RELOAD
+	int fd = open(AGETTY_RELOAD_FILENAME, O_CREAT|O_CLOEXEC|O_WRONLY, 0700);
+
+	if (fd < 0)
+		err(EXIT_FAILURE, _("cannot open: %s"), AGETTY_RELOAD_FILENAME);
+
+	if (futimes(fd, NULL) < 0 || close(fd) < 0)
+		err(EXIT_FAILURE, _("cannot touch file: %s"),
+		    AGETTY_RELOAD_FILENAME);
+#else
+	/* very unusual */
+	errx(EXIT_FAILURE, _("--reload unssupported on your system."));
+#endif
 }
