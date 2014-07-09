@@ -51,8 +51,8 @@ try_option -s 1
 try_option --signal 1
 try_option --signal HUP
 try_option --signal SIGHUP
-try_option -q HUP
-try_option --queue HUP
+try_option -s 1 -q 42
+try_option -s 1 --queue 42
 try_option -1
 try_option -HUP
 try_option -SIGHUP

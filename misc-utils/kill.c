@@ -412,9 +412,7 @@ static char **parse_arguments(int argc, char **argv, struct kill_control *ctl)
 				errx(EXIT_FAILURE, _("%s and %s are mutually exclusive"), "--pid", "--queue");
 			argc--, argv++;
 			arg = *argv;
-			if ((ctl->numsig = arg_to_signum(arg, 0)) < 0)
-				err_nosig(arg);
-			ctl->sigdata.sival_int = ctl->numsig;
+			ctl->sigdata.sival_int = strtos32_or_err(arg, _("argument error"));
 			ctl->use_sigval = 1;
 			continue;
 		}
