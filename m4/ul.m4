@@ -148,7 +148,7 @@ AC_DEFUN([UL_REQUIRES_LINUX], [
     check:yes)
       [build_]suffix=yes ;;
     check:*)
-      AC_MSG_WARN([non-linux system; do not build $1])
+      AC_MSG_WARN([non-linux system; not building $1])
       [build_]suffix=no ;;
     esac
   fi
@@ -175,7 +175,7 @@ AC_DEFUN([UL_EXCLUDE_ARCH], [
     yes:*)
       [build_]suffix=yes ;;
     check:$2)
-      AC_MSG_WARN([exclude for $host architecture; do not build $1])
+      AC_MSG_WARN([excluded for $host architecture; not building $1])
       [build_]suffix=no ;;
     check:*)
       [build_]suffix=yes ;;
@@ -217,7 +217,7 @@ AC_DEFUN([UL_REQUIRES_HAVE], [
     check:yes)
       [build_]suffix=yes ;;
     check:*)
-      AC_MSG_WARN([$3 not found; do not build $1])
+      AC_MSG_WARN([$3 not found; not building $1])
       [build_]suffix=no ;;
     esac
   fi
@@ -275,7 +275,7 @@ AC_DEFUN([UL_REQUIRES_BUILD], [
     check:yes)
       [build_]suffix=yes ;;
     check:*)
-      AC_MSG_WARN([$2 disabled; do not build $1])
+      AC_MSG_WARN([$2 disabled; not building $1])
       [build_]suffix=no ;;
     esac
   fi
@@ -315,7 +315,7 @@ AC_DEFUN([UL_REQUIRES_SYSCALL_CHECK], [
       yes:no)
         AC_MSG_ERROR([$1 selected but callname syscall not found]) ;;
       check:no)
-        AC_MSG_WARN([callname syscall not found; do not build $1])
+        AC_MSG_WARN([callname syscall not found; not building $1])
         [build_]suffix=no ;;
       *)
         dnl default $ul_cv_syscall_ is SYS_ value
