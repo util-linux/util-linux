@@ -1146,7 +1146,8 @@ partitions_ok(int fd, struct disk_desc *z) {
 	if (!partno)
 	    errx(EXIT_FAILURE, _("no partition table present."));
 	else
-	    errx(EXIT_FAILURE, _("strange, only %d partitions defined."), partno);
+	    errx(EXIT_FAILURE, P_("strange, only %d partition defined.",
+		"strange, only %d partitions defined.", partno), partno);
 	return 0;
     }
 
