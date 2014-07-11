@@ -1123,7 +1123,7 @@ int main(int argc, char **argv)
 	timeout = (unsigned int)getlogindefs_num("LOGIN_TIMEOUT", LOGIN_TIMEOUT);
 
 	signal(SIGALRM, timedout);
-	siginterrupt(SIGALRM, 1);	/* we have to interrupt syscalls like ioclt() */
+	siginterrupt(SIGALRM, 1);	/* we have to interrupt syscalls like ioctl() */
 	alarm(timeout);
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, SIG_IGN);

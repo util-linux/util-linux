@@ -358,7 +358,7 @@ static void rereadpt(int fd, const char *devname)
 
 	errno = 0;
 	ioctl(fd, BLKRRPART);
-	printf(_("%s: calling ioclt to re-read partition table: %m\n"), devname);
+	printf(_("%s: calling ioctl to re-read partition table: %m\n"), devname);
 #endif
 }
 
