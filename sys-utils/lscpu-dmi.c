@@ -258,7 +258,7 @@ int read_hypervisor_dmi(void)
 	if (rc)
 		goto done;
 	free(buf);
-
+	buf = NULL;
 memory_scan:
 #if defined(__x86_64__) || defined(__i386__)
 	/* Fallback to memory scan (x86, x86_64) */
