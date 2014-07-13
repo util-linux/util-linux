@@ -770,12 +770,11 @@ static void screendump(struct setterm_control *ctl)
 	size_t i, j;
 	ssize_t rc;
 	char *inbuf, *outbuf, *p, *q;
-	char dump_default[] = "screen.dump";
 
 	/* open source and destination files */
 	fd = open_snapshot_device(ctl);
 	if (!ctl->opt_sn_name)
-		ctl->opt_sn_name = dump_default;
+		ctl->opt_sn_name = "screen.dump";
 	out = fopen(ctl->opt_sn_name, ctl->opt_snap ? "w" : "a");
 	if (!out)
 		err(EXIT_DUMPFILE, _("can not open dump file %s for output"), ctl->opt_sn_name);
