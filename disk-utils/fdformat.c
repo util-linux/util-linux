@@ -35,7 +35,7 @@ static void format_disk(int ctrl)
 		if (ioctl(ctrl, FDFMTTRK, (long) &descr) < 0)
 			err(EXIT_FAILURE, "ioctl: FDFMTTRK");
 
-		printf("%3d\b\b\b", track);
+		printf("%3ud\b\b\b", track);
 		fflush(stdout);
 		if (param.head == 2) {
 			descr.head = 1;
@@ -63,7 +63,7 @@ static void verify_disk(char *name)
 	for (cyl = 0; cyl < param.track; cyl++) {
 		int read_bytes;
 
-		printf("%3d\b\b\b", cyl);
+		printf("%u3d\b\b\b", cyl);
 		fflush(stdout);
 		read_bytes = read(fd, data, cyl_size);
 		if (read_bytes != cyl_size) {
