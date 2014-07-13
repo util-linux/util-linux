@@ -636,7 +636,7 @@ static void resize_on_signal(int dummy __attribute__((__unused__)))
 static void menu_refresh_size(struct cfdisk *cf)
 {
 	if (cf->menu && cf->menu->nitems)
-		cf->menu->page_sz = cf->menu->nitems / (LINES - 4) ? LINES - 4 : 0;
+		cf->menu->page_sz = (cf->menu->nitems / (LINES - 4)) ? LINES - 4 : 0;
 }
 
 static void menu_update_ignore(struct cfdisk *cf)
