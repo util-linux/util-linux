@@ -612,7 +612,7 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 	for (i = 0; i < size; i++) {
 		const char *p = buf + i;
 		int rc, hex = 0;
-	        size_t len = 1;
+		size_t len;
 
 #ifdef HAVE_WIDECHAR
 		wchar_t wc;
@@ -629,6 +629,7 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 		}
 		i += len - 1;
 #else
+		len = 1;
 		if (!isprint((unsigned int) *p) &&
 			!isspace((unsigned int) *p))        /* non-printable */
 			hex = 1;
