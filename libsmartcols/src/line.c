@@ -199,9 +199,9 @@ int scols_line_remove_child(struct libscols_line *ln, struct libscols_line *chil
 	DBG(LINE, ul_debugobj(ln, "remove child %p", child));
 
 	list_del_init(&child->ln_children);
+	child->parent = NULL;
 	scols_unref_line(child);
 
-	child->parent = NULL;
 	scols_unref_line(ln);
 	return 0;
 }
