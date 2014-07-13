@@ -187,12 +187,7 @@ enum {
 
 #define TODAY_FLAG		0x400		/* flag day for highlighting */
 
-#define FMT_ST_LINES 9
 #define FMT_ST_CHARS 300	/* 90 suffices in most locales */
-struct fmt_st
-{
-	char s[FMT_ST_LINES][FMT_ST_CHARS];
-};
 
 static const int days_in_month[2][13] = {
 	{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
