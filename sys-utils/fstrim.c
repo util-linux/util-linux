@@ -118,7 +118,7 @@ static int has_discard(const char *devname, struct sysfs_cxt *wholedisk)
 	 * This is tricky to read the info from sys/, because the queue
 	 * atrributes are provided for whole devices (disk) only. We're trying
 	 * to reuse the whole-disk sysfs context to optimize this stuff (as
-	 * system usualy have just one disk only).
+	 * system usually have just one disk only).
 	 */
 	if (sysfs_devno_to_wholedisk(dev, NULL, 0, &disk) || !disk)
 		return 1;

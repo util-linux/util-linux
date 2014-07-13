@@ -303,7 +303,7 @@ int fdisk_partition_next_partno(
  *
  * Returns info about partition converted to printable string.
  *
- * For exmaple
+ * For example
  *
  *      struct fdisk_parition *pa;
  *
