@@ -38,9 +38,16 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 }
 
 static __attribute__((__noreturn__))
-void exiter(int sig)
+void exiter(int signo __attribute__((__unused__)),
+	    siginfo_t *info,
+	    void *context __attribute__((__unused__)))
 {
-	_exit(sig);
+	int ret = info->si_signo;
+
+	if (info)
+		if (info->si_code == SI_QUEUE && info->si_value.sival_int != 0)
+			ret = info->si_value.sival_int;
+	_exit(ret);
 }
 
 int main(int argc, char **argv)
@@ -81,8 +88,8 @@ int main(int argc, char **argv)
 	}
 
 	sigemptyset(&sigact.sa_mask);
-	sigact.sa_flags = 0;
-	sigact.sa_handler = exiter;
+	sigact.sa_flags = SA_SIGINFO;
+	sigact.sa_sigaction = exiter;
 	timeout.tv_sec = 5;
 	timeout.tv_usec = 0;
 
@@ -171,5 +178,5 @@ int main(int argc, char **argv)
 	FD_SET(STDIN_FILENO, &rfds);
 	select(0, &rfds, NULL, NULL, &timeout);
 
-	exiter(TEST_SIGRECEIVE_FAILURE);
+	exit(TEST_SIGRECEIVE_FAILURE);
 }

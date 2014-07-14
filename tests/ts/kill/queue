@@ -13,7 +13,7 @@
 # GNU General Public License for more details.
 
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="options"
+TS_DESC="queue"
 
 . "$TS_TOPDIR/functions.sh"
 ts_init "$*"
@@ -25,39 +25,29 @@ ts_check_test_command "$TS_HELPER_SIGRECEIVE"
 
 all_ok=true
 
-HELPER_SYMLINK="$(mktemp "${TS_OUTDIR}/opXXXXXXXXXXXXX")"
+HELPER_SYMLINK="$(mktemp "${TS_OUTDIR}/quXXXXXXXXXXXXX")"
 ln -sf "$TS_HELPER_SIGRECEIVE" "$HELPER_SYMLINK"
 
-try_option()
-{
-	"$HELPER_SYMLINK" >> "$TS_OUTPUT" 2>&1 &
-	TEST_PID=$!
-	check_test_sigreceive $TEST_PID
-	[ $? -eq 1 ] || echo "${HELPER_SYMLINK##*/} helper did not start" >> "$TS_OUTPUT"
+"$HELPER_SYMLINK" >> "$TS_OUTPUT" 2>&1 &
+TEST_PID=$!
+check_test_sigreceive $TEST_PID
+[ $? -eq 1 ] || echo "${HELPER_SYMLINK##*/} helper did not start" >> "$TS_OUTPUT"
 
-	"$TS_CMD_KILL" "$@" $TEST_PID >> "$TS_OUTPUT" 2>&1
-	if [ $? -ne 0 ]; then
-		echo "kill $@ did not work" >> "$TS_OUTPUT"
-		all_ok=false
-	fi
-	wait $TEST_PID
-	if [ $? -ne 1 ]; then
-		echo "wait $TEST_PID for $@ did not work" >> "$TS_OUTPUT"
-		all_ok=false
-	fi
-}
-
-try_option -s 1
-try_option --signal 1
-try_option --signal HUP
-try_option --signal SIGHUP
-try_option -1
-try_option -HUP
-try_option -SIGHUP
+"$TS_CMD_KILL" -1 --queue 42 $TEST_PID >> "$TS_OUTPUT" 2>&1
+if [ $? -ne 0 ]; then
+	echo "kill --queue 42 failed" >> "$TS_OUTPUT"
+	all_ok=false
+fi
+wait $TEST_PID
+if [ $? -ne 42 ]; then
+	echo "wait $TEST_PID returned $? instead of 42" >> "$TS_OUTPUT"
+	all_ok=false
+fi
 
 if $all_ok; then
 	echo 'all ok' >> "$TS_OUTPUT"
 fi
+
 rm -f "$HELPER_SYMLINK"
 
 ts_finalize
