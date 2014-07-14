@@ -47,7 +47,7 @@ static int do_scale_by_power (uintmax_t *x, int base, int power)
  * The optinal 'power' variable returns number associated with used suffix
  * {K,M,G,T,P,E,Z,Y}  = {1,2,3,4,5,6,7,8}.
  *
- * The funtion also supports decimal point, for example:
+ * The function also supports decimal point, for example:
  *              0.5MB   = 500000
  *              0.5MiB  = 512000
  *

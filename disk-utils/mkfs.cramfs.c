@@ -167,11 +167,9 @@ do_mmap(char *path, unsigned int size, unsigned int mode){
 	}
 
 	start = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
-	if (-1 == (int) (long) start) {
-		close(fd);
-		err(MKFS_EX_ERROR, "mmap");
-	}
 	close(fd);
+	if (start == MAP_FAILED)
+		err(MKFS_EX_ERROR, "mmap");
 	return start;
 err:
 	free(start);

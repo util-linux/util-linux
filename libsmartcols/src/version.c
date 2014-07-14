@@ -11,7 +11,7 @@
  * @title: Version functions
  * @short_description: functions to get the library version.
  *
- * Note that library version is not the same thing as SONAME verison. The
+ * Note that library version is not the same thing as SONAME version. The
  * libsmarcols uses symbols versioning and SONAME is not modified for releases.
  *
  * The library version and symbols version follow util-linux package versioning.

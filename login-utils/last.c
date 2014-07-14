@@ -401,7 +401,7 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 		utline[4] = 0;
 
 	/*
-	 *	Is this something we wanna show?
+	 *	Is this something we want to show?
 	 */
 	if (ctl->show) {
 		char **walk;

@@ -408,13 +408,12 @@ static void lookup(const char *pattern, struct wh_dirlist *ls, int want)
 	int count = 0;
 	char *wait = NULL, *p;
 
-	DBG(printf("lookup dirs for '%s' (%s)", patbuf, pattern));
-
 	/* canonicalize pattern -- remove path suffix etc. */
 	p = strrchr(pattern, '/');
 	p = p ? p + 1 : (char *) pattern;
 	strncpy(patbuf, p, PATH_MAX);
 	patbuf[PATH_MAX - 1] = '\0';
+	DBG(printf("lookup dirs for '%s' (%s)", patbuf, pattern));
 	p = strrchr(patbuf, '.');
 	if (p)
 		*p = '\0';

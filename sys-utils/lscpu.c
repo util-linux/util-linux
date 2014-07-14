@@ -690,7 +690,7 @@ is_vmware_platform(void)
 	if (sigsetjmp(segv_handler_env, 1))
 		return 0;
 
-	bzero(&act, sizeof(act));
+	memset(&act, 0, sizeof(act));
 	act.sa_sigaction = segv_handler;
 	act.sa_flags = SA_SIGINFO;
 

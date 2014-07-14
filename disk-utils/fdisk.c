@@ -725,16 +725,15 @@ static void print_all_devices_pt(struct fdisk_context *cxt)
 
 static sector_t get_dev_blocks(char *dev)
 {
-	int fd;
+	int fd, ret;
 	sector_t size;
 
 	if ((fd = open(dev, O_RDONLY)) < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), dev);
-	if (blkdev_get_sectors(fd, &size) == -1) {
-		close(fd);
-		err(EXIT_FAILURE, _("BLKGETSIZE ioctl failed on %s"), dev);
-	}
+	ret = blkdev_get_sectors(fd, &size);
 	close(fd);
+	if (ret < 0)
+		err(EXIT_FAILURE, _("BLKGETSIZE ioctl failed on %s"), dev);
 	return size/2;
 }
 

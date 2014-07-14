@@ -1739,7 +1739,7 @@ static int cmp_ebr_offsets(const void *a, const void *b)
 	struct pte *ae = (struct pte *) a,
 		   *be = (struct pte *) b;
 
-	if (ae->offset == 0 && ae->offset == 0)
+	if (ae->offset == 0 && be->offset == 0)
 		return 0;
 	if (ae->offset == 0)
 		return 1;

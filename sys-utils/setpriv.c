@@ -254,9 +254,10 @@ static void dump_groups(void)
 		return;
 	}
 
-	groups = alloca(n * sizeof(gid_t));
+	groups = xmalloc(n * sizeof(gid_t));
 	n = getgroups(n, groups);
 	if (n < 0) {
+		free(groups);
 		warn("getgroups failed");
 		return;
 	}
@@ -273,6 +274,7 @@ static void dump_groups(void)
 		}
 	}
 	printf("\n");
+	free(groups);
 }
 
 static void dump(int dumplevel)
