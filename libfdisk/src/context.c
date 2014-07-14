@@ -180,6 +180,7 @@ static void reset_context(struct fdisk_context *cxt)
 	cxt->dev_fd = -1;
 	cxt->dev_path = NULL;
 	cxt->firstsector = NULL;
+	cxt->firstsector_bufsz = 0;
 
 	fdisk_zeroize_device_properties(cxt);
 

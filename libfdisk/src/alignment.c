@@ -239,6 +239,8 @@ int fdisk_apply_user_device_properties(struct fdisk_context *cxt)
 		recount_geometry(cxt);
 
 	fdisk_reset_alignment(cxt);
+	if (cxt->firstsector_bufsz != cxt->sector_size)
+		fdisk_read_firstsector(cxt);
 
 	DBG(CXT, ul_debugobj(cxt, "new C/H/S: %u/%u/%u",
 		(unsigned) cxt->geom.cylinders,
@@ -484,9 +486,8 @@ int fdisk_reset_alignment(struct fdisk_context *cxt)
 	if (cxt->label && cxt->label->op->reset_alignment)
 		rc = cxt->label->op->reset_alignment(cxt);
 
-	DBG(CXT, ul_debugobj(cxt, "%s alignment reseted to: "
+	DBG(CXT, ul_debugobj(cxt, "alignment reseted to: "
 			    "first LBA=%ju, last LBA=%ju, grain=%lu [rc=%d]",
-			    cxt->label ? cxt->label->name : NULL,
 			    (uintmax_t) cxt->first_lba, (uintmax_t) cxt->last_lba,
 			    cxt->grain,	rc));
 	return rc;

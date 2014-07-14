@@ -360,11 +360,14 @@ static inline int partition_unused(const struct gpt_entry *e)
 static int gpt_mknew_pmbr(struct fdisk_context *cxt)
 {
 	struct gpt_legacy_mbr *pmbr = NULL;
+	int rc;
 
 	if (!cxt || !cxt->firstsector)
 		return -ENOSYS;
 
-	fdisk_zeroize_firstsector(cxt);
+	rc = fdisk_init_firstsector_buffer(cxt);
+	if (rc)
+		return rc;
 
 	pmbr = (struct gpt_legacy_mbr *) cxt->firstsector;
 

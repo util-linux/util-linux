@@ -338,7 +338,9 @@ struct fdisk_ask {
 struct fdisk_context {
 	int dev_fd;         /* device descriptor */
 	char *dev_path;     /* device path */
+
 	unsigned char *firstsector; /* buffer with master boot record */
+	unsigned long firstsector_bufsz;
 
 	/* topology */
 	unsigned long io_size;		/* I/O size used by fdisk */
@@ -418,7 +420,7 @@ extern int fdisk_apply_user_device_properties(struct fdisk_context *cxt);
 extern void fdisk_zeroize_device_properties(struct fdisk_context *cxt);
 
 /* utils.c */
-extern void fdisk_zeroize_firstsector(struct fdisk_context *cxt);
+extern int fdisk_init_firstsector_buffer(struct fdisk_context *cxt);
 extern int fdisk_read_firstsector(struct fdisk_context *cxt);
 extern char *fdisk_partname(const char *dev, size_t partno);
 

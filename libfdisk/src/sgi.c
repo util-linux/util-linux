@@ -908,6 +908,7 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 {
 	struct fdisk_sgi_label *sgi;
 	struct sgi_disklabel *sgilabel;
+	int rc;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -936,7 +937,10 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 		}
 	}
 #endif
-	fdisk_zeroize_firstsector(cxt);
+	rc = fdisk_init_firstsector_buffer(cxt);
+	if (rc)
+		return rc;
+
 	sgi = (struct fdisk_sgi_label *) cxt->label;
 	sgi->header = (struct sgi_disklabel *) cxt->firstsector;
 

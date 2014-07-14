@@ -586,6 +586,7 @@ static int dos_get_disklabel_id(struct fdisk_context *cxt, char **id)
 static int dos_create_disklabel(struct fdisk_context *cxt)
 {
 	unsigned int id;
+	int rc;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -597,7 +598,9 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 	random_get_bytes(&id, sizeof(id));
 
 	dos_init(cxt);
-	fdisk_zeroize_firstsector(cxt);
+	rc = fdisk_init_firstsector_buffer(cxt);
+	if (rc)
+		return rc;
 	fdisk_label_set_changed(cxt->label, 1);
 
 	/* Generate an MBR ID for this disk */

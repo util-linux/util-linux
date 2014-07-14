@@ -4,35 +4,50 @@
 
 #include <ctype.h>
 
-
 /*
  * Zeros in-memory first sector buffer
  */
-void fdisk_zeroize_firstsector(struct fdisk_context *cxt)
+int fdisk_init_firstsector_buffer(struct fdisk_context *cxt)
 {
-	if (!cxt || !cxt->firstsector)
-		return;
+	if (!cxt)
+		return -EINVAL;
+
+	if (!cxt->firstsector || cxt->firstsector_bufsz != cxt->sector_size) {
+		/* Let's allocate a new buffer if no allocated yet, or the
+		 * current buffer has incorrect size */
+		free(cxt->firstsector);
+
+		DBG(CXT, ul_debugobj(cxt, "initialize in-memory first sector "
+				"buffer [sector_size=%lu]", cxt->sector_size));
+		cxt->firstsector = calloc(1, cxt->sector_size);
+		if (!cxt->firstsector)
+			return -ENOMEM;
+
+		cxt->firstsector_bufsz = cxt->sector_size;
+		return 0;
+	}
 
 	DBG(CXT, ul_debugobj(cxt, "zeroize in-memory first sector buffer"));
-	memset(cxt->firstsector, 0, cxt->sector_size);
+	memset(cxt->firstsector, 0, cxt->firstsector_bufsz);
+	return 0;
 }
 
 int fdisk_read_firstsector(struct fdisk_context *cxt)
 {
 	ssize_t r;
+	int rc;
 
 	assert(cxt);
 	assert(cxt->sector_size);
 
-	DBG(CXT, ul_debugobj(cxt, "initialize first sector "
-				"buffer [sector_size=%lu]", cxt->sector_size));
+	rc = fdisk_init_firstsector_buffer(cxt);
+	if (rc)
+		return rc;
 
-	if (!cxt->firstsector) {
-		cxt->firstsector = calloc(1, cxt->sector_size);
-		if (!cxt->firstsector)
-			return -ENOMEM;
-	} else
-		fdisk_zeroize_firstsector(cxt);
+	assert(cxt->sector_size == cxt->firstsector_bufsz);
+
+	DBG(CXT, ul_debugobj(cxt, "reading first sector "
+				"buffer [sector_size=%lu]", cxt->sector_size));
 
 	r = read(cxt->dev_fd, cxt->firstsector, cxt->sector_size);
 

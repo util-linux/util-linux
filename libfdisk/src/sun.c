@@ -195,13 +195,17 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	unsigned int ndiv;
 	struct fdisk_sun_label *sun;		/* libfdisk sun handler */
 	struct sun_disklabel *sunlabel;	/* on disk data */
+	int rc = 0;
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SUN));
 
 	/* map first sector to header */
-	fdisk_zeroize_firstsector(cxt);
+	rc = fdisk_init_firstsector_buffer(cxt);
+	if (rc)
+		return rc;
+
 	sun = (struct fdisk_sun_label *) cxt->label;
 	sun->header = (struct sun_disklabel *) cxt->firstsector;
 
