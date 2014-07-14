@@ -2,9 +2,9 @@ util-linux 2.25-rc2: Jul 2 2014
 * see Documentation/releases/v2.25-ReleaseNotes or complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.25/v2.25-rc2-ChangeLog
 
-util-linux 2.25: Jun 18 2014
+util-linux 2.25-rc1: Jun 18 2014
 * see Documentation/releases/v2.25-ReleaseNotes or complete changelog at
-  ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.25/v2.25-ChangeLog
+  ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.25/v2.25-rc1-ChangeLog
 
 util-linux 2.24: Oct 21 2013
 * see Documentation/releases/v2.24-ReleaseNotes or complete changelog at
