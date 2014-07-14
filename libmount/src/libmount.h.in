@@ -773,29 +773,28 @@ extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status
 #define MS_REC		0x4000	/* 16384: Recursive loopback */
 #endif
 #ifndef MS_SILENT
-#define MS_SILENT	0x8000	/* 32768 */
-#endif
-#ifndef MS_RELATIME
-#define MS_RELATIME	0x200000 /* 200000: Update access times relative
-                                  to mtime/ctime */
+#define MS_SILENT	0x8000	/* 32768: Don't emit certain kernel messages */
 #endif
 #ifndef MS_UNBINDABLE
-#define MS_UNBINDABLE	(1<<17)	/* 131072 unbindable*/
+#define MS_UNBINDABLE	(1<<17)	/* 131072: Make unbindable */
 #endif
 #ifndef MS_PRIVATE
-#define MS_PRIVATE	(1<<18)	/* 262144 Private*/
+#define MS_PRIVATE	(1<<18)	/* 262144: Make private */
 #endif
 #ifndef MS_SLAVE
-#define MS_SLAVE	(1<<19)	/* 524288 Slave*/
+#define MS_SLAVE	(1<<19)	/* 524288: Make slave */
 #endif
 #ifndef MS_SHARED
-#define MS_SHARED	(1<<20)	/* 1048576 Shared*/
+#define MS_SHARED	(1<<20)	/* 1048576: Make shared */
+#endif
+#ifndef MS_RELATIME
+#define MS_RELATIME	(1<<21) /* 2097152: Update atime relative to mtime/ctime */
 #endif
 #ifndef MS_I_VERSION
-#define MS_I_VERSION	(1<<23)	/* update inode I_version field */
+#define MS_I_VERSION	(1<<23)	/* Update the inode I_version field */
 #endif
 #ifndef MS_STRICTATIME
-#define MS_STRICTATIME	(1<<24) /* strict atime semantics */
+#define MS_STRICTATIME	(1<<24) /* Always perform atime updates */
 #endif
 
 /*
