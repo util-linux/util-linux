@@ -852,7 +852,7 @@ a comma-separated list.  For example:
 .RS
 .RS
 .sp
-.B "mount LABEL=mydisk \-o noatime,nouser"
+.B "mount LABEL=mydisk \-o noatime,nodev,nosuid"
 .sp
 .RE
 
@@ -1153,7 +1153,7 @@ This option implies the options
 .TP
 .B nouser
 Forbid an ordinary (i.e., non-root) user to mount the filesystem.
-This is the default.
+This is the default; it does not imply any other options.
 .TP
 .B users
 Allow every user to mount and unmount the filesystem.
