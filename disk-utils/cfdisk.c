@@ -1,3 +1,17 @@
+/*
+ * cfdisk.c - Display or manipulate a disk partition table.
+ *
+ *     Copyright (C) 2014 Karel Zak <kzak@redhat.com>
+ *     Copyright (C) 1994 Kevin E. Martin (martin@cs.unc.edu)
+ *
+ *     The original cfdisk was inspired by the fdisk program
+ *           by A. V. Le Blanc (leblanc@mcc.ac.uk.
+ *
+ * cfdisk is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ */
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
