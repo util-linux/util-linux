@@ -36,7 +36,7 @@
 hexdump \- display file contents in ascii, decimal, hexadecimal, or octal
 .SH SYNOPSIS
 .B hexdump
-.RI [options] file ...
+.RI [options] " file" ...
 .SH DESCRIPTION
 The
 .B hexdump
@@ -44,10 +44,10 @@ utility is a filter which displays the specified files, or
 standard input if no files are specified, in a user-specified
 format.
 .SH OPTIONS
-The \fIlength\fR and \fIoffset\fR arguments may be followed by the multiplicative
-suffixes KiB=1024, MiB=1024*1024, and so on for GiB, TiB, PiB, EiB, ZiB and YiB
-(the "iB" is optional, e.g. "K" has the same meaning as "KiB") or the suffixes
-KB=1000, MB=1000*1000, and so on for GB, TB, PB, EB, ZB and YB.
+Below, the \fIlength\fR and \fIoffset\fR arguments may be followed by the multiplicative
+suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB
+(the "iB" is optional, e.g. "K" has the same meaning as "KiB"), or the suffixes
+KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 .TP
 \fB\-b\fR, \fB\-\-one\-byte\-octal\fR
 \fIOne-byte octal display\fR.  Display the input offset in hexadecimal,
@@ -67,10 +67,6 @@ by the same sixteen bytes in
 format enclosed in
 .RB ' | '
 characters.
-.IP "\fB\-L\fR, \fB\-\-color\fR[=\fIwhen\fR]"
-Accept color units for the output  (enabled by default). The optional argument \fIwhen\fP
-can be \fBauto\fR, \fBnever\fR or \fBalways\fR.  If the \fIwhen\fR argument is omitted,
-then it defaults to \fBauto\fR.
 .TP
 \fB\-d\fR, \fB\-\-two\-bytes\-decimal\fR
 \fITwo-byte decimal display\fR.  Display the input offset in hexadecimal,
@@ -80,10 +76,15 @@ of input data, in unsigned decimal, per line.
 \fB\-e\fR, \fB\-\-format\fR \fIformat_string\fR
 Specify a format string to be used for displaying data.
 .TP
-\fB\-r\fR, \fB\-\-format\-file\fR \fIfile\fR
-Specify a file that contains one or more newline separated format strings.
+\fB\-f\fR, \fB\-\-format\-file\fR \fIfile\fR
+Specify a file that contains one or more newline-separated format strings.
 Empty lines and lines whose first non-blank character is a hash mark (\&#)
 are ignored.
+.TP
+\fB\-L\fR, \fB\-\-color\fR[=\fIwhen\fR]
+Accept color units for the output (enabled by default).  The optional argument \fIwhen\fP
+can be \fBauto\fR, \fBnever\fR or \fBalways\fR.  If the \fIwhen\fR argument is omitted,
+then it defaults to \fBauto\fR.
 .TP
 \fB\-n\fR, \fB\-\-length\fR \fIlength\fR
 Interpret only

@@ -7,70 +7,70 @@
 .SH "NAME"
 terminal-colors.d \- Configure output colorization for various utilities
 .SH "SYNOPSIS"
-/etc/terminal-colors\&.d/[[name][@term]\&.][type]
+/etc/terminal-colors\&.d/[[\fIname\fR][@\fIterm\fR]\&.][\fItype\fR]
 .SH "DESCRIPTION"
 Files in this directory determine the default behavior for utilities
 when coloring output.
 
 The
-.B name
-is an utility name. The name is optional and when no specified than the
+.I name
+is a utility name.  The name is optional and when none is specified then the
 file is used for all unspecified utilities.
 
 The
-.B term
+.I term
 is a terminal identifier (the TERM environment variable).
-The terminal identifier is optional and when no specified than the file
+The terminal identifier is optional and when none is specified then the file
 is used for all unspecified terminals.
 
 The
-.B type
-is a file type. Supported file types:
+.I type
+is a file type.  Supported file types are:
 .TP
 .B disable
 Turns off output colorization for all compatible utilities.
 .TP
 .B enable
-Turns on output colorization, all another
+Turns on output colorization; any matching
 .B disable
 files are ignored.
 .TP
 .B scheme
-Specifies colors used for output. The file format may be specific to the utility,
+Specifies colors used for output.  The file format may be specific to the utility,
 the default format is described below.
 .PP
-If there is more files that match for the utility then the file with more
-specific filename wins. For example filename "@xterm.scheme" has less
-priority than "dmesg@xterm.scheme". The lowest priority have files without
+If there are more files that match for a utility, then the file with the more
+specific filename wins.  For example, the filename "@xterm.scheme" has less
+priority than "dmesg@xterm.scheme".  The lowest priority are those files without a
 utility name and terminal identifier (e.g. "disable").
 
-The user specific
-.IR  $XDG_CONFIG_HOME/terminal-colors.d
+The user-specific
+.I $XDG_CONFIG_HOME/terminal-colors.d
 or
-.IR $HOME/.config/terminal-colors.d
+.I $HOME/.config/terminal-colors.d
 overrides the global setting.
 
 .SH EXAMPLES
 Disable colors for all compatible utilities:
 .RS
 .br
-.BI "touch /etc/terminal-colors.d/disable"
+.B "touch /etc/terminal-colors.d/disable"
 .br
 .RE
 
-Disable colors for all compatible utils on vt100 terminal:
+Disable colors for all compatible utils on a vt100 terminal:
 .RS
 .br
-.BI "touch /etc/terminal-colors.d/@vt100.disable"
+.B "touch /etc/terminal-colors.d/@vt100.disable"
 .br
 .RE
 
 Disable colors for all compatible utils except dmesg(1):
 .RS
 .br
-.BI "touch /etc/terminal-colors.d/disable"
+.B "touch /etc/terminal-colors.d/disable"
 .sp
-.BI "touch /etc/terminal-colors.d/dmesg.enable"
+.B "touch /etc/terminal-colors.d/dmesg.enable"
 .br
 .RE
 
@@ -79,14 +79,14 @@ The following statement is recognized:
 
 .RS
 .br
-.BI "name color-sequence"
+.B "name color-sequence"
 .br
 .RE
 
 The
 .B name
-is a logical name of color sequence (for example "error"). The names are
-specific to the utilities. For more details always see the COLORS section
+is a logical name of color sequence (for example "error").  The names are
+specific to the utilities.  For more details always see the COLORS section
 in the man page for the utility.
 
 The
@@ -98,7 +98,7 @@ black, blue, brown, cyan, darkgray, gray, green, lightblue, lightcyan
 lightgray, lightgreen, lightmagenta, lightred, magenta, red and yellow
 .SS ANSI color sequences
 The color sequences are composed of sequences of numbers
-separated by semicolons. The most common codes are:
+separated by semicolons.  The most common codes are:
 .sp
 .RS
 .TS
@@ -126,7 +126,7 @@ l l.
 .TE
 .RE
 .SS Escape sequences
-To specify control or blank characters in the color sequences
+To specify control or blank characters in the color sequences,
 C-style \e-escaped notation can be used:
 .sp
 .RS
@@ -152,22 +152,22 @@ Please note that escapes are necessary to enter a space, backslash,
 caret, or any control character anywhere in the string, as well as a
 hash mark as the first character.
 
-For example to use red background for alert messages in
-.BR dmesg (1) 
-output use:
+For example, to use a red background for alert messages in the output of
+.BR dmesg (1),
+use:
 
 .RS
 .br
-.BI "echo 'alert 37;41' >> /etc/terminal-colors.d/dmesg.scheme"
+.B "echo 'alert 37;41' >> /etc/terminal-colors.d/dmesg.scheme"
 .br
 .RE
 
 .SH FILES
-.IR $XDG_CONFIG_HOME/terminal-colors.d
+.B $XDG_CONFIG_HOME/terminal-colors.d
 .br
-.IR $HOME/.config/terminal-colors.d
+.B $HOME/.config/terminal-colors.d
 .br
-.IR /etc/terminal-colors.d
+.B /etc/terminal-colors.d
 
 .SH COMPATIBILITY
 The terminal-colors.d functionality is currently supported by all util-linux

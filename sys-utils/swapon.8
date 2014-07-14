@@ -38,24 +38,24 @@
 .\" Mon Sep 25 14:12:38 1995: Added -v and -p information
 .\" Tue Apr 30 03:32:07 1996: Added some text from A. Koppenhoefer
 .\"
-.TH SWAPON 8 "September 1995" "util-linux" "System Administration"
+.TH SWAPON 8 "July 2014" "util-linux" "System Administration"
 .SH NAME
 swapon, swapoff \- enable/disable devices and files for paging and swapping
 .SH SYNOPSIS
-.B swapon
-[ options ]
-.RI [ specialfile... ]
+.BR swapon
+[options]
+.RI [ specialfile ...]
 .br
 .B swapoff
 .RB [ \-va ]
-.RI [ specialfile... ]
+.RI [ specialfile ...]
 .SH DESCRIPTION
 .B swapon
 is used to specify devices on which paging and swapping are to take place.
 
 The device or file used is given by the
 .I specialfile
-parameter. It may be of the form
+parameter.  It may be of the form
 .BI \-L " label"
 or
 .BI \-U " uuid"
@@ -77,17 +77,18 @@ flag is given, swapping is disabled on all known swap devices and files
 or
 .IR /etc/fstab ).
 
+.SH OPTIONS
 .TP
-.B "\-a, \-\-all"
+.BR \-a , " \-\-all"
 All devices marked as ``swap'' in
 .I /etc/fstab
 are made available, except for those with the ``noauto'' option.
 Devices that are already being used as swap are silently skipped.
 .TP
-.B "\-d, \-\-discard\fR [=\fIpolicy\fR]"
+.BR \-d , " \-\-discard" [ =\fIpolicy\fR]
 Enable swap discards, if the swap backing device supports the discard or
-trim operation. This may improve performance on some Solid State Devices,
-but often it does not. The option allows one to select between two
+trim operation.  This may improve performance on some Solid State Devices,
+but often it does not.  The option allows one to select between two
 available swap discard policies:
 .BI \-\-discard=once
 to perform a single-time discard operation for the whole swap area at swapon;
@@ -98,44 +99,44 @@ If no policy is selected, the default behavior is to enable both discard types.
 The
 .I /etc/fstab
 mount options
-.BI discard,
-.BI discard=once,
+.BR discard ,
+.BR discard=once ,
 or
-.BI discard=pages
-may be also used to enable discard flags.
+.B discard=pages
+may also be used to enable discard flags.
 .TP
-.B "\-e, \-\-ifexists"
+.BR \-e , " \-\-ifexists"
 Silently skip devices that do not exist.
 The
 .I /etc/fstab
 mount option
-.BI nofail
-may be also used to skip non-existing device.
+.B nofail
+may also be used to skip non-existing device.
 
 .TP
-.B "\-f, \-\-fixpgsz"
+.BR \-f , " \-\-fixpgsz"
 Reinitialize (exec /sbin/mkswap) the swap space if its page size does not
 match that of the current running kernel.
 .BR mkswap (2)
 initializes the whole device and does not check for bad blocks.
 .TP
-.B \-h, \-\-help
+.BR \-h , " \-\-help"
 Display help text and exit.
 .TP
-.B "\-L \fIlabel\fP"
+.BI \-L " label"
 Use the partition that has the specified
 .IR label .
 (For this, access to
 .I /proc/partitions
 is needed.)
 .TP
-.B "\-p, \-\-priority \fIpriority\fP"
+.BR \-p , " \-\-priority " \fIpriority\fP
 Specify the priority of the swap device.
 .I priority
 is a value between \-1 and 32767.  Higher numbers indicate
 higher priority.  See
 .BR swapon (2)
-for a full description of swap priorities. Add
+for a full description of swap priorities.  Add
 .BI pri= value
 to the option field of
 .I /etc/fstab
@@ -143,17 +144,17 @@ for use with
 .BR "swapon -a" .
 When priority is not defined it defaults to \-1.
 .TP
-.B "\-s, \-\-summary"
-Display swap usage summary by device. Equivalent to "cat /proc/swaps".
-Not available before Linux 2.1.25. This output format is DEPRECATED in favour
+.BR \-s , " \-\-summary"
+Display swap usage summary by device.  Equivalent to "cat /proc/swaps".
+Not available before Linux 2.1.25.  This output format is DEPRECATED in favour
 of \fB\-\-show\fR that provides better control on output data.
 .TP
-\fB\-\-show\fR [\fIcolumn\fR, ...]
+.BR \-\-show " [\fIcolumn\fR, ...]"
 Display definable device table similar to
 .B \-\-summary
-output.  See \-\-help output for
-.I column
-list.
+output.  See
+.B \-\-help
+output for a list of available columns.
 .TP
 .B \-\-noheadings
 Do not print headings when displaying
@@ -168,8 +169,9 @@ output without aligning table columns.
 .B \-\-bytes
 Display swap size in bytes in
 .B \-\-show
-output instead of user friendly size and unit.
-.B "\-U \fIuuid\fP"
+output instead of in user-friendly units.
+.TP
+.BI \-U  " uuid"
 Use the partition that has the specified
 .IR uuid .
 .TP
@@ -195,10 +197,10 @@ may not work correctly when using a swap file with some versions of btrfs.
 This is due to the swap file implementation in the kernel expecting to be able
 to write to the file directly, without the assistance of the file system.
 Since btrfs is a copy-on-write file system, the file location may not be
-static and corruption can result. Btrfs actively disallows the use of files
-on its file systems by refusing to map the file. This can be seen in the system
-log as "swapon: swapfile has holes." One possible workaround is to map the
-file to a loopback device. This will allow the file system to determine the
+static and corruption can result.  Btrfs actively disallows the use of files
+on its file systems by refusing to map the file.  This can be seen in the system
+log as "swapon: swapfile has holes."  One possible workaround is to map the
+file to a loopback device.  This will allow the file system to determine the
 mapping properly but may come with a performance impact.
 
 .SH ENVIRONMENT
