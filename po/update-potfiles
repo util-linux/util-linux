@@ -28,6 +28,7 @@ source_files=$(
 		-e '/\(\.h\|\.c\)$/!d' \
 		-e '/^tests\//d' \
 		-e '/\/samples\//d' \
+		-e '/^Documentation\//d' \
 )
 
 # throw away non-existing files (dirty git repo)
