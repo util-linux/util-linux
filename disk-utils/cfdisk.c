@@ -1617,7 +1617,7 @@ static int ui_help(void)
 		N_("  n          Create new partition from free space"),
 		N_("  q          Quit program without writing partition table"),
 		N_("  t          Change the partition type"),
-		N_("  s          Fix partitions order"),
+		N_("  s          Fix partitions order (only when in disarray)"),
 		N_("  W          Write partition table to disk (must enter upper case W)"),
 		N_("             Since this might destroy data on the disk, you must"),
 		N_("             either confirm or deny the write by entering `yes' or"),
@@ -1795,7 +1795,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		int rc;
 
 		if (fdisk_context_is_readonly(cf->cxt)) {
-			ui_warnx(_("Device open in read-only mode"));
+			warn = _("Device open in read-only mode");
 			break;
 		}
 
