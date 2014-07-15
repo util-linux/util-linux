@@ -148,6 +148,8 @@ struct cfdisk {
 	size_t	lines_idx;	/* current line <0..N>, exclude header */
 	size_t  page_sz;
 
+	unsigned int nwrites;	/* fdisk_write_disklabel() counter */
+
 	unsigned int	wrong_order :1,		/* PT not in right order */
 			zero_start :1;		/* ignore existing partition table */
 };
@@ -1805,6 +1807,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			fdisk_reread_partition_table(cf->cxt);
 			info = _("The partition table has been altered.");
 		}
+		cf->nwrites++;
 		break;
 	}
 	default:
@@ -2019,7 +2022,7 @@ int main(int argc, char *argv[])
 	free(cf->linesbuf);
 	fdisk_unref_table(cf->table);
 
-	rc = fdisk_context_deassign_device(cf->cxt);
+	rc = fdisk_context_deassign_device(cf->cxt, cf->nwrites == 0);
 	fdisk_free_context(cf->cxt);
 	DBG(FRONTEND, ul_debug("bye! [rc=%d]", rc));
 	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;

@@ -459,7 +459,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		fdisk_info(cxt, _("The partition table has been altered."));
 		rc = fdisk_reread_partition_table(cxt);
 		if (!rc)
-			rc = fdisk_context_deassign_device(cxt);
+			rc = fdisk_context_deassign_device(cxt, 0);
 		/* fallthrough */
 	case 'q':
 		fdisk_free_context(cxt);
