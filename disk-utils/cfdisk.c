@@ -552,8 +552,10 @@ static void ui_warnx(const char *fmt, ...)
 		ui_vprint_center(INFO_LINE,
 			colors_wanted() ? COLOR_PAIR(CFDISK_CL_WARNING) : 0,
 			fmt, ap);
-	else
+	else {
 		vfprintf(stderr, fmt, ap);
+		fputc('\n', stderr);
+	}
 	va_end(ap);
 }
 
@@ -569,8 +571,10 @@ static void ui_warn(const char *fmt, ...)
 		ui_vprint_center(INFO_LINE,
 			colors_wanted() ? COLOR_PAIR(CFDISK_CL_WARNING) : 0,
 			fmt_m, ap);
-	else
+	else {
 		vfprintf(stderr, fmt_m, ap);
+		fputc('\n', stderr);
+	}
 	va_end(ap);
 	free(fmt_m);
 }
@@ -583,6 +587,7 @@ static int __attribute__((__noreturn__)) ui_errx(int rc, const char *fmt, ...)
 	va_start(ap, fmt);
 	fprintf(stderr, "%s: ", program_invocation_short_name);
 	vfprintf(stderr, fmt, ap);
+	fputc('\n', stderr);
 	va_end(ap);
 
 	exit(rc);
@@ -594,8 +599,10 @@ static void ui_info(const char *fmt, ...)
 	va_start(ap, fmt);
 	if (ui_enabled)
 		ui_vprint_center(INFO_LINE, A_BOLD, fmt, ap);
-	else
+	else {
 		vfprintf(stdout, fmt, ap);
+		fputc('\n', stdout);
+	}
 	va_end(ap);
 }
 
@@ -611,8 +618,10 @@ static void ui_hint(const char *fmt, ...)
 	va_start(ap, fmt);
 	if (ui_enabled)
 		ui_vprint_center(HINT_LINE, A_BOLD, fmt, ap);
-	else
+	else {
 		vfprintf(stdout, fmt, ap);
+		fputc('\n', stdout);
+	}
 	va_end(ap);
 }
 
