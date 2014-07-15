@@ -1513,6 +1513,7 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 			if (d)
 				t = (struct fdisk_parttype *) d->userdata;
 			goto done;
+		case KEY_ESC:
 		case 'q':
 		case 'Q':
 			goto done;
@@ -1581,6 +1582,7 @@ static int ui_create_label(struct cfdisk *cf)
 			if (d)
 				rc = fdisk_create_disklabel(cf->cxt, d->name);
 			goto done;
+		case KEY_ESC:
 		case 'q':
 		case 'Q':
 			goto done;
