@@ -1412,7 +1412,7 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 			user = *res, rc = 0;		/* no change, use default */
 		else {
 			size_t len = strlen(buf);
-			if (buf[len - 1] == 'S') {
+			if (buf[len - 1] == 'S' || buf[len - 1] == 's') {
 				insec = 1;
 				buf[len - 1] = '\0';
 			}
