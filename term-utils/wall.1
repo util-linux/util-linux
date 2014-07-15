@@ -35,7 +35,7 @@
 .\"
 .TH WALL "1" "August 2013" "util-linux" "User Commands"
 .SH NAME
-wall \- write a message to users
+wall \- write a message to all users
 .SH SYNOPSIS
 .B wall
 .RB [ \-n ]
@@ -45,10 +45,10 @@ wall \- write a message to users
 .SH DESCRIPTION
 .B wall
 displays a
-.I message
+.IR message ,
 or the contents of a
-.I file
-or, by default, its standard input, on the terminals of all currently logged
+.IR file ,
+or otherwise its standard input, on the terminals of all currently logged
 in users.  The command will wrap lines that are longer than 79 characters.
 Short lines are whitespace padded to have 79 characters.  The command will
 always put a carriage return and new line at the end of each line.

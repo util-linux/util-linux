@@ -31,15 +31,16 @@
 .\"
 .\"	@(#)script.1	6.5 (Berkeley) 7/27/91
 .\"
-.TH SCRIPT "1" "September 2011" "util-linux" "User Commands"
+.TH SCRIPT "1" "June 2014" "util-linux" "User Commands"
 .SH NAME
 script \- make typescript of terminal session
 .SH SYNOPSIS
 .B script
-[options] [file]
+[options]
+.RI [ file ]
 .SH DESCRIPTION
 .B script
-makes a typescript of everything printed on your terminal.  It is useful for
+makes a typescript of everything displayed on your terminal.  It is useful for
 students who need a hardcopy record of an interactive session as proof of an
 assignment, as the typescript file can be printed out later with
 .BR lpr (1).
@@ -48,17 +49,17 @@ If the argument
 .I file
 is given,
 .B script
-saves all dialogue in
+saves the dialogue in this
 .IR file .
-If no file name is given, the typescript is saved in the file
-.IR typescript .
+If no filename is given, the dialogue is saved in the file
+.BR typescript .
 .SH OPTIONS
 .TP
 \fB\-a\fR, \fB\-\-append\fR
 Append the output to
 .I file
-or
-.IR typescript ,
+or to
+.BR typescript ,
 retaining the prior contents.
 .TP
 \fB\-c\fR, \fB\-\-command\fR \fIcommand\fR
@@ -101,8 +102,7 @@ Display help text and exit.
 .SH NOTES
 The script ends when the forked shell exits (a
 .I control-D
-to exit
-the Bourne shell
+for the Bourne shell
 .RB ( sh (1)),
 and
 .IR exit ,
@@ -118,7 +118,7 @@ C-shell,
 Certain interactive commands, such as
 .BR vi (1),
 create garbage in the typescript file.
-.B Script
+.B script
 works best with commands that do not manipulate the screen, the results are
 meant to emulate a hardcopy terminal.
 .SH ENVIRONMENT
@@ -127,11 +127,11 @@ The following environment variable is utilized by
 .TP
 .B SHELL
 If the variable
-.I SHELL
+.B SHELL
 exists, the shell forked by
 .B script
-will be that shell. If
-.I SHELL
+will be that shell.  If
+.B SHELL
 is not set, the Bourne shell is assumed.  (Most shells set this variable
 automatically).
 .SH SEE ALSO
@@ -145,9 +145,9 @@ The
 .B script
 command appeared in 3.0BSD.
 .SH BUGS
-.B Script
+.B script
 places
-.B everything
+.I everything
 in the log file, including linefeeds and backspaces.  This is not what the
 naive user expects.
 .SH AVAILABILITY

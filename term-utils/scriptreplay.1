@@ -3,14 +3,14 @@
 scriptreplay \- play back typescripts, using timing information
 .SH "SYNOPSIS"
 .B scriptreplay
-.RI [ options ]
+[options]
 .RB [ \-t ]
 .I timingfile
 .RI [ typescript
 .RI [ divisor ]]
 .SH "DESCRIPTION"
 This program replays a typescript, using timing information to ensure that
-output happens at the same speed as it originally appeared when the script
+output happens in the same rhythm as it originally appeared when the script
 was recorded.
 .PP
 The replay simply displays the information again; the programs
@@ -45,10 +45,10 @@ than the original session.
 The first three options will overide old-style arguments.
 .TP
 .BR \-t , " \-\-timing " \fIfile\fR
-File containing script timing output.
+File containing \fBscript\fR's timing output.
 .TP
 .BR \-s , " \-\-typescript " \fIfile\fR
-File containing the script terminal output.
+File containing \fBscript\fR's terminal output.
 .TP
 .BR \-d , " \-\-divisor " \fInumber\fR
 Speed up the replay displaying this
@@ -57,9 +57,9 @@ of times.  The argument is a floating point number.  It's called divisor
 because it divides the timings by this factor.
 .TP
 .BR \-m , " \-\-maxdelay " \fInumber\fR
-Set the maximal delay between transcript updates to
+Set the maximum delay between transcript updates to
 .I number
-seconds.  The argument is a floating point number.  This can be used to
+of seconds.  The argument is a floating point number.  This can be used to
 avoid long pauses in the transcript replay.
 .TP
 .BR \-V , " \-\-version"

@@ -44,7 +44,7 @@ write \- send a message to another user
 .I user
 .RI [ ttyname ]
 .SH DESCRIPTION
-.B Write
+.B write
 allows you to communicate with other users, by copying lines from
 your terminal to theirs.
 .PP
@@ -73,10 +73,11 @@ command.  Some commands, for example
 .BR nroff (1)
 and
 .BR pr (1),
-may disallow writing automatically, so that your output isn't overwritten.
+may automatically disallow writing, so that the output they produce
+isn't overwritten.
 .PP
 If the user you want to write to is logged in on more than one terminal,
-you can specify which terminal to write to by specifying the terminal
+you can specify which terminal to write to by giving the terminal
 name as the second operand to the
 .B write
 command.  Alternatively, you can let

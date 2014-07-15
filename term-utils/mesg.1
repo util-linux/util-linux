@@ -31,23 +31,18 @@
 .\"
 .\"	@(#)mesg.1	8.1 (Berkeley) 6/6/93
 .\"
-.\" Fri Mar 10 20:31:02 1995, modified for standard man macros,
-.\" faith@cs.unc.edu
-.\"
-.\"
-.\" "
-.TH MESG 1 "April 2011" "util-linux" "User Commands"
+.TH MESG 1 "July 2014" "util-linux" "User Commands"
 .SH NAME
-mesg \- display (do not display) messages from other users
+mesg \- display (or do not display) messages from other users
 .SH SYNOPSIS
 .B mesg
-.RB [options]
+[option]
 .RB [ n | y ]
 .SH DESCRIPTION
 The
 .B mesg
-utility is invoked by a users to control write access others have to the
-terminal device associated with the standard error output.  If write access
+utility is invoked by a user to control write access others have to the
+terminal device associated with standard error output.  If write access
 is allowed, then programs such as
 .BR talk (1)
 and
@@ -63,37 +58,39 @@ should be executed in your login scripts.
 .SH ARGUMENTS
 .TP
 .B n
-Disallows messages.
+Disallow messages.
 .TP
 .B y
-Permits messages to be displayed.
-.SH OPTIONS
-.TP
-.B \-v, \-\-verbose
-Explain what is being done.
-.TP
-.B \-V, \-\-verbose
-Display version information and exit.
-.TP
-.B \-h, \-\-help
-Display help text and exit.
+Allow messages to be displayed.
 .PP
 If no arguments are given,
 .B mesg
-displays the present message status to the standard error output.
-.PP
+shows the current message status on standard error output.
+.SH OPTIONS
+.TP
+.BR \-v , " \-\-verbose"
+Explain what is being done.
+.TP
+.BR \-V , " \-\-version"
+Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
+.SH EXIT STATUS
 The
 .B mesg
 utility exits with one of the following values:
+.RS 4
 .TP
-.I "\ 0"
+.B "\ 0"
 Messages are allowed.
 .TP
-.I "\ 1"
+.B "\ 1"
 Messages are not allowed.
 .TP
-.I ">1"
+.B ">1"
 An error has occurred.
+.RE
 .SH FILES
 .I /dev/[pt]ty[pq]?
 .SH "SEE ALSO"
