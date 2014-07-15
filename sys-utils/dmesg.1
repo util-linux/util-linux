@@ -5,41 +5,47 @@
 dmesg \- print or control the kernel ring buffer
 .SH SYNOPSIS
 .B dmesg
-.RB [ options ]
+[options]
 .sp
-dmesg \-\-clear
+.B dmesg \-\-clear
 .br
-dmesg \-\-read-clear [options]
+.BR "dmesg \-\-read-clear " [options]
 .br
-dmesg \-\-console-level level
+.BI "dmesg \-\-console-level " level
 .br
-dmesg \-\-console-on
+.B dmesg \-\-console-on
 .br
-dmesg \-\-console-off
+.B dmesg \-\-console-off
 .SH DESCRIPTION
 .B dmesg
 is used to examine or control the kernel ring buffer.
 .PP
 The default action is to read all messages from the kernel ring buffer.
 .SH OPTIONS
-The \-\-clear, \-\-read-clear, \-\-console-on, \-\-console-off and
-\-\-console-level options are mutually exclusive.
+The
+.BR \-\-clear ,
+.BR \-\-read-clear ,
+.BR \-\-console-on ,
+.BR \-\-console-off ,
+and
+.B \-\-console-level
+options are mutually exclusive.
 .PP
 .IP "\fB\-C\fR, \fB\-\-clear\fR"
 Clear the ring buffer.
 .IP "\fB\-c\fR, \fB\-\-read-clear\fR"
 Clear the ring buffer after first printing its contents.
 .IP "\fB\-D\fR, \fB\-\-console-off\fR"
-Disable printing messages to the console.
+Disable the printing of messages to the console.
 .IP "\fB\-d\fR, \fB\-\-show-delta\fR"
 Display the timestamp and the time delta spent between messages.  If used
 together with
 .B \-\-notime
 then only the time delta without the timestamp is printed.
-.IP "\fB\-e\fR, \fB\-\-reltime\fR"
-Display the local time and the delta in human-readable format.
 .IP "\fB\-E\fR, \fB\-\-console-on\fR"
 Enable printing messages to the console.
+.IP "\fB\-e\fR, \fB\-\-reltime\fR"
+Display the local time and the delta in human-readable format.
 .IP "\fB\-F\fR, \fB\-\-file \fIfile\fR"
 Read the messages from the given
 .IR file .
@@ -49,12 +55,12 @@ Restrict output to the given (comma-separated)
 of facilities.  For example:
 .PP
 .RS 14
-dmesg \-\-facility=daemon
+.B dmesg \-\-facility=daemon
 .RE
 .IP
 will print messages from system daemons only.  For all supported facilities
-see
-.B dmesg \-\-help
+see the
+.B \-\-help
 output.
 .IP "\fB\-H\fR, \fB\-\-human\fR"
 Enable human-readable output.  See also \fB\-\-color\fR, \fB\-\-reltime\fR
@@ -66,18 +72,18 @@ Print kernel messages.
 .IP "\fB\-L\fR, \fB\-\-color\fR[=\fIwhen\fR]"
 Colorize important messages (enabled by default).  The optional argument \fIwhen\fP
 can be \fBauto\fR, \fBnever\fR or \fBalways\fR.  If the \fIwhen\fR argument is omitted,
-then it defaults to \fBauto\fR.
+it defaults to \fBauto\fR.
 .IP  "\fB\-l\fR, \fB\-\-level \fIlist\fR"
 Restrict output to the given (comma-separated)
 .I list
 of levels.  For example:
 .PP
 .RS 14
-dmesg \-\-level=err,warn
+.B dmesg \-\-level=err,warn
 .RE
 .IP
-will print error and warning messages only.  For all supported levels see
-.B dmesg \-\-help
+will print error and warning messages only.  For all supported levels see the
+.B \-\-help
 output.
 .IP "\fB\-n\fR, \fB\-\-console-level \fIlevel\fR
 Set the
@@ -85,8 +91,8 @@ Set the
 at which printing of messages is done to the console.  The
 .I level
 is a level number or abbreviation of the level name.  For all supported
-levels see
-.B dmesg \-\-help
+levels see the
+.B \-\-help
 output.
 .sp
 For example,
@@ -179,11 +185,11 @@ format has the same issue as
 the time may be inaccurate when a system is suspended and resumed.
 .SH COLORS
 Implicit coloring can be disabled by an empty file \fI/etc/terminal-colors.d/dmesg.disable\fR.
-
 See
 .BR terminal-colors.d (5)
-for more details about colorization configuration. The logical color names
-support by
+for more details about colorization configuration.
+.PP
+The logical color names supported by
 .B dmesg
 are:
 .TP

@@ -9,33 +9,33 @@
 eject \- eject removable media
 .SH SYNOPSIS
 .B eject
-.RB [ options ]
+[options]
 .IR device | mountpoint
 .SH DESCRIPTION
-.B Eject
+.B eject
 allows removable media (typically a CD-ROM, floppy disk, tape, JAZ, ZIP or USB
 disk) to be ejected under software control.  The command can also control some
 multi-disc CD-ROM changers, the auto-eject feature supported by some devices,
 and close the disc tray of some CD-ROM drives.
 .PP
 The device corresponding to \fIdevice\fP or \fImountpoint\fP is ejected.  If no
-name is specified, the default name /dev/cdrom is used. The device may be
+name is specified, the default name \fB/dev/cdrom\fR is used.  The device may be
 addressed by device name (e.g. 'sda'), device path (e.g. '/dev/sda'),
-UUID=<uuid> or LABEL=<label> tags.
+UUID=\fIuuid\fR or LABEL=\fIlabel\fR tags.
 .PP
 There are four different methods of ejecting, depending on whether the device
-is a CD-ROM, SCSI device, removable floppy, or tape.  By default eject tries
+is a CD-ROM, SCSI device, removable floppy, or tape.  By default \fBeject\fR tries
 all four methods in order until it succeeds.
 .PP
-If device partition is specified, the whole-disk device is used.  If the device
+If a device partition is specified, the whole-disk device is used.  If the device
 or a device partition is currently mounted, it is unmounted before ejecting.
 .SH OPTIONS
-.IP "\fB\-a, \-\-auto \fIon|off\fP"
+.IP "\fB\-a\fR, \fB\-\-auto on\fR|\fBoff\fR"
 This option controls the auto-eject mode, supported by some devices.  When
 enabled, the drive automatically ejects when the device is closed.
 .IP "\fB\-c, \-\-changerslot \fIslot\fP"
 With this option a CD slot can be selected from an ATAPI/IDE CD-ROM changer.
-Linux 2.0 or higher is required to use this feature. The CD-ROM drive can not
+Linux 2.0 or higher is required to use this feature.  The CD-ROM drive cannot
 be in use (mounted data CD or playing a music CD) for a change request to work.
 Please also note that the first slot of the changer is referred to as 0, not 1.
 .IP "\fB\-d, \-\-default\fP"
@@ -47,24 +47,24 @@ disk eject command.
 Force eject, don't check device type.
 .IP "\fB\-h, \-\-help\fP"
 Display help text and exit.
-.IP "\fB\-i, \-\-manualeject \fIon|off\fP"
+.IP "\fB\-i\fR, \fB\-\-manualeject on\fR|\fBoff\fR"
 This option controls locking of the hardware eject button.  When enabled, the
 drive will not be ejected when the button is pressed.  This is useful when you
 are carrying a laptop in a bag or case and don't want it to eject if the button
 is inadvertently pressed.
 .IP "\fB\-p, \-\-proc\fP"
-This option allow you to use /proc/mounts instead /etc/mtab. It also passes the
-\-n option to \fBumount\fR(1).
+This option allows you to use /proc/mounts instead /etc/mtab.  It also passes the
+\fB\-n\fR option to \fBumount\fR(1).
 .IP "\fB\-q, \-\-tape\fP"
 This option specifies that the drive should be ejected using a tape drive
 offline command.
 .IP "\fB\-m, \-\-no-unmount\fP"
 The option tells eject to not try to unmount at all.
 .IP "\fB\-M, \-\-no-partitions-unmount\fP"
-The option tells eject to not try to unmount another partitions on partitioned
-devices. If another partition is mounted the program will not attempt to eject
-the media. It will attempt to unmount only mountpoint or mounted device given
-on eject command line.
+The option tells eject to not try to unmount other partitions on partitioned
+devices.  If another partition is still mounted, the program will not attempt
+to eject the media.  It will attempt to unmount only the device or mountpoint
+given on the command line.
 .IP "\fB\-n, \-\-noop\fP"
 With this option the selected device is displayed but no action is performed.
 .IP "\fB\-t, \-\-trayclose\fP"
@@ -84,24 +84,25 @@ Run in verbose mode; more information is displayed about what the command is
 doing.
 .IP "\fB\-V, \-\-version\fP"
 Display version information and exit.
-.IP "\fB\-x, \-\-cdspeed \fI<speed>\fP"
-With this option the drive is given a CD-ROM select speed command.  The speed
+.IP "\fB\-x, \-\-cdspeed \fIspeed\fP"
+With this option the drive is given a CD-ROM select speed command.  The
+.I speed
 argument is a number indicating the desired speed (e.g. 8 for 8X speed), or 0
 for maximum data rate.  Not all devices support this command and you can only
 specify speeds that the drive is capable of.  Every time the media is changed
-this option is cleared.  This option can be used alone, or with the \-t and \-c
-options.
+this option is cleared.  This option can be used alone, or with the
+\fB\-t\fR and \fB\-c\fR options.
 .IP "\fB\-X, \-\-listspeed\fP" 
 With this option the CD-ROM drive will be probed to detect the available
 speeds.  The output is a list of speeds which can be used as an argument of the
-\-x option.  This only works with Linux 2.6.13 or higher, on previous versions
-solely the maximum speed will be reported.  Also note that some drive may not
+\fB\-x\fR option.  This only works with Linux 2.6.13 or higher, on previous versions
+solely the maximum speed will be reported.  Also note that some drives may not
 correctly report the speed and therefore this option does not work with them.
 .SH EXIT STATUS
 Returns 0 if operation was successful, 1 if operation failed or command syntax
 was not valid.
 .SH NOTES
-.B Eject
+.B eject
 only works with devices that support one or more of the four methods of
 ejecting.  This includes most CD-ROM drives (IDE, SCSI, and proprietary), some
 SCSI tape drives, JAZ drives, ZIP drives (parallel port, SCSI, and IDE
@@ -113,11 +114,12 @@ device and not the
 .B eject
 program itself.
 .PP
-The \-r, \-s, \-f, and \-q options allow controlling which methods are used to
+The \fB\-r\fR, \fB\-s\fR, \fB\-f\fR, and \fB\-q\fR options allow controlling
+which methods are used to
 eject.  More than one method can be specified.  If none of these options are
 specified, it tries all four (this works fine in most cases).
 .PP
-.B Eject
+.B eject
 may not always be able to determine if the device is mounted (e.g. if it has
 several names).  If the device name is a symbolic link,
 .B eject
@@ -126,9 +128,9 @@ will follow the link and use the device that it points to.
 If
 .B eject
 determines that the device can have multiple partitions, it will attempt to
-unmount all mounted partitions of the device before ejecting (see
---no-partitions-unmount). If an unmount fails, the program will not attempt to
-eject the media.
+unmount all mounted partitions of the device before ejecting (see also
+\fB--no-partitions-unmount\fR).  If an unmount fails, the program will not
+attempt to eject the media.
 .PP
 You can eject an audio CD.  Some CD-ROM drives will refuse to open the tray if
 the drive is empty.  Some devices do not support the tray close command.

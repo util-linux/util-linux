@@ -24,37 +24,41 @@
 .\"   OTHER DEALINGS IN THE SOFTWARE.
 .\"
 .\" -----------------------------------------------------------------------
-.TH FLOCK 1 "September 2011" "util-linux" "User Commands"
+.TH FLOCK 1 "July 2014" "util-linux" "User Commands"
 .SH NAME
 flock \- manage locks from shell scripts
 .SH SYNOPSIS
 .B flock
-[options] <file|directory> <command> [command args]
+[options]
+.IR file | "directory command " [ arguments ]
 .br
 .B flock
-[options] <file|directory> -c <command>
+[options]
+.IR file | directory
+.BI \-c " command"
 .br
 .B flock
-[options] <file descriptor number>
+.RI [options] " number"
 .SH DESCRIPTION
 .PP
 This utility manages
 .BR flock (2)
-locks from within shell scripts or the command line.
+locks from within shell scripts or from the command line.
 .PP
-The first and second forms wrap the lock around the executing a command, in
-a manner similar to
+The first and second of the above forms wrap the lock around the execution of a
+.IR command ,
+in a manner similar to
 .BR su (1)
 or
 .BR newgrp (1).
-It locks a specified file or directory, which is created (assuming
-appropriate permissions), if it does not already exist.  By default, if the
+They lock a specified \fIfile\fR or \fIdirectory\fR, which is created (assuming
+appropriate permissions) if it does not already exist.  By default, if the
 lock cannot be immediately acquired,
 .B flock
 waits until the lock is available.
 .PP
-The third form uses open file by file descriptor number.  See examples how
-that can be used.
+The third form uses an open file by its file descriptor \fInumber\fR.
+See the examples below for how that can be used.
 .SH OPTIONS
 .TP
 \fB\-s\fP, \fB\-\-shared\fP
@@ -74,7 +78,7 @@ process which should not be holding the lock.
 Fail rather than wait if the lock cannot be
 immediately acquired.
 See the
-.I \-E
+.B \-E
 option for the exit code used.
 .TP
 \fB\-w\fP, \fB\-\-wait\fP, \fB\-\-timeout\fP \fIseconds\fP
@@ -82,20 +86,20 @@ Fail if the lock cannot be acquired within
 .IR seconds .
 Decimal fractional values are allowed.
 See the
-.I \-E
+.B \-E
 option for the exit code used.
 .TP
 \fB\-o\fP, \fB\-\-close\fP
 Close the file descriptor on which the lock is held before executing
-.BR command\ .
+.IR command .
 This is useful if
-.B command
+.I command
 spawns a child process which should not be holding the lock.
 .TP
 \fB\-E\fP, \fB\-\-conflict\-exit\-code\fP \fInumber\fP
 The exit code used when the \fB\-n\fP option is in use, and the
 conflicting lock exists, or the \fB\-w\fP option is in use,
-and the timeout is reached. The default value is 1.
+and the timeout is reached.  The default value is 1.
 .TP
 \fB\-c\fP, \fB\-\-command\fP \fIcommand\fP
 Pass a single
@@ -153,14 +157,14 @@ also sets the FLOCKER env var to the right value so it doesn't run again.
 The command uses
 .B sysexits.h
 return values for everything, except when using either of the options
-.I \-n
+.B \-n
 or
-.I \-w
+.B \-w
 which report a failure to acquire the lock with a return value given by the
-.I \-E
+.B \-E
 option, or 1 by default.
 .PP
-When using the <command> variant, and executing the child worked, then
+When using the \fIcommand\fR variant, and executing the child worked, then
 the exit status is that of the child command.
 .SH AUTHOR
 .UR hpa@zytor.com
