@@ -22,16 +22,17 @@
 .\" Formatted or processed versions of this manual, if unaccompanied by
 .\" the source, must acknowledge the copyright and authors of this work.
 .\" 
-.TH TAILF 1 "February 2003" "util-linux" "User Commands"
+.TH TAILF 1 "July 2014" "util-linux" "User Commands"
 .SH NAME
 tailf \- follow the growth of a log file
 .SH SYNOPSIS
 .B tailf
-[\fIOPTION\fR] \fIfile\fR
+[option]
+.I file
 .SH DESCRIPTION
 .B tailf
-will print out the last 10 lines of a file and then wait for the file to
-grow.  It is similar to
+will print out the last 10 lines of the given \fIfile\fR and then wait
+for this \fIfile\fR to grow.  It is similar to
 .B tail -f
 but does not access the file when it is not growing.  This has the side
 effect of not updating the access time for the file, so a filesystem flush
@@ -41,12 +42,10 @@ does not occur periodically when no log activity is happening.
 is extremely useful for monitoring log files on a laptop when logging is
 infrequent and the user desires that the hard disk spin down to conserve
 battery life.
-.PP
-Mandatory arguments to long options are mandatory for short options too.
 .TP
-\fB\-n\fR, \fB\-\-lines\fR=\fIN\fR, \fB\-N\fR
-output the last
-.I N
+.BR \-n , " -\-lines=\fInumber\fR" , " \-\fInumber\fR"
+Output the last
+.I number
 lines, instead of the last 10.
 .TP
 \fB\-V\fR, \fB\-\-version
@@ -60,7 +59,7 @@ This program was originally written by Rik Faith (faith@acm.org) and may be free
 distributed under the terms of the X11/MIT License.  There is ABSOLUTELY
 NO WARRANTY for this program.
 
-The latest inotify based implementation was written by Karel Zak (kzak@redhat.com).
+The latest inotify-based implementation was written by Karel Zak (kzak@redhat.com).
 .SH "SEE ALSO"
 .BR tail (1),
 .BR less (1)

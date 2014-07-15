@@ -33,7 +33,7 @@
 .\"
 .TH HEXDUMP "1" "April 2013" "util-linux" "User Commands"
 .SH NAME
-hexdump \- display file contents in ascii, decimal, hexadecimal, or octal
+hexdump \- display file contents in hexadecimal, decimal, octal, or ascii
 .SH SYNOPSIS
 .B hexdump
 .RI [options] " file" ...
@@ -116,6 +116,12 @@ are replaced with a line comprised of a single asterisk.
 \fITwo-byte hexadecimal display\fR.  Display the input offset in hexadecimal,
 followed by eight space-separated, four-column, zero-filled, two-byte
 quantities of input data, in hexadecimal, per line.
+.TP
+.BR \-V , " \-\-version"
+Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
 .PP
 For each input file,
 .B hexdump

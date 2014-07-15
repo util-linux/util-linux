@@ -36,7 +36,8 @@
 colcrt \- filter nroff output for CRT previewing
 .SH SYNOPSIS
 .B colcrt
-[options] [file ...]
+[options]
+.RI [ file ...]
 .SH DESCRIPTION
 .B colcrt
 provides virtual half-line and reverse line feed sequences for terminals
@@ -68,9 +69,11 @@ Display help text and exit.
 .SH EXAMPLES
 A typical use of
 .B colcrt
-would be
+would be:
 .PP
-tbl exum2.n \&| nroff \-ms \&| colcrt \- \&| more
+.RS
+.B tbl exum2.n \&| nroff \-ms \&| colcrt \- \&| more
+.RE
 .SH SEE ALSO
 .BR nroff (1),
 .BR troff (1),

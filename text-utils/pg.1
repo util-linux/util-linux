@@ -1,12 +1,12 @@
 .\" @(#)pg.1	1.7 (gritter) 4/25/01
-.TH PG 1 "April 2001" "util-linux" "User Commands"
+.TH PG 1 "July 2014" "util-linux" "User Commands"
 .SH NAME
 pg \- browse pagewise through text files
 .SH SYNOPSIS
 .B pg
-.RB [ \-\fInumber\fP ]
+.RB [ \-\fIamount\fP ]
 .RB [ \-p
-.IR string ]
+.IR prompt ]
 .RB [ \-cefnrs ]
 .RB [ +\fIline\fP ]
 .RB [ +/\fIpattern\fP/ ]
@@ -30,14 +30,14 @@ but precedes each file with its name if there is more than one.
 .PP
 If input comes from a pipe,
 .B pg
-stores the data in a buffer file while reading
+stores the data in a buffer file while reading,
 to make navigation possible.
 .SH OPTIONS
 .B pg
 accepts the following options:
 .TP
 .BI + number
-Start at the given line.
+Start at the given line number.
 .TP
 .BI +/ pattern /
 Start at the line containing the Basic Regular Expression
@@ -45,7 +45,7 @@ Start at the line containing the Basic Regular Expression
 given.
 .TP
 .BI \- number
-The number of lines per page.  Usually, this is the number of
+The number of lines per page.  By default, this is the number of
 .SM CRT
 lines minus one.
 .TP
@@ -75,7 +75,7 @@ is displayed.
 If
 .I string
 contains
-.IR %d ,
+.BR %d ,
 its first occurrence is replaced by the number of the current page.
 .TP
 .B \-r
@@ -87,23 +87,23 @@ Print messages in
 mode,
 if the terminfo entry for the terminal provides this capability.
 .TP
-.B \-h, \-\-help
-display short help and exit.
-.TP
-.B \-V, \-\-version
+.BR \-V , " \-\-version"
 Disaplay version information and exit.
-.SH USAGE
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
+.SH COMMANDS
 The following commands may be entered at the prompt.  Commands preceded by
 .I i
 in this document accept a number as argument, positive or negative.
 If this argument starts with
-.I +
+.B +
 or
-.I \-,
+.BR \- ,
 it is interpreted relative to the current position in the input file,
 otherwise relative to the beginning.
 .TP
-.IB i <newline>
+.IB i <Enter>
 Display the next or the indicated page.
 .TP
 \fIi\fR\fBd\fR or \fB^D\fR
@@ -121,8 +121,8 @@ must be a positive number and is always interpreted relative
 to the current position.
 .TP
 \fIi\fR\fBw\fR or \fIi\fR\fBz\fR
-Behave as
-.I <newline>
+As
+.B <Enter>
 except that
 .I i
 becomes the new page size.

@@ -35,8 +35,8 @@
 .SH NAME
 ul \- do underlining
 .SH SYNOPSIS
-.B ul
-[options] [file ...]
+.BR ul " [options]"
+.RI [ file ...]
 .SH DESCRIPTION
 .B ul
 reads the named files (or standard input if none are given) and translates
@@ -63,11 +63,11 @@ present in an
 output stream on a crt-terminal.
 .TP
 \fB\-t\fR, \fB\-T\fR, \fB\-\-terminal\fR \fIterminal\fR
-.It Fl t Ar terminal
-Overrides the
+Override the environment variable
+.B TERM
+with the specified
 .I terminal
-type specified in the environment with
-.BR TERM .
+type.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
@@ -98,7 +98,7 @@ file (see
 .BR setenv (1),
 .BR terminfo (5)
 .SH BUGS
-.B Nroff
+.B nroff
 usually outputs a series of backspaces and underlines intermixed with the
 text to indicate underlining.  No attempt is made to optimize the backward
 motion.

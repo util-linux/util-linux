@@ -31,12 +31,11 @@
 .\"
 .\"     @(#)column.1	8.1 (Berkeley) 6/6/93
 .\"
-.TH COLUMN 1 "October 2010" "util-linux" "User Commands"
+.TH COLUMN 1 "July 2014" "util-linux" "User Commands"
 .SH NAME
 column - columnate lists
 .SH SYNOPSIS
-.B column
-.RB [ options ]
+.BR column " [options]"
 .RI [ file ...]
 .SH DESCRIPTION
 The
@@ -48,42 +47,44 @@ otherwise from standard input.  Empty lines are ignored.
 .SH OPTIONS
 .IP "\fB\-c, \-\-columns\fP \fIwidth\fP"
 Output is formatted to a width specified as number of characters.
+.IP "\fB\-o, \-\-output-separator\fP \fIstring\fP"
+Specify the columns delimiter for table output (default is two spaces).
+.IP "\fB\-s, \-\-separator\fP \fIseparators\fP"
+Specify the possible input item delimiters (default is whitespace).
 .IP "\fB\-t, \-\-table\fP"
 Determine the number of columns the input contains and create a table.
 Columns are delimited with whitespace, by default, or with the characters
 supplied using the \fB\-\-output-separator\fP option.
 Table output is useful for pretty-printing.
-.IP "\fB\-s, \-\-separator\fP \fIseparators\fP"
-Specify the possible input item delimiters (default is whitespace).
-.IP "\fB\-o, \-\-output-separator\fP \fIstring\fP"
-Specify the columns delimiter for table output (default is two spaces).
 .IP "\fB\-x, \-\-fillrows\fP"
 Fill columns before filling rows.
+.IP "\fB\-V\fR, \fB\-\-version\fR"
+Display version information and exit.
 .IP "\fB\-h, \-\-help\fP"
 Display help text and exit.
 .SH ENVIRONMENT
-The environment variable COLUMNS is used to determine the size of
+The environment variable \fBCOLUMNS\fR is used to determine the size of
 the screen if no other information is available.
 .SH EXAMPLES
 .nf
-sed 's/#.*//' /etc/fstab | column -t
+.B sed 's/#.*//' /etc/fstab | column -t
 .nf
 .SH BUGS
-The util-linux version 2.23 changed
+Version 2.23 changed the
 .B \-s
 option to be non-greedy, for example:
 .PP
 .EX
-$ printf "a:b:c\\n1::3\\n" | column  -t -s ':'
+\fBprintf "a:b:c\\n1::3\\n" | column  -t -s ':'\fR
 .EE
 .PP
-old output:
+Old output:
 .EX
 a  b  c
 1  3
 .EE
 .PP
-new output (since util-linux 2.23)
+New output (since util-linux 2.23):
 .EX
 a  b  c
 1     3

@@ -34,7 +34,7 @@
 .\"
 .\"     @(#)col.1	6.8 (Berkeley) 6/17/91
 .\"
-.TH COL "1" "September 2011" "util-linux" "User Commands"
+.TH COL "1" "July 2014" "util-linux" "User Commands"
 .SH NAME
 col - filter reverse line feeds from input
 .SH SYNOPSIS
@@ -43,8 +43,8 @@ col - filter reverse line feeds from input
 .SH DESCRIPTION
 .B col
 filters out reverse (and half-reverse) line feeds so the output is in the
-correct order with only forward and half-forward line feeds, and replaces
-white-space characters with tabs where possible.  This can be useful in
+correct order, with only forward and half-forward line feeds.  It also replaces
+any whitespace characters with tabs where possible.  This can be useful in
 processing the output of
 .BR nroff (1)
 and
@@ -59,29 +59,26 @@ Do not output any backspaces, printing only the last character written to
 each column position.
 .TP
 \fB\-f\fR, \fB\-\-fine\fR
-Forward half line feeds are permitted
-.I fine
-mode.  Normally characters printed on a half-line boundary are printed on the
+Permit half-forward line feeds.
+Normally characters destined for a half-line boundary are printed on the
 following line.
-.TP
-\fB\-p\fR, \fB\-\-pass\fR
-Force unknown control sequences to be passed through unchanged.  Normally,
-.B col
-will filter out any control sequences from the input other than those
-recognized and interpreted by itself, which are listed below.
 .TP
 \fB\-h\fR, \fB\-\-tabs\fR
 Output tabs instead of multiple spaces.
-.TP
-\fB\-x\fR, \fB\-\-spaces\fR
-Output multiple spaces instead of tabs.
-.It Fl l, Fl Fl lines Ar num
 .TP
 \fB\-l\fR, \fB\-\-lines\fR \fInumber\fR
 Buffer at least
 .I number
 lines in memory.  By default, 128 lines are buffered.
-.It Fl V, Fl Fl version
+.TP
+\fB\-p\fR, \fB\-\-pass\fR
+Force unknown control sequences to be passed through unchanged.  Normally
+.B col
+will filter out any control sequences other than those
+recognized and interpreted by itself, which are listed below.
+.TP
+\fB\-x\fR, \fB\-\-spaces\fR
+Output multiple spaces instead of tabs.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
