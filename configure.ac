@@ -1329,7 +1329,7 @@ AM_CONDITIONAL([BUILD_LINE], [test "x$build_line" = xyes])
 
 
 AC_ARG_ENABLE([mesg],
-	      AS_HELP_STRING([--disable-mesg], [do not build mesg]),
+  AS_HELP_STRING([--disable-mesg], [do not build mesg]),
   [], [UL_DEFAULT_ENABLE([mesg], [yes])]
 )
 UL_BUILD_INIT([mesg])
@@ -1337,7 +1337,7 @@ AM_CONDITIONAL([BUILD_MESG], [test "x$build_mesg" = xyes])
 
 
 AC_ARG_ENABLE([raw],
-	      AS_HELP_STRING([--disable-raw], [do not build raw]),
+  AS_HELP_STRING([--disable-raw], [do not build raw]),
   [], [UL_DEFAULT_ENABLE([raw], [check])]
 )
 UL_BUILD_INIT([raw])
@@ -1417,8 +1417,8 @@ AM_CONDITIONAL([BUILD_CHFN_CHSH], [test "x$build_chfn_chsh" = xyes])
 AM_CONDITIONAL([CHFN_CHSH_PASSWORD], [test "x$enable_chfn_chsh_password" = xyes])
 
 AC_ARG_ENABLE([chsh-only-listed],
-AS_HELP_STRING([--disable-chsh-only-listed], [chsh: allow shells not in /etc/shells]),
-[], enable_chsh_only_listed=yes
+  AS_HELP_STRING([--disable-chsh-only-listed], [chsh: allow shells not in /etc/shells]),
+  [], enable_chsh_only_listed=yes
 )
 
 AS_IF([test "x$enable_chsh_only_listed" = xyes], [
@@ -1814,14 +1814,14 @@ AC_MSG_RESULT([
 	prefix:            ${prefix}
 	exec prefix:       ${exec_prefix}
 
-        localstatedir:     ${localstatedir}
-	bindir:	           ${bindir}
+	localstatedir:     ${localstatedir}
+	bindir:            ${bindir}
 	sbindir:           ${sbindir}
 	libdir:            ${libdir}
 	includedir:        ${includedir}
-        usrbin_execdir:    ${usrbin_execdir}
-        usrsbin_execdir:   ${usrsbin_execdir}
-        usrlib_execdir:    ${usrlib_execdir}
+	usrbin_execdir:    ${usrbin_execdir}
+	usrsbin_execdir:   ${usrsbin_execdir}
+	usrlib_execdir:    ${usrlib_execdir}
 
 	compiler:          ${CC}
 	cflags:            ${CFLAGS}
