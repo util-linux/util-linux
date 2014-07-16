@@ -265,7 +265,8 @@ struct lslogins_control {
 
 	const char *journal_path;
 
-	unsigned int selinux_enabled : 1;
+	unsigned int selinux_enabled : 1,
+		     noheadings : 1;
 };
 
 /* these have to remain global since there's no other reasonable way to pass
@@ -856,12 +857,15 @@ static int create_usertree(struct lslogins_control *ctl)
 	return 0;
 }
 
-static struct libscols_table *setup_table(void)
+static struct libscols_table *setup_table(struct lslogins_control *ctl)
 {
 	struct libscols_table *tb = scols_new_table();
 	int n = 0;
+
 	if (!tb)
-		return NULL;
+		errx(EXIT_FAILURE, _("failed to initialize output table"));
+	if (ctl->noheadings)
+		scols_table_enable_noheadings(tb, 1);
 
 	switch(outmode) {
 	case OUT_COLON:
@@ -1094,7 +1098,7 @@ static int print_pretty(struct libscols_table *tb)
 
 static int print_user_table(struct lslogins_control *ctl)
 {
-	tb = setup_table();
+	tb = setup_table(ctl);
 	if (!tb)
 		return -1;
 
@@ -1165,6 +1169,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -l, --logins=<logins>    display only users from <logins>\n"), out);
 	fputs(_(" -m, --supp-groups        display supplementary groups as well\n"), out);
 	fputs(_(" -n, --newline            display each piece of information on a new line\n"), out);
+	fputs(_("     --noheadings         don't print headings\n"), out);
 	fputs(_("     --notruncate         don't truncate output\n"), out);
 	fputs(_(" -o, --output[=<list>]    define the columns to output\n"), out);
 	fputs(_(" -p, --pwd                display information related to login by password.\n"), out);
@@ -1204,6 +1209,7 @@ int main(int argc, char *argv[])
 		OPT_WTMP,
 		OPT_BTMP,
 		OPT_NOTRUNC,
+		OPT_NOHEAD,
 		OPT_TIME_FMT,
 	};
 
@@ -1218,6 +1224,7 @@ int main(int argc, char *argv[])
 		{ "supp-groups",    no_argument,	0, 'G' },
 		{ "newline",        no_argument,	0, 'n' },
 		{ "notruncate",     no_argument,	0, OPT_NOTRUNC },
+		{ "noheadings",     no_argument,	0, OPT_NOHEAD },
 		{ "output",         required_argument,	0, 'o' },
 		{ "last",           no_argument,	0, 'L', },
 		{ "raw",            no_argument,	0, 'r' },
@@ -1346,6 +1353,9 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_NOTRUNC:
 			coldescs[COL_GECOS].flag = 0;
+			break;
+		case OPT_NOHEAD:
+			ctl->noheadings = 1;
 			break;
 		case OPT_TIME_FMT:
 			{
