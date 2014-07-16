@@ -1,14 +1,14 @@
 .\" Copyright 2002 Andre C. Mazzone (linuxdev@karagee.com)
 .\" May be distributed under the GNU General Public License
-.TH IPCRM "1" "September 2011" "util-linux" "User Commands"
+.TH IPCRM "1" "July 2014" "util-linux" "User Commands"
 .SH NAME
-ipcrm \- remove a message queue, semaphore set or shared memory id
+ipcrm \- remove certain IPC resources
 .SH SYNOPSIS
 .B ipcrm
-.RI [ options ]
-.br
+[options]
+.sp
 .B ipcrm
-.RB { shm | msg | sem } 
+.RB { shm | msg | sem }
 .IR id ...
 .SH DESCRIPTION
 .B ipcrm
@@ -74,15 +74,15 @@ objects.  Some programs create these resources at startup and may not have
 any code to deal with an unexpected disappearance.
 .LP
 The details of the removes are described in
-.BR msgctl (2),
 .BR shmctl (2),
+.BR msgctl (2),
 and
 .BR semctl (2).
-The identifiers and keys may be found by using
+The identifiers and keys can be found by using
 .BR ipcs (1).
 .SH NOTES
 In its first Linux implementation, \fBipcrm\fR used the deprecated syntax
-shown in the
+shown in the second line of the
 .BR SYNOPSIS .
 Functionality present in other *nix implementations of \fBipcrm\fR has since
 been added, namely the ability to delete resources by key (not just

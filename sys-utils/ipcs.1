@@ -1,24 +1,26 @@
 .\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be distributed under the GNU General Public License
-.TH IPCS "1" "January 2013" "util-linux" "User Commands"
+.TH IPCS "1" "July 2014" "util-linux" "User Commands"
 .SH NAME
-ipcs \- provide information on IPC facilities
+ipcs \- show information on IPC facilities
 .SH SYNOPSIS
 .B ipcs
-.RB [ resource\-option "] [" output\-format ]
-.br
-.B ipcs
-.RB [ resource\-option ]
-.BI \-i " id"
+[options]
 .SH DESCRIPTION
 .B ipcs
-provides information on the inter-process communication facilities
+shows information on the inter-process communication facilities
 for which the calling process has read access.
+By default it shows information about all three resources:
+shared memory segments, message queues, and semaphore arrays.
 .SH OPTIONS
 .TP
 \fB\-i\fR, \fB\-\-id\fR \fIid\fR
-Print details only on the resource identified by
+Show full details on just the one resource element identified by
 .IR id .
+This option needs to be combined with one of the three resource options:
+.BR \-m ,
+.BR \-q " or"
+.BR \-s .
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
@@ -27,11 +29,11 @@ Display help text and exit.
 Display version information and exit.
 .SS "Resource options"
 .TP
-\fB\-q\fR, \fB\-\-queues\fR
-Write information about active message queues.
-.TP
 \fB\-m\fR, \fB\-\-shmems\fR
 Write information about active shared memory segments.
+.TP
+\fB\-q\fR, \fB\-\-queues\fR
+Write information about active message queues.
 .TP
 \fB\-s\fR, \fB\-\-semaphores\fR
 Write information about active semaphore sets.

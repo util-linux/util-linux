@@ -1,41 +1,42 @@
 .\" Copyright 2008 Hayden A. James (hayden.james@gmail.com)
 .\" May be distributed under the GNU General Public License
-.TH IPCMK "1" "September 2011" "util-linux" "User Commands"
+.TH IPCMK "1" "July 2014" "util-linux" "User Commands"
 .SH "NAME"
-ipcmk \- create various ipc resources
+ipcmk \- make various IPC resources
 .SH "SYNOPSIS"
 .B ipcmk
-<resource options>
-[additional options]
+[options]
 .SH "DESCRIPTION"
 .B ipcmk
-allows you to create shared memory segments, message queues or semaphore arrays.
-.SH "RESOURCE OPTIONS"
+allows you to create shared memory segments, message queues,
+and semaphore arrays.
+.SH "OPTIONS"
 .TP
-Resources may be specified as follows:
+Resources can be specified with these options:
 .TP
-\fB\-M\fR, \fB\-\-shmem\fR [\fIsize\fR]
-Shared memory segment of
+.BR \-M , " \-\-shmem \fIsize\fR"
+Create a shared memory segment of
 .I size
 bytes.
 .TP
-\fB\-S\fR, \fB\-\-semaphore\fR [\fInumber\fR]
-Semaphore array with
+.BR \-Q , " \-\-queue"
+Create a message queue.
+.TP
+.BR \-S , " \-\-semaphore \fInumber\fR"
+Create a semaphore array with
 .I number
 of elements.
+.PP
+Other options are:
 .TP
-\fB\-Q\fR, \fB\-\-queue\fR
-Message queue.
-.SH "ADDITIONAL OPTIONS"
-.TP
-\fB\-p\fR, \fB\-\-mode\fR [\fImode\fR]
+.BR \-p , " \-\-mode \fImode\fR"
 Access permissions for the resource.  Default is 0644.
-.TP
-\fB\-h\fR, \fB\-\-help\fR
-Display help text and exit.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display help text and exit.
 .PP
 .SH "SEE ALSO"
 .BR ipcrm (1),
