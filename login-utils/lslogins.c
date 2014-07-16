@@ -212,7 +212,7 @@ static const char *const pretty_status[] = {
 
 #define get_status(x)	(outmode == OUT_PRETTY ? pretty_status[(x)] : status[(x)])
 
-static struct lslogins_coldesc coldescs[] =
+static const struct lslogins_coldesc coldescs[] =
 {
 	[COL_USER]          = { "USER",		N_("user name"), N_("Username"), 0.1, SCOLS_FL_NOEXTREMES },
 	[COL_UID]           = { "UID",		N_("user ID"), "UID", 1, SCOLS_FL_RIGHT},
@@ -266,7 +266,8 @@ struct lslogins_control {
 	const char *journal_path;
 
 	unsigned int selinux_enabled : 1,
-		     noheadings : 1;
+		     noheadings : 1,
+		     notrunc : 1;
 };
 
 /* these have to remain global since there's no other reasonable way to pass
@@ -891,8 +892,15 @@ static struct libscols_table *setup_table(struct lslogins_control *ctl)
 	}
 
 	while (n < ncolumns) {
-		if (!scols_table_new_column(tb, coldescs[columns[n]].name,
-					    coldescs[columns[n]].whint, coldescs[columns[n]].flag))
+		int flags = coldescs[columns[n]].flag;
+
+		if (ctl->notrunc)
+			flags &= ~SCOLS_FL_TRUNC;
+
+		if (!scols_table_new_column(tb,
+				coldescs[columns[n]].name,
+				coldescs[columns[n]].whint,
+				flags))
 			goto fail;
 		++n;
 	}
@@ -1188,7 +1196,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _("\nAvailable columns:\n"));
 
 	for (i = 0; i < ARRAY_SIZE(coldescs); i++)
-		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
+		fprintf(out, " %14s  %s\n", coldescs[i].name,
+				_(coldescs[i].help));
 
 	fprintf(out, _("\nFor more details see lslogins(1).\n"));
 
@@ -1352,7 +1361,7 @@ int main(int argc, char *argv[])
 			path_btmp = optarg;
 			break;
 		case OPT_NOTRUNC:
-			coldescs[COL_GECOS].flag = 0;
+			ctl->notrunc = 1;
 			break;
 		case OPT_NOHEAD:
 			ctl->noheadings = 1;
