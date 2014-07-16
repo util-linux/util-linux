@@ -67,18 +67,17 @@ static int fstrim_filesystem(const char *path, struct fstrim_range *rangetpl,
 	/* kernel modifies the range */
 	memcpy(&range, rangetpl, sizeof(range));
 
-	if (stat(path, &sb) == -1) {
+	fd = open(path, O_RDONLY);
+	if (fd < 0) {
+		warn(_("cannot open %s"), path);
+		return -1;
+	}
+	if (fstat(fd, &sb) == -1) {
 		warn(_("stat failed %s"), path);
 		return -1;
 	}
 	if (!S_ISDIR(sb.st_mode)) {
 		warnx(_("%s: not a directory"), path);
-		return -1;
-	}
-
-	fd = open(path, O_RDONLY);
-	if (fd < 0) {
-		warn(_("cannot open %s"), path);
 		return -1;
 	}
 	errno = 0;
