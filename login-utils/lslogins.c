@@ -261,10 +261,11 @@ struct lslogins_control {
 	char **ulist;
 	size_t ulsiz;
 
-	int sel_enabled;
 	unsigned int time_mode;
 
 	const char *journal_path;
+
+	unsigned int selinux_enabled : 1;
 };
 
 /* these have to remain global since there's no other reasonable way to pass
@@ -692,15 +693,15 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 				xasprintf(&user->pwd_ctime_max, "%ld", shadow->sp_max);
 			break;
 		case COL_SELINUX:
-		{
 #ifdef HAVE_LIBSELINUX
+			if (ctl->selinux_enabled) {
 				/* typedefs and pointers are pure evil */
-			security_context_t con = NULL;
-			if (getcon(&con) == 0)
-				user->context = con;
+				security_context_t con = NULL;
+				if (getcon(&con) == 0)
+					user->context = con;
+			}
 #endif
 			break;
-		}
 		case COL_NPROCS:
 			xasprintf(&user->nprocs, "%d", get_nprocs(pwd->pw_uid));
 			break;
@@ -1364,13 +1365,17 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'Z':
-			columns[ncolumns++] = COL_SELINUX;
+		{
 #ifdef HAVE_LIBSELINUX
-			ctl->sel_enabled = is_selinux_enabled();
-			if (ctl->sel_enabled == -1)
-				err(EXIT_FAILURE, _("failed to request selinux state"));
+			int sl = is_selinux_enabled();
+			if (sl < 0)
+				warn(_("failed to request selinux state"));
+			else
+				ctl->selinux_enabled = sl == 1;
 #endif
+			columns[ncolumns++] = COL_SELINUX;
 			break;
+		}
 		default:
 			usage(stderr);
 		}
