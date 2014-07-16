@@ -1,4 +1,3 @@
-'\" -*- coding: UTF-8 -*-
 .\" Copyright (C) 2010 Michael Krapp
 .\"
 .\" This program is free software; you can redistribute it and/or modify
@@ -19,7 +18,8 @@
 .SH NAME
 utmpdump \- dump UTMP and WTMP files in raw format
 .SH SYNOPSIS
-utmpdump [\-frohV] [ filename ]
+.BR utmpdump " [options]"
+.RI [ filename ]
 .SH DESCRIPTION
 .B utmpdump
 is a simple program to dump UTMP and WTMP files in raw format, so they
@@ -31,10 +31,10 @@ is passed.
 .SH OPTIONS
 .IP "\fB\-f\fR, \fB\-\-follow\fP"
 Output appended data as the file grows.
-.IP "\fB\-r\fR, \fB\-\-reverse\fP
-Undump, write back edited login information into the utmp or wtmp files.
 .IP "\fB\-o\fR, \fB\-\-output\fP \fIfile\fR
 Write command output to \fIfile\fR instead of standard output.
+.IP "\fB\-r\fR, \fB\-\-reverse\fP
+Undump, write back edited login information into the utmp or wtmp files.
 .IP "\fB\-h\fR, \fB\-\-help\fP"
 Display help text and exit.
 .IP "\fB\-V\fR, \fB\-\-version\fP"
@@ -42,14 +42,14 @@ Display version information and exit.
 .SH NOTES
 .B utmpdump
 can be useful in cases of corrupted utmp or wtmp entries.  It can dump
-out utmp/wtmp to an ASCII file, whic can then be edited to remove
-bogus entries and reintegrated, using
+out utmp/wtmp to an ASCII file, which can then be edited to remove
+bogus entries, and reintegrated using:
 .PP
 .RS
-utmpdump -r < ascii_file > wtmp
+.B utmpdump -r < ascii_file > wtmp
 .RE
 .PP
-but be warned, as
+But be warned,
 .B utmpdump
 was written for debugging purposes only.
 .SH BUGS

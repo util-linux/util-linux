@@ -1,4 +1,3 @@
-'\" -*- coding: UTF-8 -*-
 .\" Copyright (C) 1998-2006 Miquel van Smoorenburg.
 .\" Copyright (C) 2012 Karel Zak <kzak@redhat.com>
 .\"
@@ -16,18 +15,17 @@
 .\" along with this program; if not, write to the Free Software
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 .\"
-.TH SULOGIN "8" "Jul 2012" "util-linux" "System Administration"
+.TH SULOGIN "8" "July 2014" "util-linux" "System Administration"
 .SH NAME
-sulogin \- Single-user login
+sulogin \- single-user login
 .SH SYNOPSIS
-.B sulogin
-.RB [ options ]
-.RB [ tty ]
+.BR sulogin " [options]"
+.RI [ tty ]
 .SH DESCRIPTION
-.I sulogin
+.B sulogin
 is invoked by
 .B init
-when the system goes into single user mode.
+when the system goes into single-user mode.
 .PP
 The user is prompted:
 .IP "" .5i
@@ -35,40 +33,43 @@ Give root password for system maintenance
 .br
 (or type Control\-D for normal startup):
 .PP
-.I sulogin
-will be connected to the current terminal, or to the optional tty device that
+.B sulogin
+will be connected to the current terminal, or to the optional \fItty\fR device that
 can be specified on the command line (typically
 .BR /dev/console ).
 .PP
-After the user exits the single-user shell or presses control\-D at the
+When the user exits from the single-user shell, or presses control\-D at the
 prompt, the system will continue to boot.
 .SH OPTIONS
 .IP "\fB\-e\fR, \fB\-\-force\fP"
-If the default method of obtaining the root password via
+If the default method of obtaining the root password from the system via
 .BR getpwnam (3)
-from the system fails, manually examine
+fails, then examine
 .I /etc/passwd
 and
 .I /etc/shadow
-to get the password.  If they are damaged or nonexistent, sulogin will start
-a root shell without asking for a password.
+to get the password.  If these files are damaged or nonexistent,
+.B sulogin
+will start a root shell without asking for a password.
 .IP
 Only use the
 .B \-e
 option if you are sure the console is physically protected against
 unauthorized access.
 .IP "\fB\-p\fR, \fB\-\-login\-shell\fP"
-Specifying this option causes sulogin to start the shell process as a login
-shell.
+Specifying this option causes
+.B sulogin
+to start the shell process as a login shell.
 .IP "\fB\-t\fR, \fB\-\-timeout \fIseconds\fP"
 Specify the maximum amount of time to wait for user input.  By default,
-sulogin will wait forever.
+.B sulogin
+will wait forever.
 .IP "\fB\-h\fR, \fB\-\-help\fP"
 Display help text and exit.
 .IP "\fB\-V\fR, \fB\-\-version\fP"
 Display version information and exit.
 .SH ENVIRONMENT VARIABLES
-.I sulogin
+.B sulogin
 looks for the environment variable
 .B SUSHELL
 or
