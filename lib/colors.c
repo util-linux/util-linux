@@ -425,9 +425,9 @@ static int colors_add_scheme(struct ul_color_ctl *cc,
 		return -EINVAL;
 
 	rc = cn_sequence(seq0, &seq);
+	free(seq0);
 	if (rc)
 		return rc;
-	free(seq0);
 
 	/* convert logical name (e.g. "red") to real ESC code */
 	if (isalpha(*seq)) {
