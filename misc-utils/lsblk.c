@@ -296,7 +296,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
 
-	for (i = 0; i < NCOLS; i++) {
+	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
@@ -1494,7 +1494,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 
 	fprintf(out, _("\nAvailable columns (for --output):\n"));
 
-	for (i = 0; i < NCOLS; i++)
+	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("lsblk(8)"));
@@ -1599,7 +1599,7 @@ int main(int argc, char *argv[])
 			outarg = optarg;
 			break;
 		case 'O':
-			for (ncolumns = 0 ; ncolumns < (int) NCOLS; ncolumns++)
+			for (ncolumns = 0 ; ncolumns < (int) ARRAY_SIZE(infos); ncolumns++)
 				columns[ncolumns] = ncolumns;
 			break;
 		case 'p':
