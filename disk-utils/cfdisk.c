@@ -1090,6 +1090,7 @@ static int ui_menu_move(struct cfdisk *cf, int key)
 				ui_menu_goto(cf, (int) m->idx - m->page_sz);
 				return 0;
 			}
+			/* fallthrough */
 		case KEY_HOME:
 			ui_menu_goto(cf, 0);
 			return 0;
@@ -1098,6 +1099,7 @@ static int ui_menu_move(struct cfdisk *cf, int key)
 				ui_menu_goto(cf, m->idx + m->page_sz);
 				return 0;
 			}
+			/* fallthrough */
 		case KEY_END:
 			ui_menu_goto(cf, m->nitems);
 			return 0;
