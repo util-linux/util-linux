@@ -143,6 +143,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	int rc = 0, lo_flags = 0;
 	uint64_t offset = 0, sizelimit = 0;
 
+	assert(cxt);
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
