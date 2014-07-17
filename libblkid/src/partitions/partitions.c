@@ -1143,7 +1143,7 @@ int blkid_partitions_strcpy_ptuuid(blkid_probe pr, char *str)
  */
 const char *blkid_parttable_get_id(blkid_parttable tab)
 {
-	return tab && tab->id && *tab->id ? tab->id : NULL;
+	return tab && *tab->id ? tab->id : NULL;
 }
 
 
