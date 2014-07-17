@@ -187,6 +187,9 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 	long line_max;
 
 	line_max = sysconf(_SC_LINE_MAX);
+	if (line_max <= 0)
+		line_max = 512;
+
 	lbuf = xmalloc(line_max);
 
 	if ((fp = xfmkstemp(&tmpname, NULL)) == NULL)
