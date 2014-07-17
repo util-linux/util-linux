@@ -213,6 +213,7 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 
 	sysfs_deinit(&wholedisk);
 	mnt_unref_table(tab);
+	mnt_free_iter(itr);
 
 	if (cnt && cnt == cnt_err)
 		return MOUNT_EX_FAIL;		/* all failed */
