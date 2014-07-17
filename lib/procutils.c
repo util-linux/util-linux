@@ -174,6 +174,8 @@ int proc_next_pid(struct proc_processes *ps, pid_t *pid)
 
 			p = fgets(buf, sizeof(buf), f);
 			fclose(f);
+			if (!p)
+				continue;
 
 			if (sscanf(buf, "%*d (%255[^)])", procname) != 1)
 				continue;
