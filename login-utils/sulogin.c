@@ -645,6 +645,7 @@ static char *getpasswd(struct console *con)
 	tty.c_lflag &= ~(ECHO|ECHOE|ECHOK|ECHONL|TOSTOP|ISIG);
 	tc = (tcsetattr(fd, TCSAFLUSH, &tty) == 0);
 
+	sigemptyset(&sa.sa_mask);
 	sa.sa_handler = alrm_handler;
 	sa.sa_flags = 0;
 	sigaction(SIGALRM, &sa, NULL);
