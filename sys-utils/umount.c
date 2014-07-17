@@ -445,8 +445,10 @@ static int umount_alltargets(struct libmnt_context *cxt, const char *spec, int r
 
 	/* get on @cxt independent mountinfo */
 	tb = new_mountinfo(cxt);
-	if (!tb)
-		return MOUNT_EX_SOFTWARE;
+	if (!tb) {
+		rc = MOUNT_EX_SOFTWARE;
+		goto done;
+	}
 
 	/* Note that @fs is from mount context and the context will be reseted
 	 * after each umount() call */
@@ -468,6 +470,7 @@ static int umount_alltargets(struct libmnt_context *cxt, const char *spec, int r
 			break;
 	}
 
+done:
 	mnt_free_iter(itr);
 	mnt_unref_table(tb);
 
