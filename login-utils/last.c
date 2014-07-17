@@ -582,7 +582,7 @@ static int is_phantom(const struct last_control *ctl, struct utmp *ut)
 {
 	struct passwd *pw;
 	char path[32];
-	FILE *f;
+	FILE *f = NULL;
 	unsigned int loginuid;
 	int ret = 0;
 
@@ -592,10 +592,9 @@ static int is_phantom(const struct last_control *ctl, struct utmp *ut)
 	if (!pw)
 		return 1;
 	sprintf(path, "/proc/%u/loginuid", ut->ut_pid);
-	if (access(path, R_OK) == 0 && !(f = fopen(path, "r")))
+	if (access(path, R_OK) != 0 || !(f = fopen(path, "r")))
 		return 1;
-	else
-		return ret;
+
 	if (fscanf(f, "%u", &loginuid) != 1)
 		ret = 1;
 	fclose(f);
