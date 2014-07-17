@@ -97,6 +97,8 @@ static int plymouth_command(const char* arg)
 	pid = fork();
 	if (!pid) {
 		int fd = open("/dev/null", O_RDWR);
+		if (fd < 0)
+			exit(127);
 		dup2(fd, 0);
 		dup2(fd, 1);
 		dup2(fd, 2);
