@@ -219,6 +219,7 @@ static int partition_from_scols(struct fdisk_table *tb,
 			return -EINVAL;
 		while (scols_line_next_child(ln, itr, &chln) == 0)
 			partition_from_scols(tb, chln);
+		scols_free_iter(itr);
 	}
 	return 0;
 }
