@@ -195,9 +195,24 @@ struct lsblk {
 
 struct lsblk *lsblk;	/* global handler */
 
-#define NCOLS ARRAY_SIZE(infos)
-static int columns[NCOLS];/* enabled columns */
-static int ncolumns;		/* number of enabled columns */
+/* columns[] array specifies all currently wanted output column. The columns
+ * are defined by infos[] array and you can specify (on command line) each
+ * column twice. That's enough, dynamically allocated array of the columns is
+ * unnecessary overkill and over-engineering in this case */
+static int columns[ARRAY_SIZE(infos) * 2];
+static int ncolumns;
+
+static inline size_t err_columns_index(size_t arysz, size_t idx)
+{
+	if (idx >= arysz)
+		errx(EXIT_FAILURE, _("too many columns specified, "
+				     "the limit is %zu columns."),
+				arysz - 1);
+	return idx;
+}
+
+#define add_column(ary, n, id)	\
+		((ary)[ err_columns_index(ARRAY_SIZE(ary), (n)) ] = (id))
 
 static int excludes[256];
 static size_t nexcludes;
@@ -281,9 +296,8 @@ static int is_maj_included(int maj)
 /* array with IDs of enabled columns */
 static int get_column_id(int num)
 {
-	assert(ARRAY_SIZE(columns) == NCOLS);
 	assert(num < ncolumns);
-	assert(columns[num] < (int) NCOLS);
+	assert(columns[num] < (int) ARRAY_SIZE(infos));
 	return columns[num];
 }
 
@@ -1577,11 +1591,11 @@ int main(int argc, char *argv[])
 			lsblk->nodeps = 1;
 			break;
 		case 'D':
-			columns[ncolumns++] = COL_NAME;
-			columns[ncolumns++] = COL_DALIGN;
-			columns[ncolumns++] = COL_DGRAN;
-			columns[ncolumns++] = COL_DMAX;
-			columns[ncolumns++] = COL_DZERO;
+			add_column(columns, ncolumns++, COL_NAME);
+			add_column(columns, ncolumns++, COL_DALIGN);
+			add_column(columns, ncolumns++, COL_DGRAN);
+			add_column(columns, ncolumns++, COL_DMAX);
+			add_column(columns, ncolumns++, COL_DZERO);
 			break;
 		case 'e':
 			parse_excludes(optarg);
@@ -1623,42 +1637,42 @@ int main(int argc, char *argv[])
 			lsblk->inverse = 1;
 			break;
 		case 'f':
-			columns[ncolumns++] = COL_NAME;
-			columns[ncolumns++] = COL_FSTYPE;
-			columns[ncolumns++] = COL_LABEL;
-			columns[ncolumns++] = COL_UUID;
-			columns[ncolumns++] = COL_TARGET;
+			add_column(columns, ncolumns++, COL_NAME);
+			add_column(columns, ncolumns++, COL_FSTYPE);
+			add_column(columns, ncolumns++, COL_LABEL);
+			add_column(columns, ncolumns++, COL_UUID);
+			add_column(columns, ncolumns++, COL_TARGET);
 			break;
 		case 'm':
-			columns[ncolumns++] = COL_NAME;
-			columns[ncolumns++] = COL_SIZE;
-			columns[ncolumns++] = COL_OWNER;
-			columns[ncolumns++] = COL_GROUP;
-			columns[ncolumns++] = COL_MODE;
+			add_column(columns, ncolumns++, COL_NAME);
+			add_column(columns, ncolumns++, COL_SIZE);
+			add_column(columns, ncolumns++, COL_OWNER);
+			add_column(columns, ncolumns++, COL_GROUP);
+			add_column(columns, ncolumns++, COL_MODE);
 			break;
 		case 't':
-			columns[ncolumns++] = COL_NAME;
-			columns[ncolumns++] = COL_ALIOFF;
-			columns[ncolumns++] = COL_MINIO;
-			columns[ncolumns++] = COL_OPTIO;
-			columns[ncolumns++] = COL_PHYSEC;
-			columns[ncolumns++] = COL_LOGSEC;
-			columns[ncolumns++] = COL_ROTA;
-			columns[ncolumns++] = COL_SCHED;
-			columns[ncolumns++] = COL_RQ_SIZE;
-			columns[ncolumns++] = COL_RA;
-			columns[ncolumns++] = COL_WSAME;
+			add_column(columns, ncolumns++, COL_NAME);
+			add_column(columns, ncolumns++, COL_ALIOFF);
+			add_column(columns, ncolumns++, COL_MINIO);
+			add_column(columns, ncolumns++, COL_OPTIO);
+			add_column(columns, ncolumns++, COL_PHYSEC);
+			add_column(columns, ncolumns++, COL_LOGSEC);
+			add_column(columns, ncolumns++, COL_ROTA);
+			add_column(columns, ncolumns++, COL_SCHED);
+			add_column(columns, ncolumns++, COL_RQ_SIZE);
+			add_column(columns, ncolumns++, COL_RA);
+			add_column(columns, ncolumns++, COL_WSAME);
 			break;
 		case 'S':
 			lsblk->nodeps = 1;
 			lsblk->scsi = 1;
-			columns[ncolumns++] = COL_NAME;
-			columns[ncolumns++] = COL_HCTL;
-			columns[ncolumns++] = COL_TYPE;
-			columns[ncolumns++] = COL_VENDOR;
-			columns[ncolumns++] = COL_MODEL;
-			columns[ncolumns++] = COL_REV;
-			columns[ncolumns++] = COL_TRANSPORT;
+			add_column(columns, ncolumns++, COL_NAME);
+			add_column(columns, ncolumns++, COL_HCTL);
+			add_column(columns, ncolumns++, COL_TYPE);
+			add_column(columns, ncolumns++, COL_VENDOR);
+			add_column(columns, ncolumns++, COL_MODEL);
+			add_column(columns, ncolumns++, COL_REV);
+			add_column(columns, ncolumns++, COL_TRANSPORT);
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -1677,13 +1691,13 @@ int main(int argc, char *argv[])
 	check_sysdevblock();
 
 	if (!ncolumns) {
-		columns[ncolumns++] = COL_NAME;
-		columns[ncolumns++] = COL_MAJMIN;
-		columns[ncolumns++] = COL_RM;
-		columns[ncolumns++] = COL_SIZE;
-		columns[ncolumns++] = COL_RO;
-		columns[ncolumns++] = COL_TYPE;
-		columns[ncolumns++] = COL_TARGET;
+		add_column(columns, ncolumns++, COL_NAME);
+		add_column(columns, ncolumns++, COL_MAJMIN);
+		add_column(columns, ncolumns++, COL_RM);
+		add_column(columns, ncolumns++, COL_SIZE);
+		add_column(columns, ncolumns++, COL_RO);
+		add_column(columns, ncolumns++, COL_TYPE);
+		add_column(columns, ncolumns++, COL_TARGET);
 	}
 
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
