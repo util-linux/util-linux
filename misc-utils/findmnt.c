@@ -711,16 +711,21 @@ static int has_line(struct libscols_table *table, struct libmnt_fs *fs)
 {
 	struct libscols_line *ln;
 	struct libscols_iter *itr;
+	int rc = 0;
 
 	itr = scols_new_iter(SCOLS_ITER_FORWARD);
 	if (!itr)
 		return 0;
 
-	while(scols_table_next_line(table, itr, &ln) == 0) {
-		if ((struct libmnt_fs *) scols_line_get_userdata(ln) == fs)
-			return 1;
+	while (scols_table_next_line(table, itr, &ln) == 0) {
+		if ((struct libmnt_fs *) scols_line_get_userdata(ln) == fs) {
+			rc = 1;
+			break;
+		}
 	}
-	return 0;
+
+	scols_free_iter(itr);
+	return rc;
 }
 
 /* reads filesystems from @tb (libmount) and fillin @table (output table) */
