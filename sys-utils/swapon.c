@@ -105,8 +105,9 @@ struct colinfo infos[] = {
 	[COL_USED]     = { "USED",	0.20, SCOLS_FL_RIGHT, N_("bytes in use")},
 	[COL_PRIO]     = { "PRIO",	0.20, SCOLS_FL_RIGHT, N_("swap priority")},
 };
-#define NCOLS ARRAY_SIZE(infos)
-static int columns[NCOLS], ncolumns;
+
+static int columns[ARRAY_SIZE(infos) * 2];
+static int ncolumns;
 
 static int column_name_to_id(const char *name, size_t namesz)
 {
@@ -114,7 +115,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 
 	assert(name);
 
-	for (i = 0; i < NCOLS; i++) {
+	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
@@ -126,9 +127,8 @@ static int column_name_to_id(const char *name, size_t namesz)
 
 static inline int get_column_id(int num)
 {
-	assert(ARRAY_SIZE(columns) == NCOLS);
 	assert(num < ncolumns);
-	assert(columns[num] < (int)NCOLS);
+	assert(columns[num] < (int) ARRAY_SIZE(infos));
 
 	return columns[num];
 }
@@ -710,7 +710,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" * if no policy is selected both discard types are enabled. (default)\n"), out);
 
 	fputs(_("\nAvailable columns (for --show):\n"), out);
-	for (i = 0; i < NCOLS; i++)
+	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %4s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("swapon(8)"));
