@@ -54,6 +54,17 @@
 
 #include "fdiskP.h"
 
+#ifdef __GNU__
+# define DEFAULT_DEVICE "/dev/hd0"
+# define ALTERNATE_DEVICE "/dev/sd0"
+#elif defined(__FreeBSD__)
+# define DEFAULT_DEVICE "/dev/ad0"
+# define ALTERNATE_DEVICE "/dev/da0"
+#else
+# define DEFAULT_DEVICE "/dev/sda"
+# define ALTERNATE_DEVICE "/dev/hda"
+#endif
+
 #define ARROW_CURSOR_STRING	">>  "
 #define ARROW_CURSOR_DUMMY	"    "
 #define ARROW_CURSOR_WIDTH	(sizeof(ARROW_CURSOR_STRING) - 1)
@@ -1981,6 +1992,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char *argv[])
 {
+	const char *diskpath;
 	int rc, c, colormode = UL_COLORMODE_UNDEF;
 	struct cfdisk _cf = { .lines_idx = 0 },
 		      *cf = &_cf;
@@ -2019,8 +2031,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-
-
 	colors_init(colormode, "cfdisk");
 
 	fdisk_init_debug(0);
@@ -2033,13 +2043,17 @@ int main(int argc, char *argv[])
 	fdisk_context_set_ask(cf->cxt, ask_callback, (void *) cf);
 
 	if (optind == argc)
-		usage(stderr);
+		diskpath = access(DEFAULT_DEVICE, F_OK) == 0 ?
+					DEFAULT_DEVICE : ALTERNATE_DEVICE;
+	else
+		diskpath = argv[optind];
 
-	rc = fdisk_context_assign_device(cf->cxt, argv[optind], 0);
+	rc = fdisk_context_assign_device(cf->cxt, diskpath, 0);
 	if (rc == -EACCES)
-		rc = fdisk_context_assign_device(cf->cxt, argv[optind], 1);
+		rc = fdisk_context_assign_device(cf->cxt, diskpath, 1);
 	if (rc != 0)
-		err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
+		err(EXIT_FAILURE, _("cannot open %s"),
+				optind == argc ? DEFAULT_DEVICE : diskpath);
 
 	/* Don't use err(), warn() from this point */
 	ui_init(cf);
