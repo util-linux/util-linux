@@ -273,8 +273,25 @@ struct lslogins_control {
 /* these have to remain global since there's no other reasonable way to pass
  * them for each call of fill_table() via twalk() */
 static struct libscols_table *tb;
-static int columns[ARRAY_SIZE(coldescs)];
+
+/* columns[] array specifies all currently wanted output column. The columns
+ * are defined by coldescs[] array and you can specify (on command line) each
+ * column twice. That's enough, dynamically allocated array of the columns is
+ * unnecessary overkill and over-engineering in this case */
+static int columns[ARRAY_SIZE(coldescs) * 2];
 static int ncolumns;
+
+static inline size_t err_columns_index(size_t arysz, size_t idx)
+{
+	if (idx >= arysz)
+		errx(EXIT_FAILURE, _("too many columns specified, "
+				     "the limit is %zu columns."),
+				arysz - 1);
+	return idx;
+}
+
+#define add_column(ary, n, id)	\
+		((ary)[ err_columns_index(ARRAY_SIZE(ary), (n)) ] = (id))
 
 static struct timeval now;
 
@@ -1270,8 +1287,8 @@ int main(int argc, char *argv[])
 	ctl->time_mode = TIME_SHORT;
 
 	/* very basic default */
-	columns[ncolumns++] = COL_UID;
-	columns[ncolumns++] = COL_USER;
+	add_column(columns, ncolumns++, COL_UID);
+	add_column(columns, ncolumns++, COL_USER);
 
 	while ((c = getopt_long(argc, argv, "acfGg:hLl:no:prsuVxzZ",
 				longopts, NULL)) != -1) {
@@ -1280,11 +1297,11 @@ int main(int argc, char *argv[])
 
 		switch (c) {
 		case 'a':
-			columns[ncolumns++] = COL_PWD_WARN;
-			columns[ncolumns++] = COL_PWD_CTIME_MIN;
-			columns[ncolumns++] = COL_PWD_CTIME_MAX;
-			columns[ncolumns++] = COL_PWD_CTIME;
-			columns[ncolumns++] = COL_PWD_EXPIR;
+			add_column(columns, ncolumns++, COL_PWD_WARN);
+			add_column(columns, ncolumns++, COL_PWD_CTIME_MIN);
+			add_column(columns, ncolumns++, COL_PWD_CTIME_MAX);
+			add_column(columns, ncolumns++, COL_PWD_CTIME);
+			add_column(columns, ncolumns++, COL_PWD_EXPIR);
 			break;
 		case 'c':
 			outmode = OUT_COLON;
@@ -1293,14 +1310,14 @@ int main(int argc, char *argv[])
 			outmode = OUT_EXPORT;
 			break;
 		case 'f':
-			columns[ncolumns++] = COL_FAILED_LOGIN;
-			columns[ncolumns++] = COL_FAILED_TTY;
+			add_column(columns, ncolumns++, COL_FAILED_LOGIN);
+			add_column(columns, ncolumns++, COL_FAILED_TTY);
 			break;
 		case 'G':
-			columns[ncolumns++] = COL_GID;
-			columns[ncolumns++] = COL_GROUP;
-			columns[ncolumns++] = COL_SGIDS;
-			columns[ncolumns++] = COL_SGROUPS;
+			add_column(columns, ncolumns++, COL_GID);
+			add_column(columns, ncolumns++, COL_GROUP);
+			add_column(columns, ncolumns++, COL_SGIDS);
+			add_column(columns, ncolumns++, COL_SGROUPS);
 			break;
 		case 'g':
 			groups = optarg;
@@ -1309,9 +1326,9 @@ int main(int argc, char *argv[])
 			usage(stdout);
 			break;
 		case 'L':
-			columns[ncolumns++] = COL_LAST_TTY;
-			columns[ncolumns++] = COL_LAST_HOSTNAME;
-			columns[ncolumns++] = COL_LAST_LOGIN;
+			add_column(columns, ncolumns++, COL_LAST_TTY);
+			add_column(columns, ncolumns++, COL_LAST_HOSTNAME);
+			add_column(columns, ncolumns++, COL_LAST_LOGIN);
 			break;
 		case 'l':
 			logins = optarg;
@@ -1345,11 +1362,11 @@ int main(int argc, char *argv[])
 			lslogins_flag |= F_USRAC;
 			break;
 		case 'p':
-			columns[ncolumns++] = COL_PWDEMPTY;
-			columns[ncolumns++] = COL_PWDLOCK;
-			columns[ncolumns++] = COL_PWDDENY;
-			columns[ncolumns++] = COL_NOLOGIN;
-			columns[ncolumns++] = COL_HUSH_STATUS;
+			add_column(columns, ncolumns++, COL_PWDEMPTY);
+			add_column(columns, ncolumns++, COL_PWDLOCK);
+			add_column(columns, ncolumns++, COL_PWDDENY);
+			add_column(columns, ncolumns++, COL_NOLOGIN);
+			add_column(columns, ncolumns++, COL_HUSH_STATUS);
 			break;
 		case 'z':
 			outmode = OUT_NUL;
@@ -1392,7 +1409,7 @@ int main(int argc, char *argv[])
 			else
 				ctl->selinux_enabled = sl == 1;
 #endif
-			columns[ncolumns++] = COL_SELINUX;
+			add_column(columns, ncolumns++, COL_SELINUX);
 			break;
 		}
 		default:
@@ -1421,11 +1438,11 @@ int main(int argc, char *argv[])
 
 	} else if (ncolumns == 2 && !opt_o) {
 		/* default colummns */
-		columns[ncolumns++] = COL_NPROCS;
-		columns[ncolumns++] = COL_PWDLOCK;
-		columns[ncolumns++] = COL_PWDDENY;
-		columns[ncolumns++] = COL_LAST_LOGIN;
-		columns[ncolumns++] = COL_GECOS;
+		add_column(columns, ncolumns++, COL_NPROCS);
+		add_column(columns, ncolumns++, COL_PWDLOCK);
+		add_column(columns, ncolumns++, COL_PWDDENY);
+		add_column(columns, ncolumns++, COL_LAST_LOGIN);
+		add_column(columns, ncolumns++, COL_GECOS);
 	}
 
 	if (require_wtmp())
