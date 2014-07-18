@@ -97,9 +97,7 @@ enum {
 	COL_OPT_FIELDS,
 	COL_PROPAGATION,
 	COL_FREQ,
-	COL_PASSNO,
-
-	FINDMNT_NCOLUMNS
+	COL_PASSNO
 };
 
 enum {
@@ -119,7 +117,7 @@ struct colinfo {
 };
 
 /* columns descriptions (don't use const, this is writable) */
-static struct colinfo infos[FINDMNT_NCOLUMNS] = {
+static struct colinfo infos[] = {
 	[COL_SOURCE]       = { "SOURCE",       0.25, SCOLS_FL_NOEXTREMES, N_("source device") },
 	[COL_TARGET]       = { "TARGET",       0.30, SCOLS_FL_TREE| SCOLS_FL_NOEXTREMES, N_("mountpoint") },
 	[COL_FSTYPE]       = { "FSTYPE",       0.10, SCOLS_FL_TRUNC, N_("filesystem type") },
@@ -147,12 +145,28 @@ static struct colinfo infos[FINDMNT_NCOLUMNS] = {
 	[COL_PASSNO]       = { "PASSNO",          1, SCOLS_FL_RIGHT, N_("pass number on parallel fsck(8) [fstab only]") }
 };
 
+/* columns[] array specifies all currently wanted output column. The columns
+ * are defined by infos[] array and you can specify (on command line) each
+ * column twice. That's enough, dynamically allocated array of the columns is
+ * unnecessary overkill and over-engineering in this case */
+static int columns[ARRAY_SIZE(infos) * 2];
+static int ncolumns;
+
+static inline size_t err_columns_index(size_t arysz, size_t idx)
+{
+	if (idx >= arysz)
+		errx(EXIT_FAILURE, _("too many columns specified, "
+				     "the limit is %zu columns."),
+				arysz - 1);
+	return idx;
+}
+
+#define add_column(ary, n, id)	\
+		((ary)[ err_columns_index(ARRAY_SIZE(ary), (n)) ] = (id))
+
 /* global flags */
 static int flags;
 
-/* array with IDs of enabled columns */
-static int columns[FINDMNT_NCOLUMNS];
-static int ncolumns;
 
 /* poll actions (parsed --poll=<list> */
 #define FINDMNT_NACTIONS	4		/* mount, umount, move, remount */
@@ -172,7 +186,7 @@ static int match_func(struct libmnt_fs *fs, void *data __attribute__ ((__unused_
 static int get_column_id(int num)
 {
 	assert(num < ncolumns);
-	assert(columns[num] < FINDMNT_NCOLUMNS);
+	assert((size_t) columns[num] < ARRAY_SIZE(infos));
 	return columns[num];
 }
 
@@ -183,7 +197,7 @@ static struct colinfo *get_column_info(int num)
 
 static const char *column_id_to_name(int id)
 {
-	assert(id < FINDMNT_NCOLUMNS);
+	assert((size_t) id < ARRAY_SIZE(infos));
 	return infos[id].name;
 }
 
@@ -204,25 +218,25 @@ static int get_column_flags(int num)
 
 static const char *get_match(int id)
 {
-	assert(id < FINDMNT_NCOLUMNS);
+	assert((size_t) id < ARRAY_SIZE(infos));
 	return infos[id].match;
 }
 
 static void *get_match_data(int id)
 {
-	assert(id < FINDMNT_NCOLUMNS);
+	assert((size_t) id < ARRAY_SIZE(infos));
 	return infos[id].match_data;
 }
 
 static void set_match(int id, const char *match)
 {
-	assert(id < FINDMNT_NCOLUMNS);
+	assert((size_t) id < ARRAY_SIZE(infos));
 	infos[id].match = match;
 }
 
 static void set_match_data(int id, void *data)
 {
-	assert(id < FINDMNT_NCOLUMNS);
+	assert((size_t) id < ARRAY_SIZE(infos));
 	infos[id].match_data = data;
 }
 
@@ -272,7 +286,7 @@ static void enable_extra_target_match(void)
 
 static int is_tabdiff_column(int id)
 {
-	assert(id < FINDMNT_NCOLUMNS);
+	assert((size_t) id < ARRAY_SIZE(infos));
 
 	switch(id) {
 	case COL_ACTION:
@@ -352,9 +366,9 @@ static int is_mount_compatible_mode(void)
 
 static void disable_columns_truncate(void)
 {
-	int i;
+	size_t i;
 
-	for (i = 0; i < FINDMNT_NCOLUMNS; i++)
+	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		infos[i].flags &= ~SCOLS_FL_TRUNC;
 }
 
@@ -363,9 +377,9 @@ static void disable_columns_truncate(void)
  */
 static int column_name_to_id(const char *name, size_t namesz)
 {
-	int i;
+	size_t i;
 
-	for (i = 0; i < FINDMNT_NCOLUMNS; i++) {
+	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = column_id_to_name(i);
 
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
@@ -1152,7 +1166,7 @@ static int uniq_fs_target_cmp(
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	int i;
+	size_t i;
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
@@ -1206,7 +1220,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, _("\nAvailable columns:\n"));
 
-	for (i = 0; i < FINDMNT_NCOLUMNS; i++)
+	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("findmnt(8)"));
@@ -1271,8 +1285,6 @@ int main(int argc, char *argv[])
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
-
-	assert(ARRAY_SIZE(columns) == FINDMNT_NCOLUMNS);
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -1416,24 +1428,24 @@ int main(int argc, char *argv[])
 	}
 
 	if (!ncolumns && (flags & FL_DF)) {
-		columns[ncolumns++] = COL_SOURCE;
-		columns[ncolumns++] = COL_FSTYPE;
-		columns[ncolumns++] = COL_SIZE;
-		columns[ncolumns++] = COL_USED;
-		columns[ncolumns++] = COL_AVAIL;
-		columns[ncolumns++] = COL_USEPERC;
-		columns[ncolumns++] = COL_TARGET;
+		add_column(columns, ncolumns++, COL_SOURCE);
+		add_column(columns, ncolumns++, COL_FSTYPE);
+		add_column(columns, ncolumns++, COL_SIZE);
+		add_column(columns, ncolumns++, COL_USED);
+		add_column(columns, ncolumns++, COL_AVAIL);
+		add_column(columns, ncolumns++, COL_USEPERC);
+		add_column(columns, ncolumns++, COL_TARGET);
 	}
 
 	/* default columns */
 	if (!ncolumns) {
 		if (flags & FL_POLL)
-			columns[ncolumns++] = COL_ACTION;
+			add_column(columns, ncolumns++, COL_ACTION);
 
-		columns[ncolumns++] = COL_TARGET;
-		columns[ncolumns++] = COL_SOURCE;
-		columns[ncolumns++] = COL_FSTYPE;
-		columns[ncolumns++] = COL_OPTIONS;
+		add_column(columns, ncolumns++, COL_TARGET);
+		add_column(columns, ncolumns++, COL_SOURCE);
+		add_column(columns, ncolumns++, COL_FSTYPE);
+		add_column(columns, ncolumns++, COL_OPTIONS);
 	}
 
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
