@@ -73,16 +73,13 @@ static struct colinfo infos[] = {
 	[COL_MAJMIN]      = { "MAJ:MIN",      3, 0, N_("loop device major:minor number")},
 };
 
-#define NCOLS ARRAY_SIZE(infos)
-
-static int columns[NCOLS] = {-1};
+static int columns[ARRAY_SIZE(infos) * 2] = {-1};
 static int ncolumns;
 
 static int get_column_id(int num)
 {
-	assert(ARRAY_SIZE(columns) == NCOLS);
 	assert(num < ncolumns);
-	assert(columns[num] < (int) NCOLS);
+	assert(columns[num] < (int) ARRAY_SIZE(infos));
 	return columns[num];
 }
 
@@ -95,7 +92,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
 
-	for (i = 0; i < NCOLS; i++) {
+	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
@@ -400,7 +397,7 @@ static void usage(FILE *out)
 	fputs(USAGE_VERSION, out);
 
 	fputs(_("\nAvailable --list columns:\n"), out);
-	for (i = 0; i < NCOLS; i++)
+	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %12s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("losetup(8)"));
