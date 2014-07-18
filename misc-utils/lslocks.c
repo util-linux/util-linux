@@ -80,8 +80,10 @@ static struct colinfo infos[] = {
 	[COL_PATH] = { "PATH",    0, SCOLS_FL_TRUNC, N_("path of the locked file")},
 	[COL_BLOCKER] = { "BLOCKER", 0, SCOLS_FL_RIGHT, N_("PID of the process blocking the lock") }
 };
-#define NCOLS ARRAY_SIZE(infos)
-static int columns[NCOLS], ncolumns;
+
+static int columns[ARRAY_SIZE(infos) * 2];
+static int ncolumns;
+
 static pid_t pid = 0;
 
 static struct libmnt_table *tab;		/* /proc/self/mountinfo */
@@ -110,7 +112,7 @@ static void disable_columns_truncate(void)
 {
 	size_t i;
 
-	for (i = 0; i < NCOLS; i++)
+	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		infos[i].flags &= ~SCOLS_FL_TRUNC;
 }
 
@@ -329,7 +331,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 
 	assert(name);
 
-	for (i = 0; i < NCOLS; i++) {
+	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
@@ -341,9 +343,8 @@ static int column_name_to_id(const char *name, size_t namesz)
 
 static inline int get_column_id(int num)
 {
-	assert(ARRAY_SIZE(columns) == NCOLS);
 	assert(num < ncolumns);
-	assert(columns[num] < (int) NCOLS);
+	assert(columns[num] < (int) ARRAY_SIZE(infos));
 
 	return columns[num];
 }
@@ -516,7 +517,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 	fputs(_("\nAvailable columns (for --output):\n"), out);
 
-	for (i = 0; i < NCOLS; i++)
+	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("lslocks(8)"));
