@@ -105,8 +105,8 @@ static struct colinfo infos[] = {
 
 };
 
-#define NCOLS ARRAY_SIZE(infos)
-static int columns[NCOLS], ncolumns;
+static int columns[ARRAY_SIZE(infos) * 2];
+static int ncolumns;
 
 struct wdinfo {
 	char		*device;
@@ -143,7 +143,7 @@ static int column2id(const char *name, size_t namesz)
 {
 	size_t i;
 
-	for (i = 0; i < NCOLS; i++) {
+	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return i;
@@ -154,9 +154,8 @@ static int column2id(const char *name, size_t namesz)
 
 static int get_column_id(int num)
 {
-	assert(ARRAY_SIZE(columns) == NCOLS);
 	assert(num < ncolumns);
-	assert(columns[num] < (int) NCOLS);
+	assert(columns[num] < (int) ARRAY_SIZE(infos));
 
 	return columns[num];
 }
