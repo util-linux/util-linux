@@ -90,6 +90,8 @@ static struct prlimit_desc prlimit_desc[] =
 	[STACK]      = { "STACK",      N_("max stack size"),                     N_("bytes"),     RLIMIT_STACK }
 };
 
+#define MAX_RESOURCES ARRAY_SIZE(prlimit_desc)
+
 struct prlimit {
 	struct list_head lims;
 
@@ -125,8 +127,10 @@ struct colinfo infos[] = {
 	[COL_UNITS]   = { "UNITS",       0.1,  SCOLS_FL_TRUNC, N_("units")},
 };
 
-#define NCOLS ARRAY_SIZE(infos)
-#define MAX_RESOURCES ARRAY_SIZE(prlimit_desc)
+static int columns[ARRAY_SIZE(infos) * 2];
+static int ncolumns;
+
+
 
 #define INFINITY_STR	"unlimited"
 #define INFINITY_STRLEN	(sizeof(INFINITY_STR) - 1)
@@ -134,8 +138,6 @@ struct colinfo infos[] = {
 #define PRLIMIT_SOFT	(1 << 1)
 #define PRLIMIT_HARD	(1 << 2)
 
-/* array with IDs of enabled columns */
-static int columns[NCOLS], ncolumns;
 static pid_t pid; /* calling process (default) */
 static int verbose;
 
@@ -190,7 +192,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 	fputs(_("\nAvailable columns (for --output):\n"), out);
 
-	for (i = 0; i < NCOLS; i++)
+	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("prlimit(1)"));
@@ -200,9 +202,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 static inline int get_column_id(int num)
 {
-	assert(ARRAY_SIZE(columns) == NCOLS);
 	assert(num < ncolumns);
-	assert(columns[num] < (int) NCOLS);
+	assert(columns[num] < (int) ARRAY_SIZE(infos));
 
 	return columns[num];
 }
@@ -264,7 +265,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 
 	assert(name);
 
-	for (i = 0; i < NCOLS; i++) {
+	for (i = 0; i < ARRAY_SIZE(infos); i++) {
 		const char *cn = infos[i].name;
 
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
