@@ -1,24 +1,24 @@
 .\" Rick Sladkey <jrs@world.std.com>
 .\" In the public domain.
 .\" Path modifications by faith@cs.unc.edu
-.TH SETSID 1 "November 1993" "util-linux" "User Commands"
+.TH SETSID 1 "July 2014" "util-linux" "User Commands"
 .SH NAME
 setsid \- run a program in a new session
 .SH SYNOPSIS
 .B setsid
 .I program
-.RI [ arg ...]
+.RI [ argument ...]
 .SH DESCRIPTION
 .B setsid
 runs a program in a new session.
 .SH OPTIONS
 .TP
-\fB\-c\fP, \fB\-\-ctty\fP
+.BR \-c , " \-\-ctty"
 Set the controlling terminal to the current one.
 .TP
-\fB\-w\fP, \fB\-\-wait\fP
-Wait the execution of the program to end, and return the exit value of
-the child as return value of the
+.BR \-w , " \-\-wait"
+Wait for the execution of the program to end, and return the exit value of
+this program as the return value of
 .BR setsid .
 .SH "SEE ALSO"
 .BR setsid (2)

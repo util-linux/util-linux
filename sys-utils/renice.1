@@ -31,14 +31,14 @@
 .\"
 .\"     @(#)renice.8   8.1 (Berkeley) 6/9/93
 .\"
-.TH RENICE "1" "September 2011" "util-linux" "User Commands"
+.TH RENICE "1" "July 2014" "util-linux" "User Commands"
 .SH NAME
 renice \- alter priority of running processes
 .SH SYNOPSIS
 .B renice
 .RB [ \-n ]
 .I priority
-.RB [ \-gpu ]
+.RB [ \-g | \-p | \-u ]
 .IR identifier ...
 .SH DESCRIPTION
 .B renice
@@ -62,15 +62,15 @@ to be used for the process, process group, or user.  Use of the option
 .BR \-n " or " \-\-priority
 is optional, but when used it must be the first argument.
 .TP
-.BR \-g , " \-\-pgrp " \fIpgid\fR...
-Force the succeeding arguments to be interpreted as process group IDs.
+.BR \-g , " \-\-pgrp
+Interpret the succeeding arguments as process group IDs.
 .TP
-.BR \-u , " \-\-user " \fIname_or_uid\fR...
-Force the succeeding arguments to be interpreted as usernames or UIDs.
-.TP
-.BR \-p , " \-\-pid " \fIpid\fR...
-Force the succeeding arguments to be interpreted as process IDs
+.BR \-p , " \-\-pid
+Interpret the succeeding arguments as process IDs
 (the default).
+.TP
+.BR \-u , " \-\-user
+Interpret the succeeding arguments as usernames or UIDs.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
