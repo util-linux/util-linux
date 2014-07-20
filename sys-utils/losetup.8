@@ -1,4 +1,4 @@
-.TH LOSETUP 8 "July 2003" "util-linux" "System Administration"
+.TH LOSETUP 8 "July 2014" "util-linux" "System Administration"
 .SH NAME
 losetup \- set up and control loop devices
 .SH SYNOPSIS
@@ -18,26 +18,26 @@ Get info:
 .IR offset ]
 .sp
 .in -5
-Delete loop:
+Detach a loop device:
 .sp
 .in +5
 .B "losetup \-d"
 .IR loopdev ...
 .sp
 .in -5
-Delete all used loop devices:
+Detach all used loop devices:
 .sp
 .in +5
 .B "losetup \-D"
 .sp
 .in -5
-Print name of first unused loop device:
+Print the name of the first unused loop device:
 .sp
 .in +5
 .B "losetup \-f"
 .sp
 .in -5
-Setup loop device:
+Set up a loop device:
 .sp
 .in +5
 .B losetup
@@ -46,12 +46,12 @@ Setup loop device:
 .RB [ \-\-sizelimit
 .IR size ]
 .in +8
-.RB [ \-rP ]
-.RB { \-f [ \-\-show ]| \fIloopdev\fP }
+.RB [ \-Pr ]
+.RB [ \-\-show ]  " \-f" | \fIloopdev\fP
 .I file
 .sp
 .in -13
-Resize loop device:
+Resize a loop device:
 .sp
 .in +5
 .B "losetup \-c"
@@ -61,78 +61,96 @@ Resize loop device:
 .SH DESCRIPTION
 .B losetup
 is used to associate loop devices with regular files or block devices,
-to detach loop devices and to query the status of a loop device. If only the
+to detach loop devices, and to query the status of a loop device.  If only the
 \fIloopdev\fP argument is given, the status of the corresponding loop
-device is shown. If no option is given, all loop devices are shown.
-
-Note that the old output format (e.g. losetup -a) with comma delimited strings is
-deprecated in favour of the --list output format.
+device is shown.  If no option is given, all loop devices are shown.
+.sp
+Note that the old output format (i.e. \fBlosetup -a\fR) with comma-delimited
+strings is deprecated in favour of the \fB--list\fR output format.
 
 .SH OPTIONS
-+The \fIsize\fR and \fIoffset\fR arguments may be followed by the multiplicative
-+suffixes KiB=1024, MiB=1024*1024, and so on for GiB, TiB, PiB, EiB, ZiB and YiB
-+(the "iB" is optional, e.g. "K" has the same meaning as "KiB") or the suffixes
-+KB=1000, MB=1000*1000, and so on for GB, TB, PB, EB, ZB and YB.
+The \fIsize\fR and \fIoffset\fR
+arguments may be followed by the multiplicative suffixes KiB (=1024),
+MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is
+optional, e.g., "K" has the same meaning as "KiB") or the suffixes
+KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 
-.IP "\fB\-a, \-\-all\fP"
-show status of all loop devices. Note that not all information are accessible
-for non-root users. See also \fB\-\-list\fP. The old output format (as printed
-without --list) is deprecated.
-.IP "\fB\-c, \-\-set-capacity\fP \fIloopdev\fP
-force loop driver to reread size of the file associated with the specified loop device
-.IP "\fB\-d, \-\-detach\fP \fIloopdev\fP..."
-detach the file or device associated with the specified loop device(s)
-.IP "\fB\-D, \-\-detach-all\fP"
-detach all associated loop devices
-.IP "\fB\-f, \-\-find\fP"
-find the first unused loop device. If a
+.TP
+.BR \-a , " \-\-all"
+Show the status of all loop devices.  Note that not all information is accessible
+for non-root users.  See also \fB\-\-list\fR.  The old output format (as printed
+without \fB--list)\fR is deprecated.
+.TP
+.BR \-c , " \-\-set-capacity " \fIloopdev
+Force the loop driver to reread the size of the file associated with the
+specified loop device.
+.TP
+.BR \-d , " \-\-detach " \fIloopdev\fR...
+Detach the file or device associated with the specified loop device(s).
+.TP
+.BR \-D , " \-\-detach-all"
+Detach all associated loop devices.
+.TP
+.BR \-f , " \-\-find"
+Find the first unused loop device.  If a
 .I file
-argument is present, use this device. Otherwise, print its name
-.IP "\fB\-h, \-\-help\fP"
-print help
+argument is present, use the found device as loop device.
+Otherwise, just print its name.
 .IP "\fB\-j, \-\-associated \fIfile\fP"
-show status of all loop devices associated with given
-.I file
-.IP "\fB\-l, \-\-list"
-if a loop device or the -a option is specified, print default columns for
-either the specified loop device or all loop devices, default is to print info
-about all devices.  See also \fB\-\-output\fP, \fB\-\-noheadings\fP
+Show the status of all loop devices associated with the given
+.IR file .
+.TP
+.BR \-l , " \-\-list"
+If a loop device or the \fB-a\fR option is specified, print the default columns
+for either the specified loop device or all loop devices; the default is to
+print info about all devices.  See also \fB\-\-output\fP, \fB\-\-noheadings\fP
 and \fB\-\-raw\fP.
-.IP "\fB\-n, \fB\-\-noheadings\fP"
-don't print headings for \fB\-\-list\fP output format
-.IP "\fB\-o, \-\-offset \fIoffset\fP"
-the data start is moved \fIoffset\fP bytes into the specified file or
-device
-.IP "\fB\-O, \-\-output \fIcolumns\fP"
-specify which columns are to be printed for the \fB\-\-list\fP output
-.IP "\fB\-\-sizelimit \fIsize\fP"
-the data end is set to no more than \fIsize\fP bytes after the data start
-.IP "\fB\-P, \-\-partscan\fP"
-force kernel to scan partition table on newly created loop device
+.TP
+.BR \-n , " \-\-noheadings"
+Don't print headings for \fB\-\-list\fP output format.
+.TP
+.BR \-o , " \-\-offset " \fIoffset
+The data start is moved \fIoffset\fP bytes into the specified file or device.
+.TP
+.BR \-O , " \-\-output " \fIcolumns
+Specify the columns that are to be printed for the \fB\-\-list\fP output.
+.TP
+.BR \-P , " \-\-partscan"
+Force the kernel to scan the partition table on a newly created loop device.
 .IP "\fB\-\-raw\fP"
-use raw \fB\-\-list\fP output format
-.IP "\fB\-r, \-\-read-only\fP"
-setup read-only loop device
+Use the raw \fB\-\-list\fP output format.
+.TP
+.BR \-r , " \-\-read-only"
+Set up a read-only loop device.
+.IP "\fB\-\-sizelimit \fIsize\fP"
+The data end is set to no more than \fIsize\fP bytes after the data start.
 .IP "\fB\-\-show\fP"
-print device name if the
-.I -f
+Display the name of the assigned loop device if the
+.B \-f
 option and a
 .I file
 argument are present.
-.IP "\fB\-v, \-\-verbose\fP"
-verbose mode
+.TP
+.BR \-v , " \-\-verbose"
+Verbose mode.
+.TP
+.BR \-V , " \-\-version"
+Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
 
 .SH ENCRYPTION
-.B Cryptoloop is no longer supported in favor of dm-crypt. For more details see
-.B cryptsetup(8).
+.B Cryptoloop is no longer supported in favor of dm-crypt.
+.B For more details see cryptsetup (8).
 
 .SH RETURN VALUE
 .B losetup
-returns 0 on success, nonzero on failure. When
+returns 0 on success, nonzero on failure.  When
 .B losetup
 displays the status of a loop device, it returns 1 if the device
 is not configured and 2 if an error occurred which prevented
-from determining the status of the device.
+determining the status of the device.
 
 .SH FILES
 .TP
@@ -156,7 +174,7 @@ The following commands can be used as an example of using the loop device.
 # losetup --detach /dev/loop0
 .fi
 .SH AUTHORS
-Karel Zak <kzak@redhat.com>, based on original version from
+Karel Zak <kzak@redhat.com>, based on the original version from
 Theodore Ts'o <tytso@athena.mit.edu>
 .SH AVAILABILITY
 The losetup command is part of the util-linux package and is available from

@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.TH FSTRIM 8 "November 2010" "util-linux" "System Administration"
+.TH FSTRIM 8 "July 2014" "util-linux" "System Administration"
 .SH NAME
 fstrim \- discard unused blocks on a mounted filesystem
 .SH SYNOPSIS
@@ -10,7 +10,7 @@ fstrim \- discard unused blocks on a mounted filesystem
 .RB [ \-l
 .IR length ]
 .RB [ \-m
-.IR minimum-free-extent ]
+.IR minimum-size ]
 .RB [ \-v ]
 .I mountpoint
 
@@ -32,38 +32,38 @@ is mounted.
 .PP
 Running
 .B fstrim
-more frequently or even using
-.B mount -o discard
-might affect lifetime of the poor quality SSD devices. The usual sufficient
-frequency is once a week for most desktop and server systems. Note that not all
-devices support queued trim, so each trim command incur a performance penalty
-to whatever else might be trying to use the disk at the time.
+frequently, or even using
+.BR "mount -o discard" ,
+might negatively affect the lifetime of poor-quality SSD devices.  For most
+desktop and server systems the sufficient trimming frequency is once a week.
+Note that not all
+devices support a queued trim, so each trim command incurs a performance penalty
+on whatever else might be trying to use the disk at the time.
 
 .SH OPTIONS
-The \fIoffset\fR, \fIlength\fR, and \fIminimum-free-extent\fR arguments may be
-followed by the multiplicative suffixes KiB=1024, MiB=1024*1024, and so on for
-GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is optional, e.g. "K" has the same
-meaning as "KiB") or the suffixes KB=1000, MB=1000*1000, and so on for GB, TB,
-PB, EB, ZB and YB.
+The \fIoffset\fR, \fIlength\fR, and \fIminimum-size\fR arguments may be
+followed by the multiplicative suffixes KiB (=1024),
+MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB"
+is optional, e.g., "K" has the same meaning as "KiB") or the suffixes
+KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
+
 .IP "\fB\-a, \-\-all\fP"
 Trim all mounted filesystems on devices that support the discard operation.
 The other supplied options, like \fB\-\-offset\fR, \fB\-\-length\fR and
 \fB-\-minimum\fR, are applied to all these devices.
 Errors from filesystems that do not support the discard operation are silently
 ignored.
-.IP "\fB\-h, \-\-help\fP"
-Display help text and exit.
 .IP "\fB\-o, \-\-offset\fP \fIoffset\fP"
-Byte offset in filesystem from which to begin searching for free blocks
-to discard.  Default value is zero, starting at the beginning of the
+Byte offset in the filesystem from which to begin searching for free blocks
+to discard.  The default value is zero, starting at the beginning of the
 filesystem.
 .IP "\fB\-l, \-\-length\fP \fIlength\fP"
-Number of bytes after starting point to search for free blocks to discard.
-If the specified value extends past the end of the filesystem,
+The number of bytes (after the starting point) to search for free blocks
+to discard.  If the specified value extends past the end of the filesystem,
 .B fstrim
-will stop at the filesystem size boundary. Default value extends to the end
-of the filesystem.
-.IP "\fB\-m, \-\-minimum\fP \fIminimum-free-extent\fP"
+will stop at the filesystem size boundary.  The default value extends to
+the end of the filesystem.
+.IP "\fB\-m, \-\-minimum\fP \fIminimum-size\fP"
 Minimum contiguous free range to discard, in bytes. (This value is internally
 rounded up to a multiple of the filesystem block size).  Free ranges smaller
 than this will be ignored.  By increasing this value, the fstrim operation
@@ -71,14 +71,14 @@ will complete more quickly for filesystems with badly fragmented freespace,
 although not all blocks will be discarded.  Default value is zero, discard
 every free block.
 .IP "\fB\-v, \-\-verbose\fP"
-Verbose execution. When specified 
+Verbose execution.  With this option
 .B fstrim
 will output the number of bytes passed from the filesystem
-down the block stack to the device for potential discard. This number is a
+down the block stack to the device for potential discard.  This number is a
 maximum discard amount from the storage device's perspective, because
 .I FITRIM
 ioctl called repeated will keep sending the same sectors for discard repeatedly.
-
+.sp
 .B fstrim
 will report the same potential discard bytes each time, but only sectors which
 had been written to between the discards would actually be discarded by the
@@ -88,6 +88,12 @@ LVM setup, etc.  These reductions would not be reflected in fstrim_range.len
 (the
 .B --length
 option).
+.TP
+.BR \-V , " \-\-version"
+Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
 
 .SH RETURN CODES
 .IP 0
@@ -101,7 +107,7 @@ some filesystem discards have succeeded, some failed
 .PP
 The command
 .B fstrim --all
-returns 0 (all success), 32 (all failed) or 64 (some failed, some success).
+returns 0 (all succeeded), 32 (all failed) or 64 (some failed, some succeeded).
 
 .SH AUTHOR
 .nf

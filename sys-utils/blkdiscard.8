@@ -1,5 +1,5 @@
 .\" -*- nroff -*-
-.TH BLKDISCARD 8 "October 2012" "util-linux" "System Administration"
+.TH BLKDISCARD 8 "July 2014" "util-linux" "System Administration"
 .SH NAME
 blkdiscard \- discard sectors on a device
 .SH SYNOPSIS
@@ -15,7 +15,7 @@ blkdiscard \- discard sectors on a device
 .B blkdiscard
 is used to discard device sectors.  This is useful for solid-state
 drivers (SSDs) and thinly-provisioned storage.  Unlike
-.BR fstrim (8)
+.BR fstrim (8) ,
 this command is used directly on the block device.
 .PP
 By default,
@@ -33,32 +33,39 @@ The
 .I offset
 and
 .I length
-arguments may be followed by the multiplicative suffixes KiB=1024,
-MiB=1024*1024, and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is
+arguments may be followed by the multiplicative suffixes KiB (=1024),
+MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is
 optional, e.g., "K" has the same meaning as "KiB") or the suffixes
-KB=1000, MB=1000*1000, and so on for GB, TB, PB, EB, ZB and YB.
-.IP "\fB\-h, \-\-help\fP"
-Display help text and exit.
-.IP "\fB\-o, \-\-offset\fP \fIoffset\fP"
-Byte offset in the device from which to discard.  Provided value will be
-aligned to the device sector size.  Default value is zero.
-.IP "\fB\-l, \-\-length\fP \fIlength\fP"
-Number of bytes after starting point to discard.  Provided value will be
-aligned to the device sector size.  If the specified value extends past
+KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
+.TP
+.BR \-o , " \-\-offset \fIoffset"
+Byte offset into the device from which to start discarding.  The provided value
+will be aligned to the device sector size.  The default value is zero.
+.TP
+.BR \-l , " \-\-length \fIlength"
+The number of bytes to discard (counting from the starting point).  The provided value
+will be aligned to the device sector size.  If the specified value extends past
 the end of the device,
 .B blkdiscard
-will stop at the device size boundary.  Default value extends to the end
+will stop at the device size boundary.  The default value extends to the end
 of the device.
-.IP "\fB\-s, \-\-secure\fP"
-Perform secure discard.  Secure discard is the same as regular discard
-except all copies of the discarded blocks possibly created by garbage
-collection must also be erased.  It has to be supported by the device.
-.IP "\fB\-v, \-\-verbose\fP"
-Print aligned
+.TP
+.BR \-s , " \-\-secure"
+Perform a secure discard.  A secure discard is the same as a regular discard
+except that all copies of the discarded blocks that were possibly created by
+garbage collection must also be erased.  This requires support from the device.
+.TP
+.BR \-v , " \-\-verbose"
+Display the aligned values of
 .I offset
 and
-.I length
-arguments.
+.IR length .
+.TP
+.BR \-V , " \-\-version"
+Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
 .SH AUTHOR
 .MT lczerner@redhat.com
 Lukas Czerner
