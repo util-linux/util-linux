@@ -229,8 +229,15 @@ The programs
 .B mount
 and
 .B umount
-maintain a list of currently mounted filesystems in the file
+traditionally maintained list of currently mounted filesystems in the file
 .IR /etc/mtab .
+The mtab file is still supported, but it's recommended to use a symlink to 
+the file
+.I /proc/mounts
+rather than the regular mtab file on the current Linux systems.
+The mtab file maintained in userspace cannot reliably work with namespaces, containers
+and another advanced Linux features.
+
 If no arguments are given to
 .BR mount ,
 this list is printed.
@@ -264,27 +271,6 @@ are specified.  For example, to mount device
 .B "mount /dev/foo /dir"
 .sp
 .RE
-
-When the
-.I proc
-filesystem is mounted (say at
-.IR /proc ),
-the files
-.I /etc/mtab
-and
-.I /proc/mounts
-have very similar contents.  The former has somewhat
-more information, such as the mount options used,
-but is not necessarily up-to-date (cf.\& the
-.B \-n
-option below).  It is possible to replace
-.I /etc/mtab
-by a symbolic link to
-.IR /proc/mounts ,
-and especially when you have very large numbers of mounts
-things will be much faster with that symlink,
-but some information is lost that way, and in particular
-using the "user" option will fail.
 .RE
 
 .B The non-superuser mounts.
@@ -1144,8 +1130,9 @@ media with a limited number of write cycles
 .TP
 .B user
 Allow an ordinary user to mount the filesystem.
-The name of the mounting user is written to mtab so that he can unmount
-the filesystem again.
+The name of the mounting user is written to mtab (or to the private libmount
+file in /run/mount on system without regular mtab) so that he can unmount the
+filesystem again.
 This option implies the options
 .BR noexec ", " nosuid ", and " nodev
 (unless overridden by subsequent options, as in the option line
@@ -3214,11 +3201,14 @@ It is possible that files
 .I /etc/mtab
 and
 .I /proc/mounts
-don't match.  The first file is based only on the mount command options, but the
-content of the second file also depends on the kernel and others settings (e.g.\&
-remote NFS server.  In particular case the mount command may reports unreliable
-information about a NFS mount point and the /proc/mounts file usually contains
-more reliable information.)
+don't match on systems with regular mtab file. The first file is based only on
+the mount command options, but the content of the second file also depends on
+the kernel and others settings (e.g.\& remote NFS server.  In particular case
+the mount command may reports unreliable information about a NFS mount point
+and the /proc/mounts file usually contains more reliable information.) This is
+another reason to replace mtab file with symlink to the
+.I /proc/mounts
+file.
 .PP
 Checking files on NFS filesystem referenced by file descriptors (i.e.\& the
 .B fcntl
