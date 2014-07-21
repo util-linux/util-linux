@@ -1507,9 +1507,9 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 			continue;
 		cm[i].userdata = x;
 		if (!has_typestr)
-			xasprintf(&name, "%2x %s", x->type, x->name);
+			xasprintf(&name, "%2x %s", x->type, _(x->name));
 		else {
-			name = (char *) x->name;
+			name = (char *) _(x->name);
 			cm[i].desc = x->typestr;
 		}
 		cm[i].name = name;
