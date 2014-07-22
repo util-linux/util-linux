@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.25-rc3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2014-07-05 17:49+0200\n"
+"POT-Creation-Date: 2014-07-22 10:34+0200\n"
 "PO-Revision-Date: 2014-07-12 14:51+0300\n"
 "Last-Translator: Lauri Nurmi <lanurmi@iki.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -37,35 +37,35 @@ msgid " %s <disk device> <partition number> <start> <length>\n"
 msgstr " %s <levylaite> <osionumero> <alku> <pituus>\n"
 
 #: disk-utils/addpart.c:52 disk-utils/blockdev.c:276 disk-utils/blockdev.c:420
-#: disk-utils/blockdev.c:447 disk-utils/cfdisk.c:2011 disk-utils/delpart.c:53
+#: disk-utils/blockdev.c:447 disk-utils/cfdisk.c:2055 disk-utils/delpart.c:53
 #: disk-utils/fdformat.c:62 disk-utils/fdformat.c:154 disk-utils/fdisk.c:676
-#: disk-utils/fdisk.c:692 disk-utils/fdisk.c:732 disk-utils/fdisk.c:952
+#: disk-utils/fdisk.c:692 disk-utils/fdisk.c:732 disk-utils/fdisk.c:951
 #: disk-utils/fsck.c:1424 disk-utils/fsck.cramfs.c:145
 #: disk-utils/fsck.cramfs.c:502 disk-utils/isosize.c:134
 #: disk-utils/mkfs.bfs.c:187 disk-utils/mkfs.cramfs.c:164
-#: disk-utils/mkfs.cramfs.c:666 disk-utils/mkfs.cramfs.c:793
+#: disk-utils/mkfs.cramfs.c:664 disk-utils/mkfs.cramfs.c:791
 #: disk-utils/mkfs.minix.c:753 disk-utils/partx.c:949
 #: disk-utils/resizepart.c:97 disk-utils/swaplabel.c:105
 #: libfdisk/src/bsd.c:503 lib/path.c:73 lib/path.c:85 login-utils/islocal.c:87
-#: login-utils/last.c:644 login-utils/last-deprecated.c:245
-#: login-utils/sulogin.c:466 login-utils/sulogin.c:504
+#: login-utils/last.c:643 login-utils/last-deprecated.c:245
+#: login-utils/sulogin.c:468 login-utils/sulogin.c:506
 #: login-utils/utmpdump.c:126 login-utils/utmpdump.c:345
 #: login-utils/utmpdump.c:367 login-utils/vipw.c:265 login-utils/vipw.c:283
-#: misc-utils/findmnt.c:1066 misc-utils/logger.c:412 misc-utils/mcookie.c:112
+#: misc-utils/findmnt.c:1085 misc-utils/logger.c:412 misc-utils/mcookie.c:112
 #: misc-utils/uuidd.c:222 sys-utils/blkdiscard.c:135 sys-utils/dmesg.c:513
-#: sys-utils/eject.c:510 sys-utils/eject.c:711 sys-utils/fallocate.c:371
-#: sys-utils/fsfreeze.c:124 sys-utils/fstrim.c:81 sys-utils/hwclock.c:270
+#: sys-utils/eject.c:510 sys-utils/eject.c:711 sys-utils/fallocate.c:370
+#: sys-utils/fsfreeze.c:124 sys-utils/fstrim.c:72 sys-utils/hwclock.c:270
 #: sys-utils/hwclock-cmos.c:632 sys-utils/hwclock-rtc.c:162
 #: sys-utils/hwclock-rtc.c:256 sys-utils/hwclock-rtc.c:414
 #: sys-utils/hwclock-rtc.c:435 sys-utils/hwclock-rtc.c:482
 #: sys-utils/ldattach.c:290 sys-utils/nsenter.c:113 sys-utils/rtcwake.c:106
 #: sys-utils/rtcwake.c:265 sys-utils/rtcwake.c:525 sys-utils/setpriv.c:224
-#: sys-utils/setpriv.c:521 sys-utils/setpriv.c:544 sys-utils/swapon.c:320
+#: sys-utils/setpriv.c:523 sys-utils/setpriv.c:546 sys-utils/swapon.c:320
 #: sys-utils/swapon.c:483 sys-utils/switch_root.c:163 sys-utils/unshare.c:49
-#: sys-utils/wdctl.c:320 sys-utils/wdctl.c:376 term-utils/script.c:216
+#: sys-utils/wdctl.c:319 sys-utils/wdctl.c:375 term-utils/script.c:216
 #: term-utils/script.c:242 term-utils/script.c:683
 #: term-utils/scriptreplay.c:203 term-utils/scriptreplay.c:206
-#: term-utils/wall.c:269 text-utils/rev.c:141 text-utils/tailf.c:61
+#: term-utils/wall.c:272 text-utils/rev.c:141 text-utils/tailf.c:61
 #: text-utils/tailf.c:98 text-utils/ul.c:232
 #, c-format
 msgid "cannot open %s"
@@ -218,7 +218,7 @@ msgstr "%s epäonnistui.\n"
 msgid "%s succeeded.\n"
 msgstr "%s onnistui.\n"
 
-#: disk-utils/blockdev.c:456 misc-utils/lsblk.c:1075 misc-utils/lsblk.c:1082
+#: disk-utils/blockdev.c:456 misc-utils/lsblk.c:1089 misc-utils/lsblk.c:1096
 #, fuzzy, c-format
 msgid "%s: failed to initialize sysfs handler"
 msgstr "Puskuria ei voi varata.\n"
@@ -233,56 +233,56 @@ msgstr "tiedostolle %s ei voi käyttää ioctl:ää"
 msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
 msgstr "RO    RA   SSZ   BSZ   AlkuSekt            Koko   Laite\n"
 
-#: disk-utils/cfdisk.c:123
+#: disk-utils/cfdisk.c:148
 msgid "Bootable"
 msgstr "Käynnistettävä"
 
-#: disk-utils/cfdisk.c:123
+#: disk-utils/cfdisk.c:148
 msgid "Toggle bootable flag of the current partition"
 msgstr "Aseta nykyisen osion käynnistettävyyslippu päälle/pois"
 
-#: disk-utils/cfdisk.c:124
+#: disk-utils/cfdisk.c:149
 msgid "Delete"
 msgstr "Poista"
 
-#: disk-utils/cfdisk.c:124
+#: disk-utils/cfdisk.c:149
 msgid "Delete the current partition"
 msgstr "Poista nykyinen osio"
 
-#: disk-utils/cfdisk.c:125
+#: disk-utils/cfdisk.c:150
 msgid "New"
 msgstr "Uusi"
 
-#: disk-utils/cfdisk.c:125
+#: disk-utils/cfdisk.c:150
 msgid "Create new partition from free space"
 msgstr "Luo uusi osio tyhjästä tilasta"
 
-#: disk-utils/cfdisk.c:126
+#: disk-utils/cfdisk.c:151
 msgid "Quit"
 msgstr "Lopeta"
 
-#: disk-utils/cfdisk.c:126
+#: disk-utils/cfdisk.c:151
 msgid "Quit program without writing partition table"
 msgstr "Lopeta ohjelma kirjoittamatta osiotaulua"
 
-#: disk-utils/cfdisk.c:127 libfdisk/src/bsd.c:890 libfdisk/src/dos.c:1993
-#: libfdisk/src/gpt.c:2404 libfdisk/src/sgi.c:1089 libfdisk/src/sun.c:1003
+#: disk-utils/cfdisk.c:152 libfdisk/src/bsd.c:890 libfdisk/src/dos.c:1996
+#: libfdisk/src/gpt.c:2407 libfdisk/src/sgi.c:1093 libfdisk/src/sun.c:1007
 msgid "Type"
 msgstr "Tyyppi"
 
-#: disk-utils/cfdisk.c:127
+#: disk-utils/cfdisk.c:152
 msgid "Change the partition type"
 msgstr "Muuta osion tyyppiä"
 
-#: disk-utils/cfdisk.c:128
+#: disk-utils/cfdisk.c:153
 msgid "Help"
 msgstr "Ohje"
 
-#: disk-utils/cfdisk.c:128
+#: disk-utils/cfdisk.c:153
 msgid "Print help screen"
 msgstr "Näytä ohjeruutu"
 
-#: disk-utils/cfdisk.c:129
+#: disk-utils/cfdisk.c:154
 #, fuzzy
 msgid "Sort"
 msgstr ""
@@ -295,300 +295,300 @@ msgstr ""
 "                             ctime -c tai status -c; annettua aikaa käytetään\n"
 "                             lajitteluun, jos --sort=time\n"
 
-#: disk-utils/cfdisk.c:129
+#: disk-utils/cfdisk.c:154
 msgid "Fix partitions order"
 msgstr "Korjaa osioiden järjestys"
 
-#: disk-utils/cfdisk.c:130
+#: disk-utils/cfdisk.c:155
 msgid "Write"
 msgstr "Kirjoita"
 
-#: disk-utils/cfdisk.c:130
+#: disk-utils/cfdisk.c:155
 msgid "Write partition table to disk (this might destroy data)"
 msgstr "Kirjoita osiotaulu levylle (tämä saattaa tuhota dataa)"
 
-#: disk-utils/cfdisk.c:482 disk-utils/fdisk.c:347
+#: disk-utils/cfdisk.c:510 disk-utils/fdisk.c:347
 #, c-format
 msgid "internal error: unsupported dialog type %d"
 msgstr ""
 
-#: disk-utils/cfdisk.c:1242
+#: disk-utils/cfdisk.c:1281
 #, c-format
 msgid "Disk: %s"
 msgstr "Levy: %s"
 
-#: disk-utils/cfdisk.c:1244
+#: disk-utils/cfdisk.c:1283
 #, c-format
 msgid "Size: %s, %ju bytes, %ju sectors"
 msgstr "Koko: %s, %ju tavua, %ju sektoria"
 
-#: disk-utils/cfdisk.c:1247
+#: disk-utils/cfdisk.c:1286
 #, fuzzy, c-format
 msgid "Label: %s, identifier: %s"
 msgstr "Nimiö: %s"
 
-#: disk-utils/cfdisk.c:1250
+#: disk-utils/cfdisk.c:1289
 #, c-format
 msgid "Label: %s"
 msgstr "Nimiö: %s"
 
-#: disk-utils/cfdisk.c:1391
+#: disk-utils/cfdisk.c:1430
 msgid "May be followed by {M,B,G,T}iB (the \"iB\" is optional) or S for sectors."
 msgstr ""
 
-#: disk-utils/cfdisk.c:1395
+#: disk-utils/cfdisk.c:1434
 #, fuzzy
 msgid "Please, specify size."
 msgstr "Koko"
 
-#: disk-utils/cfdisk.c:1417
+#: disk-utils/cfdisk.c:1456
 #, c-format
 msgid "Minimal size is %ju"
 msgstr "Vähimmäiskoko on %ju"
 
-#: disk-utils/cfdisk.c:1426
+#: disk-utils/cfdisk.c:1465
 #, c-format
 msgid "Maximal size is %ju bytes."
 msgstr "Enimmäiskoko on %ju tavua."
 
-#: disk-utils/cfdisk.c:1430
+#: disk-utils/cfdisk.c:1469
 #, fuzzy
 msgid "Failed to parse size."
 msgstr "Jäsennysvirhe: %s"
 
-#: disk-utils/cfdisk.c:1485
+#: disk-utils/cfdisk.c:1524
 #, fuzzy
 msgid "Select partition type"
 msgstr "Osion tyyppi"
 
-#: disk-utils/cfdisk.c:1547 disk-utils/fdisk.c:957
+#: disk-utils/cfdisk.c:1587 disk-utils/fdisk.c:956
 #, fuzzy
 msgid "Device does not contain a recognized partition table."
 msgstr "Levy %s ei sisällä kelvollista osiotaulua\n"
 
-#: disk-utils/cfdisk.c:1549
+#: disk-utils/cfdisk.c:1589
 #, fuzzy
 msgid "Please, select a type to create a new disk label."
 msgstr "Luodaanko BSD-levynimiö?"
 
-#: disk-utils/cfdisk.c:1554
+#: disk-utils/cfdisk.c:1594
 #, fuzzy
 msgid "Select label type"
 msgstr "Virheellinen tyyppi"
 
-#: disk-utils/cfdisk.c:1590
+#: disk-utils/cfdisk.c:1631
 msgid "Help Screen for cfdisk"
 msgstr "Cfdiskin ohjeruutu"
 
-#: disk-utils/cfdisk.c:1592
+#: disk-utils/cfdisk.c:1633
 msgid "This is cfdisk, a curses based disk partitioning program, which"
 msgstr "Tämä on cfdisk, curses-pohjainen levynosiointiohjelma,"
 
-#: disk-utils/cfdisk.c:1593
+#: disk-utils/cfdisk.c:1634
 msgid "allows you to create, delete and modify partitions on your hard"
 msgstr "jolla voi luoda, poistaa ja muuttaa kiintolevyllä"
 
-#: disk-utils/cfdisk.c:1594
+#: disk-utils/cfdisk.c:1635
 msgid "disk drive."
 msgstr "olevia osioita."
 
-#: disk-utils/cfdisk.c:1596
+#: disk-utils/cfdisk.c:1637
 msgid "Copyright (C) 2014 Karel Zak <kzak@redhat.com> "
 msgstr "Copyright © 2014 Karel Zak <kzak@redhat.com> "
 
-#: disk-utils/cfdisk.c:1597
+#: disk-utils/cfdisk.c:1638
 msgid "Based on the original cfdisk from Kevin E. Martin & aeb."
 msgstr ""
 
-#: disk-utils/cfdisk.c:1599
+#: disk-utils/cfdisk.c:1640
 msgid "Command      Meaning"
 msgstr "Komento      Merkitys"
 
-#: disk-utils/cfdisk.c:1600
+#: disk-utils/cfdisk.c:1641
 msgid "-------      -------"
 msgstr "-------      --------"
 
-#: disk-utils/cfdisk.c:1601
+#: disk-utils/cfdisk.c:1642
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b          Aseta nykyisen osion käynnistettävyyslippu päälle/pois"
 
-#: disk-utils/cfdisk.c:1602
+#: disk-utils/cfdisk.c:1643
 msgid "  d          Delete the current partition"
 msgstr "  d          Poista nykyinen osio"
 
-#: disk-utils/cfdisk.c:1603
+#: disk-utils/cfdisk.c:1644
 msgid "  h          Print this screen"
 msgstr "  h          Näytä tämä ohjeruutu"
 
-#: disk-utils/cfdisk.c:1604
+#: disk-utils/cfdisk.c:1645
 msgid "  n          Create new partition from free space"
 msgstr "  n          Luo uusi osio tyhjästä tilasta"
 
-#: disk-utils/cfdisk.c:1605
+#: disk-utils/cfdisk.c:1646
 msgid "  q          Quit program without writing partition table"
 msgstr "  q          Lopeta ohjelma kirjoittamatta osiotaulua"
 
-#: disk-utils/cfdisk.c:1606
+#: disk-utils/cfdisk.c:1647
 msgid "  t          Change the partition type"
 msgstr "  t          Muuta osion tyyppiä"
 
-#: disk-utils/cfdisk.c:1607
-msgid "  s          Fix partitions order"
+#: disk-utils/cfdisk.c:1648
+#, fuzzy
+msgid "  s          Fix partitions order (only when in disarray)"
 msgstr "  s          Korjaa osioiden järjestys"
 
-#: disk-utils/cfdisk.c:1608
+#: disk-utils/cfdisk.c:1649
 msgid "  W          Write partition table to disk (must enter upper case W)"
 msgstr "  W          Kirjoita osiotaulu levylle (on annettava iso kirjain W)"
 
-#: disk-utils/cfdisk.c:1609
+#: disk-utils/cfdisk.c:1650
 msgid "             Since this might destroy data on the disk, you must"
 msgstr "             Koska tämä saattaa tuhota levyllä olevaa dataa, kirjoitus"
 
-#: disk-utils/cfdisk.c:1610
+#: disk-utils/cfdisk.c:1651
 msgid "             either confirm or deny the write by entering `yes' or"
 msgstr "             on joko varmistettava tai peruttava kirjoittamalla ”jaa” tai"
 
-#: disk-utils/cfdisk.c:1611
+#: disk-utils/cfdisk.c:1652
 msgid "             `no'"
 msgstr "             ”ei”"
 
-#: disk-utils/cfdisk.c:1612
+#: disk-utils/cfdisk.c:1653
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "Nuoli ylös   Siirrä osoitin edelliseen osioon"
 
-#: disk-utils/cfdisk.c:1613
+#: disk-utils/cfdisk.c:1654
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "Nuoli alas   Siirrä osoitin seuraavaan osioon"
 
-#: disk-utils/cfdisk.c:1614
+#: disk-utils/cfdisk.c:1655
 #, fuzzy
 msgid "Left Arrow   Move cursor to the previous menu item"
 msgstr "Nuoli ylös   Siirrä osoitin edelliseen osioon"
 
-#: disk-utils/cfdisk.c:1615
+#: disk-utils/cfdisk.c:1656
 #, fuzzy
 msgid "Right Arrow  Move cursor to the next menu item"
 msgstr "Nuoli alas   Siirrä osoitin seuraavaan osioon"
 
-#: disk-utils/cfdisk.c:1618
+#: disk-utils/cfdisk.c:1659
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Huom: Kaikki komennot voi antaa joko isoilla tai pienillä"
 
-#: disk-utils/cfdisk.c:1619
+#: disk-utils/cfdisk.c:1660
 msgid "case letters (except for Writes)."
 msgstr "kirjaimilla (paitsi taulun kirjoitus (W) )."
 
-#: disk-utils/cfdisk.c:1621
+#: disk-utils/cfdisk.c:1662
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
 msgstr ""
 
-#: disk-utils/cfdisk.c:1628
+#: disk-utils/cfdisk.c:1669
 #, fuzzy
 msgid "Press a key to continue."
 msgstr "Paina näppäintä jatkaaksesi"
 
-#: disk-utils/cfdisk.c:1704
+#: disk-utils/cfdisk.c:1745
 #, fuzzy
 msgid "Could not toggle the flag."
 msgstr "Aseta nykyisen osion käynnistettävyyslippu päälle/pois"
 
-#: disk-utils/cfdisk.c:1714
+#: disk-utils/cfdisk.c:1755
 #, fuzzy, c-format
 msgid "Could not delete partition %zu."
 msgstr "poista osio"
 
-#: disk-utils/cfdisk.c:1716 disk-utils/fdisk-menu.c:504
+#: disk-utils/cfdisk.c:1757 disk-utils/fdisk-menu.c:504
 #, c-format
 msgid "Partition %zu has been deleted."
 msgstr "Osio %zu on poistettu."
 
-#: disk-utils/cfdisk.c:1737
+#: disk-utils/cfdisk.c:1778
 msgid "Partition size: "
 msgstr "Osion koko: "
 
-#: disk-utils/cfdisk.c:1768
+#: disk-utils/cfdisk.c:1809
 #, fuzzy, c-format
 msgid "Changed type of the partition %zu."
 msgstr "Lisätään looginen osio %zu"
 
-#: disk-utils/cfdisk.c:1770
+#: disk-utils/cfdisk.c:1811
 #, fuzzy, c-format
 msgid "Type of the partition %zu is unchanged."
 msgstr "Lisätään looginen osio %zu"
 
-#: disk-utils/cfdisk.c:1785
+#: disk-utils/cfdisk.c:1826
 msgid "Device open in read-only mode"
 msgstr ""
 
-#: disk-utils/cfdisk.c:1790
+#: disk-utils/cfdisk.c:1831
 #, fuzzy
 msgid "Are you sure you want to write the partition table to disk? "
 msgstr "Haluatko varmasti kirjoittaa osiotaulun levylle? (jaa tai ei):"
 
-#. Please ignore typo (left->leave this) for now.
-#: disk-utils/cfdisk.c:1792
+#: disk-utils/cfdisk.c:1833
 msgid "Type \"yes\" or \"no\" or press ESC to left dialog."
 msgstr ""
 
-#: disk-utils/cfdisk.c:1797 login-utils/lslogins.c:209 sys-utils/lscpu.c:1233
+#: disk-utils/cfdisk.c:1838 login-utils/lslogins.c:209 sys-utils/lscpu.c:1233
 #: sys-utils/lscpu.c:1243
 #, c-format
 msgid "yes"
 msgstr "jaa"
 
-#: disk-utils/cfdisk.c:1798
+#: disk-utils/cfdisk.c:1839
 msgid "Did not write partition table to disk"
 msgstr "Osiotaulua ei kirjoitettu levylle"
 
-#: disk-utils/cfdisk.c:1803
+#: disk-utils/cfdisk.c:1844
 #, fuzzy
 msgid "Failed to write disklabel"
 msgstr "kirjoitus epäonnistui"
 
-#: disk-utils/cfdisk.c:1806 disk-utils/fdisk-menu.c:459
+#: disk-utils/cfdisk.c:1847 disk-utils/fdisk-menu.c:459
 msgid "The partition table has been altered."
 msgstr "Osiotaulua on muutettu."
 
-#: disk-utils/cfdisk.c:1825
+#: disk-utils/cfdisk.c:1867
 msgid "Note that partition table entries are not in disk order now."
 msgstr "Huomaa, että osiotaulun merkinnät eivät nyt ole levyjärjestyksessä."
 
-#: disk-utils/cfdisk.c:1848
+#: disk-utils/cfdisk.c:1890
 #, fuzzy
 msgid "failed to create a new disklabel"
 msgstr "uuden maa-asetustoarkiston luominen epäonnistui"
 
-#: disk-utils/cfdisk.c:1856
+#: disk-utils/cfdisk.c:1898
 #, fuzzy
 msgid "failed to read partitions"
 msgstr "lukeminen epäonnistui"
 
-#: disk-utils/cfdisk.c:1866 disk-utils/fdisk.c:949 disk-utils/fdisk-menu.c:451
+#: disk-utils/cfdisk.c:1908 disk-utils/fdisk.c:948 disk-utils/fdisk-menu.c:451
 msgid "Device open in read-only mode."
 msgstr ""
 
-#: disk-utils/cfdisk.c:1937
+#: disk-utils/cfdisk.c:1979
 #, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr " %1$s [valitsimet] <levy>\n"
 
-#: disk-utils/cfdisk.c:1940
+#: disk-utils/cfdisk.c:1982
 #, fuzzy
 msgid " -L --color[=<when>]     colorize output (auto, always or never)\n"
 msgstr " -L, --color[=<milloin>]     väritä tuloste (auto, always tai never)\n"
 
-#: disk-utils/cfdisk.c:1941
+#: disk-utils/cfdisk.c:1983
 #, fuzzy
 msgid " -z --zero               start with zeroed partition table\n"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: disk-utils/cfdisk.c:1979 disk-utils/fdisk.c:869 misc-utils/cal.c:378
-#: sys-utils/dmesg.c:1294 text-utils/hexdump.c:114
+#: disk-utils/cfdisk.c:2022 disk-utils/fdisk.c:868 misc-utils/cal.c:373
+#: sys-utils/dmesg.c:1295 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "tuntematon värimoodi"
 
-#: disk-utils/cfdisk.c:1982 include/c.h:286 schedutils/chrt.c:266
-#: schedutils/taskset.c:166 sys-utils/chcpu.c:330 sys-utils/dmesg.c:1334
+#: disk-utils/cfdisk.c:2025 include/c.h:286 schedutils/chrt.c:266
+#: schedutils/taskset.c:166 sys-utils/chcpu.c:330 sys-utils/dmesg.c:1335
 #: sys-utils/hwclock.c:1541 sys-utils/lscpu.c:1711 sys-utils/renice.c:102
 #: sys-utils/rtcwake.c:474 sys-utils/tunelp.c:249 term-utils/agetty.c:740
 #: term-utils/script.c:220 term-utils/scriptreplay.c:177
@@ -599,7 +599,7 @@ msgstr "tuntematon värimoodi"
 msgid "%s from %s\n"
 msgstr "%s – %s\n"
 
-#: disk-utils/cfdisk.c:2000 disk-utils/fdisk.c:809
+#: disk-utils/cfdisk.c:2041 disk-utils/fdisk.c:808
 #, fuzzy
 msgid "failed to allocate libfdisk context"
 msgstr "Puskuria ei voi varata.\n"
@@ -664,18 +664,18 @@ msgid ""
 msgstr ""
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.cramfs.c:141
-#: disk-utils/mkfs.bfs.c:180 disk-utils/mkfs.cramfs.c:753
-#: disk-utils/mkfs.cramfs.c:790 disk-utils/mkfs.minix.c:746
-#: disk-utils/partx.c:888 login-utils/last.c:658 misc-utils/namei.c:231
-#: sys-utils/blkdiscard.c:138 sys-utils/dmesg.c:515 sys-utils/fallocate.c:184
-#: sys-utils/fsfreeze.c:127 sys-utils/fstrim.c:71 sys-utils/swapon.c:457
+#: disk-utils/mkfs.bfs.c:180 disk-utils/mkfs.cramfs.c:751
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/mkfs.minix.c:746
+#: disk-utils/partx.c:888 login-utils/last.c:657 misc-utils/namei.c:231
+#: sys-utils/blkdiscard.c:138 sys-utils/dmesg.c:515 sys-utils/fallocate.c:195
+#: sys-utils/fsfreeze.c:127 sys-utils/fstrim.c:76 sys-utils/swapon.c:457
 #: sys-utils/switch_root.c:93 sys-utils/switch_root.c:133
 #: term-utils/mesg.c:124 text-utils/tailf.c:101 text-utils/tailf.c:279
 #, fuzzy, c-format
 msgid "stat failed %s"
 msgstr "tiedoston ”%s” tilan lukeminen epäonnistui: %s: ei huomioida"
 
-#: disk-utils/fdformat.c:148 disk-utils/partx.c:946 misc-utils/lsblk.c:1338
+#: disk-utils/fdformat.c:148 disk-utils/partx.c:946 misc-utils/lsblk.c:1352
 #: sys-utils/blkdiscard.c:140 sys-utils/mountpoint.c:108
 #, fuzzy, c-format
 msgid "%s: not a block device"
@@ -707,8 +707,8 @@ msgstr "Yksi"
 #: disk-utils/mkfs.minix.c:804 disk-utils/mkswap.c:661 disk-utils/partx.c:1001
 #: disk-utils/resizepart.c:108 disk-utils/sfdisk.c:2996
 #: disk-utils/sfdisk.c:3048 disk-utils/sfdisk.c:3085
-#: login-utils/utmpdump.c:385 sys-utils/dmesg.c:642 sys-utils/wdctl.c:345
-#: sys-utils/wdctl.c:410 term-utils/script.c:337 term-utils/script.c:378
+#: login-utils/utmpdump.c:385 sys-utils/dmesg.c:643 sys-utils/wdctl.c:344
+#: sys-utils/wdctl.c:409 term-utils/script.c:337 term-utils/script.c:378
 #: term-utils/script.c:491 text-utils/pg.c:1236
 msgid "write failed"
 msgstr "kirjoitus epäonnistui"
@@ -871,118 +871,117 @@ msgstr "Levyasemalla ei voi siirtyä"
 msgid "cannot read"
 msgstr "ei voida lukea"
 
-#: disk-utils/fdisk.c:643 libfdisk/src/bsd.c:233 libfdisk/src/dos.c:894
-#: libfdisk/src/gpt.c:1841
+#: disk-utils/fdisk.c:643 libfdisk/src/bsd.c:233 libfdisk/src/dos.c:897
+#: libfdisk/src/gpt.c:1844
 msgid "First sector"
 msgstr "Ensimmäinen sektori"
 
-#: disk-utils/fdisk.c:735
+#: disk-utils/fdisk.c:736
 #, fuzzy, c-format
 msgid "BLKGETSIZE ioctl failed on %s"
 msgstr "ioctl() ei onnistunut lukemaan aikaa kohteesta %s"
 
-#: disk-utils/fdisk.c:746
+#: disk-utils/fdisk.c:745
 #, c-format
 msgid ""
 " %1$s [options] <disk>      change partition table\n"
 " %1$s [options] -l [<disk>] list partition table(s)\n"
 msgstr ""
 
-#: disk-utils/fdisk.c:751
+#: disk-utils/fdisk.c:750
 #, fuzzy
 msgid " -b, --sector-size <size>      physical and logical sector size\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: disk-utils/fdisk.c:752
+#: disk-utils/fdisk.c:751
 msgid " -c, --compatibility[=<mode>]  mode is 'dos' or 'nondos' (default)\n"
 msgstr ""
 
-#: disk-utils/fdisk.c:753
+#: disk-utils/fdisk.c:752
 #, fuzzy
 msgid " -L, --color[=<when>]          colorize output (auto, always or never)\n"
 msgstr " -L, --color[=<milloin>]     väritä tuloste (auto, always tai never)\n"
 
-#. Please ignore typo (end->and) for now.
-#: disk-utils/fdisk.c:754
+#: disk-utils/fdisk.c:753
 #, fuzzy
 msgid " -l, --list                    display partitions end exit\n"
 msgstr "      --help     näytä tämä ohje ja poistu\n"
 
-#: disk-utils/fdisk.c:755
+#: disk-utils/fdisk.c:754
 #, fuzzy
 msgid " -t, --type <type>             recognize specified partition table type only\n"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: disk-utils/fdisk.c:756
+#: disk-utils/fdisk.c:755
 msgid " -u, --units[=<unit>]          display units: 'cylinders' or 'sectors' (default)\n"
 msgstr ""
 
-#: disk-utils/fdisk.c:757
+#: disk-utils/fdisk.c:756
 #, fuzzy
 msgid " -s, --getsz                   display device size in 512-byte sectors [DEPRECATED]\n"
 msgstr "  -h, --help                   Tämä pieni käyttöopas\n"
 
-#: disk-utils/fdisk.c:760
+#: disk-utils/fdisk.c:759
 #, fuzzy
 msgid " -C, --cylinders <number>      specify the number of cylinders\n"
 msgstr "Anna sylinterien määrä: "
 
-#: disk-utils/fdisk.c:761
+#: disk-utils/fdisk.c:760
 #, fuzzy
 msgid " -H, --heads <number>          specify the number of heads\n"
 msgstr "    -h# [tai --heads #]:    aseta käytettävä päiden määrä"
 
-#: disk-utils/fdisk.c:762
+#: disk-utils/fdisk.c:761
 #, fuzzy
 msgid " -S, --sectors <number>        specify the number of sectors per track\n"
 msgstr "Anna sektorien määrä uraa kohden: "
 
-#: disk-utils/fdisk.c:819
+#: disk-utils/fdisk.c:818
 #, fuzzy
 msgid "invalid sector size argument"
 msgstr "Virheellinen argumentti"
 
-#: disk-utils/fdisk.c:828 disk-utils/sfdisk.c:2610
+#: disk-utils/fdisk.c:827 disk-utils/sfdisk.c:2610
 #, fuzzy
 msgid "invalid cylinders argument"
 msgstr "Virheellinen argumentti"
 
-#: disk-utils/fdisk.c:840
+#: disk-utils/fdisk.c:839
 #, fuzzy
 msgid "not found DOS label driver"
 msgstr "%s: tiedostolle %s ei löydy laitetta\n"
 
-#: disk-utils/fdisk.c:846
+#: disk-utils/fdisk.c:845
 #, fuzzy, c-format
 msgid "unknown compatibility mode '%s'"
 msgstr "yhteensopivuustila tukee korkeintaan yhtä tiedostoa"
 
-#: disk-utils/fdisk.c:855 disk-utils/sfdisk.c:2619
+#: disk-utils/fdisk.c:854 disk-utils/sfdisk.c:2619
 #, fuzzy
 msgid "invalid heads argument"
 msgstr "Virheellinen argumentti"
 
-#: disk-utils/fdisk.c:861 disk-utils/sfdisk.c:2637
+#: disk-utils/fdisk.c:860 disk-utils/sfdisk.c:2637
 #, fuzzy
 msgid "invalid sectors argument"
 msgstr "Virheellinen argumentti"
 
-#: disk-utils/fdisk.c:883
+#: disk-utils/fdisk.c:882
 #, fuzzy, c-format
 msgid "unsupported disklabel: %s"
 msgstr "%s: tuntematon argumentti: %s\n"
 
-#: disk-utils/fdisk.c:904
+#: disk-utils/fdisk.c:903
 #, fuzzy
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Varoitus: valitsinta -b (sektorikoon asetus) tulee käyttää yhden annetun laitteen kanssa\n"
 
-#: disk-utils/fdisk.c:940
+#: disk-utils/fdisk.c:939
 #, c-format
 msgid "Welcome to fdisk (%s)."
 msgstr "Tervetuloa fdiskiin (%s)."
 
-#: disk-utils/fdisk.c:942
+#: disk-utils/fdisk.c:941
 #, fuzzy
 msgid ""
 "Changes will remain in memory only, until you decide to write them.\n"
@@ -993,7 +992,7 @@ msgstr ""
 "tietenkään ole palautettavissa.\n"
 "\n"
 
-#: disk-utils/fdisk.c:962
+#: disk-utils/fdisk.c:961
 msgid "The hybrid GPT detected. You have to sync the hybrid MBR manually (expert command 'M')."
 msgstr ""
 
@@ -1397,9 +1396,9 @@ msgstr "fsck: %s: ei löytynyt\n"
 #: disk-utils/fsck.cramfs.c:171 disk-utils/fsck.cramfs.c:225
 #: disk-utils/fsck.cramfs.c:243 libfdisk/src/bsd.c:508 lib/path.c:113
 #: lib/path.c:134 lib/path.c:155 lib/path.c:203 login-utils/last.c:196
-#: login-utils/last.c:233 login-utils/sulogin.c:672 sys-utils/setpriv.c:233
-#: term-utils/setterm.c:726 term-utils/setterm.c:784 term-utils/setterm.c:788
-#: term-utils/setterm.c:795
+#: login-utils/last.c:233 login-utils/sulogin.c:675 sys-utils/setpriv.c:233
+#: term-utils/setterm.c:726 term-utils/setterm.c:783 term-utils/setterm.c:787
+#: term-utils/setterm.c:794
 #, fuzzy, c-format
 msgid "cannot read %s"
 msgstr "hakemistoa %s ei voi lukea"
@@ -1455,7 +1454,7 @@ msgstr "siirtymisvirhe"
 msgid "%s: failed to parse fstab"
 msgstr "Jäsennysvirhe: %s"
 
-#: disk-utils/fsck.c:660 login-utils/login.c:964 login-utils/sulogin.c:1035
+#: disk-utils/fsck.c:660 login-utils/login.c:964 login-utils/sulogin.c:1038
 #: login-utils/vipw.c:213 sys-utils/flock.c:293 sys-utils/nsenter.c:138
 #: sys-utils/swapon.c:277 sys-utils/unshare.c:166 term-utils/script.c:273
 #: term-utils/script.c:283
@@ -1682,7 +1681,7 @@ msgstr "tiedosto on liian lyhyt"
 
 #: disk-utils/fsck.cramfs.c:169 disk-utils/fsck.cramfs.c:223
 #: disk-utils/fsck.cramfs.c:239 libfdisk/src/bsd.c:575 libfdisk/src/bsd.c:748
-#: login-utils/last.c:191 login-utils/last.c:225 sys-utils/fallocate.c:199
+#: login-utils/last.c:191 login-utils/last.c:225 sys-utils/fallocate.c:200
 #, fuzzy, c-format
 msgid "seek on %s failed"
 msgstr "%s: siirtyminen epäonnistui"
@@ -1786,8 +1785,8 @@ msgstr "ei-koko (%ld vs %ld) tavua"
 
 #: disk-utils/fsck.cramfs.c:404 disk-utils/fsck.cramfs.c:508
 #: disk-utils/sfdisk.c:255 disk-utils/sfdisk.c:263 disk-utils/sfdisk.c:325
-#: disk-utils/swaplabel.c:149 misc-utils/uuidd.c:347 sys-utils/fallocate.c:379
-#: sys-utils/setpriv.c:527 sys-utils/setpriv.c:550 sys-utils/swapon.c:338
+#: disk-utils/swaplabel.c:149 misc-utils/uuidd.c:347 sys-utils/fallocate.c:378
+#: sys-utils/setpriv.c:529 sys-utils/setpriv.c:552 sys-utils/swapon.c:338
 #: term-utils/ttymsg.c:175
 #, c-format
 msgid "write failed: %s"
@@ -1896,7 +1895,7 @@ msgstr "%s: virheellinen cramfs--hakemistodatan loppu (%ld) != tiedostodatan alk
 msgid "invalid file data offset"
 msgstr "virheellinen UTC-siirtymä"
 
-#: disk-utils/fsck.cramfs.c:677 disk-utils/mkfs.cramfs.c:731
+#: disk-utils/fsck.cramfs.c:677 disk-utils/mkfs.cramfs.c:729
 #, fuzzy
 msgid "invalid blocksize argument"
 msgstr "Virheellinen argumentti"
@@ -2640,12 +2639,12 @@ msgstr ""
 msgid "readlink failed: %s"
 msgstr "readlink epäonnistui: %s"
 
-#: disk-utils/mkfs.cramfs.c:301
+#: disk-utils/mkfs.cramfs.c:299
 #, c-format
 msgid "could not read directory %s"
 msgstr "hakemistoa %s ei voi lukea"
 
-#: disk-utils/mkfs.cramfs.c:326
+#: disk-utils/mkfs.cramfs.c:324
 #, c-format
 msgid ""
 "Very long (%zu bytes) filename `%s' found.\n"
@@ -2654,107 +2653,107 @@ msgstr ""
 "Löytyi hyvin pitkä tiedostonimi ”%2$s” (%1$zu tavua).\n"
 " Kasvata MAX_INPUT_NAMELEN-arvoa tiedostossa mkcramfs.c ja käännä uudelleen. Poistutaan."
 
-#: disk-utils/mkfs.cramfs.c:448
+#: disk-utils/mkfs.cramfs.c:446
 msgid "filesystem too big.  Exiting."
 msgstr "tiedostojärjestelmä on liian suuri. Lopetetaan."
 
-#: disk-utils/mkfs.cramfs.c:607
+#: disk-utils/mkfs.cramfs.c:605
 #, c-format
 msgid "AIEEE: block \"compressed\" to > 2*blocklength (%ld)\n"
 msgstr "AIEEE: ”tiivistetyn” lohkon koko > 2*lohkokoko (%ld)\n"
 
-#: disk-utils/mkfs.cramfs.c:626
+#: disk-utils/mkfs.cramfs.c:624
 #, c-format
 msgid "%6.2f%% (%+ld bytes)\t%s\n"
 msgstr "%6.2f%% (%+ld tavua)\t%s\n"
 
-#: disk-utils/mkfs.cramfs.c:671
+#: disk-utils/mkfs.cramfs.c:669
 #, c-format
 msgid "cannot close file %s"
 msgstr "tiedostoa %s ei voi sulkea"
 
-#: disk-utils/mkfs.cramfs.c:737
+#: disk-utils/mkfs.cramfs.c:735
 #, fuzzy
 msgid "invalid edition number argument"
 msgstr "virheellinen valitsin"
 
-#: disk-utils/mkfs.cramfs.c:747
+#: disk-utils/mkfs.cramfs.c:745
 msgid "invalid endianness given; must be 'big', 'little', or 'host'"
 msgstr "virheellinen tavujärjestys annettu; oltava joko ”big”, ”little” tai ”host”"
 
-#: disk-utils/mkfs.cramfs.c:811
+#: disk-utils/mkfs.cramfs.c:809
 #, fuzzy, c-format
 msgid "warning: guestimate of required size (upper bound) is %lldMB, but maximum image size is %uMB.  We might die prematurely."
 msgstr "varoitus: arviokoko (yläraja) on %lld Mt, mutta vedoksen enimmäiskoko on %u Mt. Prosessi saattaa päättyä ennenaikaisesti.\n"
 
-#: disk-utils/mkfs.cramfs.c:835
+#: disk-utils/mkfs.cramfs.c:833
 #, fuzzy
 msgid "ROM image map"
 msgstr "Avainta ei ole kartassa"
 
-#: disk-utils/mkfs.cramfs.c:847
+#: disk-utils/mkfs.cramfs.c:845
 #, c-format
 msgid "Including: %s\n"
 msgstr "Sisällytetään: %s\n"
 
-#: disk-utils/mkfs.cramfs.c:853
+#: disk-utils/mkfs.cramfs.c:851
 #, c-format
 msgid "Directory data: %zd bytes\n"
 msgstr "Hakemistodata: %zd tavua\n"
 
-#: disk-utils/mkfs.cramfs.c:861
+#: disk-utils/mkfs.cramfs.c:859
 #, c-format
 msgid "Everything: %zd kilobytes\n"
 msgstr "Kaikki: %zd kilotavua\n"
 
-#: disk-utils/mkfs.cramfs.c:866
+#: disk-utils/mkfs.cramfs.c:864
 #, c-format
 msgid "Super block: %zd bytes\n"
 msgstr "Superlohko: %zd tavua\n"
 
-#: disk-utils/mkfs.cramfs.c:873
+#: disk-utils/mkfs.cramfs.c:871
 #, c-format
 msgid "CRC: %x\n"
 msgstr "CRC: %x\n"
 
-#: disk-utils/mkfs.cramfs.c:878
+#: disk-utils/mkfs.cramfs.c:876
 #, fuzzy, c-format
 msgid "not enough space allocated for ROM image (%lld allocated, %zu used)"
 msgstr "ROM-vedokselle ei ole varattu riittävästi tilaa (%lld varattu, %zu käytetty)\n"
 
-#: disk-utils/mkfs.cramfs.c:884
+#: disk-utils/mkfs.cramfs.c:882
 #, fuzzy, c-format
 msgid "ROM image write failed (%zd %zd)"
 msgstr "ROM-vedoksen kirjoitus epäonnistui (%zd %zd)\n"
 
-#: disk-utils/mkfs.cramfs.c:887
+#: disk-utils/mkfs.cramfs.c:885
 msgid "ROM image"
 msgstr ""
 
-#: disk-utils/mkfs.cramfs.c:896
+#: disk-utils/mkfs.cramfs.c:894
 msgid "warning: filenames truncated to 255 bytes."
 msgstr "varoitus: tiedostonimet typistetään 255 tavuun."
 
-#: disk-utils/mkfs.cramfs.c:898
+#: disk-utils/mkfs.cramfs.c:896
 msgid "warning: files were skipped due to errors."
 msgstr "varoitus: tiedostoja ohitettiin virheiden takia."
 
-#: disk-utils/mkfs.cramfs.c:900
+#: disk-utils/mkfs.cramfs.c:898
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte)."
 msgstr "varoitus: tiedostojen koot typistetty %lu megatavuun (miinus 1 tavu)."
 
-#: disk-utils/mkfs.cramfs.c:904
+#: disk-utils/mkfs.cramfs.c:902
 #, c-format
 msgid "warning: uids truncated to %u bits.  (This may be a security concern.)"
 msgstr "varoitus: uid:t typistetty %u bittiin. (Tämä voi olla turvaongelma.)"
 
-#: disk-utils/mkfs.cramfs.c:907
+#: disk-utils/mkfs.cramfs.c:905
 #, c-format
 msgid "warning: gids truncated to %u bits.  (This may be a security concern.)"
 msgstr "varoitus: gid:t typistetty %u bittiin. (Tämä voi olla turvaongelma.)"
 
-#: disk-utils/mkfs.cramfs.c:910
+#: disk-utils/mkfs.cramfs.c:908
 #, c-format
 msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
@@ -3202,7 +3201,7 @@ msgstr ""
 msgid "partition name"
 msgstr "NIMI"
 
-#: disk-utils/partx.c:93 misc-utils/findmnt.c:132 misc-utils/lsblk.c:148
+#: disk-utils/partx.c:93 misc-utils/findmnt.c:130 misc-utils/lsblk.c:148
 #, fuzzy
 msgid "partition UUID"
 msgstr "UUID"
@@ -3221,7 +3220,7 @@ msgstr "Liput"
 msgid "partition type (a string, a UUID, or hex)"
 msgstr ""
 
-#: disk-utils/partx.c:114 sys-utils/losetup.c:482
+#: disk-utils/partx.c:114 sys-utils/losetup.c:479
 #, fuzzy
 msgid "failed to initialize loopcxt"
 msgstr " -initialize\n"
@@ -3241,14 +3240,14 @@ msgstr "mount: aiotaan käyttää loop-laitetta %s\n"
 msgid "%s: failed to set backing file"
 msgstr "tiedostoa %s ei löytynyt"
 
-#: disk-utils/partx.c:131 sys-utils/losetup.c:671
+#: disk-utils/partx.c:131 sys-utils/losetup.c:668
 #, fuzzy, c-format
 msgid "%s: failed to set up loop device"
 msgstr "sivutuslaitteella ei voi siirtyä taaksepäin"
 
-#: disk-utils/partx.c:161 login-utils/lslogins.c:302 misc-utils/findmnt.c:374
-#: misc-utils/lsblk.c:305 misc-utils/lslocks.c:338 sys-utils/losetup.c:104
-#: sys-utils/lscpu.c:327 sys-utils/prlimit.c:273 sys-utils/swapon.c:123
+#: disk-utils/partx.c:161 login-utils/lslogins.c:322 misc-utils/findmnt.c:388
+#: misc-utils/lsblk.c:319 misc-utils/lslocks.c:340 sys-utils/losetup.c:101
+#: sys-utils/lscpu.c:327 sys-utils/prlimit.c:274 sys-utils/swapon.c:124
 #: sys-utils/wdctl.c:151
 #, fuzzy, c-format
 msgid "unknown column: %s"
@@ -3341,8 +3340,8 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] "#%2d: %9ju-%9ju (%9ju sektori, %6ju MB)\n"
 msgstr[1] "#%2d: %9ju-%9ju (%9ju sectoria, %6ju MB)\n"
 
-#: disk-utils/partx.c:546 misc-utils/findmnt.c:683 misc-utils/findmnt.c:700
-#: misc-utils/lslocks.c:401
+#: disk-utils/partx.c:546 misc-utils/findmnt.c:697 misc-utils/findmnt.c:714
+#: misc-utils/lslocks.c:402
 #, fuzzy
 msgid "failed to add line to output"
 msgstr "Puskuria ei voi varata.\n"
@@ -3352,17 +3351,18 @@ msgstr "Puskuria ei voi varata.\n"
 msgid "failed to add data to output table"
 msgstr "Puskuria ei voi varata.\n"
 
-#: disk-utils/partx.c:632 misc-utils/findmnt.c:1510 misc-utils/lsblk.c:1706
-#: misc-utils/lslocks.c:460 sys-utils/losetup.c:303 sys-utils/lscpu.c:1404
-#: sys-utils/prlimit.c:293 sys-utils/swapon.c:243 sys-utils/wdctl.c:258
+#: disk-utils/partx.c:632 login-utils/lslogins.c:884 misc-utils/findmnt.c:1527
+#: misc-utils/lsblk.c:1720 misc-utils/lslocks.c:461 sys-utils/losetup.c:300
+#: sys-utils/lscpu.c:1404 sys-utils/prlimit.c:294 sys-utils/swapon.c:243
+#: sys-utils/wdctl.c:257
 #, fuzzy
 msgid "failed to initialize output table"
 msgstr "Osiotaulun uudelleenluku epäonnistui."
 
-#: disk-utils/partx.c:643 misc-utils/findmnt.c:1532 misc-utils/lsblk.c:1722
-#: misc-utils/lslocks.c:470 sys-utils/losetup.c:311 sys-utils/losetup.c:347
-#: sys-utils/lscpu.c:1409 sys-utils/prlimit.c:302 sys-utils/swapon.c:252
-#: sys-utils/wdctl.c:269
+#: disk-utils/partx.c:643 misc-utils/findmnt.c:1549 misc-utils/lsblk.c:1736
+#: misc-utils/lslocks.c:471 sys-utils/losetup.c:308 sys-utils/losetup.c:344
+#: sys-utils/lscpu.c:1409 sys-utils/prlimit.c:303 sys-utils/swapon.c:252
+#: sys-utils/wdctl.c:268
 #, fuzzy
 msgid "failed to initialize output column"
 msgstr "Puskuria ei voi varata.\n"
@@ -3411,7 +3411,7 @@ msgid ""
 "\n"
 msgstr "              parametrit\n"
 
-#: disk-utils/partx.c:721 misc-utils/lsblk.c:1472
+#: disk-utils/partx.c:721 misc-utils/lsblk.c:1486
 msgid " -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 msgstr ""
 
@@ -3428,12 +3428,12 @@ msgstr ""
 msgid " -o, --output <list>  define which output columns to use\n"
 msgstr "  -o, --options=valitsimet     Lyhyet tunnistettavat valitsimet\n"
 
-#: disk-utils/partx.c:725 misc-utils/lsblk.c:1485
+#: disk-utils/partx.c:725 misc-utils/lsblk.c:1499
 #, fuzzy
 msgid " -P, --pairs          use key=\"value\" output format\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: disk-utils/partx.c:726 misc-utils/lsblk.c:1486
+#: disk-utils/partx.c:726 misc-utils/lsblk.c:1500
 #, fuzzy
 msgid " -r, --raw            use raw output format\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
@@ -4545,7 +4545,7 @@ msgstr ""
 
 #: include/closestream.h:42 include/closestream.h:44 login-utils/vipw.c:280
 #: login-utils/vipw.c:299 sys-utils/rtcwake.c:276 term-utils/script.c:585
-#: term-utils/script.c:589 term-utils/setterm.c:815 term-utils/wall.c:307
+#: term-utils/script.c:589 term-utils/setterm.c:814 term-utils/wall.c:310
 #: text-utils/col.c:144
 msgid "write error"
 msgstr "kirjoitusvirhe"
@@ -4945,10 +4945,10 @@ msgid "sysinfo failed"
 msgstr "EI TÄSMÄÄ"
 
 #: lib/exec_shell.c:45 login-utils/newgrp.c:186 login-utils/su-common.c:643
-#: login-utils/su-common.c:972 login-utils/sulogin.c:808
-#: login-utils/sulogin.c:812 schedutils/chrt.c:334 schedutils/ionice.c:259
+#: login-utils/su-common.c:972 login-utils/sulogin.c:811
+#: login-utils/sulogin.c:815 schedutils/chrt.c:334 schedutils/ionice.c:259
 #: schedutils/taskset.c:237 sys-utils/flock.c:299 sys-utils/nsenter.c:342
-#: sys-utils/prlimit.c:639 sys-utils/rtcwake.c:587 sys-utils/setarch.c:315
+#: sys-utils/prlimit.c:640 sys-utils/rtcwake.c:587 sys-utils/setarch.c:315
 #: sys-utils/setarch.c:381 sys-utils/setsid.c:114 sys-utils/swapon.c:293
 #: sys-utils/switch_root.c:239 sys-utils/unshare.c:192 term-utils/script.c:547
 #: text-utils/pg.c:1363
@@ -4961,15 +4961,15 @@ msgstr "%s epäonnistui"
 msgid "Partition %i does not start on physical sector boundary.\n"
 msgstr "Osion %i alku ei ole fyysisen sektorin rajalla.\n"
 
-#: libfdisk/src/alignment.c:520
+#: libfdisk/src/alignment.c:521
 msgid "Calling ioctl() to re-read partition table."
 msgstr "Kutsutaan osiotaulun uudelleen lukeva ioctl()."
 
-#: libfdisk/src/alignment.c:529
+#: libfdisk/src/alignment.c:530
 msgid "Re-reading the partition table failed."
 msgstr "Osiotaulun uudelleenluku epäonnistui."
 
-#: libfdisk/src/alignment.c:531
+#: libfdisk/src/alignment.c:532
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or kpartx(8)."
 msgstr "Ydin käyttää edelleen vanhaa taulua. Uusi taulu tulee käyttöön seuraavassa käynnistyksessä tai ajamalla partprobe(8) tai kpartx(8)."
 
@@ -5006,15 +5006,15 @@ msgstr "Osiolla %s on virheellinen alkusektori 0.\n"
 msgid "There is no *BSD partition on %s."
 msgstr "Laitteella %s ei ole *BSD-osiota."
 
-#: libfdisk/src/bsd.c:233 libfdisk/src/dos.c:894
+#: libfdisk/src/bsd.c:233 libfdisk/src/dos.c:897
 msgid "First cylinder"
 msgstr "Ensimmäinen sylinteri"
 
-#: libfdisk/src/bsd.c:266 libfdisk/src/dos.c:1050
+#: libfdisk/src/bsd.c:266 libfdisk/src/dos.c:1053
 msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgstr "Viimeinen sylinteri, +sylinterimäärä tai +koko{K,M,G}"
 
-#: libfdisk/src/bsd.c:271 libfdisk/src/dos.c:1055 libfdisk/src/gpt.c:1882
+#: libfdisk/src/bsd.c:271 libfdisk/src/dos.c:1058 libfdisk/src/gpt.c:1885
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr "Viimeinen sektori, +sektorimäärä tai +koko{K,M,G}"
 
@@ -5194,7 +5194,7 @@ msgstr "Pakettia ei ole asennettu"
 msgid "Disklabel written to %s."
 msgstr "Kirjoittaneet %s ja %s.\n"
 
-#: libfdisk/src/bsd.c:764 libfdisk/src/context.c:306
+#: libfdisk/src/bsd.c:764 libfdisk/src/context.c:312
 msgid "Syncing disks."
 msgstr "Synkronoidaan levyt."
 
@@ -5211,28 +5211,28 @@ msgstr "   x    linkitä BSD-osio ei-BSD-osioon"
 msgid "Slice"
 msgstr ""
 
-#: libfdisk/src/bsd.c:885 libfdisk/src/dos.c:1987 libfdisk/src/gpt.c:2399
-#: libfdisk/src/sgi.c:1083 libfdisk/src/sun.c:997
+#: libfdisk/src/bsd.c:885 libfdisk/src/dos.c:1990 libfdisk/src/gpt.c:2402
+#: libfdisk/src/sgi.c:1087 libfdisk/src/sun.c:1001
 msgid "Start"
 msgstr "Alku"
 
-#: libfdisk/src/bsd.c:886 libfdisk/src/dos.c:1988 libfdisk/src/gpt.c:2400
-#: libfdisk/src/sgi.c:1084 libfdisk/src/sun.c:998
+#: libfdisk/src/bsd.c:886 libfdisk/src/dos.c:1991 libfdisk/src/gpt.c:2403
+#: libfdisk/src/sgi.c:1088 libfdisk/src/sun.c:1002
 msgid "End"
 msgstr "Loppu"
 
-#: libfdisk/src/bsd.c:887 libfdisk/src/dos.c:1989 libfdisk/src/gpt.c:2401
-#: libfdisk/src/sgi.c:1085 libfdisk/src/sun.c:999
+#: libfdisk/src/bsd.c:887 libfdisk/src/dos.c:1992 libfdisk/src/gpt.c:2404
+#: libfdisk/src/sgi.c:1089 libfdisk/src/sun.c:1003
 msgid "Sectors"
 msgstr "Sektorit"
 
-#: libfdisk/src/bsd.c:888 libfdisk/src/dos.c:1990 libfdisk/src/gpt.c:2402
-#: libfdisk/src/sgi.c:1086 libfdisk/src/sun.c:189 libfdisk/src/sun.c:1000
+#: libfdisk/src/bsd.c:888 libfdisk/src/dos.c:1993 libfdisk/src/gpt.c:2405
+#: libfdisk/src/sgi.c:1090 libfdisk/src/sun.c:189 libfdisk/src/sun.c:1004
 msgid "Cylinders"
 msgstr "Sylinterit"
 
-#: libfdisk/src/bsd.c:889 libfdisk/src/dos.c:1991 libfdisk/src/gpt.c:2403
-#: libfdisk/src/sgi.c:1087 libfdisk/src/sun.c:1001
+#: libfdisk/src/bsd.c:889 libfdisk/src/dos.c:1994 libfdisk/src/gpt.c:2406
+#: libfdisk/src/sgi.c:1091 libfdisk/src/sun.c:1005
 msgid "Size"
 msgstr "Koko"
 
@@ -5248,23 +5248,23 @@ msgstr "Bkoko"
 msgid "Cpg"
 msgstr ""
 
-#: libfdisk/src/context.c:229
+#: libfdisk/src/context.c:230
 #, c-format
 msgid "%s: device contains a valid '%s' signature, it's strongly recommended to wipe the device by command wipefs(8) if this setup is unexpected to avoid possible collisions."
 msgstr ""
 
-#: libfdisk/src/context.c:302
+#: libfdisk/src/context.c:307
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: laitteen sulkeminen epäonnistui"
 
-#: libfdisk/src/context.c:442
+#: libfdisk/src/context.c:448
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "sylinteri"
 msgstr[1] "sylinteriä"
 
-#: libfdisk/src/context.c:443
+#: libfdisk/src/context.c:449
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "sektori"
@@ -5331,189 +5331,189 @@ msgstr "Ylimääräistä laajennettua osiota %d ei huomioida"
 msgid "omitting empty partition (%zu)"
 msgstr "Osio %zu: tyhjä."
 
-#: libfdisk/src/dos.c:631
+#: libfdisk/src/dos.c:634
 #, fuzzy
 msgid "Enter the new disk identifier"
 msgstr "   i    muuta levyn tunnistetta"
 
-#: libfdisk/src/dos.c:638
+#: libfdisk/src/dos.c:641
 msgid "Incorrect value."
 msgstr "Virheellinen arvo."
 
-#: libfdisk/src/dos.c:648
+#: libfdisk/src/dos.c:651
 #, fuzzy, c-format
 msgid "Disk identifier changed from 0x%08x to 0x%08x."
 msgstr "Levyn tunniste: 0x%08x\n"
 
-#: libfdisk/src/dos.c:740
+#: libfdisk/src/dos.c:743
 #, c-format
 msgid "Ignoring extra extended partition %zu"
 msgstr "Ylimääräistä laajennettua osiota %zu ei huomioida"
 
-#: libfdisk/src/dos.c:753
+#: libfdisk/src/dos.c:756
 #, fuzzy, c-format
 msgid "Invalid flag 0x%02x%02x of EBR (for partition %zu) will be corrected by w(rite)."
 msgstr "Varoitus: osiotaulun %2$d virheellinen lippu 0x%1$04x korjataan kirjoitettaessa (w)\n"
 
-#: libfdisk/src/dos.c:881
+#: libfdisk/src/dos.c:884
 #, c-format
 msgid "Start sector %ju out of range."
 msgstr "Alkusektori %ju sallitun välin ulkopuolella"
 
-#: libfdisk/src/dos.c:934 libfdisk/src/gpt.c:1795 libfdisk/src/sgi.c:787
-#: libfdisk/src/sun.c:498
+#: libfdisk/src/dos.c:937 libfdisk/src/gpt.c:1798 libfdisk/src/sgi.c:787
+#: libfdisk/src/sun.c:502
 #, fuzzy, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "Osio %zd on jo määritelty. Poista se ennen uudelleen lisäämistä."
 
-#: libfdisk/src/dos.c:991
+#: libfdisk/src/dos.c:994
 #, c-format
 msgid "Sector %llu is already allocated."
 msgstr "Sektori %llu on jo varattu."
 
-#: libfdisk/src/dos.c:1025 libfdisk/src/gpt.c:1805
+#: libfdisk/src/dos.c:1028 libfdisk/src/gpt.c:1808
 msgid "No free sectors available."
 msgstr "Ei vapaita sektoreita käytettävissä."
 
-#: libfdisk/src/dos.c:1145
+#: libfdisk/src/dos.c:1148
 #, c-format
 msgid "Adding logical partition %zu"
 msgstr "Lisätään looginen osio %zu"
 
-#: libfdisk/src/dos.c:1164
+#: libfdisk/src/dos.c:1167
 #, c-format
 msgid "Partition %zu: contains sector 0"
 msgstr "Osio %zu: sisältää sektorin 0"
 
-#: libfdisk/src/dos.c:1166
+#: libfdisk/src/dos.c:1169
 #, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "Osio %zu: pää %d on suurempi kuin maksimi %d"
 
-#: libfdisk/src/dos.c:1169
+#: libfdisk/src/dos.c:1172
 #, c-format
 msgid "Partition %zu: sector %d greater than maximum %llu"
 msgstr "Osio %zu: sektori %d on suurempi kuin maksimi %llu"
 
-#: libfdisk/src/dos.c:1172
+#: libfdisk/src/dos.c:1175
 #, c-format
 msgid "Partition %zu: cylinder %d greater than maximum %llu"
 msgstr "Osio %zu: sylinteri %d on suurempi kuin maksimi %llu"
 
-#: libfdisk/src/dos.c:1178
+#: libfdisk/src/dos.c:1181
 #, c-format
 msgid "Partition %zu: previous sectors %u disagrees with total %u"
 msgstr "Osio %zu: edellinen sektorimäärä %u on ristiriidassa kokonaismäärän %u kanssa"
 
-#: libfdisk/src/dos.c:1231
+#: libfdisk/src/dos.c:1234
 #, fuzzy, c-format
 msgid "Partition %zu: different physical/logical beginnings (non-Linux?): phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Osiolla %d on eri fyysiset/loogiset alkukohdat (ei-Linux?):\n"
 
-#: libfdisk/src/dos.c:1242
+#: libfdisk/src/dos.c:1245
 #, fuzzy, c-format
 msgid "Partition %zu: different physical/logical endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "Osiolla %d on eri fyysiset/loogiset loppukohdat:\n"
 
-#: libfdisk/src/dos.c:1251
+#: libfdisk/src/dos.c:1254
 #, fuzzy, c-format
 msgid "Partition %zu: does not end on cylinder boundary."
 msgstr "Varoitus: osio %s ei pääty sylinterin rajalle"
 
-#: libfdisk/src/dos.c:1278
+#: libfdisk/src/dos.c:1281
 #, fuzzy, c-format
 msgid "Partition %zu: bad start-of-data."
 msgstr "Varoitus: virheellinen osion alku (aikaisin %llu)"
 
-#: libfdisk/src/dos.c:1291
+#: libfdisk/src/dos.c:1294
 #, fuzzy, c-format
 msgid "Partition %zu: overlaps partition %zu."
 msgstr "Lisätään looginen osio %zu"
 
-#: libfdisk/src/dos.c:1317
+#: libfdisk/src/dos.c:1320
 #, c-format
 msgid "Partition %zu: empty."
 msgstr "Osio %zu: tyhjä."
 
-#: libfdisk/src/dos.c:1322
+#: libfdisk/src/dos.c:1325
 #, fuzzy, c-format
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "Lisätään looginen osio %zu"
 
-#: libfdisk/src/dos.c:1330
+#: libfdisk/src/dos.c:1333
 #, fuzzy, c-format
 msgid "Total allocated sectors %llu greater than the maximum %llu."
 msgstr "Varattujen sektoreiden kokonaismäärä %llu on suurempi kuin maksimi %llu\n"
 
-#: libfdisk/src/dos.c:1333
+#: libfdisk/src/dos.c:1336
 #, fuzzy, c-format
 msgid "Remaining %lld unallocated %ld-byte sectors."
 msgstr "%lld varaamatonta %d-tavuista sektoria\n"
 
-#: libfdisk/src/dos.c:1385
+#: libfdisk/src/dos.c:1388
 #, fuzzy
 msgid "The maximum number of partitions has been created."
 msgstr "Maksimimäärä osioita on luotu\n"
 
-#: libfdisk/src/dos.c:1393
+#: libfdisk/src/dos.c:1396
 msgid "All primary partitions are in use."
 msgstr "Kaikki ensiöosiot ovat käytössä."
 
-#: libfdisk/src/dos.c:1396
+#: libfdisk/src/dos.c:1399
 msgid "If you want to create more than four partitions, you must replace a primary partition with an extended partition first."
 msgstr ""
 
-#: libfdisk/src/dos.c:1404
+#: libfdisk/src/dos.c:1407
 msgid "All logical partitions are in use. Adding a primary partition."
 msgstr "Kaikki loogiset osiot ovat käytössä. Lisätään ensiöosio."
 
-#: libfdisk/src/dos.c:1418
+#: libfdisk/src/dos.c:1421
 msgid "Partition type"
 msgstr "Osion tyyppi"
 
-#: libfdisk/src/dos.c:1422
+#: libfdisk/src/dos.c:1425
 #, c-format
 msgid "%zu primary, %d extended, %zu free"
 msgstr "%zu ensiö, %d laajennettu, %zu vapaa"
 
-#: libfdisk/src/dos.c:1427
+#: libfdisk/src/dos.c:1430
 msgid "primary"
 msgstr "ensiö"
 
-#: libfdisk/src/dos.c:1429
+#: libfdisk/src/dos.c:1432
 msgid "extended"
 msgstr "laajennettu"
 
-#: libfdisk/src/dos.c:1429
+#: libfdisk/src/dos.c:1432
 msgid "container for logical partitions"
 msgstr "säiliö loogisille osioille"
 
-#: libfdisk/src/dos.c:1431
+#: libfdisk/src/dos.c:1434
 msgid "logical"
 msgstr "looginen"
 
-#: libfdisk/src/dos.c:1431
+#: libfdisk/src/dos.c:1434
 msgid "numbered from 5"
 msgstr "numeroitu 5:stä alkaen"
 
-#: libfdisk/src/dos.c:1462
+#: libfdisk/src/dos.c:1465
 #, fuzzy, c-format
 msgid "Invalid partition type `%c'."
 msgstr "virheellinen valitsin – %c"
 
-#: libfdisk/src/dos.c:1477
+#: libfdisk/src/dos.c:1480
 #, fuzzy, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "%s: tiedostolle %s ei löydy laitetta\n"
 
-#: libfdisk/src/dos.c:1597
+#: libfdisk/src/dos.c:1600
 #, fuzzy
 msgid "You cannot change a partition into an extended one or vice versa. Delete it first."
 msgstr ""
 "Osiota ei voi muuttaa laajennetuksi osioksi, eikä päinvastoin.\n"
 "Se on poistettava ensin.\n"
 
-#: libfdisk/src/dos.c:1603
+#: libfdisk/src/dos.c:1606
 #, fuzzy
 msgid "If you have created or modified any DOS 6.x partitions, please see the fdisk documentation for additional information."
 msgstr ""
@@ -5521,65 +5521,65 @@ msgstr ""
 "VAROITUS: Jos DOS 6.x -osioita luotiin tai muutettiin,\n"
 "katso lisätietoja cfdiskin manuaalisivulta.\n"
 
-#: libfdisk/src/dos.c:1608
+#: libfdisk/src/dos.c:1611
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr "Tyyppi 0 merkitsee tyhjää tilaa useissa järjestelmissä. Tyyppiä 0 olevien osioiden pitäminen ei todennäköisesti ole viisasta."
 
-#: libfdisk/src/dos.c:1829
+#: libfdisk/src/dos.c:1832
 msgid "Nothing to do. Ordering is correct already."
 msgstr "Ei mitään tehtävää. Järjestys on jo oikea."
 
-#: libfdisk/src/dos.c:1858 libfdisk/src/gpt.c:2316
+#: libfdisk/src/dos.c:1861 libfdisk/src/gpt.c:2319
 msgid "Done."
 msgstr "Valmis."
 
-#: libfdisk/src/dos.c:1878
+#: libfdisk/src/dos.c:1881
 #, fuzzy, c-format
 msgid "Partition %zu: no data area."
 msgstr "Lisätään looginen osio %zu"
 
-#: libfdisk/src/dos.c:1908
+#: libfdisk/src/dos.c:1911
 msgid "New beginning of data"
 msgstr "Uusi datan alku"
 
-#: libfdisk/src/dos.c:1964
+#: libfdisk/src/dos.c:1967
 #, fuzzy, c-format
 msgid "Partition %zu: is an extended partition."
 msgstr "Ylimääräistä laajennettua osiota %zu ei huomioida"
 
-#: libfdisk/src/dos.c:1971
+#: libfdisk/src/dos.c:1974
 #, fuzzy, c-format
 msgid "The bootable flag on partition %zu is enabled now."
 msgstr "Osion %d järjestelmätyyppinä säilyi %x (%s)\n"
 
-#: libfdisk/src/dos.c:1972
+#: libfdisk/src/dos.c:1975
 #, fuzzy, c-format
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Osion %d järjestelmätyyppinä säilyi %x (%s)\n"
 
-#: libfdisk/src/dos.c:1985 libfdisk/src/gpt.c:2398 libfdisk/src/sgi.c:1082
-#: libfdisk/src/sun.c:996
+#: libfdisk/src/dos.c:1988 libfdisk/src/gpt.c:2401 libfdisk/src/sgi.c:1086
+#: libfdisk/src/sun.c:1000
 msgid "Device"
 msgstr "Laite"
 
-#: libfdisk/src/dos.c:1986 libfdisk/src/sun.c:35
+#: libfdisk/src/dos.c:1989 libfdisk/src/sun.c:35
 msgid "Boot"
 msgstr "Käynnistettävä"
 
-#: libfdisk/src/dos.c:1992 libfdisk/src/sgi.c:1088 libfdisk/src/sun.c:1002
+#: libfdisk/src/dos.c:1995 libfdisk/src/sgi.c:1092 libfdisk/src/sun.c:1006
 msgid "Id"
 msgstr "Id"
 
-#: libfdisk/src/dos.c:1996
+#: libfdisk/src/dos.c:1999
 msgid "Start-C/H/S"
 msgstr "Alku-C/H/S"
 
-#: libfdisk/src/dos.c:1997
+#: libfdisk/src/dos.c:2000
 #, fuzzy
 msgid "End-C/H/S"
 msgstr "Alku-C/H/S"
 
-#: libfdisk/src/dos.c:1998 libfdisk/src/gpt.c:2409 libfdisk/src/sgi.c:1090
+#: libfdisk/src/dos.c:2001 libfdisk/src/gpt.c:2412 libfdisk/src/sgi.c:1094
 msgid "Attrs"
 msgstr ""
 
@@ -5874,242 +5874,242 @@ msgstr "FreeBSD-ZFS"
 msgid "MidnightBSD Vinum"
 msgstr ""
 
-#: libfdisk/src/gpt.c:447
+#: libfdisk/src/gpt.c:450
 #, fuzzy
 msgid "failed to allocate GPT header"
 msgstr "GPT-otsake"
 
-#: libfdisk/src/gpt.c:593
+#: libfdisk/src/gpt.c:596
 #, c-format
 msgid "GPT PMBR size mismatch (%u != %u) will be corrected by w(rite)."
 msgstr ""
 
-#: libfdisk/src/gpt.c:611
+#: libfdisk/src/gpt.c:614
 #, fuzzy
 msgid "gpt: stat() failed"
 msgstr "tiedoston tilan lukeminen epäonnistui"
 
-#: libfdisk/src/gpt.c:621
+#: libfdisk/src/gpt.c:624
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr ""
 
-#: libfdisk/src/gpt.c:883
+#: libfdisk/src/gpt.c:886
 msgid "GPT Header"
 msgstr "GPT-otsake"
 
-#: libfdisk/src/gpt.c:888
+#: libfdisk/src/gpt.c:891
 msgid "GPT Entries"
 msgstr "GPT-merkinnät"
 
-#: libfdisk/src/gpt.c:1199
+#: libfdisk/src/gpt.c:1202
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1208
+#: libfdisk/src/gpt.c:1211
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1390
+#: libfdisk/src/gpt.c:1393
 #, c-format
 msgid "First LBA: %ju"
 msgstr "Ensimmäinen LBA: %ju"
 
-#: libfdisk/src/gpt.c:1391
+#: libfdisk/src/gpt.c:1394
 #, c-format
 msgid "Last LBA: %ju"
 msgstr "Viimeinen LBA: %ju"
 
-#: libfdisk/src/gpt.c:1392
+#: libfdisk/src/gpt.c:1395
 #, c-format
 msgid "Alternative LBA: %ju"
 msgstr "Vaihtoehtoinen LBA: %ju"
 
-#: libfdisk/src/gpt.c:1393
+#: libfdisk/src/gpt.c:1396
 #, fuzzy, c-format
 msgid "Partitions entries LBA: %ju"
 msgstr "Ensimmäinen LBA: %ju"
 
-#: libfdisk/src/gpt.c:1394
+#: libfdisk/src/gpt.c:1397
 #, fuzzy, c-format
 msgid "Allocated partition entries: %u"
 msgstr "  u          Muuta osiokokonäkymän yksiköitä"
 
-#: libfdisk/src/gpt.c:1541
+#: libfdisk/src/gpt.c:1544
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1576
+#: libfdisk/src/gpt.c:1579
 #, fuzzy
 msgid "Disk does not contain a valid backup header."
 msgstr "Levy %s ei sisällä kelvollista osiotaulua\n"
 
-#: libfdisk/src/gpt.c:1581
+#: libfdisk/src/gpt.c:1584
 msgid "Invalid primary header CRC checksum."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1585
+#: libfdisk/src/gpt.c:1588
 msgid "Invalid backup header CRC checksum."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1590
+#: libfdisk/src/gpt.c:1593
 msgid "Invalid partition entry checksum."
 msgstr "Virheellinen osiomerkinnän tarkistussumma."
 
-#: libfdisk/src/gpt.c:1595
+#: libfdisk/src/gpt.c:1598
 msgid "Invalid primary header LBA sanity checks."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1599
+#: libfdisk/src/gpt.c:1602
 msgid "Invalid backup header LBA sanity checks."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1604
+#: libfdisk/src/gpt.c:1607
 msgid "MyLBA mismatch with real position at primary header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1608
+#: libfdisk/src/gpt.c:1611
 msgid "MyLBA mismatch with real position at backup header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1613
+#: libfdisk/src/gpt.c:1616
 msgid "Disk is too small to hold all data."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1623
+#: libfdisk/src/gpt.c:1626
 msgid "Primary and backup header mismatch."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1629
+#: libfdisk/src/gpt.c:1632
 #, fuzzy, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "  u          Muuta osiokokonäkymän yksiköitä"
 
-#: libfdisk/src/gpt.c:1636
+#: libfdisk/src/gpt.c:1639
 #, fuzzy, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "Levyllä on päällekkäisiä osioita. Tämä on korjattava ensin!\n"
 
-#: libfdisk/src/gpt.c:1643
+#: libfdisk/src/gpt.c:1646
 #, fuzzy, c-format
 msgid "Partition %u ends before it starts."
 msgstr "Osion loppu on ennen sektoria 0"
 
-#: libfdisk/src/gpt.c:1652
+#: libfdisk/src/gpt.c:1655
 msgid "No errors detected."
 msgstr "Virheitä ei havaittu."
 
-#: libfdisk/src/gpt.c:1653
+#: libfdisk/src/gpt.c:1656
 #, c-format
 msgid "Header version: %s"
 msgstr "Otsakkeen versio: %s"
 
-#: libfdisk/src/gpt.c:1654
+#: libfdisk/src/gpt.c:1657
 #, fuzzy, c-format
 msgid "Using %u out of %d partitions."
 msgstr "outoa, vain %d osiota määritelty.\n"
 
-#: libfdisk/src/gpt.c:1665
+#: libfdisk/src/gpt.c:1668
 #, fuzzy, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] "Ei vapaita sektoreita käytettävissä\n"
 msgstr[1] "Ei vapaita sektoreita käytettävissä\n"
 
-#: libfdisk/src/gpt.c:1673
+#: libfdisk/src/gpt.c:1676
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] "Yksi virhe havaittu."
 msgstr[1] "%d virhettä havaittu."
 
-#: libfdisk/src/gpt.c:1801
+#: libfdisk/src/gpt.c:1804
 #, fuzzy
 msgid "All partitions are already in use."
 msgstr "Kaikki ensiöosiot ovat käytössä."
 
-#: libfdisk/src/gpt.c:1826 libfdisk/src/gpt.c:1853
+#: libfdisk/src/gpt.c:1829 libfdisk/src/gpt.c:1856
 #, c-format
 msgid "Sector %ju already used."
 msgstr "Sektori %ju on jo käytetty."
 
-#: libfdisk/src/gpt.c:1909
+#: libfdisk/src/gpt.c:1912
 #, fuzzy, c-format
 msgid "Could not create partition %zu"
 msgstr "Lokitiedostoa ei voitu luoda"
 
-#: libfdisk/src/gpt.c:1994
+#: libfdisk/src/gpt.c:1997
 #, fuzzy, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "   s    luo uusi tyhjä Sun-levynimiö"
 
-#: libfdisk/src/gpt.c:2031
+#: libfdisk/src/gpt.c:2034
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2038 libfdisk/src/gpt.c:2131
+#: libfdisk/src/gpt.c:2041 libfdisk/src/gpt.c:2134
 #, fuzzy
 msgid "Failed to parse your UUID."
 msgstr "%s: avaaminen epäonnistui: %s\n"
 
-#: libfdisk/src/gpt.c:2053
+#: libfdisk/src/gpt.c:2056
 #, fuzzy, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "Osion kirjoitus epäonnistui laitteelle %s"
 
-#: libfdisk/src/gpt.c:2124
+#: libfdisk/src/gpt.c:2127
 #, fuzzy
 msgid "New UUID (in 8-4-4-4-12 format)"
 msgstr "Käytettävä muoto: ”new”, ”old” tai ”compat” (oletus)"
 
-#: libfdisk/src/gpt.c:2146
+#: libfdisk/src/gpt.c:2149
 #, fuzzy, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "Osion kirjoitus epäonnistui laitteelle %s"
 
-#: libfdisk/src/gpt.c:2169
+#: libfdisk/src/gpt.c:2172
 msgid "New name"
 msgstr "Uusi nimi"
 
-#: libfdisk/src/gpt.c:2191
+#: libfdisk/src/gpt.c:2194
 #, fuzzy, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "Osion kirjoitus epäonnistui laitteelle %s"
 
-#: libfdisk/src/gpt.c:2243
+#: libfdisk/src/gpt.c:2246
 msgid "Enter GUID specific bit"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2263
+#: libfdisk/src/gpt.c:2266
 #, fuzzy, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "Osion %d järjestelmätyyppinä säilyi %x (%s)\n"
 
-#: libfdisk/src/gpt.c:2264
+#: libfdisk/src/gpt.c:2267
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2269
+#: libfdisk/src/gpt.c:2272
 #, fuzzy, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "Osion %d järjestelmätyyppinä säilyi %x (%s)\n"
 
-#: libfdisk/src/gpt.c:2270
+#: libfdisk/src/gpt.c:2273
 #, fuzzy, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "Osion %d järjestelmätyyppinä säilyi %x (%s)\n"
 
-#: libfdisk/src/gpt.c:2406
+#: libfdisk/src/gpt.c:2409
 #, fuzzy
 msgid "Type-UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:2407
+#: libfdisk/src/gpt.c:2410
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:2408 login-utils/chfn.c:235 login-utils/chfn.c:315
+#: libfdisk/src/gpt.c:2411 login-utils/chfn.c:235 login-utils/chfn.c:315
 msgid "Name"
 msgstr "Nimi"
 
@@ -6122,7 +6122,7 @@ msgstr "Geometria"
 msgid "Free space"
 msgstr "Vapaa tila"
 
-#: libfdisk/src/parttype.c:85 misc-utils/findmnt.c:650 schedutils/ionice.c:79
+#: libfdisk/src/parttype.c:85 misc-utils/findmnt.c:664 schedutils/ionice.c:79
 #: sys-utils/hwclock.c:322
 msgid "unknown"
 msgstr "tuntemattomassa "
@@ -6264,7 +6264,7 @@ msgstr "Käynnistystiedostoksi muutettiin ”%s”."
 msgid "More than one entire disk entry present."
 msgstr "Levyllä on useampi kuin yksi kokolevymerkintä."
 
-#: libfdisk/src/sgi.c:555 libfdisk/src/sun.c:440
+#: libfdisk/src/sgi.c:555 libfdisk/src/sun.c:444
 msgid "No partitions defined."
 msgstr "Osioita ei ole määritelty."
 
@@ -6327,7 +6327,7 @@ msgstr "Koko levy on jo osioiden käytössä."
 msgid "You got a partition overlap on the disk. Fix it first!"
 msgstr "Levyllä on päällekkäisiä osioita. Päällekkäisyys on korjattava ensin!"
 
-#: libfdisk/src/sgi.c:823 libfdisk/src/sun.c:525
+#: libfdisk/src/sgi.c:823 libfdisk/src/sun.c:529
 #, c-format
 msgid "First %s"
 msgstr "Ensimmäinen %s"
@@ -6336,12 +6336,12 @@ msgstr "Ensimmäinen %s"
 msgid "It is highly recommended that the eleventh partition covers the entire disk and is of type 'SGI volume'."
 msgstr "On erittäin suositeltavaa, että yhdestoista osio kattaa koko levyn ja on tyyppiä ”SGI volume”."
 
-#: libfdisk/src/sgi.c:862 libfdisk/src/sun.c:620
+#: libfdisk/src/sgi.c:862 libfdisk/src/sun.c:624
 #, fuzzy, c-format
 msgid "Last %s or +%s or +size{K,M,G,T,P}"
 msgstr "Viimeinen sylinteri, +sylinterimäärä tai +koko{K,M,G}"
 
-#: libfdisk/src/sgi.c:932 libfdisk/src/sun.c:231
+#: libfdisk/src/sgi.c:933 libfdisk/src/sun.c:235
 #, fuzzy, c-format
 msgid "BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of %llu. This value may be truncated for devices > 33.8 GB."
 msgstr ""
@@ -6349,20 +6349,20 @@ msgstr ""
 "sylinteriarvoa %d. Tämä arvo voi typistyä laitteilla, jotka ovat suurempia\n"
 "kuin 33,8 Gt.\n"
 
-#: libfdisk/src/sgi.c:993
+#: libfdisk/src/sgi.c:997
 msgid "Created a new SGI disklabel."
 msgstr "Luotiin uusi SGI-levynimiö."
 
-#: libfdisk/src/sgi.c:1007
+#: libfdisk/src/sgi.c:1011
 #, fuzzy
 msgid "Sorry, only for non-empty partitions you can change the tag."
 msgstr "Valitettavasti vain pääkäyttäjä voi säätää järjestelmäkelloa.\n"
 
-#: libfdisk/src/sgi.c:1013
+#: libfdisk/src/sgi.c:1017
 msgid "Consider leaving partition 9 as volume header (0), and partition 11 as entire volume (6), as IRIX expects it."
 msgstr "Osion 9 tyypiksi on syytä jättää osio-otsikko (0), ja osion 11 tyypiksi koko osio (6), koska IRIX odottaa näin olevan."
 
-#: libfdisk/src/sgi.c:1021
+#: libfdisk/src/sgi.c:1025
 #, fuzzy
 msgid "It is highly recommended that the partition at offset 0 is of type \"SGI volhdr\", the IRIX system will rely on it to retrieve from its directory standalone tools like sash and fx. Only the \"SGI volume\" entire disk section may violate this. Are you sure about tagging this partition differently?"
 msgstr ""
@@ -6453,52 +6453,52 @@ msgstr "Päät"
 msgid "Sectors/track"
 msgstr "Sektoreita/ura"
 
-#: libfdisk/src/sun.c:284
+#: libfdisk/src/sun.c:288
 msgid "Created a new Sun disklabel."
 msgstr "Luotiin uusi Sun-levynimiö."
 
-#: libfdisk/src/sun.c:398
+#: libfdisk/src/sun.c:402
 #, fuzzy, c-format
 msgid "Partition %u doesn't end on cylinder boundary."
 msgstr "Varoitus: osio %s ei pääty sylinterin rajalle"
 
-#: libfdisk/src/sun.c:417
+#: libfdisk/src/sun.c:421
 #, fuzzy, c-format
 msgid "Partition %u overlaps with others in sectors %u-%u."
 msgstr "Osio %zu: edellinen sektorimäärä %u on ristiriidassa kokonaismäärän %u kanssa"
 
-#: libfdisk/src/sun.c:445
+#: libfdisk/src/sun.c:449
 #, c-format
 msgid "Unused gap - sectors 0-%u."
 msgstr "Käyttämätöntä tilaa – sektorit 0–%u."
 
-#: libfdisk/src/sun.c:447 libfdisk/src/sun.c:453
+#: libfdisk/src/sun.c:451 libfdisk/src/sun.c:457
 #, c-format
 msgid "Unused gap - sectors %u-%u."
 msgstr "Käyttämätöntä tilaa – sektorit %u–%u."
 
-#: libfdisk/src/sun.c:509
+#: libfdisk/src/sun.c:513
 msgid "Other partitions already cover the whole disk. Delete some/shrink them before retry."
 msgstr "Muut osiot käyttävät jo koko levyn. Poista/kutista niitä ennen uutta yritystä."
 
-#: libfdisk/src/sun.c:574
+#: libfdisk/src/sun.c:578
 #, c-format
 msgid "Sector %d is already allocated"
 msgstr "Sektori %d on jo varattu"
 
-#: libfdisk/src/sun.c:581
+#: libfdisk/src/sun.c:585
 #, fuzzy
 msgid "It is highly recommended that the third partition covers the whole disk and is of type `Whole disk'"
 msgstr ""
 "On erittäin suositeltavaa, että kolmas osio kattaa koko levyn ja\n"
 "on tyyppiä ”Koko levy”\n"
 
-#: libfdisk/src/sun.c:591
+#: libfdisk/src/sun.c:595
 #, c-format
 msgid "Aligning the first sector from %u to %u to be on cylinder boundary."
 msgstr ""
 
-#: libfdisk/src/sun.c:666
+#: libfdisk/src/sun.c:670
 #, fuzzy, c-format
 msgid ""
 "You haven't covered the whole disk with the 3rd partition, but your value\n"
@@ -6508,55 +6508,55 @@ msgstr ""
 "Kolmas osio ei kata koko levyä, mutta arvo %d %s kattaa jonkin toisen\n"
 "osion. Merkintä on muutettu arvoon %d %s\n"
 
-#: libfdisk/src/sun.c:705
+#: libfdisk/src/sun.c:709
 #, fuzzy, c-format
 msgid "If you want to maintain SunOS/Solaris compatibility, consider leaving this partition as Whole disk (5), starting at 0, with %u sectors"
 msgstr ""
 "Jos halutaan säilyttää SunOS/Solaris-yhteensopivuus, tämän osion tyyppinä\n"
 "on syytä säilyttää Koko levy (5), alkaen kohdasta 0, %u sektoria\n"
 
-#: libfdisk/src/sun.c:729
+#: libfdisk/src/sun.c:733
 #, c-format
 msgid ""
 "Label geometry: %d rpm, %d alternate and %d physical cylinders,\n"
 "                %d extra sects/cyl, interleave %d:1"
 msgstr ""
 
-#: libfdisk/src/sun.c:736
+#: libfdisk/src/sun.c:740
 #, fuzzy, c-format
 msgid "Label ID: %s"
 msgstr "Nimiö: %s"
 
-#: libfdisk/src/sun.c:737
+#: libfdisk/src/sun.c:741
 #, fuzzy, c-format
 msgid "Volume ID: %s"
 msgstr "%s: virheellinen prosessi-ID"
 
-#: libfdisk/src/sun.c:738
+#: libfdisk/src/sun.c:742
 msgid "<none>"
 msgstr "<ei mitään>"
 
-#: libfdisk/src/sun.c:812
+#: libfdisk/src/sun.c:816
 msgid "Number of alternate cylinders"
 msgstr "Vaihtoehtoisten sylinterien määrä"
 
-#: libfdisk/src/sun.c:828
+#: libfdisk/src/sun.c:832
 msgid "Extra sectors per cylinder"
 msgstr "Ylimääräisiä sektoreita sylinterillä"
 
-#: libfdisk/src/sun.c:843
+#: libfdisk/src/sun.c:847
 msgid "Interleave factor"
 msgstr "Lomituskerroin"
 
-#: libfdisk/src/sun.c:858
+#: libfdisk/src/sun.c:862
 msgid "Rotation speed (rpm)"
 msgstr "Pyörimisnopeus (rpm)"
 
-#: libfdisk/src/sun.c:873
+#: libfdisk/src/sun.c:877
 msgid "Number of physical cylinders"
 msgstr "Fyysisten sylinterien määrä"
 
-#: libfdisk/src/sun.c:934
+#: libfdisk/src/sun.c:938
 #, fuzzy
 msgid ""
 "Consider leaving partition 3 as Whole disk (5),\n"
@@ -6565,7 +6565,7 @@ msgstr ""
 "Osion 3 tyypiksi on syytä jättää Koko levy (5),\n"
 "koska SunOS/Solaris odottaa sitä, ja jopa Linux pitää siitä.\n"
 
-#: libfdisk/src/sun.c:943
+#: libfdisk/src/sun.c:947
 #, fuzzy
 msgid ""
 "It is highly recommended that the partition at offset 0\n"
@@ -6579,7 +6579,7 @@ msgstr ""
 "Kirjoita JAA, jos olet erittäin varma, että haluat osion tyypiksi\n"
 "merkittävän 82 (Linux-sivutus): "
 
-#: libfdisk/src/sun.c:1004
+#: libfdisk/src/sun.c:1008
 msgid "Flags"
 msgstr "Liput"
 
@@ -6833,7 +6833,7 @@ msgstr "Ei tunnettuja kuoria."
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "Käyttö: %s <salasanatiedosto> <käyttäjänimi>...\n"
 
-#: login-utils/last.c:156 sys-utils/dmesg.c:1173
+#: login-utils/last.c:156 sys-utils/dmesg.c:1174
 #, fuzzy, c-format
 msgid "unknown time format: %s"
 msgstr "virheellinen ajan muoto %s"
@@ -6918,7 +6918,7 @@ msgstr ""
 msgid "                               [notime|short|full|iso]\n"
 msgstr "               Alku-      Loppu-\n"
 
-#: login-utils/last.c:850
+#: login-utils/last.c:849
 #, c-format
 msgid ""
 "\n"
@@ -6927,12 +6927,12 @@ msgstr ""
 "\n"
 "%s alkaa %s"
 
-#: login-utils/last.c:920
+#: login-utils/last.c:919
 #, fuzzy
 msgid "failed to parse number"
 msgstr "Jäsennysvirhe: %s"
 
-#: login-utils/last.c:941 login-utils/last.c:946 login-utils/last.c:951
+#: login-utils/last.c:940 login-utils/last.c:945 login-utils/last.c:950
 #, fuzzy, c-format
 msgid "invalid time value \"%s\""
 msgstr "ajanjakso ei kelpaa: %s"
@@ -7090,7 +7090,7 @@ msgstr "PAMia ei voitu alustaa: %s"
 msgid "FAILED LOGIN %u FROM %s FOR %s, %s"
 msgstr "EPÄONNISTUNUT KÄYTTÄJÄN %2$s ISTUNTO OSOITTEESTA %1$s, %3$s"
 
-#: login-utils/login.c:821 login-utils/sulogin.c:1024
+#: login-utils/login.c:821 login-utils/sulogin.c:1027
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -7175,12 +7175,12 @@ msgstr "Sinulle on postia.\n"
 msgid "setuid() failed"
 msgstr "setuid() epäonnistui"
 
-#: login-utils/login.c:1312 login-utils/sulogin.c:746
+#: login-utils/login.c:1312 login-utils/sulogin.c:749
 #, fuzzy, c-format
 msgid "%s: change directory failed"
 msgstr "hakemistoon %s ei voi siirtyä"
 
-#: login-utils/login.c:1319 login-utils/sulogin.c:747
+#: login-utils/login.c:1319 login-utils/sulogin.c:750
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Kirjaudutaan käyttäen kotihakemistona ”/”.\n"
@@ -7458,36 +7458,40 @@ msgstr "Ohjelman nscd ajaminen käyttäjän ”%s” oikeuksilla epäonnistui"
 msgid "Running processes"
 msgstr "Ei lapsiprosesseja"
 
-#. Please ignore typo (ss->s) for now.
-#: login-utils/lslogins.c:332
+#: login-utils/lslogins.c:287 misc-utils/findmnt.c:158 misc-utils/lsblk.c:208
+#, c-format
+msgid "too many columns specified, the limit is %zu columns."
+msgstr ""
+
+#: login-utils/lslogins.c:352
 #, fuzzy
 msgid "unssupported time type"
 msgstr "AIKA"
 
-#: login-utils/lslogins.c:598
+#: login-utils/lslogins.c:618
 #, fuzzy
 msgid "failed to get supplementary groups"
 msgstr "tiedoston %s ominaisuuksien hakeminen ei onnistu"
 
-#: login-utils/lslogins.c:1003
+#: login-utils/lslogins.c:1033
 #, fuzzy
 msgid "internal error: unknown column"
 msgstr "!!! Sisäinen virhe !!!"
 
-#: login-utils/lslogins.c:1007
+#: login-utils/lslogins.c:1037
 #, fuzzy
 msgid "failed to set data"
 msgstr "Välimuistidatan kirjoitus epäonnistui"
 
-#: login-utils/lslogins.c:1104
+#: login-utils/lslogins.c:1134
 #, fuzzy, c-format
 msgid ""
 "\n"
 "Last logs:\n"
 msgstr "???\n"
 
-#: login-utils/lslogins.c:1154 login-utils/nologin.c:26
-#: misc-utils/lslocks.c:506 misc-utils/mcookie.c:82 misc-utils/uuidd.c:73
+#: login-utils/lslogins.c:1184 login-utils/nologin.c:26
+#: misc-utils/lslocks.c:507 misc-utils/mcookie.c:82 misc-utils/uuidd.c:73
 #: misc-utils/uuidgen.c:33 sys-utils/dmesg.c:261 sys-utils/ipcmk.c:66
 #: sys-utils/lscpu.c:1614 sys-utils/readprofile.c:104 sys-utils/rtcwake.c:72
 #: term-utils/setterm.c:403
@@ -7495,105 +7499,110 @@ msgstr "???\n"
 msgid " %s [options]\n"
 msgstr "%s [valitsimet] [<tiedosto> ...]\n"
 
-#: login-utils/lslogins.c:1157
+#: login-utils/lslogins.c:1187
 msgid " -a, --acc-expiration     display info about passwords expiration\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1158
+#: login-utils/lslogins.c:1188
 msgid " -c, --colon-separate     display data in a format similar to /etc/passwd\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1159
+#: login-utils/lslogins.c:1189
 #, fuzzy
 msgid " -e, --export             display in an export-able output format\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: login-utils/lslogins.c:1160
+#: login-utils/lslogins.c:1190
 #, fuzzy
 msgid " -f, --failed             display data about the last users' failed logins\n"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: login-utils/lslogins.c:1161
+#: login-utils/lslogins.c:1191
 #, fuzzy
 msgid " -G, --groups-info        display information about groups\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: login-utils/lslogins.c:1162
+#: login-utils/lslogins.c:1192
 msgid " -g, --groups=<groups>    display users belonging to a group in <groups>\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1163
+#: login-utils/lslogins.c:1193
 #, fuzzy
 msgid " -L, --last               show info about the users' last login sessions\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: login-utils/lslogins.c:1164
+#: login-utils/lslogins.c:1194
 #, fuzzy
 msgid " -l, --logins=<logins>    display only users from <logins>\n"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: login-utils/lslogins.c:1165
+#: login-utils/lslogins.c:1195
 msgid " -m, --supp-groups        display supplementary groups as well\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1166
+#: login-utils/lslogins.c:1196
 #, fuzzy
 msgid " -n, --newline            display each piece of information on a new line\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: login-utils/lslogins.c:1167
+#: login-utils/lslogins.c:1197
+#, fuzzy
+msgid "     --noheadings         don't print headings\n"
+msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
+
+#: login-utils/lslogins.c:1198
 #, fuzzy
 msgid "     --notruncate         don't truncate output\n"
 msgstr "    -n :                 älä kirjoita levylle oikeasti"
 
-#: login-utils/lslogins.c:1168
+#: login-utils/lslogins.c:1199
 #, fuzzy
 msgid " -o, --output[=<list>]    define the columns to output\n"
 msgstr "  -o, --options=valitsimet     Lyhyet tunnistettavat valitsimet\n"
 
-#: login-utils/lslogins.c:1169
+#: login-utils/lslogins.c:1200
 #, fuzzy
 msgid " -p, --pwd                display information related to login by password.\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: login-utils/lslogins.c:1170
+#: login-utils/lslogins.c:1201
 #, fuzzy
 msgid " -r, --raw                display in raw mode\n"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: login-utils/lslogins.c:1171
+#: login-utils/lslogins.c:1202
 #, fuzzy
 msgid " -s, --system-accs        display system accounts\n"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: login-utils/lslogins.c:1172
+#: login-utils/lslogins.c:1203
 msgid "     --time-format=<type> display dates in short, full or iso format\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1173
+#: login-utils/lslogins.c:1204
 #, fuzzy
 msgid " -u, --user-accs          display user accounts\n"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: login-utils/lslogins.c:1174
+#: login-utils/lslogins.c:1205
 #, fuzzy
 msgid " -Z, --context            display SELinux contexts\n"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: login-utils/lslogins.c:1175
+#: login-utils/lslogins.c:1206
 #, fuzzy
 msgid " -z, --print0             delimit user entries with a nul character\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: login-utils/lslogins.c:1176
+#: login-utils/lslogins.c:1207
 msgid "     --wtmp-file <path>   set an alternate path for wtmp\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1177
+#: login-utils/lslogins.c:1208
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1182 misc-utils/findmnt.c:1202
+#: login-utils/lslogins.c:1213 misc-utils/findmnt.c:1221
 #: sys-utils/lscpu.c:1628
 #, fuzzy, c-format
 msgid ""
@@ -7601,7 +7610,7 @@ msgid ""
 "Available columns:\n"
 msgstr "Sarakkeita          :\n"
 
-#: login-utils/lslogins.c:1187
+#: login-utils/lslogins.c:1219
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -7610,12 +7619,12 @@ msgstr ""
 "\n"
 "Lisätietoja manuaalisivulla namei(1).\n"
 
-#: login-utils/lslogins.c:1371
+#: login-utils/lslogins.c:1408
 #, fuzzy
 msgid "failed to request selinux state"
 msgstr "muunnoksen aloittaminen epäonnistui"
 
-#: login-utils/lslogins.c:1381
+#: login-utils/lslogins.c:1422
 msgid "Only one user may be specified. Use -l for multiple users."
 msgstr ""
 
@@ -7844,107 +7853,107 @@ msgstr "tuntematon kuori argumentin -s tai --shell jälkeen"
 msgid "warning: cannot change directory to %s"
 msgstr "hakemistoon %s ei voi siirtyä"
 
-#: login-utils/sulogin.c:150
+#: login-utils/sulogin.c:152
 msgid "tcgetattr failed"
 msgstr "tcgetattr epäonnistui"
 
-#: login-utils/sulogin.c:227
+#: login-utils/sulogin.c:229
 msgid "tcsetattr failed"
 msgstr "tcsetattr epäonnistui"
 
-#: login-utils/sulogin.c:493
+#: login-utils/sulogin.c:495
 #, fuzzy, c-format
 msgid "%s: no entry for root\n"
 msgstr "Ryhmämerkintä ryhmälle ”%s.%s”:\n"
 
-#: login-utils/sulogin.c:520
+#: login-utils/sulogin.c:522
 #, fuzzy, c-format
 msgid "%s: no entry for root"
 msgstr "PÄÄKÄYTTÄJÄN KIRJAUTUMINEN PÄÄTTEELLÄ %s"
 
-#: login-utils/sulogin.c:524
+#: login-utils/sulogin.c:526
 #, fuzzy, c-format
 msgid "%s: root password garbled"
 msgstr "”%s” ei löytynyt salasanavälimuistista!"
 
-#: login-utils/sulogin.c:552
+#: login-utils/sulogin.c:554
 #, fuzzy, c-format
 msgid "Give root password for login: "
 msgstr "PÄÄKÄYTTÄJÄN KIRJAUTUMINEN PÄÄTTEELLÄ %s"
 
-#: login-utils/sulogin.c:554
+#: login-utils/sulogin.c:556
 #, fuzzy, c-format
 msgid "Press Enter for login: "
 msgstr "%s: salasanatiedosto on varattu.\n"
 
-#: login-utils/sulogin.c:557
+#: login-utils/sulogin.c:559
 #, c-format
 msgid "Give root password for maintenance\n"
 msgstr ""
 
-#: login-utils/sulogin.c:559
+#: login-utils/sulogin.c:561
 #, c-format
 msgid "Press Enter for maintenance"
 msgstr ""
 
-#: login-utils/sulogin.c:560
+#: login-utils/sulogin.c:562
 #, fuzzy, c-format
 msgid "(or press Control-D to continue): "
 msgstr "Paina näppäintä jatkaaksesi"
 
-#: login-utils/sulogin.c:750
+#: login-utils/sulogin.c:753
 #, fuzzy
 msgid "change directory to system root failed"
 msgstr "Siirry ja käytä ROOTia juurihakemistona"
 
-#: login-utils/sulogin.c:799
+#: login-utils/sulogin.c:802
 msgid "setexeccon failed"
 msgstr "setexeccon epäonnistui"
 
-#: login-utils/sulogin.c:819
+#: login-utils/sulogin.c:822
 #, fuzzy, c-format
 msgid " %s [options] [tty device]\n"
 msgstr "%s [valitsimet] [<laite> ...]\n"
 
-#: login-utils/sulogin.c:822
+#: login-utils/sulogin.c:825
 msgid ""
 " -p, --login-shell        start a login shell\n"
 " -t, --timeout <seconds>  max time to wait for a password (default: no limit)\n"
 " -e, --force              examine password files directly if getpwnam(3) fails\n"
 msgstr ""
 
-#: login-utils/sulogin.c:873 misc-utils/findmnt.c:1402 sys-utils/wdctl.c:522
+#: login-utils/sulogin.c:876 misc-utils/findmnt.c:1419 sys-utils/wdctl.c:521
 #: term-utils/wall.c:131
 #, fuzzy
 msgid "invalid timeout argument"
 msgstr "Virheellinen argumentti"
 
-#: login-utils/sulogin.c:895
+#: login-utils/sulogin.c:898
 msgid "only root can run this program."
 msgstr "vain root voi ajaa tämän ohjelman."
 
-#: login-utils/sulogin.c:938
+#: login-utils/sulogin.c:941
 #, fuzzy
 msgid "cannot open console"
 msgstr "ei voi avata"
 
-#: login-utils/sulogin.c:945
+#: login-utils/sulogin.c:948
 msgid "cannot open password database."
 msgstr "salasanatietokantaa ei voi avata."
 
-#: login-utils/sulogin.c:1004
+#: login-utils/sulogin.c:1007
 #, fuzzy
 msgid "crypt failed"
 msgstr "crypt() epäonnistui"
 
-#: login-utils/sulogin.c:1021
+#: login-utils/sulogin.c:1024
 #, fuzzy, c-format
 msgid ""
 "Can not execute su shell\n"
 "\n"
 msgstr "Ohjelmaa %s ei voi käynnistää: %s\n"
 
-#: login-utils/sulogin.c:1028
+#: login-utils/sulogin.c:1031
 #, fuzzy
 msgid ""
 "Timed out\n"
@@ -8003,7 +8012,7 @@ msgstr "%s %s%s\n"
 msgid "Utmp dump of %s\n"
 msgstr " -dump   <1-KONSOLIEN_MÄÄRÄ>\n"
 
-#: login-utils/vipw.c:151 term-utils/wall.c:193
+#: login-utils/vipw.c:151 term-utils/wall.c:196
 #, fuzzy
 msgid "can't open temporary file"
 msgstr "Tilapäistä välimuistitiedostoa %s ei voi luoda"
@@ -8060,102 +8069,102 @@ msgstr "Tässä järjestelmässä käytetään varjosalasanoja.\n"
 msgid "Would you like to edit %s now [y/n]? "
 msgstr "Haluatko muokata tiedostoa %s nyt [y/n]? "
 
-#: misc-utils/cal.c:369
+#: misc-utils/cal.c:364
 #, fuzzy
 msgid "invalid week argument"
 msgstr "Virheellinen argumentti"
 
-#: misc-utils/cal.c:371
+#: misc-utils/cal.c:366
 msgid "illegal week value: use 1-53"
 msgstr "virheellinen viikon arvo: käytä 1-53"
 
-#: misc-utils/cal.c:404
+#: misc-utils/cal.c:399
 msgid "illegal day value"
 msgstr "virheellinen päivän arvo"
 
-#: misc-utils/cal.c:406 misc-utils/cal.c:422
+#: misc-utils/cal.c:401 misc-utils/cal.c:417
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "virheellinen päivän arvo: käytä 1-%d"
 
-#: misc-utils/cal.c:409 misc-utils/cal.c:411
+#: misc-utils/cal.c:404 misc-utils/cal.c:406
 msgid "illegal month value: use 1-12"
 msgstr "virheellinen kuukauden arvo: käytä 1-12"
 
-#: misc-utils/cal.c:414 misc-utils/cal.c:418
+#: misc-utils/cal.c:409 misc-utils/cal.c:413
 msgid "illegal year value"
 msgstr "Virheellinen vuoden arvo"
 
-#: misc-utils/cal.c:416
+#: misc-utils/cal.c:411
 msgid "illegal year value: use positive integer"
 msgstr "virheellinen vuoden arvo: käytä positiivista kokonaislukua"
 
-#: misc-utils/cal.c:447 misc-utils/cal.c:460
+#: misc-utils/cal.c:442 misc-utils/cal.c:455
 #, c-format
 msgid "illegal week value: year %d doesn't have week %d"
 msgstr "virheellinen viikon arvo: vuonna %d ei ole viikkoa %d"
 
-#: misc-utils/cal.c:606
+#: misc-utils/cal.c:601
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#: misc-utils/cal.c:612
+#: misc-utils/cal.c:607
 #, c-format
 msgid "%d"
 msgstr "%d"
 
-#: misc-utils/cal.c:618
+#: misc-utils/cal.c:613
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:927
+#: misc-utils/cal.c:922
 #, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr " %s [valitsimet] [[[päivä] kuukausi] vuosi]\n"
 
-#: misc-utils/cal.c:930
+#: misc-utils/cal.c:925
 msgid "Display a calendar, or some part of it.\n"
 msgstr ""
 
-#: misc-utils/cal.c:931
+#: misc-utils/cal.c:926
 msgid "Without any arguments, display the current month.\n"
 msgstr ""
 
-#: misc-utils/cal.c:934
+#: misc-utils/cal.c:929
 #, fuzzy
 msgid " -1, --one             show only a single month (default)\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: misc-utils/cal.c:935
+#: misc-utils/cal.c:930
 #, fuzzy
 msgid " -3, --three           show three months spanning the date\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: misc-utils/cal.c:936
+#: misc-utils/cal.c:931
 msgid " -s, --sunday          Sunday as first day of week\n"
 msgstr " -s, --sunray          Sunnuntai viikon alkupäivänä\n"
 
-#: misc-utils/cal.c:937
+#: misc-utils/cal.c:932
 msgid " -m, --monday          Monday as first day of week\n"
 msgstr " -m, --monday          Maanantai viikon alkupäivänä\n"
 
-#: misc-utils/cal.c:938
+#: misc-utils/cal.c:933
 msgid " -j, --julian          output Julian dates\n"
 msgstr " -j, --julian          tulosta päivämäärät juliaanisina\n"
 
-#: misc-utils/cal.c:939
+#: misc-utils/cal.c:934
 #, fuzzy
 msgid " -y, --year            show the whole year\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: misc-utils/cal.c:940
+#: misc-utils/cal.c:935
 #, fuzzy
 msgid " -w, --week[=<num>]    show US or ISO-8601 week numbers\n"
 msgstr " -w, --week            näytä US- tai ISO-8601-viikkonumerot (ks. myös -m)\n"
 
-#: misc-utils/cal.c:941
+#: misc-utils/cal.c:936
 msgid "     --color[=<when>]  colorize messages (auto, always or never)\n"
 msgstr "     --color[=<milloin>]  väritä tuloste (auto, always tai never)\n"
 
@@ -8169,162 +8178,162 @@ msgstr ""
 msgid "unable to resolve '%s'"
 msgstr "ei voida avata dynaamista riippuvuutta ”%s”"
 
-#: misc-utils/findmnt.c:123
+#: misc-utils/findmnt.c:121
 #, fuzzy
 msgid "source device"
 msgstr "Laitetta ei ole"
 
-#: misc-utils/findmnt.c:124
+#: misc-utils/findmnt.c:122
 #, fuzzy
 msgid "mountpoint"
 msgstr "%s ei ole liitospiste tai virheellinen valitsin"
 
-#: misc-utils/findmnt.c:125 misc-utils/lsblk.c:141
+#: misc-utils/findmnt.c:123 misc-utils/lsblk.c:141
 #, fuzzy
 msgid "filesystem type"
 msgstr "  t          Muuta tiedostojärjestelmän tyyppiä"
 
-#: misc-utils/findmnt.c:126
+#: misc-utils/findmnt.c:124
 #, fuzzy
 msgid "all mount options"
 msgstr "%s: avaaminen epäonnistui: %s\n"
 
-#: misc-utils/findmnt.c:127
+#: misc-utils/findmnt.c:125
 msgid "VFS specific mount options"
 msgstr ""
 
-#: misc-utils/findmnt.c:128
+#: misc-utils/findmnt.c:126
 #, fuzzy
 msgid "FS specific mount options"
 msgstr "hyödylliset valitsimet:"
 
-#: misc-utils/findmnt.c:129
+#: misc-utils/findmnt.c:127
 #, fuzzy
 msgid "filesystem label"
 msgstr "nimiö "
 
-#: misc-utils/findmnt.c:130 misc-utils/lsblk.c:144
+#: misc-utils/findmnt.c:128 misc-utils/lsblk.c:144
 #, fuzzy
 msgid "filesystem UUID"
 msgstr "UUID"
 
-#: misc-utils/findmnt.c:131
+#: misc-utils/findmnt.c:129
 #, fuzzy
 msgid "partition label"
 msgstr "nimiö "
 
-#: misc-utils/findmnt.c:133 misc-utils/lsblk.c:140
+#: misc-utils/findmnt.c:131 misc-utils/lsblk.c:140
 msgid "major:minor device number"
 msgstr ""
 
-#: misc-utils/findmnt.c:134
+#: misc-utils/findmnt.c:132
 #, fuzzy
 msgid "action detected by --poll"
 msgstr "Yleislähetyskiertokyselyongelma"
 
-#: misc-utils/findmnt.c:135
+#: misc-utils/findmnt.c:133
 msgid "old mount options saved by --poll"
 msgstr ""
 
-#: misc-utils/findmnt.c:136
+#: misc-utils/findmnt.c:134
 msgid "old mountpoint saved by --poll"
 msgstr ""
 
-#: misc-utils/findmnt.c:137
+#: misc-utils/findmnt.c:135
 #, fuzzy
 msgid "filesystem size"
 msgstr "Tiedostojärjestelmä"
 
-#: misc-utils/findmnt.c:138
+#: misc-utils/findmnt.c:136
 #, fuzzy
 msgid "filesystem size available"
 msgstr "Vapaana"
 
-#: misc-utils/findmnt.c:139
+#: misc-utils/findmnt.c:137
 #, fuzzy
 msgid "filesystem size used"
 msgstr "Tiedostojärjestelmä"
 
-#: misc-utils/findmnt.c:140
+#: misc-utils/findmnt.c:138
 #, fuzzy
 msgid "filesystem use percentage"
 msgstr "Tiedostojärjestelmä"
 
-#: misc-utils/findmnt.c:141
+#: misc-utils/findmnt.c:139
 #, fuzzy
 msgid "filesystem root"
 msgstr "Tiedostojärjestelmä"
 
-#: misc-utils/findmnt.c:142
+#: misc-utils/findmnt.c:140
 #, fuzzy
 msgid "task ID"
 msgstr "id="
 
-#: misc-utils/findmnt.c:143
+#: misc-utils/findmnt.c:141
 #, fuzzy
 msgid "mount ID"
 msgstr "id="
 
-#: misc-utils/findmnt.c:144
+#: misc-utils/findmnt.c:142
 #, fuzzy
 msgid "optional mount fields"
 msgstr "Valinnainen tulostiedoston pääte"
 
-#: misc-utils/findmnt.c:145
+#: misc-utils/findmnt.c:143
 #, fuzzy
 msgid "VFS propagation flags"
 msgstr "Liput"
 
-#: misc-utils/findmnt.c:146
+#: misc-utils/findmnt.c:144
 msgid "dump(8) period in days [fstab only]"
 msgstr ""
 
-#: misc-utils/findmnt.c:147
+#: misc-utils/findmnt.c:145
 msgid "pass number on parallel fsck(8) [fstab only]"
 msgstr ""
 
-#: misc-utils/findmnt.c:331
+#: misc-utils/findmnt.c:345
 #, fuzzy, c-format
 msgid "unknown action: %s"
 msgstr "tuntematon käyttäjä-ID: %s"
 
-#: misc-utils/findmnt.c:638
+#: misc-utils/findmnt.c:652
 #, fuzzy
 msgid "mount"
 msgstr "mount: liitos epäonnistui"
 
-#: misc-utils/findmnt.c:641
+#: misc-utils/findmnt.c:655
 #, fuzzy
 msgid "umount"
 msgstr "umount: %s: vaaditaan pääkäyttäjän oikeudet"
 
-#: misc-utils/findmnt.c:644
+#: misc-utils/findmnt.c:658
 #, fuzzy
 msgid "remount"
 msgstr "umount: kohteen %s uudelleenliittäminen vain luku -tilassa epäonnistui\n"
 
-#: misc-utils/findmnt.c:647
+#: misc-utils/findmnt.c:661
 #, fuzzy
 msgid "move"
 msgstr "tiedostoa %s ei voi siirtää kohteeseen %s"
 
-#: misc-utils/findmnt.c:772
+#: misc-utils/findmnt.c:791
 #, fuzzy, c-format
 msgid "%s: parse error at line %d"
 msgstr "Jäsennysvirhe: %s"
 
-#: misc-utils/findmnt.c:801 misc-utils/findmnt.c:1044 sys-utils/eject.c:731
+#: misc-utils/findmnt.c:820 misc-utils/findmnt.c:1063 sys-utils/eject.c:731
 #: sys-utils/mount.c:644
 #, fuzzy
 msgid "failed to initialize libmount table"
 msgstr "Osiotaulun uudelleenluku epäonnistui."
 
-#: misc-utils/findmnt.c:828 text-utils/hexdump-parse.c:84
+#: misc-utils/findmnt.c:847 text-utils/hexdump-parse.c:84
 #, fuzzy, c-format
 msgid "can't read %s"
 msgstr "%s: superlohkoa ei voi lukea"
 
-#: misc-utils/findmnt.c:984 misc-utils/findmnt.c:1050 sys-utils/fstrim.c:170
+#: misc-utils/findmnt.c:1003 misc-utils/findmnt.c:1069 sys-utils/fstrim.c:169
 #: sys-utils/mount.c:135 sys-utils/mount.c:183 sys-utils/swapoff.c:98
 #: sys-utils/swapon.c:207 sys-utils/swapon.c:237 sys-utils/swapon.c:631
 #: sys-utils/umount.c:272
@@ -8332,17 +8341,17 @@ msgstr "%s: superlohkoa ei voi lukea"
 msgid "failed to initialize libmount iterator"
 msgstr "Puskuria ei voi varata.\n"
 
-#: misc-utils/findmnt.c:1056
+#: misc-utils/findmnt.c:1075
 #, fuzzy
 msgid "failed to initialize libmount tabdiff"
 msgstr "Puskuria ei voi varata.\n"
 
-#: misc-utils/findmnt.c:1084
+#: misc-utils/findmnt.c:1103
 #, fuzzy
 msgid "poll() failed"
 msgstr "svc_run: - kiertokysely epäonnistui"
 
-#: misc-utils/findmnt.c:1154
+#: misc-utils/findmnt.c:1173
 #, c-format
 msgid ""
 " %1$s [options]\n"
@@ -8351,175 +8360,175 @@ msgid ""
 " %1$s [options] [--source <device>] [--target <mountpoint>]\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1161
+#: misc-utils/findmnt.c:1180
 #, fuzzy
 msgid " -s, --fstab            search in static table of filesystems\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: misc-utils/findmnt.c:1162
+#: misc-utils/findmnt.c:1181
 #, fuzzy
 msgid " -m, --mtab             search in table of mounted filesystems\n"
 msgstr " -clear <all|rest>\n"
 
-#: misc-utils/findmnt.c:1163
+#: misc-utils/findmnt.c:1182
 msgid ""
 " -k, --kernel           search in kernel table of mounted\n"
 "                          filesystems (default)\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1166
+#: misc-utils/findmnt.c:1185
 #, fuzzy
 msgid " -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
 msgstr "   l    listaa tunnetut tiedostojärjestelmätyypit"
 
-#: misc-utils/findmnt.c:1167
+#: misc-utils/findmnt.c:1186
 msgid " -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1170
+#: misc-utils/findmnt.c:1189
 #, fuzzy
 msgid " -A, --all              disable all built-in filters, print all filesystems\n"
 msgstr " -clear <all|rest>\n"
 
-#: misc-utils/findmnt.c:1171
+#: misc-utils/findmnt.c:1190
 #, fuzzy
 msgid " -a, --ascii            use ASCII chars for tree formatting\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: misc-utils/findmnt.c:1172
+#: misc-utils/findmnt.c:1191
 #, fuzzy
 msgid " -b, --bytes            print sizes in bytes rather than in human readable format\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: misc-utils/findmnt.c:1173
+#: misc-utils/findmnt.c:1192
 msgid " -C, --nocanonicalize   don't canonicalize when comparing paths\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1174
+#: misc-utils/findmnt.c:1193
 msgid " -c, --canonicalize     canonicalize printed paths\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1175
+#: misc-utils/findmnt.c:1194
 msgid " -D, --df               imitate the output of df(1)\n"
 msgstr " -D, --df               jäljittele df(1):n tulostetta\n"
 
-#: misc-utils/findmnt.c:1176
+#: misc-utils/findmnt.c:1195
 msgid " -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1177
+#: misc-utils/findmnt.c:1196
 msgid ""
 " -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          to device names\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1179
+#: misc-utils/findmnt.c:1198
 msgid " -F, --tab-file <path>  alternative file for -s, -m or -k options\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1180
+#: misc-utils/findmnt.c:1199
 #, fuzzy
 msgid " -f, --first-only       print the first found filesystem only\n"
 msgstr "   l    listaa tunnetut tiedostojärjestelmätyypit"
 
-#: misc-utils/findmnt.c:1181
+#: misc-utils/findmnt.c:1200
 #, fuzzy
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: misc-utils/findmnt.c:1182
+#: misc-utils/findmnt.c:1201
 #, fuzzy
 msgid " -l, --list             use list format output\n"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: misc-utils/findmnt.c:1183
+#: misc-utils/findmnt.c:1202
 msgid " -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1184
+#: misc-utils/findmnt.c:1203
 #, fuzzy
 msgid " -n, --noheadings       don't print column headings\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: misc-utils/findmnt.c:1185
+#: misc-utils/findmnt.c:1204
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1186
+#: misc-utils/findmnt.c:1205
 #, fuzzy
 msgid " -o, --output <list>    the output columns to be shown\n"
 msgstr "  -o, --options=valitsimet     Lyhyet tunnistettavat valitsimet\n"
 
-#: misc-utils/findmnt.c:1187
+#: misc-utils/findmnt.c:1206
 #, fuzzy
 msgid " -P, --pairs            use key=\"value\" output format\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: misc-utils/findmnt.c:1188
+#: misc-utils/findmnt.c:1207
 #, fuzzy
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: misc-utils/findmnt.c:1189
+#: misc-utils/findmnt.c:1208
 #, fuzzy
 msgid " -r, --raw              use raw output format\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: misc-utils/findmnt.c:1190
+#: misc-utils/findmnt.c:1209
 msgid ""
 " -S, --source <string>  the device to mount (by name, maj:min, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1192
+#: misc-utils/findmnt.c:1211
 #, fuzzy
 msgid " -T, --target <string>  the mountpoint to use\n"
 msgstr "  -o, --options=valitsimet     Lyhyet tunnistettavat valitsimet\n"
 
-#: misc-utils/findmnt.c:1193
+#: misc-utils/findmnt.c:1212
 #, fuzzy
 msgid " -t, --types <list>     limit the set of filesystems by FS types\n"
 msgstr "   l    listaa tunnetut tiedostojärjestelmätyypit"
 
-#: misc-utils/findmnt.c:1194
+#: misc-utils/findmnt.c:1213
 #, fuzzy
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: misc-utils/findmnt.c:1195
+#: misc-utils/findmnt.c:1214
 #, fuzzy
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: misc-utils/findmnt.c:1196
+#: misc-utils/findmnt.c:1215
 #, fuzzy
 msgid " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: misc-utils/findmnt.c:1313
+#: misc-utils/findmnt.c:1330
 #, fuzzy, c-format
 msgid "unknown direction '%s'"
 msgstr "Ei hakemistoa %s!\n"
 
-#: misc-utils/findmnt.c:1382
+#: misc-utils/findmnt.c:1399
 #, fuzzy
 msgid "invalid TID argument"
 msgstr "Virheellinen argumentti"
 
-#: misc-utils/findmnt.c:1442
+#: misc-utils/findmnt.c:1459
 msgid "--poll accepts only one file, but more specified by --tab-file"
 msgstr ""
 
-#: misc-utils/findmnt.c:1446
+#: misc-utils/findmnt.c:1463
 msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr ""
 
-#: misc-utils/findmnt.c:1493
+#: misc-utils/findmnt.c:1510
 #, fuzzy
 msgid "failed to initialize libmount cache"
 msgstr "Välimuistidatan kirjoitus epäonnistui"
 
-#: misc-utils/findmnt.c:1526
+#: misc-utils/findmnt.c:1543
 #, c-format
 msgid "%s column is requested, but --poll is not enabled"
 msgstr ""
@@ -8615,21 +8624,21 @@ msgstr "tuntematon signaali %s; kelvolliset signaalit:"
 
 #: misc-utils/kill.c:306
 #, fuzzy, c-format
-msgid " %s [options] <pid|name>...\n"
+msgid " %s [options] <pid>|<name>...\n"
 msgstr "%s [valitsimet] [<tiedosto> ...]\n"
 
 #: misc-utils/kill.c:309
 msgid ""
 " -a, --all              do not restrict the name-to-pid conversion to processes\n"
-"                        with the same uid as the present process\n"
+"                          with the same uid as the present process\n"
 msgstr ""
 
 #: misc-utils/kill.c:311
-msgid " -s, --signal <sig>     send specified signal\n"
+msgid " -s, --signal <signal>  send this <signal> instead of SIGTERM\n"
 msgstr ""
 
 #: misc-utils/kill.c:313
-msgid " -q, --queue <sig>      use sigqueue(2) rather than kill(2)\n"
+msgid " -q, --queue <value>    use sigqueue(2), not kill(2), and pass <value> as data\n"
 msgstr ""
 
 #: misc-utils/kill.c:315
@@ -8638,7 +8647,7 @@ msgid " -p, --pid              print pids without signaling them\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
 #: misc-utils/kill.c:316
-msgid " -l, --list [=<signal>] list signal names, or convert one to a name\n"
+msgid " -l, --list[=<signal>]  list signal names, or convert a signal number to a name\n"
 msgstr ""
 
 #: misc-utils/kill.c:317
@@ -8656,12 +8665,12 @@ msgid "unknown signal: %s"
 msgstr "tuntematon signaali: %s"
 
 #: misc-utils/kill.c:388 misc-utils/kill.c:391 misc-utils/kill.c:400
-#: misc-utils/kill.c:412 misc-utils/kill.c:437
+#: misc-utils/kill.c:412 misc-utils/kill.c:435
 #, c-format
 msgid "%s and %s are mutually exclusive"
 msgstr "%s ja %s ovat toisensa poissulkevat"
 
-#: misc-utils/kill.c:397 misc-utils/kill.c:441 misc-utils/rename.c:153
+#: misc-utils/kill.c:397 misc-utils/kill.c:439 misc-utils/rename.c:153
 #: sys-utils/ipcrm.c:154 term-utils/agetty.c:753 term-utils/agetty.c:762
 msgid "not enough arguments"
 msgstr "liian vähän argumentteja"
@@ -8671,26 +8680,34 @@ msgstr "liian vähän argumentteja"
 msgid "option '%s' requires an argument"
 msgstr "valitsin ”%s ” vaatii argumentin"
 
-#: misc-utils/kill.c:434
+#: misc-utils/kill.c:415 term-utils/setterm.c:217 term-utils/setterm.c:255
+#: term-utils/setterm.c:293 term-utils/setterm.c:321 term-utils/setterm.c:335
+#: term-utils/setterm.c:346 term-utils/setterm.c:354 term-utils/setterm.c:369
+#: term-utils/setterm.c:383 term-utils/setterm.c:396
 #, fuzzy
-msgid "invalid sigval argument"
+msgid "argument error"
+msgstr "virhe: "
+
+#: misc-utils/kill.c:432
+#, fuzzy, c-format
+msgid "invalid signal name or number: %s"
 msgstr "Virheellinen argumentti"
 
-#: misc-utils/kill.c:451
+#: misc-utils/kill.c:449
 #, fuzzy, c-format
 msgid "sending signal %d to pid %d\n"
 msgstr "Tuntematon signaali %d\n"
 
-#: misc-utils/kill.c:464
+#: misc-utils/kill.c:462
 #, fuzzy, c-format
 msgid "sending signal to %s failed"
 msgstr "%s: uudelleennimeäminen %s → %s epäonnistui: %s\n"
 
-#: misc-utils/kill.c:480
+#: misc-utils/kill.c:478
 msgid "use of 'kill --pid' option as command name is deprecated"
 msgstr ""
 
-#: misc-utils/kill.c:514
+#: misc-utils/kill.c:512
 #, fuzzy, c-format
 msgid "cannot find process \"%s\"."
 msgstr "%s: virheellinen prosessi-ID"
@@ -8983,159 +9000,159 @@ msgstr "Laitetta ei ole"
 msgid "device vendor"
 msgstr "Laitetta ei ole"
 
-#: misc-utils/lsblk.c:1062
+#: misc-utils/lsblk.c:1076
 #, fuzzy, c-format
 msgid "%s: failed to get device path"
 msgstr "tiedoston %s ominaisuuksien hakeminen ei onnistu"
 
-#: misc-utils/lsblk.c:1069
+#: misc-utils/lsblk.c:1083
 #, fuzzy, c-format
 msgid "%s: unknown device name"
 msgstr "mount: %s: tuntematon laite"
 
-#: misc-utils/lsblk.c:1105
+#: misc-utils/lsblk.c:1119
 #, fuzzy, c-format
 msgid "%s: failed to get dm name"
 msgstr "tiedoston %s ominaisuuksien hakeminen ei onnistu"
 
-#: misc-utils/lsblk.c:1146
+#: misc-utils/lsblk.c:1160
 msgid "failed to open device directory in sysfs"
 msgstr ""
 
-#: misc-utils/lsblk.c:1314
+#: misc-utils/lsblk.c:1328
 #, fuzzy, c-format
 msgid "%s: failed to compose sysfs path"
 msgstr "%s: avaaminen epäonnistui: %s\n"
 
-#: misc-utils/lsblk.c:1320
+#: misc-utils/lsblk.c:1334
 #, fuzzy, c-format
 msgid "%s: failed to read link"
 msgstr "symbolista linkkiä %s ei voi lukea"
 
-#: misc-utils/lsblk.c:1343
+#: misc-utils/lsblk.c:1357
 #, fuzzy, c-format
 msgid "%s: failed to get sysfs name"
 msgstr "tiedoston %s ominaisuuksien hakeminen ei onnistu"
 
-#: misc-utils/lsblk.c:1352
+#: misc-utils/lsblk.c:1366
 #, fuzzy, c-format
 msgid "%s: failed to get whole-disk device number"
 msgstr "%s: avaaminen epäonnistui: %s\n"
 
-#: misc-utils/lsblk.c:1404 misc-utils/lsblk.c:1406 misc-utils/lsblk.c:1431
-#: misc-utils/lsblk.c:1433
+#: misc-utils/lsblk.c:1418 misc-utils/lsblk.c:1420 misc-utils/lsblk.c:1445
+#: misc-utils/lsblk.c:1447
 #, fuzzy, c-format
 msgid "failed to parse list '%s'"
 msgstr "Jäsennysvirhe: %s"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1411
+#: misc-utils/lsblk.c:1425
 #, c-format
 msgid "the list of excluded devices is too large (limit is %d devices)"
 msgstr ""
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1438
+#: misc-utils/lsblk.c:1452
 #, c-format
 msgid "the list of included devices is too large (limit is %d devices)"
 msgstr ""
 
-#: misc-utils/lsblk.c:1469 sys-utils/wdctl.c:175
+#: misc-utils/lsblk.c:1483 sys-utils/wdctl.c:174
 #, c-format
 msgid " %s [options] [<device> ...]\n"
 msgstr " %s [valitsimet] [<laite> ...]\n"
 
-#: misc-utils/lsblk.c:1471
+#: misc-utils/lsblk.c:1485
 #, fuzzy
 msgid " -a, --all            print all devices\n"
 msgstr "  -h, --help                   Tämä pieni käyttöopas\n"
 
-#: misc-utils/lsblk.c:1473
+#: misc-utils/lsblk.c:1487
 #, fuzzy
 msgid " -d, --nodeps         don't print slaves or holders\n"
 msgstr "    -n :                 älä kirjoita levylle oikeasti"
 
-#: misc-utils/lsblk.c:1474
+#: misc-utils/lsblk.c:1488
 msgid " -D, --discard        print discard capabilities\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1475
+#: misc-utils/lsblk.c:1489
 msgid " -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1476
+#: misc-utils/lsblk.c:1490
 #, fuzzy
 msgid " -f, --fs             output info about filesystems\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: misc-utils/lsblk.c:1477
+#: misc-utils/lsblk.c:1491
 #, fuzzy
 msgid " -i, --ascii          use ascii characters only\n"
 msgstr "  -T, --test                  Testaa getopt(1):n versio\n"
 
-#: misc-utils/lsblk.c:1478
+#: misc-utils/lsblk.c:1492
 msgid " -I, --include <list> show only devices with specified major numbers\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1479
+#: misc-utils/lsblk.c:1493
 #, fuzzy
 msgid " -l, --list           use list format output\n"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: misc-utils/lsblk.c:1480
+#: misc-utils/lsblk.c:1494
 #, fuzzy
 msgid " -m, --perms          output info about permissions\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: misc-utils/lsblk.c:1481
+#: misc-utils/lsblk.c:1495
 msgid " -n, --noheadings     don't print headings\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1482
+#: misc-utils/lsblk.c:1496
 msgid " -o, --output <list>  output columns\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1483
+#: misc-utils/lsblk.c:1497
 #, fuzzy
 msgid " -O, --output-all     output all columns\n"
 msgstr "  -o, --options=valitsimet     Lyhyet tunnistettavat valitsimet\n"
 
-#: misc-utils/lsblk.c:1484
+#: misc-utils/lsblk.c:1498
 #, fuzzy
 msgid " -p, --paths          print complete device path\n"
 msgstr "  -h, --help                   Tämä pieni käyttöopas\n"
 
-#: misc-utils/lsblk.c:1487
+#: misc-utils/lsblk.c:1501
 #, fuzzy
 msgid " -s, --inverse        inverse dependencies\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: misc-utils/lsblk.c:1488
+#: misc-utils/lsblk.c:1502
 #, fuzzy
 msgid " -S, --scsi           output info about SCSI devices\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: misc-utils/lsblk.c:1489
+#: misc-utils/lsblk.c:1503
 msgid " -t, --topology       output info about topology\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1490
+#: misc-utils/lsblk.c:1504
 msgid " -x, --sort <column>  sort output by <colum>\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1495 misc-utils/lslocks.c:517 sys-utils/prlimit.c:191
+#: misc-utils/lsblk.c:1509 misc-utils/lslocks.c:518 sys-utils/prlimit.c:193
 #, fuzzy, c-format
 msgid ""
 "\n"
 "Available columns (for --output):\n"
 msgstr "Sarakkeita          :\n"
 
-#: misc-utils/lsblk.c:1508
+#: misc-utils/lsblk.c:1522
 #, fuzzy, c-format
 msgid "failed to access sysfs directory: %s"
 msgstr "Tiedoston %s oikeuksien muutos arvoon %#o epäonnistui"
 
-#: misc-utils/lsblk.c:1697
+#: misc-utils/lsblk.c:1711
 msgid "the sort column has to be between output columns."
 msgstr ""
 
@@ -9184,31 +9201,31 @@ msgstr "lukittu"
 msgid "PID of the process blocking the lock"
 msgstr ""
 
-#: misc-utils/lslocks.c:261
+#: misc-utils/lslocks.c:263
 #, fuzzy
 msgid "failed to parse ID"
 msgstr "Jäsennysvirhe: %s"
 
-#: misc-utils/lslocks.c:283 sys-utils/nsenter.c:206
+#: misc-utils/lslocks.c:285 sys-utils/nsenter.c:206
 #, fuzzy
 msgid "failed to parse pid"
 msgstr "PID"
 
-#: misc-utils/lslocks.c:286
+#: misc-utils/lslocks.c:288
 msgid "(unknown)"
 msgstr "(tuntematon)"
 
-#: misc-utils/lslocks.c:295
+#: misc-utils/lslocks.c:297
 #, fuzzy
 msgid "failed to parse start"
 msgstr "Jäsennysvirhe: %s"
 
-#: misc-utils/lslocks.c:302
+#: misc-utils/lslocks.c:304
 #, fuzzy
 msgid "failed to parse end"
 msgstr "Jäsennysvirhe: %s"
 
-#: misc-utils/lslocks.c:509
+#: misc-utils/lslocks.c:510
 msgid ""
 " -p, --pid <pid>        process id\n"
 " -o, --output <list>    define which output columns to use\n"
@@ -9219,8 +9236,8 @@ msgid ""
 " -V, --version          output version information and exit\n"
 msgstr ""
 
-#: misc-utils/lslocks.c:553 schedutils/chrt.c:257 schedutils/ionice.c:176
-#: schedutils/taskset.c:160 sys-utils/prlimit.c:581
+#: misc-utils/lslocks.c:554 schedutils/chrt.c:257 schedutils/ionice.c:176
+#: schedutils/taskset.c:160 sys-utils/prlimit.c:582
 #, fuzzy
 msgid "invalid PID argument"
 msgstr "%s: virheellinen PID"
@@ -10004,7 +10021,7 @@ msgid ""
 " -v, --verbose       print aligned length and offset\n"
 msgstr ""
 
-#: sys-utils/blkdiscard.c:109 sys-utils/fstrim.c:287 sys-utils/losetup.c:533
+#: sys-utils/blkdiscard.c:109 sys-utils/fstrim.c:287 sys-utils/losetup.c:530
 #: text-utils/hexdump.c:124
 #, fuzzy
 msgid "failed to parse offset"
@@ -10015,7 +10032,7 @@ msgstr "Jäsennysvirhe: %s"
 msgid "no device specified"
 msgstr "mount: loop-laite annettu kahdesti"
 
-#: sys-utils/blkdiscard.c:129 sys-utils/fallocate.c:349
+#: sys-utils/blkdiscard.c:129 sys-utils/fallocate.c:348
 #: sys-utils/fsfreeze.c:118 sys-utils/fstrim.c:309
 #, fuzzy
 msgid "unexpected number of arguments"
@@ -10488,30 +10505,30 @@ msgstr "tuntematon käyttäjä-ID: %s"
 msgid "cannot mmap: %s"
 msgstr "Tiedoston %s muistikartoitus epäonnistui.\n"
 
-#: sys-utils/dmesg.c:1317
+#: sys-utils/dmesg.c:1318
 #, fuzzy
 msgid "invalid buffer size argument"
 msgstr "Virheellinen argumentti"
 
-#: sys-utils/dmesg.c:1374
+#: sys-utils/dmesg.c:1375
 msgid "--show-delta is ignored when used together with iso8601 time format"
 msgstr ""
 
-#: sys-utils/dmesg.c:1397
+#: sys-utils/dmesg.c:1398
 msgid "--raw could be used together with --level or --facility only when read messages from /dev/kmsg"
 msgstr ""
 
-#: sys-utils/dmesg.c:1407
+#: sys-utils/dmesg.c:1408
 #, fuzzy
 msgid "read kernel buffer failed"
 msgstr "lukeminen epäonnistui"
 
-#: sys-utils/dmesg.c:1420
+#: sys-utils/dmesg.c:1421
 #, fuzzy
 msgid "unsupported command"
 msgstr "tuntematon värimoodi"
 
-#: sys-utils/dmesg.c:1426
+#: sys-utils/dmesg.c:1427
 #, fuzzy
 msgid "klogctl failed"
 msgstr "klogctl-virhe"
@@ -10895,32 +10912,32 @@ msgstr ""
 msgid "fallocate failed"
 msgstr "EI TÄSMÄÄ"
 
-#: sys-utils/fallocate.c:214
+#: sys-utils/fallocate.c:213
 #, fuzzy, c-format
 msgid "%s: read failed"
 msgstr "fts_read epäonnistui: %s"
 
-#: sys-utils/fallocate.c:260
+#: sys-utils/fallocate.c:259
 #, c-format
 msgid "%s: %s (%ju bytes) converted to sparse holes.\n"
 msgstr ""
 
-#: sys-utils/fallocate.c:344
+#: sys-utils/fallocate.c:343
 #, fuzzy
 msgid "no filename specified."
 msgstr "tulostiedosto annettu kahdesti"
 
-#: sys-utils/fallocate.c:356 sys-utils/fallocate.c:362
+#: sys-utils/fallocate.c:355 sys-utils/fallocate.c:361
 #, fuzzy
 msgid "invalid length value specified"
 msgstr "%s: virheellinen jälkiliitteen pituus"
 
-#: sys-utils/fallocate.c:360
+#: sys-utils/fallocate.c:359
 #, fuzzy
 msgid "no length argument specified"
 msgstr "Liian vähän argumentteja"
 
-#: sys-utils/fallocate.c:365
+#: sys-utils/fallocate.c:364
 #, fuzzy
 msgid "invalid offset value specified"
 msgstr "virheellinen UTC-siirtymä"
@@ -11037,7 +11054,7 @@ msgstr "%s epäonnistui"
 msgid "%s: unfreeze failed"
 msgstr "%s epäonnistui"
 
-#: sys-utils/fstrim.c:75 sys-utils/mountpoint.c:197
+#: sys-utils/fstrim.c:80 sys-utils/mountpoint.c:197
 #, fuzzy, c-format
 msgid "%s: not a directory"
 msgstr ""
@@ -11045,18 +11062,18 @@ msgstr ""
 "*** %s: hakemisto ***\n"
 "\n"
 
-#: sys-utils/fstrim.c:89
+#: sys-utils/fstrim.c:88
 #, fuzzy, c-format
 msgid "%s: FITRIM ioctl failed"
 msgstr "ioctl() ei onnistunut lukemaan aikaa kohteesta %s"
 
 #. TRANSLATORS: The standard value here is a very large number.
-#: sys-utils/fstrim.c:99
+#: sys-utils/fstrim.c:98
 #, fuzzy, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s: taulukko luokalle ”%s”: %lu tavua\n"
 
-#: sys-utils/fstrim.c:174 sys-utils/swapon.c:627 sys-utils/umount.c:327
+#: sys-utils/fstrim.c:173 sys-utils/swapon.c:627 sys-utils/umount.c:327
 #, fuzzy, c-format
 msgid "failed to parse %s"
 msgstr "Jäsennysvirhe: %s"
@@ -11811,7 +11828,7 @@ msgstr "Viestijonon id: %d\n"
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr ""
 
-#: sys-utils/ipcmk.c:106 sys-utils/losetup.c:552
+#: sys-utils/ipcmk.c:106 sys-utils/losetup.c:549
 #, fuzzy
 msgid "failed to parse size"
 msgstr "Jäsennysvirhe: %s"
@@ -12708,166 +12725,166 @@ msgstr ""
 "Major- ja minor-laitearvot on annettava luotaessa\n"
 "erikoistiedostoja"
 
-#: sys-utils/losetup.c:132 sys-utils/losetup.c:144
+#: sys-utils/losetup.c:129 sys-utils/losetup.c:141
 #, fuzzy, c-format
 msgid ", offset %ju"
 msgstr "%s (%ju-%ju): "
 
-#: sys-utils/losetup.c:135 sys-utils/losetup.c:147
+#: sys-utils/losetup.c:132 sys-utils/losetup.c:144
 #, fuzzy, c-format
 msgid ", sizelimit %ju"
 msgstr "%s (%ju-%ju): "
 
-#: sys-utils/losetup.c:155
+#: sys-utils/losetup.c:152
 #, fuzzy, c-format
 msgid ", encryption %s (type %u)"
 msgstr ", salaus %s (tyyppi %<PRIu32>)"
 
-#: sys-utils/losetup.c:196
+#: sys-utils/losetup.c:193
 #, fuzzy, c-format
 msgid "%s: detach failed"
 msgstr "%s epäonnistui"
 
-#: sys-utils/losetup.c:318 sys-utils/lscpu.c:1426 sys-utils/prlimit.c:225
-#: sys-utils/swapon.c:151 sys-utils/wdctl.c:214
+#: sys-utils/losetup.c:315 sys-utils/lscpu.c:1426 sys-utils/prlimit.c:226
+#: sys-utils/swapon.c:151 sys-utils/wdctl.c:213
 #, fuzzy
 msgid "failed to initialize output line"
 msgstr "Osiotaulun uudelleenluku epäonnistui."
 
-#: sys-utils/losetup.c:370
+#: sys-utils/losetup.c:367
 #, c-format
 msgid ""
 " %1$s [options] [<loopdev>]\n"
 " %1$s [options] -f | <loopdev> <file>\n"
 msgstr ""
 
-#: sys-utils/losetup.c:375
+#: sys-utils/losetup.c:372
 #, fuzzy
 msgid " -a, --all                     list all used devices\n"
 msgstr "  -h, --help                   Tämä pieni käyttöopas\n"
 
-#: sys-utils/losetup.c:376
+#: sys-utils/losetup.c:373
 #, fuzzy
 msgid " -d, --detach <loopdev>...     detach one or more devices\n"
 msgstr "  -h, --help                   Tämä pieni käyttöopas\n"
 
-#: sys-utils/losetup.c:377
+#: sys-utils/losetup.c:374
 #, fuzzy
 msgid " -D, --detach-all              detach all used devices\n"
 msgstr "  -h, --help                   Tämä pieni käyttöopas\n"
 
-#: sys-utils/losetup.c:378
+#: sys-utils/losetup.c:375
 #, fuzzy
 msgid " -f, --find                    find first unused device\n"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: sys-utils/losetup.c:379
+#: sys-utils/losetup.c:376
 msgid " -c, --set-capacity <loopdev>  resize the device\n"
 msgstr ""
 
-#: sys-utils/losetup.c:380
+#: sys-utils/losetup.c:377
 msgid " -j, --associated <file>       list all devices associated with <file>\n"
 msgstr ""
 
-#: sys-utils/losetup.c:384
+#: sys-utils/losetup.c:381
 msgid " -o, --offset <num>            start at offset <num> into file\n"
 msgstr ""
 
-#: sys-utils/losetup.c:385
+#: sys-utils/losetup.c:382
 msgid "     --sizelimit <num>         device is limited to <num> bytes of the file\n"
 msgstr ""
 
-#: sys-utils/losetup.c:386
+#: sys-utils/losetup.c:383
 #, fuzzy
 msgid " -P, --partscan                create a partitioned loop device\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: sys-utils/losetup.c:387
+#: sys-utils/losetup.c:384
 #, fuzzy
 msgid " -r, --read-only               set up a read-only loop device\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: sys-utils/losetup.c:388
+#: sys-utils/losetup.c:385
 msgid "     --show                    print device name after setup (with -f)\n"
 msgstr ""
 
-#: sys-utils/losetup.c:389
+#: sys-utils/losetup.c:386
 #, fuzzy
 msgid " -v, --verbose                 verbose mode\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: sys-utils/losetup.c:393
+#: sys-utils/losetup.c:390
 #, fuzzy
 msgid " -l, --list                    list info about all or specified (default)\n"
 msgstr "  -T, --test                  Testaa getopt(1):n versio\n"
 
-#: sys-utils/losetup.c:394
+#: sys-utils/losetup.c:391
 msgid " -O, --output <cols>           specify columns to output for --list\n"
 msgstr ""
 
-#: sys-utils/losetup.c:395
+#: sys-utils/losetup.c:392
 #, fuzzy
 msgid " -n, --noheadings              don't print headings for --list output\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: sys-utils/losetup.c:396
+#: sys-utils/losetup.c:393
 #, fuzzy
 msgid "     --raw                     use raw --list output format\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: sys-utils/losetup.c:402
+#: sys-utils/losetup.c:399
 #, fuzzy
 msgid ""
 "\n"
 "Available --list columns:\n"
 msgstr "Sarakkeita          :\n"
 
-#: sys-utils/losetup.c:422
+#: sys-utils/losetup.c:419
 #, c-format
 msgid "%s: Warning: file is smaller than 512 bytes; the loop device may be useless or invisible for system tools."
 msgstr ""
 
-#: sys-utils/losetup.c:426
+#: sys-utils/losetup.c:423
 #, c-format
 msgid "%s: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored."
 msgstr ""
 
-#: sys-utils/losetup.c:497 sys-utils/losetup.c:507 sys-utils/losetup.c:597
-#: sys-utils/losetup.c:611 sys-utils/losetup.c:687
+#: sys-utils/losetup.c:494 sys-utils/losetup.c:504 sys-utils/losetup.c:594
+#: sys-utils/losetup.c:608 sys-utils/losetup.c:684
 #, fuzzy, c-format
 msgid "%s: failed to use device"
 msgstr "virhe: %s: laite on käytössä"
 
-#: sys-utils/losetup.c:608
+#: sys-utils/losetup.c:605
 #, fuzzy
 msgid "no loop device specified"
 msgstr "mount: loop-laite annettu kahdesti"
 
-#: sys-utils/losetup.c:616
+#: sys-utils/losetup.c:613
 msgid "no file specified"
 msgstr "tiedostoa ei ole annettu"
 
-#: sys-utils/losetup.c:623
+#: sys-utils/losetup.c:620
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr ""
 
-#: sys-utils/losetup.c:628
+#: sys-utils/losetup.c:625
 #, fuzzy
 msgid "the option --offset is not allowed in this context"
 msgstr "Vain root-käyttäjä voi käyttää tätä valitsinta!"
 
-#: sys-utils/losetup.c:648 sys-utils/losetup.c:699
+#: sys-utils/losetup.c:645 sys-utils/losetup.c:696
 #, fuzzy
 msgid "cannot find an unused loop device"
 msgstr "%s: tiedostolle %s ei löydy laitetta\n"
 
-#: sys-utils/losetup.c:658
+#: sys-utils/losetup.c:655
 #, fuzzy, c-format
 msgid "%s: failed to use backing file"
 msgstr "tiedostoa %s ei löytynyt"
 
-#: sys-utils/losetup.c:720
+#: sys-utils/losetup.c:717
 #, fuzzy, c-format
 msgid "%s: set capacity failed"
 msgstr "ioctl(RTC_EPOCH_SET) laitteelle %s epäonnistui"
@@ -13629,12 +13646,12 @@ msgid ""
 " --make-runbindable      recursively mark a whole subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:848 sys-utils/umount.c:543
+#: sys-utils/mount.c:848 sys-utils/umount.c:546
 #, fuzzy
 msgid "libmount context allocation failed"
 msgstr "mount: liitos epäonnistui"
 
-#: sys-utils/mount.c:905 sys-utils/umount.c:596
+#: sys-utils/mount.c:905 sys-utils/umount.c:599
 #, fuzzy
 msgid "failed to set options pattern"
 msgstr "Osion kirjoitus epäonnistui laitteelle %s"
@@ -13765,7 +13782,7 @@ msgstr "chroot epäonnistui"
 msgid "change directory by working directory file descriptor failed"
 msgstr "siirtyminen epäonnistui"
 
-#: sys-utils/nsenter.c:333 sys-utils/setpriv.c:808 sys-utils/setpriv.c:812
+#: sys-utils/nsenter.c:333 sys-utils/setpriv.c:810 sys-utils/setpriv.c:814
 #, fuzzy
 msgid "setgroups failed"
 msgstr "setgroups epäonnistui"
@@ -13875,46 +13892,46 @@ msgstr "taulukkoja enintään = %d\n"
 msgid "max stack size"
 msgstr "Pinovirhe"
 
-#: sys-utils/prlimit.c:121
+#: sys-utils/prlimit.c:123
 #, fuzzy
 msgid "resource name"
 msgstr "Resurssi menetetty"
 
-#: sys-utils/prlimit.c:122
+#: sys-utils/prlimit.c:124
 #, fuzzy
 msgid "resource description"
 msgstr "Resurssi menetetty"
 
-#: sys-utils/prlimit.c:123
+#: sys-utils/prlimit.c:125
 msgid "soft limit"
 msgstr ""
 
-#: sys-utils/prlimit.c:124
+#: sys-utils/prlimit.c:126
 msgid "hard limit (ceiling)"
 msgstr ""
 
-#: sys-utils/prlimit.c:125
+#: sys-utils/prlimit.c:127
 msgid "units"
 msgstr "yksiköt"
 
-#: sys-utils/prlimit.c:159
+#: sys-utils/prlimit.c:161
 #, fuzzy, c-format
 msgid " %s [options] [-p PID]\n"
 msgstr "%s [valitsimet] [<tiedosto> ...]\n"
 
-#: sys-utils/prlimit.c:161
+#: sys-utils/prlimit.c:163
 #, fuzzy, c-format
 msgid " %s [options] COMMAND\n"
 msgstr " %s [valitsimet] [<tiedosto> ...]\n"
 
-#: sys-utils/prlimit.c:163
+#: sys-utils/prlimit.c:165
 #, fuzzy
 msgid ""
 "\n"
 "General Options:\n"
 msgstr "Valitsimet:\n"
 
-#: sys-utils/prlimit.c:164
+#: sys-utils/prlimit.c:166
 msgid ""
 " -p, --pid <pid>        process id\n"
 " -o, --output <list>    define which output columns to use\n"
@@ -13925,14 +13942,14 @@ msgid ""
 " -V, --version          output version information and exit\n"
 msgstr ""
 
-#: sys-utils/prlimit.c:172
+#: sys-utils/prlimit.c:174
 #, fuzzy
 msgid ""
 "\n"
 "Resources Options:\n"
 msgstr "Valitsimet:\n"
 
-#: sys-utils/prlimit.c:173
+#: sys-utils/prlimit.c:175
 msgid ""
 " -c, --core             maximum size of core files created\n"
 " -d, --data             maximum size of a process's data segment\n"
@@ -13953,46 +13970,46 @@ msgid ""
 "                        under real-time scheduling\n"
 msgstr ""
 
-#: sys-utils/prlimit.c:239 sys-utils/prlimit.c:245 sys-utils/prlimit.c:361
-#: sys-utils/prlimit.c:366
+#: sys-utils/prlimit.c:240 sys-utils/prlimit.c:246 sys-utils/prlimit.c:362
+#: sys-utils/prlimit.c:367
 msgid "unlimited"
 msgstr ""
 
-#: sys-utils/prlimit.c:328
+#: sys-utils/prlimit.c:329
 #, fuzzy, c-format
 msgid "failed to get old %s limit"
 msgstr "tiedoston %s ominaisuuksien hakeminen ei onnistu"
 
-#: sys-utils/prlimit.c:352
+#: sys-utils/prlimit.c:353
 #, c-format
 msgid "the soft limit %s cannot exceed the hard limit"
 msgstr ""
 
-#: sys-utils/prlimit.c:359
+#: sys-utils/prlimit.c:360
 #, fuzzy, c-format
 msgid "New %s limit: "
 msgstr "haettaessa tiedoston %s uusia ominaisuuksia"
 
-#: sys-utils/prlimit.c:373
+#: sys-utils/prlimit.c:374
 #, fuzzy, c-format
 msgid "failed to set the %s resource limit"
 msgstr "ioctl(RTC_EPOCH_SET) laitteelle %s epäonnistui"
 
-#: sys-utils/prlimit.c:374
+#: sys-utils/prlimit.c:375
 #, fuzzy, c-format
 msgid "failed to get the %s resource limit"
 msgstr "tiedoston %s ominaisuuksien hakeminen ei onnistu"
 
-#: sys-utils/prlimit.c:451
+#: sys-utils/prlimit.c:452
 #, fuzzy, c-format
 msgid "failed to parse %s limit"
 msgstr "Jäsennysvirhe: %s"
 
-#: sys-utils/prlimit.c:580
+#: sys-utils/prlimit.c:581
 msgid "option --pid may be specified only once"
 msgstr ""
 
-#: sys-utils/prlimit.c:611
+#: sys-utils/prlimit.c:612
 #, fuzzy
 msgid "options --pid and COMMAND are mutually exclusive"
 msgstr "päiväyksen tulostusta määräävät valitsimet ovat toisensa poissulkevia"
@@ -14519,7 +14536,7 @@ msgstr ""
 msgid " This tool can be dangerous.  Read the manpage, and be careful.\n"
 msgstr ""
 
-#: sys-utils/setpriv.c:187 sys-utils/setpriv.c:459
+#: sys-utils/setpriv.c:187 sys-utils/setpriv.c:461
 msgid "getting process secure bits failed"
 msgstr ""
 
@@ -14538,296 +14555,296 @@ msgstr "Ei mitään.\n"
 msgid "%s: too long"
 msgstr "%s: liian pitkä"
 
-#: sys-utils/setpriv.c:264
+#: sys-utils/setpriv.c:265
 #, fuzzy, c-format
 msgid "Supplementary groups: "
 msgstr " ryhmät="
 
-#: sys-utils/setpriv.c:266 sys-utils/setpriv.c:313 sys-utils/setpriv.c:318
-#: sys-utils/setpriv.c:324 sys-utils/setpriv.c:329
+#: sys-utils/setpriv.c:267 sys-utils/setpriv.c:315 sys-utils/setpriv.c:320
+#: sys-utils/setpriv.c:326 sys-utils/setpriv.c:331
 #, fuzzy, c-format
 msgid "[none]"
 msgstr "   Ei mitään"
 
-#: sys-utils/setpriv.c:285
+#: sys-utils/setpriv.c:287
 #, c-format
 msgid "uid: %u\n"
 msgstr "uid: %u\n"
 
-#: sys-utils/setpriv.c:286
+#: sys-utils/setpriv.c:288
 #, c-format
 msgid "euid: %u\n"
 msgstr "euid: %u\n"
 
-#: sys-utils/setpriv.c:289
+#: sys-utils/setpriv.c:291
 #, c-format
 msgid "suid: %u\n"
 msgstr "suid: %u\n"
 
-#: sys-utils/setpriv.c:291 sys-utils/setpriv.c:383
+#: sys-utils/setpriv.c:293 sys-utils/setpriv.c:385
 #, fuzzy
 msgid "getresuid failed"
 msgstr "EI TÄSMÄÄ"
 
-#: sys-utils/setpriv.c:300 sys-utils/setpriv.c:398
+#: sys-utils/setpriv.c:302 sys-utils/setpriv.c:400
 #, fuzzy
 msgid "getresgid failed"
 msgstr "EI TÄSMÄÄ"
 
-#: sys-utils/setpriv.c:311
+#: sys-utils/setpriv.c:313
 #, c-format
 msgid "Effective capabilities: "
 msgstr ""
 
-#: sys-utils/setpriv.c:316
+#: sys-utils/setpriv.c:318
 #, fuzzy, c-format
 msgid "Permitted capabilities: "
 msgstr "Toiminto ei ole sallittu"
 
-#: sys-utils/setpriv.c:322
+#: sys-utils/setpriv.c:324
 #, c-format
 msgid "Inheritable capabilities: "
 msgstr ""
 
-#: sys-utils/setpriv.c:327
+#: sys-utils/setpriv.c:329
 #, fuzzy, c-format
 msgid "Capability bounding set: "
 msgstr "kykylistaa ei voi luoda"
 
-#: sys-utils/setpriv.c:335
+#: sys-utils/setpriv.c:337
 #, fuzzy
 msgid "SELinux label"
 msgstr "nimiö "
 
-#: sys-utils/setpriv.c:338
+#: sys-utils/setpriv.c:340
 msgid "AppArmor profile"
 msgstr ""
 
-#: sys-utils/setpriv.c:351
+#: sys-utils/setpriv.c:353
 #, c-format
 msgid "cap %d: libcap-ng is broken"
 msgstr ""
 
-#: sys-utils/setpriv.c:374
+#: sys-utils/setpriv.c:376
 #, fuzzy
 msgid "Invalid supplementary group id"
 msgstr "virheellinen ryhmä"
 
-#: sys-utils/setpriv.c:391
+#: sys-utils/setpriv.c:393
 #, fuzzy
 msgid "setresuid failed"
 msgstr "EI TÄSMÄÄ"
 
-#: sys-utils/setpriv.c:406
+#: sys-utils/setpriv.c:408
 #, fuzzy
 msgid "setresgid failed"
 msgstr "EI TÄSMÄÄ"
 
-#: sys-utils/setpriv.c:427
+#: sys-utils/setpriv.c:429
 #, fuzzy
 msgid "bad capability string"
 msgstr "kykylistaa ei voi luoda"
 
-#: sys-utils/setpriv.c:435
+#: sys-utils/setpriv.c:437
 msgid "libcap-ng is too old for \"all\" caps"
 msgstr ""
 
-#: sys-utils/setpriv.c:444
+#: sys-utils/setpriv.c:446
 #, fuzzy, c-format
 msgid "unknown capability \"%s\""
 msgstr "kykylistaa ei voi luoda"
 
-#: sys-utils/setpriv.c:468
+#: sys-utils/setpriv.c:470
 #, fuzzy
 msgid "unrecognized securebit set -- refusing to adjust"
 msgstr "tunnistamaton muoto – käytetään sektoreita\n"
 
-#: sys-utils/setpriv.c:472
+#: sys-utils/setpriv.c:474
 #, fuzzy
 msgid "bad securebits string"
 msgstr "päättämätön merkkijono"
 
-#: sys-utils/setpriv.c:479
+#: sys-utils/setpriv.c:481
 #, fuzzy
 msgid "+all securebits is not allowed"
 msgstr "merkki ”%c” ei ole sallittu"
 
-#: sys-utils/setpriv.c:492
+#: sys-utils/setpriv.c:494
 msgid "adjusting keep_caps does not make sense"
 msgstr ""
 
-#: sys-utils/setpriv.c:496
+#: sys-utils/setpriv.c:498
 #, fuzzy
 msgid "unrecognized securebit"
 msgstr "tunnistamaton valitsin"
 
-#: sys-utils/setpriv.c:516
+#: sys-utils/setpriv.c:518
 #, fuzzy
 msgid "SELinux is not running"
 msgstr "on jo käynnissä"
 
-#: sys-utils/setpriv.c:531
+#: sys-utils/setpriv.c:533
 #, fuzzy, c-format
 msgid "close failed: %s"
 msgstr "%s: sulkeminen epäonnistui"
 
-#: sys-utils/setpriv.c:539
+#: sys-utils/setpriv.c:541
 #, fuzzy
 msgid "AppArmor is not running"
 msgstr "on jo käynnissä"
 
-#: sys-utils/setpriv.c:650
+#: sys-utils/setpriv.c:652
 msgid "duplicate --no-new-privs option"
 msgstr ""
 
-#: sys-utils/setpriv.c:655
+#: sys-utils/setpriv.c:657
 #, fuzzy
 msgid "duplicate ruid"
 msgstr "ylimääräinen %<const%>"
 
-#: sys-utils/setpriv.c:657
+#: sys-utils/setpriv.c:659
 #, fuzzy
 msgid "failed to parse ruid"
 msgstr "Jäsennysvirhe: %s"
 
-#: sys-utils/setpriv.c:661
+#: sys-utils/setpriv.c:663
 #, fuzzy
 msgid "duplicate euid"
 msgstr " euid=%s"
 
-#: sys-utils/setpriv.c:663
+#: sys-utils/setpriv.c:665
 #, fuzzy
 msgid "failed to parse euid"
 msgstr "Jäsennysvirhe: %s"
 
-#: sys-utils/setpriv.c:667
+#: sys-utils/setpriv.c:669
 #, fuzzy
 msgid "duplicate ruid or euid"
 msgstr " euid=%s"
 
-#: sys-utils/setpriv.c:669
+#: sys-utils/setpriv.c:671
 #, fuzzy
 msgid "failed to parse reuid"
 msgstr "Jäsennysvirhe: %s"
 
-#: sys-utils/setpriv.c:673
+#: sys-utils/setpriv.c:675
 #, fuzzy
 msgid "duplicate rgid"
 msgstr "ylimääräinen %<const%>"
 
-#: sys-utils/setpriv.c:675
+#: sys-utils/setpriv.c:677
 #, fuzzy
 msgid "failed to parse rgid"
 msgstr "Jäsennysvirhe: %s"
 
-#: sys-utils/setpriv.c:679
+#: sys-utils/setpriv.c:681
 #, fuzzy
 msgid "duplicate egid"
 msgstr " egid=%s"
 
-#: sys-utils/setpriv.c:681
+#: sys-utils/setpriv.c:683
 #, fuzzy
 msgid "failed to parse egid"
 msgstr " egid=%s"
 
-#: sys-utils/setpriv.c:685
+#: sys-utils/setpriv.c:687
 #, fuzzy
 msgid "duplicate rgid or egid"
 msgstr " egid=%s"
 
-#: sys-utils/setpriv.c:687
+#: sys-utils/setpriv.c:689
 #, fuzzy
 msgid "failed to parse regid"
 msgstr "Jäsennysvirhe: %s"
 
-#: sys-utils/setpriv.c:692
+#: sys-utils/setpriv.c:694
 msgid "duplicate --clear-groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:698
+#: sys-utils/setpriv.c:700
 msgid "duplicate --keep-groups option"
 msgstr ""
 
-#: sys-utils/setpriv.c:704
+#: sys-utils/setpriv.c:706
 #, fuzzy
 msgid "duplicate --groups option"
 msgstr " ryhmät="
 
-#: sys-utils/setpriv.c:713
+#: sys-utils/setpriv.c:715
 msgid "duplicate --inh-caps option"
 msgstr ""
 
-#: sys-utils/setpriv.c:719
+#: sys-utils/setpriv.c:721
 #, fuzzy
 msgid "duplicate --bounding-set option"
 msgstr "kaksinkertainen joukon määrittely"
 
-#: sys-utils/setpriv.c:725
+#: sys-utils/setpriv.c:727
 #, fuzzy
 msgid "duplicate --securebits option"
 msgstr "ylimääräinen %<const%>"
 
-#: sys-utils/setpriv.c:731
+#: sys-utils/setpriv.c:733
 msgid "duplicate --selinux-label option"
 msgstr ""
 
-#: sys-utils/setpriv.c:737
+#: sys-utils/setpriv.c:739
 msgid "duplicate --apparmor-profile option"
 msgstr ""
 
-#: sys-utils/setpriv.c:748
+#: sys-utils/setpriv.c:750
 #, fuzzy, c-format
 msgid "unrecognized option '%c'"
 msgstr "%s: tunnistamaton valitsin ”%c%s”\n"
 
-#: sys-utils/setpriv.c:755
+#: sys-utils/setpriv.c:757
 msgid "--dump is incompatible with all other options"
 msgstr ""
 
-#: sys-utils/setpriv.c:763
+#: sys-utils/setpriv.c:765
 msgid "--list-caps must be specified alone"
 msgstr ""
 
-#: sys-utils/setpriv.c:769
+#: sys-utils/setpriv.c:771
 #, fuzzy
 msgid "No program specified"
 msgstr "odottamaton %<@%> ohjelmassa"
 
-#: sys-utils/setpriv.c:774
+#: sys-utils/setpriv.c:776
 msgid "--[re]gid requires --keep-groups, --clear-groups, or --groups"
 msgstr ""
 
-#: sys-utils/setpriv.c:778
+#: sys-utils/setpriv.c:780
 msgid "disallow granting new privileges failed"
 msgstr ""
 
-#: sys-utils/setpriv.c:786
+#: sys-utils/setpriv.c:788
 msgid "keep process capabilities failed"
 msgstr ""
 
-#: sys-utils/setpriv.c:794
+#: sys-utils/setpriv.c:796
 msgid "activate capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:800
+#: sys-utils/setpriv.c:802
 msgid "reactivate capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:817
+#: sys-utils/setpriv.c:819
 #, fuzzy
 msgid "set process securebits failed"
 msgstr "cache_set uhrin varaus epäonnistui"
 
-#: sys-utils/setpriv.c:823
+#: sys-utils/setpriv.c:825
 #, fuzzy
 msgid "apply bounding set"
 msgstr "Aseta"
 
-#: sys-utils/setpriv.c:829
+#: sys-utils/setpriv.c:831
 msgid "apply capabilities"
 msgstr ""
 
-#: sys-utils/setpriv.c:834
+#: sys-utils/setpriv.c:836
 #, fuzzy, c-format
 msgid "cannot execute: %s"
 msgstr "tiedostoa %s ei voi siirtää kohteeseen %s"
@@ -15089,7 +15106,7 @@ msgstr "hakemiston %s laitetta ja i-solmua ei voida määrittää"
 msgid "failed to open directory"
 msgstr "avaaminen epäonnistui"
 
-#: sys-utils/switch_root.c:67 term-utils/wall.c:298
+#: sys-utils/switch_root.c:67 term-utils/wall.c:301
 msgid "stat failed"
 msgstr "stat epäonnistui"
 
@@ -15567,7 +15584,7 @@ msgstr "ytimen sisäinen laitenimi"
 msgid "unknown flag: %s"
 msgstr "tuntematon käyttäjä-ID: %s"
 
-#: sys-utils/wdctl.c:179
+#: sys-utils/wdctl.c:178
 msgid ""
 " -f, --flags <list>     print selected flags only\n"
 " -F, --noflags          don't print information about flags\n"
@@ -15581,78 +15598,78 @@ msgid ""
 " -x, --flags-only       print only flags table (same as -I -T)\n"
 msgstr ""
 
-#: sys-utils/wdctl.c:195
+#: sys-utils/wdctl.c:194
 #, fuzzy, c-format
 msgid "The default device is %s.\n"
 msgstr "Laite: %s\n"
 
-#: sys-utils/wdctl.c:198
+#: sys-utils/wdctl.c:197
 #, fuzzy
 msgid "Available columns:\n"
 msgstr "Sarakkeita          :\n"
 
-#: sys-utils/wdctl.c:288
+#: sys-utils/wdctl.c:287
 #, fuzzy, c-format
 msgid "%s: unknown flags 0x%x\n"
 msgstr "%s: tuntematon signaali %s\n"
 
-#: sys-utils/wdctl.c:318 sys-utils/wdctl.c:374
+#: sys-utils/wdctl.c:317 sys-utils/wdctl.c:373
 #, c-format
 msgid "%s: watchdog already in use, terminating."
 msgstr ""
 
-#: sys-utils/wdctl.c:332 sys-utils/wdctl.c:402
+#: sys-utils/wdctl.c:331 sys-utils/wdctl.c:401
 #, fuzzy, c-format
 msgid "%s: failed to disarm watchdog"
 msgstr "%s epäonnistui"
 
-#: sys-utils/wdctl.c:341
+#: sys-utils/wdctl.c:340
 #, fuzzy, c-format
 msgid "cannot set timeout for %s"
 msgstr "konenimen %s asettaminen järjestelmälle ei onnistu"
 
-#: sys-utils/wdctl.c:347
+#: sys-utils/wdctl.c:346
 #, fuzzy, c-format
 msgid "Timeout has been set to %d second.\n"
 msgid_plural "Timeout has been set to %d seconds.\n"
 msgstr[0] "Aikaa edellisestä säädöstä on kulunut %d sekuntia\n"
 msgstr[1] "Aikaa edellisestä säädöstä on kulunut %d sekuntia\n"
 
-#: sys-utils/wdctl.c:381
+#: sys-utils/wdctl.c:380
 #, fuzzy, c-format
 msgid "%s: failed to get information about watchdog"
 msgstr "siirtyminen epäonnistui funktiossa write_tables"
 
-#: sys-utils/wdctl.c:463 sys-utils/wdctl.c:466 sys-utils/wdctl.c:469
+#: sys-utils/wdctl.c:462 sys-utils/wdctl.c:465 sys-utils/wdctl.c:468
 #, c-format
 msgid "%-14s %2i second\n"
 msgid_plural "%-14s %2i seconds\n"
 msgstr[0] "%-14s %2i sekunti\n"
 msgstr[1] "%-14s %2i sekuntia\n"
 
-#: sys-utils/wdctl.c:464
+#: sys-utils/wdctl.c:463
 #, fuzzy
 msgid "Timeout:"
 msgstr "virheellinen aikakatkaisuarvo: %s"
 
-#: sys-utils/wdctl.c:467
+#: sys-utils/wdctl.c:466
 #, fuzzy
 msgid "Pre-timeout:"
 msgstr "virheellinen aikakatkaisuarvo: %s"
 
-#: sys-utils/wdctl.c:470
+#: sys-utils/wdctl.c:469
 msgid "Timeleft:"
 msgstr ""
 
-#: sys-utils/wdctl.c:604
+#: sys-utils/wdctl.c:603
 msgid "Device:"
 msgstr "Laite:"
 
-#: sys-utils/wdctl.c:606
+#: sys-utils/wdctl.c:605
 msgid "Identity:"
 msgstr ""
 
-#: sys-utils/wdctl.c:608
+#: sys-utils/wdctl.c:607
 msgid "version"
 msgstr "versio"
 
@@ -16164,14 +16181,6 @@ msgstr "%s: %s: odottamaton tiedostomuoto\n"
 msgid "argument error: %s"
 msgstr "virheellinen argumentti %s %s:lle"
 
-#: term-utils/setterm.c:217 term-utils/setterm.c:255 term-utils/setterm.c:293
-#: term-utils/setterm.c:321 term-utils/setterm.c:335 term-utils/setterm.c:346
-#: term-utils/setterm.c:354 term-utils/setterm.c:369 term-utils/setterm.c:383
-#: term-utils/setterm.c:396
-#, fuzzy
-msgid "argument error"
-msgstr "virhe: "
-
 #: term-utils/setterm.c:260
 #, fuzzy, c-format
 msgid "argument error: bright %s is not supported"
@@ -16368,38 +16377,38 @@ msgstr "valitsimia -force_flat_namespace ja -dynamiclib ei voi käyttää yhdess
 msgid "cannot get blank status"
 msgstr "työhakemiston selvittäminen ei onnistu"
 
-#: term-utils/setterm.c:781
+#: term-utils/setterm.c:780
 #, fuzzy, c-format
 msgid "can not open dump file %s for output"
 msgstr "tulostiedostoa ”%s” ei voi avata"
 
-#: term-utils/setterm.c:824
+#: term-utils/setterm.c:823
 #, fuzzy, c-format
 msgid "terminal %s does not support %s"
 msgstr "%s ei tue muotoilua %<%%%s%c%> %s"
 
-#: term-utils/setterm.c:1000
+#: term-utils/setterm.c:999
 msgid "cannot (un)set powersave mode"
 msgstr "virransäästötilaa ei voi asettaa (pois)"
 
-#: term-utils/setterm.c:1019 term-utils/setterm.c:1028
+#: term-utils/setterm.c:1018 term-utils/setterm.c:1027
 msgid "klogctl error"
 msgstr "klogctl-virhe"
 
-#: term-utils/setterm.c:1049
+#: term-utils/setterm.c:1048
 msgid "$TERM is not defined."
 msgstr "$TERM on määrittelemättä."
 
-#: term-utils/setterm.c:1056
+#: term-utils/setterm.c:1055
 msgid "terminfo database cannot be found"
 msgstr ""
 
-#: term-utils/setterm.c:1058
+#: term-utils/setterm.c:1057
 #, fuzzy, c-format
 msgid "%s: unknown terminal type"
 msgstr "tuntematon tiedostojärjestelmän tyyppi ”%s”"
 
-#: term-utils/setterm.c:1060
+#: term-utils/setterm.c:1059
 #, fuzzy
 msgid "terminal is hardcopy"
 msgstr " -term päätteen_nimi\n"
@@ -16458,27 +16467,27 @@ msgstr "Vain root-käyttäjä voi käyttää tätä valitsinta!"
 msgid "invalid timeout argument: %s"
 msgstr "virheellinen argumentti %s %s:lle"
 
-#: term-utils/wall.c:207
+#: term-utils/wall.c:210
 #, fuzzy
 msgid "cannot get passwd uid"
 msgstr "työhakemiston selvittäminen ei onnistu"
 
-#: term-utils/wall.c:212
+#: term-utils/wall.c:215
 #, fuzzy
 msgid "cannot get tty name"
 msgstr "järjestelmän nimen haku ei onnistu"
 
-#: term-utils/wall.c:230
+#: term-utils/wall.c:233
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Viesti käyttäjältä %s@%s (%s) (%s):"
 
-#: term-utils/wall.c:265
+#: term-utils/wall.c:268
 #, fuzzy, c-format
 msgid "will not read %s - use stdin."
 msgstr "hakemistoa %s ei voi lukea"
 
-#: term-utils/wall.c:304
+#: term-utils/wall.c:307
 msgid "fread failed"
 msgstr "fread epäonnistui"
 

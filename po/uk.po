@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.25-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2014-07-02 11:44+0200\n"
+"POT-Creation-Date: 2014-07-22 10:34+0200\n"
 "PO-Revision-Date: 2014-07-03 12:08+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
@@ -25,35 +25,35 @@ msgid " %s <disk device> <partition number> <start> <length>\n"
 msgstr " %s <дисковий пристрій> <номер розділу> <початок> <довжина>\n"
 
 #: disk-utils/addpart.c:52 disk-utils/blockdev.c:276 disk-utils/blockdev.c:420
-#: disk-utils/blockdev.c:447 disk-utils/cfdisk.c:2011 disk-utils/delpart.c:53
+#: disk-utils/blockdev.c:447 disk-utils/cfdisk.c:2055 disk-utils/delpart.c:53
 #: disk-utils/fdformat.c:62 disk-utils/fdformat.c:154 disk-utils/fdisk.c:676
-#: disk-utils/fdisk.c:692 disk-utils/fdisk.c:732 disk-utils/fdisk.c:952
+#: disk-utils/fdisk.c:692 disk-utils/fdisk.c:732 disk-utils/fdisk.c:951
 #: disk-utils/fsck.c:1424 disk-utils/fsck.cramfs.c:145
 #: disk-utils/fsck.cramfs.c:502 disk-utils/isosize.c:134
 #: disk-utils/mkfs.bfs.c:187 disk-utils/mkfs.cramfs.c:164
-#: disk-utils/mkfs.cramfs.c:666 disk-utils/mkfs.cramfs.c:793
+#: disk-utils/mkfs.cramfs.c:664 disk-utils/mkfs.cramfs.c:791
 #: disk-utils/mkfs.minix.c:753 disk-utils/partx.c:949
 #: disk-utils/resizepart.c:97 disk-utils/swaplabel.c:105
 #: libfdisk/src/bsd.c:503 lib/path.c:73 lib/path.c:85 login-utils/islocal.c:87
-#: login-utils/last.c:644 login-utils/last-deprecated.c:245
-#: login-utils/sulogin.c:466 login-utils/sulogin.c:504
+#: login-utils/last.c:643 login-utils/last-deprecated.c:245
+#: login-utils/sulogin.c:468 login-utils/sulogin.c:506
 #: login-utils/utmpdump.c:126 login-utils/utmpdump.c:345
 #: login-utils/utmpdump.c:367 login-utils/vipw.c:265 login-utils/vipw.c:283
-#: misc-utils/findmnt.c:1066 misc-utils/logger.c:412 misc-utils/mcookie.c:112
+#: misc-utils/findmnt.c:1085 misc-utils/logger.c:412 misc-utils/mcookie.c:112
 #: misc-utils/uuidd.c:222 sys-utils/blkdiscard.c:135 sys-utils/dmesg.c:513
-#: sys-utils/eject.c:510 sys-utils/eject.c:711 sys-utils/fallocate.c:371
-#: sys-utils/fsfreeze.c:124 sys-utils/fstrim.c:81 sys-utils/hwclock.c:270
+#: sys-utils/eject.c:510 sys-utils/eject.c:711 sys-utils/fallocate.c:370
+#: sys-utils/fsfreeze.c:124 sys-utils/fstrim.c:72 sys-utils/hwclock.c:270
 #: sys-utils/hwclock-cmos.c:632 sys-utils/hwclock-rtc.c:162
 #: sys-utils/hwclock-rtc.c:256 sys-utils/hwclock-rtc.c:414
 #: sys-utils/hwclock-rtc.c:435 sys-utils/hwclock-rtc.c:482
 #: sys-utils/ldattach.c:290 sys-utils/nsenter.c:113 sys-utils/rtcwake.c:106
 #: sys-utils/rtcwake.c:265 sys-utils/rtcwake.c:525 sys-utils/setpriv.c:224
-#: sys-utils/setpriv.c:521 sys-utils/setpriv.c:544 sys-utils/swapon.c:320
+#: sys-utils/setpriv.c:523 sys-utils/setpriv.c:546 sys-utils/swapon.c:320
 #: sys-utils/swapon.c:483 sys-utils/switch_root.c:163 sys-utils/unshare.c:49
-#: sys-utils/wdctl.c:320 sys-utils/wdctl.c:376 term-utils/script.c:216
+#: sys-utils/wdctl.c:319 sys-utils/wdctl.c:375 term-utils/script.c:216
 #: term-utils/script.c:242 term-utils/script.c:683
 #: term-utils/scriptreplay.c:203 term-utils/scriptreplay.c:206
-#: term-utils/wall.c:269 text-utils/rev.c:141 text-utils/tailf.c:61
+#: term-utils/wall.c:272 text-utils/rev.c:141 text-utils/tailf.c:61
 #: text-utils/tailf.c:98 text-utils/ul.c:232
 #, c-format
 msgid "cannot open %s"
@@ -203,7 +203,7 @@ msgstr "Помилка %s.\n"
 msgid "%s succeeded.\n"
 msgstr "%s виконано.\n"
 
-#: disk-utils/blockdev.c:456 misc-utils/lsblk.c:1075 misc-utils/lsblk.c:1082
+#: disk-utils/blockdev.c:456 misc-utils/lsblk.c:1089 misc-utils/lsblk.c:1096
 #, c-format
 msgid "%s: failed to initialize sysfs handler"
 msgstr "%s: не вдалося ініціалізувати обробник sysfs"
@@ -218,338 +218,339 @@ msgstr "помилка ioctl у %s"
 msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
 msgstr "Чт    ПоЧт РзмС  РзмБл ПочСект             Розмір Пристрій\n"
 
-#: disk-utils/cfdisk.c:123
+#: disk-utils/cfdisk.c:148
 msgid "Bootable"
 msgstr "Завантаж."
 
-#: disk-utils/cfdisk.c:123
+#: disk-utils/cfdisk.c:148
 msgid "Toggle bootable flag of the current partition"
 msgstr "Перемкнути ознаку завантаження поточного розділу"
 
-#: disk-utils/cfdisk.c:124
+#: disk-utils/cfdisk.c:149
 msgid "Delete"
 msgstr "Видалити"
 
-#: disk-utils/cfdisk.c:124
+#: disk-utils/cfdisk.c:149
 msgid "Delete the current partition"
 msgstr "Видалити поточний розділ"
 
-#: disk-utils/cfdisk.c:125
+#: disk-utils/cfdisk.c:150
 msgid "New"
 msgstr "Новий"
 
-#: disk-utils/cfdisk.c:125
+#: disk-utils/cfdisk.c:150
 msgid "Create new partition from free space"
 msgstr "Створити новий розділ у вільному просторі"
 
-#: disk-utils/cfdisk.c:126
+#: disk-utils/cfdisk.c:151
 msgid "Quit"
 msgstr "Вихід"
 
-#: disk-utils/cfdisk.c:126
+#: disk-utils/cfdisk.c:151
 msgid "Quit program without writing partition table"
 msgstr "Вийти з програми без запису таблиці розділів"
 
-#: disk-utils/cfdisk.c:127 libfdisk/src/bsd.c:890 libfdisk/src/dos.c:1993
-#: libfdisk/src/gpt.c:2404 libfdisk/src/sgi.c:1089 libfdisk/src/sun.c:1003
+#: disk-utils/cfdisk.c:152 libfdisk/src/bsd.c:890 libfdisk/src/dos.c:1996
+#: libfdisk/src/gpt.c:2407 libfdisk/src/sgi.c:1093 libfdisk/src/sun.c:1007
 msgid "Type"
 msgstr "Тип"
 
-#: disk-utils/cfdisk.c:127
+#: disk-utils/cfdisk.c:152
 msgid "Change the partition type"
 msgstr "Змінити тип розділу"
 
-#: disk-utils/cfdisk.c:128
+#: disk-utils/cfdisk.c:153
 msgid "Help"
 msgstr "Довідка"
 
-#: disk-utils/cfdisk.c:128
+#: disk-utils/cfdisk.c:153
 msgid "Print help screen"
 msgstr "Вивести вікно з довідкою"
 
-#: disk-utils/cfdisk.c:129
+#: disk-utils/cfdisk.c:154
 msgid "Sort"
 msgstr "Упорядкувати"
 
-#: disk-utils/cfdisk.c:129
+#: disk-utils/cfdisk.c:154
 msgid "Fix partitions order"
 msgstr "Виправити порядок розділів"
 
-#: disk-utils/cfdisk.c:130
+#: disk-utils/cfdisk.c:155
 msgid "Write"
 msgstr "Записати"
 
-#: disk-utils/cfdisk.c:130
+#: disk-utils/cfdisk.c:155
 msgid "Write partition table to disk (this might destroy data)"
 msgstr "Записати таблицю розділів на диск (може зіпсувати дані)"
 
-#: disk-utils/cfdisk.c:482 disk-utils/fdisk.c:347
+#: disk-utils/cfdisk.c:510 disk-utils/fdisk.c:347
 #, c-format
 msgid "internal error: unsupported dialog type %d"
 msgstr "внутрішня помилка: непідтримуваний тип діалогу, %d"
 
-#: disk-utils/cfdisk.c:1242
+#: disk-utils/cfdisk.c:1281
 #, c-format
 msgid "Disk: %s"
 msgstr "Диск: %s"
 
-#: disk-utils/cfdisk.c:1244
+#: disk-utils/cfdisk.c:1283
 #, c-format
 msgid "Size: %s, %ju bytes, %ju sectors"
 msgstr "Розмір: %s, %ju байтів, %ju секторів"
 
-#: disk-utils/cfdisk.c:1247
+#: disk-utils/cfdisk.c:1286
 #, c-format
 msgid "Label: %s, identifier: %s"
 msgstr "Мітка: %s, ідентифікатор: %s"
 
-#: disk-utils/cfdisk.c:1250
+#: disk-utils/cfdisk.c:1289
 #, c-format
 msgid "Label: %s"
 msgstr "Мітка: %s"
 
-#: disk-utils/cfdisk.c:1391
+#: disk-utils/cfdisk.c:1430
 msgid "May be followed by {M,B,G,T}iB (the \"iB\" is optional) or S for sectors."
 msgstr "Можна вказати одиницю, {M,B,G,T}iB (\"iB\" є необов’язковим) або S, якщо розмір вказано у секторах."
 
-#: disk-utils/cfdisk.c:1395
+#: disk-utils/cfdisk.c:1434
 msgid "Please, specify size."
 msgstr "Будь ласка, вкажіть розмір."
 
-#: disk-utils/cfdisk.c:1417
+#: disk-utils/cfdisk.c:1456
 #, c-format
 msgid "Minimal size is %ju"
 msgstr "Мінімальний розмір: %ju"
 
-#: disk-utils/cfdisk.c:1426
+#: disk-utils/cfdisk.c:1465
 #, c-format
 msgid "Maximal size is %ju bytes."
 msgstr "Максимальний розмір: %ju байтів."
 
-#: disk-utils/cfdisk.c:1430
+#: disk-utils/cfdisk.c:1469
 msgid "Failed to parse size."
 msgstr "Не вдалося обробити значення розміру."
 
-#: disk-utils/cfdisk.c:1485
+#: disk-utils/cfdisk.c:1524
 msgid "Select partition type"
 msgstr "Виберіть тип розділу"
 
-#: disk-utils/cfdisk.c:1547 disk-utils/fdisk.c:957
+#: disk-utils/cfdisk.c:1587 disk-utils/fdisk.c:956
 msgid "Device does not contain a recognized partition table."
 msgstr "Пристрій не містить розпізнаної таблиці розділів."
 
-#: disk-utils/cfdisk.c:1549
+#: disk-utils/cfdisk.c:1589
 msgid "Please, select a type to create a new disk label."
 msgstr "Будь ласка, виберіть тип для створення мітки нового диска."
 
-#: disk-utils/cfdisk.c:1554
+#: disk-utils/cfdisk.c:1594
 msgid "Select label type"
 msgstr "Вибрати тип мітки"
 
-#: disk-utils/cfdisk.c:1590
+#: disk-utils/cfdisk.c:1631
 msgid "Help Screen for cfdisk"
 msgstr "Екран з довідкою для cfdisk"
 
-#: disk-utils/cfdisk.c:1592
+#: disk-utils/cfdisk.c:1633
 msgid "This is cfdisk, a curses based disk partitioning program, which"
 msgstr "Це cfdisk - консольна програма роботи з розділами на базі curses, яка"
 
-#: disk-utils/cfdisk.c:1593
+#: disk-utils/cfdisk.c:1634
 msgid "allows you to create, delete and modify partitions on your hard"
 msgstr "дозволяє створювати, видаляти та змінювати розділи вашого"
 
-#: disk-utils/cfdisk.c:1594
+#: disk-utils/cfdisk.c:1635
 msgid "disk drive."
 msgstr "жорсткого диска."
 
-#: disk-utils/cfdisk.c:1596
+#: disk-utils/cfdisk.c:1637
 msgid "Copyright (C) 2014 Karel Zak <kzak@redhat.com> "
 msgstr "© Karel Zak <kzak@redhat.com>, 2014 "
 
-#: disk-utils/cfdisk.c:1597
+#: disk-utils/cfdisk.c:1638
 msgid "Based on the original cfdisk from Kevin E. Martin & aeb."
 msgstr "Засновано на початковій версії cfdisk, створеній Kevin E. Martin та aeb."
 
-#: disk-utils/cfdisk.c:1599
+#: disk-utils/cfdisk.c:1640
 msgid "Command      Meaning"
 msgstr "Команда      Призначення"
 
-#: disk-utils/cfdisk.c:1600
+#: disk-utils/cfdisk.c:1641
 msgid "-------      -------"
 msgstr "-------      -----------"
 
-#: disk-utils/cfdisk.c:1601
+#: disk-utils/cfdisk.c:1642
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b          Перемкнути ознаку завантаження поточного розділу"
 
-#: disk-utils/cfdisk.c:1602
+#: disk-utils/cfdisk.c:1643
 msgid "  d          Delete the current partition"
 msgstr "  d          Видалити поточний розділ"
 
-#: disk-utils/cfdisk.c:1603
+#: disk-utils/cfdisk.c:1644
 msgid "  h          Print this screen"
 msgstr "  h          Вивести цю довідку"
 
-#: disk-utils/cfdisk.c:1604
+#: disk-utils/cfdisk.c:1645
 msgid "  n          Create new partition from free space"
 msgstr "  n          Створити новий розділ у вільному просторі"
 
-#: disk-utils/cfdisk.c:1605
+#: disk-utils/cfdisk.c:1646
 msgid "  q          Quit program without writing partition table"
 msgstr "  q          Вийти з програми без запису таблиці розділів"
 
-#: disk-utils/cfdisk.c:1606
+#: disk-utils/cfdisk.c:1647
 msgid "  t          Change the partition type"
 msgstr "  t          Змінити тип розділу"
 
-#: disk-utils/cfdisk.c:1607
-msgid "  s          Fix partitions order"
+#: disk-utils/cfdisk.c:1648
+#, fuzzy
+msgid "  s          Fix partitions order (only when in disarray)"
 msgstr "  s          Виправити порядок розділів"
 
-#: disk-utils/cfdisk.c:1608
+#: disk-utils/cfdisk.c:1649
 msgid "  W          Write partition table to disk (must enter upper case W)"
 msgstr "  W          Записати таблицю розділів на диск ( W повинен бути в верхньому регістрі)"
 
-#: disk-utils/cfdisk.c:1609
+#: disk-utils/cfdisk.c:1650
 msgid "             Since this might destroy data on the disk, you must"
 msgstr "             Це може зруйнувати дані на диску, тому необхідно або"
 
-#: disk-utils/cfdisk.c:1610
+#: disk-utils/cfdisk.c:1651
 msgid "             either confirm or deny the write by entering `yes' or"
 msgstr "             підтвердити або відмовитись від запису набравши `yes' чи "
 
-#: disk-utils/cfdisk.c:1611
+#: disk-utils/cfdisk.c:1652
 msgid "             `no'"
 msgstr "             `no'"
 
-#: disk-utils/cfdisk.c:1612
+#: disk-utils/cfdisk.c:1653
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "СтрілкаВгору Перемістити курсор на попередню позицію"
 
-#: disk-utils/cfdisk.c:1613
+#: disk-utils/cfdisk.c:1654
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "СтрілкаВниз  Перемістити курсор у наступну позицію"
 
-#: disk-utils/cfdisk.c:1614
+#: disk-utils/cfdisk.c:1655
 msgid "Left Arrow   Move cursor to the previous menu item"
 msgstr "Стрілка ліворуч Перемістити курсор на попередній пункт меню"
 
-#: disk-utils/cfdisk.c:1615
+#: disk-utils/cfdisk.c:1656
 msgid "Right Arrow  Move cursor to the next menu item"
 msgstr "Стрілка праворуч  Перемістити курсор на наступний пункт меню"
 
-#: disk-utils/cfdisk.c:1618
+#: disk-utils/cfdisk.c:1659
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Зауважте: Всі команди вводяться або у нижньому або у верхньому"
 
-#: disk-utils/cfdisk.c:1619
+#: disk-utils/cfdisk.c:1660
 msgid "case letters (except for Writes)."
 msgstr "регістрах (за винятком (W)запису)."
 
-#: disk-utils/cfdisk.c:1621
+#: disk-utils/cfdisk.c:1662
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
 msgstr "Докладніше про пристрій можна дізнатися за допомогою lsblk(8) або partx(8)."
 
-#: disk-utils/cfdisk.c:1628
+#: disk-utils/cfdisk.c:1669
 msgid "Press a key to continue."
 msgstr "Натисніть будь-яку клавішу для продовження."
 
-#: disk-utils/cfdisk.c:1704
+#: disk-utils/cfdisk.c:1745
 msgid "Could not toggle the flag."
 msgstr "Не вдалося перемкнути прапорець."
 
-#: disk-utils/cfdisk.c:1714
+#: disk-utils/cfdisk.c:1755
 #, c-format
 msgid "Could not delete partition %zu."
 msgstr "Не вдалося вилучити розділ %zu."
 
-#: disk-utils/cfdisk.c:1716 disk-utils/fdisk-menu.c:504
+#: disk-utils/cfdisk.c:1757 disk-utils/fdisk-menu.c:504
 #, c-format
 msgid "Partition %zu has been deleted."
 msgstr "Розділ %zu вилучено."
 
-#: disk-utils/cfdisk.c:1737
+#: disk-utils/cfdisk.c:1778
 msgid "Partition size: "
 msgstr "Розмір розділу: "
 
-#: disk-utils/cfdisk.c:1768
+#: disk-utils/cfdisk.c:1809
 #, c-format
 msgid "Changed type of the partition %zu."
 msgstr "Змінено тип розділу %zu."
 
-#: disk-utils/cfdisk.c:1770
+#: disk-utils/cfdisk.c:1811
 #, c-format
 msgid "Type of the partition %zu is unchanged."
 msgstr "Тип розділу %zu залишився незмінним."
 
-#: disk-utils/cfdisk.c:1785
+#: disk-utils/cfdisk.c:1826
 msgid "Device open in read-only mode"
 msgstr "Пристрій відкрито у режимі лише читання"
 
-#: disk-utils/cfdisk.c:1790
+#: disk-utils/cfdisk.c:1831
 msgid "Are you sure you want to write the partition table to disk? "
 msgstr "Ви впевнені, що бажаєте записати таблицю розділів на диск?"
 
-#: disk-utils/cfdisk.c:1792
+#: disk-utils/cfdisk.c:1833
 msgid "Type \"yes\" or \"no\" or press ESC to left dialog."
 msgstr "Введіть «yes» (так) або «no» (ні) або натисніть клавішу ESC, щоб припинити діалог."
 
-#: disk-utils/cfdisk.c:1797 login-utils/lslogins.c:209 sys-utils/lscpu.c:1233
+#: disk-utils/cfdisk.c:1838 login-utils/lslogins.c:209 sys-utils/lscpu.c:1233
 #: sys-utils/lscpu.c:1243
 #, c-format
 msgid "yes"
 msgstr "yes"
 
-#: disk-utils/cfdisk.c:1798
+#: disk-utils/cfdisk.c:1839
 msgid "Did not write partition table to disk"
 msgstr "Не записувати таблицю розділів на диск"
 
-#: disk-utils/cfdisk.c:1803
+#: disk-utils/cfdisk.c:1844
 msgid "Failed to write disklabel"
 msgstr "Не вдалося записати мітку диска"
 
-#: disk-utils/cfdisk.c:1806 disk-utils/fdisk-menu.c:459
+#: disk-utils/cfdisk.c:1847 disk-utils/fdisk-menu.c:459
 msgid "The partition table has been altered."
 msgstr "Таблицю розділів було змінено."
 
-#: disk-utils/cfdisk.c:1825
+#: disk-utils/cfdisk.c:1867
 msgid "Note that partition table entries are not in disk order now."
 msgstr "Зауважте, що тепер ви бачите записи таблиці розділів не у тому порядку, як на диску."
 
-#: disk-utils/cfdisk.c:1848
+#: disk-utils/cfdisk.c:1890
 msgid "failed to create a new disklabel"
 msgstr "не вдалося створити нову мітку диска"
 
-#: disk-utils/cfdisk.c:1856
+#: disk-utils/cfdisk.c:1898
 msgid "failed to read partitions"
 msgstr "не вдалося прочитати розділи"
 
-#: disk-utils/cfdisk.c:1866 disk-utils/fdisk.c:949 disk-utils/fdisk-menu.c:451
+#: disk-utils/cfdisk.c:1908 disk-utils/fdisk.c:948 disk-utils/fdisk-menu.c:451
 msgid "Device open in read-only mode."
 msgstr "Пристрій відкрито у режимі лише читання."
 
-#: disk-utils/cfdisk.c:1937
+#: disk-utils/cfdisk.c:1979
 #, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr " %1$s [параметри] <диск>\n"
 
-#: disk-utils/cfdisk.c:1940
+#: disk-utils/cfdisk.c:1982
 msgid " -L --color[=<when>]     colorize output (auto, always or never)\n"
 msgstr ""
 " -L, --color[=<умова>]   розфарбовування виведених даних (auto (авто),\n"
 "                           always (завжди) або never (ніколи))\n"
 
-#: disk-utils/cfdisk.c:1941
+#: disk-utils/cfdisk.c:1983
 msgid " -z --zero               start with zeroed partition table\n"
 msgstr " -z, --zero              розпочати з зануленої таблиці розділів\n"
 
-#: disk-utils/cfdisk.c:1979 disk-utils/fdisk.c:869 misc-utils/cal.c:378
-#: sys-utils/dmesg.c:1294 text-utils/hexdump.c:114
+#: disk-utils/cfdisk.c:2022 disk-utils/fdisk.c:868 misc-utils/cal.c:373
+#: sys-utils/dmesg.c:1295 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "непідтримуваний режим розфарбовування"
 
-#: disk-utils/cfdisk.c:1982 include/c.h:286 schedutils/chrt.c:266
-#: schedutils/taskset.c:166 sys-utils/chcpu.c:330 sys-utils/dmesg.c:1334
+#: disk-utils/cfdisk.c:2025 include/c.h:286 schedutils/chrt.c:266
+#: schedutils/taskset.c:166 sys-utils/chcpu.c:330 sys-utils/dmesg.c:1335
 #: sys-utils/hwclock.c:1541 sys-utils/lscpu.c:1711 sys-utils/renice.c:102
 #: sys-utils/rtcwake.c:474 sys-utils/tunelp.c:249 term-utils/agetty.c:740
 #: term-utils/script.c:220 term-utils/scriptreplay.c:177
@@ -560,7 +561,7 @@ msgstr "непідтримуваний режим розфарбовування
 msgid "%s from %s\n"
 msgstr "%s з %s\n"
 
-#: disk-utils/cfdisk.c:2000 disk-utils/fdisk.c:809
+#: disk-utils/cfdisk.c:2041 disk-utils/fdisk.c:808
 msgid "failed to allocate libfdisk context"
 msgstr "не вдалося розмістити контекстні дані libfdisk"
 
@@ -629,18 +630,18 @@ msgstr ""
 "\n"
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.cramfs.c:141
-#: disk-utils/mkfs.bfs.c:180 disk-utils/mkfs.cramfs.c:753
-#: disk-utils/mkfs.cramfs.c:790 disk-utils/mkfs.minix.c:746
-#: disk-utils/partx.c:888 login-utils/last.c:658 misc-utils/namei.c:231
-#: sys-utils/blkdiscard.c:138 sys-utils/dmesg.c:515 sys-utils/fallocate.c:184
-#: sys-utils/fsfreeze.c:127 sys-utils/fstrim.c:71 sys-utils/swapon.c:457
+#: disk-utils/mkfs.bfs.c:180 disk-utils/mkfs.cramfs.c:751
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/mkfs.minix.c:746
+#: disk-utils/partx.c:888 login-utils/last.c:657 misc-utils/namei.c:231
+#: sys-utils/blkdiscard.c:138 sys-utils/dmesg.c:515 sys-utils/fallocate.c:195
+#: sys-utils/fsfreeze.c:127 sys-utils/fstrim.c:76 sys-utils/swapon.c:457
 #: sys-utils/switch_root.c:93 sys-utils/switch_root.c:133
 #: term-utils/mesg.c:124 text-utils/tailf.c:101 text-utils/tailf.c:279
 #, c-format
 msgid "stat failed %s"
 msgstr "помилка stat: %s"
 
-#: disk-utils/fdformat.c:148 disk-utils/partx.c:946 misc-utils/lsblk.c:1338
+#: disk-utils/fdformat.c:148 disk-utils/partx.c:946 misc-utils/lsblk.c:1352
 #: sys-utils/blkdiscard.c:140 sys-utils/mountpoint.c:108
 #, c-format
 msgid "%s: not a block device"
@@ -672,8 +673,8 @@ msgstr "Одна"
 #: disk-utils/mkfs.minix.c:804 disk-utils/mkswap.c:661 disk-utils/partx.c:1001
 #: disk-utils/resizepart.c:108 disk-utils/sfdisk.c:2996
 #: disk-utils/sfdisk.c:3048 disk-utils/sfdisk.c:3085
-#: login-utils/utmpdump.c:385 sys-utils/dmesg.c:642 sys-utils/wdctl.c:345
-#: sys-utils/wdctl.c:410 term-utils/script.c:337 term-utils/script.c:378
+#: login-utils/utmpdump.c:385 sys-utils/dmesg.c:643 sys-utils/wdctl.c:344
+#: sys-utils/wdctl.c:409 term-utils/script.c:337 term-utils/script.c:378
 #: term-utils/script.c:491 text-utils/pg.c:1236
 msgid "write failed"
 msgstr "запис завершився помилкою"
@@ -832,17 +833,17 @@ msgstr "не вдалося виконати позиціювання"
 msgid "cannot read"
 msgstr "не вдалося виконати читання"
 
-#: disk-utils/fdisk.c:643 libfdisk/src/bsd.c:233 libfdisk/src/dos.c:894
-#: libfdisk/src/gpt.c:1841
+#: disk-utils/fdisk.c:643 libfdisk/src/bsd.c:233 libfdisk/src/dos.c:897
+#: libfdisk/src/gpt.c:1844
 msgid "First sector"
 msgstr "Перший сектор"
 
-#: disk-utils/fdisk.c:735
+#: disk-utils/fdisk.c:736
 #, c-format
 msgid "BLKGETSIZE ioctl failed on %s"
 msgstr "помилка ioctl BLKGETSIZE на %s"
 
-#: disk-utils/fdisk.c:746
+#: disk-utils/fdisk.c:745
 #, c-format
 msgid ""
 " %1$s [options] <disk>      change partition table\n"
@@ -851,88 +852,88 @@ msgstr ""
 " %1$s [параметри] <диск>      змінити таблицю розділів\n"
 " %1$s [параметри] -l [<диск>] показати список таблиць розділів\n"
 
-#: disk-utils/fdisk.c:751
+#: disk-utils/fdisk.c:750
 msgid " -b, --sector-size <size>      physical and logical sector size\n"
 msgstr " -b, --sector-size <розмір>     розмір фізичного і логічного секторів\n"
 
-#: disk-utils/fdisk.c:752
+#: disk-utils/fdisk.c:751
 msgid " -c, --compatibility[=<mode>]  mode is 'dos' or 'nondos' (default)\n"
 msgstr " -c, --compatibility[=<режим>] режим сумісності: «dos» або «nondos» (типовий)\n"
 
-#: disk-utils/fdisk.c:753
+#: disk-utils/fdisk.c:752
 msgid " -L, --color[=<when>]          colorize output (auto, always or never)\n"
 msgstr ""
 " -L, --color[=<умова>]         розфарбовування виведених даних (auto (авто),\n"
 "                                 always (завжди) або never (ніколи))\n"
 
-#: disk-utils/fdisk.c:754
+#: disk-utils/fdisk.c:753
 msgid " -l, --list                    display partitions end exit\n"
 msgstr " -l, --list                    вивести список розділів і завершити роботу\n"
 
-#: disk-utils/fdisk.c:755
+#: disk-utils/fdisk.c:754
 msgid " -t, --type <type>             recognize specified partition table type only\n"
 msgstr " -t, --type <тип>              розпізнавати лише вказаний тип таблиці розділів\n"
 
-#: disk-utils/fdisk.c:756
+#: disk-utils/fdisk.c:755
 msgid " -u, --units[=<unit>]          display units: 'cylinders' or 'sectors' (default)\n"
 msgstr " -u, --units[=<одиниця>]       одиниці показу даних: «cylinders» (циліндри) або «sectors» (сектори, типова)\n"
 
-#: disk-utils/fdisk.c:757
+#: disk-utils/fdisk.c:756
 msgid " -s, --getsz                   display device size in 512-byte sectors [DEPRECATED]\n"
 msgstr " -s, --getsz                   вивести розмір пристрою у 512-байтових секторах [ЗАСТАРІЛИЙ]\n"
 
-#: disk-utils/fdisk.c:760
+#: disk-utils/fdisk.c:759
 msgid " -C, --cylinders <number>      specify the number of cylinders\n"
 msgstr " -C, --cylinders  <кількість>  вказати кількість циліндрів\n"
 
-#: disk-utils/fdisk.c:761
+#: disk-utils/fdisk.c:760
 msgid " -H, --heads <number>          specify the number of heads\n"
 msgstr " -H, --heads <кількість>       вказати кількість голівок\n"
 
-#: disk-utils/fdisk.c:762
+#: disk-utils/fdisk.c:761
 msgid " -S, --sectors <number>        specify the number of sectors per track\n"
 msgstr " -S, --sectors <кількість>     вказати кількість секторів на доріжку\n"
 
-#: disk-utils/fdisk.c:819
+#: disk-utils/fdisk.c:818
 msgid "invalid sector size argument"
 msgstr "некоректний аргумент розміру сектора"
 
-#: disk-utils/fdisk.c:828 disk-utils/sfdisk.c:2610
+#: disk-utils/fdisk.c:827 disk-utils/sfdisk.c:2610
 msgid "invalid cylinders argument"
 msgstr "некоректний аргумент кількості циліндрів"
 
-#: disk-utils/fdisk.c:840
+#: disk-utils/fdisk.c:839
 msgid "not found DOS label driver"
 msgstr "не знайдено драйвера міток DOS"
 
-#: disk-utils/fdisk.c:846
+#: disk-utils/fdisk.c:845
 #, c-format
 msgid "unknown compatibility mode '%s'"
 msgstr "невідомий режим сумісності, «%s»"
 
-#: disk-utils/fdisk.c:855 disk-utils/sfdisk.c:2619
+#: disk-utils/fdisk.c:854 disk-utils/sfdisk.c:2619
 msgid "invalid heads argument"
 msgstr "некоректний аргумент кількості голівок"
 
-#: disk-utils/fdisk.c:861 disk-utils/sfdisk.c:2637
+#: disk-utils/fdisk.c:860 disk-utils/sfdisk.c:2637
 msgid "invalid sectors argument"
 msgstr "некоректний аргумент кількості секторів"
 
-#: disk-utils/fdisk.c:883
+#: disk-utils/fdisk.c:882
 #, c-format
 msgid "unsupported disklabel: %s"
 msgstr "непідтримувана мітка диска: %s"
 
-#: disk-utils/fdisk.c:904
+#: disk-utils/fdisk.c:903
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Властивості пристрою (розмір сектора та геометрію) слід використовувати лише для одного вказаного пристрою."
 
-#: disk-utils/fdisk.c:940
+#: disk-utils/fdisk.c:939
 #, c-format
 msgid "Welcome to fdisk (%s)."
 msgstr "Вітаємо у fdisk (%s)."
 
-#: disk-utils/fdisk.c:942
+#: disk-utils/fdisk.c:941
 msgid ""
 "Changes will remain in memory only, until you decide to write them.\n"
 "Be careful before using the write command.\n"
@@ -940,7 +941,7 @@ msgstr ""
 "Зміни буде збережено у пам'яті, доки ви не вирішите записати їх.\n"
 "Будьте обережні з використанням команди запису.\n"
 
-#: disk-utils/fdisk.c:962
+#: disk-utils/fdisk.c:961
 msgid "The hybrid GPT detected. You have to sync the hybrid MBR manually (expert command 'M')."
 msgstr "Виявлено гібридний GPT. Вам доведеться синхронізувати гібридний MBR вручну (додатковий режим «M»)."
 
@@ -1291,9 +1292,9 @@ msgstr "%s не змонтовано\n"
 #: disk-utils/fsck.cramfs.c:171 disk-utils/fsck.cramfs.c:225
 #: disk-utils/fsck.cramfs.c:243 libfdisk/src/bsd.c:508 lib/path.c:113
 #: lib/path.c:134 lib/path.c:155 lib/path.c:203 login-utils/last.c:196
-#: login-utils/last.c:233 login-utils/sulogin.c:672 sys-utils/setpriv.c:233
-#: term-utils/setterm.c:726 term-utils/setterm.c:784 term-utils/setterm.c:788
-#: term-utils/setterm.c:795
+#: login-utils/last.c:233 login-utils/sulogin.c:675 sys-utils/setpriv.c:233
+#: term-utils/setterm.c:726 term-utils/setterm.c:783 term-utils/setterm.c:787
+#: term-utils/setterm.c:794
 #, c-format
 msgid "cannot read %s"
 msgstr "не вдалося прочитати %s"
@@ -1347,7 +1348,7 @@ msgstr "%s: помилка обробки у рядку %d -- проігноро
 msgid "%s: failed to parse fstab"
 msgstr "%s: не вдалося обробити fstab"
 
-#: disk-utils/fsck.c:660 login-utils/login.c:964 login-utils/sulogin.c:1035
+#: disk-utils/fsck.c:660 login-utils/login.c:964 login-utils/sulogin.c:1038
 #: login-utils/vipw.c:213 sys-utils/flock.c:293 sys-utils/nsenter.c:138
 #: sys-utils/swapon.c:277 sys-utils/unshare.c:166 term-utils/script.c:273
 #: term-utils/script.c:283
@@ -1567,7 +1568,7 @@ msgstr "довжина файла є надто малою"
 
 #: disk-utils/fsck.cramfs.c:169 disk-utils/fsck.cramfs.c:223
 #: disk-utils/fsck.cramfs.c:239 libfdisk/src/bsd.c:575 libfdisk/src/bsd.c:748
-#: login-utils/last.c:191 login-utils/last.c:225 sys-utils/fallocate.c:199
+#: login-utils/last.c:191 login-utils/last.c:225 sys-utils/fallocate.c:200
 #, c-format
 msgid "seek on %s failed"
 msgstr "не вдалося виконати позиціювання на %s"
@@ -1666,8 +1667,8 @@ msgstr "безрозмірні (%ld, а не %ld) байти"
 
 #: disk-utils/fsck.cramfs.c:404 disk-utils/fsck.cramfs.c:508
 #: disk-utils/sfdisk.c:255 disk-utils/sfdisk.c:263 disk-utils/sfdisk.c:325
-#: disk-utils/swaplabel.c:149 misc-utils/uuidd.c:347 sys-utils/fallocate.c:379
-#: sys-utils/setpriv.c:527 sys-utils/setpriv.c:550 sys-utils/swapon.c:338
+#: disk-utils/swaplabel.c:149 misc-utils/uuidd.c:347 sys-utils/fallocate.c:378
+#: sys-utils/setpriv.c:529 sys-utils/setpriv.c:552 sys-utils/swapon.c:338
 #: term-utils/ttymsg.c:175
 #, c-format
 msgid "write failed: %s"
@@ -1775,7 +1776,7 @@ msgstr "завершення даних каталогу (%lu) != початку
 msgid "invalid file data offset"
 msgstr "некоректний зсув даних файла"
 
-#: disk-utils/fsck.cramfs.c:677 disk-utils/mkfs.cramfs.c:731
+#: disk-utils/fsck.cramfs.c:677 disk-utils/mkfs.cramfs.c:729
 msgid "invalid blocksize argument"
 msgstr "некоректний аргумент розміру у блоках"
 
@@ -2511,12 +2512,12 @@ msgstr ""
 msgid "readlink failed: %s"
 msgstr "помилка readlink: %s"
 
-#: disk-utils/mkfs.cramfs.c:301
+#: disk-utils/mkfs.cramfs.c:299
 #, c-format
 msgid "could not read directory %s"
 msgstr "не вдалося прочитати каталог %s"
 
-#: disk-utils/mkfs.cramfs.c:326
+#: disk-utils/mkfs.cramfs.c:324
 #, c-format
 msgid ""
 "Very long (%zu bytes) filename `%s' found.\n"
@@ -2526,105 +2527,105 @@ msgstr ""
 " Збільште значення MAX_INPUT_NAMELEN у файлі mkcramfs.c і виконайте повторне збирання.\n"
 "Завершуємо роботу."
 
-#: disk-utils/mkfs.cramfs.c:448
+#: disk-utils/mkfs.cramfs.c:446
 msgid "filesystem too big.  Exiting."
 msgstr "файлова система надто велика. Завершення."
 
-#: disk-utils/mkfs.cramfs.c:607
+#: disk-utils/mkfs.cramfs.c:605
 #, c-format
 msgid "AIEEE: block \"compressed\" to > 2*blocklength (%ld)\n"
 msgstr "AIEEE: блок \"стиснений\" > 2*blocklength (%ld)\n"
 
-#: disk-utils/mkfs.cramfs.c:626
+#: disk-utils/mkfs.cramfs.c:624
 #, c-format
 msgid "%6.2f%% (%+ld bytes)\t%s\n"
 msgstr "%6.2f%% (%+ld байтів)\t%s\n"
 
-#: disk-utils/mkfs.cramfs.c:671
+#: disk-utils/mkfs.cramfs.c:669
 #, c-format
 msgid "cannot close file %s"
 msgstr "не вдалося закрити файл %s"
 
-#: disk-utils/mkfs.cramfs.c:737
+#: disk-utils/mkfs.cramfs.c:735
 msgid "invalid edition number argument"
 msgstr "некоректний аргумент номера модифікації"
 
-#: disk-utils/mkfs.cramfs.c:747
+#: disk-utils/mkfs.cramfs.c:745
 msgid "invalid endianness given; must be 'big', 'little', or 'host'"
 msgstr "вказано некоректний порядок байтів. Має бути вказано «big», «little» або «host»"
 
-#: disk-utils/mkfs.cramfs.c:811
+#: disk-utils/mkfs.cramfs.c:809
 #, c-format
 msgid "warning: guestimate of required size (upper bound) is %lldMB, but maximum image size is %uMB.  We might die prematurely."
 msgstr "Попередження: очікуваний необхідний розмір (верхня межа) складає %lld МБ, але максимальний розмір образу — %u МБ. Можливе передчасне аварійне завершення."
 
-#: disk-utils/mkfs.cramfs.c:835
+#: disk-utils/mkfs.cramfs.c:833
 msgid "ROM image map"
 msgstr "картка образу ROM"
 
-#: disk-utils/mkfs.cramfs.c:847
+#: disk-utils/mkfs.cramfs.c:845
 #, c-format
 msgid "Including: %s\n"
 msgstr "Включається: %s\n"
 
-#: disk-utils/mkfs.cramfs.c:853
+#: disk-utils/mkfs.cramfs.c:851
 #, c-format
 msgid "Directory data: %zd bytes\n"
 msgstr "Дані каталогу: %zd байтів\n"
 
-#: disk-utils/mkfs.cramfs.c:861
+#: disk-utils/mkfs.cramfs.c:859
 #, c-format
 msgid "Everything: %zd kilobytes\n"
 msgstr "Загалом: %zd кілобайтів\n"
 
-#: disk-utils/mkfs.cramfs.c:866
+#: disk-utils/mkfs.cramfs.c:864
 #, c-format
 msgid "Super block: %zd bytes\n"
 msgstr "Суперблок: %zd байтів\n"
 
-#: disk-utils/mkfs.cramfs.c:873
+#: disk-utils/mkfs.cramfs.c:871
 #, c-format
 msgid "CRC: %x\n"
 msgstr "Контрольна сума: %x\n"
 
-#: disk-utils/mkfs.cramfs.c:878
+#: disk-utils/mkfs.cramfs.c:876
 #, c-format
 msgid "not enough space allocated for ROM image (%lld allocated, %zu used)"
 msgstr "не вистачає простору для ROM-образу (отримано %lld, використано %zu)"
 
-#: disk-utils/mkfs.cramfs.c:884
+#: disk-utils/mkfs.cramfs.c:882
 #, c-format
 msgid "ROM image write failed (%zd %zd)"
 msgstr "помилка запису ROM-обрізу (%zd %zd)"
 
-#: disk-utils/mkfs.cramfs.c:887
+#: disk-utils/mkfs.cramfs.c:885
 msgid "ROM image"
 msgstr "образ ROM"
 
-#: disk-utils/mkfs.cramfs.c:896
+#: disk-utils/mkfs.cramfs.c:894
 msgid "warning: filenames truncated to 255 bytes."
 msgstr "попередження: назви файлів обрізано до 255 байтів."
 
-#: disk-utils/mkfs.cramfs.c:898
+#: disk-utils/mkfs.cramfs.c:896
 msgid "warning: files were skipped due to errors."
 msgstr "попередження: файли пропущено через помилки."
 
-#: disk-utils/mkfs.cramfs.c:900
+#: disk-utils/mkfs.cramfs.c:898
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte)."
 msgstr "попередження: розміри файлів обрізано до %lu МБ (мінус 1 байт)."
 
-#: disk-utils/mkfs.cramfs.c:904
+#: disk-utils/mkfs.cramfs.c:902
 #, c-format
 msgid "warning: uids truncated to %u bits.  (This may be a security concern.)"
 msgstr "попередження: uid обрізано до %u бітів. (Це може загрожувати безпеці.)"
 
-#: disk-utils/mkfs.cramfs.c:907
+#: disk-utils/mkfs.cramfs.c:905
 #, c-format
 msgid "warning: gids truncated to %u bits.  (This may be a security concern.)"
 msgstr "попередження: gid обрізано до %u бітів. (Це може загрожувати безпеці.)"
 
-#: disk-utils/mkfs.cramfs.c:910
+#: disk-utils/mkfs.cramfs.c:908
 #, c-format
 msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
@@ -3080,7 +3081,7 @@ msgstr "зручний для читання розмір"
 msgid "partition name"
 msgstr "назва розділу"
 
-#: disk-utils/partx.c:93 misc-utils/findmnt.c:132 misc-utils/lsblk.c:148
+#: disk-utils/partx.c:93 misc-utils/findmnt.c:130 misc-utils/lsblk.c:148
 msgid "partition UUID"
 msgstr "UUID розділу"
 
@@ -3096,7 +3097,7 @@ msgstr "прапорці розділу"
 msgid "partition type (a string, a UUID, or hex)"
 msgstr "тип розділу (рядок, UUID або шістнадцяткове число)"
 
-#: disk-utils/partx.c:114 sys-utils/losetup.c:482
+#: disk-utils/partx.c:114 sys-utils/losetup.c:479
 msgid "failed to initialize loopcxt"
 msgstr "не вдалося ініціалізувати loopcxt"
 
@@ -3115,14 +3116,14 @@ msgstr "Спроба використання «%s» як петльового (
 msgid "%s: failed to set backing file"
 msgstr "%s: не вдалося встановити резервний файл"
 
-#: disk-utils/partx.c:131 sys-utils/losetup.c:671
+#: disk-utils/partx.c:131 sys-utils/losetup.c:668
 #, c-format
 msgid "%s: failed to set up loop device"
 msgstr "%s: не вдалося налаштувати петльовий (loop) пристрій"
 
-#: disk-utils/partx.c:161 login-utils/lslogins.c:302 misc-utils/findmnt.c:374
-#: misc-utils/lsblk.c:305 misc-utils/lslocks.c:338 sys-utils/losetup.c:104
-#: sys-utils/lscpu.c:327 sys-utils/prlimit.c:273 sys-utils/swapon.c:123
+#: disk-utils/partx.c:161 login-utils/lslogins.c:322 misc-utils/findmnt.c:388
+#: misc-utils/lsblk.c:319 misc-utils/lslocks.c:340 sys-utils/losetup.c:101
+#: sys-utils/lscpu.c:327 sys-utils/prlimit.c:274 sys-utils/swapon.c:124
 #: sys-utils/wdctl.c:151
 #, c-format
 msgid "unknown column: %s"
@@ -3217,8 +3218,8 @@ msgstr[1] "#%2d: %9ju-%9ju (%9ju сектори, %6ju МБ)\n"
 msgstr[2] "#%2d: %9ju-%9ju (%9ju секторів, %6ju МБ)\n"
 msgstr[3] "#%2d: %9ju-%9ju (%9ju сектор, %6ju МБ)\n"
 
-#: disk-utils/partx.c:546 misc-utils/findmnt.c:683 misc-utils/findmnt.c:700
-#: misc-utils/lslocks.c:401
+#: disk-utils/partx.c:546 misc-utils/findmnt.c:697 misc-utils/findmnt.c:714
+#: misc-utils/lslocks.c:402
 msgid "failed to add line to output"
 msgstr "не вдалося додати рядок до виведених даних"
 
@@ -3226,16 +3227,17 @@ msgstr "не вдалося додати рядок до виведених да
 msgid "failed to add data to output table"
 msgstr "не вдалося додати дані до таблиці-результату"
 
-#: disk-utils/partx.c:632 misc-utils/findmnt.c:1510 misc-utils/lsblk.c:1706
-#: misc-utils/lslocks.c:460 sys-utils/losetup.c:303 sys-utils/lscpu.c:1404
-#: sys-utils/prlimit.c:293 sys-utils/swapon.c:243 sys-utils/wdctl.c:258
+#: disk-utils/partx.c:632 login-utils/lslogins.c:884 misc-utils/findmnt.c:1527
+#: misc-utils/lsblk.c:1720 misc-utils/lslocks.c:461 sys-utils/losetup.c:300
+#: sys-utils/lscpu.c:1404 sys-utils/prlimit.c:294 sys-utils/swapon.c:243
+#: sys-utils/wdctl.c:257
 msgid "failed to initialize output table"
 msgstr "не вдалося ініціалізувати таблицю виведення даних"
 
-#: disk-utils/partx.c:643 misc-utils/findmnt.c:1532 misc-utils/lsblk.c:1722
-#: misc-utils/lslocks.c:470 sys-utils/losetup.c:311 sys-utils/losetup.c:347
-#: sys-utils/lscpu.c:1409 sys-utils/prlimit.c:302 sys-utils/swapon.c:252
-#: sys-utils/wdctl.c:269
+#: disk-utils/partx.c:643 misc-utils/findmnt.c:1549 misc-utils/lsblk.c:1736
+#: misc-utils/lslocks.c:471 sys-utils/losetup.c:308 sys-utils/losetup.c:344
+#: sys-utils/lscpu.c:1409 sys-utils/prlimit.c:303 sys-utils/swapon.c:252
+#: sys-utils/wdctl.c:268
 msgid "failed to initialize output column"
 msgstr "не вдалося ініціалізувати стовпчик виведення"
 
@@ -3284,7 +3286,7 @@ msgstr ""
 " -s, --show           вивести список розділів\n"
 "\n"
 
-#: disk-utils/partx.c:721 misc-utils/lsblk.c:1472
+#: disk-utils/partx.c:721 misc-utils/lsblk.c:1486
 msgid " -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 msgstr " -b, --bytes            вивести РОЗМІР у байтах, а не у зручному для читання форматі\n"
 
@@ -3300,11 +3302,11 @@ msgstr " -n, --nr <n:m>       вказати діапазон розділів (
 msgid " -o, --output <list>  define which output columns to use\n"
 msgstr " -o, --output <список>  визначити, які стовпчики слід використовувати для виведення\n"
 
-#: disk-utils/partx.c:725 misc-utils/lsblk.c:1485
+#: disk-utils/partx.c:725 misc-utils/lsblk.c:1499
 msgid " -P, --pairs          use key=\"value\" output format\n"
 msgstr " -P, --pairs          використовувати формат виведення ключ=\"значення\"\n"
 
-#: disk-utils/partx.c:726 misc-utils/lsblk.c:1486
+#: disk-utils/partx.c:726 misc-utils/lsblk.c:1500
 msgid " -r, --raw            use raw output format\n"
 msgstr " -r, --raw            використовувати формат виведення без обробки\n"
 
@@ -4415,55 +4417,6 @@ msgstr ""
 msgid "ignore -U (UUIDs are unsupported)"
 msgstr "ігнорувати -U (UUID не підтримуються)"
 
-#: Documentation/boilerplate.c:35
-#, c-format
-msgid " %s [options] file...\n"
-msgstr " %s [параметри] файл...\n"
-
-#: Documentation/boilerplate.c:37
-msgid " -n, --no-argument       option does not use argument\n"
-msgstr " -n, --no-argument       для параметра не використовуються аргументи\n"
-
-#: Documentation/boilerplate.c:38
-msgid " -o, --optional[=<arg>]  option argument is optional\n"
-msgstr " -o, --optional[=<арг>]  аргумент параметра є необов’язковим\n"
-
-#: Documentation/boilerplate.c:39
-msgid " -r, --required <arg>    option requires an argument\n"
-msgstr " -r, --required <аргумент> для використання параметра потрібен аргумент\n"
-
-#: Documentation/boilerplate.c:40
-msgid " -z                      no long option\n"
-msgstr " -z                      немає довгого варіанта\n"
-
-#: Documentation/boilerplate.c:41
-msgid "     --xyzzy             a long option only\n"
-msgstr "     --xyzzy             лише довгий варіант\n"
-
-#: Documentation/boilerplate.c:42
-msgid " -e, --extremely-long-long-option\n"
-msgstr " -e, --extremely-long-long-option\n"
-
-#: Documentation/boilerplate.c:43
-msgid "                         use next line for description when needed\n"
-msgstr "                         використовуйте наступний рядок для опису, якщо потрібно\n"
-
-#: Documentation/boilerplate.c:44
-msgid " -l, --long-explanation  an example of very verbose, and chatty option\n"
-msgstr " -l, --long-explanation  приклад дуже докладного і складного параметра\n"
-
-#: Documentation/boilerplate.c:45
-msgid "                           description on two, or multiple lines, where the\n"
-msgstr "                           з описом у декілька рядків, де\n"
-
-#: Documentation/boilerplate.c:46
-msgid "                           consecutive lines are intended by two spaces\n"
-msgstr "                           наступні рядки повинні мати відступ у додаткових два пробіли\n"
-
-#: Documentation/boilerplate.c:47
-msgid " -f, --foobar            next option description resets indent\n"
-msgstr " -f, --foobar            наступний опис параметр відновлює розмір відступу\n"
-
 #: include/c.h:279 misc-utils/getopt.c:314 misc-utils/look.c:366
 #: misc-utils/namei.c:427 misc-utils/uuidd.c:71 misc-utils/uuidgen.c:31
 #: misc-utils/wipefs.c:451 sys-utils/hwclock.c:1561 sys-utils/renice.c:55
@@ -4494,7 +4447,7 @@ msgstr ""
 
 #: include/closestream.h:42 include/closestream.h:44 login-utils/vipw.c:280
 #: login-utils/vipw.c:299 sys-utils/rtcwake.c:276 term-utils/script.c:585
-#: term-utils/script.c:589 term-utils/setterm.c:815 term-utils/wall.c:307
+#: term-utils/script.c:589 term-utils/setterm.c:814 term-utils/wall.c:310
 #: text-utils/col.c:144
 msgid "write error"
 msgstr "помилка запису"
@@ -4892,10 +4845,10 @@ msgid "sysinfo failed"
 msgstr "помилка sysinfo"
 
 #: lib/exec_shell.c:45 login-utils/newgrp.c:186 login-utils/su-common.c:643
-#: login-utils/su-common.c:972 login-utils/sulogin.c:808
-#: login-utils/sulogin.c:812 schedutils/chrt.c:334 schedutils/ionice.c:259
+#: login-utils/su-common.c:972 login-utils/sulogin.c:811
+#: login-utils/sulogin.c:815 schedutils/chrt.c:334 schedutils/ionice.c:259
 #: schedutils/taskset.c:237 sys-utils/flock.c:299 sys-utils/nsenter.c:342
-#: sys-utils/prlimit.c:639 sys-utils/rtcwake.c:587 sys-utils/setarch.c:315
+#: sys-utils/prlimit.c:640 sys-utils/rtcwake.c:587 sys-utils/setarch.c:315
 #: sys-utils/setarch.c:381 sys-utils/setsid.c:114 sys-utils/swapon.c:293
 #: sys-utils/switch_root.c:239 sys-utils/unshare.c:192 term-utils/script.c:547
 #: text-utils/pg.c:1363
@@ -4908,15 +4861,15 @@ msgstr "не вдалося виконати %s"
 msgid "Partition %i does not start on physical sector boundary.\n"
 msgstr "Розділ %i не починається на межі фізичного сектора.\n"
 
-#: libfdisk/src/alignment.c:520
+#: libfdisk/src/alignment.c:521
 msgid "Calling ioctl() to re-read partition table."
 msgstr "Викликаємо ioctl(), щоб перечитати таблицю розділів."
 
-#: libfdisk/src/alignment.c:529
+#: libfdisk/src/alignment.c:530
 msgid "Re-reading the partition table failed."
 msgstr "Спроба повторного читання таблиці розділів зазнала невдачі."
 
-#: libfdisk/src/alignment.c:531
+#: libfdisk/src/alignment.c:532
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or kpartx(8)."
 msgstr "Ядро продовжує використовувати стару таблицю. Нову таблицю буде використано під час наступного перезавантаження або запуску partprobe(8) чи kpartx(8)."
 
@@ -4952,15 +4905,15 @@ msgstr "Розділ %zd: некоректний нульовий початко
 msgid "There is no *BSD partition on %s."
 msgstr "На %s немає розділів *BSD."
 
-#: libfdisk/src/bsd.c:233 libfdisk/src/dos.c:894
+#: libfdisk/src/bsd.c:233 libfdisk/src/dos.c:897
 msgid "First cylinder"
 msgstr "Перший циліндр"
 
-#: libfdisk/src/bsd.c:266 libfdisk/src/dos.c:1050
+#: libfdisk/src/bsd.c:266 libfdisk/src/dos.c:1053
 msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgstr "Останній циліндр, +cylinders або +size{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:271 libfdisk/src/dos.c:1055 libfdisk/src/gpt.c:1882
+#: libfdisk/src/bsd.c:271 libfdisk/src/dos.c:1058 libfdisk/src/gpt.c:1885
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr "Останній сектор, +sectors або +size{K,M,G,T,P}"
 
@@ -5140,7 +5093,7 @@ msgstr "Bootstrap встановлено на %s."
 msgid "Disklabel written to %s."
 msgstr "Мітку диска записано на %s."
 
-#: libfdisk/src/bsd.c:764 libfdisk/src/context.c:306
+#: libfdisk/src/bsd.c:764 libfdisk/src/context.c:312
 msgid "Syncing disks."
 msgstr "Синхронізація дисків."
 
@@ -5157,28 +5110,28 @@ msgstr "Розділ BSD «%c» пов'язано з розділом DOS %zu."
 msgid "Slice"
 msgstr "Зріз"
 
-#: libfdisk/src/bsd.c:885 libfdisk/src/dos.c:1987 libfdisk/src/gpt.c:2399
-#: libfdisk/src/sgi.c:1083 libfdisk/src/sun.c:997
+#: libfdisk/src/bsd.c:885 libfdisk/src/dos.c:1990 libfdisk/src/gpt.c:2402
+#: libfdisk/src/sgi.c:1087 libfdisk/src/sun.c:1001
 msgid "Start"
 msgstr "Початок"
 
-#: libfdisk/src/bsd.c:886 libfdisk/src/dos.c:1988 libfdisk/src/gpt.c:2400
-#: libfdisk/src/sgi.c:1084 libfdisk/src/sun.c:998
+#: libfdisk/src/bsd.c:886 libfdisk/src/dos.c:1991 libfdisk/src/gpt.c:2403
+#: libfdisk/src/sgi.c:1088 libfdisk/src/sun.c:1002
 msgid "End"
 msgstr "Кінець"
 
-#: libfdisk/src/bsd.c:887 libfdisk/src/dos.c:1989 libfdisk/src/gpt.c:2401
-#: libfdisk/src/sgi.c:1085 libfdisk/src/sun.c:999
+#: libfdisk/src/bsd.c:887 libfdisk/src/dos.c:1992 libfdisk/src/gpt.c:2404
+#: libfdisk/src/sgi.c:1089 libfdisk/src/sun.c:1003
 msgid "Sectors"
 msgstr "Сектори"
 
-#: libfdisk/src/bsd.c:888 libfdisk/src/dos.c:1990 libfdisk/src/gpt.c:2402
-#: libfdisk/src/sgi.c:1086 libfdisk/src/sun.c:189 libfdisk/src/sun.c:1000
+#: libfdisk/src/bsd.c:888 libfdisk/src/dos.c:1993 libfdisk/src/gpt.c:2405
+#: libfdisk/src/sgi.c:1090 libfdisk/src/sun.c:189 libfdisk/src/sun.c:1004
 msgid "Cylinders"
 msgstr "Циліндрів"
 
-#: libfdisk/src/bsd.c:889 libfdisk/src/dos.c:1991 libfdisk/src/gpt.c:2403
-#: libfdisk/src/sgi.c:1087 libfdisk/src/sun.c:1001
+#: libfdisk/src/bsd.c:889 libfdisk/src/dos.c:1994 libfdisk/src/gpt.c:2406
+#: libfdisk/src/sgi.c:1091 libfdisk/src/sun.c:1005
 msgid "Size"
 msgstr "Розмір"
 
@@ -5194,17 +5147,17 @@ msgstr "розмірбл"
 msgid "Cpg"
 msgstr "цил/гр"
 
-#: libfdisk/src/context.c:229
+#: libfdisk/src/context.c:230
 #, c-format
 msgid "%s: device contains a valid '%s' signature, it's strongly recommended to wipe the device by command wipefs(8) if this setup is unexpected to avoid possible collisions."
 msgstr "%s: пристрій містить коректний підпис «%s». Наполегливо рекомендуємо витерти пристрій за допомогою команди wipefs(8), якщо така конфігурація є неочікуваною, щоб уникнути можливих конфліктів."
 
-#: libfdisk/src/context.c:302
+#: libfdisk/src/context.c:307
 #, c-format
 msgid "%s: close device failed"
 msgstr "%s: спроба закрити пристрій зазнала невдачі"
 
-#: libfdisk/src/context.c:442
+#: libfdisk/src/context.c:448
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "циліндр"
@@ -5212,7 +5165,7 @@ msgstr[1] "циліндри"
 msgstr[2] "циліндрів"
 msgstr[3] "циліндр"
 
-#: libfdisk/src/context.c:443
+#: libfdisk/src/context.c:449
 msgid "sector"
 msgid_plural "sectors"
 msgstr[0] "сектор"
@@ -5274,245 +5227,245 @@ msgstr "Зайві дані у таблиці розділів %zu проігн�
 msgid "omitting empty partition (%zu)"
 msgstr "пропускаємо порожній розділ (%zu)"
 
-#: libfdisk/src/dos.c:631
+#: libfdisk/src/dos.c:634
 msgid "Enter the new disk identifier"
 msgstr "Вкажіть новий ідентифікатор диска"
 
-#: libfdisk/src/dos.c:638
+#: libfdisk/src/dos.c:641
 msgid "Incorrect value."
 msgstr "Помилкове значення."
 
-#: libfdisk/src/dos.c:648
+#: libfdisk/src/dos.c:651
 #, c-format
 msgid "Disk identifier changed from 0x%08x to 0x%08x."
 msgstr "Ідентифікатор диска змінено з 0x%08x на 0x%08x."
 
-#: libfdisk/src/dos.c:740
+#: libfdisk/src/dos.c:743
 #, c-format
 msgid "Ignoring extra extended partition %zu"
 msgstr "Ігноруємо зайвий розширений розділ %zu"
 
-#: libfdisk/src/dos.c:753
+#: libfdisk/src/dos.c:756
 #, c-format
 msgid "Invalid flag 0x%02x%02x of EBR (for partition %zu) will be corrected by w(rite)."
 msgstr "Некоректний прапорець 0x%02x%02x EBR (для розділу %zu) буде виправлено за допомогою w(rite) або запису."
 
-#: libfdisk/src/dos.c:881
+#: libfdisk/src/dos.c:884
 #, c-format
 msgid "Start sector %ju out of range."
 msgstr "Початковий сектор %ju перебуває за межами припустимого діапазону."
 
-#: libfdisk/src/dos.c:934 libfdisk/src/gpt.c:1795 libfdisk/src/sgi.c:787
-#: libfdisk/src/sun.c:498
+#: libfdisk/src/dos.c:937 libfdisk/src/gpt.c:1798 libfdisk/src/sgi.c:787
+#: libfdisk/src/sun.c:502
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
 msgstr "Розділ %zu вже визначений. Вилучіть його перед повторним додаванням."
 
-#: libfdisk/src/dos.c:991
+#: libfdisk/src/dos.c:994
 #, c-format
 msgid "Sector %llu is already allocated."
 msgstr "Сектор %llu вже розподілено."
 
-#: libfdisk/src/dos.c:1025 libfdisk/src/gpt.c:1805
+#: libfdisk/src/dos.c:1028 libfdisk/src/gpt.c:1808
 msgid "No free sectors available."
 msgstr "Немає вільних секторів."
 
-#: libfdisk/src/dos.c:1145
+#: libfdisk/src/dos.c:1148
 #, c-format
 msgid "Adding logical partition %zu"
 msgstr "Додавання логічного розділу %zu"
 
-#: libfdisk/src/dos.c:1164
+#: libfdisk/src/dos.c:1167
 #, c-format
 msgid "Partition %zu: contains sector 0"
 msgstr "Розділ %zu містить нульовий сектор"
 
-#: libfdisk/src/dos.c:1166
+#: libfdisk/src/dos.c:1169
 #, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "Розділ %zu: голівка %d перевищує максимум у %d"
 
-#: libfdisk/src/dos.c:1169
+#: libfdisk/src/dos.c:1172
 #, c-format
 msgid "Partition %zu: sector %d greater than maximum %llu"
 msgstr "Розділ %zu: сектор %d перевищує максимум у %llu"
 
-#: libfdisk/src/dos.c:1172
+#: libfdisk/src/dos.c:1175
 #, c-format
 msgid "Partition %zu: cylinder %d greater than maximum %llu"
 msgstr "Розділ %zu: циліндр %d перевищує максимум у %llu"
 
-#: libfdisk/src/dos.c:1178
+#: libfdisk/src/dos.c:1181
 #, c-format
 msgid "Partition %zu: previous sectors %u disagrees with total %u"
 msgstr "Розділ %zu: кількість попередніх секторів %u відрізняється від загальної %u"
 
-#: libfdisk/src/dos.c:1231
+#: libfdisk/src/dos.c:1234
 #, c-format
 msgid "Partition %zu: different physical/logical beginnings (non-Linux?): phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "У розділу %zu відрізняються фізичний та логічний початок (не-Linux?): фізичний=(%d, %d, %d), логічний=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1242
+#: libfdisk/src/dos.c:1245
 #, c-format
 msgid "Partition %zu: different physical/logical endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "У розділу %zu відрізняються фізичний та логічний кінці: фізичний=(%d, %d, %d), логічний=(%d, %d, %d)"
 
-#: libfdisk/src/dos.c:1251
+#: libfdisk/src/dos.c:1254
 #, c-format
 msgid "Partition %zu: does not end on cylinder boundary."
 msgstr "Розділ %zu не закінчується на межі циліндра."
 
-#: libfdisk/src/dos.c:1278
+#: libfdisk/src/dos.c:1281
 #, c-format
 msgid "Partition %zu: bad start-of-data."
 msgstr "Розділ %zu: помилковий початок даних."
 
-#: libfdisk/src/dos.c:1291
+#: libfdisk/src/dos.c:1294
 #, c-format
 msgid "Partition %zu: overlaps partition %zu."
 msgstr "Розділ %zu: перекривається з розділом %zu."
 
-#: libfdisk/src/dos.c:1317
+#: libfdisk/src/dos.c:1320
 #, c-format
 msgid "Partition %zu: empty."
 msgstr "Розділ %zu: порожній."
 
-#: libfdisk/src/dos.c:1322
+#: libfdisk/src/dos.c:1325
 #, c-format
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "Логічний розділ %zu не вміщується цілком у розділ %zu."
 
-#: libfdisk/src/dos.c:1330
+#: libfdisk/src/dos.c:1333
 #, c-format
 msgid "Total allocated sectors %llu greater than the maximum %llu."
 msgstr "Загальна кількість розподілених секторів, %llu, перевищує максимальне значення, %llu."
 
-#: libfdisk/src/dos.c:1333
+#: libfdisk/src/dos.c:1336
 #, c-format
 msgid "Remaining %lld unallocated %ld-byte sectors."
 msgstr "Залишається %lld нерозподілених %ld-байтових секторів."
 
-#: libfdisk/src/dos.c:1385
+#: libfdisk/src/dos.c:1388
 msgid "The maximum number of partitions has been created."
 msgstr "Вже створено максимальну кількість розділів."
 
-#: libfdisk/src/dos.c:1393
+#: libfdisk/src/dos.c:1396
 msgid "All primary partitions are in use."
 msgstr "Усі основні розділи вже використано."
 
-#: libfdisk/src/dos.c:1396
+#: libfdisk/src/dos.c:1399
 msgid "If you want to create more than four partitions, you must replace a primary partition with an extended partition first."
 msgstr "Якщо вам потрібно створити більше за чотири розділи, вам слід спершу замінити основний розділ на розширений розділ."
 
-#: libfdisk/src/dos.c:1404
+#: libfdisk/src/dos.c:1407
 msgid "All logical partitions are in use. Adding a primary partition."
 msgstr "Усі логічні розділи зайнято. Додаємо основний розділ."
 
-#: libfdisk/src/dos.c:1418
+#: libfdisk/src/dos.c:1421
 msgid "Partition type"
 msgstr "Тип розділу"
 
-#: libfdisk/src/dos.c:1422
+#: libfdisk/src/dos.c:1425
 #, c-format
 msgid "%zu primary, %d extended, %zu free"
 msgstr "основний: %zu, розширений: %d, вільно: %zu"
 
-#: libfdisk/src/dos.c:1427
+#: libfdisk/src/dos.c:1430
 msgid "primary"
 msgstr "первинний"
 
-#: libfdisk/src/dos.c:1429
+#: libfdisk/src/dos.c:1432
 msgid "extended"
 msgstr "розширений"
 
-#: libfdisk/src/dos.c:1429
+#: libfdisk/src/dos.c:1432
 msgid "container for logical partitions"
 msgstr "контейнер логічних розділів"
 
-#: libfdisk/src/dos.c:1431
+#: libfdisk/src/dos.c:1434
 msgid "logical"
 msgstr "логічний"
 
-#: libfdisk/src/dos.c:1431
+#: libfdisk/src/dos.c:1434
 msgid "numbered from 5"
 msgstr "нумерація починається з 5"
 
-#: libfdisk/src/dos.c:1462
+#: libfdisk/src/dos.c:1465
 #, c-format
 msgid "Invalid partition type `%c'."
 msgstr "Некоректний тип розділу «%c»."
 
-#: libfdisk/src/dos.c:1477
+#: libfdisk/src/dos.c:1480
 #, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Спроба запису сектора %jd зазнала невдачі: помилка позиціювання"
 
-#: libfdisk/src/dos.c:1597
+#: libfdisk/src/dos.c:1600
 msgid "You cannot change a partition into an extended one or vice versa. Delete it first."
 msgstr "Не можна перетворювати первинний розділ у розширений, або навпаки. Спочатку вилучіть його."
 
-#: libfdisk/src/dos.c:1603
+#: libfdisk/src/dos.c:1606
 msgid "If you have created or modified any DOS 6.x partitions, please see the fdisk documentation for additional information."
 msgstr "Якщо ви створили або змінити будь-які розділи DOS 6.x, перегляньте документацію з cfdisk, щоб отримати докладнішу інформацію."
 
-#: libfdisk/src/dos.c:1608
+#: libfdisk/src/dos.c:1611
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr "У багатьох системах тип 0 означає вільне місце, тому не варто створювати розділи типу 0."
 
-#: libfdisk/src/dos.c:1829
+#: libfdisk/src/dos.c:1832
 msgid "Nothing to do. Ordering is correct already."
 msgstr "Нема чого робити. Порядок вже правильний."
 
-#: libfdisk/src/dos.c:1858 libfdisk/src/gpt.c:2316
+#: libfdisk/src/dos.c:1861 libfdisk/src/gpt.c:2319
 msgid "Done."
 msgstr "Завершено."
 
-#: libfdisk/src/dos.c:1878
+#: libfdisk/src/dos.c:1881
 #, c-format
 msgid "Partition %zu: no data area."
 msgstr "Розділ %zu не має області даних."
 
-#: libfdisk/src/dos.c:1908
+#: libfdisk/src/dos.c:1911
 msgid "New beginning of data"
 msgstr "Новий початок даних"
 
-#: libfdisk/src/dos.c:1964
+#: libfdisk/src/dos.c:1967
 #, c-format
 msgid "Partition %zu: is an extended partition."
 msgstr "Розділ %zu є розширеним розділом."
 
-#: libfdisk/src/dos.c:1971
+#: libfdisk/src/dos.c:1974
 #, c-format
 msgid "The bootable flag on partition %zu is enabled now."
 msgstr "Тепер прапорець завантажуваності на розділі %zu увімкнено."
 
-#: libfdisk/src/dos.c:1972
+#: libfdisk/src/dos.c:1975
 #, c-format
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Тепер прапорець завантажуваності на розділі %zu вимкнено."
 
-#: libfdisk/src/dos.c:1985 libfdisk/src/gpt.c:2398 libfdisk/src/sgi.c:1082
-#: libfdisk/src/sun.c:996
+#: libfdisk/src/dos.c:1988 libfdisk/src/gpt.c:2401 libfdisk/src/sgi.c:1086
+#: libfdisk/src/sun.c:1000
 msgid "Device"
 msgstr "Пристрій"
 
-#: libfdisk/src/dos.c:1986 libfdisk/src/sun.c:35
+#: libfdisk/src/dos.c:1989 libfdisk/src/sun.c:35
 msgid "Boot"
 msgstr "Заван."
 
-#: libfdisk/src/dos.c:1992 libfdisk/src/sgi.c:1088 libfdisk/src/sun.c:1002
+#: libfdisk/src/dos.c:1995 libfdisk/src/sgi.c:1092 libfdisk/src/sun.c:1006
 msgid "Id"
 msgstr "Ід"
 
-#: libfdisk/src/dos.c:1996
+#: libfdisk/src/dos.c:1999
 msgid "Start-C/H/S"
 msgstr "Початок-Ц/Г/С"
 
-#: libfdisk/src/dos.c:1997
+#: libfdisk/src/dos.c:2000
 msgid "End-C/H/S"
 msgstr "Кінець-Ц/Г/С"
 
-#: libfdisk/src/dos.c:1998 libfdisk/src/gpt.c:2409 libfdisk/src/sgi.c:1090
+#: libfdisk/src/dos.c:2001 libfdisk/src/gpt.c:2412 libfdisk/src/sgi.c:1094
 msgid "Attrs"
 msgstr "Атрибути"
 
@@ -5764,139 +5717,139 @@ msgstr "MidnightBSD ZFS"
 msgid "MidnightBSD Vinum"
 msgstr "MidnightBSD Vinum"
 
-#: libfdisk/src/gpt.c:447
+#: libfdisk/src/gpt.c:450
 msgid "failed to allocate GPT header"
 msgstr "не вдалося розмістити заголовок GPT"
 
-#: libfdisk/src/gpt.c:593
+#: libfdisk/src/gpt.c:596
 #, c-format
 msgid "GPT PMBR size mismatch (%u != %u) will be corrected by w(rite)."
 msgstr "Невідповідність розмірів PMBR GPT (%u != %u). Буде виправлено у відповідь на w (запис)."
 
-#: libfdisk/src/gpt.c:611
+#: libfdisk/src/gpt.c:614
 msgid "gpt: stat() failed"
 msgstr "gpt: помилка stat()"
 
-#: libfdisk/src/gpt.c:621
+#: libfdisk/src/gpt.c:624
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "gpt: обробка файлів з режимом доступу %o неможлива"
 
-#: libfdisk/src/gpt.c:883
+#: libfdisk/src/gpt.c:886
 msgid "GPT Header"
 msgstr "Заголовок GPT"
 
-#: libfdisk/src/gpt.c:888
+#: libfdisk/src/gpt.c:891
 msgid "GPT Entries"
 msgstr "Записи GPT"
 
-#: libfdisk/src/gpt.c:1199
+#: libfdisk/src/gpt.c:1202
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "Резервну таблицю GPT пошкоджено, основна, здається є правильною, тому буде використано основну таблицю."
 
-#: libfdisk/src/gpt.c:1208
+#: libfdisk/src/gpt.c:1211
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "Основну таблицю GPT пошкоджено, але резервна виглядає правильною, тому буде використовуватись саме вона."
 
-#: libfdisk/src/gpt.c:1390
+#: libfdisk/src/gpt.c:1393
 #, c-format
 msgid "First LBA: %ju"
 msgstr "Перше LBA: %ju"
 
-#: libfdisk/src/gpt.c:1391
+#: libfdisk/src/gpt.c:1394
 #, c-format
 msgid "Last LBA: %ju"
 msgstr "Останнє LBA: %ju"
 
-#: libfdisk/src/gpt.c:1392
+#: libfdisk/src/gpt.c:1395
 #, c-format
 msgid "Alternative LBA: %ju"
 msgstr "Альтернативне LBA: %ju"
 
-#: libfdisk/src/gpt.c:1393
+#: libfdisk/src/gpt.c:1396
 #, c-format
 msgid "Partitions entries LBA: %ju"
 msgstr "LBA записів розділів: %ju"
 
-#: libfdisk/src/gpt.c:1394
+#: libfdisk/src/gpt.c:1397
 #, c-format
 msgid "Allocated partition entries: %u"
 msgstr "Записи розміщених розділів: %u"
 
-#: libfdisk/src/gpt.c:1541
+#: libfdisk/src/gpt.c:1544
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr "На пристрої міститься гібридний MBR, тому записуємо лише GPT. Вам доведеться виконати синхронізацію з MBR вручну."
 
-#: libfdisk/src/gpt.c:1576
+#: libfdisk/src/gpt.c:1579
 msgid "Disk does not contain a valid backup header."
 msgstr "На диску не міститься коректного заголовка резервної копії."
 
-#: libfdisk/src/gpt.c:1581
+#: libfdisk/src/gpt.c:1584
 msgid "Invalid primary header CRC checksum."
 msgstr "Некоректна контрольна сума CRC заголовка основної копії."
 
-#: libfdisk/src/gpt.c:1585
+#: libfdisk/src/gpt.c:1588
 msgid "Invalid backup header CRC checksum."
 msgstr "Некоректна контрольна сума CRC заголовка резервної копії."
 
-#: libfdisk/src/gpt.c:1590
+#: libfdisk/src/gpt.c:1593
 msgid "Invalid partition entry checksum."
 msgstr "Некоректна контрольна сума запису розділу."
 
-#: libfdisk/src/gpt.c:1595
+#: libfdisk/src/gpt.c:1598
 msgid "Invalid primary header LBA sanity checks."
 msgstr "Некоректні результати перевірки на точність даних щодо заголовка LBA основної копії."
 
-#: libfdisk/src/gpt.c:1599
+#: libfdisk/src/gpt.c:1602
 msgid "Invalid backup header LBA sanity checks."
 msgstr "Некоректні результати перевірки на точність даних щодо заголовка LBA резервної копії."
 
-#: libfdisk/src/gpt.c:1604
+#: libfdisk/src/gpt.c:1607
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "MyLBA не відповідає справжній позиції у заголовку основної копії."
 
-#: libfdisk/src/gpt.c:1608
+#: libfdisk/src/gpt.c:1611
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "MyLBA не відповідає справжній позиції у заголовку резервної копії."
 
-#: libfdisk/src/gpt.c:1613
+#: libfdisk/src/gpt.c:1616
 msgid "Disk is too small to hold all data."
 msgstr "Диск надто малий для зберігання всіх даних."
 
-#: libfdisk/src/gpt.c:1623
+#: libfdisk/src/gpt.c:1626
 msgid "Primary and backup header mismatch."
 msgstr "Невідповідність заголовків основної і резервної копії."
 
-#: libfdisk/src/gpt.c:1629
+#: libfdisk/src/gpt.c:1632
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "Розділ %u перекривається з розділом %u."
 
-#: libfdisk/src/gpt.c:1636
+#: libfdisk/src/gpt.c:1639
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "Розділ %u є надто великим для диска."
 
-#: libfdisk/src/gpt.c:1643
+#: libfdisk/src/gpt.c:1646
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "Розділ %u завершується до свого початку."
 
-#: libfdisk/src/gpt.c:1652
+#: libfdisk/src/gpt.c:1655
 msgid "No errors detected."
 msgstr "Помилок не виявлено."
 
-#: libfdisk/src/gpt.c:1653
+#: libfdisk/src/gpt.c:1656
 #, c-format
 msgid "Header version: %s"
 msgstr "Версія заголовка: %s"
 
-#: libfdisk/src/gpt.c:1654
+#: libfdisk/src/gpt.c:1657
 #, c-format
 msgid "Using %u out of %d partitions."
 msgstr "Використовуємо %u з %d розділів."
 
-#: libfdisk/src/gpt.c:1665
+#: libfdisk/src/gpt.c:1668
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
@@ -5905,7 +5858,7 @@ msgstr[1] "Загалом доступні %ju вільних секторів �
 msgstr[2] "Загалом доступні %ju вільних секторів у %u фрагментах (найбільший - %s)."
 msgstr[3] "Загалом доступні %ju вільних секторів у %u фрагменті."
 
-#: libfdisk/src/gpt.c:1673
+#: libfdisk/src/gpt.c:1676
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
@@ -5914,89 +5867,89 @@ msgstr[1] "Виявлено %d помилки."
 msgstr[2] "Виявлено %d помилок."
 msgstr[3] "Виявлено одну помилку."
 
-#: libfdisk/src/gpt.c:1801
+#: libfdisk/src/gpt.c:1804
 msgid "All partitions are already in use."
 msgstr "Всі розділи вже використано."
 
-#: libfdisk/src/gpt.c:1826 libfdisk/src/gpt.c:1853
+#: libfdisk/src/gpt.c:1829 libfdisk/src/gpt.c:1856
 #, c-format
 msgid "Sector %ju already used."
 msgstr "Сектор %ju вже використовується."
 
-#: libfdisk/src/gpt.c:1909
+#: libfdisk/src/gpt.c:1912
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "Не вдалося створити розділ %zu"
 
-#: libfdisk/src/gpt.c:1994
+#: libfdisk/src/gpt.c:1997
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "Створено нову мітку диска GPT (GUID: %s)."
 
-#: libfdisk/src/gpt.c:2031
+#: libfdisk/src/gpt.c:2034
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "Вкажіть UUID нового диска (у форматі 8-4-4-4-12)"
 
-#: libfdisk/src/gpt.c:2038 libfdisk/src/gpt.c:2131
+#: libfdisk/src/gpt.c:2041 libfdisk/src/gpt.c:2134
 msgid "Failed to parse your UUID."
 msgstr "Не вдалося обробити вказаний вами UUID."
 
-#: libfdisk/src/gpt.c:2053
+#: libfdisk/src/gpt.c:2056
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "Ідентифікатор диска змінено з %s на %s."
 
-#: libfdisk/src/gpt.c:2124
+#: libfdisk/src/gpt.c:2127
 msgid "New UUID (in 8-4-4-4-12 format)"
 msgstr "Новий UUID (у форматі 8-4-4-4-12)"
 
-#: libfdisk/src/gpt.c:2146
+#: libfdisk/src/gpt.c:2149
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "UUID розділу змінено з %s на %s."
 
-#: libfdisk/src/gpt.c:2169
+#: libfdisk/src/gpt.c:2172
 msgid "New name"
 msgstr "Нова назва"
 
-#: libfdisk/src/gpt.c:2191
+#: libfdisk/src/gpt.c:2194
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "Назву розділу змінено з «%s» на «%.*s»."
 
-#: libfdisk/src/gpt.c:2243
+#: libfdisk/src/gpt.c:2246
 msgid "Enter GUID specific bit"
 msgstr "Введіть специфічний для GUID біт"
 
-#: libfdisk/src/gpt.c:2263
+#: libfdisk/src/gpt.c:2266
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "Тепер специфічний для GUID біт %d на розділі %zu увімкнено."
 
-#: libfdisk/src/gpt.c:2264
+#: libfdisk/src/gpt.c:2267
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "Тепер специфічний для GUID біт %d на розділі %zu вимкнено."
 
-#: libfdisk/src/gpt.c:2269
+#: libfdisk/src/gpt.c:2272
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "Тепер прапорець %s на розділі %zu увімкнено."
 
-#: libfdisk/src/gpt.c:2270
+#: libfdisk/src/gpt.c:2273
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "Тепер прапорець %s на розділі %zu вимкнено."
 
-#: libfdisk/src/gpt.c:2406
+#: libfdisk/src/gpt.c:2409
 msgid "Type-UUID"
 msgstr "Тип-UUID"
 
-#: libfdisk/src/gpt.c:2407
+#: libfdisk/src/gpt.c:2410
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:2408 login-utils/chfn.c:235 login-utils/chfn.c:315
+#: libfdisk/src/gpt.c:2411 login-utils/chfn.c:235 login-utils/chfn.c:315
 msgid "Name"
 msgstr "Назва"
 
@@ -6008,7 +5961,7 @@ msgstr "Некоректний параметр геометрії."
 msgid "Free space"
 msgstr "Вільний простір"
 
-#: libfdisk/src/parttype.c:85 misc-utils/findmnt.c:650 schedutils/ionice.c:79
+#: libfdisk/src/parttype.c:85 misc-utils/findmnt.c:664 schedutils/ionice.c:79
 #: sys-utils/hwclock.c:322
 msgid "unknown"
 msgstr "невідомий"
@@ -6140,7 +6093,7 @@ msgstr "Завантажувальний файл змінено на \"%s\"."
 msgid "More than one entire disk entry present."
 msgstr "Маємо декілька записів цілого диска."
 
-#: libfdisk/src/sgi.c:555 libfdisk/src/sun.c:440
+#: libfdisk/src/sgi.c:555 libfdisk/src/sun.c:444
 msgid "No partitions defined."
 msgstr "Не визначено розділів."
 
@@ -6207,7 +6160,7 @@ msgstr "Весь диск вже зайнятий розділами."
 msgid "You got a partition overlap on the disk. Fix it first!"
 msgstr "На диску є розділи, що перекриваються. Спочатку виправте це!"
 
-#: libfdisk/src/sgi.c:823 libfdisk/src/sun.c:525
+#: libfdisk/src/sgi.c:823 libfdisk/src/sun.c:529
 #, c-format
 msgid "First %s"
 msgstr "Перший %s"
@@ -6216,29 +6169,29 @@ msgstr "Перший %s"
 msgid "It is highly recommended that the eleventh partition covers the entire disk and is of type 'SGI volume'."
 msgstr "Наполегливо рекомендується, щоб одинадцятий розділ займав увесь диск та належав до типу «SGI volume»."
 
-#: libfdisk/src/sgi.c:862 libfdisk/src/sun.c:620
+#: libfdisk/src/sgi.c:862 libfdisk/src/sun.c:624
 #, c-format
 msgid "Last %s or +%s or +size{K,M,G,T,P}"
 msgstr "Останній %s або +%s, або +size{K,M,G,T,P}"
 
-#: libfdisk/src/sgi.c:932 libfdisk/src/sun.c:231
+#: libfdisk/src/sgi.c:933 libfdisk/src/sun.c:235
 #, c-format
 msgid "BLKGETSIZE ioctl failed on %s. Using geometry cylinder value of %llu. This value may be truncated for devices > 33.8 GB."
 msgstr "Функція BLKGETSIZE ioctl аварійно завершила роботу на %s. Використовується значення геометрії циліндра %llu. Це значення може бути обрізане для пристроїв > 33,8 ГБ."
 
-#: libfdisk/src/sgi.c:993
+#: libfdisk/src/sgi.c:997
 msgid "Created a new SGI disklabel."
 msgstr "Створено нову мітку диска SGI."
 
-#: libfdisk/src/sgi.c:1007
+#: libfdisk/src/sgi.c:1011
 msgid "Sorry, only for non-empty partitions you can change the tag."
 msgstr "Вибачте, змінювати теґ можна лише для непорожніх розділів."
 
-#: libfdisk/src/sgi.c:1013
+#: libfdisk/src/sgi.c:1017
 msgid "Consider leaving partition 9 as volume header (0), and partition 11 as entire volume (6), as IRIX expects it."
 msgstr "Вам варто зробити розділ 9 заголовком тому (0), а розділ 11 повним томом (6), як це очікується IRIX."
 
-#: libfdisk/src/sgi.c:1021
+#: libfdisk/src/sgi.c:1025
 msgid "It is highly recommended that the partition at offset 0 is of type \"SGI volhdr\", the IRIX system will rely on it to retrieve from its directory standalone tools like sash and fx. Only the \"SGI volume\" entire disk section may violate this. Are you sure about tagging this partition differently?"
 msgstr "Наполегливо рекомендується, щоб тип розділу зі зсувом 0 був \"SGI volhdr\", IRIX система покладається на це при отриманні з її каталогу окремих утиліт, наприклад sash та fx. Не дотримуватись цього можуть лише \"SGI volume\" на весь диск. Ви справді впевнені, що хочете позначити цей розділ по-іншому?"
 
@@ -6317,49 +6270,49 @@ msgstr "Головки"
 msgid "Sectors/track"
 msgstr "Секторів/доріжку"
 
-#: libfdisk/src/sun.c:284
+#: libfdisk/src/sun.c:288
 msgid "Created a new Sun disklabel."
 msgstr "Створено нову мітку диска Sun."
 
-#: libfdisk/src/sun.c:398
+#: libfdisk/src/sun.c:402
 #, c-format
 msgid "Partition %u doesn't end on cylinder boundary."
 msgstr "Розділ %u не закінчується на межі циліндра."
 
-#: libfdisk/src/sun.c:417
+#: libfdisk/src/sun.c:421
 #, c-format
 msgid "Partition %u overlaps with others in sectors %u-%u."
 msgstr "Розділ %u перекривається з іншим у секторах %u-%u."
 
-#: libfdisk/src/sun.c:445
+#: libfdisk/src/sun.c:449
 #, c-format
 msgid "Unused gap - sectors 0-%u."
 msgstr "Невикористаний простір - сектори 0-%u."
 
-#: libfdisk/src/sun.c:447 libfdisk/src/sun.c:453
+#: libfdisk/src/sun.c:451 libfdisk/src/sun.c:457
 #, c-format
 msgid "Unused gap - sectors %u-%u."
 msgstr "Невикористаний простір - сектори %u-%u."
 
-#: libfdisk/src/sun.c:509
+#: libfdisk/src/sun.c:513
 msgid "Other partitions already cover the whole disk. Delete some/shrink them before retry."
 msgstr "Інші розділи вже займають весь диск. Вилучіть частину/зменшіть їх розмір перед спробою."
 
-#: libfdisk/src/sun.c:574
+#: libfdisk/src/sun.c:578
 #, c-format
 msgid "Sector %d is already allocated"
 msgstr "Сектор %d вже розподілено"
 
-#: libfdisk/src/sun.c:581
+#: libfdisk/src/sun.c:585
 msgid "It is highly recommended that the third partition covers the whole disk and is of type `Whole disk'"
 msgstr "Наполегливо рекомендуємо зробити так, щоб третій розділ займав весь диск та належав до типу «Весь диск»"
 
-#: libfdisk/src/sun.c:591
+#: libfdisk/src/sun.c:595
 #, c-format
 msgid "Aligning the first sector from %u to %u to be on cylinder boundary."
 msgstr "Вирівнюємо перший сектор з %u до %u так, щоб він перебував на межі циліндрів."
 
-#: libfdisk/src/sun.c:666
+#: libfdisk/src/sun.c:670
 #, c-format
 msgid ""
 "You haven't covered the whole disk with the 3rd partition, but your value\n"
@@ -6370,12 +6323,12 @@ msgstr ""
 "%lu %s перекриває деякий інший розділ. Ваш елемент було змінено\n"
 "на %lu %s"
 
-#: libfdisk/src/sun.c:705
+#: libfdisk/src/sun.c:709
 #, c-format
 msgid "If you want to maintain SunOS/Solaris compatibility, consider leaving this partition as Whole disk (5), starting at 0, with %u sectors"
 msgstr "Якщо ви бажаєте підтримувати сумісність з SunOS/Solaris, створіть цей розділ як весь диск(5), починаючи з 0, розміром %u секторів"
 
-#: libfdisk/src/sun.c:729
+#: libfdisk/src/sun.c:733
 #, c-format
 msgid ""
 "Label geometry: %d rpm, %d alternate and %d physical cylinders,\n"
@@ -6384,41 +6337,41 @@ msgstr ""
 "Формат мітки:   %d об/хв, %d запасних та %d фізичних циліндрів,\n"
 "                %d додаткових сект/цил, чергування %d:1"
 
-#: libfdisk/src/sun.c:736
+#: libfdisk/src/sun.c:740
 #, c-format
 msgid "Label ID: %s"
 msgstr "Ід. мітки: %s"
 
-#: libfdisk/src/sun.c:737
+#: libfdisk/src/sun.c:741
 #, c-format
 msgid "Volume ID: %s"
 msgstr "Ід. тому: %s"
 
-#: libfdisk/src/sun.c:738
+#: libfdisk/src/sun.c:742
 msgid "<none>"
 msgstr "<немає>"
 
-#: libfdisk/src/sun.c:812
+#: libfdisk/src/sun.c:816
 msgid "Number of alternate cylinders"
 msgstr "Кількість запасних циліндрів"
 
-#: libfdisk/src/sun.c:828
+#: libfdisk/src/sun.c:832
 msgid "Extra sectors per cylinder"
 msgstr "Додаткових секторів у циліндрі"
 
-#: libfdisk/src/sun.c:843
+#: libfdisk/src/sun.c:847
 msgid "Interleave factor"
 msgstr "Фактор чергування"
 
-#: libfdisk/src/sun.c:858
+#: libfdisk/src/sun.c:862
 msgid "Rotation speed (rpm)"
 msgstr "Швидкість обертання (об/хв)"
 
-#: libfdisk/src/sun.c:873
+#: libfdisk/src/sun.c:877
 msgid "Number of physical cylinders"
 msgstr "Кількість фізичних циліндрів"
 
-#: libfdisk/src/sun.c:934
+#: libfdisk/src/sun.c:938
 msgid ""
 "Consider leaving partition 3 as Whole disk (5),\n"
 "as SunOS/Solaris expects it and even Linux likes it.\n"
@@ -6426,7 +6379,7 @@ msgstr ""
 "Обміркуйте варіант розташування розділу 3 на весь дик (5),\n"
 "тому що на це покладаються SunOS/Solaris, та Linux також це сприймає.\n"
 
-#: libfdisk/src/sun.c:943
+#: libfdisk/src/sun.c:947
 msgid ""
 "It is highly recommended that the partition at offset 0\n"
 "is UFS, EXT2FS filesystem or SunOS swap. Putting Linux swap\n"
@@ -6438,7 +6391,7 @@ msgstr ""
 "можна зруйнувати таблицю розділів та завантажувальний блок.\n"
 "Ви справді хочете позначити розділ як резервний розділ (swap) Linux?"
 
-#: libfdisk/src/sun.c:1004
+#: libfdisk/src/sun.c:1008
 msgid "Flags"
 msgstr "Ознаки"
 
@@ -6683,7 +6636,7 @@ msgstr "Немає відомих оболонок."
 msgid "Usage: %s <passwordfile> <username>...\n"
 msgstr "Користування: %s <файл_паролів> <користувач>...\n"
 
-#: login-utils/last.c:156 sys-utils/dmesg.c:1173
+#: login-utils/last.c:156 sys-utils/dmesg.c:1174
 #, c-format
 msgid "unknown time format: %s"
 msgstr "невідомий формат запису часу: %s"
@@ -6763,7 +6716,7 @@ msgstr "     --time-format <формат>  показувати позначку
 msgid "                               [notime|short|full|iso]\n"
 msgstr "                               [notime|short|full|iso]\n"
 
-#: login-utils/last.c:850
+#: login-utils/last.c:849
 #, c-format
 msgid ""
 "\n"
@@ -6772,11 +6725,11 @@ msgstr ""
 "\n"
 "%s розпочинає %s"
 
-#: login-utils/last.c:920
+#: login-utils/last.c:919
 msgid "failed to parse number"
 msgstr "не вдалося обробити число"
 
-#: login-utils/last.c:941 login-utils/last.c:946 login-utils/last.c:951
+#: login-utils/last.c:940 login-utils/last.c:945 login-utils/last.c:950
 #, c-format
 msgid "invalid time value \"%s\""
 msgstr "некоректне значення часу, «%s»"
@@ -6932,7 +6885,7 @@ msgstr "Не вдалося ініціалізувати PAM: %s"
 msgid "FAILED LOGIN %u FROM %s FOR %s, %s"
 msgstr "ПОМИЛКА ВХОДУ %u З %s ДЛЯ %s, %s"
 
-#: login-utils/login.c:821 login-utils/sulogin.c:1024
+#: login-utils/login.c:821 login-utils/sulogin.c:1027
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -7016,12 +6969,12 @@ msgstr "Для вас є пошта.\n"
 msgid "setuid() failed"
 msgstr "помилка setuid()"
 
-#: login-utils/login.c:1312 login-utils/sulogin.c:746
+#: login-utils/login.c:1312 login-utils/sulogin.c:749
 #, c-format
 msgid "%s: change directory failed"
 msgstr "%s: спроба змінити каталог зазнала невдачі"
 
-#: login-utils/login.c:1319 login-utils/sulogin.c:747
+#: login-utils/login.c:1319 login-utils/sulogin.c:750
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Вхід з домашнім каталогом = \"/\".\n"
@@ -7248,23 +7201,28 @@ msgstr "кількість процесів, запущених користув
 msgid "Running processes"
 msgstr "Запущені процеси"
 
-#: login-utils/lslogins.c:332
+#: login-utils/lslogins.c:287 misc-utils/findmnt.c:158 misc-utils/lsblk.c:208
+#, c-format
+msgid "too many columns specified, the limit is %zu columns."
+msgstr ""
+
+#: login-utils/lslogins.c:352
 msgid "unssupported time type"
 msgstr "непідтримуваний тип часу"
 
-#: login-utils/lslogins.c:598
+#: login-utils/lslogins.c:618
 msgid "failed to get supplementary groups"
 msgstr "не вдалося отримати допоміжні групи"
 
-#: login-utils/lslogins.c:1003
+#: login-utils/lslogins.c:1033
 msgid "internal error: unknown column"
 msgstr "внутрішня помилка: невідомий стовпчик"
 
-#: login-utils/lslogins.c:1007
+#: login-utils/lslogins.c:1037
 msgid "failed to set data"
 msgstr "не вдалося записати дані"
 
-#: login-utils/lslogins.c:1104
+#: login-utils/lslogins.c:1134
 #, c-format
 msgid ""
 "\n"
@@ -7273,8 +7231,8 @@ msgstr ""
 "\n"
 "Останні входи:\n"
 
-#: login-utils/lslogins.c:1154 login-utils/nologin.c:26
-#: misc-utils/lslocks.c:506 misc-utils/mcookie.c:82 misc-utils/uuidd.c:73
+#: login-utils/lslogins.c:1184 login-utils/nologin.c:26
+#: misc-utils/lslocks.c:507 misc-utils/mcookie.c:82 misc-utils/uuidd.c:73
 #: misc-utils/uuidgen.c:33 sys-utils/dmesg.c:261 sys-utils/ipcmk.c:66
 #: sys-utils/lscpu.c:1614 sys-utils/readprofile.c:104 sys-utils/rtcwake.c:72
 #: term-utils/setterm.c:403
@@ -7282,91 +7240,96 @@ msgstr ""
 msgid " %s [options]\n"
 msgstr " %s [параметри]\n"
 
-#: login-utils/lslogins.c:1157
+#: login-utils/lslogins.c:1187
 msgid " -a, --acc-expiration     display info about passwords expiration\n"
 msgstr " -a, --acc-expiration     вивести дані щодо строків завершення дії паролів\n"
 
-#: login-utils/lslogins.c:1158
+#: login-utils/lslogins.c:1188
 msgid " -c, --colon-separate     display data in a format similar to /etc/passwd\n"
 msgstr " -c, --colon-separate     вивести дані у форматі, подібному до формату /etc/passwd\n"
 
-#: login-utils/lslogins.c:1159
+#: login-utils/lslogins.c:1189
 msgid " -e, --export             display in an export-able output format\n"
 msgstr " -e, --export             вивести дані у форматі, придатному до експортування\n"
 
-#: login-utils/lslogins.c:1160
+#: login-utils/lslogins.c:1190
 msgid " -f, --failed             display data about the last users' failed logins\n"
 msgstr " -f, --failed             вивести дані щодо останніх невдалих спроб користувачів увійти до системи\n"
 
-#: login-utils/lslogins.c:1161
+#: login-utils/lslogins.c:1191
 msgid " -G, --groups-info        display information about groups\n"
 msgstr " -G, --groups-info        вивести дані щодо груп\n"
 
-#: login-utils/lslogins.c:1162
+#: login-utils/lslogins.c:1192
 msgid " -g, --groups=<groups>    display users belonging to a group in <groups>\n"
 msgstr " -g, --groups=<групи>    вивести список користувачів, що належать до групи у групах <групи>\n"
 
-#: login-utils/lslogins.c:1163
+#: login-utils/lslogins.c:1193
 msgid " -L, --last               show info about the users' last login sessions\n"
 msgstr " -L, --last               вивести дані щодо останніх сеансів входу користувачів\n"
 
-#: login-utils/lslogins.c:1164
+#: login-utils/lslogins.c:1194
 msgid " -l, --logins=<logins>    display only users from <logins>\n"
 msgstr " -l, --logins=<записи>    вивести лише користувачів зі списку <записи>\n"
 
-#: login-utils/lslogins.c:1165
+#: login-utils/lslogins.c:1195
 msgid " -m, --supp-groups        display supplementary groups as well\n"
 msgstr " -m, --supp-groups        вивести також допоміжні групи\n"
 
-#: login-utils/lslogins.c:1166
+#: login-utils/lslogins.c:1196
 msgid " -n, --newline            display each piece of information on a new line\n"
 msgstr " -n, --newline            вивести кожен з фрагментів даних з нового рядка\n"
 
-#: login-utils/lslogins.c:1167
+#: login-utils/lslogins.c:1197
+#, fuzzy
+msgid "     --noheadings         don't print headings\n"
+msgstr " -n, --noheadings       не виводити заголовки\n"
+
+#: login-utils/lslogins.c:1198
 msgid "     --notruncate         don't truncate output\n"
 msgstr "     --notruncate         не обрізати виведені дані\n"
 
-#: login-utils/lslogins.c:1168
+#: login-utils/lslogins.c:1199
 msgid " -o, --output[=<list>]    define the columns to output\n"
 msgstr " -o, --output[=<список>]  визначити стовпчики даних для виведення\n"
 
-#: login-utils/lslogins.c:1169
+#: login-utils/lslogins.c:1200
 msgid " -p, --pwd                display information related to login by password.\n"
 msgstr " -p, --pwd                вивести дані, пов’язані із входом за паролем.\n"
 
-#: login-utils/lslogins.c:1170
+#: login-utils/lslogins.c:1201
 msgid " -r, --raw                display in raw mode\n"
 msgstr " -r, --raw                вивести дані у режимі без обробки\n"
 
-#: login-utils/lslogins.c:1171
+#: login-utils/lslogins.c:1202
 msgid " -s, --system-accs        display system accounts\n"
 msgstr " -s, --system-accs        вивести список облікових записів системи\n"
 
-#: login-utils/lslogins.c:1172
+#: login-utils/lslogins.c:1203
 msgid "     --time-format=<type> display dates in short, full or iso format\n"
 msgstr "     --time-format=<тип>  вивести дати у скороченому, повному форматі або форматі ISO\n"
 
-#: login-utils/lslogins.c:1173
+#: login-utils/lslogins.c:1204
 msgid " -u, --user-accs          display user accounts\n"
 msgstr " -u, --user-accs          вивести список облікових записів користувачів\n"
 
-#: login-utils/lslogins.c:1174
+#: login-utils/lslogins.c:1205
 msgid " -Z, --context            display SELinux contexts\n"
 msgstr " -Z, --context            вивести контексти SELinux\n"
 
-#: login-utils/lslogins.c:1175
+#: login-utils/lslogins.c:1206
 msgid " -z, --print0             delimit user entries with a nul character\n"
 msgstr " -z, --print0             відокремлювати записи користувачів нульовим символом\n"
 
-#: login-utils/lslogins.c:1176
+#: login-utils/lslogins.c:1207
 msgid "     --wtmp-file <path>   set an alternate path for wtmp\n"
 msgstr "     --wtmp-file <шлях>   встановити альтернативний шлях для wtmp\n"
 
-#: login-utils/lslogins.c:1177
+#: login-utils/lslogins.c:1208
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <шлях>   встановити альтернативний шлях для btmp\n"
 
-#: login-utils/lslogins.c:1182 misc-utils/findmnt.c:1202
+#: login-utils/lslogins.c:1213 misc-utils/findmnt.c:1221
 #: sys-utils/lscpu.c:1628
 #, c-format
 msgid ""
@@ -7376,7 +7339,7 @@ msgstr ""
 "\n"
 "Доступні стовпчики:\n"
 
-#: login-utils/lslogins.c:1187
+#: login-utils/lslogins.c:1219
 #, c-format
 msgid ""
 "\n"
@@ -7385,11 +7348,11 @@ msgstr ""
 "\n"
 "Докладніші відомості можна знайти у документації з lslogins(1).\n"
 
-#: login-utils/lslogins.c:1371
+#: login-utils/lslogins.c:1408
 msgid "failed to request selinux state"
 msgstr "не вдалося надіслати запит щодо стану selinux"
 
-#: login-utils/lslogins.c:1381
+#: login-utils/lslogins.c:1422
 msgid "Only one user may be specified. Use -l for multiple users."
 msgstr "Можна вказати лише одного користувача. Для декількох користувачів скористайтеся параметром -l."
 
@@ -7619,68 +7582,68 @@ msgstr "використовується обмежена оболонка %s"
 msgid "warning: cannot change directory to %s"
 msgstr "попередження: не вдалося змінити каталог на %s"
 
-#: login-utils/sulogin.c:150
+#: login-utils/sulogin.c:152
 msgid "tcgetattr failed"
 msgstr "помилка tcgetattr"
 
-#: login-utils/sulogin.c:227
+#: login-utils/sulogin.c:229
 msgid "tcsetattr failed"
 msgstr "помилка tcsetattr"
 
-#: login-utils/sulogin.c:493
+#: login-utils/sulogin.c:495
 #, c-format
 msgid "%s: no entry for root\n"
 msgstr "%s: немає запису для root\n"
 
-#: login-utils/sulogin.c:520
+#: login-utils/sulogin.c:522
 #, c-format
 msgid "%s: no entry for root"
 msgstr "%s: немає запису для root"
 
-#: login-utils/sulogin.c:524
+#: login-utils/sulogin.c:526
 #, c-format
 msgid "%s: root password garbled"
 msgstr "%s: пароль адміністратора (root) викривлено"
 
-#: login-utils/sulogin.c:552
+#: login-utils/sulogin.c:554
 #, c-format
 msgid "Give root password for login: "
 msgstr "Вкажіть пароль root, щоб увійти до системи: "
 
-#: login-utils/sulogin.c:554
+#: login-utils/sulogin.c:556
 #, c-format
 msgid "Press Enter for login: "
 msgstr "Натисніть Enter, щоб увійти до системи: "
 
-#: login-utils/sulogin.c:557
+#: login-utils/sulogin.c:559
 #, c-format
 msgid "Give root password for maintenance\n"
 msgstr "Вкажіть пароль root, щоб виконати дії з підтримання працездатності системи\n"
 
-#: login-utils/sulogin.c:559
+#: login-utils/sulogin.c:561
 #, c-format
 msgid "Press Enter for maintenance"
 msgstr "Натисніть Enter, щоб перейти до режиму супроводу"
 
-#: login-utils/sulogin.c:560
+#: login-utils/sulogin.c:562
 #, c-format
 msgid "(or press Control-D to continue): "
 msgstr "(або натисніть Ctrl-D, щоб продовжити): "
 
-#: login-utils/sulogin.c:750
+#: login-utils/sulogin.c:753
 msgid "change directory to system root failed"
 msgstr "спроба зміни каталогу на кореневий каталог системи зазнала невдачі"
 
-#: login-utils/sulogin.c:799
+#: login-utils/sulogin.c:802
 msgid "setexeccon failed"
 msgstr "помилка setexeccon"
 
-#: login-utils/sulogin.c:819
+#: login-utils/sulogin.c:822
 #, c-format
 msgid " %s [options] [tty device]\n"
 msgstr " %s [параметри] [пристрій tty]\n"
 
-#: login-utils/sulogin.c:822
+#: login-utils/sulogin.c:825
 msgid ""
 " -p, --login-shell        start a login shell\n"
 " -t, --timeout <seconds>  max time to wait for a password (default: no limit)\n"
@@ -7690,28 +7653,28 @@ msgstr ""
 " -t, --timeout <секунди>  максимальна тривалість очікування на пароль (типово не обмежується)\n"
 " -e, --force              перевірити файли паролів безпосередньо, якщо це не може зробити getpwnam(3)\n"
 
-#: login-utils/sulogin.c:873 misc-utils/findmnt.c:1402 sys-utils/wdctl.c:522
+#: login-utils/sulogin.c:876 misc-utils/findmnt.c:1419 sys-utils/wdctl.c:521
 #: term-utils/wall.c:131
 msgid "invalid timeout argument"
 msgstr "некоректний аргумент часу очікування"
 
-#: login-utils/sulogin.c:895
+#: login-utils/sulogin.c:898
 msgid "only root can run this program."
 msgstr "запускати цю програму можна лише від імені адміністратора (root)."
 
-#: login-utils/sulogin.c:938
+#: login-utils/sulogin.c:941
 msgid "cannot open console"
 msgstr "не вдалося відкрити консоль"
 
-#: login-utils/sulogin.c:945
+#: login-utils/sulogin.c:948
 msgid "cannot open password database."
 msgstr "не вдалося відкрити базу даних паролів."
 
-#: login-utils/sulogin.c:1004
+#: login-utils/sulogin.c:1007
 msgid "crypt failed"
 msgstr "помилка шифрування"
 
-#: login-utils/sulogin.c:1021
+#: login-utils/sulogin.c:1024
 #, c-format
 msgid ""
 "Can not execute su shell\n"
@@ -7720,7 +7683,7 @@ msgstr ""
 "Не вдалося виконати оболонку su\n"
 "\n"
 
-#: login-utils/sulogin.c:1028
+#: login-utils/sulogin.c:1031
 msgid ""
 "Timed out\n"
 "\n"
@@ -7778,7 +7741,7 @@ msgstr "Зворотний дамп utmp %s\n"
 msgid "Utmp dump of %s\n"
 msgstr "Дамп utmp %s\n"
 
-#: login-utils/vipw.c:151 term-utils/wall.c:193
+#: login-utils/vipw.c:151 term-utils/wall.c:196
 msgid "can't open temporary file"
 msgstr "не вдалося відкрити тимчасовий файл"
 
@@ -7831,97 +7794,97 @@ msgstr "На цій системі використовуються тіньов
 msgid "Would you like to edit %s now [y/n]? "
 msgstr "Бажаєте відредагувати %s зараз [y/n]? "
 
-#: misc-utils/cal.c:369
+#: misc-utils/cal.c:364
 msgid "invalid week argument"
 msgstr "некоректний аргумент тижня"
 
-#: misc-utils/cal.c:371
+#: misc-utils/cal.c:366
 msgid "illegal week value: use 1-53"
 msgstr "помилкове значення тижня: мало бути від 1 до 53"
 
-#: misc-utils/cal.c:404
+#: misc-utils/cal.c:399
 msgid "illegal day value"
 msgstr "некоректне значення дня"
 
-#: misc-utils/cal.c:406 misc-utils/cal.c:422
+#: misc-utils/cal.c:401 misc-utils/cal.c:417
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "помилкове значення дня: мало бути 1-%d"
 
-#: misc-utils/cal.c:409 misc-utils/cal.c:411
+#: misc-utils/cal.c:404 misc-utils/cal.c:406
 msgid "illegal month value: use 1-12"
 msgstr "неправильне значення місяця: використовуйте 1-12"
 
-#: misc-utils/cal.c:414 misc-utils/cal.c:418
+#: misc-utils/cal.c:409 misc-utils/cal.c:413
 msgid "illegal year value"
 msgstr "некоректне значення року"
 
-#: misc-utils/cal.c:416
+#: misc-utils/cal.c:411
 msgid "illegal year value: use positive integer"
 msgstr "неправильне значення року: значення мало бути додатним цілим"
 
-#: misc-utils/cal.c:447 misc-utils/cal.c:460
+#: misc-utils/cal.c:442 misc-utils/cal.c:455
 #, c-format
 msgid "illegal week value: year %d doesn't have week %d"
 msgstr "неправильний номер тижня: у році %d немає тижня з номером %d"
 
-#: misc-utils/cal.c:606
+#: misc-utils/cal.c:601
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#: misc-utils/cal.c:612
+#: misc-utils/cal.c:607
 #, c-format
 msgid "%d"
 msgstr "%d"
 
-#: misc-utils/cal.c:618
+#: misc-utils/cal.c:613
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:927
+#: misc-utils/cal.c:922
 #, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr " %s [параметри] [[[день] місяць] рік]\n"
 
-#: misc-utils/cal.c:930
+#: misc-utils/cal.c:925
 msgid "Display a calendar, or some part of it.\n"
 msgstr "Показ календаря або його певної частини.\n"
 
-#: misc-utils/cal.c:931
+#: misc-utils/cal.c:926
 msgid "Without any arguments, display the current month.\n"
 msgstr "Якщо не вказано аргументів, буде показано календар поточного місяця.\n"
 
-#: misc-utils/cal.c:934
+#: misc-utils/cal.c:929
 msgid " -1, --one             show only a single month (default)\n"
 msgstr " -1, --one             показати дані лише для поточного місяця (типово)\n"
 
-#: misc-utils/cal.c:935
+#: misc-utils/cal.c:930
 msgid " -3, --three           show three months spanning the date\n"
 msgstr " -3, --three           показати дані для попереднього, поточного і наступного місяця\n"
 
-#: misc-utils/cal.c:936
+#: misc-utils/cal.c:931
 msgid " -s, --sunday          Sunday as first day of week\n"
 msgstr " -s, --sunday          першим днем тижня є неділя\n"
 
-#: misc-utils/cal.c:937
+#: misc-utils/cal.c:932
 msgid " -m, --monday          Monday as first day of week\n"
 msgstr " -m, --monday          першим днем тижня є понеділок\n"
 
-#: misc-utils/cal.c:938
+#: misc-utils/cal.c:933
 msgid " -j, --julian          output Julian dates\n"
 msgstr " -j, --julian          виводити дати за юліанським календарем\n"
 
-#: misc-utils/cal.c:939
+#: misc-utils/cal.c:934
 msgid " -y, --year            show the whole year\n"
 msgstr " -y, --year            показати дані для усього року\n"
 
-#: misc-utils/cal.c:940
+#: misc-utils/cal.c:935
 msgid " -w, --week[=<num>]    show US or ISO-8601 week numbers\n"
 msgstr " -w, --week[=<число>]  вивести номери тижня у форматі США або ISO-8601\n"
 
-#: misc-utils/cal.c:941
+#: misc-utils/cal.c:936
 msgid "     --color[=<when>]  colorize messages (auto, always or never)\n"
 msgstr ""
 "     -color[=<умова>]  розфарбовування виведених даних (auto (авто),\n"
@@ -7937,154 +7900,154 @@ msgstr " %s [параметри] {LABEL,UUID,PARTUUID,PARTLABEL}=<значенн
 msgid "unable to resolve '%s'"
 msgstr "не вдалося виконати визначення «%s»"
 
-#: misc-utils/findmnt.c:123
+#: misc-utils/findmnt.c:121
 msgid "source device"
 msgstr "пристрій-джерело"
 
-#: misc-utils/findmnt.c:124
+#: misc-utils/findmnt.c:122
 msgid "mountpoint"
 msgstr "точка монтування"
 
-#: misc-utils/findmnt.c:125 misc-utils/lsblk.c:141
+#: misc-utils/findmnt.c:123 misc-utils/lsblk.c:141
 msgid "filesystem type"
 msgstr "тип файлової системи"
 
-#: misc-utils/findmnt.c:126
+#: misc-utils/findmnt.c:124
 msgid "all mount options"
 msgstr "всі параметри монтування"
 
-#: misc-utils/findmnt.c:127
+#: misc-utils/findmnt.c:125
 msgid "VFS specific mount options"
 msgstr "параметри монтування, специфічні для VFS"
 
-#: misc-utils/findmnt.c:128
+#: misc-utils/findmnt.c:126
 msgid "FS specific mount options"
 msgstr "параметри монтування, специфічні для ФС"
 
-#: misc-utils/findmnt.c:129
+#: misc-utils/findmnt.c:127
 msgid "filesystem label"
 msgstr "мітка файлової системи"
 
-#: misc-utils/findmnt.c:130 misc-utils/lsblk.c:144
+#: misc-utils/findmnt.c:128 misc-utils/lsblk.c:144
 msgid "filesystem UUID"
 msgstr "UUID файлової системи"
 
-#: misc-utils/findmnt.c:131
+#: misc-utils/findmnt.c:129
 msgid "partition label"
 msgstr "мітка розділу"
 
-#: misc-utils/findmnt.c:133 misc-utils/lsblk.c:140
+#: misc-utils/findmnt.c:131 misc-utils/lsblk.c:140
 msgid "major:minor device number"
 msgstr "номер пристрою основний:додатковий"
 
-#: misc-utils/findmnt.c:134
+#: misc-utils/findmnt.c:132
 msgid "action detected by --poll"
 msgstr "дія, виявлена --poll"
 
-#: misc-utils/findmnt.c:135
+#: misc-utils/findmnt.c:133
 msgid "old mount options saved by --poll"
 msgstr "старі параметри монтування, збережені --poll"
 
-#: misc-utils/findmnt.c:136
+#: misc-utils/findmnt.c:134
 msgid "old mountpoint saved by --poll"
 msgstr "попередня точка монтування, збережена за допомогою --poll"
 
-#: misc-utils/findmnt.c:137
+#: misc-utils/findmnt.c:135
 msgid "filesystem size"
 msgstr "розмір файлової системи"
 
-#: misc-utils/findmnt.c:138
+#: misc-utils/findmnt.c:136
 msgid "filesystem size available"
 msgstr "вільний об'єм у файловій системі"
 
-#: misc-utils/findmnt.c:139
+#: misc-utils/findmnt.c:137
 msgid "filesystem size used"
 msgstr "використаний розмір у файловій системі"
 
-#: misc-utils/findmnt.c:140
+#: misc-utils/findmnt.c:138
 msgid "filesystem use percentage"
 msgstr "відсоток використаності файлової системи"
 
-#: misc-utils/findmnt.c:141
+#: misc-utils/findmnt.c:139
 msgid "filesystem root"
 msgstr "корінь файлової системи"
 
-#: misc-utils/findmnt.c:142
+#: misc-utils/findmnt.c:140
 msgid "task ID"
 msgstr "ідентифікатор завдання"
 
-#: misc-utils/findmnt.c:143
+#: misc-utils/findmnt.c:141
 msgid "mount ID"
 msgstr "ідентифікатор монтування"
 
-#: misc-utils/findmnt.c:144
+#: misc-utils/findmnt.c:142
 msgid "optional mount fields"
 msgstr "додаткові поля монтування"
 
-#: misc-utils/findmnt.c:145
+#: misc-utils/findmnt.c:143
 msgid "VFS propagation flags"
 msgstr "Прапорці розширення VFS"
 
-#: misc-utils/findmnt.c:146
+#: misc-utils/findmnt.c:144
 msgid "dump(8) period in days [fstab only]"
 msgstr "Тривалість проміжку між виконаннями dump(8) у днях [лише fstab]"
 
-#: misc-utils/findmnt.c:147
+#: misc-utils/findmnt.c:145
 msgid "pass number on parallel fsck(8) [fstab only]"
 msgstr "передати кількість паралельних fsck(8) [лише fstab]"
 
-#: misc-utils/findmnt.c:331
+#: misc-utils/findmnt.c:345
 #, c-format
 msgid "unknown action: %s"
 msgstr "невідома дія: %s"
 
-#: misc-utils/findmnt.c:638
+#: misc-utils/findmnt.c:652
 msgid "mount"
 msgstr "mount"
 
-#: misc-utils/findmnt.c:641
+#: misc-utils/findmnt.c:655
 msgid "umount"
 msgstr "umount"
 
-#: misc-utils/findmnt.c:644
+#: misc-utils/findmnt.c:658
 msgid "remount"
 msgstr "remount"
 
-#: misc-utils/findmnt.c:647
+#: misc-utils/findmnt.c:661
 msgid "move"
 msgstr "move"
 
-#: misc-utils/findmnt.c:772
+#: misc-utils/findmnt.c:791
 #, c-format
 msgid "%s: parse error at line %d"
 msgstr "%s: помилка обробки у рядку %d"
 
-#: misc-utils/findmnt.c:801 misc-utils/findmnt.c:1044 sys-utils/eject.c:731
+#: misc-utils/findmnt.c:820 misc-utils/findmnt.c:1063 sys-utils/eject.c:731
 #: sys-utils/mount.c:644
 msgid "failed to initialize libmount table"
 msgstr "не вдалося ініціалізувати таблицю libmount"
 
-#: misc-utils/findmnt.c:828 text-utils/hexdump-parse.c:84
+#: misc-utils/findmnt.c:847 text-utils/hexdump-parse.c:84
 #, c-format
 msgid "can't read %s"
 msgstr "не вдалося прочитати %s"
 
-#: misc-utils/findmnt.c:984 misc-utils/findmnt.c:1050 sys-utils/fstrim.c:170
+#: misc-utils/findmnt.c:1003 misc-utils/findmnt.c:1069 sys-utils/fstrim.c:169
 #: sys-utils/mount.c:135 sys-utils/mount.c:183 sys-utils/swapoff.c:98
 #: sys-utils/swapon.c:207 sys-utils/swapon.c:237 sys-utils/swapon.c:631
 #: sys-utils/umount.c:272
 msgid "failed to initialize libmount iterator"
 msgstr "не вдалося ініціалізувати ітератор libmount"
 
-#: misc-utils/findmnt.c:1056
+#: misc-utils/findmnt.c:1075
 msgid "failed to initialize libmount tabdiff"
 msgstr "не вдалося ініціалізувати tabdiff libmount"
 
-#: misc-utils/findmnt.c:1084
+#: misc-utils/findmnt.c:1103
 msgid "poll() failed"
 msgstr "помилка poll()"
 
-#: misc-utils/findmnt.c:1154
+#: misc-utils/findmnt.c:1173
 #, c-format
 msgid ""
 " %1$s [options]\n"
@@ -8097,15 +8060,15 @@ msgstr ""
 " %1$s [параметри] <пристрій> <точка_монтування>\n"
 " %1$s [параметри] [--source <пристрій>] [--target <точка_монтування>]\n"
 
-#: misc-utils/findmnt.c:1161
+#: misc-utils/findmnt.c:1180
 msgid " -s, --fstab            search in static table of filesystems\n"
 msgstr " -s, --fstab            шукати у статичній таблиці файлових систем\n"
 
-#: misc-utils/findmnt.c:1162
+#: misc-utils/findmnt.c:1181
 msgid " -m, --mtab             search in table of mounted filesystems\n"
 msgstr " -m, --mtab             шукати у таблиці змонтованих файлових систем\n"
 
-#: misc-utils/findmnt.c:1163
+#: misc-utils/findmnt.c:1182
 msgid ""
 " -k, --kernel           search in kernel table of mounted\n"
 "                          filesystems (default)\n"
@@ -8113,45 +8076,45 @@ msgstr ""
 " -k, --kernel           шукати у таблиці ядра змонтованих\n"
 "                          файлових систем (типова поведінка)\n"
 
-#: misc-utils/findmnt.c:1166
+#: misc-utils/findmnt.c:1185
 msgid " -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
 msgstr " -p, --poll[=<список>]  стежити за змінами у таблиці змонтованих файлових систем\n"
 
-#: misc-utils/findmnt.c:1167
+#: misc-utils/findmnt.c:1186
 msgid " -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"
 msgstr ""
 " -w, --timeout <число>  верхня межа часу очікування у мілісекундах, яку блокуватиме --poll\n"
 "\n"
 
-#: misc-utils/findmnt.c:1170
+#: misc-utils/findmnt.c:1189
 msgid " -A, --all              disable all built-in filters, print all filesystems\n"
 msgstr " -A, --all              вимкнути усі вбудовані фільтри, вивести дані щодо усіх файлових систем\n"
 
-#: misc-utils/findmnt.c:1171
+#: misc-utils/findmnt.c:1190
 msgid " -a, --ascii            use ASCII chars for tree formatting\n"
 msgstr " -a, --ascii            використовувати для форматування символи ASCII\n"
 
-#: misc-utils/findmnt.c:1172
+#: misc-utils/findmnt.c:1191
 msgid " -b, --bytes            print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes            вивести розмір у байтах, а не у зручному для читання форматі\n"
 
-#: misc-utils/findmnt.c:1173
+#: misc-utils/findmnt.c:1192
 msgid " -C, --nocanonicalize   don't canonicalize when comparing paths\n"
 msgstr " -C, --nocanonicalize   не виконувати перетворення до канонічної форми під час порівняння шляхів\n"
 
-#: misc-utils/findmnt.c:1174
+#: misc-utils/findmnt.c:1193
 msgid " -c, --canonicalize     canonicalize printed paths\n"
 msgstr " -c, --canonicalize     виконувати перетворення до канонічної форми для виведених шляхів\n"
 
-#: misc-utils/findmnt.c:1175
+#: misc-utils/findmnt.c:1194
 msgid " -D, --df               imitate the output of df(1)\n"
 msgstr " -D, --df               імітувати вивід df(1)\n"
 
-#: misc-utils/findmnt.c:1176
+#: misc-utils/findmnt.c:1195
 msgid " -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 msgstr " -d, --direction <слово> напрямок пошуку, «forward» (вперед) або «backward» (назад)\n"
 
-#: misc-utils/findmnt.c:1177
+#: misc-utils/findmnt.c:1196
 msgid ""
 " -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          to device names\n"
@@ -8159,51 +8122,51 @@ msgstr ""
 " -e, --evaluate         перетворювати теґи (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          на назви пристроїв\n"
 
-#: misc-utils/findmnt.c:1179
+#: misc-utils/findmnt.c:1198
 msgid " -F, --tab-file <path>  alternative file for -s, -m or -k options\n"
 msgstr " -F, --tab-file <шлях>  альтернативний файл для параметрів -s, -m та -k\n"
 
-#: misc-utils/findmnt.c:1180
+#: misc-utils/findmnt.c:1199
 msgid " -f, --first-only       print the first found filesystem only\n"
 msgstr " -f, --first-only       вивести лише першу зі знайдених файлових систем\n"
 
-#: misc-utils/findmnt.c:1181
+#: misc-utils/findmnt.c:1200
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -i, --invert           інвертувати критерії відповідності\n"
 
-#: misc-utils/findmnt.c:1182
+#: misc-utils/findmnt.c:1201
 msgid " -l, --list             use list format output\n"
 msgstr " -l, --list             використатися для виведення формат списку\n"
 
-#: misc-utils/findmnt.c:1183
+#: misc-utils/findmnt.c:1202
 msgid " -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
 msgstr " -N, --task <tid>       використовувати альтернативний простір назв                          (файл /proc/<tid>/mountinfo)\n"
 
-#: misc-utils/findmnt.c:1184
+#: misc-utils/findmnt.c:1203
 msgid " -n, --noheadings       don't print column headings\n"
 msgstr " -n, --noheadings       не виводити заголовки стовпчиків\n"
 
-#: misc-utils/findmnt.c:1185
+#: misc-utils/findmnt.c:1204
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr " -O, --options <список> обмежити набір файлових систем за параметрами монтування\n"
 
-#: misc-utils/findmnt.c:1186
+#: misc-utils/findmnt.c:1205
 msgid " -o, --output <list>    the output columns to be shown\n"
 msgstr " -o, --output <список>  стовпчики виведення, які буде показано\n"
 
-#: misc-utils/findmnt.c:1187
+#: misc-utils/findmnt.c:1206
 msgid " -P, --pairs            use key=\"value\" output format\n"
 msgstr " -P, --pairs            використати формат виведення ключ=\"значення\"\n"
 
-#: misc-utils/findmnt.c:1188
+#: misc-utils/findmnt.c:1207
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
 msgstr " -R, --submounts        вивести дані щодо усіх підлеглих монтування для відповідних файлових систем\n"
 
-#: misc-utils/findmnt.c:1189
+#: misc-utils/findmnt.c:1208
 msgid " -r, --raw              use raw output format\n"
 msgstr " -r, --raw              використовувати формат виведення без обробки\n"
 
-#: misc-utils/findmnt.c:1190
+#: misc-utils/findmnt.c:1209
 msgid ""
 " -S, --source <string>  the device to mount (by name, maj:min, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
@@ -8211,48 +8174,48 @@ msgstr ""
 " -S, --source <рядок>   пристрій для монтування (за назвою, осн:під, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
 
-#: misc-utils/findmnt.c:1192
+#: misc-utils/findmnt.c:1211
 msgid " -T, --target <string>  the mountpoint to use\n"
 msgstr " -T, --target <рядок>  точка монтування, якою слід скористатися\n"
 
-#: misc-utils/findmnt.c:1193
+#: misc-utils/findmnt.c:1212
 msgid " -t, --types <list>     limit the set of filesystems by FS types\n"
 msgstr " -t, --types <список>   обмежити набір файлових систем за типами ФС\n"
 
-#: misc-utils/findmnt.c:1194
+#: misc-utils/findmnt.c:1213
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -U, --uniq             ігнорувати файлові системи з дублюванням призначень\n"
 
-#: misc-utils/findmnt.c:1195
+#: misc-utils/findmnt.c:1214
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -u, --notruncate       не обрізати текст у стовпчиках\n"
 
-#: misc-utils/findmnt.c:1196
+#: misc-utils/findmnt.c:1215
 msgid " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 msgstr " -v, --nofsroot         не виводити [/dir] для монтувань bind або btrfs\n"
 
-#: misc-utils/findmnt.c:1313
+#: misc-utils/findmnt.c:1330
 #, c-format
 msgid "unknown direction '%s'"
 msgstr "невідомий напрямок «%s»"
 
-#: misc-utils/findmnt.c:1382
+#: misc-utils/findmnt.c:1399
 msgid "invalid TID argument"
 msgstr "некоректний аргумент TID"
 
-#: misc-utils/findmnt.c:1442
+#: misc-utils/findmnt.c:1459
 msgid "--poll accepts only one file, but more specified by --tab-file"
 msgstr "з --poll можна вказувати лише один файл, але у --tab-file вказано декілька файлів"
 
-#: misc-utils/findmnt.c:1446
+#: misc-utils/findmnt.c:1463
 msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr "параметри --target і --source не можна використовувати разом з елементами командного рядка, які не є параметрами"
 
-#: misc-utils/findmnt.c:1493
+#: misc-utils/findmnt.c:1510
 msgid "failed to initialize libmount cache"
 msgstr "не вдалося ініціалізувати кеш libmount"
 
-#: misc-utils/findmnt.c:1526
+#: misc-utils/findmnt.c:1543
 #, c-format
 msgid "%s column is requested, but --poll is not enabled"
 msgstr "надійшов запит на стовпчик %s, але --poll не увімкнено"
@@ -8339,24 +8302,27 @@ msgid "unknown signal %s; valid signals:"
 msgstr "невідомий сигнал %s; правильні сигнали:"
 
 #: misc-utils/kill.c:306
-#, c-format
-msgid " %s [options] <pid|name>...\n"
+#, fuzzy, c-format
+msgid " %s [options] <pid>|<name>...\n"
 msgstr " %s [параметри] <pid|назва>...\n"
 
 #: misc-utils/kill.c:309
+#, fuzzy
 msgid ""
 " -a, --all              do not restrict the name-to-pid conversion to processes\n"
-"                        with the same uid as the present process\n"
+"                          with the same uid as the present process\n"
 msgstr ""
 " -a, --all              не обмежувати перетворення назв на pid процесами з тим\n"
 "                        самим uid, що і поточний процес\n"
 
 #: misc-utils/kill.c:311
-msgid " -s, --signal <sig>     send specified signal\n"
+#, fuzzy
+msgid " -s, --signal <signal>  send this <signal> instead of SIGTERM\n"
 msgstr " -s, --signal <сигнал>  надіслати вказаний сигнал\n"
 
 #: misc-utils/kill.c:313
-msgid " -q, --queue <sig>      use sigqueue(2) rather than kill(2)\n"
+#, fuzzy
+msgid " -q, --queue <value>    use sigqueue(2), not kill(2), and pass <value> as data\n"
 msgstr " -q, --queue <сигнал>   використовувати sigqueue(2) замість kill(2)\n"
 
 #: misc-utils/kill.c:315
@@ -8364,7 +8330,8 @@ msgid " -p, --pid              print pids without signaling them\n"
 msgstr " -p, --pid              вивести pid без надсилання сигналів процесів\n"
 
 #: misc-utils/kill.c:316
-msgid " -l, --list [=<signal>] list signal names, or convert one to a name\n"
+#, fuzzy
+msgid " -l, --list[=<signal>]  list signal names, or convert a signal number to a name\n"
 msgstr " -l, --list [=<сигнал>] вивести список назв сигналів або перетворити номер на назву\n"
 
 #: misc-utils/kill.c:317
@@ -8381,12 +8348,12 @@ msgid "unknown signal: %s"
 msgstr "невідомий сигнал: %s"
 
 #: misc-utils/kill.c:388 misc-utils/kill.c:391 misc-utils/kill.c:400
-#: misc-utils/kill.c:412 misc-utils/kill.c:437
+#: misc-utils/kill.c:412 misc-utils/kill.c:435
 #, c-format
 msgid "%s and %s are mutually exclusive"
 msgstr "%s та %s є взаємовиключними"
 
-#: misc-utils/kill.c:397 misc-utils/kill.c:441 misc-utils/rename.c:153
+#: misc-utils/kill.c:397 misc-utils/kill.c:439 misc-utils/rename.c:153
 #: sys-utils/ipcrm.c:154 term-utils/agetty.c:753 term-utils/agetty.c:762
 msgid "not enough arguments"
 msgstr "недостатньо аргументів"
@@ -8396,25 +8363,33 @@ msgstr "недостатньо аргументів"
 msgid "option '%s' requires an argument"
 msgstr "разом з параметром «%s» має бути вказано аргумент"
 
-#: misc-utils/kill.c:434
-msgid "invalid sigval argument"
+#: misc-utils/kill.c:415 term-utils/setterm.c:217 term-utils/setterm.c:255
+#: term-utils/setterm.c:293 term-utils/setterm.c:321 term-utils/setterm.c:335
+#: term-utils/setterm.c:346 term-utils/setterm.c:354 term-utils/setterm.c:369
+#: term-utils/setterm.c:383 term-utils/setterm.c:396
+msgid "argument error"
+msgstr "помилковий аргумент"
+
+#: misc-utils/kill.c:432
+#, fuzzy, c-format
+msgid "invalid signal name or number: %s"
 msgstr "некоректний аргумент sigval"
 
-#: misc-utils/kill.c:451
+#: misc-utils/kill.c:449
 #, c-format
 msgid "sending signal %d to pid %d\n"
 msgstr "надсилаємо сигнал %d до pid %d\n"
 
-#: misc-utils/kill.c:464
+#: misc-utils/kill.c:462
 #, c-format
 msgid "sending signal to %s failed"
 msgstr "спроба надсилання сигналу %s зазнала невдачі"
 
-#: misc-utils/kill.c:480
+#: misc-utils/kill.c:478
 msgid "use of 'kill --pid' option as command name is deprecated"
 msgstr "використання параметра «kill --pid» як назви команди вважається застарілим"
 
-#: misc-utils/kill.c:514
+#: misc-utils/kill.c:512
 #, c-format
 msgid "cannot find process \"%s\"."
 msgstr "не вдалося знайти процес «%s»."
@@ -8679,137 +8654,137 @@ msgstr "модифікація пристрою"
 msgid "device vendor"
 msgstr "виробник пристрою"
 
-#: misc-utils/lsblk.c:1062
+#: misc-utils/lsblk.c:1076
 #, c-format
 msgid "%s: failed to get device path"
 msgstr "%s: не вдалося отримати шлях до пристрою"
 
-#: misc-utils/lsblk.c:1069
+#: misc-utils/lsblk.c:1083
 #, c-format
 msgid "%s: unknown device name"
 msgstr "%s: невідома назва пристрою"
 
-#: misc-utils/lsblk.c:1105
+#: misc-utils/lsblk.c:1119
 #, c-format
 msgid "%s: failed to get dm name"
 msgstr "%s: не вдалося отримати назву dm"
 
-#: misc-utils/lsblk.c:1146
+#: misc-utils/lsblk.c:1160
 msgid "failed to open device directory in sysfs"
 msgstr "не вдалося відкрити каталог пристрою у sysfs"
 
-#: misc-utils/lsblk.c:1314
+#: misc-utils/lsblk.c:1328
 #, c-format
 msgid "%s: failed to compose sysfs path"
 msgstr "%s: не вдалося зібрати шлях sysfs"
 
-#: misc-utils/lsblk.c:1320
+#: misc-utils/lsblk.c:1334
 #, c-format
 msgid "%s: failed to read link"
 msgstr "%s: не вдалося прочитати посилання"
 
-#: misc-utils/lsblk.c:1343
+#: misc-utils/lsblk.c:1357
 #, c-format
 msgid "%s: failed to get sysfs name"
 msgstr "%s: не вдалося отримати назву sysfs"
 
-#: misc-utils/lsblk.c:1352
+#: misc-utils/lsblk.c:1366
 #, c-format
 msgid "%s: failed to get whole-disk device number"
 msgstr "%s: не вдалося отримати номер пристрою всього диска"
 
-#: misc-utils/lsblk.c:1404 misc-utils/lsblk.c:1406 misc-utils/lsblk.c:1431
-#: misc-utils/lsblk.c:1433
+#: misc-utils/lsblk.c:1418 misc-utils/lsblk.c:1420 misc-utils/lsblk.c:1445
+#: misc-utils/lsblk.c:1447
 #, c-format
 msgid "failed to parse list '%s'"
 msgstr "не вдалося обробити список '%s'"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1411
+#: misc-utils/lsblk.c:1425
 #, c-format
 msgid "the list of excluded devices is too large (limit is %d devices)"
 msgstr "список виключених пристроїв є занадто довгим (обмежено %d пристроями)"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1438
+#: misc-utils/lsblk.c:1452
 #, c-format
 msgid "the list of included devices is too large (limit is %d devices)"
 msgstr "список включених пристроїв є занадто довгим (обмежено %d пристроями)"
 
-#: misc-utils/lsblk.c:1469 sys-utils/wdctl.c:175
+#: misc-utils/lsblk.c:1483 sys-utils/wdctl.c:174
 #, c-format
 msgid " %s [options] [<device> ...]\n"
 msgstr " %s [параметри] [<пристрій> ...]\n"
 
-#: misc-utils/lsblk.c:1471
+#: misc-utils/lsblk.c:1485
 msgid " -a, --all            print all devices\n"
 msgstr " -a, --all              вивести список всіх пристроїв\n"
 
-#: misc-utils/lsblk.c:1473
+#: misc-utils/lsblk.c:1487
 msgid " -d, --nodeps         don't print slaves or holders\n"
 msgstr " -d, --nodeps           не виводити підлеглі елемент або утримувачі\n"
 
-#: misc-utils/lsblk.c:1474
+#: misc-utils/lsblk.c:1488
 msgid " -D, --discard        print discard capabilities\n"
 msgstr " -D, --discard          вивести дані щодо відкинутих можливостей\n"
 
-#: misc-utils/lsblk.c:1475
+#: misc-utils/lsblk.c:1489
 msgid " -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
 msgstr " -e, --exclude <список> виключити пристрої за основним номером (типово диски у пам'яті)\n"
 
-#: misc-utils/lsblk.c:1476
+#: misc-utils/lsblk.c:1490
 msgid " -f, --fs             output info about filesystems\n"
 msgstr " -f, --fs               вивести дані щодо файлових систем\n"
 
-#: misc-utils/lsblk.c:1477
+#: misc-utils/lsblk.c:1491
 msgid " -i, --ascii          use ascii characters only\n"
 msgstr " -i, --ascii            використовувати лише символи ASCII\n"
 
-#: misc-utils/lsblk.c:1478
+#: misc-utils/lsblk.c:1492
 msgid " -I, --include <list> show only devices with specified major numbers\n"
 msgstr " -I, --include <список> вивести лише пристрої з вказаними основними номерами\n"
 
-#: misc-utils/lsblk.c:1479
+#: misc-utils/lsblk.c:1493
 msgid " -l, --list           use list format output\n"
 msgstr " -l, --list             використатися для виведення формат списку\n"
 
-#: misc-utils/lsblk.c:1480
+#: misc-utils/lsblk.c:1494
 msgid " -m, --perms          output info about permissions\n"
 msgstr " -m, --perms            вивести дані щодо прав доступу\n"
 
-#: misc-utils/lsblk.c:1481
+#: misc-utils/lsblk.c:1495
 msgid " -n, --noheadings     don't print headings\n"
 msgstr " -n, --noheadings       не виводити заголовки\n"
 
-#: misc-utils/lsblk.c:1482
+#: misc-utils/lsblk.c:1496
 msgid " -o, --output <list>  output columns\n"
 msgstr " -o, --output <список>  стовпчики виведених даних\n"
 
-#: misc-utils/lsblk.c:1483
+#: misc-utils/lsblk.c:1497
 msgid " -O, --output-all     output all columns\n"
 msgstr " -O, --output-all     вивести усі стовпчики\n"
 
-#: misc-utils/lsblk.c:1484
+#: misc-utils/lsblk.c:1498
 msgid " -p, --paths          print complete device path\n"
 msgstr " -p, --paths             вивести шлях до пристрою повністю\n"
 
-#: misc-utils/lsblk.c:1487
+#: misc-utils/lsblk.c:1501
 msgid " -s, --inverse        inverse dependencies\n"
 msgstr " -s, --inverse          виконати інверсію залежностей\n"
 
-#: misc-utils/lsblk.c:1488
+#: misc-utils/lsblk.c:1502
 msgid " -S, --scsi           output info about SCSI devices\n"
 msgstr " -S, --scsi              вивести дані щодо пристроїв SCSI\n"
 
-#: misc-utils/lsblk.c:1489
+#: misc-utils/lsblk.c:1503
 msgid " -t, --topology       output info about topology\n"
 msgstr " -t, --topology         вивести дані щодо топології\n"
 
-#: misc-utils/lsblk.c:1490
+#: misc-utils/lsblk.c:1504
 msgid " -x, --sort <column>  sort output by <colum>\n"
 msgstr " -x, --sort <стовпчик> упорядкувати результати за стовпчиком <стовпчик>\n"
 
-#: misc-utils/lsblk.c:1495 misc-utils/lslocks.c:517 sys-utils/prlimit.c:191
+#: misc-utils/lsblk.c:1509 misc-utils/lslocks.c:518 sys-utils/prlimit.c:193
 #, c-format
 msgid ""
 "\n"
@@ -8818,12 +8793,12 @@ msgstr ""
 "\n"
 "Можливі стовпчики (для --output):\n"
 
-#: misc-utils/lsblk.c:1508
+#: misc-utils/lsblk.c:1522
 #, c-format
 msgid "failed to access sysfs directory: %s"
 msgstr "не вдалося отримати доступу до каталогу sysfs: %s"
 
-#: misc-utils/lsblk.c:1697
+#: misc-utils/lsblk.c:1711
 msgid "the sort column has to be between output columns."
 msgstr "стовпчик упорядковування має бути серед стовпчиків виведених даних."
 
@@ -8867,27 +8842,27 @@ msgstr "шлях до заблокованого файла"
 msgid "PID of the process blocking the lock"
 msgstr "PID процесу, який утримує блокування"
 
-#: misc-utils/lslocks.c:261
+#: misc-utils/lslocks.c:263
 msgid "failed to parse ID"
 msgstr "не вдалося обробити ідентифікатор"
 
-#: misc-utils/lslocks.c:283 sys-utils/nsenter.c:206
+#: misc-utils/lslocks.c:285 sys-utils/nsenter.c:206
 msgid "failed to parse pid"
 msgstr "не вдалося обробити pid"
 
-#: misc-utils/lslocks.c:286
+#: misc-utils/lslocks.c:288
 msgid "(unknown)"
 msgstr "(невідомий)"
 
-#: misc-utils/lslocks.c:295
+#: misc-utils/lslocks.c:297
 msgid "failed to parse start"
 msgstr "не вдалося обробити початок"
 
-#: misc-utils/lslocks.c:302
+#: misc-utils/lslocks.c:304
 msgid "failed to parse end"
 msgstr "не вдалося обробити кінець"
 
-#: misc-utils/lslocks.c:509
+#: misc-utils/lslocks.c:510
 msgid ""
 " -p, --pid <pid>        process id\n"
 " -o, --output <list>    define which output columns to use\n"
@@ -8905,8 +8880,8 @@ msgstr ""
 " -h, --help             показати це довідкове повідомлення і вийти\n"
 " -V, --version          вивести дані щодо версії і вийти\n"
 
-#: misc-utils/lslocks.c:553 schedutils/chrt.c:257 schedutils/ionice.c:176
-#: schedutils/taskset.c:160 sys-utils/prlimit.c:581
+#: misc-utils/lslocks.c:554 schedutils/chrt.c:257 schedutils/ionice.c:176
+#: schedutils/taskset.c:160 sys-utils/prlimit.c:582
 msgid "invalid PID argument"
 msgstr "некоректний аргумент PID"
 
@@ -9754,7 +9729,7 @@ msgstr ""
 " -s, --secure        виконати безпечне відкидання\n"
 " -v, --verbose       вивести кількість відкинутих байтів\n"
 
-#: sys-utils/blkdiscard.c:109 sys-utils/fstrim.c:287 sys-utils/losetup.c:533
+#: sys-utils/blkdiscard.c:109 sys-utils/fstrim.c:287 sys-utils/losetup.c:530
 #: text-utils/hexdump.c:124
 msgid "failed to parse offset"
 msgstr "не вдалося обробити зсув"
@@ -9763,7 +9738,7 @@ msgstr "не вдалося обробити зсув"
 msgid "no device specified"
 msgstr "не вказано жодного пристрою"
 
-#: sys-utils/blkdiscard.c:129 sys-utils/fallocate.c:349
+#: sys-utils/blkdiscard.c:129 sys-utils/fallocate.c:348
 #: sys-utils/fsfreeze.c:118 sys-utils/fstrim.c:309
 msgid "unexpected number of arguments"
 msgstr "неочікувана кількість аргументів"
@@ -10194,27 +10169,27 @@ msgstr "невідома можливість, «%s»"
 msgid "cannot mmap: %s"
 msgstr "не вдалося виконати mmap: %s"
 
-#: sys-utils/dmesg.c:1317
+#: sys-utils/dmesg.c:1318
 msgid "invalid buffer size argument"
 msgstr "некоректний аргумент розміру буфера"
 
-#: sys-utils/dmesg.c:1374
+#: sys-utils/dmesg.c:1375
 msgid "--show-delta is ignored when used together with iso8601 time format"
 msgstr "--show-delta буде проігноровано, якщо використовується формат запису часу iso8601"
 
-#: sys-utils/dmesg.c:1397
+#: sys-utils/dmesg.c:1398
 msgid "--raw could be used together with --level or --facility only when read messages from /dev/kmsg"
 msgstr "--raw можна використовувати разом з --level або --facility, лише якщо читання повідомлень виконується з /dev/kmsg"
 
-#: sys-utils/dmesg.c:1407
+#: sys-utils/dmesg.c:1408
 msgid "read kernel buffer failed"
 msgstr "спроба читання буфера ядра зазнала невдачі"
 
-#: sys-utils/dmesg.c:1420
+#: sys-utils/dmesg.c:1421
 msgid "unsupported command"
 msgstr "непідтримувана команда"
 
-#: sys-utils/dmesg.c:1426
+#: sys-utils/dmesg.c:1427
 msgid "klogctl failed"
 msgstr "помилка klogctl"
 
@@ -10600,29 +10575,29 @@ msgstr "підтримки режиму збереження розміру (п�
 msgid "fallocate failed"
 msgstr "помилка fallocate"
 
-#: sys-utils/fallocate.c:214
+#: sys-utils/fallocate.c:213
 #, c-format
 msgid "%s: read failed"
 msgstr "%s: помилка під час спроби читання"
 
-#: sys-utils/fallocate.c:260
+#: sys-utils/fallocate.c:259
 #, c-format
 msgid "%s: %s (%ju bytes) converted to sparse holes.\n"
 msgstr "%s: %s (%ju байтів) перетворено у розріджені дірки.\n"
 
-#: sys-utils/fallocate.c:344
+#: sys-utils/fallocate.c:343
 msgid "no filename specified."
 msgstr "не вказано назви файла."
 
-#: sys-utils/fallocate.c:356 sys-utils/fallocate.c:362
+#: sys-utils/fallocate.c:355 sys-utils/fallocate.c:361
 msgid "invalid length value specified"
 msgstr "вказано некоректне значення довжини"
 
-#: sys-utils/fallocate.c:360
+#: sys-utils/fallocate.c:359
 msgid "no length argument specified"
 msgstr "не вказано аргументу довжини"
 
-#: sys-utils/fallocate.c:365
+#: sys-utils/fallocate.c:364
 msgid "invalid offset value specified"
 msgstr "вказано некоректне значення зсуву"
 
@@ -10731,23 +10706,23 @@ msgstr "%s: не вдалося заморозити"
 msgid "%s: unfreeze failed"
 msgstr "%s: не вдалося розморозити"
 
-#: sys-utils/fstrim.c:75 sys-utils/mountpoint.c:197
+#: sys-utils/fstrim.c:80 sys-utils/mountpoint.c:197
 #, c-format
 msgid "%s: not a directory"
 msgstr "%s: не є каталогом"
 
-#: sys-utils/fstrim.c:89
+#: sys-utils/fstrim.c:88
 #, c-format
 msgid "%s: FITRIM ioctl failed"
 msgstr "%s: помилка ioctl FITRIM"
 
 #. TRANSLATORS: The standard value here is a very large number.
-#: sys-utils/fstrim.c:99
+#: sys-utils/fstrim.c:98
 #, c-format
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s: %s (%<PRIu64> байтів) обрізано\n"
 
-#: sys-utils/fstrim.c:174 sys-utils/swapon.c:627 sys-utils/umount.c:327
+#: sys-utils/fstrim.c:173 sys-utils/swapon.c:627 sys-utils/umount.c:327
 #, c-format
 msgid "failed to parse %s"
 msgstr "не вдалося обробити %s"
@@ -11516,7 +11491,7 @@ msgstr " -Q, --queue              створити чергу повідомле
 msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr " -p, --mode <доступ>      права доступу до ресурсу (типовими є 0644)\n"
 
-#: sys-utils/ipcmk.c:106 sys-utils/losetup.c:552
+#: sys-utils/ipcmk.c:106 sys-utils/losetup.c:549
 msgid "failed to parse size"
 msgstr "не вдалося обробити значення розміру"
 
@@ -12361,32 +12336,32 @@ msgstr "обмеження розміру файла у байтах"
 msgid "loop device major:minor number"
 msgstr "номер пристрою основний:додатковий для петльового пристрою"
 
-#: sys-utils/losetup.c:132 sys-utils/losetup.c:144
+#: sys-utils/losetup.c:129 sys-utils/losetup.c:141
 #, c-format
 msgid ", offset %ju"
 msgstr ", зсув %ju"
 
-#: sys-utils/losetup.c:135 sys-utils/losetup.c:147
+#: sys-utils/losetup.c:132 sys-utils/losetup.c:144
 #, c-format
 msgid ", sizelimit %ju"
 msgstr ", обмеження на розмір %ju"
 
-#: sys-utils/losetup.c:155
+#: sys-utils/losetup.c:152
 #, c-format
 msgid ", encryption %s (type %u)"
 msgstr ", шифрування %s (тип %u)"
 
-#: sys-utils/losetup.c:196
+#: sys-utils/losetup.c:193
 #, c-format
 msgid "%s: detach failed"
 msgstr "%s: помилка від'єднання"
 
-#: sys-utils/losetup.c:318 sys-utils/lscpu.c:1426 sys-utils/prlimit.c:225
-#: sys-utils/swapon.c:151 sys-utils/wdctl.c:214
+#: sys-utils/losetup.c:315 sys-utils/lscpu.c:1426 sys-utils/prlimit.c:226
+#: sys-utils/swapon.c:151 sys-utils/wdctl.c:213
 msgid "failed to initialize output line"
 msgstr "не вдалося ініціалізувати рядок виведення"
 
-#: sys-utils/losetup.c:370
+#: sys-utils/losetup.c:367
 #, c-format
 msgid ""
 " %1$s [options] [<loopdev>]\n"
@@ -12395,71 +12370,71 @@ msgstr ""
 " %1$s [параметри] [<петлпристрій>]\n"
 " %1$s [параметри] -f | <петлпристрій> <файл>\n"
 
-#: sys-utils/losetup.c:375
+#: sys-utils/losetup.c:372
 msgid " -a, --all                     list all used devices\n"
 msgstr " -a, --all                     вивести список усіх використаних пристроїв\n"
 
-#: sys-utils/losetup.c:376
+#: sys-utils/losetup.c:373
 msgid " -d, --detach <loopdev>...     detach one or more devices\n"
 msgstr " -d, --detach <петльовий пристрій>... від’єднати один або декілька пристроїв\n"
 
-#: sys-utils/losetup.c:377
+#: sys-utils/losetup.c:374
 msgid " -D, --detach-all              detach all used devices\n"
 msgstr " -D, --detach-all              від’єднати усі використані пристрої\n"
 
-#: sys-utils/losetup.c:378
+#: sys-utils/losetup.c:375
 msgid " -f, --find                    find first unused device\n"
 msgstr " -f, --find                    знайти перший невикористаний пристрій\n"
 
-#: sys-utils/losetup.c:379
+#: sys-utils/losetup.c:376
 msgid " -c, --set-capacity <loopdev>  resize the device\n"
 msgstr " -c, --set-capacity <петльовий пристрій> змінити розмір пристрою\n"
 
-#: sys-utils/losetup.c:380
+#: sys-utils/losetup.c:377
 msgid " -j, --associated <file>       list all devices associated with <file>\n"
 msgstr " -j, --associated <файл>       показати список усіх пристроїв, пов’язаних з файлом <файл>\n"
 
-#: sys-utils/losetup.c:384
+#: sys-utils/losetup.c:381
 msgid " -o, --offset <num>            start at offset <num> into file\n"
 msgstr " -o, --offset <n>              розпочати з відступу <n> у файлі\n"
 
-#: sys-utils/losetup.c:385
+#: sys-utils/losetup.c:382
 msgid "     --sizelimit <num>         device is limited to <num> bytes of the file\n"
 msgstr "     --sizelimit <n>           пристрій обмежено <n> байтами файла\n"
 
-#: sys-utils/losetup.c:386
+#: sys-utils/losetup.c:383
 msgid " -P, --partscan                create a partitioned loop device\n"
 msgstr " -P, --partscan                створити петльовий пристрій з розділами\n"
 
-#: sys-utils/losetup.c:387
+#: sys-utils/losetup.c:384
 msgid " -r, --read-only               set up a read-only loop device\n"
 msgstr " -r, --read-only               створити придатний лише для читання петльовий пристрій\n"
 
-#: sys-utils/losetup.c:388
+#: sys-utils/losetup.c:385
 msgid "     --show                    print device name after setup (with -f)\n"
 msgstr "     --show                    вивести назву пристрою після налаштування (з -f)\n"
 
-#: sys-utils/losetup.c:389
+#: sys-utils/losetup.c:386
 msgid " -v, --verbose                 verbose mode\n"
 msgstr " -v, --verbose                 режим докладних повідомлень\n"
 
-#: sys-utils/losetup.c:393
+#: sys-utils/losetup.c:390
 msgid " -l, --list                    list info about all or specified (default)\n"
 msgstr " -l, --list                    вивести дані щодо всього або вказаного (типово)\n"
 
-#: sys-utils/losetup.c:394
+#: sys-utils/losetup.c:391
 msgid " -O, --output <cols>           specify columns to output for --list\n"
 msgstr " -O, --output <стовпчики>      вказати стовпчики, які слід вивести, для --list\n"
 
-#: sys-utils/losetup.c:395
+#: sys-utils/losetup.c:392
 msgid " -n, --noheadings              don't print headings for --list output\n"
 msgstr " -n, --noheadings              не виводити заголовків для даних, виведених --list\n"
 
-#: sys-utils/losetup.c:396
+#: sys-utils/losetup.c:393
 msgid "     --raw                     use raw --list output format\n"
 msgstr "     --raw                     використовувати формат виведення даних --list без обробки\n"
 
-#: sys-utils/losetup.c:402
+#: sys-utils/losetup.c:399
 msgid ""
 "\n"
 "Available --list columns:\n"
@@ -12467,49 +12442,49 @@ msgstr ""
 "\n"
 "Доступні стовпчики для --list:\n"
 
-#: sys-utils/losetup.c:422
+#: sys-utils/losetup.c:419
 #, c-format
 msgid "%s: Warning: file is smaller than 512 bytes; the loop device may be useless or invisible for system tools."
 msgstr "%s: попередження: розмір файла є меншим за 512 байтів, петльовий пристрій може виявитися непридатним або невидимим для інструментів системи."
 
-#: sys-utils/losetup.c:426
+#: sys-utils/losetup.c:423
 #, c-format
 msgid "%s: Warning: file does not fit into a 512-byte sector; the end of the file will be ignored."
 msgstr "%s: попередження: файл не вкладається у 512-байтовий сектор, отже кінець файла буде проігноровано."
 
-#: sys-utils/losetup.c:497 sys-utils/losetup.c:507 sys-utils/losetup.c:597
-#: sys-utils/losetup.c:611 sys-utils/losetup.c:687
+#: sys-utils/losetup.c:494 sys-utils/losetup.c:504 sys-utils/losetup.c:594
+#: sys-utils/losetup.c:608 sys-utils/losetup.c:684
 #, c-format
 msgid "%s: failed to use device"
 msgstr "%s: не вдалося використати пристрій"
 
-#: sys-utils/losetup.c:608
+#: sys-utils/losetup.c:605
 msgid "no loop device specified"
 msgstr "не вказано жодного петльового пристрою (loop)"
 
-#: sys-utils/losetup.c:616
+#: sys-utils/losetup.c:613
 msgid "no file specified"
 msgstr "не вказано жодного файла"
 
-#: sys-utils/losetup.c:623
+#: sys-utils/losetup.c:620
 #, c-format
 msgid "the options %s are allowed during loop device setup only"
 msgstr "параметри %s можна використовувати лише для початкового налаштовування петльового пристрою"
 
-#: sys-utils/losetup.c:628
+#: sys-utils/losetup.c:625
 msgid "the option --offset is not allowed in this context"
 msgstr "параметр --offset не можна використовувати у цьому контексті"
 
-#: sys-utils/losetup.c:648 sys-utils/losetup.c:699
+#: sys-utils/losetup.c:645 sys-utils/losetup.c:696
 msgid "cannot find an unused loop device"
 msgstr "не вдалося знайти невикористаний петльовий пристрій"
 
-#: sys-utils/losetup.c:658
+#: sys-utils/losetup.c:655
 #, c-format
 msgid "%s: failed to use backing file"
 msgstr "%s: не вдалося скористатися резервним файлом"
 
-#: sys-utils/losetup.c:720
+#: sys-utils/losetup.c:717
 #, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: спроба встановлення місткості зазнала невдачі"
@@ -13280,11 +13255,11 @@ msgstr ""
 " --make-rprivate         рекурсивно позначити всю підієрархію як закриту\n"
 " --make-runbindable      рекурсивно позначити всю підієрархію як непридатну до прив'язки\n"
 
-#: sys-utils/mount.c:848 sys-utils/umount.c:543
+#: sys-utils/mount.c:848 sys-utils/umount.c:546
 msgid "libmount context allocation failed"
 msgstr "не вдалося розподілити контекст libmount"
 
-#: sys-utils/mount.c:905 sys-utils/umount.c:596
+#: sys-utils/mount.c:905 sys-utils/umount.c:599
 msgid "failed to set options pattern"
 msgstr "не вдалося встановити шаблон параметрів"
 
@@ -13408,7 +13383,7 @@ msgstr "помилка chroot"
 msgid "change directory by working directory file descriptor failed"
 msgstr "спроба зміни каталогу на каталог з дескриптором файла робочого каталогу зазнала невдачі"
 
-#: sys-utils/nsenter.c:333 sys-utils/setpriv.c:808 sys-utils/setpriv.c:812
+#: sys-utils/nsenter.c:333 sys-utils/setpriv.c:810 sys-utils/setpriv.c:814
 msgid "setgroups failed"
 msgstr "помилка setgroups"
 
@@ -13502,37 +13477,37 @@ msgstr "максимальна кількість сигналів у черзі
 msgid "max stack size"
 msgstr "макс. розмір стека"
 
-#: sys-utils/prlimit.c:121
+#: sys-utils/prlimit.c:123
 msgid "resource name"
 msgstr "назва ресурсу"
 
-#: sys-utils/prlimit.c:122
+#: sys-utils/prlimit.c:124
 msgid "resource description"
 msgstr "опис ресурсу"
 
-#: sys-utils/prlimit.c:123
+#: sys-utils/prlimit.c:125
 msgid "soft limit"
 msgstr "м'яке обмеження"
 
-#: sys-utils/prlimit.c:124
+#: sys-utils/prlimit.c:126
 msgid "hard limit (ceiling)"
 msgstr "жорстке обмеження (стеля)"
 
-#: sys-utils/prlimit.c:125
+#: sys-utils/prlimit.c:127
 msgid "units"
 msgstr "одиниць"
 
-#: sys-utils/prlimit.c:159
+#: sys-utils/prlimit.c:161
 #, c-format
 msgid " %s [options] [-p PID]\n"
 msgstr " %s [параметри] [-p PID]\n"
 
-#: sys-utils/prlimit.c:161
+#: sys-utils/prlimit.c:163
 #, c-format
 msgid " %s [options] COMMAND\n"
 msgstr " %s [параметри] КОМАНДА\n"
 
-#: sys-utils/prlimit.c:163
+#: sys-utils/prlimit.c:165
 msgid ""
 "\n"
 "General Options:\n"
@@ -13540,7 +13515,7 @@ msgstr ""
 "\n"
 "Загальні параметри:\n"
 
-#: sys-utils/prlimit.c:164
+#: sys-utils/prlimit.c:166
 msgid ""
 " -p, --pid <pid>        process id\n"
 " -o, --output <list>    define which output columns to use\n"
@@ -13558,7 +13533,7 @@ msgstr ""
 " -h, --help             показати це довідкове повідомлення і вийти\n"
 " -V, --version          вивести дані щодо версії і вийти\n"
 
-#: sys-utils/prlimit.c:172
+#: sys-utils/prlimit.c:174
 msgid ""
 "\n"
 "Resources Options:\n"
@@ -13566,7 +13541,7 @@ msgstr ""
 "\n"
 "Параметри ресурсів:\n"
 
-#: sys-utils/prlimit.c:173
+#: sys-utils/prlimit.c:175
 msgid ""
 " -c, --core             maximum size of core files created\n"
 " -d, --data             maximum size of a process's data segment\n"
@@ -13604,46 +13579,46 @@ msgstr ""
 " -y, --rttime           процесорний час у мікросекундах, запланований для процесу\n"
 "                        у режимі планування реального часу\n"
 
-#: sys-utils/prlimit.c:239 sys-utils/prlimit.c:245 sys-utils/prlimit.c:361
-#: sys-utils/prlimit.c:366
+#: sys-utils/prlimit.c:240 sys-utils/prlimit.c:246 sys-utils/prlimit.c:362
+#: sys-utils/prlimit.c:367
 msgid "unlimited"
 msgstr "без обмежень"
 
-#: sys-utils/prlimit.c:328
+#: sys-utils/prlimit.c:329
 #, c-format
 msgid "failed to get old %s limit"
 msgstr "не вдалося отримати попереднє обмеження %s"
 
-#: sys-utils/prlimit.c:352
+#: sys-utils/prlimit.c:353
 #, c-format
 msgid "the soft limit %s cannot exceed the hard limit"
 msgstr "значення м'якого обмеження, %s, не може перевищувати значення жорсткого обмеження"
 
-#: sys-utils/prlimit.c:359
+#: sys-utils/prlimit.c:360
 #, c-format
 msgid "New %s limit: "
 msgstr "Нове обмеження %s: "
 
-#: sys-utils/prlimit.c:373
+#: sys-utils/prlimit.c:374
 #, c-format
 msgid "failed to set the %s resource limit"
 msgstr "не вдалося встановити обмеження ресурсу %s"
 
-#: sys-utils/prlimit.c:374
+#: sys-utils/prlimit.c:375
 #, c-format
 msgid "failed to get the %s resource limit"
 msgstr "не вдалося отримати обмеження ресурсу %s"
 
-#: sys-utils/prlimit.c:451
+#: sys-utils/prlimit.c:452
 #, c-format
 msgid "failed to parse %s limit"
 msgstr "не вдалося обробити обмеження %s"
 
-#: sys-utils/prlimit.c:580
+#: sys-utils/prlimit.c:581
 msgid "option --pid may be specified only once"
 msgstr "параметр --pid можна вказувати лише один раз"
 
-#: sys-utils/prlimit.c:611
+#: sys-utils/prlimit.c:612
 msgid "options --pid and COMMAND are mutually exclusive"
 msgstr "параметри --pid і КОМАНДА не можна використовувати одночасно"
 
@@ -14143,7 +14118,7 @@ msgstr " --apparmor-profile <пр>  встановити вказаний про
 msgid " This tool can be dangerous.  Read the manpage, and be careful.\n"
 msgstr " Користування цією програмою може становити небезпеку для даних. Ознайомтеся зі сторінкою підручника (man), будьте обережні.\n"
 
-#: sys-utils/setpriv.c:187 sys-utils/setpriv.c:459
+#: sys-utils/setpriv.c:187 sys-utils/setpriv.c:461
 msgid "getting process secure bits failed"
 msgstr "спроба отримання бітів захисту процесу зазнала невдачі"
 
@@ -14162,265 +14137,265 @@ msgstr "[немає]\n"
 msgid "%s: too long"
 msgstr "%s: надто великий"
 
-#: sys-utils/setpriv.c:264
+#: sys-utils/setpriv.c:265
 #, c-format
 msgid "Supplementary groups: "
 msgstr "Допоміжні групи: "
 
-#: sys-utils/setpriv.c:266 sys-utils/setpriv.c:313 sys-utils/setpriv.c:318
-#: sys-utils/setpriv.c:324 sys-utils/setpriv.c:329
+#: sys-utils/setpriv.c:267 sys-utils/setpriv.c:315 sys-utils/setpriv.c:320
+#: sys-utils/setpriv.c:326 sys-utils/setpriv.c:331
 #, c-format
 msgid "[none]"
 msgstr "[немає]"
 
-#: sys-utils/setpriv.c:285
+#: sys-utils/setpriv.c:287
 #, c-format
 msgid "uid: %u\n"
 msgstr "uid: %u\n"
 
-#: sys-utils/setpriv.c:286
+#: sys-utils/setpriv.c:288
 #, c-format
 msgid "euid: %u\n"
 msgstr "euid: %u\n"
 
-#: sys-utils/setpriv.c:289
+#: sys-utils/setpriv.c:291
 #, c-format
 msgid "suid: %u\n"
 msgstr "suid: %u\n"
 
-#: sys-utils/setpriv.c:291 sys-utils/setpriv.c:383
+#: sys-utils/setpriv.c:293 sys-utils/setpriv.c:385
 msgid "getresuid failed"
 msgstr "помилка getresuid"
 
-#: sys-utils/setpriv.c:300 sys-utils/setpriv.c:398
+#: sys-utils/setpriv.c:302 sys-utils/setpriv.c:400
 msgid "getresgid failed"
 msgstr "помилка getresgid"
 
-#: sys-utils/setpriv.c:311
+#: sys-utils/setpriv.c:313
 #, c-format
 msgid "Effective capabilities: "
 msgstr "Ефективні можливості: "
 
-#: sys-utils/setpriv.c:316
+#: sys-utils/setpriv.c:318
 #, c-format
 msgid "Permitted capabilities: "
 msgstr "Допущені можливості: "
 
-#: sys-utils/setpriv.c:322
+#: sys-utils/setpriv.c:324
 #, c-format
 msgid "Inheritable capabilities: "
 msgstr "Успадковувані можливості: "
 
-#: sys-utils/setpriv.c:327
+#: sys-utils/setpriv.c:329
 #, c-format
 msgid "Capability bounding set: "
 msgstr "Набір обмежувальних можливостей: "
 
-#: sys-utils/setpriv.c:335
+#: sys-utils/setpriv.c:337
 msgid "SELinux label"
 msgstr "Мітка SELinux"
 
-#: sys-utils/setpriv.c:338
+#: sys-utils/setpriv.c:340
 msgid "AppArmor profile"
 msgstr "Профіль AppArmor"
 
-#: sys-utils/setpriv.c:351
+#: sys-utils/setpriv.c:353
 #, c-format
 msgid "cap %d: libcap-ng is broken"
 msgstr "можл %d: libcap-ng пошкоджено"
 
-#: sys-utils/setpriv.c:374
+#: sys-utils/setpriv.c:376
 msgid "Invalid supplementary group id"
 msgstr "Некоректний ідентифікатор допоміжної групи"
 
-#: sys-utils/setpriv.c:391
+#: sys-utils/setpriv.c:393
 msgid "setresuid failed"
 msgstr "помилка setresuid"
 
-#: sys-utils/setpriv.c:406
+#: sys-utils/setpriv.c:408
 msgid "setresgid failed"
 msgstr "помилка setresgid"
 
-#: sys-utils/setpriv.c:427
+#: sys-utils/setpriv.c:429
 msgid "bad capability string"
 msgstr "помилковий рядок можливостей"
 
-#: sys-utils/setpriv.c:435
+#: sys-utils/setpriv.c:437
 msgid "libcap-ng is too old for \"all\" caps"
 msgstr "libcap-ng є надто застарілим для можливостей \"all\""
 
-#: sys-utils/setpriv.c:444
+#: sys-utils/setpriv.c:446
 #, c-format
 msgid "unknown capability \"%s\""
 msgstr "невідома можливість \"%s\""
 
-#: sys-utils/setpriv.c:468
+#: sys-utils/setpriv.c:470
 msgid "unrecognized securebit set -- refusing to adjust"
 msgstr "встановлено нерозпізнаний біт захисту - у встановленні відмовлено adjust"
 
-#: sys-utils/setpriv.c:472
+#: sys-utils/setpriv.c:474
 msgid "bad securebits string"
 msgstr "помилковий рядок бітів захисту"
 
-#: sys-utils/setpriv.c:479
+#: sys-utils/setpriv.c:481
 msgid "+all securebits is not allowed"
 msgstr "біти захисту +all заборонено"
 
-#: sys-utils/setpriv.c:492
+#: sys-utils/setpriv.c:494
 msgid "adjusting keep_caps does not make sense"
 msgstr "коригування keep_caps є беззмістовним"
 
-#: sys-utils/setpriv.c:496
+#: sys-utils/setpriv.c:498
 msgid "unrecognized securebit"
 msgstr "нерозпізнаний біт захисту"
 
-#: sys-utils/setpriv.c:516
+#: sys-utils/setpriv.c:518
 msgid "SELinux is not running"
 msgstr "SELinux не запущено"
 
-#: sys-utils/setpriv.c:531
+#: sys-utils/setpriv.c:533
 #, c-format
 msgid "close failed: %s"
 msgstr "помилка закриття: %s"
 
-#: sys-utils/setpriv.c:539
+#: sys-utils/setpriv.c:541
 msgid "AppArmor is not running"
 msgstr "AppArmor не запущено"
 
-#: sys-utils/setpriv.c:650
+#: sys-utils/setpriv.c:652
 msgid "duplicate --no-new-privs option"
 msgstr "дублювання параметра --no-new-privs"
 
-#: sys-utils/setpriv.c:655
+#: sys-utils/setpriv.c:657
 msgid "duplicate ruid"
 msgstr "дублювання ruid"
 
-#: sys-utils/setpriv.c:657
+#: sys-utils/setpriv.c:659
 msgid "failed to parse ruid"
 msgstr "не вдалося обробити ruid"
 
-#: sys-utils/setpriv.c:661
+#: sys-utils/setpriv.c:663
 msgid "duplicate euid"
 msgstr "дублювання euid"
 
-#: sys-utils/setpriv.c:663
+#: sys-utils/setpriv.c:665
 msgid "failed to parse euid"
 msgstr "не вдалося обробити euid"
 
-#: sys-utils/setpriv.c:667
+#: sys-utils/setpriv.c:669
 msgid "duplicate ruid or euid"
 msgstr "дублювання ruid або euid"
 
-#: sys-utils/setpriv.c:669
+#: sys-utils/setpriv.c:671
 msgid "failed to parse reuid"
 msgstr "не вдалося обробити reuid"
 
-#: sys-utils/setpriv.c:673
+#: sys-utils/setpriv.c:675
 msgid "duplicate rgid"
 msgstr "дублювання rgid"
 
-#: sys-utils/setpriv.c:675
+#: sys-utils/setpriv.c:677
 msgid "failed to parse rgid"
 msgstr "не вдалося обробити rgid"
 
-#: sys-utils/setpriv.c:679
+#: sys-utils/setpriv.c:681
 msgid "duplicate egid"
 msgstr "дублювання egid"
 
-#: sys-utils/setpriv.c:681
+#: sys-utils/setpriv.c:683
 msgid "failed to parse egid"
 msgstr "не вдалося обробити egid"
 
-#: sys-utils/setpriv.c:685
+#: sys-utils/setpriv.c:687
 msgid "duplicate rgid or egid"
 msgstr "дублювання rgid або egid"
 
-#: sys-utils/setpriv.c:687
+#: sys-utils/setpriv.c:689
 msgid "failed to parse regid"
 msgstr "не вдалося обробити regid"
 
-#: sys-utils/setpriv.c:692
+#: sys-utils/setpriv.c:694
 msgid "duplicate --clear-groups option"
 msgstr "дублювання параметра --clear-groups"
 
-#: sys-utils/setpriv.c:698
+#: sys-utils/setpriv.c:700
 msgid "duplicate --keep-groups option"
 msgstr "дублювання параметра --keep-groups"
 
-#: sys-utils/setpriv.c:704
+#: sys-utils/setpriv.c:706
 msgid "duplicate --groups option"
 msgstr "дублювання параметра --groups"
 
-#: sys-utils/setpriv.c:713
+#: sys-utils/setpriv.c:715
 msgid "duplicate --inh-caps option"
 msgstr "дублювання параметра --inh-caps"
 
-#: sys-utils/setpriv.c:719
+#: sys-utils/setpriv.c:721
 msgid "duplicate --bounding-set option"
 msgstr "дублювання параметра --bounding-set"
 
-#: sys-utils/setpriv.c:725
+#: sys-utils/setpriv.c:727
 msgid "duplicate --securebits option"
 msgstr "дублювання параметра --securebits"
 
-#: sys-utils/setpriv.c:731
+#: sys-utils/setpriv.c:733
 msgid "duplicate --selinux-label option"
 msgstr "дублювання параметра --selinux-label"
 
-#: sys-utils/setpriv.c:737
+#: sys-utils/setpriv.c:739
 msgid "duplicate --apparmor-profile option"
 msgstr "дублювання параметра --apparmor-profile"
 
-#: sys-utils/setpriv.c:748
+#: sys-utils/setpriv.c:750
 #, c-format
 msgid "unrecognized option '%c'"
 msgstr "нерозпізнаний параметр «%c»"
 
-#: sys-utils/setpriv.c:755
+#: sys-utils/setpriv.c:757
 msgid "--dump is incompatible with all other options"
 msgstr "параметр --dump несумісний з іншими параметрами"
 
-#: sys-utils/setpriv.c:763
+#: sys-utils/setpriv.c:765
 msgid "--list-caps must be specified alone"
 msgstr "--list-caps слід вказувати без інших параметрів"
 
-#: sys-utils/setpriv.c:769
+#: sys-utils/setpriv.c:771
 msgid "No program specified"
 msgstr "Не вказано програму"
 
-#: sys-utils/setpriv.c:774
+#: sys-utils/setpriv.c:776
 msgid "--[re]gid requires --keep-groups, --clear-groups, or --groups"
 msgstr "--[re]gid потребує параметра --keep-groups, --clear-groups або --groups"
 
-#: sys-utils/setpriv.c:778
+#: sys-utils/setpriv.c:780
 msgid "disallow granting new privileges failed"
 msgstr "не вдалося заборонити надання нових прав доступу"
 
-#: sys-utils/setpriv.c:786
+#: sys-utils/setpriv.c:788
 msgid "keep process capabilities failed"
 msgstr "спроба збереження можливостей процесу зазнала невдачі"
 
-#: sys-utils/setpriv.c:794
+#: sys-utils/setpriv.c:796
 msgid "activate capabilities"
 msgstr "задіяти можливості"
 
-#: sys-utils/setpriv.c:800
+#: sys-utils/setpriv.c:802
 msgid "reactivate capabilities"
 msgstr "повторно задіяти можливості"
 
-#: sys-utils/setpriv.c:817
+#: sys-utils/setpriv.c:819
 msgid "set process securebits failed"
 msgstr "спроба встановлення бітів захисту процесу зазнала невдачі"
 
-#: sys-utils/setpriv.c:823
+#: sys-utils/setpriv.c:825
 msgid "apply bounding set"
 msgstr "застосувати набір обмеження"
 
-#: sys-utils/setpriv.c:829
+#: sys-utils/setpriv.c:831
 msgid "apply capabilities"
 msgstr "застосувати можливості"
 
-#: sys-utils/setpriv.c:834
+#: sys-utils/setpriv.c:836
 #, c-format
 msgid "cannot execute: %s"
 msgstr "не вдалося виконати: %s"
@@ -14709,7 +14684,7 @@ msgstr "не вдалося знайти пристрій для %s"
 msgid "failed to open directory"
 msgstr "не вдалося відкрити каталог"
 
-#: sys-utils/switch_root.c:67 term-utils/wall.c:298
+#: sys-utils/switch_root.c:67 term-utils/wall.c:301
 msgid "stat failed"
 msgstr "операція stat завершилась помилкою"
 
@@ -15157,7 +15132,7 @@ msgstr "назва спостережного пристрою"
 msgid "unknown flag: %s"
 msgstr "невідомий прапорець: %s"
 
-#: sys-utils/wdctl.c:179
+#: sys-utils/wdctl.c:178
 msgid ""
 " -f, --flags <list>     print selected flags only\n"
 " -F, --noflags          don't print information about flags\n"
@@ -15181,36 +15156,36 @@ msgstr ""
 " -s, --settimeout <сек> встановити час очікування засобу спостереження\n"
 " -x, --flags-only       вивести лише таблицю прапорців (те саме, що і -I -T)\n"
 
-#: sys-utils/wdctl.c:195
+#: sys-utils/wdctl.c:194
 #, c-format
 msgid "The default device is %s.\n"
 msgstr "Типовим пристроєм є %s.\n"
 
-#: sys-utils/wdctl.c:198
+#: sys-utils/wdctl.c:197
 msgid "Available columns:\n"
 msgstr "Доступні стовпчики:\n"
 
-#: sys-utils/wdctl.c:288
+#: sys-utils/wdctl.c:287
 #, c-format
 msgid "%s: unknown flags 0x%x\n"
 msgstr "%s: невідомі прапорці 0x%x\n"
 
-#: sys-utils/wdctl.c:318 sys-utils/wdctl.c:374
+#: sys-utils/wdctl.c:317 sys-utils/wdctl.c:373
 #, c-format
 msgid "%s: watchdog already in use, terminating."
 msgstr "%s: засіб спостереження вже використовується, перериваємо завдання."
 
-#: sys-utils/wdctl.c:332 sys-utils/wdctl.c:402
+#: sys-utils/wdctl.c:331 sys-utils/wdctl.c:401
 #, c-format
 msgid "%s: failed to disarm watchdog"
 msgstr "%s: не вдалося вимкнути засіб спостереження"
 
-#: sys-utils/wdctl.c:341
+#: sys-utils/wdctl.c:340
 #, c-format
 msgid "cannot set timeout for %s"
 msgstr "не вдалося встановити час очікування для %s"
 
-#: sys-utils/wdctl.c:347
+#: sys-utils/wdctl.c:346
 #, c-format
 msgid "Timeout has been set to %d second.\n"
 msgid_plural "Timeout has been set to %d seconds.\n"
@@ -15219,12 +15194,12 @@ msgstr[1] "Було встановлено час очікування у %d с�
 msgstr[2] "Було встановлено час очікування у %d секунд.\n"
 msgstr[3] "Було встановлено час очікування у одну секунду.\n"
 
-#: sys-utils/wdctl.c:381
+#: sys-utils/wdctl.c:380
 #, c-format
 msgid "%s: failed to get information about watchdog"
 msgstr "%s: не вдалося отримати дані щодо засобу спостереження"
 
-#: sys-utils/wdctl.c:463 sys-utils/wdctl.c:466 sys-utils/wdctl.c:469
+#: sys-utils/wdctl.c:462 sys-utils/wdctl.c:465 sys-utils/wdctl.c:468
 #, c-format
 msgid "%-14s %2i second\n"
 msgid_plural "%-14s %2i seconds\n"
@@ -15233,27 +15208,27 @@ msgstr[1] "%-14s %2i секунди\n"
 msgstr[2] "%-14s %2i секунд\n"
 msgstr[3] "%-14s %2i секунда\n"
 
-#: sys-utils/wdctl.c:464
+#: sys-utils/wdctl.c:463
 msgid "Timeout:"
 msgstr "Час очікування:"
 
-#: sys-utils/wdctl.c:467
+#: sys-utils/wdctl.c:466
 msgid "Pre-timeout:"
 msgstr "Попередній час очікування:"
 
-#: sys-utils/wdctl.c:470
+#: sys-utils/wdctl.c:469
 msgid "Timeleft:"
 msgstr "Залиш. часу:"
 
-#: sys-utils/wdctl.c:604
+#: sys-utils/wdctl.c:603
 msgid "Device:"
 msgstr "Пристрій:"
 
-#: sys-utils/wdctl.c:606
+#: sys-utils/wdctl.c:605
 msgid "Identity:"
 msgstr "Профіль:"
 
-#: sys-utils/wdctl.c:608
+#: sys-utils/wdctl.c:607
 msgid "version"
 msgstr "версія"
 
@@ -15759,13 +15734,6 @@ msgstr "файл часових параметрів %s: %lu: неочікува
 msgid "argument error: %s"
 msgstr "помилковий аргумент: %s"
 
-#: term-utils/setterm.c:217 term-utils/setterm.c:255 term-utils/setterm.c:293
-#: term-utils/setterm.c:321 term-utils/setterm.c:335 term-utils/setterm.c:346
-#: term-utils/setterm.c:354 term-utils/setterm.c:369 term-utils/setterm.c:383
-#: term-utils/setterm.c:396
-msgid "argument error"
-msgstr "помилковий аргумент"
-
 #: term-utils/setterm.c:260
 #, c-format
 msgid "argument error: bright %s is not supported"
@@ -15939,38 +15907,38 @@ msgstr "не можна примусово виконувати unblank"
 msgid "cannot get blank status"
 msgstr "не вдалося отримати стан blank"
 
-#: term-utils/setterm.c:781
+#: term-utils/setterm.c:780
 #, c-format
 msgid "can not open dump file %s for output"
 msgstr "не вдалося відкрити файл дампу %s для виведення даних"
 
-#: term-utils/setterm.c:824
+#: term-utils/setterm.c:823
 #, c-format
 msgid "terminal %s does not support %s"
 msgstr "у терміналі %s не передбачено підтримки %s"
 
-#: term-utils/setterm.c:1000
+#: term-utils/setterm.c:999
 msgid "cannot (un)set powersave mode"
 msgstr "не вдалося встановити (скасувати) режим енергозбереження"
 
-#: term-utils/setterm.c:1019 term-utils/setterm.c:1028
+#: term-utils/setterm.c:1018 term-utils/setterm.c:1027
 msgid "klogctl error"
 msgstr "помилка klogctl"
 
-#: term-utils/setterm.c:1049
+#: term-utils/setterm.c:1048
 msgid "$TERM is not defined."
 msgstr "$TERM не визначено."
 
-#: term-utils/setterm.c:1056
+#: term-utils/setterm.c:1055
 msgid "terminfo database cannot be found"
 msgstr "не вдалося знайти базу даних terminfo"
 
-#: term-utils/setterm.c:1058
+#: term-utils/setterm.c:1057
 #, c-format
 msgid "%s: unknown terminal type"
 msgstr "%s: невідомий тип термінала"
 
-#: term-utils/setterm.c:1060
+#: term-utils/setterm.c:1059
 msgid "terminal is hardcopy"
 msgstr "терміналом є термінал жорсткого копіювання"
 
@@ -16026,25 +15994,25 @@ msgstr "--nobanner може користуватися лише адмініст
 msgid "invalid timeout argument: %s"
 msgstr "некоректний аргумент часу очікування: %s"
 
-#: term-utils/wall.c:207
+#: term-utils/wall.c:210
 msgid "cannot get passwd uid"
 msgstr "не вдалося отримати UID passwd"
 
-#: term-utils/wall.c:212
+#: term-utils/wall.c:215
 msgid "cannot get tty name"
 msgstr "не вдалося отримати назву tty"
 
-#: term-utils/wall.c:230
+#: term-utils/wall.c:233
 #, c-format
 msgid "Broadcast message from %s@%s (%s) (%s):"
 msgstr "Трансляційне повідомлення від %s@%s (%s) (%s):"
 
-#: term-utils/wall.c:265
+#: term-utils/wall.c:268
 #, c-format
 msgid "will not read %s - use stdin."
 msgstr "не буде прочитано %s — використовується stdin."
 
-#: term-utils/wall.c:304
+#: term-utils/wall.c:307
 msgid "fread failed"
 msgstr "помилка fread"
 
@@ -16878,6 +16846,42 @@ msgstr "невідома керівна послідовність у вхідн
 #: text-utils/ul.c:647
 msgid "Input line too long."
 msgstr "Рядок вхідних даних є надто довгим."
+
+#~ msgid " %s [options] file...\n"
+#~ msgstr " %s [параметри] файл...\n"
+
+#~ msgid " -n, --no-argument       option does not use argument\n"
+#~ msgstr " -n, --no-argument       для параметра не використовуються аргументи\n"
+
+#~ msgid " -o, --optional[=<arg>]  option argument is optional\n"
+#~ msgstr " -o, --optional[=<арг>]  аргумент параметра є необов’язковим\n"
+
+#~ msgid " -r, --required <arg>    option requires an argument\n"
+#~ msgstr " -r, --required <аргумент> для використання параметра потрібен аргумент\n"
+
+#~ msgid " -z                      no long option\n"
+#~ msgstr " -z                      немає довгого варіанта\n"
+
+#~ msgid "     --xyzzy             a long option only\n"
+#~ msgstr "     --xyzzy             лише довгий варіант\n"
+
+#~ msgid " -e, --extremely-long-long-option\n"
+#~ msgstr " -e, --extremely-long-long-option\n"
+
+#~ msgid "                         use next line for description when needed\n"
+#~ msgstr "                         використовуйте наступний рядок для опису, якщо потрібно\n"
+
+#~ msgid " -l, --long-explanation  an example of very verbose, and chatty option\n"
+#~ msgstr " -l, --long-explanation  приклад дуже докладного і складного параметра\n"
+
+#~ msgid "                           description on two, or multiple lines, where the\n"
+#~ msgstr "                           з описом у декілька рядків, де\n"
+
+#~ msgid "                           consecutive lines are intended by two spaces\n"
+#~ msgstr "                           наступні рядки повинні мати відступ у додаткових два пробіли\n"
+
+#~ msgid " -f, --foobar            next option description resets indent\n"
+#~ msgstr " -f, --foobar            наступний опис параметр відновлює розмір відступу\n"
 
 #~ msgid "waidpid failed"
 #~ msgstr "помилка waidpid"
