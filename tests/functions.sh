@@ -31,6 +31,20 @@ function ts_canonicalize {
 	fi
 }
 
+function ts_cd {
+	if [ $# -eq 0 ]; then
+		ts_failed "ul_cd: not enough arguments"
+	fi
+	DEST=$(readlink -f "$1" 2>/dev/null)
+	if [ "x$DEST" = "x" ] || [ ! -d "$DEST" ]; then
+		ts_failed "ul_cd: $1: no such directory"
+	fi
+	cd "$DEST" 2>/dev/null || ts_failed "ul_cd: $1: cannot change directory"
+	if [ "$PWD" != "$DEST" ]; then
+		ts_failed "ul_cd: $PWD is not $DEST"
+	fi
+}
+
 function ts_report {
 	if [ "$TS_PARALLEL" == "yes" ]; then
 		echo "$TS_TITLE $1"

@@ -1,0 +1,20 @@
+== files ==
+`rename_aa/aa' -> `rename_aa/xa'
+`rename_ab/aa' -> `rename_ab/xa'
+rename_aa
+rename_aa/xa
+rename_ab
+rename_ab/xa
+== symlinks ==
+rename_aa/sublink.1: `rename/aa' -> `renxme/aa'
+rename_aa/sublink.2: `rename/aa' -> `renxme/aa'
+rename_aa/sublink.3: `rename/aa' -> `renxme/aa'
+rename_ab/sublink.1: `rename/aa' -> `renxme/aa'
+rename_ab/sublink.2: `rename/aa' -> `renxme/aa'
+rename_ab/sublink.3: `rename/aa' -> `renxme/aa'
+renxme/aa
+renxme/aa
+renxme/aa
+renxme/aa
+renxme/aa
+renxme/aa

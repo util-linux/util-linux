@@ -27,72 +27,87 @@ for i in $@; do N=`echo "$i" | sed "s/$FROM/$TO/g"`; mv "$i" "$N"; done
 #include "c.h"
 #include "closestream.h"
 
-static int do_rename(char *from, char *to, char *s, int verbose, int symtarget)
+#define RENAME_EXIT_SOMEOK	2
+#define RENAME_EXIT_NOTHING	4
+#define RENAME_EXIT_UNEXPLAINED	64
+
+static int string_replace(char *from, char *to, char *s, char *orig, char **newname)
 {
-	char *newname, *where, *p, *q, *target = NULL;
-	int flen, tlen, slen;
-	struct stat sb;
+	char *p, *q, *where;
 
-	if (symtarget) {
-		if (lstat(s, &sb) == -1)
-			err(EXIT_FAILURE, _("%s: lstat failed"), s);
-
-		if (!S_ISLNK(sb.st_mode))
-			errx(EXIT_FAILURE, _("%s: not a symbolic link"), s);
-
-		target = xmalloc(sb.st_size + 1);
-		if (readlink(s, target, sb.st_size + 1) < 0)
-			err(EXIT_FAILURE, _("%s: readlink failed"), s);
-
-		target[sb.st_size] = '\0';
-		where = strstr(target, from);
-	} else
-		where = strstr(s, from);
-
-	if (where == NULL) {
-		free(target);
-		return 0;
-	}
-
-	flen = strlen(from);
-	tlen = strlen(to);
-	if (symtarget) {
-		slen = strlen(target);
-		p = target;
-	} else {
-		slen = strlen(s);
-		p = s;
-	}
-	newname = xmalloc(tlen + slen + 1);
-
-	q = newname;
+	where = strstr(s, from);
+	if (where == NULL)
+		return 1;
+	p = orig;
+	*newname = xmalloc(strlen(orig) + strlen(to) + 1);
+	q = *newname;
 	while (p < where)
 		*q++ = *p++;
 	p = to;
 	while (*p)
 		*q++ = *p++;
-	p = where + flen;
+	p = where + strlen(from);
 	while (*p)
 		*q++ = *p++;
 	*q = 0;
+	return 0;
+}
 
-	if (symtarget) {
-		if (0 > unlink(s))
-			err(EXIT_FAILURE, _("%s: unlink failed"), s);
-		if (symlink(newname, s) != 0)
-			err(EXIT_FAILURE, _("%s: symlinking to %s failed"), s, newname);
-		if (verbose)
-			printf("%s: `%s' -> `%s'\n", s, target, newname);
-	} else {
-		if (rename(s, newname) != 0)
-			err(EXIT_FAILURE, _("%s: rename to %s failed"), s, newname);
-		if (verbose)
-			printf("`%s' -> `%s'\n", s, newname);
+static int do_symlink(char *from, char *to, char *s, int verbose)
+{
+	char *newname = NULL, *target = NULL;
+	int ret = 1;
+	struct stat sb;
+
+	if (lstat(s, &sb) == -1) {
+		warn(_("%s: lstat failed"), s);
+		return 2;
 	}
-
+	if (!S_ISLNK(sb.st_mode)) {
+		warnx(_("%s: not a symbolic link"), s);
+		return 2;
+	}
+	target = xmalloc(sb.st_size + 1);
+	if (readlink(s, target, sb.st_size + 1) < 0) {
+		warn(_("%s: readlink failed"), s);
+		free(target);
+		return 2;
+	}
+	target[sb.st_size] = '\0';
+	if (string_replace(from, to, target, target, &newname))
+		ret = 0;
+	else if (0 > unlink(s)) {
+		warn(_("%s: unlink failed"), s);
+		ret = 2;
+	} else if (symlink(newname, s) != 0) {
+		warn(_("%s: symlinking to %s failed"), s, newname);
+		ret = 2;
+	}
+	if (verbose && ret == 1)
+		printf("%s: `%s' -> `%s'\n", s, target, newname);
 	free(newname);
 	free(target);
-	return 1;
+	return ret;
+}
+
+static int do_file(char *from, char *to, char *s, int verbose)
+{
+	char *newname = NULL, *file;
+	int ret = 1;
+
+	file = rindex(s, '/');
+	if (file == NULL)
+		file = s;
+	if (string_replace(from, to, file, s, &newname))
+		return 0;
+	else if (rename(s, newname) != 0) {
+		warn(_("%s: rename to %s failed"), s, newname);
+		ret = 2;
+	}
+	if (verbose && ret == 1)
+		printf("`%s' -> `%s'\n", s, newname);
+	free(newname);
+	return ret;
 }
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
@@ -114,7 +129,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 int main(int argc, char **argv)
 {
 	char *from, *to;
-	int i, c, symtarget=0, verbose = 0;
+	int i, c, ret = 0, verbose = 0;
+	int (*do_rename)(char *from, char *to, char *s, int verbose) = do_file;
 
 	static const struct option longopts[] = {
 		{"verbose", no_argument, NULL, 'v'},
@@ -135,7 +151,7 @@ int main(int argc, char **argv)
 			verbose = 1;
 			break;
 		case 's':
-			symtarget = 1;
+			do_rename = do_symlink;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -158,7 +174,18 @@ int main(int argc, char **argv)
 	to = argv[1];
 
 	for (i = 2; i < argc; i++)
-		do_rename(from, to, argv[i], verbose, symtarget);
+		ret |= do_rename(from, to, argv[i], verbose);
 
-	return EXIT_SUCCESS;
+	switch (ret) {
+	case 0:
+		return RENAME_EXIT_NOTHING;
+	case 1:
+		return EXIT_SUCCESS;
+	case 2:
+		return EXIT_FAILURE;
+	case 3:
+		return RENAME_EXIT_SOMEOK;
+	default:
+		return RENAME_EXIT_UNEXPLAINED;
+	}
 }

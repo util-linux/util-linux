@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Copyright (C) 2011 Sami Kerola <kerolasa@iki.fi>
+# Copyright (C) 2014 Sami Kerola <kerolasa@iki.fi>
 #
 # This file is part of util-linux.
 #
@@ -16,16 +16,26 @@
 # GNU General Public License for more details.
 #
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="fill row"
+TS_DESC="basic check"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-ts_check_test_command "$TS_CMD_COLUMN"
-
+ts_check_test_command "$TS_CMD_RENAME"
 ts_cd "$TS_OUTDIR"
 
-$TS_CMD_COLUMN -x -c 50 $TS_SELF/input >> $TS_OUTPUT 2>&1
+touch rename_basic.{1..3}
+$TS_CMD_RENAME -v basic test rename_basic.? >> $TS_OUTPUT 2>&1
+
+for i in rename_basic.?; do
+	echo "what is $i doing here?" >> $TS_OUTPUT
+done
+for i in rename_test.{1..3}; do
+	if [ ! -f $i ]; then
+		echo "file $i is missing" >> $TS_OUTPUT
+	else
+		rm -f $i
+	fi
+done
 
 ts_finalize
-
