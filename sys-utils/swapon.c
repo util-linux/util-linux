@@ -199,17 +199,13 @@ static void add_scols_line(struct libscols_table *table, struct libmnt_fs *fs, i
 		case COL_UUID:
 			if (pr && !blkid_probe_lookup_value(pr, "UUID", &data, NULL))
 				xasprintf(&str, "%s", data);
-			else if (pr)
-				xasprintf(&str, "");
-			else
+			else if (!pr)
 				xasprintf(&str, _("read failed"));
 			break;
 		case COL_LABEL:
 			if (pr && !blkid_probe_lookup_value(pr, "LABEL", &data, NULL))
 				xasprintf(&str, "%s", data);
-			else if (pr)
-				xasprintf(&str, "");
-			else
+			else if (!pr)
 				xasprintf(&str, _("read failed"));
 			break;
 		default:
