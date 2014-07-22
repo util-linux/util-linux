@@ -349,7 +349,7 @@ static char *make_time(int mode, time_t time)
 		strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%S%z", &tm);
 		break;
 	default:
-		errx(EXIT_FAILURE, _("unssupported time type"));
+		errx(EXIT_FAILURE, _("unsupported time type"));
 	}
 	return xstrdup(buf);
 }
