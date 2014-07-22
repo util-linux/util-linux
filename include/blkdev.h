@@ -22,7 +22,7 @@
 #define DEFAULT_SECTOR_SIZE       512
 
 #ifdef __linux__
-/* very basic ioclts, should be available everywhere */
+/* very basic ioctls, should be available everywhere */
 # ifndef BLKROSET
 #  define BLKROSET   _IO(0x12,93)	/* set device read-only (0 = read-write) */
 #  define BLKROGET   _IO(0x12,94)	/* get read-only status (0 = read_write) */

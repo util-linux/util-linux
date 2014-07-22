@@ -45,7 +45,7 @@ enum {
 #define LO_KEY_SIZE	32
 
 /*
- * Linux LOOP_{SET,GET}_STATUS64 ioclt struct
+ * Linux LOOP_{SET,GET}_STATUS64 ioctl struct
  */
 struct loop_info64 {
 	uint64_t	lo_device;
