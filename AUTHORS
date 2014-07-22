@@ -38,6 +38,7 @@ AUTHORS (merged projects & commands):
       lsblk:           Milan Broz <mbroz@redhat.com>
                        Karel Zak <kzak@redhat.com>
       lslocks:         Davidlohr Bueso <dave@gnu.org>
+      lslogins:        Ondrej Oprala <ooprala@redhat.com>
       mountpoint:      Karel Zak <kzak@redhat.com>
       nsenter:         Eric W. Biederman <ebiederm@xmission.com>
       prlimit:         Davidlohr Bueso <dave@gnu.org>
@@ -70,6 +71,7 @@ AUTHORS (merged projects & commands):
 CONTRIBUTORS:
 
       Aaron Lu <aaron.lu@intel.com>
+      A. Bram Neijt <bneijt@gmail.com>
       A. Costa <agcosta@gis.net>
       Adam Jackson <ajax@redhat.com>
       Adrian Knoth <adi@drcomp.erfurt.thur.de>
@@ -99,6 +101,7 @@ CONTRIBUTORS:
       Andy Lutomirski <luto@amacapital.net>
       Anthony Rumble <arumble@extro.ucc.su.OZ.AU>
       Anton Blanchard <anton@samba.org>
+      Antonio Ceballos Roa <aceballos@gmail.com>
       Anton V. Boyarshinov <boyarsh@altlinux.org>
       Arif E. Nugroho <arif_endro@yahoo.com>
       Arkadiusz Miśkiewicz <arekm@maven.pl>
@@ -110,7 +113,7 @@ CONTRIBUTORS:
       Bastian Friedrich <bastian.friedrich@collax.com>
       Ben Hutchings <ben@decadent.org.uk>
       Benjamin Robin <dev@benjarobin.fr>
-      Benno Schulenberg <bensberg@justemail.net>
+      Benno Schulenberg <benno@vertaalt.nl>
       Bernardo Innocenti <bernie@codewiz.org>
       Bernhard Voelker <mail@bernhard-voelker.de>
       Bernhard Walle <bwalle@suse.de>
