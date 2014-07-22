@@ -174,7 +174,7 @@ int main(int argc, char **argv)
 	}
 
 	if (ctl.maxsz && ctl.nfiles == 0)
-		warnx(_("--max-size ignored when used without --file."));
+		warnx(_("--max-size ignored when used without --file"));
 
 	randomness_from_files(&ctl);
 	free(ctl.files);
@@ -182,8 +182,9 @@ int main(int argc, char **argv)
 	random_get_bytes(&buf, RAND_BYTES);
 	MD5Update(&ctl.ctx, buf, RAND_BYTES);
 	if (ctl.verbose)
-		fprintf(stderr, _("Got %d bytes from %s\n"), RAND_BYTES,
-				random_tell_source());
+		fprintf(stderr, P_("Got %zu byte from %s\n",
+				   "Got %zu bytes from %s\n", RAND_BYTES),
+				RAND_BYTES, random_tell_source());
 
 	MD5Final(digest, &ctl.ctx);
 	for (i = 0; i < MD5LENGTH; i++)

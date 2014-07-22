@@ -797,7 +797,7 @@ int fdisk_bsd_link_partition(struct fdisk_context *cxt)
 	struct bsd_disklabel *d = self_disklabel(cxt);
 
 	if (!cxt->parent || !fdisk_is_disklabel(cxt->parent, DOS)) {
-		fdisk_warnx(cxt, _("BSD label is not nested within a DOS partition"));
+		fdisk_warnx(cxt, _("BSD label is not nested within a DOS partition."));
 		return -EINVAL;
 	}
 

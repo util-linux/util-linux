@@ -564,11 +564,11 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -R, --nohostname     don't display the hostname field\n"), out);
 	fputs(_(" -s, --since <time>   display the lines since the specified time\n"), out);
 	fputs(_(" -t, --until <time>   display the lines until the specified time\n"), out);
-	fputs(_(" -p, --present <time> display who where present at the specified time\n"), out);
+	fputs(_(" -p, --present <time> display who were present at the specified time\n"), out);
 	fputs(_(" -w, --fullnames      display full user and domain names\n"), out);
 	fputs(_(" -x, --system         display system shutdown entries and run level changes\n"), out);
-	fputs(_("     --time-format <format>  show time stamp using format:\n"), out);
-	fputs(_("                               [notime|short|full|iso]\n"), out);
+	fputs(_("     --time-format <format>  show timestamps in the specified <format>:\n"
+		"                               notime|short|full|iso\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);

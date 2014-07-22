@@ -509,7 +509,7 @@ int main(int argc, char **argv)
 
 			if (!found) {
 				nerrs++, ct++;
-				warnx(_("cannot find process \"%s\"."), ctl.arg);
+				warnx(_("cannot find process \"%s\""), ctl.arg);
 			}
 		}
 	}

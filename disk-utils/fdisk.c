@@ -958,7 +958,7 @@ int main(int argc, char **argv)
 
 		} else if (fdisk_is_disklabel(cxt, GPT) && fdisk_gpt_is_hybrid(cxt))
 			fdisk_warnx(cxt, _(
-				  "The hybrid GPT detected. You have to sync "
+				  "A hybrid GPT was detected. You have to sync "
 				  "the hybrid MBR manually (expert command 'M')."));
 
 		while (1)

@@ -69,7 +69,7 @@ static int get_shell_list(char *shell);
 static void __attribute__((__noreturn__)) usage (FILE *fp)
 {
 	fputs(USAGE_HEADER, fp);
-	fprintf(fp, _(" %s [options] [username]\n"), program_invocation_short_name);
+	fprintf(fp, _(" %s [options] [<username>]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, fp);
 	fputs(_(" -s, --shell <shell>  specify login shell\n"), fp);
 	fputs(_(" -l, --list-shells    print list of shells and exit\n"), fp);
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 
 #ifndef HAVE_LIBUSER
 	if (!(is_local(pw->pw_name)))
-		errx(EXIT_FAILURE, _("can only change local entries."));
+		errx(EXIT_FAILURE, _("can only change local entries"));
 #endif
 
 #ifdef HAVE_LIBSELINUX
