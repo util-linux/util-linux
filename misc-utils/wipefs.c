@@ -408,8 +408,8 @@ do_wipe(struct wipe_desc *wp, const char *devname, int flags)
 		if (!(flags & WP_FL_FORCE)
 		    && wp->is_parttable
 		    && !blkid_probe_is_wholedisk(pr)) {
-			warnx(_("%s: ignore nested \"%s\" partition "
-				"table on non-whole disk device."), devname, wp->type);
+			warnx(_("%s: ignoring nested \"%s\" partition table "
+				"on non-whole disk device"), devname, wp->type);
 			need_force = 1;
 			continue;
 		}

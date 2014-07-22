@@ -514,7 +514,7 @@ static int gpt_mknew_header(struct fdisk_context *cxt,
 	header->size      = cpu_to_le32(sizeof(struct gpt_header));
 
 	/*
-	 * 128 partitions is the default. It can go behond this, however,
+	 * 128 partitions are the default. It can go beyond that, but
 	 * we're creating a de facto header here, so no funny business.
 	 */
 	header->npartition_entries     = cpu_to_le32(GPT_NPARTITIONS);
@@ -958,7 +958,7 @@ static uint32_t partition_start_after_end(struct gpt_header *header, struct gpt_
 }
 
 /*
- * Check if partition e1 overlaps with partition e2
+ * Check if partition e1 overlaps with partition e2.
  */
 static inline int partition_overlap(struct gpt_entry *e1, struct gpt_entry *e2)
 {
@@ -971,7 +971,7 @@ static inline int partition_overlap(struct gpt_entry *e1, struct gpt_entry *e2)
 }
 
 /*
- * Find any paritions that overlap.
+ * Find any partitions that overlap.
  */
 static uint32_t partition_check_overlaps(struct gpt_header *header, struct gpt_entry *e)
 {

@@ -1187,7 +1187,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -a, --acc-expiration     display info about passwords expiration\n"), out);
 	fputs(_(" -c, --colon-separate     display data in a format similar to /etc/passwd\n"), out);
 	fputs(_(" -e, --export             display in an export-able output format\n"), out);
-	fputs(_(" -f, --failed             display data about the last users' failed logins\n"), out);
+	fputs(_(" -f, --failed             display data about the users' last failed logins\n"), out);
 	fputs(_(" -G, --groups-info        display information about groups\n"), out);
 	fputs(_(" -g, --groups=<groups>    display users belonging to a group in <groups>\n"), out);
 	fputs(_(" -L, --last               show info about the users' last login sessions\n"), out);

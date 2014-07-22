@@ -80,7 +80,7 @@ static int save_new_data(struct finfo *pinfo);
 static void __attribute__((__noreturn__)) usage(FILE *fp)
 {
 	fputs(USAGE_HEADER, fp);
-	fprintf(fp, _(" %s [options] [username]\n"), program_invocation_short_name);
+	fprintf(fp, _(" %s [options] [<username>]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, fp);
 	fputs(_(" -f, --full-name <full-name>  real name\n"), fp);
 	fputs(_(" -o, --office <office>        office number\n"), fp);

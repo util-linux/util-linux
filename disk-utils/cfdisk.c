@@ -1806,9 +1806,9 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		ref = 1;
 
 		if (t && fdisk_set_partition_type(cf->cxt, n, t) == 0)
-			info = _("Changed type of the partition %zu.");
+			info = _("Changed type of partition %zu.");
 		else
-			info = _("Type of the partition %zu is unchanged.");
+			info = _("The type of partition %zu is unchanged.");
 		break;
 	}
 	case 's': /* fix order */
@@ -1830,7 +1830,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		rc = ui_get_string(cf,
 			  _("Are you sure you want to write the partition "
 			    "table to disk? "),
-			  _("Type \"yes\" or \"no\" or press ESC to left dialog."),
+			  _("Type \"yes\" or \"no\", or press ESC to leave this dialog."),
 			  buf, sizeof(buf));
 
 		ref = 1;

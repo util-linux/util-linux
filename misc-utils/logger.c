@@ -130,7 +130,7 @@ static int pencode(char *s)
 		*s = '\0';
 		fac = decode(save, facilitynames);
 		if (fac < 0)
-			errx(EXIT_FAILURE, _("unknown facility name: %s."), save);
+			errx(EXIT_FAILURE, _("unknown facility name: %s"), save);
 		*s++ = '.';
 	}
 	else {
@@ -139,7 +139,7 @@ static int pencode(char *s)
 	}
 	lev = decode(s, prioritynames);
 	if (lev < 0)
-		errx(EXIT_FAILURE, _("unknown priority name: %s."), save);
+		errx(EXIT_FAILURE, _("unknown priority name: %s"), save);
 	return ((lev & LOG_PRIMASK) | (fac & LOG_FACMASK));
 }
 

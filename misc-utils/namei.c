@@ -426,7 +426,7 @@ static void usage(int rc)
 
 	fputs(_("\nUsage:\n"), out);
 	fprintf(out,
-	      _(" %s [options] pathname [pathname ...]\n"), p);
+	      _(" %s [options] <pathname>...\n"), p);
 
 	fputs(_("\nOptions:\n"), out);
 	fputs(_(" -h, --help          displays this help text\n"

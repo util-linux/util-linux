@@ -165,7 +165,7 @@ static const char *srcdirs[] = {
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] file\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] <file>\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -b         search only for binaries\n"), out);
