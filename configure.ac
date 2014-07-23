@@ -1193,7 +1193,7 @@ AC_ARG_ENABLE([pivot_root],
   [], [UL_DEFAULT_ENABLE([pivot_root], [check])]
 )
 UL_BUILD_INIT([pivot_root])
-UL_REQUIRES_LINUX([switch_root])
+UL_REQUIRES_LINUX([pivot_root])
 UL_REQUIRES_SYSCALL_CHECK([pivot_root], [UL_CHECK_SYSCALL([pivot_root])])
 AM_CONDITIONAL([BUILD_PIVOT_ROOT], [test "x$build_pivot_root" = xyes])
 
