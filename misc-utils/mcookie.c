@@ -182,8 +182,8 @@ int main(int argc, char **argv)
 	random_get_bytes(&buf, RAND_BYTES);
 	MD5Update(&ctl.ctx, buf, RAND_BYTES);
 	if (ctl.verbose)
-		fprintf(stderr, P_("Got %zu byte from %s\n",
-				   "Got %zu bytes from %s\n", RAND_BYTES),
+		fprintf(stderr, P_("Got %d byte from %s\n",
+				   "Got %d bytes from %s\n", RAND_BYTES),
 				RAND_BYTES, random_tell_source());
 
 	MD5Final(digest, &ctl.ctx);
