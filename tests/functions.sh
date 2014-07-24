@@ -621,6 +621,12 @@ function ts_resolve_host {
 	elif type "nslookup" >/dev/null 2>&1; then
 		tmp=$(nslookup "$host" 2>/dev/null) || return 1
 		tmp=$(echo "$tmp"| grep -A1 "^Name:"| grep "^Address:"| cut -d" " -f2)
+	elif type "host" >/dev/null 2>&1; then
+		tmp=$(host "$host" 2>/dev/null) || return 1
+		tmp=$(echo "$tmp" | grep " has address " | cut -d " " -f4)
+	elif type "getent" >/dev/null 2>&1; then
+		tmp=$(getent ahosts "$host" 2>/dev/null) || return 1
+		tmp=$(echo "$tmp" | cut -d " " -f 1 | sort -u)
 	fi
 
 	# we return 1 if tmp is empty
