@@ -61,27 +61,43 @@ The third form uses an open file by its file descriptor \fInumber\fR.
 See the examples below for how that can be used.
 .SH OPTIONS
 .TP
-\fB\-s\fP, \fB\-\-shared\fP
-Obtain a shared lock, sometimes called a read lock.
+.BR \-c , " \-\-command " \fIcommand
+Pass a single \fIcommand\fR, without arguments, to the shell with
+.BR \-c .
 .TP
-\fB\-x\fP, \fB\-e\fP, \fB\-\-exclusive\fP
+.BR \-E , " \-\-conflict-exit-code " \fInumber
+The exit code used when the \fB\-n\fP option is in use, and the
+conflicting lock exists, or the \fB\-w\fP option is in use,
+and the timeout is reached.  The default value is \fB1\fR.
+.TP
+.BR \-e , " \-x" , " \-\-exclusive"
 Obtain an exclusive lock, sometimes called a write lock.  This is the
 default.
 .TP
-\fB\-u\fP, \fB\-\-unlock\fP
-Drop a lock.  This is usually not required, since a lock is automatically
-dropped when the file is closed.  However, it may be required in special
-cases, for example if the enclosed command group may have forked a background
-process which should not be holding the lock.
-.TP
-\fB\-n\fP, \fB\-\-nb\fP, \fB\-\-nonblock\fP
+.BR \-n , " \-\-nb" , " \-\-nonblock"
 Fail rather than wait if the lock cannot be
 immediately acquired.
 See the
 .B \-E
 option for the exit code used.
 .TP
-\fB\-w\fP, \fB\-\-wait\fP, \fB\-\-timeout\fP \fIseconds\fP
+.BR \-o , " \-\-close"
+Close the file descriptor on which the lock is held before executing
+.IR command .
+This is useful if
+.I command
+spawns a child process which should not be holding the lock.
+.TP
+.BR \-s , " \-\-shared"
+Obtain a shared lock, sometimes called a read lock.
+.TP
+.BR \-u , " \-\-unlock"
+Drop a lock.  This is usually not required, since a lock is automatically
+dropped when the file is closed.  However, it may be required in special
+cases, for example if the enclosed command group may have forked a background
+process which should not be holding the lock.
+.TP
+.BR \-w , " \-\-wait" , " \-\-timeout " \fIseconds
 Fail if the lock cannot be acquired within
 .IR seconds .
 Decimal fractional values are allowed.
@@ -89,28 +105,11 @@ See the
 .B \-E
 option for the exit code used.
 .TP
-\fB\-o\fP, \fB\-\-close\fP
-Close the file descriptor on which the lock is held before executing
-.IR command .
-This is useful if
-.I command
-spawns a child process which should not be holding the lock.
-.TP
-\fB\-E\fP, \fB\-\-conflict\-exit\-code\fP \fInumber\fP
-The exit code used when the \fB\-n\fP option is in use, and the
-conflicting lock exists, or the \fB\-w\fP option is in use,
-and the timeout is reached.  The default value is 1.
-.TP
-\fB\-c\fP, \fB\-\-command\fP \fIcommand\fP
-Pass a single
-.IR command ,
-without arguments, to the shell with
-.BR -c .
-.TP
-\fB\-h\fP, \fB\-\-help\fP
-Display help text and exit.
-.IP "\fB\-V, \-\-version\fP"
+.BR \-V , " \-\-version"
 Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
 .SH EXAMPLES
 .TP
 shell1> flock /tmp -c cat

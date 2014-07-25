@@ -20,7 +20,7 @@ dmesg \- print or control the kernel ring buffer
 .B dmesg
 is used to examine or control the kernel ring buffer.
 .PP
-The default action is to read all messages from the kernel ring buffer.
+The default action is to display all messages from the kernel ring buffer.
 .SH OPTIONS
 The
 .BR \-\-clear ,
@@ -65,8 +65,6 @@ output.
 .IP "\fB\-H\fR, \fB\-\-human\fR"
 Enable human-readable output.  See also \fB\-\-color\fR, \fB\-\-reltime\fR
 and \fB\-\-nopager\fR.
-.IP "\fB\-h\fR, \fB\-\-help\fR"
-Display help text and exit.
 .IP "\fB\-k\fR, \fB\-\-kernel\fR"
 Print kernel messages.
 .IP "\fB\-L\fR, \fB\-\-color\fR[=\fIwhen\fR]"
@@ -152,15 +150,6 @@ system
 .BR SUSPEND / RESUME .
 .IP "\fB\-t\fR, \fB\-\-notime\fR"
 Do not print kernel's timestamps.
-.IP "\fB\-u\fR, \fB\-\-userspace\fR"
-Print userspace messages.
-.IP "\fB\-V\fR, \fB\-\-version\fR"
-Display version information and exit.
-.IP "\fB\-w\fR, \fB\-\-follow\fR"
-Wait for new messages.  This feature is supported only on systems with
-a readable /dev/kmsg (since kernel 3.5.0).
-.IP "\fB\-x\fR, \fB\-\-decode\fR"
-Decode facility and level (priority) numbers to human-readable prefixes.
 .IP "\fB\-\-time\-format\fR \fIformat\fR"
 Print timestamps using the given \fIformat\fR, which can be
 .BR ctime ,
@@ -183,6 +172,22 @@ The
 format has the same issue as
 .BR ctime :
 the time may be inaccurate when a system is suspended and resumed.
+.TP
+.BR \-u , " \-\-userspace"
+Print userspace messages.
+.TP
+.BR \-w , " \-\-follow"
+Wait for new messages.  This feature is supported only on systems with
+a readable /dev/kmsg (since kernel 3.5.0).
+.TP
+.BR \-x , " \-\-decode"
+Decode facility and level (priority) numbers to human-readable prefixes.
+.TP
+.BR \-V , " \-\-version"
+Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
 .SH COLORS
 Implicit coloring can be disabled by an empty file \fI/etc/terminal-colors.d/dmesg.disable\fR.
 See

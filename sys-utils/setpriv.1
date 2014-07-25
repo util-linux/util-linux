@@ -11,28 +11,17 @@ Sets or queries various Linux privilege settings that are inherited across
 .BR execve (2).
 .SH OPTION
 .TP
-\fB\-d\fR, \fB\-\-dump\fR
+.B \-\-clear\-groups
+Clear supplementary groups.
+.TP
+.BR \-d , " \-\-dump"
 Dump current privilege state.  Can be specified more than once to show extra,
 mostly useless, information.  Incompatible with all other options.
 .TP
-\fB\-\-no\-new\-privs\fR
-Set the
-.I no_new_privs
-bit.  With this bit set,
-.BR execve (2)
-will not grant new privileges.  For example, the setuid and setgid bits as well
-as file capabilities will be disabled.  (Executing binaries with these bits set
-will still work, but they will not gain privileges.  Certain LSMs, especially
-AppArmor, may result in failures to execute certain programs.)  This bit is
-inherited by child processes and cannot be unset.  See
-.BR prctl (2)
-and
-.IR Documentation/\:prctl/\:no_\:new_\:privs.txt
-in the Linux kernel source.
-.IP
-The no_new_privs bit is supported since Linux 3.5.
+.B \-\-groups \fIgroup\fR...
+Set supplementary groups.  The argument is a comma-separated list.
 .TP
-.B \-\-inh\-caps \fR(\fB+\fR|\fB\-\fR)\fIcap\fR... or \fB\-\-bounding\-set \fR(\fB+\fR|\fB\-\fR)\fIcap\fR...
+.BR \-\-inh-caps " (" + | \- ) \fIcap "...  or  " \-\-bounding\-set " (" + | \- ) \fIcap ...
 Set the inheritable capabilities or the capability bounding set.  See
 .BR capabilities (7).
 The argument is a comma-separated list of
@@ -51,47 +40,58 @@ and the current bounding set for
 If you drop something from the bounding set without also dropping it from the
 inheritable set, you are likely to become confused.  Do not do that.
 .TP
-.BR \-\-list\-caps
-List all known capabilities.  This option must be specified alone.
-.TP
-\fB\-\-ruid\fR \fIuid\fR, \fB\-\-euid\fR \fIuid\fR, \fB\-\-reuid\fR \fIuid\fR
-Set the real, effective, or both uids.  The \fIuid\fR argument can be
-given as textual login name.
-.IP
-Setting
-.I uid
-or
-.I gid
-does not change capabilities, although the exec call at the end might change
-capabilities.  This means that, if you are root, you probably want to do
-something like:
-.IP
-\-\-reuid=1000 \-\-regid=1000 \-\-caps=\-all
-.TP
-\fB\-\-rgid\fR \fIgid\fR, \fB\-\-egid\fR \fIgid\fR, \fB\-\-regid\fR \fIgid\fR
-Set the real, effective, or both gids.  The \fIgid\fR argument can be
-given as textual group name.
-.IP
-For safety, you must specify one of
-.BR \-\-keep\-groups ,
-.BR \-\-clear\-groups ", or"
-.B \-\-groups
-if you set any primary
-.IR gid .
-.TP
-.B \-\-clear\-groups
-Clear supplementary groups.
-.TP
 .B \-\-keep\-groups
 Preserve supplementary groups.  Only useful in conjunction with
 .BR \-\-rgid ,
 .BR \-\-egid ", or"
 .BR \-\-regid .
 .TP
-.B \-\-groups \fIgroup\fR...
-Set supplementary groups.  The argument is a comma-separated list.
+.BR \-\-list\-caps
+List all known capabilities.  This option must be specified alone.
 .TP
-.B \-\-securebits \fR(\fB+\fR|\fB\-\fR)\fIsecurebit\fR...
+.B \-\-no-new-privs
+Set the
+.I no_new_privs
+bit.  With this bit set,
+.BR execve (2)
+will not grant new privileges.  For example, the setuid and setgid bits as well
+as file capabilities will be disabled.  (Executing binaries with these bits set
+will still work, but they will not gain privileges.  Certain LSMs, especially
+AppArmor, may result in failures to execute certain programs.)  This bit is
+inherited by child processes and cannot be unset.  See
+.BR prctl (2)
+and
+.IR Documentation/\:prctl/\:no_\:new_\:privs.txt
+in the Linux kernel source.
+.sp
+The no_new_privs bit is supported since Linux 3.5.
+.TP
+.BI \-\-rgid " gid\fR, " \-\-egid " gid\fR, " \-\-regid " gid"
+Set the real, effective, or both gids.  The \fIgid\fR argument can be
+given as textual group name.
+.sp
+For safety, you must specify one of
+.BR \-\-clear-groups ,
+.BR \-\-groups ", or"
+.BR \-\-keep-groups
+if you set any primary
+.IR gid .
+.TP
+.BI \-\-ruid " uid\fR, " \-\-euid " uid\fR, " \-\-reuid " uid"
+Set the real, effective, or both uids.  The \fIuid\fR argument can be
+given as textual login name.
+.sp
+Setting a
+.I uid
+or
+.I gid
+does not change capabilities, although the exec call at the end might change
+capabilities.  This means that, if you are root, you probably want to do
+something like:
+.sp
+.B "        setpriv \-\-reuid=1000 \-\-regid=1000 \-\-caps=\-all"
+.TP
+.BR \-\-securebits " (" + | \- ) \fIsecurebit ...
 Set or clear securebits.  The argument is a comma-separated list.
 The valid securebits are
 .IR noroot ,
@@ -105,7 +105,7 @@ is cleared by
 .BR execve (2)
 and is therefore not allowed.
 .TP
-\fB\-\-selinux\-label\fR \fIlabel\fR
+.BI \-\-selinux-label " label"
 Request a particular SELinux transition (using a transition on exec, not
 dyntrans).  This will fail and cause
 .BR setpriv (1)
@@ -117,7 +117,7 @@ conjunction with
 This is similar to
 .BR runcon (1).
 .TP
-\fB\-\-apparmor\-profile\fR \fIprofile\fR
+.BI \-\-apparmor-profile " profile"
 Request a particular AppArmor profile (using a transition on exec).  This will
 fail and cause
 .BR setpriv (1)
@@ -125,10 +125,10 @@ to abort if AppArmor is not in use, and the transition may be ignored or cause
 .BR execve (2)
 to fail at AppArmor's whim.
 .TP
-\fB\-V\fR, \fB\-\-version\fR
+.BR \-V , " \-\-version"
 Display version information and exit.
 .TP
-\fB\-h\fR, \fB\-\-help\fR
+.BR \-h , " \-\-help"
 Display help text and exit.
 .SH NOTES
 If applying any specified option fails,

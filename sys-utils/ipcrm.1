@@ -37,33 +37,15 @@ with objects specified either by key or by identifier (see below).
 Both keys and identifiers may be specified in decimal, hexadecimal
 (specified with an initial '0x' or '0X'), or octal (specified with
 an initial '0').
+.PP
+The details of the removes are described in
+.BR shmctl (2),
+.BR msgctl (2),
+and
+.BR semctl (2).
+The identifiers and keys can be found by using
+.BR ipcs (1).
 .SH OPTIONS
-.TP
-\fB\-M\fR, \fB\-\-shmem\-key\fR \fIshmkey\fR
-Remove the shared memory segment created with
-.I shmkey
-after the last detach is performed.
-.TP
-\fB\-m\fR, \fB\-\-shmem\-id\fR \fIshmid\fR
-Remove the shared memory segment identified by
-.I shmid
-after the last detach is performed.
-.TP
-\fB\-Q\fR, \fB\-\-queue\-key\fR \fImsgkey\fR
-Remove the message queue created with
-.IR msgkey .
-.TP
-\fB\-q\fR, \fB\-\-queue\-id\fR \fImsgid\fR
-Remove the message queue identified by
-.IR msgid .
-.TP
-\fB\-S\fR, \fB\-\-semaphore\-key\fR \fIsemkey\fR
-Remove the semaphore created with
-.IR semkey .
-.TP
-\fB\-s\fR, \fB\-\-semaphore\-id\fR \fIsemid\fR
-Remove the semaphore identified by
-.IR semid .
 .TP
 \fB-a\fR, \fB\-\-all\fR [\fBshm\fR] [\fBmsg\fR] [\fBsem\fR]
 Remove all resources.  When an option argument is provided, the removal is
@@ -72,14 +54,38 @@ performed only for the specified resource types.  \fIWarning!\fR  Do not use
 if you are unsure how the software using the resources might react to missing
 objects.  Some programs create these resources at startup and may not have
 any code to deal with an unexpected disappearance.
-.LP
-The details of the removes are described in
-.BR shmctl (2),
-.BR msgctl (2),
-and
-.BR semctl (2).
-The identifiers and keys can be found by using
-.BR ipcs (1).
+.TP
+.BR \-M , " \-\-shmem-key " \fIshmkey
+Remove the shared memory segment created with
+.I shmkey
+after the last detach is performed.
+.TP
+.BR \-m , " \-\-shmem-id " \fIshmid
+Remove the shared memory segment identified by
+.I shmid
+after the last detach is performed.
+.TP
+.BR \-Q , " \-\-queue-key " \fImsgkey
+Remove the message queue created with
+.IR msgkey .
+.TP
+.BR \-q , " \-\-queue-id " \fImsgid
+Remove the message queue identified by
+.IR msgid .
+.TP
+.BR \-S , " \-\-semaphore-key " \fIsemkey
+Remove the semaphore created with
+.IR semkey .
+.TP
+.BR \-s , " \-\-semaphore-id " \fIsemid
+Remove the semaphore identified by
+.IR semid .
+.TP
+.BR \-V , " \-\-version"
+Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
 .SH NOTES
 In its first Linux implementation, \fBipcrm\fR used the deprecated syntax
 shown in the second line of the

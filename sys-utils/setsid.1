@@ -6,8 +6,9 @@
 setsid \- run a program in a new session
 .SH SYNOPSIS
 .B setsid
+[options]
 .I program
-.RI [ argument ...]
+.RI [ arguments ]
 .SH DESCRIPTION
 .B setsid
 runs a program in a new session.
@@ -20,6 +21,12 @@ Set the controlling terminal to the current one.
 Wait for the execution of the program to end, and return the exit value of
 this program as the return value of
 .BR setsid .
+.TP
+.BR \-V , " \-\-version"
+Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
 .SH "SEE ALSO"
 .BR setsid (2)
 .SH AUTHOR
