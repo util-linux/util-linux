@@ -758,6 +758,52 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 	return rc;
 }
 
+/* try mount(2) for all items in comma separated list of the filesystem @types */
+static int do_mount_by_types(struct libmnt_context *cxt, const char *types)
+{
+	int rc = -EINVAL;
+	char *p, *p0;
+
+	assert(cxt);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+
+	DBG(CXT, ul_debugobj(cxt, "trying to mount by FS list '%s'", types));
+
+	p0 = p = strdup(types);
+	if (!p)
+		return -ENOMEM;
+	do {
+		char *autotype = NULL;
+		char *end = strchr(p, ',');
+
+		if (end)
+			*end = '\0';
+
+		DBG(CXT, ul_debugobj(cxt, "-->trying '%s'", p));
+
+		/* Let's support things like "udf,iso9660,auto" */
+		if (strcmp(p, "auto") == 0) {
+			rc = mnt_context_guess_srcpath_fstype(cxt, &autotype);
+			if (rc) {
+				DBG(CXT, ul_debugobj(cxt, "failed to guess FS type"));
+				free(p0);
+				return rc;
+			}
+			p = autotype;
+			DBG(CXT, ul_debugobj(cxt, "   --> '%s'", p));
+		}
+
+		if (p)
+			rc = do_mount(cxt, p);
+		p = end ? end + 1 : NULL;
+		free(autotype);
+	} while (!mnt_context_get_status(cxt) && p);
+
+	free(p0);
+	return rc;
+}
+
+
 static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 {
 	int neg = pattern && strncmp(pattern, "no", 2) == 0;
@@ -767,54 +813,20 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 	assert(cxt);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	if (!neg && pattern) {
-		/*
-		 * try all types from the list
-		 */
-		char *p, *p0;
-
-		DBG(CXT, ul_debugobj(cxt, "trying to mount by FS pattern list '%s'", pattern));
-
-		p0 = p = strdup(pattern);
-		if (!p)
-			return -ENOMEM;
-		do {
-			char *autotype = NULL;
-			char *end = strchr(p, ',');
-
-			if (end)
-				*end = '\0';
-
-			DBG(CXT, ul_debugobj(cxt, "-->trying '%s'", p));
-
-			/* Let's support things like "udf,iso9660,auto" */
-			if (strcmp(p, "auto") == 0) {
-				rc = mnt_context_guess_srcpath_fstype(cxt, &autotype);
-				if (rc) {
-					DBG(CXT, ul_debugobj(cxt, "failed to guess FS type"));
-					free(p0);
-					return rc;
-				}
-				p = autotype;
-				DBG(CXT, ul_debugobj(cxt, "   --> '%s'", p));
-			}
-
-			if (p)
-				rc = do_mount(cxt, p);
-			p = end ? end + 1 : NULL;
-			free(autotype);
-		} while (!mnt_context_get_status(cxt) && p);
-
-		free(p0);
-
-		if (mnt_context_get_status(cxt))
-			return rc;
-	}
 
 	/*
-	 * try /etc/filesystems and /proc/filesystems
+	 * Use the pattern as list of the filesystems
 	 */
-	DBG(CXT, ul_debugobj(cxt, "trying to mount by filesystems lists"));
+	if (!neg && pattern) {
+		DBG(CXT, ul_debugobj(cxt, "use FS pattern as FS list"));
+		return do_mount_by_types(cxt, pattern);
+	}
+
+	DBG(CXT, ul_debugobj(cxt, "trying to mount by FS pattern '%s'", pattern));
+
+	/*
+	 * Apply pattern to /etc/filesystems and /proc/filesystems
+	 */
 
 	rc = mnt_get_filesystems(&filesystems, neg ? pattern : NULL);
 	if (rc)
@@ -930,7 +942,7 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 	if (type) {
 		if (strchr(type, ','))
 			/* this only happens if fstab contains a list of filesystems */
-			res = do_mount_by_pattern(cxt, type);
+			res = do_mount_by_types(cxt, type);
 		else
 			res = do_mount(cxt, NULL);
 	} else

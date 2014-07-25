@@ -572,7 +572,10 @@ try_readonly:
 		break;
 
 	case ENODEV:
-		warnx(_("unknown filesystem type '%s'"), mnt_context_get_fstype(cxt));
+		if (mnt_context_get_fstype(cxt))
+			warnx(_("unknown filesystem type '%s'"), mnt_context_get_fstype(cxt));
+		else
+			warnx(_("unknown filesystem type"));
 		break;
 
 	case ENOTBLK:
