@@ -789,14 +789,14 @@ option.  For example, the command
 .RS
 .RS
 .sp
-.B "mount \-a \-t nomsdos,ext"
+.B "mount \-a \-t nomsdos,smbfs"
 .sp
 .RE
 mounts all filesystems except those of type
 .I msdos
 and
-.IR ext .
-
+.IR smbfs .
+.sp
 For most types all the
 .B mount
 program has to do is issue a simple
@@ -1499,15 +1499,8 @@ starting with 2.6.29.  Further, this option is valid only if
 CONFIG_DEVPTS_MULTIPLE_INSTANCES is enabled in the kernel
 configuration.
 
-.SH "Mount options for ext"
-None.
-Note that the `ext' filesystem is obsolete.  Don't use it.
-Since Linux version 2.1.21 extfs is no longer part of the kernel source.
-
 .SH "Mount options for ext2"
 The `ext2' filesystem is the standard Linux filesystem.
-.\" Due to a kernel bug, it may be mounted with random mount options
-.\" (fixed in Linux 2.0.4).
 Since Linux 2.5.46, for most mount options the default
 is determined by the filesystem superblock.  Set them with
 .BR tune2fs (8).

@@ -18,7 +18,7 @@ cramfs	  nocramfs	ncpfs	  noncpfs	ufs	  noufs
 debugfs	  nodebugfs	nfs	  nonfs		umsdos	  noumsdos
 devpts	  nodevpts	nfs4	  nonfs4	usbfs	  nousbfs
 efs	  noefs		ntfs	  nontfs	vfat	  novfat
-ext	  noext		proc	  noproc	xenix	  noxenix
+			proc	  noproc	xenix	  noxenix
 ext2	  noext2	qnx4	  noqnx4	xfs	  noxfs
 ext3	  noext3	ramfs	  noramfs
 ext4	  noext4	reiserfs  noreiserfs
