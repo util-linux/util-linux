@@ -116,44 +116,9 @@ contains spaces these can be escaped as `\\040'.
 .RI ( fs_vfstype ).
 .RS
 This field describes the type of the filesystem.  Linux supports lots
-of filesystem types, such as
-.IR adfs ,
-.IR affs ,
-.IR autofs ,
-.IR coda ,
-.IR coherent ,
-.IR cramfs ,
-.IR devpts ,
-.IR efs ,
-.IR ext2 ,
-.IR ext3 ,
-.IR hfs ,
-.IR hpfs ,
-.IR iso9660 ,
-.IR jfs ,
-.IR minix ,
-.IR msdos ,
-.IR ncpfs ,
-.IR nfs ,
-.IR ntfs ,
-.IR proc ,
-.IR qnx4 ,
-.IR reiserfs ,
-.IR romfs ,
-.IR smbfs ,
-.IR sysv ,
-.IR tmpfs ,
-.IR udf ,
-.IR ufs ,
-.IR umsdos ,
-.IR vfat ,
-.IR xenix ,
-.IR xfs ,
-and possibly others. For more details, see
+of filesystem types, the most common are ext2, ext3, ext4, xfs, btrfs, vfat,
+sysfs, proc, nfs and cifs. For more details, see
 .BR mount (8).
-
-For the filesystems currently supported by the running kernel, see
-.IR /proc/filesystems .
 
 An entry
 .I swap
@@ -163,6 +128,8 @@ for swapping, cf.\&
 An entry
 .I none
 is useful for bind or move mounts.
+
+More than one type may be specified in a comma-separated list.
 
 .BR mount (8)
 and

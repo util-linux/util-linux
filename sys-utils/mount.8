@@ -652,67 +652,12 @@ invisible for the helpers.  This is no problem for normal mounts, but user
 The argument following the
 .B \-t
 is used to indicate the filesystem type.  The filesystem types which are
-currently supported include:
-.IR adfs ,
-.IR affs ,
-.IR autofs ,
-.IR btrfs ,
-.IR cifs ,
-.IR coda ,
-.IR coherent ,
-.IR cramfs ,
-.IR debugfs ,
-.IR devpts ,
-.IR efs ,
-.IR ext ,
-.IR ext2 ,
-.IR ext3 ,
-.IR ext4 ,
-.IR hfs ,
-.IR hfsplus ,
-.IR hpfs ,
-.IR iso9660 ,
-.IR jfs ,
-.IR minix ,
-.IR msdos ,
-.IR ncpfs ,
-.IR nfs ,
-.IR nfs4 ,
-.IR ntfs ,
-.IR proc ,
-.IR qnx4 ,
-.IR ramfs ,
-.IR reiserfs ,
-.IR romfs ,
-.IR squashfs ,
-.IR smbfs ,
-.IR sysv ,
-.IR tmpfs ,
-.IR ubifs ,
-.IR udf ,
-.IR ufs ,
-.IR umsdos ,
-.IR usbfs ,
-.IR vfat ,
-.IR xenix ,
-.IR xfs ,
-.IR xiafs .
-Note that coherent, sysv and xenix are equivalent and that
-.I xenix
+currently supported depend on kernel. See
+.I /proc/filesystems
 and
-.I coherent
-will be removed at some point in the future \(en use
-.I sysv
-instead.  Since kernel version 2.1.21 the types
-.I ext
-and
-.I xiafs
-do not exist anymore.  Earlier,
-.I usbfs
-was known as
-.IR usbdevfs .
-Note, the real list of all supported filesystems depends on your
-kernel.
+.I /lib/modules/$(uname -r)/kernel/fs
+for complete list of the filesystems. The most common are ext2, ext3, ext4, 
+xfs, btrfs, vfat, sysfs, proc, nfs and cifs.
 
 The programs
 .B mount
@@ -722,24 +667,6 @@ support filesystem subtypes.  The subtype is defined by a '.subtype' suffix.  Fo
 example  'fuse.sshfs'.  It's recommended to use subtype notation rather than add
 any prefix to the mount source (for example 'sshfs#example.com' is
 deprecated).
-
-For most types all the
-.B mount
-program has to do is issue a simple
-.IR mount (2)
-system call, and no detailed knowledge of the filesystem type is required.
-For a few types however (like nfs, nfs4, cifs, smbfs, ncpfs) an ad hoc code is
-necessary.  The nfs, nfs4, cifs, smbfs, and ncpfs filesystems
-have a separate mount program.  In order to make it possible to
-treat all types in a uniform way, \fBmount\fR will execute the program
-.BI /sbin/mount. type
-(if that exists) when called with type
-.IR type .
-Since different versions of the
-.B smbmount
-program have different calling conventions,
-.B /sbin/mount.smbfs
-may have to be a shell script that sets up the desired call.
 
 If no
 .B \-t
@@ -774,12 +701,26 @@ can be useful to change the probe order (e.g., to try vfat before msdos
 or ext3 before ext2) or if you use a kernel module autoloader.
 
 More than one type may be specified in a comma-separated
-list.  The list of filesystem types can be prefixed with
+list for
+.B \-t
+as well as by
+.I /etc/fstab
+entry.  The list of filesystem types for the option
+.B \-t 
+can be prefixed with
 .B no
 to specify the filesystem types on which no action should be taken.
-(This can be meaningful with the
+The prefix
+.B no
+has no any effect when specified by
+.I /etc/fstab
+entry.
+
+The prefix
+.B no
+can be meaningful with the
 .B \-a
-option.)  For example, the command
+option.  For example, the command
 .RS
 .RS
 .sp
@@ -790,7 +731,26 @@ mounts all filesystems except those of type
 .I msdos
 and
 .IR ext .
+
+For most types all the
+.B mount
+program has to do is issue a simple
+.IR mount (2)
+system call, and no detailed knowledge of the filesystem type is required.
+For a few types however (like nfs, nfs4, cifs, smbfs, ncpfs) an ad hoc code is
+necessary.  The nfs, nfs4, cifs, smbfs, and ncpfs filesystems
+have a separate mount program.  In order to make it possible to
+treat all types in a uniform way, \fBmount\fR will execute the program
+.BI /sbin/mount. type
+(if that exists) when called with type
+.IR type .
+Since different versions of the
+.B smbmount
+program have different calling conventions,
+.B /sbin/mount.smbfs
+may have to be a shell script that sets up the desired call.
 .RE
+
 .IP "\fB\-O, \-\-test-opts \fIopts\fP"
 Limit the set of filesystems to which the
 .B \-a
