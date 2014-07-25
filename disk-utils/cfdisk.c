@@ -1966,6 +1966,7 @@ static int ui_run(struct cfdisk *cf)
 
 	menu_pop(cf);
 
+	curs_set(1);
 	DBG(FRONTEND, ul_debug("ui: end"));
 
 	return 0;
