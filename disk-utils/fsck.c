@@ -81,8 +81,7 @@ static const char *really_wanted[] = {
 	"ext4",
 	"ext4dev",
 	"jfs",
-	"reiserfs",
-	"xiafs"
+	"reiserfs"
 };
 
 /*

@@ -61,8 +61,7 @@ _findmnt_module()
 				hfsplus hpfs iso9660 jfs minix msdos
 				ncpfs nfs nfs4 ntfs proc qnx4 ramfs
 				reiserfs romfs squashfs smbfs sysv tmpfs
-				ubifs udf ufs umsdos usbfs vfat xenix xfs
-				xiafs"
+				ubifs udf ufs umsdos usbfs vfat xenix xfs"
 			COMPREPLY=( $(compgen -W "$TYPES" -- $cur) )
 			return 0
 			;;
