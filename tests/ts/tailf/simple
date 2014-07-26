@@ -27,9 +27,9 @@ echo {a..z} > $INPUT
 
 $TS_CMD_TAILF $INPUT > $TS_OUTPUT 2>&1 &
 
-sleep 0.1
+sleep 0.5
 echo {0..9} >> $INPUT
-sleep 0.1
+sleep 0.5
 
 rm -f $INPUT
 
