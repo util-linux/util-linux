@@ -1098,10 +1098,15 @@ calculate_adjustment(const double factor,
 
 	*retro_p = exact_adjustment - (double)*adjustment_p;
 	if (debug) {
-		printf(_("Time since last adjustment is %d seconds\n"),
+		printf(P_("Time since last adjustment is %d second\n,
+			"Time since last adjustment is %d seconds\n",
+		       (int)(systime - last_time)),
 		       (int)(systime - last_time));
-		printf(_("Need to insert %d seconds and refer time back "
-			 "%.6f seconds ago\n"), *adjustment_p, *retro_p);
+		printf(P_("Need to insert %d second and refer time back "
+			 "%.6f seconds ago\n",
+			 "Need to insert %d seconds and refer time back "
+			 "%.6f seconds ago\n", *adjustment_p),
+			 *adjustment_p, *retro_p);
 	}
 }
 
