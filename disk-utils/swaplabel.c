@@ -29,6 +29,7 @@
 #include "closestream.h"
 #include "all-io.h"
 #include "swapheader.h"
+#include "swapon-common.h"
 #include "strutils.h"
 #include "nls.h"
 
