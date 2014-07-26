@@ -174,7 +174,9 @@ static void timedout(int sig __attribute__ ((__unused__)))
 	signal(SIGALRM, timedout2);
 	alarm(10);
 	/* TRANSLATORS: The standard value for %u is 60. */
-	warnx(_("timed out after %u seconds"), timeout);
+	warnx(P_("timed out after %u second",
+		"timed out after %u seconds", timeout),
+		timeout);
 	signal(SIGALRM, SIG_IGN);
 	alarm(0);
 	timedout2(0);
