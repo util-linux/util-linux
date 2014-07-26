@@ -1232,10 +1232,9 @@ int command(char *filename, register FILE *f)
 				putchar('\n');
 				if (clreol)
 					cleareol();
-				if (nlines != 1)
-					printf(_("...back %d pages"), nlines);
-				else
-					putsout(_("...back 1 page"));
+				printf(P_("...back %d page",
+					"...back %d pages", nlines),
+					nlines);
 				if (clreol)
 					cleareol();
 				putchar('\n');
@@ -1281,10 +1280,9 @@ int command(char *filename, register FILE *f)
 			putchar('\n');
 			if (clreol)
 				cleareol();
-			if (nlines == 1)
-				putsout(_("...skipping one line"));
-			else
-				printf(_("...skipping %d lines"), nlines);
+			printf(P_("...skipping %d line",
+				"...skipping %d lines", nlines),
+				nlines);
 
 			if (clreol)
 				cleareol();
