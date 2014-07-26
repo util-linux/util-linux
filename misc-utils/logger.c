@@ -144,24 +144,22 @@ static int decode(char *name, CODE *codetab)
 
 static int pencode(char *s)
 {
-	char *save;
-	int fac, lev;
+	int facility, level;
+	char *separator;
 
-	for (save = s; *s && *s != '.'; ++s);
-	if (*s) {
-		*s = '\0';
-		fac = decode(save, facilitynames);
-		if (fac < 0)
-			errx(EXIT_FAILURE, _("unknown facility name: %s"), save);
-		*s++ = '.';
-	} else {
-		fac = LOG_USER;
-		s = save;
-	}
-	lev = decode(s, prioritynames);
-	if (lev < 0)
-		errx(EXIT_FAILURE, _("unknown priority name: %s"), save);
-	return ((lev & LOG_PRIMASK) | (fac & LOG_FACMASK));
+	separator = strchr(s, '.');
+	if (separator) {
+		*separator = '\0';
+		facility = decode(s, facilitynames);
+		if (facility < 0)
+			errx(EXIT_FAILURE, _("unknown facility name: %s"), s);
+		s = ++separator;
+	} else
+		facility = LOG_USER;
+	level = decode(s, prioritynames);
+	if (level < 0)
+		errx(EXIT_FAILURE, _("unknown priority name: %s"), s);
+	return ((level & LOG_PRIMASK) | (facility & LOG_FACMASK));
 }
 
 static int unix_socket(const char *path, const int socket_type)
