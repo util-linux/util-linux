@@ -1098,7 +1098,7 @@ calculate_adjustment(const double factor,
 
 	*retro_p = exact_adjustment - (double)*adjustment_p;
 	if (debug) {
-		printf(P_("Time since last adjustment is %d second\n,
+		printf(P_("Time since last adjustment is %d second\n",
 			"Time since last adjustment is %d seconds\n",
 		       (int)(systime - last_time)),
 		       (int)(systime - last_time));
