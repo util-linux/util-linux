@@ -205,9 +205,11 @@ static int ncolumns;
 static inline size_t err_columns_index(size_t arysz, size_t idx)
 {
 	if (idx >= arysz)
-		errx(EXIT_FAILURE, _("too many columns specified, "
-				     "the limit is %zu columns."),
-				arysz - 1);
+		errx(EXIT_FAILURE, P_("too many columns specified, "
+				     "the limit is %zu column.",
+				     "too many columns specified, "
+				     "the limit is %zu columns.", arysz - 1),
+				     arysz - 1);
 	return idx;
 }
 
