@@ -2,12 +2,12 @@
 .\" Copyright 2007 by Theodore Ts'o.  All Rights Reserved.
 .\" This file may be copied under the terms of the GNU Public License.
 .\"
-.TH UUIDD 8 "June 2011" "util-linux" "System Administration"
+.TH UUIDD 8 "July 2014" "util-linux" "System Administration"
 .SH NAME
 uuidd \- UUID generation daemon
 .SH SYNOPSIS
 .B uuidd
-.RI [ options ]
+[options]
 .SH DESCRIPTION
 The
 .B uuidd
@@ -20,8 +20,8 @@ numbers of threads running on different CPUs trying to grab UUIDs.
 .BR \-d , " \-\-debug "
 Run uuidd in debugging mode.  This prevents uuidd from running as a daemon.
 .TP
-.BR \-h , " \-\-help "
-Display help screen and exit.
+.BR \-F , " \-\-no-fork "
+Do not daemonize using a double-fork.
 .TP
 .BR \-k , " \-\-kill "
 If currently a uuidd daemon is running, kill it.
@@ -32,21 +32,12 @@ of
 .I number
 UUIDs.
 .TP
+.BR \-P , " \-\-no-pid "
+Do not create a pid file.
+.TP
 .BR \-p , " \-\-pid " \fIpath\fR
 Specify the pathname where the pid file should be written.  By default,
 the pid file is written to @localstatedir@/uuidd/uuidd.pid.
-.TP
-.BR \-P , " \-\-no-pid "
-Do not create pid file.
-.TP
-.BR \-F , " \-\-no-fork "
-Do not daemonize using double-fork.
-.TP
-.BR \-S , " \-\-socket-activation "
-Do not create the socket and instead expect it to be provided by the calling
-process.  Implies --no-fork and --no-pid.  As of this writing, this option is
-supposed to be used only with systemd.  This option must be enabled with a configure
-option.
 .TP
 .BR \-q , " \-\-quiet "
 Suppress some failure messages.
@@ -55,16 +46,20 @@ Suppress some failure messages.
 Test uuidd by trying to connect to a running uuidd daemon and
 request it to return a random-based UUID.
 .TP
+.BR \-S , " \-\-socket-activation "
+Do not create a socket but instead expect it to be provided by the calling
+process.  This implies \fB--no-fork\fR and \fB--no-pid\fR.  This option is
+intended to be used only with \fBsystemd\fR(1).  It needs to be enabled with
+a configure option.
+.TP
 .BR \-s , " \-\-socket " \fIpath\fR
-Specify the pathname used for the unix-domain socket used by uuidd.  By
-default, the pathname used is @localstatedir@/uuidd/request.  This is primarily
+Make uuidd use this pathname for the unix-domain socket.  By default, the
+pathname used is @localstatedir@/uuidd/request.  This option is primarily
 for debugging purposes, since the pathname is hard-coded in the libuuid
 library.
 .TP
-.BR \-T , " \-\-timeout " \fItimeout\fR
-Specify a timeout for uuidd.  If specified, then uuidd will exit after
-.I timeout
-seconds of inactivity.
+.BR \-T , " \-\-timeout " \fInumber\fR
+Make uuidd exit after \fInumber\fR seconds of inactivity.
 .TP
 .BR \-t , " \-\-time "
 Test uuidd by trying to connect to a running uuidd daemon and
@@ -72,8 +67,11 @@ request it to return a time-based UUID.
 .TP
 .BR \-V , " \-\-version "
 Output version information and exit.
+.TP
+.BR \-h , " \-\-help "
+Display help screen and exit.
 .SH EXAMPLE
-Start up a daemon, print 42 random keys, and then stop the daemon.
+Start up a daemon, print 42 random keys, and then stop the daemon:
 .PP
 .RS
 .nf
@@ -86,9 +84,11 @@ uuidd -d -k -s /tmp/uuidd.socket
 The
 .B uuidd
 daemon was written by Theodore Ts'o <tytso@mit.edu>.
-.SH AVAILABILITY
-The uuidd daemon is part of the util-linux package and is available from
-ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
 .SH "SEE ALSO"
 .BR uuid (3),
 .BR uuidgen (1)
+.SH AVAILABILITY
+The uuidd daemon is part of the util-linux package and is available from the
+.UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .
