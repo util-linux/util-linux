@@ -1,23 +1,19 @@
-.TH RUNUSER "1" "August 2012" "util-linux" "User Commands"
+.TH RUNUSER 1 "July 2014" "util-linux" "User Commands"
 .SH NAME
 runuser \- run a command with substitute user and group ID
 .SH SYNOPSIS
-.B runuser
-[options] -u
-.IR user
+.BR runuser " [options] " \-u
+.I user
 .IR "command " [ argument ...]
 .LP
-.B runuser
-[options] [-]
-[
-.IR "user " [ argument ...]
-]
+.BR runuser " [options] [" \- ]
+.RI [ user " [" argument "...]]"
 .SH DESCRIPTION
 .B runuser
-allows to run commands with substitute user and group ID.
-If the option \fB\-u\fR is not given, falls back to
-.B su
-compatible semantics and a shell is executed.
+allows to run commands with a substitute user and group ID.
+If the option \fB\-u\fR is not given, it falls back to
+.BR su -compatible
+semantics and a shell is executed.
 The difference between the commands
 .B runuser
 and
@@ -35,7 +31,7 @@ When called without arguments,
 defaults to running an interactive shell as
 .IR root .
 .PP
-For backward compatibility
+For backward compatibility,
 .B runuser
 defaults to not change the current directory and to only set the
 environment variables
@@ -54,32 +50,27 @@ This version of
 uses PAM for session management.
 .SH OPTIONS
 .TP
-\fB\-c\fR \fIcommand\fR, \fB\-\-command\fR=\fIcommand\fR
+.BR \-c , " \-\-command" = \fIcommand
 Pass
 .I command
 to the shell with the
 .B \-c
 option.
 .TP
-\fB\-\-session\-command\fR=\fIcommand\fR
-Same as
-.B \-c ,
-but do not create a new session (discouraged).
-.TP
-\fB\-f\fR, \fB\-\-fast\fR
+.BR \-f , " \-\-fast"
 Pass
 .B \-f
 to the shell, which may or may not be useful depending on the
 shell.
 .TP
-\fB\-g\fR, \fB\-\-group\fR=\fIgroup\fR\fR
-specify the primary group, this option is allowed to the root user only
+.BR \-g , " \-\-group" = \fIgroup
+The primary group to be used.  This option is allowed for the root user only.
 .TP
-\fB\-G\fR, \fB\-\-supp-group\fR=\fIgroup\fR\fR
-specify a supplemental group, this option is allowed to the root user only
+.BR \-G , " \-\-supp-group" = \fIgroup
+A supplemental group to be used.  This option is allowed for the root user only.
 .TP
-\fB\-\fR, \fB\-l\fR, \fB\-\-login\fR
-Starts the shell as a login shell with an environment similar to a real
+.BR \- , " \-l" , " \-\-login"
+Start the shell as a login shell with an environment similar to a real
 login:
 .RS 10
 .TP
@@ -104,8 +95,8 @@ sets argv[0] of the shell to
 in order to make the shell a login shell
 .RE
 .TP
-\fB\-m\fR, \fB\-p\fR, \fB\-\-preserve-environment\fR
-Preserves the entire environment, i.e. does not set
+.BR \-m , " \-p" , " \-\-preserve-environment"
+Preserve the entire environment, i.e. it does not set
 .BR HOME ,
 .BR SHELL ,
 .B USER
@@ -113,9 +104,9 @@ nor
 .BR LOGNAME .
 The option is ignored if the option \fB\-\-login\fR is specified.
 .TP
-\fB\-s\fR \fISHELL\fR, \fB\-\-shell\fR=\fISHELL\fR
-Runs the specified shell instead of the default.  The shell to run is
-selected according to the following rules in order:
+.BR \-s , " \-\-shell" = \fIshell
+Run the specified \fIshell\fR instead of the default.  The shell to run is
+selected according to the following rules, in order:
 .RS 10
 .TP
 o
@@ -123,11 +114,11 @@ the shell specified with
 .B \-\-shell
 .TP
 o
-The shell specified in the environment variable
+the shell specified in the environment variable
 .B SHELL
 if the
 .B \-\-preserve-environment
-option is used.
+option is used
 .TP
 o
 the shell listed in the passwd entry of the target user
@@ -143,11 +134,16 @@ option and the
 .B SHELL
 environment variables are ignored unless the calling user is root.
 .TP
-\fB\-\-help\fR
-Display help text and exit.
+.BI \-\-session\-command= command
+Same as
+.B \-c ,
+but do not create a new session.  (Discouraged.)
 .TP
-\fB\-\-version\fR
+.BR \-V , " \-\-version"
 Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
 .SH CONFIG FILES
 .B runuser
 reads the
@@ -227,9 +223,10 @@ global logindef config file
 .BR shells (5),
 .BR login.defs (5),
 .BR su (1)
-.SH AUTHOR
-Derived from coreutils' su which was based on an implemenation by
-David MacKenzie and the Fedora runuser command by Dan Walsh.
+.SH HISTORY
+This \fB runuser\fR command was
+derived from coreutils' \fBsu\fR, which was based on an implemenation by
+David MacKenzie, and the Fedora \fBrunuser\fR command by Dan Walsh.
 .SH AVAILABILITY
 The runuser command is part of the util-linux package and is
 available from

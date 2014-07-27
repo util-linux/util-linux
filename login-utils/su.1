@@ -1,10 +1,8 @@
-.TH SU "1" "October 2013" "util-linux" "User Commands"
+.TH SU 1 "July 2014" "util-linux" "User Commands"
 .SH NAME
 su \- run a command with substitute user and group ID
 .SH SYNOPSIS
-.B su
-.RI [ options ]
-.RB [ \- ]
+.BR su " [options] [" \- ]
 .RI [ user " [" argument ...]]
 .SH DESCRIPTION
 .B su
@@ -15,7 +13,7 @@ When called without arguments,
 defaults to running an interactive shell as
 .IR root .
 .PP
-For backward compatibility
+For backward compatibility,
 .B su
 defaults to not change the current directory and to only set the
 environment variables
@@ -43,31 +41,26 @@ implementations, such as support for a wheel group, have to be
 configured via PAM.
 .SH OPTIONS
 .TP
-\fB\-c\fR, \fB\-\-command\fR=\fIcommand\fR
+.BR \-c , " \-\-command" = \fIcommand
 Pass
 .I command
 to the shell with the
 .B \-c
 option.
 .TP
-\fB\-\-session\-command\fR=\fIcommand\fR
-Same as
-.B \-c
-but do not create a new session (discouraged).
-.TP
-\fB\-f\fR, \fB\-\-fast\fR
+.BR \-f , " \-\-fast"
 Pass
 .B \-f
 to the shell, which may or may not be useful, depending on the shell.
 .TP
-\fB\-g\fR, \fB\-\-group\fR=\fIgroup\fR\fR
+.BR \-g , " \-\-group" = \fIgroup
 Specify the primary group.  This option is available to the root user only.
 .TP
-\fB\-G\fR, \fB\-\-supp-group\fR=\fIgroup\fR\fR
+.BR \-G , " \-\-supp-group" = \fIgroup
 Specify a supplemental group.  This option is available to the root user only.
 .TP
-\fB\-\fR, \fB\-l\fR, \fB\-\-login\fR
-Starts the shell as a login shell with an environment similar to a real
+.BR \- , " \-l" , " \-\-login"
+Start the shell as a login shell with an environment similar to a real
 login:
 .RS 10
 .TP
@@ -92,8 +85,8 @@ sets argv[0] of the shell to
 in order to make the shell a login shell
 .RE
 .TP
-\fB\-m\fR, \fB\-p\fR, \fB\-\-preserve-environment\fR
-Preserves the entire environment, i.e. it does not set
+.BR \-m , " \-p" , " \-\-preserve-environment"
+Preserve the entire environment, i.e. it does not set
 .BR HOME ,
 .BR SHELL ,
 .B USER
@@ -101,8 +94,8 @@ nor
 .BR LOGNAME .
 This option is ignored if the option \fB\-\-login\fR is specified.
 .TP
-\fB\-s\fR, \fB\-\-shell\fR=\fIshell\fR
-Runs the specified \fIshell\fR instead of the default.  The shell to run is
+.BR \-s , " \-\-shell" = \fIshell
+Run the specified \fIshell\fR instead of the default.  The shell to run is
 selected according to the following rules, in order:
 .RS 10
 .TP
@@ -131,11 +124,16 @@ option and the
 .B SHELL
 environment variables are ignored unless the calling user is root.
 .TP
-\fB\-\-help\fR
-Display help text and exit.
+.BI \-\-session-command= command
+Same as
+.B \-c
+but do not create a new session.  (Discouraged.)
 .TP
-\fB\-\-version\fR
+.BR \-V , " \-\-version"
 Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
 .SH SIGNALS
 Upon receiving either
 .BR SIGINT ,
@@ -245,8 +243,9 @@ session  required  pam_lastlog.so nowtmp
 .BR pam (8),
 .BR shells (5),
 .BR login.defs (5)
-.SH AUTHOR
-Derived from coreutils' su which was based on an implementation by
+.SH HISTORY
+This \fBsu\fR command was
+derived from coreutils' \fBsu\fR, which was based on an implementation by
 David MacKenzie.
 .SH AVAILABILITY
 The su command is part of the util-linux package and is
