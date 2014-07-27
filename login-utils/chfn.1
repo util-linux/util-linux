@@ -2,15 +2,11 @@
 .\"  chfn.1 -- change your finger information
 .\"  (c) 1994 by salvatore valente <svalente@athena.mit.edu>
 .\"
-.\"  this program is free software.  you can redistribute it and
-.\"  modify it under the terms of the gnu general public license.
-.\"  there is no warranty.
+.\"  This program is free software.  You can redistribute it and
+.\"  modify it under the terms of the GNU General Public License.
+.\"  There is no warranty.
 .\"
-.\"  $Author: faith $
-.\"  $Revision: 1.1 $
-.\"  $Date: 1995/03/12 01:29:16 $
-.\"
-.TH CHFN 1 "July 2009" "util-linux" "User Commands"
+.TH CHFN 1 "July 2014" "util-linux" "User Commands"
 .SH NAME
 chfn \- change your finger information
 .SH SYNOPSIS
@@ -38,40 +34,40 @@ program.  The Linux
 command will display four pieces of information that can be changed by
 .BR chfn :
 your real name, your work room and phone, and your home phone.
-
-.B chfn
-supports non-local entries (kerberos, LDAP, etc.\&) if linked with libuser,
-otherwise use ypchsh, lchsh or any other implementation for non-local
-entries.
-.SS COMMAND LINE
+.PP
 Any of the four pieces of information can be specified on the command
 line.  If no information is given on the command line,
 .B chfn
 enters interactive mode.
-.SS INTERACTIVE MODE
+.PP
 In interactive mode,
 .B chfn
 will prompt for each field.  At a prompt, you can enter the new information,
 or just press return to leave the field unchanged.  Enter the keyword
 "none" to make the field blank.
+.PP
+.B chfn
+supports non-local entries (kerberos, LDAP, etc.\&) if linked with libuser,
+otherwise use \fBypchfn\fR, \fBlchfn\fR or any other implementation for
+non-local entries.
 .SH OPTIONS
 .TP
-.BI "\-f, \-\-full-name " full-name
+.BR \-f , " \-\-full-name " \fIfull-name
 Specify your real name.
 .TP
-.BI "\-o, \-\-office " office
+.BR \-o , " \-\-office " \fIoffice
 Specify your office room number.
 .TP
-.BI "\-p, \-\-office-phone " office-phone
+.BR \-p , " \-\-office-phone " \fIoffice-phone
 Specify your office phone number.
 .TP
-.BI "\-h, \-\-home-phone " home-phone
+.BR \-h , " \-\-home-phone " \fIhome-phone
 Specify your home phone number.
 .TP
-.B "\-u, \-\-help"
+.BR \-u , " \-\-help"
 Display help text and exit.
 .TP
-.B "\-v, \-\-version"
+.BR \-v , " \-\-version"
 Display version information and exit.
 .SH "EXIT STATUS"
 Returns 0 if operation was successful, 1 if operation failed or command syntax was not valid.

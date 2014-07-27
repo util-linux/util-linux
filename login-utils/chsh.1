@@ -2,15 +2,11 @@
 .\"  chsh.1 -- change your login shell
 .\"  (c) 1994 by salvatore valente <svalente@athena.mit.edu>
 .\"
-.\"  this program is free software.  you can redistribute it and
-.\"  modify it under the terms of the gnu general public license.
-.\"  there is no warranty.
+.\"  This program is free software.  You can redistribute it and
+.\"  modify it under the terms of the GNU General Public License.
+.\"  There is no warranty.
 .\"
-.\"  $Author: faith $
-.\"  $Revision: 1.1 $
-.\"  $Date: 1995/03/12 01:28:58 $
-.\"
-.TH CHSH 1 "July 2009" "util-linux" "User Commands"
+.TH CHSH 1 "July 2014" "util-linux" "User Commands"
 .SH NAME
 chsh \- change your login shell
 .SH SYNOPSIS
@@ -30,22 +26,22 @@ prompts for one.
 
 .B chsh
 supports non-local entries (kerberos, LDAP, etc.\&) if linked with libuser,
-otherwise use ypchsh, lchsh or any other implementation for non-local
-entries.
+otherwise use \fBypchsh\fR, \fBlchsh\fR or any other implementation for
+non-local entries.
 .SH OPTIONS
 .TP
-.BI "\-s, \-\-shell " shell
+.BR \-s , " \-\-shell " \fIshell
 Specify your login shell.
 .TP
-.B "\-l, \-\-list-shells"
+.BR \-l , " \-\-list-shells"
 Print the list of shells listed in
 .I /etc/shells
 and exit.
 .TP
-.B "\-u, \-\-help"
+.BR \-u , " \-\-help"
 Display help text and exit.
 .TP
-.B "\-v, \-\-version"
+.BR \-v , " \-\-version"
 Display version information and exit.
 .SH "VALID SHELLS"
 .B chsh
