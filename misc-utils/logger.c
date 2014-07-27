@@ -535,6 +535,7 @@ int main(int argc, char **argv)
 		.rfc5424_host = 1,
 	};
 	int ch;
+	int stdout_reopened = 0;
 #ifdef HAVE_LIBSYSTEMD
 	FILE *jfd = NULL;
 #endif
@@ -570,8 +571,8 @@ int main(int argc, char **argv)
 		switch (ch) {
 		case 'f':		/* file to log */
 			if (freopen(optarg, "r", stdin) == NULL)
-				err(EXIT_FAILURE, _("file %s"),
-				    optarg);
+				err(EXIT_FAILURE, _("file %s"), optarg);
+			stdout_reopened = 1;
 			break;
 		case 'i':		/* log process id also */
 			ctl.logflags |= LOG_PID;
@@ -642,6 +643,8 @@ int main(int argc, char **argv)
 	}
 	argc -= optind;
 	argv += optind;
+	if (stdout_reopened && argc)
+		warnx(_("--file <file> and <message> are mutually exclusive, message is ignored"));
 #ifdef HAVE_LIBSYSTEMD
 	if (jfd) {
 		int ret = journald_entry(jfd);
