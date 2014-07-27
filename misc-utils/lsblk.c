@@ -205,9 +205,11 @@ static int ncolumns;
 static inline size_t err_columns_index(size_t arysz, size_t idx)
 {
 	if (idx >= arysz)
-		errx(EXIT_FAILURE, _("too many columns specified, "
-				     "the limit is %zu columns."),
-				arysz - 1);
+		errx(EXIT_FAILURE, P_("too many columns specified, "
+				     "the limit is %zu column.",
+				     "too many columns specified, "
+				     "the limit is %zu columns.", arysz - 1),
+				     arysz - 1);
 	return idx;
 }
 
@@ -1422,8 +1424,11 @@ static void parse_excludes(const char *str0)
 
 		if (nexcludes == ARRAY_SIZE(excludes))
 			/* TRANSLATORS: The standard value for %d is 256. */
-			errx(EXIT_FAILURE, _("the list of excluded devices is "
-					"too large (limit is %d devices)"),
+			errx(EXIT_FAILURE, P_("the list of excluded devices is "
+					"too large (limit is %d device)",
+					"the list of excluded devices is "
+					"too large (limit is %d devices)",
+					(int)ARRAY_SIZE(excludes)),
 					(int)ARRAY_SIZE(excludes));
 
 		str = end && *end ? end + 1 : NULL;
@@ -1449,8 +1454,11 @@ static void parse_includes(const char *str0)
 
 		if (nincludes == ARRAY_SIZE(includes))
 			/* TRANSLATORS: The standard value for %d is 256. */
-			errx(EXIT_FAILURE, _("the list of included devices is "
-					"too large (limit is %d devices)"),
+			errx(EXIT_FAILURE, P_("the list of included devices is "
+					"too large (limit is %d device)",
+					"the list of included devices is "
+					"too large (limit is %d devices)",
+					(int)ARRAY_SIZE(includes)),
 					(int)ARRAY_SIZE(includes));
 		str = end && *end ? end + 1 : NULL;
 	}
