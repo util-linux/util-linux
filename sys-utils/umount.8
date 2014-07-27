@@ -151,25 +151,24 @@ it finds the option \fBloop=...\fR in
 or when the \fB\-d\fR option was given.  Any still associated loop devices
 can be freed by using \fBlosetup -d\fR; see
 .BR losetup (8).
-.SH "EXTERNAL HELPERS"
+.SH EXTERNAL HELPERS
 The syntax of external unmount helpers is:
 .PP
-.BI /sbin/umount. suffix
+.RS
+.BI umount. suffix
 .RI { directory | device }
 .RB [ \-flnrv ]
 .RB [ \-t
 .IR type . subtype ]
+.RE
 .PP
-where \fIsuffix\fR is the filesystem type or a value from a "uhelper=" or
-"helper=" mtab option.  The \fB\-t\fR option can be used for filesystems
-with subtypes support (for example \fB/sbin/mount.fuse -t fuse.sshfs\fR).
+where \fIsuffix\fR is the filesystem type.
+The \fB\-t\fR option can be used for filesystems that
+have subtype support.  For example:
 .PP
-The \fBuhelper=\fR (unprivileged unmount helper) mount option can be used
-when non-root users need to be able to unmount a mountpoint which is not
-defined in \fI/etc/fstab\fR (e.g. devices mounted by udisk).
-.PP
-The \fBhelper=\fR mount option redirects all unmount requests to the
-\fB/sbin/umount.\fItype\fR helper independently of UID.
+.RS
+.B umount.fuse \-t fuse.sshfs
+.RE
 .SH FILES
 .TP
 .B /etc/mtab
