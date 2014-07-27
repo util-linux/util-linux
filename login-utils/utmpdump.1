@@ -14,7 +14,7 @@
 .\" along with this program; if not, write to the Free Software
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 .\"
-.TH UTMPDUMP "1" "July 2012" "util-linux" "System Administration"
+.TH UTMPDUMP 1 "July 2014" "util-linux" "User Commands"
 .SH NAME
 utmpdump \- dump UTMP and WTMP files in raw format
 .SH SYNOPSIS
@@ -29,16 +29,21 @@ reads from stdin unless a
 .I filename
 is passed.
 .SH OPTIONS
-.IP "\fB\-f\fR, \fB\-\-follow\fP"
+.TP
+.BR \-f , " \-\-follow"
 Output appended data as the file grows.
-.IP "\fB\-o\fR, \fB\-\-output\fP \fIfile\fR
+.TP
+.BR \-o , " \-\-output " \fIfile
 Write command output to \fIfile\fR instead of standard output.
-.IP "\fB\-r\fR, \fB\-\-reverse\fP
+.TP
+.BR \-r , " \-\-reverse"
 Undump, write back edited login information into the utmp or wtmp files.
-.IP "\fB\-h\fR, \fB\-\-help\fP"
-Display help text and exit.
-.IP "\fB\-V\fR, \fB\-\-version\fP"
+.TP
+.BR \-V , " \-\-version"
 Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
 .SH NOTES
 .B utmpdump
 can be useful in cases of corrupted utmp or wtmp entries.  It can dump
