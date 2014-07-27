@@ -298,7 +298,7 @@ static pid_t get_process_id(struct logger_ctl *ctl)
 
 static void syslog_rfc3164(struct logger_ctl *ctl, char *msg)
 {
-	char buf[1000], pid[30], *cp, *tp;
+	char buf[1000], pid[30], *cp, *tp, *hostname, *dot;
 	time_t now;
 	pid_t process;
 
@@ -312,10 +312,15 @@ static void syslog_rfc3164(struct logger_ctl *ctl, char *msg)
 		cp = ctl->tag;
 	else
 		cp = xgetlogin();
+	hostname = xgethostname();
+	dot = strchr(hostname, '.');
+	if (dot)
+		*dot = '\0';
 	time(&now);
 	tp = ctime(&now) + 4;
-	snprintf(buf, sizeof(buf), "<%d>%.15s %.200s%s: %.400s",
-		 ctl->pri, tp, cp, pid, msg);
+	snprintf(buf, sizeof(buf), "<%d>%.15s %s %.200s%s: %.400s",
+		 ctl->pri, tp, hostname, cp, pid, msg);
+	free(hostname);
 	if (write_all(ctl->fd, buf, strlen(buf) + 1) < 0)
 		warn(_("write failed"));
 	if (ctl->logflags & LOG_PERROR)
