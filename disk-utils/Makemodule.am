@@ -110,6 +110,7 @@ if BUILD_FDFORMAT
 usrsbin_exec_PROGRAMS += fdformat
 dist_man_MANS += disk-utils/fdformat.8
 fdformat_SOURCES = disk-utils/fdformat.c
+fdformat_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_BLOCKDEV
