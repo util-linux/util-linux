@@ -116,6 +116,7 @@ UL_WARN_ADD([-Wnested-externs])
 UL_WARN_ADD([-Wpointer-arith])
 UL_WARN_ADD([-Wstrict-prototypes])
 UL_WARN_ADD([-Wformat-security])
+UL_WARN_ADD([-Wimplicit-function-declaration])
 AC_SUBST([WARN_CFLAGS])
 
 UL_WARN_ADD([-Wno-clobbered], [BSD_WARN_CFLAGS])
