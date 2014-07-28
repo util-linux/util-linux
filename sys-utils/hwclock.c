@@ -1495,6 +1495,9 @@ static int compare_clock (const bool utc, const bool local_opt)
 	bool hclock_valid = FALSE, universal, first_pass = TRUE;
 	int rc;
 
+	if (ur->get_permissions())
+		return EX_NOPERM;
+
 	/* dummy call for increased precision */
 	gettimeofday(&tv, NULL);
 
@@ -1893,7 +1896,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!(show | set | systohc | hctosys | systz | adjust | getepoch
-	      | setepoch | predict))
+	      | setepoch | predict | compare))
 		show = 1;	/* default to show */
 
 	if (getuid() == 0)
