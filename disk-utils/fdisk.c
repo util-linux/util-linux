@@ -670,10 +670,13 @@ static int is_ide_cdrom_or_tape(char *device)
 	return ret;
 }
 
-static void print_device_pt(struct fdisk_context *cxt, char *device)
+static void print_device_pt(struct fdisk_context *cxt, char *device, int warnme)
 {
-	if (fdisk_context_assign_device(cxt, device, 1) != 0)	/* read-only */
-		err(EXIT_FAILURE, _("cannot open %s"), device);
+	if (fdisk_context_assign_device(cxt, device, 1) != 0) {	/* read-only */
+		if (warnme || errno == EACCES)
+			warn(_("cannot open %s"), device);
+		return;
+	}
 
 	list_disk_geometry(cxt);
 
@@ -717,7 +720,7 @@ static void print_all_devices_pt(struct fdisk_context *cxt)
 		if (!cn)
 			continue;
 		if (!is_ide_cdrom_or_tape(cn))
-			print_device_pt(cxt, cn);
+			print_device_pt(cxt, cn, 0);
 		free(cn);
 	}
 	fclose(f);
@@ -912,7 +915,7 @@ int main(int argc, char **argv)
 		if (argc > optind) {
 			int k;
 			for (k = optind; k < argc; k++)
-				print_device_pt(cxt, argv[k]);
+				print_device_pt(cxt, argv[k], 1);
 		} else
 			print_all_devices_pt(cxt);
 		break;
