@@ -435,6 +435,11 @@ static void logger_open(struct logger_ctl *ctl)
 			ctl->syslogfp = syslog_rfc5424;
 		return;
 	}
+
+	if (ctl->syslogfp == syslog_rfc5424 || ctl->syslogfp == syslog_rfc3164)
+		errx(EXIT_FAILURE, _("--server or --socket are required to "
+				     "log by --rfc5424 or --rfc3164."));
+
 	openlog(ctl->tag ? ctl->tag : xgetlogin(), ctl->logflags, 0);
 	ctl->syslogfp = syslog_local;
 }
