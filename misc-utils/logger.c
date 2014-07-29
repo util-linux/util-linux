@@ -592,9 +592,13 @@ int main(int argc, char **argv)
 		case 'i':		/* log process id also */
 			ctl.logflags |= LOG_PID;
 			if (optarg) {
-				if (!strcmp(optarg, "ppid"))
+				const char *p = optarg;
+
+				if (*p == '=')
+					p++;
+				if (!strcmp(p, "ppid"))
 					ctl.ppid = 1;
-				else if (!strcmp(optarg, "pid"))
+				else if (!strcmp(p, "pid"))
 					ctl.ppid = 0;
 				else
 					warnx(_("ignoring unknown option argument: %s"), optarg);
