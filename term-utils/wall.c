@@ -202,8 +202,6 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		char *whom, *where, *date;
 		struct passwd *pw;
 		time_t now;
-		ssize_t len;
-		int i;
 
 		if (!(whom = getlogin()) || !*whom)
 			whom = (pw = getpwuid(getuid())) ? pw->pw_name : "???";
@@ -234,10 +232,7 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		fprintf(fp, "\r%*s\r\n", TERM_WIDTH, " ");
 		sprintf(lbuf, _("Broadcast message from %s@%s (%s) (%s):"),
 			      whom, hostname, where, date);
-		len = strlen(lbuf);
-		for (i = 0; 0 < len; i++)
-			len -= fprintf(fp, "%-*.*s\007\007\r\n", TERM_WIDTH, TERM_WIDTH,
-				       lbuf + (i * TERM_WIDTH)) + 4;
+		fprintf(fp, "%-*.*s\007\007\r\n", TERM_WIDTH, TERM_WIDTH, lbuf);
 		free(hostname);
 		free(date);
 	}
