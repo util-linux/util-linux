@@ -139,17 +139,21 @@ static void verify_disk(int ctrl, unsigned int track_from, unsigned int track_to
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out, _("Usage: %s [options] device\n"),
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] <device>\n"),
 		program_invocation_short_name);
 
-	fprintf(out, _("\nOptions:\n"
-		       " -f, --from <N>    start at the track N (default 0)\n"
-		       " -t, --to <N>      stop at the track N\n"
-		       " -r, --repair <N>  try to repair tracks failed during\n"
-		       "                   the verification (max N retries)\n"
-		       " -n, --no-verify   disable the verification after the format\n"
-		       " -V, --version     output version information and exit\n"
-		       " -h, --help        display this help and exit\n\n"));
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -f, --from <N>    start at the track N (default 0)\n"), out);
+	fputs(_(" -t, --to <N>      stop at the track N\n"), out);
+	fputs(_(" -r, --repair <N>  try to repair tracks failed during\n"
+                "                     the verification (max N retries)\n"), out);
+	fputs(_(" -n, --no-verify   disable the verification after the format\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("fdformat(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -174,7 +178,6 @@ int main(int argc, char **argv)
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
 	};
-
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
