@@ -73,8 +73,8 @@ static void usage(int status)
 	fputs(_(" -n, --net   [=<file>]  enter network namespace\n"), out);
 	fputs(_(" -p, --pid   [=<file>]  enter pid namespace\n"), out);
 	fputs(_(" -U, --user  [=<file>]  enter user namespace\n"), out);
-	fputs(_(" -S, --setuid <uid>     set uid in user namespace\n"), out);
-	fputs(_(" -G, --setgid <gid>     set gid in user namespace\n"), out);
+	fputs(_(" -S, --setuid <uid>     set uid in entered namespace\n"), out);
+	fputs(_(" -G, --setgid <gid>     set gid in entered namespace\n"), out);
 	fputs(_(" -r, --root  [=<dir>]   set the root directory\n"), out);
 	fputs(_(" -w, --wd    [=<dir>]   set the working directory\n"), out);
 	fputs(_(" -F, --no-fork          do not fork before exec'ing <program>\n"), out);
@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
 
 	struct namespace_file *nsfile;
 	int c, namespaces = 0;
-	bool do_rd = false, do_wd = false;
+	bool do_rd = false, do_wd = false, force_uid = false, force_gid = false;
 	int do_fork = -1; /* unknown yet */
 	uid_t uid = 0;
 	gid_t gid = 0;
@@ -243,9 +243,11 @@ int main(int argc, char *argv[])
 			break;
 		case 'S':
 			uid = strtoul_or_err(optarg, _("failed to parse uid"));
+			force_uid = true;
 			break;
 		case 'G':
 			gid = strtoul_or_err(optarg, _("failed to parse gid"));
+			force_gid = true;
 			break;
 		case 'F':
 			do_fork = 0;
@@ -328,12 +330,16 @@ int main(int argc, char *argv[])
 	if (do_fork == 1)
 		continue_as_child();
 
-	if (namespaces & CLONE_NEWUSER) {
-		if (setgroups(0, NULL))		/* drop supplementary groups */
+	/* for user namespaces we always set UID and GID (default is 0) */
+	if (namespaces & CLONE_NEWUSER)
+		force_uid = true, force_gid = true;
+
+	if (force_uid || force_gid) {
+		if (force_gid && setgroups(0, NULL))		/* drop supplementary groups */
 			err(EXIT_FAILURE, _("setgroups failed"));
-		if (setgid(gid) < 0)
+		if (force_gid && setgid(gid) < 0)		/* change GID */
 			err(EXIT_FAILURE, _("setgid failed"));
-		if (setuid(uid) < 0)
+		if (force_uid && setuid(uid) < 0)		/* change UID */
 			err(EXIT_FAILURE, _("setuid failed"));
 	}
 
