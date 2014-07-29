@@ -1,6 +1,11 @@
 
  Note that items with (!) have high priority.
 
+nsenter(1)
+----------
+ - read the default UID and GID from the target process.
+   http://thread.gmane.org/gmane.linux.utilities.util-linux-ng/9553/focus=9585
+
 hwlock
 ------
  - use /var/lib/hwclock/drift to store hw-clock drift numbers.
