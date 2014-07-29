@@ -33,7 +33,7 @@
 .\"
 .\" Section on valid facility and level strings added by
 .\" and1000@debian.org, 26 Oct 1997.
-.TH LOGGER "1" "April 2013" "util-linux" "User Commands"
+.TH LOGGER "1" "June 2014" "util-linux" "User Commands"
 .SH NAME
 logger \- a shell command interface to the syslog(3) system log module
 .SH SYNOPSIS
@@ -56,9 +56,13 @@ port defined in /etc/services, which is often
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
 .TP
-\fB\-i\fR, \fB\-\-id\fR
-Log the process ID of the logger process with each line.
-.TP
+\fB\-i\fR, \fB\-\-id\fR=[\fBppid\fR|\fBpid\fR]
+Log the PID of the logger process with each line.  When optional
+argument
+.B ppid
+is specified PPID is used instead of logger command PID.  Use of
+.B ppid
+is recommended in scripts that send several messages.
 .TP
 \fB\-n\fR, \fB\-\-server\fR \fIserver\fR
 Write to the specified remote syslog
@@ -104,6 +108,32 @@ specified by the \fB\-p\fR option.  Similarly, if no prefix is provided,
 the line is logged using the \fB\-p\fR \fIpriority\fR.
 
 This option doesn't affect a command-line message.
+
+.TP
+\fB\-\-rfc3164\fR
+Use RFC 3164 BSD syslog protocol to submit messages to remote server.
+.TP
+\fB\-\-rfc5424\fR [\fInotime\fR,\fInotq\fR,\fInohost\fR]
+Use RFC 5424 syslog protocol to submit messages to remote server.
+Optional argument
+.I notime
+will supress submission of sender time stamp that is in ISO-8601 format,
+including microseconds and timezone.  When
+.I notime
+is specified the time quality structured data, that can be suppressed
+separately with
+.IR notq ,
+is excluded from output.  The time quality information tells if local
+clock was syncronized, and maximum number of microseconds the time stamp
+could be off.  Option argument
+.I nohost
+will suppress
+.IR gethostname (2)
+information from message header.
+.IP
+The rfc5424 protocol has been default for
+.B logger
+since version 2.26.
 .TP
 \fB\-s\fR, \fB\-\-stderr\fR
 Output the message to standard error as well as to the system log.
@@ -160,32 +190,53 @@ to start with a hyphen (\-).
 Write this \fImessage\fR to the log; if not specified, and the
 .B \-f
 flag is not provided, standard input is logged.
-.PP
+.SH RETURN VALUE
 The
 .B logger
 utility exits 0 on success, and >0 if an error occurs.
-.PP
+.SH FACILITIES AND LEVELS
 Valid facility names are:
-.IR auth , \ authpriv
-(for security information of a sensitive nature),
-.IR cron , \ daemon , \ ftp , \ kern
-(can't be generated from user process),
-.IR lpr , \ mail , \ news , \ security
-(deprecated synonym for
-.IR auth ), \ syslog , \ user , \ uucp ,
-and
-.IR local0 \ to \ local7 ,
-inclusive.
+.IP
+.TS
+tab(:);
+left l l.
+\fIauth\fR
+\fIauthpriv\fR:for security information of a sensitive nature
+\fIcron\fR
+\fIdaemon\fR
+\fIftp\fR
+\fIkern\fR:cannot be generated from user process
+\fIlpr\fR
+\fImail\fR
+\fInews\fR
+\fIsyslog\fR
+\fIuser\fR
+\fIuucp\fR
+\fIlocal0\fR
+  to:
+\fIlocal7\fR
+\fIsecurity\fR:deprecated synonym for \fIauth\fR
+.TE
 .PP
 Valid level names are:
-.IR alert , \ crit , \ debug , \ emerg , \ err , \ error
-(deprecated synonym for
-.IR err ), \ info , \ notice , \ panic
-(deprecated synonym for
-.IR  emerg ), \ warning , \ warn
-(deprecated synonym for
-.IR warning ).
-For the priority order and intended purposes of these levels, see
+.IP
+.TS
+tab(:);
+left l l.
+\fIemerg\fR
+\fIalert\fR
+\fIcrit\fR
+\fIerr\fR
+\fIwarning\fR
+\fInotice\fR
+\fIinfo\fR
+\fIdebug\fR
+\fIpanic\fR:deprecated synonym for \fIemerg\fR
+\fIerror\fR:deprecated synonym for \fIerr\fR
+\fIwarn\fR:deprecated synonym for \fIwarning\fR
+.TE
+.PP
+For the priority order and intended purposes of these facilities and levels, see
 .BR syslog (3).
 .SH EXAMPLES
 logger System rebooted
