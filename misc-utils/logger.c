@@ -298,56 +298,63 @@ static pid_t get_process_id(struct logger_ctl *ctl)
 
 static void syslog_rfc3164(struct logger_ctl *ctl, char *msg)
 {
-	char buf[1000], pid[30], *cp, *tp, *hostname, *dot;
+	char *buf, pid[30] = { '\0' }, *cp, *tp, *hostname, *dot;
 	time_t now;
 	pid_t process;
+	int len;
 
 	if (ctl->fd < 0)
 		return;
 	if ((process = get_process_id(ctl)))
 		snprintf(pid, sizeof(pid), "[%d]", process);
-	else
-		pid[0] = 0;
-	if (ctl->tag)
-		cp = ctl->tag;
-	else
-		cp = xgetlogin();
+
+	cp = ctl->tag ? ctl->tag : xgetlogin();
+
 	hostname = xgethostname();
 	dot = strchr(hostname, '.');
 	if (dot)
 		*dot = '\0';
+
 	time(&now);
 	tp = ctime(&now) + 4;
-	snprintf(buf, sizeof(buf), "<%d>%.15s %s %.200s%s: %.400s",
+
+	len = xasprintf(&buf, "<%d>%.15s %s %.200s%s: %.400s",
 		 ctl->pri, tp, hostname, cp, pid, msg);
-	free(hostname);
-	if (write_all(ctl->fd, buf, strlen(buf) + 1) < 0)
+
+	if (write_all(ctl->fd, buf, len) < 0)
 		warn(_("write failed"));
 	if (ctl->logflags & LOG_PERROR)
 		fprintf(stderr, "%s\n", buf);
+
+	free(hostname);
+	free(buf);
 }
 
 static void syslog_rfc5424(struct logger_ctl *ctl, char *msg)
 {
-	char *buf, pid[32], *tag;
+	char *buf, *tag = NULL, *hostname = NULL;
+	char pid[32] = { '\0' }, time[64] = { '\0' }, timeq[80] = { '\0' };
 	struct ntptimeval ntptv;
-	char fmt[64], time[64], timeq[80], *hostname;
 	struct timeval tv;
 	struct tm *tm;
 	pid_t process;
+	int len;
 
 	if (ctl->fd < 0)
 		return;
+
 	if (ctl->rfc5424_time) {
 		gettimeofday(&tv, NULL);
 		if ((tm = localtime(&tv.tv_sec)) != NULL) {
+			char fmt[64];
+
 			strftime(fmt, sizeof(fmt), " %Y-%m-%dT%H:%M:%S.%%06u%z",
 				 tm);
 			snprintf(time, sizeof(time), fmt, tv.tv_usec);
 		} else
 			err(EXIT_FAILURE, _("localtime() failed"));
-	} else
-		time[0] = 0;
+	}
+
 	if (ctl->rfc5424_host) {
 		hostname = xgethostname();
 		/* Arbitrary looking 'if (var < strlen()) checks originate from
@@ -355,18 +362,16 @@ static void syslog_rfc5424(struct logger_ctl *ctl, char *msg)
 		if (255 < strlen(hostname))
 			errx(EXIT_FAILURE, _("hostname '%s' is too long"),
 			     hostname);
-	} else
-		hostname = xcalloc(1, sizeof(char));
-	if (ctl->tag)
-		tag = ctl->tag;
-	else
-		tag = xgetlogin();
+	}
+
+	tag = ctl->tag ? ctl->tag : xgetlogin();
+
 	if (48 < strlen(tag))
 		errx(EXIT_FAILURE, _("tag '%s' is too long"), tag);
+
 	if ((process = get_process_id(ctl)))
 		snprintf(pid, sizeof(pid), " %d", process);
-	else
-		pid[0] = 0;
+
 	if (ctl->rfc5424_tq) {
 		if (ntp_gettime(&ntptv) == TIME_OK)
 			snprintf(timeq, sizeof(timeq),
@@ -375,15 +380,20 @@ static void syslog_rfc5424(struct logger_ctl *ctl, char *msg)
 		else
 			snprintf(timeq, sizeof(timeq),
 				 " [timeQuality tzKnown=\"1\" isSynced=\"0\"]");
-	} else
-		timeq[0] = 0;
-	xasprintf(&buf, "<%d>1%s%s%s %s -%s%s %s", ctl->pri, time,
-		  hostname[0] ? " " : "", hostname, tag, pid, timeq, msg);
-	if (write_all(ctl->fd, buf, strlen(buf) + 1) < 0)
+	}
+
+	len = xasprintf(&buf, "<%d>1%s%s%s %s -%s%s %s", ctl->pri, time,
+		  hostname ? " " : "",
+		  hostname ? hostname : "",
+		  tag, pid, timeq, msg);
+
+	if (write_all(ctl->fd, buf, len) < 0)
 		warn(_("write failed"));
-	free(hostname);
+
 	if (ctl->logflags & LOG_PERROR)
 		fprintf(stderr, "%s\n", buf);
+
+	free(hostname);
 	free(buf);
 }
 
