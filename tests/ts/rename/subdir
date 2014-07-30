@@ -35,7 +35,9 @@ for i in rename_a{a,b}/sublink.{1..3}; do
 	ln -s rename/aa $i
 done
 $TS_CMD_RENAME -s -v a x rename_a{a,b}/sublink.? >> $TS_OUTPUT 2>&1
-readlink rename_a{a,b}/sublink.?  >> $TS_OUTPUT 2>&1
+for i in rename_a{a,b}/sublink.?; do
+	readlink $i >> $TS_OUTPUT 2>&1
+done
 
 rm -rf rename_a{a,b}
 
