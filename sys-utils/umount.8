@@ -162,20 +162,30 @@ The syntax of external unmount helpers is:
 .IR type . subtype ]
 .RE
 .PP
-where \fIsuffix\fR is the filesystem type.
+where \fIsuffix\fR is the filesystem type (or the value from a
+\fBuhelper=\fR or \fBhelper=\fR marker in the mtab file).
 The \fB\-t\fR option can be used for filesystems that
 have subtype support.  For example:
 .PP
 .RS
 .B umount.fuse \-t fuse.sshfs
 .RE
+.PP
+A \fBuhelper=\fIsomething\fR marker (unprivileged helper) can appear in
+the \fI/etc/mtab\fR file when ordinary users need to be able to unmount
+a mountpoint that is not defined in \fI/etc/fstab\fR
+(for example for a device that was mounted by \fBudisks\fR(1)).
+.PP
+A \fBhelper=\fItype\fR marker in the mtab file will redirect
+all unmount requests
+to the \fB/sbin/umount.\fItype\fR helper independently of UID.
 .SH FILES
 .TP
 .B /etc/mtab
 table of mounted filesystems
 .TP
 .B /etc/fstab
-checked when option \fB\-O\fR is given
+table of known filesystems
 .SH ENVIRONMENT
 .IP LIBMOUNT_FSTAB=<path>
 overrides the default location of the fstab file
