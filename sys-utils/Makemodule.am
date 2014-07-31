@@ -253,8 +253,7 @@ dist_man_MANS += \
 
 swapon_SOURCES = \
 	sys-utils/swapon.c \
-	sys-utils/swapon-common.c \
-	sys-utils/swapon-common.h
+	sys-utils/swapon-common.c
 swapon_CFLAGS = $(AM_CFLAGS) \
 	-I$(ul_libblkid_incdir) \
 	-I$(ul_libmount_incdir) \
