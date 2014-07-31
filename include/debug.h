@@ -8,6 +8,7 @@
 #define UTIL_LINUX_DEBUG_H
 
 #include <stdarg.h>
+#include <string.h>
 
 #define UL_DEBUG_DEFINE_MASK(m) int m ## _debug_mask
 #define UL_DEBUG_DECLARE_MASK(m) extern UL_DEBUG_DEFINE_MASK(m)
@@ -47,7 +48,7 @@
 		else if (!mask) { \
 			char *str = getenv(# env); \
 			if (str) \
-				lib ## _debug_mask = strtoul(str, 0, 0); \
+				lib ## _debug_mask = parse_envmask(lib ## _masknames, str); \
 		} else \
 			lib ## _debug_mask = mask; \
 		lib ## _debug_mask |= pref ## INIT; \
@@ -56,6 +57,8 @@
 					lib ## _debug_mask)); \
 		} \
 	} while (0)
+
+struct dbg_mask { char *mname; int val; };
 
 static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
 ul_debug(const char *mesg, ...)
@@ -80,4 +83,41 @@ ul_debugobj(void *handler, const char *mesg, ...)
 	fputc('\n', stderr);
 }
 
+static inline int parse_envmask(const struct dbg_mask const flagnames[],
+				const char *mask)
+{
+	int res;
+	char *ptr;
+
+	/* let's check for a numeric mask first */
+	res = strtoul(mask, &ptr, 0);
+
+	/* perhaps it's a comma-separated string? */
+	if (*ptr != '\0') {
+		char *msbuf, *ms, *name;
+		res = 0;
+
+		ms = msbuf = strdup(mask);
+		if (!ms)
+			return res;
+
+		while ((name = strtok_r(ms, ",", &ptr))) {
+			size_t i = 0;
+			ms = ptr;
+
+			while (flagnames[i].mname) {
+				if (!strcmp(name, flagnames[i].mname)) {
+					res |= flagnames[i].val;
+					break;
+				}
+				++i;
+			}
+			/* nothing else we can do by OR-ing the mask */
+			if (res == 0xffff)
+				break;
+		}
+		free(msbuf);
+	}
+	return res;
+}
 #endif /* UTIL_LINUX_DEBUG_H */

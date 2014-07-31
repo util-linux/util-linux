@@ -63,7 +63,8 @@ check_PROGRAMS += \
 	test_mount_tab_diff \
 	test_mount_tab_update \
 	test_mount_utils \
-	test_mount_version
+	test_mount_version \
+	test_mount_debug
 
 libmount_tests_cflags  = -DTEST_PROGRAM $(libmount_la_CFLAGS)
 libmount_tests_ldflags = libblkid.la -static
@@ -117,6 +118,11 @@ test_mount_version_SOURCES = libmount/src/version.c
 test_mount_version_CFLAGS = $(libmount_tests_cflags)
 test_mount_version_LDFLAGS = $(libmount_tests_ldflags)
 test_mount_version_LDADD = $(libmount_tests_ldadd)
+
+test_mount_debug_SOURCES = libmount/src/init.c
+test_mount_debug_CFLAGS = $(libmount_tests_cflags)
+test_mount_debug_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_debug_LDADD = $(libmount_tests_ldadd)
 
 endif # BUILD_LIBMOUNT_TESTS
 

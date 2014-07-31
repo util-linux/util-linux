@@ -17,6 +17,25 @@
 
 UL_DEBUG_DEFINE_MASK(libblkid);
 
+static const struct dbg_mask libblkid_masknames [] = {
+	{ "all", BLKID_DEBUG_ALL },
+	{ "cache", BLKID_DEBUG_CACHE },
+	{ "dump", BLKID_DEBUG_DUMP },
+	{ "dev", BLKID_DEBUG_DEV },
+	{ "devname", BLKID_DEBUG_DEVNAME },
+	{ "devno", BLKID_DEBUG_DEVNO },
+	{ "probe", BLKID_DEBUG_PROBE },
+	{ "read", BLKID_DEBUG_READ },
+	{ "resolve", BLKID_DEBUG_RESOLVE },
+	{ "save", BLKID_DEBUG_SAVE },
+	{ "tag", BLKID_DEBUG_TAG },
+	{ "lowprobe", BLKID_DEBUG_LOWPROBE },
+	{ "config", BLKID_DEBUG_CONFIG },
+	{ "evaluate", BLKID_DEBUG_EVALUATE },
+	{ "init", BLKID_DEBUG_INIT },
+	{ NULL, 0 }
+};
+
 /**
  * blkid_init_debug:
  * @mask: debug mask (0xffff to enable full debuging)

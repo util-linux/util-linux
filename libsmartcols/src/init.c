@@ -19,6 +19,15 @@
 
 UL_DEBUG_DEFINE_MASK(libsmartcols);
 
+static const struct dbg_mask libsmartcols_masknames [] = {
+	{ "all", SCOLS_DEBUG_ALL },
+	{ "cell", SCOLS_DEBUG_CELL },
+	{ "line", SCOLS_DEBUG_LINE },
+	{ "tab", SCOLS_DEBUG_TAB },
+	{ "col", SCOLS_DEBUG_COL },
+	{ "buff", SCOLS_DEBUG_BUFF },
+	{ NULL, 0 }
+};
 /**
  * scols_init_debug:
  * @mask: debug mask (0xffff to enable full debugging)

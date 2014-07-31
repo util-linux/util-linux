@@ -3,6 +3,18 @@
 
 UL_DEBUG_DEFINE_MASK(libfdisk);
 
+static const struct dbg_mask libfdisk_masknames[] = {
+	{ "all", FDISK_DEBUG_ALL },
+	{ "init", FDISK_DEBUG_INIT },
+	{ "cxt", FDISK_DEBUG_CXT },
+	{ "label", FDISK_DEBUG_LABEL },
+	{ "ask", FDISK_DEBUG_ASK},
+	{ "frontend", FDISK_DEBUG_FRONTEND },
+	{ "part", FDISK_DEBUG_PART },
+	{ "parttype", FDISK_DEBUG_PARTTYPE },
+	{ "tab", FDISK_DEBUG_TAB},
+	{ NULL, 0 }
+};
 /**
  * fdisk_init_debug:
  * @mask: debug mask (0xffff to enable full debuging)
