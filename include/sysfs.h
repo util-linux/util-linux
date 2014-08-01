@@ -58,6 +58,9 @@ extern int sysfs_read_s64(struct sysfs_cxt *cxt, const char *attr, int64_t *res)
 extern int sysfs_read_u64(struct sysfs_cxt *cxt, const char *attr, uint64_t *res);
 extern int sysfs_read_int(struct sysfs_cxt *cxt, const char *attr, int *res);
 
+extern int sysfs_write_string(struct sysfs_cxt *cxt, const char *attr, const char *str);
+extern int sysfs_write_u64(struct sysfs_cxt *cxt, const char *attr, uint64_t num);
+
 extern char *sysfs_get_devname(struct sysfs_cxt *cxt, char *buf, size_t bufsiz);
 
 extern char *sysfs_strdup(struct sysfs_cxt *cxt, const char *attr);

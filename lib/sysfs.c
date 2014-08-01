@@ -11,6 +11,7 @@
 #include "pathnames.h"
 #include "sysfs.h"
 #include "fileutils.h"
+#include "all-io.h"
 
 char *sysfs_devno_attribute_path(dev_t devno, char *buf,
 				 size_t bufsiz, const char *attr)
@@ -204,9 +205,9 @@ int sysfs_has_attribute(struct sysfs_cxt *cxt, const char *attr)
 	return sysfs_stat(cxt, attr, &st) == 0;
 }
 
-static int sysfs_open(struct sysfs_cxt *cxt, const char *attr)
+static int sysfs_open(struct sysfs_cxt *cxt, const char *attr, int flags)
 {
-	int fd = open_at(cxt->dir_fd, cxt->dir_path, attr, O_RDONLY|O_CLOEXEC);
+	int fd = open_at(cxt->dir_fd, cxt->dir_path, attr, flags);
 
 	if (fd == -1 && errno == ENOENT &&
 	    strncmp(attr, "queue/", 6) == 0 && cxt->parent) {
@@ -214,8 +215,7 @@ static int sysfs_open(struct sysfs_cxt *cxt, const char *attr)
 		/* Exception for "queue/<attr>". These attributes are available
 		 * for parental devices only
 		 */
-		fd = open_at(cxt->parent->dir_fd, cxt->dir_path, attr,
-				O_RDONLY|O_CLOEXEC);
+		fd = open_at(cxt->parent->dir_fd, cxt->dir_path, attr, flags);
 	}
 	return fd;
 }
@@ -239,7 +239,7 @@ DIR *sysfs_opendir(struct sysfs_cxt *cxt, const char *attr)
 	int fd = -1;
 
 	if (attr)
-		fd = sysfs_open(cxt, attr);
+		fd = sysfs_open(cxt, attr, O_RDONLY|O_CLOEXEC);
 
 	else if (cxt->dir_fd >= 0)
 		/* request to open root of device in sysfs (/sys/block/<dev>)
@@ -264,7 +264,7 @@ DIR *sysfs_opendir(struct sysfs_cxt *cxt, const char *attr)
 
 static FILE *sysfs_fopen(struct sysfs_cxt *cxt, const char *attr)
 {
-	int fd = sysfs_open(cxt, attr);
+	int fd = sysfs_open(cxt, attr, O_RDONLY|O_CLOEXEC);
 
 	return fd < 0 ? NULL : fdopen(fd, "r" UL_CLOEXECSTR);
 }
@@ -417,6 +417,42 @@ int sysfs_read_int(struct sysfs_cxt *cxt, const char *attr, int *res)
 		return 0;
 	}
 	return -1;
+}
+
+int sysfs_write_string(struct sysfs_cxt *cxt, const char *attr, const char *str)
+{
+	int fd = sysfs_open(cxt, attr, O_WRONLY|O_CLOEXEC);
+	int rc, errsv;
+
+	if (fd < 0)
+		return -errno;
+	rc = write_all(fd, str, strlen(str));
+
+	errsv = errno;
+	close(fd);
+	errno = errsv;
+	return rc;
+}
+
+int sysfs_write_u64(struct sysfs_cxt *cxt, const char *attr, uint64_t num)
+{
+	char buf[sizeof(stringify_value(ULLONG_MAX))];
+	int fd, rc = 0, len, errsv;
+
+	fd = sysfs_open(cxt, attr, O_WRONLY|O_CLOEXEC);
+	if (fd < 0)
+		return -errno;
+
+	len = snprintf(buf, sizeof(buf), "%ju", num);
+	if (len < 0 || (size_t) len + 1 > sizeof(buf))
+		rc = -errno;
+	else
+		rc = write_all(fd, buf, len);
+
+	errsv = errno;
+	close(fd);
+	errno = errsv;
+	return rc;
 }
 
 char *sysfs_strdup(struct sysfs_cxt *cxt, const char *attr)
