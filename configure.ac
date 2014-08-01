@@ -861,6 +861,14 @@ UL_REQUIRES_LINUX([losetup])
 UL_REQUIRES_BUILD([losetup], [libsmartcols])
 AM_CONDITIONAL([BUILD_LOSETUP], [test "x$build_losetup" = xyes])
 
+AC_ARG_ENABLE([zramctl],
+  AS_HELP_STRING([--disable-zramctl], [do not build zramctl]),
+  [], [UL_DEFAULT_ENABLE([zramctl], [check])]
+)
+UL_BUILD_INIT([zramctl])
+UL_REQUIRES_LINUX([zramctl])
+UL_REQUIRES_BUILD([zramctl], [libsmartcols])
+AM_CONDITIONAL([BUILD_ZRAMCTL], [test "x$build_zramctl" = xyes])
 
 AC_ARG_ENABLE([fsck],
   AS_HELP_STRING([--disable-fsck], [do not build fsck]),

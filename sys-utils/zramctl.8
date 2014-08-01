@@ -1,0 +1,106 @@
+.TH ZRAMCTL 8 "July 2014" "util-linux" "System Administration"
+.SH NAME
+zramctl \- set up and control zram devices
+.SH SYNOPSIS
+.ad l
+Get info:
+.sp
+.in +5
+.BR zramctl " [options]"
+.sp
+.in -5
+Reset zram:
+.sp
+.in +5
+.B "zramctl \-r"
+.IR zramdev ...
+.sp
+.in -5
+Print name of first unused zram device:
+.sp
+.in +5
+.B "zramctl \-f"
+.sp
+.in -5
+Setup zram device:
+.sp
+.in +5
+.B zramctl
+.RB [ \-f " | "\fIzramdev\fP ]
+.RB [ \-s
+.IR size ]
+.RB \ [ \-t
+.IR number ]
+.in +8
+.RB [ \-a
+.IR algorithm ]
+.sp
+.in -13
+.ad b
+.SH DESCRIPTION
+.B zramctl
+is used to quickly set up zram device parameters, to reset zram devices, and to
+query the status of used zram devices.  If no option is given, all zram devices
+are shown.
+
+.SH OPTIONS
+.IP "\fB\-a, \-\-algorithm \fI{lzo|lz4}\fP"
+Set compression algorithm used for compress data in zram device.
+.IP "\fB\-f, \-\-find\fP"
+Find the first unused zram device. If a \fB--size\fR argument is present, then
+initialize the device.
+.IP "\fB\-h, \-\-help\fP"
+print help
+.IP "\fB\-h, \-\-noheadings\fP"
+Do not print a header line in status output.
+.IP "\fB\-o, \-\-output \fIlist\fP"
+Define the status output columns to use.  If no output arrangement is specified,
+then a default set is used.
+Use \fB\-\-help\fP to get a list of all supported columns.
+.IP "\fB\-r, \-\-reset\fP
+Reset options specified zram device(s). Zram device setting can be changed only
+after reset.
+.IP "\fB\-\-raw\fP"
+Use the raw format for status output.
+.IP "\fB\-s, \-\-size\fP \fIsize\fP
+Force zram driver to reread size of the file associated with the specified zram device
+
+The \fIsize\fR argument may be followed by the multiplicative suffixes KiB (=1024),
+MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB"
+is optional, e.g., "K" has the same meaning as "KiB") or the suffixes
+KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
+.IP "\fB\-t, \-\-streams \fInumber\fP"
+Set number of maximum compress streams what used for device. The default is one stream.
+.IP "\fB\-V, \-\-version\fP"
+Display version information and exit.
+
+.SH RETURN VALUE
+.B zramctl
+returns 0 on success, nonzero on failure.
+
+.SH FILES
+.TP
+.I /dev/zram[0..N]
+zram block devices
+
+.SH EXAMPLE
+The following commands can be used for setup the zram device with gigabyte size
+ and using as swap device.
+.nf
+.IP
+# zramctl --find --size 1024M
+/dev/zram0
+# mkswap /dev/zram0
+# swapon /dev/zram0
+ ...
+# swapoff /dev/zram0
+# zramctl --reset /dev/zram0
+.fi
+.SH AUTHORS
+.nf
+Timofey Titovets <nefelim4ag@gmail.com>
+Karel Zak <kzak@redhat.com>
+.fi
+.SH AVAILABILITY
+The zramctl command is part of the util-linux package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux/.

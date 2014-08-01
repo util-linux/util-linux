@@ -190,6 +190,15 @@ endif
 endif # BUILD_LOSETUP
 
 
+if BUILD_ZRAMCTL
+sbin_PROGRAMS += zramctl
+dist_man_MANS += sys-utils/zramctl.8
+zramctl_SOURCES = sys-utils/zramctl.c
+zramctl_LDADD = $(LDADD) libcommon.la libsmartcols.la
+zramctl_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
+endif
+
+
 if BUILD_PRLIMIT
 usrbin_exec_PROGRAMS += prlimit
 dist_man_MANS += sys-utils/prlimit.1

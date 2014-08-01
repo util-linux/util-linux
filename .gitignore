@@ -177,3 +177,4 @@ update.log
 /whereis
 /wipefs
 /write
+/zramctl
