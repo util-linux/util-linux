@@ -80,7 +80,7 @@ usrsbin_execdir='${exec_prefix}/sbin'
 AC_SUBST([usrsbin_execdir])
 
 AS_CASE([$libdir],
- ['${exec_prefix}/'* | '${prefix}/'* | /usr/*],
+ ['${exec_prefix}/'* | '${prefix}/'* | /usr/* | "${prefix}"/* ],
    [usrlib_execdir=$libdir],
  [usrlib_execdir='${exec_prefix}'$libdir]
 )
