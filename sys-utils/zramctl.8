@@ -68,8 +68,15 @@ can be changed only after a reset.
 .TP
 .BR \-s , " \-\-size " \fIsize
 Force the zram driver to reread the size of the file associated with
-the specified zram device
-
+the specified zram device.  When not specified the
+.I size
+unit is bytes.  The zram devices size is page size aligned.  When
+requested
+.I size
+does match with page size the device be large enough to hold the reqested
+.I size
+plus length to next page boundary.
+.IP
 The \fIsize\fR argument may be followed by the multiplicative suffixes KiB (=1024),
 MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB"
 is optional, e.g., "K" has the same meaning as "KiB") or the suffixes
