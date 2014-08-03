@@ -361,6 +361,7 @@ static void usage(FILE *out)
 {
 	size_t i;
 
+	fputs(_("losetup - set up and control loop devices\n"), out);
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,

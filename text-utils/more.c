@@ -315,6 +315,7 @@ static char *my_tgoto(char *cap, int col, int row)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("more - file perusal filter for crt viewing\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <file>...\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);

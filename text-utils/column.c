@@ -88,6 +88,7 @@ static void __attribute__((__noreturn__)) usage(int rc)
 {
 	FILE *out = rc == EXIT_FAILURE ? stderr : stdout;
 
+	fputs(_("column - columnate lists\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<file>...]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);

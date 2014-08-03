@@ -164,6 +164,7 @@ static const char *srcdirs[] = {
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("whereis - locate the binary, source, and manual page files for a command\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <file>\n"), program_invocation_short_name);
 

@@ -918,6 +918,7 @@ static void center(const char *str, size_t len, int separate)
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
+	fputs(_("cal - display a calendar\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [[[day] month] year]\n"), program_invocation_short_name);
 

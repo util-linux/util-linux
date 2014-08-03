@@ -501,6 +501,7 @@ static void logger_close(struct logger_ctl *ctl)
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("logger - a shell command interface to the syslog(3) system log module\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<message>]\n"), program_invocation_short_name);
 

@@ -2345,6 +2345,7 @@ read_input(char *dev, int interactive, struct disk_desc *z) {
  */
 static void usage(FILE * out)
 {
+	fputs(_("sfdisk - partition table manipulator for Linux\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 		_(" %s [options] <device>...\n"),  program_invocation_short_name);

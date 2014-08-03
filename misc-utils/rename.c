@@ -112,6 +112,7 @@ static int do_file(char *from, char *to, char *s, int verbose)
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
+	fputs(_("rename - rename files\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <expression> <replacement> <file>...\n"),

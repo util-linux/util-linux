@@ -1959,6 +1959,7 @@ static speed_t bcode(char *s)
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("agetty - alternative Linux getty\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
 		       " %1$s [options] <baud_rate>,... <line> [<termtype>]\n"), program_invocation_short_name);

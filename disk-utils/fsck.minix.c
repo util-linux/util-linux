@@ -190,6 +190,7 @@ leave(int status) {
 
 static void
 usage(void) {
+	fputs(_("fsck.minix - check consistency of Minix filesystem\n"), stderr);
 	fputs(USAGE_HEADER, stderr);
 	fprintf(stderr,
 		_(" %s [options] <device>\n"), program_invocation_short_name);

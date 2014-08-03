@@ -817,6 +817,7 @@ static void sushell(struct passwd *pwd)
 
 static void usage(FILE *out)
 {
+	fputs(_("sulogin - single-user login\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
 		" %s [options] [tty device]\n"), program_invocation_short_name);

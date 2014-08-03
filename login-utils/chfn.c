@@ -79,6 +79,7 @@ static int save_new_data(struct finfo *pinfo);
 
 static void __attribute__((__noreturn__)) usage(FILE *fp)
 {
+	fputs(_("chfn - change your finger information\n"), fp);
 	fputs(USAGE_HEADER, fp);
 	fprintf(fp, _(" %s [options] [<username>]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, fp);

@@ -151,6 +151,7 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 
 void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("hexdump - display file contents in hexadecimal, decimal, octal, or ascii\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <file>...\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);

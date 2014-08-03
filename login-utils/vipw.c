@@ -304,6 +304,7 @@ static void edit_file(int is_shadow)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("vipw, vigr - edit the password or group file\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, " %s\n", program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);

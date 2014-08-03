@@ -59,6 +59,7 @@ static void usage(int status)
 {
 	FILE *out = status == EXIT_SUCCESS ? stdout : stderr;
 
+	fputs(_("unshare - run program with some namespaces unshared from parent\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <program> [args...]\n"),	program_invocation_short_name);

@@ -68,6 +68,7 @@ static int get_shell_list(char *shell);
 
 static void __attribute__((__noreturn__)) usage (FILE *fp)
 {
+	fputs(_("chsh - change your login shell\n"), fp);
 	fputs(USAGE_HEADER, fp);
 	fprintf(fp, _(" %s [options] [<username>]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, fp);

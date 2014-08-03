@@ -78,6 +78,7 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("wall - write a message to all users\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] [<file> | <message>]\n"), program_invocation_short_name);

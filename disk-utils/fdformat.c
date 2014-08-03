@@ -139,6 +139,7 @@ static void verify_disk(int ctrl, unsigned int track_from, unsigned int track_to
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
+	fputs(_("fdformat - low-level format a floppy disk\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <device>\n"),
 		program_invocation_short_name);

@@ -708,6 +708,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	size_t i;
 
+	fputs(_("partx - tell the Linux kernel about the presence and numbering of on-disk partitions\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [-a|-d|-s|-u] [--nr <n:m> | <partition>] <disk>\n"),

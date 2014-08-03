@@ -20,6 +20,7 @@
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("nologin - politely refuse a login\n"), out);
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,

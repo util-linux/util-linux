@@ -27,6 +27,7 @@
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
+	fputs(_("setsid - run a program in a new session\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
 		" %s [options] <program> [arguments ...]\n"),

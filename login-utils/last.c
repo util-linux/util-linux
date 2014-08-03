@@ -548,6 +548,7 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("last, lastb - show a listing of last logged in users\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
 		" %s [options] [<username>...] [<tty>...]\n"), program_invocation_short_name);

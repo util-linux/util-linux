@@ -90,6 +90,7 @@ enum {
 static void __attribute__((__noreturn__))
 show_help(void)
 {
+  fputs(_("setarch - change reported architecture in new program environment and set personality flags\n"), stdout);
   fputs(USAGE_HEADER, stdout);
   printf(_(" %s%s [options] [program [program arguments]]\n"),
 	 program_invocation_short_name,

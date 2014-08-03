@@ -165,6 +165,7 @@ static void isosize(int argc, char *filenamep, int xflag, long divisor)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("isosize - output the length of an iso9660 filesystem\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 		_(" %s [options] <iso9660_image_file>\n"),

@@ -364,6 +364,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	size_t i;
 
+	fputs(_("zramctl - set up and control zram devices\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(	" %1$s [options] <device>\n"
 			" %1$s -r <device> [...]\n" 

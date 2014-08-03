@@ -197,6 +197,7 @@ static int switchroot(const char *newroot)
 
 static void __attribute__((__noreturn__)) usage(FILE *output)
 {
+	fputs(_("switch_root - switch to another filesystem as the root of the mount tree\n"), output);
 	fputs(USAGE_HEADER, output);
 	fprintf(output, _(" %s [options] <newrootdir> <init> <args to init>\n"),
 		program_invocation_short_name);

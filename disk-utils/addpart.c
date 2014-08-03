@@ -10,6 +10,7 @@
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
+	fputs(_("addpart - a simple wrapper around the \"add partition\" ioctl\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s <disk device> <partition number> <start> <length>\n"),
 		program_invocation_short_name);

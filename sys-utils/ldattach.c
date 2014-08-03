@@ -155,6 +155,7 @@ static void __attribute__ ((__noreturn__)) usage(int exitcode)
 {
 	FILE *out = exitcode == EXIT_SUCCESS ? stdout : stderr;
 
+	fputs(_("ldattach - attach a line discipline to a serial line\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <ldisc> <device>\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);

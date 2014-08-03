@@ -113,6 +113,7 @@ err:
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("swaplabel - print or change the label or UUID of a swap area\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <device>\n"),
 		program_invocation_short_name);
