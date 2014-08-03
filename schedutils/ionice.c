@@ -102,6 +102,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(_("\nSets or gets the IO scheduling class and priority of processes.\n"), out);
 
+	fputs(_("ionice - set or get process I/O scheduling class and priority\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out,  _(" %1$s [options] -p <pid>...\n"
 			" %1$s [options] -P <pgid>...\n"

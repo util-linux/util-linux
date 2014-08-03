@@ -501,6 +501,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	size_t i;
 
+	fputs(_("lslocks - list local system locks\n"), out);
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,

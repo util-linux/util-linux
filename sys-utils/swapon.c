@@ -699,6 +699,7 @@ static int swapon_all(void)
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	size_t i;
+	fputs(_("swapon, swapoff - enable/disable devices and files for paging and swapping\n"), out);
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out, _(" %s [options] [<spec>]\n"), program_invocation_short_name);

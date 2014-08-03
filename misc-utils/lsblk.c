@@ -1479,6 +1479,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 {
 	size_t i;
 
+	fputs(_("lsblk - list block devices\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<device> ...]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);

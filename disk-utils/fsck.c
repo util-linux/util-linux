@@ -1351,6 +1351,7 @@ static int check_all(void)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("fsck - check and repair a Linux filesystem\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] -- [fs-options] [<filesystem> ...]\n"),
 			 program_invocation_short_name);

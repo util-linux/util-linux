@@ -1168,6 +1168,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	size_t i;
 
+	fputs(_("findmnt - find a filesystem\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
 	" %1$s [options]\n"

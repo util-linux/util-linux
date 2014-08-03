@@ -114,6 +114,7 @@ static int print_devno(const char *devname, struct stat *st)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("mountpoint - see if a directory is a mountpoint\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %1$s [-qd] /path/to/directory\n"

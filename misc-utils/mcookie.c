@@ -78,6 +78,7 @@ static uint64_t hash_file(struct mcookie_control *ctl, int fd)
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
+	fputs(_("mcookie - generate magic cookies for xauth\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 

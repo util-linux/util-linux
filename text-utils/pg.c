@@ -209,6 +209,7 @@ static void __attribute__((__noreturn__)) quit(int status)
 /* Usage message and similar routines. */
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("pg - browse pagewise through text files\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 		_(" %s [options] [+line] [+/pattern/] [files]\n"),

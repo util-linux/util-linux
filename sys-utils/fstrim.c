@@ -225,6 +225,7 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("fstrim - discard unused blocks on a mounted filesystem\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <mount point>\n"), program_invocation_short_name);

@@ -63,6 +63,7 @@ static int swapoff_by_uuid(const char *uuid, int quiet)
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
+	fputs(_(""), out);
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out, _(" %s [options] [<spec>]\n"), program_invocation_short_name);

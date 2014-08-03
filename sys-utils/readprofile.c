@@ -100,6 +100,7 @@ static char *boot_uname_r_str(void)
 static void __attribute__ ((__noreturn__))
     usage(FILE * out)
 {
+	fputs(_("readprofile - read kernel profiling information\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);

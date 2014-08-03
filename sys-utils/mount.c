@@ -699,6 +699,7 @@ static void append_option(struct libmnt_context *cxt, const char *opt)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("mount - mount a filesystem\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
 		" %1$s [-lhV]\n"

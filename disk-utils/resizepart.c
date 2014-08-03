@@ -15,6 +15,7 @@
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
+	fputs(_("resizepart - simple wrapper around the \"resize partition\" ioctl\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s <disk device> <partition number> <length>\n"),
 		program_invocation_short_name);

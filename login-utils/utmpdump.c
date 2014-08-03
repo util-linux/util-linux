@@ -292,6 +292,7 @@ static void undump(FILE *in, FILE *out)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("utmpdump - dump UTMP and WTMP files in raw format\n"), out);
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,

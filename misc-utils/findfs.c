@@ -24,6 +24,7 @@
 static void __attribute__((__noreturn__)) usage(int rc)
 {
 	FILE *out = rc ? stderr : stdout;
+	fputs(_("findfs - find a filesystem by label or UUID\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] {LABEL,UUID,PARTUUID,PARTLABEL}=<value>\n"),
 		program_invocation_short_name);

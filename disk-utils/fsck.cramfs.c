@@ -103,6 +103,7 @@ static void __attribute__((__noreturn__)) usage(int status)
 {
 	FILE *stream = status ? stderr : stdout;
 
+	fputs(_("fsck.cramfs - fsck compressed ROM file system\n"), stream);
 	fputs(USAGE_HEADER, stream);
 	fprintf(stream,
 		_(" %s [options] <file>\n"), program_invocation_short_name);

@@ -89,6 +89,7 @@ struct privctx {
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("setpriv - run a program with different Linux privilege settings\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <program> [args...]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);

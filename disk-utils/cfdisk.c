@@ -1974,6 +1974,7 @@ static int ui_run(struct cfdisk *cf)
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("cfdisk - display or manipulate a disk partition table\n"), out);
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,

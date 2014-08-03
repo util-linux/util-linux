@@ -73,6 +73,7 @@ static char *filename;
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("fallocate - preallocate or deallocate space to a file\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <filename>\n"), program_invocation_short_name);

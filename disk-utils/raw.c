@@ -47,6 +47,7 @@ static void __attribute__ ((__noreturn__)) usage(int err)
 {
 	FILE *out = err == EXIT_SUCCESS ? stdout : stderr;
 
+	fputs(_("raw - bind a Linux raw character device\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 		_(" %1$s %2$srawN <major> <minor>\n"

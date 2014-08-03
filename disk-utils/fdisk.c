@@ -742,6 +742,7 @@ static sector_t get_dev_blocks(char *dev)
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("fdisk - manipulate disk partition table\n"), out);
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,

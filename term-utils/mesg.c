@@ -68,6 +68,7 @@
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
+	fputs(_("mesg - display (or do not display) messages from other users\n"), out);
 	fputs(USAGE_HEADER, out);
 	/* TRANSLATORS: this program uses for y and n rpmatch(3),
 	 * which means they can be translated.  */

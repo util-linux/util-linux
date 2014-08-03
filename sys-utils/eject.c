@@ -136,6 +136,7 @@ static inline void info(const char *fmt, ...)
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
+	fputs(_("eject - eject removable media\n"), out);
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,

@@ -398,6 +398,7 @@ static int parse_bfreq(char **argv, char *optarg, int *optind)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("setterm - set terminal attributes\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options]\n"), program_invocation_short_name);

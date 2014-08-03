@@ -76,6 +76,7 @@ struct command {
 
 static void __attribute__((__noreturn__)) print_usage(FILE *out)
 {
+	fputs(_("tunelp - set various parameters for the lp device\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <device>\n"), program_invocation_short_name);
 

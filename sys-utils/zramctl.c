@@ -364,6 +364,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	size_t i;
 
+	fputs(_("zramctl - set up and control zram devices\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(	" %1$s [options] <device>\n"
 			" %1$s -r <device> [...]\n" 
@@ -379,7 +380,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -r, --reset               reset all specified devices\n"), out);
 	fputs(_(" -s, --size <size>         device size\n"), out);
 	fputs(_("     --raw                 use raw status output format\n"), out);
-	fputs(_(" -t, --streams <number>    number of compressoin streams\n\n"), out);
+	fputs(_(" -t, --streams <number>    number of compression streams\n\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);

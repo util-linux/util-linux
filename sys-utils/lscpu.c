@@ -1610,6 +1610,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	size_t i;
 
+	fputs(_("lscpu - display information about the CPU architecture\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 

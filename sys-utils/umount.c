@@ -71,6 +71,7 @@ static void __attribute__((__noreturn__)) print_version(void)
 }
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("umount - unmount file systems\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
 		" %1$s [-hV]\n"

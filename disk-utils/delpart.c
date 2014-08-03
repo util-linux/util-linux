@@ -10,6 +10,7 @@
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
+	fputs(_("delpart - simple wrapper around the \"del partition\" ioctl\n"), out);
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s <disk device> <partition number>\n"),
 		program_invocation_short_name);
