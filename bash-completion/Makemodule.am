@@ -252,6 +252,9 @@ endif
 if BUILD_SETARCH
 dist_bashcompletion_DATA += bash-completion/setarch
 endif
+if BUILD_ZRAMCTL
+dist_bashcompletion_DATA += bash-completion/zramctl
+endif
 
 if BUILD_MESG
 dist_bashcompletion_DATA += bash-completion/mesg
