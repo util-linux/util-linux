@@ -497,7 +497,7 @@ int main(int argc, char **argv)
 		act = find ? A_FINDONLY : A_STATUS;
 
 	if (act != A_RESET && optind + 1 < argc)
-		usage(stderr);		/* only --reset holds more devices */
+		errx(EXIT_FAILURE, _("only one <device> at a time is allowed"));
 
 	switch (act) {
 	case A_STATUS:
