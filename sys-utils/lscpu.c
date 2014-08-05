@@ -546,10 +546,9 @@ cpuid(unsigned int op, unsigned int *eax, unsigned int *ebx,
 	__asm__(
 #if defined(__PIC__) && defined(__i386__)
 		/* x86 PIC cannot clobber ebx -- gcc bitches */
-		"pushl %%ebx;"
+		"xchg %%ebx, %%esi;"
 		"cpuid;"
-		"movl %%ebx, %%esi;"
-		"popl %%ebx;"
+		"xchg %%esi, %%ebx;"
 		: "=S" (*ebx),
 #else
 		"cpuid;"
@@ -656,12 +655,29 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 #define VMWARE_BDOOR_PORT           0x5658
 #define VMWARE_BDOOR_CMD_GETVERSION 10
 
-#define VMWARE_BDOOR(eax, ebx, ecx, edx)                                  \
-        __asm__("inl (%%dx), %%eax" :                                     \
-               "=a"(eax), "=c"(ecx), "=d"(edx), "=b"(ebx) :               \
-               "0"(VMWARE_BDOOR_MAGIC), "1"(VMWARE_BDOOR_CMD_GETVERSION), \
-               "2"(VMWARE_BDOOR_PORT), "3"(0) :                           \
-               "memory");
+static inline
+void vmware_bdoor(uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx)
+{
+	__asm__(
+#if defined(__PIC__) && defined(__i386__)
+		/* x86 PIC cannot clobber ebx -- gcc bitches */
+		"xchg %%ebx, %%esi;"
+		"inl (%%dx), %%eax;"
+		"xchg %%esi, %%ebx;"
+		: "=S" (*ebx),
+#else
+		"inl (%%dx), %%eax;"
+		: "=b" (*ebx),
+#endif
+		  "=a" (*eax),
+		  "=c" (*ecx),
+		  "=d" (*edx)
+		: "0" (VMWARE_BDOOR_MAGIC),
+		  "1" (VMWARE_BDOOR_CMD_GETVERSION),
+		  "2" (VMWARE_BDOOR_PORT),
+		  "3" (0)
+		: "memory");
+}
 
 static jmp_buf segv_handler_env;
 
@@ -697,7 +713,7 @@ is_vmware_platform(void)
 	if (sigaction(SIGSEGV, &act, &oact))
 		err(EXIT_FAILURE, _("error: can not set signal handler"));
 
-	VMWARE_BDOOR(eax, ebx, ecx, edx);
+	vmware_bdoor(&eax, &ebx, &ecx, &edx);
 
 	if (sigaction(SIGSEGV, &oact, NULL))
 		err(EXIT_FAILURE, _("error: can not restore signal handler"));
