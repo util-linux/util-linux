@@ -485,13 +485,13 @@ static int swapon_checks(const char *special)
 	}
 
 	if (S_ISBLK(st.st_mode) && blkdev_get_size(fd, &devsize)) {
-		warn(_("%s: get size failed"), special);
+		warnx(_("%s: get size failed"), special);
 		goto err;
 	}
 
 	hdr = swap_get_header(fd, &sig, &pagesize);
 	if (!hdr) {
-		warn(_("%s: read swap header failed"), special);
+		warnx(_("%s: read swap header failed"), special);
 		goto err;
 	}
 
