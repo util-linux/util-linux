@@ -378,7 +378,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_("     --raw                 use raw status output format\n"), out);
 	fputs(_(" -r, --reset               reset all specified devices\n"), out);
 	fputs(_(" -s, --size <size>         device size\n"), out);
-	fputs(_(" -t, --streams <number>    number of compression estreams\n\n"), out);
+	fputs(_(" -t, --streams <number>    number of compression streams\n\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
