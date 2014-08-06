@@ -525,6 +525,7 @@ static int ui_end(void)
 #else
 	mvcur(0, COLS - 1, LINES-1, 0);
 #endif
+	curs_set(1);
 	nl();
 	endwin();
 	printf("\n");
