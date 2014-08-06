@@ -525,6 +525,7 @@ static int ui_end(void)
 #else
 	mvcur(0, COLS - 1, LINES-1, 0);
 #endif
+	curs_set(1);
 	nl();
 	endwin();
 	printf("\n");
@@ -1966,9 +1967,7 @@ static int ui_run(struct cfdisk *cf)
 
 	menu_pop(cf);
 
-	curs_set(1);
 	DBG(FRONTEND, ul_debug("ui: end"));
-
 	return 0;
 }
 
