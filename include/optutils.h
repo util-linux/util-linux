@@ -78,7 +78,8 @@ static inline void err_exclusive_options(
 			else if (status[e] != c) {
 				size_t ct = 0;
 
-				fprintf(stderr, _("%s: options "),
+				fprintf(stderr, _("%s: these options are"
+						  "mutually exclusive:"),
 						program_invocation_short_name);
 
 				for (op = excl[e];
@@ -86,11 +87,10 @@ static inline void err_exclusive_options(
 				     op++, ct++) {
 					const char *n = option_to_longopt(*op, opts);
 					if (n)
-						fprintf(stderr, "--%s ", n);
+						fprintf(stderr, " --%s", n);
 					else
-						fprintf(stderr, "-%c ", *op);
+						fprintf(stderr, " -%c", *op);
 				}
-				fprintf(stderr, _("are mutually exclusive."));
 				fputc('\n', stderr);
 				exit(OPTUTILS_EXIT_CODE);
 			}

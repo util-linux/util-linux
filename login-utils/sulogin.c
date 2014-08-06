@@ -895,7 +895,7 @@ int main(int argc, char **argv)
 	}
 
 	if (geteuid() != 0)
-		errx(EXIT_FAILURE, _("only root can run this program."));
+		errx(EXIT_FAILURE, _("only superuser can run this program"));
 
 	mask_signal(SIGQUIT, SIG_IGN, &saved_sigquit);
 	mask_signal(SIGTSTP, SIG_IGN, &saved_sigtstp);
@@ -945,7 +945,7 @@ int main(int argc, char **argv)
 	 * Get the root password.
 	 */
 	if ((pwd = getrootpwent(opt_e)) == NULL) {
-		warnx(_("cannot open password database."));
+		warnx(_("cannot open password database"));
 		sleep(2);
 		return EXIT_FAILURE;
 	}

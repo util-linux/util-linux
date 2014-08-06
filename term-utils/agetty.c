@@ -2478,6 +2478,6 @@ static void reload_agettys(void)
 		    AGETTY_RELOAD_FILENAME);
 #else
 	/* very unusual */
-	errx(EXIT_FAILURE, _("--reload unssupported on your system."));
+	errx(EXIT_FAILURE, _("--reload is unsupported on your system"));
 #endif
 }
