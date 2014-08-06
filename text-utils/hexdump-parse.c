@@ -141,7 +141,7 @@ void add_fmt(const char *fmt, struct hexdump *hex)
 
 		/* Skip slash and trailing white space. */
 		if (*p == '/')
-			p = skip_space(p);
+			p = skip_space(++p);
 
 		/* byte count */
 		if (isdigit(*p)) {
