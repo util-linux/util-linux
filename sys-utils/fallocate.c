@@ -340,7 +340,7 @@ int main(int argc, char **argv)
 	}
 
 	if (optind == argc)
-		errx(EXIT_FAILURE, _("no filename specified."));
+		errx(EXIT_FAILURE, _("no filename specified"));
 
 	filename = argv[optind++];
 

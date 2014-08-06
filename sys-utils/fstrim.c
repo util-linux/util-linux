@@ -315,7 +315,7 @@ int main(int argc, char **argv)
 	else {
 		rc = fstrim_filesystem(path, &range, verbose);
 		if (rc == 1) {
-			warnx(_("%s: discard operation not supported."), path);
+			warnx(_("%s: the discard operation is not supported"), path);
 			rc = EXIT_FAILURE;
 		}
 	}

@@ -194,7 +194,7 @@ int main(int argc, char **argv)
 		argv += parse_args(argc, argv, hex);
 	} else
 		errx(EXIT_FAILURE, _("calling hexdump as od has been deprecated "
-				     "in favour to GNU coreutils od."));
+				     "in favor of GNU coreutils od"));
 
 	/* figure out the data block size */
 	hex->blocksize = 0;

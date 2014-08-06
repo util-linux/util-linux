@@ -1144,10 +1144,10 @@ partitions_ok(int fd, struct disk_desc *z) {
     /* Have at least 4 partitions been defined? */
     if (partno < 4) {
 	if (!partno)
-	    errx(EXIT_FAILURE, _("no partition table present."));
+	    errx(EXIT_FAILURE, _("no partition table present"));
 	else
-	    errx(EXIT_FAILURE, P_("strange, only %d partition defined.",
-		"strange, only %d partitions defined.", partno), partno);
+	    errx(EXIT_FAILURE, P_("strange, only %d partition defined",
+		"strange, only %d partitions defined", partno), partno);
 	return 0;
     }
 
