@@ -28,7 +28,8 @@ ts_check_prog "bc"
 . $TS_SELF/functions.sh
 
 # TODO https://github.com/karelzak/util-linux/issues/51
-if [ $(</proc/sys/kernel/shmall) -ge $(bc <<<"2^64 / $PAGE_SIZE") ]; then
+SHMALL=$(</proc/sys/kernel/shmall)
+if [ $(bc <<<"2^64 / $PAGE_SIZE < $SHMALL") -ne 1 ]; then
 	TS_KNOWN_FAIL="yes"
 fi
 
