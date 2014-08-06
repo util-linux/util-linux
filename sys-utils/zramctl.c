@@ -505,11 +505,12 @@ int main(int argc, char **argv)
 	if (act != A_RESET && optind + 1 < argc)
 		errx(EXIT_FAILURE, _("only one <device> at a time is allowed"));
 
+	if ((act == A_STATUS || act == A_FINDONLY) && (algorithm || nstreams))
+		errx(EXIT_FAILURE, _("options --algorithm and --streams "
+				     "must be combined with --size"));
+
 	switch (act) {
 	case A_STATUS:
-		if (algorithm || find || nstreams)
-			errx(EXIT_FAILURE, _("options --algorithm, --find and "
-					"--streams are mutually exclusive"));
 		if (!ncolumns) {		/* default columns */
 			columns[ncolumns++] = COL_NAME;
 			columns[ncolumns++] = COL_ALGORITHM;
