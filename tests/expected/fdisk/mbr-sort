@@ -6,7 +6,6 @@ Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-
 -------------------
 
 Create primary partitions
@@ -26,7 +25,6 @@ Device     Boot Start   End Sectors Size Id Type
 <removed>4       8192 40959   32768  16M  5 Extended
 
 Partition table entries are not in disk order.
-
 -------------------
 
 Create logical partitions
@@ -50,7 +48,6 @@ Device     Boot Start   End Sectors Size Id Type
 <removed>8      10240 12287    2048   1M 83 Linux
 
 Partition table entries are not in disk order.
-
 -------------------
 
 Fix order.
