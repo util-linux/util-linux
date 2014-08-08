@@ -122,7 +122,7 @@ endif
 if BUILD_FDFORMAT
 dist_bashcompletion_DATA += bash-completion/fdformat
 endif
-if LINUX
+if BUILD_BLOCKDEV
 dist_bashcompletion_DATA += bash-completion/blockdev
 endif
 
