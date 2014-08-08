@@ -329,7 +329,7 @@ static int probe_gpt_pt(blkid_probe pr,
 
 	blkid_probe_use_wiper(pr, lba * blkid_probe_get_size(pr), 8);
 
-	if (blkid_probe_set_magic(pr, lba << 9,
+	if (blkid_probe_set_magic(pr, blkid_probe_get_sectorsize(pr) * lba,
 			      sizeof(GPT_HEADER_SIGNATURE_STR) - 1,
 			      (unsigned char *) GPT_HEADER_SIGNATURE_STR))
 		goto err;
