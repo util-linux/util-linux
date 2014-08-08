@@ -418,7 +418,30 @@ static void parse_rfc5424_flags(struct logger_ctl *ctl, char *optarg)
 
 static void syslog_local(struct logger_ctl *ctl, char *msg)
 {
-	syslog(ctl->pri, "%s", msg);
+	char *buf, *tag;
+	char time[32], pid[32];
+	struct timeval tv;
+	struct tm *tm;
+	pid_t process;
+	int len;
+
+	gettimeofday(&tv, NULL);
+	tm = localtime(&tv.tv_sec);
+	strftime(time, sizeof(time), "%h %e %T", tm);
+
+	tag = ctl->tag ? ctl->tag : program_invocation_short_name;
+
+	if ((process = get_process_id(ctl)))
+		snprintf(pid, sizeof(pid), "[%d]", process);
+	else
+		pid[0] = '\0';
+
+	len = xasprintf(&buf, "<%d>%s %s%s: %s", ctl->pri, time, tag, pid, msg);
+	if (write_all(ctl->fd, buf, len) < 0)
+		warn(_("write failed"));
+	if (ctl->logflags & LOG_PERROR)
+		fprintf(stderr, "%s\n", buf);
+	free(buf);
 }
 
 static void logger_open(struct logger_ctl *ctl)
@@ -435,12 +458,7 @@ static void logger_open(struct logger_ctl *ctl)
 			ctl->syslogfp = syslog_rfc5424;
 		return;
 	}
-
-	if (ctl->syslogfp == syslog_rfc5424 || ctl->syslogfp == syslog_rfc3164)
-		errx(EXIT_FAILURE, _("--server or --socket are required to "
-				     "log by --rfc5424 or --rfc3164"));
-
-	openlog(ctl->tag ? ctl->tag : xgetlogin(), ctl->logflags, 0);
+	ctl->fd = unix_socket("/dev/log", ctl->socket_type);
 	ctl->syslogfp = syslog_local;
 }
 
@@ -493,10 +511,8 @@ static void logger_stdin(struct logger_ctl *ctl)
 
 static void logger_close(struct logger_ctl *ctl)
 {
-	if (!ctl->unix_socket && !ctl->server)
-		closelog();
-	else
-		close(ctl->fd);
+	if (close(ctl->fd) != 0)
+		err(EXIT_FAILURE, _("close failed"));
 }
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
