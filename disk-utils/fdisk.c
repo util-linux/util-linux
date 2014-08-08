@@ -567,17 +567,16 @@ void list_disklabel(struct fdisk_context *cxt)
 		}
 	}
 
-	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
-
 	fputc('\n', stdout);
+
+	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
 
 	while (itr && fdisk_table_next_partition(tb, itr, &pa) == 0)
 		fdisk_warn_alignment(cxt, fdisk_partition_get_start(pa),
 					  fdisk_partition_get_partno(pa) + 1);
 
-	if (fdisk_table_wrong_order(tb)) {
+	if (fdisk_table_wrong_order(tb))
 		fdisk_info(cxt, _("Partition table entries are not in disk order."));
-	}
 
 	fdisk_unref_table(tb);
 	fdisk_free_iter(itr);
@@ -693,7 +692,6 @@ static void print_device_pt(struct fdisk_context *cxt, char *device, int warnme)
 
 	if (fdisk_dev_has_disklabel(cxt))
 		list_disklabel(cxt);
-	fputc('\n', stdout);
 }
 
 static void print_all_devices_pt(struct fdisk_context *cxt)
