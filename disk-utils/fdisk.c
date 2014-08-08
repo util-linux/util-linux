@@ -538,6 +538,9 @@ void list_disk_geometry(struct fdisk_context *cxt)
 void list_disklabel(struct fdisk_context *cxt)
 {
 	struct fdisk_table *tb = NULL;
+	struct fdisk_partition *pa = NULL;
+	struct fdisk_iter *itr;
+
 	char *str;
 
 	/* print label specific stuff by libfdisk FDISK_ASK_INFO API */
@@ -564,12 +567,20 @@ void list_disklabel(struct fdisk_context *cxt)
 		}
 	}
 
+	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
+
+	fputc('\n', stdout);
+
+	while (itr && fdisk_table_next_partition(tb, itr, &pa) == 0)
+		fdisk_warn_alignment(cxt, fdisk_partition_get_start(pa),
+					  fdisk_partition_get_partno(pa) + 1);
+
 	if (fdisk_table_wrong_order(tb)) {
-		fputc('\n', stdout);
 		fdisk_info(cxt, _("Partition table entries are not in disk order."));
 	}
 
 	fdisk_unref_table(tb);
+	fdisk_free_iter(itr);
 }
 
 static size_t skip_empty(const unsigned char *buf, size_t i, size_t sz)

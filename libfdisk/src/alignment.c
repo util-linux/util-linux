@@ -105,7 +105,7 @@ sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt,
 void fdisk_warn_alignment(struct fdisk_context *cxt, sector_t lba, int partition)
 {
 	if (!lba_is_phy_aligned(cxt, lba))
-		printf(_("Partition %i does not start on physical sector boundary.\n"),
+		fdisk_warnx(cxt, _("Partition %i does not start on physical sector boundary.\n"),
 			partition + 1);
 }
 
