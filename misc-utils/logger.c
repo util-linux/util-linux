@@ -299,11 +299,12 @@ static pid_t get_process_id(struct logger_ctl *ctl)
 
 static void syslog_rfc3164(struct logger_ctl *ctl, char *msg)
 {
-	char *buf, pid[30] = { '\0' }, *cp, *tp, *hostname, *dot;
+	char *buf, pid[30], *cp, *tp, *hostname, *dot;
 	time_t now;
 	pid_t process;
 	int len;
 
+	*pid = '\0';
 	if (ctl->fd < 0)
 		return;
 	if ((process = get_process_id(ctl)))
@@ -334,13 +335,14 @@ static void syslog_rfc3164(struct logger_ctl *ctl, char *msg)
 static void syslog_rfc5424(struct logger_ctl *ctl, char *msg)
 {
 	char *buf, *tag = NULL, *hostname = NULL;
-	char pid[32] = { '\0' }, time[64] = { '\0' }, timeq[80] = { '\0' };
+	char pid[32], time[64], timeq[80];
 	struct ntptimeval ntptv;
 	struct timeval tv;
 	struct tm *tm;
 	pid_t process;
 	int len;
 
+	*pid = *time = *timeq = '\0';
 	if (ctl->fd < 0)
 		return;
 
