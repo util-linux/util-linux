@@ -158,6 +158,12 @@ static struct sysfs_cxt *zram_get_sysfs(struct zram *z)
 			return NULL;
 		if (sysfs_init(&z->sysfs, devno, NULL))
 			return NULL;
+		if (*z->devname != '/') {
+			/* cannonicalize the device name according to /sys */
+			char name[PATH_MAX];
+			if (sysfs_get_devname(&z->sysfs, name, sizeof(name)))
+				snprintf(z->devname, sizeof(z->devname), "/dev/%s", name);
+		}
 	}
 
 	return &z->sysfs;
