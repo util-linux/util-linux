@@ -348,7 +348,8 @@ static int probe_gpt_pt(blkid_probe pr,
 	if (!ls)
 		goto nothing;
 
-	tab = blkid_partlist_new_parttable(ls, "gpt", lba << 9);
+	tab = blkid_partlist_new_parttable(ls, "gpt",
+				blkid_probe_get_sectorsize(pr) * lba);
 	if (!tab)
 		goto err;
 
