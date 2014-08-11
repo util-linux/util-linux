@@ -167,8 +167,11 @@ static inline int zram_exist(struct zram *z)
 {
 	assert(z);
 
-	if (zram_get_sysfs(z) == NULL)
+	errno = 0;
+	if (zram_get_sysfs(z) == NULL) {
+		errno = ENODEV;
 		return 0;
+	}
 
 	DBG(fprintf(stderr, "%s exists", z->devname));
 	return 1;
@@ -511,8 +514,11 @@ int main(int argc, char **argv)
 			columns[ncolumns++] = COL_STREAMS;
 			columns[ncolumns++] = COL_MOUNTPOINT;
 		}
-		if (optind < argc)
+		if (optind < argc) {
 			zram = new_zram(argv[optind++]);
+			if (!zram_exist(zram))
+				err(EXIT_FAILURE, zram->devname);
+		}
 		status(zram);
 		free_zram(zram);
 		break;
@@ -521,7 +527,8 @@ int main(int argc, char **argv)
 			errx(EXIT_FAILURE, _("no device specified"));
 		while (optind < argc) {
 			zram = new_zram(argv[optind]);
-			if (zram_set_u64parm(zram, "reset", 1)) {
+			if (!zram_exist(zram)
+			    || zram_set_u64parm(zram, "reset", 1)) {
 				warn(_("%s: failed to reset"), zram->devname);
 				rc = 1;
 			}
@@ -543,8 +550,11 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE, _("no free zram device found"));
 		} else if (optind == argc)
 			errx(EXIT_FAILURE, _("no device specified"));
-		else
+		else {
 			zram = new_zram(argv[optind]);
+			if (!zram_exist(zram))
+				err(EXIT_FAILURE, zram->devname);
+		}
 
 		if (zram_set_u64parm(zram, "reset", 1))
 			err(EXIT_FAILURE, _("%s: failed to reset"), zram->devname);
