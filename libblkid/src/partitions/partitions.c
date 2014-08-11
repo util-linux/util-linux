@@ -163,7 +163,7 @@ const struct blkid_chaindrv partitions_drv = {
 /* exported as opaque type "blkid_parttable" */
 struct blkid_struct_parttable {
 	const char	*type;		/* partition table type */
-	blkid_loff_t	offset;		/* begin of the partition table */
+	blkid_loff_t	offset;		/* begin of the partition table (in bytes) */
 	int		nparts;		/* number of partitions */
 	blkid_partition	parent;		/* parent of nested partition table */
 	char		id[37];		/* PT identifier (e.g. UUID for GPT) */
@@ -173,8 +173,8 @@ struct blkid_struct_parttable {
 
 /* exported as opaque type "blkid_partition" */
 struct blkid_struct_partition {
-	blkid_loff_t	start;		/* begin of the partition */
-	blkid_loff_t	size;		/* size of the partitions */
+	blkid_loff_t	start;		/* begin of the partition (512-bytes sectors) */
+	blkid_loff_t	size;		/* size of the partitions (512-bytes sectors) */
 
 	int		type;		/* partition type */
 	char		typestr[37];	/* partition type string (GPT and Mac) */
