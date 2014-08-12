@@ -1,13 +1,11 @@
 /*
- * chrt.c - chrt
- * Command-line utility for manipulating a task's real-time attributes 
+ * chrt.c - manipulate a task's real-time attributes
  *
- * Robert Love <rml@tech9.net>
- * 27-Apr-2002: initial version
- * 04-May-2011: make thread aware - Davidlohr Bueso <dave@gnu.org>
+ * 27-Apr-2002: initial version - Robert Love <rml@tech9.net>
+ * 04-May-2011: make it thread-aware - Davidlohr Bueso <dave@gnu.org>
  *
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, v2, as
+ * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation
  *
  * This program is distributed in the hope that it will be useful,
