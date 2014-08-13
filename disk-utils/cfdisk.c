@@ -235,9 +235,6 @@ static int partition_from_scols(struct fdisk_table *tb,
 	return 0;
 }
 
-/* It would be possible to use fdisk_table_to_string(), but we want some
- * extension to the output format, so let's do it without libfdisk
- */
 static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 {
 	const struct fdisk_column *col;
@@ -283,10 +280,18 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	for (i = 0; i < cf->ncols; i++) {
 		col = fdisk_label_get_column(lb, cf->cols[i]);
 		if (col) {
-			int fl = col->scols_flags;
-			if (tree && col->id == FDISK_COL_DEVICE)
+			int fl = 0;
+
+			if (fdisk_column_is_number(col))
+				fl |= SCOLS_FL_RIGHT;
+			if (fdisk_column_get_id(col) == FDISK_COL_TYPE)
+				fl |= SCOLS_FL_TRUNC;
+			if (tree && fdisk_column_get_id(col) == FDISK_COL_DEVICE)
 				fl |= SCOLS_FL_TREE;
-			if (!scols_table_new_column(table, col->name, col->width, fl))
+
+			if (!scols_table_new_column(table,
+					fdisk_column_get_name(col),
+					fdisk_column_get_width(col), fl))
 				goto done;
 		}
 	}
@@ -305,7 +310,8 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 			col = fdisk_label_get_column(lb, cf->cols[i]);
 			if (!col)
 				continue;
-			if (fdisk_partition_to_string(pa, cf->cxt, col->id, &cdata))
+			if (fdisk_partition_to_string(pa, cf->cxt,
+					fdisk_column_get_id(col), &cdata))
 				continue;
 			scols_line_refer_data(ln, i, cdata);
 		}

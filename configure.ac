@@ -823,11 +823,11 @@ dnl libfdisk is enabled at all times if possible
 dnl
 UL_BUILD_INIT([libfdisk], [check])
 UL_REQUIRES_BUILD([libfdisk], [libuuid])
-UL_REQUIRES_BUILD([libfdisk], [libsmartcols])
 AM_CONDITIONAL([BUILD_LIBFDISK], [test "x$build_libfdisk" = xyes])
 
 UL_BUILD_INIT([fdisk], [check])
 UL_REQUIRES_BUILD([fdisk], [libfdisk])
+UL_REQUIRES_BUILD([fdisk], [libsmartcols])
 AM_CONDITIONAL([BUILD_FDISK], [test "x$build_fdisk" = xyes])
 
 

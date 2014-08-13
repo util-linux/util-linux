@@ -49,12 +49,6 @@ libfdisk_la_DEPENDENCIES += libuuid.la
 libfdisk_la_CFLAGS += -I$(ul_libuuid_incdir)
 endif
 
-if BUILD_LIBSMARTCOLS
-libfdisk_la_LIBADD += libsmartcols.la
-libfdisk_la_DEPENDENCIES += libsmartcols.la
-libfdisk_la_CFLAGS += -I$(ul_libsmartcols_incdir)
-endif
-
 check_PROGRAMS += \
 	test_fdisk_ask \
 	test_fdisk_utils
@@ -69,10 +63,6 @@ endif
 
 if BUILD_LIBUUID
 libfdisk_tests_ldflags += libuuid.la
-endif
-
-if BUILD_LIBSMARTCOLS
-libfdisk_tests_ldflags += libsmartcols.la
 endif
 
 test_fdisk_ask_SOURCES = libfdisk/src/ask.c

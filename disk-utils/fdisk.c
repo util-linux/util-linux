@@ -21,6 +21,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <limits.h>
+#include <libsmartcols.h>
 
 #include "c.h"
 #include "xalloc.h"
@@ -539,45 +540,105 @@ void list_disklabel(struct fdisk_context *cxt)
 {
 	struct fdisk_table *tb = NULL;
 	struct fdisk_partition *pa = NULL;
-	struct fdisk_iter *itr;
-
-	char *str;
+	struct fdisk_iter *itr = NULL;
+	struct libscols_table *out = NULL;
+	const char *bold = NULL;
+	int *cols = NULL;
+	size_t	ncols = 0, i;
 
 	/* print label specific stuff by libfdisk FDISK_ASK_INFO API */
 	fdisk_list_disklabel(cxt);
 
-	/* print partitions */
-	if (fdisk_get_partitions(cxt, &tb))
-		return;
-	if (fdisk_table_to_string(tb, cxt, NULL, 0, &str) == 0) {
-		fputc('\n', stdout);
-		if (str) {
-			char *p = str;
-			char *next = strchr(str, '\n');
-			if (next && colors_wanted()) {
-				*next = '\0';
-				color_scheme_enable("header", UL_COLOR_BOLD);
-				fputs(p, stdout);
-				color_disable();
-				fputc('\n', stdout);
-				p = ++next;
-			}
-			fputs(p, stdout);
-			free(str);
+	/* get partitions and generate output */
+	if (fdisk_get_partitions(cxt, &tb) || fdisk_table_get_nents(tb) <= 0)
+		goto done;
+
+	if (fdisk_get_columns(cxt, 0, &cols, &ncols))
+		goto done;
+
+	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
+	if (!itr) {
+		fdisk_warn(cxt, _("faild to allocate iterator"));
+		goto done;
+	}
+
+	out = scols_new_table();
+	if (!out) {
+		fdisk_warn(cxt, _("faild to allocate output table"));
+		goto done;
+	}
+
+	if (colors_wanted()) {
+		scols_table_enable_colors(out, 1);
+		bold = color_scheme_get_sequence("header", UL_COLOR_BOLD);
+	}
+
+	/* define output table columns */
+	for (i = 0; i < ncols; i++) {
+		int fl = 0;
+		struct libscols_column *co;
+		const struct fdisk_column *col =
+				fdisk_label_get_column(cxt->label, cols[i]);
+		if (!col)
+			goto done;
+		if (fdisk_column_is_number(col))
+			fl |= SCOLS_FL_RIGHT;
+		if (fdisk_column_get_id(col) == FDISK_COL_TYPE)
+			fl |= SCOLS_FL_TRUNC;
+
+		co = scols_table_new_column(out,
+				fdisk_column_get_name(col),
+				fdisk_column_get_width(col), fl);
+		if (!co)
+			goto done;
+
+		/* set colum header color */
+		if (bold)
+			scols_cell_set_color(scols_column_get_header(co), bold);
+	}
+
+	/* fill-in output table */
+	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
+		struct libscols_line *ln = scols_table_new_line(out, NULL);
+
+		if (!ln) {
+			fdisk_warn(cxt, _("faild to allocate output line"));
+			goto done;
+		}
+
+		for (i = 0; i < ncols; i++) {
+			char *data = NULL;
+
+			const struct fdisk_column *col =
+				fdisk_label_get_column(cxt->label, cols[i]);
+
+			if (fdisk_partition_to_string(pa, cxt,
+					fdisk_column_get_id(col),
+					&data))
+				continue;
+			scols_line_refer_data(ln, i, data);
 		}
 	}
 
+	/* print */
+	if (!scols_table_is_empty(out)) {
+		fputc('\n', stdout);
+		scols_print_table(out);
+	}
+
+
 	fputc('\n', stdout);
 
-	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
-
+	/* print warnings */
 	while (itr && fdisk_table_next_partition(tb, itr, &pa) == 0)
 		fdisk_warn_alignment(cxt, fdisk_partition_get_start(pa),
 					  fdisk_partition_get_partno(pa) + 1);
 
 	if (fdisk_table_wrong_order(tb))
 		fdisk_info(cxt, _("Partition table entries are not in disk order."));
-
+done:
+	free(cols);
+	scols_unref_table(out);
 	fdisk_unref_table(tb);
 	fdisk_free_iter(itr);
 }

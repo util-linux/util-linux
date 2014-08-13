@@ -142,6 +142,11 @@ fdisk_CFLAGS += -I$(ul_libuuid_incdir)
 fdisk_LDADD += libuuid.la
 endif
 
+if BUILD_LIBSMARTCOLS
+fdisk_CFLAGS += -I$(ul_libsmartcols_incdir)
+fdisk_LDADD += libsmartcols.la
+endif
+
 if HAVE_STATIC_FDISK
 sbin_PROGRAMS += fdisk.static
 fdisk_static_SOURCES = $(fdisk_SOURCES)

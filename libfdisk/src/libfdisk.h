@@ -35,6 +35,7 @@ struct fdisk_partition;
 struct fdisk_ask;
 struct fdisk_iter;
 struct fdisk_table;
+struct fdisk_column;
 
 /*
  * Supported partition table types (labels)
@@ -168,6 +169,11 @@ extern int fdisk_set_partition_type(struct fdisk_context *cxt, size_t partnum,
 
 extern int fdisk_get_columns(struct fdisk_context *cxt, int all, int **cols, size_t *ncols);
 
+extern int fdisk_column_get_id(const struct fdisk_column *col);
+extern const char *fdisk_column_get_name(const struct fdisk_column *col);
+extern double fdisk_column_get_width(const struct fdisk_column *col);
+extern int fdisk_column_is_number(const struct fdisk_column *col);
+
 extern void fdisk_label_set_changed(struct fdisk_label *lb, int changed);
 extern int fdisk_label_is_changed(struct fdisk_label *lb);
 
@@ -244,10 +250,6 @@ extern int fdisk_table_wrong_order(struct fdisk_table *tb);
 extern int fdisk_table_sort_partitions(struct fdisk_table *tb,
 			int (*cmp)(struct fdisk_partition *,
 				   struct fdisk_partition *));
-
-extern int fdisk_table_to_string(struct fdisk_table *tb,
-			  struct fdisk_context *cxt,
-			  int *cols, size_t ncols,  char **data);
 
 extern int fdisk_table_next_partition(
 			struct fdisk_table *tb,

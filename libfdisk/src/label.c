@@ -113,10 +113,9 @@ int fdisk_missing_geometry(struct fdisk_context *cxt)
  * @cols: returns allocated array with FDISK_COL_* IDs
  * @ncols: returns number of items in cols
  *
- * This function returns the default or all columns for the current label.  The
- * library uses the columns for list operations (see fdisk_list_disklabel() and
- * fdisk_list_partitions()). Note that the set of the default columns depends
- * on fdisk_context_enable_details() function. If the details are eanable then
+ * This function returns the default or all columns for the current label.
+ * Note that the set of the default columns depends on
+ * fdisk_context_enable_details() function. If the details are enabled then
  * this function usually returns more columns.
  *
  * Returns 0 on success, otherwise, a corresponding error.
@@ -174,6 +173,26 @@ const struct fdisk_column *fdisk_label_get_column(
 	}
 
 	return NULL;
+}
+
+int fdisk_column_get_id(const struct fdisk_column *col)
+{
+	return col ? col->id : -EINVAL;
+}
+
+const char *fdisk_column_get_name(const struct fdisk_column *col)
+{
+	return col ? col->name : NULL;
+}
+
+double fdisk_column_get_width(const struct fdisk_column *col)
+{
+	return col ? col->width : -EINVAL;
+}
+
+int fdisk_column_is_number(const struct fdisk_column *col)
+{
+	return col->flags ? col->flags & FDISK_COLFL_NUMBER : 0;
 }
 
 /**

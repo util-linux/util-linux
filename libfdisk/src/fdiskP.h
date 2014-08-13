@@ -235,8 +235,6 @@ struct fdisk_column {
 	int		id;		/* FDISK_COL_* */
 	const char	*name;		/* column header */
 	double		width;
-	int		scols_flags;	/* SCOLS_FL_* */
-
 	int		flags;		/* FDISK_COLFL_* */
 };
 
@@ -244,6 +242,7 @@ struct fdisk_column {
 enum {
 	FDISK_COLFL_DETAIL	= (1 << 1),	/* only display if fdisk_context_display_details() */
 	FDISK_COLFL_EYECANDY	= (1 << 2),	/* don't display if fdisk_context_display_details() */
+	FDISK_COLFL_NUMBER	= (1 << 3),	/* column display numbers */
 };
 
 /*
