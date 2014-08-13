@@ -10,6 +10,9 @@
 #include <stdarg.h>
 #include <string.h>
 
+struct dbg_mask { char *mname; int val; };
+#define UL_DEBUG_EMPTY_MASKNAMES {{ NULL, 0 }}
+
 #define UL_DEBUG_DEFINE_MASK(m) int m ## _debug_mask
 #define UL_DEBUG_DECLARE_MASK(m) extern UL_DEBUG_DEFINE_MASK(m)
 #define UL_DEBUG_DEFINE_MASKANEMS(m) static const struct dbg_mask m ## _masknames[]
@@ -59,7 +62,6 @@
 		} \
 	} while (0)
 
-struct dbg_mask { char *mname; int val; };
 
 static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
 ul_debug(const char *mesg, ...)
