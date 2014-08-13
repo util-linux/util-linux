@@ -229,20 +229,20 @@ struct fdisk_label_operations {
 };
 
 /*
- * fdisk_label_operations->list() output column
+ * The fields describes how to display libfdisk_partition
  */
-struct fdisk_column {
-	int		id;		/* FDISK_COL_* */
-	const char	*name;		/* column header */
-	double		width;
-	int		flags;		/* FDISK_COLFL_* */
+struct fdisk_field {
+	int		id;		/* FDISK_FIELD_* */
+	const char	*name;		/* field name */
+	double		width;		/* field width (compatible with libsmartcols whint) */
+	int		flags;		/* FDISK_FIELDFL_* */
 };
 
 /* note that the defauls is to display a column always */
 enum {
-	FDISK_COLFL_DETAIL	= (1 << 1),	/* only display if fdisk_context_display_details() */
-	FDISK_COLFL_EYECANDY	= (1 << 2),	/* don't display if fdisk_context_display_details() */
-	FDISK_COLFL_NUMBER	= (1 << 3),	/* column display numbers */
+	FDISK_FIELDFL_DETAIL	= (1 << 1),	/* only display if fdisk_context_display_details() */
+	FDISK_FIELDFL_EYECANDY	= (1 << 2),	/* don't display if fdisk_context_display_details() */
+	FDISK_FIELDFL_NUMBER	= (1 << 3),	/* column display numbers */
 };
 
 /*
@@ -262,8 +262,8 @@ struct fdisk_label {
 	unsigned int		changed:1,	/* label has been modified */
 				disabled:1;	/* this driver is disabled at all */
 
-	const struct fdisk_column *columns;	/* all possible columns */
-	size_t			ncolumns;
+	const struct fdisk_field *fields;	/* all possible fields */
+	size_t			nfields;
 
 	const struct fdisk_label_operations *op;
 };
@@ -426,8 +426,6 @@ extern char *fdisk_partname(const char *dev, size_t partno);
 /* label.c */
 extern int fdisk_probe_labels(struct fdisk_context *cxt);
 extern void fdisk_deinit_label(struct fdisk_label *lb);
-extern const struct fdisk_column *fdisk_label_get_column(
-					struct fdisk_label *lb, int id);
 
 /* ask.c */
 extern int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew);

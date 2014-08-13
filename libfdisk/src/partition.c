@@ -298,7 +298,7 @@ int fdisk_partition_next_partno(
 /**
  * fdisk_partition_to_string:
  * @pa: partition
- * @id: column (FDISK_COL_*)
+ * @id: field (FDISK_FIELD_*)
  * @data: returns string with allocated data
  *
  * Returns info about partition converted to printable string.
@@ -308,7 +308,7 @@ int fdisk_partition_next_partno(
  *      struct fdisk_parition *pa;
  *
  *      fdisk_get_partition(cxt, 0, &pa);
- *	fdisk_partition_to_string(pa, FDISK_COL_UUID, &data);
+ *	fdisk_partition_to_string(pa, FDISK_FIELD_UUID, &data);
  *	printf("first partition uuid: %s\n", data);
  *	free(data);
  *	fdisk_unref_partition(pa);
@@ -331,7 +331,7 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 		return -EINVAL;
 
 	switch (id) {
-	case FDISK_COL_DEVICE:
+	case FDISK_FIELD_DEVICE:
 		if (pa->freespace)
 			p = strdup(_("Free space"));
 		else if (cxt->label->flags & FDISK_LABEL_FL_INCHARS_PARTNO)
@@ -339,22 +339,22 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 		else
 			p = fdisk_partname(cxt->dev_path, pa->partno + 1);
 		break;
-	case FDISK_COL_BOOT:
+	case FDISK_FIELD_BOOT:
 		rc = asprintf(&p, "%c", pa->boot);
 		break;
-	case FDISK_COL_START:
+	case FDISK_FIELD_START:
 		x = fdisk_cround(cxt, pa->start);
 		rc = pa->start_post ?
 				asprintf(&p, "%ju%c", x, pa->start_post) :
 				asprintf(&p, "%ju", x);
 		break;
-	case FDISK_COL_END:
+	case FDISK_FIELD_END:
 		x = fdisk_cround(cxt, pa->end);
 		rc = pa->end_post ?
 				asprintf(&p, "%ju%c", x, pa->end_post) :
 				asprintf(&p, "%ju", x);
 		break;
-	case FDISK_COL_SIZE:
+	case FDISK_FIELD_SIZE:
 	{
 		uint64_t sz = pa->size * cxt->sector_size;
 
@@ -369,44 +369,44 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 		}
 		break;
 	}
-	case FDISK_COL_CYLINDERS:
+	case FDISK_FIELD_CYLINDERS:
 		rc = asprintf(&p, "%ju", (uintmax_t)
 				fdisk_cround(cxt, pa->size));
 		break;
-	case FDISK_COL_SECTORS:
+	case FDISK_FIELD_SECTORS:
 		rc = asprintf(&p, "%ju", pa->size);
 		break;
-	case FDISK_COL_BSIZE:
+	case FDISK_FIELD_BSIZE:
 		rc = asprintf(&p, "%ju", pa->bsize);
 		break;
-	case FDISK_COL_FSIZE:
+	case FDISK_FIELD_FSIZE:
 		rc = asprintf(&p, "%ju", pa->fsize);
 		break;
-	case FDISK_COL_CPG:
+	case FDISK_FIELD_CPG:
 		rc = asprintf(&p, "%ju", pa->cpg);
 		break;
-	case FDISK_COL_TYPE:
+	case FDISK_FIELD_TYPE:
 		p = pa->type && pa->type->name ? strdup(pa->type->name) : NULL;
 		break;
-	case FDISK_COL_TYPEID:
+	case FDISK_FIELD_TYPEID:
 		if (pa->type && pa->type->typestr)
 			rc = asprintf(&p, "%s", pa->type->typestr);
 		else if (pa->type)
 			rc = asprintf(&p, "%x", pa->type->type);
 		break;
-	case FDISK_COL_UUID:
+	case FDISK_FIELD_UUID:
 		p = pa->uuid ? strdup(pa->uuid) : NULL;
 		break;
-	case FDISK_COL_NAME:
+	case FDISK_FIELD_NAME:
 		p = pa->name ? strdup(pa->name) : NULL;
 		break;
-	case FDISK_COL_ATTR:
+	case FDISK_FIELD_ATTR:
 		p = pa->attrs ? strdup(pa->attrs) : NULL;
 		break;
-	case FDISK_COL_SADDR:
+	case FDISK_FIELD_SADDR:
 		p = pa->start_addr ? strdup(pa->start_addr) : NULL;
 		break;
-	case FDISK_COL_EADDR:
+	case FDISK_FIELD_EADDR:
 		p = pa->end_addr ? strdup(pa->end_addr) : NULL;
 		break;
 	default:

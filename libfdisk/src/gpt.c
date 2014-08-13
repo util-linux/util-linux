@@ -2395,21 +2395,21 @@ static const struct fdisk_label_operations gpt_operations =
 	.reset_alignment = gpt_reset_alignment
 };
 
-static const struct fdisk_column gpt_columns[] =
+static const struct fdisk_field gpt_fields[] =
 {
 	/* basic */
-	{ FDISK_COL_DEVICE,	N_("Device"),	 10,	0 },
-	{ FDISK_COL_START,	N_("Start"),	  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_END,	N_("End"),	  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_CYLINDERS,	N_("Cylinders"),  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_SIZE,	N_("Size"),	  5,	FDISK_COLFL_NUMBER | FDISK_COLFL_EYECANDY },
-	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	FDISK_COLFL_EYECANDY },
+	{ FDISK_FIELD_DEVICE,	N_("Device"),	 10,	0 },
+	{ FDISK_FIELD_START,	N_("Start"),	  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_END,	N_("End"),	  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_SECTORS,	N_("Sectors"),	  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_CYLINDERS,N_("Cylinders"),  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_SIZE,	N_("Size"),	  5,	FDISK_FIELDFL_NUMBER | FDISK_FIELDFL_EYECANDY },
+	{ FDISK_FIELD_TYPE,	N_("Type"),	0.1,	FDISK_FIELDFL_EYECANDY },
 	/* expert */
-	{ FDISK_COL_TYPEID,	N_("Type-UUID"), 36,	FDISK_COLFL_DETAIL },
-	{ FDISK_COL_UUID,	N_("UUID"),	 36,	FDISK_COLFL_DETAIL },
-	{ FDISK_COL_NAME,	N_("Name"),	0.2,	FDISK_COLFL_DETAIL },
-	{ FDISK_COL_ATTR,	N_("Attrs"),	  0,	FDISK_COLFL_DETAIL }
+	{ FDISK_FIELD_TYPEID,	N_("Type-UUID"), 36,	FDISK_FIELDFL_DETAIL },
+	{ FDISK_FIELD_UUID,	N_("UUID"),	 36,	FDISK_FIELDFL_DETAIL },
+	{ FDISK_FIELD_NAME,	N_("Name"),	0.2,	FDISK_FIELDFL_DETAIL },
+	{ FDISK_FIELD_ATTR,	N_("Attrs"),	  0,	FDISK_FIELDFL_DETAIL }
 };
 
 /*
@@ -2434,8 +2434,8 @@ struct fdisk_label *fdisk_new_gpt_label(struct fdisk_context *cxt)
 	lb->parttypes = gpt_parttypes;
 	lb->nparttypes = ARRAY_SIZE(gpt_parttypes);
 
-	lb->columns = gpt_columns;
-	lb->ncolumns = ARRAY_SIZE(gpt_columns);
+	lb->fields = gpt_fields;
+	lb->nfields = ARRAY_SIZE(gpt_fields);
 
 	return lb;
 }

@@ -162,8 +162,8 @@ struct cfdisk {
 	struct fdisk_table	*table;	/* partition table */
 	struct cfdisk_menu	*menu;	/* the current menu */
 
-	int	*cols;		/* output columns */
-	size_t	ncols;		/* number of columns */
+	int	*fields;	/* output columns IDs */
+	size_t	nfields;	/* number of columns IDs */
 
 	char	*linesbuf;	/* table as string */
 	size_t	linesbufsz;	/* size of the tb_buf */
@@ -179,18 +179,18 @@ struct cfdisk {
 			zero_start :1;		/* ignore existing partition table */
 };
 
-/* Initialize output columns -- we follow libcfdisk columns (usually specific
+/* Initialize output columns -- we follow libfdisk fields (usually specific
  * to the label type.
  */
 static int cols_init(struct cfdisk *cf)
 {
 	assert(cf);
 
-	free(cf->cols);
-	cf->cols = NULL;
-	cf->ncols = 0;
+	free(cf->fields);
+	cf->fields = NULL;
+	cf->nfields = 0;
 
-	return fdisk_get_columns(cf->cxt, 0, &cf->cols, &cf->ncols);
+	return fdisk_get_fields_ids(cf->cxt, 0, &cf->fields, &cf->nfields);
 }
 
 static void resize(void)
@@ -237,7 +237,6 @@ static int partition_from_scols(struct fdisk_table *tb,
 
 static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 {
-	const struct fdisk_column *col;
 	struct fdisk_partition *pa;
 	struct fdisk_label *lb;
 	struct fdisk_iter *itr = NULL;
@@ -252,7 +251,7 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 
 	assert(cf);
 	assert(cf->cxt);
-	assert(cf->cols);
+	assert(cf->fields);
 	assert(tb);
 
 	lb = fdisk_context_get_label(cf->cxt, NULL);
@@ -277,23 +276,24 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	scols_table_enable_maxout(table, 1);
 
 	/* headers */
-	for (i = 0; i < cf->ncols; i++) {
-		col = fdisk_label_get_column(lb, cf->cols[i]);
-		if (col) {
-			int fl = 0;
+	for (i = 0; i < cf->nfields; i++) {
+		int fl = 0;
+		const struct fdisk_field *field =
+				fdisk_label_get_field(lb, cf->fields[i]);
+		if (!field)
+			continue;
 
-			if (fdisk_column_is_number(col))
-				fl |= SCOLS_FL_RIGHT;
-			if (fdisk_column_get_id(col) == FDISK_COL_TYPE)
-				fl |= SCOLS_FL_TRUNC;
-			if (tree && fdisk_column_get_id(col) == FDISK_COL_DEVICE)
-				fl |= SCOLS_FL_TREE;
+		if (fdisk_field_is_number(field))
+			fl |= SCOLS_FL_RIGHT;
+		if (fdisk_field_get_id(field) == FDISK_FIELD_TYPE)
+			fl |= SCOLS_FL_TRUNC;
+		if (tree && fdisk_field_get_id(field) == FDISK_FIELD_DEVICE)
+			fl |= SCOLS_FL_TREE;
 
-			if (!scols_table_new_column(table,
-					fdisk_column_get_name(col),
-					fdisk_column_get_width(col), fl))
-				goto done;
-		}
+		if (!scols_table_new_column(table,
+				fdisk_field_get_name(field),
+				fdisk_field_get_width(field), fl))
+			goto done;
 	}
 
 	/* data */
@@ -305,13 +305,11 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 		ln = scols_table_new_line(table, parent);
 		if (!ln)
 			goto done;
-		for (i = 0; i < cf->ncols; i++) {
+		for (i = 0; i < cf->nfields; i++) {
 			char *cdata = NULL;
-			col = fdisk_label_get_column(lb, cf->cols[i]);
-			if (!col)
-				continue;
+
 			if (fdisk_partition_to_string(pa, cf->cxt,
-					fdisk_column_get_id(col), &cdata))
+					cf->fields[i], &cdata))
 				continue;
 			scols_line_refer_data(ln, i, cdata);
 		}

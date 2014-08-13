@@ -107,20 +107,21 @@ int fdisk_missing_geometry(struct fdisk_context *cxt)
 }
 
 /**
- * fdisk_get_columns:
+ * fdisk_get_fields:
  * @cxt: fdisk context
  * @all: 1 or 0
- * @cols: returns allocated array with FDISK_COL_* IDs
- * @ncols: returns number of items in cols
+ * @ids: returns allocated array with FDISK_FIELD_* IDs
+ * @nids: returns number of items in fields
  *
- * This function returns the default or all columns for the current label.
- * Note that the set of the default columns depends on
+ * This function returns the default or all fields for the current label.
+ * Note that the set of the default fields depends on
  * fdisk_context_enable_details() function. If the details are enabled then
- * this function usually returns more columns.
+ * this function usually returns more fields.
  *
  * Returns 0 on success, otherwise, a corresponding error.
  */
-int fdisk_get_columns(struct fdisk_context *cxt, int all, int **cols, size_t *ncols)
+int fdisk_get_fields_ids(struct fdisk_context *cxt, int all,
+			 int **ids, size_t *nids)
 {
 	size_t i, n;
 	int *c;
@@ -129,70 +130,69 @@ int fdisk_get_columns(struct fdisk_context *cxt, int all, int **cols, size_t *nc
 
 	if (!cxt->label)
 		return -EINVAL;
-	if (!cxt->label->columns || !cxt->label->ncolumns)
+	if (!cxt->label->fields || !cxt->label->nfields)
 		return -ENOSYS;
-	c = calloc(cxt->label->ncolumns, sizeof(int));
+	c = calloc(cxt->label->nfields, sizeof(int));
 	if (!c)
 		return -ENOMEM;
-	for (n = 0, i = 0; i < cxt->label->ncolumns; i++) {
-		int id = cxt->label->columns[i].id;
+	for (n = 0, i = 0; i < cxt->label->nfields; i++) {
+		int id = cxt->label->fields[i].id;
 
 		if (!all &&
 		    ((fdisk_context_display_details(cxt) &&
-				(cxt->label->columns[i].flags & FDISK_COLFL_EYECANDY))
+				(cxt->label->fields[i].flags & FDISK_FIELDFL_EYECANDY))
 		     || (!fdisk_context_display_details(cxt) &&
-				(cxt->label->columns[i].flags & FDISK_COLFL_DETAIL))
-		     || (id == FDISK_COL_SECTORS &&
+				(cxt->label->fields[i].flags & FDISK_FIELDFL_DETAIL))
+		     || (id == FDISK_FIELD_SECTORS &&
 			         fdisk_context_use_cylinders(cxt))
-		     || (id == FDISK_COL_CYLINDERS &&
+		     || (id == FDISK_FIELD_CYLINDERS &&
 			         !fdisk_context_use_cylinders(cxt))))
 			continue;
 
 		c[n++] = id;
 	}
-	if (cols)
-		*cols = c;
+	if (ids)
+		*ids = c;
 	else
 		free(c);
-	if (ncols)
-		*ncols = n;
+	if (nids)
+		*nids = n;
 	return 0;
 }
 
-const struct fdisk_column *fdisk_label_get_column(
-					struct fdisk_label *lb, int id)
+const struct fdisk_field *fdisk_label_get_field(struct fdisk_label *lb, int id)
 {
 	size_t i;
 
 	assert(lb);
 	assert(id > 0);
 
-	for (i = 0; i < lb->ncolumns; i++) {
-		if (lb->columns[i].id == id)
-			return &lb->columns[i];
+	for (i = 0; i < lb->nfields; i++) {
+		if (lb->fields[i].id == id)
+			return &lb->fields[i];
 	}
 
 	return NULL;
 }
 
-int fdisk_column_get_id(const struct fdisk_column *col)
+int fdisk_field_get_id(const struct fdisk_field *field)
 {
-	return col ? col->id : -EINVAL;
+	return field ? field->id : -EINVAL;
 }
 
-const char *fdisk_column_get_name(const struct fdisk_column *col)
+const char *fdisk_field_get_name(const struct fdisk_field *field)
 {
-	return col ? col->name : NULL;
+	return field ? field->name : NULL;
 }
 
-double fdisk_column_get_width(const struct fdisk_column *col)
+double fdisk_field_get_width(const struct fdisk_field *field)
 {
-	return col ? col->width : -EINVAL;
+	return field ? field->width : -EINVAL;
 }
 
-int fdisk_column_is_number(const struct fdisk_column *col)
+int fdisk_field_is_number(const struct fdisk_field *field)
 {
-	return col->flags ? col->flags & FDISK_COLFL_NUMBER : 0;
+	return field->flags ? field->flags & FDISK_FIELDFL_NUMBER : 0;
 }
 
 /**

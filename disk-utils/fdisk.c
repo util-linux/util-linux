@@ -543,8 +543,8 @@ void list_disklabel(struct fdisk_context *cxt)
 	struct fdisk_iter *itr = NULL;
 	struct libscols_table *out = NULL;
 	const char *bold = NULL;
-	int *cols = NULL;
-	size_t	ncols = 0, i;
+	int *ids = NULL;		/* IDs of fdisk_fields */
+	size_t	nids = 0, i;
 
 	/* print label specific stuff by libfdisk FDISK_ASK_INFO API */
 	fdisk_list_disklabel(cxt);
@@ -553,7 +553,7 @@ void list_disklabel(struct fdisk_context *cxt)
 	if (fdisk_get_partitions(cxt, &tb) || fdisk_table_get_nents(tb) <= 0)
 		goto done;
 
-	if (fdisk_get_columns(cxt, 0, &cols, &ncols))
+	if (fdisk_get_fields_ids(cxt, 0, &ids, &nids))
 		goto done;
 
 	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
@@ -574,21 +574,21 @@ void list_disklabel(struct fdisk_context *cxt)
 	}
 
 	/* define output table columns */
-	for (i = 0; i < ncols; i++) {
+	for (i = 0; i < nids; i++) {
 		int fl = 0;
 		struct libscols_column *co;
-		const struct fdisk_column *col =
-				fdisk_label_get_column(cxt->label, cols[i]);
-		if (!col)
+		const struct fdisk_field *field =
+				fdisk_label_get_field(cxt->label, ids[i]);
+		if (!field)
 			goto done;
-		if (fdisk_column_is_number(col))
+		if (fdisk_field_is_number(field))
 			fl |= SCOLS_FL_RIGHT;
-		if (fdisk_column_get_id(col) == FDISK_COL_TYPE)
+		if (fdisk_field_get_id(field) == FDISK_FIELD_TYPE)
 			fl |= SCOLS_FL_TRUNC;
 
 		co = scols_table_new_column(out,
-				fdisk_column_get_name(col),
-				fdisk_column_get_width(col), fl);
+				fdisk_field_get_name(field),
+				fdisk_field_get_width(field), fl);
 		if (!co)
 			goto done;
 
@@ -606,15 +606,10 @@ void list_disklabel(struct fdisk_context *cxt)
 			goto done;
 		}
 
-		for (i = 0; i < ncols; i++) {
+		for (i = 0; i < nids; i++) {
 			char *data = NULL;
 
-			const struct fdisk_column *col =
-				fdisk_label_get_column(cxt->label, cols[i]);
-
-			if (fdisk_partition_to_string(pa, cxt,
-					fdisk_column_get_id(col),
-					&data))
+			if (fdisk_partition_to_string(pa, cxt, ids[i], &data))
 				continue;
 			scols_line_refer_data(ln, i, data);
 		}
@@ -637,7 +632,7 @@ void list_disklabel(struct fdisk_context *cxt)
 	if (fdisk_table_wrong_order(tb))
 		fdisk_info(cxt, _("Partition table entries are not in disk order."));
 done:
-	free(cols);
+	free(ids);
 	scols_unref_table(out);
 	fdisk_unref_table(tb);
 	fdisk_free_iter(itr);

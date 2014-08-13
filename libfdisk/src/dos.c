@@ -1981,23 +1981,23 @@ static int dos_toggle_partition_flag(
 	return 0;
 }
 
-static const struct fdisk_column dos_columns[] =
+static const struct fdisk_field dos_fields[] =
 {
 	/* basic */
-	{ FDISK_COL_DEVICE,	N_("Device"),	 10,	0 },
-	{ FDISK_COL_BOOT,	N_("Boot"),	  1,	0 },
-	{ FDISK_COL_START,	N_("Start"),	  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_END,	N_("End"),	  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_CYLINDERS,	N_("Cylinders"),  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_SIZE,	N_("Size"),	  5,	FDISK_COLFL_NUMBER | FDISK_COLFL_EYECANDY },
-	{ FDISK_COL_TYPEID,	N_("Id"),	  2,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	0 },
+	{ FDISK_FIELD_DEVICE,	N_("Device"),	 10,	0 },
+	{ FDISK_FIELD_BOOT,	N_("Boot"),	  1,	0 },
+	{ FDISK_FIELD_START,	N_("Start"),	  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_END,	N_("End"),	  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_SECTORS,	N_("Sectors"),	  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_CYLINDERS,N_("Cylinders"),  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_SIZE,	N_("Size"),	  5,	FDISK_FIELDFL_NUMBER | FDISK_FIELDFL_EYECANDY },
+	{ FDISK_FIELD_TYPEID,	N_("Id"),	  2,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_TYPE,	N_("Type"),	0.1,	0 },
 
 	/* expert mode */
-	{ FDISK_COL_SADDR,	N_("Start-C/H/S"), 1,   FDISK_COLFL_NUMBER | FDISK_COLFL_DETAIL },
-	{ FDISK_COL_EADDR,	N_("End-C/H/S"),   1,   FDISK_COLFL_NUMBER | FDISK_COLFL_DETAIL },
-	{ FDISK_COL_ATTR,	N_("Attrs"),	   2,   FDISK_COLFL_NUMBER | FDISK_COLFL_DETAIL }
+	{ FDISK_FIELD_SADDR,	N_("Start-C/H/S"), 1,   FDISK_FIELDFL_NUMBER | FDISK_FIELDFL_DETAIL },
+	{ FDISK_FIELD_EADDR,	N_("End-C/H/S"),   1,   FDISK_FIELDFL_NUMBER | FDISK_FIELDFL_DETAIL },
+	{ FDISK_FIELD_ATTR,	N_("Attrs"),	   2,   FDISK_FIELDFL_NUMBER | FDISK_FIELDFL_DETAIL }
 
 };
 
@@ -2048,8 +2048,8 @@ struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt)
 	lb->op = &dos_operations;
 	lb->parttypes = dos_parttypes;
 	lb->nparttypes = ARRAY_SIZE(dos_parttypes);
-	lb->columns = dos_columns;
-	lb->ncolumns = ARRAY_SIZE(dos_columns);
+	lb->fields = dos_fields;
+	lb->nfields = ARRAY_SIZE(dos_fields);
 
 	return lb;
 }

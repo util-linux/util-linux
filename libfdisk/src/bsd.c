@@ -878,18 +878,18 @@ static const struct fdisk_label_operations bsd_operations =
 	.part_is_used   = bsd_partition_is_used,
 };
 
-static const struct fdisk_column bsd_columns[] =
+static const struct fdisk_field bsd_fields[] =
 {
-	{ FDISK_COL_DEVICE,	N_("Slice"),	  1,	0 },
-	{ FDISK_COL_START,	N_("Start"),	  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_END,	N_("End"),	  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_SECTORS,	N_("Sectors"),    5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_CYLINDERS,	N_("Cylinders"),  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_SIZE,	N_("Size"),	  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_TYPE,	N_("Type"),	  8,	0 },
-	{ FDISK_COL_FSIZE,	N_("Fsize"),	  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_BSIZE,	N_("Bsize"),	  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_CPG,	N_("Cpg"),	  5,	FDISK_COLFL_NUMBER }
+	{ FDISK_FIELD_DEVICE,	N_("Slice"),	  1,	0 },
+	{ FDISK_FIELD_START,	N_("Start"),	  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_END,	N_("End"),	  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_SECTORS,	N_("Sectors"),    5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_CYLINDERS,N_("Cylinders"),  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_SIZE,	N_("Size"),	  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_TYPE,	N_("Type"),	  8,	0 },
+	{ FDISK_FIELD_FSIZE,	N_("Fsize"),	  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_BSIZE,	N_("Bsize"),	  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_CPG,	N_("Cpg"),	  5,	FDISK_FIELDFL_NUMBER }
 };
 
 /*
@@ -914,8 +914,8 @@ struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt)
 	lb->parttypes = bsd_fstypes;
 	lb->nparttypes = ARRAY_SIZE(bsd_fstypes);
 
-	lb->columns = bsd_columns;
-	lb->ncolumns = ARRAY_SIZE(bsd_columns);
+	lb->fields = bsd_fields;
+	lb->nfields = ARRAY_SIZE(bsd_fields);
 
 	lb->flags |= FDISK_LABEL_FL_INCHARS_PARTNO;
 	lb->flags |= FDISK_LABEL_FL_REQUIRE_GEOMETRY;

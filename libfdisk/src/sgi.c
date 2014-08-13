@@ -1080,17 +1080,17 @@ static int sgi_toggle_partition_flag(struct fdisk_context *cxt, size_t i, unsign
 	return 0;
 }
 
-static const struct fdisk_column sgi_columns[] =
+static const struct fdisk_field sgi_fields[] =
 {
-	{ FDISK_COL_DEVICE,	N_("Device"),	 10,	0 },
-	{ FDISK_COL_START,	N_("Start"),	  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_END,	N_("End"),	  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_SECTORS,	N_("Sectors"),	  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_CYLINDERS,	N_("Cylinders"),  5,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_SIZE,	N_("Size"),	  5,	FDISK_COLFL_NUMBER | FDISK_COLFL_EYECANDY },
-	{ FDISK_COL_TYPEID,	N_("Id"),	  2,	FDISK_COLFL_NUMBER },
-	{ FDISK_COL_TYPE,	N_("Type"),	0.1,	FDISK_COLFL_EYECANDY },
-	{ FDISK_COL_ATTR,	N_("Attrs"),	  0,	FDISK_COLFL_NUMBER }
+	{ FDISK_FIELD_DEVICE,	N_("Device"),	 10,	0 },
+	{ FDISK_FIELD_START,	N_("Start"),	  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_END,	N_("End"),	  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_SECTORS,	N_("Sectors"),	  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_CYLINDERS,N_("Cylinders"),  5,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_SIZE,	N_("Size"),	  5,	FDISK_FIELDFL_NUMBER | FDISK_FIELDFL_EYECANDY },
+	{ FDISK_FIELD_TYPEID,	N_("Id"),	  2,	FDISK_FIELDFL_NUMBER },
+	{ FDISK_FIELD_TYPE,	N_("Type"),	0.1,	FDISK_FIELDFL_EYECANDY },
+	{ FDISK_FIELD_ATTR,	N_("Attrs"),	  0,	FDISK_FIELDFL_NUMBER }
 };
 
 static const struct fdisk_label_operations sgi_operations =
@@ -1130,8 +1130,8 @@ struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt)
 	lb->op = &sgi_operations;
 	lb->parttypes = sgi_parttypes;
 	lb->nparttypes = ARRAY_SIZE(sgi_parttypes);
-	lb->columns = sgi_columns;
-	lb->ncolumns = ARRAY_SIZE(sgi_columns);
+	lb->fields = sgi_fields;
+	lb->nfields = ARRAY_SIZE(sgi_fields);
 
 	lb->flags |= FDISK_LABEL_FL_REQUIRE_GEOMETRY;
 

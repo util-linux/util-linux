@@ -35,7 +35,7 @@ struct fdisk_partition;
 struct fdisk_ask;
 struct fdisk_iter;
 struct fdisk_table;
-struct fdisk_column;
+struct fdisk_field;
 
 /*
  * Supported partition table types (labels)
@@ -118,28 +118,28 @@ extern int fdisk_is_parttype_string(struct fdisk_context *cxt);
 
 /* label.c */
 enum {
-	FDISK_COL_NONE = 0,
+	FDISK_FIELD_NONE = 0,
 
 	/* generic */
-	FDISK_COL_DEVICE,
-	FDISK_COL_START,
-	FDISK_COL_END,
-	FDISK_COL_SECTORS,
-	FDISK_COL_CYLINDERS,
-	FDISK_COL_SIZE,
-	FDISK_COL_TYPE,
-	FDISK_COL_TYPEID,
+	FDISK_FIELD_DEVICE,
+	FDISK_FIELD_START,
+	FDISK_FIELD_END,
+	FDISK_FIELD_SECTORS,
+	FDISK_FIELD_CYLINDERS,
+	FDISK_FIELD_SIZE,
+	FDISK_FIELD_TYPE,
+	FDISK_FIELD_TYPEID,
 
 	/* label specific */
-	FDISK_COL_ATTR,
-	FDISK_COL_BOOT,
-	FDISK_COL_BSIZE,
-	FDISK_COL_CPG,
-	FDISK_COL_EADDR,
-	FDISK_COL_FSIZE,
-	FDISK_COL_NAME,
-	FDISK_COL_SADDR,
-	FDISK_COL_UUID,
+	FDISK_FIELD_ATTR,
+	FDISK_FIELD_BOOT,
+	FDISK_FIELD_BSIZE,
+	FDISK_FIELD_CPG,
+	FDISK_FIELD_EADDR,
+	FDISK_FIELD_FSIZE,
+	FDISK_FIELD_NAME,
+	FDISK_FIELD_SADDR,
+	FDISK_FIELD_UUID,
 };
 
 extern int fdisk_require_geometry(struct fdisk_context *cxt);
@@ -167,12 +167,16 @@ extern int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum);
 extern int fdisk_set_partition_type(struct fdisk_context *cxt, size_t partnum,
 			     struct fdisk_parttype *t);
 
-extern int fdisk_get_columns(struct fdisk_context *cxt, int all, int **cols, size_t *ncols);
 
-extern int fdisk_column_get_id(const struct fdisk_column *col);
-extern const char *fdisk_column_get_name(const struct fdisk_column *col);
-extern double fdisk_column_get_width(const struct fdisk_column *col);
-extern int fdisk_column_is_number(const struct fdisk_column *col);
+extern int fdisk_get_fields_ids(struct fdisk_context *cxt, int all,
+				int **ids, size_t *nids);
+extern const struct fdisk_field *fdisk_label_get_field(struct fdisk_label *lb, int id);
+
+extern int fdisk_field_get_id(const struct fdisk_field *fl);
+extern const char *fdisk_field_get_name(const struct fdisk_field *fl);
+extern double fdisk_field_get_width(const struct fdisk_field *fl);
+extern int fdisk_field_is_number(const struct fdisk_field *fl);
+
 
 extern void fdisk_label_set_changed(struct fdisk_label *lb, int changed);
 extern int fdisk_label_is_changed(struct fdisk_label *lb);
