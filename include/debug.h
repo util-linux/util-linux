@@ -93,7 +93,7 @@ static inline int parse_envmask(const struct dbg_mask const flagnames[],
 	res = strtoul(mask, &ptr, 0);
 
 	/* perhaps it's a comma-separated string? */
-	if (*ptr != '\0') {
+	if (*ptr != '\0' && flagnames) {
 		char *msbuf, *ms, *name;
 		res = 0;
 
