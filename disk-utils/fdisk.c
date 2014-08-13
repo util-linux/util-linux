@@ -503,6 +503,7 @@ void change_partition_type(struct fdisk_context *cxt)
 void list_disk_geometry(struct fdisk_context *cxt)
 {
 	char *id = NULL;
+	struct fdisk_label *lb = fdisk_get_label(cxt, NULL);
 	uint64_t bytes = cxt->total_sectors * cxt->sector_size;
 	char *strsz = size_to_human_string(SIZE_SUFFIX_SPACE
 					   | SIZE_SUFFIX_3LETTER, bytes);
@@ -512,7 +513,7 @@ void list_disk_geometry(struct fdisk_context *cxt)
 			bytes, (uintmax_t) cxt->total_sectors);
 	free(strsz);
 
-	if (fdisk_require_geometry(cxt) || fdisk_use_cylinders(cxt))
+	if (fdisk_label_require_geometry(lb) || fdisk_use_cylinders(cxt))
 		fdisk_info(cxt, _("Geometry: %d heads, %llu sectors/track, %llu cylinders"),
 			       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
 

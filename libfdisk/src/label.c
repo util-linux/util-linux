@@ -53,6 +53,19 @@ const char *fdisk_label_get_name(struct fdisk_label *lb)
 	return lb ? lb->name : NULL;
 }
 
+/**
+ * fdisk_label_require_geometry:
+ * @lb: label
+ *
+ * Returns: 1 if label requires CHS geometry
+ */
+int fdisk_label_require_geometry(struct fdisk_label *lb)
+{
+	assert(lb);
+
+	return lb->flags & FDISK_LABEL_FL_REQUIRE_GEOMETRY ? 1 : 0;
+}
+
 
 /**
  * fdisk_write_disklabel:
@@ -71,29 +84,6 @@ int fdisk_write_disklabel(struct fdisk_context *cxt)
 	return cxt->label->op->write(cxt);
 }
 
-int fdisk_require_geometry(struct fdisk_context *cxt)
-{
-	assert(cxt);
-
-	return cxt->label
-	       && cxt->label->flags & FDISK_LABEL_FL_REQUIRE_GEOMETRY ? 1 : 0;
-}
-
-int fdisk_missing_geometry(struct fdisk_context *cxt)
-{
-	int rc;
-
-	assert(cxt);
-
-	rc = (fdisk_require_geometry(cxt) &&
-		    (!cxt->geom.heads || !cxt->geom.sectors
-				      || !cxt->geom.cylinders));
-
-	if (rc && !fdisk_is_listonly(cxt))
-		fdisk_warnx(cxt, _("Incomplete geometry setting."));
-
-	return rc;
-}
 
 /**
  * fdisk_get_fields:

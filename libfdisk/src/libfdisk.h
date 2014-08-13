@@ -160,9 +160,7 @@ enum {
 };
 
 const char *fdisk_label_get_name(struct fdisk_label *lb);
-
-extern int fdisk_require_geometry(struct fdisk_context *cxt);
-extern int fdisk_missing_geometry(struct fdisk_context *cxt);
+int fdisk_label_require_geometry(struct fdisk_label *lb);
 
 
 extern int fdisk_write_disklabel(struct fdisk_context *cxt);

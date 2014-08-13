@@ -690,4 +690,22 @@ const char *fdisk_get_devname(struct fdisk_context *cxt)
 }
 
 
+int fdisk_missing_geometry(struct fdisk_context *cxt)
+{
+	int rc;
+
+	assert(cxt);
+
+	if (!cxt || !cxt->label)
+		return 0;
+
+	rc = (fdisk_label_require_geometry(cxt->label) &&
+		    (!cxt->geom.heads || !cxt->geom.sectors
+				      || !cxt->geom.cylinders));
+
+	if (rc && !fdisk_is_listonly(cxt))
+		fdisk_warnx(cxt, _("Incomplete geometry setting."));
+
+	return rc;
+}
 

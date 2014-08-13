@@ -380,6 +380,7 @@ struct fdisk_context {
 /* context.c */
 extern int __fdisk_switch_label(struct fdisk_context *cxt,
 				    struct fdisk_label *lb);
+extern int fdisk_missing_geometry(struct fdisk_context *cxt);
 
 /* alignment.c */
 sector_t fdisk_scround(struct fdisk_context *cxt, sector_t num);
