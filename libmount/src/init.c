@@ -16,7 +16,8 @@
 #include "mountP.h"
 
 UL_DEBUG_DEFINE_MASK(libmount);
-static const struct dbg_mask libmount_masknames [] = {
+UL_DEBUG_DEFINE_MASKANEMS(libmount) =
+{
 	{ "all", MNT_DEBUG_ALL },
 	{ "init", MNT_DEBUG_INIT },
 	{ "cache", MNT_DEBUG_CACHE },
@@ -31,6 +32,7 @@ static const struct dbg_mask libmount_masknames [] = {
 	{ "diff", MNT_DEBUG_DIFF },
 	{ NULL, 0 }
 };
+
 /**
  * mnt_init_debug:
  * @mask: debug mask (0xffff to enable full debugging)

@@ -2,8 +2,8 @@
 #include "fdiskP.h"
 
 UL_DEBUG_DEFINE_MASK(libfdisk);
-
-static const struct dbg_mask libfdisk_masknames[] = {
+UL_DEBUG_DEFINE_MASKANEMS(libfdisk) =
+{
 	{ "all", FDISK_DEBUG_ALL },
 	{ "init", FDISK_DEBUG_INIT },
 	{ "cxt", FDISK_DEBUG_CXT },

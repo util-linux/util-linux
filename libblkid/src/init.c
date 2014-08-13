@@ -16,8 +16,8 @@
 #include "blkidP.h"
 
 UL_DEBUG_DEFINE_MASK(libblkid);
-
-static const struct dbg_mask libblkid_masknames [] = {
+UL_DEBUG_DEFINE_MASKANEMS(libblkid) =
+{
 	{ "all", BLKID_DEBUG_ALL },
 	{ "cache", BLKID_DEBUG_CACHE },
 	{ "dump", BLKID_DEBUG_DUMP },

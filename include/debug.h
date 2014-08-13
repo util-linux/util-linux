@@ -12,6 +12,7 @@
 
 #define UL_DEBUG_DEFINE_MASK(m) int m ## _debug_mask
 #define UL_DEBUG_DECLARE_MASK(m) extern UL_DEBUG_DEFINE_MASK(m)
+#define UL_DEBUG_DEFINE_MASKANEMS(m) static const struct dbg_mask m ## _masknames[]
 
 /* p - flag prefix, m - flag postfix */
 #define UL_DEBUG_DEFINE_FLAG(p, m) p ## m
