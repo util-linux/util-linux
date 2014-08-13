@@ -37,6 +37,8 @@ struct fdisk_iter;
 struct fdisk_table;
 struct fdisk_field;
 
+typedef unsigned long long sector_t;
+
 /*
  * Supported partition table types (labels)
  */
@@ -109,8 +111,8 @@ unsigned long fdisk_get_physector_size(struct fdisk_context *cxt);
 unsigned long fdisk_get_sector_size(struct fdisk_context *cxt);
 unsigned long fdisk_get_alignment_offset(struct fdisk_context *cxt);
 unsigned long fdisk_get_grain_size(struct fdisk_context *cxt);
-unsigned long fdisk_get_first_lba(struct fdisk_context *cxt);
-unsigned long fdisk_get_nsectors(struct fdisk_context *cxt);
+sector_t fdisk_get_first_lba(struct fdisk_context *cxt);
+sector_t fdisk_get_nsectors(struct fdisk_context *cxt);
 const char *fdisk_get_devname(struct fdisk_context *cxt);
 
 /* parttype.c */
@@ -275,21 +277,29 @@ extern struct fdisk_partition *fdisk_table_get_partition(
 			size_t n);
 
 /* alignment.c */
-extern int fdisk_reset_alignment(struct fdisk_context *cxt);
-extern int fdisk_reset_device_properties(struct fdisk_context *cxt);
+#define FDISK_ALIGN_UP		1
+#define FDISK_ALIGN_DOWN	2
+#define FDISK_ALIGN_NEAREST	3
 
-extern int fdisk_save_user_geometry(struct fdisk_context *cxt,
+sector_t fdisk_align_lba(struct fdisk_context *cxt, sector_t lba, int direction);
+sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt,
+				  sector_t lba, sector_t start, sector_t stop);
+int fdisk_lba_is_phy_aligned(struct fdisk_context *cxt, sector_t lba);
+
+int fdisk_override_geometry(struct fdisk_context *cxt,
 			    unsigned int cylinders,
 			    unsigned int heads,
 			    unsigned int sectors);
-
-extern int fdisk_save_user_sector_size(struct fdisk_context *cxt,
+int fdisk_save_user_geometry(struct fdisk_context *cxt,
+			    unsigned int cylinders,
+			    unsigned int heads,
+			    unsigned int sectors);
+int fdisk_save_user_sector_size(struct fdisk_context *cxt,
 				unsigned int phy,
 				unsigned int log);
-
-extern int fdisk_has_user_device_properties(struct fdisk_context *cxt);
-
-extern int fdisk_reread_partition_table(struct fdisk_context *cxt);
+int fdisk_has_user_device_properties(struct fdisk_context *cxt);
+int fdisk_reset_alignment(struct fdisk_context *cxt);
+int fdisk_reread_partition_table(struct fdisk_context *cxt);
 
 /* iter.c */
 enum {

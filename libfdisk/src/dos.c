@@ -1274,7 +1274,6 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 		p = self_partition(cxt, i);
 		if (is_used_partition(p) && !IS_EXTENDED(p->sys_ind)) {
 			check_consistency(cxt, p, i);
-			fdisk_warn_alignment(cxt, get_abs_partition_start(pe), i);
 			if (get_abs_partition_start(pe) < first[i])
 				fdisk_warnx(cxt, _(
 					"Partition %zu: bad start-of-data."),

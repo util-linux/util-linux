@@ -637,7 +637,7 @@ unsigned long fdisk_get_grain_size(struct fdisk_context *cxt)
  *
  * Returns: first possible LBA on disk for data partitions.
  */
-unsigned long fdisk_get_first_lba(struct fdisk_context *cxt)
+sector_t fdisk_get_first_lba(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->first_lba;
@@ -649,7 +649,7 @@ unsigned long fdisk_get_first_lba(struct fdisk_context *cxt)
  *
  * Returns: size of the device in (real) sectors.
  */
-unsigned long fdisk_get_nsectors(struct fdisk_context *cxt)
+sector_t fdisk_get_nsectors(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->total_sectors;

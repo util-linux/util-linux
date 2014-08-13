@@ -64,9 +64,6 @@ extern int fdisk_run_test(struct fdisk_test *tests, int argc, char *argv[]);
 #endif
 
 
-typedef unsigned long long sector_t;
-
-
 /*
  * Generic iterator
  */
@@ -385,28 +382,9 @@ extern int __fdisk_switch_label(struct fdisk_context *cxt,
 				    struct fdisk_label *lb);
 
 /* alignment.c */
-extern sector_t fdisk_scround(struct fdisk_context *cxt, sector_t num);
-extern sector_t fdisk_cround(struct fdisk_context *cxt, sector_t num);
-
-extern sector_t fdisk_topology_get_first_lba(struct fdisk_context *cxt);
-extern unsigned long fdisk_topology_get_grain(struct fdisk_context *cxt);
-
-extern void fdisk_warn_alignment(struct fdisk_context *cxt,
-				 sector_t lba, int partition);
-
-
-#define FDISK_ALIGN_UP		1
-#define FDISK_ALIGN_DOWN	2
-#define FDISK_ALIGN_NEAREST	3
-
-extern sector_t fdisk_align_lba(struct fdisk_context *cxt, sector_t lba, int direction);
-extern sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt, sector_t lba,
-					 sector_t start, sector_t stop);
-
-
-extern int fdisk_override_geometry(struct fdisk_context *cxt,
-		            unsigned int cylinders, unsigned int heads,
-                            unsigned int sectors);
+sector_t fdisk_scround(struct fdisk_context *cxt, sector_t num);
+sector_t fdisk_cround(struct fdisk_context *cxt, sector_t num);
+int fdisk_reset_device_properties(struct fdisk_context *cxt);
 
 extern int fdisk_discover_geometry(struct fdisk_context *cxt);
 extern int fdisk_discover_topology(struct fdisk_context *cxt);

@@ -32,8 +32,13 @@ static int lba_is_phy_aligned(struct fdisk_context *cxt, sector_t lba)
 	return !((granularity + cxt->alignment_offset - offset) & (granularity - 1));
 }
 
-/*
- * Align @lba in @direction FDISK_ALIGN_{UP,DOWN,NEAREST}
+/**
+ * fdisk_align_lba:
+ * @cxt: context
+ * @lba: address to align
+ * @direction: FDISK_ALIGN_{UP,DOWN,NEAREST}
+ *
+ * Returns: alignment LBA.
  */
 sector_t fdisk_align_lba(struct fdisk_context *cxt, sector_t lba, int direction)
 {
@@ -81,8 +86,16 @@ sector_t fdisk_align_lba(struct fdisk_context *cxt, sector_t lba, int direction)
 	return res;
 }
 
-/*
+/**
+ * fdisk_align_lba_in_range:
+ * @cxt: context
+ * @lba: LBA
+ * @start: range start
+ * @stop: range stop
+ *
  * Align @lba, the result has to be between @start and @stop
+ *
+ * Returns: aligned LBA
  */
 sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt,
 				  sector_t lba, sector_t start, sector_t stop)
@@ -98,15 +111,18 @@ sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt,
 	return lba;
 }
 
-/*
- * Print warning if the partition @lba (start of the @partition) is not
- * aligned to physical sector boundary.
+/**
+ * fdisk_lba_is_phy_aligned:
+ * @cxt: context
+ * @lba: LBA to check
+ *
+ * Check if the @lba is aligned.
+ *
+ * Returns: 1 if aligned.
  */
-void fdisk_warn_alignment(struct fdisk_context *cxt, sector_t lba, int partition)
+int fdisk_lba_is_phy_aligned(struct fdisk_context *cxt, sector_t lba)
 {
-	if (!lba_is_phy_aligned(cxt, lba))
-		fdisk_warnx(cxt, _("Partition %i does not start on physical sector boundary.\n"),
-			partition + 1);
+	return lba_is_phy_aligned(cxt, lba);
 }
 
 static unsigned long get_sector_size(int fd)
@@ -168,6 +184,17 @@ int fdisk_override_geometry(struct fdisk_context *cxt,
 	return 0;
 }
 
+/**
+ * fdisk_save_user_geometry:
+ * @cxt: context
+ * @cylinders: C
+ * @head: H
+ * @sector: S
+ *
+ * Save user defined geometry to use it for partitioning.
+ *
+ * Returns: <0 on error, 0 on success.
+ */
 int fdisk_save_user_geometry(struct fdisk_context *cxt,
 			    unsigned int cylinders,
 			    unsigned int heads,
@@ -191,6 +218,16 @@ int fdisk_save_user_geometry(struct fdisk_context *cxt,
 	return 0;
 }
 
+/**
+ * fdisk_save_user_sector_size:
+ * @cxt: context
+ * @phy: physical sector size
+ * @log: logicla sector size
+ *
+ * Save user defined sector sizes to use it for partitioning.
+ *
+ * Returns: <0 on error, 0 on success.
+ */
 int fdisk_save_user_sector_size(struct fdisk_context *cxt,
 				unsigned int phy,
 				unsigned int log)
@@ -206,6 +243,12 @@ int fdisk_save_user_sector_size(struct fdisk_context *cxt,
 	return 0;
 }
 
+/**
+ * fdisk_has_user_device_properties:
+ * @cxt: context
+ *
+ * Returns: 1 if user specified any properties
+ */
 int fdisk_has_user_device_properties(struct fdisk_context *cxt)
 {
 	return (cxt->user_pyh_sector
@@ -391,7 +434,7 @@ static int has_topology(struct fdisk_context *cxt)
  *
  * Returns: 0 on error or number of logical sectors.
  */
-sector_t fdisk_topology_get_first_lba(struct fdisk_context *cxt)
+static sector_t topology_get_first_lba(struct fdisk_context *cxt)
 {
 	sector_t x = 0, res;
 
@@ -437,7 +480,7 @@ sector_t fdisk_topology_get_first_lba(struct fdisk_context *cxt)
  *
  * Returns: 0 on error or number of bytes.
  */
-unsigned long fdisk_topology_get_grain(struct fdisk_context *cxt)
+static unsigned long topology_get_grain(struct fdisk_context *cxt)
 {
 	unsigned long res;
 
@@ -478,8 +521,8 @@ int fdisk_reset_alignment(struct fdisk_context *cxt)
 	DBG(CXT, ul_debugobj(cxt, "reseting alignment..."));
 
 	/* default */
-	cxt->grain = fdisk_topology_get_grain(cxt);
-	cxt->first_lba = fdisk_topology_get_first_lba(cxt);
+	cxt->grain = topology_get_grain(cxt);
+	cxt->first_lba = topology_get_first_lba(cxt);
 	cxt->last_lba = cxt->total_sectors - 1;
 
 	/* overwrite default by label stuff */
@@ -506,6 +549,12 @@ sector_t fdisk_cround(struct fdisk_context *cxt, sector_t num)
 			(num / fdisk_get_units_per_sector(cxt)) + 1 : num;
 }
 
+/**
+ * fdisk_reread_partition_table:
+ * @cxt: context
+ *
+ * Force *system kernel* to re-read partition table.
+ */
 int fdisk_reread_partition_table(struct fdisk_context *cxt)
 {
 	int i;

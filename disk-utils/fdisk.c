@@ -625,9 +625,11 @@ void list_disklabel(struct fdisk_context *cxt)
 	fputc('\n', stdout);
 
 	/* print warnings */
-	while (itr && fdisk_table_next_partition(tb, itr, &pa) == 0)
-		fdisk_warn_alignment(cxt, fdisk_partition_get_start(pa),
+	while (itr && fdisk_table_next_partition(tb, itr, &pa) == 0) {
+		if (!fdisk_lba_is_phy_aligned(cxt, fdisk_partition_get_start(pa)))
+			fdisk_warnx(cxt, _("Partition %zu does not start on physical sector boundary."),
 					  fdisk_partition_get_partno(pa) + 1);
+	}
 
 	if (fdisk_table_wrong_order(tb))
 		fdisk_info(cxt, _("Partition table entries are not in disk order."));
