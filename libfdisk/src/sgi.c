@@ -68,7 +68,7 @@ static inline struct sgi_disklabel *self_disklabel(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SGI));
+	assert(fdisk_is_label(cxt, SGI));
 
 	return ((struct fdisk_sgi_label *) cxt->label)->header;
 }
@@ -78,7 +78,7 @@ static inline struct fdisk_sgi_label *self_label(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SGI));
+	assert(fdisk_is_label(cxt, SGI));
 
 	return (struct fdisk_sgi_label *) cxt->label;
 }
@@ -222,7 +222,7 @@ static int sgi_probe_label(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SGI));
+	assert(fdisk_is_label(cxt, SGI));
 	assert(sizeof(struct sgi_disklabel) <= 512);
 
 	/* map first sector to header */
@@ -417,7 +417,7 @@ static int sgi_write_disklabel(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SGI));
+	assert(fdisk_is_label(cxt, SGI));
 
 	sgilabel = self_disklabel(cxt);
 	sgilabel->csum = 0;
@@ -533,7 +533,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SGI));
+	assert(fdisk_is_label(cxt, SGI));
 
 	clear_freelist(cxt);
 	memset(Index, 0, sizeof(Index));
@@ -695,7 +695,7 @@ static int sgi_set_partition(struct fdisk_context *cxt, size_t i,
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SGI));
+	assert(fdisk_is_label(cxt, SGI));
 
 	sgilabel = self_disklabel(cxt);
 	sgilabel->partitions[i].type = cpu_to_be32(sys);
@@ -770,7 +770,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SGI));
+	assert(fdisk_is_label(cxt, SGI));
 
 	rc = fdisk_partition_next_partno(pa, cxt, &n);
 	if (rc)
@@ -911,7 +911,7 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SGI));
+	assert(fdisk_is_label(cxt, SGI));
 
 #ifdef HDIO_GETGEO
 	if (cxt->geom.heads && cxt->geom.sectors) {
@@ -1041,7 +1041,7 @@ static int sgi_partition_is_used(
 		size_t i)
 {
 	assert(cxt);
-	assert(fdisk_is_disklabel(cxt, SGI));
+	assert(fdisk_is_label(cxt, SGI));
 
 	if (i >= cxt->label->nparts_max)
 		return 0;
@@ -1053,7 +1053,7 @@ static int sgi_toggle_partition_flag(struct fdisk_context *cxt, size_t i, unsign
 	struct sgi_disklabel *sgilabel;
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SGI));
+	assert(fdisk_is_label(cxt, SGI));
 
 	if (i >= cxt->label->nparts_max)
 		return -EINVAL;

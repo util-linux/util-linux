@@ -1168,7 +1168,7 @@ static int gpt_probe_label(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
 
@@ -1338,7 +1338,7 @@ static int gpt_get_partition(struct fdisk_context *cxt, size_t n,
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
 
@@ -1385,7 +1385,7 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	if (fdisk_is_details(cxt)) {
 		struct gpt_header *h = self_label(cxt)->pheader;
@@ -1499,7 +1499,7 @@ static int gpt_write_disklabel(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
 	mbr_type = valid_pmbr(cxt);
@@ -1570,7 +1570,7 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
 
@@ -1687,7 +1687,7 @@ static int gpt_delete_partition(struct fdisk_context *cxt,
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
 
@@ -1730,7 +1730,7 @@ static int gpt_create_new_partition(struct fdisk_context *cxt,
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	DBG(LABEL, ul_debug("GPT new partition: partno=%zu, start=%ju, end=%ju",
 				partnum, fsect, lsect));
@@ -1783,7 +1783,7 @@ static int gpt_add_partition(
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
 	pheader = gpt->pheader;
@@ -1940,7 +1940,7 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
 
@@ -2007,7 +2007,7 @@ static int gpt_get_disklabel_id(struct fdisk_context *cxt, char **id)
 	assert(cxt);
 	assert(id);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
 	guid_to_string(&gpt->pheader->disk_guid, str);
@@ -2027,7 +2027,7 @@ static int gpt_set_disklabel_id(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
 	if (fdisk_ask_string(cxt,
@@ -2071,7 +2071,7 @@ static int gpt_set_partition_type(
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
 	if ((uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries)
@@ -2093,7 +2093,7 @@ static int gpt_part_is_used(struct fdisk_context *cxt, size_t i)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
 
@@ -2114,7 +2114,7 @@ int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	DBG(LABEL, ul_debug("UUID change requested partno=%zu", i));
 
@@ -2160,7 +2160,7 @@ int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	DBG(LABEL, ul_debug("NAME change requested partno=%zu", i));
 
@@ -2218,7 +2218,7 @@ static int gpt_toggle_partition_flag(
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	DBG(LABEL, ul_debug("GPT entry attribute change requested partno=%zu", i));
 	gpt = self_label(cxt);
@@ -2304,7 +2304,7 @@ static int gpt_reorder(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
 	nparts = le32_to_cpu(gpt->pheader->npartition_entries);
@@ -2327,7 +2327,7 @@ static int gpt_reset_alignment(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
 	h = gpt ? gpt->pheader : NULL;

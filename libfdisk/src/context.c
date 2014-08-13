@@ -209,6 +209,28 @@ int fdisk_switch_label(struct fdisk_context *cxt, const char *name)
 	return __fdisk_switch_label(cxt, fdisk_get_label(cxt, name));
 }
 
+/**
+ * fdisk_has_label:
+ * @cxt: fdisk context
+ *
+ * Returns: return 1 if there is label on the device.
+ */
+int fdisk_has_label(struct fdisk_context *cxt)
+{
+	return cxt && cxt->label;
+}
+
+/**
+ * fdisk_is_labeltype:
+ * @cxt: fdisk context
+ * @l: disklabel type
+ *
+ * Returns: return 1 if there is @l disklabel on the device.
+ */
+int fdisk_is_labeltype(struct fdisk_context *cxt, enum fdisk_labeltype l)
+{
+	return cxt && cxt->label && cxt->label->id == l;
+}
 
 static void reset_context(struct fdisk_context *cxt)
 {
@@ -254,7 +276,7 @@ static int warn_wipe(struct fdisk_context *cxt)
 
 	assert(cxt);
 
-	if (fdisk_dev_has_disklabel(cxt) || cxt->dev_fd < 0)
+	if (fdisk_has_label(cxt) || cxt->dev_fd < 0)
 		return -EINVAL;
 #ifdef HAVE_LIBBLKID
 	DBG(CXT, ul_debugobj(cxt, "wipe check: initialize libblkid prober"));
@@ -337,7 +359,7 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 
 	/* warn about obsolete stuff on the device if we aren't in
 	 * list-only mode and there is not PT yet */
-	if (!fdisk_is_listonly(cxt) && !fdisk_dev_has_disklabel(cxt))
+	if (!fdisk_is_listonly(cxt) && !fdisk_has_label(cxt))
 		warn_wipe(cxt);
 
 	DBG(CXT, ul_debugobj(cxt, "initialized for %s [%s]",
@@ -666,3 +688,6 @@ const char *fdisk_get_devname(struct fdisk_context *cxt)
 	assert(cxt);
 	return cxt->dev_path;
 }
+
+
+

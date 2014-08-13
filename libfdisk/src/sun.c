@@ -53,7 +53,7 @@ static inline struct sun_disklabel *self_disklabel(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SUN));
+	assert(fdisk_is_label(cxt, SUN));
 
 	return ((struct fdisk_sun_label *) cxt->label)->header;
 }
@@ -63,7 +63,7 @@ static inline struct fdisk_sun_label *self_label(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SUN));
+	assert(fdisk_is_label(cxt, SUN));
 
 	return (struct fdisk_sun_label *) cxt->label;
 }
@@ -108,7 +108,7 @@ static int sun_probe_label(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SUN));
+	assert(fdisk_is_label(cxt, SUN));
 
 	/* map first sector to header */
 	sun = (struct fdisk_sun_label *) cxt->label;
@@ -197,7 +197,7 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SUN));
+	assert(fdisk_is_label(cxt, SUN));
 
 	/* map first sector to header */
 	rc = fdisk_init_firstsector_buffer(cxt);
@@ -294,7 +294,7 @@ static int sun_toggle_partition_flag(struct fdisk_context *cxt, size_t i, unsign
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SUN));
+	assert(fdisk_is_label(cxt, SUN));
 
 	if (i >= cxt->label->nparts_max)
 		return -EINVAL;
@@ -331,7 +331,7 @@ static void fetch_sun(struct fdisk_context *cxt,
 	assert(cxt);
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SUN));
+	assert(fdisk_is_label(cxt, SUN));
 
 	sunlabel = self_disklabel(cxt);
 
@@ -390,7 +390,7 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
 #endif
     assert(cxt);
     assert(cxt->label);
-    assert(fdisk_is_disklabel(cxt, SUN));
+    assert(fdisk_is_label(cxt, SUN));
 
     fetch_sun(cxt, starts, lens, &start, &stop);
 
@@ -693,7 +693,7 @@ static int sun_delete_partition(struct fdisk_context *cxt,
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SUN));
+	assert(fdisk_is_label(cxt, SUN));
 
 	sunlabel = self_disklabel(cxt);
 	part = &sunlabel->partitions[partnum];
@@ -722,7 +722,7 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SUN));
+	assert(fdisk_is_label(cxt, SUN));
 
 	sunlabel = self_disklabel(cxt);
 
@@ -768,7 +768,7 @@ static int sun_get_partition(struct fdisk_context *cxt, size_t n,
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SUN));
+	assert(fdisk_is_label(cxt, SUN));
 
 	if (n >= cxt->label->nparts_max)
 		return -EINVAL;
@@ -889,7 +889,7 @@ static int sun_write_disklabel(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SUN));
+	assert(fdisk_is_label(cxt, SUN));
 
 	sunlabel = self_disklabel(cxt);
 
@@ -925,7 +925,7 @@ static int sun_set_parttype(
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SUN));
+	assert(fdisk_is_label(cxt, SUN));
 
 	sunlabel = self_disklabel(cxt);
 
@@ -983,7 +983,7 @@ static int sun_partition_is_used(
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, SUN));
+	assert(fdisk_is_label(cxt, SUN));
 
 	if (i >= cxt->label->nparts_max)
 		return 0;

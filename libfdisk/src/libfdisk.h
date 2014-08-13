@@ -85,6 +85,11 @@ int fdisk_next_label(struct fdisk_context *cxt, struct fdisk_label **lb);
 size_t fdisk_get_nlabels(struct fdisk_context *cxt);
 int fdisk_switch_label(struct fdisk_context *cxt, const char *name);
 
+int fdisk_has_label(struct fdisk_context *cxt);
+int fdisk_is_labeltype(struct fdisk_context *cxt, enum fdisk_labeltype l);
+#define fdisk_is_label(c, x) fdisk_is_labeltype(c, FDISK_DISKLABEL_ ## x)
+
+
 int fdisk_assign_device(struct fdisk_context *cxt,
 			const char *fname, int readonly);
 int fdisk_deassign_device(struct fdisk_context *cxt, int nosync);
@@ -154,13 +159,11 @@ enum {
 	FDISK_FIELD_UUID,
 };
 
+const char *fdisk_label_get_name(struct fdisk_label *lb);
+
 extern int fdisk_require_geometry(struct fdisk_context *cxt);
 extern int fdisk_missing_geometry(struct fdisk_context *cxt);
 
-extern int fdisk_dev_has_disklabel(struct fdisk_context *cxt);
-
-extern int fdisk_dev_is_disklabel(struct fdisk_context *cxt, enum fdisk_labeltype l);
-#define fdisk_is_disklabel(c, x) fdisk_dev_is_disklabel(c, FDISK_DISKLABEL_ ## x)
 
 extern int fdisk_write_disklabel(struct fdisk_context *cxt);
 extern int fdisk_verify_disklabel(struct fdisk_context *cxt);

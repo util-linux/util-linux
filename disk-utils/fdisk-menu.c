@@ -555,7 +555,7 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 
 	assert(cxt);
 	assert(ent);
-	assert(fdisk_is_disklabel(cxt, GPT));
+	assert(fdisk_is_label(cxt, GPT));
 
 	DBG(FRONTEND, ul_debug("enter GPT menu"));
 
@@ -633,7 +633,7 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 					= fdisk_new_nested_context(cxt, "bsd");
 			if (!bsd)
 				return -ENOMEM;
-			if (!fdisk_dev_has_disklabel(bsd))
+			if (!fdisk_has_label(bsd))
 				rc = fdisk_create_disklabel(bsd, "bsd");
 			if (rc)
 				fdisk_free_context(bsd);
@@ -689,7 +689,7 @@ static int sun_menu_cb(struct fdisk_context **cxt0,
 
 	assert(cxt);
 	assert(ent);
-	assert(fdisk_is_disklabel(cxt, SUN));
+	assert(fdisk_is_label(cxt, SUN));
 
 	DBG(FRONTEND, ul_debug("enter SUN menu"));
 
@@ -744,7 +744,7 @@ static int sgi_menu_cb(struct fdisk_context **cxt0,
 
 	assert(cxt);
 	assert(ent);
-	assert(fdisk_is_disklabel(cxt, SGI));
+	assert(fdisk_is_label(cxt, SGI));
 
 	if (ent->expert)
 		return rc;
@@ -784,7 +784,7 @@ static int bsd_menu_cb(struct fdisk_context **cxt0,
 
 	assert(cxt);
 	assert(ent);
-	assert(fdisk_is_disklabel(cxt, BSD));
+	assert(fdisk_is_label(cxt, BSD));
 
 	DBG(FRONTEND, ul_debug("enter BSD menu"));
 

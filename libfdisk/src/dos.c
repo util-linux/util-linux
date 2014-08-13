@@ -79,7 +79,7 @@ static struct fdisk_parttype dos_parttypes[] = {
 #define alignment_required(_x)	((_x)->grain != (_x)->sector_size)
 
 #define is_dos_compatible(_x) \
-		   (fdisk_is_disklabel(_x, DOS) && \
+		   (fdisk_is_label(_x, DOS) && \
                     fdisk_dos_is_compatible(fdisk_get_label(_x, NULL)))
 
 #define cround(c, n)	fdisk_cround(c, n)
@@ -89,7 +89,7 @@ static inline struct fdisk_dos_label *self_label(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	return (struct fdisk_dos_label *) cxt->label;
 }
@@ -118,7 +118,7 @@ struct dos_partition *fdisk_dos_get_partition(
 {
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	return self_partition(cxt, i);
 }
@@ -283,7 +283,7 @@ static void dos_init(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	DBG(LABEL, ul_debug("DOS: initialize, first sector buffer %p", cxt->firstsector));
 
@@ -373,7 +373,7 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	pe = self_pte(cxt, partnum);
 	if (!pe)
@@ -573,7 +573,7 @@ static int dos_get_disklabel_id(struct fdisk_context *cxt, char **id)
 	assert(cxt);
 	assert(id);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	num = mbr_get_id(cxt->firstsector);
 	if (asprintf(id, "0x%08x", num) > 0)
@@ -589,7 +589,7 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	DBG(LABEL, ul_debug("DOS: creating new disklabel"));
 
@@ -623,7 +623,7 @@ static int dos_set_disklabel_id(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	DBG(LABEL, ul_debug("DOS: setting Id"));
 
@@ -688,7 +688,7 @@ static int dos_reset_alignment(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	/* overwrite necessary stuff by DOS deprecated stuff */
 	if (is_dos_compatible(cxt)) {
@@ -713,7 +713,7 @@ static int dos_probe_label(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	/* ignore disks with AIX magic number */
 	if (memcmp(cxt->firstsector, AIX_MAGIC_STRING, AIX_MAGIC_STRLEN) == 0)
@@ -940,7 +940,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	}
 	fill_bounds(cxt, first, last);
 	if (n < 4) {
-		if (cxt->parent && fdisk_is_disklabel(cxt->parent, GPT))
+		if (cxt->parent && fdisk_is_label(cxt->parent, GPT))
 			start = 1;		/* Bad boy modifies hybrid MBR */
 		else
 			start = cxt->first_lba;
@@ -1265,7 +1265,7 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 	struct dos_partition *p;
 	struct fdisk_dos_label *l = self_label(cxt);
 
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	fill_bounds(cxt, first, last);
 	for (i = 0; i < cxt->label->nparts_max; i++) {
@@ -1353,7 +1353,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	l = self_label(cxt);
 	ext_pe = l->ext_offset ? self_pte(cxt, l->ext_index) : NULL;
@@ -1495,7 +1495,7 @@ static int dos_write_disklabel(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	mbr_changed = l->non_pt_changed;
 
@@ -1585,7 +1585,7 @@ static int dos_set_parttype(
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	if (partnum >= cxt->label->nparts_max || !t || t->type > UINT8_MAX)
 		return -EINVAL;
@@ -1653,7 +1653,7 @@ static int dos_list_disklabel(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	return 0;
 }
@@ -1668,7 +1668,7 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 	assert(cxt);
 	assert(pa);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	lb = self_label(cxt);
 	pe = self_pte(cxt, n);
@@ -1870,7 +1870,7 @@ int fdisk_dos_move_begin(struct fdisk_context *cxt, size_t i)
 	int rc;
 
 	assert(cxt);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	pe = self_pte(cxt, i);
 	p = pe->pt_entry;
@@ -1933,7 +1933,7 @@ static int dos_partition_is_used(
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	if (i >= cxt->label->nparts_max)
 		return 0;
@@ -1952,7 +1952,7 @@ static int dos_toggle_partition_flag(
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, DOS));
+	assert(fdisk_is_label(cxt, DOS));
 
 	if (i >= cxt->label->nparts_max)
 		return -EINVAL;

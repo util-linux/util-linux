@@ -459,7 +459,7 @@ void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 
 	fdisk_dos_enable_compatible(lb, flag);
 
-	if (fdisk_is_disklabel(cxt, DOS))
+	if (fdisk_is_label(cxt, DOS))
 		fdisk_reset_alignment(cxt);	/* reset the current label */
 }
 
@@ -529,7 +529,7 @@ void list_disk_geometry(struct fdisk_context *cxt)
 	if (cxt->alignment_offset)
 		fdisk_info(cxt, _("Alignment offset: %lu bytes"),
 				cxt->alignment_offset);
-	if (fdisk_dev_has_disklabel(cxt))
+	if (fdisk_has_label(cxt))
 		fdisk_info(cxt, _("Disklabel type: %s"), cxt->label->name);
 
 	if (fdisk_get_disklabel_id(cxt, &id) == 0 && id)
@@ -748,7 +748,7 @@ static void print_device_pt(struct fdisk_context *cxt, char *device, int warnme)
 
 	list_disk_geometry(cxt);
 
-	if (fdisk_dev_has_disklabel(cxt))
+	if (fdisk_has_label(cxt))
 		list_disklabel(cxt);
 }
 
@@ -1022,11 +1022,11 @@ int main(int argc, char **argv)
 
 		fflush(stdout);
 
-		if (!fdisk_dev_has_disklabel(cxt)) {
+		if (!fdisk_has_label(cxt)) {
 			fdisk_info(cxt, _("Device does not contain a recognized partition table."));
 			fdisk_create_disklabel(cxt, NULL);
 
-		} else if (fdisk_is_disklabel(cxt, GPT) && fdisk_gpt_is_hybrid(cxt))
+		} else if (fdisk_is_label(cxt, GPT) && fdisk_gpt_is_hybrid(cxt))
 			fdisk_warnx(cxt, _(
 				  "A hybrid GPT was detected. You have to sync "
 				  "the hybrid MBR manually (expert command 'M')."));

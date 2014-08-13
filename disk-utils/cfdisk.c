@@ -1714,8 +1714,8 @@ static int main_menu_ignore_keys(struct cfdisk *cf, char *ignore,
 		ignore[i++] = 'b';      /* set bootable */
 	} else {
 		ignore[i++] = 'n';
-		if (!fdisk_is_disklabel(cf->cxt, DOS) &&
-		    !fdisk_is_disklabel(cf->cxt, SGI))
+		if (!fdisk_is_label(cf->cxt, DOS) &&
+		    !fdisk_is_label(cf->cxt, SGI))
 			ignore[i++] = 'b';
 	}
 
@@ -1765,8 +1765,8 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	switch (key) {
 	case 'b': /* Bootable flag */
 	{
-		int fl = fdisk_is_disklabel(cf->cxt, DOS) ? DOS_FLAG_ACTIVE :
-			 fdisk_is_disklabel(cf->cxt, SGI) ? SGI_FLAG_BOOT : 0;
+		int fl = fdisk_is_label(cf->cxt, DOS) ? DOS_FLAG_ACTIVE :
+			 fdisk_is_label(cf->cxt, SGI) ? SGI_FLAG_BOOT : 0;
 
 		if (fl && fdisk_partition_toggle_flag(cf->cxt, n, fl))
 			warn = _("Could not toggle the flag.");
@@ -1910,7 +1910,7 @@ static int ui_run(struct cfdisk *cf)
 
 	DBG(UI, ul_debug("start COLS=%d, LINES=%d", COLS, LINES));
 
-	if (!fdisk_dev_has_disklabel(cf->cxt) || cf->zero_start) {
+	if (!fdisk_has_label(cf->cxt) || cf->zero_start) {
 		rc = ui_create_label(cf);
 		if (rc < 0)
 			ui_errx(EXIT_FAILURE,

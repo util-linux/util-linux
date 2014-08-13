@@ -1,6 +1,7 @@
 
 #include "fdiskP.h"
 
+
 /*
  * Don't use this function derectly
  */
@@ -12,7 +13,7 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
 
 	for (i = 0; i < cxt->nlabels; i++) {
 		struct fdisk_label *lb = cxt->labels[i];
-		struct fdisk_label *org = cxt->label;
+		struct fdisk_label *org = fdisk_get_label(cxt, NULL);
 		int rc;
 
 		if (!lb->op->probe)
@@ -41,29 +42,17 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
 	return 1; /* not found */
 }
 
-
 /**
- * fdisk_dev_has_disklabel:
- * @cxt: fdisk context
+ * fdisk_label_get_name:
+ * @lb: label
  *
- * Returns: return 1 if there is label on the device.
+ * Returns: label name
  */
-int fdisk_dev_has_disklabel(struct fdisk_context *cxt)
+const char *fdisk_label_get_name(struct fdisk_label *lb)
 {
-	return cxt && cxt->label;
+	return lb ? lb->name : NULL;
 }
 
-/**
- * fdisk_dev_is_disklabel:
- * @cxt: fdisk context
- * @l: disklabel type
- *
- * Returns: return 1 if there is @l disklabel on the device.
- */
-int fdisk_dev_is_disklabel(struct fdisk_context *cxt, enum fdisk_labeltype l)
-{
-	return cxt && cxt->label && cxt->label->id == l;
-}
 
 /**
  * fdisk_write_disklabel:

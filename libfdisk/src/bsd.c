@@ -91,7 +91,7 @@ static inline struct fdisk_bsd_label *self_label(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, BSD));
+	assert(fdisk_is_label(cxt, BSD));
 
 	return (struct fdisk_bsd_label *) cxt->label;
 }
@@ -100,7 +100,7 @@ static inline struct bsd_disklabel *self_disklabel(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, BSD));
+	assert(fdisk_is_label(cxt, BSD));
 
 	return &((struct fdisk_bsd_label *) cxt->label)->bsd;
 }
@@ -363,7 +363,7 @@ static int bsd_list_disklabel(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, BSD));
+	assert(fdisk_is_label(cxt, BSD));
 
 	if (fdisk_is_details(cxt)) {
 		fdisk_info(cxt, "# %s:", cxt->dev_path);
@@ -409,7 +409,7 @@ static int bsd_get_partition(struct fdisk_context *cxt, size_t n,
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, BSD));
+	assert(fdisk_is_label(cxt, BSD));
 
 	if (n >= d->d_npartitions)
 		return -EINVAL;
@@ -795,7 +795,7 @@ int fdisk_bsd_link_partition(struct fdisk_context *cxt)
 	struct dos_partition *p;
 	struct bsd_disklabel *d = self_disklabel(cxt);
 
-	if (!cxt->parent || !fdisk_is_disklabel(cxt->parent, DOS)) {
+	if (!cxt->parent || !fdisk_is_label(cxt->parent, DOS)) {
 		fdisk_warnx(cxt, _("BSD label is not nested within a DOS partition."));
 		return -EINVAL;
 	}
