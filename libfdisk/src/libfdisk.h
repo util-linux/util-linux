@@ -69,39 +69,49 @@ enum {
 extern void fdisk_init_debug(int mask);
 
 /* context.h */
-extern struct fdisk_context *fdisk_new_context(void);
-extern struct fdisk_context *fdisk_new_nested_context(
-			struct fdisk_context *parent, const char *name);
-extern void fdisk_free_context(struct fdisk_context *cxt);
-
-extern int fdisk_context_set_ask(struct fdisk_context *cxt,
-			int (*ask_cb)(struct fdisk_context *, struct fdisk_ask *, void *),
-			void *data);
-
-extern int fdisk_context_is_readonly(struct fdisk_context *cxt);
-extern int fdisk_context_assign_device(struct fdisk_context *cxt,
-				const char *fname, int readonly);
-extern int fdisk_context_deassign_device(struct fdisk_context *cxt, int nosync);
-
-extern struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt,
-				const char *name);
-extern int fdisk_context_next_label(struct fdisk_context *cxt, struct fdisk_label **lb);
-extern size_t fdisk_context_get_nlabels(struct fdisk_context *cxt);
-
-extern int fdisk_context_switch_label(struct fdisk_context *cxt,
-				const char *name);
-
-extern int fdisk_context_set_unit(struct fdisk_context *cxt, const char *str);
 
 #define PLURAL	0
 #define SINGULAR 1
-extern const char *fdisk_context_get_unit(struct fdisk_context *cxt, int n);
 
-extern unsigned int fdisk_context_get_units_per_sector(struct fdisk_context *cxt);
 
-extern int fdisk_context_enable_details(struct fdisk_context *cxt, int enable);
-extern int fdisk_context_use_cylinders(struct fdisk_context *cxt);
-extern int fdisk_context_display_details(struct fdisk_context *cxt);
+struct fdisk_context *fdisk_new_context(void);
+struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent, const char *name);
+void fdisk_free_context(struct fdisk_context *cxt);
+
+struct fdisk_label *fdisk_get_label(struct fdisk_context *cxt, const char *name);
+int fdisk_next_label(struct fdisk_context *cxt, struct fdisk_label **lb);
+size_t fdisk_get_nlabels(struct fdisk_context *cxt);
+int fdisk_switch_label(struct fdisk_context *cxt, const char *name);
+
+int fdisk_assign_device(struct fdisk_context *cxt,
+			const char *fname, int readonly);
+int fdisk_deassign_device(struct fdisk_context *cxt, int nosync);
+int fdisk_is_readonly(struct fdisk_context *cxt);
+
+int fdisk_set_ask(struct fdisk_context *cxt,
+		int (*ask_cb)(struct fdisk_context *, struct fdisk_ask *, void *),
+		void *data);
+
+int fdisk_enable_details(struct fdisk_context *cxt, int enable);
+int fdisk_is_details(struct fdisk_context *cxt);
+
+int fdisk_enable_listonly(struct fdisk_context *cxt, int enable);
+int fdisk_is_listonly(struct fdisk_context *cxt);
+
+int fdisk_set_unit(struct fdisk_context *cxt, const char *str);
+const char *fdisk_get_unit(struct fdisk_context *cxt, int n);
+int fdisk_use_cylinders(struct fdisk_context *cxt);
+unsigned int fdisk_get_units_per_sector(struct fdisk_context *cxt);
+
+unsigned long fdisk_get_optimal_iosize(struct fdisk_context *cxt);
+unsigned long fdisk_get_minimal_size(struct fdisk_context *cxt);
+unsigned long fdisk_get_physector_size(struct fdisk_context *cxt);
+unsigned long fdisk_get_sector_size(struct fdisk_context *cxt);
+unsigned long fdisk_get_alignment_offset(struct fdisk_context *cxt);
+unsigned long fdisk_get_grain_size(struct fdisk_context *cxt);
+unsigned long fdisk_get_first_lba(struct fdisk_context *cxt);
+unsigned long fdisk_get_nsectors(struct fdisk_context *cxt);
+const char *fdisk_get_devname(struct fdisk_context *cxt);
 
 /* parttype.c */
 extern struct fdisk_parttype *fdisk_get_parttype_from_code(struct fdisk_context *cxt,

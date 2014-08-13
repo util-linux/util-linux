@@ -446,7 +446,7 @@ void list_partition_types(struct fdisk_context *cxt)
 
 void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 {
-	struct fdisk_label *lb = fdisk_context_get_label(cxt, "dos");
+	struct fdisk_label *lb = fdisk_get_label(cxt, "dos");
 	int flag;
 
 	if (!lb)
@@ -512,15 +512,15 @@ void list_disk_geometry(struct fdisk_context *cxt)
 			bytes, (uintmax_t) cxt->total_sectors);
 	free(strsz);
 
-	if (fdisk_require_geometry(cxt) || fdisk_context_use_cylinders(cxt))
+	if (fdisk_require_geometry(cxt) || fdisk_use_cylinders(cxt))
 		fdisk_info(cxt, _("Geometry: %d heads, %llu sectors/track, %llu cylinders"),
 			       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
 
 	fdisk_info(cxt, _("Units: %s of %d * %ld = %ld bytes"),
-	       fdisk_context_get_unit(cxt, PLURAL),
-	       fdisk_context_get_units_per_sector(cxt),
+	       fdisk_get_unit(cxt, PLURAL),
+	       fdisk_get_units_per_sector(cxt),
 	       cxt->sector_size,
-	       fdisk_context_get_units_per_sector(cxt) * cxt->sector_size);
+	       fdisk_get_units_per_sector(cxt) * cxt->sector_size);
 
 	fdisk_info(cxt, _("Sector size (logical/physical): %lu bytes / %lu bytes"),
 				cxt->sector_size, cxt->phy_sector_size);
@@ -738,7 +738,7 @@ static int is_ide_cdrom_or_tape(char *device)
 
 static void print_device_pt(struct fdisk_context *cxt, char *device, int warnme)
 {
-	if (fdisk_context_assign_device(cxt, device, 1) != 0) {	/* read-only */
+	if (fdisk_assign_device(cxt, device, 1) != 0) {	/* read-only */
 		if (warnme || errno == EACCES)
 			warn(_("cannot open %s"), device);
 		return;
@@ -875,7 +875,7 @@ int main(int argc, char **argv)
 	if (!cxt)
 		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));
 
-	fdisk_context_set_ask(cxt, ask_callback, NULL);
+	fdisk_set_ask(cxt, ask_callback, NULL);
 
 	while ((c = getopt_long(argc, argv, "b:c::C:hH:lL::sS:t:u::vV",
 				longopts, NULL)) != -1) {
@@ -901,7 +901,7 @@ int main(int argc, char **argv)
 				 * actively used label
 				 */
 				char *p = *optarg == '=' ? optarg + 1 : optarg;
-				struct fdisk_label *lb = fdisk_context_get_label(cxt, "dos");
+				struct fdisk_label *lb = fdisk_get_label(cxt, "dos");
 
 				if (!lb)
 					err(EXIT_FAILURE, _("not found DOS label driver"));
@@ -942,10 +942,10 @@ int main(int argc, char **argv)
 		{
 			struct fdisk_label *lb = NULL;
 
-			while (fdisk_context_next_label(cxt, &lb) == 0)
+			while (fdisk_next_label(cxt, &lb) == 0)
 				fdisk_label_set_disabled(lb, 1);
 
-			lb = fdisk_context_get_label(cxt, optarg);
+			lb = fdisk_get_label(cxt, optarg);
 			if (!lb)
 				errx(EXIT_FAILURE, _("unsupported disklabel: %s"), optarg);
 			fdisk_label_set_disabled(lb, 0);
@@ -953,7 +953,7 @@ int main(int argc, char **argv)
 		case 'u':
 			if (optarg && *optarg == '=')
 				optarg++;
-			if (fdisk_context_set_unit(cxt, optarg) != 0)
+			if (fdisk_set_unit(cxt, optarg) != 0)
 				usage(stderr);
 			break;
 		case 'V': /* preferred for util-linux */
@@ -975,7 +975,7 @@ int main(int argc, char **argv)
 
 	switch (act) {
 	case ACT_LIST:
-		fdisk_context_enable_listonly(cxt, 1);
+		fdisk_enable_listonly(cxt, 1);
 
 		if (argc > optind) {
 			int k;
@@ -1009,9 +1009,9 @@ int main(int argc, char **argv)
 		fdisk_info(cxt, _("Changes will remain in memory only, until you decide to write them.\n"
 				  "Be careful before using the write command.\n"));
 
-		rc = fdisk_context_assign_device(cxt, argv[optind], 0);
+		rc = fdisk_assign_device(cxt, argv[optind], 0);
 		if (rc == -EACCES) {
-			rc = fdisk_context_assign_device(cxt, argv[optind], 1);
+			rc = fdisk_assign_device(cxt, argv[optind], 1);
 			if (rc == 0)
 				fdisk_warnx(cxt, _("Device open in read-only mode."));
 		}

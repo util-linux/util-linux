@@ -525,7 +525,7 @@ static int sun_add_partition(
 		struct fdisk_ask *ask;
 
 		snprintf(mesg, sizeof(mesg), _("First %s"),
-				fdisk_context_get_unit(cxt, SINGULAR));
+				fdisk_get_unit(cxt, SINGULAR));
 		for (;;) {
 			ask = fdisk_new_ask();
 			if (!ask)
@@ -549,8 +549,8 @@ static int sun_add_partition(
 			if (rc)
 				return rc;
 
-			if (fdisk_context_use_cylinders(cxt))
-				first *= fdisk_context_get_units_per_sector(cxt);
+			if (fdisk_use_cylinders(cxt))
+				first *= fdisk_get_units_per_sector(cxt);
 
 			/* ewt asks to add: "don't start a partition at cyl 0"
 			   However, edmundo@rano.demon.co.uk writes:
@@ -584,7 +584,7 @@ static int sun_add_partition(
 				   "third partition covers the whole disk "
 				   "and is of type `Whole disk'"));
 
-	if (!fdisk_context_use_cylinders(cxt)) {
+	if (!fdisk_use_cylinders(cxt)) {
 		/* Starting sector has to be properly aligned */
 		int cs = cxt->geom.heads * cxt->geom.sectors;
 		int x = first % cs;
@@ -620,8 +620,8 @@ static int sun_add_partition(
 
 		snprintf(mesg, sizeof(mesg),
 			 _("Last %s or +%s or +size{K,M,G,T,P}"),
-			 fdisk_context_get_unit(cxt, SINGULAR),
-			 fdisk_context_get_unit(cxt, PLURAL));
+			 fdisk_get_unit(cxt, SINGULAR),
+			 fdisk_get_unit(cxt, PLURAL));
 		fdisk_ask_set_query(ask, mesg);
 		fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 
@@ -642,10 +642,10 @@ static int sun_add_partition(
 			fdisk_ask_number_set_base(ask,    fdisk_scround(cxt, first));
 		}
 
-		if (fdisk_context_use_cylinders(cxt))
+		if (fdisk_use_cylinders(cxt))
 			fdisk_ask_number_set_unit(ask,
 				     cxt->sector_size *
-				     fdisk_context_get_units_per_sector(cxt));
+				     fdisk_get_units_per_sector(cxt));
 		else
 			fdisk_ask_number_set_unit(ask,	cxt->sector_size);
 
@@ -655,8 +655,8 @@ static int sun_add_partition(
 		fdisk_free_ask(ask);
 		if (rc)
 			return rc;
-		if (fdisk_context_use_cylinders(cxt))
-			last *= fdisk_context_get_units_per_sector(cxt);
+		if (fdisk_use_cylinders(cxt))
+			last *= fdisk_get_units_per_sector(cxt);
 	}
 
 	if (n == 2 && !first) {
@@ -668,8 +668,8 @@ static int sun_add_partition(
    _("You haven't covered the whole disk with the 3rd partition, but your value\n"
      "%lu %s covers some other partition. Your entry has been changed\n"
      "to %lu %s"),
-			(unsigned long) fdisk_scround(cxt, last), fdisk_context_get_unit(cxt, SINGULAR),
-			(unsigned long) fdisk_scround(cxt, stop), fdisk_context_get_unit(cxt, SINGULAR));
+			(unsigned long) fdisk_scround(cxt, last), fdisk_get_unit(cxt, SINGULAR),
+			(unsigned long) fdisk_scround(cxt, stop), fdisk_get_unit(cxt, SINGULAR));
 		    last = stop;
 		}
 	} else if (!whole_disk && last > stop)
@@ -726,7 +726,7 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 
 	sunlabel = self_disklabel(cxt);
 
-	if (fdisk_context_display_details(cxt)) {
+	if (fdisk_is_details(cxt)) {
 		fdisk_info(cxt,
 		_("Label geometry: %d rpm, %d alternate and %d physical cylinders,\n"
 		  "                %d extra sects/cyl, interleave %d:1"),

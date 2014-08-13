@@ -277,11 +277,11 @@ static const struct menu_entry *next_menu_entry(
 		/* entry wanted for specified labels only */
 		    (e->label && cxt->label && !(e->label & cxt->label->id)) ||
 		/* exclude non-expert entries in expect mode */
-		    (e->expert == 0 && fdisk_context_display_details(cxt)) ||
+		    (e->expert == 0 && fdisk_is_details(cxt)) ||
 		/* nested only */
 		    (e->parent && (!cxt->parent || cxt->parent->label->id != e->parent)) ||
 		/* exclude non-normal entries in normal mode */
-		    (e->normal == 0 && !fdisk_context_display_details(cxt))) {
+		    (e->normal == 0 && !fdisk_is_details(cxt))) {
 
 			mc->entry_idx++;
 			continue;
@@ -348,7 +348,7 @@ static int print_fdisk_menu(struct fdisk_context *cxt)
 
 	ON_DBG(FRONTEND, menu_detect_collisions(cxt));
 
-	if (fdisk_context_display_details(cxt))
+	if (fdisk_is_details(cxt))
 		printf(_("\nHelp (expert commands):\n"));
 	else
 		printf(_("\nHelp:\n"));
@@ -396,7 +396,7 @@ int process_fdisk_menu(struct fdisk_context **cxt0)
 	const char *prompt;
 	char buf[BUFSIZ];
 
-	if (fdisk_context_display_details(cxt))
+	if (fdisk_is_details(cxt))
 		prompt = _("Expert command (m for help): ");
 	else
 		prompt = _("Command (m for help): ");
@@ -447,7 +447,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		list_disklabel(cxt);
 		break;
 	case 'w':
-		if (fdisk_context_is_readonly(cxt)) {
+		if (fdisk_is_readonly(cxt)) {
 			fdisk_warnx(cxt, _("Device open in read-only mode."));
 			break;
 		}
@@ -459,7 +459,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		fdisk_info(cxt, _("The partition table has been altered."));
 		rc = fdisk_reread_partition_table(cxt);
 		if (!rc)
-			rc = fdisk_context_deassign_device(cxt, 0);
+			rc = fdisk_deassign_device(cxt, 0);
 		/* fallthrough */
 	case 'q':
 		fdisk_free_context(cxt);
@@ -486,7 +486,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 			rc = fdisk_reorder_partitions(cxt);
 			break;
 		case 'r':
-			rc = fdisk_context_enable_details(cxt, 0);
+			rc = fdisk_enable_details(cxt, 0);
 			break;
 		}
 		return rc;
@@ -513,16 +513,16 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		change_partition_type(cxt);
 		break;
 	case 'u':
-		fdisk_context_set_unit(cxt,
-			fdisk_context_use_cylinders(cxt) ? "sectors" :
+		fdisk_set_unit(cxt,
+			fdisk_use_cylinders(cxt) ? "sectors" :
 							   "cylinders");
-		if (fdisk_context_use_cylinders(cxt))
+		if (fdisk_use_cylinders(cxt))
 			fdisk_info(cxt, _("Changing display/entry units to cylinders (DEPRECATED!)."));
 		else
 			fdisk_info(cxt, _("Changing display/entry units to sectors."));
 		break;
 	case 'x':
-		fdisk_context_enable_details(cxt, 1);
+		fdisk_enable_details(cxt, 1);
 		break;
 	case 'r':
 		/* return from nested BSD to DOS */
@@ -568,7 +568,7 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 			if (!mbr)
 				return -ENOMEM;
 			*cxt0 = cxt = mbr;
-			fdisk_context_enable_details(cxt, 1);	/* keep us in expert mode */
+			fdisk_enable_details(cxt, 1);	/* keep us in expert mode */
 			fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
 					_("Entering protective/hybrid MBR disklabel."));
 			return 0;
@@ -796,11 +796,11 @@ static int bsd_menu_cb(struct fdisk_context **cxt0,
 		rc = fdisk_bsd_write_bootstrap(cxt);
 		break;
 	case 's':
-		org = fdisk_context_display_details(cxt);
+		org = fdisk_is_details(cxt);
 
-		fdisk_context_enable_details(cxt, 1);
+		fdisk_enable_details(cxt, 1);
 		list_disklabel(cxt);
-		fdisk_context_enable_details(cxt, org);
+		fdisk_enable_details(cxt, org);
 		break;
 	case 'x':
 		rc = fdisk_bsd_link_partition(cxt);

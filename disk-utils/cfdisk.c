@@ -276,7 +276,7 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	assert(cf->fields);
 	assert(tb);
 
-	lb = fdisk_context_get_label(cf->cxt, NULL);
+	lb = fdisk_get_label(cf->cxt, NULL);
 	assert(lb);
 
 	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
@@ -1600,10 +1600,10 @@ static int ui_create_label(struct cfdisk *cf)
 
 	/* create cfdisk menu according to libfdisk labels, note that the
 	 * last cm[] item has to be empty -- so nitems + 1 */
-	nitems = fdisk_context_get_nlabels(cf->cxt);
+	nitems = fdisk_get_nlabels(cf->cxt);
 	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menuitem));
 
-	while (fdisk_context_next_label(cf->cxt, &lb) == 0) {
+	while (fdisk_next_label(cf->cxt, &lb) == 0) {
 		if (fdisk_label_is_disabled(lb) || strcmp(lb->name, "bsd") == 0)
 			continue;
 		cm[i++].name = lb->name;
@@ -1721,7 +1721,7 @@ static int main_menu_ignore_keys(struct cfdisk *cf, char *ignore,
 
 	if (!cf->wrong_order)
 		ignore[i++] = 's';
-	if (fdisk_context_is_readonly(cf->cxt))
+	if (fdisk_is_readonly(cf->cxt))
 		ignore[i++] = 'W';
 	return i;
 }
@@ -1849,7 +1849,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		char buf[64] = { 0 };
 		int rc;
 
-		if (fdisk_context_is_readonly(cf->cxt)) {
+		if (fdisk_is_readonly(cf->cxt)) {
 			warn = _("Device open in read-only mode");
 			break;
 		}
@@ -1931,7 +1931,7 @@ static int ui_run(struct cfdisk *cf)
 	if (rc)
 		return rc;
 
-	if (fdisk_context_is_readonly(cf->cxt))
+	if (fdisk_is_readonly(cf->cxt))
 		ui_warnx(_("Device open in read-only mode."));
 
 	do {
@@ -2066,7 +2066,7 @@ int main(int argc, char *argv[])
 	if (!cf->cxt)
 		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));
 
-	fdisk_context_set_ask(cf->cxt, ask_callback, (void *) cf);
+	fdisk_set_ask(cf->cxt, ask_callback, (void *) cf);
 
 	if (optind == argc)
 		diskpath = access(DEFAULT_DEVICE, F_OK) == 0 ?
@@ -2074,9 +2074,9 @@ int main(int argc, char *argv[])
 	else
 		diskpath = argv[optind];
 
-	rc = fdisk_context_assign_device(cf->cxt, diskpath, 0);
+	rc = fdisk_assign_device(cf->cxt, diskpath, 0);
 	if (rc == -EACCES)
-		rc = fdisk_context_assign_device(cf->cxt, diskpath, 1);
+		rc = fdisk_assign_device(cf->cxt, diskpath, 1);
 	if (rc != 0)
 		err(EXIT_FAILURE, _("cannot open %s"),
 				optind == argc ? DEFAULT_DEVICE : diskpath);
@@ -2090,7 +2090,7 @@ int main(int argc, char *argv[])
 	free(cf->linesbuf);
 	fdisk_unref_table(cf->table);
 
-	rc = fdisk_context_deassign_device(cf->cxt, cf->nwrites == 0);
+	rc = fdisk_deassign_device(cf->cxt, cf->nwrites == 0);
 	fdisk_free_context(cf->cxt);
 	DBG(MISC, ul_debug("bye! [rc=%d]", rc));
 	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;

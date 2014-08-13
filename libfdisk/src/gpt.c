@@ -1387,7 +1387,7 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, GPT));
 
-	if (fdisk_context_display_details(cxt)) {
+	if (fdisk_is_details(cxt)) {
 		struct gpt_header *h = self_label(cxt)->pheader;
 
 		fdisk_info(cxt, _("First LBA: %ju"), h->first_usable_lba);

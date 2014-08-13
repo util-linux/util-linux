@@ -4,6 +4,11 @@
 
 #include "fdiskP.h"
 
+/**
+ * fdisk_new_context:
+ *
+ * Returns: newly allocated libfdisk handler
+ */
 struct fdisk_context *fdisk_new_context(void)
 {
 	struct fdisk_context *cxt;
@@ -30,6 +35,15 @@ struct fdisk_context *fdisk_new_context(void)
 	return cxt;
 }
 
+/**
+ * fdisk_new_nested_context:
+ * @parent: parental context
+ * @name: optional label name (e.g. "bsd")
+ *
+ * This is supported for MBR+BSD and GPT+pMBR only.
+ *
+ * Returns: new context for nested partiton table.
+ */
 struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 				const char *name)
 {
@@ -75,7 +89,7 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 		cxt->label = lb;
 
 		if (lb->op->probe(cxt) == 1)
-			__fdisk_context_switch_label(cxt, lb);
+			__fdisk_switch_label(cxt, lb);
 		else {
 			DBG(CXT, ul_debugobj(cxt, "not found %s label", lb->name));
 			if (lb->op->deinit)
@@ -88,10 +102,16 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 }
 
 
-/*
- * Returns the current label if no name specified.
+/**
+ * fdisk_get_label:
+ * @cxt: context instance
+ * @name: label name (e.g. "gpt")
+ *
+ * If no @name specified then returns the current context label.
+ *
+ * Returns: label struct or NULL in case of error.
  */
-struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt, const char *name)
+struct fdisk_label *fdisk_get_label(struct fdisk_context *cxt, const char *name)
 {
 	size_t i;
 
@@ -109,7 +129,26 @@ struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt, const cha
 	return NULL;
 }
 
-int fdisk_context_next_label(struct fdisk_context *cxt, struct fdisk_label **lb)
+/**
+ * fdisk_next_label:
+ * @cxt: context instance
+ * @lb: returns pointer to the next label
+ *
+ * <informalexample>
+ *   <programlisting>
+ *      // print all supported labels
+ *	struct fdisk_context *cxt = fdisk_new_context();
+ *	struct fdisk_label *lb = NULL;
+ *
+ *	while (fdisk_next_label(cxt, &lb) == 0)
+ *		print("label name: %s\n", fdisk_label_get_name(lb));
+ *	fdisk_free_context(cxt);
+ *   </programlisting>
+ * </informalexample>
+ *
+ * Returns: <0 in case of error, 0 on success, 1 at the end.
+ */
+int fdisk_next_label(struct fdisk_context *cxt, struct fdisk_label **lb)
 {
 	size_t i;
 	struct fdisk_label *res = NULL;
@@ -132,13 +171,18 @@ int fdisk_context_next_label(struct fdisk_context *cxt, struct fdisk_label **lb)
 	return res ? 0 : 1;
 }
 
-size_t fdisk_context_get_nlabels(struct fdisk_context *cxt)
+/**
+ * fdisk_get_nlabels:
+ * @cxt: context
+ *
+ * Returns: number of supported label types
+ */
+size_t fdisk_get_nlabels(struct fdisk_context *cxt)
 {
 	return cxt ? cxt->nlabels : 0;
 }
 
-int __fdisk_context_switch_label(struct fdisk_context *cxt,
-				 struct fdisk_label *lb)
+int __fdisk_switch_label(struct fdisk_context *cxt, struct fdisk_label *lb)
 {
 	if (!lb || !cxt)
 		return -EINVAL;
@@ -151,10 +195,18 @@ int __fdisk_context_switch_label(struct fdisk_context *cxt,
 	return 0;
 }
 
-int fdisk_context_switch_label(struct fdisk_context *cxt, const char *name)
+/**
+ * fdisk_switch_label:
+ * @cxt: context
+ * @name: label name (e.g. "gpt")
+ *
+ * Forces libfdisk to use the label driver.
+ *
+ * Returns: 0 on succes, <0 in case of error.
+ */
+int fdisk_switch_label(struct fdisk_context *cxt, const char *name)
 {
-	return __fdisk_context_switch_label(cxt,
-			fdisk_context_get_label(cxt, name));
+	return __fdisk_switch_label(cxt, fdisk_get_label(cxt, name));
 }
 
 
@@ -241,14 +293,16 @@ static int warn_wipe(struct fdisk_context *cxt)
 }
 
 /**
- * fdisk_context_assign_device:
+ * fdisk_assign_device:
  * @fname: path to the device to be handled
  * @readonly: how to open the device
  *
+ * Open the device, discovery topology, geometry, and detect disklabel.
+ *
  * Returns: 0 on success, < 0 on error.
  */
-int fdisk_context_assign_device(struct fdisk_context *cxt,
-				const char *fname, int readonly)
+int fdisk_assign_device(struct fdisk_context *cxt,
+			const char *fname, int readonly)
 {
 	int fd;
 
@@ -283,7 +337,7 @@ int fdisk_context_assign_device(struct fdisk_context *cxt,
 
 	/* warn about obsolete stuff on the device if we aren't in
 	 * list-only mode and there is not PT yet */
-	if (!fdisk_context_listonly(cxt) && !fdisk_dev_has_disklabel(cxt))
+	if (!fdisk_is_listonly(cxt) && !fdisk_dev_has_disklabel(cxt))
 		warn_wipe(cxt);
 
 	DBG(CXT, ul_debugobj(cxt, "initialized for %s [%s]",
@@ -294,7 +348,7 @@ fail:
 	return -errno;
 }
 
-int fdisk_context_deassign_device(struct fdisk_context *cxt, int nosync)
+int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 {
 	assert(cxt);
 	assert(cxt->dev_fd >= 0);
@@ -316,7 +370,7 @@ int fdisk_context_deassign_device(struct fdisk_context *cxt, int nosync)
 	return 0;
 }
 
-int fdisk_context_is_readonly(struct fdisk_context *cxt)
+int fdisk_is_readonly(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->readonly;
@@ -352,14 +406,16 @@ void fdisk_free_context(struct fdisk_context *cxt)
 }
 
 /**
- * fdisk_context_set_ask:
+ * fdisk_set_ask:
  * @cxt: context
  * @ask_cb: callback
  * @data: callback data
  *
+ * Set callbacks for dialog driven partitioning and library warnings/errors.
+ *
  * Returns: 0 on success, < 0 on error.
  */
-int fdisk_context_set_ask(struct fdisk_context *cxt,
+int fdisk_set_ask(struct fdisk_context *cxt,
 		int (*ask_cb)(struct fdisk_context *, struct fdisk_ask *, void *),
 		void *data)
 {
@@ -371,57 +427,74 @@ int fdisk_context_set_ask(struct fdisk_context *cxt,
 }
 
 /**
- * fdisk_context_enable_details:
- * cxt: context
- * enable: true/flase
+ * fdisk_enable_details:
+ * @cxt: context
+ * @enable: true/flase
  *
- * Enables or disables "details" display mode.
+ * Enables or disables "details" display mode. This function has effect to
+ * fdisk_partition_to_string() function.
  *
  * Returns: 0 on success, < 0 on error.
  */
-int fdisk_context_enable_details(struct fdisk_context *cxt, int enable)
+int fdisk_enable_details(struct fdisk_context *cxt, int enable)
 {
 	assert(cxt);
 	cxt->display_details = enable ? 1 : 0;
 	return 0;
 }
 
-int fdisk_context_display_details(struct fdisk_context *cxt)
+/**
+ * fdisk_is_details:
+ * @cxt: context
+ *
+ * Returns: 1 if details are enabled
+ */
+int fdisk_is_details(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->display_details == 1;
 }
 
 /**
- * fdisk_context_enable_listonly:
- * cxt: context
- * enable: true/flase
+ * fdisk_enable_listonly:
+ * @cxt: context
+ * @enable: true/flase
  *
  * Just list partition only, don't care about another details, mistakes, ...
  *
  * Returns: 0 on success, < 0 on error.
  */
-int fdisk_context_enable_listonly(struct fdisk_context *cxt, int enable)
+int fdisk_enable_listonly(struct fdisk_context *cxt, int enable)
 {
 	assert(cxt);
 	cxt->listonly = enable ? 1 : 0;
 	return 0;
 }
 
-int fdisk_context_listonly(struct fdisk_context *cxt)
+/**
+ * fdisk_is_listonly:
+ * @cxt: context
+ *
+ * Returns: 1 if list-only mode enabled
+ */
+int fdisk_is_listonly(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->listonly == 1;
 }
 
 
-/*
+/**
+ * fdisk_set_unit:
+ * @cxt: context
  * @str: "cylinder" or "sector".
  *
  * This is pure shit, unfortunately for example Sun addresses begin of the
  * partition by cylinders...
+ *
+ * Returns: 0 on succes, <0 on error.
  */
-int fdisk_context_set_unit(struct fdisk_context *cxt, const char *str)
+int fdisk_set_unit(struct fdisk_context *cxt, const char *str)
 {
 	assert(cxt);
 
@@ -436,35 +509,160 @@ int fdisk_context_set_unit(struct fdisk_context *cxt, const char *str)
 	else if (strcmp(str, "sector") == 0 || strcmp(str, "sectors") == 0)
 		cxt->display_in_cyl_units = 0;
 
-	DBG(CXT, ul_debugobj(cxt, "display unit: %s", fdisk_context_get_unit(cxt, 0)));
+	DBG(CXT, ul_debugobj(cxt, "display unit: %s", fdisk_get_unit(cxt, 0)));
 	return 0;
 }
 
-const char *fdisk_context_get_unit(struct fdisk_context *cxt, int n)
+/**
+ * fdisk_get_unit:
+ * @cxt: context
+ *
+ * Returns: unit name.
+ */
+const char *fdisk_get_unit(struct fdisk_context *cxt, int n)
 {
 	assert(cxt);
 
-	if (fdisk_context_use_cylinders(cxt))
+	if (fdisk_use_cylinders(cxt))
 		return P_("cylinder", "cylinders", n);
 	return P_("sector", "sectors", n);
 }
 
-/* Returns 1 if user wants to display in cylinders. */
-int fdisk_context_use_cylinders(struct fdisk_context *cxt)
+/**
+ * fdisk_use_cylinders:
+ * @@cxt: context
+ *
+ * Returns 1 if user wants to display in cylinders.
+ */
+int fdisk_use_cylinders(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->display_in_cyl_units == 1;
 }
 
-/* Returns number of "units" per sector, default is 1 if display unit is sector.
+/**
+ * fdisk_get_units_per_sector:
+ * @cxt: context
+ *
+ * This is neccessary only for brain dead situations when we use "cylinders";
+ *
+ * Returns: number of "units" per sector, default is 1 if display unit is sector.
  */
-unsigned int fdisk_context_get_units_per_sector(struct fdisk_context *cxt)
+unsigned int fdisk_get_units_per_sector(struct fdisk_context *cxt)
 {
 	assert(cxt);
 
-	if (fdisk_context_use_cylinders(cxt)) {
+	if (fdisk_use_cylinders(cxt)) {
 		assert(cxt->geom.heads);
 		return cxt->geom.heads * cxt->geom.sectors;
 	}
 	return 1;
+}
+
+/**
+ * fdisk_get_optimal_iosize:
+ * @cxt: context
+ *
+ * Returns: optimal I/O size
+ */
+unsigned long fdisk_get_optimal_iosize(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->optimal_io_size;
+}
+
+/**
+ * fdisk_get_minimal_iosize:
+ * @cxt: context
+ *
+ * Returns: minimal I/O size
+ */
+unsigned long fdisk_get_minimal_size(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->min_io_size;
+}
+
+/**
+ * fdisk_get_physector_size:
+ * @cxt: context
+ *
+ * Returns: physical sector size
+ */
+unsigned long fdisk_get_physector_size(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->phy_sector_size;
+}
+
+/**
+ * fdisk_get_sector_size:
+ * @cxt: context
+ *
+ * Returns: sector size
+ */
+unsigned long fdisk_get_sector_size(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->sector_size;
+}
+
+/**
+ * fdisk_get_alignment_offset
+ * @cxt: context
+ *
+ * Returns: alignment offset (used by 4K disks for backward compatibility with DOS tools).
+ */
+unsigned long fdisk_get_alignment_offset(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->alignment_offset;
+}
+
+/**
+ * fdisk_get_grain_size:
+ * @cxt: context
+ *
+ * Returns: usual grain used to align partitions
+ */
+unsigned long fdisk_get_grain_size(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->grain;
+}
+
+/**
+ * fdisk_get_first_lba:
+ * @cxt: context
+ *
+ * Returns: first possible LBA on disk for data partitions.
+ */
+unsigned long fdisk_get_first_lba(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->first_lba;
+}
+
+/**
+ * fdisk_get_nsectors:
+ * @cxt: context
+ *
+ * Returns: size of the device in (real) sectors.
+ */
+unsigned long fdisk_get_nsectors(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->total_sectors;
+}
+
+/**
+ * fdisk_get_devname:
+ * @cxt: context
+ *
+ * Returns: device name.
+ */
+const char *fdisk_get_devname(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->dev_path;
 }

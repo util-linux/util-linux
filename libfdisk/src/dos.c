@@ -80,7 +80,7 @@ static struct fdisk_parttype dos_parttypes[] = {
 
 #define is_dos_compatible(_x) \
 		   (fdisk_is_disklabel(_x, DOS) && \
-                    fdisk_dos_is_compatible(fdisk_context_get_label(_x, NULL)))
+                    fdisk_dos_is_compatible(fdisk_get_label(_x, NULL)))
 
 #define cround(c, n)	fdisk_cround(c, n)
 
@@ -306,7 +306,7 @@ static void dos_init(struct fdisk_context *cxt)
 		pe->changed = 0;
 	}
 
-	if (fdisk_context_listonly(cxt))
+	if (fdisk_is_listonly(cxt))
 		return;
 	/*
 	 * Various warnings...
@@ -324,7 +324,7 @@ static void dos_init(struct fdisk_context *cxt)
 		"I/O) size boundary is recommended, or performance may be impacted."));
 	}
 
-	if (fdisk_context_use_cylinders(cxt))
+	if (fdisk_use_cylinders(cxt))
 		fdisk_warnx(cxt, _("Cylinders as display units are deprecated."));
 
 	if (cxt->total_sectors > UINT_MAX) {
@@ -892,7 +892,7 @@ static int get_start_from_user(	struct fdisk_context *cxt,
 		if (!ask)
 			return -ENOMEM;
 		fdisk_ask_set_query(ask,
-			fdisk_context_use_cylinders(cxt) ?
+			fdisk_use_cylinders(cxt) ?
 				_("First cylinder") : _("First sector"));
 		fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
 		fdisk_ask_number_set_low(ask, fdisk_cround(cxt, low));
@@ -904,9 +904,9 @@ static int get_start_from_user(	struct fdisk_context *cxt,
 		fdisk_free_ask(ask);
 		if (rc)
 			return rc;
-		if (fdisk_context_use_cylinders(cxt)) {
+		if (fdisk_use_cylinders(cxt)) {
 		        *start = (*start - 1)
-				* fdisk_context_get_units_per_sector(cxt);
+				* fdisk_get_units_per_sector(cxt);
 			if (*start < low)
 				*start = low;
 		}
@@ -945,7 +945,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		else
 			start = cxt->first_lba;
 
-		if (fdisk_context_use_cylinders(cxt) || !cxt->total_sectors)
+		if (fdisk_use_cylinders(cxt) || !cxt->total_sectors)
 			limit = cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders - 1;
 		else
 			limit = cxt->total_sectors - 1;
@@ -963,10 +963,10 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		start = l->ext_offset + cxt->first_lba;
 		limit = get_abs_partition_end(ext_pe);
 	}
-	if (fdisk_context_use_cylinders(cxt))
+	if (fdisk_use_cylinders(cxt))
 		for (i = 0; i < cxt->label->nparts_max; i++) {
 			first[i] = (fdisk_cround(cxt, first[i]) - 1)
-				* fdisk_context_get_units_per_sector(cxt);
+				* fdisk_get_units_per_sector(cxt);
 		}
 
 	/*
@@ -988,7 +988,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			dflt = start;
 		if (start > limit)
 			break;
-		if (start >= temp + fdisk_context_get_units_per_sector(cxt)
+		if (start >= temp + fdisk_get_units_per_sector(cxt)
 		    && read) {
 			fdisk_info(cxt, _("Sector %llu is already allocated."),
 					temp);
@@ -1048,11 +1048,11 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			return -ENOMEM;
 		fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 
-		if (fdisk_context_use_cylinders(cxt)) {
+		if (fdisk_use_cylinders(cxt)) {
 			fdisk_ask_set_query(ask, _("Last cylinder, +cylinders or +size{K,M,G,T,P}"));
 			fdisk_ask_number_set_unit(ask,
 				     cxt->sector_size *
-				     fdisk_context_get_units_per_sector(cxt));
+				     fdisk_get_units_per_sector(cxt));
 		} else {
 			fdisk_ask_set_query(ask, _("Last sector, +sectors or +size{K,M,G,T,P}"));
 			fdisk_ask_number_set_unit(ask,cxt->sector_size);
@@ -1069,8 +1069,8 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		fdisk_free_ask(ask);
 		if (rc)
 			return rc;
-		if (fdisk_context_use_cylinders(cxt)) {
-			stop = stop * fdisk_context_get_units_per_sector(cxt) - 1;
+		if (fdisk_use_cylinders(cxt)) {
+			stop = stop * fdisk_get_units_per_sector(cxt) - 1;
 			if (stop >limit)
 				stop = limit;
 		}

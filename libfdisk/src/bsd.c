@@ -228,7 +228,7 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 		if (!ask)
 			return -ENOMEM;
 		fdisk_ask_set_query(ask,
-			fdisk_context_use_cylinders(cxt) ?
+			fdisk_use_cylinders(cxt) ?
 			_("First cylinder") : _("First sector"));
 		fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
 		fdisk_ask_number_set_low(ask, fdisk_cround(cxt, begin));
@@ -240,7 +240,7 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 		fdisk_free_ask(ask);
 		if (rc)
 			return rc;
-		if (fdisk_context_use_cylinders(cxt))
+		if (fdisk_use_cylinders(cxt))
 			begin = (begin - 1) * d->d_secpercyl;
 	}
 
@@ -261,11 +261,11 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 			return -ENOMEM;
 		fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 
-		if (fdisk_context_use_cylinders(cxt)) {
+		if (fdisk_use_cylinders(cxt)) {
 			fdisk_ask_set_query(ask, _("Last cylinder, +cylinders or +size{K,M,G,T,P}"));
 			fdisk_ask_number_set_unit(ask,
 				     cxt->sector_size *
-				     fdisk_context_get_units_per_sector(cxt));
+				     fdisk_get_units_per_sector(cxt));
 		} else {
 			fdisk_ask_set_query(ask, _("Last sector, +sectors or +size{K,M,G,T,P}"));
 			fdisk_ask_number_set_unit(ask,cxt->sector_size);
@@ -281,7 +281,7 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 		fdisk_free_ask(ask);
 		if (rc)
 			return rc;
-		if (fdisk_context_use_cylinders(cxt))
+		if (fdisk_use_cylinders(cxt))
 			end = end * d->d_secpercyl - 1;
 	}
 
@@ -325,14 +325,14 @@ static int bsd_create_disklabel(struct fdisk_context *cxt)
 
 	rc = bsd_initlabel(cxt);
 	if (!rc) {
-		int org = fdisk_context_display_details(cxt);
+		int org = fdisk_is_details(cxt);
 
 		cxt->label->nparts_cur = d->d_npartitions;
 		cxt->label->nparts_max = BSD_MAXPARTITIONS;
 
-		fdisk_context_enable_details(cxt, 1);
+		fdisk_enable_details(cxt, 1);
 		bsd_list_disklabel(cxt);
-		fdisk_context_enable_details(cxt, org);
+		fdisk_enable_details(cxt, org);
 	}
 
 	return rc;
@@ -365,7 +365,7 @@ static int bsd_list_disklabel(struct fdisk_context *cxt)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, BSD));
 
-	if (fdisk_context_display_details(cxt)) {
+	if (fdisk_is_details(cxt)) {
 		fdisk_info(cxt, "# %s:", cxt->dev_path);
 
 		if ((unsigned) d->d_type < BSD_DKMAXTYPES)
@@ -420,7 +420,7 @@ static int bsd_get_partition(struct fdisk_context *cxt, size_t n,
 	if (!pa->used)
 		return 0;
 
-	if (fdisk_context_use_cylinders(cxt) && d->d_secpercyl) {
+	if (fdisk_use_cylinders(cxt) && d->d_secpercyl) {
 		pa->start_post = p->p_offset % d->d_secpercyl ? '*' : ' ';
 		pa->end_post = (p->p_offset + p->p_size) % d->d_secpercyl ? '*' : ' ';
 	}

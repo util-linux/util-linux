@@ -2,7 +2,7 @@
 #include "fdiskP.h"
 
 /*
- * Don't use this function derectly, use fdisk_new_context_from_filename()
+ * Don't use this function derectly
  */
 int fdisk_probe_labels(struct fdisk_context *cxt)
 {
@@ -33,7 +33,7 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
 			continue;
 		}
 
-		__fdisk_context_switch_label(cxt, lb);
+		__fdisk_switch_label(cxt, lb);
 		return 0;
 	}
 
@@ -100,7 +100,7 @@ int fdisk_missing_geometry(struct fdisk_context *cxt)
 		    (!cxt->geom.heads || !cxt->geom.sectors
 				      || !cxt->geom.cylinders));
 
-	if (rc && !fdisk_context_listonly(cxt))
+	if (rc && !fdisk_is_listonly(cxt))
 		fdisk_warnx(cxt, _("Incomplete geometry setting."));
 
 	return rc;
@@ -115,7 +115,7 @@ int fdisk_missing_geometry(struct fdisk_context *cxt)
  *
  * This function returns the default or all fields for the current label.
  * Note that the set of the default fields depends on
- * fdisk_context_enable_details() function. If the details are enabled then
+ * fdisk_enable_details() function. If the details are enabled then
  * this function usually returns more fields.
  *
  * Returns 0 on success, otherwise, a corresponding error.
@@ -139,14 +139,14 @@ int fdisk_get_fields_ids(struct fdisk_context *cxt, int all,
 		int id = cxt->label->fields[i].id;
 
 		if (!all &&
-		    ((fdisk_context_display_details(cxt) &&
+		    ((fdisk_is_details(cxt) &&
 				(cxt->label->fields[i].flags & FDISK_FIELDFL_EYECANDY))
-		     || (!fdisk_context_display_details(cxt) &&
+		     || (!fdisk_is_details(cxt) &&
 				(cxt->label->fields[i].flags & FDISK_FIELDFL_DETAIL))
 		     || (id == FDISK_FIELD_SECTORS &&
-			         fdisk_context_use_cylinders(cxt))
+			         fdisk_use_cylinders(cxt))
 		     || (id == FDISK_FIELD_CYLINDERS &&
-			         !fdisk_context_use_cylinders(cxt))))
+			         !fdisk_use_cylinders(cxt))))
 			continue;
 
 		c[n++] = id;
@@ -269,13 +269,13 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 		haslabel = 1;
 	}
 
-	lb = fdisk_context_get_label(cxt, name);
+	lb = fdisk_get_label(cxt, name);
 	if (!lb || lb->disabled)
 		return -EINVAL;
 	if (!lb->op->create)
 		return -ENOSYS;
 
-	__fdisk_context_switch_label(cxt, lb);
+	__fdisk_switch_label(cxt, lb);
 
 	if (haslabel && !cxt->parent)
 		fdisk_reset_device_properties(cxt);

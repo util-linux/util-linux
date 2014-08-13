@@ -240,8 +240,8 @@ struct fdisk_field {
 
 /* note that the defauls is to display a column always */
 enum {
-	FDISK_FIELDFL_DETAIL	= (1 << 1),	/* only display if fdisk_context_display_details() */
-	FDISK_FIELDFL_EYECANDY	= (1 << 2),	/* don't display if fdisk_context_display_details() */
+	FDISK_FIELDFL_DETAIL	= (1 << 1),	/* only display if fdisk_is_details() */
+	FDISK_FIELDFL_EYECANDY	= (1 << 2),	/* don't display if fdisk_is_details() */
 	FDISK_FIELDFL_NUMBER	= (1 << 3),	/* column display numbers */
 };
 
@@ -381,12 +381,8 @@ struct fdisk_context {
 };
 
 /* context.c */
-extern int __fdisk_context_switch_label(struct fdisk_context *cxt,
+extern int __fdisk_switch_label(struct fdisk_context *cxt,
 				    struct fdisk_label *lb);
-
-extern int fdisk_context_enable_listonly(struct fdisk_context *cxt, int enable);
-extern int fdisk_context_listonly(struct fdisk_context *cxt);
-
 
 /* alignment.c */
 extern sector_t fdisk_scround(struct fdisk_context *cxt, sector_t num);

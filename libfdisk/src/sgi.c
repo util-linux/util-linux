@@ -253,7 +253,7 @@ static int sgi_list_table(struct fdisk_context *cxt)
 	struct sgi_device_parameter *sgiparam = &sgilabel->devparam;
 	int rc = 0;
 
-	if (fdisk_context_display_details(cxt))
+	if (fdisk_is_details(cxt))
 		fdisk_info(cxt, _(
 			"Label geometry: %d heads, %llu sectors\n"
 			"                %llu cylinders, %d physical cylinders\n"
@@ -820,7 +820,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 			return -ERANGE;
 	} else {
 		snprintf(mesg, sizeof(mesg), _("First %s"),
-				fdisk_context_get_unit(cxt, SINGULAR));
+				fdisk_get_unit(cxt, SINGULAR));
 		ask = fdisk_new_ask();
 		if (!ask)
 			return -ENOMEM;
@@ -838,8 +838,8 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 
 		if (rc)
 			return rc;
-		if (fdisk_context_use_cylinders(cxt))
-			first *= fdisk_context_get_units_per_sector(cxt);
+		if (fdisk_use_cylinders(cxt))
+			first *= fdisk_get_units_per_sector(cxt);
 	}
 
 	if (first && sys == SGI_TYPE_ENTIRE_DISK)
@@ -859,8 +859,8 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 	} else {
 		snprintf(mesg, sizeof(mesg),
 			 _("Last %s or +%s or +size{K,M,G,T,P}"),
-			 fdisk_context_get_unit(cxt, SINGULAR),
-			 fdisk_context_get_unit(cxt, PLURAL));
+			 fdisk_get_unit(cxt, SINGULAR),
+			 fdisk_get_unit(cxt, PLURAL));
 
 		ask = fdisk_new_ask();
 		if (!ask)
@@ -874,10 +874,10 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, last) - 1);/* maximal */
 		fdisk_ask_number_set_base(ask,    fdisk_scround(cxt, first));
 
-		if (fdisk_context_use_cylinders(cxt))
+		if (fdisk_use_cylinders(cxt))
 			fdisk_ask_number_set_unit(ask,
 				     cxt->sector_size *
-				     fdisk_context_get_units_per_sector(cxt));
+				     fdisk_get_units_per_sector(cxt));
 		else
 			fdisk_ask_number_set_unit(ask,cxt->sector_size);
 
@@ -887,8 +887,8 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		fdisk_free_ask(ask);
 		if (rc)
 			return rc;
-		if (fdisk_context_use_cylinders(cxt))
-			last *= fdisk_context_get_units_per_sector(cxt);
+		if (fdisk_use_cylinders(cxt))
+			last *= fdisk_get_units_per_sector(cxt);
 	}
 
 	if (sys == SGI_TYPE_ENTIRE_DISK

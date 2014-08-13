@@ -358,7 +358,7 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 	{
 		uint64_t sz = pa->size * cxt->sector_size;
 
-		if (fdisk_context_display_details(cxt)) {
+		if (fdisk_is_details(cxt)) {
 			rc = pa->size_post ?
 					asprintf(&p, "%ju%c", sz, pa->size_post) :
 					asprintf(&p, "%ju", sz);
