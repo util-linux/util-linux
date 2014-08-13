@@ -181,8 +181,10 @@ extern int fdisk_set_partition_type(struct fdisk_context *cxt, size_t partnum,
 			     struct fdisk_parttype *t);
 
 
-extern int fdisk_get_fields_ids(struct fdisk_context *cxt, int all,
-				int **ids, size_t *nids);
+extern int fdisk_label_get_fields_ids(
+			struct fdisk_label *lb,
+			struct fdisk_context *cxt,
+			int **ids, size_t *nids);
 extern const struct fdisk_field *fdisk_label_get_field(struct fdisk_label *lb, int id);
 
 extern int fdisk_field_get_id(const struct fdisk_field *fl);

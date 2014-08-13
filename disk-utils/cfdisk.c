@@ -212,7 +212,7 @@ static int cols_init(struct cfdisk *cf)
 	cf->fields = NULL;
 	cf->nfields = 0;
 
-	return fdisk_get_fields_ids(cf->cxt, 0, &cf->fields, &cf->nfields);
+	return fdisk_label_get_fields_ids(NULL, cf->cxt, &cf->fields, &cf->nfields);
 }
 
 static void resize(void)

@@ -554,7 +554,7 @@ void list_disklabel(struct fdisk_context *cxt)
 	if (fdisk_get_partitions(cxt, &tb) || fdisk_table_get_nents(tb) <= 0)
 		goto done;
 
-	if (fdisk_get_fields_ids(cxt, 0, &ids, &nids))
+	if (fdisk_label_get_fields_ids(NULL, cxt, &ids, &nids))
 		goto done;
 
 	itr = fdisk_new_iter(FDISK_ITER_FORWARD);

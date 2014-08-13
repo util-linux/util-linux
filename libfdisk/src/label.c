@@ -66,66 +66,50 @@ int fdisk_label_require_geometry(struct fdisk_label *lb)
 	return lb->flags & FDISK_LABEL_FL_REQUIRE_GEOMETRY ? 1 : 0;
 }
 
-
 /**
- * fdisk_write_disklabel:
- * @cxt: fdisk context
- *
- * Write in-memory changes to disk
- *
- * Returns 0 on success, otherwise, a corresponding error.
- */
-int fdisk_write_disklabel(struct fdisk_context *cxt)
-{
-	if (!cxt || !cxt->label || cxt->readonly)
-		return -EINVAL;
-	if (!cxt->label->op->write)
-		return -ENOSYS;
-	return cxt->label->op->write(cxt);
-}
-
-
-/**
- * fdisk_get_fields:
- * @cxt: fdisk context
- * @all: 1 or 0
+ * fdisk_label_get_fields_ids
+ * @lb: label (or NULL for the current label)
  * @ids: returns allocated array with FDISK_FIELD_* IDs
  * @nids: returns number of items in fields
  *
- * This function returns the default or all fields for the current label.
- * Note that the set of the default fields depends on
- * fdisk_enable_details() function. If the details are enabled then
- * this function usually returns more fields.
+ * This function returns the default fields for the label.
+ *
+ * Note that the set of the default fields depends on fdisk_enable_details()
+ * function. If the details are enabled then this function usually returns more
+ * fields.
  *
  * Returns 0 on success, otherwise, a corresponding error.
  */
-int fdisk_get_fields_ids(struct fdisk_context *cxt, int all,
-			 int **ids, size_t *nids)
+int fdisk_label_get_fields_ids(
+		struct fdisk_label *lb,
+		struct fdisk_context *cxt,
+		int **ids, size_t *nids)
 {
 	size_t i, n;
 	int *c;
 
 	assert(cxt);
 
-	if (!cxt->label)
+	if (!lb)
+		lb = cxt->label;
+	if (!lb)
 		return -EINVAL;
-	if (!cxt->label->fields || !cxt->label->nfields)
+	if (!lb->fields || !lb->nfields)
 		return -ENOSYS;
-	c = calloc(cxt->label->nfields, sizeof(int));
+	c = calloc(lb->nfields, sizeof(int));
 	if (!c)
 		return -ENOMEM;
-	for (n = 0, i = 0; i < cxt->label->nfields; i++) {
-		int id = cxt->label->fields[i].id;
+	for (n = 0, i = 0; i < lb->nfields; i++) {
+		int id = lb->fields[i].id;
 
-		if (!all &&
-		    ((fdisk_is_details(cxt) &&
-				(cxt->label->fields[i].flags & FDISK_FIELDFL_EYECANDY))
+		if ((fdisk_is_details(cxt) &&
+				(lb->fields[i].flags & FDISK_FIELDFL_EYECANDY))
 		     || (!fdisk_is_details(cxt) &&
-				(cxt->label->fields[i].flags & FDISK_FIELDFL_DETAIL))
+				(lb->fields[i].flags & FDISK_FIELDFL_DETAIL))
 		     || (id == FDISK_FIELD_SECTORS &&
 			         fdisk_use_cylinders(cxt))
 		     || (id == FDISK_FIELD_CYLINDERS &&
-			         !fdisk_use_cylinders(cxt))))
+			         !fdisk_use_cylinders(cxt)))
 			continue;
 
 		c[n++] = id;
@@ -173,6 +157,26 @@ int fdisk_field_is_number(const struct fdisk_field *field)
 {
 	return field->flags ? field->flags & FDISK_FIELDFL_NUMBER : 0;
 }
+
+
+/**
+ * fdisk_write_disklabel:
+ * @cxt: fdisk context
+ *
+ * Write in-memory changes to disk
+ *
+ * Returns 0 on success, otherwise, a corresponding error.
+ */
+int fdisk_write_disklabel(struct fdisk_context *cxt)
+{
+	if (!cxt || !cxt->label || cxt->readonly)
+		return -EINVAL;
+	if (!cxt->label->op->write)
+		return -ENOSYS;
+	return cxt->label->op->write(cxt);
+}
+
+
 
 /**
  * fdisk_verify_disklabel:
