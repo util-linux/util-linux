@@ -65,6 +65,9 @@ struct ul_color_ctl {
 	int		scores[__UL_COLORFILE_COUNT];	/* the best match */
 };
 
+/*
+ * Control struct, globally shared.
+ */
 static struct ul_color_ctl ul_colors;
 
 static void colors_free_schemes(struct ul_color_ctl *cc);
@@ -597,12 +600,15 @@ done:
 	return rc;
 }
 
-/*
+/**
+ * colors_init:
+ * @mode: UL_COLORMODE_*
+ * @name: util argv[0]
+ *
  * Initialize private color control struct and initialize the colors
  * status. The color schemes are parsed on demand by colors_get_scheme().
  *
- * @mode: UL_COLORMODE_*
- * @name: util argv[0]
+ * Returns: >0 on success.
  */
 int colors_init(int mode, const char *name)
 {
@@ -676,18 +682,31 @@ void color_fenable(const char *seq, FILE *f)
 }
 
 /*
- * Enable color by logical @name
+ * Returns escape sequence by logical @name, if undefined then returns @dflt.
  */
-void color_scheme_fenable(const char *name, const char *dflt, FILE *f)
+const char *color_scheme_get_sequence(const char *name, const char *dflt)
 {
 	struct ul_color_scheme *cs;
 
 	if (ul_colors.disabled || !ul_colors.has_colors)
-		return;
+		return NULL;
 
 	cs = colors_get_scheme(&ul_colors, name);
-	color_fenable(cs && cs->seq ? cs->seq : dflt, f);
+	return cs && cs->seq ? cs->seq : dflt;
 }
+
+/*
+ * Enable color by logical @name, if undefined enable @dflt.
+ */
+void color_scheme_fenable(const char *name, const char *dflt, FILE *f)
+{
+	const char *seq = color_scheme_get_sequence(name, dflt);
+
+	if (!seq)
+		return;
+	color_fenable(seq, f);
+}
+
 
 /*
  * Disable previously enabled color

@@ -65,7 +65,9 @@ extern void colors_on(void);
 
 /* Set the color */
 extern void color_fenable(const char *seq, FILE *f);
+
 extern void color_scheme_fenable(const char *name, const char *dflt, FILE *f);
+extern const char *color_scheme_get_sequence(const char *name, const char *dflt);
 
 static inline void color_enable(const char *seq)
 {
