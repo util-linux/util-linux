@@ -2248,10 +2248,19 @@ static int gpt_toggle_partition_flag(
 			return rc;
 		bit = tmp;
 		break;
+	default:
+		/* already specified PT_FLAG_GUIDSPECIFIC bit */
+		if (flag >= 48 && flag <= 63) {
+			bit = flag;
+			flag = GPT_FLAG_GUIDSPECIFIC;
+		}
+		break;
 	}
 
-	if (bit < 0)
+	if (bit < 0) {
+		fdisk_warnx(cxt, _("failed to toggle unsupported bit %lu"), flag);
 		return -EINVAL;
+	}
 
 	if (!isset(bits, bit))
 		setbit(bits, bit);
