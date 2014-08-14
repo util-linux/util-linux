@@ -4,6 +4,33 @@
 
 #include "fdiskP.h"
 
+
+/**
+ * SECTION: context
+ * @title: libfdisk handler
+ * @short_description: stores infor about device, labels etc.
+ *
+ * Partitioning data:
+ *
+ * on-disk data
+ *    The libfdisk reads PT when you assign device to the context, the
+ *    function fdisk_write_disklabel() modify on-disk data.
+ *
+ * in-memory data
+ *    All data are label specific, but usually stored in the first sector
+ *    which is cached in memory and shared between all label drivers (see
+ *    labelsection for more details). All label operations are based on
+ *    in-memory data.
+ *
+ * struct fdisk_partition
+ *    The struct provides abstraction to present partitions to users (for
+ *    example to generate human readable info about PT) and it's also unified
+ *    way how to define partition template that can be used by label driver to
+ *    create a new partition. It's necessary to understand the struct
+ *    fdisk_partition is always completely independent object and any change to
+ *    the object has no effect to in-memory (or on-disk) label data.
+ */
+
 /**
  * fdisk_new_context:
  *
@@ -200,7 +227,9 @@ int __fdisk_switch_label(struct fdisk_context *cxt, struct fdisk_label *lb)
  * @cxt: context
  * @name: label name (e.g. "gpt")
  *
- * Forces libfdisk to use the label driver.
+ * Forces libfdisk to use the label driver. It's usually bad idea to use this
+ * function, it's better to use fdisk_create_disklabel().
+ *
  *
  * Returns: 0 on succes, <0 in case of error.
  */
@@ -225,6 +254,8 @@ int fdisk_has_label(struct fdisk_context *cxt)
  * @cxt: fdisk context
  * @l: disklabel type
  *
+ * See also fdisk_is_label() macro in libfdisk.h.
+ * 
  * Returns: return 1 if there is @l disklabel on the device.
  */
 int fdisk_is_labeltype(struct fdisk_context *cxt, enum fdisk_labeltype l)
@@ -319,7 +350,8 @@ static int warn_wipe(struct fdisk_context *cxt)
  * @fname: path to the device to be handled
  * @readonly: how to open the device
  *
- * Open the device, discovery topology, geometry, and detect disklabel.
+ * Open the device, discovery topology, geometry, detect disklabel and
+ * switch the current label driver to reflect the probing result.
  *
  * Returns: 0 on success, < 0 on error.
  */
@@ -370,6 +402,13 @@ fail:
 	return -errno;
 }
 
+/**
+ * fdisk_deassign_device:
+ * @cxt: context
+ * @nosync: disable fsync()
+ *
+ * Close device and call fsync()
+ */
 int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 {
 	assert(cxt);
@@ -392,6 +431,12 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 	return 0;
 }
 
+/**
+ * fdisk_is_readonly:
+ * @cxt: context
+ *
+ * Returns: 1 if device open readonly
+ */
 int fdisk_is_readonly(struct fdisk_context *cxt)
 {
 	assert(cxt);

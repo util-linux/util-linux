@@ -4,6 +4,11 @@
 
 #include "fdiskP.h"
 
+/**
+ * fdisk_new_partition:
+ *
+ * Returns: new instance.
+ */
 struct fdisk_partition *fdisk_new_partition(void)
 {
 	struct fdisk_partition *pa = calloc(1, sizeof(*pa));
@@ -16,6 +21,12 @@ struct fdisk_partition *fdisk_new_partition(void)
 	return pa;
 }
 
+/**
+ * fdisk_reset_partition:
+ * @pa: partition
+ *
+ * Resets partition content.
+ */
 void fdisk_reset_partition(struct fdisk_partition *pa)
 {
 	int ref;
@@ -36,12 +47,25 @@ void fdisk_reset_partition(struct fdisk_partition *pa)
 	INIT_LIST_HEAD(&pa->parts);
 }
 
+/**
+ * fdisk_ref_partition:
+ * @tb: partition pointer
+ *
+ * Incremparts reference counter.
+ */
 void fdisk_ref_partition(struct fdisk_partition *pa)
 {
 	if (pa)
 		pa->refcount++;
 }
 
+/**
+ * fdisk_unref_partition:
+ * @tb: partition pointer
+ *
+ * De-incremparts reference counter, on zero the @tb is automatically
+ * deallocated.
+ */
 void fdisk_unref_partition(struct fdisk_partition *pa)
 {
 	if (!pa)
@@ -80,6 +104,13 @@ int fdisk_dump_partition(struct fdisk_partition *pa, FILE *f)
 	return 0;
 }
 
+/**
+ * fdisk_partition_set_start:
+ * @pa: partition
+ * @off: offset in sectors
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_partition_set_start(struct fdisk_partition *pa, uint64_t off)
 {
 	if (!pa)
@@ -88,17 +119,40 @@ int fdisk_partition_set_start(struct fdisk_partition *pa, uint64_t off)
 	return 0;
 }
 
+/**
+ * fdisk_partition_get_start:
+ * @pa: partition
+ *
+ * Returns: start offset in sectors
+ */
 uint64_t fdisk_partition_get_start(struct fdisk_partition *pa)
 {
 	return pa ? pa->start : 0;
 }
 
+/**
+ * fdisk_partition_cmp_start:
+ * @a: partition
+ * @b: partition
+ * See fdisk_sort_table().
+ */
 int fdisk_partition_cmp_start(struct fdisk_partition *a,
 			      struct fdisk_partition *b)
 {
 	return a->start - b->start;
 }
 
+/**
+ * fdisk_partition_set_end:
+ * @pa: partition
+ * @off: offset in sectors
+ *
+ * Sets end offset, and zeroize size.
+ *
+ * The usual way is to address end of the partition by fdisk_partition_set_size().
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_partition_set_end(struct fdisk_partition *pa, uint64_t off)
 {
 	if (!pa)
@@ -108,12 +162,26 @@ int fdisk_partition_set_end(struct fdisk_partition *pa, uint64_t off)
 	return 0;
 }
 
+/**
+ * fdisk_partition_get_start:
+ * @pa: partition
+ *
+ * Returns: start offset in sectors
+ */
 uint64_t fdisk_partition_get_end(struct fdisk_partition *pa)
 {
 	return pa ? pa->end : 0;
 }
 
-
+/**
+ * fdisk_partition_set_size
+ * @pa: partition
+ * @size: in bytes
+ *
+ * Sets size, zeroize end offset. See also fdisk_partition_set_end().
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_partition_set_size(struct fdisk_partition *pa, uint64_t size)
 {
 	if (!pa)
@@ -123,11 +191,27 @@ int fdisk_partition_set_size(struct fdisk_partition *pa, uint64_t size)
 	return 0;
 }
 
+/**
+ * fdisk_partition_get_start:
+ * @pa: partition
+ *
+ * Returns: size in sectors
+ */
 uint64_t fdisk_partition_get_size(struct fdisk_partition *pa)
 {
 	return pa ? pa->size : 0;
 }
 
+/**
+ * fdisk_partition_set_partno
+ * @pa: partition
+ * @n: partitiion number
+ *
+ * When @pa used as a tempalate for fdisk_add_partition() when infor label driver 
+ * about wanted partition position.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_partition_set_partno(struct fdisk_partition *pa, size_t n)
 {
 	if (!pa)
@@ -198,6 +282,16 @@ int fdisk_partition_set_uuid(struct fdisk_partition *pa, const char *uuid)
 	return 0;
 }
 
+/**
+ * fdisk_partition_partno_follow_default
+ * @pa: partition
+ * @enable: 0|1
+ *
+ * When @pa used as a tempalate for fdisk_add_partition() when force label driver
+ * to add a new partition to the default (next) position.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int enable)
 {
 	if (!pa)
@@ -206,6 +300,16 @@ int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int enable
 	return 0;
 }
 
+/**
+ * fdisk_partition_start_follow_default
+ * @pa: partition
+ * @enable: 0|1
+ *
+ * When @pa used as a tempalate for fdisk_add_partition() when force label driver
+ * to use the first possible space for the new partition.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_partition_start_follow_default(struct fdisk_partition *pa, int enable)
 {
 	if (!pa)
@@ -214,6 +318,16 @@ int fdisk_partition_start_follow_default(struct fdisk_partition *pa, int enable)
 	return 0;
 }
 
+/**
+ * fdisk_partition_start_follow_default
+ * @pa: partition
+ * @enable: 0|1
+ *
+ * When @pa used as a tempalate for fdisk_add_partition() when force label driver
+ * to use all the possible space for the new partition.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_partition_end_follow_default(struct fdisk_partition *pa, int enable)
 {
 	if (!pa)

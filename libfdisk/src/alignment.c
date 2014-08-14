@@ -6,6 +6,12 @@
 
 #include "fdiskP.h"
 
+/**
+ * SECTION: alignment
+ * @title: Align LBA
+ * @short_description: function to align partitions and work with disk topology and geometry.
+ */
+
 /*
  * Alignment according to logical granulity (usually 1MiB)
  */

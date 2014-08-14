@@ -67,7 +67,7 @@ void fdisk_ref_table(struct fdisk_table *tb)
  * @tb: table pointer
  *
  * De-incremparts reference counter, on zero the @tb is automatically
- * deallocated by fdisk_free_table().
+ * deallocated.
  */
 void fdisk_unref_table(struct fdisk_table *tb)
 {
@@ -324,6 +324,13 @@ static int cmp_parts_wrapper(struct list_head *a, struct list_head *b, void *dat
 	return cmp(pa, pb);
 }
 
+/**
+ * fdisk_table_sort_partitions:
+ * @tb: table
+ * @cmp: compare function
+ *
+ * Sort partition in the table.
+ */
 int fdisk_table_sort_partitions(struct fdisk_table *tb,
 			int (*cmp)(struct fdisk_partition *,
 				   struct fdisk_partition *))
@@ -461,8 +468,7 @@ static int check_container_freespace(struct fdisk_context *cxt,
  * This function adds freespace (described by fdisk_partition) to @table, it
  * allocates a new table if the @table points to NULL.
  *
- * Note that free space smaller than grain (see fdisk_topology_get_grain()) is
- * ignored.
+ * Note that free space smaller than grain (see fdisk_get_grain()) is ignored.
 
  * Returns 0 on success, otherwise, a corresponding error.
  */

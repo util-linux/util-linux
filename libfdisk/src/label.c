@@ -2,8 +2,25 @@
 #include "fdiskP.h"
 
 
-/*
- * Don't use this function derectly
+/**
+ * SECTION: label
+ * @title: Label specific driver
+ * @short_description: label (PT) specific data and functions
+ *
+ * The fdisk_new_context() initializes all label drivers, and allocate
+ * per-label specific data struct. This concept allows to store label specific
+ * settings to the label driver independently on the currently active label
+ * driver.
+ *
+ * Anyway, all label drives share in-memory first sector. The function
+ * fdisk_create_disklabel() overwrites the sector. But it's possible that
+ * label driver also uses another buffers, for example GPT uses more than only
+ * the first sector.
+ *
+ * All label operations are in-memory only, except fdisk_write_disklabel().
+ *
+ * All functions that use "struct fdisk_context" rather than "struct
+ * fdisk_label" use the currently active label driver.
  */
 int fdisk_probe_labels(struct fdisk_context *cxt)
 {
@@ -123,6 +140,17 @@ int fdisk_label_get_fields_ids(
 	return 0;
 }
 
+/**
+ * fdisk_label_get_field:
+ * @lb: label
+ * @id: FDISK_FIELD_*
+ *
+ * The field struct describes data stored in struct fdisk_partition. The info
+ * about data is usable for example to generate human readable output (e.g.
+ * fdisk 'p'rint command). See fdisk_partition_to_stirng() and fdisk code.
+ *
+ * Returns: pointer to static instance of the field.
+ */
 const struct fdisk_field *fdisk_label_get_field(struct fdisk_label *lb, int id)
 {
 	size_t i;
@@ -138,21 +166,45 @@ const struct fdisk_field *fdisk_label_get_field(struct fdisk_label *lb, int id)
 	return NULL;
 }
 
+/**
+ * fdisk_field_get_id:
+ * @field: field instance
+ *
+ * Returns: field Id (FDISK_FIELD_*)
+ */
 int fdisk_field_get_id(const struct fdisk_field *field)
 {
 	return field ? field->id : -EINVAL;
 }
 
+/**
+ * fdisk_field_get_name:
+ * @field: field instance
+ *
+ * Returns: field name
+ */
 const char *fdisk_field_get_name(const struct fdisk_field *field)
 {
 	return field ? field->name : NULL;
 }
 
+/**
+ * fdisk_field_get_width:
+ * @field: field instance
+ *
+ * Returns: libsmartcols compatible width.
+ */
 double fdisk_field_get_width(const struct fdisk_field *field)
 {
 	return field ? field->width : -EINVAL;
 }
 
+/**
+ * fdisk_field_is_number:
+ * @field: field instance
+ *
+ * Returns: 1 if field represent number
+ */
 int fdisk_field_is_number(const struct fdisk_field *field)
 {
 	return field->flags ? field->flags & FDISK_FIELDFL_NUMBER : 0;
@@ -163,7 +215,7 @@ int fdisk_field_is_number(const struct fdisk_field *field)
  * fdisk_write_disklabel:
  * @cxt: fdisk context
  *
- * Write in-memory changes to disk
+ * Write in-memory changes to disk. Be careful!
  *
  * Returns 0 on success, otherwise, a corresponding error.
  */
@@ -222,8 +274,12 @@ int fdisk_list_disklabel(struct fdisk_context *cxt)
  * @cxt: fdisk context
  * @name: label name
  *
- * Creates a new disk label of type @name. If @name is NULL, then it
- * will create a default system label type, either SUN or DOS.
+ * Creates a new disk label of type @name. If @name is NULL, then it will
+ * create a default system label type, either SUN or DOS. The function
+ * automaticaly switches the current label driver to @name. The function
+ * fdisk_get_label() returns the current label driver.
+ *
+ * The function modifies in-memory data only.
  *
  * Returns 0 on success, otherwise, a corresponding error.
  */
@@ -293,7 +349,7 @@ int fdisk_locate_disklabel(struct fdisk_context *cxt, int n, const char **name,
 /**
  * fdisk_get_disklabel_id:
  * @cxt: fdisk context
- * @id: returns pointer to allocated string
+ * @id: returns pointer to allocated string (MBR Id or GPT dirk UUID)
  *
  * Returns 0 on success, otherwise, a corresponding error.
  */
@@ -402,18 +458,40 @@ void fdisk_deinit_label(struct fdisk_label *lb)
 		lb->op->deinit(lb);
 }
 
+/**
+ * fdisk_label_set_changed:
+ * @lb: label
+ * @changed: 0/1
+ *
+ * Marks in-memory data as changed, to force fdisk_write_disklabel() to write
+ * to device. This should be unnecessar by default, the library keeps track
+ * about changes.
+ */
 void fdisk_label_set_changed(struct fdisk_label *lb, int changed)
 {
 	assert(lb);
 	lb->changed = changed ? 1 : 0;
 }
 
+/**
+ * fdisk_label_is_changed:
+ * @lb: label
+ *
+ * Returns: 1 if in-memory data has been changed.
+ */
 int fdisk_label_is_changed(struct fdisk_label *lb)
 {
 	assert(lb);
 	return lb ? lb->changed : 0;
 }
 
+/**
+ * fdisk_label_set_disabled:
+ * @lb: label
+ *
+ * Mark label as disabled, then libfdisk is going to ignore the label when 
+ * probe device for labels.
+ */
 void fdisk_label_set_disabled(struct fdisk_label *lb, int disabled)
 {
 	assert(lb);
@@ -424,6 +502,12 @@ void fdisk_label_set_disabled(struct fdisk_label *lb, int disabled)
 	lb->disabled = disabled ? 1 : 0;
 }
 
+/**
+ * fdisk_label_is_disabled:
+ * @lb: label
+ *
+ * Returns: 1 if label driver disabled.
+ */
 int fdisk_label_is_disabled(struct fdisk_label *lb)
 {
 	assert(lb);
