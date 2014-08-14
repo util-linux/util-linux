@@ -39,15 +39,32 @@ FDISK_CMD_BSD_LIST_TYPES="b\nl\nq\n"         # list supported PT types and quit
 
 #set -x
 
-# BSD disklabel depends on endianess
+# BSD disklabel depends on sector/offset and endianess. We convert the md5sums
+# into the most common values (little endian, BSD_LABELSECTOR = 1, 
+# BSD_LABELOFFSET = 0) so that they can be easily compared to the expected
+# ones.
 BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
-function fdisk_bsd_byte_order_clean
+function fdisk_bsd_offset_and_byte_order_clean
 {
-	[ $BYTE_ORDER = "BE" ] || return
-	sed -i \
-	-e "s/c2273b52976351db75596c47c10b0725/2e1cee529cb59c9341afef0443f196a1/" \
-	-e "s/9a234a5b99e37d2ce0d92b65437b93cd/b5c121c2091b2ff26b880551feac7112/" \
-	"$TS_OUTPUT"
+        if [ $BYTE_ORDER = "BE" ] ; then
+		# BSD_LABELSECTOR = 0, BSD_LABELOFFSET = 64
+		sed -i \
+		-e "s/c2273b52976351db75596c47c10b0725/2e1cee529cb59c9341afef0443f196a1/" \
+		-e "s/9a234a5b99e37d2ce0d92b65437b93cd/b5c121c2091b2ff26b880551feac7112/" \
+		"$TS_OUTPUT"
+
+		# BSD_LABELSECTOR = 1, BSD_LABELOFFSET = 0
+		sed -i \
+		-e "s/e990c8a1c2106a4cd4b008f16d71aaa6/2e1cee529cb59c9341afef0443f196a1/" \
+		-e "s/187a48c26e83d146b866868addc93702/b5c121c2091b2ff26b880551feac7112/" \
+		"$TS_OUTPUT"
+	else
+		# BSD_LABELSECTOR = 0, BSD_LABELOFFSET = 64
+		sed -i \
+		-e "s/78a922a80361cb73049bced72e0f8f1d/2e1cee529cb59c9341afef0443f196a1/" \
+		-e "s/fc2803672a0643ffe46da325629616fc/b5c121c2091b2ff26b880551feac7112/" \
+		"$TS_OUTPUT"
+	fi
 }
 
 function print_layout {
@@ -113,6 +130,6 @@ echo -e "${FDISK_CMD_BSD_LIST_TYPES}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} | \
 	sed 's/Reading .*//g; s/Welcome to fdisk .*//' >> $TS_OUTPUT 2>&1
 
-fdisk_bsd_byte_order_clean
+fdisk_bsd_offset_and_byte_order_clean
 ts_fdisk_clean ${TEST_IMAGE_NAME}
 ts_finalize
