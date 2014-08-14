@@ -389,10 +389,10 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 		p = pa->type && pa->type->name ? strdup(pa->type->name) : NULL;
 		break;
 	case FDISK_FIELD_TYPEID:
-		if (pa->type && pa->type->typestr)
-			rc = asprintf(&p, "%s", pa->type->typestr);
+		if (pa->type && fdisk_parttype_get_string(pa->type))
+			rc = asprintf(&p, "%s", fdisk_parttype_get_string(pa->type));
 		else if (pa->type)
-			rc = asprintf(&p, "%x", pa->type->type);
+			rc = asprintf(&p, "%x", fdisk_parttype_get_code(pa->type));
 		break;
 	case FDISK_FIELD_UUID:
 		p = pa->uuid ? strdup(pa->uuid) : NULL;

@@ -94,7 +94,7 @@ struct fdisk_iter {
  * Partition types
  */
 struct fdisk_parttype {
-	unsigned int	type;		/* type as number or zero */
+	unsigned int	code;		/* type as number or zero */
 	const char	*name;		/* description */
 	char		*typestr;	/* type as string or NULL */
 

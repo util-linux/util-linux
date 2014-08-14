@@ -5,68 +5,117 @@
 
 #include "fdiskP.h"
 
+
 /**
- * fdisk_get_parttype_from_code:
- * @cxt: fdisk context
+ * fdisk_label_get_nparttypes:
+ * @lb: label
+ *
+ * Returns: number of types supported by label.
+ */
+size_t fdisk_label_get_nparttypes(struct fdisk_label *lb)
+{
+	if (!lb)
+		return 0;
+	return lb->nparttypes;
+}
+
+/**
+ * fdisk_label_get_parttype:
+ * @lb: label
+ * @n: number
+ *
+ * Returns: return parttype
+ */
+const struct fdisk_parttype *fdisk_label_get_parttype(struct fdisk_label *lb, size_t n)
+{
+	if (!lb || n >= lb->nparttypes)
+		return NULL;
+	return &lb->parttypes[n];
+}
+
+/**
+ * fdisk_label_has_code_parttypes:
+ * @lb: label
+ *
+ * Returns: 1 if the label uses code as partition type
+ *          identifiers (e.g. MBR) or 0.
+ */
+int fdisk_label_has_code_parttypes(struct fdisk_label *lb)
+{
+	assert(lb);
+
+	if (lb->parttypes && lb->parttypes[0].typestr)
+		return 0;
+	return 1;
+}
+
+
+/**
+ * fdisk_label_get_parttype_from_code:
+ * @lb: label
  * @code: code to search for
  *
  * Search in lable-specific table of supported partition types by code.
  *
- * Returns partition type or NULL upon failure or invalid @code.
+ * Returns: partition type or NULL upon failure or invalid @code.
  */
-struct fdisk_parttype *fdisk_get_parttype_from_code(
-				struct fdisk_context *cxt,
+struct fdisk_parttype *fdisk_label_get_parttype_from_code(
+				struct fdisk_label *lb,
 				unsigned int code)
 {
 	size_t i;
 
-	if (!cxt->label->nparttypes)
+	assert(lb);
+
+	if (!lb->nparttypes)
 		return NULL;
 
-	for (i = 0; i < cxt->label->nparttypes; i++)
-		if (cxt->label->parttypes[i].type == code)
-			return &cxt->label->parttypes[i];
+	for (i = 0; i < lb->nparttypes; i++)
+		if (lb->parttypes[i].code == code)
+			return &lb->parttypes[i];
 
 	return NULL;
 }
 
 /**
- * fdisk_get_parttype_from_string:
- * @cxt: fdisk context
+ * fdisk_label_get_parttype_from_string:
+ * @lb: label
  * @str: string to search for
  *
  * Search in lable-specific table of supported partition types by typestr.
  *
- * Returns partition type or NULL upon failure or invalid @str.
+ * Returns: partition type or NULL upon failure or invalid @str.
  */
-struct fdisk_parttype *fdisk_get_parttype_from_string(
-				struct fdisk_context *cxt,
+struct fdisk_parttype *fdisk_label_get_parttype_from_string(
+				struct fdisk_label *lb,
 				const char *str)
 {
 	size_t i;
 
-	if (!cxt->label->nparttypes)
+	assert(lb);
+
+	if (!lb->nparttypes)
 		return NULL;
 
-	for (i = 0; i < cxt->label->nparttypes; i++)
-		if (cxt->label->parttypes[i].typestr
-		    &&strcasecmp(cxt->label->parttypes[i].typestr, str) == 0)
-			return &cxt->label->parttypes[i];
+	for (i = 0; i < lb->nparttypes; i++)
+		if (lb->parttypes[i].typestr
+		    && strcasecmp(lb->parttypes[i].typestr, str) == 0)
+			return &lb->parttypes[i];
 
 	return NULL;
 }
 
 /**
  * fdisk_new_unknown_parttype:
- * @type: type as number
+ * @code: type as number
  * @typestr: type as string
 
  * Allocates new 'unknown' partition type. Use fdisk_free_parttype() to
  * deallocate.
  *
- * Returns newly allocated partition type, or NULL upon failure.
+ * Returns: newly allocated partition type, or NULL upon failure.
  */
-struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int type,
+struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int code,
 						  const char *typestr)
 {
 	struct fdisk_parttype *t;
@@ -83,7 +132,7 @@ struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int type,
 		}
 	}
 	t->name = _("unknown");
-	t->type = type;
+	t->code = code;
 	t->flags |= FDISK_PARTTYPE_UNKNOWN | FDISK_PARTTYPE_ALLOCATED;
 
 	DBG(PARTTYPE, ul_debugobj(t, "allocated new unknown type"));
@@ -91,28 +140,30 @@ struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int type,
 }
 
 /**
- * fdisk_parse_parttype:
- * @cxt: fdisk context
+ * fdisk_label_parse_parttype:
+ * @lb: label
  * @str: string to parse from
  *
- * Returns pointer to static table of the partition types, or newly allocated
+ * Returns: pointer to static table of the partition types, or newly allocated
  * partition type for unknown types. It's safe to call fdisk_free_parttype()
  * for all results.
  */
-struct fdisk_parttype *fdisk_parse_parttype(
-				struct fdisk_context *cxt,
+struct fdisk_parttype *fdisk_label_parse_parttype(
+				struct fdisk_label *lb,
 				const char *str)
 {
 	struct fdisk_parttype *types, *ret;
 	unsigned int code = 0;
 	char *typestr = NULL, *end = NULL;
 
-	if (!cxt->label->nparttypes)
+	assert(lb);
+
+	if (!lb->nparttypes)
 		return NULL;
 
-	DBG(CXT, ul_debugobj(cxt, "parsing '%s' partition type", str));
+	DBG(LABEL, ul_debugobj(lb, "parsing '%s' partition type", str));
 
-	types = cxt->label->parttypes;
+	types = lb->parttypes;
 
 	if (types[0].typestr == NULL && isxdigit(*str)) {
 
@@ -120,17 +171,17 @@ struct fdisk_parttype *fdisk_parse_parttype(
 		code = strtol(str, &end, 16);
 
 		if (errno || *end != '\0') {
-			DBG(CXT, ul_debugobj(cxt, "parsing failed: %m"));
+			DBG(LABEL, ul_debugobj(lb, "parsing failed: %m"));
 			return NULL;
 		}
-		ret = fdisk_get_parttype_from_code(cxt, code);
+		ret = fdisk_label_get_parttype_from_code(lb, code);
 		if (ret)
 			goto done;
 	} else {
 		int i;
 
 		/* maybe specified by type string (e.g. UUID) */
-		ret = fdisk_get_parttype_from_string(cxt, str);
+		ret = fdisk_label_get_parttype_from_string(lb, str);
 		if (ret)
 			goto done;
 
@@ -138,7 +189,7 @@ struct fdisk_parttype *fdisk_parse_parttype(
 		errno = 0;
 		i = strtol(str, &end, 0);
 		if (errno == 0 && *end == '\0' && i > 0
-		    && i - 1 < (int) cxt->label->nparttypes) {
+		    && i - 1 < (int) lb->nparttypes) {
 			ret = &types[i - 1];
 			goto done;
 		}
@@ -146,7 +197,7 @@ struct fdisk_parttype *fdisk_parse_parttype(
 
 	ret = fdisk_new_unknown_parttype(code, typestr);
 done:
-	DBG(PARTTYPE, ul_debugobj(ret, "returns '%s' partition type", ret->name));
+	DBG(PARTTYPE, ul_debugobj(ret, "returns parsed '%s' partition type", ret->name));
 	return ret;
 }
 
@@ -164,5 +215,24 @@ void fdisk_free_parttype(struct fdisk_parttype *t)
 		free(t);
 	}
 }
+
+const char *fdisk_parttype_get_string(const struct fdisk_parttype *t)
+{
+	assert(t);
+	return t->typestr && *t->typestr ? t->typestr : NULL;
+}
+
+unsigned int fdisk_parttype_get_code(const struct fdisk_parttype *t)
+{
+	assert(t);
+	return t->code;
+}
+
+const char *fdisk_parttype_get_name(const struct fdisk_parttype *t)
+{
+	assert(t);
+	return t->name;
+}
+
 
 

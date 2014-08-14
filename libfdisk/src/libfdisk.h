@@ -121,16 +121,27 @@ sector_t fdisk_get_nsectors(struct fdisk_context *cxt);
 const char *fdisk_get_devname(struct fdisk_context *cxt);
 
 /* parttype.c */
-extern struct fdisk_parttype *fdisk_get_parttype_from_code(struct fdisk_context *cxt,
-                                unsigned int code);
-extern struct fdisk_parttype *fdisk_get_parttype_from_string(struct fdisk_context *cxt,
-                                const char *str);
-extern struct fdisk_parttype *fdisk_parse_parttype(struct fdisk_context *cxt, const char *str);
+const struct fdisk_parttype *fdisk_label_get_parttype(struct fdisk_label *lb, size_t n);
+size_t fdisk_label_get_nparttypes(struct fdisk_label *lb);
 
-extern struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int type, const char *typestr);
-extern void fdisk_free_parttype(struct fdisk_parttype *type);
+int fdisk_label_has_code_parttypes(struct fdisk_label *lb);
+struct fdisk_parttype *fdisk_label_get_parttype_from_code(
+				struct fdisk_label *lb,
+				unsigned int code);
 
-extern int fdisk_is_parttype_string(struct fdisk_context *cxt);
+struct fdisk_parttype *fdisk_label_get_parttype_from_string(
+				struct fdisk_label *lb,
+				const char *str);
+struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int code,
+						  const char *typestr);
+struct fdisk_parttype *fdisk_label_parse_parttype(
+				struct fdisk_label *lb,
+				const char *str);
+void fdisk_free_parttype(struct fdisk_parttype *t);
+
+const char *fdisk_parttype_get_string(const struct fdisk_parttype *t);
+unsigned int fdisk_parttype_get_code(const struct fdisk_parttype *t);
+const char *fdisk_parttype_get_name(const struct fdisk_parttype *t);
 
 /* label.c */
 enum {
@@ -178,11 +189,6 @@ extern int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum);
 
 extern int fdisk_set_partition_type(struct fdisk_context *cxt, size_t partnum,
 			     struct fdisk_parttype *t);
-
-extern int fdisk_label_get_parttypes(struct fdisk_label *lb,
-				 struct fdisk_parttype **types,
-				 size_t *ntypes);
-extern int fdisk_label_is_parttype_string(struct fdisk_label *lb);
 
 extern int fdisk_label_get_fields_ids(
 			struct fdisk_label *lb,

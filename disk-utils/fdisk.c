@@ -354,12 +354,15 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
 {
 	const char *q;
-	struct fdisk_label *lb = fdisk_get_label(cxt, NULL);
+	struct fdisk_label *lb;
 
-	if (!cxt || !cxt->label || !cxt->label->nparttypes)
+	assert(cxt);
+	lb = fdisk_get_label(cxt, NULL);
+
+	if (!lb)
 		return NULL;
 
-        q = fdisk_label_is_parttype_string(lb) ?
+        q = fdisk_label_has_code_parttypes(lb) ?
 		_("Partition type (type L to list all types): ") :
 		_("Hex code (type L to list all codes): ");
 	do {
@@ -372,7 +375,7 @@ struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
 		if (buf[1] == '\0' && toupper(*buf) == 'L')
 			list_partition_types(cxt);
 		else if (*buf)
-			return fdisk_parse_parttype(cxt, buf);
+			return fdisk_label_parse_parttype(lb, buf);
         } while (1);
 
 	return NULL;
@@ -380,16 +383,18 @@ struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
 
 void list_partition_types(struct fdisk_context *cxt)
 {
-	struct fdisk_parttype *types;
 	size_t ntypes = 0;
+	struct fdisk_label *lb = fdisk_get_label(cxt, NULL);
 
-	if (!cxt || !cxt->label || !cxt->label->parttypes)
+	assert(cxt);
+	lb = fdisk_get_label(cxt, NULL);
+	if (!lb)
+		return;
+	ntypes = fdisk_label_get_nparttypes(lb);
+	if (!ntypes)
 		return;
 
-	types = cxt->label->parttypes;
-	ntypes = cxt->label->nparttypes;
-
-	if (types[0].typestr == NULL) {
+	if (fdisk_label_has_code_parttypes(lb)) {
 		/*
 		 * Prints in 4 columns in format <hex> <name>
 		 */
@@ -397,8 +402,6 @@ void list_partition_types(struct fdisk_context *cxt)
 		int i;
 
 		size = ntypes;
-		if (types[ntypes - 1].name == NULL)
-			size--;
 
 		for (i = 3; i >= 0; i--)
 			last[3 - i] = done += (size + i - done) / (i + 1);
@@ -408,16 +411,19 @@ void list_partition_types(struct fdisk_context *cxt)
 			#define NAME_WIDTH 15
 			char name[NAME_WIDTH * MB_LEN_MAX];
 			size_t width = NAME_WIDTH;
-			struct fdisk_parttype *t = &types[next];
+			const struct fdisk_parttype *t = fdisk_label_get_parttype(lb, next);
 			size_t ret;
 
 			if (t->name) {
-				printf("%c%2x  ", i ? ' ' : '\n', t->type);
-				ret = mbsalign(_(t->name), name, sizeof(name),
-						      &width, MBS_ALIGN_LEFT, 0);
+				printf("%c%2x  ", i ? ' ' : '\n',
+						fdisk_parttype_get_code(t));
+				ret = mbsalign(_(fdisk_parttype_get_name(t)),
+						name, sizeof(name),
+						&width, MBS_ALIGN_LEFT, 0);
 
 				if (ret == (size_t)-1 || ret >= sizeof(name))
-					printf("%-15.15s", _(t->name));
+					printf("%-15.15s",
+						_(fdisk_parttype_get_name(t)));
 				else
 					fputs(name, stdout);
 			}
@@ -433,13 +439,13 @@ void list_partition_types(struct fdisk_context *cxt)
 		/*
 		 * Prints 1 column in format <idx> <name> <typestr>
 		 */
-		struct fdisk_parttype *t;
 		size_t i;
 
-		for (i = 0, t = types; t && i < ntypes; t++, i++) {
-			if (t->name)
-				printf("%3zu %-30s %s\n", i + 1,
-						t->name, t->typestr);
+		for (i = 0; i < ntypes; i++) {
+			const struct fdisk_parttype *t = fdisk_label_get_parttype(lb, i);
+			printf("%3zu %-30s %s\n", i + 1,
+					fdisk_parttype_get_name(t),
+					fdisk_parttype_get_string(t));
 		}
 	}
 	putchar('\n');
@@ -492,7 +498,7 @@ void change_partition_type(struct fdisk_context *cxt)
 	if (fdisk_set_partition_type(cxt, i, t) == 0)
 		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
 			_("Changed type of partition '%s' to '%s'."),
-			old, t ? t->name : _("Unknown"));
+			old, t ? fdisk_parttype_get_name(t) : _("Unknown"));
 	else
 		fdisk_info(cxt,
 			_("Type of partition %zu is unchanged: %s."),

@@ -72,7 +72,8 @@ static void set_sun_partition(struct fdisk_context *cxt, size_t i,
 		uint32_t start,uint32_t stop, uint16_t sysid)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
-	struct fdisk_parttype *t = fdisk_get_parttype_from_code(cxt, sysid);
+	struct fdisk_parttype *t =
+			fdisk_label_get_parttype_from_code(cxt->label, sysid);
 
 	sunlabel->vtoc.infos[i].id = cpu_to_be16(sysid);
 	sunlabel->vtoc.infos[i].flags = cpu_to_be16(0);
@@ -481,7 +482,7 @@ static int sun_add_partition(
 	struct sun_info *info;
 	uint32_t start, stop, stop2;
 	int whole_disk = 0;
-	int sys = pa && pa->type ? pa->type->type : SUN_TAG_LINUX_NATIVE;
+	int sys = pa && pa->type ? pa->type->code : SUN_TAG_LINUX_NATIVE;
 	int rc;
 	size_t n;
 
@@ -753,7 +754,8 @@ static struct fdisk_parttype *sun_get_parttype(
 	if (n >= cxt->label->nparts_max)
 		return NULL;
 
-	t = fdisk_get_parttype_from_code(cxt, be16_to_cpu(sunlabel->vtoc.infos[n].id));
+	t = fdisk_label_get_parttype_from_code(cxt->label,
+			be16_to_cpu(sunlabel->vtoc.infos[n].id));
 	return t ? : fdisk_new_unknown_parttype(be16_to_cpu(sunlabel->vtoc.infos[n].id), NULL);
 }
 
@@ -786,7 +788,7 @@ static int sun_get_partition(struct fdisk_context *cxt, size_t n,
 	len = be32_to_cpu(part->num_sectors);
 
 	pa->type = sun_get_parttype(cxt, n);
-	if (pa->type && pa->type->type == SUN_TAG_WHOLEDISK)
+	if (pa->type && pa->type->code == SUN_TAG_WHOLEDISK)
 		pa->wholedisk = 1;
 
 	if (flags & SUN_FLAG_UNMNT || flags & SUN_FLAG_RONLY) {
@@ -929,17 +931,17 @@ static int sun_set_parttype(
 
 	sunlabel = self_disklabel(cxt);
 
-	if (i >= cxt->label->nparts_max || !t || t->type > UINT16_MAX)
+	if (i >= cxt->label->nparts_max || !t || t->code > UINT16_MAX)
 		return -EINVAL;
 
-	if (i == 2 && t->type != SUN_TAG_WHOLEDISK)
+	if (i == 2 && t->code != SUN_TAG_WHOLEDISK)
 		fdisk_info(cxt, _("Consider leaving partition 3 as Whole disk (5),\n"
 		         "as SunOS/Solaris expects it and even Linux likes it.\n"));
 
 	part = &sunlabel->partitions[i];
 	info = &sunlabel->vtoc.infos[i];
 
-	if (t->type == SUN_TAG_LINUX_SWAP && !part->start_cylinder) {
+	if (t->code == SUN_TAG_LINUX_SWAP && !part->start_cylinder) {
 	    int yes, rc;
 	    rc = fdisk_ask_yesno(cxt,
 	      _("It is highly recommended that the partition at offset 0\n"
@@ -952,7 +954,7 @@ static int sun_set_parttype(
 		    return 1;
 	}
 
-	switch (t->type) {
+	switch (t->code) {
 	case SUN_TAG_SWAP:
 	case SUN_TAG_LINUX_SWAP:
 		/* swaps are not mountable by default */
@@ -964,7 +966,7 @@ static int sun_set_parttype(
 		info->flags &= ~cpu_to_be16(SUN_FLAG_UNMNT);
 		break;
 	}
-	info->id = cpu_to_be16(t->type);
+	info->id = cpu_to_be16(t->code);
 	return 0;
 }
 
@@ -1045,7 +1047,7 @@ struct fdisk_label *fdisk_new_sun_label(struct fdisk_context *cxt)
 	lb->id = FDISK_DISKLABEL_SUN;
 	lb->op = &sun_operations;
 	lb->parttypes = sun_parttypes;
-	lb->nparttypes = ARRAY_SIZE(sun_parttypes);
+	lb->nparttypes = ARRAY_SIZE(sun_parttypes) - 1;
 	lb->fields = sun_fields;
 	lb->nfields = ARRAY_SIZE(sun_fields);
 	lb->flags |= FDISK_LABEL_FL_REQUIRE_GEOMETRY;

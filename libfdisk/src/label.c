@@ -54,43 +54,6 @@ const char *fdisk_label_get_name(struct fdisk_label *lb)
 }
 
 /**
- * fdisk_label_get_parttypes:
- * @lb: label
- * @types: returns array with supported partition types
- * @ntypes: returns number of types
- *
- * Returns: 0 on success, <0 on error.
- */
-int fdisk_label_get_parttypes(struct fdisk_label *lb,
-				 struct fdisk_parttype **types,
-				 size_t *ntypes)
-{
-	if (!lb)
-		return -EINVAL;
-	if (types)
-		*types = lb->parttypes;
-	if (ntypes)
-		*ntypes = lb->nparttypes;
-	return 0;
-}
-
-/**
- * fdisk_label_is_parttype_string:
- * @lb: label
- *
- * Returns: 1 if the label uses strings as partition type
- *          identifiers (e.g. GPT UUIDS) or 0.
- */
-int fdisk_label_is_parttype_string(struct fdisk_label *lb)
-{
-	assert(lb);
-
-	if (lb->parttypes && lb->parttypes[0].typestr)
-		return 1;
-	return 0;
-}
-
-/**
  * fdisk_label_require_geometry:
  * @lb: label
  *

@@ -308,7 +308,7 @@ static struct fdisk_parttype *sgi_get_parttype(struct fdisk_context *cxt, size_t
 	if (n >= cxt->label->nparts_max)
 		return NULL;
 
-	t = fdisk_get_parttype_from_code(cxt, sgi_get_sysid(cxt, n));
+	t = fdisk_label_get_parttype_from_code(cxt->label, sgi_get_sysid(cxt, n));
 	return t ? : fdisk_new_unknown_parttype(sgi_get_sysid(cxt, n), NULL);
 }
 
@@ -329,7 +329,7 @@ static int sgi_get_partition(struct fdisk_context *cxt, size_t n, struct fdisk_p
 	pa->start = start;
 	pa->end = start + len - (len ? 1 : 0);
 
-	if (pa->type && pa->type->type == SGI_TYPE_ENTIRE_DISK)
+	if (pa->type && pa->type->code == SGI_TYPE_ENTIRE_DISK)
 		pa->wholedisk = 1;
 
 	pa->attrs = sgi_get_swappartition(cxt) == (int) n ? "swap" :
@@ -707,7 +707,8 @@ static int sgi_set_partition(struct fdisk_context *cxt, size_t i,
 	if (sgi_gaps(cxt) < 0)	/* rebuild freelist */
 		fdisk_warnx(cxt, _("Partition overlap on the disk."));
 	if (length) {
-		struct fdisk_parttype *t = fdisk_get_parttype_from_code(cxt, sys);
+		struct fdisk_parttype *t =
+				fdisk_label_get_parttype_from_code(cxt->label, sys);
 		fdisk_info_new_partition(cxt, i + 1, start, start + length, t);
 	}
 
@@ -764,7 +765,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 	char mesg[256];
 	unsigned int first = 0, last = 0;
 	struct fdisk_ask *ask;
-	int sys = pa && pa->type ? pa->type->type : SGI_TYPE_XFS;
+	int sys = pa && pa->type ? pa->type->code : SGI_TYPE_XFS;
 	int rc;
 	size_t n;
 
@@ -1003,7 +1004,7 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 {
 	struct sgi_disklabel *sgilabel;
 
-	if (i >= cxt->label->nparts_max || !t || t->type > UINT32_MAX)
+	if (i >= cxt->label->nparts_max || !t || t->code > UINT32_MAX)
 		return -EINVAL;
 
 	if (sgi_get_num_sectors(cxt, i) == 0)	/* caught already before, ... */ {
@@ -1011,13 +1012,13 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 		return -EINVAL;
 	}
 
-	if ((i == 10 && t->type != SGI_TYPE_ENTIRE_DISK)
-	    || (i == 8 && t->type != 0))
+	if ((i == 10 && t->code != SGI_TYPE_ENTIRE_DISK)
+	    || (i == 8 && t->code != 0))
 		fdisk_info(cxt, _("Consider leaving partition 9 as volume header (0), "
 				  "and partition 11 as entire volume (6), "
 				  "as IRIX expects it."));
 
-	if (((t->type != SGI_TYPE_ENTIRE_DISK) && (t->type != SGI_TYPE_VOLHDR))
+	if (((t->code != SGI_TYPE_ENTIRE_DISK) && (t->code != SGI_TYPE_VOLHDR))
 	    && (sgi_get_start_sector(cxt, i) < 1)) {
 		int yes = 0;
 		fdisk_ask_yesno(cxt,
@@ -1031,7 +1032,7 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 	}
 
 	sgilabel = self_disklabel(cxt);
-	sgilabel->partitions[i].type = cpu_to_be32(t->type);
+	sgilabel->partitions[i].type = cpu_to_be32(t->code);
 	return 0;
 }
 
@@ -1129,7 +1130,7 @@ struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt)
 	lb->id = FDISK_DISKLABEL_SGI;
 	lb->op = &sgi_operations;
 	lb->parttypes = sgi_parttypes;
-	lb->nparttypes = ARRAY_SIZE(sgi_parttypes);
+	lb->nparttypes = ARRAY_SIZE(sgi_parttypes) - 1;
 	lb->fields = sgi_fields;
 	lb->nfields = ARRAY_SIZE(sgi_fields);
 

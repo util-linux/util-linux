@@ -110,7 +110,7 @@ static struct fdisk_parttype *bsd_partition_parttype(
 		struct bsd_partition *p)
 {
 	struct fdisk_parttype *t
-			= fdisk_get_parttype_from_code(cxt, p->p_fstype);
+		= fdisk_label_get_parttype_from_code(cxt->label, p->p_fstype);
 	return t ? : fdisk_new_unknown_parttype(p->p_fstype, NULL);
 }
 
@@ -838,14 +838,14 @@ static int bsd_set_parttype(
 	struct bsd_partition *p;
 	struct bsd_disklabel *d = self_disklabel(cxt);
 
-	if (partnum >= d->d_npartitions || !t || t->type > UINT8_MAX)
+	if (partnum >= d->d_npartitions || !t || t->code > UINT8_MAX)
 		return -EINVAL;
 
 	p = &d->d_partitions[partnum];
-	if (t->type == p->p_fstype)
+	if (t->code == p->p_fstype)
 		return 0;
 
-	p->p_fstype = t->type;
+	p->p_fstype = t->code;
 	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
 }
@@ -912,7 +912,7 @@ struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt)
 	lb->id = FDISK_DISKLABEL_BSD;
 	lb->op = &bsd_operations;
 	lb->parttypes = bsd_fstypes;
-	lb->nparttypes = ARRAY_SIZE(bsd_fstypes);
+	lb->nparttypes = ARRAY_SIZE(bsd_fstypes) - 1;
 
 	lb->fields = bsd_fields;
 	lb->nfields = ARRAY_SIZE(bsd_fields);

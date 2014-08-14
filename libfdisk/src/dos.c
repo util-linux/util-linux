@@ -128,7 +128,7 @@ static struct fdisk_parttype *dos_partition_parttype(
 		struct dos_partition *p)
 {
 	struct fdisk_parttype *t
-			= fdisk_get_parttype_from_code(cxt, p->sys_ind);
+		= fdisk_label_get_parttype_from_code(cxt->label, p->sys_ind);
 	return t ? : fdisk_new_unknown_parttype(p->sys_ind, NULL);
 }
 
@@ -811,7 +811,8 @@ static void set_partition(struct fdisk_context *cxt,
 	dos_partition_set_size(p, stop - start + 1);
 
 	if (!doext) {
-		struct fdisk_parttype *t = fdisk_get_parttype_from_code(cxt, sysid);
+		struct fdisk_parttype *t =
+			fdisk_label_get_parttype_from_code(cxt->label, sysid);
 		fdisk_info_new_partition(cxt, i + 1, start, stop, t);
 	}
 	if (is_dos_compatible(cxt) && (start/(cxt->geom.sectors*cxt->geom.heads) > 1023))
@@ -930,7 +931,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 
 	DBG(LABEL, ul_debug("DOS: adding partition %zu", n));
 
-	sys = pa && pa->type ? pa->type->type : MBR_LINUX_DATA_PARTITION;
+	sys = pa && pa->type ? pa->type->code : MBR_LINUX_DATA_PARTITION;
 
 	if (is_used_partition(p)) {
 		fdisk_warnx(cxt, _("Partition %zu is already defined.  "
@@ -1451,7 +1452,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 				struct fdisk_partition xpa = { .type = NULL };
 				struct fdisk_parttype *t;
 
-				t = fdisk_get_parttype_from_code(cxt,
+				t = fdisk_label_get_parttype_from_code(cxt->label,
 						MBR_DOS_EXTENDED_PARTITION);
 				if (!pa)
 					pa = &xpa;
@@ -1587,28 +1588,28 @@ static int dos_set_parttype(
 	assert(cxt->label);
 	assert(fdisk_is_label(cxt, DOS));
 
-	if (partnum >= cxt->label->nparts_max || !t || t->type > UINT8_MAX)
+	if (partnum >= cxt->label->nparts_max || !t || t->code > UINT8_MAX)
 		return -EINVAL;
 
 	p = self_partition(cxt, partnum);
-	if (t->type == p->sys_ind)
+	if (t->code == p->sys_ind)
 		return 0;
 
-	if (IS_EXTENDED(p->sys_ind) || IS_EXTENDED(t->type)) {
+	if (IS_EXTENDED(p->sys_ind) || IS_EXTENDED(t->code)) {
 		fdisk_warnx(cxt, _("You cannot change a partition into an "
 			"extended one or vice versa. Delete it first."));
 		return -EINVAL;
 	}
 
-	if (is_dos_partition(t->type) || is_dos_partition(p->sys_ind))
+	if (is_dos_partition(t->code) || is_dos_partition(p->sys_ind))
 	    fdisk_info(cxt, _("If you have created or modified any DOS 6.x "
 		"partitions, please see the fdisk documentation for additional "
 		"information."));
 
-	if (!t->type)
+	if (!t->code)
 		fdisk_warnx(cxt, _("Type 0 means free space to many systems. "
 				   "Having partitions of type 0 is probably unwise."));
-	p->sys_ind = t->type;
+	p->sys_ind = t->code;
 
 	partition_set_changed(cxt, partnum, 1);
 	return 0;
@@ -2046,7 +2047,7 @@ struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt)
 	lb->id = FDISK_DISKLABEL_DOS;
 	lb->op = &dos_operations;
 	lb->parttypes = dos_parttypes;
-	lb->nparttypes = ARRAY_SIZE(dos_parttypes);
+	lb->nparttypes = ARRAY_SIZE(dos_parttypes) - 1;
 	lb->fields = dos_fields;
 	lb->nfields = ARRAY_SIZE(dos_fields);
 

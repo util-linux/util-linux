@@ -321,7 +321,7 @@ static struct fdisk_parttype *gpt_partition_parttype(
 	char str[37];
 
 	guid_to_string(&e->type, str);
-	t = fdisk_get_parttype_from_string(cxt, str);
+	t = fdisk_label_get_parttype_from_string(cxt->label, str);
 	return t ? : fdisk_new_unknown_parttype(0, str);
 }
 

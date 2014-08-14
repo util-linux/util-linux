@@ -1509,9 +1509,9 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 {
 	struct cfdisk_menuitem *d, *cm;
 	size_t i = 0, nitems, idx = 0;
-	struct fdisk_parttype *types, *t = NULL;
+	struct fdisk_parttype *t = NULL;
 	struct fdisk_label *lb;
-	int has_typestr = 0;
+	int codetypes = 0;
 
 	DBG(UI, ul_debug("asking for parttype."));
 
@@ -1519,27 +1519,28 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 
 	/* create cfdisk menu according to label types, note that the
 	 * last cm[] item has to be empty -- so nitems + 1 */
-	if (fdisk_label_get_parttypes(lb, &types, &nitems) || !nitems)
+	nitems = fdisk_label_get_nparttypes(lb);
+	if (!nitems)
 		return NULL;
 
 	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menuitem));
 	if (!cm)
 		return NULL;
 
-	has_typestr = fdisk_label_is_parttype_string(lb);
+	codetypes = fdisk_label_has_code_parttypes(lb);
 
 	for (i = 0; i < nitems; i++) {
-		struct fdisk_parttype *x = &types[i];
+		const struct fdisk_parttype *x = fdisk_label_get_parttype(lb, i);
 		char *name;
 
-		if (!x || !x->name)
-			continue;
-		cm[i].userdata = x;
-		if (!has_typestr)
-			xasprintf(&name, "%2x %s", x->type, _(x->name));
+		cm[i].userdata = (void *) x;
+		if (codetypes)
+			xasprintf(&name, "%2x %s",
+				fdisk_parttype_get_code(x),
+				_(fdisk_parttype_get_name(x)));
 		else {
-			name = (char *) _(x->name);
-			cm[i].desc = x->typestr;
+			name = (char *) _(fdisk_parttype_get_name(x));
+			cm[i].desc = fdisk_parttype_get_string(x);
 		}
 		cm[i].name = name;
 		if (x == cur)
@@ -1579,7 +1580,7 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 
 done:
 	menu_pop(cf);
-	if (!has_typestr) {
+	if (codetypes) {
 		for (i = 0; i < nitems; i++)
 			free((char *) cm[i].name);
 	}
