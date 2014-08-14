@@ -129,7 +129,6 @@ extern struct fdisk_parttype *fdisk_parse_parttype(struct fdisk_context *cxt, co
 
 extern struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int type, const char *typestr);
 extern void fdisk_free_parttype(struct fdisk_parttype *type);
-extern size_t fdisk_get_nparttypes(struct fdisk_context *cxt);
 
 extern int fdisk_is_parttype_string(struct fdisk_context *cxt);
 
@@ -180,6 +179,10 @@ extern int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum);
 extern int fdisk_set_partition_type(struct fdisk_context *cxt, size_t partnum,
 			     struct fdisk_parttype *t);
 
+extern int fdisk_label_get_parttypes(struct fdisk_label *lb,
+				 struct fdisk_parttype **types,
+				 size_t *ntypes);
+extern int fdisk_label_is_parttype_string(struct fdisk_label *lb);
 
 extern int fdisk_label_get_fields_ids(
 			struct fdisk_label *lb,

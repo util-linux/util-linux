@@ -20,7 +20,7 @@ struct fdisk_parttype *fdisk_get_parttype_from_code(
 {
 	size_t i;
 
-	if (!fdisk_get_nparttypes(cxt))
+	if (!cxt->label->nparttypes)
 		return NULL;
 
 	for (i = 0; i < cxt->label->nparttypes; i++)
@@ -45,7 +45,7 @@ struct fdisk_parttype *fdisk_get_parttype_from_string(
 {
 	size_t i;
 
-	if (!fdisk_get_nparttypes(cxt))
+	if (!cxt->label->nparttypes)
 		return NULL;
 
 	for (i = 0; i < cxt->label->nparttypes; i++)
@@ -107,7 +107,7 @@ struct fdisk_parttype *fdisk_parse_parttype(
 	unsigned int code = 0;
 	char *typestr = NULL, *end = NULL;
 
-	if (!fdisk_get_nparttypes(cxt))
+	if (!cxt->label->nparttypes)
 		return NULL;
 
 	DBG(CXT, ul_debugobj(cxt, "parsing '%s' partition type", str));
@@ -138,7 +138,7 @@ struct fdisk_parttype *fdisk_parse_parttype(
 		errno = 0;
 		i = strtol(str, &end, 0);
 		if (errno == 0 && *end == '\0' && i > 0
-		    && i - 1 < (int) fdisk_get_nparttypes(cxt)) {
+		    && i - 1 < (int) cxt->label->nparttypes) {
 			ret = &types[i - 1];
 			goto done;
 		}
@@ -165,19 +165,4 @@ void fdisk_free_parttype(struct fdisk_parttype *t)
 	}
 }
 
-/**
- * fdisk_is_parttype_string:
- * @cxt: context
- *
- * Returns: 1 if the current label uses strings as partition type
- *          identifiers (e.g. GPT UUIDS) or 0.
- */
-int fdisk_is_parttype_string(struct fdisk_context *cxt)
-{
-	assert(cxt);
-	assert(cxt->label);
 
-	if (cxt->label->parttypes && cxt->label->parttypes[0].typestr)
-		return 1;
-	return 0;
-}

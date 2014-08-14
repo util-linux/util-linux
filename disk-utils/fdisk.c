@@ -354,11 +354,12 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
 {
 	const char *q;
+	struct fdisk_label *lb = fdisk_get_label(cxt, NULL);
 
 	if (!cxt || !cxt->label || !cxt->label->nparttypes)
 		return NULL;
 
-        q = fdisk_is_parttype_string(cxt) ?
+        q = fdisk_label_is_parttype_string(lb) ?
 		_("Partition type (type L to list all types): ") :
 		_("Hex code (type L to list all codes): ");
 	do {

@@ -1509,25 +1509,27 @@ static struct fdisk_parttype *ui_get_parttype(struct cfdisk *cf,
 {
 	struct cfdisk_menuitem *d, *cm;
 	size_t i = 0, nitems, idx = 0;
-	struct fdisk_parttype *t = NULL;
+	struct fdisk_parttype *types, *t = NULL;
+	struct fdisk_label *lb;
 	int has_typestr = 0;
 
 	DBG(UI, ul_debug("asking for parttype."));
 
+	lb = fdisk_get_label(cf->cxt, NULL);
+
 	/* create cfdisk menu according to label types, note that the
 	 * last cm[] item has to be empty -- so nitems + 1 */
-	nitems = cf->cxt->label->nparttypes;
-	if (!nitems)
+	if (fdisk_label_get_parttypes(lb, &types, &nitems) || !nitems)
 		return NULL;
+
 	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menuitem));
 	if (!cm)
 		return NULL;
 
-	has_typestr = cf->cxt->label->parttypes[0].typestr &&
-		      *cf->cxt->label->parttypes[0].typestr;
+	has_typestr = fdisk_label_is_parttype_string(lb);
 
 	for (i = 0; i < nitems; i++) {
-		struct fdisk_parttype *x = &cf->cxt->label->parttypes[i];
+		struct fdisk_parttype *x = &types[i];
 		char *name;
 
 		if (!x || !x->name)

@@ -54,6 +54,43 @@ const char *fdisk_label_get_name(struct fdisk_label *lb)
 }
 
 /**
+ * fdisk_label_get_parttypes:
+ * @lb: label
+ * @types: returns array with supported partition types
+ * @ntypes: returns number of types
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int fdisk_label_get_parttypes(struct fdisk_label *lb,
+				 struct fdisk_parttype **types,
+				 size_t *ntypes)
+{
+	if (!lb)
+		return -EINVAL;
+	if (types)
+		*types = lb->parttypes;
+	if (ntypes)
+		*ntypes = lb->nparttypes;
+	return 0;
+}
+
+/**
+ * fdisk_label_is_parttype_string:
+ * @lb: label
+ *
+ * Returns: 1 if the label uses strings as partition type
+ *          identifiers (e.g. GPT UUIDS) or 0.
+ */
+int fdisk_label_is_parttype_string(struct fdisk_label *lb)
+{
+	assert(lb);
+
+	if (lb->parttypes && lb->parttypes[0].typestr)
+		return 1;
+	return 0;
+}
+
+/**
  * fdisk_label_require_geometry:
  * @lb: label
  *
@@ -176,8 +213,6 @@ int fdisk_write_disklabel(struct fdisk_context *cxt)
 	return cxt->label->op->write(cxt);
 }
 
-
-
 /**
  * fdisk_verify_disklabel:
  * @cxt: fdisk context
@@ -197,8 +232,6 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
 
 	return cxt->label->op->verify(cxt);
 }
-
-
 
 /**
  * fdisk_list_disklabel:
@@ -267,7 +300,20 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 	return cxt->label->op->create(cxt);
 }
 
-
+/**
+ * fdisk_locate_disklabel:
+ * @cxt: context
+ * @n: N item
+ * @name: return item name
+ * @offset: return offset where is item
+ * @size: of the item
+ *
+ * Locate disklabel and returns info about @n item of the label. For example
+ * GPT is composed from two items, PMBR and GPT, n=0 return offset to PMBR and n=1
+ * return offset to GPT. For more details see 'D' expect fdisk command.
+ *
+ * Returns: 0 on succes, <0 on error, 1 no more items.
+ */
 int fdisk_locate_disklabel(struct fdisk_context *cxt, int n, const char **name,
 			   off_t *offset, size_t *size)
 {
@@ -300,7 +346,7 @@ int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id)
 }
 
 /**
- * fdisk_get_disklabel_id:
+ * fdisk_set_disklabel_id:
  * @cxt: fdisk context
  *
  * Returns 0 on success, otherwise, a corresponding error.
@@ -337,19 +383,6 @@ int fdisk_set_partition_type(struct fdisk_context *cxt,
 	return cxt->label->op->part_set_type(cxt, partnum, t);
 }
 
-/**
- * fdisk_get_nparttypes:
- * @cxt: fdisk context
- *
- * Returns: number of partition types supported by the current label
- */
-size_t fdisk_get_nparttypes(struct fdisk_context *cxt)
-{
-	if (!cxt || !cxt->label)
-		return 0;
-
-	return cxt->label->nparttypes;
-}
 
 /**
  * fdisk_partition_taggle_flag:
