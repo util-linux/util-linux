@@ -310,10 +310,32 @@ extern int fdisk_sgi_set_bootfile(struct fdisk_context *cxt);
 extern int fdisk_sgi_create_info(struct fdisk_context *cxt);
 
 /* gpt */
+
+/* GPT partition attributes */
 enum {
+	/* System partition (disk partitioning utilities must preserve the
+	 * partition as is) */
 	GPT_FLAG_REQUIRED = 1,
+
+	/* EFI firmware should ignore the content of the partition and not try
+	 * to read from it */
 	GPT_FLAG_NOBLOCK,
+
+	/* Legacy BIOS bootable  */
 	GPT_FLAG_LEGACYBOOT,
+
+	/* bites 48-63, Defined and used by the individual partition type.
+	 *
+	 * The flag GPT_FLAG_GUIDSPECIFIC forces libfdisk to ask (by ask API)
+	 * for a bit number. If you want to toggle specific bit and avoid any
+	 * dialog, then use the bit number (in range 48..63). For example:
+	 *
+	 * // start dialog to ask for bit number
+	 * fdisk_partition_toggle_flag(cxt, n, GPT_FLAG_GUIDSPECIFIC);
+	 *
+	 * // toggle bit 60
+	 * fdisk_partition_toggle_flag(cxt, n, 60);
+	 */
 	GPT_FLAG_GUIDSPECIFIC
 };
 
