@@ -80,6 +80,8 @@ struct fdisk_context *fdisk_new_context(void);
 struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent, const char *name);
 void fdisk_free_context(struct fdisk_context *cxt);
 
+struct fdisk_context *fdisk_get_parent(struct fdisk_context *cxt);
+
 struct fdisk_label *fdisk_get_label(struct fdisk_context *cxt, const char *name);
 int fdisk_next_label(struct fdisk_context *cxt, struct fdisk_label **lb);
 size_t fdisk_get_nlabels(struct fdisk_context *cxt);
@@ -111,7 +113,7 @@ int fdisk_use_cylinders(struct fdisk_context *cxt);
 unsigned int fdisk_get_units_per_sector(struct fdisk_context *cxt);
 
 unsigned long fdisk_get_optimal_iosize(struct fdisk_context *cxt);
-unsigned long fdisk_get_minimal_size(struct fdisk_context *cxt);
+unsigned long fdisk_get_minimal_iosize(struct fdisk_context *cxt);
 unsigned long fdisk_get_physector_size(struct fdisk_context *cxt);
 unsigned long fdisk_get_sector_size(struct fdisk_context *cxt);
 unsigned long fdisk_get_alignment_offset(struct fdisk_context *cxt);
@@ -119,6 +121,11 @@ unsigned long fdisk_get_grain_size(struct fdisk_context *cxt);
 sector_t fdisk_get_first_lba(struct fdisk_context *cxt);
 sector_t fdisk_get_nsectors(struct fdisk_context *cxt);
 const char *fdisk_get_devname(struct fdisk_context *cxt);
+int fdisk_get_devfd(struct fdisk_context *cxt);
+
+unsigned int fdisk_get_geom_heads(struct fdisk_context *cxt);
+sector_t fdisk_get_geom_sectors(struct fdisk_context *cxt);
+sector_t fdisk_get_geom_cylinders(struct fdisk_context *cxt);
 
 /* parttype.c */
 const struct fdisk_parttype *fdisk_label_get_parttype(struct fdisk_label *lb, size_t n);
@@ -169,7 +176,7 @@ enum {
 	FDISK_FIELD_UUID,
 };
 
-int fdisk_label_is_labeltype(struct fdisk_label *lb, enum fdisk_labeltype id);
+int fdisk_label_get_type(struct fdisk_label *lb);
 const char *fdisk_label_get_name(struct fdisk_label *lb);
 int fdisk_label_require_geometry(struct fdisk_label *lb);
 

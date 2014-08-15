@@ -252,15 +252,30 @@ int fdisk_has_label(struct fdisk_context *cxt)
 /**
  * fdisk_is_labeltype:
  * @cxt: fdisk context
- * @l: FDISK_DISKLABEL_*
+ * @id: FDISK_DISKLABEL_*
  *
  * See also fdisk_is_label() macro in libfdisk.h.
  *
  * Returns: return 1 if the current label is @l
  */
-int fdisk_is_labeltype(struct fdisk_context *cxt, enum fdisk_labeltype l)
+int fdisk_is_labeltype(struct fdisk_context *cxt, enum fdisk_labeltype id)
 {
-	return cxt && fdisk_label_is_labeltype(cxt->label, l);
+	assert(cxt);
+	assert(cxt->label);
+
+	return fdisk_label_get_type(cxt->label) == id;
+}
+
+/**
+ * fdisk_get_parent:
+ * @cxt: nested fdisk context
+ *
+ * Returns: pointer to parental context, or NULL
+ */
+struct fdisk_context *fdisk_get_parent(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->parent;
 }
 
 static void reset_context(struct fdisk_context *cxt)
@@ -644,7 +659,7 @@ unsigned long fdisk_get_optimal_iosize(struct fdisk_context *cxt)
  *
  * Returns: minimal I/O size
  */
-unsigned long fdisk_get_minimal_size(struct fdisk_context *cxt)
+unsigned long fdisk_get_minimal_iosize(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->min_io_size;
@@ -734,6 +749,53 @@ const char *fdisk_get_devname(struct fdisk_context *cxt)
 	return cxt->dev_path;
 }
 
+/**
+ * fdisk_get_devfd:
+ * @cxt: context
+ *
+ * Retruns: device file descriptor.
+ */
+int fdisk_get_devfd(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->dev_fd;
+}
+
+/**
+ * fdisk_get_geom_heads:
+ * @cxt: context
+ *
+ * Returns: number of geometry heads.
+ */
+unsigned int fdisk_get_geom_heads(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->geom.heads;
+}
+/**
+ * fdisk_get_geom_sectors:
+ * @cxt: context
+ *
+ * Returns: number of geometry sectors.
+ */
+sector_t fdisk_get_geom_sectors(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->geom.sectors;
+
+}
+
+/**
+ * fdisk_get_geom_cylinders:
+ * @cxt: context
+ *
+ * Returns: number of geometry cylinders
+ */
+sector_t fdisk_get_geom_cylinders(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->geom.cylinders;
+}
 
 int fdisk_missing_geometry(struct fdisk_context *cxt)
 {

@@ -73,13 +73,12 @@ const char *fdisk_label_get_name(struct fdisk_label *lb)
 /**
  * fdisk_label_is_labeltype:
  * @lb: label
- * @id: FDISK_DISKLABEL_*
  *
- * Returns: 1 if the label type matches with id.
+ * Returns: FDISK_DISKLABEL_*.
  */
-int fdisk_label_is_labeltype(struct fdisk_label *lb, enum fdisk_labeltype id)
+int fdisk_label_get_type(struct fdisk_label *lb)
 {
-	return lb && lb->id == id;
+	return lb->id;
 }
 
 /**
