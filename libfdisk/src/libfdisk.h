@@ -169,6 +169,7 @@ enum {
 	FDISK_FIELD_UUID,
 };
 
+int fdisk_label_is_labeltype(struct fdisk_label *lb, enum fdisk_labeltype id);
 const char *fdisk_label_get_name(struct fdisk_label *lb);
 int fdisk_label_require_geometry(struct fdisk_label *lb);
 

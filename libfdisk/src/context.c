@@ -252,15 +252,15 @@ int fdisk_has_label(struct fdisk_context *cxt)
 /**
  * fdisk_is_labeltype:
  * @cxt: fdisk context
- * @l: disklabel type
+ * @l: FDISK_DISKLABEL_*
  *
  * See also fdisk_is_label() macro in libfdisk.h.
- * 
- * Returns: return 1 if there is @l disklabel on the device.
+ *
+ * Returns: return 1 if the current label is @l
  */
 int fdisk_is_labeltype(struct fdisk_context *cxt, enum fdisk_labeltype l)
 {
-	return cxt && cxt->label && cxt->label->id == l;
+	return cxt && fdisk_label_is_labeltype(cxt->label, l);
 }
 
 static void reset_context(struct fdisk_context *cxt)
