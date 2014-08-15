@@ -18,8 +18,10 @@
 #include <signal.h>
 #include <ctype.h>
 #include <getopt.h>
+#include <assert.h>
 #include <libsmartcols.h>
 #include <sys/ioctl.h>
+#include <libfdisk.h>
 
 #ifdef HAVE_SLANG_H
 # include <slang.h>
@@ -51,8 +53,7 @@
 #include "xalloc.h"
 #include "mbsalign.h"
 #include "colors.h"
-
-#include "fdiskP.h"
+#include "debug.h"
 
 #ifdef __GNU__
 # define DEFAULT_DEVICE "/dev/hd0"
@@ -193,7 +194,6 @@ UL_DEBUG_DEFINE_MASKANEMS(cfdisk) = UL_DEBUG_EMPTY_MASKNAMES;
 #define CFDISK_DEBUG_TABLE	(1 << 5)
 #define CFDISK_DEBUG_ALL	0xFFFF
 
-#undef DBG		/* temporary to avoid collision with fdiskP.h */
 #define DBG(m, x)       __UL_DBG(cfdisk, CFDISK_DEBUG_, m, x)
 
 static void cfdisk_init_debug(void)
@@ -1294,8 +1294,9 @@ static int ui_table_goto(struct cfdisk *cf, int where)
 
 static int ui_refresh(struct cfdisk *cf)
 {
+	struct fdisk_label *lb;
 	char *id = NULL;
-        uint64_t bytes = cf->cxt->total_sectors * cf->cxt->sector_size;
+        uint64_t bytes = fdisk_get_nsectors(cf->cxt) * fdisk_get_sector_size(cf->cxt);
 	char *strsz = size_to_human_string(SIZE_SUFFIX_SPACE
 				| SIZE_SUFFIX_3LETTER, bytes);
 	erase();
@@ -1303,17 +1304,20 @@ static int ui_refresh(struct cfdisk *cf)
 	if (!ui_enabled)
 		return -EINVAL;
 
+	lb = fdisk_get_label(cf->cxt, NULL);
+	assert(lb);
+
 	/* header */
 	attron(A_BOLD);
-	ui_center(0, _("Disk: %s"), cf->cxt->dev_path);
+	ui_center(0, _("Disk: %s"), fdisk_get_devname(cf->cxt));
 	attroff(A_BOLD);
 	ui_center(1, _("Size: %s, %ju bytes, %ju sectors"),
-			strsz, bytes, (uintmax_t) cf->cxt->total_sectors);
+			strsz, bytes, (uintmax_t) fdisk_get_nsectors(cf->cxt));
 	if (fdisk_get_disklabel_id(cf->cxt, &id) == 0 && id)
 		ui_center(2, _("Label: %s, identifier: %s"),
-				cf->cxt->label->name, id);
+				fdisk_label_get_name(lb), id);
 	else
-		ui_center(2, _("Label: %s"), cf->cxt->label->name);
+		ui_center(2, _("Label: %s"), fdisk_label_get_name(lb));
 	free(strsz);
 
 	ui_draw_table(cf);
@@ -1478,7 +1482,7 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 			DBG(UI, ul_debug("get_size user=%ju, power=%d, sectors=%s",
 						user, pwr, insec ? "yes" : "no"));
 			if (insec)
-				user *= cf->cxt->sector_size;
+				user *= fdisk_get_sector_size(cf->cxt);
 			if (user < low) {
 				ui_warnx(_("Minimal size is %ju"), low);
 				rc = -ERANGE;
@@ -1585,7 +1589,8 @@ done:
 			free((char *) cm[i].name);
 	}
 	free(cm);
-	DBG(UI, ul_debug("get parrtype done [type=%s] ", t ? t->name : NULL));
+	DBG(UI, ul_debug("get parrtype done [type=%s] ", t ?
+				fdisk_parttype_get_name(t) : NULL));
 	return t;
 }
 
@@ -1607,9 +1612,10 @@ static int ui_create_label(struct cfdisk *cf)
 	cm = xcalloc(nitems + 1, sizeof(struct cfdisk_menuitem));
 
 	while (fdisk_next_label(cf->cxt, &lb) == 0) {
-		if (fdisk_label_is_disabled(lb) || strcmp(lb->name, "bsd") == 0)
+		if (fdisk_label_is_disabled(lb) ||
+		    fdisk_label_is_labeltype(lb, FDISK_DISKLABEL_BSD))
 			continue;
-		cm[i++].name = lb->name;
+		cm[i++].name = fdisk_label_get_name(lb);
 	}
 
 	erase();
@@ -1803,7 +1809,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			return -ENOMEM;
 		/* free space range */
 		start = fdisk_partition_get_start(pa);
-		size = dflt_size = fdisk_partition_get_size(pa) * cf->cxt->sector_size;
+		size = dflt_size = fdisk_partition_get_size(pa) * fdisk_get_sector_size(cf->cxt);
 
 		if (ui_get_size(cf, _("Partition size: "), &size, 1, size)
 				== -CFDISK_ERR_ESC)
@@ -1812,7 +1818,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		if (dflt_size == size)	/* default is to fillin all free space */
 			fdisk_partition_end_follow_default(npa, 1);
 		else /* set relative size of the partition */
-			fdisk_partition_set_size(npa, size / cf->cxt->sector_size);
+			fdisk_partition_set_size(npa, size / fdisk_get_sector_size(cf->cxt));
 
 		fdisk_partition_set_start(npa, start);
 				fdisk_partition_partno_follow_default(npa, 1);
