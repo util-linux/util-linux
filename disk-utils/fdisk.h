@@ -1,17 +1,30 @@
 #ifndef UTIL_LINUX_FDISK_H
 #define UTIL_LINUX_FDISK_H
 /*
-   fdisk.h
-*/
+ *   fdisk.h
+ */
 
 #include "c.h"
+#include <assert.h>
+#include <libfdisk.h>
 
 /* Let's temporary include private libfdisk header file. The final libfdisk.h
  * maybe included when fdisk.c and libfdisk code will be completely spit.
  */
-#include "fdiskP.h"
 #include "blkdev.h"
 #include "colors.h"
+#include "debug.h"
+#include "nls.h"
+
+#define FDISKPROG_DEBUG_INIT	(1 << 1)
+#define FDISKPROG_DEBUG_MENU	(1 << 3)
+#define FDISKPROG_DEBUG_MISC	(1 << 4)
+#define FDISKPROG_DEBUG_ASK	(1 << 5)
+#define FDISKPROG_DEBUG_ALL	0xFFFF
+
+UL_DEBUG_DECLARE_MASK(fdisk);
+#define DBG(m, x)       __UL_DBG(fdisk, FDISKPROG_DEBUG_, m, x)
+#define ON_DBG(m, x)    __UL_DBG_CALL(fdisk, FDISKPROG_DEBUG_, m, x)
 
 extern int get_user_reply(struct fdisk_context *cxt,
 			  const char *prompt,

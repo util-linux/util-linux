@@ -46,7 +46,16 @@
 # include <linux/blkpg.h>
 #endif
 
+/*
+ * fdisk debug stuff (see fdisk.h and include/debug.h)
+ */
+UL_DEBUG_DEFINE_MASK(fdisk);
+UL_DEBUG_DEFINE_MASKANEMS(fdisk) = UL_DEBUG_EMPTY_MASKNAMES;
 
+static void fdiskprog_init_debug(void)
+{
+	__UL_INIT_DEBUG(fdisk, FDISKPROG_DEBUG_, 0, FDISK_DEBUG);
+}
 
 int get_user_reply(struct fdisk_context *cxt, const char *prompt,
 			  char *buf, size_t bufsz)
@@ -414,7 +423,7 @@ void list_partition_types(struct fdisk_context *cxt)
 			const struct fdisk_parttype *t = fdisk_label_get_parttype(lb, next);
 			size_t ret;
 
-			if (t->name) {
+			if (fdisk_parttype_get_name(t)) {
 				printf("%c%2x  ", i ? ' ' : '\n',
 						fdisk_parttype_get_code(t));
 				ret = mbsalign(_(fdisk_parttype_get_name(t)),
@@ -488,7 +497,7 @@ void change_partition_type(struct fdisk_context *cxt)
 	}
 
 	t = (struct fdisk_parttype *) fdisk_partition_get_type(pa);
-	old = t ? t->name : _("Unknown");
+	old = t ? fdisk_parttype_get_name(t) : _("Unknown");
 
 	do {
 		t = ask_partition_type(cxt);
@@ -781,7 +790,7 @@ static void print_all_devices_pt(struct fdisk_context *cxt)
 		return;
 	}
 
-	DBG(FRONTEND, ul_debug("reading "_PATH_PROC_PARTITIONS));
+	DBG(MISC, ul_debug("reading "_PATH_PROC_PARTITIONS));
 
 	while (fgets(line, sizeof(line), f)) {
 		char buf[PATH_MAX], *cn;
@@ -891,6 +900,8 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	fdisk_init_debug(0);
+	fdiskprog_init_debug();
+
 	cxt = fdisk_new_context();
 	if (!cxt)
 		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));

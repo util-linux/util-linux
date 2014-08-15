@@ -334,15 +334,15 @@ static int menu_detect_collisions(struct fdisk_context *cxt)
 
 		r = get_fdisk_menu_entry(cxt, e->key, NULL);
 		if (!r) {
-			DBG(FRONTEND, ul_debug("warning: not found "
+			DBG(MENU, ul_debug("warning: not found "
 					"entry for %c", e->key));
 			return -1;
 		}
 		if (r != e) {
-			DBG(FRONTEND, ul_debug("warning: duplicate key '%c'",
+			DBG(MENU, ul_debug("warning: duplicate key '%c'",
 						e->key));
-			DBG(FRONTEND, ul_debug("       : %s", e->title));
-			DBG(FRONTEND, ul_debug("       : %s", r->title));
+			DBG(MENU, ul_debug("       : %s", e->title));
+			DBG(MENU, ul_debug("       : %s", r->title));
 			abort();
 		}
 	}
@@ -355,7 +355,7 @@ static int print_fdisk_menu(struct fdisk_context *cxt)
 	struct menu_context mc = MENU_CXT_EMPTY;
 	const struct menu_entry *e;
 
-	ON_DBG(FRONTEND, menu_detect_collisions(cxt));
+	ON_DBG(MENU, menu_detect_collisions(cxt));
 
 	if (fdisk_is_details(cxt))
 		printf(_("\nHelp (expert commands):\n"));
@@ -427,18 +427,18 @@ int process_fdisk_menu(struct fdisk_context **cxt0)
 	}
 
 	rc = 0;
-	DBG(FRONTEND, ul_debug("selected: key=%c, entry='%s'",
+	DBG(MENU, ul_debug("selected: key=%c, entry='%s'",
 				key, ent->title));
 
 	/* menu has implemented callback, use it */
 	if (menu->callback)
 		rc = menu->callback(cxt0, menu, ent);
 	else {
-		DBG(FRONTEND, ul_debug("no callback for key '%c'", key));
+		DBG(MENU, ul_debug("no callback for key '%c'", key));
 		rc = -EINVAL;
 	}
 
-	DBG(FRONTEND, ul_debug("process menu done [rc=%d]", rc));
+	DBG(MENU, ul_debug("process menu done [rc=%d]", rc));
 	return rc;
 }
 
@@ -570,7 +570,7 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 	assert(ent);
 	assert(fdisk_is_label(cxt, GPT));
 
-	DBG(FRONTEND, ul_debug("enter GPT menu"));
+	DBG(MENU, ul_debug("enter GPT menu"));
 
 	if (ent->expert) {
 		switch (ent->key) {
@@ -628,7 +628,7 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 	struct fdisk_context *cxt = *cxt0;
 	int rc = 0;
 
-	DBG(FRONTEND, ul_debug("enter DOS menu"));
+	DBG(MENU, ul_debug("enter DOS menu"));
 
 	if (!ent->expert) {
 		switch (ent->key) {
@@ -698,13 +698,13 @@ static int sun_menu_cb(struct fdisk_context **cxt0,
 	struct fdisk_context *cxt = *cxt0;
 	int rc = 0;
 
-	DBG(FRONTEND, ul_debug("enter SUN menu"));
+	DBG(MENU, ul_debug("enter SUN menu"));
 
 	assert(cxt);
 	assert(ent);
 	assert(fdisk_is_label(cxt, SUN));
 
-	DBG(FRONTEND, ul_debug("enter SUN menu"));
+	DBG(MENU, ul_debug("enter SUN menu"));
 
 	/* normal mode */
 	if (!ent->expert) {
@@ -753,7 +753,7 @@ static int sgi_menu_cb(struct fdisk_context **cxt0,
 	int rc = -EINVAL;
 	size_t n = 0;
 
-	DBG(FRONTEND, ul_debug("enter SGI menu"));
+	DBG(MENU, ul_debug("enter SGI menu"));
 
 	assert(cxt);
 	assert(ent);
@@ -799,7 +799,7 @@ static int bsd_menu_cb(struct fdisk_context **cxt0,
 	assert(ent);
 	assert(fdisk_is_label(cxt, BSD));
 
-	DBG(FRONTEND, ul_debug("enter BSD menu"));
+	DBG(MENU, ul_debug("enter BSD menu"));
 
 	switch(ent->key) {
 	case 'e':
@@ -831,7 +831,7 @@ static int geo_menu_cb(struct fdisk_context **cxt0,
 	int rc = -EINVAL;
 	uintmax_t c = 0, h = 0, s = 0;
 
-	DBG(FRONTEND, ul_debug("enter GEO menu"));
+	DBG(MENU, ul_debug("enter GEO menu"));
 
 	assert(cxt);
 	assert(ent);
@@ -863,7 +863,7 @@ static int createlabel_menu_cb(struct fdisk_context **cxt0,
 	struct fdisk_context *cxt = *cxt0;
 	int rc = -EINVAL;
 
-	DBG(FRONTEND, ul_debug("enter Create label menu"));
+	DBG(MENU, ul_debug("enter Create label menu"));
 
 	assert(cxt);
 	assert(ent);
