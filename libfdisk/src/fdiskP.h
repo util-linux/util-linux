@@ -403,8 +403,6 @@ extern int fdisk_probe_labels(struct fdisk_context *cxt);
 extern void fdisk_deinit_label(struct fdisk_label *lb);
 
 /* ask.c */
-extern int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew);
-
 extern int fdisk_info_new_partition(
 			struct fdisk_context *cxt,
 			int num, sector_t start, sector_t stop,

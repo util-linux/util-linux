@@ -280,7 +280,16 @@ static char *mk_string_list(char *ptr, size_t *len, size_t *begin,
 	return ptr;
 }
 
-/* returns: 1=0 on success, < 0 on error, 1 if no free/used partition */
+/**
+ * fdisk_ask_partnum:
+ * @cxt: context
+ * @partnum: returns partition number
+ * @wantnew: 0|1
+ *
+ * This function uses libfdisk Ask API to get a partition number.
+ *
+ * Returns: 0 on success, < 0 on error, 1 if no free/used partition
+ */
 int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 {
 	int rc = 0, inchar = 0;

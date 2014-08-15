@@ -477,6 +477,7 @@ extern int fdisk_ask_menu_get_item(struct fdisk_ask *ask, size_t idx, int *key,
 extern int fdisk_ask_menu_add_item(struct fdisk_ask *ask, int key,
 			const char *name, const char *desc);
 
+extern int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew);
 
 #ifdef __cplusplus
 }
