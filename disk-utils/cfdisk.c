@@ -1613,7 +1613,7 @@ static int ui_create_label(struct cfdisk *cf)
 
 	while (fdisk_next_label(cf->cxt, &lb) == 0) {
 		if (fdisk_label_is_disabled(lb) ||
-		    fdisk_label_is_labeltype(lb, FDISK_DISKLABEL_BSD))
+		    fdisk_label_get_type(lb) == FDISK_DISKLABEL_BSD)
 			continue;
 		cm[i++].name = fdisk_label_get_name(lb);
 	}

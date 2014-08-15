@@ -59,7 +59,7 @@ int get_user_reply(struct fdisk_context *cxt, const char *prompt,
 		fflush(stdout);
 
 		if (!fgets(buf, bufsz, stdin)) {
-			if (fdisk_label_is_changed(cxt->label)) {
+			if (fdisk_label_is_changed(fdisk_get_label(cxt, NULL))) {
 				fprintf(stderr, _("\nDo you really want to quit? "));
 
 				if (fgets(buf, bufsz, stdin) && !rpmatch(buf))
@@ -478,7 +478,6 @@ void change_partition_type(struct fdisk_context *cxt)
 	const char *old = NULL;
 
 	assert(cxt);
-	assert(cxt->label);
 
 	if (fdisk_ask_partnum(cxt, &i, FALSE))
 		return;
@@ -511,34 +510,39 @@ void list_disk_geometry(struct fdisk_context *cxt)
 {
 	char *id = NULL;
 	struct fdisk_label *lb = fdisk_get_label(cxt, NULL);
-	uint64_t bytes = cxt->total_sectors * cxt->sector_size;
+	uint64_t bytes = fdisk_get_nsectors(cxt) * fdisk_get_sector_size(cxt);
 	char *strsz = size_to_human_string(SIZE_SUFFIX_SPACE
 					   | SIZE_SUFFIX_3LETTER, bytes);
 
 	fdisk_info(cxt,	_("Disk %s: %s, %ju bytes, %ju sectors"),
-			cxt->dev_path, strsz,
-			bytes, (uintmax_t) cxt->total_sectors);
+			fdisk_get_devname(cxt), strsz,
+			bytes, (uintmax_t) fdisk_get_nsectors(cxt));
 	free(strsz);
 
 	if (fdisk_label_require_geometry(lb) || fdisk_use_cylinders(cxt))
 		fdisk_info(cxt, _("Geometry: %d heads, %llu sectors/track, %llu cylinders"),
-			       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
+			       fdisk_get_geom_heads(cxt),
+			       fdisk_get_geom_sectors(cxt),
+			       fdisk_get_geom_cylinders(cxt));
 
 	fdisk_info(cxt, _("Units: %s of %d * %ld = %ld bytes"),
 	       fdisk_get_unit(cxt, PLURAL),
 	       fdisk_get_units_per_sector(cxt),
-	       cxt->sector_size,
-	       fdisk_get_units_per_sector(cxt) * cxt->sector_size);
+	       fdisk_get_sector_size(cxt),
+	       fdisk_get_units_per_sector(cxt) * fdisk_get_sector_size(cxt));
 
 	fdisk_info(cxt, _("Sector size (logical/physical): %lu bytes / %lu bytes"),
-				cxt->sector_size, cxt->phy_sector_size);
+				fdisk_get_sector_size(cxt),
+				fdisk_get_physector_size(cxt));
 	fdisk_info(cxt, _("I/O size (minimum/optimal): %lu bytes / %lu bytes"),
-				cxt->min_io_size, cxt->io_size);
-	if (cxt->alignment_offset)
+				fdisk_get_minimal_iosize(cxt),
+				fdisk_get_optimal_iosize(cxt));
+	if (fdisk_get_alignment_offset(cxt))
 		fdisk_info(cxt, _("Alignment offset: %lu bytes"),
-				cxt->alignment_offset);
+				fdisk_get_alignment_offset(cxt));
 	if (fdisk_has_label(cxt))
-		fdisk_info(cxt, _("Disklabel type: %s"), cxt->label->name);
+		fdisk_info(cxt, _("Disklabel type: %s"),
+				fdisk_label_get_name(lb));
 
 	if (fdisk_get_disklabel_id(cxt, &id) == 0 && id)
 		fdisk_info(cxt, _("Disk identifier: %s"), id);
@@ -549,6 +553,7 @@ void list_disklabel(struct fdisk_context *cxt)
 	struct fdisk_table *tb = NULL;
 	struct fdisk_partition *pa = NULL;
 	struct fdisk_iter *itr = NULL;
+	struct fdisk_label *lb;
 	struct libscols_table *out = NULL;
 	const char *bold = NULL;
 	int *ids = NULL;		/* IDs of fdisk_fields */
@@ -581,12 +586,15 @@ void list_disklabel(struct fdisk_context *cxt)
 		bold = color_scheme_get_sequence("header", UL_COLOR_BOLD);
 	}
 
+	lb = fdisk_get_label(cxt, NULL);
+	assert(lb);
+
 	/* define output table columns */
 	for (i = 0; i < nids; i++) {
 		int fl = 0;
 		struct libscols_column *co;
 		const struct fdisk_field *field =
-				fdisk_label_get_field(cxt->label, ids[i]);
+				fdisk_label_get_field(lb, ids[i]);
 		if (!field)
 			goto done;
 		if (fdisk_field_is_number(field))
@@ -693,15 +701,19 @@ static void dump_buffer(off_t base, unsigned char *buf, size_t sz, int all)
 static void dump_blkdev(struct fdisk_context *cxt, const char *name,
 			off_t offset, size_t size, int all)
 {
+	int fd = fdisk_get_devfd(cxt);
+
 	fdisk_info(cxt, _("\n%s: offset = %ju, size = %zu bytes."),
 			name, offset, size);
 
-	if (lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1)
+	assert(fd >= 0);
+
+	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
 		fdisk_warn(cxt, _("cannot seek"));
 	else {
 		unsigned char *buf = xmalloc(size);
 
-		if (read_all(cxt->dev_fd, (char *) buf, size) != (ssize_t) size)
+		if (read_all(fd, (char *) buf, size) != (ssize_t) size)
 			fdisk_warn(cxt, _("cannot read"));
 		else
 			dump_buffer(offset, buf, size, all);
@@ -714,9 +726,8 @@ void dump_firstsector(struct fdisk_context *cxt)
 	int all = !isatty(STDOUT_FILENO);
 
 	assert(cxt);
-	assert(cxt->label);
 
-	dump_blkdev(cxt, _("First sector"), 0, cxt->sector_size, all);
+	dump_blkdev(cxt, _("First sector"), 0, fdisk_get_sector_size(cxt), all);
 }
 
 void dump_disklabel(struct fdisk_context *cxt)
@@ -728,7 +739,6 @@ void dump_disklabel(struct fdisk_context *cxt)
 	size_t size = 0;
 
 	assert(cxt);
-	assert(cxt->label);
 
 	while (fdisk_locate_disklabel(cxt, i++, &name, &offset, &size) == 0 && size)
 		dump_blkdev(cxt, name, offset, size, all);

@@ -247,6 +247,16 @@ static const struct menu_entry *next_menu_entry(
 			struct fdisk_context *cxt,
 			struct menu_context *mc)
 {
+	struct fdisk_label *lb = fdisk_get_label(cxt, NULL);
+	struct fdisk_context *parent = fdisk_get_parent(cxt);
+	unsigned int type = 0, pr_type = 0;
+
+	assert(cxt);
+
+	type = fdisk_label_get_type(lb);
+	if (parent)
+		pr_type = fdisk_label_get_type(fdisk_get_label(parent, NULL));
+
 	while (mc->menu_idx < ARRAY_SIZE(menus)) {
 		const struct menu *m = menus[mc->menu_idx];
 		const struct menu_entry *e = &(m->entries[mc->entry_idx]);
@@ -258,11 +268,11 @@ static const struct menu_entry *next_menu_entry(
 		/* no more entries */
 		if (e->title == NULL ||
 		/* menu wanted for specified labels only */
-		    (m->label && cxt->label && !(m->label & cxt->label->id)) ||
+		    (m->label && lb && !(m->label & type)) ||
 		/* unwanted for nested PT */
-		    (m->nonested && cxt->parent) ||
+		    (m->nonested && parent) ||
 		/* menu excluded for specified labels */
-		    (m->exclude && cxt->label && (m->exclude & cxt->label->id))) {
+		    (m->exclude && lb && (m->exclude & type))) {
 			mc->menu_idx++;
 			mc->entry_idx = 0;
 			continue;
@@ -273,16 +283,15 @@ static const struct menu_entry *next_menu_entry(
 		 */
 
 		/* excluded for the current label */
-		if ((e->exclude && cxt->label && e->exclude & cxt->label->id) ||
+		if ((e->exclude && lb && e->exclude & type) ||
 		/* entry wanted for specified labels only */
-		    (e->label && cxt->label && !(e->label & cxt->label->id)) ||
+		    (e->label && lb && !(e->label & type)) ||
 		/* exclude non-expert entries in expect mode */
 		    (e->expert == 0 && fdisk_is_details(cxt)) ||
 		/* nested only */
-		    (e->parent && (!cxt->parent || cxt->parent->label->id != e->parent)) ||
+		    (e->parent && (!parent || pr_type != e->parent)) ||
 		/* exclude non-normal entries in normal mode */
 		    (e->normal == 0 && !fdisk_is_details(cxt))) {
-
 			mc->entry_idx++;
 			continue;
 		}
@@ -367,11 +376,15 @@ static int print_fdisk_menu(struct fdisk_context *cxt)
 	}
 	fputc('\n', stdout);
 
-	if (cxt->parent)
+	if (fdisk_get_parent(cxt)) {
+		struct fdisk_label *l = fdisk_get_label(cxt, NULL),
+				   *p = fdisk_get_label(fdisk_get_parent(cxt), NULL);
+
 		fdisk_info(cxt, _("You're editing nested '%s' partition table, "
 				  "primary partition table is '%s'."),
-				cxt->label->name,
-				cxt->parent->label->name);
+				fdisk_label_get_name(l),
+				fdisk_label_get_name(p));
+	}
 
 	return 0;
 }
@@ -454,7 +467,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		rc = fdisk_write_disklabel(cxt);
 		if (rc)
 			err(EXIT_FAILURE, _("failed to write disklabel"));
-		if (cxt->parent)
+		if (fdisk_get_parent(cxt))
 			break; /* nested PT, don't leave */
 		fdisk_info(cxt, _("The partition table has been altered."));
 		rc = fdisk_reread_partition_table(cxt);
@@ -526,8 +539,8 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		break;
 	case 'r':
 		/* return from nested BSD to DOS */
-		if (cxt->parent) {
-			*cxt0 = cxt->parent;
+		if (fdisk_get_parent(cxt)) {
+			*cxt0 = fdisk_get_parent(cxt);
 
 			fdisk_info(cxt, _("Leaving nested disklabel."));
 			fdisk_free_context(cxt);
@@ -666,8 +679,8 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 		break;
 	case 'M':
 		/* return from nested MBR to GPT */
-		if (cxt->parent) {
-			*cxt0 = cxt->parent;
+		if (fdisk_get_parent(cxt)) {
+			*cxt0 = fdisk_get_parent(cxt);
 
 			fdisk_info(cxt, _("Leaving nested disklabel."));
 			fdisk_free_context(cxt);
@@ -825,15 +838,15 @@ static int geo_menu_cb(struct fdisk_context **cxt0,
 
 	switch (ent->key) {
 	case 'c':
-		rc =  fdisk_ask_number(cxt, 1, cxt->geom.cylinders,
+		rc =  fdisk_ask_number(cxt, 1, fdisk_get_geom_cylinders(cxt),
 				1048576, _("Number of cylinders"), &c);
 		break;
 	case 'h':
-		rc =  fdisk_ask_number(cxt, 1, cxt->geom.heads,
+		rc =  fdisk_ask_number(cxt, 1, fdisk_get_geom_heads(cxt),
 				256, _("Number of heads"), &h);
 		break;
 	case 's':
-		rc =  fdisk_ask_number(cxt, 1, cxt->geom.sectors,
+		rc =  fdisk_ask_number(cxt, 1, fdisk_get_geom_sectors(cxt),
 				63, _("Number of sectors"), &s);
 		break;
 	}
