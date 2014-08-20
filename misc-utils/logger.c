@@ -83,6 +83,7 @@ enum {
 struct logger_ctl {
 	int fd;
 	int pri;
+	pid_t pid;			/* zero when unwanted */
 	char *tag;
 	char *unix_socket;
 	char *server;
@@ -91,8 +92,6 @@ struct logger_ctl {
 	void (*syslogfp)(const struct logger_ctl *ctl, const char *msg);
 	unsigned int
 			prio_prefix:1,	/* read priority from intput */
-			pid:1,		/* print PID, or PPID if it is enabled as well*/
-			ppid:1,		/* include PPID instead of PID */
 			stderr_printout:1, /* output message to stderr */
 			rfc5424_time:1,	/* include time stamp */
 			rfc5424_tq:1,	/* include time quality markup */
@@ -288,27 +287,17 @@ static char *xgetlogin(void)
 	return cp;
 }
 
-static pid_t get_process_id(const struct logger_ctl *ctl)
-{
-	pid_t id = 0;
-
-	if (ctl->pid)
-		id = ctl->ppid ? getppid() : getpid();
-	return id;
-}
-
 static void syslog_rfc3164(const struct logger_ctl *ctl, const char *msg)
 {
 	char *buf, pid[30], *cp, *tp, *hostname, *dot;
 	time_t now;
-	pid_t process;
 	int len;
 
 	*pid = '\0';
 	if (ctl->fd < 0)
 		return;
-	if ((process = get_process_id(ctl)))
-		snprintf(pid, sizeof(pid), "[%d]", process);
+	if (ctl->pid)
+		snprintf(pid, sizeof(pid), "[%d]", ctl->pid);
 
 	cp = ctl->tag ? ctl->tag : xgetlogin();
 
@@ -339,7 +328,6 @@ static void syslog_rfc5424(const  struct logger_ctl *ctl, const char *msg)
 	struct ntptimeval ntptv;
 	struct timeval tv;
 	struct tm *tm;
-	pid_t process;
 	int len;
 
 	*pid = *time = *timeq = '\0';
@@ -372,8 +360,8 @@ static void syslog_rfc5424(const  struct logger_ctl *ctl, const char *msg)
 	if (48 < strlen(tag))
 		errx(EXIT_FAILURE, _("tag '%s' is too long"), tag);
 
-	if ((process = get_process_id(ctl)))
-		snprintf(pid, sizeof(pid), " %d", process);
+	if (ctl->pid)
+		snprintf(pid, sizeof(pid), " %d", ctl->pid);
 
 	if (ctl->rfc5424_tq) {
 		if (ntp_gettime(&ntptv) == TIME_OK)
@@ -425,7 +413,6 @@ static void syslog_local(const struct logger_ctl *ctl, const char *msg)
 	char time[32], pid[32];
 	struct timeval tv;
 	struct tm *tm;
-	pid_t process;
 	int len;
 
 	gettimeofday(&tv, NULL);
@@ -434,8 +421,8 @@ static void syslog_local(const struct logger_ctl *ctl, const char *msg)
 
 	tag = ctl->tag ? ctl->tag : program_invocation_short_name;
 
-	if ((process = get_process_id(ctl)))
-		snprintf(pid, sizeof(pid), "[%d]", process);
+	if (ctl->pid)
+		snprintf(pid, sizeof(pid), "[%d]", ctl->pid);
 	else
 		pid[0] = '\0';
 
@@ -524,7 +511,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(" %s [options] [<message>]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -i, --id[=pid|ppid]   log PID or PPID (default is PID)\n"), out);
+	fputs(_(" -i, --id[=<id>]       log <id> (default is PID)\n"), out);
 	fputs(_(" -f, --file <file>     log the contents of this file\n"), out);
 	fputs(_(" -p, --priority <prio> mark given message with this priority\n"), out);
 	fputs(_("     --prio-prefix     look for a prefix on every line read from stdin\n"), out);
@@ -560,7 +547,7 @@ int main(int argc, char **argv)
 {
 	struct logger_ctl ctl = {
 		.fd = -1,
-		.ppid = 0,
+		.pid = 0,
 		.pri = LOG_NOTICE,
 		.prio_prefix = 0,
 		.tag = NULL,
@@ -613,19 +600,14 @@ int main(int argc, char **argv)
 			stdout_reopened = 1;
 			break;
 		case 'i':		/* log process id also */
-			ctl.pid = 1;
 			if (optarg) {
 				const char *p = optarg;
 
 				if (*p == '=')
 					p++;
-				if (!strcmp(p, "ppid"))
-					ctl.ppid = 1;
-				else if (!strcmp(p, "pid"))
-					ctl.ppid = 0;
-				else
-					warnx(_("ignoring unknown option argument: %s"), optarg);
-			}
+				ctl.pid = strtoul_or_err(optarg, _("failed to parse id"));
+			} else
+				ctl.pid = getpid();
 			break;
 		case 'p':		/* priority */
 			ctl.pri = pencode(optarg);

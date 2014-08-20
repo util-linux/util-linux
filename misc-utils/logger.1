@@ -56,13 +56,13 @@ port defined in /etc/services, which is often
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
 .TP
-\fB\-i\fR, \fB\-\-id\fR=[\fBppid\fR|\fBpid\fR]
+\fB\-i\fR, \fB\-\-id\fR[=\fBid\fR]
 Log the PID of the logger process with each line.  When optional
 argument
-.B ppid
-is specified PPID is used instead of logger command PID.  Use of
-.B ppid
-is recommended in scripts that send several messages.
+.B id
+is specified then it is used instead of logger command PID.  Use of
+.B --id=$$
+(PPID) is recommended in scripts that send several messages.
 .TP
 \fB\-n\fR, \fB\-\-server\fR \fIserver\fR
 Write to the specified remote syslog
