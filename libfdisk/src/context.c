@@ -645,12 +645,16 @@ unsigned int fdisk_get_units_per_sector(struct fdisk_context *cxt)
  * fdisk_get_optimal_iosize:
  * @cxt: context
  *
+ * The optimal I/O is optional and does not have to be provided by device,
+ * anyway libfdisk never returns zero. If the optimal I/O size is not provided
+ * then libfdisk returns minimal I/O size or sector size.
+ *
  * Returns: optimal I/O size
  */
 unsigned long fdisk_get_optimal_iosize(struct fdisk_context *cxt)
 {
 	assert(cxt);
-	return cxt->optimal_io_size;
+	return cxt->optimal_io_size ? cxt->optimal_io_size : cxt->io_size;
 }
 
 /**

@@ -10,8 +10,6 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: dos
 Disk identifier: <removed>
-
-
 -------------------
 
 Create 1st primary partition
@@ -208,7 +206,5 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: dos
 Disk identifier: <removed>
-
-
 -------------------
 

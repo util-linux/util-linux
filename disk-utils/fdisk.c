@@ -528,7 +528,7 @@ void list_disk_geometry(struct fdisk_context *cxt)
 			bytes, (uintmax_t) fdisk_get_nsectors(cxt));
 	free(strsz);
 
-	if (fdisk_label_require_geometry(lb) || fdisk_use_cylinders(cxt))
+	if (lb && (fdisk_label_require_geometry(lb) || fdisk_use_cylinders(cxt)))
 		fdisk_info(cxt, _("Geometry: %d heads, %llu sectors/track, %llu cylinders"),
 			       fdisk_get_geom_heads(cxt),
 			       fdisk_get_geom_sectors(cxt),

@@ -9,8 +9,6 @@ Units: cylinders of 63 * 512 = 32256 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: sun
-
-
 Create first partition
 e730c7ec8208601f41963f0485147248 sunlabel.img
 
