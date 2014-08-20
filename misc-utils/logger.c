@@ -82,17 +82,18 @@ enum {
 
 struct logger_ctl {
 	int fd;
-	int logflags;
 	int pri;
 	char *tag;
 	char *unix_socket;
 	char *server;
 	char *port;
 	int socket_type;
-	void (*syslogfp)(struct logger_ctl *ctl, char *msg);
+	void (*syslogfp)(const struct logger_ctl *ctl, const char *msg);
 	unsigned int
 			prio_prefix:1,	/* read priority from intput */
+			pid:1,		/* print PID, or PPID if it is enabled as well*/
 			ppid:1,		/* include PPID instead of PID */
+			stderr_printout:1, /* output message to stderr */
 			rfc5424_time:1,	/* include time stamp */
 			rfc5424_tq:1,	/* include time quality markup */
 			rfc5424_host:1;	/* include hostname */
@@ -117,7 +118,7 @@ static char *get_prio_prefix(char *msg, int *prio)
 	return end + 1;
 }
 
-static int decode(char *name, CODE *codetab)
+static int decode(const char *name, CODE *codetab)
 {
 	register CODE *c;
 
@@ -277,7 +278,7 @@ static int journald_entry(FILE *fp)
 }
 #endif
 
-static char *xgetlogin()
+static char *xgetlogin(void)
 {
 	char *cp;
 	struct passwd *pw;
@@ -287,22 +288,23 @@ static char *xgetlogin()
 	return cp;
 }
 
-static pid_t get_process_id(struct logger_ctl *ctl)
+static pid_t get_process_id(const struct logger_ctl *ctl)
 {
 	pid_t id = 0;
 
-	if (ctl->logflags & LOG_PID)
+	if (ctl->pid)
 		id = ctl->ppid ? getppid() : getpid();
 	return id;
 }
 
-static void syslog_rfc3164(struct logger_ctl *ctl, char *msg)
+static void syslog_rfc3164(const struct logger_ctl *ctl, const char *msg)
 {
-	char *buf, pid[30] = { '\0' }, *cp, *tp, *hostname, *dot;
+	char *buf, pid[30], *cp, *tp, *hostname, *dot;
 	time_t now;
 	pid_t process;
 	int len;
 
+	*pid = '\0';
 	if (ctl->fd < 0)
 		return;
 	if ((process = get_process_id(ctl)))
@@ -323,23 +325,24 @@ static void syslog_rfc3164(struct logger_ctl *ctl, char *msg)
 
 	if (write_all(ctl->fd, buf, len) < 0)
 		warn(_("write failed"));
-	if (ctl->logflags & LOG_PERROR)
+	if (ctl->stderr_printout)
 		fprintf(stderr, "%s\n", buf);
 
 	free(hostname);
 	free(buf);
 }
 
-static void syslog_rfc5424(struct logger_ctl *ctl, char *msg)
+static void syslog_rfc5424(const  struct logger_ctl *ctl, const char *msg)
 {
 	char *buf, *tag = NULL, *hostname = NULL;
-	char pid[32] = { '\0' }, time[64] = { '\0' }, timeq[80] = { '\0' };
+	char pid[32], time[64], timeq[80];
 	struct ntptimeval ntptv;
 	struct timeval tv;
 	struct tm *tm;
 	pid_t process;
 	int len;
 
+	*pid = *time = *timeq = '\0';
 	if (ctl->fd < 0)
 		return;
 
@@ -390,7 +393,7 @@ static void syslog_rfc5424(struct logger_ctl *ctl, char *msg)
 	if (write_all(ctl->fd, buf, len) < 0)
 		warn(_("write failed"));
 
-	if (ctl->logflags & LOG_PERROR)
+	if (ctl->stderr_printout)
 		fprintf(stderr, "%s\n", buf);
 
 	free(hostname);
@@ -416,9 +419,32 @@ static void parse_rfc5424_flags(struct logger_ctl *ctl, char *optarg)
 	}
 }
 
-static void syslog_local(struct logger_ctl *ctl, char *msg)
+static void syslog_local(const struct logger_ctl *ctl, const char *msg)
 {
-	syslog(ctl->pri, "%s", msg);
+	char *buf, *tag;
+	char time[32], pid[32];
+	struct timeval tv;
+	struct tm *tm;
+	pid_t process;
+	int len;
+
+	gettimeofday(&tv, NULL);
+	tm = localtime(&tv.tv_sec);
+	strftime(time, sizeof(time), "%h %e %T", tm);
+
+	tag = ctl->tag ? ctl->tag : program_invocation_short_name;
+
+	if ((process = get_process_id(ctl)))
+		snprintf(pid, sizeof(pid), "[%d]", process);
+	else
+		pid[0] = '\0';
+
+	len = xasprintf(&buf, "<%d>%s %s%s: %s", ctl->pri, time, tag, pid, msg);
+	if (write_all(ctl->fd, buf, len) < 0)
+		warn(_("write failed"));
+	if (ctl->stderr_printout)
+		fprintf(stderr, "%s\n", buf);
+	free(buf);
 }
 
 static void logger_open(struct logger_ctl *ctl)
@@ -435,16 +461,11 @@ static void logger_open(struct logger_ctl *ctl)
 			ctl->syslogfp = syslog_rfc5424;
 		return;
 	}
-
-	if (ctl->syslogfp == syslog_rfc5424 || ctl->syslogfp == syslog_rfc3164)
-		errx(EXIT_FAILURE, _("--server or --socket are required to "
-				     "log by --rfc5424 or --rfc3164"));
-
-	openlog(ctl->tag ? ctl->tag : xgetlogin(), ctl->logflags, 0);
+	ctl->fd = unix_socket("/dev/log", ctl->socket_type);
 	ctl->syslogfp = syslog_local;
 }
 
-static void logger_command_line(struct logger_ctl *ctl, char **argv)
+static void logger_command_line(const struct logger_ctl *ctl, char **argv)
 {
 	char buf[4096];
 	char *p = buf;
@@ -491,12 +512,10 @@ static void logger_stdin(struct logger_ctl *ctl)
 	}
 }
 
-static void logger_close(struct logger_ctl *ctl)
+static void logger_close(const struct logger_ctl *ctl)
 {
-	if (!ctl->unix_socket && !ctl->server)
-		closelog();
-	else
-		close(ctl->fd);
+	if (close(ctl->fd) != 0)
+		err(EXIT_FAILURE, _("close failed"));
 }
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
@@ -541,7 +560,6 @@ int main(int argc, char **argv)
 {
 	struct logger_ctl ctl = {
 		.fd = -1,
-		.logflags = 0,
 		.ppid = 0,
 		.pri = LOG_NOTICE,
 		.prio_prefix = 0,
@@ -595,7 +613,7 @@ int main(int argc, char **argv)
 			stdout_reopened = 1;
 			break;
 		case 'i':		/* log process id also */
-			ctl.logflags |= LOG_PID;
+			ctl.pid = 1;
 			if (optarg) {
 				const char *p = optarg;
 
@@ -613,7 +631,7 @@ int main(int argc, char **argv)
 			ctl.pri = pencode(optarg);
 			break;
 		case 's':		/* log to standard error */
-			ctl.logflags |= LOG_PERROR;
+			ctl.stderr_printout = 1;
 			break;
 		case 't':		/* tag */
 			ctl.tag = optarg;

@@ -77,6 +77,13 @@ but if thist fails a TCP connection is attempted.
 \fB\-P\fR, \fB\-\-port\fR \fIport\fR
 Use the specified
 .IR port .
+When
+.I port
+is not specified it defaults to
+.I syslog
+for udp and
+.I syslog-conn
+for tcp connections.
 .TP
 \fB\-f\fR, \fB\-\-file\fR \fIfile\fR
 Log the contents of the specified
