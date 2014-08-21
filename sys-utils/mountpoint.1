@@ -1,11 +1,13 @@
 .\" -*- nroff -*-
 .TH MOUNTPOINT 1 "July 2014" "util-linux" "User Commands"
 .SH NAME
-mountpoint \- see if a directory is a mountpoint
+mountpoint \- see if a directory or file is a mountpoint
 .SH SYNOPSIS
 .B mountpoint
 .RB [ \-d | \-q ]
 .I directory
+|
+.I file
 .sp
 .B mountpoint
 .B \-x
@@ -15,6 +17,8 @@ mountpoint \- see if a directory is a mountpoint
 .B mountpoint
 checks whether the given
 .I directory
+or
+.I file
 is mentioned in the /proc/self/mountinfo file.
 .SH OPTIONS
 .TP
@@ -34,7 +38,7 @@ Display version information and exit.
 .BR \-h , " \-\-help"
 Display help text and exit.
 .SH EXIT STATUS
-Zero if the directory is a mountpoint, non-zero if not.
+Zero if the directory or file is a mountpoint, non-zero if not.
 .SH AUTHOR
 .PP
 Karel Zak <kzak@redhat.com>
