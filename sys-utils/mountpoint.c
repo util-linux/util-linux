@@ -192,12 +192,6 @@ int main(int argc, char **argv)
 	else {
 		dev_t src;
 
-		if (!S_ISDIR(st.st_mode)) {
-			if (!quiet)
-				errx(EXIT_FAILURE, _("%s: not a directory"), spec);
-			return EXIT_FAILURE;
-		}
-
 		if ( dir_to_device(spec, &src)) {
 			if (!quiet)
 				printf(_("%s is not a mountpoint\n"), spec);
