@@ -559,9 +559,11 @@ static int exec_helper(struct libmnt_context *cxt)
 			args[i++] = "-v";			/* 6 */
 		if (mnt_context_is_rdonly_umount(cxt))
 			args[i++] = "-r";			/* 7 */
-		if (type && !endswith(cxt->helper, type)) {
+		if (type
+		    && strchr(type, '.')
+		    && !endswith(cxt->helper, type)) {
 			args[i++] = "-t";			/* 8 */
-			args[i++] = (char *) type;	/* 9 */
+			args[i++] = (char *) type;		/* 9 */
 		}
 
 		args[i] = NULL;					/* 10 */
