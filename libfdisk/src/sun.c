@@ -526,7 +526,7 @@ static int sun_add_partition(
 		struct fdisk_ask *ask;
 
 		snprintf(mesg, sizeof(mesg), _("First %s"),
-				fdisk_get_unit(cxt, SINGULAR));
+				fdisk_get_unit(cxt, FDISK_SINGULAR));
 		for (;;) {
 			ask = fdisk_new_ask();
 			if (!ask)
@@ -621,8 +621,8 @@ static int sun_add_partition(
 
 		snprintf(mesg, sizeof(mesg),
 			 _("Last %s or +%s or +size{K,M,G,T,P}"),
-			 fdisk_get_unit(cxt, SINGULAR),
-			 fdisk_get_unit(cxt, PLURAL));
+			 fdisk_get_unit(cxt, FDISK_SINGULAR),
+			 fdisk_get_unit(cxt, FDISK_PLURAL));
 		fdisk_ask_set_query(ask, mesg);
 		fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 
@@ -669,8 +669,8 @@ static int sun_add_partition(
    _("You haven't covered the whole disk with the 3rd partition, but your value\n"
      "%lu %s covers some other partition. Your entry has been changed\n"
      "to %lu %s"),
-			(unsigned long) fdisk_scround(cxt, last), fdisk_get_unit(cxt, SINGULAR),
-			(unsigned long) fdisk_scround(cxt, stop), fdisk_get_unit(cxt, SINGULAR));
+			(unsigned long) fdisk_scround(cxt, last), fdisk_get_unit(cxt, FDISK_SINGULAR),
+			(unsigned long) fdisk_scround(cxt, stop), fdisk_get_unit(cxt, FDISK_SINGULAR));
 		    last = stop;
 		}
 	} else if (!whole_disk && last > stop)

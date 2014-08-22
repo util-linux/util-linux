@@ -821,7 +821,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 			return -ERANGE;
 	} else {
 		snprintf(mesg, sizeof(mesg), _("First %s"),
-				fdisk_get_unit(cxt, SINGULAR));
+				fdisk_get_unit(cxt, FDISK_SINGULAR));
 		ask = fdisk_new_ask();
 		if (!ask)
 			return -ENOMEM;
@@ -860,8 +860,8 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 	} else {
 		snprintf(mesg, sizeof(mesg),
 			 _("Last %s or +%s or +size{K,M,G,T,P}"),
-			 fdisk_get_unit(cxt, SINGULAR),
-			 fdisk_get_unit(cxt, PLURAL));
+			 fdisk_get_unit(cxt, FDISK_SINGULAR),
+			 fdisk_get_unit(cxt, FDISK_PLURAL));
 
 		ask = fdisk_new_ask();
 		if (!ask)

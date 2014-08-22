@@ -291,27 +291,6 @@ int fdisk_get_partitions(struct fdisk_context *cxt, struct fdisk_table **tb)
 	return 0;
 }
 
-int fdisk_dump_table(struct fdisk_table *tb, FILE *f)
-{
-	struct fdisk_partition *pa;
-	struct fdisk_iter itr;
-	int i = 0;
-
-	assert(tb);
-	assert(f);
-
-	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
-
-	fprintf(f, "--table--%p\n", tb);
-	while (fdisk_table_next_partition(tb, &itr, &pa) == 0) {
-		fprintf(f, "%d: ", i++);
-		fdisk_dump_partition(pa, f);
-	}
-	fputs("-----\n", f);
-	return 0;
-}
-
-
 typedef	int (*fdisk_partcmp_t)(struct fdisk_partition *, struct fdisk_partition *);
 
 static int cmp_parts_wrapper(struct list_head *a, struct list_head *b, void *data)
@@ -524,7 +503,6 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 		}
 	}
 
-	DBG(LABEL, fdisk_dump_table(*tb, stderr));
 done:
 	fdisk_unref_table(parts);
 	return rc;
@@ -552,3 +530,4 @@ int fdisk_table_wrong_order(struct fdisk_table *tb)
 	}
 	return 0;
 }
+

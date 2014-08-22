@@ -535,7 +535,7 @@ void list_disk_geometry(struct fdisk_context *cxt)
 			       fdisk_get_geom_cylinders(cxt));
 
 	fdisk_info(cxt, _("Units: %s of %d * %ld = %ld bytes"),
-	       fdisk_get_unit(cxt, PLURAL),
+	       fdisk_get_unit(cxt, FDISK_PLURAL),
 	       fdisk_get_units_per_sector(cxt),
 	       fdisk_get_sector_size(cxt),
 	       fdisk_get_units_per_sector(cxt) * fdisk_get_sector_size(cxt));
