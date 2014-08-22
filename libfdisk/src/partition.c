@@ -430,7 +430,7 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 			p = fdisk_partname(cxt->dev_path, pa->partno + 1);
 		break;
 	case FDISK_FIELD_BOOT:
-		rc = asprintf(&p, "%c", pa->boot);
+		rc = asprintf(&p, "%c", pa->boot ? '*' : ' ');
 		break;
 	case FDISK_FIELD_START:
 		x = fdisk_cround(cxt, pa->start);

@@ -1679,7 +1679,7 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 		return 0;
 
 	pa->type = dos_partition_parttype(cxt, p);
-	pa->boot = p->boot_ind ? p->boot_ind == ACTIVE_FLAG ? '*' : '?' : ' ';
+	pa->boot = p->boot_ind == ACTIVE_FLAG ? 1 : 0;
 	pa->start = get_abs_partition_start(pe);
 	pa->end = get_abs_partition_end(pe);
 	pa->size = dos_partition_get_size(p);
@@ -1688,7 +1688,7 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 	if (n >= 4)
 		pa->parent_partno = lb->ext_index;
 
-	if (asprintf(&pa->attrs, "%02x", p->boot_ind) < 0)
+	if (p->boot_ind && asprintf(&pa->attrs, "%02x", p->boot_ind) < 0)
 		return -ENOMEM;
 
 	/* start C/H/S */

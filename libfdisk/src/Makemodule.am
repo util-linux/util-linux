@@ -20,6 +20,7 @@ libfdisk_la_SOURCES = \
 	libfdisk/src/partition.c \
 	libfdisk/src/table.c \
 	libfdisk/src/iter.c \
+	libfdisk/src/dump.c \
 	\
 	libfdisk/src/sun.c \
 	libfdisk/src/sgi.c \
@@ -51,6 +52,7 @@ endif
 
 check_PROGRAMS += \
 	test_fdisk_ask \
+	test_fdisk_dump \
 	test_fdisk_utils
 
 libfdisk_tests_cflags  = -DTEST_PROGRAM $(libfdisk_la_CFLAGS)
@@ -74,3 +76,8 @@ test_fdisk_utils_SOURCES = libfdisk/src/utils.c
 test_fdisk_utils_CFLAGS = $(libfdisk_tests_cflags)
 test_fdisk_utils_LDFLAGS = $(libfdisk_tests_ldflags)
 test_fdisk_utils_LDADD = $(libfdisk_tests_ldadd)
+
+test_fdisk_dump_SOURCES = libfdisk/src/dump.c
+test_fdisk_dump_CFLAGS = $(libfdisk_tests_cflags)
+test_fdisk_dump_LDFLAGS = $(libfdisk_tests_ldflags)
+test_fdisk_dump_LDADD = $(libfdisk_tests_ldadd)

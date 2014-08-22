@@ -13,6 +13,7 @@ UL_DEBUG_DEFINE_MASKANEMS(libfdisk) =
 	{ "part", FDISK_DEBUG_PART },
 	{ "parttype", FDISK_DEBUG_PARTTYPE },
 	{ "tab", FDISK_DEBUG_TAB},
+	{ "dump", FDISK_DEBUG_DUMP},
 	{ NULL, 0 }
 };
 /**

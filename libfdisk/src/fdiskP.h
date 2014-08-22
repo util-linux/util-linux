@@ -45,6 +45,7 @@
 #define FDISK_DEBUG_PART	(1 << 6)
 #define FDISK_DEBUG_PARTTYPE	(1 << 7)
 #define FDISK_DEBUG_TAB		(1 << 8)
+#define FDISK_DEBUG_DUMP	(1 << 9)
 #define FDISK_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libfdisk);
@@ -136,7 +137,6 @@ struct fdisk_partition {
 	uint64_t	bsize;
 	uint64_t	cpg;
 
-	char		boot;			/* is bootable (MBS only) */
 	char		*start_addr;		/* start C/H/S in string */
 	char		*end_addr;		/* end C/H/S in string */
 
@@ -146,7 +146,8 @@ struct fdisk_partition {
 			freespace : 1,		/* this is free space */
 			container : 1,		/* container partition (e.g. extended partition) */
 			wholedisk : 1,		/* special system partition */
-			used   : 1;		/* partition already used */
+			boot : 1,		/* bootable (MBR only) */
+			used : 1;		/* partition already used */
 };
 
 #define FDISK_EMPTY_PARTNO	((size_t) -1)
