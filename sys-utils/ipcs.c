@@ -461,8 +461,10 @@ static void do_msg (char format, int unit)
 			return;
 		}
 		printf (_("------ Messages Status --------\n"));
+#ifndef __FreeBSD_kernel__
 		printf (_("allocated queues = %d\n"), msginfo.msgpool);
 		printf (_("used headers = %d\n"), msginfo.msgmap);
+#endif
 		ipc_print_size(unit, _("used space"), msginfo.msgtql,
 			       unit == IPC_UNIT_DEFAULT ? _(" bytes\n") : "\n", 0);
 		return;
