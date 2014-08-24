@@ -271,6 +271,13 @@ static int remove_all(type_id type)
 			ret |= remove_id(SEM, 0, rm_me);
 		}
 	}
+/* kFreeBSD hackery -- ah 20140723 */
+#ifndef MSG_STAT
+#define MSG_STAT 11
+#endif
+#ifndef MSG_INFO
+#define MSG_INFO 12
+#endif
 	if (type == MSG || type == ALL) {
 		maxid =
 		    msgctl(0, MSG_INFO, (struct msqid_ds *)(void *)&msginfo);
