@@ -10,6 +10,7 @@
  *
  * This program is freely distributable.
  */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -44,6 +45,12 @@
 #include "widechar.h"
 #include "ttyutils.h"
 
+#if defined(__FreeBSD_kernel__)
+#include <pty.h>
+#include <sys/param.h>
+#endif
+
+
 #ifdef __linux__
 #  include <sys/kd.h>
 #  include <sys/param.h>
@@ -74,6 +81,10 @@
 #  ifndef DEFAULT_STERM
 #    define DEFAULT_STERM  "vt100"
 #  endif
+#endif
+
+#ifdef __FreeBSD_kernel__
+#define USE_SYSLOG
 #endif
 
 /* If USE_SYSLOG is undefined all diagnostics go to /dev/console. */
@@ -1088,6 +1099,11 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 			op->term = DEFAULT_TTYS1;
 	}
 #endif
+
+#if defined(__FreeBSD_kernel__)
+	login_tty (0);
+#endif
+
 	/*
 	 * Detect if this is a virtual console or serial/modem line.
 	 * In case of a virtual console the ioctl KDGKBMODE succeeds
