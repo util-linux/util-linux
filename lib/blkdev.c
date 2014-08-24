@@ -25,6 +25,10 @@
 #include <sys/disk.h>
 #endif
 
+#ifdef __FreeBSD_kernel__
+#include <sys/disk.h>
+#endif
+
 #include "blkdev.h"
 #include "c.h"
 #include "linux_version.h"
