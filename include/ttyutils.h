@@ -74,6 +74,46 @@ static inline void reset_virtual_console(struct termios *tp, int flags)
 	/* Sane setting, allow eight bit characters, no carriage return delay
 	 * the same result as `stty sane cr0 pass8'
 	 */
+#ifndef IUCLC
+# define IUCLC 0
+#endif
+#ifndef NL0
+# define NL0 0
+#endif
+#ifndef CR0
+# define CR0 0
+#endif
+#ifndef BS0
+# define BS0 0
+#endif
+#ifndef VT0
+# define VT0 0
+#endif
+#ifndef FF0
+# define FF0 0
+#endif
+#ifndef OLCUC
+# define OLCUC 0
+#endif
+#ifndef OFILL
+# define OFILL 0
+#endif
+#ifndef NLDLY
+# define NLDLY 0
+#endif
+#ifndef CRDLY
+# define CRDLY 0
+#endif
+#ifndef BSDLY
+# define BSDLY 0
+#endif
+#ifndef VTDLY
+# define VTDLY 0
+#endif
+#ifndef FFDLY
+# define FFDLY 0
+#endif
+
 	tp->c_iflag |=  (BRKINT | ICRNL | IMAXBEL);
 	tp->c_iflag &= ~(IGNBRK | INLCR | IGNCR | IXOFF | IUCLC | IXANY | ISTRIP);
 	tp->c_oflag |=  (OPOST | ONLCR | NL0 | CR0 | TAB0 | BS0 | VT0 | FF0);

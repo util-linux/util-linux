@@ -23,6 +23,7 @@ sbin_PROGRAMS += agetty
 dist_man_MANS += term-utils/agetty.8
 agetty_SOURCES = term-utils/agetty.c
 agetty_LDADD = $(LDADD) libcommon.la
+agetty_LDADD += -lutil
 endif # BUILD_AGETTY
 
 
