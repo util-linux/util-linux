@@ -91,7 +91,6 @@ void fdisk_unref_table(struct fdisk_table *tb)
  */
 int fdisk_table_is_empty(struct fdisk_table *tb)
 {
-	assert(tb);
 	return tb == NULL || list_empty(&tb->parts) ? 1 : 0;
 }
 
