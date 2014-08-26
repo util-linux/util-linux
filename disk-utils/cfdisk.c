@@ -1835,8 +1835,8 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			  buf, sizeof(buf));
 
 		ref = 1;
-		if (rc <= 0 || (strcasecmp(buf, "yes") != 0
-			        && strcasecmp(buf, _("yes"))) != 0) {
+		if (rc <= 0 || (strcasecmp(buf, "yes") != 0 &&
+				strcasecmp(buf, _("yes")) != 0)) {
 			info = _("Did not write partition table to disk");
 			break;
 		}
