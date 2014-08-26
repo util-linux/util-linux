@@ -242,7 +242,8 @@ static int read_pte(struct fdisk_context *cxt, size_t pno, sector_t offset)
 	if (!buf)
 		return -ENOMEM;
 
-	DBG(LABEL, ul_debug("DOS: reading pte %zu sector buffer %p", pno, buf));
+	DBG(LABEL, ul_debug("DOS: reading EBR %zu: offset=%ju, buffer=%p",
+				pno, (uintmax_t) offset, buf));
 
 	pe->offset = offset;
 	pe->sectorbuffer = buf;
@@ -365,6 +366,18 @@ static void dos_deinit(struct fdisk_label *lb)
 	memset(l->ptes, 0, sizeof(l->ptes));
 }
 
+static void reset_pte(struct pte *pe)
+{
+	assert(pe);
+
+	if (pe->private_sectorbuffer) {
+		DBG(LABEL, ul_debug("  --> freeing pte sector buffer %p",
+					pe->sectorbuffer));
+		free(pe->sectorbuffer);
+	}
+	memset(pe, 0, sizeof(struct pte));
+}
+
 static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 {
 	struct fdisk_dos_label *l;
@@ -401,8 +414,10 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 		clear_partition(p);
 	} else if (!q->sys_ind && partnum > 4) {
 		DBG(LABEL, ul_debug("--> delete logical [last in the chain]"));
+		reset_pte(&l->ptes[partnum]);
 		--cxt->label->nparts_max;
 		--partnum;
+		/* clear link to deleted partition */
 		clear_partition(l->ptes[partnum].ex_entry);
 		partition_set_changed(cxt, partnum, 1);
 	} else {
@@ -430,11 +445,7 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 		if (cxt->label->nparts_max > 5) {
 			DBG(LABEL, ul_debug(" --> move ptes"));
 			cxt->label->nparts_max--;
-			if (l->ptes[partnum].private_sectorbuffer) {
-				DBG(LABEL, ul_debug("  --> freeing pte %zu sector buffer %p",
-							partnum, l->ptes[partnum].sectorbuffer));
-				free(l->ptes[partnum].sectorbuffer);
-			}
+			reset_pte(&l->ptes[partnum]);
 			while (partnum < cxt->label->nparts_max) {
 				DBG(LABEL, ul_debug("  --> moving pte %zu <-- %zu", partnum, partnum + 1));
 				l->ptes[partnum] = l->ptes[partnum + 1];
@@ -448,12 +459,7 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 
 			if (partnum == 4) {
 				DBG(LABEL, ul_debug("  --> clear last logical"));
-				if (l->ptes[partnum].private_sectorbuffer) {
-					DBG(LABEL, ul_debug("  --> freeing pte %zu sector buffer %p",
-							partnum, l->ptes[partnum].sectorbuffer));
-					free(l->ptes[partnum].sectorbuffer);
-				}
-				memset(&l->ptes[partnum], 0, sizeof(struct pte));
+				reset_pte(&l->ptes[partnum]);
 				partition_set_changed(cxt, l->ext_index, 1);
 			}
 		}
@@ -466,7 +472,7 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 static void read_extended(struct fdisk_context *cxt, size_t ext)
 {
 	size_t i;
-	struct pte *pex;
+	struct pte *pex, *pe;
 	struct dos_partition *p, *q;
 	struct fdisk_dos_label *l = self_label(cxt);
 
@@ -483,7 +489,7 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 	DBG(LABEL, ul_debug("DOS: Reading extended %zu", ext));
 
 	while (IS_EXTENDED (p->sys_ind)) {
-		struct pte *pe = self_pte(cxt, cxt->label->nparts_max);
+		pe = self_pte(cxt, cxt->label->nparts_max);
 
 		if (cxt->label->nparts_max >= MAXIMUM_PARTS) {
 			/* This is not a Linux restriction, but
@@ -509,6 +515,7 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 		if (!l->ext_offset)
 			l->ext_offset = dos_partition_get_start(p);
 
+		assert(pe->sectorbuffer);
 		q = p = mbr_get_partition(pe->sectorbuffer, 0);
 
 		for (i = 0; i < 4; i++, p++) {
@@ -550,6 +557,27 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 
 		p = pe->ex_entry;
 		cxt->label->nparts_cur = ++cxt->label->nparts_max;
+
+		DBG(LABEL, ul_debug("DOS: EBR[offset=%ju]: link: type=%x,  start=%u, size=%u; "
+				                         " data: type=%x, start=%u, size=%u",
+				    (uintmax_t) pe->offset,
+				    pe->ex_entry->sys_ind,
+				    dos_partition_get_start(pe->ex_entry),
+				    dos_partition_get_size(pe->ex_entry),
+				    pe->pt_entry->sys_ind,
+				    dos_partition_get_start(pe->pt_entry),
+				    dos_partition_get_size(pe->pt_entry)));
+
+	}
+
+	/* remove last empty EBR */
+	pe = self_pte(cxt, cxt->label->nparts_max - 1);
+	if (is_cleared_partition(pe->ex_entry) &&
+	    is_cleared_partition(pe->pt_entry)) {
+		DBG(LABEL, ul_debug("DOS: EBR[offset=%ju]: empty, remove", (uintmax_t) pe->offset));
+		reset_pte(pe);
+		cxt->label->nparts_max--;
+		cxt->label->nparts_cur--;
 	}
 
 	/* remove empty links */
@@ -565,6 +593,8 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 			goto remove; 	/* numbering changed */
 		}
 	}
+
+	DBG(LABEL, ul_debug("DOS: nparts_max: %zu", cxt->label->nparts_max));
 }
 
 static int dos_get_disklabel_id(struct fdisk_context *cxt, char **id)
@@ -802,9 +832,12 @@ static void set_partition(struct fdisk_context *cxt,
 		offset = pe->offset;
 	}
 
-	DBG(LABEL, ul_debug("DOS: setting partition %d%s, start=%zu, stop=%zu, sysid=%02x",
+	DBG(LABEL, ul_debug("DOS: setting partition %d%s, offset=%zu, start=%zu, stop=%zu, sysid=%02x",
 				i, doext ? " [extended]" : "",
-				(size_t) (start -  offset), (size_t) stop, sysid));
+				(size_t) offset,
+				(size_t) (start -  offset),
+				(size_t) (stop - start + 1),
+				sysid));
 
 	p->boot_ind = 0;
 	p->sys_ind = sysid;
@@ -1005,7 +1038,13 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		}
 	} while (start != temp || !read);
 
-	if (n > 4) {			/* NOT for fifth partition */
+	if (n == 4) {
+		/* The first EBR is stored at begin of the extended partition */
+		struct pte *pe = self_pte(cxt, n);
+		pe->offset = l->ext_offset;
+
+	} else if (n > 4) {
+		/* The second (and another) EBR */
 		struct pte *pe = self_pte(cxt, n);
 
 		pe->offset = start - cxt->first_lba;
@@ -1101,22 +1140,11 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	}
 
 	if (IS_EXTENDED(sys)) {
-		struct pte *pe4 = self_pte(cxt, 4);
 		struct pte *pen = self_pte(cxt, n);
 
 		l->ext_index = n;
+		l->ext_offset = start;
 		pen->ex_entry = p;
-		pe4->offset = l->ext_offset = start;
-		pe4->sectorbuffer = calloc(1, cxt->sector_size);
-		if (!pe4->sectorbuffer)
-			return -ENOMEM;
-		DBG(LABEL, ul_debug("DOS: add partition, sector buffer %p", pe4->sectorbuffer));
-		pe4->private_sectorbuffer = 1;
-		pe4->pt_entry = mbr_get_partition(pe4->sectorbuffer, 0);
-		pe4->ex_entry = pe4->pt_entry + 1;
-
-		partition_set_changed(cxt, 4, 1);
-		cxt->label->nparts_max = 5;
 	}
 
 	fdisk_label_set_changed(cxt->label, 1);
@@ -1125,26 +1153,31 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 
 static int add_logical(struct fdisk_context *cxt, struct fdisk_partition *pa)
 {
-	struct dos_partition *p4 = self_partition(cxt, 4);
+	struct pte *pe;
 
 	assert(cxt);
 	assert(cxt->label);
+	assert(self_label(cxt)->ext_offset);
+	assert(self_label(cxt)->ext_index);
 
-	if (cxt->label->nparts_max > 5 || !is_cleared_partition(p4)) {
-		struct pte *pe = self_pte(cxt, cxt->label->nparts_max);
+	DBG(LABEL, ul_debug("DOS: nparts max: %zu", cxt->label->nparts_max));
+	pe = self_pte(cxt, cxt->label->nparts_max);
 
+	if (!pe->sectorbuffer) {
 		pe->sectorbuffer = calloc(1, cxt->sector_size);
 		if (!pe->sectorbuffer)
 			return -ENOMEM;
-		DBG(LABEL, ul_debug("DOS: add logical, sector buffer %p", pe->sectorbuffer));
+		DBG(LABEL, ul_debug("DOS: logical: %zu: new EBR sector buffer %p",
+					cxt->label->nparts_max, pe->sectorbuffer));
 		pe->private_sectorbuffer = 1;
-		pe->pt_entry = mbr_get_partition(pe->sectorbuffer, 0);
-		pe->ex_entry = pe->pt_entry + 1;
-		pe->offset = 0;
-
-		partition_set_changed(cxt, cxt->label->nparts_max, 1);
-		cxt->label->nparts_max++;
 	}
+	pe->pt_entry = mbr_get_partition(pe->sectorbuffer, 0);
+	pe->ex_entry = pe->pt_entry + 1;
+	pe->offset = 0;
+	partition_set_changed(cxt, cxt->label->nparts_max, 1);
+
+	cxt->label->nparts_max++;
+
 	fdisk_info(cxt, _("Adding logical partition %zu"),
 			cxt->label->nparts_max);
 	return add_partition(cxt, cxt->label->nparts_max - 1, pa);
@@ -1533,12 +1566,16 @@ static int dos_write_disklabel(struct fdisk_context *cxt)
 	for (i = 4; i < cxt->label->nparts_max; i++) {
 		struct pte *pe = self_pte(cxt, i);
 
-		if (pe->changed) {
-			mbr_set_magic(pe->sectorbuffer);
-			rc = write_sector(cxt, pe->offset, pe->sectorbuffer);
-			if (rc)
-				goto done;
-		}
+		if (!pe->changed)
+			continue;
+
+		assert(pe->sectorbuffer);
+		assert(pe->offset);
+
+		mbr_set_magic(pe->sectorbuffer);
+		rc = write_sector(cxt, pe->offset, pe->sectorbuffer);
+		if (rc)
+			goto done;
 	}
 
 done:
