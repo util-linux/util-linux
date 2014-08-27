@@ -1,0 +1,59 @@
+Util-linux 2.25.1 Release Notes
+===============================
+
+build-sys:
+   - fix double prefix with explict --libdir  [Christoph Junghans]
+   - fix switch_root/pivot_root cut-n-paste error in configure.ac  [Andreas Henriksson]
+cfdisk:
+   - fix typo in the previous commit  [Karel Zak]
+   - reenable cursor when quitting  [Karel Zak]
+   - wrong interpretation of yes in non-english language  [Karel Zak]
+docs:
+   - update AUTHORS file  [Karel Zak]
+fdisk:
+   - always print warning for mis-aligned partitions  [Karel Zak]
+   - fix -l [<device>]  [Karel Zak]
+   - update tests and clean up output  [Karel Zak]
+hexdump:
+   - Fix parse format of "byte count without repetition count"  [HUANG Wei]
+hwclock:
+   - check for permissions before use clock interface  [Karel Zak]
+   - use pluralized translations.  [Lauri Nurmi]
+libblkid:
+   - (gpt) fix PT offset  [Karel Zak]
+   - (gpt) use real sector size to set PTMAGIC_OFFSET  [Karel Zak]
+libfdisk:
+   - (dos) fix logical partitions add/delete code  [Karel Zak]
+   - (gpt) add Microsoft Storage Spaces GUID  [Sergei Antonov]
+   - (gpt) allow to specify attr bit by API  [Karel Zak]
+libmount:
+   - use -t for type.subtype in helpers API  [Karel Zak]
+lscpu:
+   - clean up vmware inline asm  [Mike Frysinger]
+mcookie:
+   - avoid format warning  [Bernhard Voelker]
+more:
+   - replace ad-hoc support for plurals with gettext plurals.  [Lauri Nurmi]
+po:
+   - merge changes  [Karel Zak]
+   - update cs.po (from translationproject.org)  [Petr Písař]
+   - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
+   - update zh_CN.po (from translationproject.org)  [Wylmer Wang]
+sfdisk:
+   - use pluralized translation.  [Lauri Nurmi]
+swapon:
+   - remove invalid error string print outs  [Sami Kerola]
+tests:
+   - Fall back on host/getent in ts_resolve_host  [Andreas Henriksson]
+   - allow non-inotify tailf to keep up  [Andreas Henriksson]
+   - apply travis clang PATH workaround  [Sami Kerola]
+   - fix fdisk/bsd for the two possible sectors/offsets  [Aurelien Jarno]
+   - kill output message change  [Sami Kerola]
+   - make ipcs limit calculations work when numbers are large  [Sami Kerola]
+textual:
+   - fix some typos and inconsistencies in various messages  [Benno Schulenberg]
+   - remove some inconsistent periods from error messages  [Benno Schulenberg]
+various:
+   - erase all traces of the long-obsolete xiafs  [Benno Schulenberg]
+
+- erase all traces of the long-obsolete xiafs  [Benno Schulenberg]
