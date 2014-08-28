@@ -1715,6 +1715,35 @@ static void gpt_entry_set_type(struct gpt_entry *e, struct gpt_guid *uuid)
 	DBG(LABEL, gpt_debug_uuid("new type", &(e->type)));
 }
 
+static void gpt_entry_set_name(struct gpt_entry *e, char *str)
+{
+	char name[GPT_PART_NAME_LEN] = { 0 };
+	size_t i, sz = strlen(str);
+
+	if (sz) {
+		if (sz > GPT_PART_NAME_LEN)
+			sz = GPT_PART_NAME_LEN;
+		memcpy(name, str, sz);
+	}
+
+	for (i = 0; i < GPT_PART_NAME_LEN; i++)
+		e->name[i] = cpu_to_le16((uint16_t) name[i]);
+}
+
+static int gpt_entry_set_uuid(struct gpt_entry *e, char *str)
+{
+	struct gpt_guid uuid;
+	int rc;
+
+	rc = string_to_guid(str, &uuid);
+	if (rc)
+		return rc;
+
+	e->partition_guid = uuid;
+	return 0;
+}
+
+
 /*
  * Create a new GPT partition entry, specified by partnum, and with a range
  * of fsect to lsenct sectors, of type t.
@@ -2108,7 +2137,6 @@ int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
 {
 	struct fdisk_gpt_label *gpt;
 	struct gpt_entry *e;
-	struct gpt_guid uuid;
 	char *str, new_u[37], old_u[37];
 	int rc;
 
@@ -2127,7 +2155,11 @@ int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
 			_("New UUID (in 8-4-4-4-12 format)"), &str))
 		return -EINVAL;
 
-	rc = string_to_guid(str, &uuid);
+	e = &gpt->ents[i];
+	guid_to_string(&e->partition_guid, old_u);
+
+	rc = gpt_entry_set_uuid(e, str);
+
 	free(str);
 
 	if (rc) {
@@ -2135,12 +2167,8 @@ int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
 		return rc;
 	}
 
-	e = &gpt->ents[i];
+	guid_to_string(&e->partition_guid, new_u);
 
-	guid_to_string(&e->partition_guid, old_u);
-	guid_to_string(&uuid, new_u);
-
-	e->partition_guid = uuid;
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
 	fdisk_label_set_changed(cxt->label, 1);
@@ -2155,8 +2183,7 @@ int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i)
 {
 	struct fdisk_gpt_label *gpt;
 	struct gpt_entry *e;
-	char *str, *old, name[GPT_PART_NAME_LEN] = { 0 };
-	size_t sz;
+	char *str, *old;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -2175,15 +2202,7 @@ int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i)
 	e = &gpt->ents[i];
 	old = encode_to_utf8((unsigned char *)e->name, sizeof(e->name));
 
-	sz = strlen(str);
-	if (sz) {
-		if (sz > GPT_PART_NAME_LEN)
-			sz = GPT_PART_NAME_LEN;
-		memcpy(name, str, sz);
-	}
-
-	for (i = 0; i < GPT_PART_NAME_LEN; i++)
-		e->name[i] = cpu_to_le16((uint16_t) name[i]);
+	gpt_entry_set_name(e, str);
 
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
