@@ -334,6 +334,7 @@ struct fdisk_ask {
 struct fdisk_context {
 	int dev_fd;         /* device descriptor */
 	char *dev_path;     /* device path */
+	int refcount;
 
 	unsigned char *firstsector; /* buffer with master boot record */
 	unsigned long firstsector_bufsz;

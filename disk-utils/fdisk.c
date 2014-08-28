@@ -74,7 +74,7 @@ int get_user_reply(struct fdisk_context *cxt, const char *prompt,
 				if (fgets(buf, bufsz, stdin) && !rpmatch(buf))
 					continue;
 			}
-			fdisk_free_context(cxt);
+			fdisk_unref_context(cxt);
 			exit(EXIT_FAILURE);
 		} else
 			break;
@@ -1064,6 +1064,6 @@ int main(int argc, char **argv)
 			process_fdisk_menu(&cxt);
 	}
 
-	fdisk_free_context(cxt);
+	fdisk_unref_context(cxt);
 	return EXIT_SUCCESS;
 }

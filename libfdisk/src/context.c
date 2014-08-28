@@ -46,6 +46,7 @@ struct fdisk_context *fdisk_new_context(void)
 
 	DBG(CXT, ul_debugobj(cxt, "alloc"));
 	cxt->dev_fd = -1;
+	cxt->refcount = 1;
 
 	/*
 	 * Allocate label specific structs.
@@ -85,6 +86,7 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 
 	DBG(CXT, ul_debugobj(parent, "alloc nested [%p]", cxt));
 	cxt->dev_fd = parent->dev_fd;
+	cxt->refcount = 1;
 	cxt->parent = parent;
 
 	cxt->io_size =          parent->io_size;
@@ -169,7 +171,7 @@ struct fdisk_label *fdisk_get_label(struct fdisk_context *cxt, const char *name)
  *
  *	while (fdisk_next_label(cxt, &lb) == 0)
  *		print("label name: %s\n", fdisk_label_get_name(lb));
- *	fdisk_free_context(cxt);
+ *	fdisk_unref_context(cxt);
  *   </programlisting>
  * </informalexample>
  *
@@ -459,32 +461,34 @@ int fdisk_is_readonly(struct fdisk_context *cxt)
 }
 
 /**
- * fdisk_free_context:
+ * fdisk_unref_context:
  * @cxt: fdisk context
  *
  * Deallocates context struct.
  */
-void fdisk_free_context(struct fdisk_context *cxt)
+void fdisk_unref_context(struct fdisk_context *cxt)
 {
 	int i;
 
 	if (!cxt)
 		return;
 
-	DBG(CXT, ul_debugobj(cxt, "freeing context %p for %s", cxt, cxt->dev_path));
-	reset_context(cxt);
+	cxt->refcount--;
+	if (cxt->refcount <= 0) {
+		DBG(CXT, ul_debugobj(cxt, "freeing context %p for %s", cxt, cxt->dev_path));
+		reset_context(cxt);
 
-	/* deallocate label's private stuff */
-	for (i = 0; i < cxt->nlabels; i++) {
-		if (!cxt->labels[i])
-			continue;
-		if (cxt->labels[i]->op->free)
-			cxt->labels[i]->op->free(cxt->labels[i]);
-		else
-			free(cxt->labels[i]);
+		/* deallocate label's private stuff */
+		for (i = 0; i < cxt->nlabels; i++) {
+			if (!cxt->labels[i])
+				continue;
+			if (cxt->labels[i]->op->free)
+				cxt->labels[i]->op->free(cxt->labels[i]);
+			else
+				free(cxt->labels[i]);
+		}
+		free(cxt);
 	}
-
-	free(cxt);
 }
 
 /**

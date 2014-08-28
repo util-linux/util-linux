@@ -475,7 +475,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 			rc = fdisk_deassign_device(cxt, 0);
 		/* fallthrough */
 	case 'q':
-		fdisk_free_context(cxt);
+		fdisk_unref_context(cxt);
 		fputc('\n', stdout);
 		exit(rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 	case 'm':
@@ -543,7 +543,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 			*cxt0 = fdisk_get_parent(cxt);
 
 			fdisk_info(cxt, _("Leaving nested disklabel."));
-			fdisk_free_context(cxt);
+			fdisk_unref_context(cxt);
 			cxt = *cxt0;
 		}
 		break;
@@ -649,7 +649,7 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 			if (!fdisk_has_label(bsd))
 				rc = fdisk_create_disklabel(bsd, "bsd");
 			if (rc)
-				fdisk_free_context(bsd);
+				fdisk_unref_context(bsd);
 			else {
 				*cxt0 = cxt = bsd;
 				fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
@@ -683,7 +683,7 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 			*cxt0 = fdisk_get_parent(cxt);
 
 			fdisk_info(cxt, _("Leaving nested disklabel."));
-			fdisk_free_context(cxt);
+			fdisk_unref_context(cxt);
 			cxt = *cxt0;
 		}
 		break;

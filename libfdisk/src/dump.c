@@ -714,7 +714,7 @@ int test_dump(struct fdisk_test *ts, int argc, char *argv[])
 	fdisk_dump_read_context(dp, cxt);
 	fdisk_dump_set_header(dp, "custom-header-foo", "bar");
 
-	fdisk_free_context(cxt);
+	fdisk_unref_context(cxt);
 
 	fdisk_dump_write_file(dp, stdout);
 	fdisk_unref_dump(dp);
@@ -740,7 +740,7 @@ int test_read(struct fdisk_test *ts, int argc, char *argv[])
 
 	fdisk_dump_write_file(dp, stdout);
 	fdisk_unref_dump(dp);
-	fdisk_free_context(cxt);
+	fdisk_unref_context(cxt);
 
 	return 0;
 }

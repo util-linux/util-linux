@@ -2100,7 +2100,7 @@ int main(int argc, char *argv[])
 	fdisk_unref_table(cf->table);
 
 	rc = fdisk_deassign_device(cf->cxt, cf->nwrites == 0);
-	fdisk_free_context(cf->cxt);
+	fdisk_unref_context(cf->cxt);
 	DBG(MISC, ul_debug("bye! [rc=%d]", rc));
 	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
