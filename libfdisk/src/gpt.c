@@ -1743,57 +1743,6 @@ static int gpt_entry_set_uuid(struct gpt_entry *e, char *str)
 	return 0;
 }
 
-
-/*
- * Create a new GPT partition entry, specified by partnum, and with a range
- * of fsect to lsenct sectors, of type t.
- * Returns 0 on success, or negative upon failure.
- */
-static int gpt_create_new_partition(struct fdisk_context *cxt,
-				    size_t partnum, uint64_t fsect, uint64_t lsect,
-				    struct gpt_guid *type,
-				    struct gpt_entry *entries)
-{
-	struct gpt_entry *e = NULL;
-	struct fdisk_gpt_label *gpt;
-
-	assert(cxt);
-	assert(cxt->label);
-	assert(fdisk_is_label(cxt, GPT));
-
-	DBG(LABEL, ul_debug("GPT new partition: partno=%zu, start=%ju, end=%ju",
-				partnum, fsect, lsect));
-
-	gpt = self_label(cxt);
-
-	if (fsect > lsect || partnum >= cxt->label->nparts_max)
-		return -EINVAL;
-
-	e = calloc(1, sizeof(*e));
-	if (!e)
-		return -ENOMEM;
-	e->lba_end = cpu_to_le64(lsect);
-	e->lba_start = cpu_to_le64(fsect);
-
-	gpt_entry_set_type(e, type);
-
-	/*
-	 * Any time a new partition entry is created a new GUID must be
-	 * generated for that partition, and every partition is guaranteed
-	 * to have a unique GUID.
-	 */
-	uuid_generate_random((unsigned char *) &e->partition_guid);
-	swap_efi_guid(&e->partition_guid);
-
-	memcpy(&entries[partnum], e, sizeof(*e));
-
-	gpt_recompute_crc(gpt->pheader, entries);
-	gpt_recompute_crc(gpt->bheader, entries);
-
-	free(e);
-	return 0;
-}
-
 /* Performs logical checks to add a new partition entry */
 static int gpt_add_partition(
 		struct fdisk_context *cxt,
@@ -1805,7 +1754,7 @@ static int gpt_add_partition(
 	struct gpt_guid typeid;
 	struct fdisk_gpt_label *gpt;
 	struct gpt_header *pheader;
-	struct gpt_entry *ents;
+	struct gpt_entry *e, *ents;
 	struct fdisk_ask *ask = NULL;
 	size_t partnum;
 	int rc;
@@ -1936,11 +1885,45 @@ static int gpt_add_partition(
 		}
 	}
 
-	if ((rc = gpt_create_new_partition(cxt, partnum,
-				     user_f, user_l, &typeid, ents) != 0)) {
+	DBG(LABEL, ul_debug("GPT new partition: partno=%zu, start=%ju, end=%ju",
+				partnum, user_f, user_l));
+
+	if (user_f > user_l || partnum >= cxt->label->nparts_max) {
 		fdisk_warnx(cxt, _("Could not create partition %zu"), partnum + 1);
+		rc = -EINVAL;
 		goto done;
+	}
+
+	e = &ents[partnum];
+	e->lba_end = cpu_to_le64(user_l);
+	e->lba_start = cpu_to_le64(user_f);
+
+	gpt_entry_set_type(e, &typeid);
+
+	if (pa && pa->uuid) {
+		/* Sometimes it's necessary to create a copy of the PT and
+		 * reuse already defined UUID
+		 */
+		rc = gpt_entry_set_uuid(e, pa->uuid);
+		if (rc)
+			goto done;
 	} else {
+		/* Any time a new partition entry is created a new GUID must be
+		 * generated for that partition, and every partition is guaranteed
+		 * to have a unique GUID.
+		 */
+		uuid_generate_random((unsigned char *) &e->partition_guid);
+		swap_efi_guid(&e->partition_guid);
+	}
+
+	if (pa && pa->name && *pa->name)
+		gpt_entry_set_name(e, pa->name);
+
+	gpt_recompute_crc(gpt->pheader, ents);
+	gpt_recompute_crc(gpt->bheader, ents);
+
+	/* report result */
+	{
 		struct fdisk_parttype *t;
 
 		cxt->label->nparts_cur++;
