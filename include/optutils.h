@@ -78,7 +78,7 @@ static inline void err_exclusive_options(
 			else if (status[e] != c) {
 				size_t ct = 0;
 
-				fprintf(stderr, _("%s: these options are"
+				fprintf(stderr, _("%s: these options are "
 						  "mutually exclusive:"),
 						program_invocation_short_name);
 
