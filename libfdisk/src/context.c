@@ -132,6 +132,18 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 
 
 /**
+ * fdisk_ref_context:
+ * @cxt: context pointer
+ *
+ * Incremparts reference counter.
+ */
+void fdisk_ref_context(struct fdisk_context *cxt)
+{
+	if (cxt)
+		cxt->refcount++;
+}
+
+/**
  * fdisk_get_label:
  * @cxt: context instance
  * @name: label name (e.g. "gpt")

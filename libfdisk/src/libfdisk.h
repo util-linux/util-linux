@@ -79,6 +79,7 @@ extern void fdisk_init_debug(int mask);
 struct fdisk_context *fdisk_new_context(void);
 struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent, const char *name);
 void fdisk_unref_context(struct fdisk_context *cxt);
+void fdisk_ref_context(struct fdisk_context *cxt);
 
 struct fdisk_context *fdisk_get_parent(struct fdisk_context *cxt);
 
