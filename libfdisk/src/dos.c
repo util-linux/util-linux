@@ -152,7 +152,7 @@ static void partition_set_changed(
 		return;
 
 	DBG(LABEL, ul_debug("DOS: setting %zu partition to %s", i,
-				changed ? "changed" : "unchnaged"));
+				changed ? "changed" : "unchanged"));
 
 	pe->changed = changed ? 1 : 0;
 	if (changed)
