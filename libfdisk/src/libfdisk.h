@@ -149,6 +149,7 @@ void fdisk_free_parttype(struct fdisk_parttype *t);
 const char *fdisk_parttype_get_string(const struct fdisk_parttype *t);
 unsigned int fdisk_parttype_get_code(const struct fdisk_parttype *t);
 const char *fdisk_parttype_get_name(const struct fdisk_parttype *t);
+int fdisk_parttype_is_unknown(const struct fdisk_parttype *t);
 
 /* label.c */
 enum {

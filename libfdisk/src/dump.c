@@ -19,6 +19,7 @@ struct fdisk_dump {
 	/* parser's state */
 	size_t			nlines;
 	int			fmt;		/* input format */
+	struct fdisk_label	*label;
 };
 
 
@@ -103,7 +104,7 @@ void fdisk_unref_dump(struct fdisk_dump *dp)
 	}
 }
 
-static struct fdisk_dumpheader *fdisk_dump_get_header(struct fdisk_dump *dp,
+static struct fdisk_dumpheader *dump_get_header(struct fdisk_dump *dp,
 						     const char *name)
 {
 	struct list_head *p;
@@ -116,6 +117,24 @@ static struct fdisk_dumpheader *fdisk_dump_get_header(struct fdisk_dump *dp,
 	}
 
 	return NULL;
+}
+
+/**
+ * fdisk_dump_get_header:
+ * @dp: dump instance
+ * @name: header name
+ *
+ * Returns: pointer to header data or NULL.
+ */
+const char *fdisk_dump_get_header(struct fdisk_dump *dp, const char *name)
+{
+	struct fdisk_dumpheader *fi;
+
+	assert(dp);
+	assert(name);
+
+	fi = dump_get_header(dp, name);
+	return fi ? fi->data : NULL;
 }
 
 
@@ -149,7 +168,7 @@ int fdisk_dump_set_header(struct fdisk_dump *dp,
 	if (!dp || !name)
 		return -EINVAL;
 
-	fi = fdisk_dump_get_header(dp, name);
+	fi = dump_get_header(dp, name);
 	if (!fi && !data)
 		return 0;	/* want to remove header that does not exist, success */
 
@@ -199,6 +218,18 @@ struct fdisk_table *fdisk_dump_get_table(struct fdisk_dump *dp)
 {
 	assert(dp);
 	return dp ? dp->table : NULL;
+}
+
+static struct fdisk_label *dump_get_label(struct fdisk_context *cxt, struct fdisk_dump *dp)
+{
+	assert(cxt);
+	assert(dp);
+
+	if (!dp->label) {
+		dp->label = fdisk_get_label(cxt, fdisk_dump_get_header(dp, "label"));
+		DBG(DUMP, ul_debug("label '%s'", dp->label ? dp->label->name : ""));
+	}
+	return dp->label;
 }
 
 /**
@@ -387,6 +418,37 @@ static int next_number(char **s, uint64_t *num)
 	return rc;
 }
 
+static int next_string(char **s, char **str)
+{
+	char *end = NULL;
+
+	assert(str);
+	assert(s);
+
+	*s = (char *) skip_blank(*s);
+	if (!**s)
+		return -1;
+
+	end = strchr(*s, ',');
+	if (end) {
+		*str = strndup(*s, end - *s);
+		*s = end;
+	} else {
+		*str = strdup(*s);
+		while (**s) (*s)++;
+	}
+
+	if (!*str)
+		return -ENOMEM;
+
+	ltrim_whitespace((unsigned char *) *str);
+	if (!**str) {
+		free(*str);
+		*str = NULL;
+	}
+	return 0;
+}
+
 static int partno_from_devname(char *s)
 {
 	int pno;
@@ -406,7 +468,8 @@ static int partno_from_devname(char *s)
 	return pno - 1;
 }
 
-static int parse_dump_line(struct fdisk_dump *dp, char *s)
+static int parse_dump_line(struct fdisk_dump *dp, char *s,
+			   struct fdisk_context *cxt)
 {
 	char *p;
 	struct fdisk_partition *pa;
@@ -458,6 +521,47 @@ static int parse_dump_line(struct fdisk_dump *dp, char *s)
 			rc = next_number(&p, &num);
 			if (!rc)
 				fdisk_partition_set_end(pa, num);
+
+		} else if (!strncasecmp(p, "bootable", 8)) {
+			p += 8;
+			pa->boot = 1;
+
+		} else if (!strncasecmp(p, "attrs=", 6)) {
+			p += 6;
+			rc = next_string(&p, &pa->attrs);
+			if (rc)
+				break;
+
+		} else if (!strncasecmp(p, "uuid=", 5)) {
+			p += 5;
+			rc = next_string(&p, &pa->uuid);
+			if (rc)
+				break;
+
+		} else if (!strncasecmp(p, "name=", 5)) {
+			p += 5;
+			rc = next_string(&p, &pa->name);
+			if (rc)
+				break;
+
+		} else if (!strncasecmp(p, "type=", 5)) {
+			char *type;
+			p += 5;
+
+			rc = next_string(&p, &type);
+			if (rc)
+				break;
+			pa->type = fdisk_label_parse_parttype(
+					dump_get_label(cxt, dp), type);
+			free(type);
+
+			if (!pa->type || fdisk_parttype_is_unknown(pa->type)) {
+				rc = -EINVAL;
+				fdisk_free_parttype(pa->type);
+				pa->type = NULL;
+				break;
+			}
+
 		} else {
 			DBG(DUMP, ul_debug("dump parse error: unknown field '%s'", p));
 			rc = -EINVAL;
@@ -475,17 +579,19 @@ static int parse_dump_line(struct fdisk_dump *dp, char *s)
 		DBG(DUMP, ul_debug("dump parse error: [rc=%d]", rc));
 
 	fdisk_unref_partition(pa);
-	return 0;
+	return rc;
 }
 
-static int parse_commas_line(struct fdisk_dump *dp, const char *s)
+static int parse_commas_line(struct fdisk_dump *dp, const char *s,
+			     struct fdisk_context *cxt)
 {
 	DBG(DUMP, ul_debug("   commas line parse error"));
 	return -EINVAL;
 }
 
 /* modifies @s ! */
-int fdisk_dump_read_buffer(struct fdisk_dump *dp, char *s)
+int fdisk_dump_read_buffer(struct fdisk_dump *dp, char *s,
+			   struct fdisk_context *cxt)
 {
 	int rc = 0;
 
@@ -510,11 +616,11 @@ int fdisk_dump_read_buffer(struct fdisk_dump *dp, char *s)
 
 	/* parse dump format */
 	else if (strchr(s, '='))
-		rc = parse_dump_line(dp, s);
+		rc = parse_dump_line(dp, s, cxt);
 
 	/* parse simple <value>, ... format */
 	else
-		rc = parse_commas_line(dp, s);
+		rc = parse_commas_line(dp, s, cxt);
 
 	if (rc)
 		DBG(DUMP, ul_debugobj(dp, "%zu: parse error [rc=%d]",
@@ -522,7 +628,8 @@ int fdisk_dump_read_buffer(struct fdisk_dump *dp, char *s)
 	return rc;
 }
 
-char fdisk_dump_read_line(struct fdisk_dump *dp, FILE *f)
+char fdisk_dump_read_line(struct fdisk_dump *dp, FILE *f,
+			  struct fdisk_context *cxt)
 {
 	char buf[BUFSIZ];
 	char *s;
@@ -557,7 +664,7 @@ char fdisk_dump_read_line(struct fdisk_dump *dp, FILE *f)
 		s = (char *) skip_blank(buf);
 	} while (*s == '\0' || *s == '#');
 
-	return fdisk_dump_read_buffer(dp, s);
+	return fdisk_dump_read_buffer(dp, s, cxt);
 }
 
 
@@ -565,12 +672,16 @@ char fdisk_dump_read_line(struct fdisk_dump *dp, FILE *f)
  * fdisk_dump_read_file:
  * @dp: dump
  * @f input file
+ * @cxt: context
  *
- * Reads file @f into dump @dp.
+ * Reads file @f into dump @dp. The @cxt is never modified by this function,
+ * it's used to parse label specific stuff (context contais pointers to all
+ * enebled labels).
  *
  * Returns: 0 on success, <0 on error.
  */
-int fdisk_dump_read_file(struct fdisk_dump *dp, FILE *f)
+int fdisk_dump_read_file(struct fdisk_dump *dp, FILE *f,
+			 struct fdisk_context *cxt)
 {
 	int rc = NULL;
 
@@ -579,8 +690,11 @@ int fdisk_dump_read_file(struct fdisk_dump *dp, FILE *f)
 
 	DBG(DUMP, ul_debug("parsing file"));
 
-	while (rc == 0 && !feof(f))
-		rc = fdisk_dump_read_line(dp, f);
+	while (!feof(f)) {
+		rc = fdisk_dump_read_line(dp, f, cxt);
+		if (rc)
+			break;
+	}
 
 	return rc;
 }
@@ -612,18 +726,21 @@ int test_read(struct fdisk_test *ts, int argc, char *argv[])
 {
 	char *filename = argv[1];
 	struct fdisk_dump *dp;
+	struct fdisk_context *cxt;
 	FILE *f;
 
 	if (!(f = fopen(filename, "r")))
 		err(EXIT_FAILURE, "%s: cannot open", filename);
 
+	cxt = fdisk_new_context();
 	dp = fdisk_new_dump();
 
-	fdisk_dump_read_file(dp, f);
+	fdisk_dump_read_file(dp, f, cxt);
 	fclose(f);
 
 	fdisk_dump_write_file(dp, stdout);
 	fdisk_unref_dump(dp);
+	fdisk_free_context(cxt);
 
 	return 0;
 }

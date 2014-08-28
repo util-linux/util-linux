@@ -161,7 +161,8 @@ struct fdisk_parttype *fdisk_label_parse_parttype(
 	if (!lb->nparttypes)
 		return NULL;
 
-	DBG(LABEL, ul_debugobj(lb, "parsing '%s' partition type", str));
+	DBG(LABEL, ul_debugobj(lb, "parsing '%s' (%s) partition type",
+				str, lb->name));
 
 	types = lb->parttypes;
 
@@ -234,5 +235,15 @@ const char *fdisk_parttype_get_name(const struct fdisk_parttype *t)
 	return t->name;
 }
 
-
-
+/**
+ * fdisk_parttype_is_unknown:
+ * @t: type
+ *
+ * Checks for example result from fdisk_label_parse_parttype().
+ *
+ * Returns: 1 is type is "unknonw" or 0.
+ */
+int fdisk_parttype_is_unknown(const struct fdisk_parttype *t)
+{
+	return t && (t->flags & FDISK_PARTTYPE_UNKNOWN) ? 1 : 0;
+}
