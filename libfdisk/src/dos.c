@@ -815,7 +815,7 @@ static int is_dos_partition(int t)
 
 static void set_partition(struct fdisk_context *cxt,
 			  int i, int doext, sector_t start,
-			  sector_t stop, int sysid)
+			  sector_t stop, int sysid, int boot)
 {
 	struct pte *pe = self_pte(cxt, i);
 	struct dos_partition *p;
@@ -838,7 +838,7 @@ static void set_partition(struct fdisk_context *cxt,
 				(size_t) (stop - start + 1),
 				sysid));
 
-	p->boot_ind = 0;
+	p->boot_ind = boot ? 1 : 0;
 	p->sys_ind = sysid;
 	dos_partition_set_start(p, start - offset);
 	dos_partition_set_size(p, stop - start + 1);
@@ -1132,11 +1132,11 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		}
 	}
 
-	set_partition(cxt, n, 0, start, stop, sys);
+	set_partition(cxt, n, 0, start, stop, sys, pa ? pa->boot : 0);
 	if (n > 4) {
 		struct pte *pe = self_pte(cxt, n);
 		set_partition(cxt, n - 1, 1, pe->offset, stop,
-				MBR_DOS_EXTENDED_PARTITION);
+					MBR_DOS_EXTENDED_PARTITION, 0);
 	}
 
 	if (IS_EXTENDED(sys)) {
@@ -1848,7 +1848,8 @@ again:
 			(uintmax_t) ooff, (uintmax_t) noff));
 
 		set_partition(cxt, i, 1, nxt->offset,
-				get_abs_partition_end(nxt), MBR_DOS_EXTENDED_PARTITION);
+				get_abs_partition_end(nxt),
+				MBR_DOS_EXTENDED_PARTITION, 0);
 
 		if (i + 1 == cxt->label->nparts_max - 1) {
 			clear_partition(nxt->ex_entry);
