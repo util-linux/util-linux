@@ -196,6 +196,7 @@ extern int fdisk_get_partition(struct fdisk_context *cxt, size_t partno, struct 
 
 extern int fdisk_add_partition(struct fdisk_context *cxt, struct fdisk_partition *pa);
 extern int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum);
+extern int fdisk_delete_all_partitions(struct fdisk_context *cxt);
 
 extern int fdisk_set_partition_type(struct fdisk_context *cxt, size_t partnum,
 			     struct fdisk_parttype *t);
@@ -294,6 +295,7 @@ extern int fdisk_table_next_partition(
 extern struct fdisk_partition *fdisk_table_get_partition(
 			struct fdisk_table *tb,
 			size_t n);
+extern int fdisk_apply_table(struct fdisk_context *cxt, struct fdisk_table *tb);
 
 /* alignment.c */
 #define FDISK_ALIGN_UP		1

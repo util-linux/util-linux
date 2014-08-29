@@ -631,3 +631,31 @@ int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum)
 				cxt->label->name, partnum));
 	return cxt->label->op->part_delete(cxt, partnum);
 }
+
+/**
+ * fdisk_delete_all_partitions:
+ * @cxt: fdisk context
+ *
+ * Delete all used partitions.
+ *
+ * Returns: 0 on success, otherwise, a corresponding error.
+ */
+int fdisk_delete_all_partitions(struct fdisk_context *cxt)
+{
+	size_t i;
+
+	if (!cxt || !cxt->label)
+		return -EINVAL;
+
+	for (i = 0; i < cxt->label->nparts_max; i++) {
+
+		if (!fdisk_is_partition_used(cxt, i))
+			continue;
+		rc = fdisk_delete_partition(cxt, i);
+		if (rc)
+			break;
+	}
+
+	return rc;
+}
+

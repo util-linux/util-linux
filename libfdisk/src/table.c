@@ -28,8 +28,9 @@ struct fdisk_table *fdisk_new_table(void)
  * fdisk_reset_table:
  * @tb: tab pointer
  *
- * Removes all entries (filesystems) from the table. The filesystems with zero
- * reference count will be deallocated.
+ * Removes all entries (partitions) from the table. The parititons with zero
+ * reference count will be deallocated. This function does not modify partition
+ * table.
  *
  * Returns: 0 on success or negative number in case of error.
  */
@@ -528,5 +529,36 @@ int fdisk_table_wrong_order(struct fdisk_table *tb)
 		last = pa->start;
 	}
 	return 0;
+}
+
+/**
+ * fdisk_apply_table:
+ * @cxt: context
+ * @tb: table
+ *
+ * Add partitions from table @tb to the in-memory disk label. See
+ * fdisk_add_partition(), fdisk_delete_all_partitions().
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int fdisk_apply_table(struct fdisk_context *cxt, struct fdisk_table *tb)
+{
+	struct fdisk_partition *pa;
+	struct fdisk_iter itr;
+	int rc = 0;
+
+	assert(cxt);
+	assert(tb);
+
+	DBG(TAB, ul_debugobj(tb, "applying to context %p", cxt));
+
+	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
+	while (tb && fdisk_table_next_partition(tb, &itr, &pa) == 0) {
+		rc = fdisk_add_partition(cxt, pa);
+		if (rc)
+			break;
+	}
+
+	return rc;
 }
 
