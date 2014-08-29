@@ -29,7 +29,7 @@ static void fdisk_dump_free_header(struct fdisk_dump *dp, struct fdisk_dumpheade
 	if (!fi)
 		return;
 
-	DBG(DUMP, ul_debugobj(fi, "free"));
+	DBG(DUMP, ul_debugobj(fi, "free header %s", fi->name));
 	free(fi->name);
 	free(fi->data);
 	list_del(&fi->headers);
@@ -104,7 +104,7 @@ void fdisk_unref_dump(struct fdisk_dump *dp)
 	if (dp->refcount <= 0) {
 		fdisk_reset_dump(dp);
 		fdisk_unref_context(dp->cxt);
-		DBG(DUMP, ul_debugobj(dp, "free"));
+		DBG(DUMP, ul_debugobj(dp, "free dump"));
 		free(dp);
 	}
 }
