@@ -350,7 +350,7 @@ int fdisk_dump_write_file(struct fdisk_dump *dp, FILE *f)
 		if (pa->name && *pa->name)
 			fprintf(f, ", name=\"%s\"", pa->name);
 		if (pa->attrs)
-			fprintf(f, ", attrs=%s", pa->attrs);
+			fprintf(f, ", attrs=\"%s\"", pa->attrs);
 		if (pa->boot)
 			fprintf(f, ", bootable");
 		fputc('\n', f);
@@ -429,7 +429,7 @@ static int next_number(char **s, uint64_t *num)
 
 static int next_string(char **s, char **str)
 {
-	char *end = NULL;
+	char *xend = NULL, *end = NULL;
 
 	assert(str);
 	assert(s);
@@ -438,10 +438,18 @@ static int next_string(char **s, char **str)
 	if (!**s)
 		return -1;
 
-	end = strchr(*s, ',');
-	if (end) {
-		*str = strndup(*s, end - *s);
-		*s = end;
+	if (**s == '"') {
+		++(*s);
+		xend = strchr(*s, '"');
+		if (!xend)
+			return -EINVAL;
+		end = strchr(xend, ',');
+	} else
+		xend = end = strchr(*s, ',');
+
+	if (xend) {
+		*str = strndup(*s, xend - *s);
+		*s = end ? end : xend + 1;
 	} else {
 		*str = strdup(*s);
 		while (**s) (*s)++;
@@ -450,7 +458,8 @@ static int next_string(char **s, char **str)
 	if (!*str)
 		return -ENOMEM;
 
-	ltrim_whitespace((unsigned char *) *str);
+	if (xend == end)
+		ltrim_whitespace((unsigned char *) *str);
 	if (!**str) {
 		free(*str);
 		*str = NULL;
@@ -552,7 +561,8 @@ static int parse_dump_line(struct fdisk_dump *dp, char *s)
 			if (rc)
 				break;
 
-		} else if (!strncasecmp(p, "type=", 5)) {
+		} else if (!strncasecmp(p, "type=", 5) ||
+			   !strncasecmp(p, "Id=", 3)) {		/* backward compatiility */
 			char *type;
 			p += 5;
 
