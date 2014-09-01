@@ -5,15 +5,15 @@ UL_DEBUG_DEFINE_MASK(libfdisk);
 UL_DEBUG_DEFINE_MASKANEMS(libfdisk) =
 {
 	{ "all", FDISK_DEBUG_ALL },
-	{ "init", FDISK_DEBUG_INIT },
-	{ "cxt", FDISK_DEBUG_CXT },
-	{ "label", FDISK_DEBUG_LABEL },
 	{ "ask", FDISK_DEBUG_ASK},
+	{ "cxt", FDISK_DEBUG_CXT },
 	{ "frontend", FDISK_DEBUG_FRONTEND },
+	{ "init", FDISK_DEBUG_INIT },
+	{ "label", FDISK_DEBUG_LABEL },
 	{ "part", FDISK_DEBUG_PART },
 	{ "parttype", FDISK_DEBUG_PARTTYPE },
+	{ "script", FDISK_DEBUG_SCRIPT},
 	{ "tab", FDISK_DEBUG_TAB},
-	{ "dump", FDISK_DEBUG_DUMP},
 	{ NULL, 0 }
 };
 /**

@@ -36,6 +36,7 @@ struct fdisk_ask;
 struct fdisk_iter;
 struct fdisk_table;
 struct fdisk_field;
+struct fdisk_script;
 
 typedef unsigned long long sector_t;
 
@@ -398,6 +399,28 @@ extern struct dos_partition *fdisk_dos_get_partition(
 extern int fdisk_dos_move_begin(struct fdisk_context *cxt, size_t i);
 
 #define DOS_FLAG_ACTIVE	1
+
+/* script.c */
+struct fdisk_script *fdisk_new_script(struct fdisk_context *cxt);
+struct fdisk_script *fdisk_new_script_from_file(struct fdisk_context *cxt,
+						 const char *filename);
+void fdisk_ref_script(struct fdisk_script *dp);
+void fdisk_unref_script(struct fdisk_script *dp);
+
+const char *fdisk_script_get_header(struct fdisk_script *dp, const char *name);
+int fdisk_script_set_header(struct fdisk_script *dp, const char *name, const char *data);
+struct fdisk_table *fdisk_script_get_table(struct fdisk_script *dp);
+
+int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt);
+int fdisk_script_write_file(struct fdisk_script *dp, FILE *f);
+int fdisk_script_read_buffer(struct fdisk_script *dp, char *s);
+int fdisk_script_read_file(struct fdisk_script *dp, FILE *f);
+
+int fdisk_set_script(struct fdisk_context *cxt, struct fdisk_script *dp);
+struct fdisk_script *fdisk_get_script(struct fdisk_context *cxt);
+
+int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp);
+
 
 /* ask.c */
 #define fdisk_is_ask(a, x) (fdisk_ask_get_type(a) == FDISK_ASKTYPE_ ## x)

@@ -317,8 +317,10 @@ static void reset_context(struct fdisk_context *cxt)
 	cxt->firstsector_bufsz = 0;
 
 	fdisk_zeroize_device_properties(cxt);
+	fdisk_unref_script(cxt->script);
 
 	cxt->label = NULL;
+	cxt->script = NULL;
 }
 
 /*

@@ -45,7 +45,7 @@
 #define FDISK_DEBUG_PART	(1 << 6)
 #define FDISK_DEBUG_PARTTYPE	(1 << 7)
 #define FDISK_DEBUG_TAB		(1 << 8)
-#define FDISK_DEBUG_DUMP	(1 << 9)
+#define FDISK_DEBUG_SCRIPT	(1 << 9)
 #define FDISK_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libfdisk);
@@ -376,6 +376,7 @@ struct fdisk_context {
 	void	*ask_data;		/* ask_cb() data */
 
 	struct fdisk_context	*parent;	/* for nested PT */
+	struct fdisk_script	*script;	/* what we want to follow */
 };
 
 /* context.c */

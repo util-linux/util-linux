@@ -29,7 +29,7 @@ static void fdisk_script_free_header(struct fdisk_script *dp, struct fdisk_scrip
 	if (!fi)
 		return;
 
-	DBG(DUMP, ul_debugobj(fi, "free header %s", fi->name));
+	DBG(SCRIPT, ul_debugobj(fi, "free header %s", fi->name));
 	free(fi->name);
 	free(fi->data);
 	list_del(&fi->headers);
@@ -52,13 +52,57 @@ struct fdisk_script *fdisk_new_script(struct fdisk_context *cxt)
 	if (!dp)
 		return NULL;
 
-	DBG(DUMP, ul_debugobj(dp, "alloc"));
+	DBG(SCRIPT, ul_debugobj(dp, "alloc"));
 	dp->refcount = 1;
 	dp->cxt = cxt;
 	fdisk_ref_context(cxt);
 
 	INIT_LIST_HEAD(&dp->headers);
 	return dp;
+}
+
+/**
+ * fdisk_new_script_from_file:
+ * @cxt: context
+ * @filename: path to the script file
+ *
+ * Allocates a new script and reads script from @filename.
+ *
+ * Returns: new script instance or NULL in case of error (check errno for more details).
+ */
+struct fdisk_script *fdisk_new_script_from_file(struct fdisk_context *cxt,
+						 const char *filename)
+{
+	int rc;
+	FILE *f;
+	struct fdisk_script *dp, *res = NULL;
+
+	assert(cxt);
+	assert(filename);
+
+	f = fopen(filename, "r");
+	if (!f)
+		return NULL;
+
+	dp = fdisk_new_script(cxt);
+	if (!dp)
+		goto done;
+
+	rc = fdisk_script_read_file(dp, f);
+	if (rc) {
+		errno = -rc;
+		goto done;
+	}
+
+	res = dp;
+done:
+	fclose(f);
+	if (!res)
+		fdisk_unref_script(dp);
+	else
+		errno = 0;
+
+	return res;
 }
 
 /**
@@ -104,7 +148,7 @@ void fdisk_unref_script(struct fdisk_script *dp)
 	if (dp->refcount <= 0) {
 		fdisk_reset_script(dp);
 		fdisk_unref_context(dp->cxt);
-		DBG(DUMP, ul_debugobj(dp, "free script"));
+		DBG(SCRIPT, ul_debugobj(dp, "free script"));
 		free(dp);
 	}
 }
@@ -149,11 +193,11 @@ const char *fdisk_script_get_header(struct fdisk_script *dp, const char *name)
  * @name: header name
  * @data: header data (or NULL)
  *
- * The headers are used as global options (in script) for whole partition table, always one
- * header per line.
+ * The headers are used as global options (in script) for whole partition
+ * table, always one header per line.
  *
  * If no @data specified then the header is removed. If header does not exist
- * and @data speified then a new header added.
+ * and @data specified then a new header added.
  *
  * Note that libfdisk allows to specify arbitrary custom header, the default
  * build-in headers are "unit" and "label", and some label specific headers
@@ -206,6 +250,9 @@ int fdisk_script_set_header(struct fdisk_script *dp,
 		fi->data = x;
 	}
 
+	if (strcmp(name, "label") == 0)
+		dp->label = NULL;
+
 	return 0;
 }
 
@@ -233,7 +280,7 @@ static struct fdisk_label *script_get_label(struct fdisk_script *dp)
 	if (!dp->label) {
 		dp->label = fdisk_get_label(dp->cxt,
 					fdisk_script_get_header(dp, "label"));
-		DBG(DUMP, ul_debug("label '%s'", dp->label ? dp->label->name : ""));
+		DBG(SCRIPT, ul_debugobj(dp, "label '%s'", dp->label ? dp->label->name : ""));
 	}
 	return dp->label;
 }
@@ -243,7 +290,7 @@ static struct fdisk_label *script_get_label(struct fdisk_script *dp)
  * @dp: script
  * @cxt: context
  *
- * Reads data from the current context (on disk partition table) into the script.
+ * Reads data from the @cxt context (on disk partition table) into the script.
  * If the context is no specified than defaults to context used for fdisk_new_script().
  *
  * Return: 0 on success, <0 on error.
@@ -375,7 +422,7 @@ static int parse_header_line(struct fdisk_script *dp, char *s)
 	int rc = -EINVAL;
 	char *name, *value;
 
-	DBG(DUMP, ul_debug("   parse header '%s'", s));
+	DBG(SCRIPT, ul_debugobj(dp, "   parse header '%s'", s));
 
 	if (!s || !*s)
 		return -EINVAL;
@@ -396,7 +443,7 @@ static int parse_header_line(struct fdisk_script *dp, char *s)
 		rc = fdisk_script_set_header(dp, name, value);
 done:
 	if (rc)
-		DBG(DUMP, ul_debug("header parse error: [rc=%d]", rc));
+		DBG(SCRIPT, ul_debugobj(dp, "header parse error: [rc=%d]", rc));
 	return rc;
 
 }
@@ -497,7 +544,7 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 	assert(dp);
 	assert(s);
 
-	DBG(DUMP, ul_debug("   parse script line: '%s'", s));
+	DBG(SCRIPT, ul_debugobj(dp, "   parse script line: '%s'", s));
 
 	pa = fdisk_new_partition();
 	if (!pa)
@@ -505,7 +552,7 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 
 	p = strchr(s, ':');
 	if (!p)
-		return -EINVAL;
+		goto done;
 	*p = '\0';
 	p++;
 
@@ -581,7 +628,7 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 			}
 
 		} else {
-			DBG(DUMP, ul_debug("script parse error: unknown field '%s'", p));
+			DBG(SCRIPT, ul_debugobj(dp, "script parse error: unknown field '%s'", p));
 			rc = -EINVAL;
 			break;
 		}
@@ -593,8 +640,9 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 
 	if (!rc)
 		rc = fdisk_table_add_partition(dp->table, pa);
+done:
 	if (rc)
-		DBG(DUMP, ul_debug("script parse error: [rc=%d]", rc));
+		DBG(SCRIPT, ul_debugobj(dp, "script parse error: [rc=%d]", rc));
 
 	fdisk_unref_partition(pa);
 	return rc;
@@ -602,7 +650,7 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 
 static int parse_commas_line(struct fdisk_script *dp, const char *s)
 {
-	DBG(DUMP, ul_debug("   commas line parse error"));
+	DBG(SCRIPT, ul_debugobj(dp, "   commas line parse error"));
 	return -EINVAL;
 }
 
@@ -614,7 +662,7 @@ int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
 	assert(dp);
 	assert(s);
 
-	DBG(DUMP, ul_debug("  parsing buffer"));
+	DBG(SCRIPT, ul_debugobj(dp, "  parsing buffer"));
 
 	s = (char *) skip_blank(s);
 	if (!s || !*s)
@@ -639,12 +687,12 @@ int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
 		rc = parse_commas_line(dp, s);
 
 	if (rc)
-		DBG(DUMP, ul_debugobj(dp, "%zu: parse error [rc=%d]",
+		DBG(SCRIPT, ul_debugobj(dp, "%zu: parse error [rc=%d]",
 				dp->nlines, rc));
 	return rc;
 }
 
-char fdisk_script_read_line(struct fdisk_script *dp, FILE *f)
+static int fdisk_script_read_line(struct fdisk_script *dp, FILE *f)
 {
 	char buf[BUFSIZ];
 	char *s;
@@ -652,22 +700,22 @@ char fdisk_script_read_line(struct fdisk_script *dp, FILE *f)
 	assert(dp);
 	assert(f);
 
-	DBG(DUMP, ul_debug(" parsing line"));
+	DBG(SCRIPT, ul_debugobj(dp, " parsing line"));
 
 	/* read the next non-blank non-comment line */
 	do {
 		if (fgets(buf, sizeof(buf), f) == NULL)
-			return -EINVAL;
+			return -errno;
 		dp->nlines++;
 		s = strchr(buf, '\n');
 		if (!s) {
 			/* Missing final newline?  Otherwise an extremely */
 			/* long line - assume file was corrupted */
 			if (feof(f)) {
-				DBG(DUMP, ul_debugobj(dp, "no final newline"));
+				DBG(SCRIPT, ul_debugobj(dp, "no final newline"));
 				s = strchr(buf, '\0');
 			} else {
-				DBG(DUMP, ul_debugobj(dp,
+				DBG(SCRIPT, ul_debugobj(dp,
 					"%zu: missing newline at line", dp->nlines));
 				return -EINVAL;
 			}
@@ -699,7 +747,7 @@ int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
 	assert(dp);
 	assert(f);
 
-	DBG(DUMP, ul_debug("parsing file"));
+	DBG(SCRIPT, ul_debugobj(dp, "parsing file"));
 
 	while (!feof(f)) {
 		rc = fdisk_script_read_line(dp, f);
@@ -710,9 +758,96 @@ int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
 	return rc;
 }
 
+/**
+ * fdisk_set_script:
+ * @cxt: context
+ * @dp: script (or NULL to remove previous reference)
+ *
+ * Sets reference to the @dp script. The script headers might be used by label
+ * drivers to overwrite built-in defaults (for example disk label Id).
+ *
+ * Note that script also contains reference to the fdisk context (see
+ * fdisk_new_script()). This context may be completely independent on
+ * context used for fdisk_set_script().
+ *
+ * Returns: <0 on error, 0 on success.
+ */
+int fdisk_set_script(struct fdisk_context *cxt, struct fdisk_script *dp)
+{
+	assert(cxt);
+
+	/* unref old */
+	if (cxt->script)
+		fdisk_unref_script(cxt->script);
+
+	/* ref new */
+	cxt->script = dp;
+	if (cxt->script) {
+		DBG(CXT, ul_debugobj(cxt, "setting reference to script %p", cxt->script));
+		fdisk_ref_script(cxt->script);
+	}
+
+	return 0;
+}
+
+/**
+ * fdisk_get_script:
+ * @cxt: context
+ *
+ * Returns: the current script or NULL.
+ */
+struct fdisk_script *fdisk_get_script(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->script;
+}
+
+/**
+ * fdisk_apply_script:
+ * @cxt: context
+ * @dp: script
+ *
+ * This function creates a new disklabel and partition within context @cxt. You
+ * have to call fdisk_write_disklabel() to apply changes to the device.
+ *
+ * Returns: 0 on error, <0 on error.
+ */
+int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp)
+{
+	int rc;
+	const char *p;
+	struct fdisk_script *old;
+
+	assert(dp);
+	assert(cxt);
+
+	DBG(CXT, ul_debugobj(cxt, "appling script %p", dp));
+
+	old = fdisk_get_script(cxt);
+	fdisk_set_script(cxt, dp);
+
+	/* create empty label */
+	p = fdisk_script_get_header(dp, "label");
+	if (!p) {
+		rc = -EINVAL;
+		goto done;
+	}
+	rc = fdisk_create_disklabel(cxt, p);
+	if (rc)
+		goto done;
+
+	/* create partitions */
+	if (dp->table)
+		rc = fdisk_apply_table(cxt, dp->table);
+
+done:
+	fdisk_set_script(cxt, old);
+	DBG(CXT, ul_debugobj(cxt, "script done [rc=%d]", rc));
+	return rc;
+}
 
 #ifdef TEST_PROGRAM
-int test_script(struct fdisk_test *ts, int argc, char *argv[])
+int test_dump(struct fdisk_test *ts, int argc, char *argv[])
 {
 	char *devname = argv[1];
 	struct fdisk_context *cxt;
@@ -723,7 +858,6 @@ int test_script(struct fdisk_test *ts, int argc, char *argv[])
 
 	dp = fdisk_new_script(cxt);
 	fdisk_script_read_context(dp, NULL);
-	fdisk_script_set_header(dp, "custom-header-foo", "bar");
 
 	fdisk_script_write_file(dp, stdout);
 	fdisk_unref_script(dp);
@@ -755,11 +889,52 @@ int test_read(struct fdisk_test *ts, int argc, char *argv[])
 	return 0;
 }
 
+int test_apply(struct fdisk_test *ts, int argc, char *argv[])
+{
+	char *devname = argv[1], *scriptname = argv[2];
+	struct fdisk_context *cxt;
+	struct fdisk_script *dp = NULL;
+	struct fdisk_table *tb = NULL;
+	struct fdisk_iter *itr = NULL;
+	struct fdisk_partition *pa = NULL;
+	int rc;
+
+	cxt = fdisk_new_context();
+	fdisk_assign_device(cxt, devname, 1);
+
+	dp = fdisk_new_script_from_file(cxt, scriptname);
+	if (!dp)
+		return -errno;
+
+	rc = fdisk_apply_script(cxt, dp);
+	if (rc)
+		goto done;
+	fdisk_unref_script(dp);
+
+	/* list result */
+	fdisk_list_disklabel(cxt);
+	fdisk_get_partitions(cxt, &tb);
+
+	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
+	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
+		printf(" #%zu  %12ju %12ju\n",	fdisk_partition_get_partno(pa),
+						fdisk_partition_get_start(pa),
+						fdisk_partition_get_size(pa));
+	}
+
+done:
+	fdisk_free_iter(itr);
+	fdisk_unref_table(tb);
+	fdisk_unref_context(cxt);
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 	struct fdisk_test tss[] = {
-	{ "--script",  test_script,  "<device>   print PT" },
-	{ "--read",    test_read,    "<file>     read PT scrit from file" },
+	{ "--dump",    test_dump,    "<device>            dump PT as script" },
+	{ "--read",    test_read,    "<file>              read PT script from file" },
+	{ "--apply",   test_apply,   "<device> <file>     try apply script from file to device" },
 	{ NULL }
 	};
 
