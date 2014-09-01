@@ -900,7 +900,7 @@ int test_apply(struct fdisk_test *ts, int argc, char *argv[])
 	int rc;
 
 	cxt = fdisk_new_context();
-	fdisk_assign_device(cxt, devname, 1);
+	fdisk_assign_device(cxt, devname, 0);
 
 	dp = fdisk_new_script_from_file(cxt, scriptname);
 	if (!dp)
@@ -925,6 +925,8 @@ int test_apply(struct fdisk_test *ts, int argc, char *argv[])
 done:
 	fdisk_free_iter(itr);
 	fdisk_unref_table(tb);
+
+	/*fdisk_write_disklabel(cxt);*/
 	fdisk_unref_context(cxt);
 	return 0;
 }

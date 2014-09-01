@@ -505,6 +505,7 @@ static int gpt_mknew_header(struct fdisk_context *cxt,
 			    struct gpt_header *header, uint64_t lba)
 {
 	uint64_t first, last;
+	int has_id = 0;
 
 	if (!cxt || !header)
 		return -ENOSYS;
@@ -525,9 +526,17 @@ static int gpt_mknew_header(struct fdisk_context *cxt,
 	header->last_usable_lba  = cpu_to_le64(last);
 
 	gpt_mknew_header_common(cxt, header, lba);
-	uuid_generate_random((unsigned char *) &header->disk_guid);
-	swap_efi_guid(&header->disk_guid);
 
+	if (cxt->script) {
+		const char *id = fdisk_script_get_header(cxt->script, "label-id");
+		if (id && string_to_guid(id, &header->disk_guid) == 0)
+			has_id = 1;
+	}
+
+	if (!has_id) {
+		uuid_generate_random((unsigned char *) &header->disk_guid);
+		swap_efi_guid(&header->disk_guid);
+	}
 	return 0;
 }
 
