@@ -2,15 +2,15 @@
 #include "fdiskP.h"
 #include "strutils.h"
 
-/* dump header (e.g. unit: sectors) */
-struct fdisk_dumpheader {
+/* script header (e.g. unit: sectors) */
+struct fdisk_scriptheader {
 	struct list_head	headers;
 	char			*name;
 	char			*data;
 };
 
-/* dump control struct */
-struct fdisk_dump {
+/* script control struct */
+struct fdisk_script {
 	struct fdisk_table	*table;
 	struct list_head	headers;
 	struct fdisk_context	*cxt;
@@ -24,7 +24,7 @@ struct fdisk_dump {
 };
 
 
-static void fdisk_dump_free_header(struct fdisk_dump *dp, struct fdisk_dumpheader *fi)
+static void fdisk_script_free_header(struct fdisk_script *dp, struct fdisk_scriptheader *fi)
 {
 	if (!fi)
 		return;
@@ -37,16 +37,16 @@ static void fdisk_dump_free_header(struct fdisk_dump *dp, struct fdisk_dumpheade
 }
 
 /**
- * fdisk_new_dump:
+ * fdisk_new_script:
  *
- * The dump hold fdisk_table and additional information to read/write
- * dump to the file.
+ * The script hold fdisk_table and additional information to read/write
+ * script to the file.
  *
- * Returns: newly allocated dump struct.
+ * Returns: newly allocated script struct.
  */
-struct fdisk_dump *fdisk_new_dump(struct fdisk_context *cxt)
+struct fdisk_script *fdisk_new_script(struct fdisk_context *cxt)
 {
-	struct fdisk_dump *dp = NULL;
+	struct fdisk_script *dp = NULL;
 
 	dp = calloc(1, sizeof(*dp));
 	if (!dp)
@@ -62,18 +62,18 @@ struct fdisk_dump *fdisk_new_dump(struct fdisk_context *cxt)
 }
 
 /**
- * fdisk_ref_dump:
- * @dp: dump pointer
+ * fdisk_ref_script:
+ * @dp: script pointer
  *
  * Incremparts reference counter.
  */
-void fdisk_ref_dump(struct fdisk_dump *dp)
+void fdisk_ref_script(struct fdisk_script *dp)
 {
 	if (dp)
 		dp->refcount++;
 }
 
-static void fdisk_reset_dump(struct fdisk_dump *dp)
+static void fdisk_reset_script(struct fdisk_script *dp)
 {
 	assert(dp);
 
@@ -81,41 +81,41 @@ static void fdisk_reset_dump(struct fdisk_dump *dp)
 	dp->table = NULL;
 
 	while (!list_empty(&dp->headers)) {
-		struct fdisk_dumpheader *fi = list_entry(dp->headers.next,
-						  struct fdisk_dumpheader, headers);
-		fdisk_dump_free_header(dp, fi);
+		struct fdisk_scriptheader *fi = list_entry(dp->headers.next,
+						  struct fdisk_scriptheader, headers);
+		fdisk_script_free_header(dp, fi);
 	}
 	INIT_LIST_HEAD(&dp->headers);
 }
 
 /**
- * fdisk_unref_dump:
- * @dp: dump pointer
+ * fdisk_unref_script:
+ * @dp: script pointer
  *
  * De-incremparts reference counter, on zero the @dp is automatically
  * deallocated.
  */
-void fdisk_unref_dump(struct fdisk_dump *dp)
+void fdisk_unref_script(struct fdisk_script *dp)
 {
 	if (!dp)
 		return;
 
 	dp->refcount--;
 	if (dp->refcount <= 0) {
-		fdisk_reset_dump(dp);
+		fdisk_reset_script(dp);
 		fdisk_unref_context(dp->cxt);
-		DBG(DUMP, ul_debugobj(dp, "free dump"));
+		DBG(DUMP, ul_debugobj(dp, "free script"));
 		free(dp);
 	}
 }
 
-static struct fdisk_dumpheader *dump_get_header(struct fdisk_dump *dp,
+static struct fdisk_scriptheader *script_get_header(struct fdisk_script *dp,
 						     const char *name)
 {
 	struct list_head *p;
 
 	list_for_each(p, &dp->headers) {
-		struct fdisk_dumpheader *fi = list_entry(p, struct fdisk_dumpheader, headers);
+		struct fdisk_scriptheader *fi = list_entry(p, struct fdisk_scriptheader, headers);
 
 		if (strcasecmp(fi->name, name) == 0)
 			return fi;
@@ -125,31 +125,31 @@ static struct fdisk_dumpheader *dump_get_header(struct fdisk_dump *dp,
 }
 
 /**
- * fdisk_dump_get_header:
- * @dp: dump instance
+ * fdisk_script_get_header:
+ * @dp: script instance
  * @name: header name
  *
  * Returns: pointer to header data or NULL.
  */
-const char *fdisk_dump_get_header(struct fdisk_dump *dp, const char *name)
+const char *fdisk_script_get_header(struct fdisk_script *dp, const char *name)
 {
-	struct fdisk_dumpheader *fi;
+	struct fdisk_scriptheader *fi;
 
 	assert(dp);
 	assert(name);
 
-	fi = dump_get_header(dp, name);
+	fi = script_get_header(dp, name);
 	return fi ? fi->data : NULL;
 }
 
 
 /**
- * fdisk_dump_set_header:
- * @dp: dump instance
+ * fdisk_script_set_header:
+ * @dp: script instance
  * @name: header name
  * @data: header data (or NULL)
  *
- * The headers are used as global options (in dump) for whole partition table, always one
+ * The headers are used as global options (in script) for whole partition table, always one
  * header per line.
  *
  * If no @data specified then the header is removed. If header does not exist
@@ -161,11 +161,11 @@ const char *fdisk_dump_get_header(struct fdisk_dump *dp, const char *name)
  *
  * Returns: 0 on success, <0 on error
  */
-int fdisk_dump_set_header(struct fdisk_dump *dp,
+int fdisk_script_set_header(struct fdisk_script *dp,
 			    const char *name,
 			    const char *data)
 {
-	struct fdisk_dumpheader *fi;
+	struct fdisk_scriptheader *fi;
 
 	assert(dp);
 	assert(name);
@@ -173,13 +173,13 @@ int fdisk_dump_set_header(struct fdisk_dump *dp,
 	if (!dp || !name)
 		return -EINVAL;
 
-	fi = dump_get_header(dp, name);
+	fi = script_get_header(dp, name);
 	if (!fi && !data)
 		return 0;	/* want to remove header that does not exist, success */
 
 	if (!data) {
 		/* no data, remove the header */
-		fdisk_dump_free_header(dp, fi);
+		fdisk_script_free_header(dp, fi);
 		return 0;
 	}
 
@@ -192,7 +192,7 @@ int fdisk_dump_set_header(struct fdisk_dump *dp,
 		fi->name = strdup(name);
 		fi->data = strdup(data);
 		if (!fi->data || !fi->name) {
-			fdisk_dump_free_header(dp, fi);
+			fdisk_script_free_header(dp, fi);
 			return -ENOMEM;
 		}
 		list_add_tail(&fi->headers, &dp->headers);
@@ -210,45 +210,45 @@ int fdisk_dump_set_header(struct fdisk_dump *dp,
 }
 
 /**
- * fdisk_dump_get_table:
- * @dp: dump
+ * fdisk_script_get_table:
+ * @dp: script
  *
  * The table (container with partitions) is possible to create by
- * fdisk_dump_read_context() or fdisk_dump_read_file(), otherwise
+ * fdisk_script_read_context() or fdisk_script_read_file(), otherwise
  * this function returns NULL.
  *
- * Returns: NULL or dump.
+ * Returns: NULL or script.
  */
-struct fdisk_table *fdisk_dump_get_table(struct fdisk_dump *dp)
+struct fdisk_table *fdisk_script_get_table(struct fdisk_script *dp)
 {
 	assert(dp);
 	return dp ? dp->table : NULL;
 }
 
-static struct fdisk_label *dump_get_label(struct fdisk_dump *dp)
+static struct fdisk_label *script_get_label(struct fdisk_script *dp)
 {
 	assert(dp);
 	assert(dp->cxt);
 
 	if (!dp->label) {
 		dp->label = fdisk_get_label(dp->cxt,
-					fdisk_dump_get_header(dp, "label"));
+					fdisk_script_get_header(dp, "label"));
 		DBG(DUMP, ul_debug("label '%s'", dp->label ? dp->label->name : ""));
 	}
 	return dp->label;
 }
 
 /**
- * fdisk_dump_read_context:
- * @dp: dump
+ * fdisk_script_read_context:
+ * @dp: script
  * @cxt: context
  *
- * Reads data from the current context (on disk partition table) into the dump.
- * If the context is no specified than defaults to context used for fdisk_new_dump().
+ * Reads data from the current context (on disk partition table) into the script.
+ * If the context is no specified than defaults to context used for fdisk_new_script().
  *
  * Return: 0 on success, <0 on error.
  */
-int fdisk_dump_read_context(struct fdisk_dump *dp, struct fdisk_context *cxt)
+int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt)
 {
 	struct fdisk_label *lb;
 	int rc;
@@ -262,7 +262,7 @@ int fdisk_dump_read_context(struct fdisk_dump *dp, struct fdisk_context *cxt)
 	if (!dp || !cxt)
 		return -EINVAL;
 
-	fdisk_reset_dump(dp);
+	fdisk_reset_script(dp);
 
 	lb = fdisk_get_label(cxt, NULL);
 	if (!lb)
@@ -274,16 +274,16 @@ int fdisk_dump_read_context(struct fdisk_dump *dp, struct fdisk_context *cxt)
 		return rc;
 
 	/* generate headers */
-	rc = fdisk_dump_set_header(dp, "label", fdisk_label_get_name(lb));
+	rc = fdisk_script_set_header(dp, "label", fdisk_label_get_name(lb));
 
 	if (!rc && fdisk_get_disklabel_id(cxt, &p) == 0 && p) {
-		rc = fdisk_dump_set_header(dp, "label-id", p);
+		rc = fdisk_script_set_header(dp, "label-id", p);
 		free(p);
 	}
 	if (!rc && cxt->dev_path)
-		rc = fdisk_dump_set_header(dp, "device", cxt->dev_path);
+		rc = fdisk_script_set_header(dp, "device", cxt->dev_path);
 	if (!rc)
-		rc = fdisk_dump_set_header(dp, "unit", "sectors");
+		rc = fdisk_script_set_header(dp, "unit", "sectors");
 
 	/* TODO: label specific headers (e.g. uuid for GPT) */
 
@@ -291,15 +291,15 @@ int fdisk_dump_read_context(struct fdisk_dump *dp, struct fdisk_context *cxt)
 }
 
 /**
- * fdisk_dump_write_file:
- * @dp: dump
+ * fdisk_script_write_file:
+ * @dp: script
  * @f: output file
  *
- * Writes dump @dp to the ile @f.
+ * Writes script @dp to the ile @f.
  *
  * Returns: 0 on sucess, <0 on error.
  */
-int fdisk_dump_write_file(struct fdisk_dump *dp, FILE *f)
+int fdisk_script_write_file(struct fdisk_script *dp, FILE *f)
 {
 	struct list_head *h;
 	struct fdisk_partition *pa;
@@ -309,9 +309,9 @@ int fdisk_dump_write_file(struct fdisk_dump *dp, FILE *f)
 	assert(dp);
 	assert(f);
 
-	/* dump headers */
+	/* script headers */
 	list_for_each(h, &dp->headers) {
-		struct fdisk_dumpheader *fi = list_entry(h, struct fdisk_dumpheader, headers);
+		struct fdisk_scriptheader *fi = list_entry(h, struct fdisk_scriptheader, headers);
 		fprintf(f, "%s: %s\n", fi->name, fi->data);
 		if (strcmp(fi->name, "device") == 0)
 			devname = fi->data;
@@ -370,7 +370,7 @@ static inline int is_header_line(const char *s)
 }
 
 /* parses "<name>: value", note modifies @s*/
-static int parse_header_line(struct fdisk_dump *dp, char *s)
+static int parse_header_line(struct fdisk_script *dp, char *s)
 {
 	int rc = -EINVAL;
 	char *name, *value;
@@ -393,7 +393,7 @@ static int parse_header_line(struct fdisk_dump *dp, char *s)
 	rtrim_whitespace((unsigned char *) value);
 
 	if (*name && *value)
-		rc = fdisk_dump_set_header(dp, name, value);
+		rc = fdisk_script_set_header(dp, name, value);
 done:
 	if (rc)
 		DBG(DUMP, ul_debug("header parse error: [rc=%d]", rc));
@@ -486,7 +486,7 @@ static int partno_from_devname(char *s)
 	return pno - 1;
 }
 
-static int parse_dump_line(struct fdisk_dump *dp, char *s)
+static int parse_script_line(struct fdisk_script *dp, char *s)
 {
 	char *p;
 	struct fdisk_partition *pa;
@@ -497,7 +497,7 @@ static int parse_dump_line(struct fdisk_dump *dp, char *s)
 	assert(dp);
 	assert(s);
 
-	DBG(DUMP, ul_debug("   parse dump line: '%s'", s));
+	DBG(DUMP, ul_debug("   parse script line: '%s'", s));
 
 	pa = fdisk_new_partition();
 	if (!pa)
@@ -570,7 +570,7 @@ static int parse_dump_line(struct fdisk_dump *dp, char *s)
 			if (rc)
 				break;
 			pa->type = fdisk_label_parse_parttype(
-					dump_get_label(dp), type);
+					script_get_label(dp), type);
 			free(type);
 
 			if (!pa->type || fdisk_parttype_is_unknown(pa->type)) {
@@ -581,7 +581,7 @@ static int parse_dump_line(struct fdisk_dump *dp, char *s)
 			}
 
 		} else {
-			DBG(DUMP, ul_debug("dump parse error: unknown field '%s'", p));
+			DBG(DUMP, ul_debug("script parse error: unknown field '%s'", p));
 			rc = -EINVAL;
 			break;
 		}
@@ -594,20 +594,20 @@ static int parse_dump_line(struct fdisk_dump *dp, char *s)
 	if (!rc)
 		rc = fdisk_table_add_partition(dp->table, pa);
 	if (rc)
-		DBG(DUMP, ul_debug("dump parse error: [rc=%d]", rc));
+		DBG(DUMP, ul_debug("script parse error: [rc=%d]", rc));
 
 	fdisk_unref_partition(pa);
 	return rc;
 }
 
-static int parse_commas_line(struct fdisk_dump *dp, const char *s)
+static int parse_commas_line(struct fdisk_script *dp, const char *s)
 {
 	DBG(DUMP, ul_debug("   commas line parse error"));
 	return -EINVAL;
 }
 
 /* modifies @s ! */
-int fdisk_dump_read_buffer(struct fdisk_dump *dp, char *s)
+int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
 {
 	int rc = 0;
 
@@ -630,9 +630,9 @@ int fdisk_dump_read_buffer(struct fdisk_dump *dp, char *s)
 	if (fdisk_table_is_empty(dp->table) && is_header_line(s))
 		rc = parse_header_line(dp, s);
 
-	/* parse dump format */
+	/* parse script format */
 	else if (strchr(s, '='))
-		rc = parse_dump_line(dp, s);
+		rc = parse_script_line(dp, s);
 
 	/* parse simple <value>, ... format */
 	else
@@ -644,7 +644,7 @@ int fdisk_dump_read_buffer(struct fdisk_dump *dp, char *s)
 	return rc;
 }
 
-char fdisk_dump_read_line(struct fdisk_dump *dp, FILE *f)
+char fdisk_script_read_line(struct fdisk_script *dp, FILE *f)
 {
 	char buf[BUFSIZ];
 	char *s;
@@ -679,20 +679,20 @@ char fdisk_dump_read_line(struct fdisk_dump *dp, FILE *f)
 		s = (char *) skip_blank(buf);
 	} while (*s == '\0' || *s == '#');
 
-	return fdisk_dump_read_buffer(dp, s);
+	return fdisk_script_read_buffer(dp, s);
 }
 
 
 /**
- * fdisk_dump_read_file:
- * @dp: dump
+ * fdisk_script_read_file:
+ * @dp: script
  * @f input file
  *
- * Reads file @f into dump @dp.
+ * Reads file @f into script @dp.
  *
  * Returns: 0 on success, <0 on error.
  */
-int fdisk_dump_read_file(struct fdisk_dump *dp, FILE *f)
+int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
 {
 	int rc = NULL;
 
@@ -702,7 +702,7 @@ int fdisk_dump_read_file(struct fdisk_dump *dp, FILE *f)
 	DBG(DUMP, ul_debug("parsing file"));
 
 	while (!feof(f)) {
-		rc = fdisk_dump_read_line(dp, f);
+		rc = fdisk_script_read_line(dp, f);
 		if (rc)
 			break;
 	}
@@ -712,21 +712,21 @@ int fdisk_dump_read_file(struct fdisk_dump *dp, FILE *f)
 
 
 #ifdef TEST_PROGRAM
-int test_dump(struct fdisk_test *ts, int argc, char *argv[])
+int test_script(struct fdisk_test *ts, int argc, char *argv[])
 {
 	char *devname = argv[1];
 	struct fdisk_context *cxt;
-	struct fdisk_dump *dp;
+	struct fdisk_script *dp;
 
 	cxt = fdisk_new_context();
 	fdisk_assign_device(cxt, devname, 1);
 
-	dp = fdisk_new_dump(cxt);
-	fdisk_dump_read_context(dp, NULL);
-	fdisk_dump_set_header(dp, "custom-header-foo", "bar");
+	dp = fdisk_new_script(cxt);
+	fdisk_script_read_context(dp, NULL);
+	fdisk_script_set_header(dp, "custom-header-foo", "bar");
 
-	fdisk_dump_write_file(dp, stdout);
-	fdisk_unref_dump(dp);
+	fdisk_script_write_file(dp, stdout);
+	fdisk_unref_script(dp);
 	fdisk_unref_context(cxt);
 
 	return 0;
@@ -735,7 +735,7 @@ int test_dump(struct fdisk_test *ts, int argc, char *argv[])
 int test_read(struct fdisk_test *ts, int argc, char *argv[])
 {
 	char *filename = argv[1];
-	struct fdisk_dump *dp;
+	struct fdisk_script *dp;
 	struct fdisk_context *cxt;
 	FILE *f;
 
@@ -743,13 +743,13 @@ int test_read(struct fdisk_test *ts, int argc, char *argv[])
 		err(EXIT_FAILURE, "%s: cannot open", filename);
 
 	cxt = fdisk_new_context();
-	dp = fdisk_new_dump(cxt);
+	dp = fdisk_new_script(cxt);
 
-	fdisk_dump_read_file(dp, f);
+	fdisk_script_read_file(dp, f);
 	fclose(f);
 
-	fdisk_dump_write_file(dp, stdout);
-	fdisk_unref_dump(dp);
+	fdisk_script_write_file(dp, stdout);
+	fdisk_unref_script(dp);
 	fdisk_unref_context(cxt);
 
 	return 0;
@@ -758,8 +758,8 @@ int test_read(struct fdisk_test *ts, int argc, char *argv[])
 int main(int argc, char *argv[])
 {
 	struct fdisk_test tss[] = {
-	{ "--dump",  test_dump,    "<device>   print PT" },
-	{ "--read",  test_read,    "<file>     read PT scrit from file" },
+	{ "--script",  test_script,  "<device>   print PT" },
+	{ "--read",    test_read,    "<file>     read PT scrit from file" },
 	{ NULL }
 	};
 
