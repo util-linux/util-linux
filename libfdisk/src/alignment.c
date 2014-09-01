@@ -106,15 +106,25 @@ sector_t fdisk_align_lba(struct fdisk_context *cxt, sector_t lba, int direction)
 sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt,
 				  sector_t lba, sector_t start, sector_t stop)
 {
+	sector_t res;
+
 	start = fdisk_align_lba(cxt, start, FDISK_ALIGN_UP);
 	stop = fdisk_align_lba(cxt, stop, FDISK_ALIGN_DOWN);
 	lba = fdisk_align_lba(cxt, lba, FDISK_ALIGN_NEAREST);
 
 	if (lba < start)
-		return start;
+		res = start;
 	else if (lba > stop)
-		return stop;
-	return lba;
+		res = stop;
+	else
+		res = lba;
+
+	DBG(CXT, ul_debugobj(cxt, "LBA %ju range:<%ju..%ju>, result: %ju",
+				(uintmax_t) lba,
+				(uintmax_t) start,
+				(uintmax_t) stop,
+				(uintmax_t) res));
+	return res;
 }
 
 /**

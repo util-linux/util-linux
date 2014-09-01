@@ -1803,6 +1803,7 @@ static int gpt_add_partition(
 
 	/* first sector */
 	if (pa && pa->start) {
+		DBG(LABEL, ul_debug("first sector defined: %ju", pa->start));
 		if (pa->start != find_first_available(pheader, ents, pa->start)) {
 			fdisk_warnx(cxt, _("Sector %ju already used."), pa->start);
 			return -ERANGE;
@@ -1843,13 +1844,11 @@ static int gpt_add_partition(
 	dflt_l = find_last_free(pheader, ents, user_f);
 
 	if (pa && pa->size) {
-		user_l = user_f + pa->size;
-		user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l) - 1;
-
-		/* no space for anything useful, use all space
-		if (user_l + (cxt->grain / cxt->sector_size) > dflt_l)
-			user_l = dflt_l;
-		*/
+		user_l = user_f + pa->size - 1;
+		DBG(LABEL, ul_debug("size defined: %ju, end: %ju (last possible: %ju)",
+					pa->size, user_l, dflt_l));
+		if (user_l != dflt_l)
+			user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l) - 1;
 
 	} else if (pa && pa->end_follow_default) {
 		user_l = dflt_l;
@@ -1885,8 +1884,6 @@ static int gpt_add_partition(
 		}
 	}
 
-	DBG(LABEL, ul_debug("GPT new partition: partno=%zu, start=%ju, end=%ju",
-				partnum, user_f, user_l));
 
 	if (user_f > user_l || partnum >= cxt->label->nparts_max) {
 		fdisk_warnx(cxt, _("Could not create partition %zu"), partnum + 1);
@@ -1918,6 +1915,12 @@ static int gpt_add_partition(
 
 	if (pa && pa->name && *pa->name)
 		gpt_entry_set_name(e, pa->name);
+
+	DBG(LABEL, ul_debug("GPT new partition: partno=%zu, start=%ju, end=%ju, size=%ju",
+				partnum,
+				gpt_partition_start(e),
+				gpt_partition_end(e),
+				gpt_partition_size(e)));
 
 	gpt_recompute_crc(gpt->pheader, ents);
 	gpt_recompute_crc(gpt->bheader, ents);
