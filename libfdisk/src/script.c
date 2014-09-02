@@ -448,6 +448,18 @@ done:
 
 }
 
+static char *next_separator(char *s)
+{
+	char *end;
+
+	if ((end = strchr(s, ',')) ||
+	    (end = strchr(s, ';')) ||
+	    (end = strchr(s, ' ')))
+		return end;
+
+	return NULL;
+}
+
 static int next_number(char **s, uint64_t *num)
 {
 	char *end = NULL;
@@ -460,15 +472,14 @@ static int next_number(char **s, uint64_t *num)
 	if (!**s)
 		return -1;
 
-	end = strchr(*s, ',');
+	end = next_separator(*s);
 	if (end)
 		*end = '\0';
 
 	rc = strtosize(*s, (uintmax_t *) num);
-	if (end) {
-		*end = ',';
-		*s = end;
-	} else
+	if (end)
+		*s = ++end;
+	else
 		while (**s) (*s)++;
 
 	return rc;
@@ -490,13 +501,13 @@ static int next_string(char **s, char **str)
 		xend = strchr(*s, '"');
 		if (!xend)
 			return -EINVAL;
-		end = strchr(xend, ',');
+		end = next_separator(xend);
 	} else
-		xend = end = strchr(*s, ',');
+		xend = end = next_separator(*s);
 
 	if (xend) {
 		*str = strndup(*s, xend - *s);
-		*s = end ? end : xend + 1;
+		*s = end ? end + 1 : xend + 1;
 	} else {
 		*str = strdup(*s);
 		while (**s) (*s)++;
@@ -533,6 +544,9 @@ static int partno_from_devname(char *s)
 	return pno - 1;
 }
 
+/* dump format
+ * <device>: start=<num>, size=<num>, type=<string>, ...
+ */
 static int parse_script_line(struct fdisk_script *dp, char *s)
 {
 	char *p;
@@ -634,7 +648,7 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 		}
 
 		while (isblank(*p)) p++;
-		if (*p == ',')
+		if (*p == ',' || *p == ';')
 			p++;
 	}
 
@@ -648,10 +662,155 @@ done:
 	return rc;
 }
 
-static int parse_commas_line(struct fdisk_script *dp, const char *s)
+/* original sfdisk supports partition types shortcuts like 'L' = Linux native
+ */
+static struct fdisk_parttype *translate_type_shortcuts(struct fdisk_script *dp, char *str)
 {
-	DBG(SCRIPT, ul_debugobj(dp, "   commas line parse error"));
-	return -EINVAL;
+	struct fdisk_label *lb;
+	const char *type = NULL;
+
+	if (strlen(str) != 1)
+		return NULL;
+
+	lb = script_get_label(dp);
+	if (!lb)
+		return NULL;
+
+	if (lb->id == FDISK_DISKLABEL_DOS) {
+		switch (*str) {
+		case 'L':	/* Linux */
+			type = "83";
+			break;
+		case 'S':	/* Swap */
+			type = "82";
+			break;
+		case 'E':	/* Dos extended */
+			type = "05";
+			break;
+		case 'X':	/* Linux extended */
+			type = "85";
+			break;
+		}
+	} else if (lb->id == FDISK_DISKLABEL_GPT) {
+		switch (*str) {
+		case 'L':	/* Linux */
+			type = "0FC63DAF-8483-4772-8E79-3D69D8477DE4";
+			break;
+		case 'S':	/* Swap */
+			type = "0657FD6D-A4AB-43C4-84E5-0933C84B4F4F";
+			break;
+		case 'H':	/* Home */
+			type = "933AC7E1-2EB4-4F13-B844-0E14E2AEF915";
+			break;
+		}
+	}
+
+	return type ? fdisk_label_parse_parttype(lb, type) : NULL;
+}
+
+/* simple format:
+ * <start>, <size>, <type>, <bootable>, ...
+ */
+static int parse_commas_line(struct fdisk_script *dp, char *s)
+{
+	int rc = 0;
+	char *p = s, *str;
+	struct fdisk_partition *pa;
+	enum { ITEM_START, ITEM_SIZE, ITEM_TYPE, ITEM_BOOTABLE };
+	int item = -1;
+
+	assert(dp);
+	assert(s);
+
+	pa = fdisk_new_partition();
+	if (!pa)
+		return -ENOMEM;
+
+	fdisk_partition_start_follow_default(pa, 1);
+	fdisk_partition_end_follow_default(pa, 1);
+
+	while (rc == 0 && p && *p) {
+		uint64_t num;
+
+		while (isblank(*p)) p++;
+		if (!*p)
+			break;
+		item++;
+
+		DBG(SCRIPT, ul_debugobj(dp, " parsing item %d ('%s')", item, p));
+
+		switch (item) {
+		case ITEM_START:
+			if (*p == ',' || *p == ';')
+				fdisk_partition_start_follow_default(pa, 1);
+			else {
+				rc = next_number(&p, &num);
+				if (!rc)
+					fdisk_partition_set_start(pa, num);
+				fdisk_partition_start_follow_default(pa, 0);
+			}
+			break;
+		case ITEM_SIZE:
+			if (*p == ',' || *p == ';')
+				fdisk_partition_end_follow_default(pa, 1);
+			else {
+				rc = next_number(&p, &num);
+				if (!rc)
+					fdisk_partition_set_size(pa, num);
+				fdisk_partition_end_follow_default(pa, 0);
+			}
+			break;
+		case ITEM_TYPE:
+			if (*p == ',' || *p == ';')
+				break;	/* use default type */
+
+			rc = next_string(&p, &str);
+			if (rc)
+				break;
+
+			pa->type = translate_type_shortcuts(dp, str);
+			if (!pa->type)
+				pa->type = fdisk_label_parse_parttype(
+						script_get_label(dp), str);
+			free(str);
+
+			if (!pa->type || fdisk_parttype_is_unknown(pa->type)) {
+				rc = -EINVAL;
+				fdisk_free_parttype(pa->type);
+				pa->type = NULL;
+				break;
+			}
+			break;
+		case ITEM_BOOTABLE:
+			if (*p == ',')
+				break;
+			if (*p == '*' &&
+			    (!*(p + 1) || *(p + 1) == ' ' || *(p + 1) == ',' || *(p + 1) == ';')) {
+				pa->boot = 1;
+				p++;
+			} else if (*p == '-' &&
+			    (!*(p + 1) || *(p + 1) == ' ' || *(p + 1) == ',' || *(p + 1) == ';')) {
+				pa->boot = 0;
+				p++;
+			} else
+				rc = -EINVAL;
+			break;
+		default:
+			break;
+		}
+
+		while (isblank(*p)) p++;
+		if (*p == ',' || *p == ';')
+			p++;
+	}
+
+	if (!rc)
+		rc = fdisk_table_add_partition(dp->table, pa);
+	if (rc)
+		DBG(SCRIPT, ul_debugobj(dp, "script parse error: [rc=%d]", rc));
+
+	fdisk_unref_partition(pa);
+	return rc;
 }
 
 /* modifies @s ! */
@@ -889,6 +1048,38 @@ int test_read(struct fdisk_test *ts, int argc, char *argv[])
 	return 0;
 }
 
+int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
+{
+	struct fdisk_script *dp;
+	struct fdisk_context *cxt;
+	int rc = 0;
+
+	cxt = fdisk_new_context();
+	dp = fdisk_new_script(cxt);
+	fdisk_script_set_header(dp, "label", "dos");
+
+	printf("<start>, <size>, <type>, <bootable: *|->\n");
+	do {
+		struct fdisk_partition *pa;
+		size_t n = fdisk_table_get_nents(dp->table);
+
+		printf(" #%zu :\n", n + 1);
+		rc = fdisk_script_read_line(dp, stdin);
+
+		pa = fdisk_table_get_partition(dp->table, n);
+		printf(" #%zu  %12ju %12ju\n",	n + 1,
+						fdisk_partition_get_start(pa),
+						fdisk_partition_get_size(pa));
+	} while (rc == 0);
+
+	if (!rc)
+		fdisk_script_write_file(dp, stdout);
+	fdisk_unref_script(dp);
+	fdisk_unref_context(cxt);
+
+	return rc;
+}
+
 int test_apply(struct fdisk_test *ts, int argc, char *argv[])
 {
 	char *devname = argv[1], *scriptname = argv[2];
@@ -937,6 +1128,7 @@ int main(int argc, char *argv[])
 	{ "--dump",    test_dump,    "<device>            dump PT as script" },
 	{ "--read",    test_read,    "<file>              read PT script from file" },
 	{ "--apply",   test_apply,   "<device> <file>     try apply script from file to device" },
+	{ "--stdin",   test_stdin,   "                    read input like sfdisk" },
 	{ NULL }
 	};
 
