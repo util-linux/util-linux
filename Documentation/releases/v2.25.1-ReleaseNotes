@@ -3,20 +3,6 @@ Util-linux 2.25.1 Release Notes
 
 build-sys:
    - create parent directory for $(PATHFILES)  [Michael Marineau]
-po:
-   - merge changes  [Karel Zak]
-   - update cs.po (from translationproject.org)  [Petr Písař]
-   - update da.po (from translationproject.org)  [Joe Hansen]
-   - update de.po (from translationproject.org)  [Mario Blättermann]
-   - update fr.po (from translationproject.org)  [David Prévot]
-   - update nl.po (from translationproject.org)  [Benno Schulenberg]
-   - update pl.po (from translationproject.org)  [Jakub Bogusz]
-   - update pt_BR.po (from translationproject.org)  [Rafael Ferreira]
-   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
-   - update vi.po (from translationproject.org)  [Trần Ngọc Quân]
-   - update zh_TW.po (from translationproject.org)  [Wei-Lun Chao]
-build-sys:
-   - create parent directory for $(PATHFILES)  [Michael Marineau]
    - fix double prefix with explict --libdir  [Christoph Junghans]
    - fix switch_root/pivot_root cut-n-paste error in configure.ac  [Andreas Henriksson]
    - release++ (v2.25.1-rc1)  [Karel Zak]
