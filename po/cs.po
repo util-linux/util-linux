@@ -41,10 +41,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.25-rc3\n"
+"Project-Id-Version: util-linux 2.25.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2014-08-27 14:21+0200\n"
-"PO-Revision-Date: 2014-07-27 15:44+0200\n"
+"POT-Creation-Date: 2014-08-27 14:59+0200\n"
+"PO-Revision-Date: 2014-08-28 18:26+0200\n"
 "Last-Translator: Petr Písař <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
 "Language: cs\n"
@@ -437,9 +437,8 @@ msgid "  t          Change the partition type"
 msgstr "  t          Změní druh oddílu"
 
 #: disk-utils/cfdisk.c:1649
-#, fuzzy
 msgid "  s          Fix partitions order (only when in disarray)"
-msgstr "  s          Opraví pořadí oddílů"
+msgstr "  s          Opraví pořadí oddílů (pouze při nepořádku)"
 
 #: disk-utils/cfdisk.c:1650
 msgid "  W          Write partition table to disk (must enter upper case W)"
@@ -508,14 +507,14 @@ msgid "Partition size: "
 msgstr "Velikost oddílu: "
 
 #: disk-utils/cfdisk.c:1810
-#, fuzzy, c-format
+#, c-format
 msgid "Changed type of partition %zu."
 msgstr "Druh oddílu %zu byl změněn."
 
 #: disk-utils/cfdisk.c:1812
-#, fuzzy, c-format
+#, c-format
 msgid "The type of partition %zu is unchanged."
-msgstr "Typ oddílu %zu je nezměněn: %s."
+msgstr "Typ oddílu %zu je nezměněn."
 
 #: disk-utils/cfdisk.c:1827
 msgid "Device open in read-only mode"
@@ -526,7 +525,6 @@ msgid "Are you sure you want to write the partition table to disk? "
 msgstr "Jste si jisti, že chcete uložit tabulku rozdělení disku na disk? "
 
 #: disk-utils/cfdisk.c:1834
-#, fuzzy
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Napište „ano“ nebo „ne“ nebo stiskněte Esc pro opuštění dialogu."
 
@@ -979,9 +977,8 @@ msgstr ""
 "Při použití příkazu zápisu buďte obezřetní.\n"
 
 #: disk-utils/fdisk.c:973
-#, fuzzy
 msgid "A hybrid GPT was detected. You have to sync the hybrid MBR manually (expert command 'M')."
-msgstr "Nalezena hybridní GPT. Hybridní MBR budete muset synchronizovat ručně (expertní příkaz „M“)."
+msgstr "Byla nalezena hybridní GPT. Hybridní MBR budete muset synchronizovat ručně (expertní příkaz „M“)."
 
 #: disk-utils/fdisk-menu.c:95
 msgid "Generic"
@@ -1568,9 +1565,9 @@ msgid "the -l option can be used with one device only -- ignore"
 msgstr "přepínač -l lze použít pouze s jedním zařízením – ignoruje se"
 
 #: disk-utils/fsck.cramfs.c:108 misc-utils/whereis.c:168
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <file>\n"
-msgstr " %s [PŘEPÍNAČE] [SOUBOR]\n"
+msgstr " %s [PŘEPÍNAČE] <soubor>\n"
 
 #: disk-utils/fsck.cramfs.c:110
 msgid " -a                       for compatibility only, ignored\n"
@@ -3765,17 +3762,16 @@ msgstr ""
 "Zobrazuji za použití této geometrie."
 
 #: disk-utils/sfdisk.c:1147
-#, fuzzy
 msgid "no partition table present"
-msgstr "není přítomna žádná tabulka rozdělení disku."
+msgstr "není přítomna žádná tabulka rozdělení disku"
 
 #: disk-utils/sfdisk.c:1149
-#, fuzzy, c-format
+#, c-format
 msgid "strange, only %d partition defined"
 msgid_plural "strange, only %d partitions defined"
-msgstr[0] "zvláštní - počet definovaných oddílů je pouze %d."
-msgstr[1] "zvláštní - počet definovaných oddílů je pouze %d."
-msgstr[2] "zvláštní - počet definovaných oddílů je pouze %d."
+msgstr[0] "zvláštní - pouze %d oddíl definován"
+msgstr[1] "zvláštní - pouze %d oddíly definovány"
+msgstr[2] "zvláštní - pouze %d oddílů definováno"
 
 #: disk-utils/sfdisk.c:1159
 #, c-format
@@ -4521,9 +4517,9 @@ msgid "write error"
 msgstr "chyba při zápisu"
 
 #: include/optutils.h:81
-#, fuzzy, c-format
+#, c-format
 msgid "%s: these options aremutually exclusive:"
-msgstr "%s a %s se vzájemně vylučují"
+msgstr "%s: tyto přepínače se vzájemně vylučují:"
 
 #: include/pt-mbr-partnames.h:1
 msgid "Empty"
@@ -5162,9 +5158,8 @@ msgid "Syncing disks."
 msgstr "Synchronizují se disky."
 
 #: libfdisk/src/bsd.c:800
-#, fuzzy
 msgid "BSD label is not nested within a DOS partition."
-msgstr "BSD popis disku není zanořen do dosového oddílu"
+msgstr "BSD popis disku není zanořen do dosového oddílu."
 
 #: libfdisk/src/bsd.c:829
 #, c-format
@@ -5575,10 +5570,10 @@ msgstr "Prostředí obnovy Windows"
 msgid "IBM General Parallel Fs"
 msgstr "Obecný paralelní systém IBM"
 
+# Proper name of LVM-like technology
 #: libfdisk/src/gpt.c:165
-#, fuzzy
 msgid "Microsoft Storage Spaces"
-msgstr "Vyhrazeno pro Microsoft"
+msgstr "Storage Spaces Microsoftu"
 
 #: libfdisk/src/gpt.c:168
 msgid "HP-UX data"
@@ -5991,9 +5986,9 @@ msgid "Enter GUID specific bit"
 msgstr "Zadejte bit specifický pro GUID"
 
 #: libfdisk/src/gpt.c:2262
-#, fuzzy, c-format
+#, c-format
 msgid "failed to toggle unsupported bit %lu"
-msgstr "nezdařilo se přeložit název %s port %s: %s"
+msgstr "nepodporovaný bit %lu se nepodařilo přepnout"
 
 #: libfdisk/src/gpt.c:2276
 #, c-format
@@ -6101,9 +6096,8 @@ msgid "Linux native"
 msgstr "Linux nativní"
 
 #: libfdisk/src/sgi.c:143
-#, fuzzy
 msgid "SGI info created on second sector."
-msgstr "Údaje SGI vytvořeny na druhém sektoru"
+msgstr "Údaje SGI vytvořeny na druhém sektoru."
 
 #: libfdisk/src/sgi.c:243
 msgid "Detected an SGI disklabel with wrong checksum."
@@ -6493,9 +6487,9 @@ msgid "libc pseudo-random functions"
 msgstr "pseudonáhodné funkce libc"
 
 #: login-utils/chfn.c:83 login-utils/chsh.c:72
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] [<username>]\n"
-msgstr " %s [přepínače] [uživatel]\n"
+msgstr " %s [přepínače] [<uživatel>]\n"
 
 #: login-utils/chfn.c:85
 msgid " -f, --full-name <full-name>  real name\n"
@@ -6767,9 +6761,8 @@ msgid " -t, --until <time>   display the lines until the specified time\n"
 msgstr " -t, --until <čas>    zobrazí řádky do zadaného času vyjma\n"
 
 #: login-utils/last.c:567
-#, fuzzy
 msgid " -p, --present <time> display who were present at the specified time\n"
-msgstr " -p, --present <čas>  zobrazí, kdo byl v zadaný čas přihlášen\n"
+msgstr " -p, --present <čas>  zobrazí, kdo byl v zadaný čas přítomen\n"
 
 #: login-utils/last.c:568
 msgid " -w, --fullnames      display full user and domain names\n"
@@ -6780,15 +6773,13 @@ msgid " -x, --system         display system shutdown entries and run level chang
 msgstr " -x, --system         zobrazí záznamy s vypnutím systému a změn běhové úrovně\n"
 
 #: login-utils/last.c:570
-#, fuzzy
 msgid ""
 "     --time-format <format>  show timestamps in the specified <format>:\n"
 "                               notime|short|full|iso\n"
 msgstr ""
-"     --time-format <formát>  zobrazuje časové údaje v daném formátu:\n"
-"                             [delta|reltime|ctime|notime|iso]\n"
-"                             (rozdíl, relativní, čitelný, žádný, ISO)\n"
-"Uspání/probuzení způsobuje nepřesnosti ve formátu ctime a iso.\n"
+"     --time-format <formát>  zobrazí časové údaje v daném formátu:\n"
+"                             notime, short, full, iso\n"
+"                             (žádný, krátký, celý, ISO)\n"
 
 #: login-utils/last.c:849
 #, c-format
@@ -7275,15 +7266,15 @@ msgstr "počet procesů spuštěných uživatelem"
 msgid "Running processes"
 msgstr "Spuštěné procesy"
 
+# TODO: Plural
 #: login-utils/lslogins.c:287 misc-utils/findmnt.c:158 misc-utils/lsblk.c:208
 #, c-format
 msgid "too many columns specified, the limit is %zu columns"
-msgstr ""
+msgstr "zadáno příliš mnoho sloupců, omezení je %zu sloupců"
 
 #: login-utils/lslogins.c:352
-#, fuzzy
 msgid "unsupported time type"
-msgstr "nepodporovaný typo času"
+msgstr "nepodporovaný typ času"
 
 #: login-utils/lslogins.c:618
 msgid "failed to get supplementary groups"
@@ -7328,7 +7319,6 @@ msgid " -e, --export             display in an export-able output format\n"
 msgstr " -e, --export             zobrazí výstup v exportovatelném tvaru\n"
 
 #: login-utils/lslogins.c:1190
-#, fuzzy
 msgid " -f, --failed             display data about the users' last failed logins\n"
 msgstr " -f, --failed             zobrazí údaje o posledním chybném přihlášení uživatelů\n"
 
@@ -7357,9 +7347,8 @@ msgid " -n, --newline            display each piece of information on a new line
 msgstr " -n, --newline            zobrazí každý údaj na samostatném řádku\n"
 
 #: login-utils/lslogins.c:1197
-#, fuzzy
 msgid "     --noheadings         don't print headings\n"
-msgstr " -n, --noheadings     nevypíše záhlaví\n"
+msgstr "     --noheadings         nevypisuje záhlaví\n"
 
 #: login-utils/lslogins.c:1198
 msgid "     --notruncate         don't truncate output\n"
@@ -7629,19 +7618,16 @@ msgstr[1] "nelze zadat více jak %d doplňkové skupiny"
 msgstr[2] "nelze zadat více jak %d doplňkových skupin"
 
 #: login-utils/su-common.c:860
-#, fuzzy
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
-msgstr "ignoruje se --preserve-environment, vylučuje se s přepínačem --login."
+msgstr "ignoruje se --preserve-environment, vzájemně se vylučuje s přepínačem --login"
 
 #: login-utils/su-common.c:871
-#, fuzzy
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
-msgstr "přepínače --{shell,fast,command,session-command,login} a --user se vzájemně vylučují."
+msgstr "přepínače --{shell,fast,command,session-command,login} a --user se vzájemně vylučují"
 
 #: login-utils/su-common.c:875
-#, fuzzy
 msgid "no command was specified"
-msgstr "nezadána žádná akce"
+msgstr "nezadán žádný příkaz"
 
 #: login-utils/su-common.c:889
 msgid "only root can specify alternative groups"
@@ -7739,18 +7725,16 @@ msgid "invalid timeout argument"
 msgstr "neplatný argument přepínače --timeout"
 
 #: login-utils/sulogin.c:898
-#, fuzzy
 msgid "only superuser can run this program"
-msgstr "tento program může spouštět jen superuživatel."
+msgstr "tento program může spouštět jen superuživatel"
 
 #: login-utils/sulogin.c:941
 msgid "cannot open console"
 msgstr "nelze otevřít konzolu"
 
 #: login-utils/sulogin.c:948
-#, fuzzy
 msgid "cannot open password database"
-msgstr "databázi s hesly nelze otevřít."
+msgstr "databázi s hesly nelze otevřít"
 
 #: login-utils/sulogin.c:1007
 msgid "crypt failed"
@@ -8398,12 +8382,11 @@ msgid "unknown signal %s; valid signals:"
 msgstr "neznámý signál %s; platné signály:"
 
 #: misc-utils/kill.c:306
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <pid>|<name>...\n"
-msgstr " %s [přepínače] <PID|název>…\n"
+msgstr " %s [přepínače] <PID>|<název>…\n"
 
 #: misc-utils/kill.c:309
-#, fuzzy
 msgid ""
 " -a, --all              do not restrict the name-to-pid conversion to processes\n"
 "                          with the same uid as the present process\n"
@@ -8412,25 +8395,24 @@ msgstr ""
 "                        shodným se současným procesem\n"
 
 #: misc-utils/kill.c:311
-#, fuzzy
 msgid " -s, --signal <signal>  send this <signal> instead of SIGTERM\n"
-msgstr " -s, --signal <signál>  zašle zadaný signál\n"
+msgstr " -s, --signal <signál>  zašle tento <signál> místo signálu SIGTERM\n"
 
 #: misc-utils/kill.c:313
-#, fuzzy
 msgid " -q, --queue <value>    use sigqueue(2), not kill(2), and pass <value> as data\n"
-msgstr " -q, --queue <signál>   použije sigqueue(2) místo kill(2)\n"
+msgstr ""
+" -q, --queue <hodnota>  použije sigqueue(2) místo kill(2) a jako data\n"
+"                        předá <hodnotu>\n"
 
 #: misc-utils/kill.c:315
 msgid " -p, --pid              print pids without signaling them\n"
 msgstr " -p, --pid              vypíše čísla procesů, aniž by jim zaslal signál\n"
 
 #: misc-utils/kill.c:316
-#, fuzzy
 msgid " -l, --list[=<signal>]  list signal names, or convert a signal number to a name\n"
 msgstr ""
-" -l, --list [=<signál>] vypíše seznam názvů signálů, nebo převede\n"
-"                        jeden na název\n"
+" -l, --list[=<signál>]  vypíše seznam názvů signálů, nebo převede číslo\n"
+"                        signálu na název\n"
 
 #: misc-utils/kill.c:317
 msgid " -L, --table            list signal names and numbers\n"
@@ -8469,9 +8451,9 @@ msgid "argument error"
 msgstr "chyba argumentu"
 
 #: misc-utils/kill.c:432
-#, fuzzy, c-format
+#, c-format
 msgid "invalid signal name or number: %s"
-msgstr "neplatný argument hodnoty signálu"
+msgstr "neplatný název nebo číslo signálu: %s"
 
 #: misc-utils/kill.c:449
 #, c-format
@@ -8488,19 +8470,19 @@ msgid "use of 'kill --pid' option as command name is deprecated"
 msgstr "použití přepínače „kill --pid“ jako názvu příkazu je zastaralé"
 
 #: misc-utils/kill.c:512
-#, fuzzy, c-format
+#, c-format
 msgid "cannot find process \"%s\""
-msgstr "proces „%s“ nelze nalézt."
+msgstr "proces „%s“ nelze nalézt"
 
 #: misc-utils/logger.c:133
-#, fuzzy, c-format
+#, c-format
 msgid "unknown facility name: %s"
-msgstr "neznámý název oboru (facility): %s."
+msgstr "neznámý název oboru (facility): %s"
 
 #: misc-utils/logger.c:142
-#, fuzzy, c-format
+#, c-format
 msgid "unknown priority name: %s"
-msgstr "neznámý název priority: %s."
+msgstr "neznámý název priority: %s"
 
 # openlog is function name
 #: misc-utils/logger.c:152
@@ -8893,7 +8875,6 @@ msgid " -t, --topology       output info about topology\n"
 msgstr " -t, --topology       vypíše údaje o topologii\n"
 
 #: misc-utils/lsblk.c:1504
-#, fuzzy
 msgid " -x, --sort <column>  sort output by <column>\n"
 msgstr " -x, --sort <sloupec> výstup seřadí podle <sloupce>\n"
 
@@ -8912,9 +8893,8 @@ msgid "failed to access sysfs directory: %s"
 msgstr "nezdařilo se přistoupit k adresáři v sysfs: %s"
 
 #: misc-utils/lsblk.c:1711
-#, fuzzy
 msgid "the sort column has to be among the output columns"
-msgstr "řadicí sloupec se musí nacházet mezi sloupci výstupu."
+msgstr "řadicí sloupec se musí nacházet mezi sloupci výstupu"
 
 #: misc-utils/lslocks.c:72
 msgid "command of the process holding the lock"
@@ -9033,16 +9013,15 @@ msgid "failed to parse length"
 msgstr "nezdařilo se rozebrat délku"
 
 #: misc-utils/mcookie.c:177
-#, fuzzy
 msgid "--max-size ignored when used without --file"
-msgstr "--max-size se ignoruje, když není použit s --file."
+msgstr "--max-size se ignoruje, když není použit s --file"
 
 #: misc-utils/mcookie.c:185
-#, fuzzy, c-format
+#, c-format
 msgid "Got %d byte from %s\n"
 msgid_plural "Got %d bytes from %s\n"
-msgstr[0] "Obdrženo %d bajtů z %s\n"
-msgstr[1] "Obdrženo %d bajtů z %s\n"
+msgstr[0] "Obdržen %d bajt z %s\n"
+msgstr[1] "Obdrženy %d bajty z %s\n"
 msgstr[2] "Obdrženo %d bajtů z %s\n"
 
 #: misc-utils/namei.c:186
@@ -9056,9 +9035,9 @@ msgid "%s - No such file or directory\n"
 msgstr "%s – Takový soubor nebo adresář neexistuje\n"
 
 #: misc-utils/namei.c:429
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <pathname>...\n"
-msgstr " %s [přepínače] <PID|název>…\n"
+msgstr " %s [přepínače] <cesta>…\n"
 
 #: misc-utils/namei.c:432
 msgid ""
@@ -9128,18 +9107,17 @@ msgid "%s: rename to %s failed"
 msgstr "%s: přejmenování na %s selhalo"
 
 #: misc-utils/rename.c:102
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <expression> <replacement> <file>...\n"
-msgstr " %s [přepínače] výraz náhrada soubor…\n"
+msgstr " %s [přepínače] <výraz> <náhrada> <soubor>…\n"
 
 #: misc-utils/rename.c:105
 msgid " -v, --verbose    explain what is being done\n"
 msgstr " -v, --verbose    vysvětlí, co se děje\n"
 
 #: misc-utils/rename.c:106
-#, fuzzy
 msgid " -s, --symlink    act on the target of symlinks\n"
-msgstr " -s, --symlink    pracuje s cílem symbolického odkazu\n"
+msgstr " -s, --symlink    pracuje s cílem symbolických odkazů\n"
 
 #: misc-utils/uuidd.c:76
 msgid ""
@@ -9419,7 +9397,7 @@ msgid "%s: failed to create a signature backup"
 msgstr "%s: zálohu signatury se nepodařilo vytvořit"
 
 #: misc-utils/wipefs.c:361
-#, fuzzy, c-format
+#, c-format
 msgid "%s: calling ioctl to re-read partition table: %m\n"
 msgstr "%s: volá se ioctl() pro znovunačtení tabulky rozdělení disku: %m\n"
 
@@ -9428,9 +9406,9 @@ msgid "failed to create a signature backup, $HOME undefined"
 msgstr "zálohu signatury se nepodařilo vytvořit, $HOME není definována"
 
 #: misc-utils/wipefs.c:411
-#, fuzzy, c-format
+#, c-format
 msgid "%s: ignoring nested \"%s\" partition table on non-whole disk device"
-msgstr "%s: vnořená tabulka rozdělení disku „%s“ na necelodiskovém zařízení se ignoruje."
+msgstr "%s: vnořená tabulka rozdělení disku „%s“ na necelodiskovém zařízení se ignoruje"
 
 #: misc-utils/wipefs.c:428
 #, c-format
@@ -10903,9 +10881,9 @@ msgid "no mountpoint specified"
 msgstr "nezadán žádný bod připojení"
 
 #: sys-utils/fstrim.c:318
-#, fuzzy, c-format
+#, c-format
 msgid "%s: the discard operation is not supported"
-msgstr "%s: operace zahození (discard) není podporována."
+msgstr "%s: operace zahození (discard) není podporována"
 
 #: sys-utils/hwclock.c:231
 #, c-format
@@ -11170,20 +11148,20 @@ msgstr ""
 "Opravuji míru posunu o %4$f sekund.\n"
 
 #: sys-utils/hwclock.c:1101
-#, fuzzy, c-format
+#, c-format
 msgid "Time since last adjustment is %d second\n"
 msgid_plural "Time since last adjustment is %d seconds\n"
-msgstr[0] "Počet sekund od poslední opravy: %d\n"
-msgstr[1] "Počet sekund od poslední opravy: %d\n"
-msgstr[2] "Počet sekund od poslední opravy: %d\n"
+msgstr[0] "Doba od poslední opravy je %d sekunda\n"
+msgstr[1] "Doba od poslední opravy je %d sekundy\n"
+msgstr[2] "Doba od poslední opravy je %d sekund\n"
 
 #: sys-utils/hwclock.c:1105
-#, fuzzy, c-format
+#, c-format
 msgid "Need to insert %d second and refer time back %.6f seconds ago\n"
 msgid_plural "Need to insert %d seconds and refer time back %.6f seconds ago\n"
-msgstr[0] "Potřebná změna času: sekund vpřed: %d ; sekund zpět: %.6f\n"
-msgstr[1] "Potřebná změna času: sekund vpřed: %d ; sekund zpět: %.6f\n"
-msgstr[2] "Potřebná změna času: sekund vpřed: %d ; sekund zpět: %.6f\n"
+msgstr[0] "Je třeba vložit %d sekundu a čas vrátit zpět o %.6f sekund\n"
+msgstr[1] "Je třeba vložit %d sekundy a čas vrátit zpět o %.6f sekund\n"
+msgstr[2] "Je třeba vložit %d sekund a čas vrátit zpět o %.6f sekund\n"
 
 #: sys-utils/hwclock.c:1138
 #, c-format
@@ -16526,9 +16504,8 @@ msgid " -v, --no-squeezing        output identical lines\n"
 msgstr " -v, --no-squeezing        ve výpisu nevynechá shodné řádky\n"
 
 #: text-utils/hexdump.c:196
-#, fuzzy
 msgid "calling hexdump as od has been deprecated in favor of GNU coreutils od"
-msgstr "Volání hexdump ve stylu od bylo prohlášeno za zastaralé ve prospěch „od“ z GNU coreutils."
+msgstr "Volání hexdump ve stylu od bylo prohlášeno za zastaralé ve prospěch „od“ z GNU coreutils"
 
 #: text-utils/hexdump-display.c:365
 msgid "all input file arguments failed"
@@ -16650,20 +16627,20 @@ msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Stiskněte mezerník pro pokračování, 'q' pro ukončení.]"
 
 #: text-utils/more.c:1235
-#, fuzzy, c-format
+#, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
-msgstr[0] "…přeskakuji zpět o počet stran: %d"
-msgstr[1] "…přeskakuji zpět o počet stran: %d"
-msgstr[2] "…přeskakuji zpět o počet stran: %d"
+msgstr[0] "…zpět o %d stranu"
+msgstr[1] "…zpět o %d strany"
+msgstr[2] "…zpět o %d stran"
 
 #: text-utils/more.c:1283
-#, fuzzy, c-format
+#, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
-msgstr[0] "…přeskakuji o počet řádků: %d"
-msgstr[1] "…přeskakuji o počet řádků: %d"
-msgstr[2] "…přeskakuji o počet řádků: %d"
+msgstr[0] "…přeskakuje se %d řádek"
+msgstr[1] "…přeskakují se %d řádky"
+msgstr[2] "…přeskakuje se %d řádků"
 
 #: text-utils/more.c:1321
 msgid ""
