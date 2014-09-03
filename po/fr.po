@@ -12,10 +12,10 @@
 # David Prévot <david@tilapin.org>, 2010-2014.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.25-rc3\n"
+"Project-Id-Version: util-linux 2.25.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2014-08-27 14:21+0200\n"
-"PO-Revision-Date: 2014-07-15 14:21-0400\n"
+"POT-Creation-Date: 2014-08-27 14:59+0200\n"
+"PO-Revision-Date: 2014-08-27 16:24-0400\n"
 "Last-Translator: David Prévot <david@tilapin.org>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "Language: fr\n"
@@ -230,7 +230,7 @@ msgstr "Amorçable"
 
 #: disk-utils/cfdisk.c:148
 msgid "Toggle bootable flag of the current partition"
-msgstr "Basculer l'indicateur d'amorçage de la partition actuelle"
+msgstr "Modifier l'indicateur d'amorçage de la partition actuelle"
 
 #: disk-utils/cfdisk.c:149
 msgid "Delete"
@@ -386,7 +386,7 @@ msgstr "-------      -------------"
 
 #: disk-utils/cfdisk.c:1643
 msgid "  b          Toggle bootable flag of the current partition"
-msgstr "  b          Basculer l'indicateur d'amorçage sur la partition actuelle"
+msgstr "  b          Modifier l'indicateur d'amorçage sur la partition actuelle"
 
 #: disk-utils/cfdisk.c:1644
 msgid "  d          Delete the current partition"
@@ -409,9 +409,8 @@ msgid "  t          Change the partition type"
 msgstr "  t          Modifier le type de partition"
 
 #: disk-utils/cfdisk.c:1649
-#, fuzzy
 msgid "  s          Fix partitions order (only when in disarray)"
-msgstr "  s          Corriger l'ordre des partitions"
+msgstr "  s          Corriger l'ordre des partitions (seulement en cas de désordre)"
 
 #: disk-utils/cfdisk.c:1650
 msgid "  W          Write partition table to disk (must enter upper case W)"
@@ -480,14 +479,14 @@ msgid "Partition size: "
 msgstr "Taille de partition : "
 
 #: disk-utils/cfdisk.c:1810
-#, fuzzy, c-format
+#, c-format
 msgid "Changed type of partition %zu."
-msgstr "Type de la partition %zu modifié."
+msgstr "Type de partition %zu modifié."
 
 #: disk-utils/cfdisk.c:1812
-#, fuzzy, c-format
+#, c-format
 msgid "The type of partition %zu is unchanged."
-msgstr "Type de partition %zu non modifié : %s."
+msgstr "Le type de partition %zu n’est pas modifié."
 
 #: disk-utils/cfdisk.c:1827
 msgid "Device open in read-only mode"
@@ -498,9 +497,8 @@ msgid "Are you sure you want to write the partition table to disk? "
 msgstr "Voulez-vous vraiment écrire la table de partitions sur le disque ? "
 
 #: disk-utils/cfdisk.c:1834
-#, fuzzy
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
-msgstr "Tapez « oui » ou « non » ou appuyez sur Échap pour quitter la fenêtre de dialogue."
+msgstr "Tapez « oui » ou « non » ou appuyez sur Échap pour quitter cette fenêtre de dialogue."
 
 #: disk-utils/cfdisk.c:1839 login-utils/lslogins.c:209 sys-utils/lscpu.c:1249
 #: sys-utils/lscpu.c:1259
@@ -946,9 +944,8 @@ msgstr ""
 "Soyez prudent avant d'utiliser la commande d'écriture.\n"
 
 #: disk-utils/fdisk.c:973
-#, fuzzy
 msgid "A hybrid GPT was detected. You have to sync the hybrid MBR manually (expert command 'M')."
-msgstr "Le GPT hybride est détecté. Vous devez synchroniser le secteur d’amorçage hybride vous même (commande pour spécialistes « M »)."
+msgstr "Un GPT hybride a été détecté. Vous devez synchroniser le secteur d’amorçage hybride vous même (commande pour spécialistes « M »)."
 
 #: disk-utils/fdisk-menu.c:95
 msgid "Generic"
@@ -1092,19 +1089,19 @@ msgstr "entrer dans le secteur d’amorçage (MBR) de protection ou hybride"
 
 #: disk-utils/fdisk-menu.c:165
 msgid "toggle the legacy BIOS bootable flag"
-msgstr "basculer l'indicateur d'amorçage pour vieux BIOS"
+msgstr "modifier l'indicateur d'amorçage pour vieux BIOS"
 
 #: disk-utils/fdisk-menu.c:166
 msgid "toggle the no block IO protocol flag"
-msgstr "basculer l'indicateur de protocole d’E/S sans bloc"
+msgstr "modifier l'indicateur de protocole d’E/S sans bloc"
 
 #: disk-utils/fdisk-menu.c:167
 msgid "toggle the required partition flag"
-msgstr "basculer l'indicateur de partition nécessaire"
+msgstr "modifier l'indicateur de partition nécessaire"
 
 #: disk-utils/fdisk-menu.c:168
 msgid "toggle the GUID specific bits"
-msgstr "basculer les bits spécifiques au GUID"
+msgstr "modifier les bits spécifiques au GUID"
 
 #: disk-utils/fdisk-menu.c:178
 msgid "Sun"
@@ -1112,11 +1109,11 @@ msgstr "Sun"
 
 #: disk-utils/fdisk-menu.c:179
 msgid "toggle the read-only flag"
-msgstr "basculer l'indicateur de lecture seule"
+msgstr "modifier l'indicateur de lecture seule"
 
 #: disk-utils/fdisk-menu.c:180
 msgid "toggle the mountable flag"
-msgstr "basculer l'indicateur « montable »"
+msgstr "modifier l'indicateur « montable »"
 
 #: disk-utils/fdisk-menu.c:182
 msgid "change number of alternate cylinders"
@@ -1164,7 +1161,7 @@ msgstr "DOS (secteur d'amorçage)"
 
 #: disk-utils/fdisk-menu.c:209
 msgid "toggle a bootable flag"
-msgstr "basculer l'indicateur d'amorçage"
+msgstr "modifier un indicateur d'amorçage"
 
 #: disk-utils/fdisk-menu.c:210
 msgid "edit nested BSD disklabel"
@@ -1537,9 +1534,9 @@ msgid "the -l option can be used with one device only -- ignore"
 msgstr "l'option -l ne peut être utilisée qu'avec un seul périphérique — ignorée"
 
 #: disk-utils/fsck.cramfs.c:108 misc-utils/whereis.c:168
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <file>\n"
-msgstr " %s [options] [<fichier>]\n"
+msgstr " %s [options] <fichier>\n"
 
 #: disk-utils/fsck.cramfs.c:110
 msgid " -a                       for compatibility only, ignored\n"
@@ -3711,16 +3708,15 @@ msgstr ""
 "Pour ce rapport, cette géométrie sera supposée telle."
 
 #: disk-utils/sfdisk.c:1147
-#, fuzzy
 msgid "no partition table present"
-msgstr "aucune table de partitions présente."
+msgstr "aucune table de partitions présente"
 
 #: disk-utils/sfdisk.c:1149
-#, fuzzy, c-format
+#, c-format
 msgid "strange, only %d partition defined"
 msgid_plural "strange, only %d partitions defined"
-msgstr[0] "étrange, seulement %d partitions définies."
-msgstr[1] "étrange, seulement %d partitions définies."
+msgstr[0] "étrange, seulement %d partition définie"
+msgstr[1] "étrange, seulement %d partitions définies"
 
 #: disk-utils/sfdisk.c:1159
 #, c-format
@@ -4462,10 +4458,11 @@ msgstr ""
 msgid "write error"
 msgstr "erreur d'écriture"
 
+# NOTE: s/aremutually/are mutually/
 #: include/optutils.h:81
-#, fuzzy, c-format
+#, c-format
 msgid "%s: these options aremutually exclusive:"
-msgstr "%s et %s s'excluent mutuellement"
+msgstr "%s : ces options s'excluent mutuellement :"
 
 #: include/pt-mbr-partnames.h:1
 msgid "Empty"
@@ -5104,9 +5101,8 @@ msgid "Syncing disks."
 msgstr "Synchronisation des disques."
 
 #: libfdisk/src/bsd.c:800
-#, fuzzy
 msgid "BSD label is not nested within a DOS partition."
-msgstr "L'étiquette BSD n’est pas imbriquée dans une partition DOS"
+msgstr "L'étiquette BSD n’est pas imbriquée dans une partition DOS."
 
 #: libfdisk/src/bsd.c:829
 #, c-format
@@ -5513,9 +5509,8 @@ msgid "IBM General Parallel Fs"
 msgstr "General Parallel File System IBM"
 
 #: libfdisk/src/gpt.c:165
-#, fuzzy
 msgid "Microsoft Storage Spaces"
-msgstr "Réservé Microsoft"
+msgstr "Espace de stockage Microsoft"
 
 #: libfdisk/src/gpt.c:168
 msgid "HP-UX data"
@@ -5926,9 +5921,9 @@ msgid "Enter GUID specific bit"
 msgstr "Entrez le bit spécifique au GUID"
 
 #: libfdisk/src/gpt.c:2262
-#, fuzzy, c-format
+#, c-format
 msgid "failed to toggle unsupported bit %lu"
-msgstr "échec de résolution du nom %s sur le port %s : %s"
+msgstr "échec de modification du bit %lu non pris en charge"
 
 #: libfdisk/src/gpt.c:2276
 #, c-format
@@ -6036,9 +6031,8 @@ msgid "Linux native"
 msgstr "native Linux"
 
 #: libfdisk/src/sgi.c:143
-#, fuzzy
 msgid "SGI info created on second sector."
-msgstr "informations SGI créées sur le deuxième secteur"
+msgstr "Informations SGI créées sur le deuxième secteur."
 
 #: libfdisk/src/sgi.c:243
 msgid "Detected an SGI disklabel with wrong checksum."
@@ -6425,9 +6419,9 @@ msgid "libc pseudo-random functions"
 msgstr "fonctions pseudoaléatoires de libc"
 
 #: login-utils/chfn.c:83 login-utils/chsh.c:72
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] [<username>]\n"
-msgstr " %s [options] [utilisateur]\n"
+msgstr " %s [options] [<utilisateur>]\n"
 
 #: login-utils/chfn.c:85
 msgid " -f, --full-name <full-name>  real name\n"
@@ -6673,7 +6667,7 @@ msgstr " -d, --dns            reconvertir l’adresse IP en nom d'hôte\n"
 #: login-utils/last.c:560
 #, c-format
 msgid " -f, --file <file>    use a specific file instead of %s\n"
-msgstr " -f, --file <fichier> utiliser le fichier indiqué plutôt que %s\n"
+msgstr " -f, --file <fichier>  utiliser le fichier indiqué plutôt que %s\n"
 
 #: login-utils/last.c:561
 msgid " -F, --fulltimes      print full login and logout times and dates\n"
@@ -6689,7 +6683,7 @@ msgstr ""
 
 #: login-utils/last.c:563
 msgid " -n, --limit <number> how many lines to show\n"
-msgstr " -n, --limit <nombre> nombre de lignes à afficher\n"
+msgstr " -n, --limit <nombre>  nombre de lignes à afficher\n"
 
 #: login-utils/last.c:564
 msgid " -R, --nohostname     don't display the hostname field\n"
@@ -6704,9 +6698,8 @@ msgid " -t, --until <time>   display the lines until the specified time\n"
 msgstr " -t, --until <date>   afficher les lignes jusqu’à la date indiquée\n"
 
 #: login-utils/last.c:567
-#, fuzzy
 msgid " -p, --present <time> display who were present at the specified time\n"
-msgstr " -p, --present <date> afficher les utilisateurs présents à la date indiquée\n"
+msgstr " -p, --present <date>  afficher les utilisateurs présents à la date indiquée\n"
 
 #: login-utils/last.c:568
 msgid " -w, --fullnames      display full user and domain names\n"
@@ -6719,14 +6712,12 @@ msgstr ""
 "                        niveau d'exécution (run level)\n"
 
 #: login-utils/last.c:570
-#, fuzzy
 msgid ""
 "     --time-format <format>  show timestamps in the specified <format>:\n"
 "                               notime|short|full|iso\n"
 msgstr ""
-"     --time-format <format>  afficher l’horodatage au format :\n"
-"                               [delta|reltime|ctime|notime|iso]\n"
-"La mise en veille et le réveil rendront ctime et l’horodatage ISO inexact).\n"
+"     --time-format <format>  afficher l’horodatage au <format> indiqué :\n"
+"                               notime|short|full|iso\n"
 
 #: login-utils/last.c:849
 #, c-format
@@ -7216,10 +7207,9 @@ msgstr "Processus en cours d'exécution"
 #: login-utils/lslogins.c:287 misc-utils/findmnt.c:158 misc-utils/lsblk.c:208
 #, c-format
 msgid "too many columns specified, the limit is %zu columns"
-msgstr ""
+msgstr "trop de colonnes indiquées, la limite est de %zu colonnes"
 
 #: login-utils/lslogins.c:352
-#, fuzzy
 msgid "unsupported time type"
 msgstr "type mime non pris en charge"
 
@@ -7255,20 +7245,25 @@ msgstr " %s [options]\n"
 
 #: login-utils/lslogins.c:1187
 msgid " -a, --acc-expiration     display info about passwords expiration\n"
-msgstr " -a, --acc-expiration     afficher les renseignements sur l’expiration des mots de passe\n"
+msgstr ""
+" -a, --acc-expiration     afficher les renseignements sur l’expiration des\n"
+"                            mots de passe\n"
 
 #: login-utils/lslogins.c:1188
 msgid " -c, --colon-separate     display data in a format similar to /etc/passwd\n"
-msgstr " -c, --colon-separate     afficher les données dans un format similaire à /etc/passwd\n"
+msgstr ""
+" -c, --colon-separate     afficher les données dans un format similaire à\n"
+"                            /etc/passwd\n"
 
 #: login-utils/lslogins.c:1189
 msgid " -e, --export             display in an export-able output format\n"
 msgstr " -e, --export             afficher dans un format de sortie exportable\n"
 
 #: login-utils/lslogins.c:1190
-#, fuzzy
 msgid " -f, --failed             display data about the users' last failed logins\n"
-msgstr " -f, --failed             afficher les données sur les dernières connexions échouées des utilisateurs\n"
+msgstr ""
+" -f, --failed             afficher les données sur les dernières connexions\n"
+"                            échouées des utilisateurs\n"
 
 #: login-utils/lslogins.c:1191
 msgid " -G, --groups-info        display information about groups\n"
@@ -7276,15 +7271,19 @@ msgstr " -G, --groups-info        afficher des renseignements sur les groupes\n"
 
 #: login-utils/lslogins.c:1192
 msgid " -g, --groups=<groups>    display users belonging to a group in <groups>\n"
-msgstr " -g, --groups=<groupes>   afficher les utilisateurs appartenant à un des <groupes>\n"
+msgstr ""
+" -g, --groups=<groupes>   afficher les utilisateurs appartenant à un des\n"
+"                            <groupes>\n"
 
 #: login-utils/lslogins.c:1193
 msgid " -L, --last               show info about the users' last login sessions\n"
-msgstr " -L, --last               afficher des renseignements sur les dernières sessions de connexion des utilisateurs\n"
+msgstr ""
+" -L, --last               afficher des renseignements sur les dernières\n"
+"                            sessions de connexion des utilisateurs\n"
 
 #: login-utils/lslogins.c:1194
 msgid " -l, --logins=<logins>    display only users from <logins>\n"
-msgstr " -l, --logins=<conn.>     n’afficher que les utilisateurs de <conn.>\n"
+msgstr " -l, --logins=<connexions>  n’afficher que les utilisateurs de <connexions>\n"
 
 #: login-utils/lslogins.c:1195
 msgid " -m, --supp-groups        display supplementary groups as well\n"
@@ -7295,9 +7294,8 @@ msgid " -n, --newline            display each piece of information on a new line
 msgstr " -n, --newline            afficher chaque renseignement sur une nouvelle ligne\n"
 
 #: login-utils/lslogins.c:1197
-#, fuzzy
 msgid "     --noheadings         don't print headings\n"
-msgstr " -n, --noheadings     ne pas afficher les en-têtes\n"
+msgstr "     --noheadings         ne pas afficher les en-têtes\n"
 
 #: login-utils/lslogins.c:1198
 msgid "     --notruncate         don't truncate output\n"
@@ -7574,19 +7572,16 @@ msgstr[0] "l’indication d’%d groupe supplémentaire n’est pas possible"
 msgstr[1] "l’indication de %d groupes supplémentaires n’est pas possible"
 
 #: login-utils/su-common.c:860
-#, fuzzy
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
-msgstr "ignorer --preserve-environment, cette option et --login s'excluent mutuellement."
+msgstr "--preserve-environment ignorée, cette option s'exclue mutuellement avec --login"
 
 #: login-utils/su-common.c:871
-#, fuzzy
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
-msgstr "les options --{shell,fast,command,session-command,login} et --user s'excluent mutuellement."
+msgstr "les options --{shell,fast,command,session-command,login} et --user s'excluent mutuellement"
 
 #: login-utils/su-common.c:875
-#, fuzzy
 msgid "no command was specified"
-msgstr "Aucune action indiquée"
+msgstr "aucune commande n’a été indiquée"
 
 #: login-utils/su-common.c:889
 msgid "only root can specify alternative groups"
@@ -7686,16 +7681,14 @@ msgid "invalid timeout argument"
 msgstr "argument d'expiration de la minuterie incorrect"
 
 #: login-utils/sulogin.c:898
-#, fuzzy
 msgid "only superuser can run this program"
-msgstr "seul le superutilisateur peut exécuter ce programme."
+msgstr "seul le superutilisateur peut exécuter ce programme"
 
 #: login-utils/sulogin.c:941
 msgid "cannot open console"
 msgstr "impossible d'ouvrir la console"
 
 #: login-utils/sulogin.c:948
-#, fuzzy
 msgid "cannot open password database"
 msgstr "impossible d'ouvrir la base de données de mots de passe"
 
@@ -8153,7 +8146,7 @@ msgstr ""
 
 #: misc-utils/findmnt.c:1198
 msgid " -F, --tab-file <path>  alternative file for -s, -m or -k options\n"
-msgstr " -F, --tab-file <chem.> autre fichier pour les options -s, -m ou -k\n"
+msgstr " -F, --tab-file <chem.>  autre fichier pour les options -s, -m ou -k\n"
 
 #: misc-utils/findmnt.c:1199
 msgid " -f, --first-only       print the first found filesystem only\n"
@@ -8339,12 +8332,11 @@ msgid "unknown signal %s; valid signals:"
 msgstr "signal %s inconnu ; signaux valables :"
 
 #: misc-utils/kill.c:306
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <pid>|<name>...\n"
-msgstr " %s [options] <pid|nom> ...\n"
+msgstr " %s [options] <pid>|<nom> ...\n"
 
 #: misc-utils/kill.c:309
-#, fuzzy
 msgid ""
 " -a, --all              do not restrict the name-to-pid conversion to processes\n"
 "                          with the same uid as the present process\n"
@@ -8353,23 +8345,24 @@ msgstr ""
 "                          processus avec le même UID que le processus actuel\n"
 
 #: misc-utils/kill.c:311
-#, fuzzy
 msgid " -s, --signal <signal>  send this <signal> instead of SIGTERM\n"
-msgstr " -s, --signal <sig>     envoyer le signal indiqué\n"
+msgstr " -s, --signal <signal>  envoyer ce <signal> au lieu de SIGTERM\n"
 
 #: misc-utils/kill.c:313
-#, fuzzy
 msgid " -q, --queue <value>    use sigqueue(2), not kill(2), and pass <value> as data\n"
-msgstr " -q, --queue <sig>      utiliser sigqueue(2) au lieu de kill(2)\n"
+msgstr ""
+" -q, --queue <valeur>   utiliser sigqueue(2), pas kill(2), et passer <valeur>\n"
+"                          comme donnée\n"
 
 #: misc-utils/kill.c:315
 msgid " -p, --pid              print pids without signaling them\n"
 msgstr " -p, --pid              afficher les PID sans leur envoyer de signal\n"
 
 #: misc-utils/kill.c:316
-#, fuzzy
 msgid " -l, --list[=<signal>]  list signal names, or convert a signal number to a name\n"
-msgstr " -l, --list [=<signal>] afficher les noms de signal, ou en convertir un en nom\n"
+msgstr ""
+" -l, --list[=<signal>]  afficher les noms de signal, ou convertir un numéro de\n"
+"                          signal en nom\n"
 
 #: misc-utils/kill.c:317
 msgid " -L, --table            list signal names and numbers\n"
@@ -8408,9 +8401,9 @@ msgid "argument error"
 msgstr "erreur d'argument"
 
 #: misc-utils/kill.c:432
-#, fuzzy, c-format
+#, c-format
 msgid "invalid signal name or number: %s"
-msgstr "argument sigval incorrect"
+msgstr "nom ou numéro de signal incorrect : %s"
 
 #: misc-utils/kill.c:449
 #, c-format
@@ -8427,19 +8420,19 @@ msgid "use of 'kill --pid' option as command name is deprecated"
 msgstr "L’utilisation de l’option « kill --pid » comme nom de commande est obsolète"
 
 #: misc-utils/kill.c:512
-#, fuzzy, c-format
+#, c-format
 msgid "cannot find process \"%s\""
-msgstr "impossible de trouver le processus « %s »."
+msgstr "impossible de trouver le processus « %s »"
 
 #: misc-utils/logger.c:133
-#, fuzzy, c-format
+#, c-format
 msgid "unknown facility name: %s"
-msgstr "nom de service inconnu : %s."
+msgstr "nom de service inconnu : %s"
 
 #: misc-utils/logger.c:142
-#, fuzzy, c-format
+#, c-format
 msgid "unknown priority name: %s"
-msgstr "nom de priorité inconnu : %s."
+msgstr "nom de priorité inconnu : %s"
 
 #: misc-utils/logger.c:152
 #, c-format
@@ -8826,9 +8819,8 @@ msgid " -t, --topology       output info about topology\n"
 msgstr " -t, --topology       afficher des renseignements sur la topologie\n"
 
 #: misc-utils/lsblk.c:1504
-#, fuzzy
 msgid " -x, --sort <column>  sort output by <column>\n"
-msgstr " -x, --sort <colonne> trier la sortie par <colonne>\n"
+msgstr " -x, --sort <colonne>  trier la sortie par <colonne>\n"
 
 #: misc-utils/lsblk.c:1509 misc-utils/lslocks.c:518 sys-utils/prlimit.c:193
 #, c-format
@@ -8845,9 +8837,8 @@ msgid "failed to access sysfs directory: %s"
 msgstr "échec d'accès au répertoire de système de fichiers : %s"
 
 #: misc-utils/lsblk.c:1711
-#, fuzzy
 msgid "the sort column has to be among the output columns"
-msgstr "la colonne de tri doit être parmi les colonnes de sortie."
+msgstr "la colonne de tri doit être parmi les colonnes de sortie"
 
 #: misc-utils/lslocks.c:72
 msgid "command of the process holding the lock"
@@ -8962,15 +8953,14 @@ msgid "failed to parse length"
 msgstr "échec d'analyse de longueur"
 
 #: misc-utils/mcookie.c:177
-#, fuzzy
 msgid "--max-size ignored when used without --file"
-msgstr "--max-size ignorée lors d’utilisation sans --file."
+msgstr "--max-size ignorée lors d’utilisation sans --file"
 
 #: misc-utils/mcookie.c:185
-#, fuzzy, c-format
+#, c-format
 msgid "Got %d byte from %s\n"
 msgid_plural "Got %d bytes from %s\n"
-msgstr[0] "A obtenu %d octets de %s\n"
+msgstr[0] "A obtenu %d octet de %s\n"
 msgstr[1] "A obtenu %d octets de %s\n"
 
 #: misc-utils/namei.c:186
@@ -8984,9 +8974,9 @@ msgid "%s - No such file or directory\n"
 msgstr "%s — fichier ou répertoire inexistant\n"
 
 #: misc-utils/namei.c:429
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <pathname>...\n"
-msgstr " %s [options] <pid|nom> ...\n"
+msgstr " %s [options] <chemin> ...\n"
 
 #: misc-utils/namei.c:432
 msgid ""
@@ -9056,16 +9046,15 @@ msgid "%s: rename to %s failed"
 msgstr "%s : échec de renommage en %s"
 
 #: misc-utils/rename.c:102
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <expression> <replacement> <file>...\n"
-msgstr " %s [options] expression remplacement fichier ...\n"
+msgstr " %s [options] <expression> <remplacement> <fichier> ...\n"
 
 #: misc-utils/rename.c:105
 msgid " -v, --verbose    explain what is being done\n"
 msgstr " -v, --verbose    expliquer les actions en cours\n"
 
 #: misc-utils/rename.c:106
-#, fuzzy
 msgid " -s, --symlink    act on the target of symlinks\n"
 msgstr " -s, --symlink    agir sur la cible du lien symbolique\n"
 
@@ -9337,7 +9326,7 @@ msgid "%s: failed to create a signature backup"
 msgstr "%s : échec de création d’une sauvegarde de signature"
 
 #: misc-utils/wipefs.c:361
-#, fuzzy, c-format
+#, c-format
 msgid "%s: calling ioctl to re-read partition table: %m\n"
 msgstr "%s : appel d'ioctl pour relire la table de partitions : %m\n"
 
@@ -9346,9 +9335,9 @@ msgid "failed to create a signature backup, $HOME undefined"
 msgstr "échec de création d’une sauvegarde de signature, $HOME non définie"
 
 #: misc-utils/wipefs.c:411
-#, fuzzy, c-format
+#, c-format
 msgid "%s: ignoring nested \"%s\" partition table on non-whole disk device"
-msgstr "%s : ignorer la table de partitions imbriquée « %s » sur les périphériques disque non entiers."
+msgstr "%s : table de partitions imbriquée « %s » ignorée sur les périphériques disque non entiers"
 
 #: misc-utils/wipefs.c:428
 #, c-format
@@ -10814,9 +10803,9 @@ msgid "no mountpoint specified"
 msgstr "Aucun point de montage indiqué"
 
 #: sys-utils/fstrim.c:318
-#, fuzzy, c-format
+#, c-format
 msgid "%s: the discard operation is not supported"
-msgstr "%s : opération d’abandon non prise en charge."
+msgstr "%s : l’opération d’abandon n’est pas prise en charge"
 
 #: sys-utils/hwclock.c:231
 #, c-format
@@ -11078,17 +11067,17 @@ msgstr ""
 "Ajustement du facteur de dérive de %f secondes/jour\n"
 
 #: sys-utils/hwclock.c:1101
-#, fuzzy, c-format
+#, c-format
 msgid "Time since last adjustment is %d second\n"
 msgid_plural "Time since last adjustment is %d seconds\n"
-msgstr[0] "L'heure depuis le dernier ajustement est de %d secondes\n"
+msgstr[0] "L'heure depuis le dernier ajustement est de %d seconde\n"
 msgstr[1] "L'heure depuis le dernier ajustement est de %d secondes\n"
 
 #: sys-utils/hwclock.c:1105
-#, fuzzy, c-format
+#, c-format
 msgid "Need to insert %d second and refer time back %.6f seconds ago\n"
 msgid_plural "Need to insert %d seconds and refer time back %.6f seconds ago\n"
-msgstr[0] "Besoin d'insérer %d secondes et de faire une référence arrière dans le temps de %.6f secondes\n"
+msgstr[0] "Besoin d'insérer %d seconde et de faire une référence arrière dans le temps de %.6f secondes\n"
 msgstr[1] "Besoin d'insérer %d secondes et de faire une référence arrière dans le temps de %.6f secondes\n"
 
 #: sys-utils/hwclock.c:1138
@@ -12780,7 +12769,7 @@ msgstr "Type de virtualisation : "
 
 #: sys-utils/lscpu.c:1608
 msgid "Dispatching mode:"
-msgstr "Mode distribué :"
+msgstr "Mode distribué : "
 
 #: sys-utils/lscpu.c:1614
 #, c-format
@@ -12811,7 +12800,7 @@ msgstr " -c, --offline           n'afficher que les processeurs hors ligne\n"
 # s/an/in/
 #: sys-utils/lscpu.c:1636
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
-msgstr " -e, --extended[=<liste>] afficher en format étendu lisible\n"
+msgstr " -e, --extended[=<liste>]  afficher en format étendu lisible\n"
 
 #: sys-utils/lscpu.c:1637
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
@@ -15613,7 +15602,7 @@ msgstr "     --kill-chars <chaîne>  caractères supplémentaires pour tuer\n"
 
 #: term-utils/agetty.c:1895
 msgid "     --chdir <directory>    chdir before the login\n"
-msgstr "     --chdir <répertoire>   chdir avant la connexion\n"
+msgstr "     --chdir <répertoire>   changer de répertoire avant la connexion\n"
 
 #: term-utils/agetty.c:1896
 msgid "     --delay <number>       sleep seconds before prompt\n"
@@ -16386,7 +16375,6 @@ msgid " -v, --no-squeezing        output identical lines\n"
 msgstr " -v, --no-squeezing        afficher les lignes identiques\n"
 
 #: text-utils/hexdump.c:196
-#, fuzzy
 msgid "calling hexdump as od has been deprecated in favor of GNU coreutils od"
 msgstr "appeler hexdump en tant qu'od est obsolète. Veuillez utiliser od de GNU Coreutils."
 
@@ -16510,17 +16498,17 @@ msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Appuyer sur la barre d'espacement pour continuer, « q » pour quitter.]"
 
 #: text-utils/more.c:1235
-#, fuzzy, c-format
+#, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
-msgstr[0] "… reculé de %d pages"
+msgstr[0] "… reculé de %d page"
 msgstr[1] "… reculé de %d pages"
 
 #: text-utils/more.c:1283
-#, fuzzy, c-format
+#, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
-msgstr[0] "… escamotage de %d lignes"
+msgstr[0] "… escamotage de %d ligne"
 msgstr[1] "… escamotage de %d lignes"
 
 #: text-utils/more.c:1321
