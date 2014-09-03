@@ -132,7 +132,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char **argv)
 {
-	int c, rc = 0;
+	int c;
 	struct mountpoint_control ctl = { 0 };
 
 	static const struct option longopts[] = {
@@ -186,18 +186,15 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 	if (ctl.dev_devno)
-		rc = print_devno(&ctl);
-	else {
-		if (dir_to_device(&ctl)) {
-			if (!ctl.quiet)
-				printf(_("%s is not a mountpoint\n"), ctl.path);
-			return EXIT_FAILURE;
-		}
-		if (ctl.fs_devno)
-			printf("%u:%u\n", major(ctl.dev), minor(ctl.dev));
-		else if (!ctl.quiet)
-			printf(_("%s is a mountpoint\n"), ctl.path);
+		return print_devno(&ctl) ? EXIT_FAILURE : EXIT_SUCCESS;
+	if (dir_to_device(&ctl)) {
+		if (!ctl.quiet)
+			printf(_("%s is not a mountpoint\n"), ctl.path);
+		return EXIT_FAILURE;
 	}
-
-	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
+	if (ctl.fs_devno)
+		printf("%u:%u\n", major(ctl.dev), minor(ctl.dev));
+	else if (!ctl.quiet)
+		printf(_("%s is a mountpoint\n"), ctl.path);
+	return EXIT_SUCCESS;
 }
