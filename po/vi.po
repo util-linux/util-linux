@@ -8,10 +8,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux-2.25-rc3\n"
+"Project-Id-Version: util-linux-2.25.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2014-08-27 14:21+0200\n"
-"PO-Revision-Date: 2014-07-15 08:48+0700\n"
+"POT-Creation-Date: 2014-08-27 14:59+0200\n"
+"PO-Revision-Date: 2014-08-28 08:17+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
 "Language: vi\n"
@@ -239,7 +239,7 @@ msgstr "Xoá phân vùng hiện tại"
 
 #: disk-utils/cfdisk.c:150
 msgid "New"
-msgstr "Mới"
+msgstr "Tạo mới"
 
 #: disk-utils/cfdisk.c:150
 msgid "Create new partition from free space"
@@ -406,9 +406,8 @@ msgid "  t          Change the partition type"
 msgstr "  t          Thay đổi kiểu phân vùng"
 
 #: disk-utils/cfdisk.c:1649
-#, fuzzy
 msgid "  s          Fix partitions order (only when in disarray)"
-msgstr "  s          Sửa thứ tự các phân vùng"
+msgstr "  s          Sửa thứ tự các phân vùng (chỉ khi có xáo trộn)"
 
 #: disk-utils/cfdisk.c:1650
 msgid "  W          Write partition table to disk (must enter upper case W)"
@@ -477,14 +476,14 @@ msgid "Partition size: "
 msgstr "Cỡ phân vùng: "
 
 #: disk-utils/cfdisk.c:1810
-#, fuzzy, c-format
+#, c-format
 msgid "Changed type of partition %zu."
-msgstr "Kiểu đã thay đổi của phân vùng “%zu”."
+msgstr "Đổi kiểu của phân vùng “%zu”."
 
 #: disk-utils/cfdisk.c:1812
-#, fuzzy, c-format
+#, c-format
 msgid "The type of partition %zu is unchanged."
-msgstr "Kiểu của phân vùng %zu chưa thay đổi: %s."
+msgstr "Kiểu của phân vùng “%zu” chưa thay đổi."
 
 #: disk-utils/cfdisk.c:1827
 msgid "Device open in read-only mode"
@@ -495,7 +494,6 @@ msgid "Are you sure you want to write the partition table to disk? "
 msgstr "Bạn có chắc muốn ghi bảng phân vùng lên đĩa không? "
 
 #: disk-utils/cfdisk.c:1834
-#, fuzzy
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Gõ \"có\" hoặc \"không\" hay nhấn ESC để để lại hộp thoại."
 
@@ -953,9 +951,8 @@ msgstr ""
 "Hãy cẩn thận trước khi chạy lệnh ghi lại.\n"
 
 #: disk-utils/fdisk.c:973
-#, fuzzy
 msgid "A hybrid GPT was detected. You have to sync the hybrid MBR manually (expert command 'M')."
-msgstr "Tìm thấy GPT lai. Bạn phải đồng bộ hóa MBR lai bằng tay (cần lệnh “M”)."
+msgstr "Tìm thấy một GPT lai. Bạn phải đồng bộ hóa MBR lai bằng tay (cần lệnh “M”)."
 
 #: disk-utils/fdisk-menu.c:95
 msgid "Generic"
@@ -1540,9 +1537,9 @@ msgid "the -l option can be used with one device only -- ignore"
 msgstr "tùy chọn -l chỉ có thể sử dụng với một thiết bị mà thôi -- ignore"
 
 #: disk-utils/fsck.cramfs.c:108 misc-utils/whereis.c:168
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <file>\n"
-msgstr "%s [TUỲ_CHỌN] [<TẬP_TIN>]\n"
+msgstr " %s [TUỲ_CHỌN] <TẬP_TIN>\n"
 
 #: disk-utils/fsck.cramfs.c:110
 msgid " -a                       for compatibility only, ignored\n"
@@ -3710,15 +3707,14 @@ msgstr ""
 "Tôi sẽ thừa nhận cấu trúc đó cho danh sách này."
 
 #: disk-utils/sfdisk.c:1147
-#, fuzzy
 msgid "no partition table present"
-msgstr "không có bảng phân vùng nào."
+msgstr "không có bảng phân vùng nào hiện diện"
 
 #: disk-utils/sfdisk.c:1149
-#, fuzzy, c-format
+#, c-format
 msgid "strange, only %d partition defined"
 msgid_plural "strange, only %d partitions defined"
-msgstr[0] "kỳ lạ, chỉ có %d phân vùng xác định."
+msgstr[0] "kỳ lạ, chỉ có %d phân vùng được định nghĩa"
 
 #: disk-utils/sfdisk.c:1159
 #, c-format
@@ -4459,9 +4455,9 @@ msgid "write error"
 msgstr "lỗi ghi"
 
 #: include/optutils.h:81
-#, fuzzy, c-format
+#, c-format
 msgid "%s: these options aremutually exclusive:"
-msgstr "%s và %s loại từ lẫn nhau"
+msgstr "%s: những tùy chọn này loại từ lẫn nhau:"
 
 #: include/pt-mbr-partnames.h:1
 msgid "Empty"
@@ -5101,9 +5097,8 @@ msgid "Syncing disks."
 msgstr "Đang đồng bộ hoá các đĩa."
 
 #: libfdisk/src/bsd.c:800
-#, fuzzy
 msgid "BSD label is not nested within a DOS partition."
-msgstr "nhãn BSD không nằm trong phân vùng DOS"
+msgstr "nhãn BSD không nằm trong phân vùng DOS."
 
 #: libfdisk/src/bsd.c:829
 #, c-format
@@ -5508,9 +5503,8 @@ msgid "IBM General Parallel Fs"
 msgstr "IBM General Parallel Fs"
 
 #: libfdisk/src/gpt.c:165
-#, fuzzy
 msgid "Microsoft Storage Spaces"
-msgstr "Microsoft reserved"
+msgstr "Microsoft Storage Spaces"
 
 #: libfdisk/src/gpt.c:168
 msgid "HP-UX data"
@@ -5919,9 +5913,9 @@ msgid "Enter GUID specific bit"
 msgstr "Nhập vào bít GUID đặc biệt"
 
 #: libfdisk/src/gpt.c:2262
-#, fuzzy, c-format
+#, c-format
 msgid "failed to toggle unsupported bit %lu"
-msgstr "gặp lỗi khi phân giải tên %s cổng %s: %s"
+msgstr "gặp lỗi khi bật/tắt không hỗ trợ bit %lu"
 
 #: libfdisk/src/gpt.c:2276
 #, c-format
@@ -6029,9 +6023,8 @@ msgid "Linux native"
 msgstr "Linux nguyên bản"
 
 #: libfdisk/src/sgi.c:143
-#, fuzzy
 msgid "SGI info created on second sector."
-msgstr "thông tin SGI được tạo trên cung từ thứ hai"
+msgstr "thông tin SGI được tạo trên cung từ thứ hai."
 
 #: libfdisk/src/sgi.c:243
 msgid "Detected an SGI disklabel with wrong checksum."
@@ -6414,9 +6407,9 @@ msgid "libc pseudo-random functions"
 msgstr "hàm pseudo-random từ libc"
 
 #: login-utils/chfn.c:83 login-utils/chsh.c:72
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] [<username>]\n"
-msgstr " %s [tuỳ_chọn] [tài_khoản_người_dùng]\n"
+msgstr " %s [tuỳ_chọn] [<tài_khoản_người_dùng>]\n"
 
 #: login-utils/chfn.c:85
 msgid " -f, --full-name <full-name>  real name\n"
@@ -6688,7 +6681,6 @@ msgid " -t, --until <time>   display the lines until the specified time\n"
 msgstr " -t, --until <time>   hiển thị các dòng cho đến thời điểm đã cho\n"
 
 #: login-utils/last.c:567
-#, fuzzy
 msgid " -p, --present <time> display who were present at the specified time\n"
 msgstr " -p, --present <time> hiển thị ai người mà hiện diện tại thời điểm đã cho\n"
 
@@ -6701,14 +6693,12 @@ msgid " -x, --system         display system shutdown entries and run level chang
 msgstr " -x, --system         hiển thị các mục tắt máy hệ thống và các thay đổi mức chạy\n"
 
 #: login-utils/last.c:570
-#, fuzzy
 msgid ""
 "     --time-format <format>  show timestamps in the specified <format>:\n"
 "                               notime|short|full|iso\n"
 msgstr ""
-"     --time-format <định_dạng> hiển thị dấu thời gian dùng định dạng:\n"
-"                               [delta|reltime|ctime|notime|iso]\n"
-"Ngừng/chạy sẽ làm dấu thời gian “ctime” và “iso” không chính xác.\n"
+"     --time-format <định_dạng> hiển thị dấu thời gian dùng <định_dạng>:\n"
+"                               [notime|short|full|iso]\n"
 
 #: login-utils/last.c:849
 #, c-format
@@ -7198,10 +7188,9 @@ msgstr "Các tiến trình đang chạy"
 #: login-utils/lslogins.c:287 misc-utils/findmnt.c:158 misc-utils/lsblk.c:208
 #, c-format
 msgid "too many columns specified, the limit is %zu columns"
-msgstr ""
+msgstr "đã chỉ ra quá nhiều cột, giới hạn là %zu cột"
 
 #: login-utils/lslogins.c:352
-#, fuzzy
 msgid "unsupported time type"
 msgstr "kiểu thời gian không được hỗ trợ"
 
@@ -7248,7 +7237,6 @@ msgid " -e, --export             display in an export-able output format\n"
 msgstr " -e, --export             hiển thị ở  định dạng có thể xuất ra\n"
 
 #: login-utils/lslogins.c:1190
-#, fuzzy
 msgid " -f, --failed             display data about the users' last failed logins\n"
 msgstr " -f, --failed             hiển thị dữ liệu về đăng nhập thất bại lần cuối của người dùng\n"
 
@@ -7277,9 +7265,8 @@ msgid " -n, --newline            display each piece of information on a new line
 msgstr " -n, --newline            hiển thị từng mảnh thông tin trên một dòng mới\n"
 
 #: login-utils/lslogins.c:1197
-#, fuzzy
 msgid "     --noheadings         don't print headings\n"
-msgstr " -n, --noheadings     không in phần đầu\n"
+msgstr "     --noheadings         không in phần đầu\n"
 
 #: login-utils/lslogins.c:1198
 msgid "     --notruncate         don't truncate output\n"
@@ -7545,19 +7532,16 @@ msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "không thể chỉ định nhiều hơn %d nhóm phụ thêm"
 
 #: login-utils/su-common.c:860
-#, fuzzy
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
-msgstr "bỏ qua --preserve-environment, nó loại trừ qua lại với --login."
+msgstr "bỏ qua --preserve-environment, nó loại trừ qua lại với --login"
 
 #: login-utils/su-common.c:871
-#, fuzzy
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
-msgstr "các tùy chọn --{shell,fast,command,session-command,login} và --user loại trừ lẫn nhau."
+msgstr "các tùy chọn --{shell,fast,command,session-command,login} và --user loại trừ lẫn nhau"
 
 #: login-utils/su-common.c:875
-#, fuzzy
 msgid "no command was specified"
-msgstr "chưa xác định hành động"
+msgstr "chưa chỉ ra lệnh"
 
 #: login-utils/su-common.c:889
 msgid "only root can specify alternative groups"
@@ -7656,18 +7640,16 @@ msgid "invalid timeout argument"
 msgstr "đối số quá giờ không hợp lệ"
 
 #: login-utils/sulogin.c:898
-#, fuzzy
 msgid "only superuser can run this program"
-msgstr "bạn phải chạy chương trình này với tư cách người chủ (root)."
+msgstr "chỉ có siêu người dùng (root) mới chạy chương trình này"
 
 #: login-utils/sulogin.c:941
 msgid "cannot open console"
 msgstr "không thể mở bảng điều khiển"
 
 #: login-utils/sulogin.c:948
-#, fuzzy
 msgid "cannot open password database"
-msgstr "không thể mở tập tin cơ sở dữ liệu."
+msgstr "không thể mở tập tin cơ sở dữ liệu"
 
 #: login-utils/sulogin.c:1007
 msgid "crypt failed"
@@ -8301,37 +8283,33 @@ msgid "unknown signal %s; valid signals:"
 msgstr "không hiểu tín hiệu %s; tín hiệu hợp lệ là:"
 
 #: misc-utils/kill.c:306
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <pid>|<name>...\n"
-msgstr " %s [các-tùy-chọn] <mã_số_tiến_trình|tên_tiến_trình>...\n"
+msgstr " %s [các-tùy-chọn] <mã_số_tiến_trình>|<tên_tiến_trình>...\n"
 
 #: misc-utils/kill.c:309
-#, fuzzy
 msgid ""
 " -a, --all              do not restrict the name-to-pid conversion to processes\n"
 "                          with the same uid as the present process\n"
 msgstr ""
-" -a, --all              không hạn chế chuyển đổi tên-thành-pid thành tiến trình\n"
-"                        với cùng uid với tiến trình hiện tại\n"
+" -a, --all              không hạn chế chuyển đổi tên-thành-mã-số-tiến-trình\n"
+"                        thành tiến trình với cùng uid với tiến trình hiện tại\n"
 
 #: misc-utils/kill.c:311
-#, fuzzy
 msgid " -s, --signal <signal>  send this <signal> instead of SIGTERM\n"
-msgstr " -s, --signal <sig>     gửi tín hiệu đã chỉ ra\n"
+msgstr " -s, --signal <tín_hiệu> gửi tín hiệu đã chỉ ra thay cho SIGTERM\n"
 
 #: misc-utils/kill.c:313
-#, fuzzy
 msgid " -q, --queue <value>    use sigqueue(2), not kill(2), and pass <value> as data\n"
-msgstr " -q, --queue <sig>      thà dùng sigqueue(2) còn hơn là kill(2)\n"
+msgstr " -q, --queue <giá-trị>  dùng sigqueue(2), không dùng kill(2), và chuyển giá-trị thành dữ liệu\n"
 
 #: misc-utils/kill.c:315
 msgid " -p, --pid              print pids without signaling them\n"
 msgstr " -p, --pid              hiển thị các pid mà không có tín hiệu\n"
 
 #: misc-utils/kill.c:316
-#, fuzzy
 msgid " -l, --list[=<signal>]  list signal names, or convert a signal number to a name\n"
-msgstr " -l, --list [=<tín hiệu>] liệt kê tên tín hiệu, hay chuyển đổi sang tên\n"
+msgstr " -l, --list [=<tín hiệu>] liệt kê tên tín hiệu, hay chuyển đổi từ số sang tên\n"
 
 #: misc-utils/kill.c:317
 msgid " -L, --table            list signal names and numbers\n"
@@ -8370,9 +8348,9 @@ msgid "argument error"
 msgstr "sai đối số"
 
 #: misc-utils/kill.c:432
-#, fuzzy, c-format
+#, c-format
 msgid "invalid signal name or number: %s"
-msgstr "đối số sigval không hợp lệ"
+msgstr "số hay tên của tín hiệu không hợp lệ: %s"
 
 #: misc-utils/kill.c:449
 #, c-format
@@ -8389,19 +8367,19 @@ msgid "use of 'kill --pid' option as command name is deprecated"
 msgstr "việc dùng tùy chọn “kill --pid” như là lệnh bị phản đối"
 
 #: misc-utils/kill.c:512
-#, fuzzy, c-format
+#, c-format
 msgid "cannot find process \"%s\""
-msgstr "không thể tìm thấy tiến trình “%s”."
+msgstr "không thể tìm thấy tiến trình “%s”"
 
 #: misc-utils/logger.c:133
-#, fuzzy, c-format
+#, c-format
 msgid "unknown facility name: %s"
-msgstr "không hiểu tên thiết bị: %s."
+msgstr "không hiểu tên cơ cấu: %s."
 
 #: misc-utils/logger.c:142
-#, fuzzy, c-format
+#, c-format
 msgid "unknown priority name: %s"
-msgstr "không hiểu tên ưu tiên: %s."
+msgstr "không hiểu tên ưu tiên: %s"
 
 #: misc-utils/logger.c:152
 #, c-format
@@ -8780,7 +8758,6 @@ msgid " -t, --topology       output info about topology\n"
 msgstr " -t, --topology       hiển thị thông tin về hình học\n"
 
 #: misc-utils/lsblk.c:1504
-#, fuzzy
 msgid " -x, --sort <column>  sort output by <column>\n"
 msgstr " -x, --sort <cột>     sắp xếp kết xuất theo <cột>\n"
 
@@ -8799,9 +8776,8 @@ msgid "failed to access sysfs directory: %s"
 msgstr "Truy cập thư mục sysfs gặp lỗi: %s"
 
 #: misc-utils/lsblk.c:1711
-#, fuzzy
 msgid "the sort column has to be among the output columns"
-msgstr "cột sắp xếp phải là giữa các cột xuất."
+msgstr "cột sắp xếp phải là trong số các cột xuất"
 
 #: misc-utils/lslocks.c:72
 msgid "command of the process holding the lock"
@@ -8915,15 +8891,14 @@ msgid "failed to parse length"
 msgstr "không phân tích được độ dài"
 
 #: misc-utils/mcookie.c:177
-#, fuzzy
 msgid "--max-size ignored when used without --file"
-msgstr "--max-size bị bỏ qua khi dùng cùng với --file."
+msgstr "--max-size bị bỏ qua khi dùng mà không có --file"
 
 #: misc-utils/mcookie.c:185
-#, fuzzy, c-format
+#, c-format
 msgid "Got %d byte from %s\n"
 msgid_plural "Got %d bytes from %s\n"
-msgstr[0] "Nhận %d byte từ %s\n"
+msgstr[0] "Đã nhận %d byte từ %s\n"
 
 #: misc-utils/namei.c:186
 #, c-format
@@ -8936,9 +8911,9 @@ msgid "%s - No such file or directory\n"
 msgstr "%s - Không có tập tin hay thư mục như vậy.\n"
 
 #: misc-utils/namei.c:429
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <pathname>...\n"
-msgstr " %s [các-tùy-chọn] <mã_số_tiến_trình|tên_tiến_trình>...\n"
+msgstr " %s [các-tùy-chọn] <tên_đường_dẫn>...\n"
 
 #: misc-utils/namei.c:432
 msgid ""
@@ -9009,16 +8984,15 @@ msgid "%s: rename to %s failed"
 msgstr "%s: đổi tên thành %s gặp lỗi"
 
 #: misc-utils/rename.c:102
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <expression> <replacement> <file>...\n"
-msgstr " %s [các tùy chọn] biểu_thức tập tin thay thế...\n"
+msgstr " %s [các tùy chọn] <biểu_thức> <thay_thế> <tập_tin>...\n"
 
 #: misc-utils/rename.c:105
 msgid " -v, --verbose    explain what is being done\n"
 msgstr " -v, --verbose    giải thích các công việc đã làm\n"
 
 #: misc-utils/rename.c:106
-#, fuzzy
 msgid " -s, --symlink    act on the target of symlinks\n"
 msgstr " -s, --symlink    tác động lên đích liên kết mềm\n"
 
@@ -9285,7 +9259,7 @@ msgid "%s: failed to create a signature backup"
 msgstr "%s: gặp lỗi khi tạo một bản dự phòng ký hiệu"
 
 #: misc-utils/wipefs.c:361
-#, fuzzy, c-format
+#, c-format
 msgid "%s: calling ioctl to re-read partition table: %m\n"
 msgstr "%s: đang gọi hàm ioctl() để đọc lại bảng phân vùng: %m\n"
 
@@ -9294,9 +9268,9 @@ msgid "failed to create a signature backup, $HOME undefined"
 msgstr "gặp lỗi khi tạo một sao lưu chữ ký, chưa định nghĩa biến $HOME"
 
 #: misc-utils/wipefs.c:411
-#, fuzzy, c-format
+#, c-format
 msgid "%s: ignoring nested \"%s\" partition table on non-whole disk device"
-msgstr "%s: bỏ qua bảng phân vùng lồng nhau \"%s\" trên thiết bị không-toàn-đĩa."
+msgstr "%s: bỏ qua bảng phân vùng lồng nhau \"%s\" trên thiết bị không-toàn-đĩa"
 
 #: misc-utils/wipefs.c:428
 #, c-format
@@ -10748,9 +10722,9 @@ msgid "no mountpoint specified"
 msgstr "chưa chỉ ra điểm gắn"
 
 #: sys-utils/fstrim.c:318
-#, fuzzy, c-format
+#, c-format
 msgid "%s: the discard operation is not supported"
-msgstr "%s: không hỗ trợ hủy thao tác."
+msgstr "%s: không hỗ trợ hủy thao tác"
 
 #: sys-utils/hwclock.c:231
 #, c-format
@@ -10763,7 +10737,7 @@ msgstr "UTC"
 
 #: sys-utils/hwclock.c:232 sys-utils/hwclock.c:321
 msgid "local"
-msgstr "nội bộ"
+msgstr "địa phương"
 
 #: sys-utils/hwclock.c:306
 msgid ""
@@ -11011,16 +10985,16 @@ msgstr ""
 "Chỉnh lại độ sai lệch %f giây/ngày\n"
 
 #: sys-utils/hwclock.c:1101
-#, fuzzy, c-format
+#, c-format
 msgid "Time since last adjustment is %d second\n"
 msgid_plural "Time since last adjustment is %d seconds\n"
 msgstr[0] "Thời gian kể từ lần chỉnh cuối cùng là %d giây\n"
 
 #: sys-utils/hwclock.c:1105
-#, fuzzy, c-format
+#, c-format
 msgid "Need to insert %d second and refer time back %.6f seconds ago\n"
 msgid_plural "Need to insert %d seconds and refer time back %.6f seconds ago\n"
-msgstr[0] "Cần thêm %d giây và chuyển thời gian ngược lại %.6f giây\n"
+msgstr[0] "Cần thêm %d giây và chuyển thời gian ngược lại %.6f giây trước\n"
 
 #: sys-utils/hwclock.c:1138
 #, c-format
@@ -11210,7 +11184,7 @@ msgid ""
 "     --adjfile <file> specifies the path to the adjust file;\n"
 "                        the default is %s\n"
 msgstr ""
-"     --noadjfile      không truy cập %s; điều này yêu cầu sử dụng\n"
+"     --noadjfile      không truy cập %s; nó yêu cầu sử dụng\n"
 "                        một trong hai --utc hoặc --localtime\n"
 "     --adjfile <t.tin> chỉ định đường dẫn tới tập tin chỉnh sửa;\n"
 "                        mặc định là %s\n"
@@ -11408,12 +11382,12 @@ msgstr "select() tới %s để chờ tiếng tíc tắc bị quá thời gian"
 #: sys-utils/hwclock-rtc.c:326
 #, c-format
 msgid "ioctl() to %s to turn off update interrupts failed"
-msgstr "ioctl() tới %s để tắt việc gián đoạn cập nhật không thành công"
+msgstr "ioctl() tới %s để tắt các ngắt cập nhật không thành công"
 
 #: sys-utils/hwclock-rtc.c:329
 #, c-format
 msgid "ioctl() to %s to turn on update interrupts failed unexpectedly"
-msgstr "ioctl() tới %s để bật việc gián đoạn cập nhật không thành công một cách bất thường"
+msgstr "ioctl() tới %s để bật các ngắt cập nhật không thành công một cách bất thường"
 
 #: sys-utils/hwclock-rtc.c:383
 #, c-format
@@ -16277,9 +16251,8 @@ msgid " -v, --no-squeezing        output identical lines\n"
 msgstr " -v, --no-squeezing        xuất các dây trùng nhau\n"
 
 #: text-utils/hexdump.c:196
-#, fuzzy
 msgid "calling hexdump as od has been deprecated in favor of GNU coreutils od"
-msgstr "việc gọi hexdump giống như là lệnh od đã bị phản đối trong sự thiện ý của lệnh od của gói GNU coreutils."
+msgstr "việc gọi “hexdump” giống như là lệnh “od” đã bị phản đối trong sự thiện ý của lệnh “od” của gói “GNU coreutils”"
 
 #: text-utils/hexdump-display.c:365
 msgid "all input file arguments failed"
@@ -16401,13 +16374,13 @@ msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Nhấn phím trắng để tiếp tục, “q” để thoát]"
 
 #: text-utils/more.c:1235
-#, fuzzy, c-format
+#, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
 msgstr[0] "...quay lại %d trang"
 
 #: text-utils/more.c:1283
-#, fuzzy, c-format
+#, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
 msgstr[0] "...bỏ qua %d dòng"
