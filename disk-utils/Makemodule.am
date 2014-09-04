@@ -130,7 +130,9 @@ dist_man_MANS += disk-utils/fdisk.8
 fdisk_SOURCES = \
 	disk-utils/fdisk.c \
 	disk-utils/fdisk.h \
-	disk-utils/fdisk-menu.c
+	disk-utils/fdisk-menu.c \
+	disk-utils/fdisk-list.c \
+	disk-utils/fdisk-list.h
 
 fdisk_LDADD = $(LDADD) libcommon.la libfdisk.la
 fdisk_CFLAGS = $(AM_CFLAGS) -I$(ul_libfdisk_incdir)
