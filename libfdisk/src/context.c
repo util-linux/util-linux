@@ -458,7 +458,12 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 		fdisk_info(cxt, _("Syncing disks."));
 		sync();
 	}
+
+	free(cxt->dev_path);
+
 	cxt->dev_fd = -1;
+	cxt->dev_path = NULL;
+
 	return 0;
 }
 

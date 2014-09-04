@@ -319,7 +319,8 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 	case FDISK_ASKTYPE_OFFSET:
 		return ask_offset(cxt, ask, buf, sizeof(buf));
 	case FDISK_ASKTYPE_INFO:
-		info_count++;
+		if (!fdisk_is_listonly(cxt))
+			info_count++;
 		fputs_info(ask, stdout);
 		break;
 	case FDISK_ASKTYPE_WARNX:
