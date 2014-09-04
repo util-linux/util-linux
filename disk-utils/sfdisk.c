@@ -215,10 +215,13 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,
-	      _(" %1$s [options] <disk>\n"), program_invocation_short_name);
+	      _(" %1$s [options] <disk>\n"
+		" %1$s [options] --list <disk> [...]\n"),
+	      program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-
+	fputs(_(" -d, --dump           dump partition table (suitable for later input)\n"), out);
+	fputs(_(" -l, --list           list partitions of each device\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
