@@ -840,7 +840,8 @@ AM_CONDITIONAL([BUILD_FDISK], [test "x$build_fdisk" = xyes])
 
 
 UL_BUILD_INIT([sfdisk], [check])
-UL_EXCLUDE_ARCH([sfdisk], [sparc*])
+UL_REQUIRES_BUILD([sfdisk], [libfdisk])
+UL_REQUIRES_BUILD([sfdisk], [libsmartcols])
 AM_CONDITIONAL([BUILD_SFDISK], [test "x$build_sfdisk" = xyes])
 
 
