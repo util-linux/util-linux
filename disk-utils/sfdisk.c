@@ -71,7 +71,6 @@ enum {
 struct sfdisk {
 	int		act;		/* action */
 	size_t		partno;		/* partition number <1..N> */
-	const char	*devname;	/* disk */
 
 	struct fdisk_context	*cxt;	/* libfdisk context */
 };
@@ -132,9 +131,6 @@ static int sfdisk_deinit(struct sfdisk *sf)
 	assert(sf);
 	assert(sf->cxt);
 
-	if (sf->devname)
-		rc = fdisk_deassign_device(sf->cxt, 0);
-
 	fdisk_unref_context(sf->cxt);
 	memset(sf, 0, sizeof(*sf));
 
@@ -149,11 +145,46 @@ static int command_list_partitions(struct sfdisk *sf, int argc, char **argv)
 	fdisk_enable_listonly(sf->cxt, 1);
 
 	if (argc) {
-		for (i = 0; i < argc; i++)
-			print_device_pt(sf->cxt, argv[i], 0);
+		int ct = 0;
+
+		for (i = 0; i < argc; i++) {
+			if (ct)
+				fputs("\n\n", stdout);
+			if (print_device_pt(sf->cxt, argv[i], 0) == 0)
+				ct++;
+		}
 	} else
 		print_all_devices_pt(sf->cxt);
 
+	return 0;
+}
+
+static int command_dump(struct sfdisk *sf, int argc, char **argv)
+{
+	const char *devname = NULL;
+	struct fdisk_script *dp;
+	int rc;
+
+	if (argc)
+		devname = argv[0];
+	if (!devname)
+		errx(EXIT_FAILURE, _("no disk device specified"));
+
+	rc = fdisk_assign_device(sf->cxt, devname, 1);
+	if (rc)
+		err(EXIT_FAILURE, _("cannot open %s"), devname);
+
+	dp = fdisk_new_script(sf->cxt);
+	if (!dp)
+		err(EXIT_FAILURE, _("failed to allocate dump struct"));
+
+	rc = fdisk_script_read_context(dp, NULL);
+	if (rc)
+		err(EXIT_FAILURE, _("failed to dump partition table"));
+
+	fdisk_script_write_file(dp, stdout);
+
+	fdisk_unref_script(dp);
 	return 0;
 }
 
@@ -161,19 +192,21 @@ static int command_list_partitions(struct sfdisk *sf, int argc, char **argv)
 static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 {
 	int rc;
+	const char *devname = NULL;
 
+	if (argc)
+		devname = argv[0];
 	if (argc > 1)
-		sf->devname = argv[optind++];
-	if (argc > 2)
-		sf->partno = strtou32_or_err(argv[optind++],
+		sf->partno = strtou32_or_err(argv[1],
 				_("failed to parse partition number"));
-	if (!sf->devname)
+	if (!devname)
 		errx(EXIT_FAILURE, _("no disk device specified"));
 
-	rc = fdisk_assign_device(sf->cxt, sf->devname, 0);
-	if (rc != 0)
-		err(EXIT_FAILURE, _("cannot open %s"), sf->devname);
+	rc = fdisk_assign_device(sf->cxt, devname, 0);
+	if (rc)
+		err(EXIT_FAILURE, _("cannot open %s"), devname);
 
+	fdisk_deassign_device(sf->cxt, 1);
 	return rc;
 }
 
@@ -185,6 +218,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	      _(" %1$s [options] <disk>\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
+
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -199,10 +233,11 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 int main(int argc, char *argv[])
 {
 	struct sfdisk _sf = { .partno = 0 }, *sf  = &_sf;
-	int rc, c;
+	int rc = -EINVAL, c;
 
 	static const struct option longopts[] = {
 		{ "list",    no_argument,       NULL, 'l' },
+		{ "dump",    no_argument,	NULL, 'd' },
 		{ "help",    no_argument,       NULL, 'h' },
 		{ "version", no_argument,       NULL, 'v' },
 		{ NULL, 0, 0, 0 },
@@ -213,13 +248,16 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while((c = getopt_long(argc, argv, "hlv", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "dhlv", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 			usage(stdout);
 			break;
 		case 'l':
 			sf->act = ACT_LIST;
+			break;
+		case 'd':
+			sf->act = ACT_DUMP;
 			break;
 		case 'v':
 			printf(_("%s from %s\n"), program_invocation_short_name,
@@ -237,6 +275,10 @@ int main(int argc, char *argv[])
 
 	case ACT_FDISK:
 		rc = command_fdisk(sf, argc - optind, argv + optind);
+		break;
+
+	case ACT_DUMP:
+		rc = command_dump(sf, argc - optind, argv + optind);
 		break;
 	}
 
