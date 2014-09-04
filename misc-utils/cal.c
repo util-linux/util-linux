@@ -53,6 +53,13 @@
  *             added support to read "first_weekday" locale information
  *             still to do: support for 'cal_direction' (will require a major
  *             rewrite of the displaying) and proper handling of RTL scripts
+ *
+ * 2014-09-05  Gennady Kovshenin <gennady@kovshenin.com>
+ *             Added -l flag for landscape year layout in year view. In julian
+ *             mode we can get 3x4, 4x3 by supplying the flag repetitively.
+ *             In regular mode - 4x3 and 6x2 modes are available.
+ *             With wide monitors and larger terminal resulutions, neat window
+ *             managers these days these landscape modes become quite useful.
  */
 
 #include <sys/types.h>
@@ -223,7 +230,8 @@ struct cal_control {
 	struct cal_request req;		/* the times user is interested */
 	unsigned int	julian:1,	/* julian output */
 			yflag:1,	/* print whole year */
-			header_hint:1;	/* does month name + year need two lines to fit */
+			header_hint:1,	/* does month name + year need two lines to fit */
+			landscape:2;	/* 3x4, 4x3 and 6x2 year views */
 };
 
 struct cal_month {
@@ -279,6 +287,7 @@ int main(int argc, char **argv)
 		{"monday", no_argument, NULL, 'm'},
 		{"julian", no_argument, NULL, 'j'},
 		{"year", no_argument, NULL, 'y'},
+		{"landscape", no_argument, NULL, 'l'},
 		{"week", optional_argument, NULL, 'w'},
 		{"color", optional_argument, NULL, OPT_COLOR},
 		{"version", no_argument, NULL, 'V'},
@@ -337,7 +346,7 @@ int main(int argc, char **argv)
 	}
 #endif
 
-	while ((ch = getopt_long(argc, argv, "13mjsywVh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "13mjsylwVh", longopts, NULL)) != -1)
 		switch(ch) {
 		case '1':
 			ctl.num_months = 1;		/* default */
@@ -357,6 +366,9 @@ int main(int argc, char **argv)
 			break;
 		case 'y':
 			ctl.yflag = 1;
+			break;
+		case 'l':
+			ctl.landscape++;
 			break;
 		case 'w':
 			if (optarg) {
@@ -737,17 +749,41 @@ static void monthly3(const struct cal_control *ctl)
 
 static void yearly(const struct cal_control *ctl)
 {
-	struct cal_month m1, m2, m3, *i;
+	struct cal_month m1, m2, m3, m4, m5, m6, *i;
 	int month;
+	int skip;
 	char out[FMT_ST_CHARS];
 	int year_width = 0;
 
 	m1.next = &m2;
-	if (ctl->julian)
-		m2.next = NULL;
-	else {
+	m2.next = NULL;
+	m3.next = NULL;
+	m4.next = NULL;
+	m5.next = NULL;
+	m6.next = NULL;
+
+	if (ctl->landscape > 0) {
+		/* landscape 1 (3x4 julian, 4x3 regular) */
 		m2.next = &m3;
-		m3.next = NULL;
+		if (!ctl->julian)
+			m3.next = &m4;
+		skip = ctl->julian ? 3 : 4;
+
+		/* landscape 2 (4x2 julian, 6x2 regular) */
+		if (ctl->landscape > 1) {
+			m3.next = &m4;
+			if (!ctl->julian) {
+				m4.next = &m5;
+				m5.next = &m6;
+			}
+			skip = ctl->julian ? 4 : 6;
+		}
+
+	} else {
+		/* landscape 0, default (2x6 julian, 3x4 regular)*/
+		if (!ctl->julian)
+			m2.next = &m3;
+		skip = ctl->julian ? 2 : 3;
 	}
 
 	/* year header */
@@ -759,7 +795,7 @@ static void yearly(const struct cal_control *ctl)
 	center(out, year_width, 0);
 	my_putstring("\n\n");
 
-	for (month = 1; month < MONTHS_IN_YEAR; month += ctl->julian ? 2 : 3) {
+	for (month = 1; month < MONTHS_IN_YEAR; month += skip) {
 		set_consecutive_months(&m1, month, ctl->req.year);
 		for (i = &m1; i; i = i->next)
 			cal_fill_month(i, ctl);
@@ -932,6 +968,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -m, --monday          Monday as first day of week\n"), out);
 	fputs(_(" -j, --julian          output Julian dates\n"), out);
 	fputs(_(" -y, --year            show the whole year\n"), out);
+	fputs(_(" -l, --landscape       show year in landscape mode (up to 2 times)\n"), out);
 	fputs(_(" -w, --week[=<num>]    show US or ISO-8601 week numbers\n"), out);
 	fputs(_("     --color[=<when>]  colorize messages (auto, always or never)\n"), out);
 
