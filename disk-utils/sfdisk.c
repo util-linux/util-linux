@@ -215,6 +215,9 @@ static int command_show_size(struct sfdisk *sf __attribute__((__unused__)),
 	return 0;
 }
 
+/*
+ * sfdisk --activate <device> [<partno> ...]
+ */
 static int command_activate(struct sfdisk *sf, int argc, char **argv)
 {
 	int rc, nparts, i;
@@ -263,7 +266,11 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 	for (i = 1; i < argc; i++) {
 		int n = strtou32_or_err(argv[i], _("failed to parse partition number"));
 
-		fdisk_partition_toggle_flag(sf->cxt, n - 1, DOS_FLAG_ACTIVE);
+		rc = fdisk_partition_toggle_flag(sf->cxt, n - 1, DOS_FLAG_ACTIVE);
+		if (rc)
+			errx(EXIT_FAILURE,
+				_("%s: #%d: failed to toggle bootable flag"),
+				devname, i + 1);
 	}
 
 	fdisk_unref_partition(pa);
@@ -305,15 +312,19 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 	return 0;
 }
 
-/* default command */
-static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
+/*
+ * sfdisk <device> [[-N] <partno>]
+ *
+ * Note that the option -N is there for backward compatibility only.
+ */
+static int command_fdisk(struct sfdisk *sf, int argc, char **argv, int partno)
 {
-	int rc, partno;
+	int rc;
 	const char *devname = NULL;
 
 	if (argc)
 		devname = argv[0];
-	if (argc > 1)
+	if (partno < 0 && argc > 1)
 		partno = strtou32_or_err(argv[1],
 				_("failed to parse partition number"));
 	if (!devname)
@@ -323,7 +334,12 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	if (rc)
 		err(EXIT_FAILURE, _("cannot open %s"), devname);
 
-	fdisk_deassign_device(sf->cxt, 1);
+
+
+	if (!rc)
+		rc = fdisk_write_disklabel(sf->cxt);
+	if (!rc)
+		rc = fdisk_deassign_device(sf->cxt, 1);
 	return rc;
 }
 
@@ -355,7 +371,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 int main(int argc, char *argv[])
 {
 	struct sfdisk _sf = { .act = 0 }, *sf  = &_sf;
-	int rc = -EINVAL, c;
+	int rc = -EINVAL, c, partno = 1;
 
 	static const struct option longopts[] = {
 		{ "activate",no_argument,	NULL, 'a' },
@@ -363,6 +379,7 @@ int main(int argc, char *argv[])
 		{ "dump",    no_argument,	NULL, 'd' },
 		{ "help",    no_argument,       NULL, 'h' },
 		{ "show-size", no_argument,	NULL, 's' },
+		{ "partno",  required_argument, NULL, 'N' },
 		{ "version", no_argument,       NULL, 'v' },
 		{ NULL, 0, 0, 0 },
 	};
@@ -372,7 +389,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "adhlsv", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "adhlNsv", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			sf->act = ACT_ACTIVATE;
@@ -385,6 +402,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'd':
 			sf->act = ACT_DUMP;
+			break;
+		case 'N':
+			partno = strtou32_or_err(optarg, _("failed to parse partition number"));
 			break;
 		case 's':
 			sf->act = ACT_SHOW_SIZE;
@@ -408,7 +428,7 @@ int main(int argc, char *argv[])
 		break;
 
 	case ACT_FDISK:
-		rc = command_fdisk(sf, argc - optind, argv + optind);
+		rc = command_fdisk(sf, argc - optind, argv + optind, partno);
 		break;
 
 	case ACT_DUMP:
