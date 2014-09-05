@@ -38,6 +38,7 @@
 #include "strutils.h"
 #include "closestream.h"
 #include "colors.h"
+#include "blkdev.h"
 
 #include "libfdisk.h"
 #include "fdisk-list.h"
@@ -63,8 +64,8 @@ enum {
 	ACT_CHANGE_ID,
 	ACT_DUMP,
 	ACT_LIST,
-	ACT_LIST_SIZES,
 	ACT_LIST_TYPES,
+	ACT_SHOW_SIZE,
 	ACT_VERIFY
 };
 
@@ -137,15 +138,12 @@ static int sfdisk_deinit(struct sfdisk *sf)
 	return rc;
 }
 
-/* --list backend */
 static int command_list_partitions(struct sfdisk *sf, int argc, char **argv)
 {
-	int i;
-
 	fdisk_enable_listonly(sf->cxt, 1);
 
 	if (argc) {
-		int ct = 0;
+		int i, ct = 0;
 
 		for (i = 0; i < argc; i++) {
 			if (ct)
@@ -155,6 +153,65 @@ static int command_list_partitions(struct sfdisk *sf, int argc, char **argv)
 		}
 	} else
 		print_all_devices_pt(sf->cxt);
+
+	return 0;
+}
+
+static int rdonly_open(const char *dev, int silent)
+{
+	int fd = open(dev, O_RDONLY);
+	if (fd < 0) {
+		if (!silent)
+			warn(_("cannot open: %s"), dev);
+		return -errno;
+	}
+	return fd;
+}
+
+static int get_size(const char *dev, int silent, uintmax_t *sz)
+{
+	int fd, rc = 0;
+
+	fd = rdonly_open(dev, silent);
+	if (fd < 0)
+		return -errno;
+
+	if (blkdev_get_sectors(fd, (unsigned long long *) sz) == -1) {
+		if (!silent)
+			warn(_("Cannot get size of %s"), dev);
+		rc = -errno;
+	}
+
+	close(fd);
+	return rc;
+}
+
+static int command_show_size(struct sfdisk *sf __attribute__((__unused__)),
+			     int argc, char **argv)
+{
+	uintmax_t sz;
+
+	if (argc) {
+		int i;
+		for (i = 0; i < argc; i++) {
+			if (get_size(argv[i], 0, &sz) == 0)
+				printf("%ju\n", sz / 2);
+		}
+	} else {
+		FILE *f = NULL;
+		uintmax_t total = 0;
+		char *dev;
+
+		while ((dev = next_proc_partition(&f))) {
+			if (get_size(dev, 1, &sz) == 0) {
+				printf("%s: %9ju\n", dev, sz / 2);
+				total += sz / 2;
+			}
+			free(dev);
+		}
+		if (total)
+			printf(_("total: %ju blocks\n"), total);
+	}
 
 	return 0;
 }
@@ -242,6 +299,7 @@ int main(int argc, char *argv[])
 		{ "list",    no_argument,       NULL, 'l' },
 		{ "dump",    no_argument,	NULL, 'd' },
 		{ "help",    no_argument,       NULL, 'h' },
+		{ "show-size", no_argument,	NULL, 's' },
 		{ "version", no_argument,       NULL, 'v' },
 		{ NULL, 0, 0, 0 },
 	};
@@ -251,7 +309,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while((c = getopt_long(argc, argv, "dhlv", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "dhlsv", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 			usage(stdout);
@@ -261,6 +319,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'd':
 			sf->act = ACT_DUMP;
+			break;
+		case 's':
+			sf->act = ACT_SHOW_SIZE;
 			break;
 		case 'v':
 			printf(_("%s from %s\n"), program_invocation_short_name,
@@ -282,6 +343,10 @@ int main(int argc, char *argv[])
 
 	case ACT_DUMP:
 		rc = command_dump(sf, argc - optind, argv + optind);
+		break;
+
+	case ACT_SHOW_SIZE:
+		rc = command_show_size(sf, argc - optind, argv + optind);
 		break;
 	}
 
