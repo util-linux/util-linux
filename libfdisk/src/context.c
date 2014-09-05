@@ -264,6 +264,17 @@ int fdisk_has_label(struct fdisk_context *cxt)
 }
 
 /**
+ * fdisk_get_npartitions:
+ * @cxt: context
+ *
+ * Returns: maximal number of partitions for the current label.
+ */
+size_t fdisk_get_npartitions(struct fdisk_context *cxt)
+{
+	return cxt && cxt->label ? cxt->label->nparts_max : 0;
+}
+
+/**
  * fdisk_is_labeltype:
  * @cxt: fdisk context
  * @id: FDISK_DISKLABEL_*

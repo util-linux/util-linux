@@ -346,6 +346,11 @@ int fdisk_partition_is_used(struct fdisk_partition *pa)
 	return pa && pa->used;
 }
 
+int fdisk_partition_is_bootable(struct fdisk_partition *pa)
+{
+	return pa && pa->boot;
+}
+
 int fdisk_partition_is_freespace(struct fdisk_partition *pa)
 {
 	return pa && pa->freespace;

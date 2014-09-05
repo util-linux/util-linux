@@ -84,6 +84,7 @@ void fdisk_unref_context(struct fdisk_context *cxt);
 void fdisk_ref_context(struct fdisk_context *cxt);
 
 struct fdisk_context *fdisk_get_parent(struct fdisk_context *cxt);
+size_t fdisk_get_npartitions(struct fdisk_context *cxt);
 
 struct fdisk_label *fdisk_get_label(struct fdisk_context *cxt, const char *name);
 int fdisk_next_label(struct fdisk_context *cxt, struct fdisk_label **lb);
@@ -257,6 +258,7 @@ extern int fdisk_partition_is_nested(struct fdisk_partition *pa);
 extern int fdisk_partition_is_container(struct fdisk_partition *pa);
 extern int fdisk_partition_get_parent(struct fdisk_partition *pa, size_t *parent);
 extern int fdisk_partition_is_used(struct fdisk_partition *pa);
+extern int fdisk_partition_is_bootable(struct fdisk_partition *pa);
 extern int fdisk_partition_to_string(struct fdisk_partition *pa,
 				     struct fdisk_context *cxt,
 				     int id, char **data);
