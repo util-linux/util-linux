@@ -48,8 +48,6 @@
 #include "c.h"
 #include "closestream.h"
 
-static int donice(int,int,int);
-
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(_("\nUsage:\n"), out);
@@ -70,6 +68,38 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_("\nFor more information see renice(1).\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
+static int
+donice(int which, int who, int prio) {
+	int oldprio, newprio;
+	const char *idtype = _("process ID");
+
+	if (which == PRIO_USER)
+		idtype = _("user ID");
+	else if (which == PRIO_PGRP)
+		idtype = _("process group ID");
+
+	errno = 0;
+	oldprio = getpriority(which, who);
+	if (oldprio == -1 && errno) {
+		warn(_("failed to get priority for %d (%s)"), who, idtype);
+		return 1;
+	}
+	if (setpriority(which, who, prio) < 0) {
+		warn(_("failed to set priority for %d (%s)"), who, idtype);
+		return 1;
+	}
+	errno = 0;
+	newprio = getpriority(which, who);
+	if (newprio == -1 && errno) {
+		warn(_("failed to get priority for %d (%s)"), who, idtype);
+		return 1;
+	}
+
+	printf(_("%d (%s) old priority %d, new priority %d\n"),
+	       who, idtype, oldprio, newprio);
+	return 0;
 }
 
 /*
@@ -155,34 +185,3 @@ main(int argc, char **argv)
 	return errs != 0 ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
-static int
-donice(int which, int who, int prio) {
-	int oldprio, newprio;
-	const char *idtype = _("process ID");
-
-	if (which == PRIO_USER)
-		idtype = _("user ID");
-	else if (which == PRIO_PGRP)
-		idtype = _("process group ID");
-
-	errno = 0;
-	oldprio = getpriority(which, who);
-	if (oldprio == -1 && errno) {
-		warn(_("failed to get priority for %d (%s)"), who, idtype);
-		return 1;
-	}
-	if (setpriority(which, who, prio) < 0) {
-		warn(_("failed to set priority for %d (%s)"), who, idtype);
-		return 1;
-	}
-	errno = 0;
-	newprio = getpriority(which, who);
-	if (newprio == -1 && errno) {
-		warn(_("failed to get priority for %d (%s)"), who, idtype);
-		return 1;
-	}
-
-	printf(_("%d (%s) old priority %d, new priority %d\n"),
-	       who, idtype, oldprio, newprio);
-	return 0;
-}
