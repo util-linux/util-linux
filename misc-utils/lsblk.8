@@ -11,8 +11,10 @@ lsblk \- list block devices
 lists information about all available or the specified block devices.  The
 .B lsblk
 command reads the
-.I sysfs
-filesystem to gather information.
+.B sysfs
+filesystem and
+.B udev db
+to gather information.
 .PP
 The command prints all block devices (except RAM disks) in a tree-like format
 by default.  Use
@@ -28,6 +30,15 @@ outputs in your scripts.  Always explicitly define expected columns by using
 .B \-\-output
 .I columns-list
 in environments where a stable output is required.
+.PP
+Note that
+.B lsblk
+might be executed in time when
+.B udev
+does not have all information about recently added or modified devices yet. In this
+case it is recommended to use
+.B "udevadm settle"
+before lsblk to synchronize with udev.
 .SH OPTIONS
 .TP
 .BR \-a , " \-\-all"
