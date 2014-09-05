@@ -138,6 +138,9 @@ static int sfdisk_deinit(struct sfdisk *sf)
 	return rc;
 }
 
+/*
+ * sfdisk --list [<device ..]
+ */
 static int command_list_partitions(struct sfdisk *sf, int argc, char **argv)
 {
 	fdisk_enable_listonly(sf->cxt, 1);
@@ -157,24 +160,16 @@ static int command_list_partitions(struct sfdisk *sf, int argc, char **argv)
 	return 0;
 }
 
-static int rdonly_open(const char *dev, int silent)
+static int get_size(const char *dev, int silent, uintmax_t *sz)
 {
-	int fd = open(dev, O_RDONLY);
+	int fd, rc = 0;
+
+	fd = open(dev, O_RDONLY);
 	if (fd < 0) {
 		if (!silent)
 			warn(_("cannot open: %s"), dev);
 		return -errno;
 	}
-	return fd;
-}
-
-static int get_size(const char *dev, int silent, uintmax_t *sz)
-{
-	int fd, rc = 0;
-
-	fd = rdonly_open(dev, silent);
-	if (fd < 0)
-		return -errno;
 
 	if (blkdev_get_sectors(fd, (unsigned long long *) sz) == -1) {
 		if (!silent)
@@ -186,6 +181,11 @@ static int get_size(const char *dev, int silent, uintmax_t *sz)
 	return rc;
 }
 
+/*
+ * sfdisk --show-size [<device ..]
+ *
+ * (silly, but just for backward compatibility)
+ */
 static int command_show_size(struct sfdisk *sf __attribute__((__unused__)),
 			     int argc, char **argv)
 {
@@ -216,6 +216,9 @@ static int command_show_size(struct sfdisk *sf __attribute__((__unused__)),
 	return 0;
 }
 
+/*
+ * sfdisk --dump <device>
+ */
 static int command_dump(struct sfdisk *sf, int argc, char **argv)
 {
 	const char *devname = NULL;
