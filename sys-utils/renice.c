@@ -67,8 +67,19 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static int
-donice(int which, int who, int prio) {
+static int getprio(const int which, const int who, const char *idtype, int *prio)
+{
+	errno = 0;
+	*prio = getpriority(which, who);
+	if (*prio == -1 && errno) {
+		warn(_("failed to get priority for %d (%s)"), who, idtype);
+		return -errno;
+	}
+	return 0;
+}
+
+static int donice(int which, int who, int prio)
+{
 	int oldprio, newprio;
 	const char *idtype = _("process ID");
 
@@ -76,24 +87,14 @@ donice(int which, int who, int prio) {
 		idtype = _("user ID");
 	else if (which == PRIO_PGRP)
 		idtype = _("process group ID");
-
-	errno = 0;
-	oldprio = getpriority(which, who);
-	if (oldprio == -1 && errno) {
-		warn(_("failed to get priority for %d (%s)"), who, idtype);
+	if (getprio(which, who, idtype, &oldprio) != 0)
 		return 1;
-	}
 	if (setpriority(which, who, prio) < 0) {
 		warn(_("failed to set priority for %d (%s)"), who, idtype);
 		return 1;
 	}
-	errno = 0;
-	newprio = getpriority(which, who);
-	if (newprio == -1 && errno) {
-		warn(_("failed to get priority for %d (%s)"), who, idtype);
+	if (getprio(which, who, idtype, &newprio) != 0)
 		return 1;
-	}
-
 	printf(_("%d (%s) old priority %d, new priority %d\n"),
 	       who, idtype, oldprio, newprio);
 	return 0;
@@ -103,8 +104,7 @@ donice(int which, int who, int prio) {
  * Change the priority (the nice value) of processes
  * or groups of processes which are already running.
  */
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	int which = PRIO_PROCESS;
 	int who = 0, prio, errs = 0;
