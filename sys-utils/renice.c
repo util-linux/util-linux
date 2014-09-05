@@ -160,14 +160,17 @@ int main(int argc, char **argv)
 			continue;
 		}
 		if (which == PRIO_USER) {
-			register struct passwd *pwd = getpwnam(*argv);
+			struct passwd *pwd = getpwnam(*argv);
 
-			if (pwd == NULL) {
+			if (pwd != NULL)
+				who = pwd->pw_uid;
+			else
+				who = strtol(*argv, &endptr, 10);
+			if (who < 0 || *endptr) {
 				warnx(_("unknown user %s"), *argv);
 				errs = 1;
 				continue;
 			}
-			who = pwd->pw_uid;
 		} else {
 			who = strtol(*argv, &endptr, 10);
 			if (who < 0 || *endptr) {
@@ -180,4 +183,3 @@ int main(int argc, char **argv)
 	}
 	return errs != 0 ? EXIT_FAILURE : EXIT_SUCCESS;
 }
-
