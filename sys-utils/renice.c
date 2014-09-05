@@ -131,13 +131,13 @@ main(int argc, char **argv)
 		}
 	}
 
-	if (argc < 2)
-		usage(stderr);
-
-	if (strcmp(*argv, "-n") == 0 || strcmp(*argv, "--priority") == 0) {
+	if (*argv && (strcmp(*argv, "-n") == 0 || strcmp(*argv, "--priority") == 0)) {
 		argc--;
 		argv++;
 	}
+
+	if (argc < 2)
+		usage(stderr);
 
 	prio = strtol(*argv, &endptr, 10);
 	if (*endptr)
