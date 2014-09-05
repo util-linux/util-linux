@@ -71,7 +71,6 @@ enum {
 
 struct sfdisk {
 	int		act;		/* action */
-	size_t		partno;		/* partition number <1..N> */
 
 	struct fdisk_context	*cxt;	/* libfdisk context */
 };
@@ -216,6 +215,64 @@ static int command_show_size(struct sfdisk *sf __attribute__((__unused__)),
 	return 0;
 }
 
+static int command_activate(struct sfdisk *sf, int argc, char **argv)
+{
+	int rc, nparts, i;
+	struct fdisk_partition *pa = NULL;
+	const char *devname = NULL;
+
+	if (argc)
+		devname = argv[0];
+	else
+		errx(EXIT_FAILURE, _("no disk device specified"));
+	if (argc > 2)
+		errx(EXIT_FAILURE, _("uneexpected arguments"));
+
+	rc = fdisk_assign_device(sf->cxt, devname, 0);
+	if (rc)
+		err(EXIT_FAILURE, _("cannot open %s"), devname);
+
+	if (!fdisk_is_label(sf->cxt, DOS))
+		errx(EXIT_FAILURE, _("toggle boot flags is supported for MBR only"));
+
+	nparts = fdisk_get_npartitions(sf->cxt);
+	for (i = 0; i < nparts; i++) {
+		char *data = NULL;
+
+		/* note that fdisk_get_partition() reuses the @pa pointer, you
+		 * don't have to (re)allocate it */
+		if (fdisk_get_partition(sf->cxt, i, &pa) != 0)
+			continue;
+
+		/* sfdisk --activate  list bootable partitions */
+		if (argc == 1) {
+			if (!fdisk_partition_is_bootable(pa))
+				continue;
+			if (fdisk_partition_to_string(pa, sf->cxt,
+						FDISK_FIELD_DEVICE, &data) == 0) {
+				printf("%s\n", data);
+				free(data);
+			}
+
+		/* deactivate all active partitions */
+		} else if (fdisk_partition_is_bootable(pa))
+			fdisk_partition_toggle_flag(sf->cxt, i, DOS_FLAG_ACTIVE);
+	}
+
+	/* sfdisk --activate <partno> [..] */
+	for (i = 1; i < argc; i++) {
+		int n = strtou32_or_err(argv[i], _("failed to parse partition number"));
+
+		fdisk_partition_toggle_flag(sf->cxt, n - 1, DOS_FLAG_ACTIVE);
+	}
+
+	fdisk_unref_partition(pa);
+	rc = fdisk_write_disklabel(sf->cxt);
+	if (!rc)
+		rc = fdisk_deassign_device(sf->cxt, 1);
+	return rc;
+}
+
 /*
  * sfdisk --dump <device>
  */
@@ -251,13 +308,13 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 /* default command */
 static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 {
-	int rc;
+	int rc, partno;
 	const char *devname = NULL;
 
 	if (argc)
 		devname = argv[0];
 	if (argc > 1)
-		sf->partno = strtou32_or_err(argv[1],
+		partno = strtou32_or_err(argv[1],
 				_("failed to parse partition number"));
 	if (!devname)
 		errx(EXIT_FAILURE, _("no disk device specified"));
@@ -275,11 +332,13 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,
-	      _(" %1$s [options] <disk>\n"
-		" %1$s [options] --list <disk> [...]\n"),
+	      _(" %1$s [options] --dump <device>\n"
+		" %1$s [options] --list [<device> ...]\n"
+		" %1$s [options] --activate <device> [<partno> ...]\n"),
 	      program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -a, --activate       mark MBR partitions as bootable\n"), out);
 	fputs(_(" -d, --dump           dump partition table (suitable for later input)\n"), out);
 	fputs(_(" -l, --list           list partitions of each device\n"), out);
 
@@ -295,10 +354,11 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char *argv[])
 {
-	struct sfdisk _sf = { .partno = 0 }, *sf  = &_sf;
+	struct sfdisk _sf = { .act = 0 }, *sf  = &_sf;
 	int rc = -EINVAL, c;
 
 	static const struct option longopts[] = {
+		{ "activate",no_argument,	NULL, 'a' },
 		{ "list",    no_argument,       NULL, 'l' },
 		{ "dump",    no_argument,	NULL, 'd' },
 		{ "help",    no_argument,       NULL, 'h' },
@@ -312,8 +372,11 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "dhlsv", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "adhlsv", longopts, NULL)) != -1) {
 		switch(c) {
+		case 'a':
+			sf->act = ACT_ACTIVATE;
+			break;
 		case 'h':
 			usage(stdout);
 			break;
@@ -336,6 +399,10 @@ int main(int argc, char *argv[])
 	sfdisk_init(sf);
 
 	switch (sf->act) {
+	case ACT_ACTIVATE:
+		rc = command_activate(sf, argc - optind, argv + optind);
+		break;
+
 	case ACT_LIST:
 		rc = command_list_partitions(sf, argc - optind, argv + optind);
 		break;
