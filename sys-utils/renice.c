@@ -50,23 +50,20 @@
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fputs(_("\nUsage:\n"), out);
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %1$s [-n] <priority> [-p|--pid] <pid>...\n"
 		" %1$s [-n] <priority>  -g|--pgrp <pgid>...\n"
 		" %1$s [-n] <priority>  -u|--user <user>...\n"),
 		program_invocation_short_name);
-
-	fputs(_("\nOptions:\n"), out);
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -g, --pgrp <id>        interpret argument as process group ID\n"
 		" -n, --priority <num>   specify the nice increment value\n"
 		" -p, --pid <id>         interpret argument as process ID (default)\n"
 		" -u, --user <name|id>   interpret argument as username or user ID\n"
 		" -h, --help             display help text and exit\n"
 		" -V, --version          display version information and exit\n"), out);
-
-	fputs(_("\nFor more information see renice(1).\n"), out);
-
+	fprintf(out, USAGE_MAN_TAIL("renice(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
@@ -129,9 +126,8 @@ main(int argc, char **argv)
 		if (strcmp(*argv, "-v") == 0 ||
 		    strcmp(*argv, "-V") == 0 ||
 		    strcmp(*argv, "--version") == 0) {
-			printf(_("%s from %s\n"),
-			       program_invocation_short_name, PACKAGE_STRING);
-			exit(EXIT_SUCCESS);
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		}
 	}
 
