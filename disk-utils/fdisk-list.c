@@ -177,36 +177,19 @@ done:
 	fdisk_free_iter(itr);
 }
 
-int print_device_pt(struct fdisk_context *cxt, char *device, int warnme)
+char *next_proc_partition(FILE **f)
 {
-	if (fdisk_assign_device(cxt, device, 1) != 0) {	/* read-only */
-		if (warnme || errno == EACCES)
-			warn(_("cannot open %s"), device);
-		return -1;
-	}
-
-	list_disk_geometry(cxt);
-
-	if (fdisk_has_label(cxt))
-		list_disklabel(cxt);
-
-	fdisk_deassign_device(cxt, 1);
-	return 0;
-}
-
-void print_all_devices_pt(struct fdisk_context *cxt)
-{
-	FILE *f;
 	char line[128 + 1];
-	int ct = 0;
 
-	f = fopen(_PATH_PROC_PARTITIONS, "r");
-	if (!f) {
-		warn(_("cannot open %s"), _PATH_PROC_PARTITIONS);
-		return;
+	if (!*f) {
+		*f = fopen(_PATH_PROC_PARTITIONS, "r");
+		if (!*f) {
+			warn(_("cannot open %s"), _PATH_PROC_PARTITIONS);
+			return NULL;
+		}
 	}
 
-	while (fgets(line, sizeof(line), f)) {
+	while (fgets(line, sizeof(line), *f)) {
 		char buf[PATH_MAX], *cn;
 		dev_t devno;
 
@@ -228,14 +211,44 @@ void print_all_devices_pt(struct fdisk_context *cxt)
 		if (!cn)
 			continue;
 
-		if (!is_ide_cdrom_or_tape(cn)) {
-			if (ct)
-				fputs("\n\n", stdout);
-			if (print_device_pt(cxt, cn, 0) == 0)
-				ct++;
-		}
-		free(cn);
+		if (!is_ide_cdrom_or_tape(cn))
+			return cn;
 	}
-	fclose(f);
+	fclose(*f);
+	*f = NULL;
+
+	return NULL;
+}
+
+int print_device_pt(struct fdisk_context *cxt, char *device, int warnme)
+{
+	if (fdisk_assign_device(cxt, device, 1) != 0) {	/* read-only */
+		if (warnme || errno == EACCES)
+			warn(_("cannot open %s"), device);
+		return -1;
+	}
+
+	list_disk_geometry(cxt);
+
+	if (fdisk_has_label(cxt))
+		list_disklabel(cxt);
+
+	fdisk_deassign_device(cxt, 1);
+	return 0;
+}
+
+void print_all_devices_pt(struct fdisk_context *cxt)
+{
+	FILE *f = NULL;
+	int ct = 0;
+	char *dev;
+
+	while ((dev = next_proc_partition(&f))) {
+		if (ct)
+			fputs("\n\n", stdout);
+		if (print_device_pt(cxt, dev, 0) == 0)
+			ct++;
+		free(dev);
+	}
 }
 
