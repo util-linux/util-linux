@@ -48,6 +48,12 @@
 #include "c.h"
 #include "closestream.h"
 
+const char *idtype[] = {
+	[PRIO_PROCESS]	= N_("process ID"),
+	[PRIO_PGRP]	= N_("process group ID"),
+	[PRIO_USER]	= N_("user ID"),
+};
+
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
@@ -67,36 +73,31 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static int getprio(const int which, const int who, const char *idtype, int *prio)
+static int getprio(const int which, const int who, int *prio)
 {
 	errno = 0;
 	*prio = getpriority(which, who);
 	if (*prio == -1 && errno) {
-		warn(_("failed to get priority for %d (%s)"), who, idtype);
+		warn(_("failed to get priority for %d (%s)"), who, idtype[which]);
 		return -errno;
 	}
 	return 0;
 }
 
-static int donice(int which, int who, int prio)
+static int donice(const int which, const int who, const int prio)
 {
 	int oldprio, newprio;
-	const char *idtype = _("process ID");
 
-	if (which == PRIO_USER)
-		idtype = _("user ID");
-	else if (which == PRIO_PGRP)
-		idtype = _("process group ID");
-	if (getprio(which, who, idtype, &oldprio) != 0)
+	if (getprio(which, who, &oldprio) != 0)
 		return 1;
 	if (setpriority(which, who, prio) < 0) {
-		warn(_("failed to set priority for %d (%s)"), who, idtype);
+		warn(_("failed to set priority for %d (%s)"), who, idtype[which]);
 		return 1;
 	}
-	if (getprio(which, who, idtype, &newprio) != 0)
+	if (getprio(which, who, &newprio) != 0)
 		return 1;
 	printf(_("%d (%s) old priority %d, new priority %d\n"),
-	       who, idtype, oldprio, newprio);
+	       who, idtype[which], oldprio, newprio);
 	return 0;
 }
 
@@ -174,7 +175,7 @@ int main(int argc, char **argv)
 		} else {
 			who = strtol(*argv, &endptr, 10);
 			if (who < 0 || *endptr) {
-				warnx(_("bad value %s"), *argv);
+				warnx(_("bad %s value: %s"), idtype[which], *argv);
 				errs = 1;
 				continue;
 			}
