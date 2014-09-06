@@ -24,8 +24,7 @@
  * sparc32 util by Jakub Jelinek (1998, 1999)
  */
 
-#include <syscall.h>
-#include <linux/personality.h>
+#include <sys/personality.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -37,7 +36,10 @@
 #include "c.h"
 #include "closestream.h"
 
-#define set_pers(pers) ((long)syscall(SYS_personality, pers))
+#ifndef HAVE_PERSONALITY
+# include <syscall.h>
+# define personality(pers) ((long)syscall(SYS_personality, pers))
+#endif
 
 /* Options without equivalent short options */
 enum {
@@ -229,7 +231,7 @@ static int set_arch(const char *pers, unsigned long options, int list)
 	if (transitions[i].perval < 0)
 		errx(EXIT_FAILURE, _("%s: Unrecognized architecture"), pers);
 	pers_value = transitions[i].perval | options;
-	if (set_pers(pers_value) == -EINVAL)
+	if (personality(pers_value) == -EINVAL)
 		return 1;
 	uname(&un);
 	if (transitions[i].result_arch && strcmp(un.machine, transitions[i].result_arch)) {
