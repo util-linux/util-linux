@@ -1256,9 +1256,6 @@ static void determine_clock_access_method(const bool user_requests_ISA)
 		ur = probe_for_rtc_clock();
 #endif
 
-	if (!ur)
-		ur = probe_for_kd_clock();
-
 	if (!ur && !user_requests_ISA)
 		ur = probe_for_cmos_clock();
 
