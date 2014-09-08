@@ -1379,7 +1379,8 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 static int dos_add_partition(struct fdisk_context *cxt,
 			     struct fdisk_partition *pa)
 {
-	size_t i, free_primary = 0;
+	size_t i, free_primary = 0, free_sectors = 0;
+	sector_t last = 0, grain;
 	int rc = 0;
 	struct fdisk_dos_label *l;
 	struct pte *ext_pe;
@@ -1408,12 +1409,38 @@ static int dos_add_partition(struct fdisk_context *cxt,
 			goto done;
 		}
 
+	/* pa specifies that extended partition is wanted */
+	} else if (pa && pa->type && pa->type->code == MBR_DOS_EXTENDED_PARTITION) {
+		int j;
+
+		if (l->ext_offset) {
+			fdisk_warnx(cxt, _("Extended partition already exists."));
+			return -EINVAL;
+		}
+		j = get_partition_unused_primary(cxt, pa);
+		if (j >= 0) {
+			rc = add_partition(cxt, j, pa);
+			goto done;
+		}
 	}
+
+	/* check if there is space for primary partition */
+	grain = cxt->grain > cxt->sector_size ? cxt->grain / cxt->sector_size : 1;
+	last = cxt->first_lba;
 
 	for (i = 0; i < 4; i++) {
 		struct dos_partition *p = self_partition(cxt, i);
-		free_primary += !is_used_partition(p);
+
+		if (is_used_partition(p)) {
+			sector_t start = dos_partition_get_start(p);
+			if (last + grain <= start)
+				free_sectors = 1;
+			last = start + dos_partition_get_size(p);
+		} else
+			free_primary++;
 	}
+	if (last + grain < cxt->total_sectors - 1)
+		free_sectors = 1;
 
 	if (!free_primary && cxt->label->nparts_max >= MAXIMUM_PARTS) {
 		fdisk_info(cxt, _("The maximum number of partitions has "
@@ -1422,16 +1449,20 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	}
 	rc = 1;
 
-	if (!free_primary) {
+	if (!free_primary || !free_sectors) {
 		if (l->ext_offset) {
-			fdisk_info(cxt, _("All primary partitions are in use."));
+			if (!free_primary)
+				fdisk_info(cxt, _("All primary partitions are in use."));
+			else if (!free_sectors)
+				fdisk_info(cxt, _("All space for primary partitions are in use."));
 			rc = add_logical(cxt, pa);
-		} else
+		} else {
 			fdisk_info(cxt, _("If you want to create more than "
 				"four partitions, you must replace a "
 				"primary partition with an extended "
 				"partition first."));
-
+			return -EINVAL;
+		}
 	} else if (cxt->label->nparts_max >= MAXIMUM_PARTS) {
 		int j;
 
@@ -1444,6 +1475,14 @@ static int dos_add_partition(struct fdisk_context *cxt,
 		char hint[BUFSIZ];
 		struct fdisk_ask *ask;
 		int c;
+
+		/* the default layout for scripts is to create primary partitions */
+		if (cxt->script) {
+			int j = get_partition_unused_primary(cxt, pa);
+			if (j >= 0)
+				rc = add_partition(cxt, j, pa);
+			goto done;
+		}
 
 		ask = fdisk_new_ask();
 		if (!ask)
