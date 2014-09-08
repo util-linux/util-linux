@@ -57,6 +57,12 @@ struct fdisk_script *fdisk_new_script(struct fdisk_context *cxt)
 	dp->cxt = cxt;
 	fdisk_ref_context(cxt);
 
+	dp->table = fdisk_new_table();
+	if (!dp->table) {
+		fdisk_unref_script(dp);
+		return NULL;
+	}
+
 	INIT_LIST_HEAD(&dp->headers);
 	return dp;
 }
@@ -592,7 +598,7 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 			p += 5;
 			rc = next_number(&p, &num);
 			if (!rc)
-				fdisk_partition_set_size(pa, num);
+				fdisk_partition_set_size(pa, num / dp->cxt->sector_size);
 
 		} else if (!strncasecmp(p, "end=", 4)) {
 			p += 4;
@@ -728,6 +734,7 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 
 	fdisk_partition_start_follow_default(pa, 1);
 	fdisk_partition_end_follow_default(pa, 1);
+	fdisk_partition_partno_follow_default(pa, 1);
 
 	while (rc == 0 && p && *p) {
 		uint64_t num;
@@ -756,7 +763,7 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 			else {
 				rc = next_number(&p, &num);
 				if (!rc)
-					fdisk_partition_set_size(pa, num);
+					fdisk_partition_set_size(pa, num / dp->cxt->sector_size);
 				fdisk_partition_end_follow_default(pa, 0);
 			}
 			break;
@@ -851,9 +858,17 @@ int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
 	return rc;
 }
 
-static int fdisk_script_read_line(struct fdisk_script *dp, FILE *f)
+/**
+ * fdisk_script_read_line:
+ * @dp: script
+ * @f: file
+ *
+ * Reads next line into dump.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t bufsz)
 {
-	char buf[BUFSIZ];
 	char *s;
 
 	assert(dp);
@@ -863,7 +878,7 @@ static int fdisk_script_read_line(struct fdisk_script *dp, FILE *f)
 
 	/* read the next non-blank non-comment line */
 	do {
-		if (fgets(buf, sizeof(buf), f) == NULL)
+		if (fgets(buf, bufsz, f) == NULL)
 			return -errno;
 		dp->nlines++;
 		s = strchr(buf, '\n');
@@ -901,6 +916,7 @@ static int fdisk_script_read_line(struct fdisk_script *dp, FILE *f)
  */
 int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
 {
+	char buf[BUFSIZ];
 	int rc = NULL;
 
 	assert(dp);
@@ -909,7 +925,7 @@ int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
 	DBG(SCRIPT, ul_debugobj(dp, "parsing file"));
 
 	while (!feof(f)) {
-		rc = fdisk_script_read_line(dp, f);
+		rc = fdisk_script_read_line(dp, f, buf, sizeof(buf));
 		if (rc)
 			break;
 	}
@@ -962,6 +978,32 @@ struct fdisk_script *fdisk_get_script(struct fdisk_context *cxt)
 }
 
 /**
+ * fdisk_apply_script_headers:
+ * @cxt: context
+ * dp: script
+ *
+ * Associte context @cxt with script @dp and creates a new empty disklabel.
+ *
+ * Return: 0 on success, <0 on error.
+ */
+int fdisk_apply_script_headers(struct fdisk_context *cxt, struct fdisk_script *dp)
+{
+	const char *name;
+
+	assert(cxt);
+	assert(dp);
+
+	fdisk_set_script(cxt, dp);
+
+	/* create empty label */
+	name = fdisk_script_get_header(dp, "label");
+	if (!name)
+		return -EINVAL;
+
+	return fdisk_create_disklabel(cxt, name);
+}
+
+/**
  * fdisk_apply_script:
  * @cxt: context
  * @dp: script
@@ -974,7 +1016,6 @@ struct fdisk_script *fdisk_get_script(struct fdisk_context *cxt)
 int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp)
 {
 	int rc;
-	const char *p;
 	struct fdisk_script *old;
 
 	assert(dp);
@@ -983,23 +1024,14 @@ int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp)
 	DBG(CXT, ul_debugobj(cxt, "appling script %p", dp));
 
 	old = fdisk_get_script(cxt);
-	fdisk_set_script(cxt, dp);
 
-	/* create empty label */
-	p = fdisk_script_get_header(dp, "label");
-	if (!p) {
-		rc = -EINVAL;
-		goto done;
-	}
-	rc = fdisk_create_disklabel(cxt, p);
-	if (rc)
-		goto done;
+	/* create empty disk label */
+	rc = fdisk_apply_script_headers(cxt, dp);
 
 	/* create partitions */
-	if (dp->table)
+	if (!rc && dp->table)
 		rc = fdisk_apply_table(cxt, dp->table);
 
-done:
 	fdisk_set_script(cxt, old);
 	DBG(CXT, ul_debugobj(cxt, "script done [rc=%d]", rc));
 	return rc;

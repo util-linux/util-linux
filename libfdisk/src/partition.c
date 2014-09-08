@@ -295,6 +295,18 @@ int fdisk_partition_start_follow_default(struct fdisk_partition *pa, int enable)
 }
 
 /**
+ * fdisk_partition_start_is_default:
+ * @pa: partition
+ *
+ * Returns: 1 if the partition follows default
+ */
+int fdisk_partition_start_is_default(struct fdisk_partition *pa)
+{
+	assert(pa);
+	return pa->start_follow_default;
+}
+
+/**
  * fdisk_partition_start_follow_default
  * @pa: partition
  * @enable: 0|1
@@ -310,6 +322,18 @@ int fdisk_partition_end_follow_default(struct fdisk_partition *pa, int enable)
 		return -EINVAL;
 	pa->end_follow_default = enable ? 1 : 0;
 	return 0;
+}
+
+/**
+ * fdisk_partition_end_is_default:
+ * @pa: partition
+ *
+ * Returns: 1 if the partition follows default
+ */
+int fdisk_partition_end_is_default(struct fdisk_partition *pa)
+{
+	assert(pa);
+	return pa->end_follow_default;
 }
 
 const char *fdisk_partition_get_uuid(struct fdisk_partition *pa)

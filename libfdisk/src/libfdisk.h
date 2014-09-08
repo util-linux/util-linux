@@ -270,6 +270,8 @@ extern int fdisk_partition_next_partno(struct fdisk_partition *pa,
 extern int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int enable);
 extern int fdisk_partition_start_follow_default(struct fdisk_partition *pa, int enable);
 extern int fdisk_partition_end_follow_default(struct fdisk_partition *pa, int enable);
+extern int fdisk_partition_end_is_default(struct fdisk_partition *pa);
+extern int fdisk_partition_start_is_default(struct fdisk_partition *pa);
 
 extern int fdisk_reorder_partitions(struct fdisk_context *cxt);
 
@@ -416,12 +418,13 @@ struct fdisk_table *fdisk_script_get_table(struct fdisk_script *dp);
 
 int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt);
 int fdisk_script_write_file(struct fdisk_script *dp, FILE *f);
-int fdisk_script_read_buffer(struct fdisk_script *dp, char *s);
 int fdisk_script_read_file(struct fdisk_script *dp, FILE *f);
+int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t sz);
 
 int fdisk_set_script(struct fdisk_context *cxt, struct fdisk_script *dp);
 struct fdisk_script *fdisk_get_script(struct fdisk_context *cxt);
 
+int fdisk_apply_script_headers(struct fdisk_context *cxt, struct fdisk_script *dp);
 int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp);
 
 
@@ -505,6 +508,9 @@ extern int fdisk_ask_menu_add_item(struct fdisk_ask *ask, int key,
 			const char *name, const char *desc);
 
 extern int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew);
+
+/* utils.h */
+extern char *fdisk_partname(const char *dev, size_t partno);
 
 #ifdef __cplusplus
 }

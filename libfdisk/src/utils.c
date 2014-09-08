@@ -61,8 +61,12 @@ int fdisk_read_firstsector(struct fdisk_context *cxt)
 	return 0;
 }
 
-/*
- * Return allocated buffer with partition name
+/**
+ * fdisk_partname:
+ * dev: device name
+ * @partno: partition name
+ *
+ * Return: allocated buffer with partition name
  */
 char *fdisk_partname(const char *dev, size_t partno)
 {
