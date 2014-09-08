@@ -71,6 +71,8 @@ enum {
 
 struct sfdisk {
 	int		act;		/* action */
+	int		partno;		/* -N <partno>, default -1 */
+	const char	*label;		/* --label <label> */
 
 	struct fdisk_context	*cxt;	/* libfdisk context */
 };
@@ -312,15 +314,47 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 	return 0;
 }
 
+
+static void sfdisk_print_partition(struct sfdisk *sf, int n)
+{
+	struct fdisk_partition *pa;
+	char *data;
+
+	assert(sf);
+
+	if (fdisk_get_partition(sf->cxt, n, &pa) != 0)
+		return;
+
+	fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_DEVICE, &data);
+	printf("%12s : ", data);
+
+	fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_START, &data);
+	printf("%12s ", data);
+
+	fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_END, &data);
+	printf("%12s ", data);
+
+	fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_SIZE, &data);
+	printf("(%s) ", data);
+
+	fdisk_partition_to_string(pa, sf->cxt, FDISK_FIELD_TYPE, &data);
+	printf("%s\n", data);
+
+	fdisk_unref_partition(pa);
+}
+
 /*
  * sfdisk <device> [[-N] <partno>]
  *
  * Note that the option -N is there for backward compatibility only.
  */
-static int command_fdisk(struct sfdisk *sf, int argc, char **argv, int partno)
+static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 {
-	int rc;
-	const char *devname = NULL;
+	int rc = 0, partno = sf->partno, created = 0;
+	struct fdisk_script *dp;
+	struct fdisk_table *tb = NULL;
+	const char *devname = NULL, *label;
+	char buf[BUFSIZ];
 
 	if (argc)
 		devname = argv[0];
@@ -330,16 +364,94 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv, int partno)
 	if (!devname)
 		errx(EXIT_FAILURE, _("no disk device specified"));
 
+	dp = fdisk_new_script(sf->cxt);
+	if (!dp)
+		err(EXIT_FAILURE, _("failed to allocate script handler"));
+
 	rc = fdisk_assign_device(sf->cxt, devname, 0);
 	if (rc)
 		err(EXIT_FAILURE, _("cannot open %s"), devname);
 
+	list_disk_geometry(sf->cxt);
+	printf(_("\nOld situation:"));
+	list_disklabel(sf->cxt);
+
+	if (sf->label)
+		label = sf->label;
+	else if (fdisk_has_label(sf->cxt))
+		label = fdisk_label_get_name(fdisk_get_label(sf->cxt, NULL));
+	else
+		label = "dos";	/* just for backward compatibility */
+
+	fdisk_script_set_header(dp, "label", label);
+
+	printf(_("\nInput in the following format; absent fields get a default value.\n"
+		 "<start> <size> <type [uuid, hex or E,S,L,X]> <bootable [-,*]>\n"
+		 "Usually you only need to specify <start> and <size>\n"));
+
+	if (!fdisk_has_label(sf->cxt))
+		printf(_("\nsfdisk is going to create a new '%s' disk label.\n"
+			 "Use 'label: <name>' before you define a first partition\n"
+			 "to override the default.\n"), label);
+
+	tb = fdisk_script_get_table(dp);
+
+	do {
+		size_t nparts = fdisk_table_get_nents(tb);
+		char *partname;
+
+		partname = fdisk_partname(devname, nparts + 1);
+		if (!partname)
+			err(EXIT_FAILURE, _("failed to allocate partition name"));
+		printf("%s: ", partname);
+		free(partname);
+
+		rc = fdisk_script_read_line(dp, stdin, buf, sizeof(buf));
+		if (rc) {
+			buf[sizeof(buf) - 1] = '\0';
+
+			if (strcmp(buf, "print") == 0)
+				list_disklabel(sf->cxt);
+			else if (strcmp(buf, "quit") == 0)
+				break;
+			else if (strcmp(buf, "abort") == 0) {
+				rc = -1;
+				break;
+			} else
+				fdisk_warnx(sf->cxt, _("unsupported command"));
+			continue;
+		}
+
+		nparts = fdisk_table_get_nents(tb);
+		if (nparts) {
+			struct fdisk_partition *pa = fdisk_table_get_partition(tb, nparts - 1);
+
+			if (!created) {		/* create a disklabel */
+				rc = fdisk_apply_script_headers(sf->cxt, dp);
+				created = !rc;
+			}
+			if (!rc)		/* cretate partition */
+				rc = fdisk_add_partition(sf->cxt, pa);
+
+			if (!rc)		/* sucess, print reult */
+				sfdisk_print_partition(sf, nparts - 1);
+			else if (pa)		/* error, drop partition from script */
+				fdisk_table_remove_partition(tb, pa);
+		} else
+			printf(_("OK\n"));	/* probably added script header */
+	} while (1);
 
 
+	if (!rc) {
+		printf(_("\nNew situation:"));
+		list_disklabel(sf->cxt);
+	}
 	if (!rc)
 		rc = fdisk_write_disklabel(sf->cxt);
 	if (!rc)
 		rc = fdisk_deassign_device(sf->cxt, 1);
+
+	fdisk_unref_script(dp);
 	return rc;
 }
 
@@ -370,8 +482,11 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char *argv[])
 {
-	struct sfdisk _sf = { .act = 0 }, *sf  = &_sf;
-	int rc = -EINVAL, c, partno = 1;
+	int rc = -EINVAL, c;
+	struct sfdisk _sf = {
+		.act = 0,
+		.partno = -1
+	}, *sf = &_sf;
 
 	static const struct option longopts[] = {
 		{ "activate",no_argument,	NULL, 'a' },
@@ -380,6 +495,7 @@ int main(int argc, char *argv[])
 		{ "help",    no_argument,       NULL, 'h' },
 		{ "show-size", no_argument,	NULL, 's' },
 		{ "partno",  required_argument, NULL, 'N' },
+		{ "label",   required_argument, NULL, 'X' },
 		{ "version", no_argument,       NULL, 'v' },
 		{ NULL, 0, 0, 0 },
 	};
@@ -389,7 +505,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "adhlNsv", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "adhlN:svX:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			sf->act = ACT_ACTIVATE;
@@ -404,7 +520,10 @@ int main(int argc, char *argv[])
 			sf->act = ACT_DUMP;
 			break;
 		case 'N':
-			partno = strtou32_or_err(optarg, _("failed to parse partition number"));
+			sf->partno = strtou32_or_err(optarg, _("failed to parse partition number"));
+			break;
+		case 'X':
+			sf->label = optarg;
 			break;
 		case 's':
 			sf->act = ACT_SHOW_SIZE;
@@ -413,6 +532,8 @@ int main(int argc, char *argv[])
 			printf(_("%s from %s\n"), program_invocation_short_name,
 						  PACKAGE_STRING);
 			return EXIT_SUCCESS;
+		default:
+			usage(stderr);
 		}
 	}
 
@@ -428,7 +549,7 @@ int main(int argc, char *argv[])
 		break;
 
 	case ACT_FDISK:
-		rc = command_fdisk(sf, argc - optind, argv + optind, partno);
+		rc = command_fdisk(sf, argc - optind, argv + optind);
 		break;
 
 	case ACT_DUMP:
