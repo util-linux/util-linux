@@ -759,7 +759,8 @@ static int sgi_delete_partition(struct fdisk_context *cxt, size_t partnum)
 }
 
 static int sgi_add_partition(struct fdisk_context *cxt,
-			     struct fdisk_partition *pa)
+			     struct fdisk_partition *pa,
+			     size_t *partno)
 {
 	struct fdisk_sgi_label *sgi;
 	char mesg[256];
@@ -900,7 +901,8 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 
 	sgi_set_partition(cxt, n, first, last - first, sys);
 	cxt->label->nparts_cur = count_used_partitions(cxt);
-
+	if (partno)
+		*partno = n;
 	return 0;
 }
 

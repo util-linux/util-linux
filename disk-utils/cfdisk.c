@@ -1829,7 +1829,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		fdisk_partition_set_start(npa, start);
 				fdisk_partition_partno_follow_default(npa, 1);
 		/* add to disk label -- libfdisk will ask for missing details */
-		rc = fdisk_add_partition(cf->cxt, npa);
+		rc = fdisk_add_partition(cf->cxt, npa, NULL);
 		fdisk_unref_partition(npa);
 		if (rc == 0)
 			ref = 1;

@@ -73,9 +73,9 @@ void fdisk_unref_partition(struct fdisk_partition *pa)
 
 	pa->refcount--;
 	if (pa->refcount <= 0) {
-		DBG(PART, ul_debugobj(pa, "free"));
 		fdisk_reset_partition(pa);
 		list_del(&pa->parts);
+		DBG(PART, ul_debugobj(pa, "free"));
 		free(pa);
 	}
 }
@@ -548,7 +548,9 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
  * @partno:
  * @pa: pointer to partition struct
  *
- * Fills in @pa with data about partition @n.
+ * Fills in @pa with data about partition @n. Note that partno may address
+ * unused partition and then this function does not fill anything to @pa.
+ * See fdisk_is_partition_used().
  *
  * Returns: 0 on success, otherwise, a corresponding error.
  */
@@ -601,7 +603,8 @@ int fdisk_is_partition_used(struct fdisk_context *cxt, size_t n)
 /**
  * fdisk_add_partition:
  * @cxt: fdisk context
- * @pa: template for the partition
+ * @pa: template for the partition (or NULL)
+ * @partno: returns new partition number (optional)
  *
  * If @pa is not specified or any @pa item is missiong the libfdisk will ask by
  * fdisk_ask_ API.
@@ -611,7 +614,8 @@ int fdisk_is_partition_used(struct fdisk_context *cxt, size_t n)
  * Returns 0.
  */
 int fdisk_add_partition(struct fdisk_context *cxt,
-			struct fdisk_partition *pa)
+			struct fdisk_partition *pa,
+			size_t *partno)
 {
 	int rc;
 
@@ -625,16 +629,20 @@ int fdisk_add_partition(struct fdisk_context *cxt,
 	if (fdisk_missing_geometry(cxt))
 		return -EINVAL;
 
-	DBG(CXT, ul_debugobj(cxt, "adding new partition (start=%ju, end=%ju, size=%ju, "
+	if (pa)
+		DBG(CXT, ul_debugobj(cxt, "adding new partition %p (start=%ju, end=%ju, size=%ju, "
 			    "defaults(start=%s, end=%s, partno=%s)",
-			    pa ? pa->start : 0,
-			    pa ? pa->end : 0,
-			    pa ? pa->size : 0,
-			    pa && pa->start_follow_default ? "yes" : "no",
-			    pa && pa->end_follow_default ? "yes" : "no",
-			    pa && pa->partno_follow_default ? "yes" : "no"));
+			    pa,
+			    pa->start,
+			    pa->end,
+			    pa->size,
+			    pa->start_follow_default ? "yes" : "no",
+			    pa->end_follow_default ? "yes" : "no",
+			    pa->partno_follow_default ? "yes" : "no"));
+	else
+		DBG(CXT, ul_debugobj(cxt, "adding partition"));
 
-	rc = cxt->label->op->add_part(cxt, pa);
+	rc = cxt->label->op->add_part(cxt, pa, partno);
 
 	DBG(CXT, ul_debugobj(cxt, "add partition done (rc=%d)", rc));
 	return rc;

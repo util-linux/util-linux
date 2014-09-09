@@ -197,7 +197,7 @@ extern int fdisk_set_disklabel_id(struct fdisk_context *cxt);
 
 extern int fdisk_get_partition(struct fdisk_context *cxt, size_t partno, struct fdisk_partition **pa);
 
-extern int fdisk_add_partition(struct fdisk_context *cxt, struct fdisk_partition *pa);
+extern int fdisk_add_partition(struct fdisk_context *cxt, struct fdisk_partition *pa, size_t *partno);
 extern int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum);
 extern int fdisk_delete_all_partitions(struct fdisk_context *cxt);
 

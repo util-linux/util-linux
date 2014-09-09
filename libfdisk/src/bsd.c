@@ -194,7 +194,8 @@ static int bsd_probe_label(struct fdisk_context *cxt)
 }
 
 static int bsd_add_partition(struct fdisk_context *cxt,
-			     struct fdisk_partition *pa)
+			     struct fdisk_partition *pa,
+			     size_t *partno)
 {
 	struct fdisk_bsd_label *l = self_label(cxt);
 	struct bsd_disklabel *d = self_disklabel(cxt);
@@ -297,6 +298,8 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 		bsd_set_parttype(cxt, i, pa->type);
 
 	fdisk_label_set_changed(cxt->label, 1);
+	if (partno)
+		*partno = i;
 	return 0;
 }
 

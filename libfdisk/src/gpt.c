@@ -1755,7 +1755,8 @@ static int gpt_entry_set_uuid(struct gpt_entry *e, char *str)
 /* Performs logical checks to add a new partition entry */
 static int gpt_add_partition(
 		struct fdisk_context *cxt,
-		struct fdisk_partition *pa)
+		struct fdisk_partition *pa,
+		size_t *partno)
 {
 	uint64_t user_f, user_l;	/* user input ranges for first and last sectors */
 	uint64_t disk_f, disk_l;	/* first and last available sector ranges on device*/
@@ -1947,6 +1948,8 @@ static int gpt_add_partition(
 	}
 
 	rc = 0;
+	if (partno)
+		*partno = partnum;
 done:
 	fdisk_free_ask(ask);
 	return rc;

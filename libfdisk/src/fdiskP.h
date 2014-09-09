@@ -192,7 +192,7 @@ struct fdisk_label_operations {
 	int (*set_id)(struct fdisk_context *cxt);
 
 	/* new partition */
-	int (*add_part)(struct fdisk_context *cxt, struct fdisk_partition *pa);
+	int (*add_part)(struct fdisk_context *cxt, struct fdisk_partition *pa, size_t *partno);
 
 	/* delete partition */
 	int (*part_delete)(struct fdisk_context *cxt,

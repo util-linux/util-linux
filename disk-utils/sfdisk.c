@@ -317,7 +317,7 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 
 static void sfdisk_print_partition(struct sfdisk *sf, int n)
 {
-	struct fdisk_partition *pa;
+	struct fdisk_partition *pa = NULL;
 	char *data;
 
 	assert(sf);
@@ -355,6 +355,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	struct fdisk_table *tb = NULL;
 	const char *devname = NULL, *label;
 	char buf[BUFSIZ];
+	size_t next_partno = (size_t) -1;
 
 	if (argc)
 		devname = argv[0];
@@ -387,27 +388,38 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 	printf(_("\nInput in the following format; absent fields get a default value.\n"
 		 "<start> <size> <type [uuid, hex or E,S,L,X]> <bootable [-,*]>\n"
-		 "Usually you only need to specify <start> and <size>\n"));
+		 "Usually you only need to specify <start> and <size>\n\n"));
 
 	if (!fdisk_has_label(sf->cxt))
-		printf(_("\nsfdisk is going to create a new '%s' disk label.\n"
+		printf(_("sfdisk is going to create a new '%s' disk label.\n"
 			 "Use 'label: <name>' before you define a first partition\n"
-			 "to override the default.\n"), label);
+			 "to override the default.\n\n"), label);
 
 	tb = fdisk_script_get_table(dp);
+	assert(tb);
 
 	do {
-		size_t nparts = fdisk_table_get_nents(tb);
+		size_t nparts;
 		char *partname;
 
-		partname = fdisk_partname(devname, nparts + 1);
+		DBG(PARSE, ul_debug("<---next-line--->"));
+		if (next_partno == (size_t) -1)
+			next_partno = fdisk_table_get_nents(tb);
+
+		partname = fdisk_partname(devname, next_partno + 1);
 		if (!partname)
 			err(EXIT_FAILURE, _("failed to allocate partition name"));
+		fflush(stdout);
 		printf("%s: ", partname);
 		free(partname);
 
 		rc = fdisk_script_read_line(dp, stdin, buf, sizeof(buf));
-		if (rc) {
+
+		if (rc == 1) {		/* end of file */
+			rc = 0;
+			break;
+		} else if (rc < 0) {
+			DBG(PARSE, ul_debug("script parsing failed, trying sfdisk specific commands"));
 			buf[sizeof(buf) - 1] = '\0';
 
 			if (strcmp(buf, "print") == 0)
@@ -424,18 +436,23 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 		nparts = fdisk_table_get_nents(tb);
 		if (nparts) {
+			size_t cur_partno;
 			struct fdisk_partition *pa = fdisk_table_get_partition(tb, nparts - 1);
 
+			fputc('\n', stdout);
+
+			assert(pa);
 			if (!created) {		/* create a disklabel */
 				rc = fdisk_apply_script_headers(sf->cxt, dp);
 				created = !rc;
 			}
 			if (!rc)		/* cretate partition */
-				rc = fdisk_add_partition(sf->cxt, pa);
+				rc = fdisk_add_partition(sf->cxt, pa, &cur_partno);
 
-			if (!rc)		/* sucess, print reult */
-				sfdisk_print_partition(sf, nparts - 1);
-			else if (pa)		/* error, drop partition from script */
+			if (!rc) {		/* success, print reult */
+				sfdisk_print_partition(sf, cur_partno);
+				next_partno = cur_partno + 1;
+			} else if (pa)		/* error, drop partition from script */
 				fdisk_table_remove_partition(tb, pa);
 		} else
 			printf(_("OK\n"));	/* probably added script header */

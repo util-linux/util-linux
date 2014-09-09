@@ -474,7 +474,8 @@ static int is_free_sector(struct fdisk_context *cxt,
 
 static int sun_add_partition(
 		struct fdisk_context *cxt,
-		struct fdisk_partition *pa)
+		struct fdisk_partition *pa,
+		size_t *partno)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
 	uint32_t starts[SUN_MAXPARTITIONS], lens[SUN_MAXPARTITIONS];
@@ -681,6 +682,8 @@ static int sun_add_partition(
 
 	set_sun_partition(cxt, n, first, last, sys);
 	cxt->label->nparts_cur = count_used_partitions(cxt);
+	if (partno)
+		*partno = n;
 	return 0;
 }
 

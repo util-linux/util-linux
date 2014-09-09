@@ -554,7 +554,7 @@ int fdisk_apply_table(struct fdisk_context *cxt, struct fdisk_table *tb)
 
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 	while (tb && fdisk_table_next_partition(tb, &itr, &pa) == 0) {
-		rc = fdisk_add_partition(cxt, pa);
+		rc = fdisk_add_partition(cxt, pa, NULL);
 		if (rc)
 			break;
 	}

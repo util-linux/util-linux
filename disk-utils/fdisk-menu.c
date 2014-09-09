@@ -520,7 +520,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		list_partition_types(cxt);
 		break;
 	case 'n':
-		rc = fdisk_add_partition(cxt, NULL);
+		rc = fdisk_add_partition(cxt, NULL, NULL);
 		break;
 	case 't':
 		change_partition_type(cxt);

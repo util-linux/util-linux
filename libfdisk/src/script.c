@@ -865,7 +865,7 @@ int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
  *
  * Reads next line into dump.
  *
- * Returns: 0 on success, <0 on error.
+ * Returns: 0 on success, <0 on error, 1 when nothing to read.
  */
 int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t bufsz)
 {
@@ -879,7 +879,7 @@ int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t b
 	/* read the next non-blank non-comment line */
 	do {
 		if (fgets(buf, bufsz, f) == NULL)
-			return -errno;
+			return 1;
 		dp->nlines++;
 		s = strchr(buf, '\n');
 		if (!s) {
@@ -993,6 +993,7 @@ int fdisk_apply_script_headers(struct fdisk_context *cxt, struct fdisk_script *d
 	assert(cxt);
 	assert(dp);
 
+	DBG(SCRIPT, ul_debugobj(dp, "applying script headers"));
 	fdisk_set_script(cxt, dp);
 
 	/* create empty label */
@@ -1098,10 +1099,12 @@ int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
 		printf(" #%zu :\n", n + 1);
 		rc = fdisk_script_read_line(dp, stdin);
 
-		pa = fdisk_table_get_partition(dp->table, n);
-		printf(" #%zu  %12ju %12ju\n",	n + 1,
+		if (rc == 0) {
+			pa = fdisk_table_get_partition(dp->table, n);
+			printf(" #%zu  %12ju %12ju\n",	n + 1,
 						fdisk_partition_get_start(pa),
 						fdisk_partition_get_size(pa));
+		}
 	} while (rc == 0);
 
 	if (!rc)
