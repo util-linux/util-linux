@@ -386,10 +386,15 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 	fdisk_script_set_header(dp, "label", label);
 
-	printf(_("\nInput in the following format; absent fields get a default value.\n"
-		 "<start> <size> <type [uuid, hex or E,S,L,X]> <bootable [-,*]>\n"
-		 "Usually you only need to specify <start> and <size>\n\n"));
+	fputc('\n', stdout);
+	printf(_("Input in the following format; absent fields get a default value.\n"
+		 "<start> <size> <type [uuid, hex or E,S,L,X]> <bootable [-,*]>\n"));
 
+	fputc('\n', stdout);
+	printf(_("If the size is specified by <number>{K,M,G,T,P,E,Z,Y} then\n"
+		 "it's interpreted as size in bytes rather then in sectors.\n"));
+
+	fputc('\n', stdout);
 	if (!fdisk_has_label(sf->cxt))
 		printf(_("sfdisk is going to create a new '%s' disk label.\n"
 			 "Use 'label: <name>' before you define a first partition\n"
@@ -416,6 +421,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		rc = fdisk_script_read_line(dp, stdin, buf, sizeof(buf));
 
 		if (rc == 1) {		/* end of file */
+			printf(_("Done.\n"));
 			rc = 0;
 			break;
 		} else if (rc < 0) {
@@ -455,7 +461,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			} else if (pa)		/* error, drop partition from script */
 				fdisk_table_remove_partition(tb, pa);
 		} else
-			printf(_("OK\n"));	/* probably added script header */
+			printf(_("\nScript header accepted.\n"));
 	} while (1);
 
 

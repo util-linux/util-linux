@@ -466,7 +466,7 @@ static char *next_separator(char *s)
 	return NULL;
 }
 
-static int next_number(char **s, uint64_t *num)
+static int next_number(char **s, uint64_t *num, int *power)
 {
 	char *end = NULL;
 	int rc;
@@ -482,7 +482,7 @@ static int next_number(char **s, uint64_t *num)
 	if (end)
 		*end = '\0';
 
-	rc = strtosize(*s, (uintmax_t *) num);
+	rc = parse_size(*s, (uintmax_t *) num, power);
 	if (end)
 		*s = ++end;
 	else
@@ -588,21 +588,27 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 		if (!*p)
 			break;
 
+		DBG(SCRIPT, ul_debugobj(dp, " parsing '%s'", p));
+
 		if (!strncasecmp(p, "start=", 6)) {
 			p += 6;
-			rc = next_number(&p, &num);
+			rc = next_number(&p, &num, NULL);
 			if (!rc)
 				fdisk_partition_set_start(pa, num);
 
 		} else if (!strncasecmp(p, "size=", 5)) {
-			p += 5;
-			rc = next_number(&p, &num);
-			if (!rc)
-				fdisk_partition_set_size(pa, num / dp->cxt->sector_size);
+			int pow = 0;
 
+			p += 5;
+			rc = next_number(&p, &num, &pow);
+			if (!rc) {
+				if (pow)
+					num /= dp->cxt->sector_size;
+				fdisk_partition_set_size(pa, num);
+			}
 		} else if (!strncasecmp(p, "end=", 4)) {
 			p += 4;
-			rc = next_number(&p, &num);
+			rc = next_number(&p, &num, NULL);
 			if (!rc)
 				fdisk_partition_set_end(pa, num);
 
@@ -751,7 +757,7 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 			if (*p == ',' || *p == ';')
 				fdisk_partition_start_follow_default(pa, 1);
 			else {
-				rc = next_number(&p, &num);
+				rc = next_number(&p, &num, NULL);
 				if (!rc)
 					fdisk_partition_set_start(pa, num);
 				fdisk_partition_start_follow_default(pa, 0);
@@ -761,9 +767,13 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 			if (*p == ',' || *p == ';')
 				fdisk_partition_end_follow_default(pa, 1);
 			else {
-				rc = next_number(&p, &num);
-				if (!rc)
-					fdisk_partition_set_size(pa, num / dp->cxt->sector_size);
+				int pow = 0;
+				rc = next_number(&p, &num, &pow);
+				if (!rc) {
+					if (pow)
+						num /= dp->cxt->sector_size;
+					fdisk_partition_set_size(pa, num);
+				}
 				fdisk_partition_end_follow_default(pa, 0);
 			}
 			break;
