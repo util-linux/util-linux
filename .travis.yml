@@ -12,6 +12,11 @@ env:
   - MAKE_CHECK="root"
   - MAKE_CHECK="dist"
 
+branches:
+  only:
+    - master
+    - /^stable.*/
+
 install:
   # install some packages from Ubuntu's default sources
   - sudo apt-get -qq update
