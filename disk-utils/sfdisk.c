@@ -343,6 +343,51 @@ static void sfdisk_print_partition(struct sfdisk *sf, int n)
 	fdisk_unref_partition(pa);
 }
 
+static void command_fdisk_help(void)
+{
+	fputs(_("\nHelp:\n"), stdout);
+
+	fputc('\n', stdout);
+	color_scheme_enable("help-title", UL_COLOR_BOLD);
+	fputs(_(" Commands:\n"), stdout);
+	color_disable();
+	fputs(_("   write    interupts input and write the partition table.\n"), stdout);
+	fputs(_("   abort    interupts input and exit.\n"), stdout);
+	fputs(_("   print    print partition table.\n"), stdout);
+	fputs(_("   help     this help.\n"), stdout);
+
+	fputc('\n', stdout);
+	color_scheme_enable("help-title", UL_COLOR_BOLD);
+	fputs(_(" Input format:\n"), stdout);
+	color_disable();
+	fputs(_("   <start> <size> <typy> <bootable>\n"), stdout);
+
+	fputc('\n', stdout);
+	fputs(_("   <start>  begin of the partition in sectors. The default is the first\n"
+		"            free space.\n"), stdout);
+
+	fputc('\n', stdout);
+	fputs(_("   <size>   size of the partition in sectors if specified in format\n"
+		"            <number>{K,M,G,T,P,E,Z,Y} then it's interpreted as size\n"
+		"            in bytes. The default is all available space.\n"), stdout);
+
+	fputc('\n', stdout);
+	fputs(_("   <type>   partition type. The default is Linux data partition.\n"), stdout);
+	fputs(_("            MBR: hex or L,S,E,X shortcuts.\n"), stdout);
+	fputs(_("            GPT: uuid or L,S,H shortcuts.\n"), stdout);
+
+	fputc('\n', stdout);
+	fputs(_("   <bootable>  '*' to mark MBR partition as bootable. \n"), stdout);
+
+	fputc('\n', stdout);
+	color_scheme_enable("help-title", UL_COLOR_BOLD);
+	fputs(_(" Example:\n"), stdout);
+	color_disable();
+	fputs(_("   , 4G     creates 4GiB partition on default start offset.\n"), stdout);
+	fputc('\n', stdout);
+}
+
+
 /*
  * sfdisk <device> [[-N] <partno>]
  *
@@ -373,9 +418,19 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	if (rc)
 		err(EXIT_FAILURE, _("cannot open %s"), devname);
 
+	if (isatty(STDIN_FILENO)) {
+		color_scheme_enable("welcome", UL_COLOR_GREEN);
+		fdisk_info(sf->cxt, _("\nWelcome to sfdisk (%s)."), PACKAGE_STRING);
+		color_disable();
+		fdisk_info(sf->cxt, _("Changes will remain in memory only, until you decide to write them.\n"
+				  "Be careful before using the write command.\n"));
+	}
+
 	list_disk_geometry(sf->cxt);
-	printf(_("\nOld situation:"));
-	list_disklabel(sf->cxt);
+	if (fdisk_has_label(sf->cxt)) {
+		fdisk_info(sf->cxt, _("\nOld situation:"));
+		list_disklabel(sf->cxt);
+	}
 
 	if (sf->label)
 		label = sf->label;
@@ -386,37 +441,34 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 	fdisk_script_set_header(dp, "label", label);
 
-	fputc('\n', stdout);
-	printf(_("Input in the following format; absent fields get a default value.\n"
-		 "<start> <size> <type [uuid, hex or E,S,L,X]> <bootable [-,*]>\n"));
-
-	fputc('\n', stdout);
-	printf(_("If the size is specified by <number>{K,M,G,T,P,E,Z,Y} then\n"
-		 "it's interpreted as size in bytes rather then in sectors.\n"));
-
-	fputc('\n', stdout);
-	if (!fdisk_has_label(sf->cxt))
-		printf(_("sfdisk is going to create a new '%s' disk label.\n"
-			 "Use 'label: <name>' before you define a first partition\n"
-			 "to override the default.\n\n"), label);
+	if (isatty(STDIN_FILENO)) {
+		if (!fdisk_has_label(sf->cxt) && !sf->label)
+			fdisk_info(sf->cxt,
+				_("\nsfdisk is going to create a new '%s' disk label.\n"
+				  "Use 'label: <name>' before you define a first partition\n"
+				  "to override the default."), label);
+		fdisk_info(sf->cxt, _("\nType 'help' to get more information.\n"));
+	} else
+		fputc('\n', stdout);
 
 	tb = fdisk_script_get_table(dp);
 	assert(tb);
 
 	do {
 		size_t nparts;
-		char *partname;
 
 		DBG(PARSE, ul_debug("<---next-line--->"));
 		if (next_partno == (size_t) -1)
 			next_partno = fdisk_table_get_nents(tb);
 
-		partname = fdisk_partname(devname, next_partno + 1);
-		if (!partname)
-			err(EXIT_FAILURE, _("failed to allocate partition name"));
-		fflush(stdout);
-		printf("%s: ", partname);
-		free(partname);
+		if (created) {
+			char *partname = fdisk_partname(devname, next_partno + 1);
+			if (!partname)
+				err(EXIT_FAILURE, _("failed to allocate partition name"));
+			printf("%s: ", partname);
+			free(partname);
+		} else
+			printf(">>> ");
 
 		rc = fdisk_script_read_line(dp, stdin, buf, sizeof(buf));
 
@@ -425,18 +477,30 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			rc = 0;
 			break;
 		} else if (rc < 0) {
+			const char *p;
+
 			DBG(PARSE, ul_debug("script parsing failed, trying sfdisk specific commands"));
 			buf[sizeof(buf) - 1] = '\0';
-
-			if (strcmp(buf, "print") == 0)
+			p = skip_blank(buf);
+			rc = 0;
+			if (strcmp(p, "print") == 0)
 				list_disklabel(sf->cxt);
-			else if (strcmp(buf, "quit") == 0)
+			else if (strcmp(p, "help") == 0)
+				command_fdisk_help();
+			else if (strcmp(p, "write") == 0)
 				break;
-			else if (strcmp(buf, "abort") == 0) {
+			else if (strcmp(p, "abort") == 0) {
 				rc = -1;
 				break;
-			} else
-				fdisk_warnx(sf->cxt, _("unsupported command"));
+			} else {
+				if (isatty(STDIN_FILENO))
+					fdisk_warnx(sf->cxt, _("unsupported command"));
+				else {
+					fdisk_warnx(sf->cxt, _("line %d: unsupported command"),
+							fdisk_script_get_nlines(dp));
+					break;
+				}
+			}
 			continue;
 		}
 
@@ -445,9 +509,13 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			size_t cur_partno;
 			struct fdisk_partition *pa = fdisk_table_get_partition(tb, nparts - 1);
 
-			fputc('\n', stdout);
-
 			assert(pa);
+
+			if (!fdisk_partition_get_start(pa) &&
+			    !fdisk_partition_start_is_default(pa)) {
+				fdisk_info(sf->cxt, _("Ignore partition %zu"), next_partno + 1);
+				continue;
+			}
 			if (!created) {		/* create a disklabel */
 				rc = fdisk_apply_script_headers(sf->cxt, dp);
 				created = !rc;
@@ -461,19 +529,21 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			} else if (pa)		/* error, drop partition from script */
 				fdisk_table_remove_partition(tb, pa);
 		} else
-			printf(_("\nScript header accepted.\n"));
+			fdisk_info(sf->cxt, _("Script header accepted."));
 	} while (1);
 
 
 	if (!rc) {
-		printf(_("\nNew situation:"));
+		fdisk_info(sf->cxt, _("\nNew situation:"));
 		list_disklabel(sf->cxt);
 	}
 	if (!rc)
 		rc = fdisk_write_disklabel(sf->cxt);
-	if (!rc)
-		rc = fdisk_deassign_device(sf->cxt, 1);
-
+	if (!rc) {
+		fdisk_info(sf->cxt, _("\nThe partition table has been altered."));
+		fdisk_reread_partition_table(sf->cxt);
+		rc = fdisk_deassign_device(sf->cxt, 0);
+	}
 	fdisk_unref_script(dp);
 	return rc;
 }

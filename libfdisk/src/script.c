@@ -292,6 +292,18 @@ static struct fdisk_label *script_get_label(struct fdisk_script *dp)
 }
 
 /**
+ * fdisk_script_get_nlines:
+ * @dp: script
+ *
+ * Returns: number of parsed lines or <0 on error.
+ */
+int fdisk_script_get_nlines(struct fdisk_script *dp)
+{
+	assert(dp);
+	return dp->nlines;
+}
+
+/**
  * fdisk_script_read_context:
  * @dp: script
  * @cxt: context
@@ -637,7 +649,8 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 		} else if (!strncasecmp(p, "type=", 5) ||
 			   !strncasecmp(p, "Id=", 3)) {		/* backward compatiility */
 			char *type;
-			p += 5;
+
+			p += (*p == 'I' ? 3 : 5);		/* "Id=" or "type=" */
 
 			rc = next_string(&p, &type);
 			if (rc)

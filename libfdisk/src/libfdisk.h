@@ -415,6 +415,7 @@ void fdisk_unref_script(struct fdisk_script *dp);
 const char *fdisk_script_get_header(struct fdisk_script *dp, const char *name);
 int fdisk_script_set_header(struct fdisk_script *dp, const char *name, const char *data);
 struct fdisk_table *fdisk_script_get_table(struct fdisk_script *dp);
+int fdisk_script_get_nlines(struct fdisk_script *dp);
 
 int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt);
 int fdisk_script_write_file(struct fdisk_script *dp, FILE *f);

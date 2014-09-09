@@ -286,9 +286,8 @@ size_t fdisk_get_npartitions(struct fdisk_context *cxt)
 int fdisk_is_labeltype(struct fdisk_context *cxt, enum fdisk_labeltype id)
 {
 	assert(cxt);
-	assert(cxt->label);
 
-	return fdisk_label_get_type(cxt->label) == id;
+	return cxt->label && fdisk_label_get_type(cxt->label) == id;
 }
 
 /**

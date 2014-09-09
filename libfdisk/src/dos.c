@@ -1029,6 +1029,8 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 					temp);
 			temp = start;
 			read = 0;
+			if (pa && (pa->start || pa->start_follow_default))
+				break;
 		}
 
 		if (!read && start == temp) {
