@@ -105,6 +105,29 @@ struct fdisk_parttype *fdisk_label_get_parttype_from_string(
 	return NULL;
 }
 
+static struct fdisk_parttype *new_parttype(unsigned int code,
+				    const char *typestr,
+				    const char *name)
+{
+	struct fdisk_parttype *t= calloc(1, sizeof(*t));
+
+	if (!t)
+		return NULL;
+	if (typestr) {
+		t->typestr = strdup(typestr);
+		if (!t->typestr) {
+			free(t);
+			return NULL;
+		}
+	}
+	t->name = name;
+	t->code = code;
+	t->flags |= FDISK_PARTTYPE_ALLOCATED;
+
+	DBG(PARTTYPE, ul_debugobj(t, "allocated new %s type", name));
+	return t;
+}
+
 /**
  * fdisk_new_unknown_parttype:
  * @code: type as number
@@ -118,25 +141,25 @@ struct fdisk_parttype *fdisk_label_get_parttype_from_string(
 struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int code,
 						  const char *typestr)
 {
-	struct fdisk_parttype *t;
+	struct fdisk_parttype *t = new_parttype(code, typestr, _("unknown"));
 
-	t = calloc(1, sizeof(*t));
 	if (!t)
 		return NULL;
-
-	if (typestr) {
-		t->typestr = strdup(typestr);
-		if (!t->typestr) {
-			free(t);
-			return NULL;
-		}
-	}
-	t->name = _("unknown");
-	t->code = code;
-	t->flags |= FDISK_PARTTYPE_UNKNOWN | FDISK_PARTTYPE_ALLOCATED;
-
-	DBG(PARTTYPE, ul_debugobj(t, "allocated new unknown type"));
+	t->flags |= FDISK_PARTTYPE_UNKNOWN;
 	return t;
+}
+
+/**
+ * fdisk_copy_parttype:
+ * @type: type to copy
+ *
+ * Use fdisk_free_parttype() to deallocate.
+ *
+ * Returns: newly allocated partition type, or NULL upon failure.
+ */
+struct fdisk_parttype *fdisk_copy_parttype(const struct fdisk_parttype *type)
+{
+	return new_parttype(type->code, type->typestr, type->name);
 }
 
 /**

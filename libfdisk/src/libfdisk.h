@@ -148,7 +148,9 @@ struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int code,
 struct fdisk_parttype *fdisk_label_parse_parttype(
 				struct fdisk_label *lb,
 				const char *str);
-void fdisk_free_parttype(struct fdisk_parttype *t);
+
+struct fdisk_parttype *fdisk_copy_parttype(const struct fdisk_parttype *type);
+void fdisk_free_parttype(struct fdisk_parttype *t);			/* TODO: use refcount */
 
 const char *fdisk_parttype_get_string(const struct fdisk_parttype *t);
 unsigned int fdisk_parttype_get_code(const struct fdisk_parttype *t);
@@ -247,7 +249,7 @@ extern size_t fdisk_partition_get_partno(struct fdisk_partition *pa);
 extern int fdisk_partition_cmp_partno(struct fdisk_partition *a,
 			      struct fdisk_partition *b);
 
-extern int fdisk_partition_set_type(struct fdisk_partition *pa, struct fdisk_parttype *type);
+extern int fdisk_partition_set_type(struct fdisk_partition *pa, const struct fdisk_parttype *type);
 extern const struct fdisk_parttype *fdisk_partition_get_type(struct fdisk_partition *pa);
 extern int fdisk_partition_set_name(struct fdisk_partition *pa, const char *name);
 extern const char *fdisk_partition_get_name(struct fdisk_partition *pa);

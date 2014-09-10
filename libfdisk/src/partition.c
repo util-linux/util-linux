@@ -207,12 +207,13 @@ int fdisk_partition_cmp_partno(struct fdisk_partition *a,
 	return a->partno - b->partno;
 }
 
-int fdisk_partition_set_type(struct fdisk_partition *pa, struct fdisk_parttype *type)
+int fdisk_partition_set_type(struct fdisk_partition *pa,
+			     const struct fdisk_parttype *type)
 {
 	if (!pa)
 		return -EINVAL;
 	fdisk_free_parttype(pa->type);
-	pa->type = type;
+	pa->type = fdisk_copy_parttype(type);
 	return 0;
 }
 
