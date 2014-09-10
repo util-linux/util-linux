@@ -52,6 +52,7 @@ UL_DEBUG_DEFINE_MASKANEMS(sfdisk) = UL_DEBUG_EMPTY_MASKNAMES;
 #define SFDISKPROG_DEBUG_INIT	(1 << 1)
 #define SFDISKPROG_DEBUG_PARSE	(1 << 2)
 #define SFDISKPROG_DEBUG_MISC	(1 << 3)
+#define SFDISKPROG_DEBUG_ASK	(1 << 4)
 #define SFDISKPROG_DEBUG_ALL	0xFFFF
 
 #define DBG(m, x)       __UL_DBG(sfdisk, SFDISKPROG_DEBUG_, m, x)
@@ -83,9 +84,35 @@ static void sfdiskprog_init_debug(void)
 	__UL_INIT_DEBUG(sfdisk, SFDISKPROG_DEBUG_, 0, SFDISK_DEBUG);
 }
 
+
+static int get_user_reply(const char *prompt, char *buf, size_t bufsz)
+{
+	char *p;
+	size_t sz;
+
+	fputs(prompt, stdout);
+	fflush(stdout);
+
+	if (!fgets(buf, bufsz, stdin))
+		return 1;
+
+	for (p = buf; *p && !isgraph(*p); p++);	/* get first non-blank */
+
+	if (p > buf)
+		memmove(buf, p, p - buf);	/* remove blank space */
+	sz = strlen(buf);
+	if (sz && *(buf + sz - 1) == '\n')
+		*(buf + sz - 1) = '\0';
+
+	DBG(ASK, ul_debug("user's reply: >>>%s<<<", buf));
+	return 0;
+}
+
 static int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		    void *data __attribute__((__unused__)))
 {
+	int rc = 0;
+
 	assert(cxt);
 	assert(ask);
 
@@ -107,10 +134,29 @@ static int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		fprintf(stderr, ": %m\n");
 		color_fdisable(stderr);
 		break;
+	case FDISK_ASKTYPE_YESNO:
+	{
+		char buf[BUFSIZ];
+		fputc('\n', stdout);
+		do {
+			int x;
+			fputs(fdisk_ask_get_query(ask), stdout);
+			rc = get_user_reply(_(" [Y]es/[N]o: "), buf, sizeof(buf));
+			if (rc)
+				break;
+			x = rpmatch(buf);
+			if (x == 1 || x == 0) {
+				fdisk_ask_yesno_set_result(ask, x);
+				break;
+			}
+		} while(1);
+		DBG(ASK, ul_debug("yes-no ask: reply '%s' [rc=%d]", buf, rc));
+		break;
+	}
 	default:
 		break;
 	}
-	return 0;
+	return rc;
 }
 
 static void sfdisk_init(struct sfdisk *sf)
@@ -351,8 +397,9 @@ static void command_fdisk_help(void)
 	color_scheme_enable("help-title", UL_COLOR_BOLD);
 	fputs(_(" Commands:\n"), stdout);
 	color_disable();
-	fputs(_("   write    interupts input and write the partition table.\n"), stdout);
-	fputs(_("   abort    interupts input and exit.\n"), stdout);
+	fputs(_("   write    write table to disk and exit\n"), stdout);
+	fputs(_("   quit     show new situation and wait for user's feedbadk before write\n"), stdout);
+	fputs(_("   abort    exit sfdisk shell\n"), stdout);
 	fputs(_("   print    print partition table.\n"), stdout);
 	fputs(_("   help     this help.\n"), stdout);
 
@@ -385,6 +432,44 @@ static void command_fdisk_help(void)
 	color_disable();
 	fputs(_("   , 4G     creates 4GiB partition on default start offset.\n"), stdout);
 	fputc('\n', stdout);
+}
+
+enum {
+	SFDISK_DONE_NONE = 0,
+	SFDISK_DONE_EOF,
+	SFDISK_DONE_ABORT,
+	SFDISK_DONE_WRITE,
+	SFDISK_DONE_ASK
+};
+
+/* returns: 0 on success, <0 on error, 1 successfully stop sfdisk */
+static int loop_control_commands(struct sfdisk *sf,
+				 struct fdisk_script *dp,
+				 char *buf)
+{
+	const char *p = skip_blank(buf);
+	int rc = SFDISK_DONE_NONE;
+
+	if (strcmp(p, "print") == 0)
+		list_disklabel(sf->cxt);
+	else if (strcmp(p, "help") == 0)
+		command_fdisk_help();
+	else if (strcmp(p, "quit") == 0)
+		rc = SFDISK_DONE_ASK;
+	else if (strcmp(p, "write") == 0)
+		rc = SFDISK_DONE_WRITE;
+	else if (strcmp(p, "abort") == 0)
+		rc = SFDISK_DONE_ABORT;
+	else {
+		if (isatty(STDIN_FILENO))
+			fdisk_warnx(sf->cxt, _("unsupported command"));
+		else {
+			fdisk_warnx(sf->cxt, _("line %d: unsupported command"),
+					fdisk_script_get_nlines(dp));
+			rc = -EINVAL;
+		}
+	}
+	return rc;
 }
 
 
@@ -471,37 +556,16 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			printf(">>> ");
 
 		rc = fdisk_script_read_line(dp, stdin, buf, sizeof(buf));
-
-		if (rc == 1) {		/* end of file */
-			printf(_("Done.\n"));
-			rc = 0;
-			break;
-		} else if (rc < 0) {
-			const char *p;
-
+		if (rc < 0) {
 			DBG(PARSE, ul_debug("script parsing failed, trying sfdisk specific commands"));
 			buf[sizeof(buf) - 1] = '\0';
-			p = skip_blank(buf);
-			rc = 0;
-			if (strcmp(p, "print") == 0)
-				list_disklabel(sf->cxt);
-			else if (strcmp(p, "help") == 0)
-				command_fdisk_help();
-			else if (strcmp(p, "write") == 0)
+			rc = loop_control_commands(sf, dp, buf);
+			if (rc)
 				break;
-			else if (strcmp(p, "abort") == 0) {
-				rc = -1;
-				break;
-			} else {
-				if (isatty(STDIN_FILENO))
-					fdisk_warnx(sf->cxt, _("unsupported command"));
-				else {
-					fdisk_warnx(sf->cxt, _("line %d: unsupported command"),
-							fdisk_script_get_nlines(dp));
-					break;
-				}
-			}
 			continue;
+		} else if (rc == 1) {
+			rc = SFDISK_DONE_EOF;
+			break;
 		}
 
 		nparts = fdisk_table_get_nents(tb);
@@ -532,18 +596,36 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			fdisk_info(sf->cxt, _("Script header accepted."));
 	} while (1);
 
-
-	if (!rc) {
+	if (rc != SFDISK_DONE_ABORT) {
 		fdisk_info(sf->cxt, _("\nNew situation:"));
 		list_disklabel(sf->cxt);
 	}
-	if (!rc)
+
+	switch (rc) {
+	case SFDISK_DONE_ASK:
+		if (isatty(STDIN_FILENO)) {
+			int yes = 0;
+			fdisk_ask_yesno(sf->cxt, _("Do you want to write this to disk?"), &yes);
+			if (!yes) {
+				printf(_("Leaving.\n"));
+				rc = 0;
+				break;
+			}
+		}
+	case SFDISK_DONE_EOF:
+	case SFDISK_DONE_WRITE:
 		rc = fdisk_write_disklabel(sf->cxt);
-	if (!rc) {
-		fdisk_info(sf->cxt, _("\nThe partition table has been altered."));
-		fdisk_reread_partition_table(sf->cxt);
-		rc = fdisk_deassign_device(sf->cxt, 0);
+		if (!rc) {
+			fdisk_info(sf->cxt, _("\nThe partition table has been altered."));
+			fdisk_reread_partition_table(sf->cxt);
+			rc = fdisk_deassign_device(sf->cxt, 0);
+		}
+		break;
+	case SFDISK_DONE_ABORT:
+		printf(_("Leaving.\n"));
+		break;
 	}
+
 	fdisk_unref_script(dp);
 	return rc;
 }
