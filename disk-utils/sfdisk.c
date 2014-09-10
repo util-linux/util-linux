@@ -360,8 +360,88 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 	return 0;
 }
 
+/* appply things from @tpl template to the on-disk partition @n */
+static int sfdisk_modify_partition(struct sfdisk *sf,
+			       struct fdisk_partition *tpl,
+			       size_t n)
+{
+	struct fdisk_partition *pa = NULL;
+	const struct fdisk_parttype *type;
+	const char *data;
+	sector_t num;
+	size_t new_partno = 0;
+	int rc = 0;
 
-static void sfdisk_print_partition(struct sfdisk *sf, int n)
+	/* get the current partition */
+	rc = fdisk_get_partition(sf->cxt, n, &pa);
+	if (rc)
+		goto done;
+
+	assert(n == fdisk_partition_get_partno(pa));
+
+	/* uuid */
+	data = fdisk_partition_get_uuid(tpl);
+	if (data) {
+		rc = fdisk_partition_set_uuid(pa, data);
+		if (rc)
+			goto done;
+	}
+
+	/* name */
+	data = fdisk_partition_get_name(tpl);
+	if (data) {
+		rc = fdisk_partition_set_name(pa, data);
+		if (rc)
+			goto done;
+	}
+
+	/* attributes
+	data = fdisk_partition_get_attrs(tpl);
+	if (data) {
+		rc = fdisk_partition_set_attrs(pa, data);
+		if (rc)
+			goto done;
+	}*/
+
+	/* type */
+	type = fdisk_partition_get_type(tpl);
+	if (type) {
+		rc = fdisk_partition_set_type(pa, type);
+		if (rc)
+			goto done;
+	}
+
+	/* size */
+	num = fdisk_partition_get_size(tpl);
+	if (num) {
+		rc = fdisk_partition_set_size(pa, num);
+		if (rc)
+			goto done;
+	}
+
+	/* start */
+	num = fdisk_partition_get_start(tpl);
+	if (num) {
+		rc = fdisk_partition_set_start(pa, num);
+		if (rc)
+			goto done;
+	}
+
+	/* drop the old partition */
+	rc = fdisk_delete_partition(sf->cxt, n);
+	if (rc)
+		goto done;
+
+	/* add a new partition */
+	rc = fdisk_add_partition(sf->cxt, pa, &new_partno);
+	assert(new_partno == n);
+done:
+	fdisk_unref_partition(pa);
+	return rc;
+}
+
+
+static void sfdisk_print_partition(struct sfdisk *sf, size_t n)
 {
 	struct fdisk_partition *pa = NULL;
 	char *data;
@@ -495,6 +575,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	if (!devname)
 		errx(EXIT_FAILURE, _("no disk device specified"));
 
+
 	dp = fdisk_new_script(sf->cxt);
 	if (!dp)
 		err(EXIT_FAILURE, _("failed to allocate script handler"));
@@ -502,6 +583,25 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	rc = fdisk_assign_device(sf->cxt, devname, 0);
 	if (rc)
 		err(EXIT_FAILURE, _("cannot open %s"), devname);
+
+	/*
+	 * Don't create a new disklabel when [-N] <partno> specified. In this
+	 * case reuse already specified disklabel. Let's check that the disk
+	 * really contains the partition.
+	 */
+	if (partno >= 0) {
+		size_t n;
+		if (!fdisk_has_label(sf->cxt))
+			errx(EXIT_FAILURE, _("cannot modify partition %d, "
+					     "not found partition table."), partno);
+		n = fdisk_get_npartitions(sf->cxt);
+		if ((size_t) partno > n)
+			errx(EXIT_FAILURE, _("cannot modify partition %d, "
+					     "partition table contains %zu "
+					     "partitions only."), partno, n);
+		created = 1;
+		next_partno = partno;
+	}
 
 	if (isatty(STDIN_FILENO)) {
 		color_scheme_enable("welcome", UL_COLOR_GREEN);
@@ -580,11 +680,16 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				fdisk_info(sf->cxt, _("Ignore partition %zu"), next_partno + 1);
 				continue;
 			}
-			if (!created) {		/* create a disklabel */
+			if (!created) {		/* create a new disklabel */
 				rc = fdisk_apply_script_headers(sf->cxt, dp);
 				created = !rc;
 			}
-			if (!rc)		/* cretate partition */
+			if (!rc && partno >= 0) {	/* -N <partno>, modify partition */
+				rc = sfdisk_modify_partition(sf, pa, partno);
+				if (rc == 0)
+					rc = SFDISK_DONE_ASK;
+				break;
+			} else if (!rc)		/* add partition */
 				rc = fdisk_add_partition(sf->cxt, pa, &cur_partno);
 
 			if (!rc) {		/* success, print reult */
@@ -622,6 +727,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		}
 		break;
 	case SFDISK_DONE_ABORT:
+	default:				/* rc < 0 on error */
 		printf(_("Leaving.\n"));
 		break;
 	}
@@ -695,7 +801,7 @@ int main(int argc, char *argv[])
 			sf->act = ACT_DUMP;
 			break;
 		case 'N':
-			sf->partno = strtou32_or_err(optarg, _("failed to parse partition number"));
+			sf->partno = strtou32_or_err(optarg, _("failed to parse partition number")) - 1;
 			break;
 		case 'X':
 			sf->label = optarg;
