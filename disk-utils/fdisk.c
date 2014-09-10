@@ -338,10 +338,18 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		break;
 	case FDISK_ASKTYPE_YESNO:
 		fputc('\n', stdout);
-		fputs(fdisk_ask_get_query(ask), stdout);
-		rc = get_user_reply(cxt, _(" [Y]es/[N]o: "), buf, sizeof(buf));
-		if (rc == 0)
-			fdisk_ask_yesno_set_result(ask, rpmatch(buf));
+		do {
+			int x;
+			fputs(fdisk_ask_get_query(ask), stdout);
+			rc = get_user_reply(cxt, _(" [Y]es/[N]o: "), buf, sizeof(buf));
+			if (rc)
+				break;
+			x = rpmatch(buf);
+			if (x == 1 || x == 0) {
+				fdisk_ask_yesno_set_result(ask, x);
+				break;
+			}
+		} while(1);
 		DBG(ASK, ul_debug("yes-no ask: reply '%s' [rc=%d]", buf, rc));
 		break;
 	case FDISK_ASKTYPE_STRING:

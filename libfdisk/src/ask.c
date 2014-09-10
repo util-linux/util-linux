@@ -489,7 +489,7 @@ int fdisk_ask_yesno(struct fdisk_context *cxt,
 	if (!rc)
 		rc = fdisk_do_ask(cxt, ask);
 	if (!rc)
-		*result = fdisk_ask_yesno_get_result(ask);
+		*result = fdisk_ask_yesno_get_result(ask) == 1 ? 1 : 0;
 
 	DBG(ASK, ul_debugobj(ask, "result: %d [rc=%d]\n", *result, rc));
 	fdisk_free_ask(ask);
