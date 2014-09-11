@@ -201,6 +201,9 @@ struct fdisk_label_operations {
 	/* fill in partition struct */
 	int (*get_part)(struct fdisk_context *cxt, size_t n,
 						struct fdisk_partition *pa);
+	/* modify partition */
+	int (*set_part)(struct fdisk_context *cxt, size_t n,
+						struct fdisk_partition *pa);
 
 /*** TODO use set_part() */
 	/* get partition type */

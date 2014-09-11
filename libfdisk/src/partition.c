@@ -589,6 +589,34 @@ int fdisk_get_partition(struct fdisk_context *cxt, size_t partno,
 	return rc;
 }
 
+/**
+ * fdisk_set_partition:
+ * @cxt: context
+ * @partno: partition nuymber
+ * @pa: new partition setting
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int fdisk_set_partition(struct fdisk_context *cxt, size_t partno,
+			struct fdisk_partition *pa)
+{
+	if (!cxt || !cxt->label || !pa)
+		return -EINVAL;
+	if (!cxt->label->op->set_part)
+		return -ENOSYS;
+
+	DBG(CXT, ul_debugobj(cxt, "setting partition %zu %p (start=%ju, end=%ju, size=%ju, "
+		    "defaults(start=%s, end=%s, partno=%s)",
+		    partno, pa,
+		    pa->start,
+		    pa->end,
+		    pa->size,
+		    pa->start_follow_default ? "yes" : "no",
+		    pa->end_follow_default ? "yes" : "no",
+		    pa->partno_follow_default ? "yes" : "no"));
+
+	return cxt->label->op->set_part(cxt, partno, pa);
+}
 
 /**
  * fdisk_add_partition:
