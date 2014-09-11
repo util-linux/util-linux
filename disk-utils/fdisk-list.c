@@ -220,7 +220,7 @@ char *next_proc_partition(FILE **f)
 	return NULL;
 }
 
-int print_device_pt(struct fdisk_context *cxt, char *device, int warnme)
+int print_device_pt(struct fdisk_context *cxt, char *device, int warnme, int verify)
 {
 	if (fdisk_assign_device(cxt, device, 1) != 0) {	/* read-only */
 		if (warnme || errno == EACCES)
@@ -230,14 +230,16 @@ int print_device_pt(struct fdisk_context *cxt, char *device, int warnme)
 
 	list_disk_geometry(cxt);
 
-	if (fdisk_has_label(cxt))
+	if (fdisk_has_label(cxt)) {
 		list_disklabel(cxt);
-
+		if (verify)
+			fdisk_verify_disklabel(cxt);
+	}
 	fdisk_deassign_device(cxt, 1);
 	return 0;
 }
 
-void print_all_devices_pt(struct fdisk_context *cxt)
+void print_all_devices_pt(struct fdisk_context *cxt, int verify)
 {
 	FILE *f = NULL;
 	int ct = 0;
@@ -246,7 +248,7 @@ void print_all_devices_pt(struct fdisk_context *cxt)
 	while ((dev = next_proc_partition(&f))) {
 		if (ct)
 			fputs("\n\n", stdout);
-		if (print_device_pt(cxt, dev, 0) == 0)
+		if (print_device_pt(cxt, dev, 0, verify) == 0)
 			ct++;
 		free(dev);
 	}

@@ -804,9 +804,9 @@ int main(int argc, char **argv)
 		if (argc > optind) {
 			int k;
 			for (k = optind; k < argc; k++)
-				print_device_pt(cxt, argv[k], 1);
+				print_device_pt(cxt, argv[k], 1, 0);
 		} else
-			print_all_devices_pt(cxt);
+			print_all_devices_pt(cxt, 0);
 		break;
 
 	case ACT_SHOWSIZE:

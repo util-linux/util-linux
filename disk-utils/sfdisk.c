@@ -59,8 +59,7 @@ UL_DEBUG_DEFINE_MASKANEMS(sfdisk) = UL_DEBUG_EMPTY_MASKNAMES;
 #define ON_DBG(m, x)    __UL_DBG_CALL(sfdisk, SFDISKPROG_DEBUG_, m, x)
 
 enum {
-	ACT_FDISK = 0,		/* default */
-
+	ACT_FDISK = 1,
 	ACT_ACTIVATE,
 	ACT_CHANGE_ID,
 	ACT_DUMP,
@@ -76,6 +75,8 @@ struct sfdisk {
 	const char	*label;		/* --label <label> */
 
 	struct fdisk_context	*cxt;	/* libfdisk context */
+
+	unsigned int verify : 1;	/* call fdisk_verify_disklabel() */
 };
 
 
@@ -198,11 +199,11 @@ static int command_list_partitions(struct sfdisk *sf, int argc, char **argv)
 		for (i = 0; i < argc; i++) {
 			if (ct)
 				fputs("\n\n", stdout);
-			if (print_device_pt(sf->cxt, argv[i], 0) == 0)
+			if (print_device_pt(sf->cxt, argv[i], 0, sf->verify) == 0)
 				ct++;
 		}
 	} else
-		print_all_devices_pt(sf->cxt);
+		print_all_devices_pt(sf->cxt, sf->verify);
 
 	return 0;
 }
@@ -239,6 +240,62 @@ static int command_list_types(struct sfdisk *sf)
 	}
 
 	return 0;
+}
+
+static int verify_device(struct sfdisk *sf, const char *devname)
+{
+	int rc = 1;
+
+	fdisk_enable_listonly(sf->cxt, 1);
+
+	if (fdisk_assign_device(sf->cxt, devname, 1)) {
+		warn(_("cannot open: %s"), devname);
+		return 1;
+	}
+
+	color_scheme_enable("header", UL_COLOR_BOLD);
+	fdisk_info(sf->cxt, "%s:", devname);
+	color_disable();
+
+	if (!fdisk_has_label(sf->cxt))
+		fdisk_info(sf->cxt, _("unrecognized partition table type"));
+	else
+		rc = fdisk_verify_disklabel(sf->cxt);
+
+	fdisk_deassign_device(sf->cxt, 1);
+	return rc;
+}
+
+/*
+ * sfdisk --verify [<device ..]
+ */
+static int command_verify(struct sfdisk *sf, int argc, char **argv)
+{
+	int nfails = 0, ct = 0;
+
+	if (argc) {
+		int i;
+		for (i = 0; i < argc; i++) {
+			if (i)
+				fdisk_info(sf->cxt, " ");
+			if (verify_device(sf, argv[i]) < 0)
+				nfails++;
+		}
+	} else {
+		FILE *f = NULL;
+		char *dev;
+
+		while ((dev = next_proc_partition(&f))) {
+			if (ct)
+				fdisk_info(sf->cxt, " ");
+			if (verify_device(sf, dev) < 0)
+				nfails++;
+			free(dev);
+			ct++;
+		}
+	}
+
+	return nfails;
 }
 
 static int get_size(const char *dev, int silent, uintmax_t *sz)
@@ -707,8 +764,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -N, --partno <num>   specify partition number\n"), out);
 	fputs(_(" -s, --show-size      list the size of all or specified device\n"), out);
 	fputs(_(" -T, --list-types     print the recognized types (see -X)\n"), out);
+	fputs(_(" -V, --verify         test whether partitions seem correct\n"), out);
 	fputs(_(" -X, --label <name>   specify label type (dos, gpt, ...)\n"), out);
-
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -724,20 +781,20 @@ int main(int argc, char *argv[])
 {
 	int rc = -EINVAL, c;
 	struct sfdisk _sf = {
-		.act = 0,
 		.partno = -1
 	}, *sf = &_sf;
 
 	static const struct option longopts[] = {
 		{ "activate",no_argument,	NULL, 'a' },
-		{ "list",    no_argument,       NULL, 'l' },
 		{ "dump",    no_argument,	NULL, 'd' },
 		{ "help",    no_argument,       NULL, 'h' },
-		{ "show-size", no_argument,	NULL, 's' },
-		{ "partno",  required_argument, NULL, 'N' },
 		{ "label",   required_argument, NULL, 'X' },
-		{ "version", no_argument,       NULL, 'v' },
+		{ "list",    no_argument,       NULL, 'l' },
 		{ "list-types", no_argument,	NULL, 'T' },
+		{ "partno",  required_argument, NULL, 'N' },
+		{ "show-size", no_argument,	NULL, 's' },
+		{ "verify",  no_argument,       NULL, 'V' },
+		{ "version", no_argument,       NULL, 'v' },
 		{ NULL, 0, 0, 0 },
 	};
 
@@ -746,7 +803,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "adhlN:sTvX:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "adhlN:sTvVX:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			sf->act = ACT_ACTIVATE;
@@ -776,12 +833,20 @@ int main(int argc, char *argv[])
 			printf(_("%s from %s\n"), program_invocation_short_name,
 						  PACKAGE_STRING);
 			return EXIT_SUCCESS;
+		case 'V':
+			sf->verify = 1;
+			break;
 		default:
 			usage(stderr);
 		}
 	}
 
 	sfdisk_init(sf);
+
+	if (sf->verify && !sf->act)
+		sf->act = ACT_VERIFY;	/* --verify make be used with --list too */
+	else if (!sf->act)
+		sf->act = ACT_FDISK;	/* default */
 
 	switch (sf->act) {
 	case ACT_ACTIVATE:
@@ -806,6 +871,10 @@ int main(int argc, char *argv[])
 
 	case ACT_SHOW_SIZE:
 		rc = command_show_size(sf, argc - optind, argv + optind);
+		break;
+
+	case ACT_VERIFY:
+		rc = command_verify(sf, argc - optind, argv + optind);
 		break;
 	}
 
