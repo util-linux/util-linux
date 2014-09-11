@@ -1440,13 +1440,27 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 	e = &gpt->ents[n];
 
 	if (pa->uuid) {
+		char new_u[37], old_u[37];
+
+		guid_to_string(&e->partition_guid, old_u);
 		rc = gpt_entry_set_uuid(e, pa->uuid);
 		if (rc)
 			return rc;
+		guid_to_string(&e->partition_guid, new_u);
+		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("Partition UUID changed from %s to %s."),
+			old_u, new_u);
 	}
 
-	if (pa->name)
+	if (pa->name) {
+		char *old = encode_to_utf8((unsigned char *)e->name, sizeof(e->name));
 		gpt_entry_set_name(e, pa->name);
+
+		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("Partition name changed from '%s' to '%.*s'."),
+			old, (int) GPT_PART_NAME_LEN, pa->name);
+		free(old);
+	}
 
 	if (pa->type && pa->type->typestr) {
 		struct gpt_guid typeid;
@@ -2179,91 +2193,6 @@ static int gpt_part_is_used(struct fdisk_context *cxt, size_t i)
 	e = &gpt->ents[i];
 
 	return !partition_unused(e) || gpt_partition_start(e);
-}
-
-int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
-{
-	struct fdisk_gpt_label *gpt;
-	struct gpt_entry *e;
-	char *str, new_u[37], old_u[37];
-	int rc;
-
-	assert(cxt);
-	assert(cxt->label);
-	assert(fdisk_is_label(cxt, GPT));
-
-	DBG(LABEL, ul_debug("UUID change requested partno=%zu", i));
-
-	gpt = self_label(cxt);
-
-	if ((uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries))
-		return -EINVAL;
-
-	if (fdisk_ask_string(cxt,
-			_("New UUID (in 8-4-4-4-12 format)"), &str))
-		return -EINVAL;
-
-	e = &gpt->ents[i];
-	guid_to_string(&e->partition_guid, old_u);
-
-	rc = gpt_entry_set_uuid(e, str);
-
-	free(str);
-
-	if (rc) {
-		fdisk_warnx(cxt, _("Failed to parse your UUID."));
-		return rc;
-	}
-
-	guid_to_string(&e->partition_guid, new_u);
-
-	gpt_recompute_crc(gpt->pheader, gpt->ents);
-	gpt_recompute_crc(gpt->bheader, gpt->ents);
-	fdisk_label_set_changed(cxt->label, 1);
-
-	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Partition UUID changed from %s to %s."),
-			old_u, new_u);
-	return 0;
-}
-
-int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i)
-{
-	struct fdisk_gpt_label *gpt;
-	struct gpt_entry *e;
-	char *str, *old;
-
-	assert(cxt);
-	assert(cxt->label);
-	assert(fdisk_is_label(cxt, GPT));
-
-	DBG(LABEL, ul_debug("NAME change requested partno=%zu", i));
-
-	gpt = self_label(cxt);
-
-	if ((uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries))
-		return -EINVAL;
-
-	if (fdisk_ask_string(cxt, _("New name"), &str))
-		return -EINVAL;
-
-	e = &gpt->ents[i];
-	old = encode_to_utf8((unsigned char *)e->name, sizeof(e->name));
-
-	gpt_entry_set_name(e, str);
-
-	gpt_recompute_crc(gpt->pheader, gpt->ents);
-	gpt_recompute_crc(gpt->bheader, gpt->ents);
-
-	fdisk_label_set_changed(cxt->label, 1);
-
-	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Partition name changed from '%s' to '%.*s'."),
-			old, (int) GPT_PART_NAME_LEN, str);
-	free(str);
-	free(old);
-
-	return 0;
 }
 
 int fdisk_gpt_is_hybrid(struct fdisk_context *cxt)

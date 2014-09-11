@@ -396,8 +396,6 @@ enum {
 	GPT_FLAG_GUIDSPECIFIC
 };
 
-extern int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i);
-extern int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i);
 extern int fdisk_gpt_is_hybrid(struct fdisk_context *cxt);
 
 /* dos.c */

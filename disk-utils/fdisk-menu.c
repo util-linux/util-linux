@@ -563,6 +563,7 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 {
 	struct fdisk_context *cxt = *cxt0;
 	struct fdisk_context *mbr;
+	struct fdisk_partition *pa = NULL;
 	size_t n;
 	int rc = 0;
 
@@ -594,10 +595,34 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 
 		switch(ent->key) {
 		case 'u':
-			rc = fdisk_gpt_partition_set_uuid(cxt, n);
+			pa = fdisk_new_partition();	/* new template */
+			if (!pa)
+				rc = -ENOMEM;
+			else {
+				char *str = NULL;
+				rc = fdisk_ask_string(cxt, _("New UUID (in 8-4-4-4-12 format)"), &str);
+				if (!rc)
+					rc = fdisk_partition_set_uuid(pa, str);
+				if (!rc)
+					rc = fdisk_set_partition(cxt, n, pa);
+				free(str);
+				fdisk_unref_partition(pa);
+			}
 			break;
 		case 'n':
-			rc = fdisk_gpt_partition_set_name(cxt, n);
+			pa = fdisk_new_partition();	/* new template */
+			if (!pa)
+				rc = -ENOMEM;
+			else {
+				char *str = NULL;
+				rc = fdisk_ask_string(cxt, _("New name"), &str);
+				if (!rc)
+					rc = fdisk_partition_set_name(pa, str);
+				if (!rc)
+					rc = fdisk_set_partition(cxt, n, pa);
+				free(str);
+				fdisk_unref_partition(pa);
+			}
 			break;
 		case 'A':
 			rc = fdisk_partition_toggle_flag(cxt, n, GPT_FLAG_LEGACYBOOT);
@@ -613,6 +638,7 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 			break;
 		}
 	}
+
 	return rc;
 }
 
