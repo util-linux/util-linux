@@ -843,11 +843,6 @@ static void set_partition(struct fdisk_context *cxt,
 	dos_partition_set_start(p, start - offset);
 	dos_partition_set_size(p, stop - start + 1);
 
-	if (!doext) {
-		struct fdisk_parttype *t =
-			fdisk_label_get_parttype_from_code(cxt->label, sysid);
-		fdisk_info_new_partition(cxt, i + 1, start, stop, t);
-	}
 	if (is_dos_compatible(cxt) && (start/(cxt->geom.sectors*cxt->geom.heads) > 1023))
 		start = cxt->geom.heads*cxt->geom.sectors*1024 - 1;
 	set_hsc(p->bh, p->bs, p->bc, start);
@@ -1141,6 +1136,15 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		set_partition(cxt, n - 1, 1, pe->offset, stop,
 					MBR_DOS_EXTENDED_PARTITION, 0);
 	}
+
+	/* report */
+	{
+		struct fdisk_parttype *t =
+			fdisk_label_get_parttype_from_code(cxt->label, sys);
+		fdisk_info_new_partition(cxt, n + 1, start, stop, t);
+		fdisk_free_parttype(t);
+	}
+
 
 	if (IS_EXTENDED(sys)) {
 		struct pte *pen = self_pte(cxt, n);
@@ -1807,6 +1811,44 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 	return 0;
 }
 
+static int dos_set_partition(struct fdisk_context *cxt, size_t n,
+			     struct fdisk_partition *pa)
+{
+	struct dos_partition *p;
+	struct pte *pe;
+	sector_t start, size;
+
+	assert(cxt);
+	assert(pa);
+	assert(cxt->label);
+	assert(fdisk_is_label(cxt, DOS));
+
+	if (n >= cxt->label->nparts_max)
+		return -EINVAL;
+
+	if (pa->type && IS_EXTENDED(pa->type->code)) {
+		fdisk_warnx(cxt, _("You cannot change a partition into an "
+			"extended one or vice versa. Delete it first."));
+		return -EINVAL;
+	}
+
+	if (pa->type && !pa->type->code)
+		fdisk_warnx(cxt, _("Type 0 means free space to many systems. "
+				   "Having partitions of type 0 is probably unwise."));
+	pe = self_pte(cxt, n);
+	p  = self_partition(cxt, n);
+
+	start = pa->start ? pa->start : get_abs_partition_start(pe);
+	size = pa->size ? pa->size : dos_partition_get_size(p);
+
+	set_partition(cxt, n, 0, start, start + size - 1,
+				pa->type  ? pa->type->code : p->sys_ind,
+				pa->boot);
+
+	partition_set_changed(cxt, n, 1);
+	return 0;
+}
+
 static void print_chain_of_logicals(struct fdisk_context *cxt)
 {
 	size_t i;
@@ -2114,6 +2156,7 @@ static const struct fdisk_label_operations dos_operations =
 	.set_id		= dos_set_disklabel_id,
 
 	.get_part	= dos_get_partition,
+	.set_part	= dos_set_partition,
 	.add_part	= dos_add_partition,
 	.del_part	= dos_delete_partition,
 

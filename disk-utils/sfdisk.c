@@ -360,87 +360,6 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 	return 0;
 }
 
-/* appply things from @tpl template to the on-disk partition @n */
-static int sfdisk_modify_partition(struct sfdisk *sf,
-			       struct fdisk_partition *tpl,
-			       size_t n)
-{
-	struct fdisk_partition *pa = NULL;
-	const struct fdisk_parttype *type;
-	const char *data;
-	sector_t num;
-	size_t new_partno = 0;
-	int rc = 0;
-
-	/* get the current partition */
-	rc = fdisk_get_partition(sf->cxt, n, &pa);
-	if (rc)
-		goto done;
-
-	assert(n == fdisk_partition_get_partno(pa));
-
-	/* uuid */
-	data = fdisk_partition_get_uuid(tpl);
-	if (data) {
-		rc = fdisk_partition_set_uuid(pa, data);
-		if (rc)
-			goto done;
-	}
-
-	/* name */
-	data = fdisk_partition_get_name(tpl);
-	if (data) {
-		rc = fdisk_partition_set_name(pa, data);
-		if (rc)
-			goto done;
-	}
-
-	/* attributes
-	data = fdisk_partition_get_attrs(tpl);
-	if (data) {
-		rc = fdisk_partition_set_attrs(pa, data);
-		if (rc)
-			goto done;
-	}*/
-
-	/* type */
-	type = fdisk_partition_get_type(tpl);
-	if (type) {
-		rc = fdisk_partition_set_type(pa, type);
-		if (rc)
-			goto done;
-	}
-
-	/* size */
-	num = fdisk_partition_get_size(tpl);
-	if (num) {
-		rc = fdisk_partition_set_size(pa, num);
-		if (rc)
-			goto done;
-	}
-
-	/* start */
-	num = fdisk_partition_get_start(tpl);
-	if (num) {
-		rc = fdisk_partition_set_start(pa, num);
-		if (rc)
-			goto done;
-	}
-
-	/* drop the old partition */
-	rc = fdisk_delete_partition(sf->cxt, n);
-	if (rc)
-		goto done;
-
-	/* add a new partition */
-	rc = fdisk_add_partition(sf->cxt, pa, &new_partno);
-	assert(new_partno == n);
-done:
-	fdisk_unref_partition(pa);
-	return rc;
-}
-
-
 static void sfdisk_print_partition(struct sfdisk *sf, size_t n)
 {
 	struct fdisk_partition *pa = NULL;
@@ -685,7 +604,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				created = !rc;
 			}
 			if (!rc && partno >= 0) {	/* -N <partno>, modify partition */
-				rc = sfdisk_modify_partition(sf, pa, partno);
+				rc = fdisk_set_partition(sf->cxt, partno, pa);
 				if (rc == 0)
 					rc = SFDISK_DONE_ASK;
 				break;
