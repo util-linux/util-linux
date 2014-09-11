@@ -191,12 +191,18 @@ struct fdisk_label_operations {
 	/* set disk label ID */
 	int (*set_id)(struct fdisk_context *cxt);
 
-	/* new partition */
-	int (*add_part)(struct fdisk_context *cxt, struct fdisk_partition *pa, size_t *partno);
 
+	/* new partition */
+	int (*add_part)(struct fdisk_context *cxt, struct fdisk_partition *pa,
+						size_t *partno);
 	/* delete partition */
-	int (*part_delete)(struct fdisk_context *cxt,
-						size_t partnum);
+	int (*del_part)(struct fdisk_context *cxt, size_t partnum);
+
+	/* fill in partition struct */
+	int (*get_part)(struct fdisk_context *cxt, size_t n,
+						struct fdisk_partition *pa);
+
+/*** TODO use set_part() */
 	/* get partition type */
 	struct fdisk_parttype *(*part_get_type)(struct fdisk_context *cxt,
 						size_t partnum);
@@ -204,16 +210,11 @@ struct fdisk_label_operations {
 	int (*part_set_type)(struct fdisk_context *cxt,
 						size_t partnum,
 						struct fdisk_parttype *t);
-
 	/* return state of the partition */
 	int (*part_is_used)(struct fdisk_context *cxt, size_t partnum);
 
-	/* fill in partition struct */
-	int (*get_part)(struct fdisk_context *cxt,
-						size_t n,
-						struct fdisk_partition *pa);
-
 	int (*part_toggle_flag)(struct fdisk_context *cxt, size_t i, unsigned long flag);
+/******/
 
 	/* refresh alignment setting */
 	int (*reset_alignment)(struct fdisk_context *cxt);

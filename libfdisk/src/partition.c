@@ -545,13 +545,14 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 
 /**
  * fdisk_get_partition:
- * @cxt:
- * @partno:
- * @pa: pointer to partition struct
+ * @cxt: context
+ * @partno: partition nuymber
+ * @pa: returns data about partition
  *
  * Fills in @pa with data about partition @n. Note that partno may address
  * unused partition and then this function does not fill anything to @pa.
- * See fdisk_is_partition_used().
+ * See fdisk_is_partition_used(). If @pa points to NULL then the function
+ * allocates a newly allocated fdisk_partition struct.
  *
  * Returns: 0 on success, otherwise, a corresponding error.
  */
@@ -588,31 +589,19 @@ int fdisk_get_partition(struct fdisk_context *cxt, size_t partno,
 	return rc;
 }
 
-/*
- * This is faster than fdisk_get_partition() + fdisk_partition_is_used()
- */
-int fdisk_is_partition_used(struct fdisk_context *cxt, size_t n)
-{
-	if (!cxt || !cxt->label)
-		return -EINVAL;
-	if (!cxt->label->op->part_is_used)
-		return -ENOSYS;
-
-	return cxt->label->op->part_is_used(cxt, n);
-}
 
 /**
  * fdisk_add_partition:
  * @cxt: fdisk context
  * @pa: template for the partition (or NULL)
- * @partno: returns new partition number (optional)
+ * @partno: NULL or returns new partition number
  *
  * If @pa is not specified or any @pa item is missiong the libfdisk will ask by
  * fdisk_ask_ API.
  *
  * Creates a new partition.
  *
- * Returns 0.
+ * Returns: 0 on success,  <0 on error.
  */
 int fdisk_add_partition(struct fdisk_context *cxt,
 			struct fdisk_partition *pa,
@@ -652,22 +641,22 @@ int fdisk_add_partition(struct fdisk_context *cxt,
 /**
  * fdisk_delete_partition:
  * @cxt: fdisk context
- * @partnum: partition number to delete
+ * @partno: partition number to delete
  *
- * Deletes a @partnum partition.
+ * Deletes a @partno partition.
  *
- * Returns 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, <0 on error
  */
-int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum)
+int fdisk_delete_partition(struct fdisk_context *cxt, size_t partno)
 {
 	if (!cxt || !cxt->label)
 		return -EINVAL;
-	if (!cxt->label->op->part_delete)
+	if (!cxt->label->op->del_part)
 		return -ENOSYS;
 
 	DBG(CXT, ul_debugobj(cxt, "deleting %s partition number %zd",
-				cxt->label->name, partnum));
-	return cxt->label->op->part_delete(cxt, partnum);
+				cxt->label->name, partno));
+	return cxt->label->op->del_part(cxt, partno);
 }
 
 /**
@@ -696,5 +685,18 @@ int fdisk_delete_all_partitions(struct fdisk_context *cxt)
 	}
 
 	return rc;
+}
+
+/*
+ * This is faster than fdisk_get_partition() + fdisk_partition_is_used()
+ */
+int fdisk_is_partition_used(struct fdisk_context *cxt, size_t n)
+{
+	if (!cxt || !cxt->label)
+		return -EINVAL;
+	if (!cxt->label->op->part_is_used)
+		return -ENOSYS;
+
+	return cxt->label->op->part_is_used(cxt, n);
 }
 

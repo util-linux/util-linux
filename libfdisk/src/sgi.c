@@ -1106,10 +1106,9 @@ static const struct fdisk_label_operations sgi_operations =
 
 	.get_part	= sgi_get_partition,
 	.add_part	= sgi_add_partition,
+	.del_part	= sgi_delete_partition,
 
-	.part_delete	= sgi_delete_partition,
 	.part_set_type	= sgi_set_parttype,
-
 	.part_is_used	= sgi_partition_is_used,
 	.part_toggle_flag = sgi_toggle_partition_flag
 };

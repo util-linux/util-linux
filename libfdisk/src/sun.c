@@ -1020,10 +1020,9 @@ const struct fdisk_label_operations sun_operations =
 
 	.get_part	= sun_get_partition,
 	.add_part	= sun_add_partition,
+	.del_part	= sun_delete_partition,
 
-	.part_delete	= sun_delete_partition,
 	.part_set_type	= sun_set_parttype,
-
 	.part_is_used	= sun_partition_is_used,
 	.part_toggle_flag = sun_toggle_partition_flag,
 

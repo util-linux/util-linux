@@ -2409,8 +2409,7 @@ static const struct fdisk_label_operations gpt_operations =
 
 	.get_part	= gpt_get_partition,
 	.add_part	= gpt_add_partition,
-
-	.part_delete	= gpt_delete_partition,
+	.del_part	= gpt_delete_partition,
 
 	.part_is_used	= gpt_part_is_used,
 	.part_set_type	= gpt_set_partition_type,

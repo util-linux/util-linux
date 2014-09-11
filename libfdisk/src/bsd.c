@@ -872,8 +872,8 @@ static const struct fdisk_label_operations bsd_operations =
 	.list		= bsd_list_disklabel,
 	.write		= bsd_write_disklabel,
 	.create		= bsd_create_disklabel,
-	.part_delete	= bsd_delete_part,
 
+	.del_part	= bsd_delete_part,
 	.get_part	= bsd_get_partition,
 	.add_part	= bsd_add_partition,
 

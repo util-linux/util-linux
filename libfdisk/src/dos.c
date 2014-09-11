@@ -2115,8 +2115,8 @@ static const struct fdisk_label_operations dos_operations =
 
 	.get_part	= dos_get_partition,
 	.add_part	= dos_add_partition,
+	.del_part	= dos_delete_partition,
 
-	.part_delete	= dos_delete_partition,
 	.part_set_type	= dos_set_parttype,
 
 	.part_toggle_flag = dos_toggle_partition_flag,
