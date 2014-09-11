@@ -207,6 +207,40 @@ static int command_list_partitions(struct sfdisk *sf, int argc, char **argv)
 	return 0;
 }
 
+/*
+ * sfdisk --list-types
+ */
+static int command_list_types(struct sfdisk *sf)
+{
+	const struct fdisk_parttype *t;
+	struct fdisk_label *lb;
+	const char *name;
+	size_t i = 0;
+	int codes;
+
+	assert(sf);
+	assert(sf->cxt);
+
+	name = sf->label ? sf->label : "dos";
+	lb = fdisk_get_label(sf->cxt, name);
+	if (!lb)
+		errx(EXIT_FAILURE, _("unsupported label '%s'"), name);
+
+	codes = fdisk_label_has_code_parttypes(lb);
+	fputs(_("Id  Name\n\n"), stdout);
+
+	while ((t = fdisk_label_get_parttype(lb, i++))) {
+		if (codes)
+			printf("%2x  %s\n", fdisk_parttype_get_code(t),
+					   fdisk_parttype_get_name(t));
+		else
+			printf("%s  %s\n", fdisk_parttype_get_string(t),
+					  fdisk_parttype_get_name(t));
+	}
+
+	return 0;
+}
+
 static int get_size(const char *dev, int silent, uintmax_t *sz)
 {
 	int fd, rc = 0;
@@ -672,6 +706,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -l, --list           list partitions of each device\n"), out);
 	fputs(_(" -N, --partno <num>   specify partition number\n"), out);
 	fputs(_(" -s, --show-size      list the size of all or specified device\n"), out);
+	fputs(_(" -T, --list-types     print the recognized types (see -X)\n"), out);
+	fputs(_(" -X, --label <name>   specify label type (dos, gpt, ...)\n"), out);
+
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -700,6 +737,7 @@ int main(int argc, char *argv[])
 		{ "partno",  required_argument, NULL, 'N' },
 		{ "label",   required_argument, NULL, 'X' },
 		{ "version", no_argument,       NULL, 'v' },
+		{ "list-types", no_argument,	NULL, 'T' },
 		{ NULL, 0, 0, 0 },
 	};
 
@@ -708,7 +746,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "adhlN:svX:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "adhlN:sTvX:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			sf->act = ACT_ACTIVATE;
@@ -731,6 +769,9 @@ int main(int argc, char *argv[])
 		case 's':
 			sf->act = ACT_SHOW_SIZE;
 			break;
+		case 'T':
+			sf->act = ACT_LIST_TYPES;
+			break;
 		case 'v':
 			printf(_("%s from %s\n"), program_invocation_short_name,
 						  PACKAGE_STRING);
@@ -749,6 +790,10 @@ int main(int argc, char *argv[])
 
 	case ACT_LIST:
 		rc = command_list_partitions(sf, argc - optind, argv + optind);
+		break;
+
+	case ACT_LIST_TYPES:
+		rc = command_list_types(sf);
 		break;
 
 	case ACT_FDISK:
