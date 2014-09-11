@@ -402,8 +402,6 @@ int fdisk_script_write_file(struct fdisk_script *dp, FILE *f)
 			fprintf(f, " start=%12ju", pa->start);
 		if (pa->size)
 			fprintf(f, ", size=%12ju", pa->size);
-		else if (pa->end)
-			fprintf(f, ", end=%12ju", pa->end);
 
 		if (pa->type && fdisk_parttype_get_string(pa->type))
 			fprintf(f, ", type=%s", fdisk_parttype_get_string(pa->type));
@@ -567,7 +565,7 @@ static int partno_from_devname(char *s)
  */
 static int parse_script_line(struct fdisk_script *dp, char *s)
 {
-	char *p;
+	char *p, *x;
 	struct fdisk_partition *pa;
 	int rc = 0;
 	uint64_t num;
@@ -582,18 +580,24 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 	if (!pa)
 		return -ENOMEM;
 
+	fdisk_partition_start_follow_default(pa, 1);
+	fdisk_partition_end_follow_default(pa, 1);
+	fdisk_partition_partno_follow_default(pa, 1);
+
+	/* set partno */
 	p = strchr(s, ':');
-	if (!p)
-		goto done;
-	*p = '\0';
-	p++;
+	x = strchr(s, '=');
+	if (p && (!x || p < x)) {
+		*p = '\0';
+		p++;
 
-	pno = partno_from_devname(s);
-	if (pno < 0)
-		fdisk_partition_partno_follow_default(pa, 1);
-	else
-		fdisk_partition_set_partno(pa, pno);
-
+		pno = partno_from_devname(s);
+		if (pno >= 0) {
+			fdisk_partition_partno_follow_default(pa, 0);
+			fdisk_partition_set_partno(pa, pno);
+		}
+	} else
+		p = s;
 
 	while (rc == 0 && p && *p) {
 		while (isblank(*p)) p++;
@@ -605,9 +609,10 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 		if (!strncasecmp(p, "start=", 6)) {
 			p += 6;
 			rc = next_number(&p, &num, NULL);
-			if (!rc)
+			if (!rc) {
 				fdisk_partition_set_start(pa, num);
-
+				fdisk_partition_start_follow_default(pa, 0);
+			}
 		} else if (!strncasecmp(p, "size=", 5)) {
 			int pow = 0;
 
@@ -617,12 +622,8 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 				if (pow)
 					num /= dp->cxt->sector_size;
 				fdisk_partition_set_size(pa, num);
+				fdisk_partition_end_follow_default(pa, 0);
 			}
-		} else if (!strncasecmp(p, "end=", 4)) {
-			p += 4;
-			rc = next_number(&p, &num, NULL);
-			if (!rc)
-				fdisk_partition_set_end(pa, num);
 
 		} else if (!strncasecmp(p, "bootable", 8)) {
 			p += 8;
@@ -679,7 +680,6 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 
 	if (!rc)
 		rc = fdisk_table_add_partition(dp->table, pa);
-done:
 	if (rc)
 		DBG(SCRIPT, ul_debugobj(dp, "script parse error: [rc=%d]", rc));
 
