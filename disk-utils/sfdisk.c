@@ -660,7 +660,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,
-	      _(" %1$s [options] --dump <device>\n"
+	      _(" %1$s <device> [[-N] <partno>]\n"
+		" %1$s [options] --dump <device>\n"
 		" %1$s [options] --list [<device> ...]\n"
 		" %1$s [options] --activate <device> [<partno> ...]\n"),
 	      program_invocation_short_name);
@@ -669,6 +670,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -a, --activate       mark MBR partitions as bootable\n"), out);
 	fputs(_(" -d, --dump           dump partition table (suitable for later input)\n"), out);
 	fputs(_(" -l, --list           list partitions of each device\n"), out);
+	fputs(_(" -N, --partno <num>   specify partition number\n"), out);
+	fputs(_(" -s, --show-size      list the size of all or specified device\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
