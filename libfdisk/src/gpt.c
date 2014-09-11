@@ -325,6 +325,39 @@ static struct fdisk_parttype *gpt_partition_parttype(
 	return t ? : fdisk_new_unknown_parttype(0, str);
 }
 
+static void gpt_entry_set_type(struct gpt_entry *e, struct gpt_guid *uuid)
+{
+	e->type = *uuid;
+	DBG(LABEL, gpt_debug_uuid("new type", &(e->type)));
+}
+
+static void gpt_entry_set_name(struct gpt_entry *e, char *str)
+{
+	char name[GPT_PART_NAME_LEN] = { 0 };
+	size_t i, sz = strlen(str);
+
+	if (sz) {
+		if (sz > GPT_PART_NAME_LEN)
+			sz = GPT_PART_NAME_LEN;
+		memcpy(name, str, sz);
+	}
+
+	for (i = 0; i < GPT_PART_NAME_LEN; i++)
+		e->name[i] = cpu_to_le16((uint16_t) name[i]);
+}
+
+static int gpt_entry_set_uuid(struct gpt_entry *e, char *str)
+{
+	struct gpt_guid uuid;
+	int rc;
+
+	rc = string_to_guid(str, &uuid);
+	if (rc)
+		return rc;
+
+	e->partition_guid = uuid;
+	return 0;
+}
 
 
 static const char *gpt_get_header_revstr(struct gpt_header *header)
@@ -1387,6 +1420,56 @@ done:
 }
 
 
+static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
+			     struct fdisk_partition *pa)
+{
+	struct fdisk_gpt_label *gpt;
+	struct gpt_entry *e;
+	int rc = 0;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_label(cxt, GPT));
+
+	gpt = self_label(cxt);
+
+	if ((uint32_t) n >= le32_to_cpu(gpt->pheader->npartition_entries))
+		return -EINVAL;
+
+	gpt = self_label(cxt);
+	e = &gpt->ents[n];
+
+	if (pa->uuid) {
+		rc = gpt_entry_set_uuid(e, pa->uuid);
+		if (rc)
+			return rc;
+	}
+
+	if (pa->name)
+		gpt_entry_set_name(e, pa->name);
+
+	if (pa->type && pa->type->typestr) {
+		struct gpt_guid typeid;
+
+		string_to_guid(	pa->type->typestr, &typeid);
+		gpt_entry_set_type(e, &typeid);
+	}
+
+	if (pa->start)
+		e->lba_start = cpu_to_le64(pa->start);
+	if (pa->size)
+		e->lba_end = cpu_to_le64(gpt_partition_start(e) + pa->size - 1ULL);
+
+	/* TODO: pa->attrs */
+
+	gpt_recompute_crc(gpt->pheader, gpt->ents);
+	gpt_recompute_crc(gpt->bheader, gpt->ents);
+
+	fdisk_label_set_changed(cxt->label, 1);
+	return rc;
+}
+
+
 /*
  * List label partitions.
  */
@@ -1718,39 +1801,6 @@ static int gpt_delete_partition(struct fdisk_context *cxt,
 	return 0;
 }
 
-static void gpt_entry_set_type(struct gpt_entry *e, struct gpt_guid *uuid)
-{
-	e->type = *uuid;
-	DBG(LABEL, gpt_debug_uuid("new type", &(e->type)));
-}
-
-static void gpt_entry_set_name(struct gpt_entry *e, char *str)
-{
-	char name[GPT_PART_NAME_LEN] = { 0 };
-	size_t i, sz = strlen(str);
-
-	if (sz) {
-		if (sz > GPT_PART_NAME_LEN)
-			sz = GPT_PART_NAME_LEN;
-		memcpy(name, str, sz);
-	}
-
-	for (i = 0; i < GPT_PART_NAME_LEN; i++)
-		e->name[i] = cpu_to_le16((uint16_t) name[i]);
-}
-
-static int gpt_entry_set_uuid(struct gpt_entry *e, char *str)
-{
-	struct gpt_guid uuid;
-	int rc;
-
-	rc = string_to_guid(str, &uuid);
-	if (rc)
-		return rc;
-
-	e->partition_guid = uuid;
-	return 0;
-}
 
 /* Performs logical checks to add a new partition entry */
 static int gpt_add_partition(
@@ -2408,6 +2458,7 @@ static const struct fdisk_label_operations gpt_operations =
 	.set_id		= gpt_set_disklabel_id,
 
 	.get_part	= gpt_get_partition,
+	.set_part	= gpt_set_partition,
 	.add_part	= gpt_add_partition,
 	.del_part	= gpt_delete_partition,
 
