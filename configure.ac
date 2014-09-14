@@ -310,6 +310,7 @@ AC_CHECK_FUNCS([ \
 	getexecname \
 	getmntinfo \
 	getrlimit \
+	getsgnam \
 	inotify_init \
 	inotify_init1 \
 	jrand48 \

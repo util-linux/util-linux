@@ -28,6 +28,10 @@
 # include <crypt.h>
 #endif
 
+#ifdef HAVE_GETSGNAM
+# include <gshadow.h>
+#endif
+
 #include "c.h"
 #include "closestream.h"
 #include "nls.h"
@@ -37,6 +41,12 @@
 /* try to read password from gshadow */
 static char *get_gshadow_pwd(char *groupname)
 {
+#ifdef HAVE_GETSGNAM
+	struct sgrp *sgrp;
+
+	sgrp = getsgnam(groupname);
+	return sgrp ? xstrdup(sgrp->sg_passwd) : NULL;
+#else
 	char buf[BUFSIZ];
 	char *pwd = NULL;
 	FILE *f;
@@ -69,6 +79,7 @@ static char *get_gshadow_pwd(char *groupname)
 	}
 	fclose(f);
 	return pwd ? xstrdup(pwd) : NULL;
+#endif	/* HAVE_GETSGNAM */
 }
 
 static int allow_setgid(struct passwd *pe, struct group *ge)
