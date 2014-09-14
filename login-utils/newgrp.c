@@ -160,7 +160,7 @@ static int allow_setgid(struct passwd *pe, struct group *ge)
 		memset_s(xpwd, strlen(xpwd), 0);
 		free(xpwd);
 		if (!cbuf)
-			warn(_("crypt() failed"));
+			warn(_("crypt failed"));
 		else if (strcmp(pwd, cbuf) == 0)
 			return TRUE;
 	}
