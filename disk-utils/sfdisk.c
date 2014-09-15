@@ -66,7 +66,8 @@ enum {
 	ACT_LIST,
 	ACT_LIST_TYPES,
 	ACT_SHOW_SIZE,
-	ACT_VERIFY
+	ACT_VERIFY,
+	ACT_PARTTYPE,
 };
 
 struct sfdisk {
@@ -364,9 +365,9 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 	const char *devname = NULL;
 
 	if (argc)
-		devname = argv[0];
-	else
 		errx(EXIT_FAILURE, _("no disk device specified"));
+	devname = argv[0];
+
 	if (argc > 2)
 		errx(EXIT_FAILURE, _("uneexpected arguments"));
 
@@ -449,6 +450,97 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 
 	fdisk_unref_script(dp);
 	return 0;
+}
+
+/*
+ * sfdisk --parttype <device> <partno> [<type>]
+ */
+static int command_parttype(struct sfdisk *sf, int argc, char **argv)
+{
+	int rc;
+	size_t partno, n;
+	struct fdisk_label *lb = NULL;
+	struct fdisk_partition *pa = NULL;
+	struct fdisk_parttype *type = NULL;
+	const char *devname = NULL, *typestr = NULL;
+
+	if (!argc)
+		errx(EXIT_FAILURE, _("no disk device specified"));
+	devname = argv[0];
+
+	if (argc < 2)
+		errx(EXIT_FAILURE, _("no partition number specified"));
+	partno = strtou32_or_err(argv[1], _("failed to parse partition number"));
+
+	if (argc == 3)
+		typestr = argv[2];
+	else if (argc > 3)
+		errx(EXIT_FAILURE, _("uneexpected arguments"));
+
+	/* read-only when a new <type> undefined */
+	rc = fdisk_assign_device(sf->cxt, devname, !typestr);
+	if (rc)
+		err(EXIT_FAILURE, _("cannot open %s"), devname);
+
+	lb = fdisk_get_label(sf->cxt, NULL);
+	if (!lb)
+		errx(EXIT_FAILURE, _("%s: not found partition table."), devname);
+
+	n = fdisk_get_npartitions(sf->cxt);
+	if (partno > n)
+		errx(EXIT_FAILURE, _("%s: partition %zu: partition table contains %zu "
+				     "partitions only."), devname, partno, n);
+	if (!fdisk_is_partition_used(sf->cxt, partno - 1))
+		errx(EXIT_FAILURE, _("%s: partition %zu: partition unnused"),
+				devname, partno);
+
+	/* print partition type */
+	if (!typestr) {
+		const struct fdisk_parttype *t = NULL;
+
+		if (fdisk_get_partition(sf->cxt, partno - 1, &pa) == 0)
+			t = fdisk_partition_get_type(pa);
+		if (!t)
+			errx(EXIT_FAILURE, _("%s: partition %zu: failed to get partition type"),
+						devname, partno);
+
+		if (fdisk_label_has_code_parttypes(lb))
+			printf("%2x\n", fdisk_parttype_get_code(t));
+		else
+			printf("%s\n", fdisk_parttype_get_string(t));
+
+		fdisk_unref_partition(pa);
+		fdisk_deassign_device(sf->cxt, 0);
+		return 0;
+	}
+
+	/* parse <type> and apply yo PT */
+	type = fdisk_label_parse_parttype(lb, typestr);
+	if (!type || fdisk_parttype_is_unknown(type)) {
+		rc = -EINVAL;
+		warnx(_("failed to parse %s partition type '%s'"),
+				fdisk_label_get_name(lb), typestr);
+		goto done;
+	}
+
+	pa = fdisk_new_partition();
+	if (!pa)
+		err(EXIT_FAILURE, _("failed to allocate partition"));
+	rc = fdisk_partition_set_type(pa, type);
+
+	if (!rc) {
+		rc = fdisk_set_partition(sf->cxt, partno - 1, pa);	/* apply to disklabel */
+		if (rc)
+			warnx(_("%s: partition %zu: failed to appply type to disk label"),
+					devname, partno);
+	}
+done:
+	fdisk_unref_partition(pa);
+	if (!rc)
+		rc = fdisk_write_disklabel(sf->cxt);
+	if (!rc)
+		rc = fdisk_deassign_device(sf->cxt, 1);
+	return rc;
 }
 
 static void sfdisk_print_partition(struct sfdisk *sf, size_t n)
@@ -602,13 +694,15 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	if (partno >= 0) {
 		size_t n;
 		if (!fdisk_has_label(sf->cxt))
-			errx(EXIT_FAILURE, _("cannot modify partition %d, "
-					     "not found partition table."), partno);
+			errx(EXIT_FAILURE, _("%s: cannot modify partition %d, "
+					     "not found partition table."),
+					devname, partno);
 		n = fdisk_get_npartitions(sf->cxt);
 		if ((size_t) partno > n)
-			errx(EXIT_FAILURE, _("cannot modify partition %d, "
+			errx(EXIT_FAILURE, _("%s: cannot modify partition %d, "
 					     "partition table contains %zu "
-					     "partitions only."), partno, n);
+					     "partitions only."),
+					devname, partno, n);
 		created = 1;
 		next_partno = partno;
 	}
@@ -754,11 +848,12 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	      _(" %1$s <device> [[-N] <partno>]\n"
 		" %1$s [options] --dump <device>\n"
 		" %1$s [options] --list [<device> ...]\n"
-		" %1$s [options] --activate <device> [<partno> ...]\n"),
+		" %1$s [options] --activate <device> [<partno> ...]\n"
+		" %1$s [options] --parttype <device> <partno> [<type>]\n"),
 	      program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --activate       mark MBR partitions as bootable\n"), out);
+	fputs(_(" -a, --activate       list or set bootable MBR partitions\n"), out);
 	fputs(_(" -d, --dump           dump partition table (suitable for later input)\n"), out);
 	fputs(_(" -l, --list           list partitions of each device\n"), out);
 	fputs(_(" -N, --partno <num>   specify partition number\n"), out);
@@ -766,6 +861,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -T, --list-types     print the recognized types (see -X)\n"), out);
 	fputs(_(" -V, --verify         test whether partitions seem correct\n"), out);
 	fputs(_(" -X, --label <name>   specify label type (dos, gpt, ...)\n"), out);
+	fputs(_(" -c, --parttype       print or change partition type\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -779,10 +875,16 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char *argv[])
 {
-	int rc = -EINVAL, c;
+	int rc = -EINVAL, c, longidx = -1;
 	struct sfdisk _sf = {
 		.partno = -1
 	}, *sf = &_sf;
+
+	enum {
+		OPT_CHANGE_ID = CHAR_MAX + 1,
+		OPT_PRINT_ID,
+		OPT_ID
+	};
 
 	static const struct option longopts[] = {
 		{ "activate",no_argument,	NULL, 'a' },
@@ -795,6 +897,12 @@ int main(int argc, char *argv[])
 		{ "show-size", no_argument,	NULL, 's' },
 		{ "verify",  no_argument,       NULL, 'V' },
 		{ "version", no_argument,       NULL, 'v' },
+
+		{ "parttype",no_argument,       NULL, 'c' },		/* wanted */
+		{ "change-id",no_argument,      NULL, OPT_CHANGE_ID },	/* deprecated */
+		{ "id",      no_argument,       NULL, OPT_ID },		/* deprecated */
+		{ "print-id",no_argument,       NULL, OPT_PRINT_ID },	/* deprecated */
+
 		{ NULL, 0, 0, 0 },
 	};
 
@@ -803,10 +911,20 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "adhlN:sTvVX:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "adhlN:sTvVX:",
+					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'a':
 			sf->act = ACT_ACTIVATE;
+			break;
+		case OPT_CHANGE_ID:
+		case OPT_PRINT_ID:
+		case OPT_ID:
+			warnx(_("%s is deprecated in favour of --parttype"),
+				longopts[longidx].name);
+			/* fallthrough */
+		case 'c':
+			sf->act = ACT_PARTTYPE;
 			break;
 		case 'h':
 			usage(stdout);
@@ -837,6 +955,7 @@ int main(int argc, char *argv[])
 			sf->verify = 1;
 			break;
 		default:
+			warnx(_("unsupported option '%c'"), c);
 			usage(stderr);
 		}
 	}
@@ -875,6 +994,10 @@ int main(int argc, char *argv[])
 
 	case ACT_VERIFY:
 		rc = command_verify(sf, argc - optind, argv + optind);
+		break;
+
+	case ACT_PARTTYPE:
+		rc = command_parttype(sf, argc - optind, argv + optind);
 		break;
 	}
 
