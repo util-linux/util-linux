@@ -409,7 +409,7 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 		rc = fdisk_partition_toggle_flag(sf->cxt, n - 1, DOS_FLAG_ACTIVE);
 		if (rc)
 			errx(EXIT_FAILURE,
-				_("%s: #%d: failed to toggle bootable flag"),
+				_("%s: partition %d: failed to toggle bootable flag"),
 				devname, i + 1);
 	}
 
@@ -453,7 +453,7 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 }
 
 /*
- * sfdisk --parttype <device> <partno> [<type>]
+ * sfdisk --type <device> <partno> [<type>]
  */
 static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 {
@@ -845,23 +845,26 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,
-	      _(" %1$s <device> [[-N] <partno>]\n"
-		" %1$s [options] --dump <device>\n"
-		" %1$s [options] --list [<device> ...]\n"
-		" %1$s [options] --activate <device> [<partno> ...]\n"
-		" %1$s [options] --parttype <device> <partno> [<type>]\n"),
-	      program_invocation_short_name);
+	      _(" %1$s [options] <dev> [[-N] <part>]\n"
+		" %1$s [options] <command>\n"), program_invocation_short_name);
+
+	fputs(_("\nCommands:\n"), out);
+	fputs(_(" -d, --dump <dev>                  dump partition table (usable for later input)\n"), out);
+	fputs(_(" -l, --list [<dev> ...]            list partitions of each device\n"), out);
+	fputs(_(" -a, --activate <dev> [<part> ...] list or set bootable MBR partitions\n"), out);
+	fputs(_(" -c, --type <dev> <part> [<type>]  print or change partition type\n"), out);
+	fputs(_(" -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"), out);
+	fputs(_(" -T, --list-types                  print the recognized types (see -X)\n"), out);
+	fputs(_(" -V, --verify                      test whether partitions seem correct\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" <dev>                device (usually disk) path\n"), out);
+	fputs(_(" <part>               partition number\n"), out);
+	fputs(_(" <type>               partition type, GUUID for GPT, hex for MBR\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --activate       list or set bootable MBR partitions\n"), out);
-	fputs(_(" -d, --dump           dump partition table (suitable for later input)\n"), out);
-	fputs(_(" -l, --list           list partitions of each device\n"), out);
 	fputs(_(" -N, --partno <num>   specify partition number\n"), out);
-	fputs(_(" -s, --show-size      list the size of all or specified device\n"), out);
-	fputs(_(" -T, --list-types     print the recognized types (see -X)\n"), out);
-	fputs(_(" -V, --verify         test whether partitions seem correct\n"), out);
 	fputs(_(" -X, --label <name>   specify label type (dos, gpt, ...)\n"), out);
-	fputs(_(" -c, --parttype       print or change partition type\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -898,7 +901,7 @@ int main(int argc, char *argv[])
 		{ "verify",  no_argument,       NULL, 'V' },
 		{ "version", no_argument,       NULL, 'v' },
 
-		{ "parttype",no_argument,       NULL, 'c' },		/* wanted */
+		{ "type",no_argument,           NULL, 'c' },		/* wanted */
 		{ "change-id",no_argument,      NULL, OPT_CHANGE_ID },	/* deprecated */
 		{ "id",      no_argument,       NULL, OPT_ID },		/* deprecated */
 		{ "print-id",no_argument,       NULL, OPT_PRINT_ID },	/* deprecated */
@@ -920,7 +923,7 @@ int main(int argc, char *argv[])
 		case OPT_CHANGE_ID:
 		case OPT_PRINT_ID:
 		case OPT_ID:
-			warnx(_("%s is deprecated in favour of --parttype"),
+			warnx(_("%s is deprecated in favour of --type"),
 				longopts[longidx].name);
 			/* fallthrough */
 		case 'c':
