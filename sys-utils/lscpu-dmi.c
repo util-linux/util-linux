@@ -161,7 +161,7 @@ static int hypervisor_from_dmi_table(uint32_t base, uint16_t len,
 	else if (manufacturer && strstr(manufacturer, "HITACHI") &&
 					product && strstr(product, "LPAR"))
 		rc = HYPER_HITACHI;
-	else if (!vendor && strcmp(vendor, "Parallels"))
+	else if (vendor && !strcmp(vendor, "Parallels"))
 		rc = HYPER_PARALLELS;
 done:
 	free(buf);
