@@ -1182,12 +1182,12 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 	case COL_CORE:
 		if (cpuset_ary_isset(cpu, desc->coremaps,
 				     desc->ncores, setsize, &i) == 0)
-			snprintf(buf, bufsz, "%zd", i);
+			snprintf(buf, bufsz, "%zu", i);
 		break;
 	case COL_SOCKET:
 		if (cpuset_ary_isset(cpu, desc->socketmaps,
 				     desc->nsockets, setsize, &i) == 0)
-			snprintf(buf, bufsz, "%zd", i);
+			snprintf(buf, bufsz, "%zu", i);
 		break;
 	case COL_NODE:
 		if (cpuset_ary_isset(cpu, desc->nodemaps,
@@ -1197,7 +1197,7 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 	case COL_BOOK:
 		if (cpuset_ary_isset(cpu, desc->bookmaps,
 				     desc->nbooks, setsize, &i) == 0)
-			snprintf(buf, bufsz, "%zd", i);
+			snprintf(buf, bufsz, "%zu", i);
 		break;
 	case COL_CACHE:
 	{
@@ -1210,7 +1210,7 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 
 			if (cpuset_ary_isset(cpu, ca->sharedmaps,
 					     ca->nsharedmaps, setsize, &i) == 0) {
-				int x = snprintf(p, sz, "%zd", i);
+				int x = snprintf(p, sz, "%zu", i);
 				if (x <= 0 || (size_t) x + 2 >= sz)
 					return NULL;
 				p += x;
