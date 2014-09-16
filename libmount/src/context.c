@@ -2050,8 +2050,14 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		if (!rc)
 			rc = apply_table(cxt, tab, MNT_ITER_BACKWARD);
 	}
-	if (rc)
-		DBG(CXT, ul_debugobj(cxt, "failed to find entry in fstab/mtab"));
+	if (rc) {
+		DBG(CXT, ul_debugobj(cxt, "failed to find entry in fstab/mtab [rc=%d]: %m", rc));
+
+		/* force to "not found in fstab/mtab" error, the details why
+		 * not found are not so important and may be misinterpreted by
+		 * applications... */
+		rc = -MNT_ERR_NOFSTAB;
+	}
 	return rc;
 }
 
