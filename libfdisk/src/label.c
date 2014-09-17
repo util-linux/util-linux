@@ -406,11 +406,17 @@ int fdisk_set_partition_type(struct fdisk_context *cxt,
 {
 	if (!cxt || !cxt->label)
 		return -EINVAL;
-	if (!cxt->label->op->part_set_type)
-		return -ENOSYS;
 
 	DBG(CXT, ul_debugobj(cxt, "partition: %zd: set type", partnum));
-	return cxt->label->op->part_set_type(cxt, partnum, t);
+
+	if (cxt->label->op->set_part) {
+		struct fdisk_partition pa = { .type = t };
+		return cxt->label->op->set_part(cxt, partnum, &pa);
+
+	} else if (cxt->label->op->part_set_type)
+		return cxt->label->op->part_set_type(cxt, partnum, t);
+
+	return -ENOSYS;
 }
 
 

@@ -798,21 +798,6 @@ static int dos_probe_label(struct fdisk_context *cxt)
 	return 1;
 }
 
-/*
- * Avoid warning about DOS partitions when no DOS partition was changed.
- * Here a heuristic "is probably dos partition".
- * We might also do the opposite and warn in all cases except
- * for "is probably nondos partition".
- */
-static int is_dos_partition(int t)
-{
-	return (t == 1 || t == 4 || t == 6 ||
-		t == 0x0b || t == 0x0c || t == 0x0e ||
-		t == 0x11 || t == 0x12 || t == 0x14 || t == 0x16 ||
-		t == 0x1b || t == 0x1c || t == 0x1e || t == 0x24 ||
-		t == 0xc1 || t == 0xc4 || t == 0xc6);
-}
-
 static void set_partition(struct fdisk_context *cxt,
 			  int i, int doext, sector_t start,
 			  sector_t stop, int sysid, int boot)
@@ -1680,44 +1665,6 @@ static int dos_locate_disklabel(struct fdisk_context *cxt, int n,
 	return 0;
 }
 
-static int dos_set_parttype(
-		struct fdisk_context *cxt,
-		size_t partnum,
-		struct fdisk_parttype *t)
-{
-	struct dos_partition *p;
-
-	assert(cxt);
-	assert(cxt->label);
-	assert(fdisk_is_label(cxt, DOS));
-
-	if (partnum >= cxt->label->nparts_max || !t || t->code > UINT8_MAX)
-		return -EINVAL;
-
-	p = self_partition(cxt, partnum);
-	if (t->code == p->sys_ind)
-		return 0;
-
-	if (IS_EXTENDED(p->sys_ind) || IS_EXTENDED(t->code)) {
-		fdisk_warnx(cxt, _("You cannot change a partition into an "
-			"extended one or vice versa. Delete it first."));
-		return -EINVAL;
-	}
-
-	if (is_dos_partition(t->code) || is_dos_partition(p->sys_ind))
-	    fdisk_info(cxt, _("If you have created or modified any DOS 6.x "
-		"partitions, please see the fdisk documentation for additional "
-		"information."));
-
-	if (!t->code)
-		fdisk_warnx(cxt, _("Type 0 means free space to many systems. "
-				   "Having partitions of type 0 is probably unwise."));
-	p->sys_ind = t->code;
-
-	partition_set_changed(cxt, partnum, 1);
-	return 0;
-}
-
 /*
  * Check whether partition entries are ordered by their starting positions.
  * Return 0 if OK. Return i if partition i should have been earlier.
@@ -2159,8 +2106,6 @@ static const struct fdisk_label_operations dos_operations =
 	.set_part	= dos_set_partition,
 	.add_part	= dos_add_partition,
 	.del_part	= dos_delete_partition,
-
-	.part_set_type	= dos_set_parttype,
 
 	.part_toggle_flag = dos_toggle_partition_flag,
 	.part_is_used	= dos_partition_is_used,
