@@ -360,23 +360,24 @@ static int command_show_size(struct sfdisk *sf __attribute__((__unused__)),
  */
 static int command_activate(struct sfdisk *sf, int argc, char **argv)
 {
-	int rc, nparts, i;
+	int rc, nparts, i, listonly;
 	struct fdisk_partition *pa = NULL;
 	const char *devname = NULL;
 
-	if (argc)
+	if (argc < 1)
 		errx(EXIT_FAILURE, _("no disk device specified"));
 	devname = argv[0];
 
-	if (argc > 2)
-		errx(EXIT_FAILURE, _("uneexpected arguments"));
+	/*  --activate <device> */
+	listonly = argc == 1;
 
-	rc = fdisk_assign_device(sf->cxt, devname, 0);
+	rc = fdisk_assign_device(sf->cxt, devname, listonly);
 	if (rc)
 		err(EXIT_FAILURE, _("cannot open %s"), devname);
 
 	if (!fdisk_is_label(sf->cxt, DOS))
 		errx(EXIT_FAILURE, _("toggle boot flags is supported for MBR only"));
+
 
 	nparts = fdisk_get_npartitions(sf->cxt);
 	for (i = 0; i < nparts; i++) {
@@ -388,7 +389,7 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 			continue;
 
 		/* sfdisk --activate  list bootable partitions */
-		if (argc == 1) {
+		if (listonly) {
 			if (!fdisk_partition_is_bootable(pa))
 				continue;
 			if (fdisk_partition_to_string(pa, sf->cxt,
@@ -414,7 +415,9 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 	}
 
 	fdisk_unref_partition(pa);
-	rc = fdisk_write_disklabel(sf->cxt);
+
+	if (!listonly)
+		rc = fdisk_write_disklabel(sf->cxt);
 	if (!rc)
 		rc = fdisk_deassign_device(sf->cxt, 1);
 	return rc;
@@ -449,6 +452,7 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 	fdisk_script_write_file(dp, stdout);
 
 	fdisk_unref_script(dp);
+	fdisk_deassign_device(sf->cxt, 1);
 	return 0;
 }
 
@@ -528,7 +532,7 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 	if (!rc)
 		rc = fdisk_write_disklabel(sf->cxt);
 	if (!rc)
-		rc = fdisk_deassign_device(sf->cxt, 0);
+		rc = fdisk_deassign_device(sf->cxt, 1);
 	return rc;
 }
 
