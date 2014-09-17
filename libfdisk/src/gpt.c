@@ -1465,7 +1465,9 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 	if (pa->type && pa->type->typestr) {
 		struct gpt_guid typeid;
 
-		string_to_guid(	pa->type->typestr, &typeid);
+		rc = string_to_guid(pa->type->typestr, &typeid);
+		if (rc)
+			return rc;
 		gpt_entry_set_type(e, &typeid);
 	}
 
