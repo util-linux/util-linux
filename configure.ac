@@ -135,9 +135,17 @@ PKG_PROG_PKG_CONFIG
 GTK_DOC_CHECK([1.10])
 AC_PATH_PROG([XSLTPROC], [xsltproc])
 
+
 linux_os=no
-AS_CASE([${host_os}], [*linux*], [linux_os=yes])
+bsd_os=no
+AS_CASE([${host_os}],
+  [*linux*],
+     [linux_os=yes],
+  [*bsd*],
+     [bsd_os=yes])
 AM_CONDITIONAL([LINUX], [test "x$linux_os" = xyes])
+AM_CONDITIONAL([BSD], [test "x$bsd_os" = xyes])
+
 
 dnl define ARCH_<NAME> conditionals
 UL_SET_ARCH([I86], [i?86-*])
