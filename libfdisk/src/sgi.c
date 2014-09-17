@@ -688,7 +688,7 @@ static int sgi_entire(struct fdisk_context *cxt)
 	return -1;
 }
 
-static int sgi_set_partition(struct fdisk_context *cxt, size_t i,
+static int set_partition(struct fdisk_context *cxt, size_t i,
 			     unsigned int start, unsigned int length, int sys)
 {
 	struct sgi_disklabel *sgilabel;
@@ -721,7 +721,7 @@ static void sgi_set_entire(struct fdisk_context *cxt)
 
 	for (n = 10; n < cxt->label->nparts_max; n++) {
 		if (!sgi_get_num_sectors(cxt, n)) {
-			sgi_set_partition(cxt, n, 0, sgi_get_lastblock(cxt), SGI_TYPE_ENTIRE_DISK);
+			set_partition(cxt, n, 0, sgi_get_lastblock(cxt), SGI_TYPE_ENTIRE_DISK);
 			break;
 		}
 	}
@@ -735,7 +735,7 @@ static void sgi_set_volhdr(struct fdisk_context *cxt)
 		if (!sgi_get_num_sectors(cxt, n)) {
 			/* Choose same default volume header size as IRIX fx uses. */
 			if (4096 < sgi_get_lastblock(cxt))
-				sgi_set_partition(cxt, n, 0, 4096, SGI_TYPE_VOLHDR);
+				set_partition(cxt, n, 0, 4096, SGI_TYPE_VOLHDR);
 			break;
 		}
 	}
@@ -751,7 +751,7 @@ static int sgi_delete_partition(struct fdisk_context *cxt, size_t partnum)
 	if (partnum > cxt->label->nparts_max)
 		return -EINVAL;
 
-	rc = sgi_set_partition(cxt, partnum, 0, 0, 0);
+	rc = set_partition(cxt, partnum, 0, 0, 0);
 
 	cxt->label->nparts_cur = count_used_partitions(cxt);
 
@@ -899,7 +899,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 				  "eleventh partition covers the entire "
 				  "disk and is of type 'SGI volume'."));
 
-	sgi_set_partition(cxt, n, first, last - first, sys);
+	set_partition(cxt, n, first, last - first, sys);
 	cxt->label->nparts_cur = count_used_partitions(cxt);
 	if (partno)
 		*partno = n;
@@ -1000,41 +1000,57 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	return 0;
 }
 
-static int sgi_set_parttype(struct fdisk_context *cxt,
+static int sgi_set_partition(struct fdisk_context *cxt,
 		size_t i,
-		struct fdisk_parttype *t)
+		struct fdisk_partition *pa)
 {
 	struct sgi_disklabel *sgilabel;
 
-	if (i >= cxt->label->nparts_max || !t || t->code > UINT32_MAX)
+	if (i >= cxt->label->nparts_max)
 		return -EINVAL;
-
-	if (sgi_get_num_sectors(cxt, i) == 0)	/* caught already before, ... */ {
-		fdisk_warnx(cxt, _("Sorry, only for non-empty partitions you can change the tag."));
-		return -EINVAL;
-	}
-
-	if ((i == 10 && t->code != SGI_TYPE_ENTIRE_DISK)
-	    || (i == 8 && t->code != 0))
-		fdisk_info(cxt, _("Consider leaving partition 9 as volume header (0), "
-				  "and partition 11 as entire volume (6), "
-				  "as IRIX expects it."));
-
-	if (((t->code != SGI_TYPE_ENTIRE_DISK) && (t->code != SGI_TYPE_VOLHDR))
-	    && (sgi_get_start_sector(cxt, i) < 1)) {
-		int yes = 0;
-		fdisk_ask_yesno(cxt,
-			_("It is highly recommended that the partition at offset 0 "
-			  "is of type \"SGI volhdr\", the IRIX system will rely on it to "
-			  "retrieve from its directory standalone tools like sash and fx. "
-			  "Only the \"SGI volume\" entire disk section may violate this. "
-			  "Are you sure about tagging this partition differently?"), &yes);
-		if (!yes)
-			return 1;
-	}
 
 	sgilabel = self_disklabel(cxt);
-	sgilabel->partitions[i].type = cpu_to_be32(t->code);
+
+	if (pa->type) {
+		struct fdisk_parttype *t = pa->type;
+
+		if (t->code > UINT32_MAX)
+			return -EINVAL;
+
+		if (sgi_get_num_sectors(cxt, i) == 0)	/* caught already before, ... */ {
+			fdisk_warnx(cxt, _("Sorry, only for non-empty partitions you can change the tag."));
+			return -EINVAL;
+		}
+
+		if ((i == 10 && t->code != SGI_TYPE_ENTIRE_DISK)
+		    || (i == 8 && t->code != 0))
+			fdisk_info(cxt, _("Consider leaving partition 9 as volume header (0), "
+					  "and partition 11 as entire volume (6), "
+					  "as IRIX expects it."));
+
+		if (cxt->script == NULL
+		    && ((t->code != SGI_TYPE_ENTIRE_DISK) && (t->code != SGI_TYPE_VOLHDR))
+		    && (sgi_get_start_sector(cxt, i) < 1)) {
+			int yes = 0;
+			fdisk_ask_yesno(cxt,
+				_("It is highly recommended that the partition at offset 0 "
+				  "is of type \"SGI volhdr\", the IRIX system will rely on it to "
+				  "retrieve from its directory standalone tools like sash and fx. "
+				  "Only the \"SGI volume\" entire disk section may violate this. "
+				  "Are you sure about tagging this partition differently?"), &yes);
+			if (!yes)
+				return 1;
+		}
+
+		sgilabel->partitions[i].type = cpu_to_be32(t->code);
+	}
+
+	if (pa->start)
+		sgilabel->partitions[i].first_block = cpu_to_be32(pa->start);
+	if (pa->size)
+		sgilabel->partitions[i].num_blocks = cpu_to_be32(pa->size);
+
+	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
 }
 
@@ -1105,10 +1121,10 @@ static const struct fdisk_label_operations sgi_operations =
 	.list		= sgi_list_table,
 
 	.get_part	= sgi_get_partition,
+	.set_part	= sgi_set_partition,
 	.add_part	= sgi_add_partition,
 	.del_part	= sgi_delete_partition,
 
-	.part_set_type	= sgi_set_parttype,
 	.part_is_used	= sgi_partition_is_used,
 	.part_toggle_flag = sgi_toggle_partition_flag
 };
