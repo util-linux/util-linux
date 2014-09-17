@@ -299,9 +299,8 @@ int fdisk_context_deassign_device(struct fdisk_context *cxt, int nosync)
 	assert(cxt);
 	assert(cxt->dev_fd >= 0);
 
-	if (cxt->readonly || nosync)
+	if (cxt->readonly)
 		close(cxt->dev_fd);
-
 	else {
 		if (fsync(cxt->dev_fd) || close(cxt->dev_fd)) {
 			fdisk_warn(cxt, _("%s: close device failed"),
@@ -309,8 +308,10 @@ int fdisk_context_deassign_device(struct fdisk_context *cxt, int nosync)
 			return -errno;
 		}
 
-		fdisk_info(cxt, _("Syncing disks."));
-		sync();
+		if (!nosync) {
+			fdisk_info(cxt, _("Syncing disks."));
+			sync();
+		}
 	}
 	cxt->dev_fd = -1;
 	return 0;
