@@ -68,7 +68,7 @@ static inline struct fdisk_sun_label *self_label(struct fdisk_context *cxt)
 	return (struct fdisk_sun_label *) cxt->label;
 }
 
-static void set_sun_partition(struct fdisk_context *cxt, size_t i,
+static void set_partition(struct fdisk_context *cxt, size_t i,
 		uint32_t start,uint32_t stop, uint16_t sysid)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
@@ -261,14 +261,14 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	} else
 	        ndiv = cxt->geom.cylinders * 2 / 3;
 
-	set_sun_partition(cxt, 0, 0, ndiv * cxt->geom.heads * cxt->geom.sectors,
+	set_partition(cxt, 0, 0, ndiv * cxt->geom.heads * cxt->geom.sectors,
 			  SUN_TAG_LINUX_NATIVE);
-	set_sun_partition(cxt, 1, ndiv * cxt->geom.heads * cxt->geom.sectors,
+	set_partition(cxt, 1, ndiv * cxt->geom.heads * cxt->geom.sectors,
 			  cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors,
 			  SUN_TAG_LINUX_SWAP);
 	sunlabel->vtoc.infos[1].flags |= cpu_to_be16(SUN_FLAG_UNMNT);
 
-	set_sun_partition(cxt, 2, 0,
+	set_partition(cxt, 2, 0,
 			  cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors,
 			  SUN_TAG_WHOLEDISK);
 
@@ -610,7 +610,7 @@ static int sun_add_partition(
 	if (pa && pa->end_follow_default)
 		last = whole_disk || (n == 2 && !first) ? stop2 : stop;
 	else if (pa && pa->size) {
-		last = pa->size;
+		last = first + pa->size - 1ULL;
 
 		if (!whole_disk && last > stop)
 			return -ERANGE;
@@ -680,7 +680,7 @@ static int sun_add_partition(
 	if (whole_disk)
 		sys = SUN_TAG_WHOLEDISK;
 
-	set_sun_partition(cxt, n, first, last, sys);
+	set_partition(cxt, n, first, last, sys);
 	cxt->label->nparts_cur = count_used_partitions(cxt);
 	if (partno)
 		*partno = n;
@@ -919,10 +919,10 @@ static int sun_write_disklabel(struct fdisk_context *cxt)
 	return 0;
 }
 
-static int sun_set_parttype(
+static int sun_set_partition(
 		struct fdisk_context *cxt,
 		size_t i,
-		struct fdisk_parttype *t)
+		struct fdisk_partition *pa)
 {
 	struct sun_disklabel *sunlabel;
 	struct sun_partition *part;
@@ -934,42 +934,59 @@ static int sun_set_parttype(
 
 	sunlabel = self_disklabel(cxt);
 
-	if (i >= cxt->label->nparts_max || !t || t->code > UINT16_MAX)
+	if (i >= cxt->label->nparts_max)
 		return -EINVAL;
 
-	if (i == 2 && t->code != SUN_TAG_WHOLEDISK)
-		fdisk_info(cxt, _("Consider leaving partition 3 as Whole disk (5),\n"
-		         "as SunOS/Solaris expects it and even Linux likes it.\n"));
+	if (pa->type) {
+		struct fdisk_parttype *t = pa->type;
 
-	part = &sunlabel->partitions[i];
-	info = &sunlabel->vtoc.infos[i];
+		if (t->code > UINT16_MAX)
+			return -EINVAL;
 
-	if (t->code == SUN_TAG_LINUX_SWAP && !part->start_cylinder) {
-	    int yes, rc;
-	    rc = fdisk_ask_yesno(cxt,
-	      _("It is highly recommended that the partition at offset 0\n"
-	      "is UFS, EXT2FS filesystem or SunOS swap. Putting Linux swap\n"
-	      "there may destroy your partition table and bootblock.\n"
-	      "Are you sure you want to tag the partition as Linux swap?"), &yes);
-	    if (rc)
-		    return rc;
-	    if (!yes)
-		    return 1;
+		if (i == 2 && t->code != SUN_TAG_WHOLEDISK)
+			fdisk_info(cxt, _("Consider leaving partition 3 as Whole disk (5),\n"
+			         "as SunOS/Solaris expects it and even Linux likes it.\n"));
+
+		part = &sunlabel->partitions[i];
+		info = &sunlabel->vtoc.infos[i];
+
+		if (cxt->script == NULL &&
+		    t->code == SUN_TAG_LINUX_SWAP && !part->start_cylinder) {
+			int yes, rc;
+
+			rc = fdisk_ask_yesno(cxt,
+			      _("It is highly recommended that the partition at offset 0\n"
+			      "is UFS, EXT2FS filesystem or SunOS swap. Putting Linux swap\n"
+			      "there may destroy your partition table and bootblock.\n"
+			      "Are you sure you want to tag the partition as Linux swap?"), &yes);
+			if (rc)
+				return rc;
+			if (!yes)
+				return 1;
+		}
+
+		switch (t->code) {
+		case SUN_TAG_SWAP:
+		case SUN_TAG_LINUX_SWAP:
+			/* swaps are not mountable by default */
+			info->flags |= cpu_to_be16(SUN_FLAG_UNMNT);
+			break;
+		default:
+			/* assume other types are mountable;
+			   user can change it anyway */
+			info->flags &= ~cpu_to_be16(SUN_FLAG_UNMNT);
+			break;
+		}
+		info->id = cpu_to_be16(t->code);
 	}
 
-	switch (t->code) {
-	case SUN_TAG_SWAP:
-	case SUN_TAG_LINUX_SWAP:
-		/* swaps are not mountable by default */
-		info->flags |= cpu_to_be16(SUN_FLAG_UNMNT);
-		break;
-	default:
-		/* assume other types are mountable;
-		   user can change it anyway */
-		info->flags &= ~cpu_to_be16(SUN_FLAG_UNMNT);
-		break;
-	}
-	info->id = cpu_to_be16(t->code);
+	if (pa->start)
+		sunlabel->partitions[i].start_cylinder =
+			cpu_to_be32(pa->start / (cxt->geom.heads * cxt->geom.sectors));
+	if (pa->size)
+		sunlabel->partitions[i].num_sectors = cpu_to_be32(pa->size);
+
+	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
 }
 
@@ -1019,10 +1036,10 @@ const struct fdisk_label_operations sun_operations =
 	.list		= sun_list_disklabel,
 
 	.get_part	= sun_get_partition,
+	.set_part	= sun_set_partition,
 	.add_part	= sun_add_partition,
 	.del_part	= sun_delete_partition,
 
-	.part_set_type	= sun_set_parttype,
 	.part_is_used	= sun_partition_is_used,
 	.part_toggle_flag = sun_toggle_partition_flag,
 

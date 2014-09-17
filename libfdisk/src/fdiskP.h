@@ -205,19 +205,10 @@ struct fdisk_label_operations {
 	int (*set_part)(struct fdisk_context *cxt, size_t n,
 						struct fdisk_partition *pa);
 
-/*** TODO use set_part() */
-	/* get partition type */
-	struct fdisk_parttype *(*part_get_type)(struct fdisk_context *cxt,
-						size_t partnum);
-	/* set partition type */
-	int (*part_set_type)(struct fdisk_context *cxt,
-						size_t partnum,
-						struct fdisk_parttype *t);
 	/* return state of the partition */
 	int (*part_is_used)(struct fdisk_context *cxt, size_t partnum);
 
 	int (*part_toggle_flag)(struct fdisk_context *cxt, size_t i, unsigned long flag);
-/******/
 
 	/* refresh alignment setting */
 	int (*reset_alignment)(struct fdisk_context *cxt);
