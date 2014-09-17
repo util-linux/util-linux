@@ -460,7 +460,6 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 	int rc;
 	size_t partno, n;
 	struct fdisk_label *lb = NULL;
-	struct fdisk_partition *pa = NULL;
 	struct fdisk_parttype *type = NULL;
 	const char *devname = NULL, *typestr = NULL;
 
@@ -497,6 +496,7 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 	/* print partition type */
 	if (!typestr) {
 		const struct fdisk_parttype *t = NULL;
+		struct fdisk_partition *pa = NULL;
 
 		if (fdisk_get_partition(sf->cxt, partno - 1, &pa) == 0)
 			t = fdisk_partition_get_type(pa);
@@ -510,36 +510,25 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 			printf("%s\n", fdisk_parttype_get_string(t));
 
 		fdisk_unref_partition(pa);
-		fdisk_deassign_device(sf->cxt, 0);
+		fdisk_deassign_device(sf->cxt, 1);
 		return 0;
 	}
 
 	/* parse <type> and apply yo PT */
 	type = fdisk_label_parse_parttype(lb, typestr);
-	if (!type || fdisk_parttype_is_unknown(type)) {
-		rc = -EINVAL;
-		warnx(_("failed to parse %s partition type '%s'"),
+	if (!type || fdisk_parttype_is_unknown(type))
+		errx(EXIT_FAILURE, _("failed to parse %s partition type '%s'"),
 				fdisk_label_get_name(lb), typestr);
-		goto done;
-	}
 
-	pa = fdisk_new_partition();
-	if (!pa)
-		err(EXIT_FAILURE, _("failed to allocate partition"));
-	rc = fdisk_partition_set_type(pa, type);
+	else if (fdisk_set_partition_type(sf->cxt, partno - 1, type) != 0)
+		errx(EXIT_FAILURE, _("%s: partition %zu: failed to set partition type"),
+						devname, partno);
 
-	if (!rc) {
-		rc = fdisk_set_partition(sf->cxt, partno - 1, pa);	/* apply to disklabel */
-		if (rc)
-			warnx(_("%s: partition %zu: failed to appply type to disk label"),
-					devname, partno);
-	}
-done:
-	fdisk_unref_partition(pa);
+	fdisk_free_parttype(type);
 	if (!rc)
 		rc = fdisk_write_disklabel(sf->cxt);
 	if (!rc)
-		rc = fdisk_deassign_device(sf->cxt, 1);
+		rc = fdisk_deassign_device(sf->cxt, 0);
 	return rc;
 }
 
