@@ -85,7 +85,6 @@ static int bsd_list_disklabel(struct fdisk_context *cxt);
 static int bsd_initlabel(struct fdisk_context *cxt);
 static int bsd_readlabel(struct fdisk_context *cxt);
 static void sync_disks(struct fdisk_context *cxt);
-static int bsd_set_parttype(struct fdisk_context *cxt, size_t partnum, struct fdisk_parttype *t);
 
 static inline struct fdisk_bsd_label *self_label(struct fdisk_context *cxt)
 {
@@ -193,6 +192,26 @@ static int bsd_probe_label(struct fdisk_context *cxt)
 	return 0;		/* not found */
 }
 
+static int set_parttype(
+		struct fdisk_context *cxt,
+		size_t partnum,
+		struct fdisk_parttype *t)
+{
+	struct bsd_partition *p;
+	struct bsd_disklabel *d = self_disklabel(cxt);
+
+	if (partnum >= d->d_npartitions || !t || t->code > UINT8_MAX)
+		return -EINVAL;
+
+	p = &d->d_partitions[partnum];
+	if (t->code == p->p_fstype)
+		return 0;
+
+	p->p_fstype = t->code;
+	fdisk_label_set_changed(cxt->label, 1);
+	return 0;
+}
+
 static int bsd_add_partition(struct fdisk_context *cxt,
 			     struct fdisk_partition *pa,
 			     size_t *partno)
@@ -253,7 +272,7 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 	else if (pa && pa->size) {
 		if (begin + pa->size > end)
 			return -ERANGE;
-		end = begin + pa->size;
+		end = begin + pa->size - 1ULL;
 	} else {
 		/* ask user by dialog */
 		struct fdisk_ask *ask = fdisk_new_ask();
@@ -295,13 +314,54 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 	cxt->label->nparts_cur = d->d_npartitions;
 
 	if (pa && pa->type)
-		bsd_set_parttype(cxt, i, pa->type);
+		set_parttype(cxt, i, pa->type);
 
 	fdisk_label_set_changed(cxt->label, 1);
 	if (partno)
 		*partno = i;
 	return 0;
 }
+
+static int bsd_set_partition(struct fdisk_context *cxt, size_t n,
+			     struct fdisk_partition *pa)
+{
+	struct bsd_partition *p;
+	struct fdisk_bsd_label *l = self_label(cxt);
+	struct bsd_disklabel *d = self_disklabel(cxt);
+
+	if (n >= d->d_npartitions)
+		return -EINVAL;
+
+	p = &d->d_partitions[n];
+
+	/* we have to stay within parental DOS partition */
+	if (l->dos_part && (pa->start || pa->size)) {
+		sector_t dosbegin = dos_partition_get_start(l->dos_part);
+		sector_t dosend = dosbegin + dos_partition_get_size(l->dos_part) - 1;
+		sector_t begin = pa->start ? pa->start : p->p_offset;
+		sector_t end = begin + (pa->size ? pa->size : p->p_size) - 1;
+
+		if (begin < dosbegin || begin > dosend)
+			return -ERANGE;
+		if (end < dosbegin || end > dosend)
+			return -ERANGE;
+	}
+
+	if (pa->type) {
+		int rc = set_parttype(cxt, n, pa->type);
+		if (rc)
+			return rc;
+	}
+
+	if (pa->start)
+		d->d_partitions[n].p_offset = pa->start;
+	if (pa->size)
+		d->d_partitions[n].p_size = pa->size;
+
+	fdisk_label_set_changed(cxt->label, 1);
+	return 0;
+}
+
 
 /* Returns 0 on success, < 0 on error. */
 static int bsd_create_disklabel(struct fdisk_context *cxt)
@@ -833,25 +893,6 @@ int fdisk_bsd_link_partition(struct fdisk_context *cxt)
 	return 0;
 }
 
-static int bsd_set_parttype(
-		struct fdisk_context *cxt,
-		size_t partnum,
-		struct fdisk_parttype *t)
-{
-	struct bsd_partition *p;
-	struct bsd_disklabel *d = self_disklabel(cxt);
-
-	if (partnum >= d->d_npartitions || !t || t->code > UINT8_MAX)
-		return -EINVAL;
-
-	p = &d->d_partitions[partnum];
-	if (t->code == p->p_fstype)
-		return 0;
-
-	p->p_fstype = t->code;
-	fdisk_label_set_changed(cxt->label, 1);
-	return 0;
-}
 
 static int bsd_partition_is_used(
 		struct fdisk_context *cxt,
@@ -875,9 +916,9 @@ static const struct fdisk_label_operations bsd_operations =
 
 	.del_part	= bsd_delete_part,
 	.get_part	= bsd_get_partition,
+	.set_part	= bsd_set_partition,
 	.add_part	= bsd_add_partition,
 
-	.part_set_type	= bsd_set_parttype,
 	.part_is_used   = bsd_partition_is_used,
 };
 
