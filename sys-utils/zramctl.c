@@ -524,7 +524,7 @@ int main(int argc, char **argv)
 		if (optind < argc) {
 			zram = new_zram(argv[optind++]);
 			if (!zram_exist(zram))
-				err(EXIT_FAILURE, zram->devname);
+				err(EXIT_FAILURE, "%s", zram->devname);
 		}
 		status(zram);
 		free_zram(zram);
@@ -560,7 +560,7 @@ int main(int argc, char **argv)
 		else {
 			zram = new_zram(argv[optind]);
 			if (!zram_exist(zram))
-				err(EXIT_FAILURE, zram->devname);
+				err(EXIT_FAILURE, "%s", zram->devname);
 		}
 
 		if (zram_set_u64parm(zram, "reset", 1))
