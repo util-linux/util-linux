@@ -7,7 +7,12 @@ what:  sfdisk --show-size
 why:   this does not belong to fdisk, use "blockdev --getsz"
 
 --------------------------
-                
+
+what:   sfdisk --Linux
+why:    unnecessary option, only Linux (non-DOS mode) is supported
+
+--------------------------
+
 what:   sfdisk --unit
 why:    unnecessary option, only 'S'ector unit is supported
 

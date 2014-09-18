@@ -916,8 +916,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -N, --partno <num>   specify partition number\n"), out);
 	fputs(_(" -X, --label <name>   specify label type (dos, gpt, ...)\n"), out);
-	fputs(_(" -u, --unit S         deprecated, all input and output is in sectors only\n"), out);
 	fputs(_(" -q, --quiet          suppress extra info messages\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -u, --unit S         deprecated, only sector unit is supported\n"), out);
+	fputs(_(" -L, --Linux          deprecated and ignored, only for backward copatibility\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -955,7 +957,9 @@ int main(int argc, char *argv[])
 		{ "quiet",   no_argument,       NULL, 'q' },
 		{ "verify",  no_argument,       NULL, 'V' },
 		{ "version", no_argument,       NULL, 'v' },
+
 		{ "unit",    required_argument, NULL, 'u' },		/* deprecated */
+		{ "Linux",   no_argument,       NULL, 'L' },		/* deprecated */
 
 		{ "type",no_argument,           NULL, 'c' },		/* wanted */
 		{ "change-id",no_argument,      NULL, OPT_CHANGE_ID },	/* deprecated */
@@ -970,7 +974,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "adhglN:qsTu:vVX:",
+	while ((c = getopt_long(argc, argv, "adhglLN:qsTu:vVX:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'a':
@@ -990,6 +994,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'l':
 			sf->act = ACT_LIST;
+			break;
+		case 'L':
+			warnx(_("--Linux option is deprecated and unnecessary"));
 			break;
 		case 'd':
 			sf->act = ACT_DUMP;
