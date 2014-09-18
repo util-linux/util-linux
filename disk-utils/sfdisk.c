@@ -66,6 +66,7 @@ enum {
 	ACT_LIST,
 	ACT_LIST_TYPES,
 	ACT_SHOW_SIZE,
+	ACT_SHOW_GEOM,
 	ACT_VERIFY,
 	ACT_PARTTYPE,
 };
@@ -353,6 +354,52 @@ static int command_show_size(struct sfdisk *sf __attribute__((__unused__)),
 	}
 
 	return 0;
+}
+
+static int print_geom(struct sfdisk *sf, const char *devname)
+{
+	fdisk_enable_listonly(sf->cxt, 1);
+
+	if (fdisk_assign_device(sf->cxt, devname, 1)) {
+		warn(_("cannot open: %s"), devname);
+		return 1;
+	}
+
+	fdisk_info(sf->cxt, "%s: %ju cylinders, %ju heads, %ju sectors/track",
+			devname,
+			(uintmax_t) fdisk_get_geom_cylinders(sf->cxt),
+			(uintmax_t) fdisk_get_geom_heads(sf->cxt),
+			(uintmax_t) fdisk_get_geom_sectors(sf->cxt));
+
+	fdisk_deassign_device(sf->cxt, 1);
+	return 0;
+}
+
+/*
+ * sfdisk --show-geometry [<device ..]
+ */
+static int command_show_geometry(struct sfdisk *sf, int argc, char **argv)
+{
+	int nfails = 0;
+
+	if (argc) {
+		int i;
+		for (i = 0; i < argc; i++) {
+			if (print_geom(sf, argv[i]) < 0)
+				nfails++;
+		}
+	} else {
+		FILE *f = NULL;
+		char *dev;
+
+		while ((dev = next_proc_partition(&f))) {
+			if (print_geom(sf, dev) < 0)
+				nfails++;
+			free(dev);
+		}
+	}
+
+	return nfails;
 }
 
 /*
@@ -842,22 +889,25 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 		" %1$s [options] <command>\n"), program_invocation_short_name);
 
 	fputs(_("\nCommands:\n"), out);
-	fputs(_(" -d, --dump <dev>                  dump partition table (usable for later input)\n"), out);
-	fputs(_(" -l, --list [<dev> ...]            list partitions of each device\n"), out);
 	fputs(_(" -a, --activate <dev> [<part> ...] list or set bootable MBR partitions\n"), out);
 	fputs(_(" -c, --type <dev> <part> [<type>]  print or change partition type\n"), out);
+	fputs(_(" -d, --dump <dev>                  dump partition table (usable for later input)\n"), out);
+	fputs(_(" -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"), out);
+	fputs(_(" -l, --list [<dev> ...]            list partitions of each device\n"), out);
 	fputs(_(" -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"), out);
 	fputs(_(" -T, --list-types                  print the recognized types (see -X)\n"), out);
 	fputs(_(" -V, --verify                      test whether partitions seem correct\n"), out);
 
+
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" <dev>                device (usually disk) path\n"), out);
 	fputs(_(" <part>               partition number\n"), out);
-	fputs(_(" <type>               partition type, GUUID for GPT, hex for MBR\n"), out);
+	fputs(_(" <type>               partition type, GUID for GPT, hex for MBR\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -N, --partno <num>   specify partition number\n"), out);
 	fputs(_(" -X, --label <name>   specify label type (dos, gpt, ...)\n"), out);
+	fputs(_(" -u, --unit S         deprecated, all input and output is in sectors only\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -891,8 +941,10 @@ int main(int argc, char *argv[])
 		{ "list-types", no_argument,	NULL, 'T' },
 		{ "partno",  required_argument, NULL, 'N' },
 		{ "show-size", no_argument,	NULL, 's' },
+		{ "show-geometry", no_argument, NULL, 'g' },
 		{ "verify",  no_argument,       NULL, 'V' },
 		{ "version", no_argument,       NULL, 'v' },
+		{ "unit",    required_argument, NULL, 'u' },		/* deprecated */
 
 		{ "type",no_argument,           NULL, 'c' },		/* wanted */
 		{ "change-id",no_argument,      NULL, OPT_CHANGE_ID },	/* deprecated */
@@ -907,7 +959,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "adhlN:sTvVX:",
+	while ((c = getopt_long(argc, argv, "adhglN:sTu:vVX:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'a':
@@ -931,6 +983,9 @@ int main(int argc, char *argv[])
 		case 'd':
 			sf->act = ACT_DUMP;
 			break;
+		case 'g':
+			sf->act = ACT_SHOW_GEOM;
+			break;
 		case 'N':
 			sf->partno = strtou32_or_err(optarg, _("failed to parse partition number")) - 1;
 			break;
@@ -943,6 +998,12 @@ int main(int argc, char *argv[])
 		case 'T':
 			sf->act = ACT_LIST_TYPES;
 			break;
+		case 'u':
+			/* deprecated */
+			warnx(_("--unit option is deprecated, only sectors are supported"));
+			if (*optarg != 'S')
+				errx(EXIT_FAILURE, _("unssupported unit '%c'"), *optarg);
+			break;
 		case 'v':
 			printf(_("%s from %s\n"), program_invocation_short_name,
 						  PACKAGE_STRING);
@@ -951,7 +1012,6 @@ int main(int argc, char *argv[])
 			sf->verify = 1;
 			break;
 		default:
-			warnx(_("unsupported option '%c'"), c);
 			usage(stderr);
 		}
 	}
@@ -986,6 +1046,10 @@ int main(int argc, char *argv[])
 
 	case ACT_SHOW_SIZE:
 		rc = command_show_size(sf, argc - optind, argv + optind);
+		break;
+
+	case ACT_SHOW_GEOM:
+		rc = command_show_geometry(sf, argc - optind, argv + optind);
 		break;
 
 	case ACT_VERIFY:

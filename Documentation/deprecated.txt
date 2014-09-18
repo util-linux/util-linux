@@ -3,11 +3,23 @@ deprecated utils are in maintenance mode and we keep them in source tree for
 backward compatibility only.
 
 
-what: "swapon --summary" output format
-why:  does not provide control on output data formatting. The recommended solution
-      is to use --show=<columns> in all scripts.
+what:  sfdisk --show-size
+why:   this does not belong to fdisk, use "blockdev --getsz"
 
-what: "pid" as binary name for "kill --pid"
+--------------------------
+                
+what:   sfdisk --unit
+why:    unnecessary option, only 'S'ector unit is supported
+
+--------------------------
+
+what:  "swapon --summary" output format
+why:   does not provide control on output data formatting. The recommended solution
+       is to use --show=<columns> in all scripts.
+
+--------------------------
+
+what:  "pid" as binary name for "kill --pid"
 why:   too ugly, too obscure
 
 --------------------------
