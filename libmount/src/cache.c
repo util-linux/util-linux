@@ -633,6 +633,7 @@ char *mnt_pretty_path(const char *path, struct libmnt_cache *cache)
 	if (!pretty)
 		return strdup("none");
 
+#ifdef __linux__
 	/* users assume backing file name rather than /dev/loopN in
 	 * output if the device has been initialized by mount(8).
 	 */
@@ -653,6 +654,7 @@ char *mnt_pretty_path(const char *path, struct libmnt_cache *cache)
 		loopcxt_deinit(&lc);
 
 	}
+#endif
 
 done:
 	/* don't return pointer to the cache, allocate a new string */
