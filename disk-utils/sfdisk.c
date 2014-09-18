@@ -79,7 +79,8 @@ struct sfdisk {
 	struct fdisk_context	*cxt;	/* libfdisk context */
 
 	unsigned int verify : 1,	/* call fdisk_verify_disklabel() */
-		     quiet : 1;		/* suppres extra messages */
+		     quiet  : 1,	/* suppres extra messages */
+		     noact  : 1;	/* do not write to device */
 };
 
 
@@ -468,10 +469,10 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 
 	fdisk_unref_partition(pa);
 
-	if (!listonly)
+	if (sf->noact == 0 && !listonly)
 		rc = fdisk_write_disklabel(sf->cxt);
 	if (!rc)
-		rc = fdisk_deassign_device(sf->cxt, 1);
+		rc = fdisk_deassign_device(sf->cxt, sf->noact);
 	return rc;
 }
 
@@ -489,7 +490,7 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 	if (!devname)
 		errx(EXIT_FAILURE, _("no disk device specified"));
 
-	rc = fdisk_assign_device(sf->cxt, devname, 1);
+	rc = fdisk_assign_device(sf->cxt, devname, 1);	/* read-only */
 	if (rc)
 		err(EXIT_FAILURE, _("cannot open %s"), devname);
 
@@ -504,7 +505,7 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 	fdisk_script_write_file(dp, stdout);
 
 	fdisk_unref_script(dp);
-	fdisk_deassign_device(sf->cxt, 1);
+	fdisk_deassign_device(sf->cxt, 1);		/* no-sync() */
 	return 0;
 }
 
@@ -581,10 +582,10 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 						devname, partno);
 
 	fdisk_free_parttype(type);
-	if (!rc)
+	if (sf->noact == 0 && !rc)
 		rc = fdisk_write_disklabel(sf->cxt);
 	if (!rc)
-		rc = fdisk_deassign_device(sf->cxt, 1);
+		rc = fdisk_deassign_device(sf->cxt, 1);		/* no-sync */
 	return rc;
 }
 
@@ -865,19 +866,25 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			int yes = 0;
 			fdisk_ask_yesno(sf->cxt, _("Do you want to write this to disk?"), &yes);
 			if (!yes) {
-				printf(_("Leaving.\n"));
+				fdisk_info(sf->cxt, _("Leaving."));
 				rc = 0;
 				break;
 			}
 		}
 	case SFDISK_DONE_EOF:
 	case SFDISK_DONE_WRITE:
-		rc = fdisk_write_disklabel(sf->cxt);
-		if (!rc) {
-			fdisk_info(sf->cxt, _("\nThe partition table has been altered."));
-			fdisk_reread_partition_table(sf->cxt);
-			rc = fdisk_deassign_device(sf->cxt, 0);
+		rc = 0;
+		if (sf->noact)
+			fdisk_info(sf->cxt, _("The partition table unchanged (--no-act)."));
+		else {
+			rc = fdisk_write_disklabel(sf->cxt);
+			if (!rc) {
+				fdisk_info(sf->cxt, _("\nThe partition table has been altered."));
+				fdisk_reread_partition_table(sf->cxt);
+			}
 		}
+		if (!rc)
+			rc = fdisk_deassign_device(sf->cxt, sf->noact);	/* no-sync when no-act */
 		break;
 	case SFDISK_DONE_ABORT:
 	default:				/* rc < 0 on error */
@@ -917,6 +924,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -N, --partno <num>   specify partition number\n"), out);
 	fputs(_(" -X, --label <name>   specify label type (dos, gpt, ...)\n"), out);
 	fputs(_(" -q, --quiet          suppress extra info messages\n"), out);
+	fputs(_(" -n, --no-act         do everything except write to device\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -u, --unit S         deprecated, only sector unit is supported\n"), out);
 	fputs(_(" -L, --Linux          deprecated and ignored, only for backward copatibility\n"), out);
@@ -951,6 +959,7 @@ int main(int argc, char *argv[])
 		{ "label",   required_argument, NULL, 'X' },
 		{ "list",    no_argument,       NULL, 'l' },
 		{ "list-types", no_argument,	NULL, 'T' },
+		{ "no-act",  no_argument,       NULL, 'n' },
 		{ "partno",  required_argument, NULL, 'N' },
 		{ "show-size", no_argument,	NULL, 's' },
 		{ "show-geometry", no_argument, NULL, 'g' },
@@ -974,7 +983,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "adhglLN:qsTu:vVX:",
+	while ((c = getopt_long(argc, argv, "adhglLnN:qsTu:vVX:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'a':
@@ -1003,6 +1012,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'g':
 			sf->act = ACT_SHOW_GEOM;
+			break;
+		case 'n':
+			sf->noact = 1;
 			break;
 		case 'N':
 			sf->partno = strtou32_or_err(optarg, _("failed to parse partition number")) - 1;
