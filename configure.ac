@@ -797,7 +797,6 @@ AC_ARG_ENABLE([libmount],
   [], [UL_DEFAULT_ENABLE([libmount], [check])]
 )
 UL_BUILD_INIT([libmount])
-UL_REQUIRES_LINUX([libmount])
 UL_REQUIRES_BUILD([libmount], [libblkid])
 UL_REQUIRES_HAVE([libmount], [scanf_alloc_modifier], [scanf string alloc modifier])
 AM_CONDITIONAL([BUILD_LIBMOUNT], [test "x$build_libmount" = xyes])
@@ -854,6 +853,7 @@ AC_ARG_ENABLE([mount],
   [], [UL_DEFAULT_ENABLE([mount], [check])]
 )
 UL_BUILD_INIT([mount])
+UL_REQUIRES_LINUX([mount])
 UL_REQUIRES_BUILD([mount], [libmount])
 AM_CONDITIONAL([BUILD_MOUNT], [test "x$build_mount" = xyes])
 
