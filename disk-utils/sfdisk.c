@@ -78,7 +78,8 @@ struct sfdisk {
 
 	struct fdisk_context	*cxt;	/* libfdisk context */
 
-	unsigned int verify : 1;	/* call fdisk_verify_disklabel() */
+	unsigned int verify : 1,	/* call fdisk_verify_disklabel() */
+		     quiet : 1;		/* suppres extra messages */
 };
 
 
@@ -111,9 +112,11 @@ static int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	return 0;
 }
 
-static int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
-		    void *data __attribute__((__unused__)))
+static int ask_callback(struct fdisk_context *cxt,
+			struct fdisk_ask *ask,
+			void *data)
 {
+	struct sfdisk *sf = (struct sfdisk *) data;
 	int rc = 0;
 
 	assert(cxt);
@@ -121,6 +124,8 @@ static int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 
 	switch(fdisk_ask_get_type(ask)) {
 	case FDISK_ASKTYPE_INFO:
+		if (sf->quiet)
+			break;
 		fputs(fdisk_ask_print_get_mesg(ask), stdout);
 		fputc('\n', stdout);
 		break;
@@ -172,7 +177,7 @@ static void sfdisk_init(struct sfdisk *sf)
 	sf->cxt = fdisk_new_context();
 	if (!sf->cxt)
 		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));
-	fdisk_set_ask(sf->cxt, ask_callback, NULL);
+	fdisk_set_ask(sf->cxt, ask_callback, (void *) sf);
 }
 
 static int sfdisk_deinit(struct sfdisk *sf)
@@ -590,6 +595,8 @@ static void sfdisk_print_partition(struct sfdisk *sf, size_t n)
 
 	assert(sf);
 
+	if (sf->quiet)
+		return;
 	if (fdisk_get_partition(sf->cxt, n, &pa) != 0)
 		return;
 
@@ -747,7 +754,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		next_partno = partno;
 	}
 
-	if (isatty(STDIN_FILENO)) {
+	if (!sf->quiet && isatty(STDIN_FILENO)) {
 		color_scheme_enable("welcome", UL_COLOR_GREEN);
 		fdisk_info(sf->cxt, _("\nWelcome to sfdisk (%s)."), PACKAGE_STRING);
 		color_disable();
@@ -755,10 +762,12 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				  "Be careful before using the write command.\n"));
 	}
 
-	list_disk_geometry(sf->cxt);
-	if (fdisk_has_label(sf->cxt)) {
-		fdisk_info(sf->cxt, _("\nOld situation:"));
-		list_disklabel(sf->cxt);
+	if (!sf->quiet) {
+		list_disk_geometry(sf->cxt);
+		if (fdisk_has_label(sf->cxt)) {
+			fdisk_info(sf->cxt, _("\nOld situation:"));
+			list_disklabel(sf->cxt);
+		}
 	}
 
 	if (sf->label)
@@ -770,14 +779,14 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 	fdisk_script_set_header(dp, "label", label);
 
-	if (isatty(STDIN_FILENO)) {
+	if (!sf->quiet && isatty(STDIN_FILENO)) {
 		if (!fdisk_has_label(sf->cxt) && !sf->label)
 			fdisk_info(sf->cxt,
 				_("\nsfdisk is going to create a new '%s' disk label.\n"
 				  "Use 'label: <name>' before you define a first partition\n"
 				  "to override the default."), label);
 		fdisk_info(sf->cxt, _("\nType 'help' to get more information.\n"));
-	} else
+	} else if (!sf->quiet)
 		fputc('\n', stdout);
 
 	tb = fdisk_script_get_table(dp);
@@ -845,7 +854,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			fdisk_info(sf->cxt, _("Script header accepted."));
 	} while (1);
 
-	if (rc != SFDISK_DONE_ABORT) {
+	if (!sf->quiet && rc != SFDISK_DONE_ABORT) {
 		fdisk_info(sf->cxt, _("\nNew situation:"));
 		list_disklabel(sf->cxt);
 	}
@@ -872,7 +881,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		break;
 	case SFDISK_DONE_ABORT:
 	default:				/* rc < 0 on error */
-		printf(_("Leaving.\n"));
+		fdisk_info(sf->cxt, _("Leaving.\n"));
 		break;
 	}
 
@@ -908,6 +917,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -N, --partno <num>   specify partition number\n"), out);
 	fputs(_(" -X, --label <name>   specify label type (dos, gpt, ...)\n"), out);
 	fputs(_(" -u, --unit S         deprecated, all input and output is in sectors only\n"), out);
+	fputs(_(" -q, --quiet          suppress extra info messages\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -942,6 +952,7 @@ int main(int argc, char *argv[])
 		{ "partno",  required_argument, NULL, 'N' },
 		{ "show-size", no_argument,	NULL, 's' },
 		{ "show-geometry", no_argument, NULL, 'g' },
+		{ "quiet",   no_argument,       NULL, 'q' },
 		{ "verify",  no_argument,       NULL, 'V' },
 		{ "version", no_argument,       NULL, 'v' },
 		{ "unit",    required_argument, NULL, 'u' },		/* deprecated */
@@ -959,7 +970,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "adhglN:sTu:vVX:",
+	while ((c = getopt_long(argc, argv, "adhglN:qsTu:vVX:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'a':
@@ -988,6 +999,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'N':
 			sf->partno = strtou32_or_err(optarg, _("failed to parse partition number")) - 1;
+			break;
+		case 'q':
+			sf->quiet = 1;
 			break;
 		case 'X':
 			sf->label = optarg;
