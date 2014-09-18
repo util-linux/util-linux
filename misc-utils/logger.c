@@ -40,7 +40,7 @@
 #include <limits.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <time.h>
+#include <sys/time.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
