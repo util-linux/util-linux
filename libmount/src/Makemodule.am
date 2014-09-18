@@ -8,10 +8,6 @@ libmount_la_SOURCES = \
 	include/list.h \
 	\
 	libmount/src/cache.c \
-	libmount/src/context.c \
-	libmount/src/context_loopdev.c \
-	libmount/src/context_mount.c \
-	libmount/src/context_umount.c \
 	libmount/src/fs.c \
 	libmount/src/init.c \
 	libmount/src/iter.c \
@@ -27,6 +23,14 @@ libmount_la_SOURCES = \
 	libmount/src/utils.c \
 	libmount/src/version.c \
 	$(nodist_mountinc_HEADERS)
+
+if LINUX
+libmount_la_SOURCES += \
+	libmount/src/context.c \
+	libmount/src/context_loopdev.c \
+	libmount/src/context_mount.c \
+	libmount/src/context_umount.c
+endif
 
 nodist_libmount_la_SOURCES = libmount/src/mountP.h
 
