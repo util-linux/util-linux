@@ -254,7 +254,8 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 	 * options for the target (e.g. helper=udisks to call /sbin/umount.udisks).
 	 *
 	 * So, let's use statfs() if possible (it's bad idea for --lazy/--force
-	 * umounts as target is probably unreachable NFS).
+	 * umounts as target is probably unreachable NFS, also for --detach-loop
+	 * as this additionally needs to know the name of the loop device).
 	 */
 	if (!mnt_context_is_restricted(cxt)
 	    && *tgt == '/'
@@ -262,6 +263,7 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 	    && !mnt_context_mtab_writable(cxt)
 	    && !mnt_context_is_force(cxt)
 	    && !mnt_context_is_lazy(cxt)
+	    && !mnt_context_is_loopdel(cxt)
 	    && stat(tgt, &st) == 0 && S_ISDIR(st.st_mode)
 	    && !has_utab_entry(cxt, tgt)) {
 
