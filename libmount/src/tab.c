@@ -1439,8 +1439,10 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 			} else
 				flags = LOOPDEV_FL_OFFSET;
 
+#if __linux__
 			if (loopdev_is_used(mnt_fs_get_srcpath(fs), src, offset, flags))
 				break;
+#endif
 		}
 
 		if (root) {
