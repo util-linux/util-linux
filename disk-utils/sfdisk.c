@@ -39,6 +39,7 @@
 #include "closestream.h"
 #include "colors.h"
 #include "blkdev.h"
+#include "all-io.h"
 
 #include "libfdisk.h"
 #include "fdisk-list.h"
@@ -75,6 +76,7 @@ struct sfdisk {
 	int		act;		/* action */
 	int		partno;		/* -N <partno>, default -1 */
 	const char	*label;		/* --label <label> */
+	const char	*backup_file;	/* -O <path> */
 
 	struct fdisk_context	*cxt;	/* libfdisk context */
 
@@ -82,6 +84,7 @@ struct sfdisk {
 		     quiet  : 1,	/* suppres extra messages */
 		     noreread : 1,	/* don't check device is in use */
 		     force  : 1,	/* do also stupid things */
+		     backup : 1,	/* backup sectors before write PT */
 		     noact  : 1;	/* do not write to device */
 };
 
@@ -195,6 +198,85 @@ static int sfdisk_deinit(struct sfdisk *sf)
 
 	return rc;
 }
+
+static void backup_sectors(struct sfdisk *sf,
+			   const char *tpl,
+			   const char *name,
+			   const char *devname,
+			   off_t offset, size_t size)
+{
+	char *fname;
+	int fd, devfd;
+
+	devfd = fdisk_get_devfd(sf->cxt);
+	assert(devfd >= 0);
+
+	xasprintf(&fname, "%s0x%08jx.bak", tpl, offset);
+
+	fd = open(fname, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+	if (fd < 0)
+		goto fail;
+
+	if (lseek(devfd, offset, SEEK_SET) == (off_t) -1) {
+		fdisk_warn(sf->cxt, _("cannot seek %s"), devname);
+		goto fail;
+	} else {
+		unsigned char *buf = xmalloc(size);
+
+		if (read_all(devfd, (char *) buf, size) != (ssize_t) size) {
+			fdisk_warn(sf->cxt, _("cannot read %s"), devname);
+			goto fail;
+		}
+		if (write_all(fd, buf, size) != 0) {
+			fdisk_warn(sf->cxt, _("cannot write %s"), fname);
+			goto fail;
+		}
+		free(buf);
+	}
+
+	fdisk_info(sf->cxt, _("%12s (offset %5ju, size %5ju): %s"),
+			name, (uintmax_t) offset, (uintmax_t) size, fname);
+	close(fd);
+	free(fname);
+	return;
+fail:
+	errx(EXIT_FAILURE, _("%s: failed to create a backup"), devname);
+}
+
+static void backup_partition_table(struct sfdisk *sf, const char *devname)
+{
+	const char *name;
+	char *tpl;
+	off_t offset = 0;
+	size_t size = 0;
+	int i = 0;
+
+	assert(sf);
+
+	if (!fdisk_has_label(sf->cxt))
+		return;
+
+	if (!sf->backup_file) {
+		/* initialize default backup filename */
+		const char *home = getenv ("HOME");
+		if (!home)
+			errx(EXIT_FAILURE, _("failed to create a signature backup, $HOME undefined"));
+		xasprintf(&tpl, "%s/sfdisk-%s-", home, basename(devname));
+	} else
+		xasprintf(&tpl, "%s-%s-", sf->backup_file, basename(devname));
+
+	color_scheme_enable("header", UL_COLOR_BOLD);
+	fdisk_info(sf->cxt, _("Backup files:"));
+	color_disable();
+
+	while (fdisk_locate_disklabel(sf->cxt, i++, &name, &offset, &size) == 0 && size)
+		backup_sectors(sf, tpl, name, devname, offset, size);
+
+	if (!sf->quiet)
+		fputc('\n', stdout);
+	free(tpl);
+}
+
 
 /*
  * sfdisk --list [<device ..]
@@ -433,6 +515,8 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 	if (!fdisk_is_label(sf->cxt, DOS))
 		errx(EXIT_FAILURE, _("toggle boot flags is supported for MBR only"));
 
+	if (!listonly && sf->backup)
+		backup_partition_table(sf, devname);
 
 	nparts = fdisk_get_npartitions(sf->cxt);
 	for (i = 0; i < nparts; i++) {
@@ -572,6 +656,9 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 		fdisk_deassign_device(sf->cxt, 1);
 		return 0;
 	}
+
+	if (sf->backup)
+		backup_partition_table(sf, devname);
 
 	/* parse <type> and apply yo PT */
 	type = fdisk_label_parse_parttype(lb, typestr);
@@ -800,6 +887,9 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			fputs(_(" OK\n\n"), stdout);
 	}
 
+	if (sf->backup)
+		backup_partition_table(sf, devname);
+
 	if (!sf->quiet) {
 		list_disk_geometry(sf->cxt);
 		if (fdisk_has_label(sf->cxt)) {
@@ -953,20 +1043,22 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" <dev>                device (usually disk) path\n"), out);
-	fputs(_(" <part>               partition number\n"), out);
-	fputs(_(" <type>               partition type, GUID for GPT, hex for MBR\n"), out);
+	fputs(_(" <dev>                     device (usually disk) path\n"), out);
+	fputs(_(" <part>                    partition number\n"), out);
+	fputs(_(" <type>                    partition type, GUID for GPT, hex for MBR\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -f, --force          disable all consistency checking\n"), out);
-	fputs(_(" -N, --partno <num>   specify partition number\n"), out);
-	fputs(_(" -X, --label <name>   specify label type (dos, gpt, ...)\n"), out);
-	fputs(_(" -q, --quiet          suppress extra info messages\n"), out);
-	fputs(_(" -n, --no-act         do everything except write to device\n"), out);
-	fputs(_("     --no-reread      do not check whether the device is in use\n"), out);
+	fputs(_(" -b, --backup              backup partition table sectors (see -O)\n"), out);
+	fputs(_(" -f, --force               disable all consistency checking\n"), out);
+	fputs(_(" -O, --backup-file <path>  override default backout file name\n"), out);
+	fputs(_(" -N, --partno <num>        specify partition number\n"), out);
+	fputs(_(" -X, --label <name>        specify label type (dos, gpt, ...)\n"), out);
+	fputs(_(" -q, --quiet               suppress extra info messages\n"), out);
+	fputs(_(" -n, --no-act              do everything except write to device\n"), out);
+	fputs(_("     --no-reread           do not check whether the device is in use\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" -u, --unit S         deprecated, only sector unit is supported\n"), out);
-	fputs(_(" -L, --Linux          deprecated and ignored, only for backward copatibility\n"), out);
+	fputs(_(" -u, --unit S              deprecated, only sector unit is supported\n"), out);
+	fputs(_(" -L, --Linux               deprecated, only for backward copatibility\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -975,7 +1067,6 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fprintf(out, USAGE_MAN_TAIL("sfdisk(8)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
-
 
 
 int main(int argc, char *argv[])
@@ -994,6 +1085,8 @@ int main(int argc, char *argv[])
 
 	static const struct option longopts[] = {
 		{ "activate",no_argument,	NULL, 'a' },
+		{ "backup",  no_argument,       NULL, 'b' },
+		{ "backup-file", required_argument, NULL, 'O' },
 		{ "dump",    no_argument,	NULL, 'd' },
 		{ "help",    no_argument,       NULL, 'h' },
 		{ "force",   no_argument,       NULL, 'f' },
@@ -1025,11 +1118,14 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "adfhglLnN:qsTu:vVX:",
+	while ((c = getopt_long(argc, argv, "adfhglLO:nN:qsTu:vVX:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'a':
 			sf->act = ACT_ACTIVATE;
+			break;
+		case 'b':
+			sf->backup = 1;
 			break;
 		case OPT_CHANGE_ID:
 		case OPT_PRINT_ID:
@@ -1051,6 +1147,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'L':
 			warnx(_("--Linux option is deprecated and unnecessary"));
+			break;
+		case 'O':
+			sf->backup = 1;
+			sf->backup_file = optarg;
 			break;
 		case 'd':
 			sf->act = ACT_DUMP;
