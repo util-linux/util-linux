@@ -80,6 +80,8 @@ struct sfdisk {
 
 	unsigned int verify : 1,	/* call fdisk_verify_disklabel() */
 		     quiet  : 1,	/* suppres extra messages */
+		     noreread : 1,	/* don't check device is in use */
+		     force  : 1,	/* do also stupid things */
 		     noact  : 1;	/* do not write to device */
 };
 
@@ -702,6 +704,24 @@ static int loop_control_commands(struct sfdisk *sf,
 	return rc;
 }
 
+static int is_device_used(struct sfdisk *sf)
+{
+#ifdef BLKRRPART
+	struct stat st;
+	int fd;
+
+	assert(sf);
+	assert(sf->cxt);
+
+	fd = fdisk_get_devfd(sf->cxt);
+	if (fd < 0)
+		return 0;
+
+	if (fstat(fd, &st) == 0 && S_ISBLK(st.st_mode))
+		return ioctl(fd, BLKRRPART) != 0;
+#endif
+	return 0;
+}
 
 /*
  * sfdisk <device> [[-N] <partno>]
@@ -761,6 +781,23 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		color_disable();
 		fdisk_info(sf->cxt, _("Changes will remain in memory only, until you decide to write them.\n"
 				  "Be careful before using the write command.\n"));
+	}
+
+	if (!sf->noact && !sf->noreread) {
+		if (!sf->quiet)
+			fputs(_("Checking that no-one is using this disk right now ..."), stdout);
+		if (is_device_used(sf)) {
+			fputs(_(" FAILED\n\n"), stdout);
+
+			fdisk_warnx(sf->cxt, _(
+			"This disk is currently in use - repartitioning is probably a bad idea.\n"
+			"Umount all file systems, and swapoff all swap partitions on this disk.\n"
+			"Use the --no-reread flag to suppress this check.\n"));
+
+			if (!sf->force)
+				errx(EXIT_FAILURE, _("Use the --force flag to overrule all checks."));
+		} else
+			fputs(_(" OK\n\n"), stdout);
 	}
 
 	if (!sf->quiet) {
@@ -921,10 +958,12 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" <type>               partition type, GUID for GPT, hex for MBR\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -f, --force          disable all consistency checking\n"), out);
 	fputs(_(" -N, --partno <num>   specify partition number\n"), out);
 	fputs(_(" -X, --label <name>   specify label type (dos, gpt, ...)\n"), out);
 	fputs(_(" -q, --quiet          suppress extra info messages\n"), out);
 	fputs(_(" -n, --no-act         do everything except write to device\n"), out);
+	fputs(_("     --no-reread      do not check whether the device is in use\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -u, --unit S         deprecated, only sector unit is supported\n"), out);
 	fputs(_(" -L, --Linux          deprecated and ignored, only for backward copatibility\n"), out);
@@ -949,17 +988,20 @@ int main(int argc, char *argv[])
 	enum {
 		OPT_CHANGE_ID = CHAR_MAX + 1,
 		OPT_PRINT_ID,
-		OPT_ID
+		OPT_ID,
+		OPT_NOREREAD
 	};
 
 	static const struct option longopts[] = {
 		{ "activate",no_argument,	NULL, 'a' },
 		{ "dump",    no_argument,	NULL, 'd' },
 		{ "help",    no_argument,       NULL, 'h' },
+		{ "force",   no_argument,       NULL, 'f' },
 		{ "label",   required_argument, NULL, 'X' },
 		{ "list",    no_argument,       NULL, 'l' },
 		{ "list-types", no_argument,	NULL, 'T' },
 		{ "no-act",  no_argument,       NULL, 'n' },
+		{ "no-reread", no_argument,     NULL, OPT_NOREREAD },
 		{ "partno",  required_argument, NULL, 'N' },
 		{ "show-size", no_argument,	NULL, 's' },
 		{ "show-geometry", no_argument, NULL, 'g' },
@@ -983,7 +1025,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "adhglLnN:qsTu:vVX:",
+	while ((c = getopt_long(argc, argv, "adfhglLnN:qsTu:vVX:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'a':
@@ -997,6 +1039,9 @@ int main(int argc, char *argv[])
 			/* fallthrough */
 		case 'c':
 			sf->act = ACT_PARTTYPE;
+			break;
+		case 'f':
+			sf->force = 1;
 			break;
 		case 'h':
 			usage(stdout);
@@ -1043,6 +1088,9 @@ int main(int argc, char *argv[])
 			return EXIT_SUCCESS;
 		case 'V':
 			sf->verify = 1;
+			break;
+		case OPT_NOREREAD:
+			sf->noreread = 1;
 			break;
 		default:
 			usage(stderr);
