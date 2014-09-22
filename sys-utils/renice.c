@@ -66,7 +66,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -n, --priority <num>   specify the nice increment value\n"), out);
 	fputs(_(" -p, --pid <id>         interpret argument as process ID (default)\n"), out);
 	fputs(_(" -g, --pgrp <id>        interpret argument as process group ID\n"), out);
-	fputs(_(" -u, --user <name|id>   interpret argument as username or user ID\n"), out);
+	fputs(_(" -u, --user <name>|<id> interpret argument as username or user ID\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -176,6 +176,8 @@ int main(int argc, char **argv)
 		} else {
 			who = strtol(*argv, &endptr, 10);
 			if (who < 0 || *endptr) {
+				/* TRANSLATORS: The first %s is one of the above
+				 * three ID names. Read: "bad value for %s: %s" */
 				warnx(_("bad %s value: %s"), idtype[which], *argv);
 				errs = 1;
 				continue;
