@@ -22,10 +22,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <termios.h>
 #include <unistd.h>
 
 #ifdef HAVE_CRYPT_H
 # include <crypt.h>
+#endif
+
+#ifdef HAVE_GETSGNAM
+# include <gshadow.h>
 #endif
 
 #include "c.h"
@@ -34,9 +39,58 @@
 #include "pathnames.h"
 #include "xalloc.h"
 
+static char *xgetpass(FILE *input, const char *prompt)
+{
+	char *pass = NULL;
+	struct termios saved, no_echo;
+	const int fd = fileno(input);
+	size_t dummy = 0;
+	ssize_t len;
+
+	fputs(prompt, stdout);
+	if (isatty(fd)) {
+		/* disable echo */
+		tcgetattr(fd, &saved);
+		no_echo = saved;
+		no_echo.c_lflag &= ~ECHO;
+		no_echo.c_lflag |= ECHONL;
+		if (tcsetattr(fd, TCSANOW, &no_echo))
+			err(EXIT_FAILURE, _("could not set terminal attributes"));
+	}
+	len = getline(&pass, &dummy, input);
+	if (isatty(fd))
+		/* restore terminal */
+		if (tcsetattr(fd, TCSANOW, &saved))
+			err(EXIT_FAILURE, _("could not set terminal attributes"));
+	if (len < 0)
+		err(EXIT_FAILURE, _("could not getline"));
+	if (0 < len && *(pass + len - 1) == '\n')
+		*(pass + len - 1) = '\0';
+	return pass;
+}
+
+/* Ensure memory is set to value c without compiler optimization getting
+ * into way that could happen with memset(3). */
+static int memset_s(void *v, size_t sz, const int c)
+{
+	volatile unsigned char *p = v;
+
+	if (v == NULL)
+		return EINVAL;
+	while (sz--)
+		*p++ = c;
+	return 0;
+}
+
 /* try to read password from gshadow */
 static char *get_gshadow_pwd(char *groupname)
 {
+#ifdef HAVE_GETSGNAM
+	struct sgrp *sgrp;
+
+	sgrp = getsgnam(groupname);
+	return sgrp ? xstrdup(sgrp->sg_passwd) : NULL;
+#else
 	char buf[BUFSIZ];
 	char *pwd = NULL;
 	FILE *f;
@@ -69,6 +123,7 @@ static char *get_gshadow_pwd(char *groupname)
 	}
 	fclose(f);
 	return pwd ? xstrdup(pwd) : NULL;
+#endif	/* HAVE_GETSGNAM */
 }
 
 static int allow_setgid(struct passwd *pe, struct group *ge)
@@ -99,11 +154,13 @@ static int allow_setgid(struct passwd *pe, struct group *ge)
 	if (!(pwd = get_gshadow_pwd(ge->gr_name)))
 		pwd = ge->gr_passwd;
 
-	if (pwd && *pwd && (xpwd = getpass(_("Password: ")))) {
+	if (pwd && *pwd && (xpwd = xgetpass(stdin, _("Password: ")))) {
 		char *cbuf = crypt(xpwd, pwd);
 
+		memset_s(xpwd, strlen(xpwd), 0);
+		free(xpwd);
 		if (!cbuf)
-			warn(_("crypt() failed"));
+			warn(_("crypt failed"));
 		else if (strcmp(pwd, cbuf) == 0)
 			return TRUE;
 	}

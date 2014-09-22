@@ -49,7 +49,6 @@ dist_noinst_HEADERS += \
 	include/ttyutils.h \
 	include/widechar.h \
 	include/xalloc.h \
-	include/xgetpass.h \
 	include/pt-sgi.h \
 	include/pt-bsd.h \
 	include/pt-mbr.h \

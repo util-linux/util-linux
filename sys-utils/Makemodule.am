@@ -359,8 +359,7 @@ PATHFILES += sys-utils/hwclock.8
 hwclock_SOURCES = \
 	sys-utils/hwclock.c \
 	sys-utils/hwclock.h \
-	sys-utils/hwclock-cmos.c \
-	sys-utils/hwclock-kd.c
+	sys-utils/hwclock-cmos.c
 if LINUX
 hwclock_SOURCES += sys-utils/hwclock-rtc.c
 endif

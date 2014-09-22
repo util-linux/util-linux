@@ -362,9 +362,11 @@ static void make_bad_inode_v2_v3 (void)
 
 static void make_bad_inode(void)
 {
-	if (fs_version < 2)
-		return make_bad_inode_v1();
-	return make_bad_inode_v2_v3();
+	if (fs_version < 2) {
+		make_bad_inode_v1();
+		return;
+	}
+	make_bad_inode_v2_v3();
 }
 
 static void make_root_inode_v1(void) {
@@ -412,9 +414,11 @@ static void make_root_inode_v2_v3 (void) {
 
 static void make_root_inode(void)
 {
-	if (fs_version < 2)
-		return make_root_inode_v1();
-	return make_root_inode_v2_v3();
+	if (fs_version < 2) {
+		make_root_inode_v1();
+		return;
+	}
+	make_root_inode_v2_v3();
 }
 
 static void super_set_nzones(void)

@@ -24,7 +24,6 @@ libcommon_la_SOURCES = \
 	lib/sysfs.c \
 	lib/timeutils.c \
 	lib/ttyutils.c \
-	lib/xgetpass.c \
 	lib/exec_shell.c \
 	lib/readutmp.c
 

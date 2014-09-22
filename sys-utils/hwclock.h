@@ -19,7 +19,6 @@ struct clock_ops {
 
 extern struct clock_ops *probe_for_cmos_clock(void);
 extern struct clock_ops *probe_for_rtc_clock(void);
-extern struct clock_ops *probe_for_kd_clock(void);
 
 typedef int bool;
 

@@ -376,9 +376,9 @@ static void trim_trailing_spaces(char *s)
 /*
  *	Show one line of information on screen
  */
-static int list(const struct last_control *ctl, struct utmp *p, time_t t, int what)
+static int list(const struct last_control *ctl, struct utmp *p, time_t logout_time, int what)
 {
-	time_t		secs, tmp, epoch;
+	time_t		secs, utmp_time, now;
 	char		logintime[LAST_TIMESTAMP_LEN];
 	char		logouttime[LAST_TIMESTAMP_LEN];
 	char		length[LAST_TIMESTAMP_LEN];
@@ -417,22 +417,25 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 	/*
 	 *	Calculate times
 	 */
-	tmp = p->UL_UT_TIME;
+	utmp_time = p->UL_UT_TIME;
 
-	if (ctl->present && (ctl->present < tmp || (0 < t && t < ctl->present)))
-		return 0;
-
-	if (time_formatter(ctl, &logintime[0], sizeof(logintime), &tmp, 0) < 0 ||
-	    time_formatter(ctl, &logouttime[0], sizeof(logouttime), &t, 1) < 0)
+	if (ctl->present) {
+		if (ctl->present < utmp_time)
+			return 0;
+		if (0 < logout_time && logout_time < ctl->present)
+			return 0;
+	}
+	if (time_formatter(ctl, &logintime[0], sizeof(logintime), &utmp_time, 0) < 0 ||
+	    time_formatter(ctl, &logouttime[0], sizeof(logouttime), &logout_time, 1) < 0)
 		errx(EXIT_FAILURE, _("preallocation size exceeded"));
 
-	secs = t - p->UL_UT_TIME;
+	secs  = logout_time - utmp_time;
 	mins  = (secs / 60) % 60;
 	hours = (secs / 3600) % 24;
 	days  = secs / 86400;
 
-	epoch = time(NULL);
-	if (t == epoch) {
+	now = time(NULL);
+	if (logout_time == now) {
 		if (ctl->time_fmt > LAST_TIMEFTM_SHORT_CTIME) {
 			sprintf(logouttime, "  still running");
 			length[0] = 0;
@@ -582,8 +585,6 @@ static int is_phantom(const struct last_control *ctl, struct utmp *ut)
 {
 	struct passwd *pw;
 	char path[32];
-	FILE *f = NULL;
-	unsigned int loginuid;
 	int ret = 0;
 
 	if (ut->UL_UT_TIME < ctl->boot_time.tv_sec)
@@ -592,14 +593,26 @@ static int is_phantom(const struct last_control *ctl, struct utmp *ut)
 	if (!pw)
 		return 1;
 	sprintf(path, "/proc/%u/loginuid", ut->ut_pid);
-	if (access(path, R_OK) != 0 || !(f = fopen(path, "r")))
-		return 1;
+	if (access(path, R_OK) == 0) {
+		unsigned int loginuid;
+		FILE *f = NULL;
 
-	if (fscanf(f, "%u", &loginuid) != 1)
-		ret = 1;
-	fclose(f);
-	if (!ret && pw->pw_uid != loginuid)
-		return 1;
+		if (!(f = fopen(path, "r")))
+			return 1;
+		if (fscanf(f, "%u", &loginuid) != 1)
+			ret = 1;
+		fclose(f);
+		if (!ret && pw->pw_uid != loginuid)
+			return 1;
+	} else {
+		struct stat st;
+
+		sprintf(path, "/dev/%s", ut->ut_line);
+		if (stat(path, &st))
+			return 1;
+		if (pw->pw_uid != st.st_uid)
+			return 1;
+	}
 	return ret;
 }
 
