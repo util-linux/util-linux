@@ -29,7 +29,7 @@ blkid_probe get_swap_prober(const char *devname)
 	if (rc == -1)
 		warn(_("%s: unable to probe device"), devname);
 	else if (rc == -2)
-		warnx(_("%s: ambivalent probing result, use wipefs(8)"), devname);
+		warnx(_("%s: ambiguous probing result; use wipefs(8)"), devname);
 	else if (rc == 1)
 		warnx(_("%s: not a valid swap partition"), devname);
 
