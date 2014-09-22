@@ -62,7 +62,7 @@ static void usage(int status)
 	FILE *out = status == EXIT_SUCCESS ? stdout : stderr;
 
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] <program> [args...]\n"),
+	fprintf(out, _(" %s [options] <program> [<argument>...]\n"),
 		program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);

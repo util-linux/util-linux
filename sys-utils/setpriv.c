@@ -90,7 +90,9 @@ struct privctx {
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] <program> [args...]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] <program> [<argument>...]\n"),
+		program_invocation_short_name);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -d, --dump               show current state (and do not exec anything)\n"), out);
 	fputs(_(" --nnp, --no-new-privs    disallow granting new privileges\n"), out);
@@ -108,6 +110,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" --securebits <bits>      set securebits\n"), out);
 	fputs(_(" --selinux-label <label>  set SELinux label\n"), out);
 	fputs(_(" --apparmor-profile <pr>  set AppArmor profile\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
