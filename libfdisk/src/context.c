@@ -363,10 +363,10 @@ static int warn_wipe(struct fdisk_context *cxt)
 		if (blkid_probe_lookup_value(pr, "TYPE", &name, 0) == 0 ||
 		    blkid_probe_lookup_value(pr, "PTTYPE", &name, 0) == 0) {
 			fdisk_warnx(cxt, _(
-				"%s: device contains a valid '%s' signature, it's "
-				"strongly recommended to wipe the device by command wipefs(8) "
-				"if this setup is unexpected to avoid "
-				"possible collisions."), cxt->dev_path, name);
+				"%s: device contains a valid '%s' signature; it is "
+				"strongly recommended to wipe the device with "
+				"wipefs(8) if this is unexpected, in order to "
+				"avoid possible collisions"), cxt->dev_path, name);
 			rc = 1;
 		}
 	}
