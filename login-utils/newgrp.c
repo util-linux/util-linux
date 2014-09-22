@@ -63,7 +63,7 @@ static char *xgetpass(FILE *input, const char *prompt)
 		if (tcsetattr(fd, TCSANOW, &saved))
 			err(EXIT_FAILURE, _("could not set terminal attributes"));
 	if (len < 0)
-		err(EXIT_FAILURE, _("could not getline"));
+		err(EXIT_FAILURE, _("getline() failed"));
 	if (0 < len && *(pass + len - 1) == '\n')
 		*(pass + len - 1) = '\0';
 	return pass;
