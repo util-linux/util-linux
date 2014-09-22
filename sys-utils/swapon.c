@@ -12,9 +12,6 @@
 #include <stdint.h>
 #include <ctype.h>
 
-#include <blkid.h>
-
-#include <libmount.h>
 #include <libsmartcols.h>
 
 #include "c.h"
@@ -23,11 +20,12 @@
 #include "blkdev.h"
 #include "pathnames.h"
 #include "xalloc.h"
+#include "strutils.h"
 #include "closestream.h"
 
 #include "swapheader.h"
+#include "swapprober.h"
 #include "swapon-common.h"
-#include "strutils.h"
 
 #define PATH_MKSWAP	"/sbin/mkswap"
 

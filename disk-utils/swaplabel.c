@@ -18,7 +18,6 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <blkid.h>
 #include <getopt.h>
 
 #ifdef HAVE_LIBUUID
@@ -26,12 +25,13 @@
 #endif
 
 #include "c.h"
-#include "closestream.h"
-#include "all-io.h"
-#include "swapheader.h"
-#include "swapon-common.h"
-#include "strutils.h"
 #include "nls.h"
+#include "all-io.h"
+#include "strutils.h"
+#include "closestream.h"
+
+#include "swapheader.h"
+#include "swapprober.h"
 
 #define SWAP_UUID_OFFSET	(offsetof(struct swap_header_v1_2, uuid))
 #define SWAP_LABEL_OFFSET	(offsetof(struct swap_header_v1_2, volume_name))

@@ -41,7 +41,7 @@ dist_noinst_HEADERS += \
 	include/rpmatch.h \
 	include/setproctitle.h \
 	include/strutils.h \
-	include/swapon-common.h \
+	include/swapprober.h \
 	include/swapheader.h \
 	include/sysfs.h \
 	include/timer.h \
