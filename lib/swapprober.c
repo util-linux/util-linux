@@ -2,6 +2,7 @@
 #include "c.h"
 #include "nls.h"
 
+#include "swapheader.h"
 #include "swapprober.h"
 
 blkid_probe get_swap_prober(const char *devname)
