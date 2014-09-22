@@ -1395,8 +1395,8 @@ int main(int argc, char *argv[])
 		if (ctl.raw
 		    && ctl.method != DMESG_METHOD_KMSG
 		    && (ctl.fltr_lev || ctl.fltr_fac))
-			    errx(EXIT_FAILURE, _("--raw could be used together with --level or "
-				 "--facility only when read messages from /dev/kmsg"));
+			    errx(EXIT_FAILURE, _("--raw can be used together with --level or "
+				 "--facility only when reading messages from /dev/kmsg"));
 		if (ctl.pager)
 			setup_pager();
 		n = read_buffer(&ctl, &buf);
