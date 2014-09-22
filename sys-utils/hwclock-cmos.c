@@ -319,7 +319,7 @@ static inline unsigned long cmos_read(unsigned long reg)
 			       clock_ctl_addr);
 		lseek(dev_port_fd, clock_data_addr, 0);
 		if (read(dev_port_fd, &v, 1) == -1 && debug)
-			warn(_("cmos_read(): read data address %X failed"),
+			warn(_("cmos_read(): read from data address %X failed"),
 			       clock_data_addr);
 		return v;
 	} else {
