@@ -101,7 +101,7 @@ int fdisk_table_is_empty(struct fdisk_table *tb)
  *
  * Returns: number of entries in table.
  */
-int fdisk_table_get_nents(struct fdisk_table *tb)
+size_t fdisk_table_get_nents(struct fdisk_table *tb)
 {
 	return tb ? tb->nents : 0;
 }

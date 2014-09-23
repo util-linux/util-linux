@@ -85,6 +85,7 @@ struct sfdisk {
 		     noreread : 1,	/* don't check device is in use */
 		     force  : 1,	/* do also stupid things */
 		     backup : 1,	/* backup sectors before write PT */
+		     container : 1,	/* PT contains container (MBR extended) partitions */
 		     noact  : 1;	/* do not write to device */
 };
 
@@ -726,7 +727,7 @@ static void command_fdisk_help(void)
 	color_scheme_enable("help-title", UL_COLOR_BOLD);
 	fputs(_(" Input format:\n"), stdout);
 	color_disable();
-	fputs(_("   <start> <size> <typy> <bootable>\n"), stdout);
+	fputs(_("   <start>, <size>, <typy>, <bootable>\n"), stdout);
 
 	fputc('\n', stdout);
 	fputs(_("   <start>  begin of the partition in sectors. The default is the first\n"
@@ -789,6 +790,29 @@ static int loop_control_commands(struct sfdisk *sf,
 		}
 	}
 	return rc;
+}
+
+static int has_container(struct sfdisk *sf)
+{
+	size_t i, nparts;
+	struct fdisk_partition *pa = NULL;
+
+	if (sf->container)
+		return sf->container;
+
+	nparts = fdisk_get_npartitions(sf->cxt);
+
+	for (i = 0; i < nparts; i++) {
+		if (fdisk_get_partition(sf->cxt, i, &pa) != 0)
+			continue;
+		if (fdisk_partition_is_container(pa)) {
+			sf->container = 1;
+			break;
+		}
+	}
+
+	fdisk_unref_partition(pa);
+	return sf->container;
 }
 
 static int is_device_used(struct sfdisk *sf)
@@ -927,6 +951,15 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		if (next_partno == (size_t) -1)
 			next_partno = fdisk_table_get_nents(tb);
 
+		if (created
+		    && partno < 0
+		    && fdisk_table_get_nents(tb) == fdisk_get_npartitions(sf->cxt)
+		    && !has_container(sf)) {
+			fdisk_info(sf->cxt, _("All partitions used."));
+			rc = SFDISK_DONE_ASK;
+			break;
+		}
+
 		if (created) {
 			char *partname = fdisk_partname(devname, next_partno + 1);
 			if (!partname)
@@ -976,10 +1009,16 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			if (!rc) {		/* success, print reult */
 				sfdisk_print_partition(sf, cur_partno);
 				next_partno = cur_partno + 1;
-			} else if (pa)		/* error, drop partition from script */
+			} else if (pa) {	/* error, drop partition from script */
 				fdisk_table_remove_partition(tb, pa);
+				if (rc == -ENOSPC) {
+					rc = SFDISK_DONE_ASK;
+					break;
+				}
+			}
 		} else
 			fdisk_info(sf->cxt, _("Script header accepted."));
+
 	} while (1);
 
 	if (!sf->quiet && rc != SFDISK_DONE_ABORT) {

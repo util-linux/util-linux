@@ -284,7 +284,7 @@ extern struct fdisk_table *fdisk_new_table(void);
 extern int fdisk_reset_table(struct fdisk_table *tb);
 extern void fdisk_ref_table(struct fdisk_table *tb);
 extern void fdisk_unref_table(struct fdisk_table *tb);
-extern int fdisk_table_get_nents(struct fdisk_table *tb);
+extern size_t fdisk_table_get_nents(struct fdisk_table *tb);
 extern int fdisk_table_is_empty(struct fdisk_table *tb);
 extern int fdisk_table_add_partition(struct fdisk_table *tb, struct fdisk_partition *pa);
 extern int fdisk_table_remove_partition(struct fdisk_table *tb, struct fdisk_partition *pa);
