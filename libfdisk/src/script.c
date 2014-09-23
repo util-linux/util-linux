@@ -962,7 +962,9 @@ int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
  * @dp: script (or NULL to remove previous reference)
  *
  * Sets reference to the @dp script. The script headers might be used by label
- * drivers to overwrite built-in defaults (for example disk label Id).
+ * drivers to overwrite built-in defaults (for example disk label Id) and label
+ * driver might optimize the default semantic to be more usable for scripts
+ * (for example to not ask for primary/logical/extended partition type).
  *
  * Note that script also contains reference to the fdisk context (see
  * fdisk_new_script()). This context may be completely independent on

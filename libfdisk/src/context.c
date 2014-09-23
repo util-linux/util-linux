@@ -394,6 +394,8 @@ static int warn_wipe(struct fdisk_context *cxt)
  * Open the device, discovery topology, geometry, detect disklabel and
  * switch the current label driver to reflect the probing result.
  *
+ * Note that this function resets all generic setting in context.
+ *
  * Returns: 0 on success, < 0 on error.
  */
 int fdisk_assign_device(struct fdisk_context *cxt,

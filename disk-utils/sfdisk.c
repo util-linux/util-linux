@@ -86,6 +86,7 @@ struct sfdisk {
 		     force  : 1,	/* do also stupid things */
 		     backup : 1,	/* backup sectors before write PT */
 		     container : 1,	/* PT contains container (MBR extended) partitions */
+		     append : 1,	/* don't create new PT, append partitions only */
 		     noact  : 1;	/* do not write to device */
 };
 
@@ -801,7 +802,6 @@ static int has_container(struct sfdisk *sf)
 		return sf->container;
 
 	nparts = fdisk_get_npartitions(sf->cxt);
-
 	for (i = 0; i < nparts; i++) {
 		if (fdisk_get_partition(sf->cxt, i, &pa) != 0)
 			continue;
@@ -813,6 +813,28 @@ static int has_container(struct sfdisk *sf)
 
 	fdisk_unref_partition(pa);
 	return sf->container;
+}
+
+static size_t last_pt_partno(struct sfdisk *sf)
+{
+	size_t i, nparts, partno = 0;
+	struct fdisk_partition *pa = NULL;
+
+
+	nparts = fdisk_get_npartitions(sf->cxt);
+	for (i = 0; i < nparts; i++) {
+		size_t x;
+
+		if (fdisk_get_partition(sf->cxt, i, &pa) != 0 ||
+		    !fdisk_partition_is_used(pa))
+			continue;
+		x = fdisk_partition_get_partno(pa);
+		if (x > partno)
+			partno = x;
+	}
+
+	fdisk_unref_partition(pa);
+	return partno;
 }
 
 static int is_device_used(struct sfdisk *sf)
@@ -856,14 +878,14 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	if (!devname)
 		errx(EXIT_FAILURE, _("no disk device specified"));
 
+	rc = fdisk_assign_device(sf->cxt, devname, 0);
+	if (rc)
+		err(EXIT_FAILURE, _("cannot open %s"), devname);
 
 	dp = fdisk_new_script(sf->cxt);
 	if (!dp)
 		err(EXIT_FAILURE, _("failed to allocate script handler"));
-
-	rc = fdisk_assign_device(sf->cxt, devname, 0);
-	if (rc)
-		err(EXIT_FAILURE, _("cannot open %s"), devname);
+	fdisk_set_script(sf->cxt, dp);
 
 	/*
 	 * Don't create a new disklabel when [-N] <partno> specified. In this
@@ -884,6 +906,11 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 					devname, partno, n);
 		created = 1;
 		next_partno = partno;
+	}
+
+	if (sf->append) {
+		created = 1;
+		next_partno = last_pt_partno(sf) + 1;
 	}
 
 	if (!sf->quiet && isatty(STDIN_FILENO)) {
@@ -953,7 +980,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 		if (created
 		    && partno < 0
-		    && fdisk_table_get_nents(tb) == fdisk_get_npartitions(sf->cxt)
+		    && next_partno == fdisk_get_npartitions(sf->cxt)
 		    && !has_container(sf)) {
 			fdisk_info(sf->cxt, _("All partitions used."));
 			rc = SFDISK_DONE_ASK;
@@ -1087,6 +1114,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" <type>                    partition type, GUID for GPT, hex for MBR\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -A, --append              append partitions to existing partition table\n"), out);
 	fputs(_(" -b, --backup              backup partition table sectors (see -O)\n"), out);
 	fputs(_(" -f, --force               disable all consistency checking\n"), out);
 	fputs(_(" -O, --backup-file <path>  override default backout file name\n"), out);
@@ -1124,6 +1152,7 @@ int main(int argc, char *argv[])
 
 	static const struct option longopts[] = {
 		{ "activate",no_argument,	NULL, 'a' },
+		{ "append",  no_argument,       NULL, 'A' },
 		{ "backup",  no_argument,       NULL, 'b' },
 		{ "backup-file", required_argument, NULL, 'O' },
 		{ "dump",    no_argument,	NULL, 'd' },
@@ -1157,11 +1186,14 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "adfhglLO:nN:qsTu:vVX:",
+	while ((c = getopt_long(argc, argv, "aAdfhglLO:nN:qsTu:vVX:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'a':
 			sf->act = ACT_ACTIVATE;
+			break;
+		case 'A':
+			sf->append = 1;
 			break;
 		case 'b':
 			sf->backup = 1;
