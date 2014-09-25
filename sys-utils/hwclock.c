@@ -809,6 +809,12 @@ static int interpret_date_string(const char *date_opt, time_t * const time_p)
  * environment variable and/or /usr/lib/zoneinfo/, interpreted as tzset()
  * would interpret them.
  *
+ * If this is the first call of settimeofday since boot, then this also sets
+ * the kernel variable persistent_clock_is_local so that NTP 11 minute mode
+ * will update the Hardware Clock with the proper timescale. If the Hardware
+ * Clock's timescale configuration is changed then a reboot is required for
+ * persistent_clock_is_local to be updated.
+ *
  * EXCEPT: if hclock_valid is false, just issue an error message saying
  * there is no valid time in the Hardware Clock to which to set the system
  * time.
@@ -818,7 +824,7 @@ static int interpret_date_string(const char *date_opt, time_t * const time_p)
  */
 static int
 set_system_clock(const bool hclock_valid, const struct timeval newtime,
-		 const bool testing)
+		 const bool testing, const bool universal)
 {
 	int retcode;
 
@@ -828,9 +834,10 @@ set_system_clock(const bool hclock_valid, const struct timeval newtime,
 		       "we cannot set the System Time from it."));
 		retcode = 1;
 	} else {
+		const struct timeval *tv_null = NULL;
 		struct tm *broken;
 		int minuteswest;
-		int rc;
+		int rc = 0;
 
 		broken = localtime(&newtime.tv_sec);
 #ifdef HAVE_TM_GMTOFF
@@ -854,7 +861,14 @@ set_system_clock(const bool hclock_valid, const struct timeval newtime,
 		} else {
 			const struct timezone tz = { minuteswest, 0 };
 
-			rc = settimeofday(&newtime, &tz);
+			/* Set kernel persistent_clock_is_local so that 11 minute
+			 * mode does not clobber the Hardware Clock with UTC. This
+			 * is only available on first call of settimeofday after boot.
+			 */
+			if (!universal)
+				rc = settimeofday(tv_null, &tz);
+			if (!rc)
+				rc = settimeofday(&newtime, &tz);
 			if (rc) {
 				if (errno == EPERM) {
 					warnx(_
@@ -1376,7 +1390,8 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 			adjust_drift_factor(&adjtime, nowtime,
 					    hclock_valid, hclocktime);
 	} else if (hctosys) {
-		rc = set_system_clock(hclock_valid, hclocktime, testing);
+		rc = set_system_clock(hclock_valid, hclocktime,
+				      testing, universal);
 		if (rc) {
 			printf(_("Unable to set system clock.\n"));
 			return rc;
