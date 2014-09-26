@@ -1064,13 +1064,13 @@ static void print_journal_tail(const char *journal_path, uid_t uid, size_t len)
 	do {
 		if (0 > sd_journal_get_data(j, "SYSLOG_IDENTIFIER",
 				(const void **) &identifier, &identifier_len))
-			return;
+			goto done;
 		if (0 > sd_journal_get_data(j, "_PID",
 				(const void **) &pid, &pid_len))
-			return;
+			goto done;
 		if (0 > sd_journal_get_data(j, "MESSAGE",
 				(const void **) &message, &message_len))
-			return;
+			goto done;
 
 		sd_journal_get_realtime_usec(j, &x);
 		t = x / 1000000;
@@ -1087,6 +1087,7 @@ static void print_journal_tail(const char *journal_path, uid_t uid, size_t len)
 		fprintf(stdout, "%s\n", message);
 	} while (sd_journal_next(j));
 
+done:
 	free(buf);
 	free(match);
 	sd_journal_flush_matches(j);
