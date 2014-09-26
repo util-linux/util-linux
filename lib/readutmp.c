@@ -64,8 +64,10 @@ read_utmp (char const *file, size_t *n_entries, struct utmp **utmp_buf)
 		}
 		utmp[n_read++] = *u;
 	}
-	if (!u && errno)
+	if (!u && errno) {
+		free(utmp);
 		return -1;
+	}
 
 	endutent();
 
