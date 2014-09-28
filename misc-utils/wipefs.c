@@ -464,7 +464,7 @@ usage(FILE *out)
 		" -t, --types <list>  limit the set of filesystem, RAIDs or partition tables\n"
 		" -V, --version       output version information and exit\n"), out);
 
-	fprintf(out, _("\nFor more information see wipefs(8).\n"));
+	fprintf(out, USAGE_MAN_TAIL("wipefs(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }

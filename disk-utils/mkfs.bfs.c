@@ -83,6 +83,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		       "                     -V as version must be only option\n"
 		       " -h, --help          display this help and exit\n\n"));
 
+	fprintf(out, USAGE_MAN_TAIL("mkfs.bfs(8)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 

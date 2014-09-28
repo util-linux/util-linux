@@ -81,7 +81,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		       " -V, --version   output version information and exit\n"
 		       " -h, --help      display this help and exit\n"));
 
-	fprintf(out, _("\nFor more information see rev(1).\n"));
+	fprintf(out, USAGE_MAN_TAIL("rev(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }

@@ -1217,7 +1217,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		fprintf(out, " %14s  %s\n", coldescs[i].name,
 				_(coldescs[i].help));
 
-	fprintf(out, _("\nFor more details see lslogins(1).\n"));
+	fprintf(out, USAGE_MAN_TAIL("lslogins(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }

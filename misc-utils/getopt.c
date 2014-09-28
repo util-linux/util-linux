@@ -333,6 +333,7 @@ static void __attribute__ ((__noreturn__)) print_help(void)
 	fputs(_(" -V, --version                Output version information\n"), stderr);
 	fputc('\n', stderr);
 
+	fprintf(stderr, USAGE_MAN_TAIL("getopt(1)"));
 	exit(PARAMETER_EXIT_CODE);
 }
 

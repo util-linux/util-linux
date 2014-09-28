@@ -145,6 +145,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		"%s reads from standard input and writes to standard output\n\n"),
 		program_invocation_short_name);
 
+	fprintf(out, USAGE_MAN_TAIL("col(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 

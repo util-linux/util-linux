@@ -72,7 +72,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		"    e.g. 0-31:2 is equivalent to mask 0x55555555\n"),
 		program_invocation_short_name);
 
-	fprintf(out, _("\nFor more information see taskset(1).\n"));
+	fprintf(out, USAGE_MAN_TAIL("taskset(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }

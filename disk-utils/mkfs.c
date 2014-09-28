@@ -59,7 +59,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		       "                      -V as --version must be the only option\n"));
 	fprintf(out, _(" -h, --help         display this help text and exit\n"));
 
-	fprintf(out, _("\nFor more information see mkfs(8).\n"));
+	fprintf(out, USAGE_MAN_TAIL("mkfs(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }

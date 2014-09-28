@@ -50,6 +50,7 @@ usage(FILE *out)
 		" -V, --version           output version information and exit\n"
 		" -h, --help              display this help and exit\n\n"), out);
 
+	fprintf(out, USAGE_MAN_TAIL("scriptreplay(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 

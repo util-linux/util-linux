@@ -1646,7 +1646,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	for (i = 0; i < ARRAY_SIZE(coldescs); i++)
 		fprintf(out, " %13s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
-	fprintf(out, _("\nFor more details see lscpu(1).\n"));
+	fprintf(out, USAGE_MAN_TAIL("lscpu(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }

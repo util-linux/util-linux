@@ -438,7 +438,7 @@ static void usage(int rc)
 		" -n, --nosymlinks    don't follow symlinks\n"
 		" -v, --vertical      vertical align of modes and owners\n"), out);
 
-	fputs(_("\nFor more information see namei(1).\n"), out);
+	fprintf(out, USAGE_MAN_TAIL("namei(1)"));
 	exit(rc);
 }
 

@@ -86,6 +86,7 @@ static void __attribute__((__noreturn__)) show_usage(int rc)
 	"  -v | --verbose       display status information\n"
 	"  -V | --version       output version information\n\n"));
 
+	fprintf(out, USAGE_MAN_TAIL("chrt(1)"));
 	exit(rc);
 }
 
