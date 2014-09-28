@@ -86,7 +86,7 @@ ul_debugobj(void *handler, const char *mesg, ...)
 	fputc('\n', stderr);
 }
 
-static inline int parse_envmask(const struct dbg_mask const flagnames[],
+static inline int parse_envmask(const struct dbg_mask flagnames[],
 				const char *mask)
 {
 	int res;
