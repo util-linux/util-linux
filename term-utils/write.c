@@ -77,14 +77,14 @@ static gid_t root_access;
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fputs(_("\nUsage:\n"), out);
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <user> [<ttyname>]\n"),
 	      program_invocation_short_name);
 
-	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -V, --version    output version information and exit\n"
-		" -h, --help       display this help and exit\n\n"), out);
+	fputs(USAGE_OPTIONS, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 
 	fprintf(out, USAGE_MAN_TAIL("write(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);

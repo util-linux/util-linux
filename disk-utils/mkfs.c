@@ -44,11 +44,10 @@
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out, _("Usage:\n"));
+	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [-t <type>] [fs-options] <device> [<size>]\n"),
 		     program_invocation_short_name);
-
-	fprintf(out, _("\nOptions:\n"));
+	fputs(USAGE_OPTIONS, out);
 	fprintf(out, _(" -t, --type=<type>  filesystem type; when unspecified, ext2 is used\n"));
 	fprintf(out, _("     fs-options     parameters for the real filesystem builder\n"));
 	fprintf(out, _("     <device>       path to the device to be used\n"));

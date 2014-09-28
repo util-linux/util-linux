@@ -59,14 +59,11 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out, _("\nUsage:\n"
 		       " %s [startcol [endcol]]\n"),
 		       program_invocation_short_name);
-
-	fprintf(out, _("\nOptions:\n"
-		       " -V, --version   output version information and exit\n"
-		       " -h, --help      display this help and exit\n\n"));
-
+	fputs(USAGE_OPTIONS, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 	fprintf(out, _("%s reads from standard input and writes to standard output\n\n"),
 		       program_invocation_short_name);
-
 	fprintf(out, USAGE_MAN_TAIL("colrm(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }

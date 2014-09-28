@@ -68,11 +68,11 @@ struct uuidd_cxt_t {
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fputs(_("\nUsage:\n"), out);
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options]\n"), program_invocation_short_name);
 
-	fputs(_("\nOptions:\n"), out);
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -p, --pid <path>        path to pid file\n"
 		" -s, --socket <path>     path to socket\n"
 		" -T, --timeout <sec>     specify inactivity timeout\n"

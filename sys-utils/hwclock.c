@@ -1563,7 +1563,7 @@ static void usage(const char *fmt, ...)
 
 	usageto = fmt ? stderr : stdout;
 
-	fputs(_("\nUsage:\n"), usageto);
+	fputs(USAGE_HEADER, usageto);
 	fputs(_(" hwclock [function] [option...]\n"), usageto);
 
 	fputs(_("\nFunctions:\n"), usageto);
@@ -1584,7 +1584,7 @@ static void usage(const char *fmt, ...)
 	fputs(_("     --predict        predict RTC reading at time given with --date\n"
 		" -V, --version        display version information and exit\n"), usageto);
 
-	fputs(_("\nOptions:\n"), usageto);
+	fputs(USAGE_OPTIONS, usageto);
 	fputs(_(" -u, --utc            the hardware clock is kept in UTC\n"
 		"     --localtime      the hardware clock is kept in local time\n"), usageto);
 #ifdef __linux__

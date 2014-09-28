@@ -363,11 +363,10 @@ compare(char *s2, char *s2end) {
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fputs(_("\nUsage:\n"), out),
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] string [file]\n"), program_invocation_short_name);
-
-	fputs(_("\nOptions:\n"), out);
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --alternative      use alternative dictionary\n"
 		" -d, --alphanum         compare only alphanumeric characters\n"
 		" -f, --ignore-case      ignore case differences when comparing\n"

@@ -76,11 +76,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fprintf(out, _("Usage: %s [options] [file ...]\n"),
 		program_invocation_short_name);
-
-	fprintf(out, _("\nOptions:\n"
-		       " -V, --version   output version information and exit\n"
-		       " -h, --help      display this help and exit\n"));
-
+	fputs(USAGE_OPTIONS, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("rev(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);

@@ -424,11 +424,10 @@ static void usage(int rc)
 	if (!*p)
 		p = "namei";
 
-	fputs(_("\nUsage:\n"), out);
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <pathname>...\n"), p);
-
-	fputs(_("\nOptions:\n"), out);
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -h, --help          displays this help text\n"
 		" -V, --version       output version information and exit\n"
 		" -x, --mountpoints   show mount point directories with a 'D'\n"

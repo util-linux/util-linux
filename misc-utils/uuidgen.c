@@ -28,11 +28,11 @@ extern int optind;
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fputs(_("\nUsage:\n"), out);
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options]\n"), program_invocation_short_name);
 
-	fputs(_("\nOptions:\n"), out);
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -r, --random     generate random-based uuid\n"
 		" -t, --time       generate time-based uuid\n"
 		" -V, --version    output version information and exit\n"

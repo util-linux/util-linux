@@ -311,17 +311,15 @@ static void set_shell(const char *new_shell)
 
 static void __attribute__ ((__noreturn__)) print_help(void)
 {
-	fputs(_("\nUsage:\n"), stderr);
-
+	fputs(USAGE_HEADER, stderr);
 	fprintf(stderr, _(
 		" %1$s optstring parameters\n"
 		" %1$s [options] [--] optstring parameters\n"
 		" %1$s [options] -o|--options optstring [options] [--] parameters\n"),
 		program_invocation_short_name);
 
-	fputs(_("\nOptions:\n"), stderr);
+	fputs(USAGE_OPTIONS, stderr);
 	fputs(_(" -a, --alternative            Allow long options starting with single -\n"), stderr);
-	fputs(_(" -h, --help                   This small usage guide\n"), stderr);
 	fputs(_(" -l, --longoptions <longopts> Long options to be recognized\n"), stderr);
 	fputs(_(" -n, --name <progname>        The name under which errors are reported\n"), stderr);
 	fputs(_(" -o, --options <optstring>    Short options to be recognized\n"), stderr);
@@ -330,9 +328,9 @@ static void __attribute__ ((__noreturn__)) print_help(void)
 	fputs(_(" -s, --shell <shell>          Set shell quoting conventions\n"), stderr);
 	fputs(_(" -T, --test                   Test for getopt(1) version\n"), stderr);
 	fputs(_(" -u, --unquoted               Do not quote the output\n"), stderr);
-	fputs(_(" -V, --version                Output version information\n"), stderr);
-	fputc('\n', stderr);
-
+	fputs(USAGE_SEPARATOR, stderr);
+	fputs(USAGE_HELP, stderr);
+	fputs(USAGE_VERSION, stderr);
 	fprintf(stderr, USAGE_MAN_TAIL("getopt(1)"));
 	exit(PARAMETER_EXIT_CODE);
 }
