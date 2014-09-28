@@ -344,7 +344,7 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
  *
  * Writes script @dp to the ile @f.
  *
- * Returns: 0 on sucess, <0 on error.
+ * Returns: 0 on success, <0 on error.
  */
 int fdisk_script_write_file(struct fdisk_script *dp, FILE *f)
 {

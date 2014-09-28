@@ -100,7 +100,7 @@ static int buffer_set_data(struct libscols_buffer *buf, const char *str)
 	return rc ? rc : buffer_append_data(buf, str);
 }
 
-/* save the current buffer possition to art_idx */
+/* save the current buffer position to art_idx */
 static void buffer_set_art_index(struct libscols_buffer *buf)
 {
 	if (buf) {

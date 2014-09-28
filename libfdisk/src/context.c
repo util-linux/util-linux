@@ -644,7 +644,7 @@ int fdisk_use_cylinders(struct fdisk_context *cxt)
  * fdisk_get_units_per_sector:
  * @cxt: context
  *
- * This is neccessary only for brain dead situations when we use "cylinders";
+ * This is necessary only for brain dead situations when we use "cylinders";
  *
  * Returns: number of "units" per sector, default is 1 if display unit is sector.
  */
