@@ -218,7 +218,7 @@ int main(int argc, char *argv[])
 
 	} else if (optind < argc) {
 		/* Use provided file descriptor */
-		fd = (int)strtol_or_err(argv[optind], "bad number");
+		fd = strtos32_or_err(argv[optind], _("bad file descriptor"));
 	} else {
 		/* Bad options */
 		errx(EX_USAGE, _("requires file descriptor, file or directory"));
