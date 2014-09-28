@@ -60,6 +60,7 @@
 #include <errno.h>
 #include <getopt.h>
 #include <limits.h>
+#include <math.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1042,7 +1043,7 @@ adjust_drift_factor(struct adjtime *adjtime_p,
 		/* New drift factor */
 		drift_factor = adjtime_p->drift_factor + factor_adjust;
 
-		if (abs(drift_factor) > MAX_DRIFT) {
+		if (fabs(drift_factor) > MAX_DRIFT) {
 			if (debug)
 				printf(_("Clock drift factor was calculated as "
 					 "%f seconds/day.\n"
@@ -1215,7 +1216,7 @@ do_adjustment(struct adjtime *adjtime_p,
 		if (debug)
 			printf(_("Not setting clock because last adjustment time is zero, "
 				 "so history is bad.\n"));
-	} else if (abs(adjtime_p->drift_factor) > MAX_DRIFT) {
+	} else if (fabs(adjtime_p->drift_factor) > MAX_DRIFT) {
 		if (debug)
 			printf(_("Not setting clock because drift factor %f is far too high.\n"),
 				adjtime_p->drift_factor);
