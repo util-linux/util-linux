@@ -665,7 +665,7 @@ int main(int argc, char ** argv) {
 
 	if (argc == 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-		printf(_("%s (%s)\n"), program_name, PACKAGE_STRING);
+		printf(UTIL_LINUX_VERSION);
 		exit(MKFS_EX_OK);
 	}
 

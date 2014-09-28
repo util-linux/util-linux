@@ -770,8 +770,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 			reload_agettys();
 			exit(EXIT_SUCCESS);
 		case VERSION_OPTION:
-			printf(_("%s from %s\n"), program_invocation_short_name,
-			       PACKAGE_STRING);
+			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
 		case HELP_OPTION:
 			usage(stdout);

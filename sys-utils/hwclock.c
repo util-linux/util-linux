@@ -1543,7 +1543,7 @@ static int compare_clock (const bool utc, const bool local_opt)
 
 static void out_version(void)
 {
-	printf(_("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING);
+	printf(UTIL_LINUX_VERSION);
 }
 
 /*

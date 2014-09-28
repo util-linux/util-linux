@@ -149,9 +149,8 @@ int main(int argc, char **argv)
 			usage(EXIT_SUCCESS);
 			break;
 		case 'V':
-			printf(_("%s from %s\n"), program_invocation_short_name,
-				 PACKAGE_STRING);
-				 return EXIT_SUCCESS;
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		case 'c':
 			termwidth = strtou32_or_err(optarg, _("invalid columns argument"));
 			break;
