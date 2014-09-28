@@ -735,7 +735,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 	fputs(_("\nAvailable columns (for --show):\n"), out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		fprintf(out, " %4s  %s\n", infos[i].name, _(infos[i].help));
+		fprintf(out, " %-5s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("swapon(8)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
