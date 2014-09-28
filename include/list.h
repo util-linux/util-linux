@@ -166,7 +166,7 @@ _INLINE_ void list_splice(struct list_head *list, struct list_head *head)
  * @type:	the type of the struct this is embedded in.
  * @member:	the name of the list_struct within the struct.
  */
-#define list_entry(ptr, type, member) ({              \
+#define list_entry(ptr, type, member) __extension__ ({              \
 	const typeof( ((type *)0)->member ) *__mptr = (ptr);   \
 	(type *)( (char *)__mptr - offsetof(type,member) );})
 
