@@ -31,6 +31,15 @@
 
 /* Sccsid @(#)pg.c 1.44 (gritter) 2/8/02 - modified for util-linux */
 
+/*
+ * This command is deprecated.  The utility is in maintenance mode,
+ * meaning we keep them in source tree for backward compatibility
+ * only.  Do not waste time making this command better, unless the
+ * fix is about security or other very critical issue.
+ *
+ * See Documentation/deprecated.txt for more information.
+ */
+
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>

@@ -7,6 +7,15 @@
  */
 
 /*
+ * This command is deprecated.  The utility is in maintenance mode,
+ * meaning we keep them in source tree for backward compatibility
+ * only.  Do not waste time making this command better, unless the
+ * fix is about security or other very critical issue.
+ *
+ * See Documentation/deprecated.txt for more information.
+ */
+
+/*
  * $Log: tunelp.c,v $
  * Revision 1.9  1998/06/08 19:37:11  janl
  * Thus compiles tunelp with 2.1.103 kernels
