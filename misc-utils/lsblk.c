@@ -1143,7 +1143,7 @@ static int list_partitions(struct blkdev_cxt *wholedisk_cxt, struct blkdev_cxt *
 {
 	DIR *dir;
 	struct dirent *d;
-	struct blkdev_cxt part_cxt = {};
+	struct blkdev_cxt part_cxt = { 0 };
 	int r = -1;
 
 	assert(wholedisk_cxt);
@@ -1242,7 +1242,7 @@ static int list_deps(struct blkdev_cxt *cxt)
 {
 	DIR *dir;
 	struct dirent *d;
-	struct blkdev_cxt dep = {};
+	struct blkdev_cxt dep = { 0 };
 	char dirname[PATH_MAX];
 	const char *depname;
 
@@ -1293,7 +1293,7 @@ static int iterate_block_devices(void)
 {
 	DIR *dir;
 	struct dirent *d;
-	struct blkdev_cxt cxt = {};
+	struct blkdev_cxt cxt = { 0 };
 
 	if (!(dir = opendir(_PATH_SYS_BLOCK)))
 		return EXIT_FAILURE;
@@ -1341,7 +1341,7 @@ static char *devno_to_sysfs_name(dev_t devno, char *devname, char *buf, size_t b
 
 static int process_one_device(char *devname)
 {
-	struct blkdev_cxt parent = {}, cxt = {};
+	struct blkdev_cxt parent = { 0 }, cxt = { 0 };
 	struct stat st;
 	char buf[PATH_MAX + 1], *name, *diskname = NULL;
 	dev_t disk = 0;
