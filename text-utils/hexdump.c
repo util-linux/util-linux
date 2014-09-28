@@ -179,7 +179,6 @@ int main(int argc, char **argv)
 	struct list_head *p;
 	struct hexdump_fs *tfs;
 	int ret;
-	char *c;
 
 	struct hexdump *hex = xcalloc(1, sizeof (struct hexdump));
 	hex->length = -1;
@@ -190,11 +189,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	if (!(c = strrchr(argv[0], 'o')) || strcmp(c, "od")) {
-		argv += parse_args(argc, argv, hex);
-	} else
-		errx(EXIT_FAILURE, _("calling hexdump as od has been deprecated "
-				     "in favor of GNU coreutils od"));
+	argv += parse_args(argc, argv, hex);
 
 	/* figure out the data block size */
 	hex->blocksize = 0;
