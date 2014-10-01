@@ -29,7 +29,7 @@ ts_check_prog "bc"
 
 # TODO https://github.com/karelzak/util-linux/issues/51
 SHMALL=$(</proc/sys/kernel/shmall)
-if [ $(bc <<<"2^64 / $PAGE_SIZE < $SHMALL") -ne 1 ]; then
+if [ $(bc <<<"(2^64 / $PAGE_SIZE) <= $SHMALL") -eq 1 ]; then
 	TS_KNOWN_FAIL="yes"
 fi
 
