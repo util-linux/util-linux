@@ -71,9 +71,9 @@
 
 #define MENU_PADDING		2
 #define TABLE_START_LINE	4
-#define MENU_START_LINE		((size_t) LINES - 5)
-#define INFO_LINE		((size_t) LINES - 2)
-#define HINT_LINE		((size_t) LINES - 1)
+#define MENU_START_LINE		(ui_lines - 5)
+#define INFO_LINE		(ui_lines - 2)
+#define HINT_LINE		(ui_lines - 1)
 
 #define CFDISK_ERR_ESC		5000
 
@@ -117,6 +117,11 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 
 static int ui_enabled;
 static int ui_resize;
+
+/* ncurses LINES and COLS may be actual variables or *macros*, but we need
+ * something portable and writable */
+size_t ui_lines;
+size_t ui_cols;
 
 /* menu item */
 struct cfdisk_menuitem {
@@ -199,8 +204,8 @@ static void resize(void)
 
 	if (ioctl(fileno(stdout), TIOCGWINSZ, &ws) != -1
 	    && ws.ws_row && ws.ws_col) {
-		LINES = ws.ws_row;
-		COLS = ws.ws_col;
+		ui_lines = ws.ws_row;
+		ui_cols  = ws.ws_col;
 #if HAVE_RESIZETERM
 		resizeterm(ws.ws_row, ws.ws_col);
 #endif
@@ -208,7 +213,8 @@ static void resize(void)
 	}
 	touchwin(stdscr);
 
-	DBG(FRONTEND, ul_debug("ui: resize refresh COLS=%d, LINES=%d", COLS, LINES));
+	DBG(FRONTEND, ul_debug("ui: resize refresh ui_cols=%zu, ui_lines=%zu",
+				ui_cols, ui_lines));
 	ui_resize = 0;
 }
 
@@ -520,10 +526,10 @@ static int ui_end(void)
 		return -EINVAL;
 
 #if defined(HAVE_SLCURSES_H) || defined(HAVE_SLANG_SLCURSES_H)
-	SLsmg_gotorc(LINES - 1, 0);
+	SLsmg_gotorc(ui_lines - 1, 0);
 	SLsmg_refresh();
 #else
-	mvcur(0, COLS - 1, LINES-1, 0);
+	mvcur(0, ui_cols - 1, ui_lines-1, 0);
 #endif
 	curs_set(1);
 	nl();
@@ -533,7 +539,7 @@ static int ui_end(void)
 	return 0;
 }
 
-static void ui_vprint_center(int line, int attrs, const char *fmt, va_list ap)
+static void ui_vprint_center(size_t line, int attrs, const char *fmt, va_list ap)
 {
 	size_t width;
 	char *buf = NULL;
@@ -544,12 +550,12 @@ static void ui_vprint_center(int line, int attrs, const char *fmt, va_list ap)
 	xvasprintf(&buf, fmt, ap);
 
 	width = mbs_safe_width(buf);
-	if (width > (size_t) COLS) {
-		char *p = strrchr(buf + COLS, ' ');
+	if (width > (size_t) ui_cols) {
+		char *p = strrchr(buf + ui_cols, ' ');
 		if (!p)
-			p = buf + COLS;
+			p = buf + ui_cols;
 		*p = '\0';
-		if (line + 1 >= LINES)
+		if (line + 1 >= ui_lines)
 			line--;
 		attron(attrs);
 		mvaddstr(line, 0, buf);
@@ -557,13 +563,13 @@ static void ui_vprint_center(int line, int attrs, const char *fmt, va_list ap)
 		attroff(attrs);
 	} else {
 		attron(attrs);
-		mvaddstr(line, (COLS - width) / 2, buf);
+		mvaddstr(line, (ui_cols - width) / 2, buf);
 		attroff(attrs);
 	}
 	free(buf);
 }
 
-static void ui_center(int line, const char *fmt, ...)
+static void ui_center(size_t line, const char *fmt, ...)
 {
 	va_list ap;
 	va_start(ap, fmt);
@@ -674,7 +680,7 @@ static void resize_on_signal(int dummy __attribute__((__unused__)))
 static void menu_refresh_size(struct cfdisk *cf)
 {
 	if (cf->menu && cf->menu->nitems)
-		cf->menu->page_sz = (cf->menu->nitems / (LINES - 4)) ? LINES - 4 : 0;
+		cf->menu->page_sz = (cf->menu->nitems / (ui_lines - 4)) ? ui_lines - 4 : 0;
 }
 
 static void menu_update_ignore(struct cfdisk *cf)
@@ -828,11 +834,11 @@ static size_t menuitem_get_line(struct cfdisk *cf, size_t idx)
 
 	if (m->vertical) {
 		if (!m->page_sz)				/* small menu */
-			return (LINES - (cf->menu->nitems + 1)) / 2 + idx;
+			return (ui_lines - (cf->menu->nitems + 1)) / 2 + idx;
 		return (idx % m->page_sz) + 1;
 	} else {
 		size_t len = m->width + 4 + MENU_PADDING;	/* item width */
-		size_t items = COLS / len;			/* items per line */
+		size_t items = ui_cols / len;			/* items per line */
 
 		if (items == 0)
 			return 0;
@@ -845,15 +851,15 @@ static int menuitem_get_column(struct cfdisk *cf, size_t idx)
 {
 	if (cf->menu->vertical) {
 		size_t nc = cf->menu->width + MENU_PADDING;
-		if ((size_t) COLS <= nc)
+		if ((size_t) ui_cols <= nc)
 			return 0;
-		return (COLS - nc) / 2;
+		return (ui_cols - nc) / 2;
 	} else {
 		size_t len = cf->menu->width + 4 + MENU_PADDING;	/* item width */
-		size_t items = COLS / len;				/* items per line */
+		size_t items = ui_cols / len;				/* items per line */
 		size_t extra = items < cf->menu->nitems ?		/* extra space on line */
-				COLS % len :				/* - multi-line menu */
-				COLS - (cf->menu->nitems * len);	/* - one line menu */
+				ui_cols % len :				/* - multi-line menu */
+				ui_cols - (cf->menu->nitems * len);	/* - one line menu */
 
 		if (items == 0)
 			return 0;					/* hmm... no space */
@@ -1193,7 +1199,7 @@ static void ui_draw_partition(struct cfdisk *cf, size_t i)
 	    cf->page_sz && curpg < cf->nlines / cf->page_sz) {
 		if (cur)
 			attron(A_REVERSE);
-		mvaddch(ln, COLS - 1, ACS_DARROW);
+		mvaddch(ln, ui_cols - 1, ACS_DARROW);
 		mvaddch(ln, 0, ACS_DARROW);
 		if (cur)
 			attroff(A_REVERSE);
@@ -1226,11 +1232,11 @@ static int ui_draw_table(struct cfdisk *cf)
 		ui_draw_partition(cf, i);
 
 	if (curpg != 0) {
-		mvaddch(TABLE_START_LINE, COLS - 1, ACS_UARROW);
+		mvaddch(TABLE_START_LINE, ui_cols - 1, ACS_UARROW);
 		mvaddch(TABLE_START_LINE, 0, ACS_UARROW);
 	}
 	if (cf->page_sz && curpg < cf->nlines / cf->page_sz) {
-		mvaddch(MENU_START_LINE - 1, COLS - 1, ACS_DARROW);
+		mvaddch(MENU_START_LINE - 1, ui_cols - 1, ACS_DARROW);
 		mvaddch(MENU_START_LINE - 1, 0, ACS_DARROW);
 	}
 	return 0;
@@ -1584,9 +1590,9 @@ static int ui_create_label(struct cfdisk *cf)
 	}
 
 	erase();
-	ui_center(LINES - 4,
+	ui_center(ui_lines - 4,
 		_("Device does not contain a recognized partition table."));
-	ui_center(LINES - 3,
+	ui_center(ui_lines - 3,
 		_("Please, select a type to create a new disk label."));
 
 	/* make the new menu active */
@@ -1882,7 +1888,9 @@ static int ui_run(struct cfdisk *cf)
 {
 	int rc = 0;
 
-	DBG(FRONTEND, ul_debug("ui: start COLS=%d, LINES=%d", COLS, LINES));
+	ui_lines = LINES;
+	ui_cols = COLS;
+	DBG(FRONTEND, ul_debug("start cols=%zu, lines=%zu", ui_cols, ui_lines));
 
 	if (!fdisk_dev_has_disklabel(cf->cxt) || cf->zero_start) {
 		rc = ui_create_label(cf);
