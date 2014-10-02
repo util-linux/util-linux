@@ -777,7 +777,7 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 			}
 			break;
 		case ITEM_SIZE:
-			if (*p == ',' || *p == ';')
+			if (*p == ',' || *p == ';' || *p == '+')
 				fdisk_partition_end_follow_default(pa, 1);
 			else {
 				int pow = 0;
