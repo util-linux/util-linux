@@ -55,10 +55,6 @@ addressed by \fIpartno\fR.
 Switch on the bootable flag. If \fIpartno\fR no specified then lists all partitions
 with enabled flag.
 .TP
-.BR \-c , " \-\-type " \fIdevice\fR " " \fIpartno\fR " "[\fItype\fR]
-Change partition type. If \fItype\fR no specified then print the current
-partition type. The argument \fItype\fR is hex for MBR or GUID for GPT.
-.TP
 .BR \-d , " \-\-dump " \fIdevice\fR
 Dump the partitions of a device in a format that is usable as input to sfdisk.
 See the section "BACKUP PARTITION TABLE".
@@ -70,21 +66,25 @@ List geometry of all or specified devices.
 List partitions of all or specified devices. This command can be used
 together with \fB\-\-verify\fR.
 .TP
+.BR \-\-part\-label " " \fIdevice\fR " " \fIpartno\fR " "[\fIlabel\fR]
+Change GPT partition name (label). If \fIlabel\fR no specified then print the current
+partition label.
+.TP
+.BR \-\-part-type " " \fIdevice\fR " " \fIpartno\fR " "[\fItype\fR]
+Change partition type. If \fItype\fR no specified then print the current
+partition type. The argument \fItype\fR is hex for MBR or GUID for GPT.
+For backward compatibility the option -c, --id has the same meaning.
+.TP
+.BR \-\-part\-uuid " " \fIdevice\fR " " \fIpartno\fR " "[\fIuuid\fR]
+Change GPT partition UUID. If \fIuuid\fR no specified then print the current
+partition UUID.
+.TP
 .BR \-s , " \-\-show-size " [\fIdevice\fR ...]
 List sizes of all or specified devices.
 .TP
 .BR \-T , " \-\-list-types
 Print all supported types for the current disk label or label specified by
 \fB\-\-label\fR.
-.TP
-.BR \-U , " \-\-uuid " \fIdevice\fR " " \fIpartno\fR " "[\fIuuid\fR]
-Change GPT partition UUID. If \fIuuid\fR no specified then print the current
-partition UUID.
-.TP
-.BR \-\-name " " \fIdevice\fR " " \fIpartno\fR " "[\fIname\fR]
-Change GPT partition name (label). If \fIname\fR no specified then print the current
-partition name.
-
 .TP
 .BR \-V , " \-\-verify
 Test whether partition table and partitions seem correct.

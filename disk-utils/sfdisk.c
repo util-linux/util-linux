@@ -71,7 +71,7 @@ enum {
 	ACT_VERIFY,
 	ACT_PARTTYPE,
 	ACT_PARTUUID,
-	ACT_PARTNAME,
+	ACT_PARTLABEL,
 };
 
 struct sfdisk {
@@ -646,7 +646,7 @@ static void assign_device_partition(struct sfdisk *sf,
 }
 
 /*
- * sfdisk --type <device> <partno> [<type>]
+ * sfdisk --part-type <device> <partno> [<type>]
  */
 static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 {
@@ -711,7 +711,7 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 }
 
 /*
- * sfdisk --uuid <device> <partno> [<uuid>]
+ * sfdisk --part-uuid <device> <partno> [<uuid>]
  */
 static int command_partuuid(struct sfdisk *sf, int argc, char **argv)
 {
@@ -766,9 +766,9 @@ static int command_partuuid(struct sfdisk *sf, int argc, char **argv)
 }
 
 /*
- * sfdisk --name <device> <partno> [<name>]
+ * sfdisk --part-label <device> <partno> [<label>]
  */
-static int command_partname(struct sfdisk *sf, int argc, char **argv)
+static int command_partlabel(struct sfdisk *sf, int argc, char **argv)
 {
 	size_t partno;
 	struct fdisk_partition *pa = NULL;
@@ -1229,15 +1229,17 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 	fputs(_("\nCommands:\n"), out);
 	fputs(_(" -a, --activate <dev> [<part> ...] list or set bootable MBR partitions\n"), out);
-	fputs(_(" -c, --type <dev> <part> [<type>]  print or change partition type\n"), out);
 	fputs(_(" -d, --dump <dev>                  dump partition table (usable for later input)\n"), out);
 	fputs(_(" -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"), out);
 	fputs(_(" -l, --list [<dev> ...]            list partitions of each device\n"), out);
-	fputs(_("     --name <dev> <part> [<name>]  print or change partition name\n"), out);
 	fputs(_(" -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"), out);
 	fputs(_(" -T, --list-types                  print the recognized types (see -X)\n"), out);
-	fputs(_(" -U, --uuid <dev> <part> [<uuid>]  print or change partition uuid\n"), out);
 	fputs(_(" -V, --verify                      test whether partitions seem correct\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" --part-label <dev> <part> [<str>] print or change partition label\n"), out);
+	fputs(_(" --part-type <dev> <part> [<type>] print or change partition type\n"), out);
+	fputs(_(" --part-uuid <dev> <part> [<uuid>] print or change partition uuid\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" <dev>                     device (usually disk) path\n"), out);
@@ -1279,7 +1281,9 @@ int main(int argc, char *argv[])
 		OPT_PRINT_ID,
 		OPT_ID,
 		OPT_NOREREAD,
-		OPT_PARTNAME
+		OPT_PARTUUID,
+		OPT_PARTLABEL,
+		OPT_PARTTYPE,
 	};
 
 	static const struct option longopts[] = {
@@ -1301,15 +1305,16 @@ int main(int argc, char *argv[])
 		{ "quiet",   no_argument,       NULL, 'q' },
 		{ "verify",  no_argument,       NULL, 'V' },
 		{ "version", no_argument,       NULL, 'v' },
-		{ "uuid",    no_argument,       NULL, 'U' },
-		{ "name",    no_argument,       NULL, OPT_PARTNAME },
+
+		{ "part-uuid",  no_argument,    NULL, OPT_PARTUUID },
+		{ "part-label", no_argument,    NULL, OPT_PARTLABEL },
+		{ "part-type",  no_argument,    NULL, OPT_PARTTYPE },
 
 		{ "unit",    required_argument, NULL, 'u' },		/* deprecated */
 		{ "Linux",   no_argument,       NULL, 'L' },		/* deprecated */
 
-		{ "type",    no_argument,       NULL, 'c' },		/* wanted */
 		{ "change-id",no_argument,      NULL, OPT_CHANGE_ID },	/* deprecated */
-		{ "id",      no_argument,       NULL, OPT_ID },		/* deprecated */
+		{ "id",      no_argument,       NULL, 'c' },		/* deprecated */
 		{ "print-id",no_argument,       NULL, OPT_PRINT_ID },	/* deprecated */
 
 		{ NULL, 0, 0, 0 },
@@ -1320,7 +1325,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "aAdfhglLO:nN:qsTiu:UvVX:",
+	while ((c = getopt_long(argc, argv, "aAbcdfghlLO:nN:qsTu:vVX:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'a':
@@ -1335,14 +1340,21 @@ int main(int argc, char *argv[])
 		case OPT_CHANGE_ID:
 		case OPT_PRINT_ID:
 		case OPT_ID:
-			warnx(_("%s is deprecated in favour of --type"),
+			warnx(_("%s is deprecated in favour of ---part-type"),
 				longopts[longidx].name);
-			/* fallthrough */
-		case 'c':
 			sf->act = ACT_PARTTYPE;
+		case 'c':
+			warnx(_("--id s deprecated in favour of ---part-type"));
+			sf->act = ACT_PARTTYPE;
+			break;
+		case 'd':
+			sf->act = ACT_DUMP;
 			break;
 		case 'f':
 			sf->force = 1;
+			break;
+		case 'g':
+			sf->act = ACT_SHOW_GEOM;
 			break;
 		case 'h':
 			usage(stdout);
@@ -1351,17 +1363,11 @@ int main(int argc, char *argv[])
 			sf->act = ACT_LIST;
 			break;
 		case 'L':
-			warnx(_("--Linux option is deprecated and unnecessary"));
+			warnx(_("--Linux option is unnecessary and deprecated"));
 			break;
 		case 'O':
 			sf->backup = 1;
 			sf->backup_file = optarg;
-			break;
-		case 'd':
-			sf->act = ACT_DUMP;
-			break;
-		case 'g':
-			sf->act = ACT_SHOW_GEOM;
 			break;
 		case 'n':
 			sf->noact = 1;
@@ -1372,17 +1378,11 @@ int main(int argc, char *argv[])
 		case 'q':
 			sf->quiet = 1;
 			break;
-		case 'X':
-			sf->label = optarg;
-			break;
 		case 's':
 			sf->act = ACT_SHOW_SIZE;
 			break;
 		case 'T':
 			sf->act = ACT_LIST_TYPES;
-			break;
-		case 'U':
-			sf->act = ACT_PARTUUID;
 			break;
 		case 'u':
 			/* deprecated */
@@ -1397,12 +1397,23 @@ int main(int argc, char *argv[])
 		case 'V':
 			sf->verify = 1;
 			break;
-		case OPT_PARTNAME:
-			sf->act = ACT_PARTNAME;
+		case 'X':
+			sf->label = optarg;
+			break;
+
+		case OPT_PARTUUID:
+			sf->act = ACT_PARTUUID;
+			break;
+		case OPT_PARTTYPE:
+			sf->act = ACT_PARTTYPE;
+			break;
+		case OPT_PARTLABEL:
+			sf->act = ACT_PARTLABEL;
 			break;
 		case OPT_NOREREAD:
 			sf->noreread = 1;
 			break;
+
 		default:
 			usage(stderr);
 		}
@@ -1456,8 +1467,8 @@ int main(int argc, char *argv[])
 		rc = command_partuuid(sf, argc - optind, argv + optind);
 		break;
 
-	case ACT_PARTNAME:
-		rc = command_partname(sf, argc - optind, argv + optind);
+	case ACT_PARTLABEL:
+		rc = command_partlabel(sf, argc - optind, argv + optind);
 		break;
 
 	}
