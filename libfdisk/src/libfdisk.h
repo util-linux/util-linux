@@ -256,6 +256,7 @@ extern const struct fdisk_parttype *fdisk_partition_get_type(struct fdisk_partit
 extern int fdisk_partition_set_name(struct fdisk_partition *pa, const char *name);
 extern const char *fdisk_partition_get_name(struct fdisk_partition *pa);
 extern int fdisk_partition_set_uuid(struct fdisk_partition *pa, const char *uuid);
+extern int fdisk_partition_set_attrs(struct fdisk_partition *pa, const char *attrs);
 extern const char *fdisk_partition_get_uuid(struct fdisk_partition *pa);
 extern const char *fdisk_partition_get_attrs(struct fdisk_partition *pa);
 extern int fdisk_partition_is_nested(struct fdisk_partition *pa);

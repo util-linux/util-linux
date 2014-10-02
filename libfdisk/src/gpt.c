@@ -1370,6 +1370,75 @@ static int gpt_entry_attrs_to_string(struct gpt_entry *e, char **res)
 	return 0;
 }
 
+static int gpt_entry_attrs_from_string(
+			struct fdisk_context *cxt,
+			struct gpt_entry *e,
+			const char *str)
+{
+	const char *p = str;
+	uint64_t attrs = 0;
+	char *bits;
+
+	assert(e);
+	assert(p);
+
+	DBG(LABEL, ul_debug("GPT: parsing string attributes '%s'", p));
+
+	bits = (char *) &attrs;
+
+	while (p && *p) {
+		int bit = -1;
+
+		while (isblank(*p)) p++;
+		if (!*p)
+			break;
+
+		DBG(LABEL, ul_debug(" parsing item '%s'", p));
+
+		if (strncmp(p, "GUID:", 5) == 0) {
+			p += 5;
+			continue;
+		} else if (strncmp(p, GPT_ATTRSTR_REQ,
+					sizeof(GPT_ATTRSTR_REQ) - 1) == 0) {
+			bit = GPT_ATTRBIT_REQ;
+			p += sizeof(GPT_ATTRSTR_REQ) - 1;
+		} else if (strncmp(p, GPT_ATTRSTR_LEGACY,
+					sizeof(GPT_ATTRSTR_LEGACY) - 1) == 0) {
+			bit = GPT_ATTRBIT_LEGACY;
+			p += sizeof(GPT_ATTRSTR_LEGACY) - 1;
+		} else if (strncmp(p, GPT_ATTRSTR_NOBLOCK,
+					sizeof(GPT_ATTRSTR_NOBLOCK) - 1) == 0) {
+			bit = GPT_ATTRBIT_NOBLOCK;
+			p += sizeof(GPT_ATTRSTR_NOBLOCK) - 1;
+		} else if (isdigit((unsigned int) *p)) {
+			char *end = NULL;
+
+			errno = 0;
+			bit = strtol(p, &end, 0);
+			if (errno || !end || end == str
+			    || bit < GPT_ATTRBIT_GUID_FIRST
+			    || bit >= GPT_ATTRBIT_GUID_FIRST + GPT_ATTRBIT_GUID_COUNT)
+				bit = -1;
+			else
+				p = end;
+		}
+
+		if (bit < 0) {
+			fdisk_warnx(cxt, _("unssuported GPT attribute bit '%s'"), p);
+			return -EINVAL;
+		}
+
+		setbit(bits, bit);
+
+		while (isblank(*p)) p++;
+		if (*p == ',')
+			p++;
+	}
+
+	e->attrs = cpu_to_le64(attrs);
+	return 0;
+}
+
 static int gpt_get_partition(struct fdisk_context *cxt, size_t n,
 			     struct fdisk_partition *pa)
 {
@@ -1469,6 +1538,11 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 		if (rc)
 			return rc;
 		gpt_entry_set_type(e, &typeid);
+	}
+	if (pa->attrs) {
+		rc = gpt_entry_attrs_from_string(cxt, e, pa->attrs);
+		if (rc)
+			return rc;
 	}
 
 	if (pa->start)
@@ -1991,6 +2065,8 @@ static int gpt_add_partition(
 
 	if (pa && pa->name && *pa->name)
 		gpt_entry_set_name(e, pa->name);
+	if (pa && pa->attrs)
+		gpt_entry_attrs_from_string(cxt, e, pa->attrs);
 
 	DBG(LABEL, ul_debug("GPT new partition: partno=%zu, start=%ju, end=%ju, size=%ju",
 				partnum,

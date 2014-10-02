@@ -347,6 +347,22 @@ const char *fdisk_partition_get_attrs(struct fdisk_partition *pa)
 	return pa ? pa->attrs : NULL;
 }
 
+int fdisk_partition_set_attrs(struct fdisk_partition *pa, const char *attrs)
+{
+	char *p = NULL;
+
+	if (!pa)
+		return -EINVAL;
+	if (attrs) {
+	       p = strdup(attrs);
+	       if (!p)
+		       return -ENOMEM;
+	}
+	free(pa->attrs);
+	pa->attrs = p;
+	return 0;
+}
+
 int fdisk_partition_is_nested(struct fdisk_partition *pa)
 {
 	return pa && pa->parent_partno != FDISK_EMPTY_PARTNO;
