@@ -1859,4 +1859,6 @@ AC_MSG_RESULT([
 	warnings:
 
 ${WARN_CFLAGS}
+
+	Type 'make' or 'make <utilname>' to compile.
 ])
