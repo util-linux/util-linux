@@ -72,6 +72,7 @@ enum {
 	ACT_PARTTYPE,
 	ACT_PARTUUID,
 	ACT_PARTLABEL,
+	ACT_PARTATTRS,
 };
 
 struct sfdisk {
@@ -821,6 +822,60 @@ static int command_partlabel(struct sfdisk *sf, int argc, char **argv)
 	return write_changes(sf);
 }
 
+/*
+ * sfdisk --part-attrs <device> <partno> [<attrs>]
+ */
+static int command_partattrs(struct sfdisk *sf, int argc, char **argv)
+{
+	size_t partno;
+	struct fdisk_partition *pa = NULL;
+	const char *devname = NULL, *attrs = NULL;
+
+	if (!argc)
+		errx(EXIT_FAILURE, _("no disk device specified"));
+	devname = argv[0];
+
+	if (argc < 2)
+		errx(EXIT_FAILURE, _("no partition number specified"));
+	partno = strtou32_or_err(argv[1], _("failed to parse partition number"));
+
+	if (argc == 3)
+		attrs = argv[2];
+	else if (argc > 3)
+		errx(EXIT_FAILURE, _("uneexpected arguments"));
+
+	/* read-only if name not given */
+	assign_device_partition(sf, devname, partno, !attrs);
+
+	/* print partition name */
+	if (!attrs) {
+		const char *str;
+
+		if (fdisk_get_partition(sf->cxt, partno - 1, &pa) == 0)
+			str = fdisk_partition_get_attrs(pa);
+		if (str)
+			printf("%s\n", str);
+		fdisk_unref_partition(pa);
+		fdisk_deassign_device(sf->cxt, 1);
+		return 0;
+	}
+
+	if (sf->backup)
+		backup_partition_table(sf, devname);
+
+	pa = fdisk_new_partition();
+	if (!pa)
+		err(EXIT_FAILURE, _("failed to allocate partition object"));
+
+	if (fdisk_partition_set_attrs(pa, attrs) != 0 ||
+	    fdisk_set_partition(sf->cxt, partno - 1, pa) != 0)
+		errx(EXIT_FAILURE, _("%s: partition %zu: failed to set partition attributes"),
+				devname, partno);
+
+	fdisk_unref_partition(pa);
+	return write_changes(sf);
+}
+
 static void sfdisk_print_partition(struct sfdisk *sf, size_t n)
 {
 	struct fdisk_partition *pa = NULL;
@@ -1240,6 +1295,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" --part-label <dev> <part> [<str>] print or change partition label\n"), out);
 	fputs(_(" --part-type <dev> <part> [<type>] print or change partition type\n"), out);
 	fputs(_(" --part-uuid <dev> <part> [<uuid>] print or change partition uuid\n"), out);
+	fputs(_(" --part-attrs <dev> <part> [<str>] print or change partition attributes\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" <dev>                     device (usually disk) path\n"), out);
@@ -1284,6 +1340,7 @@ int main(int argc, char *argv[])
 		OPT_PARTUUID,
 		OPT_PARTLABEL,
 		OPT_PARTTYPE,
+		OPT_PARTATTRS,
 	};
 
 	static const struct option longopts[] = {
@@ -1309,6 +1366,7 @@ int main(int argc, char *argv[])
 		{ "part-uuid",  no_argument,    NULL, OPT_PARTUUID },
 		{ "part-label", no_argument,    NULL, OPT_PARTLABEL },
 		{ "part-type",  no_argument,    NULL, OPT_PARTTYPE },
+		{ "part-attrs", no_argument,    NULL, OPT_PARTATTRS },
 
 		{ "unit",    required_argument, NULL, 'u' },		/* deprecated */
 		{ "Linux",   no_argument,       NULL, 'L' },		/* deprecated */
@@ -1410,6 +1468,9 @@ int main(int argc, char *argv[])
 		case OPT_PARTLABEL:
 			sf->act = ACT_PARTLABEL;
 			break;
+		case OPT_PARTATTRS:
+			sf->act = ACT_PARTATTRS;
+			break;
 		case OPT_NOREREAD:
 			sf->noreread = 1;
 			break;
@@ -1469,6 +1530,10 @@ int main(int argc, char *argv[])
 
 	case ACT_PARTLABEL:
 		rc = command_partlabel(sf, argc - optind, argv + optind);
+		break;
+
+	case ACT_PARTATTRS:
+		rc = command_partattrs(sf, argc - optind, argv + optind);
 		break;
 
 	}
