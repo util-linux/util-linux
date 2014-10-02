@@ -70,7 +70,8 @@ enum {
 	ACT_SHOW_GEOM,
 	ACT_VERIFY,
 	ACT_PARTTYPE,
-	ACT_PARTUUID
+	ACT_PARTUUID,
+	ACT_PARTNAME,
 };
 
 struct sfdisk {
@@ -280,6 +281,23 @@ static void backup_partition_table(struct sfdisk *sf, const char *devname)
 	free(tpl);
 }
 
+static int write_changes(struct sfdisk *sf)
+{
+	int rc = 0;
+
+	if (sf->noact)
+		fdisk_info(sf->cxt, _("The partition table unchanged (--no-act)."));
+	else {
+		rc = fdisk_write_disklabel(sf->cxt);
+		if (!rc) {
+			fdisk_info(sf->cxt, _("\nThe partition table has been altered."));
+			fdisk_reread_partition_table(sf->cxt);
+		}
+	}
+	if (!rc)
+		rc = fdisk_deassign_device(sf->cxt, sf->noact);	/* no-sync when no-act */
+	return rc;
+}
 
 /*
  * sfdisk --list [<device ..]
@@ -557,11 +575,10 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 	}
 
 	fdisk_unref_partition(pa);
-
-	if (sf->noact == 0 && !listonly)
-		rc = fdisk_write_disklabel(sf->cxt);
-	if (!rc)
-		rc = fdisk_deassign_device(sf->cxt, sf->noact);
+	if (listonly)
+		rc = fdisk_deassign_device(sf->cxt, 1);
+	else
+		rc = write_changes(sf);
 	return rc;
 }
 
@@ -633,7 +650,6 @@ static void assign_device_partition(struct sfdisk *sf,
  */
 static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 {
-	int rc = 0;
 	size_t partno;
 	struct fdisk_parttype *type = NULL;
 	struct fdisk_label *lb;
@@ -690,13 +706,8 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 	else if (fdisk_set_partition_type(sf->cxt, partno - 1, type) != 0)
 		errx(EXIT_FAILURE, _("%s: partition %zu: failed to set partition type"),
 						devname, partno);
-
 	fdisk_free_parttype(type);
-	if (sf->noact == 0)
-		rc = fdisk_write_disklabel(sf->cxt);
-	if (!rc)
-		rc = fdisk_deassign_device(sf->cxt, 1);		/* no-sync */
-	return rc;
+	return write_changes(sf);
 }
 
 /*
@@ -704,7 +715,6 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
  */
 static int command_partuuid(struct sfdisk *sf, int argc, char **argv)
 {
-	int rc = 0;
 	size_t partno;
 	struct fdisk_partition *pa = NULL;
 	const char *devname = NULL, *uuid = NULL;
@@ -751,11 +761,64 @@ static int command_partuuid(struct sfdisk *sf, int argc, char **argv)
 	    fdisk_set_partition(sf->cxt, partno - 1, pa) != 0)
 		errx(EXIT_FAILURE, _("%s: partition %zu: failed to set partition UUID"),
 						devname, partno);
-	if (sf->noact == 0)
-		rc = fdisk_write_disklabel(sf->cxt);
-	if (!rc)
-		rc = fdisk_deassign_device(sf->cxt, 1);		/* no-sync */
-	return rc;
+	fdisk_unref_partition(pa);
+	return write_changes(sf);
+}
+
+/*
+ * sfdisk --name <device> <partno> [<name>]
+ */
+static int command_partname(struct sfdisk *sf, int argc, char **argv)
+{
+	size_t partno;
+	struct fdisk_partition *pa = NULL;
+	const char *devname = NULL, *name = NULL;
+
+	if (!argc)
+		errx(EXIT_FAILURE, _("no disk device specified"));
+	devname = argv[0];
+
+	if (argc < 2)
+		errx(EXIT_FAILURE, _("no partition number specified"));
+	partno = strtou32_or_err(argv[1], _("failed to parse partition number"));
+
+	if (argc == 3)
+		name = argv[2];
+	else if (argc > 3)
+		errx(EXIT_FAILURE, _("uneexpected arguments"));
+
+	/* read-only if name not given */
+	assign_device_partition(sf, devname, partno, !name);
+
+	/* print partition name */
+	if (!name) {
+		const char *str;
+
+		if (fdisk_get_partition(sf->cxt, partno - 1, &pa) == 0)
+			str = fdisk_partition_get_name(pa);
+		if (!str)
+			errx(EXIT_FAILURE, _("%s: partition %zu: failed to get partition name"),
+						devname, partno);
+		printf("%s\n", str);
+		fdisk_unref_partition(pa);
+		fdisk_deassign_device(sf->cxt, 1);
+		return 0;
+	}
+
+	if (sf->backup)
+		backup_partition_table(sf, devname);
+
+	pa = fdisk_new_partition();
+	if (!pa)
+		err(EXIT_FAILURE, _("failed to allocate partition object"));
+
+	if (fdisk_partition_set_name(pa, name) != 0 ||
+	    fdisk_set_partition(sf->cxt, partno - 1, pa) != 0)
+		errx(EXIT_FAILURE, _("%s: partition %zu: failed to set partition name"),
+				devname, partno);
+
+	fdisk_unref_partition(pa);
+	return write_changes(sf);
 }
 
 static void sfdisk_print_partition(struct sfdisk *sf, size_t n)
@@ -1144,18 +1207,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		}
 	case SFDISK_DONE_EOF:
 	case SFDISK_DONE_WRITE:
-		rc = 0;
-		if (sf->noact)
-			fdisk_info(sf->cxt, _("The partition table unchanged (--no-act)."));
-		else {
-			rc = fdisk_write_disklabel(sf->cxt);
-			if (!rc) {
-				fdisk_info(sf->cxt, _("\nThe partition table has been altered."));
-				fdisk_reread_partition_table(sf->cxt);
-			}
-		}
-		if (!rc)
-			rc = fdisk_deassign_device(sf->cxt, sf->noact);	/* no-sync when no-act */
+		rc = write_changes(sf);
 		break;
 	case SFDISK_DONE_ABORT:
 	default:				/* rc < 0 on error */
@@ -1181,6 +1233,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -d, --dump <dev>                  dump partition table (usable for later input)\n"), out);
 	fputs(_(" -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"), out);
 	fputs(_(" -l, --list [<dev> ...]            list partitions of each device\n"), out);
+	fputs(_("     --name <dev> <part> [<name>]  print or change partition name\n"), out);
 	fputs(_(" -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"), out);
 	fputs(_(" -T, --list-types                  print the recognized types (see -X)\n"), out);
 	fputs(_(" -U, --uuid <dev> <part> [<uuid>]  print or change partition uuid\n"), out);
@@ -1225,7 +1278,8 @@ int main(int argc, char *argv[])
 		OPT_CHANGE_ID = CHAR_MAX + 1,
 		OPT_PRINT_ID,
 		OPT_ID,
-		OPT_NOREREAD
+		OPT_NOREREAD,
+		OPT_PARTNAME
 	};
 
 	static const struct option longopts[] = {
@@ -1248,6 +1302,7 @@ int main(int argc, char *argv[])
 		{ "verify",  no_argument,       NULL, 'V' },
 		{ "version", no_argument,       NULL, 'v' },
 		{ "uuid",    no_argument,       NULL, 'U' },
+		{ "name",    no_argument,       NULL, OPT_PARTNAME },
 
 		{ "unit",    required_argument, NULL, 'u' },		/* deprecated */
 		{ "Linux",   no_argument,       NULL, 'L' },		/* deprecated */
@@ -1342,6 +1397,9 @@ int main(int argc, char *argv[])
 		case 'V':
 			sf->verify = 1;
 			break;
+		case OPT_PARTNAME:
+			sf->act = ACT_PARTNAME;
+			break;
 		case OPT_NOREREAD:
 			sf->noreread = 1;
 			break;
@@ -1396,6 +1454,10 @@ int main(int argc, char *argv[])
 
 	case ACT_PARTUUID:
 		rc = command_partuuid(sf, argc - optind, argv + optind);
+		break;
+
+	case ACT_PARTNAME:
+		rc = command_partname(sf, argc - optind, argv + optind);
 		break;
 
 	}
