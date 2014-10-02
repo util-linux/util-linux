@@ -614,8 +614,8 @@ static int dos_get_disklabel_id(struct fdisk_context *cxt, char **id)
 
 static int dos_create_disklabel(struct fdisk_context *cxt)
 {
-	unsigned int id;
-	int rc;
+	unsigned int id = 0;
+	int rc, has_id = 0;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -623,8 +623,21 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 
 	DBG(LABEL, ul_debug("DOS: creating new disklabel"));
 
+	if (cxt->script) {
+		char *end = NULL;
+		const char *s = fdisk_script_get_header(cxt->script, "label-id");
+
+		if (s) {
+			errno = 0;
+			id = strtol(s, &end, 16);
+			if (!errno && end && s < end)
+				has_id = 1;
+		}
+	}
+
 	/* random disk signature */
-	random_get_bytes(&id, sizeof(id));
+	if (!has_id)
+		random_get_bytes(&id, sizeof(id));
 
 	dos_init(cxt);
 	rc = fdisk_init_firstsector_buffer(cxt);
