@@ -1,6 +1,11 @@
 
  Note that items with (!) have high priority.
 
+swapon
+------
+ - (!) add option -o to specify swap options on command line in fstab notation
+   (e.g swapon /dev/sda2 -o discard=page,pri=1)
+
 nsenter(1)
 ----------
  - read the default UID and GID from the target process.
