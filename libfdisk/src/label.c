@@ -65,7 +65,7 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
  *
  * Returns: label name
  */
-const char *fdisk_label_get_name(struct fdisk_label *lb)
+const char *fdisk_label_get_name(const struct fdisk_label *lb)
 {
 	return lb ? lb->name : NULL;
 }
@@ -76,7 +76,7 @@ const char *fdisk_label_get_name(struct fdisk_label *lb)
  *
  * Returns: FDISK_DISKLABEL_*.
  */
-int fdisk_label_get_type(struct fdisk_label *lb)
+int fdisk_label_get_type(const struct fdisk_label *lb)
 {
 	return lb->id;
 }
@@ -87,7 +87,7 @@ int fdisk_label_get_type(struct fdisk_label *lb)
  *
  * Returns: 1 if label requires CHS geometry
  */
-int fdisk_label_require_geometry(struct fdisk_label *lb)
+int fdisk_label_require_geometry(const struct fdisk_label *lb)
 {
 	assert(lb);
 
@@ -109,7 +109,7 @@ int fdisk_label_require_geometry(struct fdisk_label *lb)
  * Returns 0 on success, otherwise, a corresponding error.
  */
 int fdisk_label_get_fields_ids(
-		struct fdisk_label *lb,
+		const struct fdisk_label *lb,
 		struct fdisk_context *cxt,
 		int **ids, size_t *nids)
 {
@@ -162,7 +162,7 @@ int fdisk_label_get_fields_ids(
  *
  * Returns: pointer to static instance of the field.
  */
-const struct fdisk_field *fdisk_label_get_field(struct fdisk_label *lb, int id)
+const struct fdisk_field *fdisk_label_get_field(const struct fdisk_label *lb, int id)
 {
 	size_t i;
 
@@ -176,6 +176,31 @@ const struct fdisk_field *fdisk_label_get_field(struct fdisk_label *lb, int id)
 
 	return NULL;
 }
+
+/**
+ * fdisk_label_get_field_by_name
+ * @lb: label
+ * @name: field name
+ *
+ * Returns: pointer to static instance of the field.
+ */
+const struct fdisk_field *fdisk_label_get_field_by_name(
+				const struct fdisk_label *lb,
+				const char *name)
+{
+	size_t i;
+
+	assert(lb);
+	assert(name);
+
+	for (i = 0; i < lb->nfields; i++) {
+		if (lb->fields[i].name && strcasecmp(lb->fields[i].name, name) == 0)
+			return &lb->fields[i];
+	}
+
+	return NULL;
+}
+
 
 /**
  * fdisk_field_get_id:
@@ -495,7 +520,7 @@ void fdisk_label_set_changed(struct fdisk_label *lb, int changed)
  *
  * Returns: 1 if in-memory data has been changed.
  */
-int fdisk_label_is_changed(struct fdisk_label *lb)
+int fdisk_label_is_changed(const struct fdisk_label *lb)
 {
 	assert(lb);
 	return lb ? lb->changed : 0;
@@ -524,7 +549,7 @@ void fdisk_label_set_disabled(struct fdisk_label *lb, int disabled)
  *
  * Returns: 1 if label driver disabled.
  */
-int fdisk_label_is_disabled(struct fdisk_label *lb)
+int fdisk_label_is_disabled(const struct fdisk_label *lb)
 {
 	assert(lb);
 	return lb ? lb->disabled : 0;

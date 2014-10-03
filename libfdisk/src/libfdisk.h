@@ -132,21 +132,21 @@ sector_t fdisk_get_geom_sectors(struct fdisk_context *cxt);
 sector_t fdisk_get_geom_cylinders(struct fdisk_context *cxt);
 
 /* parttype.c */
-const struct fdisk_parttype *fdisk_label_get_parttype(struct fdisk_label *lb, size_t n);
-size_t fdisk_label_get_nparttypes(struct fdisk_label *lb);
+const struct fdisk_parttype *fdisk_label_get_parttype(const struct fdisk_label *lb, size_t n);
+size_t fdisk_label_get_nparttypes(const struct fdisk_label *lb);
 
-int fdisk_label_has_code_parttypes(struct fdisk_label *lb);
+int fdisk_label_has_code_parttypes(const struct fdisk_label *lb);
 struct fdisk_parttype *fdisk_label_get_parttype_from_code(
-				struct fdisk_label *lb,
+				const struct fdisk_label *lb,
 				unsigned int code);
 
 struct fdisk_parttype *fdisk_label_get_parttype_from_string(
-				struct fdisk_label *lb,
+				const struct fdisk_label *lb,
 				const char *str);
 struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int code,
 						  const char *typestr);
 struct fdisk_parttype *fdisk_label_parse_parttype(
-				struct fdisk_label *lb,
+				const struct fdisk_label *lb,
 				const char *str);
 
 struct fdisk_parttype *fdisk_copy_parttype(const struct fdisk_parttype *type);
@@ -181,11 +181,13 @@ enum {
 	FDISK_FIELD_NAME,
 	FDISK_FIELD_SADDR,
 	FDISK_FIELD_UUID,
+
+	FDISK_NFIELDS		/* must be last */
 };
 
-int fdisk_label_get_type(struct fdisk_label *lb);
-const char *fdisk_label_get_name(struct fdisk_label *lb);
-int fdisk_label_require_geometry(struct fdisk_label *lb);
+int fdisk_label_get_type(const struct fdisk_label *lb);
+const char *fdisk_label_get_name(const struct fdisk_label *lb);
+int fdisk_label_require_geometry(const struct fdisk_label *lb);
 
 
 extern int fdisk_write_disklabel(struct fdisk_context *cxt);
@@ -209,10 +211,14 @@ extern int fdisk_set_partition_type(struct fdisk_context *cxt, size_t partnum,
 
 
 extern int fdisk_label_get_fields_ids(
-			struct fdisk_label *lb,
+			const struct fdisk_label *lb,
 			struct fdisk_context *cxt,
 			int **ids, size_t *nids);
-extern const struct fdisk_field *fdisk_label_get_field(struct fdisk_label *lb, int id);
+
+extern const struct fdisk_field *fdisk_label_get_field(const struct fdisk_label *lb, int id);
+extern const struct fdisk_field *fdisk_label_get_field_by_name(
+			const struct fdisk_label *lb,
+			const char *name);
 
 extern int fdisk_field_get_id(const struct fdisk_field *fl);
 extern const char *fdisk_field_get_name(const struct fdisk_field *fl);
@@ -221,10 +227,10 @@ extern int fdisk_field_is_number(const struct fdisk_field *fl);
 
 
 extern void fdisk_label_set_changed(struct fdisk_label *lb, int changed);
-extern int fdisk_label_is_changed(struct fdisk_label *lb);
+extern int fdisk_label_is_changed(const struct fdisk_label *lb);
 
 extern void fdisk_label_set_disabled(struct fdisk_label *lb, int disabled);
-extern int fdisk_label_is_disabled(struct fdisk_label *lb);
+extern int fdisk_label_is_disabled(const struct fdisk_label *lb);
 
 extern int fdisk_is_partition_used(struct fdisk_context *cxt, size_t n);
 
