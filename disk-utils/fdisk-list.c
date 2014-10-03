@@ -276,7 +276,7 @@ void list_available_columns(FILE *out)
 	if (termwidth <= 0)
 		termwidth = 80;
 
-	fprintf(out, _("\nAvailable columns: (for -o)\n"));
+	fprintf(out, _("\nAvailable columns (for -o):\n"));
 
 	while (fdisk_next_label(cxt, &lb) == 0) {
 		size_t width = 6;	/* label name and separators */
