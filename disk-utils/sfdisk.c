@@ -1306,6 +1306,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -A, --append              append partitions to existing partition table\n"), out);
 	fputs(_(" -b, --backup              backup partition table sectors (see -O)\n"), out);
 	fputs(_(" -f, --force               disable all consistency checking\n"), out);
+	fputs(_(" -o, --output <list>       output columns\n"), out);
 	fputs(_(" -O, --backup-file <path>  override default backout file name\n"), out);
 	fputs(_(" -N, --partno <num>        specify partition number\n"), out);
 	fputs(_(" -X, --label <name>        specify label type (dos, gpt, ...)\n"), out);
@@ -1320,6 +1321,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 
+	list_available_columns(out);
+
 	fprintf(out, USAGE_MAN_TAIL("sfdisk(8)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -1327,6 +1330,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char *argv[])
 {
+	const char *outarg = NULL;
 	int rc = -EINVAL, c, longidx = -1;
 	struct sfdisk _sf = {
 		.partno = -1
@@ -1356,6 +1360,7 @@ int main(int argc, char *argv[])
 		{ "list-types", no_argument,	NULL, 'T' },
 		{ "no-act",  no_argument,       NULL, 'n' },
 		{ "no-reread", no_argument,     NULL, OPT_NOREREAD },
+		{ "output",  required_argument, NULL, 'o' },
 		{ "partno",  required_argument, NULL, 'N' },
 		{ "show-size", no_argument,	NULL, 's' },
 		{ "show-geometry", no_argument, NULL, 'g' },
@@ -1383,7 +1388,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "aAbcdfghlLO:nN:qsTu:vVX:",
+	while ((c = getopt_long(argc, argv, "aAbcdfghlLo:O:nN:qsTu:vVX:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'a':
@@ -1422,6 +1427,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'L':
 			warnx(_("--Linux option is unnecessary and deprecated"));
+			break;
+		case 'o':
+			outarg = optarg;
 			break;
 		case 'O':
 			sf->backup = 1;
@@ -1481,6 +1489,8 @@ int main(int argc, char *argv[])
 	}
 
 	sfdisk_init(sf);
+	if (outarg)
+		init_fields(NULL, outarg, NULL);
 
 	if (sf->verify && !sf->act)
 		sf->act = ACT_VERIFY;	/* --verify make be used with --list too */

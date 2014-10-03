@@ -108,14 +108,17 @@ backup file name is ~/sfdisk-<device>-<offset>.bak, see \fI\-\-backup-file\fR.
 .BR \-f , " \-\-force"
 Disable all consistency checking.
 .TP
+.BR \-o , " \-\-output " \fIlist\fP
+Specify which output columns to print.  Use
+.B \-\-help
+to get a list of all supported columns.
+
+The default list of columns may be extended if \fIlist\fP is
+specified in the format \fI+list\fP (e.g. \fB-o +UUID\fP).
+.TP
 .BR \-O , " \-\-backup-file " \fIpath\fR
 Override default backup file name. Note that the device name and offset is always
 appended to the file name.
-.TP
-.BR \-X , " \-\-label \fItype\fR
-Specify disk label type (e.g. dos, gpt, ...). If no label specified then sfdisk
-defaults to an existing label. If there is no label on the device than defaults
-to "dos".
 .TP
 .BR \-q , " \-\-quiet"
 Suppress extra info messages.
@@ -132,6 +135,11 @@ Deprecated option. The sector unit is supported only.
 .BR "\-\-Linux"
 Deprecated and ignored option. Linux (and another moder OS) compatible
 partitioning is the default.
+.TP
+.BR \-X , " \-\-label \fItype\fR
+Specify disk label type (e.g. dos, gpt, ...). If no label specified then sfdisk
+defaults to an existing label. If there is no label on the device than defaults
+to "dos".
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
