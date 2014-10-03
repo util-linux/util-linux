@@ -73,6 +73,14 @@ If no devices are given, those mentioned in
 .I /proc/partitions
 (if that file exists) are used.
 .TP
+.BR \-o , " \-\-output " \fIlist\fP
+Specify which output columns to print.  Use
+.B \-\-help
+to get a list of all supported columns.
+
+The default list of columns may be extended if \fIlist\fP is
+specified in the format \fI+list\fP (e.g. \fB-o +UUID\fP).
+.TP
 \fB\-s\fR, \fB\-\-getsz\fR
 Print the size in 512-byte sectors of each given block device.  This option is DEPRECATED
 in favour of

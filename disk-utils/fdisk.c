@@ -654,6 +654,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 
+	list_available_columns(out);
+
 	fprintf(out, USAGE_MAN_TAIL("fdisk(8)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -670,6 +672,7 @@ int main(int argc, char **argv)
 	int rc, i, c, act = ACT_FDISK;
 	int colormode = UL_COLORMODE_UNDEF;
 	struct fdisk_context *cxt;
+	char *outarg = NULL;
 
 	static const struct option longopts[] = {
 		{ "color",          optional_argument, NULL, 'L' },
@@ -701,7 +704,7 @@ int main(int argc, char **argv)
 
 	fdisk_set_ask(cxt, ask_callback, NULL);
 
-	while ((c = getopt_long(argc, argv, "b:c::C:hH:lL::sS:t:u::vV",
+	while ((c = getopt_long(argc, argv, "b:c::C:hH:lL::o:sS:t:u::vV",
 				longopts, NULL)) != -1) {
 		switch (c) {
 		case 'b':
@@ -759,6 +762,9 @@ int main(int argc, char **argv)
 				colormode = colormode_or_err(optarg,
 						_("unsupported color mode"));
 			break;
+		case 'o':
+			outarg = optarg;
+			break;
 		case 's':
 			act = ACT_SHOWSIZE;
 			break;
@@ -800,6 +806,7 @@ int main(int argc, char **argv)
 	switch (act) {
 	case ACT_LIST:
 		fdisk_enable_listonly(cxt, 1);
+		init_fields(cxt, outarg, NULL);
 
 		if (argc > optind) {
 			int k;
@@ -852,6 +859,8 @@ int main(int argc, char **argv)
 			fdisk_warnx(cxt, _(
 				  "A hybrid GPT was detected. You have to sync "
 				  "the hybrid MBR manually (expert command 'M')."));
+
+		init_fields(cxt, outarg, NULL);		/* -o <columns> */
 
 		while (1)
 			process_fdisk_menu(&cxt);

@@ -12,8 +12,15 @@
 #include "strutils.h"
 #include "sysfs.h"
 #include "colors.h"
+#include "ttyutils.h"
 
 #include "fdisk-list.h"
+
+/* see init_fields() */
+static const char *fields_string;
+static int *fields_ids;
+static size_t fields_nids;
+static const struct fdisk_label *fields_label;
 
 static int is_ide_cdrom_or_tape(char *device)
 {
@@ -90,7 +97,8 @@ void list_disklabel(struct fdisk_context *cxt)
 	if (fdisk_get_partitions(cxt, &tb) || fdisk_table_get_nents(tb) <= 0)
 		goto done;
 
-	if (fdisk_label_get_fields_ids(NULL, cxt, &ids, &nids))
+	ids = init_fields(cxt, NULL, &nids);
+	if (!ids)
 		goto done;
 
 	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
@@ -171,7 +179,6 @@ void list_disklabel(struct fdisk_context *cxt)
 	if (fdisk_table_wrong_order(tb))
 		fdisk_info(cxt, _("Partition table entries are not in disk order."));
 done:
-	free(ids);
 	scols_unref_table(out);
 	fdisk_unref_table(tb);
 	fdisk_free_iter(itr);
@@ -252,5 +259,112 @@ void print_all_devices_pt(struct fdisk_context *cxt, int verify)
 			ct++;
 		free(dev);
 	}
+}
+
+/* usable for example in usage() */
+void list_available_columns(FILE *out)
+{
+	size_t i;
+	int termwidth;
+	struct fdisk_label *lb = NULL;
+	struct fdisk_context *cxt = fdisk_new_context();
+
+	if (!cxt)
+		return;
+
+	termwidth = get_terminal_width();
+	if (termwidth <= 0)
+		termwidth = 80;
+
+	fprintf(out, _("\nAvailable columns: (for -o)\n"));
+
+	while (fdisk_next_label(cxt, &lb) == 0) {
+		size_t width = 6;	/* label name and separators */
+
+		fprintf(out, " %s:", fdisk_label_get_name(lb));
+		for (i = 1; i < FDISK_NFIELDS; i++) {
+			const struct fdisk_field *fl = fdisk_label_get_field(lb, i);
+			const char *name = fl ? fdisk_field_get_name(fl) : NULL;
+			size_t len;
+
+			if (!name)
+				continue;
+			len = strlen(name) + 1;
+			if (width + len > (size_t) termwidth) {
+				fputs("\n     ", out);
+				width = 6;
+			}
+			fprintf(out, " %s", name);
+			width += len;
+		}
+		fputc('\n', out);
+	}
+
+	fdisk_unref_context(cxt);
+}
+
+static int fieldname_to_id(const char *name, size_t namesz)
+{
+	const struct fdisk_field *fl;
+	char buf[namesz + 1];
+
+	assert(name);
+	assert(namesz);
+	assert(fields_label);
+
+	memcpy(buf, name, namesz);
+	buf[namesz] = '\0';
+
+	fl = fdisk_label_get_field_by_name(fields_label, buf);
+	if (!fl) {
+		warnx(_("%s unknown column: %s"),
+				fdisk_label_get_name(fields_label), buf);
+		return -1;
+	}
+	return fdisk_field_get_id(fl);
+}
+
+/*
+ * Initialize array with output columns (fields_ids[]) according to
+ * comma delimited list of columns (@str). If the list string is not
+ * defined then use library defaults. This function is "-o <list>"
+ * backend.
+ *
+ * If the columns are already initialized then returns already existing columns.
+ */
+int *init_fields(struct fdisk_context *cxt, const char *str, size_t *n)
+{
+	int *dflt_ids = NULL;
+
+	if (!fields_string)
+		fields_string = str;
+
+	if (!cxt || fields_nids)
+		goto done;
+
+	fields_label = fdisk_get_label(cxt, NULL);
+	if (!fields_label)
+		goto done;
+
+	/* library default */
+	if (fdisk_label_get_fields_ids(NULL, cxt, &dflt_ids, &fields_nids))
+		goto done;
+
+	fields_ids = xcalloc(sizeof(int), FDISK_NFIELDS * 2);
+
+	/* copy defaults to the list with wanted fields */
+	memcpy(fields_ids, dflt_ids, fields_nids * sizeof(int));
+	free(dflt_ids);
+
+	/* extend or replace fields_nids[] according to fields_string */
+	if (fields_string &&
+	    string_add_to_idarray(fields_string, fields_ids, FDISK_NFIELDS * 2,
+			      (int *) &fields_nids, fieldname_to_id) < 0)
+		exit(EXIT_FAILURE);
+done:
+	fields_label = NULL;
+	if (n)
+		*n = fields_nids;
+	return fields_ids;
 }
 
