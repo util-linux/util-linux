@@ -261,16 +261,19 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	} else
 	        ndiv = cxt->geom.cylinders * 2 / 3;
 
-	set_partition(cxt, 0, 0, ndiv * cxt->geom.heads * cxt->geom.sectors,
+	/* create the default layout only if no-script defined */
+	if (!cxt->script) {
+		set_partition(cxt, 0, 0, ndiv * cxt->geom.heads * cxt->geom.sectors,
 			  SUN_TAG_LINUX_NATIVE);
-	set_partition(cxt, 1, ndiv * cxt->geom.heads * cxt->geom.sectors,
+		set_partition(cxt, 1, ndiv * cxt->geom.heads * cxt->geom.sectors,
 			  cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors,
 			  SUN_TAG_LINUX_SWAP);
-	sunlabel->vtoc.infos[1].flags |= cpu_to_be16(SUN_FLAG_UNMNT);
+		sunlabel->vtoc.infos[1].flags |= cpu_to_be16(SUN_FLAG_UNMNT);
 
-	set_partition(cxt, 2, 0,
+		set_partition(cxt, 2, 0,
 			  cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors,
 			  SUN_TAG_WHOLEDISK);
+	}
 
 	{
 		unsigned short *ush = (unsigned short *)sunlabel;

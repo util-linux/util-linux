@@ -1226,8 +1226,13 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				if (rc == 0)
 					rc = SFDISK_DONE_ASK;
 				break;
-			} else if (!rc)		/* add partition */
+			} else if (!rc) {		/* add partition */
 				rc = fdisk_add_partition(sf->cxt, pa, &cur_partno);
+				if (rc) {
+					errno = -rc;
+					fdisk_warn(sf->cxt, _("failed to add partition"));
+				}
+			}
 
 			if (!rc) {		/* success, print reult */
 				sfdisk_print_partition(sf, cur_partno);

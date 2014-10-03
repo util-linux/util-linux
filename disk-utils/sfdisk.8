@@ -39,6 +39,12 @@ sense for new devices.
 block-device I/O limits when specified by relative sizes, or when default
 values expected.
 
+.B sfdisk
+does not create default system partitions for SGI and SUN disk label like
+.BR fdisk (8).
+It is necessary to explicitly create all partitions including whole-disk system
+partitions.
+
 .SH COMMANDS
 The commands are mutually exclusive.
 .TP

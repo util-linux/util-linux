@@ -552,6 +552,8 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 	if (sortcount == 0) {
 		if (verbose)
 			fdisk_info(cxt, _("No partitions defined."));
+		if (lastblock)
+			add_to_freelist(cxt, 0, lastblock);
 		return (lastblock > 0) ? 1 : (lastblock == 0) ? 0 : -1;
 	}
 
@@ -789,7 +791,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 				   "Delete it before re-adding it."), n + 1);
 		return -EINVAL;
 	}
-	if (sgi_entire(cxt) == -1 &&  sys != SGI_TYPE_ENTIRE_DISK) {
+	if (!cxt->script && sgi_entire(cxt) == -1 &&  sys != SGI_TYPE_ENTIRE_DISK) {
 		fdisk_info(cxt, _("Attempting to generate entire disk entry automatically."));
 		sgi_set_entire(cxt);
 		sgi_set_volhdr(cxt);
@@ -853,11 +855,11 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 
 	/* last sector */
 	if (pa && pa->end_follow_default)
-		last -= 1;
+		last -= 1ULL;
 	else if (pa && pa->size) {
-		if (first + pa->size > last)
+		if (first + pa->size - 1ULL > last)
 			return -ERANGE;
-		last = first + pa->size;
+		last = first + pa->size - 1ULL;
 	} else {
 		snprintf(mesg, sizeof(mesg),
 			 _("Last %s or +%s or +size{K,M,G,T,P}"),
@@ -990,9 +992,12 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	memset(&(sgilabel->partitions), 0,
 			sizeof(struct sgi_partition) * SGI_MAXPARTITIONS);
 	cxt->label->nparts_max = SGI_MAXPARTITIONS;
-	sgi_set_entire(cxt);
-	sgi_set_volhdr(cxt);
 
+	/* don't create default layout when a script defined */
+	if (!cxt->script) {
+		sgi_set_entire(cxt);
+		sgi_set_volhdr(cxt);
+	}
 	cxt->label->nparts_cur = count_used_partitions(cxt);
 
 	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
