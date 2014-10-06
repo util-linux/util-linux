@@ -79,6 +79,7 @@ struct sfdisk {
 	int		act;		/* action */
 	int		partno;		/* -N <partno>, default -1 */
 	const char	*label;		/* --label <label> */
+	const char	*label_nested;	/* --label-nested <label> */
 	const char	*backup_file;	/* -O <path> */
 
 	struct fdisk_context	*cxt;	/* libfdisk context */
@@ -189,14 +190,30 @@ static void sfdisk_init(struct sfdisk *sf)
 	if (!sf->cxt)
 		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));
 	fdisk_set_ask(sf->cxt, ask_callback, (void *) sf);
+
+	if (sf->label_nested) {
+		struct fdisk_context *x = fdisk_new_nested_context(sf->cxt,
+							sf->label_nested);
+		if (!x)
+			err(EXIT_FAILURE, _("failed to allocate nested libfdisk context"));
+		/* the original context is available by fdisk_get_parent() */
+		sf->cxt = x;
+	}
 }
 
 static int sfdisk_deinit(struct sfdisk *sf)
 {
+	struct fdisk_context *parent;
 	int rc;
 
 	assert(sf);
 	assert(sf->cxt);
+
+	parent = fdisk_get_parent(sf->cxt);
+	if (parent) {
+		fdisk_unref_context(sf->cxt);
+		sf->cxt = parent;
+	}
 
 	fdisk_unref_context(sf->cxt);
 	memset(sf, 0, sizeof(*sf));
@@ -1315,6 +1332,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -O, --backup-file <path>  override default backout file name\n"), out);
 	fputs(_(" -N, --partno <num>        specify partition number\n"), out);
 	fputs(_(" -X, --label <name>        specify label type (dos, gpt, ...)\n"), out);
+	fputs(_(" -Y, --label-nested <name> specify nested label type (dos, bsd)\n"), out);
 	fputs(_(" -q, --quiet               suppress extra info messages\n"), out);
 	fputs(_(" -n, --no-act              do everything except write to device\n"), out);
 	fputs(_("     --no-reread           do not check whether the device is in use\n"), out);
@@ -1361,6 +1379,7 @@ int main(int argc, char *argv[])
 		{ "help",    no_argument,       NULL, 'h' },
 		{ "force",   no_argument,       NULL, 'f' },
 		{ "label",   required_argument, NULL, 'X' },
+		{ "label-nested", required_argument, NULL, 'Y' },
 		{ "list",    no_argument,       NULL, 'l' },
 		{ "list-types", no_argument,	NULL, 'T' },
 		{ "no-act",  no_argument,       NULL, 'n' },
@@ -1393,7 +1412,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "aAbcdfghlLo:O:nN:qsTu:vVX:",
+	while ((c = getopt_long(argc, argv, "aAbcdfghlLo:O:nN:qsTu:vVX:Y:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'a':
@@ -1470,6 +1489,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'X':
 			sf->label = optarg;
+			break;
+		case 'Y':
+			sf->label_nested = optarg;
 			break;
 
 		case OPT_PARTUUID:

@@ -147,6 +147,10 @@ Specify disk label type (e.g. dos, gpt, ...). If no label specified then sfdisk
 defaults to an existing label. If there is no label on the device than defaults
 to "dos".
 .TP
+.BR \-Y , " \-\-label-nested \fItype\fR
+Force sfdisk to edit nested disk label. The primary disk label has to already exist.
+This option allows to edit for example hybrid/protective MBR on devices with GPT.
+.TP
 .BR \-h , " \-\-help"
 Display help text and exit.
 .TP
