@@ -15,7 +15,8 @@ int fdisk_init_firstsector_buffer(struct fdisk_context *cxt)
 	if (!cxt->firstsector || cxt->firstsector_bufsz != cxt->sector_size) {
 		/* Let's allocate a new buffer if no allocated yet, or the
 		 * current buffer has incorrect size */
-		free(cxt->firstsector);
+		if (!cxt->parent || cxt->parent->firstsector != cxt->firstsector)
+			free(cxt->firstsector);
 
 		DBG(CXT, ul_debugobj(cxt, "initialize in-memory first sector "
 				"buffer [sector_size=%lu]", cxt->sector_size));

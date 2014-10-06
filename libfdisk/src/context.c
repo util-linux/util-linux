@@ -63,14 +63,65 @@ struct fdisk_context *fdisk_new_context(void)
 	return cxt;
 }
 
+static void init_nested_from_parent(struct fdisk_context *cxt, int isnew)
+{
+	struct fdisk_context *parent;
+
+	assert(cxt);
+	assert(cxt->parent);
+
+	parent = cxt->parent;
+
+	cxt->dev_path =		parent->dev_path;
+	cxt->alignment_offset = parent->alignment_offset;
+	cxt->ask_cb =		parent->ask_cb;
+	cxt->ask_data =		parent->ask_data;
+	cxt->dev_fd =		parent->dev_fd;
+	cxt->first_lba =        parent->first_lba;
+	cxt->firstsector_bufsz = parent->firstsector_bufsz;
+	cxt->firstsector =	parent->firstsector;
+	cxt->geom =		parent->geom;
+	cxt->grain =            parent->grain;
+	cxt->io_size =          parent->io_size;
+	cxt->last_lba =		parent->last_lba;
+	cxt->min_io_size =      parent->min_io_size;
+	cxt->optimal_io_size =  parent->optimal_io_size;
+	cxt->phy_sector_size =  parent->phy_sector_size;
+	cxt->readonly =		parent->readonly;
+	cxt->script =		parent->script;
+	fdisk_ref_script(cxt->script);
+	cxt->sector_size =      parent->sector_size;
+	cxt->total_sectors =    parent->total_sectors;
+	cxt->user_geom =	parent->user_geom;
+	cxt->user_log_sector =	parent->user_log_sector;
+	cxt->user_pyh_sector =  parent->user_pyh_sector;
+
+	/* parent <--> nested independent setting, initialize for new nested 
+	 * contexts only */
+	if (isnew) {
+		cxt->listonly =	parent->listonly;
+		cxt->display_details =	parent->display_details;
+		cxt->display_in_cyl_units = parent->display_in_cyl_units;
+	}
+
+}
+
 /**
  * fdisk_new_nested_context:
  * @parent: parental context
  * @name: optional label name (e.g. "bsd")
  *
- * This is supported for MBR+BSD and GPT+pMBR only.
+ * Create a new nested fdisk context for nested disk labels (e.g. BSD or PMBR).
+ * The function also probes for the nested label on the device if device is
+ * already assigned to parent.
  *
- * Returns: new context for nested partiton table.
+ * The new context is initialized according to @parent and both context shares
+ * some settings and file descriptor to the device. The child propagate some
+ * changes (like fdisk_assign_device()) to parent, but it does not work
+ * vice-versa. The behavior is undefined if you assign another device to
+ * parent.
+ *
+ * Returns: new context for nested partition table.
  */
 struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 				const char *name)
@@ -85,25 +136,12 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 		return NULL;
 
 	DBG(CXT, ul_debugobj(parent, "alloc nested [%p]", cxt));
-	cxt->dev_fd = parent->dev_fd;
 	cxt->refcount = 1;
+
+	fdisk_ref_context(parent);
 	cxt->parent = parent;
 
-	cxt->io_size =          parent->io_size;
-	cxt->optimal_io_size =  parent->optimal_io_size;
-	cxt->min_io_size =      parent->min_io_size;
-	cxt->phy_sector_size =  parent->phy_sector_size;
-	cxt->sector_size =      parent->sector_size;
-	cxt->alignment_offset = parent->alignment_offset;
-	cxt->grain =            parent->grain;
-	cxt->first_lba =        parent->first_lba;
-	cxt->total_sectors =    parent->total_sectors;
-	cxt->firstsector =	parent->firstsector;
-
-	cxt->ask_cb =		parent->ask_cb;
-	cxt->ask_data =		parent->ask_data;
-
-	cxt->geom = parent->geom;
+	init_nested_from_parent(cxt, 1);
 
 	if (name) {
 		if (strcmp(name, "bsd") == 0)
@@ -112,7 +150,7 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 			lb = cxt->labels[ cxt->nlabels++ ] = fdisk_new_dos_label(cxt);
 	}
 
-	if (lb) {
+	if (lb && parent->dev_fd >= 0) {
 		DBG(CXT, ul_debugobj(cxt, "probing for nested %s", lb->name));
 
 		cxt->label = lb;
@@ -312,25 +350,29 @@ static void reset_context(struct fdisk_context *cxt)
 	for (i = 0; i < cxt->nlabels; i++)
 		fdisk_deinit_label(cxt->labels[i]);
 
-	/* free device specific stuff */
-	if (!cxt->parent && cxt->dev_fd > -1)
-		close(cxt->dev_fd);
-	free(cxt->dev_path);
-
-	if (cxt->parent == NULL || cxt->parent->firstsector != cxt->firstsector)
+	if (cxt->parent) {
+		/* the first sector may be independent on parent */
+		if (cxt->parent->firstsector != cxt->firstsector)
+			free(cxt->firstsector);
+	} else {
+		/* we close device only in primary context */
+		if (cxt->dev_fd > -1)
+			close(cxt->dev_fd);
+		free(cxt->dev_path);
 		free(cxt->firstsector);
+	}
 
-	/* initialize */
 	cxt->dev_fd = -1;
 	cxt->dev_path = NULL;
 	cxt->firstsector = NULL;
 	cxt->firstsector_bufsz = 0;
 
 	fdisk_zeroize_device_properties(cxt);
+
 	fdisk_unref_script(cxt->script);
+	cxt->script = NULL;
 
 	cxt->label = NULL;
-	cxt->script = NULL;
 }
 
 /*
@@ -388,13 +430,18 @@ static int warn_wipe(struct fdisk_context *cxt)
 
 /**
  * fdisk_assign_device:
+ * @cxt: context
  * @fname: path to the device to be handled
  * @readonly: how to open the device
  *
- * Open the device, discovery topology, geometry, detect disklabel and
- * switch the current label driver to reflect the probing result.
+ * Open the device, discovery topology, geometry, detect disklabel and switch
+ * the current label driver to reflect the probing result.
  *
- * Note that this function resets all generic setting in context.
+ * Note that this function resets all generic setting in context. If the @cxt
+ * is nested context then the device is assigned to the parental context and
+ * necessary properties are copied to the @cxt. The change is propagated in
+ * child->parent direction only. It's impossible to use a different device for
+ * primary and nested contexts.
  *
  * Returns: 0 on success, < 0 on error.
  */
@@ -405,6 +452,24 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 
 	DBG(CXT, ul_debugobj(cxt, "assigning device %s", fname));
 	assert(cxt);
+
+	/* redirect request to parent */
+	if (cxt->parent) {
+		int rc, org = fdisk_is_listonly(cxt->parent);
+
+		/* assign_device() is sensitive to "listonly" mode, so let's
+		 * follow the current context setting for the parent to avoid 
+		 * unwanted extra warnings. */
+		fdisk_enable_listonly(cxt->parent, fdisk_is_listonly(cxt));
+
+		rc = fdisk_assign_device(cxt->parent, fname, readonly);
+		fdisk_enable_listonly(cxt->parent, org);
+
+		init_nested_from_parent(cxt, 0);
+		if (!rc)
+			fdisk_probe_labels(cxt);
+		return rc;
+	}
 
 	reset_context(cxt);
 
@@ -450,12 +515,20 @@ fail:
  * @cxt: context
  * @nosync: disable fsync()
  *
- * Close device and call fsync()
+ * Close device and call fsync(). If the @cxt is nested context than the
+ * request is redirected to the parent.
  */
 int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 {
 	assert(cxt);
 	assert(cxt->dev_fd >= 0);
+
+	if (cxt->parent) {
+		int rc = fdisk_deassign_device(cxt->parent, nosync);
+
+		init_nested_from_parent(cxt, 0);
+		return rc;
+	}
 
 	if (cxt->readonly)
 		close(cxt->dev_fd);
@@ -508,7 +581,8 @@ void fdisk_unref_context(struct fdisk_context *cxt)
 	cxt->refcount--;
 	if (cxt->refcount <= 0) {
 		DBG(CXT, ul_debugobj(cxt, "freeing context %p for %s", cxt, cxt->dev_path));
-		reset_context(cxt);
+
+		reset_context(cxt);	/* this is sensitive to parent<->child relationship! */
 
 		/* deallocate label's private stuff */
 		for (i = 0; i < cxt->nlabels; i++) {
@@ -519,6 +593,10 @@ void fdisk_unref_context(struct fdisk_context *cxt)
 			else
 				free(cxt->labels[i]);
 		}
+
+		fdisk_unref_context(cxt->parent);
+		cxt->parent = NULL;
+
 		free(cxt);
 	}
 }
