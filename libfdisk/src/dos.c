@@ -836,7 +836,7 @@ static void set_partition(struct fdisk_context *cxt,
 				(size_t) (stop - start + 1),
 				sysid));
 
-	p->boot_ind = boot ? 1 : 0;
+	p->boot_ind = boot ? ACTIVE_FLAG : 0;
 	p->sys_ind = sysid;
 	dos_partition_set_start(p, start - offset);
 	dos_partition_set_size(p, stop - start + 1);
@@ -1128,7 +1128,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		}
 	}
 
-	set_partition(cxt, n, 0, start, stop, sys, pa ? pa->boot : 0);
+	set_partition(cxt, n, 0, start, stop, sys, pa && pa->boot ? 1 : 0);
 	if (n > 4) {
 		struct pte *pe = self_pte(cxt, n);
 		set_partition(cxt, n - 1, 1, pe->offset, stop,
