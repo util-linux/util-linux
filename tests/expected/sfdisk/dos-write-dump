@@ -1,0 +1,9 @@
+# partition table of <removed>
+unit: sectors
+
+<removed>1 : start=     2048, size=     6144, Id=83, bootable
+<removed>2 : start=     8192, size=     6144, Id=82
+<removed>3 : start=    14336, size=     6144, Id=83
+<removed>4 : start=    20480, size=    81920, Id= 5
+<removed>5 : start=    20481, size=     6144, Id=83
+<removed>6 : start=    26626, size=    75774, Id=83

@@ -1,0 +1,11 @@
+
+Disk <removed>: 100 cylinders, 32 heads, 32 sectors/track
+Units: sectors of 512 bytes, counting from 0
+
+   Device Boot    Start       End   #sectors  Id  System
+<removed>1   *      2048      8191       6144  83  Linux
+<removed>2          8192     14335       6144  82  Linux swap / Solaris
+<removed>3         14336     20479       6144  83  Linux
+<removed>4         20480    102399      81920   5  Extended
+<removed>5         20481     26624       6144  83  Linux
+<removed>6         26626    102399      75774  83  Linux

@@ -1,0 +1,24 @@
+sfdisk: Checking that no-one is using this disk right now ...
+sfdisk: OK
+sfdisk:  <removed>: unrecognized partition table type
+sfdisk: No partitions found
+sfdisk: Warning: no primary partition is marked bootable (active)
+This does not matter for LILO, but the DOS MBR will not boot this disk.
+
+Disk <removed>: 100 cylinders, 32 heads, 32 sectors/track
+Old situation:
+New situation:
+Units: sectors of 512 bytes, counting from 0
+
+   Device Boot    Start       End   #sectors  Id  System
+<removed>1          2048      8191       6144  83  Linux
+<removed>2          8192     14335       6144  82  Linux swap / Solaris
+<removed>3             1      2047       2047  83  Linux
+<removed>4             0         -          0   0  Empty
+Successfully wrote the new partition table
+
+sfdisk: If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)
+to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1
+(See fdisk(8).)
+Re-reading the partition table ...
+
