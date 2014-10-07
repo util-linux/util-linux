@@ -1158,7 +1158,6 @@ static int add_logical(struct fdisk_context *cxt, struct fdisk_partition *pa)
 	assert(cxt);
 	assert(cxt->label);
 	assert(self_label(cxt)->ext_offset);
-	assert(self_label(cxt)->ext_index);
 
 	DBG(LABEL, ul_debug("DOS: nparts max: %zu", cxt->label->nparts_max));
 	pe = self_pte(cxt, cxt->label->nparts_max);
