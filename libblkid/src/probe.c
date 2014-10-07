@@ -538,8 +538,10 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 	struct list_head *p;
 	struct blkid_bufinfo *bf = NULL;
 
-	if (pr->size <= 0)
+	if (pr->size <= 0) {
+		errno = EINVAL;
 		return NULL;
+	}
 
 	if (pr->parent &&
 	    pr->parent->devno == pr->devno &&
@@ -601,6 +603,7 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 		list_add_tail(&bf->bufs, &pr->buffers);
 	}
 
+	errno = 0;
 	return off ? bf->data + (off - bf->off) : bf->data;
 }
 
