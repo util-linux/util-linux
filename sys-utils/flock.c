@@ -175,8 +175,6 @@ int main(int argc, char *argv[])
 			have_timeout = 1;
 			strtotimeval_or_err(optarg, &timeout.it_value,
 				_("invalid timeout value"));
-			if (timeout.it_value.tv_sec + timeout.it_value.tv_usec == 0)
-				errx(EX_USAGE, _("timeout cannot be zero"));
 			break;
 		case 'E':
 			conflict_exit_code = strtos32_or_err(optarg,

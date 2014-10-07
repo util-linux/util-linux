@@ -87,7 +87,9 @@ Fail if the lock cannot be acquired within
 Decimal fractional values are allowed.
 See the
 .B \-E
-option for the exit code used.
+option for the exit code used. The zero number of
+.IR seconds
+is interpreted as \fB\-\-nonblock\fR.
 .TP
 \fB\-o\fP, \fB\-\-close\fP
 Close the file descriptor on which the lock is held before executing
