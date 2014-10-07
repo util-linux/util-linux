@@ -66,7 +66,7 @@ test -f sys-utils/mount.c || {
 	echo
 	DIE=1
 }
-(libtool --version) < /dev/null > /dev/null 2>&1 || {
+(libtoolize --version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have libtool-2 installed to generate util-linux build system."
 	echo
