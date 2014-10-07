@@ -303,7 +303,7 @@ AC_CHECK_FUNCS([ \
 	err \
 	errx \
 	fsync \
-	futimens \
+	utimensat \
 	getdomainname \
 	getdtablesize \
 	getexecname \

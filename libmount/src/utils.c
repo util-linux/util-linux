@@ -193,7 +193,7 @@ int mnt_is_readonly(const char *path)
 	if (errno != EACCES)
 		return 0;
 
-#ifdef HAVE_FUTIMENS
+#ifdef HAVE_UTIMENSAT
 	/*
 	 * access(2) returns EACCES on read-only FS:
 	 *
