@@ -626,7 +626,12 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 			}
 
 		} else if (!strncasecmp(p, "bootable", 8)) {
+			char *x;
+
 			p += 8;
+			x = next_separator(p);
+			if (x)
+				p = x + 1;
 			pa->boot = 1;
 
 		} else if (!strncasecmp(p, "attrs=", 6)) {
@@ -672,10 +677,6 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 			rc = -EINVAL;
 			break;
 		}
-
-		while (isblank(*p)) p++;
-		if (*p == ',' || *p == ';')
-			p++;
 	}
 
 	if (!rc)
@@ -757,6 +758,7 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 
 	while (rc == 0 && p && *p) {
 		uint64_t num;
+		char *begin;
 
 		while (isblank(*p)) p++;
 		if (!*p)
@@ -764,6 +766,7 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 		item++;
 
 		DBG(SCRIPT, ul_debugobj(dp, " parsing item %d ('%s')", item, p));
+		begin = p;
 
 		switch (item) {
 		case ITEM_START:
@@ -829,8 +832,7 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 			break;
 		}
 
-		while (isblank(*p)) p++;
-		if (*p == ',' || *p == ';')
+		if (begin == p)
 			p++;
 	}
 
