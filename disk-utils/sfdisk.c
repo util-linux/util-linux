@@ -86,6 +86,7 @@ struct sfdisk {
 
 	unsigned int verify : 1,	/* call fdisk_verify_disklabel() */
 		     quiet  : 1,	/* suppres extra messages */
+		     interactive : 1,	/* running on tty */
 		     noreread : 1,	/* don't check device is in use */
 		     force  : 1,	/* do also stupid things */
 		     backup : 1,	/* backup sectors before write PT */
@@ -995,7 +996,7 @@ static int loop_control_commands(struct sfdisk *sf,
 	else if (strcmp(p, "abort") == 0)
 		rc = SFDISK_DONE_ABORT;
 	else {
-		if (isatty(STDIN_FILENO))
+		if (sf->interactive)
 			fdisk_warnx(sf->cxt, _("unsupported command"));
 		else {
 			fdisk_warnx(sf->cxt, _("line %d: unsupported command"),
@@ -1126,7 +1127,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		next_partno = last_pt_partno(sf) + 1;
 	}
 
-	if (!sf->quiet && isatty(STDIN_FILENO)) {
+	if (!sf->quiet && sf->interactive) {
 		color_scheme_enable("welcome", UL_COLOR_GREEN);
 		fdisk_info(sf->cxt, _("\nWelcome to sfdisk (%s)."), PACKAGE_STRING);
 		color_disable();
@@ -1171,7 +1172,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 	fdisk_script_set_header(dp, "label", label);
 
-	if (!sf->quiet && isatty(STDIN_FILENO)) {
+	if (!sf->quiet && sf->interactive) {
 		if (!fdisk_has_label(sf->cxt) && !sf->label)
 			fdisk_info(sf->cxt,
 				_("\nsfdisk is going to create a new '%s' disk label.\n"
@@ -1252,7 +1253,8 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			}
 
 			if (!rc) {		/* success, print reult */
-				sfdisk_print_partition(sf, cur_partno);
+				if (sf->interactive)
+					sfdisk_print_partition(sf, cur_partno);
 				next_partno = cur_partno + 1;
 			} else if (pa) {	/* error, drop partition from script */
 				fdisk_table_remove_partition(tb, pa);
@@ -1273,7 +1275,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 	switch (rc) {
 	case SFDISK_DONE_ASK:
-		if (isatty(STDIN_FILENO)) {
+		if (sf->interactive) {
 			int yes = 0;
 			fdisk_ask_yesno(sf->cxt, _("Do you want to write this to disk?"), &yes);
 			if (!yes) {
@@ -1356,7 +1358,8 @@ int main(int argc, char *argv[])
 	const char *outarg = NULL;
 	int rc = -EINVAL, c, longidx = -1;
 	struct sfdisk _sf = {
-		.partno = -1
+		.partno = -1,
+		.interactive = isatty(STDIN_FILENO) ? 1 : 0,
 	}, *sf = &_sf;
 
 	enum {
@@ -1397,7 +1400,7 @@ int main(int argc, char *argv[])
 		{ "part-type",  no_argument,    NULL, OPT_PARTTYPE },
 		{ "part-attrs", no_argument,    NULL, OPT_PARTATTRS },
 
-		{ "unit",    required_argument, NULL, 'u' },		/* deprecated */
+		{ "unit",    required_argument, NULL, 'u' },
 		{ "Linux",   no_argument,       NULL, 'L' },		/* deprecated */
 
 		{ "change-id",no_argument,      NULL, OPT_CHANGE_ID },	/* deprecated */
@@ -1475,8 +1478,6 @@ int main(int argc, char *argv[])
 			sf->act = ACT_LIST_TYPES;
 			break;
 		case 'u':
-			/* deprecated */
-			warnx(_("--unit option is deprecated, only sectors are supported"));
 			if (*optarg != 'S')
 				errx(EXIT_FAILURE, _("unssupported unit '%c'"), *optarg);
 			break;
