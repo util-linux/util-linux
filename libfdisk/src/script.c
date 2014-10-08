@@ -464,81 +464,72 @@ done:
 
 }
 
-static char *next_separator(char *s)
+/* returns zero terminated string with next token and @str is updated */
+static char *next_token(char **str)
 {
-	char *end;
+	char *tk_begin = NULL,
+	     *tk_end = NULL,
+	     *end = NULL,
+	     *p;
+	int open_quote = 0;
 
-	if ((end = strchr(s, ',')) ||
-	    (end = strchr(s, ';')) ||
-	    (end = strchr(s, ' ')))
-		return end;
+	for (p = *str; p && *p; p++) {
+		if (!tk_begin) {
+			if (isblank(*p))
+				continue;
+			tk_begin = p;
+		}
+		if (*p == '"')
+			open_quote ^= 1;
+		if (open_quote)
+			continue;
+		if (isblank(*p) || *p == ',' || *p == ';' || *p == '"' )
+			tk_end = p;
+		else if (*(p + 1) == '\0')
+			tk_end = p + 1;
+		if (tk_begin && tk_end)
+			break;
+	}
 
-	return NULL;
+	if (!tk_end)
+		return NULL;
+	end = isblank(*tk_end) ? (char *) skip_blank(tk_end) : tk_end;
+	if (*end == ',' || *end == ';')
+		end++;
+
+	*tk_end = '\0';
+	*str = end;
+	return tk_begin;
 }
 
 static int next_number(char **s, uint64_t *num, int *power)
 {
-	char *end = NULL;
-	int rc;
+	char *tk;
+	int rc = -EINVAL;
 
 	assert(num);
 	assert(s);
 
-	*s = (char *) skip_blank(*s);
-	if (!**s)
-		return -1;
-
-	end = next_separator(*s);
-	if (end)
-		*end = '\0';
-
-	rc = parse_size(*s, (uintmax_t *) num, power);
-	if (end)
-		*s = ++end;
-	else
-		while (**s) (*s)++;
-
+	tk = next_token(s);
+	if (tk)
+		rc = parse_size(tk, (uintmax_t *) num, power);
 	return rc;
 }
 
 static int next_string(char **s, char **str)
 {
-	char *xend = NULL, *end = NULL;
+	char *tk;
+	int rc = -EINVAL;
 
-	assert(str);
 	assert(s);
+	assert(str);
 
-	*s = (char *) skip_blank(*s);
-	if (!**s)
-		return -1;
-
-	if (**s == '"') {
-		++(*s);
-		xend = strchr(*s, '"');
-		if (!xend)
-			return -EINVAL;
-		end = next_separator(xend);
-	} else
-		xend = end = next_separator(*s);
-
-	if (xend) {
-		*str = strndup(*s, xend - *s);
-		*s = end ? end + 1 : xend + 1;
-	} else {
-		*str = strdup(*s);
-		while (**s) (*s)++;
+	tk = next_token(s);
+	if (tk) {
+		*str = strdup(tk);
+		rc = !*str ? -ENOMEM : 0;
 	}
-
-	if (!*str)
-		return -ENOMEM;
-
-	if (xend == end)
-		ltrim_whitespace((unsigned char *) *str);
-	if (!**str) {
-		free(*str);
-		*str = NULL;
-	}
-	return 0;
+	return rc;
 }
 
 static int partno_from_devname(char *s)
@@ -600,9 +591,6 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 		p = s;
 
 	while (rc == 0 && p && *p) {
-		while (isblank(*p)) p++;
-		if (!*p)
-			break;
 
 		DBG(SCRIPT, ul_debugobj(dp, " parsing '%s'", p));
 
@@ -626,33 +614,26 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 			}
 
 		} else if (!strncasecmp(p, "bootable", 8)) {
-			char *x;
-
-			p += 8;
-			x = next_separator(p);
-			if (x)
-				p = x + 1;
-			pa->boot = 1;
+			char *tk = next_token(&p);
+			if (strcmp(tk, "bootable") == 0)
+				pa->boot = 1;
+			else
+				rc = -EINVAL;
 
 		} else if (!strncasecmp(p, "attrs=", 6)) {
 			p += 6;
 			rc = next_string(&p, &pa->attrs);
-			if (rc)
-				break;
 
 		} else if (!strncasecmp(p, "uuid=", 5)) {
 			p += 5;
 			rc = next_string(&p, &pa->uuid);
-			if (rc)
-				break;
 
 		} else if (!strncasecmp(p, "name=", 5)) {
 			p += 5;
 			rc = next_string(&p, &pa->name);
-			if (rc)
-				break;
 
 		} else if (!strncasecmp(p, "type=", 5) ||
+
 			   !strncasecmp(p, "Id=", 3)) {		/* backward compatiility */
 			char *type;
 
@@ -815,18 +796,17 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 			}
 			break;
 		case ITEM_BOOTABLE:
-			if (*p == ',')
+			if (*p == ',' || *p == ';')
 				break;
-			if (*p == '*' &&
-			    (!*(p + 1) || *(p + 1) == ' ' || *(p + 1) == ',' || *(p + 1) == ';')) {
-				pa->boot = 1;
-				p++;
-			} else if (*p == '-' &&
-			    (!*(p + 1) || *(p + 1) == ' ' || *(p + 1) == ',' || *(p + 1) == ';')) {
-				pa->boot = 0;
-				p++;
-			} else
-				rc = -EINVAL;
+			else {
+				char *tk = next_token(&p);
+				if (tk && *tk == '*' && *(tk + 1) == '\0')
+					pa->boot = 1;
+				else if (tk && *tk == '-' && *(tk + 1) == '\0')
+					pa->boot = 0;
+				else
+					rc = -EINVAL;
+			}
 			break;
 		default:
 			break;
