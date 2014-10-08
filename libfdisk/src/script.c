@@ -593,6 +593,7 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 	while (rc == 0 && p && *p) {
 
 		DBG(SCRIPT, ul_debugobj(dp, " parsing '%s'", p));
+		p = (char *) skip_blank(p);
 
 		if (!strncasecmp(p, "start=", 6)) {
 			p += 6;
@@ -741,9 +742,7 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 		uint64_t num;
 		char *begin;
 
-		while (isblank(*p)) p++;
-		if (!*p)
-			break;
+		p = (char *) skip_blank(p);
 		item++;
 
 		DBG(SCRIPT, ul_debugobj(dp, " parsing item %d ('%s')", item, p));
