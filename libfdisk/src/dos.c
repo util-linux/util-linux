@@ -1185,8 +1185,11 @@ static int add_logical(struct fdisk_context *cxt,
 
 	cxt->label->nparts_max++;
 
-	fdisk_info(cxt, _("Adding logical partition %zu"),
-			cxt->label->nparts_max);
+	/* this message makes sense only when we use extended/primary/logical
+	 * dialog. The dialog is disable for scripts, see dos_add_partition() */
+	if (!cxt->script)
+		fdisk_info(cxt, _("Adding logical partition %zu"),
+				cxt->label->nparts_max);
 	*partno = cxt->label->nparts_max - 1;
 	return add_partition(cxt, *partno, pa);
 }
