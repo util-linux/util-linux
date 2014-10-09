@@ -31,11 +31,11 @@ ts_scsi_debug_init dev_size_mb=50 sector_size=512 physblk_exp=3
 
 ts_init_subtest "simple-commas"
 $TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
-2048,6144,L
-8192,6144,S
-14336,6144,
+ 2048,6144,L
+8192, 6144,S
+14336 , 6144 ,
 20480,,E
-,6144,
+,6144 ,
 ,,
 EOF
 ts_fdisk_clean $TS_DEVICE
@@ -53,9 +53,10 @@ ts_finalize_subtest
 
 ts_init_subtest "simple-space"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
 $TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
-2048,6144,L
-8192,6144,S
+ 2048 6144 L
+8192  6144 S
 ,,
 EOF
 ts_fdisk_clean $TS_DEVICE
@@ -65,8 +66,10 @@ ts_finalize_subtest
 
 ts_init_subtest "read-dump"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
 $TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
 unit: sectors
+label-id: 0x1ddc8a79
 
 ${TS_DEVICE}1 : start=     2048, size=     6144, Id=83, bootable
 ${TS_DEVICE}2 : start=     8192, size=     6144, Id=82

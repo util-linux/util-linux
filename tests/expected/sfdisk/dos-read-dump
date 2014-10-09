@@ -1,26 +1,30 @@
-sfdisk: Checking that no-one is using this disk right now ...
-sfdisk: OK
-sfdisk:  <removed>: unrecognized partition table type
-sfdisk: No partitions found
-sfdisk: Warning: partition 5 does not end at a cylinder boundary
-sfdisk: Warning: partition [6] does not start at a cylinder boundary
+Checking that no-one is using this disk right now ... OK
 
-Disk <removed>: 100 cylinders, 32 heads, 32 sectors/track
-Old situation:
+Disk <removed>: 50 MiB, 52428800 bytes, 102400 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 32768 bytes
+
+>>> Script header accepted.
+>>> Script header accepted.
+>>> Created a new <removed>.
+Created a new <removed>.
+<removed>2: Created a new <removed>.
+<removed>3: Created a new <removed>.
+<removed>4: Created a new <removed>.
+<removed>5: Created a new <removed>.
+<removed>6: Created a new <removed>.
+<removed>7: 
 New situation:
-Units: sectors of 512 bytes, counting from 0
 
-   Device Boot    Start       End   #sectors  Id  System
-<removed>1   *      2048      8191       6144  83  Linux
-<removed>2          8192     14335       6144  82  Linux swap / Solaris
-<removed>3         14336     20479       6144  83  Linux
-<removed>4         20480    102399      81920   5  Extended
-<removed>5         20481     26624       6144  83  Linux
-<removed>6         26626    102399      75774  83  Linux
-Successfully wrote the new partition table
+Device     Boot Start    End Sectors Size Id Type
+<removed>1  *     2048   8191    6144   3M 83 Linux
+<removed>2        8192  14335    6144   3M 82 Linux swap / Solaris
+<removed>3       14336  20479    6144   3M 83 Linux
+<removed>4       20480 102399   81920  40M  5 Extended
+<removed>5       20481  26624    6144   3M 83 Linux
+<removed>6       26626 102399   75774  37M 83 Linux
 
-sfdisk: If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)
-to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1
-(See fdisk(8).)
-Re-reading the partition table ...
-
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
