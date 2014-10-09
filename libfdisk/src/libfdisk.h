@@ -250,6 +250,7 @@ extern int fdisk_partition_cmp_start(struct fdisk_partition *a,
 extern int fdisk_partition_set_end(struct fdisk_partition *pa, uint64_t off);
 extern uint64_t fdisk_partition_get_end(struct fdisk_partition *pa);
 extern int fdisk_partition_set_size(struct fdisk_partition *pa, uint64_t size);
+extern int fdisk_partition_size_explicit(struct fdisk_partition *pa, int enable);
 extern uint64_t fdisk_partition_get_size(struct fdisk_partition *pa);
 
 extern int fdisk_partition_set_partno(struct fdisk_partition *pa, size_t n);

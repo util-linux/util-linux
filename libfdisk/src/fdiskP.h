@@ -142,6 +142,7 @@ struct fdisk_partition {
 	unsigned int	partno_follow_default : 1,	/* use default partno */
 			start_follow_default : 1,	/* use default start */
 			end_follow_default : 1,		/* use default end */
+			size_explicit : 1,		/* don't align the size */
 			freespace : 1,		/* this is free space */
 			container : 1,		/* container partition (e.g. extended partition) */
 			wholedisk : 1,		/* special system partition */

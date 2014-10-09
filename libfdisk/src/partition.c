@@ -337,6 +337,25 @@ int fdisk_partition_end_is_default(struct fdisk_partition *pa)
 	return pa->end_follow_default;
 }
 
+/**
+ * fdisk_partition_size_explicit:
+ * @pa: partition
+ * @enable: 0|1
+ *
+ * By default libfdisk aligns the size when add the new partition (by
+ * fdisk_add_partrition()). If you want to disable this functionality use
+ * @enable = 1.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int fdisk_partition_size_explicit(struct fdisk_partition *pa, int enable)
+{
+	if (!pa)
+		return -EINVAL;
+	pa->size_explicit = enable ? 1 : 0;
+	return 0;
+}
+
 const char *fdisk_partition_get_uuid(struct fdisk_partition *pa)
 {
 	return pa ? pa->uuid : NULL;
@@ -601,7 +620,8 @@ int fdisk_get_partition(struct fdisk_context *cxt, size_t partno,
 			*pa = NULL;
 		} else
 			fdisk_reset_partition(*pa);
-	}
+	} else
+		(*pa)->size_explicit = 1;
 	return rc;
 }
 
