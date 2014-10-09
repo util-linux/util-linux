@@ -970,8 +970,13 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	if (n < 4) {
 		if (cxt->parent && fdisk_is_label(cxt->parent, GPT))
 			start = 1;		/* Bad boy modifies hybrid MBR */
-		else
+		else {
+			if (cxt->script && pa && pa->start && pa->start < cxt->first_lba
+			    && pa->start >= 1)
+				fdisk_set_first_lba(cxt, 1);
+
 			start = cxt->first_lba;
+		}
 
 		if (fdisk_use_cylinders(cxt) || !cxt->total_sectors)
 			limit = cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders - 1;
@@ -988,8 +993,14 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		}
 	} else {
 		assert(ext_pe);
-		start = l->ext_offset + cxt->first_lba;
 		limit = get_abs_partition_end(ext_pe);
+
+		if (cxt->script && pa && pa->start && pa->start >= l->ext_offset
+		    && pa->start < l->ext_offset + cxt->first_lba)
+			fdisk_set_first_lba(cxt, 1);
+
+		start = l->ext_offset + cxt->first_lba;
+
 	}
 	if (fdisk_use_cylinders(cxt))
 		for (i = 0; i < cxt->label->nparts_max; i++) {
@@ -1005,6 +1016,13 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 
 		temp = start;
 		dflt = start = get_unused_start(cxt, n, start, first, last);
+
+		if (n >= 4 && pa && pa->start && cxt->script
+		    && cxt->first_lba > 1
+		    && temp == start - cxt->first_lba) {
+			fdisk_set_first_lba(cxt, 1);
+			start = pa->start;
+		}
 
 		/* the default sector should be aligned and unused */
 		do {
@@ -1074,8 +1092,8 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	else if (pa && pa->end_follow_default)
 		stop = limit;
 	else if (pa && pa->size) {
-		stop = start + pa->size;
-		isrel = 1;
+		stop = start + pa->size - 1;
+		isrel = pa->size_explicit ? 0 : 1;
 	} else {
 		/* ask user by dialog */
 		struct fdisk_ask *ask = fdisk_new_ask();
@@ -1109,8 +1127,11 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			stop = stop * fdisk_get_units_per_sector(cxt) - 1;
 			if (stop >limit)
 				stop = limit;
-		}
+		} else
+			stop -= 1;
 	}
+
+	DBG(LABEL, ul_debug("DOS: raw stop: %ju", (uintmax_t) stop));
 
 	if (stop > limit)
 		stop = limit;
