@@ -88,6 +88,27 @@ $TS_CMD_SFDISK --unit S --dump ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 ts_fdisk_clean $TS_DEVICE
 ts_finalize_subtest
 
+#
+# Test first LBA smaller than libfdisk default (~1MiB) and small gaps between
+# logical partitions (just only one sector for EBR).
+#
+ts_init_subtest "explicit-size"
+$TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
+$TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+label: dos
+1, 1000, L
+1001, 1000, S
+2001, 1000
+3001,,E
+3002,1000,L
+4003,1000,L
+5004,,L
+EOF
+ts_fdisk_clean $TS_DEVICE
+udevadm settle
+ts_finalize_subtest
+
 
 rmmod scsi_debug
 ts_finalize
