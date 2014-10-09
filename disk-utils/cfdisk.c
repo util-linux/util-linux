@@ -1448,7 +1448,7 @@ done:
 
 /* @res is default value as well as result in bytes */
 static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
-		       uintmax_t low, uintmax_t up)
+		       uintmax_t low, uintmax_t up, int *expsize)
 {
 	char buf[128];
 	uintmax_t user = 0;
@@ -1502,6 +1502,9 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 				ui_warnx(_("Maximal size is %ju bytes."), up);
 				rc = -ERANGE;
 			}
+			if (rc == 0 && insec && expsize)
+				*expsize = 1;
+
 		} else
 			ui_warnx(_("Failed to parse size."));
 	} while (rc != 0);
@@ -1807,6 +1810,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	{
 		uint64_t start, size, dflt_size;
 		struct fdisk_partition *npa;	/* the new partition */
+		int expsize = 0;		/* size specified explicitly in sectors */
 
 		if (!pa || !fdisk_partition_is_freespace(pa))
 			return -EINVAL;
@@ -1817,7 +1821,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		start = fdisk_partition_get_start(pa);
 		size = dflt_size = fdisk_partition_get_size(pa) * fdisk_get_sector_size(cf->cxt);
 
-		if (ui_get_size(cf, _("Partition size: "), &size, 1, size)
+		if (ui_get_size(cf, _("Partition size: "), &size, 1, size, &expsize)
 				== -CFDISK_ERR_ESC)
 			break;
 
@@ -1826,8 +1830,11 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		else /* set relative size of the partition */
 			fdisk_partition_set_size(npa, size / fdisk_get_sector_size(cf->cxt));
 
+		if (expsize)
+			fdisk_partition_size_explicit(pa, 1);
+
 		fdisk_partition_set_start(npa, start);
-				fdisk_partition_partno_follow_default(npa, 1);
+		fdisk_partition_partno_follow_default(npa, 1);
 		/* add to disk label -- libfdisk will ask for missing details */
 		rc = fdisk_add_partition(cf->cxt, npa, NULL);
 		fdisk_unref_partition(npa);

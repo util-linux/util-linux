@@ -608,8 +608,10 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 			p += 5;
 			rc = next_number(&p, &num, &pow);
 			if (!rc) {
-				if (pow)
+				if (pow)	/* specified as <num><suffix> */
 					num /= dp->cxt->sector_size;
+				else		/* specified as number of sectors */
+					fdisk_partition_size_explicit(pa, 1);
 				fdisk_partition_set_size(pa, num);
 				fdisk_partition_end_follow_default(pa, 0);
 			}
@@ -766,8 +768,10 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 				int pow = 0;
 				rc = next_number(&p, &num, &pow);
 				if (!rc) {
-					if (pow)
+					if (pow) /* specified as <size><suffix> */
 						num /= dp->cxt->sector_size;
+					else	 /* specified as number of sectors */
+						fdisk_partition_size_explicit(pa, 1);
 					fdisk_partition_set_size(pa, num);
 				}
 				fdisk_partition_end_follow_default(pa, 0);
