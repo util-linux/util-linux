@@ -128,7 +128,7 @@ void list_disklabel(struct fdisk_context *cxt)
 		const struct fdisk_field *field =
 				fdisk_label_get_field(lb, ids[i]);
 		if (!field)
-			goto done;
+			continue;
 		if (fdisk_field_is_number(field))
 			fl |= SCOLS_FL_RIGHT;
 		if (fdisk_field_get_id(field) == FDISK_FIELD_TYPE)
@@ -335,16 +335,26 @@ static int fieldname_to_id(const char *name, size_t namesz)
 int *init_fields(struct fdisk_context *cxt, const char *str, size_t *n)
 {
 	int *dflt_ids = NULL;
+	struct fdisk_label *lb;
 
 	if (!fields_string)
 		fields_string = str;
+	if (!cxt)
+	       goto done;
 
-	if (!cxt || fields_nids)
-		goto done;
+	lb = fdisk_get_label(cxt, NULL);
 
-	fields_label = fdisk_get_label(cxt, NULL);
-	if (!fields_label)
+	if (!lb || fields_label != lb) {	/* label changed: reset */
+		free(fields_ids);
+		fields_ids = NULL;
+		fields_label = lb;
+		fields_nids = 0;
+	}
+
+	if (!fields_label)	/*  no label */
 		goto done;
+	if (fields_nids)
+		goto done;	/* already initialized */
 
 	/* library default */
 	if (fdisk_label_get_fields_ids(NULL, cxt, &dflt_ids, &fields_nids))
