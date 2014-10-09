@@ -114,7 +114,7 @@ static int ui_menu_move(struct cfdisk *cf, int key);
 static void ui_menu_resize(struct cfdisk *cf);
 
 static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
-		       uintmax_t low, uintmax_t up);
+		       uintmax_t low, uintmax_t up, int *expsize);
 
 static int ui_enabled;
 static int ui_resize;

@@ -1275,6 +1275,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 	switch (rc) {
 	case SFDISK_DONE_ASK:
+	case SFDISK_DONE_EOF:
 		if (sf->interactive) {
 			int yes = 0;
 			fdisk_ask_yesno(sf->cxt, _("Do you want to write this to disk?"), &yes);
@@ -1284,7 +1285,6 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				break;
 			}
 		}
-	case SFDISK_DONE_EOF:
 	case SFDISK_DONE_WRITE:
 		rc = write_changes(sf);
 		break;
