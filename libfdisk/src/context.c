@@ -844,6 +844,62 @@ sector_t fdisk_get_first_lba(struct fdisk_context *cxt)
 }
 
 /**
+ * fdisk_set_first_lba:
+ * @cxt: fdisk context
+ * @lba: first possible sector for data
+ *
+ * It's strongly recommended to use the default library setting. The first LBA
+ * is always reseted by fdisk_assign_device(), fdisk_override_geometry()
+ * and fdisk_reset_alignment(). This is very low level function and library
+ * does not check if your setting makes any sense.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+sector_t fdisk_set_first_lba(struct fdisk_context *cxt, sector_t lba)
+{
+	assert(cxt);
+	DBG(CXT, ul_debugobj(cxt, "setting first LBA from %ju to %ju",
+			(uintmax_t) cxt->first_lba, (uintmax_t) lba));
+	cxt->first_lba = lba;
+	return 0;
+}
+
+/**
+ * fdisk_get_last_lba:
+ * @cxt: fdisk context
+ *
+ * Note that the device has to be already assigned.
+ *
+ * Returns: last possible LBA on device
+ */
+sector_t fdisk_get_last_lba(struct fdisk_context *cxt)
+{
+	return cxt->last_lba;
+}
+
+/**
+ * fdisk_set_last_lba:
+ * @cxt: fdisk context
+ * @lba: last possible sector
+ *
+ * It's strongly recommended to use the default library setting. The last LBA
+ * is always reseted by fdisk_assign_device(), fdisk_override_geometry() and
+ * fdisk_reset_alignment().
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+sector_t fdisk_set_last_lba(struct fdisk_context *cxt, sector_t lba)
+{
+	assert(cxt);
+
+	if (lba > cxt->total_sectors - 1 && lba < 1)
+		return -ERANGE;
+	cxt->last_lba = lba;
+	return 0;
+}
+
+
+/**
  * fdisk_get_nsectors:
  * @cxt: context
  *

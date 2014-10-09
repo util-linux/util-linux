@@ -123,6 +123,9 @@ unsigned long fdisk_get_sector_size(struct fdisk_context *cxt);
 unsigned long fdisk_get_alignment_offset(struct fdisk_context *cxt);
 unsigned long fdisk_get_grain_size(struct fdisk_context *cxt);
 sector_t fdisk_get_first_lba(struct fdisk_context *cxt);
+sector_t fdisk_set_first_lba(struct fdisk_context *cxt, sector_t lba);
+sector_t fdisk_get_last_lba(struct fdisk_context *cxt);
+sector_t fdisk_set_last_lba(struct fdisk_context *cxt, sector_t lba);
 sector_t fdisk_get_nsectors(struct fdisk_context *cxt);
 const char *fdisk_get_devname(struct fdisk_context *cxt);
 int fdisk_get_devfd(struct fdisk_context *cxt);
@@ -130,6 +133,8 @@ int fdisk_get_devfd(struct fdisk_context *cxt);
 unsigned int fdisk_get_geom_heads(struct fdisk_context *cxt);
 sector_t fdisk_get_geom_sectors(struct fdisk_context *cxt);
 sector_t fdisk_get_geom_cylinders(struct fdisk_context *cxt);
+
+
 
 /* parttype.c */
 const struct fdisk_parttype *fdisk_label_get_parttype(const struct fdisk_label *lb, size_t n);
