@@ -1182,6 +1182,7 @@ static int add_logical(struct fdisk_context *cxt,
 		       size_t *partno)
 {
 	struct pte *pe;
+	int rc;
 
 	assert(cxt);
 	assert(partno);
@@ -1212,7 +1213,18 @@ static int add_logical(struct fdisk_context *cxt,
 		fdisk_info(cxt, _("Adding logical partition %zu"),
 				cxt->label->nparts_max);
 	*partno = cxt->label->nparts_max - 1;
-	return add_partition(cxt, *partno, pa);
+	rc = add_partition(cxt, *partno, pa);
+
+	if (rc) {
+		/* reset on error */
+		cxt->label->nparts_max--;
+		pe->pt_entry = NULL;
+		pe->ex_entry = NULL;
+		pe->offset = 0;
+		pe->changed = 0;
+	}
+
+	return rc;
 }
 
 static void check(struct fdisk_context *cxt, size_t n,
@@ -1653,11 +1665,8 @@ static int dos_write_disklabel(struct fdisk_context *cxt)
 	for (i = 4; i < cxt->label->nparts_max; i++) {
 		struct pte *pe = self_pte(cxt, i);
 
-		if (!pe->changed)
+		if (!pe->changed || !pe->offset || !pe->sectorbuffer)
 			continue;
-
-		assert(pe->sectorbuffer);
-		assert(pe->offset);
 
 		mbr_set_magic(pe->sectorbuffer);
 		rc = write_sector(cxt, pe->offset, pe->sectorbuffer);
