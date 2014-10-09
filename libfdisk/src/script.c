@@ -394,7 +394,7 @@ int fdisk_script_write_file(struct fdisk_script *dp, FILE *f)
 		if (devname)
 			p = fdisk_partname(devname, pa->partno + 1);
 		if (p)
-			fprintf(f, "%s : ", p);
+			fprintf(f, "%s :", p);
 		else
 			fprintf(f, "%zu :", pa->partno + 1);
 
@@ -412,8 +412,14 @@ int fdisk_script_write_file(struct fdisk_script *dp, FILE *f)
 			fprintf(f, ", uuid=%s", pa->uuid);
 		if (pa->name && *pa->name)
 			fprintf(f, ", name=\"%s\"", pa->name);
-		if (pa->attrs)
-			fprintf(f, ", attrs=\"%s\"", pa->attrs);
+
+		/* for MBR attr=80 means bootable */
+		if (pa->attrs) {
+			struct fdisk_label *lb = script_get_label(dp);
+
+			if (!lb || fdisk_label_get_type(lb) != FDISK_DISKLABEL_DOS)
+				fprintf(f, ", attrs=\"%s\"", pa->attrs);
+		}
 		if (pa->boot)
 			fprintf(f, ", bootable");
 		fputc('\n', f);
