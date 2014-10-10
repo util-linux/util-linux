@@ -461,6 +461,17 @@ static int parse_header_line(struct fdisk_script *dp, char *s)
 	ltrim_whitespace((unsigned char *) value);
 	rtrim_whitespace((unsigned char *) value);
 
+	if (strcmp(name, "label") == 0) {
+		if (dp->cxt && !fdisk_get_label(dp->cxt, value))
+			goto done;			/* unknown label name */
+	} else if (strcmp(name, "unit") == 0) {
+		if (strcmp(value, "sectors") != 0)
+			goto done;			/* only "sectors" supported */
+	} else if (strcmp(name, "label-id") == 0) {
+		;					/* whatever is posssible */
+	} else
+		goto done;				/* unknown header */
+
 	if (*name && *value)
 		rc = fdisk_script_set_header(dp, name, value);
 done:
