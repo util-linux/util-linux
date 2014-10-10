@@ -1238,6 +1238,10 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			if (!created) {		/* create a new disklabel */
 				rc = fdisk_apply_script_headers(sf->cxt, dp);
 				created = !rc;
+				if (rc)
+					fdisk_warnx(sf->cxt, _(
+					  "Failed to apply script headers, "
+					  "disk label not created."));
 			}
 			if (!rc && partno >= 0) {	/* -N <partno>, modify partition */
 				rc = fdisk_set_partition(sf->cxt, partno, pa);
@@ -1248,7 +1252,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				rc = fdisk_add_partition(sf->cxt, pa, &cur_partno);
 				if (rc) {
 					errno = -rc;
-					fdisk_warn(sf->cxt, _("failed to add partition"));
+					fdisk_warn(sf->cxt, _("Failed to add partition"));
 				}
 			}
 
@@ -1256,16 +1260,15 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				if (sf->interactive)
 					sfdisk_print_partition(sf, cur_partno);
 				next_partno = cur_partno + 1;
-			} else if (pa) {	/* error, drop partition from script */
+			} else if (pa)		/* error, drop partition from script */
 				fdisk_table_remove_partition(tb, pa);
-				if (rc == -ENOSPC) {
-					rc = SFDISK_DONE_ASK;
-					break;
-				}
-			}
 		} else
 			fdisk_info(sf->cxt, _("Script header accepted."));
 
+		if (rc && !sf->interactive) {
+			rc =  SFDISK_DONE_ABORT;
+			break;
+		}
 	} while (1);
 
 	if (!sf->quiet && rc != SFDISK_DONE_ABORT) {

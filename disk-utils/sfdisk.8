@@ -74,7 +74,7 @@ together with \fB\-\-verify\fR.
 .TP
 .BR \-\-part\-attrs " " \fIdevice\fR " " \fIpartno\fR " "[\fIattrs\fR]
 Change GPT partition attribute bits. If \fIattrs\fR no specified then print the current
-partition setting. The \fIattrs\fR is comma delimited list of bits. The currently
+partition setting. The \fIattrs\fR is comma or space delimited list of bits. The currently
 supported attribute bits are: RequiredPartiton, NoBlockIOProtocol, LegacyBIOSBootable
 and GUID specific bits in range from 48 to 63. For example string 
 "RequiredPartiton,50,51" sets three bits.
