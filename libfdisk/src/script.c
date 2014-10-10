@@ -494,7 +494,7 @@ static char *next_token(char **str)
 		if (!tk_begin) {
 			if (isblank(*p))
 				continue;
-			tk_begin = p;
+			tk_begin = *p == '"' ? p + 1 : p;
 		}
 		if (*p == '"')
 			open_quote ^= 1;
