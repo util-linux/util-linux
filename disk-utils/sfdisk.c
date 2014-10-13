@@ -76,7 +76,7 @@ enum {
 };
 
 struct sfdisk {
-	int		act;		/* action */
+	int		act;		/* ACT_* */
 	int		partno;		/* -N <partno>, default -1 */
 	const char	*label;		/* --label <label> */
 	const char	*label_nested;	/* --label-nested <label> */

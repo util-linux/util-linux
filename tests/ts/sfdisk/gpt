@@ -102,5 +102,11 @@ ts_fdisk_clean $TS_DEVICE
 ts_finalize_subtest
 
 
+ts_init_subtest "list-pmbr"
+$TS_CMD_SFDISK --list --label-nested dos ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean $TS_DEVICE
+ts_finalize_subtest
+
+
 rmmod scsi_debug
 ts_finalize
