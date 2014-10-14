@@ -2031,8 +2031,7 @@ static int gpt_add_partition(
 				if (user_l + (cxt->grain / cxt->sector_size) > dflt_l)
 					user_l = dflt_l;
 				*/
-			} else
-				user_l -= 1;
+			}
 
 			if (user_l > user_f && user_l <= disk_l)
 				break;
