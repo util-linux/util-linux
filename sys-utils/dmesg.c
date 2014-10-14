@@ -71,6 +71,7 @@ struct dmesg_color {
 enum {
 	DMESG_COLOR_SUBSYS,
 	DMESG_COLOR_TIME,
+	DMESG_COLOR_TIMEBREAK,
 	DMESG_COLOR_ALERT,
 	DMESG_COLOR_CRIT,
 	DMESG_COLOR_ERR,
@@ -82,6 +83,7 @@ static const struct dmesg_color colors[] =
 {
 	[DMESG_COLOR_SUBSYS]    = { "subsys",	UL_COLOR_BROWN },
 	[DMESG_COLOR_TIME]	= { "time",     UL_COLOR_GREEN },
+	[DMESG_COLOR_TIMEBREAK]	= { "timebreak",UL_COLOR_GREEN UL_COLOR_BOLD },
 	[DMESG_COLOR_ALERT]	= { "alert",    UL_COLOR_REVERSE UL_COLOR_RED },
 	[DMESG_COLOR_CRIT]	= { "crit",     UL_COLOR_BOLD UL_COLOR_RED },
 	[DMESG_COLOR_ERR]       = { "err",      UL_COLOR_RED },
@@ -921,6 +923,7 @@ static void print_record(struct dmesg_control *ctl,
 		if (cur.tm_min != ctl->lasttm.tm_min ||
 		    cur.tm_hour != ctl->lasttm.tm_hour ||
 		    cur.tm_yday != ctl->lasttm.tm_yday) {
+			dmesg_enable_color(DMESG_COLOR_TIMEBREAK);
 			printf("[%s] ", short_ctime(&cur, buf, sizeof(buf)));
 		} else {
 			if (delta < 10)
