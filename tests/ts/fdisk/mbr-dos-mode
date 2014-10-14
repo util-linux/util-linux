@@ -39,7 +39,7 @@ FDISK_CMD_DELETE_EXTENDED="d\n2\n" # delete second primary
 FDISK_OPTIONS="-C 1024 -c=dos -u=cylinders"
 
 function print_layout {
-	echo -ne "\n---layout----------" >> $TS_OUTPUT
+	echo -ne "\n---layout----------\n" >> $TS_OUTPUT
 	$TS_CMD_FDISK ${FDISK_OPTIONS} -l ${TEST_IMAGE_NAME} >> $TS_OUTPUT
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
 }

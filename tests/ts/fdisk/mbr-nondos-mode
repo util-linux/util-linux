@@ -37,7 +37,7 @@ FDISK_CMD_DELETE_2PRIMARY="d\n2\n" # delete first primary
 FDISK_CMD_DELETE_EXTENDED="d\n3\n" # delete second primary
 
 function print_layout {
-	echo -ne "\n---layout----------" >> $TS_OUTPUT
+	echo -ne "\n---layout----------\n" >> $TS_OUTPUT
 	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} >> $TS_OUTPUT
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
 }

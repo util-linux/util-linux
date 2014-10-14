@@ -64,5 +64,4 @@ Device     Boot Start    End Sectors Size Id Type
 <removed>p6      77824  88063   10240   5M 83 Linux
 <removed>p7      90112 102399   12288   6M 83 Linux
 
-
 Command (m for help): 

@@ -23,7 +23,6 @@ Device     Boot Start   End Sectors Size Id Type
 <removed>2       2048  4095    2048   1M 83 Linux
 <removed>3       6144  8191    2048   1M 83 Linux
 <removed>4       8192 40959   32768  16M  5 Extended
-
 Partition table entries are not in disk order.
 -------------------
 
@@ -46,7 +45,6 @@ Device     Boot Start   End Sectors Size Id Type
 <removed>6      22528 24575    2048   1M 83 Linux
 <removed>7      18432 20479    2048   1M 83 Linux
 <removed>8      10240 12287    2048   1M 83 Linux
-
 Partition table entries are not in disk order.
 -------------------
 
@@ -69,6 +67,5 @@ Device     Boot Start   End Sectors Size Id Type
 <removed>6      14336 16383    2048   1M 83 Linux
 <removed>7      18432 20479    2048   1M 83 Linux
 <removed>8      22528 24575    2048   1M 83 Linux
-
 -------------------
 

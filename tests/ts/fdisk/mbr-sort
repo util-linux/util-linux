@@ -39,7 +39,7 @@ FDISK_CMD_CREATE_4LOGICAL="n\n10240\n12287\n"
 FDISK_CMD_EXPERT_SORT="x\nf\nr\n"
 
 function print_layout {
-	echo -ne "\n---layout----------" >> $TS_OUTPUT
+	echo -ne "\n---layout----------\n" >> $TS_OUTPUT
 	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} >> $TS_OUTPUT
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
 }

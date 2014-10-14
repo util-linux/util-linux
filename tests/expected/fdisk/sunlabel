@@ -2,7 +2,6 @@ Initialize empty image
 f1c9645dbc14efddc7d8a322685f26eb sunlabel.img
 Create new SUN partition table
 f050fd2beb99f8d968bf17450f655f06 sunlabel.img
-
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
 Geometry: 1 heads, 63 sectors/track, 325 cylinders
 Units: cylinders of 63 * 512 = 32256 bytes
@@ -11,7 +10,6 @@ I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: sun
 Create first partition
 e730c7ec8208601f41963f0485147248 sunlabel.img
-
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
 Geometry: 1 heads, 63 sectors/track, 325 cylinders
 Units: cylinders of 63 * 512 = 32256 bytes
@@ -21,10 +19,8 @@ Disklabel type: sun
 
 Device             Start   End Cylinders Size Id Type         Flags
 <removed>1     1   128       129   4M 83 Linux native      
-
 Set partition sysid
 df75defdb97fbd56222aed18631a22d0 sunlabel.img
-
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
 Geometry: 1 heads, 63 sectors/track, 325 cylinders
 Units: cylinders of 63 * 512 = 32256 bytes
@@ -34,10 +30,8 @@ Disklabel type: sun
 
 Device             Start   End Cylinders Size Id Type      Flags
 <removed>1     1   128       129   4M  4 SunOS usr      
-
 Set first partition readonly
 da23f66698d9a553162887621d4c7490 sunlabel.img
-
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
 Geometry: 1 heads, 63 sectors/track, 325 cylinders
 Units: cylinders of 63 * 512 = 32256 bytes
@@ -47,10 +41,8 @@ Disklabel type: sun
 
 Device             Start   End Cylinders Size Id Type      Flags
 <removed>1     1   128       129   4M  4 SunOS usr     r
-
 Set first partition mountable
 3ab76e8491b103eab52b2ae1856c1e30 sunlabel.img
-
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
 Geometry: 1 heads, 63 sectors/track, 325 cylinders
 Units: cylinders of 63 * 512 = 32256 bytes
@@ -60,7 +52,6 @@ Disklabel type: sun
 
 Device             Start   End Cylinders Size Id Type      Flags
 <removed>1     1   128       129   4M  4 SunOS usr    ur
-
 Create second partition
 
 Welcome to fdisk <removed>.
@@ -75,7 +66,6 @@ Command (m for help): The partition table has been altered.
 Syncing disks.
 
 a87e80830aa13d2d68b766962f052750 sunlabel.img
-
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
 Geometry: 1 heads, 63 sectors/track, 325 cylinders
 Units: cylinders of 63 * 512 = 32256 bytes
@@ -86,6 +76,5 @@ Disklabel type: sun
 Device             Start   End Cylinders  Size Id Type         Flags
 <removed>1     1   128       129    4M  4 SunOS usr       ur
 <removed>2   129   325       198  6.1M 83 Linux native      
-
 Delete all partitions
 502ba7a0cfdce2849c3a99881f0590c3 sunlabel.img

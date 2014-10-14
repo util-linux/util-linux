@@ -35,7 +35,7 @@ FDISK_CMD_DELETE_PART="d\n2\n"               # delete 2nd partition
 FDISK_CMD_CREATE_PART="n\n2\n\n\n"           # create 2nd partition
 
 function print_layout {
-	echo -ne "\n---layout----------" >> $TS_OUTPUT
+	echo -ne "\n---layout----------\n" >> $TS_OUTPUT
 	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} &>> $TS_OUTPUT
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
 }
