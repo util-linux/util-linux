@@ -17,6 +17,7 @@ struct fdisk_partition *fdisk_new_partition(void)
 	INIT_LIST_HEAD(&pa->parts);
 	pa->partno = FDISK_EMPTY_PARTNO;
 	pa->parent_partno = FDISK_EMPTY_PARTNO;
+	pa->boot = FDISK_EMPTY_BOOTFLAG;
 	DBG(PART, ul_debugobj(pa, "alloc"));
 	return pa;
 }
@@ -43,6 +44,7 @@ void fdisk_reset_partition(struct fdisk_partition *pa)
 	memset(pa, 0, sizeof(*pa));
 	pa->partno = FDISK_EMPTY_PARTNO;
 	pa->parent_partno = FDISK_EMPTY_PARTNO;
+	pa->boot = FDISK_EMPTY_BOOTFLAG;
 	pa->refcount = ref;
 	INIT_LIST_HEAD(&pa->parts);
 }
@@ -408,7 +410,7 @@ int fdisk_partition_is_used(struct fdisk_partition *pa)
 
 int fdisk_partition_is_bootable(struct fdisk_partition *pa)
 {
-	return pa && pa->boot;
+	return pa && pa->boot == 1;
 }
 
 int fdisk_partition_is_freespace(struct fdisk_partition *pa)

@@ -139,6 +139,8 @@ struct fdisk_partition {
 	char		*start_addr;		/* start C/H/S in string */
 	char		*end_addr;		/* end C/H/S in string */
 
+	int		boot;			/* MBR only: 1 = yes, 0 = no, -1 undefined */
+
 	unsigned int	partno_follow_default : 1,	/* use default partno */
 			start_follow_default : 1,	/* use default start */
 			end_follow_default : 1,		/* use default end */
@@ -146,12 +148,12 @@ struct fdisk_partition {
 			freespace : 1,		/* this is free space */
 			container : 1,		/* container partition (e.g. extended partition) */
 			wholedisk : 1,		/* special system partition */
-			boot : 1,		/* bootable (MBR only) */
 			used : 1;		/* partition already used */
 };
 
 #define FDISK_EMPTY_PARTNO	((size_t) -1)
 #define FDISK_EMPTY_PARTITION	{ .partno = FDISK_EMPTY_PARTNO }
+#define FDISK_EMPTY_BOOTFLAG	(-1)
 
 struct fdisk_table {
 	struct list_head	parts;		/* partitions */

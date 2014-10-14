@@ -1808,7 +1808,6 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 {
 	struct dos_partition *p;
 	struct pte *pe;
-	sector_t start, size;
 
 	assert(cxt);
 	assert(pa);
@@ -1827,15 +1826,27 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 	if (pa->type && !pa->type->code)
 		fdisk_warnx(cxt, _("Type 0 means free space to many systems. "
 				   "Having partitions of type 0 is probably unwise."));
-	pe = self_pte(cxt, n);
+
 	p  = self_partition(cxt, n);
 
-	start = pa->start ? pa->start : get_abs_partition_start(pe);
-	size = pa->size ? pa->size : dos_partition_get_size(p);
+	if (pa->start || pa->size) {
+		sector_t start, size;
 
-	set_partition(cxt, n, 0, start, start + size - 1,
+		pe = self_pte(cxt, n);
+
+		start = pa->start ? pa->start : get_abs_partition_start(pe);
+		size = pa->size ? pa->size : dos_partition_get_size(p);
+
+		set_partition(cxt, n, 0, start, start + size - 1,
 				pa->type  ? pa->type->code : p->sys_ind,
 				pa->boot);
+
+	} else {
+		if (pa->type)
+			p->sys_ind = pa->type->code;
+		if (pa->boot != FDISK_EMPTY_BOOTFLAG)
+			p->boot_ind = pa->boot == 1 ? ACTIVE_FLAG : 0;
+	}
 
 	partition_set_changed(cxt, n, 1);
 	return 0;
