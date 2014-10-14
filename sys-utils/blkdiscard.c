@@ -150,7 +150,7 @@ int main(int argc, char **argv)
 
 	/* is the range end behind the end of the device ?*/
 	if (range[0] > blksize)
-		err(EXIT_FAILURE, _("%s: offset is greater than device size"), path);
+		errx(EXIT_FAILURE, _("%s: offset is greater than device size"), path);
 	end = range[0] + range[1];
 	if (end < range[0] || end > blksize)
 		range[1] = blksize - range[0];
