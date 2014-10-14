@@ -1127,8 +1127,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			stop = stop * fdisk_get_units_per_sector(cxt) - 1;
 			if (stop >limit)
 				stop = limit;
-		} else
-			stop -= 1;
+		}
 	}
 
 	DBG(LABEL, ul_debug("DOS: raw stop: %ju", (uintmax_t) stop));
