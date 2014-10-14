@@ -63,7 +63,7 @@ struct fdisk_context *fdisk_new_context(void)
 	return cxt;
 }
 
-static void init_nested_from_parent(struct fdisk_context *cxt, int isnew)
+static int init_nested_from_parent(struct fdisk_context *cxt, int isnew)
 {
 	struct fdisk_context *parent;
 
@@ -72,7 +72,6 @@ static void init_nested_from_parent(struct fdisk_context *cxt, int isnew)
 
 	parent = cxt->parent;
 
-	cxt->dev_path =		parent->dev_path;
 	cxt->alignment_offset = parent->alignment_offset;
 	cxt->ask_cb =		parent->ask_cb;
 	cxt->ask_data =		parent->ask_data;
@@ -104,6 +103,16 @@ static void init_nested_from_parent(struct fdisk_context *cxt, int isnew)
 		cxt->display_in_cyl_units = parent->display_in_cyl_units;
 	}
 
+	free(cxt->dev_path);
+	cxt->dev_path = NULL;
+
+	if (parent->dev_path) {
+		cxt->dev_path =	strdup(parent->dev_path);
+		if (!cxt->dev_path)
+			return -ENOMEM;
+	}
+
+	return 0;
 }
 
 /**
@@ -141,7 +150,8 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 	fdisk_ref_context(parent);
 	cxt->parent = parent;
 
-	init_nested_from_parent(cxt, 1);
+	if (init_nested_from_parent(cxt, 1) != 0)
+		return NULL;
 
 	if (name) {
 		if (strcmp(name, "bsd") == 0)
@@ -358,12 +368,13 @@ static void reset_context(struct fdisk_context *cxt)
 		/* we close device only in primary context */
 		if (cxt->dev_fd > -1)
 			close(cxt->dev_fd);
-		free(cxt->dev_path);
 		free(cxt->firstsector);
 	}
 
-	cxt->dev_fd = -1;
+	free(cxt->dev_path);
 	cxt->dev_path = NULL;
+
+	cxt->dev_fd = -1;
 	cxt->firstsector = NULL;
 	cxt->firstsector_bufsz = 0;
 
@@ -465,7 +476,8 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 		rc = fdisk_assign_device(cxt->parent, fname, readonly);
 		fdisk_enable_listonly(cxt->parent, org);
 
-		init_nested_from_parent(cxt, 0);
+		if (!rc)
+			rc = init_nested_from_parent(cxt, 0);
 		if (!rc)
 			fdisk_probe_labels(cxt);
 		return rc;
@@ -526,7 +538,8 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 	if (cxt->parent) {
 		int rc = fdisk_deassign_device(cxt->parent, nosync);
 
-		init_nested_from_parent(cxt, 0);
+		if (!rc)
+			rc = init_nested_from_parent(cxt, 0);
 		return rc;
 	}
 
@@ -546,9 +559,9 @@ int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 	}
 
 	free(cxt->dev_path);
+	cxt->dev_path = NULL;
 
 	cxt->dev_fd = -1;
-	cxt->dev_path = NULL;
 
 	return 0;
 }
