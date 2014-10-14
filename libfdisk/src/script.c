@@ -942,7 +942,7 @@ int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t b
 int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
 {
 	char buf[BUFSIZ];
-	int rc = NULL;
+	int rc;
 
 	assert(dp);
 	assert(f);
@@ -1110,6 +1110,7 @@ int test_read(struct fdisk_test *ts, int argc, char *argv[])
 
 int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
 {
+	char buf[BUFSIZ];
 	struct fdisk_script *dp;
 	struct fdisk_context *cxt;
 	int rc = 0;
@@ -1124,7 +1125,7 @@ int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
 		size_t n = fdisk_table_get_nents(dp->table);
 
 		printf(" #%zu :\n", n + 1);
-		rc = fdisk_script_read_line(dp, stdin);
+		rc = fdisk_script_read_line(dp, stdin, buf, sizeof(buf));
 
 		if (rc == 0) {
 			pa = fdisk_table_get_partition(dp->table, n);
