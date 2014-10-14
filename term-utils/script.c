@@ -80,6 +80,7 @@
 
 #define DEFAULT_OUTPUT "typescript"
 
+void sig_finish(int);
 void finish(int);
 void done(void);
 void fail(void);
@@ -258,7 +259,7 @@ main(int argc, char **argv) {
 	/* setup SIGCHLD handler */
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
-	sa.sa_handler = finish;
+	sa.sa_handler = sig_finish;
 	sigaction(SIGCHLD, &sa, NULL);
 
 	/* init mask for SIGCHLD */
@@ -385,23 +386,29 @@ doinput(void) {
 	}
 
 	if (!die)
-		finish(0);	/* wait for childern */
+		finish(1);	/* wait for children */
 	done();
 }
 
 void
-finish(int dummy __attribute__ ((__unused__))) {
+finish(int wait) {
 	int status;
 	pid_t pid;
 	int errsv = errno;
+	int options = wait ? 0 : WNOHANG;
 
-	while ((pid = wait3(&status, WNOHANG, 0)) > 0)
+	while ((pid = wait3(&status, options, 0)) > 0)
 		if (pid == child) {
 			childstatus = status;
 			die = 1;
 		}
 
 	errno = errsv;
+}
+
+void
+sig_finish(int dummy __attribute__ ((__unused__))) {
+	finish(0);
 }
 
 void
