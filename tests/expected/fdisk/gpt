@@ -30,7 +30,6 @@ Device             Start   End Sectors Size Type
 <removed>6 12288 14335    2048   1M Linux filesystem
 <removed>7 14336 16383    2048   1M Linux filesystem
 <removed>8 16384 18431    2048   1M Linux filesystem
-
 -------------------
 
 Change partition type by UUID
@@ -52,7 +51,6 @@ Device             Start   End Sectors Size Type
 <removed>6 12288 14335    2048   1M Linux filesystem
 <removed>7 14336 16383    2048   1M Linux filesystem
 <removed>8 16384 18431    2048   1M Linux filesystem
-
 -------------------
 
 Delete partition
@@ -73,7 +71,6 @@ Device             Start   End Sectors Size Type
 <removed>6 12288 14335    2048   1M Linux filesystem
 <removed>7 14336 16383    2048   1M Linux filesystem
 <removed>8 16384 18431    2048   1M Linux filesystem
-
 -------------------
 
 Create again partition
@@ -95,7 +92,6 @@ Device             Start   End Sectors Size Type
 <removed>6 12288 14335    2048   1M Linux filesystem
 <removed>7 14336 16383    2048   1M Linux filesystem
 <removed>8 16384 18431    2048   1M Linux filesystem
-
 -------------------
 
 Corrupt primary table
@@ -117,7 +113,6 @@ Device             Start   End Sectors Size Type
 <removed>6 12288 14335    2048   1M Linux filesystem
 <removed>7 14336 16383    2048   1M Linux filesystem
 <removed>8 16384 18431    2048   1M Linux filesystem
-
 -------------------
 
 Corrupt backup table
@@ -139,6 +134,5 @@ Device             Start   End Sectors Size Type
 <removed>6 12288 14335    2048   1M Linux filesystem
 <removed>7 14336 16383    2048   1M Linux filesystem
 <removed>8 16384 18431    2048   1M Linux filesystem
-
 -------------------
 

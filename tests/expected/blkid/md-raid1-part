@@ -30,7 +30,6 @@ Device     Boot Start    End Sectors Size Id Type
 <removed>1        2048  53247   51200  25M 83 Linux
 <removed>2       53248 104447   51200  25M 83 Linux
 
-
 Command (m for help): The partition table has been altered.
 Calling ioctl() to re-read partition table.
 Syncing disks.
