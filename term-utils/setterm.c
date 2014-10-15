@@ -162,9 +162,10 @@ struct setterm_control {
 	/* colors */
 	int opt_fo_color:4, opt_ba_color:4, opt_ul_color:4, opt_hb_color:4;
 	/* boolean options */
-	int opt_cu_on:1, opt_li_on:1, opt_bo_on:1, opt_hb_on:1, opt_bl_on:1,
-	    opt_re_on:1, opt_un_on:1, opt_rep_on:1, opt_appck_on:1,
-	    opt_invsc_on:1, opt_msg_on:1, opt_cl_all:1, vcterm:1;
+	unsigned int opt_cu_on:1, opt_li_on:1, opt_bo_on:1, opt_hb_on:1,
+	    opt_bl_on:1, opt_re_on:1, opt_un_on:1, opt_rep_on:1,
+	    opt_appck_on:1, opt_invsc_on:1, opt_msg_on:1, opt_cl_all:1,
+	    vcterm:1;
 	/* Option flags.  Set when an option is invoked. */
 	uint64_t opt_term:1, opt_reset:1, opt_initialize:1, opt_cursor:1,
 	    opt_linewrap:1, opt_default:1, opt_foreground:1,
