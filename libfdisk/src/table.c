@@ -369,8 +369,10 @@ static int table_add_freespace(
 	if (!pa)
 		return 0;
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
-	if (parent) {
+	if (parent && fdisk_partition_has_partno(parent)) {
 		while (fdisk_table_next_partition(tb, &itr, &x) == 0) {
+			if (!fdisk_partition_has_partno(pa))
+				continue;
 			if (x->partno == parent->partno) {
 				real_parent = x;
 				break;

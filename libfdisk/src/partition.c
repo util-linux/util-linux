@@ -286,34 +286,101 @@ int fdisk_partition_size_explicit(struct fdisk_partition *pa, int enable)
 	return 0;
 }
 
-
 /**
- * fdisk_partition_set_partno
+ * fdisk_partition_set_partno:
  * @pa: partition
- * @n: partition number
+ * @parto: partitin number (0 is the first partition, maximal is SIZE_MAX-1)
  *
- * When @pa used as a tempalate for fdisk_add_partition() when infor label driver 
- * about wanted partition position.
+ * Note that zero is valid partno too. Use fdisk_partition_unset_partno() to
+ * undefine the partno.
  *
  * Returns: 0 on success, <0 on error.
  */
-int fdisk_partition_set_partno(struct fdisk_partition *pa, size_t n)
+int fdisk_partition_set_partno(struct fdisk_partition *pa, size_t num)
 {
 	if (!pa)
 		return -EINVAL;
-	pa->partno = n;
+	if (FDISK_IS_UNDEF(num))
+		return -ERANGE;
+	pa->partno = num;
 	return 0;
 }
 
-size_t fdisk_partition_get_partno(struct fdisk_partition *pa)
+/**
+ * fdisk_partition_unset_partno:
+ * @pa: partition
+ *
+ * Sets the partno as undefined. See fdisk_partition_has_partno().
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int fdisk_partition_unset_partno(struct fdisk_partition *pa)
 {
-	return pa ? pa->partno : (size_t) -1;
+	if (!pa)
+		return -EINVAL;
+	FDISK_INIT_UNDEF(pa->partno);
+	return 0;
 }
 
+/**
+ * fdisk_partition_get_partno:
+ * @pa: partition
+ *
+ * The zero is also valid parition number. The function may return random
+ * value when partno is undefined (for example after fdisk_partition_unset_partno()).
+ * Always use fdisk_partition_has_partno() to be sure that you work with valid
+ * numbers.
+ *
+ * Returns: partition number (0 is the first partition)
+ */
+size_t fdisk_partition_get_partno(struct fdisk_partition *pa)
+{
+	return pa->partno;
+}
+
+/**
+ * fdisk_partition_has_partno:
+ * @pa: partition
+ *
+ * Returns: 1 or 0
+ */
+int fdisk_partition_has_partno(struct fdisk_partition *pa)
+{
+	return pa && !FDISK_IS_UNDEF(pa->partno);
+}
+
+
+/**
+ * fdisk_partition_cmp_partno:
+ * @a: partition
+ * @b: partition
+ *
+ * Compares partitons according to partition number See fdisk_sort_table().
+ *
+ * Return: 0 if the same, <0 if @b greater, >0 if @a greater.
+ */
 int fdisk_partition_cmp_partno(struct fdisk_partition *a,
 			       struct fdisk_partition *b)
 {
 	return a->partno - b->partno;
+}
+
+/**
+ * fdisk_partition_partno_follow_default
+ * @pa: partition
+ * @enable: 0|1
+ *
+ * When @pa used as a tempalate for fdisk_add_partition() when force label driver
+ * to add a new partition to the default (next) position.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int enable)
+{
+	if (!pa)
+		return -EINVAL;
+	pa->partno_follow_default = enable ? 1 : 0;
+	return 0;
 }
 
 int fdisk_partition_set_type(struct fdisk_partition *pa,
@@ -368,27 +435,10 @@ int fdisk_partition_set_uuid(struct fdisk_partition *pa, const char *uuid)
 	return 0;
 }
 
-/**
- * fdisk_partition_partno_follow_default
- * @pa: partition
- * @enable: 0|1
- *
- * When @pa used as a tempalate for fdisk_add_partition() when force label driver
- * to add a new partition to the default (next) position.
- *
- * Returns: 0 on success, <0 on error.
- */
-int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int enable)
-{
-	if (!pa)
-		return -EINVAL;
-	pa->partno_follow_default = enable ? 1 : 0;
-	return 0;
-}
 
 
 /**
- * fdisk_partition_start_follow_default
+ * fdisk_partition_end_follow_default
  * @pa: partition
  * @enable: 0|1
  *
@@ -498,7 +548,7 @@ int fdisk_partition_next_partno(
 		}
 		return -ERANGE;
 
-	} else if (pa && !FDISK_IS_UNDEF(pa->partno)) {
+	} else if (pa && fdisk_partition_has_partno(pa)) {
 
 		DBG(PART, ul_debugobj(pa, "next partno (specified=%zu)", pa->partno));
 
@@ -550,13 +600,16 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 	case FDISK_FIELD_DEVICE:
 		if (pa->freespace)
 			p = strdup(_("Free space"));
-		else if (cxt->label->flags & FDISK_LABEL_FL_INCHARS_PARTNO)
-			rc = asprintf(&p, "%c", (int) pa->partno + 'a');
-		else
-			p = fdisk_partname(cxt->dev_path, pa->partno + 1);
+		else if (fdisk_partition_has_partno(pa) && cxt->dev_path) {
+			if (cxt->label->flags & FDISK_LABEL_FL_INCHARS_PARTNO)
+				rc = asprintf(&p, "%c", (int) pa->partno + 'a');
+			else
+				p = fdisk_partname(cxt->dev_path, pa->partno + 1);
+		}
 		break;
 	case FDISK_FIELD_BOOT:
-		rc = asprintf(&p, "%c", pa->boot ? '*' : ' ');
+		if (fdisk_partition_is_bootable(pa))
+			rc = asprintf(&p, "%c", pa->boot ? '*' : ' ');
 		break;
 	case FDISK_FIELD_START:
 		if (fdisk_partition_has_start(pa)) {
@@ -644,13 +697,15 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 /**
  * fdisk_get_partition:
  * @cxt: context
- * @partno: partition nuymber
+ * @partno: partition number (0 is the first partition)
  * @pa: returns data about partition
  *
- * Fills in @pa with data about partition @n. Note that partno may address
- * unused partition and then this function does not fill anything to @pa.
- * See fdisk_is_partition_used(). If @pa points to NULL then the function
- * allocates a newly allocated fdisk_partition struct.
+ * Reads disklabel and fills in @pa with data about partition @n.
+ *
+ * Note that partno may address unused partition and then this function does
+ * not fill anything to @pa.  See fdisk_is_partition_used(). If @pa points to
+ * NULL then the function allocates a newly allocated fdisk_partition struct,
+ * use fdisk_unref_partition() to deallocate.
  *
  * Returns: 0 on success, otherwise, a corresponding error.
  */
@@ -691,8 +746,10 @@ int fdisk_get_partition(struct fdisk_context *cxt, size_t partno,
 /**
  * fdisk_set_partition:
  * @cxt: context
- * @partno: partition nuymber
+ * @partno: partition number (0 is the first partition)
  * @pa: new partition setting
+ *
+ * Modifies disklabel according to setting with in @pa.
  *
  * Returns: 0 on success, <0 on error.
  */
@@ -726,9 +783,9 @@ int fdisk_set_partition(struct fdisk_context *cxt, size_t partno,
  * If @pa is not specified or any @pa item is missiong the libfdisk will ask by
  * fdisk_ask_ API.
  *
- * Creates a new partition.
+ * Adds a new partition to disklabel.
  *
- * Returns: 0 on success,  <0 on error.
+ * Returns: 0 on success, <0 on error.
  */
 int fdisk_add_partition(struct fdisk_context *cxt,
 			struct fdisk_partition *pa,
@@ -768,9 +825,9 @@ int fdisk_add_partition(struct fdisk_context *cxt,
 /**
  * fdisk_delete_partition:
  * @cxt: fdisk context
- * @partno: partition number to delete
+ * @partno: partition number to delete (0 is the first partition)
  *
- * Deletes a @partno partition.
+ * Deletes a @partno partition from disklabel.
  *
  * Returns: 0 on success, <0 on error
  */
@@ -790,7 +847,7 @@ int fdisk_delete_partition(struct fdisk_context *cxt, size_t partno)
  * fdisk_delete_all_partitions:
  * @cxt: fdisk context
  *
- * Delete all used partitions.
+ * Delete all used partitions from disklabel.
  *
  * Returns: 0 on success, otherwise, a corresponding error.
  */
@@ -814,8 +871,13 @@ int fdisk_delete_all_partitions(struct fdisk_context *cxt)
 	return rc;
 }
 
-/*
- * This is faster than fdisk_get_partition() + fdisk_partition_is_used()
+/**
+ * fdisk_is_partition_used:
+ * @n: partition number (0 is the first partition)
+ *
+ * This is faster than fdisk_get_partition() + fdisk_partition_is_used().
+ *
+ * Returns: 0 or 1
  */
 int fdisk_is_partition_used(struct fdisk_context *cxt, size_t n)
 {

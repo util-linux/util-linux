@@ -377,6 +377,11 @@ struct fdisk_context {
 	struct fdisk_script	*script;	/* what we want to follow */
 };
 
+/* partition.c */
+int fdisk_partition_next_partno(struct fdisk_partition *pa,
+				       struct fdisk_context *cxt,
+				       size_t *n);
+
 /* context.c */
 extern int __fdisk_switch_label(struct fdisk_context *cxt,
 				    struct fdisk_label *lb);

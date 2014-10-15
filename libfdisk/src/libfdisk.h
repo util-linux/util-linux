@@ -262,10 +262,14 @@ uint64_t fdisk_partition_get_size(struct fdisk_partition *pa);
 int fdisk_partition_has_size(struct fdisk_partition *pa);
 int fdisk_partition_size_explicit(struct fdisk_partition *pa, int enable);
 
-extern int fdisk_partition_set_partno(struct fdisk_partition *pa, size_t n);
-extern size_t fdisk_partition_get_partno(struct fdisk_partition *pa);
-extern int fdisk_partition_cmp_partno(struct fdisk_partition *a,
-			      struct fdisk_partition *b);
+int fdisk_partition_set_partno(struct fdisk_partition *pa, size_t num);
+int fdisk_partition_unset_partno(struct fdisk_partition *pa);
+size_t fdisk_partition_get_partno(struct fdisk_partition *pa);
+int fdisk_partition_has_partno(struct fdisk_partition *pa);
+int fdisk_partition_cmp_partno(struct fdisk_partition *a,
+	                               struct fdisk_partition *b);
+int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int enable);
+
 
 extern int fdisk_partition_set_type(struct fdisk_partition *pa, const struct fdisk_parttype *type);
 extern const struct fdisk_parttype *fdisk_partition_get_type(struct fdisk_partition *pa);
@@ -284,11 +288,10 @@ extern int fdisk_partition_to_string(struct fdisk_partition *pa,
 				     struct fdisk_context *cxt,
 				     int id, char **data);
 
-extern int fdisk_partition_next_partno(struct fdisk_partition *pa,
+int fdisk_partition_next_partno(struct fdisk_partition *pa,
 				       struct fdisk_context *cxt,
 				       size_t *n);
 
-extern int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int enable);
 extern int fdisk_partition_end_follow_default(struct fdisk_partition *pa, int enable);
 extern int fdisk_partition_end_is_default(struct fdisk_partition *pa);
 
