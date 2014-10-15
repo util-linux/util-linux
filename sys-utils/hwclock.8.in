@@ -342,7 +342,18 @@ with SRM console.
 Do everything except actually updating the Hardware Clock or anything
 else.  This is useful, especially in conjunction with
 .BR \-\-debug ,
-in learning about
+in learning about the internal operations of hwclock.
+
+.TP
+.B \-\-update\-drift
+Update the Hardware Clock's drift factor in
+.IR @ADJTIME_PATH@ .
+It is used with
+.BR --set\  or \ --systohc ,
+otherwise it is ignored.
+See the discussion below, under
+.B The Adjust
+.BR Function.
 
 .TP
 .BR \-u , \ \-\-utc
@@ -532,8 +543,8 @@ command to set the Hardware Clock to the true current time.
 .B hwclock
 creates the adjtime file and records in it the current time as the
 last time the clock was calibrated.
-5 days later, the clock has gained 10 seconds, so you issue another
-.I hwclock \-\-set
+5 days later, the clock has gained 10 seconds, so you issue the
+.I hwclock \-\-set \-\-update\-drift
 command to set it back 10 seconds.
 .B hwclock
 updates the adjtime file to show the current time as the last time the
@@ -552,15 +563,16 @@ Another 24 hours goes by and you issue another
 does the same thing: subtracts 2 seconds and updates the adjtime file
 with the current time as the last time the clock was adjusted.
 .PP
-Every time you calibrate (set) the clock (using
-.I \-\-set
-or
-.IR \-\-systohc ),
-.B hwclock
-recalculates the systematic drift rate based on how long it has been
+When you use the
+.I \-\-update\-drift
+option with
+.IR \-\-set\  or \ \-\-systohc ,
+the systematic drift rate is (re)calculated based on how long it has been
 since the last calibration, how long it has been since the last
 adjustment, what drift rate was assumed in any intervening
-adjustments, and the amount by which the clock is presently off.
+adjustments, and the amount by which the clock is presently off.  This updated
+drift factor is then saved in
+.IR @ADJTIME_PATH@ .
 .PP
 A small amount of error creeps in when
 the Hardware Clock is set, so
