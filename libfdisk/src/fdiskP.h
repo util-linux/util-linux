@@ -113,6 +113,7 @@ enum {
 
 struct fdisk_partition {
 	int		refcount;		/* reference counter */
+
 	size_t		partno;			/* partition number */
 	size_t		parent_partno;		/* for logical partitions */
 
@@ -136,24 +137,23 @@ struct fdisk_partition {
 	uint64_t	bsize;
 	uint64_t	cpg;
 
-	char		*start_addr;		/* start C/H/S in string */
-	char		*end_addr;		/* end C/H/S in string */
+	char		*start_chs;		/* start C/H/S in string */
+	char		*end_chs;		/* end C/H/S in string */
 
-	int		boot;			/* MBR only: 1 = yes, 0 = no, -1 undefined */
+	unsigned int	boot;			/* MBR: bootable */
 
-	unsigned int	partno_follow_default : 1,	/* use default partno */
-			start_follow_default : 1,	/* use default start */
+	unsigned int	container : 1,			/* container partition (e.g. extended partition) */
 			end_follow_default : 1,		/* use default end */
+			freespace : 1,			/* this is free space */
+			partno_follow_default : 1,	/* use default partno */
 			size_explicit : 1,		/* don't align the size */
-			freespace : 1,		/* this is free space */
-			container : 1,		/* container partition (e.g. extended partition) */
-			wholedisk : 1,		/* special system partition */
-			used : 1;		/* partition already used */
+			start_follow_default : 1,	/* use default start */
+			used : 1,			/* partition already used */
+			wholedisk : 1;			/* special system partition */
 };
 
-#define FDISK_EMPTY_PARTNO	((size_t) -1)
-#define FDISK_EMPTY_PARTITION	{ .partno = FDISK_EMPTY_PARTNO }
-#define FDISK_EMPTY_BOOTFLAG	(-1)
+#define FDISK_INIT_UNDEF(_x)	((_x) = (__typeof__(_x)) -1)
+#define FDISK_IS_UNDEF(_x)	((_x) == (__typeof__(_x)) -1)
 
 struct fdisk_table {
 	struct list_head	parts;		/* partitions */

@@ -1812,7 +1812,8 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		struct fdisk_partition *npa;	/* the new partition */
 		int expsize = 0;		/* size specified explicitly in sectors */
 
-		if (!pa || !fdisk_partition_is_freespace(pa))
+		if (!pa || !fdisk_partition_is_freespace(pa)
+			|| !fdisk_partition_has_start(pa))
 			return -EINVAL;
 		npa = fdisk_new_partition();
 		if (!npa)

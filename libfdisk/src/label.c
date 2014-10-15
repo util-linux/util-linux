@@ -434,10 +434,17 @@ int fdisk_set_partition_type(struct fdisk_context *cxt,
 
 
 	if (cxt->label->op->set_part) {
-		struct fdisk_partition pa = { .type = t };
+		struct fdisk_partition *pa = fdisk_new_partition();
+		int rc;
+
+		if (!pa)
+			return -ENOMEM;
+		fdisk_partition_set_type(pa, t);
 
 		DBG(CXT, ul_debugobj(cxt, "partition: %zd: set type", partnum));
-		return cxt->label->op->set_part(cxt, partnum, &pa);
+		rc = cxt->label->op->set_part(cxt, partnum, pa);
+		fdisk_unref_partition(pa);
+		return rc;
 	}
 
 	return -ENOSYS;

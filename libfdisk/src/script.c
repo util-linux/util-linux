@@ -398,9 +398,9 @@ int fdisk_script_write_file(struct fdisk_script *dp, FILE *f)
 		else
 			fprintf(f, "%zu :", pa->partno + 1);
 
-		if (pa->start)
+		if (fdisk_partition_has_start(pa))
 			fprintf(f, " start=%12ju", pa->start);
-		if (pa->size)
+		if (fdisk_partition_has_size(pa))
 			fprintf(f, ", size=%12ju", pa->size);
 
 		if (pa->type && fdisk_parttype_get_string(pa->type))
@@ -420,7 +420,7 @@ int fdisk_script_write_file(struct fdisk_script *dp, FILE *f)
 			if (!lb || fdisk_label_get_type(lb) != FDISK_DISKLABEL_DOS)
 				fprintf(f, ", attrs=\"%s\"", pa->attrs);
 		}
-		if (pa->boot)
+		if (fdisk_partition_is_bootable(pa))
 			fprintf(f, ", bootable");
 		fputc('\n', f);
 	}

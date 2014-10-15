@@ -816,7 +816,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 	/* first sector */
 	if (pa && pa->start_follow_default)
 		;
-	else if (pa && pa->start) {
+	else if (pa && fdisk_partition_has_start(pa)) {
 		first = pa->start;
 		last = is_in_freelist(cxt, first);
 
@@ -856,7 +856,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 	/* last sector */
 	if (pa && pa->end_follow_default)
 		last -= 1ULL;
-	else if (pa && pa->size) {
+	else if (pa && fdisk_partition_has_size(pa)) {
 		if (first + pa->size - 1ULL > last)
 			return -ERANGE;
 		last = first + pa->size - 1ULL;
@@ -1050,9 +1050,9 @@ static int sgi_set_partition(struct fdisk_context *cxt,
 		sgilabel->partitions[i].type = cpu_to_be32(t->code);
 	}
 
-	if (pa->start)
+	if (fdisk_partition_has_start(pa))
 		sgilabel->partitions[i].first_block = cpu_to_be32(pa->start);
-	if (pa->size)
+	if (fdisk_partition_has_size(pa))
 		sgilabel->partitions[i].num_blocks = cpu_to_be32(pa->size);
 
 	fdisk_label_set_changed(cxt->label, 1);

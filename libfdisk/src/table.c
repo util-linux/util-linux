@@ -413,13 +413,15 @@ static int check_container_freespace(struct fdisk_context *cxt,
 	assert(parts);
 	assert(tb);
 	assert(cont);
+	assert(fdisk_partition_has_start(cont));
 
 	last = fdisk_partition_get_start(cont);
 	grain = cxt->grain > cxt->sector_size ?	cxt->grain / cxt->sector_size : 1;
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 
 	while (fdisk_table_next_partition(parts, &itr, &pa) == 0) {
-		if (!pa->used || !fdisk_partition_is_nested(pa))
+		if (!pa->used || !fdisk_partition_is_nested(pa)
+			      || !fdisk_partition_has_start(pa))
 			continue;
 
 		lastplusoff = last + cxt->first_lba;
@@ -476,7 +478,8 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 
 	/* analyze gaps between partitions */
 	while (rc == 0 && fdisk_table_next_partition(parts, &itr, &pa) == 0) {
-		if (!pa->used || pa->wholedisk || fdisk_partition_is_nested(pa))
+		if (!pa->used || pa->wholedisk || fdisk_partition_is_nested(pa)
+			      || !fdisk_partition_has_start(pa))
 			continue;
 		DBG(CXT, ul_debugobj(cxt, "freespace analyze: partno=%zu, start=%ju, end=%ju",
 					pa->partno, pa->start, pa->end));
@@ -524,6 +527,8 @@ int fdisk_table_wrong_order(struct fdisk_table *tb)
 
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 	while (tb && fdisk_table_next_partition(tb, &itr, &pa) == 0) {
+		if (!fdisk_partition_has_start(pa))
+			continue;
 		if (pa->start < last)
 			return 1;
 		last = pa->start;
@@ -556,7 +561,7 @@ int fdisk_apply_table(struct fdisk_context *cxt, struct fdisk_table *tb)
 
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 	while (tb && fdisk_table_next_partition(tb, &itr, &pa) == 0) {
-		if (!pa->start && !pa->start_follow_default)
+		if (!fdisk_partition_has_start(pa) && !pa->start_follow_default)
 			continue;
 		rc = fdisk_add_partition(cxt, pa, NULL);
 		if (rc)

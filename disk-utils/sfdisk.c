@@ -1230,7 +1230,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 			assert(pa);
 
-			if (!fdisk_partition_get_start(pa) &&
+			if (!fdisk_partition_has_start(pa) &&
 			    !fdisk_partition_start_is_default(pa)) {
 				fdisk_info(sf->cxt, _("Ignore partition %zu"), next_partno + 1);
 				continue;

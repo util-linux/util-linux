@@ -171,6 +171,8 @@ void list_disklabel(struct fdisk_context *cxt)
 
 	/* print warnings */
 	while (itr && fdisk_table_next_partition(tb, itr, &pa) == 0) {
+		if (!fdisk_partition_has_start(pa))
+			continue;
 		if (!fdisk_lba_is_phy_aligned(cxt, fdisk_partition_get_start(pa)))
 			fdisk_warnx(cxt, _("Partition %zu does not start on physical sector boundary."),
 					  fdisk_partition_get_partno(pa) + 1);

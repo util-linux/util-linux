@@ -238,7 +238,7 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 	 */
 	if (pa && pa->start_follow_default)
 		;
-	else if (pa && pa->start) {
+	else if (pa && fdisk_partition_has_start(pa)) {
 		if (pa->start < begin || pa->start > end)
 			return -ERANGE;
 		begin = pa->start;
@@ -269,7 +269,7 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 	 */
 	if (pa && pa->end_follow_default)
 		;
-	else if (pa && pa->size) {
+	else if (pa && fdisk_partition_has_size(pa)) {
 		if (begin + pa->size > end)
 			return -ERANGE;
 		end = begin + pa->size - 1ULL;
@@ -335,11 +335,13 @@ static int bsd_set_partition(struct fdisk_context *cxt, size_t n,
 	p = &d->d_partitions[n];
 
 	/* we have to stay within parental DOS partition */
-	if (l->dos_part && (pa->start || pa->size)) {
+	if (l->dos_part && (fdisk_partition_has_start(pa) ||
+			    fdisk_partition_has_size(pa))) {
+
 		sector_t dosbegin = dos_partition_get_start(l->dos_part);
 		sector_t dosend = dosbegin + dos_partition_get_size(l->dos_part) - 1;
-		sector_t begin = pa->start ? pa->start : p->p_offset;
-		sector_t end = begin + (pa->size ? pa->size : p->p_size) - 1;
+		sector_t begin = fdisk_partition_has_start(pa) ? pa->start : p->p_offset;
+		sector_t end = begin + (fdisk_partition_has_size(pa) ? pa->size : p->p_size) - 1;
 
 		if (begin < dosbegin || begin > dosend)
 			return -ERANGE;
@@ -353,9 +355,9 @@ static int bsd_set_partition(struct fdisk_context *cxt, size_t n,
 			return rc;
 	}
 
-	if (pa->start)
+	if (fdisk_partition_has_start(pa))
 		d->d_partitions[n].p_offset = pa->start;
-	if (pa->size)
+	if (fdisk_partition_has_size(pa))
 		d->d_partitions[n].p_size = pa->size;
 
 	fdisk_label_set_changed(cxt->label, 1);

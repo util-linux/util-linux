@@ -521,7 +521,7 @@ static int sun_add_partition(
 
 	if (pa && pa->start_follow_default)
 		first = start;
-	else if (pa && pa->start) {
+	else if (pa && fdisk_partition_has_start(pa)) {
 		first = pa->start;
 
 		if (!whole_disk && !is_free_sector(cxt, first, starts, lens))
@@ -612,7 +612,7 @@ static int sun_add_partition(
 	/* last */
 	if (pa && pa->end_follow_default)
 		last = whole_disk || (n == 2 && !first) ? stop2 : stop;
-	else if (pa && pa->size) {
+	else if (pa && fdisk_partition_has_size(pa)) {
 		last = first + pa->size - 1ULL;
 
 		if (!whole_disk && last > stop)
@@ -983,10 +983,10 @@ static int sun_set_partition(
 		info->id = cpu_to_be16(t->code);
 	}
 
-	if (pa->start)
+	if (fdisk_partition_has_start(pa))
 		sunlabel->partitions[i].start_cylinder =
 			cpu_to_be32(pa->start / (cxt->geom.heads * cxt->geom.sectors));
-	if (pa->size)
+	if (fdisk_partition_has_size(pa))
 		sunlabel->partitions[i].num_sectors = cpu_to_be32(pa->size);
 
 	fdisk_label_set_changed(cxt->label, 1);

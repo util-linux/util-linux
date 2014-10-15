@@ -819,6 +819,8 @@ static void set_partition(struct fdisk_context *cxt,
 	struct dos_partition *p;
 	sector_t offset;
 
+	assert(!FDISK_IS_UNDEF(start));
+	assert(!FDISK_IS_UNDEF(stop));
 
 	if (doext) {
 		struct fdisk_dos_label *l = self_label(cxt);
@@ -902,7 +904,7 @@ static int get_start_from_user(	struct fdisk_context *cxt,
 	if (pa && pa->start_follow_default)
 		*start = dflt;
 
-	else if (pa && pa->start) {
+	else if (pa && fdisk_partition_has_start(pa)) {
 		DBG(LABEL, ul_debug("DOS: start: wanted=%ju, low=%ju, limit=%ju",
 				(uintmax_t) pa->start, (uintmax_t) low, (uintmax_t) limit));
 		*start = pa->start;
@@ -971,7 +973,8 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		if (cxt->parent && fdisk_is_label(cxt->parent, GPT))
 			start = 1;		/* Bad boy modifies hybrid MBR */
 		else {
-			if (cxt->script && pa && pa->start && pa->start < cxt->first_lba
+			if (cxt->script && pa && fdisk_partition_has_start(pa)
+			    && pa->start < cxt->first_lba
 			    && pa->start >= 1)
 				fdisk_set_first_lba(cxt, 1);
 
@@ -995,7 +998,8 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		assert(ext_pe);
 		limit = get_abs_partition_end(ext_pe);
 
-		if (cxt->script && pa && pa->start && pa->start >= l->ext_offset
+		if (cxt->script && pa && fdisk_partition_has_start(pa)
+		    && pa->start >= l->ext_offset
 		    && pa->start < l->ext_offset + cxt->first_lba)
 			fdisk_set_first_lba(cxt, 1);
 
@@ -1017,7 +1021,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		temp = start;
 		dflt = start = get_unused_start(cxt, n, start, first, last);
 
-		if (n >= 4 && pa && pa->start && cxt->script
+		if (n >= 4 && pa && fdisk_partition_has_start(pa) && cxt->script
 		    && cxt->first_lba > 1
 		    && temp == start - cxt->first_lba) {
 			fdisk_set_first_lba(cxt, 1);
@@ -1040,7 +1044,8 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 					temp);
 			temp = start;
 			read = 0;
-			if (pa && (pa->start || pa->start_follow_default))
+			if (pa && (fdisk_partition_has_start(pa) ||
+				   pa->start_follow_default))
 				break;
 		}
 
@@ -1091,7 +1096,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		stop = limit;
 	else if (pa && pa->end_follow_default)
 		stop = limit;
-	else if (pa && pa->size) {
+	else if (pa && fdisk_partition_has_size(pa)) {
 		stop = start + pa->size - 1;
 		isrel = pa->size_explicit ? 0 : 1;
 	} else {
@@ -1148,7 +1153,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		}
 	}
 
-	set_partition(cxt, n, 0, start, stop, sys, pa && pa->boot ? 1 : 0);
+	set_partition(cxt, n, 0, start, stop, sys, pa && pa->boot == 1 ? 1 : 0);
 	if (n > 4) {
 		struct pte *pe = self_pte(cxt, n);
 		set_partition(cxt, n - 1, 1, pe->offset, stop,
@@ -1445,7 +1450,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	 */
 
 	/* pa specifies start within extended partition, add logical */
-	if (pa && pa->start && ext_pe
+	if (pa && fdisk_partition_has_start(pa) && ext_pe
 	    && pa->start >= l->ext_offset
 	    && pa->start <= get_abs_partition_end(ext_pe)) {
 		DBG(LABEL, ul_debug("DOS: pa template %p: add logical", pa));
@@ -1466,7 +1471,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 		}
 
 	/* pa specifies start, but outside extended partition */
-	} else if (pa && pa->start && l->ext_offset) {
+	} else if (pa && fdisk_partition_has_start(pa) && l->ext_offset) {
 		DBG(LABEL, ul_debug("DOS: pa template %p: add primary", pa));
 		res = get_partition_unused_primary(cxt, pa);
 		if (res >= 0) {
@@ -1508,7 +1513,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	if (!free_primary || !free_sectors) {
 		DBG(LABEL, ul_debug("DOS: primary impossible, add logical"));
 		if (l->ext_offset) {
-			if (!pa || pa->start) {
+			if (!pa || fdisk_partition_has_start(pa)) {
 				if (!free_primary)
 					fdisk_info(cxt, _("All primary partitions are in use."));
 				else if (!free_sectors)
@@ -1578,15 +1583,22 @@ static int dos_add_partition(struct fdisk_context *cxt,
 		} else if (c == 'e' && !l->ext_offset) {
 			res = get_partition_unused_primary(cxt, pa);
 			if (res >= 0) {
-				struct fdisk_partition xpa = { .type = NULL };
+				struct fdisk_partition *xpa = NULL;
 				struct fdisk_parttype *t;
 
 				t = fdisk_label_get_parttype_from_code(cxt->label,
 						MBR_DOS_EXTENDED_PARTITION);
-				if (!pa)
-					pa = &xpa;
+				if (!pa) {
+					pa = xpa = fdisk_new_partition();
+					if (!xpa)
+						return -ENOMEM;
+				}
 				fdisk_partition_set_type(pa, t);
 				rc = add_partition(cxt, res, pa);
+				if (xpa) {
+					fdisk_unref_partition(xpa);
+					pa = NULL;
+				}
 			}
 			goto done;
 		} else
@@ -1787,14 +1799,14 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 		return -ENOMEM;
 
 	/* start C/H/S */
-	if (asprintf(&pa->start_addr, "%d/%d/%d",
+	if (asprintf(&pa->start_chs, "%d/%d/%d",
 				cylinder(p->bs, p->bc),
 				sector(p->bs),
 				p->bh) < 0)
 		return -ENOMEM;
 
 	/* end C/H/S */
-	if (asprintf(&pa->end_addr, "%d/%d/%d",
+	if (asprintf(&pa->end_chs, "%d/%d/%d",
 				cylinder(p->es, p->ec),
 				sector(p->es),
 				p->eh) < 0)
@@ -1829,22 +1841,25 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 
 	p  = self_partition(cxt, n);
 
-	if (pa->start || pa->size) {
+	if (fdisk_partition_has_start(pa) || fdisk_partition_has_size(pa)) {
 		sector_t start, size;
+
+		DBG(LABEL, ul_debug("DOS: resize partition"));
 
 		pe = self_pte(cxt, n);
 
-		start = pa->start ? pa->start : get_abs_partition_start(pe);
-		size = pa->size ? pa->size : dos_partition_get_size(p);
+		start = fdisk_partition_has_start(pa) ? pa->start : get_abs_partition_start(pe);
+		size = fdisk_partition_has_size(pa) ? pa->size : dos_partition_get_size(p);
 
 		set_partition(cxt, n, 0, start, start + size - 1,
 				pa->type  ? pa->type->code : p->sys_ind,
-				pa->boot);
+				pa->boot == 1);
 
 	} else {
+		DBG(LABEL, ul_debug("DOS: keep size, modify properties"));
 		if (pa->type)
 			p->sys_ind = pa->type->code;
-		if (pa->boot != FDISK_EMPTY_BOOTFLAG)
+		if (!FDISK_IS_UNDEF(pa->boot))
 			p->boot_ind = pa->boot == 1 ? ACTIVE_FLAG : 0;
 	}
 
@@ -2006,6 +2021,7 @@ static int dos_reorder(struct fdisk_context *cxt)
 	return 0;
 }
 
+/* TODO: use fdisk_set_partition() API */
 int fdisk_dos_move_begin(struct fdisk_context *cxt, size_t i)
 {
 	struct pte *pe;

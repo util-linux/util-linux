@@ -1545,12 +1545,10 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 			return rc;
 	}
 
-	if (pa->start)
+	if (fdisk_partition_has_start(pa))
 		e->lba_start = cpu_to_le64(pa->start);
-	if (pa->size)
+	if (fdisk_partition_has_size(pa))
 		e->lba_end = cpu_to_le64(gpt_partition_start(e) + pa->size - 1ULL);
-
-	/* TODO: pa->attrs */
 
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
@@ -1954,15 +1952,16 @@ static int gpt_add_partition(
 	dflt_f = fdisk_align_lba_in_range(cxt, dflt_f, dflt_f, dflt_l);
 
 	/* first sector */
-	if (pa && pa->start) {
+	if (pa && pa->start_follow_default) {
+		user_f = dflt_f;
+
+	} else if (pa && fdisk_partition_has_start(pa)) {
 		DBG(LABEL, ul_debug("first sector defined: %ju", pa->start));
 		if (pa->start != find_first_available(pheader, ents, pa->start)) {
 			fdisk_warnx(cxt, _("Sector %ju already used."), pa->start);
 			return -ERANGE;
 		}
 		user_f = pa->start;
-	} else if (pa && pa->start_follow_default) {
-		user_f = dflt_f;
 	} else {
 		/*  ask by dialog */
 		for (;;) {
@@ -1995,15 +1994,16 @@ static int gpt_add_partition(
 	/* Last sector */
 	dflt_l = find_last_free(pheader, ents, user_f);
 
-	if (pa && pa->size) {
+	if (pa && pa->end_follow_default) {
+		user_l = dflt_l;
+
+	} else if (pa && fdisk_partition_has_size(pa)) {
 		user_l = user_f + pa->size - 1;
 		DBG(LABEL, ul_debug("size defined: %ju, end: %ju (last possible: %ju)",
 					pa->size, user_l, dflt_l));
 		if (user_l != dflt_l && !pa->size_explicit)
 			user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l) - 1;
 
-	} else if (pa && pa->end_follow_default) {
-		user_l = dflt_l;
 	} else {
 		for (;;) {
 			if (!ask)
@@ -2044,6 +2044,9 @@ static int gpt_add_partition(
 		rc = -EINVAL;
 		goto done;
 	}
+
+	assert(!FDISK_IS_UNDEF(user_l));
+	assert(!FDISK_IS_UNDEF(user_f));
 
 	e = &ents[partnum];
 	e->lba_end = cpu_to_le64(user_l);
