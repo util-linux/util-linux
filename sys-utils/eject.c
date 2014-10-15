@@ -433,9 +433,6 @@ static int eject_cdrom(int fd)
  */
 static void toggle_tray(int fd)
 {
-	struct timeval time_start, time_stop;
-	int time_elapsed;
-
 #ifdef CDROM_DRIVE_STATUS
 	/* First ask the CDROM for info, otherwise fall back to manual.  */
 	switch (ioctl(fd, CDROM_DRIVE_STATUS)) {
@@ -457,7 +454,9 @@ static void toggle_tray(int fd)
 	default:
 		abort();
 	}
-#endif
+#else
+	struct timeval time_start, time_stop;
+	int time_elapsed;
 
 	/* Try to open the CDROM tray and measure the time therefor
 	 * needed.  In my experience the function needs less than 0.05
@@ -481,6 +480,7 @@ static void toggle_tray(int fd)
 	 * closed before. This would mean that we are done.  */
 	if (time_elapsed < TRAY_WAS_ALREADY_OPEN_USECS)
 		close_tray(fd);
+#endif
 }
 
 /*
