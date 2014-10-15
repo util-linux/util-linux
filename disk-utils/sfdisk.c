@@ -756,7 +756,7 @@ static int command_partuuid(struct sfdisk *sf, int argc, char **argv)
 
 	/* print partition uuid */
 	if (!uuid) {
-		const char *str;
+		const char *str = NULL;
 
 		if (fdisk_get_partition(sf->cxt, partno - 1, &pa) == 0)
 			str = fdisk_partition_get_uuid(pa);
@@ -811,7 +811,7 @@ static int command_partlabel(struct sfdisk *sf, int argc, char **argv)
 
 	/* print partition name */
 	if (!name) {
-		const char *str;
+		const char *str = NULL;
 
 		if (fdisk_get_partition(sf->cxt, partno - 1, &pa) == 0)
 			str = fdisk_partition_get_name(pa);
@@ -867,7 +867,7 @@ static int command_partattrs(struct sfdisk *sf, int argc, char **argv)
 
 	/* print partition name */
 	if (!attrs) {
-		const char *str;
+		const char *str = NULL;
 
 		if (fdisk_get_partition(sf->cxt, partno - 1, &pa) == 0)
 			str = fdisk_partition_get_attrs(pa);
