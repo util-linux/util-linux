@@ -281,94 +281,84 @@ static void filter(FILE *f)
 	wint_t c;
 	int i, w;
 
-	while ((c = getwc(f)) != WEOF)
-	switch (c) {
-
-	case '\b':
-		setcol(col - 1);
-		continue;
-
-	case '\t':
-		setcol((col+8) & ~07);
-		continue;
-
-	case '\r':
-		setcol(0);
-		continue;
-
-	case SO:
-		mode |= ALTSET;
-		continue;
-
-	case SI:
-		mode &= ~ALTSET;
-		continue;
-
-	case IESC:
-		if(handle_escape(f)) {
-			c = getwc(f);
-			errx(EXIT_FAILURE,
-				_("unknown escape sequence in input: %o, %o"),
-				IESC, c);
-		}
-		continue;
-
-	case '_':
-		if (obuf[col].c_char || obuf[col].c_width < 0) {
-			while(col > 0 && obuf[col].c_width < 0)
-				col--;
-			w = obuf[col].c_width;
-			for (i = 0; i < w; i++)
-				obuf[col++].c_mode |= UNDERL | mode;
-			setcol(col);
+	while ((c = getwc(f)) != WEOF) {
+		switch (c) {
+		case '\b':
+			setcol(col - 1);
+			continue;
+		case '\t':
+			setcol((col + 8) & ~07);
+			continue;
+		case '\r':
+			setcol(0);
+			continue;
+		case SO:
+			mode |= ALTSET;
+			continue;
+		case SI:
+			mode &= ~ALTSET;
+			continue;
+		case IESC:
+			if (handle_escape(f)) {
+				c = getwc(f);
+				errx(EXIT_FAILURE,
+				     _("unknown escape sequence in input: %o, %o"), IESC, c);
+			}
+			continue;
+		case '_':
+			if (obuf[col].c_char || obuf[col].c_width < 0) {
+				while (col > 0 && obuf[col].c_width < 0)
+					col--;
+				w = obuf[col].c_width;
+				for (i = 0; i < w; i++)
+					obuf[col++].c_mode |= UNDERL | mode;
+				setcol(col);
+				continue;
+			}
+			obuf[col].c_char = '_';
+			obuf[col].c_width = 1;
+			/* fall through */
+		case ' ':
+			setcol(col + 1);
+			continue;
+		case '\n':
+			flushln();
+			continue;
+		case '\f':
+			flushln();
+			putwchar('\f');
+			continue;
+		default:
+			if (!iswprint(c))
+				/* non printable */
+				continue;
+			w = wcwidth(c);
+			needcol(col + w);
+			if (obuf[col].c_char == '\0') {
+				obuf[col].c_char = c;
+				for (i = 0; i < w; i++)
+					obuf[col + i].c_mode = mode;
+				obuf[col].c_width = w;
+				for (i = 1; i < w; i++)
+					obuf[col + i].c_width = -1;
+			} else if (obuf[col].c_char == '_') {
+				obuf[col].c_char = c;
+				for (i = 0; i < w; i++)
+					obuf[col + i].c_mode |= UNDERL | mode;
+				obuf[col].c_width = w;
+				for (i = 1; i < w; i++)
+					obuf[col + i].c_width = -1;
+			} else if ((wint_t) obuf[col].c_char == c) {
+				for (i = 0; i < w; i++)
+					obuf[col + i].c_mode |= BOLD | mode;
+			} else {
+				w = obuf[col].c_width;
+				for (i = 0; i < w; i++)
+					obuf[col + i].c_mode = mode;
+			}
+			setcol(col + w);
 			continue;
 		}
-		obuf[col].c_char = '_';
-		obuf[col].c_width = 1;
-		/* fall through */
-	case ' ':
-		setcol(col + 1);
-		continue;
-
-	case '\n':
-		flushln();
-		continue;
-
-	case '\f':
-		flushln();
-		putwchar('\f');
-		continue;
-
-	default:
-		if (!iswprint(c))
-			/* non printable */
-			continue;
-		w = wcwidth(c);
-		needcol(col + w);
-		if (obuf[col].c_char == '\0') {
-			obuf[col].c_char = c;
-			for (i = 0; i < w; i++)
-				obuf[col+i].c_mode = mode;
-			obuf[col].c_width = w;
-			for (i = 1; i < w; i++)
-				obuf[col+i].c_width = -1;
-		} else if (obuf[col].c_char == '_') {
-			obuf[col].c_char = c;
-			for (i = 0; i < w; i++)
-				obuf[col+i].c_mode |= UNDERL|mode;
-			obuf[col].c_width = w;
-			for (i = 1; i < w; i++)
-				obuf[col+i].c_width = -1;
-		} else if ((wint_t) obuf[col].c_char == c) {
-			for (i = 0; i < w; i++)
-				obuf[col+i].c_mode |= BOLD|mode;
-		} else {
-			w = obuf[col].c_width;
-			for (i = 0; i < w; i++)
-				obuf[col+i].c_mode = mode;
-		}
-		setcol(col + w);
-		continue;
 	}
 	if (maxcol)
 		flushln();
