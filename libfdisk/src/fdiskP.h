@@ -96,10 +96,11 @@ struct fdisk_iter {
  */
 struct fdisk_parttype {
 	unsigned int	code;		/* type as number or zero */
-	const char	*name;		/* description */
+	char		*name;		/* description */
 	char		*typestr;	/* type as string or NULL */
 
 	unsigned int	flags;		/* FDISK_PARTTYPE_* flags */
+	int		refcount;	/* reference counter for allocated types */
 };
 
 enum {

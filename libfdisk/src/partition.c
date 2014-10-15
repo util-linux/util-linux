@@ -48,7 +48,7 @@ void fdisk_reset_partition(struct fdisk_partition *pa)
 	DBG(PART, ul_debugobj(pa, "reset"));
 	ref = pa->refcount;
 
-	fdisk_free_parttype(pa->type);
+	fdisk_unref_parttype(pa->type);
 	free(pa->name);
 	free(pa->uuid);
 	free(pa->attrs);
@@ -383,17 +383,35 @@ int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int enable
 	return 0;
 }
 
+/**
+ * fdisk_partition_set_type:
+ * @pa: partition
+ * @type: partition type
+ *
+ * Sets parition type.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_partition_set_type(struct fdisk_partition *pa,
-			     const struct fdisk_parttype *type)
+			     struct fdisk_parttype *type)
 {
 	if (!pa)
 		return -EINVAL;
-	fdisk_free_parttype(pa->type);
-	pa->type = fdisk_copy_parttype(type);
+
+	fdisk_ref_parttype(type);
+	fdisk_unref_parttype(pa->type);
+	pa->type = type;
+
 	return 0;
 }
 
-const struct fdisk_parttype *fdisk_partition_get_type(struct fdisk_partition *pa)
+/**
+ * fdisk_partition_get_type:
+ * @pa: partition
+ *
+ * Returns: pointer to partition type.
+ */
+struct fdisk_parttype *fdisk_partition_get_type(struct fdisk_partition *pa)
 {
 	return pa ? pa->type : NULL;
 }

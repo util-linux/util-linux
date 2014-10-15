@@ -1165,7 +1165,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		struct fdisk_parttype *t =
 			fdisk_label_get_parttype_from_code(cxt->label, sys);
 		fdisk_info_new_partition(cxt, n + 1, start, stop, t);
-		fdisk_free_parttype(t);
+		fdisk_unref_parttype(t);
 	}
 
 

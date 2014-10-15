@@ -7,6 +7,131 @@
 
 
 /**
+ * fdisk_new_parttype:
+ *
+ * It's recommended to use fdisk_label_get_parttype_from_code() or
+ * fdisk_label_get_parttype_from_string() for well known types rather
+ * than allocate a new instance.
+ *
+ * Returns: new instance.
+ */
+struct fdisk_parttype *fdisk_new_parttype(void)
+{
+	struct fdisk_parttype *t = calloc(1, sizeof(*t));
+
+	t->refcount = 1;
+	t->flags = FDISK_PARTTYPE_ALLOCATED;
+	DBG(PARTTYPE, ul_debugobj(t, "alloc"));
+	return t;
+}
+
+/**
+ * fdisk_ref_parttype:
+ * @t: partition type
+ *
+ * Incremparts reference counter for allocated types
+ */
+void fdisk_ref_parttype(struct fdisk_parttype *t)
+{
+	if (fdisk_parttype_is_allocated(t))
+		t->refcount++;
+}
+
+/**
+ * fdisk_unref_parttype
+ * @t: partition pointer
+ *
+ * De-incremparts reference counter, on zero the @t is automatically
+ * deallocated.
+ */
+void fdisk_unref_parttype(struct fdisk_parttype *t)
+{
+	if (!fdisk_parttype_is_allocated(t))
+		return;
+
+	t->refcount--;
+	if (t->refcount <= 0) {
+		DBG(PARTTYPE, ul_debugobj(t, "free"));
+		free(t->typestr);
+		free(t->name);
+		free(t);
+	}
+}
+
+/**
+ * fdisk_parttype_set_name:
+ * @t: partition type
+ * @str: type name
+ *
+ * Sets type name to allocated partition type, for static types
+ * it returns -EINVAL.
+ *
+ * Return: 0 on success, <0 on error
+ */
+int fdisk_parttype_set_name(struct fdisk_parttype *t, const char *str)
+{
+	char *p = NULL;
+
+	if (!t || !fdisk_parttype_is_allocated(t))
+		return -EINVAL;
+	if (str) {
+		p = strdup(str);
+		if (!p)
+			return -ENOMEM;
+	}
+
+	free(t->name);
+	t->name = p;
+	return 0;
+}
+
+/**
+ * fdisk_parttype_set_typestr:
+ * @t: partition type
+ * @str: type identificator (e.g. GUID for GPT)
+ *
+ * Sets type string to allocated partition type, for static types
+ * it returns -EINVAL. Don't use this function for MBR, see
+ * fdisk_parttype_set_code().
+ *
+ * Return: 0 on success, <0 on error
+ */
+int fdisk_parttype_set_typestr(struct fdisk_parttype *t, const char *str)
+{
+	char *p = NULL;
+
+	if (!t || !fdisk_parttype_is_allocated(t))
+		return -EINVAL;
+	if (str) {
+		p = strdup(str);
+		if (!p)
+			return -ENOMEM;
+	}
+
+	free(t->typestr);
+	t->typestr = p;
+	return 0;
+}
+
+/**
+ * fdisk_parttype_set_code:
+ * @t: partition type
+ * @int: type identificator (e.g. MBR type codes)
+ *
+ * Sets type code to allocated partition type, for static types it returns
+ * -EINVAL. Don't use this function for GPT, see fdisk_parttype_set_typestr().
+ *
+ * Return: 0 on success, <0 on error
+ */
+int fdisk_parttype_set_code(struct fdisk_parttype *t, int code)
+{
+	if (!t || !fdisk_parttype_is_allocated(t))
+		return -EINVAL;
+	t->code = code;
+	return 0;
+}
+
+/**
  * fdisk_label_get_nparttypes:
  * @lb: label
  *
@@ -26,7 +151,7 @@ size_t fdisk_label_get_nparttypes(const struct fdisk_label *lb)
  *
  * Returns: return parttype
  */
-const struct fdisk_parttype *fdisk_label_get_parttype(const struct fdisk_label *lb, size_t n)
+struct fdisk_parttype *fdisk_label_get_parttype(const struct fdisk_label *lb, size_t n)
 {
 	if (!lb || n >= lb->nparttypes)
 		return NULL;
@@ -55,7 +180,8 @@ int fdisk_label_has_code_parttypes(const struct fdisk_label *lb)
  * @lb: label
  * @code: code to search for
  *
- * Search in lable-specific table of supported partition types by code.
+ * Search for partition type in label-specific table. The result
+ * is pointer to static array of label types.
  *
  * Returns: partition type or NULL upon failure or invalid @code.
  */
@@ -73,7 +199,6 @@ struct fdisk_parttype *fdisk_label_get_parttype_from_code(
 	for (i = 0; i < lb->nparttypes; i++)
 		if (lb->parttypes[i].code == code)
 			return &lb->parttypes[i];
-
 	return NULL;
 }
 
@@ -82,7 +207,8 @@ struct fdisk_parttype *fdisk_label_get_parttype_from_code(
  * @lb: label
  * @str: string to search for
  *
- * Search in lable-specific table of supported partition types by typestr.
+ * Search for partition type in label-specific table. The result
+ * is pointer to static array of label types.
  *
  * Returns: partition type or NULL upon failure or invalid @str.
  */
@@ -105,35 +231,12 @@ struct fdisk_parttype *fdisk_label_get_parttype_from_string(
 	return NULL;
 }
 
-static struct fdisk_parttype *new_parttype(unsigned int code,
-				    const char *typestr,
-				    const char *name)
-{
-	struct fdisk_parttype *t= calloc(1, sizeof(*t));
-
-	if (!t)
-		return NULL;
-	if (typestr) {
-		t->typestr = strdup(typestr);
-		if (!t->typestr) {
-			free(t);
-			return NULL;
-		}
-	}
-	t->name = name;
-	t->code = code;
-	t->flags |= FDISK_PARTTYPE_ALLOCATED;
-
-	DBG(PARTTYPE, ul_debugobj(t, "allocated new %s type", name));
-	return t;
-}
-
 /**
  * fdisk_new_unknown_parttype:
  * @code: type as number
  * @typestr: type as string
 
- * Allocates new 'unknown' partition type. Use fdisk_free_parttype() to
+ * Allocates new 'unknown' partition type. Use fdisk_unref_parttype() to
  * deallocate.
  *
  * Returns: newly allocated partition type, or NULL upon failure.
@@ -141,11 +244,16 @@ static struct fdisk_parttype *new_parttype(unsigned int code,
 struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int code,
 						  const char *typestr)
 {
-	struct fdisk_parttype *t = new_parttype(code, typestr, _("unknown"));
+	struct fdisk_parttype *t = fdisk_new_parttype();
 
 	if (!t)
 		return NULL;
+
+	fdisk_parttype_set_name(t, _("unknown"));
+	fdisk_parttype_set_code(t, code);
+	fdisk_parttype_set_typestr(t, typestr);
 	t->flags |= FDISK_PARTTYPE_UNKNOWN;
+
 	return t;
 }
 
@@ -153,13 +261,22 @@ struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int code,
  * fdisk_copy_parttype:
  * @type: type to copy
  *
- * Use fdisk_free_parttype() to deallocate.
+ * Use fdisk_unref_parttype() to deallocate.
  *
  * Returns: newly allocated partition type, or NULL upon failure.
  */
 struct fdisk_parttype *fdisk_copy_parttype(const struct fdisk_parttype *type)
 {
-	return new_parttype(type->code, type->typestr, type->name);
+	struct fdisk_parttype *t = fdisk_new_parttype();
+
+	if (!t)
+		return NULL;
+
+	fdisk_parttype_set_name(t, type->name);
+	fdisk_parttype_set_code(t, type->code);
+	fdisk_parttype_set_typestr(t, type->typestr);
+
+	return t;
 }
 
 /**
@@ -167,9 +284,12 @@ struct fdisk_parttype *fdisk_copy_parttype(const struct fdisk_parttype *type)
  * @lb: label
  * @str: string to parse from
  *
- * Returns: pointer to static table of the partition types, or newly allocated
- * partition type for unknown types. It's safe to call fdisk_free_parttype()
- * for all results.
+ * Parses partition type from @str according to the label. Thefunction returns
+ * a pointer to static table of the partition types, or newly allocated
+ * partition type for unknown types (see fdisk_parttype_is_unknown(). It's
+ * safe to call fdisk_unref_parttype() for all results.
+ *
+ * Returns: pointer to type or NULL on error.
  */
 struct fdisk_parttype *fdisk_label_parse_parttype(
 				const struct fdisk_label *lb,
@@ -186,7 +306,6 @@ struct fdisk_parttype *fdisk_label_parse_parttype(
 
 	DBG(LABEL, ul_debugobj((void *) lb, "parsing '%s' (%s) partition type",
 				str, lb->name));
-
 	types = lb->parttypes;
 
 	if (types[0].typestr == NULL && isxdigit(*str)) {
@@ -226,32 +345,35 @@ done:
 }
 
 /**
- * fdisk_free_parttype:
- * @t: new type
+ * fdisk_parttype_get_string:
+ * @t: type
  *
- * Free the @type.
+ * Returns: partition type string (e.g. GUID for GPT)
  */
-void fdisk_free_parttype(struct fdisk_parttype *t)
-{
-	if (t && (t->flags & FDISK_PARTTYPE_ALLOCATED)) {
-		DBG(PARTTYPE, ul_debugobj(t, "free"));
-		free(t->typestr);
-		free(t);
-	}
-}
-
 const char *fdisk_parttype_get_string(const struct fdisk_parttype *t)
 {
 	assert(t);
 	return t->typestr && *t->typestr ? t->typestr : NULL;
 }
 
+/**
+ * fdisk_parttype_get_code:
+ * @t: type
+ *
+ * Returns: partition type code (e.g. for MBR)
+ */
 unsigned int fdisk_parttype_get_code(const struct fdisk_parttype *t)
 {
 	assert(t);
 	return t->code;
 }
 
+/**
+ * fdisk_parttype_get_name:
+ * @t: type
+ *
+ * Returns: partition type human readable name
+ */
 const char *fdisk_parttype_get_name(const struct fdisk_parttype *t)
 {
 	assert(t);

@@ -668,7 +668,7 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 
 			if (!pa->type || fdisk_parttype_is_unknown(pa->type)) {
 				rc = -EINVAL;
-				fdisk_free_parttype(pa->type);
+				fdisk_unref_parttype(pa->type);
 				pa->type = NULL;
 				break;
 			}
@@ -810,7 +810,7 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 
 			if (!pa->type || fdisk_parttype_is_unknown(pa->type)) {
 				rc = -EINVAL;
-				fdisk_free_parttype(pa->type);
+				fdisk_unref_parttype(pa->type);
 				pa->type = NULL;
 				break;
 			}

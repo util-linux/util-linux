@@ -725,7 +725,7 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 	else if (fdisk_set_partition_type(sf->cxt, partno - 1, type) != 0)
 		errx(EXIT_FAILURE, _("%s: partition %zu: failed to set partition type"),
 						devname, partno);
-	fdisk_free_parttype(type);
+	fdisk_unref_parttype(type);
 	return write_changes(sf);
 }
 

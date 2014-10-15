@@ -2093,7 +2093,7 @@ static int gpt_add_partition(
 
 		t = gpt_partition_parttype(cxt, &ents[partnum]);
 		fdisk_info_new_partition(cxt, partnum + 1, user_f, user_l, t);
-		fdisk_free_parttype(t);
+		fdisk_unref_parttype(t);
 	}
 
 	rc = 0;

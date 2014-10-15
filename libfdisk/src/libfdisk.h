@@ -137,26 +137,27 @@ sector_t fdisk_get_geom_cylinders(struct fdisk_context *cxt);
 
 
 /* parttype.c */
-const struct fdisk_parttype *fdisk_label_get_parttype(const struct fdisk_label *lb, size_t n);
+struct fdisk_parttype *fdisk_new_parttype(void);
+void fdisk_ref_parttype(struct fdisk_parttype *t);
+void fdisk_unref_parttype(struct fdisk_parttype *t);
+int fdisk_parttype_set_name(struct fdisk_parttype *t, const char *str);
+int fdisk_parttype_set_typestr(struct fdisk_parttype *t, const char *str);
+int fdisk_parttype_set_code(struct fdisk_parttype *t, int code);
 size_t fdisk_label_get_nparttypes(const struct fdisk_label *lb);
-
+struct fdisk_parttype *fdisk_label_get_parttype(const struct fdisk_label *lb, size_t n);
 int fdisk_label_has_code_parttypes(const struct fdisk_label *lb);
 struct fdisk_parttype *fdisk_label_get_parttype_from_code(
 				const struct fdisk_label *lb,
 				unsigned int code);
-
 struct fdisk_parttype *fdisk_label_get_parttype_from_string(
 				const struct fdisk_label *lb,
 				const char *str);
 struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int code,
 						  const char *typestr);
+struct fdisk_parttype *fdisk_copy_parttype(const struct fdisk_parttype *type);
 struct fdisk_parttype *fdisk_label_parse_parttype(
 				const struct fdisk_label *lb,
 				const char *str);
-
-struct fdisk_parttype *fdisk_copy_parttype(const struct fdisk_parttype *type);
-void fdisk_free_parttype(struct fdisk_parttype *t);			/* TODO: use refcount */
-
 const char *fdisk_parttype_get_string(const struct fdisk_parttype *t);
 unsigned int fdisk_parttype_get_code(const struct fdisk_parttype *t);
 const char *fdisk_parttype_get_name(const struct fdisk_parttype *t);
@@ -271,8 +272,8 @@ int fdisk_partition_cmp_partno(struct fdisk_partition *a,
 int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int enable);
 
 
-extern int fdisk_partition_set_type(struct fdisk_partition *pa, const struct fdisk_parttype *type);
-extern const struct fdisk_parttype *fdisk_partition_get_type(struct fdisk_partition *pa);
+extern int fdisk_partition_set_type(struct fdisk_partition *pa, struct fdisk_parttype *type);
+extern struct fdisk_parttype *fdisk_partition_get_type(struct fdisk_partition *pa);
 extern int fdisk_partition_set_name(struct fdisk_partition *pa, const char *name);
 extern const char *fdisk_partition_get_name(struct fdisk_partition *pa);
 extern int fdisk_partition_set_uuid(struct fdisk_partition *pa, const char *uuid);
