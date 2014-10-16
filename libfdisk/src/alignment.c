@@ -10,10 +10,31 @@
  * SECTION: alignment
  * @title: Align LBA
  * @short_description: function to align partitions and work with disk topology and geometry.
+ *
+ * The libfdisk aligns the end of the partitions to make it possible to align
+ * the next partition to the "grain" (see fdisk_get_grain()). The grain is
+ * usually 1MiB (or more for devices where optimal I/O is greater than 1MiB).
+ *
+ * It means that the library does not align strictly to physical sector size
+ * (or minimal or optimal I/O), but it uses greater granularity. It makes
+ * partition tables more portable. If you copy disk layout from 512-sector to
+ * 4K-sector device, all partitions are still aligned to physical sectors.
+ *
+ * This unified concept also makes partition tables more user friendly, all
+ * tables look same, LBA of the first partition is 2048 sectors everywhere, etc.
+ *
+ * It's recommended to not change any alignment or device properties. All is
+ * initialized by default by fdisk_assign_device().
+ *
+ * Note that terminology used by libfdisk is: 
+ *   - device properties: I/O limits (topology), geometry, sector size, ...
+ *   - alignment: first, last LBA, grain, ...
+ *
+ * The alignment setting may be modified by disk label driver.
  */
 
 /*
- * Alignment according to logical granulity (usually 1MiB)
+ * Alignment according to logical granularity (usually 1MiB)
  */
 static int lba_is_aligned(struct fdisk_context *cxt, sector_t lba)
 {
@@ -43,6 +64,10 @@ static int lba_is_phy_aligned(struct fdisk_context *cxt, sector_t lba)
  * @cxt: context
  * @lba: address to align
  * @direction: FDISK_ALIGN_{UP,DOWN,NEAREST}
+ *
+ * This function aligns @lba to the "grain" (see fdisk_get_grain()). If the
+ * device uses alignment offset then the result is moved according the offset
+ * to be on the physical boundary.
  *
  * Returns: alignment LBA.
  */
@@ -132,7 +157,7 @@ sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt,
  * @cxt: context
  * @lba: LBA to check
  *
- * Check if the @lba is aligned.
+ * Check if the @lba is aligned to physical sector boundary.
  *
  * Returns: 1 if aligned.
  */
@@ -168,8 +193,12 @@ static void recount_geometry(struct fdisk_context *cxt)
  * @heads: user specified heads
  * @sectors: user specified sectors
  *
- * Overrides autodiscovery and apply user specified geometry. The function
- * fdisk_reset_device_properties() restores the original setting.
+ * Overrides auto-discovery. The function fdisk_reset_device_properties() 
+ * restores the original setting.
+ *
+ * The difference between fdisk_override_geometry() and fdisk_save_user_geometry()
+ * is that saved user geometry is persistent setting and it's applied always 
+ * when device is assigned to the context or device properties are reseted.
  *
  * Returns: 0 on success, < 0 on error.
  */
@@ -209,6 +238,9 @@ int fdisk_override_geometry(struct fdisk_context *cxt,
  *
  * Save user defined geometry to use it for partitioning.
  *
+ * The user properties are applied by fdisk_assign_device() or 
+ * fdisk_reset_device_properties().
+
  * Returns: <0 on error, 0 on success.
  */
 int fdisk_save_user_geometry(struct fdisk_context *cxt,
@@ -241,6 +273,9 @@ int fdisk_save_user_geometry(struct fdisk_context *cxt,
  * @log: logicla sector size
  *
  * Save user defined sector sizes to use it for partitioning.
+ *
+ * The user properties are applied by fdisk_assign_device() or 
+ * fdisk_reset_device_properties().
  *
  * Returns: <0 on error, 0 on success.
  */
@@ -330,6 +365,20 @@ void fdisk_zeroize_device_properties(struct fdisk_context *cxt)
 	memset(&cxt->geom, 0, sizeof(struct fdisk_geometry));
 }
 
+/**
+ * fdisk_reset_device_properties:
+ * @cxt: context
+ *
+ * Resets and discovery topology (I/O limits), geometry, re-read the first
+ * rector on the device if necessary and apply user device setting (geometry
+ * and sector size), then initialize alignment according to label driver (see
+ * fdisk_reset_alignment()).
+ *
+ * You don't have to use this function by default, fdisk_assign_device() is
+ * smart enough to initialize all necessary setting.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_reset_device_properties(struct fdisk_context *cxt)
 {
 	int rc;
@@ -490,12 +539,6 @@ static sector_t topology_get_first_lba(struct fdisk_context *cxt)
 	return res;
 }
 
-/*
- * The LBA of the first partition is based on the device geometry and topology.
- * This offset is generic generic (and recommended) for all labels.
- *
- * Returns: 0 on error or number of bytes.
- */
 static unsigned long topology_get_grain(struct fdisk_context *cxt)
 {
 	unsigned long res;
@@ -523,7 +566,8 @@ static unsigned long topology_get_grain(struct fdisk_context *cxt)
  * fdisk_reset_alignment:
  * @cxt: fdisk context
  *
- * Resets alignment setting to the default or label specific values.
+ * Resets alignment setting to the default and label specific values. This
+ * function does not change device properties (I/O limits, geometry etc.).
  *
  * Returns: 0 on success, < 0 in case of error.
  */
@@ -569,7 +613,9 @@ sector_t fdisk_cround(struct fdisk_context *cxt, sector_t num)
  * fdisk_reread_partition_table:
  * @cxt: context
  *
- * Force *system kernel* to re-read partition table.
+ * Force *kernel* to re-read partition table on block devices.
+ *
+ * Returns: 0 on success, < 0 in case of error.
  */
 int fdisk_reread_partition_table(struct fdisk_context *cxt)
 {

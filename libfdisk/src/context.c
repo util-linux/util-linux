@@ -10,25 +10,24 @@
  * @title: libfdisk handler
  * @short_description: stores infor about device, labels etc.
  *
- * Partitioning data:
+ * The library distinguish between three types of partitioning objects.
  *
  * on-disk data
- *    The libfdisk reads PT when you assign device to the context, the
- *    function fdisk_write_disklabel() modify on-disk data.
+ *    - disk label specific
+ *    - probed and read  by disklabel drivers when assign device to the context
+ *      or when switch to another disk label type
+ *    - only fdisk_write_disklabel() modify on-disk data
  *
  * in-memory data
- *    All data are label specific, but usually stored in the first sector
- *    which is cached in memory and shared between all label drivers (see
- *    labelsection for more details). All label operations are based on
- *    in-memory data.
+ *    - generic data and disklabel specific data stored in struct fdisk_label
+ *    - all partitioning operations are based on in-memory data only
  *
  * struct fdisk_partition
- *    The struct provides abstraction to present partitions to users (for
- *    example to generate human readable info about PT) and it's also unified
- *    way how to define partition template that can be used by label driver to
- *    create a new partition. It's necessary to understand the struct
- *    fdisk_partition is always completely independent object and any change to
- *    the object has no effect to in-memory (or on-disk) label data.
+ *    - provides abstraction to present partitions to users
+ *    - fdisk_partition is possible to gather to fdisk_table container
+ *    - used as unified template for new partitions
+ *    - the struct fdisk_partition is always completely independent object and
+ *      any change to the object has no effect to in-memory (or on-disk) label data
  */
 
 /**
@@ -183,7 +182,7 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
  * fdisk_ref_context:
  * @cxt: context pointer
  *
- * Incremparts reference counter.
+ * Increments reference counter.
  */
 void fdisk_ref_context(struct fdisk_context *cxt)
 {
@@ -285,22 +284,6 @@ int __fdisk_switch_label(struct fdisk_context *cxt, struct fdisk_label *lb)
 }
 
 /**
- * fdisk_switch_label:
- * @cxt: context
- * @name: label name (e.g. "gpt")
- *
- * Forces libfdisk to use the label driver. It's usually bad idea to use this
- * function, it's better to use fdisk_create_disklabel().
- *
- *
- * Returns: 0 on succes, <0 in case of error.
- */
-int fdisk_switch_label(struct fdisk_context *cxt, const char *name)
-{
-	return __fdisk_switch_label(cxt, fdisk_get_label(cxt, name));
-}
-
-/**
  * fdisk_has_label:
  * @cxt: fdisk context
  *
@@ -314,6 +297,36 @@ int fdisk_has_label(struct fdisk_context *cxt)
 /**
  * fdisk_get_npartitions:
  * @cxt: context
+ *
+ * The maximal number of the partitions depends on disklabel and does not
+ * have to describe the real limit of PT.
+ *
+ * For example the limit for MBR without extend partition is 4, with extended
+ * partition it's unlimited (so the function returns the current number of all
+ * partitions in this case).
+ *
+ * And for example for GPT it depends on space allocated on disk for array of
+ * entry records (usually 128).
+ *
+ * It's fine to use fdisk_get_npartitions() in loops, but don't forget that
+ * partition may be unused (see fdisk_is_partition_used()).
+ *
+ * <informalexample>
+ *   <programlisting>
+ *	struct fdisk_partition *pa = NULL;
+ *	size_t i, nmax = fdisk_get_npartitions(cxt);
+ *
+ *	for (i = 0; i < nmax; i++) {
+ *		if (!fdisk_is_partition_used(cxt, i))
+ *			continue;
+ *		... do something ...
+ *	}
+ *   </programlisting>
+ * </informalexample>
+ *
+ * Note that the recommended way to list partitions is to use
+ * fdisk_get_partitions() and struct fdisk_table than ask disk driver for each
+ * individual partitions.
  *
  * Returns: maximal number of partitions for the current label.
  */
@@ -529,6 +542,8 @@ fail:
  *
  * Close device and call fsync(). If the @cxt is nested context than the
  * request is redirected to the parent.
+ *
+ * Returns: 0 on success, < 0 on error.
  */
 int fdisk_deassign_device(struct fdisk_context *cxt, int nosync)
 {
@@ -620,7 +635,7 @@ void fdisk_unref_context(struct fdisk_context *cxt)
  * @ask_cb: callback
  * @data: callback data
  *
- * Set callbacks for dialog driven partitioning and library warnings/errors.
+ * Set callback for dialog driven partitioning and library warnings/errors.
  *
  * Returns: 0 on success, < 0 on error.
  */
@@ -776,7 +791,7 @@ unsigned int fdisk_get_units_per_sector(struct fdisk_context *cxt)
  * anyway libfdisk never returns zero. If the optimal I/O size is not provided
  * then libfdisk returns minimal I/O size or sector size.
  *
- * Returns: optimal I/O size
+ * Returns: optimal I/O size in bytes.
  */
 unsigned long fdisk_get_optimal_iosize(struct fdisk_context *cxt)
 {
@@ -788,7 +803,7 @@ unsigned long fdisk_get_optimal_iosize(struct fdisk_context *cxt)
  * fdisk_get_minimal_iosize:
  * @cxt: context
  *
- * Returns: minimal I/O size
+ * Returns: minimal I/O size in bytes
  */
 unsigned long fdisk_get_minimal_iosize(struct fdisk_context *cxt)
 {
@@ -800,7 +815,7 @@ unsigned long fdisk_get_minimal_iosize(struct fdisk_context *cxt)
  * fdisk_get_physector_size:
  * @cxt: context
  *
- * Returns: physical sector size
+ * Returns: physical sector size in bytes
  */
 unsigned long fdisk_get_physector_size(struct fdisk_context *cxt)
 {
@@ -812,7 +827,7 @@ unsigned long fdisk_get_physector_size(struct fdisk_context *cxt)
  * fdisk_get_sector_size:
  * @cxt: context
  *
- * Returns: sector size
+ * Returns: logical sector size in bytes
  */
 unsigned long fdisk_get_sector_size(struct fdisk_context *cxt)
 {
@@ -824,7 +839,11 @@ unsigned long fdisk_get_sector_size(struct fdisk_context *cxt)
  * fdisk_get_alignment_offset
  * @cxt: context
  *
- * Returns: alignment offset (used by 4K disks for backward compatibility with DOS tools).
+ * The alignment offset is offset between logical and physical sectors. For
+ * backward compatibility the first logical sector on 4K disks does no have to
+ * start on the same place like physical sectors.
+ *
+ * Returns: alignment offset in bytes
  */
 unsigned long fdisk_get_alignment_offset(struct fdisk_context *cxt)
 {
@@ -836,7 +855,7 @@ unsigned long fdisk_get_alignment_offset(struct fdisk_context *cxt)
  * fdisk_get_grain_size:
  * @cxt: context
  *
- * Returns: usual grain used to align partitions
+ * Returns: grain in bytes used to align partitions (usually 1MiB)
  */
 unsigned long fdisk_get_grain_size(struct fdisk_context *cxt)
 {
@@ -859,12 +878,16 @@ sector_t fdisk_get_first_lba(struct fdisk_context *cxt)
 /**
  * fdisk_set_first_lba:
  * @cxt: fdisk context
- * @lba: first possible sector for data
+ * @lba: first possible logical sector for data
  *
  * It's strongly recommended to use the default library setting. The first LBA
  * is always reseted by fdisk_assign_device(), fdisk_override_geometry()
  * and fdisk_reset_alignment(). This is very low level function and library
  * does not check if your setting makes any sense.
+ *
+ * This function is necessary only when you want to work with very unusual
+ * partition tables like GPT protective MBR or hybrid partition tables on
+ * bootable media where the first partition may start on very crazy offsets.
  *
  * Returns: 0 on success, <0 on error.
  */
@@ -893,11 +916,15 @@ sector_t fdisk_get_last_lba(struct fdisk_context *cxt)
 /**
  * fdisk_set_last_lba:
  * @cxt: fdisk context
- * @lba: last possible sector
+ * @lba: last possible logical sector
  *
  * It's strongly recommended to use the default library setting. The last LBA
  * is always reseted by fdisk_assign_device(), fdisk_override_geometry() and
  * fdisk_reset_alignment().
+ *
+ * The default is number of sectors on the device, but maybe modified by the
+ * current disklabel driver (for example GPT uses and of disk for backup
+ * header, so last_lba is smaller than total number of sectors).
  *
  * Returns: 0 on success, <0 on error.
  */
@@ -916,7 +943,7 @@ sector_t fdisk_set_last_lba(struct fdisk_context *cxt, sector_t lba)
  * fdisk_get_nsectors:
  * @cxt: context
  *
- * Returns: size of the device in (real) sectors.
+ * Returns: size of the device in logical sectors.
  */
 sector_t fdisk_get_nsectors(struct fdisk_context *cxt)
 {

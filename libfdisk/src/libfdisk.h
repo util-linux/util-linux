@@ -89,7 +89,6 @@ size_t fdisk_get_npartitions(struct fdisk_context *cxt);
 struct fdisk_label *fdisk_get_label(struct fdisk_context *cxt, const char *name);
 int fdisk_next_label(struct fdisk_context *cxt, struct fdisk_label **lb);
 size_t fdisk_get_nlabels(struct fdisk_context *cxt);
-int fdisk_switch_label(struct fdisk_context *cxt, const char *name);
 
 int fdisk_has_label(struct fdisk_context *cxt);
 int fdisk_is_labeltype(struct fdisk_context *cxt, enum fdisk_labeltype l);
@@ -349,6 +348,7 @@ int fdisk_save_user_sector_size(struct fdisk_context *cxt,
 				unsigned int log);
 int fdisk_has_user_device_properties(struct fdisk_context *cxt);
 int fdisk_reset_alignment(struct fdisk_context *cxt);
+int fdisk_reset_device_properties(struct fdisk_context *cxt);
 int fdisk_reread_partition_table(struct fdisk_context *cxt);
 
 /* iter.c */

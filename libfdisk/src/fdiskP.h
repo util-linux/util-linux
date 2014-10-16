@@ -391,7 +391,6 @@ extern int fdisk_missing_geometry(struct fdisk_context *cxt);
 /* alignment.c */
 sector_t fdisk_scround(struct fdisk_context *cxt, sector_t num);
 sector_t fdisk_cround(struct fdisk_context *cxt, sector_t num);
-int fdisk_reset_device_properties(struct fdisk_context *cxt);
 
 extern int fdisk_discover_geometry(struct fdisk_context *cxt);
 extern int fdisk_discover_topology(struct fdisk_context *cxt);
