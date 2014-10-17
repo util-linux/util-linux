@@ -694,6 +694,16 @@ static void append_option(struct libmnt_context *cxt, const char *opt)
 		err(MOUNT_EX_SYSERR, _("failed to append option '%s'"), opt);
 }
 
+static int has_remount_flag(struct libmnt_context *cxt)
+{
+	unsigned long mflags = 0;
+
+	if (mnt_context_get_mflags(cxt, &mflags))
+		return 0;
+
+	return mflags & MS_REMOUNT;
+}
+
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
@@ -1087,8 +1097,8 @@ int main(int argc, char **argv)
 		/* BIND/MOVE operations, let's set the mount flags */
 		mnt_context_set_mflags(cxt, oper);
 
-	if (oper || propa)
-		/* For --make-* or --bind is fstab unnecessary */
+	if ((oper && !has_remount_flag(cxt)) || propa)
+		/* For --make-* or --bind is fstab/mtab unnecessary */
 		mnt_context_set_optsmode(cxt, MNT_OMODE_NOTAB);
 
 	rc = mnt_context_mount(cxt);
