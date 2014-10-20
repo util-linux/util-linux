@@ -1357,9 +1357,6 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 			     hclocktime.tv_sec, &tdrift);
 	if (!show && !predict)
 		hclocktime = time_inc(tdrift, hclocktime.tv_sec);
-	if (predict)
-		hclocktime = time_inc(hclocktime, (double)
-				      -(tdrift.tv_sec + tdrift.tv_sec / 1E6));
 	if (show || get) {
 		display_time(hclock_valid,
 			     time_inc(hclocktime, -time_diff
@@ -1410,6 +1407,8 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 			return rc;
 		}
 	} else if (predict) {
+		hclocktime = time_inc(hclocktime, (double)
+				      -(tdrift.tv_sec + tdrift.tv_usec / 1E6));
 		if (debug) {
 			printf(_
 			       ("At %ld seconds after 1969, RTC is predicted to read %ld seconds after 1969.\n"),
