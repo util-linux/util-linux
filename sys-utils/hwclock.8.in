@@ -21,16 +21,16 @@ gains time at a certain rate when left to run).
 
 Since v2.26
 .B hwclock
-does not update Hardware Clock's drift factor in @ADJTIME_PATH@ by default.
-It's necessary to use \fB\-\-update-drift\fR with \fB\-\-set\fR or
-\fB\-\-systohc\fR to force drift factor update.
+does not update the Hardware Clock's drift factor in @ADJTIME_PATH@ by default.
+It is necessary to use \fB\-\-update-drift\fR, with \fB\-\-set\fR or
+\fB\-\-systohc\fR, to force drift factor updates.
 
 Since v2.26
-.B hwclock
-automatically compensates Hardware Clock to account for systematic drift before
-using it to set the System Clock by \fB\-\-hctosys\fR. It means that
-\fB\-\-adjust\fR is no more necessary during boot. This functionality makes
-hwclock usable early in boot process when the root filesystem is read-only.
+.B hwclock \-\-hctosys
+automatically compensates time read from the Hardware Clock to account for
+systematic drift before using it to set the System Clock.  Therefore,
+\fB\-\-adjust\fR is no longer necessary during boot. This functionality makes
+hwclock usable early in the boot process when the root filesystem is read-only.
 
 .SH FUNCTIONS
 You need exactly one of the following options to tell
