@@ -41,7 +41,7 @@ Hardware Clock refers.  For example, if you are using the convention
 that the year counter in your Hardware Clock contains the number of
 full years since 1952, then the kernel's Hardware Clock epoch value
 must be 1952.
-.PP
+.sp
 This epoch value is used whenever
 .B hwclock
 reads or sets the Hardware Clock.
@@ -73,7 +73,7 @@ Hardware Clock is not being periodically updated by something such as NTP's
 Set the System Time from the Hardware Clock.  The time read from the Hardware
 Clock is compensated to account for systematic drift before using it to set the
 System Clock.  See the discussion below, under \fBThe Adjust Function\fR.
-.PP
+.sp
 Also set the kernel's timezone value to the local timezone
 as indicated by the TZ environment variable and/or
 .IR /usr/share/zoneinfo ,
@@ -83,7 +83,7 @@ would interpret them.
 The obsolete tz_dsttime field of the kernel's timezone value is set
 to DST_NONE.  (For details on what this field used to mean, see
 .BR settimeofday (2).)
-.PP
+.sp
 When used in a startup script, making it the first caller of
 .BR settimeofday (2)
 from boot, it will set the NTP 11 minute mode time scale via the
@@ -91,9 +91,9 @@ from boot, it will set the NTP 11 minute mode time scale via the
 kernel variable. See the discussion below, under
 .B Automatic Hardware Clock Synchronization by the
 .BR Kernel.
-.PP
+.sp
 This is a good option to use in one of the system startup scripts.
-.PP
+.sp
 This option should never be used on a running system. Jumping system time
 will cause problems, such as, corrupted file system timestamps.
 Also, if NTP 11 minute mode is active then
@@ -117,9 +117,9 @@ option for details.
 .TP
 .B \-\-systz
 Set the kernel's timezone and reset the System Time based on the current timezone.
-.PP
+.sp
 The system time is only reset on the first call after boot.
-.PP
+.sp
 The local timezone is taken to be what is
 indicated by the TZ environment variable and/or
 .IR /usr/share/zoneinfo ,
@@ -129,7 +129,7 @@ would interpret them.
 The obsolete tz_dsttime field of the kernel's timezone value is set
 to DST_NONE.  (For details on what this field used to mean, see
 .BR settimeofday (2).)
-.PP
+.sp
 This is an alternate option to
 .B \-\-hctosys
 that does not read the hardware clock, and may be used in system startup
@@ -170,7 +170,7 @@ actually gets set is 94 (or 95).  Thus, if you have one of these machines,
 .B hwclock
 cannot set the year after 1999 and cannot use the value of the clock as
 the true time in the normal way.
-.PP
+.sp
 To compensate for this (without your getting a BIOS update, which would
 definitely be preferable), always use
 .B \-\-badyear
@@ -184,7 +184,7 @@ within the past year.  For this to work, you had better do a
 or
 .B hwclock \-\-systohc
 at least once a year!
-.PP
+.sp
 Though
 .B hwclock
 ignores the year value when it reads the Hardware Clock, it sets the
@@ -194,7 +194,7 @@ the true year.  That way, the Hardware Clock inserts leap days where
 they belong.  Again, if you let the Hardware Clock run for more than a
 year without setting it, this scheme could be defeated and you could
 end up losing a day.
-.PP
+.sp
 .B hwclock
 warns you that you probably need
 .B \-\-badyear
@@ -213,9 +213,9 @@ The value of this option is an argument to the
 .BR date (1)
 program.
 For example:
-.PP
+.sp
 .B "    hwclock" --set --date="2011-08-14 16:45:05"
-.PP
+.sp
 The argument must be in local time, even if you keep your Hardware Clock in
 Coordinated Universal time.  See the
 .B \-\-utc
@@ -250,9 +250,9 @@ Hardware Clock's year counter refers.  It is used together with
 the \fB\-\-setepoch\fR option to set the kernel's idea of the epoch of the
 Hardware Clock, or otherwise to specify the epoch for use with
 direct ISA access.
-.PP
+.sp
 For example, on a Digital Unix machine:
-.PP
+.sp
 .B "    hwclock" --setepoch --epoch=1952
 
 .TP
@@ -281,7 +281,7 @@ is mounted.
 work, contact the maintainer to see if the program can be improved
 to detect your system automatically.  Output of `hwclock --debug'
 and `cat /proc/cpuinfo' may be of interest.)
-.PP
+.sp
 Option
 .B \-\-jensen
 means you are running on a Jensen model.  And
@@ -293,7 +293,7 @@ in the option name refers to the Time Of Year facility of the machine.
 .TP
 .B \-\-localtime
 Indicate that the Hardware Clock is kept in local time.
-.PP
+.sp
 It is your choice whether to keep
 your clock in UTC or in local time, but nothing in the clock itself
 says which alternative
@@ -302,7 +302,7 @@ you give this information to
 .BR hwclock .
 If you specify the wrong one (or specify neither and take a wrong default),
 both setting and querying the Hardware Clock will be messed up.
-.PP
+.sp
 If you specify neither
 .B \-\-utc
 nor

@@ -1599,11 +1599,12 @@ static void usage(const char *fmt, ...)
 		"     --epoch <year>   specifies the year which is the beginning of the\n"
 		"                        hardware clock's epoch value\n"), _PATH_RTC_DEV);
 	fprintf(usageto, _(
-		"     --update-drift   update drift factor in %s\n"
-		"     --noadjfile      do not access %s; this requires the use of\n"
+		"     --update-drift   update drift factor in %1$s (requires\n"
+		"                        --set or --systohc)\n"
+		"     --noadjfile      do not access %1$s; this requires the use of\n"
 		"                        either --utc or --localtime\n"
 		"     --adjfile <file> specifies the path to the adjust file;\n"
-		"                        the default is %s\n"), _PATH_ADJTIME, _PATH_ADJTIME, _PATH_ADJTIME);
+		"                        the default is %1$s\n"), _PATH_ADJTIME);
 	fputs(_("     --test           do not update anything, just show what would happen\n"
 		" -D, --debug          debugging mode\n" "\n"), usageto);
 #ifdef __alpha__
