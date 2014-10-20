@@ -130,6 +130,18 @@ Use the partition that has the specified
 .I /proc/partitions
 is needed.)
 .TP
+.BR \-o , " \-\-options " \fIopts\fP
+Specify swap options by fstab compatible comma separated string. For example:
+.RS
+.RS
+.sp
+.B "swapon -o pri=1,discard=pages,nofail /dev/sda2"
+.sp
+.RE
+The \fIopts\fP string is evaluated as the last and overrides all another
+options.
+.RE
+.TP
 .BR \-p , " \-\-priority " \fIpriority\fP
 Specify the priority of the swap device.
 .I priority
@@ -149,10 +161,8 @@ Display swap usage summary by device.  Equivalent to "cat /proc/swaps".
 Not available before Linux 2.1.25.  This output format is DEPRECATED in favour
 of \fB\-\-show\fR that provides better control on output data.
 .TP
-.BR \-\-show " [\fIcolumn\fR, ...]"
-Display definable device table similar to
-.B \-\-summary
-output.  See
+.BR " \-\-show" [ =\fIcolumn\fR]
+Display definable table of swap areas. See
 .B \-\-help
 output for a list of available columns.
 .TP

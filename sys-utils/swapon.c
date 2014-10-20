@@ -21,6 +21,7 @@
 #include "pathnames.h"
 #include "xalloc.h"
 #include "strutils.h"
+#include "optutils.h"
 #include "closestream.h"
 
 #include "swapheader.h"
@@ -640,6 +641,42 @@ static int swapon_by_uuid(const char *uuid, int prio, int dsc)
 			 cannot_find(uuid);
 }
 
+/* -o <options> or fstab */
+static int parse_options(const char *optstr,
+			 int *priority, int *discard, int *nofail)
+{
+	char *arg = NULL;
+
+	assert(optstr);
+	assert(priority);
+	assert(discard);
+	assert(nofail);
+
+	if (mnt_optstr_get_option(optstr, "nofail", NULL, 0) == 0)
+		*nofail = 1;
+
+	if (mnt_optstr_get_option(optstr, "discard", &arg, NULL) == 0) {
+		*discard |= SWAP_FLAG_DISCARD;
+
+		if (arg) {
+			/* only single-time discards are wanted */
+			if (strcmp(arg, "once") == 0)
+				*discard |= SWAP_FLAG_DISCARD_ONCE;
+
+			/* do discard for every released swap page */
+			if (strcmp(arg, "pages") == 0)
+				*discard |= SWAP_FLAG_DISCARD_PAGES;
+			}
+	}
+
+	arg = NULL;
+	if (mnt_optstr_get_option(optstr, "pri", &arg, NULL) == 0 && arg)
+		*priority = atoi(arg);
+
+	return 0;
+}
+
+
 static int swapon_all(void)
 {
 	struct libmnt_table *tb = get_fstab();
@@ -657,26 +694,14 @@ static int swapon_all(void)
 	while (mnt_table_find_next_fs(tb, itr, match_swap, NULL, &fs) == 0) {
 		/* defaults */
 		int pri = priority, dsc = discard, nofail = ifexists;
-		char *p, *src, *dscarg;
+		const char *opts, *src;
 
 		if (mnt_fs_get_option(fs, "noauto", NULL, NULL) == 0)
 			continue;
-		if (mnt_fs_get_option(fs, "discard", &dscarg, NULL) == 0) {
-			dsc |= SWAP_FLAG_DISCARD;
-			if (dscarg) {
-				/* only single-time discards are wanted */
-				if (strcmp(dscarg, "once") == 0)
-					dsc |= SWAP_FLAG_DISCARD_ONCE;
 
-				/* do discard for every released swap page */
-				if (strcmp(dscarg, "pages") == 0)
-					dsc |= SWAP_FLAG_DISCARD_PAGES;
-			}
-		}
-		if (mnt_fs_get_option(fs, "nofail", NULL, NULL) == 0)
-			nofail = 1;
-		if (mnt_fs_get_option(fs, "pri", &p, NULL) == 0 && p)
-			pri = atoi(p);
+		opts = mnt_fs_get_options(fs);
+		if (opts)
+			parse_options(opts, &pri, &dsc, &nofail);
 
 		src = mnt_resolve_spec(mnt_fs_get_source(fs), mntcache);
 		if (!src) {
@@ -694,6 +719,7 @@ static int swapon_all(void)
 	return status;
 }
 
+
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	size_t i;
@@ -706,6 +732,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" -d, --discard[=<policy>] enable swap discards, if supported by device\n"
 		" -e, --ifexists           silently skip devices that do not exist\n"
 		" -f, --fixpgsz            reinitialize the swap space if necessary\n"
+		" -o, --options <list>     comma-separated list of swap options\n"
 		" -p, --priority <prio>    specify the priority of the swap device\n"
 		" -s, --summary            display summary about used swap devices (DEPRECATED)\n"
 		"     --show[=<columns>]   display summary in definable table\n"
@@ -743,22 +770,24 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 int main(int argc, char *argv[])
 {
+	char *options = NULL;
 	int status = 0, c;
 	int show = 0;
 	int bytes = 0;
 	size_t i;
 
 	enum {
-		SHOW_OPTION = CHAR_MAX + 1,
-		RAW_OPTION,
+		BYTES_OPTION = CHAR_MAX + 1,
 		NOHEADINGS_OPTION,
-		BYTES_OPTION
+		RAW_OPTION,
+		SHOW_OPTION
 	};
 
 	static const struct option long_opts[] = {
 		{ "priority", 1, 0, 'p' },
 		{ "discard",  2, 0, 'd' },
 		{ "ifexists", 0, 0, 'e' },
+		{ "options",  2, 0, 'o' },
 		{ "summary",  0, 0, 's' },
 		{ "fixpgsz",  0, 0, 'f' },
 		{ "all",      0, 0, 'a' },
@@ -772,6 +801,15 @@ int main(int argc, char *argv[])
 		{ NULL, 0, 0, 0 }
 	};
 
+	static const ul_excl_t excl[] = {       /* rows and cols in in ASCII order */
+		{ 'a','o','s', SHOW_OPTION },
+		{ 'a','o', BYTES_OPTION },
+		{ 'a','o', NOHEADINGS_OPTION },
+		{ 'a','o', RAW_OPTION },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -780,14 +818,20 @@ int main(int argc, char *argv[])
 	mnt_init_debug(0);
 	mntcache = mnt_new_cache();
 
-	while ((c = getopt_long(argc, argv, "ahd::efp:svVL:U:",
+	while ((c = getopt_long(argc, argv, "ahd::efo:p:svVL:U:",
 				long_opts, NULL)) != -1) {
+
+		err_exclusive_options(c, long_opts, excl, excl_st);
+
 		switch (c) {
 		case 'a':		/* all */
 			++all;
 			break;
 		case 'h':		/* help */
 			usage(stdout);
+			break;
+		case 'o':
+			options = optarg;
 			break;
 		case 'p':		/* priority */
 			priority = strtos16_or_err(optarg,
@@ -875,6 +919,9 @@ int main(int argc, char *argv[])
 
 	if (all)
 		status |= swapon_all();
+
+	if (options)
+		parse_options(options, &priority, &discard, &ifexists);
 
 	for (i = 0; i < numof_labels(); i++)
 		status |= swapon_by_label(get_label(i), priority, discard);
