@@ -182,6 +182,18 @@ static void read_date_from_file(struct tm *tm)
 }
 
 /*
+ * time_t to timeval conversion.
+ */
+static struct timeval t2tv(time_t timet)
+{
+	struct timeval rettimeval;
+
+	rettimeval.tv_sec = timet;
+	rettimeval.tv_usec = 0;
+	return rettimeval;
+}
+
+/*
  * The difference in seconds between two times in "timeval" format.
  */
 double time_diff(struct timeval subtrahend, struct timeval subtractor)
@@ -672,15 +684,12 @@ set_hardware_clock_exact(const time_t sethwtime,
 }
 
 /*
- * Put the time "systime" on standard output in display format. Except if
+ * Put the time "hwctime" on standard output in display format. Except if
  * hclock_valid == false, just tell standard output that we don't know what
  * time it is.
- *
- * Include in the output the adjustment "sync_duration".
  */
 static void
-display_time(const bool hclock_valid, const time_t systime,
-	     const double sync_duration)
+display_time(const bool hclock_valid, struct timeval hwctime)
 {
 	if (!hclock_valid)
 		warnx(_
@@ -692,9 +701,9 @@ display_time(const bool hclock_valid, const time_t systime,
 		char *format = "%c";
 		char ctime_now[200];
 
-		lt = localtime(&systime);
+		lt = localtime(&hwctime.tv_sec);
 		strftime(ctime_now, sizeof(ctime_now), format, lt);
-		printf(_("%s  %.6f seconds\n"), ctime_now, -(sync_duration));
+		printf(_("%s  .%06d seconds\n"), ctime_now, (int)hwctime.tv_usec);
 	}
 }
 
@@ -800,6 +809,12 @@ static int interpret_date_string(const char *date_opt, time_t * const time_p)
  * environment variable and/or /usr/lib/zoneinfo/, interpreted as tzset()
  * would interpret them.
  *
+ * If this is the first call of settimeofday since boot, then this also sets
+ * the kernel variable persistent_clock_is_local so that NTP 11 minute mode
+ * will update the Hardware Clock with the proper timescale. If the Hardware
+ * Clock's timescale configuration is changed then a reboot is required for
+ * persistent_clock_is_local to be updated.
+ *
  * EXCEPT: if hclock_valid is false, just issue an error message saying
  * there is no valid time in the Hardware Clock to which to set the system
  * time.
@@ -808,8 +823,8 @@ static int interpret_date_string(const char *date_opt, time_t * const time_p)
  * have.
  */
 static int
-set_system_clock(const bool hclock_valid, const time_t newtime,
-		 const bool testing)
+set_system_clock(const bool hclock_valid, const struct timeval newtime,
+		 const bool testing, const bool universal)
 {
 	int retcode;
 
@@ -819,15 +834,12 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
 		       "we cannot set the System Time from it."));
 		retcode = 1;
 	} else {
-		struct timeval tv;
+		const struct timeval *tv_null = NULL;
 		struct tm *broken;
 		int minuteswest;
-		int rc;
+		int rc = 0;
 
-		tv.tv_sec = newtime;
-		tv.tv_usec = 0;
-
-		broken = localtime(&newtime);
+		broken = localtime(&newtime.tv_sec);
 #ifdef HAVE_TM_GMTOFF
 		minuteswest = -broken->tm_gmtoff / 60;	/* GNU extension */
 #else
@@ -839,7 +851,7 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
 		if (debug) {
 			printf(_("Calling settimeofday:\n"));
 			printf(_("\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"),
-			       (long)tv.tv_sec, (long)tv.tv_usec);
+			       (long)newtime.tv_sec, (long)newtime.tv_usec);
 			printf(_("\ttz.tz_minuteswest = %d\n"), minuteswest);
 		}
 		if (testing) {
@@ -849,7 +861,14 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
 		} else {
 			const struct timezone tz = { minuteswest, 0 };
 
-			rc = settimeofday(&tv, &tz);
+			/* Set kernel persistent_clock_is_local so that 11 minute
+			 * mode does not clobber the Hardware Clock with UTC. This
+			 * is only available on first call of settimeofday after boot.
+			 */
+			if (!universal)
+				rc = settimeofday(tv_null, &tz);
+			if (!rc)
+				rc = settimeofday(&newtime, &tz);
 			if (rc) {
 				if (errno == EPERM) {
 					warnx(_
@@ -962,12 +981,13 @@ static int set_system_clock_timezone(const bool universal, const bool testing)
 }
 
 /*
- * Update the drift factor in <*adjtime_p> to reflect the fact that the
- * Hardware Clock was calibrated to <nowtime> and before that was set to
- * <hclocktime>.
+ * Refresh the last calibrated and last adjusted timestamps in <*adjtime_p>
+ * to facilitate future drift calculations based on this set point.
  *
- * We record in the adjtime file the time at which we last calibrated the
- * clock so we can compute the drift rate each time we calibrate.
+ * With the --update-drift option:
+ * Update the drift factor in <*adjtime_p> based on the fact that the
+ * Hardware Clock was just calibrated to <nowtime> and before that was
+ * set to the <hclocktime> time scale.
  *
  * EXCEPT: if <hclock_valid> is false, assume Hardware Clock was not set
  * before to anything meaningful and regular adjustments have not been done,
@@ -975,11 +995,16 @@ static int set_system_clock_timezone(const bool universal, const bool testing)
  */
 static void
 adjust_drift_factor(struct adjtime *adjtime_p,
-		    const time_t nowtime,
+		    const struct timeval nowtime,
 		    const bool hclock_valid,
-		    const time_t hclocktime, const double sync_delay)
+		    const struct timeval hclocktime,
+		    const bool update)
 {
-	if (!hclock_valid) {
+	if (!update) {
+		if (debug)
+			printf(_("Not adjusting drift factor because the "
+				 "--update-drift option was not used.\n"));
+	} else if (!hclock_valid) {
 		if (debug)
 			printf(_("Not adjusting drift factor because the "
 				 "Hardware Clock previously contained "
@@ -990,59 +1015,44 @@ adjust_drift_factor(struct adjtime *adjtime_p,
 				 "calibration time is zero,\n"
 				 "so history is bad and calibration startover "
 				 "is necessary.\n"));
-	} else if ((hclocktime - adjtime_p->last_calib_time) < 24 * 60 * 60) {
+	} else if ((hclocktime.tv_sec - adjtime_p->last_calib_time) < 24 * 60 * 60) {
 		if (debug)
 			printf(_("Not adjusting drift factor because it has "
 				 "been less than a day since the last "
 				 "calibration.\n"));
 	} else if (adjtime_p->last_calib_time != 0) {
 		/*
-		 * At adjustment time we adjust the hardware clock according
-		 * to the contents of /etc/adjtime.
+		 * At adjustment time we drift correct the hardware clock
+		 * according to the contents of the adjtime file and refresh
+		 * its last adjusted timestamp.
 		 *
-		 * At calibration time we set the hardware clock and update
-		 * /etc/adjtime, that is, for each calibration (except the
-		 * first) we also do an adjustment.
+		 * At calibration time we set the Hardware Clock and refresh
+		 * both timestamps in <*adjtime_p>.
 		 *
-		 * We are now at calibration time.
+		 * Here, with the --update-drift option, we also update the
+		 * drift factor in <*adjtime_p>.
 		 *
 		 * Let us do computation in doubles. (Floats almost suffice,
 		 * but 195 days + 1 second equals 195 days in floats.)
 		 */
 		const double sec_per_day = 24.0 * 60.0 * 60.0;
-		double atime_per_htime;
-		double adj_days, cal_days;
-		double exp_drift, unc_drift;
 		double factor_adjust;
 		double drift_factor;
+		struct timeval last_calib;
 
-		/* Adjusted time units per hardware time unit */
-		atime_per_htime = 1.0 + adjtime_p->drift_factor / sec_per_day;
+		last_calib = t2tv(adjtime_p->last_calib_time);
+		/*
+		 * Correction to apply to the current drift factor.
+		 *
+		 * Simplified: uncorrected_drift / days_since_calibration.
+		 *
+		 * hclocktime is fully corrected with the current drift factor.
+		 * Its difference from nowtime is the missed drift correction.
+		 */
+		factor_adjust = time_diff(nowtime, hclocktime) /
+				(time_diff(nowtime, last_calib) / sec_per_day);
 
-		/* Days since last adjustment (in hardware clock time) */
-		adj_days = (double)(hclocktime - adjtime_p->last_adj_time)
-		    / sec_per_day;
-
-		/* Expected drift (sec) since last adjustment */
-		exp_drift = adj_days * adjtime_p->drift_factor
-		    + adjtime_p->not_adjusted;
-
-		/* Uncorrected drift (sec) since last calibration */
-		unc_drift = (double)(nowtime - hclocktime)
-		    + sync_delay - exp_drift;
-
-		/* Days since last calibration (in hardware clock time) */
-		cal_days = ((double)(adjtime_p->last_adj_time
-				     - adjtime_p->last_calib_time)
-			    + adjtime_p->not_adjusted)
-		    / (sec_per_day * atime_per_htime) + adj_days;
-
-		/* Amount to add to previous drift factor */
-		factor_adjust = unc_drift / cal_days;
-
-		/* New drift factor */
 		drift_factor = adjtime_p->drift_factor + factor_adjust;
-
 		if (fabs(drift_factor) > MAX_DRIFT) {
 			if (debug)
 				printf(_("Clock drift factor was calculated as "
@@ -1053,19 +1063,19 @@ adjust_drift_factor(struct adjtime *adjtime_p,
 		} else {
 			if (debug)
 				printf(_("Clock drifted %.1f seconds in the past "
-					 "%d seconds in spite of a drift factor of "
+					 "%.1f seconds\nin spite of a drift factor of "
 					 "%f seconds/day.\n"
 					 "Adjusting drift factor by %f seconds/day\n"),
-				       unc_drift,
-				       (int)(nowtime - adjtime_p->last_calib_time),
+				       time_diff(nowtime, hclocktime),
+				       time_diff(nowtime, last_calib),
 				       adjtime_p->drift_factor, factor_adjust);
 		}
 
 		adjtime_p->drift_factor = drift_factor;
 	}
-	adjtime_p->last_calib_time = nowtime;
+	adjtime_p->last_calib_time = nowtime.tv_sec;
 
-	adjtime_p->last_adj_time = nowtime;
+	adjtime_p->last_adj_time = nowtime.tv_sec;
 
 	adjtime_p->not_adjusted = 0;
 
@@ -1073,41 +1083,34 @@ adjust_drift_factor(struct adjtime *adjtime_p,
 }
 
 /*
- * Do the drift adjustment calculation.
+ * Calculate the drift correction currently needed for the
+ * Hardware Clock based on the last time it was adjusted,
+ * and the current drift factor, as stored in the adjtime file.
  *
- * The way we have to set the clock, we need the adjustment in two parts:
+ * The total drift adjustment needed is stored at tdrift_p.
  *
- *	1) an integer number of seconds (return as *adjustment_p)
- *	2) a positive fraction of a second (less than 1) (return as *retro_p)
- *
- * The sum of these two values is the adjustment needed. Positive means to
- * advance the clock or insert seconds. Negative means to retard the clock
- * or remove seconds.
  */
 static void
 calculate_adjustment(const double factor,
 		     const time_t last_time,
 		     const double not_adjusted,
-		     const time_t systime, int *adjustment_p, double *retro_p)
+		     const time_t systime, struct timeval *tdrift_p)
 {
 	double exact_adjustment;
 
 	exact_adjustment =
 	    ((double)(systime - last_time)) * factor / (24 * 60 * 60)
 	    + not_adjusted;
-	*adjustment_p = FLOOR(exact_adjustment);
-
-	*retro_p = exact_adjustment - (double)*adjustment_p;
+	tdrift_p->tv_sec = FLOOR(exact_adjustment);
+	tdrift_p->tv_usec = (exact_adjustment -
+				 (double)tdrift_p->tv_sec) * 1E6;
 	if (debug) {
 		printf(P_("Time since last adjustment is %d second\n",
 			"Time since last adjustment is %d seconds\n",
 		       (int)(systime - last_time)),
 		       (int)(systime - last_time));
-		printf(P_("Need to insert %d second and refer time back "
-			 "%.6f seconds ago\n",
-			 "Need to insert %d seconds and refer time back "
-			 "%.6f seconds ago\n", *adjustment_p),
-			 *adjustment_p, *retro_p);
+		printf(_("Calculated Hardware Clock drift is %ld.%06d seconds\n"),
+		       (long)tdrift_p->tv_sec, (int)tdrift_p->tv_usec);
 	}
 }
 
@@ -1180,28 +1183,25 @@ static void save_adjtime(const struct adjtime adjtime, const bool testing)
  * Do not update anything if the Hardware Clock does not currently present a
  * valid time.
  *
- * Arguments <factor> and <last_time> are current values from the adjtime
- * file.
+ * <hclock_valid> means the Hardware Clock contains a valid time.
  *
- * <hclock_valid> means the Hardware Clock contains a valid time, and that
- * time is <hclocktime>.
+ * <hclocktime> is the drift corrected time read from the Hardware Clock.
  *
- * <read_time> is the current system time (to be precise, it is the system
- * time at the time <hclocktime> was read, which due to computational delay
- * could be a short time ago).
+ * <read_time> was the system time when the <hclocktime> was read, which due
+ * to computational delay could be a short time ago. It is used to define a
+ * trigger point for setting the Hardware Clock. The fractional part of the
+ * Hardware clock set time is subtracted from read_time to 'refer back', or
+ * delay, the trigger point.  Fractional parts must be accounted for in this
+ * way, because the Hardware Clock can only be set to a whole second.
  *
  * <universal>: the Hardware Clock is kept in UTC.
  *
  * <testing>:  We are running in test mode (no updating of clock).
  *
- * We do not bother to update the clock if the adjustment would be less than
- * one second. This is to avoid cumulative error and needless CPU hogging
- * (remember we use an infinite loop for some timing) if the user runs us
- * frequently.
  */
 static void
 do_adjustment(struct adjtime *adjtime_p,
-	      const bool hclock_valid, const time_t hclocktime,
+	      const bool hclock_valid, const struct timeval hclocktime,
 	      const struct timeval read_time,
 	      const bool universal, const bool testing)
 {
@@ -1221,27 +1221,13 @@ do_adjustment(struct adjtime *adjtime_p,
 			printf(_("Not setting clock because drift factor %f is far too high.\n"),
 				adjtime_p->drift_factor);
 	} else {
-		int adjustment;
-		/* Number of seconds we must insert in the Hardware Clock */
-		double retro;
-		/*
-		 * Fraction of second we have to remove from clock after
-		 * inserting <adjustment> whole seconds.
-		 */
-		calculate_adjustment(adjtime_p->drift_factor,
-				     adjtime_p->last_adj_time,
-				     adjtime_p->not_adjusted,
-				     hclocktime, &adjustment, &retro);
-		if (adjustment > 0 || adjustment < -1) {
-			set_hardware_clock_exact(hclocktime + adjustment,
-						 time_inc(read_time, -retro),
-						 universal, testing);
-			adjtime_p->last_adj_time = hclocktime + adjustment;
-			adjtime_p->not_adjusted = 0;
-			adjtime_p->dirty = TRUE;
-		} else if (debug)
-			printf(_("Needed adjustment is less than one second, "
-				 "so not setting clock.\n"));
+		set_hardware_clock_exact(hclocktime.tv_sec,
+					 time_inc(read_time,
+						  -(hclocktime.tv_usec / 1E6)),
+					 universal, testing);
+		adjtime_p->last_adj_time = hclocktime.tv_sec;
+		adjtime_p->not_adjusted = 0;
+		adjtime_p->dirty = TRUE;
 	}
 }
 
@@ -1280,8 +1266,8 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 		 const bool set, const time_t set_time,
 		 const bool hctosys, const bool systohc, const bool systz,
 		 const struct timeval startup_time,
-		 const bool utc, const bool local_opt,
-		 const bool testing, const bool predict)
+		 const bool utc, const bool local_opt, const bool update,
+		 const bool testing, const bool predict, const bool get)
 {
 	/* Contents of the adjtime file, or what they should be. */
 	struct adjtime adjtime;
@@ -1296,11 +1282,12 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 	 */
 	bool hclock_valid = FALSE;
 	/*
-	 * The time the hardware clock had just after we
-	 * synchronized to its next clock tick when we
-	 * started up. Defined only if hclock_valid is true.
+	 * Tick synchronized time read from the Hardware Clock and
+	 * then drift correct for all operations except --show.
 	 */
-	time_t hclocktime = 0;
+	struct timeval hclocktime = { 0, 0 };
+	/* Total Hardware Clock drift correction needed. */
+	struct timeval tdrift;
 	/* local return code */
 	int rc = 0;
 
@@ -1310,13 +1297,12 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 			return EX_NOPERM;
 	}
 
-	if (!noadjfile
-	    && (adjust || set || systohc || (!utc && !local_opt) || predict)) {
+	if (!noadjfile && !(systz && (utc || local_opt))) {
 		rc = read_adjtime(&adjtime);
 		if (rc)
 			return rc;
 	} else {
-		/* A little trick to avoid reading the file if we don't have to */
+		/* A little trick to avoid writing the file if we don't have to */
 		adjtime.dirty = FALSE;
 	}
 
@@ -1328,7 +1314,7 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 		adjtime.dirty = TRUE;
 	}
 
-	if (show || adjust || hctosys || (!noadjfile && !systz && !predict)) {
+	if (show || get || adjust || hctosys || (!noadjfile && !systz && !predict)) {
 		/* data from HW-clock are required */
 		rc = synchronize_to_clock_tick();
 
@@ -1351,26 +1337,48 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 		 */
 		if (!rc) {
 			rc = read_hardware_clock(universal,
-						 &hclock_valid, &hclocktime);
+						 &hclock_valid, &hclocktime.tv_sec);
 			if (rc && !set && !systohc)
 				return EX_IOERR;
 		}
 	}
-
-	if (show) {
-		display_time(hclock_valid, hclocktime,
-			     time_diff(read_time, startup_time));
+	/*
+	 * Calculate Hardware Clock drift for --predict with the user
+	 * supplied --date option time, and with the time read from the
+	 * Hardware Clock for all other operations.  Apply drift correction
+	 * to the Hardware Clock time for everything except --show and
+	 * --predict.  For --predict negate the drift correction, because we
+	 * want to 'predict' a future Hardware Clock time that includes drift.
+	 */
+	hclocktime = predict ? t2tv(set_time) : hclocktime;
+	calculate_adjustment(adjtime.drift_factor,
+			     adjtime.last_adj_time,
+			     adjtime.not_adjusted,
+			     hclocktime.tv_sec, &tdrift);
+	if (!show && !predict)
+		hclocktime = time_inc(tdrift, hclocktime.tv_sec);
+	if (predict)
+		hclocktime = time_inc(hclocktime, (double)
+				      -(tdrift.tv_sec + tdrift.tv_sec / 1E6));
+	if (show || get) {
+		display_time(hclock_valid,
+			     time_inc(hclocktime, -time_diff
+				      (read_time, startup_time)));
 	} else if (set) {
 		set_hardware_clock_exact(set_time, startup_time,
 					 universal, testing);
 		if (!noadjfile)
-			adjust_drift_factor(&adjtime, set_time,
-					    hclock_valid,
-					    hclocktime,
-					    time_diff(read_time, startup_time));
+			adjust_drift_factor(&adjtime,
+					    time_inc(t2tv(set_time), time_diff
+						     (read_time, startup_time)),
+					    hclock_valid, hclocktime, update);
 	} else if (adjust) {
-		do_adjustment(&adjtime, hclock_valid,
-			      hclocktime, read_time, universal, testing);
+		if (tdrift.tv_sec > 0 || tdrift.tv_sec < -1)
+			do_adjustment(&adjtime, hclock_valid,
+				      hclocktime, read_time, universal, testing);
+		else
+			printf(_("Needed adjustment is less than one second, "
+				 "so not setting clock.\n"));
 	} else if (systohc) {
 		struct timeval nowtime, reftime;
 		/*
@@ -1386,12 +1394,11 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 					 reftime.tv_sec,
 					 reftime, universal, testing);
 		if (!noadjfile)
-			adjust_drift_factor(&adjtime, (time_t)
-					    reftime.tv_sec,
-					    hclock_valid, hclocktime, (double)
-					    read_time.tv_usec / 1E6);
+			adjust_drift_factor(&adjtime, nowtime,
+					    hclock_valid, hclocktime, update);
 	} else if (hctosys) {
-		rc = set_system_clock(hclock_valid, hclocktime, testing);
+		rc = set_system_clock(hclock_valid, hclocktime,
+				      testing, universal);
 		if (rc) {
 			printf(_("Unable to set system clock.\n"));
 			return rc;
@@ -1403,19 +1410,12 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 			return rc;
 		}
 	} else if (predict) {
-		int adjustment;
-		double retro;
-
-		calculate_adjustment(adjtime.drift_factor,
-				     adjtime.last_adj_time,
-				     adjtime.not_adjusted,
-				     set_time, &adjustment, &retro);
 		if (debug) {
 			printf(_
 			       ("At %ld seconds after 1969, RTC is predicted to read %ld seconds after 1969.\n"),
-			       set_time, set_time + adjustment);
+			       set_time, (long)hclocktime.tv_sec);
 		}
-		display_time(TRUE, set_time + adjustment, -retro);
+		display_time(TRUE, hclocktime);
 	}
 	if (!noadjfile)
 		save_adjtime(adjtime, testing);
@@ -1570,6 +1570,7 @@ static void usage(const char *fmt, ...)
 	fputs(_("\nFunctions:\n"), usageto);
 	fputs(_(" -h, --help           show this help text and exit\n"
 		" -r, --show           read hardware clock and print result\n"
+		"     --get            read hardware clock and print drift corrected result\n"
 		"     --set            set the RTC to the time given with --date\n"), usageto);
 	fputs(_(" -s, --hctosys        set the system time from the hardware clock\n"
 		" -w, --systohc        set the hardware clock from the current system time\n"
@@ -1598,10 +1599,11 @@ static void usage(const char *fmt, ...)
 		"     --epoch <year>   specifies the year which is the beginning of the\n"
 		"                        hardware clock's epoch value\n"), _PATH_RTC_DEV);
 	fprintf(usageto, _(
+		"     --update-drift   update drift factor in %s\n"
 		"     --noadjfile      do not access %s; this requires the use of\n"
 		"                        either --utc or --localtime\n"
 		"     --adjfile <file> specifies the path to the adjust file;\n"
-		"                        the default is %s\n"), _PATH_ADJTIME, _PATH_ADJTIME);
+		"                        the default is %s\n"), _PATH_ADJTIME, _PATH_ADJTIME, _PATH_ADJTIME);
 	fputs(_("     --test           do not update anything, just show what would happen\n"
 		" -D, --debug          debugging mode\n" "\n"), usageto);
 #ifdef __alpha__
@@ -1644,8 +1646,8 @@ int main(int argc, char **argv)
 	/* Variables set by various options; show may also be set later */
 	/* The options debug, badyear and epoch_option are global */
 	bool show, set, systohc, hctosys, systz, adjust, getepoch, setepoch,
-	    predict, compare;
-	bool utc, testing, local_opt, noadjfile, directisa;
+	    predict, compare, get;
+	bool utc, testing, local_opt, update, noadjfile, directisa;
 	char *date_opt;
 #ifdef __alpha__
 	bool ARCconsole, Jensen, SRM, funky_toy;
@@ -1657,6 +1659,7 @@ int main(int argc, char **argv)
 		OPT_DATE,
 		OPT_DIRECTISA,
 		OPT_EPOCH,
+		OPT_GET,
 		OPT_GETEPOCH,
 		OPT_LOCALTIME,
 		OPT_NOADJFILE,
@@ -1664,7 +1667,8 @@ int main(int argc, char **argv)
 		OPT_SET,
 		OPT_SETEPOCH,
 		OPT_SYSTZ,
-		OPT_TEST
+		OPT_TEST,
+		OPT_UPDATE
 	};
 
 	static const struct option longopts[] = {
@@ -1704,15 +1708,18 @@ int main(int argc, char **argv)
 		{"adjfile",	1, 0, OPT_ADJFILE},
 		{"systz",	0, 0, OPT_SYSTZ},
 		{"predict-hc",	0, 0, OPT_PREDICT_HC},
+		{"get",		0, 0, OPT_GET},
+		{"update-drift",0, 0, OPT_UPDATE},
 		{NULL,		0, NULL, 0}
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
 		{ 'a','r','s','w',
-		  OPT_GETEPOCH,	OPT_PREDICT_HC, OPT_SET,
-		  OPT_SETEPOCH, OPT_SYSTZ },
+		  OPT_GET, OPT_GETEPOCH, OPT_PREDICT_HC,
+		  OPT_SET, OPT_SETEPOCH, OPT_SYSTZ },
 		{ 'u', OPT_LOCALTIME},
 		{ OPT_ADJFILE, OPT_NOADJFILE },
+		{ OPT_NOADJFILE, OPT_UPDATE },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -1747,7 +1754,7 @@ int main(int argc, char **argv)
 
 	/* Set option defaults */
 	show = set = systohc = hctosys = systz = adjust = noadjfile = predict =
-	    compare = FALSE;
+	    compare = get = update = FALSE;
 	getepoch = setepoch = utc = local_opt = directisa = testing = debug = FALSE;
 #ifdef __alpha__
 	ARCconsole = Jensen = SRM = funky_toy = badyear = FALSE;
@@ -1837,6 +1844,12 @@ int main(int argc, char **argv)
 		case OPT_PREDICT_HC:
 			predict = TRUE;		/* --predict-hc */
 			break;
+		case OPT_GET:
+			get = TRUE;		/* --get */
+			break;
+		case OPT_UPDATE:
+			update = TRUE;		/* --update-drift */
+			break;
 #ifdef __linux__
 		case 'f':
 			rtc_dev_name = optarg;	/* --rtc */
@@ -1894,7 +1907,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!(show | set | systohc | hctosys | systz | adjust | getepoch
-	      | setepoch | predict | compare))
+	      | setepoch | predict | compare | get))
 		show = 1;	/* default to show */
 
 	if (getuid() == 0)
@@ -1951,7 +1964,7 @@ int main(int argc, char **argv)
 	} else
 		rc = manipulate_clock(show, adjust, noadjfile, set, set_time,
 			      hctosys, systohc, systz, startup_time, utc,
-			      local_opt, testing, predict);
+			      local_opt, update, testing, predict, get);
 
 	hwclock_exit(rc);
 	return rc;		/* Not reached */
