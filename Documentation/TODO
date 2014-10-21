@@ -1,6 +1,20 @@
 
  Note that items with (!) have high priority.
 
+agetty
+-----
+  - support default issue (/etc/issue) output for agetty to make it agetty
+    usable on systems with empty /etc. 
+
+    This change is little bit controversial, because now agetty prints nothing 
+    by default and it's probably used by admins to hide information about the 
+    system to unauthorized users. We already have --noissue to disable issue 
+    output. The question is if admins use this option, "rm /etc/issue" is 
+    probably easer than modify inittab (or systemd unit file).
+
+    Maybe we can implement it by --enable-agetty-default-issue compile option and 
+    move the decision to downstream maintainers ;-)
+
 swapon
 ------
  - (!) add option -o to specify swap options on command line in fstab notation
