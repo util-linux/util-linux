@@ -16,6 +16,22 @@
 #include "pathnames.h"
 #include "strutils.h"
 
+#include "debug.h"
+
+/*
+ * terminal-colors.d debug stuff
+ */
+UL_DEBUG_DEFINE_MASK(termcolors);
+UL_DEBUG_DEFINE_MASKANEMS(termcolors) = UL_DEBUG_EMPTY_MASKNAMES;
+
+#define TERMCOLORS_DEBUG_INIT	(1 << 1)
+#define TERMCOLORS_DEBUG_CONF	(1 << 2)
+#define TERMCOLORS_DEBUG_SCHEME	(1 << 3)
+#define TERMCOLORS_DEBUG_ALL	0xFFFF
+
+#define DBG(m, x)       __UL_DBG(termcolors, TERMCOLORS_DEBUG_, m, x)
+#define ON_DBG(m, x)    __UL_DBG_CALL(termcolors, TERMCOLORS_DEBUG_, m, x)
+
 /*
  * terminal-colors.d file types
  */
@@ -138,10 +154,9 @@ static void colors_reset(struct ul_color_ctl *cc)
 	memset(cc->scores, 0, sizeof(cc->scores));
 }
 
-#ifdef TEST_PROGRAM
 static void colors_debug(struct ul_color_ctl *cc)
 {
-	int i;
+	size_t i;
 
 	if (!cc)
 		return;
@@ -172,7 +187,7 @@ static void colors_debug(struct ul_color_ctl *cc)
 	fputc('\n', stdout);
 
 	for (i = 0; i < cc->nschemes; i++) {
-		printf("\tscheme #%02d ", i);
+		printf("\tscheme #%02zu ", i);
 		color_scheme_enable(cc->schemes[i].name, NULL);
 		fputs(cc->schemes[i].name, stdout);
 		color_disable();
@@ -180,7 +195,6 @@ static void colors_debug(struct ul_color_ctl *cc)
 	}
 	fputc('\n', stdout);
 }
-#endif
 
 /*
  * Parses [[<utilname>][@<termname>].]<type>
@@ -205,8 +219,10 @@ static int filename_to_tokens(const char *str,
 		*filetype = UL_COLORFILE_ENABLE;
 	else if (strcmp(type_start, "scheme") == 0)
 		*filetype = UL_COLORFILE_SCHEME;
-	else
+	else {
+		DBG(CONF, ul_debug("unknown type '%s'", type_start));
 		return 1;				/* unknown type */
+	}
 
 	if (type_start == str)
 		return 0;				/* "type" only */
@@ -244,6 +260,9 @@ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
 
 	if (!dirname || !cc || !cc->utilname || !*cc->utilname)
 		return -EINVAL;
+
+	DBG(CONF, ul_debug("reading dir: '%s'", dirname));
+
 	dir = opendir(dirname);
 	if (!dir)
 		return -errno;
@@ -275,10 +294,12 @@ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
 		if (tk_term)
 			score += 10;
 
-		/*
-		fprintf(stderr, "%20s score: %2d [cur max: %2d]\n",
-				d->d_name, score, cc->scores[type]);
-		*/
+		DBG(CONF, ul_debug("item '%s': score=%d "
+			"[cur: %d, name(%zu): %s, term(%zu): %s]",
+			d->d_name, score, cc->scores[type],
+			tk_namesz, tk_name,
+			tk_termsz, tk_term));
+
 
 		if (score < cc->scores[type])
 			continue;
@@ -292,6 +313,11 @@ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
 				  strncmp(tk_term, cc->termname, termsz) != 0))
 			continue;
 
+		DBG(CONF, ul_debug("setting '%s' from %d -to-> %d",
+					type == UL_COLORFILE_SCHEME ? "scheme" :
+					type == UL_COLORFILE_DISABLE ? "disable" :
+					type == UL_COLORFILE_ENABLE ? "enable" : "???",
+					cc->scores[type], score));
 		cc->scores[type] = score;
 		if (type == UL_COLORFILE_SCHEME)
 			strncpy(sfile, d->d_name, sizeof(sfile));
@@ -426,6 +452,8 @@ static int colors_add_scheme(struct ul_color_ctl *cc,
 	if (!cc || !name || !*name || !seq0 || !*seq0)
 		return -EINVAL;
 
+	DBG(SCHEME, ul_debug("add '%s'", name));
+
 	rc = cn_sequence(seq0, &seq);
 	free(seq0);
 	if (rc)
@@ -436,8 +464,10 @@ static int colors_add_scheme(struct ul_color_ctl *cc,
 		const char *s = color_sequence_from_colorname(seq);
 		char *p;
 
-		if (!s)
+		if (!s) {
+			DBG(SCHEME, ul_debug("unknown logical name: %s", seq));
 			return -EINVAL;
+		}
 		p = strdup(s);
 		if (!p)
 			return -ENOMEM;
@@ -470,6 +500,8 @@ static void colors_free_schemes(struct ul_color_ctl *cc)
 {
 	size_t i;
 
+	DBG(SCHEME, ul_debug("free scheme"));
+
 	for (i = 0; i < cc->nschemes; i++) {
 		free(cc->schemes[i].name);
 		free(cc->schemes[i].seq);
@@ -488,6 +520,8 @@ static void colors_sort_schemes(struct ul_color_ctl *cc)
 {
 	if (!cc->nschemes)
 		return;
+
+	DBG(SCHEME, ul_debug("sort scheme"));
 
 	qsort(cc->schemes, cc->nschemes,
 	      sizeof(struct ul_color_scheme), cmp_scheme_name);
@@ -511,6 +545,8 @@ static struct ul_color_scheme *colors_get_scheme(struct ul_color_ctl *cc,
 	}
 	if (!cc->nschemes)
 		return NULL;
+
+	DBG(SCHEME, ul_debug("search '%s'", name));
 
 	res = bsearch(&key, cc->schemes, cc->nschemes,
 				sizeof(struct ul_color_scheme),
@@ -556,6 +592,8 @@ static int colors_read_schemes(struct ul_color_ctl *cc)
 	if (rc || !cc->sfile)
 		goto done;
 
+	DBG(SCHEME, ul_debug("reading file '%s'", cc->sfile));
+
 	f = fopen(cc->sfile, "r");
 	if (!f) {
 		rc = -errno;
@@ -599,6 +637,12 @@ done:
 	return rc;
 }
 
+
+static void termcolors_init_debug(void)
+{
+	__UL_INIT_DEBUG(termcolors, TERMCOLORS_DEBUG_, 0, TERMINAL_COLORS_DEBUG);
+}
+
 /**
  * colors_init:
  * @mode: UL_COLORMODE_*
@@ -617,11 +661,14 @@ int colors_init(int mode, const char *name)
 	cc->utilname = name;
 	cc->mode = mode;
 
+	termcolors_init_debug();
+
 	if (mode == UL_COLORMODE_UNDEF && (atty = isatty(STDOUT_FILENO))) {
 		int rc = colors_read_configuration(cc);
 		if (rc)
 			cc->mode = UL_COLORMODE_AUTO;
 		else {
+
 			/* evaluate scores */
 			if (cc->scores[UL_COLORFILE_DISABLE] >
 			    cc->scores[UL_COLORFILE_ENABLE])
@@ -644,6 +691,9 @@ int colors_init(int mode, const char *name)
 	default:
 		cc->has_colors = 0;
 	}
+
+	ON_DBG(CONF, colors_debug(cc));
+
 	return cc->has_colors;
 }
 
@@ -808,8 +858,6 @@ int main(int argc, char *argv[])
 	printf("Hello World!");
 	color_disable();
 	fputc('\n', stdout);
-
-	colors_debug(&ul_colors);
 
 	return EXIT_SUCCESS;
 }
