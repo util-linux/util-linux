@@ -180,7 +180,6 @@ static void colors_debug(struct ul_color_ctl *cc)
 	}
 	fputc('\n', stdout);
 }
-
 #endif
 
 /*
@@ -285,8 +284,8 @@ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
 			continue;
 
 		/* filter out by names */
-		if (tk_namesz != namesz
-		    || strncmp(tk_name, cc->utilname, namesz) != 0)
+		if (tk_namesz && (tk_namesz != namesz ||
+				 strncmp(tk_name, cc->utilname, namesz) != 0))
 			continue;
 
 		if (tk_termsz && (termsz == 0 || tk_termsz != termsz ||
