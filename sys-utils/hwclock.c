@@ -767,7 +767,7 @@ static int interpret_date_string(const char *date_opt, time_t * const time_p)
 	if (!fgets(date_resp, sizeof(date_resp), date_child_fp))
 		date_resp[0] = '\0';	/* in case fgets fails */
 	if (debug)
-		printf(_("response from date command = %s\n"), date_resp);
+		printf(_("response from date command = %s"), date_resp);
 	if (strncmp(date_resp, magic, sizeof(magic) - 1) != 0) {
 		warnx(_("The date command issued by %s returned "
 				  "unexpected results.\n"
