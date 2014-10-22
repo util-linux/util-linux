@@ -15,11 +15,6 @@ agetty
     Maybe we can implement it by --enable-agetty-default-issue compile option and 
     move the decision to downstream maintainers ;-)
 
-swapon
-------
- - (!) add option -o to specify swap options on command line in fstab notation
-   (e.g swapon /dev/sda2 -o discard=page,pri=1)
-
 nsenter(1)
 ----------
  - read the default UID and GID from the target process.
@@ -118,9 +113,6 @@ libfdisk
  - add "move end" command to move end of the last primary/extended partition.
    This feature seems very attractive to users who resizing their disks 
    (for example in virtual machines).
-
- - sfdisk rounds to cylinders is -uM (megabyte units) is specified, this is
-   pretty stupid feature. It has to round to sectors if -uS or -uM is specified.
 
  - use off_t instead "long long"
 
