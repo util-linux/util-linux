@@ -490,7 +490,7 @@ int main(int argc, char **argv)
 {
 	struct wh_dirlist *ls = NULL;
 	int want = ALL_DIRS;
-	int i;
+	int i, want_resetable = 0;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -518,21 +518,16 @@ int main(int argc, char **argv)
 
 		if (*arg != '-') {
 			lookup(arg, ls, want);
-			continue;
-		}
-
-		if (i > 1 && *argv[i - 1] != '-') {
-			/* the list of search patterns has been interupted by
-			 * any non-pattern option, then reset the mask for
-			 * wanted directories. For example:
+			/*
+			 * The lookup mask ("want") is cumulative and it's
+			 * resetable only when it has been already used.
 			 *
-			 *    whereis -m ls -b tr
-			 *
-			 * search for "ls" in mandirs and "tr" in bindirs
+			 *  whereis -b -m foo     :'foo' mask=BIN|MAN
+			 *  whereis -b foo bar    :'foo' and 'bar' mask=BIN|MAN
+			 *  whereis -b foo -m bar :'foo' mask=BIN; 'bar' mask=MAN
 			 */
-			DBG(ARGV, ul_debug("list of search patterns interupted "
-					   "by non-pattern"));
-			want = ALL_DIRS;
+			want_resetable = 1;
+			continue;
 		}
 
 		for (++arg; arg && *arg; arg++) {
@@ -569,12 +564,24 @@ int main(int argc, char **argv)
 					&ls, &i, argc, argv, SRC_DIR);
 				break;
 			case 'b':
+				if (want_resetable) {
+					want = ALL_DIRS;
+					want_resetable = 0;
+				}
 				want = want == ALL_DIRS ? BIN_DIR : want | BIN_DIR;
 				break;
 			case 'm':
+				if (want_resetable) {
+					want = ALL_DIRS;
+					want_resetable = 0;
+				}
 				want = want == ALL_DIRS ? MAN_DIR : want | MAN_DIR;
 				break;
 			case 's':
+				if (want_resetable) {
+					want = ALL_DIRS;
+					want_resetable = 0;
+				}
 				want = want == ALL_DIRS ? SRC_DIR : want | SRC_DIR;
 				break;
 			case 'l':
