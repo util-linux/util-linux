@@ -55,7 +55,22 @@
 #include "closestream.h"
 #include "canonicalize.h"
 
-/*#define DEBUG*/
+#include "debug.h"
+
+UL_DEBUG_DEFINE_MASK(whereis);
+UL_DEBUG_DEFINE_MASKANEMS(whereis) = UL_DEBUG_EMPTY_MASKNAMES;
+
+#define WHEREIS_DEBUG_INIT	(1 << 1)
+#define WHEREIS_DEBUG_PATH	(1 << 2)
+#define WHEREIS_DEBUG_ENV	(1 << 3)
+#define WHEREIS_DEBUG_ARGV	(1 << 4)
+#define WHEREIS_DEBUG_SEARCH	(1 << 5)
+#define WHEREIS_DEBUG_STATIC	(1 << 6)
+#define WHEREIS_DEBUG_LIST	(1 << 7)
+#define WHEREIS_DEBUG_ALL	0xFFFF
+
+#define DBG(m, x)       __UL_DBG(whereis, WHEREIS_DEBUG_, m, x)
+#define ON_DBG(m, x)    __UL_DBG_CALL(whereis, WHEREIS_DEBUG_, m, x)
 
 static char uflag = 0;
 
@@ -152,15 +167,20 @@ static const char *srcdirs[] = {
 	NULL
 };
 
-#ifdef DEBUG
-# define DBG(_x)	do { \
-				printf("DEBUG: "); \
-				_x; \
-				fputc('\n', stdout); \
-			} while (0)
-#else
-# define DBG(_x)
-#endif
+static void whereis_init_debug(void)
+{
+	__UL_INIT_DEBUG(whereis, WHEREIS_DEBUG_, 0, WHEREIS_DEBUG);
+}
+
+static const char *whereis_type_to_name(int type)
+{
+	switch (type) {
+	case BIN_DIR: return "bin";
+	case MAN_DIR: return "man";
+	case SRC_DIR: return "src";
+	default:      return "???";
+	}
+}
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -187,24 +207,22 @@ static void dirlist_add_dir(struct wh_dirlist **ls0, int type, const char *dir)
 	struct stat st;
 	struct wh_dirlist *prev = NULL, *ls = *ls0;
 
-	DBG(printf("add dir: '%s'", dir));
-
 	if (access(dir, R_OK) != 0)
 		return;
 	if (stat(dir, &st) != 0 || !S_ISDIR(st.st_mode))
 		return;
+
 	while (ls) {
 		if (ls->st_ino == st.st_ino &&
 		    ls->st_dev == st.st_dev &&
 		    ls->type == type) {
-			DBG(printf("  already in the list, ignore"));
+			DBG(LIST, ul_debugobj(*ls0, "  ignore (already in list): %s", dir));
 			return;
 		}
 		prev = ls;
 		ls = ls->next;
 	}
 
-	DBG(printf("  adding new directory"));
 
 	ls = xcalloc(1, sizeof(*ls));
 	ls->st_ino = st.st_ino;
@@ -218,6 +236,8 @@ static void dirlist_add_dir(struct wh_dirlist **ls0, int type, const char *dir)
 		assert(prev);
 		prev->next = ls;	/* add to the end of the list */
 	}
+
+	DBG(LIST, ul_debugobj(*ls0, "  add dir: %s", ls->path));
 	return;
 }
 
@@ -231,8 +251,6 @@ static void dirlist_add_subdir(struct wh_dirlist **ls, int type, const char *dir
 	strncpy(buf, dir, PATH_MAX);
 	buf[PATH_MAX - 1] = '\0';
 
-	DBG(printf("add subdir: %s", buf));
-
 	d = strchr(buf, '*');
 	if (!d)
 		return;
@@ -242,7 +260,7 @@ static void dirlist_add_subdir(struct wh_dirlist **ls, int type, const char *dir
 	if (!dirp)
 		return;
 
-	DBG(printf("  scan: %s", buf));
+	DBG(LIST, ul_debugobj(*ls, " scanning subdir: %s", dir));
 
 	while ((dp = readdir(dirp)) != NULL) {
 		if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
@@ -266,7 +284,8 @@ static void construct_dirlist_from_env(const char *env,
 		return;
 	pathcp = xstrdup(path);
 
-	DBG(printf("construct from env: %s", path));
+	DBG(ENV, ul_debugobj(*ls, "construct %s dirlist from: %s",
+				whereis_type_to_name(type), path));
 
 	for (tok = strtok_r(pathcp, ":", &key); tok;
 	     tok = strtok_r(NULL, ":", &key))
@@ -282,13 +301,20 @@ static void construct_dirlist_from_argv(struct wh_dirlist **ls,
 					char *argv[],
 					int type)
 {
-	DBG(printf("construct argv[%d..]", *idx));
+	int i;
 
-	for (; *idx < argc; (*idx)++) {
-		if (*argv[*idx] == '-')			/* end of the list */
-			return;
-		dirlist_add_dir(ls, type, argv[*idx]);
+	DBG(ARGV, ul_debugobj(*ls, "construct %s dirlist from argv[%d..]",
+				whereis_type_to_name(type), *idx));
+
+	for (i = *idx; i < argc; i++) {
+		if (*argv[i] == '-')			/* end of the list */
+			break;
+
+		DBG(ARGV, ul_debugobj(*ls, "  using argv[%d]: %s", *idx, argv[*idx]));
+		dirlist_add_dir(ls, type, argv[i]);
+		*idx = i;
 	}
+
 	return;
 }
 
@@ -298,7 +324,8 @@ static void construct_dirlist(struct wh_dirlist **ls,
 {
 	size_t i;
 
-	DBG(printf("construct from dirs"));
+	DBG(STATIC, ul_debugobj(*ls, "construct %s dirlist from static array",
+				whereis_type_to_name(type)));
 
 	for (i = 0; paths[i]; i++) {
 		if (!strchr(paths[i], '*'))
@@ -315,14 +342,12 @@ static void free_dirlist(struct wh_dirlist **ls0, int type)
 
 	*ls0 = NULL;
 
-	DBG(printf("freeing dirlist"));
+	DBG(LIST, ul_debugobj(*ls0, "free dirlist"));
 
 	while (ls) {
 		if (ls->type & type) {
 			next = ls->next;
-
-			DBG(printf("freeing dir: %s", ls->path));
-
+			DBG(LIST, ul_debugobj(*ls0, " free: %s", ls->path));
 			free(ls->path);
 			free(ls);
 			ls = next;
@@ -381,7 +406,7 @@ static void findin(const char *dir, const char *pattern, int *count, char **wait
 	if (dirp == NULL)
 		return;
 
-	DBG(printf("find '%s' in '%s'", pattern, dir));
+	DBG(SEARCH, ul_debug("find '%s' in '%s'", pattern, dir));
 
 	while ((dp = readdir(dirp)) != NULL) {
 		if (!filename_equal(pattern, dp->d_name))
@@ -413,7 +438,12 @@ static void lookup(const char *pattern, struct wh_dirlist *ls, int want)
 	p = p ? p + 1 : (char *) pattern;
 	strncpy(patbuf, p, PATH_MAX);
 	patbuf[PATH_MAX - 1] = '\0';
-	DBG(printf("lookup dirs for '%s' (%s)", patbuf, pattern));
+
+	DBG(SEARCH, ul_debug("lookup dirs for '%s' (%s), want: %s %s %s",
+				patbuf, pattern,
+				want & BIN_DIR ? "bin" : "",
+				want & MAN_DIR ? "min" : "",
+				want & SRC_DIR ? "src" : ""));
 	p = strrchr(patbuf, '.');
 	if (p)
 		*p = '\0';
@@ -471,6 +501,8 @@ int main(int argc, char **argv)
 	if (argc == 1)
 		usage(stderr);
 
+	whereis_init_debug();
+
 	construct_dirlist(&ls, BIN_DIR, bindirs);
 	construct_dirlist_from_env("PATH", &ls, BIN_DIR);
 
@@ -481,13 +513,16 @@ int main(int argc, char **argv)
 
 	for (i = 1; i < argc; i++) {
 		const char *arg = argv[i];
+		int arg_i = i;
+
+		DBG(ARGV, ul_debug("argv[%d]: %s", i, arg));
 
 		if (*arg != '-') {
 			lookup(arg, ls, want);
 			continue;
 		}
 
-		if (i > 1 && *argv[i - 1] != '-')
+		if (i > 1 && *argv[i - 1] != '-') {
 			/* the list of search patterns has been interupted by
 			 * any non-pattern option, then reset the mask for
 			 * wanted directories. For example:
@@ -496,9 +531,14 @@ int main(int argc, char **argv)
 			 *
 			 * search for "ls" in mandirs and "tr" in bindirs
 			 */
+			DBG(ARGV, ul_debug("list of search patterns interupted "
+					   "by non-pattern"));
 			want = ALL_DIRS;
+		}
 
 		for (++arg; arg && *arg; arg++) {
+			DBG(ARGV, ul_debug("  arg: %s", arg));
+
 			switch (*arg) {
 			case 'f':
 				break;
@@ -549,11 +589,12 @@ int main(int argc, char **argv)
 			default:
 				usage(stderr);
 			}
+
+			if (arg_i < i)		/* moved the the next argv[] item */
+				break;
 		}
 	}
 
-
-	DBG(printf("DONE"));
 	free_dirlist(&ls, ALL_DIRS);
 	return EXIT_SUCCESS;
 }
