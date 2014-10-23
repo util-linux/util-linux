@@ -311,11 +311,12 @@ static void print_value(int output, int num, const char *devname,
 
 	} else {
 		if (num == 1 && devname)
-			printf("%s: ", devname);
+			printf("%s:", devname);
+		fputs(" ", stdout);
 		fputs(name, stdout);
 		fputs("=\"", stdout);
 		safe_print(value, valsz, "\"");
-		fputs("\" ", stdout);
+		fputs("\"", stdout);
 	}
 }
 
