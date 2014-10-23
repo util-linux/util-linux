@@ -56,14 +56,35 @@ in the places specified by
 .B $PATH
 and
 .BR $MANPATH .
+
+The search restrinctions (options \fB\-b\fP, \fB\-m\fP and \fB\-s\fP) are
+cumulative and always applied for the next \fIname\fP patterns specified on
+command line. The first search restrinction resets the search mask. For example
+.RS
+.sp
+.B "whereis -bm ls tr -m gcc"
+.sp
+.RE
+searchs for "ls" and "tr" binaries and man pages, and "gcc" man pages only.
+
+The options \fB\-B\fP, \fB\-M\fP and \fB\-S\fP resets search paths for the next
+\fIname\fP patterns. For example
+.RS
+.sp
+.B "whereis -m ls -M /usr/share/man/man1 -f cal"
+.sp
+.RE
+searchs for "ls" man pages in all default paths, but for "cal" in
+/usr/share/man/man1 directory only.
+
 .SH OPTIONS
 .TP
 .IP \fB\-b\fP
-Search only for binaries.
+Search for binaries.
 .IP \fB\-m\fP
-Search only for manuals.
+Search for manuals.
 .IP \fB\-s\fP
-Search only for sources.
+Search for sources.
 .IP \fB\-u\fP
 Only show the command names that have unusual entries.  A command is said to be
 unusual if it does not have just one entry of each explicitly requested type.
