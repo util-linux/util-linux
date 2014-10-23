@@ -52,7 +52,7 @@
 			lib ## _debug_mask = mask; \
 		lib ## _debug_mask |= pref ## INIT; \
 		if (lib ## _debug_mask != pref ## INIT) { \
-			__UL_DBG(lib, pref, INIT, ul_debug("library debug mask: 0x%04x", \
+			__UL_DBG(lib, pref, INIT, ul_debug("debug mask: 0x%04x", \
 					lib ## _debug_mask)); \
 		} \
 	} while (0)
