@@ -154,7 +154,11 @@ endif
 
 if BUILD_RUNUSER
 install-data-hook-bashcomp-runuser::
+if BUILD_SU
 	ln -sf su $(DESTDIR)$(bashcompletiondir)/runuser
+else
+	cp $(top_srcdir)/bash-completion/su $(DESTDIR)$(bashcompletiondir)/runuser
+endif
 INSTALL_DATA_HOOKS += install-data-hook-bashcomp-runuser
 endif
 
