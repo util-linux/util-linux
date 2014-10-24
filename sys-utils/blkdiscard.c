@@ -144,9 +144,10 @@ int main(int argc, char **argv)
 	if (ioctl(fd, BLKSSZGET, &secsize))
 		err(EXIT_FAILURE, _("%s: BLKSSZGET ioctl failed"), path);
 
-	/* align range to the sector size */
-	range[0] = (range[0] + secsize - 1) & ~(secsize - 1);
-	range[1] &= ~(secsize - 1);
+	/* check offset alignment to the sector size */
+	if (range[0] % secsize)
+		errx(EXIT_FAILURE, _("%s: offset %" PRIu64 " is not aligned "
+			 "to sector size %i"), path, range[0], secsize);
 
 	/* is the range end behind the end of the device ?*/
 	if (range[0] > blksize)
@@ -154,6 +155,11 @@ int main(int argc, char **argv)
 	end = range[0] + range[1];
 	if (end < range[0] || end > blksize)
 		range[1] = blksize - range[0];
+
+	/* check length alignment to the sector size */
+	if (range[1] % secsize)
+		errx(EXIT_FAILURE, _("%s: length %" PRIu64 " is not aligned "
+			 "to sector size %i"), path, range[1], secsize);
 
 	if (secure) {
 		if (ioctl(fd, BLKSECDISCARD, &range))
