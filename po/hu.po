@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.18-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2014-09-03 10:35+0200\n"
+"POT-Creation-Date: 2014-10-24 12:11+0200\n"
 "PO-Revision-Date: 2010-07-02 10:44+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -25,24 +25,24 @@ msgid " %s <disk device> <partition number> <start> <length>\n"
 msgstr ""
 
 #: disk-utils/addpart.c:52 disk-utils/blockdev.c:276 disk-utils/blockdev.c:420
-#: disk-utils/blockdev.c:447 disk-utils/cfdisk.c:2056 disk-utils/delpart.c:53
-#: disk-utils/fdformat.c:62 disk-utils/fdformat.c:154 disk-utils/fdisk.c:687
-#: disk-utils/fdisk.c:704 disk-utils/fdisk.c:744 disk-utils/fdisk.c:963
+#: disk-utils/blockdev.c:447 disk-utils/cfdisk.c:2064 disk-utils/delpart.c:53
+#: disk-utils/fdformat.c:62 disk-utils/fdformat.c:154 disk-utils/fdisk.c:695
+#: disk-utils/fdisk.c:712 disk-utils/fdisk.c:752 disk-utils/fdisk.c:971
 #: disk-utils/fsck.c:1423 disk-utils/fsck.cramfs.c:145
 #: disk-utils/fsck.cramfs.c:502 disk-utils/isosize.c:134
 #: disk-utils/mkfs.bfs.c:187 disk-utils/mkfs.cramfs.c:164
 #: disk-utils/mkfs.cramfs.c:664 disk-utils/mkfs.cramfs.c:791
-#: disk-utils/mkfs.minix.c:753 disk-utils/partx.c:949
+#: disk-utils/mkfs.minix.c:757 disk-utils/partx.c:949
 #: disk-utils/resizepart.c:97 disk-utils/swaplabel.c:105
 #: libfdisk/src/bsd.c:503 lib/path.c:73 lib/path.c:85 login-utils/islocal.c:87
-#: login-utils/last.c:643 login-utils/last-deprecated.c:245
+#: login-utils/last.c:653 login-utils/last-deprecated.c:245
 #: login-utils/sulogin.c:468 login-utils/sulogin.c:506
 #: login-utils/utmpdump.c:126 login-utils/utmpdump.c:345
 #: login-utils/utmpdump.c:367 login-utils/vipw.c:265 login-utils/vipw.c:283
 #: misc-utils/findmnt.c:1085 misc-utils/logger.c:412 misc-utils/mcookie.c:112
 #: misc-utils/uuidd.c:222 sys-utils/blkdiscard.c:135 sys-utils/dmesg.c:513
 #: sys-utils/eject.c:510 sys-utils/eject.c:711 sys-utils/fallocate.c:370
-#: sys-utils/fsfreeze.c:124 sys-utils/fstrim.c:72 sys-utils/hwclock.c:270
+#: sys-utils/fsfreeze.c:124 sys-utils/fstrim.c:72 sys-utils/hwclock.c:271
 #: sys-utils/hwclock-cmos.c:632 sys-utils/hwclock-rtc.c:162
 #: sys-utils/hwclock-rtc.c:256 sys-utils/hwclock-rtc.c:414
 #: sys-utils/hwclock-rtc.c:435 sys-utils/hwclock-rtc.c:482
@@ -50,8 +50,8 @@ msgstr ""
 #: sys-utils/rtcwake.c:265 sys-utils/rtcwake.c:525 sys-utils/setpriv.c:224
 #: sys-utils/setpriv.c:523 sys-utils/setpriv.c:546 sys-utils/swapon.c:320
 #: sys-utils/swapon.c:483 sys-utils/switch_root.c:163 sys-utils/unshare.c:49
-#: sys-utils/wdctl.c:319 sys-utils/wdctl.c:375 term-utils/script.c:216
-#: term-utils/script.c:242 term-utils/script.c:683
+#: sys-utils/wdctl.c:319 sys-utils/wdctl.c:375 term-utils/script.c:217
+#: term-utils/script.c:243 term-utils/script.c:690
 #: term-utils/scriptreplay.c:203 term-utils/scriptreplay.c:206
 #: term-utils/wall.c:272 text-utils/rev.c:141 text-utils/tailf.c:61
 #: text-utils/tailf.c:98 text-utils/ul.c:232
@@ -218,371 +218,371 @@ msgstr "%s: ioctl hiba a következőn: %s\n"
 msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
 msgstr "ÍV    EO   SM    BM    KezdőSzektor        Méret   Eszköz\n"
 
-#: disk-utils/cfdisk.c:148
+#: disk-utils/cfdisk.c:153
 msgid "Bootable"
 msgstr "Aktív"
 
-#: disk-utils/cfdisk.c:148
+#: disk-utils/cfdisk.c:153
 msgid "Toggle bootable flag of the current partition"
 msgstr "Az aktuális partíció indíthatóvá tétele"
 
-#: disk-utils/cfdisk.c:149
+#: disk-utils/cfdisk.c:154
 msgid "Delete"
 msgstr "Törlés"
 
-#: disk-utils/cfdisk.c:149
+#: disk-utils/cfdisk.c:154
 msgid "Delete the current partition"
 msgstr "Az aktuális partíció törlése"
 
-#: disk-utils/cfdisk.c:150
+#: disk-utils/cfdisk.c:155
 msgid "New"
 msgstr "Új"
 
-#: disk-utils/cfdisk.c:150
+#: disk-utils/cfdisk.c:155
 msgid "Create new partition from free space"
 msgstr "Új partíció létrehozása a szabad területen"
 
-#: disk-utils/cfdisk.c:151
+#: disk-utils/cfdisk.c:156
 msgid "Quit"
 msgstr "Kilépés"
 
-#: disk-utils/cfdisk.c:151
+#: disk-utils/cfdisk.c:156
 msgid "Quit program without writing partition table"
 msgstr "Kilépés a partíciós tábla kiírása nélkül"
 
-#: disk-utils/cfdisk.c:152 libfdisk/src/bsd.c:890 libfdisk/src/dos.c:2033
+#: disk-utils/cfdisk.c:157 libfdisk/src/bsd.c:890 libfdisk/src/dos.c:2032
 #: libfdisk/src/gpt.c:2417 libfdisk/src/sgi.c:1093 libfdisk/src/sun.c:1007
 msgid "Type"
 msgstr "Típus"
 
-#: disk-utils/cfdisk.c:152
+#: disk-utils/cfdisk.c:157
 #, fuzzy
 msgid "Change the partition type"
 msgstr "   t   egy partíció rendszerazonosítójának módosítása"
 
-#: disk-utils/cfdisk.c:153
+#: disk-utils/cfdisk.c:158
 msgid "Help"
 msgstr "Súgó"
 
-#: disk-utils/cfdisk.c:153
+#: disk-utils/cfdisk.c:158
 msgid "Print help screen"
 msgstr "Segítség kiírása"
 
-#: disk-utils/cfdisk.c:154
+#: disk-utils/cfdisk.c:159
 msgid "Sort"
 msgstr ""
 
-#: disk-utils/cfdisk.c:154
+#: disk-utils/cfdisk.c:159
 #, fuzzy
 msgid "Fix partitions order"
 msgstr "   f   partíciósorrend javítása"
 
-#: disk-utils/cfdisk.c:155
+#: disk-utils/cfdisk.c:160
 msgid "Write"
 msgstr "Kiírás"
 
-#: disk-utils/cfdisk.c:155
+#: disk-utils/cfdisk.c:160
 msgid "Write partition table to disk (this might destroy data)"
 msgstr "A partíciós tábla kiírása a lemezre (adatvesztést okozhat)"
 
-#: disk-utils/cfdisk.c:510 disk-utils/fdisk.c:347
+#: disk-utils/cfdisk.c:516 disk-utils/fdisk.c:355
 #, c-format
 msgid "internal error: unsupported dialog type %d"
 msgstr ""
 
-#: disk-utils/cfdisk.c:1282
+#: disk-utils/cfdisk.c:1288
 #, fuzzy, c-format
 msgid "Disk: %s"
 msgstr "lemez: %.*s\n"
 
-#: disk-utils/cfdisk.c:1284
+#: disk-utils/cfdisk.c:1290
 #, fuzzy, c-format
 msgid "Size: %s, %ju bytes, %ju sectors"
 msgstr ""
 "\n"
 "%s lemez: %lu cilinder, %lu fej, %lu szektor sávonként\n"
 
-#: disk-utils/cfdisk.c:1287
+#: disk-utils/cfdisk.c:1293
 #, fuzzy, c-format
 msgid "Label: %s, identifier: %s"
 msgstr "Lemezazonosító: 0x%08x\n"
 
-#: disk-utils/cfdisk.c:1290
+#: disk-utils/cfdisk.c:1296
 #, fuzzy, c-format
 msgid "Label: %s"
 msgstr "címke: %.*s\n"
 
-#: disk-utils/cfdisk.c:1431
+#: disk-utils/cfdisk.c:1437
 msgid "May be followed by {M,B,G,T}iB (the \"iB\" is optional) or S for sectors."
 msgstr ""
 
-#: disk-utils/cfdisk.c:1435
+#: disk-utils/cfdisk.c:1441
 #, fuzzy
 msgid "Please, specify size."
 msgstr "A „--date” kapcsoló nincs megadva.\n"
 
-#: disk-utils/cfdisk.c:1457
+#: disk-utils/cfdisk.c:1463
 #, c-format
 msgid "Minimal size is %ju"
 msgstr ""
 
-#: disk-utils/cfdisk.c:1466
+#: disk-utils/cfdisk.c:1472
 #, fuzzy, c-format
 msgid "Maximal size is %ju bytes."
 msgstr "méret lekérése bájtokban"
 
-#: disk-utils/cfdisk.c:1470
+#: disk-utils/cfdisk.c:1476
 #, fuzzy
 msgid "Failed to parse size."
 msgstr "%s: a következő megnyitása meghiúsult: %s\n"
 
-#: disk-utils/cfdisk.c:1525
+#: disk-utils/cfdisk.c:1531
 #, fuzzy
 msgid "Select partition type"
 msgstr "%d. partíció kiválasztva\n"
 
-#: disk-utils/cfdisk.c:1588 disk-utils/fdisk.c:968
+#: disk-utils/cfdisk.c:1594 disk-utils/fdisk.c:976
 #, fuzzy
 msgid "Device does not contain a recognized partition table."
 msgstr "A(z) %s lemez nem tartalmaz érvényes partíciós táblát\n"
 
-#: disk-utils/cfdisk.c:1590
+#: disk-utils/cfdisk.c:1596
 #, fuzzy
 msgid "Please, select a type to create a new disk label."
 msgstr "Létre akar hozni lemezcímkét? (i/n) "
 
-#: disk-utils/cfdisk.c:1595
+#: disk-utils/cfdisk.c:1601
 #, fuzzy
 msgid "Select label type"
 msgstr "Érvénytelen típus\n"
 
-#: disk-utils/cfdisk.c:1632
+#: disk-utils/cfdisk.c:1638
 msgid "Help Screen for cfdisk"
 msgstr "A cfdisk súgója"
 
-#: disk-utils/cfdisk.c:1634
+#: disk-utils/cfdisk.c:1640
 msgid "This is cfdisk, a curses based disk partitioning program, which"
 msgstr "Ez a cfdisk, egy curses alapú lemezparticionáló program, amellyel"
 
-#: disk-utils/cfdisk.c:1635
+#: disk-utils/cfdisk.c:1641
 msgid "allows you to create, delete and modify partitions on your hard"
 msgstr "létrehozhatja, törölheti és módosíthatja a partícióit a"
 
-#: disk-utils/cfdisk.c:1636
+#: disk-utils/cfdisk.c:1642
 msgid "disk drive."
 msgstr "merevlemezen."
 
-#: disk-utils/cfdisk.c:1638
+#: disk-utils/cfdisk.c:1644
 msgid "Copyright (C) 2014 Karel Zak <kzak@redhat.com> "
 msgstr ""
 
-#: disk-utils/cfdisk.c:1639
+#: disk-utils/cfdisk.c:1645
 msgid "Based on the original cfdisk from Kevin E. Martin & aeb."
 msgstr ""
 
-#: disk-utils/cfdisk.c:1641
+#: disk-utils/cfdisk.c:1647
 msgid "Command      Meaning"
 msgstr "Parancs     Jelentés"
 
-#: disk-utils/cfdisk.c:1642
+#: disk-utils/cfdisk.c:1648
 msgid "-------      -------"
 msgstr "-------      -------"
 
-#: disk-utils/cfdisk.c:1643
+#: disk-utils/cfdisk.c:1649
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b          Az aktuális partíció megjelölése indíthatóként"
 
-#: disk-utils/cfdisk.c:1644
+#: disk-utils/cfdisk.c:1650
 msgid "  d          Delete the current partition"
 msgstr "  d          Az aktuális partíció törlése"
 
-#: disk-utils/cfdisk.c:1645
+#: disk-utils/cfdisk.c:1651
 msgid "  h          Print this screen"
 msgstr "  h          Ezen képernyő megjelenítése"
 
-#: disk-utils/cfdisk.c:1646
+#: disk-utils/cfdisk.c:1652
 msgid "  n          Create new partition from free space"
 msgstr "  n          Új partíció létrehozása a szabad területből"
 
-#: disk-utils/cfdisk.c:1647
+#: disk-utils/cfdisk.c:1653
 msgid "  q          Quit program without writing partition table"
 msgstr "  q          Kilépés a programból a partíciós tábla kiírása nélkül"
 
-#: disk-utils/cfdisk.c:1648
+#: disk-utils/cfdisk.c:1654
 #, fuzzy
 msgid "  t          Change the partition type"
 msgstr "  t          A fájlrendszer típusának megváltoztatása"
 
-#: disk-utils/cfdisk.c:1649
+#: disk-utils/cfdisk.c:1655
 #, fuzzy
 msgid "  s          Fix partitions order (only when in disarray)"
 msgstr "              paraméterek\n"
 
-#: disk-utils/cfdisk.c:1650
+#: disk-utils/cfdisk.c:1656
 msgid "  W          Write partition table to disk (must enter upper case W)"
 msgstr "  W          Kiírja a partíciós táblát a lemezre (csak a nagy W érvényes)"
 
-#: disk-utils/cfdisk.c:1651
+#: disk-utils/cfdisk.c:1657
 msgid "             Since this might destroy data on the disk, you must"
 msgstr "             Ez letörli az összes adatot a lemezről, ezért"
 
-#: disk-utils/cfdisk.c:1652
+#: disk-utils/cfdisk.c:1658
 msgid "             either confirm or deny the write by entering `yes' or"
 msgstr "             erősítse, vagy tagadja meg az írást az „igen”"
 
-#: disk-utils/cfdisk.c:1653
+#: disk-utils/cfdisk.c:1659
 msgid "             `no'"
 msgstr "             vagy „nem” beírásával"
 
-#: disk-utils/cfdisk.c:1654
+#: disk-utils/cfdisk.c:1660
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "Fel nyíl     A kurzort az előző partícióra mozgatja"
 
-#: disk-utils/cfdisk.c:1655
+#: disk-utils/cfdisk.c:1661
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "Le nyíl      A kurzort a következő partícióra mozgatja"
 
-#: disk-utils/cfdisk.c:1656
+#: disk-utils/cfdisk.c:1662
 #, fuzzy
 msgid "Left Arrow   Move cursor to the previous menu item"
 msgstr "Fel nyíl     A kurzort az előző partícióra mozgatja"
 
-#: disk-utils/cfdisk.c:1657
+#: disk-utils/cfdisk.c:1663
 #, fuzzy
 msgid "Right Arrow  Move cursor to the next menu item"
 msgstr "Le nyíl      A kurzort a következő partícióra mozgatja"
 
-#: disk-utils/cfdisk.c:1660
+#: disk-utils/cfdisk.c:1666
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Megjegyzés: Az összes parancs beírható kis és nagy betűvel is"
 
-#: disk-utils/cfdisk.c:1661
+#: disk-utils/cfdisk.c:1667
 msgid "case letters (except for Writes)."
 msgstr "kivéve kiírásnál (W)."
 
-#: disk-utils/cfdisk.c:1663
+#: disk-utils/cfdisk.c:1669
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
 msgstr ""
 
-#: disk-utils/cfdisk.c:1670
+#: disk-utils/cfdisk.c:1676
 #, fuzzy
 msgid "Press a key to continue."
 msgstr "Nyomjon meg egy billentyűt a folytatáshoz"
 
-#: disk-utils/cfdisk.c:1746
+#: disk-utils/cfdisk.c:1752
 #, fuzzy
 msgid "Could not toggle the flag."
 msgstr "Nem nyitható meg a következő: %s\n"
 
-#: disk-utils/cfdisk.c:1756
+#: disk-utils/cfdisk.c:1762
 #, fuzzy, c-format
 msgid "Could not delete partition %zu."
 msgstr "%d. partíció kiválasztva\n"
 
-#: disk-utils/cfdisk.c:1758 disk-utils/fdisk-menu.c:504
+#: disk-utils/cfdisk.c:1764 disk-utils/fdisk-menu.c:504
 #, fuzzy, c-format
 msgid "Partition %zu has been deleted."
 msgstr "A(z) %d. partíciónak nincs adatterülete\n"
 
-#: disk-utils/cfdisk.c:1779
+#: disk-utils/cfdisk.c:1785
 #, fuzzy
 msgid "Partition size: "
 msgstr ""
 "\n"
 "%d partíció:\n"
 
-#: disk-utils/cfdisk.c:1810
+#: disk-utils/cfdisk.c:1816
 #, fuzzy, c-format
 msgid "Changed type of partition %zu."
 msgstr "A(z) %d. partíció rendszertípusa módosítva a következőre: %x (%s)\n"
 
-#: disk-utils/cfdisk.c:1812
+#: disk-utils/cfdisk.c:1818
 #, fuzzy, c-format
 msgid "The type of partition %zu is unchanged."
 msgstr "A(z) %d. partíció rendszertípusa változatlan: %x (%s)\n"
 
-#: disk-utils/cfdisk.c:1827
+#: disk-utils/cfdisk.c:1833
 msgid "Device open in read-only mode"
 msgstr ""
 
-#: disk-utils/cfdisk.c:1832
+#: disk-utils/cfdisk.c:1838
 #, fuzzy
 msgid "Are you sure you want to write the partition table to disk? "
 msgstr "Biztosan ki akarja írni a partíciós táblát a lemezre? (igen vagy nem): "
 
-#: disk-utils/cfdisk.c:1834
+#: disk-utils/cfdisk.c:1840
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr ""
 
-#: disk-utils/cfdisk.c:1839 login-utils/lslogins.c:209 sys-utils/lscpu.c:1249
+#: disk-utils/cfdisk.c:1845 login-utils/lslogins.c:209 sys-utils/lscpu.c:1249
 #: sys-utils/lscpu.c:1259
 #, c-format
 msgid "yes"
 msgstr "igen"
 
-#: disk-utils/cfdisk.c:1840
+#: disk-utils/cfdisk.c:1846
 msgid "Did not write partition table to disk"
 msgstr "A partíciós tábla nem került a lemezre"
 
-#: disk-utils/cfdisk.c:1845
+#: disk-utils/cfdisk.c:1851
 #, fuzzy
 msgid "Failed to write disklabel"
 msgstr "a pozicionálás sikertelen a write_tables-ben"
 
-#: disk-utils/cfdisk.c:1848 disk-utils/fdisk-menu.c:459
+#: disk-utils/cfdisk.c:1854 disk-utils/fdisk-menu.c:459
 #, fuzzy
 msgid "The partition table has been altered."
 msgstr ""
 "A partíciós tábla módosítva!\n"
 "\n"
 
-#: disk-utils/cfdisk.c:1868
+#: disk-utils/cfdisk.c:1874
 #, fuzzy
 msgid "Note that partition table entries are not in disk order now."
 msgstr ""
 "\n"
 "A partíciós tábla bejegyzései nem a lemezen található sorrendben vannak\n"
 
-#: disk-utils/cfdisk.c:1891
+#: disk-utils/cfdisk.c:1899
 #, fuzzy
 msgid "failed to create a new disklabel"
 msgstr "a pozicionálás sikertelen a write_tables-ben"
 
-#: disk-utils/cfdisk.c:1899
+#: disk-utils/cfdisk.c:1907
 #, fuzzy
 msgid "failed to read partitions"
 msgstr "partíciós tábla újraolvasása"
 
-#: disk-utils/cfdisk.c:1909 disk-utils/fdisk.c:960 disk-utils/fdisk-menu.c:451
+#: disk-utils/cfdisk.c:1917 disk-utils/fdisk.c:968 disk-utils/fdisk-menu.c:451
 msgid "Device open in read-only mode."
 msgstr ""
 
-#: disk-utils/cfdisk.c:1980
+#: disk-utils/cfdisk.c:1988
 #, fuzzy, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr "Használat: %s [kapcsolók] eszköz ...\n"
 
-#: disk-utils/cfdisk.c:1983
+#: disk-utils/cfdisk.c:1991
 #, fuzzy
 msgid " -L --color[=<when>]     colorize output (auto, always or never)\n"
 msgstr "  -Q, --quiet-output               Nincs normál kimenet\n"
 
-#: disk-utils/cfdisk.c:1984
+#: disk-utils/cfdisk.c:1992
 #, fuzzy
 msgid " -z --zero               start with zeroed partition table\n"
 msgstr "  -Q, --quiet-output               Nincs normál kimenet\n"
 
-#: disk-utils/cfdisk.c:2023 disk-utils/fdisk.c:880 misc-utils/cal.c:373
+#: disk-utils/cfdisk.c:2031 disk-utils/fdisk.c:888 misc-utils/cal.c:373
 #: sys-utils/dmesg.c:1295 text-utils/hexdump.c:114
 #, fuzzy
 msgid "unsupported color mode"
 msgstr "nincs parancs?\n"
 
-#: disk-utils/cfdisk.c:2026 include/c.h:286 schedutils/chrt.c:266
+#: disk-utils/cfdisk.c:2034 include/c.h:286 schedutils/chrt.c:266
 #: schedutils/taskset.c:166 sys-utils/chcpu.c:330 sys-utils/dmesg.c:1335
-#: sys-utils/hwclock.c:1549 sys-utils/lscpu.c:1727 sys-utils/renice.c:102
-#: sys-utils/rtcwake.c:474 sys-utils/tunelp.c:249 term-utils/agetty.c:740
-#: term-utils/script.c:220 term-utils/scriptreplay.c:177
+#: sys-utils/hwclock.c:1550 sys-utils/lscpu.c:1727 sys-utils/renice.c:102
+#: sys-utils/rtcwake.c:474 sys-utils/tunelp.c:249 term-utils/agetty.c:751
+#: term-utils/script.c:221 term-utils/scriptreplay.c:177
 #: term-utils/write.c:113 text-utils/col.c:208 text-utils/colcrt.c:118
 #: text-utils/colrm.c:174 text-utils/column.c:152 text-utils/rev.c:124
 #: text-utils/tailf.c:264 text-utils/ul.c:196
@@ -590,7 +590,7 @@ msgstr "nincs parancs?\n"
 msgid "%s from %s\n"
 msgstr "%s a(z) %s csomagból\n"
 
-#: disk-utils/cfdisk.c:2042 disk-utils/fdisk.c:820
+#: disk-utils/cfdisk.c:2050 disk-utils/fdisk.c:828
 #, fuzzy
 msgid "failed to allocate libfdisk context"
 msgstr "nem foglalható le kimeneti puffer"
@@ -656,8 +656,8 @@ msgstr ""
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.cramfs.c:141
 #: disk-utils/mkfs.bfs.c:180 disk-utils/mkfs.cramfs.c:751
-#: disk-utils/mkfs.cramfs.c:788 disk-utils/mkfs.minix.c:746
-#: disk-utils/partx.c:888 login-utils/last.c:657 misc-utils/namei.c:231
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/mkfs.minix.c:750
+#: disk-utils/partx.c:888 login-utils/last.c:667 misc-utils/namei.c:231
 #: sys-utils/blkdiscard.c:138 sys-utils/dmesg.c:515 sys-utils/fallocate.c:195
 #: sys-utils/fsfreeze.c:127 sys-utils/fstrim.c:76 sys-utils/swapon.c:457
 #: sys-utils/switch_root.c:93 sys-utils/switch_root.c:133
@@ -695,12 +695,12 @@ msgid "Single"
 msgstr "Szimpla"
 
 #: disk-utils/fdformat.c:163 disk-utils/fsck.minix.c:1389
-#: disk-utils/mkfs.minix.c:804 disk-utils/mkswap.c:661 disk-utils/partx.c:1001
+#: disk-utils/mkfs.minix.c:808 disk-utils/mkswap.c:661 disk-utils/partx.c:1001
 #: disk-utils/resizepart.c:108 disk-utils/sfdisk.c:2997
 #: disk-utils/sfdisk.c:3049 disk-utils/sfdisk.c:3086
 #: login-utils/utmpdump.c:385 sys-utils/dmesg.c:643 sys-utils/wdctl.c:344
-#: sys-utils/wdctl.c:409 term-utils/script.c:337 term-utils/script.c:378
-#: term-utils/script.c:491 text-utils/pg.c:1236
+#: sys-utils/wdctl.c:409 term-utils/script.c:338 term-utils/script.c:379
+#: term-utils/script.c:498 text-utils/pg.c:1236
 #, fuzzy
 msgid "write failed"
 msgstr "az írás meghiúsult: %s"
@@ -757,228 +757,228 @@ msgstr "%s (%s)\n"
 msgid "%s (%ju-%ju): "
 msgstr "%s (%s)\n"
 
-#: disk-utils/fdisk.c:330
+#: disk-utils/fdisk.c:332
 msgid " [Y]es/[N]o: "
 msgstr ""
 
-#: disk-utils/fdisk.c:361
+#: disk-utils/fdisk.c:369
 #, fuzzy
 msgid "Partition type (type L to list all types): "
 msgstr "Hexa kód (a kódok listája az L megnyomásával érhető el): "
 
-#: disk-utils/fdisk.c:362
+#: disk-utils/fdisk.c:370
 #, fuzzy
 msgid "Hex code (type L to list all codes): "
 msgstr "Hexa kód (a kódok listája az L megnyomásával érhető el): "
 
-#: disk-utils/fdisk.c:456
+#: disk-utils/fdisk.c:464
 #, fuzzy
 msgid "DOS Compatibility flag is set (DEPRECATED!)"
 msgstr "A DOS kompatibilitási jelző be van állítva\n"
 
-#: disk-utils/fdisk.c:457
+#: disk-utils/fdisk.c:465
 #, fuzzy
 msgid "DOS Compatibility flag is not set"
 msgstr "A DOS kompatibilitási jelző nincs beállítva\n"
 
-#: disk-utils/fdisk.c:479
+#: disk-utils/fdisk.c:487
 #, fuzzy, c-format
 msgid "Partition %zu does not exist yet!"
 msgstr "A(z) %d. partíció még nem létezik!\n"
 
-#: disk-utils/fdisk.c:484 disk-utils/fdisk.c:493 disk-utils/sfdisk.c:586
+#: disk-utils/fdisk.c:492 disk-utils/fdisk.c:501 disk-utils/sfdisk.c:586
 #: libfdisk/src/ask.c:751
 msgid "Unknown"
 msgstr "Ismeretlen"
 
-#: disk-utils/fdisk.c:492
+#: disk-utils/fdisk.c:500
 #, fuzzy, c-format
 msgid "Changed type of partition '%s' to '%s'."
 msgstr "A(z) %d. partíció rendszertípusa módosítva a következőre: %x (%s)\n"
 
-#: disk-utils/fdisk.c:496
+#: disk-utils/fdisk.c:504
 #, fuzzy, c-format
 msgid "Type of partition %zu is unchanged: %s."
 msgstr "A(z) %d. partíció rendszertípusa változatlan: %x (%s)\n"
 
-#: disk-utils/fdisk.c:509
+#: disk-utils/fdisk.c:517
 #, fuzzy, c-format
 msgid "Disk %s: %s, %ju bytes, %ju sectors"
 msgstr ""
 "\n"
 "%s lemez: %lu cilinder, %lu fej, %lu szektor sávonként\n"
 
-#: disk-utils/fdisk.c:515
+#: disk-utils/fdisk.c:523
 #, fuzzy, c-format
 msgid "Geometry: %d heads, %llu sectors/track, %llu cylinders"
 msgstr "%d fej, %llu szektor, %d cilinder"
 
-#: disk-utils/fdisk.c:518
+#: disk-utils/fdisk.c:526
 #, fuzzy, c-format
 msgid "Units: %s of %d * %ld = %ld bytes"
 msgstr "Egység: %s %d * %d = %d bájt\n"
 
-#: disk-utils/fdisk.c:524
+#: disk-utils/fdisk.c:532
 #, c-format
 msgid "Sector size (logical/physical): %lu bytes / %lu bytes"
 msgstr ""
 
-#: disk-utils/fdisk.c:526
+#: disk-utils/fdisk.c:534
 #, c-format
 msgid "I/O size (minimum/optimal): %lu bytes / %lu bytes"
 msgstr ""
 
-#: disk-utils/fdisk.c:529
+#: disk-utils/fdisk.c:537
 #, fuzzy, c-format
 msgid "Alignment offset: %lu bytes"
 msgstr "igazítási eltolás lekérése"
 
-#: disk-utils/fdisk.c:532
+#: disk-utils/fdisk.c:540
 #, fuzzy, c-format
 msgid "Disklabel type: %s"
 msgstr "Lemezmeghajtó: %s\n"
 
-#: disk-utils/fdisk.c:535
+#: disk-utils/fdisk.c:543
 #, fuzzy, c-format
 msgid "Disk identifier: %s"
 msgstr "Lemezazonosító: 0x%08x\n"
 
-#: disk-utils/fdisk.c:579
+#: disk-utils/fdisk.c:587
 #, fuzzy
 msgid "Partition table entries are not in disk order."
 msgstr ""
 "\n"
 "A partíciós tábla bejegyzései nem a lemezen található sorrendben vannak\n"
 
-#: disk-utils/fdisk.c:630
+#: disk-utils/fdisk.c:638
 #, c-format
 msgid ""
 "\n"
 "%s: offset = %ju, size = %zu bytes."
 msgstr ""
 
-#: disk-utils/fdisk.c:634
+#: disk-utils/fdisk.c:642
 #, fuzzy
 msgid "cannot seek"
 msgstr "a programindítás meghiúsult"
 
-#: disk-utils/fdisk.c:639
+#: disk-utils/fdisk.c:647
 #, fuzzy
 msgid "cannot read"
 msgstr "%s: nem olvasható a(z) %s.\n"
 
-#: disk-utils/fdisk.c:653 libfdisk/src/bsd.c:233 libfdisk/src/dos.c:930
+#: disk-utils/fdisk.c:661 libfdisk/src/bsd.c:233 libfdisk/src/dos.c:930
 #: libfdisk/src/gpt.c:1845
 #, fuzzy
 msgid "First sector"
 msgstr "Első %s"
 
-#: disk-utils/fdisk.c:748
+#: disk-utils/fdisk.c:756
 #, fuzzy, c-format
 msgid "BLKGETSIZE ioctl failed on %s"
 msgstr "A BLKGETSIZE ioctl meghiúsult a következőn: %s\n"
 
-#: disk-utils/fdisk.c:757
+#: disk-utils/fdisk.c:765
 #, c-format
 msgid ""
 " %1$s [options] <disk>      change partition table\n"
 " %1$s [options] -l [<disk>] list partition table(s)\n"
 msgstr ""
 
-#: disk-utils/fdisk.c:762
+#: disk-utils/fdisk.c:770
 #, fuzzy
 msgid " -b, --sector-size <size>      physical and logical sector size\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: disk-utils/fdisk.c:763
+#: disk-utils/fdisk.c:771
 msgid " -c, --compatibility[=<mode>]  mode is 'dos' or 'nondos' (default)\n"
 msgstr ""
 
-#: disk-utils/fdisk.c:764
+#: disk-utils/fdisk.c:772
 #, fuzzy
 msgid " -L, --color[=<when>]          colorize output (auto, always or never)\n"
 msgstr "  -Q, --quiet-output               Nincs normál kimenet\n"
 
-#: disk-utils/fdisk.c:765
+#: disk-utils/fdisk.c:773
 #, fuzzy
 msgid " -l, --list                    display partitions end exit\n"
 msgstr "  -h, --help                       Ez a súgószöveg\n"
 
-#: disk-utils/fdisk.c:766
+#: disk-utils/fdisk.c:774
 #, fuzzy
 msgid " -t, --type <type>             recognize specified partition table type only\n"
 msgstr "  -Q, --quiet-output               Nincs normál kimenet\n"
 
-#: disk-utils/fdisk.c:767
+#: disk-utils/fdisk.c:775
 msgid " -u, --units[=<unit>]          display units: 'cylinders' or 'sectors' (default)\n"
 msgstr ""
 
-#: disk-utils/fdisk.c:768
+#: disk-utils/fdisk.c:776
 #, fuzzy
 msgid " -s, --getsz                   display device size in 512-byte sectors [DEPRECATED]\n"
 msgstr "  -h, --help                       Ez a súgószöveg\n"
 
-#: disk-utils/fdisk.c:771
+#: disk-utils/fdisk.c:779
 #, fuzzy
 msgid " -C, --cylinders <number>      specify the number of cylinders\n"
 msgstr "Adja meg a cilinderek számát: "
 
-#: disk-utils/fdisk.c:772
+#: disk-utils/fdisk.c:780
 #, fuzzy
 msgid " -H, --heads <number>          specify the number of heads\n"
 msgstr "    -H# [vagy --heads #]:      a használandó fejszám beállítása"
 
-#: disk-utils/fdisk.c:773
+#: disk-utils/fdisk.c:781
 #, fuzzy
 msgid " -S, --sectors <number>        specify the number of sectors per track\n"
 msgstr "Adja meg a sávonkénti szektorok számát: "
 
-#: disk-utils/fdisk.c:830
+#: disk-utils/fdisk.c:838
 #, fuzzy
 msgid "invalid sector size argument"
 msgstr "érvénytelen kapcsoló"
 
-#: disk-utils/fdisk.c:839 disk-utils/sfdisk.c:2611
+#: disk-utils/fdisk.c:847 disk-utils/sfdisk.c:2611
 #, fuzzy
 msgid "invalid cylinders argument"
 msgstr "érvénytelen kapcsoló"
 
-#: disk-utils/fdisk.c:851
+#: disk-utils/fdisk.c:859
 #, fuzzy
 msgid "not found DOS label driver"
 msgstr "%s: nem található a(z) %s eszköze\n"
 
-#: disk-utils/fdisk.c:857
+#: disk-utils/fdisk.c:865
 #, fuzzy, c-format
 msgid "unknown compatibility mode '%s'"
 msgstr "ismeretlen erőforrástípus: %s\n"
 
-#: disk-utils/fdisk.c:866 disk-utils/sfdisk.c:2620
+#: disk-utils/fdisk.c:874 disk-utils/sfdisk.c:2620
 #, fuzzy
 msgid "invalid heads argument"
 msgstr "érvénytelen kapcsoló"
 
-#: disk-utils/fdisk.c:872 disk-utils/sfdisk.c:2638
+#: disk-utils/fdisk.c:880 disk-utils/sfdisk.c:2638
 #, fuzzy
 msgid "invalid sectors argument"
 msgstr "érvénytelen kapcsoló"
 
-#: disk-utils/fdisk.c:894
+#: disk-utils/fdisk.c:902
 #, fuzzy, c-format
 msgid "unsupported disklabel: %s"
 msgstr "%s: ismeretlen argumentum: %s\n"
 
-#: disk-utils/fdisk.c:915
+#: disk-utils/fdisk.c:923
 #, fuzzy
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Figyelmeztetés: a -b (szektorméret beállítása) kapcsolóhoz meg kell adni egy eszközt\n"
 
-#: disk-utils/fdisk.c:951
+#: disk-utils/fdisk.c:959
 #, c-format
 msgid "Welcome to fdisk (%s)."
 msgstr ""
 
-#: disk-utils/fdisk.c:953
+#: disk-utils/fdisk.c:961
 #, fuzzy
 msgid ""
 "Changes will remain in memory only, until you decide to write them.\n"
@@ -989,7 +989,7 @@ msgstr ""
 "a korábbi tartalom elvész.\n"
 "\n"
 
-#: disk-utils/fdisk.c:973
+#: disk-utils/fdisk.c:981
 msgid "A hybrid GPT was detected. You have to sync the hybrid MBR manually (expert command 'M')."
 msgstr ""
 
@@ -1398,8 +1398,8 @@ msgstr "umount: %s nem található"
 #: disk-utils/fsck.cramfs.c:243 libfdisk/src/bsd.c:508 lib/path.c:113
 #: lib/path.c:134 lib/path.c:155 lib/path.c:203 login-utils/last.c:196
 #: login-utils/last.c:233 login-utils/sulogin.c:675 sys-utils/setpriv.c:233
-#: term-utils/setterm.c:726 term-utils/setterm.c:783 term-utils/setterm.c:787
-#: term-utils/setterm.c:794
+#: term-utils/setterm.c:727 term-utils/setterm.c:784 term-utils/setterm.c:788
+#: term-utils/setterm.c:795
 #, fuzzy, c-format
 msgid "cannot read %s"
 msgstr "%s: nem olvasható a(z) %s.\n"
@@ -1456,9 +1456,9 @@ msgid "%s: failed to parse fstab"
 msgstr "%s: a következő megnyitása meghiúsult: %s\n"
 
 #: disk-utils/fsck.c:659 login-utils/login.c:964 login-utils/sulogin.c:1038
-#: login-utils/vipw.c:213 sys-utils/flock.c:293 sys-utils/nsenter.c:138
-#: sys-utils/swapon.c:277 sys-utils/unshare.c:166 term-utils/script.c:273
-#: term-utils/script.c:283
+#: login-utils/vipw.c:213 sys-utils/flock.c:291 sys-utils/nsenter.c:138
+#: sys-utils/swapon.c:277 sys-utils/unshare.c:166 term-utils/script.c:274
+#: term-utils/script.c:284
 #, fuzzy
 msgid "fork failed"
 msgstr "az indítás meghiúsult\n"
@@ -1472,7 +1472,7 @@ msgstr "a pozicionálás meghiúsult"
 msgid "wait: no more child process?!?"
 msgstr ""
 
-#: disk-utils/fsck.c:757 sys-utils/flock.c:310 sys-utils/swapon.c:301
+#: disk-utils/fsck.c:757 sys-utils/flock.c:308 sys-utils/swapon.c:301
 #: sys-utils/unshare.c:171
 #, fuzzy
 msgid "waitpid failed"
@@ -1644,7 +1644,7 @@ msgstr "%s: ismeretlen argumentum: %s\n"
 msgid "the -l option can be used with one device only -- ignore"
 msgstr ""
 
-#: disk-utils/fsck.cramfs.c:108 misc-utils/whereis.c:168
+#: disk-utils/fsck.cramfs.c:108 misc-utils/whereis.c:187
 #, fuzzy, c-format
 msgid " %s [options] <file>\n"
 msgstr "Használat: %s [kapcsolók] eszköz ...\n"
@@ -2113,7 +2113,7 @@ msgstr "%ld inode\n"
 msgid "%ld blocks\n"
 msgstr "%ld blokk\n"
 
-#: disk-utils/fsck.minix.c:632 disk-utils/mkfs.minix.c:546
+#: disk-utils/fsck.minix.c:632 disk-utils/mkfs.minix.c:550
 #, fuzzy, c-format
 msgid "Firstdatazone=%jd (%jd)\n"
 msgstr "Első adatzóna=%ld (%ld)\n"
@@ -2527,8 +2527,8 @@ msgstr "Használat: mkfs [-V] [-t fájlrendszertípus] [fájlrendszer-beállít�
 
 #: disk-utils/mkfs.c:42 include/c.h:280 misc-utils/getopt.c:322
 #: misc-utils/look.c:370 misc-utils/namei.c:431 misc-utils/uuidd.c:75
-#: misc-utils/uuidgen.c:35 misc-utils/wipefs.c:455 sys-utils/hwclock.c:1590
-#: sys-utils/renice.c:62 term-utils/script.c:145 term-utils/scriptreplay.c:45
+#: misc-utils/uuidgen.c:35 misc-utils/wipefs.c:455 sys-utils/hwclock.c:1591
+#: sys-utils/renice.c:62 term-utils/script.c:146 term-utils/scriptreplay.c:45
 #: term-utils/write.c:85
 #, fuzzy, c-format
 msgid ""
@@ -2816,41 +2816,41 @@ msgstr "túl sok hibás blokk"
 msgid "%s: not enough good blocks"
 msgstr "nincs elég jó blokk"
 
-#: disk-utils/mkfs.minix.c:485
+#: disk-utils/mkfs.minix.c:489
 #, fuzzy, c-format
 msgid "%s: unable to allocate buffer for superblock"
 msgstr "nem lehet puffert lefoglalni a szuperblokknak"
 
-#: disk-utils/mkfs.minix.c:531
+#: disk-utils/mkfs.minix.c:535
 #, fuzzy, c-format
 msgid "%s: unable to allocate buffers for maps"
 msgstr "nem lehet puffereket lefoglalni a térképeknek"
 
-#: disk-utils/mkfs.minix.c:541
+#: disk-utils/mkfs.minix.c:545
 #, fuzzy, c-format
 msgid "%s: unable to allocate buffer for inodes"
 msgstr "nem lehet puffereket lefoglalni az inode-oknak"
 
-#: disk-utils/mkfs.minix.c:544
+#: disk-utils/mkfs.minix.c:548
 #, fuzzy, c-format
 msgid "%lu inode\n"
 msgid_plural "%lu inodes\n"
 msgstr[0] "%ld inode\n"
 msgstr[1] "%ld inode\n"
 
-#: disk-utils/mkfs.minix.c:545
+#: disk-utils/mkfs.minix.c:549
 #, fuzzy, c-format
 msgid "%lu block\n"
 msgid_plural "%lu blocks\n"
 msgstr[0] "%ld blokk\n"
 msgstr[1] "%ld blokk\n"
 
-#: disk-utils/mkfs.minix.c:547
+#: disk-utils/mkfs.minix.c:551
 #, fuzzy, c-format
 msgid "Zonesize=%zu\n"
 msgstr "Zónaméret=%d\n"
 
-#: disk-utils/mkfs.minix.c:548
+#: disk-utils/mkfs.minix.c:552
 #, fuzzy, c-format
 msgid ""
 "Maxsize=%zu\n"
@@ -2859,94 +2859,94 @@ msgstr ""
 "Max. méret=%ld\n"
 "\n"
 
-#: disk-utils/mkfs.minix.c:561
+#: disk-utils/mkfs.minix.c:565
 #, fuzzy, c-format
 msgid "%s: seek failed during testing of blocks"
 msgstr "a pozicionálás meghiúsult a blokkok tesztelése közben"
 
-#: disk-utils/mkfs.minix.c:568
+#: disk-utils/mkfs.minix.c:572
 #, c-format
 msgid "Weird values in do_check: probably bugs\n"
 msgstr "Szokatlan értékek a do_check-ben: ez valószínűleg hibát jelez\n"
 
-#: disk-utils/mkfs.minix.c:601
+#: disk-utils/mkfs.minix.c:605
 #, fuzzy, c-format
 msgid "%s: seek failed in check_blocks"
 msgstr "a pozicionálás meghiúsult a check_blocks-ban"
 
-#: disk-utils/mkfs.minix.c:611
+#: disk-utils/mkfs.minix.c:615
 #, fuzzy, c-format
 msgid "%s: bad blocks before data-area: cannot make fs"
 msgstr "hibás blokkok az adatterület előtt: nem lehet létrehozni a fájlrendszert"
 
-#: disk-utils/mkfs.minix.c:618 disk-utils/mkfs.minix.c:642
+#: disk-utils/mkfs.minix.c:622 disk-utils/mkfs.minix.c:646
 #, fuzzy, c-format
 msgid "%d bad block\n"
 msgid_plural "%d bad blocks\n"
 msgstr[0] "%d hibás blokk\n"
 msgstr[1] "%d hibás blokk\n"
 
-#: disk-utils/mkfs.minix.c:627
+#: disk-utils/mkfs.minix.c:631
 #, fuzzy, c-format
 msgid "%s: can't open file of bad blocks"
 msgstr "nem nyitható meg a hibás blokkok fájlja"
 
-#: disk-utils/mkfs.minix.c:632
+#: disk-utils/mkfs.minix.c:636
 #, c-format
 msgid "badblock number input error on line %d\n"
 msgstr "bemeneti hiba a hibás blokkok számánál a(z) %d. sorban\n"
 
-#: disk-utils/mkfs.minix.c:633
+#: disk-utils/mkfs.minix.c:637
 #, fuzzy, c-format
 msgid "%s: cannot read badblocks file"
 msgstr "hibás blokkok fájlja nem olvasható"
 
-#: disk-utils/mkfs.minix.c:664
+#: disk-utils/mkfs.minix.c:668
 #, c-format
 msgid "%s (%s)\n"
 msgstr "%s (%s)\n"
 
-#: disk-utils/mkfs.minix.c:669 disk-utils/mkfs.minix.c:671
+#: disk-utils/mkfs.minix.c:673 disk-utils/mkfs.minix.c:675
 #, fuzzy, c-format
 msgid "%s: bad inode size"
 msgstr "hibás inode méret"
 
-#: disk-utils/mkfs.minix.c:680
+#: disk-utils/mkfs.minix.c:684
 #, fuzzy
 msgid "failed to parse number of inodes"
 msgstr "a(z) „%s” nem nyitható meg: %s"
 
-#: disk-utils/mkfs.minix.c:686
+#: disk-utils/mkfs.minix.c:690
 #, fuzzy
 msgid "failed to parse maximum length of filenames"
 msgstr "a(z) „%s” nem nyitható meg: %s"
 
-#: disk-utils/mkfs.minix.c:719
+#: disk-utils/mkfs.minix.c:723
 #, fuzzy
 msgid "failed to parse number of blocks"
 msgstr "a(z) „%s” nem nyitható meg: %s"
 
-#: disk-utils/mkfs.minix.c:762
+#: disk-utils/mkfs.minix.c:766
 #, fuzzy, c-format
 msgid "%s: device is misaligned"
 msgstr "mount: a(z) %s foglalt"
 
-#: disk-utils/mkfs.minix.c:765
+#: disk-utils/mkfs.minix.c:769
 #, c-format
 msgid "block size smaller than physical sector size of %s"
 msgstr "a blokkméret kisebb, mint a fizikai szektorméret (%s)"
 
-#: disk-utils/mkfs.minix.c:769
+#: disk-utils/mkfs.minix.c:773
 #, c-format
 msgid "cannot determine size of %s"
 msgstr "a(z) %s mérete nem állapítható meg"
 
-#: disk-utils/mkfs.minix.c:778
+#: disk-utils/mkfs.minix.c:782
 #, c-format
 msgid "will not try to make filesystem on '%s'"
 msgstr "a(z) „%s” eszközön nem történik kísérlet a fájlrendszer létrehozására"
 
-#: disk-utils/mkfs.minix.c:780
+#: disk-utils/mkfs.minix.c:784
 #, fuzzy, c-format
 msgid "%s: number of blocks too small"
 msgstr "a blokkok száma túl kicsi"
@@ -3505,8 +3505,8 @@ msgstr "Nem lehet zárolni a(z) %s zárolási fájlt: %s\n"
 msgid "Device '%s' is not a block device"
 msgstr "Figyelmeztetés: a(z) %s nem blokkeszköz\n"
 
-#: disk-utils/raw.c:190 disk-utils/raw.c:193 sys-utils/ipcrm.c:340
-#: sys-utils/ipcrm.c:353 sys-utils/ipcrm.c:366
+#: disk-utils/raw.c:190 disk-utils/raw.c:193 sys-utils/ipcrm.c:347
+#: sys-utils/ipcrm.c:360 sys-utils/ipcrm.c:373
 #, fuzzy
 msgid "failed to parse argument"
 msgstr "%s: a következő megnyitása meghiúsult: %s\n"
@@ -4543,8 +4543,8 @@ msgstr "%1$s: figyelmeztetés: a -U figyelmen kívül marad (a(z) %1$s nem támo
 
 #: include/c.h:279 misc-utils/getopt.c:314 misc-utils/look.c:366
 #: misc-utils/namei.c:427 misc-utils/uuidd.c:71 misc-utils/uuidgen.c:31
-#: misc-utils/wipefs.c:451 sys-utils/hwclock.c:1569 sys-utils/renice.c:55
-#: term-utils/script.c:141 term-utils/scriptreplay.c:40 term-utils/write.c:80
+#: misc-utils/wipefs.c:451 sys-utils/hwclock.c:1570 sys-utils/renice.c:55
+#: term-utils/script.c:142 term-utils/scriptreplay.c:40 term-utils/write.c:80
 #, fuzzy
 msgid ""
 "\n"
@@ -4570,8 +4570,8 @@ msgstr ""
 "További információkért tekintse meg a setarch(8) kézikönyvoldalt.\n"
 
 #: include/closestream.h:42 include/closestream.h:44 login-utils/vipw.c:280
-#: login-utils/vipw.c:299 sys-utils/rtcwake.c:276 term-utils/script.c:585
-#: term-utils/script.c:589 term-utils/setterm.c:814 term-utils/wall.c:310
+#: login-utils/vipw.c:299 sys-utils/rtcwake.c:276 term-utils/script.c:592
+#: term-utils/script.c:596 term-utils/setterm.c:815 term-utils/wall.c:310
 #: text-utils/col.c:144
 #, fuzzy
 msgid "write error"
@@ -4968,13 +4968,13 @@ msgstr "a gettimeofday hívás meghiúsult"
 msgid "sysinfo failed"
 msgstr "az fsync meghiúsult"
 
-#: lib/exec_shell.c:45 login-utils/newgrp.c:186 login-utils/su-common.c:643
-#: login-utils/su-common.c:972 login-utils/sulogin.c:811
+#: lib/exec_shell.c:45 login-utils/newgrp.c:186 login-utils/su-common.c:642
+#: login-utils/su-common.c:971 login-utils/sulogin.c:811
 #: login-utils/sulogin.c:815 schedutils/chrt.c:334 schedutils/ionice.c:259
-#: schedutils/taskset.c:237 sys-utils/flock.c:299 sys-utils/nsenter.c:342
+#: schedutils/taskset.c:237 sys-utils/flock.c:297 sys-utils/nsenter.c:342
 #: sys-utils/prlimit.c:640 sys-utils/rtcwake.c:587 sys-utils/setarch.c:315
 #: sys-utils/setarch.c:381 sys-utils/setsid.c:114 sys-utils/swapon.c:293
-#: sys-utils/switch_root.c:239 sys-utils/unshare.c:192 term-utils/script.c:547
+#: sys-utils/switch_root.c:239 sys-utils/unshare.c:192 term-utils/script.c:554
 #: text-utils/pg.c:1363
 #, fuzzy, c-format
 msgid "failed to execute %s"
@@ -5219,8 +5219,8 @@ msgstr "Rendszerindítás: %sindítás -> indítás%s (%s): "
 msgid "Bootstrap overlaps with disklabel!"
 msgstr "A rendszerindító átfedi a lemezcímkét!\n"
 
-#: libfdisk/src/bsd.c:580 libfdisk/src/bsd.c:752 sys-utils/hwclock.c:160
-#: sys-utils/hwclock.c:162
+#: libfdisk/src/bsd.c:580 libfdisk/src/bsd.c:752 sys-utils/hwclock.c:161
+#: sys-utils/hwclock.c:163
 #, fuzzy, c-format
 msgid "cannot write %s"
 msgstr "a(z) %s nem nyitható meg"
@@ -5253,28 +5253,28 @@ msgstr "   x   BSD partíció csatolása egy nem BSD partícióhoz"
 msgid "Slice"
 msgstr ""
 
-#: libfdisk/src/bsd.c:885 libfdisk/src/dos.c:2027 libfdisk/src/gpt.c:2412
+#: libfdisk/src/bsd.c:885 libfdisk/src/dos.c:2026 libfdisk/src/gpt.c:2412
 #: libfdisk/src/sgi.c:1087 libfdisk/src/sun.c:1001
 #, fuzzy
 msgid "Start"
 msgstr "kezdet"
 
-#: libfdisk/src/bsd.c:886 libfdisk/src/dos.c:2028 libfdisk/src/gpt.c:2413
+#: libfdisk/src/bsd.c:886 libfdisk/src/dos.c:2027 libfdisk/src/gpt.c:2413
 #: libfdisk/src/sgi.c:1088 libfdisk/src/sun.c:1002
 msgid "End"
 msgstr "Vége"
 
-#: libfdisk/src/bsd.c:887 libfdisk/src/dos.c:2029 libfdisk/src/gpt.c:2414
+#: libfdisk/src/bsd.c:887 libfdisk/src/dos.c:2028 libfdisk/src/gpt.c:2414
 #: libfdisk/src/sgi.c:1089 libfdisk/src/sun.c:1003
 msgid "Sectors"
 msgstr "Szektorok"
 
-#: libfdisk/src/bsd.c:888 libfdisk/src/dos.c:2030 libfdisk/src/gpt.c:2415
+#: libfdisk/src/bsd.c:888 libfdisk/src/dos.c:2029 libfdisk/src/gpt.c:2415
 #: libfdisk/src/sgi.c:1090 libfdisk/src/sun.c:189 libfdisk/src/sun.c:1004
 msgid "Cylinders"
 msgstr "Cilinderek"
 
-#: libfdisk/src/bsd.c:889 libfdisk/src/dos.c:2031 libfdisk/src/gpt.c:2416
+#: libfdisk/src/bsd.c:889 libfdisk/src/dos.c:2030 libfdisk/src/gpt.c:2416
 #: libfdisk/src/sgi.c:1091 libfdisk/src/sun.c:1005
 msgid "Size"
 msgstr ""
@@ -5296,19 +5296,19 @@ msgstr ""
 msgid "%s: device contains a valid '%s' signature, it's strongly recommended to wipe the device by command wipefs(8) if this setup is unexpected to avoid possible collisions."
 msgstr ""
 
-#: libfdisk/src/context.c:307
+#: libfdisk/src/context.c:306
 #, fuzzy, c-format
 msgid "%s: close device failed"
 msgstr "%s: az lseek meghiúsult"
 
-#: libfdisk/src/context.c:448
+#: libfdisk/src/context.c:449
 #, fuzzy
 msgid "cylinder"
 msgid_plural "cylinders"
 msgstr[0] "cilinder"
 msgstr[1] "cilinder"
 
-#: libfdisk/src/context.c:449
+#: libfdisk/src/context.c:450
 #, fuzzy
 msgid "sector"
 msgid_plural "sectors"
@@ -5422,153 +5422,153 @@ msgstr "A(z) %llu. szektor már le van foglalva\n"
 msgid "No free sectors available."
 msgstr "Nem érhető el szabad szektor\n"
 
-#: libfdisk/src/dos.c:1181
+#: libfdisk/src/dos.c:1180
 #, fuzzy, c-format
 msgid "Adding logical partition %zu"
 msgstr "Hibás logikai partíció"
 
-#: libfdisk/src/dos.c:1200
+#: libfdisk/src/dos.c:1199
 #, fuzzy, c-format
 msgid "Partition %zu: contains sector 0"
 msgstr "Figyelmeztetés: a(z) %d. partíció a 0. szektort is tartalmazza\n"
 
-#: libfdisk/src/dos.c:1202
+#: libfdisk/src/dos.c:1201
 #, fuzzy, c-format
 msgid "Partition %zu: head %d greater than maximum %d"
 msgstr "%d. partíció: a(z) %d. fej nagyobb, mint a maximális %d\n"
 
-#: libfdisk/src/dos.c:1205
+#: libfdisk/src/dos.c:1204
 #, fuzzy, c-format
 msgid "Partition %zu: sector %d greater than maximum %llu"
 msgstr "%d. partíció: a(z) %d. szektor nagyobb, mint a maximális %llu\n"
 
-#: libfdisk/src/dos.c:1208
+#: libfdisk/src/dos.c:1207
 #, fuzzy, c-format
 msgid "Partition %zu: cylinder %d greater than maximum %llu"
 msgstr "%d. partíció: a(z) %d. cilinder nagyobb, mint a maximális %d\n"
 
-#: libfdisk/src/dos.c:1214
+#: libfdisk/src/dos.c:1213
 #, fuzzy, c-format
 msgid "Partition %zu: previous sectors %u disagrees with total %u"
 msgstr "%d. partíció: az előző %d szektor eltér a teljes %d értéktől\n"
 
-#: libfdisk/src/dos.c:1267
+#: libfdisk/src/dos.c:1266
 #, fuzzy, c-format
 msgid "Partition %zu: different physical/logical beginnings (non-Linux?): phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "A(z) %d. partíción eltér a fizikai és logikai kezdet (nem Linux?):\n"
 
-#: libfdisk/src/dos.c:1278
+#: libfdisk/src/dos.c:1277
 #, fuzzy, c-format
 msgid "Partition %zu: different physical/logical endings: phys=(%d, %d, %d), logical=(%d, %d, %d)"
 msgstr "A(z) %d. partíción eltér a fizikai és logikai vég:\n"
 
-#: libfdisk/src/dos.c:1287
+#: libfdisk/src/dos.c:1286
 #, fuzzy, c-format
 msgid "Partition %zu: does not end on cylinder boundary."
 msgstr "A(z) %d. partíció nem cilinderhatáron végződik.\n"
 
-#: libfdisk/src/dos.c:1314
+#: libfdisk/src/dos.c:1313
 #, fuzzy, c-format
 msgid "Partition %zu: bad start-of-data."
 msgstr "A(z) %d. partíciónak nincs adatterülete\n"
 
-#: libfdisk/src/dos.c:1327
+#: libfdisk/src/dos.c:1326
 #, fuzzy, c-format
 msgid "Partition %zu: overlaps partition %zu."
 msgstr "Figyelmeztetés: a(z) %d. partíció átfedi a(z) %d partíciót.\n"
 
-#: libfdisk/src/dos.c:1353
+#: libfdisk/src/dos.c:1352
 #, fuzzy, c-format
 msgid "Partition %zu: empty."
 msgstr "Figyelmeztetés: a(z) %d. partíció üres\n"
 
-#: libfdisk/src/dos.c:1358
+#: libfdisk/src/dos.c:1357
 #, fuzzy, c-format
 msgid "Logical partition %zu: not entirely in partition %zu."
 msgstr "A(z) %d. logikai partíció nincs teljesen bejegyezve a(z) %d. partíción\n"
 
-#: libfdisk/src/dos.c:1366
+#: libfdisk/src/dos.c:1365
 #, fuzzy, c-format
 msgid "Total allocated sectors %llu greater than the maximum %llu."
 msgstr "Az összesen lefoglalt szektorok száma (%ld) nagyobb, mint a maximális %lld\n"
 
-#: libfdisk/src/dos.c:1369
+#: libfdisk/src/dos.c:1368
 #, fuzzy, c-format
 msgid "Remaining %lld unallocated %ld-byte sectors."
 msgstr "%lld szektor nincs lefoglalva\n"
 
-#: libfdisk/src/dos.c:1421
+#: libfdisk/src/dos.c:1420
 #, fuzzy
 msgid "The maximum number of partitions has been created."
 msgstr "A létrehozott partíciók száma elérte a maximumot\n"
 
-#: libfdisk/src/dos.c:1429
+#: libfdisk/src/dos.c:1428
 #, fuzzy
 msgid "All primary partitions are in use."
 msgstr "Az összes logikai partíció használatban van\n"
 
-#: libfdisk/src/dos.c:1432
+#: libfdisk/src/dos.c:1431
 msgid "If you want to create more than four partitions, you must replace a primary partition with an extended partition first."
 msgstr ""
 
-#: libfdisk/src/dos.c:1440
+#: libfdisk/src/dos.c:1439
 #, fuzzy
 msgid "All logical partitions are in use. Adding a primary partition."
 msgstr "Az összes logikai partíció használatban van\n"
 
-#: libfdisk/src/dos.c:1454
+#: libfdisk/src/dos.c:1453
 #, fuzzy
 msgid "Partition type"
 msgstr "Partíciószám"
 
-#: libfdisk/src/dos.c:1458
+#: libfdisk/src/dos.c:1457
 #, c-format
 msgid "%zu primary, %d extended, %zu free"
 msgstr ""
 
-#: libfdisk/src/dos.c:1463
+#: libfdisk/src/dos.c:1462
 #, fuzzy
 msgid "primary"
 msgstr "Elsődleges"
 
-#: libfdisk/src/dos.c:1465
+#: libfdisk/src/dos.c:1464
 #, fuzzy
 msgid "extended"
 msgstr "Kiterjesztett"
 
-#: libfdisk/src/dos.c:1465
+#: libfdisk/src/dos.c:1464
 #, fuzzy
 msgid "container for logical partitions"
 msgstr "Hibás logikai partíció"
 
-#: libfdisk/src/dos.c:1467
+#: libfdisk/src/dos.c:1466
 #, fuzzy
 msgid "logical"
 msgstr "Logikai"
 
-#: libfdisk/src/dos.c:1467
+#: libfdisk/src/dos.c:1466
 #, fuzzy
 msgid "numbered from 5"
 msgstr "l   logikai (5 vagy több)"
 
-#: libfdisk/src/dos.c:1498
+#: libfdisk/src/dos.c:1497
 #, fuzzy, c-format
 msgid "Invalid partition type `%c'."
 msgstr "Érvénytelen partíciószám a(z) „%c” típushoz\n"
 
-#: libfdisk/src/dos.c:1513
+#: libfdisk/src/dos.c:1512
 #, fuzzy, c-format
 msgid "Cannot write sector %jd: seek failed"
 msgstr "%s: nem írható a parancsfájl, hiba: %s\n"
 
-#: libfdisk/src/dos.c:1637
+#: libfdisk/src/dos.c:1636
 #, fuzzy
 msgid "You cannot change a partition into an extended one or vice versa. Delete it first."
 msgstr ""
 "A partíciót nem változtatható kiterjesztett partícióvá vagy vissza\n"
 "Először törölje le.\n"
 
-#: libfdisk/src/dos.c:1643
+#: libfdisk/src/dos.c:1642
 #, fuzzy
 msgid "If you have created or modified any DOS 6.x partitions, please see the fdisk documentation for additional information."
 msgstr ""
@@ -5577,7 +5577,7 @@ msgstr ""
 "létre vagy módosított, akkor további információkért\n"
 "olvassa el a cfdisk kézikönyv oldalát.\n"
 
-#: libfdisk/src/dos.c:1648
+#: libfdisk/src/dos.c:1647
 #, fuzzy
 msgid "Type 0 means free space to many systems. Having partitions of type 0 is probably unwise."
 msgstr ""
@@ -5586,67 +5586,67 @@ msgstr ""
 "okos dolog. A partíció a 'd' paranccsal törölhető\n"
 "\n"
 
-#: libfdisk/src/dos.c:1869
+#: libfdisk/src/dos.c:1868
 #, fuzzy
 msgid "Nothing to do. Ordering is correct already."
 msgstr ""
 "Nincs teendő. A sorrend már helyes.\n"
 "\n"
 
-#: libfdisk/src/dos.c:1898 libfdisk/src/gpt.c:2329
+#: libfdisk/src/dos.c:1897 libfdisk/src/gpt.c:2329
 #, fuzzy
 msgid "Done."
 msgstr ""
 "Kész\n"
 "\n"
 
-#: libfdisk/src/dos.c:1918
+#: libfdisk/src/dos.c:1917
 #, fuzzy, c-format
 msgid "Partition %zu: no data area."
 msgstr "A(z) %d. partíciónak nincs adatterülete\n"
 
-#: libfdisk/src/dos.c:1948
+#: libfdisk/src/dos.c:1947
 msgid "New beginning of data"
 msgstr "Az adatok új kezdete"
 
-#: libfdisk/src/dos.c:2004
+#: libfdisk/src/dos.c:2003
 #, fuzzy, c-format
 msgid "Partition %zu: is an extended partition."
 msgstr "FIGYELMEZTETÉS: A(z) %d partíció egy kiterjesztett partíció\n"
 
-#: libfdisk/src/dos.c:2011
+#: libfdisk/src/dos.c:2010
 #, fuzzy, c-format
 msgid "The bootable flag on partition %zu is enabled now."
 msgstr "A(z) %d. partíció rendszertípusa változatlan: %x (%s)\n"
 
-#: libfdisk/src/dos.c:2012
+#: libfdisk/src/dos.c:2011
 #, fuzzy, c-format
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "A(z) %d. partíció rendszertípusa változatlan: %x (%s)\n"
 
-#: libfdisk/src/dos.c:2025 libfdisk/src/gpt.c:2411 libfdisk/src/sgi.c:1086
+#: libfdisk/src/dos.c:2024 libfdisk/src/gpt.c:2411 libfdisk/src/sgi.c:1086
 #: libfdisk/src/sun.c:1000
 msgid "Device"
 msgstr "Eszköz"
 
-#: libfdisk/src/dos.c:2026 libfdisk/src/sun.c:35
+#: libfdisk/src/dos.c:2025 libfdisk/src/sun.c:35
 msgid "Boot"
 msgstr "Indítható"
 
-#: libfdisk/src/dos.c:2032 libfdisk/src/sgi.c:1092 libfdisk/src/sun.c:1006
+#: libfdisk/src/dos.c:2031 libfdisk/src/sgi.c:1092 libfdisk/src/sun.c:1006
 msgid "Id"
 msgstr ""
 
-#: libfdisk/src/dos.c:2036
+#: libfdisk/src/dos.c:2035
 #, fuzzy
 msgid "Start-C/H/S"
 msgstr "kezdet"
 
-#: libfdisk/src/dos.c:2037
+#: libfdisk/src/dos.c:2036
 msgid "End-C/H/S"
 msgstr ""
 
-#: libfdisk/src/dos.c:2038 libfdisk/src/gpt.c:2422 libfdisk/src/sgi.c:1094
+#: libfdisk/src/dos.c:2037 libfdisk/src/gpt.c:2422 libfdisk/src/sgi.c:1094
 msgid "Attrs"
 msgstr ""
 
@@ -6190,7 +6190,7 @@ msgid "Free space"
 msgstr "Szabad terület"
 
 #: libfdisk/src/parttype.c:85 misc-utils/findmnt.c:664 schedutils/ionice.c:79
-#: sys-utils/hwclock.c:322
+#: sys-utils/hwclock.c:323
 msgid "unknown"
 msgstr "ismeretlen"
 
@@ -7041,7 +7041,7 @@ msgid ""
 "                               notime|short|full|iso\n"
 msgstr ""
 
-#: login-utils/last.c:849
+#: login-utils/last.c:859
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -7050,12 +7050,12 @@ msgstr ""
 "\n"
 "wtmp kezdete: %s"
 
-#: login-utils/last.c:919
+#: login-utils/last.c:929
 #, fuzzy
 msgid "failed to parse number"
 msgstr "A személyiség beállítása meghiúsult a következőre: %s"
 
-#: login-utils/last.c:940 login-utils/last.c:945 login-utils/last.c:950
+#: login-utils/last.c:950 login-utils/last.c:955 login-utils/last.c:960
 #, fuzzy, c-format
 msgid "invalid time value \"%s\""
 msgstr "érvénytelen kapcsoló"
@@ -7588,126 +7588,126 @@ msgstr "belső hiba"
 msgid "failed to set data"
 msgstr "%s nem érhető el"
 
-#: login-utils/lslogins.c:1134
+#: login-utils/lslogins.c:1135
 #, fuzzy, c-format
 msgid ""
 "\n"
 "Last logs:\n"
 msgstr "Utolsó bejelentkezés: %.*s "
 
-#: login-utils/lslogins.c:1184 login-utils/nologin.c:26
+#: login-utils/lslogins.c:1185 login-utils/nologin.c:26
 #: misc-utils/lslocks.c:507 misc-utils/mcookie.c:82 misc-utils/uuidd.c:73
 #: misc-utils/uuidgen.c:33 sys-utils/dmesg.c:261 sys-utils/ipcmk.c:66
 #: sys-utils/lscpu.c:1630 sys-utils/readprofile.c:104 sys-utils/rtcwake.c:72
-#: term-utils/setterm.c:403
+#: term-utils/setterm.c:404
 #, fuzzy, c-format
 msgid " %s [options]\n"
 msgstr "Használat: %s [kapcsolók] eszköz ...\n"
 
-#: login-utils/lslogins.c:1187
+#: login-utils/lslogins.c:1188
 msgid " -a, --acc-expiration     display info about passwords expiration\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1188
+#: login-utils/lslogins.c:1189
 msgid " -c, --colon-separate     display data in a format similar to /etc/passwd\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1189
+#: login-utils/lslogins.c:1190
 #, fuzzy
 msgid " -e, --export             display in an export-able output format\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: login-utils/lslogins.c:1190
+#: login-utils/lslogins.c:1191
 #, fuzzy
 msgid " -f, --failed             display data about the users' last failed logins\n"
 msgstr "  -Q, --quiet-output               Nincs normál kimenet\n"
 
-#: login-utils/lslogins.c:1191
+#: login-utils/lslogins.c:1192
 #, fuzzy
 msgid " -G, --groups-info        display information about groups\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: login-utils/lslogins.c:1192
+#: login-utils/lslogins.c:1193
 msgid " -g, --groups=<groups>    display users belonging to a group in <groups>\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1193
+#: login-utils/lslogins.c:1194
 #, fuzzy
 msgid " -L, --last               show info about the users' last login sessions\n"
 msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
 
-#: login-utils/lslogins.c:1194
+#: login-utils/lslogins.c:1195
 #, fuzzy
 msgid " -l, --logins=<logins>    display only users from <logins>\n"
 msgstr "  -Q, --quiet-output               Nincs normál kimenet\n"
 
-#: login-utils/lslogins.c:1195
+#: login-utils/lslogins.c:1196
 msgid " -m, --supp-groups        display supplementary groups as well\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1196
+#: login-utils/lslogins.c:1197
 #, fuzzy
 msgid " -n, --newline            display each piece of information on a new line\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: login-utils/lslogins.c:1197
+#: login-utils/lslogins.c:1198
 #, fuzzy
 msgid "     --noheadings         don't print headings\n"
 msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
 
-#: login-utils/lslogins.c:1198
+#: login-utils/lslogins.c:1199
 #, fuzzy
 msgid "     --notruncate         don't truncate output\n"
 msgstr "    -n :                   a lemez tényleges írásának kihagyása"
 
-#: login-utils/lslogins.c:1199
+#: login-utils/lslogins.c:1200
 #, fuzzy
 msgid " -o, --output[=<list>]    define the columns to output\n"
 msgstr "  -o, --options=kapcsoló-karakterlánc  Felismerendő rövid kapcsolók\n"
 
-#: login-utils/lslogins.c:1200
+#: login-utils/lslogins.c:1201
 #, fuzzy
 msgid " -p, --pwd                display information related to login by password.\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: login-utils/lslogins.c:1201
+#: login-utils/lslogins.c:1202
 #, fuzzy
 msgid " -r, --raw                display in raw mode\n"
 msgstr "  -Q, --quiet-output               Nincs normál kimenet\n"
 
-#: login-utils/lslogins.c:1202
+#: login-utils/lslogins.c:1203
 #, fuzzy
 msgid " -s, --system-accs        display system accounts\n"
 msgstr "  -Q, --quiet-output               Nincs normál kimenet\n"
 
-#: login-utils/lslogins.c:1203
+#: login-utils/lslogins.c:1204
 msgid "     --time-format=<type> display dates in short, full or iso format\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1204
+#: login-utils/lslogins.c:1205
 #, fuzzy
 msgid " -u, --user-accs          display user accounts\n"
 msgstr "  -Q, --quiet-output               Nincs normál kimenet\n"
 
-#: login-utils/lslogins.c:1205
+#: login-utils/lslogins.c:1206
 #, fuzzy
 msgid " -Z, --context            display SELinux contexts\n"
 msgstr "  -Q, --quiet-output               Nincs normál kimenet\n"
 
-#: login-utils/lslogins.c:1206
+#: login-utils/lslogins.c:1207
 #, fuzzy
 msgid " -z, --print0             delimit user entries with a nul character\n"
 msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
 
-#: login-utils/lslogins.c:1207
+#: login-utils/lslogins.c:1208
 msgid "     --wtmp-file <path>   set an alternate path for wtmp\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1208
+#: login-utils/lslogins.c:1209
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1213 misc-utils/findmnt.c:1221
+#: login-utils/lslogins.c:1214 misc-utils/findmnt.c:1221
 #: sys-utils/lscpu.c:1644
 #, fuzzy, c-format
 msgid ""
@@ -7715,7 +7715,7 @@ msgid ""
 "Available columns:\n"
 msgstr "Elérhető parancsok:\n"
 
-#: login-utils/lslogins.c:1219
+#: login-utils/lslogins.c:1220
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -7724,12 +7724,12 @@ msgstr ""
 "\n"
 "További információkért tekintse meg a setarch(8) kézikönyvoldalt.\n"
 
-#: login-utils/lslogins.c:1408
+#: login-utils/lslogins.c:1409
 #, fuzzy
 msgid "failed to request selinux state"
 msgstr "%s: a következő megnyitása meghiúsult: %s\n"
 
-#: login-utils/lslogins.c:1422
+#: login-utils/lslogins.c:1423
 msgid "Only one user may be specified. Use -l for multiple users."
 msgstr ""
 
@@ -7803,63 +7803,62 @@ msgstr "Nem nyitható meg a(z) „%s” fájl"
 msgid "cannot set signal handler"
 msgstr "Nem állítható be a jelzéskezelő"
 
-#: login-utils/su-common.c:368
-#, c-format
-msgid "%s (core dumped)\n"
+#: login-utils/su-common.c:367
+msgid " (core dumped)"
 msgstr ""
 
-#: login-utils/su-common.c:384
+#: login-utils/su-common.c:383
 #, c-format
 msgid ""
 "\n"
 "Session terminated, killing shell..."
 msgstr ""
 
-#: login-utils/su-common.c:394
+#: login-utils/su-common.c:393
 #, fuzzy, c-format
 msgid " ...killed.\n"
 msgstr "%s meghiúsult.\n"
 
-#: login-utils/su-common.c:474
+#: login-utils/su-common.c:473
 msgid "may not be used by non-root users"
 msgstr ""
 
-#: login-utils/su-common.c:502
+#: login-utils/su-common.c:501
 #, fuzzy
 msgid "incorrect password"
 msgstr "Helytelen jelszó."
 
-#: login-utils/su-common.c:517
+#: login-utils/su-common.c:516
 #, fuzzy
 msgid "failed to set PATH"
 msgstr "%s nem érhető el"
 
-#: login-utils/su-common.c:584
+#: login-utils/su-common.c:583
 #, fuzzy
 msgid "cannot set groups"
 msgstr "a csoportazonosító nem állítható be"
 
-#: login-utils/su-common.c:599 sys-utils/eject.c:675
+#: login-utils/su-common.c:598 sys-utils/eject.c:675
 #, fuzzy
 msgid "cannot set group id"
 msgstr "a csoportazonosító nem állítható be"
 
-#: login-utils/su-common.c:601 sys-utils/eject.c:678
+#: login-utils/su-common.c:600 sys-utils/eject.c:678
 #, fuzzy
 msgid "cannot set user id"
 msgstr "a felhasználóazonosító nem állítható be"
 
-#: login-utils/su-common.c:674
+#: login-utils/su-common.c:673
 #, fuzzy, c-format
 msgid " %s [options] -u <user> <command>\n"
 msgstr "Használat: namei [-mx] útvonal [útvonal ...]\n"
 
-#: login-utils/su-common.c:675 login-utils/su-common.c:687
+#: login-utils/su-common.c:674 login-utils/su-common.c:686
 #, fuzzy, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr "Használat: %s program [argumentum ...]\n"
 
-#: login-utils/su-common.c:676
+#: login-utils/su-common.c:675
 msgid ""
 "\n"
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
@@ -7867,100 +7866,100 @@ msgid ""
 "The options -c, -f, -l, and -s are mutually exclusive with -u.\n"
 msgstr ""
 
-#: login-utils/su-common.c:683
+#: login-utils/su-common.c:682
 #, fuzzy
 msgid " -u, --user <user>             username\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: login-utils/su-common.c:688
+#: login-utils/su-common.c:687
 msgid ""
 "\n"
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
 msgstr ""
 
-#: login-utils/su-common.c:695
+#: login-utils/su-common.c:694
 msgid " -m, -p, --preserve-environment  do not reset environment variables\n"
 msgstr ""
 
-#: login-utils/su-common.c:696
+#: login-utils/su-common.c:695
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr ""
 
-#: login-utils/su-common.c:697
+#: login-utils/su-common.c:696
 msgid ""
 " -G, --supp-group <group>        specify a supplemental group\n"
 "\n"
 msgstr ""
 
-#: login-utils/su-common.c:699
+#: login-utils/su-common.c:698
 #, fuzzy
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr "  -h, --help                       Ez a súgószöveg\n"
 
-#: login-utils/su-common.c:700
+#: login-utils/su-common.c:699
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr ""
 
-#: login-utils/su-common.c:701
+#: login-utils/su-common.c:700
 #, fuzzy
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
 msgstr "               Első     Utolsó\n"
 
-#: login-utils/su-common.c:703
+#: login-utils/su-common.c:702
 #, fuzzy
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
 
-#: login-utils/su-common.c:704
+#: login-utils/su-common.c:703
 #, fuzzy
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr ""
 "  -s, --shell=parancsértelmező     A parancsértelmező idézési megállapodásainak\n"
 "                                     beállítása\n"
 
-#: login-utils/su-common.c:801 login-utils/su-common.c:816
+#: login-utils/su-common.c:800 login-utils/su-common.c:815
 #, fuzzy, c-format
 msgid "group %s does not exist"
 msgstr "%s: a(z) „%s” felhasználó nem létezik.\n"
 
-#: login-utils/su-common.c:810
+#: login-utils/su-common.c:809
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] ""
 msgstr[1] ""
 
-#: login-utils/su-common.c:860
+#: login-utils/su-common.c:859
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr ""
 
-#: login-utils/su-common.c:871
+#: login-utils/su-common.c:870
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr ""
 
-#: login-utils/su-common.c:875
+#: login-utils/su-common.c:874
 #, fuzzy
 msgid "no command was specified"
 msgstr "A „--date” kapcsoló nincs megadva.\n"
 
-#: login-utils/su-common.c:889
+#: login-utils/su-common.c:888
 msgid "only root can specify alternative groups"
 msgstr ""
 
-#: login-utils/su-common.c:896
+#: login-utils/su-common.c:895
 #, fuzzy, c-format
 msgid "user %s does not exist"
 msgstr "%s: a(z) „%s” felhasználó nem létezik.\n"
 
-#: login-utils/su-common.c:942
+#: login-utils/su-common.c:941
 #, c-format
 msgid "using restricted shell %s"
 msgstr ""
 
-#: login-utils/su-common.c:966
+#: login-utils/su-common.c:965
 #, fuzzy, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "A személyiség beállítása meghiúsult a következőre: %s"
@@ -8795,7 +8794,7 @@ msgid "%s and %s are mutually exclusive"
 msgstr "%s: Az --adjfile és a --noadjfile kölcsönösen kizárják egymást, de mindkettőt megadta.\n"
 
 #: misc-utils/kill.c:397 misc-utils/kill.c:439 misc-utils/rename.c:153
-#: sys-utils/ipcrm.c:154 term-utils/agetty.c:753 term-utils/agetty.c:762
+#: sys-utils/ipcrm.c:154 term-utils/agetty.c:764 term-utils/agetty.c:773
 #, fuzzy
 msgid "not enough arguments"
 msgstr "Túl kevés argumentum"
@@ -8805,10 +8804,10 @@ msgstr "Túl kevés argumentum"
 msgid "option '%s' requires an argument"
 msgstr "%s egy paramétert igényel\n"
 
-#: misc-utils/kill.c:415 term-utils/setterm.c:217 term-utils/setterm.c:255
-#: term-utils/setterm.c:293 term-utils/setterm.c:321 term-utils/setterm.c:335
-#: term-utils/setterm.c:346 term-utils/setterm.c:354 term-utils/setterm.c:369
-#: term-utils/setterm.c:383 term-utils/setterm.c:396
+#: misc-utils/kill.c:415 term-utils/setterm.c:218 term-utils/setterm.c:256
+#: term-utils/setterm.c:294 term-utils/setterm.c:322 term-utils/setterm.c:336
+#: term-utils/setterm.c:347 term-utils/setterm.c:355 term-utils/setterm.c:370
+#: term-utils/setterm.c:384 term-utils/setterm.c:397
 #, fuzzy
 msgid "argument error"
 msgstr "%s: Paraméterhiba, használat:\n"
@@ -9680,41 +9679,41 @@ msgid ""
 "\n"
 msgstr ""
 
-#: misc-utils/whereis.c:171
+#: misc-utils/whereis.c:190
 #, fuzzy
 msgid " -b         search only for binaries\n"
 msgstr "    -n :                   a lemez tényleges írásának kihagyása"
 
-#: misc-utils/whereis.c:172
+#: misc-utils/whereis.c:191
 msgid " -B <dirs>  define binaries lookup path\n"
 msgstr ""
 
-#: misc-utils/whereis.c:173
+#: misc-utils/whereis.c:192
 msgid " -m         search only for manuals\n"
 msgstr ""
 
-#: misc-utils/whereis.c:174
+#: misc-utils/whereis.c:193
 msgid " -M <dirs>  define man lookup path\n"
 msgstr ""
 
-#: misc-utils/whereis.c:175
+#: misc-utils/whereis.c:194
 msgid " -s         search only for sources\n"
 msgstr ""
 
-#: misc-utils/whereis.c:176
+#: misc-utils/whereis.c:195
 msgid " -S <dirs>  define sources lookup path\n"
 msgstr ""
 
-#: misc-utils/whereis.c:177
+#: misc-utils/whereis.c:196
 #, fuzzy
 msgid " -f         terminate <dirs> argument list\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: misc-utils/whereis.c:178
+#: misc-utils/whereis.c:197
 msgid " -u         search for unusual entries\n"
 msgstr ""
 
-#: misc-utils/whereis.c:179
+#: misc-utils/whereis.c:198
 msgid " -l         output effective lookup paths\n"
 msgstr ""
 
@@ -10150,18 +10149,23 @@ msgstr "A BLKGETSIZE ioctl meghiúsult a következőn: %s\n"
 msgid "%s: BLKSSZGET ioctl failed"
 msgstr "%s meghiúsult.\n"
 
-#: sys-utils/blkdiscard.c:158
+#: sys-utils/blkdiscard.c:153
+#, fuzzy, c-format
+msgid "%s: offset is greater than device size"
+msgstr "Nem lehet lekérdezni a lemez méretét"
+
+#: sys-utils/blkdiscard.c:160
 #, fuzzy, c-format
 msgid "%s: BLKSECDISCARD ioctl failed"
 msgstr "%s meghiúsult.\n"
 
-#: sys-utils/blkdiscard.c:161
+#: sys-utils/blkdiscard.c:163
 #, fuzzy, c-format
 msgid "%s: BLKDISCARD ioctl failed"
 msgstr "%s meghiúsult.\n"
 
 #. TRANSLATORS: The standard value here is a very large number.
-#: sys-utils/blkdiscard.c:166
+#: sys-utils/blkdiscard.c:168
 #, c-format
 msgid "%s: Discarded %<PRIu64> bytes from the offset %<PRIu64>\n"
 msgstr ""
@@ -11057,22 +11061,17 @@ msgstr "Nem nyitható meg a(z) „%s” fájl"
 msgid "invalid timeout value"
 msgstr "érvénytelen kapcsoló"
 
-#: sys-utils/flock.c:179
-#, fuzzy
-msgid "timeout cannot be zero"
-msgstr "mount: nem állítható be a felhasználóazonosító: %s"
-
-#: sys-utils/flock.c:183
+#: sys-utils/flock.c:181
 #, fuzzy
 msgid "invalid exit code"
 msgstr "érvénytelen azonosító"
 
-#: sys-utils/flock.c:203
+#: sys-utils/flock.c:201
 #, fuzzy, c-format
 msgid "%s requires exactly one command argument"
 msgstr "%s egy paramétert igényel\n"
 
-#: sys-utils/flock.c:224
+#: sys-utils/flock.c:222
 #, fuzzy
 msgid "requires file descriptor, file or directory"
 msgstr "a gyökér inode nem könyvtár"
@@ -11180,129 +11179,129 @@ msgstr "A „--date” kapcsoló nincs megadva.\n"
 msgid "%s: the discard operation is not supported"
 msgstr "a sebesség (%d) nem támogatott"
 
-#: sys-utils/hwclock.c:231
+#: sys-utils/hwclock.c:232
 #, c-format
 msgid "Assuming hardware clock is kept in %s time.\n"
 msgstr "Feltesszük, hogy a hardveróra a(z) %s időben marad.\n"
 
-#: sys-utils/hwclock.c:232 sys-utils/hwclock.c:322
+#: sys-utils/hwclock.c:233 sys-utils/hwclock.c:323
 msgid "UTC"
 msgstr "UTC"
 
-#: sys-utils/hwclock.c:232 sys-utils/hwclock.c:321
+#: sys-utils/hwclock.c:233 sys-utils/hwclock.c:322
 msgid "local"
 msgstr "helyi"
 
-#: sys-utils/hwclock.c:306
+#: sys-utils/hwclock.c:307
 #, fuzzy
 msgid ""
 "Warning: unrecognized third line in adjtime file\n"
 "(Expected: `UTC' or `LOCAL' or nothing.)"
 msgstr "%s: Figyelmeztetés: az adjtime fájl harmadik sora ismeretlen\n"
 
-#: sys-utils/hwclock.c:315
+#: sys-utils/hwclock.c:316
 #, c-format
 msgid "Last drift adjustment done at %ld seconds after 1969\n"
 msgstr "Utolsó csúszó igazítás: 1969 után %ld másodperccel\n"
 
-#: sys-utils/hwclock.c:317
+#: sys-utils/hwclock.c:318
 #, c-format
 msgid "Last calibration done at %ld seconds after 1969\n"
 msgstr "Utolsó beállítás: 1969 után %ld másodperccel\n"
 
-#: sys-utils/hwclock.c:319
+#: sys-utils/hwclock.c:320
 #, c-format
 msgid "Hardware clock is on %s time\n"
 msgstr "A hardveróra a(z) %s időt mutatja\n"
 
-#: sys-utils/hwclock.c:346
+#: sys-utils/hwclock.c:347
 #, c-format
 msgid "Waiting for clock tick...\n"
 msgstr "Várakozás az óra ütésére...\n"
 
-#: sys-utils/hwclock.c:352
+#: sys-utils/hwclock.c:353
 #, c-format
 msgid "...synchronization failed\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:354
+#: sys-utils/hwclock.c:355
 #, c-format
 msgid "...got clock tick\n"
 msgstr "   az óraütés megvan\n"
 
-#: sys-utils/hwclock.c:417
+#: sys-utils/hwclock.c:418
 #, c-format
 msgid "Invalid values in hardware clock: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 msgstr "Érvénytelen értékek a hardverórában: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 
-#: sys-utils/hwclock.c:426
+#: sys-utils/hwclock.c:427
 #, c-format
 msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr "A hardveróra ideje: %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld másodperc 1969 óta\n"
 
-#: sys-utils/hwclock.c:460
+#: sys-utils/hwclock.c:461
 #, c-format
 msgid "Time read from Hardware Clock: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 msgstr "A hardverórából olvasott idő: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 
-#: sys-utils/hwclock.c:488
+#: sys-utils/hwclock.c:489
 #, c-format
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr "A hardveróra beállítása %.2d:%.2d:%.2d = %ld másodperc 1969 óta\n"
 
-#: sys-utils/hwclock.c:494
+#: sys-utils/hwclock.c:495
 #, c-format
 msgid "Clock not changed - testing only.\n"
 msgstr "Az óra nem változott - csak teszt.\n"
 
-#: sys-utils/hwclock.c:598
+#: sys-utils/hwclock.c:599
 #, c-format
 msgid "sleeping ~%d usec\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:609
+#: sys-utils/hwclock.c:610
 #, c-format
 msgid "time jumped backward %.6f seconds to %ld.%06d - retargeting\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:617
+#: sys-utils/hwclock.c:618
 #, c-format
 msgid "%ld.%06d < %ld.%06d (%.6f)\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:633
+#: sys-utils/hwclock.c:634
 #, c-format
 msgid "missed it - %ld.%06d is too far past %ld.%06d (%.6f > %.6f)\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:661
+#: sys-utils/hwclock.c:662
 #, c-format
 msgid ""
 "%ld.%06d is close enough to %ld.%06d (%.6f < %.6f)\n"
 "Set RTC to %ld (%ld + %d; refsystime = %ld.%06d)\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:686
+#: sys-utils/hwclock.c:687
 #, fuzzy
 msgid "The Hardware Clock registers contain values that are either invalid (e.g. 50th day of month) or beyond the range we can handle (e.g. Year 2095)."
 msgstr "A hardveróra regiszterei érvénytelen (például a hónap 50. napja) vagy a kezelhetőn túli tartományban lévő (például 2095-ös év) értéket tartalmaznak\n"
 
-#: sys-utils/hwclock.c:696
+#: sys-utils/hwclock.c:697
 #, c-format
 msgid "%s  %.6f seconds\n"
 msgstr "%s  %.6f másodperc\n"
 
-#: sys-utils/hwclock.c:727
+#: sys-utils/hwclock.c:728
 #, fuzzy
 msgid "No --date option specified."
 msgstr "A „--date” kapcsoló nincs megadva.\n"
 
-#: sys-utils/hwclock.c:733
+#: sys-utils/hwclock.c:734
 #, fuzzy
 msgid "--date argument too long"
 msgstr "A --date paramétere túl hosszú\n"
 
-#: sys-utils/hwclock.c:740
+#: sys-utils/hwclock.c:741
 #, fuzzy
 msgid ""
 "The value of the --date option is not a valid date.\n"
@@ -11311,21 +11310,21 @@ msgstr ""
 "A --date kapcsoló értéke nem egy érvényes dátum.\n"
 "Pontosabban: idézőjeleket tartalmaz.\n"
 
-#: sys-utils/hwclock.c:748
+#: sys-utils/hwclock.c:749
 #, c-format
 msgid "Issuing date command: %s\n"
 msgstr "Dátum parancs kiadása: %s\n"
 
-#: sys-utils/hwclock.c:752
+#: sys-utils/hwclock.c:753
 msgid "Unable to run 'date' program in /bin/sh shell. popen() failed"
 msgstr "A „date” program nem futtatható a /bin/sh parancsértelmezőben. A popen() meghiúsult"
 
-#: sys-utils/hwclock.c:760
+#: sys-utils/hwclock.c:761
 #, c-format
 msgid "response from date command = %s\n"
 msgstr "a date parancs válasza = %s\n"
 
-#: sys-utils/hwclock.c:762
+#: sys-utils/hwclock.c:763
 #, fuzzy, c-format
 msgid ""
 "The date command issued by %s returned unexpected results.\n"
@@ -11340,7 +11339,7 @@ msgstr ""
 "A válasz:\n"
 "  %s\n"
 
-#: sys-utils/hwclock.c:773
+#: sys-utils/hwclock.c:774
 #, c-format
 msgid ""
 "The date command issued by %s returned something other than an integer where the converted time value was expected.\n"
@@ -11355,61 +11354,61 @@ msgstr ""
 "A válasz:\n"
 "  %s\n"
 
-#: sys-utils/hwclock.c:785
+#: sys-utils/hwclock.c:786
 #, c-format
 msgid "date string %s equates to %ld seconds since 1969.\n"
 msgstr "a(z) %s dátum karakterlánc egyenlő %ld másodperccel 1969 óta.\n"
 
-#: sys-utils/hwclock.c:817
+#: sys-utils/hwclock.c:818
 #, fuzzy
 msgid "The Hardware Clock does not contain a valid time, so we cannot set the System Time from it."
 msgstr "A hardveróra nem tartalmaz érvényes időt, így nem lehet beállítani a rendszeridőt.\n"
 
-#: sys-utils/hwclock.c:839 sys-utils/hwclock.c:919
+#: sys-utils/hwclock.c:840 sys-utils/hwclock.c:920
 #, c-format
 msgid "Calling settimeofday:\n"
 msgstr "A settimeofday hívása:\n"
 
-#: sys-utils/hwclock.c:840 sys-utils/hwclock.c:921
+#: sys-utils/hwclock.c:841 sys-utils/hwclock.c:922
 #, c-format
 msgid "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 msgstr "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 
-#: sys-utils/hwclock.c:842 sys-utils/hwclock.c:923
+#: sys-utils/hwclock.c:843 sys-utils/hwclock.c:924
 #, c-format
 msgid "\ttz.tz_minuteswest = %d\n"
 msgstr "\ttz.tz_minuteswest = %d\n"
 
-#: sys-utils/hwclock.c:846 sys-utils/hwclock.c:927
+#: sys-utils/hwclock.c:847 sys-utils/hwclock.c:928
 #, c-format
 msgid "Not setting system clock because running in test mode.\n"
 msgstr "A rendszeróra teszt módban nem kerül beállításra.\n"
 
-#: sys-utils/hwclock.c:855 sys-utils/hwclock.c:951
+#: sys-utils/hwclock.c:856 sys-utils/hwclock.c:952
 #, fuzzy
 msgid "Must be superuser to set system clock."
 msgstr "Rendszergazdai jog szükséges a rendszeróra beállításához.\n"
 
-#: sys-utils/hwclock.c:858 sys-utils/hwclock.c:954
+#: sys-utils/hwclock.c:859 sys-utils/hwclock.c:955
 msgid "settimeofday() failed"
 msgstr "A settimeofday() nem sikerült"
 
-#: sys-utils/hwclock.c:894
+#: sys-utils/hwclock.c:895
 #, fuzzy, c-format
 msgid "Current system time: %ld = %s\n"
 msgstr "rendszeridő olvasása"
 
-#: sys-utils/hwclock.c:920
+#: sys-utils/hwclock.c:921
 #, c-format
 msgid "\tUTC: %s\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:983
+#: sys-utils/hwclock.c:984
 #, c-format
 msgid "Not adjusting drift factor because the Hardware Clock previously contained garbage.\n"
 msgstr "A csúsztatási tényező nem kerül beállításra, mert a hardveróra korábban szemetet tartalmazott.\n"
 
-#: sys-utils/hwclock.c:988
+#: sys-utils/hwclock.c:989
 #, c-format
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
@@ -11418,19 +11417,19 @@ msgstr ""
 "A csúsztatási tényező nem kerül beállításra, mert az utolsó kalibráció ideje 0,\n"
 "így az előzmények hibásak és új kalibráció szükséges.\n"
 
-#: sys-utils/hwclock.c:994
+#: sys-utils/hwclock.c:995
 #, c-format
 msgid "Not adjusting drift factor because it has been less than a day since the last calibration.\n"
 msgstr "A csúsztatási tényező nem kerül beállításra, mert még nem telt el egy nap az utolsó kalibráció óta.\n"
 
-#: sys-utils/hwclock.c:1047
+#: sys-utils/hwclock.c:1048
 #, c-format
 msgid ""
 "Clock drift factor was calculated as %f seconds/day.\n"
 "It is far too much. Resetting to zero.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1054
+#: sys-utils/hwclock.c:1055
 #, c-format
 msgid ""
 "Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor of %f seconds/day.\n"
@@ -11439,26 +11438,26 @@ msgstr ""
 "Az óra %.1f másodpercet csúszott az elmúlt %d másodpercben, a napi %f másodperc csúsztatási tényező ellenére.\n"
 "A csúsztatási tényező beállítva napi %f másodpercre\n"
 
-#: sys-utils/hwclock.c:1101
+#: sys-utils/hwclock.c:1102
 #, fuzzy, c-format
 msgid "Time since last adjustment is %d second\n"
 msgid_plural "Time since last adjustment is %d seconds\n"
 msgstr[0] "Az utolsó igazítás óta eltelt idő %d másodperc\n"
 msgstr[1] "Az utolsó igazítás óta eltelt idő %d másodperc\n"
 
-#: sys-utils/hwclock.c:1105
+#: sys-utils/hwclock.c:1106
 #, fuzzy, c-format
 msgid "Need to insert %d second and refer time back %.6f seconds ago\n"
 msgid_plural "Need to insert %d seconds and refer time back %.6f seconds ago\n"
 msgstr[0] "%d másodperc beszúrása szükséges és az idő visszaállítása %.6f másodperccel\n"
 msgstr[1] "%d másodperc beszúrása szükséges és az idő visszaállítása %.6f másodperccel\n"
 
-#: sys-utils/hwclock.c:1138
+#: sys-utils/hwclock.c:1139
 #, c-format
 msgid "Not updating adjtime file because of testing mode.\n"
 msgstr "Az adjtime fájl teszt módban nem kerül módosításra.\n"
 
-#: sys-utils/hwclock.c:1139
+#: sys-utils/hwclock.c:1140
 #, c-format
 msgid ""
 "Would have written the following to %s:\n"
@@ -11467,61 +11466,61 @@ msgstr ""
 "A(z) %s fájlba a következő került volna kiírásra:\n"
 "%s"
 
-#: sys-utils/hwclock.c:1148
+#: sys-utils/hwclock.c:1149
 #, c-format
 msgid "Could not open file with the clock adjustment parameters in it (%s) for writing"
 msgstr ""
 
-#: sys-utils/hwclock.c:1154 sys-utils/hwclock.c:1161
+#: sys-utils/hwclock.c:1155 sys-utils/hwclock.c:1162
 #, c-format
 msgid "Could not update file with the clock adjustment parameters (%s) in it"
 msgstr ""
 
-#: sys-utils/hwclock.c:1169
+#: sys-utils/hwclock.c:1170
 #, fuzzy
 msgid "Drift adjustment parameters not updated."
 msgstr "A csúsztatás paraméterei nem kerültek frissítésre.\n"
 
-#: sys-utils/hwclock.c:1208
+#: sys-utils/hwclock.c:1209
 #, fuzzy
 msgid "The Hardware Clock does not contain a valid time, so we cannot adjust it."
 msgstr "A hardveróra nem tartalmaz érvényes időt, így nem lehet igazítani.\n"
 
-#: sys-utils/hwclock.c:1216
+#: sys-utils/hwclock.c:1217
 #, fuzzy, c-format
 msgid "Not setting clock because last adjustment time is zero, so history is bad.\n"
 msgstr ""
 "A csúsztatási tényező nem kerül beállításra, mert az utolsó kalibráció ideje 0,\n"
 "így az előzmények hibásak és új kalibráció szükséges.\n"
 
-#: sys-utils/hwclock.c:1220
+#: sys-utils/hwclock.c:1221
 #, fuzzy, c-format
 msgid "Not setting clock because drift factor %f is far too high.\n"
 msgstr ""
 "A csúsztatási tényező nem kerül beállításra, mert az utolsó kalibráció ideje 0,\n"
 "így az előzmények hibásak és új kalibráció szükséges.\n"
 
-#: sys-utils/hwclock.c:1242
+#: sys-utils/hwclock.c:1243
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr "A szükséges igazítás kevesebb mint egy másodperc, így nem kerül beállításra.\n"
 
-#: sys-utils/hwclock.c:1269
+#: sys-utils/hwclock.c:1270
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "Nem található használható órafelület\n"
 
-#: sys-utils/hwclock.c:1398 sys-utils/hwclock.c:1404
+#: sys-utils/hwclock.c:1399 sys-utils/hwclock.c:1405
 #, c-format
 msgid "Unable to set system clock.\n"
 msgstr "A rendszeróra nem állítható be.\n"
 
-#: sys-utils/hwclock.c:1417
+#: sys-utils/hwclock.c:1418
 #, c-format
 msgid "At %ld seconds after 1969, RTC is predicted to read %ld seconds after 1969.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1446
+#: sys-utils/hwclock.c:1447
 #, fuzzy
 msgid ""
 "The kernel keeps an epoch value for the Hardware Clock only on an Alpha machine.\n"
@@ -11532,36 +11531,36 @@ msgstr ""
 "A hwcolock ezen másolata nem Alpha gépre készült\n"
 "(és így feltételezhetően most sem Alpha gépen fut). Nincs teendő.\n"
 
-#: sys-utils/hwclock.c:1463
+#: sys-utils/hwclock.c:1464
 #, fuzzy
 msgid "Unable to get the epoch value from the kernel."
 msgstr "Nem lehet lekérni az epoch értékét a rendszermagból.\n"
 
-#: sys-utils/hwclock.c:1465
+#: sys-utils/hwclock.c:1466
 #, c-format
 msgid "Kernel is assuming an epoch value of %lu\n"
 msgstr "A rendszermag feltételezi, hogy az epoch értéke %lu\n"
 
-#: sys-utils/hwclock.c:1470
+#: sys-utils/hwclock.c:1471
 #, fuzzy
 msgid "To set the epoch value, you must use the 'epoch' option to tell to what value to set it."
 msgstr "A beállítandó epoch érték megadásához használja az „epoch” kapcsolót.\n"
 
-#: sys-utils/hwclock.c:1474
+#: sys-utils/hwclock.c:1475
 #, c-format
 msgid "Not setting the epoch to %d - testing only.\n"
 msgstr "Az epoch értéke nem kerül beállításra (%d értékre) - ez csak teszt.\n"
 
-#: sys-utils/hwclock.c:1478
+#: sys-utils/hwclock.c:1479
 #, c-format
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Nem lehet beállítani az epoch értéket a rendszermagban.\n"
 
-#: sys-utils/hwclock.c:1570
+#: sys-utils/hwclock.c:1571
 msgid " hwclock [function] [option...]\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1572
+#: sys-utils/hwclock.c:1573
 #, fuzzy
 msgid ""
 "\n"
@@ -11570,14 +11569,14 @@ msgstr ""
 "\n"
 "%d partíció:\n"
 
-#: sys-utils/hwclock.c:1573
+#: sys-utils/hwclock.c:1574
 msgid ""
 " -h, --help           show this help text and exit\n"
 " -r, --show           read hardware clock and print result\n"
 "     --set            set the RTC to the time given with --date\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1576
+#: sys-utils/hwclock.c:1577
 msgid ""
 " -s, --hctosys        set the system time from the hardware clock\n"
 " -w, --systohc        set the hardware clock from the current system time\n"
@@ -11586,34 +11585,34 @@ msgid ""
 "                        the clock was last set or adjusted\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1581
+#: sys-utils/hwclock.c:1582
 msgid " -c, --compare        periodically compare the system clock with the CMOS clock\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1583
+#: sys-utils/hwclock.c:1584
 msgid ""
 "     --getepoch       print out the kernel's hardware clock epoch value\n"
 "     --setepoch       set the kernel's hardware clock epoch value to the \n"
 "                        value given with --epoch\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1587
+#: sys-utils/hwclock.c:1588
 msgid ""
 "     --predict        predict RTC reading at time given with --date\n"
 " -V, --version        display version information and exit\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1591
+#: sys-utils/hwclock.c:1592
 msgid ""
 " -u, --utc            the hardware clock is kept in UTC\n"
 "     --localtime      the hardware clock is kept in local time\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1594
+#: sys-utils/hwclock.c:1595
 msgid " -f, --rtc <file>     special /dev/... file to use instead of default\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1597
+#: sys-utils/hwclock.c:1598
 #, c-format
 msgid ""
 "     --directisa      access the ISA bus directly instead of %s\n"
@@ -11623,7 +11622,7 @@ msgid ""
 "                        hardware clock's epoch value\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1603
+#: sys-utils/hwclock.c:1604
 #, c-format
 msgid ""
 "     --noadjfile      do not access %s; this requires the use of\n"
@@ -11632,14 +11631,14 @@ msgid ""
 "                        the default is %s\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1607
+#: sys-utils/hwclock.c:1608
 msgid ""
 "     --test           do not update anything, just show what would happen\n"
 " -D, --debug          debugging mode\n"
 "\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1610
+#: sys-utils/hwclock.c:1611
 #, fuzzy
 msgid ""
 " -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
@@ -11650,52 +11649,52 @@ msgstr ""
 "                megadja a hwclocknak a használt alpha gép típusát\n"
 "                  (lásd a hwclock(8) kézikönyvoldalt)\n"
 
-#: sys-utils/hwclock.c:1733
+#: sys-utils/hwclock.c:1734
 #, fuzzy
 msgid "Unable to connect to audit system"
 msgstr "%s: Nem lehet a megfigyelőrendszerhez csatlakozni.\n"
 
-#: sys-utils/hwclock.c:1831
+#: sys-utils/hwclock.c:1832
 #, fuzzy
 msgid "invalid epoch argument"
 msgstr "érvénytelen kapcsoló"
 
-#: sys-utils/hwclock.c:1870
+#: sys-utils/hwclock.c:1871
 #, c-format
 msgid "%s takes no non-option arguments.  You supplied %d.\n"
 msgstr "A(z) %s nem vár nem kapcsoló paramétereket. A következőt adta meg: %d.\n"
 
-#: sys-utils/hwclock.c:1879
+#: sys-utils/hwclock.c:1880
 #, fuzzy
 msgid "With --noadjfile, you must specify either --utc or --localtime"
 msgstr "%s: A --noadjfile kapcsolóval használnia kell a --utc vagy --localtime egyikét\n"
 
-#: sys-utils/hwclock.c:1892
+#: sys-utils/hwclock.c:1893
 #, fuzzy
 msgid "No usable set-to time.  Cannot set clock."
 msgstr "Nem használható a beállítandó idő. Az óra nem állítható be.\n"
 
-#: sys-utils/hwclock.c:1907
+#: sys-utils/hwclock.c:1908
 #, fuzzy
 msgid "Sorry, only the superuser can change the Hardware Clock."
 msgstr "Elnézést, csak a rendszergazda módosíthatja a hardverórát.\n"
 
-#: sys-utils/hwclock.c:1911
+#: sys-utils/hwclock.c:1912
 #, fuzzy
 msgid "Sorry, only the superuser can change the System Clock."
 msgstr "Elnézést, csak a rendszergazda módosíthatja a rendszerórát.\n"
 
-#: sys-utils/hwclock.c:1915
+#: sys-utils/hwclock.c:1916
 #, fuzzy
 msgid "Sorry, only the superuser can change the Hardware Clock epoch in the kernel."
 msgstr "Elnézést, csak a rendszergazda módosíthatja a hardveróra epoch értékét a rendszermagban.\n"
 
-#: sys-utils/hwclock.c:1938
+#: sys-utils/hwclock.c:1939
 #, fuzzy
 msgid "Cannot access the Hardware Clock via any known method."
 msgstr "A hardveróra egyetlen ismert módon sem érhető el.\n"
 
-#: sys-utils/hwclock.c:1941
+#: sys-utils/hwclock.c:1942
 #, fuzzy
 msgid "Use the --debug option to see the details of our search for an access method."
 msgstr "Használja a --debug kapcsolót az elérési mód keresésével kapcsolatos részletek megjelenítéséhez.\n"
@@ -12068,12 +12067,12 @@ msgstr "a rendszermag nincs beállítva osztott memória használatára\n"
 msgid "kernel not configured for semaphores"
 msgstr "a rendszermag nincs beállítva szemaforok használatára\n"
 
-#: sys-utils/ipcrm.c:279
+#: sys-utils/ipcrm.c:286
 #, fuzzy
 msgid "kernel not configured for message queues"
 msgstr "a rendszermag nincs beállítva üzenetsorok használatára\n"
 
-#: sys-utils/ipcrm.c:381 sys-utils/ipcrm.c:405
+#: sys-utils/ipcrm.c:388 sys-utils/ipcrm.c:412
 #, fuzzy, c-format
 msgid "unknown argument: %s"
 msgstr "%s: ismeretlen argumentum: %s\n"
@@ -12198,23 +12197,23 @@ msgid "shmid"
 msgstr "o.m.-az"
 
 #: sys-utils/ipcs.c:251 sys-utils/ipcs.c:270 sys-utils/ipcs.c:374
-#: sys-utils/ipcs.c:389 sys-utils/ipcs.c:473 sys-utils/ipcs.c:491
+#: sys-utils/ipcs.c:389 sys-utils/ipcs.c:475 sys-utils/ipcs.c:493
 msgid "perms"
 msgstr "jogok"
 
-#: sys-utils/ipcs.c:251 sys-utils/ipcs.c:374 sys-utils/ipcs.c:473
+#: sys-utils/ipcs.c:251 sys-utils/ipcs.c:374 sys-utils/ipcs.c:475
 msgid "cuid"
 msgstr "l.fh.az"
 
-#: sys-utils/ipcs.c:251 sys-utils/ipcs.c:374 sys-utils/ipcs.c:473
+#: sys-utils/ipcs.c:251 sys-utils/ipcs.c:374 sys-utils/ipcs.c:475
 msgid "cgid"
 msgstr "l.cs.az"
 
-#: sys-utils/ipcs.c:251 sys-utils/ipcs.c:374 sys-utils/ipcs.c:473
+#: sys-utils/ipcs.c:251 sys-utils/ipcs.c:374 sys-utils/ipcs.c:475
 msgid "uid"
 msgstr "fh.az"
 
-#: sys-utils/ipcs.c:251 sys-utils/ipcs.c:374 sys-utils/ipcs.c:473
+#: sys-utils/ipcs.c:251 sys-utils/ipcs.c:374 sys-utils/ipcs.c:475
 msgid "gid"
 msgstr "cs.az"
 
@@ -12224,8 +12223,8 @@ msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
 msgstr "-------- Osztott memória csatolási/leválasztási/módosítási számai -------\n"
 
 #: sys-utils/ipcs.c:257 sys-utils/ipcs.c:264 sys-utils/ipcs.c:270
-#: sys-utils/ipcs.c:380 sys-utils/ipcs.c:389 sys-utils/ipcs.c:479
-#: sys-utils/ipcs.c:485 sys-utils/ipcs.c:491
+#: sys-utils/ipcs.c:380 sys-utils/ipcs.c:389 sys-utils/ipcs.c:481
+#: sys-utils/ipcs.c:487 sys-utils/ipcs.c:493
 msgid "owner"
 msgstr "tulajdonos"
 
@@ -12259,11 +12258,11 @@ msgstr "u.f.az"
 msgid "------ Shared Memory Segments --------\n"
 msgstr "------- Osztott memóriaszegmensek --------\n"
 
-#: sys-utils/ipcs.c:270 sys-utils/ipcs.c:389 sys-utils/ipcs.c:491
+#: sys-utils/ipcs.c:270 sys-utils/ipcs.c:389 sys-utils/ipcs.c:493
 msgid "key"
 msgstr "kulcs"
 
-#: sys-utils/ipcs.c:271 sys-utils/ipcs.c:492
+#: sys-utils/ipcs.c:271 sys-utils/ipcs.c:494
 msgid "size"
 msgstr ""
 
@@ -12281,10 +12280,10 @@ msgid "status"
 msgstr "állapot"
 
 #: sys-utils/ipcs.c:296 sys-utils/ipcs.c:298 sys-utils/ipcs.c:300
-#: sys-utils/ipcs.c:412 sys-utils/ipcs.c:414 sys-utils/ipcs.c:516
-#: sys-utils/ipcs.c:518 sys-utils/ipcs.c:520 sys-utils/ipcs.c:574
-#: sys-utils/ipcs.c:576 sys-utils/ipcs.c:605 sys-utils/ipcs.c:607
-#: sys-utils/ipcs.c:609 sys-utils/ipcs.c:633
+#: sys-utils/ipcs.c:412 sys-utils/ipcs.c:414 sys-utils/ipcs.c:518
+#: sys-utils/ipcs.c:520 sys-utils/ipcs.c:522 sys-utils/ipcs.c:576
+#: sys-utils/ipcs.c:578 sys-utils/ipcs.c:607 sys-utils/ipcs.c:609
+#: sys-utils/ipcs.c:611 sys-utils/ipcs.c:635
 msgid "Not set"
 msgstr "Nincs beállítva"
 
@@ -12407,85 +12406,85 @@ msgstr "a rendszermag nincs beállítva üzenetsorok használatára\n"
 msgid "------ Messages Status --------\n"
 msgstr "------ Üzenetek: állapot -------\n"
 
-#: sys-utils/ipcs.c:464
+#: sys-utils/ipcs.c:465
 #, c-format
 msgid "allocated queues = %d\n"
 msgstr "lefoglalt sorok = %d\n"
 
-#: sys-utils/ipcs.c:465
+#: sys-utils/ipcs.c:466
 #, c-format
 msgid "used headers = %d\n"
 msgstr "használt fejlécek = %d\n"
 
-#: sys-utils/ipcs.c:466
+#: sys-utils/ipcs.c:468
 #, fuzzy
 msgid "used space"
 msgstr "használt terület = %d bájt\n"
 
-#: sys-utils/ipcs.c:467
+#: sys-utils/ipcs.c:469
 #, fuzzy
 msgid " bytes\n"
 msgstr "bájt"
 
-#: sys-utils/ipcs.c:471
+#: sys-utils/ipcs.c:473
 #, fuzzy, c-format
 msgid "------ Message Queues Creators/Owners --------\n"
 msgstr "------ Üzenetsorok: létrehozók/tulajdonosok --------\n"
 
-#: sys-utils/ipcs.c:473 sys-utils/ipcs.c:479 sys-utils/ipcs.c:485
-#: sys-utils/ipcs.c:491
+#: sys-utils/ipcs.c:475 sys-utils/ipcs.c:481 sys-utils/ipcs.c:487
+#: sys-utils/ipcs.c:493
 msgid "msqid"
 msgstr "üz.az"
 
-#: sys-utils/ipcs.c:477
+#: sys-utils/ipcs.c:479
 #, c-format
 msgid "------ Message Queues Send/Recv/Change Times --------\n"
 msgstr "-------- Üzenetsorok küldések/fogadások/módosítások számai -------\n"
 
-#: sys-utils/ipcs.c:479
+#: sys-utils/ipcs.c:481
 msgid "send"
 msgstr "küldés"
 
-#: sys-utils/ipcs.c:479
+#: sys-utils/ipcs.c:481
 msgid "recv"
 msgstr "fogadás"
 
-#: sys-utils/ipcs.c:479
+#: sys-utils/ipcs.c:481
 msgid "change"
 msgstr "módosítás"
 
-#: sys-utils/ipcs.c:483
+#: sys-utils/ipcs.c:485
 #, c-format
 msgid "------ Message Queues PIDs --------\n"
 msgstr "----- Üzenetsorok PID-jei --------\n"
 
-#: sys-utils/ipcs.c:485
+#: sys-utils/ipcs.c:487
 msgid "lspid"
 msgstr "u.k.f.az"
 
-#: sys-utils/ipcs.c:485
+#: sys-utils/ipcs.c:487
 msgid "lrpid"
 msgstr "u.f.f.az"
 
-#: sys-utils/ipcs.c:489
+#: sys-utils/ipcs.c:491
 #, c-format
 msgid "------ Message Queues --------\n"
 msgstr "------- Üzenetsorok ---------\n"
 
-#: sys-utils/ipcs.c:492
+#: sys-utils/ipcs.c:494
 msgid "used-bytes"
 msgstr "használt bájtok"
 
-#: sys-utils/ipcs.c:493
+#: sys-utils/ipcs.c:495
 msgid "messages"
 msgstr "üzenetek"
 
-#: sys-utils/ipcs.c:558 sys-utils/ipcs.c:588 sys-utils/ipcs.c:621
+#: sys-utils/ipcs.c:560 sys-utils/ipcs.c:590 sys-utils/ipcs.c:623
 #, fuzzy, c-format
 msgid "id %d not found"
 msgstr "umount: %s nem található"
 
-#: sys-utils/ipcs.c:562
+#: sys-utils/ipcs.c:564
 #, c-format
 msgid ""
 "\n"
@@ -12494,46 +12493,46 @@ msgstr ""
 "\n"
 "Osztott memóriaszegmens o.m.az =%d\n"
 
-#: sys-utils/ipcs.c:563
+#: sys-utils/ipcs.c:565
 #, fuzzy, c-format
 msgid "uid=%u\tgid=%u\tcuid=%u\tcgid=%u\n"
 msgstr "f.az=%d\tcs.az=%d\tl.fh.az=%d\tl.cs.az=%d\n"
 
-#: sys-utils/ipcs.c:566
+#: sys-utils/ipcs.c:568
 #, c-format
 msgid "mode=%#o\taccess_perms=%#o\n"
 msgstr "mód=%#o\thozzáférési_jog=%#o\n"
 
-#: sys-utils/ipcs.c:568
+#: sys-utils/ipcs.c:570
 msgid "size="
 msgstr ""
 
-#: sys-utils/ipcs.c:568
+#: sys-utils/ipcs.c:570
 #, fuzzy
 msgid "bytes="
 msgstr "bájt"
 
-#: sys-utils/ipcs.c:570
+#: sys-utils/ipcs.c:572
 #, fuzzy, c-format
 msgid "lpid=%u\tcpid=%u\tnattch=%jd\n"
 msgstr "bájt=%ld\tu.f.az=%d\tl.f.az=%d\tcsat.szám=%ld\n"
 
-#: sys-utils/ipcs.c:573
+#: sys-utils/ipcs.c:575
 #, c-format
 msgid "att_time=%-26.24s\n"
 msgstr "csatl_idő=%-26.24s\n"
 
-#: sys-utils/ipcs.c:575
+#: sys-utils/ipcs.c:577
 #, c-format
 msgid "det_time=%-26.24s\n"
 msgstr "lev_idő=%-26.24s\n"
 
-#: sys-utils/ipcs.c:577 sys-utils/ipcs.c:608
+#: sys-utils/ipcs.c:579 sys-utils/ipcs.c:610
 #, c-format
 msgid "change_time=%-26.24s\n"
 msgstr "módosítási_idő=%-26.24s\n"
 
-#: sys-utils/ipcs.c:592
+#: sys-utils/ipcs.c:594
 #, c-format
 msgid ""
 "\n"
@@ -12542,40 +12541,40 @@ msgstr ""
 "\n"
 "Üzenetsor üz.az=%d\n"
 
-#: sys-utils/ipcs.c:593
+#: sys-utils/ipcs.c:595
 #, fuzzy, c-format
 msgid "uid=%u\tgid=%u\tcuid=%u\tcgid=%u\tmode=%#o\n"
 msgstr "f.az=%d\tcs.az=%d\tl.fh.az=%d\tl.cs.az=%d\tmód=%#o\n"
 
-#: sys-utils/ipcs.c:597
+#: sys-utils/ipcs.c:599
 msgid "csize="
 msgstr ""
 
-#: sys-utils/ipcs.c:597
+#: sys-utils/ipcs.c:599
 #, fuzzy
 msgid "cbytes="
 msgstr "bájt"
 
-#: sys-utils/ipcs.c:599
+#: sys-utils/ipcs.c:601
 msgid "qsize="
 msgstr ""
 
-#: sys-utils/ipcs.c:599
+#: sys-utils/ipcs.c:601
 #, fuzzy
 msgid "qbytes="
 msgstr "bájt"
 
-#: sys-utils/ipcs.c:604
+#: sys-utils/ipcs.c:606
 #, c-format
 msgid "send_time=%-26.24s\n"
 msgstr "küldési_idő=%-26.24s\n"
 
-#: sys-utils/ipcs.c:606
+#: sys-utils/ipcs.c:608
 #, c-format
 msgid "rcv_time=%-26.24s\n"
 msgstr "fogadási_idő=%-26.24s\n"
 
-#: sys-utils/ipcs.c:625
+#: sys-utils/ipcs.c:627
 #, c-format
 msgid ""
 "\n"
@@ -12584,48 +12583,48 @@ msgstr ""
 "\n"
 "Szemafortömb szem.az=%d\n"
 
-#: sys-utils/ipcs.c:626
+#: sys-utils/ipcs.c:628
 #, fuzzy, c-format
 msgid "uid=%u\t gid=%u\t cuid=%u\t cgid=%u\n"
 msgstr "f.az=%d\t cs.az=%d\t l.fh.az=%d\t l.cs.az=%d\n"
 
-#: sys-utils/ipcs.c:629
+#: sys-utils/ipcs.c:631
 #, c-format
 msgid "mode=%#o, access_perms=%#o\n"
 msgstr "mód=%#o, hozzáférési_jog=%#o\n"
 
-#: sys-utils/ipcs.c:631
+#: sys-utils/ipcs.c:633
 #, fuzzy, c-format
 msgid "nsems = %ju\n"
 msgstr "szem.szám = %ld\n"
 
-#: sys-utils/ipcs.c:632
+#: sys-utils/ipcs.c:634
 #, c-format
 msgid "otime = %-26.24s\n"
 msgstr "oidő = %-26.24s\n"
 
-#: sys-utils/ipcs.c:634
+#: sys-utils/ipcs.c:636
 #, c-format
 msgid "ctime = %-26.24s\n"
 msgstr "cidő = %-26.24s\n"
 
-#: sys-utils/ipcs.c:637
+#: sys-utils/ipcs.c:639
 msgid "semnum"
 msgstr "szemaforszám"
 
-#: sys-utils/ipcs.c:637
+#: sys-utils/ipcs.c:639
 msgid "value"
 msgstr "érték"
 
-#: sys-utils/ipcs.c:637
+#: sys-utils/ipcs.c:639
 msgid "ncount"
 msgstr "n.szám"
 
-#: sys-utils/ipcs.c:637
+#: sys-utils/ipcs.c:639
 msgid "zcount"
 msgstr "z.szám"
 
-#: sys-utils/ipcs.c:637
+#: sys-utils/ipcs.c:639
 msgid "pid"
 msgstr "f.az"
 
@@ -13590,7 +13589,7 @@ msgstr "%s: ismeretlen argumentum: %s\n"
 msgid "failed to append option '%s'"
 msgstr "%s: a következő megnyitása meghiúsult: %s\n"
 
-#: sys-utils/mount.c:701
+#: sys-utils/mount.c:711
 #, c-format
 msgid ""
 " %1$s [-lhV]\n"
@@ -13600,7 +13599,7 @@ msgid ""
 " %1$s <operation> <mountpoint> [<target>]\n"
 msgstr ""
 
-#: sys-utils/mount.c:710
+#: sys-utils/mount.c:720
 #, c-format
 msgid ""
 " -a, --all               mount all filesystems mentioned in fstab\n"
@@ -13610,7 +13609,7 @@ msgid ""
 " -T, --fstab <path>      alternative file to /etc/fstab\n"
 msgstr ""
 
-#: sys-utils/mount.c:716
+#: sys-utils/mount.c:726
 #, c-format
 msgid ""
 " -h, --help              display this help text and exit\n"
@@ -13619,7 +13618,7 @@ msgid ""
 " -n, --no-mtab           don't write to /etc/mtab\n"
 msgstr ""
 
-#: sys-utils/mount.c:721
+#: sys-utils/mount.c:731
 #, c-format
 msgid ""
 " -o, --options <list>    comma-separated list of mount options\n"
@@ -13628,14 +13627,14 @@ msgid ""
 " -t, --types <list>      limit the set of filesystem types\n"
 msgstr ""
 
-#: sys-utils/mount.c:726
+#: sys-utils/mount.c:736
 #, c-format
 msgid ""
 "     --source <src>      explicitly specifies source (path, label, uuid)\n"
 "     --target <target>   explicitly specifies mountpoint\n"
 msgstr ""
 
-#: sys-utils/mount.c:729
+#: sys-utils/mount.c:739
 #, c-format
 msgid ""
 " -v, --verbose           say what is being done\n"
@@ -13643,7 +13642,7 @@ msgid ""
 " -w, --rw, --read-write  mount the filesystem read-write (default)\n"
 msgstr ""
 
-#: sys-utils/mount.c:738
+#: sys-utils/mount.c:748
 #, c-format
 msgid ""
 "\n"
@@ -13656,7 +13655,7 @@ msgid ""
 " PARTUUID=<uuid>         specifies device by partition UUID\n"
 msgstr ""
 
-#: sys-utils/mount.c:747
+#: sys-utils/mount.c:757
 #, c-format
 msgid ""
 " <device>                specifies device by path\n"
@@ -13664,7 +13663,7 @@ msgid ""
 " <file>                  regular file for loopdev setup\n"
 msgstr ""
 
-#: sys-utils/mount.c:752
+#: sys-utils/mount.c:762
 #, c-format
 msgid ""
 "\n"
@@ -13674,7 +13673,7 @@ msgid ""
 " -R, --rbind             mount a subtree and all submounts somewhere else\n"
 msgstr ""
 
-#: sys-utils/mount.c:757
+#: sys-utils/mount.c:767
 #, c-format
 msgid ""
 " --make-shared           mark a subtree as shared\n"
@@ -13683,7 +13682,7 @@ msgid ""
 " --make-unbindable       mark a subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:762
+#: sys-utils/mount.c:772
 #, c-format
 msgid ""
 " --make-rshared          recursively mark a whole subtree as shared\n"
@@ -13692,17 +13691,17 @@ msgid ""
 " --make-runbindable      recursively mark a whole subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:848 sys-utils/umount.c:546
+#: sys-utils/mount.c:858 sys-utils/umount.c:546
 #, fuzzy
 msgid "libmount context allocation failed"
 msgstr "mount: a csatolás meghiúsult"
 
-#: sys-utils/mount.c:905 sys-utils/umount.c:599
+#: sys-utils/mount.c:915 sys-utils/umount.c:599
 #, fuzzy
 msgid "failed to set options pattern"
 msgstr "A személyiség beállítása meghiúsult a következőre: %s"
 
-#: sys-utils/mount.c:1058
+#: sys-utils/mount.c:1068
 #, fuzzy
 msgid "source specified more than once"
 msgstr "Több cilindert adott meg, mint amennyi elfér a lemezen"
@@ -15726,331 +15725,331 @@ msgstr ""
 msgid "version"
 msgstr ""
 
-#: term-utils/agetty.c:416
+#: term-utils/agetty.c:427
 #, c-format
 msgid "%s%s (automatic login)\n"
 msgstr ""
 
-#: term-utils/agetty.c:470
+#: term-utils/agetty.c:481
 #, fuzzy, c-format
 msgid "%s: can't change root directory %s: %m"
 msgstr "%s: a(z) %s nem futtatható: %m"
 
-#: term-utils/agetty.c:475
+#: term-utils/agetty.c:486
 #, fuzzy, c-format
 msgid "%s: can't change working directory %s: %m"
 msgstr "%s: a(z) %s nem futtatható: %m"
 
-#: term-utils/agetty.c:480
+#: term-utils/agetty.c:491
 #, fuzzy, c-format
 msgid "%s: can't change process priority: %m"
 msgstr "%s: a(z) „%s” folyamat nem található\n"
 
-#: term-utils/agetty.c:491
+#: term-utils/agetty.c:502
 #, c-format
 msgid "%s: can't exec %s: %m"
 msgstr "%s: a(z) %s nem futtatható: %m"
 
-#: term-utils/agetty.c:522 term-utils/agetty.c:805 term-utils/agetty.c:817
-#: term-utils/agetty.c:1360 term-utils/agetty.c:1378 term-utils/agetty.c:1410
-#: term-utils/agetty.c:1420 term-utils/agetty.c:1457 term-utils/agetty.c:1733
-#: term-utils/agetty.c:2246
+#: term-utils/agetty.c:533 term-utils/agetty.c:816 term-utils/agetty.c:828
+#: term-utils/agetty.c:1376 term-utils/agetty.c:1394 term-utils/agetty.c:1426
+#: term-utils/agetty.c:1436 term-utils/agetty.c:1473 term-utils/agetty.c:1749
+#: term-utils/agetty.c:2262
 #, fuzzy, c-format
 msgid "failed to allocate memory: %m"
 msgstr "nem foglalható le kimeneti puffer"
 
-#: term-utils/agetty.c:684
+#: term-utils/agetty.c:695
 #, fuzzy
 msgid "invalid argument of --local-line"
 msgstr "érvénytelen azonosító: %s\n"
 
-#: term-utils/agetty.c:716
+#: term-utils/agetty.c:727
 #, c-format
 msgid "bad timeout value: %s"
 msgstr "hibás időkorlátérték: %s"
 
-#: term-utils/agetty.c:835
+#: term-utils/agetty.c:846
 #, c-format
 msgid "bad speed: %s"
 msgstr "hibás sebesség: %s"
 
-#: term-utils/agetty.c:837
+#: term-utils/agetty.c:848
 msgid "too many alternate speeds"
 msgstr "túl sok alternatív sebesség"
 
-#: term-utils/agetty.c:965 term-utils/agetty.c:982 term-utils/agetty.c:1022
+#: term-utils/agetty.c:976 term-utils/agetty.c:993 term-utils/agetty.c:1033
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr "/dev/%s: nem nyitható meg szabványos bemenetként: %m"
 
-#: term-utils/agetty.c:988
+#: term-utils/agetty.c:999
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr "/dev/%s: nem egy karaktereszköz"
 
-#: term-utils/agetty.c:990
+#: term-utils/agetty.c:1001
 #, fuzzy, c-format
 msgid "/dev/%s: not a tty"
 msgstr "a gyökér inode nem könyvtár"
 
-#: term-utils/agetty.c:994 term-utils/agetty.c:1026
+#: term-utils/agetty.c:1005 term-utils/agetty.c:1037
 #, fuzzy, c-format
 msgid "/dev/%s: cannot get controlling tty: %m"
 msgstr "/dev/%s: nem nyitható meg szabványos bemenetként: %m"
 
-#: term-utils/agetty.c:1016
+#: term-utils/agetty.c:1027
 #, fuzzy, c-format
 msgid "/dev/%s: vhangup() failed: %m"
 msgstr "%s: a calloc() sikertelen: %s\n"
 
-#: term-utils/agetty.c:1037
+#: term-utils/agetty.c:1048
 #, c-format
 msgid "%s: not open for read/write"
 msgstr "%s: nem nyitható meg írásra vagy olvasásra"
 
-#: term-utils/agetty.c:1042
+#: term-utils/agetty.c:1053
 #, fuzzy, c-format
 msgid "/dev/%s: cannot set process group: %m"
 msgstr "%s: a(z) „%s” folyamat nem található\n"
 
-#: term-utils/agetty.c:1056
+#: term-utils/agetty.c:1067
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr "%s: kettőzési probléma: %m"
 
-#: term-utils/agetty.c:1073
+#: term-utils/agetty.c:1084
 #, fuzzy, c-format
 msgid "%s: failed to get terminal attributes: %m"
 msgstr "a(z) %s terminálattribútumai nem kérhetők le"
 
-#: term-utils/agetty.c:1266 term-utils/agetty.c:1286
+#: term-utils/agetty.c:1282 term-utils/agetty.c:1302
 #, fuzzy, c-format
 msgid "setting terminal attributes failed: %m"
 msgstr "a(z) %s terminálattribútumai nem állíthatók be"
 
-#: term-utils/agetty.c:1401
+#: term-utils/agetty.c:1417
 #, fuzzy, c-format
 msgid "cannot open: %s: %m"
 msgstr "a(z) %s nem nyitható meg"
 
-#: term-utils/agetty.c:1507
+#: term-utils/agetty.c:1523
 msgid "[press ENTER to login]"
 msgstr ""
 
-#: term-utils/agetty.c:1523
+#: term-utils/agetty.c:1539
 msgid "Num Lock off"
 msgstr ""
 
-#: term-utils/agetty.c:1526
+#: term-utils/agetty.c:1542
 msgid "Num Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:1529
+#: term-utils/agetty.c:1545
 msgid "Caps Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:1532
+#: term-utils/agetty.c:1548
 msgid "Scroll Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:1535
+#: term-utils/agetty.c:1551
 #, fuzzy, c-format
 msgid ""
 "Hint: %s\n"
 "\n"
 msgstr "típus: %s\n"
 
-#: term-utils/agetty.c:1654
+#: term-utils/agetty.c:1670
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: olvasás: %m"
 
-#: term-utils/agetty.c:1713
+#: term-utils/agetty.c:1729
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: a bemenet túlcsordult"
 
-#: term-utils/agetty.c:1729 term-utils/agetty.c:1737
+#: term-utils/agetty.c:1745 term-utils/agetty.c:1753
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr ""
 
-#: term-utils/agetty.c:1743
+#: term-utils/agetty.c:1759
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr ""
 
-#: term-utils/agetty.c:1828
+#: term-utils/agetty.c:1844
 #, fuzzy, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "a(z) %s terminálattribútumai nem állíthatók be"
 
-#: term-utils/agetty.c:1864
+#: term-utils/agetty.c:1880
 #, c-format
 msgid ""
 " %1$s [options] <line> [<baud_rate>,...] [<termtype>]\n"
 " %1$s [options] <baud_rate>,... <line> [<termtype>]\n"
 msgstr ""
 
-#: term-utils/agetty.c:1867
+#: term-utils/agetty.c:1883
 #, fuzzy
 msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
 
-#: term-utils/agetty.c:1868
+#: term-utils/agetty.c:1884
 msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr ""
 
-#: term-utils/agetty.c:1869
+#: term-utils/agetty.c:1885
 #, fuzzy
 msgid " -c, --noreset              do not reset control mode\n"
 msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
 
-#: term-utils/agetty.c:1870
+#: term-utils/agetty.c:1886
 #, fuzzy
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: term-utils/agetty.c:1871
+#: term-utils/agetty.c:1887
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr ""
 
-#: term-utils/agetty.c:1872
+#: term-utils/agetty.c:1888
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr ""
 
-#: term-utils/agetty.c:1873
+#: term-utils/agetty.c:1889
 #, fuzzy
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr ""
 "  -s, --shell=parancsértelmező     A parancsértelmező idézési megállapodásainak\n"
 "                                     beállítása\n"
 
-#: term-utils/agetty.c:1874
+#: term-utils/agetty.c:1890
 #, fuzzy
 msgid " -i, --noissue              do not display issue file\n"
 msgstr "  p          A partíciós tábla kiírása a képernyőre vagy fájlba"
 
-#: term-utils/agetty.c:1875
+#: term-utils/agetty.c:1891
 msgid " -I, --init-string <string> set init string\n"
 msgstr ""
 
-#: term-utils/agetty.c:1876
+#: term-utils/agetty.c:1892
 #, fuzzy
 msgid " -J  --noclear              do not clear the screen before prompt\n"
 msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
 
-#: term-utils/agetty.c:1877
+#: term-utils/agetty.c:1893
 msgid " -l, --login-program <file> specify login program\n"
 msgstr ""
 
-#: term-utils/agetty.c:1878
+#: term-utils/agetty.c:1894
 msgid " -L, --local-line[=<mode>]  control the local line flag\n"
 msgstr ""
 
-#: term-utils/agetty.c:1879
-msgid " -m, --extract-baud         extract baud rate during connect\n"
-msgstr ""
-
-#: term-utils/agetty.c:1880
-#, fuzzy
-msgid " -n, --skip-login           do not prompt for login\n"
-msgstr "    -n :                   a lemez tényleges írásának kihagyása"
-
-#: term-utils/agetty.c:1881
-#, fuzzy
-msgid " -N  --nonewline            do not print a newline before issue\n"
-msgstr "  p          A partíciós tábla kiírása a képernyőre vagy fájlba"
-
-#: term-utils/agetty.c:1882
-#, fuzzy
-msgid " -o, --login-options <opts> options that are passed to login\n"
-msgstr "  -l, --longoptions=hosszú_kapcsolók    Felismerendő hosszú kapcsolók\n"
-
-#: term-utils/agetty.c:1883
-#, fuzzy
-msgid " -p, --login-pause          wait for any key before the login\n"
-msgstr "    -n :                   a lemez tényleges írásának kihagyása"
-
-#: term-utils/agetty.c:1884
-msgid " -r, --chroot <dir>         change root to the directory\n"
-msgstr ""
-
-#: term-utils/agetty.c:1885
-#, fuzzy
-msgid " -R, --hangup               do virtually hangup on the tty\n"
-msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
-
-#: term-utils/agetty.c:1886
-msgid " -s, --keep-baud            try to keep baud rate after break\n"
-msgstr ""
-
-#: term-utils/agetty.c:1887
-msgid " -t, --timeout <number>     login process timeout\n"
-msgstr ""
-
-#: term-utils/agetty.c:1888
-msgid " -U, --detect-case          detect uppercase terminal\n"
-msgstr ""
-
-#: term-utils/agetty.c:1889
-#, fuzzy
-msgid " -w, --wait-cr              wait carriage-return\n"
-msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
-
-#: term-utils/agetty.c:1890
-#, fuzzy
-msgid "     --nohints              do not print hints\n"
-msgstr "    -n :                   a lemez tényleges írásának kihagyása"
-
-#: term-utils/agetty.c:1891
-#, fuzzy
-msgid "     --nohostname           no hostname at all will be shown\n"
-msgstr "  p          A partíciós tábla kiírása a képernyőre vagy fájlba"
-
-#: term-utils/agetty.c:1892
-msgid "     --long-hostname        show full qualified hostname\n"
-msgstr ""
-
-#: term-utils/agetty.c:1893
-msgid "     --erase-chars <string> additional backspace chars\n"
-msgstr ""
-
-#: term-utils/agetty.c:1894
-msgid "     --kill-chars <string>  additional kill chars\n"
-msgstr ""
-
 #: term-utils/agetty.c:1895
-msgid "     --chdir <directory>    chdir before the login\n"
+msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr ""
 
 #: term-utils/agetty.c:1896
 #, fuzzy
+msgid " -n, --skip-login           do not prompt for login\n"
+msgstr "    -n :                   a lemez tényleges írásának kihagyása"
+
+#: term-utils/agetty.c:1897
+#, fuzzy
+msgid " -N  --nonewline            do not print a newline before issue\n"
+msgstr "  p          A partíciós tábla kiírása a képernyőre vagy fájlba"
+
+#: term-utils/agetty.c:1898
+#, fuzzy
+msgid " -o, --login-options <opts> options that are passed to login\n"
+msgstr "  -l, --longoptions=hosszú_kapcsolók    Felismerendő hosszú kapcsolók\n"
+
+#: term-utils/agetty.c:1899
+#, fuzzy
+msgid " -p, --login-pause          wait for any key before the login\n"
+msgstr "    -n :                   a lemez tényleges írásának kihagyása"
+
+#: term-utils/agetty.c:1900
+msgid " -r, --chroot <dir>         change root to the directory\n"
+msgstr ""
+
+#: term-utils/agetty.c:1901
+#, fuzzy
+msgid " -R, --hangup               do virtually hangup on the tty\n"
+msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
+
+#: term-utils/agetty.c:1902
+msgid " -s, --keep-baud            try to keep baud rate after break\n"
+msgstr ""
+
+#: term-utils/agetty.c:1903
+msgid " -t, --timeout <number>     login process timeout\n"
+msgstr ""
+
+#: term-utils/agetty.c:1904
+msgid " -U, --detect-case          detect uppercase terminal\n"
+msgstr ""
+
+#: term-utils/agetty.c:1905
+#, fuzzy
+msgid " -w, --wait-cr              wait carriage-return\n"
+msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
+
+#: term-utils/agetty.c:1906
+#, fuzzy
+msgid "     --nohints              do not print hints\n"
+msgstr "    -n :                   a lemez tényleges írásának kihagyása"
+
+#: term-utils/agetty.c:1907
+#, fuzzy
+msgid "     --nohostname           no hostname at all will be shown\n"
+msgstr "  p          A partíciós tábla kiírása a képernyőre vagy fájlba"
+
+#: term-utils/agetty.c:1908
+msgid "     --long-hostname        show full qualified hostname\n"
+msgstr ""
+
+#: term-utils/agetty.c:1909
+msgid "     --erase-chars <string> additional backspace chars\n"
+msgstr ""
+
+#: term-utils/agetty.c:1910
+msgid "     --kill-chars <string>  additional kill chars\n"
+msgstr ""
+
+#: term-utils/agetty.c:1911
+msgid "     --chdir <directory>    chdir before the login\n"
+msgstr ""
+
+#: term-utils/agetty.c:1912
+#, fuzzy
 msgid "     --delay <number>       sleep seconds before prompt\n"
 msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
 
-#: term-utils/agetty.c:1897
+#: term-utils/agetty.c:1913
 msgid "     --nice <number>        run login with this priority\n"
 msgstr ""
 
-#: term-utils/agetty.c:1898
+#: term-utils/agetty.c:1914
 #, fuzzy
 msgid "     --help                 display this help and exit\n"
 msgstr "  -h, --help                       Ez a súgószöveg\n"
 
-#: term-utils/agetty.c:1899
+#: term-utils/agetty.c:1915
 #, fuzzy
 msgid "     --version              output version information and exit\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: term-utils/agetty.c:2210
+#: term-utils/agetty.c:2226
 #, fuzzy, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "felhasználó"
 msgstr[1] "felhasználó"
 
-#: term-utils/agetty.c:2334
+#: term-utils/agetty.c:2350
 #, fuzzy, c-format
 msgid "checkname failed: %m"
 msgstr "a chown meghiúsult: %s"
@@ -16098,7 +16097,7 @@ msgstr ""
 msgid "invalid argument: %s"
 msgstr "érvénytelen azonosító: %s\n"
 
-#: term-utils/script.c:133
+#: term-utils/script.c:134
 #, fuzzy, c-format
 msgid ""
 "output file `%s' is a link\n"
@@ -16109,12 +16108,12 @@ msgstr ""
 "Használja a(z) „%s [kapcsolók] %s” parancsot, ha valóban\n"
 "használni akarja. A parancsfájl nem indult el.\n"
 
-#: term-utils/script.c:143
+#: term-utils/script.c:144
 #, fuzzy, c-format
 msgid " %s [options] [file]\n"
 msgstr "Használat: %s [kapcsolók] eszköz ...\n"
 
-#: term-utils/script.c:146
+#: term-utils/script.c:147
 msgid ""
 " -a, --append            append the output\n"
 " -c, --command <command> run command rather than interactive shell\n"
@@ -16128,22 +16127,22 @@ msgid ""
 "\n"
 msgstr ""
 
-#: term-utils/script.c:252
+#: term-utils/script.c:253
 #, c-format
 msgid "Script started, file is %s\n"
 msgstr "A parancsfájl elindult, a fájl: %s\n"
 
-#: term-utils/script.c:440
+#: term-utils/script.c:447
 #, c-format
 msgid "Script started on %s"
 msgstr "A parancsfájl elindult ekkor: %s"
 
-#: term-utils/script.c:482
+#: term-utils/script.c:489
 #, fuzzy
 msgid "cannot write script file"
 msgstr "%s: nem írható a parancsfájl, hiba: %s\n"
 
-#: term-utils/script.c:582
+#: term-utils/script.c:589
 #, c-format
 msgid ""
 "\n"
@@ -16152,22 +16151,22 @@ msgstr ""
 "\n"
 "A parancsfájl kész ekkor: %s"
 
-#: term-utils/script.c:599
+#: term-utils/script.c:606
 #, c-format
 msgid "Script done, file is %s\n"
 msgstr "A parancsfájl kész, a fájl: %s\n"
 
-#: term-utils/script.c:625
+#: term-utils/script.c:632
 #, fuzzy
 msgid "failed to get terminal attributes"
 msgstr "a(z) %s terminálattribútumai nem kérhetők le"
 
-#: term-utils/script.c:632
+#: term-utils/script.c:639
 #, fuzzy
 msgid "openpty failed"
 msgstr "az openpty meghiúsult\n"
 
-#: term-utils/script.c:672
+#: term-utils/script.c:679
 #, fuzzy
 msgid "out of pty's"
 msgstr "Elfogytak a pszeudoterminálok\n"
@@ -16227,244 +16226,244 @@ msgstr "az időzítésfájl (%s) olvasása meghiúsult"
 msgid "timings file %s: %lu: unexpected format"
 msgstr "%s időzítésfájl: %lu: várt formátum"
 
-#: term-utils/setterm.c:191 term-utils/setterm.c:219 term-utils/setterm.c:257
-#: term-utils/setterm.c:295 term-utils/setterm.c:314 term-utils/setterm.c:323
-#: term-utils/setterm.c:337 term-utils/setterm.c:371 term-utils/setterm.c:385
+#: term-utils/setterm.c:192 term-utils/setterm.c:220 term-utils/setterm.c:258
+#: term-utils/setterm.c:296 term-utils/setterm.c:315 term-utils/setterm.c:324
+#: term-utils/setterm.c:338 term-utils/setterm.c:372 term-utils/setterm.c:386
 #, fuzzy, c-format
 msgid "argument error: %s"
 msgstr "%s: Paraméterhiba, használat:\n"
 
-#: term-utils/setterm.c:260
+#: term-utils/setterm.c:261
 #, fuzzy, c-format
 msgid "argument error: bright %s is not supported"
 msgstr "a sebesség (%d) nem támogatott"
 
-#: term-utils/setterm.c:351
+#: term-utils/setterm.c:352
 #, fuzzy
 msgid "too many tabs"
 msgstr "%s: ismeretlen argumentum: %s\n"
 
-#: term-utils/setterm.c:405
+#: term-utils/setterm.c:406
 msgid " --term          <terminal_name>   override TERM environment variable\n"
 msgstr ""
 
-#: term-utils/setterm.c:406
+#: term-utils/setterm.c:407
 #, fuzzy
 msgid " --reset                           reset terminal to power-on state\n"
 msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
 
-#: term-utils/setterm.c:407
+#: term-utils/setterm.c:408
 #, fuzzy
 msgid " --initialize                      display init string, and use default settings\n"
 msgstr "  -h, --help                       Ez a súgószöveg\n"
 
-#: term-utils/setterm.c:408
+#: term-utils/setterm.c:409
 #, fuzzy
 msgid " --default                         use default terminal settings\n"
 msgstr "  -h, --help                       Ez a súgószöveg\n"
 
-#: term-utils/setterm.c:409
+#: term-utils/setterm.c:410
 msgid " --store                           save current terminal settings as default\n"
 msgstr ""
 
-#: term-utils/setterm.c:410
+#: term-utils/setterm.c:411
 #, fuzzy
 msgid " --cursor        [on|off]          display cursor\n"
 msgstr "  -Q, --quiet-output               Nincs normál kimenet\n"
 
-#: term-utils/setterm.c:411
+#: term-utils/setterm.c:412
 #, fuzzy
 msgid " --repeat        [on|off]          keyboard repeat\n"
 msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
 
-#: term-utils/setterm.c:412
+#: term-utils/setterm.c:413
 msgid " --appcursorkeys [on|off]          cursor key application mode\n"
 msgstr ""
 
-#: term-utils/setterm.c:413
+#: term-utils/setterm.c:414
 #, fuzzy
 msgid " --linewrap      [on|off]          continue on a new line when a line is full\n"
 msgstr "  -h, --help                       Ez a súgószöveg\n"
 
-#: term-utils/setterm.c:414
+#: term-utils/setterm.c:415
 msgid " --inversescreen [on|off]          swap colors for the whole screen\n"
 msgstr ""
 
-#: term-utils/setterm.c:415
+#: term-utils/setterm.c:416
 msgid " --foreground    default|<color>   set foreground color\n"
 msgstr ""
 
-#: term-utils/setterm.c:416
+#: term-utils/setterm.c:417
 msgid " --background    default|<color>   set background color\n"
 msgstr ""
 
-#: term-utils/setterm.c:417
+#: term-utils/setterm.c:418
 msgid " --ulcolor       [bright] <color>  set underlined text color\n"
 msgstr ""
 
-#: term-utils/setterm.c:418
+#: term-utils/setterm.c:419
 msgid " --hbcolor       [bright] <color>  set bold text color\n"
 msgstr ""
 
-#: term-utils/setterm.c:419
+#: term-utils/setterm.c:420
 msgid "                 <color>: black blue cyan green grey magenta red white yellow\n"
 msgstr ""
 
-#: term-utils/setterm.c:420
+#: term-utils/setterm.c:421
 #, fuzzy
 msgid " --bold          [on|off]          bold\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: term-utils/setterm.c:421
+#: term-utils/setterm.c:422
 #, fuzzy
 msgid " --half-bright   [on|off]          dim\n"
 msgstr "  [ -half-bright [on|off] ]\n"
 
-#: term-utils/setterm.c:422
+#: term-utils/setterm.c:423
 msgid " --blink         [on|off]          blink\n"
 msgstr ""
 
-#: term-utils/setterm.c:423
+#: term-utils/setterm.c:424
 #, fuzzy
 msgid " --underline     [on|off]          underline\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: term-utils/setterm.c:424
+#: term-utils/setterm.c:425
 msgid " --reverse       [on|off]          swap foreground and background colors\n"
 msgstr ""
 
-#: term-utils/setterm.c:425
+#: term-utils/setterm.c:426
 #, fuzzy
 msgid " --clear         [all|rest]        clear screen and set cursor position\n"
 msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
 
-#: term-utils/setterm.c:426
+#: term-utils/setterm.c:427
 #, fuzzy
 msgid " --tabs          [<number>...]     set these tab stop positions, or show them\n"
 msgstr "  -T, --test                       A getopt(1) verzió tesztelése\n"
 
-#: term-utils/setterm.c:427
+#: term-utils/setterm.c:428
 #, fuzzy
 msgid " --clrtabs       [<number>...]     clear these tab stop positions, or all\n"
 msgstr "  -T, --test                       A getopt(1) verzió tesztelése\n"
 
-#: term-utils/setterm.c:428
+#: term-utils/setterm.c:429
 #, fuzzy
 msgid " --regtabs       [1-160]           set a regular tab stop interval\n"
 msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
 
-#: term-utils/setterm.c:429
+#: term-utils/setterm.c:430
 msgid " --blank         [0-60|force|poke] set time of inactivity before screen blanks\n"
 msgstr ""
 
-#: term-utils/setterm.c:430
+#: term-utils/setterm.c:431
 msgid " --dump          [<number>]        write vcsa<number> console dump to file\n"
 msgstr ""
 
-#: term-utils/setterm.c:431
+#: term-utils/setterm.c:432
 msgid " --append        [<number>]        append vcsa<number> console dump to file\n"
 msgstr ""
 
-#: term-utils/setterm.c:432
+#: term-utils/setterm.c:433
 msgid " --file          <filename>        name of the dump file\n"
 msgstr ""
 
-#: term-utils/setterm.c:433
+#: term-utils/setterm.c:434
 #, fuzzy
 msgid " --msg           [on|off]          send kernel messages to console\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: term-utils/setterm.c:434
+#: term-utils/setterm.c:435
 #, fuzzy
 msgid " --msglevel      0-8               kernel console log level\n"
 msgstr "  -Q, --quiet-output               Nincs normál kimenet\n"
 
-#: term-utils/setterm.c:435
+#: term-utils/setterm.c:436
 #, fuzzy
 msgid " --powersave     [on|vsync|hsync|powerdown|off]\n"
 msgstr "  [ -powersave [on|vsync|hsync|powerdown|off] ]\n"
 
-#: term-utils/setterm.c:436
+#: term-utils/setterm.c:437
 #, fuzzy
 msgid "                                   set vesa powersaving features\n"
 msgstr "               Első     Utolsó\n"
 
-#: term-utils/setterm.c:437
+#: term-utils/setterm.c:438
 msgid " --powerdown     [0-60]            set vesa powerdown interval in minutes\n"
 msgstr ""
 
-#: term-utils/setterm.c:438
+#: term-utils/setterm.c:439
 msgid " --blength       [0-2000]          duration of the bell in milliseconds\n"
 msgstr ""
 
-#: term-utils/setterm.c:439
+#: term-utils/setterm.c:440
 msgid " --bfreq         <number>          bell frequency in Hertz\n"
 msgstr ""
 
-#: term-utils/setterm.c:440
+#: term-utils/setterm.c:441
 #, fuzzy
 msgid " --version                         show version information and exit\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: term-utils/setterm.c:441
+#: term-utils/setterm.c:442
 #, fuzzy
 msgid " --help                            display this help and exit\n"
 msgstr "  -h, --help                       Ez a súgószöveg\n"
 
-#: term-utils/setterm.c:449
+#: term-utils/setterm.c:450
 msgid "duplicate use of an option"
 msgstr ""
 
-#: term-utils/setterm.c:743
+#: term-utils/setterm.c:744
 #, fuzzy
 msgid "cannot force blank"
 msgstr "az ürítés nem kényszeríthető\n"
 
-#: term-utils/setterm.c:748
+#: term-utils/setterm.c:749
 #, fuzzy
 msgid "cannot force unblank"
 msgstr "a visszaállítás nem kényszeríthető\n"
 
-#: term-utils/setterm.c:754
+#: term-utils/setterm.c:755
 #, fuzzy
 msgid "cannot get blank status"
 msgstr "az ürítés állapota nem kérhető le\n"
 
-#: term-utils/setterm.c:780
+#: term-utils/setterm.c:781
 #, fuzzy, c-format
 msgid "can not open dump file %s for output"
 msgstr "a(z) %s eszköz nem nyitható meg írásra\n"
 
-#: term-utils/setterm.c:823
+#: term-utils/setterm.c:824
 #, fuzzy, c-format
 msgid "terminal %s does not support %s"
 msgstr "%s: a(z) „%s” felhasználó nem létezik.\n"
 
-#: term-utils/setterm.c:999
+#: term-utils/setterm.c:1000
 #, fuzzy
 msgid "cannot (un)set powersave mode"
 msgstr "nem lehet átváltani az energiatakarékos módot\n"
 
-#: term-utils/setterm.c:1018 term-utils/setterm.c:1027
+#: term-utils/setterm.c:1019 term-utils/setterm.c:1028
 #, fuzzy
 msgid "klogctl error"
 msgstr "klogctl hiba: %s\n"
 
-#: term-utils/setterm.c:1048
+#: term-utils/setterm.c:1049
 #, fuzzy
 msgid "$TERM is not defined."
 msgstr "%s: A $TERM nincs megadva.\n"
 
-#: term-utils/setterm.c:1055
+#: term-utils/setterm.c:1056
 msgid "terminfo database cannot be found"
 msgstr ""
 
-#: term-utils/setterm.c:1057
+#: term-utils/setterm.c:1058
 #, fuzzy, c-format
 msgid "%s: unknown terminal type"
 msgstr "%s: ismeretlen jelzés: %s\n"
 
-#: term-utils/setterm.c:1059
+#: term-utils/setterm.c:1060
 msgid "terminal is hardcopy"
 msgstr ""
 
@@ -16793,10 +16792,6 @@ msgstr ""
 #, fuzzy
 msgid " -v, --no-squeezing        output identical lines\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
-
-#: text-utils/hexdump.c:196
-msgid "calling hexdump as od has been deprecated in favor of GNU coreutils od"
-msgstr ""
 
 #: text-utils/hexdump-display.c:365
 #, fuzzy
@@ -17332,6 +17327,10 @@ msgstr "Ismeretlen escape-sorozat a bemenetben: %o, %o\n"
 #, fuzzy
 msgid "Input line too long."
 msgstr "A bemeneti sor túl hosszú.\n"
+
+#, fuzzy
+#~ msgid "timeout cannot be zero"
+#~ msgstr "mount: nem állítható be a felhasználóazonosító: %s"
 
 #, fuzzy
 #~ msgid "Type of the partition %zu is unchanged."
