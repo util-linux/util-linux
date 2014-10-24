@@ -1,0 +1,85 @@
+Util-linux 2.25.2 Release Notes
+===============================
+
+agetty:
+   - fixing FTBFS on !linux (Debian util-linux 2.20.1-1.2)  [Christoph Egger]
+blkdiscard:
+   - fix err->errx()  [Karel Zak]
+   - fix underflow when offset is greater than device size  [Raphael S. Carvalho]
+blkid:
+   - remove extra trailing spaces in output  [Karel Zak]
+build-sys:
+   - build libmount everywhere  [Andreas Henriksson]
+   - check for libtoolize rather than libtool  [Helmut Grohne]
+   - use -lutil for BSD only  [Karel Zak]
+cal:
+   - `color` option documentation should match actual behaviour  [Eugene Yunak]
+cfdisk:
+   - don't modify ncurses LINES and COLS  [Karel Zak]
+docs:
+   - fix mess in Release notes  [Karel Zak]
+   - remove obsolete READMEs for (s)fdisk  [Karel Zak]
+   - update AUTHORS file  [Karel Zak]
+fdisk:
+   - add section about sizes to the man page  [Karel Zak]
+flock:
+   - zero timeout is valid  [Karel Zak]
+hexdump:
+   - remove deprecation message  [Sami Kerola]
+hwclock:
+   - use fabs() instead abs() when argument is double  [Sami Kerola]
+ipcrm:
+   - add hacks to avoid FTBFS  [Andreas Henriksson]
+ipcs:
+   - remaining kFreeBSD hackery for building.  [Aurelien Jarno]
+last:
+   - make is_phantom() when kernel config does not include audit support  [Sami Kerola]
+lib/blkdev:
+   - report correct disk size on GNU/kFreeBSD. Thanks Tuco.  [Robert Millan]
+libblkid:
+   - zeroize errno on blkid_probe_get_buffer() success  [Karel Zak]
+libfdisk:
+   - fix add_logical() assert  [Karel Zak]
+   - make yes/no dialogs more robust  [Karel Zak]
+libmount:
+   - don't return root if path contains // or ending /  [Søren Holm]
+   - fix mnt_is_readonly() #ifdef  [Karel Zak]
+   - hide details about failed search in fstab/mtab  [Karel Zak]
+   - only include context on linux  [Andreas Henriksson]
+   - only invoke loopcxt on linux  [Andreas Henriksson]
+linfdisk:
+   - cleanup fsync usage  [Karel Zak]
+logger:
+   - gettimeofday needs <sys/time.h>  [Andreas Henriksson]
+losetup:
+   - improve man page -D docs  [Karel Zak]
+lsblk:
+   - add notes about udev to the man page  [Karel Zak]
+lscpu:
+   - fix cppcheck warnings  [Boris Egorov]
+lslogins:
+   - cleanup after error [coverity scan]  [Karel Zak]
+   - free after error [coverity scan]  [Karel Zak]
+mkfs.minix:
+   - fix couple compiler warnings  [Sami Kerola]
+mount:
+   - don't ignore mtab for --bind -o remount  [Karel Zak]
+   - improve --move docs  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
+script:
+   - may be hangs  [Andreas Henriksson]
+setterm:
+   - fix dubious one-bit signed bitfield [smatch scan]  [Sami Kerola]
+su:
+   - print proper core dump message when killed  [pcpa]
+terminal-colors.d:
+   - fix filter by name  [Karel Zak]
+tests:
+   - fix the ipcs test for shmall being too big to show  [Karel Zak]
+umount:
+   - read mountinfo if --detach-loop given  [Robert Schiele]
+whereis:
+   - cleanup debug stuff, fix argv[] usage  [Karel Zak]
+   - reset search mask more carefully  [Karel Zak]
