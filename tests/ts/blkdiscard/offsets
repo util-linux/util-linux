@@ -1,0 +1,62 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2014 Federico Simoncelli <fsimonce@redhat.com>
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="offsets"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_BLKDISCARD"
+
+ts_skip_nonroot
+ts_check_losetup
+
+set -o pipefail
+
+ORIGPWD=$(pwd)
+IMAGE_NAME="${TS_TESTNAME}-loop.img"
+IMAGE_PATH="$TS_OUTDIR/$IMAGE_NAME"
+
+truncate -s 10M $IMAGE_PATH
+
+ts_log "create loop device from image"
+DEVICE=$($TS_CMD_LOSETUP --show -f $IMAGE_PATH)
+CMD_SED_DEVICE="sed s#$DEVICE:\s##"
+
+ts_log "testing offsets with full block size"
+$TS_CMD_BLKDISCARD -v $DEVICE 2>&1 | $CMD_SED_DEVICE >> $TS_OUTPUT
+$TS_CMD_BLKDISCARD -v -o 1 $DEVICE 2>&1 | $CMD_SED_DEVICE >> $TS_OUTPUT
+$TS_CMD_BLKDISCARD -v -o 511 $DEVICE 2>&1 | $CMD_SED_DEVICE >> $TS_OUTPUT
+$TS_CMD_BLKDISCARD -v -o 512 $DEVICE 2>&1 | $CMD_SED_DEVICE >> $TS_OUTPUT
+$TS_CMD_BLKDISCARD -v -o 1024 $DEVICE 2>&1 | $CMD_SED_DEVICE >> $TS_OUTPUT
+
+ts_log "testing offsets with specific length"
+$TS_CMD_BLKDISCARD -v -l 5242880 $DEVICE 2>&1 | $CMD_SED_DEVICE >> $TS_OUTPUT
+$TS_CMD_BLKDISCARD -v -l 5242881 $DEVICE 2>&1 | $CMD_SED_DEVICE >> $TS_OUTPUT
+$TS_CMD_BLKDISCARD -v -l 5243391 $DEVICE 2>&1 | $CMD_SED_DEVICE >> $TS_OUTPUT
+$TS_CMD_BLKDISCARD -v -o 1 -l 5242880 $DEVICE 2>&1 | $CMD_SED_DEVICE >> $TS_OUTPUT
+$TS_CMD_BLKDISCARD -v -o 511 -l 5242880 $DEVICE 2>&1 | $CMD_SED_DEVICE >> $TS_OUTPUT
+$TS_CMD_BLKDISCARD -v -o 512 -l 5242880 $DEVICE 2>&1 | $CMD_SED_DEVICE >> $TS_OUTPUT
+$TS_CMD_BLKDISCARD -v -o 1024 -l 5242880 $DEVICE 2>&1 | $CMD_SED_DEVICE >> $TS_OUTPUT
+
+ts_log "detach loop device from image"
+$TS_CMD_LOSETUP -d $DEVICE 2>&1 >> $TS_OUTPUT
+
+ts_cd "$ORIGPWD"
+
+ts_finalize
