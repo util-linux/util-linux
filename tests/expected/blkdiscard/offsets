@@ -13,4 +13,27 @@ blkdiscard: offset 1 is not aligned to sector size 512
 blkdiscard: offset 511 is not aligned to sector size 512
 Discarded 5242880 bytes from the offset 512
 Discarded 5242880 bytes from the offset 1024
+testing aligned steps full device
+Discarded 10485760 bytes from the offset 0
+Discarded 10485760 bytes from the offset 0
+testing aligned steps with offsets and length
+Discarded 1024 bytes from the offset 0
+blkdiscard: offset 1 is not aligned to sector size 512
+blkdiscard: offset 1 is not aligned to sector size 512
+blkdiscard: offset 511 is not aligned to sector size 512
+Discarded 1536 bytes from the offset 512
+Discarded 1024 bytes from the offset 1024
+testing misaligned steps full device
+blkdiscard: length 1 is not aligned to sector size 512
+blkdiscard: length 256 is not aligned to sector size 512
+blkdiscard: length 511 is not aligned to sector size 512
+blkdiscard: length 513 is not aligned to sector size 512
+blkdiscard: length 768 is not aligned to sector size 512
+testing misaligned steps with offsets and length
+blkdiscard: length 511 is not aligned to sector size 512
+blkdiscard: offset 1 is not aligned to sector size 512
+blkdiscard: offset 511 is not aligned to sector size 512
+blkdiscard: length 511 is not aligned to sector size 512
+blkdiscard: offset 1 is not aligned to sector size 512
+blkdiscard: offset 511 is not aligned to sector size 512
 detach loop device from image
