@@ -16,7 +16,7 @@
 #include "mountP.h"
 
 UL_DEBUG_DEFINE_MASK(libmount);
-UL_DEBUG_DEFINE_MASKANEMS(libmount) =
+UL_DEBUG_DEFINE_MASKNAMES(libmount) =
 {
 	{ "all", MNT_DEBUG_ALL },
 	{ "init", MNT_DEBUG_INIT },

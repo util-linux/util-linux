@@ -16,7 +16,7 @@
 #include "blkidP.h"
 
 UL_DEBUG_DEFINE_MASK(libblkid);
-UL_DEBUG_DEFINE_MASKANEMS(libblkid) =
+UL_DEBUG_DEFINE_MASKNAMES(libblkid) =
 {
 	{ "all", BLKID_DEBUG_ALL },
 	{ "cache", BLKID_DEBUG_CACHE },

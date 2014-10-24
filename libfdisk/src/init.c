@@ -2,7 +2,7 @@
 #include "fdiskP.h"
 
 UL_DEBUG_DEFINE_MASK(libfdisk);
-UL_DEBUG_DEFINE_MASKANEMS(libfdisk) =
+UL_DEBUG_DEFINE_MASKNAMES(libfdisk) =
 {
 	{ "all", FDISK_DEBUG_ALL },
 	{ "ask", FDISK_DEBUG_ASK},

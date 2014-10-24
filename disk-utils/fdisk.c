@@ -51,7 +51,7 @@
  * fdisk debug stuff (see fdisk.h and include/debug.h)
  */
 UL_DEBUG_DEFINE_MASK(fdisk);
-UL_DEBUG_DEFINE_MASKANEMS(fdisk) = UL_DEBUG_EMPTY_MASKNAMES;
+UL_DEBUG_DEFINE_MASKNAMES(fdisk) = UL_DEBUG_EMPTY_MASKNAMES;
 
 static void fdiskprog_init_debug(void)
 {

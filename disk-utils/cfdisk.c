@@ -190,7 +190,7 @@ struct cfdisk {
  * let's use include/debug.h stuff for cfdisk too
  */
 UL_DEBUG_DEFINE_MASK(cfdisk);
-UL_DEBUG_DEFINE_MASKANEMS(cfdisk) = UL_DEBUG_EMPTY_MASKNAMES;
+UL_DEBUG_DEFINE_MASKNAMES(cfdisk) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define CFDISK_DEBUG_INIT	(1 << 1)
 #define CFDISK_DEBUG_UI		(1 << 2)
