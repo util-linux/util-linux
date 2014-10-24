@@ -1879,6 +1879,9 @@ int main(int argc, char **argv)
 		}
 	}
 #endif
+	if (debug)
+		out_version();
+
 	if (argc > 0) {
 		usage(_("%s takes no non-option arguments\n"
 			"You supplied %d\n"), program_invocation_short_name,
@@ -1940,9 +1943,6 @@ int main(int argc, char **argv)
 		hwclock_exit(EX_OK);
 	}
 #endif
-
-	if (debug)
-		out_version();
 
 	if (!systz && !predict) {
 		determine_clock_access_method(directisa);
