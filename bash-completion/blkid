@@ -58,11 +58,7 @@ _blkid_module()
 			return 0
 			;;
 	esac
-	local DEV TYPE DEVICES=''
-	while read DEV TYPE; do
-		[ $TYPE = 'part' ] && DEVICES+="$DEV "
-	done < <(lsblk -pnro name,type)
-	COMPREPLY=( $(compgen -W "$DEVICES" -- $cur) )
+	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _blkid_module blkid

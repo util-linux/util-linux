@@ -6,11 +6,7 @@ _fdisk_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-s'|'--getsz')
-			local DEV TYPE DEVICES=''
-			while read DEV TYPE; do
-				[ $TYPE = 'part' ] && DEVICES+="$DEV "
-			done < <(lsblk -pnro name,type)
-			COMPREPLY=( $(compgen -W "$DEVICES" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
 			return 0
 			;;
 		'-b'|'--sector-size')
@@ -55,11 +51,7 @@ _fdisk_module()
 			return 0
 			;;
 	esac
-	local DEV TYPE DEVICES=''
-	while read DEV TYPE; do
-		[ $TYPE = 'disk' ] && DEVICES+="$DEV "
-	done < <(lsblk -pnro name,type)
-	COMPREPLY=( $(compgen -W "$DEVICES" -- $cur) )
+	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _fdisk_module fdisk

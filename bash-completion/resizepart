@@ -11,11 +11,7 @@ _resizepart_module()
 	esac
 	case $COMP_CWORD in
 		1)
-			local DEV TYPE DEVICES=''
-			while read DEV TYPE; do
-				[ $TYPE = 'disk' ] && DEVICES+="$DEV "
-			done < <(lsblk -pnro name,type)
-			OPTS="--help --version $DEVICES"
+			OPTS="--help --version $(lsblk -pnro name)"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			;;
 		2)

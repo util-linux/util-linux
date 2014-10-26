@@ -5,9 +5,7 @@ _addpart_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	case $COMP_CWORD in
 		1)
-			local DEVS=''
-			while read dev; do DEVS+="$dev " ; done < <(lsblk -pnro name)
-			OPTS="--help --version $DEVS"
+			OPTS="--help --version $(lsblk -pnro name)"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			;;
 		2)

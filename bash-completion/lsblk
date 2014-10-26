@@ -70,8 +70,7 @@ _lsblk_module()
 			;;
 	esac
 	local DEVS
-	DEVS=''; while read dev; do DEVS+="$dev " ; done < <(lsblk -pnro name)
-	COMPREPLY=( $(compgen -W "$DEVS" -- $cur) )
+	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _lsblk_module lsblk

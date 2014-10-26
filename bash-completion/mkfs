@@ -21,8 +21,7 @@ _mkfs_module()
 			return 0
 			;;
 	esac
-	while read dev; do DEVS+="$dev " ; done < <(lsblk -pnro name)
-	COMPREPLY=( $(compgen -W "$DEVS /path/to/file" -- $cur) )
+	COMPREPLY=( $(compgen -W "$(lsblk -pnro name) /path/to/file" -- $cur) )
 	return 0
 }
 complete -F _mkfs_module mkfs

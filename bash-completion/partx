@@ -31,11 +31,7 @@ _partx_module()
 			return 0
 			;;
 	esac
-	local DEV TYPE DEVICES=''
-	while read DEV TYPE; do
-		[ $TYPE = 'disk' ] && DEVICES+="$DEV "
-	done < <(lsblk -pnro name,type)
-	COMPREPLY=( $(compgen -W "$DEVICES" -- $cur) )
+	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _partx_module partx

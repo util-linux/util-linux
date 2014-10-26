@@ -9,9 +9,8 @@ _fsck.minix_module()
 			return 0
 			;;
 	esac
-	while read dev; do DEVS+="$dev " ; done < <(lsblk -pnro name)
 	OPTS="-l -a -r -v -s -m -f --version"
-	COMPREPLY=( $(compgen -W "${OPTS[*]} $DEVS" -- $cur) )
+	COMPREPLY=( $(compgen -W "${OPTS[*]} $(lsblk -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _fsck.minix_module fsck.minix
