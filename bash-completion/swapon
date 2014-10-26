@@ -14,7 +14,7 @@ _swapon_module()
 		'--show')
 			# FIXME: how to append to a string with compgen?
 			local OUTPUT
-			OUTPUT="NAME TYPE SIZE USED PRIO"
+			OUTPUT="NAME TYPE SIZE USED PRIO UUID LABEL"
 			compopt -o nospace
 			COMPREPLY=( $(compgen -W "$OUTPUT" -S ',' -- $cur) )
 			return 0
