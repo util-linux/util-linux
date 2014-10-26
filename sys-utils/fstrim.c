@@ -244,7 +244,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char **argv)
 {
-	char *path;
+	char *path = NULL;
 	int c, rc, verbose = 0, all = 0;
 	struct fstrim_range range;
 
