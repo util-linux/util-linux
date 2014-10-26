@@ -621,7 +621,7 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 		fd = path_fopen("r", 0, _PATH_PROC_DEVICETREE "/ibm,partition-name");
 		if (fd) {
 			char buf[256];
-			if (fscanf(fd, "%s", buf) == 1 && !strcmp(buf, "full"))
+			if (fscanf(fd, "%255s", buf) == 1 && !strcmp(buf, "full"))
 				desc->virtype = VIRT_NONE;
 			fclose(fd);
 		}
@@ -757,7 +757,7 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		if (fd) {
 			char buf[256];
 
-			if (fscanf(fd, "%s", buf) == 1 &&
+			if (fscanf(fd, "%255s", buf) == 1 &&
 			    !strcmp(buf, "control_d"))
 				dom0 = 1;
 			fclose(fd);
