@@ -205,7 +205,6 @@ static void sfdisk_init(struct sfdisk *sf)
 static int sfdisk_deinit(struct sfdisk *sf)
 {
 	struct fdisk_context *parent;
-	int rc;
 
 	assert(sf);
 	assert(sf->cxt);
@@ -219,7 +218,7 @@ static int sfdisk_deinit(struct sfdisk *sf)
 	fdisk_unref_context(sf->cxt);
 	memset(sf, 0, sizeof(*sf));
 
-	return rc;
+	return 0;
 }
 
 static void backup_sectors(struct sfdisk *sf,
