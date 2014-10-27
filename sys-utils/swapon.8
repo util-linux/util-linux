@@ -38,7 +38,7 @@
 .\" Mon Sep 25 14:12:38 1995: Added -v and -p information
 .\" Tue Apr 30 03:32:07 1996: Added some text from A. Koppenhoefer
 .\"
-.TH SWAPON 8 "July 2014" "util-linux" "System Administration"
+.TH SWAPON 8 "October 2014" "util-linux" "System Administration"
 .SH NAME
 swapon, swapoff \- enable/disable devices and files for paging and swapping
 .SH SYNOPSIS
@@ -131,14 +131,15 @@ Use the partition that has the specified
 is needed.)
 .TP
 .BR \-o , " \-\-options " \fIopts\fP
-Specify swap options by fstab compatible comma separated string. For example:
+Specify swap options by an fstab-compatible comma-separated string.
+For example:
 .RS
 .RS
 .sp
 .B "swapon -o pri=1,discard=pages,nofail /dev/sda2"
 .sp
 .RE
-The \fIopts\fP string is evaluated as the last and overrides all another
+The \fIopts\fP string is evaluated last and overrides all other
 options.
 .RE
 .TP
@@ -154,15 +155,15 @@ to the option field of
 .I /etc/fstab
 for use with
 .BR "swapon -a" .
-When priority is not defined it defaults to \-1.
+When no priority is defined, it defaults to \-1.
 .TP
 .BR \-s , " \-\-summary"
 Display swap usage summary by device.  Equivalent to "cat /proc/swaps".
 Not available before Linux 2.1.25.  This output format is DEPRECATED in favour
 of \fB\-\-show\fR that provides better control on output data.
 .TP
-.BR " \-\-show" [ =\fIcolumn\fR]
-Display definable table of swap areas. See
+.BR \-\-show [ =\fIcolumn\fR ...]
+Display a definable table of swap areas.  See the
 .B \-\-help
 output for a list of available columns.
 .TP
@@ -185,10 +186,10 @@ output instead of in user-friendly units.
 Use the partition that has the specified
 .IR uuid .
 .TP
-.B "\-v, \-\-verbose"
+.BR \-v , " \-\-verbose"
 Be verbose.
 .TP
-.B "\-V, \-\-version"
+.BR \-V , " \-\-version"
 Display version information and exit.
 .SH NOTES
 You should not use
