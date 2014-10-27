@@ -72,7 +72,7 @@ if BUILD_DMESG
 bin_PROGRAMS += dmesg
 dist_man_MANS += sys-utils/dmesg.1
 dmesg_SOURCES = sys-utils/dmesg.c lib/boottime.c
-dmesg_LDADD = $(LDADD) libcommon.la -lrt
+dmesg_LDADD = $(LDADD) libcommon.la $(CLOCKGETTIME_LIBS)
 endif
 
 if BUILD_CTRLALTDEL
@@ -91,7 +91,7 @@ if BUILD_BLKDISCARD
 sbin_PROGRAMS += blkdiscard
 dist_man_MANS += sys-utils/blkdiscard.8
 blkdiscard_SOURCES = sys-utils/blkdiscard.c
-blkdiscard_LDADD = $(LDADD) libcommon.la -lrt
+blkdiscard_LDADD = $(LDADD) libcommon.la $(CLOCKGETTIME_LIBS)
 endif
 
 if BUILD_LDATTACH
