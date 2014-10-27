@@ -728,18 +728,18 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out, _(" %s [options] [<spec>]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all                enable all swaps from /etc/fstab\n"
-		" -d, --discard[=<policy>] enable swap discards, if supported by device\n"
-		" -e, --ifexists           silently skip devices that do not exist\n"
-		" -f, --fixpgsz            reinitialize the swap space if necessary\n"
-		" -o, --options <list>     comma-separated list of swap options\n"
-		" -p, --priority <prio>    specify the priority of the swap device\n"
-		" -s, --summary            display summary about used swap devices (DEPRECATED)\n"
-		"     --show[=<columns>]   display summary in definable table\n"
-		"     --noheadings         don't print headings, use with --show\n"
-		"     --raw                use the raw output format, use with --show\n"
-		"     --bytes              display swap size in bytes in --show output\n"
-		" -v, --verbose            verbose mode\n"), out);
+	fputs(_(" -a, --all                enable all swaps from /etc/fstab\n"), out);
+	fputs(_(" -d, --discard[=<policy>] enable swap discards, if supported by device\n"), out);
+	fputs(_(" -e, --ifexists           silently skip devices that do not exist\n"), out);
+	fputs(_(" -f, --fixpgsz            reinitialize the swap space if necessary\n"), out);
+	fputs(_(" -o, --options <list>     comma-separated list of swap options\n"), out);
+	fputs(_(" -p, --priority <prio>    specify the priority of the swap device\n"), out);
+	fputs(_(" -s, --summary            display summary about used swap devices (DEPRECATED)\n"), out);
+	fputs(_("     --show[=<columns>]   display summary in definable table\n"), out);
+	fputs(_("     --noheadings         don't print table heading (with --show)\n"), out);
+	fputs(_("     --raw                use the raw output format (with --show)\n"), out);
+	fputs(_("     --bytes              display swap size in bytes in --show output\n"), out);
+	fputs(_(" -v, --verbose            verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
