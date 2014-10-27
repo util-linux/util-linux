@@ -50,6 +50,10 @@ the end of the device,
 will stop at the device size boundary.  The default value extends to the end
 of the device.
 .TP
+.BR \-p , " \-\-step \fIlength"
+The number of bytes to discard within one iteration. The default is to discard
+all by one ioctl call.
+.TP
 .BR \-s , " \-\-secure"
 Perform a secure discard.  A secure discard is the same as a regular discard
 except that all copies of the discarded blocks that were possibly created by
@@ -60,6 +64,7 @@ Display the aligned values of
 .I offset
 and
 .IR length .
+If the option \fB\-\-step\fR specified than it prints discard progress every second.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
