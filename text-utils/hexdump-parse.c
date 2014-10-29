@@ -226,7 +226,7 @@ void rewrite_rules(struct hexdump_fs *fs, struct hexdump *hex)
 	struct hexdump_fu *fu;
 	struct list_head *p, *q;
 	char *p1, *p2, *fmtp;
-	char savech, cs[3];
+	char savech, cs[4];
 	int nconv, prec = 0;
 
 	list_for_each (p, &fs->fulist) {
@@ -301,9 +301,10 @@ void rewrite_rules(struct hexdump_fs *fs, struct hexdump *hex)
 				goto isint;
 			} else if (first_letter(cs, "ouxX")) {
 				pr->flags = F_UINT;
-isint:				cs[2] = '\0';
-				cs[1] = cs[0];
-				cs[0] = 'q';
+isint:				cs[3] = '\0';
+				cs[2] = cs[0];
+				cs[1] = 'l';
+				cs[0] = 'l';
 				switch(fu->bcnt) {
 					case 0:
 						pr->bcnt = 4;
@@ -355,9 +356,10 @@ isint:				cs[2] = '\0';
 						pr->flags = F_ADDRESS;
 						++p2;
 						if (first_letter(p1 + 2, "dox")) {
-							cs[0] = 'q';
-							cs[1] = p1[2];
-							cs[2] = '\0';
+							cs[0] = 'l';
+							cs[1] = 'l';
+							cs[2] = p1[2];
+							cs[3] = '\0';
 						} else {
 							p1[3] = '\0';
 							badconv(p1);
