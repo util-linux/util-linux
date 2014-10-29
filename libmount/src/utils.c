@@ -1034,24 +1034,28 @@ char *mnt_get_fs_root(const char *path, const char *mnt)
  *
  * Returns newly allocated string with a parameter argument if the @name is
  * specified as "name=" or returns pointer to @name or returns NULL if not
- * found.
+ * found.  If it is specified more than once, we grab the last copy.
  *
  * For example cmdline: "aaa bbb=BBB ccc"
  *
  *	@name is "aaa"	--returns--> "aaa" (pointer to @name)
  *	@name is "bbb=" --returns--> "BBB" (allocated)
  *	@name is "foo"  --returns--> NULL
+ *
+ * Note: It is not really feasible to parse the command line exactly the same
+ * as the kernel does since we don't know which options are valid.  We can use
+ * the -- marker though and not walk past that.
  */
 char *mnt_get_kernel_cmdline_option(const char *name)
 {
 	FILE *f;
 	size_t len;
 	int val = 0;
-	char *p, *res = NULL;
+	char *p, *res = NULL, *mem = NULL;
 	char buf[BUFSIZ];	/* see kernel include/asm-generic/setup.h: COMMAND_LINE_SIZE */
 	const char *path = _PATH_PROC_CMDLINE;
 
-	if (!name)
+	if (!name || !name[0])
 		return NULL;
 
 #ifdef TEST_PROGRAM
@@ -1069,14 +1073,20 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 	if (!p || !*p || *p == '\n')
 		return NULL;
 
-	len = strlen(buf);
-	*(buf + len - 1) = '\0';	/* remove last '\n' */
+	p = strstr(p, " -- ");
+	if (p) {
+		/* no more kernel args after this */
+		*p = '\0';
+	} else {
+		len = strlen(buf);
+		buf[len - 1] = '\0';	/* remove last '\n' */
+	}
 
 	len = strlen(name);
-	if (len && *(name + len - 1) == '=')
+	if (name[len - 1] == '=')
 		val = 1;
 
-	for ( ; p && *p; p++) {
+	for (p = buf; p && *p; p++) {
 		if (!(p = strstr(p, name)))
 			break;			/* not found the option */
 		if (p != buf && !isblank(*(p - 1)))
@@ -1085,15 +1095,19 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 			continue;		/* no space after the option */
 		if (val) {
 			char *v = p + len;
+			int end;
 
 			while (*p && !isblank(*p))	/* jump to the end of the argument */
 				p++;
+			end = (*p == '\0');
 			*p = '\0';
-			res = strdup(v);
-			break;
+			free(mem);
+			res = mem = strdup(v);
+			if (end)
+				break;
 		} else
 			res = (char *) name;	/* option without '=' */
-		break;
+		/* don't break -- keep scanning for more options */
 	}
 
 	return res;
