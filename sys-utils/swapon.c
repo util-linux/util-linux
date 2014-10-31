@@ -756,7 +756,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" <file>                 name of file to be used\n"), out);
 
 	fputs(_("\nAvailable discard policy types (for --discard):\n"
-		" once	  : only single-time area discards are issued. (swapon)\n"
+		" once	  : only single-time area discards are issued.\n"
 		" pages	  : discard freed pages before they are reused.\n"
 		" * if no policy is selected both discard types are enabled. (default)\n"), out);
 
