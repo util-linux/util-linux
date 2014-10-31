@@ -198,6 +198,10 @@ to specify the filesystem types on which no action should be taken.  For
 more details see
 .BR mount (8).
 .TP
+.BR \-U , " \-\-uniq"
+Ignore filesystems with duplicate mount targets, thus effectively skipping
+over-mounted mount points.
+.TP
 .BR \-u , " \-\-notruncate"
 Do not truncate text in columns.  The default is to not truncate the
 .BR TARGET ,
