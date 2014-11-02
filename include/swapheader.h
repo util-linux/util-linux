@@ -20,6 +20,4 @@ struct swap_header_v1_2 {
 	uint32_t      badpages[1];
 };
 
-#define SWAP_HEADER_SIZE (sizeof(struct swap_header_v1_2))
-
 #endif /* _SWAPHEADER_H */
