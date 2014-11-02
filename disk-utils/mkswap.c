@@ -225,31 +225,31 @@ get_size(const struct mkswap_control *ctl)
 
 #ifdef HAVE_LIBBLKID
 static blkid_probe
-new_prober(int fd)
+new_prober(const struct mkswap_control *ctl)
 {
 	blkid_probe pr = blkid_new_probe();
 	if (!pr)
 		errx(EXIT_FAILURE, _("unable to alloc new libblkid probe"));
-	if (blkid_probe_set_device(pr, fd, 0, 0))
+	if (blkid_probe_set_device(pr, ctl->fd, 0, 0))
 		errx(EXIT_FAILURE, _("unable to assign device to libblkid probe"));
 	return pr;
 }
 #endif
 
 static void
-wipe_device(int fd, const char *devname, int force)
+wipe_device(struct mkswap_control *ctl)
 {
 	char *type = NULL;
 	int zap = 1;
 #ifdef HAVE_LIBBLKID
 	blkid_probe pr = NULL;
 #endif
-	if (!force) {
-		if (lseek(fd, 0, SEEK_SET) != 0)
+	if (!ctl->force) {
+		if (lseek(ctl->fd, 0, SEEK_SET) != 0)
 			errx(EXIT_FAILURE, _("unable to rewind swap-device"));
 
 #ifdef HAVE_LIBBLKID
-		pr = new_prober(fd);
+		pr = new_prober(ctl);
 		blkid_probe_enable_partitions(pr, 1);
 		blkid_probe_enable_superblocks(pr, 0);
 
@@ -271,18 +271,18 @@ wipe_device(int fd, const char *devname, int force)
 		 */
 		char buf[1024];
 
-		if (lseek(fd, 0, SEEK_SET) != 0)
+		if (lseek(ctl->fd, 0, SEEK_SET) != 0)
 			errx(EXIT_FAILURE, _("unable to rewind swap-device"));
 
 		memset(buf, 0, sizeof(buf));
-		if (write_all(fd, buf, sizeof(buf)))
+		if (write_all(ctl->fd, buf, sizeof(buf)))
 			errx(EXIT_FAILURE, _("unable to erase bootbits sectors"));
 #ifdef HAVE_LIBBLKID
 		/*
 		 * Wipe rest of the device
 		 */
 		if (!pr)
-			pr = new_prober(fd);
+			pr = new_prober(ctl);
 
 		blkid_probe_enable_superblocks(pr, 1);
 		blkid_probe_enable_partitions(pr, 0);
@@ -292,13 +292,13 @@ wipe_device(int fd, const char *devname, int force)
 			const char *data = NULL;
 
 			if (blkid_probe_lookup_value(pr, "TYPE", &data, NULL) == 0 && data)
-				warnx(_("%s: warning: wiping old %s signature."), devname, data);
+				warnx(_("%s: warning: wiping old %s signature."), ctl->device_name, data);
 			blkid_do_wipe(pr, 0);
 		}
 #endif
 	} else {
 		warnx(_("%s: warning: don't erase bootbits sectors"),
-			devname);
+			ctl->device_name);
 		if (type)
 			fprintf(stderr, _("        (%s partition table detected). "), type);
 		else
@@ -450,7 +450,7 @@ main(int argc, char **argv) {
 	if (ctl.check)
 		check_blocks(&ctl);
 
-	wipe_device(ctl.fd, ctl.device_name, ctl.force);
+	wipe_device(&ctl);
 
 	ctl.hdr = (struct swap_header_v1_2 *) ctl.signature_page;
 	ctl.hdr->version = version;
