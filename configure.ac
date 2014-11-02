@@ -461,6 +461,7 @@ int main()
 	int i;
 	char *s;
 	i = sscanf("x", $1, &s);
+	free(s);
 	if (i == 1)
 		return 0;
 	return 1;
