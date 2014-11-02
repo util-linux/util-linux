@@ -388,6 +388,7 @@ int main(int argc, char *argv[])
 	printf("[%s]\n", cpulist_create(buf, buflen, set, setsize));
 
 	free(buf);
+	free(mask);
 	free(range);
 	cpuset_free(set);
 
