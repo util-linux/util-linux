@@ -209,10 +209,8 @@ get_size(const char *file)
 	unsigned long long size;
 
 	fd = open(file, O_RDONLY);
-	if (fd < 0) {
-		perror(file);
-		exit(EXIT_FAILURE);
-	}
+	if (fd < 0)
+		err(EXIT_FAILURE, _("cannot open %s"), file);
 	if (blkdev_get_size(fd, &size) == 0)
 		size /= pagesize;
 
@@ -434,19 +432,14 @@ main(int argc, char **argv) {
 			"%s is mounted; will not make swapspace"),
 			device_name);
 
-	if (stat(device_name, &statbuf) < 0) {
-		perror(device_name);
-		exit(EXIT_FAILURE);
-	}
+	if (stat(device_name, &statbuf) < 0)
+		err(EXIT_FAILURE, _("stat failed %s"), device_name);
 	if (S_ISBLK(statbuf.st_mode))
 		DEV = open(device_name, O_RDWR | O_EXCL);
 	else
 		DEV = open(device_name, O_RDWR);
-
-	if (DEV < 0) {
-		perror(device_name);
-		exit(EXIT_FAILURE);
-	}
+	if (DEV < 0)
+		err(EXIT_FAILURE, _("cannot open %s"), device_name);
 
 	if (!S_ISBLK(statbuf.st_mode))
 		check=0;
