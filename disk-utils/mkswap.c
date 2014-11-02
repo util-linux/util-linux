@@ -90,23 +90,21 @@ struct mkswap_control {
 static void
 init_signature_page(struct mkswap_control *ctl)
 {
-
-	int kernel_pagesize = ctl->pagesize = getpagesize();
+	const int kernel_pagesize = getpagesize();
 
 	if (ctl->user_pagesize) {
 		if (ctl->user_pagesize < 0 || !is_power_of_2(ctl->user_pagesize) ||
 		    (size_t) ctl->user_pagesize < sizeof(struct swap_header_v1_2) + 10)
 			errx(EXIT_FAILURE,
-				_("Bad user-specified page size %u"),
-				ctl->user_pagesize);
-		ctl->pagesize = ctl->user_pagesize;
-	}
-
-	if (ctl->user_pagesize && ctl->user_pagesize != kernel_pagesize)
-		warnx(_("Using user-specified page size %d, "
+			     _("Bad user-specified page size %u"),
+			       ctl->user_pagesize);
+		if (ctl->user_pagesize != kernel_pagesize)
+			warnx(_("Using user-specified page size %d, "
 				"instead of the system value %d"),
 				ctl->pagesize, kernel_pagesize);
-
+		ctl->pagesize = ctl->user_pagesize;
+	} else
+		ctl->pagesize = kernel_pagesize;
 	ctl->signature_page = (unsigned long *) xcalloc(1, ctl->pagesize);
 }
 
