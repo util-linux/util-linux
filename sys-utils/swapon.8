@@ -192,40 +192,40 @@ Be verbose.
 .BR \-V , " \-\-version"
 Display version information and exit.
 .SH NOTES
-You should not use swapon on a file with holes. This can be seen in the system
-log as
+You should not use \fBswapon\fR on a file with holes.
+This can be seen in the system log as
 .RS
 .sp
 .B "swapon: swapfile has holes."
 .sp
 .RE
-The swap file implementation in the kernel expecting to be able to write to the
-file directly, without the assistance of the file system. This is problem on
+The swap file implementation in the kernel expects to be able to write to the
+file directly, without the assistance of the filesystem.  This is a problem on
 preallocated files (e.g.
-.BR fallocate (1)
-) on filesystems like \fBXFS\fR or \fBext4\fR, and on copy-on-write file
-systems like \fBbtrfs\fR.
+.BR fallocate (1))
+on filesystems like \fBXFS\fR or \fBext4\fR, and on copy-on-write
+filesystems like \fBbtrfs\fR.
 .PP
 It is recommended to use
-. BR dd (1)
+.BR dd (1)
 and
 .I /dev/zero
 to avoid holes on XFS and ext4.
 .PP
 .B swapon
 may not work correctly when using a swap file with some versions of
-\fBbtrfs\fR.  This is due to Since btrfs is a copy-on-write file system, the
+\fBbtrfs\fR.  This is due to btrfs being a copy-on-write filesystem: the
 file location may not be static and corruption can result.  Btrfs actively
-disallows the use of files on its file systems by refusing to map the file.
+disallows the use of swap files on its filesystems by refusing to map the file.
 .PP
-One possible workaround is to map the
-file to a loopback device.  This will allow the file system to determine the
+One possible workaround is to map the swap
+file to a loopback device.  This will allow the filesystem to determine the
 mapping properly but may come with a performance impact.
 .PP
 Swap over \fBNFS\fR may not work.
 .PP
 .B swapon
-automatically detects and rewrites swap space signature with old software
+automatically detects and rewrites a swap space signature with old software
 suspend data (e.g S1SUSPEND, S2SUSPEND, ...). The problem is that if we don't
 do it, then we get data corruption the next time an attempt at unsuspending is
 made.
