@@ -30,6 +30,7 @@
 /*
  * Debug
  */
+#define SCOLS_DEBUG_HELP	(1 << 0)
 #define SCOLS_DEBUG_INIT	(1 << 1)
 #define SCOLS_DEBUG_CELL	(1 << 2)
 #define SCOLS_DEBUG_LINE	(1 << 3)
