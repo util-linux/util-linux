@@ -344,6 +344,14 @@ sfdisk since version 2.25 does not provide \fB\-\-DOS\fR, \fB\-\-IBM\fR, \fB\-\-
 \fB\-\-unhide\fR, \fB\-\-show\-extended\fR, \fB\-\-cylinders\fR, \fB\-\-heads\fR, \fB\-\-sectors\fR,
 \fB\-\-inside\-outer\fR, \fB\-\-not\-inside\-outer\fR options.
 
+.SH ENVIRONMENT
+.IP LIBFDISK_DEBUG=all
+enables libfdisk debug output.
+.IP LIBBLKID_DEBUG=all
+enables libblkid debug output.
+.IP LIBSMARTCOLS_DEBUG=all
+enables libsmartcols debug output.
+
 .SH "SEE ALSO"
 .BR fdisk (8),
 .BR cfdisk (8),

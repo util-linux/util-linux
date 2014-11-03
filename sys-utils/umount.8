@@ -188,11 +188,11 @@ table of mounted filesystems
 table of known filesystems
 .SH ENVIRONMENT
 .IP LIBMOUNT_FSTAB=<path>
-overrides the default location of the fstab file
+overrides the default location of the fstab file (ignored for suid)
 .IP LIBMOUNT_MTAB=<path>
-overrides the default location of the mtab file
-.IP LIBMOUNT_DEBUG=0xffff
-enables debug output
+overrides the default location of the mtab file (ignored for suid)
+.IP LIBMOUNT_DEBUG=all
+enables libmount debug output
 .SH "SEE ALSO"
 .BR umount (2),
 .BR mount (8),

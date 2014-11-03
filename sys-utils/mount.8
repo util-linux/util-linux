@@ -3118,11 +3118,13 @@ temporary file
 a list of filesystem types to try
 .SH ENVIRONMENT
 .IP LIBMOUNT_FSTAB=<path>
-overrides the default location of the fstab file
+overrides the default location of the fstab file (ignored for suid)
 .IP LIBMOUNT_MTAB=<path>
-overrides the default location of the mtab file
-.IP LIBMOUNT_DEBUG=0xffff
-enables debug output
+overrides the default location of the mtab file (ignored for suid)
+.IP LIBMOUNT_DEBUG=all
+enables libmount debug output
+.IP LIBBLKID_DEBUG=all
+enables libblkid debug output
 .SH "SEE ALSO"
 .BR mount (2),
 .BR umount (2),

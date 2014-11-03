@@ -51,8 +51,10 @@ higher the debugging level. Search for `DEBUG' from files
 to see what the different bits mean. At the time of writing this the following
 enabled full debug.
 
-	export LIBBLKID_DEBUG=0xffff
-	export LIBMOUNT_DEBUG=0xffff
+	export LIBBLKID_DEBUG=all
+	export LIBMOUNT_DEBUG=all
+	export LIBFDISK_DEBUG=all
+	export LIBSMARTCOLS_DEBUG=all
 
 The libblkid reads by default /etc/blkid.conf which can be overridden by the
 environment variable BLKID_CONF. See manual libblkid/libblkid.3 for details
