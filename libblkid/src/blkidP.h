@@ -316,24 +316,24 @@ struct blkid_struct_cache
 #define BLKID_PRI_LVM	20
 #define BLKID_PRI_MD	10
 
-#define BLKID_DEBUG_CACHE	0x0001
-#define BLKID_DEBUG_DUMP	0x0002
-#define BLKID_DEBUG_DEV		0x0004
-#define BLKID_DEBUG_DEVNAME	0x0008
-#define BLKID_DEBUG_DEVNO	0x0010
-#define BLKID_DEBUG_PROBE	0x0020
-#define BLKID_DEBUG_READ	0x0040
-#define BLKID_DEBUG_RESOLVE	0x0080
-#define BLKID_DEBUG_SAVE	0x0100
-#define BLKID_DEBUG_TAG		0x0200
-#define BLKID_DEBUG_LOWPROBE	0x0400
-#define BLKID_DEBUG_CONFIG	0x0800
-#define BLKID_DEBUG_EVALUATE	0x1000
-#define BLKID_DEBUG_INIT	0x8000
-#define BLKID_DEBUG_ALL		0xFFFF
+#define BLKID_DEBUG_HELP	(1 << 0)
+#define BLKID_DEBUG_INIT	(1 << 1)
+#define BLKID_DEBUG_CACHE	(1 << 2)
+#define BLKID_DEBUG_CONFIG	(1 << 3)
+#define BLKID_DEBUG_DEV		(1 << 4)
+#define BLKID_DEBUG_DEVNAME	(1 << 5)
+#define BLKID_DEBUG_DEVNO	(1 << 6)
+#define BLKID_DEBUG_EVALUATE	(1 << 7)
+#define BLKID_DEBUG_LOWPROBE	(1 << 8)
+#define BLKID_DEBUG_PROBE	(1 << 9)
+#define BLKID_DEBUG_READ	(1 << 10)
+#define BLKID_DEBUG_SAVE	(1 << 11)
+#define BLKID_DEBUG_TAG		(1 << 12)
+#define BLKID_DEBUG_ALL		0xFFFF		/* (1 << 16) aka FFFF is expected by API */
 
 UL_DEBUG_DECLARE_MASK(libblkid);
-#define DBG(m, x) __UL_DBG(libblkid, BLKID_DEBUG_, m, x)
+#define DBG(m, x)	__UL_DBG(libblkid, BLKID_DEBUG_, m, x)
+#define ON_DBG(m, x)    __UL_DBG_CALL(libblkid, BLKID_DEBUG_, m, x)
 
 extern void blkid_debug_dump_dev(blkid_dev dev);
 extern void blkid_debug_dump_tag(blkid_tag tag);
