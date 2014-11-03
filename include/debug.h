@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2014 Ondrej Oprala <ooprala@redhat.com>
+ * Copyright (C) 2014 Karel Zak <kzak@redhat.com>
  *
  * This file may be distributed under the terms of the
  * GNU Lesser General Public License.
@@ -7,15 +8,49 @@
 #ifndef UTIL_LINUX_DEBUG_H
 #define UTIL_LINUX_DEBUG_H
 
+
+/*
+ * util-linux debug macros
+ *
+ * The debug stuff is based on <name>_debug_mask that controls what outputs is
+ * expected. The mask is usually initialized by <NAME>_DEBUG= env.variable
+ *
+ * After successful initialization the flag <PREFIX>_DEBUG_INIT is always set
+ * to the mask (this flag is required). The <PREFIX> is usually library API
+ * prefix (e.g. MNT_) or program name (e.g. CFDISK_)
+ *
+ * In the code is possible to use
+ *
+ *	DBG(FOO, ul_debug("this is output for foo"));
+ *
+ * where for the FOO has to be defined <PREFIX>_DEBUG_FOO.
+ *
+ * It's possible to initialize the mask by comma delimited strings with
+ * subsystem names (e.g. "LIBMOUNT_DEBUG=options,tab"). In this case is
+ * necessary to define mask names array. This functionality is optional.
+ *
+ * It's stringly recommended to use UL_* macros to define/declare/use
+ * the debug stuff.
+ *
+ * See disk-utils/cfdisk.c: cfdisk_init_debug()  for programs debug
+ *  or libmount/src/init.c: mnt_init_debug()     for library debug
+ *
+ */
+
 #include <stdarg.h>
 #include <string.h>
 
-struct dbg_mask { char *mname; int val; };
-#define UL_DEBUG_EMPTY_MASKNAMES {{ NULL, 0 }}
+struct ul_debug_maskname {
+	const char *name;
+	int mask;
+	const char *help;
+};
+#define UL_DEBUG_EMPTY_MASKNAMES {{ NULL, 0, NULL }}
+#define UL_DEBUG_DEFINE_MASKNAMES(m) static const struct ul_debug_maskname m ## _masknames[]
+#define UL_DEBUG_MASKNAMES(m)	m ## _masknames
 
 #define UL_DEBUG_DEFINE_MASK(m) int m ## _debug_mask
 #define UL_DEBUG_DECLARE_MASK(m) extern UL_DEBUG_DEFINE_MASK(m)
-#define UL_DEBUG_DEFINE_MASKNAMES(m) static const struct dbg_mask m ## _masknames[]
 
 /* p - flag prefix, m - flag postfix */
 #define UL_DEBUG_DEFINE_FLAG(p, m) p ## m
@@ -52,14 +87,10 @@ struct dbg_mask { char *mname; int val; };
 		else if (!mask) { \
 			char *str = getenv(# env); \
 			if (str) \
-				lib ## _debug_mask = parse_envmask(lib ## _masknames, str); \
+				lib ## _debug_mask = ul_debug_parse_envmask(lib ## _masknames, str); \
 		} else \
 			lib ## _debug_mask = mask; \
 		lib ## _debug_mask |= pref ## INIT; \
-		if (lib ## _debug_mask != pref ## INIT) { \
-			__UL_DBG(lib, pref, INIT, ul_debug("debug mask: 0x%04x", \
-					lib ## _debug_mask)); \
-		} \
 	} while (0)
 
 
@@ -86,8 +117,9 @@ ul_debugobj(void *handler, const char *mesg, ...)
 	fputc('\n', stderr);
 }
 
-static inline int parse_envmask(const struct dbg_mask flagnames[],
-				const char *mask)
+static inline int ul_debug_parse_envmask(
+			const struct ul_debug_maskname flagnames[],
+			const char *mask)
 {
 	int res;
 	char *ptr;
@@ -96,7 +128,7 @@ static inline int parse_envmask(const struct dbg_mask flagnames[],
 	res = strtoul(mask, &ptr, 0);
 
 	/* perhaps it's a comma-separated string? */
-	if (*ptr != '\0' && flagnames) {
+	if (ptr && *ptr && flagnames && flagnames[0].name) {
 		char *msbuf, *ms, *name;
 		res = 0;
 
@@ -105,22 +137,43 @@ static inline int parse_envmask(const struct dbg_mask flagnames[],
 			return res;
 
 		while ((name = strtok_r(ms, ",", &ptr))) {
-			size_t i = 0;
+			const struct ul_debug_maskname *d;
 			ms = ptr;
 
-			while (flagnames[i].mname) {
-				if (!strcmp(name, flagnames[i].mname)) {
-					res |= flagnames[i].val;
+			for (d = flagnames; d && d->name; d++) {
+				if (strcmp(name, d->name) == 0) {
+					res |= d->mask;
 					break;
 				}
-				++i;
 			}
 			/* nothing else we can do by OR-ing the mask */
 			if (res == 0xffff)
 				break;
 		}
 		free(msbuf);
-	}
+	} else if (ptr && strcmp(ptr, "all") == 0)
+		res = 0xffff;
+
 	return res;
 }
+
+static inline void ul_debug_print_masks(
+			const char *env,
+			const struct ul_debug_maskname flagnames[])
+{
+	const struct ul_debug_maskname *d;
+
+	if (!flagnames)
+		return;
+
+	fprintf(stderr, "Available \"%s=<name>[,...]|<mask>\" debug masks:\n",
+			env);
+	for (d = flagnames; d && d->name; d++) {
+		if (!d->help)
+			continue;
+		fprintf(stderr, "   %-8s [0x%04x] : %s\n",
+				d->name, d->mask, d->help);
+	}
+}
+
 #endif /* UTIL_LINUX_DEBUG_H */
