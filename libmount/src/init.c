@@ -83,12 +83,11 @@ int main(int argc, char *argv[])
 		if (errno)
 			return 1;
 
-		__UL_INIT_DEBUG(libmount, MNT_DEBUG_, mask, LIBMOUNT_DEBUG);
+		mnt_init_debug(mask);
 	}
 	else if (argc == 1) {
-		__UL_INIT_DEBUG(libmount, MNT_DEBUG_, 0, LIBMOUNT_DEBUG);
-	}
-	else
+		mnt_init_debug(0);
+	} else
 		return 1;
 
 	return 0;
