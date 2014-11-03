@@ -37,21 +37,21 @@
 /*
  * Debug
  */
-#define FDISK_DEBUG_INIT	(1 << 1)
-#define FDISK_DEBUG_CXT		(1 << 2)
-#define FDISK_DEBUG_LABEL       (1 << 3)
-#define FDISK_DEBUG_ASK         (1 << 4)
-#define FDISK_DEBUG_FRONTEND	(1 << 5)
-#define FDISK_DEBUG_PART	(1 << 6)
-#define FDISK_DEBUG_PARTTYPE	(1 << 7)
-#define FDISK_DEBUG_TAB		(1 << 8)
-#define FDISK_DEBUG_SCRIPT	(1 << 9)
-#define FDISK_DEBUG_ALL		0xFFFF
+#define LIBFDISK_DEBUG_HELP	(1 << 0)
+#define LIBFDISK_DEBUG_INIT	(1 << 1)
+#define LIBFDISK_DEBUG_CXT	(1 << 2)
+#define LIBFDISK_DEBUG_LABEL    (1 << 3)
+#define LIBFDISK_DEBUG_ASK      (1 << 4)
+#define LIBFDISK_DEBUG_PART	(1 << 6)
+#define LIBFDISK_DEBUG_PARTTYPE	(1 << 7)
+#define LIBFDISK_DEBUG_TAB	(1 << 8)
+#define LIBFDISK_DEBUG_SCRIPT	(1 << 9)
+#define LIBFDISK_DEBUG_ALL	0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libfdisk);
-#define DBG(m, x)	__UL_DBG(libfdisk, FDISK_DEBUG_, m, x)
-#define ON_DBG(m, x)	__UL_DBG_CALL(libfdisk, FDISK_DEBUG_, m, x)
-#define DBG_FLUSH	__UL_DBG_FLUSH(libfdisk, FDISK_DEBUG_)
+#define DBG(m, x)	__UL_DBG(libfdisk, LIBFDISK_DEBUG_, m, x)
+#define ON_DBG(m, x)	__UL_DBG_CALL(libfdisk, LIBFDISK_DEBUG_, m, x)
+#define DBG_FLUSH	__UL_DBG_FLUSH(libfdisk, LIBFDISK_DEBUG_)
 
 #ifdef TEST_PROGRAM
 struct fdisk_test {
