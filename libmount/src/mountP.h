@@ -37,17 +37,17 @@
 /*
  * Debug
  */
+#define MNT_DEBUG_HELP		(1 << 0)
 #define MNT_DEBUG_INIT		(1 << 1)
 #define MNT_DEBUG_CACHE		(1 << 2)
 #define MNT_DEBUG_OPTIONS	(1 << 3)
 #define MNT_DEBUG_LOCKS		(1 << 4)
 #define MNT_DEBUG_TAB		(1 << 5)
 #define MNT_DEBUG_FS		(1 << 6)
-#define MNT_DEBUG_OPTS		(1 << 7)
-#define MNT_DEBUG_UPDATE	(1 << 8)
-#define MNT_DEBUG_UTILS		(1 << 9)
-#define MNT_DEBUG_CXT		(1 << 10)
-#define MNT_DEBUG_DIFF		(1 << 11)
+#define MNT_DEBUG_UPDATE	(1 << 7)
+#define MNT_DEBUG_UTILS		(1 << 8)
+#define MNT_DEBUG_CXT		(1 << 9)
+#define MNT_DEBUG_DIFF		(1 << 10)
 #define MNT_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libmount);

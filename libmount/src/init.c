@@ -18,18 +18,17 @@
 UL_DEBUG_DEFINE_MASK(libmount);
 UL_DEBUG_DEFINE_MASKNAMES(libmount) =
 {
-	{ "all", MNT_DEBUG_ALL },
-	{ "init", MNT_DEBUG_INIT },
-	{ "cache", MNT_DEBUG_CACHE },
-	{ "options", MNT_DEBUG_OPTIONS },
-	{ "locks", MNT_DEBUG_LOCKS },
-	{ "tab", MNT_DEBUG_TAB },
-	{ "fs", MNT_DEBUG_FS },
-	{ "opts", MNT_DEBUG_OPTS },
-	{ "update", MNT_DEBUG_UPDATE },
-	{ "utils", MNT_DEBUG_UTILS },
-	{ "cxt", MNT_DEBUG_CXT },
-	{ "diff", MNT_DEBUG_DIFF },
+	{ "all", MNT_DEBUG_ALL,		"info about all subsystems" },
+	{ "cache", MNT_DEBUG_CACHE,	"paths and tags cache" },
+	{ "cxt", MNT_DEBUG_CXT,		"library context (handler)" },
+	{ "diff", MNT_DEBUG_DIFF,	"mountinfo changes tracking" },
+	{ "fs", MNT_DEBUG_FS,		"FS abstraction" },
+	{ "help", MNT_DEBUG_HELP,	"this help" },
+	{ "locks", MNT_DEBUG_LOCKS,	"mtab and utab locking" },
+	{ "options", MNT_DEBUG_OPTIONS,	"mount options parsing" },
+	{ "tab", MNT_DEBUG_TAB,		"fstab, mtab, moutninfo routines" },
+	{ "update", MNT_DEBUG_UPDATE,	"mtab, utab updates" },
+	{ "utils", MNT_DEBUG_UTILS,	"misc library utils" },
 	{ NULL, 0 }
 };
 
@@ -45,20 +44,28 @@ UL_DEBUG_DEFINE_MASKNAMES(libmount) =
  */
 void mnt_init_debug(int mask)
 {
+	if (libmount_debug_mask)
+		return;
+
 	__UL_INIT_DEBUG(libmount, MNT_DEBUG_, mask, LIBMOUNT_DEBUG);
 
-	if (libmount_debug_mask != MNT_DEBUG_INIT) {
+	if (libmount_debug_mask != MNT_DEBUG_INIT
+	    && libmount_debug_mask != (MNT_DEBUG_HELP|MNT_DEBUG_INIT)) {
 		const char *ver = NULL;
 		const char **features = NULL, **p;
 
 		mnt_get_library_version(&ver);
 		mnt_get_library_features(&features);
 
+		DBG(INIT, ul_debug("library debug mask: 0x%04x", libmount_debug_mask));
 		DBG(INIT, ul_debug("library version: %s", ver));
 		p = features;
 		while (p && *p)
 			DBG(INIT, ul_debug("    feature: %s", *p++));
 	}
+
+	ON_DBG(HELP, ul_debug_print_masks("LIBMOUNT_DEBUG",
+				UL_DEBUG_MASKNAMES(libmount)));
 }
 
 #ifdef TEST_PROGRAM
