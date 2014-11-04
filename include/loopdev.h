@@ -97,7 +97,6 @@ struct loopdev_cxt {
 	int		flags;		/* LOOPDEV_FL_* flags */
 	unsigned int	has_info:1;	/* .info contains data */
 	unsigned int	extra_check:1;	/* unusual stuff for iterator */
-	unsigned int	debug:1;	/* debug mode ON/OFF */
 	unsigned int	info_failed:1;	/* LOOP_GET_STATUS ioctl failed */
 	unsigned int    control_ok:1;	/* /dev/loop-control success */
 
@@ -145,7 +144,6 @@ extern int loopdev_count_by_backing_file(const char *filename, char **loopdev);
 extern int loopcxt_init(struct loopdev_cxt *lc, int flags)
 				__attribute__ ((warn_unused_result));
 extern void loopcxt_deinit(struct loopdev_cxt *lc);
-extern void loopcxt_enable_debug(struct loopdev_cxt *lc, int enable);
 
 extern int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 				__attribute__ ((warn_unused_result));

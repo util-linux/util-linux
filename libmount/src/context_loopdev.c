@@ -165,8 +165,6 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	if (rc)
 		return rc;
 
-	ON_DBG(CXT, loopcxt_enable_debug(&lc, 1));
-
 	optstr = mnt_fs_get_user_options(cxt->fs);
 
 	/*
