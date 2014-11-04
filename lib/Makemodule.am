@@ -62,7 +62,6 @@ check_PROGRAMS += test_cpuset
 endif
 check_PROGRAMS += \
 	test_sysfs \
-	test_loopdev \
 	test_pager
 endif
 
@@ -106,10 +105,6 @@ test_sysfs_LDADD = libcommon.la
 
 test_pager_SOURCES = lib/pager.c
 test_pager_CFLAGS = -DTEST_PROGRAM
-
-test_loopdev_SOURCES = lib/loopdev.c
-test_loopdev_CFLAGS = -DTEST_PROGRAM_LOOPDEV
-test_loopdev_LDADD = libcommon.la
 endif
 
 test_fileutils_SOURCES = lib/fileutils.c
