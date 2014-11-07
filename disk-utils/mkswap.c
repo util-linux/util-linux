@@ -19,6 +19,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <getopt.h>
+#include <assert.h>
 #ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>
 #include <selinux/context.h>
@@ -49,7 +50,7 @@
 #define SELINUX_SWAPFILE_TYPE	"swapfile_t"
 
 struct mkswap_control {
-	struct swap_header_v1_2	*hdr;
+	struct swap_header_v1_2	*hdr;		/* swap header */
 	void			*signature_page;/* buffer with swap header */
 
 	char			*device_name;
@@ -68,8 +69,7 @@ struct mkswap_control {
 				force:1;	/* --force */
 };
 
-static void
-init_signature_page(struct mkswap_control *ctl)
+static void init_signature_page(struct mkswap_control *ctl)
 {
 	const int kernel_pagesize = getpagesize();
 
@@ -86,7 +86,17 @@ init_signature_page(struct mkswap_control *ctl)
 		ctl->pagesize = ctl->user_pagesize;
 	} else
 		ctl->pagesize = kernel_pagesize;
+
 	ctl->signature_page = (unsigned long *) xcalloc(1, ctl->pagesize);
+	ctl->hdr = (struct swap_header_v1_2 *) ctl->signature_page;
+}
+
+static void deinit_signature_page(struct mkswap_control *ctl)
+{
+	free(ctl->signature_page);
+
+	ctl->hdr = NULL;
+	ctl->signature_page = NULL;
 }
 
 static void
@@ -100,19 +110,25 @@ write_signature(const struct mkswap_control *ctl)
 static void
 write_uuid_and_label(const struct mkswap_control *ctl)
 {
-	struct swap_header_v1_2 *h;
+	assert(ctl);
+	assert(ctl->hdr);
 
-	h = (struct swap_header_v1_2 *) ctl->signature_page;
+	/* set UUID */
 	if (ctl->uuid)
-		memcpy(h->uuid, ctl->uuid, sizeof(h->uuid));
+		memcpy(ctl->hdr->uuid, ctl->uuid, sizeof(ctl->hdr->uuid));
+
+	/* set LABEL */
 	if (ctl->opt_label) {
-		xstrncpy(h->volume_name, ctl->opt_label, sizeof(h->volume_name));
-		if (strlen(ctl->opt_label) > strlen(h->volume_name))
+		xstrncpy(ctl->hdr->volume_name,
+			 ctl->opt_label, sizeof(ctl->hdr->volume_name));
+		if (strlen(ctl->opt_label) > strlen(ctl->hdr->volume_name))
 			warnx(_("Label was truncated."));
 	}
+
+	/* report resuls */
 	if (ctl->uuid || ctl->opt_label) {
 		if (ctl->opt_label)
-			printf("LABEL=%s, ", h->volume_name);
+			printf("LABEL=%s, ", ctl->hdr->volume_name);
 		else
 			printf(_("no label, "));
 #ifdef HAVE_LIBUUID
@@ -147,24 +163,26 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static void
-page_bad(struct mkswap_control *ctl, unsigned int page)
+static void page_bad(struct mkswap_control *ctl, unsigned int page)
 {
-	struct swap_header_v1_2 *p = (struct swap_header_v1_2 *)ctl->signature_page;
-	const unsigned long max_badpages = (ctl->pagesize - 1024 - 128 * sizeof(int) - 10) / sizeof(int);
+	const unsigned long max_badpages =
+		(ctl->pagesize - 1024 - 128 * sizeof(int) - 10) / sizeof(int);
 
 	if (ctl->nbadpages == max_badpages)
 		errx(EXIT_FAILURE, _("too many bad pages: %lu"), max_badpages);
-	p->badpages[ctl->nbadpages] = page;
+
+	ctl->hdr->badpages[ctl->nbadpages] = page;
 	ctl->nbadpages++;
 }
 
-static void
-check_blocks(struct mkswap_control *ctl)
+static void check_blocks(struct mkswap_control *ctl)
 {
 	unsigned int current_page = 0;
 	int do_seek = 1;
 	char *buffer;
+
+	assert(ctl);
+	assert(ctl->fd > -1);
 
 	buffer = xmalloc(ctl->pagesize);
 	while (current_page < ctl->npages) {
@@ -289,7 +307,7 @@ wipe_device(struct mkswap_control *ctl)
 
 int
 main(int argc, char **argv) {
-	struct mkswap_control ctl = { .fd = -1, 0 };
+	struct mkswap_control ctl = { .fd = -1 };
 	struct stat statbuf;
 	int c;
 	unsigned long long goodpages;
@@ -432,7 +450,7 @@ main(int argc, char **argv) {
 
 	wipe_device(&ctl);
 
-	ctl.hdr = (struct swap_header_v1_2 *) ctl.signature_page;
+	assert(ctl.hdr);
 	ctl.hdr->version = version;
 	ctl.hdr->last_page = ctl.npages - 1;
 	ctl.hdr->nr_badpages = ctl.nbadpages;
@@ -455,7 +473,9 @@ main(int argc, char **argv) {
 		err(EXIT_FAILURE,
 			_("%s: unable to write signature page"),
 			ctl.device_name);
-	free(ctl.signature_page);
+
+	deinit_signature_page(&ctl);
+
 #ifdef HAVE_LIBSELINUX
 	if (S_ISREG(statbuf.st_mode) && is_selinux_enabled() > 0) {
 		security_context_t context_string;
