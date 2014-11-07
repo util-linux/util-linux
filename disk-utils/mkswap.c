@@ -1,34 +1,11 @@
 /*
  * mkswap.c - set up a linux swap device
  *
- * (C) 1991 Linus Torvalds. This file may be redistributed as per
- * the Linux copyright.
- */
-
-/*
- * 20.12.91  -	time began. Got VM working yesterday by doing this by hand.
+ * Copyright (C) 1991 Linus Torvalds
+ *               20.12.91 - time began. Got VM working yesterday by doing this by hand.
  *
- * Usage: mkswap [-c] [-vN] [-f] device [size-in-blocks]
- *
- *	-c   for readability checking. (Use it unless you are SURE!)
- *	-vN  for swap areas version N. (Only N=0,1 known today.)
- *      -f   for forcing swap creation even if it would smash partition table.
- *
- * The device may be a block device or an image of one, but this isn't
- * enforced (but it's not much fun on a character device :-).
- *
- * Patches from jaggy@purplet.demon.co.uk (Mike Jagdis) to make the
- * size-in-blocks parameter optional added Wed Feb  8 10:33:43 1995.
- *
- * Version 1 swap area code (for kernel 2.1.117), aeb, 981010.
- *
- * Sparc fixes, jj@ultra.linux.cz (Jakub Jelinek), 981201 - mangled by aeb.
- * V1_MAX_PAGES fixes, jj, 990325.
- * sparc64 fixes, jj, 000219.
- *
- * 1999-02-22 Arkadiusz Miśkiewicz <misiek@pld.ORG.PL>
- * - added Native Language Support
- *
+ * Copyright (C) 1999 Jakub Jelinek <jj@ultra.linux.cz>
+ * Copyright (C) 2007-2014 Karel Zak <kzak@redhat.com>
  */
 
 #include <stdio.h>
@@ -72,19 +49,23 @@
 #define SELINUX_SWAPFILE_TYPE	"swapfile_t"
 
 struct mkswap_control {
-	struct swap_header_v1_2 *hdr;
-	char *device_name;
-	int fd;
-	unsigned long long nr_pages;
-	unsigned long badpages;
-	int user_pagesize;
-	int pagesize;
-	void *signature_page;
-	char *opt_label;
-	unsigned char *uuid;
-	unsigned int
-		check:1,
-		force:1;
+	struct swap_header_v1_2	*hdr;
+	void			*signature_page;/* buffer with swap header */
+
+	char			*device_name;
+	int			fd;
+
+	unsigned long long	npages;		/* number of pages */
+	unsigned long		nbadpages;	/* number of bad pages */
+
+	int			user_pagesize;	/* --pagesize */
+	int			pagesize;	/* final pagesize used for the header */
+
+	char			*opt_label;	/* LABEL as specified on command line */
+	unsigned char		*uuid;		/* UUID parsed by libbuuid */
+
+	unsigned int		check:1,	/* --check */
+				force:1;	/* --force */
 };
 
 static void
@@ -172,10 +153,10 @@ page_bad(struct mkswap_control *ctl, unsigned int page)
 	struct swap_header_v1_2 *p = (struct swap_header_v1_2 *)ctl->signature_page;
 	const unsigned long max_badpages = (ctl->pagesize - 1024 - 128 * sizeof(int) - 10) / sizeof(int);
 
-	if (ctl->badpages == max_badpages)
+	if (ctl->nbadpages == max_badpages)
 		errx(EXIT_FAILURE, _("too many bad pages: %lu"), max_badpages);
-	p->badpages[ctl->badpages] = page;
-	ctl->badpages++;
+	p->badpages[ctl->nbadpages] = page;
+	ctl->nbadpages++;
 }
 
 static void
@@ -186,7 +167,7 @@ check_blocks(struct mkswap_control *ctl)
 	char *buffer;
 
 	buffer = xmalloc(ctl->pagesize);
-	while (current_page < ctl->nr_pages) {
+	while (current_page < ctl->npages) {
 		ssize_t rc;
 
 		if (do_seek && lseek(ctl->fd, current_page * ctl->pagesize, SEEK_SET) !=
@@ -199,7 +180,7 @@ check_blocks(struct mkswap_control *ctl)
 			page_bad(ctl, current_page);
 		current_page++;
 	}
-	printf(P_("%lu bad page\n", "%lu bad pages\n", ctl->badpages), ctl->badpages);
+	printf(P_("%lu bad page\n", "%lu bad pages\n", ctl->nbadpages), ctl->nbadpages);
 	free(buffer);
 }
 
@@ -402,26 +383,26 @@ main(int argc, char **argv) {
 		/* this silly user specified the number of blocks explicitly */
 		uint64_t blks = strtou64_or_err(block_count,
 					_("invalid block count argument"));
-		ctl.nr_pages = blks / (ctl.pagesize / 1024);
+		ctl.npages = blks / (ctl.pagesize / 1024);
 	}
 	sz = get_size(&ctl);
-	if (!ctl.nr_pages)
-		ctl.nr_pages = sz;
-	else if (ctl.nr_pages > sz && !ctl.force)
+	if (!ctl.npages)
+		ctl.npages = sz;
+	else if (ctl.npages > sz && !ctl.force)
 		errx(EXIT_FAILURE,
 			_("error: "
 			  "size %llu KiB is larger than device size %llu KiB"),
-			ctl.nr_pages * (ctl.pagesize / 1024), sz * (ctl.pagesize / 1024));
+			ctl.npages * (ctl.pagesize / 1024), sz * (ctl.pagesize / 1024));
 
-	if (ctl.nr_pages < MIN_GOODPAGES)
+	if (ctl.npages < MIN_GOODPAGES)
 		errx(EXIT_FAILURE,
 		     _("error: swap area needs to be at least %ld KiB"),
 		     (long)(MIN_GOODPAGES * ctl.pagesize / 1024));
-	if (ctl.nr_pages > UINT32_MAX) {
+	if (ctl.npages > UINT32_MAX) {
 		/* true when swap is bigger than 17.59 terabytes */
-		ctl.nr_pages = UINT32_MAX;
+		ctl.npages = UINT32_MAX;
 		warnx(_("warning: truncating swap area to %llu KiB"),
-			ctl.nr_pages * ctl.pagesize / 1024);
+			ctl.npages * ctl.pagesize / 1024);
 	}
 
 	if (is_mounted(ctl.device_name))
@@ -453,13 +434,13 @@ main(int argc, char **argv) {
 
 	ctl.hdr = (struct swap_header_v1_2 *) ctl.signature_page;
 	ctl.hdr->version = version;
-	ctl.hdr->last_page = ctl.nr_pages - 1;
-	ctl.hdr->nr_badpages = ctl.badpages;
+	ctl.hdr->last_page = ctl.npages - 1;
+	ctl.hdr->nr_badpages = ctl.nbadpages;
 
-	if ((ctl.nr_pages - MIN_GOODPAGES) < ctl.badpages)
+	if ((ctl.npages - MIN_GOODPAGES) < ctl.nbadpages)
 		errx(EXIT_FAILURE, _("Unable to set up swap-space: unreadable"));
 
-	goodpages = ctl.nr_pages - ctl.badpages - 1;
+	goodpages = ctl.npages - ctl.nbadpages - 1;
 	printf(_("Setting up swapspace version %d, size = %llu KiB\n"),
 		version, goodpages * ctl.pagesize / 1024);
 
