@@ -68,6 +68,7 @@ partitions: 4
 Slice Start   End Sectors  Size Type     Fsize Bsize Cpg
 c      4096 20479   16384    8M unused       0     0   0
 d         0 16064   16065  7.9M unused       0     0   0
+
 Partition table entries are not in disk order.
 
 Command (m for help): Leaving nested disklabel.
@@ -98,6 +99,7 @@ Slice Start   End Sectors  Size Type     Fsize Bsize Cpg
 a      4096  6144    2049    1M 4.2BSD       0     0   0
 c      4096 20479   16384    8M unused       0     0   0
 d         0 16064   16065  7.9M unused       0     0   0
+
 Partition table entries are not in disk order.
 
 Command (m for help): Leaving nested disklabel.
