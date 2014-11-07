@@ -27,7 +27,7 @@ sfdisk \- display or manipulate a disk partition table
 .B sfdisk
 is a script oriented tool for partitioning any block device.
 
-Since version 2.25
+Since version 2.26
 .B sfdisk
 supports MBR (DOS), GPT, SUN and SGI disk labels, but no longer provides any
 functionality for CHS (Cylinder-Head-Sector) addressing.  CHS has
@@ -35,7 +35,7 @@ never been important for Linux, and this addressing concept does not make any
 sense for new devices.
 
 .B sfdisk
-(since version 2.25) aligns start and end of the partitions to
+(since version 2.26) aligns start and end of the partitions to
 block-device I/O limits when specified by relative sizes, or when default
 values expected.
 
@@ -331,16 +331,16 @@ and later restore GPT header by:
 .B dd if=~/sfdisk-sda-0x00000200.bak of=/dev/sda seek=$((0x00000200.bak)) bs=1 conv=notrunc
 .sp
 .RE
-Note that sfdisk since version 2.25 does not provide \fB\-I\fR command line option to
+Note that sfdisk since version 2.26 does not provide \fB\-I\fR command line option to
 restore sectors. 
 .B dd (1)
 provides all necessary functionality.
 
 .SH NOTES
-sfdisk since version 2.25 does not provide \fB\-\-re\-read\fR command to force kernel to reread partition table. Use
+sfdisk since version 2.26 does not provide \fB\-\-re\-read\fR command to force kernel to reread partition table. Use
 \fBblockdev \-\-rereadpt\fR.
 .PP
-sfdisk since version 2.25 does not provide \fB\-\-DOS\fR, \fB\-\-IBM\fR, \fB\-\-DOS-extended\fR,
+sfdisk since version 2.26 does not provide \fB\-\-DOS\fR, \fB\-\-IBM\fR, \fB\-\-DOS-extended\fR,
 \fB\-\-unhide\fR, \fB\-\-show\-extended\fR, \fB\-\-cylinders\fR, \fB\-\-heads\fR, \fB\-\-sectors\fR,
 \fB\-\-inside\-outer\fR, \fB\-\-not\-inside\-outer\fR options.
 
