@@ -53,8 +53,9 @@ struct mkswap_control {
 	struct swap_header_v1_2	*hdr;		/* swap header */
 	void			*signature_page;/* buffer with swap header */
 
-	char			*device_name;
-	int			fd;
+	char			*devname;	/* device or file name */
+	struct stat		devstat;	/* stat() result */
+	int			fd;		/* swap file descriptor */
 
 	unsigned long long	npages;		/* number of pages */
 	unsigned long		nbadpages;	/* number of bad pages */
@@ -99,16 +100,15 @@ static void deinit_signature_page(struct mkswap_control *ctl)
 	ctl->signature_page = NULL;
 }
 
-static void
-write_signature(const struct mkswap_control *ctl)
+static void write_signature(const struct mkswap_control *ctl)
 {
 	char *sp = (char *) ctl->signature_page;
 
+	assert(sp);
 	strncpy(sp + ctl->pagesize - SWAP_SIGNATURE_SZ, SWAP_SIGNATURE, SWAP_SIGNATURE_SZ);
 }
 
-static void
-write_uuid_and_label(const struct mkswap_control *ctl)
+static void write_uuid_and_label(const struct mkswap_control *ctl)
 {
 	assert(ctl);
 	assert(ctl->hdr);
@@ -203,15 +203,14 @@ static void check_blocks(struct mkswap_control *ctl)
 }
 
 /* return size in pages */
-static unsigned long long
-get_size(const struct mkswap_control *ctl)
+static unsigned long long get_size(const struct mkswap_control *ctl)
 {
 	int fd;
 	unsigned long long size;
 
-	fd = open(ctl->device_name, O_RDONLY);
+	fd = open(ctl->devname, O_RDONLY);
 	if (fd < 0)
-		err(EXIT_FAILURE, _("cannot open %s"), ctl->device_name);
+		err(EXIT_FAILURE, _("cannot open %s"), ctl->devname);
 	if (blkdev_get_size(fd, &size) == 0)
 		size /= ctl->pagesize;
 
@@ -220,8 +219,7 @@ get_size(const struct mkswap_control *ctl)
 }
 
 #ifdef HAVE_LIBBLKID
-static blkid_probe
-new_prober(const struct mkswap_control *ctl)
+static blkid_probe new_prober(const struct mkswap_control *ctl)
 {
 	blkid_probe pr = blkid_new_probe();
 	if (!pr)
@@ -232,8 +230,33 @@ new_prober(const struct mkswap_control *ctl)
 }
 #endif
 
-static void
-wipe_device(struct mkswap_control *ctl)
+static void open_device(struct mkswap_control *ctl)
+{
+	assert(ctl);
+	assert(ctl->devname);
+
+	if (stat(ctl->devname, &ctl->devstat) < 0)
+		err(EXIT_FAILURE, _("stat failed %s"), ctl->devname);
+
+	if (S_ISBLK(ctl->devstat.st_mode))
+		ctl->fd = open(ctl->devname, O_RDWR | O_EXCL);
+	else {
+		if (ctl->check) {
+			ctl->check = 0;
+			warnx(_("warning: checking bad blocks from swap file is not supported: %s"),
+				ctl->devname);
+		}
+		ctl->fd = open(ctl->devname, O_RDWR);
+	}
+	if (ctl->fd < 0)
+		err(EXIT_FAILURE, _("cannot open %s"), ctl->devname);
+
+	if (S_ISBLK(ctl->devstat.st_mode))
+		if (blkdev_is_misaligned(ctl->fd))
+			warnx(_("warning: %s is misaligned"), ctl->devname);
+}
+
+static void wipe_device(struct mkswap_control *ctl)
 {
 	char *type = NULL;
 	int zap = 1;
@@ -287,13 +310,13 @@ wipe_device(struct mkswap_control *ctl)
 			const char *data = NULL;
 
 			if (blkid_probe_lookup_value(pr, "TYPE", &data, NULL) == 0 && data)
-				warnx(_("%s: warning: wiping old %s signature."), ctl->device_name, data);
+				warnx(_("%s: warning: wiping old %s signature."), ctl->devname, data);
 			blkid_do_wipe(pr, 0);
 		}
 #endif
 	} else {
 		warnx(_("%s: warning: don't erase bootbits sectors"),
-			ctl->device_name);
+			ctl->devname);
 		if (type)
 			fprintf(stderr, _("        (%s partition table detected). "), type);
 		else
@@ -308,7 +331,6 @@ wipe_device(struct mkswap_control *ctl)
 int
 main(int argc, char **argv) {
 	struct mkswap_control ctl = { .fd = -1 };
-	struct stat statbuf;
 	int c;
 	unsigned long long goodpages;
 	unsigned long long sz;
@@ -374,7 +396,7 @@ main(int argc, char **argv) {
 		}
 	}
 	if (optind < argc)
-		ctl.device_name = argv[optind++];
+		ctl.devname = argv[optind++];
 	if (optind < argc)
 		block_count = argv[optind++];
 	if (optind != argc) {
@@ -393,7 +415,7 @@ main(int argc, char **argv) {
 
 	init_signature_page(&ctl);	/* get pagesize and allocate signature page */
 
-	if (!ctl.device_name) {
+	if (!ctl.devname) {
 		warnx(_("error: Nowhere to set up swap on?"));
 		usage(stderr);
 	}
@@ -423,28 +445,13 @@ main(int argc, char **argv) {
 			ctl.npages * ctl.pagesize / 1024);
 	}
 
-	if (is_mounted(ctl.device_name))
+	if (is_mounted(ctl.devname))
 		errx(EXIT_FAILURE, _("error: "
 			"%s is mounted; will not make swapspace"),
-			ctl.device_name);
+			ctl.devname);
 
-	if (stat(ctl.device_name, &statbuf) < 0)
-		err(EXIT_FAILURE, _("stat failed %s"), ctl.device_name);
-	if (S_ISBLK(statbuf.st_mode))
-		ctl.fd = open(ctl.device_name, O_RDWR | O_EXCL);
-	else {
-		if (ctl.check) {
-			ctl.check = 0;
-			warnx(_("warning: checking bad blocks from swap file is not supported: %s"),
-				ctl.device_name);
-		}
-		ctl.fd = open(ctl.device_name, O_RDWR);
-	}
-	if (ctl.fd < 0)
-		err(EXIT_FAILURE, _("cannot open %s"), ctl.device_name);
-	if (S_ISBLK(statbuf.st_mode))
-		if (blkdev_is_misaligned(ctl.fd))
-			warnx(_("warning: %s is misaligned"), ctl.device_name);
+	open_device(&ctl);
+
 	if (ctl.check)
 		check_blocks(&ctl);
 
@@ -472,12 +479,12 @@ main(int argc, char **argv) {
 				    ctl.pagesize - offset) == -1)
 		err(EXIT_FAILURE,
 			_("%s: unable to write signature page"),
-			ctl.device_name);
+			ctl.devname);
 
 	deinit_signature_page(&ctl);
 
 #ifdef HAVE_LIBSELINUX
-	if (S_ISREG(statbuf.st_mode) && is_selinux_enabled() > 0) {
+	if (S_ISREG(ctl.devstat.st_mode) && is_selinux_enabled() > 0) {
 		security_context_t context_string;
 		security_context_t oldcontext;
 		context_t newcontext;
@@ -486,8 +493,8 @@ main(int argc, char **argv) {
 			if (errno != ENODATA)
 				err(EXIT_FAILURE,
 					_("%s: unable to obtain selinux file label"),
-					ctl.device_name);
-			if (matchpathcon(ctl.device_name, statbuf.st_mode, &oldcontext))
+					ctl.devname);
+			if (matchpathcon(ctl.devname, ctl.devstat.st_mode, &oldcontext))
 				errx(EXIT_FAILURE, _("unable to matchpathcon()"));
 		}
 		if (!(newcontext = context_new(oldcontext)))
@@ -500,7 +507,7 @@ main(int argc, char **argv) {
 		if (strcmp(context_string, oldcontext)!=0) {
 			if (fsetfilecon(ctl.fd, context_string))
 				err(EXIT_FAILURE, _("unable to relabel %s to %s"),
-						ctl.device_name, context_string);
+						ctl.devname, context_string);
 		}
 		context_free(newcontext);
 		freecon(oldcontext);
