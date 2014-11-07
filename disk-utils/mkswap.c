@@ -346,15 +346,13 @@ static void write_header_to_device(struct mkswap_control *ctl)
 			ctl->devname);
 }
 
-
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	struct mkswap_control ctl = { .fd = -1 };
 	int c;
-	unsigned long long goodpages;
-	unsigned long long sz;
+	uint64_t sz;
 	int version = SWAP_VERSION;
-	char *block_count = NULL;
+	char *block_count = NULL, *strsz = NULL;
 #ifdef HAVE_LIBUUID
 	const char *opt_uuid = NULL;
 	uuid_t uuid_dat;
@@ -451,7 +449,7 @@ main(int argc, char **argv) {
 	else if (ctl.npages > sz && !ctl.force)
 		errx(EXIT_FAILURE,
 			_("error: "
-			  "size %llu KiB is larger than device size %llu KiB"),
+			  "size %llu KiB is larger than device size %ju KiB"),
 			ctl.npages * (ctl.pagesize / 1024), sz * (ctl.pagesize / 1024));
 
 	if (ctl.npages < MIN_GOODPAGES)
@@ -485,9 +483,11 @@ main(int argc, char **argv) {
 	if ((ctl.npages - MIN_GOODPAGES) < ctl.nbadpages)
 		errx(EXIT_FAILURE, _("Unable to set up swap-space: unreadable"));
 
-	goodpages = ctl.npages - ctl.nbadpages - 1;
-	printf(_("Setting up swapspace version %d, size = %llu KiB\n"),
-		version, goodpages * ctl.pagesize / 1024);
+	sz = (ctl.npages - ctl.nbadpages - 1) * ctl.pagesize;
+	strsz = size_to_human_string(SIZE_SUFFIX_SPACE | SIZE_SUFFIX_3LETTER, sz);
+
+	printf(_("Setting up swapspace version %d, size = %s (%ju bytes)\n"),
+		version, strsz, sz);
 
 	set_signature(&ctl);
 	set_uuid_and_label(&ctl);
