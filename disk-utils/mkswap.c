@@ -100,7 +100,7 @@ static void deinit_signature_page(struct mkswap_control *ctl)
 	ctl->signature_page = NULL;
 }
 
-static void write_signature(const struct mkswap_control *ctl)
+static void set_signature(const struct mkswap_control *ctl)
 {
 	char *sp = (char *) ctl->signature_page;
 
@@ -108,7 +108,7 @@ static void write_signature(const struct mkswap_control *ctl)
 	strncpy(sp + ctl->pagesize - SWAP_SIGNATURE_SZ, SWAP_SIGNATURE, SWAP_SIGNATURE_SZ);
 }
 
-static void write_uuid_and_label(const struct mkswap_control *ctl)
+static void set_uuid_and_label(const struct mkswap_control *ctl)
 {
 	assert(ctl);
 	assert(ctl->hdr);
@@ -328,13 +328,31 @@ static void wipe_device(struct mkswap_control *ctl)
 #endif
 }
 
+#define SIGNATURE_OFFSET	1024
+
+static void write_header_to_device(struct mkswap_control *ctl)
+{
+	assert(ctl);
+	assert(ctl->fd > -1);
+	assert(ctl->signature_page);
+
+	if (lseek(ctl->fd, SIGNATURE_OFFSET, SEEK_SET) != SIGNATURE_OFFSET)
+		errx(EXIT_FAILURE, _("unable to rewind swap-device"));
+
+	if (write_all(ctl->fd, (char *) ctl->signature_page + SIGNATURE_OFFSET,
+		      ctl->pagesize - SIGNATURE_OFFSET) == -1)
+		err(EXIT_FAILURE,
+			_("%s: unable to write signature page"),
+			ctl->devname);
+}
+
+
 int
 main(int argc, char **argv) {
 	struct mkswap_control ctl = { .fd = -1 };
 	int c;
 	unsigned long long goodpages;
 	unsigned long long sz;
-	off_t offset;
 	int version = SWAP_VERSION;
 	char *block_count = NULL;
 #ifdef HAVE_LIBUUID
@@ -395,6 +413,7 @@ main(int argc, char **argv) {
 			usage(stderr);
 		}
 	}
+
 	if (optind < argc)
 		ctl.devname = argv[optind++];
 	if (optind < argc)
@@ -425,6 +444,7 @@ main(int argc, char **argv) {
 					_("invalid block count argument"));
 		ctl.npages = blks / (ctl.pagesize / 1024);
 	}
+
 	sz = get_size(&ctl);
 	if (!ctl.npages)
 		ctl.npages = sz;
@@ -469,17 +489,10 @@ main(int argc, char **argv) {
 	printf(_("Setting up swapspace version %d, size = %llu KiB\n"),
 		version, goodpages * ctl.pagesize / 1024);
 
-	write_signature(&ctl);
-	write_uuid_and_label(&ctl);
+	set_signature(&ctl);
+	set_uuid_and_label(&ctl);
 
-	offset = 1024;
-	if (lseek(ctl.fd, offset, SEEK_SET) != offset)
-		errx(EXIT_FAILURE, _("unable to rewind swap-device"));
-	if (write_all(ctl.fd, (char *) ctl.signature_page + offset,
-				    ctl.pagesize - offset) == -1)
-		err(EXIT_FAILURE,
-			_("%s: unable to write signature page"),
-			ctl.devname);
+	write_header_to_device(&ctl);
 
 	deinit_signature_page(&ctl);
 
