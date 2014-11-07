@@ -89,6 +89,7 @@ void list_disklabel(struct fdisk_context *cxt)
 	const char *bold = NULL;
 	int *ids = NULL;		/* IDs of fdisk_fields */
 	size_t	nids = 0, i;
+	int post = 0;
 
 	/* print label specific stuff by libfdisk FDISK_ASK_INFO API */
 	fdisk_list_disklabel(cxt);
@@ -170,16 +171,24 @@ void list_disklabel(struct fdisk_context *cxt)
 	}
 
 	/* print warnings */
+	fdisk_reset_iter(itr, FDISK_ITER_FORWARD);
 	while (itr && fdisk_table_next_partition(tb, itr, &pa) == 0) {
 		if (!fdisk_partition_has_start(pa))
 			continue;
-		if (!fdisk_lba_is_phy_aligned(cxt, fdisk_partition_get_start(pa)))
+		if (!fdisk_lba_is_phy_aligned(cxt, fdisk_partition_get_start(pa))) {
+			if (!post)
+				fputc('\n', stdout);
 			fdisk_warnx(cxt, _("Partition %zu does not start on physical sector boundary."),
 					  fdisk_partition_get_partno(pa) + 1);
+			post++;
+		}
 	}
 
-	if (fdisk_table_wrong_order(tb))
+	if (fdisk_table_wrong_order(tb)) {
+		if (!post)
+			fputc('\n', stdout);
 		fdisk_info(cxt, _("Partition table entries are not in disk order."));
+	}
 done:
 	scols_unref_table(out);
 	fdisk_unref_table(tb);
