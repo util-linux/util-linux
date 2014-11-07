@@ -8,8 +8,10 @@
 
 #include "nls.h"
 #include "c.h"
+#include "xalloc.h"
 #include "closestream.h"
 
+#include "swapprober.h"
 #include "swapon-common.h"
 
 #ifndef SWAPON_HAS_TWO_ARGS
@@ -24,6 +26,58 @@ static int all;
 #define QUIET	1
 #define CANONIC	1
 
+/*
+ * This function works like mnt_resolve_tag(), but it's able to read UUiD/LABEL
+ * from regular swap files too (according to entries in /proc/swaps). Note that
+ * mnt_resolve_tag() and mnt_resolve_spec() works with system visible block
+ * devices only.
+ */
+static char *swapoff_resolve_tag(const char *name, const char *value,
+				 struct libmnt_cache *cache)
+{
+	char *path;
+	struct libmnt_table *tb;
+	struct libmnt_iter *itr;
+	struct libmnt_fs *fs;
+
+	/* this is usual case for block devices (and it's really fast as it uses
+	 * udev /dev/disk/by-* symlinks by default */
+	path = mnt_resolve_tag(name, value, cache);
+	if (path)
+		return path;
+
+	/* try regular files from /proc/swaps */
+	tb = get_swaps();
+	if (!tb)
+		return NULL;
+
+	itr = mnt_new_iter(MNT_ITER_BACKWARD);
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to initialize libmount iterator"));
+
+	while (tb && mnt_table_next_fs(tb, itr, &fs) == 0) {
+		blkid_probe pr = NULL;
+		const char *src = mnt_fs_get_source(fs);
+		const char *type = mnt_fs_get_swaptype(fs);
+		const char *data = NULL;
+
+		if (!src || !type || strcmp(type, "file") != 0)
+			continue;
+		pr = get_swap_prober(src);
+		if (!pr)
+			continue;
+		blkid_probe_lookup_value(pr, name, &data, NULL);
+		if (data && strcmp(data, value) == 0)
+			path = xstrdup(src);
+		blkid_free_probe(pr);
+		if (path)
+			break;
+	}
+
+	mnt_free_iter(itr);
+	return path;
+}
+
 static int do_swapoff(const char *orig_special, int quiet, int canonic)
 {
         const char *special = orig_special;
@@ -32,7 +86,11 @@ static int do_swapoff(const char *orig_special, int quiet, int canonic)
 		printf(_("swapoff %s\n"), orig_special);
 
 	if (!canonic) {
+		char *n, *v;
+
 		special = mnt_resolve_spec(orig_special, mntcache);
+		if (!special && blkid_parse_tag_string(orig_special, &n, &v) == 0)
+			special = swapoff_resolve_tag(n, v, mntcache);
 		if (!special)
 			return cannot_find(orig_special);
 	}
@@ -49,16 +107,10 @@ static int do_swapoff(const char *orig_special, int quiet, int canonic)
 	return -1;
 }
 
-static int swapoff_by_label(const char *label, int quiet)
+static int swapoff_by(const char *name, const char *value, int quiet)
 {
-	const char *special = mnt_resolve_tag("LABEL", label, mntcache);
-	return special ? do_swapoff(special, quiet, CANONIC) : cannot_find(label);
-}
-
-static int swapoff_by_uuid(const char *uuid, int quiet)
-{
-	const char *special = mnt_resolve_tag("UUID", uuid, mntcache);
-	return special ? do_swapoff(special, quiet, CANONIC) : cannot_find(uuid);
+	const char *special = swapoff_resolve_tag(name, value, mntcache);
+	return special ? do_swapoff(special, quiet, CANONIC) : cannot_find(value);
 }
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
@@ -178,10 +230,10 @@ int main(int argc, char *argv[])
 	mntcache = mnt_new_cache();
 
 	for (i = 0; i < numof_labels(); i++)
-		status |= swapoff_by_label(get_label(i), !QUIET);
+		status |= swapoff_by("LABEL", get_label(i), !QUIET);
 
 	for (i = 0; i < numof_uuids(); i++)
-		status |= swapoff_by_uuid(get_uuid(i), !QUIET);
+		status |= swapoff_by("UUID", get_uuid(i), !QUIET);
 
 	while (*argv != NULL)
 		status |= do_swapoff(*argv++, !QUIET, !CANONIC);
