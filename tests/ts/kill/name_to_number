@@ -33,6 +33,9 @@ for SIG in $($TS_CMD_KILL -L); do
 		EXPECTED=$SIG
 		continue
 	fi
+	if [ -f "$ASAN_SYMBOLIZER_PATH" ] && [ "x$SIG" = "xSEGV" ]; then
+		continue
+	fi
 	if [ "x$SIG" = "xSTOP" ] || [ "x$SIG" = "xKILL" ]; then
 		continue
 	fi
