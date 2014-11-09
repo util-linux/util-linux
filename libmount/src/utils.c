@@ -565,7 +565,7 @@ static int get_filesystems(const char *filename, char ***filesystems, const char
 {
 	int rc = 0;
 	FILE *f;
-	char line[128];
+	char line[129];
 
 	f = fopen(filename, "r" UL_CLOEXECSTR);
 	if (!f)
