@@ -50,6 +50,13 @@ int fdisk_read_firstsector(struct fdisk_context *cxt)
 	DBG(CXT, ul_debugobj(cxt, "reading first sector "
 				"buffer [sector_size=%lu]", cxt->sector_size));
 
+	r = lseek(cxt->dev_fd, 0, SEEK_SET);
+	if (r == -1)
+	{
+		DBG(CXT, ul_debugobj(cxt, "failed to seek to first sector %m"));
+		return -errno;
+	}
+
 	r = read(cxt->dev_fd, cxt->firstsector, cxt->sector_size);
 
 	if (r != cxt->sector_size) {
