@@ -7,6 +7,10 @@ TS_DESC="tags"
 ts_init "$*"
 ts_skip_nonroot
 
+if [ -f "$ASAN_SYMBOLIZER_PATH" ]; then
+	TS_KNOWN_FAIL="yes"
+fi
+
 TESTPROG="$TS_HELPER_LIBMOUNT_TAB"
 
 [ -x $TESTPROG ] || ts_skip "test not compiled"

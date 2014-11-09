@@ -10,6 +10,10 @@ ts_init "$*"
 ts_init_py libmount
 ts_skip_nonroot
 
+if [ -f "$ASAN_SYMBOLIZER_PATH" ]; then
+	TS_KNOWN_FAIL="yes"
+fi
+
 TESTPROG="$TS_HELPER_PYLIBMOUNT_UPDATE"
 [ -x $TESTPROG ] || ts_die "test script missing"
 
@@ -21,7 +25,7 @@ rm -f $LIBMOUNT_FSTAB
 cp "$TS_SELF/files/fstab.comment" $LIBMOUNT_FSTAB
 
 ts_init_subtest "fstab-replace"
-$PYTHON $TESTPROG --replace "LABEL=foo" "/mnt/foo"
+$PYTHON $TESTPROG --replace "LABEL=foo" "/mnt/foo" >/dev/null 2>&1
 cp $LIBMOUNT_FSTAB $TS_OUTPUT	# save the fstab aside
 ts_finalize_subtest		#checks the fstab
 

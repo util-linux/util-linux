@@ -9,6 +9,10 @@ TS_DESC="tab files-py"
 ts_init "$*"
 ts_init_py libmount
 
+if [ -f "$ASAN_SYMBOLIZER_PATH" ]; then
+	TS_KNOWN_FAIL="yes"
+fi
+
 PYDBG="$PYTHON -m pdb"
 TESTPROG="$TS_HELPER_PYLIBMOUNT_TAB"
 [ -x $TESTPROG ] || ts_die "test script missing"

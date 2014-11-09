@@ -8,6 +8,10 @@ ts_init "$*"
 ts_init_py libmount
 ts_skip_nonroot
 
+if [ -f "$ASAN_SYMBOLIZER_PATH" ]; then
+	TS_KNOWN_FAIL="yes"
+fi
+
 TESTPROG="$TS_HELPER_PYLIBMOUNT_TAB"
 [ -x $TESTPROG ] || ts_die "test script missing"
 
