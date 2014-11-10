@@ -7,9 +7,9 @@
  * If possible then don't depend on internal libc __SWORD_TYPE type.
  */
 #ifdef __GNUC__
-typedef __typeof__( ((struct statfs *)0)->f_type )	ul_statfs_ftype_t;
+#define F_TYPE_EQUAL(a, b) (a == (__typeof__(a)) b)
 #else
-typedef __SWORD_TYPE	ul_statfs_ftype_t;
+#define F_TYPE_EQUAL(a, b) (a == (__SWORD_TYPE) b)
 #endif
 
 /*
