@@ -948,15 +948,16 @@ static int gpt_locate_disklabel(struct fdisk_context *cxt, int n,
 /*
  * Returns the number of partitions that are in use.
  */
-static unsigned partitions_in_use(struct gpt_header *header, struct gpt_entry *e)
+static unsigned partitions_in_use(struct gpt_header *header,
+				  struct gpt_entry *ents)
 {
 	uint32_t i, used = 0;
 
-	if (!header || ! e)
+	if (!header || ! ents)
 		return 0;
 
 	for (i = 0; i < le32_to_cpu(header->npartition_entries); i++)
-		if (!partition_unused(&e[i]))
+		if (!partition_unused(&ents[i]))
 			used++;
 	return used;
 }
@@ -966,15 +967,15 @@ static unsigned partitions_in_use(struct gpt_header *header, struct gpt_entry *e
  * Check if a partition is too big for the disk (sectors).
  * Returns the faulting partition number, otherwise 0.
  */
-static uint32_t partition_check_too_big(struct gpt_header *header,
-				   struct gpt_entry *e, uint64_t sectors)
+static uint32_t check_too_big_partitions(struct gpt_header *header,
+				   struct gpt_entry *ents, uint64_t sectors)
 {
 	uint32_t i;
 
 	for (i = 0; i < le32_to_cpu(header->npartition_entries); i++) {
-		if (partition_unused(&e[i]))
+		if (partition_unused(&ents[i]))
 			continue;
-		if (gpt_partition_end(&e[i]) >= sectors)
+		if (gpt_partition_end(&ents[i]) >= sectors)
 			return i + 1;
 	}
 
@@ -985,14 +986,15 @@ static uint32_t partition_check_too_big(struct gpt_header *header,
  * Check if a partition ends before it begins
  * Returns the faulting partition number, otherwise 0.
  */
-static uint32_t partition_start_after_end(struct gpt_header *header, struct gpt_entry *e)
+static uint32_t check_start_after_end_paritions(struct gpt_header *header,
+						struct gpt_entry *ents)
 {
 	uint32_t i;
 
 	for (i = 0; i < le32_to_cpu(header->npartition_entries); i++) {
-		if (partition_unused(&e[i]))
+		if (partition_unused(&ents[i]))
 			continue;
-		if (gpt_partition_start(&e[i]) > gpt_partition_end(&e[i]))
+		if (gpt_partition_start(&ents[i]) > gpt_partition_end(&ents[i]))
 			return i + 1;
 	}
 
@@ -1015,16 +1017,17 @@ static inline int partition_overlap(struct gpt_entry *e1, struct gpt_entry *e2)
 /*
  * Find any partitions that overlap.
  */
-static uint32_t partition_check_overlaps(struct gpt_header *header, struct gpt_entry *e)
+static uint32_t check_overlap_partitions(struct gpt_header *header,
+					 struct gpt_entry *ents)
 {
 	uint32_t i, j;
 
 	for (i = 0; i < le32_to_cpu(header->npartition_entries); i++)
 		for (j = 0; j < i; j++) {
-			if (partition_unused(&e[i]) ||
-			    partition_unused(&e[j]))
+			if (partition_unused(&ents[i]) ||
+			    partition_unused(&ents[j]))
 				continue;
-			if (partition_overlap(&e[i], &e[j])) {
+			if (partition_overlap(&ents[i], &ents[j])) {
 				DBG(LABEL, ul_debug("GPT partitions overlap detected [%u vs. %u]", i, j));
 				return i + 1;
 			}
@@ -1038,14 +1041,14 @@ static uint32_t partition_check_overlaps(struct gpt_header *header, struct gpt_e
  * there are no available blocks left, or error. From gdisk.
  */
 static uint64_t find_first_available(struct gpt_header *header,
-				     struct gpt_entry *e, uint64_t start)
+				     struct gpt_entry *ents, uint64_t start)
 {
 	uint64_t first;
 	uint32_t i, first_moved = 0;
 
 	uint64_t fu, lu;
 
-	if (!header || !e)
+	if (!header || !ents)
 		return 0;
 
 	fu = le64_to_cpu(header->first_usable_lba);
@@ -1067,12 +1070,12 @@ static uint64_t find_first_available(struct gpt_header *header,
 	do {
 		first_moved = 0;
 		for (i = 0; i < le32_to_cpu(header->npartition_entries); i++) {
-			if (partition_unused(&e[i]))
+			if (partition_unused(&ents[i]))
 				continue;
-			if (first < gpt_partition_start(&e[i]))
+			if (first < gpt_partition_start(&ents[i]))
 				continue;
-			if (first <= gpt_partition_end(&e[i])) {
-				first = gpt_partition_end(&e[i]) + 1;
+			if (first <= gpt_partition_end(&ents[i])) {
+				first = gpt_partition_end(&ents[i]) + 1;
 				first_moved = 1;
 			}
 		}
@@ -1087,18 +1090,18 @@ static uint64_t find_first_available(struct gpt_header *header,
 
 /* Returns last available sector in the free space pointed to by start. From gdisk. */
 static uint64_t find_last_free(struct gpt_header *header,
-			       struct gpt_entry *e, uint64_t start)
+			       struct gpt_entry *ents, uint64_t start)
 {
 	uint32_t i;
 	uint64_t nearest_start;
 
-	if (!header || !e)
+	if (!header || !ents)
 		return 0;
 
 	nearest_start = le64_to_cpu(header->last_usable_lba);
 
 	for (i = 0; i < le32_to_cpu(header->npartition_entries); i++) {
-		uint64_t ps = gpt_partition_start(&e[i]);
+		uint64_t ps = gpt_partition_start(&ents[i]);
 
 		if (nearest_start > ps && ps > start)
 			nearest_start = ps - 1;
@@ -1109,12 +1112,12 @@ static uint64_t find_last_free(struct gpt_header *header,
 
 /* Returns the last free sector on the disk. From gdisk. */
 static uint64_t find_last_free_sector(struct gpt_header *header,
-				      struct gpt_entry *e)
+				      struct gpt_entry *ents)
 {
 	uint32_t i, last_moved;
 	uint64_t last = 0;
 
-	if (!header || !e)
+	if (!header || !ents)
 		goto done;
 
 	/* start by assuming the last usable LBA is available */
@@ -1122,9 +1125,9 @@ static uint64_t find_last_free_sector(struct gpt_header *header,
 	do {
 		last_moved = 0;
 		for (i = 0; i < le32_to_cpu(header->npartition_entries); i++) {
-			if ((last >= gpt_partition_start(&e[i])) &&
-			    (last <= gpt_partition_end(&e[i]))) {
-				last = gpt_partition_start(&e[i]) - 1;
+			if ((last >= gpt_partition_start(&ents[i])) &&
+			    (last <= gpt_partition_end(&ents[i]))) {
+				last = gpt_partition_start(&ents[i]) - 1;
 				last_moved = 1;
 			}
 		}
@@ -1138,18 +1141,19 @@ done:
  * space on the disk. Returns 0 if there are no available blocks left.
  * From gdisk.
  */
-static uint64_t find_first_in_largest(struct gpt_header *header, struct gpt_entry *e)
+static uint64_t find_first_in_largest(struct gpt_header *header,
+				      struct gpt_entry *ents)
 {
 	uint64_t start = 0, first_sect, last_sect;
 	uint64_t segment_size, selected_size = 0, selected_segment = 0;
 
-	if (!header || !e)
+	if (!header || !ents)
 		goto done;
 
 	do {
-		first_sect =  find_first_available(header, e, start);
+		first_sect =  find_first_available(header, ents, start);
 		if (first_sect != 0) {
-			last_sect = find_last_free(header, e, first_sect);
+			last_sect = find_last_free(header, ents, first_sect);
 			segment_size = last_sect - first_sect + 1;
 
 			if (segment_size > selected_size) {
@@ -1169,7 +1173,7 @@ done:
  * they reside, and the size of the largest of those segments. From gdisk.
  */
 static uint64_t get_free_sectors(struct fdisk_context *cxt, struct gpt_header *header,
-				 struct gpt_entry *e, uint32_t *nsegments,
+				 struct gpt_entry *ents, uint32_t *nsegments,
 				 uint64_t *largest_segment)
 {
 	uint32_t num = 0;
@@ -1181,9 +1185,9 @@ static uint64_t get_free_sectors(struct fdisk_context *cxt, struct gpt_header *h
 		goto done;
 
 	do {
-		first_sect = find_first_available(header, e, start);
+		first_sect = find_first_available(header, ents, start);
 		if (first_sect) {
-			last_sect = find_last_free(header, e, first_sect);
+			last_sect = find_last_free(header, ents, first_sect);
 			segment_sz = last_sect - first_sect + 1;
 
 			if (segment_sz > largest_seg)
@@ -1695,7 +1699,7 @@ static int gpt_write_disklabel(struct fdisk_context *cxt)
 		/* TODO: correct this (with user authorization) and write */
 		goto err0;
 
-	if (partition_check_overlaps(gpt->pheader, gpt->ents))
+	if (check_overlap_partitions(gpt->pheader, gpt->ents))
 		goto err0;
 
 	/* recompute CRCs for both headers */
@@ -1808,21 +1812,21 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 		fdisk_warnx(cxt, _("Primary and backup header mismatch."));
 	}
 
-	ptnum = partition_check_overlaps(gpt->pheader, gpt->ents);
+	ptnum = check_overlap_partitions(gpt->pheader, gpt->ents);
 	if (ptnum) {
 		nerror++;
 		fdisk_warnx(cxt, _("Partition %u overlaps with partition %u."),
 				ptnum, ptnum+1);
 	}
 
-	ptnum = partition_check_too_big(gpt->pheader, gpt->ents, cxt->total_sectors);
+	ptnum = check_too_big_partitions(gpt->pheader, gpt->ents, cxt->total_sectors);
 	if (ptnum) {
 		nerror++;
 		fdisk_warnx(cxt, _("Partition %u is too big for the disk."),
 				ptnum);
 	}
 
-	ptnum = partition_start_after_end(gpt->pheader, gpt->ents);
+	ptnum = check_start_after_end_paritions(gpt->pheader, gpt->ents);
 	if (ptnum) {
 		nerror++;
 		fdisk_warnx(cxt, _("Partition %u ends before it starts."),
