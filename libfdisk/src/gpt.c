@@ -1945,7 +1945,31 @@ static int gpt_add_partition(
 				pa->type->typestr:
 				GPT_DEFAULT_ENTRY_TYPE, &typeid);
 
-	disk_f = find_first_available(pheader, ents, 0);
+	disk_f = find_first_available(pheader, ents, pheader->first_usable_lba);
+
+	/* if first sector no explicitly defined then ignore small gaps before
+	 * the first partition */
+	if ((!pa || !fdisk_partition_has_start(pa))
+	    && !partition_unused(&ents[0])
+	    && disk_f < gpt_partition_start(&ents[0])) {
+
+		do {
+			uint64_t x;
+			DBG(LABEL, ul_debug("testing first sector %ju", disk_f));
+			disk_f = find_first_available(pheader, ents, disk_f);
+			if (!disk_f)
+				break;
+			x = find_last_free(pheader, ents, disk_f);
+			if (x - disk_f >= cxt->grain / cxt->sector_size)
+				break;
+			DBG(LABEL, ul_debug("first sector %ju addresses to small space, continue...", disk_f));
+			disk_f = x + 1;
+		} while(1);
+
+		if (disk_f == 0)
+			disk_f = find_first_available(pheader, ents, pheader->first_usable_lba);
+	}
+
 	disk_l = find_last_free_sector(pheader, ents);
 
 	/* the default is the largest free space */
