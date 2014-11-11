@@ -323,6 +323,7 @@ static void wipe_device(struct mkswap_control *ctl)
 			fprintf(stderr, _("        (compiled without libblkid). "));
 		fprintf(stderr, _("Use -f to force.\n"));
 	}
+	free(type);
 #ifdef HAVE_LIBBLKID
 	blkid_free_probe(pr);
 #endif
@@ -488,6 +489,7 @@ int main(int argc, char **argv)
 
 	printf(_("Setting up swapspace version %d, size = %s (%ju bytes)\n"),
 		version, strsz, sz);
+	free(strsz);
 
 	set_signature(&ctl);
 	set_uuid_and_label(&ctl);
