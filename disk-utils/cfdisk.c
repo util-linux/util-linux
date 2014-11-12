@@ -159,6 +159,8 @@ static struct cfdisk_menuitem main_menuitems[] = {
 	{ 'h', N_("Help"), N_("Print help screen") },
 	{ 's', N_("Sort"), N_("Fix partitions order") },
 	{ 'W', N_("Write"), N_("Write partition table to disk (this might destroy data)") },
+	{ 'l', N_("Load"), N_("Load disk layout from sfdisk compatible script file") },
+	{ 'u', N_("Dump"), N_("Dump partition table to sfdisk compatible script file") },
 	{ 0, NULL, NULL }
 };
 
@@ -1346,6 +1348,9 @@ static ssize_t ui_get_string(struct cfdisk *cf, const char *prompt,
 	move(ln, 0);
 	clrtoeol();
 
+	move(ln + 1, 0);
+	clrtoeol();
+
 	if (prompt) {
 		mvaddstr(ln, cl, (char *) prompt);
 		cl += mbs_safe_width(prompt);
@@ -1603,6 +1608,76 @@ done:
 	return t;
 }
 
+static int ui_script_read(struct cfdisk *cf)
+{
+	struct fdisk_script *sc = NULL;
+	char buf[PATH_MAX] = { 0 };
+	int rc;
+
+	rc = ui_get_string(cf,	_("Enter script file name: "),
+				_("The script file will be applied to in-memory partition table."),
+				buf, sizeof(buf));
+	if (rc <= 0)
+		return rc;
+
+	rc = -1;
+	errno = 0;
+	sc = fdisk_new_script_from_file(cf->cxt, buf);
+	if (!sc && errno)
+		ui_warn(_("Cannot open: %s"), buf);
+	else if (!sc)
+		ui_warnx(_("Failed to parse script file %s"), buf);
+	else if (fdisk_apply_script(cf->cxt, sc) != 0)
+		ui_warnx(_("Failed to apply script %s"), buf);
+	else
+		rc = 0;
+
+	fdisk_unref_script(sc);
+	return rc;
+}
+
+static int ui_script_write(struct cfdisk *cf)
+{
+	struct fdisk_script *sc = NULL;
+	char buf[PATH_MAX] = { 0 };
+	FILE *f = NULL;
+	int rc;
+
+	rc = ui_get_string(cf,	_("Enter script file name: "),
+				_("The current in-memory partition table will be dumped to the file."),
+				buf, sizeof(buf));
+	if (rc <= 0)
+		return rc;
+
+	rc = 0;
+	sc = fdisk_new_script(cf->cxt);
+	if (!sc) {
+		ui_warn(_("Failed to allocate script handler"));
+		goto done;
+	}
+
+	rc = fdisk_script_read_context(sc, NULL);
+	if (rc) {
+		ui_warnx(_("Failed to read disk layout into script."));
+		goto done;
+	}
+
+	f = fopen(buf, "w");
+	if (!f) {
+		ui_warn(_("Cannot open: %s"), buf);
+		goto done;
+	}
+
+	rc = fdisk_script_write_file(sc, f);
+	if (rc)
+		ui_warn(_("Failed to write script %s"), buf);
+done:
+	if (f)
+		fclose(f);
+	fdisk_unref_script(sc);
+	return rc;
+}
+
 /* prints menu with libfdisk labels and waits for users response */
 static int ui_create_label(struct cfdisk *cf)
 {
@@ -1631,7 +1706,7 @@ static int ui_create_label(struct cfdisk *cf)
 	ui_center(ui_lines - 4,
 		_("Device does not contain a recognized partition table."));
 	ui_center(ui_lines - 3,
-		_("Please, select a type to create a new disk label."));
+		_("Select a type to create a new label or press 'L' to load script file."));
 
 	/* make the new menu active */
 	menu_push(cf, cm);
@@ -1659,6 +1734,14 @@ static int ui_create_label(struct cfdisk *cf)
 		case 'q':
 		case 'Q':
 			goto done;
+		case 'L':
+			ui_clean_hint();
+			ui_clean_info();
+
+			rc = ui_script_read(cf);
+			if (rc == 0)
+				goto done;
+			break;
 		}
 	} while (1);
 
@@ -1668,6 +1751,7 @@ done:
 	DBG(UI, ul_debug("create label done [rc=%d] ", rc));
 	return rc;
 }
+
 
 static int ui_help(void)
 {
@@ -1687,10 +1771,12 @@ static int ui_help(void)
 		N_("  b          Toggle bootable flag of the current partition"),
 		N_("  d          Delete the current partition"),
 		N_("  h          Print this screen"),
+		N_("  l          Load disk layout from sfdisk compatible script file"), 
 		N_("  n          Create new partition from free space"),
 		N_("  q          Quit program without writing partition table"),
 		N_("  t          Change the partition type"),
 		N_("  s          Fix partitions order (only when in disarray)"),
+		N_("  u          Dump disk layout to sfdisk compatible script file"),
 		N_("  W          Write partition table to disk (must enter upper case W)"),
 		N_("             Since this might destroy data on the disk, you must"),
 		N_("             either confirm or deny the write by entering `yes' or"),
@@ -1867,6 +1953,27 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			ref = 1;
 		}
 		break;
+	case 'l':
+		rc = ui_script_read(cf);
+		if (rc == 0) {
+			info = _("Script file successfully applied.");
+			ref = 1;
+		} else if (rc != CFDISK_ERR_ESC) {
+			refresh();
+			sleep(2);
+			warn = _("Failed to read script file");
+		}
+		break;
+	case 'u':
+		rc = ui_script_write(cf);
+		if (rc == 0)
+			info = _("Disk layout successfully dumped.");
+		else if (rc != CFDISK_ERR_ESC) {
+			refresh();
+			sleep(2);
+			warn = _("Failed to create script file");
+		}
+		break;
 	case 'W': /* Write */
 	{
 		char buf[64] = { 0 };
@@ -1906,7 +2013,8 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	if (ref) {
 		lines_refresh(cf);
 		ui_refresh(cf);
-	}
+	} else
+		ui_draw_menu(cf);
 
 	ui_clean_hint();
 	if (warn)

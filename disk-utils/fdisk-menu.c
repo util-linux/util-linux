@@ -110,8 +110,8 @@ struct menu menu_generic = {
 		MENU_ENT_E('x', N_("extra functionality (experts only)"), FDISK_DISKLABEL_BSD),
 
 		MENU_SEP(N_("Script")),
-		MENU_ENT  ('I', N_("read disk layout from fdisk script file")),
-		MENU_ENT  ('O', N_("write disk layout to fdisk script file")),
+		MENU_ENT  ('I', N_("load disk layout from fdisk script file")),
+		MENU_ENT  ('O', N_("dump disk layout to fdisk script file")),
 
 		MENU_BSEP(N_("Save & Exit")),
 		MENU_ENT_E('w', N_("write table to disk and exit"), FDISK_DISKLABEL_BSD),

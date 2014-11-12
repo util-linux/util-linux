@@ -105,6 +105,19 @@ MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB
 Quit the program.  This will exit the program without writing any data to
 the disk.
 .TP
+.B l
+Load sfdisk compatible script file and create a new (in-memory) disk label 
+according to the script, and then it is possible to modify the
+partition table before you write it to the device.
+.TP
+.B u
+Dump the current in-memory partition table to the sfdisk compatible file.
+to the script file by command 'O'.
+.sp
+The script files are compatible between cfdisk, sfdisk, fdisk and another
+libfdisk applications. For more details see
+.BR sfdisk (8).
+.TP
 .B t
 Change the partition type.  By default, new partitions are created as
 .I Linux
