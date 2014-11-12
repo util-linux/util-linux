@@ -86,6 +86,7 @@ struct fdisk_script *fdisk_new_script_from_file(struct fdisk_context *cxt,
 	assert(cxt);
 	assert(filename);
 
+	DBG(SCRIPT, ul_debug("opening %s", filename));
 	f = fopen(filename, "r");
 	if (!f)
 		return NULL;
@@ -127,6 +128,7 @@ static void fdisk_reset_script(struct fdisk_script *dp)
 {
 	assert(dp);
 
+	DBG(SCRIPT, ul_debugobj(dp, "reset"));
 	fdisk_unref_table(dp->table);
 	dp->table = NULL;
 
@@ -327,6 +329,7 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 	if (!dp || !cxt)
 		return -EINVAL;
 
+	DBG(SCRIPT, ul_debugobj(dp, "reading context into script"));
 	fdisk_reset_script(dp);
 
 	lb = fdisk_get_label(cxt, NULL);
@@ -352,6 +355,7 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 
 	/* TODO: label specific headers (e.g. uuid for GPT) */
 
+	DBG(SCRIPT, ul_debugobj(dp, "read context done [rc=%d]", rc));
 	return rc;
 }
 
@@ -374,6 +378,8 @@ int fdisk_script_write_file(struct fdisk_script *dp, FILE *f)
 	assert(dp);
 	assert(f);
 
+	DBG(SCRIPT, ul_debugobj(dp, "writing script to file"));
+
 	/* script headers */
 	list_for_each(h, &dp->headers) {
 		struct fdisk_scriptheader *fi = list_entry(h, struct fdisk_scriptheader, headers);
@@ -382,8 +388,12 @@ int fdisk_script_write_file(struct fdisk_script *dp, FILE *f)
 			devname = fi->data;
 	}
 
-	if (!dp->table)
+	if (!dp->table) {
+		DBG(SCRIPT, ul_debugobj(dp, "script table empty"));
 		return 0;
+	}
+
+	DBG(SCRIPT, ul_debugobj(dp, "%zu entries", fdisk_table_get_nents(dp->table)));
 
 	fputc('\n', f);
 
@@ -393,9 +403,10 @@ int fdisk_script_write_file(struct fdisk_script *dp, FILE *f)
 
 		if (devname)
 			p = fdisk_partname(devname, pa->partno + 1);
-		if (p)
+		if (p) {
+			DBG(SCRIPT, ul_debugobj(dp, "write %s entry", p));
 			fprintf(f, "%s :", p);
-		else
+		} else
 			fprintf(f, "%zu :", pa->partno + 1);
 
 		if (fdisk_partition_has_start(pa))
@@ -425,6 +436,7 @@ int fdisk_script_write_file(struct fdisk_script *dp, FILE *f)
 		fputc('\n', f);
 	}
 
+	DBG(SCRIPT, ul_debugobj(dp, "write script done"));
 	return 0;
 }
 
@@ -467,7 +479,8 @@ static int parse_header_line(struct fdisk_script *dp, char *s)
 	} else if (strcmp(name, "unit") == 0) {
 		if (strcmp(value, "sectors") != 0)
 			goto done;			/* only "sectors" supported */
-	} else if (strcmp(name, "label-id") == 0) {
+	} else if (strcmp(name, "label-id") == 0
+		   || strcmp(name, "device") == 0) {
 		;					/* whatever is posssible */
 	} else
 		goto done;				/* unknown header */
@@ -476,7 +489,9 @@ static int parse_header_line(struct fdisk_script *dp, char *s)
 		rc = fdisk_script_set_header(dp, name, value);
 done:
 	if (rc)
-		DBG(SCRIPT, ul_debugobj(dp, "header parse error: [rc=%d]", rc));
+		DBG(SCRIPT, ul_debugobj(dp, "header parse error: "
+				"[rc=%d, name='%s', value='%s']",
+				rc, name, value));
 	return rc;
 
 }
@@ -899,7 +914,7 @@ int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t b
 	assert(dp);
 	assert(f);
 
-	DBG(SCRIPT, ul_debugobj(dp, " parsing line"));
+	DBG(SCRIPT, ul_debugobj(dp, " parsing line %zu", dp->nlines));
 
 	/* read the next non-blank non-comment line */
 	do {
@@ -955,6 +970,10 @@ int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
 			break;
 	}
 
+	if (rc == 1)
+		rc = 0;		/* end of file */
+
+	DBG(SCRIPT, ul_debugobj(dp, "parsing file done [rc=%d]", rc));
 	return rc;
 }
 
@@ -1049,7 +1068,7 @@ int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp)
 	assert(dp);
 	assert(cxt);
 
-	DBG(CXT, ul_debugobj(cxt, "appling script %p", dp));
+	DBG(CXT, ul_debugobj(cxt, "applying script %p", dp));
 
 	old = fdisk_get_script(cxt);
 
