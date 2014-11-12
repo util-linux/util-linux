@@ -97,7 +97,7 @@ static int probe_nilfs2(blkid_probe pr, const struct blkid_idmag *mag)
 	/* backup */
 	sbb = (struct nilfs_super_block *) blkid_probe_get_buffer(
 			pr, ((pr->size / 0x200) - 8) * 0x200, sizeof(struct nilfs_super_block));
-	if (!sbp)
+	if (!sbb)
 		return errno ? -errno : 1;
 
 	/*
