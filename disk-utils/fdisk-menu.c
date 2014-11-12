@@ -109,6 +109,10 @@ struct menu menu_generic = {
 		MENU_ENT_E('u', N_("change display/entry units"), FDISK_DISKLABEL_GPT),
 		MENU_ENT_E('x', N_("extra functionality (experts only)"), FDISK_DISKLABEL_BSD),
 
+		MENU_SEP(N_("Script")),
+		MENU_ENT  ('I', N_("read disk layout from fdisk script file")),
+		MENU_ENT  ('O', N_("write disk layout to fdisk script file")),
+
 		MENU_BSEP(N_("Save & Exit")),
 		MENU_ENT_E('w', N_("write table to disk and exit"), FDISK_DISKLABEL_BSD),
 		MENU_ENT_L('w', N_("write table to disk"), FDISK_DISKLABEL_BSD),
@@ -442,6 +446,74 @@ int process_fdisk_menu(struct fdisk_context **cxt0)
 	return rc;
 }
 
+static int script_read(struct fdisk_context *cxt)
+{
+	struct fdisk_script *sc = NULL;
+	char *filename = NULL;
+	int rc;
+
+	rc = fdisk_ask_string(cxt, _("Enter script file name"), &filename);
+	if (rc)
+		return rc;
+
+	errno = 0;
+	sc = fdisk_new_script_from_file(cxt, filename);
+	if (!sc && errno)
+		fdisk_warn(cxt, _("Cannot open: %s"), filename);
+	else if (!sc)
+		fdisk_warnx(cxt, _("Failed to parse script file %s"), filename);
+	else if (fdisk_apply_script(cxt, sc) != 0)
+		fdisk_warnx(cxt, _("Failed to apply script %s"), filename);
+	else
+		fdisk_info(cxt, _("Script successfully applied."));
+
+	fdisk_unref_script(sc);
+	free(filename);
+	return rc;
+}
+
+static int script_write(struct fdisk_context *cxt)
+{
+	struct fdisk_script *sc = NULL;
+	char *filename = NULL;
+	FILE *f = NULL;
+	int rc;
+
+	rc = fdisk_ask_string(cxt, _("Enter script file name"), &filename);
+	if (rc)
+		return rc;
+
+	sc = fdisk_new_script(cxt);
+	if (!sc) {
+		fdisk_warn(cxt, _("Failed to allocate script handler"));
+		goto done;
+	}
+
+	rc = fdisk_script_read_context(sc, NULL);
+	if (rc) {
+		fdisk_warnx(cxt, _("Failed to read disk layout into script."));
+		goto done;
+	}
+
+	f = fopen(filename, "w");
+	if (!f) {
+		fdisk_warn(cxt, _("Cannot open: %s"), filename);
+		goto done;
+	}
+
+	rc = fdisk_script_write_file(sc, f);
+	if (rc)
+		fdisk_warn(cxt, _("Failed to write script %s"), filename);
+	else
+		fdisk_info(cxt, _("Script successfully saved."));
+done:
+	if (f)
+		fclose(f);
+	fdisk_unref_script(sc);
+	free(filename);
+	return rc;
+}
+
 /*
  * Basic fdisk actions
  */
@@ -515,6 +587,12 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 			fdisk_warnx(cxt, _("Could not delete partition %zu"), n + 1);
 		else
 			fdisk_info(cxt, _("Partition %zu has been deleted."), n + 1);
+		break;
+	case 'I':
+		script_read(cxt);
+		break;
+	case 'O':
+		script_write(cxt);
 		break;
 	case 'l':
 		list_partition_types(cxt);

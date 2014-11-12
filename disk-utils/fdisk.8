@@ -147,6 +147,19 @@ For backward compatibility fdisk also accepts the suffixes KB=1000,
 MB=1000*1000, and so on for GB, TB, PB, EB, ZB and YB. These 10^N suffixes
 are deprecated.
 
+.SH SCRIPT FILES
+.B fdisk
+allows to read (by 'I' command) sfdisk compatible script files. The script is
+applied to in-memory partition table, and then it is possible to modify the
+partition table before you write it to the device.
+.PP
+And vice-versa it is possible to write the current in-memory disk layout
+to the script file by command 'O'.
+.PP
+The script files are compatible between cfdisk, sfdisk, fdisk and another
+libfdisk applications. For more details see
+.BR sfdisk (8).
+
 .SH DISK LABELS
 .B GPT (GUID Partition Table)
 .RS
