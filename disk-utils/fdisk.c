@@ -779,6 +779,7 @@ int main(int argc, char **argv)
 			if (!lb)
 				errx(EXIT_FAILURE, _("unsupported disklabel: %s"), optarg);
 			fdisk_label_set_disabled(lb, 0);
+			break;
 		}
 		case 'u':
 			if (optarg && *optarg == '=')
