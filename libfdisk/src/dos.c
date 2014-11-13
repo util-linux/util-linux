@@ -1877,7 +1877,7 @@ static void print_chain_of_logicals(struct fdisk_context *cxt)
 	for (i = 4; i < cxt->label->nparts_max; i++) {
 		struct pte *pe = self_pte(cxt, i);
 
-		printf("#%02zu EBR [%10ju], "
+		fprintf(stderr, "#%02zu EBR [%10ju], "
 			"data[start=%10ju (%10ju), size=%10ju], "
 			"link[start=%10ju (%10ju), size=%10ju]\n",
 			i, (uintmax_t) pe->offset,

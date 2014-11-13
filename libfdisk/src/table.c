@@ -220,7 +220,7 @@ static int table_insert_partition(
 			pa, poz ? poz : NULL, pa->start, pa->end, pa->size,
 			fdisk_partition_is_freespace(pa) ? "freespace" : "",
 			fdisk_partition_is_nested(pa)    ? "nested"    : "",
-			fdisk_partition_is_container(pa) ? "container" : "primary"));
+			fdisk_partition_is_container(pa) ? "container" : ""));
 	return 0;
 }
 
@@ -368,10 +368,13 @@ static int table_add_freespace(
 		return -ENOMEM;
 	if (!pa)
 		return 0;
+
+	DBG(TAB, ul_debugobj(tb, "adding freespace"));
+
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 	if (parent && fdisk_partition_has_partno(parent)) {
 		while (fdisk_table_next_partition(tb, &itr, &x) == 0) {
-			if (!fdisk_partition_has_partno(pa))
+			if (!fdisk_partition_has_partno(x))
 				continue;
 			if (x->partno == parent->partno) {
 				real_parent = x;
@@ -395,6 +398,8 @@ static int table_add_freespace(
 	rc = table_insert_partition(tb, best, pa);
 
 	fdisk_unref_partition(pa);
+
+	DBG(TAB, ul_debugobj(tb, "adding freespace DONE [rc=%d]", rc));
 	return rc;
 }
 
@@ -417,6 +422,8 @@ static int check_container_freespace(struct fdisk_context *cxt,
 	assert(cont);
 	assert(fdisk_partition_has_start(cont));
 
+	DBG(TAB, ul_debugobj(tb, "analyze container 0x%p", cont));
+
 	last = fdisk_partition_get_start(cont);
 	grain = cxt->grain > cxt->sector_size ?	cxt->grain / cxt->sector_size : 1;
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
@@ -430,15 +437,20 @@ static int check_container_freespace(struct fdisk_context *cxt,
 		if (pa->start > lastplusoff && pa->start - lastplusoff > grain)
 			rc = table_add_freespace(cxt, tb, lastplusoff, pa->start, cont);
 		if (rc)
-			return rc;
+			goto done;
 		last = pa->end;
 	}
 
 	/* free-space remaining in extended partition */
 	x = fdisk_partition_get_start(cont) + fdisk_partition_get_size(cont) - 1;
 	lastplusoff = last + cxt->first_lba;
-	if (lastplusoff < x && x - lastplusoff > grain)
+	if (lastplusoff < x && x - lastplusoff > grain) {
+		DBG(TAB, ul_debugobj(tb, "add remaining space in container 0x%p", cont));
 		rc = table_add_freespace(cxt, tb, lastplusoff, x, cont);
+	}
+
+done:
+	DBG(TAB, ul_debugobj(tb, "analyze container 0x%p DONE [rc=%d]", cont, rc));
 	return rc;
 }
 
@@ -499,6 +511,7 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 	/* add free-space behind last partition to the end of the table (so
 	 * don't use table_add_freespace()) */
 	if (rc == 0 && last + grain < cxt->total_sectors - 1) {
+		DBG(CXT, ul_debugobj(cxt, "freespace behind last partition detected"));
 		rc = new_freespace(cxt,
 			last + (last > cxt->first_lba ? 1 : 0),
 			cxt->last_lba, NULL, &pa);
@@ -510,6 +523,8 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 
 done:
 	fdisk_unref_table(parts);
+
+	DBG(CXT, ul_debugobj(cxt, "get freespace DONE [rc=%d]", rc));
 	return rc;
 }
 
