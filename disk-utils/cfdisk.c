@@ -70,7 +70,20 @@
 #define ARROW_CURSOR_DUMMY	"    "
 #define ARROW_CURSOR_WIDTH	(sizeof(ARROW_CURSOR_STRING) - 1)
 
-#define MENU_PADDING		2
+/* vertical menu */
+#define MENU_V_SPADDING		1	/* space around menu item string */
+
+/* horizontal menu */
+#define MENU_H_SPADDING		0	/* space around menu item string */
+#define MENU_H_BETWEEN		2	/* space between menu items */
+#define MENU_H_PRESTR		"["
+#define MENU_H_POSTSTR		"]"
+
+#define MENU_TITLE_PADDING	3
+
+#define MENU_H_PRESTR_SZ	(sizeof(MENU_H_PRESTR) - 1)
+#define MENU_H_POSTSTR_SZ	(sizeof(MENU_H_POSTSTR) - 1)
+
 #define TABLE_START_LINE	4
 #define MENU_START_LINE		(ui_lines - 5)
 #define INFO_LINE		(ui_lines - 2)
@@ -806,8 +819,8 @@ static void menu_set_title(struct cfdisk_menu *m, const char *title)
 
 	if (title) {
 		size_t len =  mbs_safe_width(title);
-		if (len + 3 > m->width)
-			m->width = len + 3;
+		if (len + MENU_TITLE_PADDING > m->width)
+			m->width = len + MENU_TITLE_PADDING;
 		str = xstrdup(title);
 	}
 	m->title = str;
@@ -855,6 +868,16 @@ static int ui_init(struct cfdisk *cf __attribute__((__unused__)))
 	return 0;
 }
 
+/* "[ string ]" */
+#define MENU_H_ITEMWIDTH(m)	(  MENU_H_PRESTR_SZ \
+				 + MENU_H_SPADDING \
+				 + (m)->width \
+				 + MENU_H_SPADDING \
+				 + MENU_H_POSTSTR_SZ)
+
+#define MENU_V_ITEMWIDTH(m)	(MENU_V_SPADDING + (m)->width + MENU_V_SPADDING)
+
+
 static size_t menuitem_get_line(struct cfdisk *cf, size_t idx)
 {
 	struct cfdisk_menu *m = cf->menu;
@@ -864,7 +887,7 @@ static size_t menuitem_get_line(struct cfdisk *cf, size_t idx)
 			return (ui_lines - (cf->menu->nitems + 1)) / 2 + idx;
 		return (idx % m->page_sz) + 1;
 	} else {
-		size_t len = m->width + 4 + MENU_PADDING;	/* item width */
+		size_t len = MENU_H_ITEMWIDTH(m) + MENU_H_BETWEEN; /** item width */
 		size_t items = ui_cols / len;			/* items per line */
 
 		if (items == 0)
@@ -877,12 +900,12 @@ static size_t menuitem_get_line(struct cfdisk *cf, size_t idx)
 static int menuitem_get_column(struct cfdisk *cf, size_t idx)
 {
 	if (cf->menu->vertical) {
-		size_t nc = cf->menu->width + MENU_PADDING;
+		size_t nc = MENU_V_ITEMWIDTH(cf->menu);
 		if ((size_t) ui_cols <= nc)
 			return 0;
 		return (ui_cols - nc) / 2;
 	} else {
-		size_t len = cf->menu->width + 4 + MENU_PADDING;	/* item width */
+		size_t len = MENU_H_ITEMWIDTH(cf->menu) + MENU_H_BETWEEN; /* item width */
 		size_t items = ui_cols / len;				/* items per line */
 		size_t extra = items < cf->menu->nitems ?		/* extra space on line */
 				ui_cols % len :				/* - multi-line menu */
@@ -891,7 +914,7 @@ static int menuitem_get_column(struct cfdisk *cf, size_t idx)
 		if (items == 0)
 			return 0;					/* hmm... no space */
 
-		extra += MENU_PADDING;		/* add padding after last item to extra */
+		extra += MENU_H_BETWEEN;	/* add padding after last item to extra */
 
 		if (idx < items)
 			return (idx * len) + (extra / 2);
@@ -944,9 +967,9 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 			     struct cfdisk_menuitem *d,
 			     size_t idx)
 {
-	char buf[80 * MB_CUR_MAX];
+	char buf[80 * MB_CUR_MAX], *ptr = buf;
 	const char *name;
-	size_t width = cf->menu->width + 2;	/* 2 = blank around string */
+	size_t width;
 	int ln, cl, vert = cf->menu->vertical;
 
 	if (!menuitem_on_page(cf, idx))
@@ -954,8 +977,16 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 	ln = menuitem_get_line(cf, idx);
 	cl = menuitem_get_column(cf, idx);
 
+	/* string width */
+	if (vert) {
+		width = cf->menu->width + MENU_V_SPADDING;
+		memset(ptr, ' ', MENU_V_SPADDING);
+		ptr += MENU_V_SPADDING;
+	} else
+		width = MENU_H_SPADDING + cf->menu->width + MENU_H_SPADDING;
+
 	name = _(d->name);
-	mbsalign(name, buf, sizeof(buf), &width,
+	mbsalign(name, ptr, sizeof(buf), &width,
 			vert ? MBS_ALIGN_LEFT : MBS_ALIGN_CENTER,
 			0);
 
@@ -964,17 +995,22 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 
 	if (vert) {
 		mvaddch(ln, cl - 1, ACS_VLINE);
-		mvaddch(ln, cl + cf->menu->width + 4, ACS_VLINE);
+		mvaddch(ln, cl + MENU_V_ITEMWIDTH(cf->menu), ACS_VLINE);
 	}
 
-	if (cf->menu->idx == idx) {
+	if (cf->menu->idx == idx)
 		standout();
-		mvprintw(ln, cl, vert ? " %s " : "[%s]", buf);
+
+	if (vert)
+		mvprintw(ln, cl, "%s", buf);
+	else
+		mvprintw(ln, cl, "%s%s%s", MENU_H_PRESTR, buf, MENU_H_POSTSTR);
+
+	if (cf->menu->idx == idx) {
 		standend();
 		if (d->desc)
 			ui_hint(d->desc);
-	} else
-		mvprintw(ln, cl, vert ? " %s " : "[%s]", buf);
+	}
 }
 
 static void ui_clean_menu(struct cfdisk *cf)
@@ -1035,7 +1071,7 @@ static void ui_draw_menu(struct cfdisk *cf)
 		mvaddch(ln - 1, cl - 1, ACS_ULCORNER);
 		mvaddch(ln + nlines, cl - 1, ACS_LLCORNER);
 
-		for (i = 0; i < m->width + 4; i++) {
+		for (i = 0; i < MENU_V_ITEMWIDTH(m); i++) {
 			mvaddch(ln - 1, cl + i, ACS_HLINE);
 			mvaddch(ln + nlines, cl + i, ACS_HLINE);
 		}
@@ -1048,7 +1084,7 @@ static void ui_draw_menu(struct cfdisk *cf)
 		    m->nitems / m->page_sz == m->idx / m->page_sz) {
 			for (i = m->nitems % m->page_sz + 1; i <= m->page_sz; i++) {
 				mvaddch(i, cl - 1, ACS_VLINE);
-				mvaddch(i, cl + cf->menu->width + 4, ACS_VLINE);
+				mvaddch(i, cl + MENU_V_ITEMWIDTH(m), ACS_VLINE);
 			}
 		}
 		if (m->title) {
@@ -1057,9 +1093,9 @@ static void ui_draw_menu(struct cfdisk *cf)
 			attroff(A_BOLD);
 		}
 		if (curpg != 0)
-			mvaddch(ln - 1, cl + m->width + 3, ACS_UARROW);
+			mvaddch(ln - 1, cl + MENU_V_ITEMWIDTH(m) - 2, ACS_UARROW);
 		if (m->page_sz && curpg < m->nitems / m->page_sz)
-			mvaddch(ln + nlines, cl + m->width + 3, ACS_DARROW);
+			mvaddch(ln + nlines, cl + MENU_V_ITEMWIDTH(m) - 2, ACS_DARROW);
 	}
 
 	DBG(MENU, ul_debug("draw end."));
