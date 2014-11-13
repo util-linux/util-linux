@@ -1918,6 +1918,7 @@ static int cmp_ebr_offsets(const void *a, const void *b)
 static void fix_chain_of_logicals(struct fdisk_context *cxt)
 {
 	struct fdisk_dos_label *l = self_label(cxt);
+	struct pte *last;
 	size_t i;
 
 	DBG(LABEL, print_chain_of_logicals(cxt));
@@ -1972,13 +1973,15 @@ again:
 		set_partition(cxt, i, 1, nxt->offset,
 				get_abs_partition_end(nxt),
 				MBR_DOS_EXTENDED_PARTITION, 0);
-
-		if (i + 1 == cxt->label->nparts_max - 1) {
-			clear_partition(nxt->ex_entry);
-			partition_set_changed(cxt, i + 1, 1);
-		}
-
 	}
+
+	/* always terminate the chain ! */
+	last = self_pte(cxt, cxt->label->nparts_max - 1);
+	if (last) {
+		clear_partition(last->ex_entry);
+		partition_set_changed(cxt, cxt->label->nparts_max - 1, 1);
+	}
+
 	DBG(LABEL, print_chain_of_logicals(cxt));
 }
 
