@@ -66,7 +66,9 @@ Display version information and exit.
 .BR \-z , " \-\-zero"
 Start with an in-memory zeroed partition table.  This option does not zero the
 partition table on the disk; rather, it simply starts the program without
-reading the existing partition table.
+reading the existing partition table.  This option allows to a create new
+partition table from scratch or create a new partition table according to
+a sfdisk compatible script.
 
 .SH COMMANDS
 The commands for
@@ -105,18 +107,16 @@ MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB
 Quit the program.  This will exit the program without writing any data to
 the disk.
 .TP
-.B l
-Load sfdisk compatible script file and create a new (in-memory) disk label 
-according to the script, and then it is possible to modify the
-partition table before you write it to the device.
-.TP
 .B u
 Dump the current in-memory partition table to the sfdisk compatible file.
-to the script file by command 'O'.
 .sp
 The script files are compatible between cfdisk, sfdisk, fdisk and another
 libfdisk applications. For more details see
 .BR sfdisk (8).
+.sp
+It is also possible to load sfdisk script to cfdisk if there is no partition
+table on the device or when you start cfdisk with \fI--zero\fR command line
+option.
 .TP
 .B t
 Change the partition type.  By default, new partitions are created as

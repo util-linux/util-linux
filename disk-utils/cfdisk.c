@@ -159,7 +159,6 @@ static struct cfdisk_menuitem main_menuitems[] = {
 	{ 'h', N_("Help"), N_("Print help screen") },
 	{ 's', N_("Sort"), N_("Fix partitions order") },
 	{ 'W', N_("Write"), N_("Write partition table to disk (this might destroy data)") },
-	{ 'l', N_("Load"), N_("Load disk layout from sfdisk compatible script file") },
 	{ 'u', N_("Dump"), N_("Dump partition table to sfdisk compatible script file") },
 	{ 0, NULL, NULL }
 };
@@ -1771,7 +1770,6 @@ static int ui_help(void)
 		N_("  b          Toggle bootable flag of the current partition"),
 		N_("  d          Delete the current partition"),
 		N_("  h          Print this screen"),
-		N_("  l          Load disk layout from sfdisk compatible script file"), 
 		N_("  n          Create new partition from free space"),
 		N_("  q          Quit program without writing partition table"),
 		N_("  t          Change the partition type"),
@@ -1951,17 +1949,6 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		if (cf->wrong_order) {
 			fdisk_reorder_partitions(cf->cxt);
 			ref = 1;
-		}
-		break;
-	case 'l':
-		rc = ui_script_read(cf);
-		if (rc == 0) {
-			info = _("Script file successfully applied.");
-			ref = 1;
-		} else if (rc != CFDISK_ERR_ESC) {
-			refresh();
-			sleep(2);
-			warn = _("Failed to read script file");
 		}
 		break;
 	case 'u':
