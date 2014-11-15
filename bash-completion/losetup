@@ -6,12 +6,12 @@ _losetup_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-d'|'--detach')
-			ARG="$(losetup --output NAME | awk '{if (1 < NR) {print}}')"
+			ARG="$($1 --output NAME | awk '{if (1 < NR) {print}}')"
 			COMPREPLY=( $(compgen -W "$ARG" -- $cur) )
 			return 0
 			;;
 		'-j'|'--associated')
-			ARG="$(losetup --output BACK-FILE | awk '{if (1 < NR) {print}}')"
+			ARG="$($1 --output BACK-FILE | awk '{if (1 < NR) {print}}')"
 			COMPREPLY=( $(compgen -W "$ARG" -- $cur) )
 			return 0
 			;;

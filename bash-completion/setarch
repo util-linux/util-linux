@@ -10,7 +10,7 @@ _setarch_module()
 			;;
 	esac
 	if [ $COMP_CWORD -eq 1 ]; then
-		COMPREPLY=( $(compgen -W "$(setarch --list)" -- $cur) )
+		COMPREPLY=( $(compgen -W "$($1 --list)" -- $cur) )
 		return 0
 	fi
 	case $cur in

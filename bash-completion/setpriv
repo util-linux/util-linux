@@ -8,7 +8,7 @@ _setpriv_module()
 		'--inh-caps'|'--bounding-set')
 			# FIXME: how to append to a string with compgen?
 			local INHERIT
-			INHERIT=$(setpriv --list-caps| awk '{print $1, "-" $1}')
+			INHERIT=$($1 --list-caps| awk '{print $1, "-" $1}')
 			compopt -o nospace
 			COMPREPLY=( $(compgen -W "all $INHERIT" -S ',' -- $cur) )
 			return 0

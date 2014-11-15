@@ -70,7 +70,7 @@ _lsblk_module()
 			;;
 	esac
 	local DEVS
-	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
+	COMPREPLY=( $(compgen -W "$($1 -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _lsblk_module lsblk

@@ -6,7 +6,7 @@ _chsh_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-s'|'--shell')
-			COMPREPLY=( $(compgen -W "$(chsh -l)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$($1 -l)" -- $cur) )
 			return 0
 			;;
 		'-u'|'--help'|'-v'|'--version')

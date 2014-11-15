@@ -15,7 +15,7 @@ _eject_module()
 			return 0
 			;;
 		'-x'|'--cdspeed')
-			COMPREPLY=( $(compgen -W "$(eject -X)" -- $cur) )
+			COMPREPLY=( $(compgen -W "$($1 -X)" -- $cur) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
