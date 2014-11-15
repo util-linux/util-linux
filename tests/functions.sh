@@ -601,7 +601,7 @@ function ts_scsi_debug_init {
 	local devname
 	TS_DEVICE="none"
 
-	# dry run is not realy reliable, real modprobe may still fail
+	# dry run is not really reliable, real modprobe may still fail
 	modprobe --dry-run --quiet scsi_debug &>/dev/null \
 		|| ts_skip "missing scsi_debug module (dry-run)"
 

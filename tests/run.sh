@@ -49,7 +49,7 @@ while [ -n "$1" ]; do
 		;;
 	--nonroot)
 		if [ $(id -ru) -eq 0 ]; then
-			echo "Ignore utils-linux test suite [non-root UID expected]."
+			echo "Ignore util-linux test suite [non-root UID expected]."
 			exit 0
 		fi
 		;;
