@@ -90,7 +90,11 @@ char *fdisk_partname(const char *dev, size_t partno)
 
 	w = strlen(dev);
 	if (isdigit(dev[w - 1]))
+#ifdef __GNU__
+		p = "s";
+#else
 		p = "p";
+#endif
 
 	/* devfs kludge - note: fdisk partition names are not supposed
 	   to equal kernel names, so there is no reason to do this */
