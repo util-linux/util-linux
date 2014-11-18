@@ -25,9 +25,39 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "all-io.h"
 #include "nls.h"
 #include "strutils.h"
 #include "closestream.h"
+
+#include <signal.h>
+#include <sys/socket.h>
+#include <linux/if.h>
+
+#include <linux/tty.h>		/* for N_GSM0710 */
+
+#ifdef LINUX_GSMMUX_H
+# include <linux/gsmmux.h>	/* Add by guowenxue */
+#else
+struct gsm_config
+{
+	unsigned int adaption;
+	unsigned int encapsulation;
+	unsigned int initiator;
+	unsigned int t1;
+	unsigned int t2;
+	unsigned int t3;
+	unsigned int n2;
+	unsigned int mru;
+	unsigned int mtu;
+	unsigned int k;
+	unsigned int i;
+	unsigned int unused[8];		/* Padding for expansion without
+					   breaking stuff */
+};
+# define GSMIOC_GETCONF		_IOR('G', 0, struct gsm_config)
+# define GSMIOC_SETCONF		_IOW('G', 1, struct gsm_config)
+#endif
 
 #ifndef N_GIGASET_M101
 # define N_GIGASET_M101 16
@@ -36,6 +66,8 @@
 #ifndef N_PPS
 # define N_PPS 18
 #endif
+
+#define MAXINTROPARMLEN 32
 
 /* attach a line discipline ioctl */
 #ifndef TIOCSETD
@@ -51,6 +83,7 @@ struct ld_table {
 
 /* currently supported line disciplines, plus some aliases */
 static const struct ld_table ld_discs[] = {
+	{ "GSM0710",		N_GSM0710},
 	{ "TTY",		N_TTY },
 	{ "SLIP",		N_SLIP },
 	{ "MOUSE",		N_MOUSE },
@@ -69,7 +102,7 @@ static const struct ld_table ld_discs[] = {
 	{ "M101",		N_GIGASET_M101 },
 	{ "GIGASET",		N_GIGASET_M101 },
 	{ "GIGASET_M101",	N_GIGASET_M101 },
-	{ NULL, 		0 }
+	{ NULL,	0 }
 };
 
 /* known c_iflag names */
@@ -161,6 +194,8 @@ static void __attribute__ ((__noreturn__)) usage(int exitcode)
 
 	fputs(_(" -d, --debug             print verbose messages to stderr\n"), out);
 	fputs(_(" -s, --speed <value>     set serial line speed\n"), out);
+	fputs(_(" -c, --intro-command <string> intro sent before ldattach\n"), out);
+	fputs(_(" -p, --pause <seconds>   pause between intro and ldattach\n"), out);
 	fputs(_(" -7, --sevenbits         set character size to 7 bits\n"), out);
 	fputs(_(" -8, --eightbits         set character size to 8 bits\n"), out);
 	fputs(_(" -n, --noparity          set parity to none\n"), out);
@@ -206,6 +241,30 @@ static int my_cfsetspeed(struct termios *ts, int speed)
 #endif
 }
 
+static void handler(int s)
+{
+	dbg("got SIG %i -> exiting\n", s);
+	exit(EXIT_SUCCESS);
+}
+
+static void gsm0710_set_conf(int tty_fd)
+{
+	struct gsm_config c;
+
+	/* Add by guowenxue */
+	/*  get n_gsm configuration */
+	ioctl(tty_fd, GSMIOC_GETCONF, &c);
+	/*  we are initiator and need encoding 0 (basic) */
+	c.initiator = 1;
+	c.encapsulation = 0;
+	/*  our modem defaults to a maximum size of 127 bytes */
+	c.mru = 127;
+	c.mtu = 127;
+	/*  set the new configuration */
+	ioctl(tty_fd, GSMIOC_SETCONF, &c);
+	/* Add by guowenxue end*/
+}
+
 int main(int argc, char **argv)
 {
 	int tty_fd;
@@ -215,6 +274,9 @@ int main(int argc, char **argv)
 	int ldisc;
 	int optc;
 	char *dev;
+	int intropause = 1;
+	char *introparm = NULL;
+
 	static const struct option opttbl[] = {
 		{"speed", required_argument, NULL, 's'},
 		{"sevenbits", no_argument, NULL, '7'},
@@ -228,8 +290,13 @@ int main(int argc, char **argv)
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{"debug", no_argument, NULL, 'd'},
+	        {"intro-command", no_argument, NULL, 'c'},
+	        {"pause", no_argument, NULL, 'p'},
 		{NULL, 0, NULL, 0}
 	};
+
+	signal(SIGKILL, handler);
+	signal(SIGINT, handler);
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -240,7 +307,7 @@ int main(int argc, char **argv)
 	if (argc == 0)
 		usage(EXIT_SUCCESS);
 	while ((optc =
-		getopt_long(argc, argv, "dhV78neo12s:i:", opttbl,
+		getopt_long(argc, argv, "dhV78neo12s:i:c:p:", opttbl,
 			    NULL)) >= 0) {
 		switch (optc) {
 		case 'd':
@@ -261,6 +328,14 @@ int main(int argc, char **argv)
 			break;
 		case 's':
 			speed = strtos32_or_err(optarg, _("invalid speed argument"));
+			break;
+		case 'p':
+			intropause = strtou32_or_err(optarg, _("invalid pause argument"));
+			if (intropause > 10)
+				errx(EXIT_FAILURE, "invalid pause: %s", optarg);
+			break;
+		case 'c':
+			introparm = optarg;
 			break;
 		case 'i':
 			parse_iflag(optarg, &set_iflag, &clr_iflag);
@@ -353,11 +428,27 @@ int main(int argc, char **argv)
 	dbg("set to raw %d %c%c%c: cflag=0x%x",
 	    speed, bits, parity, stop, ts.c_cflag);
 
+	if (introparm && *introparm)
+	{
+		dbg("intro command is '%s'", introparm);
+		if (write_all(tty_fd, introparm, strlen(introparm)) != 0)
+			err(EXIT_FAILURE,
+			    _("cannot write intro command to %s"), dev);
+
+		if (intropause) {
+			dbg("waiting for %d seconds", intropause);
+			sleep(intropause);
+		}
+	}
+
 	/* Attach the line discpline. */
 	if (ioctl(tty_fd, TIOCSETD, &ldisc) < 0)
 		err(EXIT_FAILURE, _("cannot set line discipline"));
 
 	dbg("line discipline set to %d", ldisc);
+
+	if (ldisc == N_GSM0710)
+		gsm0710_set_conf(tty_fd);
 
 	/* Go into background if not in debug mode. */
 	if (!debug && daemon(0, 0) < 0)

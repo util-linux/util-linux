@@ -87,6 +87,9 @@ Driver for Siemens Gigaset M101 serial DECT adapter.
 .TP
 .BR PPS ( 18 )
 Driver for serial line Pulse Per Second (PPS) source.
+.TP
+.BR GSM0710 ( 21 )
+Driver for GSM 07.10 multiplexing protocol modem (CMUX).
 .SH OPTIONS
 .TP
 .BR \-1 , " \-\-onestopbit"
@@ -125,6 +128,14 @@ Set the parity of the serial line to odd.
 .TP
 .BR  \-s , " \-\-speed " \fIvalue
 Set the speed (the baud rate) of the serial line to the specified \fIvalue\fR.
+.TP
+.BR \-c , " \-\-intro-command " \fIstring
+Define an intro command that is sent through the serial line before the invocation
+of ldattach. E.g. in conjunction with line discipline GSM0710, the command
+\'AT+CMUX=0\\r\' is commonly suitable to switch the modem into the CMUX mode.
+.TP
+.BR \-p , " \-\-pause "  \fIvalue
+Sleep for \fIvalue\fR seconds before the invocation of ldattach. Default is one second.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.

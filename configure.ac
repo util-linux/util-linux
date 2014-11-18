@@ -189,6 +189,7 @@ AC_CHECK_HEADERS([ \
 	linux/fd.h \
 	linux/raw.h \
 	linux/tiocl.h \
+	linux/gsmmux.h \
 	linux/version.h \
 	linux/securebits.h \
 	locale.h \
