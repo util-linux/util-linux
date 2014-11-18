@@ -42,6 +42,7 @@
 #include "strutils.h"
 #include "c.h"
 #include "closestream.h"
+#include "timeutils.h"
 
 #ifndef BLKDISCARD
 #define BLKDISCARD	_IO(0x12,119)
@@ -80,7 +81,7 @@ int main(int argc, char **argv)
 	int c, fd, verbose = 0, secure = 0, secsize;
 	uint64_t end, blksize, step, range[2], stats[2];
 	struct stat sb;
-	struct timespec now, last;
+	struct timeval now, last;
 
 	static const struct option longopts[] = {
 	    { "help",      0, 0, 'h' },
@@ -178,7 +179,7 @@ int main(int argc, char **argv)
 			 "to sector size %i"), path, range[1], secsize);
 
 	stats[0] = range[0], stats[1] = 0;
-	clock_gettime(CLOCK_MONOTONIC, &last);
+	gettime_monotonic(&last);
 
 	for (range[0] = range[0]; range[0] < end; range[0] += range[1]) {
 		if (range[0] + range[1] > end)
@@ -194,7 +195,7 @@ int main(int argc, char **argv)
 
 		/* reporting progress */
 		if (verbose && step) {
-			clock_gettime(CLOCK_MONOTONIC, &now);
+			gettime_monotonic(&now);
 			if (last.tv_sec < now.tv_sec) {
 				print_stats(path, stats);
 				stats[0] = range[0], stats[1] = 0;

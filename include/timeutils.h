@@ -3,6 +3,7 @@
   copied to util-linux at August 2013.
 
   Copyright 2010 Lennart Poettering
+  Copyright (C) 2014 Karel Zak <kzak@redhat.com>
 
   systemd is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as published by
@@ -51,5 +52,7 @@ typedef uint64_t nsec_t;
 #define FORMAT_TIMESPAN_MAX 64
 
 int parse_timestamp(const char *t, usec_t *usec);
+
+int gettime_monotonic(struct timeval *tv);
 
 #endif /* UTIL_LINUX_TIME_UTIL_H */

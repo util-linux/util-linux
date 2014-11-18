@@ -52,6 +52,7 @@
 #include "xalloc.h"
 #include "pathnames.h"
 #include "sysfs.h"
+#include "timeutils.h"
 
 /*
  * sg_io_hdr_t driver_status -- see kernel include/scsi/scsi.h
@@ -462,7 +463,7 @@ static void toggle_tray(int fd)
 	 * needed.  In my experience the function needs less than 0.05
 	 * seconds if the tray was already open, and at least 1.5 seconds
 	 * if it was closed.  */
-	gettimeofday(&time_start, NULL);
+	gettime_monotonic(&time_start);
 
 	/* Send the CDROMEJECT command to the device. */
 	if (!eject_cdrom(fd))
@@ -470,7 +471,7 @@ static void toggle_tray(int fd)
 
 	/* Get the second timestamp, to measure the time needed to open
 	 * the tray.  */
-	gettimeofday(&time_stop, NULL);
+	gettime_monotonic(&time_stop);
 
 	time_elapsed = (time_stop.tv_sec * 1000000 + time_stop.tv_usec) -
 		(time_start.tv_sec * 1000000 + time_start.tv_usec);
