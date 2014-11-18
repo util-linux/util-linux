@@ -35,7 +35,7 @@ case "$1" in
 	log_end_msg $?
     ;;
   stop)
-	log_daemon_msg "Stopping uuidd generator" "uuidd"
+	log_daemon_msg "Stopping uuid generator" "uuidd"
 	killproc -p $PIDFILE $DAEMON
 	log_end_msg $?
     ;;
