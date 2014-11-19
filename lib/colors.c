@@ -438,8 +438,9 @@ static int cn_sequence(const char *str, char **seq)
 
 
 /*
- * Adds one color sequence to array with color scheme,
- * @seq and @name have to be allocated strings
+ * Adds one color sequence to array with color scheme.
+ * When returning success (0) this function takes ownership of
+ * @seq and @name, which have to be allocated strings.
  */
 static int colors_add_scheme(struct ul_color_ctl *cc,
 			     char *name,
@@ -455,7 +456,6 @@ static int colors_add_scheme(struct ul_color_ctl *cc,
 	DBG(SCHEME, ul_debug("add '%s'", name));
 
 	rc = cn_sequence(seq0, &seq);
-	free(seq0);
 	if (rc)
 		return rc;
 
@@ -484,6 +484,8 @@ static int colors_add_scheme(struct ul_color_ctl *cc,
 		cc->schemes = tmp;
 		cc->schemes_sz = cc->nschemes + 10;
 	}
+
+	free(seq0);
 
 	/* add a new item */
 	cs = &cc->schemes[cc->nschemes++];
