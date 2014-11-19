@@ -1060,6 +1060,52 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 }
 
 /*
+ * Called by mtab parser to filter out entries, non-zero means that
+ * an entry has to be filtered out.
+ */
+static int mtab_filter(struct libmnt_fs *fs, void *data)
+{
+	if (!fs || !data)
+		return 0;
+	if (mnt_fs_streq_target(fs, data))
+		return 0;
+	if (mnt_fs_streq_srcpath(fs, data))
+		return 0;
+	return 1;
+}
+
+/*
+ * The same like mnt_context_get_mtab(), but does not read all mountinfo/mtab
+ * file, but only entries relevant for @tgt.
+ */
+int mnt_context_get_mtab_for_target(struct libmnt_context *cxt,
+				    struct libmnt_table **mtab,
+				    const char *tgt)
+{
+	struct stat st;
+	struct libmnt_cache *cache = NULL;
+	char *cn_tgt = NULL;
+	int rc;
+
+	if (stat(tgt, &st) == 0 && S_ISDIR(st.st_mode)) {
+		cache = mnt_context_get_cache(cxt);
+		cn_tgt = mnt_resolve_path(tgt, cache);
+		if (cn_tgt)
+			mnt_context_set_tabfilter(cxt, mtab_filter, cn_tgt);
+	}
+
+	rc = mnt_context_get_mtab(cxt, mtab);
+
+	if (cn_tgt) {
+		mnt_context_set_tabfilter(cxt, NULL, NULL);
+		if (!cache)
+			free(cn_tgt);
+	}
+
+	return rc;
+}
+
+/*
  * Allows to specify a filter for tab file entries. The filter is called by
  * the table parser. Currently used for mtab and utab only.
  */
@@ -1979,6 +2025,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	int rc = -1;
 	struct libmnt_table *tab = NULL;
 	const char *src = NULL, *tgt = NULL;
+	unsigned long mflags = 0;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -1999,6 +2046,13 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		cxt->optsmode &= ~MNT_OMODE_FSTAB;
 		cxt->optsmode &= ~MNT_OMODE_MTAB;
 		cxt->optsmode &= ~MNT_OMODE_FORCE;
+	}
+
+	if (mnt_context_get_mflags(cxt, &mflags) == 0 && mflags & MS_REMOUNT) {
+		/* preffer mtab on remount */
+		DBG(CXT, ul_debugobj(cxt, "force mtab parsing on remount"));
+		cxt->optsmode |= MNT_OMODE_MTAB;
+		cxt->optsmode &= ~MNT_OMODE_FSTAB;
 	}
 
 	if (cxt->fs) {
@@ -2030,14 +2084,12 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		return 0;
 	}
 
-	DBG(CXT, ul_debugobj(cxt,
-		"trying to apply fstab (src=%s, target=%s)", src, tgt));
-
 	/* let's initialize cxt->fs */
 	ignore_result( mnt_context_get_fs(cxt) );
 
 	/* try fstab */
 	if (cxt->optsmode & MNT_OMODE_FSTAB) {
+		DBG(CXT, ul_debugobj(cxt, "trying to apply fstab (src=%s, target=%s)", src, tgt));
 		rc = mnt_context_get_fstab(cxt, &tab);
 		if (!rc)
 			rc = apply_table(cxt, tab, MNT_ITER_FORWARD);
@@ -2045,8 +2097,11 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 
 	/* try mtab */
 	if (rc < 0 && (cxt->optsmode & MNT_OMODE_MTAB)) {
-		DBG(CXT, ul_debugobj(cxt, "trying to apply from mtab"));
-		rc = mnt_context_get_mtab(cxt, &tab);
+		DBG(CXT, ul_debugobj(cxt, "trying to apply mtab (src=%s, target=%s)", src, tgt));
+		if (tgt)
+			rc = mnt_context_get_mtab_for_target(cxt, &tab, tgt);
+		else
+			rc = mnt_context_get_mtab(cxt, &tab);
 		if (!rc)
 			rc = apply_table(cxt, tab, MNT_ITER_BACKWARD);
 	}

@@ -376,6 +376,9 @@ extern int mnt_context_mtab_writable(struct libmnt_context *cxt);
 extern int mnt_context_utab_writable(struct libmnt_context *cxt);
 extern const char *mnt_context_get_writable_tabpath(struct libmnt_context *cxt);
 
+extern int mnt_context_get_mtab_for_target(struct libmnt_context *cxt,
+				    struct libmnt_table **mtab, const char *tgt);
+
 extern int mnt_context_prepare_srcpath(struct libmnt_context *cxt);
 extern int mnt_context_prepare_target(struct libmnt_context *cxt);
 extern int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type);
