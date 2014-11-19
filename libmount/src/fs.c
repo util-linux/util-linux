@@ -51,25 +51,10 @@ void mnt_free_fs(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return;
-	list_del(&fs->ents);
+
 	DBG(FS, ul_debugobj(fs, "free [refcount=%d]", fs->refcount));
 
-	free(fs->source);
-	free(fs->bindsrc);
-	free(fs->tagname);
-	free(fs->tagval);
-	free(fs->root);
-	free(fs->swaptype);
-	free(fs->target);
-	free(fs->fstype);
-	free(fs->optstr);
-	free(fs->vfs_optstr);
-	free(fs->fs_optstr);
-	free(fs->user_optstr);
-	free(fs->attrs);
-	free(fs->opt_fields);
-	free(fs->comment);
-
+	mnt_reset_fs(fs);
 	free(fs);
 }
 
@@ -87,6 +72,24 @@ void mnt_reset_fs(struct libmnt_fs *fs)
 		return;
 
 	ref = fs->refcount;
+
+	list_del(&fs->ents);
+	free(fs->source);
+	free(fs->bindsrc);
+	free(fs->tagname);
+	free(fs->tagval);
+	free(fs->root);
+	free(fs->swaptype);
+	free(fs->target);
+	free(fs->fstype);
+	free(fs->optstr);
+	free(fs->vfs_optstr);
+	free(fs->fs_optstr);
+	free(fs->user_optstr);
+	free(fs->attrs);
+	free(fs->opt_fields);
+	free(fs->comment);
+
 	memset(fs, 0, sizeof(*fs));
 	INIT_LIST_HEAD(&fs->ents);
 	fs->refcount = ref;
