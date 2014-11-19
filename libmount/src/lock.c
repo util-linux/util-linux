@@ -260,6 +260,8 @@ static int mnt_wait_mtab_lock(struct libmnt_lock *ml, struct flock *fl, time_t m
 	int ret = 0;
 
 	gettime_monotonic(&now);
+	DBG(LOCKS, ul_debugobj(ml, "(%d) waiting for F_SETLKW (now=%ju, maxtime=%ju, diff=%ju)",
+				getpid(), now.tv_sec, maxtime, maxtime - now.tv_sec));
 
 	if (now.tv_sec >= maxtime)
 		return 1;		/* timeout */
@@ -271,7 +273,6 @@ static int mnt_wait_mtab_lock(struct libmnt_lock *ml, struct flock *fl, time_t m
 
 	sigaction(SIGALRM, &sa, &osa);
 
-	DBG(LOCKS, ul_debugobj(ml, "(%d) waiting for F_SETLKW", getpid()));
 
 	alarm(maxtime - now.tv_sec);
 	if (fcntl(ml->lockfile_fd, F_SETLKW, fl) == -1)
@@ -602,7 +603,6 @@ int test_lock(struct libmnt_test *ts, int argc, char *argv[])
 {
 	time_t synctime = 0;
 	unsigned int usecs;
-	struct timeval tv;
 	const char *datafile = NULL;
 	int verbose = 0, loops = 0, l, idx = 1;
 
@@ -647,7 +647,9 @@ int test_lock(struct libmnt_test *ts, int argc, char *argv[])
 
 	/* start the test in exactly defined time */
 	if (synctime) {
-		gettime_monotonic(&tv);
+		struct timeval tv;
+
+		gettimeofday(&tv, NULL);
 		if (synctime && synctime - tv.tv_sec > 1) {
 			usecs = ((synctime - tv.tv_sec) * 1000000UL) -
 						(1000000UL - tv.tv_usec);
