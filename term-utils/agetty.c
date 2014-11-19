@@ -1223,7 +1223,7 @@ static void termio_init(struct options *op, struct termios *tp)
 		return;
 	}
 
-	if (op->flags & F_KEEPSPEED) {
+	if (op->flags & F_KEEPSPEED || !op->numspeed) {
 		/* Save the original setting. */
 		ispeed = cfgetispeed(tp);
 		ospeed = cfgetospeed(tp);
@@ -1619,6 +1619,9 @@ static void do_prompt(struct options *op, struct termios *tp)
 static void next_speed(struct options *op, struct termios *tp)
 {
 	static int baud_index = -1;
+
+	if (!op->numspeed)
+		return;
 
 	if (baud_index == -1)
 		/*
