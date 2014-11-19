@@ -61,6 +61,13 @@ library.  It can determine the type of content (e.g. filesystem or swap)
 that a block device holds, and also the attributes (tokens, NAME=value pairs)
 from the content metadata (e.g. LABEL or UUID fields).
 .PP
+It is recommended to use
+.BR lsblk (8)
+command to get information about block devices rather than blkid.
+.BR lsblk (8)
+provides more information, better control on output formatting and it does not
+require root permissions to get actual information.
+.PP
 When
 .I device
 is specified, tokens from only this device are displayed.
@@ -302,7 +309,8 @@ and Karel Zak.
 .SH SEE ALSO
 .BR libblkid (3),
 .BR findfs (8),
-.BR wipefs (8)
+.BR wipefs (8),
+.BR lsblk (8),
 .SH AVAILABILITY
 The blkid command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
