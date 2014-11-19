@@ -1993,6 +1993,9 @@ static int apply_table(struct libmnt_context *cxt, struct libmnt_table *tb,
 	if (!rc && !mnt_fs_get_fstype(cxt->fs))
 		rc = mnt_fs_set_fstype(cxt->fs, mnt_fs_get_fstype(fs));
 
+	if (!rc && !mnt_fs_get_root(cxt->fs) && mnt_fs_get_root(fs))
+		rc = mnt_fs_set_root(cxt->fs, mnt_fs_get_root(fs));
+
 	if (rc)
 		return rc;
 
