@@ -495,6 +495,7 @@ static void log_audit(struct login_context *cxt, int status)
 
 static void log_lastlog(struct login_context *cxt)
 {
+	struct sigaction sa, oldsa_xfsz;
 	struct lastlog ll;
 	time_t t;
 	int fd;
@@ -502,9 +503,14 @@ static void log_lastlog(struct login_context *cxt)
 	if (!cxt->pwd)
 		return;
 
+	/* lastlog is huge on systems with large UIDs, ignore SIGXFSZ */
+	memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = SIG_IGN;
+	sigaction(SIGXFSZ, &sa, &oldsa_xfsz);
+
 	fd = open(_PATH_LASTLOG, O_RDWR, 0);
 	if (fd < 0)
-		return;
+		goto done;
 
 	if (lseek(fd, (off_t) cxt->pwd->pw_uid * sizeof(ll), SEEK_SET) == -1)
 		goto done;
@@ -542,7 +548,10 @@ static void log_lastlog(struct login_context *cxt)
 	if (write_all(fd, (char *)&ll, sizeof(ll)))
 		warn(_("write lastlog failed"));
 done:
-	close(fd);
+	if (fd >= 0)
+		close(fd);
+
+	sigaction(SIGXFSZ, &oldsa_xfsz, NULL);		/* restore original setting */
 }
 
 /*
