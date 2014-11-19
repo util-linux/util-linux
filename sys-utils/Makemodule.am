@@ -71,7 +71,7 @@ EXTRA_DIST += sys-utils/fstrim.timer
 if BUILD_DMESG
 bin_PROGRAMS += dmesg
 dist_man_MANS += sys-utils/dmesg.1
-dmesg_SOURCES = sys-utils/dmesg.c lib/boottime.c
+dmesg_SOURCES = sys-utils/dmesg.c lib/monotonic.c
 dmesg_LDADD = $(LDADD) libcommon.la $(CLOCKGETTIME_LIBS)
 endif
 
@@ -90,7 +90,7 @@ endif
 if BUILD_BLKDISCARD
 sbin_PROGRAMS += blkdiscard
 dist_man_MANS += sys-utils/blkdiscard.8
-blkdiscard_SOURCES = sys-utils/blkdiscard.c
+blkdiscard_SOURCES = sys-utils/blkdiscard.c lib/monotonic.c
 blkdiscard_LDADD = $(LDADD) libcommon.la $(CLOCKGETTIME_LIBS)
 endif
 
@@ -166,7 +166,7 @@ endif # BUILD_SETARCH
 
 if BUILD_EJECT
 usrbin_exec_PROGRAMS += eject
-eject_SOURCES =  sys-utils/eject.c
+eject_SOURCES =  sys-utils/eject.c lib/monotonic.c
 eject_LDADD = $(LDADD) libmount.la libcommon.la $(CLOCKGETTIME_LIBS)
 eject_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 dist_man_MANS += sys-utils/eject.1

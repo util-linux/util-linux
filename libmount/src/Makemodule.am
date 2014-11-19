@@ -6,6 +6,7 @@ nodist_mountinc_HEADERS = $(top_builddir)/libmount/src/libmount.h
 usrlib_exec_LTLIBRARIES += libmount.la
 libmount_la_SOURCES = \
 	include/list.h \
+	lib/monotonic.c \
 	\
 	libmount/src/cache.c \
 	libmount/src/fs.c \

@@ -50,7 +50,7 @@
 #include "carefulputc.h"
 #include "strutils.h"
 #include "timeutils.h"
-#include "boottime.h"
+#include "monotonic.h"
 
 #if defined(_HAVE_UT_TV)
 # define UL_UT_TIME ut_tv.tv_sec

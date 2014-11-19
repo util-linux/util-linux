@@ -25,7 +25,7 @@
 #include "closestream.h"
 #include "pathnames.h"
 #include "mountP.h"
-#include "timeutils.h"
+#include "monotonic.h"
 
 /*
  * lock handler

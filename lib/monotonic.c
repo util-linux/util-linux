@@ -1,11 +1,14 @@
-
+/*
+ * Please, don't add this file to libcommon because clock_gettime() requires
+ * -lrt on systems with old libc.
+ */
 #include <time.h>
 #include <sys/sysinfo.h>
 #include <sys/time.h>
 
 #include "c.h"
 #include "nls.h"
-#include "boottime.h"
+#include "monotonic.h"
 
 int get_boot_time(struct timeval *boot_time)
 {
@@ -39,5 +42,27 @@ int get_boot_time(struct timeval *boot_time)
 	return 0;
 #else
 	return -ENOSYS;
+#endif
+}
+
+int gettime_monotonic(struct timeval *tv)
+{
+#ifdef CLOCK_MONOTONIC
+	/* Can slew only by ntp and adjtime */
+	int ret;
+	struct timespec ts;
+
+# ifdef CLOCK_MONOTONIC_RAW
+	/* Linux specific, cant slew */
+	if (!(ret = clock_gettime(CLOCK_MONOTONIC_RAW, &ts))) {
+# else
+	if (!(ret = clock_gettime(CLOCK_MONOTONIC, &ts))) {
+# endif
+		tv->tv_sec = ts.tv_sec;
+		tv->tv_usec = ts.tv_nsec / 1000;
+	}
+	return ret;
+#else
+	return gettimeofday(tv, NULL);
 #endif
 }

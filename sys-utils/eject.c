@@ -52,7 +52,7 @@
 #include "xalloc.h"
 #include "pathnames.h"
 #include "sysfs.h"
-#include "timeutils.h"
+#include "monotonic.h"
 
 /*
  * sg_io_hdr_t driver_status -- see kernel include/scsi/scsi.h

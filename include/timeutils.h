@@ -53,6 +53,4 @@ typedef uint64_t nsec_t;
 
 int parse_timestamp(const char *t, usec_t *usec);
 
-int gettime_monotonic(struct timeval *tv);
-
 #endif /* UTIL_LINUX_TIME_UTIL_H */

@@ -4,7 +4,7 @@ usrbin_exec_PROGRAMS += last
 dist_man_MANS += \
 	login-utils/last.1 \
 	login-utils/lastb.1
-last_SOURCES = login-utils/last.c lib/boottime.c
+last_SOURCES = login-utils/last.c lib/monotonic.c
 last_LDADD = $(LDADD) libcommon.la $(CLOCKGETTIME_LIBS)
 
 install-exec-hook-last:
