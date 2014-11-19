@@ -599,6 +599,7 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 	int rc = -1;
 	int flags = 0;
 	pid_t tid = -1;
+	struct libmnt_fs *fs = NULL;
 
 	assert(tb);
 	assert(f);
@@ -615,10 +616,11 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 		flags = MNT_FS_KERNEL;
 
 	while (!feof(f)) {
-		struct libmnt_fs *fs = mnt_new_fs();
-
-		if (!fs)
-			goto err;
+		if (!fs) {
+			fs = mnt_new_fs();
+			if (!fs)
+				goto err;
+		}
 
 		rc = mnt_table_parse_next(tb, f, fs, filename, &nlines);
 
@@ -632,15 +634,21 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 			if (rc == 0 && tb->fmt == MNT_FMT_MOUNTINFO)
 				rc = kernel_fs_postparse(tb, fs, &tid, filename);
 		}
-		mnt_unref_fs(fs);
 
 		if (rc) {
-			if (rc == 1)
-				continue;	/* recoverable error */
+			if (rc == 1) {
+				mnt_reset_fs(fs);
+				assert(fs->refcount == 1);
+				continue;	/* recoverable error, reuse fs*/
+			}
+
+			mnt_unref_fs(fs);
 			if (feof(f))
 				break;
 			goto err;		/* fatal error */
 		}
+		mnt_unref_fs(fs);
+		fs = NULL;
 	}
 
 	DBG(TAB, ul_debugobj(tb, "%s: stop parsing (%d entries)",
