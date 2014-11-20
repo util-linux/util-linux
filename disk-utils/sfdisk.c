@@ -936,6 +936,8 @@ static void command_fdisk_help(void)
 	fputs(_("   abort    exit sfdisk shell\n"), stdout);
 	fputs(_("   print    print partition table.\n"), stdout);
 	fputs(_("   help     this help.\n"), stdout);
+	fputc('\n', stdout);
+	fputs(_("   CTRL-D   the same like 'quit' command\n"), stdout);
 
 	fputc('\n', stdout);
 	color_scheme_enable("help-title", UL_COLOR_BOLD);
