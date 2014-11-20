@@ -386,6 +386,11 @@ int main(int argc, char **argv)
 	sigaction(SIGHUP, &sa_hup, NULL);
 
 	tcsetpgrp(STDIN_FILENO, getpid());
+
+	/* Default serial line speed (may be ignored on --{extract,keep}-baud) */
+	if ((options.flags & F_VCONSOLE) == 0 && options.numspeed == 0)
+		options.speeds[options.numspeed++] = bcode("9600");
+
 	/* Initialize the termios settings (raw mode, eight-bit, blocking i/o). */
 	debug("calling termio_init\n");
 	termio_init(&options, &termios);
@@ -447,7 +452,7 @@ int main(int argc, char **argv)
 			debug("reading login name\n");
 			while ((username =
 				get_logname(&options, &termios, &chardata)) == NULL)
-				if ((options.flags & F_VCONSOLE) == 0)
+				if ((options.flags & F_VCONSOLE) == 0 && options.numspeed)
 					next_speed(&options, &termios);
 		}
 	}
@@ -801,8 +806,6 @@ static void parse_args(int argc, char **argv, struct options *op)
 			char *v = argv[optind++];
 			if (is_speed(v))
 				parse_speeds(op, v);
-			else
-				op->speeds[op->numspeed++] = bcode("9600");
 		}
 	}
 
@@ -1223,7 +1226,11 @@ static void termio_init(struct options *op, struct termios *tp)
 		return;
 	}
 
-	if (op->flags & F_KEEPSPEED) {
+	/*
+	 * Serial line
+	 */
+
+	if (op->flags & F_KEEPSPEED || !op->numspeed) {
 		/* Save the original setting. */
 		ispeed = cfgetispeed(tp);
 		ospeed = cfgetospeed(tp);
