@@ -1499,6 +1499,7 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 	struct fdisk_gpt_label *gpt;
 	struct gpt_entry *e;
 	int rc = 0;
+	uint64_t start, end;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -1508,6 +1509,9 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 
 	if ((uint32_t) n >= le32_to_cpu(gpt->pheader->npartition_entries))
 		return -EINVAL;
+
+	FDISK_INIT_UNDEF(start);
+	FDISK_INIT_UNDEF(end);
 
 	gpt = self_label(cxt);
 	e = &gpt->ents[n];
@@ -1550,9 +1554,23 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 	}
 
 	if (fdisk_partition_has_start(pa))
-		e->lba_start = cpu_to_le64(pa->start);
+		start = pa->start;
 	if (fdisk_partition_has_size(pa))
-		e->lba_end = cpu_to_le64(gpt_partition_start(e) + pa->size - 1ULL);
+		end = gpt_partition_start(e) + pa->size - 1ULL;
+
+	if (pa->end_follow_default) {
+		/* enlarge */
+		if (!FDISK_IS_UNDEF(start))
+			start = gpt_partition_start(e);
+		end = find_last_free(gpt->bheader, gpt->ents, start);
+		if (!end)
+			FDISK_INIT_UNDEF(end);
+	}
+
+	if (!FDISK_IS_UNDEF(start))
+		e->lba_start = cpu_to_le64(start);
+	if (!FDISK_IS_UNDEF(end))
+		e->lba_end = cpu_to_le64(end);
 
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
