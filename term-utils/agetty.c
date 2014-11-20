@@ -200,6 +200,7 @@ enum {
 #define F_LONGHNAME	(1<<19) /* Show Full qualified hostname */
 #define F_NOHINTS	(1<<20) /* Don't print hints */
 #define F_REMOTE	(1<<21) /* Add '-h fakehost' to login(1) command line */
+#define F_SCONSOLE	(1<<22) /* Serial console */
 
 #define serial_tty_option(opt, flag)	\
 	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
@@ -388,7 +389,7 @@ int main(int argc, char **argv)
 	tcsetpgrp(STDIN_FILENO, getpid());
 
 	/* Default serial line speed (may be ignored on --{extract,keep}-baud) */
-	if ((options.flags & F_VCONSOLE) == 0 && options.numspeed == 0)
+	if ((options.flags & (F_VCONSOLE | F_SCONSOLE)) == 0 && options.numspeed == 0)
 		options.speeds[options.numspeed++] = bcode("9600");
 
 	/* Initialize the termios settings (raw mode, eight-bit, blocking i/o). */
@@ -1148,6 +1149,8 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 #endif
 		if (!op->term)
 			op->term = DEFAULT_STERM;
+		if (strcmp(tty, "console") == 0)
+			op->flags |= F_SCONSOLE;
 	}
 
 	setenv("TERM", op->term, 1);
