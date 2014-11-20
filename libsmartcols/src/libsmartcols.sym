@@ -1,5 +1,7 @@
 /*
  * symbols since util-linux 2.25
+ *
+ * Copyright (C) 2014 Karel Zak <kzak@redhat.com>
  */
 SMARTCOLS_2.25 {
 global:

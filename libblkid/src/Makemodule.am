@@ -112,7 +112,7 @@ libblkid_la_LIBADD = libcommon.la
 
 libblkid_la_DEPENDENCIES = \
 	libcommon.la \
-	libblkid/src/blkid.sym \
+	libblkid/src/libblkid.sym \
 	libblkid/src/blkid.h.in
 
 libblkid_la_CFLAGS = \
@@ -128,11 +128,11 @@ endif
 
 libblkid_la_LDFLAGS = \
 	$(SOLIB_LDFLAGS) \
-	-Wl,--version-script=$(top_srcdir)/libblkid/src/blkid.sym \
+	-Wl,--version-script=$(top_srcdir)/libblkid/src/libblkid.sym \
 	-version-info $(LIBBLKID_VERSION_INFO)
 
 EXTRA_DIST += \
-	libblkid/src/blkid.sym \
+	libblkid/src/libblkid.sym \
 	libblkid/src/blkid.h.in
 
 if BUILD_LIBBLKID_TESTS

@@ -1,10 +1,12 @@
 /*
- * The symbol versioning ensures that a new application requiring symbol foo()
- * can't run with old libuuid.so not providing foo() - the global SONAME
+ * The symbol versioning ensures that a new application requiring symbol 'foo'
+ * can't run with old libbrary.so not providing 'foo' - the global SONAME
  * version info can't enforce this since we never change the SONAME.
  *
  * The original libuuid from e2fsprogs (<=1.41.5) does not to use
  * symbol versioning -- all the original symbols are in UUID_1.0 now.
+ *
+ * Copyright (C) 2011-2014 Karel Zak <kzak@redhat.com>
  */
 UUID_1.0 {
 global:

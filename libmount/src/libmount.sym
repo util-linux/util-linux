@@ -1,7 +1,10 @@
 /*
- * The symbol versioning ensures that a new application requiring symbol foo;
- * can't run with old libblkid.so not providing foo;
- * version info can't enforce this since we never change the SONAME.
+ * The symbol versioning ensures that a new application requiring symbol foo,
+ * can't run with old library.so not providing foo.
+ *
+ * Version info can't enforce this since we never change the SONAME.
+ *
+ * Copyright (C) 2011-2014 Karel Zak <kzak@redhat.com> 
  */
 MOUNT_2.19 {
 global:
