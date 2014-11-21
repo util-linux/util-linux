@@ -62,6 +62,9 @@ struct gsm_config
 #ifndef N_GIGASET_M101
 # define N_GIGASET_M101 16
 #endif
+#ifndef N_GSM0710
+# define N_GSM0710 21
+#endif
 
 #ifndef N_PPS
 # define N_PPS 18
