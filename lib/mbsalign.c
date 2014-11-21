@@ -319,7 +319,7 @@ mbs_align_pad (char *dest, const char* dest_end, size_t n_spaces)
 {
   /* FIXME: Should we pad with "figure space" (\u2007)
      if non ascii data present?  */
-  while (n_spaces-- && (dest < dest_end))
+  for (/* nothing */; n_spaces && (dest < dest_end); n_spaces--)
     *dest++ = ' ';
   *dest = '\0';
   return dest;
