@@ -934,7 +934,7 @@ static int get_start_from_user(	struct fdisk_context *cxt,
 
 		rc = fdisk_do_ask(cxt, ask);
 		*start = fdisk_ask_number_get_result(ask);
-		fdisk_free_ask(ask);
+		fdisk_unref_ask(ask);
 		if (rc)
 			return rc;
 		if (fdisk_use_cylinders(cxt)) {
@@ -1167,7 +1167,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		rc = fdisk_do_ask(cxt, ask);
 		stop = fdisk_ask_number_get_result(ask);
 		isrel = fdisk_ask_number_is_relative(ask);
-		fdisk_free_ask(ask);
+		fdisk_unref_ask(ask);
 		if (rc)
 			return rc;
 		if (fdisk_use_cylinders(cxt)) {
@@ -1612,7 +1612,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 		if (rc)
 			return rc;
 		fdisk_ask_menu_get_result(ask, &c);
-		fdisk_free_ask(ask);
+		fdisk_unref_ask(ask);
 
 		if (c == 'p') {
 			rc = get_partition_unused_primary(cxt, pa, &res);

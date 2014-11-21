@@ -2146,7 +2146,7 @@ static int gpt_add_partition(
 	if (partno)
 		*partno = partnum;
 done:
-	fdisk_free_ask(ask);
+	fdisk_unref_ask(ask);
 	return rc;
 }
 

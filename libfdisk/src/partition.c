@@ -85,9 +85,9 @@ void fdisk_ref_partition(struct fdisk_partition *pa)
 
 /**
  * fdisk_unref_partition:
- * @tb: partition pointer
+ * @pa: partition pointer
  *
- * De-incremparts reference counter, on zero the @tb is automatically
+ * De-incremparts reference counter, on zero the @pa is automatically
  * deallocated.
  */
 void fdisk_unref_partition(struct fdisk_partition *pa)

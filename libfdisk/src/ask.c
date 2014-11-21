@@ -1,38 +1,83 @@
 
 #include "strutils.h"
-
 #include "fdiskP.h"
+
+/**
+ * SECTION: ask
+ * @title: Ask callback
+ * @short_description: interface for dialog driven partitioning
+ *
+ */
 
 static void fdisk_ask_menu_reset_items(struct fdisk_ask *ask);
 
-
+/**
+ * fdisk_new_ask:
+ *
+ * Returns: newly allocated ask instance.
+ */
 struct fdisk_ask *fdisk_new_ask(void)
 {
 	struct fdisk_ask *ask = calloc(1, sizeof(struct fdisk_ask));
 	DBG(ASK, ul_debugobj(ask, "alloc"));
+	ask->refcount = 1;
 	return ask;
 }
 
+/**
+ * fdisk_reset_ask:
+ * @ask: ask instance
+ *
+ * Resets all ask setting.
+ */
 void fdisk_reset_ask(struct fdisk_ask *ask)
 {
+	int refcount;
+
 	assert(ask);
 	free(ask->query);
 
 	DBG(ASK, ul_debugobj(ask, "reset"));
+	refcount = ask->refcount;
 
 	if (fdisk_is_ask(ask, MENU))
 		fdisk_ask_menu_reset_items(ask);
 
 	memset(ask, 0, sizeof(*ask));
+	ask->refcount = refcount;
 }
 
-void fdisk_free_ask(struct fdisk_ask *ask)
+/**
+ * fdisk_ref_ask:
+ * @ask: ask instance
+ *
+ * Incremparts reference counter.
+ */
+void fdisk_ref_ask(struct fdisk_ask *ask)
+{
+	if (ask)
+		ask->refcount++;
+}
+
+
+/**
+ * fdisk_unref_ask:
+ * @ask: ask instance
+ *
+ * De-incremparts reference counter, on zero the @ask is automatically
+ * deallocated.
+ */
+void fdisk_unref_ask(struct fdisk_ask *ask)
 {
 	if (!ask)
 		return;
-	fdisk_reset_ask(ask);
-	DBG(ASK, ul_debugobj(ask, "free"));
-	free(ask);
+	ask->refcount--;
+
+	if (ask->refcount <= 0) {
+		fdisk_reset_ask(ask);
+		DBG(ASK, ul_debugobj(ask, "free"));
+		free(ask);
+	}
 }
 
 const char *fdisk_ask_get_query(struct fdisk_ask *ask)
@@ -384,7 +429,7 @@ dont_ask:
 			*partnum -= 1;
 	}
 	DBG(ASK, ul_debugobj(ask, "result: %ju [rc=%d]\n", fdisk_ask_number_get_result(ask), rc));
-	fdisk_free_ask(ask);
+	fdisk_unref_ask(ask);
 	return rc;
 }
 
@@ -420,7 +465,7 @@ int fdisk_ask_number(struct fdisk_context *cxt,
 		*result = fdisk_ask_number_get_result(ask);
 
 	DBG(ASK, ul_debugobj(ask, "result: %ju [rc=%d]\n", *result, rc));
-	fdisk_free_ask(ask);
+	fdisk_unref_ask(ask);
 	return rc;
 }
 
@@ -466,7 +511,7 @@ int fdisk_ask_string(struct fdisk_context *cxt,
 		*result = fdisk_ask_string_get_result(ask);
 
 	DBG(ASK, ul_debugobj(ask, "result: %s [rc=%d]\n", *result, rc));
-	fdisk_free_ask(ask);
+	fdisk_unref_ask(ask);
 	return rc;
 }
 
@@ -492,7 +537,7 @@ int fdisk_ask_yesno(struct fdisk_context *cxt,
 		*result = fdisk_ask_yesno_get_result(ask) == 1 ? 1 : 0;
 
 	DBG(ASK, ul_debugobj(ask, "result: %d [rc=%d]\n", *result, rc));
-	fdisk_free_ask(ask);
+	fdisk_unref_ask(ask);
 	return rc;
 }
 
@@ -690,7 +735,7 @@ static int do_vprint(struct fdisk_context *cxt, int errnum, int type,
 		fdisk_ask_print_set_errno(ask, errnum);
 	rc = fdisk_do_ask(cxt, ask);
 
-	fdisk_free_ask(ask);
+	fdisk_unref_ask(ask);
 	free(mesg);
 	return rc;
 }

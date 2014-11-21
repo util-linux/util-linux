@@ -295,6 +295,8 @@ struct fdisk_ask {
 	char		*query;
 	unsigned int	flags;
 
+	int		refcount;
+
 	union {
 		/* FDISK_ASKTYPE_{NUMBER,OFFSET} */
 		struct ask_number {

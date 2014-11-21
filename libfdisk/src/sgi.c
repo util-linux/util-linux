@@ -838,7 +838,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 
 		rc = fdisk_do_ask(cxt, ask);
 		first = fdisk_ask_number_get_result(ask);
-		fdisk_free_ask(ask);
+		fdisk_unref_ask(ask);
 
 		if (rc)
 			return rc;
@@ -888,7 +888,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		rc = fdisk_do_ask(cxt, ask);
 		last = fdisk_ask_number_get_result(ask) + 1;
 
-		fdisk_free_ask(ask);
+		fdisk_unref_ask(ask);
 		if (rc)
 			return rc;
 		if (fdisk_use_cylinders(cxt))

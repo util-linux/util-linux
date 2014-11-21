@@ -257,7 +257,7 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 
 		rc = fdisk_do_ask(cxt, ask);
 		begin = fdisk_ask_number_get_result(ask);
-		fdisk_free_ask(ask);
+		fdisk_unref_ask(ask);
 		if (rc)
 			return rc;
 		if (fdisk_use_cylinders(cxt))
@@ -298,7 +298,7 @@ static int bsd_add_partition(struct fdisk_context *cxt,
 
 		rc = fdisk_do_ask(cxt, ask);
 		end = fdisk_ask_number_get_result(ask);
-		fdisk_free_ask(ask);
+		fdisk_unref_ask(ask);
 		if (rc)
 			return rc;
 		if (fdisk_use_cylinders(cxt))

@@ -455,7 +455,8 @@ int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp);
 
 extern struct fdisk_ask *fdisk_new_ask(void);
 extern void fdisk_reset_ask(struct fdisk_ask *ask);
-extern void fdisk_free_ask(struct fdisk_ask *ask);
+extern void fdisk_ref_ask(struct fdisk_ask *ask);
+extern void fdisk_unref_ask(struct fdisk_ask *ask);
 extern const char *fdisk_ask_get_query(struct fdisk_ask *ask);
 extern int fdisk_ask_set_query(struct fdisk_ask *ask, const char *str);
 extern int fdisk_ask_get_type(struct fdisk_ask *ask);
