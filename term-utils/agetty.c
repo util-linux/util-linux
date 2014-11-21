@@ -126,12 +126,6 @@
 /*
  * agetty --reload
  */
-#define AGETTY_RELOAD			/* enabled by default */
-
-#ifndef HAVE_INOTIFY_INIT1
-# undef AGETTY_RELOAD			/* disable on systems without inotify */
-#endif
-
 #ifdef AGETTY_RELOAD
 # include <sys/inotify.h>
 # define AGETTY_RELOAD_FILENAME "/run/agetty.reload"	/* trigger file */
@@ -2499,7 +2493,7 @@ static void reload_agettys(void)
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open: %s"), AGETTY_RELOAD_FILENAME);
 
-	if (futimes(fd, NULL) < 0 || close(fd) < 0)
+	if (futimens(fd, NULL) < 0 || close(fd) < 0)
 		err(EXIT_FAILURE, _("cannot touch file: %s"),
 		    AGETTY_RELOAD_FILENAME);
 #else

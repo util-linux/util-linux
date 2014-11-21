@@ -313,7 +313,6 @@ AC_CHECK_FUNCS([ \
 	getrlimit \
 	getsgnam \
 	inotify_init \
-	inotify_init1 \
 	jrand48 \
 	lchown \
 	llseek \
@@ -346,6 +345,8 @@ AC_FUNC_FSEEKO
 
 AC_CHECK_FUNCS([openat fstatat unlinkat], [have_openat=yes], [have_openat=no])
 AC_CHECK_FUNCS([ioperm iopl], [have_io=yes])
+AC_CHECK_FUNCS([futimens], [have_futimens=yes])
+AC_CHECK_FUNCS([inotify_init1], [have_inotify_init1=yes])
 
 dnl Old glibc requires -lrt
 AC_CHECK_FUNCS(clock_gettime, [], [
@@ -1052,6 +1053,11 @@ AC_ARG_ENABLE([agetty],
 )
 UL_BUILD_INIT([agetty])
 AM_CONDITIONAL([BUILD_AGETTY], [test "x$build_agetty" = xyes])
+AS_IF([test "x$have_futimens" = xyes -a "x$have_inotify_init1" = xyes ], [
+  AC_DEFINE([AGETTY_RELOAD], [1], [Enable agetty --reload feature])
+],[
+  AC_MSG_WARN([futimens or inotify_init1 not found; agetty(8) will not provide ---reload functionality])
+])
 
 
 AC_ARG_ENABLE([cramfs],
