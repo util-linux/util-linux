@@ -803,9 +803,11 @@ static void parse_args(int argc, char **argv, struct options *op)
 	} else {
 		op->tty = argv[optind++];
 		if (argc > optind) {
-			char *v = argv[optind++];
-			if (is_speed(v))
+			char *v = argv[optind];
+			if (is_speed(v)) {
 				parse_speeds(op, v);
+				optind++;
+			}
 		}
 	}
 
