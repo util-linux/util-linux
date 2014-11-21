@@ -446,8 +446,8 @@ static int colors_add_scheme(struct ul_color_ctl *cc,
 			     char *name,
 			     char *seq0)
 {
-	struct ul_color_scheme *cs;
-	char *seq;
+	struct ul_color_scheme *cs = NULL;
+	char *seq = NULL;
 	int rc;
 
 	if (!cc || !name || !*name || !seq0 || !*seq0)
@@ -459,6 +459,8 @@ static int colors_add_scheme(struct ul_color_ctl *cc,
 	if (rc)
 		return rc;
 
+	rc = -ENOMEM;
+
 	/* convert logical name (e.g. "red") to real ESC code */
 	if (isalpha(*seq)) {
 		const char *s = color_sequence_from_colorname(seq);
@@ -466,11 +468,13 @@ static int colors_add_scheme(struct ul_color_ctl *cc,
 
 		if (!s) {
 			DBG(SCHEME, ul_debug("unknown logical name: %s", seq));
-			return -EINVAL;
+			rc = -EINVAL;
+			goto err;
 		}
+
 		p = strdup(s);
 		if (!p)
-			return -ENOMEM;
+			goto err;
 		free(seq);
 		seq = p;
 	}
@@ -480,19 +484,28 @@ static int colors_add_scheme(struct ul_color_ctl *cc,
 		void *tmp = realloc(cc->schemes, (cc->nschemes + 10)
 					* sizeof(struct ul_color_scheme));
 		if (!tmp)
-			return -ENOMEM;
+			goto err;
 		cc->schemes = tmp;
 		cc->schemes_sz = cc->nschemes + 10;
 	}
 
-	free(seq0);
-
 	/* add a new item */
-	cs = &cc->schemes[cc->nschemes++];
-	cs->name = name;
+	cs = &cc->schemes[cc->nschemes];
 	cs->seq = seq;
+	cs->name = strdup(name);
+	if (!cs->name)
+		goto err;
 
+	cc->nschemes++;
 	return 0;
+err:
+	if (cs) {
+		free(cs->seq);
+		free(cs->name);
+		cs->seq = cs->name = NULL;
+	} else
+		free(seq);
+	return rc;
 }
 
 /*
@@ -584,7 +597,8 @@ static int colors_read_schemes(struct ul_color_ctl *cc)
 {
 	int rc = 0;
 	FILE *f = NULL;
-	char buf[BUFSIZ];
+	char buf[BUFSIZ],
+	     cn[129], seq[129];
 
 	if (!cc->configured)
 		rc = colors_read_configuration(cc);
@@ -603,7 +617,6 @@ static int colors_read_schemes(struct ul_color_ctl *cc)
 	}
 
 	while (fgets(buf, sizeof(buf), f)) {
-		char *cn = NULL, *seq = NULL;
 		char *p = strchr(buf, '\n');
 
 		if (!p) {
@@ -619,17 +632,14 @@ static int colors_read_schemes(struct ul_color_ctl *cc)
 		if (*p == '\0' || *p == '#')
 			continue;
 
-		rc = sscanf(p,  UL_SCNsA" "	/* name */
-				UL_SCNsA,	/* color */
-				&cn, &seq);
-		if (rc == 2 && cn && seq)
+		rc = sscanf(p, "%128[^ ] %128[^\n ]", cn, seq);
+		if (rc == 2 && *cn && *seq) {
 			rc = colors_add_scheme(cc, cn, seq);	/* set rc=0 on success */
-		if (rc) {
-			free(cn);
-			free(seq);
+			if (rc)
+				goto done;
 		}
-		rc = 0;
 	}
+	rc = 0;
 
 done:
 	if (f)
