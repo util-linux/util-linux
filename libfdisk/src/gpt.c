@@ -1524,8 +1524,7 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 		if (rc)
 			return rc;
 		guid_to_string(&e->partition_guid, new_u);
-		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Partition UUID changed from %s to %s."),
+		fdisk_info(cxt, _("Partition UUID changed from %s to %s."),
 			old_u, new_u);
 	}
 
@@ -1533,8 +1532,7 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 		char *old = encode_to_utf8((unsigned char *)e->name, sizeof(e->name));
 		gpt_entry_set_name(e, pa->name);
 
-		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Partition name changed from '%s' to '%.*s'."),
+		fdisk_info(cxt, _("Partition name changed from '%s' to '%.*s'."),
 			old, (int) GPT_PART_NAME_LEN, pa->name);
 		free(old);
 	}
@@ -2215,8 +2213,7 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 
 	guid_to_string(&gpt->pheader->disk_guid, str);
 	fdisk_label_set_changed(cxt->label, 1);
-	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Created a new GPT disklabel (GUID: %s)."), str);
+	fdisk_info(cxt, _("Created a new GPT disklabel (GUID: %s)."), str);
 done:
 	return rc;
 }
@@ -2274,8 +2271,7 @@ static int gpt_set_disklabel_id(struct fdisk_context *cxt)
 
 	gpt_get_disklabel_id(cxt, &new);
 
-	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Disk identifier changed from %s to %s."), old, new);
+	fdisk_info(cxt, _("Disk identifier changed from %s to %s."), old, new);
 
 	free(old);
 	free(new);
@@ -2372,14 +2368,12 @@ static int gpt_toggle_partition_flag(
 	gpt->ents[i].attrs = cpu_to_le64(attrs);
 
 	if (flag == GPT_FLAG_GUIDSPECIFIC)
-		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			isset(bits, bit) ?
+		fdisk_info(cxt, isset(bits, bit) ?
 			_("The GUID specific bit %d on partition %zu is enabled now.") :
 			_("The GUID specific bit %d on partition %zu is disabled now."),
 			bit, i + 1);
 	else
-		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			isset(bits, bit) ?
+		fdisk_info(cxt, isset(bits, bit) ?
 			_("The %s flag on partition %zu is enabled now.") :
 			_("The %s flag on partition %zu is disabled now."),
 			name, i + 1);
@@ -2427,7 +2421,7 @@ static int gpt_reorder(struct fdisk_context *cxt)
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
 	fdisk_label_set_changed(cxt->label, 1);
 
-	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS, _("Done."));
+	fdisk_info(cxt, _("Done."));
 	return 0;
 }
 

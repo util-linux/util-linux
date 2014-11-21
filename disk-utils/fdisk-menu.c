@@ -661,8 +661,7 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 				return -ENOMEM;
 			*cxt0 = cxt = mbr;
 			fdisk_enable_details(cxt, 1);	/* keep us in expert mode */
-			fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-					_("Entering protective/hybrid MBR disklabel."));
+			fdisk_info(cxt, _("Entering protective/hybrid MBR disklabel."));
 			return 0;
 		}
 
@@ -756,8 +755,7 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 				fdisk_unref_context(bsd);
 			else {
 				*cxt0 = cxt = bsd;
-				fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-						_("Entering nested BSD disklabel."));
+				fdisk_info(cxt,	_("Entering nested BSD disklabel."));
 			}
 			break;
 		}

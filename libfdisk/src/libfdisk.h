@@ -64,11 +64,6 @@ enum {
 	FDISK_ASKTYPE_MENU
 };
 
-/* extra flags for info massages (see fdisk_sinfo() */
-enum {
-	FDISK_INFO_SUCCESS	/* info after successful action */
-};
-
 /* init.c */
 extern void fdisk_init_debug(int mask);
 
@@ -461,8 +456,6 @@ extern const char *fdisk_ask_get_query(struct fdisk_ask *ask);
 extern int fdisk_ask_set_query(struct fdisk_ask *ask, const char *str);
 extern int fdisk_ask_get_type(struct fdisk_ask *ask);
 extern int fdisk_ask_set_type(struct fdisk_ask *ask, int type);
-extern int fdisk_ask_set_flags(struct fdisk_ask *ask, unsigned int flags);
-extern unsigned int fdisk_ask_get_flags(struct fdisk_ask *ask);
 
 extern int fdisk_do_ask(struct fdisk_context *cxt, struct fdisk_ask *ask);
 
@@ -506,8 +499,6 @@ extern int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...)
 			__attribute__ ((__format__ (__printf__, 2, 3)));
 extern int fdisk_colon(struct fdisk_context *cxt, const char *fmt, ...)
 			__attribute__ ((__format__ (__printf__, 2, 3)));
-extern int fdisk_sinfo(struct fdisk_context *cxt, unsigned int flags, const char *fmt, ...)
-			__attribute__ ((__format__ (__printf__, 3, 4)));
 
 extern int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...)
 			__attribute__ ((__format__ (__printf__, 2, 3)));

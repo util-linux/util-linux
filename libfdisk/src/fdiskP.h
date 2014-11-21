@@ -293,7 +293,6 @@ struct ask_menuitem {
 struct fdisk_ask {
 	int		type;		/* FDISK_ASKTYPE_* */
 	char		*query;
-	unsigned int	flags;
 
 	int		refcount;
 

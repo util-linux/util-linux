@@ -514,7 +514,7 @@ void change_partition_type(struct fdisk_context *cxt)
 	} while (!t);
 
 	if (fdisk_set_partition_type(cxt, i, t) == 0)
-		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+		fdisk_info(cxt,
 			_("Changed type of partition '%s' to '%s'."),
 			old, t ? fdisk_parttype_get_name(t) : _("Unknown"));
 	else

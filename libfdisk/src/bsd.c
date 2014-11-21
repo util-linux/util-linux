@@ -574,8 +574,7 @@ static int bsd_get_bootstrap(struct fdisk_context *cxt,
 		return -errno;
 	}
 
-	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("The bootstrap file %s successfully loaded."), path);
+	fdisk_info(cxt, _("The bootstrap file %s successfully loaded."), path);
 	close (fd);
 	return 0;
 }
@@ -646,8 +645,7 @@ int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt)
 		goto done;
 	}
 
-	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Bootstrap installed on %s."), cxt->dev_path);
+	fdisk_info(cxt, _("Bootstrap installed on %s."), cxt->dev_path);
 	sync_disks(cxt);
 
 	rc = 0;
@@ -818,8 +816,7 @@ static int bsd_write_disklabel(struct fdisk_context *cxt)
 	}
 	sync_disks(cxt);
 
-	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Disklabel written to %s."), cxt->dev_path);
+	fdisk_info(cxt, _("Disklabel written to %s."), cxt->dev_path);
 	return 0;
 }
 
@@ -889,8 +886,7 @@ int fdisk_bsd_link_partition(struct fdisk_context *cxt)
 	cxt->label->nparts_cur = d->d_npartitions;
 	fdisk_label_set_changed(cxt->label, 1);
 
-	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("BSD partition '%c' linked to DOS partition %zu."),
+	fdisk_info(cxt, _("BSD partition '%c' linked to DOS partition %zu."),
 			'a' + (int) i, k + 1);
 	return 0;
 }

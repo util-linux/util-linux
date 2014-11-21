@@ -403,8 +403,7 @@ int fdisk_sgi_set_bootfile(struct fdisk_context *cxt)
 
 	memcpy(sgilabel->boot_file, name, sz);
 
-	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Bootfile has been changed to \"%s\"."), name);
+	fdisk_info(cxt, _("Bootfile has been changed to \"%s\"."), name);
 done:
 	free(name);
 	return rc;
@@ -1000,8 +999,7 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	}
 	cxt->label->nparts_cur = count_used_partitions(cxt);
 
-	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Created a new SGI disklabel."));
+	fdisk_info(cxt, _("Created a new SGI disklabel."));
 	return 0;
 }
 

@@ -80,41 +80,54 @@ void fdisk_unref_ask(struct fdisk_ask *ask)
 	}
 }
 
+/**
+ * fdisk_ask_get_query:
+ * @ask: ask instance
+ *
+ * Returns: pointer to dialog string.
+ */
 const char *fdisk_ask_get_query(struct fdisk_ask *ask)
 {
 	assert(ask);
 	return ask->query;
 }
 
+/**
+ * fdisk_ask_set_query:
+ * @ask: ask instance
+ * @str: new query string
+ *
+ * Returns: 0 on success, <0 on error
+ */
 int fdisk_ask_set_query(struct fdisk_ask *ask, const char *str)
 {
 	assert(ask);
 	return !strdup_to_struct_member(ask, query, str) ? -ENOMEM : 0;
 }
 
+/**
+ * fdisk_ask_get_type:
+ * @ask: ask instance
+ *
+ * Returns: FDISK_ASKTYPE_*
+ */
 int fdisk_ask_get_type(struct fdisk_ask *ask)
 {
 	assert(ask);
 	return ask->type;
 }
 
+/**
+ * fdisk_ask_set_type:
+ * @ask: ask instance
+ * @type: new ask type
+ *
+ * Returns: 0 on success, <0 on error
+ */
 int fdisk_ask_set_type(struct fdisk_ask *ask, int type)
 {
 	assert(ask);
 	ask->type = type;
-	return 0;
-}
-
-unsigned int fdisk_ask_get_flags(struct fdisk_ask *ask)
-{
-	assert(ask);
-	return ask->flags;
-}
-
-int fdisk_ask_set_flags(struct fdisk_ask *ask, unsigned int flags)
-{
-	assert(ask);
-	ask->flags = flags;
 	return 0;
 }
 
@@ -711,7 +724,7 @@ int fdisk_ask_print_set_mesg(struct fdisk_ask *ask, const char *mesg)
 }
 
 static int do_vprint(struct fdisk_context *cxt, int errnum, int type,
-		 unsigned int flags, const char *fmt, va_list va)
+		     const char *fmt, va_list va)
 {
 	struct fdisk_ask *ask;
 	int rc;
@@ -729,7 +742,6 @@ static int do_vprint(struct fdisk_context *cxt, int errnum, int type,
 	}
 
 	fdisk_ask_set_type(ask, type);
-	fdisk_ask_set_flags(ask, flags);
 	fdisk_ask_print_set_mesg(ask, mesg);
 	if (errnum >= 0)
 		fdisk_ask_print_set_errno(ask, errnum);
@@ -747,24 +759,9 @@ int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...)
 
 	assert(cxt);
 	va_start(ap, fmt);
-	rc = do_vprint(cxt, -1, FDISK_ASKTYPE_INFO, 0, fmt, ap);
+	rc = do_vprint(cxt, -1, FDISK_ASKTYPE_INFO, fmt, ap);
 	va_end(ap);
 	return rc;
-}
-
-/* "smart" version, allows to set flags for the message */
-int fdisk_sinfo(struct fdisk_context *cxt,
-		unsigned int flags, const char *fmt, ...)
-{
-	int rc;
-	va_list ap;
-
-	assert(cxt);
-	va_start(ap, fmt);
-	rc = do_vprint(cxt, -1, FDISK_ASKTYPE_INFO, flags, fmt, ap);
-	va_end(ap);
-	return rc;
-
 }
 
 int fdisk_warn(struct fdisk_context *cxt, const char *fmt, ...)
@@ -774,7 +771,7 @@ int fdisk_warn(struct fdisk_context *cxt, const char *fmt, ...)
 
 	assert(cxt);
 	va_start(ap, fmt);
-	rc = do_vprint(cxt, errno, FDISK_ASKTYPE_WARN, 0, fmt, ap);
+	rc = do_vprint(cxt, errno, FDISK_ASKTYPE_WARN, fmt, ap);
 	va_end(ap);
 	return rc;
 }
@@ -786,7 +783,7 @@ int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...)
 
 	assert(cxt);
 	va_start(ap, fmt);
-	rc = do_vprint(cxt, -1, FDISK_ASKTYPE_WARNX, 0, fmt, ap);
+	rc = do_vprint(cxt, -1, FDISK_ASKTYPE_WARNX, fmt, ap);
 	va_end(ap);
 	return rc;
 }
@@ -800,7 +797,7 @@ int fdisk_info_new_partition(
 	char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
 				     (uint64_t)(stop - start + 1) * cxt->sector_size);
 
-	rc = fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+	rc = fdisk_info(cxt,
 			_("Created a new partition %d of type '%s' and of size %s."),
 			num, t ? t->name : _("Unknown"), str);
 	free(str);

@@ -655,8 +655,7 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 	/* Put MBR signature */
 	mbr_set_magic(cxt->firstsector);
 
-	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			("Created a new DOS disklabel with disk "
+	fdisk_info(cxt, _("Created a new DOS disklabel with disk "
 			 "identifier 0x%08x."), id);
 	return 0;
 }
@@ -693,8 +692,7 @@ static int dos_set_disklabel_id(struct fdisk_context *cxt)
 	l->non_pt_changed = 1;
 	fdisk_label_set_changed(cxt->label, 1);
 
-	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Disk identifier changed from 0x%08x to 0x%08x."),
+	fdisk_info(cxt, _("Disk identifier changed from 0x%08x to 0x%08x."),
 			old, id);
 	return 0;
 }
@@ -2207,8 +2205,7 @@ static int dos_toggle_partition_flag(
 
 		p->boot_ind = (p->boot_ind ? 0 : ACTIVE_FLAG);
 		partition_set_changed(cxt, i, 1);
-		fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			p->boot_ind ?
+		fdisk_info(cxt,	p->boot_ind ?
 			_("The bootable flag on partition %zu is enabled now.") :
 			_("The bootable flag on partition %zu is disabled now."),
 			i + 1);

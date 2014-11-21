@@ -286,8 +286,7 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	fdisk_label_set_changed(cxt->label, 1);
 	cxt->label->nparts_cur = count_used_partitions(cxt);
 
-	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Created a new Sun disklabel."));
+	fdisk_info(cxt, _("Created a new Sun disklabel."));
 	return 0;
 }
 
