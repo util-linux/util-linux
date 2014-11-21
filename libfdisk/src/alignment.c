@@ -193,11 +193,11 @@ static void recount_geometry(struct fdisk_context *cxt)
  * @heads: user specified heads
  * @sectors: user specified sectors
  *
- * Overrides auto-discovery. The function fdisk_reset_device_properties() 
+ * Overrides auto-discovery. The function fdisk_reset_device_properties()
  * restores the original setting.
  *
  * The difference between fdisk_override_geometry() and fdisk_save_user_geometry()
- * is that saved user geometry is persistent setting and it's applied always 
+ * is that saved user geometry is persistent setting and it's applied always
  * when device is assigned to the context or device properties are reseted.
  *
  * Returns: 0 on success, < 0 on error.
@@ -238,7 +238,7 @@ int fdisk_override_geometry(struct fdisk_context *cxt,
  *
  * Save user defined geometry to use it for partitioning.
  *
- * The user properties are applied by fdisk_assign_device() or 
+ * The user properties are applied by fdisk_assign_device() or
  * fdisk_reset_device_properties().
 
  * Returns: <0 on error, 0 on success.

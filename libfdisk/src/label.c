@@ -10,7 +10,9 @@
  * The fdisk_new_context() initializes all label drivers, and allocate
  * per-label specific data struct. This concept allows to store label specific
  * settings to the label driver independently on the currently active label
- * driver.
+ * driver. Note that lable struct cannot be deallocated, so there is no
+ * reference counting for fdisk_label objects. All is destroyed by
+ * fdisk_unref_context() only.
  *
  * Anyway, all label drives share in-memory first sector. The function
  * fdisk_create_disklabel() overwrites the sector. But it's possible that

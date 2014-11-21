@@ -4,6 +4,18 @@
 
 #include "fdiskP.h"
 
+/**
+ * SECTION: partition
+ * @title: partition abstraction
+ * @short_description: generic label independent partition
+ *
+ * The fdisk_partition provides label independent abstraction. The partitions
+ * are not directly connected with partition table (label) data. Any change to
+ * fdisk_partition does not affects in-memory or on-disk label data.
+ *
+ * The fdisk_partition is possible to use as a template for
+ * fdisk_add_partition() or fdisk_set_partition() operations.
+ */
 
 static void init_partition(struct fdisk_partition *pa)
 {

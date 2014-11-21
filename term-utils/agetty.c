@@ -390,7 +390,7 @@ int main(int argc, char **argv)
 	/* Default is to follow the current line speend and then default to 9600 */
 	if ((options.flags & F_VCONSOLE) == 0 && options.numspeed == 0) {
 		options.speeds[options.numspeed++] = bcode("9600");
-		options.flags |= F_KEEPSPEED
+		options.flags |= F_KEEPSPEED;
 	}
 
 	/* Initialize the termios settings (raw mode, eight-bit, blocking i/o). */

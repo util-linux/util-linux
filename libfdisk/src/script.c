@@ -2,6 +2,18 @@
 #include "fdiskP.h"
 #include "strutils.h"
 
+/**
+ * SECTION: script
+ * @title: Partition table script
+ * @short_description: text based description of partition table
+ *
+ * The libfdisk scripts are based on original sfdisk script (dumps).  Each
+ * script has two parts: script headers and partition table entries
+ * (partitions).
+ *
+ * For more details about script format see sfdisk man page.
+ */
+
 /* script header (e.g. unit: sectors) */
 struct fdisk_scriptheader {
 	struct list_head	headers;

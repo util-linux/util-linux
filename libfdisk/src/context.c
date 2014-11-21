@@ -197,6 +197,10 @@ void fdisk_ref_context(struct fdisk_context *cxt)
  *
  * If no @name specified then returns the current context label.
  *
+ * The label is allocated and maintained within the context #cxt. There is
+ * nothing like reference counting for labels, you cannot delallocate the
+ * label.
+ *
  * Returns: label struct or NULL in case of error.
  */
 struct fdisk_label *fdisk_get_label(struct fdisk_context *cxt, const char *name)

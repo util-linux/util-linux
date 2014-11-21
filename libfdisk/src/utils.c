@@ -4,6 +4,12 @@
 
 #include <ctype.h>
 
+/**
+ * SECTION: utils
+ * @title: Misc utils
+ * @short_description: misc fdisk functions
+ */
+
 /*
  * Zeros in-memory first sector buffer
  */
@@ -74,7 +80,7 @@ int fdisk_read_firstsector(struct fdisk_context *cxt)
  * dev: device name
  * @partno: partition name
  *
- * Return: allocated buffer with partition name
+ * Return: allocated buffer with partition name, use free() to deallocate.
  */
 char *fdisk_partname(const char *dev, size_t partno)
 {

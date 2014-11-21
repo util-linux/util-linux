@@ -2,6 +2,16 @@
 #include "fdiskP.h"
 
 /**
+ * SECTION: table
+ * @title: table
+ * @short_description: container for fdisk partitions
+ *
+ * The fdisk_table is simple container for fdisk_partitions. The table is no
+ * directly connected to label data (partition table), and table changes don't
+ * affect in-memory or on-disk data.
+ */
+
+/**
  * fdisk_new_table:
  *
  * The table is a container for struct fdisk_partition entries. The container

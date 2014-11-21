@@ -2,9 +2,16 @@
 #include <ctype.h>
 
 #include "nls.h"
-
 #include "fdiskP.h"
 
+/**
+ * SECTION: parttypw
+ * @title: Partition types
+ * @short_description: abstraction to partition types
+ *
+ * There are two basic types of parttypes, string based (e.g. GPT)
+ * and code/hex based (e.g. MBR).
+ */
 
 /**
  * fdisk_new_parttype:
