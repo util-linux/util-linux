@@ -70,8 +70,10 @@ the list, which is treated as if it were circular.
 Baud rates should be specified in descending order, so that the
 null character (Ctrl\-@) can also be used for baud-rate switching.
 .sp
-This argument is optional and unnecessary for virtual terminals.
-The default for serial terminals is '9600'.
+This argument is optional and unnecessary for \fBvirtual terminals\fP.
+.sp
+The default for \fBserial terminals\fP is keep the current baud rate
+(see \fB\-\-keep-baud\fP) and if unsuccessful then default to '9600'.
 .TP
 term
 The value to be used for the TERM environment variable. This overrides

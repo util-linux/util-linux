@@ -387,9 +387,11 @@ int main(int argc, char **argv)
 
 	tcsetpgrp(STDIN_FILENO, getpid());
 
-	/* Default serial line speed (may be ignored on --{extract,keep}-baud) */
-	if ((options.flags & F_VCONSOLE) == 0 && options.numspeed == 0)
+	/* Default is to follow the current line speend and then default to 9600 */
+	if ((options.flags & F_VCONSOLE) == 0 && options.numspeed == 0) {
 		options.speeds[options.numspeed++] = bcode("9600");
+		options.flags |= F_KEEPSPEED
+	}
 
 	/* Initialize the termios settings (raw mode, eight-bit, blocking i/o). */
 	debug("calling termio_init\n");
