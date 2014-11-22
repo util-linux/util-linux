@@ -108,8 +108,10 @@ uint32_t crc32(uint32_t seed, const unsigned char *buf, size_t len)
 	uint32_t crc = seed;
 	const unsigned char *p = buf;
 
-	while(len-- > 0)
+	while (len) {
 		crc = crc32_tab[(crc ^ *p++) & 0xff] ^ (crc >> 8);
+		len--;
+	}
 
 	return crc;
 }
