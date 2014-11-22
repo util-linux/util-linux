@@ -99,8 +99,10 @@ static inline uint32_t sgi_pt_checksum(struct sgi_disklabel *label)
 
 	i = sizeof(*label) / sizeof(*ptr);
 
-	while (i--)
+	while (i) {
+		i--;
 		sum -= be32_to_cpu(ptr[i]);
+	}
 
 	return sum;
 }
