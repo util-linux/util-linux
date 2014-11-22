@@ -655,7 +655,7 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 #define VMWARE_BDOOR_PORT           0x5658
 #define VMWARE_BDOOR_CMD_GETVERSION 10
 
-static inline
+static UL_ASAN_BLACKLIST
 void vmware_bdoor(uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx)
 {
 	__asm__(
