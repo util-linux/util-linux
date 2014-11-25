@@ -409,7 +409,24 @@ extern int fdisk_probe_labels(struct fdisk_context *cxt);
 extern void fdisk_deinit_label(struct fdisk_label *lb);
 
 /* ask.c */
-extern int fdisk_info_new_partition(
+struct fdisk_ask *fdisk_new_ask(void);
+void fdisk_reset_ask(struct fdisk_ask *ask);
+int fdisk_ask_set_query(struct fdisk_ask *ask, const char *str);
+int fdisk_ask_set_type(struct fdisk_ask *ask, int type);
+int fdisk_do_ask(struct fdisk_context *cxt, struct fdisk_ask *ask);
+int fdisk_ask_number_set_range(struct fdisk_ask *ask, const char *range);
+int fdisk_ask_number_set_default(struct fdisk_ask *ask, uint64_t dflt);
+int fdisk_ask_number_set_low(struct fdisk_ask *ask, uint64_t low);
+int fdisk_ask_number_set_high(struct fdisk_ask *ask, uint64_t high);
+int fdisk_ask_number_set_base(struct fdisk_ask *ask, uint64_t base);
+int fdisk_ask_number_set_unit(struct fdisk_ask *ask, uint64_t unit);
+int fdisk_ask_number_is_relative(struct fdisk_ask *ask);
+int fdisk_ask_menu_set_default(struct fdisk_ask *ask, int dfl);
+int fdisk_ask_menu_add_item(struct fdisk_ask *ask, int key,
+			const char *name, const char *desc);
+int fdisk_ask_print_set_errno(struct fdisk_ask *ask, int errnum);
+int fdisk_ask_print_set_mesg(struct fdisk_ask *ask, const char *mesg);
+int fdisk_info_new_partition(
 			struct fdisk_context *cxt,
 			int num, sector_t start, sector_t stop,
 			struct fdisk_parttype *t);

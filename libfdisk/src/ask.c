@@ -11,11 +11,6 @@
 
 static void fdisk_ask_menu_reset_items(struct fdisk_ask *ask);
 
-/**
- * fdisk_new_ask:
- *
- * Returns: newly allocated ask instance.
- */
 struct fdisk_ask *fdisk_new_ask(void)
 {
 	struct fdisk_ask *ask = calloc(1, sizeof(struct fdisk_ask));
@@ -24,12 +19,6 @@ struct fdisk_ask *fdisk_new_ask(void)
 	return ask;
 }
 
-/**
- * fdisk_reset_ask:
- * @ask: ask instance
- *
- * Resets all ask setting.
- */
 void fdisk_reset_ask(struct fdisk_ask *ask)
 {
 	int refcount;
@@ -92,13 +81,6 @@ const char *fdisk_ask_get_query(struct fdisk_ask *ask)
 	return ask->query;
 }
 
-/**
- * fdisk_ask_set_query:
- * @ask: ask instance
- * @str: new query string
- *
- * Returns: 0 on success, <0 on error
- */
 int fdisk_ask_set_query(struct fdisk_ask *ask, const char *str)
 {
 	assert(ask);
@@ -117,13 +99,6 @@ int fdisk_ask_get_type(struct fdisk_ask *ask)
 	return ask->type;
 }
 
-/**
- * fdisk_ask_set_type:
- * @ask: ask instance
- * @type: new ask type
- *
- * Returns: 0 on success, <0 on error
- */
 int fdisk_ask_set_type(struct fdisk_ask *ask, int type)
 {
 	assert(ask);
@@ -158,6 +133,12 @@ int fdisk_do_ask(struct fdisk_context *cxt, struct fdisk_ask *ask)
 
 #define is_number_ask(a)  (fdisk_is_ask(a, NUMBER) || fdisk_is_ask(a, OFFSET))
 
+/**
+ * fdisk_ask_number_get_range:
+ * @ask: ask instance
+ *
+ * Returns: string with range (e.g. "1,3,5-10")
+ */
 const char *fdisk_ask_number_get_range(struct fdisk_ask *ask)
 {
 	assert(ask);
@@ -173,6 +154,13 @@ int fdisk_ask_number_set_range(struct fdisk_ask *ask, const char *range)
 	return 0;
 }
 
+/**
+ * fdisk_ask_number_get_default:
+ * @ask: ask instance
+ *
+ * Returns: default number
+ *
+ */
 uint64_t fdisk_ask_number_get_default(struct fdisk_ask *ask)
 {
 	assert(ask);
@@ -187,6 +175,12 @@ int fdisk_ask_number_set_default(struct fdisk_ask *ask, uint64_t dflt)
 	return 0;
 }
 
+/**
+ * fdisk_ask_number_get_low"
+ * @ask: ask instance
+ *
+ * Returns: minimal possible number when ask for numbers in range
+ */
 uint64_t fdisk_ask_number_get_low(struct fdisk_ask *ask)
 {
 	assert(ask);
@@ -201,6 +195,12 @@ int fdisk_ask_number_set_low(struct fdisk_ask *ask, uint64_t low)
 	return 0;
 }
 
+/**
+ * fdisk_ask_number_get_high"
+ * @ask: ask instance
+ *
+ * Returns: maximal possible number when ask for numbers in range
+ */
 uint64_t fdisk_ask_number_get_high(struct fdisk_ask *ask)
 {
 	assert(ask);
@@ -215,6 +215,12 @@ int fdisk_ask_number_set_high(struct fdisk_ask *ask, uint64_t high)
 	return 0;
 }
 
+/**
+ * fdisk_ask_number_get_result:
+ * @ask: ask instance
+ *
+ * Returns: result
+ */
 uint64_t fdisk_ask_number_get_result(struct fdisk_ask *ask)
 {
 	assert(ask);
@@ -222,6 +228,13 @@ uint64_t fdisk_ask_number_get_result(struct fdisk_ask *ask)
 	return ask->data.num.result;
 }
 
+/**
+ * fdisk_ask_number_set_result:
+ * @ask: ask instance
+ * @ask: dialog result
+ *
+ * Returns: 0 on success, <0 on error
+ */
 int fdisk_ask_number_set_result(struct fdisk_ask *ask, uint64_t result)
 {
 	assert(ask);
@@ -229,6 +242,12 @@ int fdisk_ask_number_set_result(struct fdisk_ask *ask, uint64_t result)
 	return 0;
 }
 
+/**
+ * fdisk_ask_number_get_base:
+ * @ask: ask instance
+ *
+ * Returns: base when user specify number in relative notation (+<size>)
+ */
 uint64_t fdisk_ask_number_get_base(struct fdisk_ask *ask)
 {
 	assert(ask);
@@ -243,7 +262,12 @@ int fdisk_ask_number_set_base(struct fdisk_ask *ask, uint64_t base)
 	return 0;
 }
 
-/* if numbers are not in bytes, then specify number of bytes per the unit */
+/**
+ * fdisk_ask_number_get_unit:
+ * @ask: ask instance
+ *
+ * Returns: number of bytes per the unit
+ */
 uint64_t fdisk_ask_number_get_unit(struct fdisk_ask *ask)
 {
 	assert(ask);
@@ -265,6 +289,17 @@ int fdisk_ask_number_is_relative(struct fdisk_ask *ask)
 	return ask->data.num.relative;
 }
 
+/**
+ * fdisk_ask_number_set_relative
+ * @ask: ask instance
+ * @relative: 0 or 1
+ *
+ * Inform libfdisk that user specified number in relative notation rather than
+ * by explicit number. This info allows to fdisk do some optimization (e.g.
+ * align end of partiton, etc.)
+ *
+ * Returns: 0 on success, <0 on error
+ */
 int fdisk_ask_number_set_relative(struct fdisk_ask *ask, int relative)
 {
 	assert(ask);
@@ -272,6 +307,16 @@ int fdisk_ask_number_set_relative(struct fdisk_ask *ask, int relative)
 	return 0;
 }
 
+/**
+ * fdisk_ask_number_inchars:
+ * @ask: ask instance
+ *
+ * For example for BSD is normal to address partition by chars rather than by
+ * number (first partition is 'a').
+ *
+ * Returns: 1 if number should be presented as chars
+ *
+ */
 int fdisk_ask_number_inchars(struct fdisk_ask *ask)
 {
 	assert(ask);
@@ -344,7 +389,7 @@ static char *mk_string_list(char *ptr, size_t *len, size_t *begin,
  * @partnum: returns partition number
  * @wantnew: 0|1
  *
- * This function uses libfdisk Ask API to get a partition number.
+ * High-level API to ask for used or unused partition number.
  *
  * Returns: 0 on success, < 0 on error, 1 if no free/used partition
  */
@@ -446,7 +491,17 @@ dont_ask:
 	return rc;
 }
 
-/* very basic wraper to ask numbers */
+/**
+ * fdisk_ask_number:
+ * @cxt: context
+ * @low: minimal possible number
+ * @dflt: default suggestion
+ * @high: maximal possible number
+ * @query: question string
+ * @result: returns result
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_ask_number(struct fdisk_context *cxt,
 		     uintmax_t low,
 		     uintmax_t dflt,
@@ -482,6 +537,12 @@ int fdisk_ask_number(struct fdisk_context *cxt,
 	return rc;
 }
 
+/**
+ * fdisk_ask_string_get_result:
+ * @ask: ask instance
+ *
+ * Returns: pointer to dialog result
+ */
 char *fdisk_ask_string_get_result(struct fdisk_ask *ask)
 {
 	assert(ask);
@@ -489,8 +550,15 @@ char *fdisk_ask_string_get_result(struct fdisk_ask *ask)
 	return ask->data.str.result;
 }
 
-/*
- * The @result has to be poiter to the allocated buffer.
+/**
+ * fdisk_ask_string_set_result:
+ * @ask: ask instance
+ * @result: pointer to allocated buffer with string
+ *
+ * You don't have to care about the @result deallocation, libfdisk is going to
+ * deallocate the result when destroy @ask instance.
+ *
+ * Returns: 0 on success, <0 on error
  */
 int fdisk_ask_string_set_result(struct fdisk_ask *ask, char *result)
 {
@@ -499,8 +567,15 @@ int fdisk_ask_string_set_result(struct fdisk_ask *ask, char *result)
 	return 0;
 }
 
-/*
- * Don't forget to deallocate @result.
+/**
+ * fdisk_ask_string:
+ * @cxt: context:
+ * @query: question string
+ * @result: returns allocated buffer
+ *
+ * High-level API to ask for strings. Don't forget to deallocate the @result.
+ *
+ * Returns: 0 on success, <0 on error.
  */
 int fdisk_ask_string(struct fdisk_context *cxt,
 		     const char *query,
@@ -528,6 +603,16 @@ int fdisk_ask_string(struct fdisk_context *cxt,
 	return rc;
 }
 
+/**
+ * fdisk_ask_yesno:
+ * @cxt: context
+ * @query: question string
+ * @result: returns 0 (no) or 1 (yes)
+ *
+ * Hight-level API to ask Yes/No questions
+ *
+ * Returns: 0 on success, <0 on error
+ */
 int fdisk_ask_yesno(struct fdisk_context *cxt,
 		     const char *query,
 		     int *result)
@@ -554,14 +639,27 @@ int fdisk_ask_yesno(struct fdisk_context *cxt,
 	return rc;
 }
 
-uint64_t fdisk_ask_yesno_get_result(struct fdisk_ask *ask)
+/**
+ * fdisk_ask_yesno_get_result:
+ * @ask: ask instance
+ *
+ * Returns: 0 or 1
+ */
+int fdisk_ask_yesno_get_result(struct fdisk_ask *ask)
 {
 	assert(ask);
 	assert(fdisk_is_ask(ask, YESNO));
 	return ask->data.yesno.result;
 }
 
-int fdisk_ask_yesno_set_result(struct fdisk_ask *ask, uint64_t result)
+/**
+ * fdisk_ask_yesno_set_result:
+ * @ask: ask instance
+ * @result: 1 or 0
+ *
+ * Returns: 0 on success, <0 on error
+ */
+int fdisk_ask_yesno_set_result(struct fdisk_ask *ask, int result)
 {
 	assert(ask);
 	ask->data.yesno.result = result;
@@ -579,6 +677,12 @@ int fdisk_ask_menu_set_default(struct fdisk_ask *ask, int dfl)
 	return 0;
 }
 
+/**
+ * fdisk_ask_menu_get_default:
+ * @ask: ask instance
+ *
+ * Returns: default menu item key
+ */
 int fdisk_ask_menu_get_default(struct fdisk_ask *ask)
 {
 	assert(ask);
@@ -586,6 +690,13 @@ int fdisk_ask_menu_get_default(struct fdisk_ask *ask)
 	return ask->data.menu.dfl;
 }
 
+/**
+ * fdisk_ask_menu_set_result:
+ * @ask: ask instance
+ * @key: result
+ *
+ * Returns: 0 on success, <0 on error
+ */
 int fdisk_ask_menu_set_result(struct fdisk_ask *ask, int key)
 {
 	assert(ask);
@@ -596,6 +707,13 @@ int fdisk_ask_menu_set_result(struct fdisk_ask *ask, int key)
 
 }
 
+/**
+ * fdisk_ask_menu_get_result:
+ * @ask: ask instance
+ * @key: returns selected menu item key
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_ask_menu_get_result(struct fdisk_ask *ask, int *key)
 {
 	assert(ask);
@@ -605,7 +723,16 @@ int fdisk_ask_menu_get_result(struct fdisk_ask *ask, int *key)
 	return 0;
 }
 
-/* returns: 0 = success, <0 = error, >0 = idx out-of-range */
+/**
+ * fdisk_ask_menu_get_item:
+ * @ask: ask menu instance
+ * @idx: wanted menu item index
+ * @key: returns key of the menu item
+ * @name: returns name of the menu item
+ * @desc: returns description of the menu item
+ *
+ * Returns: 0 on success, <0 on error, >0 if idx out-of-range
+ */
 int fdisk_ask_menu_get_item(struct fdisk_ask *ask, size_t idx, int *key,
 			    const char **name, const char **desc)
 {
@@ -645,6 +772,12 @@ static void fdisk_ask_menu_reset_items(struct fdisk_ask *ask)
 	}
 }
 
+/**
+ * fdisk_ask_menu_get_nitems:
+ * @ask: ask instance
+ *
+ * Returns: number of menu items
+ */
 size_t fdisk_ask_menu_get_nitems(struct fdisk_ask *ask)
 {
 	struct ask_menuitem *mi;
@@ -694,6 +827,12 @@ int fdisk_ask_menu_add_item(struct fdisk_ask *ask, int key,
 
 #define is_print_ask(a) (fdisk_is_ask(a, WARN) || fdisk_is_ask(a, WARNX) || fdisk_is_ask(a, INFO))
 
+/**
+ * fdisk_ask_print_get_errno:
+ * @ask: ask instance
+ *
+ * Returns: error number for warning/error messages
+ */
 int fdisk_ask_print_get_errno(struct fdisk_ask *ask)
 {
 	assert(ask);
@@ -708,6 +847,12 @@ int fdisk_ask_print_set_errno(struct fdisk_ask *ask, int errnum)
 	return 0;
 }
 
+/**
+ * fdisk_ask_print_get_mesg:
+ * @ask: ask instance
+ *
+ * Returns: pointer to message
+ */
 const char *fdisk_ask_print_get_mesg(struct fdisk_ask *ask)
 {
 	assert(ask);
@@ -752,6 +897,15 @@ static int do_vprint(struct fdisk_context *cxt, int errnum, int type,
 	return rc;
 }
 
+/**
+ * fdisk_info:
+ * @cxt: context
+ * @fmt: printf-like formatted string
+ *
+ * High-level API to print info messages,
+ *
+ * Returns: 0 on success, <0 on error
+ */
 int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...)
 {
 	int rc;
@@ -764,6 +918,15 @@ int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...)
 	return rc;
 }
 
+/**
+ * fdisk_info:
+ * @cxt: context
+ * @fmt: printf-like formatted string
+ *
+ * High-level API to print warning message (errno expected)
+ *
+ * Returns: 0 on success, <0 on error
+ */
 int fdisk_warn(struct fdisk_context *cxt, const char *fmt, ...)
 {
 	int rc;
@@ -776,6 +939,15 @@ int fdisk_warn(struct fdisk_context *cxt, const char *fmt, ...)
 	return rc;
 }
 
+/**
+ * fdisk_warnx:
+ * @cxt: context
+ * @fmt: printf-like formatted string
+ *
+ * High-level API to print warning message
+ *
+ * Returns: 0 on success, <0 on error
+ */
 int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...)
 {
 	int rc;

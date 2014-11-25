@@ -448,80 +448,50 @@ int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp);
 /* ask.c */
 #define fdisk_is_ask(a, x) (fdisk_ask_get_type(a) == FDISK_ASKTYPE_ ## x)
 
-extern struct fdisk_ask *fdisk_new_ask(void);
-extern void fdisk_reset_ask(struct fdisk_ask *ask);
-extern void fdisk_ref_ask(struct fdisk_ask *ask);
-extern void fdisk_unref_ask(struct fdisk_ask *ask);
-extern const char *fdisk_ask_get_query(struct fdisk_ask *ask);
-extern int fdisk_ask_set_query(struct fdisk_ask *ask, const char *str);
-extern int fdisk_ask_get_type(struct fdisk_ask *ask);
-extern int fdisk_ask_set_type(struct fdisk_ask *ask, int type);
+void fdisk_ref_ask(struct fdisk_ask *ask);
+void fdisk_unref_ask(struct fdisk_ask *ask);
+const char *fdisk_ask_get_query(struct fdisk_ask *ask);
+int fdisk_ask_get_type(struct fdisk_ask *ask);
+const char *fdisk_ask_number_get_range(struct fdisk_ask *ask);
+uint64_t fdisk_ask_number_get_default(struct fdisk_ask *ask);
+uint64_t fdisk_ask_number_get_low(struct fdisk_ask *ask);
+uint64_t fdisk_ask_number_get_high(struct fdisk_ask *ask);
+uint64_t fdisk_ask_number_get_result(struct fdisk_ask *ask);
+int fdisk_ask_number_set_result(struct fdisk_ask *ask, uint64_t result);
+uint64_t fdisk_ask_number_get_base(struct fdisk_ask *ask);
+uint64_t fdisk_ask_number_get_unit(struct fdisk_ask *ask);
+int fdisk_ask_number_set_relative(struct fdisk_ask *ask, int relative);
+int fdisk_ask_number_inchars(struct fdisk_ask *ask);
+int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew);
 
-extern int fdisk_do_ask(struct fdisk_context *cxt, struct fdisk_ask *ask);
-
-extern const char *fdisk_ask_number_get_range(struct fdisk_ask *ask);
-extern int fdisk_ask_number_set_range(struct fdisk_ask *ask, const char *range);
-extern uint64_t fdisk_ask_number_get_default(struct fdisk_ask *ask);
-extern int fdisk_ask_number_set_default(struct fdisk_ask *ask, uint64_t dflt);
-extern uint64_t fdisk_ask_number_get_low(struct fdisk_ask *ask);
-extern int fdisk_ask_number_set_low(struct fdisk_ask *ask, uint64_t low);
-extern uint64_t fdisk_ask_number_get_high(struct fdisk_ask *ask);
-extern int fdisk_ask_number_set_high(struct fdisk_ask *ask, uint64_t high);
-extern uint64_t fdisk_ask_number_get_base(struct fdisk_ask *ask);
-extern int fdisk_ask_number_set_base(struct fdisk_ask *ask, uint64_t base);
-extern uint64_t fdisk_ask_number_get_unit(struct fdisk_ask *ask);
-extern int fdisk_ask_number_set_unit(struct fdisk_ask *ask, uint64_t unit);
-extern uint64_t fdisk_ask_number_get_result(struct fdisk_ask *ask);
-extern int fdisk_ask_number_set_result(struct fdisk_ask *ask, uint64_t result);
-extern int fdisk_ask_number_set_relative(struct fdisk_ask *ask, int relative);
-extern int fdisk_ask_number_is_relative(struct fdisk_ask *ask);
-extern int fdisk_ask_number_inchars(struct fdisk_ask *ask);
-
-extern int fdisk_ask_number(struct fdisk_context *cxt,
+int fdisk_ask_number(struct fdisk_context *cxt,
 		     uintmax_t low,
 		     uintmax_t dflt,
 		     uintmax_t high,
 		     const char *query,
 		     uintmax_t *result);
-
-extern int fdisk_ask_string(struct fdisk_context *cxt,
+char *fdisk_ask_string_get_result(struct fdisk_ask *ask);
+int fdisk_ask_string_set_result(struct fdisk_ask *ask, char *result);
+int fdisk_ask_string(struct fdisk_context *cxt,
 		     const char *query,
 		     char **result);
-
-extern char *fdisk_ask_string_get_result(struct fdisk_ask *ask);
-extern int fdisk_ask_string_set_result(struct fdisk_ask *ask, char *result);
-
-extern int fdisk_ask_yesno(struct fdisk_context *cxt, const char *query, int *result);
-extern uint64_t fdisk_ask_yesno_get_result(struct fdisk_ask *ask);
-extern int fdisk_ask_yesno_set_result(struct fdisk_ask *ask, uint64_t result);
-
-extern int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...)
-			__attribute__ ((__format__ (__printf__, 2, 3)));
-extern int fdisk_colon(struct fdisk_context *cxt, const char *fmt, ...)
-			__attribute__ ((__format__ (__printf__, 2, 3)));
-
-extern int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...)
-			__attribute__ ((__format__ (__printf__, 2, 3)));
-extern int fdisk_warn(struct fdisk_context *cxt, const char *fmt, ...)
-			__attribute__ ((__format__ (__printf__, 2, 3)));
-
-extern int fdisk_ask_print_get_errno(struct fdisk_ask *ask);
-extern int fdisk_ask_print_set_errno(struct fdisk_ask *ask, int errnum);
-extern const char *fdisk_ask_print_get_mesg(struct fdisk_ask *ask);
-extern int fdisk_ask_print_set_mesg(struct fdisk_ask *ask, const char *mesg);
-
-
-extern size_t fdisk_ask_menu_get_nitems(struct fdisk_ask *ask);
-extern int fdisk_ask_menu_set_default(struct fdisk_ask *ask, int dfl);
-extern int fdisk_ask_menu_get_default(struct fdisk_ask *ask);
-extern int fdisk_ask_menu_set_result(struct fdisk_ask *ask, int key);
-extern int fdisk_ask_menu_get_result(struct fdisk_ask *ask, int *key);
-extern int fdisk_ask_menu_get_item(struct fdisk_ask *ask, size_t idx, int *key,
+int fdisk_ask_yesno(struct fdisk_context *cxt,
+		     const char *query,
+		     int *result);
+int fdisk_ask_yesno_get_result(struct fdisk_ask *ask);
+int fdisk_ask_yesno_set_result(struct fdisk_ask *ask, int result);
+int fdisk_ask_menu_get_default(struct fdisk_ask *ask);
+int fdisk_ask_menu_set_result(struct fdisk_ask *ask, int key);
+int fdisk_ask_menu_get_result(struct fdisk_ask *ask, int *key);
+int fdisk_ask_menu_get_item(struct fdisk_ask *ask, size_t idx, int *key,
 			    const char **name, const char **desc);
-extern int fdisk_ask_menu_add_item(struct fdisk_ask *ask, int key,
-			const char *name, const char *desc);
+size_t fdisk_ask_menu_get_nitems(struct fdisk_ask *ask);
+int fdisk_ask_print_get_errno(struct fdisk_ask *ask);
+const char *fdisk_ask_print_get_mesg(struct fdisk_ask *ask);
 
-extern int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew);
+int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...);
+int fdisk_warn(struct fdisk_context *cxt, const char *fmt, ...);
+int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...);
 
 /* utils.h */
 extern char *fdisk_partname(const char *dev, size_t partno);
