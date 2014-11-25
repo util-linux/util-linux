@@ -98,7 +98,7 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 	FILE *f;
 	int i = 0, maxid;
 	struct shm_data *p;
-	struct shm_info dummy;
+	struct shmid_ds dummy;
 
 	p = *shmds = xcalloc(1, sizeof(struct shm_data));
 	p->next = NULL;
@@ -154,7 +154,7 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 
 	/* Fallback; /proc or /sys file(s) missing. */
 shm_fallback:
-	maxid = shmctl(0, SHM_INFO, (struct shmid_ds *) &dummy);
+	maxid = shmctl(0, SHM_INFO, &dummy);
 
 	for (int j = 0; j <= maxid; j++) {
 		int shmid;
