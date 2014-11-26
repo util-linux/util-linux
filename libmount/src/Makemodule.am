@@ -35,7 +35,11 @@ endif
 
 nodist_libmount_la_SOURCES = libmount/src/mountP.h
 
-libmount_la_LIBADD = libcommon.la libblkid.la $(SELINUX_LIBS) $(CLOCKGETTIME_LIBS)
+libmount_la_LIBADD = \
+	libcommon.la \
+	libblkid.la \
+	$(SELINUX_LIBS) \
+	$(CLOCKGETTIME_LIBS)
 
 libmount_la_CFLAGS = \
 	$(SOLIB_CFLAGS) \
