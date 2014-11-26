@@ -28,6 +28,12 @@
 #include "strutils.h"
 #include "all-io.h"
 
+/**
+ * SECTION: gpt
+ * @title: UEFI GPT functions
+ * @short_description: GPT specific functionality
+ */
+
 #define GPT_HEADER_SIGNATURE 0x5452415020494645LL /* EFI PART */
 #define GPT_HEADER_REVISION_V1_02 0x00010200
 #define GPT_HEADER_REVISION_V1_00 0x00010000
@@ -2297,6 +2303,22 @@ static int gpt_part_is_used(struct fdisk_context *cxt, size_t i)
 	return !partition_unused(e) || gpt_partition_start(e);
 }
 
+/**
+ * fdisk_gpt_is_hybrid:
+ * @cxt: context
+ *
+ * The regular GPT contains PMBR (dummy protective MBR) where the protective
+ * MBR does not address any partitions.
+ *
+ * Hybrid GPT contains regular MBR where this partition table addresses the
+ * same partitions as GPT. It's recommended to not use hybrid GPT due to MBR
+ * limits.
+ *
+ * The libfdisk does not provide functionality to sync GPT and MBR, you have to
+ * directly access and modify (P)MBR (see fdisk_new_nested_context()).
+ *
+ * Returns: 1 if partition table detected as hybrid otherwise return 0
+ */
 int fdisk_gpt_is_hybrid(struct fdisk_context *cxt)
 {
 	assert(cxt);
