@@ -29,19 +29,75 @@ extern "C" {
 #include <stdarg.h>
 #include <stdint.h>
 
+/**
+ * fdisk_context:
+ *
+ * Basic library handler.
+ */
 struct fdisk_context;
+
+/**
+ * fdisk_label:
+ *
+ * Disk label specific driver and setting.
+ */
 struct fdisk_label;
+
+/**
+ * fdisk_parttype:
+ *
+ * Partition type.
+ */
 struct fdisk_parttype;
+
+/**
+ * fdisk_partition:
+ *
+ * Partition abstraction (and template).
+ */
 struct fdisk_partition;
+
+/**
+ * fdisk_ask:
+ *
+ * Ask API handler for dialogs with users.
+ */
 struct fdisk_ask;
+
+/**
+ * fdisk_iter:
+ *
+ * Unified iterator.
+ */
 struct fdisk_iter;
+
+/**
+ * fdisk_table:
+ *
+ * Container for fdisk_partition objects
+ */
 struct fdisk_table;
+
+/**
+ * fdisk_field
+ *
+ * Output field description.
+ */
 struct fdisk_field;
+
+/**
+ * fdisk_script
+ *
+ * libraru handler for sfdisk compatible scripts
+ */
 struct fdisk_script;
 
+/* TODO: use uint64, the name is too generic */
 typedef unsigned long long sector_t;
 
-/*
+/**
+ * fdisk_labeltype:
+ *
  * Supported partition table types (labels)
  */
 enum fdisk_labeltype {
@@ -52,7 +108,12 @@ enum fdisk_labeltype {
 	FDISK_DISKLABEL_GPT = (1 << 5)
 };
 
-enum {
+/**
+ * fdisk_asktype:
+ *
+ * Ask API dialog types
+ */
+enum fdisk_asktype {
 	FDISK_ASKTYPE_NONE = 0,
 	FDISK_ASKTYPE_NUMBER,
 	FDISK_ASKTYPE_OFFSET,
@@ -71,7 +132,6 @@ extern void fdisk_init_debug(int mask);
 
 #define FDISK_PLURAL	0
 #define FDISK_SINGULAR	1
-
 
 struct fdisk_context *fdisk_new_context(void);
 struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent, const char *name);
@@ -158,7 +218,13 @@ const char *fdisk_parttype_get_name(const struct fdisk_parttype *t);
 int fdisk_parttype_is_unknown(const struct fdisk_parttype *t);
 
 /* label.c */
-enum {
+
+/**
+ * fdisk_fieldtype
+ *
+ * Types of fdisk_field
+ */
+enum fdisk_fieldtype {
 	FDISK_FIELD_NONE = 0,
 
 	/* generic */
