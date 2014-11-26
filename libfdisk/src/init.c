@@ -1,6 +1,14 @@
 
 #include "fdiskP.h"
 
+
+/**
+ * SECTION: init
+ * @title: Library initialization
+ * @short_description: initialize debug stuff
+ *
+ */
+
 UL_DEBUG_DEFINE_MASK(libfdisk);
 UL_DEBUG_DEFINE_MASKNAMES(libfdisk) =
 {
@@ -15,6 +23,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libfdisk) =
 	{ "tab",	LIBFDISK_DEBUG_TAB,	"table utils"},
 	{ NULL, 0 }
 };
+
 /**
  * fdisk_init_debug:
  * @mask: debug mask (0xffff to enable full debuging)
@@ -24,6 +33,8 @@ UL_DEBUG_DEFINE_MASKNAMES(libfdisk) =
  *
  * Already initialized debugging stuff cannot be changed. It does not
  * have effect to call this function twice.
+ *
+ * It's strongly recommended to use fdisk_init_debug(0) in your code.
  */
 void fdisk_init_debug(int mask)
 {
