@@ -7,6 +7,7 @@ usrlib_exec_LTLIBRARIES += libfdisk.la
 libfdisk_la_SOURCES = \
 	include/list.h \
 	\
+	libfdisk/src/fdiskP.h \
 	libfdisk/src/init.c \
 	libfdisk/src/test.c \
 	libfdisk/src/ask.c \
