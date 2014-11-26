@@ -1906,7 +1906,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		int fl = fdisk_is_label(cf->cxt, DOS) ? DOS_FLAG_ACTIVE :
 			 fdisk_is_label(cf->cxt, SGI) ? SGI_FLAG_BOOT : 0;
 
-		if (fl && fdisk_partition_toggle_flag(cf->cxt, n, fl))
+		if (fl && fdisk_toggle_partition_flag(cf->cxt, n, fl))
 			warn = _("Could not toggle the flag.");
 		else if (fl)
 			ref = 1;

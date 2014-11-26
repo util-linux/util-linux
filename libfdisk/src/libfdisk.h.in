@@ -162,10 +162,6 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 int fdisk_deassign_device(struct fdisk_context *cxt, int nosync);
 int fdisk_is_readonly(struct fdisk_context *cxt);
 
-int fdisk_set_ask(struct fdisk_context *cxt,
-		int (*ask_cb)(struct fdisk_context *, struct fdisk_ask *, void *),
-		void *data);
-
 int fdisk_enable_details(struct fdisk_context *cxt, int enable);
 int fdisk_is_details(struct fdisk_context *cxt);
 
@@ -307,7 +303,7 @@ extern int fdisk_label_is_disabled(const struct fdisk_label *lb);
 
 extern int fdisk_is_partition_used(struct fdisk_context *cxt, size_t n);
 
-extern int fdisk_partition_toggle_flag(struct fdisk_context *cxt, size_t partnum, unsigned long flag);
+extern int fdisk_toggle_partition_flag(struct fdisk_context *cxt, size_t partnum, unsigned long flag);
 
 extern struct fdisk_partition *fdisk_new_partition(void);
 extern void fdisk_reset_partition(struct fdisk_partition *pa);
@@ -478,10 +474,10 @@ enum {
 	 * dialog, then use the bit number (in range 48..63). For example:
 	 *
 	 * // start dialog to ask for bit number
-	 * fdisk_partition_toggle_flag(cxt, n, GPT_FLAG_GUIDSPECIFIC);
+	 * fdisk_toggle_partition_flag(cxt, n, GPT_FLAG_GUIDSPECIFIC);
 	 *
 	 * // toggle bit 60
-	 * fdisk_partition_toggle_flag(cxt, n, 60);
+	 * fdisk_toggle_partition_flag(cxt, n, 60);
 	 */
 	GPT_FLAG_GUIDSPECIFIC
 };
@@ -515,6 +511,11 @@ int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp);
 
 /* ask.c */
 #define fdisk_is_ask(a, x) (fdisk_ask_get_type(a) == FDISK_ASKTYPE_ ## x)
+
+int fdisk_set_ask(struct fdisk_context *cxt,
+		int (*ask_cb)(struct fdisk_context *, struct fdisk_ask *, void *),
+		void *data);
+
 
 void fdisk_ref_ask(struct fdisk_ask *ask);
 void fdisk_unref_ask(struct fdisk_ask *ask);

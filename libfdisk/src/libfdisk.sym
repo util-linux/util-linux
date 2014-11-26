@@ -157,7 +157,7 @@ global:
 	fdisk_partition_size_explicit;
 	fdisk_partition_start_follow_default;
 	fdisk_partition_start_is_default;
-	fdisk_partition_toggle_flag;
+	fdisk_toggle_partition_flag;
 	fdisk_partition_to_string;
 	fdisk_partition_unset_partno;
 	fdisk_partition_unset_size;

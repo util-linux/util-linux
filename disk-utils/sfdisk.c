@@ -578,14 +578,14 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 
 		/* deactivate all active partitions */
 		} else if (fdisk_partition_is_bootable(pa))
-			fdisk_partition_toggle_flag(sf->cxt, i, DOS_FLAG_ACTIVE);
+			fdisk_toggle_partition_flag(sf->cxt, i, DOS_FLAG_ACTIVE);
 	}
 
 	/* sfdisk --activate <partno> [..] */
 	for (i = 1; i < argc; i++) {
 		int n = strtou32_or_err(argv[i], _("failed to parse partition number"));
 
-		rc = fdisk_partition_toggle_flag(sf->cxt, n - 1, DOS_FLAG_ACTIVE);
+		rc = fdisk_toggle_partition_flag(sf->cxt, n - 1, DOS_FLAG_ACTIVE);
 		if (rc)
 			errx(EXIT_FAILURE,
 				_("%s: partition %d: failed to toggle bootable flag"),

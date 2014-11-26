@@ -456,14 +456,14 @@ int fdisk_set_partition_type(struct fdisk_context *cxt,
 
 
 /**
- * fdisk_partition_taggle_flag:
+ * fdisk_toggle_partition_flag:
  * @cxt: fdisk context
  * @partnum: partition number
  * @status: flags
  *
  * Returns 0 on success, otherwise, a corresponding error.
  */
-int fdisk_partition_toggle_flag(struct fdisk_context *cxt,
+int fdisk_toggle_partition_flag(struct fdisk_context *cxt,
 			       size_t partnum,
 			       unsigned long flag)
 {

@@ -702,16 +702,16 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 			}
 			break;
 		case 'A':
-			rc = fdisk_partition_toggle_flag(cxt, n, GPT_FLAG_LEGACYBOOT);
+			rc = fdisk_toggle_partition_flag(cxt, n, GPT_FLAG_LEGACYBOOT);
 			break;
 		case 'B':
-			rc = fdisk_partition_toggle_flag(cxt, n, GPT_FLAG_NOBLOCK);
+			rc = fdisk_toggle_partition_flag(cxt, n, GPT_FLAG_NOBLOCK);
 			break;
 		case 'R':
-			rc = fdisk_partition_toggle_flag(cxt, n, GPT_FLAG_REQUIRED);
+			rc = fdisk_toggle_partition_flag(cxt, n, GPT_FLAG_REQUIRED);
 			break;
 		case 'S':
-			rc = fdisk_partition_toggle_flag(cxt, n, GPT_FLAG_GUIDSPECIFIC);
+			rc = fdisk_toggle_partition_flag(cxt, n, GPT_FLAG_GUIDSPECIFIC);
 			break;
 		}
 	}
@@ -740,7 +740,7 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 			size_t n;
 			rc = fdisk_ask_partnum(cxt, &n, FALSE);
 			if (!rc)
-				rc = fdisk_partition_toggle_flag(cxt, n, DOS_FLAG_ACTIVE);
+				rc = fdisk_toggle_partition_flag(cxt, n, DOS_FLAG_ACTIVE);
 			break;
 		}
 		case 'b':
@@ -817,10 +817,10 @@ static int sun_menu_cb(struct fdisk_context **cxt0,
 			return rc;
 		switch (ent->key) {
 		case 'a':
-			rc = fdisk_partition_toggle_flag(cxt, n, SUN_FLAG_RONLY);
+			rc = fdisk_toggle_partition_flag(cxt, n, SUN_FLAG_RONLY);
 			break;
 		case 'c':
-			rc = fdisk_partition_toggle_flag(cxt, n, SUN_FLAG_UNMNT);
+			rc = fdisk_toggle_partition_flag(cxt, n, SUN_FLAG_UNMNT);
 			break;
 		}
 		return rc;
@@ -868,7 +868,7 @@ static int sgi_menu_cb(struct fdisk_context **cxt0,
 	case 'a':
 		rc = fdisk_ask_partnum(cxt, &n, FALSE);
 		if (!rc)
-			rc = fdisk_partition_toggle_flag(cxt, n, SGI_FLAG_BOOT);
+			rc = fdisk_toggle_partition_flag(cxt, n, SGI_FLAG_BOOT);
 		break;
 	case 'b':
 		fdisk_sgi_set_bootfile(cxt);
@@ -876,7 +876,7 @@ static int sgi_menu_cb(struct fdisk_context **cxt0,
 	case 'c':
 		rc = fdisk_ask_partnum(cxt, &n, FALSE);
 		if (!rc)
-			rc = fdisk_partition_toggle_flag(cxt, n, SGI_FLAG_SWAP);
+			rc = fdisk_toggle_partition_flag(cxt, n, SGI_FLAG_SWAP);
 		break;
 	case 'i':
 		rc = fdisk_sgi_create_info(cxt);

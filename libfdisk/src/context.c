@@ -633,26 +633,6 @@ void fdisk_unref_context(struct fdisk_context *cxt)
 	}
 }
 
-/**
- * fdisk_set_ask:
- * @cxt: context
- * @ask_cb: callback
- * @data: callback data
- *
- * Set callback for dialog driven partitioning and library warnings/errors.
- *
- * Returns: 0 on success, < 0 on error.
- */
-int fdisk_set_ask(struct fdisk_context *cxt,
-		int (*ask_cb)(struct fdisk_context *, struct fdisk_ask *, void *),
-		void *data)
-{
-	assert(cxt);
-
-	cxt->ask_cb = ask_cb;
-	cxt->ask_data = data;
-	return 0;
-}
 
 /**
  * fdisk_enable_details:
