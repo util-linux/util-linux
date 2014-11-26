@@ -22,6 +22,13 @@
 #include "pt-mbr.h"
 #include "fdiskP.h"
 
+/**
+ * SECTION: sgi
+ * @title: SGI functions
+ * @short_description: SGI disk label specific functionality
+ *
+ */
+
 /*
  * in-memory fdisk SGI stuff
  */
@@ -130,6 +137,16 @@ static void sgi_free_info(struct sgi_info *info)
 	free(info);
 }
 
+/**
+ * fdisk_sgi_create_info:
+ * @cxt: context
+ *
+ * This function add hint about SGI label (e.g. set "sgilabel" as volume name)
+ * to the first SGI volume. This is probably old SGI convention without any
+ * effect to the device partitioning.
+ *
+ * Returns: 0 on success, <0 on error
+ */
 int fdisk_sgi_create_info(struct fdisk_context *cxt)
 {
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
@@ -378,6 +395,15 @@ static int sgi_check_bootfile(struct fdisk_context *cxt, const char *name)
 	return 1;	/* filename did not change */
 }
 
+/**
+ * fdisk_sgi_set_bootfile:
+ * @cxt: context
+ *
+ * Allows to set SGI boot file. The function uses Ask API for dialog with
+ * user.
+ *
+ * Returns: 0 on success, <0 on error
+ */
 int fdisk_sgi_set_bootfile(struct fdisk_context *cxt)
 {
 	int rc = 0;
