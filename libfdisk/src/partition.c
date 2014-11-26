@@ -600,7 +600,8 @@ int fdisk_partition_next_partno(
  * Returns info about partition converted to printable string.
  *
  * For example
- *
+ * <informalexample>
+ *   <programlisting>
  *      struct fdisk_parition *pa;
  *
  *      fdisk_get_partition(cxt, 0, &pa);
@@ -608,12 +609,13 @@ int fdisk_partition_next_partno(
  *	printf("first partition uuid: %s\n", data);
  *	free(data);
  *	fdisk_unref_partition(pa);
+ *   </programlisting>
+ * </informalexample>
  *
  * returns UUID for the first partition.
  *
  * Returns 0 on success, otherwise, a corresponding error.
  */
-
 int fdisk_partition_to_string(struct fdisk_partition *pa,
 			      struct fdisk_context *cxt,
 			      int id,
