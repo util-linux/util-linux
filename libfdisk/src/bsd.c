@@ -23,6 +23,14 @@
 #include "pt-bsd.h"
 #include "all-io.h"
 
+
+/**
+ * SECTION: bsd
+ * @title: BSD functions
+ * @short_description: BSD disklabel specific libfdisk functions
+ *
+ */
+
 static const char *bsd_dktypenames[] = {
 	"unknown",
 	"SMD",
@@ -527,6 +535,14 @@ static uint16_t ask_uint16(struct fdisk_context *cxt,
 	return dflt;
 }
 
+/**
+ * fdisk_bsd_edit_disklabel:
+ * @cxt: context
+ *
+ * Edits fields in BSD disk label.
+ *
+ * Returns: 0 on success, <0 on error
+ */
 int fdisk_bsd_edit_disklabel(struct fdisk_context *cxt)
 {
 	struct bsd_disklabel *d = self_disklabel(cxt);
@@ -579,6 +595,12 @@ static int bsd_get_bootstrap(struct fdisk_context *cxt,
 	return 0;
 }
 
+/**
+ * fdisk_bsd_write_bootstrap:
+ * @cxt: context
+ *
+ * Install bootstrap file to the BSD device
+ */
 int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt)
 {
 	struct bsd_disklabel dl, *d = self_disklabel(cxt);
@@ -847,8 +869,13 @@ static int bsd_translate_fstype (int linux_type)
 	return BSD_FS_OTHER;
 }
 
-/*
- * link partition from parent (DOS) to nested BSD partition table
+/**
+ * fdisk_bsd_link_partition:
+ * @cxt: context
+ *
+ * Links partition from parent (DOS) to nested BSD partition table.
+ *
+ * Returns: 0 on success, <0 on error
  */
 int fdisk_bsd_link_partition(struct fdisk_context *cxt)
 {
