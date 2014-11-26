@@ -8,8 +8,8 @@
 
 /**
  * SECTION: alignment
- * @title: Align LBA
- * @short_description: function to align partitions and work with disk topology and geometry.
+ * @title: Alignment
+ * @short_description: functions to align partitions and work with disk topology and geometry
  *
  * The libfdisk aligns the end of the partitions to make it possible to align
  * the next partition to the "grain" (see fdisk_get_grain()). The grain is
@@ -233,8 +233,8 @@ int fdisk_override_geometry(struct fdisk_context *cxt,
  * fdisk_save_user_geometry:
  * @cxt: context
  * @cylinders: C
- * @head: H
- * @sector: S
+ * @heads: H
+ * @sectors: S
  *
  * Save user defined geometry to use it for partitioning.
  *

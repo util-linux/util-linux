@@ -6,7 +6,7 @@
 
 /**
  * SECTION: utils
- * @title: Misc utils
+ * @title: Utils
  * @short_description: misc fdisk functions
  */
 
@@ -77,7 +77,7 @@ int fdisk_read_firstsector(struct fdisk_context *cxt)
 
 /**
  * fdisk_partname:
- * dev: device name
+ * @dev: device name
  * @partno: partition name
  *
  * Return: allocated buffer with partition name, use free() to deallocate.

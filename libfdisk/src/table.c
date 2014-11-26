@@ -3,7 +3,7 @@
 
 /**
  * SECTION: table
- * @title: table
+ * @title: Table
  * @short_description: container for fdisk partitions
  *
  * The fdisk_table is simple container for fdisk_partitions. The table is no
@@ -272,7 +272,7 @@ int fdisk_table_remove_partition(struct fdisk_table *tb, struct fdisk_partition 
  * This function adds partitions from disklabel to @table, it allocates a new
  * table if if @table points to NULL.
  *
- * Returns 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_get_partitions(struct fdisk_context *cxt, struct fdisk_table **tb)
 {
@@ -319,6 +319,8 @@ static int cmp_parts_wrapper(struct list_head *a, struct list_head *b, void *dat
  * @cmp: compare function
  *
  * Sort partition in the table.
+ *
+ * Returns: 0 on success, <0 on error.
  */
 int fdisk_table_sort_partitions(struct fdisk_table *tb,
 			int (*cmp)(struct fdisk_partition *,
@@ -475,7 +477,7 @@ done:
  *
  * Note that free space smaller than grain (see fdisk_get_grain()) is ignored.
 
- * Returns 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 {

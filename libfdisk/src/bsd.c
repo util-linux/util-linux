@@ -26,8 +26,8 @@
 
 /**
  * SECTION: bsd
- * @title: BSD functions
- * @short_description: BSD disklabel specific libfdisk functions
+ * @title: BSD
+ * @short_description: disk label specific functions
  *
  */
 

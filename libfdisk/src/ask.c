@@ -4,8 +4,8 @@
 
 /**
  * SECTION: ask
- * @title: Ask callback
- * @short_description: interface for dialog driven partitioning
+ * @title: Ask
+ * @short_description: interface for dialog driven partitioning, warning and info messages
  *
  */
 
@@ -198,7 +198,7 @@ int fdisk_ask_number_set_default(struct fdisk_ask *ask, uint64_t dflt)
 }
 
 /**
- * fdisk_ask_number_get_low"
+ * fdisk_ask_number_get_low:
  * @ask: ask instance
  *
  * Returns: minimal possible number when ask for numbers in range
@@ -218,7 +218,7 @@ int fdisk_ask_number_set_low(struct fdisk_ask *ask, uint64_t low)
 }
 
 /**
- * fdisk_ask_number_get_high"
+ * fdisk_ask_number_get_high:
  * @ask: ask instance
  *
  * Returns: maximal possible number when ask for numbers in range
@@ -253,7 +253,7 @@ uint64_t fdisk_ask_number_get_result(struct fdisk_ask *ask)
 /**
  * fdisk_ask_number_set_result:
  * @ask: ask instance
- * @ask: dialog result
+ * @result: dialog result
  *
  * Returns: 0 on success, <0 on error
  */
@@ -268,7 +268,7 @@ int fdisk_ask_number_set_result(struct fdisk_ask *ask, uint64_t result)
  * fdisk_ask_number_get_base:
  * @ask: ask instance
  *
- * Returns: base when user specify number in relative notation (+<size>)
+ * Returns: base when user specify number in relative notation (+size)
  */
 uint64_t fdisk_ask_number_get_base(struct fdisk_ask *ask)
 {
@@ -923,6 +923,7 @@ static int do_vprint(struct fdisk_context *cxt, int errnum, int type,
  * fdisk_info:
  * @cxt: context
  * @fmt: printf-like formatted string
+ * @...: variable parametrs
  *
  * High-level API to print info messages,
  *
@@ -944,6 +945,7 @@ int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...)
  * fdisk_info:
  * @cxt: context
  * @fmt: printf-like formatted string
+ * @...: variable parametrs
  *
  * High-level API to print warning message (errno expected)
  *
@@ -965,6 +967,7 @@ int fdisk_warn(struct fdisk_context *cxt, const char *fmt, ...)
  * fdisk_warnx:
  * @cxt: context
  * @fmt: printf-like formatted string
+ * @...: variable options
  *
  * High-level API to print warning message
  *

@@ -5,7 +5,7 @@
 #include "fdiskP.h"
 
 /**
- * SECTION: parttypw
+ * SECTION: parttype
  * @title: Partition types
  * @short_description: abstraction to partition types
  *
@@ -123,7 +123,7 @@ int fdisk_parttype_set_typestr(struct fdisk_parttype *t, const char *str)
 /**
  * fdisk_parttype_set_code:
  * @t: partition type
- * @int: type identificator (e.g. MBR type codes)
+ * @code: type identificator (e.g. MBR type codes)
  *
  * Sets type code to allocated partition type, for static types it returns
  * -EINVAL. Don't use this function for GPT, see fdisk_parttype_set_typestr().

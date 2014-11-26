@@ -6,8 +6,8 @@
 
 /**
  * SECTION: partition
- * @title: partition abstraction
- * @short_description: generic label independent partition
+ * @title: Partition
+ * @short_description: generic label independent partition abstraction
  *
  * The fdisk_partition provides label independent abstraction. The partitions
  * are not directly connected with partition table (label) data. Any change to
@@ -73,7 +73,7 @@ void fdisk_reset_partition(struct fdisk_partition *pa)
 
 /**
  * fdisk_ref_partition:
- * @tb: partition pointer
+ * @pa: partition pointer
  *
  * Incremparts reference counter.
  */
@@ -301,7 +301,7 @@ int fdisk_partition_size_explicit(struct fdisk_partition *pa, int enable)
 /**
  * fdisk_partition_set_partno:
  * @pa: partition
- * @parto: partitin number (0 is the first partition, maximal is SIZE_MAX-1)
+ * @num: partitin number (0 is the first partition, maximal is SIZE_MAX-1)
  *
  * Note that zero is valid partno too. Use fdisk_partition_unset_partno() to
  * undefine the partno.
@@ -594,6 +594,7 @@ int fdisk_partition_next_partno(
 /**
  * fdisk_partition_to_string:
  * @pa: partition
+ * @cxt: context
  * @id: field (FDISK_FIELD_*)
  * @data: returns string with allocated data
  *
@@ -614,7 +615,7 @@ int fdisk_partition_next_partno(
  *
  * returns UUID for the first partition.
  *
- * Returns 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_partition_to_string(struct fdisk_partition *pa,
 			      struct fdisk_context *cxt,
@@ -905,6 +906,7 @@ int fdisk_delete_all_partitions(struct fdisk_context *cxt)
 
 /**
  * fdisk_is_partition_used:
+ * @cxt: context
  * @n: partition number (0 is the first partition)
  *
  * This is faster than fdisk_get_partition() + fdisk_partition_is_used().

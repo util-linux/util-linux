@@ -23,8 +23,8 @@
 
 /**
  * SECTION: sun
- * @title: SUN functions
- * @short_description: SUN disklabel specific functions
+ * @title: SUN
+ * @short_description: disk label specific functions
  *
  */
 

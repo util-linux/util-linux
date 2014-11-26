@@ -4,8 +4,8 @@
 
 /**
  * SECTION: script
- * @title: Partition table script
- * @short_description: text based description of partition table
+ * @title: Script
+ * @short_description: text based sfdisk compatible description of partition table
  *
  * The libfdisk scripts are based on original sfdisk script (dumps).  Each
  * script has two parts: script headers and partition table entries
@@ -50,6 +50,7 @@ static void fdisk_script_free_header(struct fdisk_script *dp, struct fdisk_scrip
 
 /**
  * fdisk_new_script:
+ * @cxt: context
  *
  * The script hold fdisk_table and additional information to read/write
  * script to the file.
@@ -914,6 +915,8 @@ int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
  * fdisk_script_read_line:
  * @dp: script
  * @f: file
+ * @buf: buffer to store one line of the file
+ * @bufsz: buffer size
  *
  * Reads next line into dump.
  *
@@ -960,7 +963,7 @@ int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t b
 /**
  * fdisk_script_read_file:
  * @dp: script
- * @f input file
+ * @f: input file
  *
  * Reads file @f into script @dp.
  *
@@ -1038,11 +1041,11 @@ struct fdisk_script *fdisk_get_script(struct fdisk_context *cxt)
 /**
  * fdisk_apply_script_headers:
  * @cxt: context
- * dp: script
+ * @dp: script
  *
  * Associte context @cxt with script @dp and creates a new empty disklabel.
  *
- * Return: 0 on success, <0 on error.
+ * Returns: 0 on success, <0 on error.
  */
 int fdisk_apply_script_headers(struct fdisk_context *cxt, struct fdisk_script *dp)
 {

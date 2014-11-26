@@ -4,8 +4,8 @@
 
 /**
  * SECTION: label
- * @title: Label specific driver
- * @short_description: label (PT) specific data and functions
+ * @title: Label
+ * @short_description: disk label (PT) specific data and functions
  *
  * The fdisk_new_context() initializes all label drivers, and allocate
  * per-label specific data struct. This concept allows to store label specific
@@ -101,6 +101,7 @@ int fdisk_label_require_geometry(const struct fdisk_label *lb)
 /**
  * fdisk_label_get_fields_ids
  * @lb: label (or NULL for the current label)
+ * @cxt: context
  * @ids: returns allocated array with FDISK_FIELD_* IDs
  * @nids: returns number of items in fields
  *
@@ -110,7 +111,7 @@ int fdisk_label_require_geometry(const struct fdisk_label *lb)
  * function. If the details are enabled then this function usually returns more
  * fields.
  *
- * Returns 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_label_get_fields_ids(
 		const struct fdisk_label *lb,
@@ -257,7 +258,7 @@ int fdisk_field_is_number(const struct fdisk_field *field)
  *
  * Write in-memory changes to disk. Be careful!
  *
- * Returns 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_write_disklabel(struct fdisk_context *cxt)
 {
@@ -297,7 +298,7 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
  * This function uses libfdisk ASK interface to print data. The details about
  * partitions table are printed by FDISK_ASKTYPE_INFO.
  *
- * Returns 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_list_disklabel(struct fdisk_context *cxt)
 {
@@ -321,7 +322,7 @@ int fdisk_list_disklabel(struct fdisk_context *cxt)
  *
  * The function modifies in-memory data only.
  *
- * Returns 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 {
@@ -391,7 +392,7 @@ int fdisk_locate_disklabel(struct fdisk_context *cxt, int n, const char **name,
  * @cxt: fdisk context
  * @id: returns pointer to allocated string (MBR Id or GPT dirk UUID)
  *
- * Returns 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id)
 {
@@ -408,7 +409,7 @@ int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id)
  * fdisk_set_disklabel_id:
  * @cxt: fdisk context
  *
- * Returns 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_set_disklabel_id(struct fdisk_context *cxt)
 {
@@ -427,7 +428,7 @@ int fdisk_set_disklabel_id(struct fdisk_context *cxt)
  * @partnum: partition number
  * @t: new type
  *
- * Returns 0 on success, < 0 on error.
+ * Returns: 0 on success, < 0 on error.
  */
 int fdisk_set_partition_type(struct fdisk_context *cxt,
 			     size_t partnum,
@@ -459,9 +460,9 @@ int fdisk_set_partition_type(struct fdisk_context *cxt,
  * fdisk_toggle_partition_flag:
  * @cxt: fdisk context
  * @partnum: partition number
- * @status: flags
+ * @flag: flag ID
  *
- * Returns 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_toggle_partition_flag(struct fdisk_context *cxt,
 			       size_t partnum,
@@ -486,7 +487,7 @@ int fdisk_toggle_partition_flag(struct fdisk_context *cxt,
  *
  * Sort partitions according to the partition start sector.
  *
- * Returns 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_reorder_partitions(struct fdisk_context *cxt)
 {
@@ -540,8 +541,9 @@ int fdisk_label_is_changed(const struct fdisk_label *lb)
 /**
  * fdisk_label_set_disabled:
  * @lb: label
+ * @disabled: 0 or 1
  *
- * Mark label as disabled, then libfdisk is going to ignore the label when 
+ * Mark label as disabled, then libfdisk is going to ignore the label when
  * probe device for labels.
  */
 void fdisk_label_set_disabled(struct fdisk_label *lb, int disabled)

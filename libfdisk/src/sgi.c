@@ -24,8 +24,8 @@
 
 /**
  * SECTION: sgi
- * @title: SGI functions
- * @short_description: SGI disk label specific functionality
+ * @title: SGI
+ * @short_description: disk label specific functions
  *
  */
 

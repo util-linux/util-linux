@@ -7,8 +7,8 @@
 
 /**
  * SECTION: context
- * @title: libfdisk handler
- * @short_description: stores infor about device, labels etc.
+ * @title: Context
+ * @short_description: stores info about device, labels etc.
  *
  * The library distinguish between three types of partitioning objects.
  *
@@ -346,7 +346,7 @@ size_t fdisk_get_npartitions(struct fdisk_context *cxt)
  *
  * See also fdisk_is_label() macro in libfdisk.h.
  *
- * Returns: return 1 if the current label is @l
+ * Returns: return 1 if the current label is @id
  */
 int fdisk_is_labeltype(struct fdisk_context *cxt, enum fdisk_labeltype id)
 {
@@ -724,6 +724,7 @@ int fdisk_set_unit(struct fdisk_context *cxt, const char *str)
 /**
  * fdisk_get_unit:
  * @cxt: context
+ * @n: FDISK_PLURAL or FDISK_SINGULAR
  *
  * Returns: unit name.
  */
@@ -738,9 +739,9 @@ const char *fdisk_get_unit(struct fdisk_context *cxt, int n)
 
 /**
  * fdisk_use_cylinders:
- * @@cxt: context
+ * @cxt: context
  *
- * Returns 1 if user wants to display in cylinders.
+ * Returns: 1 if user wants to display in cylinders.
  */
 int fdisk_use_cylinders(struct fdisk_context *cxt)
 {

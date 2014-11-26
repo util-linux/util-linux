@@ -1859,13 +1859,15 @@ Makefile
 libblkid/docs/Makefile
 libblkid/docs/version.xml
 libblkid/src/blkid.h
+libfdisk/docs/Makefile
+libfdisk/docs/version.xml
+libfdisk/src/libfdisk.h
 libmount/docs/Makefile
 libmount/docs/version.xml
 libmount/src/libmount.h
 libsmartcols/docs/Makefile
 libsmartcols/docs/version.xml
 libsmartcols/src/libsmartcols.h
-libfdisk/src/libfdisk.h
 po/Makefile.in
 ])
 

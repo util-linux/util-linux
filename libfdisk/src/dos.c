@@ -21,8 +21,8 @@
 
 /**
  * SECTION: dos
- * @title: MBR (DOS) functions
- * @short_description: MBR disk label specific functions
+ * @title: DOS (MBR)
+ * @short_description: disk label specific functions
  *
  */
 

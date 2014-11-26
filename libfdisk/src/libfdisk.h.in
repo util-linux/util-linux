@@ -153,7 +153,7 @@ int fdisk_next_label(struct fdisk_context *cxt, struct fdisk_label **lb);
 size_t fdisk_get_nlabels(struct fdisk_context *cxt);
 
 int fdisk_has_label(struct fdisk_context *cxt);
-int fdisk_is_labeltype(struct fdisk_context *cxt, enum fdisk_labeltype l);
+int fdisk_is_labeltype(struct fdisk_context *cxt, enum fdisk_labeltype id);
 #define fdisk_is_label(c, x) fdisk_is_labeltype(c, FDISK_DISKLABEL_ ## x)
 
 
@@ -289,10 +289,10 @@ extern const struct fdisk_field *fdisk_label_get_field_by_name(
 			const struct fdisk_label *lb,
 			const char *name);
 
-extern int fdisk_field_get_id(const struct fdisk_field *fl);
-extern const char *fdisk_field_get_name(const struct fdisk_field *fl);
-extern double fdisk_field_get_width(const struct fdisk_field *fl);
-extern int fdisk_field_is_number(const struct fdisk_field *fl);
+extern int fdisk_field_get_id(const struct fdisk_field *field);
+extern const char *fdisk_field_get_name(const struct fdisk_field *field);
+extern double fdisk_field_get_width(const struct fdisk_field *field);
+extern int fdisk_field_is_number(const struct fdisk_field *field);
 
 
 extern void fdisk_label_set_changed(struct fdisk_label *lb, int changed);
@@ -500,7 +500,7 @@ int fdisk_script_get_nlines(struct fdisk_script *dp);
 int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt);
 int fdisk_script_write_file(struct fdisk_script *dp, FILE *f);
 int fdisk_script_read_file(struct fdisk_script *dp, FILE *f);
-int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t sz);
+int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t bufsz);
 
 int fdisk_set_script(struct fdisk_context *cxt, struct fdisk_script *dp);
 struct fdisk_script *fdisk_get_script(struct fdisk_context *cxt);
