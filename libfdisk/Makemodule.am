@@ -2,6 +2,8 @@ if BUILD_LIBFDISK
 
 include libfdisk/src/Makemodule.am
 
+pkgconfig_DATA += libfdisk/fdisk.pc
+PATHFILES      += libfdisk/fdisk.pc
 EXTRA_DIST     += libfdisk/COPYING
 
 endif # BUILD_LIBFDISK

@@ -861,6 +861,10 @@ UL_REQUIRES_BUILD([libfdisk], [libuuid])
 AM_CONDITIONAL([BUILD_LIBFDISK], [test "x$build_libfdisk" = xyes])
 AM_CONDITIONAL([BUILD_LIBFDISK_TESTS], [test "x$build_libfdisk" = xyes -a "x$enable_static" = xyes])
 
+AS_IF([test "x$build_libblkid" = xyes],
+  [LIBFDISK_PC_REQUIRES="uuid blkid"],[LIBFDISK_PC_REQUIRES="uuid"])
+AC_SUBST([LIBFDISK_PC_REQUIRES])
+
 AC_SUBST([LIBFDISK_VERSION])
 AC_SUBST([LIBFDISK_VERSION_INFO])
 AC_DEFINE_UNQUOTED([LIBFDISK_VERSION], ["$LIBFDISK_VERSION"], [libfdisk version string])
