@@ -359,6 +359,9 @@ extern int fdisk_iter_get_direction(struct fdisk_iter *itr);
 
 
 /* dos.c */
+#define DOS_FLAG_ACTIVE	1
+
+extern int fdisk_dos_move_begin(struct fdisk_context *cxt, size_t i);
 extern int fdisk_dos_enable_compatible(struct fdisk_label *lb, int enable);
 extern int fdisk_dos_is_compatible(struct fdisk_label *lb);
 
@@ -412,14 +415,6 @@ enum {
 
 extern int fdisk_gpt_is_hybrid(struct fdisk_context *cxt);
 
-/* dos.c */
-extern struct dos_partition *fdisk_dos_get_partition(
-				struct fdisk_context *cxt,
-				size_t i);
-
-extern int fdisk_dos_move_begin(struct fdisk_context *cxt, size_t i);
-
-#define DOS_FLAG_ACTIVE	1
 
 /* script.c */
 struct fdisk_script *fdisk_new_script(struct fdisk_context *cxt);

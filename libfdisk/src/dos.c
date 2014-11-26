@@ -19,6 +19,14 @@
 #define MAXIMUM_PARTS	60
 #define ACTIVE_FLAG     0x80
 
+/**
+ * SECTION: dos
+ * @title: MBR (DOS) functions
+ * @short_description: MBR disk label specific functions
+ *
+ */
+
+
 #define IS_EXTENDED(i) \
 	((i) == MBR_DOS_EXTENDED_PARTITION \
 	 || (i) == MBR_W95_EXTENDED_PARTITION \
@@ -2289,10 +2297,16 @@ struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt)
 	return lb;
 }
 
-/*
- * Public label specific functions
+/**
+ * fdisk_dos_enable_compatible:
+ * @lb: DOS label (see fdisk_get_label())
+ * @enable: 0 or 1
+ *
+ * Enables deprecated DOS compatible mode, in this mode library checks for
+ * cylinders boundary, cases about CHS addressing and another obscure things.
+ *
+ * Returns: 0 on success, <0 on error.
  */
-
 int fdisk_dos_enable_compatible(struct fdisk_label *lb, int enable)
 {
 	struct fdisk_dos_label *dos = (struct fdisk_dos_label *) lb;
@@ -2306,6 +2320,12 @@ int fdisk_dos_enable_compatible(struct fdisk_label *lb, int enable)
 	return 0;
 }
 
+/**
+ * fdisk_dos_is_compatible:
+ * @lb: DOS label
+ *
+ * Returns: 0 if DOS compatibility disabled, 1 if enabled
+ */
 int fdisk_dos_is_compatible(struct fdisk_label *lb)
 {
 	return ((struct fdisk_dos_label *) lb)->compatible;

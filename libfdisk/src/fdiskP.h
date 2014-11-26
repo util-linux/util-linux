@@ -431,4 +431,9 @@ int fdisk_info_new_partition(
 			int num, sector_t start, sector_t stop,
 			struct fdisk_parttype *t);
 
+/* dos.c */
+extern struct dos_partition *fdisk_dos_get_partition(
+				struct fdisk_context *cxt,
+				size_t i);
+
 #endif /* _LIBFDISK_PRIVATE_H */
