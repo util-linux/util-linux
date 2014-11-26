@@ -20,6 +20,14 @@
 #include "pt-sun.h"
 #include "all-io.h"
 
+
+/**
+ * SECTION: sun
+ * @title: SUN functions
+ * @short_description: SUN disklabel specific functions
+ *
+ */
+
 /*
  * in-memory fdisk SUN stuff
  */
@@ -810,7 +818,15 @@ static int sun_get_partition(struct fdisk_context *cxt, size_t n,
 	return 0;
 }
 
-
+/**
+ * fdisk_sun_set_alt_cyl:
+ * @cxt: context
+ *
+ * Sets number of alternative cylinders. This function uses libfdisk Ask API
+ * for dialog with user.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_sun_set_alt_cyl(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
@@ -827,6 +843,15 @@ int fdisk_sun_set_alt_cyl(struct fdisk_context *cxt)
 	return 0;
 }
 
+/**
+ * fdisk_sun_set_xcyl:
+ * @cxt: context
+ *
+ * Sets number of extra sectors per cylinder. This function uses libfdisk Ask API
+ * for dialog with user.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_sun_set_xcyl(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
@@ -842,6 +867,15 @@ int fdisk_sun_set_xcyl(struct fdisk_context *cxt)
 	return 0;
 }
 
+/**
+ * fdisk_sun_set_ilfact:
+ * @cxt: context
+ *
+ * Sets interleave factor. This function uses libfdisk Ask API for dialog with
+ * user.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_sun_set_ilfact(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
@@ -857,6 +891,15 @@ int fdisk_sun_set_ilfact(struct fdisk_context *cxt)
 	return 0;
 }
 
+/**
+ * fdisk_sun_set_rspeed
+ * @cxt: context
+ *
+ * Sets rotation speed. This function uses libfdisk Ask API for dialog with
+ * user.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_sun_set_rspeed(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
@@ -872,6 +915,15 @@ int fdisk_sun_set_rspeed(struct fdisk_context *cxt)
 	return 0;
 }
 
+/**
+ * fdisk_sun_set_pcylcount
+ * @cxt: context
+ *
+ * Sets number of physical cylinders. This function uses libfdisk Ask API for
+ * dialog with user.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
 int fdisk_sun_set_pcylcount(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
