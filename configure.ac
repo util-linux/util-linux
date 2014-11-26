@@ -53,6 +53,13 @@ LIBSMARTCOLS_LT_MINOR=1
 LIBSMARTCOLS_LT_MICRO=0
 LIBSMARTCOLS_VERSION_INFO=`expr $LIBSMARTCOLS_LT_MAJOR + $LIBSMARTCOLS_LT_MINOR`:$LIBSMARTCOLS_LT_MICRO:$LIBSMARTCOLS_LT_MINOR
 
+dnl libfdisk version
+LIBFDISK_VERSION="$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_RELEASE"
+LIBFDISK_LT_MAJOR=1
+LIBFDISK_LT_MINOR=1
+LIBFDISK_LT_MICRO=0
+LIBFDISK_VERSION_INFO=`expr $LIBFDISK_LT_MAJOR + $LIBFDISK_LT_MINOR`:$LIBFDISK_LT_MICRO:$LIBFDISK_LT_MINOR
+
 # Check whether exec_prefix=/usr:
 AS_CASE([$exec_prefix:$prefix],
 [NONE:NONE | NONE:/usr | /usr:*],
@@ -843,11 +850,21 @@ AC_DEFINE_UNQUOTED([LIBSMARTCOLS_VERSION], ["$LIBSMARTCOLS_VERSION"], [libsmartc
 
 
 dnl
-dnl libfdisk is enabled at all times if possible
+dnl libfdisk
 dnl
-UL_BUILD_INIT([libfdisk], [check])
+AC_ARG_ENABLE([libfdisk],
+  AS_HELP_STRING([--disable-libfdisk], [do not build libfdisk]),
+  [], [UL_DEFAULT_ENABLE([libfdisk], [check])]
+)
+UL_BUILD_INIT([libfdisk])
 UL_REQUIRES_BUILD([libfdisk], [libuuid])
 AM_CONDITIONAL([BUILD_LIBFDISK], [test "x$build_libfdisk" = xyes])
+AM_CONDITIONAL([BUILD_LIBFDISK_TESTS], [test "x$build_libfdisk" = xyes -a "x$enable_static" = xyes])
+
+AC_SUBST([LIBFDISK_VERSION])
+AC_SUBST([LIBFDISK_VERSION_INFO])
+AC_DEFINE_UNQUOTED([LIBFDISK_VERSION], ["$LIBFDISK_VERSION"], [libfdisk version string])
+
 
 UL_BUILD_INIT([fdisk], [check])
 UL_REQUIRES_BUILD([fdisk], [libfdisk])
@@ -1844,6 +1861,7 @@ libmount/src/libmount.h
 libsmartcols/docs/Makefile
 libsmartcols/docs/version.xml
 libsmartcols/src/libsmartcols.h
+libfdisk/src/libfdisk.h
 po/Makefile.in
 ])
 

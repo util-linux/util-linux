@@ -1,13 +1,11 @@
-#
-# The libfdisk is used for internal util-linux purpose. The library is not
-# distributed as shared library for now. Maybe one day...
-#
 
+# libfdisk.h is generated, so it's stored in builddir!
+fdiskincdir = $(includedir)/libfdisk
+nodist_fdiskinc_HEADERS = $(top_builddir)/libfdisk/src/libfdisk.h
 
-noinst_LTLIBRARIES += libfdisk.la
+usrlib_exec_LTLIBRARIES += libfdisk.la
 libfdisk_la_SOURCES = \
-	libfdisk/src/libfdisk.h \
-	libfdisk/src/fdiskP.h \
+	include/list.h \
 	\
 	libfdisk/src/init.c \
 	libfdisk/src/test.c \
@@ -26,17 +24,30 @@ libfdisk_la_SOURCES = \
 	libfdisk/src/sgi.c \
 	libfdisk/src/dos.c \
 	libfdisk/src/bsd.c \
-	libfdisk/src/gpt.c
+	libfdisk/src/gpt.c \
+	$(nodist_fdiskinc_HEADERS)
 
 
 nodist_libfdisk_la_SOURCES = libfdisk/src/fdiskP.h
 
-libfdisk_la_LIBADD = libcommon.la
-libfdisk_la_DEPENDENCIES = libcommon.la
+libfdisk_la_LIBADD = libcommon.la libuuid.la
 
 libfdisk_la_CFLAGS = \
+	$(SOLIB_CFLAGS) \
+	-I$(ul_libuuid_incdir) \
 	-I$(ul_libfdisk_incdir) \
 	-I$(top_srcdir)/libfdisk/src
+
+libfdisk_la_DEPENDENCIES = \
+	libcommon.la \
+	libuuid.la \
+	libfdisk/src/libfdisk.sym \
+	libfdisk/src/libfdisk.h.in
+
+libfdisk_la_LDFLAGS = \
+	$(SOLIB_LDFLAGS) \
+	-Wl,--version-script=$(top_srcdir)/libfdisk/src/libfdisk.sym \
+	-version-info $(LIBFDISK_VERSION_INFO)
 
 if BUILD_LIBBLKID
 libfdisk_la_LIBADD += libblkid.la
@@ -44,27 +55,22 @@ libfdisk_la_DEPENDENCIES += libblkid.la
 libfdisk_la_CFLAGS += -I$(ul_libblkid_incdir)
 endif
 
-if BUILD_LIBUUID
-libfdisk_la_LIBADD += libuuid.la
-libfdisk_la_DEPENDENCIES += libuuid.la
-libfdisk_la_CFLAGS += -I$(ul_libuuid_incdir)
-endif
+EXTRA_DIST += \
+	libfdisk/src/libfdisk.sym \
+	libfdisk/src/libfdisk.h.in
 
+if BUILD_LIBFDISK_TESTS
 check_PROGRAMS += \
 	test_fdisk_ask \
 	test_fdisk_script \
 	test_fdisk_utils
 
 libfdisk_tests_cflags  = -DTEST_PROGRAM $(libfdisk_la_CFLAGS)
-libfdisk_tests_ldflags = -static
-libfdisk_tests_ldadd   = libfdisk.la
+libfdisk_tests_ldflags = libuuid.la -static
+libfdisk_tests_ldadd   = libfdisk.la $(UUID_LIBS)
 
 if BUILD_LIBBLKID
 libfdisk_tests_ldflags += libblkid.la
-endif
-
-if BUILD_LIBUUID
-libfdisk_tests_ldflags += libuuid.la
 endif
 
 test_fdisk_ask_SOURCES = libfdisk/src/ask.c
@@ -81,3 +87,25 @@ test_fdisk_script_SOURCES = libfdisk/src/script.c
 test_fdisk_script_CFLAGS = $(libfdisk_tests_cflags)
 test_fdisk_script_LDFLAGS = $(libfdisk_tests_ldflags)
 test_fdisk_script_LDADD = $(libfdisk_tests_ldadd)
+
+endif # BUILD_LIBFDISK_TESTS
+
+
+# move lib from $(usrlib_execdir) to $(libdir) if needed
+install-exec-hook-libfdisk:
+	if test "$(usrlib_execdir)" != "$(libdir)" -a -f "$(DESTDIR)$(usrlib_execdir)/libfdisk.so"; then \
+		mkdir -p $(DESTDIR)$(libdir); \
+		mv $(DESTDIR)$(usrlib_execdir)/libfdisk.so.* $(DESTDIR)$(libdir); \
+		so_img_name=$$(readlink $(DESTDIR)$(usrlib_execdir)/libfdisk.so); \
+		so_img_rel_target=$$(echo $(usrlib_execdir) | sed 's,\(^/\|\)[^/][^/]*,..,g'); \
+		(cd $(DESTDIR)$(usrlib_execdir) && \
+			rm -f libfdisk.so && \
+			$(LN_S) $$so_img_rel_target$(libdir)/$$so_img_name libfdisk.so); \
+	fi
+
+uninstall-hook-libfdisk:
+	rm -f $(DESTDIR)$(libdir)/libfdisk.so*
+
+INSTALL_EXEC_HOOKS += install-exec-hook-libfdisk
+UNINSTALL_HOOKS += uninstall-hook-libfdisk
+

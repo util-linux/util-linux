@@ -1,7 +1,7 @@
 /*
  * libfdisk.h - libfdisk API
  *
- * Copyright (C) 2012 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2012-2014 Karel Zak <kzak@redhat.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +18,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef _LIBFDISK_FDISK_H
-#define _LIBFDISK_FDISK_H
+#ifndef _LIBFDISK_H
+#define _LIBFDISK_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,6 +28,13 @@ extern "C" {
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
+
+/**
+ * LIBFDISK_VERSION:
+ *
+ * Library version string
+ */
+#define LIBFDISK_VERSION   "@LIBFDISK_VERSION@"
 
 /**
  * fdisk_context:
@@ -561,4 +568,4 @@ extern char *fdisk_partname(const char *dev, size_t partno);
 }
 #endif
 
-#endif /* _LIBFDISK_FDISK_H */
+#endif /* _LIBFDISK_H */

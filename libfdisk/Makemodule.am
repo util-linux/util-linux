@@ -2,4 +2,6 @@ if BUILD_LIBFDISK
 
 include libfdisk/src/Makemodule.am
 
+EXTRA_DIST     += libfdisk/COPYING
+
 endif # BUILD_LIBFDISK
