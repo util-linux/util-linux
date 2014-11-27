@@ -34,6 +34,8 @@ static inline void fputs_quoted(const char *data, FILE *out)
 	for (p = data; p && *p; p++) {
 		if ((unsigned char) *p == 0x22 ||		/* " */
 		    (unsigned char) *p == 0x5c ||		/* \ */
+		    (unsigned char) *p == 0x60 ||		/* ` */
+		    (unsigned char) *p == 0x24 ||		/* $ */
 		    !isprint((unsigned char) *p) ||
 		    iscntrl((unsigned char) *p)) {
 
