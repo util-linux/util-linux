@@ -306,7 +306,7 @@ static void print_value(int output, int num, const char *devname,
 			printf("DEVNAME=%s\n", devname);
 		fputs(name, stdout);
 		fputs("=", stdout);
-		safe_print(value, valsz, NULL);
+		safe_print(value, valsz, " \\\"'$`<>");
 		fputs("\n", stdout);
 
 	} else {
@@ -315,7 +315,7 @@ static void print_value(int output, int num, const char *devname,
 		fputs(" ", stdout);
 		fputs(name, stdout);
 		fputs("=\"", stdout);
-		safe_print(value, valsz, "\"");
+		safe_print(value, valsz, "\"\\");
 		fputs("\"", stdout);
 	}
 }

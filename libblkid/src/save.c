@@ -26,6 +26,21 @@
 
 #include "blkidP.h"
 
+
+static void save_quoted(const char *data, FILE *file)
+{
+	const char *p;
+
+	fputc('"', file);
+	for (p = data; p && *p; p++) {
+		if ((unsigned char) *p == 0x22 ||		/* " */
+		    (unsigned char) *p == 0x5c)			/* \ */
+			fputc('\\', file);
+
+		fputc(*p, file);
+	}
+	fputc('"', file);
+}
 static int save_dev(blkid_dev dev, FILE *file)
 {
 	struct list_head *p;
@@ -43,9 +58,14 @@ static int save_dev(blkid_dev dev, FILE *file)
 
 	if (dev->bid_pri)
 		fprintf(file, " PRI=\"%d\"", dev->bid_pri);
+
 	list_for_each(p, &dev->bid_tags) {
 		blkid_tag tag = list_entry(p, struct blkid_struct_tag, bit_tags);
-		fprintf(file, " %s=\"%s\"", tag->bit_name,tag->bit_val);
+
+		fputc(' ', file);			/* space between tags */
+		fputs(tag->bit_name, file);		/* tag NAME */
+		fputc('=', file);			/* separator between NAME and VALUE */
+		save_quoted(tag->bit_val, file);	/* tag "VALUE" */
 	}
 	fprintf(file, ">%s</device>\n", dev->bid_name);
 

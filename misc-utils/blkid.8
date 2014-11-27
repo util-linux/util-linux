@@ -200,7 +200,10 @@ partitions.  This output format is \fBDEPRECATED\fR.
 .TP
 .B export
 print key=value pairs for easy import into the environment; this output format
-is automatically enabled when I/O Limits (\fB-i\fR option) are requested
+is automatically enabled when I/O Limits (\fB-i\fR option) are requested.
+
+The non-printing characters are encoded by ^ and M- notation and all
+potentially unsafe characters are escaped.
 .RE
 .TP
 .BI \-O " offset"
