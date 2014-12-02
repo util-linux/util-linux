@@ -105,6 +105,7 @@ enum {
 	COL_PKNAME,
 	COL_HCTL,
 	COL_TRANSPORT,
+	COL_SUBSYS,
 	COL_REV,
 	COL_VENDOR
 };
@@ -178,6 +179,7 @@ static struct colinfo infos[] = {
 	[COL_WWN]    = { "WWN",     18, 0, N_("unique storage identifier") },
 	[COL_HCTL]   = { "HCTL", 10, 0, N_("Host:Channel:Target:Lun for SCSI") },
 	[COL_TRANSPORT] = { "TRAN", 6, 0, N_("device transport type") },
+	[COL_SUBSYS] = { "SUBSYSTEMS", 0.1, SCOLS_FL_NOEXTREMES, N_("de-duplicated chain of subsystems") },
 	[COL_REV]    = { "REV",   4, SCOLS_FL_RIGHT, N_("device revision") },
 	[COL_VENDOR] = { "VENDOR", 0.1, SCOLS_FL_TRUNC, N_("device vendor") },
 };
@@ -708,6 +710,38 @@ static char *get_transport(struct blkdev_cxt *cxt)
 	return trans ? xstrdup(trans) : NULL;
 }
 
+static char *get_subsystems(struct blkdev_cxt *cxt)
+{
+	char path[PATH_MAX];
+	char *sub, *chain, *res = NULL;
+	size_t len = 0, last = 0;
+
+	chain = sysfs_get_devchain(&cxt->sysfs, path, sizeof(path));
+	if (!chain)
+		return NULL;
+
+	while (sysfs_next_subsystem(&cxt->sysfs, chain, &sub) == 0) {
+		size_t sz;
+
+		/* don't create "block:scsi:scsi", but "block:scsi" */
+		if (len && strcmp(res + last, sub) == 0)
+			continue;
+
+		sz = strlen(sub);
+		res = xrealloc(res, len + sz + 2);
+		if (len)
+			res[len++] = ':';
+
+		memcpy(res + len, sub, sz + 1);
+		last = len;
+		len += sz;
+		free(sub);
+	}
+
+	return res;
+}
+
+
 #define is_parsable(_l)	(scols_table_is_raw((_l)->table) || \
 			 scols_table_is_export((_l)->table))
 
@@ -984,6 +1018,9 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 	}
 	case COL_TRANSPORT:
 		str = get_transport(cxt);
+		break;
+	case COL_SUBSYS:
+		str = get_subsystems(cxt);
 		break;
 	case COL_DALIGN:
 		if (cxt->discard)
