@@ -547,6 +547,146 @@ char *sysfs_get_devname(struct sysfs_cxt *cxt, char *buf, size_t bufsiz)
 	return buf;
 }
 
+#define SUBSYSTEM_LINKNAME	"/subsystem"
+
+/*
+ * For example:
+ *
+ * chain: /sys/dev/block/../../devices/pci0000:00/0000:00:1a.0/usb1/1-1/1-1.2/ \
+ *                           1-1.2:1.0/host65/target65:0:0/65:0:0:0/block/sdb
+ *
+ * The function check if <chain>/subsystem symlink exists, if yes then returns
+ * basename of the readlink result, and remove the last subdirectory from the
+ * <chain> path.
+ */
+static char *get_subsystem(char *chain, char *buf, size_t bufsz)
+{
+	size_t len;
+	char *p;
+
+	if (!chain || !*chain)
+		return NULL;
+
+	len = strlen(chain);
+	if (len + sizeof(SUBSYSTEM_LINKNAME) > PATH_MAX)
+		return NULL;
+
+	do {
+		ssize_t sz;
+
+		/* append "/subsystem" to the path */
+		memcpy(chain + len, SUBSYSTEM_LINKNAME, sizeof(SUBSYSTEM_LINKNAME));
+
+		/* try if subsystem symlink exists */
+		sz = readlink(chain, buf, bufsz - 1);
+
+		/* remove last subsystem from chain */
+		chain[len] = '\0';
+		p = strrchr(chain, '/');
+		if (p) {
+			*p = '\0';
+			len = p - chain;
+		}
+
+		if (sz > 0) {
+			/* we found symlink to subsystem, return basename */
+			buf[sz] = '\0';
+			return basename(buf);
+		}
+
+	} while (p);
+
+	return NULL;
+}
+
+/*
+ * Returns complete path to the device, the patch contains all all sybsystems
+ * used for the device.
+ */
+char *sysfs_get_devchain(struct sysfs_cxt *cxt, char *buf, size_t bufsz)
+{
+	/* read /sys/dev/block/<maj>:<min> symlink */
+	size_t sz = sysfs_readlink(cxt, NULL, buf, bufsz);
+	if (sz <= 0 || sz + sizeof(_PATH_SYS_DEVBLOCK "/") > bufsz)
+		return NULL;
+
+	buf[sz++] = '\0';
+
+	/* create absolute patch from the link */
+	memmove(buf + sizeof(_PATH_SYS_DEVBLOCK "/") - 1, buf, sz);
+	memcpy(buf, _PATH_SYS_DEVBLOCK "/", sizeof(_PATH_SYS_DEVBLOCK "/") - 1);
+
+	return buf;
+}
+
+/*
+ * The @subsys returns the next subsystem in the chain. Function modifies
+ * @devchain string.
+ *
+ * Returns: 0 in success, <0 on error, 1 on end of chain
+ */
+int sysfs_next_subsystem(struct sysfs_cxt *cxt __attribute__((unused)),
+			 char *devchain, char **subsys)
+{
+	char subbuf[PATH_MAX];
+	char *sub;
+
+	if (!subsys || !devchain)
+		return -EINVAL;
+
+	while ((sub = get_subsystem(devchain, subbuf, sizeof(subbuf)))) {
+		*subsys = strdup(sub);
+		if (!*subsys)
+			return -ENOMEM;
+		return 0;
+	}
+
+	return 1;
+}
+
+
+static int is_hotpluggable_subsystem(const char *name)
+{
+	static const char * const hotplug_subsystems[] = {
+		"usb",
+		"ieee1394",
+		"pcmcia",
+		"mmc",
+		"ccw"
+	};
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(hotplug_subsystems); i++)
+		if (strcmp(name, hotplug_subsystems[i]) == 0)
+			return 1;
+
+	return 0;
+}
+
+int sysfs_is_hotpluggable(struct sysfs_cxt *cxt)
+{
+	char buf[PATH_MAX], *chain, *sub;
+	int rc = 0;
+
+
+	/* check /sys/dev/block/<maj>:<min>/removable attribute */
+	if (sysfs_read_int(cxt, "removable", &rc) == 0 && rc == 1)
+		return 1;
+
+	chain = sysfs_get_devchain(cxt, buf, sizeof(buf));
+
+	while (chain && sysfs_next_subsystem(cxt, chain, &sub) == 0) {
+		rc = is_hotpluggable_subsystem(sub);
+		if (rc) {
+			free(sub);
+			break;
+		}
+		free(sub);
+	}
+
+	return rc;
+}
+
 static int get_dm_wholedisk(struct sysfs_cxt *cxt, char *diskname,
                 size_t len, dev_t *diskdevno)
 {
@@ -711,6 +851,7 @@ int sysfs_devno_is_wholedisk(dev_t devno)
 	return devno == disk;
 }
 
+
 int sysfs_scsi_get_hctl(struct sysfs_cxt *cxt, int *h, int *c, int *t, int *l)
 {
 	char buf[PATH_MAX], *hctl;
@@ -858,7 +999,7 @@ int main(int argc, char *argv[])
 	struct sysfs_cxt cxt = UL_SYSFSCXT_EMPTY;
 	char *devname;
 	dev_t devno;
-	char path[PATH_MAX];
+	char path[PATH_MAX], *sub, *chain;
 	int i, is_part;
 	uint64_t u64;
 	ssize_t len;
@@ -911,6 +1052,16 @@ int main(int argc, char *argv[])
 		printf("SECTOR: %d\n", i);
 
 	printf("DEVNAME: %s\n", sysfs_get_devname(&cxt, path, sizeof(path)));
+	printf("HOTPLUG: %s\n", sysfs_is_hotpluggable(&cxt) ? "yes" : "no");
+
+	chain = sysfs_get_devchain(&cxt, path, sizeof(path));
+	printf("SUBSUSTEMS:\n");
+
+	while (chain && sysfs_next_subsystem(&cxt, chain, &sub) == 0) {
+		printf("\t%s\n", sub);
+		free(sub);
+	}
+
 
 	sysfs_deinit(&cxt);
 	return EXIT_SUCCESS;

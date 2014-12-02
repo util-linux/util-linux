@@ -70,6 +70,10 @@ extern int sysfs_count_partitions(struct sysfs_cxt *cxt, const char *devname);
 extern dev_t sysfs_partno_to_devno(struct sysfs_cxt *cxt, int partno);
 extern char *sysfs_get_slave(struct sysfs_cxt *cxt);
 
+extern char *sysfs_get_devchain(struct sysfs_cxt *cxt, char *buf, size_t bufsz);
+extern int sysfs_next_subsystem(struct sysfs_cxt *cxt, char *devchain, char **subsys);
+extern int sysfs_is_hotpluggable(struct sysfs_cxt *cxt);
+
 extern int sysfs_is_partition_dirent(DIR *dir, struct dirent *d,
 			const char *parent_name);
 
