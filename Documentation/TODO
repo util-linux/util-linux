@@ -1,11 +1,6 @@
 
  Note that items with (!) have high priority.
 
-lsblk
------
-  - add column HOTPLUG, use code from sys-util/eject.c:is_hotpluggable()
-   (the current "RM" - removable is not enough for subsystems like usb, pcmcia, ..)
-
 agetty
 -----
   - support default issue (/etc/issue) output for agetty to make it agetty
