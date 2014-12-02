@@ -78,6 +78,7 @@ enum {
 	COL_RA,
 	COL_RO,
 	COL_RM,
+	COL_HOTPLUG,
 	COL_MODEL,
 	COL_SERIAL,
 	COL_SIZE,
@@ -105,7 +106,7 @@ enum {
 	COL_HCTL,
 	COL_TRANSPORT,
 	COL_REV,
-	COL_VENDOR,
+	COL_VENDOR
 };
 
 /* basic table settings */
@@ -151,6 +152,7 @@ static struct colinfo infos[] = {
 	[COL_RA]     = { "RA",      3, SCOLS_FL_RIGHT, N_("read-ahead of the device"), SORT_U64 },
 	[COL_RO]     = { "RO",      1, SCOLS_FL_RIGHT, N_("read-only device") },
 	[COL_RM]     = { "RM",      1, SCOLS_FL_RIGHT, N_("removable device") },
+	[COL_HOTPLUG]= { "HOTPLUG", 1, SCOLS_FL_RIGHT, N_("removable or hotplug device (usb, pcmcia, ...)") },
 	[COL_ROTA]   = { "ROTA",    1, SCOLS_FL_RIGHT, N_("rotational device") },
 	[COL_RAND]   = { "RAND",    1, SCOLS_FL_RIGHT, N_("adds randomness") },
 	[COL_MODEL]  = { "MODEL",   0.1, SCOLS_FL_TRUNC, N_("device identifier") },
@@ -889,6 +891,9 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		str = sysfs_strdup(&cxt->sysfs, "removable");
 		if (!str && cxt->sysfs.parent)
 			str = sysfs_strdup(cxt->sysfs.parent, "removable");
+		break;
+	case COL_HOTPLUG:
+		str = sysfs_is_hotpluggable(&cxt->sysfs) ? xstrdup("1") : xstrdup("0");
 		break;
 	case COL_ROTA:
 		str = sysfs_strdup(&cxt->sysfs, "queue/rotational");
