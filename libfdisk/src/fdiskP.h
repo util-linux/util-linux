@@ -118,9 +118,9 @@ struct fdisk_partition {
 	size_t		partno;			/* partition number */
 	size_t		parent_partno;		/* for logical partitions */
 
-	uint64_t	start;			/* first sectors */
-	uint64_t	end;			/* last sector */
-	uint64_t	size;			/* size in sectors */
+	fdisk_sector_t	start;			/* first sectors */
+	fdisk_sector_t	end;			/* last sector */
+	fdisk_sector_t	size;			/* size in sectors */
 
 	char		*name;			/* partition name */
 	char		*uuid;			/* partition UUID */
@@ -167,8 +167,8 @@ struct fdisk_table {
  */
 struct fdisk_geometry {
 	unsigned int heads;
-	sector_t sectors;
-	sector_t cylinders;
+	fdisk_sector_t sectors;
+	fdisk_sector_t cylinders;
 };
 
 /*
@@ -354,11 +354,11 @@ struct fdisk_context {
 
 	/* alignment */
 	unsigned long grain;		/* alignment unit */
-	sector_t first_lba;		/* recommended begin of the first partition */
-	sector_t last_lba;		/* recomennded end of last partition */
+	fdisk_sector_t first_lba;		/* recommended begin of the first partition */
+	fdisk_sector_t last_lba;		/* recomennded end of last partition */
 
 	/* geometry */
-	sector_t total_sectors;	/* in logical sectors */
+	fdisk_sector_t total_sectors;	/* in logical sectors */
 	struct fdisk_geometry geom;
 
 	/* user setting to overwrite device default */
@@ -390,8 +390,8 @@ extern int __fdisk_switch_label(struct fdisk_context *cxt,
 extern int fdisk_missing_geometry(struct fdisk_context *cxt);
 
 /* alignment.c */
-sector_t fdisk_scround(struct fdisk_context *cxt, sector_t num);
-sector_t fdisk_cround(struct fdisk_context *cxt, sector_t num);
+fdisk_sector_t fdisk_scround(struct fdisk_context *cxt, fdisk_sector_t num);
+fdisk_sector_t fdisk_cround(struct fdisk_context *cxt, fdisk_sector_t num);
 
 extern int fdisk_discover_geometry(struct fdisk_context *cxt);
 extern int fdisk_discover_topology(struct fdisk_context *cxt);
@@ -428,7 +428,7 @@ int fdisk_ask_print_set_errno(struct fdisk_ask *ask, int errnum);
 int fdisk_ask_print_set_mesg(struct fdisk_ask *ask, const char *mesg);
 int fdisk_info_new_partition(
 			struct fdisk_context *cxt,
-			int num, sector_t start, sector_t stop,
+			int num, fdisk_sector_t start, fdisk_sector_t stop,
 			struct fdisk_parttype *t);
 
 /* dos.c */

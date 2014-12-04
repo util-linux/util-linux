@@ -332,7 +332,7 @@ static struct fdisk_parttype *sgi_get_parttype(struct fdisk_context *cxt, size_t
 /* fdisk_get_partition() backend */
 static int sgi_get_partition(struct fdisk_context *cxt, size_t n, struct fdisk_partition *pa)
 {
-	uint64_t start, len;
+	fdisk_sector_t start, len;
 
 	pa->used = sgi_get_num_sectors(cxt, n) > 0;
 	if (!pa->used)
@@ -945,11 +945,11 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 
 #ifdef HDIO_GETGEO
 	if (cxt->geom.heads && cxt->geom.sectors) {
-		sector_t llsectors;
+		fdisk_sector_t llsectors;
 
-		if (blkdev_get_sectors(cxt->dev_fd, &llsectors) == 0) {
+		if (blkdev_get_sectors(cxt->dev_fd, (unsigned long long *) &llsectors) == 0) {
 			/* the get device size ioctl was successful */
-			sector_t llcyls;
+			fdisk_sector_t llcyls;
 			int sec_fac = cxt->sector_size / 512;
 
 			llcyls = llsectors / (cxt->geom.heads * cxt->geom.sectors * sec_fac);

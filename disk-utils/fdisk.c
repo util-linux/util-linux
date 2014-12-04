@@ -613,14 +613,14 @@ void dump_disklabel(struct fdisk_context *cxt)
 		dump_blkdev(cxt, name, offset, size, all);
 }
 
-static sector_t get_dev_blocks(char *dev)
+static fdisk_sector_t get_dev_blocks(char *dev)
 {
 	int fd, ret;
-	sector_t size;
+	fdisk_sector_t size;
 
 	if ((fd = open(dev, O_RDONLY)) < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), dev);
-	ret = blkdev_get_sectors(fd, &size);
+	ret = blkdev_get_sectors(fd, (unsigned long long *) &size);
 	close(fd);
 	if (ret < 0)
 		err(EXIT_FAILURE, _("BLKGETSIZE ioctl failed on %s"), dev);
@@ -823,10 +823,12 @@ int main(int argc, char **argv)
 			usage(stderr);
 
 		for (i = optind; i < argc; i++) {
+			uintmax_t blks = get_dev_blocks(argv[i]);
+
 			if (argc - optind == 1)
-				printf("%llu\n", get_dev_blocks(argv[i]));
+				printf("%ju\n", blks);
 			else
-				printf("%s: %llu\n", argv[i], get_dev_blocks(argv[i]));
+				printf("%s: %ju\n", argv[i], blks);
 		}
 		break;
 

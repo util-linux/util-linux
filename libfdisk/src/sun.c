@@ -227,11 +227,11 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 
 #ifdef HDIO_GETGEO
 	if (cxt->geom.heads && cxt->geom.sectors) {
-		sector_t llsectors;
+		fdisk_sector_t llsectors;
 
-		if (blkdev_get_sectors(cxt->dev_fd, &llsectors) == 0) {
+		if (blkdev_get_sectors(cxt->dev_fd, (unsigned long long *) &llsectors) == 0) {
 			int sec_fac = cxt->sector_size / 512;
-			sector_t llcyls;
+			fdisk_sector_t llcyls;
 
 			llcyls = llsectors / (cxt->geom.heads * cxt->geom.sectors * sec_fac);
 			cxt->geom.cylinders = llcyls;
@@ -260,9 +260,11 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	sunlabel->ncyl   = cpu_to_be16(cxt->geom.cylinders);
 
 	snprintf((char *) sunlabel->label_id, sizeof(sunlabel->label_id),
-		 "Linux cyl %llu alt %u hd %u sec %llu",
-		 cxt->geom.cylinders, be16_to_cpu(sunlabel->acyl),
-		 cxt->geom.heads, cxt->geom.sectors);
+		 "Linux cyl %ju alt %u hd %u sec %ju",
+		 (uintmax_t) cxt->geom.cylinders,
+		 be16_to_cpu(sunlabel->acyl),
+		 cxt->geom.heads,
+		 (uintmax_t) cxt->geom.sectors);
 
 	if (cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors >= 150 * 2048) {
 	        ndiv = cxt->geom.cylinders - (50 * 2048 / (cxt->geom.heads * cxt->geom.sectors)); /* 50M swap */
@@ -470,7 +472,7 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
 
 
 static int is_free_sector(struct fdisk_context *cxt,
-		sector_t s, uint32_t starts[], uint32_t lens[])
+		fdisk_sector_t s, uint32_t starts[], uint32_t lens[])
 {
 	size_t i;
 

@@ -335,8 +335,8 @@ int fdisk_table_sort_partitions(struct fdisk_table *tb,
 
 /* allocates a new freespace description */
 static int new_freespace(struct fdisk_context *cxt,
-			 uint64_t start,
-			 uint64_t end,
+			 fdisk_sector_t start,
+			 fdisk_sector_t end,
 			 struct fdisk_partition *parent,
 			 struct fdisk_partition **pa)
 {
@@ -365,8 +365,8 @@ static int new_freespace(struct fdisk_context *cxt,
 static int table_add_freespace(
 			struct fdisk_context *cxt,
 			struct fdisk_table *tb,
-			uint64_t start,
-			uint64_t end,
+			fdisk_sector_t start,
+			fdisk_sector_t end,
 			struct fdisk_partition *parent)
 {
 	struct fdisk_partition *pa, *x, *real_parent = NULL, *best = NULL;
@@ -424,8 +424,7 @@ static int check_container_freespace(struct fdisk_context *cxt,
 {
 	struct fdisk_iter itr;
 	struct fdisk_partition *pa;
-	uint64_t x, last, grain;
-	uint64_t lastplusoff;
+	fdisk_sector_t x, last, grain, lastplusoff;
 	int rc = 0;
 
 	assert(cxt);
@@ -482,7 +481,7 @@ done:
 int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 {
 	int rc = 0;
-	uint64_t last, grain;
+	fdisk_sector_t last, grain;
 	struct fdisk_table *parts = NULL;
 	struct fdisk_partition *pa;
 	struct fdisk_iter itr;
@@ -556,7 +555,7 @@ int fdisk_table_wrong_order(struct fdisk_table *tb)
 {
 	struct fdisk_partition *pa;
 	struct fdisk_iter itr;
-	sector_t last = 0;
+	fdisk_sector_t last = 0;
 
 	DBG(TAB, ul_debugobj(tb, "wrong older check"));
 

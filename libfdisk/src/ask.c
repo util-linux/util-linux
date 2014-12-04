@@ -987,7 +987,7 @@ int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...)
 
 int fdisk_info_new_partition(
 			struct fdisk_context *cxt,
-			int num, sector_t start, sector_t stop,
+			int num, fdisk_sector_t start, fdisk_sector_t stop,
 			struct fdisk_parttype *t)
 {
 	int rc;

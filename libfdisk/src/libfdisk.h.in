@@ -95,12 +95,16 @@ struct fdisk_field;
 /**
  * fdisk_script
  *
- * libraru handler for sfdisk compatible scripts
+ * library handler for sfdisk compatible scripts
  */
 struct fdisk_script;
 
-/* TODO: use uint64, the name is too generic */
-typedef unsigned long long sector_t;
+/**
+ * fdisk_sector_t
+ *
+ * LBA adresses type
+ */
+typedef uint64_t fdisk_sector_t;
 
 /**
  * fdisk_labeltype:
@@ -179,17 +183,17 @@ unsigned long fdisk_get_physector_size(struct fdisk_context *cxt);
 unsigned long fdisk_get_sector_size(struct fdisk_context *cxt);
 unsigned long fdisk_get_alignment_offset(struct fdisk_context *cxt);
 unsigned long fdisk_get_grain_size(struct fdisk_context *cxt);
-sector_t fdisk_get_first_lba(struct fdisk_context *cxt);
-sector_t fdisk_set_first_lba(struct fdisk_context *cxt, sector_t lba);
-sector_t fdisk_get_last_lba(struct fdisk_context *cxt);
-sector_t fdisk_set_last_lba(struct fdisk_context *cxt, sector_t lba);
-sector_t fdisk_get_nsectors(struct fdisk_context *cxt);
+fdisk_sector_t fdisk_get_first_lba(struct fdisk_context *cxt);
+fdisk_sector_t fdisk_set_first_lba(struct fdisk_context *cxt, fdisk_sector_t lba);
+fdisk_sector_t fdisk_get_last_lba(struct fdisk_context *cxt);
+fdisk_sector_t fdisk_set_last_lba(struct fdisk_context *cxt, fdisk_sector_t lba);
+fdisk_sector_t fdisk_get_nsectors(struct fdisk_context *cxt);
 const char *fdisk_get_devname(struct fdisk_context *cxt);
 int fdisk_get_devfd(struct fdisk_context *cxt);
 
 unsigned int fdisk_get_geom_heads(struct fdisk_context *cxt);
-sector_t fdisk_get_geom_sectors(struct fdisk_context *cxt);
-sector_t fdisk_get_geom_cylinders(struct fdisk_context *cxt);
+fdisk_sector_t fdisk_get_geom_sectors(struct fdisk_context *cxt);
+fdisk_sector_t fdisk_get_geom_cylinders(struct fdisk_context *cxt);
 
 
 
@@ -394,10 +398,10 @@ extern int fdisk_apply_table(struct fdisk_context *cxt, struct fdisk_table *tb);
 #define FDISK_ALIGN_DOWN	2
 #define FDISK_ALIGN_NEAREST	3
 
-sector_t fdisk_align_lba(struct fdisk_context *cxt, sector_t lba, int direction);
-sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt,
-				  sector_t lba, sector_t start, sector_t stop);
-int fdisk_lba_is_phy_aligned(struct fdisk_context *cxt, sector_t lba);
+fdisk_sector_t fdisk_align_lba(struct fdisk_context *cxt, fdisk_sector_t lba, int direction);
+fdisk_sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt,
+				  fdisk_sector_t lba, fdisk_sector_t start, fdisk_sector_t stop);
+int fdisk_lba_is_phy_aligned(struct fdisk_context *cxt, fdisk_sector_t lba);
 
 int fdisk_override_geometry(struct fdisk_context *cxt,
 			    unsigned int cylinders,

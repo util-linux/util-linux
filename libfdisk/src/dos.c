@@ -44,7 +44,7 @@
 struct pte {
 	struct dos_partition *pt_entry;	/* on-disk MBR entry */
 	struct dos_partition *ex_entry;	/* on-disk EBR entry */
-	sector_t offset;	        /* disk sector number */
+	fdisk_sector_t offset;	        /* disk sector number */
 	unsigned char *sectorbuffer;	/* disk sector contents */
 
 	unsigned int changed : 1,
@@ -58,7 +58,7 @@ struct fdisk_dos_label {
 	struct fdisk_label	head;		/* generic part */
 
 	struct pte	ptes[MAXIMUM_PARTS];	/* partition */
-	sector_t	ext_offset;		/* start of the ext.partition */
+	fdisk_sector_t	ext_offset;		/* start of the ext.partition */
 	size_t		ext_index;		/* ext.partition index (if ext_offset is set) */
 	unsigned int	compatible : 1,		/* is DOS compatible? */
 			non_pt_changed : 1;	/* MBR, but no PT changed */
@@ -167,7 +167,7 @@ static void partition_set_changed(
 		fdisk_label_set_changed(cxt->label, 1);
 }
 
-static sector_t get_abs_partition_start(struct pte *pe)
+static fdisk_sector_t get_abs_partition_start(struct pte *pe)
 {
 	assert(pe);
 	assert(pe->pt_entry);
@@ -175,9 +175,9 @@ static sector_t get_abs_partition_start(struct pte *pe)
 	return pe->offset + dos_partition_get_start(pe->pt_entry);
 }
 
-static sector_t get_abs_partition_end(struct pte *pe)
+static fdisk_sector_t get_abs_partition_end(struct pte *pe)
 {
-	sector_t size;
+	fdisk_sector_t size;
 
 	assert(pe);
 	assert(pe->pt_entry);
@@ -218,14 +218,14 @@ static int get_partition_unused_primary(struct fdisk_context *cxt,
 	return rc;
 }
 
-static int seek_sector(struct fdisk_context *cxt, sector_t secno)
+static int seek_sector(struct fdisk_context *cxt, fdisk_sector_t secno)
 {
 	off_t offset = (off_t) secno * cxt->sector_size;
 
 	return lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1 ? -errno : 0;
 }
 
-static int read_sector(struct fdisk_context *cxt, sector_t secno,
+static int read_sector(struct fdisk_context *cxt, fdisk_sector_t secno,
 			unsigned char *buf)
 {
 	int rc = seek_sector(cxt, secno);
@@ -243,7 +243,7 @@ static int read_sector(struct fdisk_context *cxt, sector_t secno,
 }
 
 /* Allocate a buffer and read a partition table sector */
-static int read_pte(struct fdisk_context *cxt, size_t pno, sector_t offset)
+static int read_pte(struct fdisk_context *cxt, size_t pno, fdisk_sector_t offset)
 {
 	int rc;
 	unsigned char *buf;
@@ -822,12 +822,12 @@ static int dos_probe_label(struct fdisk_context *cxt)
 }
 
 static void set_partition(struct fdisk_context *cxt,
-			  int i, int doext, sector_t start,
-			  sector_t stop, int sysid, int boot)
+			  int i, int doext, fdisk_sector_t start,
+			  fdisk_sector_t stop, int sysid, int boot)
 {
 	struct pte *pe = self_pte(cxt, i);
 	struct dos_partition *p;
-	sector_t offset;
+	fdisk_sector_t offset;
 
 	assert(!FDISK_IS_UNDEF(start));
 	assert(!FDISK_IS_UNDEF(stop));
@@ -862,14 +862,14 @@ static void set_partition(struct fdisk_context *cxt,
 	partition_set_changed(cxt, i, 1);
 }
 
-static sector_t get_unused_start(struct fdisk_context *cxt,
-				 int part_n, sector_t start,
-				 sector_t first[], sector_t last[])
+static fdisk_sector_t get_unused_start(struct fdisk_context *cxt,
+				 int part_n, fdisk_sector_t start,
+				 fdisk_sector_t first[], fdisk_sector_t last[])
 {
 	size_t i;
 
 	for (i = 0; i < cxt->label->nparts_max; i++) {
-		sector_t lastplusoff;
+		fdisk_sector_t lastplusoff;
 		struct pte *pe = self_pte(cxt, i);
 
 		if (start == pe->offset)
@@ -883,7 +883,7 @@ static sector_t get_unused_start(struct fdisk_context *cxt,
 }
 
 static void fill_bounds(struct fdisk_context *cxt,
-			sector_t *first, sector_t *last)
+			fdisk_sector_t *first, fdisk_sector_t *last)
 {
 	size_t i;
 	struct pte *pe = self_pte(cxt, 0);
@@ -902,10 +902,10 @@ static void fill_bounds(struct fdisk_context *cxt,
 }
 
 static int get_start_from_user(	struct fdisk_context *cxt,
-				sector_t *start,
-				sector_t low,
-				sector_t dflt,
-				sector_t limit,
+				fdisk_sector_t *start,
+				fdisk_sector_t low,
+				fdisk_sector_t dflt,
+				fdisk_sector_t limit,
 				struct fdisk_partition *pa)
 {
 	assert(start);
@@ -955,9 +955,9 @@ static int get_start_from_user(	struct fdisk_context *cxt,
 	return 0;
 }
 
-static sector_t get_possible_last(struct fdisk_context *cxt, size_t n)
+static fdisk_sector_t get_possible_last(struct fdisk_context *cxt, size_t n)
 {
-	sector_t limit;
+	fdisk_sector_t limit;
 
 	if (n >= 4) {
 		/* logical partitions */
@@ -985,12 +985,12 @@ static sector_t get_possible_last(struct fdisk_context *cxt, size_t n)
 
 /* returns last free sector for area addressed by @start, the first[] and
  * last[] are fill_bounds() results */
-static sector_t get_unused_last(struct fdisk_context *cxt, size_t n,
-				sector_t start,
-				sector_t first[], sector_t last[])
+static fdisk_sector_t get_unused_last(struct fdisk_context *cxt, size_t n,
+				fdisk_sector_t start,
+				fdisk_sector_t first[], fdisk_sector_t last[])
 {
 	size_t i;
-	sector_t limit = get_possible_last(cxt, n);
+	fdisk_sector_t limit = get_possible_last(cxt, n);
 
 	for (i = 0; i < cxt->label->nparts_max; i++) {
 		struct pte *pe = self_pte(cxt, i);
@@ -1015,7 +1015,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	struct dos_partition *p = self_partition(cxt, n);
 	struct pte *ext_pe = l->ext_offset ? self_pte(cxt, l->ext_index) : NULL;
 
-	sector_t start, stop = 0, limit, temp,
+	fdisk_sector_t start, stop = 0, limit, temp,
 		first[cxt->label->nparts_max],
 		last[cxt->label->nparts_max];
 
@@ -1070,7 +1070,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	 * Ask for first sector
 	 */
 	do {
-		sector_t dflt, aligned;
+		fdisk_sector_t dflt, aligned;
 
 		temp = start;
 		dflt = start = get_unused_start(cxt, n, start, first, last);
@@ -1389,9 +1389,9 @@ static void check_consistency(struct fdisk_context *cxt, struct dos_partition *p
 static int dos_verify_disklabel(struct fdisk_context *cxt)
 {
 	size_t i, j;
-	sector_t total = 1, n_sectors = cxt->total_sectors;
-	unsigned long long first[cxt->label->nparts_max],
-			   last[cxt->label->nparts_max];
+	fdisk_sector_t total = 1, n_sectors = cxt->total_sectors;
+	fdisk_sector_t first[cxt->label->nparts_max],
+		       last[cxt->label->nparts_max];
 	struct dos_partition *p;
 	struct fdisk_dos_label *l = self_label(cxt);
 
@@ -1433,7 +1433,7 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 	}
 
 	if (l->ext_offset) {
-		sector_t e_last;
+		fdisk_sector_t e_last;
 		struct pte *ext_pe = self_pte(cxt, l->ext_index);
 
 		e_last = get_abs_partition_end(ext_pe);
@@ -1478,7 +1478,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 			     size_t *partno)
 {
 	size_t i, free_primary = 0, free_sectors = 0;
-	sector_t last = 0, grain;
+	fdisk_sector_t last = 0, grain;
 	int rc = 0;
 	struct fdisk_dos_label *l;
 	struct pte *ext_pe;
@@ -1541,7 +1541,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 		struct dos_partition *p = self_partition(cxt, i);
 
 		if (is_used_partition(p)) {
-			sector_t start = dos_partition_get_start(p);
+			fdisk_sector_t start = dos_partition_get_start(p);
 			if (last + grain <= start)
 				free_sectors = 1;
 			last = start + dos_partition_get_size(p);
@@ -1661,7 +1661,7 @@ done:
 	return rc;
 }
 
-static int write_sector(struct fdisk_context *cxt, sector_t secno,
+static int write_sector(struct fdisk_context *cxt, fdisk_sector_t secno,
 			       unsigned char *buf)
 {
 	int rc;
@@ -1712,7 +1712,7 @@ static int dos_write_disklabel(struct fdisk_context *cxt)
 		 * been modified and then cleanup possible remaining EBR  */
 		struct pte *pe = self_pte(cxt, l->ext_index);
 		unsigned char empty[512] = { 0 };
-		sector_t off = pe ? get_abs_partition_start(pe) : 0;
+		fdisk_sector_t off = pe ? get_abs_partition_start(pe) : 0;
 
 		if (off && pe->changed) {
 			mbr_set_magic(empty);
@@ -1869,7 +1869,7 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 	struct fdisk_dos_label *l;
 	struct dos_partition *p;
 	struct pte *pe;
-	sector_t start, size;
+	fdisk_sector_t start, size;
 
 	assert(cxt);
 	assert(pa);
@@ -1901,7 +1901,7 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 		size = pa->size;
 
 	if (pa->end_follow_default) {
-		sector_t first[cxt->label->nparts_max],
+		fdisk_sector_t first[cxt->label->nparts_max],
 			 last[cxt->label->nparts_max],
 			 xlast;
 		struct pte *ext = l->ext_offset ? self_pte(cxt, l->ext_index) : NULL; 
@@ -2018,7 +2018,7 @@ again:
 		    get_abs_partition_start(nxt)) {
 
 			struct dos_partition tmp = *cur->pt_entry;
-			sector_t cur_start = get_abs_partition_start(cur),
+			fdisk_sector_t cur_start = get_abs_partition_start(cur),
 				 nxt_start = get_abs_partition_start(nxt);
 
 			/* swap data partitions */
@@ -2041,7 +2041,7 @@ again:
 		struct pte *cur = self_pte(cxt, i),
 			   *nxt = self_pte(cxt, i + 1);
 
-		sector_t noff = nxt->offset - l->ext_offset,
+		fdisk_sector_t noff = nxt->offset - l->ext_offset,
 			 ooff = dos_partition_get_start(cur->ex_entry);
 
 		if (noff == ooff)

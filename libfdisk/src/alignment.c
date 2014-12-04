@@ -36,7 +36,7 @@
 /*
  * Alignment according to logical granularity (usually 1MiB)
  */
-static int lba_is_aligned(struct fdisk_context *cxt, sector_t lba)
+static int lba_is_aligned(struct fdisk_context *cxt, fdisk_sector_t lba)
 {
 	unsigned long granularity = max(cxt->phy_sector_size, cxt->min_io_size);
 	uintmax_t offset;
@@ -51,7 +51,7 @@ static int lba_is_aligned(struct fdisk_context *cxt, sector_t lba)
 /*
  * Alignment according to physical device topology (usually minimal i/o size)
  */
-static int lba_is_phy_aligned(struct fdisk_context *cxt, sector_t lba)
+static int lba_is_phy_aligned(struct fdisk_context *cxt, fdisk_sector_t lba)
 {
 	unsigned long granularity = max(cxt->phy_sector_size, cxt->min_io_size);
 	uintmax_t offset = (lba * cxt->sector_size) & (granularity - 1);
@@ -71,14 +71,14 @@ static int lba_is_phy_aligned(struct fdisk_context *cxt, sector_t lba)
  *
  * Returns: alignment LBA.
  */
-sector_t fdisk_align_lba(struct fdisk_context *cxt, sector_t lba, int direction)
+fdisk_sector_t fdisk_align_lba(struct fdisk_context *cxt, fdisk_sector_t lba, int direction)
 {
-	sector_t res;
+	fdisk_sector_t res;
 
 	if (lba_is_aligned(cxt, lba))
 		res = lba;
 	else {
-		sector_t sects_in_phy = cxt->grain / cxt->sector_size;
+		fdisk_sector_t sects_in_phy = cxt->grain / cxt->sector_size;
 
 		if (lba < cxt->first_lba)
 			res = cxt->first_lba;
@@ -128,10 +128,10 @@ sector_t fdisk_align_lba(struct fdisk_context *cxt, sector_t lba, int direction)
  *
  * Returns: aligned LBA
  */
-sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt,
-				  sector_t lba, sector_t start, sector_t stop)
+fdisk_sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt,
+				  fdisk_sector_t lba, fdisk_sector_t start, fdisk_sector_t stop)
 {
-	sector_t res;
+	fdisk_sector_t res;
 
 	start = fdisk_align_lba(cxt, start, FDISK_ALIGN_UP);
 	stop = fdisk_align_lba(cxt, stop, FDISK_ALIGN_DOWN);
@@ -161,7 +161,7 @@ sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt,
  *
  * Returns: 1 if aligned.
  */
-int fdisk_lba_is_phy_aligned(struct fdisk_context *cxt, sector_t lba)
+int fdisk_lba_is_phy_aligned(struct fdisk_context *cxt, fdisk_sector_t lba)
 {
 	return lba_is_phy_aligned(cxt, lba);
 }
@@ -405,7 +405,7 @@ int fdisk_reset_device_properties(struct fdisk_context *cxt)
  */
 int fdisk_discover_geometry(struct fdisk_context *cxt)
 {
-	sector_t nsects;
+	fdisk_sector_t nsects;
 
 	assert(cxt);
 	assert(cxt->geom.heads == 0);
@@ -413,7 +413,7 @@ int fdisk_discover_geometry(struct fdisk_context *cxt)
 	DBG(CXT, ul_debugobj(cxt, "%s: discovering geometry...", cxt->dev_path));
 
 	/* get number of 512-byte sectors, and convert it the real sectors */
-	if (!blkdev_get_sectors(cxt->dev_fd, &nsects))
+	if (!blkdev_get_sectors(cxt->dev_fd, (unsigned long long *) &nsects))
 		cxt->total_sectors = (nsects / (cxt->sector_size >> 9));
 
 	DBG(CXT, ul_debugobj(cxt, "total sectors: %ju (ioctl=%ju)",
@@ -503,9 +503,9 @@ static int has_topology(struct fdisk_context *cxt)
  *
  * Returns: 0 on error or number of logical sectors.
  */
-static sector_t topology_get_first_lba(struct fdisk_context *cxt)
+static fdisk_sector_t topology_get_first_lba(struct fdisk_context *cxt)
 {
-	sector_t x = 0, res;
+	fdisk_sector_t x = 0, res;
 
 	if (!cxt)
 		return 0;
@@ -601,13 +601,13 @@ int fdisk_reset_alignment(struct fdisk_context *cxt)
 }
 
 
-sector_t fdisk_scround(struct fdisk_context *cxt, sector_t num)
+fdisk_sector_t fdisk_scround(struct fdisk_context *cxt, fdisk_sector_t num)
 {
-	sector_t un = fdisk_get_units_per_sector(cxt);
+	fdisk_sector_t un = fdisk_get_units_per_sector(cxt);
 	return (num + un - 1) / un;
 }
 
-sector_t fdisk_cround(struct fdisk_context *cxt, sector_t num)
+fdisk_sector_t fdisk_cround(struct fdisk_context *cxt, fdisk_sector_t num)
 {
 	return fdisk_use_cylinders(cxt) ?
 			(num / fdisk_get_units_per_sector(cxt)) + 1 : num;

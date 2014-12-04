@@ -854,7 +854,7 @@ unsigned long fdisk_get_grain_size(struct fdisk_context *cxt)
  *
  * Returns: first possible LBA on disk for data partitions.
  */
-sector_t fdisk_get_first_lba(struct fdisk_context *cxt)
+fdisk_sector_t fdisk_get_first_lba(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->first_lba;
@@ -876,7 +876,7 @@ sector_t fdisk_get_first_lba(struct fdisk_context *cxt)
  *
  * Returns: 0 on success, <0 on error.
  */
-sector_t fdisk_set_first_lba(struct fdisk_context *cxt, sector_t lba)
+fdisk_sector_t fdisk_set_first_lba(struct fdisk_context *cxt, fdisk_sector_t lba)
 {
 	assert(cxt);
 	DBG(CXT, ul_debugobj(cxt, "setting first LBA from %ju to %ju",
@@ -893,7 +893,7 @@ sector_t fdisk_set_first_lba(struct fdisk_context *cxt, sector_t lba)
  *
  * Returns: last possible LBA on device
  */
-sector_t fdisk_get_last_lba(struct fdisk_context *cxt)
+fdisk_sector_t fdisk_get_last_lba(struct fdisk_context *cxt)
 {
 	return cxt->last_lba;
 }
@@ -913,7 +913,7 @@ sector_t fdisk_get_last_lba(struct fdisk_context *cxt)
  *
  * Returns: 0 on success, <0 on error.
  */
-sector_t fdisk_set_last_lba(struct fdisk_context *cxt, sector_t lba)
+fdisk_sector_t fdisk_set_last_lba(struct fdisk_context *cxt, fdisk_sector_t lba)
 {
 	assert(cxt);
 
@@ -930,7 +930,7 @@ sector_t fdisk_set_last_lba(struct fdisk_context *cxt, sector_t lba)
  *
  * Returns: size of the device in logical sectors.
  */
-sector_t fdisk_get_nsectors(struct fdisk_context *cxt)
+fdisk_sector_t fdisk_get_nsectors(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->total_sectors;
@@ -977,7 +977,7 @@ unsigned int fdisk_get_geom_heads(struct fdisk_context *cxt)
  *
  * Returns: number of geometry sectors.
  */
-sector_t fdisk_get_geom_sectors(struct fdisk_context *cxt)
+fdisk_sector_t fdisk_get_geom_sectors(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->geom.sectors;
@@ -990,7 +990,7 @@ sector_t fdisk_get_geom_sectors(struct fdisk_context *cxt)
  *
  * Returns: number of geometry cylinders
  */
-sector_t fdisk_get_geom_cylinders(struct fdisk_context *cxt)
+fdisk_sector_t fdisk_get_geom_cylinders(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->geom.cylinders;

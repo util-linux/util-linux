@@ -114,7 +114,7 @@ void fdisk_unref_partition(struct fdisk_partition *pa)
  *
  * Returns: 0 on success, <0 on error.
  */
-int fdisk_partition_set_start(struct fdisk_partition *pa, uint64_t off)
+int fdisk_partition_set_start(struct fdisk_partition *pa, fdisk_sector_t off)
 {
 	if (!pa)
 		return -EINVAL;
@@ -151,7 +151,7 @@ int fdisk_partition_unset_start(struct fdisk_partition *pa)
  *
  * Returns: start offset in sectors
  */
-uint64_t fdisk_partition_get_start(struct fdisk_partition *pa)
+fdisk_sector_t fdisk_partition_get_start(struct fdisk_partition *pa)
 {
 	return pa->start;
 }
@@ -236,7 +236,7 @@ int fdisk_partition_start_is_default(struct fdisk_partition *pa)
  *
  * Returns: 0 on success, <0 on error.
  */
-int fdisk_partition_set_size(struct fdisk_partition *pa, uint64_t sz)
+int fdisk_partition_set_size(struct fdisk_partition *pa, fdisk_sector_t sz)
 {
 	if (!pa)
 		return -EINVAL;
@@ -273,7 +273,7 @@ int fdisk_partition_unset_size(struct fdisk_partition *pa)
  *
  * Returns: size offset in sectors
  */
-uint64_t fdisk_partition_get_size(struct fdisk_partition *pa)
+fdisk_sector_t fdisk_partition_get_size(struct fdisk_partition *pa)
 {
 	return pa->size;
 }
@@ -688,7 +688,8 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 			fdisk_cround(cxt, fdisk_partition_has_size(pa) ? pa->size : 0));
 		break;
 	case FDISK_FIELD_SECTORS:
-		rc = asprintf(&p, "%ju", fdisk_partition_has_size(pa) ? pa->size : 0);
+		rc = asprintf(&p, "%ju",
+			fdisk_partition_has_size(pa) ? (uintmax_t) pa->size : 0);
 		break;
 	case FDISK_FIELD_BSIZE:
 		rc = asprintf(&p, "%ju", pa->bsize);

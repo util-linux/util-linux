@@ -155,7 +155,7 @@ static int bsd_assign_dos_partition(struct fdisk_context *cxt)
 	size_t i;
 
 	for (i = 0; i < 4; i++) {
-		sector_t ss;
+		fdisk_sector_t ss;
 
 		l->dos_part = fdisk_dos_get_partition(cxt->parent, i);
 
@@ -346,10 +346,10 @@ static int bsd_set_partition(struct fdisk_context *cxt, size_t n,
 	if (l->dos_part && (fdisk_partition_has_start(pa) ||
 			    fdisk_partition_has_size(pa))) {
 
-		sector_t dosbegin = dos_partition_get_start(l->dos_part);
-		sector_t dosend = dosbegin + dos_partition_get_size(l->dos_part) - 1;
-		sector_t begin = fdisk_partition_has_start(pa) ? pa->start : p->p_offset;
-		sector_t end = begin + (fdisk_partition_has_size(pa) ? pa->size : p->p_size) - 1;
+		fdisk_sector_t dosbegin = dos_partition_get_start(l->dos_part);
+		fdisk_sector_t dosend = dosbegin + dos_partition_get_size(l->dos_part) - 1;
+		fdisk_sector_t begin = fdisk_partition_has_start(pa) ? pa->start : p->p_offset;
+		fdisk_sector_t end = begin + (fdisk_partition_has_size(pa) ? pa->size : p->p_size) - 1;
 
 		if (begin < dosbegin || begin > dosend)
 			return -ERANGE;
@@ -609,7 +609,7 @@ int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt)
 	char buf[BUFSIZ];
 	char *res, *dp, *p;
 	int rc;
-	sector_t sector;
+	fdisk_sector_t sector;
 
 	snprintf(buf, sizeof(buf),
 		_("Bootstrap: %1$sboot -> boot%1$s (default %1$s)"),
