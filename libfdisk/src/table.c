@@ -307,6 +307,22 @@ int fdisk_get_partitions(struct fdisk_context *cxt, struct fdisk_table **tb)
 	return 0;
 }
 
+static void debug_print_table(struct fdisk_table *tb)
+{
+	struct fdisk_iter itr;
+	struct fdisk_partition *pa;
+
+	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
+	while (fdisk_table_next_partition(tb, &itr, &pa) == 0)
+		ul_debugobj(tb, "partition %p [partno=%zu, start=%ju, end=%ju, size=%ju] ",
+			    pa, pa->partno,
+			    (uintmax_t) fdisk_partition_get_start(pa),
+			    (uintmax_t) fdisk_partition_get_end(pa),
+			    (uintmax_t) fdisk_partition_get_size(pa));
+
+}
+
+
 typedef	int (*fdisk_partcmp_t)(struct fdisk_partition *, struct fdisk_partition *);
 
 static int cmp_parts_wrapper(struct list_head *a, struct list_head *b, void *data)
@@ -318,6 +334,7 @@ static int cmp_parts_wrapper(struct list_head *a, struct list_head *b, void *dat
 
 	return cmp(pa, pb);
 }
+
 
 /**
  * fdisk_table_sort_partitions:
@@ -335,7 +352,14 @@ int fdisk_table_sort_partitions(struct fdisk_table *tb,
 	if (!tb)
 		return -EINVAL;
 
+	DBG(TAB, ul_debugobj(tb, "Before sort:"));
+	ON_DBG(TAB, debug_print_table(tb));
+
 	list_sort(&tb->parts, cmp_parts_wrapper, (void *) cmp);
+
+	DBG(TAB, ul_debugobj(tb, "After sort:"));
+	ON_DBG(TAB, debug_print_table(tb));
+
 	return 0;
 }
 
@@ -413,13 +437,14 @@ static int table_add_freespace(
 	}
 
 	while (fdisk_table_next_partition(tb, &itr, &x) == 0) {
-		fdisk_sector_t end, best_end;
+		fdisk_sector_t end, best_end = 0;
 
 		if (!fdisk_partition_has_end(x))
 			continue;
 
 		end = fdisk_partition_get_end(x);
-		best_end = fdisk_partition_get_end(best);
+		if (best)
+			best_end = fdisk_partition_get_end(best);
 
 		if (end < pa->start && (!best || best_end < end))
 			best = x;
@@ -459,10 +484,20 @@ static int check_container_freespace(struct fdisk_context *cxt,
 	grain = cxt->grain > cxt->sector_size ?	cxt->grain / cxt->sector_size : 1;
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 
+	DBG(CXT, ul_debugobj(cxt, "initialized:  last=%ju, grain=%ju", last, grain));
+
 	while (fdisk_table_next_partition(parts, &itr, &pa) == 0) {
+
+		DBG(CXT, ul_debugobj(cxt, "partno=%zu, start=%ju", pa->partno, pa->start));
+
 		if (!pa->used || !fdisk_partition_is_nested(pa)
 			      || !fdisk_partition_has_start(pa))
 			continue;
+
+		DBG(CXT, ul_debugobj(cxt, "freespace container analyze: partno=%zu, start=%ju, end=%ju",
+					pa->partno,
+					(uintmax_t) fdisk_partition_get_start(pa),
+					(uintmax_t) fdisk_partition_get_end(pa)));
 
 		lastplusoff = last + cxt->first_lba;
 		if (pa->start > lastplusoff && pa->start - lastplusoff > grain)

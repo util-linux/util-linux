@@ -112,7 +112,7 @@
 	__typeof__(x) _a = (x);			\
 	__typeof__(y) _b = (y);			\
 	(void) (&_a == &_b);			\
-	a == b ? 0 : a > b ? 1 : -1; })
+	_a == _b ? 0 : _a > _b ? 1 : -1; })
 #endif
 
 #ifndef offsetof
