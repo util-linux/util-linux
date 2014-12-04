@@ -21,7 +21,6 @@ static void init_partition(struct fdisk_partition *pa)
 {
 	FDISK_INIT_UNDEF(pa->size);
 	FDISK_INIT_UNDEF(pa->start);
-	FDISK_INIT_UNDEF(pa->end);
 	FDISK_INIT_UNDEF(pa->partno);
 	FDISK_INIT_UNDEF(pa->parent_partno);
 	FDISK_INIT_UNDEF(pa->boot);
@@ -475,7 +474,33 @@ int fdisk_partition_set_uuid(struct fdisk_partition *pa, const char *uuid)
 	return 0;
 }
 
+/**
+ * fdisk_partition_has_end:
+ * @pa: partition
+ *
+ * Returns: 1 if the partition has defined last sector
+ */
+int fdisk_partition_has_end(struct fdisk_partition *pa)
+{
+	return pa && !FDISK_IS_UNDEF(pa->start) && !FDISK_IS_UNDEF(pa->size);
+}
 
+/**
+ * fdisk_partition_get_end:
+ * @pa: partition
+ *
+ * This function may returns absolute non-sense, always check
+ * fdisk_partition_has_end().
+ *
+ * Note that partition end is defined by fdisk_partition_set_start() and
+ * fdisk_partition_set_size().
+ *
+ * Returns: last partition sector LBA.
+ */
+fdisk_sector_t fdisk_partition_get_end(struct fdisk_partition *pa)
+{
+	return pa->start + pa->size - (pa->size == 0 ? 0 : 1);
+}
 
 /**
  * fdisk_partition_end_follow_default
@@ -663,10 +688,12 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 		}
 		break;
 	case FDISK_FIELD_END:
-		x = fdisk_cround(cxt, pa->end);
-		rc = pa->end_post ?
-				asprintf(&p, "%ju%c", x, pa->end_post) :
-				asprintf(&p, "%ju", x);
+		if (fdisk_partition_has_end(pa)) {
+			x = fdisk_cround(cxt, fdisk_partition_get_end(pa));
+			rc = pa->end_post ?
+					asprintf(&p, "%ju%c", x, pa->end_post) :
+					asprintf(&p, "%ju", x);
+		}
 		break;
 	case FDISK_FIELD_SIZE:
 		if (fdisk_partition_has_size(pa)) {
@@ -808,9 +835,9 @@ int fdisk_set_partition(struct fdisk_context *cxt, size_t partno,
 	DBG(CXT, ul_debugobj(cxt, "setting partition %zu %p (start=%ju, end=%ju, size=%ju, "
 		    "defaults(start=%s, end=%s, partno=%s)",
 		    partno, pa,
-		    pa->start,
-		    pa->end,
-		    pa->size,
+		    (uintmax_t) fdisk_partition_get_start(pa),
+		    (uintmax_t) fdisk_partition_get_end(pa),
+		    (uintmax_t) fdisk_partition_get_size(pa),
 		    pa->start_follow_default ? "yes" : "no",
 		    pa->end_follow_default ? "yes" : "no",
 		    pa->partno_follow_default ? "yes" : "no"));
@@ -851,9 +878,9 @@ int fdisk_add_partition(struct fdisk_context *cxt,
 		DBG(CXT, ul_debugobj(cxt, "adding new partition %p (start=%ju, end=%ju, size=%ju, "
 			    "defaults(start=%s, end=%s, partno=%s)",
 			    pa,
-			    pa->start,
-			    pa->end,
-			    pa->size,
+			    (uintmax_t) fdisk_partition_get_start(pa),
+			    (uintmax_t) fdisk_partition_get_end(pa),
+			    (uintmax_t) fdisk_partition_get_size(pa),
 			    pa->start_follow_default ? "yes" : "no",
 			    pa->end_follow_default ? "yes" : "no",
 			    pa->partno_follow_default ? "yes" : "no"));

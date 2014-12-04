@@ -344,7 +344,6 @@ static int sgi_get_partition(struct fdisk_context *cxt, size_t n, struct fdisk_p
 	pa->type = sgi_get_parttype(cxt, n);
 	pa->size = len;
 	pa->start = start;
-	pa->end = start + len - (len ? 1 : 0);
 
 	if (pa->type && pa->type->code == SGI_TYPE_ENTIRE_DISK)
 		pa->wholedisk = 1;

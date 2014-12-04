@@ -119,7 +119,6 @@ struct fdisk_partition {
 	size_t		parent_partno;		/* for logical partitions */
 
 	fdisk_sector_t	start;			/* first sectors */
-	fdisk_sector_t	end;			/* last sector */
 	fdisk_sector_t	size;			/* size in sectors */
 
 	char		*name;			/* partition name */

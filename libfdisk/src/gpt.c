@@ -1474,7 +1474,6 @@ static int gpt_get_partition(struct fdisk_context *cxt, size_t n,
 		return 0;
 
 	pa->start = gpt_partition_start(e);
-	pa->end = gpt_partition_end(e);
 	pa->size = gpt_partition_size(e);
 	pa->type = gpt_partition_parttype(cxt, e);
 

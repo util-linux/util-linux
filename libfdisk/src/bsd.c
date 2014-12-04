@@ -499,7 +499,6 @@ static int bsd_get_partition(struct fdisk_context *cxt, size_t n,
 	}
 
 	pa->start = p->p_offset;
-	pa->end = p->p_offset + p->p_size - 1;
 	pa->size = p->p_size;
 	pa->type = bsd_partition_parttype(cxt, p);
 

@@ -1836,7 +1836,6 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 	pa->type = dos_partition_parttype(cxt, p);
 	pa->boot = p->boot_ind == ACTIVE_FLAG ? 1 : 0;
 	pa->start = get_abs_partition_start(pe);
-	pa->end = get_abs_partition_end(pe);
 	pa->size = dos_partition_get_size(p);
 	pa->container = lb->ext_offset && n == lb->ext_index;
 

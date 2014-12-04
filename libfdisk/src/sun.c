@@ -814,7 +814,6 @@ static int sun_get_partition(struct fdisk_context *cxt, size_t n,
 	}
 
 	pa->start = start;
-	pa->end = start + len - (len ? 1 : 0);
 	pa->size = len;
 
 	return 0;

@@ -145,6 +145,7 @@ fdisk_partition_cmp_start
 fdisk_partition_end_follow_default
 fdisk_partition_end_is_default
 fdisk_partition_get_attrs
+fdisk_partition_get_end
 fdisk_partition_get_name
 fdisk_partition_get_parent
 fdisk_partition_get_partno
@@ -152,6 +153,7 @@ fdisk_partition_get_size
 fdisk_partition_get_start
 fdisk_partition_get_type
 fdisk_partition_get_uuid
+fdisk_partition_has_end
 fdisk_partition_has_partno
 fdisk_partition_has_size
 fdisk_partition_has_start
