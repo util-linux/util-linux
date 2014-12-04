@@ -591,7 +591,7 @@ FILE *checkf(register char *fs, int *clearfirst)
 		fflush(stdout);
 		if (clreol)
 			cleareol();
-		perror(fs);
+		warn(_("stat failed %s"), fs);
 		return ((FILE *)NULL);
 	}
 	if ((stbuf.st_mode & S_IFMT) == S_IFDIR) {
@@ -600,7 +600,7 @@ FILE *checkf(register char *fs, int *clearfirst)
 	}
 	if ((f = Fopen(fs, "r")) == NULL) {
 		fflush(stdout);
-		perror(fs);
+		warn(_("cannot open %s"), fs);
 		return ((FILE *)NULL);
 	}
 	if (magic(f, fs)) {
@@ -1781,10 +1781,8 @@ void initterm(void)
 			int tgrp;
 			/* Wait until we're in the foreground before we
 			 * save the terminal modes. */
-			if ((tgrp = tcgetpgrp(fileno(stdout))) < 0) {
-				perror("tcgetpgrp");
-				exit(EXIT_FAILURE);
-			}
+			if ((tgrp = tcgetpgrp(fileno(stdout))) < 0)
+				err(EXIT_FAILURE, "tcgetpgrp");
 			if (tgrp != getpgrp(0)) {
 				kill(0, SIGTTOU);
 				goto retry;

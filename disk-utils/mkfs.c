@@ -147,6 +147,5 @@ int main(int argc, char **argv)
 
 	/* Execute the program */
 	execvp(progname, argv + optind);
-	perror(progname);
-	return EXIT_FAILURE;
+	err(EXIT_FAILURE, _("failed to execute %s"), progname);
 }

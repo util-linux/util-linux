@@ -328,7 +328,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 		memcpy(endpath, dirent->d_name, namelen + 1);
 
 		if (lstat(path, &st) < 0) {
-			perror(endpath);
+			warn(_("stat failed %s"), endpath);
 			warn_skip = 1;
 			continue;
 		}
