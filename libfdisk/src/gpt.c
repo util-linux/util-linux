@@ -2420,7 +2420,7 @@ static int gpt_entry_cmp_start(const void *a, const void *b)
 	if (bu)
 		return -1;
 
-	return gpt_partition_start(ae) - gpt_partition_start(be);
+	return cmp_numbers(gpt_partition_start(ae), gpt_partition_start(be));
 }
 
 /* sort partition by start sector */

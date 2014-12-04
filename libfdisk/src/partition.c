@@ -180,7 +180,17 @@ int fdisk_partition_has_start(struct fdisk_partition *pa)
 int fdisk_partition_cmp_start(struct fdisk_partition *a,
 			      struct fdisk_partition *b)
 {
-	return a->start - b->start;
+	int is_a = FDISK_IS_UNDEF(a->start),
+	    is_b = FDISK_IS_UNDEF(b->start);
+
+	if (!is_a && !is_b)
+		return 0;
+	if (!is_a)
+		return -1;
+	if (!is_b)
+		return 1;
+
+	return cmp_numbers(a->start, b->start);
 }
 
 /**

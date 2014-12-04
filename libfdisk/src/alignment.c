@@ -416,6 +416,10 @@ int fdisk_discover_geometry(struct fdisk_context *cxt)
 	if (!blkdev_get_sectors(cxt->dev_fd, &nsects))
 		cxt->total_sectors = (nsects / (cxt->sector_size >> 9));
 
+	DBG(CXT, ul_debugobj(cxt, "total sectors: %ju (ioctl=%ju)",
+				(uintmax_t) cxt->total_sectors,
+				(uintmax_t) nsects));
+
 	/* what the kernel/bios thinks the geometry is */
 	blkdev_get_geometry(cxt->dev_fd, &cxt->geom.heads, (unsigned int *) &cxt->geom.sectors);
 

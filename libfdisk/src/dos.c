@@ -1985,7 +1985,7 @@ static int cmp_ebr_offsets(const void *a, const void *b)
 	if (be->offset == 0)
 		return -1;
 
-	return ae->offset - be->offset;
+	return cmp_numbers(ae->offset, be->offset);
 }
 
 /*
