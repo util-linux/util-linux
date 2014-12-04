@@ -15,31 +15,65 @@
  * See Documentation/deprecated.txt for more information.
  */
 
-#include	<stdio.h>
-#include	<unistd.h>
+#include <getopt.h>
+#include <stdio.h>
+#include <unistd.h>
 
-static int	status;		/* exit status */
+#include "c.h"
+#include "closestream.h"
+#include "nls.h"
+#include "widechar.h"
 
-static void
-doline(int fd)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	char c;
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("line(1)"));
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
+int main(int argc, char **argv)
+{
+	wint_t c;
+	int opt;
+	int status = EXIT_SUCCESS;
+
+	static const struct option longopts[] = {
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	atexit(close_stdout);
+
+	while ((opt = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
+		switch (opt) {
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
+		case 'h':
+			usage(stdout);
+		default:
+			usage(stderr);
+		}
 
 	for (;;) {
-		if (read(fd, &c, 1) <= 0) {
-			status = 1;
+		c = getwchar();
+		if (c == WEOF) {
+			status = EXIT_FAILURE;
 			break;
 		}
 		if (c == '\n')
 			break;
-		putchar(c);
+		putwchar(c);
 	}
-	putchar('\n');
-}
+	putwchar(L'\n');
 
-int
-main(void)
-{
-	doline(0);
 	return status;
 }
