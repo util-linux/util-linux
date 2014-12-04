@@ -1,6 +1,6 @@
 /*
  *  getopt.c - Enhanced implementation of BSD getopt(1)
- *  Copyright (c) 1997-2005 Frodo Looijaard <frodo@frodo.looijaard.name>
+ *  Copyright (c) 1997-2014 Frodo Looijaard <frodo@frodo.looijaard.name>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -37,6 +37,11 @@
  *     <misiek@pld.org.pl>)
  * Version 1.1.4: Mon Nov 7 2005
  *   Fixed a few type's in the manpage
+ * Version 1.1.5: Sun Aug 12 2012
+ *  Sync with util-linux-2.21, fixed build problems, many new translations
+ * Version 1.1.6: Mon Nov 24 2014
+ *  Sync with util-linux git 20141120, detect ambiguous long options, fix
+ *  backslash problem in tcsh
  */
 
 /* Exit codes:
@@ -66,7 +71,7 @@
  * mode */
 #define NON_OPT 1
 /* LONG_OPT is the code that is returned when a long option is found. */
-#define LONG_OPT 2
+#define LONG_OPT 0
 
 /* The shells recognized. */
 typedef enum { BASH, TCSH } shell_t;
@@ -107,6 +112,8 @@ static const char *normalize(const char *arg)
 	const char *argptr = arg;
 	char *bufptr;
 
+	free(BUFFER);
+
 	if (!quote) {
 		/* Just copy arg */
 		BUFFER = xmalloc(strlen(arg) + 1);
@@ -132,6 +139,10 @@ static const char *normalize(const char *arg)
 			*bufptr++ = '\\';
 			*bufptr++ = '\'';
 			*bufptr++ = '\'';
+		} else if (shell == TCSH && *argptr == '\\') {
+			/* Backslash: replace it with: '\\' */
+			*bufptr++ = '\\';
+			*bufptr++ = '\\';
 		} else if (shell == TCSH && *argptr == '!') {
 			/* Exclamation mark: replace it with: \! */
 			*bufptr++ = '\'';
@@ -231,6 +242,8 @@ static int long_options_nr = 0;		/* Nr of used elements in array */
 static void add_longopt(const char *name, int has_arg)
 {
 	char *tmp;
+	static int flag;
+
 	if (!name) {
 		/* init */
 		free(long_options);
@@ -254,8 +267,8 @@ static void add_longopt(const char *name, int has_arg)
 	if (long_options_nr && name) {
 		/* Not for init! */
 		long_options[long_options_nr - 1].has_arg = has_arg;
-		long_options[long_options_nr - 1].flag = NULL;
-		long_options[long_options_nr - 1].val = LONG_OPT;
+		long_options[long_options_nr - 1].flag = &flag;
+		long_options[long_options_nr - 1].val = long_options_nr;
 		tmp = xmalloc(strlen(name) + 1);
 		strcpy(tmp, name);
 		long_options[long_options_nr - 1].name = tmp;
