@@ -1,0 +1,4 @@
+getopt: invalid option -- 'b'
+getopt: unrecognized option '--whatever'
+ --long -a --
+exit value: 1

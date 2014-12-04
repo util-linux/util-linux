@@ -1,0 +1,4 @@
+THIS_PROGRAM: invalid option -- 'b'
+THIS_PROGRAM: unrecognized option '--whatever'
+ --long -a --
+exit value: 1
