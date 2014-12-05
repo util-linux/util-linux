@@ -103,6 +103,7 @@
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdarg.h>
+#include <limits.h>
 
 #ifdef HAVE_LIBUUID
 # include <uuid.h>
@@ -575,6 +576,12 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 
 		if (blkid_llseek(pr->fd, pr->off + off, SEEK_SET) < 0) {
 			errno = 0;
+			return NULL;
+		}
+
+		/* someone trying to overflow some buffers? */
+		if (len > ULONG_MAX - sizeof(struct blkid_bufinfo)) {
+			errno = ENOMEM;
 			return NULL;
 		}
 

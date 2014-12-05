@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <limits.h>
 
 #include "partitions.h"
 #include "crc32.h"
@@ -263,13 +264,16 @@ static struct gpt_header *get_gpt_header(
 		return NULL;
 	}
 
-	/* Size of blocks with GPT entries */
-	esz = le32_to_cpu(h->num_partition_entries) *
-			le32_to_cpu(h->sizeof_partition_entry);
-	if (!esz) {
+	if (le32_to_cpu(h->num_partition_entries) == 0 ||
+	    le32_to_cpu(h->sizeof_partition_entry) == 0 ||
+	    ULONG_MAX / le32_to_cpu(h->num_partition_entries) < le32_to_cpu(h->sizeof_partition_entry)) {
 		DBG(LOWPROBE, ul_debug("GPT entries undefined"));
 		return NULL;
 	}
+
+	/* Size of blocks with GPT entries */
+	esz = le32_to_cpu(h->num_partition_entries) *
+			le32_to_cpu(h->sizeof_partition_entry);
 
 	/* The header seems valid, save it
 	 * (we don't care about zeros in hdr->reserved2 area) */
