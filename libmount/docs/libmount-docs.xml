@@ -43,6 +43,7 @@ available from ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
     <title>Tables management</title>
     <xi:include href="xml/lock.xml"/>
     <xi:include href="xml/update.xml"/>
+    <xi:include href="xml/monitor.xml"/>
     <xi:include href="xml/tabdiff.xml"/>
   </part>
   <part>

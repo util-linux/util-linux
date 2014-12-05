@@ -48,6 +48,8 @@
 #define MNT_DEBUG_UTILS		(1 << 8)
 #define MNT_DEBUG_CXT		(1 << 9)
 #define MNT_DEBUG_DIFF		(1 << 10)
+#define MNT_DEBUG_MONITOR	(1 << 11)
+
 #define MNT_DEBUG_ALL		0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libmount);

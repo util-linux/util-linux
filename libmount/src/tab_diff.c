@@ -7,8 +7,8 @@
 
 /**
  * SECTION: tabdiff
- * @title: Monitor mountinfo changes
- * @short_description: monitor changes in the list of the mounted filesystems
+ * @title: Compare changes in mount tables
+ * @short_description: compare changes in the list of the mounted filesystems
  */
 #include "mountP.h"
 

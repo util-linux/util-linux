@@ -29,6 +29,8 @@ UL_DEBUG_DEFINE_MASKNAMES(libmount) =
 	{ "tab", MNT_DEBUG_TAB,		"fstab, mtab, moutninfo routines" },
 	{ "update", MNT_DEBUG_UPDATE,	"mtab, utab updates" },
 	{ "utils", MNT_DEBUG_UTILS,	"misc library utils" },
+	{ "monitor", MNT_DEBUG_MONITOR,	"mount tables monitor" },
+
 	{ NULL, 0 }
 };
 

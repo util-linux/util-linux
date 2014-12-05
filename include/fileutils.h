@@ -1,6 +1,12 @@
 #ifndef UTIL_LINUX_FILEUTILS
 #define UTIL_LINUX_FILEUTILS
 
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+
+#include "c.h"
+
 extern int xmkstemp(char **tmpname, char *dir);
 
 static inline FILE *xfmkstemp(char **tmpname, char *dir)

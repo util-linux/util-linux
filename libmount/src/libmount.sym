@@ -297,3 +297,13 @@ MOUNT_2.25 {
 	mnt_table_uniq_fs;
 	mnt_tag_is_valid;
 } MOUNT_2.24;
+
+MOUNT_2.26 {
+	mnt_monitor_get_events;
+	mnt_monitor_get_filename;
+	mnt_monitor_is_changed;
+	mnt_monitor_userspace_get_fd;
+	mnt_new_monitor;
+	mnt_ref_monitor;
+	mnt_unref_monitor;
+} MOUNT_2.25;

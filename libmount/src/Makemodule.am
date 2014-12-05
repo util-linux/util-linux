@@ -30,7 +30,8 @@ libmount_la_SOURCES += \
 	libmount/src/context.c \
 	libmount/src/context_loopdev.c \
 	libmount/src/context_mount.c \
-	libmount/src/context_umount.c
+	libmount/src/context_umount.c \
+	libmount/src/monitor.c
 endif
 
 nodist_libmount_la_SOURCES = libmount/src/mountP.h
@@ -73,6 +74,7 @@ check_PROGRAMS += \
 	test_mount_tab_update \
 	test_mount_utils \
 	test_mount_version \
+	test_mount_monitor \
 	test_mount_debug
 
 libmount_tests_cflags  = -DTEST_PROGRAM $(libmount_la_CFLAGS)
@@ -112,6 +114,11 @@ test_mount_tab_diff_SOURCES = libmount/src/tab_diff.c
 test_mount_tab_diff_CFLAGS = $(libmount_tests_cflags)
 test_mount_tab_diff_LDFLAGS = $(libmount_tests_ldflags)
 test_mount_tab_diff_LDADD = $(libmount_tests_ldadd)
+
+test_mount_monitor_SOURCES = libmount/src/monitor.c
+test_mount_monitor_CFLAGS = $(libmount_tests_cflags)
+test_mount_monitor_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_monitor_LDADD = $(libmount_tests_ldadd)
 
 test_mount_tab_update_SOURCES = libmount/src/tab_update.c
 test_mount_tab_update_CFLAGS = $(libmount_tests_cflags)
