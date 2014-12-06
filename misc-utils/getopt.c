@@ -114,8 +114,7 @@ static const char *normalize(const struct getopt_control *ctl, const char *arg)
 
 	if (!ctl->quote) {
 		/* Just copy arg */
-		BUFFER = xmalloc(strlen(arg) + 1);
-		strcpy(BUFFER, arg);
+		BUFFER = xstrdup(arg);
 		return BUFFER;
 	}
 
@@ -233,7 +232,6 @@ static void __attribute__ ((__noreturn__)) parse_error(const char *message)
 /* Register a long option. The contents of name is copied. */
 static void add_longopt(struct getopt_control *ctl, const char *name, int has_arg)
 {
-	char *tmp;
 	static int flag;
 
 	if (!name) {
@@ -261,9 +259,7 @@ static void add_longopt(struct getopt_control *ctl, const char *name, int has_ar
 		ctl->long_options[ctl->long_options_nr - 1].has_arg = has_arg;
 		ctl->long_options[ctl->long_options_nr - 1].flag = &flag;
 		ctl->long_options[ctl->long_options_nr - 1].val = ctl->long_options_nr;
-		tmp = xmalloc(strlen(name) + 1);
-		strcpy(tmp, name);
-		ctl->long_options[ctl->long_options_nr - 1].name = tmp;
+		ctl->long_options[ctl->long_options_nr - 1].name = xstrdup(name);
 	}
 	ctl->long_options_nr++;
 }
@@ -407,16 +403,14 @@ int main(int argc, char *argv[])
 			print_help();
 		case 'o':
 			free(ctl.optstr);
-			ctl.optstr = xmalloc(strlen(optarg) + 1);
-			strcpy(ctl.optstr, optarg);
+			ctl.optstr = xstrdup(optarg);
 			break;
 		case 'l':
 			add_long_options(&ctl, optarg);
 			break;
 		case 'n':
 			free(name);
-			name = xmalloc(strlen(optarg) + 1);
-			strcpy(name, optarg);
+			name = xstrdup(optarg);
 			break;
 		case 'q':
 			ctl.quiet_errors = 1;
@@ -446,8 +440,7 @@ int main(int argc, char *argv[])
 		if (optind >= argc)
 			parse_error(_("missing optstring argument"));
 		else {
-			ctl.optstr = xmalloc(strlen(argv[optind]) + 1);
-			strcpy(ctl.optstr, argv[optind]);
+			ctl.optstr = xstrdup(argv[optind]);
 			optind++;
 		}
 	}
