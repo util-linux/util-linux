@@ -67,8 +67,8 @@
 #include "nls.h"
 #include "xalloc.h"
 
-/* NON_OPT is the code that is returned when a non-option is found in '+'
- * mode */
+/* NON_OPT is the code that is returned getopt(3) when a non-option is
+ * found in 'char optstring[]="-abc...";', e.g., it begins by '-' */
 #define NON_OPT 1
 /* LONG_OPT is the code that is returned when a long option is found. */
 #define LONG_OPT 0
