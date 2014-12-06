@@ -87,16 +87,6 @@ static int quote = 1;		/* 1 is do quote. */
 int (*getopt_long_fp) (int argc, char *const *argv, const char *optstr,
 		       const struct option * longopts, int *longindex);
 
-/* Function prototypes */
-static const char *normalize(const char *arg);
-static int generate_output(char *argv[], int argc, const char *optstr,
-			   const struct option *longopts);
-static void parse_error(const char *message);
-static void add_long_options(char *options);
-static void add_longopt(const char *name, int has_arg);
-static void print_help(void);
-static void set_shell(const char *new_shell);
-
 /*
  * This function 'normalizes' a single argument: it puts single quotes
  * around it and escapes other special characters. If quote is false, it
