@@ -104,18 +104,15 @@ int (*getopt_long_fp) (int argc, char *const *argv, const char *optstr,
  * exclamation marks within single quotes, and nukes whitespace. This
  * function returns a pointer to a buffer that is overwritten by each call.
  */
-static const char *normalize(const struct getopt_control *ctl, const char *arg)
+static void normalize(const struct getopt_control *ctl, const char *arg)
 {
-	static char *BUFFER = NULL;
+	char *buf;
 	const char *argptr = arg;
 	char *bufptr;
 
-	free(BUFFER);
-
 	if (!ctl->quote) {
-		/* Just copy arg */
-		BUFFER = xstrdup(arg);
-		return BUFFER;
+		printf(" %s", arg);
+		return;
 	}
 
 	/*
@@ -124,9 +121,9 @@ static const char *normalize(const struct getopt_control *ctl, const char *arg)
 	 * and an opening quote! We need also the global opening and closing
 	 * quote, and one extra character for '\0'.
 	 */
-	BUFFER = xmalloc(strlen(arg) * 4 + 3);
+	buf = xmalloc(strlen(arg) * 4 + 3);
 
-	bufptr = BUFFER;
+	bufptr = buf;
 	*bufptr++ = '\'';
 
 	while (*argptr) {
@@ -163,7 +160,8 @@ static const char *normalize(const struct getopt_control *ctl, const char *arg)
 	}
 	*bufptr++ = '\'';
 	*bufptr++ = '\0';
-	return BUFFER;
+	printf(" %s", buf);
+	free(buf);
 }
 
 /*
@@ -195,21 +193,21 @@ static int generate_output(const struct getopt_control *ctl, char *argv[], int a
 			if (opt == LONG_OPT) {
 				printf(" --%s", ctl->long_options[longindex].name);
 				if (ctl->long_options[longindex].has_arg)
-					printf(" %s", normalize(ctl, optarg ? optarg : ""));
+					normalize(ctl, optarg ? optarg : "");
 			} else if (opt == NON_OPT)
-				printf(" %s", normalize(ctl, optarg ? optarg : ""));
+				normalize(ctl, optarg ? optarg : "");
 			else {
 				printf(" -%c", opt);
 				charptr = strchr(ctl->optstr, opt);
 				if (charptr != NULL && *++charptr == ':')
-					printf(" %s", normalize(ctl, optarg ? optarg : ""));
+					normalize(ctl, optarg ? optarg : "");
 			}
 		}
 
 	if (!ctl->quiet_output) {
 		printf(" --");
 		while (optind < argc)
-			printf(" %s", normalize(ctl, argv[optind++]));
+			normalize(ctl, argv[optind++]);
 		printf("\n");
 	}
 	return exit_code;
