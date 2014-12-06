@@ -232,14 +232,6 @@ static void add_longopt(struct getopt_control *ctl, const char *name, int has_ar
 {
 	static int flag;
 
-	if (!name) {
-		/* init */
-		free(ctl->long_options);
-		ctl->long_options = NULL;
-		ctl->long_options_length = 0;
-		ctl->long_options_nr = 0;
-	}
-
 	if (ctl->long_options_nr == ctl->long_options_length) {
 		ctl->long_options_length += REALLOC_INCREMENT;
 		ctl->long_options = xrealloc(ctl->long_options,
@@ -252,7 +244,7 @@ static void add_longopt(struct getopt_control *ctl, const char *name, int has_ar
 	ctl->long_options[ctl->long_options_nr].flag = NULL;
 	ctl->long_options[ctl->long_options_nr].val = 0;
 
-	if (ctl->long_options_nr && name) {
+	if (name) {
 		/* Not for init! */
 		ctl->long_options[ctl->long_options_nr - 1].has_arg = has_arg;
 		ctl->long_options[ctl->long_options_nr - 1].flag = &flag;
