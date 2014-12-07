@@ -122,42 +122,49 @@ static void normalize(const struct getopt_control *ctl, const char *arg)
 	 * quote, and one extra character for '\0'.
 	 */
 	buf = xmalloc(strlen(arg) * 4 + 3);
-
 	bufptr = buf;
-	*bufptr++ = '\'';
 
-	while (*argptr) {
+	for (*bufptr++ = '\''; *argptr; argptr++) {
+		if (ctl->shell == TCSH) {
+			switch (*argptr) {
+			case '\\':
+				/* Backslash: replace it with: '\\' */
+				*bufptr++ = '\\';
+				*bufptr++ = '\\';
+				continue;
+			case '!':
+				/* Exclamation mark: replace it with: \! */
+				*bufptr++ = '\'';
+				*bufptr++ = '\\';
+				*bufptr++ = '!';
+				*bufptr++ = '\'';
+				continue;
+			case '\n':
+				/* Newline: replace it with: \n */
+				*bufptr++ = '\\';
+				*bufptr++ = 'n';
+				continue;
+			}
+			if (isspace(*argptr)) {
+				/* Non-newline whitespace: replace it with \<ws> */
+				*bufptr++ = '\'';
+				*bufptr++ = '\\';
+				*bufptr++ = *argptr;
+				*bufptr++ = '\'';
+				continue;
+			}
+		}
 		if (*argptr == '\'') {
 			/* Quote: replace it with: '\'' */
 			*bufptr++ = '\'';
 			*bufptr++ = '\\';
 			*bufptr++ = '\'';
 			*bufptr++ = '\'';
-		} else if (ctl->shell == TCSH && *argptr == '\\') {
-			/* Backslash: replace it with: '\\' */
-			*bufptr++ = '\\';
-			*bufptr++ = '\\';
-		} else if (ctl->shell == TCSH && *argptr == '!') {
-			/* Exclamation mark: replace it with: \! */
-			*bufptr++ = '\'';
-			*bufptr++ = '\\';
-			*bufptr++ = '!';
-			*bufptr++ = '\'';
-		} else if (ctl->shell == TCSH && *argptr == '\n') {
-			/* Newline: replace it with: \n */
-			*bufptr++ = '\\';
-			*bufptr++ = 'n';
-		} else if (ctl->shell == TCSH && isspace(*argptr)) {
-			/* Non-newline whitespace: replace it with \<ws> */
-			*bufptr++ = '\'';
-			*bufptr++ = '\\';
-			*bufptr++ = *argptr;
-			*bufptr++ = '\'';
 		} else
 			/* Just copy */
 			*bufptr++ = *argptr;
-		argptr++;
 	}
+
 	*bufptr++ = '\'';
 	*bufptr++ = '\0';
 	printf(" %s", buf);
@@ -190,13 +197,16 @@ static int generate_output(const struct getopt_control *ctl, char *argv[], int a
 		if (opt == '?' || opt == ':')
 			exit_code = GETOPT_EXIT_CODE;
 		else if (!ctl->quiet_output) {
-			if (opt == LONG_OPT) {
+			switch (opt) {
+			case LONG_OPT:
 				printf(" --%s", ctl->long_options[longindex].name);
 				if (ctl->long_options[longindex].has_arg)
 					normalize(ctl, optarg ? optarg : "");
-			} else if (opt == NON_OPT)
+				break;
+			case NON_OPT:
 				normalize(ctl, optarg ? optarg : "");
-			else {
+				break;
+			default:
 				printf(" -%c", opt);
 				charptr = strchr(ctl->optstr, opt);
 				if (charptr != NULL && *++charptr == ':')
