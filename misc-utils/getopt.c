@@ -295,19 +295,17 @@ static void add_long_options(struct getopt_control *ctl, char *options)
 	}
 }
 
-static void set_shell(struct getopt_control *ctl, const char *new_shell)
+static shell_t shell_type(const char *new_shell)
 {
 	if (!strcmp(new_shell, "bash"))
-		ctl->shell = BASH;
-	else if (!strcmp(new_shell, "tcsh"))
-		ctl->shell = TCSH;
-	else if (!strcmp(new_shell, "sh"))
-		ctl->shell = BASH;
-	else if (!strcmp(new_shell, "csh"))
-		ctl->shell = TCSH;
-	else
-		parse_error(_
-			    ("unknown shell after -s or --shell argument"));
+		return BASH;
+	if (!strcmp(new_shell, "sh"))
+		return BASH;
+	if (!strcmp(new_shell, "tcsh"))
+		return TCSH;
+	if (!strcmp(new_shell, "csh"))
+		return TCSH;
+	parse_error(_("unknown shell after -s or --shell argument"));
 }
 
 static void __attribute__ ((__noreturn__)) print_help(void)
@@ -419,7 +417,7 @@ int main(int argc, char *argv[])
 			ctl.quiet_output = 1;
 			break;
 		case 's':
-			set_shell(&ctl, optarg);
+			ctl.shell = shell_type(optarg);
 			break;
 		case 'T':
 			return TEST_EXIT_CODE;
