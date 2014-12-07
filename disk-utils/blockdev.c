@@ -365,7 +365,7 @@ static void do_commands(int fd, char **argv, int d)
 		}
 
 		if (res == -1) {
-			perror(bdcms[j].iocname);
+			warn(_("ioctl error on %s"), bdcms[j].iocname);
 			if (verbose)
 				printf(_("%s failed.\n"), _(bdcms[j].help));
 			exit(EXIT_FAILURE);
