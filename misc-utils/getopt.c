@@ -248,20 +248,13 @@ static void add_longopt(struct getopt_control *ctl, const char *name, int has_ar
 					     sizeof(struct option) *
 					     ctl->long_options_length);
 	}
-
-	ctl->long_options[ctl->long_options_nr].name = NULL;
-	ctl->long_options[ctl->long_options_nr].has_arg = 0;
-	ctl->long_options[ctl->long_options_nr].flag = NULL;
-	ctl->long_options[ctl->long_options_nr].val = 0;
-
 	if (name) {
 		/* Not for init! */
-		ctl->long_options[ctl->long_options_nr - 1].has_arg = has_arg;
-		ctl->long_options[ctl->long_options_nr - 1].flag = &flag;
-		ctl->long_options[ctl->long_options_nr - 1].val = ctl->long_options_nr;
-		ctl->long_options[ctl->long_options_nr - 1].name = xstrdup(name);
+		ctl->long_options[ctl->long_options_nr].has_arg = has_arg;
+		ctl->long_options[ctl->long_options_nr].flag = &flag;
+		ctl->long_options[ctl->long_options_nr].val = ctl->long_options_nr;
+		ctl->long_options[ctl->long_options_nr].name = xstrdup(name);
 	}
-	ctl->long_options_nr++;
 }
 
 
@@ -290,9 +283,15 @@ static void add_long_options(struct getopt_control *ctl, char *options)
 						     "-l or --long argument"));
 			}
 			add_longopt(ctl, tokptr, arg_opt);
+			ctl->long_options_nr++;
 		}
 		tokptr = strtok(NULL, ", \t\n");
 	}
+	add_longopt(&ctl, NULL, 0);	/* ensure long_options[] is not full */
+	ctl->long_options[ctl->long_options_nr].name = NULL;
+	ctl->long_options[ctl->long_options_nr].has_arg = 0;
+	ctl->long_options[ctl->long_options_nr].flag = NULL;
+	ctl->long_options[ctl->long_options_nr].val = 0;
 }
 
 static shell_t shell_type(const char *new_shell)
