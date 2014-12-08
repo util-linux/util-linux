@@ -842,7 +842,7 @@ static int get_user(struct lslogins_control *ctl, struct lslogins_user **user,
 		    const char *username)
 {
 	*user = get_user_info(ctl, username);
-	if (!*user && errno)
+	if (!*user)
 		if (IS_REAL_ERRNO(errno))
 			return -1;
 	return 0;
