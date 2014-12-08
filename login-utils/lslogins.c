@@ -1189,11 +1189,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -c, --colon-separate     display data in a format similar to /etc/passwd\n"), out);
 	fputs(_(" -e, --export             display in an export-able output format\n"), out);
 	fputs(_(" -f, --failed             display data about the users' last failed logins\n"), out);
-	fputs(_(" -G, --groups-info        display information about groups\n"), out);
+	fputs(_(" -G, --supp-groups        display information about groups\n"), out);
 	fputs(_(" -g, --groups=<groups>    display users belonging to a group in <groups>\n"), out);
 	fputs(_(" -L, --last               show info about the users' last login sessions\n"), out);
 	fputs(_(" -l, --logins=<logins>    display only users from <logins>\n"), out);
-	fputs(_(" -m, --supp-groups        display supplementary groups as well\n"), out);
 	fputs(_(" -n, --newline            display each piece of information on a new line\n"), out);
 	fputs(_("     --noheadings         don't print headings\n"), out);
 	fputs(_("     --notruncate         don't truncate output\n"), out);
