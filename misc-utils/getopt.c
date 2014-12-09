@@ -96,7 +96,7 @@ int (*getopt_long_fp) (int argc, char *const *argv, const char *optstr,
 		       const struct option * longopts, int *longindex);
 
 /*
- * This function 'normalizes' a single argument: it puts single quotes
+ * This function 'print_normalizeds' a single argument: it puts single quotes
  * around it and escapes other special characters. If quote is false, it
  * just returns its argument.
  *
@@ -104,7 +104,7 @@ int (*getopt_long_fp) (int argc, char *const *argv, const char *optstr,
  * exclamation marks within single quotes, and nukes whitespace. This
  * function returns a pointer to a buffer that is overwritten by each call.
  */
-static void normalize(const struct getopt_control *ctl, const char *arg)
+static void print_normalized(const struct getopt_control *ctl, const char *arg)
 {
 	char *buf;
 	const char *argptr = arg;
@@ -201,23 +201,23 @@ static int generate_output(const struct getopt_control *ctl, char *argv[], int a
 			case LONG_OPT:
 				printf(" --%s", ctl->long_options[longindex].name);
 				if (ctl->long_options[longindex].has_arg)
-					normalize(ctl, optarg ? optarg : "");
+					print_normalized(ctl, optarg ? optarg : "");
 				break;
 			case NON_OPT:
-				normalize(ctl, optarg ? optarg : "");
+				print_normalized(ctl, optarg ? optarg : "");
 				break;
 			default:
 				printf(" -%c", opt);
 				charptr = strchr(ctl->optstr, opt);
 				if (charptr != NULL && *++charptr == ':')
-					normalize(ctl, optarg ? optarg : "");
+					print_normalized(ctl, optarg ? optarg : "");
 			}
 		}
 
 	if (!ctl->quiet_output) {
 		printf(" --");
 		while (optind < argc)
-			normalize(ctl, argv[optind++]);
+			print_normalized(ctl, argv[optind++]);
 		printf("\n");
 	}
 	return exit_code;
