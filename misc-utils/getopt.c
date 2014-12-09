@@ -266,18 +266,21 @@ static void add_long_options(struct getopt_control *ctl, char *options)
 {
 	int arg_opt;
 	char *tokptr = strtok(options, ", \t\n");
+
 	while (tokptr) {
+		size_t len = strlen(tokptr);
+
 		arg_opt = no_argument;
-		if (strlen(tokptr) > 0) {
-			if (tokptr[strlen(tokptr) - 1] == ':') {
-				if (tokptr[strlen(tokptr) - 2] == ':') {
-					tokptr[strlen(tokptr) - 2] = '\0';
+		if (len > 0) {
+			if (tokptr[len - 1] == ':') {
+				if (tokptr[len - 2] == ':') {
+					tokptr[len - 2] = '\0';
 					arg_opt = optional_argument;
 				} else {
-					tokptr[strlen(tokptr) - 1] = '\0';
+					tokptr[len - 1] = '\0';
 					arg_opt = required_argument;
 				}
-				if (strlen(tokptr) == 0)
+				if (!*tokptr)
 					parse_error(_
 						    ("empty long option after "
 						     "-l or --long argument"));
