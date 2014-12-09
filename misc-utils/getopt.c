@@ -287,7 +287,7 @@ static void add_long_options(struct getopt_control *ctl, char *options)
 		}
 		tokptr = strtok(NULL, ", \t\n");
 	}
-	add_longopt(&ctl, NULL, 0);	/* ensure long_options[] is not full */
+	add_longopt(ctl, NULL, 0);	/* ensure long_options[] is not full */
 	ctl->long_options[ctl->long_options_nr].name = NULL;
 	ctl->long_options[ctl->long_options_nr].has_arg = 0;
 	ctl->long_options[ctl->long_options_nr].flag = NULL;
