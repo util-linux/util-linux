@@ -6,7 +6,11 @@
  */
 #ifndef UTIL_LINUX_PAMFAIL_H
 #include <security/pam_appl.h>
-#include <security/pam_misc.h>
+#ifdef HAVE_SECURITY_PAM_MISC_H
+# include <security/pam_misc.h>
+#elif defined(HAVE_SECURITY_OPENPAM_H)
+# include <security/openpam.h>
+#endif
 #include "c.h"
 
 static inline int

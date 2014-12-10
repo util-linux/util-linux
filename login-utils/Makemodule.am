@@ -50,7 +50,10 @@ login_SOURCES = \
 	login-utils/login.c \
 	login-utils/logindefs.c \
 	login-utils/logindefs.h
-login_LDADD = $(LDADD) libcommon.la -lpam -lpam_misc
+login_LDADD = $(LDADD) libcommon.la -lpam
+if HAVE_LINUXPAM
+login_LDADD += -lpam_misc
+endif
 if HAVE_AUDIT
 login_LDADD += -laudit
 endif
@@ -86,11 +89,14 @@ chfn_chsh_ldflags = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 chfn_chsh_ldadd = libcommon.la
 
 if CHFN_CHSH_PASSWORD
-chfn_chsh_ldadd += -lpam -lpam_misc
+chfn_chsh_ldadd += -lpam
+if HAVE_LINUXPAM
+chfn_chsh_ldadd += -lpam_misc
+endif
 chfn_chsh_sources += \
 	login-utils/auth.c \
 	login-utils/auth.h
-endif
+endif # CHFN_CHSH_PASSWORD
 
 if HAVE_USER
 chfn_chsh_ldflags += $(LIBUSER_LIBS)
@@ -136,8 +142,11 @@ su_SOURCES = \
 	login-utils/logindefs.h
 su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-su_LDADD = $(LDADD) libcommon.la -lpam -lpam_misc
+su_LDADD = $(LDADD) libcommon.la -lpam
+if HAVE_LINUXPAM
+su_LDADD += -lpam_misc
 endif
+endif # BUILD_SU
 
 
 if BUILD_RUNUSER
@@ -149,8 +158,11 @@ runuser_SOURCES = \
 	login-utils/su-common.h \
 	login-utils/logindefs.c \
 	login-utils/logindefs.h
-runuser_LDADD = $(LDADD) libcommon.la -lpam -lpam_misc
+runuser_LDADD = $(LDADD) libcommon.la -lpam
+if HAVE_LINUXPAM
+runuser_LDADD += -lpam_misc
 endif
+endif # BUILD_RUNUSER
 
 
 if BUILD_NEWGRP

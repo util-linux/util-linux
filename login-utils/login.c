@@ -55,7 +55,11 @@
 #include <netdb.h>
 #include <lastlog.h>
 #include <security/pam_appl.h>
-#include <security/pam_misc.h>
+#ifdef HAVE_SECURITY_PAM_MISC_H
+# include <security/pam_misc.h>
+#elif defined(HAVE_SECURITY_OPENPAM_H)
+# include <security/openpam.h>
+#endif
 #include <sys/sendfile.h>
 
 #ifdef HAVE_LIBAUDIT
@@ -1124,9 +1128,14 @@ int main(int argc, char **argv)
 	struct passwd *pwd = NULL, _pwd;
 
 	struct login_context cxt = {
-		.tty_mode = TTY_MODE,		/* tty chmod() */
-		.pid = getpid(),		/* PID */
-		.conv = { misc_conv, NULL }	/* PAM conversation function */
+		.tty_mode = TTY_MODE,		  /* tty chmod() */
+		.pid = getpid(),		  /* PID */
+#ifdef HAVE_SECURITY_PAM_MISC_H
+		.conv = { misc_conv, NULL }	  /* Linux-PAM conversation function */
+#elif defined(HAVE_SECURITY_OPENPAM_H)
+		.conv = { openpam_ttyconv, NULL } /* OpenPAM conversation function */
+#endif
+
 	};
 
 	timeout = (unsigned int)getlogindefs_num("LOGIN_TIMEOUT", LOGIN_TIMEOUT);

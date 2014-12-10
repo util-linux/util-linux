@@ -7,7 +7,6 @@
  *   there is no warranty.
  *
  */
-
 #include "auth.h"
 #include "pamfail.h"
 
@@ -15,7 +14,11 @@ int auth_pam(const char *service_name, uid_t uid, const char *username)
 {
 	if (uid != 0) {
 		pam_handle_t *pamh = NULL;
+#ifdef HAVE_SECURITY_PAM_MISC_H
 		struct pam_conv conv = { misc_conv, NULL };
+#elif defined(HAVE_SECURITY_OPENPAM_H)
+		struct pam_conv conv = { openpam_ttyconv, NULL };
+#endif
 		int retcode;
 
 		retcode = pam_start(service_name, username, &conv, &pamh);

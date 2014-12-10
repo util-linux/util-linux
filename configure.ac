@@ -206,7 +206,7 @@ AC_CHECK_HEADERS([ \
 	netinet/in.h \
 	paths.h \
 	pty.h \
-	security/pam_misc.h \
+	security/pam_appl.h \
 	stdint.h \
 	stdio_ext.h \
 	stdlib.h \
@@ -235,6 +235,20 @@ AC_CHECK_HEADERS([ \
 	unistd.h \
 ])
 
+AC_CHECK_HEADERS([security/pam_misc.h],
+		[AM_CONDITIONAL([HAVE_LINUXPAM], [true])],
+		[AM_CONDITIONAL([HAVE_LINUXPAM], [false])], [
+#ifdef HAVE_SECURITY_PAM_APPL_H
+#include <security/pam_appl.h>
+#endif
+])
+
+AC_CHECK_HEADERS([security/openpam.h], [], [], [
+#ifdef HAVE_SECURITY_PAM_APPL_H
+#include <security/pam_appl.h>
+#endif
+])
+
 AC_CHECK_HEADERS([langinfo.h],
 		[AM_CONDITIONAL([HAVE_LANGINFO], [true])],
 		[AM_CONDITIONAL([HAVE_LANGINFO], [false])])
@@ -244,8 +258,9 @@ dnl
 have_linux_raw_h=$ac_cv_header_linux_raw_h
 have_linux_securebits_h=$ac_cv_header_linux_securebits_h
 have_linux_watchdog_h=$ac_cv_header_linux_watchdog_h
+have_security_pam_appl_h=$ac_cv_header_security_pam_appl_h
 have_security_pam_misc_h=$ac_cv_header_security_pam_misc_h
-
+have_security_openpam_h=$ac_cv_header_security_openpam_h
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <time.h>
@@ -659,7 +674,6 @@ AC_ARG_WITH([ncurses],
   [], [with_ncurses=auto]
 )
 AM_CONDITIONAL([HAVE_NCURSES], [false])
-
 AS_IF([test "x$with_ncurses" != xno], [
   have_ncurses=no
 
@@ -1472,7 +1486,7 @@ AC_ARG_ENABLE([chfn-chsh],
 UL_BUILD_INIT([chfn_chsh])
 
 AS_IF([test "x$enable_chfn_chsh_password" = xyes -o "x$have_user" = xyes], [
-  UL_REQUIRES_HAVE([chfn_chsh], [security_pam_misc_h], [PAM header file])
+  UL_REQUIRES_HAVE([chfn_chsh], [security_pam_appl_h], [PAM header file])
   AC_DEFINE([CHFN_CHSH_PASSWORD], [1], [Should chfn and chsh require the user to enter the password?])
 ])
 AM_CONDITIONAL([BUILD_CHFN_CHSH], [test "x$build_chfn_chsh" = xyes])
@@ -1493,7 +1507,8 @@ AC_ARG_ENABLE([login],
   [], [UL_DEFAULT_ENABLE([login], [check])]
 )
 UL_BUILD_INIT([login])
-UL_REQUIRES_HAVE([login], [security_pam_misc_h], [PAM header file])
+UL_REQUIRES_HAVE([login], [security_pam_appl_h], [PAM header file])
+UL_REQUIRES_HAVE([login], [security_pam_misc_h, security_openpam_h], [PAM conversation functions])
 AM_CONDITIONAL([BUILD_LOGIN], [test "x$build_login" = xyes])
 
 AC_ARG_ENABLE([login-chown-vcs],
@@ -1536,7 +1551,7 @@ AC_ARG_ENABLE([su],
   [], [UL_DEFAULT_ENABLE([su], [check])]
 )
 UL_BUILD_INIT([su])
-UL_REQUIRES_HAVE([su], [security_pam_misc_h], [PAM header file])
+UL_REQUIRES_HAVE([su], [security_pam_appl_h], [PAM header file])
 AM_CONDITIONAL([BUILD_SU], [test "x$build_su" = xyes])
 
 
@@ -1545,7 +1560,7 @@ AC_ARG_ENABLE([runuser],
   [], [UL_DEFAULT_ENABLE([runuser], [check])]
 )
 UL_BUILD_INIT([runuser])
-UL_REQUIRES_HAVE([runuser], [security_pam_misc_h], [PAM header file])
+UL_REQUIRES_HAVE([runuser], [security_pam_appl_h], [PAM header file])
 AM_CONDITIONAL([BUILD_RUNUSER], [test "x$build_runuser" = xyes])
 
 
