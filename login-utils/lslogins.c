@@ -266,6 +266,7 @@ struct lslogins_control {
 	const char *journal_path;
 
 	unsigned int selinux_enabled : 1,
+		     ulist_on : 1,
 		     noheadings : 1,
 		     notrunc : 1;
 };
@@ -770,41 +771,49 @@ static int get_ulist(struct lslogins_control *ctl, char *logins, char *groups)
 	*arsiz = 32;
 	*ar = xcalloc(1, sizeof(char *) * (*arsiz));
 
-	while ((u = strtok(logins, ","))) {
-		logins = NULL;
+	if (logins) {
+		while ((u = strtok(logins, ","))) {
+			logins = NULL;
 
-		/* user specified by UID? */
-		if (!str_to_uint(u, &uid)) {
-			pwd = getpwuid(uid);
-			if (!pwd)
-				continue;
-			u = pwd->pw_name;
-		}
-		(*ar)[i++] = xstrdup(u);
-
-		if (i == *arsiz)
-			*ar = xrealloc(*ar, sizeof(char *) * (*arsiz += 32));
-	}
-	/* FIXME: this might lead to duplicit entries, although not visible
-	 * in output, crunching a user's info multiple times is very redundant */
-	while ((g = strtok(groups, ","))) {
-		groups = NULL;
-
-		/* user specified by GID? */
-		if (!str_to_uint(g, &gid))
-			grp = getgrgid(gid);
-		else
-			grp = getgrnam(g);
-
-		if (!grp)
-			continue;
-
-		while ((u = grp->gr_mem[n++])) {
+			/* user specified by UID? */
+			if (!str_to_uint(u, &uid)) {
+				pwd = getpwuid(uid);
+				if (!pwd)
+					continue;
+				u = pwd->pw_name;
+			}
 			(*ar)[i++] = xstrdup(u);
 
 			if (i == *arsiz)
 				*ar = xrealloc(*ar, sizeof(char *) * (*arsiz += 32));
 		}
+		ctl->ulist_on = 1;
+	}
+
+	if (groups) {
+		/* FIXME: this might lead to duplicit entries, although not visible
+		 * in output, crunching a user's info multiple times is very redundant */
+		while ((g = strtok(groups, ","))) {
+			n = 0;
+			groups = NULL;
+
+			/* user specified by GID? */
+			if (!str_to_uint(g, &gid))
+				grp = getgrgid(gid);
+			else
+				grp = getgrnam(g);
+
+			if (!grp)
+				continue;
+
+			while ((u = grp->gr_mem[n++])) {
+				(*ar)[i++] = xstrdup(u);
+
+				if (i == *arsiz)
+					*ar = xrealloc(*ar, sizeof(char *) * (*arsiz += 32));
+			}
+		}
+		ctl->ulist_on = 1;
 	}
 	*arsiz = i;
 	return 0;
@@ -860,7 +869,7 @@ static int create_usertree(struct lslogins_control *ctl)
 	struct lslogins_user *user = NULL;
 	size_t n = 0;
 
-	if (*ctl->ulist) {
+	if (ctl->ulist_on) {
 		while (n < ctl->ulsiz) {
 			if (get_user(ctl, &user, ctl->ulist[n]))
 				return -1;
@@ -1450,7 +1459,8 @@ int main(int argc, char *argv[])
 	if (require_btmp())
 		parse_btmp(ctl, path_btmp);
 
-	get_ulist(ctl, logins, groups);
+	if (logins || groups)
+		get_ulist(ctl, logins, groups);
 
 	if (create_usertree(ctl))
 		return EXIT_FAILURE;
