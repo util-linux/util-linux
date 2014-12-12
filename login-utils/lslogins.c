@@ -1055,7 +1055,7 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 	return;
 }
 #ifdef HAVE_LIBSYSTEMD
-static void print_journal_tail(const char *journal_path, uid_t uid, size_t len)
+static void print_journal_tail(const char *journal_path, uid_t uid, size_t len, int time_mode)
 {
 	sd_journal *j;
 	char *match, *buf;
@@ -1069,7 +1069,6 @@ static void print_journal_tail(const char *journal_path, uid_t uid, size_t len)
 	else
 		sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
 
-	buf = xmalloc(sizeof(char) * 16);
 	xasprintf(&match, "_UID=%d", uid);
 
 	sd_journal_add_match(j, match, 0);
@@ -1089,7 +1088,7 @@ static void print_journal_tail(const char *journal_path, uid_t uid, size_t len)
 
 		sd_journal_get_realtime_usec(j, &x);
 		t = x / 1000000;
-		strftime(buf, 16, "%b %d %H:%M:%S", localtime(&t));
+		buf = make_time(time_mode, t);
 
 		fprintf(stdout, "%s", buf);
 
@@ -1148,7 +1147,7 @@ static int print_user_table(struct lslogins_control *ctl)
 		print_pretty(tb);
 #ifdef HAVE_LIBSYSTEMD
 		fprintf(stdout, _("\nLast logs:\n"));
-		print_journal_tail(ctl->journal_path, ctl->uid, 3);
+		print_journal_tail(ctl->journal_path, ctl->uid, 3, ctl->time_mode);
 		fputc('\n', stdout);
 #endif
 	} else
