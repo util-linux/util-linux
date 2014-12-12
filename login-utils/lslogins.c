@@ -143,6 +143,7 @@ enum {
 	TIME_SHORT,
 	TIME_FULL,
 	TIME_ISO,
+	TIME_ISO_SHORT,
 };
 
 /*
@@ -348,6 +349,9 @@ static char *make_time(int mode, time_t time)
 		break;
 	case TIME_ISO:
 		strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%S%z", &tm);
+		break;
+	case TIME_ISO_SHORT:
+		strftime(buf, sizeof(buf), "%Y-%m-%d", &tm);
 		break;
 	default:
 		errx(EXIT_FAILURE, _("unsupported time type"));
@@ -693,7 +697,8 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			break;
 		case COL_PWD_EXPIR:
 			if (shadow && shadow->sp_expire >= 0)
-				user->pwd_expire = make_time(TIME_SHORT,
+				user->pwd_expire = make_time(ctl->time_mode == TIME_ISO ?
+						TIME_ISO_SHORT : ctl->time_mode,
 						shadow->sp_expire * 86400);
 			break;
 		case COL_PWD_CTIME:
@@ -701,7 +706,8 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			 * (especially in non-GMT timezones) would only serve
 			 * to confuse */
 			if (shadow)
-				user->pwd_ctime = make_time(TIME_SHORT,
+				user->pwd_ctime = make_time(ctl->time_mode == TIME_ISO ?
+						TIME_ISO_SHORT : ctl->time_mode,
 						shadow->sp_lstchg * 86400);
 			break;
 		case COL_PWD_CTIME_MIN:
