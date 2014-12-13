@@ -1180,16 +1180,25 @@ static void free_user(void *f)
 	free(u);
 }
 
-struct lslogins_timefmt {
-	const char *name;
-	int val;
-};
+static int parse_time_mode(const char *optarg)
+{
+	struct lslogins_timefmt {
+		const char *name;
+		const int val;
+	};
+	static const struct lslogins_timefmt timefmts[] = {
+		{"iso", TIME_ISO},
+		{"full", TIME_FULL},
+		{"short", TIME_SHORT},
+	};
+	size_t i;
 
-static struct lslogins_timefmt timefmts[] = {
-	{ "short", TIME_SHORT },
-	{ "full", TIME_FULL },
-	{ "iso", TIME_ISO },
-};
+	for (i = 0; i < ARRAY_SIZE(timefmts); i++) {
+		if (strcmp(timefmts[i].name, optarg) == 0)
+			return timefmts[i].val;
+	}
+	errx(EXIT_FAILURE, _("unknown time format: %s"), optarg);
+}
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -1397,18 +1406,7 @@ int main(int argc, char *argv[])
 			ctl->noheadings = 1;
 			break;
 		case OPT_TIME_FMT:
-			{
-				size_t i;
-
-				for (i = 0; i < ARRAY_SIZE(timefmts); i++) {
-					if (strcmp(timefmts[i].name, optarg) == 0) {
-						ctl->time_mode = timefmts[i].val;
-						break;
-					}
-				}
-				if (ctl->time_mode == TIME_INVALID)
-					usage(stderr);
-			}
+			ctl->time_mode = parse_time_mode(optarg);
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
