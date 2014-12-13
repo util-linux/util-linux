@@ -688,8 +688,8 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			if (strstr(pwd->pw_shell, "nologin"))
 				user->nologin = 1;
 			else if (pwd->pw_uid)
-				user->nologin = access("/etc/nologin", F_OK) == 0 ||
-						access("/var/run/nologin", F_OK) == 0;
+				user->nologin = access(_PATH_NOLOGIN, F_OK) == 0 ||
+						access(_PATH_VAR_NOLOGIN, F_OK) == 0;
 			break;
 		case COL_PWD_WARN:
 			if (shadow && shadow->sp_warn >= 0)
