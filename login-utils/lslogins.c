@@ -1058,7 +1058,7 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 static void print_journal_tail(const char *journal_path, uid_t uid, size_t len, int time_mode)
 {
 	sd_journal *j;
-	char *match, *buf;
+	char *match, *timestamp;
 	uint64_t x;
 	time_t t;
 	const char *identifier, *pid, *message;
@@ -1088,21 +1088,18 @@ static void print_journal_tail(const char *journal_path, uid_t uid, size_t len, 
 
 		sd_journal_get_realtime_usec(j, &x);
 		t = x / 1000000;
-		buf = make_time(time_mode, t);
-
-		fprintf(stdout, "%s", buf);
-
+		timestamp = make_time(time_mode, t);
+		/* Get rid of journal entry field identifiers */
 		identifier = strchr(identifier, '=') + 1;
-		pid = strchr(pid, '=') + 1		;
+		pid = strchr(pid, '=') + 1;
 		message = strchr(message, '=') + 1;
 
-		fprintf(stdout, " %s", identifier);
-		fprintf(stdout, "[%s]:", pid);
-		fprintf(stdout, "%s\n", message);
+		fprintf(stdout, "%s %s[%s]: %s\n", timestamp, identifier, pid,
+			message);
+		free(timestamp);
 	} while (sd_journal_next(j));
 
 done:
-	free(buf);
 	free(match);
 	sd_journal_flush_matches(j);
 	sd_journal_close(j);
