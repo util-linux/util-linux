@@ -1437,7 +1437,7 @@ int main(int argc, char *argv[])
 		logins = argv[optind];
 		outmode = OUT_PRETTY;
 	} else if (argc != optind)
-		usage(stderr);
+		errx(EXIT_FAILURE, _("Only one user may be specified. Use -l for multiple users."));
 
 	scols_init_debug(0);
 
