@@ -1245,8 +1245,7 @@ int main(int argc, char *argv[])
 
 	/* long only options. */
 	enum {
-		OPT_VER = CHAR_MAX + 1,
-		OPT_WTMP,
+		OPT_WTMP = CHAR_MAX + 1,
 		OPT_BTMP,
 		OPT_NOTRUNC,
 		OPT_NOHEAD,
@@ -1304,7 +1303,7 @@ int main(int argc, char *argv[])
 	add_column(columns, ncolumns++, COL_UID);
 	add_column(columns, ncolumns++, COL_USER);
 
-	while ((c = getopt_long(argc, argv, "acfGg:hLl:no:prsuVxzZ",
+	while ((c = getopt_long(argc, argv, "acefGg:hLl:no:prsuVzZ",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
