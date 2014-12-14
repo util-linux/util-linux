@@ -77,8 +77,8 @@ static void __attribute__((__noreturn__)) usage(FILE *fp)
 	fputs(_(" -p, --office-phone <phone>   office phone number\n"), fp);
 	fputs(_(" -h, --home-phone <phone>     home phone number\n"), fp);
 	fputs(USAGE_SEPARATOR, fp);
-	fputs(USAGE_HELP, fp);
-	fputs(USAGE_VERSION, fp);
+	fputs(_(" -u, --help     display this help and exit\n"), fp);
+	fputs(_(" -v, --version  output version information and exit\n"), fp);
 	fprintf(fp, USAGE_MAN_TAIL("chfn(1)"));
 	exit(fp == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
