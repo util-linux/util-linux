@@ -15,14 +15,14 @@
 sfdisk \- display or manipulate a disk partition table
 .SH SYNOPSIS
 .B sfdisk
-.RB [ options ]
-.RI device
-.BR [ \-N
-.IR partno ]
+[options]
+.I device
+.RB [ \-N
+.IR partition-number ]
 .sp
 .B sfdisk
-.RB [ options ]
-.RI command
+[options]
+.I command
 .SH DESCRIPTION
 .B sfdisk
 is a script oriented tool for partitioning any block device.
@@ -48,10 +48,10 @@ partitions.
 .SH COMMANDS
 The commands are mutually exclusive.
 .TP
-.BR [\-N " \fIpartno\fR"] " " \fIdevice\fR
-The default sfdisk command is to read the specification for the desired 
+.RB [ \-N " \fIpartition-number\fR] " \fIdevice\fR
+The default sfdisk command is to read the specification for the desired
 partitioning of \fIdevice\fR from standard input, and then create a partition
-table according to the specification. See below description of the input
+table according to the specification. See below for the description of the input
 format. If the standard input is a terminal then sfdisk starts interactive session.
 
 If the option \fB\-N\fR specified then the changes are applied to the partition

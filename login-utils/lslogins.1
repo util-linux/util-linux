@@ -5,7 +5,10 @@
 lslogins \- display information about known users in the system
 .SH SYNOPSIS
 .B lslogins
-[\fIoptions\fR] [\fB-s\fR|\fB-u\fR[=\fIUID\fR]] [\fB-g \fIgroups\fR] [\fB-l \fIlogins\fR]
+[options]
+.RB [ \-s | \-u [ =\fIUID ]]
+.RB [ \-g " \fIgroups\fR]"
+.RB [ \-l " \fIlogins\fR]"
 .SH DESCRIPTION
 .PP
 Examine the wtmp and btmp logs, /etc/shadow (if necessary) and /etc/passwd

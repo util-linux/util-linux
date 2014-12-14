@@ -7,9 +7,16 @@
 .SH NAME
 partx \- tell the Linux kernel about the presence and numbering of on-disk partitions
 .SH SYNOPSIS
-partx [\-a | \-d | \-s | \-u] [\-t TYPE] [\-n M:N] [\-] disk
+.B partx
+.RB [ \-a | \-d | \-s | \-u ]
+.RB [ \-t " \fItype\fR]"
+.RB [ \-n " \fIM" : \fIN\fR]
+.RB [ \- "] " \fIdisk
 .br
-partx [\-a | \-d | \-s | \-u] [\-t TYPE] partition [disk]
+.B partx
+.RB [ \-a | \-d | \-s | \-u ]
+.RB [ \-t " \fItype\fR]"
+.IR partition " [" disk ]
 .SH DESCRIPTION
 Given a device or disk-image,
 .B partx
