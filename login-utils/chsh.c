@@ -129,22 +129,17 @@ static int get_shell_list(const char *shell_name)
  */
 static void parse_argv(int argc, char **argv, struct sinfo *pinfo)
 {
-	int index, c;
-
-	static struct option long_options[] = {
+	const struct option long_options[] = {
 		{"shell", required_argument, 0, 's'},
 		{"list-shells", no_argument, 0, 'l'},
 		{"help", no_argument, 0, 'u'},
 		{"version", no_argument, 0, 'v'},
 		{NULL, no_argument, 0, '0'},
 	};
+	int c;
 
-	optind = c = 0;
-	while (c != EOF) {
-		c = getopt_long(argc, argv, "s:luv", long_options, &index);
+	while ((c = getopt_long(argc, argv, "s:luv", long_options, NULL)) != -1) {
 		switch (c) {
-		case -1:
-			break;
 		case 'v':
 			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
