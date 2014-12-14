@@ -252,6 +252,7 @@ static int check_shell(const char *shell)
 int main(int argc, char **argv)
 {
 	char *oldshell;
+	int nullshell = 0;
 	const uid_t uid = getuid();
 	struct sinfo info = { 0 };
 	struct passwd *pw;
@@ -302,8 +303,10 @@ int main(int argc, char **argv)
 #endif
 
 	oldshell = pw->pw_shell;
-	if (oldshell == NULL || *oldshell == '\0')
+	if (oldshell == NULL || *oldshell == '\0') {
 		oldshell = _PATH_BSHELL;	/* default */
+		nullshell = 1;
+	}
 
 	/* reality check */
 #ifdef HAVE_LIBUSER
@@ -339,7 +342,7 @@ int main(int argc, char **argv)
 	if (check_shell(info.shell) < 0)
 		return EXIT_FAILURE;
 
-	if (strcmp(oldshell, info.shell) == 0)
+	if (!nullshell && strcmp(oldshell, info.shell) == 0)
 		errx(EXIT_SUCCESS, _("Shell not changed."));
 
 #ifdef HAVE_LIBUSER
