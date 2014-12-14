@@ -40,6 +40,7 @@
 #include "setpwnam.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "logindefs.h"
 
 #ifdef HAVE_LIBSELINUX
 # include <selinux/selinux.h>
@@ -71,6 +72,10 @@ struct chfn_control {
 	 *  In the end, "newf" is folded into "oldf".  */
 	struct finfo oldf, newf;
 	unsigned int
+		allow_fullname:1,	/* The login.defs restriction */
+		allow_room:1,		   /* see: man login.defs(5) */
+		allow_work:1,		   /* and look for CHFN_RESTRICT */
+		allow_home:1,		   /* keyword for these four. */
 		changed:1,		/* is change requested */
 		interactive:1;		/* whether to prompt for fields or not */
 };
@@ -144,18 +149,26 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 				&index)) != -1) {
 		switch (c) {
 		case 'f':
+			if (!ctl->allow_fullname)
+				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Name"));
 			ctl->newf.full_name = optarg;
 			status += check_gecos_string(_("Name"), optarg);
 			break;
 		case 'o':
+			if (!ctl->allow_room)
+				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Office"));
 			ctl->newf.office = optarg;
 			status += check_gecos_string(_("Office"), optarg);
 			break;
 		case 'p':
+			if (!ctl->allow_work)
+				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Office Phone"));
 			ctl->newf.office_phone = optarg;
 			status += check_gecos_string(_("Office Phone"), optarg);
 			break;
 		case 'h':
+			if (!ctl->allow_home)
+				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Home Phone"));
 			ctl->newf.home_phone = optarg;
 			status += check_gecos_string(_("Home Phone"), optarg);
 			break;
@@ -239,16 +252,69 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
 }
 
 /*
+ *  get_login_defs()
+ *	find /etc/login.defs CHFN_RESTRICT and save restrictions to run time
+ */
+static void get_login_defs(struct chfn_control *ctl)
+{
+	const char *s;
+	size_t i;
+	int broken = 0;
+
+	/* real root does not have restrictions */
+	if (geteuid() == getuid() && getuid() == 0) {
+		ctl->allow_fullname = ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
+		return;
+	}
+	s = getlogindefs_str("CHFN_RESTRICT", "");
+	if (!strcmp(s, "yes")) {
+		ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
+		return;
+	}
+	if (!strcmp(s, "no")) {
+		ctl->allow_fullname = ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
+		return;
+	}
+	for (i = 0; s[i]; i++) {
+		switch (s[i]) {
+		case 'f':
+			ctl->allow_fullname = 1;
+			break;
+		case 'r':
+			ctl->allow_room = 1;
+			break;
+		case 'w':
+			ctl->allow_work = 1;
+			break;
+		case 'h':
+			ctl->allow_home = 1;
+			break;
+		default:
+			broken = 1;
+		}
+	}
+	if (broken)
+		warnx(_("%s: CHFN_RESTRICT has unexpected value: %s"), _PATH_LOGINDEFS, s);
+	if (!ctl->allow_fullname && !ctl->allow_room && !ctl->allow_work && !ctl->allow_home)
+		errx(EXIT_FAILURE, _("%s: CHFN_RESTRICT does not allow any changes"), _PATH_LOGINDEFS);
+	return;
+}
+
+/*
  *  ask_info () --
  *	prompt the user for the finger information and store it.
  */
 static void ask_info(struct chfn_control *ctl)
 {
-	ctl->newf.full_name = ask_new_field(ctl, _("Name"), ctl->oldf.full_name);
-	ctl->newf.office = ask_new_field(ctl, _("Office"), ctl->oldf.office);
-	ctl->newf.office_phone = ask_new_field(ctl, _("Office Phone"), ctl->oldf.office_phone);
-	ctl->newf.home_phone = ask_new_field(ctl, _("Home Phone"), ctl->oldf.home_phone);
-	printf("\n");
+	if (ctl->allow_fullname)
+		ctl->newf.full_name = ask_new_field(ctl, _("Name"), ctl->oldf.full_name);
+	if (ctl->allow_room)
+		ctl->newf.office = ask_new_field(ctl, _("Office"), ctl->oldf.office);
+	if (ctl->allow_work)
+		ctl->newf.office_phone = ask_new_field(ctl, _("Office Phone"), ctl->oldf.office_phone);
+	if (ctl->allow_home)
+		ctl->newf.home_phone = ask_new_field(ctl, _("Home Phone"), ctl->oldf.home_phone);
+	putchar('\n');
 }
 
 /*
@@ -335,6 +401,9 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 	uid = getuid();
 
+	/* check /etc/login.defs CHFN_RESTRICT */
+	get_login_defs(&ctl);
+
 	parse_argv(&ctl, argc, argv);
 	if (!ctl.username) {
 		ctl.pw = getpwuid(uid);
@@ -395,8 +464,8 @@ int main(int argc, char **argv)
 
 	if (ctl.interactive)
 		ask_info(&ctl);
-	else
-		add_missing(&ctl);
+
+	add_missing(&ctl);
 
 	if (!ctl.changed) {
 		printf(_("Finger information not changed.\n"));

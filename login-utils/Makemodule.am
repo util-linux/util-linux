@@ -119,7 +119,11 @@ chfn_chsh_sources += \
 chfn_chsh_ldadd += -lselinux
 endif
 
-chfn_SOURCES = login-utils/chfn.c $(chfn_chsh_sources)
+chfn_SOURCES = \
+	login-utils/chfn.c \
+	login-utils/logindefs.c \
+	login-utils/logindefs.h \
+	$(chfn_chsh_sources)
 chfn_CFLAGS = $(chfn_chsh_cflags)
 chfn_LDFLAGS = $(chfn_chsh_ldflags)
 chfn_LDADD = $(LDADD) $(chfn_chsh_ldadd)
