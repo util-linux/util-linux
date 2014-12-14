@@ -42,6 +42,8 @@
 #include "setpwnam.h"
 #include "xalloc.h"
 
+#include "ch-common.h"
+
 #ifdef HAVE_LIBSELINUX
 # include <selinux/selinux.h>
 # include <selinux/av_permissions.h>
@@ -205,8 +207,6 @@ static char *prompt(char *question, char *def_val)
  */
 static int check_shell(char *shell)
 {
-	unsigned int i, c;
-
 	if (!shell)
 		return -1;
 
@@ -222,17 +222,9 @@ static int check_shell(char *shell)
 		printf(_("\"%s\" is not executable"), shell);
 		return -1;
 	}
-	/* keep /etc/passwd clean. */
-	for (i = 0; i < strlen(shell); i++) {
-		c = shell[i];
-		if (c == ',' || c == ':' || c == '=' || c == '"' || c == '\n') {
-			warnx(_("'%c' is not allowed"), c);
-			return -1;
-		}
-		if (iscntrl(c)) {
-			warnx(_("control characters are not allowed"));
-			return -1;
-		}
+	if (illegal_passwd_chars(shell)) {
+		warnx(_("%s: has illegal characters"), shell);
+		return -1;
 	}
 #ifdef ONLY_LISTED_SHELLS
 	if (!get_shell_list(shell)) {

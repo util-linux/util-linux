@@ -42,6 +42,8 @@
 #include "xalloc.h"
 #include "logindefs.h"
 
+#include "ch-common.h"
+
 #ifdef HAVE_LIBSELINUX
 # include <selinux/selinux.h>
 # include <selinux/av_permissions.h>
@@ -106,23 +108,15 @@ static void __attribute__((__noreturn__)) usage(FILE *fp)
  */
 static int check_gecos_string(const char *msg, char *gecos)
 {
-	unsigned int i, c;
 	const size_t len = strlen(gecos);
 
 	if (MAX_FIELD_SIZE < len) {
 		warnx(_("field %s is too long"), msg);
 		return -1;
 	}
-	for (i = 0; i < len; i++) {
-		c = gecos[i];
-		if (c == ',' || c == ':' || c == '=' || c == '"' || c == '\n') {
-			warnx(_("%s: '%c' is not allowed"), msg, c);
-			return -1;
-		}
-		if (iscntrl(c)) {
-			warnx(_("%s: control characters are not allowed"), msg);
-			return -1;
-		}
+	if (illegal_passwd_chars(gecos)) {
+		warnx(_("%s: has illegal characters"), gecos);
+		return -1;
 	}
 	return 0;
 }
