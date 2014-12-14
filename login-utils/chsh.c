@@ -83,7 +83,7 @@ static void __attribute__((__noreturn__)) usage (FILE *fp)
  *	return true.  if not, return false.
  *	if the given shell is NULL, /etc/shells is outputted to stdout.
  */
-static int get_shell_list(char *shell_name)
+static int get_shell_list(const char *shell_name)
 {
 	FILE *fp;
 	int found;
@@ -206,7 +206,7 @@ static char *prompt(char *question, char *def_val)
  *	an error and return (-1).
  *	if the shell is a bad idea, print a warning.
  */
-static int check_shell(char *shell)
+static int check_shell(const char *shell)
 {
 	if (!shell)
 		return -1;
@@ -251,9 +251,9 @@ static int check_shell(char *shell)
 
 int main(int argc, char **argv)
 {
-	char *shell, *oldshell;
-	uid_t uid;
-	struct sinfo info;
+	char *oldshell;
+	const uid_t uid = getuid();
+	struct sinfo info = { 0 };
 	struct passwd *pw;
 
 	sanitize_env();
@@ -262,11 +262,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	uid = getuid();
-	memset(&info, 0, sizeof(info));
-
 	parse_argv(argc, argv, &info);
-	pw = NULL;
 	if (!info.username) {
 		pw = getpwuid(uid);
 		if (!pw)
@@ -327,33 +323,31 @@ int main(int argc, char **argv)
 				    "shell change denied"), _PATH_SHELLS);
 	}
 
-	shell = info.shell;
-
 	printf(_("Changing shell for %s.\n"), pw->pw_name);
 
 #if !defined(HAVE_LIBUSER) && defined(CHFN_CHSH_PASSWORD)
-	if(!auth_pam("chsh", uid, pw->pw_name)) {
+	if (!auth_pam("chsh", uid, pw->pw_name)) {
 		return EXIT_FAILURE;
 	}
 #endif
-	if (!shell) {
-		shell = prompt(_("New shell"), oldshell);
-		if (!shell)
+	if (!info.shell) {
+		info.shell = prompt(_("New shell"), oldshell);
+		if (!info.shell)
 			return EXIT_SUCCESS;
 	}
 
-	if (check_shell(shell) < 0)
+	if (check_shell(info.shell) < 0)
 		return EXIT_FAILURE;
 
-	if (strcmp(oldshell, shell) == 0)
+	if (strcmp(oldshell, info.shell) == 0)
 		errx(EXIT_SUCCESS, _("Shell not changed."));
 
 #ifdef HAVE_LIBUSER
 	if (set_value_libuser("chsh", pw->pw_name, uid,
-	    LU_LOGINSHELL, shell) < 0)
+	    LU_LOGINSHELL, info.shell) < 0)
 		errx(EXIT_FAILURE, _("Shell *NOT* changed.  Try again later."));
 #else
-	pw->pw_shell = shell;
+	pw->pw_shell = info.shell;
 	if (setpwnam(pw) < 0)
 		err(EXIT_FAILURE, _("setpwnam failed\n"
 			"Shell *NOT* changed.  Try again later."));
