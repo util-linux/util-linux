@@ -1348,7 +1348,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	fputs(_(" -v, --version  output version information and exit\n"), out);
 
 	list_available_columns(out);
 
