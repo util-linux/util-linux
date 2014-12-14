@@ -87,8 +87,8 @@ static int get_shell_list(char *shell_name)
 {
 	FILE *fp;
 	int found;
-	int len;
-	char buf[PATH_MAX];
+	char *buf = NULL;
+	size_t sz = 0, len;
 
 	found = false;
 	fp = fopen(_PATH_SHELLS, "r");
@@ -97,17 +97,17 @@ static int get_shell_list(char *shell_name)
 			warnx(_("No known shells."));
 		return true;
 	}
-	while (fgets(buf, sizeof(buf), fp) != NULL) {
+	while (getline(&buf, &sz, fp) != -1) {
+		len = strlen(buf);
 		/* ignore comments */
 		if (*buf == '#')
 			continue;
-		len = strlen(buf);
+		/* skip blank lines*/
+		if (len < 2)
+			continue;
 		/* strip the ending newline */
 		if (buf[len - 1] == '\n')
 			buf[len - 1] = 0;
-		/* ignore lines that are too damn long */
-		else
-			continue;
 		/* check or output the shell */
 		if (shell_name) {
 			if (!strcmp(shell_name, buf)) {
@@ -118,6 +118,7 @@ static int get_shell_list(char *shell_name)
 			printf("%s\n", buf);
 	}
 	fclose(fp);
+	free(buf);
 	return found;
 }
 
