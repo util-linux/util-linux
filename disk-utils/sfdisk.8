@@ -10,7 +10,7 @@
 .\" entire resulting derived work is distributed under the terms of a
 .\" permission notice identical to this one.
 .\"
-.TH SFDISK 8 "September 2014" "util-linux" "System Administration"
+.TH SFDISK 8 "December 2014" "util-linux" "System Administration"
 .SH NAME
 sfdisk \- display or manipulate a disk partition table
 .SH SYNOPSIS
@@ -25,7 +25,7 @@ sfdisk \- display or manipulate a disk partition table
 .I command
 .SH DESCRIPTION
 .B sfdisk
-is a script oriented tool for partitioning any block device.
+is a script-oriented tool for partitioning any block device.
 
 Since version 2.26
 .B sfdisk
@@ -33,15 +33,16 @@ supports MBR (DOS), GPT, SUN and SGI disk labels, but no longer provides any
 functionality for CHS (Cylinder-Head-Sector) addressing.  CHS has
 never been important for Linux, and this addressing concept does not make any
 sense for new devices.
-
+.sp
 .B sfdisk
 (since version 2.26) aligns start and end of the partitions to
-block-device I/O limits when specified by relative sizes, or when default
-values expected.
-
+block-device I/O limits when relative sizes are specified, or when the
+default values are used.
+.sp
 .B sfdisk
-does not create default system partitions for SGI and SUN disk label like
-.BR fdisk (8).
+does not create the standard system partitions for SGI and SUN disk labels like
+.BR fdisk (8)
+does.
 It is necessary to explicitly create all partitions including whole-disk system
 partitions.
 
@@ -49,82 +50,86 @@ partitions.
 The commands are mutually exclusive.
 .TP
 .RB [ \-N " \fIpartition-number\fR] " \fIdevice\fR
-The default sfdisk command is to read the specification for the desired
+The default \fBsfdisk\fR command is to read the specification for the desired
 partitioning of \fIdevice\fR from standard input, and then create a partition
-table according to the specification. See below for the description of the input
-format. If the standard input is a terminal then sfdisk starts interactive session.
-
-If the option \fB\-N\fR specified then the changes are applied to the partition
-addressed by \fIpartno\fR.
+table according to the specification.  See below for the description of the
+input format.  If standard input is a terminal, then \fBsfdisk\fR starts an
+interactive session.
+.sp
+If the option \fB\-N\fR is specified, then the changes are applied to
+the partition addressed by \fIpartition-number\fR.
 .TP
-.BR \-a , " \-\-activate " \fIdevice\fR " "[\fIpartno\fR ...]
-Switch on the bootable flag. If \fIpartno\fR no specified then lists all partitions
-with enabled flag.
+.BR \-a , " \-\-activate \fIdevice\fR [" \fIpartition-number\fR...]
+Switch on the bootable flag.  If no \fIpartition-number\fR is specified,
+then all partitions with an enabled flag are listed.
 .TP
 .BR \-d , " \-\-dump " \fIdevice\fR
 Dump the partitions of a device in a format that is usable as input to sfdisk.
-See the section "BACKUP PARTITION TABLE".
+See the section \fBBACKING UP THE PARTITION TABLE\fR.
 .TP
-.BR \-g , " \-\-show-geometry " [\fIdevice\fR ...]
-List geometry of all or specified devices.
+.BR \-g , " \-\-show-geometry " [ \fIdevice ...]
+List the geometry of all or the specified devices.
 .TP
-.BR \-l , " \-\-list " [\fIdevice\fR ...]
-List partitions of all or specified devices. This command can be used
+.BR \-l , " \-\-list " [ \fIdevice ...]
+List the partitions of all or the specified devices.  This command can be used
 together with \fB\-\-verify\fR.
 .TP
-.BR \-\-part\-attrs " " \fIdevice\fR " " \fIpartno\fR " "[\fIattrs\fR]
-Change GPT partition attribute bits. If \fIattrs\fR no specified then print the current
-partition setting. The \fIattrs\fR is comma or space delimited list of bits. The currently
-supported attribute bits are: RequiredPartiton, NoBlockIOProtocol, LegacyBIOSBootable
-and GUID specific bits in range from 48 to 63. For example string 
+.BR \-\-part-attrs " \fIdevice partno [" \fIattrs ]
+Change the GPT partition attribute bits.  If \fIattrs\fR is not specified,
+then print the current partition settings.  The \fIattrs\fR argument is a
+comma- or space-delimited list of bits.  The currently supported attribute
+bits are: RequiredPartiton, NoBlockIOProtocol, LegacyBIOSBootable
+and GUID-specific bits in the range from 48 to 63.  For example, the string
 "RequiredPartiton,50,51" sets three bits.
 .TP
-.BR \-\-part\-label " " \fIdevice\fR " " \fIpartno\fR " "[\fIlabel\fR]
-Change GPT partition name (label). If \fIlabel\fR no specified then print the current
-partition label.
+.BR \-\-part-label " \fIdevice partno [" \fIlabel ]
+Change the GPT partition name (label).  If \fIlabel\fR is nto specified,
+then print the current partition label.
 .TP
-.BR \-\-part-type " " \fIdevice\fR " " \fIpartno\fR " "[\fItype\fR]
-Change partition type. If \fItype\fR no specified then print the current
-partition type. The argument \fItype\fR is hex for MBR or GUID for GPT.
-For backward compatibility the option -c, --id has the same meaning.
+.BR \-\-part-type " \fIdevice partno [" \fItype ]
+Change the partition type.  If \fItype\fR is not specified, then print the
+current partition type.  The \fItype\fR argument is hexadecimal for MBR,
+or a GUID for GPT.  For backward compatibility the options \fB\-c\fR and
+\fB\-\-id\fR have the same meaning.
 .TP
-.BR \-\-part\-uuid " " \fIdevice\fR " " \fIpartno\fR " "[\fIuuid\fR]
-Change GPT partition UUID. If \fIuuid\fR no specified then print the current
-partition UUID.
+.BR \-\-part-uuid " \fIdevice partno [" \fIuuid ]
+Change the GPT partition UUID.  If \fIuuid\fR is not specified,
+then print the current partition UUID.
 .TP
-.BR \-s , " \-\-show-size " [\fIdevice\fR ...]
-List sizes of all or specified devices.
+.BR \-s , " \-\-show-size " [ \fIdevice ...]
+List the sizes of all or the specified devices.
 .TP
-.BR \-T , " \-\-list-types
-Print all supported types for the current disk label or label specified by
+.BR \-T , " \-\-list-types"
+Print all supported types for the current disk label or the label specified by
 \fB\-\-label\fR.
 .TP
 .BR \-V , " \-\-verify
-Test whether partition table and partitions seem correct.
+Test whether the partition table and partitions seem correct.
 
 .SH OPTIONS
 .TP
 .BR \-A , " \-\-append"
-Don't create a new partition table, but rather appends specified partitions only.
+Don't create a new partition table, but only append the specified partitions.
 .TP
 .BR \-b , " \-\-backup"
-Backup the current partition table sectors before start partitioning. The defautl
-backup file name is ~/sfdisk-<device>-<offset>.bak, see \fI\-\-backup-file\fR.
+Back up the current partition table sectors before starting the partitioning.
+The default backup file name is ~/sfdisk-<device>-<offset>.bak; to use another
+name see \fB\-\-backup-file\fR.
 .TP
 .BR \-f , " \-\-force"
 Disable all consistency checking.
 .TP
-.BR \-o , " \-\-output " \fIlist\fP
+.BR \-o , " \-\-output " \fIlist
 Specify which output columns to print.  Use
 .B \-\-help
 to get a list of all supported columns.
-
+.sp
 The default list of columns may be extended if \fIlist\fP is
 specified in the format \fI+list\fP (e.g. \fB-o +UUID\fP).
 .TP
 .BR \-O , " \-\-backup-file " \fIpath\fR
-Override default backup file name. Note that the device name and offset is always
-appended to the file name.
+Override the default backup file name.  Note that the device name and offset
+are always appended to the file name.
 .TP
 .BR \-q , " \-\-quiet"
 Suppress extra info messages.
@@ -132,30 +137,30 @@ Suppress extra info messages.
 .BR \-n , " \-\-no\-act"
 Do everything except write to device.
 .TP
-.BR "\-\-no\-reread"
-Do not check by re-read-partition-table ioctl whether the device is in use.
+.B \-\-no-reread
+Do not check through the re-read-partition-table ioctl whether the device is in use.
 .TP
-.BR \-u , " \-\-unit " S
-Deprecated option. The sector unit is supported only.
+.BR \-u , " \-\-unit S"
+Deprecated option.  Only the sector unit is supported.
 .TP
 .BR "\-\-Linux"
-Deprecated and ignored option. Linux (and another moder OS) compatible
+Deprecated and ignored option.  Linux (and another modern OS) compatible
 partitioning is the default.
 .TP
-.BR \-X , " \-\-label \fItype\fR
-Specify disk label type (e.g. dos, gpt, ...). If no label specified then sfdisk
-defaults to an existing label. If there is no label on the device than defaults
-to "dos".
+.BR \-X , " \-\-label " \fItype
+Specify the disk label type (e.g. \fBdos\fR, \fBgpt\fR, ...).  If this option
+is not given, then \fBsfdisk\fR defaults to the existing label, but if there
+is no label on the device yet, then the type defaults to \fBdos\fR.
 .TP
-.BR \-Y , " \-\-label-nested \fItype\fR
-Force sfdisk to edit nested disk label. The primary disk label has to already exist.
-This option allows to edit for example hybrid/protective MBR on devices with GPT.
+.BR \-Y , " \-\-label-nested " \fItype
+Force editing of a nested disk label.  The primary disk label has to exist already.
+This option allows to edit for example a hybrid/protective MBR on devices with GPT.
+.TP
+.BR \-v , " \-\-version"
+Display version information and exit.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
-.TP
-.BR \-V , " \-\-version"
-Display version information and exit.
 
 .SH "INPUT FORMATS"
 .B sfdisk
@@ -163,70 +168,70 @@ supports two input formats and generic header lines.
 
 .B Header lines
 .RS
-The optional headers lines specify generic information that apply to partition 
-table. The header line format is:
-.RS     
-.sp     
+The optional header lines specify generic information that apply to the partition
+table.  The header-line format is:
+.RS
+.sp
 .B "<name>: <value>"
-.sp     
-.RE 
+.sp
+.RE
 The currently recognized headers are:
 .RS
 .TP
 .B unit
-Specify partitioning unit. The supported unit is only "sectors".
+Specify the partitioning unit.  The only supported unit is \fBsectors\fR.
 .TP
 .B label
-Specify partition table type. For example "dos" or "gpt".
+Specify the partition table type.  For example \fBdos\fR or \fBgpt\fR.
 .TP
 .B label-id
-Specify partition table identifier. It's hexadecimal number (with 0x prefix) for 
-MBR and UUID for GPT.
+Specify the partition table identifier.  It should be a  hexadecimal number
+(with a 0x prefix) for MBR and a UUID for GPT.
 .RE
 .sp
-Note that header lines is possible to use only before the first partition 
+Note that it is only possible to use header lines before the first partition
 is specified in the input.
 .RE
 
-.B Unnamed fields format
+.B Unnamed-fields format
 .RS
-.RS     
-.sp     
-.B "<start> <size> <type> <bootable>"
-.sp     
-.RE 
+.RS
+.sp
+.I start size type bootable
+.sp
+.RE
 where each line fills one partition descriptor.
-
-Fields are separated by whitespace, or comma or semicolon possibly followed  by
+.sp
+Fields are separated by whitespace, or q comma or semicolon possibly followed by
 whitespace; initial and trailing whitespace is ignored.  Numbers can be octal,
-decimal or hexadecimal, decimal is default.  When  a field is absent or empty,
-a default value is used. But when the \fB-N\fR option (change a single partition
-only) is given, the default for each field is its previous value.
-
+decimal or hexadecimal; decimal is the default.  When  a field is absent or empty,
+a default value is used.  But when the \fB-N\fR option (change a single partition)
+is given, the default for each field is its previous value.
+.sp
 The default value of
 .I start
-is the first non-assigned sector aligned according to device I/O limits. The default
-start offset for the first partition is 1 MiB.
-
+is the first non-assigned sector aligned according to device I/O limits.
+The default start offset for the first partition is 1 MiB.
+.sp
 The default value of
 .I size
-is as much as possible (until next partition or end-of-device). A '+' can be
+is as much as possible (until the next partition or end-of-device).  A '+' can be
 used instead of a number for size, which also means as much as possible.  The
 size may be followed by the multiplicative suffixes (KiB, MiB, GiB, TiB, PiB,
 EiB, ZiB and YiB), then the number is interpreted as size of the partition in
 bytes and then the size is aligned according to the device I/O limits.
 The default is to interpret the number as number of sectors.
-
-Patition
+.sp
+The partition
 .I type
-is given in hex for MBR (DOS), without the 0x prefix, GUID string for GPT or
-shortcut:
+is given in hex for MBR (DOS), without the 0x prefix, a GUID string for GPT, or
+a shortcut:
 .RS
 .TP
-.B L 
+.B L
 Linux; means 83 for MBR and 0FC63DAF-8483-4772-8E79-3D69D8477DE4 for GPT.
 .TP
-.B S 
+.B S
 swap area; means 82 for MBR and 0657FD6D-A4AB-43C4-84E5-0933C84B4F4F for GPT
 .TP
 .B E
@@ -239,110 +244,115 @@ home partition; means 933AC7E1-2EB4-4F13-B844-0E14E2AEF915 for GPT
 linux extended partition; means 85 for MBR.
 .RE
 
-.I Bootable
-is specified as [*|-], with as default not-bootable. (The value of this
-field is irrelevant for Linux - when Linux  runs  it  has been booted already -
-but might play a role for certain boot loaders and for other operating systems).
+.I bootable
+is specified as [\fB*\fR|\fB-\fR], with as default not-bootable.  (The value of
+this field is irrelevant for Linux - when Linux runs it has been booted already -
+but might play a role for certain boot loaders and for other operating systems.)
 .RE
 
-.B Named fields format
+.B Named-fields format
 .RS
-This format is more readable, robust, extendible and allows to specify additional 
-information (e.g. uuid). It's recommended to use this format to keep you scripts
+This format is more readable, robust, extendible and allows to specify additional
+information (e.g. a UUID).  It is recommended to use this format to keep you scripts
 more readable.
-.RS     
-.sp     
-.B "[<device> :] <name>[=<value>], ..."
-.sp     
-.RE 
-The 
+.RS
+.sp
+.RI [ "device \fB:" ] " name" [\fB= value "], ..."
+.sp
+.RE
+The
 .I device
-field is optional. sfdisk extracts partition number from the device name. It 
-allows to specify partition in random order. This functionality is mostly
-used by \fR\-\-dump\fR. Don't use it if you are not sure.
+field is optional.  \fBsfdisk\fRextracts the partition number from the
+device name.  It allows to specify the partitions in random order.
+This functionality is mostly used by \fb\-\-dump\fR.
+Don't use it if you are not sure.
 
 The
 .I value
-can be between quotation marks (e.g. name="This is partition name"). The currently
-supported fields:
+can be between quotation marks (e.g. name="This is partition name").
+The currently supported fields are:
 .RS
 .TP
-.B start=<number>
-The first non-assigned sector aligned according to device I/O limits. The default
+.BI start= number
+The first non-assigned sector aligned according to device I/O limits.  The default
 start offset for the first partition is 1 MiB.
 .TP
-.B size=<number>
-Specify partition size in sectors. The number may be followed by the multiplicative 
+.BI size= number
+Specify the partition size in sectors.  The number may be followed by the multiplicative
 suffixes (KiB, MiB, GiB, TiB, PiB, EiB, ZiB and YiB), then it's interpreted as size
 in bytes and the size is aligned according to device I/O limits.
 .TP
-.B bootable 
-Mark partition as bootable.
+.B bootable
+Mark the partition as bootable.
 .TP
-.B attrs=<string>
-Partition attributes, usually GPT partition attribute bits. See --part-attrs for
-more details about GPT bits string format.
+.BI attrs= string
+Partition attributes, usually GPT partition attribute bits.  See
+\fB\-\-part-attrs\fR for more details about the GPT-bits string format.
 .TP
-.B uuid=<string>
+.BI uuid= string
 GPT partition UUID.
 .TP
-.B name=<string>
+.BI name= string
 GPT partition name.
 .TP
-.B type=<code>
-Hexadecimal number (without 0x) for MBR partition or GUID for GPT partition. For backward
-compatibility \fBId=\fR field has the same meaning.
+.BI type= code
+A hexadecimal number (without 0x) for an MBR partition, or a GUID for a GPT partition.
+For backward compatibility the \fBId=\fR field has the same meaning.
 .RE
 .RE
 
-.SH "BACKUP PARTITION TABLE"
-It's recommended to save device layout.
+.SH "BACKING UP THE PARTITION TABLE"
+It is recommended to save the layout of your devices.
 .B sfdisk
 supports two ways.
-
-Use \fB\-\-dump\fR command line option to save description of the device layout
-to text file. The dump format is suitable for later sfdisk input. For example
+.sp
+Use the \fB\-\-dump\fR option to save a description of the device layout
+to a text file.  The dump format is suitable for later \fBsfdisk\fR input.
+For example:
 .RS
 .sp
 .B "sfdisk --dump /dev/sda > sda.dump"
 .sp
 .RE
-and restore by:
+This can later be restored by:
 .RS
 .sp
 .B "sfdisk /dev/sda < sda.dump"
 .RE
 
-If you want to full (binary) backup of all sectors where is stored partition table 
-then use \fB\-\-backup\fR command line option. It writes the sectors to 
-~/sfdisk-<device>-<offset>.bak files. The default name of the backup file might
-be changed by \fB\-\-backup\-file\fR command line option. The backup files
-contain only raw data from the \fIdevice\fR. Note that the same concept of
-backups files uses
-.B wipefs (8)
+If you want to do a full (binary) backup of all sectors where the
+partition table is stored,
+then use the \fB\-\-backup\fR option.  It writes the sectors to
+~/sfdisk-<device>-<offset>.bak files.  The default name of the backup file can
+be changed with the \fB\-\-backup\-file\fR option.  The backup files
+contain only raw data from the \fIdevice\fR.
+Note that the same concept of backup files is used by
+.BR wipefs (8).
+For example:
 .RS
 .sp
 .B "sfdisk --backup /dev/sda"
 .sp
 .RE
-and later restore GPT header by:
+The GPT header can later be restored by:
 .RS
 .sp
 .B dd if=~/sfdisk-sda-0x00000200.bak of=/dev/sda seek=$((0x00000200.bak)) bs=1 conv=notrunc
 .sp
 .RE
-Note that sfdisk since version 2.26 does not provide \fB\-I\fR command line option to
-restore sectors. 
+Note that \fBsfdisk\fR since version 2.26 no longer provides the \fB\-I\fR option to
+restore sectors.
 .B dd (1)
 provides all necessary functionality.
 
 .SH NOTES
-sfdisk since version 2.26 does not provide \fB\-\-re\-read\fR command to force kernel to reread partition table. Use
-\fBblockdev \-\-rereadpt\fR.
+Since version 2.26 \fBsfdisk\fR no longer provides the \fB\-R\fR or
+\fB\-\-re-read\fR option to force the kernel to reread the partition table.
+Use \fBblockdev \-\-rereadpt\fR instead.
 .PP
-sfdisk since version 2.26 does not provide \fB\-\-DOS\fR, \fB\-\-IBM\fR, \fB\-\-DOS-extended\fR,
-\fB\-\-unhide\fR, \fB\-\-show\-extended\fR, \fB\-\-cylinders\fR, \fB\-\-heads\fR, \fB\-\-sectors\fR,
-\fB\-\-inside\-outer\fR, \fB\-\-not\-inside\-outer\fR options.
+Since version 2.26 \fBsfdisk\fR does not provide the \fB\-\-DOS\fR, \fB\-\-IBM\fR, \fB\-\-DOS-extended\fR,
+\fB\-\-unhide\fR, \fB\-\-show-extended\fR, \fB\-\-cylinders\fR, \fB\-\-heads\fR, \fB\-\-sectors\fR,
+\fB\-\-inside-outer\fR, \fB\-\-not-inside-outer\fR options.
 
 .SH ENVIRONMENT
 .IP LIBFDISK_DEBUG=all
@@ -358,6 +368,7 @@ enables libsmartcols debug output.
 .BR parted (8),
 .BR partprobe (8),
 .BR partx(8)
+
 .SH AUTHOR
 Karel Zak <kzak@redhat.com>
 .PP
