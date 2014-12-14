@@ -191,42 +191,21 @@ static int parse_argv(int argc, char *argv[], struct finfo *pinfo)
 static void parse_passwd(struct passwd *pw, struct finfo *pinfo)
 {
 	char *gecos;
-	char *cp;
 
-	if (pw) {
-		pinfo->pw = pw;
-		pinfo->username = pw->pw_name;
-		/* use pw_gecos - we take a copy since PAM destroys the original */
-		gecos = xstrdup(pw->pw_gecos);
-		cp = (gecos ? gecos : "");
-		pinfo->full_name = cp;
-		cp = strchr(cp, ',');
-		if (cp) {
-			*cp = 0, cp++;
-		} else
-			return;
-		pinfo->office = cp;
-		cp = strchr(cp, ',');
-		if (cp) {
-			*cp = 0, cp++;
-		} else
-			return;
-		pinfo->office_phone = cp;
-		cp = strchr(cp, ',');
-		if (cp) {
-			*cp = 0, cp++;
-		} else
-			return;
-		pinfo->home_phone = cp;
-		/*  extra fields contain site-specific information, and can
-		 *  not be changed by this version of chfn.  */
-		cp = strchr(cp, ',');
-		if (cp) {
-			*cp = 0, cp++;
-		} else
-			return;
-		pinfo->other = cp;
-	}
+	if (!pw)
+		return;
+	pinfo->pw = pw;
+	pinfo->username = pw->pw_name;
+	/* use pw_gecos - we take a copy since PAM destroys the original */
+	gecos = xstrdup(pw->pw_gecos);
+	/* extract known fields */
+	pinfo->full_name = strsep(&gecos, ",");
+	pinfo->office = strsep(&gecos, ",");
+	pinfo->office_phone = strsep(&gecos, ",");
+	pinfo->home_phone = strsep(&gecos, ",");
+	/*  extra fields contain site-specific information, and can
+	 *  not be changed by this version of chfn.  */
+	pinfo->other = strsep(&gecos, ",");
 }
 
 /*
