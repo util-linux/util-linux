@@ -324,12 +324,8 @@ static int save_new_data(struct finfo *pinfo)
 		pinfo->other = "";
 
 	/* create the new gecos string */
-	len = (strlen(pinfo->full_name) + strlen(pinfo->office) +
-	       strlen(pinfo->office_phone) + strlen(pinfo->home_phone) +
-	       strlen(pinfo->other) + 4);
-	gecos = (char *)xmalloc(len + 1);
-	sprintf(gecos, "%s,%s,%s,%s,%s", pinfo->full_name, pinfo->office,
-		pinfo->office_phone, pinfo->home_phone, pinfo->other);
+	len = xasprintf(&gecos, "%s,%s,%s,%s,%s", pinfo->full_name, pinfo->office,
+		  pinfo->office_phone, pinfo->home_phone, pinfo->other);
 
 	/* remove trailing empty fields (but not subfields of pinfo->other) */
 	if (!pinfo->other[0]) {
@@ -351,6 +347,7 @@ static int save_new_data(struct finfo *pinfo)
 		       ("Finger information *NOT* changed.  Try again later.\n"));
 		return -1;
 	}
+	free(gecos);
 	printf(_("Finger information changed.\n"));
 	return 0;
 }
