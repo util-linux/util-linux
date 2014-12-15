@@ -27,8 +27,9 @@ enum {
 struct monitor_entry {
 	int			fd;		/* public file descriptor */
 	char			*path;		/* path to the monitored file */
-	unsigned int		events;		/* epoll events or zero */
 	int			type;		/* MNT_MONITOR_TYPE_* */
+
+	unsigned int		enable : 1;
 
 	struct list_head	ents;
 };
@@ -38,6 +39,9 @@ struct libmnt_monitor {
 
 	struct list_head	ents;
 };
+
+static int monitor_enable_entry(struct libmnt_monitor *mn,
+				struct monitor_entry *me, int enable);
 
 /**
  * mnt_new_monitor:
@@ -121,55 +125,97 @@ static struct monitor_entry *monitor_new_entry(struct libmnt_monitor *mn)
         INIT_LIST_HEAD(&me->ents);
 	list_add_tail(&me->ents, &mn->ents);
 
+	me->fd = -1;
+
 	return me;
 }
 
-/**
- * mnt_monitor_userspace_get_fd:
- * @mn: monitor pointer
- * @filename: overwrites default
- *
- * The kernel mount tables (/proc/mounts and /proc/self/mountinfo) are possible
- * to monitor by [e]poll(). This function provides the same for userspace mount
- * table.
- *
- * The userspace mount table is originaly /etc/mtab or on systems without mtab
- * it's private libmount utab file.
- *
- * The userspace mount tables are updated by rename(2), this requires that all
- * dictionary with the mount table is monitored. Be careful on systems with
- * regular /etc (see mnt_has_regular_mtab()).
- *
- * Use mnt_monitor_userspace_get_events() to get epoll events mask (e.g
- * EPOLLIN, ...).
- * 
- * Use mnt_monitor_is_changed() to verify that events on the @fd are really
- * relevant for userspace moutn table.
- *
- * If the change is detected then you can use mnt_table_parse_mtab() to parse
- * the file and mnt_diff_tables() to compare old and new version of the file.
- *
- * Returns: <0 on error or file descriptor.
- */
-#ifdef HAVE_INOTIFY_INIT1
-int mnt_monitor_userspace_get_fd(struct libmnt_monitor *mn, const char *filename)
+static struct monitor_entry *monitor_get_entry(struct libmnt_monitor *mn, int type)
 {
-	struct monitor_entry *me;
-	int rc = 0, wd;
-	char *dirname, *sep;
+	struct list_head *p;
+
+	assert(mn);
+	assert(type);
+
+	list_for_each(p, &mn->ents) {
+		struct monitor_entry *me;
+
+		me = list_entry(p, struct monitor_entry, ents);
+		if (me->type == type)
+			return me;
+	}
+
+	return NULL;
+}
+
+static struct monitor_entry *monitor_get_entry_by_fd(struct libmnt_monitor *mn, int fd)
+{
+	struct list_head *p;
 
 	assert(mn);
 
-	if (!filename) {
-		if (!mnt_has_regular_mtab(&filename, NULL))	/* /etc/mtab */
-			filename = mnt_get_utab_path();		/* /run/mount/utab */
-		if (!filename) {
-			DBG(MONITOR, ul_debugobj(mn, "failed to get userspace mount table path"));
-			return -EINVAL;
-		}
+	if (fd < 0)
+		return NULL;
+
+	list_for_each(p, &mn->ents) {
+		struct monitor_entry *me;
+
+		me = list_entry(p, struct monitor_entry, ents);
+		if (me->fd == fd)
+			return me;
 	}
 
-	DBG(MONITOR, ul_debugobj(mn, "new userspace monitor for %s requested", filename));
+	DBG(MONITOR, ul_debugobj(mn, "failed to get entry for fd=%d", fd));
+	return NULL;
+}
+
+
+
+/**
+ * mnt_monitor_enable_userspace:
+ * @mn: monitor
+ * @enable: 0 or 1
+ * @filename: overwrites default
+ *
+ * Enables or disables userspace monitor. If the monitor does not exist and
+ * enable=1 then allocates new resources necessary for the monitor.
+ *
+ * If high-level monitor has been already initialized (by mnt_monitor_get_fd()
+ * or mnt_wait_monitor()) then it's updated according to @enable.
+ *
+ * The @filename is used only first time when you enable the monitor. It's
+ * impossible to have more than one userspace monitor.
+ *
+ * Note that the current implementation of the userspace monitor is based on
+ * inotify. On systems (libc) without inotify_init1() the function return
+ * -ENOSYS. The dependence on inotify is implemenation specific and may be
+ * changed later.
+ *
+ * Return: 0 on success and <0 on error
+ */
+int mnt_monitor_enable_userspace(struct libmnt_monitor *mn, int enable, const char *filename)
+{
+	struct monitor_entry *me;
+	int rc = 0;
+
+	if (!mn)
+		return -EINVAL;
+
+	me = monitor_get_entry(mn, MNT_MONITOR_TYPE_USERSPACE);
+	if (me)
+		return monitor_enable_entry(mn, me, enable);
+	if (!enable)
+		return 0;
+
+	DBG(MONITOR, ul_debugobj(mn, "allocate new userspace monitor"));
+
+	/* create a new entry */
+	if (!mnt_has_regular_mtab(&filename, NULL))	/* /etc/mtab */
+		filename = mnt_get_utab_path();		/* /run/mount/utab */
+	if (!filename) {
+		DBG(MONITOR, ul_debugobj(mn, "failed to get userspace mount table path"));
+		return -EINVAL;
+	}
 
 	me = monitor_new_entry(mn);
 	if (!me)
@@ -179,6 +225,39 @@ int mnt_monitor_userspace_get_fd(struct libmnt_monitor *mn, const char *filename
 	me->path = strdup(filename);
 	if (!me->path)
 		goto err;
+
+	DBG(MONITOR, ul_debugobj(mn, "allocate new userspace monitor: OK"));
+	return monitor_enable_entry(mn, me, 1);
+err:
+	rc = -errno;
+	free_monitor_entry(me);
+	return rc;
+}
+
+/**
+ * mnt_monitor_userspace_get_fd:
+ * @mn: monitor pointer
+ *
+ * Returns: file descriptor to previously enabled userspace monitor or <0 on error.
+ */
+#ifdef HAVE_INOTIFY_INIT1
+int mnt_monitor_userspace_get_fd(struct libmnt_monitor *mn)
+{
+	struct monitor_entry *me;
+	int wd, rc;
+	char *dirname, *sep;
+
+	assert(mn);
+
+	me = monitor_get_entry(mn, MNT_MONITOR_TYPE_USERSPACE);
+	if (!me || me->enable == 0)	/* not-initialized or disabled */
+		return -EINVAL;
+
+	if (me->fd >= 0)
+		return me->fd;		/* already initialized */
+
+	assert(me->path);
+	DBG(MONITOR, ul_debugobj(mn, "open userspace monitor for %s", me->path));
 
 	dirname = me->path;
 	sep = stripoff_last_component(dirname);	/* add \0 between dir/filename */
@@ -206,59 +285,74 @@ int mnt_monitor_userspace_get_fd(struct libmnt_monitor *mn, const char *filename
 	if (sep && sep > dirname)
 		*(sep - 1) = '/';		/* set '/' back to the path */
 
-	me->events = EPOLLIN | EPOLLPRI;
-
 	DBG(MONITOR, ul_debugobj(mn, "new fd=%d", me->fd));
 	return me->fd;
 err:
-	rc = -errno;
-	free_monitor_entry(me);
+	return -errno;
+}
+
+static int monitor_userspace_is_changed(struct libmnt_monitor *mn,
+					struct monitor_entry *me)
+{
+	char wanted[NAME_MAX + 1];
+	char buf[sizeof(struct inotify_event) + NAME_MAX + 1];
+	struct inotify_event *event;
+	char *p;
+	ssize_t r;
+	int rc = 0;
+
+	DBG(MONITOR, ul_debugobj(mn, "checking fd=%d for userspace changes", me->fd));
+
+	p = strrchr(me->path, '/');
+	if (!p)
+		p = me->path;
+	else
+		p++;
+	strncpy(wanted, p, sizeof(wanted) - 1);
+	wanted[sizeof(wanted) - 1] = '\0';
+	rc = 0;
+
+	DBG(MONITOR, ul_debugobj(mn, "wanted file: '%s'", wanted));
+
+	while ((r = read(me->fd, buf, sizeof(buf))) > 0) {
+		for (p = buf; p < buf + r; ) {
+			event = (struct inotify_event *) p;
+
+			if (strcmp(event->name, wanted) == 0)
+				rc = 1;
+			p += sizeof(struct inotify_event) + event->len;
+		}
+		if (rc)
+			break;
+	}
+
 	return rc;
 }
+
 #else /* HAVE_INOTIFY_INIT1 */
-int mnt_monitor_userspace_get_fd(struct libmnt_monitor *mn __attribute__((unused)),
-				const char *filename  __attribute__((unused)))
+int mnt_monitor_enable_userspace(
+		struct libmnt_monitor *mn  __attribute__((unused)),
+		int enable  __attribute__((unused)),
+		const char *filename  __attribute__((unused)))
+{
+	return -ENOSYS;
+}
+int mnt_monitor_userspace_get_fd(
+		struct libmnt_monitor *mn __attribute__((unused)))
 {
 	return -ENOSYS;
 }
 #endif
 
-static struct monitor_entry *get_monitor_entry(struct libmnt_monitor *mn, int fd)
+static int monitor_enable_entry(struct libmnt_monitor *mn,
+				struct monitor_entry *me, int enable)
 {
-	struct list_head *p;
-
 	assert(mn);
+	assert(me);
 
-	if (fd < 0)
-		return NULL;
+	me->enable = enable ? 1 : 0;
 
-	list_for_each(p, &mn->ents) {
-		struct monitor_entry *me;
-
-		me = list_entry(p, struct monitor_entry, ents);
-		if (me->fd == fd)
-			return me;
-	}
-
-	DBG(MONITOR, ul_debugobj(mn, "failed to get entry for fd=%d", fd));
-	return NULL;
-}
-
-/**
- * mnt_monitor_get_events:
- * @mn: monitor
- * @fd: event file descriptor
- * @event: returns epoll event mask
- *
- * Returns: on on success, <0 on error.
- */
-int mnt_monitor_get_events(struct libmnt_monitor *mn, int fd, unsigned int *event)
-{
-	struct monitor_entry *me = get_monitor_entry(mn, fd);
-
-	if (!me || !event)
-		return -EINVAL;
-	*event = me->events;
+	/* TODO : remove / add me->fd to high-level*/
 	return 0;
 }
 
@@ -271,7 +365,7 @@ int mnt_monitor_get_events(struct libmnt_monitor *mn, int fd, unsigned int *even
  */
 const char *mnt_monitor_get_filename(struct libmnt_monitor *mn, int fd)
 {
-	struct monitor_entry *me = get_monitor_entry(mn, fd);
+	struct monitor_entry *me = monitor_get_entry_by_fd(mn, fd);
 
 	if (!me)
 		return NULL;
@@ -287,50 +381,16 @@ const char *mnt_monitor_get_filename(struct libmnt_monitor *mn, int fd)
  */
 int mnt_monitor_is_changed(struct libmnt_monitor *mn, int fd)
 {
-	struct monitor_entry *me = get_monitor_entry(mn, fd);
+	struct monitor_entry *me = monitor_get_entry_by_fd(mn, fd);
 	int rc = 0;
 
 	if (!me)
 		return 0;
 
-
 	switch (me->type) {
-#ifdef HAVE_INOTIFY_INIT1
 	case MNT_MONITOR_TYPE_USERSPACE:
-	{
-		char wanted[NAME_MAX + 1];
-		char buf[sizeof(struct inotify_event) + NAME_MAX + 1];
-		struct inotify_event *event;
-                char *p;
-		ssize_t r;
-
-		DBG(MONITOR, ul_debugobj(mn, "checking fd=%d for userspace changes", me->fd));
-
-		p = strrchr(me->path, '/');
-		if (!p)
-			p = me->path;
-		else
-			p++;
-		strncpy(wanted, p, sizeof(wanted) - 1);
-		wanted[sizeof(wanted) - 1] = '\0';
-		rc = 0;
-
-		DBG(MONITOR, ul_debugobj(mn, "wanted file: '%s'", wanted));
-
-                while ((r = read(me->fd, buf, sizeof(buf))) > 0) {
-			for (p = buf; p < buf + r; ) {
-				event = (struct inotify_event *) p;
-
-				if (strcmp(event->name, wanted) == 0)
-					rc = 1;
-				p += sizeof(struct inotify_event) + event->len;
-                        }
-			if (rc)
-				break;
-                }
+		rc = monitor_userspace_is_changed(mn, me);
 		break;
-	}
-#endif
 	default:
 		return 0;
 	}
@@ -354,10 +414,14 @@ int test_monitor(struct libmnt_test *ts, int argc, char *argv[])
 		goto done;
 	}
 
-	/* monitor userspace mount table changes */
-	fd = mnt_monitor_userspace_get_fd(mn, NULL);
+	if (mnt_monitor_enable_userspace(mn, TRUE, NULL)) {
+		warn("failed to initialize userspace monitor");
+		goto done;
+	}
+
+	fd = mnt_monitor_userspace_get_fd(mn);
 	if (fd < 0) {
-		warn("failed to initialize userspace mount table fd");
+		warn("failed to initialize userspace monitor fd");
 		goto done;
 	}
 
@@ -367,7 +431,7 @@ int test_monitor(struct libmnt_test *ts, int argc, char *argv[])
 		goto done;
 	}
 
-	mnt_monitor_get_events(mn, fd, &ev.events);
+	ev.events = EPOLLPRI | EPOLLIN;
 
 	/* set data is necessary only if you want to use epoll for more file
 	 * descriptors, then epoll_wait() returns data associated with the file
@@ -411,7 +475,7 @@ done:
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
-		{ "--monitor", test_monitor, "print change" },
+		{ "--low-userspace", test_monitor, "tests low-level userspace monitor" },
 		{ NULL }
 	};
 

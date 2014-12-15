@@ -299,7 +299,7 @@ MOUNT_2.25 {
 } MOUNT_2.24;
 
 MOUNT_2.26 {
-	mnt_monitor_get_events;
+	mnt_monitor_enable_userspace;
 	mnt_monitor_get_filename;
 	mnt_monitor_is_changed;
 	mnt_monitor_userspace_get_fd;
