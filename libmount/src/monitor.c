@@ -402,28 +402,13 @@ int mnt_monitor_is_changed(struct libmnt_monitor *mn, int fd)
 
 #ifdef TEST_PROGRAM
 
-int test_monitor(struct libmnt_test *ts, int argc, char *argv[])
+static int my_epoll(struct libmnt_monitor *mn, int fd)
 {
-	struct libmnt_monitor *mn;
-	int fd, efd = -1, rc = -1;
+	int efd = -1, rc = -1;
 	struct epoll_event ev = { .events = 0 };
 
-	mn = mnt_new_monitor();
-	if (!mn) {
-		warn("failed to allocate monitor");
-		goto done;
-	}
-
-	if (mnt_monitor_enable_userspace(mn, TRUE, NULL)) {
-		warn("failed to initialize userspace monitor");
-		goto done;
-	}
-
-	fd = mnt_monitor_userspace_get_fd(mn);
-	if (fd < 0) {
-		warn("failed to initialize userspace monitor fd");
-		goto done;
-	}
+	assert(mn);
+	assert(fd >= 0);
 
 	efd = epoll_create1(EPOLL_CLOEXEC);
 	if (efd < 0) {
@@ -432,10 +417,6 @@ int test_monitor(struct libmnt_test *ts, int argc, char *argv[])
 	}
 
 	ev.events = EPOLLPRI | EPOLLIN;
-
-	/* set data is necessary only if you want to use epoll for more file
-	 * descriptors, then epoll_wait() returns data associated with the file
-	 * descriptor. */
 	ev.data.fd = fd;
 
 	rc = epoll_ctl(efd, EPOLL_CTL_ADD, fd, &ev);
@@ -465,17 +446,44 @@ int test_monitor(struct libmnt_test *ts, int argc, char *argv[])
 
 	rc = 0;
 done:
-	printf("done");
-	mnt_unref_monitor(mn);
 	if (efd >= 0)
 		close(efd);
+	return rc;
+}
+
+int test_low_user(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_monitor *mn;
+	int fd, rc = -1;
+
+	mn = mnt_new_monitor();
+	if (!mn) {
+		warn("failed to allocate monitor");
+		goto done;
+	}
+
+	if (mnt_monitor_enable_userspace(mn, TRUE, NULL)) {
+		warn("failed to initialize userspace monitor");
+		goto done;
+	}
+
+	fd = mnt_monitor_userspace_get_fd(mn);
+	if (fd < 0) {
+		warn("failed to initialize userspace monitor fd");
+		goto done;
+	}
+
+	rc = my_epoll(mn, fd);
+done:
+	printf("done");
+	mnt_unref_monitor(mn);
 	return rc;
 }
 
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
-		{ "--low-userspace", test_monitor, "tests low-level userspace monitor" },
+		{ "--low-userspace", test_low_user, "tests low-level userspace monitor" },
 		{ NULL }
 	};
 
