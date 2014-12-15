@@ -590,6 +590,29 @@ int blkid_probe_set_id_label(blkid_probe pr, const char *name,
 	return 0;
 }
 
+int blkid_probe_set_utf8_id_label(blkid_probe pr, const char *name,
+			     unsigned char *data, size_t len, int enc)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+	struct blkid_prval *v;
+
+	if (!(chn->flags & BLKID_SUBLKS_LABEL))
+		return 0;
+
+	v = blkid_probe_assign_value(pr, name);
+	if (!v)
+		return -1;
+
+	blkid_encode_to_utf8(enc, v->data, sizeof(v->data), data, len);
+	v->len = blkid_rtrim_whitespace(v->data) + 1;
+	if (v->len > 1)
+		v->len = blkid_ltrim_whitespace(v->data) + 1;
+
+	if (v->len <= 1)
+		blkid_probe_reset_last_value(pr);
+	return 0;
+}
+
 int blkid_probe_set_label(blkid_probe pr, unsigned char *label, size_t len)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
