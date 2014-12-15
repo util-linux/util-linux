@@ -429,7 +429,9 @@ static void init_tty(struct login_context *cxt)
 static void log_btmp(struct login_context *cxt)
 {
 	struct utmp ut;
+#if defined(_HAVE_UT_TV)        /* in <utmpbits.h> included by <utmp.h> */
 	struct timeval tv;
+#endif
 
 	memset(&ut, 0, sizeof(ut));
 
