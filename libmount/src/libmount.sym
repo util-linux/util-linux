@@ -299,8 +299,12 @@ MOUNT_2.25 {
 } MOUNT_2.24;
 
 MOUNT_2.26 {
+	mnt_monitor_close_fd;
 	mnt_monitor_enable_userspace;
 	mnt_monitor_get_fd;
+	mnt_monitor_is_changed;
+	mnt_monitor_next_changed;
+	mnt_monitor_wait;
 	mnt_new_monitor;
 	mnt_ref_monitor;
 	mnt_unref_monitor;
