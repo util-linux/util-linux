@@ -87,16 +87,6 @@ static void free_monitor_entry(struct monitor_entry *me)
 	free(me);
 }
 
-static void free_monitor(struct libmnt_monitor *mn)
-{
-
-	while (!list_empty(&mn->ents)) {
-		struct monitor_entry *me = list_entry(mn->ents.next,
-				                  struct monitor_entry, ents);
-		free_monitor_entry(me);
-	}
-}
-
 /**
  * mnt_unref_monitor:
  * @mn: monitor pointer
@@ -106,10 +96,16 @@ static void free_monitor(struct libmnt_monitor *mn)
  */
 void mnt_unref_monitor(struct libmnt_monitor *mn)
 {
-	if (mn) {
-		mn->refcount--;
-		if (mn->refcount <= 0)
-			free_monitor(mn);
+	if (!mn)
+		return;
+
+	mn->refcount--;
+	if (mn->refcount <= 0) {
+		while (!list_empty(&mn->ents)) {
+			struct monitor_entry *me = list_entry(mn->ents.next,
+						  struct monitor_entry, ents);
+			free_monitor_entry(me);
+		}
 	}
 }
 
