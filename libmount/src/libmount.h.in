@@ -544,7 +544,7 @@ extern void mnt_unref_monitor(struct libmnt_monitor *mn);
 extern int mnt_monitor_enable_userspace(struct libmnt_monitor *mn,
 				int enable, const char *filename);
 
-extern int mnt_monitor_userspace_get_fd(struct libmnt_monitor *mn);
+extern int mnt_monitor_get_fd(struct libmnt_monitor *mn);
 
 /* context.c */
 
