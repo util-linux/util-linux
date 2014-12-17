@@ -202,10 +202,11 @@ static void parse_passwd(struct chfn_control *ctl)
 }
 
 /*
- *  prompt () --
+ *  ask_new_field () --
  *	ask the user for a given field and check that the string is legal.
  */
-static char *prompt(const char *question, char *def_val)
+static char *ask_new_field(struct chfn_control *ctl, const char *question,
+			   char *def_val)
 {
 	int len;
 	char *ans;
@@ -238,10 +239,10 @@ static char *prompt(const char *question, char *def_val)
  */
 static void ask_info(struct chfn_control *ctl)
 {
-	ctl->newf.full_name = prompt(_("Name"), ctl->oldf.full_name);
-	ctl->newf.office = prompt(_("Office"), ctl->oldf.office);
-	ctl->newf.office_phone = prompt(_("Office Phone"), ctl->oldf.office_phone);
-	ctl->newf.home_phone = prompt(_("Home Phone"), ctl->oldf.home_phone);
+	ctl->newf.full_name = ask_new_field(ctl, _("Name"), ctl->oldf.full_name);
+	ctl->newf.office = ask_new_field(ctl, _("Office"), ctl->oldf.office);
+	ctl->newf.office_phone = ask_new_field(ctl, _("Office Phone"), ctl->oldf.office_phone);
+	ctl->newf.home_phone = ask_new_field(ctl, _("Home Phone"), ctl->oldf.home_phone);
 	printf("\n");
 }
 
