@@ -1091,6 +1091,16 @@ void clreos(void)
 	my_putstring(EodClr);
 }
 
+
+static UL_ASAN_BLACKLIST xmbrtowc(wchar_t *wc, const char *s, size_t n,
+				  mbstate_t *mbstate)
+{
+	const size_t mblength = mbrtowc(&wc, s, n, &mbstate);
+	if (mblength == (size_t)-2 || mblength == (size_t)-1)
+		return 1;
+	return mblength;
+}
+
 /* Print a buffer of n characters */
 void prbuf(register char *s, register int n)
 {
@@ -1130,10 +1140,7 @@ void prbuf(register char *s, register int n)
 				memset(&mbstate, '\0', sizeof(mbstate_t));
 				s--;
 				n++;
-				mblength = mbrtowc(&wc, s, n, &mbstate);
-				if (mblength == (size_t)-2
-				    || mblength == (size_t)-1)
-					mblength = 1;
+				mblength = xmbrtowc(&wc, s, n, &mbstate);
 				while (mblength--)
 					putchar(*s++);
 				n += mblength;
