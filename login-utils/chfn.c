@@ -71,6 +71,7 @@ struct chfn_control {
 	 *  In the end, "newf" is folded into "oldf".  */
 	struct finfo oldf, newf;
 	unsigned int
+		changed:1,		/* is change requested */
 		interactive:1;		/* whether to prompt for fields or not */
 };
 
@@ -166,6 +167,7 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 		default:
 			usage(stderr);
 		}
+		ctl->changed = 1;
 		ctl->interactive = 0;
 	}
 	if (status != 0)
@@ -224,12 +226,15 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
 		ltrim_whitespace((unsigned char *) ans);
 		len = rtrim_whitespace((unsigned char *) ans);
 		if (len == 0)
-			return NULL;
-		if (!strcasecmp(ans, "none"))
-			return "";
+			return xstrdup(def_val);
+		if (!strcasecmp(ans, "none")) {
+			ctl->changed = 1;
+			return xstrdup("");
+		}
 		if (check_gecos_string(question, ans) >= 0)
 			break;
 	}
+	ctl->changed = 1;
 	return xstrdup(ans);
 }
 
@@ -247,30 +252,30 @@ static void ask_info(struct chfn_control *ctl)
 }
 
 /*
- *  set_changed_data () --
- *	incorporate the new data into the old finger info.
+ *  find_field () --
+ *	find field value in uninteractive mode; can be new, old, or blank
  */
-static int set_changed_data(struct chfn_control *ctl)
+static char *find_field(char *nf, char *of)
 {
-	int changed = false;
+	if (nf)
+		return nf;
+	if (of)
+		return of;
+	return xstrdup("");
+}
 
-	if (ctl->newf.full_name)
-		changed = true;
-	else
-		ctl->newf.full_name = ctl->oldf.full_name;
-	if (ctl->newf.office)
-		changed = true;
-	else
-		ctl->newf.office = ctl->oldf.office;
-	if (ctl->newf.office_phone)
-		changed = true;
-	else
-		ctl->newf.office_phone = ctl->oldf.office_phone;
-	if (ctl->newf.home_phone)
-		changed = true;
-	else
-		ctl->newf.home_phone = ctl->oldf.home_phone;
-	return changed;
+/*
+ *  add_missing () --
+ *	add not supplied field values when in uninteractive mode
+ */
+static void add_missing(struct chfn_control *ctl)
+{
+	ctl->newf.full_name = find_field(ctl->newf.full_name, ctl->oldf.full_name);
+	ctl->newf.office = find_field(ctl->newf.office, ctl->oldf.office);
+	ctl->newf.office_phone = find_field(ctl->newf.office_phone, ctl->oldf.office_phone);
+	ctl->newf.home_phone = find_field(ctl->newf.home_phone, ctl->oldf.home_phone);
+	ctl->newf.other = find_field(ctl->newf.other, ctl->oldf.other);
+	printf("\n");
 }
 
 /*
@@ -283,24 +288,16 @@ static int save_new_data(struct chfn_control *ctl)
 	char *gecos;
 	int len;
 
-	/* null fields will confuse printf(). */
-	if (!ctl->newf.full_name)
-		ctl->newf.full_name = "";
-	if (!ctl->newf.office)
-		ctl->newf.office = "";
-	if (!ctl->newf.office_phone)
-		ctl->newf.office_phone = "";
-	if (!ctl->newf.home_phone)
-		ctl->newf.home_phone = "";
-	if (!ctl->newf.other)
-		ctl->newf.other = "";
-
 	/* create the new gecos string */
-	len = xasprintf(&gecos, "%s,%s,%s,%s,%s", ctl->newf.full_name, ctl->newf.office,
-		  ctl->newf.office_phone, ctl->newf.home_phone, ctl->newf.other);
+	len = xasprintf(&gecos, "%s,%s,%s,%s,%s",
+			ctl->newf.full_name,
+			ctl->newf.office,
+			ctl->newf.office_phone,
+			ctl->newf.home_phone,
+			ctl->newf.other);
 
 	/* remove trailing empty fields (but not subfields of ctl->newf.other) */
-	if (!ctl->newf.other[0]) {
+	if (!ctl->newf.other) {
 		while (len > 0 && gecos[len - 1] == ',')
 			len--;
 		gecos[len] = 0;
@@ -398,8 +395,10 @@ int main(int argc, char **argv)
 
 	if (ctl.interactive)
 		ask_info(&ctl);
+	else
+		add_missing(&ctl);
 
-	if (!set_changed_data(&ctl)) {
+	if (!ctl.changed) {
 		printf(_("Finger information not changed.\n"));
 		return EXIT_SUCCESS;
 	}
