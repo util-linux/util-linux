@@ -93,6 +93,7 @@
 
 #define _PATH_PROC_UIDMAP	"/proc/self/uid_map"
 #define _PATH_PROC_GIDMAP	"/proc/self/gid_map"
+#define _PATH_PROC_SETGROUPS	"/proc/self/setgroups"
 
 #define _PATH_PROC_ATTR_CURRENT	"/proc/self/attr/current"
 #define _PATH_PROC_ATTR_EXEC	"/proc/self/attr/exec"

@@ -39,6 +39,24 @@
 #include "pathnames.h"
 #include "all-io.h"
 
+static void disable_setgroups(void)
+{
+	const char *file = _PATH_PROC_SETGROUPS;
+	const char *deny = "deny";
+	int fd;
+
+	fd = open(file, O_WRONLY);
+	if (fd < 0) {
+		if (errno == ENOENT)
+			return;
+		 err(EXIT_FAILURE, _("cannot open %s"), file);
+	}
+
+	if (write_all(fd, deny, strlen(deny)))
+		err(EXIT_FAILURE, _("write failed %s"), file);
+	close(fd);
+}
+
 static void map_id(const char *file, uint32_t from, uint32_t to)
 {
 	char *buf;
@@ -181,6 +199,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (maproot) {
+		disable_setgroups();
 		map_id(_PATH_PROC_UIDMAP, 0, real_euid);
 		map_id(_PATH_PROC_GIDMAP, 0, real_egid);
 	}
