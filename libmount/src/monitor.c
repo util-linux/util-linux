@@ -30,7 +30,8 @@ struct monitor_entry {
 
 	const struct monitor_opers *opers;
 
-	unsigned int		enable : 1;
+	unsigned int		enable : 1,
+				changed : 1;
 
 	struct list_head	ents;
 };
@@ -360,6 +361,111 @@ err:
 	return rc;
 }
 
+
+/*
+ * Kernel monitor
+ */
+
+static int kernel_monitor_close_fd(struct libmnt_monitor *mn,
+				   struct monitor_entry *me)
+{
+	assert(mn);
+	assert(me);
+
+	if (me->fd >= 0)
+		close(me->fd);
+	me->fd = -1;
+	return 0;
+}
+
+static int kernel_monitor_get_fd(struct libmnt_monitor *mn,
+				 struct monitor_entry *me)
+{
+	int rc;
+
+	assert(mn);
+	assert(me);
+
+	if (!me || me->enable == 0)	/* not-initialized or disabled */
+		return -EINVAL;
+	if (me->fd >= 0)
+		return me->fd;		/* already initialized */
+
+	assert(me->path);
+	DBG(MONITOR, ul_debugobj(mn, " open kernel monitor for %s", me->path));
+
+	me->fd = open(me->path, O_RDONLY|O_CLOEXEC);
+	if (me->fd < 0)
+		goto err;
+
+	return me->fd;
+err:
+	rc = -errno;
+	DBG(MONITOR, ul_debugobj(mn, "failed to create kernel  monitor [rc=%d]", rc));
+	return rc;
+}
+
+/*
+ * kernel monitor operations
+ */
+static const struct monitor_opers kernel_opers = {
+	.op_get_fd		= kernel_monitor_get_fd,
+	.op_close_fd		= kernel_monitor_close_fd,
+};
+
+/**
+ * mnt_monitor_enable_kernel:
+ * @mn: monitor
+ * @enable: 0 or 1
+ *
+ * Enables or disables userspace monitoring. If the userspace monitor does not
+ * exist and enable=1 then allocates new resources necessary for the monitor.
+ *
+ * If the top-level monitor has been already created (by mnt_monitor_get_fd()
+ * or mnt_monitor_wait()) then it's updated according to @enable.
+ *
+ * Return: 0 on success and <0 on error
+ */
+int mnt_monitor_enable_kernel(struct libmnt_monitor *mn, int enable)
+{
+	struct monitor_entry *me;
+	int rc = 0;
+
+	if (!mn)
+		return -EINVAL;
+
+	me = monitor_get_entry(mn, MNT_MONITOR_TYPE_KERNEL);
+	if (me) {
+		rc = monitor_modify_epoll(mn, me, enable);
+		if (!enable)
+			kernel_monitor_close_fd(mn, me);
+		return rc;
+	}
+	if (!enable)
+		return 0;
+
+	DBG(MONITOR, ul_debugobj(mn, "allocate new kernel monitor"));
+
+	/* create a new entry */
+	me = monitor_new_entry(mn);
+	if (!me)
+		goto err;
+
+	me->type = MNT_MONITOR_TYPE_KERNEL;
+	me->opers = &kernel_opers;
+	me->events = EPOLLPRI;
+	me->path = strdup(_PATH_PROC_MOUNTINFO);
+	if (!me->path)
+		goto err;
+
+	return monitor_modify_epoll(mn, me, TRUE);
+err:
+	rc = -errno;
+	free_monitor_entry(me);
+	DBG(MONITOR, ul_debugobj(mn, "failed to allocate kernel monitor [rc=%d]", rc));
+	return rc;
+}
+
 /*
  * Add/Remove monitor entry to/from monitor epoll.
  */
@@ -370,6 +476,7 @@ static int monitor_modify_epoll(struct libmnt_monitor *mn,
 	assert(me);
 
 	me->enable = enable ? 1 : 0;
+	me->changed = 0;
 
 	if (mn->fd < 0)
 		return 0;	/* no epoll, ignore request */
@@ -501,6 +608,7 @@ err:
 int mnt_monitor_wait(struct libmnt_monitor *mn, int timeout)
 {
 	int rc;
+	struct monitor_entry *me;
 	struct epoll_event events[1];
 
 	if (!mn)
@@ -512,13 +620,33 @@ int mnt_monitor_wait(struct libmnt_monitor *mn, int timeout)
 			return rc;
 	}
 
+	DBG(MONITOR, ul_debugobj(mn, "calling epoll_wait(), timeout=%d", timeout));
 	rc = epoll_wait(mn->fd, events, 1, timeout);
 	if (rc < 0)
 		return -errno;		/* error */
 	if (rc == 0)
 		return 0;		/* timeout */
 
+	me = (struct monitor_entry *) events[0].data.ptr;
+	if (!me)
+		return -EINVAL;
+	me->changed = 1;
+
 	return 1;			/* success */
+}
+
+
+static struct monitor_entry *get_changed(struct libmnt_monitor *mn)
+{
+	struct libmnt_iter itr;
+	struct monitor_entry *me;
+
+	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+	while (monitor_next_entry(mn, &itr, &me) == 0) {
+		if (me->changed)
+			return me;
+	}
+	return NULL;
 }
 
 /**
@@ -556,60 +684,57 @@ int mnt_monitor_next_changed(struct libmnt_monitor *mn,
 			     int *type)
 {
 	int rc;
+	struct monitor_entry *me;
 
 	if (!mn || mn->fd < 0)
 		return -EINVAL;
+again:
+	/*
+	 * if we previously called epoll_wait() (e.g. mnt_monitor_waith()) then
+	 * info about unread change is already stored in monitor_entry.
+	 *
+	 * We we get nothing, then ask kernel.
+	 */
+	me = get_changed(mn);
+	if (!me) {
+		do {
+			struct epoll_event events[1];
 
-	do {
-		struct monitor_entry *me;
-		struct epoll_event events[1];
+			DBG(MONITOR, ul_debugobj(mn, "asking for next changed"));
 
-		rc = epoll_wait(mn->fd, events, 1, 0);	/* no timeout! */
-		if (rc < 0)
-			return -errno;		/* error */
-		if (rc == 0)
-			return 1;		/* nothing */
+			rc = epoll_wait(mn->fd, events, 1, 0);	/* no timeout! */
+			if (rc < 0) {
+				DBG(MONITOR, ul_debugobj(mn, " *** error"));
+				return -errno;
+			}
+			if (rc == 0) {
+				DBG(MONITOR, ul_debugobj(mn, " *** nothing"));
+				return 1;
+			}
 
-		me = (struct monitor_entry *) events[0].data.ptr;
-		if (!me)
-			return -EINVAL;
+			me = (struct monitor_entry *) events[0].data.ptr;
+			if (!me)
+				return -EINVAL;
+			break;
+		} while (1);
+	}
 
-		if (me->opers->op_verify_change != NULL &&
-		    me->opers->op_verify_change(mn, me) != 1)
-			continue;		/* false positive */
+	me->changed = 0;
 
-		if (filename)
-			*filename = me->path;
-		if (type)
-			*type = me->type;
+	if (me->opers->op_verify_change != NULL &&
+	    me->opers->op_verify_change(mn, me) != 1) {
+		DBG(MONITOR, ul_debugobj(mn, " *** false positive"));
+		goto again;
+	}
 
-		break;
-	} while (1);
+	if (filename)
+		*filename = me->path;
+	if (type)
+		*type = me->type;
 
+	DBG(MONITOR, ul_debugobj(mn, " *** success"));
 	return 0;				/* success */
 }
-
-
-/**
- * mnt_monitor_is_changed:
- * @mn: monitor
- *
- * This function verifies previously detected activity on monitored files. The
- * function is mutually exclusive to mnt_monitor_next_changed()
- *
- * Returns: 1 or 0.
- */
-int mnt_monitor_is_changed(struct libmnt_monitor *mn)
-{
-	int ct = 0;
-
-	/* read all changes */
-	while (mnt_monitor_next_changed(mn, NULL, NULL) == 0)
-		ct++;
-
-	return ct ? 1 : 0;
-}
-
 
 #ifdef TEST_PROGRAM
 
@@ -628,6 +753,12 @@ static struct libmnt_monitor *create_test_monitor(int argc, char *argv[])
 		if (strcmp(argv[i], "userspace") == 0) {
 			if (mnt_monitor_enable_userspace(mn, TRUE, NULL)) {
 				warn("failed to initialize userspace monitor");
+				goto err;
+			}
+
+		} else if (strcmp(argv[i], "kernel") == 0) {
+			if (mnt_monitor_enable_kernel(mn, TRUE)) {
+				warn("failed to initialize kernel monitor");
 				goto err;
 			}
 		}
@@ -678,7 +809,6 @@ int test_epoll(struct libmnt_test *ts, int argc, char *argv[])
 
 	printf("waiting for changes...\n");
 	do {
-		const char *filename = NULL;
 		struct epoll_event events[1];
 		int n = epoll_wait(efd, events, 1, -1);
 
@@ -690,8 +820,7 @@ int test_epoll(struct libmnt_test *ts, int argc, char *argv[])
 		if (n == 0 || events[0].data.fd != fd)
 			continue;
 
-		while (mnt_monitor_next_changed(mn, &filename, NULL) == 0)
-			printf("%s: change detected\n", filename);
+		printf(" change detected\n");
 	} while (1);
 
 	rc = 0;

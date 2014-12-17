@@ -555,7 +555,6 @@ extern int mnt_monitor_wait(struct libmnt_monitor *mn, int timeout);
 
 extern int mnt_monitor_next_changed(struct libmnt_monitor *mn,
 			     const char **filename, int *type);
-extern int mnt_monitor_is_changed(struct libmnt_monitor *mn);
 
 
 /* context.c */
