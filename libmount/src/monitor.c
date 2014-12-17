@@ -304,7 +304,11 @@ static const struct monitor_opers userspace_opers = {
  * or mnt_monitor_wait()) then it's updated according to @enable.
  *
  * The @filename is used only first time when you enable the monitor. It's
- * impossible to have more than one userspace monitor.
+ * impossible to have more than one userspace monitor. The recommended is to
+ * use NULL as filename.
+ *
+ * The userspace monitor is unsupported for systems with classic regular
+ * /etc/mtab file.
  *
  * Return: 0 on success and <0 on error
  */
@@ -329,8 +333,10 @@ int mnt_monitor_enable_userspace(struct libmnt_monitor *mn, int enable, const ch
 	DBG(MONITOR, ul_debugobj(mn, "allocate new userspace monitor"));
 
 	/* create a new entry */
-	if (!mnt_has_regular_mtab(&filename, NULL))	/* /etc/mtab */
-		filename = mnt_get_utab_path();		/* /run/mount/utab */
+	if (mnt_has_regular_mtab(NULL, NULL))
+		return -ENOSYS;
+
+	filename = mnt_get_utab_path();		/* /run/mount/utab */
 	if (!filename) {
 		DBG(MONITOR, ul_debugobj(mn, "failed to get userspace mount table path"));
 		return -EINVAL;
@@ -412,8 +418,8 @@ static const struct monitor_opers kernel_opers = {
  * @mn: monitor
  * @enable: 0 or 1
  *
- * Enables or disables userspace monitoring. If the userspace monitor does not
- * exist and enable=1 then allocates new resources necessary for the monitor.
+ * Enables or disables kernel VFS monitoring. If the monitor does not exist and
+ * enable=1 then allocates new resources necessary for the monitor.
  *
  * If the top-level monitor has been already created (by mnt_monitor_get_fd()
  * or mnt_monitor_wait()) then it's updated according to @enable.
@@ -550,6 +556,11 @@ int mnt_monitor_close_fd(struct libmnt_monitor *mn)
  * The file descriptor is associated with all monitored files and it's usable
  * for example for epoll.
  *
+ * Note that if you want to use the @fd in your epoll then you will get only
+ * notification, but mnt_monitor_next_changed() does not work in this case. You
+ * have to call mnt_monitor_event_cleanup() after each event if you do not use
+ * mnt_monitor_next_changed().
+ *
  * Returns: >=0 on success, <0 on error
  */
 int mnt_monitor_get_fd(struct libmnt_monitor *mn)
@@ -653,8 +664,7 @@ static struct monitor_entry *get_changed(struct libmnt_monitor *mn)
  * @filename: returns changed file (optional argument)
  * @type: returns MNT_MONITOR_TYPE_* (optional argument)
  *
- * The function does not wait and it's designed to provide details and to avoid
- * false positives after detected activity on monitor file descriptor.
+ * The function does not wait and it's designed to provide details about chnages.
  *
  * Returns: 0 on success, 1 no change, <0 on error
  */

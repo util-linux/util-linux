@@ -546,6 +546,7 @@ extern struct libmnt_monitor *mnt_new_monitor(void);
 extern void mnt_ref_monitor(struct libmnt_monitor *mn);
 extern void mnt_unref_monitor(struct libmnt_monitor *mn);
 
+extern int mnt_monitor_enable_kernel(struct libmnt_monitor *mn, int enable);
 extern int mnt_monitor_enable_userspace(struct libmnt_monitor *mn,
 				int enable, const char *filename);
 
@@ -555,6 +556,7 @@ extern int mnt_monitor_wait(struct libmnt_monitor *mn, int timeout);
 
 extern int mnt_monitor_next_changed(struct libmnt_monitor *mn,
 			     const char **filename, int *type);
+extern int mnt_monitor_event_cleanup(struct libmnt_monitor *mn);
 
 
 /* context.c */
