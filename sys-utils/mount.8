@@ -1072,9 +1072,10 @@ Attempt to remount an already-mounted filesystem.  This is commonly
 used to change the mount flags for a filesystem, especially to make a
 readonly filesystem writable.  It does not change device or mount point.
 
-The remount functionality follows the standard way the mount command works
-with options from fstab.  This means that the mount command only doesn't
-read fstab (or mtab) when both the
+The remount functionality follows the standard way the mount command works with
+options, but preferred source for the options is mtab (or /proc/self/mouninfo)
+rather than fstab.  The mount command only does not read mtab 
+when both the
 .I device
 and
 .I dir
@@ -1083,15 +1084,16 @@ are specified.
 .B "mount \-o remount,rw /dev/foo /dir"
 
 After this call all old mount options are replaced and arbitrary stuff from
-fstab is ignored, except the loop= option which is internally generated and
+mtab is ignored, except the loop= option which is internally generated and
 maintained by the mount command.
 
 .B "mount \-o remount,rw  /dir"
 
-After this call mount reads fstab (or mtab) and merges these options with
+After this call mount reads mtab and merges these options with
 the options from the command line (\c
 .B \-o\c
-).
+). If no mtab (or /proc/self/mountinfo) is available than remount with unspecified
+source is allowed.
 .TP
 .B ro
 Mount the filesystem read-only.

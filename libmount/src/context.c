@@ -2025,7 +2025,7 @@ static int apply_table(struct libmnt_context *cxt, struct libmnt_table *tb,
  */
 int mnt_context_apply_fstab(struct libmnt_context *cxt)
 {
-	int rc = -1;
+	int rc = -1, isremount = 0;
 	struct libmnt_table *tab = NULL;
 	const char *src = NULL, *tgt = NULL;
 	unsigned long mflags = 0;
@@ -2056,6 +2056,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		DBG(CXT, ul_debugobj(cxt, "force mtab parsing on remount"));
 		cxt->optsmode |= MNT_OMODE_MTAB;
 		cxt->optsmode &= ~MNT_OMODE_FSTAB;
+		isremount = 1;
 	}
 
 	if (cxt->fs) {
@@ -2109,6 +2110,13 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 			rc = apply_table(cxt, tab, MNT_ITER_BACKWARD);
 	}
 	if (rc) {
+		if (!mnt_context_is_restricted(cxt)
+		    && tgt && !src
+		    && isremount) {
+			DBG(CXT, ul_debugobj(cxt, "only target; ignore missing mtab entry on remount"));
+			return 0;
+		}
+
 		DBG(CXT, ul_debugobj(cxt, "failed to find entry in fstab/mtab [rc=%d]: %m", rc));
 
 		/* force to "not found in fstab/mtab" error, the details why
