@@ -26,7 +26,6 @@
 #include <errno.h>
 #include <getopt.h>
 #include <pwd.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -87,16 +86,15 @@ static void __attribute__((__noreturn__)) usage (FILE *fp)
 static int get_shell_list(const char *shell_name)
 {
 	FILE *fp;
-	int found;
+	int found = 0;
 	char *buf = NULL;
 	size_t sz = 0, len;
 
-	found = false;
 	fp = fopen(_PATH_SHELLS, "r");
 	if (!fp) {
 		if (!shell_name)
 			warnx(_("No known shells."));
-		return true;
+		return 0;
 	}
 	while (getline(&buf, &sz, fp) != -1) {
 		len = strlen(buf);
@@ -112,7 +110,7 @@ static int get_shell_list(const char *shell_name)
 		/* check or output the shell */
 		if (shell_name) {
 			if (!strcmp(shell_name, buf)) {
-				found = true;
+				found = 1;
 				break;
 			}
 		} else
