@@ -1,10 +1,6 @@
 load original values
-check for difference between kernel and IPC
-/proc/sys/kernel/shmmni OK
-/proc/sys/kernel/shmall OK
-/proc/sys/kernel/shmmax OK
 maximalize kernel setting
-re-check for difference between kernel and IPC
+check for difference between kernel and IPC
 /proc/sys/kernel/shmmni OK
 /proc/sys/kernel/shmall OK
 /proc/sys/kernel/shmmax OK
