@@ -40,6 +40,7 @@
 #include "setpwnam.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "logindefs.h"
 
 #ifdef HAVE_LIBSELINUX
 # include <selinux/selinux.h>
@@ -54,11 +55,7 @@
 # include "auth.h"
 #endif
 
-static char buf[1024];
-
 struct finfo {
-	struct passwd *pw;
-	char *username;
 	char *full_name;
 	char *office;
 	char *office_phone;
@@ -66,13 +63,22 @@ struct finfo {
 	char *other;
 };
 
-static int parse_argv(int argc, char *argv[], struct finfo *pinfo);
-static void parse_passwd(struct passwd *pw, struct finfo *pinfo);
-static void ask_info(struct finfo *oldfp, struct finfo *newfp);
-static char *prompt(char *question, char *def_val);
-static int check_gecos_string(char *msg, char *gecos);
-static int set_changed_data(struct finfo *oldfp, struct finfo *newfp);
-static int save_new_data(struct finfo *pinfo);
+struct chfn_control {
+	struct passwd *pw;
+	char *username;
+	/*  "oldf"  Contains the users original finger information.
+	 *  "newf"  Contains the changed finger information, and contains
+	 *          NULL in fields that haven't been changed.
+	 *  In the end, "newf" is folded into "oldf".  */
+	struct finfo oldf, newf;
+	unsigned int
+		allow_fullname:1,	/* The login.defs restriction */
+		allow_room:1,		   /* see: man login.defs(5) */
+		allow_work:1,		   /* and look for CHFN_RESTRICT */
+		allow_home:1,		   /* keyword for these four. */
+		changed:1,		/* is change requested */
+		interactive:1;		/* whether to prompt for fields or not */
+};
 
 /* we do not accept gecos field sizes longer than MAX_FIELD_SIZE */
 #define MAX_FIELD_SIZE		256
@@ -87,61 +93,340 @@ static void __attribute__((__noreturn__)) usage(FILE *fp)
 	fputs(_(" -p, --office-phone <phone>   office phone number\n"), fp);
 	fputs(_(" -h, --home-phone <phone>     home phone number\n"), fp);
 	fputs(USAGE_SEPARATOR, fp);
-	fputs(USAGE_HELP, fp);
-	fputs(USAGE_VERSION, fp);
+	fputs(_(" -u, --help     display this help and exit\n"), fp);
+	fputs(_(" -v, --version  output version information and exit\n"), fp);
 	fprintf(fp, USAGE_MAN_TAIL("chfn(1)"));
 	exit(fp == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
+/*
+ *  check_gecos_string () --
+ *	check that the given gecos string is legal.  if it's not legal,
+ *	output "msg" followed by a description of the problem, and return (-1).
+ */
+static int check_gecos_string(const char *msg, char *gecos)
+{
+	unsigned int i, c;
+	const size_t len = strlen(gecos);
+
+	if (MAX_FIELD_SIZE < len) {
+		warnx(_("field %s is too long"), msg);
+		return -1;
+	}
+	for (i = 0; i < len; i++) {
+		c = gecos[i];
+		if (c == ',' || c == ':' || c == '=' || c == '"' || c == '\n') {
+			warnx(_("%s: '%c' is not allowed"), msg, c);
+			return -1;
+		}
+		if (iscntrl(c)) {
+			warnx(_("%s: control characters are not allowed"), msg);
+			return -1;
+		}
+	}
+	return 0;
+}
+
+/*
+ *  parse_argv () --
+ *	parse the command line arguments.
+ *	returns true if no information beyond the username was given.
+ */
+static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
+{
+	int index, c, status = 0;
+	static const struct option long_options[] = {
+		{"full-name", required_argument, 0, 'f'},
+		{"office", required_argument, 0, 'o'},
+		{"office-phone", required_argument, 0, 'p'},
+		{"home-phone", required_argument, 0, 'h'},
+		{"help", no_argument, 0, 'u'},
+		{"version", no_argument, 0, 'v'},
+		{NULL, no_argument, 0, '0'},
+	};
+
+	while ((c = getopt_long(argc, argv, "f:r:p:h:o:uv", long_options,
+				&index)) != -1) {
+		switch (c) {
+		case 'f':
+			if (!ctl->allow_fullname)
+				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Name"));
+			ctl->newf.full_name = optarg;
+			status += check_gecos_string(_("Name"), optarg);
+			break;
+		case 'o':
+			if (!ctl->allow_room)
+				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Office"));
+			ctl->newf.office = optarg;
+			status += check_gecos_string(_("Office"), optarg);
+			break;
+		case 'p':
+			if (!ctl->allow_work)
+				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Office Phone"));
+			ctl->newf.office_phone = optarg;
+			status += check_gecos_string(_("Office Phone"), optarg);
+			break;
+		case 'h':
+			if (!ctl->allow_home)
+				errx(EXIT_FAILURE, _("login.defs forbids setting %s"), _("Home Phone"));
+			ctl->newf.home_phone = optarg;
+			status += check_gecos_string(_("Home Phone"), optarg);
+			break;
+		case 'v':
+			printf(UTIL_LINUX_VERSION);
+			exit(EXIT_SUCCESS);
+		case 'u':
+			usage(stdout);
+		default:
+			usage(stderr);
+		}
+		ctl->changed = 1;
+		ctl->interactive = 0;
+	}
+	if (status != 0)
+		exit(EXIT_FAILURE);
+	/* done parsing arguments.  check for a username. */
+	if (optind < argc) {
+		if (optind + 1 < argc)
+			usage(stderr);
+		ctl->username = argv[optind];
+	}
+	return;
+}
+
+/*
+ *  parse_passwd () --
+ *	take a struct password and fill in the fields of the struct finfo.
+ */
+static void parse_passwd(struct chfn_control *ctl)
+{
+	char *gecos;
+
+	if (!ctl->pw)
+		return;
+	/* use pw_gecos - we take a copy since PAM destroys the original */
+	gecos = xstrdup(ctl->pw->pw_gecos);
+	/* extract known fields */
+	ctl->oldf.full_name = strsep(&gecos, ",");
+	ctl->oldf.office = strsep(&gecos, ",");
+	ctl->oldf.office_phone = strsep(&gecos, ",");
+	ctl->oldf.home_phone = strsep(&gecos, ",");
+	/*  extra fields contain site-specific information, and can
+	 *  not be changed by this version of chfn.  */
+	ctl->oldf.other = strsep(&gecos, ",");
+}
+
+/*
+ *  ask_new_field () --
+ *	ask the user for a given field and check that the string is legal.
+ */
+static char *ask_new_field(struct chfn_control *ctl, const char *question,
+			   char *def_val)
+{
+	int len;
+	char *ans;
+	char buf[MAX_FIELD_SIZE + 2];
+
+	if (!def_val)
+		def_val = "";
+	while (true) {
+		printf("%s [%s]: ", question, def_val);
+		__fpurge(stdin);
+		if (fgets(buf, sizeof(buf), stdin) == NULL)
+			errx(EXIT_FAILURE, _("Aborted."));
+		ans = buf;
+		/* remove white spaces from string end */
+		ltrim_whitespace((unsigned char *) ans);
+		len = rtrim_whitespace((unsigned char *) ans);
+		if (len == 0)
+			return xstrdup(def_val);
+		if (!strcasecmp(ans, "none")) {
+			ctl->changed = 1;
+			return xstrdup("");
+		}
+		if (check_gecos_string(question, ans) >= 0)
+			break;
+	}
+	ctl->changed = 1;
+	return xstrdup(ans);
+}
+
+/*
+ *  get_login_defs()
+ *	find /etc/login.defs CHFN_RESTRICT and save restrictions to run time
+ */
+static void get_login_defs(struct chfn_control *ctl)
+{
+	const char *s;
+	size_t i;
+	int broken = 0;
+
+	/* real root does not have restrictions */
+	if (geteuid() == getuid() && getuid() == 0) {
+		ctl->allow_fullname = ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
+		return;
+	}
+	s = getlogindefs_str("CHFN_RESTRICT", "");
+	if (!strcmp(s, "yes")) {
+		ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
+		return;
+	}
+	if (!strcmp(s, "no")) {
+		ctl->allow_fullname = ctl->allow_room = ctl->allow_work = ctl->allow_home = 1;
+		return;
+	}
+	for (i = 0; s[i]; i++) {
+		switch (s[i]) {
+		case 'f':
+			ctl->allow_fullname = 1;
+			break;
+		case 'r':
+			ctl->allow_room = 1;
+			break;
+		case 'w':
+			ctl->allow_work = 1;
+			break;
+		case 'h':
+			ctl->allow_home = 1;
+			break;
+		default:
+			broken = 1;
+		}
+	}
+	if (broken)
+		warnx(_("%s: CHFN_RESTRICT has unexpected value: %s"), _PATH_LOGINDEFS, s);
+	if (!ctl->allow_fullname && !ctl->allow_room && !ctl->allow_work && !ctl->allow_home)
+		errx(EXIT_FAILURE, _("%s: CHFN_RESTRICT does not allow any changes"), _PATH_LOGINDEFS);
+	return;
+}
+
+/*
+ *  ask_info () --
+ *	prompt the user for the finger information and store it.
+ */
+static void ask_info(struct chfn_control *ctl)
+{
+	if (ctl->allow_fullname)
+		ctl->newf.full_name = ask_new_field(ctl, _("Name"), ctl->oldf.full_name);
+	if (ctl->allow_room)
+		ctl->newf.office = ask_new_field(ctl, _("Office"), ctl->oldf.office);
+	if (ctl->allow_work)
+		ctl->newf.office_phone = ask_new_field(ctl, _("Office Phone"), ctl->oldf.office_phone);
+	if (ctl->allow_home)
+		ctl->newf.home_phone = ask_new_field(ctl, _("Home Phone"), ctl->oldf.home_phone);
+	putchar('\n');
+}
+
+/*
+ *  find_field () --
+ *	find field value in uninteractive mode; can be new, old, or blank
+ */
+static char *find_field(char *nf, char *of)
+{
+	if (nf)
+		return nf;
+	if (of)
+		return of;
+	return xstrdup("");
+}
+
+/*
+ *  add_missing () --
+ *	add not supplied field values when in uninteractive mode
+ */
+static void add_missing(struct chfn_control *ctl)
+{
+	ctl->newf.full_name = find_field(ctl->newf.full_name, ctl->oldf.full_name);
+	ctl->newf.office = find_field(ctl->newf.office, ctl->oldf.office);
+	ctl->newf.office_phone = find_field(ctl->newf.office_phone, ctl->oldf.office_phone);
+	ctl->newf.home_phone = find_field(ctl->newf.home_phone, ctl->oldf.home_phone);
+	ctl->newf.other = find_field(ctl->newf.other, ctl->oldf.other);
+	printf("\n");
+}
+
+/*
+ *  save_new_data () --
+ *	save the given finger info in /etc/passwd.
+ *	return zero on success.
+ */
+static int save_new_data(struct chfn_control *ctl)
+{
+	char *gecos;
+	int len;
+
+	/* create the new gecos string */
+	len = xasprintf(&gecos, "%s,%s,%s,%s,%s",
+			ctl->newf.full_name,
+			ctl->newf.office,
+			ctl->newf.office_phone,
+			ctl->newf.home_phone,
+			ctl->newf.other);
+
+	/* remove trailing empty fields (but not subfields of ctl->newf.other) */
+	if (!ctl->newf.other) {
+		while (len > 0 && gecos[len - 1] == ',')
+			len--;
+		gecos[len] = 0;
+	}
+
+#ifdef HAVE_LIBUSER
+	if (set_value_libuser("chfn", ctl->username, ctl->pw->pw_uid,
+			LU_GECOS, gecos) < 0) {
+#else /* HAVE_LIBUSER */
+	/* write the new struct passwd to the passwd file. */
+	ctl->pw->pw_gecos = gecos;
+	if (setpwnam(ctl->pw) < 0) {
+		warn("setpwnam failed");
+#endif
+		printf(_
+		       ("Finger information *NOT* changed.  Try again later.\n"));
+		return -1;
+	}
+	free(gecos);
+	printf(_("Finger information changed.\n"));
+	return 0;
 }
 
 int main(int argc, char **argv)
 {
 	uid_t uid;
-	struct finfo oldf, newf;
-	int interactive;
+	struct chfn_control ctl = {
+		.interactive = 1
+	};
 
 	sanitize_env();
 	setlocale(LC_ALL, "");	/* both for messages and for iscntrl() below */
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
-
-	/*
-	 *  "oldf" contains the users original finger information.
-	 *  "newf" contains the changed finger information, and contains NULL
-	 *         in fields that haven't been changed.
-	 *  in the end, "newf" is folded into "oldf".
-	 *
-	 *  the reason the new finger information is not put _immediately_
-	 *  into "oldf" is that on the command line, new finger information
-	 *  can be specified before we know what user the information is
-	 *  being specified for.
-	 */
 	uid = getuid();
-	memset(&oldf, 0, sizeof(oldf));
-	memset(&newf, 0, sizeof(newf));
 
-	interactive = parse_argv(argc, argv, &newf);
-	if (!newf.username) {
-		parse_passwd(getpwuid(uid), &oldf);
-		if (!oldf.username)
+	/* check /etc/login.defs CHFN_RESTRICT */
+	get_login_defs(&ctl);
+
+	parse_argv(&ctl, argc, argv);
+	if (!ctl.username) {
+		ctl.pw = getpwuid(uid);
+		if (!ctl.pw)
 			errx(EXIT_FAILURE, _("you (user %d) don't exist."),
 			     uid);
+		ctl.username = ctl.pw->pw_name;
 	} else {
-		parse_passwd(getpwnam(newf.username), &oldf);
-		if (!oldf.username)
+		ctl.pw = getpwnam(ctl.username);
+		if (!ctl.pw)
 			errx(EXIT_FAILURE, _("user \"%s\" does not exist."),
-			     newf.username);
+			     ctl.username);
 	}
-
+	parse_passwd(&ctl);
 #ifndef HAVE_LIBUSER
-	if (!(is_local(oldf.username)))
+	if (!(is_local(ctl.username)))
 		errx(EXIT_FAILURE, _("can only change local entries"));
 #endif
 
 #ifdef HAVE_LIBSELINUX
 	if (is_selinux_enabled() > 0) {
 		if (uid == 0) {
-			if (checkAccess(oldf.username, PASSWD__CHFN) != 0) {
+			if (checkAccess(ctl.username, PASSWD__CHFN) != 0) {
 				security_context_t user_context;
 				if (getprevcon(&user_context) < 0)
 					user_context = NULL;
@@ -149,7 +434,7 @@ int main(int argc, char **argv)
 				     _("%s is not authorized to change "
 				       "the finger info of %s"),
 				     user_context ? : _("Unknown user context"),
-				     oldf.username);
+				     ctl.username);
 			}
 		}
 		if (setupDefaultContext(_PATH_PASSWD))
@@ -160,319 +445,32 @@ int main(int argc, char **argv)
 
 #ifdef HAVE_LIBUSER
 	/* If we're setuid and not really root, disallow the password change. */
-	if (geteuid() != getuid() && uid != oldf.pw->pw_uid) {
+	if (geteuid() != getuid() && uid != ctl.pw->pw_uid) {
 #else
-	if (uid != 0 && uid != oldf.pw->pw_uid) {
+	if (uid != 0 && uid != ctl.oldf.pw->pw_uid) {
 #endif
 		errno = EACCES;
 		err(EXIT_FAILURE, _("running UID doesn't match UID of user we're "
 		      "altering, change denied"));
 	}
 
-	printf(_("Changing finger information for %s.\n"), oldf.username);
+	printf(_("Changing finger information for %s.\n"), ctl.username);
 
 #if !defined(HAVE_LIBUSER) && defined(CHFN_CHSH_PASSWORD)
-	if(!auth_pam("chfn", uid, oldf.username)) {
+	if (!auth_pam("chfn", uid, ctl.username)) {
 		return EXIT_FAILURE;
 	}
 #endif
 
-	if (interactive)
-		ask_info(&oldf, &newf);
+	if (ctl.interactive)
+		ask_info(&ctl);
 
-	if (!set_changed_data(&oldf, &newf)) {
+	add_missing(&ctl);
+
+	if (!ctl.changed) {
 		printf(_("Finger information not changed.\n"));
 		return EXIT_SUCCESS;
 	}
 
-	return save_new_data(&oldf) == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
-}
-
-/*
- *  parse_argv () --
- *	parse the command line arguments.
- *	returns true if no information beyond the username was given.
- */
-static int parse_argv(int argc, char *argv[], struct finfo *pinfo)
-{
-	int index, c, status;
-	int info_given;
-
-	static struct option long_options[] = {
-		{"full-name", required_argument, 0, 'f'},
-		{"office", required_argument, 0, 'o'},
-		{"office-phone", required_argument, 0, 'p'},
-		{"home-phone", required_argument, 0, 'h'},
-		{"help", no_argument, 0, 'u'},
-		{"version", no_argument, 0, 'v'},
-		{NULL, no_argument, 0, '0'},
-	};
-
-	optind = 0;
-	info_given = false;
-	while (true) {
-		c = getopt_long(argc, argv, "f:r:p:h:o:uv", long_options,
-				&index);
-		if (c == -1)
-			break;
-		/* version?  output version and exit. */
-		if (c == 'v') {
-			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
-		}
-		if (c == 'u')
-			usage(stdout);
-		/* all other options must have an argument. */
-		if (!optarg)
-			usage(stderr);
-		/* ok, we were given an argument */
-		info_given = true;
-
-		/* now store the argument */
-		switch (c) {
-		case 'f':
-			pinfo->full_name = optarg;
-			status = check_gecos_string(_("Name"), optarg);
-			break;
-		case 'o':
-			pinfo->office = optarg;
-			status = check_gecos_string(_("Office"), optarg);
-			break;
-		case 'p':
-			pinfo->office_phone = optarg;
-			status = check_gecos_string(_("Office Phone"), optarg);
-			break;
-		case 'h':
-			pinfo->home_phone = optarg;
-			status = check_gecos_string(_("Home Phone"), optarg);
-			break;
-		default:
-			usage(stderr);
-		}
-		if (status != 0)
-			exit(EXIT_FAILURE);
-	}
-	/* done parsing arguments.  check for a username. */
-	if (optind < argc) {
-		if (optind + 1 < argc)
-			usage(stderr);
-		pinfo->username = argv[optind];
-	}
-	return !info_given;
-}
-
-/*
- *  parse_passwd () --
- *	take a struct password and fill in the fields of the struct finfo.
- */
-static void parse_passwd(struct passwd *pw, struct finfo *pinfo)
-{
-	char *gecos;
-	char *cp;
-
-	if (pw) {
-		pinfo->pw = pw;
-		pinfo->username = pw->pw_name;
-		/* use pw_gecos - we take a copy since PAM destroys the original */
-		gecos = xstrdup(pw->pw_gecos);
-		cp = (gecos ? gecos : "");
-		pinfo->full_name = cp;
-		cp = strchr(cp, ',');
-		if (cp) {
-			*cp = 0, cp++;
-		} else
-			return;
-		pinfo->office = cp;
-		cp = strchr(cp, ',');
-		if (cp) {
-			*cp = 0, cp++;
-		} else
-			return;
-		pinfo->office_phone = cp;
-		cp = strchr(cp, ',');
-		if (cp) {
-			*cp = 0, cp++;
-		} else
-			return;
-		pinfo->home_phone = cp;
-		/*  extra fields contain site-specific information, and can
-		 *  not be changed by this version of chfn.  */
-		cp = strchr(cp, ',');
-		if (cp) {
-			*cp = 0, cp++;
-		} else
-			return;
-		pinfo->other = cp;
-	}
-}
-
-/*
- *  ask_info () --
- *	prompt the user for the finger information and store it.
- */
-static void ask_info(struct finfo *oldfp, struct finfo *newfp)
-{
-	newfp->full_name = prompt(_("Name"), oldfp->full_name);
-	newfp->office = prompt(_("Office"), oldfp->office);
-	newfp->office_phone = prompt(_("Office Phone"), oldfp->office_phone);
-	newfp->home_phone = prompt(_("Home Phone"), oldfp->home_phone);
-	printf("\n");
-}
-
-/*
- *  prompt () --
- *	ask the user for a given field and check that the string is legal.
- */
-static char *prompt(char *question, char *def_val)
-{
-	static char *blank = "none";
-	int len;
-	char *ans, *cp;
-
-	while (true) {
-		if (!def_val)
-			def_val = "";
-		printf("%s [%s]: ", question, def_val);
-		*buf = 0;
-		if (fgets(buf, sizeof(buf), stdin) == NULL)
-			errx(EXIT_FAILURE, _("Aborted."));
-		/* remove the newline at the end of buf. */
-		ans = buf;
-		while (isspace(*ans))
-			ans++;
-		len = strlen(ans);
-		while (len > 0 && isspace(ans[len - 1]))
-			len--;
-		if (len <= 0)
-			return NULL;
-		ans[len] = 0;
-		if (!strcasecmp(ans, blank))
-			return "";
-		if (check_gecos_string(NULL, ans) >= 0)
-			break;
-	}
-	cp = (char *)xmalloc(len + 1);
-	strcpy(cp, ans);
-	return cp;
-}
-
-/*
- *  check_gecos_string () --
- *	check that the given gecos string is legal.  if it's not legal,
- *	output "msg" followed by a description of the problem, and return (-1).
- */
-static int check_gecos_string(char *msg, char *gecos)
-{
-	unsigned int i, c;
-
-	if (strlen(gecos) > MAX_FIELD_SIZE) {
-		if (msg)
-			warnx(_("field %s is too long"), msg);
-		else
-			warnx(_("field is too long"));
-		return -1;
-	}
-
-	for (i = 0; i < strlen(gecos); i++) {
-		c = gecos[i];
-		if (c == ',' || c == ':' || c == '=' || c == '"' || c == '\n') {
-			if (msg)
-				warnx(_("%s: '%c' is not allowed"), msg, c);
-			else
-				warnx(_("'%c' is not allowed"), c);
-			return -1;
-		}
-		if (iscntrl(c)) {
-			if (msg)
-				warnx(_
-				      ("%s: control characters are not allowed"),
-				      msg);
-			else
-				warnx(_("control characters are not allowed"));
-			return -1;
-		}
-	}
-	return 0;
-}
-
-/*
- *  set_changed_data () --
- *	incorporate the new data into the old finger info.
- */
-static int set_changed_data(struct finfo *oldfp, struct finfo *newfp)
-{
-	int changed = false;
-
-	if (newfp->full_name) {
-		oldfp->full_name = newfp->full_name;
-		changed = true;
-	}
-	if (newfp->office) {
-		oldfp->office = newfp->office;
-		changed = true;
-	}
-	if (newfp->office_phone) {
-		oldfp->office_phone = newfp->office_phone;
-		changed = true;
-	}
-	if (newfp->home_phone) {
-		oldfp->home_phone = newfp->home_phone;
-		changed = true;
-	}
-
-	return changed;
-}
-
-/*
- *  save_new_data () --
- *	save the given finger info in /etc/passwd.
- *	return zero on success.
- */
-static int save_new_data(struct finfo *pinfo)
-{
-	char *gecos;
-	int len;
-
-	/* null fields will confuse printf(). */
-	if (!pinfo->full_name)
-		pinfo->full_name = "";
-	if (!pinfo->office)
-		pinfo->office = "";
-	if (!pinfo->office_phone)
-		pinfo->office_phone = "";
-	if (!pinfo->home_phone)
-		pinfo->home_phone = "";
-	if (!pinfo->other)
-		pinfo->other = "";
-
-	/* create the new gecos string */
-	len = (strlen(pinfo->full_name) + strlen(pinfo->office) +
-	       strlen(pinfo->office_phone) + strlen(pinfo->home_phone) +
-	       strlen(pinfo->other) + 4);
-	gecos = (char *)xmalloc(len + 1);
-	sprintf(gecos, "%s,%s,%s,%s,%s", pinfo->full_name, pinfo->office,
-		pinfo->office_phone, pinfo->home_phone, pinfo->other);
-
-	/* remove trailing empty fields (but not subfields of pinfo->other) */
-	if (!pinfo->other[0]) {
-		while (len > 0 && gecos[len - 1] == ',')
-			len--;
-		gecos[len] = 0;
-	}
-
-#ifdef HAVE_LIBUSER
-	if (set_value_libuser("chfn", pinfo->pw->pw_name, pinfo->pw->pw_uid,
-			LU_GECOS, gecos) < 0) {
-#else /* HAVE_LIBUSER */
-	/* write the new struct passwd to the passwd file. */
-	pinfo->pw->pw_gecos = gecos;
-	if (setpwnam(pinfo->pw) < 0) {
-		warn("setpwnam failed");
-#endif
-		printf(_
-		       ("Finger information *NOT* changed.  Try again later.\n"));
-		return -1;
-	}
-	printf(_("Finger information changed.\n"));
-	return 0;
+	return save_new_data(&ctl) == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }

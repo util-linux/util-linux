@@ -143,6 +143,7 @@ enum {
 	TIME_SHORT,
 	TIME_FULL,
 	TIME_ISO,
+	TIME_ISO_SHORT,
 };
 
 /*
@@ -348,6 +349,9 @@ static char *make_time(int mode, time_t time)
 		break;
 	case TIME_ISO:
 		strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%S%z", &tm);
+		break;
+	case TIME_ISO_SHORT:
+		strftime(buf, sizeof(buf), "%Y-%m-%d", &tm);
 		break;
 	default:
 		errx(EXIT_FAILURE, _("unsupported time type"));
@@ -684,8 +688,8 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			if (strstr(pwd->pw_shell, "nologin"))
 				user->nologin = 1;
 			else if (pwd->pw_uid)
-				user->nologin = access("/etc/nologin", F_OK) == 0 ||
-						access("/var/run/nologin", F_OK) == 0;
+				user->nologin = access(_PATH_NOLOGIN, F_OK) == 0 ||
+						access(_PATH_VAR_NOLOGIN, F_OK) == 0;
 			break;
 		case COL_PWD_WARN:
 			if (shadow && shadow->sp_warn >= 0)
@@ -693,7 +697,8 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			break;
 		case COL_PWD_EXPIR:
 			if (shadow && shadow->sp_expire >= 0)
-				user->pwd_expire = make_time(TIME_SHORT,
+				user->pwd_expire = make_time(ctl->time_mode == TIME_ISO ?
+						TIME_ISO_SHORT : ctl->time_mode,
 						shadow->sp_expire * 86400);
 			break;
 		case COL_PWD_CTIME:
@@ -701,7 +706,8 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 			 * (especially in non-GMT timezones) would only serve
 			 * to confuse */
 			if (shadow)
-				user->pwd_ctime = make_time(TIME_SHORT,
+				user->pwd_ctime = make_time(ctl->time_mode == TIME_ISO ?
+						TIME_ISO_SHORT : ctl->time_mode,
 						shadow->sp_lstchg * 86400);
 			break;
 		case COL_PWD_CTIME_MIN:
@@ -1049,10 +1055,10 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 	return;
 }
 #ifdef HAVE_LIBSYSTEMD
-static void print_journal_tail(const char *journal_path, uid_t uid, size_t len)
+static void print_journal_tail(const char *journal_path, uid_t uid, size_t len, int time_mode)
 {
 	sd_journal *j;
-	char *match, *buf;
+	char *match, *timestamp;
 	uint64_t x;
 	time_t t;
 	const char *identifier, *pid, *message;
@@ -1063,7 +1069,6 @@ static void print_journal_tail(const char *journal_path, uid_t uid, size_t len)
 	else
 		sd_journal_open(&j, SD_JOURNAL_LOCAL_ONLY);
 
-	buf = xmalloc(sizeof(char) * 16);
 	xasprintf(&match, "_UID=%d", uid);
 
 	sd_journal_add_match(j, match, 0);
@@ -1083,21 +1088,18 @@ static void print_journal_tail(const char *journal_path, uid_t uid, size_t len)
 
 		sd_journal_get_realtime_usec(j, &x);
 		t = x / 1000000;
-		strftime(buf, 16, "%b %d %H:%M:%S", localtime(&t));
-
-		fprintf(stdout, "%s", buf);
-
+		timestamp = make_time(time_mode, t);
+		/* Get rid of journal entry field identifiers */
 		identifier = strchr(identifier, '=') + 1;
-		pid = strchr(pid, '=') + 1		;
+		pid = strchr(pid, '=') + 1;
 		message = strchr(message, '=') + 1;
 
-		fprintf(stdout, " %s", identifier);
-		fprintf(stdout, "[%s]:", pid);
-		fprintf(stdout, "%s\n", message);
+		fprintf(stdout, "%s %s[%s]: %s\n", timestamp, identifier, pid,
+			message);
+		free(timestamp);
 	} while (sd_journal_next(j));
 
 done:
-	free(buf);
 	free(match);
 	sd_journal_flush_matches(j);
 	sd_journal_close(j);
@@ -1142,7 +1144,7 @@ static int print_user_table(struct lslogins_control *ctl)
 		print_pretty(tb);
 #ifdef HAVE_LIBSYSTEMD
 		fprintf(stdout, _("\nLast logs:\n"));
-		print_journal_tail(ctl->journal_path, ctl->uid, 3);
+		print_journal_tail(ctl->journal_path, ctl->uid, 3, ctl->time_mode);
 		fputc('\n', stdout);
 #endif
 	} else
@@ -1175,16 +1177,25 @@ static void free_user(void *f)
 	free(u);
 }
 
-struct lslogins_timefmt {
-	const char *name;
-	int val;
-};
+static int parse_time_mode(const char *optarg)
+{
+	struct lslogins_timefmt {
+		const char *name;
+		const int val;
+	};
+	static const struct lslogins_timefmt timefmts[] = {
+		{"iso", TIME_ISO},
+		{"full", TIME_FULL},
+		{"short", TIME_SHORT},
+	};
+	size_t i;
 
-static struct lslogins_timefmt timefmts[] = {
-	{ "short", TIME_SHORT },
-	{ "full", TIME_FULL },
-	{ "iso", TIME_ISO },
-};
+	for (i = 0; i < ARRAY_SIZE(timefmts); i++) {
+		if (strcmp(timefmts[i].name, optarg) == 0)
+			return timefmts[i].val;
+	}
+	errx(EXIT_FAILURE, _("unknown time format: %s"), optarg);
+}
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -1240,8 +1251,7 @@ int main(int argc, char *argv[])
 
 	/* long only options. */
 	enum {
-		OPT_VER = CHAR_MAX + 1,
-		OPT_WTMP,
+		OPT_WTMP = CHAR_MAX + 1,
 		OPT_BTMP,
 		OPT_NOTRUNC,
 		OPT_NOHEAD,
@@ -1299,7 +1309,7 @@ int main(int argc, char *argv[])
 	add_column(columns, ncolumns++, COL_UID);
 	add_column(columns, ncolumns++, COL_USER);
 
-	while ((c = getopt_long(argc, argv, "acfGg:hLl:no:prsuVxzZ",
+	while ((c = getopt_long(argc, argv, "acefGg:hLl:no:prsuVzZ",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1393,18 +1403,7 @@ int main(int argc, char *argv[])
 			ctl->noheadings = 1;
 			break;
 		case OPT_TIME_FMT:
-			{
-				size_t i;
-
-				for (i = 0; i < ARRAY_SIZE(timefmts); i++) {
-					if (strcmp(timefmts[i].name, optarg) == 0) {
-						ctl->time_mode = timefmts[i].val;
-						break;
-					}
-				}
-				if (ctl->time_mode == TIME_INVALID)
-					usage(stderr);
-			}
+			ctl->time_mode = parse_time_mode(optarg);
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -1432,7 +1431,7 @@ int main(int argc, char *argv[])
 		logins = argv[optind];
 		outmode = OUT_PRETTY;
 	} else if (argc != optind)
-		usage(stderr);
+		errx(EXIT_FAILURE, _("Only one user may be specified. Use -l for multiple users."));
 
 	scols_init_debug(0);
 
