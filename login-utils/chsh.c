@@ -193,50 +193,34 @@ static char *ask_new_shell(char *question, char *oldshell)
 
 /*
  *  check_shell () -- if the shell is completely invalid, print
- *	an error and return (-1).
- *	if the shell is a bad idea, print a warning.
+ *	an error and exit.
  */
-static int check_shell(const char *shell)
+static void check_shell(const char *shell)
 {
-	if (!shell)
-		return -1;
-
-	if (*shell != '/') {
-		warnx(_("shell must be a full path name"));
-		return -1;
-	}
-	if (access(shell, F_OK) < 0) {
-		warnx(_("\"%s\" does not exist"), shell);
-		return -1;
-	}
-	if (access(shell, X_OK) < 0) {
-		printf(_("\"%s\" is not executable"), shell);
-		return -1;
-	}
-	if (illegal_passwd_chars(shell)) {
-		warnx(_("%s: has illegal characters"), shell);
-		return -1;
-	}
-#ifdef ONLY_LISTED_SHELLS
+	if (*shell != '/')
+		errx(EXIT_FAILURE, _("shell must be a full path name"));
+	if (access(shell, F_OK) < 0)
+		errx(EXIT_FAILURE, _("\"%s\" does not exist"), shell);
+	if (access(shell, X_OK) < 0)
+		errx(EXIT_FAILURE, _("\"%s\" is not executable"), shell);
+	if (illegal_passwd_chars(shell))
+		errx(EXIT_FAILURE, _("%s: has illegal characters"), shell);
 	if (!get_shell_list(shell)) {
+#ifdef ONLY_LISTED_SHELLS
 		if (!getuid())
-			warnx(_
-			      ("Warning: \"%s\" is not listed in %s."),
-			      shell, _PATH_SHELLS);
+			warnx(_("Warning: \"%s\" is not listed in %s."), shell,
+			      _PATH_SHELLS);
 		else
 			errx(EXIT_FAILURE,
 			     _("\"%s\" is not listed in %s.\n"
 			       "Use %s -l to see list."), shell, _PATH_SHELLS,
 			     program_invocation_short_name);
-	}
 #else
-	if (!get_shell_list(shell)) {
 		warnx(_("\"%s\" is not listed in %s.\n"
 			"Use %s -l to see list."), shell, _PATH_SHELLS,
-		      program_invocation_short_name);
-	}
+		       program_invocation_short_name);
 #endif
-	return 0;
+	}
 }
 
 int main(int argc, char **argv)
@@ -329,8 +313,7 @@ int main(int argc, char **argv)
 			return EXIT_SUCCESS;
 	}
 
-	if (check_shell(info.shell) < 0)
-		return EXIT_FAILURE;
+	check_shell(info.shell);
 
 	if (!nullshell && strcmp(oldshell, info.shell) == 0)
 		errx(EXIT_SUCCESS, _("Shell not changed."));
