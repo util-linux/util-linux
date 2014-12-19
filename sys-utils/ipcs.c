@@ -209,9 +209,11 @@ static void do_shm (char format, int unit)
 	case STATUS:
 	{
 		int maxid;
-		struct shm_info shm_info;
+		struct shmid_ds shmbuf;
+		struct shm_info *shm_info;
 
-		maxid = shmctl (0, SHM_INFO, (struct shmid_ds *) &shm_info);
+		maxid = shmctl (0, SHM_INFO, &shmbuf);
+		shm_info =  (struct shm_info *) &shmbuf;
 		if (maxid < 0) {
 			printf (_("kernel not configured for shared memory\n"));
 			return;
@@ -234,11 +236,11 @@ static void do_shm (char format, int unit)
 			  "pages resident  %ld\n"
 			  "pages swapped   %ld\n"
 			  "Swap performance: %ld attempts\t %ld successes\n"),
-			shm_info.used_ids,
-			shm_info.shm_tot,
-			shm_info.shm_rss,
-			shm_info.shm_swp,
-			shm_info.swap_attempts, shm_info.swap_successes);
+			shm_info->used_ids,
+			shm_info->shm_tot,
+			shm_info->shm_rss,
+			shm_info->shm_swp,
+			shm_info->swap_attempts, shm_info->swap_successes);
 		return;
 	}
 

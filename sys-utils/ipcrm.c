@@ -235,7 +235,6 @@ static int remove_all(type_id type)
 	int id, rm_me, maxid;
 
 	struct shmid_ds shmseg;
-	struct shm_info shm_info;
 
 	struct semid_ds semary;
 	struct seminfo seminfo;
@@ -245,8 +244,7 @@ static int remove_all(type_id type)
 	struct msginfo msginfo;
 
 	if (type == SHM || type == ALL) {
-		maxid =
-		    shmctl(0, SHM_INFO, (struct shmid_ds *)(void *)&shm_info);
+		maxid = shmctl(0, SHM_INFO, &shmseg);
 		if (maxid < 0)
 			errx(EXIT_FAILURE,
 			     _("kernel not configured for shared memory"));

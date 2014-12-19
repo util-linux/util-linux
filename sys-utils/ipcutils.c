@@ -1,4 +1,3 @@
-
 #include <inttypes.h>
 
 #include "c.h"
@@ -82,12 +81,15 @@ int ipc_shm_get_limits(struct ipc_limits *lim)
 		lim->shmmni = path_read_u64(_PATH_PROC_IPC_SHMMNI);
 
 	} else {
-		struct shminfo shminfo;
+		struct shminfo *shminfo;
+		struct shmid_ds shmbuf;
 
-		if (shmctl(0, IPC_INFO, (struct shmid_ds *) &shminfo) < 0)
+		if (shmctl(0, IPC_INFO, &shmbuf) < 0)
 			return 1;
-		lim->shmmni = shminfo.shmmni;
-		lim->shmall = shminfo.shmall;
+		shminfo = (struct shminfo *) &shmbuf;
+		lim->shmmni = shminfo->shmmni;
+		lim->shmall = shminfo->shmall;
+		lim->shmmax = shminfo->shmmax;
 	}
 
 	return 0;
