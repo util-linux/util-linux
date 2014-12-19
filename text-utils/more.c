@@ -1092,10 +1092,10 @@ void clreos(void)
 }
 
 
-static UL_ASAN_BLACKLIST xmbrtowc(wchar_t *wc, const char *s, size_t n,
+static UL_ASAN_BLACKLIST size_t xmbrtowc(wchar_t *wc, const char *s, size_t n,
 				  mbstate_t *mbstate)
 {
-	const size_t mblength = mbrtowc(&wc, s, n, &mbstate);
+	const size_t mblength = mbrtowc(wc, s, n, mbstate);
 	if (mblength == (size_t)-2 || mblength == (size_t)-1)
 		return 1;
 	return mblength;
