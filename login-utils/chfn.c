@@ -447,7 +447,7 @@ int main(int argc, char **argv)
 	/* If we're setuid and not really root, disallow the password change. */
 	if (geteuid() != getuid() && uid != ctl.pw->pw_uid) {
 #else
-	if (uid != 0 && uid != ctl.oldf.pw->pw_uid) {
+	if (uid != 0 && uid != ctl.pw->pw_uid) {
 #endif
 		errno = EACCES;
 		err(EXIT_FAILURE, _("running UID doesn't match UID of user we're "
