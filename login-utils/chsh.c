@@ -40,6 +40,7 @@
 #include "nls.h"
 #include "pathnames.h"
 #include "setpwnam.h"
+#include "strutils.h"
 #include "xalloc.h"
 
 #include "ch-common.h"
@@ -166,34 +167,28 @@ static void parse_argv(int argc, char **argv, struct sinfo *pinfo)
 }
 
 /*
- *  prompt () --
- *	ask the user for a given field and return it.
+ *  ask_new_shell () --
+ *	ask the user for a shell and return it.
  */
-static char *prompt(char *question, char *def_val)
+static char *ask_new_shell(char *question, char *oldshell)
 {
 	int len;
-	char *ans, *cp;
-	char buf[BUFSIZ];
+	char *ans = NULL;
+	size_t dummy = 0;
+	ssize_t sz;
 
-	if (!def_val)
-		def_val = "";
-	printf("%s [%s]: ", question, def_val);
-	*buf = 0;
-	if (fgets(buf, sizeof(buf), stdin) == NULL)
-		errx(EXIT_FAILURE, _("Aborted."));
-	/* remove the newline at the end of buf. */
-	ans = buf;
-	while (isspace(*ans))
-		ans++;
-	len = strlen(ans);
-	while (len > 0 && isspace(ans[len - 1]))
-		len--;
-	if (len <= 0)
+	if (!oldshell)
+		oldshell = "";
+	printf("%s [%s]: ", question, oldshell);
+	sz = getline(&ans, &dummy, stdin);
+	if (sz == -1)
 		return NULL;
-	ans[len] = 0;
-	cp = (char *)xmalloc(len + 1);
-	strcpy(cp, ans);
-	return cp;
+	/* remove the newline at the end of ans. */
+	ltrim_whitespace((unsigned char *) ans);
+	len = rtrim_whitespace((unsigned char *) ans);
+	if (len == 0)
+		return NULL;
+	return ans;
 }
 
 /*
@@ -329,7 +324,7 @@ int main(int argc, char **argv)
 	}
 #endif
 	if (!info.shell) {
-		info.shell = prompt(_("New shell"), oldshell);
+		info.shell = ask_new_shell(_("New shell"), oldshell);
 		if (!info.shell)
 			return EXIT_SUCCESS;
 	}
