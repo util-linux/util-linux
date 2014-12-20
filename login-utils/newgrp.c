@@ -202,9 +202,6 @@ int main(int argc, char *argv[])
 	if (!(pw_entry = getpwuid(getuid())))
 		err(EXIT_FAILURE, _("who are you?"));
 
-	shell = (pw_entry->pw_shell && *pw_entry->pw_shell ?
-				pw_entry->pw_shell : _PATH_BSHELL);
-
 	if (argc < 2) {
 		if (setgid(pw_entry->pw_gid) < 0)
 			err(EXIT_FAILURE, _("setgid failed"));
@@ -225,8 +222,9 @@ int main(int argc, char *argv[])
 	if (setuid(getuid()) < 0)
 		err(EXIT_FAILURE, _("setuid failed"));
 
-	fflush(stdout);
-	fflush(stderr);
+	fflush(NULL);
+	shell = (pw_entry->pw_shell && *pw_entry->pw_shell ?
+				pw_entry->pw_shell : _PATH_BSHELL);
 	execl(shell, shell, (char *)0);
 	warn(_("failed to execute %s"), shell);
 	fflush(stderr);
