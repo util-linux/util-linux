@@ -74,7 +74,7 @@ static int memset_s(void *v, size_t sz, const int c)
 }
 
 /* try to read password from gshadow */
-static char *get_gshadow_pwd(char *groupname)
+static char *get_gshadow_pwd(const char *groupname)
 {
 #ifdef HAVE_GETSGNAM
 	struct sgrp *sgrp;
@@ -117,7 +117,7 @@ static char *get_gshadow_pwd(char *groupname)
 #endif	/* HAVE_GETSGNAM */
 }
 
-static int allow_setgid(struct passwd *pe, struct group *ge)
+static int allow_setgid(const struct passwd *pe, const struct group *ge)
 {
 	char **look;
 	int notfound = 1;
@@ -160,7 +160,7 @@ static int allow_setgid(struct passwd *pe, struct group *ge)
 	return FALSE;
 }
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fprintf(out, USAGE_HEADER);
 	fprintf(out, _(" %s <group>\n"), program_invocation_short_name);
