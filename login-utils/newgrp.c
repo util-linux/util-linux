@@ -214,15 +214,12 @@ int main(int argc, char *argv[])
 			if (errno)
 				err(EXIT_FAILURE, _("no such group"));
 			else
-				/* No group */
 				errx(EXIT_FAILURE, _("no such group"));
-		} else {
-			if (allow_setgid(pw_entry, gr_entry)) {
-				if (setgid(gr_entry->gr_gid) < 0)
-					err(EXIT_FAILURE, _("setgid failed"));
-			} else
-				errx(EXIT_FAILURE, _("permission denied"));
 		}
+		if (!allow_setgid(pw_entry, gr_entry))
+			errx(EXIT_FAILURE, _("permission denied"));
+		if (setgid(gr_entry->gr_gid) < 0)
+			err(EXIT_FAILURE, _("setgid failed"));
 	}
 
 	if (setuid(getuid()) < 0)
