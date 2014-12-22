@@ -319,6 +319,9 @@ static void __attribute__ ((__noreturn__)) print_help(void)
 		" %1$s [options] -o|--options <optstring> [options] [--] <parameters>\n"),
 		program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, stderr);
+	fputs(_("Parse command options.\n"), stderr);
+
 	fputs(USAGE_OPTIONS, stderr);
 	fputs(_(" -a, --alternative             allow long options starting with single -\n"), stderr);
 	fputs(_(" -l, --longoptions <longopts>  the long options to be recognized\n"), stderr);

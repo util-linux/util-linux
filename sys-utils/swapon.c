@@ -724,8 +724,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	size_t i;
 	fputs(USAGE_HEADER, out);
-
 	fprintf(out, _(" %s [options] [<spec>]\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Enable devices and files for paging and swapping.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all                enable all swaps from /etc/fstab\n"), out);

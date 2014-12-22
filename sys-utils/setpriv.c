@@ -93,6 +93,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(" %s [options] <program> [<argument>...]\n"),
 		program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Run a program with different privilege settings.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -d, --dump               show current state (and do not exec anything)\n"), out);
 	fputs(_(" --nnp, --no-new-privs    disallow granting new privileges\n"), out);

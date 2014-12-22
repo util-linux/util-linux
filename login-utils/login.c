@@ -1190,6 +1190,8 @@ int main(int argc, char **argv)
 		case '?':
 		default:
 			fprintf(stderr, _("Usage: login [-p] [-h <host>] [-H] [[-f] <username>]\n"));
+			fputs(USAGE_SEPARATOR, stderr);
+			fputs(_("Begin a session on the system.\n"), stderr);
 			exit(EXIT_FAILURE);
 		}
 	argc -= optind;

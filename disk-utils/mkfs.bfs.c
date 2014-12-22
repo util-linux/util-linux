@@ -72,6 +72,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out,
 		_("Usage: %s [options] device [block-count]\n"),
 		program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Make an SCO bfs filesystem.\n"), out);
+
 	fprintf(out, _("\nOptions:\n"
 		       " -N, --inodes=NUM    specify desired number of inodes\n"
 		       " -V, --vname=NAME    specify volume name\n"

@@ -94,6 +94,10 @@ static void __attribute__((__noreturn__)) show_help(void)
 	printf(_(" %s%s [options] [program [program arguments]]\n"),
 	       program_invocation_short_name,
 	       !strcmp(program_invocation_short_name, "setarch") ? " <arch>" : "");
+
+	fputs(USAGE_SEPARATOR, stdout);
+	fputs(_("Change the reported architecture and set personality flags.\n"), stdout);
+
 	fputs(USAGE_OPTIONS, stdout);
 	fputs(_(" -v, --verbose            says what options are being switched on\n"), stdout);
 	fputs(_(" -R, --addr-no-randomize  disables randomization of the virtual address space\n"), stdout);

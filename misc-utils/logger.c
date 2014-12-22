@@ -510,6 +510,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<message>]\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Enter messages into the system log.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -i, --id[=<id>]       log <id> (default is PID)\n"), out);
 	fputs(_(" -f, --file <file>     log the contents of this file\n"), out);

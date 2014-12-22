@@ -19,6 +19,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fprintf(out, USAGE_HEADER);
 	fprintf(out, _(" %s hard|soft\n"), program_invocation_short_name);
+
+	fprintf(out, USAGE_SEPARATOR);
+	fprintf(out, "Set the function of the Ctrl-Alt-Del combination.\n");
+
 	fprintf(out, USAGE_OPTIONS);
 	fprintf(out, USAGE_HELP);
 	fprintf(out, USAGE_VERSION);

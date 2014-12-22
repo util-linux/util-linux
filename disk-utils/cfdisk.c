@@ -2163,9 +2163,11 @@ static int ui_run(struct cfdisk *cf)
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
-
 	fprintf(out,
 	      _(" %1$s [options] <disk>\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Display or manipulate a disk partition table.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -L --color[=<when>]     colorize output (auto, always or never)\n"), out);

@@ -718,6 +718,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" %1$s <operation> <mountpoint> [<target>]\n"),
 		program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Mount a filesystem.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fprintf(out, _(
 	" -a, --all               mount all filesystems mentioned in fstab\n"

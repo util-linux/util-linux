@@ -73,6 +73,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	 * which means they can be translated.  */
 	fprintf(out,
 	      _(" %s [options] [y | n]\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Control write access of other users to your terminal.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -v, --verbose  explain what is being done\n"), out);
 	fputs(USAGE_HELP, out);

@@ -68,6 +68,10 @@ static void __attribute__((__noreturn__)) usage (FILE *fp)
 {
 	fputs(USAGE_HEADER, fp);
 	fprintf(fp, _(" %s [options] [<username>]\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, fp);
+	fputs(_("Change your login shell.\n"), fp);
+
 	fputs(USAGE_OPTIONS, fp);
 	fputs(_(" -s, --shell <shell>  specify login shell\n"), fp);
 	fputs(_(" -l, --list-shells    print list of shells and exit\n"), fp);

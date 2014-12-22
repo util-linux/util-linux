@@ -173,8 +173,10 @@ static void usage(FILE *out)
 	fprintf(out,
 	      _(" %s [options] [<device> ...]\n"), program_invocation_short_name);
 
-	fputs(USAGE_OPTIONS, out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Show the status of the hardware watchdog.\n"), out);
 
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -f, --flags <list>     print selected flags only\n"
 		" -F, --noflags          don't print information about flags\n"
 		" -I, --noident          don't print watchdog identity information\n"

@@ -57,8 +57,8 @@ static void __attribute__((__noreturn__)) show_usage(int rc)
 {
 	FILE *out = rc == EXIT_SUCCESS ? stdout : stderr;
 
+	fputs(_("Show or change the real-time scheduling attributes of a process.\n"), out);
 	fprintf(out, _(
-	"\nchrt - manipulate real-time attributes of a process\n"
 	"\nSet policy:\n"
 	"  chrt [options] [<policy>] <priority> [-p <pid> | <command> [<arg>...]]\n"
 	"\nGet policy:\n"

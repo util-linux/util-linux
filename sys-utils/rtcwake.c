@@ -71,6 +71,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out,
 	      _(" %s [options]\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Enter a system sleep state until a specified wakeup time.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --auto               reads the clock mode from adjust file (default)\n"), out);
 	fprintf(out,

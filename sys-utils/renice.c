@@ -62,6 +62,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" %1$s [-n] <priority>  -g|--pgrp <pgid>...\n"
 		" %1$s [-n] <priority>  -u|--user <user>...\n"),
 		program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Alter the priority of running processes.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -n, --priority <num>   specify the nice increment value\n"), out);
 	fputs(_(" -p, --pid <id>         interpret argument as process ID (default)\n"), out);

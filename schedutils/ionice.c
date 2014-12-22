@@ -108,6 +108,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 			" %1$s [options] -u <uid>...\n"
 			" %1$s [options] <command>\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Show or change the I/O-scheduling class and priority of a process.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -c, --class <class>    name or number of scheduling class,\n"
 		"                          0: none, 1: realtime, 2: best-effort, 3: idle\n"), out);

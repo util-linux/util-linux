@@ -54,6 +54,10 @@ static void __attribute__ ((__noreturn__)) usage(int err)
 		  " %1$s -q %2$srawN\n"
 		  " %1$s -qa\n"), program_invocation_short_name,
 		_PATH_RAWDEVDIR);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Bind a raw character device to a block device.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -q, --query    set query mode\n"), out);
 	fputs(_(" -a, --all      query all raw devices\n"), out);

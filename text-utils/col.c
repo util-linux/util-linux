@@ -130,6 +130,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		"\nUsage:\n"
 		" %s [options]\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Filter out reverse line feeds.\n"), out);
+
 	fprintf(out, _(
 		"\nOptions:\n"
 		" -b, --no-backspaces    do not output backspaces\n"

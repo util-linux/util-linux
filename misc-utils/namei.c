@@ -427,6 +427,10 @@ static void usage(int rc)
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <pathname>...\n"), p);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Follow a pathname until a terminal point is found.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -h, --help          displays this help text\n"
 		" -V, --version       output version information and exit\n"

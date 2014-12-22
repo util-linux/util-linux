@@ -106,6 +106,10 @@ static void __attribute__((__noreturn__)) usage(int status)
 	fputs(USAGE_HEADER, stream);
 	fprintf(stream,
 		_(" %s [options] <file>\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, stream);
+	fputs(_("Check and repair a compressed ROM filesystem.\n"), stream);
+
 	fputs(USAGE_OPTIONS, stream);
 	fputs(_(" -a                       for compatibility only, ignored\n"), stream);
 	fputs(_(" -v, --verbose            be more verbose\n"), stream);

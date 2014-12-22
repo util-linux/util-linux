@@ -317,6 +317,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <file>...\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("A file perusal filter for CRT viewing.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -d          display help instead of ringing bell\n"), out);
 	fputs(_(" -f          count logical rather than screen lines\n"), out);

@@ -313,6 +313,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		_("\nUsage:\n"
 		  " %s [options] [file ...]\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Filter nroff output for CRT previewing.\n"), out);
+
+	fputs(USAGE_OPTIONS, out);
 	fprintf(out,
 		_(" -,  --no-underlining  suppress all underlining\n"
 		  " -2, --half-lines      print all half-lines\n"

@@ -1355,6 +1355,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(" %s [options] -- [fs-options] [<filesystem> ...]\n"),
 			 program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Check and repair a Linux filesystem.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -A         check all filesystems\n"), out);
 	fputs(_(" -C [<fd>]  display progress bar; file descriptor is for GUIs\n"), out);

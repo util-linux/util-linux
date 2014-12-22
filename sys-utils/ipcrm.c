@@ -49,7 +49,11 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out, USAGE_HEADER);
 	fprintf(out, " %s [options]\n", program_invocation_short_name);
 	fprintf(out, " %s shm|msg|sem <id>...\n", program_invocation_short_name);
-	fprintf(out, USAGE_OPTIONS);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Remove certain IPC resources.\n"), out);
+
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -m, --shmem-id <id>        remove shared memory segment by id\n"), out);
 	fputs(_(" -M, --shmem-key <key>      remove shared memory segment by key\n"), out);
 	fputs(_(" -q, --queue-id <id>        remove message queue by id\n"), out);

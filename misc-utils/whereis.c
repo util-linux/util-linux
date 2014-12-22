@@ -187,6 +187,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <file>\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Locate the binary, source, and manual-page files for a command.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -b         search only for binaries\n"), out);
 	fputs(_(" -B <dirs>  define binaries lookup path\n"), out);

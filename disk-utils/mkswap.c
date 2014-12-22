@@ -149,6 +149,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 		  " %s [options] device [size]\n"),
 		program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Set up a Linux swap area.\n"), out);
+
 	fprintf(out, _(
 		"\nOptions:\n"
 		" -c, --check               check bad blocks before creating the swap area\n"

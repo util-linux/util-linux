@@ -72,6 +72,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out,
 	      _(" %s [options]\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("A daemon for generating UUIDs.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -p, --pid <path>        path to pid file\n"
 		" -s, --socket <path>     path to socket\n"

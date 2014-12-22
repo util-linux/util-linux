@@ -130,9 +130,11 @@ static inline void info(const char *fmt, ...)
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
-
 	fprintf(out,
 		_(" %s [options] [<device>|<mountpoint>]\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Eject removable media.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --auto <on|off>         turn auto-eject feature on or off\n"

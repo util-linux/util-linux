@@ -78,6 +78,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" %1$s [options] <source> | <directory>\n"),
 		program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Unmount filesystems.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all               unmount all filesystems\n"), out);
 	fputs(_(" -A, --all-targets       unmount all mountpoints for the given device in the\n"

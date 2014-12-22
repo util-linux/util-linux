@@ -1310,6 +1310,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	      _(" %1$s [options] <dev> [[-N] <part>]\n"
 		" %1$s [options] <command>\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Display or manipulate a disk partition table.\n"), out);
+
 	fputs(_("\nCommands:\n"), out);
 	fputs(_(" -a, --activate <dev> [<part> ...] list or set bootable MBR partitions\n"), out);
 	fputs(_(" -d, --dump <dev>                  dump partition table (usable for later input)\n"), out);

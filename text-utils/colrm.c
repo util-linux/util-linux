@@ -59,6 +59,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out, _("\nUsage:\n"
 		       " %s [startcol [endcol]]\n"),
 		       program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Filter out the specified columns.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);

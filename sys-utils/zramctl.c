@@ -378,6 +378,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 			" %1$s [options] -f | <device> -s <size>\n"),
 			program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Set up and control zram devices.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --algorithm lzo|lz4   compression algorithm to use\n"), out);
 	fputs(_(" -b, --bytes               print sizes in bytes rather than in human readable format\n"), out);

@@ -222,6 +222,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out,
 		_(" %s [options] [+line] [+/pattern/] [files]\n"),
 		program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Browse pagewise through text files.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -number      lines per page\n"), out);
 	fputs(_(" -c           clear screen before displaying\n"), out);

@@ -169,6 +169,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out,
 		_(" %s [options] <iso9660_image_file>\n"),
 		program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Show the length of an ISO-9660 filesystem.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -d, --divisor=<number>  divide the amount of bytes by <number>\n"), out);
 	fputs(_(" -x, --sectors           show sector count and size\n"), out);

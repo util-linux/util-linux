@@ -198,6 +198,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 		  " %s [option] file\n"),
 		program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Follow the growth of a log file.\n"), out);
+
 	fprintf(out, _(
 		"\nOptions:\n"
 		" -n, --lines NUMBER  output the last NUMBER lines\n"

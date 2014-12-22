@@ -366,6 +366,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] string [file]\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Display lines beginning with a specified string.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --alternative      use alternative dictionary\n"
 		" -d, --alphanum         compare only alphanumeric characters\n"

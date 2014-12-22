@@ -64,8 +64,11 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fprintf(out, USAGE_HEADER);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
-	fprintf(out, USAGE_OPTIONS);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Create various IPC resources.\n"), out);
+
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -M, --shmem <size>       create shared memory segment of size <size>\n"), out);
 	fputs(_(" -S, --semaphore <nsems>  create semaphore array with <nsems> elements\n"), out);
 	fputs(_(" -Q, --queue              create message queue\n"), out);

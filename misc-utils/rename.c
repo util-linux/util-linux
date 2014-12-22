@@ -116,6 +116,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out,
 	      _(" %s [options] <expression> <replacement> <file>...\n"),
 		program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Rename files.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -v, --verbose    explain what is being done\n"), out);
 	fputs(_(" -s, --symlink    act on the target of symlinks\n"), out);

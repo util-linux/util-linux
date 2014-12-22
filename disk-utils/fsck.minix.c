@@ -193,6 +193,10 @@ usage(void) {
 	fputs(USAGE_HEADER, stderr);
 	fprintf(stderr,
 		_(" %s [options] <device>\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, stderr);
+	fputs(_("Check the consistency of a Minix filesystem.\n"), stderr);
+
 	fputs(USAGE_OPTIONS, stderr);
 	fputs(_(" -l  list all filenames\n"), stderr);
 	fputs(_(" -a  automatic repair\n"), stderr);

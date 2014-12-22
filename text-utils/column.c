@@ -90,6 +90,10 @@ static void __attribute__((__noreturn__)) usage(int rc)
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<file>...]\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Columnate lists.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -c, --columns <width>    width of output in number of characters\n"), out);
 	fputs(_(" -t, --table              create a table\n"), out);

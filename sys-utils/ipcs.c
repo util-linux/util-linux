@@ -52,7 +52,11 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out, USAGE_HEADER);
 	fprintf(out, " %s [resource ...] [output-format]\n", program_invocation_short_name);
 	fprintf(out, " %s [resource] -i <id>\n", program_invocation_short_name);
-	fprintf(out, USAGE_OPTIONS);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Show information on IPC facilities.\n"), out);
+
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -i, --id <id>  print details on resource identified by <id>\n"), out);
 	fprintf(out, USAGE_HELP);
 	fprintf(out, USAGE_VERSION);

@@ -1176,6 +1176,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" %1$s [options] [--source <device>] [--target <mountpoint>]\n"),
 		program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Find a (mounted) filesystem.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -s, --fstab            search in static table of filesystems\n"), out);
 	fputs(_(" -m, --mtab             search in table of mounted filesystems\n"), out);
