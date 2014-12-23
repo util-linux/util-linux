@@ -272,7 +272,7 @@ static int read_adjtime(struct adjtime *adjtime_p)
 		adjtime_p->last_adj_time = 0;
 		adjtime_p->not_adjusted = 0;
 		adjtime_p->last_calib_time = 0;
-		adjtime_p->local_utc = UNKNOWN;
+		adjtime_p->local_utc = UTC;
 		adjtime_p->dirty = FALSE;	/* don't create a zero adjfile */
 
 		return 0;
@@ -1135,7 +1135,7 @@ static void save_adjtime(const struct adjtime adjtime, const bool testing)
 			(long)adjtime.last_adj_time,
 			adjtime.not_adjusted,
 			(long)adjtime.last_calib_time,
-			(adjtime.local_utc == UTC) ? "UTC" : "LOCAL");
+			(adjtime.local_utc == LOCAL) ? "LOCAL" : "UTC");
 
 		if (testing) {
 			printf(_
