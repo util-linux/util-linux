@@ -364,20 +364,21 @@ compare(char *s2, char *s2end) {
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out,
-	      _(" %s [options] string [file]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] <string> [<file>...]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Display lines beginning with a specified string.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --alternative      use alternative dictionary\n"
-		" -d, --alphanum         compare only alphanumeric characters\n"
-		" -f, --ignore-case      ignore case differences when comparing\n"
-		" -t, --terminate <char> define string termination character\n"
-		" -V, --version          output version information and exit\n"
-		" -h, --help             display this help and exit\n\n"), out);
+	fputs(_(" -a, --alternative        use the alternative dictionary\n"), out);
+	fputs(_(" -d, --alphanum           compare only alphanumeric characters\n"), out);
+	fputs(_(" -f, --ignore-case        ignore case differences when comparing\n"), out);
+	fputs(_(" -t, --terminate <char>   define the string-termination character\n"), out);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("look(1)"));
+
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
