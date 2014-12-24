@@ -91,9 +91,10 @@ enum {
 static void __attribute__((__noreturn__)) show_help(void)
 {
 	fputs(USAGE_HEADER, stdout);
-	printf(_(" %s%s [options] [program [program arguments]]\n"),
-	       program_invocation_short_name,
-	       !strcmp(program_invocation_short_name, "setarch") ? " <arch>" : "");
+	if (!strcmp(program_invocation_short_name, "setarch"))
+		printf(_(" %s <arch> [options] [<program> [<argument>...]]\n"), program_invocation_short_name);
+	else
+		printf(_(" %s [options] [<program> [<argument>...]]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	fputs(_("Change the reported architecture and set personality flags.\n"), stdout);
