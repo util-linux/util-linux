@@ -193,22 +193,21 @@ watch_file_inotify(const char *filename, off_t *size)
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out,
-		_("\nUsage:\n"
-		  " %s [option] file\n"),
-		program_invocation_short_name);
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [option] <file>\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Follow the growth of a log file.\n"), out);
 
-	fprintf(out, _(
-		"\nOptions:\n"
-		" -n, --lines NUMBER  output the last NUMBER lines\n"
-		" -NUMBER             same as `-n NUMBER'\n"
-		" -V, --version       output version information and exit\n"
-		" -h, --help          display this help and exit\n\n"));
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -n, --lines <number>   output the last <number> lines\n"), out);
+	fputs(_(" -<number>              same as '-n <number>'\n"), out);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("tailf(1)"));
+
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
