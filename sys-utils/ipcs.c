@@ -50,13 +50,13 @@ static void print_msg (int id, int unit);
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fprintf(out, USAGE_HEADER);
-	fprintf(out, " %s [resource ...] [output-format]\n", program_invocation_short_name);
-	fprintf(out, " %s [resource] -i <id>\n", program_invocation_short_name);
+	fprintf(out, _(" %1$s [resource-option...] [output-option]\n"
+		       " %1$s -m|-q|-s -i <id>\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Show information on IPC facilities.\n"), out);
 
-	fputs(USAGE_OPTIONS, out);
+	fprintf(out, USAGE_OPTIONS);
 	fputs(_(" -i, --id <id>  print details on resource identified by <id>\n"), out);
 	fprintf(out, USAGE_HELP);
 	fprintf(out, USAGE_VERSION);
@@ -67,7 +67,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -s, --semaphores  semaphores\n"), out);
 	fputs(_(" -a, --all         all (default)\n"), out);
 	fprintf(out, USAGE_SEPARATOR);
-	fputs(_("Output format:\n"), out);
+	fputs(_("Output options:\n"), out);
 	fputs(_(" -t, --time        show attach, detach and change times\n"), out);
 	fputs(_(" -p, --pid         show PIDs of creator and last operator\n"), out);
 	fputs(_(" -c, --creator     show creator and owner\n"), out);
