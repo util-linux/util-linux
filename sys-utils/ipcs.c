@@ -49,24 +49,26 @@ static void print_msg (int id, int unit);
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out, USAGE_HEADER);
+	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %1$s [resource-option...] [output-option]\n"
 		       " %1$s -m|-q|-s -i <id>\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Show information on IPC facilities.\n"), out);
 
-	fprintf(out, USAGE_OPTIONS);
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -i, --id <id>  print details on resource identified by <id>\n"), out);
-	fprintf(out, USAGE_HELP);
-	fprintf(out, USAGE_VERSION);
-	fprintf(out, USAGE_SEPARATOR);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+
+	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Resource options:\n"), out);
 	fputs(_(" -m, --shmems      shared memory segments\n"), out);
 	fputs(_(" -q, --queues      message queues\n"), out);
 	fputs(_(" -s, --semaphores  semaphores\n"), out);
 	fputs(_(" -a, --all         all (default)\n"), out);
-	fprintf(out, USAGE_SEPARATOR);
+
+	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Output options:\n"), out);
 	fputs(_(" -t, --time        show attach, detach and change times\n"), out);
 	fputs(_(" -p, --pid         show PIDs of creator and last operator\n"), out);
@@ -76,6 +78,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_("     --human       show sizes in human-readable format\n"), out);
 	fputs(_(" -b, --bytes       show sizes in bytes\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("ipcs(1)"));
+
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
