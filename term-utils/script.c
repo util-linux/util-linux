@@ -63,6 +63,8 @@
 #include <stddef.h>
 #include <sys/wait.h>
 #include <poll.h>
+#include <sys/signalfd.h>
+#include <assert.h>
 
 #include "closestream.h"
 #include "nls.h"
@@ -106,8 +108,8 @@ struct script_control {
 	 isterm:1,		/* is child process running as terminal */
 	 resized:1,		/* has terminal been resized */
 	 die:1;			/* terminate program */
-	sigset_t block_mask;	/* signals that are blocked */
-	sigset_t unblock_mask;	/* original signal mask */
+	sigset_t sigset;	/* catch SIGCHLD and SIGWINCH with signalfd() */
+	int sigfd;		/* file descriptor for signalfd() */
 };
 struct script_control *gctl;	/* global control structure, used in signal handlers */
 
@@ -265,16 +267,13 @@ static void doinput(struct script_control *ctl)
 
 	FD_ZERO(&readfds);
 
-	/* block SIGCHLD */
-	sigprocmask(SIG_SETMASK, &ctl->block_mask, &ctl->unblock_mask);
-
 	while (!ctl->die) {
 		FD_SET(STDIN_FILENO, &readfds);
 
 		errno = 0;
 		/* wait for input or signal (including SIGCHLD) */
 		if ((cc = pselect(STDIN_FILENO + 1, &readfds, NULL, NULL, NULL,
-				  &ctl->unblock_mask)) > 0) {
+				  NULL)) > 0) {
 
 			if ((cc = read(STDIN_FILENO, ibuf, BUFSIZ)) > 0) {
 				if (write_all(ctl->master, ibuf, cc)) {
@@ -297,9 +296,6 @@ static void doinput(struct script_control *ctl)
 			break;
 		}
 	}
-
-	/* unblock SIGCHLD */
-	sigprocmask(SIG_SETMASK, &ctl->unblock_mask, NULL);
 
 	/* To be sure that we don't miss any data */
 	wait_for_empty_fd(ctl, ctl->slave);
@@ -369,28 +365,23 @@ static void dooutput(struct script_control *ctl)
 	do {
 		if (ctl->die || errsv == EINTR) {
 			struct pollfd fds[] = {
+				{.fd = ctl->sigfd, .events = POLLIN | POLLERR | POLLHUP},
 				{.fd = ctl->master, .events = POLLIN}
 			};
 			if (poll(fds, 1, 50) <= 0)
 				break;
 		}
 
-		/* block SIGCHLD */
-		sigprocmask(SIG_SETMASK, &ctl->block_mask, &ctl->unblock_mask);
-
 		FD_SET(ctl->master, &readfds);
 		errno = 0;
 
 		/* wait for input or signal (including SIGCHLD) */
 		if ((cc = pselect(ctl->master + 1, &readfds, NULL, NULL, NULL,
-				  &ctl->unblock_mask)) > 0) {
+				  NULL)) > 0) {
 
 			cc = read(ctl->master, obuf, sizeof(obuf));
 		}
 		errsv = errno;
-
-		/* unblock SIGCHLD */
-		sigprocmask(SIG_SETMASK, &ctl->unblock_mask, NULL);
 
 		if (ctl->tflg)
 			gettimeofday(&tv, NULL);
@@ -582,7 +573,6 @@ int main(int argc, char **argv)
 		.master = -1,
 		0
 	};
-	struct sigaction sa;
 	int ch;
 
 	enum { FORCE_OPTION = CHAR_MAX + 1 };
@@ -670,20 +660,16 @@ int main(int argc, char **argv)
 #ifdef HAVE_LIBUTEMPTER
 	utempter_add_record(ctl.master, NULL);
 #endif
-	/* setup SIGCHLD handler */
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-	sa.sa_handler = sig_finish;
-	sigaction(SIGCHLD, &sa, NULL);
-
-	/* init mask for SIGCHLD */
-	sigprocmask(SIG_SETMASK, NULL, &ctl.block_mask);
-	sigaddset(&ctl.block_mask, SIGCHLD);
+	/* setup signal handler */
+	assert(sigemptyset(&ctl.sigset) == 0);
+	assert(sigaddset(&ctl.sigset, SIGCHLD) == 0);
+	assert(sigaddset(&ctl.sigset, SIGWINCH) == 0);
+	assert(sigprocmask(SIG_BLOCK, &ctl.sigset, NULL) == 0);
+	if ((ctl.sigfd = signalfd(-1, &ctl.sigset, 0)) < 0)
+		err(EXIT_FAILURE, _("cannot set signal handler"));
 
 	fflush(stdout);
-	sigprocmask(SIG_SETMASK, &ctl.block_mask, &ctl.unblock_mask);
 	ctl.child = fork();
-	sigprocmask(SIG_SETMASK, &ctl.unblock_mask, NULL);
 
 	if (ctl.child < 0) {
 		warn(_("fork failed"));
@@ -691,9 +677,7 @@ int main(int argc, char **argv)
 	}
 	if (ctl.child == 0) {
 
-		sigprocmask(SIG_SETMASK, &ctl.block_mask, NULL);
 		ctl.subchild = ctl.child = fork();
-		sigprocmask(SIG_SETMASK, &ctl.unblock_mask, NULL);
 
 		if (ctl.child < 0) {
 			warn(_("fork failed"));
@@ -703,9 +687,6 @@ int main(int argc, char **argv)
 			dooutput(&ctl);
 		else
 			doshell(&ctl);
-	} else {
-		sa.sa_handler = resize;
-		sigaction(SIGWINCH, &sa, NULL);
 	}
 	doinput(&ctl);
 
