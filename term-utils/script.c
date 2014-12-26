@@ -240,14 +240,63 @@ static void write_output(struct script_control *ctl, char *obuf,
 	}
 }
 
-static void do_io(struct script_control *ctl)
+static void handle_io(struct script_control *ctl, int fd, double *oldtime, int i)
 {
 	char buf[BUFSIZ];
+	ssize_t bytes;
+
+	bytes = read(fd, buf, sizeof(buf));
+	if (bytes < 0) {
+		if (errno == EAGAIN)
+			return;
+		fail(ctl);
+	}
+	if (i == 0) {
+		if (write_all(ctl->master, buf, bytes)) {
+			warn(_("write failed"));
+			fail(ctl);
+		}
+		/* without sync write_output() will write both input &
+		 * shell output that looks like double echoing */
+		fdatasync(ctl->master);
+		if (!ctl->isterm && feof(stdin)) {
+			char c = DEF_EOF;
+			write_all(ctl->master, &c, sizeof(char));
+		}
+	} else
+		write_output(ctl, buf, bytes, oldtime);
+}
+
+static void handle_signal(struct script_control *ctl, int fd)
+{
+	struct signalfd_siginfo info;
+	ssize_t bytes;
+
+	bytes = read(fd, &info, sizeof(info));
+	assert(bytes == sizeof(info));
+	switch (info.ssi_signo) {
+	case SIGCHLD:
+		finish(ctl, 0);
+		ctl->poll_timeout = 10;
+		return;
+	case SIGWINCH:
+		if (ctl->isterm) {
+			ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&ctl->win);
+			ioctl(ctl->slave, TIOCSWINSZ, (char *)&ctl->win);
+		}
+		break;
+	default:
+		abort();
+	}
+}
+
+static void do_io(struct script_control *ctl)
+{
 	struct pollfd pfd[POLLFDS];
 	int ret, i;
-	ssize_t bytes;
 	double oldtime = time(NULL);
 	time_t tvec = script_time((time_t *)NULL);
+	char buf[128];
 
 	if (ctl->tflg && !ctl->timingfp)
 		ctl->timingfp = fdopen(STDERR_FILENO, "w");
@@ -277,57 +326,16 @@ static void do_io(struct script_control *ctl)
 			if (pfd[i].revents == 0)
 				continue;
 			if (i < 2) {
-				bytes = read(pfd[i].fd, buf, BUFSIZ);
-				if (bytes < 0) {
-					if (errno == EAGAIN)
-						continue;
-					fail(ctl);
-				}
-				if (i == 0) {
-					if (write_all(ctl->master, buf, bytes)) {
-						warn(_("write failed"));
-						fail(ctl);
-					} else
-
-						/* without sync write_output()
-						 * will write both input &
-						 * shell output that looks like
-						 * double echoing */
-						fdatasync(ctl->master);
-					if (!ctl->isterm && feof(stdin)) {
-						char c = DEF_EOF;
-						write_all(ctl->master, &c, sizeof(char));
-					}
-				} else
-					write_output(ctl, buf, bytes, &oldtime);
+				handle_io(ctl, pfd[i].fd, &oldtime, i);
 				continue;
 			}
 			if (i == 2) {
-				struct signalfd_siginfo info;
-				ssize_t read_bytes;
-
-				read_bytes = read(pfd[i].fd, &info, sizeof(info));
-				assert(read_bytes == sizeof(info));
-				switch (info.ssi_signo) {
-				case SIGCHLD:
-					finish(ctl, 0);
-					ctl->poll_timeout = 10;
-					if (!ctl->isterm)
-						/* In situation such as 'date' in
-						* $ echo date | ./script
-						* ignore input when shell has
-						* exited.  */
-						pfd[0].fd = -1;
-					break;
-				case SIGWINCH:
-					if (ctl->isterm) {
-						ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&ctl->win);
-						ioctl(ctl->slave, TIOCSWINSZ, (char *)&ctl->win);
-					}
-					break;
-				default:
-					abort();
-				}
+				handle_signal(ctl, pfd[i].fd);
+				if (!ctl->isterm && -1 < ctl->poll_timeout)
+					/* In situation such as 'date' in
+					* $ echo date | ./script
+					* ignore input when shell has exited.  */
+					pfd[0].fd = -1;
 			}
 		}
 	}
