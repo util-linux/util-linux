@@ -27,10 +27,6 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_SCRIPT"
 
-# TODO see comments about script design
-# https://github.com/karelzak/util-linux/pull/62
-TS_KNOWN_FAIL="yes"
-
 bingofile="$TS_OUTDIR/${TS_TESTNAME}-bingo"
 
 count=1000

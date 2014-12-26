@@ -92,6 +92,7 @@ struct script_control {
 	FILE *timingfp;		/* timing file pointer */
 	int master;		/* pseudoterminal master file descriptor */
 	int slave;		/* pseudoterminal slave file descriptor */
+	int poll_timeout;	/* poll() timeout, used in end of execution */
 	pid_t child;		/* child pid */
 	int childstatus;	/* child process exit value */
 	struct termios tt;	/* slave terminal runtime attributes */
@@ -205,16 +206,11 @@ static void finish(struct script_control *ctl, int wait)
 {
 	int status;
 	pid_t pid;
-	int errsv = errno;
 	int options = wait ? 0 : WNOHANG;
 
 	while ((pid = wait3(&status, options, 0)) > 0)
-		if (pid == ctl->child) {
+		if (pid == ctl->child)
 			ctl->childstatus = status;
-			ctl->die = 1;
-		}
-
-	errno = errsv;
 }
 
 static void write_output(struct script_control *ctl, char *obuf,
@@ -270,13 +266,15 @@ static void do_io(struct script_control *ctl)
 
 	while (!ctl->die) {
 		/* wait for input or signal */
-		ret = poll(pfd, POLLFDS, -1);
+		ret = poll(pfd, POLLFDS, ctl->poll_timeout);
 		if (ret < 0) {
 			if (errno == EAGAIN)
 				continue;
 			warn(_("poll failed"));
 			fail(ctl);
 		}
+		if (ret == 0)
+			ctl->die = 1;
 		for (i = 0; i < POLLFDS; i++) {
 			if (pfd[i].revents == 0)
 				continue;
@@ -315,6 +313,13 @@ static void do_io(struct script_control *ctl)
 				switch (info.ssi_signo) {
 				case SIGCHLD:
 					finish(ctl, 0);
+					ctl->poll_timeout = 10;
+					if (!ctl->isterm)
+						/* In situation such as 'date' in
+						* $ echo date | ./script
+						* ignore input when shell has
+						* exited.  */
+						pfd[0].fd = -1;
 					break;
 				case SIGWINCH:
 					if (ctl->isterm) {
@@ -496,6 +501,7 @@ int main(int argc, char **argv)
 		.line = "/dev/ptyXX",
 #endif
 		.master = -1,
+		.poll_timeout = -1,
 		0
 	};
 	int ch;
