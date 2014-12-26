@@ -247,6 +247,7 @@ static void do_io(struct script_control *ctl)
 	int ret, i;
 	ssize_t bytes;
 	double oldtime = time(NULL);
+	time_t tvec = script_time((time_t *)NULL);
 
 	if (ctl->tflg && !ctl->timingfp)
 		ctl->timingfp = fdopen(STDERR_FILENO, "w");
@@ -258,11 +259,8 @@ static void do_io(struct script_control *ctl)
 	pfd[2].fd = ctl->sigfd;
 	pfd[2].events = POLLIN | POLLERR | POLLHUP;
 
-	if (!ctl->qflg) {
-		time_t tvec = script_time((time_t *)NULL);
-		my_strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
-		fprintf(ctl->typescriptfp, _("Script started on %s"), buf);
-	}
+	my_strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
+	fprintf(ctl->typescriptfp, _("Script started on %s"), buf);
 
 	while (!ctl->die) {
 		/* wait for input or signal */
