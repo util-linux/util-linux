@@ -199,7 +199,7 @@ static void finish(struct script_control *ctl, int wait)
 	pid_t pid;
 	int options = wait ? 0 : WNOHANG;
 
-	while ((pid = wait3(&status, options, 0)) > 0)
+	while ((pid = wait3(&status, options, NULL)) > 0)
 		if (pid == ctl->child)
 			ctl->childstatus = status;
 }
@@ -483,14 +483,6 @@ static void getmaster(struct script_control *ctl)
 #endif				/* not HAVE_LIBUTIL */
 }
 
-/*
- * script -t prints time delays as floating point numbers
- * The example program (scriptreplay) that we provide to handle this
- * timing output is a perl script, and does not handle numbers in
- * locale format (not even when "use locale;" is added).
- * So, since these numbers are not for human consumption, it seems
- * easiest to set LC_NUMERIC here.
- */
 int main(int argc, char **argv)
 {
 	struct script_control ctl = {
@@ -519,7 +511,14 @@ int main(int argc, char **argv)
 	};
 
 	setlocale(LC_ALL, "");
-	setlocale(LC_NUMERIC, "C");	/* see comment above */
+	/*
+	 * script -t prints time delays as floating point numbers.  The example
+	 * program (scriptreplay) that we provide to handle this timing output
+	 * is a perl script, and does not handle numbers in locale format (not
+	 * even when "use locale;" is added).  So, since these numbers are not
+	 * for human consumption, it seems easiest to set LC_NUMERIC here.
+	 */
+	setlocale(LC_NUMERIC, "C");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
@@ -556,7 +555,6 @@ int main(int argc, char **argv)
 		case 'h':
 			usage(stdout);
 			break;
-		case '?':
 		default:
 			usage(stderr);
 		}
@@ -605,6 +603,6 @@ int main(int argc, char **argv)
 	if (ctl.child == 0)
 		doshell(&ctl);
 	do_io(&ctl);
-
-	return EXIT_SUCCESS;
+	/* should not happen, do_io() calls done() */
+	return EXIT_FAILURE;
 }
