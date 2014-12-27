@@ -166,15 +166,6 @@ static void die_if_link(const struct script_control *ctl)
 		       "Program not started."), ctl->fname);
 }
 
-/*
- * Stop extremely silly gcc complaint on %c:
- *  warning: `%c' yields only last 2 digits of year in some locales
- */
-static void my_strftime(char *buf, size_t len, const char *fmt, const struct tm *tm)
-{
-	strftime(buf, len, fmt, tm);
-}
-
 static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 {
 	if (ctl->isterm)
@@ -308,7 +299,7 @@ static void do_io(struct script_control *ctl)
 	pfd[2].fd = ctl->sigfd;
 	pfd[2].events = POLLIN | POLLERR | POLLHUP;
 
-	my_strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
+	strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
 	fprintf(ctl->typescriptfp, _("Script started on %s"), buf);
 
 	while (!ctl->die) {
@@ -342,8 +333,8 @@ static void do_io(struct script_control *ctl)
 	if (!ctl->die)
 		finish(ctl, 1); /* wait for children */
 	if (!ctl->qflg && ctl->typescriptfp) {
-		time_t tvec = script_time((time_t *)NULL);
-		my_strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
+		tvec = script_time((time_t *)NULL);
+		strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
 		fprintf(ctl->typescriptfp, _("\nScript done on %s"), buf);
 	}
 	done(ctl);

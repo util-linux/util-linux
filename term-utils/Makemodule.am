@@ -2,6 +2,7 @@ if BUILD_SCRIPT
 usrbin_exec_PROGRAMS += script
 dist_man_MANS += term-utils/script.1
 script_SOURCES = term-utils/script.c
+script_CFLAGS = $(AM_CFLAGS) -Wno-format-y2k
 script_LDADD = $(LDADD)
 if HAVE_UTIL
 script_LDADD += -lutil
