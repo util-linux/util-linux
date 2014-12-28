@@ -103,6 +103,20 @@ Display version information and exit.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
+.SH EXAMPLES
+.TP
+.B # unshare --fork --pid --mount-proc readlink /proc/self
+.TQ
+1
+.br
+Establish a PID namespace, ensure we're PID 1 in it against newly mounted
+procfs instance.
+.TP
+.B $ unshare --map-root-user --user sh -c whoami
+.TQ
+root
+.br
+Establish a user namespace as an unprivileged user with a root user within it.
 .SH SEE ALSO
 .BR unshare (2),
 .BR clone (2),
