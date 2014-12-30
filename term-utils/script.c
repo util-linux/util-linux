@@ -189,7 +189,7 @@ static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 	exit(EXIT_SUCCESS);
 }
 
-static void fail(struct script_control *ctl)
+static void __attribute__((__noreturn__)) fail(struct script_control *ctl)
 {
 	kill(0, SIGTERM);
 	done(ctl);
@@ -358,7 +358,7 @@ static void getslave(struct script_control *ctl)
 	ioctl(ctl->slave, TIOCSCTTY, 0);
 }
 
-static void doshell(struct script_control *ctl)
+static void __attribute__((__noreturn__)) doshell(struct script_control *ctl)
 {
 	char *shname;
 
