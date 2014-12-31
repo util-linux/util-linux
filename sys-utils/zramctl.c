@@ -351,7 +351,7 @@ static void status(struct zram *z)
 	if (z)
 		fill_table_row(tb, z);		/* just one device specified */
 	else {
-		size_t i;			/* list all used devices */
+		/* list all used devices */
 		z = new_zram(NULL);
 
 		for (i = 0; ; i++) {

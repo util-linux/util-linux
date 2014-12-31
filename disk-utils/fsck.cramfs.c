@@ -101,25 +101,26 @@ static size_t blksize = 0;
 /* Input status of 0 to print help and exit without an error. */
 static void __attribute__((__noreturn__)) usage(int status)
 {
-	FILE *stream = status ? stderr : stdout;
+	FILE *out = status ? stderr : stdout;
 
-	fputs(USAGE_HEADER, stream);
-	fprintf(stream,
+	fputs(USAGE_HEADER, out);
+	fprintf(out,
 		_(" %s [options] <file>\n"), program_invocation_short_name);
 
-	fputs(USAGE_SEPARATOR, stream);
-	fputs(_("Check and repair a compressed ROM filesystem.\n"), stream);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Check and repair a compressed ROM filesystem.\n"), out);
 
-	fputs(USAGE_OPTIONS, stream);
-	fputs(_(" -a                       for compatibility only, ignored\n"), stream);
-	fputs(_(" -v, --verbose            be more verbose\n"), stream);
-	fputs(_(" -y                       for compatibility only, ignored\n"), stream);
-	fputs(_(" -b, --blocksize <size>   use this blocksize, defaults to page size\n"), stream);
-	fputs(_("     --extract[=<dir>]    test uncompression, optionally extract into <dir>\n"), stream);
-	fputs(USAGE_SEPARATOR, stream);
-	fputs(USAGE_HELP, stream);
-	fputs(USAGE_VERSION, stream);
-	fputs(USAGE_SEPARATOR, stream);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -a                       for compatibility only, ignored\n"), out);
+	fputs(_(" -v, --verbose            be more verbose\n"), out);
+	fputs(_(" -y                       for compatibility only, ignored\n"), out);
+	fputs(_(" -b, --blocksize <size>   use this blocksize, defaults to page size\n"), out);
+	fputs(_("     --extract[=<dir>]    test uncompression, optionally extract into <dir>\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fputs(USAGE_SEPARATOR, out);
+
 	exit(status);
 }
 
@@ -364,7 +365,7 @@ static int uncompress_block(void *src, size_t len)
 #define lchown chown
 #endif
 
-static void do_uncompress(char *path, int fd, unsigned long offset,
+static void do_uncompress(char *path, int outfd, unsigned long offset,
 			  unsigned long size)
 {
 	unsigned long curr = offset + 4 * ((size + blksize - 1) / blksize);
@@ -404,7 +405,7 @@ static void do_uncompress(char *path, int fd, unsigned long offset,
 		}
 		size -= out;
 		if (*extract_dir != '\0')
-			if (write(fd, outbuffer, out) < 0)
+			if (write(outfd, outbuffer, out) < 0)
 				err(FSCK_EX_ERROR, _("write failed: %s"),
 				    path);
 		curr = next;
@@ -488,7 +489,7 @@ static void do_directory(char *path, struct cramfs_inode *i)
 static void do_file(char *path, struct cramfs_inode *i)
 {
 	unsigned long offset = i->offset << 2;
-	int fd = 0;
+	int outfd = 0;
 
 	if (offset == 0 && i->size != 0)
 		errx(FSCK_EX_UNCORRECTED,
@@ -501,14 +502,14 @@ static void do_file(char *path, struct cramfs_inode *i)
 	if (opt_verbose)
 		print_node('f', i, path);
 	if (*extract_dir != '\0') {
-		fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, i->mode);
-		if (fd < 0)
+		outfd = open(path, O_WRONLY | O_CREAT | O_TRUNC, i->mode);
+		if (outfd < 0)
 			err(FSCK_EX_ERROR, _("cannot open %s"), path);
 	}
 	if (i->size)
-		do_uncompress(path, fd, offset, i->size);
+		do_uncompress(path, outfd, offset, i->size);
 	if ( *extract_dir != '\0') {
-		if (close_fd(fd) != 0)
+		if (close_fd(outfd) != 0)
 			err(FSCK_EX_ERROR, _("write failed: %s"), path);
 		change_file_status(path, i);
 	}

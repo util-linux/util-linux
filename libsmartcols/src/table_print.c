@@ -660,13 +660,13 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 			}
 		} else if (width < tb->termwidth) {
 			/* enlarge the last column */
-			struct libscols_column *cl = list_entry(
+			struct libscols_column *col = list_entry(
 				tb->tb_columns.prev, struct libscols_column, cl_columns);
 
 			DBG(TAB, ul_debugobj(tb, "   enlarge width (last column)"));
 
-			if (!scols_column_is_right(cl) && tb->termwidth - width > 0) {
-				cl->width += tb->termwidth - width;
+			if (!scols_column_is_right(col) && tb->termwidth - width > 0) {
+				col->width += tb->termwidth - width;
 				width = tb->termwidth;
 			}
 		}

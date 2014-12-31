@@ -856,7 +856,7 @@ static struct libmnt_table *parse_tabfiles(char **files,
  * Parses mountinfo and calls mnt_cache_set_targets(cache, mtab). Only
  * necessary if @tb in main() was read from a non-kernel source.
  */
-static void cache_set_targets(struct libmnt_cache *cache)
+static void cache_set_targets(struct libmnt_cache *tmp)
 {
 	struct libmnt_table *tb;
 	const char *path;
@@ -870,7 +870,7 @@ static void cache_set_targets(struct libmnt_cache *cache)
 		_PATH_PROC_MOUNTS;
 
 	if (mnt_table_parse_file(tb, path) == 0)
-		mnt_cache_set_targets(cache, tb);
+		mnt_cache_set_targets(tmp, tb);
 
 	mnt_unref_table(tb);
 }

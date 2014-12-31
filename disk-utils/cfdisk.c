@@ -505,7 +505,7 @@ static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 
 	/* wait for keys */
 	do {
-		int key = getch();
+		key = getch();
 
 		if (ui_resize)
 			ui_menu_resize(cf);
@@ -2006,7 +2006,6 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	case 'W': /* Write */
 	{
 		char buf[64] = { 0 };
-		int rc;
 
 		if (fdisk_is_readonly(cf->cxt)) {
 			warn = _("Device open in read-only mode");
@@ -2098,8 +2097,9 @@ static int ui_run(struct cfdisk *cf)
 		ui_warnx(_("Device open in read-only mode."));
 
 	do {
-		int rc = 0, key = getch();
+		int key = getch();
 
+		rc = 0;
 		if (ui_resize)
 			/* Note that ncurses getch() returns ERR when interrupted
 			 * by signal, but SLang does not interrupt at all. */

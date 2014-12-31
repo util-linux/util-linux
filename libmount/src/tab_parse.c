@@ -173,10 +173,10 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 		/* remove "(deleted)" suffix */
 		sz = strlen(fs->target);
 		if (sz > PATH_DELETED_SUFFIX_SZ) {
-			char *p = fs->target + (sz - PATH_DELETED_SUFFIX_SZ);
+			char *ptr = fs->target + (sz - PATH_DELETED_SUFFIX_SZ);
 
-			if (strcmp(p, PATH_DELETED_SUFFIX) == 0)
-				*p = '\0';
+			if (strcmp(ptr, PATH_DELETED_SUFFIX) == 0)
+				*ptr = '\0';
 		}
 
 		unmangle_string(fs->root);

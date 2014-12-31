@@ -892,33 +892,33 @@ static int create_usertree(struct lslogins_control *ctl)
 
 static struct libscols_table *setup_table(struct lslogins_control *ctl)
 {
-	struct libscols_table *tb = scols_new_table();
+	struct libscols_table *table = scols_new_table();
 	int n = 0;
 
-	if (!tb)
+	if (!table)
 		errx(EXIT_FAILURE, _("failed to initialize output table"));
 	if (ctl->noheadings)
-		scols_table_enable_noheadings(tb, 1);
+		scols_table_enable_noheadings(table, 1);
 
 	switch(outmode) {
 	case OUT_COLON:
-		scols_table_enable_raw(tb, 1);
-		scols_table_set_column_separator(tb, ":");
+		scols_table_enable_raw(table, 1);
+		scols_table_set_column_separator(table, ":");
 		break;
 	case OUT_NEWLINE:
-		scols_table_set_column_separator(tb, "\n");
+		scols_table_set_column_separator(table, "\n");
 		/* fallthrough */
 	case OUT_EXPORT:
-		scols_table_enable_export(tb, 1);
+		scols_table_enable_export(table, 1);
 		break;
 	case OUT_NUL:
-		scols_table_set_line_separator(tb, "\0");
+		scols_table_set_line_separator(table, "\0");
 		/* fallthrough */
 	case OUT_RAW:
-		scols_table_enable_raw(tb, 1);
+		scols_table_enable_raw(table, 1);
 		break;
 	case OUT_PRETTY:
-		scols_table_enable_noheadings(tb, 1);
+		scols_table_enable_noheadings(table, 1);
 	default:
 		break;
 	}
@@ -929,7 +929,7 @@ static struct libscols_table *setup_table(struct lslogins_control *ctl)
 		if (ctl->notrunc)
 			flags &= ~SCOLS_FL_TRUNC;
 
-		if (!scols_table_new_column(tb,
+		if (!scols_table_new_column(table,
 				coldescs[columns[n]].name,
 				coldescs[columns[n]].whint,
 				flags))
@@ -937,9 +937,9 @@ static struct libscols_table *setup_table(struct lslogins_control *ctl)
 		++n;
 	}
 
-	return tb;
+	return table;
 fail:
-	scols_unref_table(tb);
+	scols_unref_table(table);
 	return NULL;
 }
 
@@ -1106,7 +1106,7 @@ done:
 }
 #endif
 
-static int print_pretty(struct libscols_table *tb)
+static int print_pretty(struct libscols_table *table)
 {
 	struct libscols_iter *itr = scols_new_iter(SCOLS_ITER_FORWARD);
 	struct libscols_column *col;
@@ -1115,8 +1115,8 @@ static int print_pretty(struct libscols_table *tb)
 	const char *hstr, *dstr;
 	int n = 0;
 
-	ln = scols_table_get_line(tb, 0);
-	while (!scols_table_next_column(tb, itr, &col)) {
+	ln = scols_table_get_line(table, 0);
+	while (!scols_table_next_column(table, itr, &col)) {
 
 		data = scols_line_get_cell(ln, n);
 

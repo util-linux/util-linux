@@ -162,7 +162,7 @@ static char *get_fallback_filename(dev_t dev)
  * Return the absolute path of a file from
  * a given inode number (and its size)
  */
-static char *get_filename_sz(ino_t inode, pid_t pid, size_t *size)
+static char *get_filename_sz(ino_t inode, pid_t lock_pid, size_t *size)
 {
 	struct stat sb;
 	struct dirent *dp;
@@ -180,7 +180,7 @@ static char *get_filename_sz(ino_t inode, pid_t pid, size_t *size)
 	 * iterate the *entire* filesystem searching
 	 * for the damn file.
 	 */
-	sprintf(path, "/proc/%d/fd/", pid);
+	sprintf(path, "/proc/%d/fd/", lock_pid);
 	if (!(dirp = opendir(path)))
 		return NULL;
 
