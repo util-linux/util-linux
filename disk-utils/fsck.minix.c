@@ -112,6 +112,7 @@
 #include "all-io.h"
 #include "closestream.h"
 #include "rpmatch.h"
+#include "strutils.h"
 
 #define ROOT_INO 1
 #define YESNO_LENGTH 64
@@ -956,7 +957,9 @@ check_file(struct minix_inode *dir, unsigned int offset) {
 		ino = 0;
 	}
 	if (name_depth < MAX_DEPTH)
-		strncpy(name_list[name_depth], name, namelen);
+		xstrncpy(name_list[name_depth], name, namelen);
+	else
+		return;
 	name_depth++;
 	inode = get_inode(ino);
 	name_depth--;
@@ -981,7 +984,9 @@ check_file(struct minix_inode *dir, unsigned int offset) {
 	if (!inode)
 		return;
 	if (name_depth < MAX_DEPTH)
-		strncpy(name_list[name_depth], name, namelen);
+		xstrncpy(name_list[name_depth], name, namelen);
+	else
+		return;
 	name_depth++;
 	if (list) {
 		if (verbose)
@@ -1024,7 +1029,9 @@ check_file2(struct minix2_inode *dir, unsigned int offset) {
 		ino = 0;
 	}
 	if (name_depth < MAX_DEPTH)
-		strncpy(name_list[name_depth], name, namelen);
+		xstrncpy(name_list[name_depth], name, namelen);
+	else
+		return;
 	name_depth++;
 	inode = get_inode2(ino);
 	name_depth--;
