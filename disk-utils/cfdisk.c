@@ -1928,16 +1928,14 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		break;
 	case 'n': /* New */
 	{
-		uint64_t start, size, dflt_size;
+		uint64_t start, size, dflt_size, secs;
 		struct fdisk_partition *npa;	/* the new partition */
 		int expsize = 0;		/* size specified explicitly in sectors */
 
 		if (!pa || !fdisk_partition_is_freespace(pa)
 			|| !fdisk_partition_has_start(pa))
 			return -EINVAL;
-		npa = fdisk_new_partition();
-		if (!npa)
-			return -ENOMEM;
+
 		/* free space range */
 		start = fdisk_partition_get_start(pa);
 		size = dflt_size = fdisk_partition_get_size(pa) * fdisk_get_sector_size(cf->cxt);
@@ -1946,10 +1944,20 @@ static int main_menu_action(struct cfdisk *cf, int key)
 				== -CFDISK_ERR_ESC)
 			break;
 
+		secs = size / fdisk_get_sector_size(cf->cxt);
+		if (size && secs < 1) {
+			warn = _("Too small partition size specified.");
+			break;
+		}
+
+		npa = fdisk_new_partition();
+		if (!npa)
+			return -ENOMEM;
+
 		if (dflt_size == size)	/* default is to fillin all free space */
 			fdisk_partition_end_follow_default(npa, 1);
-		else /* set relative size of the partition */
-			fdisk_partition_set_size(npa, size / fdisk_get_sector_size(cf->cxt));
+		else
+			fdisk_partition_set_size(npa, secs);
 
 		if (expsize)
 			fdisk_partition_size_explicit(pa, 1);
@@ -2040,6 +2048,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		ui_draw_menu(cf);
 
 	ui_clean_hint();
+
 	if (warn)
 		ui_warnx(warn, n + 1);
 	else if (info)
