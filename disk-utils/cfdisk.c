@@ -87,6 +87,7 @@
 #define TABLE_START_LINE	4
 #define MENU_START_LINE		(ui_lines - 5)
 #define INFO_LINE		(ui_lines - 2)
+#define WARN_LINE		INFO_LINE
 #define HINT_LINE		(ui_lines - 1)
 
 #define CFDISK_ERR_ESC		5000
@@ -622,7 +623,7 @@ static void ui_warnx(const char *fmt, ...)
 	va_list ap;
 	va_start(ap, fmt);
 	if (ui_enabled)
-		ui_vprint_center(INFO_LINE,
+		ui_vprint_center(WARN_LINE,
 			colors_wanted() ? COLOR_PAIR(CFDISK_CL_WARNING) : 0,
 			fmt, ap);
 	else {
@@ -641,7 +642,7 @@ static void ui_warn(const char *fmt, ...)
 
 	va_start(ap, fmt);
 	if (ui_enabled)
-		ui_vprint_center(INFO_LINE,
+		ui_vprint_center(WARN_LINE,
 			colors_wanted() ? COLOR_PAIR(CFDISK_CL_WARNING) : 0,
 			fmt_m, ap);
 	else {
@@ -892,7 +893,6 @@ static size_t menuitem_get_line(struct cfdisk *cf, size_t idx)
 
 		if (items == 0)
 			return 0;
-
 		return MENU_START_LINE + ((idx / items));
 	}
 }
@@ -1016,18 +1016,19 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 static void ui_clean_menu(struct cfdisk *cf)
 {
 	size_t i;
-	size_t nlines;
+	size_t lastline;
 	struct cfdisk_menu *m = cf->menu;
 	size_t ln = menuitem_get_line(cf, 0);
 
 	if (m->vertical)
-		nlines = m->page_sz ? m->page_sz : m->nitems;
+		lastline = ln + (m->page_sz ? m->page_sz : m->nitems);
 	else
-		nlines = menuitem_get_line(cf, m->nitems);
+		lastline = menuitem_get_line(cf, m->nitems);
 
-	for (i = ln; i <= ln + nlines; i++) {
+	for (i = ln; i <= lastline; i++) {
 		move(i, 0);
 		clrtoeol();
+		DBG(MENU, ul_debug("clean_menu: line %zu", i));
 	}
 	if (m->vertical) {
 		move(ln - 1, 0);
