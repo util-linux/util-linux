@@ -1698,16 +1698,20 @@ static int ui_script_write(struct cfdisk *cf)
 		goto done;
 	}
 
+	DBG(UI, ul_debug("writing dump into: '%s'", buf));
 	f = fopen(buf, "w");
 	if (!f) {
 		ui_warn(_("Cannot open: %s"), buf);
+		rc = -errno;
 		goto done;
 	}
 
 	rc = fdisk_script_write_file(sc, f);
+	if (!rc)
+		ui_info(_("Disk layout successfully dumped."));
+done:
 	if (rc)
 		ui_warn(_("Failed to write script %s"), buf);
-done:
 	if (f)
 		fclose(f);
 	fdisk_unref_script(sc);
@@ -1997,14 +2001,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		}
 		break;
 	case 'u':
-		rc = ui_script_write(cf);
-		if (rc == 0)
-			info = _("Disk layout successfully dumped.");
-		else if (rc != CFDISK_ERR_ESC) {
-			refresh();
-			sleep(2);
-			warn = _("Failed to create script file");
-		}
+		ui_script_write(cf);
 		break;
 	case 'W': /* Write */
 	{
