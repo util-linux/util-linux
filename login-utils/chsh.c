@@ -88,7 +88,8 @@ static int get_shell_list(const char *shell_name)
 	FILE *fp;
 	int found = 0;
 	char *buf = NULL;
-	size_t sz = 0, len;
+	size_t sz = 0;
+	ssize_t len;
 
 	fp = fopen(_PATH_SHELLS, "r");
 	if (!fp) {
@@ -96,13 +97,9 @@ static int get_shell_list(const char *shell_name)
 			warnx(_("No known shells."));
 		return 0;
 	}
-	while (getline(&buf, &sz, fp) != -1) {
-		len = strlen(buf);
-		/* ignore comments */
-		if (*buf == '#')
-			continue;
-		/* skip blank lines*/
-		if (len < 2)
+	while ((len = getline(&buf, &sz, fp)) != -1) {
+		/* ignore comments and blank lines */
+		if (*buf == '#' || len < 2)
 			continue;
 		/* strip the ending newline */
 		if (buf[len - 1] == '\n')
