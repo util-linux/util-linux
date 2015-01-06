@@ -47,8 +47,8 @@ static int verbose = 0;
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options]\n"
-		       " %s shm|msg|sem <id>...\n"), program_invocation_short_name);
+	fprintf(out, _(" %1$s [options]\n"
+		       " %1$s shm|msg|sem <id>...\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Remove certain IPC resources.\n"), out);
