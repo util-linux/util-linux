@@ -1,9 +1,7 @@
 Patches
 
 	* send your patches to the mailing list or to the upstream maintainer
-	  (see the AUTHORS and README files)
-
-	* diff -u
+	  (see the README file in project root directory).
 
 	* don't include generated (autotools) stuff to your patches (hint:
 	  use git clean -Xd)
@@ -17,12 +15,16 @@ Patches
 
 	* one patch per email, with the changelog in the body of the email.
 
+	* mail attachments are difficult. Tip:
+	  git send-email --to util-linux@vger.kernel.org origin/master..yourbranch
+
 	* many small patches are favoured over one big. Break down is done on
 	  basis of logical functionality; for example #endif mark ups,
 	  compiler warning and exit codes fixes all should be individual
 	  small patches.
 
-	* Subject: [PATCH] subsystem: description
+	* 'Subject: [PATCH] subsystem: description'. See also 'Patching
+	  process'.
 
 	* if someone else wrote the patch, they should be credited (and
 	  blamed) for it. To communicate this, add a line:
@@ -74,8 +76,8 @@ Before sending a patch
 	  errors.
 
 	* test that previously existed program behavior is not
-	  unintentionally alterred. If you alter the behavior tell about in
-	  commit message.
+	  unintentionally alterred. If you alter the behavior tell about
+	  it in commit message.
 
 Coding style
 
@@ -86,7 +88,7 @@ Coding style
 
 	* Use `FIXME:' and a good description if want to inform others
 	  something is not quite right, and you are unwilling to fix the
-	  issue.
+	  issue in the submitted change.
 
 Patching process
 
@@ -106,6 +108,9 @@ Patching process
 	* Resubmission can be partial or complete.  If only few alterations
 	  are needed here and there resubmit particular patches.  When
 	  comments cause greater effect resubmit everything again.
+
+	* Mark resubmission with [PATCH v2]. Hint:
+	  git format-patch origin/master..yourbranch --subject-prefix='PATCH v2'
 
 	* All patch submissions, big or small, are either commented, reject,
 	  or merge.  When maintainer rejects a patch (series) it is pointless
