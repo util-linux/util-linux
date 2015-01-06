@@ -125,7 +125,7 @@ static int get_shell_list(const char *shell_name)
  */
 static void parse_argv(int argc, char **argv, struct sinfo *pinfo)
 {
-	const struct option long_options[] = {
+	static const struct option long_options[] = {
 		{"shell", required_argument, 0, 's'},
 		{"list-shells", no_argument, 0, 'l'},
 		{"help", no_argument, 0, 'u'},
