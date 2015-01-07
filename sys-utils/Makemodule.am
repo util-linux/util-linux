@@ -357,6 +357,13 @@ usrbin_exec_PROGRAMS += nsenter
 dist_man_MANS += sys-utils/nsenter.1
 nsenter_SOURCES = sys-utils/nsenter.c
 nsenter_LDADD = $(LDADD) libcommon.la
+
+if HAVE_STATIC_NSENTER
+usrbin_exec_PROGRAMS += nsenter.static
+nsenter_static_SOURCES = $(nsenter_SOURCES)
+nsenter_static_LDFLAGS = -all-static
+nsenter_static_LDADD = $(nsenter_LDADD)
+endif
 endif
 
 if BUILD_HWCLOCK
