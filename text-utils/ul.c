@@ -174,15 +174,6 @@ int main(int argc, char **argv)
 
 	termtype = getenv("TERM");
 
-	/*
-	 * FIXME: why terminal type is lpr when command begins with c and has
-	 * no terminal? If this behavior can be explained please insert
-	 * reference or remove the code. In case this truly is desired command
-	 * behavior this should be mentioned in manual page.
-	 */
-	if (termtype == NULL || (argv[0][0] == 'c' && !isatty(STDOUT_FILENO)))
-		termtype = "lpr";
-
 	while ((c = getopt_long(argc, argv, "it:T:Vh", longopts, NULL)) != -1)
 		switch (c) {
 
