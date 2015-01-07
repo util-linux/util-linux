@@ -356,7 +356,6 @@ AC_CHECK_FUNCS([ \
 	strnchr \
 	strndup \
 	strnlen \
-	strtoull \
 	sysconf \
 	sysinfo \
 	updwtmp \
