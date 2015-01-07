@@ -45,15 +45,16 @@
 #include "widechar.h"
 #include "ttyutils.h"
 
-#if defined(__FreeBSD_kernel__)
-#include <pty.h>
-#include <sys/param.h>
+#ifdef HAVE_SYS_PARAM_H
+# include <sys/param.h>
 #endif
 
+#if defined(__FreeBSD_kernel__)
+#include <pty.h>
+#endif
 
 #ifdef __linux__
 #  include <sys/kd.h>
-#  include <sys/param.h>
 #  define USE_SYSLOG
 #  ifndef DEFAULT_VCTERM
 #    define DEFAULT_VCTERM "linux"

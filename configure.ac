@@ -220,6 +220,7 @@ AC_CHECK_HEADERS([ \
 	sys/ioccom.h \
 	sys/ioctl.h \
 	sys/mkdev.h \
+	sys/param.h \
 	sys/prctl.h \
 	sys/queue.h \
 	sys/resource.h \
