@@ -10,8 +10,9 @@ Patches
 	  distribution-neutral. No RPMs/DEBs/... are provided - get yours
 	  from your distributor.
 
-	* patches are delivered via email only. Downloading them from
-	  internet servers is a pain.
+	* patches are delivered via email or git remote repository only.
+	  Downloading them from internet servers is a pain.  See
+	  howto-pull-request.txt for remote repository instructions.
 
 	* one patch per email, with the changelog in the body of the email.
 
@@ -111,6 +112,9 @@ Patching process
 
 	* Mark resubmission with [PATCH v2]. Hint:
 	  git format-patch origin/master..yourbranch --subject-prefix='PATCH v2'
+
+	* Use of remote repository for resubmission can be good idea.
+	  See also howto-pull-request.txt
 
 	* All patch submissions, big or small, are either commented, reject,
 	  or merge.  When maintainer rejects a patch (series) it is pointless
