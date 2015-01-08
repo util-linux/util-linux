@@ -85,6 +85,21 @@ conveniently gain capabilities needed to manage various aspects of the newly cre
 namespaces (such as configuring interfaces in the network namespace or mounting filesystems in
 the mount namespace) even when run unprivileged.  As a mere convenience feature, it does not support
 more sophisticated use cases, such as mapping multiple ranges of UIDs and GIDs.
+This option implies --setgroups=deny.
+.TP
+.BR \-s , " \-\-setgroups \fIallow|deny\fP"
+Allow or deny
+.BR setgroups (2)
+syscall in user namespaces.
+
+.BR setgroups(2)
+is only callable with CAP_SETGID and CAP_SETGID in a user
+namespace (since Linux 3.19) does not give you permission to call setgroups(2)
+until after GID map has been set. The GID map is writable by root when
+.BR setgroups(2)
+is enabled and GID map becomes writable by unprivileged processes when
+.BR setgroups(2)
+is permamently disabled.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.

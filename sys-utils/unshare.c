@@ -39,11 +39,38 @@
 #include "pathnames.h"
 #include "all-io.h"
 
-static void disable_setgroups(void)
+enum {
+	SETGROUPS_NONE = -1,
+	SETGROUPS_DENY = 0,
+	SETGROUPS_ALLOW = 1,
+};
+
+static const char *setgroups_strings[] =
+{
+	[SETGROUPS_DENY] = "deny",
+	[SETGROUPS_ALLOW] = "allow"
+};
+
+static int setgroups_str2id(const char *str)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(setgroups_strings); i++)
+		if (strcmp(str, setgroups_strings[i]) == 0)
+			return i;
+
+	errx(EXIT_FAILURE, _("unsupported --setgroups argument '%s'"), str);
+}
+
+static void setgroups_control(int action)
 {
 	const char *file = _PATH_PROC_SETGROUPS;
-	const char *deny = "deny";
+	const char *cmd;
 	int fd;
+
+	if (action < 0 || (size_t) action >= ARRAY_SIZE(setgroups_strings))
+		return;
+	cmd = setgroups_strings[action];
 
 	fd = open(file, O_WRONLY);
 	if (fd < 0) {
@@ -52,7 +79,7 @@ static void disable_setgroups(void)
 		 err(EXIT_FAILURE, _("cannot open %s"), file);
 	}
 
-	if (write_all(fd, deny, strlen(deny)))
+	if (write_all(fd, cmd, strlen(cmd)))
 		err(EXIT_FAILURE, _("write failed %s"), file);
 	close(fd);
 }
@@ -94,6 +121,7 @@ static void usage(int status)
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
 	fputs(_("     --mount-proc[=<dir>]  mount proc filesystem first (implies --mount)\n"), out);
 	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
+	fputs(_(" -s, --setgroups <allow|deny>  control setgroups syscall in user namespaces\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -106,7 +134,8 @@ static void usage(int status)
 int main(int argc, char *argv[])
 {
 	enum {
-		OPT_MOUNTPROC = CHAR_MAX + 1
+		OPT_MOUNTPROC = CHAR_MAX + 1,
+		OPT_SETGROUPS
 	};
 	static const struct option longopts[] = {
 		{ "help", no_argument, 0, 'h' },
@@ -120,9 +149,11 @@ int main(int argc, char *argv[])
 		{ "fork", no_argument, 0, 'f' },
 		{ "mount-proc", optional_argument, 0, OPT_MOUNTPROC },
 		{ "map-root-user", no_argument, 0, 'r' },
+		{ "setgroups", required_argument, 0, OPT_SETGROUPS },
 		{ NULL, 0, 0, 0 }
 	};
 
+	int setgrpcmd = SETGROUPS_NONE;
 	int unshare_flags = 0;
 	int c, forkit = 0, maproot = 0;
 	const char *procmnt = NULL;
@@ -170,6 +201,9 @@ int main(int argc, char *argv[])
 			unshare_flags |= CLONE_NEWUSER;
 			maproot = 1;
 			break;
+		case OPT_SETGROUPS:
+			setgrpcmd = setgroups_str2id(optarg);
+			break;
 		default:
 			usage(EXIT_FAILURE);
 		}
@@ -199,10 +233,20 @@ int main(int argc, char *argv[])
 	}
 
 	if (maproot) {
-		disable_setgroups();
+		if (setgrpcmd == SETGROUPS_ALLOW)
+			errx(EXIT_FAILURE, _("options --setgroups=allow and "
+					"--map-root-user are mutually exclusive."));
+
+		/* since Linux 3.19 unprivileged writing of /proc/self/gid_map
+		 * has s been disabled unless /proc/self/setgroups is written
+		 * first to permanently disable the ability to call setgroups
+		 * in that user namespace. */
+		setgroups_control(SETGROUPS_DENY);
 		map_id(_PATH_PROC_UIDMAP, 0, real_euid);
 		map_id(_PATH_PROC_GIDMAP, 0, real_egid);
-	}
+
+	} else if (setgrpcmd != SETGROUPS_NONE)
+		setgroups_control(setgrpcmd);
 
 	if (procmnt &&
 	    (mount("none", procmnt, NULL, MS_PRIVATE|MS_REC, NULL) != 0 ||
