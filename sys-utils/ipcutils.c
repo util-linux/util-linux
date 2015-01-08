@@ -387,10 +387,6 @@ int ipc_msg_get_info(int id, struct msg_data **msgds)
 		if (id > -1) {
 			/* ID specified */
 			if (id == p->msg_perm.id) {
-				/*
-				 * FIXME: q_qbytes are not in /proc
-				 *
-				 */
 				if (msgctl(id, IPC_STAT, &msgseg) != -1)
 					p->q_qbytes = msgseg.msg_qbytes;
 				i = 1;

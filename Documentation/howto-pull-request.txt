@@ -150,7 +150,7 @@ The following changes since commit 17bf9c1c39b4f35163ec5c443b8bbd5857386ddd:
 
 are available in the git repository at:
 
-  git://github.com/yourlogin/lelux-utiliteetit.git textual
+  git://github.com/yourlogin/util-linux.git textual
 ----------------------------------------------------------------
 
 and copy paste it to 0000-cover-letter.patch file somewhere near 'BLURB

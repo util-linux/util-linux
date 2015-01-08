@@ -153,9 +153,6 @@ main(int argc, char *argv[])
 	if ((fd = open(file, O_RDONLY, 0)) < 0 || fstat(fd, &sb))
 		err(EXIT_FAILURE, "%s", file);
 	front = mmap(NULL, (size_t) sb.st_size, PROT_READ,
-#ifdef MAP_FILE
-		     MAP_FILE |
-#endif
 		     MAP_SHARED, fd, (off_t) 0);
 	if
 #ifdef MAP_FAILED
@@ -164,13 +161,6 @@ main(int argc, char *argv[])
 		((void *)(front) <= (void *)0)
 #endif
 			err(EXIT_FAILURE, "%s", file);
-
-#if 0
-	/* workaround for mmap problem (rmiller@duskglow.com) */
-	if (front == (void *)0)
-		return 1;
-#endif
-
 	back = front + sb.st_size;
 	return look(front, back);
 }

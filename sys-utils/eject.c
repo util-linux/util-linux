@@ -335,20 +335,23 @@ static void auto_eject(const struct eject_control *ctl)
 }
 
 /*
- * Stops CDROM from opening on manual eject pressing the button.
+ * Stops CDROM from opening on manual eject button press.
  * This can be useful when you carry your laptop
  * in your bag while it's on and no CD inserted in it's drive.
  * Implemented as found in Documentation/ioctl/cdrom.txt
- *
- * TODO: Maybe we should check this also:
- * EDRIVE_CANT_DO_THIS   Door lock function not supported.
- * EBUSY                 Attempt to unlock when multiple users
- *                       have the drive open and not CAP_SYS_ADMIN
  */
 static void manual_eject(const struct eject_control *ctl)
 {
-	if (ioctl(ctl->fd, CDROM_LOCKDOOR, ctl->i_arg) < 0)
-		err(EXIT_FAILURE, _("CD-ROM lock door command failed"));
+	if (ioctl(ctl->fd, CDROM_LOCKDOOR, ctl->i_arg) < 0) {
+		switch (errno) {
+		case EDRIVE_CANT_DO_THIS:
+			errx(EXIT_FAILURE, _("CD-ROM door lock is not supported"));
+		case EBUSY:
+			errx(EXIT_FAILURE, _("other users have the drive open and not CAP_SYS_ADMIN"));
+		default:
+			err(EXIT_FAILURE, _("CD-ROM lock door command failed"));
+		}
+	}
 
 	if (ctl->i_arg)
 		info(_("CD-Drive may NOT be ejected with device button"));
