@@ -437,16 +437,16 @@ static int table_add_freespace(
 	}
 
 	while (fdisk_table_next_partition(tb, &itr, &x) == 0) {
-		fdisk_sector_t end, best_end = 0;
+		fdisk_sector_t the_end, best_end = 0;
 
 		if (!fdisk_partition_has_end(x))
 			continue;
 
-		end = fdisk_partition_get_end(x);
+		the_end = fdisk_partition_get_end(x);
 		if (best)
 			best_end = fdisk_partition_get_end(best);
 
-		if (end < pa->start && (!best || best_end < end))
+		if (the_end < pa->start && (!best || best_end < the_end))
 			best = x;
 	}
 

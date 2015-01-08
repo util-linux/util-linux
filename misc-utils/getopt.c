@@ -91,12 +91,12 @@ struct getopt_control {
 
 enum { REALLOC_INCREMENT = 8 };
 
-/* Allow changing which getopt is in use with function pointer */
+/* Allow changing which getopt is in use with function pointer. */
 int (*getopt_long_fp) (int argc, char *const *argv, const char *optstr,
 		       const struct option * longopts, int *longindex);
 
 /*
- * This function 'print_normalizeds' a single argument: it puts single quotes
+ * This function 'normalizes' a single argument: it puts single quotes
  * around it and escapes other special characters. If quote is false, it
  * just returns its argument.
  *
@@ -314,21 +314,24 @@ static void __attribute__ ((__noreturn__)) print_help(void)
 {
 	fputs(USAGE_HEADER, stderr);
 	fprintf(stderr, _(
-		" %1$s optstring parameters\n"
-		" %1$s [options] [--] optstring parameters\n"
-		" %1$s [options] -o|--options optstring [options] [--] parameters\n"),
+		" %1$s <optstring> <parameters>\n"
+		" %1$s [options] [--] <optstring> <parameters>\n"
+		" %1$s [options] -o|--options <optstring> [options] [--] <parameters>\n"),
 		program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, stderr);
+	fputs(_("Parse command options.\n"), stderr);
+
 	fputs(USAGE_OPTIONS, stderr);
-	fputs(_(" -a, --alternative            Allow long options starting with single -\n"), stderr);
-	fputs(_(" -l, --longoptions <longopts> Long options to be recognized\n"), stderr);
-	fputs(_(" -n, --name <progname>        The name under which errors are reported\n"), stderr);
-	fputs(_(" -o, --options <optstring>    Short options to be recognized\n"), stderr);
-	fputs(_(" -q, --quiet                  Disable error reporting by getopt(3)\n"), stderr);
-	fputs(_(" -Q, --quiet-output           No normal output\n"), stderr);
-	fputs(_(" -s, --shell <shell>          Set shell quoting conventions\n"), stderr);
-	fputs(_(" -T, --test                   Test for getopt(1) version\n"), stderr);
-	fputs(_(" -u, --unquoted               Do not quote the output\n"), stderr);
+	fputs(_(" -a, --alternative             allow long options starting with single -\n"), stderr);
+	fputs(_(" -l, --longoptions <longopts>  the long options to be recognized\n"), stderr);
+	fputs(_(" -n, --name <progname>         the name under which errors are reported\n"), stderr);
+	fputs(_(" -o, --options <optstring>     the short options to be recognized\n"), stderr);
+	fputs(_(" -q, --quiet                   disable error reporting by getopt(3)\n"), stderr);
+	fputs(_(" -Q, --quiet-output            no normal output\n"), stderr);
+	fputs(_(" -s, --shell <shell>           set quoting conventions to those of <shell>\n"), stderr);
+	fputs(_(" -T, --test                    test for getopt(1) version\n"), stderr);
+	fputs(_(" -u, --unquoted                do not quote the output\n"), stderr);
 	fputs(USAGE_SEPARATOR, stderr);
 	fputs(USAGE_HELP, stderr);
 	fputs(USAGE_VERSION, stderr);

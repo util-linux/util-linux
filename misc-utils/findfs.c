@@ -27,6 +27,10 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] {LABEL,UUID,PARTUUID,PARTLABEL}=<value>\n"),
 		program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Find a filesystem by label or UUID.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);

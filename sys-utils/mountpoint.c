@@ -118,6 +118,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	      _(" %1$s [-qd] /path/to/directory\n"
 		" %1$s -x /dev/device\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Check whether a directory or file is a mountpoint.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -q, --quiet        quiet mode - don't print anything\n"
 		" -d, --fs-devno     print maj:min device number of the filesystem\n"

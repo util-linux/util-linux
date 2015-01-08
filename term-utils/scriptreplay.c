@@ -42,6 +42,9 @@ usage(FILE *out)
 	      _(" %s [-t] timingfile [typescript] [divisor]\n"),
 	      program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Play back terminal typescripts, using timing information.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -t, --timing <file>     script timing output file\n"
 		" -s, --typescript <file> script terminal session output file\n"

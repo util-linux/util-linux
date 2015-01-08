@@ -643,35 +643,35 @@ static int swapon_by_uuid(const char *uuid, int prio, int dsc)
 
 /* -o <options> or fstab */
 static int parse_options(const char *optstr,
-			 int *priority, int *discard, int *nofail)
+			 int *prio, int *disc, int *nofail)
 {
 	char *arg = NULL;
 
 	assert(optstr);
-	assert(priority);
-	assert(discard);
+	assert(prio);
+	assert(disc);
 	assert(nofail);
 
 	if (mnt_optstr_get_option(optstr, "nofail", NULL, 0) == 0)
 		*nofail = 1;
 
 	if (mnt_optstr_get_option(optstr, "discard", &arg, NULL) == 0) {
-		*discard |= SWAP_FLAG_DISCARD;
+		*disc |= SWAP_FLAG_DISCARD;
 
 		if (arg) {
 			/* only single-time discards are wanted */
 			if (strcmp(arg, "once") == 0)
-				*discard |= SWAP_FLAG_DISCARD_ONCE;
+				*disc |= SWAP_FLAG_DISCARD_ONCE;
 
 			/* do discard for every released swap page */
 			if (strcmp(arg, "pages") == 0)
-				*discard |= SWAP_FLAG_DISCARD_PAGES;
+				*disc |= SWAP_FLAG_DISCARD_PAGES;
 			}
 	}
 
 	arg = NULL;
 	if (mnt_optstr_get_option(optstr, "pri", &arg, NULL) == 0 && arg)
-		*priority = atoi(arg);
+		*prio = atoi(arg);
 
 	return 0;
 }
@@ -724,8 +724,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	size_t i;
 	fputs(USAGE_HEADER, out);
-
 	fprintf(out, _(" %s [options] [<spec>]\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Enable devices and files for paging and swapping.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all                enable all swaps from /etc/fstab\n"), out);

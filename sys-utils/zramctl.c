@@ -351,7 +351,7 @@ static void status(struct zram *z)
 	if (z)
 		fill_table_row(tb, z);		/* just one device specified */
 	else {
-		size_t i;			/* list all used devices */
+		/* list all used devices */
 		z = new_zram(NULL);
 
 		for (i = 0; ; i++) {
@@ -377,6 +377,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 			" %1$s -r <device> [...]\n"
 			" %1$s [options] -f | <device> -s <size>\n"),
 			program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Set up and control zram devices.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --algorithm lzo|lz4   compression algorithm to use\n"), out);

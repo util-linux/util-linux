@@ -297,6 +297,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out,
 		_(" %s [options] [filename]\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Dump UTMP and WTMP files in raw format.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -f, --follow         output appended data as the file grows\n"), out);
 	fputs(_(" -r, --reverse        write back dumped data into utmp file\n"), out);

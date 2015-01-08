@@ -193,8 +193,11 @@ static void __attribute__ ((__noreturn__)) usage(int exitcode)
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <ldisc> <device>\n"), program_invocation_short_name);
-	fputs(USAGE_OPTIONS, out);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Attach a line discipline to a serial line.\n"), out);
+
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -d, --debug             print verbose messages to stderr\n"), out);
 	fputs(_(" -s, --speed <value>     set serial line speed\n"), out);
 	fputs(_(" -c, --intro-command <string> intro sent before ldattach\n"), out);

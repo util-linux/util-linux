@@ -171,11 +171,14 @@ static inline size_t rtrim_whitespace(unsigned char *str)
 {
 	size_t i = strlen((char *) str);
 
-	while (i--) {
-		if (!isspace(str[i]))
+	while (i) {
+		i--;
+		if (!isspace(str[i])) {
+			i++;
 			break;
+		}
 	}
-	str[++i] = '\0';
+	str[i] = '\0';
 	return i;
 }
 

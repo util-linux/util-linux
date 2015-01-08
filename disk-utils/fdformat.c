@@ -143,6 +143,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out, _(" %s [options] <device>\n"),
 		program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Do a low-level formatting of a floppy disk.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -f, --from <N>    start at the track N (default 0)\n"), out);
 	fputs(_(" -t, --to <N>      stop at the track N\n"), out);

@@ -162,7 +162,7 @@ static char *get_fallback_filename(dev_t dev)
  * Return the absolute path of a file from
  * a given inode number (and its size)
  */
-static char *get_filename_sz(ino_t inode, pid_t pid, size_t *size)
+static char *get_filename_sz(ino_t inode, pid_t lock_pid, size_t *size)
 {
 	struct stat sb;
 	struct dirent *dp;
@@ -180,7 +180,7 @@ static char *get_filename_sz(ino_t inode, pid_t pid, size_t *size)
 	 * iterate the *entire* filesystem searching
 	 * for the damn file.
 	 */
-	sprintf(path, "/proc/%d/fd/", pid);
+	sprintf(path, "/proc/%d/fd/", lock_pid);
 	if (!(dirp = opendir(path)))
 		return NULL;
 
@@ -223,7 +223,7 @@ out:
  */
 static ino_t get_dev_inode(char *str, dev_t *dev)
 {
-	int maj = 0, min = 0;
+	unsigned int maj = 0, min = 0;
 	ino_t inum = 0;
 
 	sscanf(str, "%02x:%02x:%ju", &maj, &min, &inum);
@@ -505,6 +505,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 	fprintf(out,
 		_(" %s [options]\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("List local system locks.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -p, --pid <pid>        process id\n"

@@ -321,4 +321,21 @@ static inline int xusleep(useconds_t usec)
 #define stringify_value(s) stringify(s)
 #define stringify(s) #s
 
+/*
+ * UL_ASAN_BLACKLIST is a macro to tell AddressSanitizer (a compile-time
+ * instrumentation shipped with Clang and GCC) to not instrument the
+ * annotated function.  Furthermore, it will prevent the compiler from
+ * inlining the function because inlining currently breaks the blacklisting
+ * mechanism of AddressSanitizer.
+ */
+#if defined(__has_feature)
+# if __has_feature(address_sanitizer)
+#  define UL_ASAN_BLACKLIST __attribute__((noinline)) __attribute__((no_sanitize_memory)) __attribute__((no_sanitize_address))
+# else
+#  define UL_ASAN_BLACKLIST	/* nothing */
+# endif
+#else
+# define UL_ASAN_BLACKLIST	/* nothing */
+#endif
+
 #endif /* UTIL_LINUX_C_H */

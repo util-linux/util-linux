@@ -76,8 +76,11 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <filename>\n"), program_invocation_short_name);
-	fputs(USAGE_OPTIONS, out);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Preallocate space to, or deallocate space from a file.\n"), out);
+
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -c, --collapse-range remove a range from the file\n"), out);
 	fputs(_(" -d, --dig-holes      detect zeroes and replace with holes\n"), out);
 	fputs(_(" -l, --length <num>   length for range operations, in bytes\n"), out);
@@ -365,7 +368,8 @@ int main(int argc, char **argv)
 
 	/* O_CREAT makes sense only for the default fallocate(2) behavior
 	 * when mode is no specified and new space is allocated */
-	fd = open(filename, O_RDWR | (!dig && !mode ? O_CREAT : 0), 0644);
+	fd = open(filename, O_RDWR | (!dig && !mode ? O_CREAT : 0),
+		  S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), filename);
 

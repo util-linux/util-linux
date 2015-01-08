@@ -402,6 +402,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options]\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Set the attributes of a terminal.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" --term          <terminal_name>   override TERM environment variable\n"), out);
 	fputs(_(" --reset                           reset terminal to power-on state\n"), out);

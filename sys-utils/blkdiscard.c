@@ -61,6 +61,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <device>\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Discard the content of sectors on a device.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -o, --offset <num>  offset in bytes to discard from\n"
 		" -l, --length <num>  length of bytes to discard from the offset\n"

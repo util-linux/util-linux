@@ -153,6 +153,10 @@ void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <file>...\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Display file contents in hexadecimal, decimal, octal, or ascii.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -b, --one-byte-octal      one-byte octal display\n"), out);
 	fputs(_(" -c, --one-byte-char       one-byte character display\n"), out);

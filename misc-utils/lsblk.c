@@ -1523,6 +1523,10 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<device> ...]\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("List information about block devices.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all            print all devices\n"), out);
 	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);

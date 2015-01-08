@@ -1,4 +1,4 @@
-.TH GETOPT "1" "June 2012" "util-linux" "User Commands"
+.TH GETOPT "1" "December 2014" "util-linux" "User Commands"
 .SH NAME
 getopt \- parse command options (enhanced)
 .SH SYNOPSIS
@@ -6,15 +6,15 @@ getopt \- parse command options (enhanced)
 .I optstring parameters
 .br
 .B getopt
-.RI [ options ]
+[options]
 .RB [ \-\- ]
 .I optstring parameters
 .br
 .B getopt
-.RI [ options ]
+[options]
 .BR \-o | \-\-options
 .I optstring
-.RI [ options ]
+[options]
 .RB [ \-\- ]
 .I parameters
 .SH DESCRIPTION
@@ -69,7 +69,7 @@ for more information).
 .PP
 Traditional implementations of
 .BR getopt (1)
-are unable to cope with whitespace and other (shell\-specific)
+are unable to cope with whitespace and other (shell-specific)
 special characters in arguments and non\-option parameters.  To solve
 this problem, this implementation can generate quoted output which
 must once again be interpreted by the shell (usually by using the
@@ -151,13 +151,6 @@ conventions are used.  Valid arguments are currently
 and
 .RB ' tcsh '.
 .TP
-.BR \-u , " \-\-unquoted"
-Do not quote the output.  Note that whitespace and special
-(shell\-dependent) characters can cause havoc in this mode (like they
-do with other
-.BR getopt (1)
-implementations).
-.TP
 .BR \-T , " \-\-test"
 Test if your
 .BR getopt (1)
@@ -169,6 +162,13 @@ and this version if the environment variable
 is set, will return
 .RB ' \-\- '
 and error status 0.
+.TP
+.BR \-u , " \-\-unquoted"
+Do not quote the output.  Note that whitespace and special
+(shell-dependent) characters can cause havoc in this mode (like they
+do with other
+.BR getopt (1)
+implementations).
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.  No other output is generated.

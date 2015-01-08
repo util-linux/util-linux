@@ -1566,6 +1566,9 @@ static void usage(const char *fmt, ...)
 	fputs(USAGE_HEADER, usageto);
 	fputs(_(" hwclock [function] [option...]\n"), usageto);
 
+	fputs(USAGE_SEPARATOR, usageto);
+	fputs(_("Query or set the hardware clock.\n"), usageto);
+
 	fputs(_("\nFunctions:\n"), usageto);
 	fputs(_(" -h, --help           show this help text and exit\n"
 		" -r, --show           read hardware clock and print result\n"

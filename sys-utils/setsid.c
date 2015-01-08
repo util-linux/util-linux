@@ -32,6 +32,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" %s [options] <program> [arguments ...]\n"),
 		program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Run a program in a new session.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -c, --ctty     set the controlling terminal to the current one\n"), out);
 	fputs(_(" -w, --wait     wait program to exit, and use the same return\n"), out);

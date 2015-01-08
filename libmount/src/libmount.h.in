@@ -536,15 +536,27 @@ extern int mnt_tabdiff_next_change(struct libmnt_tabdiff *df,
 				   struct libmnt_fs **new_fs,
 				   int *oper);
 
-/* minitor.c */
+/* monitor.c */
+enum {
+	MNT_MONITOR_TYPE_USERSPACE = 1,	/* userspace mount options */
+	MNT_MONITOR_TYPE_KERNEL		/* kernel mount table */
+};
+
 extern struct libmnt_monitor *mnt_new_monitor(void);
 extern void mnt_ref_monitor(struct libmnt_monitor *mn);
 extern void mnt_unref_monitor(struct libmnt_monitor *mn);
 
-extern int mnt_monitor_userspace_get_fd(struct libmnt_monitor *mn, const char *filename);
-extern int mnt_monitor_get_events(struct libmnt_monitor *mn, int fd, unsigned int *event);
-extern const char *mnt_monitor_get_filename(struct libmnt_monitor *mn, int fd);
-extern int mnt_monitor_is_changed(struct libmnt_monitor *mn, int fd);
+extern int mnt_monitor_enable_kernel(struct libmnt_monitor *mn, int enable);
+extern int mnt_monitor_enable_userspace(struct libmnt_monitor *mn,
+				int enable, const char *filename);
+
+extern int mnt_monitor_get_fd(struct libmnt_monitor *mn);
+extern int mnt_monitor_close_fd(struct libmnt_monitor *mn);
+extern int mnt_monitor_wait(struct libmnt_monitor *mn, int timeout);
+
+extern int mnt_monitor_next_changed(struct libmnt_monitor *mn,
+			     const char **filename, int *type);
+extern int mnt_monitor_event_cleanup(struct libmnt_monitor *mn);
 
 
 /* context.c */

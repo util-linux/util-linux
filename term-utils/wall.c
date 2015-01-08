@@ -81,6 +81,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] [<file> | <message>]\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Write a message to all users.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -n, --nobanner          do not print banner, works only for root\n"), out);
 	fputs(_(" -t, --timeout <timeout> write timeout in seconds\n"), out);

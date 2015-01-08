@@ -389,8 +389,11 @@ libmnt_monitor
 mnt_new_monitor
 mnt_ref_monitor
 mnt_unref_monitor
-mnt_monitor_userspace_get_fd
-mnt_monitor_get_events
-mnt_monitor_get_filename
-mnt_monitor_is_changed
+mnt_monitor_enable_userspace
+mnt_monitor_enable_kernel
+mnt_monitor_get_fd
+mnt_monitor_close_fd
+mnt_monitor_next_changed
+mnt_monitor_event_cleanup
+mnt_monitor_wait
 </SECTION>

@@ -200,6 +200,10 @@ static void __attribute__((__noreturn__)) usage(FILE *output)
 	fputs(USAGE_HEADER, output);
 	fprintf(output, _(" %s [options] <newrootdir> <init> <args to init>\n"),
 		program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, output);
+	fputs(_("Switch to another filesystem as the root of the mount tree.\n"), output);
+
 	fputs(USAGE_OPTIONS, output);
 	fputs(USAGE_HELP, output);
 	fputs(USAGE_VERSION, output);

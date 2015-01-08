@@ -65,6 +65,9 @@ static void usage(int status)
 	fprintf(out, _(" %s [options] <program> [<argument>...]\n"),
 		program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Run a program with namespaces of other processes.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -t, --target <pid>     target process to get namespaces from\n"), out);
 	fputs(_(" -m, --mount[=<file>]   enter mount namespace\n"), out);

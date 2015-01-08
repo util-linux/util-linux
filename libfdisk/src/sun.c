@@ -957,9 +957,11 @@ static int sun_write_disklabel(struct fdisk_context *cxt)
 	sunlabel->nhead = cpu_to_be16(cxt->geom.heads);
 	sunlabel->nsect = cpu_to_be16(cxt->geom.sectors);
 
-	if (cxt->geom.cylinders != be16_to_cpu(sunlabel->ncyl))
-		sunlabel->ncyl = cpu_to_be16( cxt->geom.cylinders
-				      - be16_to_cpu(sunlabel->acyl) );
+	if (cxt->geom.cylinders != be16_to_cpu(sunlabel->ncyl)) {
+		int a = cpu_to_be16(cxt->geom.cylinders);
+		int b = be16_to_cpu(sunlabel->acyl);
+		sunlabel->ncyl = a - b;
+	}
 
 	ush = (unsigned short *) sunlabel;
 

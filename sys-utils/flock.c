@@ -53,6 +53,10 @@ static void __attribute__((__noreturn__)) usage(int ex)
 		  " %1$s [options] <file>|<directory> -c <command>\n"
 		  " %1$s [options] <file descriptor number>\n"),
 		program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, stderr);
+	fputs(_("Manage file locks from shell scripts.\n"), stderr);
+
 	fputs(USAGE_OPTIONS, stderr);
 	fputs(_(  " -s, --shared             get a shared lock\n"), stderr);
 	fputs(_(  " -x, --exclusive          get an exclusive lock (default)\n"), stderr);

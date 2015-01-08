@@ -87,6 +87,7 @@
 #define TABLE_START_LINE	4
 #define MENU_START_LINE		(ui_lines - 5)
 #define INFO_LINE		(ui_lines - 2)
+#define WARN_LINE		INFO_LINE
 #define HINT_LINE		(ui_lines - 1)
 
 #define CFDISK_ERR_ESC		5000
@@ -504,7 +505,7 @@ static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 
 	/* wait for keys */
 	do {
-		int key = getch();
+		key = getch();
 
 		if (ui_resize)
 			ui_menu_resize(cf);
@@ -622,7 +623,7 @@ static void ui_warnx(const char *fmt, ...)
 	va_list ap;
 	va_start(ap, fmt);
 	if (ui_enabled)
-		ui_vprint_center(INFO_LINE,
+		ui_vprint_center(WARN_LINE,
 			colors_wanted() ? COLOR_PAIR(CFDISK_CL_WARNING) : 0,
 			fmt, ap);
 	else {
@@ -641,7 +642,7 @@ static void ui_warn(const char *fmt, ...)
 
 	va_start(ap, fmt);
 	if (ui_enabled)
-		ui_vprint_center(INFO_LINE,
+		ui_vprint_center(WARN_LINE,
 			colors_wanted() ? COLOR_PAIR(CFDISK_CL_WARNING) : 0,
 			fmt_m, ap);
 	else {
@@ -892,7 +893,6 @@ static size_t menuitem_get_line(struct cfdisk *cf, size_t idx)
 
 		if (items == 0)
 			return 0;
-
 		return MENU_START_LINE + ((idx / items));
 	}
 }
@@ -1016,18 +1016,19 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 static void ui_clean_menu(struct cfdisk *cf)
 {
 	size_t i;
-	size_t nlines;
+	size_t lastline;
 	struct cfdisk_menu *m = cf->menu;
 	size_t ln = menuitem_get_line(cf, 0);
 
 	if (m->vertical)
-		nlines = m->page_sz ? m->page_sz : m->nitems;
+		lastline = ln + (m->page_sz ? m->page_sz : m->nitems);
 	else
-		nlines = menuitem_get_line(cf, m->nitems);
+		lastline = menuitem_get_line(cf, m->nitems);
 
-	for (i = ln; i <= ln + nlines; i++) {
+	for (i = ln; i <= lastline; i++) {
 		move(i, 0);
 		clrtoeol();
+		DBG(MENU, ul_debug("clean_menu: line %zu", i));
 	}
 	if (m->vertical) {
 		move(ln - 1, 0);
@@ -1697,16 +1698,20 @@ static int ui_script_write(struct cfdisk *cf)
 		goto done;
 	}
 
+	DBG(UI, ul_debug("writing dump into: '%s'", buf));
 	f = fopen(buf, "w");
 	if (!f) {
 		ui_warn(_("Cannot open: %s"), buf);
+		rc = -errno;
 		goto done;
 	}
 
 	rc = fdisk_script_write_file(sc, f);
+	if (!rc)
+		ui_info(_("Disk layout successfully dumped."));
+done:
 	if (rc)
 		ui_warn(_("Failed to write script %s"), buf);
-done:
 	if (f)
 		fclose(f);
 	fdisk_unref_script(sc);
@@ -1928,16 +1933,14 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		break;
 	case 'n': /* New */
 	{
-		uint64_t start, size, dflt_size;
+		uint64_t start, size, dflt_size, secs;
 		struct fdisk_partition *npa;	/* the new partition */
 		int expsize = 0;		/* size specified explicitly in sectors */
 
 		if (!pa || !fdisk_partition_is_freespace(pa)
 			|| !fdisk_partition_has_start(pa))
 			return -EINVAL;
-		npa = fdisk_new_partition();
-		if (!npa)
-			return -ENOMEM;
+
 		/* free space range */
 		start = fdisk_partition_get_start(pa);
 		size = dflt_size = fdisk_partition_get_size(pa) * fdisk_get_sector_size(cf->cxt);
@@ -1946,10 +1949,20 @@ static int main_menu_action(struct cfdisk *cf, int key)
 				== -CFDISK_ERR_ESC)
 			break;
 
+		secs = size / fdisk_get_sector_size(cf->cxt);
+		if (size && secs < 1) {
+			warn = _("Too small partition size specified.");
+			break;
+		}
+
+		npa = fdisk_new_partition();
+		if (!npa)
+			return -ENOMEM;
+
 		if (dflt_size == size)	/* default is to fillin all free space */
 			fdisk_partition_end_follow_default(npa, 1);
-		else /* set relative size of the partition */
-			fdisk_partition_set_size(npa, size / fdisk_get_sector_size(cf->cxt));
+		else
+			fdisk_partition_set_size(npa, secs);
 
 		if (expsize)
 			fdisk_partition_size_explicit(pa, 1);
@@ -1988,19 +2001,11 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		}
 		break;
 	case 'u':
-		rc = ui_script_write(cf);
-		if (rc == 0)
-			info = _("Disk layout successfully dumped.");
-		else if (rc != CFDISK_ERR_ESC) {
-			refresh();
-			sleep(2);
-			warn = _("Failed to create script file");
-		}
+		ui_script_write(cf);
 		break;
 	case 'W': /* Write */
 	{
 		char buf[64] = { 0 };
-		int rc;
 
 		if (fdisk_is_readonly(cf->cxt)) {
 			warn = _("Device open in read-only mode");
@@ -2040,6 +2045,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		ui_draw_menu(cf);
 
 	ui_clean_hint();
+
 	if (warn)
 		ui_warnx(warn, n + 1);
 	else if (info)
@@ -2091,8 +2097,9 @@ static int ui_run(struct cfdisk *cf)
 		ui_warnx(_("Device open in read-only mode."));
 
 	do {
-		int rc = 0, key = getch();
+		int key = getch();
 
+		rc = 0;
 		if (ui_resize)
 			/* Note that ncurses getch() returns ERR when interrupted
 			 * by signal, but SLang does not interrupt at all. */
@@ -2156,9 +2163,11 @@ static int ui_run(struct cfdisk *cf)
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
-
 	fprintf(out,
 	      _(" %1$s [options] <disk>\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Display or manipulate a disk partition table.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -L --color[=<when>]     colorize output (auto, always or never)\n"), out);

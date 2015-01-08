@@ -162,6 +162,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out,
 		_(" %s [options] COMMAND\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Show or change the resource limits of a process.\n"), out);
+
 	fputs(_("\nGeneral Options:\n"), out);
 	fputs(_(" -p, --pid <pid>        process id\n"
 		" -o, --output <list>    define which output columns to use\n"

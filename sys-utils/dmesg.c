@@ -261,6 +261,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Display or control the kernel ring buffer.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -C, --clear                 clear the kernel ring buffer\n"), out);
 	fputs(_(" -c, --read-clear            read and clear all messages\n"), out);

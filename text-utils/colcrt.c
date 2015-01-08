@@ -309,16 +309,20 @@ void move(int l, int m)
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out,
-		_("\nUsage:\n"
-		  " %s [options] [file ...]\n"), program_invocation_short_name);
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] [<file>...]\n"), program_invocation_short_name);
 
-	fprintf(out,
-		_(" -,  --no-underlining  suppress all underlining\n"
-		  " -2, --half-lines      print all half-lines\n"
-		  " -V, --version         output version information and exit\n"
-		  " -h, --help            display this help and exit\n\n"));
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Filter nroff output for CRT previewing.\n"), out);
 
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -,  --no-underlining    suppress all underlining\n"), out);
+	fputs(_(" -2, --half-lines        print all half-lines\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("colcrt(1)"));
+
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }

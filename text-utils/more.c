@@ -317,6 +317,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <file>...\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("A file perusal filter for CRT viewing.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -d          display help instead of ringing bell\n"), out);
 	fputs(_(" -f          count logical rather than screen lines\n"), out);
@@ -1091,6 +1095,16 @@ void clreos(void)
 	my_putstring(EodClr);
 }
 
+
+static UL_ASAN_BLACKLIST size_t xmbrtowc(wchar_t *wc, const char *s, size_t n,
+				  mbstate_t *mbstate)
+{
+	const size_t mblength = mbrtowc(wc, s, n, mbstate);
+	if (mblength == (size_t)-2 || mblength == (size_t)-1)
+		return 1;
+	return mblength;
+}
+
 /* Print a buffer of n characters */
 void prbuf(register char *s, register int n)
 {
@@ -1130,10 +1144,7 @@ void prbuf(register char *s, register int n)
 				memset(&mbstate, '\0', sizeof(mbstate_t));
 				s--;
 				n++;
-				mblength = mbrtowc(&wc, s, n, &mbstate);
-				if (mblength == (size_t)-2
-				    || mblength == (size_t)-1)
-					mblength = 1;
+				mblength = xmbrtowc(&wc, s, n, &mbstate);
 				while (mblength--)
 					putchar(*s++);
 				n += mblength;

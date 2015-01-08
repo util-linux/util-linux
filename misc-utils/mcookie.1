@@ -1,39 +1,37 @@
 .\" mcookie.1 --
 .\" Public Domain 1995 Rickard E. Faith (faith@cs.unc.edu)
-.TH MCOOKIE 1 "March 2014" "util-linux" "User Commands"
+.TH MCOOKIE 1 "December 2014" "util-linux" "User Commands"
 .SH NAME
 mcookie \- generate magic cookies for xauth
 .SH SYNOPSIS
 .B mcookie
-[\fIoptions\fR]
+[options]
 .SH DESCRIPTION
 .B mcookie
 generates a 128-bit random hexadecimal number for use with the X authority
 system.  Typical usage:
+.sp
 .RS
-xauth add :0 . `mcookie`
+.B xauth add :0 . `mcookie`
 .RE
 .PP
-The "random" number generated is actually the output of the MD5 message
-digest fed with random information from one of the sources
+The "random" number generated is actually the MD5 message
+digest of random information coming from one of the sources
 .IR /dev/urandom ,
 .IR /dev/random ,
-or
-.I "libc pseudo-random functions"
+or the
+.IR "libc pseudo-random functions" ,
 in this preference order.
 .SH OPTIONS
 .TP
-\fB\-f\fR, \fB\-\-file\fR=\fIFILE\fR
-Use additional file as a macig cookie random seed.  When file is defined
-as '-' character input is read from stdin.
+.BR \-f , " \-\-file " \fIfile
+Use this \fIfile\fR as an additional source of randomness.
+When \fIfile\fR is '-', characters are read from standard input.
 .TP
-\fB\-m\fR, \fB\-\-max\-size\fR=\fInumber\fR
-Read form
-.I FILE
-only
-.I number
-of bytes.  This option is meant to be used when reading additional
-randomness from a device.
+.BR \-m , " \-\-max\-size " \fInumber
+Read from \fIfile\fR only this \fInumber\fR of bytes.
+This option is meant to be used when reading additional
+randomness from a file or device.
 .IP
 The
 .I number
@@ -42,14 +40,14 @@ MiB=1024*1024, and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is
 optional, e.g., "K" has the same meaning as "KiB") or the suffixes
 KB=1000, MB=1000*1000, and so on for GB, TB, PB, EB, ZB and YB.
 .TP
-\fB\-v\fR, \fB\-\-verbose\fR
+.BR \-v , " \-\-verbose"
 Inform where randomness originated, with amount of entropy read from each
 source.
 .TP
-\fB\-V\fR, \fB\-\-version\fR
+.BR \-V , " \-\-version"
 Display version information and exit.
 .TP
-\fB\-h\fR, \fB\-\-help\fR
+.BR \-h , " \-\-help"
 Display help text and exit.
 .SH BUGS
 It is assumed that none of the randomness sources will block.

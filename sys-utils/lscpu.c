@@ -655,7 +655,7 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 #define VMWARE_BDOOR_PORT           0x5658
 #define VMWARE_BDOOR_CMD_GETVERSION 10
 
-static inline
+static UL_ASAN_BLACKLIST
 void vmware_bdoor(uint32_t *eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx)
 {
 	__asm__(
@@ -1628,6 +1628,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Display information about the CPU architecture.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all               print both online and offline CPUs (default for -e)\n"), out);

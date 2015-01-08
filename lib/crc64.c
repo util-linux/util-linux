@@ -98,9 +98,10 @@ uint64_t crc64(uint64_t seed, const unsigned char *data, size_t len)
 {
 	uint64_t crc = seed;
 
-	while (len--) {
+	while (len) {
 		int i = ((int) (crc >> 56) ^ *data++) & 0xFF;
 		crc = crc64_tab[i] ^ (crc << 8);
+		len--;
 	}
 
 	return crc;

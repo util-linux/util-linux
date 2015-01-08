@@ -64,14 +64,17 @@ IPCS_IDX=$(seq 0 $(( ${#IPCS_PROCFILES[*]} - 1 )))
 # checker
 function ipcs_limits_check {
 	for i in $IPCS_IDX; do
+
 		echo -n ${IPCS_PROCFILES[$i]}
 
 		a=$(eval ${IPCS_KERNEL_CMD[$i]})
 		b=$(eval ${IPCS_CMD[$i]})
 
-		#echo -n " RAW: "
-		#cat ${IPCS_PROCFILES[$i]}
-		#echo "CMD: ${ICPS_KERNEL_CMD[$i]}"
+		#echo
+		#echo "KERNEL-CMD: ${IPCS_KERNEL_CMD[$i]}"
+		#echo "KERNEL-RAW: $(cat ${IPCS_PROCFILES[$i]})"
+		#echo "IPCS-CMD:   ${IPCS_CMD[$i]}"
+		#echo
 
 		if [ x"$a" == x"$b" ]; then
 			echo " OK"

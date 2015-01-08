@@ -451,6 +451,10 @@ usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <device>\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Wipe signatures from a device.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all           wipe all magic strings (BE CAREFUL!)\n"
 		" -b, --backup        create a signature backup in $HOME\n"

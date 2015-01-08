@@ -74,7 +74,7 @@ static int memset_s(void *v, size_t sz, const int c)
 }
 
 /* try to read password from gshadow */
-static char *get_gshadow_pwd(char *groupname)
+static char *get_gshadow_pwd(const char *groupname)
 {
 #ifdef HAVE_GETSGNAM
 	struct sgrp *sgrp;
@@ -117,7 +117,7 @@ static char *get_gshadow_pwd(char *groupname)
 #endif	/* HAVE_GETSGNAM */
 }
 
-static int allow_setgid(struct passwd *pe, struct group *ge)
+static int allow_setgid(const struct passwd *pe, const struct group *ge)
 {
 	char **look;
 	int notfound = 1;
@@ -160,10 +160,14 @@ static int allow_setgid(struct passwd *pe, struct group *ge)
 	return FALSE;
 }
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fprintf(out, USAGE_HEADER);
 	fprintf(out, _(" %s <group>\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Log in to a new group.\n"), out);
+
 	fprintf(out, USAGE_OPTIONS);
 	fprintf(out, USAGE_HELP);
 	fprintf(out, USAGE_VERSION);
@@ -202,9 +206,6 @@ int main(int argc, char *argv[])
 	if (!(pw_entry = getpwuid(getuid())))
 		err(EXIT_FAILURE, _("who are you?"));
 
-	shell = (pw_entry->pw_shell && *pw_entry->pw_shell ?
-				pw_entry->pw_shell : _PATH_BSHELL);
-
 	if (argc < 2) {
 		if (setgid(pw_entry->pw_gid) < 0)
 			err(EXIT_FAILURE, _("setgid failed"));
@@ -214,22 +215,20 @@ int main(int argc, char *argv[])
 			if (errno)
 				err(EXIT_FAILURE, _("no such group"));
 			else
-				/* No group */
 				errx(EXIT_FAILURE, _("no such group"));
-		} else {
-			if (allow_setgid(pw_entry, gr_entry)) {
-				if (setgid(gr_entry->gr_gid) < 0)
-					err(EXIT_FAILURE, _("setgid failed"));
-			} else
-				errx(EXIT_FAILURE, _("permission denied"));
 		}
+		if (!allow_setgid(pw_entry, gr_entry))
+			errx(EXIT_FAILURE, _("permission denied"));
+		if (setgid(gr_entry->gr_gid) < 0)
+			err(EXIT_FAILURE, _("setgid failed"));
 	}
 
 	if (setuid(getuid()) < 0)
 		err(EXIT_FAILURE, _("setuid failed"));
 
-	fflush(stdout);
-	fflush(stderr);
+	fflush(NULL);
+	shell = (pw_entry->pw_shell && *pw_entry->pw_shell ?
+				pw_entry->pw_shell : _PATH_BSHELL);
 	execl(shell, shell, (char *)0);
 	warn(_("failed to execute %s"), shell);
 	fflush(stderr);

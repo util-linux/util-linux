@@ -35,15 +35,12 @@ for i in $IPCS_IDX; do
 	SHM_ORG[$i]=$(cat ${IPCS_PROCFILES[$i]})
 done >> $TS_OUTPUT
 
-ts_log "check for difference between kernel and IPC"
-ipcs_limits_check >> $TS_OUTPUT
-
 ts_log "maximalize kernel setting"
 for i in $IPCS_IDX; do
 	echo ${IPCS_LIMITS[$i]} >> ${IPCS_PROCFILES[$i]}
 done >> $TS_OUTPUT
 
-ts_log "re-check for difference between kernel and IPC"
+ts_log "check for difference between kernel and IPC"
 ipcs_limits_check >> $TS_OUTPUT
 
 ts_log "write original values to kernel"

@@ -81,6 +81,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Generate magic cookies for xauth.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -f, --file <file>     use file as a cookie seed\n"), out);
 	fputs(_(" -m, --max-size <num>  limit how much is read from seed files\n"), out);

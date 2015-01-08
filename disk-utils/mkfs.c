@@ -47,6 +47,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [-t <type>] [fs-options] <device> [<size>]\n"),
 		     program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Make a Linux filesystem.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fprintf(out, _(" -t, --type=<type>  filesystem type; when unspecified, ext2 is used\n"));
 	fprintf(out, _("     fs-options     parameters for the real filesystem builder\n"));

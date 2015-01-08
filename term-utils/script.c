@@ -143,6 +143,9 @@ usage(FILE *out)
 	fprintf(out,
 	      _(" %s [options] [file]\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Make a typescript of a terminal session.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --append            append the output\n"
 		" -c, --command <command> run command rather than interactive shell\n"

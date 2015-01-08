@@ -51,6 +51,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		_("Usage: %s [options] [mask | cpu-list] [pid|cmd [args...]]\n\n"),
 		program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Show or change the CPU affinity of a process.\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+
 	fprintf(out, _(
 		"Options:\n"
 		" -a, --all-tasks         operate on all the tasks (threads) for a given pid\n"

@@ -238,6 +238,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		"\nUsage:\n"
 		" %s [options]\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Configure CPUs in a multi-processor system.\n"), out);
+
 	puts(_(	"\nOptions:\n"
 		"  -h, --help                    print this help\n"
 		"  -e, --enable <cpu-list>       enable cpus\n"

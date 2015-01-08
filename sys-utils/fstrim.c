@@ -228,6 +228,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <mount point>\n"), program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Discard unused blocks on a mounted filesystem.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all           trim all mounted filesystems that are supported\n"), out);
 	fputs(_(" -o, --offset <num>  the offset in bytes to start discarding from\n"), out);

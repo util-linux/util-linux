@@ -555,6 +555,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(
 		" %s [options] [<username>...] [<tty>...]\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Show a listing of last logged in users.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -<number>            how many lines to show\n"), out);
 	fputs(_(" -a, --hostlast       display hostnames in the last column\n"), out);

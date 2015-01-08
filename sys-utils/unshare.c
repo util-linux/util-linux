@@ -63,6 +63,9 @@ static void usage(int status)
 	fprintf(out, _(" %s [options] <program> [<argument>...]\n"),
 		program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Run a program with some namespaces unshared from the parent.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -m, --mount               unshare mounts namespace\n"), out);
 	fputs(_(" -u, --uts                 unshare UTS namespace (hostname etc)\n"), out);

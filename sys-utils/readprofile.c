@@ -102,8 +102,11 @@ static void __attribute__ ((__noreturn__))
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
-	fputs(USAGE_OPTIONS, out);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Display kernel profiling information.\n"), out);
+
+	fputs(USAGE_OPTIONS, out);
 	fprintf(out,
 	      _(" -m, --mapfile <mapfile>   (defaults: \"%s\" and\n"), defaultmap);
 	fprintf(out,

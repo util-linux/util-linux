@@ -88,6 +88,9 @@ static void __attribute__((__noreturn__)) print_usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <device>\n"), program_invocation_short_name);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Set various parameters for the line printer.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -i, --irq <num>              specify parallel port irq\n"), out);
 	fputs(_(" -t, --time <ms>              driver wait time in milliseconds\n"), out);

@@ -3,20 +3,18 @@
 .\" Copyright 2012 Davidlohr Bueso <dave@gnu.org>
 .\" May be distributed under the GNU General Public License
 
-.TH LSLOCKS 8 "February 2012" "util-linux" "System Administration"
+.TH LSLOCKS 8 "December 2014" "util-linux" "System Administration"
 .SH NAME
 lslocks \- list local system locks
 .SH SYNOPSIS
-.BR lslocks " [" options ]
+.B lslocks
+[options]
 
 .SH DESCRIPTION
 .B lslocks
 lists information about all the currently held file locks in a Linux system.
 
 .SH OPTIONS
-.TP
-.BR \-h , " \-\-help"
-Display help text and exit.
 .TP
 .BR \-n , " \-\-noheadings"
 Do not print a header line.
@@ -37,47 +35,45 @@ Use the raw output format.
 .TP
 .BR \-u , " \-\-notruncate"
 Do not truncate text in columns.
+.TP
+.BR \-V , " \-\-version"
+Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
 
 .SH OUTPUT
 .IP "COMMAND"
 The command name of the process holding the lock.
-
 .IP "PID"
 The process ID of the process which holds the lock.
-
 .IP "TYPE"
-The type of lock; can be FLOCK (created with flock(2)) or POSIX (created with fcntl(2) and lockf(3)).
-
+The type of lock; can be FLOCK (created with \fBflock\fR(2)) or POSIX
+(created with \fBfcntl\fR(2) and \fBlockf\fR(3)).
 .IP "SIZE"
 Size of the locked file.
-
 .IP "MODE"
 The lock's access permissions (read, write).  If the process is blocked and waiting for the lock,
 then the mode is postfixed with an '*' (asterisk).
-
 .IP "M"
 Whether the lock is mandatory; 0 means no (meaning the lock is only advisory), 1 means yes.
-(See fcntl(2)).
-
+(See \fBfcntl\fR(2).)
 .IP "START"
 Relative byte offset of the lock.
-
 .IP "END"
 Ending offset of the lock.
-
 .IP "PATH"
 Full path of the lock.  If none is found, or there are no permissions to read the path,
 it will fall back to the device's mountpoint.  The path might be truncated; use
-.B "--notruncate"
-to get the full path.
-
+\fB\-\-notruncate\fR to get the full path.
 .IP "BLOCKER"
 The PID of the process which blocks the lock.
 
 .SH NOTES
 .nf
-The lslocks command is meant to replace the lslk(8) command, originally written by
-Victor A. Abell <abe@purdue.edu> and unmaintained since 2001.
+The \fBlslocks\fR command is meant to replace the \fBlslk\fR(8) command,
+originally written by Victor A. Abell <abe@purdue.edu> and unmaintained
+since 2001.
 .fi
 
 .SH AUTHORS

@@ -856,7 +856,7 @@ static struct libmnt_table *parse_tabfiles(char **files,
  * Parses mountinfo and calls mnt_cache_set_targets(cache, mtab). Only
  * necessary if @tb in main() was read from a non-kernel source.
  */
-static void cache_set_targets(struct libmnt_cache *cache)
+static void cache_set_targets(struct libmnt_cache *tmp)
 {
 	struct libmnt_table *tb;
 	const char *path;
@@ -870,7 +870,7 @@ static void cache_set_targets(struct libmnt_cache *cache)
 		_PATH_PROC_MOUNTS;
 
 	if (mnt_table_parse_file(tb, path) == 0)
-		mnt_cache_set_targets(cache, tb);
+		mnt_cache_set_targets(tmp, tb);
 
 	mnt_unref_table(tb);
 }
@@ -1175,6 +1175,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" %1$s [options] <device> <mountpoint>\n"
 	" %1$s [options] [--source <device>] [--target <mountpoint>]\n"),
 		program_invocation_short_name);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Find a (mounted) filesystem.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -s, --fstab            search in static table of filesystems\n"), out);

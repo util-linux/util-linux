@@ -1,4 +1,4 @@
-.TH SETARCH 8 "July 2014" "util-linux" "System Administration"
+.TH SETARCH 8 "December 2014" "util-linux" "System Administration"
 .SH NAME
 setarch \- change reported architecture in new program environment and set personality flags
 .SH SYNOPSIS
@@ -6,21 +6,22 @@ setarch \- change reported architecture in new program environment and set perso
 .I arch
 [options]
 .RI [ program
-.RI [ arguments ]]
+.RI [ argument ...]]
+.sp
+.B arch
+[options]
+.RI [ program
+.RI [ argument ...]]
 .sp
 .B setarch
 .BR \-\-list | \-h | \-V
 .SH DESCRIPTION
 .B setarch
 currently only affects the output of \fBuname -m\fR.
-For example, on an AMD64 system, running 'setarch i386 program' will cause 'program' to see
-.IR i686
-instead of
-.IR x86_64
-as the machine type.  It also allows to set various personality options.
-The default
-.B program
-is /bin/sh.
+For example, on an AMD64 system, running \fBsetarch i386 \fIprogram\fR
+will cause \fIprogram\fR to see i686 instead of x86_64 as the machine type.
+It also allows to set various personality options.
+The default \fIprogram\fR is \fB/bin/sh\fR.
 .SH OPTIONS
 .TP
 \fB\-\-list\fR
