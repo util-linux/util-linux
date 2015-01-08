@@ -55,7 +55,7 @@
 #include "c.h"
 #include "nls.h"
 
-#if defined(__i386__)
+#if defined(__i386__) || defined(__x86_64__)
 # ifdef HAVE_SYS_IO_H
 #  include <sys/io.h>
 # elif defined(HAVE_ASM_IO_H)
@@ -66,6 +66,7 @@
  * not export that header.
  */
 #undef __i386__
+#undef __x86_64__
 void outb(int a __attribute__ ((__unused__)),
 	  int b __attribute__ ((__unused__)))
 {
@@ -75,7 +76,7 @@ int inb(int c __attribute__ ((__unused__)))
 {
 	return 0;
 }
-#endif				/* __i386__ */
+#endif				/* __i386__ __x86_64__ */
 
 #elif defined(__alpha__)
 /* <asm/io.h> fails to compile, probably because of u8 etc */
@@ -603,7 +604,7 @@ static int set_hardware_clock_cmos(const struct tm *new_broken_time)
 	return 0;
 }
 
-#if defined(__i386__) || defined(__alpha__)
+#if defined(__i386__) || defined(__alpha__) || defined(__x86_64__)
 # if defined(HAVE_IOPL)
 static int i386_iopl(const int level)
 {
@@ -663,7 +664,7 @@ static struct clock_ops cmos = {
 struct clock_ops *probe_for_cmos_clock(void)
 {
 	int have_cmos =
-#if defined(__i386__) || defined(__alpha__)
+#if defined(__i386__) || defined(__alpha__) || defined(__x86_64__)
 	    TRUE;
 #else
 	    FALSE;
