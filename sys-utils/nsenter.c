@@ -284,6 +284,15 @@ int main(int argc, char *argv[])
 		open_target_fd(&wd_fd, "cwd", NULL);
 
 	/*
+	 * Update namespaces variable to contain all requested namespaces
+	 */
+	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
+		if (nsfile->fd < 0)
+			continue;
+		namespaces |= nsfile->nstype;
+	}
+
+	/*
 	 * Now that we know which namespaces we want to enter, enter them.
 	 */
 	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
