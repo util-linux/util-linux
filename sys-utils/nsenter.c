@@ -78,6 +78,7 @@ static void usage(int status)
 	fputs(_(" -U, --user[=<file>]    enter user namespace\n"), out);
 	fputs(_(" -S, --setuid <uid>     set uid in entered namespace\n"), out);
 	fputs(_(" -G, --setgid <gid>     set gid in entered namespace\n"), out);
+	fputs(_("     --preserve-credentials do not touch uids or gids\n"), out);
 	fputs(_(" -r, --root[=<dir>]     set the root directory\n"), out);
 	fputs(_(" -w, --wd[=<dir>]       set the working directory\n"), out);
 	fputs(_(" -F, --no-fork          do not fork before exec'ing <program>\n"), out);
@@ -165,6 +166,9 @@ static void continue_as_child(void)
 
 int main(int argc, char *argv[])
 {
+	enum {
+		OPT_PRESERVE_CRED = CHAR_MAX + 1
+	};
 	static const struct option longopts[] = {
 		{ "help", no_argument, NULL, 'h' },
 		{ "version", no_argument, NULL, 'V'},
@@ -180,11 +184,12 @@ int main(int argc, char *argv[])
 		{ "root", optional_argument, NULL, 'r' },
 		{ "wd", optional_argument, NULL, 'w' },
 		{ "no-fork", no_argument, NULL, 'F' },
+		{ "preserve-credentials", no_argument, NULL, OPT_PRESERVE_CRED },
 		{ NULL, 0, NULL, 0 }
 	};
 
 	struct namespace_file *nsfile;
-	int c, namespaces = 0;
+	int c, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
 	bool do_rd = false, do_wd = false, force_uid = false, force_gid = false;
 	int do_fork = -1; /* unknown yet */
 	uid_t uid = 0;
@@ -267,6 +272,9 @@ int main(int argc, char *argv[])
 			else
 				do_wd = true;
 			break;
+		case OPT_PRESERVE_CRED:
+			preserve_cred = 1;
+			break;
 		default:
 			usage(EXIT_FAILURE);
 		}
@@ -290,6 +298,17 @@ int main(int argc, char *argv[])
 		if (nsfile->fd < 0)
 			continue;
 		namespaces |= nsfile->nstype;
+	}
+
+	/* for user namespaces we always set UID and GID (default is 0)
+	 * and clear root's groups if --preserve-credentials is no specified */
+	if ((namespaces & CLONE_NEWUSER) && !preserve_cred) {
+		force_uid = true, force_gid = true;
+
+		/* We call setgroups() before and after we enter user namespace,
+		 * let's complain only if both fail */
+		if (setgroups(0, NULL) != 0)
+			setgroups_nerrs++;
 	}
 
 	/*
@@ -342,12 +361,8 @@ int main(int argc, char *argv[])
 	if (do_fork == 1)
 		continue_as_child();
 
-	/* for user namespaces we always set UID and GID (default is 0) */
-	if (namespaces & CLONE_NEWUSER)
-		force_uid = true, force_gid = true;
-
 	if (force_uid || force_gid) {
-		if (force_gid && setgroups(0, NULL))		/* drop supplementary groups */
+		if (force_gid && setgroups(0, NULL) != 0 && setgroups_nerrs)	/* drop supplementary groups */
 			err(EXIT_FAILURE, _("setgroups failed"));
 		if (force_gid && setgid(gid) < 0)		/* change GID */
 			err(EXIT_FAILURE, _("setgid failed"));

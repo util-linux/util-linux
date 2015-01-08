@@ -136,6 +136,10 @@ Set the user ID which will be used in the entered namespace.
 .BR nsenter (1)
 always sets UID for user namespaces, the default is 0.
 .TP
+\fB\-\-preserve-credentials\fR
+Don't modify UID and GID when enter user namespace. The default is to
+drops supplementary groups and sets GID and UID to 0.
+.TP
 \fB\-r\fR, \fB\-\-root\fR[=\fIdirectory\fR]
 Set the root directory.  If no directory is specified, set the root directory to
 the root directory of the target process.  If directory is specified, set the
