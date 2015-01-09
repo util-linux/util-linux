@@ -783,7 +783,7 @@ synchronizes the System Clock.
 .PP
 If your system runs with \%'11\ minute\ mode' on, it may need to use either
 .BR \%\-\-hctosys " or " \%\-\-systz
-in a startup script, especially if the Hardware Clock is configured to to use
+in a startup script, especially if the Hardware Clock is configured to use
 the local timescale. Unless the kernel is informed of what timescale the
 Hardware Clock is using, it may clobber it with the wrong one. The kernel
 uses UTC by default.
