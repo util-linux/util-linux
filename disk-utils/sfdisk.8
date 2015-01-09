@@ -337,7 +337,7 @@ For example:
 The GPT header can later be restored by:
 .RS
 .sp
-.B dd if=~/sfdisk-sda-0x00000200.bak of=/dev/sda seek=$((0x00000200.bak)) bs=1 conv=notrunc
+.B dd if=~/sfdisk-sda-0x00000200.bak of=/dev/sda seek=$((0x00000200)) bs=1 conv=notrunc
 .sp
 .RE
 Note that \fBsfdisk\fR since version 2.26 no longer provides the \fB\-I\fR option to

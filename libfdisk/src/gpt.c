@@ -484,7 +484,9 @@ static struct gpt_header *gpt_copy_header(struct fdisk_context *cxt,
 	if (!cxt || !src)
 		return NULL;
 
-	res = calloc(1, sizeof(*res));
+	assert(cxt->sector_size >= sizeof(struct gpt_header));
+
+	res = calloc(1, cxt->sector_size);
 	if (!res) {
 		fdisk_warn(cxt, _("failed to allocate GPT header"));
 		return NULL;
@@ -551,7 +553,14 @@ static int gpt_mknew_header(struct fdisk_context *cxt,
 
 	header->signature = cpu_to_le64(GPT_HEADER_SIGNATURE);
 	header->revision  = cpu_to_le32(GPT_HEADER_REVISION_V1_00);
-	header->size      = cpu_to_le32(sizeof(struct gpt_header));
+
+	/* According to EFI standard it's valid to count all the first
+	 * sector into header size, but some tools may have a problem
+	 * to accept it, so use the header without the zerozied area.
+	 * This does not have any impact to CRC, etc.   --kzak Jan-2015
+	 */
+	header->size = cpu_to_le32(sizeof(struct gpt_header)
+				- sizeof(header->reserved2));
 
 	/*
 	 * 128 partitions are the default. It can go beyond that, but
@@ -863,12 +872,16 @@ static struct gpt_header *gpt_read_header(struct fdisk_context *cxt,
 	if (!cxt)
 		return NULL;
 
-	header = calloc(1, sizeof(*header));
+	/* always allocate all sector, the area after GPT header
+	 * has to be fill by zeros */
+	assert(cxt->sector_size >= sizeof(struct gpt_header));
+
+	header = calloc(1, cxt->sector_size);
 	if (!header)
 		return NULL;
 
 	/* read and verify header */
-	if (read_lba(cxt, lba, header, sizeof(struct gpt_header)) != 0)
+	if (read_lba(cxt, lba, header, cxt->sector_size) != 0)
 		goto invalid;
 
 	if (!gpt_check_signature(header))
@@ -1630,7 +1643,11 @@ fail:
 }
 
 /*
- * Write a GPT header to a specified LBA
+ * Write a GPT header to a specified LBA.
+ *
+ * We read all sector, so we have to write all sector back
+ * to the device -- never ever rely on sizeof(struct gpt_header)!
+ *
  * Returns 0 on success, or corresponding error otherwise.
  */
 static int gpt_write_header(struct fdisk_context *cxt,
@@ -2182,8 +2199,10 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 	if (rc < 0)
 		goto done;
 
+	assert(cxt->sector_size >= sizeof(struct gpt_header));
+
 	/* primary */
-	gpt->pheader = calloc(1, sizeof(*gpt->pheader));
+	gpt->pheader = calloc(1, cxt->sector_size);
 	if (!gpt->pheader) {
 		rc = -ENOMEM;
 		goto done;
@@ -2193,7 +2212,7 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 		goto done;
 
 	/* backup ("copy" primary) */
-	gpt->bheader = calloc(1, sizeof(*gpt->bheader));
+	gpt->bheader = calloc(1, cxt->sector_size);
 	if (!gpt->bheader) {
 		rc = -ENOMEM;
 		goto done;
