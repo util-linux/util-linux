@@ -49,7 +49,7 @@
 
 #define ADJTIME_ZONE_STRLEN	8
 
-#define RTC_PATH		"/sys/class/rtc/%s/device/power/wakeup"
+#define SYS_WAKEUP_PATH_TEMPLATE	"/sys/class/rtc/%s/device/power/wakeup"
 #define SYS_POWER_STATE_PATH	"/sys/power/state"
 #define DEFAULT_DEVICE		"/dev/rtc0"
 
@@ -136,9 +136,11 @@ static int is_wakeup_enabled(const char *devname)
 {
 	char	buf[128], *s;
 	FILE	*f;
+	size_t	skip = 0;
 
-	/* strip the '/dev/' from the devname here */
-	snprintf(buf, sizeof buf, RTC_PATH, devname + strlen("/dev/"));
+	if (startswith(devname, "/dev/"))
+		skip = 5;
+	snprintf(buf, sizeof buf, SYS_WAKEUP_PATH_TEMPLATE, devname + skip);
 	f = fopen(buf, "r");
 	if (!f) {
 		warn(_("cannot open %s"), buf);
@@ -377,6 +379,22 @@ static int get_mode(const char *optarg)
 	return -EINVAL;
 }
 
+static int open_dev_rtc(const char *devname)
+{
+	int fd;
+	char *devpath = NULL;
+
+	if (startswith(devname, "/dev"))
+		devpath = xstrdup(devname);
+	else
+		xasprintf(&devpath, "/dev/%s", devname);
+	fd = open(devpath, O_RDONLY | O_CLOEXEC);
+	if (fd < 0)
+		err(EXIT_FAILURE, _("%s: unable to find device"), devpath);
+	free(devpath);
+	return fd;
+}
+
 int main(int argc, char **argv)
 {
 	struct rtcwake_control ctl = {
@@ -503,28 +521,11 @@ int main(int argc, char **argv)
 		usage(stderr);
 	}
 
-	/* when devname doesn't start with /dev, append it */
-	if (strncmp(devname, "/dev/", strlen("/dev/")) != 0) {
-		char *new_devname;
-
-		new_devname = xmalloc(strlen(devname) + strlen("/dev/") + 1);
-
-		strcpy(new_devname, "/dev/");
-		strcat(new_devname, devname);
-		devname = new_devname;
-	}
+	/* device must exist and (if we'll sleep) be wakeup-enabled */
+	fd = open_dev_rtc(devname);
 
 	if (suspend != ON_MODE && suspend != NO_MODE && !is_wakeup_enabled(devname))
 		errx(EXIT_FAILURE, _("%s not enabled for wakeup events"), devname);
-
-	/* this RTC must exist and (if we'll sleep) be wakeup-enabled */
-#ifdef O_CLOEXEC
-	fd = open(devname, O_RDONLY | O_CLOEXEC);
-#else
-	fd = open(devname, O_RDONLY);
-#endif
-	if (fd < 0)
-		err(EXIT_FAILURE, _("cannot open %s"), devname);
 
 	/* relative or absolute alarm time, normalized to time_t */
 	if (get_basetimes(&ctl, fd) < 0)
