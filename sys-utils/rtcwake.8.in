@@ -16,7 +16,7 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 .\" 02110-1301, USA.
 .\"
-.TH RTCWAKE 8 "July 2014" "util-linux" "System Administration"
+.TH RTCWAKE 8 "June 2015" "util-linux" "System Administration"
 .SH NAME
 rtcwake \- enter a system sleep state until specified wakeup time
 .SH SYNOPSIS
@@ -77,6 +77,9 @@ You may specify \fBrtc1\fP, \fBrtc2\fP, ... here.
 .BR \-l , " \-\-local"
 Assume that the hardware clock is set to local time, regardless of the
 contents of the \fIadjtime\fP file.
+.TP
+.B \-\-list\-modes
+List available \-\-mode option arguments.
 .TP
 .BR \-m , " \-\-mode " \fImode
 Go into the given standby state.  Valid values for \fImode\fP are:

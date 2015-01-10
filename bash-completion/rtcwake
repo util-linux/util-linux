@@ -12,7 +12,7 @@ _rtcwake_module()
 			return 0
 			;;
 		'-m'|'--mode')
-			COMPREPLY=( $(compgen -W "standby mem disk off no on disable show" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(rtcwake --list-modes)" -- $cur) )
 			return 0
 			;;
 		'-s'|'--seconds')

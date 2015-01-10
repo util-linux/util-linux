@@ -117,6 +117,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -d, --device <device>    select rtc device (rtc0|rtc1|...)\n"), out);
 	fputs(_(" -n, --dry-run            does everything, but suspend\n"), out);
 	fputs(_(" -l, --local              RTC uses local timezone\n"), out);
+	fputs(_("     --list-modes         list available modes\n"), out);
 	fputs(_(" -m, --mode <mode>        standby|mem|... sleep mode\n"), out);
 	fputs(_(" -s, --seconds <seconds>  seconds to sleep\n"), out);
 	fputs(_(" -t, --time <time_t>      time to wake\n"), out);
@@ -395,6 +396,15 @@ static int open_dev_rtc(const char *devname)
 	return fd;
 }
 
+static void list_modes(void)
+{
+	int i = ARRAY_SIZE(mode_str);
+
+	while (i--)
+		printf("%s%s", mode_str[i], i == 0 ? "" : " ");
+	putchar('\n');
+}
+
 int main(int argc, char **argv)
 {
 	struct rtcwake_control ctl = {
@@ -413,7 +423,8 @@ int main(int argc, char **argv)
 	time_t		alarm = 0;
 
 	enum {
-		OPT_DATE = CHAR_MAX + 1
+		OPT_DATE = CHAR_MAX + 1,
+		OPT_LIST
 	};
 
 	static const struct option long_options[] = {
@@ -430,6 +441,7 @@ int main(int argc, char **argv)
 		{"seconds",	required_argument,	0, 's'},
 		{"time",	required_argument,	0, 't'},
 		{"date",	required_argument,	0, OPT_DATE},
+		{"list-modes",	no_argument,		0, OPT_LIST},
 		{0,		0,			0, 0  }
 	};
 
@@ -457,6 +469,10 @@ int main(int argc, char **argv)
 		case 'l':
 			ctl.clock_mode = CM_LOCAL;
 			break;
+
+		case OPT_LIST:
+			list_modes();
+			return EXIT_SUCCESS;
 
 		case 'm':
 			if ((suspend = get_mode(optarg)) < 0)
