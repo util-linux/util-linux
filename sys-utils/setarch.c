@@ -247,7 +247,7 @@ static int set_arch(const char *pers, unsigned long options, int list)
 			&& strcmp(un.machine, "i586")
 			&& strcmp(un.machine, "i686")
 			&& strcmp(un.machine, "athlon")))
-			errx(EXIT_FAILURE, _("%s: Unrecognized architecture"), pers);
+			errx(EXIT_FAILURE, _("Kernel cannot set architecture to %s"), pers);
 	}
 	return 0;
 }
