@@ -41,6 +41,7 @@
 #include "strutils.h"
 #include "c.h"
 #include "closestream.h"
+#include "timeutils.h"
 
 /* constants from legacy PC/AT hardware */
 #define	RTC_PF	0x40
@@ -113,6 +114,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out,
 	      _(" -A, --adjfile <file>     specifies the path to the adjust file\n"
 		"                            the default is %s\n"), _PATH_ADJTIME);
+	fputs(_("     --date <timestamp>   date time of timestamp to wake\n"), out);
 	fputs(_(" -d, --device <device>    select rtc device (rtc0|rtc1|...)\n"), out);
 	fputs(_(" -n, --dry-run            does everything, but suspend\n"), out);
 	fputs(_(" -l, --local              RTC uses local timezone\n"), out);
@@ -398,6 +400,10 @@ int main(int argc, char **argv)
 	int		fd;
 	time_t		alarm = 0;
 
+	enum {
+		OPT_DATE = CHAR_MAX + 1
+	};
+
 	static const struct option long_options[] = {
 		{"adjfile",     required_argument,      0, 'A'},
 		{"auto",	no_argument,		0, 'a'},
@@ -411,6 +417,7 @@ int main(int argc, char **argv)
 		{"device",	required_argument,	0, 'd'},
 		{"seconds",	required_argument,	0, 's'},
 		{"time",	required_argument,	0, 't'},
+		{"date",	required_argument,	0, OPT_DATE},
 		{0,		0,			0, 0  }
 	};
 
@@ -448,18 +455,25 @@ int main(int argc, char **argv)
 			ctl.dryrun = 1;
 			break;
 
-			/* alarm time, seconds-to-sleep (relative) */
 		case 's':
+			/* alarm time, seconds-to-sleep (relative) */
 			seconds = strtou32_or_err(optarg, _("invalid seconds argument"));
 			break;
 
-			/* alarm time, time_t (absolute, seconds since
-			 * 1/1 1970 UTC)
-			 */
 		case 't':
+			/* alarm time, time_t (absolute, seconds since epoc) */
 			alarm = strtou32_or_err(optarg, _("invalid time argument"));
 			break;
 
+		case OPT_DATE:
+		{
+			/* alarm time, see timestamp format from manual */
+			usec_t p;
+			if (parse_timestamp(optarg, &p) < 0)
+				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
+			alarm = (time_t) (p / 1000000);
+			break;
+		}
 		case 'u':
 			ctl.clock_mode = CM_UTC;
 			break;
@@ -491,7 +505,7 @@ int main(int argc, char **argv)
 				_("Using local time.\n"));
 
 	if (!alarm && !seconds && suspend != DISABLE_MODE && suspend != SHOW_MODE) {
-		warnx(_("must provide wake time (see -t and -s options)"));
+		warnx(_("must provide wake time (see --seconds, --time, and --date options)"));
 		usage(stderr);
 	}
 
