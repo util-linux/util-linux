@@ -43,10 +43,9 @@
 #include "closestream.h"
 #include "timeutils.h"
 
-/* constants from legacy PC/AT hardware */
-#define	RTC_PF	0x40
-#define	RTC_AF	0x20
-#define	RTC_UF	0x10
+#ifndef RTC_AF
+# define	RTC_AF	0x20	/* Alarm interrupt */
+#endif
 
 #define ADJTIME_ZONE_STRLEN	8
 
