@@ -6,6 +6,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <ctype.h>
+#include <stdio.h>
 
 /* default strtoxx_or_err() exit code */
 #ifndef STRTOXX_EXIT_CODE
@@ -206,5 +207,7 @@ static inline size_t ltrim_whitespace(unsigned char *str)
 extern char *strnappend(const char *s, const char *suffix, size_t b);
 extern char *strappend(const char *s, const char *suffix);
 extern const char *split(const char **state, size_t *l, const char *separator, int quoted);
+
+extern int skip_fline(FILE *fp);
 
 #endif

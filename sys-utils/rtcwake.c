@@ -47,7 +47,7 @@
 #define	RTC_AF	0x20
 #define	RTC_UF	0x10
 
-#define MAX_LINE		1024
+#define ADJTIME_ZONE_STRLEN	8
 
 #define RTC_PATH		"/sys/class/rtc/%s/device/power/wakeup"
 #define SYS_POWER_STATE_PATH	"/sys/power/state"
@@ -294,30 +294,23 @@ static void suspend_system(struct rtcwake_control *ctl, int suspend)
 		errx(EXIT_FAILURE, _("write error"));
 }
 
-
 static int read_clock_mode(struct rtcwake_control *ctl)
 {
 	FILE *fp;
-	char linebuf[MAX_LINE];
+	char linebuf[ADJTIME_ZONE_STRLEN];
 
 	fp = fopen(ctl->adjfile, "r");
 	if (!fp)
 		return -1;
 
-	/* skip first line */
-	if (!fgets(linebuf, MAX_LINE, fp)) {
-		fclose(fp);
-		return -1;
-	}
-
-	/* skip second line */
-	if (!fgets(linebuf, MAX_LINE, fp)) {
+	/* skip two lines */
+	if (skip_fline(fp) || skip_fline(fp)) {
 		fclose(fp);
 		return -1;
 	}
 
 	/* read third line */
-	if (!fgets(linebuf, MAX_LINE, fp)) {
+	if (!fgets(linebuf, sizeof linebuf, fp)) {
 		fclose(fp);
 		return -1;
 	}
@@ -326,6 +319,8 @@ static int read_clock_mode(struct rtcwake_control *ctl)
 		ctl->clock_mode = CM_UTC;
 	else if (strncmp(linebuf, "LOCAL", 5) == 0)
 		ctl->clock_mode = CM_LOCAL;
+	else if (ctl->verbose)
+		warnx(_("unexpected third line in: %s: %s"), ctl->adjfile, linebuf);
 
 	fclose(fp);
 
