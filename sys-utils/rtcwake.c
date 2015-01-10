@@ -249,24 +249,9 @@ static int setup_alarm(struct rtcwake_control *ctl, int fd, time_t *wakeup)
 
 	wake.enabled = 1;
 
-	/* First try the preferred RTC_WKALM_SET */
 	if (!ctl->dryrun && ioctl(fd, RTC_WKALM_SET, &wake) < 0) {
-		wake.enabled = 0;
-		/* Fall back on the non-preferred way of setting wakeups; only
-		* works for alarms < 24 hours from now */
-		if ((ctl->rtc_time + (24 * 60 * 60)) > *wakeup) {
-			if (ioctl(fd, RTC_ALM_SET, &wake.time) < 0) {
-				warn(_("set rtc alarm failed"));
-				return -1;
-			}
-			if (ioctl(fd, RTC_AIE_ON, 0) < 0) {
-				warn(_("enable rtc alarm failed"));
-				return -1;
-			}
-		} else {
-			warn(_("set rtc wake alarm failed"));
-			return -1;
-		}
+		warn(_("set rtc wake alarm failed"));
+		return -1;
 	}
 
 	return 0;
@@ -357,19 +342,9 @@ static int print_alarm(struct rtcwake_control *ctl, int fd)
 	struct tm tm;
 	time_t alarm;
 
-	 /* First try the preferred RTC_WKALM_RD */
 	if (ioctl(fd, RTC_WKALM_RD, &wake) < 0) {
-		/* Fall back on the non-preferred way of reading wakeups; only
-		 * works for alarms < 24 hours from now
-		 *
-		 * set wake.enabled to 1 and determine from value of the year-1
-		 * means disabled
-		 */
-		wake.enabled = 1;
-		if (ioctl(fd, RTC_ALM_READ, &wake.time) < 0) {
-			warn(_("read rtc alarm failed"));
-			return -1;
-		}
+		warn(_("read rtc alarm failed"));
+		return -1;
 	}
 
 	if (wake.enabled != 1 || wake.time.tm_year == -1) {
@@ -659,16 +634,11 @@ int main(int argc, char **argv)
 	}
 
 	if (!ctl.dryrun) {
-		/* try to disable the alarm with the preferred RTC_WKALM_RD and
-		 * RTC_WKALM_SET calls, if it fails fall back to RTC_AIE_OFF
-		 */
 		struct rtc_wkalrm wake;
 
 		if (ioctl(fd, RTC_WKALM_RD, &wake) < 0) {
-			if (ioctl(fd, RTC_AIE_OFF, 0) < 0) {
-				warn(_("disable rtc alarm interrupt failed"));
-				rc = EXIT_FAILURE;
-			}
+			warn(_("read rtc alarm failed"));
+			rc = EXIT_FAILURE;
 		} else {
 			wake.enabled = 0;
 			if (ioctl(fd, RTC_WKALM_SET, &wake) < 0) {
