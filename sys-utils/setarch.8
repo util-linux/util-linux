@@ -24,11 +24,12 @@ It also allows to set various personality options.
 The default \fIprogram\fR is \fB/bin/sh\fR.
 .SH OPTIONS
 .TP
-\fB\-\-list\fR
-List the architectures that can be set.
+.B \-\-list
+List the architectures that \fBsetarch\fR knows about.  Whether \fBsetarch\fR
+can actually set each of these architectures depends on the running kernel.
 .TP
-\fB\-\-uname\-2.6\fR
-Causes the program to see a kernel version number beginning with 2.6.
+.B \-\-uname\-2.6
+Causes the \fIprogram\fR to see a kernel version number beginning with 2.6.
 .TP
 .BR \-v , " \-\-verbose"
 Be verbose.
