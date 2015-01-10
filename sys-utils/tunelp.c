@@ -116,13 +116,6 @@ static void __attribute__((__noreturn__)) print_usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static long get_onoff(char *val)
-{
-	if (!strncasecmp("on", val, 2))
-		return 1;
-	return 0;
-}
-
 int main(int argc, char **argv)
 {
 	int c, fd, irq, status, show_irq, offset = 0, retval;
@@ -193,28 +186,24 @@ int main(int argc, char **argv)
 			break;
 		case 'a':
 			cmds->op = LPABORT;
-			cmds->val = get_onoff(optarg);
+			cmds->val = parse_switch(optarg, _("argument error"), "on", "off", NULL);
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
 			cmds->next = 0;
 			break;
 		case 'q':
-			if (get_onoff(optarg)) {
-				show_irq = 1;
-			} else {
-				show_irq = 0;
-			}
+			show_irq = parse_switch(optarg, _("argument error"), "on", "off", NULL);
 			break;
 		case 'o':
 			cmds->op = LPABORTOPEN;
-			cmds->val = get_onoff(optarg);
+			cmds->val = parse_switch(optarg, _("argument error"), "on", "off", NULL);
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
 			cmds->next = 0;
 			break;
 		case 'C':
 			cmds->op = LPCAREFUL;
-			cmds->val = get_onoff(optarg);
+			cmds->val = parse_switch(optarg, _("argument error"), "on", "off", NULL);
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
 			cmds->next = 0;
@@ -239,7 +228,7 @@ int main(int argc, char **argv)
 			 * 2.0.36 when compiled under 2.2.x
 			 */
 			cmds->op = LPTRUSTIRQ;
-			cmds->val = get_onoff(optarg);
+			cmds->val = parse_switch(optarg, _("argument error"), "on", "off", NULL);
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
 			cmds->next = 0;
