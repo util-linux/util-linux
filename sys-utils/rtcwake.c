@@ -160,7 +160,7 @@ static int is_wakeup_enabled(const char *devname)
 
 static int get_basetimes(struct rtcwake_control *ctl, int fd)
 {
-	struct tm	tm;
+	struct tm	tm = { 0 };
 	struct rtc_time	rtc;
 
 	/* this process works in RTC time, except when working
@@ -186,7 +186,6 @@ static int get_basetimes(struct rtcwake_control *ctl, int fd)
 	/* convert rtc_time to normal arithmetic-friendly form,
 	 * updating tm.tm_wday as used by asctime().
 	 */
-	memset(&tm, 0, sizeof tm);
 	tm.tm_sec = rtc.tm_sec;
 	tm.tm_min = rtc.tm_min;
 	tm.tm_hour = rtc.tm_hour;
@@ -334,8 +333,7 @@ static int read_clock_mode(struct rtcwake_control *ctl)
 static int print_alarm(struct rtcwake_control *ctl, int fd)
 {
 	struct rtc_wkalrm wake;
-	struct rtc_time rtc;
-	struct tm tm;
+	struct tm tm = { 0 };
 	time_t alarm;
 
 	if (ioctl(fd, RTC_WKALM_RD, &wake) < 0) {
@@ -348,15 +346,12 @@ static int print_alarm(struct rtcwake_control *ctl, int fd)
 		return 0;
 	}
 
-	rtc = wake.time;
-
-	memset(&tm, 0, sizeof tm);
-	tm.tm_sec = rtc.tm_sec;
-	tm.tm_min = rtc.tm_min;
-	tm.tm_hour = rtc.tm_hour;
-	tm.tm_mday = rtc.tm_mday;
-	tm.tm_mon = rtc.tm_mon;
-	tm.tm_year = rtc.tm_year;
+	tm.tm_sec = wake.time.tm_sec;
+	tm.tm_min = wake.time.tm_min;
+	tm.tm_hour = wake.time.tm_hour;
+	tm.tm_mday = wake.time.tm_mday;
+	tm.tm_mon = wake.time.tm_mon;
+	tm.tm_year = wake.time.tm_year;
 	tm.tm_isdst = -1;  /* assume the system knows better than the RTC */
 
 	alarm = mktime(&tm);
