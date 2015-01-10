@@ -588,12 +588,15 @@ int main(int argc, char **argv)
 		xusleep(10 * 1000);
 	}
 
-	if (suspend == NO_MODE) {
+	switch (suspend) {
+	case NO_MODE:
 		if (ctl.verbose)
 			printf(_("suspend mode: no; leaving\n"));
 		ctl.dryrun = 1;	/* to skip disabling alarm at the end */
+		break;
 
-	} else if (suspend == OFF_MODE) {
+	case OFF_MODE:
+	{
 		char *arg[5];
 		int i = 0;
 
@@ -612,8 +615,10 @@ int main(int argc, char **argv)
 			warn(_("failed to execute %s"), _PATH_SHUTDOWN);
 			rc = EXIT_FAILURE;
 		}
-
-	} else if (suspend == ON_MODE) {
+		break;
+	}
+	case ON_MODE:
+	{
 		unsigned long data;
 
 		if (ctl.verbose)
@@ -630,20 +635,23 @@ int main(int argc, char **argv)
 					printf("... %s: %03lx\n", devname, data);
 			} while (!(data & RTC_AF));
 		}
-
-	} else if (suspend == DISABLE_MODE) {
+		break;
+	}
+	case DISABLE_MODE:
 		/* just break, alarm gets disabled in the end */
 		if (ctl.verbose)
 			printf(_("suspend mode: disable; disabling alarm\n"));
+		break;
 
-	} else if (suspend == SHOW_MODE) {
+	case SHOW_MODE:
 		if (ctl.verbose)
 			printf(_("suspend mode: show; printing alarm info\n"));
 		if (print_alarm(&ctl, fd))
 			rc = EXIT_FAILURE;
 		ctl.dryrun = 1;	/* don't really disable alarm in the end, just show */
+		break;
 
-	} else {
+	default:
 		if (ctl.verbose)
 			printf(_("suspend mode: %s; suspending system\n"), mode_str[suspend]);
 		sync();
