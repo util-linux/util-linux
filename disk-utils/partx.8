@@ -1,4 +1,4 @@
-.\" partx.8 --
+.\" partx.8 -- man page for partx
 .\" Copyright 2007 Karel Zak <kzak@redhat.com>
 .\" Copyright 2007 Red Hat, Inc.
 .\" Copyright 2010 Davidlohr Bueso <dave@gnu.org>
@@ -6,39 +6,40 @@
 .\"
 .TH PARTX "8" "December 2014" "util-linux" "System Administration"
 .SH NAME
-partx \- tell the Linux kernel about the presence and numbering of on-disk partitions
+partx \- tell the kernel about the presence and numbering of on-disk partitions
 .SH SYNOPSIS
 .B partx
-.RB [ \-a | \-d | \-s | \-u ]
+.RB [ \-a | \-d | \-P | \-r | \-s | \-u ]
 .RB [ \-t " \fItype\fR]"
 .RB [ \-n " \fIM" : \fIN\fR]
 .RB [ \- "] " \fIdisk
 .br
 .B partx
-.RB [ \-a | \-d | \-s | \-u ]
+.RB [ \-a | \-d | \-P | \-r | \-s | \-u ]
 .RB [ \-t " \fItype\fR]"
 .IR partition " [" disk ]
 .SH DESCRIPTION
 Given a device or disk-image,
 .B partx
 tries to parse the partition table and list its contents.  It
-optionally adds or removes partitions.
+can also tell the kernel to add or remove partitions from its
+bookkeeping.
 .PP
 The
 .I disk
 argument is optional when a
 .I partition
 argument is provided.  To force scanning a partition as if it were a whole disk
-(for example to list nested subpartitions), use the argument "\-" (hyphen-minus).  For example:
+(for example to list nested subpartitions), use the argument "\-" (hyphen-minus).
+For example:
 
 .RS 7
 .TP
 partx \-\-show \- /dev/sda3
 .RE
 .PP
-This will see sda3 as a whole-disk rather than a partition.
+This will see sda3 as a whole-disk rather than as a partition.
 .PP
-The
 .B partx is not an fdisk program
 \(en adding and removing partitions does not change the disk, it just
 tells the kernel about the presence and numbering of on-disk
@@ -55,7 +56,7 @@ Print the SIZE column in bytes rather than in human-readable format.
 Delete the specified partitions or all partitions.
 .TP
 .BR \-g , " \-\-noheadings"
-Do not print a header line.
+Do not print a header line with \fB\-\-show\fR or \fB\-\-raw\fR.
 .TP
 .BR \-l , " \-\-list"
 List the partitions.  Note that all numbers are in 512-byte sectors.
@@ -89,9 +90,9 @@ Specifies the lower and upper limits (e.g.\& \fB\-\-nr 2:4\fR).
 .BR \-o , " \-\-output " \fIlist
 Define the output columns to use for
 .BR \-\-show ,
-.BR \-\-raw
-or
 .B \-\-pairs
+and
+.B \-\-raw
 output.  If no output arrangement is specified, then a default set is
 used.  Use
 .B \-\-help
@@ -106,14 +107,16 @@ or
 options.
 .TP
 .BR \-P , " \-\-pairs"
-Output using key="value" format.
+List the partitions using the KEY="value" format.
 .TP
 .BR \-r , " \-\-raw"
-Use the raw output format.
+List the partitions using the raw output format.
 .TP
-.BR \-s , "\-\-show"
-List the partitions.  All numbers (except SIZE) are in 512-byte sectors.
-The output columns can be rearranged with the \fB\-\-output\fR option.
+.BR \-s , " \-\-show"
+List the partitions.
+The output columns can be selected and rearranged with the
+\fB\-\-output\fR option.
+All numbers (except SIZE) are in 512-byte sectors.
 .TP
 .BR \-t , " \-\-type " \fItype
 Specify the partition table type, which can be one of
