@@ -1,26 +1,20 @@
-.\" delpart.8 --
+.\" delpart.8 -- man page for delpart
 .\" Copyright 2007 Karel Zak <kzak@redhat.com>
 .\" Copyright 2007 Red Hat, Inc.
 .\" May be distributed under the GNU General Public License
-.TH DELPART 8 "January 2007" "util-linux" "System Administration"
+.TH DELPART 8 "January 2015" "util-linux" "System Administration"
 .SH NAME
-delpart \- simple wrapper around the "del partition" ioctl
+delpart \- tell the kernel to forget about a partition
 .SH SYNOPSIS
 .B delpart
 .I device partition
 .SH DESCRIPTION
 .B delpart
-is a program that asks the Linux kernel to remove a partition.
+asks the Linux kernel to forget about the specified \fIpartition\fR
+(a number) on the specified \fIdevice\fR.
+The command is a simple wrapper around the "del partition" ioctl.
 
 This command doesn't manipulate partitions on a hard drive.
-
-.SH OPTIONS
-.TP
-.I device
-Specify the disk device.
-.TP
-.I partition
-Specify the partition number.
 
 .SH SEE ALSO
 .BR addpart (8),

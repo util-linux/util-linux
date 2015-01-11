@@ -1,32 +1,33 @@
-.\" addpart.8 --
+.\" addpart.8 -- man page for addpart
 .\" Copyright 2007 Karel Zak <kzak@redhat.com>
 .\" Copyright 2007 Red Hat, Inc.
 .\" May be distributed under the GNU General Public License
-.TH ADDPART 8 "January 2007" "util-linux" "System Administration"
+.TH ADDPART 8 "January 2015" "util-linux" "System Administration"
 .SH NAME
-addpart \- a simple wrapper around the "add partition" ioctl
+addpart \- tell the kernel about the existence of a partition
 .SH SYNOPSIS
 .B addpart
 .I device partition start length
 .SH DESCRIPTION
 .B addpart
-is a program that informs the Linux kernel of a new partition.
+tells the Linux kernel about the existence of the specified partition.
+The command is a simple wrapper around the "add partition" ioctl.
 
-This command doesn't manipulate partitions on the hard drive.
+This command doesn't manipulate partitions on a hard drive.
 
 .SH PARAMETERS
 .TP
 .I device
-Specify the disk device.
+The disk device.
 .TP
 .I partition
-Specify the partition number.
+The partition number.
 .TP
 .I start
-Specify the beginning of the partition (in 512-byte sectors).
+The beginning of the partition (in 512-byte sectors).
 .TP
 .I length
-Specify the length of the partition (in 512-byte sectors).
+The length of the partition (in 512-byte sectors).
 
 .SH SEE ALSO
 .BR delpart (8),
