@@ -36,6 +36,7 @@
 #include "c.h"
 #include "closestream.h"
 #include "nls.h"
+#include "optutils.h"
 #include "pathnames.h"
 #include "strutils.h"
 #include "timeutils.h"
@@ -407,6 +408,11 @@ int main(int argc, char **argv)
 		{"list-modes",	no_argument,		0, OPT_LIST},
 		{0,		0,			0, 0  }
 	};
+	static const ul_excl_t excl[] = {
+		{ 'a', 'l', 'u' },
+		{ 's', 't', OPT_DATE },
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -414,6 +420,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 	while ((t = getopt_long(argc, argv, "A:ahd:lm:ns:t:uVv",
 					long_options, NULL)) != EOF) {
+		err_exclusive_options(t, long_options, excl, excl_st);
 		switch (t) {
 		case 'A':
 			/* for better compatibility with hwclock */
