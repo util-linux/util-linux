@@ -309,7 +309,7 @@ static int del_parts(int fd, const char *device, dev_t devno,
 			continue;
 		} else if (errno == ENXIO) {
 			if (verbose)
-				printf(_("%s: partition #%d already doesn't exist\n"), device, i);
+				printf(_("%s: partition #%d doesn't exist\n"), device, i);
 			continue;
 		}
 		rc = -1;
