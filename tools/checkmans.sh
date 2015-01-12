@@ -90,11 +90,23 @@ for I in $(
 	echo "From: cat ${I} | troff -mandoc -ww -z"
 	echo "=================================================="
 	fi
-	if ! lexgrog ${I} >/dev/null; then
-		echo "error: run: lexgrog ${I}" >&2
-		I_ERR=1
+	GROG=1
+	if command -v lexgrog &> /dev/null; then
+		if ! lexgrog ${I} >/dev/null; then
+			echo "error: run: lexgrog ${I}"
+			echo "=================================================="
+			((++COUNT_ERRORS))
+		fi
+	elif command -v grog &> /dev/null; then
+		if ! grog ${I} | grep man >/dev/null; then
+			echo "error: grog ${I} is not a man file"
+			echo "=================================================="
+			((++COUNT_ERRORS))
+		fi
+	else
+	GROG=0
 	fi
-	REPEATS=( $(cat ${I} | troff -mandoc -ww -Tascii | grotty |
+	REPEATS=( $(cat ${I} | troff -mandoc -Tascii 2>/dev/null | grotty |
 		col -b |
 		sed  -e 's/\s\+/\n/g; /^$/d' |
 		awk 'BEGIN { p="" } { if (0 < length($0)) { if (p == $0) { print } } p = $0 }') )
@@ -147,8 +159,12 @@ for I in ${!BIN_LIST[@]}; do
 done
 set -u
 
+if [ ${GROG} = 0 ]; then
+echo "warning: neither grog nor lexgrog commands were found"
+fi
+
 if [ ${COUNT_ERRORS} -ne 0 ]; then
-	echo "error: ${SCRIPT_INVOCATION_SHORT_NAME}: ${COUNT_ERRORS} manuals failed" >&2
+	echo "error: ${SCRIPT_INVOCATION_SHORT_NAME}: ${COUNT_ERRORS} manuals failed"
 	exit 1
 fi
 
