@@ -774,7 +774,7 @@ int main(int argc, char **argv)
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
-		{ 'P','a','d','l','r','s' },
+		{ 'P','a','d','l','r','s','u' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
