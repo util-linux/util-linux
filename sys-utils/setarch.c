@@ -41,12 +41,6 @@
 # define personality(pers) ((long)syscall(SYS_personality, pers))
 #endif
 
-/* Options without equivalent short options */
-enum {
-	OPT_4GB = CHAR_MAX + 1,
-	OPT_UNAME26
-};
-
 #define turn_on(_flag, _opts) \
 	do { \
 		(_opts) |= _flag; \
@@ -88,10 +82,12 @@ enum {
 # define ADDR_LIMIT_3GB          0x8000000
 #endif
 
+static int archwrapper;
+
 static void __attribute__((__noreturn__)) show_help(void)
 {
 	fputs(USAGE_HEADER, stdout);
-	if (!strcmp(program_invocation_short_name, "setarch"))
+	if (!archwrapper)
 		printf(_(" %s <arch> [options] [<program> [<argument>...]]\n"), program_invocation_short_name);
 	else
 		printf(_(" %s [options] [<program> [<argument>...]]\n"), program_invocation_short_name);
@@ -113,7 +109,9 @@ static void __attribute__((__noreturn__)) show_help(void)
 	fputs(_("     --4gb                ignored (for backward compatibility only)\n"), stdout);
 	fputs(_("     --uname-2.6          turns on UNAME26\n"), stdout);
 	fputs(_(" -v, --verbose            say what options are being switched on\n"), stdout);
-	fputs(_("     --list               list settable architectures, and exit\n"), stdout);
+
+	if (!archwrapper)
+		fputs(_("     --list               list settable architectures, and exit\n"), stdout);
 
 	fputs(USAGE_SEPARATOR, stdout);
 	fputs(USAGE_HELP, stdout);
@@ -254,10 +252,17 @@ static int set_arch(const char *pers, unsigned long options, int list)
 
 int main(int argc, char *argv[])
 {
-	const char *p;
+	const char *arch = NULL;
 	unsigned long options = 0;
 	int verbose = 0;
 	int c;
+
+	/* Options without equivalent short options */
+	enum {
+		OPT_4GB = CHAR_MAX + 1,
+		OPT_UNAME26,
+		OPT_LIST
+	};
 
 	/* Options --3gb and --4gb are for compatibitity with an old
 	 * Debian setarch implementation.  */
@@ -277,6 +282,7 @@ int main(int argc, char *argv[])
 		{"3gb",			no_argument,	NULL,	'3'},
 		{"4gb",			no_argument,	NULL,	OPT_4GB},
 		{"uname-2.6",		no_argument,	NULL,	OPT_UNAME26},
+		{"list",		no_argument,	NULL,	OPT_LIST},
 		{NULL,			0,		NULL,	0}
 	};
 
@@ -288,26 +294,21 @@ int main(int argc, char *argv[])
 	if (argc < 1)
 		show_usage(_("Not enough arguments"));
 
-	p = program_invocation_short_name;
-	if (!strcmp(p, "setarch")) {
-		argc--;
-		if (argc < 1)
-			show_usage(_("Not enough arguments"));
-		p = argv[1];
-		argv[1] = argv[0];	/* for getopt_long() to get the program name */
-		argv++;
-		if (!strcmp(p, "-h") || !strcmp(p, "--help"))
-			show_help();
-		else if (!strcmp(p, "-V") || !strcmp(p, "--version"))
-			show_version();
-		else if (!strcmp(p, "--list")) {
-			set_arch(argv[0], 0L, 1);
-			return EXIT_SUCCESS;
+	archwrapper = strcmp(program_invocation_short_name, "setarch") != 0;
+	if (archwrapper)
+		arch = program_invocation_short_name;	/* symlinks to setarch */
+	else {
+		if (*argv[1] != '-') {
+			arch = argv[1];
+			argv[1] = argv[0];	/* for getopt_long() to get the program name */
+			argv++;
+			argc--;
 		}
 	}
+
 #if defined(__sparc64__) || defined(__sparc__)
-	if (!strcmp(p, "sparc32bash")) {
-		if (set_arch(p, 0L, 0))
+	if (archwrapper && strcmp(arch, "sparc32bash") == 0) {
+		if (set_arch(arch, 0L, 0))
 			err(EXIT_FAILURE, _("Failed to set personality to %s"), p);
 		execl("/bin/bash", NULL);
 		err(EXIT_FAILURE, _("failed to execute %s"), "/bin/bash");
@@ -360,16 +361,25 @@ int main(int argc, char *argv[])
 		case OPT_UNAME26:
 			turn_on(UNAME26, options);
 			break;
+		case OPT_LIST:
+			if (!archwrapper) {
+				set_arch(NULL, 0, 1);
+				break;
+			} else
+				warnx(_("unrecognized option '--list'"));
 		default:
 			show_usage(NULL);
 		}
 	}
 
+	if (!arch)
+		errx(EXIT_FAILURE, _("no architecture argument specified"));
+
 	argc -= optind;
 	argv += optind;
 
-	if (set_arch(p, options, 0))
-		err(EXIT_FAILURE, _("Failed to set personality to %s"), p);
+	if (set_arch(arch, options, 0))
+		err(EXIT_FAILURE, _("failed to set personality to %s"), arch);
 
 	/* flush all output streams before exec */
 	fflush(NULL);
