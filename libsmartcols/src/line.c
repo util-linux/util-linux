@@ -11,7 +11,7 @@
 /**
  * SECTION: line
  * @title: Line
- * @short_description: line API
+ * @short_description: cells container, also keeps tree (parent->child) information
  *
  * An API to access and modify per-line data and information.
  */

@@ -10,7 +10,7 @@
 /**
  * SECTION: symbols
  * @title: Symbols
- * @short_description: symbols API
+ * @short_description: allows to overwrite default output chars (for ascii art)
  *
  * An API to access and modify data and information per symbol/symbol group.
  */

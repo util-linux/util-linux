@@ -11,7 +11,7 @@
 /**
  * SECTION: table
  * @title: Table
- * @short_description: table data API
+ * @short_description: container for rows and columns
  *
  * Table data manipulation API.
  */

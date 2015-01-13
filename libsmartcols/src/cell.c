@@ -11,7 +11,7 @@
 /**
  * SECTION: cell
  * @title: Cell
- * @short_description: cell API
+ * @short_description: container for your data
  *
  * An API to access and modify per-cell data and information. Note that cell is
  * always part of the line. If you destroy (un-reference) a line than it

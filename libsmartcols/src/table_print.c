@@ -10,7 +10,7 @@
 /**
  * SECTION: table_print
  * @title: Table print
- * @short_description: table print API
+ * @short_description: output functions
  *
  * Table output API.
  */

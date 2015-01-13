@@ -11,7 +11,7 @@
 /**
  * SECTION: column
  * @title: Column
- * @short_description: column API
+ * @short_description: defines output columns formats, headers, etc.
  *
  * An API to access and modify per-column data and information.
  */
