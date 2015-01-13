@@ -908,7 +908,7 @@ fdisk_sector_t fdisk_get_last_lba(struct fdisk_context *cxt)
  * fdisk_reset_alignment().
  *
  * The default is number of sectors on the device, but maybe modified by the
- * current disklabel driver (for example GPT uses and of disk for backup
+ * current disklabel driver (for example GPT uses the end of disk for backup
  * header, so last_lba is smaller than total number of sectors).
  *
  * Returns: 0 on success, <0 on error.

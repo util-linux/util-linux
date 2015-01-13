@@ -214,11 +214,11 @@ const char *fdisk_script_get_header(struct fdisk_script *dp, const char *name)
  * @name: header name
  * @data: header data (or NULL)
  *
- * The headers are used as global options (in script) for whole partition
+ * The headers are used as global options for whole partition
  * table, always one header per line.
  *
- * If no @data specified then the header is removed. If header does not exist
- * and @data specified then a new header added.
+ * If no @data is specified then the header is removed. If header does not exist
+ * and @data is specified then a new header is added.
  *
  * Note that libfdisk allows to specify arbitrary custom header, the default
  * build-in headers are "unit" and "label", and some label specific headers

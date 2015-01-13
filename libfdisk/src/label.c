@@ -15,9 +15,9 @@
  * fdisk_unref_context() only.
  *
  * Anyway, all label drives share in-memory first sector. The function
- * fdisk_create_disklabel() overwrites the sector. But it's possible that
- * label driver also uses another buffers, for example GPT uses more than only
- * the first sector.
+ * fdisk_create_disklabel() overwrites thi in-memory sector. But it's possible that
+ * label driver also uses another buffers, for example GPT reads more sectors
+ * from the device.
  *
  * All label operations are in-memory only, except fdisk_write_disklabel().
  *
@@ -370,7 +370,7 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
  *
  * Locate disklabel and returns info about @n item of the label. For example
  * GPT is composed from two items, PMBR and GPT, n=0 return offset to PMBR and n=1
- * return offset to GPT. For more details see 'D' expect fdisk command.
+ * return offset to GPT. For more details see 'D' expert fdisk command.
  *
  * Returns: 0 on succes, <0 on error, 1 no more items.
  */
