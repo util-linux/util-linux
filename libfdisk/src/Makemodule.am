@@ -20,6 +20,7 @@ libfdisk_la_SOURCES = \
 	libfdisk/src/table.c \
 	libfdisk/src/iter.c \
 	libfdisk/src/script.c \
+	libfdisk/src/version.c \
 	\
 	libfdisk/src/sun.c \
 	libfdisk/src/sgi.c \
@@ -64,7 +65,8 @@ if BUILD_LIBFDISK_TESTS
 check_PROGRAMS += \
 	test_fdisk_ask \
 	test_fdisk_script \
-	test_fdisk_utils
+	test_fdisk_utils \
+	test_fdisk_version 
 
 libfdisk_tests_cflags  = -DTEST_PROGRAM $(libfdisk_la_CFLAGS)
 libfdisk_tests_ldflags = libuuid.la -static
@@ -88,6 +90,11 @@ test_fdisk_script_SOURCES = libfdisk/src/script.c
 test_fdisk_script_CFLAGS = $(libfdisk_tests_cflags)
 test_fdisk_script_LDFLAGS = $(libfdisk_tests_ldflags)
 test_fdisk_script_LDADD = $(libfdisk_tests_ldadd)
+
+test_fdisk_version_SOURCES = libfdisk/src/version.c
+test_fdisk_version_CFLAGS = $(libfdisk_tests_cflags)
+test_fdisk_version_LDFLAGS = $(libfdisk_tests_ldflags)
+test_fdisk_version_LDADD = $(libfdisk_tests_ldadd)
 
 endif # BUILD_LIBFDISK_TESTS
 

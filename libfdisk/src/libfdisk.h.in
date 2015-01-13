@@ -36,6 +36,10 @@ extern "C" {
  */
 #define LIBFDISK_VERSION   "@LIBFDISK_VERSION@"
 
+#define LIBFDISK_MAJOR_VERSION   @LIBFDISK_MAJOR_VERSION@
+#define LIBFDISK_MINOR_VERSION   @LIBFDISK_MINOR_VERSION@
+#define LIBFDISK_PATCH_VERSION   @LIBFDISK_PATCH_VERSION@
+
 /**
  * fdisk_context:
  *
@@ -138,6 +142,11 @@ enum fdisk_asktype {
 
 /* init.c */
 extern void fdisk_init_debug(int mask);
+
+/* version.c */
+extern int fdisk_parse_version_string(const char *ver_string);
+extern int fdisk_get_library_version(const char **ver_string);
+extern int fdisk_get_library_features(const char ***features);
 
 /* context.h */
 

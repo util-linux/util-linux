@@ -1,7 +1,17 @@
 <SECTION>
 <FILE>init</FILE>
-LIBFDISK_VERSION
 fdisk_init_debug
+</SECTION>
+
+<SECTION>
+<FILE>version-utils</FILE>
+LIBFDISK_MAJOR_VERSION
+LIBFDISK_MINOR_VERSION
+LIBFDISK_PATCH_VERSION
+fdisk_parse_version_string
+fdisk_get_library_version
+fdisk_get_library_features
+LIBFDISK_VERSION
 </SECTION>
 
 <SECTION>

@@ -71,6 +71,8 @@ global:
 	fdisk_get_grain_size;
 	fdisk_get_label;
 	fdisk_get_last_lba;
+	fdisk_get_library_features;
+	fdisk_get_library_version;
 	fdisk_get_minimal_iosize;
 	fdisk_get_nlabels;
 	fdisk_get_npartitions;
@@ -125,6 +127,7 @@ global:
 	fdisk_new_unknown_parttype;
 	fdisk_next_label;
 	fdisk_override_geometry;
+	fdisk_parse_version_string;
 	fdisk_partition_cmp_partno;
 	fdisk_partition_cmp_start;
 	fdisk_partition_end_follow_default;
@@ -159,7 +162,6 @@ global:
 	fdisk_partition_size_explicit;
 	fdisk_partition_start_follow_default;
 	fdisk_partition_start_is_default;
-	fdisk_toggle_partition_flag;
 	fdisk_partition_to_string;
 	fdisk_partition_unset_partno;
 	fdisk_partition_unset_size;
@@ -218,6 +220,7 @@ global:
 	fdisk_table_remove_partition;
 	fdisk_table_sort_partitions;
 	fdisk_table_wrong_order;
+	fdisk_toggle_partition_flag;
 	fdisk_unref_ask;
 	fdisk_unref_context;
 	fdisk_unref_partition;
