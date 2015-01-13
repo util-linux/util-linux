@@ -56,7 +56,7 @@ int scols_reset_cell(struct libscols_cell *ce)
 /**
  * scols_cell_set_data:
  * @ce: a pointer to a struct libscols_cell instance
- * @str: data (used for scols_printtable())
+ * @str: data (used for scols_print_table())
  *
  * Stores a copy of the @str in @ce.
  *
@@ -83,7 +83,7 @@ int scols_cell_set_data(struct libscols_cell *ce, const char *str)
 /**
  * scols_cell_refer_data:
  * @ce: a pointer to a struct libscols_cell instance
- * @str: data (used for scols_printtable())
+ * @str: data (used for scols_print_table())
  *
  * Adds a reference to @str to @ce. The pointer is deallocated by
  * scols_reset_cell() or scols_unref_line(). This function is mostly designed
