@@ -163,7 +163,7 @@ int fdisk_label_get_fields_ids(
  *
  * The field struct describes data stored in struct fdisk_partition. The info
  * about data is usable for example to generate human readable output (e.g.
- * fdisk 'p'rint command). See fdisk_partition_to_stirng() and fdisk code.
+ * fdisk 'p'rint command). See fdisk_partition_to_string() and fdisk code.
  *
  * Returns: pointer to static instance of the field.
  */

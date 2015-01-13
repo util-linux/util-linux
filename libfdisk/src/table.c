@@ -185,7 +185,7 @@ struct fdisk_partition *fdisk_table_get_partition(
  * @pa: new entry
  *
  * Adds a new entry to table and increment @pa reference counter. Don't forget to
- * use fdisk_unref_pa() after fdisk_table_add_partition() if you want to keep
+ * use fdisk_unref_partition() after fdisk_table_add_partition() if you want to keep
  * the @pa referenced by the table only.
  *
  * Returns: 0 on success or negative number in case of error.
@@ -529,7 +529,8 @@ done:
  * This function adds freespace (described by fdisk_partition) to @table, it
  * allocates a new table if the @table points to NULL.
  *
- * Note that free space smaller than grain (see fdisk_get_grain()) is ignored.
+ * Note that free space smaller than grain (see fdisk_get_grain_size()) is
+ * ignored.
 
  * Returns: 0 on success, otherwise, a corresponding error.
  */

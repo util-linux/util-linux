@@ -461,33 +461,50 @@ extern int fdisk_sgi_create_info(struct fdisk_context *cxt);
 
 /* gpt */
 
-/* GPT partition attributes */
-enum {
-	/* System partition (disk partitioning utilities must preserve the
-	 * partition as is) */
-	GPT_FLAG_REQUIRED = 1,
+/*
+ * GPT partition attributes
+ */
 
-	/* EFI firmware should ignore the content of the partition and not try
-	 * to read from it */
-	GPT_FLAG_NOBLOCK,
+/**
+ * GPT_FLAG_REQUIRED:
+ *
+ * GPT attribute; marks a partition as system partition (disk
+ * partitioning utilities must preserve the partition as is)
+ */
+#define GPT_FLAG_REQUIRED	1
 
-	/* Legacy BIOS bootable  */
-	GPT_FLAG_LEGACYBOOT,
+/**
+ * GPT_FLAG_NOBLOCK:
+ *
+ * GPT attribute; EFI firmware should ignore the content of the
+ * partition and not try to read from it
+ */
+#define GPT_FLAG_NOBLOCK	2
 
-	/* bites 48-63, Defined and used by the individual partition type.
-	 *
-	 * The flag GPT_FLAG_GUIDSPECIFIC forces libfdisk to ask (by ask API)
-	 * for a bit number. If you want to toggle specific bit and avoid any
-	 * dialog, then use the bit number (in range 48..63). For example:
-	 *
-	 * // start dialog to ask for bit number
-	 * fdisk_toggle_partition_flag(cxt, n, GPT_FLAG_GUIDSPECIFIC);
-	 *
-	 * // toggle bit 60
-	 * fdisk_toggle_partition_flag(cxt, n, 60);
-	 */
-	GPT_FLAG_GUIDSPECIFIC
-};
+/**
+ * GPT_FLAG_LEGACYBOOT:
+ *
+ * GPT attribute; use the partition for legacy boot method
+ */
+#define GPT_FLAG_LEGACYBOOT	3
+
+/**
+ * GPT_FLAG_GUIDSPECIFIC:
+ *
+ * GPT attribute; for bites 48-63, defined and used by the individual partition
+ * type.
+ *
+ * The flag GPT_FLAG_GUIDSPECIFIC forces libfdisk to ask (by ask API)
+ * for a bit number. If you want to toggle specific bit and avoid any
+ * dialog, then use the bit number (in range 48..63). For example:
+ *
+ * // start dialog to ask for bit number
+ * fdisk_toggle_partition_flag(cxt, n, GPT_FLAG_GUIDSPECIFIC);
+ *
+ * // toggle bit 60
+ * fdisk_toggle_partition_flag(cxt, n, 60);
+ */
+#define GPT_FLAG_GUIDSPECIFIC	4
 
 extern int fdisk_gpt_is_hybrid(struct fdisk_context *cxt);
 

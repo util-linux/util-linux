@@ -1,5 +1,6 @@
 <SECTION>
 <FILE>init</FILE>
+LIBFDISK_VERSION
 fdisk_init_debug
 </SECTION>
 
@@ -11,6 +12,7 @@ fdisk_warnx
 fdisk_set_ask
 <SUBSECTION>
 fdisk_ask
+fdisk_is_ask
 fdisk_ask_get_query
 fdisk_ask_get_type
 fdisk_ask_menu_get_default
@@ -44,6 +46,10 @@ fdisk_unref_ask
 
 <SECTION>
 <FILE>alignment</FILE>
+FDISK_ALIGN_DOWN
+FDISK_ALIGN_NEAREST
+FDISK_ALIGN_UP
+fdisk_sector_t
 fdisk_align_lba
 fdisk_align_lba_in_range
 fdisk_has_user_device_properties
@@ -81,6 +87,7 @@ fdisk_field_get_width
 fdisk_field_is_number
 <SUBSECTION>
 fdisk_label
+fdisk_is_label
 fdisk_label_get_field
 fdisk_label_get_field_by_name
 fdisk_label_get_fields_ids
@@ -185,6 +192,7 @@ fdisk_unref_partition
 
 <SECTION>
 <FILE>dos</FILE>
+DOS_FLAG_ACTIVE
 fdisk_dos_enable_compatible
 fdisk_dos_is_compatible
 fdisk_dos_move_begin
@@ -192,6 +200,8 @@ fdisk_dos_move_begin
 
 <SECTION>
 <FILE>sgi</FILE>
+SGI_FLAG_BOOT
+SGI_FLAG_SWAP
 fdisk_sgi_create_info
 fdisk_sgi_set_bootfile
 </SECTION>
@@ -199,6 +209,10 @@ fdisk_sgi_set_bootfile
 <SECTION>
 <FILE>gpt</FILE>
 fdisk_gpt_is_hybrid
+GPT_FLAG_REQUIRED
+GPT_FLAG_NOBLOCK
+GPT_FLAG_LEGACYBOOT
+GPT_FLAG_GUIDSPECIFIC
 </SECTION>
 
 <SECTION>
@@ -271,10 +285,11 @@ fdisk_get_optimal_iosize
 fdisk_get_parent
 fdisk_get_physector_size
 fdisk_get_sector_size
+FDISK_PLURAL
+FDISK_SINGULAR
 fdisk_get_unit
 fdisk_get_units_per_sector
 fdisk_has_label
-fdisk_has_user_device_properties
 fdisk_is_details
 fdisk_is_labeltype
 fdisk_is_listonly
@@ -296,6 +311,7 @@ fdisk_partname
 
 <SECTION>
 <FILE>iter</FILE>
+fdisk_iter
 fdisk_free_iter
 fdisk_iter_get_direction
 fdisk_new_iter

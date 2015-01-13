@@ -12,7 +12,7 @@
  * @short_description: functions to align partitions and work with disk topology and geometry
  *
  * The libfdisk aligns the end of the partitions to make it possible to align
- * the next partition to the "grain" (see fdisk_get_grain()). The grain is
+ * the next partition to the "grain" (see fdisk_get_grain_size()). The grain is
  * usually 1MiB (or more for devices where optimal I/O is greater than 1MiB).
  *
  * It means that the library does not align strictly to physical sector size
@@ -65,7 +65,7 @@ static int lba_is_phy_aligned(struct fdisk_context *cxt, fdisk_sector_t lba)
  * @lba: address to align
  * @direction: FDISK_ALIGN_{UP,DOWN,NEAREST}
  *
- * This function aligns @lba to the "grain" (see fdisk_get_grain()). If the
+ * This function aligns @lba to the "grain" (see fdisk_get_grain_size()). If the
  * device uses alignment offset then the result is moved according the offset
  * to be on the physical boundary.
  *

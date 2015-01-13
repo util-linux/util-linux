@@ -172,7 +172,7 @@ int fdisk_partition_has_start(struct fdisk_partition *pa)
  * @a: partition
  * @b: partition
  *
- * Compares partitons according to start offset, See fdisk_sort_table().
+ * Compares partitons according to start offset, See fdisk_table_sort_partitions().
  *
  * Return: 0 if the same, <0 if @b greater, >0 if @a greater.
  */
@@ -294,7 +294,7 @@ int fdisk_partition_has_size(struct fdisk_partition *pa)
  * @enable: 0|1
  *
  * By default libfdisk aligns the size when add the new partition (by
- * fdisk_add_partrition()). If you want to disable this functionality use
+ * fdisk_add_partition()). If you want to disable this functionality use
  * @enable = 1.
  *
  * Returns: 0 on success, <0 on error.
@@ -376,7 +376,7 @@ int fdisk_partition_has_partno(struct fdisk_partition *pa)
  * @a: partition
  * @b: partition
  *
- * Compares partitons according to partition number See fdisk_sort_table().
+ * Compares partitons according to partition number See fdisk_table_sort_partitions().
  *
  * Return: 0 if the same, <0 if @b greater, >0 if @a greater.
  */
