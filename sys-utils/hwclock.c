@@ -1243,8 +1243,12 @@ static void determine_clock_access_method(const bool user_requests_ISA)
 		ur = probe_for_rtc_clock();
 #endif
 
+#if defined(__i386__) || defined(__alpha__)
+	/* CMOS is also available for x86_64, but we don't check it automatically,
+	 * --directisa has to be excplicitly specified */
 	if (!ur && !user_requests_ISA)
 		ur = probe_for_cmos_clock();
+#endif
 
 	if (debug) {
 		if (ur)
