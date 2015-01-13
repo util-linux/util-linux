@@ -1,5 +1,6 @@
-cfdisk:  libncursesw libsmartcols libtinfo libuuid 
-fdisk:  libsmartcols libuuid 
+cfdisk:  libfdisk libncursesw libsmartcols libtinfo libuuid 
+fdisk:  libfdisk libsmartcols libuuid 
+libfdisk.so.1.1.0:  libuuid 
 libsmartcols.so.1.1.0:  
 libuuid.so.1.3.0:  
 losetup:  libsmartcols 
@@ -7,9 +8,11 @@ lscpu:  libsmartcols
 lslogins:  libsmartcols libsystemd-id128 libsystemd-journal 
 mkswap:  libuuid 
 prlimit:  libsmartcols 
+sfdisk:  libfdisk libsmartcols libuuid 
 uuidd:  libsystemd-daemon libuuid 
 uuidgen:  libuuid 
 wdctl:  libsmartcols 
+zramctl:  libsmartcols 
 agetty:  
 blkdiscard:  
 blockdev:  
@@ -23,7 +26,7 @@ colcrt:
 colrm:  
 column:  
 ctrlaltdel:  
-dmesg:  librt 
+dmesg:  
 fallocate:  
 fdformat:  
 flock:  
@@ -32,14 +35,14 @@ fsck.minix:
 fsfreeze:  
 getopt:  
 hexdump:  
-hwclock:  
+hwclock:  libm 
 ionice:  
 ipcmk:  
 ipcrm:  
 ipcs:  
 isosize:  
 kill:  
-last:  librt 
+last:  
 ldattach:  
 logger:  libsystemd-id128 libsystemd-journal 
 login:  libpam libpam_misc 
@@ -69,7 +72,6 @@ setarch:
 setpriv:  ap-ng 
 setsid:  
 setterm:  libtinfo 
-sfdisk:  
 su:  libpam libpam_misc 
 sulogin:  rypt 
 switch_root:  

@@ -1,12 +1,13 @@
 blkid:  libblkid libuuid 
-cfdisk:  libblkid libncursesw libsmartcols libtinfo libuuid 
+cfdisk:  libblkid libfdisk libncursesw libsmartcols libtinfo libuuid 
 eject:  libblkid libmount libuuid 
-fdisk:  libblkid libsmartcols libuuid 
+fdisk:  libblkid libfdisk libsmartcols libuuid 
 findfs:  libblkid libuuid 
 findmnt:  libblkid libmount libsmartcols libudev libuuid 
 fsck:  libblkid libmount libuuid 
 fstrim:  libblkid libmount libuuid 
 libblkid.so.1.1.0:  libuuid 
+libfdisk.so.1.1.0:  libblkid libuuid 
 libmount.so.1.1.0:  libblkid libuuid 
 libsmartcols.so.1.1.0:  
 libuuid.so.1.3.0:  
@@ -21,6 +22,7 @@ mountpoint:  libblkid libmount libuuid
 partx:  libblkid libsmartcols libuuid 
 prlimit:  libsmartcols 
 pylibmount.so:  libblkid libmount libpython2 libuuid 
+sfdisk:  libblkid libfdisk libsmartcols libuuid 
 swaplabel:  libblkid libuuid 
 swapoff:  libblkid libmount libuuid 
 swapon:  libblkid libmount libsmartcols libuuid 
@@ -29,6 +31,7 @@ uuidd:  libsystemd-daemon libuuid
 uuidgen:  libuuid 
 wdctl:  libsmartcols 
 wipefs:  libblkid libuuid 
+zramctl:  libsmartcols 
 addpart:  
 agetty:  
 blkdiscard:  
@@ -44,7 +47,7 @@ colrm:
 column:  
 ctrlaltdel:  
 delpart:  
-dmesg:  librt 
+dmesg:  
 fallocate:  
 fdformat:  
 flock:  
@@ -53,14 +56,14 @@ fsck.minix:
 fsfreeze:  
 getopt:  
 hexdump:  
-hwclock:  
+hwclock:  libm 
 ionice:  
 ipcmk:  
 ipcrm:  
 ipcs:  
 isosize:  
 kill:  
-last:  librt 
+last:  
 ldattach:  
 logger:  libsystemd-id128 libsystemd-journal 
 login:  libpam libpam_misc 
@@ -91,7 +94,6 @@ setarch:
 setpriv:  ap-ng 
 setsid:  
 setterm:  libtinfo 
-sfdisk:  
 su:  libpam libpam_misc 
 sulogin:  rypt 
 switch_root:  
