@@ -224,7 +224,7 @@ static int query(int minor_raw, const char *raw_name, int quiet)
 	if (raw_name) {
 		struct stat statbuf;
 
-		if (!stat(raw_name, &statbuf))
+		if (stat(raw_name, &statbuf) != 0)
 			err(EXIT_RAW_ACCESS,
 			    _("Cannot locate raw device '%s'"), raw_name);
 		if (!S_ISCHR(statbuf.st_mode))
