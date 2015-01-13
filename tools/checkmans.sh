@@ -42,7 +42,8 @@ done
 # Try to find missing manuals matching build targets with manual files.
 declare -A MAN_LIST BIN_LIST
 
-COUNT_ERRORS=0
+declare -i ITER
+declare -i COUNT_ERRORS=0
 declare -a REPEATS
 declare -A KNOWN_REPEATS
 KNOWN_REPEATS[mount.8]='foo'
@@ -111,21 +112,14 @@ for I in $(
 		sed  -e 's/\s\+/\n/g; /^$/d' |
 		awk 'BEGIN { p="" } { if (0 < length($0)) { if (p == $0) { print } } p = $0 }') )
 	if [ 0 -lt "${#REPEATS[@]}" ]; then
-		ITER=${#REPEATS[@]}
-		while [ -1 -lt ${ITER} ]; do
+		ITER=${#REPEATS[@]}+1
+		while ((ITER--)); do
 			remove_repeats ${ITER}
-			# The 'let' may cause exit on error.
-			# When ITER == 0 -> let returns 1, bash bug?
-			let ITER=${ITER}-1 || true
 		done
 		if [ 0 -lt "${#REPEATS[@]}" ]; then
 			echo "warning: ${I} has repeating words: ${REPEATS[@]}"
 		fi
 	fi
-	# The 'let' may cause exit on error.
-	# COUNT_ERRORS=0; let COUNT_ERRORS=$COUNT_ERRORS+0; echo $?
-	# Is this a bash bug?
-	let COUNT_ERRORS=$COUNT_ERRORS+$I_ERR || true
 done
 
 # Create a list of build targets.
