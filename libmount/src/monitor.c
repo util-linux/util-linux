@@ -10,6 +10,26 @@
  * @title: Monitor
  * @short_description: interface to monitor mount tables
  *
+ * For example monitor VFS (/proc/self/mountinfo) for changes:
+ *
+ * <informalexample>
+ *   <programlisting>
+ * const char *filename;
+ * struct libmount_monitor *mn = mnt_new_monitor();
+ *
+ * mnt_monitor_enable_kernel(mn, TRUE));
+ *
+ * printf("waiting for changes...\n");
+ * while (mnt_monitor_wait(mn, -1) > 0) {
+ *    printf("notification detected\n");
+ *
+ *    while (mnt_monitor_next_change(mn, &filename, NULL) == 0)
+ *       printf(" %s: change detected\n", filename);
+ * }
+ * mnt_unref_monitor(mn);
+ *   </programlisting>
+ * </informalexample>
+ *
  */
 
 #include "fileutils.h"
