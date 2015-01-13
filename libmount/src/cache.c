@@ -563,7 +563,7 @@ char *mnt_resolve_path(const char *path, struct libmnt_cache *cache)
  * Like mnt_resolve_path(), unless @cache is not NULL and
  * mnt_cache_set_targets(cache, mtab) was called: if @path is found in the
  * cached @mtab and the matching entry was provided by the kernel, assume that
- * @path is already canonicalized. By avoiding a call to canonicalize_path() on
+ * @path is already canonicalized. By avoiding a call to realpath(2) on
  * known mount points, there is a lower risk of stepping on a stale mount
  * point, which can result in an application freeze. This is also faster in
  * general, as stat(2) on a mount point is slower than on a regular file.

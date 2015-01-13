@@ -573,7 +573,7 @@ int mnt_monitor_close_fd(struct libmnt_monitor *mn)
  *
  * The file descriptor is associated with all monitored files and it's usable
  * for example for epoll. You have to call mnt_monitor_event_cleanup() or
- * mnt_monitor_next_changed() after each event.
+ * mnt_monitor_next_change() after each event.
  *
  * Returns: >=0 (fd) on success, <0 on error
  */
@@ -673,7 +673,7 @@ static struct monitor_entry *get_changed(struct libmnt_monitor *mn)
 }
 
 /**
- * mnt_monitor_next_changed:
+ * mnt_monitor_next_change:
  * @mn: monitor
  * @filename: returns changed file (optional argument)
  * @type: returns MNT_MONITOR_TYPE_* (optional argument)
@@ -682,7 +682,7 @@ static struct monitor_entry *get_changed(struct libmnt_monitor *mn)
  *
  * Returns: 0 on success, 1 no change, <0 on error
  */
-int mnt_monitor_next_changed(struct libmnt_monitor *mn,
+int mnt_monitor_next_change(struct libmnt_monitor *mn,
 			     const char **filename,
 			     int *type)
 {
@@ -846,7 +846,7 @@ int test_epoll(struct libmnt_test *ts, int argc, char *argv[])
 			continue;
 
 		printf(" top-level FD active\n");
-		while (mnt_monitor_next_changed(mn, &filename, NULL) == 0)
+		while (mnt_monitor_next_change(mn, &filename, NULL) == 0)
 			printf("  %s: change detected\n", filename);
 	} while (1);
 
@@ -873,7 +873,7 @@ int test_wait(struct libmnt_test *ts, int argc, char *argv[])
 	while (mnt_monitor_wait(mn, -1) > 0) {
 		printf("notification detected\n");
 
-		while (mnt_monitor_next_changed(mn, &filename, NULL) == 0)
+		while (mnt_monitor_next_change(mn, &filename, NULL) == 0)
 			printf(" %s: change detected\n", filename);
 
 	}

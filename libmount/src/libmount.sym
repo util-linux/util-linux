@@ -304,7 +304,7 @@ MOUNT_2.26 {
 	mnt_monitor_enable_kernel;
 	mnt_monitor_event_cleanup;
 	mnt_monitor_get_fd;
-	mnt_monitor_next_changed;
+	mnt_monitor_next_change;
 	mnt_monitor_wait;
 	mnt_new_monitor;
 	mnt_ref_monitor;
