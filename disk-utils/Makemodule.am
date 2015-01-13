@@ -178,6 +178,14 @@ if BUILD_LIBBLKID
 sfdisk_CFLAGS += -I$(ul_libblkid_incdir)
 sfdisk_LDADD += libblkid.la
 endif
+
+if HAVE_STATIC_SFDISK
+sbin_PROGRAMS += sfdisk.static
+sfdisk_static_SOURCES = $(sfdisk_SOURCES)
+sfdisk_static_LDFLAGS = -all-static
+sfdisk_static_CFLAGS = $(sfdisk_CFLAGS)
+sfdisk_static_LDADD = $(sfdisk_LDADD)
+endif
 endif # BUILD_SFDISK
 
 
