@@ -38,7 +38,9 @@ Hardware Clock values based on its drift rate.
 .PP
 Since v2.26 important changes were made to the
 .B \-\-hctosys
-function, and the new option
+function, the
+.B \-\-directisa
+option, and a new option
 .B \-\-update\-drift
 was added. See their respective sections below.
 .
@@ -343,11 +345,13 @@ machines, it has no effect.  This option tells
 to use explicit I/O instructions to access the Hardware Clock.
 Without this option,
 .B \%hwclock
-will try to use the rtc device, which it assumes to be driven by the RTC
-device driver.  If it is unable to open the device for reading, it will
-use the explicit I/O instructions anyway.  Direct hardware access from
-userspace should only be used for testing, troubleshooting, and as a
-last resort when all other methods fail.  See the
+will use the rtc device, which it assumes to be driven by the RTC device
+driver.  As of v2.26 it will no longer automatically use directisa when
+the rtc driver is unavailable; this was causing an unsafe condition that
+could allow two processes to access the Hardware Clock at the same time.
+Direct hardware access from userspace should only be used for testing,
+troubleshooting, and as a last resort when all other methods fail.  See
+the
 .BR \-\-rtc " option."
 .
 .TP
@@ -473,8 +477,7 @@ Specifies the year which is the beginning of the Hardware Clock's epoch,
 that is the number of years into AD to which a zero value in the
 Hardware Clock's year counter refers.  It is used together with the
 .B \%\-\-setepoch
-option to set the kernel's idea of the epoch of the Hardware Clock, or
-otherwise to specify the epoch for use with direct ISA access.
+option to set the kernel's idea of the epoch of the Hardware Clock.
 .sp
 For example, on a Digital Unix machine:
 .RS
@@ -612,58 +615,46 @@ installed setuid root, but it's there for now.)
 .SS Hardware Clock Access Methods
 .PP
 .B \%hwclock
-uses many different ways to get and set Hardware Clock values.
-The most normal way is to do I/O to the rtc device special file,
-which is presumed to be driven by the rtc device driver.  However,
-this method is not always available as older systems do not have it.
-Also, though there are versions of the rtc driver that work on DEC
-Alphas, there appear to be plenty of Alphas on which the rtc driver
-does not work (a common symptom is hwclock hanging).
-Moreover, Linux systems using the rtc framework with udev, are capable
-of supporting multiple Hardware Clocks.  This may bring about the need
-to override the default rtc device by specifying one with the
+uses many different ways to get and set Hardware Clock values.  The most
+normal way is to do I/O to the rtc device special file, which is
+presumed to be driven by the rtc device driver.  Also, Linux systems
+using the rtc framework with udev, are capable of supporting multiple
+Hardware Clocks.  This may bring about the need to override the default
+rtc device by specifying one with the
 .BR \-\-rtc " option."
-.
 .PP
-On older systems, the method of accessing the Hardware Clock depends on
-the system hardware.
+However, this method is not always available as older systems do not
+have an rtc driver.  On these systems, the method of accessing the
+Hardware Clock depends on the system hardware.
 .PP
 On an ISA compatible system,
 .B \%hwclock
 can directly access the "CMOS memory" registers that
 constitute the clock, by doing I/O to Ports 0x70 and 0x71.  It does
 this with actual I/O instructions and consequently can only do it if
-running with superuser effective userid.  (In the case of a Jensen
-Alpha, there is no way for
-.B \%hwclock
-to execute those I/O instructions, and so it uses instead the
-\%/dev/port device special file, which provides almost as low-level an
-interface to the I/O subsystem.)
+running with superuser effective userid.  This method may be used by
+specifying the
+.BR \%\-\-directisa " option."
 .PP
 This is a really poor method of accessing the clock, for all the
 reasons that userspace programs are generally not supposed to do
 direct I/O and disable interrupts.
 .B \%hwclock
-provides it because it is the only method available on ISA compatible
-and Alpha systems which do not have working rtc device drivers available.
+provides it for testing, troubleshooting, and  because it may be the
+only method available on ISA compatible and Alpha systems which do not
+have a working rtc device driver.
+.PP
+In the case of a Jensen Alpha, there is no way for
+.B \%hwclock
+to execute those I/O instructions, and so it uses instead the
+.I \%/dev/port
+device special file, which provides almost as low-level an interface to
+the I/O subsystem.
 .PP
 On an m68k system,
 .B \%hwclock
 can access the clock with the console driver, via the device special file
 .IR \%/dev/tty1 .
-.PP
-.B \%hwclock
-tries to use the rtc device interface first.  If it is compiled for a
-kernel that does not have that function or it is unable to open it (or
-the alternative special file defined on the command line with
-.BR \-\-rtc ") " \%hwclock
-will fall back to another method, if available.  On an ISA compatible or
-Alpha machine,
-.B \%hwclock
-can be forced to use the direct manipulation of the CMOS registers
-without even trying the rtc device interface by specifying the
-.BR \%\-\-directisa " option."
-.
 .SS The Adjust Function
 .PP
 The Hardware Clock is usually not very accurate.  However, much of its
