@@ -644,6 +644,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -c, --compatibility[=<mode>]  mode is 'dos' or 'nondos' (default)\n"), out);
 	fputs(_(" -L, --color[=<when>]          colorize output (auto, always or never)\n"), out);
 	fputs(_(" -l, --list                    display partitions end exit\n"), out);
+	fputs(_(" -o, --output <list>           output columns\n"), out);
 	fputs(_(" -t, --type <type>             recognize specified partition table type only\n"), out);
 	fputs(_(" -u, --units[=<unit>]          display units: 'cylinders' or 'sectors' (default)\n"), out);
 	fputs(_(" -s, --getsz                   display device size in 512-byte sectors [DEPRECATED]\n"), out);
@@ -690,6 +691,7 @@ int main(int argc, char **argv)
 		{ "type",           required_argument, NULL, 't' },
 		{ "units",          optional_argument, NULL, 'u' },
 		{ "version",        no_argument,       NULL, 'V' },
+		{ "output",         no_argument,       NULL, 'o' },
 		{ NULL, 0, NULL, 0 }
 	};
 
