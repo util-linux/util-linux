@@ -197,6 +197,7 @@ struct dmesg_control {
 			decode:1,	/* use "facility: level: " prefix */
 			pager:1,	/* pipe output into a pager */
 			color:1;	/* colorize messages */
+	int		indent;		/* due to timestamps if newline */
 };
 
 struct dmesg_record {
@@ -608,9 +609,10 @@ static int fwrite_hex(const char *buf, size_t size, FILE *out)
 /*
  * Prints to 'out' and non-printable chars are replaced with \x<hex> sequences.
  */
-static void safe_fwrite(const char *buf, size_t size, FILE *out)
+static void safe_fwrite(const char *buf, size_t size, int indent, FILE *out)
 {
 	size_t i;
+	int in;
 #ifdef HAVE_WIDECHAR
 	mbstate_t s;
 	memset(&s, 0, sizeof (s));
@@ -642,6 +644,15 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 #endif
 		if (hex)
 			rc = fwrite_hex(p, len, out);
+		else if (*p == '\n' && *(p + 1) && indent) {
+			char s = ' ';
+			rc = fwrite(p, 1, len, out) != len;
+			in = indent;
+			do {
+				if (!rc) rc = fwrite(&s, 1, 1, out) != 1;
+				in--;
+			} while (in && !rc);
+		}
 		else
 			rc = fwrite(p, 1, len, out) != len;
 		if (rc != 0) {
@@ -766,7 +777,7 @@ static void raw_print(struct dmesg_control *ctl, const char *buf, size_t size)
 		/*
 		 * Print whole ring buffer
 		 */
-		safe_fwrite(buf, size, stdout);
+		safe_fwrite(buf, size, 0, stdout);
 		lastc = buf[size - 1];
 	} else {
 		/*
@@ -776,7 +787,7 @@ static void raw_print(struct dmesg_control *ctl, const char *buf, size_t size)
 			size_t sz = size > ctl->pagesize ? ctl->pagesize : size;
 			char *x = ctl->mmap_buff;
 
-			safe_fwrite(x, sz, stdout);
+			safe_fwrite(x, sz, 0, stdout);
 			lastc = x[sz - 1];
 			size -= sz;
 			ctl->mmap_buff += sz;
@@ -871,6 +882,7 @@ static void print_record(struct dmesg_control *ctl,
 	int has_color = 0;
 	const char *mesg;
 	size_t mesg_size;
+	int indent = 0;
 
 	if (!accept_record(ctl, rec))
 		return;
@@ -885,10 +897,10 @@ static void print_record(struct dmesg_control *ctl,
 	 * backward compatibility with syslog(2) buffers only
 	 */
 	if (ctl->raw) {
-		printf("<%d>[%5d.%06d] ",
-			LOG_MAKEPRI(rec->facility, rec->level),
-			(int) rec->tv.tv_sec,
-			(int) rec->tv.tv_usec);
+		ctl->indent = printf("<%d>[%5d.%06d] ",
+				     LOG_MAKEPRI(rec->facility, rec->level),
+				     (int) rec->tv.tv_sec,
+				     (int) rec->tv.tv_usec);
 
 		goto mesg;
 	}
@@ -899,8 +911,8 @@ static void print_record(struct dmesg_control *ctl,
 	if (ctl->decode &&
 	    -1 < rec->level    && rec->level     < (int) ARRAY_SIZE(level_names) &&
 	    -1 < rec->facility && rec->facility  < (int) ARRAY_SIZE(facility_names))
-		printf("%-6s:%-6s: ", facility_names[rec->facility].name,
-				      level_names[rec->level].name);
+		indent = printf("%-6s:%-6s: ", facility_names[rec->facility].name,
+				               level_names[rec->level].name);
 
 	if (ctl->color)
 		dmesg_enable_color(DMESG_COLOR_TIME);
@@ -909,17 +921,18 @@ static void print_record(struct dmesg_control *ctl,
 		double delta;
 		struct tm cur;
 	case DMESG_TIMEFTM_NONE:
+		ctl->indent = 0;
 		break;
 	case DMESG_TIMEFTM_CTIME:
-		printf("[%s] ", record_ctime(ctl, rec, buf, sizeof(buf)));
+		ctl->indent = printf("[%s] ", record_ctime(ctl, rec, buf, sizeof(buf)));
 		break;
 	case DMESG_TIMEFTM_CTIME_DELTA:
-		printf("[%s <%12.06f>] ",
-		       record_ctime(ctl, rec, buf, sizeof(buf)),
-		       record_count_delta(ctl, rec));
+		ctl->indent = printf("[%s <%12.06f>] ",
+		       		     record_ctime(ctl, rec, buf, sizeof(buf)),
+		       		     record_count_delta(ctl, rec));
 		break;
 	case DMESG_TIMEFTM_DELTA:
-		printf("[<%12.06f>] ", record_count_delta(ctl, rec));
+		ctl->indent = printf("[<%12.06f>] ", record_count_delta(ctl, rec));
 		break;
 	case DMESG_TIMEFTM_RELTIME:
 		record_localtime(ctl, rec, &cur);
@@ -928,28 +941,30 @@ static void print_record(struct dmesg_control *ctl,
 		    cur.tm_hour != ctl->lasttm.tm_hour ||
 		    cur.tm_yday != ctl->lasttm.tm_yday) {
 			dmesg_enable_color(DMESG_COLOR_TIMEBREAK);
-			printf("[%s] ", short_ctime(&cur, buf, sizeof(buf)));
+			ctl->indent = printf("[%s] ", short_ctime(&cur, buf, sizeof(buf)));
 		} else {
 			if (delta < 10)
-				printf("[  %+8.06f] ", delta);
+				ctl->indent = printf("[  %+8.06f] ", delta);
 			else
-				printf("[ %+9.06f] ", delta);
+				ctl->indent = printf("[ %+9.06f] ", delta);
 		}
 		ctl->lasttm = cur;
 		break;
 	case DMESG_TIMEFTM_TIME:
-		printf("[%5d.%06d] ", (int)rec->tv.tv_sec, (int)rec->tv.tv_usec);
+		ctl->indent = printf("[%5d.%06d] ", (int)rec->tv.tv_sec, (int)rec->tv.tv_usec);
 		break;
 	case DMESG_TIMEFTM_TIME_DELTA:
-		printf("[%5d.%06d <%12.06f>] ", (int)rec->tv.tv_sec,
-		       (int)rec->tv.tv_usec, record_count_delta(ctl, rec));
+		ctl->indent = printf("[%5d.%06d <%12.06f>] ", (int)rec->tv.tv_sec,
+			       (int)rec->tv.tv_usec, record_count_delta(ctl, rec));
 		break;
 	case DMESG_TIMEFTM_ISO8601:
-		printf("%s ", iso_8601_time(ctl, rec, buf, sizeof(buf)));
+		ctl->indent = printf("%s ", iso_8601_time(ctl, rec, buf, sizeof(buf)));
 		break;
 	default:
 		abort();
 	}
+
+	ctl->indent += indent;
 
 	if (ctl->color)
 		color_disable();
@@ -964,7 +979,7 @@ mesg:
 		const char *subsys = get_subsys_delimiter(mesg, mesg_size);
 		if (subsys) {
 			dmesg_enable_color(DMESG_COLOR_SUBSYS);
-			safe_fwrite(mesg, subsys - mesg, stdout);
+			safe_fwrite(mesg, subsys - mesg, ctl->indent, stdout);
 			color_disable();
 
 			mesg_size -= subsys - mesg;
@@ -972,11 +987,11 @@ mesg:
 		}
 		/* error, alert .. etc. colors */
 		has_color = set_level_color(rec->level, mesg, mesg_size) == 0;
-		safe_fwrite(mesg, mesg_size, stdout);
+		safe_fwrite(mesg, mesg_size, ctl->indent, stdout);
 		if (has_color)
 			color_disable();
 	} else
-		safe_fwrite(mesg, mesg_size, stdout);
+		safe_fwrite(mesg, mesg_size, ctl->indent, stdout);
 
 	if (*(mesg + mesg_size - 1) != '\n')
 		putchar('\n');
@@ -1195,6 +1210,7 @@ int main(int argc, char *argv[])
 		.method = DMESG_METHOD_KMSG,
 		.kmsg = -1,
 		.time_fmt = DMESG_TIMEFTM_TIME,
+		.indent = 0,
 	};
 	int colormode = UL_COLORMODE_UNDEF;
 	enum {
