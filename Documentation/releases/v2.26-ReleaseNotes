@@ -15,8 +15,8 @@ Util-linux 2.26 Release Notes
  for some UDF volumes.
 
 
- The command hwlock(8) uses the drift correction for all relevant operations
- and it is unnecessary to specify --adjuts on hwlock command line now.
+ The command hwclock(8) uses the drift correction for all relevant operations
+ and it is unnecessary to specify --adjuts on hwclock command line now.
 
  The command hwclock(8) does not automatically (re)calculate drift factor on
  --systohc to avoid several problem (ntpd with an '11 minute mode', etc.), but
