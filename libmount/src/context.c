@@ -2051,13 +2051,8 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		cxt->optsmode &= ~MNT_OMODE_FORCE;
 	}
 
-	if (mnt_context_get_mflags(cxt, &mflags) == 0 && mflags & MS_REMOUNT) {
-		/* preffer mtab on remount */
-		DBG(CXT, ul_debugobj(cxt, "force mtab parsing on remount"));
-		cxt->optsmode |= MNT_OMODE_MTAB;
-		cxt->optsmode &= ~MNT_OMODE_FSTAB;
+	if (mnt_context_get_mflags(cxt, &mflags) == 0 && mflags & MS_REMOUNT)
 		isremount = 1;
-	}
 
 	if (cxt->fs) {
 		src = mnt_fs_get_source(cxt->fs);
