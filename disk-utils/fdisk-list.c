@@ -104,13 +104,13 @@ void list_disklabel(struct fdisk_context *cxt)
 
 	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
 	if (!itr) {
-		fdisk_warn(cxt, _("faild to allocate iterator"));
+		fdisk_warn(cxt, _("failed to allocate iterator"));
 		goto done;
 	}
 
 	out = scols_new_table();
 	if (!out) {
-		fdisk_warn(cxt, _("faild to allocate output table"));
+		fdisk_warn(cxt, _("failed to allocate output table"));
 		goto done;
 	}
 
@@ -151,7 +151,7 @@ void list_disklabel(struct fdisk_context *cxt)
 		struct libscols_line *ln = scols_table_new_line(out, NULL);
 
 		if (!ln) {
-			fdisk_warn(cxt, _("faild to allocate output line"));
+			fdisk_warn(cxt, _("failed to allocate output line"));
 			goto done;
 		}
 

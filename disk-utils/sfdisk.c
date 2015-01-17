@@ -659,7 +659,7 @@ static void assign_device_partition(struct sfdisk *sf,
 		errx(EXIT_FAILURE, _("%s: partition %zu: partition table contains %zu "
 				     "partitions only."), devname, partno, n);
 	if (!fdisk_is_partition_used(sf->cxt, partno - 1))
-		errx(EXIT_FAILURE, _("%s: partition %zu: partition unnused"),
+		errx(EXIT_FAILURE, _("%s: partition %zu: partition unused"),
 				devname, partno);
 }
 
@@ -684,7 +684,7 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 	if (argc == 3)
 		typestr = argv[2];
 	else if (argc > 3)
-		errx(EXIT_FAILURE, _("uneexpected arguments"));
+		errx(EXIT_FAILURE, _("unexpected arguments"));
 
 	/* read-only when a new <type> undefined */
 	assign_device_partition(sf, devname, partno, !typestr);
@@ -748,7 +748,7 @@ static int command_partuuid(struct sfdisk *sf, int argc, char **argv)
 	if (argc == 3)
 		uuid = argv[2];
 	else if (argc > 3)
-		errx(EXIT_FAILURE, _("uneexpected arguments"));
+		errx(EXIT_FAILURE, _("unexpected arguments"));
 
 	/* read-only if uuid not given */
 	assign_device_partition(sf, devname, partno, !uuid);
@@ -803,7 +803,7 @@ static int command_partlabel(struct sfdisk *sf, int argc, char **argv)
 	if (argc == 3)
 		name = argv[2];
 	else if (argc > 3)
-		errx(EXIT_FAILURE, _("uneexpected arguments"));
+		errx(EXIT_FAILURE, _("unexpected arguments"));
 
 	/* read-only if name not given */
 	assign_device_partition(sf, devname, partno, !name);
@@ -859,7 +859,7 @@ static int command_partattrs(struct sfdisk *sf, int argc, char **argv)
 	if (argc == 3)
 		attrs = argv[2];
 	else if (argc > 3)
-		errx(EXIT_FAILURE, _("uneexpected arguments"));
+		errx(EXIT_FAILURE, _("unexpected arguments"));
 
 	/* read-only if name not given */
 	assign_device_partition(sf, devname, partno, !attrs);
@@ -932,7 +932,7 @@ static void command_fdisk_help(void)
 	fputs(_(" Commands:\n"), stdout);
 	color_disable();
 	fputs(_("   write    write table to disk and exit\n"), stdout);
-	fputs(_("   quit     show new situation and wait for user's feedbadk before write\n"), stdout);
+	fputs(_("   quit     show new situation and wait for user's feedback before write\n"), stdout);
 	fputs(_("   abort    exit sfdisk shell\n"), stdout);
 	fputs(_("   print    print partition table.\n"), stdout);
 	fputs(_("   help     this help.\n"), stdout);
@@ -1338,7 +1338,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -b, --backup              backup partition table sectors (see -O)\n"), out);
 	fputs(_(" -f, --force               disable all consistency checking\n"), out);
 	fputs(_(" -o, --output <list>       output columns\n"), out);
-	fputs(_(" -O, --backup-file <path>  override default backout file name\n"), out);
+	fputs(_(" -O, --backup-file <path>  override default backup file name\n"), out);
 	fputs(_(" -N, --partno <num>        specify partition number\n"), out);
 	fputs(_(" -X, --label <name>        specify label type (dos, gpt, ...)\n"), out);
 	fputs(_(" -Y, --label-nested <name> specify nested label type (dos, bsd)\n"), out);
@@ -1347,7 +1347,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_("     --no-reread           do not check whether the device is in use\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -u, --unit S              deprecated, only sector unit is supported\n"), out);
-	fputs(_(" -L, --Linux               deprecated, only for backward copatibility\n"), out);
+	fputs(_(" -L, --Linux               deprecated, only for backward compatibility\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -1486,7 +1486,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'u':
 			if (*optarg != 'S')
-				errx(EXIT_FAILURE, _("unssupported unit '%c'"), *optarg);
+				errx(EXIT_FAILURE, _("unsupported unit '%c'"), *optarg);
 			break;
 		case 'v':
 			printf(_("%s from %s\n"), program_invocation_short_name,
