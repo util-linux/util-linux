@@ -525,8 +525,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -T, --tcp             use TCP only\n"), out);
 	fputs(_(" -d, --udp             use UDP only\n"), out);
 	fputs(_("     --rfc3164         use the obsolete BSD syslog protocol\n"), out);
-	fputs(_("     --rfc5424[=<notime,notq,nohost>]\n"), out);
-	fputs(_("                       use the syslog protocol (default)\n"), out);
+	fputs(_("     --rfc5424[=<cut>] use the syslog protocol (the default);\n"
+		"                         <cut> can be notime, or notq, and/or nohost\n"), out);
 	fputs(_(" -u, --socket <socket> write to this Unix socket\n"), out);
 #ifdef HAVE_LIBSYSTEMD
 	fputs(_("     --journald[=<file>]  write journald entry\n"), out);
