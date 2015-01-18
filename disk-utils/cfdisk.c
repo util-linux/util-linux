@@ -334,7 +334,7 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 			fl |= SCOLS_FL_TREE;
 
 		if (!scols_table_new_column(table,
-				fdisk_field_get_name(field),
+				_(fdisk_field_get_name(field)),
 				fdisk_field_get_width(field), fl))
 			goto done;
 	}
@@ -1009,7 +1009,7 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 	if (cf->menu->idx == idx) {
 		standend();
 		if (d->desc)
-			ui_hint(d->desc);
+			ui_hint(_(d->desc));
 	}
 }
 
