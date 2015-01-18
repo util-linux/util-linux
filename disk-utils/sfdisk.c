@@ -304,7 +304,7 @@ static int write_changes(struct sfdisk *sf)
 	int rc = 0;
 
 	if (sf->noact)
-		fdisk_info(sf->cxt, _("The partition table unchanged (--no-act)."));
+		fdisk_info(sf->cxt, _("The partition table is unchanged (--no-act)."));
 	else {
 		rc = fdisk_write_disklabel(sf->cxt);
 		if (!rc) {
@@ -380,7 +380,7 @@ static int verify_device(struct sfdisk *sf, const char *devname)
 	fdisk_enable_listonly(sf->cxt, 1);
 
 	if (fdisk_assign_device(sf->cxt, devname, 1)) {
-		warn(_("cannot open: %s"), devname);
+		warn(_("cannot open %s"), devname);
 		return 1;
 	}
 
@@ -436,7 +436,7 @@ static int get_size(const char *dev, int silent, uintmax_t *sz)
 	fd = open(dev, O_RDONLY);
 	if (fd < 0) {
 		if (!silent)
-			warn(_("cannot open: %s"), dev);
+			warn(_("cannot open %s"), dev);
 		return -errno;
 	}
 
@@ -490,7 +490,7 @@ static int print_geom(struct sfdisk *sf, const char *devname)
 	fdisk_enable_listonly(sf->cxt, 1);
 
 	if (fdisk_assign_device(sf->cxt, devname, 1)) {
-		warn(_("cannot open: %s"), devname);
+		warn(_("cannot open %s"), devname);
 		return 1;
 	}
 
@@ -656,10 +656,10 @@ static void assign_device_partition(struct sfdisk *sf,
 
 	n = fdisk_get_npartitions(sf->cxt);
 	if (partno > n)
-		errx(EXIT_FAILURE, _("%s: partition %zu: partition table contains %zu "
-				     "partitions only."), devname, partno, n);
+		errx(EXIT_FAILURE, _("%s: partition %zu: partition table contains "
+				     "only %zu partitions"), devname, partno, n);
 	if (!fdisk_is_partition_used(sf->cxt, partno - 1))
-		errx(EXIT_FAILURE, _("%s: partition %zu: partition unnused"),
+		errx(EXIT_FAILURE, _("%s: partition %zu: partition is unused"),
 				devname, partno);
 }
 
@@ -1111,14 +1111,14 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	if (partno >= 0) {
 		size_t n;
 		if (!fdisk_has_label(sf->cxt))
-			errx(EXIT_FAILURE, _("%s: cannot modify partition %d, "
-					     "not found partition table."),
+			errx(EXIT_FAILURE, _("%s: cannot modify partition %d: "
+					     "no partition table was found"),
 					devname, partno);
 		n = fdisk_get_npartitions(sf->cxt);
 		if ((size_t) partno > n)
-			errx(EXIT_FAILURE, _("%s: cannot modify partition %d, "
-					     "partition table contains %zu "
-					     "partitions only."),
+			errx(EXIT_FAILURE, _("%s: cannot modify partition %d: "
+					     "partition table contains only %zu "
+					     "partitions"),
 					devname, partno, n);
 		created = 1;
 		next_partno = partno;
@@ -1234,7 +1234,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 			if (!fdisk_partition_has_start(pa) &&
 			    !fdisk_partition_start_is_default(pa)) {
-				fdisk_info(sf->cxt, _("Ignore partition %zu"), next_partno + 1);
+				fdisk_info(sf->cxt, _("Ignoring partition %zu."), next_partno + 1);
 				continue;
 			}
 			if (!created) {		/* create a new disklabel */
@@ -1490,7 +1490,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'u':
 			if (*optarg != 'S')
-				errx(EXIT_FAILURE, _("unssupported unit '%c'"), *optarg);
+				errx(EXIT_FAILURE, _("unsupported unit '%c'"), *optarg);
 			break;
 		case 'v':
 			printf(_("%s from %s\n"), program_invocation_short_name,

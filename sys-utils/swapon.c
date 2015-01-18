@@ -758,9 +758,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" <file>                 name of file to be used\n"), out);
 
 	fputs(_("\nAvailable discard policy types (for --discard):\n"
-		" once	  : only single-time area discards are issued\n"
-		" pages	  : freed pages are discarded before they are reused\n"
-		" If no policy is selected, both discard types are enabled (default).\n"), out);
+		" once    : only single-time area discards are issued\n"
+		" pages   : freed pages are discarded before they are reused\n"
+		"If no policy is selected, both discard types are enabled (default).\n"), out);
 
 	fputs(_("\nAvailable columns (for --show):\n"), out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)

@@ -1447,7 +1447,7 @@ static int gpt_entry_attrs_from_string(
 		}
 
 		if (bit < 0) {
-			fdisk_warnx(cxt, _("unssuported GPT attribute bit '%s'"), p);
+			fdisk_warnx(cxt, _("unsupported GPT attribute bit '%s'"), p);
 			return -EINVAL;
 		}
 

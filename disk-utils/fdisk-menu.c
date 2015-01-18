@@ -459,7 +459,7 @@ static int script_read(struct fdisk_context *cxt)
 	errno = 0;
 	sc = fdisk_new_script_from_file(cxt, filename);
 	if (!sc && errno)
-		fdisk_warn(cxt, _("Cannot open: %s"), filename);
+		fdisk_warn(cxt, _("Cannot open %s"), filename);
 	else if (!sc)
 		fdisk_warnx(cxt, _("Failed to parse script file %s"), filename);
 	else if (fdisk_apply_script(cxt, sc) != 0)
@@ -491,13 +491,13 @@ static int script_write(struct fdisk_context *cxt)
 
 	rc = fdisk_script_read_context(sc, NULL);
 	if (rc) {
-		fdisk_warnx(cxt, _("Failed to read disk layout into script."));
+		fdisk_warnx(cxt, _("Failed to transform disk layout into script"));
 		goto done;
 	}
 
 	f = fopen(filename, "w");
 	if (!f) {
-		fdisk_warn(cxt, _("Cannot open: %s"), filename);
+		fdisk_warn(cxt, _("Cannot open %s"), filename);
 		goto done;
 	}
 

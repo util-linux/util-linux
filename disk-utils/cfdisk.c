@@ -1660,7 +1660,7 @@ static int ui_script_read(struct cfdisk *cf)
 	errno = 0;
 	sc = fdisk_new_script_from_file(cf->cxt, buf);
 	if (!sc && errno)
-		ui_warn(_("Cannot open: %s"), buf);
+		ui_warn(_("Cannot open %s"), buf);
 	else if (!sc)
 		ui_warnx(_("Failed to parse script file %s"), buf);
 	else if (fdisk_apply_script(cf->cxt, sc) != 0)
@@ -1701,7 +1701,7 @@ static int ui_script_write(struct cfdisk *cf)
 	DBG(UI, ul_debug("writing dump into: '%s'", buf));
 	f = fopen(buf, "w");
 	if (!f) {
-		ui_warn(_("Cannot open: %s"), buf);
+		ui_warn(_("Cannot open %s"), buf);
 		rc = -errno;
 		goto done;
 	}

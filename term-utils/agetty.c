@@ -1446,7 +1446,7 @@ static char *read_os_release(struct options *op, const char *varname)
 	if (!op->osrelease) {
 		fd = open(_PATH_OS_RELEASE, O_RDONLY);
 		if (fd == -1) {
-			log_warn(_("cannot open: %s: %m"), _PATH_OS_RELEASE);
+			log_warn(_("cannot open %s: %m"), _PATH_OS_RELEASE);
 			return NULL;
 		}
 
@@ -2496,10 +2496,10 @@ static void reload_agettys(void)
 	int fd = open(AGETTY_RELOAD_FILENAME, O_CREAT|O_CLOEXEC|O_WRONLY, 0700);
 
 	if (fd < 0)
-		err(EXIT_FAILURE, _("cannot open: %s"), AGETTY_RELOAD_FILENAME);
+		err(EXIT_FAILURE, _("cannot open %s"), AGETTY_RELOAD_FILENAME);
 
 	if (futimens(fd, NULL) < 0 || close(fd) < 0)
-		err(EXIT_FAILURE, _("cannot touch file: %s"),
+		err(EXIT_FAILURE, _("cannot touch file %s"),
 		    AGETTY_RELOAD_FILENAME);
 #else
 	/* very unusual */

@@ -678,7 +678,7 @@ int main(int argc, char **argv)
 		if (stdin != jfd)
 			fclose(jfd);
 		if (ret)
-			errx(EXIT_FAILURE, _("journald entry could not be wrote"));
+			errx(EXIT_FAILURE, _("journald entry could not be written"));
 		return EXIT_SUCCESS;
 	}
 #endif

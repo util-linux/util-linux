@@ -121,7 +121,7 @@ static void usage(int status)
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
 	fputs(_("     --mount-proc[=<dir>]  mount proc filesystem first (implies --mount)\n"), out);
 	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
-	fputs(_(" -s, --setgroups <allow|deny>  control setgroups syscall in user namespaces\n"), out);
+	fputs(_(" -s, --setgroups allow|deny  control the setgroups syscall in user namespaces\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -235,7 +235,7 @@ int main(int argc, char *argv[])
 	if (maproot) {
 		if (setgrpcmd == SETGROUPS_ALLOW)
 			errx(EXIT_FAILURE, _("options --setgroups=allow and "
-					"--map-root-user are mutually exclusive."));
+					"--map-root-user are mutually exclusive"));
 
 		/* since Linux 3.19 unprivileged writing of /proc/self/gid_map
 		 * has s been disabled unless /proc/self/setgroups is written
