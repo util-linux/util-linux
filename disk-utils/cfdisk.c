@@ -1798,14 +1798,14 @@ static int ui_help(void)
 	size_t i;
 	static const char *help[] = {
 		N_("Help Screen for cfdisk"),
-		"",
+		"  ",
 		N_("This is cfdisk, a curses based disk partitioning program, which"),
 		N_("allows you to create, delete and modify partitions on your hard"),
 		N_("disk drive."),
-		"",
+		"  ",
 		N_("Copyright (C) 2014 Karel Zak <kzak@redhat.com> "),
 		N_("Based on the original cfdisk from Kevin E. Martin & aeb."),
-		"",
+		"  ",
 		N_("Command      Meaning"),
 		N_("-------      -------"),
 		N_("  b          Toggle bootable flag of the current partition"),
@@ -1824,11 +1824,10 @@ static int ui_help(void)
 		N_("Down Arrow   Move cursor to the next partition"),
 		N_("Left Arrow   Move cursor to the previous menu item"),
 		N_("Right Arrow  Move cursor to the next menu item"),
-
-		"",
+		"  ",
 		N_("Note: All of the commands can be entered with either upper or lower"),
 		N_("case letters (except for Writes)."),
-		"",
+		"  ",
 		N_("Use lsblk(8) or partx(8) to see more details about the device.")
 	};
 
