@@ -143,7 +143,7 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 	if (!cxt)
 		return NULL;
 
-	DBG(CXT, ul_debugobj(parent, "alloc nested [%p]", cxt));
+	DBG(CXT, ul_debugobj(parent, "alloc nested [%p] [name=%s]", cxt, name));
 	cxt->refcount = 1;
 
 	fdisk_ref_context(parent);
@@ -153,9 +153,9 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 		return NULL;
 
 	if (name) {
-		if (strcmp(name, "bsd") == 0)
+		if (strcasecmp(name, "bsd") == 0)
 			lb = cxt->labels[ cxt->nlabels++ ] = fdisk_new_bsd_label(cxt);
-		else if (strcmp(name, "dos") == 0)
+		else if (strcasecmp(name, "dos") == 0 || strcasecmp(name, "mbr") == 0)
 			lb = cxt->labels[ cxt->nlabels++ ] = fdisk_new_dos_label(cxt);
 	}
 
@@ -211,10 +211,12 @@ struct fdisk_label *fdisk_get_label(struct fdisk_context *cxt, const char *name)
 
 	if (!name)
 		return cxt->label;
+	else if (strcasecmp(name, "mbr") == 0)
+		name = "dos";
 
 	for (i = 0; i < cxt->nlabels; i++)
 		if (cxt->labels[i]
-		    && strcmp(cxt->labels[i]->name, name) == 0)
+		    && strcasecmp(cxt->labels[i]->name, name) == 0)
 			return cxt->labels[i];
 
 	DBG(CXT, ul_debugobj(cxt, "failed to found %s label driver", name));
