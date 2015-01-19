@@ -1364,7 +1364,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 int main(int argc, char *argv[])
 {
 	const char *outarg = NULL;
-	int rc = -EINVAL, c, longidx = -1;
+	int rc = -EINVAL, c, longidx = -1, bytes = 0;
 	struct sfdisk _sf = {
 		.partno = -1,
 		.interactive = isatty(STDIN_FILENO) ? 1 : 0,
@@ -1424,8 +1424,6 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
-
-	sfdisk_init(sf);
 
 	while ((c = getopt_long(argc, argv, "aAbcdfghlLo:O:nN:qsTu:vVX:Y:",
 					longopts, &longidx)) != -1) {
@@ -1523,12 +1521,16 @@ int main(int argc, char *argv[])
 			sf->noreread = 1;
 			break;
 		case OPT_BYTES:
-			fdisk_set_size_unit(sf->cxt, FDISK_SIZEUNIT_BYTES);
+			bytes = 1;
 			break;
 		default:
 			usage(stderr);
 		}
 	}
+
+	sfdisk_init(sf);
+	if (bytes)
+		fdisk_set_size_unit(sf->cxt, FDISK_SIZEUNIT_BYTES);
 
 	if (outarg)
 		init_fields(NULL, outarg, NULL);
