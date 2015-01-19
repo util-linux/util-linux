@@ -1335,6 +1335,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -A, --append              append partitions to existing partition table\n"), out);
+	fputs(_("     --bytes               print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -b, --backup              backup partition table sectors (see -O)\n"), out);
 	fputs(_(" -f, --force               disable all consistency checking\n"), out);
 	fputs(_(" -o, --output <list>       output columns\n"), out);
@@ -1378,6 +1379,7 @@ int main(int argc, char *argv[])
 		OPT_PARTLABEL,
 		OPT_PARTTYPE,
 		OPT_PARTATTRS,
+		OPT_BYTES
 	};
 
 	static const struct option longopts[] = {
@@ -1385,6 +1387,7 @@ int main(int argc, char *argv[])
 		{ "append",  no_argument,       NULL, 'A' },
 		{ "backup",  no_argument,       NULL, 'b' },
 		{ "backup-file", required_argument, NULL, 'O' },
+		{ "bytes",   no_argument,	NULL, OPT_BYTES },
 		{ "dump",    no_argument,	NULL, 'd' },
 		{ "help",    no_argument,       NULL, 'h' },
 		{ "force",   no_argument,       NULL, 'f' },
@@ -1421,6 +1424,8 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
+
+	sfdisk_init(sf);
 
 	while ((c = getopt_long(argc, argv, "aAbcdfghlLo:O:nN:qsTu:vVX:Y:",
 					longopts, &longidx)) != -1) {
@@ -1517,13 +1522,14 @@ int main(int argc, char *argv[])
 		case OPT_NOREREAD:
 			sf->noreread = 1;
 			break;
-
+		case OPT_BYTES:
+			fdisk_set_size_unit(sf->cxt, FDISK_SIZEUNIT_BYTES);
+			break;
 		default:
 			usage(stderr);
 		}
 	}
 
-	sfdisk_init(sf);
 	if (outarg)
 		init_fields(NULL, outarg, NULL);
 

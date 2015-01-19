@@ -923,6 +923,35 @@ fdisk_sector_t fdisk_set_last_lba(struct fdisk_context *cxt, fdisk_sector_t lba)
 	return 0;
 }
 
+/**
+ * fdisk_set_size_unit:
+ * @cxt: fdisk context
+ * @unit: FDISK_SIZEUNIT_*
+ *
+ * Sets unit for SIZE output field (see fdisk_partition_to_string()).
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int fdisk_set_size_unit(struct fdisk_context *cxt, int unit)
+{
+	assert(cxt);
+	cxt->sizeunit = unit;
+	return 0;
+}
+
+/**
+ * fdisk_get_size_unit:
+ * @cxt: fdisk context
+ *
+ * Gets unit for SIZE output field (see fdisk_partition_to_string()).
+ *
+ * Returns: unit
+ */
+int fdisk_get_size_units(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->sizeunit;
+}
 
 /**
  * fdisk_get_nsectors:

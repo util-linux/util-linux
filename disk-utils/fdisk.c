@@ -648,6 +648,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -t, --type <type>             recognize specified partition table type only\n"), out);
 	fputs(_(" -u, --units[=<unit>]          display units: 'cylinders' or 'sectors' (default)\n"), out);
 	fputs(_(" -s, --getsz                   display device size in 512-byte sectors [DEPRECATED]\n"), out);
+	fputs(_("     --bytes                   print SIZE in bytes rather than in human readable format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -C, --cylinders <number>      specify the number of cylinders\n"), out);
@@ -677,8 +678,11 @@ int main(int argc, char **argv)
 	int colormode = UL_COLORMODE_UNDEF;
 	struct fdisk_context *cxt;
 	char *outarg = NULL;
-
+	enum {
+		OPT_BYTES	= CHAR_MAX + 1
+	};
 	static const struct option longopts[] = {
+		{ "bytes",          no_argument,       NULL, OPT_BYTES },
 		{ "color",          optional_argument, NULL, 'L' },
 		{ "compatibility",  optional_argument, NULL, 'c' },
 		{ "cylinders",      required_argument, NULL, 'C' },
@@ -798,6 +802,9 @@ int main(int argc, char **argv)
 			return EXIT_SUCCESS;
 		case 'h':
 			usage(stdout);
+		case OPT_BYTES:
+			fdisk_set_size_unit(cxt, FDISK_SIZEUNIT_BYTES);
+			break;
 		default:
 			usage(stderr);
 		}

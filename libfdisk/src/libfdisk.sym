@@ -84,6 +84,7 @@ global:
 	fdisk_get_physector_size;
 	fdisk_get_script;
 	fdisk_get_sector_size;
+	fdisk_get_size_unit;
 	fdisk_get_unit;
 	fdisk_get_units_per_sector;
 	fdisk_gpt_is_hybrid;
@@ -204,6 +205,7 @@ global:
 	fdisk_set_partition;
 	fdisk_set_partition_type;
 	fdisk_set_script;
+	fdisk_set_size_unit;
 	fdisk_set_unit;
 	fdisk_sgi_create_info;
 	fdisk_sgi_set_bootfile;

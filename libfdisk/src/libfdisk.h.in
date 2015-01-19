@@ -204,6 +204,12 @@ unsigned int fdisk_get_geom_heads(struct fdisk_context *cxt);
 fdisk_sector_t fdisk_get_geom_sectors(struct fdisk_context *cxt);
 fdisk_sector_t fdisk_get_geom_cylinders(struct fdisk_context *cxt);
 
+enum {
+	FDISK_SIZEUNIT_HUMAN	= 0,	/* default, human readable {M,G,P,...} */
+	FDISK_SIZEUNIT_BYTES		/* bytes */
+};
+int fdisk_set_size_unit(struct fdisk_context *cxt, int unit);
+int fdisk_get_size_unit(struct fdisk_context *cxt);
 
 
 /* parttype.c */

@@ -699,14 +699,21 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 		if (fdisk_partition_has_size(pa)) {
 			uint64_t sz = pa->size * cxt->sector_size;
 
-			if (fdisk_is_details(cxt)) {
-				rc = pa->size_post ?
-						asprintf(&p, "%ju%c", sz, pa->size_post) :
-						asprintf(&p, "%ju", sz);
-			} else {
-				p = size_to_human_string(SIZE_SUFFIX_1LETTER, sz);
-				if (!p)
-					rc = -ENOMEM;
+			switch (cxt->sizeunit) {
+			case FDISK_SIZEUNIT_BYTES:
+				rc = asprintf(&p, "%ju", sz);
+				break;
+			case FDISK_SIZEUNIT_HUMAN:
+				if (fdisk_is_details(cxt))
+					rc = pa->size_post ?
+							asprintf(&p, "%ju%c", sz, pa->size_post) :
+							asprintf(&p, "%ju", sz);
+				else {
+					p = size_to_human_string(SIZE_SUFFIX_1LETTER, sz);
+					if (!p)
+						rc = -ENOMEM;
+				}
+				break;
 			}
 		}
 		break;

@@ -351,6 +351,8 @@ struct fdisk_context {
 		     display_details : 1,	/* expert display mode */
 		     listonly : 1;		/* list partition, nothing else */
 
+	int sizeunit;				/* SIZE fields, FDISK_SIZEUNIT_* */
+
 	/* alignment */
 	unsigned long grain;		/* alignment unit */
 	fdisk_sector_t first_lba;		/* recommended begin of the first partition */
