@@ -946,8 +946,9 @@ static void command_fdisk_help(void)
 	fputs(_("   <start>, <size>, <typy>, <bootable>\n"), stdout);
 
 	fputc('\n', stdout);
-	fputs(_("   <start>  begin of the partition in sectors. The default is the first\n"
-		"            free space.\n"), stdout);
+	fputs(_("   <start>  begin of the partition in sectors or bytes if specified\n"
+		"            in format <number>{K,M,G,T,P,E,Z,Y}. The default is\n"
+		"            the first free space.\n"), stdout);
 
 	fputc('\n', stdout);
 	fputs(_("   <size>   size of the partition in sectors if specified in format\n"

@@ -641,9 +641,12 @@ static int parse_script_line(struct fdisk_script *dp, char *s)
 		p = (char *) skip_blank(p);
 
 		if (!strncasecmp(p, "start=", 6)) {
+			int pow = 0;
 			p += 6;
-			rc = next_number(&p, &num, NULL);
+			rc = next_number(&p, &num, &pow);
 			if (!rc) {
+				if (pow)	/* specified as <num><suffix> */
+					num /= dp->cxt->sector_size;
 				fdisk_partition_set_start(pa, num);
 				fdisk_partition_start_follow_default(pa, 0);
 			}
@@ -800,9 +803,13 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 			if (*p == ',' || *p == ';')
 				fdisk_partition_start_follow_default(pa, 1);
 			else {
-				rc = next_number(&p, &num, NULL);
-				if (!rc)
+				int pow = 0;
+				rc = next_number(&p, &num, &pow);
+				if (!rc) {
+					if (pow)	/* specified as <num><suffix> */
+						num /= dp->cxt->sector_size;
 					fdisk_partition_set_start(pa, num);
+				}
 				fdisk_partition_start_follow_default(pa, 0);
 			}
 			break;

@@ -211,7 +211,9 @@ is given, the default for each field is its previous value.
 The default value of
 .I start
 is the first non-assigned sector aligned according to device I/O limits.
-The default start offset for the first partition is 1 MiB.
+The default start offset for the first partition is 1 MiB. The offset may
+be may be followed by the multiplicative suffixes (KiB, MiB, GiB, TiB, PiB,
+EiB, ZiB and YiB) then the number is interpreted as offset in bytes.
 .sp
 The default value of
 .I size
@@ -275,7 +277,9 @@ The currently supported fields are:
 .TP
 .BI start= number
 The first non-assigned sector aligned according to device I/O limits.  The default
-start offset for the first partition is 1 MiB.
+start offset for the first partition is 1 MiB. The offset may be followed by
+the multiplicative suffixes (KiB, MiB, GiB, TiB, PiB, EiB, ZiB and YiB) then
+the number is interpreted as offset in bytes.
 .TP
 .BI size= number
 Specify the partition size in sectors.  The number may be followed by the multiplicative
