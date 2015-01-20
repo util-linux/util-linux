@@ -310,7 +310,7 @@ fdisk_new_nested_context
 fdisk_ref_context
 fdisk_set_first_lba
 fdisk_set_last_lba
-sdisk_set_size_unit
+fdisk_set_size_unit
 fdisk_set_unit
 fdisk_unref_context
 fdisk_use_cylinders
