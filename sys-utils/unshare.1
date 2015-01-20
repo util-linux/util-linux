@@ -68,14 +68,14 @@ Unshare the user namespace.
 Fork the specified \fIprogram\fR as a child process of \fBunshare\fR rather than
 running it directly.  This is useful when creating a new pid namespace.
 .TP
-.BR \-\-mount-proc "[=\fImountpoint\fP]"
+.BR \-\-mount\-proc "[=\fImountpoint\fP]"
 Just before running the program, mount the proc filesystem at \fImountpoint\fP
 (default is /proc).  This is useful when creating a new pid namespace.  It also
 implies creating a new mount namespace since the /proc mount would otherwise
 mess up existing programs on the system.  The new proc filesystem is explicitly
 mounted as private (by MS_PRIVATE|MS_REC).
 .TP
-.BR \-r , " \-\-map-root-user"
+.BR \-r , " \-\-map\-root\-user"
 Run the program only after the current effective user and group IDs have been mapped to
 the superuser UID and GID in the newly created user namespace.  This makes it possible to
 conveniently gain capabilities needed to manage various aspects of the newly created

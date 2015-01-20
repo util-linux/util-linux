@@ -67,14 +67,14 @@ then all partitions with an enabled flag are listed.
 Dump the partitions of a device in a format that is usable as input to sfdisk.
 See the section \fBBACKING UP THE PARTITION TABLE\fR.
 .TP
-.BR \-g , " \-\-show-geometry " [ \fIdevice ...]
+.BR \-g , " \-\-show\-geometry " [ \fIdevice ...]
 List the geometry of all or the specified devices.
 .TP
 .BR \-l , " \-\-list " [ \fIdevice ...]
 List the partitions of all or the specified devices.  This command can be used
 together with \fB\-\-verify\fR.
 .TP
-.BR \-\-part-attrs " \fIdevice partno [" \fIattrs ]
+.BR \-\-part\-attrs " \fIdevice partno [" \fIattrs ]
 Change the GPT partition attribute bits.  If \fIattrs\fR is not specified,
 then print the current partition settings.  The \fIattrs\fR argument is a
 comma- or space-delimited list of bits.  The currently supported attribute
@@ -82,24 +82,24 @@ bits are: RequiredPartiton, NoBlockIOProtocol, LegacyBIOSBootable
 and GUID-specific bits in the range from 48 to 63.  For example, the string
 "RequiredPartiton,50,51" sets three bits.
 .TP
-.BR \-\-part-label " \fIdevice partno [" \fIlabel ]
+.BR \-\-part\-label " \fIdevice partno [" \fIlabel ]
 Change the GPT partition name (label).  If \fIlabel\fR is nto specified,
 then print the current partition label.
 .TP
-.BR \-\-part-type " \fIdevice partno [" \fItype ]
+.BR \-\-part\-type " \fIdevice partno [" \fItype ]
 Change the partition type.  If \fItype\fR is not specified, then print the
 current partition type.  The \fItype\fR argument is hexadecimal for MBR,
 or a GUID for GPT.  For backward compatibility the options \fB\-c\fR and
 \fB\-\-id\fR have the same meaning.
 .TP
-.BR \-\-part-uuid " \fIdevice partno [" \fIuuid ]
+.BR \-\-part\-uuid " \fIdevice partno [" \fIuuid ]
 Change the GPT partition UUID.  If \fIuuid\fR is not specified,
 then print the current partition UUID.
 .TP
-.BR \-s , " \-\-show-size " [ \fIdevice ...]
+.BR \-s , " \-\-show\-size " [ \fIdevice ...]
 List the sizes of all or the specified devices.
 .TP
-.BR \-T , " \-\-list-types"
+.BR \-T , " \-\-list\-types"
 Print all supported types for the current disk label or the label specified by
 \fB\-\-label\fR.
 .TP
@@ -114,7 +114,7 @@ Don't create a new partition table, but only append the specified partitions.
 .BR \-b , " \-\-backup"
 Back up the current partition table sectors before starting the partitioning.
 The default backup file name is ~/sfdisk-<device>-<offset>.bak; to use another
-name see \fB\-\-backup-file\fR.
+name see \fB\-\-backup\-file\fR.
 .TP
 .BR \-f , " \-\-force"
 Disable all consistency checking.
@@ -127,7 +127,7 @@ to get a list of all supported columns.
 The default list of columns may be extended if \fIlist\fP is
 specified in the format \fI+list\fP (e.g. \fB-o +UUID\fP).
 .TP
-.BR \-O , " \-\-backup-file " \fIpath\fR
+.BR \-O , " \-\-backup\-file " \fIpath\fR
 Override the default backup file name.  Note that the device name and offset
 are always appended to the file name.
 .TP
@@ -137,7 +137,7 @@ Suppress extra info messages.
 .BR \-n , " \-\-no\-act"
 Do everything except write to device.
 .TP
-.B \-\-no-reread
+.B \-\-no\-reread
 Do not check through the re-read-partition-table ioctl whether the device is in use.
 .TP
 .BR \-u , " \-\-unit S"
@@ -152,7 +152,7 @@ Specify the disk label type (e.g. \fBdos\fR, \fBgpt\fR, ...).  If this option
 is not given, then \fBsfdisk\fR defaults to the existing label, but if there
 is no label on the device yet, then the type defaults to \fBdos\fR.
 .TP
-.BR \-Y , " \-\-label-nested " \fItype
+.BR \-Y , " \-\-label\-nested " \fItype
 Force editing of a nested disk label.  The primary disk label has to exist already.
 This option allows to edit for example a hybrid/protective MBR on devices with GPT.
 .TP
@@ -291,7 +291,7 @@ Mark the partition as bootable.
 .TP
 .BI attrs= string
 Partition attributes, usually GPT partition attribute bits.  See
-\fB\-\-part-attrs\fR for more details about the GPT-bits string format.
+\fB\-\-part\-attrs\fR for more details about the GPT-bits string format.
 .TP
 .BI uuid= string
 GPT partition UUID.
@@ -351,12 +351,12 @@ provides all necessary functionality.
 
 .SH NOTES
 Since version 2.26 \fBsfdisk\fR no longer provides the \fB\-R\fR or
-\fB\-\-re-read\fR option to force the kernel to reread the partition table.
+\fB\-\-re\-read\fR option to force the kernel to reread the partition table.
 Use \fBblockdev \-\-rereadpt\fR instead.
 .PP
-Since version 2.26 \fBsfdisk\fR does not provide the \fB\-\-DOS\fR, \fB\-\-IBM\fR, \fB\-\-DOS-extended\fR,
-\fB\-\-unhide\fR, \fB\-\-show-extended\fR, \fB\-\-cylinders\fR, \fB\-\-heads\fR, \fB\-\-sectors\fR,
-\fB\-\-inside-outer\fR, \fB\-\-not-inside-outer\fR options.
+Since version 2.26 \fBsfdisk\fR does not provide the \fB\-\-DOS\fR, \fB\-\-IBM\fR, \fB\-\-DOS\-extended\fR,
+\fB\-\-unhide\fR, \fB\-\-show\-extended\fR, \fB\-\-cylinders\fR, \fB\-\-heads\fR, \fB\-\-sectors\fR,
+\fB\-\-inside\-outer\fR, \fB\-\-not\-inside\-outer\fR options.
 
 .SH ENVIRONMENT
 .IP LIBFDISK_DEBUG=all

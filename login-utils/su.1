@@ -56,7 +56,7 @@ to the shell, which may or may not be useful, depending on the shell.
 .BR \-g , " \-\-group" = \fIgroup
 Specify the primary group.  This option is available to the root user only.
 .TP
-.BR \-G , " \-\-supp-group" = \fIgroup
+.BR \-G , " \-\-supp\-group" = \fIgroup
 Specify a supplemental group.  This option is available to the root user only.
 .TP
 .BR \- , " \-l" , " \-\-login"
@@ -85,7 +85,7 @@ sets argv[0] of the shell to
 in order to make the shell a login shell
 .RE
 .TP
-.BR \-m , " \-p" , " \-\-preserve-environment"
+.BR \-m , " \-p" , " \-\-preserve\-environment"
 Preserve the entire environment, i.e. it does not set
 .BR HOME ,
 .BR SHELL ,
@@ -107,7 +107,7 @@ o
 the shell specified in the environment variable
 .BR SHELL ,
 if the
-.B \-\-preserve-environment
+.B \-\-preserve\-environment
 option is used
 .TP
 o
@@ -124,7 +124,7 @@ option and the
 .B SHELL
 environment variables are ignored unless the calling user is root.
 .TP
-.BI \-\-session-command= command
+.BI \-\-session\-command= command
 Same as
 .B \-c
 but do not create a new session.  (Discouraged.)

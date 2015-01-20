@@ -22,7 +22,7 @@ The program can handle 7-bit characters with even, odd, none or space
 parity, and 8-bit characters with no parity. The following special
 characters are recognized: Control-U (kill); DEL and
 backspace (erase); carriage return and line feed (end of line).
-See also the \fB\-\-erase-chars\fP and \fB\-\-kill-chars\fP options.
+See also the \fB\-\-erase\-chars\fP and \fB\-\-kill\-chars\fP options.
 .IP \(bu
 Optionally deduces the baud rate from the CONNECT messages produced by
 Hayes(tm)-compatible modems.
@@ -71,7 +71,7 @@ null character (Ctrl\-@) can also be used for baud-rate switching.
 This argument is optional and unnecessary for \fBvirtual terminals\fP.
 .sp
 The default for \fBserial terminals\fP is keep the current baud rate
-(see \fB\-\-keep-baud\fP) and if unsuccessful then default to '9600'.
+(see \fB\-\-keep\-baud\fP) and if unsuccessful then default to '9600'.
 .TP
 term
 The value to be used for the TERM environment variable. This overrides
@@ -91,7 +91,7 @@ Assume that the tty is 8-bit clean, hence disable parity detection.
 \-a, \-\-autologin \fIusername\fP
 Log the specified user automatically in without asking for a login name and
 password. The \-f \fIusername\fP option is added to the \fB/bin/login\fP
-command line by default. The \-\-login-options option changes this default
+command line by default. The \-\-login\-options option changes this default
 behavior and then only \\u is replaced by the \fIusername\fP and no other
 option is added to the login command line.
 .TP
