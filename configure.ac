@@ -480,6 +480,7 @@ AX_CHECK_TLS
 
 AC_DEFUN([UL_SCANF_TYPE_MODIFIER], [dnl
 # include <stdio.h>
+# include <stdlib.h>
 int main()
 {
 	int i;
