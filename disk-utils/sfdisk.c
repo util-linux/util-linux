@@ -684,7 +684,7 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 	if (argc == 3)
 		typestr = argv[2];
 	else if (argc > 3)
-		errx(EXIT_FAILURE, _("uneexpected arguments"));
+		errx(EXIT_FAILURE, _("unexpected arguments"));
 
 	/* read-only when a new <type> undefined */
 	assign_device_partition(sf, devname, partno, !typestr);
@@ -748,7 +748,7 @@ static int command_partuuid(struct sfdisk *sf, int argc, char **argv)
 	if (argc == 3)
 		uuid = argv[2];
 	else if (argc > 3)
-		errx(EXIT_FAILURE, _("uneexpected arguments"));
+		errx(EXIT_FAILURE, _("unexpected arguments"));
 
 	/* read-only if uuid not given */
 	assign_device_partition(sf, devname, partno, !uuid);
@@ -803,7 +803,7 @@ static int command_partlabel(struct sfdisk *sf, int argc, char **argv)
 	if (argc == 3)
 		name = argv[2];
 	else if (argc > 3)
-		errx(EXIT_FAILURE, _("uneexpected arguments"));
+		errx(EXIT_FAILURE, _("unexpected arguments"));
 
 	/* read-only if name not given */
 	assign_device_partition(sf, devname, partno, !name);
@@ -859,7 +859,7 @@ static int command_partattrs(struct sfdisk *sf, int argc, char **argv)
 	if (argc == 3)
 		attrs = argv[2];
 	else if (argc > 3)
-		errx(EXIT_FAILURE, _("uneexpected arguments"));
+		errx(EXIT_FAILURE, _("unexpected arguments"));
 
 	/* read-only if name not given */
 	assign_device_partition(sf, devname, partno, !attrs);
@@ -932,7 +932,7 @@ static void command_fdisk_help(void)
 	fputs(_(" Commands:\n"), stdout);
 	color_disable();
 	fputs(_("   write    write table to disk and exit\n"), stdout);
-	fputs(_("   quit     show new situation and wait for user's feedbadk before write\n"), stdout);
+	fputs(_("   quit     show new situation and wait for user's feedback before write\n"), stdout);
 	fputs(_("   abort    exit sfdisk shell\n"), stdout);
 	fputs(_("   print    print partition table.\n"), stdout);
 	fputs(_("   help     this help.\n"), stdout);
@@ -943,7 +943,7 @@ static void command_fdisk_help(void)
 	color_scheme_enable("help-title", UL_COLOR_BOLD);
 	fputs(_(" Input format:\n"), stdout);
 	color_disable();
-	fputs(_("   <start>, <size>, <typy>, <bootable>\n"), stdout);
+	fputs(_("   <start>, <size>, <type>, <bootable>\n"), stdout);
 
 	fputc('\n', stdout);
 	fputs(_("   <start>  begin of the partition in sectors or bytes if specified\n"
@@ -1340,7 +1340,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -b, --backup              backup partition table sectors (see -O)\n"), out);
 	fputs(_(" -f, --force               disable all consistency checking\n"), out);
 	fputs(_(" -o, --output <list>       output columns\n"), out);
-	fputs(_(" -O, --backup-file <path>  override default backout file name\n"), out);
+	fputs(_(" -O, --backup-file <path>  override default backup file name\n"), out);
 	fputs(_(" -N, --partno <num>        specify partition number\n"), out);
 	fputs(_(" -X, --label <name>        specify label type (dos, gpt, ...)\n"), out);
 	fputs(_(" -Y, --label-nested <name> specify nested label type (dos, bsd)\n"), out);
@@ -1349,7 +1349,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_("     --no-reread           do not check whether the device is in use\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -u, --unit S              deprecated, only sector unit is supported\n"), out);
-	fputs(_(" -L, --Linux               deprecated, only for backward copatibility\n"), out);
+	fputs(_(" -L, --Linux               deprecated, only for backward compatibility\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -1441,11 +1441,11 @@ int main(int argc, char *argv[])
 		case OPT_CHANGE_ID:
 		case OPT_PRINT_ID:
 		case OPT_ID:
-			warnx(_("%s is deprecated in favour of ---part-type"),
+			warnx(_("%s is deprecated in favour of --part-type"),
 				longopts[longidx].name);
 			sf->act = ACT_PARTTYPE;
 		case 'c':
-			warnx(_("--id s deprecated in favour of ---part-type"));
+			warnx(_("--id is deprecated in favour of --part-type"));
 			sf->act = ACT_PARTTYPE;
 			break;
 		case 'd':

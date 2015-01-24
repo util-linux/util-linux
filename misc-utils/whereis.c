@@ -600,7 +600,7 @@ int main(int argc, char **argv)
 				usage(stderr);
 			}
 
-			if (arg_i < i)		/* moved the the next argv[] item */
+			if (arg_i < i)		/* moved to the next argv[] item */
 				break;
 		}
 	}
