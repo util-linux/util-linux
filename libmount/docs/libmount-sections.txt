@@ -263,6 +263,7 @@ mnt_lock_block_signals
 
 <SECTION>
 <FILE>optmap</FILE>
+libmnt_optmap
 mnt_get_builtin_optmap
 MNT_INVERT
 MNT_NOMTAB

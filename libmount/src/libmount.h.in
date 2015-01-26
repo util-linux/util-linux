@@ -57,14 +57,17 @@ struct libmnt_iter;
 
 /**
  * libmnt_optmap:
+ * @name: option name[=type] where type is printf-like type specifier")
+ * @id: option ID or MS_* flags (e.g MS_RDONLY)
+ * @mask: MNT_{NOMTAB,INVERT,...} mask
  *
  * Mount options description (map)
  */
 struct libmnt_optmap
 {
-	const char	*name;	 /* option name[=%<type>] (e.g. "loop[=%s]") */
-	int		id;	 /* option ID or MS_* flags (e.g MS_RDONLY) */
-	int		mask;	 /* MNT_{NOMTAB,INVERT,...} mask */
+	const char	*name;
+	int		id;
+	int		mask;
 };
 
 /*

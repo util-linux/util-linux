@@ -260,8 +260,11 @@ static int mnt_wait_mtab_lock(struct libmnt_lock *ml, struct flock *fl, time_t m
 	int ret = 0;
 
 	gettime_monotonic(&now);
-	DBG(LOCKS, ul_debugobj(ml, "(%d) waiting for F_SETLKW (now=%ju, maxtime=%ju, diff=%ju)",
-				getpid(), now.tv_sec, maxtime, maxtime - now.tv_sec));
+	DBG(LOCKS, ul_debugobj(ml, "(%d) waiting for F_SETLKW (now=%lu, maxtime=%lu, diff=%lu)",
+				getpid(),
+				(unsigned long) now.tv_sec,
+				(unsigned long) maxtime,
+				(unsigned long) (maxtime - now.tv_sec)));
 
 	if (now.tv_sec >= maxtime)
 		return 1;		/* timeout */
