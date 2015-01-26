@@ -136,7 +136,7 @@ Set the user ID which will be used in the entered namespace.
 .BR nsenter (1)
 always sets UID for user namespaces, the default is 0.
 .TP
-\fB\-\-preserve-credentials\fR
+\fB\-\-preserve\-credentials\fR
 Don't modify UID and GID when enter user namespace. The default is to
 drops supplementary groups and sets GID and UID to 0.
 .TP
@@ -150,7 +150,7 @@ Set the working directory.  If no directory is specified, set the working
 directory to the working directory of the target process.  If directory is
 specified, set the working directory to the specified directory.
 .TP
-\fB\-F\fR, \fB\-\-no-fork\fR
+\fB\-F\fR, \fB\-\-no\-fork\fR
 Do not fork before exec'ing the specified program.  By default, when entering a
 PID namespace, \fBnsenter\fP calls \fBfork\fP before calling \fBexec\fP so that
 any children will also be in the newly entered PID namespace.

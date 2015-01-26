@@ -9,13 +9,13 @@ dmesg \- print or control the kernel ring buffer
 .sp
 .B dmesg \-\-clear
 .br
-.BR "dmesg \-\-read-clear " [options]
+.BR "dmesg \-\-read\-clear " [options]
 .br
-.BI "dmesg \-\-console-level " level
+.BI "dmesg \-\-console\-level " level
 .br
-.B dmesg \-\-console-on
+.B dmesg \-\-console\-on
 .br
-.B dmesg \-\-console-off
+.B dmesg \-\-console\-off
 .SH DESCRIPTION
 .B dmesg
 is used to examine or control the kernel ring buffer.
@@ -24,25 +24,25 @@ The default action is to display all messages from the kernel ring buffer.
 .SH OPTIONS
 The
 .BR \-\-clear ,
-.BR \-\-read-clear ,
-.BR \-\-console-on ,
-.BR \-\-console-off ,
+.BR \-\-read\-clear ,
+.BR \-\-console\-on ,
+.BR \-\-console\-off ,
 and
-.B \-\-console-level
+.B \-\-console\-level
 options are mutually exclusive.
 .PP
 .IP "\fB\-C\fR, \fB\-\-clear\fR"
 Clear the ring buffer.
-.IP "\fB\-c\fR, \fB\-\-read-clear\fR"
+.IP "\fB\-c\fR, \fB\-\-read\-clear\fR"
 Clear the ring buffer after first printing its contents.
-.IP "\fB\-D\fR, \fB\-\-console-off\fR"
+.IP "\fB\-D\fR, \fB\-\-console\-off\fR"
 Disable the printing of messages to the console.
-.IP "\fB\-d\fR, \fB\-\-show-delta\fR"
+.IP "\fB\-d\fR, \fB\-\-show\-delta\fR"
 Display the timestamp and the time delta spent between messages.  If used
 together with
 .B \-\-notime
 then only the time delta without the timestamp is printed.
-.IP "\fB\-E\fR, \fB\-\-console-on\fR"
+.IP "\fB\-E\fR, \fB\-\-console\-on\fR"
 Enable printing messages to the console.
 .IP "\fB\-e\fR, \fB\-\-reltime\fR"
 Display the local time and the delta in human-readable format.
@@ -83,7 +83,7 @@ of levels.  For example:
 will print error and warning messages only.  For all supported levels see the
 .B \-\-help
 output.
-.IP "\fB\-n\fR, \fB\-\-console-level \fIlevel\fR
+.IP "\fB\-n\fR, \fB\-\-console\-level \fIlevel\fR
 Set the
 .I level
 at which printing of messages is done to the console.  The
@@ -131,7 +131,7 @@ kernel interface to read kernel messages.  The default is to use /dev/kmsg rathe
 than
 .BR syslog (2)
 since kernel 3.5.0.
-.IP "\fB\-s\fR, \fB\-\-buffer-size \fIsize\fR
+.IP "\fB\-s\fR, \fB\-\-buffer\-size \fIsize\fR
 Use a buffer of
 .I size
 to query the kernel ring buffer.  This is 16392 by default.  (The default

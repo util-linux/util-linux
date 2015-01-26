@@ -21,7 +21,7 @@ mostly useless, information.  Incompatible with all other options.
 .B \-\-groups \fIgroup\fR...
 Set supplementary groups.  The argument is a comma-separated list.
 .TP
-.BR \-\-inh-caps " (" + | \- ) \fIcap "...  or  " \-\-bounding\-set " (" + | \- ) \fIcap ...
+.BR \-\-inh\-caps " (" + | \- ) \fIcap "...  or  " \-\-bounding\-set " (" + | \- ) \fIcap ...
 Set the inheritable capabilities or the capability bounding set.  See
 .BR capabilities (7).
 The argument is a comma-separated list of
@@ -49,7 +49,7 @@ Preserve supplementary groups.  Only useful in conjunction with
 .BR \-\-list\-caps
 List all known capabilities.  This option must be specified alone.
 .TP
-.B \-\-no-new-privs
+.B \-\-no\-new\-privs
 Set the
 .I no_new_privs
 bit.  With this bit set,
@@ -71,9 +71,9 @@ Set the real, effective, or both gids.  The \fIgid\fR argument can be
 given as textual group name.
 .sp
 For safety, you must specify one of
-.BR \-\-clear-groups ,
+.BR \-\-clear\-groups ,
 .BR \-\-groups ", or"
-.BR \-\-keep-groups
+.BR \-\-keep\-groups
 if you set any primary
 .IR gid .
 .TP
@@ -105,7 +105,7 @@ is cleared by
 .BR execve (2)
 and is therefore not allowed.
 .TP
-.BI \-\-selinux-label " label"
+.BI \-\-selinux\-label " label"
 Request a particular SELinux transition (using a transition on exec, not
 dyntrans).  This will fail and cause
 .BR setpriv (1)
@@ -117,7 +117,7 @@ conjunction with
 This is similar to
 .BR runcon (1).
 .TP
-.BI \-\-apparmor-profile " profile"
+.BI \-\-apparmor\-profile " profile"
 Request a particular AppArmor profile (using a transition on exec).  This will
 fail and cause
 .BR setpriv (1)

@@ -63,7 +63,7 @@ All of the filesystems described in
 .I /etc/mtab
 are unmounted, except the \fIproc\fR filesystem.
 .TP
-.BR \-A , " \-\-all-targets"
+.BR \-A , " \-\-all\-targets"
 Unmount all mountpoints in the current namespace for the specified filesystem.
 The filesystem can be specified by one of the mountpoints or the device name (or
 UUID, etc.).  When this option is used together with \fB\-\-recursive\fR, then
@@ -71,14 +71,14 @@ all nested mounts within the filesystem are recursively unmounted.
 This option is only supported on systems where /etc/mtab is a symlink
 to /proc/mounts.
 .TP
-.BR \-c , " \-\-no-canonicalize"
+.BR \-c , " \-\-no\-canonicalize"
 Do not canonicalize paths.  For more details about this option see the
 .BR mount (8)
 man page.  Note that \fBumount\fR does not pass this option to the
 .BI /sbin/umount. type
 helpers.
 .TP
-.BR \-d , " \-\-detach-loop"
+.BR \-d , " \-\-detach\-loop"
 When the unmounted device was a loop device, also free this loop
 device.
 .TP
@@ -94,7 +94,7 @@ option.
 Force an unmount (in case of an unreachable NFS system).  (Requires kernel
 2.1.116 or later.)
 .TP
-.BR \-i , " \-\-internal-only"
+.BR \-i , " \-\-internal\-only"
 Do not call the \fB/sbin/umount.\fIfilesystem\fR helper even if it exists.
 By default such a helper program is called if it exists.
 .TP
@@ -103,11 +103,11 @@ Lazy unmount.  Detach the filesystem from the file hierarchy now,
 and clean up all references to this filesystem as soon as it is not busy
 anymore.  (Requires kernel 2.4.11 or later.)
 .TP
-.BR \-n , " \-\-no-mtab"
+.BR \-n , " \-\-no\-mtab"
 Unmount without writing in
 .IR /etc/mtab .
 .TP
-.BR \-O , " \-\-test-opts " \fIoption\fR...
+.BR \-O , " \-\-test\-opts " \fIoption\fR...
 Unmount only the filesystems that have the specified option set in
 .IR /etc/fstab .
 More than one option may be specified in a comma-separated list.
@@ -122,7 +122,7 @@ between mountpoints is determined by /proc/self/mountinfo entries.  The filesyst
 must be specified by mountpoint path; a recursive unmount by device name (or UUID)
 is unsupported.
 .TP
-.BR \-r , " \-\-read-only"
+.BR \-r , " \-\-read\-only"
 When an unmount fails, try to remount the filesystem read-only.
 .TP
 .BR \-t , " \-\-types " \fItype\fR...

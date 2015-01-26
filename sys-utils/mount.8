@@ -447,10 +447,10 @@ Supported operations are:
 
 .RS
 .nf
-.BI "mount \-\-make-shared " mountpoint
-.BI "mount \-\-make-slave " mountpoint
-.BI "mount \-\-make-private " mountpoint
-.BI "mount \-\-make-unbindable " mountpoint
+.BI "mount \-\-make\-shared " mountpoint
+.BI "mount \-\-make\-slave " mountpoint
+.BI "mount \-\-make\-private " mountpoint
+.BI "mount \-\-make\-unbindable " mountpoint
 .fi
 .RE
 
@@ -459,10 +459,10 @@ mounts under a given mountpoint.
 
 .RS
 .nf
-.BI "mount \-\-make-rshared " mountpoint
-.BI "mount \-\-make-rslave " mountpoint
-.BI "mount \-\-make-rprivate " mountpoint
-.BI "mount \-\-make-runbindable " mountpoint
+.BI "mount \-\-make\-rshared " mountpoint
+.BI "mount \-\-make\-rslave " mountpoint
+.BI "mount \-\-make\-rprivate " mountpoint
+.BI "mount \-\-make\-runbindable " mountpoint
 .fi
 .RE
 
@@ -497,7 +497,7 @@ For example:
 
 .RS
 .nf
-.BI "mount \-\-make-private \-\-make-unbindable /dev/sda1 /foo"
+.BI "mount \-\-make\-private \-\-make\-unbindable /dev/sda1 /foo"
 .fi
 .RE
 
@@ -506,8 +506,8 @@ is the same as:
 .RS
 .nf
 .BI "mount /dev/sda1 /foo"
-.BI "mount \-\-make-private /foo"
-.BI "mount \-\-make-unbindable /foo"
+.BI "mount \-\-make\-private /foo"
+.BI "mount \-\-make\-unbindable /foo"
 .fi
 .RE
 .RE
@@ -544,7 +544,7 @@ keyword).  The filesystems are mounted following their order in
 Remount a subtree somewhere else (so that its contents are available
 in both places).  See above.
 .TP
-.BR \-c , " \-\-no-canonicalize"
+.BR \-c , " \-\-no\-canonicalize"
 Don't canonicalize paths.  The mount command canonicalizes all paths
 (from command line or fstab) by default.  This option can be used
 together with the
@@ -579,14 +579,14 @@ command is trying to do.  It can also be used to add entries for devices
 that were mounted earlier with the \fB\-n\fR option.  The \fB\-f\fR option
 checks for an existing record in /etc/mtab and fails when the record already
 exists (with a regular non-fake mount, this check is done by the kernel).
-.IP "\fB\-i, \-\-internal-only\fP"
+.IP "\fB\-i, \-\-internal\-only\fP"
 Don't call the \fB/sbin/mount.\fIfilesystem\fR helper even if it exists.
 .TP
 .BR \-L , " \-\-label " \fIlabel
 Mount the partition that has the specified
 .IR label .
 .TP
-.BR \-l , " \-\-show-labels"
+.BR \-l , " \-\-show\-labels"
 Add the labels in the mount output.  \fBmount\fR must have
 permission to read the disk device (e.g.\& be suid root) for this to work.
 One can set such a label for ext2, ext3 or ext4 using the
@@ -599,14 +599,14 @@ or for reiserfs using
 .BR \-M , " \-\-move"
 Move a subtree to some other place.  See above.
 .TP
-.BR \-n , " \-\-no-mtab"
+.BR \-n , " \-\-no\-mtab"
 Mount without writing in
 .IR /etc/mtab .
 This is necessary for example when
 .I /etc
 is on a read-only filesystem.
 .TP
-.BR \-O , " \-\-test-opts " \fIopts
+.BR \-O , " \-\-test\-opts " \fIopts
 Limit the set of filesystems to which the
 .B \-a
 option applies.  In this regard it is like the
@@ -670,7 +670,7 @@ sections.
 Remount a subtree and all possible submounts somewhere else (so that its
 contents are available in both places).  See above.
 .TP
-.BR \-r , " \-\-read-only"
+.BR \-r , " \-\-read\-only"
 Mount the filesystem read-only.  A synonym is
 .BR "\-o ro" .
 .sp
@@ -821,7 +821,7 @@ Mount the partition that has the specified
 .BR \-v , " \-\-verbose"
 Verbose mode.
 .TP
-.BR \-w , " \-\-rw" , " \-\-read-write"
+.BR \-w , " \-\-rw" , " \-\-read\-write"
 Mount the filesystem read/write.  This is the default.  A synonym is
 .BR "\-o rw" .
 .TP

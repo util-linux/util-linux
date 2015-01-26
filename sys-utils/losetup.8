@@ -81,14 +81,14 @@ Show the status of all loop devices.  Note that not all information is accessibl
 for non-root users.  See also \fB\-\-list\fR.  The old output format (as printed
 without \fB--list)\fR is deprecated.
 .TP
-.BR \-c , " \-\-set-capacity " \fIloopdev
+.BR \-c , " \-\-set\-capacity " \fIloopdev
 Force the loop driver to reread the size of the file associated with the
 specified loop device.
 .TP
 .BR \-d , " \-\-detach " \fIloopdev\fR...
 Detach the file or device associated with the specified loop device(s).
 .TP
-.BR \-D , " \-\-detach-all"
+.BR \-D , " \-\-detach\-all"
 Detach all associated loop devices.
 .TP
 .BR \-f , " \-\-find"
@@ -120,7 +120,7 @@ Force the kernel to scan the partition table on a newly created loop device.
 .IP "\fB\-\-raw\fP"
 Use the raw \fB\-\-list\fP output format.
 .TP
-.BR \-r , " \-\-read-only"
+.BR \-r , " \-\-read\-only"
 Set up a read-only loop device.
 .IP "\fB\-\-sizelimit \fIsize\fP"
 The data end is set to no more than \fIsize\fP bytes after the data start.
