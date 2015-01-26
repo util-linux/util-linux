@@ -203,7 +203,7 @@ cal:
    - mention where Gregorian reformation happen in September 1752  [Sami Kerola]
    - remove optional from short arg -w  [Tommi Kyntola]
    - remove unnecessary static variables  [Sami Kerola]
-   - remove unnused structure and definition  [Sami Kerola]
+   - remove unused structure and definition  [Sami Kerola]
    - rename ascii_wnum() to ascii_weeknum()  [Sami Kerola]
    - simplify ascii_weeknum() function  [Sami Kerola]
    - use control structure for run time configuration  [Sami Kerola]
