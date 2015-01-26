@@ -64,7 +64,7 @@ given PID.
 .BR -b ,\  --batch
 Set scheduling policy to
 .B SCHED_BATCH
-(Linux-specific).
+(Linux-specific). The priority argument has to be set to zero.
 .TP
 .BR -f ,\  --fifo
 Set scheduling policy to
@@ -73,7 +73,7 @@ Set scheduling policy to
 .BR -i ,\  --idle
 Set scheduling policy to
 .B SCHED_IDLE
-(Linux-specific).
+(Linux-specific). The priority argument has to be set to zero.
 .TP
 .BR -m ,\  --max
 Show minimum and maximum valid priorities, then exit.
