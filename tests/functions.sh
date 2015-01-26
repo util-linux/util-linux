@@ -332,8 +332,8 @@ function ts_init_py {
 
 	[ -f "$top_builddir/py${LIBNAME}.la" ] || ts_skip "py${LIBNAME} not compiled"
 
-	export LD_LIBRARY_PATH="$top_builddir/.libs"
-	export PYTHONPATH="$top_builddir/$LIBNAME/python:$top_builddir/.libs"
+	export LD_LIBRARY_PATH="$top_builddir/.libs:$LD_LIBRARY_PATH"
+	export PYTHONPATH="$top_builddir/$LIBNAME/python:$top_builddir/.libs:$PYTHONPATH"
 
 	export PYTHON_VERSION=$(awk '/^PYTHON_VERSION/ { print $3 }' $top_builddir/Makefile)
 	export PYTHON_MAJOR_VERSION=$(echo $PYTHON_VERSION | sed 's/\..*//')

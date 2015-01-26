@@ -1242,20 +1242,20 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 		if (!desc->configured)
 			break;
 		if (mod->mode == OUTPUT_PARSABLE)
-			snprintf(buf, bufsz,
+			snprintf(buf, bufsz, "%s",
 				 desc->configured[idx] ? _("Y") : _("N"));
 		else
-			snprintf(buf, bufsz,
+			snprintf(buf, bufsz, "%s",
 				 desc->configured[idx] ? _("yes") : _("no"));
 		break;
 	case COL_ONLINE:
 		if (!desc->online)
 			break;
 		if (mod->mode == OUTPUT_PARSABLE)
-			snprintf(buf, bufsz,
+			snprintf(buf, bufsz, "%s",
 				 is_cpu_online(desc, cpu) ? _("Y") : _("N"));
 		else
-			snprintf(buf, bufsz,
+			snprintf(buf, bufsz, "%s",
 				 is_cpu_online(desc, cpu) ? _("yes") : _("no"));
 		break;
 	case COL_MAXMHZ:

@@ -21,11 +21,18 @@ AC_DEFUN([UL_WARN_ADD], [
   m4_define([warnvarname], m4_default([$2],WARN_CFLAGS))
   AS_VAR_PUSHDEF([ul_Warn], [ul_cv_warn_$1])dnl
   AC_CACHE_CHECK([whether compiler handles $1], m4_defn([ul_Warn]), [
+    # store AC_LANG_WERROR status, then turn it on
+    save_ac_[]_AC_LANG_ABBREV[]_werror_flag="${ac_[]_AC_LANG_ABBREV[]_werror_flag}"
+    AC_LANG_WERROR
+
     ul_save_CPPFLAGS="$CPPFLAGS"
     CPPFLAGS="-Werror ${CPPFLAGS} $1"
     AC_PREPROC_IFELSE([AC_LANG_PROGRAM([])],
                       [AS_VAR_SET(ul_Warn, [yes])],
                       [AS_VAR_SET(ul_Warn, [no])])
+    # restore AC_LANG_WERROR
+    ac_[]_AC_LANG_ABBREV[]_werror_flag="${save_ac_[]_AC_LANG_ABBREV[]_werror_flag}"
+
     CPPFLAGS="$ul_save_CPPFLAGS"
   ])
   AS_VAR_IF(ul_Warn, [yes], [UL_AS_VAR_APPEND(warnvarname, [" $1"])])

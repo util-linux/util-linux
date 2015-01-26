@@ -492,7 +492,7 @@ int main(int argc, char **argv)
 		}
 	}
 	if (verbose)
-		printf(clock_mode == CM_UTC ? _("Using UTC time.\n") :
+		printf("%s", clock_mode == CM_UTC ? _("Using UTC time.\n") :
 				_("Using local time.\n"));
 
 	if (!alarm && !seconds && strcmp(suspend,"disable") &&

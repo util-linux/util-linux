@@ -480,6 +480,7 @@ AX_CHECK_TLS
 
 AC_DEFUN([UL_SCANF_TYPE_MODIFIER], [dnl
 # include <stdio.h>
+# include <stdlib.h>
 int main()
 {
 	int i;
@@ -491,6 +492,8 @@ int main()
 	return 1;
 }])
 
+ul_save_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="-Werror ${CPPFLAGS}"
 AC_CACHE_VAL([scanf_cv_alloc_modifier],
   AC_RUN_IFELSE([AC_LANG_SOURCE([UL_SCANF_TYPE_MODIFIER(["%ms"])])],
     [scanf_cv_alloc_modifier=ms],
@@ -524,6 +527,7 @@ AC_CACHE_VAL([scanf_cv_alloc_modifier],
     [scanf_cv_alloc_modifier=no])]
   )
 )
+CPPFLAGS="$ul_save_CPPFLAGS"
 
 AC_MSG_CHECKING([scanf string alloc modifiers])
 AS_CASE([$scanf_cv_alloc_modifier],
