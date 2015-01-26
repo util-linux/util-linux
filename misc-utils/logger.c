@@ -514,20 +514,20 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_("Enter messages into the system log.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -i, --id[=<id>]       log <id> (default is PID)\n"), out);
-	fputs(_(" -f, --file <file>     log the contents of this file\n"), out);
-	fputs(_(" -p, --priority <prio> mark given message with this priority\n"), out);
-	fputs(_("     --prio-prefix     look for a prefix on every line read from stdin\n"), out);
-	fputs(_(" -s, --stderr          output message to standard error as well\n"), out);
-	fputs(_(" -t, --tag <tag>       mark every line with this tag\n"), out);
-	fputs(_(" -n, --server <name>   write to this remote syslog server\n"), out);
-	fputs(_(" -P, --port <number>   use this UDP port\n"), out);
-	fputs(_(" -T, --tcp             use TCP only\n"), out);
-	fputs(_(" -d, --udp             use UDP only\n"), out);
-	fputs(_("     --rfc3164         use the obsolete BSD syslog protocol\n"), out);
-	fputs(_("     --rfc5424[=<cut>] use the syslog protocol (the default);\n"
-		"                         <cut> can be notime, or notq, and/or nohost\n"), out);
-	fputs(_(" -u, --socket <socket> write to this Unix socket\n"), out);
+	fputs(_(" -i, --id[=<id>]          log <id> (default is PID)\n"), out);
+	fputs(_(" -f, --file <file>        log the contents of this file\n"), out);
+	fputs(_(" -p, --priority <prio>    mark given message with this priority\n"), out);
+	fputs(_("     --prio-prefix        look for a prefix on every line read from stdin\n"), out);
+	fputs(_(" -s, --stderr             output message to standard error as well\n"), out);
+	fputs(_(" -t, --tag <tag>          mark every line with this tag\n"), out);
+	fputs(_(" -n, --server <name>      write to this remote syslog server\n"), out);
+	fputs(_(" -P, --port <number>      use this UDP port\n"), out);
+	fputs(_(" -T, --tcp                use TCP only\n"), out);
+	fputs(_(" -d, --udp                use UDP only\n"), out);
+	fputs(_("     --rfc3164            use the obsolete BSD syslog protocol\n"), out);
+	fputs(_("     --rfc5424[=<snip>]   use the syslog protocol (the default);\n"
+		"                            <snip> can be notime, or notq, and/or nohost\n"), out);
+	fputs(_(" -u, --socket <socket>    write to this Unix socket\n"), out);
 #ifdef HAVE_LIBSYSTEMD
 	fputs(_("     --journald[=<file>]  write journald entry\n"), out);
 #endif
