@@ -44,7 +44,6 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include <sys/timex.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -65,6 +64,10 @@
 
 #ifdef HAVE_LIBSYSTEMD
 # include <systemd/sd-journal.h>
+#endif
+
+#ifdef HAVE_SYS_TIMEX_H
+# include <sys/timex.h>
 #endif
 
 enum {
@@ -325,7 +328,9 @@ static void syslog_rfc5424(const  struct logger_ctl *ctl, const char *msg)
 {
 	char *buf, *tag = NULL, *hostname = NULL;
 	char pid[32], time[64], timeq[80];
+#ifdef HAVE_SYS_TIMEX_H
 	struct ntptimeval ntptv;
+#endif
 	struct timeval tv;
 	struct tm *tm;
 	int len;
@@ -364,11 +369,13 @@ static void syslog_rfc5424(const  struct logger_ctl *ctl, const char *msg)
 		snprintf(pid, sizeof(pid), " %d", ctl->pid);
 
 	if (ctl->rfc5424_tq) {
+#ifdef HAVE_SYS_TIMEX_H
 		if (ntp_gettime(&ntptv) == TIME_OK)
 			snprintf(timeq, sizeof(timeq),
 				 " [timeQuality tzKnown=\"1\" isSynced=\"1\" syncAccuracy=\"%ld\"]",
 				 ntptv.maxerror);
 		else
+#endif
 			snprintf(timeq, sizeof(timeq),
 				 " [timeQuality tzKnown=\"1\" isSynced=\"0\"]");
 	}
