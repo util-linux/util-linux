@@ -185,7 +185,8 @@ struct fdisk_label_operations {
 	/* list disklabel details */
 	int (*list)(struct fdisk_context *cxt);
 	/* returns offset and size of the 'n' part of the PT */
-	int (*locate)(struct fdisk_context *cxt, int n, const char **name, off_t *offset, size_t *size);
+	int (*locate)(struct fdisk_context *cxt, int n, const char **name,
+		      uint64_t *offset, size_t *size);
 	/* reorder partitions */
 	int (*reorder)(struct fdisk_context *cxt);
 

@@ -568,7 +568,7 @@ static void dump_buffer(off_t base, unsigned char *buf, size_t sz, int all)
 }
 
 static void dump_blkdev(struct fdisk_context *cxt, const char *name,
-			off_t offset, size_t size, int all)
+			uint64_t offset, size_t size, int all)
 {
 	int fd = fdisk_get_devfd(cxt);
 
@@ -577,7 +577,7 @@ static void dump_blkdev(struct fdisk_context *cxt, const char *name,
 
 	assert(fd >= 0);
 
-	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
+	if (lseek(fd, (off_t) offset, SEEK_SET) == (off_t) -1)
 		fdisk_warn(cxt, _("cannot seek"));
 	else {
 		unsigned char *buf = xmalloc(size);
@@ -604,7 +604,7 @@ void dump_disklabel(struct fdisk_context *cxt)
 	int all = !isatty(STDOUT_FILENO);
 	int i = 0;
 	const char *name = NULL;
-	off_t offset = 0;
+	uint64_t offset = 0;
 	size_t size = 0;
 
 	assert(cxt);

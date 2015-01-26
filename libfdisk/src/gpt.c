@@ -927,7 +927,7 @@ invalid:
 
 
 static int gpt_locate_disklabel(struct fdisk_context *cxt, int n,
-		const char **name, off_t *offset, size_t *size)
+		const char **name, uint64_t *offset, size_t *size)
 {
 	struct fdisk_gpt_label *gpt;
 
@@ -945,7 +945,7 @@ static int gpt_locate_disklabel(struct fdisk_context *cxt, int n,
 		break;
 	case 1:
 		*name = _("GPT Header");
-		*offset = GPT_PRIMARY_PARTITION_TABLE_LBA * cxt->sector_size;
+		*offset = (uint64_t) GPT_PRIMARY_PARTITION_TABLE_LBA * cxt->sector_size;
 		*size = sizeof(struct gpt_header);
 		break;
 	case 2:

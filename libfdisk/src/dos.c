@@ -1738,7 +1738,7 @@ done:
 }
 
 static int dos_locate_disklabel(struct fdisk_context *cxt, int n,
-		const char **name, off_t *offset, size_t *size)
+		const char **name, uint64_t *offset, size_t *size)
 {
 	assert(cxt);
 
@@ -1760,7 +1760,7 @@ static int dos_locate_disklabel(struct fdisk_context *cxt, int n,
 			assert(pe->private_sectorbuffer);
 
 			*name = "EBR";
-			*offset = pe->offset * cxt->sector_size;
+			*offset = (uint64_t) pe->offset * cxt->sector_size;
 			*size = 512;
 		} else
 			return 1;

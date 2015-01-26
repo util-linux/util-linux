@@ -282,7 +282,10 @@ extern int fdisk_write_disklabel(struct fdisk_context *cxt);
 extern int fdisk_verify_disklabel(struct fdisk_context *cxt);
 extern int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name);
 extern int fdisk_list_disklabel(struct fdisk_context *cxt);
-extern int fdisk_locate_disklabel(struct fdisk_context *cxt, int n, const char **name, off_t *offset, size_t *size);
+extern int fdisk_locate_disklabel(struct fdisk_context *cxt, int n,
+				  const char **name,
+				  uint64_t *offset,
+				  size_t *size);
 
 extern int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id);
 extern int fdisk_set_disklabel_id(struct fdisk_context *cxt);

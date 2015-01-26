@@ -375,7 +375,7 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
  * Returns: 0 on succes, <0 on error, 1 no more items.
  */
 int fdisk_locate_disklabel(struct fdisk_context *cxt, int n, const char **name,
-			   off_t *offset, size_t *size)
+			   uint64_t *offset, size_t *size)
 {
 	if (!cxt || !cxt->label)
 		return -EINVAL;

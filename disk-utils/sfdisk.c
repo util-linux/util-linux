@@ -225,7 +225,7 @@ static void backup_sectors(struct sfdisk *sf,
 			   const char *tpl,
 			   const char *name,
 			   const char *devname,
-			   off_t offset, size_t size)
+			   uint64_t offset, size_t size)
 {
 	char *fname;
 	int fd, devfd;
@@ -239,7 +239,7 @@ static void backup_sectors(struct sfdisk *sf,
 	if (fd < 0)
 		goto fail;
 
-	if (lseek(devfd, offset, SEEK_SET) == (off_t) -1) {
+	if (lseek(devfd, (off_t) offset, SEEK_SET) == (off_t) -1) {
 		fdisk_warn(sf->cxt, _("cannot seek %s"), devname);
 		goto fail;
 	} else {
@@ -269,7 +269,7 @@ static void backup_partition_table(struct sfdisk *sf, const char *devname)
 {
 	const char *name;
 	char *tpl;
-	off_t offset = 0;
+	uint64_t offset = 0;
 	size_t size = 0;
 	int i = 0;
 
