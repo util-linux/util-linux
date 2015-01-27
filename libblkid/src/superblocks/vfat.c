@@ -16,6 +16,7 @@
 #include <ctype.h>
 #include <stdint.h>
 
+#include "pt-mbr.h"
 #include "superblocks.h"
 
 /* Yucky misaligned values */
@@ -169,7 +170,8 @@ static unsigned char *search_fat_label(blkid_probe pr,
 	return NULL;
 }
 
-static int fat_valid_superblock(const struct blkid_idmag *mag,
+static int fat_valid_superblock(blkid_probe pr,
+			const struct blkid_idmag *mag,
 			struct msdos_super_block *ms,
 			struct vfat_super_block *vs,
 			uint32_t *cluster_count, uint32_t *fat_size)
@@ -243,6 +245,20 @@ static int fat_valid_superblock(const struct blkid_idmag *mag,
 	if (cluster_count)
 		*cluster_count = __cluster_count;
 
+	if (blkid_probe_is_wholedisk(pr)) {
+		/* OK, seems like FAT, but it's possible that we found boot
+		 * sector with crazy FAT-like stuff (magic strings, media,
+		 * etc..) before MBR. Let's make sure that there is no MBR with
+		 * usable partition. */
+		unsigned char *buf = (unsigned char *) ms;
+		if (mbr_is_valid_magic(buf)) {
+			struct dos_partition *p0 = mbr_get_partition(buf, 0);
+			if (dos_partition_get_size(p0) != 0 &&
+			    (p0->boot_ind == 0 || p0->boot_ind == 0x80))
+				return 0;
+		}
+	}
+
 	return 1;	/* valid */
 }
 
@@ -270,7 +286,7 @@ int blkid_probe_is_vfat(blkid_probe pr)
 	if (!vs)
 		return errno ? -errno : 0;
 
-	return fat_valid_superblock(mag, ms, vs, NULL, NULL);
+	return fat_valid_superblock(pr, mag, ms, vs, NULL, NULL);
 }
 
 /* FAT label extraction from the root directory taken from Kay
@@ -293,7 +309,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!vs)
 		return errno ? -errno : 1;
 
-	if (!fat_valid_superblock(mag, ms, vs, &cluster_count, &fat_size))
+	if (!fat_valid_superblock(pr, mag, ms, vs, &cluster_count, &fat_size))
 		return 1;
 
 	sector_size = unaligned_le16(&ms->ms_sector_size);
