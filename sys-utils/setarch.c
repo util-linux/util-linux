@@ -364,7 +364,7 @@ int main(int argc, char *argv[])
 		case OPT_LIST:
 			if (!archwrapper) {
 				set_arch(NULL, 0, 1);
-				break;
+				return EXIT_SUCCESS;
 			} else
 				warnx(_("unrecognized option '--list'"));
 		default:
