@@ -715,9 +715,9 @@ static int command_parttype(struct sfdisk *sf, int argc, char **argv)
 	if (sf->backup)
 		backup_partition_table(sf, devname);
 
-	/* parse <type> and apply yo PT */
+	/* parse <type> and apply to PT */
 	type = fdisk_label_parse_parttype(lb, typestr);
-	if (!type || fdisk_parttype_is_unknown(type))
+	if (!type)
 		errx(EXIT_FAILURE, _("failed to parse %s partition type '%s'"),
 				fdisk_label_get_name(lb), typestr);
 
