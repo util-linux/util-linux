@@ -1341,12 +1341,14 @@ static int ui_refresh(struct cfdisk *cf)
 	struct fdisk_label *lb;
 	char *id = NULL;
         uint64_t bytes = fdisk_get_nsectors(cf->cxt) * fdisk_get_sector_size(cf->cxt);
-	char *strsz = size_to_human_string(SIZE_SUFFIX_SPACE
-				| SIZE_SUFFIX_3LETTER, bytes);
-	erase();
+	char *strsz;
 
+	erase();
 	if (!ui_enabled)
 		return -EINVAL;
+
+	strsz = size_to_human_string(SIZE_SUFFIX_SPACE
+				| SIZE_SUFFIX_3LETTER, bytes);
 
 	lb = fdisk_get_label(cf->cxt, NULL);
 	assert(lb);
@@ -1891,6 +1893,8 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	}
 
 	pa = get_current_partition(cf);
+	if (!pa)
+		return -EINVAL;
 	n = fdisk_partition_get_partno(pa);
 
 	DBG(MENU, ul_debug("menu action on %p", pa));
@@ -1929,8 +1933,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		struct fdisk_partition *npa;	/* the new partition */
 		int expsize = 0;		/* size specified explicitly in sectors */
 
-		if (!pa || !fdisk_partition_is_freespace(pa)
-			|| !fdisk_partition_has_start(pa))
+		if (!fdisk_partition_is_freespace(pa) || !fdisk_partition_has_start(pa))
 			return -EINVAL;
 
 		/* free space range */
@@ -1974,7 +1977,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	{
 		struct fdisk_parttype *t;
 
-		if (!pa || fdisk_partition_is_freespace(pa))
+		if (fdisk_partition_is_freespace(pa))
 			return -EINVAL;
 		t = (struct fdisk_parttype *) fdisk_partition_get_type(pa);
 		t = ui_get_parttype(cf, t);
