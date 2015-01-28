@@ -455,7 +455,10 @@ static void report_device(char *device, int quiet)
 			err(EXIT_FAILURE,
 				_("%s: failed to initialize sysfs handler"),
 				device);
-		sysfs_read_u64(&cxt, "start", &start);
+		if (sysfs_read_u64(&cxt, "start", &start))
+			err(EXIT_FAILURE,
+				_("%s: failed to read partition start from sysfs"),
+				device);
 		sysfs_deinit(&cxt);
 	}
 	if (ioctl(fd, BLKROGET, &ro) == 0 &&
