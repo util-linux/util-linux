@@ -450,10 +450,14 @@ static void fs_interpret_type(struct libmnt_fs *fs)
 	device = fs_get_device(fs);
 	if (device) {
 		int ambi = 0;
+		char *tp;
+		struct libmnt_cache *cache = mnt_table_get_cache(fstab);
 
-		type = mnt_get_fstype(device, &ambi, mnt_table_get_cache(fstab));
+		tp = mnt_get_fstype(device, &ambi, cache);
 		if (!ambi)
-			mnt_fs_set_fstype(fs, type);
+			mnt_fs_set_fstype(fs, tp);
+		if (!cache)
+			free(tp);
 	}
 }
 
