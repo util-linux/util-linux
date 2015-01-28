@@ -257,7 +257,8 @@ static const struct menu_entry *next_menu_entry(
 
 	assert(cxt);
 
-	type = fdisk_label_get_type(lb);
+	if (lb)
+		type = fdisk_label_get_type(lb);
 	if (parent)
 		pr_type = fdisk_label_get_type(fdisk_get_label(parent, NULL));
 

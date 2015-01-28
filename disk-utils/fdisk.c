@@ -107,7 +107,7 @@ static int ask_menu(struct fdisk_context *cxt, struct fdisk_ask *ask,
 
 	do {
 		char prompt[128];
-		int key, c;
+		int key, c, rc;
 		const char *name, *desc;
 		size_t i = 0;
 
@@ -117,7 +117,9 @@ static int ask_menu(struct fdisk_context *cxt, struct fdisk_ask *ask,
 
 		/* ask for key */
 		snprintf(prompt, sizeof(prompt), _("Select (default %c): "), dft);
-		get_user_reply(cxt, prompt, buf, bufsz);
+		rc = get_user_reply(cxt, prompt, buf, bufsz);
+		if (rc)
+			return rc;
 		if (!*buf) {
 			fdisk_info(cxt, _("Using default response %c."), dft);
 			c = dft;
