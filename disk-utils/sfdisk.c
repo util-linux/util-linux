@@ -1444,6 +1444,7 @@ int main(int argc, char *argv[])
 			warnx(_("%s is deprecated in favour of --part-type"),
 				longopts[longidx].name);
 			sf->act = ACT_PARTTYPE;
+			break;
 		case 'c':
 			warnx(_("--id is deprecated in favour of --part-type"));
 			sf->act = ACT_PARTTYPE;
