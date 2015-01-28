@@ -606,7 +606,7 @@ static char *get_subsystem(char *chain, char *buf, size_t bufsz)
 char *sysfs_get_devchain(struct sysfs_cxt *cxt, char *buf, size_t bufsz)
 {
 	/* read /sys/dev/block/<maj>:<min> symlink */
-	size_t sz = sysfs_readlink(cxt, NULL, buf, bufsz);
+	ssize_t sz = sysfs_readlink(cxt, NULL, buf, bufsz);
 	if (sz <= 0 || sz + sizeof(_PATH_SYS_DEVBLOCK "/") > bufsz)
 		return NULL;
 
@@ -776,10 +776,9 @@ int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
          */
         char linkpath[PATH_MAX];
         char *name;
-        int linklen;
+	ssize_t	linklen;
 
-        linklen = sysfs_readlink(&cxt, NULL,
-                linkpath, sizeof(linkpath) - 1);
+	linklen = sysfs_readlink(&cxt, NULL, linkpath, sizeof(linkpath) - 1);
         if (linklen < 0)
             goto err;
         linkpath[linklen] = '\0';
