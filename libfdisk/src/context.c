@@ -149,8 +149,11 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 	fdisk_ref_context(parent);
 	cxt->parent = parent;
 
-	if (init_nested_from_parent(cxt, 1) != 0)
+	if (init_nested_from_parent(cxt, 1) != 0) {
+		cxt->parent = NULL;
+		fdisk_unref_context(cxt);
 		return NULL;
+	}
 
 	if (name) {
 		if (strcasecmp(name, "bsd") == 0)
