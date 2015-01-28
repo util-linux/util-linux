@@ -9,8 +9,13 @@
  * %End-Header%
  */
 
-#define _LARGEFILE_SOURCE
-#define _LARGEFILE64_SOURCE
+#ifndef _LARGEFILE_SOURCE
+# define _LARGEFILE_SOURCE
+#endif
+
+#ifndef _LARGEFILE64_SOURCE
+# define _LARGEFILE64_SOURCE
+#endif
 
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
