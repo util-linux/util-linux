@@ -265,7 +265,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	if (ext == HFSPLUS_EXTENT_COUNT)
 		return 0;
 
-	leaf_off = (ext_block_start + leaf_block) * blocksize;
+	leaf_off = ((uint64_t) ext_block_start + leaf_block) * blocksize;
 
 	buf = blkid_probe_get_buffer(pr,
 				(blkid_loff_t) off + leaf_off,
