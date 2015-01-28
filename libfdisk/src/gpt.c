@@ -303,8 +303,10 @@ static void swap_efi_guid(struct gpt_guid *uid)
 
 static int string_to_guid(const char *in, struct gpt_guid *guid)
 {
-	if (uuid_parse(in, (unsigned char *) guid))	/* BE */
-		return -1;
+	if (uuid_parse(in, (unsigned char *) guid)) {   /* BE */
+		DBG(LABEL, ul_debug("GPT: failed to parse GUID: %s", in));
+		return -EINVAL;
+	}
 	swap_efi_guid(guid);				/* LE */
 	return 0;
 }
@@ -1979,9 +1981,11 @@ static int gpt_add_partition(
 		return -ENOSPC;
 	}
 
-	string_to_guid(pa && pa->type && pa->type->typestr ?
+	rc = string_to_guid(pa && pa->type && pa->type->typestr ?
 				pa->type->typestr:
 				GPT_DEFAULT_ENTRY_TYPE, &typeid);
+	if (rc)
+		return rc;
 
 	disk_f = find_first_available(pheader, ents, pheader->first_usable_lba);
 
