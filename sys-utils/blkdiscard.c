@@ -154,7 +154,7 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("cannot open %s"), path);
 
 	if (fstat(fd, &sb) == -1)
-		err(EXIT_FAILURE, _("stat failed %s"), path);
+		err(EXIT_FAILURE, _("stat of %s failed"), path);
 	if (!S_ISBLK(sb.st_mode))
 		errx(EXIT_FAILURE, _("%s: not a block device"), path);
 

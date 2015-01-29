@@ -143,7 +143,7 @@ static void test_super(int *start, size_t * length)
 
 	/* find the physical size of the file or block device */
 	if (stat(filename, &st) < 0)
-		err(FSCK_EX_ERROR, _("stat failed %s"), filename);
+		err(FSCK_EX_ERROR, _("stat of %s failed"), filename);
 
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)

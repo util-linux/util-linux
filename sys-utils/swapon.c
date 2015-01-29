@@ -479,7 +479,7 @@ static int swapon_checks(const char *special)
 	int permMask;
 
 	if (stat(special, &st) < 0) {
-		warn(_("stat failed %s"), special);
+		warn(_("stat of %s failed"), special);
 		goto err;
 	}
 

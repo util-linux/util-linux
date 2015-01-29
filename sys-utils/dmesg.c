@@ -519,7 +519,7 @@ static ssize_t mmap_file_buffer(struct dmesg_control *ctl, char **buf)
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), ctl->filename);
 	if (fstat(fd, &st))
-		err(EXIT_FAILURE, _("stat failed %s"), ctl->filename);
+		err(EXIT_FAILURE, _("stat of %s failed"), ctl->filename);
 
 	*buf = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
 	if (*buf == MAP_FAILED)

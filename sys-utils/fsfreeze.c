@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("cannot open %s"), path);
 
 	if (fstat(fd, &sb) == -1) {
-		warn(_("stat failed %s"), path);
+		warn(_("stat of %s failed"), path);
 		goto done;
 	}
 

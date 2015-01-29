@@ -195,7 +195,7 @@ static void dig_holes(int fd, off_t off, off_t len)
 #endif
 
 	if (fstat(fd, &st) != 0)
-		err(EXIT_FAILURE, _("stat failed %s"), filename);
+		err(EXIT_FAILURE, _("stat of %s failed"), filename);
 
 	bufsz = st.st_blksize;
 

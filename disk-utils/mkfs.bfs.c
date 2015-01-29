@@ -182,7 +182,7 @@ int main(int argc, char **argv)
 	device = argv[optind++];
 
 	if (stat(device, &statbuf) < 0)
-		err(EXIT_FAILURE, _("stat failed %s"), device);
+		err(EXIT_FAILURE, _("stat of %s failed"), device);
 
 	if (!S_ISBLK(statbuf.st_mode))
 		errx(EXIT_FAILURE, _("%s is not a block special device"), device);

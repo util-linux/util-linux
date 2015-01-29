@@ -239,7 +239,7 @@ static void open_device(struct mkswap_control *ctl)
 	assert(ctl->devname);
 
 	if (stat(ctl->devname, &ctl->devstat) < 0)
-		err(EXIT_FAILURE, _("stat failed %s"), ctl->devname);
+		err(EXIT_FAILURE, _("stat of %s failed"), ctl->devname);
 
 	if (S_ISBLK(ctl->devstat.st_mode))
 		ctl->fd = open(ctl->devname, O_RDWR | O_EXCL);

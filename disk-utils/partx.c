@@ -888,7 +888,7 @@ int main(int argc, char **argv)
 		device = argv[optind];
 
 		if (stat(device, &sb))
-			err(EXIT_FAILURE, _("stat failed %s"), device);
+			err(EXIT_FAILURE, _("stat of %s failed"), device);
 
 		part_devno = sb.st_rdev;
 

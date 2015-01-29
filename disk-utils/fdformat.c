@@ -217,7 +217,7 @@ int main(int argc, char **argv)
 	if (argc < 1)
 		usage(stderr);
 	if (stat(argv[0], &st) < 0)
-		err(EXIT_FAILURE, _("stat failed %s"), argv[0]);
+		err(EXIT_FAILURE, _("stat of %s failed"), argv[0]);
 	if (!S_ISBLK(st.st_mode))
 		/* do not test major - perhaps this was an USB floppy */
 		errx(EXIT_FAILURE, _("%s: not a block device"), argv[0]);

@@ -73,7 +73,7 @@ static int fstrim_filesystem(const char *path, struct fstrim_range *rangetpl,
 		return -1;
 	}
 	if (fstat(fd, &sb) == -1) {
-		warn(_("stat failed %s"), path);
+		warn(_("stat of %s failed"), path);
 		return -1;
 	}
 	if (!S_ISDIR(sb.st_mode)) {

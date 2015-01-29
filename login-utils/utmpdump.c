@@ -126,7 +126,7 @@ static void roll_file(const char *filename, off_t *size, FILE *out)
 		err(EXIT_FAILURE, _("cannot open %s"), filename);
 
 	if (fstat(fileno(in), &st) == -1)
-		err(EXIT_FAILURE, _("%s: stat failed"), filename);
+		err(EXIT_FAILURE, _("stat of %s failed"), filename);
 
 	if (st.st_size == *size)
 		goto done;

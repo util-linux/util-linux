@@ -595,7 +595,7 @@ FILE *checkf(register char *fs, int *clearfirst)
 		fflush(stdout);
 		if (clreol)
 			cleareol();
-		warn(_("stat failed %s"), fs);
+		warn(_("stat of %s failed"), fs);
 		return ((FILE *)NULL);
 	}
 	if ((stbuf.st_mode & S_IFMT) == S_IFDIR) {

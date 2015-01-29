@@ -90,7 +90,7 @@ static int recursiveRemove(int fd)
 			struct stat sb;
 
 			if (fstatat(dfd, d->d_name, &sb, AT_SYMLINK_NOFOLLOW)) {
-				warn(_("stat failed %s"), d->d_name);
+				warn(_("stat of %s failed"), d->d_name);
 				continue;
 			}
 
@@ -130,7 +130,7 @@ static int switchroot(const char *newroot)
 	struct stat newroot_stat, sb;
 
 	if (stat(newroot, &newroot_stat) != 0) {
-		warn(_("stat failed %s"), newroot);
+		warn(_("stat of %s failed"), newroot);
 		return -1;
 	}
 

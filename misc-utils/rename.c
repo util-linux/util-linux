@@ -60,7 +60,7 @@ static int do_symlink(char *from, char *to, char *s, int verbose)
 	struct stat sb;
 
 	if (lstat(s, &sb) == -1) {
-		warn(_("%s: lstat failed"), s);
+		warn(_("stat of %s failed"), s);
 		return 2;
 	}
 	if (!S_ISLNK(sb.st_mode)) {

@@ -670,7 +670,7 @@ static void process_wtmp_file(const struct last_control *ctl)
 		begintime = ut.UL_UT_TIME;
 	else {
 		if (fstat(fileno(fp), &st) != 0)
-			err(EXIT_FAILURE, _("stat failed %s"), ctl->altv[ctl->alti]);
+			err(EXIT_FAILURE, _("stat of %s failed"), ctl->altv[ctl->alti]);
 		begintime = st.st_ctime;
 		quit = 1;
 	}
