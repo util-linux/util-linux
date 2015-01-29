@@ -261,26 +261,29 @@ static void set_source_match(const char *data)
 
 static void enable_extra_target_match(void)
 {
-	const char *cn = NULL, *mnt = NULL;
+	char *cn = NULL, *mnt = NULL;
+	const char *tgt = NULL;
 
 	/*
 	 * Check if match pattern is mountpoint, if not use the
 	 * real mountpoint.
 	 */
 	if (flags & FL_NOCACHE)
-		cn = get_match(COL_TARGET);
+		tgt = get_match(COL_TARGET);
 	else {
-		cn = mnt_resolve_path(get_match(COL_TARGET), cache);
+		tgt = cn = mnt_resolve_path(get_match(COL_TARGET), cache);
 		if (!cn)
 			return;
 	}
 
-	mnt = mnt_get_mountpoint(cn);
-	if (!mnt || strcmp(mnt, cn) == 0)
-		return;
+	mnt = mnt_get_mountpoint(tgt);
+	if (mnt && strcmp(mnt, tgt) != 0)
+		set_match(COL_TARGET, mnt);	/* replace the current setting */
+	else
+		free(mnt);
 
-	/* replace the current setting with the real mountpoint */
-	set_match(COL_TARGET, mnt);
+	if (!cache)
+		free(cn);
 }
 
 
@@ -526,19 +529,22 @@ static char *get_data(struct libmnt_fs *fs, int num)
 	{
 		const char *root = mnt_fs_get_root(fs);
 		const char *spec = mnt_fs_get_srcpath(fs);
+		char *cn = NULL;
 
 		if (spec && (flags & FL_CANONICALIZE))
-			spec = mnt_resolve_path(spec, cache);
+			spec = cn = mnt_resolve_path(spec, cache);
 		if (!spec) {
 			spec = mnt_fs_get_source(fs);
 
 			if (spec && (flags & FL_EVALUATE))
-				spec = mnt_resolve_spec(spec, cache);
+				spec = cn = mnt_resolve_spec(spec, cache);
 		}
 		if (root && spec && !(flags & FL_NOFSROOT) && strcmp(root, "/"))
 			xasprintf(&str, "%s[%s]", spec, root);
 		else if (spec)
 			str = xstrdup(spec);
+		if (!cache)
+			free(cn);
 		break;
 	}
 	case COL_TARGET:
