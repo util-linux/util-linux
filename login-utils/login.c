@@ -1038,12 +1038,13 @@ static void fork_session(struct login_context *cxt)
 static void init_environ(struct login_context *cxt)
 {
 	struct passwd *pwd = cxt->pwd;
-	char *termenv = NULL, **env;
+	char *termenv, **env;
 	char tmp[PATH_MAX];
 	int len, i;
 
 	termenv = getenv("TERM");
-	termenv = termenv ? xstrdup(termenv) : "dumb";
+	if (termenv)
+		termenv = xstrdup(termenv);
 
 	/* destroy environment unless user has requested preservation (-p) */
 	if (!cxt->keep_env) {
@@ -1054,7 +1055,8 @@ static void init_environ(struct login_context *cxt)
 	setenv("HOME", pwd->pw_dir, 0);	/* legal to override */
 	setenv("USER", pwd->pw_name, 1);
 	setenv("SHELL", pwd->pw_shell, 1);
-	setenv("TERM", termenv, 1);
+	setenv("TERM", termenv ? termenv : "dumb", 1);
+	free(termenv);
 
 	if (pwd->pw_uid)
 		logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH);
