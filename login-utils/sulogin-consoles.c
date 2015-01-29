@@ -594,7 +594,7 @@ int detect_consoles(const char *device, int fallback, struct list_head *consoles
 	consoles_debug = getenv("CONSOLES_DEBUG") ? 1 : 0;
 
 	if (!device || !*device)
-		fd = dup(fallback);
+		fd = fallback >= 0 ? dup(fallback) : - 1;
 	else {
 		fd = open(device, O_RDWR|O_NONBLOCK|O_NOCTTY|O_CLOEXEC);
 		reconnect = 1;
