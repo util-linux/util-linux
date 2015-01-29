@@ -310,7 +310,7 @@ static int print_data(struct libscols_table *tb,
 		len = width;
 		bytes = mbs_truncate(data, &len);	/* updates 'len' */
 
-		if (!data || bytes == (size_t) -1) {
+		if (bytes == (size_t) -1) {
 			bytes = len = 0;
 			data = NULL;
 		}
