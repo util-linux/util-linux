@@ -135,6 +135,17 @@ which is done by using
 This sysfs block directory appeared in kernel 2.6.27 (October 2008).
 In case of problems with a new enough kernel, check that CONFIG_SYSFS
 was enabled at the time of the kernel build.
+
+.SH RETURN CODES
+.IP 0
+success
+.IP 1
+failure
+.IP 32
+not found all specified devices
+.IP 64
+some specified devices found, some not found
+
 .SH AUTHORS
 .nf
 Milan Broz <mbroz@redhat.com>

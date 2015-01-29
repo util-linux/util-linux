@@ -62,6 +62,10 @@
 #include "mangle.h"
 #include "optutils.h"
 
+
+#define LSBLK_EXIT_SOMEOK 64
+#define LSBLK_EXIT_ALLFAILED 32
+
 /* column IDs */
 enum {
 	COL_NAME = 0,
@@ -1338,7 +1342,7 @@ static int iterate_block_devices(void)
 	struct blkdev_cxt cxt = { 0 };
 
 	if (!(dir = opendir(_PATH_SYS_BLOCK)))
-		return EXIT_FAILURE;
+		return -errno;
 
 	while ((d = xreaddir(dir))) {
 		if (set_cxt(&cxt, NULL, NULL, d->d_name))
@@ -1358,7 +1362,7 @@ static int iterate_block_devices(void)
 
 	closedir(dir);
 
-	return EXIT_SUCCESS;
+	return 0;
 }
 
 static char *devno_to_sysfs_name(dev_t devno, char *devname, char *buf, size_t buf_size)
@@ -1385,19 +1389,18 @@ static int process_one_device(char *devname)
 {
 	struct blkdev_cxt parent = { 0 }, cxt = { 0 };
 	struct stat st;
-	char buf[PATH_MAX + 1], *name, *diskname = NULL;
+	char buf[PATH_MAX + 1], *name = NULL, *diskname = NULL;
 	dev_t disk = 0;
-	int real_part = 0;
-	int status = EXIT_FAILURE;
+	int real_part = 0, rc = -EINVAL;
 
 	if (stat(devname, &st) || !S_ISBLK(st.st_mode)) {
 		warnx(_("%s: not a block device"), devname);
-		return EXIT_FAILURE;
+		goto leave;
 	}
 
 	if (!(name = devno_to_sysfs_name(st.st_rdev, devname, buf, PATH_MAX))) {
 		warn(_("%s: failed to get sysfs name"), devname);
-		return EXIT_FAILURE;
+		goto leave;
 	}
 
 	if (!strncmp(name, "dm-", 3)) {
@@ -1406,7 +1409,7 @@ static int process_one_device(char *devname)
 	} else {
 		if (blkid_devno_to_wholedisk(st.st_rdev, buf, sizeof(buf), &disk)) {
 			warn(_("%s: failed to get whole-disk device number"), devname);
-			return EXIT_FAILURE;
+			goto leave;
 		}
 		diskname = buf;
 		real_part = st.st_rdev != disk;
@@ -1434,7 +1437,7 @@ static int process_one_device(char *devname)
 			process_blkdev(&cxt, &parent, 1, NULL);
 	}
 
-	status = EXIT_SUCCESS;
+	rc = 0;
 leave:
 	free(name);
 	reset_blkdev_cxt(&cxt);
@@ -1442,7 +1445,7 @@ leave:
 	if (real_part)
 		reset_blkdev_cxt(&parent);
 
-	return status;
+	return rc;
 }
 
 static void parse_excludes(const char *str0)
@@ -1791,9 +1794,20 @@ int main(int argc, char *argv[])
 	}
 
 	if (optind == argc)
-		status = iterate_block_devices();
-	else while (optind < argc)
-		status = process_one_device(argv[optind++]);
+		status = iterate_block_devices() == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+	else {
+		int cnt = 0, cnt_err = 0;
+
+		while (optind < argc) {
+			if (process_one_device(argv[optind++]) != 0)
+				cnt_err++;
+			cnt++;
+		}
+		status = cnt == 0	? EXIT_FAILURE :	/* nothing */
+			 cnt == cnt_err	? LSBLK_EXIT_ALLFAILED :/* all failed */
+			 cnt_err	? LSBLK_EXIT_SOMEOK :	/* some ok */
+					  EXIT_SUCCESS;		/* all success */
+	}
 
 	if (lsblk->sort_col)
 		scols_sort_table(lsblk->table, lsblk->sort_col);
