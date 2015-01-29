@@ -533,13 +533,15 @@ modify_environment (const struct passwd *pw, const char *shell)
     {
       /* Leave TERM unchanged.  Set HOME, SHELL, USER, LOGNAME, PATH.
          Unset all other environment variables.  */
-      char const *term = getenv ("TERM");
+      char *term = getenv ("TERM");
       if (term)
 	term = xstrdup (term);
       environ = xmalloc ((6 + !!term) * sizeof (char *));
       environ[0] = NULL;
-      if (term)
+      if (term) {
 	xsetenv ("TERM", term, 1);
+	free(term);
+      }
       xsetenv ("HOME", pw->pw_dir, 1);
       if (shell)
 	xsetenv ("SHELL", shell, 1);
