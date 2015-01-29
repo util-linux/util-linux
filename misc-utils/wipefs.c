@@ -240,7 +240,7 @@ new_probe(const char *devname, int mode)
 			goto error;
 
 		pr = blkid_new_probe();
-		if (pr && blkid_probe_set_device(pr, fd, 0, 0)) {
+		if (!pr || blkid_probe_set_device(pr, fd, 0, 0) != 0) {
 			close(fd);
 			goto error;
 		}
@@ -266,7 +266,6 @@ new_probe(const char *devname, int mode)
 error:
 	blkid_free_probe(pr);
 	err(EXIT_FAILURE, _("error: %s: probing initialization failed"), devname);
-	return NULL;
 }
 
 static struct wipe_desc *
