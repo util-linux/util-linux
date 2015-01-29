@@ -661,7 +661,7 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 	int rc = 0;
 	uint64_t x;
 
-	if (!pa || !cxt)
+	if (!pa || !cxt || !data)
 		return -EINVAL;
 
 	switch (id) {
@@ -762,13 +762,16 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 		return -EINVAL;
 	}
 
-	if (rc < 0)
+	if (rc < 0) {
 		rc = -ENOMEM;
-	else if (rc > 0)
+		free(p);
+		p = NULL;
+
+	} else if (rc > 0)
 		rc = 0;
 
-	if (data)
-		*data = p;
+	*data = p;
+
 	return rc;
 }
 
