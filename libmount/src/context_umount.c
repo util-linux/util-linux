@@ -169,6 +169,7 @@ static int has_utab_entry(struct libmnt_context *cxt, const char *target)
 	struct libmnt_fs *fs;
 	struct libmnt_iter itr;
 	char *cn = NULL;
+	int rc = 0;
 
 	assert(cxt);
 
@@ -191,10 +192,16 @@ static int has_utab_entry(struct libmnt_context *cxt, const char *target)
 	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
 
 	while (mnt_table_next_fs(cxt->utab, &itr, &fs) == 0) {
-		if (mnt_fs_streq_target(fs, cn))
-			return 1;
+		if (mnt_fs_streq_target(fs, cn)) {
+			rc = 1;
+			break;
+		}
 	}
-	return 0;
+
+	if (!cache)
+		free(cn);
+
+	return rc;
 }
 
 /* this is umount replacement to mnt_context_apply_fstab(), use
