@@ -1647,8 +1647,9 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	return 0;
 }
 
-/* Guess type, but not set to cxt->fs, use free() for the result. It's no error
- * when we're not able to guess a filesystem type.
+/* Guess type, but not set to cxt->fs, always use free() for the result. It's
+ * no error when we're not able to guess a filesystem type. Note that error
+ * does not mean that result in @type is NULL.
  */
 int mnt_context_guess_srcpath_fstype(struct libmnt_context *cxt, char **type)
 {
@@ -1717,8 +1718,8 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 	rc = mnt_context_guess_srcpath_fstype(cxt, &type);
 	if (rc == 0 && type)
 		__mnt_fs_set_fstype_ptr(cxt->fs, type);
-	else
-		free(type);
+
+	free(type);
 done:
 	DBG(CXT, ul_debugobj(cxt, "FS type: %s [rc=%d]",
 				mnt_fs_get_fstype(cxt->fs), rc));

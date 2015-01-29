@@ -787,8 +787,9 @@ static int do_mount_by_types(struct libmnt_context *cxt, const char *types)
 		if (strcmp(p, "auto") == 0) {
 			rc = mnt_context_guess_srcpath_fstype(cxt, &autotype);
 			if (rc) {
-				DBG(CXT, ul_debugobj(cxt, "failed to guess FS type"));
+				DBG(CXT, ul_debugobj(cxt, "failed to guess FS type [rc=%d]", rc));
 				free(p0);
+				free(autotype);
 				return rc;
 			}
 			p = autotype;
