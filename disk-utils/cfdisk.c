@@ -1507,8 +1507,8 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 
 		snprintf(buf, sizeof(buf), "%s", dflt);
 		rc = ui_get_string(cf, prompt,
-				_("May be followed by {M,B,G,T}iB "
-				  "(the \"iB\" is optional) or S for sectors."),
+				_("May be followed by M for MiB, G for GiB, "
+				  "T for TiB, or S for sectors."),
 				buf, sizeof(buf));
 		if (rc == 0) {
 			ui_warnx(_("Please, specify size."));
