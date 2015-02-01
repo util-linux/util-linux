@@ -735,7 +735,7 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 		rc = asprintf(&p, "%ju", pa->cpg);
 		break;
 	case FDISK_FIELD_TYPE:
-		p = pa->type && pa->type->name ? strdup(pa->type->name) : NULL;
+		p = pa->type && pa->type->name ? strdup(_(pa->type->name)) : NULL;
 		break;
 	case FDISK_FIELD_TYPEID:
 		if (pa->type && fdisk_parttype_get_string(pa->type))
