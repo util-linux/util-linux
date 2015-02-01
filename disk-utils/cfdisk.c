@@ -1923,7 +1923,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			info = _("Partition %zu has been deleted.");
 		ref = 1;
 		break;
-	case 'h': /* help */
+	case 'h': /* Help */
 		ui_help();
 		ref = 1;
 		break;
@@ -1989,13 +1989,13 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			info = _("The type of partition %zu is unchanged.");
 		break;
 	}
-	case 's': /* fix order */
+	case 's': /* Sort */
 		if (cf->wrong_order) {
 			fdisk_reorder_partitions(cf->cxt);
 			ref = 1;
 		}
 		break;
-	case 'u':
+	case 'u': /* dUmp */
 		ui_script_write(cf);
 		break;
 	case 'W': /* Write */
@@ -2003,7 +2003,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		char buf[64] = { 0 };
 
 		if (fdisk_is_readonly(cf->cxt)) {
-			warn = _("Device open in read-only mode");
+			warn = _("Device is open in read-only mode.");
 			break;
 		}
 
@@ -2016,12 +2016,12 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		ref = 1;
 		if (rc <= 0 || (strcasecmp(buf, "yes") != 0 &&
 				strcasecmp(buf, _("yes")) != 0)) {
-			info = _("Did not write partition table to disk");
+			info = _("Did not write partition table to disk.");
 			break;
 		}
 		rc = fdisk_write_disklabel(cf->cxt);
 		if (rc)
-			warn = _("Failed to write disklabel");
+			warn = _("Failed to write disklabel.");
 		else {
 			fdisk_reread_partition_table(cf->cxt);
 			info = _("The partition table has been altered.");
