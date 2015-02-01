@@ -136,7 +136,7 @@ void list_disklabel(struct fdisk_context *cxt)
 			fl |= SCOLS_FL_TRUNC;
 
 		co = scols_table_new_column(out,
-				fdisk_field_get_name(field),
+				_(fdisk_field_get_name(field)),
 				fdisk_field_get_width(field), fl);
 		if (!co)
 			goto done;
