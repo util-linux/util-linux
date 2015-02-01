@@ -101,9 +101,9 @@ int parse_size(const char *str, uintmax_t *res, int *power)
 	 * Check size suffixes
 	 */
 check_suffix:
-	if (*(p + 1) == 'i' && *(p + 2) == 'B' && !*(p + 3))
+	if (*(p + 1) == 'i' && (*(p + 2) == 'B' || *(p + 2) == 'b') && !*(p + 3))
 		base = 1024;			/* XiB, 2^N */
-	else if (*(p + 1) == 'B' && !*(p + 2))
+	else if ((*(p + 1) == 'B' || *(p + 1) == 'b') && !*(p + 2))
 		base = 1000;			/* XB, 10^N */
 	else if (*(p + 1)) {
 		struct lconv const *l = localeconv();
