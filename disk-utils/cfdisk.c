@@ -1533,7 +1533,7 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 			if (insec)
 				user *= fdisk_get_sector_size(cf->cxt);
 			if (user < low) {
-				ui_warnx(_("Minimal size is %ju"), low);
+				ui_warnx(_("Minimum size is %ju bytes."), low);
 				rc = -ERANGE;
 			}
 			if (user > up && pwr && user < up + (1ULL << pwr * 10))
@@ -1542,7 +1542,7 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 				user = up;
 
 			if (user > up) {
-				ui_warnx(_("Maximal size is %ju bytes."), up);
+				ui_warnx(_("Maximum size is %ju bytes."), up);
 				rc = -ERANGE;
 			}
 			if (rc == 0 && insec && expsize)
