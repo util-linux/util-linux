@@ -1924,6 +1924,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		ref = 1;
 		break;
 	case 'h': /* Help */
+	case '?':
 		ui_help();
 		ref = 1;
 		break;
