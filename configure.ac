@@ -653,6 +653,26 @@ AS_IF([test "x$with_selinux" = xno], [
 AC_SUBST([SELINUX_LIBS])
 AC_SUBST([SELINUX_LIBS_STATIC])
 
+
+AC_ARG_WITH([readline],
+  AS_HELP_STRING([--with-readline], [compile with GNU Readline support]),
+  [], [with_readline=auto]
+)
+
+AS_IF([test "x$with_readline" = xno], [
+  AM_CONDITIONAL([HAVE_READLINE], [false])
+], [
+  UL_CHECK_LIB([readline], [readline])
+  AS_CASE([$with_readline:$have_readline],
+    [yes:no],
+      [AC_MSG_ERROR([readline selected but libreadline not found ])],
+    [*:yes],
+      [READLINE_LIBS=-lreadline]
+  )
+])
+AC_SUBST([READLINE_LIBS])
+
+
 AC_ARG_WITH([audit],
   AS_HELP_STRING([--with-audit], [compile with audit support]),
   [], [with_audit=no]
