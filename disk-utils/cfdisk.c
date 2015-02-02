@@ -1435,6 +1435,14 @@ static ssize_t ui_get_string(struct cfdisk *cf, const char *prompt,
 		case KEY_ESC:
 			rc = -CFDISK_ERR_ESC;
 			goto done;
+		case KEY_LEFT:		/* TODO: implement full buffer editor */
+		case KEY_RIGHT:
+		case KEY_END:
+		case KEY_HOME:
+		case KEY_UP:
+		case KEY_DOWN:
+			beep();
+			break;
 		case KEY_DELETE:
 		case '\b':
 		case KEY_BACKSPACE:
@@ -1448,6 +1456,7 @@ static ssize_t ui_get_string(struct cfdisk *cf, const char *prompt,
 			} else
 				beep();
 			break;
+
 		default:
 #if defined(HAVE_LIBNCURSESW) && defined(HAVE_WIDECHAR)
 			if (i + 1 < (ssize_t) len && iswprint(c)) {
