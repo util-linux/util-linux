@@ -2063,6 +2063,7 @@ static void ui_resize_refresh(struct cfdisk *cf)
 static int ui_run(struct cfdisk *cf)
 {
 	int rc = 0;
+	size_t qitem = 0;
 
 	ui_lines = LINES;
 	ui_cols = COLS;
@@ -2084,6 +2085,9 @@ static int ui_run(struct cfdisk *cf)
 
 	menu_push(cf, main_menuitems);
 	cf->menu->ignore_cb = main_menu_ignore_keys;
+
+	if (menu_get_menuitem_by_key(cf, 'q', &qitem))
+		cf->menu->idx = qitem;
 
 	rc = ui_refresh(cf);
 	if (rc)
