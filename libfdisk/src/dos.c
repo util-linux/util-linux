@@ -1593,11 +1593,9 @@ static int dos_add_partition(struct fdisk_context *cxt,
 			}
 			rc = add_logical(cxt, pa, &res);
 		} else {
-			fdisk_info(cxt,
-			     _(	"Impossible to create another primary partition. "
-				"If you want to create more partitions, you must "
-				"replace a primary partition with an extended "
-				"partition first."));
+			/* TRANSLATORS: Try to keep this within 80 characters. */
+			fdisk_info(cxt, _("To create more partitions, first replace "
+					  "a primary with an extended partition."));
 			return -EINVAL;
 		}
 	} else if (cxt->label->nparts_max >= MAXIMUM_PARTS) {
