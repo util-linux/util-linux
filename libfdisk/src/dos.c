@@ -1138,9 +1138,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	limit = get_unused_last(cxt, n, start, first, last);
 
 	if (start > limit) {
-		fdisk_info(cxt, _("No free sectors available."));
-		if (n > 4)
-			cxt->label->nparts_max--;
+		fdisk_warnx(cxt, _("No free sectors available."));
 		return -ENOSPC;
 	}
 
@@ -1569,10 +1567,17 @@ static int dos_add_partition(struct fdisk_context *cxt,
 		DBG(LABEL, ul_debug("DOS: primary impossible, add logical"));
 		if (l->ext_offset) {
 			if (!pa || fdisk_partition_has_start(pa)) {
+				const char *msg;
 				if (!free_primary)
-					fdisk_info(cxt, _("All primary partitions are in use."));
+					msg = _("All primary partitions are in use.");
 				else if (!free_sectors)
-					fdisk_info(cxt, _("All space for primary partitions is in use."));
+					msg =  _("All space for primary partitions is in use.");
+
+				if (pa && fdisk_partition_has_start(pa)) {
+					fdisk_warnx(cxt, msg);
+					return -EINVAL;
+				} else
+					fdisk_info(cxt, msg);
 			}
 			rc = add_logical(cxt, pa, &res);
 		} else {
