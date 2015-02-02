@@ -382,7 +382,7 @@ static void reset_pte(struct pte *pe)
 	assert(pe);
 
 	if (pe->private_sectorbuffer) {
-		DBG(LABEL, ul_debug("  --> freeing pte sector buffer %p",
+		DBG(LABEL, ul_debug("   --> freeing pte sector buffer %p",
 					pe->sectorbuffer));
 		free(pe->sectorbuffer);
 	}
@@ -416,6 +416,13 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 	if (partnum < 4) {
 		DBG(LABEL, ul_debug("--> delete primary"));
 		if (IS_EXTENDED(p->sys_ind) && partnum == l->ext_index) {
+			size_t i;
+			DBG(LABEL, ul_debug(" --> delete extended"));
+			for (i = 4; i < cxt->label->nparts_max; i++) {
+				DBG(LABEL, ul_debug("  --> delete logical #%zu", i));
+				reset_pte(&l->ptes[i]);
+
+			}
 			cxt->label->nparts_max = 4;
 			l->ptes[l->ext_index].ex_entry = NULL;
 			l->ext_offset = 0;
