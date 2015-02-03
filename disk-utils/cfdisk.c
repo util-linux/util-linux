@@ -656,6 +656,12 @@ static void ui_warn(const char *fmt, ...)
 	free(fmt_m);
 }
 
+static void ui_clean_warn(void)
+{
+	move(WARN_LINE, 0);
+	clrtoeol();
+}
+
 static int __attribute__((__noreturn__)) ui_errx(int rc, const char *fmt, ...)
 		{
 	va_list ap;
@@ -1522,14 +1528,17 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 
 	ui_clean_info();
 
+	snprintf(buf, sizeof(buf), "%s", dflt);
+
 	do {
 		int pwr = 0, insec = 0;
 
-		snprintf(buf, sizeof(buf), "%s", dflt);
 		rc = ui_get_string(cf, prompt,
 				_("May be followed by M for MiB, G for GiB, "
 				  "T for TiB, or S for sectors."),
 				buf, sizeof(buf));
+		ui_clean_warn();
+
 		if (rc == 0) {
 			ui_warnx(_("Please, specify size."));
 			continue;			/* nothing specified */
@@ -1970,10 +1979,6 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			break;
 
 		secs = size / fdisk_get_sector_size(cf->cxt);
-		if (size && secs < 1) {
-			warn = _("Too small partition size specified.");
-			break;
-		}
 
 		npa = fdisk_new_partition();
 		if (!npa)
