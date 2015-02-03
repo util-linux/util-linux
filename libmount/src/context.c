@@ -1718,8 +1718,8 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 	rc = mnt_context_guess_srcpath_fstype(cxt, &type);
 	if (rc == 0 && type)
 		__mnt_fs_set_fstype_ptr(cxt->fs, type);
-
-	free(type);
+	else
+		free(type);
 done:
 	DBG(CXT, ul_debugobj(cxt, "FS type: %s [rc=%d]",
 				mnt_fs_get_fstype(cxt->fs), rc));
