@@ -2071,9 +2071,12 @@ static int gpt_add_partition(
 		user_l = user_f + pa->size - 1;
 		DBG(LABEL, ul_debug("size defined: %ju, end: %ju (last possible: %ju)",
 					pa->size, user_l, dflt_l));
-		if (user_l != dflt_l && !pa->size_explicit)
-			user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l) - 1;
-
+		if (user_l != dflt_l && !pa->size_explicit
+		    && user_l - user_f > cxt->grain) {
+			user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l);
+			if (user_l > user_f)
+				user_l -= 1;
+		}
 	} else {
 		for (;;) {
 			if (!ask)
