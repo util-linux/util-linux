@@ -635,6 +635,7 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 {
 	unsigned int id = 0;
 	int rc, has_id = 0;
+	struct fdisk_dos_label *l;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -658,14 +659,17 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 	if (!has_id)
 		random_get_bytes(&id, sizeof(id));
 
-	dos_init(cxt);
 	rc = fdisk_init_firstsector_buffer(cxt);
 	if (rc)
 		return rc;
-	fdisk_label_set_changed(cxt->label, 1);
+	dos_init(cxt);
+
+	l = self_label(cxt);
 
 	/* Generate an MBR ID for this disk */
 	mbr_set_id(cxt->firstsector, id);
+	l->non_pt_changed = 1;
+	fdisk_label_set_changed(cxt->label, 1);
 
 	/* Put MBR signature */
 	mbr_set_magic(cxt->firstsector);
@@ -1702,6 +1706,9 @@ static int dos_write_disklabel(struct fdisk_context *cxt)
 	assert(cxt->label);
 	assert(fdisk_is_label(cxt, DOS));
 
+	DBG(LABEL, ul_debug("DOS: write PT requested [label-changed: %d, non-pt-changed: %d]",
+				cxt->label->changed, l->non_pt_changed));
+
 	mbr_changed = l->non_pt_changed;
 
 	/* MBR (primary partitions) */
@@ -1713,6 +1720,7 @@ static int dos_write_disklabel(struct fdisk_context *cxt)
 		}
 	}
 	if (mbr_changed) {
+		DBG(LABEL, ul_debug("DOS: MBR changed, writting"));
 		mbr_set_magic(cxt->firstsector);
 		rc = write_sector(cxt, 0, cxt->firstsector);
 		if (rc)
