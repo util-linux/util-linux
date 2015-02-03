@@ -104,11 +104,13 @@ enum {
 	CFDISK_CL_NONE = 0,
 	CFDISK_CL_WARNING,
 	CFDISK_CL_FREESPACE,
+	CFDISK_CL_INFO
 };
 static const int color_pairs[][2] = {
 	/* color            foreground, background */
 	[CFDISK_CL_WARNING]   = { COLOR_RED, -1 },
-	[CFDISK_CL_FREESPACE] = { COLOR_GREEN, -1 }
+	[CFDISK_CL_FREESPACE] = { COLOR_GREEN, -1 },
+	[CFDISK_CL_INFO]      = { COLOR_BLUE, -1 }
 };
 
 struct cfdisk;
@@ -673,7 +675,9 @@ static void ui_info(const char *fmt, ...)
 	va_list ap;
 	va_start(ap, fmt);
 	if (ui_enabled)
-		ui_vprint_center(INFO_LINE, A_BOLD, fmt, ap);
+		ui_vprint_center(INFO_LINE,
+				colors_wanted() ? COLOR_PAIR(CFDISK_CL_INFO) : 0,
+				fmt, ap);
 	else {
 		vfprintf(stdout, fmt, ap);
 		fputc('\n', stdout);
@@ -1876,6 +1880,7 @@ static int main_menu_ignore_keys(struct cfdisk *cf, char *ignore,
 
 	if (!cf->wrong_order)
 		ignore[i++] = 's';
+
 	if (fdisk_is_readonly(cf->cxt))
 		ignore[i++] = 'W';
 	return i;
@@ -2109,6 +2114,8 @@ static int ui_run(struct cfdisk *cf)
 
 	if (fdisk_is_readonly(cf->cxt))
 		ui_warnx(_("Device open in read-only mode."));
+	else if (cf->wrong_order)
+		 ui_info(_("Note that partition table entries are not in disk order now."));
 
 	do {
 		int key = getch();
