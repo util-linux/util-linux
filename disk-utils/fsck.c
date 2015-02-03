@@ -54,6 +54,7 @@
 #include "c.h"
 #include "closestream.h"
 #include "fileutils.h"
+#include "monotonic.h"
 
 #define XALLOC_EXIT_CODE	FSCK_EX_ERROR
 #include "xalloc.h"
@@ -577,20 +578,19 @@ static int progress_active(void)
  */
 static void print_stats(struct fsck_instance *inst)
 {
-	double time_diff;
+	struct timeval delta;
 
 	if (!inst || !report_stats || noexecute)
 		return;
 
-	time_diff = (inst->end_time.tv_sec  - inst->start_time.tv_sec)
-		  + (inst->end_time.tv_usec - inst->start_time.tv_usec) / 1E6;
+	timersub(&inst->end_time, &inst->start_time, &delta);
 
 	fprintf(stdout, "%s: status %d, rss %ld, "
-			"real %f, user %d.%06d, sys %d.%06d\n",
+			"real %ld.%06ld, user %d.%06d, sys %d.%06d\n",
 		fs_get_device(inst->fs),
 		inst->exit_status,
 		inst->rusage.ru_maxrss,
-		time_diff,
+		delta.tv_sec, delta.tv_usec,
 		(int)inst->rusage.ru_utime.tv_sec,
 		(int)inst->rusage.ru_utime.tv_usec,
 		(int)inst->rusage.ru_stime.tv_sec,
@@ -676,7 +676,7 @@ static int execute(const char *progname, const char *progpath,
 	inst->pid = pid;
 	inst->prog = xstrdup(progname);
 	inst->type = xstrdup(type);
-	gettimeofday(&inst->start_time, NULL);
+	gettime_monotonic(&inst->start_time);
 	inst->next = NULL;
 
 	/*
@@ -789,7 +789,7 @@ static struct fsck_instance *wait_one(int flags)
 
 	inst->exit_status = status;
 	inst->flags |= FLAG_DONE;
-	gettimeofday(&inst->end_time, NULL);
+	gettime_monotonic(&inst->end_time);
 	memcpy(&inst->rusage, &rusage, sizeof(struct rusage));
 
 	if (progress && (inst->flags & FLAG_PROGRESS) &&

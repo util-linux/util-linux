@@ -83,8 +83,8 @@ endif #BUILD_SWAPLABEL
 if BUILD_FSCK
 sbin_PROGRAMS += fsck
 dist_man_MANS += disk-utils/fsck.8
-fsck_SOURCES = disk-utils/fsck.c
-fsck_LDADD = $(LDADD) libmount.la libblkid.la libcommon.la
+fsck_SOURCES = disk-utils/fsck.c lib/monotonic.c
+fsck_LDADD = $(LDADD) libmount.la libblkid.la libcommon.la $(CLOCKGETTIME_LIBS)
 fsck_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir) -I$(ul_libblkid_incdir)
 endif
 
