@@ -1964,8 +1964,9 @@ static int main_menu_action(struct cfdisk *cf, int key)
 		start = fdisk_partition_get_start(pa);
 		size = dflt_size = fdisk_partition_get_size(pa) * fdisk_get_sector_size(cf->cxt);
 
-		if (ui_get_size(cf, _("Partition size: "), &size, 1, size, &expsize)
-				== -CFDISK_ERR_ESC)
+		if (ui_get_size(cf, _("Partition size: "), &size,
+				fdisk_get_sector_size(cf->cxt),
+				size, &expsize) == -CFDISK_ERR_ESC)
 			break;
 
 		secs = size / fdisk_get_sector_size(cf->cxt);

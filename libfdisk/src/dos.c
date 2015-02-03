@@ -852,7 +852,7 @@ static void set_partition(struct fdisk_context *cxt,
 		offset = pe->offset;
 	}
 
-	DBG(LABEL, ul_debug("DOS: setting partition %d%s, offset=%zu, start=%zu, stop=%zu, sysid=%02x",
+	DBG(LABEL, ul_debug("DOS: setting partition %d%s, offset=%zu, start=%zu, size=%zu, sysid=%02x",
 				i, doext ? " [extended]" : "",
 				(size_t) offset,
 				(size_t) (start -  offset),
@@ -1204,9 +1204,12 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			 * align the end of the partition. The next partition
 			 * will start at phy.block boundary.
 			 */
-			stop = fdisk_align_lba_in_range(cxt, stop, start, limit) - 1;
+			stop = fdisk_align_lba_in_range(cxt, stop, start, limit);
+			if (stop > start)
+				stop -= 1;
 			if (stop > limit)
 				stop = limit;
+			DBG(LABEL, ul_debug("DOS: aligned stop: %ju", (uintmax_t) stop));
 		}
 	}
 

@@ -289,7 +289,7 @@ int fdisk_get_partitions(struct fdisk_context *cxt, struct fdisk_table **tb)
 	if (!cxt->label->op->get_part)
 		return -ENOSYS;
 
-	DBG(CXT, ul_debugobj(cxt, "get table"));
+	DBG(CXT, ul_debugobj(cxt, " -- get table --"));
 
 	if (!*tb && !(*tb = fdisk_new_table()))
 		return -ENOMEM;
@@ -537,12 +537,13 @@ done:
 int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 {
 	int rc = 0;
+	size_t nparts = 0;
 	fdisk_sector_t last, grain;
 	struct fdisk_table *parts = NULL;
 	struct fdisk_partition *pa;
 	struct fdisk_iter itr;
 
-	DBG(CXT, ul_debugobj(cxt, "get freespace"));
+	DBG(CXT, ul_debugobj(cxt, "-- get freespace --"));
 
 	if (!cxt || !cxt->label || !tb)
 		return -EINVAL;
@@ -581,6 +582,7 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 		if (fdisk_partition_is_container(pa))
 			rc = check_container_freespace(cxt, parts, *tb, pa);
 		last = fdisk_partition_get_end(pa);
+		nparts++;
 	}
 
 	/* add free-space behind last partition to the end of the table (so
@@ -588,7 +590,7 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 	if (rc == 0 && last + grain < cxt->total_sectors - 1) {
 		DBG(CXT, ul_debugobj(cxt, "freespace behind last partition detected"));
 		rc = new_freespace(cxt,
-			last + (last > cxt->first_lba ? 1 : 0),
+			last + (last > cxt->first_lba || nparts ? 1 : 0),
 			cxt->last_lba, NULL, &pa);
 		if (pa) {
 			fdisk_table_add_partition(*tb, pa);
