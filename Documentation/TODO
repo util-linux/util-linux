@@ -8,6 +8,12 @@ libblkid
     to have LABELs longer than we have bufferes in libblkid
     https://bugzilla.redhat.com/show_bug.cgi?id=1164708
 
+cfdisk
+------
+  - provide additional information about the current partitions (LABEL=, UUID=,
+    filesystem type, size, usage, mountpoint, ...) just optionally add extra
+    table between main menu and list of partitions.
+
 agetty
 -----
   - support default issue (/etc/issue) output for agetty to make it agetty
