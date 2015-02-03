@@ -155,6 +155,7 @@ struct cfdisk_menu {
 	size_t			nitems;	/* number of the active menu items */
 	size_t			page_sz;/* when menu longer than screen */
 	size_t			idx;	/* the current menu item */
+	int			prefkey;/* preferred menu item  */
 	struct cfdisk_menu	*prev;
 
 	/* @ignore keys generator */
@@ -729,7 +730,7 @@ static void menu_update_ignore(struct cfdisk *cf)
 	char ignore[128] = { 0 };
 	int i = 0;
 	struct cfdisk_menu *m;
-	struct cfdisk_menuitem *d, *org;
+	struct cfdisk_menuitem *d, *org = NULL;
 	size_t idx;
 
 	assert(cf);
@@ -737,18 +738,19 @@ static void menu_update_ignore(struct cfdisk *cf)
 	assert(cf->menu->ignore_cb);
 
 	m = cf->menu;
-	org = menu_get_menuitem(cf, m->idx);
-
 	DBG(MENU, ul_debug("update menu ignored keys"));
 
 	i = m->ignore_cb(cf, ignore, sizeof(ignore));
 	ignore[i] = '\0';
 
 	/* return if no change */
-	if (   (!m->ignore && !*ignore)
+	if ((!m->ignore && !*ignore)
 	    || (m->ignore && *ignore && strcmp(m->ignore, ignore) == 0)) {
 		    return;
 	}
+
+	if (!m->prefkey)
+		org = menu_get_menuitem(cf, m->idx);
 
 	free(m->ignore);
 	m->ignore = xstrdup(ignore);
@@ -760,8 +762,12 @@ static void menu_update_ignore(struct cfdisk *cf)
 		m->nitems++;
 	}
 
+	DBG(MENU, ul_debug("update menu preferred keys"));
+
 	/* refresh menu index to be at the same menuitem or go to the first */
 	if (org && menu_get_menuitem_by_key(cf, org->key, &idx))
+		m->idx = idx;
+	else if (m->prefkey && menu_get_menuitem_by_key(cf, m->prefkey, &idx))
 		m->idx = idx;
 	else
 		m->idx = 0;
@@ -792,6 +798,7 @@ static struct cfdisk_menu *menu_push(
 	}
 
 	cf->menu = m;
+
 	menu_refresh_size(cf);
 	return m;
 }
@@ -1858,7 +1865,9 @@ static int main_menu_ignore_keys(struct cfdisk *cf, char *ignore,
 		ignore[i++] = 'd';	/* delete */
 		ignore[i++] = 't';	/* set type */
 		ignore[i++] = 'b';      /* set bootable */
+		cf->menu->prefkey = 'n';
 	} else {
+		cf->menu->prefkey = 'q';
 		ignore[i++] = 'n';
 		if (!fdisk_is_label(cf->cxt, DOS) &&
 		    !fdisk_is_label(cf->cxt, SGI))
@@ -2072,7 +2081,6 @@ static void ui_resize_refresh(struct cfdisk *cf)
 static int ui_run(struct cfdisk *cf)
 {
 	int rc = 0;
-	size_t qitem = 0;
 
 	ui_lines = LINES;
 	ui_cols = COLS;
@@ -2094,9 +2102,6 @@ static int ui_run(struct cfdisk *cf)
 
 	menu_push(cf, main_menuitems);
 	cf->menu->ignore_cb = main_menu_ignore_keys;
-
-	if (menu_get_menuitem_by_key(cf, 'q', &qitem))
-		cf->menu->idx = qitem;
 
 	rc = ui_refresh(cf);
 	if (rc)
