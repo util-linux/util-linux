@@ -1197,10 +1197,13 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	if (stop > limit)
 		stop = limit;
 
-	if (isrel && stop - start < cxt->grain)
+	if (isrel && stop - start < (cxt->grain / fdisk_get_sector_size(cxt))) {
 		/* Don't try to be smart on very small partitions and don't
 		 * align so small sizes, just follow the resurst */
 		isrel = 0;
+		DBG(LABEL, ul_debug("DOS: don't align end os tiny partition [start=%ju, stop=%ju, grain=%ju]",
+			   start, stop, cxt->grain));
+	}
 
 	if (stop < limit) {
 		if (isrel && alignment_required(cxt)) {
