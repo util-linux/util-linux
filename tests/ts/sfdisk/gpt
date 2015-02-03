@@ -93,6 +93,7 @@ EOF
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 $TS_CMD_SFDISK --list -o START,END,SIZE,UUID,TYPE,NAME ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean $TS_DEVICE
 ts_finalize_subtest
 
 

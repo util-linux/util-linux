@@ -25,12 +25,12 @@ Device             Start    End Sectors Size Type
 The partition table has been altered.
 Calling ioctl() to re-read partition table.
 Syncing disks.
-Disk /dev/sdb: 50 MiB, 52428800 bytes, 102400 sectors
+Disk <removed>: 50 MiB, 52428800 bytes, 102400 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 4096 bytes
 I/O size (minimum/optimal): 4096 bytes / 32768 bytes
 Disklabel type: gpt
-Disk identifier: 3B8559DB-33AF-43E9-BEFC-C331D829B539
+Disk identifier: <removed>
 
 Start    End Size UUID                                 Type             Name
  2048   8191   3M 4DD6948A-44F8-4E6C-8BDC-064F740704F8 Linux root (x86) 
