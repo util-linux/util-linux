@@ -113,6 +113,7 @@
 #include "all-io.h"
 #include "sysfs.h"
 #include "strutils.h"
+#include "list.h"
 
 /* chains */
 extern const struct blkid_chaindrv superblocks_drv;
@@ -128,6 +129,7 @@ static const struct blkid_chaindrv *chains_drvs[] = {
 	[BLKID_CHAIN_PARTS] = &partitions_drv
 };
 
+static struct blkid_prval *blkid_probe_new_value(void);
 static void blkid_probe_reset_vals(blkid_probe pr);
 static void blkid_probe_reset_buffer(blkid_probe pr);
 
@@ -155,6 +157,7 @@ blkid_probe blkid_new_probe(void)
 		pr->chains[i].enabled = chains_drvs[i]->dflt_enabled;
 	}
 	INIT_LIST_HEAD(&pr->buffers);
+	INIT_LIST_HEAD(&pr->vals);
 	return pr;
 }
 
@@ -265,29 +268,34 @@ void blkid_free_probe(blkid_probe pr)
 	free(pr);
 }
 
+void blkid_probe_free_val(struct blkid_prval *v)
+{
+	if (!v)
+		return;
+
+	list_del(&v->prvals);
+	free(v->data);
+	free(v);
+}
 
 /*
  * Removes chain values from probing result.
  */
 void blkid_probe_chain_reset_vals(blkid_probe pr, struct blkid_chain *chn)
 {
-	int nvals = pr->nvals;
-	int i, x;
 
-	for (x = 0, i = 0; i < pr->nvals; i++) {
-		struct blkid_prval *v = &pr->vals[i];
+	struct list_head *p, *pnext;
 
-		if (v->chain != chn && x == i) {
-			x++;
-			continue;
-		}
-		if (v->chain == chn) {
-			--nvals;
-			continue;
-		}
-		memcpy(&pr->vals[x++], v, sizeof(struct blkid_prval));
+	if (!pr || list_empty(&pr->vals))
+		return;
+
+	list_for_each_safe(p, pnext, &pr->vals) {
+		struct blkid_prval *v = list_entry(p,
+						struct blkid_prval, prvals);
+
+		if (v->chain == chn)
+			blkid_probe_free_val(v);
 	}
-	pr->nvals = nvals;
 }
 
 static void blkid_probe_chain_reset_position(struct blkid_chain *chn)
@@ -296,42 +304,56 @@ static void blkid_probe_chain_reset_position(struct blkid_chain *chn)
 		chn->idx = -1;
 }
 
+static struct blkid_prval *blkid_probe_deep_copy_val(struct blkid_prval *dest,
+						struct blkid_prval *src)
+{
+	memcpy(dest, src, sizeof(struct blkid_prval));
+
+	dest->data = malloc(src->len);
+	if (!dest->data)
+		return NULL;
+
+	memcpy(dest->data, src->data, src->len);
+
+	INIT_LIST_HEAD(&dest->prvals);
+
+	return dest;
+}
+
 /*
- * Copies chain values from probing result to @vals, the max size of @vals is
- * @nvals and returns real number of values.
+ * Copies chain values from probing result to @vals.
  */
 int blkid_probe_chain_copy_vals(blkid_probe pr, struct blkid_chain *chn,
-		struct blkid_prval *vals, int nvals)
+		struct list_head *vals)
 {
-	int i, x;
+	struct list_head *p;
+	struct blkid_prval *new_v, *v;
 
-	for (x = 0, i = 0; i < pr->nvals && x < nvals; i++) {
-		struct blkid_prval *v = &pr->vals[i];
+	list_for_each(p, &pr->vals) {
+
+		v = list_entry(p, struct blkid_prval, prvals);
+
+		new_v = blkid_probe_new_value();
+		if (!new_v)
+			break;
 
 		if (v->chain != chn)
 			continue;
-		memcpy(&vals[x++], v, sizeof(struct blkid_prval));
+
+		if (!blkid_probe_deep_copy_val(new_v, v))
+			break;
+
+		list_add_tail(&new_v->prvals, vals);
 	}
-	return x;
+	return 0;
 }
 
 /*
  * Appends values from @vals to the probing result
  */
-void blkid_probe_append_vals(blkid_probe pr, struct blkid_prval *vals, int nvals)
+void blkid_probe_append_vals(blkid_probe pr, struct list_head *vals)
 {
-	int i = 0;
-
-	while (i < nvals && pr->nvals < BLKID_NVALS) {
-		memcpy(&pr->vals[pr->nvals++], &vals[i++],
-				sizeof(struct blkid_prval));
-	}
-}
-
-static void blkid_probe_reset_vals(blkid_probe pr)
-{
-	memset(pr->vals, 0, sizeof(pr->vals));
-	pr->nvals = 0;
+	list_splice(vals, &pr->vals);
 }
 
 struct blkid_chain *blkid_probe_get_chain(blkid_probe pr)
@@ -615,7 +637,6 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 	return off ? bf->data + (off - bf->off) : bf->data;
 }
 
-
 static void blkid_probe_reset_buffer(blkid_probe pr)
 {
 	uint64_t read_ct = 0, len_ct = 0;
@@ -639,6 +660,22 @@ static void blkid_probe_reset_buffer(blkid_probe pr)
 			len_ct, read_ct));
 
 	INIT_LIST_HEAD(&pr->buffers);
+}
+
+static void blkid_probe_reset_vals(blkid_probe pr)
+{
+	if (!pr || list_empty(&pr->vals))
+		return;
+
+	DBG(LOWPROBE, ul_debug("resetting results pr=%p", pr));
+
+	while (!list_empty(&pr->vals)) {
+		struct blkid_prval *v = list_entry(pr->vals.next,
+						struct blkid_prval, prvals);
+		blkid_probe_free_val(v);
+	}
+
+	INIT_LIST_HEAD(&pr->vals);
 }
 
 /*
@@ -1273,37 +1310,47 @@ struct blkid_prval *blkid_probe_assign_value(
 			blkid_probe pr, const char *name)
 {
 	struct blkid_prval *v;
-
 	if (!name)
 		return NULL;
-	if (pr->nvals >= BLKID_NVALS)
+
+	v = blkid_probe_new_value();
+	if (!v)
 		return NULL;
 
-	v = &pr->vals[pr->nvals];
 	v->name = name;
 	v->chain = pr->cur_chain;
-	pr->nvals++;
+	list_add_tail(&v->prvals, &pr->vals);
 
 	DBG(LOWPROBE, ul_debug("assigning %s [%s]", name, v->chain->driver->name));
 	return v;
 }
 
-int blkid_probe_reset_last_value(blkid_probe pr)
+static struct blkid_prval *blkid_probe_new_value(void)
 {
-	struct blkid_prval *v;
+	struct blkid_prval *v = calloc(1, sizeof(struct blkid_prval));
+	if (!v)
+		return NULL;
 
-	if (pr == NULL || pr->nvals == 0)
-		return -1;
+	INIT_LIST_HEAD(&v->prvals);
 
-	v = &pr->vals[pr->nvals - 1];
+	return v;
+}
 
-	DBG(LOWPROBE, ul_debug("un-assigning %s [%s]", v->name, v->chain->driver->name));
+/* Note that value data is always terminated by zero to keep things robust,
+ * this extra zero is not count to the value lenght. It's caller responsibility
+ * to set proper value lenght (for strings we count terminator to the lenght,
+ * for binary data it's without terminator).
+ */
+int blkid_probe_value_set_data(struct blkid_prval *v,
+		unsigned char *data, size_t len)
+{
+	v->data = calloc(1, len + 1);	/* always terminate by \0 */
 
-	memset(v, 0, sizeof(struct blkid_prval));
-	pr->nvals--;
-
+	if (!v->data)
+		return -ENOMEM;
+	memcpy(v->data, data, len);
+	v->len = len;
 	return 0;
-
 }
 
 int blkid_probe_set_value(blkid_probe pr, const char *name,
@@ -1311,16 +1358,11 @@ int blkid_probe_set_value(blkid_probe pr, const char *name,
 {
 	struct blkid_prval *v;
 
-	if (len > BLKID_PROBVAL_BUFSIZ)
-		len = BLKID_PROBVAL_BUFSIZ;
-
 	v = blkid_probe_assign_value(pr, name);
 	if (!v)
 		return -1;
 
-	memcpy(v->data, data, len);
-	v->len = len;
-	return 0;
+	return blkid_probe_value_set_data(v, data, len);
 }
 
 int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
@@ -1331,13 +1373,13 @@ int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
 
 	v = blkid_probe_assign_value(pr, name);
 	if (!v)
-		return -1;
+		return -ENOMEM;
 
-	len = vsnprintf((char *) v->data, sizeof(v->data), fmt, ap);
+	len = vasprintf((char **) &v->data, fmt, ap);
 
-	if (len <= 0 || (size_t) len >= sizeof(v->data)) {
-		blkid_probe_reset_last_value(pr);
-		return -1;
+	if (len <= 0) {
+		blkid_probe_free_val(v);
+		return len == 0 ? -EINVAL : -ENOMEM;
 	}
 	v->len = len + 1;
 	return 0;
@@ -1586,9 +1628,14 @@ blkid_loff_t blkid_probe_get_sectors(blkid_probe pr)
  */
 int blkid_probe_numof_values(blkid_probe pr)
 {
+	int i = 0;
+	struct list_head *p;
 	if (!pr)
 		return -1;
-	return pr->nvals;
+
+	list_for_each(p, &pr->vals)
+		++i;
+	return i;
 }
 
 /**
@@ -1662,23 +1709,41 @@ int blkid_probe_has_value(blkid_probe pr, const char *name)
 	return 0;
 }
 
-struct blkid_prval *__blkid_probe_get_value(blkid_probe pr, int num)
+struct blkid_prval *blkid_probe_last_value(blkid_probe pr)
 {
-	if (!pr || num < 0 || num >= pr->nvals)
+	if (!pr || list_empty(&pr->vals))
 		return NULL;
 
-	return &pr->vals[num];
+	return list_last_entry(&pr->vals, struct blkid_prval, prvals);
+}
+
+
+struct blkid_prval *__blkid_probe_get_value(blkid_probe pr, int num)
+{
+	int i = 0;
+	struct list_head *p;
+
+	if (!pr || num < 0)
+		return NULL;
+
+	list_for_each(p, &pr->vals) {
+		if (i++ != num)
+			continue;
+		return list_entry(p, struct blkid_prval, prvals);
+	}
+	return NULL;
 }
 
 struct blkid_prval *__blkid_probe_lookup_value(blkid_probe pr, const char *name)
 {
-	int i;
+	struct list_head *p;
 
-	if (!pr || !pr->nvals || !name)
+	if (!pr || list_empty(&pr->vals) || !name)
 		return NULL;
 
-	for (i = 0; i < pr->nvals; i++) {
-		struct blkid_prval *v = &pr->vals[i];
+	list_for_each(p, &pr->vals) {
+		struct blkid_prval *v = list_entry(p, struct blkid_prval,
+						prvals);
 
 		if (v->name && strcmp(name, v->name) == 0) {
 			DBG(LOWPROBE, ul_debug("returning %s value", v->name));

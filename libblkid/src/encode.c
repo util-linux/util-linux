@@ -268,6 +268,12 @@ size_t blkid_encode_to_utf8(int enc, unsigned char *dest, size_t len,
 	return j;
 }
 
+unsigned char *blkid_encode_alloc(size_t count, size_t *reslen)
+{
+	*reslen = (count * 3) + 1;
+	return calloc(1, *reslen);
+}
+
 /**
  * blkid_encode_string:
  * @str: input string to be encoded

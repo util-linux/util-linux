@@ -118,24 +118,14 @@ struct blkid_chaindrv {
 /*
  * Low-level probe result
  */
-#define BLKID_PROBVAL_BUFSIZ	128
-
-#define BLKID_NVALS_SUBLKS	18
-#define BLKID_NVALS_TOPLGY	5
-#define BLKID_NVALS_PARTS	13
-
-/* Max number of all values in probing result */
-#define BLKID_NVALS             (BLKID_NVALS_SUBLKS + \
-				 BLKID_NVALS_TOPLGY + \
-				 BLKID_NVALS_PARTS)
-
 struct blkid_prval
 {
-	const char	*name;			/* value name */
-	unsigned char	data[BLKID_PROBVAL_BUFSIZ]; /* value data */
-	size_t		len;			/* length of value data */
+	const char	*name;		/* value name */
+	unsigned char	*data;		/* value data */
+	size_t		len;		/* length of value data */
 
 	struct blkid_chain	*chain;		/* owner */
+	struct list_head	prvals;		/* list of results */
 };
 
 /*
@@ -208,8 +198,7 @@ struct blkid_struct_probe
 	struct blkid_chain	chains[BLKID_NCHAINS];	/* array of chains */
 	struct blkid_chain	*cur_chain;		/* current chain */
 
-	struct blkid_prval	vals[BLKID_NVALS];	/* results */
-	int			nvals;		/* number of assigned vals */
+	struct list_head	vals;		/* results */
 
 	struct blkid_struct_probe *parent;	/* for clones */
 	struct blkid_struct_probe *disk_probe;	/* whole-disk probing */
@@ -432,8 +421,7 @@ extern void blkid_probe_chain_reset_vals(blkid_probe pr, struct blkid_chain *chn
 			__attribute__((nonnull));
 extern int blkid_probe_chain_copy_vals(blkid_probe pr,
 				       struct blkid_chain *chn,
-			               struct blkid_prval *vals,
-				       int nvals)
+			               struct list_head *vals)
 			__attribute__((nonnull));
 
 extern struct blkid_prval *blkid_probe_assign_value(blkid_probe pr,
@@ -441,16 +429,18 @@ extern struct blkid_prval *blkid_probe_assign_value(blkid_probe pr,
 			__attribute__((nonnull))
 			__attribute__((warn_unused_result));
 
-extern int blkid_probe_reset_last_value(blkid_probe pr)
-			__attribute__((nonnull));
+extern void blkid_probe_free_val(struct blkid_prval *v);
+
+
 extern void blkid_probe_append_vals(blkid_probe pr,
-				    struct blkid_prval *vals,
-				    int nvals)
+				    struct list_head *vals)
 			__attribute__((nonnull));
 
 extern struct blkid_chain *blkid_probe_get_chain(blkid_probe pr)
 			__attribute__((nonnull))
 			__attribute__((warn_unused_result));
+
+extern struct blkid_prval *blkid_probe_last_value(blkid_probe pr);
 
 extern struct blkid_prval *__blkid_probe_get_value(blkid_probe pr, int num)
 			__attribute__((nonnull))
@@ -475,7 +465,12 @@ extern void *blkid_probe_get_binary_data(blkid_probe pr, struct blkid_chain *chn
 			__attribute__((nonnull))
 			__attribute__((warn_unused_result));
 
+extern struct blkid_prval *blkid_probe_new_val(void)
+			__attribute__((warn_unused_result));
 extern int blkid_probe_set_value(blkid_probe pr, const char *name,
+				unsigned char *data, size_t len)
+			__attribute__((nonnull));
+extern int blkid_probe_value_set_data(struct blkid_prval *v,
 				unsigned char *data, size_t len)
 			__attribute__((nonnull));
 
@@ -535,6 +530,7 @@ extern void blkid_probe_use_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t
 		(blkid_bmp_nwords(max_items) * sizeof(unsigned long))
 
 /* encode.c */
+extern unsigned char *blkid_encode_alloc(size_t count, size_t *reslen);
 extern size_t blkid_encode_to_utf8(int enc, unsigned char *dest, size_t len,
 				const unsigned char *src, size_t count)
 			__attribute__((nonnull));
