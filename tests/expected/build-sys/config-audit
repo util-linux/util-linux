@@ -15,7 +15,7 @@ losetup:  libsmartcols
 lsblk:  libblkid libmount libsmartcols libudev libuuid 
 lscpu:  libsmartcols 
 lslocks:  libblkid libmount libsmartcols libuuid 
-lslogins:  libsmartcols libsystemd-id128 libsystemd-journal 
+lslogins:  libsmartcols libsystemd 
 mkswap:  libblkid libuuid 
 mount:  libblkid libmount libuuid 
 mountpoint:  libblkid libmount libuuid 
@@ -27,7 +27,7 @@ swaplabel:  libblkid libuuid
 swapoff:  libblkid libmount libuuid 
 swapon:  libblkid libmount libsmartcols libuuid 
 umount:  libblkid libmount libuuid 
-uuidd:  libsystemd-daemon libuuid 
+uuidd:  libsystemd libuuid 
 uuidgen:  libuuid 
 wdctl:  libsmartcols 
 wipefs:  libblkid libuuid 
@@ -65,7 +65,7 @@ isosize:
 kill:  
 last:  
 ldattach:  
-logger:  libsystemd-id128 libsystemd-journal 
+logger:  libsystemd 
 login:  libaudit libpam libpam_misc 
 look:  
 mcookie:  

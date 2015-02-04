@@ -13,7 +13,7 @@ mountpoint:  libblkid libmount libuuid
 pylibmount.so:  libblkid libmount libpython2 libuuid 
 swaplabel:  libblkid libuuid 
 umount:  libblkid libmount libuuid 
-uuidd:  libsystemd-daemon libuuid 
+uuidd:  libsystemd libuuid 
 uuidgen:  libuuid 
 wipefs:  libblkid libuuid 
 agetty:  
@@ -47,7 +47,7 @@ isosize:
 kill:  
 last:  
 ldattach:  
-logger:  libsystemd-id128 libsystemd-journal 
+logger:  libsystemd 
 login:  libpam libpam_misc 
 look:  
 mcookie:  

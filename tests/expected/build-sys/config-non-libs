@@ -29,7 +29,7 @@ isosize:
 kill:  
 last:  
 ldattach:  
-logger:  libsystemd-id128 libsystemd-journal 
+logger:  libsystemd 
 login:  libpam libpam_misc 
 look:  
 mcookie:  
