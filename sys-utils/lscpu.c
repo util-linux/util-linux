@@ -594,6 +594,30 @@ read_hypervisor_cpuid(struct lscpu_desc *desc __attribute__((__unused__)))
 }
 #endif
 
+static int is_compatible(const char *path, const char *str)
+{
+	FILE *fd;
+
+	fd = path_fopen("r", 0, path);
+	if (fd) {
+		char buf[256];
+		size_t i, len;
+
+		memset(buf, 0, sizeof(buf));
+		len = fread(buf, 1, sizeof(buf) - 1, fd);
+		fclose(fd);
+
+		for (i = 0; i < len;) {
+			if (!strcmp(&buf[i], str))
+				return 1;
+			i += strlen(&buf[i]);
+			i++;
+		}
+	}
+
+	return 0;
+}
+
 static int
 read_hypervisor_powerpc(struct lscpu_desc *desc)
 {
@@ -605,7 +629,10 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 	 *              if partition-name is "full", its kind of "bare-metal": full-system-partition
 	 *              otherwise its some partition created by Hardware Management Console
 	 *              in any case, its always some sort of HVM
-	 *              Note that pSeries could also be emulated by qemu/KVM.
+	 *
+	 *              Note that pSeries could also be emulated by qemu and it's
+	 *              indicated by 'qemu,pseries" in /compatible
+	 *
 	 * KVM: "linux,kvm" in /hypervisor/compatible indicates a KVM guest
 	 * Xen: not in use, not detected
 	 */
@@ -626,26 +653,17 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 			fclose(fd);
 		}
 	} else if (path_exist(_PATH_PROC_DEVICETREE "/hypervisor/compatible")) {
-		FILE *fd;
-		fd = path_fopen("r", 0, _PATH_PROC_DEVICETREE "/hypervisor/compatible");
-		if (fd) {
-			char buf[256];
-			size_t i, len;
-			memset(buf, 0, sizeof(buf));
-			len = fread(buf, 1, sizeof(buf) - 1, fd);
-			fclose(fd);
-			for (i = 0; i < len;) {
-				if (!strcmp(&buf[i], "linux,kvm")) {
-					desc->hyper = HYPER_KVM;
-					desc->virtype = VIRT_FULL;
-					break;
-				}
-				i += strlen(&buf[i]);
-				i++;
-			}
+		if (is_compatible(_PATH_PROC_DEVICETREE "/hypervisor/compatible",
+				  "linux,kvm")) {
+			desc->hyper = HYPER_KVM;
+			desc->virtype = VIRT_FULL;
+		}
+	} else if (path_exist(_PATH_PROC_DEVICETREE "/compatible")) {
+		if (is_compatible(_PATH_PROC_DEVICETREE "/compatible", "qemu,pseries")) {
+			desc->hyper = HYPER_KVM;
+			desc->virtype = VIRT_FULL;
 		}
 	}
-
 	return desc->hyper;
 }
 
