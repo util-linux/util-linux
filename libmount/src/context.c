@@ -2077,6 +2077,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	}
 
 	if (!src && tgt
+	    && !(cxt->optsmode & MNT_OMODE_FORCE)
 	    && !(cxt->optsmode & MNT_OMODE_FSTAB)
 	    && !(cxt->optsmode & MNT_OMODE_MTAB)) {
 		DBG(CXT, ul_debugobj(cxt, "only target; fstab/mtab not required "
@@ -2088,7 +2089,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	ignore_result( mnt_context_get_fs(cxt) );
 
 	/* try fstab */
-	if (cxt->optsmode & MNT_OMODE_FSTAB) {
+	if (cxt->optsmode & (MNT_OMODE_FSTAB | MNT_OMODE_FORCE)) {
 		DBG(CXT, ul_debugobj(cxt, "trying to apply fstab (src=%s, target=%s)", src, tgt));
 		rc = mnt_context_get_fstab(cxt, &tab);
 		if (!rc)
@@ -2096,7 +2097,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	}
 
 	/* try mtab */
-	if (rc < 0 && (cxt->optsmode & MNT_OMODE_MTAB)) {
+	if (rc < 0 && (cxt->optsmode & (MNT_OMODE_MTAB | MNT_OMODE_FORCE))) {
 		DBG(CXT, ul_debugobj(cxt, "trying to apply mtab (src=%s, target=%s)", src, tgt));
 		if (tgt)
 			rc = mnt_context_get_mtab_for_target(cxt, &tab, tgt);
