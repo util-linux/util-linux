@@ -1585,7 +1585,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 				const char *msg;
 				if (!free_primary)
 					msg = _("All primary partitions are in use.");
-				else if (!free_sectors)
+				else
 					msg =  _("All space for primary partitions is in use.");
 
 				if (pa && fdisk_partition_has_start(pa)) {
