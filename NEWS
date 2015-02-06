@@ -67,11 +67,11 @@ util-linux 2.21-rc1: Jan 18 2012
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.21/v2.21-rc1-ChangeLog
 
 util-linux 2.20: Aug 29 2011
-* see docs/v2.20-ReleaseNotes or the complete changelog at
+* see Documentation/releases/v2.20-ReleaseNotes or the complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.20/v2.20-ChangeLog
 
 util-linux 2.20-rc2: Aug 17 2011
-* see docs/v2.20-ReleaseNotes or the complete changelog at
+* see Documentation/releases/v2.20-ReleaseNotes or the complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.20/v2.20-rc2-ChangeLog
 
 util-linux 2.20-rc1: Jul 29 2011
