@@ -150,35 +150,31 @@ util-linux-ng 2.14: Jun 9 2008
 * see Documentation/releases/v2.14-ReleaseNotes or complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.14/v2.14-ChangeLog
 
-util-linux-ng 2.14-rc3
+util-linux-ng 2.14-rc3: May 19 2008
 * see Documentation/releases/v2.14-ReleaseNotes or complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.14/v2.14-rc3-ChangeLog
 
-util-linux-ng 2.14-rc2
+util-linux-ng 2.14-rc2: Apr 28 2008
 * see Documentation/releases/v2.14-ReleaseNotes or complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.14/v2.14-rc2-ChangeLog
 
-util-linux-ng 2.14-rc1
+util-linux-ng 2.14-rc1: Apr 16 2008
 * see Documentation/releases/v2.14-ReleaseNotes or complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.14/v2.14-rc1-ChangeLog
 
-util-linux-ng 2.13
-
+util-linux-ng 2.13: Aug 28 2007
 * see Documentation/releases/v2.13-ReleaseNotes or complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.13/v2.13-ChangeLog
 
-util-linux-ng 2.13-rc3
-
+util-linux-ng 2.13-rc3: Aug 8 2007
 * see Documentation/releases/v2.13-ReleaseNotes or complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.13/v2.13-rc3-ChangeLog
 
-util-linux-ng 2.13-rc2
-
+util-linux-ng 2.13-rc2: Jul 17 2007
 * see Documentation/releases/v2.13-ReleaseNotes or complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.13/v2.13-rc2-ChangeLog
 
-util-linux-ng 2.13-rc1
-
+util-linux-ng 2.13-rc1: Jul 4 2007
 * see Documentation/releases/v2.13-ReleaseNotes or complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.13/v2.13-rc1-ChangeLog
 
