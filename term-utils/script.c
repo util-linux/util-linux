@@ -269,6 +269,7 @@ main(int argc, char **argv) {
 	sigprocmask(SIG_SETMASK, NULL, &block_mask);
 	sigaddset(&block_mask, SIGCHLD);
 
+	fflush(stdout);
 	sigprocmask(SIG_SETMASK, &block_mask, &unblock_mask);
 	child = fork();
 	sigprocmask(SIG_SETMASK, &unblock_mask, NULL);
