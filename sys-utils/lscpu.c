@@ -598,7 +598,7 @@ static int is_compatible(const char *path, const char *str)
 {
 	FILE *fd;
 
-	fd = path_fopen("r", 0, path);
+	fd = path_fopen("r", 0, "%s", path);
 	if (fd) {
 		char buf[256];
 		size_t i, len;
