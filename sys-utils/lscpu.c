@@ -623,22 +623,19 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 {
 	assert(!desc->hyper);
 
-	/* powerpc:
-	 * IBM iSeries: legacy, if /proc/iSeries exists, its para-virtualized on top of OS/400
-	 * IBM pSeries: always has a hypervisor
-	 *              if partition-name is "full", its kind of "bare-metal": full-system-partition
-	 *              otherwise its some partition created by Hardware Management Console
-	 *              in any case, its always some sort of HVM
-	 *
-	 *              Note that pSeries could also be emulated by qemu and it's
-	 *              indicated by 'qemu,pseries" in /compatible
-	 *
-	 * KVM: "linux,kvm" in /hypervisor/compatible indicates a KVM guest
-	 * Xen: not in use, not detected
-	 */
+	 /* IBM iSeries: legacy, para-virtualized on top of OS/400 */
 	if (path_exist("/proc/iSeries")) {
 		desc->hyper = HYPER_OS400;
 		desc->virtype = VIRT_PARA;
+
+	/* PowerNV (POWER Non-Virtualized, bare-metal) */
+	} else if (path_exist(_PATH_PROC_DEVICETREE "/compatible")) {
+		if (is_compatible(_PATH_PROC_DEVICETREE "/compatible", "ibm,powernv")) {
+			desc->hyper = HYPER_KVM;
+			desc->virtype = VIRT_PARA;
+		}
+
+	/* PowerVM (IBM's proprietary hypervisor, aka pHyp */
 	} else if (path_exist(_PATH_PROC_DEVICETREE "/ibm,partition-name")
 		   && path_exist(_PATH_PROC_DEVICETREE "/hmc-managed?")
 		   && !path_exist(_PATH_PROC_DEVICETREE "/chosen/qemu,graphic-width")) {
@@ -652,16 +649,12 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 				desc->virtype = VIRT_NONE;
 			fclose(fd);
 		}
-	} else if (path_exist(_PATH_PROC_DEVICETREE "/hypervisor/compatible")) {
-		if (is_compatible(_PATH_PROC_DEVICETREE "/hypervisor/compatible",
-				  "linux,kvm")) {
-			desc->hyper = HYPER_KVM;
-			desc->virtype = VIRT_FULL;
-		}
+
+	/* Qemu */
 	} else if (path_exist(_PATH_PROC_DEVICETREE "/compatible")) {
 		if (is_compatible(_PATH_PROC_DEVICETREE "/compatible", "qemu,pseries")) {
 			desc->hyper = HYPER_KVM;
-			desc->virtype = VIRT_FULL;
+			desc->virtype = VIRT_PARA;
 		}
 	}
 	return desc->hyper;
