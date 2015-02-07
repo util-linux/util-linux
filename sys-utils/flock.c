@@ -44,6 +44,7 @@
 #include "strutils.h"
 #include "closestream.h"
 #include "timer.h"
+#include "monotonic.h"
 
 static void __attribute__((__noreturn__)) usage(int ex)
 {
@@ -66,6 +67,7 @@ static void __attribute__((__noreturn__)) usage(int ex)
 	fputs(_(  " -E, --conflict-exit-code <number>  exit code after conflict or timeout\n"), stderr);
 	fputs(_(  " -o, --close              close file descriptor before running command\n"), stderr);
 	fputs(_(  " -c, --command <command>  run a single command string through the shell\n"), stderr);
+	fputs(_(  "     --verbose            increase verbosity\n"), stderr);
 	fprintf(stderr, USAGE_SEPARATOR);
 	fprintf(stderr, USAGE_HELP);
 	fprintf(stderr, USAGE_VERSION);
@@ -120,6 +122,8 @@ int main(int argc, char *argv[])
 	int opt, ix;
 	int do_close = 0;
 	int status;
+	int verbose = 0;
+	struct timeval time_start, time_done;
 	/*
 	 * The default exit code for lock conflict or timeout
 	 * is specified in man flock.1
@@ -128,7 +132,9 @@ int main(int argc, char *argv[])
 	char **cmd_argv = NULL, *sh_c_argv[4];
 	const char *filename = NULL;
 	struct sigaction old_sa;
-
+	enum {
+		OPT_VERBOSE = CHAR_MAX + 1
+	};
 	static const struct option long_options[] = {
 		{"shared", no_argument, NULL, 's'},
 		{"exclusive", no_argument, NULL, 'x'},
@@ -139,6 +145,7 @@ int main(int argc, char *argv[])
 		{"wait", required_argument, NULL, 'w'},
 		{"conflict-exit-code", required_argument, NULL, 'E'},
 		{"close", no_argument, NULL, 'o'},
+		{"verbose", no_argument, NULL, OPT_VERBOSE},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -183,6 +190,9 @@ int main(int argc, char *argv[])
 		case 'E':
 			conflict_exit_code = strtos32_or_err(optarg,
 				_("invalid exit code"));
+			break;
+		case OPT_VERBOSE:
+			verbose = 1;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -239,16 +249,23 @@ int main(int argc, char *argv[])
 			setup_timer(&timeout, &old_timer, &old_sa, timeout_handler);
 	}
 
+	if (verbose)
+		gettime_monotonic(&time_start);
 	while (flock(fd, type | block)) {
 		switch (errno) {
 		case EWOULDBLOCK:
 			/* -n option set and failed to lock. */
+			if (verbose)
+				warnx(_("failed to get lock"));
 			exit(conflict_exit_code);
 		case EINTR:
 			/* Signal received */
-			if (timeout_expired)
+			if (timeout_expired) {
 				/* -w option set and failed to lock. */
+				if (verbose)
+					warnx(_("timeout while waiting to get lock"));
 				exit(conflict_exit_code);
+			}
 			/* otherwise try again */
 			continue;
 		case EIO:
@@ -282,13 +299,23 @@ int main(int argc, char *argv[])
 
 	if (have_timeout)
 		cancel_timer(&old_timer, &old_sa);
+	if (verbose) {
+		struct timeval delta;
 
+		gettime_monotonic(&time_done);
+		timersub(&time_done, &time_start, &delta);
+		printf(_("%s: getting lock took %ld.%06ld seconds\n"),
+		       program_invocation_short_name, delta.tv_sec,
+		       delta.tv_usec);
+	}
 	status = EX_OK;
 
 	if (cmd_argv) {
 		pid_t w, f;
 		/* Clear any inherited settings */
 		signal(SIGCHLD, SIG_DFL);
+		if (verbose)
+			printf(_("%s: executing %s\n"), program_invocation_short_name, cmd_argv[2]);
 		f = fork();
 
 		if (f < 0) {
