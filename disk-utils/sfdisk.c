@@ -1336,20 +1336,20 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -A, --append              append partitions to existing partition table\n"), out);
-	fputs(_("     --bytes               print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -b, --backup              backup partition table sectors (see -O)\n"), out);
+	fputs(_("     --bytes               print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -f, --force               disable all consistency checking\n"), out);
-	fputs(_(" -o, --output <list>       output columns\n"), out);
-	fputs(_(" -O, --backup-file <path>  override default backup file name\n"), out);
 	fputs(_(" -N, --partno <num>        specify partition number\n"), out);
-	fputs(_(" -X, --label <name>        specify label type (dos, gpt, ...)\n"), out);
-	fputs(_(" -Y, --label-nested <name> specify nested label type (dos, bsd)\n"), out);
-	fputs(_(" -q, --quiet               suppress extra info messages\n"), out);
 	fputs(_(" -n, --no-act              do everything except write to device\n"), out);
 	fputs(_("     --no-reread           do not check whether the device is in use\n"), out);
+	fputs(_(" -O, --backup-file <path>  override default backup file name\n"), out);
+	fputs(_(" -o, --output <list>       output columns\n"), out);
+	fputs(_(" -q, --quiet               suppress extra info messages\n"), out);
+	fputs(_(" -X, --label <name>        specify label type (dos, gpt, ...)\n"), out);
+	fputs(_(" -Y, --label-nested <name> specify nested label type (dos, bsd)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_(" -u, --unit S              deprecated, only sector unit is supported\n"), out);
 	fputs(_(" -L, --Linux               deprecated, only for backward compatibility\n"), out);
+	fputs(_(" -u, --unit S              deprecated, only sector unit is supported\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
