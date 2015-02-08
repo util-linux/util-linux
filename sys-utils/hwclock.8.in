@@ -772,6 +772,11 @@ that sets the System Clock the old fashioned way.  However, if the NTP daemon is
 still running, it will turn 11 minute mode back on again the next time it
 synchronizes the System Clock.
 .PP
+When \%'11\ minute\ mode' is active the 64 bit of the kernel's
+.I time_status
+variable is unset. The status variable can be checked with the
+.BR \%adjtimex\ --print " or " \%ntptime " commands."
+.PP
 If your system runs with \%'11\ minute\ mode' on, it may need to use either
 .BR \%\-\-hctosys " or " \%\-\-systz
 in a startup script, especially if the Hardware Clock is configured to use
