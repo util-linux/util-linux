@@ -95,7 +95,7 @@ static int do_file(char *from, char *to, char *s, int verbose)
 	char *newname = NULL, *file;
 	int ret = 1;
 
-	file = rindex(s, '/');
+	file = strrchr(s, '/');
 	if (file == NULL)
 		file = s;
 	if (string_replace(from, to, file, s, &newname))
