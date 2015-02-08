@@ -1774,8 +1774,9 @@ static int ui_create_label(struct cfdisk *cf)
 	}
 
 	erase();
-	ui_center(ui_lines - 4,
-		_("Device does not contain a recognized partition table."));
+	if (!cf->zero_start)
+		ui_center(ui_lines - 4,
+			_("Device does not contain a recognized partition table."));
 	ui_center(ui_lines - 3,
 		_("Select a type to create a new label or press 'L' to load script file."));
 
