@@ -1066,7 +1066,7 @@ int main(int argc, char **argv)
 			if (*usemask & (1<<con->id))
 				continue;
 			kill(con->pid, SIGHUP);
-			usleep(50000);
+			xusleep(50000);
 			kill(con->pid, SIGKILL);
 		}
 	}

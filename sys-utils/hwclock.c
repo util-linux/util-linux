@@ -609,7 +609,7 @@ set_hardware_clock_exact(const time_t sethwtime,
 		if (debug >= 10) {
 			int usec = random() % 1000000;
 			printf(_("sleeping ~%d usec\n"), usec);
-			usleep(usec);
+			xusleep(usec);
 		}
 
 		gettimeofday(&nowsystime, NULL);
