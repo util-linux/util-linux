@@ -1806,6 +1806,7 @@ static int ui_create_label(struct cfdisk *cf)
 		case 'q':
 		case 'Q':
 			goto done;
+		case 'l':
 		case 'L':
 			ui_clean_hint();
 			ui_clean_info();
