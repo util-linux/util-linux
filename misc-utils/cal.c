@@ -59,6 +59,7 @@
 
 #include <ctype.h>
 #include <getopt.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -808,7 +809,7 @@ static int day_in_week(int day, int month, int32_t year)
 	if (REFORMATION_YEAR < year
 	    || (year == REFORMATION_YEAR && 9 < month)
 	    || (year == REFORMATION_YEAR && month == 9 && 13 < day)) {
-		long long_year = year;
+		int64_t long_year = year;
 		return (long_year + (year / 4) - (year / 100) + (year / 400) + reform[month - 1] +
 			day) % 7;
 	}
