@@ -631,11 +631,11 @@ read_hypervisor_powerpc(struct lscpu_desc *desc)
 	/* PowerNV (POWER Non-Virtualized, bare-metal) */
 	} else if (path_exist(_PATH_PROC_DEVICETREE "/compatible")) {
 		if (is_compatible(_PATH_PROC_DEVICETREE "/compatible", "ibm,powernv")) {
-			desc->hyper = HYPER_KVM;
-			desc->virtype = VIRT_PARA;
+			desc->hyper = HYPER_NONE;
+			desc->virtype = VIRT_NONE;
 		}
 
-	/* PowerVM (IBM's proprietary hypervisor, aka pHyp */
+	/* PowerVM (IBM's proprietary hypervisor, aka pHyp) */
 	} else if (path_exist(_PATH_PROC_DEVICETREE "/ibm,partition-name")
 		   && path_exist(_PATH_PROC_DEVICETREE "/hmc-managed?")
 		   && !path_exist(_PATH_PROC_DEVICETREE "/chosen/qemu,graphic-width")) {
