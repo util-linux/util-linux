@@ -160,9 +160,9 @@ static int set_arch(const char *pers, unsigned long options, int list)
 		{PER_LINUX,	"ppc64pseries",	"ppc64"},
 		{PER_LINUX,	"ppc64iseries",	"ppc64"},
 # else
-		PER_LINUX32,	"ppc32le",	"ppcle"},
-		PER_LINUX32,	"ppcle",	"ppcle"},
-		PER_LINUX,	"ppc64le",	"ppc64le"},
+		{PER_LINUX32,	"ppc32le",	"ppcle"},
+		{PER_LINUX32,	"ppcle",	"ppcle"},
+		{PER_LINUX,	"ppc64le",	"ppc64le"},
 # endif
 #endif
 #if defined(__x86_64__) || defined(__i386__) || defined(__ia64__)
