@@ -371,10 +371,16 @@ AC_CHECK_FUNCS([ioperm iopl], [have_io=yes])
 AC_CHECK_FUNCS([futimens], [have_futimens=yes])
 AC_CHECK_FUNCS([inotify_init1], [have_inotify_init1=yes])
 
-dnl Old glibc requires -lrt
-AC_CHECK_FUNCS(clock_gettime, [], [
-	AC_CHECK_LIB(rt, clock_gettime, [
-		AC_DEFINE(HAVE_CLOCK_GETTIME, 1)
+dnl lib/mononotic.c may require -lrt
+AC_CHECK_FUNCS([clock_gettime],
+	[AC_CHECK_FUNCS([timer_create], [], [
+		AC_CHECK_LIB([rt], [timer_create], [
+			AC_DEFINE([HAVE_CLOCK_GETTIME], [1])
+			CLOCKGETTIME_LIBS="-lrt"
+		])
+	])],
+	[AC_CHECK_LIB([rt], [clock_gettime], [
+		AC_DEFINE([HAVE_CLOCK_GETTIME], [1])
 		CLOCKGETTIME_LIBS="-lrt"
 	])
 ])

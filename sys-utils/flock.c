@@ -43,7 +43,6 @@
 #include "nls.h"
 #include "strutils.h"
 #include "closestream.h"
-#include "timer.h"
 #include "monotonic.h"
 
 static void __attribute__((__noreturn__)) usage(int ex)
@@ -77,9 +76,12 @@ static void __attribute__((__noreturn__)) usage(int ex)
 
 static sig_atomic_t timeout_expired = 0;
 
-static void timeout_handler(int sig __attribute__((__unused__)))
+static void timeout_handler(int sig __attribute__((__unused__)),
+			    siginfo_t *info,
+			    void *context __attribute__((__unused__)))
 {
-	timeout_expired = 1;
+	if (info->si_code == SI_TIMER)
+		timeout_expired = 1;
 }
 
 static int open_file(const char *filename, int *flags)
@@ -113,7 +115,8 @@ static int open_file(const char *filename, int *flags)
 
 int main(int argc, char *argv[])
 {
-	struct itimerval timeout, old_timer;
+	static timer_t t_id;
+	struct itimerval timeout;
 	int have_timeout = 0;
 	int type = LOCK_EX;
 	int block = 0;
@@ -131,7 +134,6 @@ int main(int argc, char *argv[])
 	int conflict_exit_code = 1;
 	char **cmd_argv = NULL, *sh_c_argv[4];
 	const char *filename = NULL;
-	struct sigaction old_sa;
 	enum {
 		OPT_VERBOSE = CHAR_MAX + 1
 	};
@@ -246,7 +248,8 @@ int main(int argc, char *argv[])
 			have_timeout = 0;
 			block = LOCK_NB;
 		} else
-			setup_timer(&timeout, &old_timer, &old_sa, timeout_handler);
+			if (setup_timer(&t_id, &timeout, &timeout_handler))
+				err(EX_OSERR, _("cannot not setup timer"));
 	}
 
 	if (verbose)
@@ -298,7 +301,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (have_timeout)
-		cancel_timer(&old_timer, &old_sa);
+		cancel_timer(&t_id);
 	if (verbose) {
 		struct timeval delta;
 

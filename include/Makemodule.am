@@ -44,7 +44,6 @@ dist_noinst_HEADERS += \
 	include/swapprober.h \
 	include/swapheader.h \
 	include/sysfs.h \
-	include/timer.h \
 	include/timeutils.h \
 	include/ttyutils.h \
 	include/widechar.h \

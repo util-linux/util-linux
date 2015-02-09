@@ -2,7 +2,7 @@ if BUILD_FLOCK
 usrbin_exec_PROGRAMS += flock
 dist_man_MANS += sys-utils/flock.1
 flock_SOURCES = sys-utils/flock.c lib/monotonic.c
-flock_LDADD = $(LDADD) libcommon.la $(CLOCKGETTIME_LIBS)
+flock_LDADD = $(LDADD) libcommon.la -lrt
 endif
 
 if BUILD_IPCMK
