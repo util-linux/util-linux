@@ -1681,6 +1681,7 @@ static int ui_script_read(struct cfdisk *cf)
 	char buf[PATH_MAX] = { 0 };
 	int rc;
 
+	erase();
 	rc = ui_get_string(cf,	_("Enter script file name: "),
 				_("The script file will be applied to in-memory partition table."),
 				buf, sizeof(buf));
@@ -1699,6 +1700,7 @@ static int ui_script_read(struct cfdisk *cf)
 	else
 		rc = 0;
 
+	ui_clean_hint();
 	fdisk_unref_script(sc);
 	return rc;
 }
@@ -1753,7 +1755,7 @@ done:
 static int ui_create_label(struct cfdisk *cf)
 {
 	struct cfdisk_menuitem *d, *cm;
-	int rc = 1;
+	int rc = 1, refresh_menu = 1;
 	size_t i = 0, nitems;
 	struct fdisk_label *lb = NULL;
 
@@ -1774,20 +1776,24 @@ static int ui_create_label(struct cfdisk *cf)
 	}
 
 	erase();
-	if (!cf->zero_start)
-		ui_center(ui_lines - 4,
-			_("Device does not contain a recognized partition table."));
-	ui_center(ui_lines - 3,
-		_("Select a type to create a new label or press 'L' to load script file."));
 
 	/* make the new menu active */
 	menu_push(cf, cm);
 	cf->menu->vertical = 1;
 	menu_set_title(cf->menu, _("Select label type"));
-	ui_draw_menu(cf);
-	refresh();
+
+	if (!cf->zero_start)
+		ui_info(_("Device does not contain a recognized partition table."));
+
 
 	do {
+		if (refresh_menu) {
+			ui_draw_menu(cf);
+			ui_hint(_("Select a type to create a new label or press 'L' to load script file."));
+			refresh();
+			refresh_menu = 0;
+		}
+
 		int key = getch();
 
 		if (ui_resize)
@@ -1808,12 +1814,10 @@ static int ui_create_label(struct cfdisk *cf)
 			goto done;
 		case 'l':
 		case 'L':
-			ui_clean_hint();
-			ui_clean_info();
-
 			rc = ui_script_read(cf);
 			if (rc == 0)
 				goto done;
+			refresh_menu = 1;
 			break;
 		}
 	} while (1);
