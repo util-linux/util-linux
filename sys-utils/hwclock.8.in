@@ -772,6 +772,11 @@ that sets the System Clock the old fashioned way.  However, if the NTP daemon is
 still running, it will turn 11 minute mode back on again the next time it
 synchronizes the System Clock.
 .PP
+When \%'11\ minute\ mode' is active the 64 bit of the kernel's
+.I time_status
+variable is unset. The status variable can be checked with the
+.BR \%adjtimex\ --print " or " \%ntptime " commands."
+.PP
 If your system runs with \%'11\ minute\ mode' on, it may need to use either
 .BR \%\-\-hctosys " or " \%\-\-systz
 in a startup script, especially if the Hardware Clock is configured to use
@@ -834,6 +839,10 @@ During shutdown the following is called:
 .br
 .B \%hwclock\ \-\-systohc
 .PP
+.in +4
+.BR * " Systems without " adjtimex " may use " ntptime .
+.in
+.PP
 Whether maintaining precision time with
 .BR \%ntpd (1)
 or not, it makes sense to configure the system to keep reasonably good
@@ -861,7 +870,10 @@ should be done first.
 The System Clock drift is corrected with the
 .BR \%adjtimex "(8) command's " \-\-tick " and " \%\-\-frequency
 options.  These two work together, tick is the course adjustment and
-frequency is the fine adjustment.
+frequency is the fine adjustment. (For system that do not have an
+.BR \%adjtimex " package,"
+.BI \%ntptime\ \-f\  <ppm>
+may be use instead.)
 .PP
 Some Linux distributions attempt to automatically calculate the System
 Clock drift with
