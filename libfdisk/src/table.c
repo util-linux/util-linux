@@ -621,7 +621,7 @@ int fdisk_table_wrong_order(struct fdisk_table *tb)
 
 	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
 	while (tb && fdisk_table_next_partition(tb, &itr, &pa) == 0) {
-		if (!fdisk_partition_has_start(pa))
+		if (!fdisk_partition_has_start(pa) || fdisk_partition_is_wholedisk(pa))
 			continue;
 		if (pa->start < last)
 			return 1;
