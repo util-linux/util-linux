@@ -107,6 +107,7 @@ const char *hv_vendors[] = {
 	[HYPER_VBOX]	= "Oracle",
 	[HYPER_OS400]	= "OS/400",
 	[HYPER_PHYP]	= "pHyp",
+	[HYPER_SPAR]	= "Unisys s-Par"
 };
 
 const int hv_vendor_pci[] = {
@@ -585,6 +586,8 @@ read_hypervisor_cpuid(struct lscpu_desc *desc)
 		desc->hyper = HYPER_MSHV;
 	else if (!strncmp("VMwareVMware", hyper_vendor_id, 12))
 		desc->hyper = HYPER_VMWARE;
+	else if (!strncmp("UnisysSpar64", hyper_vendor_id, 12))
+		desc->hyper = HYPER_SPAR;
 }
 
 #else /* ! (__x86_64__ || __i386__) */
