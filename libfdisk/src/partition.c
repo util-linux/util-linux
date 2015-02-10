@@ -592,6 +592,12 @@ int fdisk_partition_is_freespace(struct fdisk_partition *pa)
 	return pa && pa->freespace;
 }
 
+int fdisk_partition_is_wholedisk(struct fdisk_partition *pa)
+{
+	return pa && pa->wholedisk;
+}
+
+
 int fdisk_partition_next_partno(
 		struct fdisk_partition *pa,
 		struct fdisk_context *cxt,
