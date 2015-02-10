@@ -172,7 +172,7 @@ int fdisk_partition_has_start(struct fdisk_partition *pa)
  * @a: partition
  * @b: partition
  *
- * Compares partitons according to start offset, See fdisk_table_sort_partitions().
+ * Compares partitions according to start offset, See fdisk_table_sort_partitions().
  *
  * Return: 0 if the same, <0 if @b greater, >0 if @a greater.
  */
@@ -197,7 +197,7 @@ int fdisk_partition_cmp_start(struct fdisk_partition *a,
  * @pa: partition
  * @enable: 0|1
  *
- * When @pa used as a tempalate for fdisk_add_partition() when force label driver
+ * When @pa used as a template for fdisk_add_partition() when force label driver
  * to use the first possible space for the new partition.
  *
  * Returns: 0 on success, <0 on error.
@@ -267,7 +267,7 @@ int fdisk_partition_unset_size(struct fdisk_partition *pa)
  *
  * The zero is also valid size. The function may return random undefined
  * value when size is undefined (for example after fdisk_partition_unset_size()).
- * Always use fdisk_partition_has_size() to be sure that you work with valid 
+ * Always use fdisk_partition_has_size() to be sure that you work with valid
  * numbers.
  *
  * Returns: size offset in sectors
@@ -347,7 +347,7 @@ int fdisk_partition_unset_partno(struct fdisk_partition *pa)
  * fdisk_partition_get_partno:
  * @pa: partition
  *
- * The zero is also valid parition number. The function may return random
+ * The zero is also valid partition number. The function may return random
  * value when partno is undefined (for example after fdisk_partition_unset_partno()).
  * Always use fdisk_partition_has_partno() to be sure that you work with valid
  * numbers.
@@ -376,7 +376,7 @@ int fdisk_partition_has_partno(struct fdisk_partition *pa)
  * @a: partition
  * @b: partition
  *
- * Compares partitons according to partition number See fdisk_table_sort_partitions().
+ * Compares partitions according to partition number See fdisk_table_sort_partitions().
  *
  * Return: 0 if the same, <0 if @b greater, >0 if @a greater.
  */
@@ -391,7 +391,7 @@ int fdisk_partition_cmp_partno(struct fdisk_partition *a,
  * @pa: partition
  * @enable: 0|1
  *
- * When @pa used as a tempalate for fdisk_add_partition() when force label driver
+ * When @pa used as a template for fdisk_add_partition() when force label driver
  * to add a new partition to the default (next) position.
  *
  * Returns: 0 on success, <0 on error.
@@ -409,7 +409,7 @@ int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int enable
  * @pa: partition
  * @type: partition type
  *
- * Sets parition type.
+ * Sets parititon type.
  *
  * Returns: 0 on success, <0 on error.
  */
@@ -507,7 +507,7 @@ fdisk_sector_t fdisk_partition_get_end(struct fdisk_partition *pa)
  * @pa: partition
  * @enable: 0|1
  *
- * When @pa used as a tempalate for fdisk_add_partition() when force label driver
+ * When @pa used as a template for fdisk_add_partition() when force label driver
  * to use all the possible space for the new partition.
  *
  * Returns: 0 on success, <0 on error.
@@ -532,16 +532,37 @@ int fdisk_partition_end_is_default(struct fdisk_partition *pa)
 	return pa->end_follow_default;
 }
 
+/**
+ * fdisk_partition_get_uuid:
+ * @pa: partition
+ *
+ * Returns: partition UUID as string
+ */
 const char *fdisk_partition_get_uuid(struct fdisk_partition *pa)
 {
 	return pa ? pa->uuid : NULL;
 }
 
+/**
+ * fdisk_partition_get_attrs:
+ * @pa: partition
+ *
+ * Returns: partition attributes in string format
+ */
 const char *fdisk_partition_get_attrs(struct fdisk_partition *pa)
 {
 	return pa ? pa->attrs : NULL;
 }
 
+/**
+ * fdisk_partition_set_attrs:
+ * @pa: partition
+ * @attrs: attributes
+ *
+ * Sets @attrs to @pa.
+ *
+ * Return: 0 on success, <0 on error.
+ */
 int fdisk_partition_set_attrs(struct fdisk_partition *pa, const char *attrs)
 {
 	char *p = NULL;
@@ -558,16 +579,34 @@ int fdisk_partition_set_attrs(struct fdisk_partition *pa, const char *attrs)
 	return 0;
 }
 
+/**
+ * fdisk_partition_is_nested:
+ * @pa: partition
+ *
+ * Returns: 1 if the partition is nested (e.g. MBR logical partition)
+ */
 int fdisk_partition_is_nested(struct fdisk_partition *pa)
 {
 	return pa && !FDISK_IS_UNDEF(pa->parent_partno);
 }
 
+/**
+ * fdisk_partition_is_container:
+ * @pa: partition
+ *
+ * Returns: 1 if the partition is container (e.g. MBR extended partition)
+ */
 int fdisk_partition_is_container(struct fdisk_partition *pa)
 {
 	return pa && pa->container;
 }
 
+/**
+ * fdisk_partition_get_parent:
+ * @pa: partition
+ *
+ * Returns: returns devno of the parent
+ */
 int fdisk_partition_get_parent(struct fdisk_partition *pa, size_t *parent)
 {
 	if (pa && parent)
@@ -577,27 +616,62 @@ int fdisk_partition_get_parent(struct fdisk_partition *pa, size_t *parent)
 	return 0;
 }
 
+/**
+ * fdisk_partition_is_used:
+ * @pa: partition
+ *
+ * Returns: 1 if the partition points to some area
+ */
 int fdisk_partition_is_used(struct fdisk_partition *pa)
 {
 	return pa && pa->used;
 }
 
+/**
+ * fdisk_partition_is_bootable:
+ * @pa: partition
+ *
+ * Returns: 1 if the partition has enabled boot flag
+ */
 int fdisk_partition_is_bootable(struct fdisk_partition *pa)
 {
 	return pa && pa->boot == 1;
 }
 
+/**
+ * fdisk_partition_is_freespace:
+ * @pa: partition
+ *
+ * Returns: 1 if @pa points to freespace
+ */
 int fdisk_partition_is_freespace(struct fdisk_partition *pa)
 {
 	return pa && pa->freespace;
 }
 
+/**
+ * fdisk_partition_is_wholedisk:
+ * @pa: partition
+ *
+ * Returns: 1 if the partition is special whole-disk (e.g. SUN) partition
+ */
 int fdisk_partition_is_wholedisk(struct fdisk_partition *pa)
 {
 	return pa && pa->wholedisk;
 }
 
-
+/**
+ * fdisk_partition_next_partno:
+ * @pa: partition
+ * @cxt: context
+ * @n: returns partition number
+ *
+ * If partno-follow-default (see fdisk_partition_partno_follow_default())
+ * enabled then returns next expected partno, otherwise use Ask API to ask user
+ * for the next partno.
+ *
+ * Returns: 0 on success, <0 on error
+ */
 int fdisk_partition_next_partno(
 		struct fdisk_partition *pa,
 		struct fdisk_context *cxt,

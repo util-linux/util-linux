@@ -179,6 +179,7 @@ fdisk_partition_is_container
 fdisk_partition_is_freespace
 fdisk_partition_is_nested
 fdisk_partition_is_used
+fdisk_partition_is_wholedisk
 fdisk_partition_next_partno
 fdisk_partition_partno_follow_default
 fdisk_partition_set_attrs
