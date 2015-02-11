@@ -121,6 +121,26 @@ create garbage in the typescript file.
 .B script
 works best with commands that do not manipulate the screen, the results are
 meant to emulate a hardcopy terminal.
+.PP
+It is not recommended to run
+.B script
+in non-interactive shells. The inner shell of
+.B script
+is always interactive, and this could lead to unexpected results. If you use
+.B script
+in the shell initialization file (profile), you should use e. g.
+.RS
+.RE
+.sp
+.na
+.RS
+.nf
+if test -t 0 ; then
+    script
+fi
+.fi
+.RE
+.PP
 .SH ENVIRONMENT
 The following environment variable is utilized by
 .BR script :
