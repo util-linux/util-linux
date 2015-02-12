@@ -48,7 +48,7 @@
 #include "loopdev.h"
 #include "fileutils.h"
 
-static int is_mountinfo(struct libmnt_table *tb)
+int is_mountinfo(struct libmnt_table *tb)
 {
 	struct libmnt_fs *fs;
 

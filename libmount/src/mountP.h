@@ -111,6 +111,7 @@ extern void mnt_free_filesystems(char **filesystems);
 extern char *mnt_get_kernel_cmdline_option(const char *name);
 
 /* tab.c */
+extern int is_mountinfo(struct libmnt_table *tb);
 extern int mnt_table_set_parser_fltrcb(	struct libmnt_table *tb,
 					int (*cb)(struct libmnt_fs *, void *),
 					void *data);

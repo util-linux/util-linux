@@ -687,8 +687,9 @@ int mnt_table_parse_file(struct libmnt_table *tb, const char *filename)
 		rc = mnt_table_parse_stream(tb, f, filename);
 		fclose(f);
 	} else
-		return -errno;
+		rc = -errno;
 
+	DBG(TAB, ul_debugobj(tb, "parsing done [filename=%s, rc=%d]", filename, rc));
 	return rc;
 }
 
@@ -1053,13 +1054,23 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 
 	if (mnt_has_regular_mtab(&filename, NULL)) {
 
-		DBG(TAB, ul_debugobj(tb, "force %s usage", filename));
+		DBG(TAB, ul_debugobj(tb, "force mtab usage [filename=%s]", filename));
 
 		rc = mnt_table_parse_file(tb, filename);
+
+		/*
+		 * If @filename forces us to read from /proc then also read
+		 * utab file to merge userspace mount options.
+		 */
+		if (rc == 0 && is_mountinfo(tb))
+			goto read_utab;
+
 		if (!rc)
 			return 0;
 		filename = NULL;	/* failed */
 	}
+
+	DBG(TAB, ul_debugobj(tb, "mtab parse: #1 read mountinfo"));
 
 	/*
 	 * useless /etc/mtab
@@ -1073,6 +1084,9 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 		return mnt_table_parse_file(tb, _PATH_PROC_MOUNTS);
 	}
 
+read_utab:
+	DBG(TAB, ul_debugobj(tb, "mtab parse: #2 read utab"));
+
 	if (mnt_table_get_nents(tb) == 0)
 		return 0;			/* empty, ignore utab */
 	/*
@@ -1080,6 +1094,7 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 	 */
 	if (!u_tb) {
 		const char *utab = mnt_get_utab_path();
+
 		if (!utab || is_file_empty(utab))
 			return 0;
 
@@ -1093,6 +1108,8 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 		rc = mnt_table_parse_file(u_tb, utab);
 		priv_utab = 1;
 	}
+
+	DBG(TAB, ul_debugobj(tb, "mtab parse: #3 merge utab"));
 
 	if (rc == 0) {
 		struct libmnt_fs *u_fs;
