@@ -900,6 +900,26 @@ static int tab_is_tree(struct libmnt_table *tb)
 	return rc;
 }
 
+/* checks if all fs in @tb are from kernel */
+static int tab_is_kernel(struct libmnt_table *tb)
+{
+	struct libmnt_fs *fs = NULL;
+	struct libmnt_iter *itr = NULL;
+
+	itr = mnt_new_iter(MNT_ITER_BACKWARD);
+	if (!itr)
+		return 0;
+
+	while (mnt_table_next_fs(tb, itr, &fs) == 0) {
+		if (!mnt_fs_is_kernel(fs)) {
+			mnt_free_iter(itr);
+			return 0;
+		}
+	}
+
+	mnt_free_iter(itr);
+	return 1;
+}
 
 /* filter function for libmount (mnt_table_find_next_fs()) */
 static int match_func(struct libmnt_fs *fs,
@@ -1509,6 +1529,9 @@ int main(int argc, char *argv[])
 	tb = parse_tabfiles(tabfiles, ntabfiles, tabtype);
 	if (!tb)
 		goto leave;
+
+	if (tabtype == TABTYPE_MTAB && tab_is_kernel(tb))
+		tabtype = TABTYPE_KERNEL;
 
 	if ((flags & FL_TREE) && (ntabfiles > 1 || !tab_is_tree(tb)))
 		flags &= ~FL_TREE;
