@@ -128,7 +128,8 @@ in non-interactive shells. The inner shell of
 .B script
 is always interactive, and this could lead to unexpected results. If you use
 .B script
-in the shell initialization file (profile), you should use e. g.
+in the shell initialization file, you have to avoid entering an infinite
+loop. Use e. g. profile file, which is read by login shells only:
 .RS
 .RE
 .sp
@@ -137,9 +138,14 @@ in the shell initialization file (profile), you should use e. g.
 .nf
 if test -t 0 ; then
     script
+    exit
 fi
 .fi
 .RE
+.PP
+You should also avoid use of script in command pipes, as
+.B script
+can read more input than you would expect.
 .PP
 .SH ENVIRONMENT
 The following environment variable is utilized by
