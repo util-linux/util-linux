@@ -160,6 +160,23 @@ Write to the specified
 .I socket
 instead of to the builtin syslog routines.
 .TP
+.BR \-\-socket\-errors [ =\fImode ]
+Print errors about Unix socket connections.  The \fImode\fR can be a value of
+\fBoff\fR, \fBon\fR, or \fBauto\fR.  When the mode is auto logger will detect
+if the init process is systemd, and if so assumption is made /dev/log can be
+used early at boot.  Other init systems lack of /dev/log will not cause errors
+that is identical with messaging using
+.BR openlog (3)
+system call.  The
+.BR logger (1)
+before version 2.26 used openlog, and hence was inable to detected loss of
+messages sent to Unix sockets.
+.IP
+The default mode is \fBauto\fR.  When errors are not enabled lost messages are
+not communicated and will result to successful return value of
+.BR logger (1)
+invocation.
+.TP
 .B \-\-
 End the argument list.  This allows the \fImessage\fR
 to start with a hyphen (\-).
