@@ -40,6 +40,7 @@
 #include "colors.h"
 #include "blkdev.h"
 #include "all-io.h"
+#include "rpmatch.h"
 
 #include "libfdisk.h"
 #include "fdisk-list.h"
