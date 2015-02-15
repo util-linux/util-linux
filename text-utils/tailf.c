@@ -208,16 +208,16 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 }
 
 /* parses -N option */
-static long old_style_option(int *argc, char **argv)
+static long old_style_option(int *argc, char **argv, unsigned long *lines)
 {
-	int i = 1, nargs = *argc;
-	long lines = -1;
+	int i = 1, nargs = *argc, ret = 0;
 
 	while(i < nargs) {
 		if (argv[i][0] == '-' && isdigit(argv[i][1])) {
-			lines = strtol_or_err(argv[i] + 1,
+			*lines = strtoul_or_err(argv[i] + 1,
 					_("failed to parse number of lines"));
 			nargs--;
+			ret = 1;
 			if (nargs - i)
 				memmove(argv + i, argv + i + 1,
 						sizeof(char *) * (nargs - i));
@@ -225,13 +225,13 @@ static long old_style_option(int *argc, char **argv)
 			i++;
 	}
 	*argc = nargs;
-	return lines;
+	return ret;
 }
 
 int main(int argc, char **argv)
 {
 	const char *filename;
-	long lines;
+	unsigned long lines;
 	int ch;
 	struct stat st;
 
@@ -247,16 +247,18 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	lines = old_style_option(&argc, argv);
-	if (lines < 0)
+	if (!old_style_option(&argc, argv, &lines))
 		lines = DEFAULT_LINES;
 
 	while ((ch = getopt_long(argc, argv, "n:N:Vh", longopts, NULL)) != -1)
-		switch((char)ch) {
+		switch ((char)ch) {
 		case 'n':
 		case 'N':
-			lines = strtol_or_err(optarg,
-					_("failed to parse number of lines"));
+			if (optarg[0] == '-')
+				errx(EXIT_FAILURE, "%s: %s",
+				     _("failed to parse number of lines"), optarg);
+			lines =
+			    strtoul_or_err(optarg, _("failed to parse number of lines"));
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
