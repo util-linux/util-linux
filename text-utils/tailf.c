@@ -36,6 +36,8 @@
 #include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
+#include <sys/mman.h>
+
 #ifdef HAVE_INOTIFY_INIT
 #include <sys/inotify.h>
 #endif
@@ -49,44 +51,38 @@
 #define DEFAULT_LINES  10
 
 static void
-tailf(const char *filename, int lines)
+tailf(const char *filename, unsigned long lines, struct stat *st)
 {
-	char *buf, *p;
-	int  head = 0;
-	int  tail = 0;
-	FILE *str;
-	int  i;
+	int fd;
+	size_t i;
+	char *data;
 
-	if (!(str = fopen(filename, "r")))
+	if (!(fd = open(filename, O_RDONLY)))
 		err(EXIT_FAILURE, _("cannot open %s"), filename);
-
-	buf = xmalloc((lines ? lines : 1) * BUFSIZ);
-	p = buf;
-	while (fgets(p, BUFSIZ, str)) {
-		if (++tail >= lines) {
-			tail = 0;
-			head = 1;
+	data = mmap(0, st->st_size, PROT_READ, MAP_SHARED, fd, 0);
+	i = (size_t)st->st_size - 1;
+	/* humans do not think last new line in a file should be counted,
+	 * in that case do off by one from counter point of view */
+	if (data[i] == '\n')
+		lines++;
+	while (i) {
+		if (data[i] == '\n') {
+			if (--lines == 0) {
+				i++;
+				break;
+			}
 		}
-		p = buf + (tail * BUFSIZ);
+		i--;
 	}
-
-	if (head) {
-		for (i = tail; i < lines; i++)
-			fputs(buf + (i * BUFSIZ), stdout);
-		for (i = 0; i < tail; i++)
-			fputs(buf + (i * BUFSIZ), stdout);
-	} else {
-		for (i = head; i < tail; i++)
-			fputs(buf + (i * BUFSIZ), stdout);
-	}
-
+	while (i < (size_t)st->st_size)
+		putchar(data[i++]);
+	munmap(data, st->st_size);
+	close(fd);
 	fflush(stdout);
-	free(buf);
-	fclose(str);
 }
 
 static void
-roll_file(const char *filename, off_t *size)
+roll_file(const char *filename, struct stat *old)
 {
 	char buf[BUFSIZ];
 	int fd;
@@ -100,12 +96,12 @@ roll_file(const char *filename, off_t *size)
 	if (fstat(fd, &st) == -1)
 		err(EXIT_FAILURE, _("stat of %s failed"), filename);
 
-	if (st.st_size == *size) {
+	if (st.st_size == old->st_size) {
 		close(fd);
 		return;
 	}
 
-	if (lseek(fd, *size, SEEK_SET) != (off_t)-1) {
+	if (lseek(fd, old->st_size, SEEK_SET) != (off_t)-1) {
 		ssize_t rc, wc;
 
 		while ((rc = read(fd, buf, sizeof(buf))) > 0) {
@@ -123,16 +119,16 @@ roll_file(const char *filename, off_t *size)
 	 * avoids data duplication. If we read nothing or hit an error, reset
 	 * to the reported size, this handles truncated files.
 	 */
-	*size = (pos != -1 && pos != *size) ? pos : st.st_size;
+	old->st_size = (pos != -1 && pos != old->st_size) ? pos : st.st_size;
 
 	close(fd);
 }
 
 static void
-watch_file(const char *filename, off_t *size)
+watch_file(const char *filename, struct stat *old)
 {
 	do {
-		roll_file(filename, size);
+		roll_file(filename, old);
 		xusleep(250000);
 	} while(1);
 }
@@ -144,7 +140,7 @@ watch_file(const char *filename, off_t *size)
 #define NEVENTS		4
 
 static int
-watch_file_inotify(const char *filename, off_t *size)
+watch_file_inotify(const char *filename, struct stat *old)
 {
 	char buf[ NEVENTS * sizeof(struct inotify_event) ];
 	int fd, ffd, e;
@@ -176,7 +172,7 @@ watch_file_inotify(const char *filename, off_t *size)
 			struct inotify_event *ev = (struct inotify_event *) &buf[e];
 
 			if (ev->mask & IN_MODIFY)
-				roll_file(filename, size);
+				roll_file(filename, old);
 			else {
 				close(ffd);
 				ffd = -1;
@@ -238,7 +234,6 @@ int main(int argc, char **argv)
 	long lines;
 	int ch;
 	struct stat st;
-	off_t size = 0;
 
 	static const struct option longopts[] = {
 		{ "lines",   required_argument, 0, 'n' },
@@ -280,13 +275,13 @@ int main(int argc, char **argv)
 	if (stat(filename, &st) != 0)
 		err(EXIT_FAILURE, _("stat of %s failed"), filename);
 
-	size = st.st_size;;
-	tailf(filename, lines);
+	if (st.st_size)
+		tailf(filename, lines, &st);
 
 #ifdef HAVE_INOTIFY_INIT
-	if (!watch_file_inotify(filename, &size))
+	if (!watch_file_inotify(filename, &st))
 #endif
-		watch_file(filename, &size);
+		watch_file(filename, &st);
 
 	return EXIT_SUCCESS;
 }
