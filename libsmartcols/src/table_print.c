@@ -820,9 +820,8 @@ int scols_print_table(struct libscols_table *tb)
 	struct libscols_iter itr;
 	struct libscols_buffer *buf;
 
-	assert(tb);
 	if (!tb)
-		return -1;
+		return -EINVAL;
 
 	DBG(TAB, ul_debugobj(tb, "printing"));
 	if (!tb->symbols)

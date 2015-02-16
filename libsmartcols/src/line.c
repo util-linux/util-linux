@@ -122,8 +122,6 @@ int scols_line_alloc_cells(struct libscols_line *ln, size_t n)
 {
 	struct libscols_cell *ce;
 
-	assert(ln);
-
 	if (!ln)
 		return -EINVAL;
 	if (ln->ncells == n)
@@ -160,7 +158,6 @@ int scols_line_alloc_cells(struct libscols_line *ln, size_t n)
  */
 int scols_line_set_userdata(struct libscols_line *ln, void *data)
 {
-	assert(ln);
 	if (!ln)
 		return -EINVAL;
 	ln->userdata = data;
@@ -190,9 +187,6 @@ void *scols_line_get_userdata(struct libscols_line *ln)
  */
 int scols_line_remove_child(struct libscols_line *ln, struct libscols_line *child)
 {
-	assert(ln);
-	assert(child);
-
 	if (!ln || !child)
 		return -EINVAL;
 
@@ -217,9 +211,6 @@ int scols_line_remove_child(struct libscols_line *ln, struct libscols_line *chil
  */
 int scols_line_add_child(struct libscols_line *ln, struct libscols_line *child)
 {
-	assert(ln);
-	assert(child);
-
 	if (!ln || !child)
 		return -EINVAL;
 
@@ -248,7 +239,6 @@ int scols_line_add_child(struct libscols_line *ln, struct libscols_line *child)
  */
 struct libscols_line *scols_line_get_parent(struct libscols_line *ln)
 {
-	assert(ln);
 	return ln ? ln->parent : NULL;
 }
 
@@ -260,7 +250,6 @@ struct libscols_line *scols_line_get_parent(struct libscols_line *ln)
  */
 int scols_line_has_children(struct libscols_line *ln)
 {
-	assert(ln);
 	return ln ? !list_empty(&ln->ln_branch) : 0;
 }
 
@@ -305,7 +294,6 @@ int scols_line_set_color(struct libscols_line *ln, const char *color)
 {
 	char *p = NULL;
 
-	assert(ln);
 	if (!ln)
 		return -EINVAL;
 	if (color) {
@@ -333,7 +321,6 @@ int scols_line_set_color(struct libscols_line *ln, const char *color)
  */
 const char *scols_line_get_color(struct libscols_line *ln)
 {
-	assert(ln);
 	return ln ? ln->color : NULL;
 }
 
@@ -345,7 +332,6 @@ const char *scols_line_get_color(struct libscols_line *ln)
  */
 size_t scols_line_get_ncells(struct libscols_line *ln)
 {
-	assert(ln);
 	return ln ? ln->ncells : 0;
 }
 
@@ -359,8 +345,6 @@ size_t scols_line_get_ncells(struct libscols_line *ln)
 struct libscols_cell *scols_line_get_cell(struct libscols_line *ln,
 					  size_t n)
 {
-	assert(ln);
-
 	if (!ln || n >= ln->ncells)
 		return NULL;
 	return &ln->cells[n];
@@ -379,8 +363,8 @@ struct libscols_cell *scols_line_get_column_cell(
 			struct libscols_line *ln,
 			struct libscols_column *cl)
 {
-	assert(ln);
-	assert(cl);
+	if (!ln || !cl)
+		return NULL;
 
 	return scols_line_get_cell(ln, cl->seqnum);
 }
@@ -430,7 +414,6 @@ struct libscols_line *scols_copy_line(struct libscols_line *ln)
 	struct libscols_line *ret;
 	size_t i;
 
-	assert (ln);
 	if (!ln)
 		return NULL;
 

@@ -104,9 +104,6 @@ void scols_unref_table(struct libscols_table *tb)
  */
 int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl)
 {
-	assert(tb);
-	assert(cl);
-
 	if (!tb || !cl || !list_empty(&tb->tb_lines))
 		return -EINVAL;
 
@@ -139,9 +136,6 @@ int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl
 int scols_table_remove_column(struct libscols_table *tb,
 			      struct libscols_column *cl)
 {
-	assert(tb);
-	assert(cl);
-
 	if (!tb || !cl || !list_empty(&tb->tb_lines))
 		return -EINVAL;
 
@@ -165,8 +159,6 @@ int scols_table_remove_column(struct libscols_table *tb,
  */
 int scols_table_remove_columns(struct libscols_table *tb)
 {
-	assert(tb);
-
 	if (!tb || !list_empty(&tb->tb_lines))
 		return -EINVAL;
 
@@ -222,7 +214,6 @@ struct libscols_column *scols_table_new_column(struct libscols_table *tb,
 	struct libscols_column *cl;
 	struct libscols_cell *hr;
 
-	assert (tb);
 	if (!tb)
 		return NULL;
 
@@ -291,7 +282,6 @@ int scols_table_next_column(struct libscols_table *tb,
  */
 int scols_table_get_ncols(struct libscols_table *tb)
 {
-	assert(tb);
 	return tb ? tb->ncols : -EINVAL;
 }
 
@@ -303,7 +293,6 @@ int scols_table_get_ncols(struct libscols_table *tb)
  */
 int scols_table_get_nlines(struct libscols_table *tb)
 {
-	assert(tb);
 	return tb ? tb->nlines : -EINVAL;
 }
 
@@ -337,7 +326,6 @@ int scols_table_set_stream(struct libscols_table *tb, FILE *stream)
  */
 FILE *scols_table_get_stream(struct libscols_table *tb)
 {
-	assert(tb);
 	return tb ? tb->out: NULL;
 }
 
@@ -352,7 +340,6 @@ FILE *scols_table_get_stream(struct libscols_table *tb)
  */
 int scols_table_reduce_termwidth(struct libscols_table *tb, size_t reduce)
 {
-	assert(tb);
 	if (!tb)
 		return -EINVAL;
 
@@ -374,7 +361,6 @@ struct libscols_column *scols_table_get_column(struct libscols_table *tb,
 	struct libscols_iter itr;
 	struct libscols_column *cl;
 
-	assert(tb);
 	if (!tb)
 		return NULL;
 	if (n >= tb->ncols)
@@ -400,10 +386,6 @@ struct libscols_column *scols_table_get_column(struct libscols_table *tb,
  */
 int scols_table_add_line(struct libscols_table *tb, struct libscols_line *ln)
 {
-
-	assert(tb);
-	assert(ln);
-
 	if (!tb || !ln)
 		return -EINVAL;
 
@@ -433,9 +415,6 @@ int scols_table_add_line(struct libscols_table *tb, struct libscols_line *ln)
 int scols_table_remove_line(struct libscols_table *tb,
 			    struct libscols_line *ln)
 {
-	assert(tb);
-	assert(ln);
-
 	if (!tb || !ln)
 		return -EINVAL;
 
@@ -517,9 +496,6 @@ struct libscols_line *scols_table_new_line(struct libscols_table *tb,
 {
 	struct libscols_line *ln;
 
-	assert(tb);
-	assert(tb->ncols);
-
 	if (!tb || !tb->ncols)
 		return NULL;
 
@@ -558,7 +534,6 @@ struct libscols_line *scols_table_get_line(struct libscols_table *tb,
 	struct libscols_iter itr;
 	struct libscols_line *ln;
 
-	assert(tb);
 	if (!tb)
 		return NULL;
 	if (n >= tb->nlines)
@@ -588,7 +563,6 @@ struct libscols_table *scols_copy_table(struct libscols_table *tb)
 	struct libscols_column *cl;
 	struct libscols_iter itr;
 
-	assert(tb);
 	if (!tb)
 		return NULL;
 	ret = scols_new_table();
@@ -654,8 +628,6 @@ err:
 int scols_table_set_symbols(struct libscols_table *tb,
 			    struct libscols_symbols *sy)
 {
-	assert(tb);
-
 	if (!tb)
 		return -EINVAL;
 
@@ -698,7 +670,6 @@ int scols_table_set_symbols(struct libscols_table *tb,
  */
 int scols_table_enable_colors(struct libscols_table *tb, int enable)
 {
-	assert(tb);
 	if (!tb)
 		return -EINVAL;
 
@@ -718,7 +689,6 @@ int scols_table_enable_colors(struct libscols_table *tb, int enable)
  */
 int scols_table_enable_raw(struct libscols_table *tb, int enable)
 {
-	assert(tb);
 	if (!tb)
 		return -EINVAL;
 
@@ -742,7 +712,6 @@ int scols_table_enable_raw(struct libscols_table *tb, int enable)
  */
 int scols_table_enable_export(struct libscols_table *tb, int enable)
 {
-	assert(tb);
 	if (!tb)
 		return -EINVAL;
 
@@ -771,7 +740,6 @@ int scols_table_enable_export(struct libscols_table *tb, int enable)
  */
 int scols_table_enable_ascii(struct libscols_table *tb, int enable)
 {
-	assert(tb);
 	if (!tb)
 		return -EINVAL;
 
@@ -791,7 +759,6 @@ int scols_table_enable_ascii(struct libscols_table *tb, int enable)
  */
 int scols_table_enable_noheadings(struct libscols_table *tb, int enable)
 {
-	assert(tb);
 	if (!tb)
 		return -EINVAL;
 	DBG(TAB, ul_debugobj(tb, "noheading: %s", enable ? "ENABLE" : "DISABLE"));
@@ -811,7 +778,6 @@ int scols_table_enable_noheadings(struct libscols_table *tb, int enable)
  */
 int scols_table_enable_maxout(struct libscols_table *tb, int enable)
 {
-	assert(tb);
 	if (!tb)
 		return -EINVAL;
 	DBG(TAB, ul_debugobj(tb, "maxout: %s", enable ? "ENABLE" : "DISABLE"));
@@ -827,7 +793,6 @@ int scols_table_enable_maxout(struct libscols_table *tb, int enable)
  */
 int scols_table_colors_wanted(struct libscols_table *tb)
 {
-	assert(tb);
 	return tb && tb->colors_wanted;
 }
 
@@ -839,7 +804,6 @@ int scols_table_colors_wanted(struct libscols_table *tb)
  */
 int scols_table_is_empty(struct libscols_table *tb)
 {
-	assert(tb);
 	return !tb || !tb->nlines;
 }
 
@@ -851,7 +815,6 @@ int scols_table_is_empty(struct libscols_table *tb)
  */
 int scols_table_is_ascii(struct libscols_table *tb)
 {
-	assert(tb);
 	return tb && tb->ascii;
 }
 
@@ -863,7 +826,6 @@ int scols_table_is_ascii(struct libscols_table *tb)
  */
 int scols_table_is_noheadings(struct libscols_table *tb)
 {
-	assert(tb);
 	return tb && tb->no_headings;
 }
 
@@ -875,7 +837,6 @@ int scols_table_is_noheadings(struct libscols_table *tb)
  */
 int scols_table_is_export(struct libscols_table *tb)
 {
-	assert(tb);
 	return tb && tb->format == SCOLS_FMT_EXPORT;
 }
 
@@ -887,7 +848,6 @@ int scols_table_is_export(struct libscols_table *tb)
  */
 int scols_table_is_raw(struct libscols_table *tb)
 {
-	assert(tb);
 	return tb && tb->format == SCOLS_FMT_RAW;
 }
 
@@ -900,7 +860,6 @@ int scols_table_is_raw(struct libscols_table *tb)
  */
 int scols_table_is_maxout(struct libscols_table *tb)
 {
-	assert(tb);
 	return tb && tb->maxout;
 }
 
@@ -912,7 +871,6 @@ int scols_table_is_maxout(struct libscols_table *tb)
  */
 int scols_table_is_tree(struct libscols_table *tb)
 {
-	assert(tb);
 	return tb && tb->ntreecols > 0;
 }
 
@@ -930,11 +888,8 @@ int scols_table_set_column_separator(struct libscols_table *tb, const char *sep)
 {
 	char *p = NULL;
 
-	assert (tb);
-
 	if (!tb)
 		return -EINVAL;
-
 	if (sep) {
 		p = strdup(sep);
 		if (!p)
@@ -960,8 +915,6 @@ int scols_table_set_line_separator(struct libscols_table *tb, const char *sep)
 {
 	char *p = NULL;
 
-	assert (tb);
-
 	if (!tb)
 		return -EINVAL;
 
@@ -985,8 +938,6 @@ int scols_table_set_line_separator(struct libscols_table *tb, const char *sep)
  */
 char *scols_table_get_column_separator(struct libscols_table *tb)
 {
-	assert (tb);
-
 	if (!tb)
 		return NULL;
 	return tb->colsep;
@@ -1000,8 +951,6 @@ char *scols_table_get_column_separator(struct libscols_table *tb)
  */
 char *scols_table_get_line_separator(struct libscols_table *tb)
 {
-	assert (tb);
-
 	if (!tb)
 		return NULL;
 	return tb->linesep;
@@ -1037,9 +986,6 @@ static int cells_cmp_wrapper(struct list_head *a, struct list_head *b, void *dat
  */
 int scols_sort_table(struct libscols_table *tb, struct libscols_column *cl)
 {
-	assert(tb);
-	assert(cl);
-
 	if (!tb || !cl)
 		return -EINVAL;
 

@@ -86,7 +86,6 @@ struct libscols_column *scols_copy_column(const struct libscols_column *cl)
 {
 	struct libscols_column *ret;
 
-	assert (cl);
 	if (!cl)
 		return NULL;
 	ret = scols_new_column();
@@ -125,8 +124,6 @@ err:
  */
 int scols_column_set_whint(struct libscols_column *cl, double whint)
 {
-	assert(cl);
-
 	if (!cl)
 		return -EINVAL;
 
@@ -157,8 +154,6 @@ double scols_column_get_whint(struct libscols_column *cl)
  */
 int scols_column_set_flags(struct libscols_column *cl, int flags)
 {
-	assert(cl);
-
 	if (!cl)
 		return -EINVAL;
 
@@ -187,7 +182,6 @@ int scols_column_get_flags(struct libscols_column *cl)
  */
 struct libscols_cell *scols_column_get_header(struct libscols_column *cl)
 {
-	assert(cl);
 	return cl ? &cl->header : NULL;
 }
 
@@ -210,7 +204,6 @@ int scols_column_set_color(struct libscols_column *cl, const char *color)
 {
 	char *p = NULL;
 
-	assert(cl);
 	if (!cl)
 		return -EINVAL;
 	if (color) {
@@ -257,7 +250,6 @@ int scols_column_set_cmpfunc(struct libscols_column *cl,
 				   void *),
 			void *data)
 {
-	assert(cl);
 	if (!cl)
 		return -EINVAL;
 
@@ -276,7 +268,6 @@ int scols_column_set_cmpfunc(struct libscols_column *cl,
  */
 int scols_column_is_trunc(struct libscols_column *cl)
 {
-	assert(cl);
 	if (!cl)
 		return -EINVAL;
 	return cl->flags & SCOLS_FL_TRUNC;
@@ -291,7 +282,6 @@ int scols_column_is_trunc(struct libscols_column *cl)
  */
 int scols_column_is_tree(struct libscols_column *cl)
 {
-	assert(cl);
 	if (!cl)
 		return -EINVAL;
 	return cl->flags & SCOLS_FL_TREE;
@@ -306,7 +296,6 @@ int scols_column_is_tree(struct libscols_column *cl)
  */
 int scols_column_is_right(struct libscols_column *cl)
 {
-	assert(cl);
 	if (!cl)
 		return -EINVAL;
 	return cl->flags & SCOLS_FL_RIGHT;
@@ -321,7 +310,6 @@ int scols_column_is_right(struct libscols_column *cl)
  */
 int scols_column_is_strict_width(struct libscols_column *cl)
 {
-	assert(cl);
 	if (!cl)
 		return -EINVAL;
 	return cl->flags & SCOLS_FL_STRICTWIDTH;
@@ -336,7 +324,6 @@ int scols_column_is_strict_width(struct libscols_column *cl)
  */
 int scols_column_is_noextremes(struct libscols_column *cl)
 {
-	assert(cl);
 	if (!cl)
 		return -EINVAL;
 	return cl->flags & SCOLS_FL_NOEXTREMES;
