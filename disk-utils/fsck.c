@@ -1464,14 +1464,13 @@ static void parse_argv(int argc, char *argv[])
 				break;
 			case 'C':
 				progress = 1;
-				if (arg[j+1]) {
+				if (arg[j+1]) {					/* -C<fd> */
 					progress_fd = string_to_int(arg+j+1);
 					if (progress_fd < 0)
 						progress_fd = 0;
 					else
 						goto next_arg;
-				} else if ((i+1) < argc &&
-					   !strncmp(argv[i+1], "-", 1) == 0) {
+				} else if (i+1 < argc && *argv[i+1] != '-') {	/* -C <fd> */
 					progress_fd = string_to_int(argv[i]);
 					if (progress_fd < 0)
 						progress_fd = 0;
