@@ -830,7 +830,6 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 	/*
 	 * Apply pattern to /etc/filesystems and /proc/filesystems
 	 */
-
 	rc = mnt_get_filesystems(&filesystems, neg ? pattern : NULL);
 	if (rc)
 		return rc;

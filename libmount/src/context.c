@@ -1699,6 +1699,8 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
+	DBG(CXT, ul_debugobj(cxt, "preparing fstype"));
+
 	if (!cxt || !cxt->fs)
 		return -EINVAL;
 
@@ -1714,7 +1716,7 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 
 	if (type)
 		goto done;
-	if (cxt->flags & MS_REMOUNT)
+	if (cxt->mountflags & MS_REMOUNT)
 		goto none;
 	if (cxt->fstype_pattern)
 		goto done;
@@ -2100,7 +2102,8 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	}
 
 	/* try mtab */
-	if (rc < 0 && (cxt->optsmode & MNT_OMODE_MTAB)) {
+	if (rc < 0 && (cxt->optsmode & MNT_OMODE_MTAB)
+	    && (isremount || cxt->action == MNT_ACT_UMOUNT)) {
 		DBG(CXT, ul_debugobj(cxt, "trying to apply mtab (src=%s, target=%s)", src, tgt));
 		if (tgt)
 			rc = mnt_context_get_mtab_for_target(cxt, &tab, tgt);
