@@ -851,6 +851,15 @@ AC_SUBST([LIBMOUNT_PATCH_VERSION], $PACKAGE_VERSION_RELEASE)
 AC_SUBST([LIBMOUNT_VERSION_INFO])
 AC_DEFINE_UNQUOTED([LIBMOUNT_VERSION], ["$LIBMOUNT_VERSION"], [libmount version string])
 
+AC_ARG_ENABLE([libmount-force-mountinfo],
+  AS_HELP_STRING([--enable-libmount-force-mountinfo], [ignore /etc/mtab in all situations (recommended for systemd)]),
+  [], [enable_libmount_force_mountinfo=no]
+)
+
+AS_IF([test "x$enable_libmount_force_mountinfo" == xyes], [
+  AC_DEFINE([USE_LIBMOUNT_FORCE_MOUNTINFO], [1], [Define to 1 if want to ignore mtab in all situations.])
+])
+
 
 dnl
 dnl libsmartcols

@@ -219,7 +219,11 @@ static int context_init_paths(struct libmnt_context *cxt, int writable)
 
 	DBG(CXT, ul_debugobj(cxt, "checking for writable tab files"));
 
+#ifdef USE_LIBMOUNT_FORCE_MOUNTINFO
+	cxt->mtab_writable = 0;
+#else
 	mnt_has_regular_mtab(&cxt->mtab_path, &cxt->mtab_writable);
+#endif
 
 	if (!cxt->mtab_writable)
 		/* use /run/mount/utab if /etc/mtab is useless */

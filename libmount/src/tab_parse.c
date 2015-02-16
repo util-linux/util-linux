@@ -1052,6 +1052,9 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 
 	assert(tb);
 
+#ifdef USE_LIBMOUNT_FORCE_MOUNTINFO
+	DBG(TAB, ul_debugobj(tb, "mtab parse: ignore %s", filename ? filename : "mtab"));
+#else
 	if (mnt_has_regular_mtab(&filename, NULL)) {
 
 		DBG(TAB, ul_debugobj(tb, "force mtab usage [filename=%s]", filename));
@@ -1069,7 +1072,7 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 			return 0;
 		filename = NULL;	/* failed */
 	}
-
+#endif
 	DBG(TAB, ul_debugobj(tb, "mtab parse: #1 read mountinfo"));
 
 	/*
