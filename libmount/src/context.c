@@ -191,7 +191,6 @@ int mnt_reset_context(struct libmnt_context *cxt)
  */
 int mnt_context_reset_status(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 
@@ -323,7 +322,6 @@ int mnt_context_is_restricted(struct libmnt_context *cxt)
  */
 int mnt_context_set_optsmode(struct libmnt_context *cxt, int mode)
 {
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 	cxt->optsmode = mode;
@@ -339,7 +337,6 @@ int mnt_context_set_optsmode(struct libmnt_context *cxt, int mode)
 
 int mnt_context_get_optsmode(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	return cxt->optsmode;
 }
 
@@ -721,7 +718,6 @@ int mnt_context_set_fs(struct libmnt_context *cxt, struct libmnt_fs *fs)
  */
 struct libmnt_fs *mnt_context_get_fs(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	if (!cxt)
 		return NULL;
 	if (!cxt->fs)
@@ -737,7 +733,6 @@ struct libmnt_fs *mnt_context_get_fs(struct libmnt_context *cxt)
  */
 void *mnt_context_get_fs_userdata(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	return cxt->fs ? mnt_fs_get_userdata(cxt->fs) : NULL;
 }
 
@@ -749,7 +744,6 @@ void *mnt_context_get_fs_userdata(struct libmnt_context *cxt)
  */
 void *mnt_context_get_fstab_userdata(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	return cxt->fstab ? mnt_table_get_userdata(cxt->fstab) : NULL;
 }
 
@@ -761,7 +755,6 @@ void *mnt_context_get_fstab_userdata(struct libmnt_context *cxt)
  */
 void *mnt_context_get_mtab_userdata(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	return cxt->mtab ? mnt_table_get_userdata(cxt->mtab) : NULL;
 }
 
@@ -779,7 +772,6 @@ void *mnt_context_get_mtab_userdata(struct libmnt_context *cxt)
  */
 int mnt_context_set_source(struct libmnt_context *cxt, const char *source)
 {
-	assert(cxt);
 	return mnt_fs_set_source(mnt_context_get_fs(cxt), source);
 }
 
@@ -791,7 +783,6 @@ int mnt_context_set_source(struct libmnt_context *cxt, const char *source)
  */
 const char *mnt_context_get_source(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	return mnt_fs_get_source(mnt_context_get_fs(cxt));
 }
 
@@ -804,7 +795,6 @@ const char *mnt_context_get_source(struct libmnt_context *cxt)
  */
 int mnt_context_set_target(struct libmnt_context *cxt, const char *target)
 {
-	assert(cxt);
 	return mnt_fs_set_target(mnt_context_get_fs(cxt), target);
 }
 
@@ -816,7 +806,6 @@ int mnt_context_set_target(struct libmnt_context *cxt, const char *target)
  */
 const char *mnt_context_get_target(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	return mnt_fs_get_target(mnt_context_get_fs(cxt));
 }
 
@@ -833,7 +822,6 @@ const char *mnt_context_get_target(struct libmnt_context *cxt)
  */
 int mnt_context_set_fstype(struct libmnt_context *cxt, const char *fstype)
 {
-	assert(cxt);
 	return mnt_fs_set_fstype(mnt_context_get_fs(cxt), fstype);
 }
 
@@ -845,7 +833,6 @@ int mnt_context_set_fstype(struct libmnt_context *cxt, const char *fstype)
  */
 const char *mnt_context_get_fstype(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	return mnt_fs_get_fstype(mnt_context_get_fs(cxt));
 }
 
@@ -858,7 +845,6 @@ const char *mnt_context_get_fstype(struct libmnt_context *cxt)
  */
 int mnt_context_set_options(struct libmnt_context *cxt, const char *optstr)
 {
-	assert(cxt);
 	return mnt_fs_set_options(mnt_context_get_fs(cxt), optstr);
 }
 
@@ -871,7 +857,6 @@ int mnt_context_set_options(struct libmnt_context *cxt, const char *optstr)
  */
 int mnt_context_append_options(struct libmnt_context *cxt, const char *optstr)
 {
-	assert(cxt);
 	return mnt_fs_append_options(mnt_context_get_fs(cxt), optstr);
 }
 
@@ -890,7 +875,6 @@ int mnt_context_append_options(struct libmnt_context *cxt, const char *optstr)
  */
 const char *mnt_context_get_options(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	return mnt_fs_get_options(mnt_context_get_fs(cxt));
 }
 
@@ -907,7 +891,6 @@ int mnt_context_set_fstype_pattern(struct libmnt_context *cxt, const char *patte
 {
 	char *p = NULL;
 
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 	if (pattern) {
@@ -933,7 +916,6 @@ int mnt_context_set_options_pattern(struct libmnt_context *cxt, const char *patt
 {
 	char *p = NULL;
 
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 	if (pattern) {
@@ -969,7 +951,6 @@ int mnt_context_set_options_pattern(struct libmnt_context *cxt, const char *patt
  */
 int mnt_context_set_fstab(struct libmnt_context *cxt, struct libmnt_table *tb)
 {
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 
@@ -991,7 +972,6 @@ int mnt_context_set_fstab(struct libmnt_context *cxt, struct libmnt_table *tb)
  */
 int mnt_context_get_fstab(struct libmnt_context *cxt, struct libmnt_table **tb)
 {
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 	if (!cxt->fstab) {
@@ -1025,7 +1005,6 @@ int mnt_context_get_fstab(struct libmnt_context *cxt, struct libmnt_table **tb)
  */
 int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 {
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 	if (!cxt->mtab) {
@@ -1117,7 +1096,6 @@ int mnt_context_set_tabfilter(struct libmnt_context *cxt,
 			      int (*fltr)(struct libmnt_fs *, void *),
 			      void *data)
 {
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 
@@ -1157,8 +1135,6 @@ int mnt_context_get_table(struct libmnt_context *cxt,
 {
 	int rc;
 
-	assert(cxt);
-	assert(tb);
 	if (!cxt || !tb)
 		return -EINVAL;
 
@@ -1196,7 +1172,6 @@ int mnt_context_get_table(struct libmnt_context *cxt,
 int mnt_context_set_tables_errcb(struct libmnt_context *cxt,
 	int (*cb)(struct libmnt_table *tb, const char *filename, int line))
 {
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 
@@ -1254,7 +1229,6 @@ int mnt_context_set_cache(struct libmnt_context *cxt, struct libmnt_cache *cache
  */
 struct libmnt_cache *mnt_context_get_cache(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	if (!cxt || mnt_context_is_nocanonicalize(cxt))
 		return NULL;
 
@@ -1281,7 +1255,6 @@ int mnt_context_set_passwd_cb(struct libmnt_context *cxt,
 			      char *(*get)(struct libmnt_context *),
 			      void (*release)(struct libmnt_context *, char *))
 {
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 	cxt->pwd_get_cb = get;
@@ -1311,7 +1284,6 @@ int mnt_context_set_passwd_cb(struct libmnt_context *cxt,
  */
 struct libmnt_lock *mnt_context_get_lock(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	/*
 	 * DON'T call this function within libmount, it will always allocate
 	 * the lock. The mnt_update_* functions are able to allocate the lock
@@ -1351,7 +1323,6 @@ struct libmnt_lock *mnt_context_get_lock(struct libmnt_context *cxt)
  */
 int mnt_context_set_mflags(struct libmnt_context *cxt, unsigned long flags)
 {
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 
@@ -1384,8 +1355,6 @@ int mnt_context_get_mflags(struct libmnt_context *cxt, unsigned long *flags)
 	int rc = 0;
 	struct list_head *p;
 
-	assert(cxt);
-	assert(flags);
 	if (!cxt || !flags)
 		return -EINVAL;
 
@@ -1443,8 +1412,6 @@ int mnt_context_get_user_mflags(struct libmnt_context *cxt, unsigned long *flags
 {
 	int rc = 0;
 
-	assert(cxt);
-	assert(flags);
 	if (!cxt || !flags)
 		return -EINVAL;
 
@@ -1476,7 +1443,6 @@ int mnt_context_get_user_mflags(struct libmnt_context *cxt, unsigned long *flags
  */
 int mnt_context_set_mountdata(struct libmnt_context *cxt, void *data)
 {
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 	cxt->mountdata = data;
@@ -2037,10 +2003,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	const char *src = NULL, *tgt = NULL;
 	unsigned long mflags = 0;
 
-	assert(cxt);
-	assert(cxt->fs);
-
-	if (!cxt)
+	if (!cxt || !cxt->fs)
 		return -EINVAL;
 
 	if (mnt_context_tab_applied(cxt))	/* already applied */
@@ -2138,7 +2101,6 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
  */
 int mnt_context_tab_applied(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	return cxt->flags & MNT_FL_TAB_APPLIED;
 }
 
@@ -2149,9 +2111,6 @@ int mnt_context_tab_applied(struct libmnt_context *cxt)
  */
 int mnt_context_propagation_only(struct libmnt_context *cxt)
 {
-	assert(cxt);
-	assert(cxt->fs);
-
 	if (cxt->action != MNT_ACT_MOUNT)
 		return 0;
 
@@ -2180,7 +2139,6 @@ int mnt_context_propagation_only(struct libmnt_context *cxt)
  */
 int mnt_context_get_status(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	return !cxt->syscall_status || !cxt->helper_exec_status;
 }
 
@@ -2192,7 +2150,6 @@ int mnt_context_get_status(struct libmnt_context *cxt)
  */
 int mnt_context_helper_executed(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	return cxt->helper_exec_status != 1;
 }
 
@@ -2205,7 +2162,6 @@ int mnt_context_helper_executed(struct libmnt_context *cxt)
  */
 int mnt_context_get_helper_status(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	return cxt->helper_status;
 }
 
@@ -2217,7 +2173,6 @@ int mnt_context_get_helper_status(struct libmnt_context *cxt)
  */
 int mnt_context_syscall_called(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	return cxt->syscall_status != 1;
 }
 
@@ -2232,7 +2187,6 @@ int mnt_context_syscall_called(struct libmnt_context *cxt)
  */
 int mnt_context_get_syscall_errno(struct libmnt_context *cxt)
 {
-	assert(cxt);
 	if (cxt->syscall_status < 0)
 		return -cxt->syscall_status;
 	return 0;
@@ -2252,7 +2206,6 @@ int mnt_context_get_syscall_errno(struct libmnt_context *cxt)
  */
 int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status)
 {
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 
@@ -2301,7 +2254,8 @@ int mnt_context_init_helper(struct libmnt_context *cxt, int action,
 {
 	int rc;
 
-	assert(cxt);
+	if (!cxt)
+		return -EINVAL;
 
 	rc = mnt_context_disable_helpers(cxt, TRUE);
 	if (!rc)
@@ -2354,7 +2308,6 @@ int mnt_context_is_fs_mounted(struct libmnt_context *cxt,
 	struct libmnt_table *mtab;
 	int rc;
 
-	assert(cxt);
 	if (!cxt || !fs || !mounted)
 		return -EINVAL;
 
@@ -2370,7 +2323,6 @@ static int mnt_context_add_child(struct libmnt_context *cxt, pid_t pid)
 {
 	pid_t *pids;
 
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 
@@ -2424,7 +2376,6 @@ int mnt_context_wait_for_children(struct libmnt_context *cxt,
 {
 	int i;
 
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 

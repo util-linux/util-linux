@@ -99,9 +99,6 @@ int mnt_tabdiff_next_change(struct libmnt_tabdiff *df, struct libmnt_iter *itr,
 	int rc = 1;
 	struct tabdiff_entry *de = NULL;
 
-	assert(df);
-	assert(df);
-
 	if (!df || !itr)
 		return -EINVAL;
 

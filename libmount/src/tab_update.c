@@ -86,7 +86,6 @@ int mnt_update_set_filename(struct libmnt_update *upd, const char *filename,
 	const char *path = NULL;
 	int rw = 0;
 
-	assert(upd);
 	if (!upd)
 		return -EINVAL;
 
@@ -131,7 +130,6 @@ int mnt_update_set_filename(struct libmnt_update *upd, const char *filename,
  */
 const char *mnt_update_get_filename(struct libmnt_update *upd)
 {
-	assert(upd);
 	return upd ? upd->filename : NULL;
 }
 
@@ -144,7 +142,6 @@ const char *mnt_update_get_filename(struct libmnt_update *upd)
  */
 int mnt_update_is_ready(struct libmnt_update *upd)
 {
-	assert(upd);
 	return upd ? upd->ready : FALSE;
 }
 
@@ -161,9 +158,6 @@ int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 		      const char *target, struct libmnt_fs *fs)
 {
 	int rc;
-
-	assert(upd);
-	assert(target || fs);
 
 	if (!upd)
 		return -EINVAL;
@@ -229,7 +223,6 @@ int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
  */
 struct libmnt_fs *mnt_update_get_fs(struct libmnt_update *upd)
 {
-	assert(upd);
 	return upd ? upd->fs : NULL;
 }
 
@@ -241,7 +234,6 @@ struct libmnt_fs *mnt_update_get_fs(struct libmnt_update *upd)
  */
 unsigned long mnt_update_get_mflags(struct libmnt_update *upd)
 {
-	assert(upd);
 	return upd ? upd->mountflags : 0;
 }
 
@@ -256,7 +248,6 @@ int mnt_update_force_rdonly(struct libmnt_update *upd, int rdonly)
 {
 	int rc = 0;
 
-	assert(upd);
 	if (!upd || !upd->fs)
 		return -EINVAL;
 
@@ -454,9 +445,6 @@ static int fprintf_utab_fs(FILE *f, struct libmnt_fs *fs)
 	char *p;
 	int rc = 0;
 
-	assert(fs);
-	assert(f);
-
 	if (!fs || !f)
 		return -EINVAL;
 
@@ -514,7 +502,6 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 	int rc, fd;
 	char *uq = NULL;
 
-	assert(upd);
 	if (!tb || !upd->filename)
 		return -EINVAL;
 
@@ -839,7 +826,6 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 	struct libmnt_lock *lc0 = lc;
 	int rc = -EINVAL;
 
-	assert(upd);
 	if (!upd || !upd->filename)
 		return -EINVAL;
 	if (!upd->ready)

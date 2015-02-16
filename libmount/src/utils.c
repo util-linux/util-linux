@@ -298,8 +298,6 @@ int mnt_fstype_is_pseudofs(const char *type)
  */
 int mnt_fstype_is_netfs(const char *type)
 {
-	assert(type);
-
 	if (strcmp(type, "cifs")   == 0 ||
 	    strcmp(type, "smbfs")  == 0 ||
 	    strncmp(type,"nfs", 3) == 0 ||
@@ -970,7 +968,8 @@ char *mnt_get_mountpoint(const char *path)
 	struct stat st;
 	dev_t dir, base;
 
-	assert(path);
+	if (!path)
+		return NULL;
 
 	mnt = strdup(path);
 	if (!mnt)
