@@ -73,11 +73,11 @@ function ts_check_losetup {
 	if test -b "$tmp"; then
 		return 0
 	fi
-	ts_skip "no loop device support"
+	ts_skip "no loop-device support"
 }
 
 function ts_skip_subtest {
-	ts_report " IGNORE ($1)"
+	ts_report " SKIPPED ($1)"
 }
 
 function ts_skip {
@@ -90,7 +90,7 @@ function ts_skip {
 
 function ts_skip_nonroot {
 	if [ $UID -ne 0 ]; then
-		ts_skip "not root permissions"
+		ts_skip "no root permissions"
 	fi
 }
 
