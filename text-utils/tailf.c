@@ -276,7 +276,8 @@ int main(int argc, char **argv)
 
 	if (stat(filename, &st) != 0)
 		err(EXIT_FAILURE, _("stat of %s failed"), filename);
-
+	if (!S_ISREG(st.st_mode))
+		errx(EXIT_FAILURE, _("%s: is not a file"), filename);
 	if (st.st_size)
 		tailf(filename, lines, &st);
 
