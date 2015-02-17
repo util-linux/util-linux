@@ -298,7 +298,7 @@ int main(int argc, char *argv[])
 	if (archwrapper)
 		arch = program_invocation_short_name;	/* symlinks to setarch */
 	else {
-		if (*argv[1] != '-') {
+		if (1 < argc && *argv[1] != '-') {
 			arch = argv[1];
 			argv[1] = argv[0];	/* for getopt_long() to get the program name */
 			argv++;
