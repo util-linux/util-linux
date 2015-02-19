@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2015-02-04 11:54+0100\n"
+"POT-Creation-Date: 2015-02-19 13:02+0100\n"
 "PO-Revision-Date: 2015-02-15 08:31+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -32,7 +32,7 @@ msgid "Tell the kernel about the existence of a specified partition.\n"
 msgstr "Cho nhân biết về sự tồn tại của một phân vùng chỉ định.\n"
 
 #: disk-utils/addpart.c:56 disk-utils/blockdev.c:276 disk-utils/blockdev.c:420
-#: disk-utils/blockdev.c:447 disk-utils/cfdisk.c:2272 disk-utils/delpart.c:57
+#: disk-utils/blockdev.c:447 disk-utils/cfdisk.c:2278 disk-utils/delpart.c:57
 #: disk-utils/fdformat.c:229 disk-utils/fdisk.c:624 disk-utils/fdisk.c:867
 #: disk-utils/fdisk-list.c:205 disk-utils/fdisk-list.c:245
 #: disk-utils/fsck.c:1430 disk-utils/fsck.cramfs.c:150
@@ -40,16 +40,16 @@ msgstr "Cho nhân biết về sự tồn tại của một phân vùng chỉ đ�
 #: disk-utils/mkfs.bfs.c:192 disk-utils/mkfs.cramfs.c:164
 #: disk-utils/mkfs.cramfs.c:664 disk-utils/mkfs.cramfs.c:791
 #: disk-utils/mkfs.minix.c:757 disk-utils/mkswap.c:216 disk-utils/mkswap.c:255
-#: disk-utils/partx.c:952 disk-utils/resizepart.c:101 disk-utils/sfdisk.c:383
-#: disk-utils/sfdisk.c:439 disk-utils/sfdisk.c:493 disk-utils/sfdisk.c:552
-#: disk-utils/sfdisk.c:619 disk-utils/sfdisk.c:651 disk-utils/sfdisk.c:1099
+#: disk-utils/partx.c:952 disk-utils/resizepart.c:101 disk-utils/sfdisk.c:384
+#: disk-utils/sfdisk.c:440 disk-utils/sfdisk.c:494 disk-utils/sfdisk.c:553
+#: disk-utils/sfdisk.c:620 disk-utils/sfdisk.c:652 disk-utils/sfdisk.c:1100
 #: disk-utils/swaplabel.c:60 libfdisk/src/bsd.c:582 lib/path.c:70
 #: lib/path.c:82 login-utils/islocal.c:87 login-utils/last.c:659
 #: login-utils/last-deprecated.c:245 login-utils/sulogin.c:468
 #: login-utils/sulogin.c:506 login-utils/utmpdump.c:126
 #: login-utils/utmpdump.c:348 login-utils/utmpdump.c:370
-#: login-utils/vipw.c:256 login-utils/vipw.c:274 misc-utils/findmnt.c:1091
-#: misc-utils/logger.c:667 misc-utils/mcookie.c:115 misc-utils/uuidd.c:225
+#: login-utils/vipw.c:256 login-utils/vipw.c:274 misc-utils/findmnt.c:1111
+#: misc-utils/logger.c:698 misc-utils/mcookie.c:115 misc-utils/uuidd.c:225
 #: sys-utils/blkdiscard.c:154 sys-utils/dmesg.c:520 sys-utils/eject.c:508
 #: sys-utils/eject.c:708 sys-utils/fallocate.c:374 sys-utils/fsfreeze.c:128
 #: sys-utils/fstrim.c:72 sys-utils/hwclock.c:283 sys-utils/hwclock-cmos.c:633
@@ -61,7 +61,7 @@ msgstr "Cho nhân biết về sự tồn tại của một phân vùng chỉ đ�
 #: sys-utils/setpriv.c:552 sys-utils/swapon.c:345 sys-utils/swapon.c:508
 #: sys-utils/switch_root.c:163 sys-utils/unshare.c:79 sys-utils/unshare.c:94
 #: sys-utils/wdctl.c:321 sys-utils/wdctl.c:377 term-utils/agetty.c:2499
-#: term-utils/script.c:221 term-utils/script.c:246 term-utils/script.c:693
+#: term-utils/script.c:221 term-utils/script.c:246 term-utils/script.c:694
 #: term-utils/scriptreplay.c:206 term-utils/scriptreplay.c:209
 #: term-utils/wall.c:276 text-utils/more.c:607 text-utils/rev.c:142
 #: text-utils/tailf.c:61 text-utils/tailf.c:98 text-utils/ul.c:225
@@ -357,238 +357,238 @@ msgstr "Gặp lỗi khi phân tích cú pháp kích cỡ."
 msgid "Select partition type"
 msgstr "Chọn kiểu phân vùng"
 
-#: disk-utils/cfdisk.c:1684 disk-utils/cfdisk.c:1713
+#: disk-utils/cfdisk.c:1685 disk-utils/cfdisk.c:1715
 msgid "Enter script file name: "
 msgstr "Nhập vào tên tập tin bó lệnh: "
 
-#: disk-utils/cfdisk.c:1685
+#: disk-utils/cfdisk.c:1686
 msgid "The script file will be applied to in-memory partition table."
 msgstr "Tập tin văn lệnh sẽ được áp dụng vào bảng phân vùng trong bộ nhớ."
 
-#: disk-utils/cfdisk.c:1694 disk-utils/cfdisk.c:1735
+#: disk-utils/cfdisk.c:1695 disk-utils/cfdisk.c:1737
 #: disk-utils/fdisk-menu.c:463 disk-utils/fdisk-menu.c:501
 #, c-format
 msgid "Cannot open %s"
 msgstr "Không thể mở %s"
 
-#: disk-utils/cfdisk.c:1696 disk-utils/fdisk-menu.c:465
+#: disk-utils/cfdisk.c:1697 disk-utils/fdisk-menu.c:465
 #, c-format
 msgid "Failed to parse script file %s"
 msgstr "Gặp lỗi khi phân tích cú pháp của tập tin văn lệnh %s"
 
-#: disk-utils/cfdisk.c:1698 disk-utils/fdisk-menu.c:467
+#: disk-utils/cfdisk.c:1699 disk-utils/fdisk-menu.c:467
 #, c-format
 msgid "Failed to apply script %s"
 msgstr "Gặp lỗi khi áp dụng văn lệnh %s"
 
-#: disk-utils/cfdisk.c:1714
+#: disk-utils/cfdisk.c:1716
 msgid "The current in-memory partition table will be dumped to the file."
 msgstr "Bảng phân vùng trong bộ nhớ hiện tại sẽ được đổ thành tập tin."
 
-#: disk-utils/cfdisk.c:1722 disk-utils/fdisk-menu.c:489
+#: disk-utils/cfdisk.c:1724 disk-utils/fdisk-menu.c:489
 msgid "Failed to allocate script handler"
 msgstr "Gặp lỗi khi cấp phát cán của văn lệnh"
 
-#: disk-utils/cfdisk.c:1728
+#: disk-utils/cfdisk.c:1730
 msgid "Failed to read disk layout into script."
 msgstr "Gặp lỗi khi đọc bố cục đĩa vào văn lệnh."
 
-#: disk-utils/cfdisk.c:1742
+#: disk-utils/cfdisk.c:1744
 msgid "Disk layout successfully dumped."
 msgstr "Bố cục đĩa đã được đổ thành công."
 
-#: disk-utils/cfdisk.c:1745 disk-utils/fdisk-menu.c:507
+#: disk-utils/cfdisk.c:1747 disk-utils/fdisk-menu.c:507
 #, c-format
 msgid "Failed to write script %s"
 msgstr "Gặp lỗi khi ghi văn lệnh %s"
 
-#: disk-utils/cfdisk.c:1778 disk-utils/fdisk.c:872
-msgid "Device does not contain a recognized partition table."
-msgstr "Thiết bị không chứa bảng phân vùng được biết."
-
-#: disk-utils/cfdisk.c:1780
-msgid "Select a type to create a new label or press 'L' to load script file."
-msgstr "Chọn một kiểu để tạo một nhãn mới hoặc nhấn “L” để tải tập tin văn lệnh."
-
-#: disk-utils/cfdisk.c:1785
+#: disk-utils/cfdisk.c:1783
 msgid "Select label type"
 msgstr "Chọn kiểu nhãn"
 
-#: disk-utils/cfdisk.c:1831
+#: disk-utils/cfdisk.c:1786 disk-utils/fdisk.c:872
+msgid "Device does not contain a recognized partition table."
+msgstr "Thiết bị không chứa bảng phân vùng được biết."
+
+#: disk-utils/cfdisk.c:1792
+msgid "Select a type to create a new label or press 'L' to load script file."
+msgstr "Chọn một kiểu để tạo một nhãn mới hoặc nhấn “L” để tải tập tin văn lệnh."
+
+#: disk-utils/cfdisk.c:1837
 msgid "This is cfdisk, a curses-based disk partitioning program."
 msgstr "Đây là cfdisk, một chương trình phân vùng đĩa dựa trên curses."
 
-#: disk-utils/cfdisk.c:1832
+#: disk-utils/cfdisk.c:1838
 msgid "It lets you create, delete, and modify partitions on a block device."
 msgstr "chương trình cho phép bạn tạo, xóa và sửa đổi các phân vùng trên một thiết bị khối."
 
-#: disk-utils/cfdisk.c:1834
+#: disk-utils/cfdisk.c:1840
 msgid "Command      Meaning"
 msgstr "Câu lệnh     Ý nghĩa"
 
-#: disk-utils/cfdisk.c:1835
+#: disk-utils/cfdisk.c:1841
 msgid "-------      -------"
 msgstr "-------      -------"
 
-#: disk-utils/cfdisk.c:1836
+#: disk-utils/cfdisk.c:1842
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b          Bật/tắt khả năng khởi động của phân vùng hiện tại"
 
-#: disk-utils/cfdisk.c:1837
+#: disk-utils/cfdisk.c:1843
 msgid "  d          Delete the current partition"
 msgstr "  d          Xóa phân vùng hiện tại"
 
-#: disk-utils/cfdisk.c:1838
+#: disk-utils/cfdisk.c:1844
 msgid "  h          Print this screen"
 msgstr "  h          Hiển thị trợ giúp này"
 
-#: disk-utils/cfdisk.c:1839
+#: disk-utils/cfdisk.c:1845
 msgid "  n          Create new partition from free space"
 msgstr "  n          Tạo một phân vùng mới từ không gian trống"
 
-#: disk-utils/cfdisk.c:1840
+#: disk-utils/cfdisk.c:1846
 msgid "  q          Quit program without writing partition table"
 msgstr "  q          Thoát khỏi chương trình và không ghi lại bảng phân vùng"
 
-#: disk-utils/cfdisk.c:1841
+#: disk-utils/cfdisk.c:1847
 msgid "  s          Fix partitions order (only when in disarray)"
 msgstr "  s          Sửa thứ tự các phân vùng (chỉ khi có xáo trộn)"
 
-#: disk-utils/cfdisk.c:1842
+#: disk-utils/cfdisk.c:1848
 msgid "  t          Change the partition type"
 msgstr "  t          Thay đổi kiểu phân vùng"
 
-#: disk-utils/cfdisk.c:1843
+#: disk-utils/cfdisk.c:1849
 msgid "  u          Dump disk layout to sfdisk compatible script file"
 msgstr "  u          Đổ bố cục đĩa ra tập tin tương thích với văn lệnh sfdisk"
 
-#: disk-utils/cfdisk.c:1844
+#: disk-utils/cfdisk.c:1850
 msgid "  W          Write partition table to disk (you must enter uppercase W);"
 msgstr "  W          Ghi bảng phân vùng lên đĩa (cần nhập chữ W hoa);"
 
-#: disk-utils/cfdisk.c:1845
+#: disk-utils/cfdisk.c:1851
 msgid "               since this might destroy data on the disk, you must either"
 msgstr "               vì câu lệnh có thể hủy dữ liệu trên đĩa, bạn cần"
 
-#: disk-utils/cfdisk.c:1846
+#: disk-utils/cfdisk.c:1852
 msgid "               confirm or deny the write by entering 'yes' or 'no'"
 msgstr "               hoặc đồng ý hoặc hủy bỏ việc ghi bằng các nhập \"yes\" (có) hoặc \"no\" (không)"
 
-#: disk-utils/cfdisk.c:1847
+#: disk-utils/cfdisk.c:1853
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "Mũi tên lên  Di chuyển con trỏ tới phân vùng ở trước"
 
-#: disk-utils/cfdisk.c:1848
+#: disk-utils/cfdisk.c:1854
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "Mũi tên xuống Di chuyển con trỏ tới phân vùng tiếp theo"
 
-#: disk-utils/cfdisk.c:1849
+#: disk-utils/cfdisk.c:1855
 msgid "Left Arrow   Move cursor to the previous menu item"
 msgstr "Mũi tên trái Di chuyển con trỏ tới mục đơn kế trước"
 
-#: disk-utils/cfdisk.c:1850
+#: disk-utils/cfdisk.c:1856
 msgid "Right Arrow  Move cursor to the next menu item"
 msgstr "Mũi tên phải Di chuyển con trỏ tới mục đơn kế tiếp"
 
-#: disk-utils/cfdisk.c:1852
+#: disk-utils/cfdisk.c:1858
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Chú ý: Có thể nhập tất cả các câu lệnh với chữ thường và chữ hoa"
 
-#: disk-utils/cfdisk.c:1853
+#: disk-utils/cfdisk.c:1859
 msgid "case letters (except for Write)."
 msgstr "chữ HOA (ngoại trừ lệnh Write [ghi])."
 
-#: disk-utils/cfdisk.c:1855
+#: disk-utils/cfdisk.c:1861
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
 msgstr "Dùng lsblk(8) hay partx(8) để xem thông tin chi tiết hơn về thiết bị."
 
-#: disk-utils/cfdisk.c:1862
+#: disk-utils/cfdisk.c:1868
 msgid "Press a key to continue."
 msgstr "Nhấn một phím để tiếp tục."
 
-#: disk-utils/cfdisk.c:1943
+#: disk-utils/cfdisk.c:1949
 msgid "Could not toggle the flag."
 msgstr "Không thể bật/tắt cờ."
 
-#: disk-utils/cfdisk.c:1953
+#: disk-utils/cfdisk.c:1959
 #, c-format
 msgid "Could not delete partition %zu."
 msgstr "Không thể xóa phân vùng %zu."
 
-#: disk-utils/cfdisk.c:1955 disk-utils/fdisk-menu.c:590
+#: disk-utils/cfdisk.c:1961 disk-utils/fdisk-menu.c:590
 #, c-format
 msgid "Partition %zu has been deleted."
 msgstr "Phân vùng %zu đã bị xóa bỏ."
 
-#: disk-utils/cfdisk.c:1976
+#: disk-utils/cfdisk.c:1982
 msgid "Partition size: "
 msgstr "Cỡ phân vùng: "
 
-#: disk-utils/cfdisk.c:2017
+#: disk-utils/cfdisk.c:2023
 #, c-format
 msgid "Changed type of partition %zu."
 msgstr "Đổi kiểu của phân vùng “%zu”."
 
-#: disk-utils/cfdisk.c:2019
+#: disk-utils/cfdisk.c:2025
 #, c-format
 msgid "The type of partition %zu is unchanged."
 msgstr "Kiểu của phân vùng “%zu” chưa thay đổi."
 
-#: disk-utils/cfdisk.c:2036
+#: disk-utils/cfdisk.c:2042
 msgid "Device is open in read-only mode."
 msgstr "Thiết bị được mở trong chế độ chỉ cho đọc."
 
-#: disk-utils/cfdisk.c:2041
+#: disk-utils/cfdisk.c:2047
 msgid "Are you sure you want to write the partition table to disk? "
 msgstr "Bạn có chắc muốn ghi bảng phân vùng lên đĩa không? "
 
-#: disk-utils/cfdisk.c:2043
+#: disk-utils/cfdisk.c:2049
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Gõ \"có\" hoặc \"không\" hay nhấn ESC để để lại hộp thoại."
 
-#: disk-utils/cfdisk.c:2048 login-utils/lslogins.c:210 sys-utils/lscpu.c:1249
-#: sys-utils/lscpu.c:1259
+#: disk-utils/cfdisk.c:2054 login-utils/lslogins.c:210 sys-utils/lscpu.c:1263
+#: sys-utils/lscpu.c:1273
 msgid "yes"
 msgstr "có"
 
-#: disk-utils/cfdisk.c:2049
+#: disk-utils/cfdisk.c:2055
 msgid "Did not write partition table to disk."
 msgstr "Không ghi bảng phân vùng lên đĩa."
 
-#: disk-utils/cfdisk.c:2054
+#: disk-utils/cfdisk.c:2060
 msgid "Failed to write disklabel."
 msgstr "Gặp lỗi khi ghi nhãn đĩa."
 
-#: disk-utils/cfdisk.c:2057 disk-utils/fdisk-menu.c:545
+#: disk-utils/cfdisk.c:2063 disk-utils/fdisk-menu.c:545
 msgid "The partition table has been altered."
 msgstr "Bảng phân vùng đã bị thay đổi!"
 
-#: disk-utils/cfdisk.c:2079 disk-utils/cfdisk.c:2124
+#: disk-utils/cfdisk.c:2085 disk-utils/cfdisk.c:2130
 msgid "Note that partition table entries are not in disk order now."
 msgstr "Các mục trong bảng phân vùng hiện giờ không đúng như thứ tự như ở trên đĩa."
 
-#: disk-utils/cfdisk.c:2104
+#: disk-utils/cfdisk.c:2110
 msgid "failed to create a new disklabel"
 msgstr "gặp lỗi khi tạo nhãn đĩa mới"
 
-#: disk-utils/cfdisk.c:2112
+#: disk-utils/cfdisk.c:2118
 msgid "failed to read partitions"
 msgstr "gặp lỗi khi đọc các phân vùng"
 
-#: disk-utils/cfdisk.c:2122 disk-utils/fdisk.c:864 disk-utils/fdisk-menu.c:537
+#: disk-utils/cfdisk.c:2128 disk-utils/fdisk.c:864 disk-utils/fdisk-menu.c:537
 msgid "Device open in read-only mode."
 msgstr "Thiết bị mở trong chế độ chỉ cho đọc."
 
-#: disk-utils/cfdisk.c:2194
+#: disk-utils/cfdisk.c:2200
 #, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr " %1$s [các-tùy-chọn] <đĩa>\n"
 
-#: disk-utils/cfdisk.c:2197 disk-utils/fdisk.c:642 disk-utils/sfdisk.c:1315
+#: disk-utils/cfdisk.c:2203 disk-utils/fdisk.c:642 disk-utils/sfdisk.c:1316
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "Hiển thị hay thao tác với bảng phân vùng đĩa.\n"
 
-#: disk-utils/cfdisk.c:2200
+#: disk-utils/cfdisk.c:2206
 msgid " -L --color[=<when>]     colorize output (auto, always or never)\n"
 msgstr ""
 " -L --color[=<khi>]      tô sáng kết xuất <khi>:\n"
@@ -596,16 +596,16 @@ msgstr ""
 "                           always  luôn hoặc\n"
 "                           never   không bao giờ)\n"
 
-#: disk-utils/cfdisk.c:2201
+#: disk-utils/cfdisk.c:2207
 msgid " -z --zero               start with zeroed partition table\n"
 msgstr " -z --zero               bắt đầu với bảng phân vùng được xóa trắng\n"
 
-#: disk-utils/cfdisk.c:2240 disk-utils/fdisk.c:774 misc-utils/cal.c:373
+#: disk-utils/cfdisk.c:2246 disk-utils/fdisk.c:774 misc-utils/cal.c:374
 #: sys-utils/dmesg.c:1318 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "không được hỗ trợ tô màu"
 
-#: disk-utils/cfdisk.c:2258 disk-utils/fdisk.c:714 disk-utils/sfdisk.c:192
+#: disk-utils/cfdisk.c:2264 disk-utils/fdisk.c:714 disk-utils/sfdisk.c:193
 msgid "failed to allocate libfdisk context"
 msgstr "gặp lỗi khi phân bổ ngữ cảnh libfdisk"
 
@@ -752,7 +752,7 @@ msgstr "rãnh cuối do người dùng định nghĩa đã vượt quá số l�
 msgid "user defined start track exceeds the user defined end track"
 msgstr "rãnh bắt đầu do người dùng định nghĩa đã vượt quá điểm cuối được người dùng định nghĩa"
 
-#: disk-utils/fdformat.c:253 misc-utils/logger.c:512
+#: disk-utils/fdformat.c:253 misc-utils/logger.c:538
 msgid "close failed"
 msgstr "gặp lỗi khi đóng"
 
@@ -809,7 +809,7 @@ msgstr "%s (%c-%c): "
 msgid "%s (%ju-%ju): "
 msgstr "%s (%ju-%ju): "
 
-#: disk-utils/fdisk.c:346 disk-utils/sfdisk.c:165
+#: disk-utils/fdisk.c:346 disk-utils/sfdisk.c:166
 msgid " [Y]es/[N]o: "
 msgstr " [C]ó/[K]hông: "
 
@@ -978,7 +978,7 @@ msgstr "Thuộc tính thiết bị (kích cỡ cung từ và cấu trúc hình h
 msgid "Welcome to fdisk (%s)."
 msgstr "Chào mừng bạn dùng fdisk (%s)."
 
-#: disk-utils/fdisk.c:857 disk-utils/sfdisk.c:1136
+#: disk-utils/fdisk.c:857 disk-utils/sfdisk.c:1137
 msgid ""
 "Changes will remain in memory only, until you decide to write them.\n"
 "Be careful before using the write command.\n"
@@ -1342,7 +1342,7 @@ msgstr ""
 "\n"
 "Trợ giúp (lệnh cao cấp):\n"
 
-#: disk-utils/fdisk-menu.c:368 disk-utils/sfdisk.c:928
+#: disk-utils/fdisk-menu.c:368 disk-utils/sfdisk.c:929
 #, c-format
 msgid ""
 "\n"
@@ -1434,19 +1434,19 @@ msgstr "Số đầu đọc"
 msgid "Number of sectors"
 msgstr "Số cung từ"
 
-#: disk-utils/fsck.c:207
+#: disk-utils/fsck.c:208
 #, c-format
 msgid "%s is mounted\n"
 msgstr "%s đã được gắn\n"
 
-#: disk-utils/fsck.c:209
+#: disk-utils/fsck.c:210
 #, c-format
 msgid "%s is not mounted\n"
 msgstr "%s chưa được gắn\n"
 
-#: disk-utils/fsck.c:323 disk-utils/fsck.cramfs.c:169
+#: disk-utils/fsck.c:324 disk-utils/fsck.cramfs.c:169
 #: disk-utils/fsck.cramfs.c:176 disk-utils/fsck.cramfs.c:230
-#: disk-utils/fsck.cramfs.c:248 disk-utils/sfdisk.c:249 libfdisk/src/bsd.c:587
+#: disk-utils/fsck.cramfs.c:248 disk-utils/sfdisk.c:250 libfdisk/src/bsd.c:587
 #: lib/path.c:110 lib/path.c:131 lib/path.c:152 lib/path.c:200
 #: login-utils/last.c:196 login-utils/last.c:233 login-utils/sulogin.c:675
 #: sys-utils/setpriv.c:239 term-utils/setterm.c:731 term-utils/setterm.c:788
@@ -1455,59 +1455,59 @@ msgstr "%s chưa được gắn\n"
 msgid "cannot read %s"
 msgstr "không thể đọc %s"
 
-#: disk-utils/fsck.c:325 lib/path.c:133 lib/path.c:154
+#: disk-utils/fsck.c:326 lib/path.c:133 lib/path.c:154
 #, c-format
 msgid "parse error: %s"
 msgstr "lỗi phân tích cú pháp: %s"
 
-#: disk-utils/fsck.c:352
+#: disk-utils/fsck.c:353
 #, c-format
 msgid "cannot create directory %s"
 msgstr "không thể tạo thư mục %s"
 
-#: disk-utils/fsck.c:365
+#: disk-utils/fsck.c:366
 #, c-format
 msgid "Locking disk by %s ... "
 msgstr "Đang khóa đĩa bằn %s …"
 
-#: disk-utils/fsck.c:376
+#: disk-utils/fsck.c:377
 #, c-format
 msgid "(waiting) "
 msgstr "(đang chờ) "
 
 #. TRANSLATORS: These are followups to "Locking disk...".
-#: disk-utils/fsck.c:386
+#: disk-utils/fsck.c:387
 msgid "succeeded"
 msgstr "thành công"
 
-#: disk-utils/fsck.c:386
+#: disk-utils/fsck.c:387
 msgid "failed"
 msgstr "gặp lỗi"
 
-#: disk-utils/fsck.c:404
+#: disk-utils/fsck.c:405
 #, c-format
 msgid "Unlocking %s.\n"
 msgstr "Đang mở khóa %s.\n"
 
-#: disk-utils/fsck.c:437
+#: disk-utils/fsck.c:438
 #, c-format
 msgid "failed to setup description for %s"
 msgstr "gặp lỗi khi cài đặt mô tả cho %s"
 
-#: disk-utils/fsck.c:467
+#: disk-utils/fsck.c:468
 #, c-format
 msgid "%s: parse error at line %d -- ignore"
 msgstr "%s: lỗi phân tích cú pháp tại dòng %d -- ignore"
 
-#: disk-utils/fsck.c:499 disk-utils/fsck.c:501
+#: disk-utils/fsck.c:500 disk-utils/fsck.c:502
 #, c-format
 msgid "%s: failed to parse fstab"
 msgstr "%s: gặp lỗi khi phân tích fstab"
 
 #: disk-utils/fsck.c:663 login-utils/login.c:979 login-utils/sulogin.c:1041
 #: login-utils/vipw.c:204 sys-utils/flock.c:295 sys-utils/nsenter.c:142
-#: sys-utils/swapon.c:302 sys-utils/unshare.c:221 term-utils/script.c:277
-#: term-utils/script.c:287
+#: sys-utils/swapon.c:302 sys-utils/unshare.c:221 term-utils/script.c:278
+#: term-utils/script.c:288
 msgid "fork failed"
 msgstr "gặp lỗi khi rẽ nhánh tiến trình"
 
@@ -1674,12 +1674,12 @@ msgstr "phải là người chủ (root) để quét tìm hệ thống tập tin
 msgid "couldn't find matching filesystem: %s"
 msgstr "không tìm thấy hệ thống tập tin khớp: %s"
 
-#: disk-utils/fsck.c:1452 disk-utils/fsck.c:1540 misc-utils/kill.c:367
+#: disk-utils/fsck.c:1452 disk-utils/fsck.c:1539 misc-utils/kill.c:367
 #: sys-utils/eject.c:287
 msgid "too many arguments"
 msgstr "quá nhiều đối số"
 
-#: disk-utils/fsck.c:1592
+#: disk-utils/fsck.c:1591
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "tùy chọn -l chỉ có thể sử dụng với một thiết bị mà thôi -- ignore"
 
@@ -2378,10 +2378,10 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:1400 disk-utils/mkfs.minix.c:808
 #: disk-utils/mkswap.c:540 disk-utils/partx.c:1004 disk-utils/resizepart.c:112
-#: login-utils/utmpdump.c:388 misc-utils/logger.c:319 misc-utils/logger.c:389
-#: misc-utils/logger.c:438 sys-utils/dmesg.c:660 sys-utils/wdctl.c:346
-#: sys-utils/wdctl.c:411 term-utils/script.c:341 term-utils/script.c:382
-#: term-utils/script.c:501 text-utils/pg.c:1249
+#: login-utils/utmpdump.c:388 misc-utils/logger.c:333 misc-utils/logger.c:403
+#: misc-utils/logger.c:464 sys-utils/dmesg.c:660 sys-utils/wdctl.c:346
+#: sys-utils/wdctl.c:411 term-utils/script.c:342 term-utils/script.c:383
+#: term-utils/script.c:502 text-utils/pg.c:1249
 msgid "write failed"
 msgstr "gặp lỗi khi ghi"
 
@@ -2632,7 +2632,7 @@ msgstr " -h, --help         hiển thị trợ giúp này rồi thoát\n"
 #: sys-utils/nsenter.c:375 sys-utils/prlimit.c:643 sys-utils/rtcwake.c:589
 #: sys-utils/setarch.c:314 sys-utils/setarch.c:389 sys-utils/setsid.c:117
 #: sys-utils/swapon.c:318 sys-utils/switch_root.c:243 sys-utils/unshare.c:258
-#: term-utils/script.c:557 text-utils/pg.c:1376
+#: term-utils/script.c:558 text-utils/pg.c:1376
 #, c-format
 msgid "failed to execute %s"
 msgstr "lỗi thực hiện %s"
@@ -3278,7 +3278,7 @@ msgstr "%s: gặp lỗi khi cài đặt thiết bị loop"
 
 #: disk-utils/partx.c:161 login-utils/lslogins.c:324 misc-utils/findmnt.c:391
 #: misc-utils/lsblk.c:327 misc-utils/lslocks.c:340 sys-utils/losetup.c:101
-#: sys-utils/lscpu.c:327 sys-utils/prlimit.c:277 sys-utils/swapon.c:135
+#: sys-utils/lscpu.c:328 sys-utils/prlimit.c:277 sys-utils/swapon.c:135
 #: sys-utils/wdctl.c:151 sys-utils/zramctl.c:113
 #, c-format
 msgid "unknown column: %s"
@@ -3379,16 +3379,16 @@ msgstr "không thêm được dòng vào kết xuất"
 msgid "failed to add data to output table"
 msgstr "gặp lỗi khi thêm dữ liệu vào bảng kết xuất"
 
-#: disk-utils/partx.c:632 login-utils/lslogins.c:899 misc-utils/findmnt.c:1536
+#: disk-utils/partx.c:632 login-utils/lslogins.c:899 misc-utils/findmnt.c:1559
 #: misc-utils/lsblk.c:1769 misc-utils/lslocks.c:461 sys-utils/losetup.c:300
-#: sys-utils/lscpu.c:1420 sys-utils/prlimit.c:297 sys-utils/swapon.c:268
+#: sys-utils/lscpu.c:1434 sys-utils/prlimit.c:297 sys-utils/swapon.c:268
 #: sys-utils/wdctl.c:259 sys-utils/zramctl.c:339
 msgid "failed to initialize output table"
 msgstr "lỗi khởi tạo bảng kết xuất"
 
-#: disk-utils/partx.c:643 misc-utils/findmnt.c:1558 misc-utils/lsblk.c:1785
+#: disk-utils/partx.c:643 misc-utils/findmnt.c:1581 misc-utils/lsblk.c:1785
 #: misc-utils/lslocks.c:471 sys-utils/losetup.c:308 sys-utils/losetup.c:344
-#: sys-utils/lscpu.c:1425 sys-utils/prlimit.c:306 sys-utils/swapon.c:277
+#: sys-utils/lscpu.c:1439 sys-utils/prlimit.c:306 sys-utils/swapon.c:277
 #: sys-utils/wdctl.c:270 sys-utils/zramctl.c:348
 msgid "failed to initialize output column"
 msgstr "lỗi khởi tạo cột kết xuất"
@@ -3606,44 +3606,44 @@ msgstr "%s: gặp lỗi khi lấy điểm bắt đầu của phân vùng số %s
 msgid "failed to resize partition"
 msgstr "thay đổi kích thước phân vùng gặp lỗi"
 
-#: disk-utils/sfdisk.c:199
+#: disk-utils/sfdisk.c:200
 msgid "failed to allocate nested libfdisk context"
 msgstr "gặp lỗi khi phân bổ ngữ cảnh libfdisk lồng nhau"
 
-#: disk-utils/sfdisk.c:243
+#: disk-utils/sfdisk.c:244
 #, c-format
 msgid "cannot seek %s"
 msgstr "không thể di chuyển vị trí đọc %s"
 
-#: disk-utils/sfdisk.c:253 libfdisk/src/bsd.c:664 libfdisk/src/bsd.c:835
+#: disk-utils/sfdisk.c:254 libfdisk/src/bsd.c:664 libfdisk/src/bsd.c:835
 #: sys-utils/hwclock.c:161 sys-utils/hwclock.c:163
 #, c-format
 msgid "cannot write %s"
 msgstr "không thể ghi %s"
 
-#: disk-utils/sfdisk.c:259
+#: disk-utils/sfdisk.c:260
 #, c-format
 msgid "%12s (offset %5ju, size %5ju): %s"
 msgstr "%12s: (hiệu = %ju, cỡ = %ju): %s"
 
-#: disk-utils/sfdisk.c:265
+#: disk-utils/sfdisk.c:266
 #, c-format
 msgid "%s: failed to create a backup"
 msgstr "%s: gặp lỗi khi tạo một bản dự phòng"
 
-#: disk-utils/sfdisk.c:285 misc-utils/wipefs.c:382
+#: disk-utils/sfdisk.c:286 misc-utils/wipefs.c:382
 msgid "failed to create a signature backup, $HOME undefined"
 msgstr "gặp lỗi khi tạo một sao lưu chữ ký, chưa định nghĩa biến $HOME"
 
-#: disk-utils/sfdisk.c:291
+#: disk-utils/sfdisk.c:292
 msgid "Backup files:"
 msgstr "Tập tin sao lưu dự phòng:"
 
-#: disk-utils/sfdisk.c:307
+#: disk-utils/sfdisk.c:308
 msgid "The partition table is unchanged (--no-act)."
 msgstr "Bảng phân vùng không thay đổi (--no-act)."
 
-#: disk-utils/sfdisk.c:311
+#: disk-utils/sfdisk.c:312
 msgid ""
 "\n"
 "The partition table has been altered."
@@ -3651,12 +3651,12 @@ msgstr ""
 "\n"
 "Bảng phân vùng đã bị thay đổi!"
 
-#: disk-utils/sfdisk.c:359
+#: disk-utils/sfdisk.c:360
 #, c-format
 msgid "unsupported label '%s'"
 msgstr "không hỗ trợ nhãn đĩa “%s”"
 
-#: disk-utils/sfdisk.c:362
+#: disk-utils/sfdisk.c:363
 msgid ""
 "Id  Name\n"
 "\n"
@@ -3664,155 +3664,155 @@ msgstr ""
 "Id  Tên\n"
 "\n"
 
-#: disk-utils/sfdisk.c:392
+#: disk-utils/sfdisk.c:393
 msgid "unrecognized partition table type"
 msgstr "kiểu bảng phân vùng không nhận ra"
 
-#: disk-utils/sfdisk.c:445
+#: disk-utils/sfdisk.c:446
 #, c-format
 msgid "Cannot get size of %s"
 msgstr "không thể lấy kích cỡ của %s"
 
-#: disk-utils/sfdisk.c:482
+#: disk-utils/sfdisk.c:483
 #, c-format
 msgid "total: %ju blocks\n"
 msgstr "tổng số: %ju khối\n"
 
-#: disk-utils/sfdisk.c:544 disk-utils/sfdisk.c:615 disk-utils/sfdisk.c:677
-#: disk-utils/sfdisk.c:741 disk-utils/sfdisk.c:796 disk-utils/sfdisk.c:852
-#: disk-utils/sfdisk.c:1095
+#: disk-utils/sfdisk.c:545 disk-utils/sfdisk.c:616 disk-utils/sfdisk.c:678
+#: disk-utils/sfdisk.c:742 disk-utils/sfdisk.c:797 disk-utils/sfdisk.c:853
+#: disk-utils/sfdisk.c:1096
 msgid "no disk device specified"
 msgstr "chưa chỉ định thiết bị"
 
-#: disk-utils/sfdisk.c:555
+#: disk-utils/sfdisk.c:556
 msgid "toggle boot flags is supported for MBR only"
 msgstr "bật/tắt các cờ khởi động chỉ hỗ trợ với MBR"
 
-#: disk-utils/sfdisk.c:586 disk-utils/sfdisk.c:682 disk-utils/sfdisk.c:746
-#: disk-utils/sfdisk.c:801 disk-utils/sfdisk.c:857 disk-utils/sfdisk.c:1093
-#: disk-utils/sfdisk.c:1481
+#: disk-utils/sfdisk.c:587 disk-utils/sfdisk.c:683 disk-utils/sfdisk.c:747
+#: disk-utils/sfdisk.c:802 disk-utils/sfdisk.c:858 disk-utils/sfdisk.c:1094
+#: disk-utils/sfdisk.c:1482
 msgid "failed to parse partition number"
 msgstr "gặp lỗi khi phân tích số của phân vùng"
 
-#: disk-utils/sfdisk.c:591
+#: disk-utils/sfdisk.c:592
 #, c-format
 msgid "%s: partition %d: failed to toggle bootable flag"
 msgstr "%s: phân vùng %d: gặp lỗi khi bật/tắt cờ khởi động"
 
-#: disk-utils/sfdisk.c:623
+#: disk-utils/sfdisk.c:624
 msgid "failed to allocate dump struct"
 msgstr "gặp lỗi khi phân bổ cấu trúc đổ"
 
-#: disk-utils/sfdisk.c:627
+#: disk-utils/sfdisk.c:628
 msgid "failed to dump partition table"
 msgstr "gặp lỗi khi đổ bảng phân vùng"
 
-#: disk-utils/sfdisk.c:655
+#: disk-utils/sfdisk.c:656
 #, c-format
 msgid "%s: not found partition table."
 msgstr "%s: không tìm thấy bảng phân vùng."
 
-#: disk-utils/sfdisk.c:659
+#: disk-utils/sfdisk.c:660
 #, c-format
 msgid "%s: partition %zu: partition table contains only %zu partitions"
 msgstr "%s: bảng phân vùng %zu: bảng phân vùng chỉ chứa %zu phân vùng"
 
-#: disk-utils/sfdisk.c:662
+#: disk-utils/sfdisk.c:663
 #, c-format
 msgid "%s: partition %zu: partition is unused"
 msgstr "%s: Phân vùng %zu: phân vùng chưa được dùng"
 
-#: disk-utils/sfdisk.c:681 disk-utils/sfdisk.c:745 disk-utils/sfdisk.c:800
-#: disk-utils/sfdisk.c:856
+#: disk-utils/sfdisk.c:682 disk-utils/sfdisk.c:746 disk-utils/sfdisk.c:801
+#: disk-utils/sfdisk.c:857
 msgid "no partition number specified"
 msgstr "chưa chỉ ra số của phân vùng"
 
-#: disk-utils/sfdisk.c:687 disk-utils/sfdisk.c:751 disk-utils/sfdisk.c:806
-#: disk-utils/sfdisk.c:862
+#: disk-utils/sfdisk.c:688 disk-utils/sfdisk.c:752 disk-utils/sfdisk.c:807
+#: disk-utils/sfdisk.c:863
 msgid "unexpected arguments"
 msgstr "gặp số các đối số không cần"
 
-#: disk-utils/sfdisk.c:702
+#: disk-utils/sfdisk.c:703
 #, c-format
 msgid "%s: partition %zu: failed to get partition type"
 msgstr "%s: phân vùng %zu: gặp lỗi khi lấy kiểu của phân vùng"
 
-#: disk-utils/sfdisk.c:721
+#: disk-utils/sfdisk.c:722
 #, c-format
 msgid "failed to parse %s partition type '%s'"
 msgstr "gặp lỗi khi phân tích phân vùng “%s” kiểu “%s”"
 
-#: disk-utils/sfdisk.c:725
+#: disk-utils/sfdisk.c:726
 #, c-format
 msgid "%s: partition %zu: failed to set partition type"
 msgstr "%s: phân vùng %zu: gặp lỗi khi đặt kiểu phân vùng"
 
-#: disk-utils/sfdisk.c:763
+#: disk-utils/sfdisk.c:764
 #, c-format
 msgid "%s: partition %zu: failed to get partition UUID"
 msgstr "%s: phân vùng %zu: gặp lỗi khi lấy mã số thiết bị của phân vùng"
 
-#: disk-utils/sfdisk.c:776 disk-utils/sfdisk.c:831 disk-utils/sfdisk.c:885
+#: disk-utils/sfdisk.c:777 disk-utils/sfdisk.c:832 disk-utils/sfdisk.c:886
 msgid "failed to allocate partition object"
 msgstr "gặp lỗi khi cấp phát đối tượng bảng phân vùng"
 
-#: disk-utils/sfdisk.c:780
+#: disk-utils/sfdisk.c:781
 #, c-format
 msgid "%s: partition %zu: failed to set partition UUID"
 msgstr "%s: phân vùng %zu: gặp lỗi khi đặt mã số thiết bị phân vùng"
 
-#: disk-utils/sfdisk.c:818
+#: disk-utils/sfdisk.c:819
 #, c-format
 msgid "%s: partition %zu: failed to get partition name"
 msgstr "%s: phân vùng %zu: gặp lỗi khi lấy tên của phân vùng"
 
-#: disk-utils/sfdisk.c:835
+#: disk-utils/sfdisk.c:836
 #, c-format
 msgid "%s: partition %zu: failed to set partition name"
 msgstr "%s: phân vùng %zu: gặp lỗi khi đặt tên cho phân vùng"
 
-#: disk-utils/sfdisk.c:889
+#: disk-utils/sfdisk.c:890
 #, c-format
 msgid "%s: partition %zu: failed to set partition attributes"
 msgstr "%s: phân vùng %zu: gặp lỗi khi đặt thuộc tính của phân vùng"
 
-#: disk-utils/sfdisk.c:932
+#: disk-utils/sfdisk.c:933
 msgid " Commands:\n"
 msgstr "Lệnh:\n"
 
-#: disk-utils/sfdisk.c:934
+#: disk-utils/sfdisk.c:935
 msgid "   write    write table to disk and exit\n"
 msgstr "   write    ghi bảng phân vùng lên đĩa và thoát\n"
 
-#: disk-utils/sfdisk.c:935
+#: disk-utils/sfdisk.c:936
 msgid "   quit     show new situation and wait for user's feedback before write\n"
 msgstr "   quit     hiển thị tình trạng mới và đợi phản hồi của người dùng trước khi ghi\n"
 
-#: disk-utils/sfdisk.c:936
+#: disk-utils/sfdisk.c:937
 msgid "   abort    exit sfdisk shell\n"
 msgstr "   abort    thoát khỏi hệ vỏ sfdisk\n"
 
-#: disk-utils/sfdisk.c:937
+#: disk-utils/sfdisk.c:938
 msgid "   print    print partition table.\n"
 msgstr "   print    in ra bảng phân vùng.\n"
 
-#: disk-utils/sfdisk.c:938
+#: disk-utils/sfdisk.c:939
 msgid "   help     this help.\n"
 msgstr "   help     hiển thị trợ giúp này.\n"
 
-#: disk-utils/sfdisk.c:940
+#: disk-utils/sfdisk.c:941
 msgid "   CTRL-D   the same like 'quit' command\n"
 msgstr "   CTRL-D   giống với lệnh “quit”\n"
 
-#: disk-utils/sfdisk.c:944
+#: disk-utils/sfdisk.c:945
 msgid " Input format:\n"
 msgstr "Định dạng đầu vào:\n"
 
-#: disk-utils/sfdisk.c:946
+#: disk-utils/sfdisk.c:947
 msgid "   <start>, <size>, <type>, <bootable>\n"
 msgstr "   <đầu>, <cỡ>, <kiểu>, <khởi động được>\n"
 
-#: disk-utils/sfdisk.c:949
+#: disk-utils/sfdisk.c:950
 msgid ""
 "   <start>  begin of the partition in sectors or bytes if specified\n"
 "            in format <number>{K,M,G,T,P,E,Z,Y}. The default is\n"
@@ -3822,7 +3822,7 @@ msgstr ""
 "                chỉ định theo định dạng <số>{K,M,G,T,P,E,Z,Y}.\n"
 "                Mặc định là đầu chỗ trống.\n"
 
-#: disk-utils/sfdisk.c:954
+#: disk-utils/sfdisk.c:955
 msgid ""
 "   <size>   size of the partition in sectors if specified in format\n"
 "            <number>{K,M,G,T,P,E,Z,Y} then it's interpreted as size\n"
@@ -3832,54 +3832,54 @@ msgstr ""
 "            định dạng <số>{K,M,G,T,P,E,Z,Y} thế thì nó được biên\n"
 "            dịch là theo byte. Mặc định là mọi vùng trống sẵn có\n"
 
-#: disk-utils/sfdisk.c:959
+#: disk-utils/sfdisk.c:960
 msgid "   <type>   partition type. The default is Linux data partition.\n"
 msgstr "   <kiểu>  kiểu phân vùng. Mặc định là phân vùng dữ liệu Linux.\n"
 
-#: disk-utils/sfdisk.c:960
+#: disk-utils/sfdisk.c:961
 msgid "            MBR: hex or L,S,E,X shortcuts.\n"
 msgstr "            MBR: hex hay phím tắt L,S,E,X.\n"
 
-#: disk-utils/sfdisk.c:961
+#: disk-utils/sfdisk.c:962
 msgid "            GPT: uuid or L,S,H shortcuts.\n"
 msgstr "            GPT: uuid hay phím tắt L,S,H.\n"
 
-#: disk-utils/sfdisk.c:964
+#: disk-utils/sfdisk.c:965
 msgid "   <bootable>  '*' to mark MBR partition as bootable. \n"
 msgstr "   <khởi động được>  “*” đánh dấu bảng MBR là khởi động được. \n"
 
-#: disk-utils/sfdisk.c:968
+#: disk-utils/sfdisk.c:969
 msgid " Example:\n"
 msgstr "Ví dụ:\n"
 
-#: disk-utils/sfdisk.c:970
+#: disk-utils/sfdisk.c:971
 msgid "   , 4G     creates 4GiB partition on default start offset.\n"
 msgstr "   , 4G     tạo phân vùng 4GiB trên vị trí bù mặc định đầu tiên.\n"
 
-#: disk-utils/sfdisk.c:1002 sys-utils/dmesg.c:1443
+#: disk-utils/sfdisk.c:1003 sys-utils/dmesg.c:1443
 msgid "unsupported command"
 msgstr "lệnh không được hỗ trợ"
 
-#: disk-utils/sfdisk.c:1004
+#: disk-utils/sfdisk.c:1005
 #, c-format
 msgid "line %d: unsupported command"
 msgstr "dòng %d: lệnh không được hỗ trợ"
 
-#: disk-utils/sfdisk.c:1103
+#: disk-utils/sfdisk.c:1104
 msgid "failed to allocate script handler"
 msgstr "gặp lỗi khi cấp phát cán của văn lệnh"
 
-#: disk-utils/sfdisk.c:1114
+#: disk-utils/sfdisk.c:1115
 #, c-format
 msgid "%s: cannot modify partition %d: no partition table was found"
 msgstr "%s: không thể sửa phân vùng %d, không tìm thấy bảng phân vùng"
 
-#: disk-utils/sfdisk.c:1119
+#: disk-utils/sfdisk.c:1120
 #, c-format
 msgid "%s: cannot modify partition %d: partition table contains only %zu partitions"
 msgstr "%s: không thể sửa phân vùng %d, bảng phân vùng chỉ chứa %zu phân vùng mà thôi"
 
-#: disk-utils/sfdisk.c:1134
+#: disk-utils/sfdisk.c:1135
 #, c-format
 msgid ""
 "\n"
@@ -3888,11 +3888,11 @@ msgstr ""
 "\n"
 "Chào mừng bạn dùng fdisk (%s)."
 
-#: disk-utils/sfdisk.c:1142
+#: disk-utils/sfdisk.c:1143
 msgid "Checking that no-one is using this disk right now ..."
 msgstr "Đang kiểm tra xem để chắc chắn là không có ai đó đang sử dụng đĩa này…"
 
-#: disk-utils/sfdisk.c:1144
+#: disk-utils/sfdisk.c:1145
 msgid ""
 " FAILED\n"
 "\n"
@@ -3900,7 +3900,7 @@ msgstr ""
 " BỊ LỖI\n"
 "\n"
 
-#: disk-utils/sfdisk.c:1147
+#: disk-utils/sfdisk.c:1148
 msgid ""
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
 "Umount all file systems, and swapoff all swap partitions on this disk.\n"
@@ -3910,11 +3910,11 @@ msgstr ""
 "hay. Hãy Bỏ gắn tất cả các hệ thống tập tin, và tắt (swapoff) các phân vùng trao đổi\n"
 "trên đĩa này. Sử dụng “--no-reread” để bỏ kiểm tra này.\n"
 
-#: disk-utils/sfdisk.c:1152
+#: disk-utils/sfdisk.c:1153
 msgid "Use the --force flag to overrule all checks."
 msgstr "Sử dụng tùy chọn --force để bãi bỏ mọi kiểm tra."
 
-#: disk-utils/sfdisk.c:1154
+#: disk-utils/sfdisk.c:1155
 msgid ""
 " OK\n"
 "\n"
@@ -3922,7 +3922,7 @@ msgstr ""
 "OK\n"
 "\n"
 
-#: disk-utils/sfdisk.c:1163
+#: disk-utils/sfdisk.c:1164
 msgid ""
 "\n"
 "Old situation:"
@@ -3930,7 +3930,7 @@ msgstr ""
 "\n"
 "Trạng thái cũ:"
 
-#: disk-utils/sfdisk.c:1180
+#: disk-utils/sfdisk.c:1181
 #, c-format
 msgid ""
 "\n"
@@ -3943,7 +3943,7 @@ msgstr ""
 "Dùng “label: <tên>” trước khi bạn định nghĩa phân vùng đầu tiên\n"
 "để mà đè lên mặc định."
 
-#: disk-utils/sfdisk.c:1183
+#: disk-utils/sfdisk.c:1184
 msgid ""
 "\n"
 "Type 'help' to get more information.\n"
@@ -3951,32 +3951,32 @@ msgstr ""
 "\n"
 "Hãy gõ lệnh “%s --help” để tìm thấy thông tin thêm.\n"
 
-#: disk-utils/sfdisk.c:1201
+#: disk-utils/sfdisk.c:1202
 msgid "All partitions used."
 msgstr "Mọi phân vùng đã được dùng."
 
-#: disk-utils/sfdisk.c:1209
+#: disk-utils/sfdisk.c:1210
 msgid "failed to allocate partition name"
 msgstr "gặp lỗi cấp phát tên phân vùng"
 
-#: disk-utils/sfdisk.c:1237
+#: disk-utils/sfdisk.c:1238
 #, c-format
 msgid "Ignoring partition %zu."
 msgstr "Bỏ qua phân vùng %zu."
 
-#: disk-utils/sfdisk.c:1245
+#: disk-utils/sfdisk.c:1246
 msgid "Failed to apply script headers, disk label not created."
 msgstr "Gặp lỗi khi áp dụng phần đầu văn lệnh, nhãn đia chưa tạo."
 
-#: disk-utils/sfdisk.c:1257
+#: disk-utils/sfdisk.c:1258
 msgid "Failed to add partition"
 msgstr "Gặp lỗi khi thêm phân vùng"
 
-#: disk-utils/sfdisk.c:1268
+#: disk-utils/sfdisk.c:1269
 msgid "Script header accepted."
 msgstr "Phần đầu văn lệnh được chấp thuận."
 
-#: disk-utils/sfdisk.c:1277
+#: disk-utils/sfdisk.c:1278
 msgid ""
 "\n"
 "New situation:"
@@ -3984,19 +3984,19 @@ msgstr ""
 "\n"
 "Trạng thái mới:"
 
-#: disk-utils/sfdisk.c:1286
+#: disk-utils/sfdisk.c:1287
 msgid "Do you want to write this to disk?"
 msgstr "Bạn có muốn ghi lên đĩa?"
 
-#: disk-utils/sfdisk.c:1288
+#: disk-utils/sfdisk.c:1289
 msgid "Leaving."
 msgstr "Rời bỏ."
 
-#: disk-utils/sfdisk.c:1298
+#: disk-utils/sfdisk.c:1299
 msgid "Leaving.\n"
 msgstr "Rời bỏ.\n"
 
-#: disk-utils/sfdisk.c:1311
+#: disk-utils/sfdisk.c:1312
 #, c-format
 msgid ""
 " %1$s [options] <dev> [[-N] <part>]\n"
@@ -4005,7 +4005,7 @@ msgstr ""
 " %1$s [các tùy chọn] <thiết-bị> [[-N] <phần>]\n"
 " %1$s [các tùy chọn] <lệnh>\n"
 
-#: disk-utils/sfdisk.c:1317
+#: disk-utils/sfdisk.c:1318
 msgid ""
 "\n"
 "Commands:\n"
@@ -4013,141 +4013,141 @@ msgstr ""
 "\n"
 "Lệnh:\n"
 
-#: disk-utils/sfdisk.c:1318
+#: disk-utils/sfdisk.c:1319
 msgid " -a, --activate <dev> [<part> ...] list or set bootable MBR partitions\n"
 msgstr " -a, --activate <dev> [<part> …] liệt kê hoặc đặt các phân vùng MBR khởi động được\n"
 
-#: disk-utils/sfdisk.c:1319
+#: disk-utils/sfdisk.c:1320
 msgid " -d, --dump <dev>                  dump partition table (usable for later input)\n"
 msgstr " -d, --dump <dev>                  đổ bảng phân vùng (có thể dùng làm đầu vào sau này)\n"
 
-#: disk-utils/sfdisk.c:1320
+#: disk-utils/sfdisk.c:1321
 msgid " -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"
 msgstr " -g, --show-geometry [<dev> …]   liệt kê hình học của thiết bị đã cho hoặc mọi\n"
 
-#: disk-utils/sfdisk.c:1321
+#: disk-utils/sfdisk.c:1322
 msgid " -l, --list [<dev> ...]            list partitions of each device\n"
 msgstr " -l, --list [<dev> …]              liệt kê các phân vùng của từng thiết bị\n"
 
-#: disk-utils/sfdisk.c:1322
+#: disk-utils/sfdisk.c:1323
 msgid " -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"
 msgstr " -s, --show-size [<dev> …]         liệt kê các cỡ của mọi hay từng thiết bị đã cho\n"
 
-#: disk-utils/sfdisk.c:1323
+#: disk-utils/sfdisk.c:1324
 msgid " -T, --list-types                  print the recognized types (see -X)\n"
 msgstr " -T, --list-types                  hiển thị các kiểu được chấp nhận (xem -X)\n"
 
-#: disk-utils/sfdisk.c:1324
+#: disk-utils/sfdisk.c:1325
 msgid " -V, --verify                      test whether partitions seem correct\n"
 msgstr " -V, --verify                      kiểm tra xem phân vùng đã đúng chưa\n"
 
-#: disk-utils/sfdisk.c:1327
+#: disk-utils/sfdisk.c:1328
 msgid " --part-label <dev> <part> [<str>] print or change partition label\n"
 msgstr " --part-label <dev> <part> [<str>] in hay đổi nhãn phân vùng\n"
 
-#: disk-utils/sfdisk.c:1328
+#: disk-utils/sfdisk.c:1329
 msgid " --part-type <dev> <part> [<type>] print or change partition type\n"
 msgstr " --part-type <dev> <part> [<type>] in hoặc đổi kiểu phân vùng\n"
 
-#: disk-utils/sfdisk.c:1329
+#: disk-utils/sfdisk.c:1330
 msgid " --part-uuid <dev> <part> [<uuid>] print or change partition uuid\n"
 msgstr " --part-uuid <dev> <part> [<uuid>] in hay đổi uuid của phân vùng\n"
 
-#: disk-utils/sfdisk.c:1330
+#: disk-utils/sfdisk.c:1331
 msgid " --part-attrs <dev> <part> [<str>] print or change partition attributes\n"
 msgstr " --part-attrs <dev> <part> [<str>] in hay đổi các thuộc tính của phân vùng\n"
 
-#: disk-utils/sfdisk.c:1333
+#: disk-utils/sfdisk.c:1334
 msgid " <dev>                     device (usually disk) path\n"
 msgstr " <dev>                     đường dẫn thiết bị (thường là đĩa)\n"
 
-#: disk-utils/sfdisk.c:1334
+#: disk-utils/sfdisk.c:1335
 msgid " <part>                    partition number\n"
 msgstr " <part>                    số phân vùng\n"
 
-#: disk-utils/sfdisk.c:1335
+#: disk-utils/sfdisk.c:1336
 msgid " <type>                    partition type, GUID for GPT, hex for MBR\n"
 msgstr " <type>                    kiểu phân vùng, GUID cho GPT, hex cho MBR\n"
 
-#: disk-utils/sfdisk.c:1338
+#: disk-utils/sfdisk.c:1339
 msgid " -A, --append              append partitions to existing partition table\n"
 msgstr " -A, --append              thêm các phân vùng sẵn có vào bảng phân vùng\n"
-
-#: disk-utils/sfdisk.c:1339
-msgid "     --bytes               print SIZE in bytes rather than in human readable format\n"
-msgstr "     --bytes               hiển thị kích thước theo byte thay vì định dạng dành cho con người\n"
 
 #: disk-utils/sfdisk.c:1340
 msgid " -b, --backup              backup partition table sectors (see -O)\n"
 msgstr " -b, --backup              sao lưu các cung từ bảng phân vùng (xem -O)\n"
 
 #: disk-utils/sfdisk.c:1341
+msgid "     --bytes               print SIZE in bytes rather than in human readable format\n"
+msgstr "     --bytes               hiển thị kích thước theo byte thay vì định dạng dành cho con người\n"
+
+#: disk-utils/sfdisk.c:1342
 msgid " -f, --force               disable all consistency checking\n"
 msgstr " -f, --force               tắt mọi kiểm tra toàn vẹn\n"
 
-#: disk-utils/sfdisk.c:1342
-msgid " -o, --output <list>       output columns\n"
-msgstr " -o, --output <d.sách>  hiển thị các cột\n"
-
 #: disk-utils/sfdisk.c:1343
-msgid " -O, --backup-file <path>  override default backup file name\n"
-msgstr " -O, --backup-file <path>  đè lên tên tập tin sao lưu dự phòng mặc định\n"
-
-#: disk-utils/sfdisk.c:1344
 msgid " -N, --partno <num>        specify partition number\n"
 msgstr " -N, --partno <num>        chỉ định số phân vùng\n"
 
-#: disk-utils/sfdisk.c:1345
-msgid " -X, --label <name>        specify label type (dos, gpt, ...)\n"
-msgstr " -X, --label <name>        chỉ định kiểu nhãn (dos, gpt, …)\n"
-
-#: disk-utils/sfdisk.c:1346
-msgid " -Y, --label-nested <name> specify nested label type (dos, bsd)\n"
-msgstr " -Y, --label-nested <name> chỉ định kiểu nhãn lồng nhau (dos, bsd)\n"
-
-#: disk-utils/sfdisk.c:1347
-msgid " -q, --quiet               suppress extra info messages\n"
-msgstr " -q, --quiet               chặn các thông tin thông báo mở rộng\n"
-
-#: disk-utils/sfdisk.c:1348
+#: disk-utils/sfdisk.c:1344
 msgid " -n, --no-act              do everything except write to device\n"
 msgstr " -n, --no-act              làm mọi thứ ngoại trừ ghi lên thiết bị\n"
 
-#: disk-utils/sfdisk.c:1349
+#: disk-utils/sfdisk.c:1345
 msgid "     --no-reread           do not check whether the device is in use\n"
 msgstr "     --no-reread           không cần kiểm tra xem thiết bị có đang được dùng hay không\n"
 
-#: disk-utils/sfdisk.c:1351
-msgid " -u, --unit S              deprecated, only sector unit is supported\n"
-msgstr " -u, --unit S              đã lạc hậu, chỉ đơn vị cung từ được hỗ trợ\n"
+#: disk-utils/sfdisk.c:1346
+msgid " -O, --backup-file <path>  override default backup file name\n"
+msgstr " -O, --backup-file <path>  đè lên tên tập tin sao lưu dự phòng mặc định\n"
+
+#: disk-utils/sfdisk.c:1347
+msgid " -o, --output <list>       output columns\n"
+msgstr " -o, --output <d.sách>  hiển thị các cột\n"
+
+#: disk-utils/sfdisk.c:1348
+msgid " -q, --quiet               suppress extra info messages\n"
+msgstr " -q, --quiet               chặn các thông tin thông báo mở rộng\n"
+
+#: disk-utils/sfdisk.c:1349
+msgid " -X, --label <name>        specify label type (dos, gpt, ...)\n"
+msgstr " -X, --label <name>        chỉ định kiểu nhãn (dos, gpt, …)\n"
+
+#: disk-utils/sfdisk.c:1350
+msgid " -Y, --label-nested <name> specify nested label type (dos, bsd)\n"
+msgstr " -Y, --label-nested <name> chỉ định kiểu nhãn lồng nhau (dos, bsd)\n"
 
 #: disk-utils/sfdisk.c:1352
 msgid " -L, --Linux               deprecated, only for backward compatibility\n"
 msgstr " -L, --Linux               đã lạc hậu, dành cho mục đích tương thích ngược\n"
 
-#: disk-utils/sfdisk.c:1356 login-utils/chfn.c:103 login-utils/chsh.c:80
+#: disk-utils/sfdisk.c:1353
+msgid " -u, --unit S              deprecated, only sector unit is supported\n"
+msgstr " -u, --unit S              đã lạc hậu, chỉ đơn vị cung từ được hỗ trợ\n"
+
+#: disk-utils/sfdisk.c:1357 login-utils/chfn.c:103 login-utils/chsh.c:80
 msgid " -v, --version  output version information and exit\n"
 msgstr " -v, --version  đưa ra thông tin phiên bản rồi thoát\n"
 
-#: disk-utils/sfdisk.c:1444
+#: disk-utils/sfdisk.c:1445
 #, c-format
 msgid "%s is deprecated in favour of --part-type"
 msgstr "%s đã lỗi thời trong---part-type"
 
-#: disk-utils/sfdisk.c:1449
+#: disk-utils/sfdisk.c:1450
 msgid "--id is deprecated in favour of --part-type"
 msgstr "--id đã lỗi thời trong ---part-type"
 
-#: disk-utils/sfdisk.c:1468
+#: disk-utils/sfdisk.c:1469
 msgid "--Linux option is unnecessary and deprecated"
 msgstr "Tùy chọn --Linux là không cần thiết và đã lỗi thời"
 
-#: disk-utils/sfdisk.c:1494
+#: disk-utils/sfdisk.c:1495
 #, c-format
 msgid "unsupported unit '%c'"
 msgstr "không hỗ trợ đơn vị “%c”"
 
-#: disk-utils/sfdisk.c:1497 include/c.h:294
+#: disk-utils/sfdisk.c:1498 include/c.h:294
 #, c-format
 msgid "%s from %s\n"
 msgstr "“%s” từ gói phần mềm “%s”\n"
@@ -4233,8 +4233,8 @@ msgstr ""
 "Thông báo lỗi dịch cho <http://translationproject.org/team/vi.html>\n"
 
 #: include/closestream.h:42 include/closestream.h:44 login-utils/vipw.c:271
-#: login-utils/vipw.c:290 sys-utils/rtcwake.c:279 term-utils/script.c:595
-#: term-utils/script.c:599 term-utils/setterm.c:819 term-utils/wall.c:314
+#: login-utils/vipw.c:290 sys-utils/rtcwake.c:279 term-utils/script.c:596
+#: term-utils/script.c:600 term-utils/setterm.c:819 term-utils/wall.c:314
 #: text-utils/col.c:157
 msgid "write error"
 msgstr "lỗi ghi"
@@ -5721,7 +5721,7 @@ msgstr "UUID"
 msgid "Name"
 msgstr "Tên"
 
-#: libfdisk/src/partition.c:670
+#: libfdisk/src/partition.c:751
 msgid "Free space"
 msgstr "Chỗ trống"
 
@@ -6164,7 +6164,7 @@ msgstr "lấy thông tin hệ thống (sysinfo) gặp lỗi"
 msgid "waitpid failed (%s)"
 msgstr "waitpid bị lỗi (%s)"
 
-#: lib/path.c:209 sys-utils/lscpu.c:1525
+#: lib/path.c:209 sys-utils/lscpu.c:1539
 msgid "failed to callocate cpu set"
 msgstr "gặp lỗi khi phân cấp (callocate) tập hợp CPU"
 
@@ -6786,7 +6786,7 @@ msgstr "%s: %s chứa giá trị bằng số không hợp lệ: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "trạng thái đăng nhập im lặng: phục hồi ID nguyên gốc gặp lỗi"
 
-#: login-utils/lslogins.c:209 sys-utils/lscpu.c:1249 sys-utils/lscpu.c:1259
+#: login-utils/lslogins.c:209 sys-utils/lscpu.c:1263 sys-utils/lscpu.c:1273
 msgid "no"
 msgstr "không"
 
@@ -7023,7 +7023,7 @@ msgstr ""
 #: login-utils/lslogins.c:1205 login-utils/nologin.c:25
 #: misc-utils/lslocks.c:507 misc-utils/mcookie.c:82 misc-utils/uuidd.c:73
 #: misc-utils/uuidgen.c:33 sys-utils/dmesg.c:264 sys-utils/ipcmk.c:66
-#: sys-utils/lscpu.c:1630 sys-utils/readprofile.c:104 sys-utils/rtcwake.c:72
+#: sys-utils/lscpu.c:1644 sys-utils/readprofile.c:104 sys-utils/rtcwake.c:72
 #: term-utils/setterm.c:404 text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
@@ -7117,8 +7117,8 @@ msgstr "     --wtmp-file <đường_dẫn>  đặt đường dẫn thay thế ch
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <đường_dẫn>  đặt đường dẫn thay thế cho btmp\n"
 
-#: login-utils/lslogins.c:1236 misc-utils/findmnt.c:1230
-#: sys-utils/lscpu.c:1647
+#: login-utils/lslogins.c:1236 misc-utils/findmnt.c:1250
+#: sys-utils/lscpu.c:1661
 #, c-format
 msgid ""
 "\n"
@@ -7448,7 +7448,7 @@ msgstr ""
 " -e, --force              xem xét đến các tập tin mật khẩu một cách trực\n"
 "                          tiếp nếu getpwnam(3) gặp lỗi\n"
 
-#: login-utils/sulogin.c:879 misc-utils/findmnt.c:1428 sys-utils/wdctl.c:523
+#: login-utils/sulogin.c:879 misc-utils/findmnt.c:1448 sys-utils/wdctl.c:523
 #: term-utils/wall.c:135
 msgid "invalid timeout argument"
 msgstr "đối số quá giờ không hợp lệ"
@@ -7588,97 +7588,97 @@ msgstr "Bạn đang dùng shadow passwords (mật khẩu bóng) trên hệ thố
 msgid "Would you like to edit %s now [y/n]? "
 msgstr "Soạn thảo %s bây giờ [y/n]? "
 
-#: misc-utils/cal.c:364
+#: misc-utils/cal.c:365
 msgid "invalid week argument"
 msgstr "đối số tuần không hợp lệ"
 
-#: misc-utils/cal.c:366
+#: misc-utils/cal.c:367
 msgid "illegal week value: use 1-53"
 msgstr "đối số tuần không hợp lệ: dùng 1-53"
 
-#: misc-utils/cal.c:399
+#: misc-utils/cal.c:400
 msgid "illegal day value"
 msgstr "giá trị ngày bị sai"
 
-#: misc-utils/cal.c:401 misc-utils/cal.c:417
+#: misc-utils/cal.c:402 misc-utils/cal.c:418
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "giá trị ngày bị sai: hãy dùng 1-%d"
 
-#: misc-utils/cal.c:404 misc-utils/cal.c:406
+#: misc-utils/cal.c:405 misc-utils/cal.c:407
 msgid "illegal month value: use 1-12"
 msgstr "giá trị tháng bị sai: hãy dùng 1-12"
 
-#: misc-utils/cal.c:409 misc-utils/cal.c:413
+#: misc-utils/cal.c:410 misc-utils/cal.c:414
 msgid "illegal year value"
 msgstr "giá trị năm không hợp lệ"
 
-#: misc-utils/cal.c:411
+#: misc-utils/cal.c:412
 msgid "illegal year value: use positive integer"
 msgstr "giá trị năm không hợp lệ: hãy dùng số nguyên dương"
 
-#: misc-utils/cal.c:442 misc-utils/cal.c:455
+#: misc-utils/cal.c:443 misc-utils/cal.c:456
 #, c-format
 msgid "illegal week value: year %d doesn't have week %d"
 msgstr "đối số tuần không hợp lệ: năm %d không có tuần %d"
 
-#: misc-utils/cal.c:601
+#: misc-utils/cal.c:602
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#: misc-utils/cal.c:607
+#: misc-utils/cal.c:608
 #, c-format
 msgid "%d"
 msgstr "%d"
 
-#: misc-utils/cal.c:613
+#: misc-utils/cal.c:614
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:924
+#: misc-utils/cal.c:925
 #, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr "%s [tuỳ_chọn] [[[ngày] tháng] năm]\n"
 
-#: misc-utils/cal.c:927
+#: misc-utils/cal.c:928
 msgid "Display a calendar, or some part of it.\n"
 msgstr "Hiển thị lịch hay một số bộ phận của nó.\n"
 
-#: misc-utils/cal.c:928
+#: misc-utils/cal.c:929
 msgid "Without any arguments, display the current month.\n"
 msgstr "Nếu không có đối số thì hiển thị tháng hiện tại.\n"
 
-#: misc-utils/cal.c:931
+#: misc-utils/cal.c:932
 msgid " -1, --one             show only a single month (default)\n"
 msgstr " -1, --one             chỉ hiển thị một tháng (mặc định)\n"
 
-#: misc-utils/cal.c:932
+#: misc-utils/cal.c:933
 msgid " -3, --three           show three months spanning the date\n"
 msgstr " -3, --three           hiển thị tháng hiện tại và hai tháng trước và sau\n"
 
-#: misc-utils/cal.c:933
+#: misc-utils/cal.c:934
 msgid " -s, --sunday          Sunday as first day of week\n"
 msgstr " -s, --sunday          Chủ nhật là ngày đầu tuần\n"
 
-#: misc-utils/cal.c:934
+#: misc-utils/cal.c:935
 msgid " -m, --monday          Monday as first day of week\n"
 msgstr " -m, --monday          Thứ hai là ngày đầu tuần\n"
 
-#: misc-utils/cal.c:935
+#: misc-utils/cal.c:936
 msgid " -j, --julian          output Julian dates\n"
 msgstr " -j, --julian          kết xuất dạng ngày tháng kiểu Julian\n"
 
-#: misc-utils/cal.c:936
+#: misc-utils/cal.c:937
 msgid " -y, --year            show the whole year\n"
 msgstr " -y, --year            hiển thị toàn bộ năm nay\n"
 
-#: misc-utils/cal.c:937
+#: misc-utils/cal.c:938
 msgid " -w, --week[=<num>]    show US or ISO-8601 week numbers\n"
 msgstr " -w, --week[=<số>]     hiển thị số tuần US hoặc ISO-8601\n"
 
-#: misc-utils/cal.c:938
+#: misc-utils/cal.c:939
 msgid "     --color[=<when>]  colorize messages (auto, always or never)\n"
 msgstr ""
 "     --color[=<khi>]   tô màu chữ khi:\n"
@@ -7822,7 +7822,7 @@ msgstr "di chuyển"
 msgid "%s: parse error at line %d"
 msgstr "%s: lỗi phân tích tại dòng %d"
 
-#: misc-utils/findmnt.c:826 misc-utils/findmnt.c:1069 sys-utils/eject.c:727
+#: misc-utils/findmnt.c:826 misc-utils/findmnt.c:1089 sys-utils/eject.c:727
 #: sys-utils/mount.c:647
 msgid "failed to initialize libmount table"
 msgstr "gặp lỗi khi khởi tạo bảng libmount"
@@ -7832,22 +7832,22 @@ msgstr "gặp lỗi khi khởi tạo bảng libmount"
 msgid "can't read %s"
 msgstr "không đọc được %s"
 
-#: misc-utils/findmnt.c:1009 misc-utils/findmnt.c:1075 sys-utils/fstrim.c:169
+#: misc-utils/findmnt.c:1029 misc-utils/findmnt.c:1095 sys-utils/fstrim.c:169
 #: sys-utils/mount.c:135 sys-utils/mount.c:183 sys-utils/swapoff.c:56
 #: sys-utils/swapoff.c:152 sys-utils/swapon.c:232 sys-utils/swapon.c:262
 #: sys-utils/swapon.c:692 sys-utils/umount.c:275
 msgid "failed to initialize libmount iterator"
 msgstr "lỗi khởi tạo bộ lặp lại libmount"
 
-#: misc-utils/findmnt.c:1081
+#: misc-utils/findmnt.c:1101
 msgid "failed to initialize libmount tabdiff"
 msgstr "gặp lỗi khi khởi tạo bảng tabdiff libmount"
 
-#: misc-utils/findmnt.c:1109
+#: misc-utils/findmnt.c:1129
 msgid "poll() failed"
 msgstr "poll() gặp lỗi"
 
-#: misc-utils/findmnt.c:1179
+#: misc-utils/findmnt.c:1199
 #, c-format
 msgid ""
 " %1$s [options]\n"
@@ -7860,19 +7860,19 @@ msgstr ""
 " %1$s [tuỳ_chọn] <thiết_bị> <điểm_lắp>\n"
 " %1$s [tuỳ_chọn] [--source <thiết_bị>] [--target <điểm_lắp>]\n"
 
-#: misc-utils/findmnt.c:1186
+#: misc-utils/findmnt.c:1206
 msgid "Find a (mounted) filesystem.\n"
 msgstr "Tìm một hệ thống tập tin (đã gắn).\n"
 
-#: misc-utils/findmnt.c:1189
+#: misc-utils/findmnt.c:1209
 msgid " -s, --fstab            search in static table of filesystems\n"
 msgstr " -s, --fstab            tìm trong bảng cố định của hệ thống tập tin\n"
 
-#: misc-utils/findmnt.c:1190
+#: misc-utils/findmnt.c:1210
 msgid " -m, --mtab             search in table of mounted filesystems\n"
 msgstr " -m, --mtab             tìm trong bảng của hệ thống tập tin đã gắn\n"
 
-#: misc-utils/findmnt.c:1191
+#: misc-utils/findmnt.c:1211
 msgid ""
 " -k, --kernel           search in kernel table of mounted\n"
 "                          filesystems (default)\n"
@@ -7880,43 +7880,43 @@ msgstr ""
 " -k, --kernel           tìm kiếm bảng nhân của hệ thống tập tin\n"
 "                          đã gắn (mặc định)\n"
 
-#: misc-utils/findmnt.c:1194
+#: misc-utils/findmnt.c:1214
 msgid " -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
 msgstr " -p, --poll[=<list>]    theo dõi các thay đổi trong bảng của hệ thống tập tin đã gắn\n"
 
-#: misc-utils/findmnt.c:1195
+#: misc-utils/findmnt.c:1215
 msgid " -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"
 msgstr " -w, --timeout <số>     giới hạn trên theo milli-giây mà --poll sẽ khóa\n"
 
-#: misc-utils/findmnt.c:1198
+#: misc-utils/findmnt.c:1218
 msgid " -A, --all              disable all built-in filters, print all filesystems\n"
 msgstr " -A, --all              tắt tất cả các bộ lọc dựng sẵn, in mọi hệ thống tập tin\n"
 
-#: misc-utils/findmnt.c:1199
+#: misc-utils/findmnt.c:1219
 msgid " -a, --ascii            use ASCII chars for tree formatting\n"
 msgstr " -a, --ascii            dùng các ký tự ASCII để định dạng cây\n"
 
-#: misc-utils/findmnt.c:1200
+#: misc-utils/findmnt.c:1220
 msgid " -b, --bytes            print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes            hiển thị cỡ theo byte thay vì dạng dành cho con người đọc\n"
 
-#: misc-utils/findmnt.c:1201
+#: misc-utils/findmnt.c:1221
 msgid " -C, --nocanonicalize   don't canonicalize when comparing paths\n"
 msgstr " -C, --no-canonicalize  không canonical hóa đường dẫn khi so sánh các đường dẫn\n"
 
-#: misc-utils/findmnt.c:1202
+#: misc-utils/findmnt.c:1222
 msgid " -c, --canonicalize     canonicalize printed paths\n"
 msgstr " -c, --canonicalize     canonical hóa đường dẫn\n"
 
-#: misc-utils/findmnt.c:1203
+#: misc-utils/findmnt.c:1223
 msgid " -D, --df               imitate the output of df(1)\n"
 msgstr " -D, --df               xuất theo kiểu df(1)\n"
 
-#: misc-utils/findmnt.c:1204
+#: misc-utils/findmnt.c:1224
 msgid " -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 msgstr " -d, --direction <từ>   hướng tìm kiếm, “forward” hoặc “backward”\n"
 
-#: misc-utils/findmnt.c:1205
+#: misc-utils/findmnt.c:1225
 msgid ""
 " -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          to device names\n"
@@ -7924,51 +7924,51 @@ msgstr ""
 " -e, --evaluate         chuyển đổi các thẻ (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          thành tên thiết bị\n"
 
-#: misc-utils/findmnt.c:1207
+#: misc-utils/findmnt.c:1227
 msgid " -F, --tab-file <path>  alternative file for -s, -m or -k options\n"
 msgstr " -F, --tab-file <đường_dẫn>  tập tin thay thế cho tùy chọn -s, -m hay -k\n"
 
-#: misc-utils/findmnt.c:1208
+#: misc-utils/findmnt.c:1228
 msgid " -f, --first-only       print the first found filesystem only\n"
 msgstr " -f, --first-only       chỉ hiển thị hệ thống tập tin tìm thấy đầu tiên\n"
 
-#: misc-utils/findmnt.c:1209
+#: misc-utils/findmnt.c:1229
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -s, --inverse          đảo ngược phần khớp\n"
 
-#: misc-utils/findmnt.c:1210
+#: misc-utils/findmnt.c:1230
 msgid " -l, --list             use list format output\n"
 msgstr " -l, --list             dùng định dạng kết xuất liệt kê\n"
 
-#: misc-utils/findmnt.c:1211
+#: misc-utils/findmnt.c:1231
 msgid " -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
 msgstr " -N, --task <tid>       dùng không gian tên thay thế (tập tin /proc/<tid>/mountinfo)\n"
 
-#: misc-utils/findmnt.c:1212
+#: misc-utils/findmnt.c:1232
 msgid " -n, --noheadings       don't print column headings\n"
 msgstr " -n, --noheadings       không hiển thị phần đầu của cột\n"
 
-#: misc-utils/findmnt.c:1213
+#: misc-utils/findmnt.c:1233
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr " -O, --options <d.sách> giới hạn tập hợp hệ thống tập tin bởi tùy chọn gắn\n"
 
-#: misc-utils/findmnt.c:1214
+#: misc-utils/findmnt.c:1234
 msgid " -o, --output <list>    the output columns to be shown\n"
 msgstr " -o, --options <d.sách> các cột sẽ hiển thị\n"
 
-#: misc-utils/findmnt.c:1215
+#: misc-utils/findmnt.c:1235
 msgid " -P, --pairs            use key=\"value\" output format\n"
 msgstr " -P, --pairs            dùng kết xuất theo định dạng khóa=\"giá trị\"\n"
 
-#: misc-utils/findmnt.c:1216
+#: misc-utils/findmnt.c:1236
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
 msgstr " -R, --submounts        hiển thị mọi gắn con cho hệ thống tập tin khớp\n"
 
-#: misc-utils/findmnt.c:1217
+#: misc-utils/findmnt.c:1237
 msgid " -r, --raw              use raw output format\n"
 msgstr " -r, --raw              dùng định dạng thô\n"
 
-#: misc-utils/findmnt.c:1218
+#: misc-utils/findmnt.c:1238
 msgid ""
 " -S, --source <string>  the device to mount (by name, maj:min, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
@@ -7976,48 +7976,48 @@ msgstr ""
 " -S, --source <chuỗi>   thiết bị để gắn (bằng tên, lớn:nhỏ, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
 
-#: misc-utils/findmnt.c:1220
+#: misc-utils/findmnt.c:1240
 msgid " -T, --target <string>  the mountpoint to use\n"
 msgstr " -T, --target <chuỗi>   điểm gắn được dùng\n"
 
-#: misc-utils/findmnt.c:1221
+#: misc-utils/findmnt.c:1241
 msgid " -t, --types <list>     limit the set of filesystems by FS types\n"
 msgstr " -t, --types <d.sách>   giới hạn tập hợp hệ thống tập tin theo kiểu\n"
 
-#: misc-utils/findmnt.c:1222
+#: misc-utils/findmnt.c:1242
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -U, --uniq             bỏ qua hệ thống tập tin với đích trùng lặp\n"
 
-#: misc-utils/findmnt.c:1223
+#: misc-utils/findmnt.c:1243
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -u, --notruncate       đừng cắt ngắn trong các cột\n"
 
-#: misc-utils/findmnt.c:1224
+#: misc-utils/findmnt.c:1244
 msgid " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 msgstr " -v, --nofsroot         đừng in [/dir] cho gắn bind hay btrfs\n"
 
-#: misc-utils/findmnt.c:1339
+#: misc-utils/findmnt.c:1359
 #, c-format
 msgid "unknown direction '%s'"
 msgstr "không hiểu hướng “%s”"
 
-#: misc-utils/findmnt.c:1408
+#: misc-utils/findmnt.c:1428
 msgid "invalid TID argument"
 msgstr "đối số TID không hợp lệ"
 
-#: misc-utils/findmnt.c:1468
+#: misc-utils/findmnt.c:1488
 msgid "--poll accepts only one file, but more specified by --tab-file"
 msgstr "--poll thừa nhận chỉ một tập tin, nhưng phải được chỉ định bởi --tab-file"
 
-#: misc-utils/findmnt.c:1472
+#: misc-utils/findmnt.c:1492
 msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr "không thể sử dụng cả hai tùy chọn “--target” (đích) và “--source” (nguồn) với một yếu tố dòng lệnh mà không thể là một tùy chọn"
 
-#: misc-utils/findmnt.c:1519
+#: misc-utils/findmnt.c:1542
 msgid "failed to initialize libmount cache"
 msgstr "lỗi khởi tạo vùng nhớ tạm libmount"
 
-#: misc-utils/findmnt.c:1552
+#: misc-utils/findmnt.c:1575
 #, c-format
 msgid "%s column is requested, but --poll is not enabled"
 msgstr "%s cột được yêu cầu, nhưng tùy chọn --poll lại không được bật"
@@ -8192,114 +8192,119 @@ msgstr "việc dùng tùy chọn “kill --pid” như là lệnh bị phản đ
 msgid "cannot find process \"%s\""
 msgstr "không thể tìm thấy tiến trình “%s”"
 
-#: misc-utils/logger.c:158
+#: misc-utils/logger.c:167
 #, c-format
 msgid "unknown facility name: %s"
 msgstr "không hiểu tên cơ cấu: %s."
 
-#: misc-utils/logger.c:164
+#: misc-utils/logger.c:173
 #, c-format
 msgid "unknown priority name: %s"
 msgstr "không hiểu tên ưu tiên: %s"
 
-#: misc-utils/logger.c:174
+#: misc-utils/logger.c:183
 #, c-format
 msgid "openlog %s: pathname too long"
 msgstr "openlog %s: tên đường dẫn quá dài"
 
-#: misc-utils/logger.c:196
+#: misc-utils/logger.c:206
 #, c-format
 msgid "socket %s"
 msgstr "ổ cắm (socket) %s"
 
-#: misc-utils/logger.c:225
+#: misc-utils/logger.c:239
 #, c-format
 msgid "failed to resolve name %s port %s: %s"
 msgstr "gặp lỗi khi phân giải tên %s cổng %s: %s"
 
-#: misc-utils/logger.c:242
+#: misc-utils/logger.c:256
 #, c-format
 msgid "failed to connect to %s port %s"
 msgstr "gặp lỗi khi kết nối đến %s cổng %s"
 
-#: misc-utils/logger.c:269
+#: misc-utils/logger.c:283
 #, c-format
 msgid "maximum input lines (%d) exceeded"
 msgstr "đã vượt quá số lượng dòng tối đa (%d)"
 
-#: misc-utils/logger.c:351
+#: misc-utils/logger.c:365
 msgid "localtime() failed"
 msgstr "localtime() bị lỗi"
 
-#: misc-utils/logger.c:359
+#: misc-utils/logger.c:373
 #, c-format
 msgid "hostname '%s' is too long"
 msgstr "tên máy “%s” là quá dài"
 
-#: misc-utils/logger.c:366
+#: misc-utils/logger.c:380
 #, c-format
 msgid "tag '%s' is too long"
 msgstr "thẻ “%s” là quá dài"
 
-#: misc-utils/logger.c:413
+#: misc-utils/logger.c:427
 #, c-format
 msgid "ignoring unknown option argument: %s"
 msgstr "bỏ qua các đối số tùy chon chưa biết: %s"
 
-#: misc-utils/logger.c:518
+#: misc-utils/logger.c:439
+#, fuzzy, c-format
+msgid "invalid argument: %s: using automatic errors"
+msgstr "đối số không hợp lệ đối với tùy chọn --auto/-a"
+
+#: misc-utils/logger.c:544
 #, c-format
 msgid " %s [options] [<message>]\n"
 msgstr " %s [tùy chọn] [thông điệp]\n"
 
-#: misc-utils/logger.c:521
+#: misc-utils/logger.c:547
 msgid "Enter messages into the system log.\n"
 msgstr "Nhập lời nhắn vào nhật ký hệ thống.\n"
 
-#: misc-utils/logger.c:524
+#: misc-utils/logger.c:550
 msgid " -i, --id[=<id>]          log <id> (default is PID)\n"
 msgstr " -i, --id[=<id>]          log <id> (mặc định là PID)\n"
 
-#: misc-utils/logger.c:525
+#: misc-utils/logger.c:551
 msgid " -f, --file <file>        log the contents of this file\n"
 msgstr " -f, --file <TẬP-TIN>     hiển thị nhật ký của tập tin này\n"
 
-#: misc-utils/logger.c:526
+#: misc-utils/logger.c:552
 msgid " -p, --priority <prio>    mark given message with this priority\n"
 msgstr " -p, --priority <prio>    đánh dấu lời nhắn đã cho với mức ưu tiên này\n"
 
-#: misc-utils/logger.c:527
+#: misc-utils/logger.c:553
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
 msgstr "     --prio-prefix        tìm kiếm tiền tố trên mỗi dòng đọc từ đầu vào chuẩn\n"
 
-#: misc-utils/logger.c:528
+#: misc-utils/logger.c:554
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr " -s, --stderr             cũng hiển thị thông điệp ra đầu ra lỗi tiêu chuẩn\n"
 
-#: misc-utils/logger.c:529
+#: misc-utils/logger.c:555
 msgid " -t, --tag <tag>          mark every line with this tag\n"
 msgstr " -t, --tag <tag>          đánh dấu mọi dòng bằng thẻ này\n"
 
-#: misc-utils/logger.c:530
+#: misc-utils/logger.c:556
 msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr " -n, --server <tên>       ghi cái này đến máy chủ ghi syslog\n"
 
-#: misc-utils/logger.c:531
+#: misc-utils/logger.c:557
 msgid " -P, --port <number>      use this UDP port\n"
 msgstr " -P, --port <số>          dùng cổng UDP này\n"
 
-#: misc-utils/logger.c:532
+#: misc-utils/logger.c:558
 msgid " -T, --tcp                use TCP only\n"
 msgstr " -T, --tcp                chỉ dùng TCP\n"
 
-#: misc-utils/logger.c:533
+#: misc-utils/logger.c:559
 msgid " -d, --udp                use UDP only\n"
 msgstr " -d, --udp                chỉ dùng UDP\n"
 
-#: misc-utils/logger.c:534
+#: misc-utils/logger.c:560
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
 msgstr "     --rfc3164            dùng giao thức syslog BSD kiểu cũ\n"
 
-#: misc-utils/logger.c:535
+#: misc-utils/logger.c:561
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default);\n"
 "                            <snip> can be notime, or notq, and/or nohost\n"
@@ -8307,28 +8312,34 @@ msgstr ""
 "     --rfc5424[=<snip>]   dùng giao thức syslog (mặc định);\n"
 "                            <snip> có thể là notime, hoặc notq, và/hoặc nohost\n"
 
-#: misc-utils/logger.c:537
+#: misc-utils/logger.c:563
 msgid " -u, --socket <socket>    write to this Unix socket\n"
 msgstr " -u, --socket <socket>    ghi ra ổ cắm Unix này\n"
 
-#: misc-utils/logger.c:539
+#: misc-utils/logger.c:564
+msgid ""
+"     --socket-errors[=<on|off|auto>]\n"
+"                          print connection errors when using Unix sockets\n"
+msgstr ""
+
+#: misc-utils/logger.c:567
 msgid "     --journald[=<file>]  write journald entry\n"
 msgstr "     --journald[=<tập-tin>]  ghi mục nhật ký\n"
 
-#: misc-utils/logger.c:609
+#: misc-utils/logger.c:640
 #, c-format
 msgid "file %s"
 msgstr "tập tin %s"
 
-#: misc-utils/logger.c:618
+#: misc-utils/logger.c:649
 msgid "failed to parse id"
 msgstr "gặp lỗi khi phân tích ID"
 
-#: misc-utils/logger.c:681
+#: misc-utils/logger.c:715
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr "--file <file> and <message> loại từ lẫn nhau, chuỗi bị bỏ qua"
 
-#: misc-utils/logger.c:688
+#: misc-utils/logger.c:722
 msgid "journald entry could not be written"
 msgstr "không thể ghi mục tin journald"
 
@@ -12286,7 +12297,7 @@ msgstr ", mã hóa %s (kiểu %u)"
 msgid "%s: detach failed"
 msgstr "%s: tháo gặp lỗi"
 
-#: sys-utils/losetup.c:315 sys-utils/lscpu.c:1442 sys-utils/prlimit.c:229
+#: sys-utils/losetup.c:315 sys-utils/lscpu.c:1456 sys-utils/prlimit.c:229
 #: sys-utils/swapon.c:164 sys-utils/wdctl.c:215 sys-utils/zramctl.c:259
 msgid "failed to initialize output line"
 msgstr "gặp lỗi khi khởi tạo dòng kết xuất"
@@ -12439,92 +12450,92 @@ msgstr "đầy"
 msgid "container"
 msgstr "thùng chứa"
 
-#: sys-utils/lscpu.c:152
+#: sys-utils/lscpu.c:153
 msgid "horizontal"
 msgstr "ngang"
 
-#: sys-utils/lscpu.c:153
+#: sys-utils/lscpu.c:154
 msgid "vertical"
 msgstr "dọc"
 
-#: sys-utils/lscpu.c:302
+#: sys-utils/lscpu.c:303
 msgid "logical CPU number"
 msgstr "số CPU logíc"
 
-#: sys-utils/lscpu.c:303
+#: sys-utils/lscpu.c:304
 msgid "logical core number"
 msgstr "số lõi lôgíc"
 
-#: sys-utils/lscpu.c:304
+#: sys-utils/lscpu.c:305
 msgid "logical socket number"
 msgstr "số khe cắm lôgíc"
 
-#: sys-utils/lscpu.c:305
+#: sys-utils/lscpu.c:306
 msgid "logical NUMA node number"
 msgstr "số nút NUMA lôgíc"
 
-#: sys-utils/lscpu.c:306
+#: sys-utils/lscpu.c:307
 msgid "logical book number"
 msgstr "số chỗ logíc"
 
-#: sys-utils/lscpu.c:307
+#: sys-utils/lscpu.c:308
 msgid "shows how caches are shared between CPUs"
 msgstr "hiển thị bộ nhớ đệm được chia sẻ giữ các bộ vi xử lý"
 
-#: sys-utils/lscpu.c:308
+#: sys-utils/lscpu.c:309
 msgid "CPU dispatching mode on virtual hardware"
 msgstr "Chế độ CPU phân phối trên phần cứng ảo"
 
-#: sys-utils/lscpu.c:309
+#: sys-utils/lscpu.c:310
 msgid "physical address of a CPU"
 msgstr "địa chỉ vật lý của CPU"
 
-#: sys-utils/lscpu.c:310
+#: sys-utils/lscpu.c:311
 msgid "shows if the hypervisor has allocated the CPU"
 msgstr "hiển thị nếu máy ảo đã được cấp CPU"
 
-#: sys-utils/lscpu.c:311
+#: sys-utils/lscpu.c:312
 msgid "shows if Linux currently makes use of the CPU"
 msgstr "hiển thị nếu Linux hiện tại có sử dụng CPU"
 
-#: sys-utils/lscpu.c:312
+#: sys-utils/lscpu.c:313
 msgid "shows the maximum MHz of the CPU"
 msgstr "hiển thị tần số đồng hồ tối đa của CPU theo mhz"
 
-#: sys-utils/lscpu.c:313
+#: sys-utils/lscpu.c:314
 msgid "shows the minimum MHz of the CPU"
 msgstr "hiển thị tần số đồng hồ tối thiểu của CPU theo mhz"
 
-#: sys-utils/lscpu.c:408
+#: sys-utils/lscpu.c:409
 msgid "error: uname failed"
 msgstr "lỗi: uname không thành công"
 
-#: sys-utils/lscpu.c:483
+#: sys-utils/lscpu.c:484
 #, c-format
 msgid "failed to determine number of CPUs: %s"
 msgstr "gặp lỗi khi xác định số CPU: %s"
 
-#: sys-utils/lscpu.c:714
+#: sys-utils/lscpu.c:728
 msgid "error: can not set signal handler"
 msgstr "lỗi: không thể đặt bộ tiếp hợp tín hiệu"
 
-#: sys-utils/lscpu.c:719
+#: sys-utils/lscpu.c:733
 msgid "error: can not restore signal handler"
 msgstr "lỗi: không thể phục hồi bộ tiếp hợp tín hiệu"
 
-#: sys-utils/lscpu.c:1154
+#: sys-utils/lscpu.c:1168
 msgid "Failed to extract the node number"
 msgstr "Gặp lỗi khi lấy số của nút"
 
-#: sys-utils/lscpu.c:1246 sys-utils/lscpu.c:1256
+#: sys-utils/lscpu.c:1260 sys-utils/lscpu.c:1270
 msgid "Y"
 msgstr "C"
 
-#: sys-utils/lscpu.c:1246 sys-utils/lscpu.c:1256
+#: sys-utils/lscpu.c:1260 sys-utils/lscpu.c:1270
 msgid "N"
 msgstr "K"
 
-#: sys-utils/lscpu.c:1338
+#: sys-utils/lscpu.c:1352
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -12535,161 +12546,161 @@ msgstr ""
 "# trình khác. Mỗi mục riêng trong mỗi cột có một mã số ID duy nhất,\n"
 "# bắt đầu từ số không.\n"
 
-#: sys-utils/lscpu.c:1488
+#: sys-utils/lscpu.c:1502
 msgid "Architecture:"
 msgstr "Kiến trúc:"
 
-#: sys-utils/lscpu.c:1502
+#: sys-utils/lscpu.c:1516
 msgid "CPU op-mode(s):"
 msgstr "Chế độ thao tác CPU:"
 
-#: sys-utils/lscpu.c:1505 sys-utils/lscpu.c:1507
+#: sys-utils/lscpu.c:1519 sys-utils/lscpu.c:1521
 msgid "Byte Order:"
 msgstr "Thứ tự Byte:"
 
-#: sys-utils/lscpu.c:1509
+#: sys-utils/lscpu.c:1523
 msgid "CPU(s):"
 msgstr "CPU:"
 
-#: sys-utils/lscpu.c:1512
+#: sys-utils/lscpu.c:1526
 msgid "On-line CPU(s) mask:"
 msgstr "Mặt nạ CPU trực tuyến:"
 
-#: sys-utils/lscpu.c:1513
+#: sys-utils/lscpu.c:1527
 msgid "On-line CPU(s) list:"
 msgstr "Danh sách CPU trực tuyến:"
 
-#: sys-utils/lscpu.c:1532
+#: sys-utils/lscpu.c:1546
 msgid "Off-line CPU(s) mask:"
 msgstr "Mặt nạ CPU ngoại tuyến:"
 
-#: sys-utils/lscpu.c:1533
+#: sys-utils/lscpu.c:1547
 msgid "Off-line CPU(s) list:"
 msgstr "Danh sách CPU ngoại tuyến:"
 
-#: sys-utils/lscpu.c:1564
+#: sys-utils/lscpu.c:1578
 msgid "Thread(s) per core:"
 msgstr "Số tuyến mỗi lõi:"
 
-#: sys-utils/lscpu.c:1565
+#: sys-utils/lscpu.c:1579
 msgid "Core(s) per socket:"
 msgstr "Số lõi mỗi đế cắm:"
 
-#: sys-utils/lscpu.c:1568
+#: sys-utils/lscpu.c:1582
 msgid "Socket(s) per book:"
 msgstr "Số Socket(s) trên mỗi lần đợi:"
 
-#: sys-utils/lscpu.c:1570
+#: sys-utils/lscpu.c:1584
 msgid "Book(s):"
 msgstr "Chỗ giữ:"
 
-#: sys-utils/lscpu.c:1572
+#: sys-utils/lscpu.c:1586
 msgid "Socket(s):"
 msgstr "Số đế cắm:"
 
-#: sys-utils/lscpu.c:1576
+#: sys-utils/lscpu.c:1590
 msgid "NUMA node(s):"
 msgstr "Nút NUMA:"
 
-#: sys-utils/lscpu.c:1578
+#: sys-utils/lscpu.c:1592
 msgid "Vendor ID:"
 msgstr "ID nhà sản xuất:"
 
-#: sys-utils/lscpu.c:1580
+#: sys-utils/lscpu.c:1594
 msgid "CPU family:"
 msgstr "Họ CPU:"
 
-#: sys-utils/lscpu.c:1582
+#: sys-utils/lscpu.c:1596
 msgid "Model:"
 msgstr "Mô hình:"
 
-#: sys-utils/lscpu.c:1584
+#: sys-utils/lscpu.c:1598
 msgid "Model name:"
 msgstr "Tên mô hình:"
 
-#: sys-utils/lscpu.c:1586
+#: sys-utils/lscpu.c:1600
 msgid "Stepping:"
 msgstr "Bước:"
 
-#: sys-utils/lscpu.c:1588
+#: sys-utils/lscpu.c:1602
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:1590
+#: sys-utils/lscpu.c:1604
 msgid "CPU max MHz:"
 msgstr "Tần số đồng hồ CPU tối đa (MHz):"
 
-#: sys-utils/lscpu.c:1592
+#: sys-utils/lscpu.c:1606
 msgid "CPU min MHz:"
 msgstr "Tần số đồng hồ CPU tối thiểu (MHz):"
 
-#: sys-utils/lscpu.c:1594
+#: sys-utils/lscpu.c:1608
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:1597 sys-utils/lscpu.c:1599
+#: sys-utils/lscpu.c:1611 sys-utils/lscpu.c:1613
 msgid "Virtualization:"
 msgstr "Ảo hóa:"
 
-#: sys-utils/lscpu.c:1602
+#: sys-utils/lscpu.c:1616
 msgid "Hypervisor:"
 msgstr "Ảo hóa:"
 
-#: sys-utils/lscpu.c:1604
+#: sys-utils/lscpu.c:1618
 msgid "Hypervisor vendor:"
 msgstr "Nhà cung cấp bộ ảo hóa:"
 
-#: sys-utils/lscpu.c:1605
+#: sys-utils/lscpu.c:1619
 msgid "Virtualization type:"
 msgstr "Kiểu ảo hóa:"
 
-#: sys-utils/lscpu.c:1608
+#: sys-utils/lscpu.c:1622
 msgid "Dispatching mode:"
 msgstr "Chế độ điều phối:"
 
-#: sys-utils/lscpu.c:1614
+#: sys-utils/lscpu.c:1628
 #, c-format
 msgid "%s cache:"
 msgstr "Bộ nhớ đệm %s:"
 
-#: sys-utils/lscpu.c:1620
+#: sys-utils/lscpu.c:1634
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "CPU nút%d NUMA:"
 
-#: sys-utils/lscpu.c:1633
+#: sys-utils/lscpu.c:1647
 msgid "Display information about the CPU architecture.\n"
 msgstr "Hiển thị thông tin về kiến trúc CPU.\n"
 
-#: sys-utils/lscpu.c:1636
+#: sys-utils/lscpu.c:1650
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr " -a, --all               in ra cả CPU đang chạy và đang nghỉ (mặc định cho -e)\n"
 
-#: sys-utils/lscpu.c:1637
+#: sys-utils/lscpu.c:1651
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr " -b, --online            chỉ hiển thị các CPU online (mặc định cho -p)\n"
 
-#: sys-utils/lscpu.c:1638
+#: sys-utils/lscpu.c:1652
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline           chỉ hiển thị các CPU đang tắt\n"
 
-#: sys-utils/lscpu.c:1639
+#: sys-utils/lscpu.c:1653
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr " -e, --extended[=<dsách>] in ra định dạng có thể đọc được phần mở rộng\n"
 
-#: sys-utils/lscpu.c:1640
+#: sys-utils/lscpu.c:1654
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<dsách>]   in ra định dạng phân tích được\n"
 
-#: sys-utils/lscpu.c:1641
+#: sys-utils/lscpu.c:1655
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <dir>     dùng thư mục đã cho như là thư mục gốc của hệ thống\n"
 
-#: sys-utils/lscpu.c:1642
+#: sys-utils/lscpu.c:1656
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr " -x, --hex               hiển thị dạng thập lục phân thay cho danh sách CPU\n"
 
-#: sys-utils/lscpu.c:1739
+#: sys-utils/lscpu.c:1753
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: các tùy chọn --all, --online và --offline có lẽ chỉ sử dụng cùng với các tùy chọn --extended hay --parsa.\n"
@@ -15845,16 +15856,16 @@ msgstr ""
 msgid "Script started, file is %s\n"
 msgstr "Văn lệnh đã khởi chạy, tập tin là %s\n"
 
-#: term-utils/script.c:450
+#: term-utils/script.c:451
 #, c-format
 msgid "Script started on %s"
 msgstr "Văn lệnh đã khởi chạy trên %s"
 
-#: term-utils/script.c:492
+#: term-utils/script.c:493
 msgid "cannot write script file"
 msgstr "không thể ghi tập tin bó lệnh"
 
-#: term-utils/script.c:592
+#: term-utils/script.c:593
 #, c-format
 msgid ""
 "\n"
@@ -15863,20 +15874,20 @@ msgstr ""
 "\n"
 "Hoàn tất chạy văn lệnh trên %s"
 
-#: term-utils/script.c:609
+#: term-utils/script.c:610
 #, c-format
 msgid "Script done, file is %s\n"
 msgstr "Hoàn tất chạy văn lệnh, tập tin là %s\n"
 
-#: term-utils/script.c:635
+#: term-utils/script.c:636
 msgid "failed to get terminal attributes"
 msgstr "gặp lỗi khi lấy các thuộc tính của thiết bị cuối"
 
-#: term-utils/script.c:642
+#: term-utils/script.c:643
 msgid "openpty failed"
 msgstr "openpty không thành công"
 
-#: term-utils/script.c:682
+#: term-utils/script.c:683
 msgid "out of pty's"
 msgstr "hết pty”."
 
