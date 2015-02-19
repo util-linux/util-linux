@@ -48,6 +48,7 @@ EOF
 
 function deinit_device {
 	udevadm settle
+	sleep 1
 	rmmod scsi_debug
 }
 
@@ -57,6 +58,7 @@ init_device
 $TS_CMD_EJECT --force $TS_DEVICE && ts_log "Success"
 deinit_device
 ts_finalize_subtest
+
 
 ts_init_subtest "by-disk-mounted"
 init_device
