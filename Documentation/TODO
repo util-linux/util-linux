@@ -14,6 +14,12 @@ cfdisk
     filesystem type, size, usage, mountpoint, ...) just optionally add extra
     table between main menu and list of partitions.
 
+  - (!) add auto-sort support (sort partitions automatically) and
+    --sort={auto,never,always} command line option. This feature should be
+    enabled by default for logical partitions if we created all container (extended
+    partition) in the current session.
+      
+
 agetty
 -----
   - support default issue (/etc/issue) output for agetty to make it agetty
