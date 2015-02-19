@@ -604,6 +604,7 @@ int fdisk_partition_is_container(struct fdisk_partition *pa)
 /**
  * fdisk_partition_get_parent:
  * @pa: partition
+ * @parent: parent parno
  *
  * Returns: returns devno of the parent
  */
