@@ -20,6 +20,14 @@ cfdisk
     partition) in the current session.
       
 
+terminal-colors.d
+-----------------
+
+  - (!) check if the current terminal supports colors (e.g. max_colors in
+    terminfo; "tput colors" command)
+
+  - (!) add support for non-ANSI terminals (now we hardcode \033[ ...)
+
 agetty
 -----
   - support default issue (/etc/issue) output for agetty to make it agetty
