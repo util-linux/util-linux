@@ -65,6 +65,7 @@ struct nilfs_super_block {
 
 #define NILFS_SB_MAGIC		0x3434
 #define NILFS_SB_OFFSET		0x400
+#define NILFS_SBB_OFFSET(_sz)	((((_sz) / 0x200) - 8) * 0x200)
 
 static int nilfs_valid_sb(blkid_probe pr, struct nilfs_super_block *sb)
 {
@@ -88,15 +89,17 @@ static int probe_nilfs2(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct nilfs_super_block *sb, *sbp, *sbb;
 	int valid[2], swp = 0;
+	uint64_t magoff;
 
 	/* primary */
 	sbp = (struct nilfs_super_block *) blkid_probe_get_buffer(
 			pr, NILFS_SB_OFFSET, sizeof(struct nilfs_super_block));
 	if (!sbp)
 		return errno ? -errno : 1;
+
 	/* backup */
 	sbb = (struct nilfs_super_block *) blkid_probe_get_buffer(
-			pr, ((pr->size / 0x200) - 8) * 0x200, sizeof(struct nilfs_super_block));
+			pr, NILFS_SBB_OFFSET(pr->size), sizeof(struct nilfs_super_block));
 	if (!sbb)
 		return errno ? -errno : 1;
 
@@ -123,6 +126,13 @@ static int probe_nilfs2(blkid_probe pr, const struct blkid_idmag *mag)
 
 	blkid_probe_set_uuid(pr, sb->s_uuid);
 	blkid_probe_sprintf_version(pr, "%u", le32_to_cpu(sb->s_rev_level));
+
+	magoff = swp ? NILFS_SBB_OFFSET(pr->size) : NILFS_SB_OFFSET;
+	magoff += offsetof(struct nilfs_super_block, s_magic);
+
+	if (blkid_probe_set_magic(pr, magoff, sizeof(sb->s_magic),
+				(unsigned char *) &sb->s_magic))
+		return 1;
 
 	return 0;
 }
