@@ -6,10 +6,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.26-rc1\n"
+"Project-Id-Version: util-linux 2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2015-02-04 11:38+0100\n"
-"PO-Revision-Date: 2015-01-22 21:48+0100\n"
+"POT-Creation-Date: 2015-02-04 11:54+0100\n"
+"PO-Revision-Date: 2015-02-06 23:02+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -219,9 +219,9 @@ msgid "%s: failed to initialize sysfs handler"
 msgstr "%s: nie udało się zainicjować obsługi sysfs"
 
 #: disk-utils/blockdev.c:460
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to read partition start from sysfs"
-msgstr "%s: nie udało się odczytać tablicy partycji"
+msgstr "%s: nie udało się odczytać początku partycji z sysfs"
 
 #: disk-utils/blockdev.c:481
 #, c-format
@@ -327,21 +327,20 @@ msgid "Label: %s"
 msgstr "Etykieta: %s"
 
 #: disk-utils/cfdisk.c:1537
-#, fuzzy
 msgid "May be followed by M for MiB, G for GiB, T for TiB, or S for sectors."
-msgstr "Można dodać przyrostek {M,B,G,T}iB (\"iB\" jest opcjonalne) lub S (sektory)."
+msgstr "Można dodać przyrostek M dla MiB, G dla GiB, T dla TiB lub S dla sektorów."
 
 #: disk-utils/cfdisk.c:1543
 msgid "Please, specify size."
 msgstr "Proszę podać rozmiar."
 
 #: disk-utils/cfdisk.c:1565
-#, fuzzy, c-format
+#, c-format
 msgid "Minimum size is %ju bytes."
-msgstr "Maksymalny rozmiar w bajtach to %ju."
+msgstr "Minimalny rozmiar w bajtach to %ju."
 
 #: disk-utils/cfdisk.c:1574
-#, fuzzy, c-format
+#, c-format
 msgid "Maximum size is %ju bytes."
 msgstr "Maksymalny rozmiar w bajtach to %ju."
 
@@ -363,9 +362,9 @@ msgstr "Plik skryptu zostanie naniesiony na tablicę partycji w pamięci."
 
 #: disk-utils/cfdisk.c:1694 disk-utils/cfdisk.c:1735
 #: disk-utils/fdisk-menu.c:463 disk-utils/fdisk-menu.c:501
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot open %s"
-msgstr "Nie można otworzyć: %s"
+msgstr "Nie można otworzyć %s"
 
 #: disk-utils/cfdisk.c:1696 disk-utils/fdisk-menu.c:465
 #, c-format
@@ -411,14 +410,12 @@ msgid "Select label type"
 msgstr "Proszę wybrać typ etykiety"
 
 #: disk-utils/cfdisk.c:1831
-#, fuzzy
 msgid "This is cfdisk, a curses-based disk partitioning program."
-msgstr "To jest cfdisk - oparty na curses program do partycjonowania dysku,"
+msgstr "To jest cfdisk - oparty na curses program do partycjonowania dysku."
 
 #: disk-utils/cfdisk.c:1832
-#, fuzzy
 msgid "It lets you create, delete, and modify partitions on a block device."
-msgstr "pozwalający tworzyć, usuwać i modyfikować partycje na twardym"
+msgstr "Pozwala tworzyć, usuwać i modyfikować partycje na urządzeniu blokowym."
 
 #: disk-utils/cfdisk.c:1834
 msgid "Command      Meaning"
@@ -461,19 +458,16 @@ msgid "  u          Dump disk layout to sfdisk compatible script file"
 msgstr "  u          Zrzut układu dysku do pliku skryptu zgodnego z programem sfdisk"
 
 #: disk-utils/cfdisk.c:1844
-#, fuzzy
 msgid "  W          Write partition table to disk (you must enter uppercase W);"
-msgstr "  W          Zapis tablicy partycji na dysk (musi być wielkie W)"
+msgstr "  W          Zapis tablicy partycji na dysk (musi być wielkie W);"
 
 #: disk-utils/cfdisk.c:1845
-#, fuzzy
 msgid "               since this might destroy data on the disk, you must either"
-msgstr "             Ponieważ może to zniszczyć dane na dysku, należy"
+msgstr "               ponieważ może to zniszczyć dane na dysku, należy"
 
 #: disk-utils/cfdisk.c:1846
-#, fuzzy
 msgid "               confirm or deny the write by entering 'yes' or 'no'"
-msgstr "             potwierdzić lub anulować zapis wpisując \"tak\" lub"
+msgstr "               potwierdzić lub anulować zapis wpisując \"tak\" lub \"nie\""
 
 #: disk-utils/cfdisk.c:1847
 msgid "Up Arrow     Move cursor to the previous partition"
@@ -496,7 +490,6 @@ msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Uwaga: wszystkie polecenia mogą być uruchomione wielkimi lub małymi"
 
 #: disk-utils/cfdisk.c:1853
-#, fuzzy
 msgid "case letters (except for Write)."
 msgstr "literami (z wyjątkiem zapisu - W)."
 
@@ -537,9 +530,8 @@ msgid "The type of partition %zu is unchanged."
 msgstr "Typ partycji %zu nie został zmieniony."
 
 #: disk-utils/cfdisk.c:2036
-#, fuzzy
 msgid "Device is open in read-only mode."
-msgstr "Urządzenie otwarte w trybie tylko do odczytu."
+msgstr "Urządzenie jest otwarte w trybie tylko do odczytu."
 
 #: disk-utils/cfdisk.c:2041
 msgid "Are you sure you want to write the partition table to disk? "
@@ -555,14 +547,12 @@ msgid "yes"
 msgstr "tak"
 
 #: disk-utils/cfdisk.c:2049
-#, fuzzy
 msgid "Did not write partition table to disk."
-msgstr "Nie zapisano tablicy partycji"
+msgstr "Nie zapisano tablicy partycji na dysk."
 
 #: disk-utils/cfdisk.c:2054
-#, fuzzy
 msgid "Failed to write disklabel."
-msgstr "Nie udało się zapisać etykiety dysku"
+msgstr "Nie udało się zapisać etykiety dysku."
 
 #: disk-utils/cfdisk.c:2057 disk-utils/fdisk-menu.c:545
 msgid "The partition table has been altered."
@@ -709,9 +699,9 @@ msgstr "błędny argument - opcja naprawy"
 #: sys-utils/swapon.c:482 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:133 term-utils/mesg.c:128 text-utils/more.c:598
 #: text-utils/tailf.c:101 text-utils/tailf.c:281
-#, fuzzy, c-format
+#, c-format
 msgid "stat of %s failed"
-msgstr "stat nie powiodło się"
+msgstr "stat %s nie powiodło się"
 
 #: disk-utils/fdformat.c:223 disk-utils/partx.c:949 misc-utils/lsblk.c:1397
 #: sys-utils/blkdiscard.c:159 sys-utils/mountpoint.c:107
@@ -918,11 +908,10 @@ msgid " -s, --getsz                   display device size in 512-byte sectors [D
 msgstr " -s, --getsz                   podanie rozmiaru urządzenia w sektorach 512b [PRZESTARZAŁE]\n"
 
 #: disk-utils/fdisk.c:653
-#, fuzzy
 msgid "     --bytes                   print SIZE in bytes rather than in human readable format\n"
 msgstr ""
-" -b, --bytes          wypisywanie rozmiarów w bajtach zamiast formatu\n"
-"                      czytelnego dla człowieka\n"
+"     --bytes                   wypisywanie rozmiarów w bajtach zamiast formatu\n"
+"                               czytelnego dla człowieka\n"
 
 #: disk-utils/fdisk.c:656
 msgid " -C, --cylinders <number>      specify the number of cylinders\n"
@@ -1032,12 +1021,10 @@ msgid "failed to allocate iterator"
 msgstr "nie udało się przydzielić iteratora"
 
 #: disk-utils/fdisk-list.c:113
-#, fuzzy
 msgid "failed to allocate output table"
 msgstr "nie udało się przydzielić tabeli wyjściowej"
 
 #: disk-utils/fdisk-list.c:154
-#, fuzzy
 msgid "failed to allocate output line"
 msgstr "nie udało się zainicjować linii wyjściowej"
 
@@ -1377,9 +1364,8 @@ msgid "Script successfully applied."
 msgstr "Skrypt został poprawnie naniesiony."
 
 #: disk-utils/fdisk-menu.c:495
-#, fuzzy
 msgid "Failed to transform disk layout into script"
-msgstr "Nie udało się odczytać układu dysku do skryptu."
+msgstr "Nie udało się przekształcić układu dysku do skryptu"
 
 #: disk-utils/fdisk-menu.c:509
 msgid "Script successfully saved."
@@ -3648,7 +3634,6 @@ msgid "Backup files:"
 msgstr "Pliki kopii zapasowych:"
 
 #: disk-utils/sfdisk.c:307
-#, fuzzy
 msgid "The partition table is unchanged (--no-act)."
 msgstr "Tablica partycji nie została zmieniona (--no-act)."
 
@@ -3722,12 +3707,12 @@ msgid "%s: not found partition table."
 msgstr "%s: nie znaleziono tablicy partycji."
 
 #: disk-utils/sfdisk.c:659
-#, fuzzy, c-format
+#, c-format
 msgid "%s: partition %zu: partition table contains only %zu partitions"
-msgstr "%s: partycja %zu: tablica partycji zawiera mniej partycji (%zu)."
+msgstr "%s: partycja %zu: tablica partycji zawiera mniej partycji (%zu)"
 
 #: disk-utils/sfdisk.c:662
-#, fuzzy, c-format
+#, c-format
 msgid "%s: partition %zu: partition is unused"
 msgstr "%s: partycja %zu: partycja nie jest używana"
 
@@ -3738,7 +3723,6 @@ msgstr "nie podano numeru partycji"
 
 #: disk-utils/sfdisk.c:687 disk-utils/sfdisk.c:751 disk-utils/sfdisk.c:806
 #: disk-utils/sfdisk.c:862
-#, fuzzy
 msgid "unexpected arguments"
 msgstr "nieoczekiwane argumenty"
 
@@ -3795,7 +3779,6 @@ msgid "   write    write table to disk and exit\n"
 msgstr "   write    zapis tablicy partycji na dysk i zakończenie\n"
 
 #: disk-utils/sfdisk.c:935
-#, fuzzy
 msgid "   quit     show new situation and wait for user's feedback before write\n"
 msgstr "   quit     wyświetlenie nowej sytuacji i oczekiwanie na reakcję użytkownika przed zapisem\n"
 
@@ -3820,20 +3803,18 @@ msgid " Input format:\n"
 msgstr " Format wyjścia:\n"
 
 #: disk-utils/sfdisk.c:946
-#, fuzzy
 msgid "   <start>, <size>, <type>, <bootable>\n"
-msgstr "   <początek>, <rozmiar>, <typy>, <rozruch>\n"
+msgstr "   <początek>, <rozmiar>, <typ>, <rozruch>\n"
 
 #: disk-utils/sfdisk.c:949
-#, fuzzy
 msgid ""
 "   <start>  begin of the partition in sectors or bytes if specified\n"
 "            in format <number>{K,M,G,T,P,E,Z,Y}. The default is\n"
 "            the first free space.\n"
 msgstr ""
-"   <rozmiar>   rozmiar partycji w sektorach; jeśli podano w formacie\n"
-"            <liczba>{K,M,G,T,P,E,Z,Y}, jest interpretowany jako rozmiar\n"
-"            w bajtach. Domyślnie całe dostępne miejsce.\n"
+"   <początek>  początek partycji w sektorach lub bajtach, jeśli podano\n"
+"               w formacie <liczba>{K,M,G,T,P,E,Z,Y}. Domyślnie pierwsze\n"
+"               wolne miejsce.\n"
 
 #: disk-utils/sfdisk.c:954
 msgid ""
@@ -3842,8 +3823,8 @@ msgid ""
 "            in bytes. The default is all available space.\n"
 msgstr ""
 "   <rozmiar>   rozmiar partycji w sektorach; jeśli podano w formacie\n"
-"            <liczba>{K,M,G,T,P,E,Z,Y}, jest interpretowany jako rozmiar\n"
-"            w bajtach. Domyślnie całe dostępne miejsce.\n"
+"               <liczba>{K,M,G,T,P,E,Z,Y}, jest interpretowany jako rozmiar\n"
+"               w bajtach. Domyślnie całe dostępne miejsce.\n"
 
 #: disk-utils/sfdisk.c:959
 msgid "   <type>   partition type. The default is Linux data partition.\n"
@@ -3883,14 +3864,14 @@ msgid "failed to allocate script handler"
 msgstr "nie udało się przydzielić nagłówka skryptu"
 
 #: disk-utils/sfdisk.c:1114
-#, fuzzy, c-format
+#, c-format
 msgid "%s: cannot modify partition %d: no partition table was found"
-msgstr "%s: nie można zmodyfikować partycji %d, nie znaleziono tablicy partycji."
+msgstr "%s: nie można zmodyfikować partycji %d: nie znaleziono tablicy partycji"
 
 #: disk-utils/sfdisk.c:1119
-#, fuzzy, c-format
+#, c-format
 msgid "%s: cannot modify partition %d: partition table contains only %zu partitions"
-msgstr "%s: nie można zmodyfikować partycji %d, tablica partycji jest mniejsza (%zu)."
+msgstr "%s: nie można zmodyfikować partycji %d: tablica partycji jest mniejsza (%zu)"
 
 #: disk-utils/sfdisk.c:1134
 #, c-format
@@ -3974,9 +3955,9 @@ msgid "failed to allocate partition name"
 msgstr "nie udało się przydzielić nazwy partycji"
 
 #: disk-utils/sfdisk.c:1237
-#, fuzzy, c-format
+#, c-format
 msgid "Ignoring partition %zu."
-msgstr "Zignorowanie partycji %zu"
+msgstr "Zignorowano partycję %zu."
 
 #: disk-utils/sfdisk.c:1245
 msgid "Failed to apply script headers, disk label not created."
@@ -4088,11 +4069,10 @@ msgid " -A, --append              append partitions to existing partition table\
 msgstr " -A, --append              dołączenie partycji do istniejącej tablicy\n"
 
 #: disk-utils/sfdisk.c:1339
-#, fuzzy
 msgid "     --bytes               print SIZE in bytes rather than in human readable format\n"
 msgstr ""
-" -b, --bytes          wypisywanie rozmiarów w bajtach zamiast formatu\n"
-"                      czytelnego dla człowieka\n"
+" -b, --bytes               wypisywanie rozmiarów w bajtach zamiast formatu\n"
+"                           czytelnego dla człowieka\n"
 
 #: disk-utils/sfdisk.c:1340
 msgid " -b, --backup              backup partition table sectors (see -O)\n"
@@ -4107,7 +4087,6 @@ msgid " -o, --output <list>       output columns\n"
 msgstr " -o, --output <lista>      kolumny do wypisania\n"
 
 #: disk-utils/sfdisk.c:1343
-#, fuzzy
 msgid " -O, --backup-file <path>  override default backup file name\n"
 msgstr " -O, --backup-file <ścieżka> nadpisanie domyślnej nazwy pliku kopii zapasowej\n"
 
@@ -4140,7 +4119,6 @@ msgid " -u, --unit S              deprecated, only sector unit is supported\n"
 msgstr " -u, --unit S              przestarzałe, obsługiwane są tylko sektory\n"
 
 #: disk-utils/sfdisk.c:1352
-#, fuzzy
 msgid " -L, --Linux               deprecated, only for backward compatibility\n"
 msgstr " -L, --Linux               przestarzałe, tylko dla zgodności wstecznej\n"
 
@@ -4149,12 +4127,11 @@ msgid " -v, --version  output version information and exit\n"
 msgstr " -v, --version   wypisanie informacji o wersji i zakończenie\n"
 
 #: disk-utils/sfdisk.c:1444
-#, fuzzy, c-format
+#, c-format
 msgid "%s is deprecated in favour of --part-type"
 msgstr "%s jest przestarzałe, należy używać --part-type"
 
 #: disk-utils/sfdisk.c:1449
-#, fuzzy
 msgid "--id is deprecated in favour of --part-type"
 msgstr "--id jest przestarzałe, należy używać --part-type"
 
@@ -4163,7 +4140,7 @@ msgid "--Linux option is unnecessary and deprecated"
 msgstr "Opcja --Linux jest zbędna i przestarzała"
 
 #: disk-utils/sfdisk.c:1494
-#, fuzzy, c-format
+#, c-format
 msgid "unsupported unit '%c'"
 msgstr "nieobsługiwana jednostka '%c'"
 
@@ -5144,9 +5121,8 @@ msgstr "Całe miejsce na partycje główne jest już wykorzystane."
 
 #. TRANSLATORS: Try to keep this within 80 characters.
 #: libfdisk/src/dos.c:1600
-#, fuzzy
 msgid "To create more partitions, first replace a primary with an extended partition."
-msgstr "Nie można utworzyć kolejnej partycji głównej. Aby utworzyć więcej partycji, należy najpierw zastąpić jedną partycję główną partycją rozszerzoną."
+msgstr "Aby utworzyć więcej partycji, należy najpierw zamienić jedną partycję główną na rozszerzoną."
 
 #: libfdisk/src/dos.c:1605
 msgid "All logical partitions are in use. Adding a primary partition."
@@ -5543,7 +5519,7 @@ msgid "The primary GPT table is corrupt, but the backup appears OK, so that will
 msgstr "Główna tablica GPT jest uszkodzona, ale zapasowa wygląda dobrze, więc zostanie użyta zapasowa."
 
 #: libfdisk/src/gpt.c:1452
-#, fuzzy, c-format
+#, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "nieobsługiwany bit atrybutu GPT '%s'"
 
@@ -8292,72 +8268,62 @@ msgid "Enter messages into the system log.\n"
 msgstr "Wprowadzenie komunikatów do logu systemowego.\n"
 
 #: misc-utils/logger.c:524
-#, fuzzy
 msgid " -i, --id[=<id>]          log <id> (default is PID)\n"
-msgstr " -i, --id[=<id>]       logowanie <id> (domyślnie logowany jest PID)\n"
+msgstr " -i, --id[=<id>]          logowanie <id> (domyślnie logowany jest PID)\n"
 
 #: misc-utils/logger.c:525
-#, fuzzy
 msgid " -f, --file <file>        log the contents of this file\n"
-msgstr " -f, --file <plik>     zalogowanie zawartości podanego pliku\n"
+msgstr " -f, --file <plik>        zalogowanie zawartości podanego pliku\n"
 
 #: misc-utils/logger.c:526
-#, fuzzy
 msgid " -p, --priority <prio>    mark given message with this priority\n"
-msgstr " -p, --priority <prio> oznaczenie komunikatu podanym priorytetem\n"
+msgstr " -p, --priority <prio>    oznaczenie komunikatu podanym priorytetem\n"
 
 #: misc-utils/logger.c:527
-#, fuzzy
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
-msgstr "     --prio-prefix     szukanie prefiksu w każdej linii czytanej z stdin\n"
+msgstr "     --prio-prefix        szukanie prefiksu w każdej linii czytanej z stdin\n"
 
 #: misc-utils/logger.c:528
-#, fuzzy
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr ""
-" -s, --stderr          wypisanie komunikatów także na standardowe wyjście\n"
-"                         diagnostyczne\n"
+" -s, --stderr             wypisanie komunikatów także na standardowe wyjście\n"
+"                            diagnostyczne\n"
 
 #: misc-utils/logger.c:529
-#, fuzzy
 msgid " -t, --tag <tag>          mark every line with this tag\n"
-msgstr " -t, --tag <znacznik>  oznaczanie każdej linii podanym znacznikiem\n"
+msgstr " -t, --tag <znacznik>     oznaczanie każdej linii podanym znacznikiem\n"
 
 #: misc-utils/logger.c:530
-#, fuzzy
 msgid " -n, --server <name>      write to this remote syslog server\n"
-msgstr " -n, --server <nazwa>  zapis do danego zdalnego serwera sysloga\n"
+msgstr " -n, --server <nazwa>     zapis do danego zdalnego serwera sysloga\n"
 
 #: misc-utils/logger.c:531
-#, fuzzy
 msgid " -P, --port <number>      use this UDP port\n"
-msgstr " -P, --port <numer>    użycie podanego portu UDP\n"
+msgstr " -P, --port <numer>       użycie podanego portu UDP\n"
 
 #: misc-utils/logger.c:532
-#, fuzzy
 msgid " -T, --tcp                use TCP only\n"
-msgstr " -T, --tcp             użycie tylko TCP\n"
+msgstr " -T, --tcp                użycie tylko TCP\n"
 
 #: misc-utils/logger.c:533
-#, fuzzy
 msgid " -d, --udp                use UDP only\n"
-msgstr " -d, --udp             użycie tylko UDP\n"
+msgstr " -d, --udp                użycie tylko UDP\n"
 
 #: misc-utils/logger.c:534
-#, fuzzy
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
-msgstr "     --rfc3164         użycie przestarzałego protokołu sysloga BSD\n"
+msgstr "     --rfc3164            użycie przestarzałego protokołu sysloga BSD\n"
 
 #: misc-utils/logger.c:535
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default);\n"
 "                            <snip> can be notime, or notq, and/or nohost\n"
 msgstr ""
+"     --rfc5424[=<snip>]   użycie protokołu syslog (domyślne);\n"
+"                            <snip> może być: notime, notq i/lub nohost\n"
 
 #: misc-utils/logger.c:537
-#, fuzzy
 msgid " -u, --socket <socket>    write to this Unix socket\n"
-msgstr " -u, --socket <gniazdo> zapis do podanego gniazda uniksowego\n"
+msgstr " -u, --socket <gniazdo>   zapis do podanego gniazda uniksowego\n"
 
 #: misc-utils/logger.c:539
 msgid "     --journald[=<file>]  write journald entry\n"
@@ -8377,7 +8343,6 @@ msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr "--file <plik> oraz <komunikat> wykluczają się wzajemnie, zigorowano komunikat"
 
 #: misc-utils/logger.c:688
-#, fuzzy
 msgid "journald entry could not be written"
 msgstr "nie można zapisać wpisu journald"
 
@@ -9162,14 +9127,12 @@ msgid " -B <dirs>  define binaries lookup path\n"
 msgstr " -B <katalogi>  określenie ścieżek wyszukiwania binariów\n"
 
 #: misc-utils/whereis.c:197
-#, fuzzy
 msgid " -m         search only for manuals and infos\n"
-msgstr " -m             wyszukiwanie tylko stron podręcznika (man)\n"
+msgstr " -m             wyszukiwanie tylko stron podręcznika man i info\n"
 
 #: misc-utils/whereis.c:198
-#, fuzzy
 msgid " -M <dirs>  define man and info lookup path\n"
-msgstr " -M <katalogi>  określenie ścieżek wyszukiwania stron podręcznika\n"
+msgstr " -M <katalogi>  określenie ścieżek wyszukiwania stron man i info\n"
 
 #: misc-utils/whereis.c:199
 msgid " -s         search only for sources\n"
@@ -14736,7 +14699,6 @@ msgstr ""
 " <plik>                 nazwa pliku do użycia\n"
 
 #: sys-utils/swapon.c:760
-#, fuzzy
 msgid ""
 "\n"
 "Available discard policy types (for --discard):\n"
@@ -14746,9 +14708,9 @@ msgid ""
 msgstr ""
 "\n"
 "Dostępne polityki kasowania (dla --discard):\n"
-" once\t  : tylko jednorazowe kasowanie obszarów\n"
-" pages\t  : kasowanie wolnych stron przed ponownym użyciem\n"
-" Jeśli nie wybrano polityki, włączane są oba rodzaje (domyślne).\n"
+" once    : tylko jednorazowe kasowanie obszarów\n"
+" pages   : kasowanie wolnych stron przed ponownym użyciem\n"
+"Jeśli nie wybrano polityki, włączane są oba rodzaje (domyślne).\n"
 
 #: sys-utils/swapon.c:765
 msgid ""
@@ -15162,9 +15124,8 @@ msgstr ""
 "                             (wymusza --user)\n"
 
 #: sys-utils/unshare.c:124
-#, fuzzy
 msgid " -s, --setgroups allow|deny  control the setgroups syscall in user namespaces\n"
-msgstr " -s, --setgroups <allow|deny>  dopuszczalność setgroups w przestrzeniach użytkowników\n"
+msgstr " -s, --setgroups allow|deny  dopuszczalność setgroups w przestrzeniach użytkowników\n"
 
 #: sys-utils/unshare.c:213
 msgid "unshare failed"
@@ -15175,9 +15136,8 @@ msgid "child exit failed"
 msgstr "zakończenie potomka nie powiodło się"
 
 #: sys-utils/unshare.c:237
-#, fuzzy
 msgid "options --setgroups=allow and --map-root-user are mutually exclusive"
-msgstr "opcje --setgroups=allow oraz --map-root-user wykluczają się wzajemnie."
+msgstr "opcje --setgroups=allow oraz --map-root-user wykluczają się wzajemnie"
 
 #: sys-utils/unshare.c:254
 #, c-format
@@ -15589,7 +15549,7 @@ msgid "setting terminal attributes failed: %m"
 msgstr "nie udało się ustawić atrybutów terminala: %m"
 
 #: term-utils/agetty.c:1449
-#, fuzzy, c-format
+#, c-format
 msgid "cannot open %s: %m"
 msgstr "nie można otworzyć %s: %m"
 
@@ -15810,9 +15770,9 @@ msgid "checkname failed: %m"
 msgstr "checkname nie powiodło się: %m"
 
 #: term-utils/agetty.c:2502
-#, fuzzy, c-format
+#, c-format
 msgid "cannot touch file %s"
-msgstr "nie można dotknąć pliku: %s"
+msgstr "nie można dotknąć pliku %s"
 
 #: term-utils/agetty.c:2506
 msgid "--reload is unsupported on your system"
@@ -17099,62 +17059,3 @@ msgstr "nieznana sekwencja specjalna na wejściu: %o, %o"
 #: text-utils/ul.c:630
 msgid "Input line too long."
 msgstr "Linia wejściowa zbyt długa."
-
-#~ msgid "Minimal size is %ju"
-#~ msgstr "Minimalny rozmiar to %ju"
-
-#~ msgid "Help Screen for cfdisk"
-#~ msgstr "Ekran pomocy dla cfdiska"
-
-#~ msgid "disk drive."
-#~ msgstr "dysku."
-
-#~ msgid "Copyright (C) 2014 Karel Zak <kzak@redhat.com> "
-#~ msgstr "Copyright (C) 2014 Karel Zak <kzak@redhat.com> "
-
-#~ msgid "Based on the original cfdisk from Kevin E. Martin & aeb."
-#~ msgstr "Program oparty na oryginalnym cfdisku autorstwa Kevina E. Martina & aeb."
-
-#~ msgid "             `no'"
-#~ msgstr "             \"nie\""
-
-#~ msgid "Too small partition size specified."
-#~ msgstr "Podano zbyt mały rozmiar partycji."
-
-#~ msgid "Device open in read-only mode"
-#~ msgstr "Urządzenie otwarte w trybie tylko do odczytu"
-
-#~ msgid "stat failed %s"
-#~ msgstr "stat nie powiodło się %s"
-
-#~ msgid "faild to allocate iterator"
-#~ msgstr "nie udało się przydzielić iteratora"
-
-#~ msgid "cannot open: %s"
-#~ msgstr "nie można otworzyć: %s"
-
-#~ msgid ""
-#~ "   <start>  begin of the partition in sectors. The default is the first\n"
-#~ "            free space.\n"
-#~ msgstr ""
-#~ "   <początek>  początek partycji w sektorach. Domyślnie pierwsze wolne\n"
-#~ "               miejsce.\n"
-
-#~ msgid "%s: stat failed"
-#~ msgstr "%s: stat nie powiodło się"
-
-#~ msgid "     --rfc5424[=<notime,notq,nohost>]\n"
-#~ msgstr "     --rfc5424[=<notime,notq,nohost>]\n"
-
-#~ msgid "                       use the syslog protocol (default)\n"
-#~ msgstr " -l, --list            użycie protokołu syslog (domyślne)\n"
-
-#~ msgid "%s: lstat failed"
-#~ msgstr "%s: lstat nie powiodło się"
-
-#~ msgid ""
-#~ "\n"
-#~ "Sets or gets the IO scheduling class and priority of processes.\n"
-#~ msgstr ""
-#~ "\n"
-#~ "Ustawianie lub odczyt klasy i priorytetu szeregowania we/wy procesów.\n"
