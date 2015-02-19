@@ -1,3 +1,7 @@
+util-linux 2.26: Feb 19 2015
+* see Documentation/releases/v2.26-ReleaseNotes or the complete changelog at
+  ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.26/v2.26-ChangeLog
+
 util-linux 2.26-rc2: Feb 4 2015
 * see Documentation/releases/v2.26-ReleaseNotes or the complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.26/v2.26-rc2-ChangeLog
