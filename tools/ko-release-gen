@@ -85,6 +85,7 @@ add_file	Documentation/releases/v${VERSION_DOCS}-ReleaseNotes
 add_html_dir	libmount/docs/html libmount-docs
 add_html_dir	libblkid/docs/html libblkid-docs
 add_html_dir	libsmartcols/docs/html libsmartcols-docs
+add_html_dir	libfdisk/docs/html libfdisk-docs
 
 killall gpg-agent
 
