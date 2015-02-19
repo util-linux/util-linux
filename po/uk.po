@@ -6,10 +6,10 @@
 # Yuri Chornoivan <yurchor@ukr.net>, 2012, 2013, 2014, 2015.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.26-rc1\n"
+"Project-Id-Version: util-linux 2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2015-02-04 11:38+0100\n"
-"PO-Revision-Date: 2015-01-18 00:12+0200\n"
+"POT-Creation-Date: 2015-02-04 11:54+0100\n"
+"PO-Revision-Date: 2015-02-05 09:22+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
 "Language: uk\n"
@@ -221,9 +221,9 @@ msgid "%s: failed to initialize sysfs handler"
 msgstr "%s: не вдалося ініціалізувати обробник sysfs"
 
 #: disk-utils/blockdev.c:460
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to read partition start from sysfs"
-msgstr "%s: не вдалося прочитати таблицю розділів"
+msgstr "%s: не вдалося прочитати початок таблиці розділів із sysfs"
 
 #: disk-utils/blockdev.c:481
 #, c-format
@@ -329,23 +329,22 @@ msgid "Label: %s"
 msgstr "Мітка: %s"
 
 #: disk-utils/cfdisk.c:1537
-#, fuzzy
 msgid "May be followed by M for MiB, G for GiB, T for TiB, or S for sectors."
-msgstr "Можна вказати одиницю, {M,B,G,T}iB (\"iB\" є необов’язковим) або S, якщо розмір вказано у секторах."
+msgstr "Можна вказати одиницю, M — МіБ, G — ГіБ, T — ТіБ, або S, якщо розмір вказано у секторах."
 
 #: disk-utils/cfdisk.c:1543
 msgid "Please, specify size."
 msgstr "Будь ласка, вкажіть розмір."
 
 #: disk-utils/cfdisk.c:1565
-#, fuzzy, c-format
+#, c-format
 msgid "Minimum size is %ju bytes."
-msgstr "Максимальний розмір: %ju байтів."
+msgstr "Максимальний розмір — %ju байтів."
 
 #: disk-utils/cfdisk.c:1574
-#, fuzzy, c-format
+#, c-format
 msgid "Maximum size is %ju bytes."
-msgstr "Максимальний розмір: %ju байтів."
+msgstr "Максимальний розмір — %ju байтів."
 
 #: disk-utils/cfdisk.c:1581
 msgid "Failed to parse size."
@@ -365,9 +364,9 @@ msgstr "Файл скрипту буде застосовано до табли�
 
 #: disk-utils/cfdisk.c:1694 disk-utils/cfdisk.c:1735
 #: disk-utils/fdisk-menu.c:463 disk-utils/fdisk-menu.c:501
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot open %s"
-msgstr "Не вдалося відкрити: %s"
+msgstr "Не вдалося відкрити %s"
 
 #: disk-utils/cfdisk.c:1696 disk-utils/fdisk-menu.c:465
 #, c-format
@@ -413,14 +412,12 @@ msgid "Select label type"
 msgstr "Вибрати тип мітки"
 
 #: disk-utils/cfdisk.c:1831
-#, fuzzy
 msgid "This is cfdisk, a curses-based disk partitioning program."
-msgstr "Це cfdisk - консольна програма роботи з розділами на базі curses, яка"
+msgstr "Це cfdisk - консольна програма роботи з розділами на базі curses."
 
 #: disk-utils/cfdisk.c:1832
-#, fuzzy
 msgid "It lets you create, delete, and modify partitions on a block device."
-msgstr "дозволяє створювати, видаляти та змінювати розділи вашого"
+msgstr "Надає змогу створювати, вилучати та змінювати розділи на блоковому пристрої."
 
 #: disk-utils/cfdisk.c:1834
 msgid "Command      Meaning"
@@ -463,19 +460,16 @@ msgid "  u          Dump disk layout to sfdisk compatible script file"
 msgstr "  u          Створити дамп компонування диска у сумісному з sfdisk файлі скрипту"
 
 #: disk-utils/cfdisk.c:1844
-#, fuzzy
 msgid "  W          Write partition table to disk (you must enter uppercase W);"
-msgstr "  W          Записати таблицю розділів на диск ( W повинен бути в верхньому регістрі)"
+msgstr "  W          Записати таблицю розділів на диск (слід ввести W у верхньому регістрі)"
 
 #: disk-utils/cfdisk.c:1845
-#, fuzzy
 msgid "               since this might destroy data on the disk, you must either"
-msgstr "             Це може зруйнувати дані на диску, тому необхідно або"
+msgstr "               оскільки це може зруйнувати дані на диску, необхідно або"
 
 #: disk-utils/cfdisk.c:1846
-#, fuzzy
 msgid "               confirm or deny the write by entering 'yes' or 'no'"
-msgstr "             підтвердити або відмовитись від запису набравши `yes' чи "
+msgstr "              підтвердити, або відмовитись від запису набравши «yes» чи «no»"
 
 #: disk-utils/cfdisk.c:1847
 msgid "Up Arrow     Move cursor to the previous partition"
@@ -498,7 +492,6 @@ msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Зауважте: Всі команди вводяться або у нижньому або у верхньому"
 
 #: disk-utils/cfdisk.c:1853
-#, fuzzy
 msgid "case letters (except for Write)."
 msgstr "регістрах (за винятком (W)запису)."
 
@@ -539,7 +532,6 @@ msgid "The type of partition %zu is unchanged."
 msgstr "Тип розділу %zu залишився незмінним."
 
 #: disk-utils/cfdisk.c:2036
-#, fuzzy
 msgid "Device is open in read-only mode."
 msgstr "Пристрій відкрито у режимі лише читання."
 
@@ -557,14 +549,12 @@ msgid "yes"
 msgstr "yes"
 
 #: disk-utils/cfdisk.c:2049
-#, fuzzy
 msgid "Did not write partition table to disk."
-msgstr "Не записувати таблицю розділів на диск"
+msgstr "Не записувати таблицю розділів на диск."
 
 #: disk-utils/cfdisk.c:2054
-#, fuzzy
 msgid "Failed to write disklabel."
-msgstr "Не вдалося записати мітку диска"
+msgstr "Не вдалося записати мітку диска."
 
 #: disk-utils/cfdisk.c:2057 disk-utils/fdisk-menu.c:545
 msgid "The partition table has been altered."
@@ -713,9 +703,9 @@ msgstr "некоректний аргумент - repair"
 #: sys-utils/swapon.c:482 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:133 term-utils/mesg.c:128 text-utils/more.c:598
 #: text-utils/tailf.c:101 text-utils/tailf.c:281
-#, fuzzy, c-format
+#, c-format
 msgid "stat of %s failed"
-msgstr "операція stat завершилась помилкою"
+msgstr "не вдалося отримати статистичні дані %s"
 
 #: disk-utils/fdformat.c:223 disk-utils/partx.c:949 misc-utils/lsblk.c:1397
 #: sys-utils/blkdiscard.c:159 sys-utils/mountpoint.c:107
@@ -924,9 +914,8 @@ msgid " -s, --getsz                   display device size in 512-byte sectors [D
 msgstr " -s, --getsz                   вивести розмір пристрою у 512-байтових секторах [ЗАСТАРІЛИЙ]\n"
 
 #: disk-utils/fdisk.c:653
-#, fuzzy
 msgid "     --bytes                   print SIZE in bytes rather than in human readable format\n"
-msgstr " -b, --bytes            вивести РОЗМІР у байтах, а не у зручному для читання форматі\n"
+msgstr "     --bytes                   вивести РОЗМІР у байтах, а не у зручному для читання форматі\n"
 
 #: disk-utils/fdisk.c:656
 msgid " -C, --cylinders <number>      specify the number of cylinders\n"
@@ -1036,12 +1025,10 @@ msgid "failed to allocate iterator"
 msgstr "не вдалося розподілити ітератор"
 
 #: disk-utils/fdisk-list.c:113
-#, fuzzy
 msgid "failed to allocate output table"
 msgstr "не вдалося розташувати у пам’яті таблицю виведення"
 
 #: disk-utils/fdisk-list.c:154
-#, fuzzy
 msgid "failed to allocate output line"
 msgstr "не вдалося розташувати у пам’яті рядок виведення"
 
@@ -1381,9 +1368,8 @@ msgid "Script successfully applied."
 msgstr "Скрипт успішно застосовано."
 
 #: disk-utils/fdisk-menu.c:495
-#, fuzzy
 msgid "Failed to transform disk layout into script"
-msgstr "Не вдалося прочитати компонування диска до скрипту."
+msgstr "Не вдалося перетворити компонування диска на скрипт"
 
 #: disk-utils/fdisk-menu.c:509
 msgid "Script successfully saved."
@@ -3656,7 +3642,6 @@ msgid "Backup files:"
 msgstr "Файли резервних копій:"
 
 #: disk-utils/sfdisk.c:307
-#, fuzzy
 msgid "The partition table is unchanged (--no-act)."
 msgstr "Таблицю розділів не змінено (--no-act)."
 
@@ -3730,12 +3715,12 @@ msgid "%s: not found partition table."
 msgstr "%s: таблиці розділів не знайдено."
 
 #: disk-utils/sfdisk.c:659
-#, fuzzy, c-format
+#, c-format
 msgid "%s: partition %zu: partition table contains only %zu partitions"
-msgstr "%s: розділ %zu: таблиця розділів містить лише %zu розділів."
+msgstr "%s: розділ %zu: таблиця розділів містить лише %zu розділів"
 
 #: disk-utils/sfdisk.c:662
-#, fuzzy, c-format
+#, c-format
 msgid "%s: partition %zu: partition is unused"
 msgstr "%s: розділ %zu: розділ не використовується"
 
@@ -3746,7 +3731,6 @@ msgstr "не вказано номер розділу"
 
 #: disk-utils/sfdisk.c:687 disk-utils/sfdisk.c:751 disk-utils/sfdisk.c:806
 #: disk-utils/sfdisk.c:862
-#, fuzzy
 msgid "unexpected arguments"
 msgstr "неочікувані аргументи"
 
@@ -3803,7 +3787,6 @@ msgid "   write    write table to disk and exit\n"
 msgstr "   write    записати таблицю на диск і вийти\n"
 
 #: disk-utils/sfdisk.c:935
-#, fuzzy
 msgid "   quit     show new situation and wait for user's feedback before write\n"
 msgstr "   quit     показати нову ситуацію і зачекати на відповідь користувача до виконання запису\n"
 
@@ -3828,20 +3811,18 @@ msgid " Input format:\n"
 msgstr " Вхідний формат:\n"
 
 #: disk-utils/sfdisk.c:946
-#, fuzzy
 msgid "   <start>, <size>, <type>, <bootable>\n"
 msgstr "   <початок>, <sрозмір>, <тип>, <завантажуваність>\n"
 
 #: disk-utils/sfdisk.c:949
-#, fuzzy
 msgid ""
 "   <start>  begin of the partition in sectors or bytes if specified\n"
 "            in format <number>{K,M,G,T,P,E,Z,Y}. The default is\n"
 "            the first free space.\n"
 msgstr ""
-"   <розмір> розмір розділу у секторах, якщо вказано у форматі\n"
-"            <розмір>{K,M,G,T,P,E,Z,Y}, обробляється як розмір\n"
-"            у байтах. Типово використовується увесь доступний простір.\n"
+"   <початок> початок розділу у секторах або байтах, якщо вказано у форматі\n"
+"            <число>{K,M,G,T,P,E,Z,Y}. Типово використовується увесь\n"
+"            доступний вільний простір.\n"
 
 #: disk-utils/sfdisk.c:954
 msgid ""
@@ -3891,14 +3872,14 @@ msgid "failed to allocate script handler"
 msgstr "не вдалося отримати пам’ять під обробки скриптів"
 
 #: disk-utils/sfdisk.c:1114
-#, fuzzy, c-format
+#, c-format
 msgid "%s: cannot modify partition %d: no partition table was found"
-msgstr "%s: не вдалося внести зміни до розділу %d, таблиці розділів не знайдено."
+msgstr "%s: не вдалося внести зміни до розділу %d, таблиці розділів не знайдено"
 
 #: disk-utils/sfdisk.c:1119
-#, fuzzy, c-format
+#, c-format
 msgid "%s: cannot modify partition %d: partition table contains only %zu partitions"
-msgstr "%s: не вдалося внести зміни до розділу %d, таблиця розділів містити лише %zu розділів."
+msgstr "%s: не вдалося внести зміни до розділу %d, таблиця розділів містить лише %zu розділів"
 
 #: disk-utils/sfdisk.c:1134
 #, c-format
@@ -3981,9 +3962,9 @@ msgid "failed to allocate partition name"
 msgstr "не вдалося отримати пам’ять під назву розділу"
 
 #: disk-utils/sfdisk.c:1237
-#, fuzzy, c-format
+#, c-format
 msgid "Ignoring partition %zu."
-msgstr "Ігнорувати розділ %zu"
+msgstr "Ігноруємо розділ %zu."
 
 #: disk-utils/sfdisk.c:1245
 msgid "Failed to apply script headers, disk label not created."
@@ -4095,9 +4076,8 @@ msgid " -A, --append              append partitions to existing partition table\
 msgstr " -A, --append              дописати розділи до наявної таблиці розділів\n"
 
 #: disk-utils/sfdisk.c:1339
-#, fuzzy
 msgid "     --bytes               print SIZE in bytes rather than in human readable format\n"
-msgstr " -b, --bytes            вивести РОЗМІР у байтах, а не у зручному для читання форматі\n"
+msgstr "     --bytes               вивести РОЗМІР у байтах, а не у зручному для читання форматі\n"
 
 #: disk-utils/sfdisk.c:1340
 msgid " -b, --backup              backup partition table sectors (see -O)\n"
@@ -4112,7 +4092,6 @@ msgid " -o, --output <list>       output columns\n"
 msgstr " -o, --output <список>     стовпчики виведених даних\n"
 
 #: disk-utils/sfdisk.c:1343
-#, fuzzy
 msgid " -O, --backup-file <path>  override default backup file name\n"
 msgstr " -O, --backup-file <шлях>  перевизначити типову назву файла резервної копії\n"
 
@@ -4145,7 +4124,6 @@ msgid " -u, --unit S              deprecated, only sector unit is supported\n"
 msgstr " -u, --unit S              застарілий, передбачено підтримку лише одиниці секторів\n"
 
 #: disk-utils/sfdisk.c:1352
-#, fuzzy
 msgid " -L, --Linux               deprecated, only for backward compatibility\n"
 msgstr " -L, --Linux               застарілий, лише для зворотної сумісності\n"
 
@@ -4154,21 +4132,20 @@ msgid " -v, --version  output version information and exit\n"
 msgstr " -v, --version  вивести інформацію щодо версії і вийти\n"
 
 #: disk-utils/sfdisk.c:1444
-#, fuzzy, c-format
+#, c-format
 msgid "%s is deprecated in favour of --part-type"
-msgstr "%s вважається застарілим, скористайтеся краще ---part-type"
+msgstr "%s вважається застарілим, скористайтеся краще --part-type"
 
 #: disk-utils/sfdisk.c:1449
-#, fuzzy
 msgid "--id is deprecated in favour of --part-type"
-msgstr "Параметр --id є застарілим, скористайтеся краще ---part-type"
+msgstr "Параметр --id є застарілим, скористайтеся краще --part-type"
 
 #: disk-utils/sfdisk.c:1468
 msgid "--Linux option is unnecessary and deprecated"
 msgstr "Параметр --Linux є необов’язковим і вважається застарілим"
 
 #: disk-utils/sfdisk.c:1494
-#, fuzzy, c-format
+#, c-format
 msgid "unsupported unit '%c'"
 msgstr "непідтримувана одиниця, «%c»"
 
@@ -5151,9 +5128,8 @@ msgstr "Все місце під основні розділи вже викор
 
 #. TRANSLATORS: Try to keep this within 80 characters.
 #: libfdisk/src/dos.c:1600
-#, fuzzy
 msgid "To create more partitions, first replace a primary with an extended partition."
-msgstr "Неможливо створити основний розділ. Якщо вам потрібно створити більше розділів, вам слід спершу замінити основний розділ на розширений розділ."
+msgstr "Якщо вам потрібно створити більше розділів, вам слід спершу замінити основний розділ на розширений розділ."
 
 #: libfdisk/src/dos.c:1605
 msgid "All logical partitions are in use. Adding a primary partition."
@@ -5550,7 +5526,7 @@ msgid "The primary GPT table is corrupt, but the backup appears OK, so that will
 msgstr "Основну таблицю GPT пошкоджено, але резервна виглядає правильною, тому буде використовуватись саме вона."
 
 #: libfdisk/src/gpt.c:1452
-#, fuzzy, c-format
+#, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "непідтримуваний біт атрибута GPT, «%s»"
 
@@ -8302,70 +8278,60 @@ msgid "Enter messages into the system log.\n"
 msgstr "Ввести повідомлення до журналу систему.\n"
 
 #: misc-utils/logger.c:524
-#, fuzzy
 msgid " -i, --id[=<id>]          log <id> (default is PID)\n"
 msgstr " -i, --id[=<ідентифікатор>] вести журнал <ідентифікатора> (типовим є PID)\n"
 
 #: misc-utils/logger.c:525
-#, fuzzy
 msgid " -f, --file <file>        log the contents of this file\n"
-msgstr " -f, --file <файл>     записати до журналу вміст вказаного файла\n"
+msgstr " -f, --file <файл>        записати до журналу вміст вказаного файла\n"
 
 #: misc-utils/logger.c:526
-#, fuzzy
 msgid " -p, --priority <prio>    mark given message with this priority\n"
-msgstr " -p, --priority <число> позначити вказане повідомлення цим рівнем пріоритетності\n"
+msgstr " -p, --priority <число>   позначити вказане повідомлення цим рівнем пріоритетності\n"
 
 #: misc-utils/logger.c:527
-#, fuzzy
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
-msgstr "     --prio-prefix     шукати префікс на кожному рядку читання зі стандартного введення\n"
+msgstr "     --prio-prefix        шукати префікс на кожному рядку читання зі стандартного введення\n"
 
 #: misc-utils/logger.c:528
-#, fuzzy
 msgid " -s, --stderr             output message to standard error as well\n"
-msgstr " -s, --stderr          вивести також повідомлення до стандартного виведення помилок\n"
+msgstr " -s, --stderr             вивести також повідомлення до стандартного виведення помилок\n"
 
 #: misc-utils/logger.c:529
-#, fuzzy
 msgid " -t, --tag <tag>          mark every line with this tag\n"
-msgstr " -t, --tag <теґ>       позначати кожен рядок цим теґом\n"
+msgstr " -t, --tag <теґ>          позначати кожен рядок цим теґом\n"
 
 #: misc-utils/logger.c:530
-#, fuzzy
 msgid " -n, --server <name>      write to this remote syslog server\n"
-msgstr " -n, --server <назва>  виконати запис до цього віддаленого сервера журналювання\n"
+msgstr " -n, --server <назва>     виконати запис до цього віддаленого сервера журналювання\n"
 
 #: misc-utils/logger.c:531
-#, fuzzy
 msgid " -P, --port <number>      use this UDP port\n"
-msgstr " -P, --port <число>    використовувати цей порт UDP\n"
+msgstr " -P, --port <число>       використовувати цей порт UDP\n"
 
 #: misc-utils/logger.c:532
-#, fuzzy
 msgid " -T, --tcp                use TCP only\n"
-msgstr " -T, --tcp             використовувати лише TCP\n"
+msgstr " -T, --tcp                використовувати лише TCP\n"
 
 #: misc-utils/logger.c:533
-#, fuzzy
 msgid " -d, --udp                use UDP only\n"
-msgstr " -d, --udp             використовувати лише UDP\n"
+msgstr " -d, --udp                використовувати лише UDP\n"
 
 #: misc-utils/logger.c:534
-#, fuzzy
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
-msgstr "     --rfc3164         використовувати застарілий протокол syslog BSD\n"
+msgstr "     --rfc3164            використовувати застарілий протокол syslog BSD\n"
 
 #: misc-utils/logger.c:535
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default);\n"
 "                            <snip> can be notime, or notq, and/or nohost\n"
 msgstr ""
+"     --rfc5424[=<snip>]   використовувати протокол syslog (типово);\n"
+"                            значенням <snip> може бути notime або notq і/або nohost\n"
 
 #: misc-utils/logger.c:537
-#, fuzzy
 msgid " -u, --socket <socket>    write to this Unix socket\n"
-msgstr " -u, --socket <сокет>  виконати запис до цього сокета Unix\n"
+msgstr " -u, --socket <сокет>     виконати запис до цього сокета Unix\n"
 
 #: misc-utils/logger.c:539
 msgid "     --journald[=<file>]  write journald entry\n"
@@ -8385,7 +8351,6 @@ msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr "--file <файл> і <повідомлення> не можна використовувати одночасно, повідомлення проігноровано"
 
 #: misc-utils/logger.c:688
-#, fuzzy
 msgid "journald entry could not be written"
 msgstr "запис journald не вдалося записати"
 
@@ -9176,14 +9141,12 @@ msgid " -B <dirs>  define binaries lookup path\n"
 msgstr " -B <кат>   визначити місця пошуку виконуваних файлів\n"
 
 #: misc-utils/whereis.c:197
-#, fuzzy
 msgid " -m         search only for manuals and infos\n"
-msgstr " -m         шукати лише у каталогах з підручниками\n"
+msgstr " -m         шукати лише у каталогах з підручниками та файлами info\n"
 
 #: misc-utils/whereis.c:198
-#, fuzzy
 msgid " -M <dirs>  define man and info lookup path\n"
-msgstr " -M <кат>   визначити місця пошуку підручників\n"
+msgstr " -M <кат>   визначити місця пошуку підручників та файлів info\n"
 
 #: misc-utils/whereis.c:199
 msgid " -s         search only for sources\n"
@@ -14757,7 +14720,6 @@ msgstr ""
 " <файл>                 назва файла, який буде використано\n"
 
 #: sys-utils/swapon.c:760
-#, fuzzy
 msgid ""
 "\n"
 "Available discard policy types (for --discard):\n"
@@ -14767,8 +14729,8 @@ msgid ""
 msgstr ""
 "\n"
 "Доступні типи правил відкидання (для --discard):\n"
-" once\t  : використовуються лише відкидання одноразових областей. (swapon)\n"
-" pages\t  : відкидати звільнені сторінки до повторного використання.\n"
+" once    : використовуються лише відкидання одноразових областей. (swapon)\n"
+" pages   : відкидати звільнені сторінки до повторного використання.\n"
 " Якщо не вибрано жодних правил, використовуються обидва набори (типова поведінка).\n"
 
 #: sys-utils/swapon.c:765
@@ -15181,9 +15143,8 @@ msgid " -r, --map-root-user       map current user to root (implies --user)\n"
 msgstr " -r, --map-root-user       пов’язати поточного користувача з користувачем root (використовує --user)\n"
 
 #: sys-utils/unshare.c:124
-#, fuzzy
 msgid " -s, --setgroups allow|deny  control the setgroups syscall in user namespaces\n"
-msgstr " -s, --setgroups <allow|deny>  керувати викликами setgroup у просторах назв користувачів\n"
+msgstr " -s, --setgroups allow|deny  керувати викликами setgroup у просторах назв користувачів\n"
 
 #: sys-utils/unshare.c:213
 msgid "unshare failed"
@@ -15194,9 +15155,8 @@ msgid "child exit failed"
 msgstr "спроба завершити дочірній процес завершилася невдало"
 
 #: sys-utils/unshare.c:237
-#, fuzzy
 msgid "options --setgroups=allow and --map-root-user are mutually exclusive"
-msgstr "параметри --setgroups=allow і --map-root-user не можна використовувати одночасно."
+msgstr "параметри --setgroups=allow і --map-root-user не можна використовувати одночасно"
 
 #: sys-utils/unshare.c:254
 #, c-format
@@ -15610,9 +15570,9 @@ msgid "setting terminal attributes failed: %m"
 msgstr "не вдалося встановити атрибути термінала: %m"
 
 #: term-utils/agetty.c:1449
-#, fuzzy, c-format
+#, c-format
 msgid "cannot open %s: %m"
-msgstr "не вдалося відкрити: %s: %m"
+msgstr "не вдалося відкрити %s: %m"
 
 #: term-utils/agetty.c:1555
 msgid "[press ENTER to login]"
@@ -15832,9 +15792,9 @@ msgid "checkname failed: %m"
 msgstr "помилка checkname: %m"
 
 #: term-utils/agetty.c:2502
-#, fuzzy, c-format
+#, c-format
 msgid "cannot touch file %s"
-msgstr "не вдалося виконати touch для файла: %s"
+msgstr "не вдалося виконати touch для файла %s"
 
 #: term-utils/agetty.c:2506
 msgid "--reload is unsupported on your system"
