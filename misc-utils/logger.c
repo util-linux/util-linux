@@ -89,7 +89,8 @@ enum {
 	OPT_JOURNALD,
 	OPT_RFC3164,
 	OPT_RFC5424,
-	OPT_SOCKET_ERRORS
+	OPT_SOCKET_ERRORS,
+	OPT_ID
 };
 
 struct logger_ctl {
@@ -552,7 +553,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_("Enter messages into the system log.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -i, --id[=<id>]          log <id> (default is PID)\n"), out);
+	fputs(_(" -i                       log the logger command's PID\n"), out);
+	fputs(_("     --id[=<id>]          log the given <id>, or otherwise the PID\n"), out);
 	fputs(_(" -f, --file <file>        log the contents of this file\n"), out);
 	fputs(_(" -p, --priority <prio>    mark given message with this priority\n"), out);
 	fputs(_("     --prio-prefix        look for a prefix on every line read from stdin\n"), out);
@@ -610,7 +612,7 @@ int main(int argc, char **argv)
 	FILE *jfd = NULL;
 #endif
 	static const struct option longopts[] = {
-		{ "id",		optional_argument,  0, 'i' },
+		{ "id",		optional_argument,  0, OPT_ID },
 		{ "stderr",	no_argument,	    0, 's' },
 		{ "file",	required_argument,  0, 'f' },
 		{ "priority",	required_argument,  0, 'p' },
@@ -637,7 +639,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((ch = getopt_long(argc, argv, "f:i::p:st:u:dTn:P:Vh",
+	while ((ch = getopt_long(argc, argv, "f:ip:st:u:dTn:P:Vh",
 					    longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'f':		/* file to log */
@@ -646,6 +648,9 @@ int main(int argc, char **argv)
 			stdout_reopened = 1;
 			break;
 		case 'i':		/* log process id also */
+			ctl.pid = getpid();
+			break;
+		case OPT_ID:
 			if (optarg) {
 				const char *p = optarg;
 
