@@ -56,6 +56,7 @@
 #include "c.h"
 #include "closestream.h"
 #include "nls.h"
+#include "pathnames.h"
 #include "strutils.h"
 #include "xalloc.h"
 
@@ -481,7 +482,7 @@ static void logger_open(struct logger_ctl *ctl)
 			ctl->syslogfp = syslog_rfc5424;
 		return;
 	}
-	ctl->fd = unix_socket(ctl, "/dev/log", ctl->socket_type);
+	ctl->fd = unix_socket(ctl, _PATH_DEVLOG, ctl->socket_type);
 	ctl->syslogfp = syslog_local;
 }
 
