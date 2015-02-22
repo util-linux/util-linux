@@ -360,7 +360,8 @@ static void do_prlimit(struct list_head *lims)
 			old = &lim->rlim;
 
 		if (verbose && new) {
-			printf(_("New %s limit: "), lim->desc->name);
+			printf(_("New %s limit for pid %d: "), lim->desc->name,
+				pid ? pid : getpid());
 			if (new->rlim_cur == RLIM_INFINITY)
 				printf("<%s", _("unlimited"));
 			else
