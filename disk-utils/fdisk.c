@@ -347,7 +347,7 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 			if (rc)
 				break;
 			x = rpmatch(buf);
-			if (x == 1 || x == 0) {
+			if (x == RPMATCH_YES || x == RPMATCH_NO) {
 				fdisk_ask_yesno_set_result(ask, x);
 				break;
 			}

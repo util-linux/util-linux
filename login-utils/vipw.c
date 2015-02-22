@@ -352,7 +352,7 @@ int main(int argc, char *argv[])
 		printf(_("Would you like to edit %s now [y/n]? "), orig_file);
 
 		if (fgets(response, sizeof(response), stdin)) {
-			if (rpmatch(response) == 1)
+			if (rpmatch(response) == RPMATCH_YES)
 				edit_file(1);
 		}
 	}

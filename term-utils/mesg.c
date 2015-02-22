@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 	}
 
 	switch (rpmatch(argv[0])) {
-	case 1:
+	case RPMATCH_YES:
 #ifdef USE_TTY_GROUP
 		if (chmod(tty, sb.st_mode | S_IWGRP) < 0)
 #else
@@ -147,13 +147,13 @@ int main(int argc, char *argv[])
 		if (verbose)
 			puts(_("write access to your terminal is allowed"));
 		return IS_ALLOWED;
-	case 0:
+	case RPMATCH_NO:
 		if (chmod(tty, sb.st_mode & ~(S_IWGRP|S_IWOTH)) < 0)
 			 err(MESG_EXIT_FAILURE, _("change %s mode failed"), tty);
 		if (verbose)
 			puts(_("write access to your terminal is denied"));
 		return IS_NOT_ALLOWED;
-        case -1:
+	case RPMATCH_INVALID:
 		warnx(_("invalid argument: %s"), argv[0]);
 		usage(stderr);
         default:

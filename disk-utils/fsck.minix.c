@@ -269,11 +269,11 @@ ask(const char *string, int def) {
 	ignore_result( fgets(input, YESNO_LENGTH, stdin) );
 	resp = rpmatch(input);
 	switch (resp) {
-	case -1:
+	case RPMATCH_INVALID:
 		/* def = def */
 		break;
-	case 0:
-	case 1:
+	case RPMATCH_NO:
+	case RPMATCH_YES:
 		def = resp;
 		break;
 	default:
