@@ -36,6 +36,8 @@ extern void strtotimeval_or_err(const char *str, struct timeval *tv,
 
 extern int isdigit_string(const char *str);
 
+extern int parse_switch(const char *arg, const char *a, const char *b);
+
 #ifndef HAVE_MEMPCPY
 extern void *mempcpy(void *restrict dest, const void *restrict src, size_t n);
 #endif

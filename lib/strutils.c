@@ -181,6 +181,14 @@ int isdigit_string(const char *str)
 	return p && p > str && !*p;
 }
 
+int parse_switch(const char *arg, const char *a, const char *b)
+{
+	if (strcmp(arg, a) == 0)
+		return 1;
+	else if (strcmp(arg, b) == 0)
+		return 0;
+	errx(STRTOXX_EXIT_CODE, _("argument error: %s"), arg);
+}
 
 #ifndef HAVE_MEMPCPY
 void *mempcpy(void *restrict dest, const void *restrict src, size_t n)
