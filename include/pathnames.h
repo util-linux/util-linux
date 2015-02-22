@@ -193,5 +193,8 @@
 /* kernel command line */
 #define _PATH_PROC_CMDLINE	"/proc/cmdline"
 
+/* logger paths */
+#define _PATH_DEVLOG		"/dev/log"
+
 #endif /* PATHNAMES_H */
 
