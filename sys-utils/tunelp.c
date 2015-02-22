@@ -205,7 +205,6 @@ int main(int argc, char **argv)
 				show_irq = 0;
 			}
 			break;
-#ifdef LPGETSTATUS
 		case 'o':
 			cmds->op = LPABORTOPEN;
 			cmds->val = get_onoff(optarg);
@@ -228,8 +227,6 @@ int main(int argc, char **argv)
 			cmds = cmds->next;
 			cmds->next = 0;
 			break;
-#endif
-#ifdef LPRESET
 		case 'r':
 			cmds->op = LPRESET;
 			cmds->val = 0;
@@ -237,8 +234,6 @@ int main(int argc, char **argv)
 			cmds = cmds->next;
 			cmds->next = 0;
 			break;
-#endif
-#ifdef LPTRUSTIRQ
 		case 'T':
 			/* Note: this will do the wrong thing on
 			 * 2.0.36 when compiled under 2.2.x
@@ -249,7 +244,6 @@ int main(int argc, char **argv)
 			cmds = cmds->next;
 			cmds->next = 0;
 			break;
-#endif
 		case 'v':
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -290,7 +284,6 @@ int main(int argc, char **argv)
 
 	cmds = cmdst;
 	while (cmds->next) {
-#ifdef LPGETSTATUS
 		if (cmds->op == LPGETSTATUS) {
 			status = 0xdeadbeef;
 			retval = ioctl(fd, LPGETSTATUS - offset, &status);
@@ -314,7 +307,6 @@ int main(int argc, char **argv)
 				printf("\n");
 			}
 		} else
-#endif /* LPGETSTATUS */
 		if (ioctl(fd, cmds->op - offset, cmds->val) < 0)
 			warn(_("ioctl failed"));
 		cmdst = cmds;
