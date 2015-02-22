@@ -202,12 +202,8 @@ static void parse_args(struct eject_control *ctl, int argc, char **argv)
 		switch (c) {
 		case 'a':
 			ctl->a_option = 1;
-			if (!strcmp(optarg, "0") || !strcmp(optarg, "off"))
-				ctl->a_arg = 0;
-			else if (!strcmp(optarg, "1") || !strcmp(optarg, "on"))
-				ctl->a_arg = 1;
-			else
-				errx(EXIT_FAILURE, _("invalid argument to --auto/-a option"));
+			ctl->a_arg = parse_switch(optarg, _("argument error"),
+						"on", "off",  "1", "0",  NULL);
 			break;
 		case 'c':
 			ctl->c_option = 1;
@@ -231,12 +227,8 @@ static void parse_args(struct eject_control *ctl, int argc, char **argv)
 			break;
 		case 'i':
 			ctl->i_option = 1;
-			if (!strcmp(optarg, "0") || !strcmp(optarg, "off"))
-				ctl->i_arg = 0;
-			else if (!strcmp(optarg, "1") || !strcmp(optarg, "on"))
-				ctl->i_arg = 1;
-			else
-				errx(EXIT_FAILURE, _("invalid argument to --manualeject/-i option"));
+			ctl->i_arg = parse_switch(optarg, _("argument error"),
+						"on", "off",  "1", "0",  NULL);
 			break;
 		case 'm':
 			ctl->m_option = 1;
