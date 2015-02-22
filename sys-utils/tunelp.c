@@ -74,8 +74,10 @@
 #include "xalloc.h"
 #include "closestream.h"
 
-#define EXIT_BAD_VALUE	3
-#define EXIT_LP_IO_ERR	4
+#define STRTOXX_EXIT_CODE	3
+#define EXIT_LP_IO_ERR		4
+
+#include "strutils.h"
 
 struct command {
 	long op;
@@ -112,14 +114,6 @@ static void __attribute__((__noreturn__)) print_usage(FILE *out)
 	fprintf(out, USAGE_MAN_TAIL("tunelp(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
-}
-
-static long get_val(char *val)
-{
-	long ret;
-	if (!(sscanf(val, "%ld", &ret) == 1))
-		errx(EXIT_BAD_VALUE, _("bad value"));
-	return ret;
 }
 
 static long get_onoff(char *val)
@@ -171,28 +165,28 @@ int main(int argc, char **argv)
 			break;
 		case 'i':
 			cmds->op = LPSETIRQ;
-			cmds->val = get_val(optarg);
+			cmds->val = strtol_or_err(optarg, _("argument error"));
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
 			cmds->next = 0;
 			break;
 		case 't':
 			cmds->op = LPTIME;
-			cmds->val = get_val(optarg);
+			cmds->val = strtol_or_err(optarg, _("argument error"));
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
 			cmds->next = 0;
 			break;
 		case 'c':
 			cmds->op = LPCHAR;
-			cmds->val = get_val(optarg);
+			cmds->val = strtol_or_err(optarg, _("argument error"));
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
 			cmds->next = 0;
 			break;
 		case 'w':
 			cmds->op = LPWAIT;
-			cmds->val = get_val(optarg);
+			cmds->val = strtol_or_err(optarg, _("argument error"));
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
 			cmds->next = 0;
