@@ -167,7 +167,7 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 		}
 	}
 
-	blkid_probe_chain_reset_vals(pr, chn);
+	blkid_probe_chain_reset_values(pr, chn);
 
 	DBG(LOWPROBE, ul_debug("--> starting probing loop [TOPOLOGY idx=%d]",
 		chn->idx));

@@ -198,7 +198,7 @@ struct blkid_struct_probe
 	struct blkid_chain	chains[BLKID_NCHAINS];	/* array of chains */
 	struct blkid_chain	*cur_chain;		/* current chain */
 
-	struct list_head	vals;		/* results */
+	struct list_head	values;		/* results */
 
 	struct blkid_struct_probe *parent;	/* for clones */
 	struct blkid_struct_probe *disk_probe;	/* whole-disk probing */
@@ -417,9 +417,9 @@ extern int blkid_probe_is_covered_by_pt(blkid_probe pr,
 					blkid_loff_t offset, blkid_loff_t size)
 			__attribute__((warn_unused_result));
 
-extern void blkid_probe_chain_reset_vals(blkid_probe pr, struct blkid_chain *chn)
+extern void blkid_probe_chain_reset_values(blkid_probe pr, struct blkid_chain *chn)
 			__attribute__((nonnull));
-extern int blkid_probe_chain_copy_vals(blkid_probe pr,
+extern int blkid_probe_chain_save_values(blkid_probe pr,
 				       struct blkid_chain *chn,
 			               struct list_head *vals)
 			__attribute__((nonnull));
@@ -429,12 +429,14 @@ extern struct blkid_prval *blkid_probe_assign_value(blkid_probe pr,
 			__attribute__((nonnull))
 			__attribute__((warn_unused_result));
 
-extern void blkid_probe_free_val(struct blkid_prval *v);
+extern void blkid_probe_free_value(struct blkid_prval *v);
 
 
-extern void blkid_probe_append_vals(blkid_probe pr,
+extern void blkid_probe_append_values_list(blkid_probe pr,
 				    struct list_head *vals)
 			__attribute__((nonnull));
+
+extern void blkid_probe_free_values_list(struct list_head *vals);
 
 extern struct blkid_chain *blkid_probe_get_chain(blkid_probe pr)
 			__attribute__((nonnull))

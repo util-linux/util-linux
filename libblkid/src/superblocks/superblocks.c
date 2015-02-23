@@ -341,7 +341,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 	if (!pr || chn->idx < -1)
 		return -EINVAL;
 
-	blkid_probe_chain_reset_vals(pr, chn);
+	blkid_probe_chain_reset_values(pr, chn);
 
 	if (pr->flags & BLKID_FL_NOSCAN_DEV)
 		return BLKID_PROBE_NONE;
@@ -402,7 +402,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 			DBG(LOWPROBE, ul_debug("\tcall probefunc()"));
 			rc = id->probefunc(pr, mag);
 			if (rc != BLKID_PROBE_OK) {
-				blkid_probe_chain_reset_vals(pr, chn);
+				blkid_probe_chain_reset_values(pr, chn);
 				if (rc < 0)
 					break;
 				continue;
@@ -422,7 +422,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 			rc = blkid_probe_set_magic(pr, off, mag->len,
 					(unsigned char *) mag->magic);
 		if (rc) {
-			blkid_probe_chain_reset_vals(pr, chn);
+			blkid_probe_chain_reset_values(pr, chn);
 			DBG(LOWPROBE, ul_debug("failed to set result -- ignore"));
 			continue;
 		}
@@ -479,27 +479,30 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 
 		if (count == 1) {
 			/* save the first result */
-			blkid_probe_chain_copy_vals(pr, chn, &vals);
+			blkid_probe_chain_save_values(pr, chn, &vals);
 			idx = chn->idx;
 		}
 	}
 
 	if (rc < 0)
-		return rc;		/* error */
+		goto done;		/* error */
 
 	if (count > 1 && intol) {
 		DBG(LOWPROBE, ul_debug("ERROR: superblocks chain: "
 			       "ambivalent result detected (%d filesystems)!",
 			       count));
-		return -2;		/* error, ambivalent result (more FS) */
+		rc = -2;		/* error, ambivalent result (more FS) */
+		goto done;
 	}
-	if (!count)
-		return BLKID_PROBE_NONE;
+	if (!count) {
+		rc = BLKID_PROBE_NONE;
+		goto done;
+	}
 
 	if (idx != -1) {
 		/* restore the first result */
-		blkid_probe_chain_reset_vals(pr, chn);
-		blkid_probe_append_vals(pr, &vals);
+		blkid_probe_chain_reset_values(pr, chn);
+		blkid_probe_append_values_list(pr, &vals);
 		chn->idx = idx;
 	}
 
@@ -511,7 +514,10 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 	if (chn->idx >= 0 && idinfos[chn->idx]->usage & BLKID_USAGE_RAID)
 		pr->prob_flags |= BLKID_PROBE_FL_IGNORE_PT;
 
-	return BLKID_PROBE_OK;
+	rc = BLKID_PROBE_OK;
+done:
+	blkid_probe_free_values_list(&vals);
+	return rc;
 }
 
 int blkid_probe_set_version(blkid_probe pr, const char *version)
@@ -586,7 +592,7 @@ int blkid_probe_set_id_label(blkid_probe pr, const char *name,
 			return 0;
 	}
 
-	blkid_probe_free_val(v);
+	blkid_probe_free_value(v);
 	return rc;
 
 }
@@ -618,7 +624,7 @@ int blkid_probe_set_utf8_id_label(blkid_probe pr, const char *name,
 			return 0;
 	}
 
-	blkid_probe_free_val(v);
+	blkid_probe_free_value(v);
 	return rc;
 }
 
@@ -646,7 +652,7 @@ int blkid_probe_set_label(blkid_probe pr, unsigned char *label, size_t len)
 			return 0;
 	}
 
-	blkid_probe_free_val(v);
+	blkid_probe_free_value(v);
 	return rc;
 }
 
@@ -678,7 +684,7 @@ int blkid_probe_set_utf8label(blkid_probe pr, unsigned char *label,
 			return 0;
 	}
 
-	blkid_probe_free_val(v);
+	blkid_probe_free_value(v);
 	return rc;
 }
 
@@ -737,7 +743,7 @@ int blkid_probe_strncpy_uuid(blkid_probe pr, unsigned char *str, size_t len)
 			return 0;
 	}
 
-	blkid_probe_free_val(v);
+	blkid_probe_free_value(v);
 	return rc;
 }
 
@@ -776,7 +782,7 @@ int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const char *nam
 		return 0;
 	}
 
-	blkid_probe_free_val(v);
+	blkid_probe_free_value(v);
 	return rc;
 }
 

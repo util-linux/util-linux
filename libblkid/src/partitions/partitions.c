@@ -556,7 +556,7 @@ static int idinfo_probe(blkid_probe pr, const struct blkid_idinfo *id,
 			/* reset after error */
 			reset_partlist(blkid_probe_get_partlist(pr));
 			if (chn && !chn->binary)
-				blkid_probe_chain_reset_vals(pr, chn);
+				blkid_probe_chain_reset_values(pr, chn);
 			DBG(LOWPROBE, ul_debug("%s probefunc failed, rc %d",
 						  id->name, rc));
 		}
@@ -584,7 +584,7 @@ static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 	if (!pr || chn->idx < -1)
 		return -EINVAL;
 
-	blkid_probe_chain_reset_vals(pr, chn);
+	blkid_probe_chain_reset_values(pr, chn);
 
 	if (pr->flags & BLKID_FL_NOSCAN_DEV)
 		return BLKID_PROBE_NONE;
@@ -1108,7 +1108,7 @@ int blkid_partitions_set_ptuuid(blkid_probe pr, unsigned char *uuid)
 		return 0;
 	}
 
-	blkid_probe_free_val(v);
+	blkid_probe_free_value(v);
 	return -ENOMEM;
 }
 

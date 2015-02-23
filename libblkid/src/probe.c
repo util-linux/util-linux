@@ -130,7 +130,7 @@ static const struct blkid_chaindrv *chains_drvs[] = {
 };
 
 static struct blkid_prval *blkid_probe_new_value(void);
-static void blkid_probe_reset_vals(blkid_probe pr);
+static void blkid_probe_reset_values(blkid_probe pr);
 static void blkid_probe_reset_buffer(blkid_probe pr);
 
 /**
@@ -157,7 +157,7 @@ blkid_probe blkid_new_probe(void)
 		pr->chains[i].enabled = chains_drvs[i]->dflt_enabled;
 	}
 	INIT_LIST_HEAD(&pr->buffers);
-	INIT_LIST_HEAD(&pr->vals);
+	INIT_LIST_HEAD(&pr->values);
 	return pr;
 }
 
@@ -262,39 +262,44 @@ void blkid_free_probe(blkid_probe pr)
 	if ((pr->flags & BLKID_FL_PRIVATE_FD) && pr->fd >= 0)
 		close(pr->fd);
 	blkid_probe_reset_buffer(pr);
+	blkid_probe_reset_values(pr);
 	blkid_free_probe(pr->disk_probe);
 
 	DBG(LOWPROBE, ul_debug("free probe %p", pr));
 	free(pr);
 }
 
-void blkid_probe_free_val(struct blkid_prval *v)
+void blkid_probe_free_value(struct blkid_prval *v)
 {
 	if (!v)
 		return;
 
 	list_del(&v->prvals);
 	free(v->data);
+
+	DBG(LOWPROBE, ul_debug(" free value %s", v->name));
 	free(v);
 }
 
 /*
  * Removes chain values from probing result.
  */
-void blkid_probe_chain_reset_vals(blkid_probe pr, struct blkid_chain *chn)
+void blkid_probe_chain_reset_values(blkid_probe pr, struct blkid_chain *chn)
 {
 
 	struct list_head *p, *pnext;
 
-	if (!pr || list_empty(&pr->vals))
+	if (!pr || list_empty(&pr->values))
 		return;
 
-	list_for_each_safe(p, pnext, &pr->vals) {
+	DBG(LOWPROBE, ul_debug("reseting %s values", chn->driver->name));
+
+	list_for_each_safe(p, pnext, &pr->values) {
 		struct blkid_prval *v = list_entry(p,
 						struct blkid_prval, prvals);
 
 		if (v->chain == chn)
-			blkid_probe_free_val(v);
+			blkid_probe_free_value(v);
 	}
 }
 
@@ -304,9 +309,14 @@ static void blkid_probe_chain_reset_position(struct blkid_chain *chn)
 		chn->idx = -1;
 }
 
-static struct blkid_prval *blkid_probe_deep_copy_val(struct blkid_prval *dest,
-						struct blkid_prval *src)
+/*
+static struct blkid_prval *blkid_probe_copy_value(struct blkid_prval *src)
 {
+	struct blkid_prval *dest = blkid_probe_new_value();
+
+	if (!dest)
+		return NULL;
+
 	memcpy(dest, src, sizeof(struct blkid_prval));
 
 	dest->data = malloc(src->len);
@@ -316,34 +326,31 @@ static struct blkid_prval *blkid_probe_deep_copy_val(struct blkid_prval *dest,
 	memcpy(dest->data, src->data, src->len);
 
 	INIT_LIST_HEAD(&dest->prvals);
-
 	return dest;
 }
+*/
 
 /*
- * Copies chain values from probing result to @vals.
+ * Move chain values from probing result to @vals
  */
-int blkid_probe_chain_copy_vals(blkid_probe pr, struct blkid_chain *chn,
-		struct list_head *vals)
+int blkid_probe_chain_save_values(blkid_probe pr, struct blkid_chain *chn,
+				struct list_head *vals)
 {
-	struct list_head *p;
-	struct blkid_prval *new_v, *v;
+	struct list_head *p, *pnext;
+	struct blkid_prval *v;
 
-	list_for_each(p, &pr->vals) {
+	DBG(LOWPROBE, ul_debug("saving %s values", chn->driver->name));
+
+	list_for_each_safe(p, pnext, &pr->values) {
 
 		v = list_entry(p, struct blkid_prval, prvals);
-
-		new_v = blkid_probe_new_value();
-		if (!new_v)
-			break;
-
 		if (v->chain != chn)
 			continue;
 
-		if (!blkid_probe_deep_copy_val(new_v, v))
-			break;
+		list_del(&v->prvals);
+		INIT_LIST_HEAD(&v->prvals);
 
-		list_add_tail(&new_v->prvals, vals);
+		list_add_tail(&v->prvals, vals);
 	}
 	return 0;
 }
@@ -351,9 +358,26 @@ int blkid_probe_chain_copy_vals(blkid_probe pr, struct blkid_chain *chn,
 /*
  * Appends values from @vals to the probing result
  */
-void blkid_probe_append_vals(blkid_probe pr, struct list_head *vals)
+void blkid_probe_append_values_list(blkid_probe pr, struct list_head *vals)
 {
-	list_splice(vals, &pr->vals);
+	DBG(LOWPROBE, ul_debug("appending values"));
+
+	list_splice(vals, &pr->values);
+	INIT_LIST_HEAD(vals);
+}
+
+
+void blkid_probe_free_values_list(struct list_head *vals)
+{
+	if (!vals)
+		return;
+
+	DBG(LOWPROBE, ul_debug("freeing values list"));
+
+	while (!list_empty(vals)) {
+		struct blkid_prval *v = list_entry(vals->next, struct blkid_prval, prvals);
+		blkid_probe_free_value(v);
+	}
 }
 
 struct blkid_chain *blkid_probe_get_chain(blkid_probe pr)
@@ -423,7 +447,7 @@ void blkid_reset_probe(blkid_probe pr)
 	if (!pr)
 		return;
 
-	blkid_probe_reset_vals(pr);
+	blkid_probe_reset_values(pr);
 	blkid_probe_set_wiper(pr, 0, 0);
 
 	pr->cur_chain = NULL;
@@ -662,20 +686,20 @@ static void blkid_probe_reset_buffer(blkid_probe pr)
 	INIT_LIST_HEAD(&pr->buffers);
 }
 
-static void blkid_probe_reset_vals(blkid_probe pr)
+static void blkid_probe_reset_values(blkid_probe pr)
 {
-	if (!pr || list_empty(&pr->vals))
+	if (!pr || list_empty(&pr->values))
 		return;
 
 	DBG(LOWPROBE, ul_debug("resetting results pr=%p", pr));
 
-	while (!list_empty(&pr->vals)) {
-		struct blkid_prval *v = list_entry(pr->vals.next,
+	while (!list_empty(&pr->values)) {
+		struct blkid_prval *v = list_entry(pr->values.next,
 						struct blkid_prval, prvals);
-		blkid_probe_free_val(v);
+		blkid_probe_free_value(v);
 	}
 
-	INIT_LIST_HEAD(&pr->vals);
+	INIT_LIST_HEAD(&pr->values);
 }
 
 /*
@@ -1319,7 +1343,7 @@ struct blkid_prval *blkid_probe_assign_value(
 
 	v->name = name;
 	v->chain = pr->cur_chain;
-	list_add_tail(&v->prvals, &pr->vals);
+	list_add_tail(&v->prvals, &pr->values);
 
 	DBG(LOWPROBE, ul_debug("assigning %s [%s]", name, v->chain->driver->name));
 	return v;
@@ -1378,7 +1402,7 @@ int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
 	len = vasprintf((char **) &v->data, fmt, ap);
 
 	if (len <= 0) {
-		blkid_probe_free_val(v);
+		blkid_probe_free_value(v);
 		return len == 0 ? -EINVAL : -ENOMEM;
 	}
 	v->len = len + 1;
@@ -1633,7 +1657,7 @@ int blkid_probe_numof_values(blkid_probe pr)
 	if (!pr)
 		return -1;
 
-	list_for_each(p, &pr->vals)
+	list_for_each(p, &pr->values)
 		++i;
 	return i;
 }
@@ -1711,10 +1735,10 @@ int blkid_probe_has_value(blkid_probe pr, const char *name)
 
 struct blkid_prval *blkid_probe_last_value(blkid_probe pr)
 {
-	if (!pr || list_empty(&pr->vals))
+	if (!pr || list_empty(&pr->values))
 		return NULL;
 
-	return list_last_entry(&pr->vals, struct blkid_prval, prvals);
+	return list_last_entry(&pr->values, struct blkid_prval, prvals);
 }
 
 
@@ -1726,7 +1750,7 @@ struct blkid_prval *__blkid_probe_get_value(blkid_probe pr, int num)
 	if (!pr || num < 0)
 		return NULL;
 
-	list_for_each(p, &pr->vals) {
+	list_for_each(p, &pr->values) {
 		if (i++ != num)
 			continue;
 		return list_entry(p, struct blkid_prval, prvals);
@@ -1738,10 +1762,10 @@ struct blkid_prval *__blkid_probe_lookup_value(blkid_probe pr, const char *name)
 {
 	struct list_head *p;
 
-	if (!pr || list_empty(&pr->vals) || !name)
+	if (!pr || list_empty(&pr->values) || !name)
 		return NULL;
 
-	list_for_each(p, &pr->vals) {
+	list_for_each(p, &pr->values) {
 		struct blkid_prval *v = list_entry(p, struct blkid_prval,
 						prvals);
 
@@ -1893,6 +1917,6 @@ void blkid_probe_use_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
 		DBG(LOWPROBE, ul_debug("previously wiped area modified "
 				       " -- ignore previous results"));
 		blkid_probe_set_wiper(pr, 0, 0);
-		blkid_probe_chain_reset_vals(pr, chn);
+		blkid_probe_chain_reset_values(pr, chn);
 	}
 }
