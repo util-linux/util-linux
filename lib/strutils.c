@@ -181,13 +181,31 @@ int isdigit_string(const char *str)
 	return p && p > str && !*p;
 }
 
-int parse_switch(const char *arg, const char *a, const char *b)
+/*
+ *  parse_switch(argv[i], "on", "off",  "yes", "no",  NULL);
+ */
+int parse_switch(const char *arg, const char *errmesg, ...)
 {
-	if (strcmp(arg, a) == 0)
-		return 1;
-	else if (strcmp(arg, b) == 0)
-		return 0;
-	errx(STRTOXX_EXIT_CODE, _("argument error: %s"), arg);
+	const char *a, *b;
+	va_list ap;
+
+	va_start(ap, errmesg);
+	do {
+		a = va_arg(ap, char *);
+		if (!a)
+			break;
+		b = va_arg(ap, char *);
+		if (!b)
+			break;
+
+		if (strcmp(arg, a) == 0)
+			return 1;
+		else if (strcmp(arg, b) == 0)
+			return 0;
+	} while (1);
+	va_end(ap);
+
+	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, arg);
 }
 
 #ifndef HAVE_MEMPCPY
