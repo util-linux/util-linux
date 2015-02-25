@@ -854,7 +854,7 @@ running at their own speed and drifting away from the 'correct' time at
 their own rates.  The methods and software for drift correction are
 different for each of them.  However, most systems are configured to
 exchange values between these two clocks at startup and shutdown.  Now
-the individual device's time keeping errors are transfered back and
+the individual device's time keeping errors are transferred back and
 forth between each other.  Attempt to configure drift correction for only
 one of them, and the other's drift will be overlaid upon it.  If the big
 picture is not kept in mind, confusion will soon ensue.
