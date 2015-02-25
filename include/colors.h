@@ -39,6 +39,7 @@
 
 #define UL_COLOR_WHITE		"\033[1;37m"
 
+
 /* --color[=WHEN] */
 enum colortmode {
 	UL_COLORMODE_AUTO = 0,
@@ -48,6 +49,12 @@ enum colortmode {
 
 	__UL_NCOLORMODES	/* last */
 };
+
+#ifdef USE_COLORS_BY_DEFAUL
+# define USAGE_COLORS_DEFAULT	N_("colors enabled by default")
+#else
+# define USAGE_COLORS_DEFAULT   N_("colors disabled by default")
+#endif
 
 extern int colormode_from_string(const char *str);
 extern int colormode_or_err(const char *str, const char *errmsg);
