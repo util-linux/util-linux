@@ -70,18 +70,10 @@ Display a calendar for the whole year.
 Display week numbers in the calendar (US or ISO-8601).
 .TP
 \fB\-\-color\fR[\fI=when\fR]
-Colorize output.  The
-.I when
-can be
-.IR never ,
-.IR auto ,
-or
-.IR always .
-Never will turn off colorizing in all situations.  Auto is default, and
-it will make colorizing to be in use if output is done to terminal.
-Always will allow colors to be outputed when
-.B cal
-outputs to pipe, or is called from a script.
+Colorize the output.  The optional argument \fIwhen\fP
+can be \fBauto\fR, \fBnever\fR or \fBalways\fR.  If the \fIwhen\fR argument is omitted,
+it defaults to \fBauto\fR.  The colors can be disabled, for the current built-in default 
+see \fB\-\-help\fR output. See also the COLORS section.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
@@ -117,8 +109,9 @@ Implicit coloring can be disabled as follows:
 .br
 
 .RE
-For more details see
-.BR terminal-colors.d (5).
+See
+.BR terminal-colors.d (5)
+for more details about colorization configuration.
 .SH BUGS
 .PP
 The

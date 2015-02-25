@@ -645,6 +645,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -b, --sector-size <size>      physical and logical sector size\n"), out);
 	fputs(_(" -c, --compatibility[=<mode>]  mode is 'dos' or 'nondos' (default)\n"), out);
 	fputs(_(" -L, --color[=<when>]          colorize output (auto, always or never)\n"), out);
+	fprintf(out,
+	        "                                 %s\n", USAGE_COLORS_DEFAULT);
 	fputs(_(" -l, --list                    display partitions end exit\n"), out);
 	fputs(_(" -o, --output <list>           output columns\n"), out);
 	fputs(_(" -t, --type <type>             recognize specified partition table type only\n"), out);
@@ -769,6 +771,7 @@ int main(int argc, char **argv)
 			act = ACT_LIST;
 			break;
 		case 'L':
+			colormode = UL_COLORMODE_AUTO;
 			if (optarg)
 				colormode = colormode_or_err(optarg,
 						_("unsupported color mode"));

@@ -165,6 +165,8 @@ void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -o, --two-bytes-octal     two-byte octal display\n"), out);
 	fputs(_(" -x, --two-bytes-hex       two-byte hexadecimal display\n"), out);
 	fputs(_(" -L, --color[=<mode>]      interpret color formatting specifiers\n"), out);
+	fprintf(out,
+	        "                             %s\n", USAGE_COLORS_DEFAULT);
 	fputs(_(" -e, --format <format>     format string to be used for displaying data\n"), out);
 	fputs(_(" -f, --format-file <file>  file that contains format strings\n"), out);
 	fputs(_(" -n, --length <length>     interpret only length bytes of input\n"), out);
