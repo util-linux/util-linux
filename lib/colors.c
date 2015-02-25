@@ -19,6 +19,15 @@
 #include "debug.h"
 
 /*
+ * Default behavior, maybe be override by terminal-colors.d/{enable,disable}.
+ */
+#ifdef USE_COLORS_BY_DEFAULT
+# define UL_COLORMODE_DEFAULT	UL_COLORMODE_AUTO	/* check isatty() */
+#else
+# define UL_COLORMODE_DEFAULT	UL_COLORMODE_NEVER	/* no colors by default */
+#endif
+
+/*
  * terminal-colors.d debug stuff
  */
 UL_DEBUG_DEFINE_MASK(termcolors);
@@ -678,7 +687,7 @@ int colors_init(int mode, const char *name)
 	if (mode == UL_COLORMODE_UNDEF && (atty = isatty(STDOUT_FILENO))) {
 		int rc = colors_read_configuration(cc);
 		if (rc)
-			cc->mode = UL_COLORMODE_AUTO;
+			cc->mode = UL_COLORMODE_DEFAULT;
 		else {
 
 			/* evaluate scores */
@@ -686,7 +695,7 @@ int colors_init(int mode, const char *name)
 			    cc->scores[UL_COLORFILE_ENABLE])
 				cc->mode = UL_COLORMODE_NEVER;
 			else
-				cc->mode = UL_COLORMODE_AUTO;
+				cc->mode = UL_COLORMODE_DEFAULT;
 
 			atexit(colors_deinit);
 		}

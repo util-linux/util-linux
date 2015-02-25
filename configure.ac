@@ -1849,11 +1849,21 @@ AC_ARG_ENABLE([makeinstall-chown],
 )
 AM_CONDITIONAL([MAKEINSTALL_DO_CHOWN], [test "x$enable_makeinstall_chown" = xyes])
 
+
 AC_ARG_ENABLE([makeinstall-setuid],
   AS_HELP_STRING([--disable-makeinstall-setuid], [do not do setuid chmod operations during "make install"]),
   [], [enable_makeinstall_setuid=yes]
 )
 AM_CONDITIONAL([MAKEINSTALL_DO_SETUID], [test "x$enable_makeinstall_setuid" = xyes])
+
+
+AC_ARG_ENABLE([colors-default],
+  AS_HELP_STRING([--disable-colors-default], [do not colorize output from utils by default]),
+  [], [enable_colors_default=yes]
+)
+AS_IF([test "x$enable_colors_default" = xyes], [
+  AC_DEFINE([USE_COLORS_BY_DEFAULT], [1], [Enables colorized output from utils by default])
+])
 
 
 AC_ARG_VAR([SUID_CFLAGS],
