@@ -19,6 +19,7 @@
 #define VDEV_LABEL_UBERBLOCK	(128 * 1024ULL)
 #define VDEV_LABEL_NVPAIR	( 16 * 1024ULL)
 #define VDEV_LABEL_SIZE		(256 * 1024ULL)
+#define UBERBLOCK_SIZE		1024ULL
 
 /* #include <sys/uberblock_impl.h> */
 #define UBERBLOCK_MAGIC         0x00bab10c              /* oo-ba-bloc!  */
@@ -31,7 +32,7 @@ struct zfs_uberblock {
 	char		ub_rootbp;	/* MOS objset_phys_t		*/
 } __attribute__((packed));
 
-#define ZFS_TRIES	64
+#define ZFS_TRIES	512
 #define ZFS_WANT	 4
 
 #define DATA_TYPE_UINT64 8
@@ -162,11 +163,10 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 #define zdebug(fmt, ...)	do {} while(0)
 /*#define zdebug(fmt, a...)	fprintf(stderr, fmt, ##a)*/
 
-/* ZFS has 128x1kB host-endian root blocks, stored in 2 areas at the start
- * of the disk, and 2 areas at the end of the disk.  Check only some of them...
- * #4 (@ 132kB) is the first one written on a new filesystem. */
-static int probe_zfs(blkid_probe pr,
-		const struct blkid_idmag *mag __attribute__((__unused__)))
+/* ZFS has 128x1kB host-endian root blocks, stored in 2 areas (labels)
+ * at the start of the disk, and 2 areas at the end of the disk.
+ */
+static int probe_zfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	uint64_t swab_magic = swab64(UBERBLOCK_MAGIC);
 	struct zfs_uberblock *ub;
@@ -174,15 +174,29 @@ static int probe_zfs(blkid_probe pr,
 	loff_t offset, ub_offset = 0;
 	int tried;
 	int found;
+	loff_t blk_align = (pr->size % (256 * 1024ULL));
 
 	zdebug("probe_zfs\n");
-	/* Look for at least 4 uberblocks to ensure a positive match */
+	/* Look for at least 4 uberblocks to ensure a positive match.
+	   Begin with Label 0 (L0) at the start of the block device. */
 	for (tried = found = 0, offset = VDEV_LABEL_UBERBLOCK;
-	     tried < ZFS_TRIES && found < ZFS_WANT;
-	     tried++, offset += 4096) {
-		/* also try the second uberblock copy */
-		if (tried == (ZFS_TRIES / 2))
+	     found < ZFS_WANT && tried < ZFS_TRIES;
+	     tried++, offset += UBERBLOCK_SIZE)
+	{
+		/* Leave L0 to try other labels */
+		switch(tried) {
+		case 128: // jump to L1, just after L0
 			offset = VDEV_LABEL_SIZE + VDEV_LABEL_UBERBLOCK;
+			break;
+		case 256: // jump to L2 near the far end of the block device
+			offset = pr->size - 2 * VDEV_LABEL_SIZE + VDEV_LABEL_UBERBLOCK - blk_align;
+			zdebug("probe_zfs: l2 offset %llu\n", offset >> 10);
+			break;
+		case 384: // jump to L3 at the furthest end of the block device
+			offset = pr->size - VDEV_LABEL_SIZE + VDEV_LABEL_UBERBLOCK - blk_align;
+			zdebug("probe_zfs: l3 offset %llu\n", offset >> 10);
+			break;
+		}
 
 		ub = (struct zfs_uberblock *)
 			blkid_probe_get_buffer(pr, offset,
@@ -193,15 +207,14 @@ static int probe_zfs(blkid_probe pr,
 		if (ub->ub_magic == UBERBLOCK_MAGIC) {
 			ub_offset = offset;
 			found++;
+			zdebug("probe_zfs: found little-endian uberblock at %llu\n", offset >> 10);
 		}
 
 		if ((swab_endian = (ub->ub_magic == swab_magic))) {
 			ub_offset = offset;
 			found++;
+			zdebug("probe_zfs: found big-endian uberblock at %llu\n", offset >> 10);
 		}
-
-		zdebug("probe_zfs: found %s-endian uberblock at %llu\n",
-		       swab_endian ? "big" : "little", offset >> 10);
 	}
 
 	if (found < 4)
@@ -230,4 +243,3 @@ const struct blkid_idinfo zfs_idinfo =
 	.minsz		= 64 * 1024 * 1024,
 	.magics		= BLKID_NONE_MAGIC
 };
-
