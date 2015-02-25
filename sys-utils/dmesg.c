@@ -276,6 +276,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -H, --human                 human readable output\n"), out);
 	fputs(_(" -k, --kernel                display kernel messages\n"), out);
 	fputs(_(" -L, --color[=<when>]        colorize messages (auto, always or never)\n"), out);
+	fprintf(out,
+	        "                               %s\n", USAGE_COLORS_DEFAULT);
 	fputs(_(" -l, --level <list>          restrict output to defined levels\n"), out);
 	fputs(_(" -n, --console-level <level> set level of messages printed to console\n"), out);
 	fputs(_(" -P, --nopager               do not pipe output into a pager\n"), out);

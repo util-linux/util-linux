@@ -369,6 +369,7 @@ int main(int argc, char **argv)
 			ctl.weektype = WEEK_NUM_US;	/* default per weekstart */
 			break;
 		case OPT_COLOR:
+			ctl.colormode = UL_COLORMODE_AUTO;
 			if (optarg)
 				ctl.colormode = colormode_or_err(optarg,
 						_("unsupported color mode"));
@@ -937,6 +938,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -y, --year            show the whole year\n"), out);
 	fputs(_(" -w, --week[=<num>]    show US or ISO-8601 week numbers\n"), out);
 	fputs(_("     --color[=<when>]  colorize messages (auto, always or never)\n"), out);
+	fprintf(out,
+	        "                         %s\n", USAGE_COLORS_DEFAULT);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);

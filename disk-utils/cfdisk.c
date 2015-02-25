@@ -2203,8 +2203,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_("Display or manipulate a disk partition table.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -L --color[=<when>]     colorize output (auto, always or never)\n"), out);
-	fputs(_(" -z --zero               start with zeroed partition table\n"), out);
+	fputs(_(" -L, --color[=<when>]     colorize output (auto, always or never)\n"), out);
+	fprintf(out,
+	        "                            %s\n", USAGE_COLORS_DEFAULT);
+	fputs(_(" -z, --zero               start with zeroed partition table\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);

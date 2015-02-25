@@ -64,8 +64,10 @@ the correct form is for example '-c=dos'.
 Display a help text and exit.
 .TP
 \fB\-L\fR, \fB\-\-color\fR[\fI=when\fR]
-Colorize the output in interactive mode.  The optional argument \fIwhen\fP can
-be \fBauto\fR, \fBnever\fR or \fBalways\fR.  The default is \fBauto\fR.
+Colorize the output.  The optional argument \fIwhen\fP
+can be \fBauto\fR, \fBnever\fR or \fBalways\fR.  If the \fIwhen\fR argument is omitted,
+it defaults to \fBauto\fR.  The colors can be disabled, for the current built-in default 
+see \fB\-\-help\fR output. See also the COLORS section.
 .TP
 \fB\-l\fR, \fB\-\-list\fR
 List the partition tables for the specified devices and then exit.
