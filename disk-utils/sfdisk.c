@@ -186,8 +186,6 @@ static void sfdisk_init(struct sfdisk *sf)
 	fdisk_init_debug(0);
 	sfdiskprog_init_debug();
 
-	colors_init(UL_COLORMODE_UNDEF, "sfdisk");
-
 	sf->cxt = fdisk_new_context();
 	if (!sf->cxt)
 		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));
@@ -1340,6 +1338,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -b, --backup              backup partition table sectors (see -O)\n"), out);
 	fputs(_("     --bytes               print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -f, --force               disable all consistency checking\n"), out);
+	fputs(_("     --color[=<when>]      colorize output (auto, always or never)\n"), out);
+	fprintf(out,
+	        "                             %s\n", USAGE_COLORS_DEFAULT);
 	fputs(_(" -N, --partno <num>        specify partition number\n"), out);
 	fputs(_(" -n, --no-act              do everything except write to device\n"), out);
 	fputs(_("     --no-reread           do not check whether the device is in use\n"), out);
@@ -1367,6 +1368,7 @@ int main(int argc, char *argv[])
 {
 	const char *outarg = NULL;
 	int rc = -EINVAL, c, longidx = -1, bytes = 0;
+	int colormode = UL_COLORMODE_UNDEF;
 	struct sfdisk _sf = {
 		.partno = -1,
 		.interactive = isatty(STDIN_FILENO) ? 1 : 0,
@@ -1381,7 +1383,8 @@ int main(int argc, char *argv[])
 		OPT_PARTLABEL,
 		OPT_PARTTYPE,
 		OPT_PARTATTRS,
-		OPT_BYTES
+		OPT_BYTES,
+		OPT_COLOR
 	};
 
 	static const struct option longopts[] = {
@@ -1390,6 +1393,7 @@ int main(int argc, char *argv[])
 		{ "backup",  no_argument,       NULL, 'b' },
 		{ "backup-file", required_argument, NULL, 'O' },
 		{ "bytes",   no_argument,	NULL, OPT_BYTES },
+		{ "color",   optional_argument, NULL, OPT_COLOR },
 		{ "dump",    no_argument,	NULL, 'd' },
 		{ "help",    no_argument,       NULL, 'h' },
 		{ "force",   no_argument,       NULL, 'f' },
@@ -1526,10 +1530,18 @@ int main(int argc, char *argv[])
 		case OPT_BYTES:
 			bytes = 1;
 			break;
+		case OPT_COLOR:
+			colormode = UL_COLORMODE_AUTO;
+			if (optarg)
+				colormode = colormode_or_err(optarg,
+						_("unsupported color mode"));
+			break;
 		default:
 			usage(stderr);
 		}
 	}
+
+	colors_init(colormode, "sfdisk");
 
 	sfdisk_init(sf);
 	if (bytes)

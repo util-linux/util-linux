@@ -116,6 +116,12 @@ Back up the current partition table sectors before starting the partitioning.
 The default backup file name is ~/sfdisk-<device>-<offset>.bak; to use another
 name see \fB\-\-backup\-file\fR.
 .TP
+.BR "\-\-color"[\fI=when\fR]
+Colorize the output.  The optional argument \fIwhen\fP
+can be \fBauto\fR, \fBnever\fR or \fBalways\fR.  If the \fIwhen\fR argument is omitted,
+it defaults to \fBauto\fR.  The colors can be disabled, for the current built-in default 
+see \fB\-\-help\fR output. See also the COLORS section.
+.TP
 .BR \-f , " \-\-force"
 Disable all consistency checking.
 .TP
@@ -348,6 +354,25 @@ Note that \fBsfdisk\fR since version 2.26 no longer provides the \fB\-I\fR optio
 restore sectors.
 .B dd (1)
 provides all necessary functionality.
+
+.SH COLORS
+Implicit coloring can be disabled by an empty file \fI/etc/terminal-colors.d/sfdisk.disable\fR.
+
+See
+.BR terminal-colors.d (5)
+for more details about colorization configuration. The logical color names
+supported by
+.B sfdisk
+are:
+.TP
+.B header
+The header of the output tables.
+.TP
+.B warn
+The warning messages.
+.TP
+.B welcome
+The welcome message.
 
 .SH NOTES
 Since version 2.26 \fBsfdisk\fR no longer provides the \fB\-R\fR or
