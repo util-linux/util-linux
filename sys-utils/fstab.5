@@ -31,7 +31,7 @@
 .\"
 .\"     @(#)fstab.5	6.5 (Berkeley) 5/10/91
 .\"
-.TH FSTAB 5 "August 2010" "util-linux" "File Formats"
+.TH FSTAB 5 "February 2015" "util-linux" "File Formats"
 .SH NAME
 fstab \- static information about the filesystems
 .SH SYNOPSIS
@@ -39,13 +39,10 @@ fstab \- static information about the filesystems
 .SH DESCRIPTION
 The file
 .B fstab
-contains descriptive information about the various file systems.
+contains descriptive information about the filesystems the system can mount.
 .B fstab
 is only read by programs, and not written; it is the duty of the system
-administrator to properly create and maintain this file.  Each filesystem
-is described on a separate line; fields on each line are separated by tabs or
-spaces.  Lines starting with '#' are comments, blank lines are ignored. The
-order of records in
+administrator to properly create and maintain this file.  The order of records in
 .B fstab
 is important because
 .BR fsck (8),
@@ -56,27 +53,46 @@ sequentially iterate through
 .B fstab
 doing their thing.
 
+Each filesystem is described on a separate line.
+Fields on each line are separated by tabs or spaces.
+Lines starting with '#' are comments.  Blank lines are ignored.
+.PP
+The following is a typical example of an
+.B fstab
+entry:
+.sp
+.RS 7
+LABEL=t-home2   /home      ext4    defaults,auto_da_alloc      0  2
+.RE
+
 .B The first field
 .RI ( fs_spec ).
 .RS
 This field describes the block special device or
 remote filesystem to be mounted.
 .LP
-For ordinary mounts it will hold (a link to) a block special
+For ordinary mounts, it will hold (a link to) a block special
 device node (as created by
 .BR mknod (8))
 for the device to be mounted, like `/dev/cdrom' or `/dev/sdb7'.
-For NFS mounts one will have <host>:<dir>, e.g., `knuth.aeb.nl:/'.
-For procfs, use `proc'.
+For NFS mounts, this field is <host>:<dir>, e.g., `knuth.aeb.nl:/'.
+For filesystems with no storage, any string can be used, and will show up in
+.BR df (1)
+output, for example.  Typical usage is `proc' for procfs; `mem', `none',
+or `tmpfs' for tmpfs.  Other special filesystems, like udev and sysfs,
+are typically not listed in
+.BR fstab .
 .LP
-Instead of giving the device explicitly, one may indicate
-the filesystem that is to be mounted by its UUID or
-LABEL (cf.
-.BR e2label (8)
+LABEL=<label> or UUID=<uuid> may be given instead of a device name.
+This is the recommended method, as device names are often a coincidence
+of hardware detection order, and can change when other disks are added or removed.
+For example, `LABEL=Boot' or `UUID=3e6be9de\%-8139\%-11d1\%-9106\%-a43f08d823a6'.
+(Use a filesystem-specific tool like
+.BR e2label (8),
+.BR xfs_admin (8),
 or
-.BR xfs_admin (8)),
-writing LABEL=<label> or UUID=<uuid>,
-e.g., `LABEL=Boot' or `UUID=3e6be9de\%-8139\%-11d1\%-9106\%-a43f08d823a6'.
+.BR fatlabel (8)
+to set LABELs on filesystems).
 
 It's also possible to use PARTUUID= and PARTLABEL=. These partitions identifiers
 are supported for example for GUID Partition Table (GPT).
@@ -86,7 +102,7 @@ See
 .BR blkid (8)
 or
 .BR lsblk (8)
-for more details about devices identifiers.
+for more details about device identifiers.
 
 .LP
 Note that
@@ -106,9 +122,10 @@ contains spaces these can be escaped as `\\040'.
 .B The third field
 .RI ( fs_vfstype ).
 .RS
-This field describes the type of the filesystem.  Linux supports lots
-of filesystem types, the most common are ext2, ext3, ext4, xfs, btrfs, vfat,
-sysfs, proc, nfs and cifs. For more details, see
+This field describes the type of the filesystem.  Linux supports many
+filesystem types: ext4, xfs, btrfs, f2fs, vfat, ntfs, hfsplus,
+tmpfs, sysfs, proc, iso9660, udf, squashfs, nfs, cifs, and many more.
+For more details, see
 .BR mount (8).
 
 An entry
@@ -138,14 +155,19 @@ deprecated).
 .RS
 This field describes the mount options associated with the filesystem.
 
-It is formatted as a comma separated list of options.  It contains at least
-the type of mount plus any additional options appropriate to the filesystem
-type. For documentation on the available mount options, see
-.BR mount (8).
-For documentation on the available swap options, see
+It is formatted as a comma-separated list of options.
+It contains at least the type of mount
+.RB ( ro
+or
+.BR rw ),
+plus any additional options appropriate to the filesystem
+type (including performance-tuning options).
+For details, see
+.BR mount (8)
+or
 .BR swapon (8).
 
-Basic file system independent options are:
+Basic filesystem-independent options are:
 .TP
 .B defaults
 use default options: rw, suid, dev, exec, auto, nouser, and async.
@@ -171,31 +193,26 @@ do not report errors for this device if it does not exist.
 .B The fifth field
 .RI ( fs_freq ).
 .RS
-This field is used for these filesystems by the
+This field is used by
 .BR dump (8)
-command to determine which filesystems need to be dumped.  If the fifth
-field is not present, a value of zero is returned and
-.B dump
-will assume that the filesystem does not need to be dumped.
+to determine which filesystems need to be dumped.
+Defaults to zero (don't dump) if not present.
 .RE
 
 .B The sixth field
 .RI ( fs_passno ).
 .RS
-This field is used by the
+This field is used by
 .BR fsck (8)
-program to determine the order in which filesystem checks are done at
-reboot time.  The root filesystem should be specified with a
+to determine the order in which filesystem checks are done at
+boot time.  The root filesystem should be specified with a
 .I fs_passno
-of 1, and other filesystems should have a
+of 1.  Other filesystems should have a
 .I fs_passno
 of 2.  Filesystems within a drive will be checked sequentially, but
 filesystems on different drives will be checked at the same time to utilize
-parallelism available in the hardware.  If the sixth field is not present
-or zero, a value of zero is returned and
-.B fsck
-will assume that the filesystem does not need to be checked.
-.RE
+parallelism available in the hardware.
+Defaults to zero (don't fsck) if not present.
 
 .SH NOTES
 The proper way to read records from
@@ -207,7 +224,7 @@ or
 
 The keyword
 .B ignore
-as filesystem type (3rd field) is not more supported by the pure
+as a filesystem type (3rd field) is no longer supported by the pure
 libmount based mount utility (since util-linux v2.22).
 
 .SH FILES
