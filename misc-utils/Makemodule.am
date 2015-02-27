@@ -11,7 +11,7 @@ cal_SOURCES += lib/langinfo.c
 endif
 
 cal_CFLAGS = $(AM_CFLAGS) $(NCURSES_CFLAGS)
-cal_LDADD = $(LDADD) libcommon.la $(NCURSES_LIBS) $(TINFO_LIBS)
+cal_LDADD = $(LDADD) libcommon.la libtcolors.la $(NCURSES_LIBS)
 if HAVE_TERMCAP
 cal_LDADD += -ltermcap
 endif

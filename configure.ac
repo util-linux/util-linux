@@ -778,6 +778,9 @@ PKG_CHECK_MODULES(TINFO, [tinfo], [have_tinfo=yes], [
 AC_SUBST([TINFO_LIBS])
 AC_SUBST([TINFO_CFLAGS])
 AM_CONDITIONAL([HAVE_TINFO], [test "x$have_tinfo" = xyes])
+AS_IF([test "x$have_tinfo" = xyes],
+	AC_DEFINE(HAVE_LIBTINFO, 1, [Define if libtinfo available.])
+])
 
 
 AC_ARG_WITH([utempter],

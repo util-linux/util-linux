@@ -34,7 +34,7 @@ hexdump_SOURCES = \
 	text-utils/hexdump.c \
 	text-utils/hexdump.h \
 	text-utils/hexdump-parse.c
-hexdump_LDADD = $(LDADD) libcommon.la
+hexdump_LDADD = $(LDADD) libcommon.la libtcolors.la
 endif
 
 if BUILD_REV

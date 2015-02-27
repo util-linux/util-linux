@@ -134,7 +134,7 @@ fdisk_SOURCES = \
 	disk-utils/fdisk-list.c \
 	disk-utils/fdisk-list.h
 
-fdisk_LDADD = $(LDADD) libcommon.la libfdisk.la libsmartcols.la
+fdisk_LDADD = $(LDADD) libcommon.la libfdisk.la libsmartcols.la libtcolors.la
 fdisk_CFLAGS = $(AM_CFLAGS) -I$(ul_libfdisk_incdir) -I$(ul_libsmartcols_incdir)
 
 if BUILD_LIBBLKID
@@ -166,7 +166,7 @@ sfdisk_SOURCES = \
 	disk-utils/fdisk-list.c \
 	disk-utils/fdisk-list.h
 
-sfdisk_LDADD = $(LDADD) libcommon.la libfdisk.la libsmartcols.la
+sfdisk_LDADD = $(LDADD) libcommon.la libfdisk.la libsmartcols.la libtcolors.la
 sfdisk_CFLAGS = $(AM_CFLAGS) -I$(ul_libfdisk_incdir) -I$(ul_libsmartcols_incdir)
 
 if BUILD_LIBUUID
@@ -193,7 +193,7 @@ if BUILD_CFDISK
 sbin_PROGRAMS += cfdisk
 dist_man_MANS += disk-utils/cfdisk.8
 cfdisk_SOURCES = disk-utils/cfdisk.c
-cfdisk_LDADD = $(LDADD) libcommon.la libfdisk.la
+cfdisk_LDADD = $(LDADD) libcommon.la libfdisk.la libtcolors.la
 cfdisk_CFLAGS = $(AM_CFLAGS) -I$(ul_libfdisk_incdir)
 
 if BUILD_LIBUUID

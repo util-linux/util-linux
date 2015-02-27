@@ -22,7 +22,7 @@ libsmartcols_la_SOURCES= \
 
 nodist_libsmartcols_la_SOURCES = libsmartcols/src/smartcolsP.h
 
-libsmartcols_la_LIBADD = libcommon.la
+libsmartcols_la_LIBADD = libcommon.la libtcolors.la
 
 libsmartcols_la_CFLAGS = \
 	$(SOLIB_CFLAGS) \
@@ -31,6 +31,7 @@ libsmartcols_la_CFLAGS = \
 
 libsmartcols_la_DEPENDENCIES = \
 	libcommon.la \
+	libtcolors.la \
 	libsmartcols/src/libsmartcols.sym \
 	libsmartcols/src/libsmartcols.h.in
 
@@ -48,7 +49,7 @@ if BUILD_LIBSMARTCOLS_TESTS
 check_PROGRAMS += test_smartcols
 
 libsmartcols_tests_cflags = $(libsmartcols_la_CFLAGS)
-libsmartcols_tests_ldadd  = libsmartcols.la libcommon.la
+libsmartcols_tests_ldadd  = libsmartcols.la libcommon.la libtcolors.la
 
 test_smartcols_SOURCES = libsmartcols/src/test.c
 test_smartcols_CFLAGS = $(libsmartcols_tests_cflags)
