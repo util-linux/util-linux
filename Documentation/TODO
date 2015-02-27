@@ -23,10 +23,8 @@ cfdisk
 terminal-colors.d
 -----------------
 
-  - (!) check if the current terminal supports colors (e.g. max_colors in
-    terminfo; "tput colors" command)
-
-  - (!) add support for non-ANSI terminals (now we hardcode \033[ ...)
+  - (!) add support for non-ANSI terminals (now we hardcode \033[ ...) and read
+    colors from terminfo
 
 agetty
 -----
