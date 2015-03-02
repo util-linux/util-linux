@@ -238,17 +238,22 @@ int fdisk_script_set_header(struct fdisk_script *dp,
 	if (!dp || !name)
 		return -EINVAL;
 
+
 	fi = script_get_header(dp, name);
 	if (!fi && !data)
 		return 0;	/* want to remove header that does not exist, success */
 
 	if (!data) {
+		DBG(SCRIPT, ul_debugobj(dp, "freeing header %s", name));
+
 		/* no data, remove the header */
 		fdisk_script_free_header(dp, fi);
 		return 0;
 	}
 
 	if (!fi) {
+		DBG(SCRIPT, ul_debugobj(dp, "setting new header %s='%s'", name, data));
+
 		/* new header */
 		fi = calloc(1, sizeof(*fi));
 		if (!fi)
@@ -264,6 +269,8 @@ int fdisk_script_set_header(struct fdisk_script *dp,
 	} else {
 		/* update existing */
 		char *x = strdup(data);
+
+		DBG(SCRIPT, ul_debugobj(dp, "update '%s' header '%s' -> '%s'", name, fi->data, data));
 
 		if (!x)
 			return -ENOMEM;
@@ -366,7 +373,17 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 	if (!rc)
 		rc = fdisk_script_set_header(dp, "unit", "sectors");
 
-	/* TODO: label specific headers (e.g. uuid for GPT) */
+	if (!rc && fdisk_is_label(cxt, GPT)) {
+		char buf[64];
+
+		snprintf(buf, sizeof(buf), "%ju", cxt->first_lba);
+		rc = fdisk_script_set_header(dp, "first-lba", buf);
+
+		if (!rc) {
+			snprintf(buf, sizeof(buf), "%ju", cxt->last_lba);
+			rc = fdisk_script_set_header(dp, "last-lba", buf);
+		}
+	}
 
 	DBG(SCRIPT, ul_debugobj(dp, "read context done [rc=%d]", rc));
 	return rc;
@@ -493,7 +510,9 @@ static int parse_header_line(struct fdisk_script *dp, char *s)
 		if (strcmp(value, "sectors") != 0)
 			goto done;			/* only "sectors" supported */
 	} else if (strcmp(name, "label-id") == 0
-		   || strcmp(name, "device") == 0) {
+		   || strcmp(name, "device") == 0
+		   || strcmp(name, "first-lba") == 0
+		   || strcmp(name, "last-lba") == 0) {
 		;					/* whatever is posssible */
 	} else
 		goto done;				/* unknown header */

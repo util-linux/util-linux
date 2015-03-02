@@ -520,20 +520,82 @@ static struct gpt_header *gpt_copy_header(struct fdisk_context *cxt,
 	return res;
 }
 
-static void count_first_last_lba(struct fdisk_context *cxt,
-				 uint64_t *first, uint64_t *last)
+static int get_script_u64(struct fdisk_context *cxt, uint64_t *num, const char *name)
 {
-	uint64_t esz = 0;
+	const char *str;
+	int pwr = 0, rc = 0;
 
 	assert(cxt);
 
-	esz = sizeof(struct gpt_entry) * GPT_NPARTITIONS / cxt->sector_size;
-	*last = cxt->total_sectors - 2 - esz;
-	*first = esz + 2;
+	*num = 0;
 
-	if (*first < cxt->first_lba && cxt->first_lba < *last)
-		/* Align according to topology */
-		*first = cxt->first_lba;
+	if (!cxt->script)
+		return 1;
+
+	str = fdisk_script_get_header(cxt->script, name);
+	if (!str)
+		return 1;
+
+	rc = parse_size(str, (uintmax_t *) num, &pwr);
+	if (rc < 0)
+		return rc;
+	if (pwr)
+		*num /= cxt->sector_size;
+	return 0;
+}
+
+static int count_first_last_lba(struct fdisk_context *cxt,
+				 uint64_t *first, uint64_t *last)
+{
+	int rc = 0;
+	uint64_t flba, llba;
+
+	uint64_t esz = 0;
+
+	assert(cxt);
+	assert(first);
+	assert(last);
+
+	*first = *last = 0;
+
+	/* UEFI default */
+	esz = sizeof(struct gpt_entry) * GPT_NPARTITIONS / cxt->sector_size;
+	llba = cxt->total_sectors - 2 - esz;
+	flba = esz + 2;
+
+	/* script default */
+	if (cxt->script) {
+		rc = get_script_u64(cxt, first, "first-lba");
+		if (rc < 0)
+			return rc;
+
+		DBG(LABEL, ul_debug("FirstLBA: script=%ju, uefi=%ju, topology=%ju.", *first, flba, cxt->first_lba));
+
+		if (rc == 0 && (*first < flba || *first > llba)) {
+			fdisk_warnx(cxt, _("First LBA specified by script is out of range."));
+			return -ERANGE;
+		}
+
+		rc = get_script_u64(cxt, last, "last-lba");
+		if (rc < 0)
+			return rc;
+
+		DBG(LABEL, ul_debug("LastLBA: script=%ju, uefi=%ju, topology=%ju.", *last, llba, cxt->last_lba));
+
+		if (rc == 0 && (*last > llba || *last < flba)) {
+			fdisk_warnx(cxt, _("Last LBA specified by script is out of range."));
+			return -ERANGE;
+		}
+	}
+
+	if (!*last)
+		*last = llba;
+
+	/* default by topology */
+	if (!*first)
+		*first = flba < cxt->first_lba &&
+			 cxt->first_lba < *last ? cxt->first_lba : flba;
+	return 0;
 }
 
 /*
@@ -548,7 +610,7 @@ static int gpt_mknew_header(struct fdisk_context *cxt,
 			    struct gpt_header *header, uint64_t lba)
 {
 	uint64_t first, last;
-	int has_id = 0;
+	int has_id = 0, rc;
 
 	if (!cxt || !header)
 		return -ENOSYS;
@@ -571,7 +633,10 @@ static int gpt_mknew_header(struct fdisk_context *cxt,
 	header->npartition_entries     = cpu_to_le32(GPT_NPARTITIONS);
 	header->sizeof_partition_entry = cpu_to_le32(sizeof(struct gpt_entry));
 
-	count_first_last_lba(cxt, &first, &last);
+	rc = count_first_last_lba(cxt, &first, &last);
+	if (rc)
+		return rc;
+
 	header->first_usable_lba = cpu_to_le64(first);
 	header->last_usable_lba  = cpu_to_le64(last);
 
