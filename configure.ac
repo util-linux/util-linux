@@ -1846,6 +1846,16 @@ AS_IF([test "x$enable_sulogin_emergency_mount" = xyes], [
 ])
 
 
+AC_ARG_ENABLE([usrdir-path],
+  AS_HELP_STRING([--enable-usrdir-path], [use only /usr paths in PATH env. variable (recommended on systems with /bin -> /usr/bin symlinks)]),
+  [], [enable_usrdir_path=no]
+)
+
+AS_IF([test "x$enable_usrdir_path" == xyes], [
+  AC_DEFINE([USE_USRDIR_PATHS_ONLY], [1], [Define to 1 to remove /bin and /sbin from PATH env.variable])
+])
+
+
 AC_ARG_ENABLE([makeinstall-chown],
   AS_HELP_STRING([--disable-makeinstall-chown], [do not do chown-like operations during "make install"]),
   [], [enable_makeinstall_chown=yes]

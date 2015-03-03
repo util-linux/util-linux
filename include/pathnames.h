@@ -20,10 +20,20 @@
 
 /* DEFPATHs from <paths.h> don't include /usr/local */
 #undef _PATH_DEFPATH
-#define	_PATH_DEFPATH	        "/usr/local/bin:/bin:/usr/bin"
+
+#ifdef USE_USRDIR_PATHS_ONLY
+# define _PATH_DEFPATH	        "/usr/local/bin:/usr/bin"
+#else
+# define _PATH_DEFPATH	        "/usr/local/bin:/bin:/usr/bin"
+#endif
 
 #undef _PATH_DEFPATH_ROOT
-#define	_PATH_DEFPATH_ROOT	"/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
+
+#ifdef USE_USRDIR_PATHS_ONLY
+# define _PATH_DEFPATH_ROOT	"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
+#else
+# define _PATH_DEFPATH_ROOT	"/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
+#endif
 
 #define _PATH_SECURETTY		"/etc/securetty"
 #define _PATH_WTMPLOCK		"/etc/wtmplock"
