@@ -90,6 +90,7 @@ struct script_control {
 	char *cflg;		/* command to be executed */
 	char *fname;		/* output file path */
 	FILE *typescriptfp;	/* output file pointer */
+	char *tname;		/* timing file path */
 	FILE *timingfp;		/* timing file pointer */
 	struct timeval oldtime;	/* previous write or command start time */
 	int master;		/* pseudoterminal master file descriptor */
@@ -186,6 +187,9 @@ static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 		else
 			exit(WEXITSTATUS(ctl->childstatus));
 	}
+	if (ctl->timingfp)
+		fclose(ctl->timingfp);
+	fclose(ctl->typescriptfp);
 	exit(EXIT_SUCCESS);
 }
 
@@ -288,8 +292,17 @@ static void do_io(struct script_control *ctl)
 	time_t tvec = script_time((time_t *)NULL);
 	char buf[128];
 
-	if (ctl->tflg && !ctl->timingfp)
-		ctl->timingfp = fdopen(STDERR_FILENO, "w");
+	if ((ctl->typescriptfp = fopen(ctl->fname, ctl->aflg ? "a" : "w")) == NULL) {
+		warn(_("cannot open %s"), ctl->fname);
+		fail(ctl);
+	}
+	if (ctl->tflg) {
+		if (!ctl->tname) {
+			if (!(ctl->timingfp = fopen("/dev/stderr", "w")))
+				err(EXIT_FAILURE, _("cannot open %s"), "/dev/stderr");
+		} else if (!(ctl->timingfp = fopen(ctl->tname, "w")))
+			err(EXIT_FAILURE, _("cannot open %s"), ctl->tname);
+	}
 
 	pfd[0].fd = STDIN_FILENO;
 	pfd[0].events = POLLIN;
@@ -366,11 +379,6 @@ static void __attribute__((__noreturn__)) doshell(struct script_control *ctl)
 
 	/* close things irrelevant for this process */
 	close(ctl->master);
-	if (ctl->typescriptfp)
-		fclose(ctl->typescriptfp);
-	if (ctl->timingfp)
-		fclose(ctl->timingfp);
-	ctl->typescriptfp = ctl->timingfp = NULL;
 
 	dup2(ctl->slave, STDIN_FILENO);
 	dup2(ctl->slave, STDOUT_FILENO);
@@ -544,8 +552,8 @@ int main(int argc, char **argv)
 			ctl.qflg = 1;
 			break;
 		case 't':
-			if (optarg && !(ctl.timingfp = fopen(optarg, "w")))
-				err(EXIT_FAILURE, _("cannot open %s"), optarg);
+			if (optarg)
+				ctl.tname = optarg;
 			ctl.tflg = 1;
 			break;
 		case 'V':
@@ -566,11 +574,6 @@ int main(int argc, char **argv)
 	else {
 		ctl.fname = DEFAULT_OUTPUT;
 		die_if_link(&ctl);
-	}
-
-	if ((ctl.typescriptfp = fopen(ctl.fname, ctl.aflg ? "a" : "w")) == NULL) {
-		warn(_("cannot open %s"), ctl.fname);
-		fail(&ctl);
 	}
 
 	ctl.shell = getenv("SHELL");
