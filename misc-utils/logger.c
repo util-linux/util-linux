@@ -481,14 +481,12 @@ static void logger_open(struct logger_ctl *ctl)
 			ctl->syslogfp = syslog_rfc5424;
 		return;
 	}
-	if (ctl->unix_socket) {
-		ctl->fd = unix_socket(ctl, ctl->unix_socket, ctl->socket_type);
-		if (!ctl->syslogfp)
-			ctl->syslogfp = syslog_rfc5424;
-		return;
-	}
-	ctl->fd = unix_socket(ctl, _PATH_DEVLOG, ctl->socket_type);
-	ctl->syslogfp = syslog_local;
+	if (!ctl->unix_socket)
+		ctl->unix_socket = _PATH_DEVLOG;
+
+	ctl->fd = unix_socket(ctl, ctl->unix_socket, ctl->socket_type);
+	if (!ctl->syslogfp)
+		ctl->syslogfp = syslog_local;
 }
 
 static void logger_command_line(const struct logger_ctl *ctl, char **argv)
