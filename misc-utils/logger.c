@@ -359,8 +359,12 @@ static void syslog_rfc5424(const  struct logger_ctl *ctl, const char *msg)
 		if ((tm = localtime(&tv.tv_sec)) != NULL) {
 			char fmt[64];
 
-			strftime(fmt, sizeof(fmt), " %Y-%m-%dT%H:%M:%S.%%06u%z",
-				 tm);
+			const size_t i = strftime(fmt, sizeof(fmt),
+					" %Y-%m-%dT%H:%M:%S.%%06u%z ", tm);
+			/* patch TZ info to comply with RFC3339 (we left SP at end) */
+			fmt[i-1] = fmt[i-2];
+			fmt[i-2] = fmt[i-3];
+			fmt[i-3] = ':';
 			snprintf(time, sizeof(time), fmt, tv.tv_usec);
 		} else
 			err(EXIT_FAILURE, _("localtime() failed"));
