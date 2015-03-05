@@ -1444,10 +1444,13 @@ static char *read_os_release(struct options *op, const char *varname)
 
 	/* read the file only once */
 	if (!op->osrelease) {
-		fd = open(_PATH_OS_RELEASE, O_RDONLY);
+		fd = open(_PATH_OS_RELEASE_ETC, O_RDONLY);
 		if (fd == -1) {
-			log_warn(_("cannot open %s: %m"), _PATH_OS_RELEASE);
-			return NULL;
+			fd = open(_PATH_OS_RELEASE_USR, O_RDONLY);
+			if (fd == -1) {
+				log_warn(_("cannot open os-release file"));
+				return NULL;
+			}
 		}
 
 		if (fstat(fd, &st) < 0 || st.st_size > 4 * 1024 * 1024)

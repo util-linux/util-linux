@@ -338,8 +338,9 @@ Insert the system name, the name of the operating system. Same as `uname \-s'.
 See also \\S escape code.
 .TP
 S or S{VARIABLE}
-Insert the VARIABLE data from \fI/etc/os-release\fP.  If the VARIABLE argument
-is not specified then use PRETTY_NAME from the file or the system name (see \\s).
+Insert the VARIABLE data from \fI/etc/os-release\fP, if the file does not exist
+then fallback to \fI/usr/lib/os-release\fP.  If the VARIABLE argument is not
+specified then use PRETTY_NAME from the file or the system name (see \\s).
 This escape code allows to keep \fI/etc/issue\fP distribution and release
 independent.  Note that \\S{ANSI_COLOR} is converted to the real terminal
 escape sequence.
@@ -401,7 +402,7 @@ the system status file.
 .B /etc/issue
 printed before the login prompt.
 .TP
-.B /etc/os-release
+.B /etc/os-release /usr/lib/os-release
 operating system identification data.
 .TP
 .B /dev/console
