@@ -178,7 +178,6 @@ DISTCHECK_CONFIGURE_FLAGS = \
 	--disable-use-tty-group \
 	--disable-silent-rules \
 	--enable-all-programs \
-	--enable-static-programs \
 	--enable-gtk-doc \
 	--with-python \
 	--with-bashcompletiondir=$$dc_install_base/$(bashcompletiondir) \
