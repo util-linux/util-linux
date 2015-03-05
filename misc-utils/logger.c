@@ -173,6 +173,8 @@ static int pencode(char *s)
 	level = decode(s, prioritynames);
 	if (level < 0)
 		errx(EXIT_FAILURE, _("unknown priority name: %s"), s);
+	if(facility == LOG_KERN)
+		facility = LOG_USER; /* kern is forbidden */
 	return ((level & LOG_PRIMASK) | (facility & LOG_FACMASK));
 }
 
