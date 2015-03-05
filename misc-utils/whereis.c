@@ -186,7 +186,7 @@ static const char *whereis_type_to_name(int type)
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] <file>\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] [-BMS <dir>... -f] <name>\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Locate the binary, source, and manual-page files for a command.\n"), out);
