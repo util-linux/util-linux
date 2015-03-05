@@ -607,7 +607,7 @@ int main(int argc, char **argv)
 	struct logger_ctl ctl = {
 		.fd = -1,
 		.pid = 0,
-		.pri = LOG_NOTICE,
+		.pri = LOG_USER | LOG_NOTICE,
 		.prio_prefix = 0,
 		.tag = NULL,
 		.unix_socket = NULL,
