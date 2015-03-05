@@ -306,9 +306,33 @@ static char *xgetlogin(void)
 	return cp;
 }
 
+
+/* this creates a timestamp based on current time according to the
+ * fine rules of RFC3164, most importantly it ensures in a portable
+ * way that the month day is correctly written (with a SP instead
+ * of a leading 0). The function uses a static buffer which is
+ * overwritten on the next call (just like ctime() does).
+ */
+static const char *
+rfc3164_current_time(void)
+{
+	static char time[32];
+	struct timeval tv;
+	struct tm *tm;
+	static char *monthnames[] = { "Jan", "Feb", "Mar", "Apr",
+			"May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+	gettimeofday(&tv, NULL);
+	tm = localtime(&tv.tv_sec);
+	snprintf(time, sizeof(time),"%s %2d %2.2d:%2.2d:%2.2d",
+		monthnames[tm->tm_mon], tm->tm_mday,
+		tm->tm_hour, tm->tm_min, tm->tm_sec); 
+	return time;
+}
+
 static void syslog_rfc3164(const struct logger_ctl *ctl, const char *msg)
 {
-	char *buf, pid[30], *cp, *tp, *hostname, *dot;
+	char *buf, pid[30], *cp, *hostname, *dot;
 	time_t now;
 	int len;
 
@@ -325,11 +349,8 @@ static void syslog_rfc3164(const struct logger_ctl *ctl, const char *msg)
 	if (dot)
 		*dot = '\0';
 
-	time(&now);
-	tp = ctime(&now) + 4;
-
 	len = xasprintf(&buf, "<%d>%.15s %s %.200s%s: %.400s",
-		 ctl->pri, tp, hostname, cp, pid, msg);
+		 ctl->pri, rfc3164_current_time(), hostname, cp, pid, msg);
 
 	if (write_all(ctl->fd, buf, len) < 0)
 		warn(_("write failed"));
@@ -449,14 +470,8 @@ static int parse_unix_socket_errors_flags(char *optarg)
 static void syslog_local(const struct logger_ctl *ctl, const char *msg)
 {
 	char *buf, *tag;
-	char time[32], pid[32];
-	struct timeval tv;
-	struct tm *tm;
+	char pid[32];
 	int len;
-
-	gettimeofday(&tv, NULL);
-	tm = localtime(&tv.tv_sec);
-	strftime(time, sizeof(time), "%h %e %T", tm);
 
 	tag = ctl->tag ? ctl->tag : program_invocation_short_name;
 
@@ -465,7 +480,8 @@ static void syslog_local(const struct logger_ctl *ctl, const char *msg)
 	else
 		pid[0] = '\0';
 
-	len = xasprintf(&buf, "<%d>%s %s%s: %s", ctl->pri, time, tag, pid, msg);
+	len = xasprintf(&buf, "<%d>%s %s%s: %s", ctl->pri, rfc3164_current_time(),
+		tag, pid, msg);
 	if (write_all(ctl->fd, buf, len) < 0)
 		warn(_("write failed"));
 	if (ctl->stderr_printout)
