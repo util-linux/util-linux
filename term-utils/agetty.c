@@ -1447,7 +1447,13 @@ static char *read_os_release(struct options *op, const char *varname)
 		fd = open(_PATH_OS_RELEASE, O_RDONLY);
 		if (fd == -1) {
 			log_warn(_("cannot open %s: %m"), _PATH_OS_RELEASE);
-			return NULL;
+			log_warn(_("trying legacy %s"), _PATH_OS_RELEASE_OLD);
+
+			fd = open(_PATH_OS_RELEASE_OLD, O_RDONLY);
+			if (fd == -1) {
+				log_warn(_("cannot open %s: %m"), _PATH_OS_RELEASE_OLD);
+				return NULL;
+			}
 		}
 
 		if (fstat(fd, &st) < 0 || st.st_size > 4 * 1024 * 1024)
