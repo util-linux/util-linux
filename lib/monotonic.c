@@ -69,7 +69,7 @@ int gettime_monotonic(struct timeval *tv)
 }
 
 int setup_timer(timer_t * t_id, struct itimerval *timeout,
-		void (*timeout_handler)(void))
+		void (*timeout_handler)(int, siginfo_t *, void *))
 {
 	struct sigaction sig_a;
 	static struct sigevent sig_e = {
@@ -85,8 +85,10 @@ int setup_timer(timer_t * t_id, struct itimerval *timeout,
 
 	if (sigemptyset(&sig_a.sa_mask))
 		return 1;
+
 	sig_a.sa_flags = SA_SIGINFO;
-	sig_a.sa_handler = timeout_handler;
+	sig_a.sa_sigaction = timeout_handler;
+
 	if (sigaction(SIGALRM, &sig_a, 0))
 		return 1;
 	if (timer_create(CLOCK_MONOTONIC, &sig_e, t_id))
