@@ -50,8 +50,8 @@
 
 #define DEFAULT_LINES  10
 
-static void
-tailf(const char *filename, unsigned long lines, struct stat *st)
+/* st->st_size has to be greater than zero! */
+static void tailf(const char *filename, size_t lines, struct stat *st)
 {
 	int fd;
 	size_t i;
@@ -60,7 +60,8 @@ tailf(const char *filename, unsigned long lines, struct stat *st)
 	if (!(fd = open(filename, O_RDONLY)))
 		err(EXIT_FAILURE, _("cannot open %s"), filename);
 	data = mmap(0, st->st_size, PROT_READ, MAP_SHARED, fd, 0);
-	i = (size_t)st->st_size - 1;
+	i = (size_t) st->st_size - 1;
+
 	/* humans do not think last new line in a file should be counted,
 	 * in that case do off by one from counter point of view */
 	if (data[i] == '\n')
@@ -74,15 +75,15 @@ tailf(const char *filename, unsigned long lines, struct stat *st)
 		}
 		i--;
 	}
-	while (i < (size_t)st->st_size)
-		putchar(data[i++]);
+
+	fwrite(data + i, st->st_size - i, 1, stdout);
+
 	munmap(data, st->st_size);
 	close(fd);
 	fflush(stdout);
 }
 
-static void
-roll_file(const char *filename, struct stat *old)
+static void roll_file(const char *filename, struct stat *old)
 {
 	char buf[BUFSIZ];
 	int fd;
@@ -124,8 +125,7 @@ roll_file(const char *filename, struct stat *old)
 	close(fd);
 }
 
-static void
-watch_file(const char *filename, struct stat *old)
+static void watch_file(const char *filename, struct stat *old)
 {
 	do {
 		roll_file(filename, old);
@@ -139,8 +139,7 @@ watch_file(const char *filename, struct stat *old)
 #define EVENTS		(IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF|IN_UNMOUNT)
 #define NEVENTS		4
 
-static int
-watch_file_inotify(const char *filename, struct stat *old)
+static int watch_file_inotify(const char *filename, struct stat *old)
 {
 	char buf[ NEVENTS * sizeof(struct inotify_event) ];
 	int fd, ffd, e;
@@ -208,7 +207,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 }
 
 /* parses -N option */
-static long old_style_option(int *argc, char **argv, unsigned long *lines)
+static long old_style_option(int *argc, char **argv, size_t *lines)
 {
 	int i = 1, nargs = *argc, ret = 0;
 
@@ -231,7 +230,7 @@ static long old_style_option(int *argc, char **argv, unsigned long *lines)
 int main(int argc, char **argv)
 {
 	const char *filename;
-	unsigned long lines;
+	size_t lines;
 	int ch;
 	struct stat st;
 
@@ -254,11 +253,8 @@ int main(int argc, char **argv)
 		switch ((char)ch) {
 		case 'n':
 		case 'N':
-			if (optarg[0] == '-')
-				errx(EXIT_FAILURE, "%s: %s",
-				     _("failed to parse number of lines"), optarg);
-			lines =
-			    strtoul_or_err(optarg, _("failed to parse number of lines"));
+			lines = strtoul_or_err(optarg,
+					_("failed to parse number of lines"));
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
