@@ -332,6 +332,15 @@ rfc3164_current_time(void)
 	return time;
 }
 
+static void write_output(const struct logger_ctl *ctl, const char *const buf,
+	const size_t len)
+{
+	if (write_all(ctl->fd, buf, len) < 0)
+		warn(_("write failed"));
+	if (ctl->stderr_printout)
+		fprintf(stderr, "%s\n", buf);
+}
+
 static void syslog_rfc3164(const struct logger_ctl *ctl, const char *msg)
 {
 	char *buf, pid[30], *cp, *hostname, *dot;
@@ -353,10 +362,7 @@ static void syslog_rfc3164(const struct logger_ctl *ctl, const char *msg)
 	len = xasprintf(&buf, "<%d>%.15s %s %.200s%s: %.400s",
 		 ctl->pri, rfc3164_current_time(), hostname, cp, pid, msg);
 
-	if (write_all(ctl->fd, buf, len) < 0)
-		warn(_("write failed"));
-	if (ctl->stderr_printout)
-		fprintf(stderr, "%s\n", buf);
+	write_output(ctl, buf, len);
 
 	free(hostname);
 	free(buf);
@@ -427,11 +433,7 @@ static void syslog_rfc5424(const  struct logger_ctl *ctl, const char *msg)
 		  hostname ? hostname : "",
 		  tag, pid, timeq, msg);
 
-	if (write_all(ctl->fd, buf, len) < 0)
-		warn(_("write failed"));
-
-	if (ctl->stderr_printout)
-		fprintf(stderr, "%s\n", buf);
+	write_output(ctl, buf, len);
 
 	free(hostname);
 	free(buf);
@@ -483,10 +485,7 @@ static void syslog_local(const struct logger_ctl *ctl, const char *msg)
 
 	len = xasprintf(&buf, "<%d>%s %s%s: %s", ctl->pri, rfc3164_current_time(),
 		tag, pid, msg);
-	if (write_all(ctl->fd, buf, len) < 0)
-		warn(_("write failed"));
-	if (ctl->stderr_printout)
-		fprintf(stderr, "%s\n", buf);
+	write_output(ctl, buf, len);
 	free(buf);
 }
 
