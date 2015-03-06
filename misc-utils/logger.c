@@ -173,6 +173,8 @@ static int pencode(char *s)
 	level = decode(s, prioritynames);
 	if (level < 0)
 		errx(EXIT_FAILURE, _("unknown priority name: %s"), s);
+	if(facility == LOG_KERN)
+		facility = LOG_USER; /* kern is forbidden */
 	return ((level & LOG_PRIMASK) | (facility & LOG_FACMASK));
 }
 
@@ -606,7 +608,7 @@ int main(int argc, char **argv)
 	struct logger_ctl ctl = {
 		.fd = -1,
 		.pid = 0,
-		.pri = LOG_NOTICE,
+		.pri = LOG_USER | LOG_NOTICE,
 		.prio_prefix = 0,
 		.tag = NULL,
 		.unix_socket = NULL,
