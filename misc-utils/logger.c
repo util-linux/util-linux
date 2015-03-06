@@ -98,7 +98,7 @@ struct logger_ctl {
 	int pri;
 	pid_t pid;			/* zero when unwanted */
 	char *tag;
-	char *unix_socket;
+	char *unix_socket;		/* -u <path> or default to _PATH_DEVLOG */
 	char *server;
 	char *port;
 	int socket_type;
