@@ -196,7 +196,6 @@ static int find_uberblocks(const void *label, loff_t *ub_offset, int *swap_endia
  * #4 (@ 132kB) is the first one written on a new filesystem. */
 static int probe_zfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	uint64_t swab_magic = swab64(UBERBLOCK_MAGIC);
 	int swab_endian = 0;
 	struct zfs_uberblock *ub;
 	loff_t offset, ub_offset = 0;
