@@ -4,10 +4,9 @@ dist_noinst_HEADERS += \
 	include/at.h \
 	include/bitops.h \
 	include/blkdev.h \
-	include/monotonic.h \
-	include/c.h \
 	include/canonicalize.h \
 	include/carefulputc.h \
+	include/c.h \
 	include/closestream.h \
 	include/colors.h \
 	include/cpuset.h \
@@ -28,6 +27,7 @@ dist_noinst_HEADERS += \
 	include/mbsalign.h \
 	include/md5.h \
 	include/minix.h \
+	include/monotonic.h \
 	include/namespace.h \
 	include/nls.h \
 	include/optutils.h \
@@ -36,21 +36,22 @@ dist_noinst_HEADERS += \
 	include/path.h \
 	include/pathnames.h \
 	include/procutils.h \
+	include/pt-bsd.h \
+	include/pt-mbr.h \
+	include/pt-mbr-partnames.h \
+	include/pt-sgi.h \
+	include/pt-sun.h \
 	include/randutils.h \
 	include/readutmp.h \
 	include/rpmatch.h \
 	include/setproctitle.h \
+	include/statfs_magic.h
 	include/strutils.h \
-	include/swapprober.h \
 	include/swapheader.h \
+	include/swapprober.h \
 	include/sysfs.h \
+	include/timer.h \
 	include/timeutils.h \
 	include/ttyutils.h \
 	include/widechar.h \
-	include/xalloc.h \
-	include/pt-sgi.h \
-	include/pt-bsd.h \
-	include/pt-mbr.h \
-	include/pt-mbr-partnames.h \
-	include/pt-sun.h \
-	include/statfs_magic.h
+	include/xalloc.h

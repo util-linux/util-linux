@@ -44,6 +44,7 @@
 #include "strutils.h"
 #include "closestream.h"
 #include "monotonic.h"
+#include "timer.h"
 
 static void __attribute__((__noreturn__)) usage(int ex)
 {
