@@ -90,7 +90,7 @@ to see rest of the fields.
 .TP
 .BR \-n , " \-\-server " \fIserver
 Write to the specified remote syslog \fIserver\fR
-instead of to the builtin syslog routines.  Unless
+instead of to the system log socket.  Unless
 \fB\-\-udp\fR or \fB\-\-tcp\fR
 is specified, \fBlogger\fR will first try to use UDP,
 but if thist fails a TCP connection is attempted.
@@ -158,7 +158,7 @@ Mark every line to be logged with the specified
 .BR \-u , " \-\-socket " \fIsocket
 Write to the specified
 .I socket
-instead of to the builtin syslog routines.
+instead of to the system log socket.
 .TP
 .BR \-\-socket\-errors [ =\fImode ]
 Print errors about Unix socket connections.  The \fImode\fR can be a value of
