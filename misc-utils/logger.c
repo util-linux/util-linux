@@ -332,11 +332,26 @@ rfc3164_current_time(void)
 	return time;
 }
 
+/* writes generated buffer to desired destination. For TCP syslog,
+ * we use RFC6587 octet-stuffing. This is not great, but doing
+ * full blown RFC5425 (TLS) looks like it is too much for the
+ * logger utility.
+ */
 static void write_output(const struct logger_ctl *ctl, const char *const buf,
 	const size_t len)
 {
 	if (write_all(ctl->fd, buf, len) < 0)
 		warn(_("write failed"));
+	else
+		if (ctl->socket_type == TYPE_TCP)
+			/* using an additional write seems like the best compromise:
+			 * - writev() is not yet supported by framework
+			 * - adding the \n to the buffer in formatters violates layers
+			 * - adding \n after the fact requires memory copy
+			 * - logger is not a high-performance app
+			 */
+			if (write_all(ctl->fd, "\n", 1) < 0)
+				warn(_("write failed"));
 	if (ctl->stderr_printout)
 		fprintf(stderr, "%s\n", buf);
 }
