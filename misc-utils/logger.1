@@ -86,6 +86,21 @@ execution of
 will display MESSAGE field.  Use
 .B journalctl --output json-pretty
 to see rest of the fields.
+.TP
+.BR \-\-message\-size " \fIsize
+Sets the maximum permitted message size to \fIsize\fR. The default
+is 1KiB characters, which is the limit traditionally used and specified
+in RFC 3164. With RFC 5424, this limit has become flexible. A good assumption
+is that RFC 5424 receivers can at least process 4KiB messages.
+
+Most receivers accept larger than 1KiB message over any type of syslog
+protocol. As such, the \fB\-\-message\-size\fR option affects logger in
+all cases (not only when \fB\-\-rfc5424\fR was used).
+
+Note: the message size limit is not totally strict. It limits only
+the user data, the size of the syslog header is not considered. While
+this can lead to some truncation at the receiver level, a consistent limit
+based on the user data size is generally wanted.
 
 .TP
 .BR \-n , " \-\-server " \fIserver
