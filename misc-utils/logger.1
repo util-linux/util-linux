@@ -40,10 +40,7 @@ logger \- enter messages into the system log
 .RI [ message ]
 .SH DESCRIPTION
 .B logger
-makes entries in the system log.  It provides a shell-command
-interface to the
-.BR syslog (3)
-system log module.
+makes entries in the system log.
 .sp
 When the optional \fImessage\fR argument is present, it is written
 to the log.  If it is not present, and the \fB\-f\fR option is not
@@ -245,7 +242,6 @@ For the priority order and intended purposes of these facilities and levels, see
 .B logger \-n loghost.example.com System rebooted
 .SH SEE ALSO
 .BR syslog (3),
-.BR syslogd (8),
 .BR journalctl (1),
 .BR systemd.journal-fields (7)
 .SH STANDARDS
