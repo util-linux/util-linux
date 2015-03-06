@@ -102,6 +102,7 @@ struct logger_ctl {
 	char *server;
 	char *port;
 	int socket_type;
+	size_t max_message_size;
 	void (*syslogfp)(const struct logger_ctl *ctl, const char *msg);
 	unsigned int
 			unix_socket_errors:1,	/* whether to report or not errors */
@@ -374,7 +375,7 @@ static void syslog_rfc3164(const struct logger_ctl *ctl, const char *msg)
 	if (dot)
 		*dot = '\0';
 
-	len = xasprintf(&buf, "<%d>%.15s %s %.200s%s: %.400s",
+	len = xasprintf(&buf, "<%d>%.15s %s %.200s%s: %s",
 		 ctl->pri, rfc3164_current_time(), hostname, cp, pid, msg);
 
 	write_output(ctl, buf, len);
@@ -522,9 +523,9 @@ static void logger_open(struct logger_ctl *ctl)
 
 static void logger_command_line(const struct logger_ctl *ctl, char **argv)
 {
-	char buf[4096];
+	char *const buf = xmalloc(ctl->max_message_size + 1);
 	char *p = buf;
-	const char *endp = buf + sizeof(buf) - 2;
+	const char *endp = buf + ctl->max_message_size - 1;
 	size_t len;
 
 	while (*argv) {
@@ -533,7 +534,8 @@ static void logger_command_line(const struct logger_ctl *ctl, char **argv)
 			ctl->syslogfp(ctl, buf);
 			p = buf;
 		}
-		if (sizeof(buf) - 1 < len) {
+		if (ctl->max_message_size < len) {
+			(*argv)[ctl->max_message_size] = '\0'; /* truncate */
 			ctl->syslogfp(ctl, *argv++);
 			continue;
 		}
@@ -550,9 +552,9 @@ static void logger_stdin(struct logger_ctl *ctl)
 {
 	char *msg;
 	int default_priority = ctl->pri;
-	char buf[1024];
+	char *const buf = xmalloc(ctl->max_message_size + 2);
 
-	while (fgets(buf, sizeof(buf), stdin) != NULL) {
+	while (fgets(buf, ctl->max_message_size+2, stdin) != NULL) {
 		int len = strlen(buf);
 
 		/* some glibc versions are buggy, they add an additional
@@ -588,6 +590,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -p, --priority <prio>    mark given message with this priority\n"), out);
 	fputs(_("     --prio-prefix        look for a prefix on every line read from stdin\n"), out);
 	fputs(_(" -s, --stderr             output message to standard error as well\n"), out);
+	fputs(_(" -S, --size <size>        maximum size for a single message\n"), out);
 	fputs(_(" -t, --tag <tag>          mark every line with this tag\n"), out);
 	fputs(_(" -n, --server <name>      write to this remote syslog server\n"), out);
 	fputs(_(" -P, --port <number>      use this UDP port\n"), out);
@@ -630,6 +633,7 @@ int main(int argc, char **argv)
 		.server = NULL,
 		.port = NULL,
 		.socket_type = ALL_TYPES,
+		.max_message_size = 1024,
 		.rfc5424_time = 1,
 		.rfc5424_tq = 1,
 		.rfc5424_host = 1,
@@ -657,6 +661,7 @@ int main(int argc, char **argv)
 		{ "prio-prefix", no_argument, 0, OPT_PRIO_PREFIX },
 		{ "rfc3164",	no_argument,  0, OPT_RFC3164 },
 		{ "rfc5424",	optional_argument,  0, OPT_RFC5424 },
+		{ "size",       required_argument,  0, 'S' },
 #ifdef HAVE_LIBSYSTEMD
 		{ "journald",   optional_argument,  0, OPT_JOURNALD },
 #endif
@@ -668,7 +673,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((ch = getopt_long(argc, argv, "f:ip:st:u:dTn:P:Vh",
+	while ((ch = getopt_long(argc, argv, "f:ip:S:st:u:dTn:P:Vh",
 					    longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'f':		/* file to log */
@@ -700,6 +705,10 @@ int main(int argc, char **argv)
 			break;
 		case 'u':		/* unix socket */
 			ctl.unix_socket = optarg;
+			break;
+		case 'S':		/* max message size */
+			ctl.max_message_size = strtosize_or_err(optarg,
+				_("failed to parse message size"));
 			break;
 		case 'd':
 			ctl.socket_type = TYPE_UDP;
