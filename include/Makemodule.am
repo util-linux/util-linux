@@ -45,7 +45,7 @@ dist_noinst_HEADERS += \
 	include/readutmp.h \
 	include/rpmatch.h \
 	include/setproctitle.h \
-	include/statfs_magic.h
+	include/statfs_magic.h \
 	include/strutils.h \
 	include/swapheader.h \
 	include/swapprober.h \
