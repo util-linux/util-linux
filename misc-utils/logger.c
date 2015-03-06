@@ -326,14 +326,13 @@ rfc3164_current_time(void)
 	tm = localtime(&tv.tv_sec);
 	snprintf(time, sizeof(time),"%s %2d %2.2d:%2.2d:%2.2d",
 		monthnames[tm->tm_mon], tm->tm_mday,
-		tm->tm_hour, tm->tm_min, tm->tm_sec); 
+		tm->tm_hour, tm->tm_min, tm->tm_sec);
 	return time;
 }
 
 static void syslog_rfc3164(const struct logger_ctl *ctl, const char *msg)
 {
 	char *buf, pid[30], *cp, *hostname, *dot;
-	time_t now;
 	int len;
 
 	*pid = '\0';
