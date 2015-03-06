@@ -491,7 +491,7 @@ static void syslog_local(const struct logger_ctl *ctl, const char *msg)
 	char pid[32];
 	int len;
 
-	tag = ctl->tag ? ctl->tag : program_invocation_short_name;
+	tag = ctl->tag ? ctl->tag : xgetlogin();
 
 	if (ctl->pid)
 		snprintf(pid, sizeof(pid), "[%d]", ctl->pid);
