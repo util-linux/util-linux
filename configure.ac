@@ -372,19 +372,19 @@ AC_CHECK_FUNCS([futimens], [have_futimens=yes])
 AC_CHECK_FUNCS([inotify_init1], [have_inotify_init1=yes])
 
 dnl lib/mononotic.c may require -lrt
-AC_CHECK_FUNCS([clock_gettime],
-	[AC_CHECK_FUNCS([timer_create], [], [
-		AC_CHECK_LIB([rt], [timer_create], [
-			AC_DEFINE([HAVE_CLOCK_GETTIME], [1])
-			CLOCKGETTIME_LIBS="-lrt"
-		])
-	])],
-	[AC_CHECK_LIB([rt], [clock_gettime], [
-		AC_DEFINE([HAVE_CLOCK_GETTIME], [1])
-		CLOCKGETTIME_LIBS="-lrt"
-	])
-])
-AC_SUBST([CLOCKGETTIME_LIBS])
+AC_CHECK_FUNCS([clock_gettime], [],
+	[AC_CHECK_LIB([rt], [clock_gettime], [REALTIME_LIBS="-lrt"])]
+)
+AC_SUBST([REALTIME_LIBS])
+
+have_timer="no"
+AC_CHECK_FUNCS([timer_createx],
+	[have_time="yes"],
+	[AC_CHECK_LIB([rt], [timer_create], [
+		have_timer="yes"
+		REALTIME_LIBS="-lrt"
+	])]
+)
 
 
 AC_CHECK_MEMBER([struct sockaddr.sa_len],
@@ -784,7 +784,7 @@ PKG_CHECK_MODULES(TINFO, [tinfo], [have_tinfo=yes], [
 AC_SUBST([TINFO_LIBS])
 AC_SUBST([TINFO_CFLAGS])
 AM_CONDITIONAL([HAVE_TINFO], [test "x$have_tinfo" = xyes])
-AS_IF([test "x$have_tinfo" = xyes],
+AS_IF([test "x$have_tinfo" = xyes], [
 	AC_DEFINE(HAVE_LIBTINFO, 1, [Define if libtinfo available.])
 ])
 
@@ -1301,6 +1301,7 @@ AM_CONDITIONAL([BUILD_PIVOT_ROOT], [test "x$build_pivot_root" = xyes])
 
 
 UL_BUILD_INIT([flock], [yes])
+UL_REQUIRES_HAVE([flock], [timer], [timer_create function])
 AM_CONDITIONAL([BUILD_FLOCK], [test "x$build_flock" = xyes])
 
 UL_BUILD_INIT([ipcmk], [yes])

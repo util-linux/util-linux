@@ -5,7 +5,7 @@ dist_man_MANS += \
 	login-utils/last.1 \
 	login-utils/lastb.1
 last_SOURCES = login-utils/last.c lib/monotonic.c
-last_LDADD = $(LDADD) libcommon.la $(CLOCKGETTIME_LIBS)
+last_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS)
 
 install-exec-hook-last:
 	cd $(DESTDIR)$(usrbin_execdir) && ln -sf last lastb
