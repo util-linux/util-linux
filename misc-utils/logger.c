@@ -111,7 +111,8 @@ struct logger_ctl {
 			stderr_printout:1,	/* output message to stderr */
 			rfc5424_time:1,		/* include time stamp */
 			rfc5424_tq:1,		/* include time quality markup */
-			rfc5424_host:1;		/* include hostname */
+			rfc5424_host:1,		/* include hostname */
+			skip_empty_lines:1; /* do not send empty lines when processing files */
 };
 
 static int decode(const char *name, CODE *codetab)
@@ -578,7 +579,8 @@ static void logger_stdin(struct logger_ctl *ctl)
 		}
 		buf[i] = '\0';
 
-		write_output(ctl, buf);
+		if(i > 0 || !ctl->skip_empty_lines)
+			write_output(ctl, buf);
 
 		if (c == '\n') /* discard line terminator */
 			c = getchar();
@@ -604,6 +606,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -i                       log the logger command's PID\n"), out);
 	fputs(_("     --id[=<id>]          log the given <id>, or otherwise the PID\n"), out);
 	fputs(_(" -f, --file <file>        log the contents of this file\n"), out);
+	fputs(_(" -e, --skip-empty-lines   do not log empty lines when processing files\n"), out);
 	fputs(_(" -p, --priority <prio>    mark given message with this priority\n"), out);
 	fputs(_("     --prio-prefix        look for a prefix on every line read from stdin\n"), out);
 	fputs(_(" -s, --stderr             output message to standard error as well\n"), out);
@@ -655,6 +658,7 @@ int main(int argc, char **argv)
 		.rfc5424_time = 1,
 		.rfc5424_tq = 1,
 		.rfc5424_host = 1,
+		.skip_empty_lines = 0
 	};
 	int ch;
 	int stdout_reopened = 0;
@@ -681,6 +685,7 @@ int main(int argc, char **argv)
 		{ "rfc3164",	no_argument,  0, OPT_RFC3164 },
 		{ "rfc5424",	optional_argument,  0, OPT_RFC5424 },
 		{ "message-size", required_argument,  0, 'S' },
+		{ "skip-empty-lines", no_argument,  0, 'e' },
 #ifdef HAVE_LIBSYSTEMD
 		{ "journald",   optional_argument,  0, OPT_JOURNALD },
 #endif
@@ -699,6 +704,9 @@ int main(int argc, char **argv)
 			if (freopen(optarg, "r", stdin) == NULL)
 				err(EXIT_FAILURE, _("file %s"), optarg);
 			stdout_reopened = 1;
+			break;
+		case 'e':
+			ctl.skip_empty_lines = 1;
 			break;
 		case 'i':		/* log process id also */
 			ctl.pid = getpid();
