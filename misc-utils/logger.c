@@ -114,25 +114,6 @@ struct logger_ctl {
 			rfc5424_host:1;		/* include hostname */
 };
 
-static char *get_prio_prefix(char *msg, int *prio)
-{
-	int p;
-	char *end = NULL;
-	int facility = *prio & LOG_FACMASK;
-
-	errno = 0;
-	p = strtoul(msg + 1, &end, 10);
-
-	if (errno || !end || end == msg + 1 || end[0] != '>')
-		return msg;
-
-	if (p & LOG_FACMASK)
-		facility = p & LOG_FACMASK;
-
-	*prio = facility | (p & LOG_PRIMASK);
-	return end + 1;
-}
-
 static int decode(const char *name, CODE *codetab)
 {
 	register CODE *c;
@@ -553,23 +534,54 @@ static void logger_stdin(struct logger_ctl *ctl)
 {
 	char *msg;
 	int default_priority = ctl->pri;
-	const size_t max_usrmsg_size = ctl->max_message_size - strlen(ctl->hdr);
-	char *const buf = xmalloc(max_usrmsg_size + 2);
+	int last_pri = default_priority;
+	size_t max_usrmsg_size = ctl->max_message_size - strlen(ctl->hdr);
+	char *const buf = xmalloc(max_usrmsg_size + 2 + 2);
+	int pri;
+	int c;
+	size_t i;
 
-	while (fgets(buf, max_usrmsg_size+2, stdin) != NULL) {
-		int len = strlen(buf);
+	c = getchar();
+	while (c != EOF) {
+		i = 0;
+		if (ctl->prio_prefix) {
+			if (c == '<') {
+				pri = 0;
+				buf[i++] = c;
+				while(isdigit(c = getchar()) && pri <= 191) {
+						buf[i++] = c;
+						pri = pri * 10 + c - '0';
+				}
+				if (c != EOF && c != '\n')
+					buf[i++] = c;
+				if (c == '>' && 0 <= pri && pri <= 191) { /* valid RFC PRI values */
+					i = 0;
+					if (pri < 8)
+						pri |= 8; /* kern facility is forbidden */
+					ctl->pri = pri;
+				} else
+					ctl->pri = default_priority;
 
-		/* some glibc versions are buggy, they add an additional
-		 * newline which is removed here.  */
-		if (0 < len && buf[len - 1] == '\n')
-			buf[len - 1] = '\0';
-		msg = buf;
-		ctl->pri = default_priority;
-		if (ctl->prio_prefix && msg[0] == '<')
-			msg = get_prio_prefix(msg, &ctl->pri);
-		/* this potentially runs long, date may have changed (and also PRI) */
-		generate_syslog_header(ctl);
-		write_output(ctl, msg);
+				if (ctl->pri != last_pri) {
+					generate_syslog_header(ctl);
+					max_usrmsg_size = ctl->max_message_size - strlen(ctl->hdr);
+					last_pri = ctl->pri;
+				}
+				if (c != EOF && c != '\n')
+					c = getchar();
+			}
+		}
+
+		while (c != EOF && c != '\n' && i < max_usrmsg_size) {
+			buf[i++] = c;
+			c = getchar();
+		}
+		buf[i] = '\0';
+
+		write_output(ctl, buf);
+
+		if (c == '\n') /* discard line terminator */
+			c = getchar();
 	}
 }
 
