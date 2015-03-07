@@ -97,10 +97,13 @@ Most receivers accept larger than 1KiB message over any type of syslog
 protocol. As such, the \fB\-\-size\fR option affects logger in
 all cases (not only when \fB\-\-rfc5424\fR was used).
 
-Note: the message size limit is not totally strict. It limits only
-the user data, the size of the syslog header is not considered. While
-this can lead to some truncation at the receiver level, a consistent limit
-based on the user data size is generally wanted.
+Note: the message size limit limits the overall message size, including
+the syslog header. Header sizes vary depending on options selected and hostname
+length. As a rule of thumb, headers are usually not longer than 50 to 80
+characters. When selecting maximum message size, it is important to ensure
+that the receiver supports the max size as well, otherwise messages may
+become truncated. Again, as a rule of thumb two to four KiB message size
+should generally be OK, whereas anything larger should be verified to work.
 
 .TP
 .BR \-n , " \-\-server " \fIserver
