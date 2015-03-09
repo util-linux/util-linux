@@ -1515,13 +1515,85 @@ done:
 	return ret;
 }
 
-/* Show login prompt, optionally preceded by /etc/issue contents. */
-static void do_prompt(struct options *op, struct termios *tp)
+#ifdef AGETTY_RELOAD
+static int wait_for_term_input(int fd)
+{
+	char buffer[sizeof(struct inotify_event) + NAME_MAX + 1];
+	struct termios orig, nonc;
+	fd_set rfds;
+	int count, i;
+
+	/* Our aim here is to fall through if something fails
+         * and not be stuck waiting. On failure assume we have input */
+
+	if (tcgetattr(fd, &orig) != 0)
+		return 1;
+
+	memcpy(&nonc, &orig, sizeof (nonc));
+	nonc.c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHOKE);
+	nonc.c_cc[VMIN] = 1;
+	nonc.c_cc[VTIME] = 0;
+
+	if (tcsetattr(fd, TCSANOW, &nonc) != 0)
+		return 1;
+
+	if (inotify_fd == AGETTY_RELOAD_FDNONE) {
+		/* make sure the reload trigger file exists */
+		int reload_fd = open(AGETTY_RELOAD_FILENAME,
+					O_CREAT|O_CLOEXEC|O_RDONLY,
+					S_IRUSR|S_IWUSR);
+
+		/* initialize reload trigger inotify stuff */
+		if (reload_fd >= 0) {
+			inotify_fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
+			if (inotify_fd > 0)
+				inotify_add_watch(inotify_fd, AGETTY_RELOAD_FILENAME,
+					  IN_ATTRIB | IN_MODIFY);
+
+			close(reload_fd);
+		} else
+			log_warn(_("failed to create reload file: %s: %m"),
+					AGETTY_RELOAD_FILENAME);
+	}
+
+	FD_ZERO(&rfds);
+	FD_SET(fd, &rfds);
+
+	if (inotify_fd >= 0)
+		FD_SET(inotify_fd, &rfds);
+
+	/* If waiting fails, just fall through, presumably reading input will fail */
+	if (select(max(fd, inotify_fd) + 1, &rfds, NULL, NULL, NULL) < 0)
+		return 1;
+
+	if (FD_ISSET(fd, &rfds)) {
+		count = read(fd, buffer, sizeof (buffer));
+
+		tcsetattr(fd, TCSANOW, &orig);
+
+		/* Reinject the bytes we read back into the buffer, usually just one byte */
+		for (i = 0; i < count; i++)
+			ioctl(fd, TIOCSTI, buffer + i);
+
+		/* Have terminal input */
+		return 1;
+
+	} else {
+		tcsetattr(fd, TCSANOW, &orig);
+
+		/* Just drain the inotify buffer */
+		while (read(inotify_fd, buffer, sizeof (buffer)) > 0);
+
+		/* Need to reprompt */
+		return 0;
+	}
+}
+#endif  /* AGETTY_RELOAD */
+static void print_issue_file(struct options *op, struct termios *tp)
 {
 #ifdef	ISSUE
 	FILE *fd;
-#endif				/* ISSUE */
-
+#endif
 	if ((op->flags & F_NONL) == 0) {
 		/* Issue not in use, start with a new line. */
 		write_all(STDOUT_FILENO, "\r\n", 2);
@@ -1554,8 +1626,24 @@ static void do_prompt(struct options *op, struct termios *tp)
 		fclose(fd);
 	}
 #endif	/* ISSUE */
+}
+
+/* Show login prompt, optionally preceded by /etc/issue contents. */
+static void do_prompt(struct options *op, struct termios *tp)
+{
+again:
+	print_issue_file(op, tp);
+
 	if (op->flags & F_LOGINPAUSE) {
 		puts(_("[press ENTER to login]"));
+#ifdef AGETTY_RELOAD
+		if (!wait_for_term_input(STDIN_FILENO)) {
+			/* reload issue */
+			if (op->flags & F_VCONSOLE)
+				termio_clear(STDOUT_FILENO);
+			goto again;
+		}
+#endif
 		getc(stdin);
 	}
 #ifdef KDGKBLED
@@ -1643,81 +1731,6 @@ static void next_speed(struct options *op, struct termios *tp)
 	cfsetospeed(tp, op->speeds[baud_index]);
 	tcsetattr(STDIN_FILENO, TCSANOW, tp);
 }
-
-#ifdef AGETTY_RELOAD
-static int wait_for_term_input(int fd)
-{
-	char buffer[sizeof(struct inotify_event) + NAME_MAX + 1];
-	struct termios orig, nonc;
-	fd_set rfds;
-	int count, i;
-
-	/* Our aim here is to fall through if something fails
-         * and not be stuck waiting. On failure assume we have input */
-
-	if (tcgetattr(fd, &orig) != 0)
-		return 1;
-
-	memcpy(&nonc, &orig, sizeof (nonc));
-	nonc.c_lflag &= ~(ICANON | ECHO | ECHOE | ECHOK | ECHOKE);
-	nonc.c_cc[VMIN] = 1;
-	nonc.c_cc[VTIME] = 0;
-
-	if (tcsetattr(fd, TCSANOW, &nonc) != 0)
-		return 1;
-
-	if (inotify_fd == AGETTY_RELOAD_FDNONE) {
-		/* make sure the reload trigger file exists */
-		int reload_fd = open(AGETTY_RELOAD_FILENAME,
-					O_CREAT|O_CLOEXEC|O_RDONLY,
-					S_IRUSR|S_IWUSR);
-
-		/* initialize reload trigger inotify stuff */
-		if (reload_fd >= 0) {
-			inotify_fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
-			if (inotify_fd > 0)
-				inotify_add_watch(inotify_fd, AGETTY_RELOAD_FILENAME,
-					  IN_ATTRIB | IN_MODIFY);
-
-			close(reload_fd);
-		} else
-			log_warn(_("failed to create reload file: %s: %m"),
-					AGETTY_RELOAD_FILENAME);
-	}
-
-	FD_ZERO(&rfds);
-	FD_SET(fd, &rfds);
-
-	if (inotify_fd >= 0)
-		FD_SET(inotify_fd, &rfds);
-
-	/* If waiting fails, just fall through, presumably reading input will fail */
-	if (select(max(fd, inotify_fd) + 1, &rfds, NULL, NULL, NULL) < 0)
-		return 1;
-
-	if (FD_ISSET(fd, &rfds)) {
-		count = read(fd, buffer, sizeof (buffer));
-
-		tcsetattr(fd, TCSANOW, &orig);
-
-		/* Reinject the bytes we read back into the buffer, usually just one byte */
-		for (i = 0; i < count; i++)
-			ioctl(fd, TIOCSTI, buffer + i);
-
-		/* Have terminal input */
-		return 1;
-
-	} else {
-		tcsetattr(fd, TCSANOW, &orig);
-
-		/* Just drain the inotify buffer */
-		while (read(inotify_fd, buffer, sizeof (buffer)) > 0);
-
-		/* Need to reprompt */
-		return 0;
-	}
-}
-#endif  /* AGETTY_RELOAD */
 
 /* Get user name, establish parity, speed, erase, kill & eol. */
 static char *get_logname(struct options *op, struct termios *tp, struct chardata *cp)
