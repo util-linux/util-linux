@@ -1667,11 +1667,22 @@ static int wait_for_term_input(int fd)
 		return 1;
 
 	if (inotify_fd == AGETTY_RELOAD_FDNONE) {
+		/* make sure the reload trigger file exists */
+		int reload_fd = open(AGETTY_RELOAD_FILENAME,
+					O_CREAT|O_CLOEXEC|O_RDONLY,
+					S_IRUSR|S_IWUSR);
+
 		/* initialize reload trigger inotify stuff */
-		inotify_fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
-		if (inotify_fd > 0)
-			inotify_add_watch(inotify_fd, AGETTY_RELOAD_FILENAME,
+		if (reload_fd >= 0) {
+			inotify_fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
+			if (inotify_fd > 0)
+				inotify_add_watch(inotify_fd, AGETTY_RELOAD_FILENAME,
 					  IN_ATTRIB | IN_MODIFY);
+
+			close(reload_fd);
+		} else
+			log_warn(_("failed to create reload file: %s: %m"),
+					AGETTY_RELOAD_FILENAME);
 	}
 
 	FD_ZERO(&rfds);
@@ -2496,8 +2507,8 @@ static int plymouth_command(const char* arg)
 static void reload_agettys(void)
 {
 #ifdef AGETTY_RELOAD
-	int fd = open(AGETTY_RELOAD_FILENAME, O_CREAT|O_CLOEXEC|O_WRONLY, 0700);
-
+	int fd = open(AGETTY_RELOAD_FILENAME, O_CREAT|O_CLOEXEC|O_WRONLY,
+					      S_IRUSR|S_IWUSR);
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), AGETTY_RELOAD_FILENAME);
 
