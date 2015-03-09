@@ -51,6 +51,14 @@ given either, then standard input is logged.
 Use datagrams (UDP) only.  By default the connection is tried to the
 syslog port defined in /etc/services, which is often 514 .
 .TP
+.BR \-e , " \-\-skip-empty-lines"
+When processing files, empty lines will be ignored. An empty line
+is defined to be a line without any characters. Thus a line consisting
+only of whitespace is NOT considered empty.
+Note that when the \fR\-\-prio\-prefix\fR option is specified, the priority
+is not part of the line. Thus an empty line in this mode is a line that does
+not have any characters after the priority (e.g. "<13>").
+.TP
 .BR \-f , " \-\-file " \fIfile
 Log the contents of the specified \fIfile\fR.
 This option cannot be combined with a command-line message.
@@ -86,6 +94,24 @@ execution of
 will display MESSAGE field.  Use
 .B journalctl --output json-pretty
 to see rest of the fields.
+.TP
+.BR \-\-message\-size " \fIsize
+Sets the maximum permitted message size to \fIsize\fR. The default
+is 1KiB characters, which is the limit traditionally used and specified
+in RFC 3164. With RFC 5424, this limit has become flexible. A good assumption
+is that RFC 5424 receivers can at least process 4KiB messages.
+
+Most receivers accept larger than 1KiB message over any type of syslog
+protocol. As such, the \fB\-\-message\-size\fR option affects logger in
+all cases (not only when \fB\-\-rfc5424\fR was used).
+
+Note: the message size limit limits the overall message size, including
+the syslog header. Header sizes vary depending on options selected and hostname
+length. As a rule of thumb, headers are usually not longer than 50 to 80
+characters. When selecting maximum message size, it is important to ensure
+that the receiver supports the max size as well, otherwise messages may
+become truncated. Again, as a rule of thumb two to four KiB message size
+should generally be OK, whereas anything larger should be verified to work.
 
 .TP
 .BR \-n , " \-\-server " \fIserver
