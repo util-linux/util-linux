@@ -99,7 +99,6 @@ extern int mnt_get_uid(const char *username, uid_t *uid);
 extern int mnt_get_gid(const char *groupname, gid_t *gid);
 extern int mnt_in_group(gid_t gid);
 
-extern char *mnt_get_fs_root(const char *path, const char *mountpoint);
 extern int mnt_open_uniq_filename(const char *filename, char **name);
 
 extern int mnt_has_regular_utab(const char **utab, int *writable);
@@ -116,10 +115,6 @@ extern int mnt_table_set_parser_fltrcb(	struct libmnt_table *tb,
 					int (*cb)(struct libmnt_fs *, void *),
 					void *data);
 
-extern struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
-                                        struct libmnt_fs *fs,
-                                        unsigned long mountflags,
-                                        char **fsroot);
 extern int __mnt_table_parse_mtab(struct libmnt_table *tb,
 					const char *filename,
 					struct libmnt_table *u_tb);
