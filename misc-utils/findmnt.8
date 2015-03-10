@@ -185,8 +185,12 @@ Search in
 .IR /etc/fstab .
 The output is in the list format (see \fB--list\fR).
 .TP
-.BR \-T , " \-\-target \fIdir\fP"
-Explicitly define the mount target (mountpoint directory).
+.BR \-T , " \-\-target \fIpath\fP"
+Explicitly define the mount target (mountpoint directory). If the \fIpath\fR
+is not a mountpoint file or directory than
+.B findmnt
+checks \fIpath\fR elements in reverse order for get the mountpoint (this feature is 
+supported only if search in kernel files and unsupported for \fB\-\-fstab\fP).
 .TP
 .BR \-t , " \-\-types \fIlist\fP"
 Limit the set of printed filesystems.  More than one type may be
