@@ -95,6 +95,12 @@ will display MESSAGE field.  Use
 .B journalctl --output json-pretty
 to see rest of the fields.
 .TP
+.BR \-\-msgid " \fIMSGID
+Sets the RFC5424 MSGID field. Note that the space character is not permitted
+inside of \fIMSGID\fR. This option is only used if \fB\-\-rfc5424\fR is
+specified as well. Otherwise, it is silently ignored.
+
+.TP
 .BR \-\--size " \fIsize
 Sets the maximum permitted message size to \fIsize\fR. The default
 is 1KiB characters, which is the limit traditionally used and specified
