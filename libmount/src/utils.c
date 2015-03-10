@@ -960,6 +960,10 @@ int mnt_open_uniq_filename(const char *filename, char **name)
  * This function finds the mountpoint that a given path resides in. @path
  * should be canonicalized. The returned pointer should be freed by the caller.
  *
+ * WARNING: the function compares st_dev of the @path elements. This traditional
+ * way maybe be insufficient on filesystems like Linux "overlay". See also
+ * mnt_table_find_target().
+ *
  * Returns: allocated string with the target of the mounted device or NULL on error
  */
 char *mnt_get_mountpoint(const char *path)
