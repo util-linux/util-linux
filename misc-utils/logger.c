@@ -362,33 +362,53 @@ static void syslog_rfc3164_header(struct logger_ctl *const ctl)
 	free(hostname);
 }
 
+/* Some field mappings may be controversal, thus I give the reason
+ * why this specific mapping was used:
+ * APP-NAME <-- tag
+ *    Some may argue that "logger" is a better fit, but we think
+ *    this is better inline of what other implementations do. In
+ *    rsyslog, for example, the TAG value is populated from APP-NAME.
+ * PROCID <-- pid
+ *    This is a relatively straightforward interpretation from
+ *    RFC5424, sect. 6.2.6.
+ * MSGID <-- '-' (NILVALUE)
+ *    One may argue that the string "logger" would be better suited
+ *    here so that a receiver can identify the sender process.
+ *    However, this does not sound like a good match to RFC5424,
+ *    sect. 6.2.7. It may be useful to add an option to logger to
+ *    specify a message ID.
+ * Note that appendix A.1 of RFC5424 does not provide clear guidance
+ * of how these fields should be used. This is the case because the
+ * IETF working group couldn't arrive at a clear agreement when we
+ * specified RFC5424. The rest of the field mappings should be
+ * pretty clear from RFC5424. -- Rainer Gerhards, 2015-03-10
+ */
+#define NILVALUE "-"
 static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 {
-	char *hostname = NULL;
-	char pid[32], time[64], timeq[80];
-	struct timeval tv;
-	struct tm *tm;
-
-	*pid = *time = *timeq = '\0';
 	if (ctl->fd < 0)
 		return;
 
+	char *time;
 	if (ctl->rfc5424_time) {
+		struct timeval tv;
+		struct tm *tm;
 		gettimeofday(&tv, NULL);
 		if ((tm = localtime(&tv.tv_sec)) != NULL) {
 			char fmt[64];
-
 			const size_t i = strftime(fmt, sizeof(fmt),
-					" %Y-%m-%dT%H:%M:%S.%%06u%z ", tm);
+					"%Y-%m-%dT%H:%M:%S.%%06u%z ", tm);
 			/* patch TZ info to comply with RFC3339 (we left SP at end) */
 			fmt[i-1] = fmt[i-2];
 			fmt[i-2] = fmt[i-3];
 			fmt[i-3] = ':';
-			snprintf(time, sizeof(time), fmt, tv.tv_usec);
+			xasprintf(&time, fmt, tv.tv_usec);
 		} else
 			err(EXIT_FAILURE, _("localtime() failed"));
-	}
+	} else
+		time = strdup(NILVALUE);
 
+	char *hostname;
 	if (ctl->rfc5424_host) {
 		hostname = xgethostname();
 		/* Arbitrary looking 'if (var < strlen()) checks originate from
@@ -396,34 +416,50 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 		if (255 < strlen(hostname))
 			errx(EXIT_FAILURE, _("hostname '%s' is too long"),
 			     hostname);
-	}
+	} else
+		hostname = strdup(NILVALUE);
 
+	char *const app_name = ctl->tag;
 	if (48 < strlen(ctl->tag))
 		errx(EXIT_FAILURE, _("tag '%s' is too long"), ctl->tag);
 
+	char *procid;
 	if (ctl->pid)
-		snprintf(pid, sizeof(pid), " %d", ctl->pid);
+		xasprintf(&procid, "%d", ctl->pid);
+	else
+		procid = strdup(NILVALUE);
 
+	char *const msgid = strdup(NILVALUE);
+
+	char *structured_data;
 	if (ctl->rfc5424_tq) {
 #ifdef HAVE_NTP_GETTIME
 		struct ntptimeval ntptv;
-
 		if (ntp_gettime(&ntptv) == TIME_OK)
-			snprintf(timeq, sizeof(timeq),
-				 " [timeQuality tzKnown=\"1\" isSynced=\"1\" syncAccuracy=\"%ld\"]",
+			xasprintf(&structured_data,
+				 "[timeQuality tzKnown=\"1\" isSynced=\"1\" syncAccuracy=\"%ld\"]",
 				 ntptv.maxerror);
 		else
 #endif
-			snprintf(timeq, sizeof(timeq),
-				 " [timeQuality tzKnown=\"1\" isSynced=\"0\"]");
+			xasprintf(&structured_data,
+				 "[timeQuality tzKnown=\"1\" isSynced=\"0\"]");
 	}
 
-	xasprintf(&ctl->hdr, "<%d>1%s%s%s %s -%s%s", ctl->pri, time,
-		  hostname ? " " : "",
-		  hostname ? hostname : "",
-		  ctl->tag, pid, timeq);
+	xasprintf(&ctl->hdr, "<%d>1 %s %s %s %s %s %s ",
+		ctl->pri,
+		time,
+		hostname,
+		app_name,
+		procid,
+		msgid,
+		structured_data);
 
+	free(time);
 	free(hostname);
+	/* app_name points to ctl->tag, do NOT free! */
+	free(procid);
+	free(msgid);
+	free(structured_data);
 }
 
 static void parse_rfc5424_flags(struct logger_ctl *ctl, char *optarg)
