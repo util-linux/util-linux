@@ -90,6 +90,7 @@ enum {
 	OPT_RFC3164,
 	OPT_RFC5424,
 	OPT_SOCKET_ERRORS,
+	OPT_MSGID,
 	OPT_ID
 };
 
@@ -99,6 +100,7 @@ struct logger_ctl {
 	pid_t pid;			/* zero when unwanted */
 	char *hdr;			/* the syslog header (based on protocol) */
 	char *tag;
+	char *msgid;
 	char *unix_socket;		/* -u <path> or default to _PATH_DEVLOG */
 	char *server;
 	char *port;
@@ -371,12 +373,11 @@ static void syslog_rfc3164_header(struct logger_ctl *const ctl)
  * PROCID <-- pid
  *    This is a relatively straightforward interpretation from
  *    RFC5424, sect. 6.2.6.
- * MSGID <-- '-' (NILVALUE)
+ * MSGID <-- msgid (from --msgid)
  *    One may argue that the string "logger" would be better suited
  *    here so that a receiver can identify the sender process.
  *    However, this does not sound like a good match to RFC5424,
- *    sect. 6.2.7. It may be useful to add an option to logger to
- *    specify a message ID.
+ *    sect. 6.2.7.
  * Note that appendix A.1 of RFC5424 does not provide clear guidance
  * of how these fields should be used. This is the case because the
  * IETF working group couldn't arrive at a clear agreement when we
@@ -429,7 +430,7 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 	else
 		procid = strdup(NILVALUE);
 
-	char *const msgid = strdup(NILVALUE);
+	char *const msgid = strdup((ctl->msgid) ? ctl->msgid : NILVALUE);
 
 	char *structured_data;
 	if (ctl->rfc5424_tq) {
@@ -650,6 +651,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_("     --rfc3164            use the obsolete BSD syslog protocol\n"), out);
 	fputs(_("     --rfc5424[=<snip>]   use the syslog protocol (the default);\n"
 		"                            <snip> can be notime, or notq, and/or nohost\n"), out);
+	fputs(_("     --msgid              set rfc5424 MSGID field, ignored for non-rfc5424 format\n"), out);
 	fputs(_(" -u, --socket <socket>    write to this Unix socket\n"), out);
 	fputs(_("     --socket-errors[=<on|off|auto>]\n"
 		"                          print connection errors when using Unix sockets\n"), out);
@@ -684,6 +686,7 @@ int main(int argc, char **argv)
 		.server = NULL,
 		.port = NULL,
 		.hdr = NULL,
+		.msgid = NULL,
 		.socket_type = ALL_TYPES,
 		.max_message_size = 1024,
 		.rfc5424_time = 1,
@@ -715,6 +718,7 @@ int main(int argc, char **argv)
 		{ "rfc3164",	no_argument,  0, OPT_RFC3164 },
 		{ "rfc5424",	optional_argument,  0, OPT_RFC5424 },
 		{ "size",       required_argument,  0, 'S' },
+		{ "msgid",      required_argument,  0, OPT_MSGID },
 		{ "skip-empty", no_argument,  0, 'e' },
 #ifdef HAVE_LIBSYSTEMD
 		{ "journald",   optional_argument,  0, OPT_JOURNALD },
@@ -794,6 +798,11 @@ int main(int argc, char **argv)
 			ctl.syslogfp = syslog_rfc5424_header;
 			if (optarg)
 				parse_rfc5424_flags(&ctl, optarg);
+			break;
+		case OPT_MSGID:
+			if(strchr(optarg, ' '))
+					err(EXIT_FAILURE, _("--msgid cannot contain space"));
+			ctl.msgid = optarg;
 			break;
 #ifdef HAVE_LIBSYSTEMD
 		case OPT_JOURNALD:
