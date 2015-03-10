@@ -366,9 +366,6 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 {
 	char *hostname = NULL;
 	char pid[32], time[64], timeq[80];
-#ifdef HAVE_SYS_TIMEX_H
-	struct ntptimeval ntptv;
-#endif
 	struct timeval tv;
 	struct tm *tm;
 
@@ -408,7 +405,9 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 		snprintf(pid, sizeof(pid), " %d", ctl->pid);
 
 	if (ctl->rfc5424_tq) {
-#ifdef HAVE_SYS_TIMEX_H
+#ifdef HAVE_NTP_GETTIME
+		struct ntptimeval ntptv;
+
 		if (ntp_gettime(&ntptv) == TIME_OK)
 			snprintf(timeq, sizeof(timeq),
 				 " [timeQuality tzKnown=\"1\" isSynced=\"1\" syncAccuracy=\"%ld\"]",
