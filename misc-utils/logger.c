@@ -649,7 +649,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -T, --tcp                use TCP only\n"), out);
 	fputs(_(" -d, --udp                use UDP only\n"), out);
 	fputs(_("     --rfc3164            use the obsolete BSD syslog protocol\n"), out);
-	fputs(_("     --rfc5424[=<snip>]   use the syslog protocol (the default);\n"
+	fputs(_("     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
 		"                            <snip> can be notime, or notq, and/or nohost\n"), out);
 	fputs(_("     --msgid              set rfc5424 MSGID field, ignored for non-rfc5424 format\n"), out);
 	fputs(_(" -u, --socket <socket>    write to this Unix socket\n"), out);
