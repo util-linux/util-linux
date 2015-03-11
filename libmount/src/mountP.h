@@ -119,6 +119,10 @@ extern int __mnt_table_parse_mtab(struct libmnt_table *tb,
 					const char *filename,
 					struct libmnt_table *u_tb);
 
+extern struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
+					struct libmnt_fs *fs,
+					unsigned long mountflags,
+					char **fsroot);
 
 /*
  * Generic iterator
