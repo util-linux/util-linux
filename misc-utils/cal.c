@@ -74,6 +74,9 @@
 #include "mbsalign.h"
 #include "strutils.h"
 
+static int has_term = 0;
+static const char *Senter = "", *Sexit = "";	/* enter and exit standout mode */
+
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
 # ifdef HAVE_NCURSES_H
 #  include <ncurses.h>
@@ -82,22 +85,31 @@
 # endif
 # include <term.h>
 
-static void my_setupterm(const char *term, int fildes, int *errret)
+static int setup_terminal(char *term)
 {
-	setupterm((char *)term, fildes, errret);
+	int ret;
+
+	if (setupterm(term, STDOUT_FILENO, &ret) != OK || ret != 1)
+		return -1;
+	return 0;
 }
 
 static void my_putstring(char *s)
 {
-	putp(s);
+	if (has_term)
+		putp(s);
+	else
+		fputs(s, stdout);
 }
 
 static const char *my_tgetstr(char *s __attribute__((__unused__)), char *ss)
 {
-	const char *ret = tigetstr(ss);
+	const char *ret = NULL;
+
+	if (has_term)
+		ret = tigetstr(ss);
 	if (!ret || ret == (char *)-1)
 		return "";
-
 	return ret;
 }
 
@@ -108,22 +120,29 @@ static char termbuffer[4096];
 static char tcbuffer[4096];
 static char *strbuf = termbuffer;
 
-static void my_setupterm(const char *term, int fildes __attribute__((__unused__)), int *errret)
+static int setup_terminal(char *term)
 {
-	*errret = tgetent(tcbuffer, term);
+	if (tgetent(tcbuffer, term) < 0)
+		return -1;
+	return 0;
 }
 
 static void my_putstring(char *s)
 {
-	tputs(s, 1, putchar);
+	if (has_term)
+		tputs(s, 1, putchar);
+	else
+		fputs(s, stdout);
 }
 
 static const char *my_tgetstr(char *s, char *ss __attribute__((__unused__)))
 {
-	const char *ret = tgetstr(s, &strbuf);
+	const char *ret = NULL;
+
+	if (has_term)
+		ret = tgetstr(s, &strbuf);
 	if (!ret)
 		return "";
-
 	return ret;
 }
 
@@ -136,11 +155,6 @@ static void my_putstring(char *s)
 
 #endif	/* end of LIBTERMCAP / NCURSES */
 
-#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW) || defined(HAVE_LIBTERMCAP)
-static const char	*term="";
-#endif
-
-static const char	*Senter="", *Sexit="";/* enter and exit standout mode */
 
 #include "widechar.h"
 
@@ -293,12 +307,15 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW) || defined(HAVE_LIBTERMCAP)
-	if ((term = getenv("TERM"))) {
-		int ret;
-		my_setupterm(term, STDOUT_FILENO, &ret);
-		if (ret > 0) {
-			Senter = my_tgetstr("so","smso");
-			Sexit = my_tgetstr("se","rmso");
+	{
+		char *term = getenv("TERM");
+
+		if (term) {
+			has_term = setup_terminal(term) == 0;
+			if (has_term) {
+				Senter = my_tgetstr("so","smso");
+				Sexit = my_tgetstr("se","rmso");
+			}
 		}
 	}
 #endif
