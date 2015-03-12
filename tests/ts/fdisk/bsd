@@ -47,23 +47,27 @@ FDISK_CMD_BSD_LIST_TYPES="b\nl\nq\n"         # list supported PT types and quit
 BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
 function fdisk_bsd_offset_and_byte_order_clean
 {
+		# expected md5sums are from x86 systems
+		local md5_bsdimg1_LE_0_64="2e1cee529cb59c9341afef0443f196a1"
+		local md5_bsdimg2_LE_0_64="b5c121c2091b2ff26b880551feac7112"
+
         if [ $BYTE_ORDER = "BE" ] ; then
 		# BSD_LABELSECTOR = 0, BSD_LABELOFFSET = 64
 		sed -i \
-		-e "s/c2273b52976351db75596c47c10b0725/2e1cee529cb59c9341afef0443f196a1/" \
-		-e "s/9a234a5b99e37d2ce0d92b65437b93cd/b5c121c2091b2ff26b880551feac7112/" \
+		-e "s/c2273b52976351db75596c47c10b0725/$md5_bsdimg1_LE_0_64/" \
+		-e "s/9a234a5b99e37d2ce0d92b65437b93cd/$md5_bsdimg2_LE_0_64/" \
 		"$TS_OUTPUT"
 
 		# BSD_LABELSECTOR = 1, BSD_LABELOFFSET = 0
 		sed -i \
-		-e "s/e990c8a1c2106a4cd4b008f16d71aaa6/2e1cee529cb59c9341afef0443f196a1/" \
-		-e "s/187a48c26e83d146b866868addc93702/b5c121c2091b2ff26b880551feac7112/" \
+		-e "s/e990c8a1c2106a4cd4b008f16d71aaa6/$md5_bsdimg1_LE_0_64/" \
+		-e "s/187a48c26e83d146b866868addc93702/$md5_bsdimg2_LE_0_64/" \
 		"$TS_OUTPUT"
 	else
 		# BSD_LABELSECTOR = 0, BSD_LABELOFFSET = 64
 		sed -i \
-		-e "s/78a922a80361cb73049bced72e0f8f1d/2e1cee529cb59c9341afef0443f196a1/" \
-		-e "s/fc2803672a0643ffe46da325629616fc/b5c121c2091b2ff26b880551feac7112/" \
+		-e "s/78a922a80361cb73049bced72e0f8f1d/$md5_bsdimg1_LE_0_64/" \
+		-e "s/fc2803672a0643ffe46da325629616fc/$md5_bsdimg2_LE_0_64/" \
 		"$TS_OUTPUT"
 	fi
 }
