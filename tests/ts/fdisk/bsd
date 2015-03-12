@@ -66,8 +66,8 @@ function fdisk_bsd_offset_and_byte_order_clean
 	else
 		# BSD_LABELSECTOR = 0, BSD_LABELOFFSET = 64
 		sed -i \
-		-e "s/78a922a80361cb73049bced72e0f8f1d/$md5_bsdimg1_LE_0_64/" \
-		-e "s/fc2803672a0643ffe46da325629616fc/$md5_bsdimg2_LE_0_64/" \
+		-e "s/6d760d7a8ef33b27cc6e27f1e8807d48/$md5_bsdimg1_LE_0_64/" \
+		-e "s/3739c7959adb42693a69edb7a99914e8/$md5_bsdimg2_LE_0_64/" \
 		"$TS_OUTPUT"
 	fi
 }
