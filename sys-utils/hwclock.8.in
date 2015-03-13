@@ -938,28 +938,6 @@ Clock is corrected properly at startup.  To check this, first make sure
 that the System Time is correct before shutdown and then use
 .BR \%sntp ", or " \%date\ \-Ins
 and a precision timepiece, immediately after startup.
-.PP
-Both clocks typically use a quartz crystal oscillator.  Crystals are
-used for reference oscillators in electronics because by most measures
-they produce a very clean and stable sine wave.  Their greatest
-shortcoming is that they have a Positive Temperature Coefficient;
-meaning that their frequency increases as the temperature increases and
-vise versa. Therefore, both the Hardware and System Clock's drift rate
-changes with intrinsic and extrinsic machine temperatures.  These
-characteristics will vary by machine depending upon its design.
-.PP
-Drift correction strategies are many, but as a general guide the goal
-would be to find a longterm average.  A year long average to take into
-account seasonal ambient temperature shifts may be a good target period.
-So perhaps the date-time advances a bit in the summer and declines a bit
-in the winter, but at the end of a year it balances to zero.
-.PP
-If this is beginning to sound futile, it is not.  Left on its own a
-machine can lose 3 seconds per day or more.  Accumulated drift over a
-year may easily exceed half an hour.  Using carefully crafted drift
-corrections can make a significant improvement in a machine's ability to
-keep reasonably good date-time.
-.
 .SS LOCAL vs UTC
 Keeping the Hardware Clock in a local timescale causes inconsistent
 daylight saving time results:
