@@ -888,7 +888,7 @@ would be
 .BR \%adjtimex 's " \-\-log " options.
 .PP
 It may be more effective to simply track the System Clock drift with
-.BR \%ntpdate\ \-q " , or " \%date\ \-Ins
+.BR \%sntp ", or " \%date\ \-Ins
 and a precision timepiece, and then calculate the correction manually.
 .PP
 After setting the tick and frequency values, continue to test and refine the
@@ -931,7 +931,7 @@ results it will likely need to be adjusted by directly editing the
 file.  Continue to test and refine the drift factor until the Hardware
 Clock is corrected properly at startup.  To check this, first make sure
 that the System Time is correct before shutdown and then use
-.BR \%ntpdate\ \-q ", or " \%date\ \-Ins
+.BR \%sntp ", or " \%date\ \-Ins
 and a precision timepiece, immediately after startup.
 .PP
 Both clocks typically use a quartz crystal oscillator.  Crystals are
