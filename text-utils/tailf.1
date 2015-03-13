@@ -29,6 +29,12 @@ tailf \- follow the growth of a log file
 [option]
 .I file
 .SH DESCRIPTION
+.B tailf is deprecated.
+It may have unfixed bugs and will be removed in March 2017. Nowadays it's safe
+to use
+.B tail -f
+(coreutils) in contrast to the original documentation below.
+.PP
 .B tailf
 will print out the last 10 lines of the given \fIfile\fR and then wait
 for this \fIfile\fR to grow.  It is similar to

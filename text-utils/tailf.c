@@ -19,12 +19,17 @@
  * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
- *
- * less -F and tail -f cause a disk access every five seconds.  This
- * program avoids this problem by waiting for the file size to change.
- * Hence, the file is not accessed, and the access time does not need to be
- * flushed back to disk.  This is sort of a "stealth" tail.
  */
+
+/*
+ * This command is deprecated.  The utility is in maintenance mode,
+ * meaning we keep them in source tree for backward compatibility
+ * only.  Do not waste time making this command better, unless the
+ * fix is about security or other very critical issue.
+ *
+ * See Documentation/deprecated.txt for more information.
+ */
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -202,6 +207,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("tailf(1)"));
+	fputs(_("Warning: use of 'tailf' is deprecated, use 'tail -f' instead.\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
