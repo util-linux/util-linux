@@ -1052,10 +1052,19 @@ configured timezone.
 If this variable is set its value takes precedence over the system
 configured timezone database directory path.
 .SH FILES
-.br
+.TP
 .I @ADJTIME_PATH@
-.br
+The configuration and state file for hwclock.
+.TP
 .I /etc/localtime
+The system timezone file.
+.TP
+.I /usr/share/zoneinfo/
+The system timezone database directory.
+.PP
+Device files
+.B hwclock
+may try for Hardware Clock access:
 .br
 .I /dev/rtc
 .br
@@ -1070,9 +1079,6 @@ configured timezone database directory path.
 .I /dev/port
 .br
 .I /dev/tty1
-.br
-.I /proc/cpuinfo
-.
 .SH "SEE ALSO"
 .BR date (1),
 .BR adjtimex (8),
