@@ -1039,11 +1039,18 @@ time conversion.
 Attempting to mix and match files from these separate databases will not
 work, because they each require the System Clock to use a different
 timescale. The zoneinfo database must be configured to use either posix
-or 'right', as described above.
-.
-.SH "ENVIRONMENT VARIABLES"
-.I TZ
-.
+or 'right', as described above, or by assigning a database path to the
+.SB TZDIR
+environment variable.
+.SH ENVIRONMENT
+.TP
+.B TZ
+If this variable is set its value takes precedence over the system
+configured timezone.
+.TP
+.B TZDIR
+If this variable is set its value takes precedence over the system
+configured timezone database directory path.
 .SH FILES
 .br
 .I @ADJTIME_PATH@
