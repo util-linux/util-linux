@@ -407,7 +407,7 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 		} else
 			err(EXIT_FAILURE, _("localtime() failed"));
 	} else
-		time = strdup(NILVALUE);
+		time = xstrdup(NILVALUE);
 
 	char *hostname;
 	if (ctl->rfc5424_host) {
@@ -418,7 +418,7 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 			errx(EXIT_FAILURE, _("hostname '%s' is too long"),
 			     hostname);
 	} else
-		hostname = strdup(NILVALUE);
+		hostname = xstrdup(NILVALUE);
 
 	char *const app_name = ctl->tag;
 	if (48 < strlen(ctl->tag))
@@ -428,9 +428,9 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 	if (ctl->pid)
 		xasprintf(&procid, "%d", ctl->pid);
 	else
-		procid = strdup(NILVALUE);
+		procid = xstrdup(NILVALUE);
 
-	char *const msgid = strdup((ctl->msgid) ? ctl->msgid : NILVALUE);
+	char *const msgid = xstrdup((ctl->msgid) ? ctl->msgid : NILVALUE);
 
 	char *structured_data;
 	if (ctl->rfc5424_tq) {
