@@ -3,6 +3,11 @@ deprecated utils are in maintenance mode and we keep them in source tree for
 backward compatibility only.
 
 
+what:  tailf
+why:   "tail -f" is better nowadays, tailf has unfixed bugs
+
+--------------------------
+
 what:  sfdisk --show-size
 why:   this does not belong to fdisk, use "blockdev --getsz"
 
