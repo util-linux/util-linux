@@ -90,10 +90,6 @@ struct last_control {
 
 	char **show;		/* Match search list */
 
-	char **altv;		/* Alternate wtmp files */
-	unsigned int altc;	/* Number of alternative files */
-	unsigned int alti;	/* Index number of the alternative file */
-
 	struct timeval boot_time; /* system boot time */
 	time_t since;		/* at what time to start displaying the file */
 	time_t until;		/* at what time to stop displaying the file */
@@ -159,8 +155,7 @@ static int which_time_format(const char *optarg)
  *	Read one utmp entry, return in new format.
  *	Automatically reposition file pointer.
  */
-static int uread(const struct last_control *ctl, FILE *fp, struct utmp *u,
-		 int *quit)
+static int uread(FILE *fp, struct utmp *u,  int *quit, const char *filename)
 {
 	static int utsize;
 	static char buf[UCHUNKSIZE];
@@ -187,12 +182,12 @@ static int uread(const struct last_control *ctl, FILE *fp, struct utmp *u,
 			return 0;
 		o = ((fpos - 1) / UCHUNKSIZE) * UCHUNKSIZE;
 		if (fseeko(fp, o, SEEK_SET) < 0) {
-			warn(_("seek on %s failed"), ctl->altv[ctl->alti]);
+			warn(_("seek on %s failed"), filename);
 			return 0;
 		}
 		bpos = (int)(fpos - o);
 		if (fread(buf, bpos, 1, fp) != 1) {
-			warn(_("cannot read %s"), ctl->altv[ctl->alti]);
+			warn(_("cannot read %s"), filename);
 			return 0;
 		}
 		fpos = o;
@@ -221,7 +216,7 @@ static int uread(const struct last_control *ctl, FILE *fp, struct utmp *u,
 	 */
 	memcpy(tmp + (-bpos), buf, utsize + bpos);
 	if (fseeko(fp, fpos, SEEK_SET) < 0) {
-		warn(_("seek on %s failed"), ctl->altv[ctl->alti]);
+		warn(_("seek on %s failed"), filename);
 		return 0;
 	}
 
@@ -229,7 +224,7 @@ static int uread(const struct last_control *ctl, FILE *fp, struct utmp *u,
 	 *	Read another UCHUNKSIZE bytes.
 	 */
 	if (fread(buf, UCHUNKSIZE, 1, fp) != 1) {
-		warn(_("cannot read %s"), ctl->altv[ctl->alti]);
+		warn(_("cannot read %s"), filename);
 		return 0;
 	}
 
@@ -618,10 +613,10 @@ static int is_phantom(const struct last_control *ctl, struct utmp *ut)
 	return ret;
 }
 
-static void process_wtmp_file(const struct last_control *ctl)
+static void process_wtmp_file(const struct last_control *ctl,
+			      const char *filename)
 {
 	FILE *fp;		/* Filepointer of wtmp file */
-	char *filename;
 
 	struct utmp ut;		/* Current utmp entry */
 	struct utmplist *ulist = NULL;	/* All entries */
@@ -640,9 +635,6 @@ static void process_wtmp_file(const struct last_control *ctl)
 	int down = 0;		/* Down flag */
 
 	time(&lastdown);
-	lastrch = lastdown;
-	filename = ctl->altv[ctl->alti];
-
 	/*
 	 * Fill in 'lastdate'
 	 */
@@ -668,7 +660,7 @@ static void process_wtmp_file(const struct last_control *ctl)
 	/*
 	 * Read first structure to capture the time field
 	 */
-	if (uread(ctl, fp, &ut, NULL) == 1)
+	if (uread(fp, &ut, NULL, filename) == 1)
 		begintime = ut.UL_UT_TIME;
 	else {
 		if (fstat(fileno(fp), &st) != 0)
@@ -681,14 +673,14 @@ static void process_wtmp_file(const struct last_control *ctl)
 	 * Go to end of file minus one structure
 	 * and/or initialize utmp reading code.
 	 */
-	uread(ctl, fp, NULL, NULL);
+	uread(fp, NULL, NULL, filename);
 
 	/*
 	 * Read struct after struct backwards from the file.
 	 */
 	while (!quit) {
 
-		if (uread(ctl, fp, &ut, &quit) != 1)
+		if (uread(fp, &ut, &quit, filename) != 1)
 			break;
 
 		if (ctl->since && ut.UL_UT_TIME < ctl->since)
@@ -883,6 +875,8 @@ int main(int argc, char **argv)
 		.time_fmt = LAST_TIMEFTM_SHORT_CTIME,
 		.domain_len = LAST_DOMAIN_LEN
 	};
+	char **files = NULL;
+	size_t i, nfiles = 0;
 	int c;
 	usec_t p;
 
@@ -940,9 +934,9 @@ int main(int argc, char **argv)
 			ctl.maxrecs = strtos32_or_err(optarg, _("failed to parse number"));
 			break;
 		case 'f':
-			if (!ctl.altv)
-				ctl.altv = xmalloc(sizeof(char *) * argc);
-			ctl.altv[ctl.altc++] = xstrdup(optarg);
+			if (!files)
+				files = xmalloc(sizeof(char *) * argc);
+			files[nfiles++] = xstrdup(optarg);
 			break;
 		case 'd':
 			ctl.usedns = 1;
@@ -997,20 +991,16 @@ int main(int argc, char **argv)
 	 * Which file do we want to read?
 	 */
 	ctl.lastb = strcmp(program_invocation_short_name, "lastb") == 0 ? 1 : 0;
-	if (!ctl.altc) {
-		ctl.altv = xmalloc(sizeof(char *));
-		if (ctl.lastb)
-			ctl.altv[0] = xstrdup(_PATH_BTMP);
-		else
-			ctl.altv[0] = xstrdup(_PATH_WTMP);
-		ctl.altc++;
+	if (!files) {
+		files = xmalloc(sizeof(char *));
+		files[nfiles++] = xstrdup(ctl.lastb ? _PATH_BTMP : _PATH_WTMP);
 	}
 
-	for (ctl.alti = 0; ctl.alti < ctl.altc; ctl.alti++) {
+	for (i = 0; i < nfiles; i++) {
 		get_boot_time(&ctl.boot_time);
-		process_wtmp_file(&ctl);
-		free(ctl.altv[ctl.alti]);
+		process_wtmp_file(&ctl, files[i]);
+		free(files[i]);
 	}
-	free(ctl.altv);
+	free(files);
 	return EXIT_SUCCESS;
 }
