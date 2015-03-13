@@ -1,0 +1,68 @@
+Util-linux 2.26.1 Release Notes
+===============================
+
+agetty:
+   - make sure that reload file exists  [Karel Zak]
+   - reload issue on --autologin --login-pause too  [Karel Zak]
+   - support /usr/lib/os-release too  [Karel Zak]
+build-sys:
+   - add --disable-colors-default  [Karel Zak]
+cal:
+   - care about setuprterm() result  [Karel Zak]
+colors:
+   - cleanup man pages, add hint to usage()  [Karel Zak]
+docs:
+   - fix some spelling errors and typos in man pages  [Bill Pemberton]
+   - fstab(5) grammar / English fixes, and some other updates  [Peter Cordes]
+   - update AUTHORS file  [Karel Zak]
+findmnt:
+   - don't rely on st_dev for --target  [Karel Zak]
+last:
+   - fix utmplist usage  [Karel Zak]
+lib/colors:
+   - add USAGE_COLORS_DEFAULT  [Karel Zak]
+libfdisk:
+   - add {first,last}-lba header to sfdisk scritps  [Karel Zak]
+libmount:
+   - add mnt_table_get_fs_root() to header file  [Karel Zak]
+   - cleanup fs root detection code  [Karel Zak]
+   - mark overlay as pseudo-FS  [Karel Zak]
+logger:
+   - add --msgid option, permits to set RFC5424 MSGID field  [Rainer Gerhards]
+   - add --skip-empty to prevent logging empty lines  [Rainer Gerhards]
+   - add comment  [Karel Zak]
+   - bugfix  missing sanity checks with --prio-prefix option  [Rainer Gerhards]
+   - bugfix  tcp syslog framing is broken, -T unusable  [Rainer Gerhards]
+   - check for ntp_gettime() rather than for timex.h  [Karel Zak]
+   - fix -i argument parsing regression  [Sami Kerola]
+   - fix -p kern.* priority is accepted regression  [Rainer Gerhards]
+   - fix inconsistent format regression when logging locally  [Rainer Gerhards]
+   - fix invalid timestamp in rfc5425 format  [Rainer Gerhards]
+   - fix invalid timestamp regression in local format  [Rainer Gerhards]
+   - fix multiple format bugs in rfc5424 formatter  [Rainer Gerhards]
+   - fix whitespace and compiler warning [-Wunused-variable]  [Karel Zak]
+   - link libsystemd-daemon.so  [Ruediger Meier]
+   - messages are logged with kern.* priority by default  [Rainer Gerhards]
+   - move /dev/log to pathnames.h  [Sami Kerola]
+   - permit to send messages larger than 1024 characters  [Rainer Gerhards]
+   - refactor message generation  [Rainer Gerhards]
+   - refactor the way output is written  [Rainer Gerhards]
+   - remove "interface to syslog(3)" from man page  [Karel Zak]
+   - small change in usage()  [Karel Zak]
+   - use username as the default tag  [Karel Zak]
+   - use xstrdup()  [Karel Zak]
+logger man page:
+   - bump man page date to current  [Rainer Gerhards]
+   - fix some "syslog(3) routine" remnants  [Rainer Gerhards]
+   - fix typo  [Rainer Gerhards]
+   - update --size doc  [Rainer Gerhards]
+po:
+   - merge changes  [Karel Zak]
+sfdisk:
+   - add missing --color  [Karel Zak]
+tests:
+   - fix fdisk/bsd for ppc64le  [Ruediger Meier]
+   - improve readability for fdisk/bsd  [Ruediger Meier]
+   - update sfdisk --dump test  [Karel Zak]
+
+- silence compiler warning  [Rainer Gerhards]
