@@ -107,7 +107,6 @@ struct utmplist {
 	struct utmplist *next;
 	struct utmplist *prev;
 };
-struct utmplist *utmplist = NULL;
 
 /* Types of listing */
 enum {
@@ -622,8 +621,10 @@ static int is_phantom(const struct last_control *ctl, struct utmp *ut)
 static void process_wtmp_file(const struct last_control *ctl)
 {
 	FILE *fp;		/* Filepointer of wtmp file */
+	char *filename;
 
 	struct utmp ut;		/* Current utmp entry */
+	struct utmplist *ulist = NULL;	/* All entries */
 	struct utmplist *p;	/* Pointer into utmplist */
 	struct utmplist *next;	/* Pointer into utmplist */
 
@@ -640,6 +641,7 @@ static void process_wtmp_file(const struct last_control *ctl)
 
 	time(&lastdown);
 	lastrch = lastdown;
+	filename = ctl->altv[ctl->alti];
 
 	/*
 	 * Fill in 'lastdate'
@@ -655,8 +657,8 @@ static void process_wtmp_file(const struct last_control *ctl)
 	/*
 	 * Open the utmp file
 	 */
-	if ((fp = fopen(ctl->altv[ctl->alti], "r")) == NULL)
-		err(EXIT_FAILURE, _("cannot open %s"), ctl->altv[ctl->alti]);
+	if ((fp = fopen(filename, "r")) == NULL)
+		err(EXIT_FAILURE, _("cannot open %s"), filename);
 
 	/*
 	 * Optimize the buffer size.
@@ -670,7 +672,7 @@ static void process_wtmp_file(const struct last_control *ctl)
 		begintime = ut.UL_UT_TIME;
 	else {
 		if (fstat(fileno(fp), &st) != 0)
-			err(EXIT_FAILURE, _("stat of %s failed"), ctl->altv[ctl->alti]);
+			err(EXIT_FAILURE, _("stat of %s failed"), filename);
 		begintime = st.st_ctime;
 		quit = 1;
 	}
@@ -787,7 +789,7 @@ static void process_wtmp_file(const struct last_control *ctl)
 			 * the same ut_line.
 			 */
 			c = 0;
-			for (p = utmplist; p; p = next) {
+			for (p = ulist; p; p = next) {
 				next = p->next;
 				if (strncmp(p->ut.ut_line, ut.ut_line,
 				    UT_LINESIZE) == 0) {
@@ -796,11 +798,12 @@ static void process_wtmp_file(const struct last_control *ctl)
 						quit = list(ctl, &ut, p->ut.UL_UT_TIME, R_NORMAL);
 						c = 1;
 					}
-					if (p->next) p->next->prev = p->prev;
+					if (p->next)
+						p->next->prev = p->prev;
 					if (p->prev)
 						p->prev->next = p->next;
 					else
-						utmplist = p->next;
+						ulist = p->next;
 					free(p);
 				}
 			}
@@ -829,10 +832,11 @@ static void process_wtmp_file(const struct last_control *ctl)
 				break;
 			p = xmalloc(sizeof(struct utmplist));
 			memcpy(&p->ut, &ut, sizeof(struct utmp));
-			p->next  = utmplist;
+			p->next  = ulist;
 			p->prev  = NULL;
-			if (utmplist) utmplist->prev = p;
-			utmplist = p;
+			if (ulist)
+				ulist->prev = p;
+			ulist = p;
 			break;
 
 		case EMPTY:
@@ -848,23 +852,24 @@ static void process_wtmp_file(const struct last_control *ctl)
 
 		/*
 		 * If we saw a shutdown/reboot record we can remove
-		 * the entire current utmplist.
+		 * the entire current ulist.
 		 */
 		if (down) {
 			lastboot = ut.UL_UT_TIME;
 			whydown = (ut.ut_type == SHUTDOWN_TIME) ? R_DOWN : R_CRASH;
-			for (p = utmplist; p; p = next) {
+			for (p = ulist; p; p = next) {
 				next = p->next;
 				free(p);
 			}
-			utmplist = NULL;
+			ulist = NULL;
 			down = 0;
 		}
 	}
 
-	printf(_("\n%s begins %s"), basename(ctl->altv[ctl->alti]), ctime(&begintime));
+	printf(_("\n%s begins %s"), basename(filename), ctime(&begintime));
 	fclose(fp);
-	for (p = utmplist; p; p = next) {
+
+	for (p = ulist; p; p = next) {
 		next = p->next;
 		free(p);
 	}
@@ -1001,7 +1006,7 @@ int main(int argc, char **argv)
 		ctl.altc++;
 	}
 
-	for (; ctl.alti < ctl.altc; ctl.alti++) {
+	for (ctl.alti = 0; ctl.alti < ctl.altc; ctl.alti++) {
 		get_boot_time(&ctl.boot_time);
 		process_wtmp_file(&ctl);
 		free(ctl.altv[ctl.alti]);
