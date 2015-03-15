@@ -656,7 +656,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_("     --rfc3164            use the obsolete BSD syslog protocol\n"), out);
 	fputs(_("     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
 		"                            <snip> can be notime, or notq, and/or nohost\n"), out);
-	fputs(_("     --msgid              set rfc5424 MSGID field, ignored for non-rfc5424 format\n"), out);
+	fputs(_("     --msgid <msgid>      set rfc5424 message id field\n"), out);
 	fputs(_(" -u, --socket <socket>    write to this Unix socket\n"), out);
 	fputs(_("     --socket-errors[=<on|off|auto>]\n"
 		"                          print connection errors when using Unix sockets\n"), out);
@@ -806,7 +806,7 @@ int main(int argc, char **argv)
 			break;
 		case OPT_MSGID:
 			if (strchr(optarg, ' '))
-				err(EXIT_FAILURE, _("--msgid cannot contain space"));
+				errx(EXIT_FAILURE, _("--msgid cannot contain space"));
 			ctl.msgid = optarg;
 			break;
 #ifdef HAVE_LIBSYSTEMD
