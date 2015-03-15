@@ -1062,8 +1062,8 @@ adjust_drift_factor(struct adjtime *adjtime_p,
 			drift_factor = 0;
 		} else {
 			if (debug)
-				printf(_("Clock drifted %.1f seconds in the past "
-					 "%.1f seconds\nin spite of a drift factor of "
+				printf(_("Clock drifted %f seconds in the past "
+					 "%f seconds\nin spite of a drift factor of "
 					 "%f seconds/day.\n"
 					 "Adjusting drift factor by %f seconds/day\n"),
 				       time_diff(nowtime, hclocktime),
