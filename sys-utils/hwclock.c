@@ -1914,15 +1914,15 @@ int main(int argc, char **argv)
 		permitted = TRUE;
 	else {
 		/* program is designed to run setuid (in some situations) */
-		if (set || systohc || adjust) {
+		if ((set || systohc || adjust) && !testing) {
 			warnx(_("Sorry, only the superuser can change "
 				"the Hardware Clock."));
 			permitted = FALSE;
-		} else if (systz || hctosys) {
+		} else if ((systz || hctosys) && !testing) {
 			warnx(_("Sorry, only the superuser can change "
 				"the System Clock."));
 			permitted = FALSE;
-		} else if (setepoch) {
+		} else if (setepoch && !testing) {
 			warnx(_("Sorry, only the superuser can change the "
 				"Hardware Clock epoch in the kernel."));
 			permitted = FALSE;
