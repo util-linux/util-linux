@@ -343,9 +343,10 @@ static void write_output(const struct logger_ctl *ctl, const char *const msg)
 		fprintf(stderr, "%s\n", buf);
 }
 
+#define NILVALUE "-"
 static void syslog_rfc3164_header(struct logger_ctl *const ctl)
 {
-	char pid[30], *hostname, *dot;
+	char pid[30], *hostname;
 
 	*pid = '\0';
 	if (ctl->fd < 0)
@@ -353,10 +354,12 @@ static void syslog_rfc3164_header(struct logger_ctl *const ctl)
 	if (ctl->pid)
 		snprintf(pid, sizeof(pid), "[%d]", ctl->pid);
 
-	hostname = xgethostname();
-	dot = strchr(hostname, '.');
-	if (dot)
-		*dot = '\0';
+	if ((hostname = xgethostname())) {
+		char *dot = strchr(hostname, '.');
+		if (dot)
+			*dot = '\0';
+	} else
+		hostname = xstrdup(NILVALUE);
 
 	xasprintf(&ctl->hdr, "<%d>%.15s %s %.200s%s: ",
 		 ctl->pri, rfc3164_current_time(), hostname, ctl->tag, pid);
@@ -384,7 +387,6 @@ static void syslog_rfc3164_header(struct logger_ctl *const ctl)
  * specified RFC5424. The rest of the field mappings should be
  * pretty clear from RFC5424. -- Rainer Gerhards, 2015-03-10
  */
-#define NILVALUE "-"
 static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 {
 	char *time;
@@ -417,7 +419,8 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 		time = xstrdup(NILVALUE);
 
 	if (ctl->rfc5424_host) {
-		hostname = xgethostname();
+		if (!(hostname = xgethostname()))
+			hostname = xstrdup(NILVALUE);
 		/* Arbitrary looking 'if (var < strlen()) checks originate from
 		 * RFC 5424 - 6 Syslog Message Format definition.  */
 		if (255 < strlen(hostname))
