@@ -127,6 +127,7 @@ static int decode(const char *name, CODE *codetab)
 		int num;
 		char *end = NULL;
 
+		errno = 0;
 		num = strtol(name, &end, 10);
 		if (errno || name == end || (end && *end))
 			return -1;
