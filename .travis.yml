@@ -18,19 +18,10 @@ branches:
     - /^stable.*/
 
 install:
-  # install some packages from Ubuntu's default sources
-  - sudo apt-get -qq update
-  - sudo apt-get install -qq
-    bc
-    dnsutils
-    libcap-ng-dev
-    libpam-dev
-    libudev-dev
-    gtk-doc-tools
-    ntp
+  - source ./.travis-functions.sh
+  - travis_install_script
 
 before_script:
-  - source ./.travis-functions.sh
   - travis_before_script
 
 script:
