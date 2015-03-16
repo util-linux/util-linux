@@ -449,7 +449,8 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 #endif
 			xasprintf(&structured_data,
 				 "[timeQuality tzKnown=\"1\" isSynced=\"0\"]");
-	}
+	} else
+		structured_data = xstrdup(NILVALUE);
 
 	xasprintf(&ctl->hdr, "<%d>1 %s %s %s %s %s %s ",
 		ctl->pri,
