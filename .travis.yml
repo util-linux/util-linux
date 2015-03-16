@@ -16,6 +16,7 @@ branches:
   only:
     - master
     - /^stable.*/
+    - /^travis.*/
 
 install:
   - source ./.travis-functions.sh
