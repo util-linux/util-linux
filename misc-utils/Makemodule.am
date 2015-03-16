@@ -26,6 +26,11 @@ if HAVE_SYSTEMD
 logger_LDADD = $(SYSTEMD_LIBS) $(SYSTEMD_DAEMON_LIBS) $(SYSTEMD_JOURNAL_LIBS)
 logger_CFLAGS = $(SYSTEMD_CFLAGS) $(SYSTEMD_DAEMON_CFLAGS) $(SYSTEMD_JOURNAL_CFLAGS)
 endif
+
+check_PROGRAMS += test_logger
+test_logger_SOURCES = $(logger_SOURCES)
+test_logger_LDADD = $(logger_LDADD)
+test_logger_CFLAGS = -DTEST_LOGGER $(logger_CFLAGS)
 endif # BUILD_LOGGER
 
 

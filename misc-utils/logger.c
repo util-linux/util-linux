@@ -119,6 +119,50 @@ struct logger_ctl {
 			skip_empty_lines:1; /* do not send empty lines when processing files */
 };
 
+/*
+ * For tests we want to be able to control datetime outputs
+ */
+#ifdef TEST_LOGGER
+static inline int logger_gettimeofday(struct timeval *tv, struct timezone *tz)
+{
+	char *str = getenv("LOGGER_TEST_TIMEOFDAY");
+	uintmax_t sec, usec;
+
+	if (str && sscanf(str, "%ju.%ju", &sec, &usec) == 2) {
+		tv->tv_sec = sec;
+		tv->tv_usec = usec;
+		return tv->tv_sec == sec && tv->tv_usec == usec;
+	}
+
+	return gettimeofday(tv, tz);
+}
+
+static inline char *logger_xgethostname(void)
+{
+	char *str = getenv("LOGGER_TEST_HOSTNAME");
+	return str ? xstrdup(str) : xgethostname();
+}
+
+static inline pid_t logger_getpid(void)
+{
+	char *str = getenv("LOGGER_TEST_GETPID");
+	unsigned int pid;
+
+	if (str && sscanf(str, "%u", &pid) == 1)
+		return pid;
+	return getpid();
+}
+
+
+#undef HAVE_NTP_GETTIME		/* force to default non-NTP */
+
+#else /* !TEST_LOGGER */
+# define logger_gettimeofday(x, y)	gettimeofday(x, y)
+# define logger_xgethostname		xgethostname
+# define logger_getpid			getpid
+#endif
+
+
 static int decode(const char *name, CODE *codetab)
 {
 	register CODE *c;
@@ -319,7 +363,7 @@ static const char *rfc3164_current_time(void)
 		"Sep", "Oct", "Nov", "Dec"
 	};
 
-	gettimeofday(&tv, NULL);
+	logger_gettimeofday(&tv, NULL);
 	tm = localtime(&tv.tv_sec);
 	snprintf(time, sizeof(time),"%s %2d %2.2d:%2.2d:%2.2d",
 		monthnames[tm->tm_mon], tm->tm_mday,
@@ -367,7 +411,7 @@ static void syslog_rfc3164_header(struct logger_ctl *const ctl)
 	if (ctl->pid)
 		snprintf(pid, sizeof(pid), "[%d]", ctl->pid);
 
-	if ((hostname = xgethostname())) {
+	if ((hostname = logger_xgethostname())) {
 		char *dot = strchr(hostname, '.');
 		if (dot)
 			*dot = '\0';
@@ -416,7 +460,7 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 		struct timeval tv;
 		struct tm *tm;
 
-		gettimeofday(&tv, NULL);
+		logger_gettimeofday(&tv, NULL);
 		if ((tm = localtime(&tv.tv_sec)) != NULL) {
 			char fmt[64];
 			const size_t i = strftime(fmt, sizeof(fmt),
@@ -432,7 +476,7 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 		time = xstrdup(NILVALUE);
 
 	if (ctl->rfc5424_host) {
-		if (!(hostname = xgethostname()))
+		if (!(hostname = logger_xgethostname()))
 			hostname = xstrdup(NILVALUE);
 		/* Arbitrary looking 'if (var < strlen()) checks originate from
 		 * RFC 5424 - 6 Syslog Message Format definition.  */
@@ -764,7 +808,7 @@ int main(int argc, char **argv)
 			ctl.skip_empty_lines = 1;
 			break;
 		case 'i':		/* log process id also */
-			ctl.pid = getpid();
+			ctl.pid = logger_getpid();
 			break;
 		case OPT_ID:
 			if (optarg) {
@@ -774,7 +818,7 @@ int main(int argc, char **argv)
 					p++;
 				ctl.pid = strtoul_or_err(optarg, _("failed to parse id"));
 			} else
-				ctl.pid = getpid();
+				ctl.pid = logger_getpid();
 			break;
 		case 'p':		/* priority */
 			ctl.pri = pencode(optarg);
