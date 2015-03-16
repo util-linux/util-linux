@@ -117,7 +117,7 @@ static int probe_bcache (blkid_probe pr, const struct blkid_idmag *mag)
 		return BLKID_PROBE_NONE;
 
 	return BLKID_PROBE_OK;
-};
+}
 
 const struct blkid_idinfo bcache_idinfo =
 {
