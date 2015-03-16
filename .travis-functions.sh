@@ -69,6 +69,21 @@ function check_dist
 	$MAKE distcheck || return
 }
 
+function travis_install_script
+{
+	# install some packages from Ubuntu's default sources
+	sudo apt-get -qq update || return
+	sudo apt-get install -qq >/dev/null \
+		bc \
+		dnsutils \
+		libcap-ng-dev \
+		libpam-dev \
+		libudev-dev \
+		gtk-doc-tools \
+		ntp \
+		|| return
+}
+
 function travis_before_script
 {
 	pushd "$SOURCE_DIR" || return
