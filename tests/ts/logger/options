@@ -34,15 +34,15 @@ echo "<66>" prio_prefix	 > $TS_OUTDIR/input_prio_prefix
 
 # bash 4 might not be available, use go-around hash
 tests_array=(
-	"simple:--stderr test"
-	"log_pid:--stderr -i test"
-	"log_pid_long:--stderr --id test"
-	"log_pid_define:--stderr --id=12345 test"
+	"simple:test"
+	"log_pid:-i test"
+	"log_pid_long:--id test"
+	"log_pid_define:--id=12345 test"
 	"log_pid_no_arg:-is test"
-	"input_file_simple:--stderr -f $TS_OUTDIR/input_simple"
-	"input_file_empty_line:--stderr -f $TS_OUTDIR/input_empty_line"
-	"input_file_skip_empty:--stderr --file $TS_OUTDIR/input_empty_line -e"
-	"input_file_prio_prefix:--stderr --file $TS_OUTDIR/input_prio_prefix --skip-empty --prio-prefix"
+	"input_file_simple:-f $TS_OUTDIR/input_simple"
+	"input_file_empty_line:-f $TS_OUTDIR/input_empty_line"
+	"input_file_skip_empty:--file $TS_OUTDIR/input_empty_line -e"
+	"input_file_prio_prefix:--file $TS_OUTDIR/input_prio_prefix --skip-empty --prio-prefix"
 )
 
 export TZ="GMT"
@@ -55,7 +55,7 @@ for i in "${tests_array[@]}"; do
 	options="${i##*:}"
 
 	ts_init_subtest "$name"
-	$TS_HELPER_LOGGER -t "test_tag" $options > "$TS_OUTPUT" 2>&1
+	$TS_HELPER_LOGGER --stderr --no-act -t "test_tag" $options > "$TS_OUTPUT" 2>&1
 	ts_finalize_subtest
 done
 
