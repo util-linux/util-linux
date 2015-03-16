@@ -91,6 +91,7 @@ enum {
 	OPT_RFC5424,
 	OPT_SOCKET_ERRORS,
 	OPT_MSGID,
+	OPT_NOACT,
 	OPT_ID
 };
 
@@ -109,6 +110,7 @@ struct logger_ctl {
 	void (*syslogfp)(struct logger_ctl *ctl);
 	unsigned int
 			unix_socket_errors:1,	/* whether to report or not errors */
+			noact:1,		/* do not write to sockets */
 			prio_prefix:1,		/* read priority from intput */
 			stderr_printout:1,	/* output message to stderr */
 			rfc5424_time:1,		/* include time stamp */
@@ -250,12 +252,12 @@ static int inet_socket(const char *servername, const char *port,
 }
 
 #ifdef HAVE_LIBSYSTEMD
-static int journald_entry(FILE *fp)
+static int journald_entry(struct logger_ctl *ctl, FILE *fp)
 {
 	struct iovec *iovec;
 	char *buf = NULL;
 	ssize_t sz;
-	int n, lines, vectors = 8, ret;
+	int n, lines, vectors = 8, ret = 0;
 	size_t dummy = 0;
 
 	iovec = xmalloc(vectors * sizeof(struct iovec));
@@ -277,7 +279,13 @@ static int journald_entry(FILE *fp)
 		iovec[lines].iov_base = buf;
 		iovec[lines].iov_len = sz;
 	}
-	ret = sd_journal_sendv(iovec, lines);
+
+	if (!ctl->noact)
+		ret = sd_journal_sendv(iovec, lines);
+	if (ctl->stderr_printout) {
+		for (n = 0; n < lines; n++)
+			fprintf(stderr, "%s\n", (char *) iovec[n].iov_base);
+	}
 	for (n = 0; n < lines; n++)
 		free(iovec[n].iov_base);
 	free(iovec);
@@ -328,17 +336,22 @@ static void write_output(const struct logger_ctl *ctl, const char *const msg)
 {
 	char *buf;
 	const size_t len = xasprintf(&buf, "%s%s", ctl->hdr, msg);
-	if (write_all(ctl->fd, buf, len) < 0)
-		warn(_("write failed"));
-	else if (ctl->socket_type == TYPE_TCP)
-		/* using an additional write seems like the best compromise:
-		 * - writev() is not yet supported by framework
-		 * - adding the \n to the buffer in formatters violates layers
-		 * - adding \n after the fact requires memory copy
-		 * - logger is not a high-performance app
-		 */
-		if (write_all(ctl->fd, "\n", 1) < 0)
+
+	if (!ctl->noact) {
+		if (write_all(ctl->fd, buf, len) < 0)
 			warn(_("write failed"));
+		else if (ctl->socket_type == TYPE_TCP) {
+			/* using an additional write seems like the best compromise:
+			 * - writev() is not yet supported by framework
+			 * - adding the \n to the buffer in formatters violates layers
+			 * - adding \n after the fact requires memory copy
+			 * - logger is not a high-performance app
+			 */
+			if (write_all(ctl->fd, "\n", 1) < 0)
+				warn(_("write failed"));
+		}
+	}
+
 	if (ctl->stderr_printout)
 		fprintf(stderr, "%s\n", buf);
 }
@@ -645,6 +658,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_("     --id[=<id>]          log the given <id>, or otherwise the PID\n"), out);
 	fputs(_(" -f, --file <file>        log the contents of this file\n"), out);
 	fputs(_(" -e, --skip-empty         do not log empty lines when processing files\n"), out);
+	fputs(_("     --no-act             do everything except the write the log\n"), out);
 	fputs(_(" -p, --priority <prio>    mark given message with this priority\n"), out);
 	fputs(_("     --prio-prefix        look for a prefix on every line read from stdin\n"), out);
 	fputs(_(" -s, --stderr             output message to standard error as well\n"), out);
@@ -710,6 +724,7 @@ int main(int argc, char **argv)
 		{ "id",		   optional_argument, 0, OPT_ID		   },
 		{ "stderr",	   no_argument,	      0, 's'		   },
 		{ "file",	   required_argument, 0, 'f'		   },
+		{ "no-act",        no_argument,       0, OPT_NOACT,	   },
 		{ "priority",	   required_argument, 0, 'p'		   },
 		{ "tag",	   required_argument, 0, 't'		   },
 		{ "socket",	   required_argument, 0, 'u'		   },
@@ -824,6 +839,9 @@ int main(int argc, char **argv)
 		case OPT_SOCKET_ERRORS:
 			unix_socket_errors_mode = parse_unix_socket_errors_flags(optarg);
 			break;
+		case OPT_NOACT:
+			ctl.noact = 1;
+			break;
 		case '?':
 		default:
 			usage(stderr);
@@ -835,7 +853,7 @@ int main(int argc, char **argv)
 		warnx(_("--file <file> and <message> are mutually exclusive, message is ignored"));
 #ifdef HAVE_LIBSYSTEMD
 	if (jfd) {
-		int ret = journald_entry(jfd);
+		int ret = journald_entry(&ctl, jfd);
 		if (stdin != jfd)
 			fclose(jfd);
 		if (ret)
