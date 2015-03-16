@@ -68,6 +68,10 @@ function ts_check_losetup {
 	local tmp
 	ts_check_test_command "$TS_CMD_LOSETUP"
 
+	if [ "$TS_OPT_FEAT_SKIP_LOOP" = "yes" ]; then
+		ts_skip "loop-device tests disabled"
+	fi
+
 	# assuming that losetup -f works ... to be checked somewhere else
 	tmp=$($TS_CMD_LOSETUP -f 2>/dev/null)
 	if test -b "$tmp"; then
