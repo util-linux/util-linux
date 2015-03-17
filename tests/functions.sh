@@ -68,7 +68,7 @@ function ts_check_losetup {
 	local tmp
 	ts_check_test_command "$TS_CMD_LOSETUP"
 
-	if [ "$TS_OPT_FEAT_SKIP_LOOP" = "yes" ]; then
+	if [ "$TS_SKIP_LOOPDEVS" = "yes" ]; then
 		ts_skip "loop-device tests disabled"
 	fi
 
@@ -241,6 +241,7 @@ function ts_init_env {
 	TS_VERBOSE=$(ts_has_option "verbose" "$*")
 	TS_PARALLEL=$(ts_has_option "parallel" "$*")
 	TS_KNOWN_FAIL=$(ts_has_option "known-fail" "$*")
+	TS_SKIP_LOOPDEVS=$(ts_has_option "skip-loopdevs" "$*")
 
 	tmp=$( ts_has_option "memcheck" "$*")
 	if [ "$tmp" == "yes" -a -f /usr/bin/valgrind ]; then

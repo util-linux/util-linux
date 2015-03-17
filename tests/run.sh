@@ -47,6 +47,9 @@ while [ -n "$1" ]; do
 	--verbose)
 		OPTS="$OPTS --verbose"
 		;;
+	--skip-loopdevs)
+		OPTS="$OPTS --skip-loopdevs"
+		;;
 	--nonroot)
 		if [ $(id -ru) -eq 0 ]; then
 			echo "Ignore util-linux test suite [non-root UID expected]."
