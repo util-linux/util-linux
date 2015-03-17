@@ -438,7 +438,6 @@ static void report_device(char *device, int quiet)
 	long ra;
 	unsigned long long bytes;
 	uint64_t start = 0;
-	struct sysfs_cxt cxt;
 	struct stat st;
 
 	fd = open(device, O_RDONLY | O_NONBLOCK);
@@ -450,7 +449,9 @@ static void report_device(char *device, int quiet)
 
 	ro = ssz = bsz = 0;
 	ra = 0;
-	if (fstat(fd, &st) == 0) {
+	if (fstat(fd, &st) == 0 && !sysfs_devno_is_wholedisk(st.st_rdev)) {
+		struct sysfs_cxt cxt;
+
 		if (sysfs_init(&cxt, st.st_rdev, NULL))
 			err(EXIT_FAILURE,
 				_("%s: failed to initialize sysfs handler"),
