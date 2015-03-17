@@ -39,6 +39,8 @@ function configure_travis
 
 function check_nonroot
 {
+	local opts="$MAKE_CHECK_OPTS"
+
 	configure_travis \
 		--disable-use-tty-group \
 		--with-python \
@@ -46,19 +48,21 @@ function check_nonroot
 		--enable-gtk-doc \
 		|| return
 	$MAKE || return
-	$MAKE check || return
+	$MAKE check TS_OPTS="$opts" || return
 	$MAKE install DESTDIR=/tmp/dest || return
 }
 
 function check_root
 {
+	local opts="$MAKE_CHECK_OPTS --parallel=1"
+
 	configure_travis \
 		--with-python \
 		--enable-all-programs \
 		|| return
 	$MAKE || return
 	$MAKE check TS_COMMAND="true" || return
-	sudo -E $MAKE check TS_OPTS='--parallel=1' || return
+	sudo -E $MAKE check TS_OPTS="$opts" || return
 	sudo $MAKE install || return
 }
 
