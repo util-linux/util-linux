@@ -252,6 +252,9 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
+	warnx(_("warning: "
+		"use of 'tailf' is deprecated, use 'tail -f' instead"));
+
 	if (!old_style_option(&argc, argv, &lines))
 		lines = DEFAULT_LINES;
 
