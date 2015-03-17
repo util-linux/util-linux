@@ -758,24 +758,29 @@ You can use an adjtime file that was previously used with the
 .PP
 You should be aware of another way that the Hardware Clock is kept
 synchronized in some systems.  The Linux kernel has a mode wherein it
-copies the System Time to the Hardware Clock every 11 minutes.
+copies the System Time to the Hardware Clock every 11 minutes. This mode
+is a compile time option, so not all kernels will have this capability.
 This is a good mode to use when you are using something sophisticated
 like NTP to keep your System Clock synchronized. (NTP is a way to keep
 your System Time synchronized either to a time server somewhere on the
 network or to a radio clock hooked up to your system.  See RFC 1305.)
 .PP
-This mode (we'll call it \%'11\ minute\ mode') is off until something
-turns it on.  The NTP daemon ntpd is one thing that turns it on.  You
-can turn it off by running anything, including
+If the kernel is compiled with the \%'11\ minute\ mode' option it will
+be active when the kernel's clock discipline is in a synchronized state.
+When in this state the binary 64's bit of the kernel's
+.I \%time_status
+variable is unset (10111111). This value is output as the 'status' line of the
+.BR \%adjtimex\ --print " or " \%ntptime " commands."
+.PP
+It takes an outside influence, like the NTP daemon
+.BR ntpd (1),
+to put the kernel's clock discipline into a synchronized state, and
+therefore turn on \%'11\ minute\ mode'.
+It can be turned off by running anything, including
 .BR \%hwclock\ \-\-hctosys ,
 that sets the System Clock the old fashioned way.  However, if the NTP daemon is
-still running, it will turn 11 minute mode back on again the next time it
+still running, it will turn \%'11\ minute\ mode' back on again the next time it
 synchronizes the System Clock.
-.PP
-When \%'11\ minute\ mode' is active the 64 bit of the kernel's
-.I time_status
-variable is unset. The status variable can be checked with the
-.BR \%adjtimex\ --print " or " \%ntptime " commands."
 .PP
 If your system runs with \%'11\ minute\ mode' on, it may need to use either
 .BR \%\-\-hctosys " or " \%\-\-systz
@@ -888,7 +893,7 @@ would be
 .BR \%adjtimex 's " \-\-log " options.
 .PP
 It may be more effective to simply track the System Clock drift with
-.BR \%ntpdate\ \-q " , or " \%date\ \-Ins
+.BR \%sntp ", or " \%date\ \-Ins
 and a precision timepiece, and then calculate the correction manually.
 .PP
 After setting the tick and frequency values, continue to test and refine the
@@ -931,30 +936,8 @@ results it will likely need to be adjusted by directly editing the
 file.  Continue to test and refine the drift factor until the Hardware
 Clock is corrected properly at startup.  To check this, first make sure
 that the System Time is correct before shutdown and then use
-.BR \%ntpdate\ \-q ", or " \%date\ \-Ins
+.BR \%sntp ", or " \%date\ \-Ins
 and a precision timepiece, immediately after startup.
-.PP
-Both clocks typically use a quartz crystal oscillator.  Crystals are
-used for reference oscillators in electronics because by most measures
-they produce a very clean and stable sine wave.  Their greatest
-shortcoming is that they have a Positive Temperature Coefficient;
-meaning that their frequency increases as the temperature increases and
-vise versa. Therefore, both the Hardware and System Clock's drift rate
-changes with intrinsic and extrinsic machine temperatures.  These
-characteristics will vary by machine depending upon its design.
-.PP
-Drift correction strategies are many, but as a general guide the goal
-would be to find a longterm average.  A year long average to take into
-account seasonal ambient temperature shifts may be a good target period.
-So perhaps the date-time advances a bit in the summer and declines a bit
-in the winter, but at the end of a year it balances to zero.
-.PP
-If this is beginning to sound futile, it is not.  Left on its own a
-machine can lose 3 seconds per day or more.  Accumulated drift over a
-year may easily exceed half an hour.  Using carefully crafted drift
-corrections can make a significant improvement in a machine's ability to
-keep reasonably good date-time.
-.
 .SS LOCAL vs UTC
 Keeping the Hardware Clock in a local timescale causes inconsistent
 daylight saving time results:
@@ -1039,16 +1022,32 @@ time conversion.
 Attempting to mix and match files from these separate databases will not
 work, because they each require the System Clock to use a different
 timescale. The zoneinfo database must be configured to use either posix
-or 'right', as described above.
-.
-.SH "ENVIRONMENT VARIABLES"
-.I TZ
-.
+or 'right', as described above, or by assigning a database path to the
+.SB TZDIR
+environment variable.
+.SH ENVIRONMENT
+.TP
+.B TZ
+If this variable is set its value takes precedence over the system
+configured timezone.
+.TP
+.B TZDIR
+If this variable is set its value takes precedence over the system
+configured timezone database directory path.
 .SH FILES
-.br
+.TP
 .I @ADJTIME_PATH@
-.br
+The configuration and state file for hwclock.
+.TP
 .I /etc/localtime
+The system timezone file.
+.TP
+.I /usr/share/zoneinfo/
+The system timezone database directory.
+.PP
+Device files
+.B hwclock
+may try for Hardware Clock access:
 .br
 .I /dev/rtc
 .br
@@ -1063,9 +1062,6 @@ or 'right', as described above.
 .I /dev/port
 .br
 .I /dev/tty1
-.br
-.I /proc/cpuinfo
-.
 .SH "SEE ALSO"
 .BR date (1),
 .BR adjtimex (8),
