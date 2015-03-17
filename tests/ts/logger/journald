@@ -26,7 +26,7 @@ ts_init "$*"
 ts_check_test_command "$TS_HELPER_LOGGER"
 
 if ! $TS_HELPER_LOGGER --help | grep -q journald; then
-	TS_KNOWN_FAIL="yes"
+	ts_skip "unsupported"
 fi
 
 printf "%s\n%s\n%s\n" MESSAGE_ID=b8f74e14bc714bfc8040a5106dc9376a MESSAGE="a b c 1 2 3" |
