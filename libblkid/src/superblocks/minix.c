@@ -21,6 +21,7 @@ static int get_minix_version(const unsigned char *data, int *other_endian)
 	struct minix_super_block *sb = (struct minix_super_block *) data;
 	struct minix3_super_block *sb3 = (struct minix3_super_block *) data;
 	int version = 0;
+	char *endian;
 
 	*other_endian = 0;
 
@@ -60,13 +61,13 @@ static int get_minix_version(const unsigned char *data, int *other_endian)
 	if (!version)
 		return -1;
 
-	DBG(LOWPROBE, ul_debug("minix version %d detected [%s]", version,
 #if defined(WORDS_BIGENDIAN)
-	*other_endian ? "LE" : "BE"
+	endian = *other_endian ? "LE" : "BE";
 #else
-	*other_endian ? "BE" : "LE"
+	endian = *other_endian ? "BE" : "LE";
 #endif
-	));
+	DBG(LOWPROBE, ul_debug("minix version %d detected [%s]", version,
+			       endian));
 	return version;
 }
 
