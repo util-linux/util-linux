@@ -298,11 +298,6 @@ the true year.  That way, the Hardware Clock inserts leap days where
 they belong.  Again, if you let the Hardware Clock run for more than a
 year without setting it, this scheme could be defeated and you could
 end up losing a day.
-.sp
-.B \%hwclock
-warns you that you probably need
-.B \%\-\-badyear
-whenever it finds your Hardware Clock set to 1994 or 1995.
 .
 .TP
 .BI \%\-\-date= date_string
