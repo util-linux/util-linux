@@ -14,12 +14,14 @@ options.  Unshareable namespaces are:
 .BR "mount namespace"
 Mounting and unmounting filesystems will not affect the rest of the system
 (\fBCLONE_NEWNS\fP flag), except for filesystems which are explicitly marked as
-shared (with \fBmount --make-shared\fP; see \fI/proc/self/mountinfo\fP for the
-\fBshared\fP flags).
+shared (with \fBmount --make-shared\fP; see \fI/proc/self/mountinfo\fP or
+\fBfindmnt -o+PROPAGATION\fP for the \fBshared\fP flags).
 .sp
-It's recommended to use \fBmount --make-rprivate\fP or \fBmount --make-rslave\fP
-after \fBunshare --mount\fP to make sure that mountpoints in the new namespace
-are really unshared from the parental namespace.
+.B unshare
+since util-linux version 2.27 automatically sets propagation to \fBprivate\fP
+in the new mount namespace to make sure that the new namespace is really
+unshared. This feature is possible to disable by option \fB\-\-propagation unchanged\fP.
+Note that \fBprivate\fP is the kernel default.
 .TP
 .BR "UTS namespace"
 Setting hostname or domainname will not affect the rest of the system.
@@ -84,7 +86,13 @@ the mount namespace) even when run unprivileged.  As a mere convenience feature,
 more sophisticated use cases, such as mapping multiple ranges of UIDs and GIDs.
 This option implies --setgroups=deny.
 .TP
-.BR \-s , " \-\-setgroups \fIallow|deny\fP"
+.BR "\-\-propagation \fIprivate|shared|slave|unchanged\fP"
+Recursively sets mount propagation flag in the new mount namespace. The default
+is to set the propagation to \fIprivate\fP, this feature is possible to disable
+by \fIunchanged\fP argument. The options is silently ignored when mount namespace (\fB\-\-mount\fP)
+is not requested.
+.TP
+.BR "\-\-setgroups \fIallow|deny\fP"
 Allow or deny
 .BR setgroups (2)
 syscall in user namespaces.

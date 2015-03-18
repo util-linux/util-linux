@@ -39,6 +39,9 @@
 #include "pathnames.h"
 #include "all-io.h"
 
+/* 'private' is kernel default */
+#define UNSHARE_PROPAGATION_DEFAULT	(MS_REC | MS_PRIVATE)
+
 enum {
 	SETGROUPS_NONE = -1,
 	SETGROUPS_DENY = 0,
@@ -100,6 +103,36 @@ static void map_id(const char *file, uint32_t from, uint32_t to)
 	close(fd);
 }
 
+static unsigned long parse_propagation(const char *str)
+{
+	size_t i;
+	static const struct prop_opts {
+		const char *name;
+		unsigned long flag;
+	} opts[] = {
+		{ "slave",	MS_REC | MS_SLAVE },
+		{ "private",	MS_REC | MS_PRIVATE },
+		{ "shared",     MS_REC | MS_SHARED },
+		{ "unchanged",        0 }
+	};
+
+	for (i = 0; i < ARRAY_SIZE(opts); i++) {
+		if (strcmp(opts[i].name, str) == 0)
+			return opts[i].flag;
+	}
+
+	errx(EXIT_FAILURE, _("unsupported propagation mode: %s"), str);
+}
+
+static void set_propagation(unsigned long flags)
+{
+	if (flags == 0)
+		return;
+
+	if (mount("none", "/", NULL, flags, NULL) != 0)
+		err(EXIT_FAILURE, _("cannot change root filesystem propagation"));
+}
+
 static void usage(int status)
 {
 	FILE *out = status == EXIT_SUCCESS ? stdout : stderr;
@@ -121,6 +154,8 @@ static void usage(int status)
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
 	fputs(_("     --mount-proc[=<dir>]  mount proc filesystem first (implies --mount)\n"), out);
 	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
+	fputs(_("     --propagation <slave|shared|private|unchanged>\n"
+	        "                           modify mount propagation in mount namespace\n"), out);
 	fputs(_(" -s, --setgroups allow|deny  control the setgroups syscall in user namespaces\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -135,6 +170,7 @@ int main(int argc, char *argv[])
 {
 	enum {
 		OPT_MOUNTPROC = CHAR_MAX + 1,
+		OPT_PROPAGATION,
 		OPT_SETGROUPS
 	};
 	static const struct option longopts[] = {
@@ -149,6 +185,7 @@ int main(int argc, char *argv[])
 		{ "fork", no_argument, 0, 'f' },
 		{ "mount-proc", optional_argument, 0, OPT_MOUNTPROC },
 		{ "map-root-user", no_argument, 0, 'r' },
+		{ "propagation", required_argument, 0, OPT_PROPAGATION },
 		{ "setgroups", required_argument, 0, OPT_SETGROUPS },
 		{ NULL, 0, 0, 0 }
 	};
@@ -157,6 +194,7 @@ int main(int argc, char *argv[])
 	int unshare_flags = 0;
 	int c, forkit = 0, maproot = 0;
 	const char *procmnt = NULL;
+	unsigned long propagation = UNSHARE_PROPAGATION_DEFAULT;
 	uid_t real_euid = geteuid();
 	gid_t real_egid = getegid();;
 
@@ -204,6 +242,9 @@ int main(int argc, char *argv[])
 		case OPT_SETGROUPS:
 			setgrpcmd = setgroups_str2id(optarg);
 			break;
+		case OPT_PROPAGATION:
+			propagation = parse_propagation(optarg);
+			break;
 		default:
 			usage(EXIT_FAILURE);
 		}
@@ -247,6 +288,9 @@ int main(int argc, char *argv[])
 
 	} else if (setgrpcmd != SETGROUPS_NONE)
 		setgroups_control(setgrpcmd);
+
+	if ((unshare_flags & CLONE_NEWNS) && propagation)
+		set_propagation(propagation);
 
 	if (procmnt &&
 	    (mount("none", procmnt, NULL, MS_PRIVATE|MS_REC, NULL) != 0 ||
