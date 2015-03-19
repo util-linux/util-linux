@@ -13,7 +13,7 @@ findmnt \- find a filesystem
 [options]
 .RB [ \-\-source ]
 .IR device
-.RB [ \-\-target ]
+.RB [ \-\-target | \-\-mountpoint ]
 .IR mountpoint
 .SH DESCRIPTION
 .B findmnt
@@ -31,9 +31,13 @@ or
 is not given, all filesystems are shown.
 .PP
 The device may be specified by device name, maj:min, filesystem LABEL or UUID,
-or partition PARTUUID or PARTLABEL.  Note that a device name may be interpreted
-as a mountpoint (and vice versa) if the \fB--target\fR or \fB--source\fR options
-are not specified.
+or partition PARTUUID or PARTLABEL.  Note that
+.B findmnt
+follows
+.BR mount (8)
+behavior where a device name may be interpreted
+as a mountpoint (and vice versa) if the \fB--target\fR, \fB--mountpoint\fR or
+\fB--source\fR options are not specified.
 .PP
 The command prints all mounted filesystems in the tree-like format by default.
 .SH OPTIONS
@@ -95,6 +99,9 @@ Use the list output format.  This output format is automatically enabled if the
 output is restricted by the \fB\-t\fP, \fB\-O\fP, \fB\-S\fP or \fB\-T\fP
 option and the option \fB\-\-submounts\fP is not used or if more that one
 source file (the option \fB\-F\fP) is specified.
+.TP
+.BR \-M , " \-\-mountpoint \fIpath\fP"
+Explicitly define the mountpoint file or directory. See also \fB\-\-target\fP.
 .TP
 .BR \-m , " \-\-mtab"
 Search in
@@ -186,11 +193,13 @@ Search in
 The output is in the list format (see \fB--list\fR).
 .TP
 .BR \-T , " \-\-target \fIpath\fP"
-Explicitly define the mount target (mountpoint directory). If the \fIpath\fR
+Define the mount target. If the \fIpath\fR
 is not a mountpoint file or directory than
 .B findmnt
 checks \fIpath\fR elements in reverse order for get the mountpoint (this feature is 
-supported only if search in kernel files and unsupported for \fB\-\-fstab\fP).
+supported only if search in kernel files and unsupported for \fB\-\-fstab\fP). It's
+recommended to use the option \fB--mountpoint\fR when checks \fIpath\fR elements is
+unwanted and \fIpath\fR is strictly specified mountpoint.
 .TP
 .BR \-t , " \-\-types \fIlist\fP"
 Limit the set of printed filesystems.  More than one type may be
@@ -239,9 +248,9 @@ Prints all
 filesystems and converts LABEL= and UUID= tags to the real device names.
 .IP "\fBfindmnt -n --raw --evaluate --output=target LABEL=/boot\fP"
 Prints only the mountpoint where the filesystem with label "/boot" is mounted.
-.IP "\fBfindmnt --poll --target /mnt/foo\fP"
+.IP "\fBfindmnt --poll --mountpoint /mnt/foo\fP"
 Monitors mount, unmount, remount and move on /mnt/foo.
-.IP "\fBfindmnt --poll=umount --first-only --target /mnt/foo\fP"
+.IP "\fBfindmnt --poll=umount --first-only --mountpoint /mnt/foo\fP"
 Waits for /mnt/foo unmount.
 .IP "\fBfindmnt --poll=remount -t ext3 -O ro\fP"
 Monitors remounts to read-only mode on all ext3 filesystems.
