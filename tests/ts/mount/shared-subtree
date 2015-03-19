@@ -18,6 +18,7 @@ ts_check_losetup
 
 # bind
 $TS_CMD_MOUNT --bind $TS_MOUNTPOINT $TS_MOUNTPOINT
+[ "$?" = "0" ] || ts_die "error: mount --bind"
 
 # check the bind
 $TS_CMD_FINDMNT --kernel --mountpoint $TS_MOUNTPOINT  &> /dev/null

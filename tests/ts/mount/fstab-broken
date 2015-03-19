@@ -39,6 +39,7 @@ ts_fstab_close
 
 ts_init_subtest "mount"
 $TS_CMD_MOUNT $MNT &> /dev/null
+[ "$?" = "0" ] || ts_log "error: mount $MNT"
 $TS_CMD_FINDMNT --kernel --mountpoint "$MNT" &> /dev/null
 if [ "$?" != "0" ]; then
 	ts_log "Cannot find $MNT in /proc/self/mountinfo"
@@ -46,11 +47,13 @@ else
 	ts_log "OK"
 fi
 $TS_CMD_UMOUNT $MNT &> /dev/null
+[ "$?" = "0" ] || ts_log "error: umount $MNT"
 ts_finalize_subtest
 
 
 ts_init_subtest "mount-all"
 $TS_CMD_MOUNT -a &> /dev/null
+[ "$?" = "0" ] || ts_log "error: mount -a"
 $TS_CMD_FINDMNT --kernel --mountpoint "$MNT" &> /dev/null
 if [ "$?" != "0" ]; then
 	ts_log "Cannot find $MNT in /proc/self/mountinfo"
@@ -58,6 +61,7 @@ else
 	ts_log "OK"
 fi
 $TS_CMD_UMOUNT $MNT &> /dev/null
+[ "$?" = "0" ] || ts_log "error: umount $MNT"
 ts_finalize_subtest
 
 ts_fstab_clean
