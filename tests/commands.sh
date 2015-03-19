@@ -64,6 +64,7 @@ TS_CMD_MKCRAMFS=${TS_CMD_MKCRAMFS:-"$top_builddir/mkfs.cramfs"}
 TS_CMD_MKMINIX=${TS_CMD_MKMINIX:-"$top_builddir/mkfs.minix"}
 TS_CMD_MKSWAP=${TS_CMD_MKSWAP:-"$top_builddir/mkswap"}
 TS_CMD_MOUNT=${TS_CMD_MOUNT:-"$top_builddir/mount"}
+TS_CMD_MOUNTPOINT=${TS_CMD_MOUNTPOINT:-"$top_builddir/mountpoint"}
 TS_CMD_NAMEI=${TS_CMD_NAMEI-"$top_builddir/namei"}
 TS_CMD_PARTX=${TS_CMD_PARTX-"$top_builddir/partx"}
 TS_CMD_RENAME=${TS_CMD_RENAME-"$top_builddir/rename"}
