@@ -19,6 +19,9 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="race conditions"
 
+# Don't execute this test by default, --force required
+TS_OPTIONAL="yes"
+
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
