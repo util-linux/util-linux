@@ -28,6 +28,17 @@ ts_check_test_command "$TS_CMD_MOUNTPOINT"
 
 ts_skip_nonroot
 
+function mount_and_check {
+	# last arg must be an existing or to-be-mounted mountpoint
+	local mountpoint="${@: -1}"
+
+	$TS_CMD_MOUNT "$@" \
+		|| ts_die "error: mount $*"
+
+	$TS_CMD_MOUNTPOINT -q "$mountpoint" \
+		|| ts_die "error: mountpoint $mountpoint"
+}
+
 DIR_PRIVATE2="$TS_OUTDIR/mnt-move-private2"
 DIR_PRIVATE="$TS_OUTDIR/mnt-move-private"
 
@@ -35,30 +46,26 @@ DIR_SRC="$DIR_PRIVATE/mnt-move-src"
 DIR_A="$DIR_PRIVATE/mnt-move-A"
 DIR_B="$DIR_PRIVATE/mnt-move-B"
 
+# this may fail if there are mounted dirs left
+rm -rf "$DIR_PRIVATE2" "$DIR_PRIVATE" \
+	|| ts_die "cleanup failed, check manually!"
+mkdir "$DIR_PRIVATE2" "$DIR_PRIVATE" \
+	|| ts_die "error: mkdir DIR_PRIVATE"
+
 # create bind mount and make it private to be sure
 # (kernel cannot move mount with shared parent)
-[ -d $DIR_PRIVATE2 ] || mkdir $DIR_PRIVATE2
-[ -d $DIR_PRIVATE ] || mkdir $DIR_PRIVATE
-$TS_CMD_MOUNT --bind $DIR_PRIVATE2 $DIR_PRIVATE
-$TS_CMD_MOUNT --make-private $DIR_PRIVATE
+mount_and_check --bind $DIR_PRIVATE2 $DIR_PRIVATE
+mount_and_check --make-private $DIR_PRIVATE
 
-[ -d $DIR_SRC ] || mkdir $DIR_SRC
-[ -d $DIR_A ] || mkdir $DIR_A
-[ -d $DIR_B ] || mkdir $DIR_B
+# Is the bind mount still rw?
+mkdir $DIR_SRC $DIR_A $DIR_B \
+	|| ts_die "error: mkdir on private bind mount"
 
 # bind
-$TS_CMD_MOUNT --bind $DIR_SRC $DIR_A
-
-# check the bind
-$TS_CMD_FINDMNT --kernel --mountpoint "$DIR_A" &> /dev/null
-[ "$?" == "0" ] || ts_die "Cannot find binded $DIR_A in /proc/self/mountinfo"
+mount_and_check --bind $DIR_SRC $DIR_A
 
 # move
-$TS_CMD_MOUNT --move $DIR_A $DIR_B
-
-# check the move
-$TS_CMD_FINDMNT --kernel --mountpoint "$DIR_B" &> /dev/null
-[ "$?" == "0" ] || ts_die "Cannot find binded $DIR_B in /proc/self/mountinfo"
+mount_and_check --move $DIR_A $DIR_B
 
 # BTW a basic test for findmnt(8) and mountpoint(1)
 for f in `find $DIR_PRIVATE2 $DIR_PRIVATE`; do
@@ -75,11 +82,10 @@ for f in `find $DIR_PRIVATE2 $DIR_PRIVATE`; do
 done
 
 # clean up
-$TS_CMD_UMOUNT $DIR_B
-rmdir $DIR_SRC $DIR_A $DIR_B
-
-$TS_CMD_UMOUNT $DIR_PRIVATE
-rmdir $DIR_PRIVATE $DIR_PRIVATE2
+$TS_CMD_UMOUNT $DIR_B || ts_log "error: umount DIR_B"
+rmdir $DIR_SRC $DIR_A $DIR_B || ts_log "error: rmdir DIR_B"
+$TS_CMD_UMOUNT $DIR_PRIVATE || ts_log "error: umount DIR_PRIVATE"
+rmdir $DIR_PRIVATE $DIR_PRIVATE2 || ts_log "error: rmdir DIR_PRIVATE"
 
 ts_log "Success"
 ts_finalize
