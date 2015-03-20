@@ -611,6 +611,9 @@ try_readonly:
 		else if (mflags & MS_REMOUNT)
 			warnx(_("cannot remount %s read-write, is write-protected"), src);
 
+		else if (mflags & MS_BIND)
+			warn(_("mount %s on %s failed"), src, tgt);
+
 		else {
 			warnx(_("%s is write-protected, mounting read-only"), src);
 
