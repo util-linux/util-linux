@@ -39,7 +39,6 @@ function mount_and_check {
 		|| ts_die "error: mountpoint $mountpoint"
 }
 
-DIR_PRIVATE2="$TS_OUTDIR/mnt-move-private2"
 DIR_PRIVATE="$TS_OUTDIR/mnt-move-private"
 
 DIR_SRC="$DIR_PRIVATE/mnt-move-src"
@@ -47,15 +46,13 @@ DIR_A="$DIR_PRIVATE/mnt-move-A"
 DIR_B="$DIR_PRIVATE/mnt-move-B"
 
 # this may fail if there are mounted dirs left
-rm -rf "$DIR_PRIVATE2" "$DIR_PRIVATE" \
-	|| ts_die "cleanup failed, check manually!"
-mkdir "$DIR_PRIVATE2" "$DIR_PRIVATE" \
-	|| ts_die "error: mkdir DIR_PRIVATE"
+rm -rf "$DIR_PRIVATE" || ts_die "cleanup failed, check manually!"
+mkdir "$DIR_PRIVATE"  || ts_die "error: mkdir DIR_PRIVATE"
 
 # create bind mount and make it private to be sure
 # (kernel cannot move mount with shared parent)
-mount_and_check --bind $DIR_PRIVATE2 $DIR_PRIVATE
-mount_and_check --make-private $DIR_PRIVATE
+mount_and_check --bind $DIR_PRIVATE $DIR_PRIVATE
+mount_and_check --make-rprivate $DIR_PRIVATE
 
 # Is the bind mount still rw?
 mkdir $DIR_SRC $DIR_A $DIR_B \
@@ -85,7 +82,7 @@ done
 $TS_CMD_UMOUNT $DIR_B || ts_log "error: umount DIR_B"
 rmdir $DIR_SRC $DIR_A $DIR_B || ts_log "error: rmdir DIR_B"
 $TS_CMD_UMOUNT $DIR_PRIVATE || ts_log "error: umount DIR_PRIVATE"
-rmdir $DIR_PRIVATE $DIR_PRIVATE2 || ts_log "error: rmdir DIR_PRIVATE"
+rmdir $DIR_PRIVATE || ts_log "error: rmdir DIR_PRIVATE"
 
 ts_log "Success"
 ts_finalize
