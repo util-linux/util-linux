@@ -30,6 +30,10 @@
 #include <sys/wait.h>
 #include <grp.h>
 
+#ifdef HAVE_LIBSELINUX
+# include <selinux/selinux.h>
+#endif
+
 #include "strutils.h"
 #include "nls.h"
 #include "c.h"
@@ -82,6 +86,9 @@ static void usage(int status)
 	fputs(_(" -r, --root[=<dir>]     set the root directory\n"), out);
 	fputs(_(" -w, --wd[=<dir>]       set the working directory\n"), out);
 	fputs(_(" -F, --no-fork          do not fork before exec'ing <program>\n"), out);
+#ifdef HAVE_LIBSELINUX
+	fputs(_(" -Z, --follow-context   set SELinux context according to --target PID\n"), out);
+#endif
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -185,6 +192,9 @@ int main(int argc, char *argv[])
 		{ "wd", optional_argument, NULL, 'w' },
 		{ "no-fork", no_argument, NULL, 'F' },
 		{ "preserve-credentials", no_argument, NULL, OPT_PRESERVE_CRED },
+#ifdef HAVE_LIBSELINUX
+		{ "follow-context", no_argument, NULL, 'Z' },
+#endif
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -194,6 +204,9 @@ int main(int argc, char *argv[])
 	int do_fork = -1; /* unknown yet */
 	uid_t uid = 0;
 	gid_t gid = 0;
+#ifdef HAVE_LIBSELINUX
+	bool selinux = 0;
+#endif
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -201,7 +214,7 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	while ((c =
-		getopt_long(argc, argv, "+hVt:m::u::i::n::p::U::S:G:r::w::F",
+		getopt_long(argc, argv, "+hVt:m::u::i::n::p::U::S:G:r::w::FZ",
 			    longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
@@ -275,11 +288,30 @@ int main(int argc, char *argv[])
 		case OPT_PRESERVE_CRED:
 			preserve_cred = 1;
 			break;
+#ifdef HAVE_LIBSELINUX
+		case 'Z':
+			selinux = 1;
+			break;
+#endif
 		default:
 			usage(EXIT_FAILURE);
 		}
 	}
 
+#ifdef HAVE_LIBSELINUX
+	if (selinux && is_selinux_enabled() > 0) {
+		char *scon = NULL;
+
+		if (!namespace_target_pid)
+			errx(EXIT_FAILURE, _("no target PID specified for --follow-context"));
+		if (getpidcon(namespace_target_pid, &scon) < 0)
+			errx(EXIT_FAILURE, _("failed to get %d SELinux context"),
+					(int) namespace_target_pid);
+		if (setexeccon(scon) < 0)
+			errx(EXIT_FAILURE, _("failed to set exec context to '%s'"), scon);
+		freecon(scon);
+	}
+#endif
 	/*
 	 * Open remaining namespace and directory descriptors.
 	 */

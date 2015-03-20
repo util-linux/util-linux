@@ -358,7 +358,7 @@ if BUILD_NSENTER
 usrbin_exec_PROGRAMS += nsenter
 dist_man_MANS += sys-utils/nsenter.1
 nsenter_SOURCES = sys-utils/nsenter.c
-nsenter_LDADD = $(LDADD) libcommon.la
+nsenter_LDADD = $(LDADD) libcommon.la $(SELINUX_LIBS)
 
 if HAVE_STATIC_NSENTER
 usrbin_exec_PROGRAMS += nsenter.static

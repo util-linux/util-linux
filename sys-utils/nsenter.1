@@ -155,6 +155,11 @@ Do not fork before exec'ing the specified program.  By default, when entering a
 PID namespace, \fBnsenter\fP calls \fBfork\fP before calling \fBexec\fP so that
 any children will also be in the newly entered PID namespace.
 .TP
+\fB\-Z\fR, \fB\-\-follow\-context\fR
+Set the SELinux security context used for executing a new process according to
+already running process specified by \fB\-\-target\fR PID. (The util-linux has
+to be compiled with SELinux support otherwise the option is unavailable.)
+.TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
 .TP
@@ -163,10 +168,14 @@ Display help text and exit.
 .SH SEE ALSO
 .BR setns (2),
 .BR clone (2)
-.SH AUTHOR
-.MT ebiederm@xmission.com
+.SH AUTHORS
+.UR biederm@xmission.com
 Eric Biederman
-.ME
+.UE
+.br
+.UR kzak@redhat.com
+Karel Zak
+.UE
 .SH AVAILABILITY
 The nsenter command is part of the util-linux package and is available from
 .UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
