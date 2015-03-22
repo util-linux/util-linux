@@ -18,8 +18,8 @@ TS_DESC="decode"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-ts_check_test_command "$TS_CMD_DMESG"
+ts_check_test_command "$TS_HELPER_DMESG"
 
-$TS_CMD_DMESG -x -F $TS_SELF/input >> $TS_OUTPUT 2>/dev/null
+$TS_HELPER_DMESG -x -F $TS_SELF/input >> $TS_OUTPUT 2>/dev/null
 
 ts_finalize

@@ -1378,8 +1378,13 @@ int main(int argc, char *argv[])
 	    is_timefmt(&ctl, CTIME) ||
 	    is_timefmt(&ctl, ISO8601)) {
 
+#ifdef TEST_DMESG
+		ctl.boot_time.tv_sec = 1234567890;
+		ctl.boot_time.tv_usec = 123456;
+#else
 		if (get_boot_time(&ctl.boot_time) != 0)
 			ctl.time_fmt = DMESG_TIMEFTM_NONE;
+#endif
 	}
 
 	if (delta)

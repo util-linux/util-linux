@@ -4,6 +4,7 @@ TS_TESTUSER=${TS_TESTUSER:-"nobody"}
 # helpers
 TS_HELPER_BYTESWAP="$top_builddir/test_byteswap"
 TS_HELPER_CPUSET="$top_builddir/test_cpuset"
+TS_HELPER_DMESG="$top_builddir/test_dmesg"
 TS_HELPER_ISLOCAL="$top_builddir/test_islocal"
 TS_HELPER_ISMOUNTED="$top_builddir/test_ismounted"
 TS_HELPER_LIBMOUNT_CONTEXT="$top_builddir/test_mount_context"
@@ -36,7 +37,6 @@ TS_CMD_CAL=${TS_CMD_CAL-"$top_builddir/cal"}
 TS_CMD_COLRM=${TS_CMD_COLRM:-"$top_builddir/colrm"}
 TS_CMD_COL=${TS_CMD_COL:-"$top_builddir/col"}
 TS_CMD_COLUMN=${TS_CMD_COLUMN:-"$top_builddir/column"}
-TS_CMD_DMESG=${TS_CMD_DMESG-"$top_builddir/dmesg"}
 TS_CMD_EJECT=${TS_CMD_EJECT-"$top_builddir/eject"}
 TS_CMD_FALLOCATE=${TS_CMD_FALLOCATE-"$top_builddir/fallocate"}
 TS_CMD_FDISK=${TS_CMD_FDISK-"$top_builddir/fdisk"}

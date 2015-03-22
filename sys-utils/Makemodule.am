@@ -75,6 +75,10 @@ dist_man_MANS += sys-utils/dmesg.1
 dmesg_SOURCES = sys-utils/dmesg.c lib/monotonic.c
 dmesg_LDADD = $(LDADD) libcommon.la libtcolors.la $(REALTIME_LIBS)
 dmesg_CFLAGS = $(AM_CFLAGS)
+check_PROGRAMS += test_dmesg
+test_dmesg_SOURCES = $(dmesg_SOURCES)
+test_dmesg_LDADD = $(dmesg_LDADD)
+test_dmesg_CFLAGS = -DTEST_DMESG $(dmesg_CFLAGS)
 endif
 
 if BUILD_CTRLALTDEL
