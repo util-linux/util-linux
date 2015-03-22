@@ -18,3 +18,18 @@ line
 two
 new
 lines
+[Feb13 23:31] new
+              line
+[  +1.000000] two
+              new
+              lines
+[Fri Feb 13 23:31:31 2009] new
+                           line
+[Fri Feb 13 23:31:32 2009] two
+                           new
+                           lines
+2009-02-13T23:31:31,000000+0000 new
+                                line
+2009-02-13T23:31:32,000000+0000 two
+                                new
+                                lines
