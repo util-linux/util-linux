@@ -1,0 +1,20 @@
+[    1.000000] new
+               line
+[    2.000000] two
+               new
+               lines
+user  :crit  : [    1.000000] new
+                              line
+mail  :warn  : [    2.000000] two
+                              new
+                              lines
+[<    0.000000>] new
+                 line
+[<    1.000000>] two
+                 new
+                 lines
+new
+line
+two
+new
+lines
