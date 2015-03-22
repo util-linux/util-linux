@@ -614,7 +614,6 @@ static int fwrite_hex(const char *buf, size_t size, FILE *out)
 static void safe_fwrite(const char *buf, size_t size, int indent, FILE *out)
 {
 	size_t i;
-	int in;
 #ifdef HAVE_WIDECHAR
 	mbstate_t s;
 	memset(&s, 0, sizeof (s));
@@ -647,13 +646,9 @@ static void safe_fwrite(const char *buf, size_t size, int indent, FILE *out)
 		if (hex)
 			rc = fwrite_hex(p, len, out);
 		else if (*p == '\n' && *(p + 1) && indent) {
-			char s = ' ';
-			rc = fwrite(p, 1, len, out) != len;
-			in = indent;
-			do {
-				if (!rc) rc = fwrite(&s, 1, 1, out) != 1;
-				in--;
-			} while (in && !rc);
+		        rc = fwrite(p, 1, len, out) != len;
+			if (fprintf(out, "%*s", indent, "") != indent)
+				rc |= 1;
 		}
 		else
 			rc = fwrite(p, 1, len, out) != len;
