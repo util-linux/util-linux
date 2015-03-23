@@ -954,6 +954,11 @@ static struct gpt_header *gpt_read_header(struct fdisk_context *cxt,
 	if (!gpt_check_signature(header))
 		goto invalid;
 
+	/* make sure header size is between 92 and sector size bytes */
+	hsz = le32_to_cpu(header->size);
+	if (hsz < GPT_HEADER_MINSZ || hsz > cxt->sector_size)
+		goto invalid;
+
 	if (!gpt_check_header_crc(header, NULL))
 		goto invalid;
 
@@ -972,10 +977,6 @@ static struct gpt_header *gpt_read_header(struct fdisk_context *cxt,
 	if (le64_to_cpu(header->my_lba) != lba)
 		goto invalid;
 
-	/* make sure header size is between 92 and sector size bytes */
-	hsz = le32_to_cpu(header->size);
-	if (hsz < GPT_HEADER_MINSZ || hsz > cxt->sector_size)
-		goto invalid;
 
 	if (_ents)
 		*_ents = ents;
