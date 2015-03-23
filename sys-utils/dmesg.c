@@ -1193,6 +1193,24 @@ static int which_time_format(const char *optarg)
 	errx(EXIT_FAILURE, _("unknown time format: %s"), optarg);
 }
 
+#ifdef TEST_DMESG
+static inline int dmesg_get_boot_time(struct timeval *tv)
+{
+	char *str = getenv("DMESG_TEST_BOOTIME");
+	uintmax_t sec, usec;
+
+	if (str && sscanf(str, "%ju.%ju", &sec, &usec) == 2) {
+		tv->tv_sec = sec;
+		tv->tv_usec = usec;
+		return tv->tv_sec >= 0 && tv->tv_usec >= 0 ? 0 : -EINVAL;
+	}
+
+	return get_boot_time(tv);
+}
+#else
+# define dmesg_get_boot_time	get_boot_time
+#endif
+
 int main(int argc, char *argv[])
 {
 	char *buf = NULL;
@@ -1377,14 +1395,8 @@ int main(int argc, char *argv[])
 	if (is_timefmt(&ctl, RELTIME) ||
 	    is_timefmt(&ctl, CTIME) ||
 	    is_timefmt(&ctl, ISO8601)) {
-
-#ifdef TEST_DMESG
-		ctl.boot_time.tv_sec = 1234567890;
-		ctl.boot_time.tv_usec = 123456;
-#else
-		if (get_boot_time(&ctl.boot_time) != 0)
+		if (dmesg_get_boot_time(&ctl.boot_time) != 0)
 			ctl.time_fmt = DMESG_TIMEFTM_NONE;
-#endif
 	}
 
 	if (delta)
