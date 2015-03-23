@@ -131,7 +131,7 @@ static inline int logger_gettimeofday(struct timeval *tv, struct timezone *tz)
 	if (str && sscanf(str, "%ju.%ju", &sec, &usec) == 2) {
 		tv->tv_sec = sec;
 		tv->tv_usec = usec;
-		return tv->tv_sec == sec && tv->tv_usec == usec;
+		return tv->tv_sec >= 0 && tv->tv_usec >= 0 ? 0 : -EINVAL;
 	}
 
 	return gettimeofday(tv, tz);
