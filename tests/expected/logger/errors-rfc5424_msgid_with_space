@@ -1,1 +1,2 @@
 test_logger: --msgid cannot contain space
+ret: 1

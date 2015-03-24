@@ -1,2 +1,4 @@
 test_logger: failed to parse id: 'A B'
+ret: 1
 test_logger: failed to parse id: 'A B'
+ret: 1
