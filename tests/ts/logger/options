@@ -56,6 +56,7 @@ for i in "${tests_array[@]}"; do
 
 	ts_init_subtest "$name"
 	$TS_HELPER_LOGGER --stderr --no-act -t "test_tag" $options > "$TS_OUTPUT" 2>&1
+	echo "ret: $?" >> "$TS_OUTPUT" 
 	ts_finalize_subtest
 done
 

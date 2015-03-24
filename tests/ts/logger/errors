@@ -32,34 +32,43 @@ export LOGGER_TEST_GETPID="98765"
 
 ts_init_subtest "kern_priority"
 $TS_HELPER_LOGGER --no-act -s -t "prio" -p kern.emerg "message" > "$TS_OUTPUT" 2>&1
+echo "ret: $?" >> "$TS_OUTPUT"
 ts_finalize_subtest
 
 ts_init_subtest "kern_priority_numeric"
 $TS_HELPER_LOGGER --no-act -s -t "prio" -p 0 "message" > "$TS_OUTPUT" 2>&1
+echo "ret: $?" >> "$TS_OUTPUT"
 ts_finalize_subtest
 
 ts_init_subtest "invalid_prio"
 $TS_HELPER_LOGGER --no-act -s -t "prio" -p 8 "message" > "$TS_OUTPUT" 2>&1
+echo "ret: $?" >> "$TS_OUTPUT"
 ts_finalize_subtest
 
 # should truncate
 ts_init_subtest "rfc5424_exceed_size"
 $TS_HELPER_LOGGER --no-act -s -t "rfc5424_exceed_size" --rfc5424 --size 3 "abcd" > "$TS_OUTPUT" 2>&1
+echo "ret: $?" >> "$TS_OUTPUT"
 ts_finalize_subtest
 
 ts_init_subtest "id_with_space"
 $TS_HELPER_LOGGER --no-act -s -t "id_with_space" --id="A B" "message" > "$TS_OUTPUT" 2>&1
+echo "ret: $?" >> "$TS_OUTPUT"
 $TS_HELPER_LOGGER --no-act -s -t "rfc5424_id_with_space" --rfc5424 --id="A B" "message" >> "$TS_OUTPUT" 2>&1
+echo "ret: $?" >> "$TS_OUTPUT"
 ts_finalize_subtest
 
 # should not fail
 ts_init_subtest "tag_with_space"
 $TS_HELPER_LOGGER --no-act -s -t "A B" "tag_with_space" > "$TS_OUTPUT" 2>&1
+echo "ret: $?" >> "$TS_OUTPUT"
 $TS_HELPER_LOGGER --no-act -s -t "A B" --rfc5424 "tag_with_space_rfc5424" >> "$TS_OUTPUT" 2>&1
+echo "ret: $?" >> "$TS_OUTPUT"
 ts_finalize_subtest
 
 ts_init_subtest "rfc5424_msgid_with_space"
 $TS_HELPER_LOGGER --no-act -s -t "rfc5424_msgid_with_space" --rfc5424 --msgid="A B" "message" > "$TS_OUTPUT" 2>&1
+echo "ret: $?" >> "$TS_OUTPUT"
 ts_finalize_subtest
 
 ts_finalize
