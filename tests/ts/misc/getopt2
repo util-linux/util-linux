@@ -74,7 +74,7 @@ echo "exit value: $?" >> $TS_OUTPUT
 ts_init_subtest long_option_ambiguous_1
 $TS_CMD_GETOPT -o a -l long1,long2 -- --long >> $TS_OUTPUT 2>&1
 echo "exit value: $?" >> $TS_OUTPUT
-sed -i '1,1s/.*\///' $TS_OUTPUT
+sed -i -e '1,1s/.*\///' -e "1s/ambiguous$/ambiguous; possibilities: '--long1' '--long2'/" $TS_OUTPUT
 ts_finalize_subtest
 
 echo "exit value: $?" >> $TS_OUTPUT
@@ -111,14 +111,14 @@ echo "exit value: $?" >> $TS_OUTPUT
 ts_init_subtest quiet_output_option_long
 $TS_CMD_GETOPT --quiet-output -o a,b: -l long1,long2 -- -c --unknown --long -b >> $TS_OUTPUT 2>&1
 echo "exit value: $?" >> $TS_OUTPUT
-sed -i '1,4s/.*\///' $TS_OUTPUT
+sed -i -e '1,4s/.*\///' -e "3s/ambiguous$/ambiguous; possibilities: '--long1' '--long2'/" $TS_OUTPUT
 ts_finalize_subtest
 
 echo "exit value: $?" >> $TS_OUTPUT
 ts_init_subtest quiet_output_option_short
 $TS_CMD_GETOPT -Q -o a,b: -l long1,long2 -- -c --unknown --long -b >> $TS_OUTPUT 2>&1
 echo "exit value: $?" >> $TS_OUTPUT
-sed -i '1,4s/.*\///' $TS_OUTPUT
+sed -i -e '1,4s/.*\///' -e "3s/ambiguous$/ambiguous; possibilities: '--long1' '--long2'/" $TS_OUTPUT
 ts_finalize_subtest
 
 echo "exit value: $?" >> $TS_OUTPUT
