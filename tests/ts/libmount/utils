@@ -66,11 +66,11 @@ ts_finalize_subtest
 
 ts_init_subtest "kernel-cmdline"
 export LIBMOUNT_KERNEL_CMDLINE="$TS_SELF/files/kernel_cmdline"
-ts_valgrind $TESTPROG --kernel-cmdline selinux= &>> $TS_OUTPUT
-ts_valgrind $TESTPROG --kernel-cmdline selinux &>> $TS_OUTPUT
-ts_valgrind $TESTPROG --kernel-cmdline ro &>> $TS_OUTPUT
-ts_valgrind $TESTPROG --kernel-cmdline ro= &>> $TS_OUTPUT
-ts_valgrind $TESTPROG --kernel-cmdline root= &>> $TS_OUTPUT
+ts_valgrind $TESTPROG --kernel-cmdline selinux= >> $TS_OUTPUT 2>&1
+ts_valgrind $TESTPROG --kernel-cmdline selinux >> $TS_OUTPUT 2>&1
+ts_valgrind $TESTPROG --kernel-cmdline ro >> $TS_OUTPUT 2>&1
+ts_valgrind $TESTPROG --kernel-cmdline ro= >> $TS_OUTPUT 2>&1
+ts_valgrind $TESTPROG --kernel-cmdline root= >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 ts_finalize
