@@ -638,7 +638,7 @@ static void process_wtmp_file(const struct last_control *ctl,
 	/*
 	 * Fill in 'lastdate'
 	 */
-	lastdate = lastdown;
+	lastdate = lastrch = lastdown;
 
 	/*
 	 * Install signal handlers
