@@ -1471,7 +1471,7 @@ static void parse_argv(int argc, char *argv[])
 					else
 						goto next_arg;
 				} else if (i+1 < argc && *argv[i+1] != '-') {	/* -C <fd> */
-					progress_fd = string_to_int(argv[i]);
+					progress_fd = string_to_int(argv[i+1]);
 					if (progress_fd < 0)
 						progress_fd = 0;
 					else {
