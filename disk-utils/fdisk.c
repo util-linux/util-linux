@@ -71,7 +71,8 @@ static char *rl_fgets(char *s, int n, FILE *stream, const char *prompt)
 	if (!p)
 		return NULL;
 
-	memcpy(s, p, n);
+	strncpy(s, p, n);
+	s[n - 1] = '\0';
 	free(p);
 	return s;
 }
