@@ -667,10 +667,12 @@ AS_IF([test "x$with_readline" = xno], [
     [yes:no],
       [AC_MSG_ERROR([readline selected but libreadline not found ])],
     [*:yes],
-      [READLINE_LIBS=-lreadline]
+      [READLINE_LIBS="-lreadline"
+       READLINE_LIBS_STATIC="-lreadline -ltinfo"]
   )
 ])
 AC_SUBST([READLINE_LIBS])
+AC_SUBST([READLINE_LIBS_STATIC])
 
 
 AC_ARG_WITH([audit],
