@@ -30,6 +30,9 @@
 #include <getopt.h>
 #include <sys/stat.h>
 #include <assert.h>
+#ifdef HAVE_LIBREADLINE
+# include <readline/readline.h>
+#endif
 
 #include "c.h"
 #include "xalloc.h"
@@ -82,6 +85,7 @@ struct sfdisk {
 	const char	*label;		/* --label <label> */
 	const char	*label_nested;	/* --label-nested <label> */
 	const char	*backup_file;	/* -O <path> */
+	char		*prompt;
 
 	struct fdisk_context	*cxt;	/* libfdisk context */
 
@@ -96,6 +100,7 @@ struct sfdisk {
 		     noact  : 1;	/* do not write to device */
 };
 
+#define SFDISK_PROMPT	">>> "
 
 static void sfdiskprog_init_debug(void)
 {
@@ -108,11 +113,22 @@ static int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	char *p;
 	size_t sz;
 
-	fputs(prompt, stdout);
-	fflush(stdout);
+#ifdef HAVE_LIBREADLINE
+	if (isatty(STDIN_FILENO)) {
+		p = readline(prompt);
+		if (!p)
+			return 1;
+		memcpy(buf, p, bufsz);
+		free(p);
+	} else
+#endif
+	{
+		fputs(prompt, stdout);
+		fflush(stdout);
 
-	if (!fgets(buf, bufsz, stdin))
-		return 1;
+		if (!fgets(buf, bufsz, stdin))
+			return 1;
+	}
 
 	for (p = buf; *p && !isgraph(*p); p++);	/* get first non-blank */
 
@@ -215,8 +231,9 @@ static int sfdisk_deinit(struct sfdisk *sf)
 	}
 
 	fdisk_unref_context(sf->cxt);
-	memset(sf, 0, sizeof(*sf));
+	free(sf->prompt);
 
+	memset(sf, 0, sizeof(*sf));
 	return 0;
 }
 
@@ -1071,6 +1088,39 @@ static int is_device_used(struct sfdisk *sf)
 	return 0;
 }
 
+static char *sfdisk_fgets(struct fdisk_script *dp,
+			  char *buf, size_t bufsz, FILE *f)
+{
+	struct sfdisk *sf = (struct sfdisk *) fdisk_script_get_userdata(dp);
+
+	assert(dp);
+	assert(buf);
+	assert(bufsz > 2);
+
+#ifdef HAVE_LIBREADLINE
+	if (isatty(STDIN_FILENO)) {
+		char *p = readline(sf->prompt);
+		size_t len;
+
+		if (!p)
+			return NULL;
+		len = strlen(p);
+		if (len > bufsz - 2)
+			len = bufsz - 2;
+
+		memcpy(buf, p, len);
+		buf[len] = '\n';		/* append \n to be compatible with libc fgetc() */
+		buf[len + 1] = '\0';
+		free(p);
+		return buf;
+	}
+#endif
+	if (sf->prompt)
+		fputs(sf->prompt, stdout);
+	fflush(stdout);
+	return fgets(buf, bufsz, f);
+}
+
 /*
  * sfdisk <device> [[-N] <partno>]
  *
@@ -1101,6 +1151,8 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	if (!dp)
 		err(EXIT_FAILURE, _("failed to allocate script handler"));
 	fdisk_set_script(sf->cxt, dp);
+	fdisk_script_set_fgets(dp, sfdisk_fgets);
+	fdisk_script_set_userdata(dp, (void *) sf);
 
 	/*
 	 * Don't create a new disklabel when [-N] <partno> specified. In this
@@ -1206,10 +1258,15 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			char *partname = fdisk_partname(devname, next_partno + 1);
 			if (!partname)
 				err(EXIT_FAILURE, _("failed to allocate partition name"));
-			printf("%s: ", partname);
+			if (!sf->prompt || !startswith(sf->prompt, partname)) {
+				free(sf->prompt);
+				xasprintf(&sf->prompt,"%s: ", partname);
+			}
 			free(partname);
-		} else
-			printf(">>> ");
+		} else if (!sf->prompt || !startswith(sf->prompt, SFDISK_PROMPT)) {
+			free(sf->prompt);
+			sf->prompt = xstrdup(SFDISK_PROMPT);
+		}
 
 		rc = fdisk_script_read_line(dp, stdin, buf, sizeof(buf));
 		if (rc < 0) {

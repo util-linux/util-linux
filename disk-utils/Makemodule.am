@@ -166,7 +166,8 @@ sfdisk_SOURCES = \
 	disk-utils/fdisk-list.c \
 	disk-utils/fdisk-list.h
 
-sfdisk_LDADD = $(LDADD) libcommon.la libfdisk.la libsmartcols.la libtcolors.la
+sfdisk_LDADD = $(LDADD) libcommon.la libfdisk.la \
+	       libsmartcols.la libtcolors.la $(READLINE_LIBS)
 sfdisk_CFLAGS = $(AM_CFLAGS) -I$(ul_libfdisk_incdir) -I$(ul_libsmartcols_incdir)
 
 if BUILD_LIBUUID
