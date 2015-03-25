@@ -1,11 +1,12 @@
 /*
  * The symbol versioning ensures that a new application requiring symbol foo;
- * can't run with old libblkid.so not providing foo;
- * version info can't enforce this since we never change the SONAME.
+ * can't run with old library.so not providing foo.
+
+ * Version info can't enforce this since we never change the SONAME.
  *
- * Copyright (C) 2014 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2014-2015 Karel Zak <kzak@redhat.com>
  */
-MOUNT_2.26 {
+FDISK_2.26 {
 global:
 	fdisk_add_partition;
 	fdisk_align_lba;
