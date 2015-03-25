@@ -1,13 +1,6 @@
 
  Note that items with (!) have high priority.
 
-libblkid
---------
-  - (!) don't use fixed set of the static buffers for TAGs in blkid_probe,
-    allocate all on the fly. It seems that for example btrfs is crazy enough
-    to have LABELs longer than we have bufferes in libblkid
-    https://bugzilla.redhat.com/show_bug.cgi?id=1164708
-
 cfdisk
 ------
   - provide additional information about the current partitions (LABEL=, UUID=,
@@ -19,12 +12,6 @@ cfdisk
     enabled by default for logical partitions if we created all container (extended
     partition) in the current session.
       
-
-terminal-colors.d
------------------
-
-  - (!) add support for non-ANSI terminals (now we hardcode \033[ ...) and read
-    colors from terminfo
 
 agetty
 -----
