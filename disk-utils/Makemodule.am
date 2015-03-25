@@ -134,7 +134,8 @@ fdisk_SOURCES = \
 	disk-utils/fdisk-list.c \
 	disk-utils/fdisk-list.h
 
-fdisk_LDADD = $(LDADD) libcommon.la libfdisk.la libsmartcols.la libtcolors.la
+fdisk_LDADD = $(LDADD) libcommon.la libfdisk.la \
+	      libsmartcols.la libtcolors.la $(READLINE_LIBS)
 fdisk_CFLAGS = $(AM_CFLAGS) -I$(ul_libfdisk_incdir) -I$(ul_libsmartcols_incdir)
 
 if BUILD_LIBBLKID
@@ -146,7 +147,6 @@ if BUILD_LIBUUID
 fdisk_CFLAGS += -I$(ul_libuuid_incdir)
 fdisk_LDADD += libuuid.la
 endif
-
 
 if HAVE_STATIC_FDISK
 sbin_PROGRAMS += fdisk.static
