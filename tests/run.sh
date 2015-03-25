@@ -18,6 +18,7 @@
 
 TS_TOPDIR=$(cd ${0%/*} && pwd)
 SUBTESTS=
+EXCLUDETESTS=
 OPTS=
 
 top_srcdir=
@@ -70,6 +71,9 @@ while [ -n "$1" ]; do
 		paraller_jobs=$(num_cpus)
 		OPTS="$OPTS --parallel"
 		;;
+	--exclude=*)
+		EXCLUDETESTS="${1##--exclude=}"
+		;;
 	--*)
 		echo "Unknown option $1"
 		echo "Usage: "
@@ -83,6 +87,7 @@ while [ -n "$1" ]; do
 		echo "  --srcdir=<path>   autotools top source directory"
 		echo "  --builddir=<path> autotools top build directory"
 		echo "  --parallel=<num>  number of parallel test jobs, default: num cpus"
+		echo "  --exclude=<list>  exclude tests by list '<utilname>/<testname> ..'"
 		echo
 		exit 1
 		;;
@@ -129,10 +134,25 @@ else
 	comps=( $(find $top_srcdir/tests/ts/ -type f -perm /a+x -regex ".*/[^\.~]*") )
 fi
 
+if [ -n "$EXCLUDETESTS" ]; then
+	declare -a xcomps		# temporary array
+	for ts in ${comps[@]}; do
+		tsname=${ts##*ts/}	# test name
+
+		if [[ "$EXCLUDETESTS" == *${tsname}* ]]; then
+			#echo "Ignore ${tsname}."
+			true
+		else
+			xcomps+=($ts)
+		fi
+	done
+	comps=("${xcomps[@]}")		# replace the array
+fi
 
 unset LIBMOUNT_DEBUG
 unset LIBBLKID_DEBUG
 unset LIBFDISK_DEBUG
+unset LIBSMARTCOLS_DEBUG
 
 echo
 echo "-------------------- util-linux regression tests --------------------"
