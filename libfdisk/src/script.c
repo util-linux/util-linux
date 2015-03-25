@@ -28,6 +28,8 @@ struct fdisk_script {
 	struct fdisk_context	*cxt;
 
 	int			refcount;
+	char			*(*fn_fgets)(struct fdisk_script *, char *, size_t, FILE *);
+	void			*userdata;
 
 	/* parser's state */
 	size_t			nlines;
@@ -172,6 +174,34 @@ void fdisk_unref_script(struct fdisk_script *dp)
 		DBG(SCRIPT, ul_debugobj(dp, "free script"));
 		free(dp);
 	}
+}
+
+/**
+ * fdisk_script_set_userdata
+ * @dp: script
+ * @data: your data
+ *
+ * Sets data usable for example in callbacks (e.g fdisk_script_set_fgets()).
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int fdisk_script_set_userdata(struct fdisk_script *dp, void *data)
+{
+	assert(dp);
+	dp->userdata = data;
+	return 0;
+}
+
+/**
+ * fdisk_script_get_userdata
+ * @dp: script
+ *
+ * Returns: user data or NULL.
+ */
+void *fdisk_script_get_userdata(struct fdisk_script *dp)
+{
+	assert(dp);
+	return dp->userdata;
 }
 
 static struct fdisk_scriptheader *script_get_header(struct fdisk_script *dp,
@@ -938,6 +968,26 @@ int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
 }
 
 /**
+ * fdisk_script_set_fgets:
+ * @dp: script
+ * @fn_fgets: callback function
+ *
+ * The library uses fgets() function to read the next line from the script.
+ * This default maybe overrided to another function. Note that the function has
+ * to return the line terminated by \n (for example readline(3) removes \n).
+ *
+ * Return: 0 on success, <0 on error
+ */
+int fdisk_script_set_fgets(struct fdisk_script *dp,
+			  char *(*fn_fgets)(struct fdisk_script *, char *, size_t, FILE *))
+{
+	assert(dp);
+
+	dp->fn_fgets = fn_fgets;
+	return 0;
+}
+
+/**
  * fdisk_script_read_line:
  * @dp: script
  * @f: file
@@ -959,8 +1009,12 @@ int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t b
 
 	/* read the next non-blank non-comment line */
 	do {
-		if (fgets(buf, bufsz, f) == NULL)
+		if (dp->fn_fgets) {
+			if (dp->fn_fgets(dp, buf, bufsz, f) == NULL)
+				return 1;
+		} else if (fgets(buf, bufsz, f) == NULL)
 			return 1;
+
 		dp->nlines++;
 		s = strchr(buf, '\n');
 		if (!s) {

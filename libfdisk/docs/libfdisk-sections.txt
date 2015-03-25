@@ -135,7 +135,10 @@ fdisk_script_read_context
 fdisk_script_read_file
 fdisk_script_read_line
 fdisk_script_set_header
+fdisk_script_set_fgets
 fdisk_script_write_file
+fdisk_script_set_userdata
+fdisk_script_get_userdata
 fdisk_unref_script
 </SECTION>
 

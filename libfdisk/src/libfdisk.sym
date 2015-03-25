@@ -239,3 +239,9 @@ global:
 local:
 	*;
 };
+
+FDISK_2.27 {
+	fdisk_script_set_fgets;
+	fdisk_script_set_userdata;
+	fdisk_script_get_userdata;
+} FDISK_2.26;
