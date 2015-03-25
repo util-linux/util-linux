@@ -17,6 +17,11 @@
 	# cd tests
 	# ./run.sh [--verbose] [--memcheck]
 
+	Alternatively using sudo and make:
+
+	$ make check TS_COMMAND="true"
+	$ sudo -E make check TS_OPTS="--parallel=1"
+
  note that as root you have to manually remove output and diff directories
 
 	# rm -rf output diff
@@ -42,3 +47,48 @@
 
  Please, be careful and use these tests only for development and never on
  production system.
+
+
+environment variables
+---------------------
+
+TS_COMMAND
+
+    Evaluated by "make check" to override the default command (run.sh).
+    Example:
+      - build all test dependencies, but skip the actual test
+        $ make check TS_COMMAND="true"
+
+TS_OPTS
+
+    Evaluated by "make check" to pass options.to run.sh (see ./run.sh --help).
+    Examples:
+      - run utmp tests only
+        $ make check TS_OPTS="--parallel=1 utmp"
+
+TS_OPT_testdir_[testscript_]fake="<yes|no>"
+
+    Evaluated by any test script to skip certain tests.
+    Examples:
+      - skip all the tests within "fdisk" test-direcrory:
+        $ make check TS_OPT_fdisk_fake="yes"
+
+      - skip only "fdisk/bsd" test:
+        $ make check TS_OPT_fdisk_bsd_fake="yes"
+
+      - skip all "fdisk" tests except fdisk/bsd:
+        $ make check TS_OPT_fdisk_fake="yes" TS_OPT_fdisk_bsd_fake="no"
+
+TS_OPT_testdir_[testscript_]known_fail="<yes|no>"
+
+    Similar usage like TS_OPT_*_fake above. "known_fail" means that the given
+    test will run but (negative) results will be ignored. The build log and test
+    diffs will still remind you about the issue.
+
+TS_OPT_testdir_[testscript_]verbose="<yes|no>"
+
+    Set verbosity for certain tests. Similar usage like TS_OPT_*_fake above.
+
+TS_OPT_testdir_[testscript_]memcheck="<yes|no>"
+
+    Run certain tests with valgrind. Similar usage like TS_OPT_*_fake above.
