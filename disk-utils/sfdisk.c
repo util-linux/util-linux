@@ -1371,7 +1371,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_("Display or manipulate a disk partition table.\n"), out);
 
 	fputs(_("\nCommands:\n"), out);
-	fputs(_(" -a, --activate <dev> [<part> ...] list or set bootable MBR partitions\n"), out);
+	fputs(_(" -A, --activate <dev> [<part> ...] list or set bootable MBR partitions\n"), out);
 	fputs(_(" -d, --dump <dev>                  dump partition table (usable for later input)\n"), out);
 	fputs(_(" -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"), out);
 	fputs(_(" -l, --list [<dev> ...]            list partitions of each device\n"), out);
@@ -1391,7 +1391,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" <type>                    partition type, GUID for GPT, hex for MBR\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -A, --append              append partitions to existing partition table\n"), out);
+	fputs(_(" -a, --append              append partitions to existing partition table\n"), out);
 	fputs(_(" -b, --backup              backup partition table sectors (see -O)\n"), out);
 	fputs(_("     --bytes               print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -f, --force               disable all consistency checking\n"), out);
@@ -1445,8 +1445,8 @@ int main(int argc, char *argv[])
 	};
 
 	static const struct option longopts[] = {
-		{ "activate",no_argument,	NULL, 'a' },
-		{ "append",  no_argument,       NULL, 'A' },
+		{ "activate",no_argument,	NULL, 'A' },
+		{ "append",  no_argument,       NULL, 'a' },
 		{ "backup",  no_argument,       NULL, 'b' },
 		{ "backup-file", required_argument, NULL, 'O' },
 		{ "bytes",   no_argument,	NULL, OPT_BYTES },
@@ -1491,10 +1491,10 @@ int main(int argc, char *argv[])
 	while ((c = getopt_long(argc, argv, "aAbcdfghlLo:O:nN:qsTu:vVX:Y:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
-		case 'a':
+		case 'A':
 			sf->act = ACT_ACTIVATE;
 			break;
-		case 'A':
+		case 'a':
 			sf->append = 1;
 			break;
 		case 'b':
