@@ -914,10 +914,9 @@ int main(int argc, char **argv)
 		ctl.unix_socket_errors = 1;
 		break;
 	case AF_UNIX_ERRORS_AUTO:
+		ctl.unix_socket_errors = ctl.noact || ctl.stderr_printout;
 #ifdef HAVE_LIBSYSTEMD
-		ctl.unix_socket_errors = sd_booted();
-#else
-		ctl.unix_socket_errors = 0;
+		ctl.unix_socket_errors |= !!sd_booted();
 #endif
 		break;
 	default:
