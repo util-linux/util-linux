@@ -145,7 +145,7 @@ endif
 
 if BUILD_LIBUUID
 fdisk_CFLAGS += -I$(ul_libuuid_incdir)
-fdisk_LDADD += libuuid.la $(READLINE_LIBS_STATIC)
+fdisk_LDADD += libuuid.la
 endif
 
 if HAVE_STATIC_FDISK
@@ -153,7 +153,7 @@ sbin_PROGRAMS += fdisk.static
 fdisk_static_SOURCES = $(fdisk_SOURCES)
 fdisk_static_LDFLAGS = -all-static
 fdisk_static_CFLAGS = $(fdisk_CFLAGS)
-fdisk_static_LDADD = $(fdisk_LDADD)
+fdisk_static_LDADD = $(fdisk_LDADD) $(READLINE_LIBS_STATIC)
 endif
 endif # BUILD_FDISK
 
