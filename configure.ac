@@ -1757,6 +1757,7 @@ AC_ARG_WITH([python],
 )
 
 have_python=no
+have_libpython=no
 AS_IF([test "x$with_python" != xno], [
   # We follow distributions default and look for PKG module name "python"
   # (minimal version is 2) but if major version is explicitly specified by
@@ -1764,14 +1765,18 @@ AS_IF([test "x$with_python" != xno], [
   # "python3".
   AS_IF([test "x$withval" != xno -a "x$withval" != xyes -a "x$withval" != xcheck],
 	[pymajor="$withval"; PYTHON=python${pymajor}], [pymajor="2"])
+
+  # check for python interpreter
   AM_PATH_PYTHON([$pymajor], [have_python=yes], [have_python=no])
   AS_CASE([$with_python:$have_python],
     [yes:no],
-      [AC_MSG_ERROR([python selected but libpython not found])],
+      [AC_MSG_ERROR([python selected but python interpreter not found])],
     [check:no],
-       [AC_MSG_WARN([libpython not found, do not build python bindings])],
+       [AC_MSG_WARN([python interpreter not found, do not build python bindings])],
     [*:yes],
-       [PKG_CHECK_MODULES([PYTHON], [python-$PYTHON_VERSION])]
+       # check for python development stuff
+       [PKG_CHECK_MODULES([PYTHON], [python-$PYTHON_VERSION],
+			  [have_libpython=yes], [have_libpython=no])]
   )
 ])
 
@@ -1781,7 +1786,7 @@ AC_ARG_ENABLE([pylibmount],
   [], [UL_DEFAULT_ENABLE([pylibmount], [check])]
 )
 UL_BUILD_INIT([pylibmount])
-UL_REQUIRES_HAVE([pylibmount], [python], [libpython])
+UL_REQUIRES_HAVE([pylibmount], [libpython], [libpython])
 UL_REQUIRES_BUILD([pylibmount], [libmount])
 AM_CONDITIONAL([BUILD_PYLIBMOUNT], [test "x$build_pylibmount" = "xyes"])
 
