@@ -38,6 +38,16 @@
               $ ./run.sh blkid
               $ ./run.sh libmount
 
+ The tests is possible to exclude by ./run.sh --exclude=<list>  where the
+ <list> is blank separated test names in format "testdir/testname", for example:
+
+	$ ./run.sh --exclude="mount/move"
+
+ The --exclude is evaluated by the ./run.sh script only. See below
+
+	TS_OPT_testdir_[testscript_]fake=
+
+ environment variable which provides more powerful functionality to skip tests.
 
 
  *** WARNING for root users ***
