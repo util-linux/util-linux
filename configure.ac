@@ -727,9 +727,10 @@ AS_IF([test "x$with_ncurses" != xno], [
     ])
   ])
 
-  AS_IF([test "x$have_ncurses" = xno], [
-    AC_MSG_ERROR([ncurses or ncursesw selected, but library not found (--without-ncurses to disable)])
-  ])
+  AS_CASE([$with_ncurses:$have_ncurses],
+    [yes:no], [AC_MSG_ERROR([ncurses or ncursesw selected, but library not found])]
+  )
+
 ])
 AC_SUBST([NCURSES_CFLAGS])
 AC_SUBST([NCURSES_LIBS])
