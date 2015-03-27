@@ -654,27 +654,6 @@ AC_SUBST([SELINUX_LIBS])
 AC_SUBST([SELINUX_LIBS_STATIC])
 
 
-AC_ARG_WITH([readline],
-  AS_HELP_STRING([--with-readline], [compile with GNU Readline support]),
-  [], [with_readline=auto]
-)
-
-AS_IF([test "x$with_readline" = xno], [
-  AM_CONDITIONAL([HAVE_READLINE], [false])
-], [
-  UL_CHECK_LIB([readline], [readline])
-  AS_CASE([$with_readline:$have_readline],
-    [yes:no],
-      [AC_MSG_ERROR([readline selected but libreadline not found ])],
-    [*:yes],
-      [READLINE_LIBS="-lreadline"
-       READLINE_LIBS_STATIC="-lreadline -ltinfo"]
-  )
-])
-AC_SUBST([READLINE_LIBS])
-AC_SUBST([READLINE_LIBS_STATIC])
-
-
 AC_ARG_WITH([audit],
   AS_HELP_STRING([--with-audit], [compile with audit support]),
   [], [with_audit=no]
@@ -800,19 +779,47 @@ AS_IF([test "x$have_slang" = xyes -o "x$have_ncurses" = xyes], [
 
 
 dnl Try pkg-config for libtinfo
-PKG_CHECK_MODULES(TINFO, [tinfo], [have_tinfo=yes], [
-    dnl If that failed, fall back to classic searching.
-    AC_CHECK_LIB([tinfo], [tgetent], [
+PKG_CHECK_MODULES(TINFO, [tinfo], [
+  dnl pkg-config success
+  have_tinfo=yes
+  UL_PKG_STATIC([TINFO_LIBS_STATIC], [tinfo])], [
+
+  dnl If pkg-config failed, fall back to classic searching.
+  AC_CHECK_LIB([tinfo], [tgetent], [
        have_tinfo=yes
        TINFO_LIBS="-ltinfo"
+       TINFO_LIBS_STATIC="-tinfo"
        TINFO_CFLAGS=""])
+
 ])
 AC_SUBST([TINFO_LIBS])
+AC_SUBST([TINFO_LIBS_STATIC])
 AC_SUBST([TINFO_CFLAGS])
 AM_CONDITIONAL([HAVE_TINFO], [test "x$have_tinfo" = xyes])
 AS_IF([test "x$have_tinfo" = xyes], [
 	AC_DEFINE(HAVE_LIBTINFO, 1, [Define if libtinfo available.])
 ])
+
+
+AC_ARG_WITH([readline],
+  AS_HELP_STRING([--with-readline], [compile with GNU Readline support]),
+  [], [with_readline=auto]
+)
+
+AS_IF([test "x$with_readline" = xno], [
+  AM_CONDITIONAL([HAVE_READLINE], [false])
+], [
+  UL_CHECK_LIB([readline], [readline])
+  AS_CASE([$with_readline:$have_readline],
+    [yes:no],
+      [AC_MSG_ERROR([readline selected but libreadline not found ])],
+    [*:yes],
+      [READLINE_LIBS="-lreadline"
+       READLINE_LIBS_STATIC="-lreadline $TINFO_LIBS_STATIC"]
+  )
+])
+AC_SUBST([READLINE_LIBS])
+AC_SUBST([READLINE_LIBS_STATIC])
 
 
 AC_ARG_WITH([utempter],
