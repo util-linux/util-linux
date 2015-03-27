@@ -885,6 +885,9 @@ UL_REQUIRES_BUILD([libmount], [libblkid])
 UL_REQUIRES_HAVE([libmount], [scanf_alloc_modifier], [scanf string alloc modifier])
 AM_CONDITIONAL([BUILD_LIBMOUNT], [test "x$build_libmount" = xyes])
 AM_CONDITIONAL([BUILD_LIBMOUNT_TESTS], [test "x$build_libmount" = xyes -a "x$enable_static" = xyes])
+AS_IF([test "x$build_libmount" = xyes], [
+	AC_DEFINE(HAVE_LIBMOUNT, 1, [Define if libmount available.])
+])
 
 AC_SUBST([LIBMOUNT_VERSION])
 AC_SUBST([LIBMOUNT_MAJOR_VERSION], $PACKAGE_VERSION_MAJOR)
