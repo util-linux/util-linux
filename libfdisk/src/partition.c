@@ -825,19 +825,19 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 			rc = asprintf(&p, "%x", fdisk_parttype_get_code(pa->type));
 		break;
 	case FDISK_FIELD_UUID:
-		p = pa->uuid ? strdup(pa->uuid) : NULL;
+		p = pa->uuid && *pa->uuid? strdup(pa->uuid) : NULL;
 		break;
 	case FDISK_FIELD_NAME:
-		p = pa->name ? strdup(pa->name) : NULL;
+		p = pa->name && *pa->name ? strdup(pa->name) : NULL;
 		break;
 	case FDISK_FIELD_ATTR:
-		p = pa->attrs ? strdup(pa->attrs) : NULL;
+		p = pa->attrs && *pa->attrs ? strdup(pa->attrs) : NULL;
 		break;
 	case FDISK_FIELD_SADDR:
-		p = pa->start_chs ? strdup(pa->start_chs) : NULL;
+		p = pa->start_chs && *pa->start_chs ? strdup(pa->start_chs) : NULL;
 		break;
 	case FDISK_FIELD_EADDR:
-		p = pa->end_chs ? strdup(pa->end_chs) : NULL;
+		p = pa->end_chs && *pa->end_chs? strdup(pa->end_chs) : NULL;
 		break;
 	default:
 		return -EINVAL;
