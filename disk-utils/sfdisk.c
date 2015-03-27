@@ -1088,6 +1088,7 @@ static int is_device_used(struct sfdisk *sf)
 	return 0;
 }
 
+#ifdef HAVE_LIBREADLINE
 static char *sfdisk_fgets(struct fdisk_script *dp,
 			  char *buf, size_t bufsz, FILE *f)
 {
@@ -1097,8 +1098,7 @@ static char *sfdisk_fgets(struct fdisk_script *dp,
 	assert(buf);
 	assert(bufsz > 2);
 
-#ifdef HAVE_LIBREADLINE
-	if (isatty(STDIN_FILENO)) {
+	if (sf->interactive) {
 		char *p = readline(sf->prompt);
 		size_t len;
 
@@ -1112,14 +1112,12 @@ static char *sfdisk_fgets(struct fdisk_script *dp,
 		buf[len] = '\n';		/* append \n to be compatible with libc fgetc() */
 		buf[len + 1] = '\0';
 		free(p);
+		fflush(stdout);
 		return buf;
 	}
-#endif
-	if (sf->prompt)
-		fputs(sf->prompt, stdout);
-	fflush(stdout);
 	return fgets(buf, bufsz, f);
 }
+#endif
 
 /*
  * sfdisk <device> [[-N] <partno>]
@@ -1151,7 +1149,9 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	if (!dp)
 		err(EXIT_FAILURE, _("failed to allocate script handler"));
 	fdisk_set_script(sf->cxt, dp);
+#ifdef HAVE_LIBREADLINE
 	fdisk_script_set_fgets(dp, sfdisk_fgets);
+#endif
 	fdisk_script_set_userdata(dp, (void *) sf);
 
 	/*
@@ -1268,6 +1268,13 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			sf->prompt = xstrdup(SFDISK_PROMPT);
 		}
 
+#ifndef HAVE_LIBREADLINE
+		if (sf->prompt)
+			fputs(sf->prompt, stdout);
+#else
+		if (!sf->interactive && sf->prompt)
+			fputs(sf->prompt, stdout);
+#endif
 		rc = fdisk_script_read_line(dp, stdin, buf, sizeof(buf));
 		if (rc < 0) {
 			DBG(PARSE, ul_debug("script parsing failed, trying sfdisk specific commands"));
