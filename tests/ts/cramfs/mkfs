@@ -36,6 +36,18 @@ IMAGE_PATH="$TS_OUTDIR/$IMAGE_NAME"
 IMAGE_SRC="$TS_OUTDIR/${TS_TESTNAME}-data"
 LABEL="testCramfs"
 
+BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
+PAGE_SIZE=$($TS_HELPER_SYSINFO pagesize)
+case "${BYTE_ORDER}:${PAGE_SIZE}" in
+	LE:4096) MD5_EXP="a6667acb1cb0685d9eb5b9cd3724766c" ;;
+	LE:65536) MD5_EXP="b60133682603b0118592b55f1dba017c" ;;
+	BE:4096) MD5_EXP="eaf05031dc8ec97c91ba5c773635cc89" ;;
+	BE:65536) MD5_EXP="5859f87b185b1187fca3b2b00c809c03" ;;
+	*) echo "warning ${TS_NS}: unknown checksum" \
+	        "for ${BYTE_ORDER}:${PAGE_SIZE}"
+	   MD5_EXP="unknown" ;;
+esac
+
 ts_log "create mountpoint dir"
 
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
@@ -66,7 +78,10 @@ $TS_CMD_MKCRAMFS -n $LABEL $IMAGE_SRC $IMAGE_PATH 2>&1 >> $TS_OUTPUT
 ts_cd "$TS_OUTDIR"
 
 ts_log "count MD5 from the image"
-md5sum $IMAGE_NAME 2>&1 | sort >> $TS_OUTPUT
+MD5_OUT=$(md5sum "$IMAGE_NAME" | awk '{printf $1}') >> $TS_OUTPUT 2>&1
+if [ "$MD5_EXP" != "$MD5_OUT" -a "$MD5_EXP" != "unknown" ]; then
+	ts_log "is $MD5_OUT, should be $MD5_EXP"
+fi
 echo >> $TS_OUTPUT
 
 ts_log "create loop device from image"

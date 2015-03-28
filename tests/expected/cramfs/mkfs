@@ -1225,7 +1225,6 @@ fff6015c3b8f791f4027791ac0b5f593  ./dir-063/data.004
 
 create cramfs image
 count MD5 from the image
-a6667acb1cb0685d9eb5b9cd3724766c  mkfs-loop.img
 
 create loop device from image
 check the image
