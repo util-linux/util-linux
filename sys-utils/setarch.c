@@ -309,7 +309,7 @@ int main(int argc, char *argv[])
 #if defined(__sparc64__) || defined(__sparc__)
 	if (archwrapper && strcmp(arch, "sparc32bash") == 0) {
 		if (set_arch(arch, 0L, 0))
-			err(EXIT_FAILURE, _("Failed to set personality to %s"), p);
+			err(EXIT_FAILURE, _("Failed to set personality to %s"), arch);
 		execl("/bin/bash", NULL);
 		err(EXIT_FAILURE, _("failed to execute %s"), "/bin/bash");
 	}
