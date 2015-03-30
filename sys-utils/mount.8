@@ -1048,7 +1048,6 @@ Only update times (atime, mtime, ctime) on the in-memory version of the file ino
 
 This mount option significantly reduces writes to the inode table for
 workloads that perform frequent random writes to preallocated files.
-As at Linux 3.20, this option is supported only on ext4.
 
 The on-disk timestamps are updated only when:
 .sp
