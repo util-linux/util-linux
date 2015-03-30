@@ -346,7 +346,6 @@ AC_CHECK_FUNCS([ \
 	mempcpy \
 	nanosleep \
 	ntp_gettime \
-	open_memstream \
 	personality \
 	posix_fadvise \
 	prctl \
@@ -373,6 +372,7 @@ AC_CHECK_FUNCS([openat fstatat unlinkat], [have_openat=yes], [have_openat=no])
 AC_CHECK_FUNCS([ioperm iopl], [have_io=yes])
 AC_CHECK_FUNCS([futimens], [have_futimens=yes])
 AC_CHECK_FUNCS([inotify_init1], [have_inotify_init1=yes])
+AC_CHECK_FUNCS([open_memstream], [have_open_memstream=yes],[have_open_memstream=no])
 
 dnl Old glibc requires -lrt
 AC_CHECK_FUNCS(clock_gettime, [], [
@@ -920,6 +920,7 @@ AM_CONDITIONAL([BUILD_SFDISK], [test "x$build_sfdisk" = xyes])
 UL_BUILD_INIT([cfdisk], [check])
 UL_REQUIRES_BUILD([cfdisk], [libfdisk])
 UL_REQUIRES_BUILD([cfdisk], [libsmartcols])
+UL_REQUIRES_HAVE([cfdisk], [open_memstream])
 UL_REQUIRES_HAVE([cfdisk], [ncurses,slang], [ncurses or slang library])
 AM_CONDITIONAL([BUILD_CFDISK], [test "x$build_cfdisk" = xyes])
 
