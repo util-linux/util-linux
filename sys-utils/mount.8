@@ -1043,6 +1043,33 @@ system mount options see /proc/mounts.
 .B nostrictatime
 Use the kernel's default behavior for inode access time updates.
 .TP
+.B lazytime
+Only update times (atime, mtime, ctime) on the in-memory version of the file inode.
+
+This mount option significantly reduces writes to the inode table for
+workloads that perform frequent random writes to preallocated files.
+As at Linux 3.20, this option is supported only on ext4.
+
+The on-disk timestamps are updated only when:
+.sp
+.RS
+- the inode needs to be updated for some change unrelated to file timestamps
+.sp
+- the application employs
+.BR fsync (2),
+.BR syncfs (2),
+or
+.BR sync (2)
+.sp
+- an undeleted inode is evicted from memory
+.sp
+- more than 24 hours have passed since the i-node was written to disk.
+.RE
+.sp
+.TP
+.B nolazytime
+Do not use the nolazytime feature.
+.TP
 .B suid
 Allow set-user-identifier or set-group-identifier bits to take
 effect.

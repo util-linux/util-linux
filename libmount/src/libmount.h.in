@@ -832,6 +832,10 @@ extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status
 #ifndef MS_STRICTATIME
 #define MS_STRICTATIME	(1<<24) /* Always perform atime updates */
 #endif
+#ifndef MS_LAZYTIME
+#define MS_LAZYTIME     (1<<25) /* Update the on-disk [acm]times lazily */
+#endif
+
 
 /*
  * Magic mount flag number. Had to be or-ed to the flag values.

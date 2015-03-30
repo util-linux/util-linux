@@ -113,6 +113,10 @@ static const struct libmnt_optmap linux_flags_map[] =
    { "strictatime", MS_STRICTATIME },         /* Strict atime semantics */
    { "nostrictatime", MS_STRICTATIME, MNT_INVERT }, /* kernel default atime */
 #endif
+#ifdef MS_LAZYTIME
+   { "lazytime", MS_LAZYTIME },               /* Update {a,m,c}time on the in-memory inode only */
+   { "nolazytime", MS_LAZYTIME, MNT_INVERT },
+#endif
 #ifdef MS_PROPAGATION
    { "unbindable",  MS_UNBINDABLE,          MNT_NOHLPS | MNT_NOMTAB }, /* Unbindable */
    { "runbindable", MS_UNBINDABLE | MS_REC, MNT_NOHLPS | MNT_NOMTAB },
