@@ -35,14 +35,14 @@ ts_device_init
 DEVICE=$TS_LODEV
 
 $TS_CMD_MKSWAP -L $LABEL $DEVICE > /dev/null 2>> $TS_OUTPUT \
- || ts_die "Cannot make swap on $DEVICE" $DEVICE
+ || ts_die "Cannot make swap on $DEVICE"
 
 ts_device_has "LABEL" $LABEL $DEVICE \
- || ts_die "Cannot find LABEL '$LABEL' on $DEVICE" $DEVICE
+ || ts_die "Cannot find LABEL '$LABEL' on $DEVICE"
 
 $TS_CMD_SWAPON -L $LABEL 2>&1 >> $TS_OUTPUT
 
-grep -q $DEVICE /proc/swaps || ts_die "Cannot find $DEVICE in /proc/swaps" $DEVICE
+grep -q $DEVICE /proc/swaps || ts_die "Cannot find $DEVICE in /proc/swaps"
 
 $TS_CMD_SWAPOFF $DEVICE
 

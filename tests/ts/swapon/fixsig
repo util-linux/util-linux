@@ -24,9 +24,9 @@ ts_device_init
 DEVICE=$TS_LODEV
 
 $TS_CMD_MKSWAP $DEVICE > /dev/null 2>> $TS_OUTPUT \
- || ts_die "Cannot make swap $DEVICE" $DEVICE
+ || ts_die "Cannot make swap $DEVICE"
 
-ts_device_has "TYPE" "swap" $DEVICE || ts_die "Cannot find swap on $DEVICE" $DEVICE
+ts_device_has "TYPE" "swap" $DEVICE || ts_die "Cannot find swap on $DEVICE"
 
 #
 # Rewrite signature to swsuspend
@@ -35,14 +35,14 @@ echo "S2SUSPEND " > $TS_OUTPUT.signature
 dd if=$TS_OUTPUT.signature of=$DEVICE \
 	seek=$(( $PAGESIZE - 10 )) count=10 bs=1 conv=notrunc &> /dev/null
 
-ts_device_has "TYPE" "swsuspend" $DEVICE || ts_die "Cannot find swsuspend on $DEVICE" $DEVICE
+ts_device_has "TYPE" "swsuspend" $DEVICE || ts_die "Cannot find swsuspend on $DEVICE"
 
 #
 # Swapon
 #
 $TS_CMD_SWAPON $DEVICE &> /dev/null
 
-grep -q $DEVICE /proc/swaps || ts_die "Cannot find $DEVICE in /proc/swaps" $DEVICE
+grep -q $DEVICE /proc/swaps || ts_die "Cannot find $DEVICE in /proc/swaps"
 
 $TS_CMD_SWAPOFF $DEVICE
 
