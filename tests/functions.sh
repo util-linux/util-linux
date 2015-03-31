@@ -89,6 +89,7 @@ function ts_skip {
 	if [ -n "$2" -a -b "$2" ]; then
 		ts_device_deinit "$2"
 	fi
+	ts_cleanup_on_exit
 	exit 0
 }
 
@@ -411,11 +412,7 @@ function ts_finalize_subtest {
 }
 
 function ts_finalize {
-	for idx in $(seq 0 $((${#TS_SUID_PROGS[*]} - 1))); do
-		PROG=${TS_SUID_PROGS[$idx]}
-		chmod a-s $PROG &> /dev/null
-		chown ${TS_SUID_USER[$idx]}.${TS_SUID_GROUP[$idx]} $PROG &> /dev/null
-	done
+	ts_cleanup_on_exit
 
 	if [ $TS_NSUBTESTS -ne 0 ]; then
 		printf "%11s..."
@@ -444,6 +441,15 @@ function ts_die {
 		ts_fstab_clean		# for sure...
 	fi
 	ts_finalize
+}
+
+function ts_cleanup_on_exit {
+
+	for idx in $(seq 0 $((${#TS_SUID_PROGS[*]} - 1))); do
+		PROG=${TS_SUID_PROGS[$idx]}
+		chmod a-s $PROG &> /dev/null
+		chown ${TS_SUID_USER[$idx]}.${TS_SUID_GROUP[$idx]} $PROG &> /dev/null
+	done
 }
 
 function ts_image_md5sum {
