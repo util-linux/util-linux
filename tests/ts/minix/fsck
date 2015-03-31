@@ -28,7 +28,8 @@ ts_check_losetup
 set -o pipefail
 
 IMAGE="$TS_OUTDIR/${TS_TESTNAME}-loop.img"
-DEVICE=$(ts_device_init)
+ts_device_init
+DEVICE=$TS_LODEV
 
 ts_log "create minix fs"
 $TS_CMD_MKMINIX $DEVICE 2>&1 >> $TS_OUTPUT
@@ -36,6 +37,5 @@ $TS_CMD_MKMINIX $DEVICE 2>&1 >> $TS_OUTPUT
 ts_log "fsck minix fs"
 $TS_CMD_FSCKMINIX $DEVICE 2>&1 >> $TS_OUTPUT
 
-ts_device_deinit $DEVICE
 ts_finalize
 

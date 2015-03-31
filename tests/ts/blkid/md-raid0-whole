@@ -34,11 +34,11 @@ set -o pipefail
 ts_log "Initialize devices"
 IMGNAME="${TS_OUTDIR}/${TS_TESTNAME}"
 
-DEVICE1=$(ts_device_init 50 ${IMGNAME}1.img)
-[ "$?" == 0 ] || ts_die "Cannot init device1"
+ts_device_init 50 ${IMGNAME}1.img
+DEVICE1=$TS_LODEV
 
-DEVICE2=$(ts_device_init 50 ${IMGNAME}2.img)
-[ "$?" == 0 ] || ts_die "Cannot init device2" $DEVICE1
+ts_device_init 50 ${IMGNAME}2.img
+DEVICE2=$TS_LODEV
 
 MD_DEVNAME=md8
 MD_DEVICE=/dev/${MD_DEVNAME}
@@ -80,8 +80,6 @@ mdadm -q -S ${MD_DEVICE} >> $TS_OUTPUT 2>&1
 udevadm settle
 
 ts_log "Deinitialize devices"
-ts_device_deinit $DEVICE1
-ts_device_deinit $DEVICE2
 
 ts_fdisk_clean $MD_DEVICE
 

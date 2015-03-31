@@ -33,8 +33,8 @@ set -o pipefail
 
 LINKNAME="$TS_OUTDIR/${TS_TESTNAME}_lnk"
 
-DEVICE=$(ts_device_init)
-[ "$?" == 0 ] || ts_die "Cannot init device"
+ts_device_init
+DEVICE=$TS_LODEV
 
 mkfs.ext3 $DEVICE &> /dev/null || ts_die "Cannot make ext3 on $DEVICE" $DEVICE
 
@@ -65,7 +65,6 @@ $TS_CMD_UMOUNT $LINKNAME || ts_die "A) Cannot umount $LINKNAME" $DEVICE
 #su $TS_TESTUSER -c "$TS_CMD_UMOUNT $LINKNAME" 2>&1 >> $TS_OUTPUT \
 #   || ts_die "B) Cannot umount $LINKNAME" $DEVICE
 
-ts_device_deinit $DEVICE
 ts_fstab_clean
 rm -f $LINKNAME
 

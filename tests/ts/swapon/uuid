@@ -30,8 +30,8 @@ ts_check_losetup
 
 set -o pipefail
 
-DEVICE=$(ts_device_init)
-[ "$?" == 0 ] || ts_die "Cannot init device"
+ts_device_init
+DEVICE=$TS_LODEV
 
 $TS_CMD_MKSWAP $DEVICE > /dev/null 2>> $TS_OUTPUT \
  || ts_die "Cannot make swap $DEVICE" $DEVICE
@@ -45,7 +45,6 @@ $TS_CMD_SWAPON -U $UUID 2>&1 >> $TS_OUTPUT
 grep -q $DEVICE /proc/swaps || ts_die "Cannot find $DEVICE in /proc/swaps" $DEVICE
 
 $TS_CMD_SWAPOFF $DEVICE
-ts_device_deinit $DEVICE
 
 ts_log "Success"
 ts_finalize

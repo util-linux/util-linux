@@ -30,8 +30,8 @@ ts_check_losetup
 
 set -o pipefail
 
-DEVICE=$(ts_device_init)
-[ "$?" == 0 ] || ts_die "Cannot init device"
+ts_device_init
+DEVICE=$TS_LODEV
 
 mkfs.ext3 $DEVICE &> /dev/null || ts_die "Cannot make ext3 on $DEVICE" $DEVICE
 
@@ -50,8 +50,6 @@ $TS_CMD_UMOUNT $DEVICE || ts_die "A) Cannot umount $DEVICE" $DEVICE
 $TS_CMD_MOUNT UUID=$UUID $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
 ts_is_mounted $DEVICE || ts_die "B) Cannot find $DEVICE in /proc/mounts" $DEVICE
 $TS_CMD_UMOUNT $DEVICE || ts_die "B) Cannot umount $DEVICE" $DEVICE
-
-ts_device_deinit $DEVICE
 
 ts_log "Success"
 ts_finalize
