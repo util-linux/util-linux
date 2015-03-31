@@ -1360,14 +1360,6 @@ done:
 	free(devuuid);
 }
 
-static void ui_clear_extra(struct cfdisk *cf)
-{
-	DBG(UI, ul_debug("clear window: %p", cf->act_win));
-
-	wclear(cf->act_win);
-	wrefresh(cf->act_win);
-}
-
 static int ui_draw_extra(struct cfdisk *cf)
 {
 	WINDOW *win_ex;
@@ -1376,6 +1368,14 @@ static int ui_draw_extra(struct cfdisk *cf)
 	char *tbstr = NULL, *end;
 	int win_ex_start_line, win_height, tblen;
 	int ndatalines;
+
+	if (!cf->show_extra)
+		return 0;
+
+	DBG(UI, ul_debug("draw extra"));
+
+	if (cf->act_win)
+		wclear(cf->act_win);
 
 	if (scols_table_is_empty(ln->extra))
 		extra_prepare_data(cf);
@@ -1397,7 +1397,7 @@ static int ui_draw_extra(struct cfdisk *cf)
 	if ((size_t) win_ex_start_line + win_height + 1 < MENU_START_LINE)
 		win_ex_start_line = MENU_START_LINE - win_height;
 
-	win_ex = newwin(win_height, ui_cols - 2, win_ex_start_line, 1);
+	win_ex = subwin(stdscr, win_height, ui_cols - 2, win_ex_start_line, 1);
 
 	scols_table_reduce_termwidth(ln->extra, 4);
 	scols_print_table_to_string(ln->extra, &tbstr);
@@ -1415,15 +1415,10 @@ static int ui_draw_extra(struct cfdisk *cf)
 	}
 	free(end);
 
-#if !defined(HAVE_SLCURSES_H) && !defined(HAVE_SLANG_SLCURSES_H)
-	/* clear the currently shown extra window */
-	ui_clear_extra(cf);
-#endif
-
-	DBG(UI, ul_debug("delete window: %p", ln->w));
 	delwin(ln->w);
 
 	DBG(UI, ul_debug("draw window: %p", win_ex));
+	touchwin(stdscr);
 	wrefresh(win_ex);
 
 	cf->act_win = ln->w = win_ex;
@@ -1662,10 +1657,9 @@ static int ui_table_goto(struct cfdisk *cf, int where)
 	}
 	ui_clean_info();
 	ui_draw_menu(cf);
+	ui_draw_extra(cf);
 	refresh();
 
-	if (cf->show_extra)
-		ui_draw_extra(cf);
 	return 0;
 }
 
@@ -2352,10 +2346,6 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	case 'u': /* dUmp */
 		ui_script_write(cf);
 		break;
-	case 'x': /* Extra */
-		cf->show_extra = cf->show_extra ? 0 : 1;
-		ref = 1;
-		break;
 	case 'W': /* Write */
 	{
 		char buf[64] = { 0 };
@@ -2394,11 +2384,9 @@ static int main_menu_action(struct cfdisk *cf, int key)
 	if (ref) {
 		lines_refresh(cf);
 		ui_refresh(cf);
+		ui_draw_extra(cf);
 	} else
 		ui_draw_menu(cf);
-
-	if (cf->show_extra)
-		ui_draw_extra(cf);
 
 	ui_clean_hint();
 
@@ -2418,9 +2406,7 @@ static void ui_resize_refresh(struct cfdisk *cf)
 	menu_refresh_size(cf);
 	lines_refresh(cf);
 	ui_refresh(cf);
-
-	if (cf->show_extra)
-		ui_draw_extra(cf);
+	ui_draw_extra(cf);
 }
 
 static int ui_run(struct cfdisk *cf)
@@ -2454,7 +2440,7 @@ static int ui_run(struct cfdisk *cf)
 		return rc;
 
 	cf->show_extra = 1;
-		ui_draw_extra(cf);
+	ui_draw_extra(cf);
 
 	if (fdisk_is_readonly(cf->cxt))
 		ui_warnx(_("Device open in read-only mode."));
@@ -2462,13 +2448,6 @@ static int ui_run(struct cfdisk *cf)
 		 ui_info(_("Note that partition table entries are not in disk order now."));
 
 	do {
-#if defined(HAVE_SLANG_H) || defined(HAVE_SLCURSES_H)
-		/* slang getch() seems to clear
-		 * the extra window from the screen,
-		 * so turn off the flag as well
-		 */
-		cf->show_extra = 0;
-#endif
 		int key = getch();
 
 		rc = 0;
@@ -2514,6 +2493,10 @@ static int ui_run(struct cfdisk *cf)
 		case '\n':
 		case '\r':
 			rc = main_menu_action(cf, 0);
+			break;
+		case 'x': /* Extra */
+			cf->show_extra = cf->show_extra ? 0 : 1;
+			DBG(MENU, ul_debug("extra: %s", cf->show_extra ? "ENABLED" : "DISABLED" ));
 			break;
 		default:
 			rc = main_menu_action(cf, key);
