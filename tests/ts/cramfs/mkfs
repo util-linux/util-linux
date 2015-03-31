@@ -86,6 +86,7 @@ echo >> $TS_OUTPUT
 
 ts_log "create loop device from image"
 DEVICE=$($TS_CMD_LOSETUP --show -f $IMAGE_PATH)
+ts_register_loop_device "$DEVICE"
 
 ts_log "check the image"
 ts_device_has "TYPE" "cramfs" $DEVICE
@@ -111,7 +112,5 @@ echo >> $TS_OUTPUT
 ts_cd "$ORIGPWD"
 
 ts_log "umount the image"
-$TS_CMD_UMOUNT $DEVICE
-$TS_CMD_LOSETUP -d $DEVICE 2>&1 >> $TS_OUTPUT
 ts_finalize
 

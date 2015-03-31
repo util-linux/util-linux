@@ -36,6 +36,7 @@ truncate -s 10M $IMAGE_PATH
 
 ts_log "create loop device from image"
 DEVICE=$($TS_CMD_LOSETUP --show -f $IMAGE_PATH)
+ts_register_loop_device "$DEVICE"
 CMD_SED_DEVICE="sed s#$DEVICE:\s##"
 
 ts_log "testing offsets with full block size"
@@ -82,7 +83,6 @@ $TS_CMD_BLKDISCARD -v -p 511 -o 1 -l 10240 $DEVICE 2>&1 | $CMD_SED_DEVICE >> $TS
 $TS_CMD_BLKDISCARD -v -p 511 -o 511 -l 10240 $DEVICE 2>&1 | $CMD_SED_DEVICE >> $TS_OUTPUT
 
 ts_log "detach loop device from image"
-$TS_CMD_LOSETUP -d $DEVICE 2>&1 >> $TS_OUTPUT
 
 ts_cd "$ORIGPWD"
 

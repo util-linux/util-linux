@@ -31,8 +31,8 @@ ts_check_losetup
 # mountpoint
 [ -d $TS_MOUNTPOINT ] || mkdir -p $TS_MOUNTPOINT
 
-DEVICE=$(ts_device_init)
-[ "$?" == 0 ] || ts_die "Cannot init device"
+ts_device_init
+DEVICE=$TS_LODEV
 
 mkfs.ext2 $DEVICE &> /dev/null || ts_die "Cannot make ext2 on $DEVICE" $DEVICE
 
@@ -50,8 +50,6 @@ $TS_CMD_MOUNT -o remount,ro $TS_MOUNTPOINT \
 # check the remount
 $TS_CMD_FINDMNT --kernel --mountpoint "$TS_MOUNTPOINT" --options "ro" &> /dev/null
 [ "$?" == "0" ] || ts_die "Cannot find read-only in $TS_MOUNTPOINT in /proc/self/mountinfo"
-
-ts_device_deinit $DEVICE
 
 ts_log "Success"
 ts_finalize
