@@ -1371,7 +1371,9 @@ static int list_deps(struct blkdev_cxt *cxt)
 		else if (!set_cxt(&dep, cxt, NULL, d->d_name)) {
 			DBG(CXT, ul_debugobj(cxt, "%s: %s: dependence is whole-disk",
 								cxt->name, d->d_name));
-			process_blkdev(&dep, cxt, 1, NULL);
+			/* For inverse tree we don't want to show partitions
+			 * if the dependence is pn whle-disk */
+			process_blkdev(&dep, cxt, lsblk->inverse ? 0 : 1, NULL);
 		}
 		reset_blkdev_cxt(&dep);
 	}
