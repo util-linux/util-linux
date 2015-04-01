@@ -62,6 +62,20 @@
 #include "mangle.h"
 #include "optutils.h"
 
+#include "debug.h"
+
+UL_DEBUG_DEFINE_MASK(lsblk);
+UL_DEBUG_DEFINE_MASKNAMES(lsblk) = UL_DEBUG_EMPTY_MASKNAMES;
+
+#define LSBLK_DEBUG_INIT	(1 << 1)
+#define LSBLK_DEBUG_FILTER	(1 << 2)
+#define LSBLK_DEBUG_DEV		(1 << 3)
+#define LSBLK_DEBUG_CXT		(1 << 4)
+#define LSBLK_DEBUG_ALL		0xFFFF
+
+#define DBG(m, x)       __UL_DBG(lsblk, LSBLK_DEBUG_, m, x)
+#define ON_DBG(m, x)    __UL_DBG_CALL(lsblk, LSBLK_DEBUG_, m, x)
+
 
 #define LSBLK_EXIT_SOMEOK 64
 #define LSBLK_EXIT_ALLFAILED 32
@@ -271,6 +285,11 @@ struct blkdev_cxt {
 	uint64_t size;		/* device size */
 };
 
+static void lsblk_init_debug(void)
+{
+	__UL_INIT_DEBUG(lsblk, LSBLK_DEBUG_, 0, LSBLK_DEBUG);
+}
+
 static int is_maj_excluded(int maj)
 {
 	size_t i;
@@ -280,9 +299,12 @@ static int is_maj_excluded(int maj)
 	if (!nexcludes)
 		return 0;	/* filter not enabled, device not exluded */
 
-	for (i = 0; i < nexcludes; i++)
-		if (excludes[i] == maj)
+	for (i = 0; i < nexcludes; i++) {
+		if (excludes[i] == maj) {
+			DBG(FILTER, ul_debug("exclude: maj=%d", maj));
 			return 1;
+		}
+	}
 	return 0;
 }
 
@@ -295,9 +317,12 @@ static int is_maj_included(int maj)
 	if (!nincludes)
 		return 1;	/* filter not enabled, device is included */
 
-	for (i = 0; i < nincludes; i++)
-		if (includes[i] == maj)
+	for (i = 0; i < nincludes; i++) {
+		if (includes[i] == maj) {
+			DBG(FILTER, ul_debug("include: maj=%d", maj));
 			return 1;
+		}
+	}
 	return 0;
 }
 
@@ -342,6 +367,9 @@ static void reset_blkdev_cxt(struct blkdev_cxt *cxt)
 {
 	if (!cxt)
 		return;
+
+	DBG(CXT, ul_debugobj(cxt, "reset"));
+
 	free(cxt->name);
 	free(cxt->dm_name);
 	free(cxt->filename);
@@ -459,6 +487,7 @@ static char *get_device_mountpoint(struct blkdev_cxt *cxt)
 		mnt_free_iter(itr);
 	}
 
+	DBG(DEV, ul_debugobj(cxt, "mountpoint: %s", mnt_fs_get_target(fs)));
 	return xstrdup(mnt_fs_get_target(fs));
 }
 
@@ -511,6 +540,7 @@ static int get_udev_properties(struct blkdev_cxt *cxt)
 			cxt->serial = xstrdup(data);
 		udev_device_unref(dev);
 		cxt->probed = 1;
+		DBG(DEV, ul_debugobj(cxt, "%s: found udev properties", cxt->name));
 	}
 
 	return cxt->probed == 1 ? 0 : -1;
@@ -566,6 +596,7 @@ static void probe_device(struct blkdev_cxt *cxt)
 			cxt->partlabel = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_FLAGS", &data, NULL))
 			cxt->partflags = xstrdup(data);
+		DBG(DEV, ul_debugobj(cxt, "%s: found blkid properties", cxt->name));
 	}
 
 	blkid_free_probe(pr);
@@ -1113,6 +1144,9 @@ static int set_cxt(struct blkdev_cxt *cxt,
 {
 	dev_t devno;
 
+	DBG(CXT, ul_debugobj(cxt, "setting context for %s [parent=%p, wholedisk=%p]",
+				name, parent, wholedisk));
+
 	cxt->parent = parent;
 	cxt->name = xstrdup(name);
 	cxt->partition = wholedisk != NULL;
@@ -1122,6 +1156,7 @@ static int set_cxt(struct blkdev_cxt *cxt,
 		warnx(_("%s: failed to get device path"), name);
 		return -1;
 	}
+	DBG(CXT, ul_debugobj(cxt, "%s: filename=%s", cxt->name, cxt->filename));
 
 	devno = sysfs_devname_to_devno(name, wholedisk ? wholedisk->name : NULL);
 
@@ -1156,9 +1191,10 @@ static int set_cxt(struct blkdev_cxt *cxt,
 		cxt->discard = 0;
 
 	/* Ignore devices of zero size */
-	if (!lsblk->all_devices && cxt->size == 0)
+	if (!lsblk->all_devices && cxt->size == 0) {
+		DBG(CXT, ul_debugobj(cxt, "zero size device -- ignore"));
 		return -1;
-
+	}
 	if (is_dm(name)) {
 		cxt->dm_name = sysfs_strdup(&cxt->sysfs, "dm/name");
 		if (!cxt->dm_name) {
@@ -1171,10 +1207,16 @@ static int set_cxt(struct blkdev_cxt *cxt,
 	cxt->nholders = sysfs_count_dirents(&cxt->sysfs, "holders");
 	cxt->nslaves = sysfs_count_dirents(&cxt->sysfs, "slaves");
 
-	/* ignore non-SCSI devices */
-	if (lsblk->scsi && sysfs_scsi_get_hctl(&cxt->sysfs, NULL, NULL, NULL, NULL))
-		return -1;
+	DBG(CXT, ul_debugobj(cxt, "%s: npartitions=%d, nholders=%d, nslaves=%d",
+			cxt->name, cxt->npartitions, cxt->nholders, cxt->nslaves));
 
+	/* ignore non-SCSI devices */
+	if (lsblk->scsi && sysfs_scsi_get_hctl(&cxt->sysfs, NULL, NULL, NULL, NULL)) {
+		DBG(CXT, ul_debugobj(cxt, "non-scsi device -- ignore"));
+		return -1;
+	}
+
+	DBG(CXT, ul_debugobj(cxt, "%s: context successfully initialized", cxt->name));
 	return 0;
 }
 
@@ -1201,6 +1243,8 @@ static int list_partitions(struct blkdev_cxt *wholedisk_cxt, struct blkdev_cxt *
 	if (!wholedisk_cxt->npartitions || wholedisk_cxt->partition)
 		return -1;
 
+	DBG(CXT, ul_debugobj(wholedisk_cxt, "probe whole-disk for partitions"));
+
 	dir = sysfs_opendir(&wholedisk_cxt->sysfs, NULL);
 	if (!dir)
 		err(EXIT_FAILURE, _("failed to open device directory in sysfs"));
@@ -1212,6 +1256,8 @@ static int list_partitions(struct blkdev_cxt *wholedisk_cxt, struct blkdev_cxt *
 
 		if (!(sysfs_is_partition_dirent(dir, d, wholedisk_cxt->name)))
 			continue;
+
+		DBG(CXT, ul_debugobj(wholedisk_cxt, "  checking %s", d->d_name));
 
 		if (lsblk->inverse) {
 			/*
@@ -1250,6 +1296,7 @@ static int list_partitions(struct blkdev_cxt *wholedisk_cxt, struct blkdev_cxt *
 		r = 0;
 	}
 
+	DBG(CXT, ul_debugobj(wholedisk_cxt, "probe whole-disk for partitions -- done"));
 	closedir(dir);
 	return r;
 }
@@ -1297,6 +1344,8 @@ static int list_deps(struct blkdev_cxt *cxt)
 	if (lsblk->nodeps)
 		return 0;
 
+	DBG(CXT, ul_debugobj(cxt, "%s: list dependencies", cxt->name));
+
 	if (!(lsblk->inverse ? cxt->nslaves : cxt->nholders))
 		return 0;
 
@@ -1305,22 +1354,30 @@ static int list_deps(struct blkdev_cxt *cxt)
 	if (!dir)
 		return 0;
 
+	DBG(CXT, ul_debugobj(cxt, "%s: checking for '%s' dependence", cxt->name, depname));
+
 	snprintf(dirname, sizeof(dirname), "%s/%s", cxt->sysfs.dir_path, depname);
 
 	while ((d = xreaddir(dir))) {
 		/* Is the dependency a partition? */
 		if (sysfs_is_partition_dirent(dir, d, NULL)) {
-		    if (!get_wholedisk_from_partition_dirent(dir, dirname, d, &dep))
-			    process_blkdev(&dep, cxt, 1, d->d_name);
+			if (!get_wholedisk_from_partition_dirent(dir, dirname, d, &dep)) {
+				DBG(CXT, ul_debugobj(cxt, "%s: %s: dependence is partition",
+								cxt->name, d->d_name));
+				process_blkdev(&dep, cxt, 1, d->d_name);
+			}
 		}
 		/* The dependency is a whole device. */
-		else if (!set_cxt(&dep, cxt, NULL, d->d_name))
+		else if (!set_cxt(&dep, cxt, NULL, d->d_name)) {
+			DBG(CXT, ul_debugobj(cxt, "%s: %s: dependence is whole-disk",
+								cxt->name, d->d_name));
 			process_blkdev(&dep, cxt, 1, NULL);
-
+		}
 		reset_blkdev_cxt(&dep);
 	}
 	closedir(dir);
 
+	DBG(CXT, ul_debugobj(cxt, "%s: checking for '%s' -- done", cxt->name, depname));
 	return 0;
 }
 
@@ -1344,7 +1401,12 @@ static int iterate_block_devices(void)
 	if (!(dir = opendir(_PATH_SYS_BLOCK)))
 		return -errno;
 
+	DBG(DEV, ul_debug("iterate on " _PATH_SYS_BLOCK));
+
 	while ((d = xreaddir(dir))) {
+
+		DBG(DEV, ul_debug(" %s dentry", d->d_name));
+
 		if (set_cxt(&cxt, NULL, NULL, d->d_name))
 			goto next;
 
@@ -1362,6 +1424,7 @@ static int iterate_block_devices(void)
 
 	closedir(dir);
 
+	DBG(DEV, ul_debug("iterate on " _PATH_SYS_BLOCK " -- done"));
 	return 0;
 }
 
@@ -1623,6 +1686,8 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	lsblk = &_ls;
+
+	lsblk_init_debug();
 
 	while((c = getopt_long(argc, argv,
 			       "abdDe:fhlnmo:OpPiI:rstVSx:", longopts, NULL)) != -1) {
