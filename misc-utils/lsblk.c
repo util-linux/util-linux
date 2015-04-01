@@ -1387,9 +1387,10 @@ static int process_blkdev(struct blkdev_cxt *cxt, struct blkdev_cxt *parent,
 			  int do_partitions, const char *part_name)
 {
 	if (do_partitions && cxt->npartitions)
-		return list_partitions(cxt, parent, part_name);
+		list_partitions(cxt, parent, part_name);		/* partitoins + whole-disk */
+	else
+		fill_table_line(cxt, parent ? parent->scols_line : NULL); /* whole-disk only */
 
-	fill_table_line(cxt, parent ? parent->scols_line : NULL);
 	return list_deps(cxt);
 }
 
