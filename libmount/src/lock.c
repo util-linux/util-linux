@@ -511,6 +511,10 @@ failed:
  *   3. a) link() success: setups F_SETLK lock (see fcnlt(2))
  *      b) link() failed:  wait (max 30s) on F_SETLKW lock, goto 2.
  *
+ * Note that when the lock is used by mnt_update_table() interface then libmount
+ * uses flock() for private library file /run/mount/utab. The fcnlt(2) is used only
+ * for backwardly compatible stuff like /etc/mtab.
+ *
  * Returns: 0 on success or negative number in case of error (-ETIMEOUT is case
  * of stale lock file).
  */
