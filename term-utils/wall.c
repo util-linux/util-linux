@@ -181,13 +181,73 @@ int main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 
+struct buffer {
+	size_t	sz;
+	size_t	used;
+	char	*data;
+};
+
+static void buf_enlarge(struct buffer *bs, size_t len)
+{
+	if (bs->sz == 0 || len > bs->sz - bs->used) {
+		bs->sz += len < 128 ? 128 : len;
+		bs->data = xrealloc(bs->data, bs->sz);
+	}
+}
+
+static void buf_puts(struct buffer *bs, const char *s)
+{
+	size_t len = strlen(s);
+
+	buf_enlarge(bs, len + 1);
+	memcpy(bs->data + bs->used, s, len + 1);
+	bs->used += len;
+}
+
+static void buf_printf(struct buffer *bs, const char *fmt, ...)
+{
+	int rc;
+	va_list ap;
+	size_t limit;
+
+	buf_enlarge(bs, 0);	/* default size */
+	limit = bs->sz - bs->used;
+
+	va_start(ap, fmt);
+	rc = vsnprintf(bs->data + bs->used, limit, fmt, ap);
+	va_end(ap);
+
+	if (rc > 0 && (size_t) rc + 1 > limit) {	/* not enoght, enlarge */
+		buf_enlarge(bs, rc + 1);
+		limit = bs->sz - bs->used;
+		va_start(ap, fmt);
+		rc = vsnprintf(bs->data  + bs->used, limit, fmt, ap);;
+		va_end(ap);
+	}
+
+	if (rc > 0)
+		bs->used += rc;
+}
+
+static void buf_putc_careful(struct buffer *bs, int c)
+{
+	if (isprint(c) || c == '\a' || c == '\t' || c == '\r' || c == '\n') {
+		buf_enlarge(bs, 1);
+		bs->data[bs->used++] = c;
+	} else if (!isascii(c))
+		buf_printf(bs, "\\%3o", (unsigned char)c);
+	else {
+		char tmp[] = { '^', c ^ 0x40, '\0' };
+		buf_puts(bs, tmp);
+	}
+}
+
 static char *makemsg(char *fname, char **mvec, int mvecsz,
 		     size_t *mbufsize, int print_banner)
 {
+	struct buffer _bs = {.used = 0}, *bs = &_bs;
 	register int ch, cnt;
-	struct stat sbuf;
-	FILE *fp;
-	char *p, *lbuf, *tmpname, *mbuf;
+	char *p, *lbuf;
 	long line_max;
 
 	line_max = sysconf(_SC_LINE_MAX);
@@ -195,11 +255,6 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		line_max = 512;
 
 	lbuf = xmalloc(line_max);
-
-	if ((fp = xfmkstemp(&tmpname, NULL)) == NULL)
-		err(EXIT_FAILURE, _("can't open temporary file"));
-	unlink(tmpname);
-	free(tmpname);
 
 	if (print_banner == TRUE) {
 		char *hostname = xgethostname();
@@ -233,14 +288,16 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		 */
 		/* snprintf is not always available, but the sprintf's here
 		   will not overflow as long as %d takes at most 100 chars */
-		fprintf(fp, "\r%*s\r\n", TERM_WIDTH, " ");
-		sprintf(lbuf, _("Broadcast message from %s@%s (%s) (%s):"),
-			      whom, hostname, where, date);
-		fprintf(fp, "%-*.*s\007\007\r\n", TERM_WIDTH, TERM_WIDTH, lbuf);
+		buf_printf(bs, "\r%*s\r\n", TERM_WIDTH, " ");
+
+		snprintf(lbuf, line_max,
+				_("Broadcast message from %s@%s (%s) (%s):"),
+				whom, hostname, where, date);
+		buf_printf(bs, "%-*.*s\007\007\r\n", TERM_WIDTH, TERM_WIDTH, lbuf);
 		free(hostname);
 		free(date);
 	}
-	fprintf(fp, "%*s\r\n", TERM_WIDTH, " ");
+	buf_printf(bs, "%*s\r\n", TERM_WIDTH, " ");
 
 	 if (mvec) {
 		/*
@@ -249,13 +306,11 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 		int i;
 
 		for (i = 0; i < mvecsz; i++) {
-			fputs(mvec[i], fp);
+			buf_puts(bs, mvec[i]);
 			if (i < mvecsz - 1)
-				fputc(' ', fp);
+				buf_puts(bs, " ");
 		}
-		fputc('\r', fp);
-		fputc('\n', fp);
-
+		buf_puts(bs, "\r\n");
 	} else {
 		/*
 		 * read message from <file>
@@ -284,33 +339,22 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 			for (cnt = 0, p = lbuf; (ch = *p) != '\0'; ++p, ++cnt) {
 				if (cnt == TERM_WIDTH || ch == '\n') {
 					for (; cnt < TERM_WIDTH; ++cnt)
-						putc(' ', fp);
-					putc('\r', fp);
-					putc('\n', fp);
+						buf_puts(bs, " ");
+					buf_puts(bs, "\r\n");
 					cnt = 0;
 				}
 				if (ch == '\t')
 					cnt += (7 - (cnt % 8));
 				if (ch != '\n')
-					fputc_careful(ch, fp, '^');
+					buf_putc_careful(bs, ch);
 			}
 		}
 	}
-	fprintf(fp, "%*s\r\n", TERM_WIDTH, " ");
+	buf_printf(bs, "%*s\r\n", TERM_WIDTH, " ");
 
 	free(lbuf);
-	rewind(fp);
 
-	if (fstat(fileno(fp), &sbuf))
-		err(EXIT_FAILURE, _("stat failed"));
-
-	*mbufsize = (size_t) sbuf.st_size;
-	mbuf = xmalloc(*mbufsize);
-
-	if (fread(mbuf, 1, *mbufsize, fp) != *mbufsize)
-		err(EXIT_FAILURE, _("fread failed"));
-
-	if (close_stream(fp) != 0)
-		errx(EXIT_FAILURE, _("write error"));
-	return mbuf;
+	bs->data[bs->used] = '\0';	/* be paranoid */
+	*mbufsize = bs->used;
+	return bs->data;
 }
