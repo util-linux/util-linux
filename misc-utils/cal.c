@@ -381,7 +381,7 @@ int main(int argc, char **argv)
 					errx(EXIT_FAILURE,_("illegal month value: only use positive integers"));
 			} else
 					errx(EXIT_FAILURE,_("-n requires an argument"));
-      break;
+			break;
 		case 'w':
 			if (optarg) {
 				ctl.req.week = strtos32_or_err(optarg,
@@ -498,8 +498,8 @@ int main(int argc, char **argv)
 		else
 			ctl.num_months = MONTH_COLS;
 		ctl.gutter_width = 3;
-    ctl.num_months = 12;
-    ctl.req.month = 1;
+		ctl.num_months = 12;
+		ctl.req.month = 1;
 		yearly(&ctl);
 	} else {
 		if (ctl.num_months == -3) {
@@ -723,31 +723,31 @@ static void monthly(const struct cal_control *ctl)
 
 	m1.next=&m2;
 	m2.next=(ctl->julian) ? NULL : &m3;
-  m3.next = NULL;
+	m3.next = NULL;
 
-  rows = (ctl->num_months-1)/months_in_row;
+	rows = (ctl->num_months-1)/months_in_row;
 	for (i = 0; i < rows + 1 ; i++){
-    if (i == rows){
-      switch (ctl->num_months % months_in_row){
-        case 1:
-          m1.next = NULL;
-        case 2:
-          m2.next = NULL;
-      }
-    }
-    for (m = &m1; m; m = m->next){
-      m->month = month++;
-      m->year = year;
-      if (MONTHS_IN_YEAR < month) {
-        year++;
-        month = 1;
-      }
-      cal_fill_month(m, ctl);
-    }
+		if (i == rows){
+			switch (ctl->num_months % months_in_row){
+				case 1:
+					m1.next = NULL;
+				case 2:
+					m2.next = NULL;
+			}
+		}
+		for (m = &m1; m; m = m->next){
+			m->month = month++;
+			m->year = year;
+			if (MONTHS_IN_YEAR < month) {
+				year++;
+				month = 1;
+			}
+			cal_fill_month(m, ctl);
+		}
 		cal_output_header(&m1, ctl);
 		cal_output_months(&m1, ctl);
 	}
-  fflush(stdout);
+	fflush(stdout);
 }
 
 static void yearly(const struct cal_control *ctl)
@@ -762,8 +762,8 @@ static void yearly(const struct cal_control *ctl)
 	center(out, year_width, 0);
 	my_putstring("\n\n");
 
-  monthly(ctl);
-	
+	monthly(ctl);
+
 	/* Is empty line at the end year output really needed? */
 	my_putstring("\n");
 }
