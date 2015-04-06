@@ -582,14 +582,14 @@ static void logger_open(struct logger_ctl *ctl)
 		ctl->fd = inet_socket(ctl->server, ctl->port, ctl->socket_type);
 		if (!ctl->syslogfp)
 			ctl->syslogfp = syslog_rfc5424_header;
-		return;
-	}
-	if (!ctl->unix_socket)
-		ctl->unix_socket = _PATH_DEVLOG;
+	} else {
+		if (!ctl->unix_socket)
+			ctl->unix_socket = _PATH_DEVLOG;
 
-	ctl->fd = unix_socket(ctl, ctl->unix_socket, ctl->socket_type);
-	if (!ctl->syslogfp)
-		ctl->syslogfp = syslog_local_header;
+		ctl->fd = unix_socket(ctl, ctl->unix_socket, ctl->socket_type);
+		if (!ctl->syslogfp)
+			ctl->syslogfp = syslog_local_header;
+	}
 	if (!ctl->tag)
 		ctl->tag = xgetlogin();
 	generate_syslog_header(ctl);
