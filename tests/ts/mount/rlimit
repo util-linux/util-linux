@@ -60,22 +60,31 @@ OLD_SUM=$(mtab_checksum)
 	$TS_CMD_MOUNT $DEVICE $TS_MOUNTPOINT
 ) &> /dev/null
 NEW_SUM=$(mtab_checksum)
-$TS_CMD_UMOUNT $TS_MOUNTPOINT &> /dev/null
 [ $NEW_SUM = $OLD_SUM ] && echo "OK: mtab unmodified by mount" >> $TS_OUTPUT
+ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
+$TS_CMD_UMOUNT $TS_MOUNTPOINT &> /dev/null
+ts_is_mounted $DEVICE && ts_die "$DEVICE is still mounted"
 ts_finalize_subtest
 
 
 ts_init_subtest "umount"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 $TS_CMD_MOUNT $DEVICE $TS_MOUNTPOINT &> /dev/null
+ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
 OLD_SUM=$(mtab_checksum)
 (
 	ulimit -f 1
 	$TS_CMD_UMOUNT $TS_MOUNTPOINT &> /dev/null
 ) &> /dev/null
 NEW_SUM=$(mtab_checksum)
-$TS_CMD_UMOUNT $TS_MOUNTPOINT &> /dev/null
 [ $NEW_SUM = $OLD_SUM ] && echo "OK: mtab unmodified by umount" >> $TS_OUTPUT
+if ts_is_mounted $DEVICE; then
+	echo "FAIL: $DEVICE is still mounted" >> $TS_OUTPUT
+	$TS_CMD_UMOUNT $TS_MOUNTPOINT &> /dev/null
+else
+	# repair /etc/mtab
+	$TS_CMD_UMOUNT --fake $TS_MOUNTPOINT &> /dev/null
+fi
 ts_finalize_subtest
 
 

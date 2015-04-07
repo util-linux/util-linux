@@ -83,9 +83,7 @@ ts_finalize_subtest
 ts_init_subtest "type-pattern-neg"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 $TS_CMD_MOUNT -t nofoo,bar,ext3,ext2,ext4 $DEVICE $TS_MOUNTPOINT &> /dev/null
-ts_is_mounted $DEVICE && (
-	$TS_CMD_UMOUNT $TS_MOUNTPOINT
-	ts_die "$DEVICE unexpectedly mounted" $DEVICE)
+ts_is_mounted $DEVICE && ts_die "$DEVICE unexpectedly mounted" $DEVICE
 ts_log "Success"
 ts_finalize_subtest
 
