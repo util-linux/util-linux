@@ -138,6 +138,7 @@ static struct last_timefmt timefmts[] = {
 /* Global variables */
 static unsigned int recsdone;	/* Number of records listed */
 static time_t lastdate;		/* Last date we've seen */
+static time_t currentdate;	/* date when we started processing the file */
 
 /* --time-format=option parser */
 static int which_time_format(const char *optarg)
@@ -372,7 +373,7 @@ static void trim_trailing_spaces(char *s)
  */
 static int list(const struct last_control *ctl, struct utmp *p, time_t logout_time, int what)
 {
-	time_t		secs, utmp_time, now;
+	time_t		secs, utmp_time;
 	char		logintime[LAST_TIMESTAMP_LEN];
 	char		logouttime[LAST_TIMESTAMP_LEN];
 	char		length[LAST_TIMESTAMP_LEN];
@@ -428,8 +429,7 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t logout_ti
 	hours = (secs / 3600) % 24;
 	days  = secs / 86400;
 
-	now = time(NULL);
-	if (logout_time == now) {
+	if (logout_time == currentdate) {
 		if (ctl->time_fmt > LAST_TIMEFTM_SHORT_CTIME) {
 			sprintf(logouttime, "  still running");
 			length[0] = 0;
@@ -638,7 +638,7 @@ static void process_wtmp_file(const struct last_control *ctl,
 	/*
 	 * Fill in 'lastdate'
 	 */
-	lastdate = lastdown;
+	lastdate = currentdate = lastrch = lastdown;
 
 	/*
 	 * Install signal handlers
