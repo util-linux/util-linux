@@ -788,7 +788,7 @@ PKG_CHECK_MODULES(TINFO, [tinfo], [
   AC_CHECK_LIB([tinfo], [tgetent], [
        have_tinfo=yes
        TINFO_LIBS="-ltinfo"
-       TINFO_LIBS_STATIC="-tinfo"
+       TINFO_LIBS_STATIC="-ltinfo"
        TINFO_CFLAGS=""])
 
 ])
