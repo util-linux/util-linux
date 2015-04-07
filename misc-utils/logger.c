@@ -395,9 +395,9 @@ static void write_output(const struct logger_ctl *ctl, const char *const msg)
 				warn(_("write failed"));
 		}
 	}
-
 	if (ctl->stderr_printout)
 		fprintf(stderr, "%s\n", buf);
+	free(buf);
 }
 
 #define NILVALUE "-"
@@ -625,6 +625,7 @@ static void logger_command_line(const struct logger_ctl *ctl, char **argv)
 	}
 	if (p != buf)
 		write_output(ctl, buf);
+	free(buf);
 }
 
 static void logger_stdin(struct logger_ctl *ctl)
