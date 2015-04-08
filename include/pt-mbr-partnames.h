@@ -71,6 +71,7 @@
 	{0xb7, N_("BSDI fs")},
 	{0xb8, N_("BSDI swap")},
 	{0xbb, N_("Boot Wizard hidden")},
+	{0xbc, N_("Acronis FAT32 LBA")},/* hidden (+0xb0) Acronis Secure Zone (backup software) */
 	{0xbe, N_("Solaris boot")},
 	{0xbf, N_("Solaris")},
 	{0xc1, N_("DRDOS/sec (FAT-12)")},
