@@ -8,8 +8,17 @@ unshare \- run program with some namespaces unshared from parent
 .RI [ arguments ]
 .SH DESCRIPTION
 Unshares the indicated namespaces from the parent process and then executes
-the specified \fIprogram\fR.  The namespaces to be unshared are indicated via
-options.  Unshareable namespaces are:
+the specified \fIprogram\fR.
+.PP
+The namespaces can optionally be persisted by bind mounting /proc/[pid]/ns/[type] files
+to a filesystem path and entered with
+.BR nsenter (1)
+even after \fIprogram\fR terminates.
+Once a persistent namespace is no longer needed it can be unpersisted with
+.BR umount (8).
+See EXAMPLES section for more details.
+.PP
+The namespaces to be unshared are indicated via options.  Unshareable namespaces are:
 .TP
 .BR "mount namespace"
 Mounting and unmounting filesystems will not affect the rest of the system
@@ -47,24 +56,29 @@ The process will have a distinct set of UIDs, GIDs and capabilities.
 See \fBclone\fR(2) for the exact semantics of the flags.
 .SH OPTIONS
 .TP
-.BR \-i , " \-\-ipc"
-Unshare the IPC namespace.
+.BR \-i , " \-\-ipc"[=\fIfile\fP]
+Unshare the IPC namespace. If \fIfile\fP is specified then persistent namespace is created
+by bind mount.
 .TP
-.BR \-m , " \-\-mount"
-Unshare the mount namespace.
+.BR \-m , " \-\-mount"[=\fIfile\fP]
+Unshare the mount namespace. If \fIfile\fP is specified then persistent namespace is created
+by bind mount.
 .TP
-.BR \-n , " \-\-net"
-Unshare the network namespace.
+.BR \-n , " \-\-net"[=\fIfile\fP]
+Unshare the network namespace. If \fIfile\fP is specified then persistent namespace is created
+by bind mount.
 .TP
-.BR \-p , " \-\-pid"
-Unshare the pid namespace.
-See also the \fB--fork\fP and \fB--mount-proc\fP options.
+.BR \-p , " \-\-pid"[=\fIfile\fP]
+Unshare the pid namespace. If \fIfile\fP is specified then persistent namespace is created
+by bind mount. See also the \fB--fork\fP and \fB--mount-proc\fP options.
 .TP
-.BR \-u , " \-\-uts"
-Unshare the UTS namespace.
+.BR \-u , " \-\-uts"[=\fIfile\fP]
+Unshare the UTS namespace. If \fIfile\fP is specified then persistent namespace is created
+by bind mount.
 .TP
-.BR \-U , " \-\-user"
-Unshare the user namespace.
+.BR \-U , " \-\-user"[=\fIfile\fP]
+Unshare the user namespace. If \fIfile\fP is specified then persistent namespace is created
+by bind mount.
 .TP
 .BR \-f , " \-\-fork"
 Fork the specified \fIprogram\fR as a child process of \fBunshare\fR rather than
@@ -125,14 +139,32 @@ procfs instance.
 root
 .br
 Establish a user namespace as an unprivileged user with a root user within it.
+.TP
+.TQ
+.B # touch /root/uts-ns
+.TQ
+.B # unshare --uts=/root/uts-ns hostanme FOO
+.TQ
+.B # nsenter --uts=/root/uts-ns hostname
+.TQ
+FOO
+.TQ
+.B # umount /root/uts-ns
+.br
+Establish a persistent UTS namespace, modify hostname. The namespace maybe later entered
+by nsenter. The namespace is destroyed by umount the bind reference.
 .SH SEE ALSO
 .BR unshare (2),
 .BR clone (2),
 .BR mount (8)
-.SH BUGS
-None known so far.
-.SH AUTHOR
-Mikhail Gusarov <dottedmag@dottedmag.net>
+.SH AUTHORS
+.UR dottedmag@dottedmag.net
+Mikhail Gusarov
+.UE
+.br
+.UR kzak@redhat.com
+Karel Zak
+.UE
 .SH AVAILABILITY
 The unshare command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.

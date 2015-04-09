@@ -42,6 +42,24 @@
 /* 'private' is kernel default */
 #define UNSHARE_PROPAGATION_DEFAULT	(MS_REC | MS_PRIVATE)
 
+/* /proc namespace files and mountpoints for binds */
+static struct namespace_file {
+	int		type;		/* CLONE_NEW* */
+	const char	*name;		/* ns/<type> */
+	const char	*target;	/* user specified target for bind mount */
+} namespace_files[] = {
+	{ .type = CLONE_NEWUSER, .name = "ns/user" },
+	{ .type = CLONE_NEWIPC,  .name = "ns/ipc"  },
+	{ .type = CLONE_NEWUTS,  .name = "ns/uts"  },
+	{ .type = CLONE_NEWNET,  .name = "ns/net"  },
+	{ .type = CLONE_NEWPID,  .name = "ns/pid"  },
+	{ .type = CLONE_NEWNS,   .name = "ns/mnt"  },
+	{ .name = NULL }
+};
+
+static int npersists;	/* number of persistent namespaces */
+
+
 enum {
 	SETGROUPS_NONE = -1,
 	SETGROUPS_DENY = 0,
@@ -133,6 +151,40 @@ static void set_propagation(unsigned long flags)
 		err(EXIT_FAILURE, _("cannot change root filesystem propagation"));
 }
 
+
+static int set_ns_target(int type, const char *path)
+{
+	struct namespace_file *ns;
+
+	for (ns = namespace_files; ns->name; ns++) {
+		if (ns->type != type)
+			continue;
+		ns->target = path;
+		npersists++;
+		return 0;
+	}
+
+	return -EINVAL;
+}
+
+static int bind_ns_files(pid_t pid)
+{
+	struct namespace_file *ns;
+	char src[PATH_MAX];
+
+	for (ns = namespace_files; ns->name; ns++) {
+		if (!ns->target)
+			continue;
+
+		snprintf(src, sizeof(src), "/proc/%u/%s", (unsigned) pid, ns->name);
+
+		if (mount(src, ns->target, NULL, MS_BIND, NULL) != 0)
+			err(EXIT_FAILURE, _("mount %s on %s failed"), src, ns->target);
+	}
+
+	return 0;
+}
+
 static void usage(int status)
 {
 	FILE *out = status == EXIT_SUCCESS ? stdout : stderr;
@@ -145,12 +197,12 @@ static void usage(int status)
 	fputs(_("Run a program with some namespaces unshared from the parent.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -m, --mount               unshare mounts namespace\n"), out);
-	fputs(_(" -u, --uts                 unshare UTS namespace (hostname etc)\n"), out);
-	fputs(_(" -i, --ipc                 unshare System V IPC namespace\n"), out);
-	fputs(_(" -n, --net                 unshare network namespace\n"), out);
-	fputs(_(" -p, --pid                 unshare pid namespace\n"), out);
-	fputs(_(" -U, --user                unshare user namespace\n"), out);
+	fputs(_(" -m, --mount[=<file>]      unshare mounts namespace\n"), out);
+	fputs(_(" -u, --uts[=<file>]        unshare UTS namespace (hostname etc)\n"), out);
+	fputs(_(" -i, --ipc[=<file>]        unshare System V IPC namespace\n"), out);
+	fputs(_(" -n, --net[=<file>]        unshare network namespace\n"), out);
+	fputs(_(" -p, --pid[=<file>]        unshare pid namespace\n"), out);
+	fputs(_(" -U, --user[=<file>]       unshare user namespace\n"), out);
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
 	fputs(_("     --mount-proc[=<dir>]  mount proc filesystem first (implies --mount)\n"), out);
 	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
@@ -176,12 +228,14 @@ int main(int argc, char *argv[])
 	static const struct option longopts[] = {
 		{ "help", no_argument, 0, 'h' },
 		{ "version", no_argument, 0, 'V'},
-		{ "mount", no_argument, 0, 'm' },
-		{ "uts", no_argument, 0, 'u' },
-		{ "ipc", no_argument, 0, 'i' },
-		{ "net", no_argument, 0, 'n' },
-		{ "pid", no_argument, 0, 'p' },
-		{ "user", no_argument, 0, 'U' },
+
+		{ "mount", optional_argument, 0, 'm' },
+		{ "uts",   optional_argument, 0, 'u' },
+		{ "ipc",   optional_argument, 0, 'i' },
+		{ "net",   optional_argument, 0, 'n' },
+		{ "pid",   optional_argument, 0, 'p' },
+		{ "user",  optional_argument, 0, 'U' },
+
 		{ "fork", no_argument, 0, 'f' },
 		{ "mount-proc", optional_argument, 0, OPT_MOUNTPROC },
 		{ "map-root-user", no_argument, 0, 'r' },
@@ -215,21 +269,33 @@ int main(int argc, char *argv[])
 			return EXIT_SUCCESS;
 		case 'm':
 			unshare_flags |= CLONE_NEWNS;
+			if (optarg)
+				set_ns_target(CLONE_NEWNS, optarg);
 			break;
 		case 'u':
 			unshare_flags |= CLONE_NEWUTS;
+			if (optarg)
+				set_ns_target(CLONE_NEWUTS, optarg);
 			break;
 		case 'i':
 			unshare_flags |= CLONE_NEWIPC;
+			if (optarg)
+				set_ns_target(CLONE_NEWIPC, optarg);
 			break;
 		case 'n':
 			unshare_flags |= CLONE_NEWNET;
+			if (optarg)
+				set_ns_target(CLONE_NEWNET, optarg);
 			break;
 		case 'p':
 			unshare_flags |= CLONE_NEWPID;
+			if (optarg)
+				set_ns_target(CLONE_NEWPID, optarg);
 			break;
 		case 'U':
 			unshare_flags |= CLONE_NEWUSER;
+			if (optarg)
+				set_ns_target(CLONE_NEWUSER, optarg);
 			break;
 		case OPT_MOUNTPROC:
 			unshare_flags |= CLONE_NEWNS;
@@ -272,6 +338,9 @@ int main(int argc, char *argv[])
 			err(EXIT_FAILURE, _("child exit failed"));
 		}
 	}
+
+	if (npersists)
+		bind_ns_files(getpid());
 
 	if (maproot) {
 		if (setgrpcmd == SETGROUPS_ALLOW)
