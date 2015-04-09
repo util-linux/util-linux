@@ -27,6 +27,10 @@
 #include <sys/wait.h>
 #include <sys/mount.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 /* we only need some defines missing in sys/mount.h, no libmount linkage */
 #include <libmount.h>
 
@@ -185,6 +189,43 @@ static int bind_ns_files(pid_t pid)
 	return 0;
 }
 
+static ino_t get_mnt_ino(pid_t pid)
+{
+	struct stat st;
+	char path[PATH_MAX];
+
+	snprintf(path, sizeof(path), "/proc/%u/ns/mnt", (unsigned) pid);
+
+	if (stat(path, &st) != 0)
+		err(EXIT_FAILURE, _("cannot stat %s"), path);
+	return st.st_ino;
+}
+
+static void bind_ns_files_from_child(pid_t *child)
+{
+	pid_t ppid = getpid();
+	ino_t ino = get_mnt_ino(ppid);
+
+	*child = fork();
+
+	switch(*child) {
+	case -1:
+		err(EXIT_FAILURE, _("fork failed"));
+	case 0:	/* child */
+		do {
+			/* wait until parent unshare() */
+			ino_t new_ino = get_mnt_ino(ppid);
+			if (ino != new_ino)
+				break;
+		} while (1);
+		bind_ns_files(ppid);
+		exit(EXIT_SUCCESS);
+		break;
+	default: /* parent */
+		break;
+	}
+}
+
 static void usage(int status)
 {
 	FILE *out = status == EXIT_SUCCESS ? stdout : stderr;
@@ -248,6 +289,8 @@ int main(int argc, char *argv[])
 	int unshare_flags = 0;
 	int c, forkit = 0, maproot = 0;
 	const char *procmnt = NULL;
+	pid_t pid = 0;
+	int status;
 	unsigned long propagation = UNSHARE_PROPAGATION_DEFAULT;
 	uid_t real_euid = geteuid();
 	gid_t real_egid = getegid();;
@@ -316,12 +359,35 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	if (npersists && (unshare_flags & CLONE_NEWNS))
+		bind_ns_files_from_child(&pid);
+
 	if (-1 == unshare(unshare_flags))
 		err(EXIT_FAILURE, _("unshare failed"));
 
+	if (npersists) {
+		if (pid && (unshare_flags & CLONE_NEWNS)) {
+			/* wait for bind_ns_files_from_child() */
+			int rc;
+
+			do {
+				rc = waitpid(pid, &status, 0);
+				if (rc < 0) {
+					if (errno == EINTR)
+						continue;
+					err(EXIT_FAILURE, _("waitpid failed"));
+				}
+				if (WIFEXITED(status) &&
+				    WEXITSTATUS(status) != EXIT_SUCCESS)
+					return WEXITSTATUS(status);
+			} while (rc < 0);
+		} else
+			/* simple way, just bind */
+			bind_ns_files(getpid());
+	}
+
 	if (forkit) {
-		int status;
-		pid_t pid = fork();
+		pid = fork();
 
 		switch(pid) {
 		case -1:
@@ -339,8 +405,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (npersists)
-		bind_ns_files(getpid());
 
 	if (maproot) {
 		if (setgrpcmd == SETGROUPS_ALLOW)
