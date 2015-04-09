@@ -36,8 +36,11 @@ ts_init_socket_to_file $DEVLOG $SOCKIN
 SOCAT_PID="$!"
 
 function logger_fun {
-	$TS_HELPER_LOGGER -u $DEVLOG -s --no-act "$@" >> "$TS_OUTPUT" 2>&1
+	# logger without --no-act to write all data to the socket
+	echo "socket data, ${TS_SUBNAME}:" |socat -u - UNIX-CONNECT:$DEVLOG
+	$TS_HELPER_LOGGER -u $DEVLOG --stderr "$@" >> "$TS_OUTPUT" 2>&1
 	echo "ret: $?" >> "$TS_OUTPUT"
+	echo |socat -u - UNIX-CONNECT:$DEVLOG
 }
 
 ts_init_subtest "kern_priority"
