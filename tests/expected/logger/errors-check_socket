@@ -17,3 +17,5 @@ socket data, tag_with_space:
 <13>1 2009-02-13T23:31:30.123456+00:00 test-hostname A B - - [timeQuality tzKnown="1" isSynced="0"] tag_with_space_rfc5424
 socket data, rfc5424_msgid_with_space:
 
+socket data, invalid_socket:
+

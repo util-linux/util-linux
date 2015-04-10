@@ -1,0 +1,2 @@
+test_logger: socket /bad/boy: No such file or directory
+ret: 1
