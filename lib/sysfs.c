@@ -246,7 +246,7 @@ DIR *sysfs_opendir(struct sysfs_cxt *cxt, const char *attr)
 		 * -- we cannot use cxt->sysfs_fd directly, because closedir()
 		 * will close this our persistent file descriptor.
 		 */
-		fd = dup(cxt->dir_fd);
+		fd = fcntl(cxt->dir_fd, F_DUPFD_CLOEXEC, STDERR_FILENO + 1);
 
 	if (fd < 0)
 		return NULL;
