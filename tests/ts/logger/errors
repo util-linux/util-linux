@@ -75,6 +75,10 @@ ts_init_subtest "rfc5424_msgid_with_space"
 logger_fun -t "rfc5424_msgid_with_space" --rfc5424 --msgid="A B" "message"
 ts_finalize_subtest
 
+ts_init_subtest "invalid_socket"
+logger_fun -u /bad/boy -t "invalid_socket" "message"
+ts_finalize_subtest
+
 ts_init_subtest "check_socket"
 ts_log "Check written socket data of all subtests."
 sleep 1
