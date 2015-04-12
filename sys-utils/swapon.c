@@ -28,8 +28,6 @@
 #include "swapprober.h"
 #include "swapon-common.h"
 
-#define PATH_MKSWAP	"/sbin/mkswap"
-
 #ifdef HAVE_SYS_SWAP_H
 # include <sys/swap.h>
 #endif
@@ -303,7 +301,7 @@ static int swap_reinitialize(const char *device,
 		return -1;
 
 	case 0:	/* child */
-		cmd[idx++] = PATH_MKSWAP;
+		cmd[idx++] = "mkswap";
 		if (label && *label) {
 			cmd[idx++] = "-L";
 			cmd[idx++] = (char *) label;
@@ -314,7 +312,7 @@ static int swap_reinitialize(const char *device,
 		}
 		cmd[idx++] = (char *) device;
 		cmd[idx++] = NULL;
-		execv(cmd[0], cmd);
+		execvp(cmd[0], cmd);
 		err(EXIT_FAILURE, _("failed to execute %s"), cmd[0]);
 
 	default: /* parent */
