@@ -38,10 +38,6 @@
 #define DEFAULT_FSTYPE	"ext2"
 #endif
 
-#define SEARCH_PATH	"PATH=" FS_SEARCH_PATH
-#define PROGNAME	"mkfs.%s"
-
-
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
@@ -78,7 +74,6 @@ int main(int argc, char **argv)
 	char *progname;		/* name of executable to be called */
 	char *fstype = NULL;
 	int i, more = 0, verbose = 0;
-	char *oldpath, *newpath;
 
 	enum { VERSION_OPTION = CHAR_MAX + 1 };
 
@@ -126,17 +121,7 @@ int main(int argc, char **argv)
 	if (fstype == NULL)
 		fstype = DEFAULT_FSTYPE;
 
-	/* Set PATH and program name */
-	oldpath = getenv("PATH");
-	if (!oldpath)
-		oldpath = "/bin";
-
-	newpath = xmalloc(strlen(oldpath) + sizeof(SEARCH_PATH) + 3);
-	sprintf(newpath, "%s:%s\n", SEARCH_PATH, oldpath);
-	putenv(newpath);
-
-	progname = xmalloc(sizeof(PROGNAME) + strlen(fstype) + 1);
-	sprintf(progname, PROGNAME, fstype);
+	xasprintf(&progname, "mkfs.%s", fstype);
 	argv[--optind] = progname;
 
 	if (verbose) {

@@ -29,20 +29,8 @@ In actuality,
 is simply a front-end for the various filesystem builders
 (\fBmkfs.\fIfstype\fR)
 available under Linux.
-The filesystem-specific builder is searched for in a number
-of directories, like perhaps
-.IR /sbin ,
-.IR /sbin/fs ,
-.IR /sbin/fs.d ,
-.IR /etc/fs ,
-.I /etc
-(the precise list is defined at compile time but at least
-contains
-.I /sbin
-and
-.IR /sbin/fs ),
-and finally in the directories
-listed in the PATH environment variable.
+The filesystem-specific builder is searched for via your PATH
+environment setting only.
 Please see the filesystem-specific builder manual pages for
 further details.
 .SH OPTIONS
