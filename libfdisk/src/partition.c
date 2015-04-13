@@ -757,8 +757,7 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 		}
 		break;
 	case FDISK_FIELD_BOOT:
-		if (fdisk_partition_is_bootable(pa))
-			rc = asprintf(&p, "%c", pa->boot ? '*' : ' ');
+		p = fdisk_partition_is_bootable(pa) ? strdup("*") : NULL;
 		break;
 	case FDISK_FIELD_START:
 		if (fdisk_partition_has_start(pa)) {

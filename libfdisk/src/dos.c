@@ -1221,7 +1221,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		}
 	}
 
-	set_partition(cxt, n, 0, start, stop, sys, pa && pa->boot == 1 ? 1 : 0);
+	set_partition(cxt, n, 0, start, stop, sys, fdisk_partition_is_bootable(pa));
 	if (n > 4) {
 		struct pte *pe = self_pte(cxt, n);
 		set_partition(cxt, n - 1, 1, pe->offset, stop,
@@ -1963,13 +1963,15 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 
 		set_partition(cxt, n, 0, start, start + size - 1,
 				pa->type  ? pa->type->code : p->sys_ind,
-				pa->boot == 1);
+				FDISK_IS_UNDEF(pa->boot) ?
+					p->boot_ind == ACTIVE_FLAG :
+					fdisk_partition_is_bootable(pa));
 	} else {
 		DBG(LABEL, ul_debug("DOS: keep size, modify properties"));
 		if (pa->type)
 			p->sys_ind = pa->type->code;
 		if (!FDISK_IS_UNDEF(pa->boot))
-			p->boot_ind = pa->boot == 1 ? ACTIVE_FLAG : 0;
+			p->boot_ind = fdisk_partition_is_bootable(pa) ? ACTIVE_FLAG : 0;
 	}
 
 	partition_set_changed(cxt, n, 1);
