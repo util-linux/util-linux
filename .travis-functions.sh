@@ -86,6 +86,13 @@ function travis_install_script
 		gtk-doc-tools \
 		ntp \
 		|| return
+
+	# install/upgrade custom stuff from non-official sources
+	sudo add-apt-repository -y ppa:malcscott/socat || return
+	sudo apt-get -qq update || return
+	sudo apt-get install -qq >/dev/null \
+		socat \
+		|| return
 }
 
 function travis_before_script
