@@ -965,7 +965,7 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 		}
 	}
 #endif
-	rc = fdisk_init_firstsector_buffer(cxt);
+	rc = fdisk_init_firstsector_buffer(cxt, 0, 0);
 	if (rc)
 		return rc;
 

@@ -244,4 +244,6 @@ FDISK_2.27 {
 	fdisk_script_set_fgets;
 	fdisk_script_set_userdata;
 	fdisk_script_get_userdata;
+	fdisk_enable_bootbits_protection;
+	fdisk_has_protected_bootbits;
 } FDISK_2.26;

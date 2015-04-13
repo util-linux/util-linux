@@ -10,13 +10,48 @@
  * @short_description: misc fdisk functions
  */
 
+static int read_from_device(struct fdisk_context *cxt,
+		unsigned char *buf,
+		uintmax_t start, size_t size)
+{
+	ssize_t r;
+
+	assert(cxt);
+
+	DBG(CXT, ul_debugobj(cxt, "reading: offset=%ju, size=%zu",
+				start, size));
+
+	r = lseek(cxt->dev_fd, start, SEEK_SET);
+	if (r == -1)
+	{
+		DBG(CXT, ul_debugobj(cxt, "failed to seek to offset %ju: %m", start));
+		return -errno;
+	}
+
+	r = read(cxt->dev_fd, buf, size);
+	if (r < 0 || r != size) {
+		if (!errno)
+			errno = EINVAL;	/* probably too small file/device */
+		DBG(CXT, ul_debugobj(cxt, "failed to read %zu from offset %ju: %m",
+				size, start));
+		return -errno;
+	}
+
+	return 0;
+}
+
+
 /*
  * Zeros in-memory first sector buffer
  */
-int fdisk_init_firstsector_buffer(struct fdisk_context *cxt)
+int fdisk_init_firstsector_buffer(struct fdisk_context *cxt,
+				  unsigned int protect_off,
+				  unsigned int protect_size)
 {
 	if (!cxt)
 		return -EINVAL;
+
+	assert(protect_off + protect_size <= cxt->sector_size);
 
 	if (!cxt->firstsector || cxt->firstsector_bufsz != cxt->sector_size) {
 		/* Let's allocate a new buffer if no allocated yet, or the
@@ -36,43 +71,37 @@ int fdisk_init_firstsector_buffer(struct fdisk_context *cxt)
 
 	DBG(CXT, ul_debugobj(cxt, "zeroize in-memory first sector buffer"));
 	memset(cxt->firstsector, 0, cxt->firstsector_bufsz);
+
+	if (protect_size) {
+		/*
+		 * It would be possible to reuse data from cxt->firstsector
+		 * (call memset() for non-protected area only) and avoid one
+		 * read() from the device, but it seems like a too fragile
+		 * solution as we have no clue about stuff in the buffer --
+		 * maybe it was already modified. Let's re-read from the device
+		 * to be sure.			-- kzak 13-Apr-2015
+		 */
+		DBG(CXT, ul_debugobj(cxt, "first sector protection enabled -- re-reading"));
+		read_from_device(cxt, cxt->firstsector, protect_off, protect_size);
+	}
 	return 0;
 }
 
 int fdisk_read_firstsector(struct fdisk_context *cxt)
 {
-	ssize_t r;
 	int rc;
 
 	assert(cxt);
 	assert(cxt->sector_size);
 
-	rc = fdisk_init_firstsector_buffer(cxt);
+	rc = fdisk_init_firstsector_buffer(cxt, 0, 0);
 	if (rc)
 		return rc;
 
 	assert(cxt->sector_size == cxt->firstsector_bufsz);
 
-	DBG(CXT, ul_debugobj(cxt, "reading first sector "
-				"buffer [sector_size=%lu]", cxt->sector_size));
 
-	r = lseek(cxt->dev_fd, 0, SEEK_SET);
-	if (r == -1)
-	{
-		DBG(CXT, ul_debugobj(cxt, "failed to seek to first sector %m"));
-		return -errno;
-	}
-
-	r = read(cxt->dev_fd, cxt->firstsector, cxt->sector_size);
-
-	if (r != cxt->sector_size) {
-		if (!errno)
-			errno = EINVAL;	/* probably too small file/device */
-		DBG(CXT, ul_debugobj(cxt, "failed to read first sector %m"));
-		return -errno;
-	}
-
-	return 0;
+	return  read_from_device(cxt, cxt->firstsector, 0, cxt->sector_size);
 }
 
 /**
