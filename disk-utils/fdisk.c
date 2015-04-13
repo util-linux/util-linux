@@ -680,6 +680,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -b, --sector-size <size>      physical and logical sector size\n"), out);
+	fputs(_(" -B, --protect-boot            don't erase bootbits when creat a new label\n"), out);
 	fputs(_(" -c, --compatibility[=<mode>]  mode is 'dos' or 'nondos' (default)\n"), out);
 	fputs(_(" -L, --color[=<when>]          colorize output (auto, always or never)\n"), out);
 	fprintf(out,
@@ -737,6 +738,7 @@ int main(int argc, char **argv)
 		{ "units",          optional_argument, NULL, 'u' },
 		{ "version",        no_argument,       NULL, 'V' },
 		{ "output",         no_argument,       NULL, 'o' },
+		{ "protect-boot",   no_argument,       NULL, 'B' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -754,7 +756,7 @@ int main(int argc, char **argv)
 
 	fdisk_set_ask(cxt, ask_callback, NULL);
 
-	while ((c = getopt_long(argc, argv, "b:c::C:hH:lL::o:sS:t:u::vV",
+	while ((c = getopt_long(argc, argv, "b:Bc::C:hH:lL::o:sS:t:u::vV",
 				longopts, NULL)) != -1) {
 		switch (c) {
 		case 'b':
@@ -766,6 +768,9 @@ int main(int argc, char **argv)
 			fdisk_save_user_sector_size(cxt, sz, sz);
 			break;
 		}
+		case 'B'
+			fdisk_enable_bootbits_protection(cxt, 1);
+			break;
 		case 'C':
 			fdisk_save_user_geometry(cxt,
 				strtou32_or_err(optarg,

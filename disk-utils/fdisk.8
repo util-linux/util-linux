@@ -53,6 +53,10 @@ to override the kernel's ideas.)  Since util-linux-2.17, \fBfdisk\fR differentia
 between logical and physical sector size.  This option changes both sector sizes to
 .IB sectorsize .
 .TP
+\fB\-B\fR, \fB\-\-protect\-boot\fP
+Don't erase the begin of the first disk sector when create a new disk label. This
+feature is supported for GPT and MBR.
+.TP
 \fB\-c\fR, \fB\-\-compatibility\fR[\fI=mode\fR]
 Specify the compatibility mode, 'dos' or 'nondos'.  The default is non-DOS
 mode.  For backward compatibility, it is possible to use the option without
