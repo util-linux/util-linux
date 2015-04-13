@@ -190,6 +190,7 @@ static void sfdisk_init(struct sfdisk *sf)
 	if (!sf->cxt)
 		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));
 	fdisk_set_ask(sf->cxt, ask_callback, (void *) sf);
+	fdisk_enable_bootbits_protection(sf->cxt, 1);
 
 	if (sf->label_nested) {
 		struct fdisk_context *x = fdisk_new_nested_context(sf->cxt,
