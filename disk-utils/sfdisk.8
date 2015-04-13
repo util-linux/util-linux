@@ -57,7 +57,14 @@ input format.  If standard input is a terminal, then \fBsfdisk\fR starts an
 interactive session.
 .sp
 If the option \fB\-N\fR is specified, then the changes are applied to
-the partition addressed by \fIpartition-number\fR.
+the partition addressed by \fIpartition-number\fR. The unspecified fields
+of the partition are not modified.
+.sp
+Note that it's possible to address unused partition by \fB\-N\fR. For example
+MBR always contains 4 partitions, but the number of the used partitions may be
+smaller.  In this case sfdisk follows the default values from the partition
+table and it does not use built-in defaults for the unused partition specified
+by \fB\-N\fR. See also \fB\---append\fR.
 .TP
 .BR \-A , " \-\-activate \fIdevice\fR [" \fIpartition-number\fR...]
 Switch on the bootable flag.  If no \fIpartition-number\fR is specified,

@@ -1109,16 +1109,21 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	 */
 	if (partno >= 0) {
 		size_t n;
+
 		if (!fdisk_has_label(sf->cxt))
 			errx(EXIT_FAILURE, _("%s: cannot modify partition %d: "
 					     "no partition table was found"),
-					devname, partno);
+					devname, partno + 1);
 		n = fdisk_get_npartitions(sf->cxt);
 		if ((size_t) partno > n)
 			errx(EXIT_FAILURE, _("%s: cannot modify partition %d: "
 					     "partition table contains only %zu "
 					     "partitions"),
-					devname, partno, n);
+					devname, partno + 1, n);
+
+		if (!fdisk_is_partition_used(sf->cxt, partno))
+			fdisk_warnx(sf->cxt, _("warning: %s: partition %d is not defined yet"),
+					devname, partno + 1);
 		created = 1;
 		next_partno = partno;
 	}
