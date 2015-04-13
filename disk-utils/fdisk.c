@@ -768,7 +768,7 @@ int main(int argc, char **argv)
 			fdisk_save_user_sector_size(cxt, sz, sz);
 			break;
 		}
-		case 'B'
+		case 'B':
 			fdisk_enable_bootbits_protection(cxt, 1);
 			break;
 		case 'C':
