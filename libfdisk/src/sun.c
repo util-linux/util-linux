@@ -209,7 +209,7 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	assert(fdisk_is_label(cxt, SUN));
 
 	/* map first sector to header */
-	rc = fdisk_init_firstsector_buffer(cxt);
+	rc = fdisk_init_firstsector_buffer(cxt, 0, 0);
 	if (rc)
 		return rc;
 

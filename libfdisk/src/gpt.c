@@ -27,6 +27,7 @@
 #include "bitops.h"
 #include "strutils.h"
 #include "all-io.h"
+#include "pt-mbr.h"
 
 /**
  * SECTION: gpt
@@ -406,7 +407,10 @@ static int gpt_mknew_pmbr(struct fdisk_context *cxt)
 	if (!cxt || !cxt->firstsector)
 		return -ENOSYS;
 
-	rc = fdisk_init_firstsector_buffer(cxt);
+	if (fdisk_has_protected_bootbits(cxt))
+		rc = fdisk_init_firstsector_buffer(cxt, 0, MBR_PT_BOOTBITS_SIZE);
+	else
+		rc = fdisk_init_firstsector_buffer(cxt, 0, 0);
 	if (rc)
 		return rc;
 

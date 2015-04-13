@@ -11,6 +11,7 @@ struct dos_partition {
 } __attribute__((packed));
 
 #define MBR_PT_OFFSET		0x1be
+#define MBR_PT_BOOTBITS_SIZE	440
 
 static inline struct dos_partition *mbr_get_partition(unsigned char *mbr, int i)
 {

@@ -239,3 +239,8 @@ global:
 local:
 	*;
 };
+
+FDISK_2.27 {
+	fdisk_enable_bootbits_protection;
+	fdisk_has_protected_bootbits;
+} FDISK_2.26;

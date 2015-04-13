@@ -211,6 +211,8 @@ enum {
 int fdisk_set_size_unit(struct fdisk_context *cxt, int unit);
 int fdisk_get_size_unit(struct fdisk_context *cxt);
 
+int fdisk_has_protected_bootbits(struct fdisk_context *cxt);
+int fdisk_enable_bootbits_protection(struct fdisk_context *cxt, int enable);
 
 /* parttype.c */
 struct fdisk_parttype *fdisk_new_parttype(void);

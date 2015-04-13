@@ -659,7 +659,10 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 	if (!has_id)
 		random_get_bytes(&id, sizeof(id));
 
-	rc = fdisk_init_firstsector_buffer(cxt);
+	if (fdisk_has_protected_bootbits(cxt))
+		rc = fdisk_init_firstsector_buffer(cxt, 0, MBR_PT_BOOTBITS_SIZE);
+	else
+		rc = fdisk_init_firstsector_buffer(cxt, 0, 0);
 	if (rc)
 		return rc;
 	dos_init(cxt);

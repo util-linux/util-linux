@@ -350,6 +350,7 @@ struct fdisk_context {
 	unsigned int readonly : 1,		/* don't write to the device */
 		     display_in_cyl_units : 1,	/* for obscure labels */
 		     display_details : 1,	/* expert display mode */
+		     protect_bootbits : 1,	/* don't zeroize fll irst sector */
 		     listonly : 1;		/* list partition, nothing else */
 
 	int sizeunit;				/* SIZE fields, FDISK_SIZEUNIT_* */
@@ -402,7 +403,8 @@ extern int fdisk_apply_user_device_properties(struct fdisk_context *cxt);
 extern void fdisk_zeroize_device_properties(struct fdisk_context *cxt);
 
 /* utils.c */
-extern int fdisk_init_firstsector_buffer(struct fdisk_context *cxt);
+extern int fdisk_init_firstsector_buffer(struct fdisk_context *cxt,
+			unsigned int protect_off, unsigned int protect_size);
 extern int fdisk_read_firstsector(struct fdisk_context *cxt);
 extern char *fdisk_partname(const char *dev, size_t partno);
 

@@ -94,12 +94,13 @@ static int init_nested_from_parent(struct fdisk_context *cxt, int isnew)
 	cxt->user_log_sector =	parent->user_log_sector;
 	cxt->user_pyh_sector =  parent->user_pyh_sector;
 
-	/* parent <--> nested independent setting, initialize for new nested 
+	/* parent <--> nested independent setting, initialize for new nested
 	 * contexts only */
 	if (isnew) {
 		cxt->listonly =	parent->listonly;
 		cxt->display_details =	parent->display_details;
 		cxt->display_in_cyl_units = parent->display_in_cyl_units;
+		cxt->protect_bootbits = parent->protect_bootbits;
 	}
 
 	free(cxt->dev_path);
@@ -301,6 +302,36 @@ int __fdisk_switch_label(struct fdisk_context *cxt, struct fdisk_label *lb)
 int fdisk_has_label(struct fdisk_context *cxt)
 {
 	return cxt && cxt->label;
+}
+
+/**
+ * fdisk_has_protected_bootbits:
+ * @cxt: fdisk context
+ *
+ * Returns: return 1 if boot bits protection enabled.
+ */
+int fdisk_has_protected_bootbits(struct fdisk_context *cxt)
+{
+	return cxt && cxt->protect_bootbits;
+}
+
+/**
+ * fdisk_enable_bootbits_protection:
+ * @cxt: fdisk context
+ * @enable: 1 or 0
+ *
+ * The library zeroizes all the first sector when create a new disk label by
+ * default.  This function allows to control this behavior. For now it's
+ * supported for MBR and GPT.
+ *
+ * Returns: 0 on success, < 0 on error.
+ */
+int fdisk_enable_bootbits_protection(struct fdisk_context *cxt, int enable)
+{
+	if (!cxt)
+		return -EINVAL;
+	cxt->protect_bootbits = enable ? 1 : 0;
+	return 0;
 }
 
 /**
