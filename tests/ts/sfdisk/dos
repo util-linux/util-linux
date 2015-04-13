@@ -111,5 +111,19 @@ udevadm settle
 ts_finalize_subtest
 
 
+ts_init_subtest "resize"
+$TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
+$TS_CMD_SFDISK ${TS_DEVICE} > /dev/null 2>&1 <<EOF
+label: dos
+,10M,S,*
+EOF
+udevadm settle
+echo ',+' | $TS_CMD_SFDISK -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean $TS_DEVICE
+udevadm settle
+ts_finalize_subtest
+
+
 rmmod scsi_debug
 ts_finalize
