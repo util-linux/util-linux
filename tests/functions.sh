@@ -545,7 +545,7 @@ function ts_is_mounted {
 	grep -q $DEV /proc/mounts && return 0
 
 	if [ "${DEV#/dev/loop/}" != "$DEV" ]; then
-		return grep -q "/dev/loop${DEV#/dev/loop/}" /proc/mounts
+		grep -q "/dev/loop${DEV#/dev/loop/}" /proc/mounts && return 0
 	fi
 	return 1
 }
