@@ -36,6 +36,11 @@ umount $MOUNTPOINT &> /dev/null
 ts_scsi_debug_init dev_size_mb=100
 DEVNAME=$(basename $TS_DEVICE)
 
+grep -q '#define USE_LIBMOUNT_FORCE_MOUNTINFO' ${TS_TOPDIR}/../config.h
+if [ $? == 0 ]; then
+	MOUNTINFO_ONLY=yes
+fi
+
 ts_log "Create partitions"
 $TS_CMD_FDISK ${TS_DEVICE} &> /dev/null <<EOF
 n
@@ -66,47 +71,53 @@ ts_log "Do tests..."
 export LIBMOUNT_MTAB=$TS_OUTPUT.mtab
 > $LIBMOUNT_MTAB
 
+# check local mtab of system mountinfo
+function is_mounted {
+	if [ "$MOUNTINFO_ONLY" = "yes" ]; then
+		ts_is_mounted "$1"
+		return $?
+	fi
+	grep -q "$1" $LIBMOUNT_MTAB && return 0
+	return 1
+}
+
+
 udevadm settle
 ts_device_has "TYPE" "ext4" $DEVICE || ts_die "Cannot find ext3 on $DEVICE" $DEVICE
+
 
 ts_init_subtest "mount-by-devname"
 mkdir -p $MOUNTPOINT &>  /dev/null
 $PYTHON $TESTPROG --mount $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
-
-grep -q $DEVICE $LIBMOUNT_MTAB || \
-	echo "(by device) cannot find $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+is_mounted $DEVICE || echo "$DEVICE not mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
+
 
 ts_init_subtest "umount-by-devname"
 $PYTHON $TESTPROG --umount $DEVICE >> $TS_OUTPUT 2>&1
-grep -q $DEVICE $LIBMOUNT_MTAB &&
-	echo "umount (device) failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+is_mounted $DEVICE && echo "$DEVICE still mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
 ts_init_subtest "mount-by-label"
 mkdir -p $MOUNTPOINT &>  /dev/null
 $PYTHON $TESTPROG --mount LABEL="$LABEL" $MOUNTPOINT >> $TS_OUTPUT 2>&1
-grep -q $DEVICE $LIBMOUNT_MTAB || \
-	echo "(by label) cannot find $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+is_mounted $DEVICE || echo "$DEVICE not mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
 ts_init_subtest "umount-by-mountpoint"
 $PYTHON $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
-grep -q $DEVICE $LIBMOUNT_MTAB && \
-	echo "umount (mountpoint) failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+is_mounted $DEVICE && echo "$DEVICE still mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
 ts_init_subtest "mount-by-uuid"
 mkdir -p $MOUNTPOINT &> /dev/null
 $PYTHON $TESTPROG --mount UUID="$UUID" $MOUNTPOINT >> $TS_OUTPUT 2>&1
-grep -q $DEVICE $LIBMOUNT_MTAB || \
-	echo "(by uuid) cannot find $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+is_mounted $DEVICE || echo "$DEVICE not mounted" >> $TS_OUTPUT 2>&1
 $PYTHON $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
-grep -q $DEVICE $LIBMOUNT_MTAB &&
-	echo "umount failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+is_mounted $DEVICE && echo "$DEVICE still mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
@@ -114,15 +125,13 @@ ts_init_subtest "mount-flags"
 mkdir -p $MOUNTPOINT &> /dev/null
 $PYTHON $TESTPROG --mount -o ro,noexec,nosuid,strictatime $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
 $TS_CMD_FINDMNT --kernel $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>&1
-grep -q $DEVICE $LIBMOUNT_MTAB || \
-	echo "cannot find $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+is_mounted $DEVICE || echo "$DEVICE not mounted" >> $TS_OUTPUT 2>&1
 
 $PYTHON $TESTPROG --mount -o remount,rw $MOUNTPOINT >> $TS_OUTPUT 2>&1
 $TS_CMD_FINDMNT --kernel $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>&1
 
 $PYTHON $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
-grep -q $DEVICE $LIBMOUNT_MTAB &&
-	echo "umount failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+is_mounted $DEVICE && echo "$DEVICE still mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
@@ -133,18 +142,17 @@ mkfs.ext3 -F $img &> /dev/null
 udevadm settle
 
 $PYTHON $TESTPROG --mount -o loop $img $MOUNTPOINT >> $TS_OUTPUT 2>&1
-grep -q $MOUNTPOINT $LIBMOUNT_MTAB || \
-	echo "(loopdev) cannot find $MOUNTPOINT in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+is_mounted $MOUNTPOINT || echo "$MOUNTPOINT not mounted" >> $TS_OUTPUT 2>&1
 udevadm settle
 $PYTHON $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
-grep -q $MOUNTPOINT $LIBMOUNT_MTAB &&
-	echo "umount failed: found $MOUNTPOINT in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+is_mounted $MOUNTPOINT && echo "$MOUNTPOINT still mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 ts_init_subtest "x-mount.mkdir"
 $TS_CMD_MOUNT -o x-mount.mkdir --bind $MOUNTPOINT $TS_NOEXIST >> $TS_OUTPUT 2>&1 &&
   echo "successfully mounted" >> $TS_OUTPUT
 ts_finalize_subtest
+
 
 $TS_CMD_UMOUNT $TS_NOEXIST
 rmdir $TS_NOEXIST
