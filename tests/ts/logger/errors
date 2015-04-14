@@ -30,7 +30,8 @@ export LOGGER_TEST_TIMEOFDAY="1234567890.123456"
 export LOGGER_TEST_HOSTNAME="test-hostname"
 export LOGGER_TEST_GETPID="98765"
 
-DEVLOG="${TS_OUTDIR}/${TS_TESTNAME}_devlog"
+DEVLOG="$(mktemp "/tmp/ultest-$TS_COMPONENT-$TS_TESTNAME-XXXXXX")" \
+	|| ts_die "mktemp failed"
 SOCKIN="${TS_OUTDIR}/${TS_TESTNAME}_socketin"
 ts_init_socket_to_file $DEVLOG $SOCKIN
 SOCAT_PID="$!"
@@ -85,6 +86,7 @@ sleep 1
 kill $SOCAT_PID
 wait $SOCAT_PID &>/dev/null
 cat "$SOCKIN" >> "$TS_OUTPUT" 2>&1
+rm -f "$DEVLOG" "$SOCKIN"
 ts_finalize_subtest
 
 ts_finalize
