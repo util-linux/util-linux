@@ -50,14 +50,31 @@ export LOGGER_TEST_TIMEOFDAY="1234567890.123456"
 export LOGGER_TEST_HOSTNAME="test-hostname"
 export LOGGER_TEST_GETPID="98765"
 
+DEVLOG="${TS_OUTDIR}/${TS_TESTNAME}_devlog"
+SOCKIN="${TS_OUTDIR}/${TS_TESTNAME}_socketin"
+ts_init_socket_to_file $DEVLOG $SOCKIN
+SOCAT_PID="$!"
+
+function logger_fun {
+	$TS_HELPER_LOGGER -u $DEVLOG --stderr --no-act "$@" >> "$TS_OUTPUT" 2>&1
+	echo "ret: $?" >> "$TS_OUTPUT"
+}
+
 for i in "${tests_array[@]}"; do
 	name="${i%%:*}"
 	options="${i##*:}"
 
 	ts_init_subtest "$name"
-	$TS_HELPER_LOGGER --stderr --no-act -t "test_tag" $options > "$TS_OUTPUT" 2>&1
-	echo "ret: $?" >> "$TS_OUTPUT" 
+	logger_fun -t "test_tag" $options
 	ts_finalize_subtest
 done
+
+ts_init_subtest "check_socket"
+ts_log "Check written socket data of all subtests."
+sleep 1
+kill $SOCAT_PID
+wait $SOCAT_PID &>/dev/null
+cat "$SOCKIN" >> "$TS_OUTPUT" 2>&1
+ts_finalize_subtest
 
 ts_finalize

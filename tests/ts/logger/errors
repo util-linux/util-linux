@@ -30,45 +30,61 @@ export LOGGER_TEST_TIMEOFDAY="1234567890.123456"
 export LOGGER_TEST_HOSTNAME="test-hostname"
 export LOGGER_TEST_GETPID="98765"
 
+DEVLOG="${TS_OUTDIR}/${TS_TESTNAME}_devlog"
+SOCKIN="${TS_OUTDIR}/${TS_TESTNAME}_socketin"
+ts_init_socket_to_file $DEVLOG $SOCKIN
+SOCAT_PID="$!"
+
+function logger_fun {
+	# logger without --no-act to write all data to the socket
+	echo "socket data, ${TS_SUBNAME}:" |socat -u - UNIX-CONNECT:$DEVLOG
+	$TS_HELPER_LOGGER -u $DEVLOG --stderr "$@" >> "$TS_OUTPUT" 2>&1
+	echo "ret: $?" >> "$TS_OUTPUT"
+	echo |socat -u - UNIX-CONNECT:$DEVLOG
+}
+
 ts_init_subtest "kern_priority"
-$TS_HELPER_LOGGER --no-act -s -t "prio" -p kern.emerg "message" > "$TS_OUTPUT" 2>&1
-echo "ret: $?" >> "$TS_OUTPUT"
+logger_fun -t "prio" -p kern.emerg "message"
 ts_finalize_subtest
 
 ts_init_subtest "kern_priority_numeric"
-$TS_HELPER_LOGGER --no-act -s -t "prio" -p 0 "message" > "$TS_OUTPUT" 2>&1
-echo "ret: $?" >> "$TS_OUTPUT"
+logger_fun -t "prio" -p 0 "message"
 ts_finalize_subtest
 
 ts_init_subtest "invalid_prio"
-$TS_HELPER_LOGGER --no-act -s -t "prio" -p 8 "message" > "$TS_OUTPUT" 2>&1
-echo "ret: $?" >> "$TS_OUTPUT"
+logger_fun -t "prio" -p 8 "message"
 ts_finalize_subtest
 
 # should truncate
 ts_init_subtest "rfc5424_exceed_size"
-$TS_HELPER_LOGGER --no-act -s -t "rfc5424_exceed_size" --rfc5424 --size 3 "abcd" > "$TS_OUTPUT" 2>&1
-echo "ret: $?" >> "$TS_OUTPUT"
+logger_fun -t "rfc5424_exceed_size" --rfc5424 --size 3 "abcd"
 ts_finalize_subtest
 
 ts_init_subtest "id_with_space"
-$TS_HELPER_LOGGER --no-act -s -t "id_with_space" --id="A B" "message" > "$TS_OUTPUT" 2>&1
-echo "ret: $?" >> "$TS_OUTPUT"
-$TS_HELPER_LOGGER --no-act -s -t "rfc5424_id_with_space" --rfc5424 --id="A B" "message" >> "$TS_OUTPUT" 2>&1
-echo "ret: $?" >> "$TS_OUTPUT"
+logger_fun -t "id_with_space" --id="A B" "message"
+logger_fun -t "rfc5424_id_with_space" --rfc5424 --id="A B" "message"
 ts_finalize_subtest
 
 # should not fail
 ts_init_subtest "tag_with_space"
-$TS_HELPER_LOGGER --no-act -s -t "A B" "tag_with_space" > "$TS_OUTPUT" 2>&1
-echo "ret: $?" >> "$TS_OUTPUT"
-$TS_HELPER_LOGGER --no-act -s -t "A B" --rfc5424 "tag_with_space_rfc5424" >> "$TS_OUTPUT" 2>&1
-echo "ret: $?" >> "$TS_OUTPUT"
+logger_fun -t "A B" "tag_with_space"
+logger_fun -t "A B" --rfc5424 "tag_with_space_rfc5424"
 ts_finalize_subtest
 
 ts_init_subtest "rfc5424_msgid_with_space"
-$TS_HELPER_LOGGER --no-act -s -t "rfc5424_msgid_with_space" --rfc5424 --msgid="A B" "message" > "$TS_OUTPUT" 2>&1
-echo "ret: $?" >> "$TS_OUTPUT"
+logger_fun -t "rfc5424_msgid_with_space" --rfc5424 --msgid="A B" "message"
+ts_finalize_subtest
+
+ts_init_subtest "invalid_socket"
+logger_fun -u /bad/boy -t "invalid_socket" "message"
+ts_finalize_subtest
+
+ts_init_subtest "check_socket"
+ts_log "Check written socket data of all subtests."
+sleep 1
+kill $SOCAT_PID
+wait $SOCAT_PID &>/dev/null
+cat "$SOCKIN" >> "$TS_OUTPUT" 2>&1
 ts_finalize_subtest
 
 ts_finalize

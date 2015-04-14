@@ -30,6 +30,6 @@ if ! $TS_HELPER_LOGGER --help | grep -q journald; then
 fi
 
 printf "%s\n%s\n%s\n" MESSAGE_ID=b8f74e14bc714bfc8040a5106dc9376a MESSAGE="a b c 1 2 3" |
-$TS_HELPER_LOGGER --no-act --journald --stderr > "$TS_OUTPUT" 2>&1
+$TS_HELPER_LOGGER -u /bad/boy --no-act --journald --stderr > "$TS_OUTPUT" 2>&1
 echo "ret: $?" >> "$TS_OUTPUT"
 ts_finalize

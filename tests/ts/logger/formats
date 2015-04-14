@@ -30,35 +30,50 @@ export LOGGER_TEST_TIMEOFDAY="1234567890.123456"
 export LOGGER_TEST_HOSTNAME="test-hostname"
 export LOGGER_TEST_GETPID="98765"
 
+DEVLOG="${TS_OUTDIR}/${TS_TESTNAME}_devlog"
+SOCKIN="${TS_OUTDIR}/${TS_TESTNAME}_socketin"
+ts_init_socket_to_file $DEVLOG $SOCKIN
+SOCAT_PID="$!"
+
+function logger_fun {
+	$TS_HELPER_LOGGER -u $DEVLOG -s --no-act "$@" >> "$TS_OUTPUT" 2>&1
+	echo "ret: $?" >> "$TS_OUTPUT"
+}
+
 ts_init_subtest "rfc3164"
-$TS_HELPER_LOGGER -s --no-act -t "rfc3164" --rfc3164 "message" > "$TS_OUTPUT" 2>&1
-echo "ret: $?" >> "$TS_OUTPUT"
+logger_fun -t "rfc3164" --rfc3164 "message"
 ts_finalize_subtest
 
 ts_init_subtest "rfc5424_simple"
-$TS_HELPER_LOGGER -s --no-act -t "rfc5424" --rfc5424 "message" > "$TS_OUTPUT" 2>&1
-echo "ret: $?" >> "$TS_OUTPUT"
+logger_fun -t "rfc5424" --rfc5424 "message"
 ts_finalize_subtest
+
 ts_init_subtest "rfc5424_notime"
-$TS_HELPER_LOGGER -s --no-act -t "rfc5424" --rfc5424=notime "message" > "$TS_OUTPUT" 2>&1
-echo "ret: $?" >> "$TS_OUTPUT"
+logger_fun -t "rfc5424" --rfc5424=notime "message"
 ts_finalize_subtest
+
 ts_init_subtest "rfc5424_nohost"
-$TS_HELPER_LOGGER -s --no-act -t "rfc5424" --rfc5424=nohost "message" > "$TS_OUTPUT" 2>&1
-echo "ret: $?" >> "$TS_OUTPUT"
+logger_fun -t "rfc5424" --rfc5424=nohost "message"
 ts_finalize_subtest
+
 ts_init_subtest "rfc5424_msgid"
-$TS_HELPER_LOGGER -s --no-act -t "rfc5424" --rfc5424 --msgid "MSGID" "message" > "$TS_OUTPUT" 2>&1
-echo "ret: $?" >> "$TS_OUTPUT"
+logger_fun -t "rfc5424" --rfc5424 --msgid "MSGID" "message"
 ts_finalize_subtest
 
 ts_init_subtest "priorities"
 for facility in auth authpriv cron daemon ftp lpr mail news syslog user uucp local{0..7}; do
 	for level in emerg alert crit err warning notice info debug; do
-		$TS_HELPER_LOGGER -s --no-act -t "prio" -p "$facility.$level" "$facility.$level" >> "$TS_OUTPUT" 2>&1
-		echo "ret: $?" >> "$TS_OUTPUT"
+		logger_fun -t "prio" -p "$facility.$level" "$facility.$level"
 	done
 done
+ts_finalize_subtest
+
+ts_init_subtest "check_socket"
+ts_log "Check written socket data of all subtests."
+sleep 1
+kill $SOCAT_PID
+wait $SOCAT_PID &>/dev/null
+cat "$SOCKIN" >> "$TS_OUTPUT" 2>&1
 ts_finalize_subtest
 
 ts_finalize

@@ -652,3 +652,32 @@ function ts_resolve_host {
 	test -n "$tmp" || return 1
 	echo "$tmp" | sort -R | head -n 1
 }
+
+# listen to unix socket (background socat)
+function ts_init_socket_to_file {
+	local socket=$1
+	local outfile=$2
+	local pid="0"
+
+	ts_check_prog "socat"
+	rm -f "$socket" "$outfile"
+
+	socat -u UNIX-LISTEN:$socket,fork,max-children=1,backlog=128 \
+		STDOUT > "$outfile" &
+	pid=$!
+
+	# check for running background process
+	if [ "$pid" -le "0" ] || ! kill -s 0 "$pid"; then
+		ts_skip "unable to run socat"
+	fi
+	# wait for the socket listener
+	if ! socat -u /dev/null UNIX-CONNECT:$socket,retry=30,interval=0.1; then
+		kill -9 "$pid"
+		ts_skip "timeout waiting for socket"
+	fi
+	# check socket again
+	if ! socat -u /dev/null UNIX-CONNECT:$socket; then
+		kill -9 "$pid"
+		ts_skip "socket stopped listening"
+	fi
+}
