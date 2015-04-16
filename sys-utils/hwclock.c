@@ -1525,6 +1525,7 @@ static int compare_clock (const bool utc, const bool local_opt)
 			printf("hw-time      system-time         freq-offset-ppm   tick\n");
 			printf("%10.0f   %10.6f\n", (double) time1_hw, time1_sys);
 		}
+		fflush(stdout);
 		sleep(10);
 	}
 
