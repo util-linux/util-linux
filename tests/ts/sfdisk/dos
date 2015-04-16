@@ -21,7 +21,7 @@ TS_DESC="MBR"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-ts_check_test_command "$TS_CMD_FDISK"
+ts_check_test_command "$TS_CMD_SFDISK"
 ts_check_test_command "$TS_CMD_WIPEFS"
 
 ts_skip_nonroot
@@ -120,6 +120,26 @@ label: dos
 EOF
 udevadm settle
 echo ',+' | $TS_CMD_SFDISK -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean $TS_DEVICE
+udevadm settle
+ts_finalize_subtest
+
+
+ts_init_subtest "dump-old"
+$TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
+$TS_CMD_SFDISK ${TS_DEVICE} < $TS_SELF/files/dump-old >> $TS_OUTPUT 2>&1
+udevadm settle
+ts_fdisk_clean $TS_DEVICE
+udevadm settle
+ts_finalize_subtest
+
+
+ts_init_subtest "dump-gaps"
+$TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
+$TS_CMD_SFDISK ${TS_DEVICE} < $TS_SELF/files/dump-gaps >> $TS_OUTPUT 2>&1
+udevadm settle
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 ts_finalize_subtest
