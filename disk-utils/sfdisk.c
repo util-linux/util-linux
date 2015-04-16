@@ -1072,6 +1072,22 @@ static int is_device_used(struct sfdisk *sf)
 	return 0;
 }
 
+static int ignore_partition(struct fdisk_partition *pa)
+{
+	/* incomplete partition setting */
+	if (!fdisk_partition_has_start(pa) && !fdisk_partition_start_is_default(pa))
+		return 1;
+	if (!fdisk_partition_has_size(pa) && !fdisk_partition_end_is_default(pa))
+		return 1;
+
+	/* probably dump from old sfdisk with start=0 size=0 */
+	if (fdisk_partition_has_start(pa) && fdisk_partition_get_start(pa) == 0 &&
+	    fdisk_partition_has_size(pa) && fdisk_partition_get_size(pa) == 0)
+		return 1;
+
+	return 0;
+}
+
 /*
  * sfdisk <device> [[-N] <partno>]
  *
@@ -1237,9 +1253,9 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 			assert(pa);
 
-			if (!fdisk_partition_has_start(pa) &&
-			    !fdisk_partition_start_is_default(pa)) {
-				fdisk_info(sf->cxt, _("Ignoring partition %zu."), next_partno + 1);
+			if (ignore_partition(pa)) {
+				fdisk_info(sf->cxt, _("Ignoring partition."));
+				next_partno++;
 				continue;
 			}
 			if (!created) {		/* create a new disklabel */
