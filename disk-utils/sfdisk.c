@@ -41,6 +41,7 @@
 #include "blkdev.h"
 #include "all-io.h"
 #include "rpmatch.h"
+#include "loopdev.h"
 
 #include "libfdisk.h"
 #include "fdisk-list.h"
@@ -1066,7 +1067,8 @@ static int is_device_used(struct sfdisk *sf)
 	if (fd < 0)
 		return 0;
 
-	if (fstat(fd, &st) == 0 && S_ISBLK(st.st_mode))
+	if (fstat(fd, &st) == 0 && S_ISBLK(st.st_mode)
+	    && major(st.st_rdev) != LOOPDEV_MAJOR)
 		return ioctl(fd, BLKRRPART) != 0;
 #endif
 	return 0;
