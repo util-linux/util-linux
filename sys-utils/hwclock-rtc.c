@@ -280,18 +280,6 @@ static int synchronize_to_clock_tick_rtc(void)
 				       rtc_dev_name);
 			ret = busywait_for_rtc_clock_tick(rtc_fd);
 		} else if (rc == 0) {
-#ifdef Wait_until_update_interrupt
-			unsigned long dummy;
-
-			/* this blocks until the next update interrupt */
-			rc = read(rtc_fd, &dummy, sizeof(dummy));
-			ret = 1;
-			if (rc == -1)
-				warn(_("read() to %s to wait for clock tick failed"),
-				     rtc_dev_name);
-			else
-				ret = 0;
-#else
 			/*
 			 * Just reading rtc_fd fails on broken hardware: no
 			 * update interrupt comes and a bootscript with a
@@ -319,8 +307,6 @@ static int synchronize_to_clock_tick_rtc(void)
 					       rtc_dev_name);
 			} else
 				ret = 0;
-#endif
-
 			/* Turn off update interrupts */
 			rc = ioctl(rtc_fd, RTC_UIE_OFF, 0);
 			if (rc == -1)
