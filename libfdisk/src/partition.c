@@ -70,6 +70,24 @@ void fdisk_reset_partition(struct fdisk_partition *pa)
 	init_partition(pa);
 }
 
+static struct fdisk_partition *__copy_partition(struct fdisk_partition *o)
+{
+	struct fdisk_partition *n = fdisk_new_partition();
+
+	if (!n)
+		return NULL;
+	memcpy(n, o, sizeof(*n));
+	if (n->type)
+		fdisk_ref_parttype(n->type);
+	if (o->name)
+		n->name = strdup(o->name);
+	if (o->uuid)
+		n->uuid = strdup(o->uuid);
+	if (o->attrs)
+		n->attrs = strdup(o->attrs);
+	return n;
+}
+
 /**
  * fdisk_ref_partition:
  * @pa: partition pointer
@@ -223,7 +241,6 @@ int fdisk_partition_start_is_default(struct fdisk_partition *pa)
 	assert(pa);
 	return pa->start_follow_default;
 }
-
 
 /**
  * fdisk_partition_set_size:
@@ -507,8 +524,8 @@ fdisk_sector_t fdisk_partition_get_end(struct fdisk_partition *pa)
  * @pa: partition
  * @enable: 0|1
  *
- * When @pa used as a template for fdisk_add_partition() when force label driver
- * to use all the possible space for the new partition.
+ * When @pa used as a template for fdisk_add_partition() when force label
+ * driver to use all the possible space for the new partition.
  *
  * Returns: 0 on success, <0 on error.
  */
@@ -904,6 +921,186 @@ int fdisk_get_partition(struct fdisk_context *cxt, size_t partno,
 	return rc;
 }
 
+static struct fdisk_partition *resize_get_by_offset(
+			struct fdisk_table *tb, fdisk_sector_t off)
+{
+	struct fdisk_partition *pa = NULL;
+	struct fdisk_iter itr;
+
+	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
+
+	while (fdisk_table_next_partition(tb, &itr, &pa) == 0) {
+		if (!fdisk_partition_has_start(pa) || !fdisk_partition_has_size(pa))
+			continue;
+		if (off >= pa->start && off < pa->start + pa->size)
+			return pa;
+	}
+
+	return NULL;
+}
+
+/*
+ * Verify that area addressed by @start is freespace or the @cur[rent]
+ * partition and continue to the next table entries until it's freespace, and
+ * counts size of all this space.
+ *
+ * This is core of the partition start offset move operation. We can move the
+ * start within the current partition of to the another free space. It's
+ * forbidden to move start of the partition to another already defined
+ * partition.
+ */
+static int resize_get_last_possible(
+			struct fdisk_table *tb,
+			struct fdisk_partition *cur,
+			fdisk_sector_t start,
+			fdisk_sector_t *maxsz)
+{
+	struct fdisk_partition *pa = NULL, *last = NULL;
+	struct fdisk_iter itr;
+
+	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
+
+	*maxsz = 0;
+
+	while (fdisk_table_next_partition(tb, &itr, &pa) == 0) {
+		if (!fdisk_partition_has_start(pa) ||
+		    !fdisk_partition_has_size(pa) ||
+		    fdisk_partition_is_container(pa))
+			continue;
+
+		if (!last) {
+			if (start >= pa->start &&  start < pa->start + pa->size) {
+				if (fdisk_partition_is_freespace(pa) || pa == cur)
+					last = pa;
+				else
+					break;
+				*maxsz = pa->size - (pa->start - start);
+			}
+		} else if (!fdisk_partition_is_freespace(pa) && pa != cur) {
+			break;
+		} else {
+			last = pa;
+			*maxsz += pa->size;
+		}
+	}
+
+	if (last)
+		DBG(PART, ul_debugobj(cur, "resize: max size=%ju", (uintmax_t) *maxsz));
+	return last ? 0 : -1;
+
+}
+
+/*
+ * Uses template @tpl to recount start and size change of the partition @res. The
+ * @tpl->size and @tpl->start are interpreted as relative to the current setting.
+ */
+static int recount_resize(
+			struct fdisk_context *cxt, size_t partno,
+			struct fdisk_partition *res, struct fdisk_partition *tpl)
+{
+	fdisk_sector_t start, size;
+	struct fdisk_partition *cur = NULL;
+	struct fdisk_table *tb = NULL;
+	int rc;
+
+	DBG(PART, ul_debugobj(tpl, "resize requested"));
+
+	FDISK_INIT_UNDEF(start);
+	FDISK_INIT_UNDEF(size);
+
+	rc = fdisk_get_partitions(cxt, &tb);
+	if (!rc)
+		rc = fdisk_get_freespaces(cxt, &tb);
+	if (rc)
+		return rc;
+
+	cur = fdisk_table_get_partition_by_partno(tb, partno);
+	if (!cur) {
+		fdisk_unref_table(tb);
+		return -EINVAL;
+	}
+
+	/* 1a) set new start - change relative to the current on-disk setting */
+	if (tpl->movestart && fdisk_partition_has_start(tpl)) {
+		start = fdisk_partition_get_start(cur);
+		if (tpl->movestart == FDISK_MOVE_DOWN) {
+			if (fdisk_partition_get_start(tpl) > start)
+				goto erange;
+			start -= fdisk_partition_get_start(tpl);
+		} else
+			start += fdisk_partition_get_start(tpl);
+
+	/* 1b) set new start - absolute number */
+	} else if (fdisk_partition_has_start(tpl))
+		start = fdisk_partition_get_start(tpl);
+
+	/* 2) verify that start is within the current partition or any freespace area */
+	if (!FDISK_IS_UNDEF(start)) {
+		struct fdisk_partition *area = resize_get_by_offset(tb, start);
+		if (!area)
+			goto erange;
+		if (area == cur)
+			DBG(PART, ul_debugobj(tpl, "resize: start points to the current partition"));
+		else if (fdisk_partition_is_freespace(area))
+			DBG(PART, ul_debugobj(tpl, "resize: start points to freespace"));
+		else
+			goto erange;
+	} else {
+		/* no change, start points to the current partition */
+		start = fdisk_partition_get_start(cur);
+	}
+
+	/* 3a) set new size -- reduce */
+	if (tpl->resize == FDISK_RESIZE_REDUCE && fdisk_partition_has_size(tpl)) {
+		DBG(PART, ul_debugobj(tpl, "resize: reduce"));
+		size = fdisk_partition_get_size(cur);
+		if (fdisk_partition_get_size(tpl) > size)
+			goto erange;
+		size -= fdisk_partition_get_size(tpl);
+
+	/* 3b) set new size -- enlarge */
+	} else if (tpl->resize == FDISK_RESIZE_ENLARGE && fdisk_partition_has_size(tpl)) {
+		DBG(PART, ul_debugobj(tpl, "resize: enlarge"));
+		size = fdisk_partition_get_size(cur);
+		size += fdisk_partition_get_size(tpl);
+
+	/* 3c) set new size -- no size specified, enlarge to all freespace */
+	} else if (tpl->resize == FDISK_RESIZE_ENLARGE) {
+		DBG(PART, ul_debugobj(tpl, "resize: enlarge to all possible"));
+		if (resize_get_last_possible(tb, cur, start, &size))
+			goto erange;
+
+	/* 3d) set new size -- absolute number */
+	} else if (fdisk_partition_has_size(tpl)) {
+		DBG(PART, ul_debugobj(tpl, "resize: new absolute size"));
+		size = fdisk_partition_get_size(tpl);
+	}
+
+	/* 4) verify that size is within the current partition or next free space */
+	if (!FDISK_IS_UNDEF(size)) {
+		fdisk_sector_t maxsz;
+		if (resize_get_last_possible(tb, cur, start, &maxsz))
+			goto erange;
+		DBG(PART, ul_debugobj(tpl, "resize: size wanted=%ju, max=%ju",
+					(uintmax_t) size, (uintmax_t) maxsz));
+		if (size > maxsz)
+			goto erange;
+	}
+
+	DBG(PART, ul_debugobj(tpl, "resize: SUCCESS: start %ju->%ju; size %ju->%ju",
+			(uintmax_t) fdisk_partition_get_start(cur), (uintmax_t) start,
+			(uintmax_t) fdisk_partition_get_size(cur), (uintmax_t) size));
+	res->start = start;
+	res->size = size;
+	fdisk_unref_table(tb);
+	return 0;
+erange:
+	DBG(PART, ul_debugobj(tpl, "resize: FAILED"));
+	fdisk_unref_table(tb);
+	return -ERANGE;
+
+}
+
 /**
  * fdisk_set_partition:
  * @cxt: context
@@ -917,23 +1114,39 @@ int fdisk_get_partition(struct fdisk_context *cxt, size_t partno,
 int fdisk_set_partition(struct fdisk_context *cxt, size_t partno,
 			struct fdisk_partition *pa)
 {
+	struct fdisk_partition *xpa = pa;
+	int rc;
+
 	if (!cxt || !cxt->label || !pa)
 		return -EINVAL;
 	if (!cxt->label->op->set_part)
 		return -ENOSYS;
 
-	DBG(CXT, ul_debugobj(cxt, "setting partition %zu %p (start=%ju, end=%ju, size=%ju, "
-		    "defaults(start=%s, end=%s, partno=%s)",
-		    partno, pa,
-		    (uintmax_t) fdisk_partition_get_start(pa),
-		    (uintmax_t) fdisk_partition_get_end(pa),
-		    (uintmax_t) fdisk_partition_get_size(pa),
-		    pa->start_follow_default ? "yes" : "no",
-		    pa->end_follow_default ? "yes" : "no",
-		    pa->partno_follow_default ? "yes" : "no"));
+	if (pa->resize || fdisk_partition_has_start(pa) || fdisk_partition_has_size(pa)) {
+		xpa = __copy_partition(pa);
+		xpa->movestart = 0;
+		xpa->resize = 0;
+		FDISK_INIT_UNDEF(xpa->size);
+		FDISK_INIT_UNDEF(xpa->start);
 
-	return cxt->label->op->set_part(cxt, partno, pa);
+		rc = recount_resize(cxt, partno, xpa, pa);
+		if (rc)
+			goto done;
+	}
+
+	DBG(CXT, ul_debugobj(cxt, "setting partition %zu %p (start=%ju, end=%ju, size=%ju)",
+		    partno, xpa,
+		    (uintmax_t) fdisk_partition_get_start(xpa),
+		    (uintmax_t) fdisk_partition_get_end(xpa),
+		    (uintmax_t) fdisk_partition_get_size(xpa)));
+
+	rc = cxt->label->op->set_part(cxt, partno, xpa);
+done:
+	if (xpa != pa)
+		fdisk_unref_partition(xpa);
+	return rc;
 }
+
 
 /**
  * fdisk_add_partition:
