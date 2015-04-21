@@ -1096,6 +1096,7 @@ static int recount_resize(
 	return 0;
 erange:
 	DBG(PART, ul_debugobj(tpl, "resize: FAILED"));
+	fdisk_warnx(cxt, _("failed to resize partition #%zu."), partno + 1);
 	fdisk_unref_table(tb);
 	return -ERANGE;
 
