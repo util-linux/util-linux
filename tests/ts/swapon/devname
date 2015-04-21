@@ -28,8 +28,6 @@ ts_check_test_command "$TS_CMD_SWAPOFF"
 ts_skip_nonroot
 ts_check_losetup
 
-set -o pipefail
-
 ts_device_init
 DEVICE=$TS_LODEV
 

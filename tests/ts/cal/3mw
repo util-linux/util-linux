@@ -23,8 +23,6 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_CAL"
 
-set -o pipefail
-
 USETERM=$( ts_has_option "useterm" "$*" )
 MYTIME="27 09 2006"
 

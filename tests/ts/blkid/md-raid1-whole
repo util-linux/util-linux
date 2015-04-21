@@ -29,8 +29,6 @@ ts_skip_nonroot
 ts_check_losetup
 ts_check_prog "mdadm"
 
-set -o pipefail
-
 ts_log "Initialize devices"
 IMGNAME="${TS_OUTDIR}/${TS_TESTNAME}"
 
