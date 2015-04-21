@@ -268,6 +268,7 @@ fdisk_reset_table
 fdisk_table_add_partition
 fdisk_table_get_nents
 fdisk_table_get_partition
+fdisk_table_get_partition_by_partno
 fdisk_table_is_empty
 fdisk_table_next_partition
 fdisk_table_remove_partition

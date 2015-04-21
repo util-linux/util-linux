@@ -158,6 +158,13 @@ int fdisk_table_next_partition(
 	return rc;
 }
 
+/**
+ * fdisk_table_get_partition:
+ * @tb: tab pointer
+ * @n: number of entry in table
+ *
+ * Returns: n-th entry from table or NULL
+ */
 struct fdisk_partition *fdisk_table_get_partition(
 			struct fdisk_table *tb,
 			size_t n)
@@ -174,6 +181,33 @@ struct fdisk_partition *fdisk_table_get_partition(
 		if (n == 0)
 			return pa;
 		n--;
+	}
+
+	return NULL;
+}
+
+/**
+ * fdisk_table_get_partition_by_partno:
+ * @tb: tab pointer
+ * @partno: partition number
+ *
+ * Returns: partition with @partno or NULL.
+ */
+struct fdisk_partition *fdisk_table_get_partition_by_partno(
+			struct fdisk_table *tb,
+			size_t partno)
+{
+	struct fdisk_partition *pa = NULL;
+	struct fdisk_iter itr;
+
+	if (!tb)
+		return NULL;
+
+	fdisk_reset_iter(&itr, FDISK_ITER_FORWARD);
+
+	while (fdisk_table_next_partition(tb, &itr, &pa) == 0) {
+		if (pa->partno == partno)
+			return pa;
 	}
 
 	return NULL;

@@ -246,4 +246,5 @@ FDISK_2.27 {
 	fdisk_script_get_userdata;
 	fdisk_enable_bootbits_protection;
 	fdisk_has_protected_bootbits;
+	fdisk_table_get_partition_by_partno;
 } FDISK_2.26;
