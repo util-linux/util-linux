@@ -121,6 +121,9 @@ struct fdisk_partition {
 	fdisk_sector_t	start;			/* first sectors */
 	fdisk_sector_t	size;			/* size in sectors */
 
+	int		movestart;		/* FDISK_MOVE_* (scripts only) */
+	int		resize;			/* FDISK_RESIZE_* (scripts only) */
+
 	char		*name;			/* partition name */
 	char		*uuid;			/* partition UUID */
 	char		*attrs;			/* partition flags/attributes converted to string */
@@ -150,6 +153,18 @@ struct fdisk_partition {
 			start_follow_default : 1,	/* use default start */
 			used : 1,			/* partition already used */
 			wholedisk : 1;			/* special system partition */
+};
+
+enum {
+	FDISK_MOVE_NONE = 0,
+	FDISK_MOVE_DOWN = -1,
+	FDISK_MOVE_UP = 1
+};
+
+enum {
+	FDISK_RESIZE_NONE = 0,
+	FDISK_RESIZE_REDUCE = -1,
+	FDISK_RESIZE_ENLARGE = 1
 };
 
 #define FDISK_INIT_UNDEF(_x)	((_x) = (__typeof__(_x)) -1)
