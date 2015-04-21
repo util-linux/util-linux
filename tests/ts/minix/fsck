@@ -25,8 +25,6 @@ ts_check_test_command "$TS_CMD_MKMINIX"
 ts_skip_nonroot
 ts_check_losetup
 
-set -o pipefail
-
 IMAGE="$TS_OUTDIR/${TS_TESTNAME}-loop.img"
 ts_device_init
 DEVICE=$TS_LODEV

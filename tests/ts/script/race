@@ -33,8 +33,6 @@ TS_KNOWN_FAIL="yes"
 
 bingofile="$TS_OUTDIR/${TS_TESTNAME}-bingo"
 
-set -o pipefail
-
 count=1000
 for i in `seq 1 $count`; do
 	$TS_CMD_SCRIPT -q -c "printf 'Bingo\n'" $bingofile

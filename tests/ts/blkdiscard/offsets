@@ -26,8 +26,6 @@ ts_check_test_command "$TS_CMD_BLKDISCARD"
 ts_skip_nonroot
 ts_check_losetup
 
-set -o pipefail
-
 ORIGPWD=$(pwd)
 IMAGE_NAME="${TS_TESTNAME}-loop.img"
 IMAGE_PATH="$TS_OUTDIR/$IMAGE_NAME"

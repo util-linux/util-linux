@@ -12,8 +12,6 @@ ts_check_test_command "$TS_CMD_FINDMNT"
 
 ts_skip_nonroot
 
-set -o pipefail
-
 ts_fstab_add "none" "$TS_MOUNTPOINT" "tmpfs" "rw,nosuid,nodev,relatime"
 
 mkdir -p $TS_MOUNTPOINT

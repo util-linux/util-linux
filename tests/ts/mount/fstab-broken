@@ -27,8 +27,6 @@ ts_check_test_command "$TS_CMD_FINDMNT"
 
 ts_skip_nonroot
 
-set -o pipefail
-
 # Let's use the same mountpoint for all subtests
 MNT=$TS_MOUNTPOINT
 mkdir -p $MNT

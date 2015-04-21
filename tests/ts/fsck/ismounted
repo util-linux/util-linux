@@ -27,8 +27,6 @@ ts_check_prog "mkfs.ext3"
 ts_skip_nonroot
 ts_check_losetup
 
-set -o pipefail
-
 > $TS_OUTPUT
 
 ts_device_init

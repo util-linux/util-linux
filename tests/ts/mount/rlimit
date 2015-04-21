@@ -39,8 +39,6 @@ ts_check_losetup
 [ -L /etc/mtab ] && ts_skip "mtab is symlink"
 [ "$(stat --format '%s' /etc/mtab)" -gt "1024" ] || ts_skip "mtab is too small"
 
-set -o pipefail
-
 function mtab_checksum()
 {
 	md5sum /etc/mtab | awk '{printf $1}'

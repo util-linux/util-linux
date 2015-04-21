@@ -26,8 +26,6 @@ ts_check_test_command "$TS_CMD_FSCKCRAMFS"
 
 ts_skip_nonroot
 
-set -o pipefail
-
 IMAGE_LITTLE="$TS_SELF/cramfs-little.img"	#Known good little endian image
 IMAGE_BIG="$TS_SELF/cramfs-big.img"		#Known good big endian image
 
