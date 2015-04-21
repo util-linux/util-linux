@@ -1646,15 +1646,6 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 	if (fdisk_partition_has_size(pa))
 		end = gpt_partition_start(e) + pa->size - 1ULL;
 
-	if (pa->end_follow_default) {
-		/* enlarge */
-		if (!FDISK_IS_UNDEF(start))
-			start = gpt_partition_start(e);
-		end = find_last_free(gpt->bheader, gpt->ents, start);
-		if (!end)
-			FDISK_INIT_UNDEF(end);
-	}
-
 	if (!FDISK_IS_UNDEF(start))
 		e->lba_start = cpu_to_le64(start);
 	if (!FDISK_IS_UNDEF(end))
