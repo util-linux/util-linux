@@ -785,6 +785,9 @@ static struct fdisk_parttype *translate_type_shortcuts(struct fdisk_script *dp, 
 	return type ? fdisk_label_parse_parttype(lb, type) : NULL;
 }
 
+#define TK_PLUS		1
+#define TK_MINUS	-1
+
 /* simple format:
  * <start>, <size>, <type>, <bootable>, ...
  */
@@ -810,6 +813,7 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 	while (rc == 0 && p && *p) {
 		uint64_t num;
 		char *begin;
+		int sign = 0;
 
 		p = (char *) skip_blank(p);
 		item++;
@@ -817,25 +821,38 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 		DBG(SCRIPT, ul_debugobj(dp, " parsing item %d ('%s')", item, p));
 		begin = p;
 
+		if (item != ITEM_BOOTABLE) {
+			sign = *p == '-' ? TK_MINUS : *p == '+' ? TK_PLUS : 0;
+			if (sign)
+				p++;
+		}
+
 		switch (item) {
 		case ITEM_START:
-			if (*p == ',' || *p == ';')
+			if (*p == ',' || *p == ';' || (sign && *p == '\0'))
 				fdisk_partition_start_follow_default(pa, 1);
 			else {
 				int pow = 0;
+
 				rc = next_number(&p, &num, &pow);
 				if (!rc) {
 					if (pow)	/* specified as <num><suffix> */
 						num /= dp->cxt->sector_size;
 					fdisk_partition_set_start(pa, num);
+					pa->movestart = sign == TK_MINUS ? FDISK_MOVE_DOWN :
+							sign == TK_PLUS  ? FDISK_MOVE_UP :
+							FDISK_MOVE_NONE;
 				}
 				fdisk_partition_start_follow_default(pa, 0);
 			}
 			break;
 		case ITEM_SIZE:
-			if (*p == ',' || *p == ';' || *p == '+')
+			if (*p == ',' || *p == ';' || (sign && *p == '\0')) {
 				fdisk_partition_end_follow_default(pa, 1);
-			else {
+				if (sign == TK_PLUS)
+					/* alone '+' means use all possible space, elone '-' means nothing */
+					pa->resize = FDISK_RESIZE_ENLARGE;
+			} else {
 				int pow = 0;
 				rc = next_number(&p, &num, &pow);
 				if (!rc) {
@@ -844,12 +861,15 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 					else	 /* specified as number of sectors */
 						fdisk_partition_size_explicit(pa, 1);
 					fdisk_partition_set_size(pa, num);
+					pa->resize = sign == TK_MINUS ? FDISK_RESIZE_REDUCE :
+						     sign == TK_PLUS  ? FDISK_RESIZE_ENLARGE :
+							FDISK_RESIZE_NONE;
 				}
 				fdisk_partition_end_follow_default(pa, 0);
 			}
 			break;
 		case ITEM_TYPE:
-			if (*p == ',' || *p == ';')
+			if (*p == ',' || *p == ';' || (sign && *p == '\0'))
 				break;	/* use default type */
 
 			rc = next_string(&p, &str);
@@ -878,6 +898,8 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 					pa->boot = 1;
 				else if (tk && *tk == '-' && *(tk + 1) == '\0')
 					pa->boot = 0;
+				else if (tk && *tk == '+' && *(tk + 1) == '\0')
+					pa->boot = 1;
 				else
 					rc = -EINVAL;
 			}
