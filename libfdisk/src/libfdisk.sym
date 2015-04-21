@@ -243,4 +243,5 @@ local:
 FDISK_2.27 {
 	fdisk_enable_bootbits_protection;
 	fdisk_has_protected_bootbits;
+	fdisk_table_get_partition_by_partno;
 } FDISK_2.26;
