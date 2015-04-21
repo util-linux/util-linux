@@ -1897,7 +1897,6 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 			     struct fdisk_partition *pa)
 {
-	struct fdisk_dos_label *l;
 	struct dos_partition *p;
 	struct pte *pe;
 	fdisk_sector_t start, size;
@@ -1919,7 +1918,6 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 	if (pa->type && !pa->type->code)
 		fdisk_warnx(cxt, _("Type 0 means free space to many systems. "
 				   "Having partitions of type 0 is probably unwise."));
-	l = self_label(cxt);
 	p = self_partition(cxt, n);
 	pe = self_pte(cxt, n);
 
@@ -1930,31 +1928,6 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 		start = pa->start;
 	if (fdisk_partition_has_size(pa))
 		size = pa->size;
-
-	if (pa->end_follow_default) {
-		fdisk_sector_t first[cxt->label->nparts_max],
-			 last[cxt->label->nparts_max],
-			 xlast;
-		struct pte *ext = l->ext_offset ? self_pte(cxt, l->ext_index) : NULL; 
-
-		fill_bounds(cxt, first, last);
-
-		if (ext && l->ext_offset) {
-			first[l->ext_index] = l->ext_offset;
-			last[l->ext_index] = get_abs_partition_end(ext);
-		}
-		if (FDISK_IS_UNDEF(start))
-			start = get_abs_partition_start(pe);
-
-		DBG(LABEL, ul_debug("DOS: #%zu    now %ju +%ju sectors",
-			n, (uintmax_t) start, (uintmax_t) dos_partition_get_size(p)));
-
-		xlast = get_unused_last(cxt, n, start, first, last);
-		size = xlast ? xlast - start + 1: dos_partition_get_size(p);
-
-		DBG(LABEL, ul_debug("DOS: #%zu wanted %ju +%ju sectors",
-			n, (uintmax_t) start, (uintmax_t) size));
-	}
 
 	if (!FDISK_IS_UNDEF(start) || !FDISK_IS_UNDEF(size)) {
 		DBG(LABEL, ul_debug("DOS: resize partition"));
