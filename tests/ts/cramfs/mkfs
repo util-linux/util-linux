@@ -28,8 +28,6 @@ ts_check_test_command "$TS_CMD_UMOUNT"
 ts_skip_nonroot
 ts_check_losetup
 
-set -o pipefail
-
 ORIGPWD=$(pwd)
 IMAGE_NAME="${TS_TESTNAME}-loop.img"
 IMAGE_PATH="$TS_OUTDIR/$IMAGE_NAME"
@@ -86,16 +84,17 @@ echo >> $TS_OUTPUT
 
 ts_log "create loop device from image"
 DEVICE=$($TS_CMD_LOSETUP --show -f $IMAGE_PATH)
+ts_register_loop_device "$DEVICE"
 
 ts_log "check the image"
 ts_device_has "TYPE" "cramfs" $DEVICE
-[  "$?" == "0" ] || ts_die "Cannot find cramfs on $DEVICE" $DEVICE
+[  "$?" == "0" ] || ts_die "Cannot find cramfs on $DEVICE"
 
 ts_log "mount the image"
 ts_mount "cramfs" -r -L $LABEL $TS_MOUNTPOINT
 
 # check it
-ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts" $DEVICE
+ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
 
 ts_cd "$TS_MOUNTPOINT"
 
@@ -111,7 +110,5 @@ echo >> $TS_OUTPUT
 ts_cd "$ORIGPWD"
 
 ts_log "umount the image"
-$TS_CMD_UMOUNT $DEVICE
-$TS_CMD_LOSETUP -d $DEVICE 2>&1 >> $TS_OUTPUT
 ts_finalize
 

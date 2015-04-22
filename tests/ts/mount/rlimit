@@ -39,17 +39,15 @@ ts_check_losetup
 [ -L /etc/mtab ] && ts_skip "mtab is symlink"
 [ "$(stat --format '%s' /etc/mtab)" -gt "1024" ] || ts_skip "mtab is too small"
 
-set -o pipefail
-
 function mtab_checksum()
 {
 	md5sum /etc/mtab | awk '{printf $1}'
 }
 
-DEVICE=$(ts_device_init)
-[ "$?" == 0 ] || ts_die "Cannot init device"
+ts_device_init
+DEVICE=$TS_LODEV
 
-mkfs.ext3 $DEVICE &> /dev/null || ts_die "Cannot make ext3 on $DEVICE" $DEVICE
+mkfs.ext3 $DEVICE &> /dev/null || ts_die "Cannot make ext3 on $DEVICE"
 
 
 ts_init_subtest "mount"
@@ -87,7 +85,5 @@ else
 fi
 ts_finalize_subtest
 
-
-ts_device_deinit $DEVICE
 ts_log "Success"
 ts_finalize

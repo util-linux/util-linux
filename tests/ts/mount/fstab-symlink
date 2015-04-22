@@ -29,16 +29,14 @@ ts_check_prog "mkfs.ext3"
 ts_skip_nonroot
 ts_check_losetup
 
-set -o pipefail
-
 LINKNAME="$TS_OUTDIR/${TS_TESTNAME}_lnk"
 
-DEVICE=$(ts_device_init)
-[ "$?" == 0 ] || ts_die "Cannot init device"
+ts_device_init
+DEVICE=$TS_LODEV
 
-mkfs.ext3 $DEVICE &> /dev/null || ts_die "Cannot make ext3 on $DEVICE" $DEVICE
+mkfs.ext3 $DEVICE &> /dev/null || ts_die "Cannot make ext3 on $DEVICE"
 
-ts_device_has "TYPE" "ext3" $DEVICE || ts_die "Cannot find ext3 on $DEVICE" $DEVICE
+ts_device_has "TYPE" "ext3" $DEVICE || ts_die "Cannot find ext3 on $DEVICE"
 
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 
@@ -49,8 +47,8 @@ ts_fstab_add $LINKNAME $TS_MOUNTPOINT "auto" "defaults,user"
 
 # variant A) -- UID=0
 $TS_CMD_MOUNT $LINKNAME 2>&1 >> $TS_OUTPUT
-ts_is_mounted $DEVICE || ts_die "A) Cannot find $DEVICE in /proc/mounts" $DEVICE
-$TS_CMD_UMOUNT $LINKNAME || ts_die "A) Cannot umount $LINKNAME" $DEVICE
+ts_is_mounted $DEVICE || ts_die "A) Cannot find $DEVICE in /proc/mounts"
+$TS_CMD_UMOUNT $LINKNAME || ts_die "A) Cannot umount $LINKNAME"
 
 # varian B) -- disabled, the $TS_CMD_MOUNT is usually not a real program, but
 #              libtool wrapper and the real mount is exec()ed with
@@ -61,11 +59,10 @@ $TS_CMD_UMOUNT $LINKNAME || ts_die "A) Cannot umount $LINKNAME" $DEVICE
 #
 #su $TS_TESTUSER -c "$TS_CMD_MOUNT -v -v -v $LINKNAME" 2>&1 >> $TS_OUTPUT
 #ts_is_mounted $DEVICE
-#   || ts_die "B) Cannot find $DEVICE in /proc/mounts" $DEVICE
+#   || ts_die "B) Cannot find $DEVICE in /proc/mounts"
 #su $TS_TESTUSER -c "$TS_CMD_UMOUNT $LINKNAME" 2>&1 >> $TS_OUTPUT \
-#   || ts_die "B) Cannot umount $LINKNAME" $DEVICE
+#   || ts_die "B) Cannot umount $LINKNAME"
 
-ts_device_deinit $DEVICE
 ts_fstab_clean
 rm -f $LINKNAME
 

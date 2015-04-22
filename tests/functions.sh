@@ -86,9 +86,8 @@ function ts_skip_subtest {
 
 function ts_skip {
 	ts_skip_subtest "$1"
-	if [ -n "$2" -a -b "$2" ]; then
-		ts_device_deinit "$2"
-	fi
+
+	ts_cleanup_on_exit
 	exit 0
 }
 
@@ -253,6 +252,7 @@ function ts_init_env {
 	declare -a TS_SUID_PROGS
 	declare -a TS_SUID_USER
 	declare -a TS_SUID_GROUP
+	declare -a TS_LOOP_DEVS
 
 	if [ -f $TS_TOPDIR/commands.sh ]; then
 		. $TS_TOPDIR/commands.sh
@@ -411,11 +411,7 @@ function ts_finalize_subtest {
 }
 
 function ts_finalize {
-	for idx in $(seq 0 $((${#TS_SUID_PROGS[*]} - 1))); do
-		PROG=${TS_SUID_PROGS[$idx]}
-		chmod a-s $PROG &> /dev/null
-		chown ${TS_SUID_USER[$idx]}.${TS_SUID_GROUP[$idx]} $PROG &> /dev/null
-	done
+	ts_cleanup_on_exit
 
 	if [ $TS_NSUBTESTS -ne 0 ]; then
 		printf "%11s..."
@@ -439,11 +435,21 @@ function ts_finalize {
 
 function ts_die {
 	ts_log "$1"
-	if [ -n "$2" ] && [ -b "$2" ]; then
-		ts_device_deinit "$2"
-		ts_fstab_clean		# for sure...
-	fi
 	ts_finalize
+}
+
+function ts_cleanup_on_exit {
+
+	for idx in $(seq 0 $((${#TS_SUID_PROGS[*]} - 1))); do
+		PROG=${TS_SUID_PROGS[$idx]}
+		chmod a-s $PROG &> /dev/null
+		chown ${TS_SUID_USER[$idx]}.${TS_SUID_GROUP[$idx]} $PROG &> /dev/null
+	done
+
+	for dev in "${TS_LOOP_DEVS[@]}"; do
+		ts_device_deinit "$dev"
+	done
+	unset TS_LOOP_DEVS
 }
 
 function ts_image_md5sum {
@@ -460,16 +466,26 @@ function ts_image_init {
 	return 0
 }
 
+function ts_register_loop_device {
+	local ct=${#TS_LOOP_DEVS[*]}
+	TS_LOOP_DEVS[$ct]=$1
+}
+
 function ts_device_init {
 	local img
 	local dev
 
 	img=$(ts_image_init $1 $2)
 	dev=$($TS_CMD_LOSETUP --show -f "$img")
+	if [ "$?" != "0" -o "$dev" = "" ]; then
+		ts_die "Cannot init device"
+	fi
 
-	echo $dev
+	ts_register_loop_device "$dev"
+	TS_LODEV=$dev
 }
 
+# call from ts_cleanup_on_exit() only because of TS_LOOP_DEVS maintenance
 function ts_device_deinit {
 	local DEV="$1"
 

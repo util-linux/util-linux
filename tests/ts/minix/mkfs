@@ -25,10 +25,9 @@ ts_check_test_command "$TS_CMD_MKMINIX"
 ts_skip_nonroot
 ts_check_losetup
 
-set -o pipefail
-
 IMAGE="$TS_OUTDIR/${TS_TESTNAME}-loop.img"
-DEVICE=$(ts_device_init)
+ts_device_init
+DEVICE=$TS_LODEV
 
 ts_log "create minix fs"
 $TS_CMD_MKMINIX $DEVICE 2>&1 >> $TS_OUTPUT
@@ -40,10 +39,9 @@ ts_log "mount the filesystem"
 ts_mount "minix" $DEVICE $TS_MOUNTPOINT
 
 # check it
-ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts" $DEVICE
+ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
 
 ts_log "umount the image"
 $TS_CMD_UMOUNT $DEVICE
-ts_device_deinit $DEVICE
 ts_finalize
 
