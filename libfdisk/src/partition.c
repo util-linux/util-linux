@@ -1037,12 +1037,12 @@ static int recount_resize(
 	/* 2) verify that start is within the current partition or any freespace area */
 	if (!FDISK_IS_UNDEF(start)) {
 		struct fdisk_partition *area = resize_get_by_offset(tb, start);
-		if (!area)
-			goto erange;
 		if (area == cur)
 			DBG(PART, ul_debugobj(tpl, "resize: start points to the current partition"));
-		else if (fdisk_partition_is_freespace(area))
+		else if (area && fdisk_partition_is_freespace(area))
 			DBG(PART, ul_debugobj(tpl, "resize: start points to freespace"));
+		else if (!area && start >= cxt->first_lba && start < cxt->first_lba + (cxt->grain / cxt->sector_size))
+			DBG(PART, ul_debugobj(tpl, "resize: start points before first partition"));
 		else
 			goto erange;
 	} else {
@@ -1096,7 +1096,7 @@ static int recount_resize(
 	return 0;
 erange:
 	DBG(PART, ul_debugobj(tpl, "resize: FAILED"));
-	fdisk_warnx(cxt, _("failed to resize partition #%zu."), partno + 1);
+	fdisk_warnx(cxt, _("Failed to resize partition #%zu."), partno + 1);
 	fdisk_unref_table(tb);
 	return -ERANGE;
 
