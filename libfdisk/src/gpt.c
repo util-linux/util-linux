@@ -374,7 +374,7 @@ static const char *gpt_get_header_revstr(struct gpt_header *header)
 	if (!header)
 		goto unknown;
 
-	switch (header->revision) {
+	switch (le32_to_cpu(header->revision)) {
 	case GPT_HEADER_REVISION_V1_02:
 		return "1.2";
 	case GPT_HEADER_REVISION_V1_00:
@@ -1680,13 +1680,13 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 	if (fdisk_is_details(cxt)) {
 		struct gpt_header *h = self_label(cxt)->pheader;
 
-		fdisk_info(cxt, _("First LBA: %ju"), h->first_usable_lba);
-		fdisk_info(cxt, _("Last LBA: %ju"), h->last_usable_lba);
+		fdisk_info(cxt, _("First LBA: %ju"), le64_to_cpu(h->first_usable_lba));
+		fdisk_info(cxt, _("Last LBA: %ju"), le64_to_cpu(h->last_usable_lba));
 		/* TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header. */
-		fdisk_info(cxt, _("Alternative LBA: %ju"), h->alternative_lba);
+		fdisk_info(cxt, _("Alternative LBA: %ju"), le64_to_cpu(h->alternative_lba));
 		/* TRANSLATORS: The start of the array of partition entries. */
-		fdisk_info(cxt, _("Partition entries LBA: %ju"), h->partition_entry_lba);
-		fdisk_info(cxt, _("Allocated partition entries: %u"), h->npartition_entries);
+		fdisk_info(cxt, _("Partition entries LBA: %ju"), le64_to_cpu(h->partition_entry_lba));
+		fdisk_info(cxt, _("Allocated partition entries: %u"), le32_to_cpu(h->npartition_entries));
 	}
 
 	return 0;
@@ -2057,7 +2057,7 @@ static int gpt_add_partition(
 	if (rc)
 		return rc;
 
-	disk_f = find_first_available(pheader, ents, pheader->first_usable_lba);
+	disk_f = find_first_available(pheader, ents, le64_to_cpu(pheader->first_usable_lba));
 
 	/* if first sector no explicitly defined then ignore small gaps before
 	 * the first partition */
@@ -2079,7 +2079,7 @@ static int gpt_add_partition(
 		} while(1);
 
 		if (disk_f == 0)
-			disk_f = find_first_available(pheader, ents, pheader->first_usable_lba);
+			disk_f = find_first_available(pheader, ents, le64_to_cpu(pheader->first_usable_lba));
 	}
 
 	disk_l = find_last_free_sector(pheader, ents);
@@ -2556,8 +2556,8 @@ static int gpt_reset_alignment(struct fdisk_context *cxt)
 
 	if (h) {
 		/* always follow existing table */
-		cxt->first_lba = h->first_usable_lba;
-		cxt->last_lba  = h->last_usable_lba;
+		cxt->first_lba = le64_to_cpu(h->first_usable_lba);
+		cxt->last_lba  = le64_to_cpu(h->last_usable_lba);
 	} else {
 		/* estimate ranges for GPT */
 		uint64_t first, last;
