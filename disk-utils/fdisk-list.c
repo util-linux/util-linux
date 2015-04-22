@@ -380,7 +380,7 @@ int *init_fields(struct fdisk_context *cxt, const char *str, size_t *n)
 	/* extend or replace fields_nids[] according to fields_string */
 	if (fields_string &&
 	    string_add_to_idarray(fields_string, fields_ids, FDISK_NFIELDS * 2,
-			      (int *) &fields_nids, fieldname_to_id) < 0)
+			          &fields_nids, fieldname_to_id) < 0)
 		exit(EXIT_FAILURE);
 done:
 	fields_label = NULL;

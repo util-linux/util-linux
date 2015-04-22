@@ -550,13 +550,12 @@ int string_to_idarray(const char *list, int ary[], size_t arysz,
  * it adds fields to array instead of replacing them.
  */
 int string_add_to_idarray(const char *list, int ary[], size_t arysz,
-			int *ary_pos, int (name2id)(const char *, size_t))
+			size_t *ary_pos, int (name2id)(const char *, size_t))
 {
 	const char *list_add;
 	int r;
 
-	if (!list || !*list || !ary_pos ||
-	    *ary_pos < 0 || (size_t) *ary_pos > arysz)
+	if (!list || !*list || !ary_pos || *ary_pos > arysz)
 		return -1;
 
 	if (list[0] == '+')

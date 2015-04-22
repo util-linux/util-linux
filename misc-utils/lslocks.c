@@ -82,7 +82,7 @@ static struct colinfo infos[] = {
 };
 
 static int columns[ARRAY_SIZE(infos) * 2];
-static int ncolumns;
+static size_t ncolumns;
 
 static pid_t pid = 0;
 
@@ -343,7 +343,8 @@ static int column_name_to_id(const char *name, size_t namesz)
 
 static inline int get_column_id(int num)
 {
-	assert(num < ncolumns);
+	assert(num >= 0);
+	assert((size_t) num < ncolumns);
 	assert(columns[num] < (int) ARRAY_SIZE(infos));
 
 	return columns[num];
@@ -385,7 +386,7 @@ static pid_t get_blocker(int id, struct list_head *locks)
 
 static void add_scols_line(struct libscols_table *table, struct lock *l, struct list_head *locks)
 {
-	int i;
+	size_t i;
 	struct libscols_line *line;
 	/*
 	 * Whenever cmdname or filename is NULL it is most
@@ -452,7 +453,8 @@ static void add_scols_line(struct libscols_table *table, struct lock *l, struct 
 
 static int show_locks(struct list_head *locks)
 {
-	int i, rc = 0;
+	int rc = 0;
+	size_t i;
 	struct list_head *p, *pnext;
 	struct libscols_table *table;
 
