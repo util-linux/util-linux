@@ -371,7 +371,7 @@ int *init_fields(struct fdisk_context *cxt, const char *str, size_t *n)
 	if (fdisk_label_get_fields_ids(NULL, cxt, &dflt_ids, &fields_nids))
 		goto done;
 
-	fields_ids = xcalloc(sizeof(int), FDISK_NFIELDS * 2);
+	fields_ids = xcalloc(FDISK_NFIELDS * 2, sizeof(int));
 
 	/* copy defaults to the list with wanted fields */
 	memcpy(fields_ids, dflt_ids, fields_nids * sizeof(int));
