@@ -818,6 +818,8 @@ static struct fdisk_parttype *translate_type_shortcuts(struct fdisk_script *dp, 
 #define TK_PLUS		1
 #define TK_MINUS	-1
 
+#define alone_sign(_sign, _p)	(_sign && (*_p == '\0' || isblank(*_p)))
+
 /* simple format:
  * <start>, <size>, <type>, <bootable>, ...
  */
@@ -848,18 +850,18 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 		p = (char *) skip_blank(p);
 		item++;
 
-		DBG(SCRIPT, ul_debugobj(dp, " parsing item %d ('%s')", item, p));
-		begin = p;
-
 		if (item != ITEM_BOOTABLE) {
 			sign = *p == '-' ? TK_MINUS : *p == '+' ? TK_PLUS : 0;
 			if (sign)
 				p++;
 		}
 
+		DBG(SCRIPT, ul_debugobj(dp, " parsing item %d ('%s')", item, p));
+		begin = p;
+
 		switch (item) {
 		case ITEM_START:
-			if (*p == ',' || *p == ';' || (sign && *p == '\0'))
+			if (*p == ',' || *p == ';' || alone_sign(sign, p))
 				fdisk_partition_start_follow_default(pa, 1);
 			else {
 				int pow = 0;
@@ -877,7 +879,7 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 			}
 			break;
 		case ITEM_SIZE:
-			if (*p == ',' || *p == ';' || (sign && *p == '\0')) {
+			if (*p == ',' || *p == ';' || alone_sign(sign, p)) {
 				fdisk_partition_end_follow_default(pa, 1);
 				if (sign == TK_PLUS)
 					/* alone '+' means use all possible space, elone '-' means nothing */
@@ -899,7 +901,7 @@ static int parse_commas_line(struct fdisk_script *dp, char *s)
 			}
 			break;
 		case ITEM_TYPE:
-			if (*p == ',' || *p == ';' || (sign && *p == '\0'))
+			if (*p == ',' || *p == ';' || alone_sign(sign, p))
 				break;	/* use default type */
 
 			rc = next_string(&p, &str);
