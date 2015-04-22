@@ -74,11 +74,12 @@ static struct colinfo infos[] = {
 };
 
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
-static int ncolumns;
+static size_t ncolumns;
 
 static int get_column_id(int num)
 {
-	assert(num < ncolumns);
+	assert(num >= 0);
+	assert((size_t) num < ncolumns);
 	assert(columns[num] < (int) ARRAY_SIZE(infos));
 	return columns[num];
 }
@@ -213,7 +214,7 @@ static int delete_all_loops(struct loopdev_cxt *lc)
 
 static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 {
-	int i;
+	size_t i;
 
 	for (i = 0; i < ncolumns; i++) {
 		const char *p = NULL;			/* external data */
@@ -292,7 +293,8 @@ static int show_table(struct loopdev_cxt *lc,
 	struct stat sbuf, *st = &sbuf;
 	struct libscols_table *tb;
 	struct libscols_line *ln;
-	int i, rc = 0;
+	int rc = 0;
+	size_t i;
 
 	scols_init_debug(0);
 

@@ -151,7 +151,7 @@ static struct colinfo infos[] = {
  * column twice. That's enough, dynamically allocated array of the columns is
  * unnecessary overkill and over-engineering in this case */
 static int columns[ARRAY_SIZE(infos) * 2];
-static int ncolumns;
+static size_t ncolumns;
 
 static inline size_t err_columns_index(size_t arysz, size_t idx)
 {
@@ -186,7 +186,8 @@ static int match_func(struct libmnt_fs *fs, void *data __attribute__ ((__unused_
 
 static int get_column_id(int num)
 {
-	assert(num < ncolumns);
+	assert(num >= 0);
+	assert((size_t) num < ncolumns);
 	assert((size_t) columns[num] < ARRAY_SIZE(infos));
 	return columns[num];
 }
@@ -704,7 +705,7 @@ static char *get_tabdiff_data(struct libmnt_fs *old_fs,
 static struct libscols_line *add_line(struct libscols_table *table, struct libmnt_fs *fs,
 					struct libscols_line *parent)
 {
-	int i;
+	size_t i;
 	struct libscols_line *line = scols_table_new_line(table, parent);
 
 	if (!line) {
@@ -721,7 +722,7 @@ static struct libscols_line *add_line(struct libscols_table *table, struct libmn
 static struct libscols_line *add_tabdiff_line(struct libscols_table *table, struct libmnt_fs *new_fs,
 			struct libmnt_fs *old_fs, int change)
 {
-	int i;
+	size_t i;
 	struct libscols_line *line = scols_table_new_line(table, NULL);
 
 	if (!line) {
@@ -1271,9 +1272,10 @@ int main(int argc, char *argv[])
 	struct libmnt_table *tb = NULL;
 	char **tabfiles = NULL;
 	int direction = MNT_ITER_FORWARD;
-	int i, c, rc = -1, timeout = -1;
+	int c, rc = -1, timeout = -1;
 	int ntabfiles = 0, tabtype = 0;
 	char *outarg = NULL;
+	size_t i;
 
 	struct libscols_table *table = NULL;
 

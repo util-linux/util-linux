@@ -99,7 +99,8 @@ struct colinfo infos[] = {
 #define NCOLS ARRAY_SIZE(infos)
 
 /* array with IDs of enabled columns */
-static int columns[NCOLS], ncolumns;
+static int columns[NCOLS];
+size_t ncolumns;
 
 static int verbose;
 static int partx_flags;

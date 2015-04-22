@@ -222,7 +222,7 @@ struct lsblk *lsblk;	/* global handler */
  * column twice. That's enough, dynamically allocated array of the columns is
  * unnecessary overkill and over-engineering in this case */
 static int columns[ARRAY_SIZE(infos) * 2];
-static int ncolumns;
+static size_t ncolumns;
 
 static inline size_t err_columns_index(size_t arysz, size_t idx)
 {
@@ -329,7 +329,8 @@ static int is_maj_included(int maj)
 /* array with IDs of enabled columns */
 static int get_column_id(int num)
 {
-	assert(num < ncolumns);
+	assert(num >= 0);
+	assert((size_t) num < ncolumns);
 	assert(columns[num] < (int) ARRAY_SIZE(infos));
 	return columns[num];
 }
@@ -357,7 +358,7 @@ static int column_id_to_number(int id)
 {
 	size_t i;
 
-	for (i = 0; i < (size_t) ncolumns; i++)
+	for (i = 0; i < ncolumns; i++)
 		if (columns[i] == id)
 			return i;
 	return -1;
@@ -1127,7 +1128,7 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 
 static void fill_table_line(struct blkdev_cxt *cxt, struct libscols_line *scols_parent)
 {
-	int i;
+	size_t i;
 
 	cxt->scols_line = scols_table_new_line(lsblk->table, scols_parent);
 	if (!cxt->scols_line)
@@ -1642,8 +1643,9 @@ int main(int argc, char *argv[])
 {
 	struct lsblk _ls = { .sort_id = -1 };
 	int scols_flags = LSBLK_TREE;
-	int i, c, status = EXIT_FAILURE;
+	int c, status = EXIT_FAILURE;
 	char *outarg = NULL;
+	size_t i;
 
 	static const struct option longopts[] = {
 		{ "all",	0, 0, 'a' },
@@ -1730,7 +1732,7 @@ int main(int argc, char *argv[])
 			outarg = optarg;
 			break;
 		case 'O':
-			for (ncolumns = 0 ; ncolumns < (int) ARRAY_SIZE(infos); ncolumns++)
+			for (ncolumns = 0 ; ncolumns < ARRAY_SIZE(infos); ncolumns++)
 				columns[ncolumns] = ncolumns;
 			break;
 		case 'p':
