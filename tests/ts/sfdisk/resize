@@ -118,7 +118,7 @@ function test_label_resize {
 test_label_resize dos
 
 # GPT
-#test_label_resize gpt
+test_label_resize gpt
 
 rmmod scsi_debug
 ts_finalize
