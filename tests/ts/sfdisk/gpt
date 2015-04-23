@@ -89,7 +89,7 @@ label-id: 3b8559db-33af-43e9-befc-c331d829b539
 ${TS_DEVICE}1 : start=2048,  size=6144, type=44479540-F297-41B2-9AF7-D131D5F0458A, uuid=4dd6948a-44f8-4e6c-8bdc-064f740704f8
 ${TS_DEVICE}2 : start=8192,  size=6144, uuid=44b51def-5f04-465a-91aa-2889a62d8e49
 ${TS_DEVICE}3 : start=14336, size=6144, uuid=643e1d0d-bc02-4ced-b83b-86121062858f
-${TS_DEVICE}4 : start=20480, size=81920,uuid=d2a29b0a-fdee-40c3-9bae-b9fa782c986c, name="GPT is the best"
+${TS_DEVICE}4 : start=20480, size=81887,uuid=d2a29b0a-fdee-40c3-9bae-b9fa782c986c, name="GPT is the best"
 EOF
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
