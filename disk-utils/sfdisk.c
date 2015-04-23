@@ -1164,7 +1164,8 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		if (!sf->quiet)
 			fputs(_("Checking that no-one is using this disk right now ..."), stdout);
 		if (is_device_used(sf)) {
-			fputs(_(" FAILED\n\n"), stdout);
+			if (!sf->quiet)
+				fputs(_(" FAILED\n\n"), stdout);
 
 			fdisk_warnx(sf->cxt, _(
 			"This disk is currently in use - repartitioning is probably a bad idea.\n"
@@ -1173,7 +1174,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 
 			if (!sf->force)
 				errx(EXIT_FAILURE, _("Use the --force flag to overrule all checks."));
-		} else
+		} else if (!sf->quiet)
 			fputs(_(" OK\n\n"), stdout);
 	}
 
