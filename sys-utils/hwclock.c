@@ -400,15 +400,8 @@ mktime_tz(struct tm tm, const bool universal,
 	 */
 	zone = getenv("TZ");	/* remember original time zone */
 	if (universal) {
-		/* Set timezone to UTC as defined by the environment
-		 * variable TZUTC.  TZUTC undefined gives the default UTC
-		 * zonefile which usually does not take into account leap
-		 * seconds.  Define TZUTC to select your UTC zonefile which
-		 * does include leap seconds.  For example, with recent GNU
-		 * libc's:
-		 *    TZUTC=:/usr/share/zoneinfo/right/UTC
-		 */
-		setenv("TZ", getenv("TZUTC"), TRUE);
+		/* Set timezone to UTC */
+		setenv("TZ", "", TRUE);
 		/*
 		 * Note: tzset() gets called implicitly by the time code,
 		 * but only the first time. When changing the environment
