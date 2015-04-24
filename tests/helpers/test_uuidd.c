@@ -307,7 +307,7 @@ int main(int argc, char *argv[])
 
 	remove_segment(shmem_id, objects);
 	if (nignored)
-		printf("%zu objects ignored (probably problem to create processes/threads\n", nignored);
+		printf("%zu objects ignored\n", nignored);
 	if (!nfailed)
 		printf("test successful (no duplicate UUIDs found)\n");
 	else
