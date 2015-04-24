@@ -47,7 +47,9 @@ typedef struct threadentry thread_t;
 /* this is in shared memory, keep it as small as possible */
 struct objectentry {
 	uuid_t		uuid;
-	thread_t	*thread;
+	pthread_t	tid;
+	pid_t		pid;
+	size_t		idx;
 };
 typedef struct objectentry object_t;
 
@@ -123,7 +125,9 @@ static void *create_uuids(thread_t *th)
 		object_t *obj = &objects[i];
 
 		object_uuid_create(obj);
-		obj->thread = th;
+		obj->tid = th->tid;
+		obj->pid = th->proc->pid;
+		obj->idx = th->index + i;;
 	}
 	return 0;
 }
@@ -230,8 +234,9 @@ static void object_dump(size_t idx, object_t *obj)
 
 	fprintf(stderr, "object[%zu]: {\n", idx);
 	fprintf(stderr, "  uuid:    <%s>\n", p);
-	fprintf(stderr, "  process: %d\n", obj->thread && obj->thread->proc ? (int) obj->thread->proc->pid : 0);
-	fprintf(stderr, "  thread:  %d\n", obj->thread ? (int) obj->thread->tid : 0);
+	fprintf(stderr, "  idx:     %zu\n", obj->idx);
+	fprintf(stderr, "  process: %d\n", (int) obj->pid);
+	fprintf(stderr, "  thread:  %d\n", (int) obj->tid);
 	fprintf(stderr, "}\n");
 }
 
@@ -289,7 +294,7 @@ int main(int argc, char *argv[])
 		object_t *obj1 = &objects[i],
 			 *obj2 = &objects[i + 1];
 
-		if (!obj1->thread) {
+		if (!obj1->tid) {
 			LOG(3, (stderr, "ignore unused object #%zu\n", i));
 			nignored++;
 			continue;
