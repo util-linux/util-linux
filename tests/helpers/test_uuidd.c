@@ -27,46 +27,46 @@
 
 pid_t pid;
 
-int processes = 4;
-int threads = 4;
-int objects = 4096;
-int logging = 1;
-int help = 0;
-
-struct threadentry {
-	pthread_t thread;
-	pthread_attr_t thread_attr;
-	long arg;		/* index in object[] */
-	long value;		/* thread retval */
-};
-typedef struct threadentry thread_t;
+size_t processes = 4;
+size_t threads = 4;
+size_t objects = 4096;
+size_t logging = 1;
 
 struct processentry {
-	pid_t pid;
-	int status;
+	pid_t		pid;
+	int		status;
 };
 typedef struct processentry process_t;
 
+struct threadentry {
+	process_t	*proc;
+	pthread_t	tid;		/* pthread_self() / phtread_create() */
+	pthread_attr_t	thread_attr;
+	size_t		index;		/* index in object[] */
+	int		retval;		/* pthread exit() */
+};
+typedef struct threadentry thread_t;
+
+
 struct objectentry {
-	uuid_t uuid;
-	pid_t pid;
-	pthread_t tid;
-	int pos;
+	uuid_t		uuid;
+	thread_t	*thread;
+	size_t		id;
 };
 typedef struct objectentry object_t;
 
-int objectid;
-object_t *object;
+static int shmem_id;
+static object_t *object;
 
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fprintf(out, "\n %s [options]\n", program_invocation_short_name);
 
-	fprintf(out, "  -p <num>     number of of processes (default:%d)\n", processes);
-	fprintf(out, "  -t <num>     number of threads (default:%d)\n", threads);
-	fprintf(out, "  -o <num>     number of objects (default:%d)\n", objects);
-	fprintf(out, "  -l <level>   log level (default:%d)\n", logging);
+	fprintf(out, "  -p <num>     number of of processes (default:%zu)\n", processes);
+	fprintf(out, "  -t <num>     number of threads (default:%zu)\n", threads);
+	fprintf(out, "  -o <num>     number of objects (default:%zu)\n", objects);
+	fprintf(out, "  -l <level>   log level (default:%zu)\n", logging);
 	fprintf(out, "  -h           display help\n");
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
@@ -104,40 +104,42 @@ static void object_uuid_create(object_t * object)
 	uuid_generate_time(object->uuid);
 }
 
-static void object_uuid_to_string(object_t * object, unsigned char **string_uuid)
+static void object_uuid_to_string(object_t * object, char **string_uuid)
 {
 	uuid_unparse(object->uuid, *string_uuid);
 }
 
 static int object_uuid_compare(const void *object1, const void *object2)
 {
-	uuid_t *uuid1, *uuid2;
-	int result;
+	uuid_t *uuid1 = &((object_t *) object1)->uuid,
+	       *uuid2 = &((object_t *) object2)->uuid;
 
-	uuid1 = &((object_t *) object1)->uuid;
-	uuid2 = &((object_t *) object2)->uuid;
-	result = uuid_compare(*uuid1, *uuid2);
-	return (result);
+	return uuid_compare(*uuid1, *uuid2);
 }
 
-static void *create_uuids(void *p)
+static void *create_uuids(thread_t *th)
 {
-	long index, i;
+	size_t i;
 
-	index = *((long *)p);
-	for (i = index; i < index + objects; i++) {
+	for (i = th->index; i < th->index + objects; i++) {
 		object_uuid_create(&object[i]);
-		object[i].pid = pid;
-		object[i].tid = pthread_self();
-		object[i].pos = i - index;
+		object[i].thread = th;
+		object[i].id = i - th->index;
 	}
-	return (0);
+	return 0;
 }
 
-static void create_threads(int index)
+static void *thread_body(void *arg)
+{
+	thread_t *th = (thread_t *) arg;
+
+	return create_uuids(th);
+}
+
+static void create_threads(process_t *proc, size_t index)
 {
 	thread_t *thread;
-	int i, result;
+	size_t i, result;
 	pid_t pid = getpid();
 
 	thread = (thread_t *) xcalloc(threads, sizeof(thread_t));
@@ -146,33 +148,36 @@ static void create_threads(int index)
 		if (result)
 			error(EXIT_FAILURE, result, "pthread_attr_init failed");
 
-		thread[i].arg = index;
-		result =  pthread_create(&thread[i].thread, &thread[i].thread_attr,
-				   &create_uuids, &thread[i].arg);
+		thread[i].index = index;
+		thread[i].proc = proc;
+		result = pthread_create(&thread[i].tid,
+					&thread[i].thread_attr,
+					&thread_body,
+					&thread[i]);
 		if (result)
 			error(EXIT_FAILURE, result, "pthread_create failed");
 
 		LOG(2,
-		    (stderr, "%d: started thread [tid=%d,arg=%d]\n",
-		     pid, thread[i].thread, thread[i].arg));
+		    (stderr, "%d: started thread [tid=%d,index=%zu]\n",
+		     pid, (int) thread[i].tid, thread[i].index));
 		index += objects;
 	}
 
 	for (i = 0; i < threads; i++) {
-		result = pthread_join(thread[i].thread, (void *)&thread[i].value);
+		result = pthread_join(thread[i].tid, (void *)&thread[i].retval);
 		if (result)
 			error(EXIT_FAILURE, result, "pthread_join failed");
 		LOG(2,
-		    (stderr, "%d: thread exited [tid=%d,value=%d]\n",
-		     pid, thread[i].thread, thread[i].value));
+		    (stderr, "%d: thread exited [tid=%d,return=%d]\n",
+		     pid, (int) thread[i].tid, thread[i].retval));
 	}
 	free(thread);
 }
 
-static void create_processes()
+static void create_processes(void)
 {
 	process_t *process;
-	int i;
+	size_t i;
 
 	process = (process_t *) xcalloc(processes, sizeof(process_t));
 	for (i = 0; i < processes; i++) {
@@ -182,7 +187,7 @@ static void create_processes()
 			err(EXIT_FAILURE, "fork failed");
 			break;
 		case 0:
-			create_threads(i * threads * objects);
+			create_threads(&process[i], i * threads * objects);
 			exit(EXIT_SUCCESS);
 			break;
 		default:
@@ -205,20 +210,19 @@ static void create_processes()
 	free(process);
 }
 
-static void object_dump(int i)
+static void object_dump(size_t i)
 {
-	unsigned char uuid_string[37], *p;
+	char uuid_string[37], *p;
 
 	p = uuid_string;
 	object_uuid_to_string(&object[i], &p);
-	LOG(0,
-	    (stderr, "%d: object[%d]=[uuid=<%s>,pid=%d,tid=%d,pos=%d]\n",
-	     pid, i, p, object[i].pid, object[i].tid, object[i].pos));
+	fprintf(stderr, "%d: object[%zu]={uuid=<%s>,pid=%d,tid=%d,id=%zu}\n",
+	     pid, i, p, object[i].thread->proc->pid, (int) object[i].thread->tid, object[i].id);
 }
 
 int main(int argc, char *argv[])
 {
-	int i, count;
+	size_t i, count;
 	int c;
 
 	while (((c = getopt(argc, argv, "p:t:o:l:h")) != -1)) {
@@ -248,11 +252,11 @@ int main(int argc, char *argv[])
 		usage(stderr);
 
 	if (logging == 1)
-		fprintf(stderr, "requested: %d processes, %d threads, %d objects\n",
+		fprintf(stderr, "requested: %zu processes, %zu threads, %zu objects\n",
 				processes, threads, objects);
 
 
-	allocate_segment(&objectid, (void **)&object,
+	allocate_segment(&shmem_id, (void **)&object,
 			 processes * threads * objects, sizeof(object_t));
 	create_processes();
 	if (logging >= 3) {
@@ -267,24 +271,17 @@ int main(int argc, char *argv[])
 	for (i = 0; i < processes * threads * objects - 1; i++) {
 		if (object_uuid_compare(&object[i], &object[i + 1]) == 0) {
 			if (logging >= 1) {
-				LOG(0,
-				    (stdout,
-				     "%d: objects #%d and #%d have duplicate UUIDs\n",
-				     pid, i, i + 1));
+			fprintf(stderr, "%d: objects #%zu and #%zu have duplicate UUIDs\n",
+				     pid, i, i + 1);
 				object_dump(i);
 				object_dump(i + 1);
 			}
 			count = count + 1;
 		}
 	}
-	remove_segment(objectid, object);
-	if (count == 0) {
-		LOG(0,
-		    (stdout, "test successful (no duplicate UUIDs found)\n"));
-	}
-	else {
-		LOG(0,
-		    (stdout, "test failed (found %d duplicate UUIDs)\n",
-		     count));
-	}
+	remove_segment(shmem_id, object);
+	if (count == 0)
+		printf("test successful (no duplicate UUIDs found)\n");
+	else
+		printf("test failed (found %zu duplicate UUIDs)\n", count);
 }
