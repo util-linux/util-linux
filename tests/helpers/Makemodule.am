@@ -17,6 +17,6 @@ test_sigreceive_LDADD = $(LDADD) libcommon.la
 
 check_PROGRAMS += test_uuidd
 test_uuidd_SOURCES = tests/helpers/test_uuidd.c
-test_uuidd_LDADD =  libuuid.la -lpthread
+test_uuidd_LDADD =  $(LDADD) libcommon.la libuuid.la -lpthread
 test_uuidd_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 
