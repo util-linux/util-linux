@@ -14,3 +14,9 @@ test_sysinfo_SOURCES = tests/helpers/test_sysinfo.c
 check_PROGRAMS += test_sigreceive
 test_sigreceive_SOURCES = tests/helpers/test_sigreceive.c
 test_sigreceive_LDADD = $(LDADD) libcommon.la
+
+check_PROGRAMS += test_uuidd
+test_uuidd_SOURCES = tests/helpers/test_uuidd.c
+test_uuidd_LDADD =  libuuid.la -lpthread
+test_uuidd_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir)
+
