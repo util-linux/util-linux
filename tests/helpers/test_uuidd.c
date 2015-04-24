@@ -25,8 +25,6 @@
 
 #define LOG(level,args) if (logging >= level) { fprintf args; }
 
-pid_t pid;
-
 size_t processes = 4;
 size_t threads = 4;
 size_t objects = 4096;
@@ -83,8 +81,8 @@ static void allocate_segment(int *id, void **address, size_t number, size_t size
 		err(EXIT_FAILURE, "shmat failed");
 
 	LOG(2, (stderr,
-	     "%d: allocate shared memory segment [id=%d,address=0x%p]\n",
-	     pid, *id, *address));
+	     "allocate shared memory segment [id=%d,address=0x%p]\n",
+	     *id, *address));
 }
 
 static void remove_segment(int id, void *address)
@@ -95,8 +93,8 @@ static void remove_segment(int id, void *address)
 		err(EXIT_FAILURE, "shmctl failed");
 	LOG(2,
 	    (stderr,
-	     "%d: remove shared memory segment [id=%d,address=0x%p]\n",
-	     pid, id, address));
+	     "remove shared memory segment [id=%d,address=0x%p]\n",
+	     id, address));
 }
 
 static void object_uuid_create(object_t * object)
@@ -183,17 +181,17 @@ static void create_processes(void)
 	for (i = 0; i < processes; i++) {
 		process[i].pid = fork();
 		switch (process[i].pid) {
-		case -1:
+		case -1: /* error */
 			err(EXIT_FAILURE, "fork failed");
 			break;
-		case 0:
+		case 0: /* child */
+			process[i].pid = getpid();
 			create_threads(&process[i], i * threads * objects);
 			exit(EXIT_SUCCESS);
 			break;
-		default:
-			LOG(2,
-			    (stderr, "%d: started process [pid=%d]\n",
-			     pid, process[i].pid));
+		default: /* parent */
+			LOG(2, (stderr, "started process [pid=%d]\n",
+						process[i].pid));
 			break;
 		}
 	}
@@ -204,8 +202,8 @@ static void create_processes(void)
 			err(EXIT_FAILURE, "waitpid failed");
 
 		LOG(2,
-		    (stderr, "%d: process exited [pid=%d,status=%d]\n",
-		     pid, process[i].pid, process[i].status));
+		    (stderr, "process exited [pid=%d,status=%d]\n",
+		     process[i].pid, process[i].status));
 	}
 	free(process);
 }
@@ -216,8 +214,9 @@ static void object_dump(size_t i)
 
 	p = uuid_string;
 	object_uuid_to_string(&object[i], &p);
-	fprintf(stderr, "%d: object[%zu]={uuid=<%s>,pid=%d,tid=%d,id=%zu}\n",
-	     pid, i, p, object[i].thread->proc->pid, (int) object[i].thread->tid, object[i].id);
+	fprintf(stderr, "object[%zu]: {uuid=<%s>,pid=%d,tid=%d,id=%zu}\n",
+	     i, p, object[i].thread->proc->pid,
+	     (int) object[i].thread->tid, object[i].id);
 }
 
 int main(int argc, char *argv[])
@@ -260,22 +259,21 @@ int main(int argc, char *argv[])
 			 processes * threads * objects, sizeof(object_t));
 	create_processes();
 	if (logging >= 3) {
-		for (i = 0; i < processes * threads * objects; i++) {
+		for (i = 0; i < processes * threads * objects; i++)
 			object_dump(i);
-		}
 	}
+
 	qsort(object, processes * threads * objects, sizeof(object_t),
 	      object_uuid_compare);
-	LOG(2, (stdout, "%d: qsort() done\n", pid));
+	LOG(2, (stdout, "qsort() done\n"));
 	count = 0;
 	for (i = 0; i < processes * threads * objects - 1; i++) {
 		if (object_uuid_compare(&object[i], &object[i + 1]) == 0) {
-			if (logging >= 1) {
-			fprintf(stderr, "%d: objects #%zu and #%zu have duplicate UUIDs\n",
-				     pid, i, i + 1);
-				object_dump(i);
-				object_dump(i + 1);
-			}
+			if (logging >= 1)
+				fprintf(stderr, "objects #%zu and #%zu have duplicate UUIDs\n",
+					i, i + 1);
+					object_dump(i);
+					object_dump(i + 1);
 			count = count + 1;
 		}
 	}
