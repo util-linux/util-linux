@@ -228,10 +228,11 @@ static void object_dump(size_t idx, object_t *obj)
 	p = uuid_string;
 	object_uuid_to_string(obj, &p);
 
-	fprintf(stderr, "object[%zu]: {uuid=<%s>,pid=%d,tid=%d}\n",
-	     idx, p,
-	     obj->thread->proc->pid,
-	     (int) obj->thread->tid);
+	fprintf(stderr, "object[%zu]: {\n", idx);
+	fprintf(stderr, "  uuid:    <%s>\n", p);
+	fprintf(stderr, "  process: %d\n", obj->thread && obj->thread->proc ? (int) obj->thread->proc->pid : 0);
+	fprintf(stderr, "  thread:  %d\n", obj->thread ? (int) obj->thread->tid : 0);
+	fprintf(stderr, "}\n");
 }
 
 int main(int argc, char *argv[])
