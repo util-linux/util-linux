@@ -5,6 +5,23 @@
  *	SAP Technology Group
  *
  * Copyright (C) 2015 Karel Zak <kzak@redhat.com>
+ *
+ *
+ * The test heavily uses shared memory, to enlarge maximal size of shared
+ * segment use:
+ *
+ *	echo "4294967295" > /proc/sys/kernel/shmm
+ *
+ * The test is compiled against in-tree libuuid, if you want to test uuidd
+ * installed to the system then make sure that libuuid uses the same socket
+ * like the running uuidd. You can start the uuidd manually, for example:
+ *
+ *	uuidd --debug --no-fork --no-pid --socket /run/uuidd/request
+ *
+ * if the $localstatedir (as defined by build-system) is /run. If you want
+ * to overwrite the built-in default then use:
+ *
+ *	make uuidd uuidgen localstatedir=/var
  */
 #include <error.h>
 #include <libgen.h>
