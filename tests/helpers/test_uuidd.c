@@ -45,7 +45,7 @@ struct threadentry {
 };
 typedef struct threadentry thread_t;
 
-
+/* this is in shared memory, keep it as small as possible */
 struct objectentry {
 	uuid_t		uuid;
 	thread_t	*thread;
@@ -82,6 +82,8 @@ static void allocate_segment(int *id, void **address, size_t number, size_t size
 	LOG(2, (stderr,
 	     "allocate shared memory segment [id=%d,address=0x%p]\n",
 	     *id, *address));
+
+	memset(*address, 0, number * size);
 }
 
 static void remove_segment(int id, void *address)
@@ -137,7 +139,7 @@ static void *thread_body(void *arg)
 static void create_nthreads(process_t *proc, size_t index)
 {
 	thread_t *threads;
-	size_t i;
+	size_t i, ncreated = 0;
 	int rc;
 
 	threads = (thread_t *) xcalloc(nthreads, sizeof(thread_t));
@@ -146,22 +148,32 @@ static void create_nthreads(process_t *proc, size_t index)
 		thread_t *th = &threads[i];
 
 		rc = pthread_attr_init(&th->thread_attr);
-		if (rc)
-			error(EXIT_FAILURE, rc, "%d: pthread_attr_init failed", proc->pid);
+		if (rc) {
+			error(0, rc, "%d: pthread_attr_init failed", proc->pid);
+			break;
+		}
 
 		th->index = index;
 		th->proc = proc;
 		rc = pthread_create(&th->tid, &th->thread_attr, &thread_body, th);
 
-		if (rc)
-			error(EXIT_FAILURE, rc, "%d: pthread_create failed", proc->pid);
+		if (rc) {
+			error(0, rc, "%d: pthread_create failed", proc->pid);
+			break;
+		}
 
 		LOG(2, (stderr, "%d: started thread [tid=%d,index=%zu]\n",
 		     proc->pid, (int) th->tid, th->index));
 		index += nobjects;
+		ncreated++;
 	}
 
-	for (i = 0; i < nthreads; i++) {
+	if (ncreated != nthreads)
+		fprintf(stderr, "%d: %zu threads not craeted and ~%zu objects will be ignored\n",
+				proc->pid, nthreads - ncreated,
+				(nthreads - ncreated) * nobjects);
+
+	for (i = 0; i < ncreated; i++) {
 		thread_t *th = &threads[i];
 
 		rc = pthread_join(th->tid, (void *) &th->retval);
@@ -295,9 +307,11 @@ int main(int argc, char *argv[])
 
 	remove_segment(shmem_id, objects);
 	if (nignored)
-		printf("%zu objects ignored (probably problem to create processes/threads", nignored);
+		printf("%zu objects ignored (probably problem to create processes/threads\n", nignored);
 	if (!nfailed)
 		printf("test successful (no duplicate UUIDs found)\n");
 	else
 		printf("test failed (found %zu duplicate UUIDs)\n", nfailed);
+
+	return nfailed ? EXIT_FAILURE : EXIT_SUCCESS;
 }
