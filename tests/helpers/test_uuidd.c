@@ -23,12 +23,12 @@
 #include "xalloc.h"
 #include "strutils.h"
 
-#define LOG(level,args) if (logging >= level) { fprintf args; }
+#define LOG(level,args) if (loglev >= level) { fprintf args; }
 
-size_t processes = 4;
-size_t threads = 4;
-size_t objects = 4096;
-size_t logging = 1;
+size_t nprocesses = 4;
+size_t nthreads = 4;
+size_t nobjects = 4096;
+size_t loglev = 1;
 
 struct processentry {
 	pid_t		pid;
@@ -61,10 +61,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fprintf(out, "\n %s [options]\n", program_invocation_short_name);
 
-	fprintf(out, "  -p <num>     number of of processes (default:%zu)\n", processes);
-	fprintf(out, "  -t <num>     number of threads (default:%zu)\n", threads);
-	fprintf(out, "  -o <num>     number of objects (default:%zu)\n", objects);
-	fprintf(out, "  -l <level>   log level (default:%zu)\n", logging);
+	fprintf(out, "  -p <num>     number of of nprocesses (default:%zu)\n", nprocesses);
+	fprintf(out, "  -t <num>     number of nthreads (default:%zu)\n", nthreads);
+	fprintf(out, "  -o <num>     number of nobjects (default:%zu)\n", nobjects);
+	fprintf(out, "  -l <level>   log level (default:%zu)\n", loglev);
 	fprintf(out, "  -h           display help\n");
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
@@ -119,7 +119,7 @@ static void *create_uuids(thread_t *th)
 {
 	size_t i;
 
-	for (i = th->index; i < th->index + objects; i++) {
+	for (i = th->index; i < th->index + nobjects; i++) {
 		object_uuid_create(&object[i]);
 		object[i].thread = th;
 		object[i].id = i - th->index;
@@ -134,14 +134,14 @@ static void *thread_body(void *arg)
 	return create_uuids(th);
 }
 
-static void create_threads(process_t *proc, size_t index)
+static void create_nthreads(process_t *proc, size_t index)
 {
 	thread_t *thread;
 	size_t i, result;
 	pid_t pid = getpid();
 
-	thread = (thread_t *) xcalloc(threads, sizeof(thread_t));
-	for (i = 0; i < threads; i++) {
+	thread = (thread_t *) xcalloc(nthreads, sizeof(thread_t));
+	for (i = 0; i < nthreads; i++) {
 		result = pthread_attr_init(&thread[i].thread_attr);
 		if (result)
 			error(EXIT_FAILURE, result, "pthread_attr_init failed");
@@ -158,10 +158,10 @@ static void create_threads(process_t *proc, size_t index)
 		LOG(2,
 		    (stderr, "%d: started thread [tid=%d,index=%zu]\n",
 		     pid, (int) thread[i].tid, thread[i].index));
-		index += objects;
+		index += nobjects;
 	}
 
-	for (i = 0; i < threads; i++) {
+	for (i = 0; i < nthreads; i++) {
 		result = pthread_join(thread[i].tid, (void *)&thread[i].retval);
 		if (result)
 			error(EXIT_FAILURE, result, "pthread_join failed");
@@ -172,13 +172,13 @@ static void create_threads(process_t *proc, size_t index)
 	free(thread);
 }
 
-static void create_processes(void)
+static void create_nprocesses(void)
 {
 	process_t *process;
 	size_t i;
 
-	process = (process_t *) xcalloc(processes, sizeof(process_t));
-	for (i = 0; i < processes; i++) {
+	process = (process_t *) xcalloc(nprocesses, sizeof(process_t));
+	for (i = 0; i < nprocesses; i++) {
 		process[i].pid = fork();
 		switch (process[i].pid) {
 		case -1: /* error */
@@ -186,7 +186,7 @@ static void create_processes(void)
 			break;
 		case 0: /* child */
 			process[i].pid = getpid();
-			create_threads(&process[i], i * threads * objects);
+			create_nthreads(&process[i], i * nthreads * nobjects);
 			exit(EXIT_SUCCESS);
 			break;
 		default: /* parent */
@@ -196,7 +196,7 @@ static void create_processes(void)
 		}
 	}
 
-	for (i = 0; i < processes; i++) {
+	for (i = 0; i < nprocesses; i++) {
 		if (waitpid(process[i].pid, &process[i].status, 0) ==
 		    (pid_t) - 1)
 			err(EXIT_FAILURE, "waitpid failed");
@@ -227,16 +227,16 @@ int main(int argc, char *argv[])
 	while (((c = getopt(argc, argv, "p:t:o:l:h")) != -1)) {
 		switch (c) {
 		case 'p':
-			processes = strtou32_or_err(optarg, "invalid processes number argument");
+			nprocesses = strtou32_or_err(optarg, "invalid nprocesses number argument");
 			break;
 		case 't':
-			threads = strtou32_or_err(optarg, "invalid threads number argument");
+			nthreads = strtou32_or_err(optarg, "invalid nthreads number argument");
 			break;
 		case 'o':
-			objects = strtou32_or_err(optarg, "invalid objects number argument");
+			nobjects = strtou32_or_err(optarg, "invalid nobjects number argument");
 			break;
 		case 'l':
-			logging = strtou32_or_err(optarg, "invalid log level argument");
+			loglev = strtou32_or_err(optarg, "invalid log level argument");
 			break;
 		case 'h':
 			usage(stdout);
@@ -250,27 +250,27 @@ int main(int argc, char *argv[])
 	if (optind != argc)
 		usage(stderr);
 
-	if (logging == 1)
-		fprintf(stderr, "requested: %zu processes, %zu threads, %zu objects\n",
-				processes, threads, objects);
+	if (loglev == 1)
+		fprintf(stderr, "requested: %zu nprocesses, %zu nthreads, %zu nobjects\n",
+				nprocesses, nthreads, nobjects);
 
 
 	allocate_segment(&shmem_id, (void **)&object,
-			 processes * threads * objects, sizeof(object_t));
-	create_processes();
-	if (logging >= 3) {
-		for (i = 0; i < processes * threads * objects; i++)
+			 nprocesses * nthreads * nobjects, sizeof(object_t));
+	create_nprocesses();
+	if (loglev >= 3) {
+		for (i = 0; i < nprocesses * nthreads * nobjects; i++)
 			object_dump(i);
 	}
 
-	qsort(object, processes * threads * objects, sizeof(object_t),
+	qsort(object, nprocesses * nthreads * nobjects, sizeof(object_t),
 	      object_uuid_compare);
 	LOG(2, (stdout, "qsort() done\n"));
 	count = 0;
-	for (i = 0; i < processes * threads * objects - 1; i++) {
+	for (i = 0; i < nprocesses * nthreads * nobjects - 1; i++) {
 		if (object_uuid_compare(&object[i], &object[i + 1]) == 0) {
-			if (logging >= 1)
-				fprintf(stderr, "objects #%zu and #%zu have duplicate UUIDs\n",
+			if (loglev >= 1)
+				fprintf(stderr, "nobjects #%zu and #%zu have duplicate UUIDs\n",
 					i, i + 1);
 					object_dump(i);
 					object_dump(i + 1);
