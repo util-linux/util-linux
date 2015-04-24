@@ -17,8 +17,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#include <uuid/uuid.h>
-
+#include "uuid.h"
 #include "c.h"
 #include "xalloc.h"
 #include "strutils.h"
