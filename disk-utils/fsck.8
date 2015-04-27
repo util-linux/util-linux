@@ -6,7 +6,9 @@
 fsck \- check and repair a Linux filesystem
 .SH SYNOPSIS
 .B fsck
-.RB [ \-lrsAVRTMNP ]
+.RB [ \-lsAVRTMNP ]
+.RB [ \-r
+.RI [ fd ]]
 .RB [ \-C
 .RI [ fd ]]
 .RB [ \-t
@@ -100,13 +102,20 @@ multiple devices or for non-rotating disks.  \fBfsck\fR does not lock underlying
 devices when executed to check stacked devices (e.g.\& MD or DM) \(en this feature is
 not implemented yet.
 .TP
-.B \-r
+.BR \-r \ [ \fIfd\fR ]
 Report certain statistics for each fsck when it completes.  These statistics
 include the exit status, the maximum run set size (in kilobytes), the elapsed
 all-clock time and the user and system CPU time used by the fsck run.  For
 example:
 
 /dev/sda1: status 0, rss 92828, real 4.002804, user 2.677592, sys 0.86186
+
+GUI front-ends may specify a file descriptor
+.IR fd ,
+in which case the progress bar information will be sent to that file descriptor
+in a machine parseable format.  For example:
+
+/dev/sda1 0 92828 4.002804 2.677592 0.86186
 .TP
 .B \-s
 Serialize
