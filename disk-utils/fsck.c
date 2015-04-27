@@ -150,8 +150,9 @@ static int kill_sent;
 static char *fstype;
 static struct fsck_instance *instance_list;
 
-static const char fsck_prefix_path[] = FS_SEARCH_PATH;
+#define FSCK_DEFAULT_PATH "/sbin"
 static char *fsck_path;
+
 
 /* parsed fstab and mtab */
 static struct libmnt_table *fstab, *mtab;
@@ -1551,8 +1552,8 @@ int main(int argc, char *argv[])
 {
 	int i, status = 0;
 	int interactive = 0;
-	char *oldpath = getenv("PATH");
 	struct libmnt_fs *fs;
+	const char *path = getenv("PATH");
 
 	setvbuf(stdout, NULL, _IONBF, BUFSIZ);
 	setvbuf(stderr, NULL, _IONBF, BUFSIZ);
@@ -1573,16 +1574,7 @@ int main(int argc, char *argv[])
 
 	load_fs_info();
 
-	/* Update our search path to include uncommon directories. */
-	if (oldpath) {
-		fsck_path = xmalloc (strlen (fsck_prefix_path) + 1 +
-				    strlen (oldpath) + 1);
-		strcpy (fsck_path, fsck_prefix_path);
-		strcat (fsck_path, ":");
-		strcat (fsck_path, oldpath);
-	} else {
-		fsck_path = xstrdup(fsck_prefix_path);
-	}
+	fsck_path = xstrdup(path && *path ? path : FSCK_DEFAULT_PATH);
 
 	if ((num_devices == 1) || (serialize))
 		interactive = 1;

@@ -80,14 +80,11 @@ In actuality,
 .B fsck
 is simply a front-end for the various filesystem checkers
 (\fBfsck\fR.\fIfstype\fR) available under Linux.  The
-filesystem-specific checker is searched for in
-.I /sbin
-first, then in
-.I /etc/fs
-and
-.IR /etc ,
-and finally in the directories listed in the PATH environment
-variable.  Please see the filesystem-specific checker manual pages for
+filesystem-specific checker is searched for in the
+PATH environment variable. If the PATH is undefined then
+fallback to "/sbin".
+.PP
+Please see the filesystem-specific checker manual pages for
 further details.
 .SH OPTIONS
 .TP
@@ -416,17 +413,7 @@ be run based on gathering accounting data from the operating system.
 .B PATH
 The
 .B PATH
-environment variable is used to find filesystem checkers.  A set of
-system directories are searched first:
-.BR /sbin ,
-.BR /sbin/fs.d ,
-.BR /sbin/fs ,
-.BR /etc/fs ,
-and
-.BR /etc .
-Then the set of directories found in the
-.B PATH
-environment are searched.
+environment variable is used to find filesystem checkers.
 .TP
 .B FSTAB_FILE
 This environment variable allows the system administrator
