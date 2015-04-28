@@ -56,6 +56,9 @@
 #include "fileutils.h"
 #include "monotonic.h"
 
+#define STRTOXX_EXIT_CODE	FSCK_EX_ERROR
+#include "strutils.h"
+
 #define XALLOC_EXIT_CODE	FSCK_EX_ERROR
 #include "xalloc.h"
 
@@ -1413,7 +1416,7 @@ static void parse_argv(int argc, char *argv[])
 	int	opt = 0;
 	int     opts_for_fsck = 0;
 	struct sigaction	sa;
-	int	report_stats_fd = 0;
+	int	report_stats_fd = -1;
 
 	/*
 	 * Set up signal action
@@ -1520,19 +1523,12 @@ static void parse_argv(int argc, char *argv[])
 			case 'r':
 				report_stats = 1;
 				if (arg[j+1]) {					/* -r<fd> */
-					report_stats_fd = string_to_int(arg+j+1);
-					if (report_stats_fd < 0)
-						report_stats_fd = 0;
-					else
-						goto next_arg;
+					report_stats_fd = strtou32_or_err(arg+j+1, _("invalid argument -r"));
+					goto next_arg;
 				} else if (i+1 < argc && *argv[i+1] != '-') {	/* -r <fd> */
-					report_stats_fd = string_to_int(argv[i+1]);
-					if (report_stats_fd < 0)
-						report_stats_fd = 0;
-					else {
-						++i;
-						goto next_arg;
-					}
+					report_stats_fd = strtou32_or_err(argv[i+1], _("invalid argument -r"));
+					++i;
+					goto next_arg;
 				}
 				break;
 			case 's':
@@ -1574,7 +1570,7 @@ static void parse_argv(int argc, char *argv[])
 	}
 
 	/* Validate the report stats file descriptor to avoid disasters */
-	if (report_stats_fd) {
+	if (report_stats_fd >= 0) {
 		report_stats_file = fdopen(report_stats_fd, "w");
 		if (!report_stats_file)
 			err(FSCK_EX_ERROR,
