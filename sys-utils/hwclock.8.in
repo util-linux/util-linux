@@ -1,24 +1,10 @@
 .\" hwclock.8.in -- man page for util-linux' hwclock
 .\"
 .\" 2015-01-07 J William Piggott
-.\" Authored new section: DATE-TIME CONFIGURATION.
-.\" Subsections: Keeping Time..., LOCAL vs UTC, POSIX vs 'RIGHT'.
-.\" Errata and drop outdated language.
-.\" Updates for v2.26
+.\"   Authored new section: DATE-TIME CONFIGURATION.
+.\"   Subsections: Keeping Time..., LOCAL vs UTC, POSIX vs 'RIGHT'.
 .\"
-.\"
-.\" -------------------------------
-.\" Included for troff portability.
-.\" Continuation line for .TP header.
-.de TQ
-.  br
-.  ns
-.  TP \\$1\" no doublequotes around argument!
-..
-.
-.\" -------------------------------
-.
-.TH HWCLOCK 8 "January 2015" "util-linux" "System Administration"
+.TH HWCLOCK 8 "April 2015" "util-linux" "System Administration"
 .SH NAME
 hwclock \- read or set the hardware clock (RTC)
 .SH SYNOPSIS
