@@ -103,10 +103,10 @@ libfdisk
 
    [always check libfdisk branch at github!]
 
- - (!) add fsck 'I'nfo fommand to print all details about specified partition
+ - (!) add fdisk 'I'nfo fommand to print all details about specified partition
    (like offset, size, name, uuid, type, C/H/S, fstype)
 
- - (!) add to "First sector" dialog a line with information about available
+ - (!) add to "First sector" fdisk dialog a line with information about available
    gaps (free areas) to make it more user friendly if you want to skip
    any useless (small) areas between existing partitions. 
    See https://bugzilla.redhat.com/show_bug.cgi?id=715114
