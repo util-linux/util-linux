@@ -3,10 +3,6 @@
 
 cfdisk
 ------
-  - provide additional information about the current partitions (LABEL=, UUID=,
-    filesystem type, size, usage, mountpoint, ...) just optionally add extra
-    table between main menu and list of partitions.
-
   - (!) add auto-sort support (sort partitions automatically) and
     --sort={auto,never,always} command line option. This feature should be
     enabled by default for logical partitions if we created all container (extended
@@ -107,7 +103,7 @@ libfdisk
 
    [always check libfdisk branch at github!]
 
- - (!) add 'I'nfo fommand to print all details about specified partition
+ - (!) add fsck 'I'nfo fommand to print all details about specified partition
    (like offset, size, name, uuid, type, C/H/S, fstype)
 
  - (!) add to "First sector" dialog a line with information about available
@@ -121,12 +117,6 @@ libfdisk
 
  - add support for Apple Partition Map (see libblkid/src/partitions/mac.c)
    http://en.wikipedia.org/wiki/Apple_Partition_Map
-
- - add "move end" command to move end of the last primary/extended partition.
-   This feature seems very attractive to users who resizing their disks 
-   (for example in virtual machines).
-
- - use off_t instead "long long"
 
  - catch SIGINT (Ctrl-C) and return to main menu.
    From Red Hat bugzilla #545488:
