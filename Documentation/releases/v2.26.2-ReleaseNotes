@@ -1,0 +1,126 @@
+util-linux 2.26.2 Release Notes
+===============================
+
+blockdev:
+   - fix whole-disk start sector usage  [Karel Zak]
+build-sys:
+   - add new compiler warnings  [Karel Zak]
+   - define cfdisk dependence on open_memstream  [Karel Zak]
+   - ncurses is optional, don't fail when missing  [Karel Zak]
+   - python is optional, don't fail when missing  [Karel Zak]
+dmesg:
+   - fix shadow declaration  [Sami Kerola]
+docs:
+   - update AUTHORS file  [Karel Zak]
+fdisk, sfdisk:
+   - fix -o <list> backend  [Karel Zak]
+fsck:
+   - fix fsck -C {fd} parsing  [Stanislav Brabec]
+hwclock:
+   - Remove TZUTC  [J William Piggott]
+   - flush stdout in hwclock -c  [Alexey Galakhov]
+   - regression fix  [J William Piggott]
+last:
+   - fix first (current) runlevel line  [Ruediger Meier]
+lib/strutils:
+   - fix string_add_to_idarray() int vs. size_t  [Karel Zak]
+lib/sysfs.c:
+   - use fcntl(..F_DUPFD_CLOEXEC) instead of dup(2)  [Cristian Rodríguez]
+libblkid:
+   - fix compiler warnings  [Sami Kerola]
+libfdisk:
+   - (dos)  retain existing boot flag when resizing a partition  [Karel Zak, awilliam@redhat.co]
+   - (gpt) add extra check for First/Last LBA  [Karel Zak]
+   - (gpt) check header size before verify CRC  [Karel Zak]
+   - (gpt) fix LE usage  [Karel Zak]
+   - (gpt) fix end sector calculation on resize  [Karel Zak]
+   - add fdisk_table_get_partition_by_partno()  [Karel Zak]
+   - add warning to resize function  [Karel Zak]
+   - allow to move start to first usable LBA  [Karel Zak]
+   - don't resize in label drivers  [Karel Zak]
+   - don't return empty strings from fdisk_partition_to_string()  [Karel Zak]
+   - fix script parser to support resize operations  [Karel Zak]
+   - fix scriptk parser to support alone signs  [Karel Zak]
+   - fix symbols versioning script  [Karel Zak]
+   - recognize FAT32 partitions hidden by Acronis software  [Jörg Jenderek]
+   - support bootbits protection from (p)MBR  [Karel Zak]
+   - support resize operation in fdisk_set_partition()  [Karel Zak]
+libmount:
+   - add note about flock() to docs  [Karel Zak]
+   - add support for MS_LAZYTIME  [Karel Zak]
+logger:
+   - --stderr and --no-act turn "auto-errors" on  [Ruediger Meier]
+   - Fix use of errno after strtol() without zeroing first  [Stef Walter]
+   - add --no-act for testing  [Karel Zak]
+   - add -DTEST_LOGGER  [Karel Zak]
+   - check xgethostname() return value  [Sami Kerola]
+   - fix LOGGER_TEST_TIMEOFDAY check  [Karel Zak]
+   - fix memory leaks  [Sami Kerola]
+   - fix rfc5424 format crash  [Karel Zak]
+   - generate header when reading message from stdin  [Patrick Plagwitz]
+   - tidy few indentation issues  [Sami Kerola]
+   - use errx() when checking user input  [Sami Kerola]
+lsblk:
+   - add debug support  [Karel Zak]
+   - don't ignore dependences for partitioned devies  [Karel Zak]
+   - follow kernel for inverse tree  [Karel Zak]
+mount:
+   - don't remount read-only on --bind  [Karel Zak]
+   - fix lazytime docs  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update da.po (from translationproject.org)  [Joe Hansen]
+   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+setarch:
+   - fix regression for sparc builds  [Waldemar Brodkorb]
+sfdisk:
+   - accept empty partitions from dump  [Karel Zak]
+   - don't use BLKRRPART to check loopdev usage  [Karel Zak]
+   - enable bootbits protection  [Karel Zak]
+   - fix -a vs. -A bug  [Karel Zak]
+   - improve -N warnings  [Karel Zak]
+tests:
+   - add --skip-loopdevs  [Karel Zak]
+   - add logger(1) command line options tests  [Sami Kerola]
+   - add logger(1) error condition tests  [Sami Kerola]
+   - add logger(1) journald test  [Sami Kerola]
+   - add logger(1) message format tests  [Sami Kerola]
+   - add old dump for sfdisk  [Karel Zak]
+   - add sfdisk resize regression tests for MBR  [Karel Zak]
+   - add sfdisk resize tests  [Karel Zak]
+   - add sfdisk resize tests for GPT  [Karel Zak]
+   - add subtests for invalid logger devive  [Ruediger Meier]
+   - avoid &>> for bash compatibility  [Ruediger Meier]
+   - config.h lives in build directory  [Ruediger Meier]
+   - fix cramfs/mkfs for BE and different pagesizes  [Ruediger Meier]
+   - fix getopt for old glibc  [Ruediger Meier]
+   - fix logger device pathname too long  [Ruediger Meier]
+   - fix sfdisk GPT test  [Karel Zak]
+   - fix, don't call ts_die from subshell  [Ruediger Meier]
+   - introduce TS_LOOP_DEVS for cleanup  [Ruediger Meier]
+   - introduce ts_cleanup_on_exit()  [Ruediger Meier]
+   - logger with socat device  [Ruediger Meier]
+   - logger, validate written socket data  [Ruediger Meier]
+   - logger/errors does not use --no-act  [Ruediger Meier]
+   - loop tests, don't call ts_die() with DEVICE parameter  [Ruediger Meier]
+   - make libmount context tests sensitive to USE_LIBMOUNT_FORCE_MOUNTINFO  [Karel Zak]
+   - make libmount python context tests sensitive to USE_LIBMOUNT_FORCE_MOUNTINFO  [Karel Zak]
+   - more(1) depends on terminal, force to TERM=linux  [Karel Zak]
+   - mount/rlimit tries to restore mtab  [Ruediger Meier]
+   - never use -o pipefail  [Ruediger Meier]
+   - optionally skip tests where loop support is needed  [Ruediger Meier]
+   - require wipefs for sfdisk/gpt  [Karel Zak]
+   - scsi_debug tests, don't call ts_die() with DEVICE parameter  [Ruediger Meier]
+   - simplify common logger options  [Ruediger Meier]
+   - start script/race test only when --force specified  [Karel Zak]
+   - ts_scsi_debug_init() sleeps a bit earlier  [Ruediger Meier]
+   - use --no-act for logger tests  [Karel Zak]
+   - use ts_skip for logger/journald  [Karel Zak]
+   - verify logger return value  [Ruediger Meier]
+travis:
+   - add MAKE_CHECK_OPTS  [Karel Zak]
+   - install socat >= 1.7.2  [Ruediger Meier]
+   - move install script to .travis-functions.sh  [Ruediger Meier]
+   - whitelist travis* branches  [Ruediger Meier]
+whereis:
+   - trivial spelling and grammar fix  [Mike Place]
