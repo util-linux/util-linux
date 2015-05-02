@@ -2429,6 +2429,73 @@ int fdisk_gpt_is_hybrid(struct fdisk_context *cxt)
 	return valid_pmbr(cxt) == GPT_MBR_HYBRID;
 }
 
+/**
+ * fdisk_gpt_get_partition_attrs:
+ * @cxt: context
+ * @partnum: partition number
+ * @attrs: GPT partition attributes
+ *
+ * Sets @attrs for the given partition
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int fdisk_gpt_get_partition_attrs(
+		struct fdisk_context *cxt,
+		size_t partnum,
+		uint64_t *attrs)
+{
+	struct fdisk_gpt_label *gpt;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_label(cxt, GPT));
+
+	gpt = self_label(cxt);
+
+	if ((uint32_t) partnum >= le32_to_cpu(gpt->pheader->npartition_entries))
+		return -EINVAL;
+
+	*attrs = le64_to_cpu(gpt->ents[partnum].attrs);
+	return 0;
+}
+
+/**
+ * fdisk_gpt_set_partition_attrs:
+ * @cxt: context
+ * @partnum: partition number
+ * @attrs: GPT partition attributes
+ *
+ * Sets the GPT partition attributes field to @attrs.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int fdisk_gpt_set_partition_attrs(
+		struct fdisk_context *cxt,
+		size_t partnum,
+		uint64_t attrs)
+{
+	struct fdisk_gpt_label *gpt;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_label(cxt, GPT));
+
+	DBG(LABEL, ul_debug("GPT entry attributes change requested partno=%zu", partnum));
+	gpt = self_label(cxt);
+
+	if ((uint32_t) partnum >= le32_to_cpu(gpt->pheader->npartition_entries))
+		return -EINVAL;
+
+	gpt->ents[partnum].attrs = cpu_to_le64(attrs);
+	fdisk_info(cxt, _("The attributes on partition %zu changed to 0x%016" PRIx64 "."),
+			partnum + 1, attrs);
+
+	gpt_recompute_crc(gpt->pheader, gpt->ents);
+	gpt_recompute_crc(gpt->bheader, gpt->ents);
+	fdisk_label_set_changed(cxt->label, 1);
+	return 0;
+}
+
 static int gpt_toggle_partition_flag(
 		struct fdisk_context *cxt,
 		size_t i,
@@ -2668,3 +2735,62 @@ struct fdisk_label *fdisk_new_gpt_label(struct fdisk_context *cxt)
 
 	return lb;
 }
+
+#ifdef TEST_PROGRAM
+int test_getattr(struct fdisk_test *ts, int argc, char *argv[])
+{
+	const char *disk = argv[1];
+	size_t part = strtoul(argv[2], NULL, 0) - 1;
+	struct fdisk_context *cxt;
+	uint64_t atters = 0;
+
+	cxt = fdisk_new_context();
+	fdisk_assign_device(cxt, disk, 1);
+
+	if (!fdisk_is_label(cxt, GPT))
+		return EXIT_FAILURE;
+
+	if (fdisk_gpt_get_partition_attrs(cxt, part, &atters))
+		return EXIT_FAILURE;
+
+	printf("%s: 0x%016" PRIx64 "\n", argv[2], atters);
+
+	fdisk_unref_context(cxt);
+	return 0;
+}
+
+int test_setattr(struct fdisk_test *ts, int argc, char *argv[])
+{
+	const char *disk = argv[1];
+	size_t part = strtoul(argv[2], NULL, 0) - 1;
+	uint64_t atters = strtoull(argv[3], NULL, 0);
+	struct fdisk_context *cxt;
+
+	cxt = fdisk_new_context();
+	fdisk_assign_device(cxt, disk, 0);
+
+	if (!fdisk_is_label(cxt, GPT))
+		return EXIT_FAILURE;
+
+	if (fdisk_gpt_set_partition_attrs(cxt, part, atters))
+		return EXIT_FAILURE;
+
+	if (fdisk_write_disklabel(cxt))
+		return EXIT_FAILURE;
+
+	fdisk_unref_context(cxt);
+	return 0;
+}
+
+int main(int argc, char *argv[])
+{
+	struct fdisk_test tss[] = {
+		{ "--getattr",  test_getattr,  "<disk> <partition>             print attributes" },
+		{ "--setattr",  test_setattr,  "<disk> <partition> <value>     set attributes" },
+		{ NULL }
+	};
+
+	return fdisk_run_test(tss, argc, argv);
+}
+
+#endif

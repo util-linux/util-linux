@@ -64,6 +64,7 @@ EXTRA_DIST += \
 if BUILD_LIBFDISK_TESTS
 check_PROGRAMS += \
 	test_fdisk_ask \
+	test_fdisk_gpt \
 	test_fdisk_script \
 	test_fdisk_utils \
 	test_fdisk_version 
@@ -80,6 +81,11 @@ test_fdisk_ask_SOURCES = libfdisk/src/ask.c
 test_fdisk_ask_CFLAGS = $(libfdisk_tests_cflags)
 test_fdisk_ask_LDFLAGS = $(libfdisk_tests_ldflags)
 test_fdisk_ask_LDADD = $(libfdisk_tests_ldadd)
+
+test_fdisk_gpt_SOURCES = libfdisk/src/gpt.c
+test_fdisk_gpt_CFLAGS = $(libfdisk_tests_cflags)
+test_fdisk_gpt_LDFLAGS = $(libfdisk_tests_ldflags)
+test_fdisk_gpt_LDADD = $(libfdisk_tests_ldadd)
 
 test_fdisk_utils_SOURCES = libfdisk/src/utils.c
 test_fdisk_utils_CFLAGS = $(libfdisk_tests_cflags)
