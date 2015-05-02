@@ -678,11 +678,6 @@ static int valid_pmbr(struct fdisk_context *cxt)
 	if (le16_to_cpu(pmbr->signature) != MSDOS_MBR_SIGNATURE)
 		goto done;
 
-	/* LBA of the GPT partition header */
-	if (pmbr->partition_record[0].starting_lba !=
-	    cpu_to_le32(GPT_PRIMARY_PARTITION_TABLE_LBA))
-		goto done;
-
 	/* seems like a valid MBR was found, check DOS primary partitions */
 	for (i = 0; i < 4; i++) {
 		if (pmbr->partition_record[i].os_type == EFI_PMBR_OSTYPE) {
@@ -693,13 +688,18 @@ static int valid_pmbr(struct fdisk_context *cxt)
 			 */
 			part = i;
 			ret = GPT_MBR_PROTECTIVE;
-			goto check_hybrid;
+			break;
 		}
 	}
 
 	if (ret != GPT_MBR_PROTECTIVE)
 		goto done;
-check_hybrid:
+
+	/* LBA of the GPT partition header */
+	if (pmbr->partition_record[part].starting_lba !=
+	    cpu_to_le32(GPT_PRIMARY_PARTITION_TABLE_LBA))
+		goto done;
+
 	for (i = 0 ; i < 4; i++) {
 		if ((pmbr->partition_record[i].os_type != EFI_PMBR_OSTYPE) &&
 		    (pmbr->partition_record[i].os_type != 0x00))
