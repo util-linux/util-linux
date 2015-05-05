@@ -319,7 +319,7 @@ int main(int argc, char *argv[])
 		/* Clear any inherited settings */
 		signal(SIGCHLD, SIG_DFL);
 		if (verbose)
-			printf(_("%s: executing %s\n"), program_invocation_short_name, cmd_argv[2]);
+			printf(_("%s: executing %s\n"), program_invocation_short_name, cmd_argv[0]);
 		f = fork();
 
 		if (f < 0) {
