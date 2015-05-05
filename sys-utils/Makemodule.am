@@ -357,6 +357,14 @@ dist_man_MANS += sys-utils/unshare.1
 unshare_SOURCES = sys-utils/unshare.c
 unshare_LDADD = $(LDADD) libcommon.la
 unshare_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+
+if HAVE_STATIC_UNSHARE
+usrbin_exec_PROGRAMS += unshare.static
+unshare_static_SOURCES = $(unshare_SOURCES)
+unshare_static_LDFLAGS = -all-static
+unshare_static_LDADD = $(unshare_LDADD)
+unshare_static_CFLAGS = $(unshare_CFLAGS)
+endif
 endif
 
 if BUILD_NSENTER
