@@ -8,10 +8,6 @@ compiler:
   - clang
 
 env:
-  global:
-  # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
-  # via the "travis encrypt" command using the project repo's public key
-  - secure: "X5xVT8S0hsnT5cyDzmQbKr68kunpI1VyNADD/bMcEjPiBO2p6/iWHSfAqRP3q2UEqt92XgwCd8cuSVffdagbin4JlvA5fgnCWkcCphC8k79jhHqz9aoK97qbSXBHLU4yDimeC/m9HlslBc/zjPAc+s9/7UKBXQI+YN9ITL1i7pQ="
   - MAKE_CHECK="nonroot"
   - MAKE_CHECK="root"
   - MAKE_CHECK="dist"
@@ -40,13 +36,3 @@ before_install:
   - which $CC
   # workaround clang not system wide, fail on sudo make install
   - export CC=`which $CC`
-
-addons:
-  coverity_scan:
-    project:
-      name: "karelzak/util-linux"
-      description: "Build submitted via Travis CI"
-      notification_email: kzak@redhat.com
-      build_command_prepend: travis_before_script
-      build_command: "make"
-      branch_pattern: coverity_scan
