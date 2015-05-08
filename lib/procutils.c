@@ -143,6 +143,7 @@ int proc_next_pid(struct proc_processes *ps, pid_t *pid)
 	do {
 		char buf[BUFSIZ], *p;
 
+		errno = 0;
 		d = readdir(ps->dir);
 		if (!d)
 			return errno ? -1 : 1;		/* error or end-of-dir */
