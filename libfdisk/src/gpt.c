@@ -1415,7 +1415,7 @@ static int gpt_entry_attrs_to_string(struct gpt_entry *e, char **res)
 	assert(res);
 
 	*res = NULL;
-	attrs = le64_to_cpu(e->attrs);
+	attrs = e->attrs;
 	if (!attrs)
 		return 0;	/* no attributes at all */
 
@@ -1530,7 +1530,7 @@ static int gpt_entry_attrs_from_string(
 			p++;
 	}
 
-	e->attrs = cpu_to_le64(attrs);
+	e->attrs = attrs;
 	return 0;
 }
 
@@ -2517,7 +2517,7 @@ static int gpt_toggle_partition_flag(
 	if ((uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries))
 		return -EINVAL;
 
-	attrs = le64_to_cpu(gpt->ents[i].attrs);
+	attrs = gpt->ents[i].attrs;
 	bits = (char *) &attrs;
 
 	switch (flag) {
@@ -2558,7 +2558,7 @@ static int gpt_toggle_partition_flag(
 	else
 		clrbit(bits, bit);
 
-	gpt->ents[i].attrs = cpu_to_le64(attrs);
+	gpt->ents[i].attrs = attrs;
 
 	if (flag == GPT_FLAG_GUIDSPECIFIC)
 		fdisk_info(cxt, isset(bits, bit) ?
