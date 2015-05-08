@@ -41,13 +41,13 @@ fi
 if [ "x$TEST_PID" != "x$KILL_PID" ]; then
 	echo "jobs -p $TEST_PID != kill -p $KILL_PID" >> "$TS_OUTPUT"
 	all_ok=false
-else
-	"$TS_CMD_KILL" -1 $TEST_PID
-	wait $TEST_PID
-	if [ $? -ne 1 ]; then
-		echo "wait $TEST_PID returned ${?}" >> "$TS_OUTPUT"
-		all_ok=false
-	fi
+fi
+
+"$TS_CMD_KILL" -1 $TEST_PID
+wait $TEST_PID
+if [ $? -ne 1 ]; then
+	echo "wait $TEST_PID returned ${?}" >> "$TS_OUTPUT"
+	all_ok=false
 fi
 
 if $all_ok; then
