@@ -564,6 +564,50 @@ void change_partition_type(struct fdisk_context *cxt)
 	fdisk_unref_partition(pa);
 }
 
+int print_partition_info(struct fdisk_context *cxt)
+{
+	struct fdisk_partition *pa = NULL;
+	int rc = 0, details;
+	size_t i, nfields;
+	int *fields = NULL;
+	struct fdisk_label *lb = fdisk_get_label(cxt, NULL);
+
+	if ((rc = fdisk_ask_partnum(cxt, &i, FALSE)))
+		return rc;
+
+	if ((rc = fdisk_get_partition(cxt, i, &pa))) {
+		fdisk_warnx(cxt, _("Partition %zu does not exist yet!"), i + 1);
+		return rc;
+	}
+
+	details = fdisk_is_details(cxt);
+	fdisk_enable_details(cxt, 1);
+	if ((rc = fdisk_label_get_fields_ids(lb, cxt, &fields, &nfields)))
+		goto clean_data;
+	fdisk_enable_details(cxt, details);
+
+	for (i = 0; i < nfields; ++i) {
+		int id = fields[i];
+		char *data = NULL;
+		const struct fdisk_field *fd = fdisk_label_get_field(lb, id);
+
+		if (!fd)
+			continue;
+
+		rc = fdisk_partition_to_string(pa, cxt, id, &data);
+		if (rc < 0)
+			goto clean_data;
+
+		fdisk_info(cxt, _("%15s: %s"), fdisk_field_get_name(fd), data);
+		free(data);
+	}
+
+clean_data:
+	fdisk_unref_partition(pa);
+	free(fields);
+	return rc;
+}
+
 static size_t skip_empty(const unsigned char *buf, size_t i, size_t sz)
 {
 	size_t next;

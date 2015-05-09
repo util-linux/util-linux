@@ -99,6 +99,7 @@ struct menu menu_generic = {
 		MENU_BENT ('p', N_("print the partition table")),
 		MENU_ENT  ('t', N_("change a partition type")),
 		MENU_BENT_E('v', N_("verify the partition table"), FDISK_DISKLABEL_BSD),
+		MENU_ENT  ('i', N_("print information about a partition")),
 
 		MENU_XENT('d', N_("print the raw data of the first sector from the device")),
 		MENU_XENT('D', N_("print the raw data of the disklabel from the device")),
@@ -556,6 +557,9 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		break;
 	case 'v':
 		rc = fdisk_verify_disklabel(cxt);
+		break;
+	case 'i':
+		rc = print_partition_info(cxt);
 		break;
 	}
 
