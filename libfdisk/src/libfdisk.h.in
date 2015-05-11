@@ -308,6 +308,11 @@ extern int fdisk_label_get_fields_ids(
 			struct fdisk_context *cxt,
 			int **ids, size_t *nids);
 
+extern int fdisk_label_get_fields_ids_all(
+			const struct fdisk_label *lb,
+			struct fdisk_context *cxt,
+			int **ids, size_t *nids);
+
 extern const struct fdisk_field *fdisk_label_get_field(const struct fdisk_label *lb, int id);
 extern const struct fdisk_field *fdisk_label_get_field_by_name(
 			const struct fdisk_label *lb,

@@ -157,6 +157,47 @@ int fdisk_label_get_fields_ids(
 }
 
 /**
+ * fdisk_label_get_fields_ids_all
+ * @lb: label (or NULL for the current label)
+ * @cxt: context
+ * @ids: returns allocated array with FDISK_FIELD_* IDs
+ * @nids: returns number of items in fields
+ *
+ * This function returns all fields for the label.
+ *
+ * Returns: 0 on success, otherwise, a corresponding error.
+ */
+int fdisk_label_get_fields_ids_all(
+		const struct fdisk_label *lb,
+		struct fdisk_context *cxt,
+		int **ids, size_t *nids)
+{
+	size_t i, n;
+	int *c;
+
+	assert(cxt);
+
+	if (!lb)
+		lb = cxt->label;
+	if (!lb)
+		return -EINVAL;
+	if (!lb->fields || !lb->nfields)
+		return -ENOSYS;
+	c = calloc(lb->nfields, sizeof(int));
+	if (!c)
+		return -ENOMEM;
+	for (n = 0, i = 0; i < lb->nfields; i++)
+		c[n++] = lb->fields[i].id;
+	if (ids)
+		*ids = c;
+	else
+		free(c);
+	if (nids)
+		*nids = n;
+	return 0;
+}
+
+/**
  * fdisk_label_get_field:
  * @lb: label
  * @id: FDISK_FIELD_*

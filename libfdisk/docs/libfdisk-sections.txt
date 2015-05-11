@@ -101,6 +101,7 @@ fdisk_is_label
 fdisk_label_get_field
 fdisk_label_get_field_by_name
 fdisk_label_get_fields_ids
+fdisk_label_get_fields_ids_all
 fdisk_label_get_name
 fdisk_label_get_nparttypes
 fdisk_label_get_parttype
