@@ -815,9 +815,12 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 		}
 		break;
 	case FDISK_FIELD_CYLINDERS:
-		rc = asprintf(&p, "%ju", (uintmax_t)
-			fdisk_cround(cxt, fdisk_partition_has_size(pa) ? pa->size : 0));
+	{
+		uintmax_t sz = fdisk_partition_has_size(pa) ? pa->size : 0;
+		if (sz)
+			rc = asprintf(&p, "%ju", (sz / (cxt->geom.heads * cxt->geom.sectors)) + 1);
 		break;
+	}
 	case FDISK_FIELD_SECTORS:
 		rc = asprintf(&p, "%ju",
 			fdisk_partition_has_size(pa) ? (uintmax_t) pa->size : 0);
