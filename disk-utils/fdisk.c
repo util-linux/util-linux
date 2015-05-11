@@ -567,7 +567,7 @@ void change_partition_type(struct fdisk_context *cxt)
 int print_partition_info(struct fdisk_context *cxt)
 {
 	struct fdisk_partition *pa = NULL;
-	int rc = 0, details;
+	int rc = 0;
 	size_t i, nfields;
 	int *fields = NULL;
 	struct fdisk_label *lb = fdisk_get_label(cxt, NULL);
@@ -580,11 +580,8 @@ int print_partition_info(struct fdisk_context *cxt)
 		return rc;
 	}
 
-	details = fdisk_is_details(cxt);
-	fdisk_enable_details(cxt, 1);
-	if ((rc = fdisk_label_get_fields_ids(lb, cxt, &fields, &nfields)))
+	if ((rc = fdisk_label_get_fields_ids_all(lb, cxt, &fields, &nfields)))
 		goto clean_data;
-	fdisk_enable_details(cxt, details);
 
 	for (i = 0; i < nfields; ++i) {
 		int id = fields[i];
@@ -597,7 +594,8 @@ int print_partition_info(struct fdisk_context *cxt)
 		rc = fdisk_partition_to_string(pa, cxt, id, &data);
 		if (rc < 0)
 			goto clean_data;
-
+		if (!data || !*data)
+			continue;
 		fdisk_info(cxt, _("%15s: %s"), fdisk_field_get_name(fd), data);
 		free(data);
 	}
