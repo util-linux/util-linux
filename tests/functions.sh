@@ -222,6 +222,9 @@ function ts_init_env {
 	top_srcdir=$(ts_abspath $top_srcdir)
 	top_builddir=$(ts_abspath $top_builddir)
 
+	# some ul commands search other ul commands in $PATH
+	export PATH="$top_builddir:$PATH"
+
 	TS_SCRIPT="$mydir/$(basename $0)"
 	TS_SUBDIR=$(dirname $TS_SCRIPT)
 	TS_TESTNAME=$(basename $TS_SCRIPT)

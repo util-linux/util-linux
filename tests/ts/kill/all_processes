@@ -39,11 +39,14 @@ echo "test 1" >> "$TS_OUTPUT"
 if [ $? -ne 1 ]; then
 	echo "kill did not return 1" >> "$TS_OUTPUT"
 fi
+
 echo "test 2" >> "$TS_OUTPUT"
 "$TS_CMD_KILL" -a ${HELPER_SYMLINK##*/} >> "$TS_OUTPUT" 2>&1
 if [ $? -ne 0 ]; then
 	echo "kill did not return 0" >> "$TS_OUTPUT"
 fi
+wait $TEST_PID
+
 echo "test 3" >> "$TS_OUTPUT"
 "$TS_CMD_KILL" -a -p ${HELPER_SYMLINK##*/} >> "$TS_OUTPUT" 2>&1
 if [ $? -ne 1 ]; then
