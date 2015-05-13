@@ -1634,6 +1634,9 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		snprintf(buf, sizeof(buf), _("NUMA node%d CPU(s):"), desc->idx2nodenum[i]);
 		print_cpuset(buf, desc->nodemaps[i], mod->hex);
 	}
+
+	if (desc->flags)
+		print_s(_("Flags:"), desc->flags);
 }
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
