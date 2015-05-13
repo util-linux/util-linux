@@ -12,6 +12,7 @@ Hypervisor:            PR/SM
 Hypervisor vendor:     IBM
 Virtualization type:   full
 Dispatching mode:      vertical
+Flags:                 esan3 zarch stfle msa ldisp eimm dfp etf3eh highgprs
 
 # The following is the parsable format, which can be fed to other
 # programs. Each different item in every column has an unique ID
