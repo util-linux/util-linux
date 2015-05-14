@@ -377,9 +377,9 @@ doinput(void) {
 		 * We usually use this when stdin is not a tty, for example:
 		 * echo "ps" | script
 		 */
-		int c = DEF_EOF;
+		char c = DEF_EOF;
 
-		if (write_all(master, &c, 1)) {
+		if (write_all(master, &c, sizeof(char))) {
 			warn (_("write failed"));
 			fail();
 		}
