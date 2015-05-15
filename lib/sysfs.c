@@ -457,10 +457,11 @@ int sysfs_write_u64(struct sysfs_cxt *cxt, const char *attr, uint64_t num)
 
 char *sysfs_strdup(struct sysfs_cxt *cxt, const char *attr)
 {
-	char buf[1024];
+	char buf[BUFSIZ];
 	return sysfs_scanf(cxt, attr, "%1023[^\n]", buf) == 1 ?
 						strdup(buf) : NULL;
 }
+
 
 int sysfs_count_dirents(struct sysfs_cxt *cxt, const char *attr)
 {

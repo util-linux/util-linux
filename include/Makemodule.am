@@ -47,6 +47,7 @@ dist_noinst_HEADERS += \
 	include/setproctitle.h \
 	include/statfs_magic.h \
 	include/strutils.h \
+	include/strv.h \
 	include/swapheader.h \
 	include/swapprober.h \
 	include/sysfs.h \

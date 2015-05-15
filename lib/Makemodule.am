@@ -24,6 +24,7 @@ libcommon_la_SOURCES = \
 	lib/timeutils.c \
 	lib/ttyutils.c \
 	lib/exec_shell.c \
+	lib/strv.c \
 	lib/readutmp.c
 
 if LINUX
