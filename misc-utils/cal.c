@@ -609,7 +609,7 @@ static void cal_fill_month(struct cal_month *month, const struct cal_control *ct
 			else
 				month->weeks[i] = SPACE;
 			weeklines--;
-			if (52 < weeknum && i == 0)
+			if (i == 0 && (52 < weeknum || (month->year == 1753 && 51 < weeknum)))
 				weeknum = week_number(month->days[DAYS_IN_WEEK * (i + 1)], 1, month->year, ctl);
 			else if (52 < weeknum)
 				weeknum = week_number(31, 12, month->year, ctl);
