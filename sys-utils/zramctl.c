@@ -34,6 +34,7 @@
 #include "sysfs.h"
 #include "optutils.h"
 #include "ismounted.h"
+#include "strv.h"
 
 /*#define CONFIG_ZRAM_DEBUG*/
 
@@ -78,9 +79,33 @@ static const struct colinfo infos[] = {
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
 static int ncolumns;
 
+enum {
+	MM_ORIG_DATA_SIZE = 0,
+	MM_COMPR_DATA_SIZE,
+	MM_MEM_USED_TOTAL,
+	MM_MEM_LIMIT,
+	MM_MEM_USED_MAX,
+	MM_ZERO_PAGES,
+	MM_NUM_MIGRATED
+};
+
+static const char *mm_stat_names[] = {
+	[MM_ORIG_DATA_SIZE]  = "orig_data_size",
+	[MM_COMPR_DATA_SIZE] = "compr_data_size",
+	[MM_MEM_USED_TOTAL]  = "mem_used_total",
+	[MM_MEM_LIMIT]       = "mem_limit",
+	[MM_MEM_USED_MAX]    = "mem_used_max",
+	[MM_ZERO_PAGES]      = "zero_pages",
+	[MM_NUM_MIGRATED]    = "num_migrated"
+};
+
+
 struct zram {
 	char	devname[32];
 	struct sysfs_cxt sysfs;
+	char	**mm_stat;
+
+	unsigned int mm_stat_probed : 1;
 };
 
 #define ZRAM_EMPTY	{ .devname = { '\0' }, .sysfs = UL_SYSFSCXT_EMPTY }
@@ -145,6 +170,8 @@ static void free_zram(struct zram *z)
 		return;
 	DBG(fprintf(stderr, "free: %p", z));
 	sysfs_deinit(&z->sysfs);
+
+	strv_free(z->mm_stat);
 	free(z);
 }
 
@@ -238,6 +265,53 @@ static struct zram *find_free_zram(void)
 	return z;
 }
 
+#include "path.h"
+
+static char *get_mm_stat(struct zram *z, size_t idx, int inbytes)
+{
+	struct sysfs_cxt *sysfs;
+	const char *name;
+	uint64_t num;
+
+	assert(idx < ARRAY_SIZE(mm_stat_names));
+	assert(z);
+
+	sysfs = zram_get_sysfs(z);
+	if (!sysfs)
+		return NULL;
+
+	/* Linux >= 4.1 uses /sys/block/zram<id>/mm_stat */
+	if (!z->mm_stat && !z->mm_stat_probed) {
+		char *str;
+
+		str = sysfs_strdup(sysfs, "mm_stat");
+		if (str) {
+			z->mm_stat = strv_split(str, " ");
+			if (strv_length(z->mm_stat) < ARRAY_SIZE(mm_stat_names))
+				errx(EXIT_FAILURE, _("Failed to parse mm_stat"));
+		}
+		z->mm_stat_probed = 1;
+		free(str);
+
+	}
+
+	if (z->mm_stat) {
+		if (inbytes)
+			return xstrdup(z->mm_stat[idx]);
+
+		num = strtou64_or_err(z->mm_stat[idx], _("Failed to parse mm_stat"));
+		return size_to_human_string(SIZE_SUFFIX_1LETTER, num);
+	}
+
+	/* Linux < 4.1 uses /sys/block/zram<id>/<attrname> */
+	name = mm_stat_names[idx];
+	if (inbytes)
+		return sysfs_strdup(sysfs, name);
+	else if (sysfs_read_u64(sysfs, name, &num) == 0)
+		return size_to_human_string(SIZE_SUFFIX_1LETTER, num);
+	return NULL;
+}
+
 static void fill_table_row(struct libscols_table *tb, struct zram *z)
 {
 	static struct libscols_line *ln;
@@ -272,16 +346,10 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER, num);
 			break;
 		case COL_ORIG_SIZE:
-			if (inbytes)
-				str = sysfs_strdup(sysfs, "orig_data_size");
-			else if (sysfs_read_u64(sysfs, "orig_data_size", &num) == 0)
-				str = size_to_human_string(SIZE_SUFFIX_1LETTER, num);
+			str = get_mm_stat(z, MM_ORIG_DATA_SIZE, inbytes);
 			break;
 		case COL_COMP_SIZE:
-			if (inbytes)
-				str = sysfs_strdup(sysfs, "compr_data_size");
-			else if (sysfs_read_u64(sysfs, "compr_data_size", &num) == 0)
-				str = size_to_human_string(SIZE_SUFFIX_1LETTER, num);
+			str = get_mm_stat(z, MM_COMPR_DATA_SIZE, inbytes);
 			break;
 		case COL_ALGORITHM:
 		{
@@ -312,13 +380,10 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 			str = sysfs_strdup(sysfs, "max_comp_streams");
 			break;
 		case COL_ZEROPAGES:
-			str = sysfs_strdup(sysfs, "zero_pages");
+			str = get_mm_stat(z, MM_ZERO_PAGES, 1);
 			break;
 		case COL_MEMTOTAL:
-			if (inbytes)
-				str = sysfs_strdup(sysfs, "mem_used_total");
-			else if (sysfs_read_u64(sysfs, "mem_used_total", &num) == 0)
-				str = size_to_human_string(SIZE_SUFFIX_1LETTER, num);
+			str = get_mm_stat(z, MM_MEM_USED_TOTAL, inbytes);
 			break;
 		}
 
