@@ -61,6 +61,9 @@ enum {
 	COL_STREAMS,
 	COL_ZEROPAGES,
 	COL_MEMTOTAL,
+	COL_MEMLIMIT,
+	COL_MEMUSED,
+	COL_MIGRATED,
 	COL_MOUNTPOINT
 };
 
@@ -73,6 +76,9 @@ static const struct colinfo infos[] = {
 	[COL_STREAMS]   = { "STREAMS",      3, SCOLS_FL_RIGHT, N_("number of concurrent compress operations") },
 	[COL_ZEROPAGES] = { "ZERO-PAGES",   3, SCOLS_FL_RIGHT, N_("empty pages with no allocated memory") },
 	[COL_MEMTOTAL]  = { "TOTAL",        5, SCOLS_FL_RIGHT, N_("all memory including allocator fragmentation and metadata overhead") },
+	[COL_MEMLIMIT]  = { "MEM-LIMIT",    5, SCOLS_FL_RIGHT, N_("memory limit used to store compressed data") },
+	[COL_MEMUSED]   = { "MEM-USED",     5, SCOLS_FL_RIGHT, N_("memory zram have consumed to store compressed data") },
+	[COL_MIGRATED]  = { "MIGRATED",     5, SCOLS_FL_RIGHT, N_("number of objects migrated migrated by compaction") },
 	[COL_MOUNTPOINT]= { "MOUNTPOINT",0.10, SCOLS_FL_TRUNC, N_("where the device is mounted") },
 };
 
@@ -345,12 +351,6 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 			else if (sysfs_read_u64(sysfs, "disksize", &num) == 0)
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER, num);
 			break;
-		case COL_ORIG_SIZE:
-			str = get_mm_stat(z, MM_ORIG_DATA_SIZE, inbytes);
-			break;
-		case COL_COMP_SIZE:
-			str = get_mm_stat(z, MM_COMPR_DATA_SIZE, inbytes);
-			break;
 		case COL_ALGORITHM:
 		{
 			char *alg = sysfs_strdup(sysfs, "comp_algorithm");
@@ -382,11 +382,25 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 		case COL_ZEROPAGES:
 			str = get_mm_stat(z, MM_ZERO_PAGES, 1);
 			break;
+		case COL_ORIG_SIZE:
+			str = get_mm_stat(z, MM_ORIG_DATA_SIZE, inbytes);
+			break;
+		case COL_COMP_SIZE:
+			str = get_mm_stat(z, MM_COMPR_DATA_SIZE, inbytes);
+			break;
 		case COL_MEMTOTAL:
 			str = get_mm_stat(z, MM_MEM_USED_TOTAL, inbytes);
 			break;
+		case COL_MEMLIMIT:
+			str = get_mm_stat(z, MM_MEM_LIMIT, inbytes);
+			break;
+		case COL_MEMUSED:
+			str = get_mm_stat(z, MM_MEM_USED_MAX, inbytes);
+			break;
+		case COL_MIGRATED:
+			str = get_mm_stat(z, MM_NUM_MIGRATED, inbytes);
+			break;
 		}
-
 		if (str)
 			scols_line_refer_data(ln, i, str);
 	}
