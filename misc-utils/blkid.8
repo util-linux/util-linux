@@ -266,8 +266,9 @@ Look up the device that uses this filesystem \fIuuid\fR.  For more details see t
 Display version number and exit.
 .SH "RETURN CODE"
 If the specified device or device addressed by specified token (option
-\fB-t\fR) was found, an exit code 0 is returned.  Note the option \fB-s\fR filters
-output tags, but it does not affect return code.
+\fB-t\fR) was found and it's possible to gather any information about the
+device, an exit code 0 is returned.  Note the option \fB-s\fR filters output
+tags, but it does not affect return code.
 
 If the specified token was not found, or no (specified) devices could be
 identified, an exit code of 2 is returned.
