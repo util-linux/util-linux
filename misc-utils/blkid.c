@@ -510,21 +510,6 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 	if (!rc)
 		nvals = blkid_probe_numof_values(pr);
 
-	if (nvals &&
-	    !(chain & LOWPROBE_TOPOLOGY) &&
-	    !(output & OUTPUT_UDEV_LIST) &&
-	    !blkid_probe_has_value(pr, "TYPE") &&
-	    !blkid_probe_has_value(pr, "PTTYPE"))
-		/*
-		 * Ignore probing result if there is not any filesystem or
-		 * partition table on the device and udev output is not
-		 * requested.
-		 *
-		 * The udev db stores information about partitions, so
-		 * PART_ENTRY_* values are alway important.
-		 */
-		nvals = 0;
-
 	if (nvals && !first && output & (OUTPUT_UDEV_LIST | OUTPUT_EXPORT_LIST))
 		/* add extra line between output from devices */
 		fputc('\n', stdout);
