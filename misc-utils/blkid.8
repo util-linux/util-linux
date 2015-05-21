@@ -57,9 +57,9 @@ library.  It can determine the type of content (e.g. filesystem or swap)
 that a block device holds, and also the attributes (tokens, NAME=value pairs)
 from the content metadata (e.g. LABEL or UUID fields).
 .PP
-It is recommended to use
+.B It is recommended to use
 .BR lsblk (8)
-command to get information about block devices rather than blkid.
+.B command to get information about block devices rather than blkid.
 .BR lsblk (8)
 provides more information, better control on output formatting and it does not
 require root permissions to get actual information.
@@ -210,7 +210,10 @@ used together with the \fB-i\fR option.
 Switch to low-level superblock probing mode (bypassing the cache).
 
 Note that low-level probing also returns information about partition table type
-(PTTYPE tag) and partitions (PART_ENTRY_* tags).
+(PTTYPE tag) and partitions (PART_ENTRY_* tags). The tag names produced by
+low-level probing are based on names used internally by libblkid and it may be
+different than when executed without \fB-p\fR (for example PART_ENTRY_UUID= vs
+PARTUUID=).
 .TP
 .BI \-s " tag"
 For each (specified) device, show only the tags that match
@@ -262,8 +265,9 @@ Look up the device that uses this filesystem \fIuuid\fR.  For more details see t
 .B \-V
 Display version number and exit.
 .SH "RETURN CODE"
-If the specified token was found, or if any tags were shown from (specified)
-devices, 0 is returned.
+If the specified device or device addressed by specified token (option
+\fB-t\fR) was found, an exit code 0 is returned.  Note the option \fB-s\fR filters
+output tags, but it does not affect return code.
 
 If the specified token was not found, or no (specified) devices could be
 identified, an exit code of 2 is returned.
