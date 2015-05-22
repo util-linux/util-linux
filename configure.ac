@@ -553,8 +553,28 @@ AS_CASE([$scanf_cv_alloc_modifier],
    have_scanf_alloc_modifier=no]
 )
 
-UL_CHECK_LIB([util], [openpty])
-UL_CHECK_LIB([termcap], [tgetnum])
+
+AC_ARG_WITH([util], AS_HELP_STRING([--without-util], [compile without libutil]),
+  [], [with_util=auto]
+)
+AS_IF([test "x$with_util" = xno], [
+  AM_CONDITIONAL([HAVE_UTIL], [false])
+  have_util=no
+], [
+  UL_CHECK_LIB([util], [openpty])
+])
+
+
+AC_ARG_WITH([termcap], AS_HELP_STRING([--without-termcap], [compile without libtermcap]),
+  [], [with_termcap=auto]
+)
+AS_IF([test "x$with_termcap" = xno], [
+  AM_CONDITIONAL([HAVE_TERMCAP], [false])
+  have_termcap=no
+], [
+  UL_CHECK_LIB([termcap], [tgetnum])
+])
+
 
 AC_CHECK_TYPES([union semun], [], [], [[
 #include <sys/sem.h>
@@ -778,26 +798,31 @@ AS_IF([test "x$have_slang" = xyes -o "x$have_ncurses" = xyes], [
 ])
 
 
-dnl Try pkg-config for libtinfo
-PKG_CHECK_MODULES(TINFO, [tinfo], [
-  dnl pkg-config success
-  have_tinfo=yes
-  UL_PKG_STATIC([TINFO_LIBS_STATIC], [tinfo])], [
+AC_ARG_WITH([tinfo], AS_HELP_STRING([--without-tinfo], [compile without libtinfo]),
+  [], [with_tinfo=auto]
+)
+have_tinfo=no
+AS_IF([test "x$with_tinfo" != xno], [
+  dnl Try pkg-config for libtinfo
+  PKG_CHECK_MODULES(TINFO, [tinfo], [
+    dnl pkg-config success
+    have_tinfo=yes
+    UL_PKG_STATIC([TINFO_LIBS_STATIC], [tinfo])], [
 
-  dnl If pkg-config failed, fall back to classic searching.
-  AC_CHECK_LIB([tinfo], [tgetent], [
+    dnl If pkg-config failed, fall back to classic searching.
+    AC_CHECK_LIB([tinfo], [tgetent], [
        have_tinfo=yes
        TINFO_LIBS="-ltinfo"
        TINFO_LIBS_STATIC="-ltinfo"
        TINFO_CFLAGS=""])
-
+  ])
 ])
 AC_SUBST([TINFO_LIBS])
 AC_SUBST([TINFO_LIBS_STATIC])
 AC_SUBST([TINFO_CFLAGS])
 AM_CONDITIONAL([HAVE_TINFO], [test "x$have_tinfo" = xyes])
 AS_IF([test "x$have_tinfo" = xyes], [
-	AC_DEFINE(HAVE_LIBTINFO, 1, [Define if libtinfo available.])
+  AC_DEFINE(HAVE_LIBTINFO, 1, [Define if libtinfo available.])
 ])
 
 
@@ -835,7 +860,6 @@ AS_IF([test "x$with_utempter" = xyes], [
 ], [
   AM_CONDITIONAL([HAVE_UTEMPTER], [false])
 ])
-
 
 
 dnl
@@ -1120,10 +1144,16 @@ UL_REQUIRES_SYSCALL_CHECK([nsenter], [UL_CHECK_SYSCALL([setns])], [setns])
 AM_CONDITIONAL([BUILD_NSENTER], [test "x$build_nsenter" = xyes])
 AC_CHECK_FUNCS([setns])
 
-dnl setpriv depends on libcap-ng.  It would be possible to build
-dnl a version of setpriv with limited functionality without libcap-ng,
-dnl but this isn't currently supported.
-UL_CHECK_LIB([cap-ng], [capng_apply], [cap_ng])
+
+AC_ARG_WITH([cap_ng],
+  AS_HELP_STRING([--without-capng], [compile without libcap-ng]),
+  [], [with_cap_ng=auto]
+)
+AS_IF([test "x$with_cap_ng" = xno], [have_cap_ng=no],[
+  UL_CHECK_LIB([cap-ng], [capng_apply], [cap_ng])
+])
+
+
 AC_ARG_ENABLE([setpriv],
   AS_HELP_STRING([--disable-setpriv], [do not build setpriv]),
   [], [UL_DEFAULT_ENABLE([setpriv], [check])]
@@ -1158,12 +1188,20 @@ AS_IF([test "x$have_futimens" = xyes -a "x$have_inotify_init1" = xyes ], [
 ])
 
 
+AC_ARG_WITH([libz],
+  AS_HELP_STRING([--without-libz], [compile without libz]),
+  [], [with_libz=auto]
+)
+AS_IF([test "x$with_libz" = xno], [have_z=no], [
+  AC_CHECK_LIB([z], [crc32], [have_z=yes], [have_z=no])
+])
+
+
 AC_ARG_ENABLE([cramfs],
   AS_HELP_STRING([--disable-cramfs], [do not build fsck.cramfs, mkfs.cramfs]),
   [], [UL_DEFAULT_ENABLE([cramfs], [check])]
 )
 UL_BUILD_INIT([cramfs])
-AC_CHECK_LIB([z], [crc32], [have_z=yes], [have_z=no])
 UL_REQUIRES_HAVE([cramfs], [z], [z library])
 AM_CONDITIONAL([BUILD_CRAMFS], [test "x$build_cramfs" = xyes])
 
