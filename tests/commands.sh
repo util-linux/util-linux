@@ -25,6 +25,7 @@ TS_HELPER_MD5="$top_builddir/test_md5"
 TS_HELPER_MORE=${TS_HELPER_MORE-"$top_builddir/test_more"}
 TS_HELPER_PARTITIONS="$top_builddir/sample-partitions"
 TS_HELPER_PATHS="$top_builddir/test_pathnames"
+TS_HELPER_SCRIPT="$top_builddir/test_script"
 TS_HELPER_SIGRECEIVE="$top_builddir/test_sigreceive"
 TS_HELPER_STRUTILS="$top_builddir/test_strutils"
 TS_HELPER_SYSINFO="$top_builddir/test_sysinfo"

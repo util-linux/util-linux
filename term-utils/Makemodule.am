@@ -9,6 +9,11 @@ endif
 if HAVE_UTEMPTER
 script_LDADD += -lutempter
 endif
+
+check_PROGRAMS += test_script
+test_script_SOURCES = $(script_SOURCES)
+test_script_LDADD = $(script_LDADD)
+test_script_CFLAGS = -DTEST_SCRIPT $(logger_CFLAGS)
 endif # BUILD_SCRIPT
 
 if BUILD_SCRIPTREPLAY

@@ -123,6 +123,23 @@ sigset_t block_mask, unblock_mask;
 int die;
 int resized;
 
+/*
+ * For tests we want to be able to control time output
+ */
+#ifdef TEST_SCRIPT
+static inline time_t script_time(time_t *t)
+{
+	const char *str = getenv("SCRIPT_TEST_SECOND_SINCE_EPOCH");
+	time_t sec;
+
+	if (str && sscanf(str, "%ld", &sec) == 1)
+		return sec;
+	return time(t);
+}
+#else	/* !TEST_SCRIPT */
+# define script_time(x) time(x)
+#endif
+
 static void
 die_if_link(char *fn) {
 	struct stat s;
@@ -446,7 +463,7 @@ dooutput(void) {
 		timingfd = fdopen(STDERR_FILENO, "w");
 
 	if (!qflg) {
-		time_t tvec = time((time_t *)NULL);
+		time_t tvec = script_time((time_t *)NULL);
 		my_strftime(obuf, sizeof obuf, "%c\n", localtime(&tvec));
 		fprintf(fscript, _("Script started on %s"), obuf);
 	}
@@ -588,7 +605,7 @@ done(void) {
 		if (fscript) {
 			if (!qflg) {
 				char buf[BUFSIZ];
-				tvec = time((time_t *)NULL);
+				tvec = script_time((time_t *)NULL);
 				my_strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
 				fprintf(fscript, _("\nScript done on %s"), buf);
 			}
