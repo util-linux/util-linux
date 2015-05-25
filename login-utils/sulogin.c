@@ -435,8 +435,8 @@ static struct passwd *getrootpwent(int try_manually)
 	struct passwd *pw;
 	struct spwd *spw;
 	FILE *fp;
-	static char line[256];
-	static char sline[256];
+	static char line[2 * BUFSIZ];
+	static char sline[2 * BUFSIZ];
 	char *p;
 
 	/*
@@ -472,7 +472,7 @@ static struct passwd *getrootpwent(int try_manually)
 	/*
 	 * Find root in the password file.
 	 */
-	while ((p = fgets(line, 256, fp)) != NULL) {
+	while ((p = fgets(line, sizeof(line), fp)) != NULL) {
 		if (strncmp(line, "root:", 5) != 0)
 			continue;
 		p += 5;
@@ -501,12 +501,12 @@ static struct passwd *getrootpwent(int try_manually)
 	/*
 	 * The password is invalid. If there is a shadow password, try it.
 	 */
-	strcpy(pwd.pw_passwd, "");
+	*pwd.pw_passwd = '\0';
 	if ((fp = fopen(_PATH_SHADOW_PASSWD, "r")) == NULL) {
 		warn(_("cannot open %s"), _PATH_PASSWD);
 		return &pwd;
 	}
-	while ((p = fgets(sline, 256, fp)) != NULL) {
+	while ((p = fgets(sline, sizeof(sline), fp)) != NULL) {
 		if (strncmp(sline, "root:", 5) != 0)
 			continue;
 		p += 5;
@@ -520,11 +520,11 @@ static struct passwd *getrootpwent(int try_manually)
 	 */
 	if (p == NULL) {
 		warnx(_("%s: no entry for root"), _PATH_SHADOW_PASSWD);
-		strcpy(pwd.pw_passwd, "");
+		*pwd.pw_passwd = '\0';
 	}
 	if (!valid(pwd.pw_passwd)) {
 		warnx(_("%s: root password garbled"), _PATH_SHADOW_PASSWD);
-		strcpy(pwd.pw_passwd, "");
+		*pwd.pw_passwd = '\0';
 	}
 	return &pwd;
 }
