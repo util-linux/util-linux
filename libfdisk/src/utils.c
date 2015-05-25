@@ -139,9 +139,11 @@ char *fdisk_partname(const char *dev, size_t partno)
 	}
 
 	/* udev names partitions by appending -partN
-	   e.g. ata-SAMSUNG_SV8004H_0357J1FT712448-part1 */
+	   e.g. ata-SAMSUNG_SV8004H_0357J1FT712448-part1
+	   multipath-tools kpartx.rules also append -partN */
 	if ((strncmp(dev, _PATH_DEV_BYID, sizeof(_PATH_DEV_BYID) - 1) == 0) ||
-	     strncmp(dev, _PATH_DEV_BYPATH, sizeof(_PATH_DEV_BYPATH) - 1) == 0) {
+	     strncmp(dev, _PATH_DEV_BYPATH, sizeof(_PATH_DEV_BYPATH) - 1) == 0 ||
+	     strncmp(dev, "/dev/mapper", sizeof("/dev/mapper") - 1) == 0) {
 	       p = "-part";
 	}
 
