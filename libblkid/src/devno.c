@@ -208,6 +208,7 @@ static char *scandev_devno_to_devpath(dev_t devno)
 			new_list = NULL;
 		}
 	}
+	sysfs_devname_to_dev_name(devname);
 	free_dirlist(&list);
 	free_dirlist(&new_list);
 

@@ -131,6 +131,7 @@ char *sysfs_devno_to_devpath(dev_t devno, char *buf, size_t bufsiz)
 		return NULL;
 
 	/* create the final "/dev/<name>" string */
+	sysfs_devname_to_dev_name(name);
 	memmove(buf + 5, name, sz + 1);
 	memcpy(buf, "/dev/", 5);
 
@@ -789,6 +790,7 @@ int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
         if (!name)
             goto err;
 
+	sysfs_devname_to_dev_name(name);
         if (diskname && len) {
             strncpy(diskname, name, len);
             diskname[len - 1] = '\0';

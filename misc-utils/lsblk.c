@@ -421,6 +421,7 @@ static char *get_device_path(struct blkdev_cxt *cxt)
 		return canonicalize_dm_name(cxt->name);
 
 	snprintf(path, sizeof(path), "/dev/%s", cxt->name);
+	sysfs_devname_to_dev_name(path);
 	return xstrdup(path);
 }
 
