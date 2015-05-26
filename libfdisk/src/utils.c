@@ -1,6 +1,7 @@
 
 #include "fdiskP.h"
 #include "pathnames.h"
+#include "canonicalize.h"
 
 #include <ctype.h>
 
@@ -115,12 +116,20 @@ char *fdisk_partname(const char *dev, size_t partno)
 {
 	char *res = NULL;
 	const char *p = "";
+	char *dev_mapped = NULL;
 	int w = 0;
 
 	if (!dev || !*dev) {
 		if (asprintf(&res, "%zd", partno) > 0)
 			return res;
 		return NULL;
+	}
+
+	/* It is impossible to predict /dev/dm-N partition names. */
+	if (strncmp(dev, "/dev/dm-", sizeof("/dev/dm-") - 1) == 0) {
+		dev_mapped = canonicalize_dm_name (dev + 5);
+		if (dev_mapped)
+			dev = dev_mapped;
 	}
 
 	w = strlen(dev);
@@ -147,10 +156,11 @@ char *fdisk_partname(const char *dev, size_t partno)
 	       p = "-part";
 	}
 
-	if (asprintf(&res, "%.*s%s%zu", w, dev, p, partno) > 0)
-		return res;
+	if (asprintf(&res, "%.*s%s%zu", w, dev, p, partno) <= 0)
+		res = NULL;
 
-	return NULL;
+	free(dev_mapped);
+	return res;
 }
 
 #ifdef TEST_PROGRAM
