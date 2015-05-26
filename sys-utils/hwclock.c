@@ -1633,8 +1633,6 @@ int main(int argc, char **argv)
 	 * fractions.
 	 */
 	time_t set_time = 0;	/* Time to which user said to set Hardware Clock */
-
-	bool permitted;		/* User is permitted to do the function */
 	int rc, c;
 
 	/* Variables set by various options; show may also be set later */
@@ -1863,6 +1861,11 @@ int main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
+	if (getuid() != 0) {
+		warnx(_("Sorry, only the superuser can use the Hardware Clock."));
+		hwclock_exit(EX_NOPERM);
+	}
+
 #ifdef HAVE_LIBAUDIT
 	if (testing != TRUE) {
 		if (adjust == TRUE || hctosys == TRUE || systohc == TRUE ||
@@ -1904,28 +1907,6 @@ int main(int argc, char **argv)
 	      | setepoch | predict | compare | get))
 		show = 1;	/* default to show */
 
-	if (getuid() == 0)
-		permitted = TRUE;
-	else {
-		/* program is designed to run setuid (in some situations) */
-		if ((set || systohc || adjust) && !testing) {
-			warnx(_("Sorry, only the superuser can change "
-				"the Hardware Clock."));
-			permitted = FALSE;
-		} else if ((systz || hctosys) && !testing) {
-			warnx(_("Sorry, only the superuser can change "
-				"the System Clock."));
-			permitted = FALSE;
-		} else if (setepoch && !testing) {
-			warnx(_("Sorry, only the superuser can change the "
-				"Hardware Clock epoch in the kernel."));
-			permitted = FALSE;
-		} else
-			permitted = TRUE;
-	}
-
-	if (!permitted)
-		hwclock_exit(EX_NOPERM);
 
 #ifdef __linux__
 	if (getepoch || setepoch) {
@@ -2027,11 +2008,6 @@ void __attribute__((__noreturn__)) hwaudit_exit(int status)
  * be compiled as external references. Since you probably won't be linking
  * with any functions by these names, you will have unresolved external
  * references when you link.
- *
- * The program is designed to run setuid superuser, since we need to be able
- * to do direct I/O. (More to the point: we need permission to execute the
- * iopl() system call). (However, if you use one of the methods other than
- * direct ISA I/O to access the clock, no setuid is required).
  *
  * Here's some info on how we must deal with the time that elapses while
  * this program runs: There are two major delays as we run:

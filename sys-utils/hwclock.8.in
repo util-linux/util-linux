@@ -577,21 +577,6 @@ This second field is not used under Linux and is always zero.
 See also
 .BR \%settimeofday (2).
 .
-.SS User access and setuid
-.PP
-Sometimes, you need to install
-.B \%hwclock
-setuid root.  If you want users other than the superuser to be able to
-display the clock value using the direct ISA I/O method, install it setuid
-root.  If you have the rtc device interface on your system, or are on a non-ISA
-compatible system, there is probably no need for users to have the direct
-ISA I/O method, so do not bother.  See the
-.BR \-\-rtc " option."
-.PP
-In any case, \fBhwclock\fR will not allow you to set anything unless you have the
-superuser real uid.  (This restriction is not necessary if you haven't
-installed setuid root, but it's there for now.)
-.
 .SS Hardware Clock Access Methods
 .PP
 .B \%hwclock
