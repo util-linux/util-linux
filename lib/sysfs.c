@@ -74,10 +74,14 @@ dev_t sysfs_devname_to_devno(const char *name, const char *parent)
 
 	} else if (!dev) {
 		/*
-		 * Create path to /sys/block/<name>/dev
+		 * Create path to /sys/block/<sysname>/dev
 		 */
+		char sysname[PATH_MAX];
+
+		strncpy(sysname, name, sizeof(sysname));
+		sysfs_dev_name_to_devname(sysname);
 		int len = snprintf(buf, sizeof(buf),
-				_PATH_SYS_BLOCK "/%s/dev", name);
+				_PATH_SYS_BLOCK "/%s/dev", sysname);
 		if (len < 0 || (size_t) len + 1 > sizeof(buf))
 			return 0;
 		path = buf;
