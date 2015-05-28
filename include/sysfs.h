@@ -92,7 +92,7 @@ extern int sysfs_scsi_has_attribute(struct sysfs_cxt *cxt, const char *attr);
 extern int sysfs_scsi_path_contains(struct sysfs_cxt *cxt, const char *pattern);
 
 /**
- * sysfs_devname_to_dev_name:
+ * sysfs_devname_sys_to_dev:
  * @name: devname to be converted in place
  *
  * Linux kernel linux/drivers/base/core.c: device_get_devnode()
@@ -100,7 +100,7 @@ extern int sysfs_scsi_path_contains(struct sysfs_cxt *cxt, const char *pattern);
  * /dev device name. This helper replaces all ocurrences of '!' in
  * @name by '/' to convert from /sys to /dev.
  */
-static inline void sysfs_devname_to_dev_name (char *name)
+static inline void sysfs_devname_sys_to_dev(char *name)
 {
 	char *c;
 
@@ -110,15 +110,12 @@ static inline void sysfs_devname_to_dev_name (char *name)
 }
 
 /**
- * sysfs_dev_name_to_devname:
+ * sysfs_devname_dev_to_sys:
  * @name: devname to be converted in place
  *
- * Linux kernel linux/drivers/base/core.c: device_get_devnode()
- * defines a replacement of '!' in the /sys device name by '/' in the
- * /dev device name. This helper replaces all ocurrences of '/' in
- * @name by '!' to convert from /dev to /sys.
+ * See sysfs_devname_sys_to_dev().
  */
-static inline void sysfs_dev_name_to_devname (char *name)
+static inline void sysfs_devname_dev_to_sys(char *name)
 {
 	char *c;
 

@@ -66,8 +66,19 @@ dev_t sysfs_devname_to_devno(const char *name, const char *parent)
 		/*
 		 * Create path to /sys/block/<parent>/<name>/dev
 		 */
-		int len = snprintf(buf, sizeof(buf),
-				_PATH_SYS_BLOCK "/%s/%s/dev", parent, name);
+		char *_name = strdup(name), *_parent = strdup(parent);
+		int len;
+
+		if (!_name || !_parent)
+			return 0;
+
+		sysfs_devname_dev_to_sys(_name);
+		sysfs_devname_dev_to_sys(_parent);
+
+		len = snprintf(buf, sizeof(buf),
+				_PATH_SYS_BLOCK "/%s/%s/dev", _parent, _name);
+		free(_name);
+		free(_parent);
 		if (len < 0 || (size_t) len + 1 > sizeof(buf))
 			return 0;
 		path = buf;
@@ -76,12 +87,16 @@ dev_t sysfs_devname_to_devno(const char *name, const char *parent)
 		/*
 		 * Create path to /sys/block/<sysname>/dev
 		 */
-		char sysname[PATH_MAX];
+		char *_name = strdup(name);
+		int len;
 
-		strncpy(sysname, name, sizeof(sysname));
-		sysfs_dev_name_to_devname(sysname);
-		int len = snprintf(buf, sizeof(buf),
-				_PATH_SYS_BLOCK "/%s/dev", sysname);
+		if (!_name)
+			return 0;
+
+		sysfs_devname_dev_to_sys(_name);
+		len = snprintf(buf, sizeof(buf),
+				_PATH_SYS_BLOCK "/%s/dev", _name);
+		free(_name);
 		if (len < 0 || (size_t) len + 1 > sizeof(buf))
 			return 0;
 		path = buf;
@@ -135,7 +150,6 @@ char *sysfs_devno_to_devpath(dev_t devno, char *buf, size_t bufsiz)
 		return NULL;
 
 	/* create the final "/dev/<name>" string */
-	sysfs_devname_to_dev_name(name);
 	memmove(buf + 5, name, sz + 1);
 	memcpy(buf, "/dev/", 5);
 
@@ -550,6 +564,8 @@ char *sysfs_get_devname(struct sysfs_cxt *cxt, char *buf, size_t bufsiz)
 	sz = strlen(name);
 
 	memmove(buf, name, sz + 1);
+	sysfs_devname_sys_to_dev(buf);
+
 	return buf;
 }
 
@@ -794,7 +810,7 @@ int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
         if (!name)
             goto err;
 
-	sysfs_devname_to_dev_name(name);
+	sysfs_devname_sys_to_dev(name);
         if (diskname && len) {
             strncpy(diskname, name, len);
             diskname[len - 1] = '\0';

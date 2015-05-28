@@ -421,7 +421,6 @@ static char *get_device_path(struct blkdev_cxt *cxt)
 		return canonicalize_dm_name(cxt->name);
 
 	snprintf(path, sizeof(path), "/dev/%s", cxt->name);
-	sysfs_devname_to_dev_name(path);
 	return xstrdup(path);
 }
 
@@ -1153,30 +1152,33 @@ static int set_cxt(struct blkdev_cxt *cxt,
 	cxt->name = xstrdup(name);
 	cxt->partition = wholedisk != NULL;
 
+	/* make sure that the name is usable in paths */
+	sysfs_devname_sys_to_dev(cxt->name);
+
 	cxt->filename = get_device_path(cxt);
 	if (!cxt->filename) {
-		warnx(_("%s: failed to get device path"), name);
+		warnx(_("%s: failed to get device path"), cxt->name);
 		return -1;
 	}
 	DBG(CXT, ul_debugobj(cxt, "%s: filename=%s", cxt->name, cxt->filename));
 
-	devno = sysfs_devname_to_devno(name, wholedisk ? wholedisk->name : NULL);
+	devno = sysfs_devname_to_devno(cxt->name, wholedisk ? wholedisk->name : NULL);
 
 	if (!devno) {
-		warnx(_("%s: unknown device name"), name);
+		warnx(_("%s: unknown device name"), cxt->name);
 		return -1;
 	}
 
 	if (lsblk->inverse) {
 		if (sysfs_init(&cxt->sysfs, devno, wholedisk ? &wholedisk->sysfs : NULL)) {
-			warnx(_("%s: failed to initialize sysfs handler"), name);
+			warnx(_("%s: failed to initialize sysfs handler"), cxt->name);
 			return -1;
 		}
 		if (parent)
 			parent->sysfs.parent = &cxt->sysfs;
 	} else {
 		if (sysfs_init(&cxt->sysfs, devno, parent ? &parent->sysfs : NULL)) {
-			warnx(_("%s: failed to initialize sysfs handler"), name);
+			warnx(_("%s: failed to initialize sysfs handler"), cxt->name);
 			return -1;
 		}
 	}
@@ -1197,14 +1199,15 @@ static int set_cxt(struct blkdev_cxt *cxt,
 		DBG(CXT, ul_debugobj(cxt, "zero size device -- ignore"));
 		return -1;
 	}
-	if (is_dm(name)) {
+	if (is_dm(cxt->name)) {
 		cxt->dm_name = sysfs_strdup(&cxt->sysfs, "dm/name");
 		if (!cxt->dm_name) {
-			warnx(_("%s: failed to get dm name"), name);
+			warnx(_("%s: failed to get dm name"), cxt->name);
 			return -1;
 		}
 	}
 
+	/* use "name" (sysfs-like name) here */
 	cxt->npartitions = sysfs_count_partitions(&cxt->sysfs, name);
 	cxt->nholders = sysfs_count_dirents(&cxt->sysfs, "holders");
 	cxt->nslaves = sysfs_count_dirents(&cxt->sysfs, "slaves");
