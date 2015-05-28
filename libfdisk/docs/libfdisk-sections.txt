@@ -50,6 +50,7 @@ fdisk_ask_string_set_result
 fdisk_ask_yesno
 fdisk_ask_yesno_get_result
 fdisk_ask_yesno_set_result
+fdisk_asktype
 fdisk_ref_ask
 fdisk_unref_ask
 </SECTION>
@@ -95,6 +96,7 @@ fdisk_field_get_id
 fdisk_field_get_name
 fdisk_field_get_width
 fdisk_field_is_number
+fdisk_fieldtype
 <SUBSECTION>
 fdisk_label
 fdisk_is_label
@@ -115,6 +117,7 @@ fdisk_label_parse_parttype
 fdisk_label_require_geometry
 fdisk_label_set_changed
 fdisk_label_set_disabled
+fdisk_labeltype
 </SECTION>
 
 <SECTION>

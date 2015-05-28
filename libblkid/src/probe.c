@@ -942,7 +942,6 @@ static inline void blkid_probe_end(blkid_probe pr)
  * <example>
  *   <title>basic case - use the first result only</title>
  *   <programlisting>
- *
  *	if (blkid_do_probe(pr) == 0) {
  *		int nvals = blkid_probe_numof_values(pr);
  *		for (n = 0; n < nvals; n++) {
@@ -956,7 +955,6 @@ static inline void blkid_probe_end(blkid_probe pr)
  * <example>
  *   <title>advanced case - probe for all signatures</title>
  *   <programlisting>
- *
  *	while (blkid_do_probe(pr) == 0) {
  *		int nvals = blkid_probe_numof_values(pr);
  *		...

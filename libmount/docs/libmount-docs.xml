@@ -59,7 +59,7 @@ available from ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
     <xi:include href="xml/utils.xml"/>
     <xi:include href="xml/version-utils.xml"/>
   </part>
-  <index id="api-index-full">
+  <index id="api-index">
     <title>API Index</title>
     <xi:include href="xml/api-index-full.xml"><xi:fallback /></xi:include>
   </index>
