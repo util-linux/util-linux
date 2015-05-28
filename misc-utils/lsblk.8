@@ -60,7 +60,7 @@ top-level devices only.
 .TP
 .BR \-f , " \-\-fs"
 Output info about filesystems.  This option is equivalent to
-.BR -o\ NAME,FSTYPE,LABEL,MOUNTPOINT .
+.BR -o\ NAME,FSTYPE,LABEL,UUID,MOUNTPOINT .
 The authoritative information about filesystems and raids is provided by the
 .BR blkid (8)
 command.
@@ -116,7 +116,7 @@ Print dependencies in inverse order.
 .BR \-t , " \-\-topology"
 Output info about block-device topology.
 This option is equivalent to
-.BR -o\ NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED,RQ-SIZE,WSAME .
+.BR -o\ NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED,RQ-SIZE,RA,WSAME .
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
