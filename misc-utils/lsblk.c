@@ -421,6 +421,7 @@ static char *get_device_path(struct blkdev_cxt *cxt)
 		return canonicalize_dm_name(cxt->name);
 
 	snprintf(path, sizeof(path), "/dev/%s", cxt->name);
+	sysfs_devname_sys_to_dev(path);
 	return xstrdup(path);
 }
 
@@ -790,6 +791,8 @@ static char *mk_name(const char *name)
 		xasprintf(&p, "/dev/%s", name);
 	else
 		p = xstrdup(name);
+	if (p)
+		sysfs_devname_sys_to_dev(p);
 	return p;
 }
 
@@ -1152,9 +1155,6 @@ static int set_cxt(struct blkdev_cxt *cxt,
 	cxt->name = xstrdup(name);
 	cxt->partition = wholedisk != NULL;
 
-	/* make sure that the name is usable in paths */
-	sysfs_devname_sys_to_dev(cxt->name);
-
 	cxt->filename = get_device_path(cxt);
 	if (!cxt->filename) {
 		warnx(_("%s: failed to get device path"), cxt->name);
@@ -1207,8 +1207,7 @@ static int set_cxt(struct blkdev_cxt *cxt,
 		}
 	}
 
-	/* use "name" (sysfs-like name) here */
-	cxt->npartitions = sysfs_count_partitions(&cxt->sysfs, name);
+	cxt->npartitions = sysfs_count_partitions(&cxt->sysfs, cxt->name);
 	cxt->nholders = sysfs_count_dirents(&cxt->sysfs, "holders");
 	cxt->nslaves = sysfs_count_dirents(&cxt->sysfs, "slaves");
 

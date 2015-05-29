@@ -69,9 +69,11 @@ dev_t sysfs_devname_to_devno(const char *name, const char *parent)
 		char *_name = strdup(name), *_parent = strdup(parent);
 		int len;
 
-		if (!_name || !_parent)
+		if (!_name || !_parent) {
+			free(_name);
+			free(_parent);
 			return 0;
-
+		}
 		sysfs_devname_dev_to_sys(_name);
 		sysfs_devname_dev_to_sys(_parent);
 
