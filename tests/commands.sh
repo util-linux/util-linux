@@ -72,6 +72,7 @@ TS_CMD_PARTX=${TS_CMD_PARTX-"$top_builddir/partx"}
 TS_CMD_RENAME=${TS_CMD_RENAME-"$top_builddir/rename"}
 TS_CMD_REV=${TS_CMD_REV:-"$top_builddir/rev"}
 TS_CMD_SCRIPT=${TS_CMD_SCRIPT-"$top_builddir/script"}
+TS_CMD_SCRIPTREPLAY=${TS_CMD_SCRIPTREPLAY-"$top_builddir/scriptreplay"}
 TS_CMD_SETARCH=${TS_CMD_SETARCH-"$top_builddir/setarch"}
 TS_CMD_SETSID=${TS_CMD_SETSID-"$top_builddir/setsid"}
 TS_CMD_SWAPLABEL=${TS_CMD_SWAPLABEL:-"$top_builddir/swaplabel"}
