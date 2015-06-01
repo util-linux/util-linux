@@ -713,7 +713,7 @@ int mnt_monitor_next_change(struct libmnt_monitor *mn,
 		return -EINVAL;
 
 	/*
-	 * if we previously called epoll_wait() (e.g. mnt_monitor_waith()) then
+	 * if we previously called epoll_wait() (e.g. mnt_monitor_wait()) then
 	 * info about unread change is already stored in monitor_entry.
 	 *
 	 * If we get nothing, then ask kernel.
@@ -751,7 +751,7 @@ int mnt_monitor_next_change(struct libmnt_monitor *mn,
 	if (type)
 		*type = me->type;
 
-	DBG(MONITOR, ul_debugobj(mn, " *** success"));
+	DBG(MONITOR, ul_debugobj(mn, " *** success [changed: %s]", me->path));
 	return 0;				/* success */
 }
 
@@ -766,18 +766,13 @@ int mnt_monitor_next_change(struct libmnt_monitor *mn,
  */
 int mnt_monitor_event_cleanup(struct libmnt_monitor *mn)
 {
-	struct monitor_entry *me;
-	struct libmnt_iter itr;
+	int rc;
 
 	if (!mn || mn->fd < 0)
 		return -EINVAL;
 
-	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
-	while (monitor_next_entry(mn, &itr, &me) == 0) {
-		if (me->opers->op_event_cleanup != NULL)
-			me->opers->op_event_cleanup(mn, me);
-	}
-	return 0;
+	while ((rc = mnt_monitor_next_change(mn, NULL, NULL)) == 0);
+	return rc < 0 ? rc : 0;
 }
 
 #ifdef TEST_PROGRAM
@@ -821,7 +816,7 @@ err:
 /*
  * create a monitor and add the monitor fd to epoll
  */
-int test_epoll(struct libmnt_test *ts, int argc, char *argv[])
+int __test_epoll(struct libmnt_test *ts, int argc, char *argv[], int cleanup)
 {
 	int fd, efd = -1, rc = -1;
 	struct epoll_event ev;
@@ -866,8 +861,12 @@ int test_epoll(struct libmnt_test *ts, int argc, char *argv[])
 			continue;
 
 		printf(" top-level FD active\n");
-		while (mnt_monitor_next_change(mn, &filename, NULL) == 0)
-			printf("  %s: change detected\n", filename);
+		if (cleanup)
+			mnt_monitor_event_cleanup(mn);
+		else {
+			while (mnt_monitor_next_change(mn, &filename, NULL) == 0)
+				printf("  %s: change detected\n", filename);
+		}
 	} while (1);
 
 	rc = 0;
@@ -876,6 +875,19 @@ done:
 		close(efd);
 	mnt_unref_monitor(mn);
 	return rc;
+}
+
+/*
+ * create a monitor and add the monitor fd to epoll
+ */
+int test_epoll(struct libmnt_test *ts, int argc, char *argv[])
+{
+	return __test_epoll(ts, argc, argv, 0);
+}
+
+int test_epoll_cleanup(struct libmnt_test *ts, int argc, char *argv[])
+{
+	return __test_epoll(ts, argc, argv, 1);
 }
 
 /*
@@ -905,6 +917,7 @@ int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
 		{ "--epoll", test_epoll, "<userspace kernel ...>  monitor in epoll" },
+		{ "--epoll-clean", test_epoll_cleanup, "<userspace kernel ...>  monitor in epoll and clean events" },
 		{ "--wait",  test_wait,  "<userspace kernel ...>  monitor wait function" },
 		{ NULL }
 	};
