@@ -12,7 +12,7 @@ _lscpu_module()
 			prefix="${cur%$realcur}"
 			OPTS_ALL="CPU CORE SOCKET NODE
 				BOOK CACHE POLARIZATION ADDRESS
-				CONFIGURED ONLINE MMHZ"
+				CONFIGURED ONLINE MAXMHZ MINMHZ"
 			for WORD in $OPTS_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
 					OPTS="$WORD $OPTS"
