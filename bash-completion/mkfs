@@ -1,6 +1,6 @@
 _mkfs_module()
 {
-	local cur prev OPTS DEVS
+	local cur prev OPTS
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"

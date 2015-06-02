@@ -28,7 +28,6 @@ _mkfs.minix_module()
 			return 0
 			;;
 	esac
-	local DEVS
 	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
 	return 0
 }

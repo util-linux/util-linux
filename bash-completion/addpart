@@ -1,6 +1,6 @@
 _addpart_module()
 {
-	local cur prev
+	local cur
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	case $COMP_CWORD in

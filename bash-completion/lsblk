@@ -81,7 +81,6 @@ _lsblk_module()
 			return 0
 			;;
 	esac
-	local DEVS
 	COMPREPLY=( $(compgen -W "$($1 -pnro name)" -- $cur) )
 	return 0
 }
