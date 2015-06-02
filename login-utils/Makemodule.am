@@ -13,13 +13,6 @@ install-exec-hook-last:
 INSTALL_EXEC_HOOKS += install-exec-hook-last
 endif
 
-if BUILD_DEPRECATED_LAST
-usrbin_exec_PROGRAMS += last
-dist_man_MANS += login-utils/last-deprecated.1
-last_SOURCES = login-utils/last-deprecated.c
-endif # BUILD_DEPRECATED_LAST
-
-
 if BUILD_SULOGIN
 sbin_PROGRAMS += sulogin
 dist_man_MANS += login-utils/sulogin.8

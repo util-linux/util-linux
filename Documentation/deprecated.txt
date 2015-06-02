@@ -91,11 +91,6 @@ What:   losetup output format without --list
 What:	tunelp
 Why:	parallel port printers are probably almost extinct devices
 
---------------------------
-
-What:	deprecated_last(1)
-Why:	nobody uses this implementation
-
 ----------------------------
 
 The Single UNIX(TM) Specification, Version 2
