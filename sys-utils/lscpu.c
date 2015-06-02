@@ -34,8 +34,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#if (defined(__x86_64__) || defined(__i386__)) && !defined(__SANITIZE_ADDRESS__)
-# define INCLUDE_VMWARE_BDOOR
+#if (defined(__x86_64__) || defined(__i386__))
+# if !defined( __SANITIZE_ADDRESS__)
+#  define INCLUDE_VMWARE_BDOOR
+# else
+#  warning VMWARE detection disabled by __SANITIZE_ADDRESS__
+# endif
 #endif
 
 #ifdef INCLUDE_VMWARE_BDOOR
