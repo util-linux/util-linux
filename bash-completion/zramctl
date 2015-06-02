@@ -10,11 +10,17 @@ _zramctl_module()
 			return 0
 			;;
 		'-o'|'--output')
-			# FIXME: how to append to a string with compgen?
-			local OUTPUT
-			OUTPUT="NAME DISKSIZE DATA COMPR ALGORITHM STREAMS ZERO-PAGES TOTAL MOUNTPOINT"
+			local prefix realcur OUTPUT_ALL OUTPUT
+			realcur="${cur##*,}"
+			prefix="${cur%$realcur}"
+			OUTPUT_ALL="NAME DISKSIZE DATA COMPR ALGORITHM STREAMS ZERO-PAGES TOTAL MOUNTPOINT"
+			for WORD in $OUTPUT_ALL; do
+				if ! [[ $prefix == *"$WORD"* ]]; then
+					OUTPUT="$WORD $OUTPUT"
+				fi
+			done
 			compopt -o nospace
-			COMPREPLY=( $(compgen -W "$OUTPUT" -S ',' -- $cur) )
+			COMPREPLY=( $(compgen -P "$prefix" -W "$OUTPUT" -S ',' -- $realcur) )
 			return 0
 			;;
 		'-s'|'--size')

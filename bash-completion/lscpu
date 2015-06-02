@@ -1,26 +1,25 @@
 _lscpu_module()
 {
-	local cur OPTS
+	local cur OPTS_ALL
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'--extended'|'=')
+		'--extended='|'=')
+			local prefix realcur OPTS
 			cur=${cur#=}
-			# FIXME: how to append to a string with compgen?
-			OPTS="CPU,
-				CORE,
-				SOCKET,
-				NODE,
-				BOOK,
-				CACHE,
-				POLARIZATION,
-				ADDRESS,
-				CONFIGURED,
-				ONLINE,
-				MMHZ"
+			realcur="${cur##*,}"
+			prefix="${cur%$realcur}"
+			OPTS_ALL="CPU CORE SOCKET NODE
+				BOOK CACHE POLARIZATION ADDRESS
+				CONFIGURED ONLINE MMHZ"
+			for WORD in $OPTS_ALL; do
+				if ! [[ $prefix == *"$WORD"* ]]; then
+					OPTS="$WORD $OPTS"
+				fi
+			done
 			compopt -o nospace
-			COMPREPLY=( $(compgen -W "$OPTS" -- $cur) )
+			COMPREPLY=( $(compgen -P "$prefix" -W "$OPTS" -S ',' -- $realcur) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
@@ -29,7 +28,7 @@ _lscpu_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="--all
+			OPTS_ALL="--all
 				--online
 				--offline
 				--extended=
@@ -38,7 +37,7 @@ _lscpu_module()
 				--hex
 				--help
 				--version"
-			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			COMPREPLY=( $(compgen -W "${OPTS_ALL[*]}" -- $cur) )
 			return 0
 			;;
 	esac

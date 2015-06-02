@@ -6,19 +6,31 @@ _chcpu_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-e'|'--enable')
-			local CPULIST
-			# FIXME: will propose only binding to a cpu.
-			# Maybe this should add comma, and continue?
-			CPULIST=$(sed 's/^/{/; s/-/../g; s/,/} {/g; s/$/}/' /sys/devices/system/cpu/offline)
-			COMPREPLY=( $(compgen -W "$(eval echo $CPULIST)" -- $cur) )
+			local prefix realcur CPULIST_ALL CPULIST
+			realcur="${cur##*,}"
+			prefix="${cur%$realcur}"
+			CPULIST_ALL=$(sed 's/^/{/; s/-/../g; s/,/} {/g; s/$/}/' /sys/devices/system/cpu/offline)
+			for WORD in $(eval echo $CPULIST_ALL); do
+				if ! [[ $prefix == *"$WORD"* ]]; then
+					CPULIST="$WORD $CPULIST"
+				fi
+			done
+			compopt -o nospace
+			COMPREPLY=( $(compgen -P "$prefix" -W "$CPULIST" -S ',' -- $realcur) )
 			return 0
 			;;
 		'-d'|'--disable')
-			local CPULIST
-			# FIXME: will propose only binding to a cpu.
-			# Maybe this should add comma, and continue?
-			CPULIST=$(sed 's/^/{/; s/-/../g; s/,/} {/g; s/$/}/' /sys/devices/system/cpu/online)
-			COMPREPLY=( $(compgen -W "$(eval echo $CPULIST)" -- $cur) )
+			local prefix realcur CPULIST_ALL CPULIST
+			realcur="${cur##*,}"
+			prefix="${cur%$realcur}"
+			CPULIST_ALL=$(sed 's/^/{/; s/-/../g; s/,/} {/g; s/$/}/' /sys/devices/system/cpu/online)
+			for WORD in $(eval echo $CPULIST_ALL); do
+				if ! [[ $prefix == *"$WORD"* ]]; then
+					CPULIST="$WORD $CPULIST"
+				fi
+			done
+			compopt -o nospace
+			COMPREPLY=( $(compgen -P "$prefix" -W "$CPULIST" -S ',' -- $realcur) )
 			return 0
 			;;
 		'-c'|'--configure'|'-g'|'--deconfigure')

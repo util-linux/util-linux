@@ -1,8 +1,8 @@
 _partx_module()
 {
-	local cur prev OPTS OUTPUT
+	local cur prev OPTS OUTPUT_ALL
 	COMPREPLY=()
-	OUTPUT="NR START END SECTORS SIZE NAME UUID TYPE FLAGS SCHEME"
+	OUTPUT_ALL="NR START END SECTORS SIZE NAME UUID TYPE FLAGS SCHEME"
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
@@ -10,9 +10,16 @@ _partx_module()
 			return 0
 			;;
 		'-o'|'--output')
-			# FIXME: how to append to a string with compgen?
+			local realcur prefix OUTPUT
+			realcur="${cur##*,}"
+			prefix="${cur%$realcur}"
+			for WORD in $OUTPUT_ALL; do
+				if ! [[ $prefix == *"$WORD"* ]]; then
+					OUTPUT="$WORD $OUTPUT"
+				fi
+			done
 			compopt -o nospace
-			COMPREPLY=( $(compgen -W "$OUTPUT" -S ',' -- $cur) )
+			COMPREPLY=( $(compgen -P "$prefix" -W "$OUTPUT" -S ',' -- $realcur) )
 			return 0
 			;;
 		'-t'|'--type')

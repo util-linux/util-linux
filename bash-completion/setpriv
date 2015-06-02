@@ -6,11 +6,17 @@ _setpriv_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'--inh-caps'|'--bounding-set')
-			# FIXME: how to append to a string with compgen?
-			local INHERIT
-			INHERIT=$($1 --list-caps| awk '{print $1, "-" $1}')
+			local prefix realcur INHERIT_ALL INHERIT
+			realcur="${cur##*,}"
+			prefix="${cur%$realcur}"
+			INHERIT_ALL=$($1 --list-caps| awk '{print $1, "-" $1}')
+			for WORD in $INHERIT_ALL; do
+				if ! [[ $prefix == *"$WORD"* ]]; then
+					INHERIT="$WORD $INHERIT"
+				fi
+			done
 			compopt -o nospace
-			COMPREPLY=( $(compgen -W "all $INHERIT" -S ',' -- $cur) )
+			COMPREPLY=( $(compgen -P "$prefix" -W "$INHERIT" -S ',' -- $realcur) )
 			return 0
 			;;
 		'--ruid'|'--euid'|'--reuid')
@@ -26,11 +32,17 @@ _setpriv_module()
 			return 0
 			;;
 		'--groups')
-			# FIXME: how to append to a string with compgen?
-			local GIDS
-			GIDS=$(getent group | awk -F: '{print $3}')
+			local prefix realcur GIDS_ALL GIDS
+			realcur="${cur##*,}"
+			prefix="${cur%$realcur}"
+			GIDS_ALL=$(getent group | awk -F: '{print $3}')
+			for WORD in $GIDS_ALL; do
+				if ! [[ $prefix == *"$WORD"* ]]; then
+					GIDS="$WORD $GIDS"
+				fi
+			done
 			compopt -o nospace
-			COMPREPLY=( $(compgen -W "$GIDS" -S ',' -- $cur) )
+			COMPREPLY=( $(compgen -P "$prefix" -W "$GIDS" -S ',' -- $realcur) )
 			return 0
 			;;
 		'--securebits')
