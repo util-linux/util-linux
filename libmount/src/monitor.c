@@ -323,7 +323,7 @@ static const struct monitor_opers userspace_opers = {
  * If the top-level monitor has been already created (by mnt_monitor_get_fd()
  * or mnt_monitor_wait()) then it's updated according to @enable.
  *
- * The @filename is used only first time when you enable the monitor. It's
+ * The @filename is used only the first time when you enable the monitor. It's
  * impossible to have more than one userspace monitor. The recommended is to
  * use NULL as filename.
  *
