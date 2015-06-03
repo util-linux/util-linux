@@ -510,6 +510,12 @@ static int exec_helper(struct libmnt_context *cxt)
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 	assert(cxt->helper_exec_status == 1);
 
+	if (mnt_context_is_fake(cxt)) {
+		DBG(CXT, ul_debugobj(cxt, "fake mode: does not execute helper"));
+		cxt->helper_exec_status = rc = 0;
+		return rc;
+	}
+
 	DBG_FLUSH;
 
 	switch (fork()) {

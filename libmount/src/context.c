@@ -1816,10 +1816,10 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 
 	target = mnt_fs_get_target(cxt->fs);
 
-	if (cxt->action == MNT_ACT_UMOUNT && target && !strcmp(target, "/"))
-		/* Don't try to touch mtab if umounting root FS */
+	if (cxt->action == MNT_ACT_UMOUNT && target && !strcmp(target, "/")) {
+		DBG(CXT, ul_debugobj(cxt, "root umount: setting NOMTAB"));
 		mnt_context_disable_mtab(cxt, TRUE);
-
+	}
 	if (mnt_context_is_nomtab(cxt)) {
 		DBG(CXT, ul_debugobj(cxt, "skip update: NOMTAB flag"));
 		return 0;

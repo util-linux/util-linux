@@ -83,8 +83,9 @@ When the unmounted device was a loop device, also free this loop
 device.
 .TP
 .B \-\-fake
-Causes everything to be done except for the actual system call; this 'fakes'
-unmounting the filesystem.  It can be used to remove entries from
+Causes everything to be done except for the actual system call or umount helper
+execution; this 'fakes' unmounting the filesystem.  It can be used to remove
+entries from
 .I /etc/mtab
 that were unmounted earlier with the
 .B \-n
