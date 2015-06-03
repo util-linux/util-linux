@@ -121,7 +121,7 @@ static void free_monitor_entry(struct monitor_entry *me)
  * mnt_unref_monitor:
  * @mn: monitor pointer
  *
- * De-increments reference counter, on zero the @mn is automatically
+ * Decrements the reference counter, on zero the @mn is automatically
  * deallocated.
  */
 void mnt_unref_monitor(struct libmnt_monitor *mn)
