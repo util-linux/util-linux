@@ -25,6 +25,7 @@
 #include "optutils.h"
 #include "xalloc.h"
 #include "canonicalize.h"
+#include "pathnames.h"
 
 enum {
 	A_CREATE = 1,		/* setup a new device */
@@ -697,9 +698,17 @@ int main(int argc, char **argv)
 		break;
 	case A_FIND_FREE:
 		res = loopcxt_find_unused(&lc);
-		if (res)
+		if (res) {
+			int errsv = errno;
+
+			if (access(_PATH_DEV_LOOPCTL, F_OK) == 0 &&
+			    access(_PATH_DEV_LOOPCTL, W_OK) != 0)
+				;
+			else
+				errno = errsv;
+
 			warn(_("cannot find an unused loop device"));
-		else
+		} else
 			printf("%s\n", loopcxt_get_device(&lc));
 		break;
 	case A_SHOW:
