@@ -135,6 +135,7 @@ enum {
 	LSBLK_NOHEADINGS =	(1 << 2),
 	LSBLK_EXPORT =		(1 << 3),
 	LSBLK_TREE =		(1 << 4),
+	LSBLK_JSON =		(1 << 5),
 };
 
 enum {
@@ -780,7 +781,8 @@ static char *get_subsystems(struct blkdev_cxt *cxt)
 
 
 #define is_parsable(_l)	(scols_table_is_raw((_l)->table) || \
-			 scols_table_is_export((_l)->table))
+			 scols_table_is_export((_l)->table) || \
+			 scols_table_is_json((_l)->table))
 
 static char *mk_name(const char *name)
 {
@@ -1609,6 +1611,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 	fputs(_(" -f, --fs             output info about filesystems\n"), out);
 	fputs(_(" -i, --ascii          use ascii characters only\n"), out);
 	fputs(_(" -I, --include <list> show only devices with specified major numbers\n"), out);
+	fputs(_(" -J, --json           use JSON output format\n"), out);
 	fputs(_(" -l, --list           use list format output\n"), out);
 	fputs(_(" -m, --perms          output info about permissions\n"), out);
 	fputs(_(" -n, --noheadings     don't print headings\n"), out);
@@ -1656,6 +1659,7 @@ int main(int argc, char *argv[])
 		{ "nodeps",     0, 0, 'd' },
 		{ "discard",    0, 0, 'D' },
 		{ "help",	0, 0, 'h' },
+		{ "json",       0, 0, 'J' },
 		{ "output",     1, 0, 'o' },
 		{ "output-all", 0, 0, 'O' },
 		{ "perms",      0, 0, 'm' },
@@ -1679,6 +1683,7 @@ int main(int argc, char *argv[])
 	static const ul_excl_t excl[] = {       /* rows and cols in in ASCII order */
 		{ 'D','O' },
 		{ 'I','e' },
+		{ 'J', 'P', 'r' },
 		{ 'O','S' },
 		{ 'O','f' },
 		{ 'O','m' },
@@ -1698,7 +1703,7 @@ int main(int argc, char *argv[])
 	lsblk_init_debug();
 
 	while((c = getopt_long(argc, argv,
-			       "abdDe:fhlnmo:OpPiI:rstVSx:", longopts, NULL)) != -1) {
+			       "abdDe:fhJlnmo:OpPiI:rstVSx:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1724,6 +1729,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'h':
 			help(stdout);
+			break;
+		case 'J':
+			scols_flags |= LSBLK_JSON;
 			break;
 		case 'l':
 			scols_flags &= ~LSBLK_TREE; /* disable the default */
@@ -1843,7 +1851,11 @@ int main(int argc, char *argv[])
 	scols_table_enable_raw(lsblk->table, !!(scols_flags & LSBLK_RAW));
 	scols_table_enable_export(lsblk->table, !!(scols_flags & LSBLK_EXPORT));
 	scols_table_enable_ascii(lsblk->table, !!(scols_flags & LSBLK_ASCII));
+	scols_table_enable_json(lsblk->table, !!(scols_flags & LSBLK_JSON));
 	scols_table_enable_noheadings(lsblk->table, !!(scols_flags & LSBLK_NOHEADINGS));
+
+	if (scols_flags & LSBLK_JSON)
+		scols_table_set_name(lsblk->table, "blockdevices");
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *ci = get_column_info(i);
