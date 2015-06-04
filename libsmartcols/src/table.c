@@ -89,8 +89,36 @@ void scols_unref_table(struct libscols_table *tb)
 		scols_unref_symbols(tb->symbols);
 		free(tb->linesep);
 		free(tb->colsep);
+		free(tb->name);
 		free(tb);
 	}
+}
+
+
+/**
+ * scols_table_set_name:
+ * @tb: a pointer to a struct libscols_table instance
+ * @name: a name
+ *
+ * The table name is used for example for JSON top level object name.
+ *
+ * Returns: 0, a negative number in case of an error.
+ */
+int scols_table_set_name(struct libscols_table *tb, const char *name)
+{
+	char *p = NULL;
+
+	if (!tb)
+		return -EINVAL;
+
+	if (name) {
+		p = strdup(name);
+		if (!p)
+			return -ENOMEM;
+	}
+	free(tb->name);
+	tb->name = p;
+	return 0;
 }
 
 /**
@@ -659,6 +687,7 @@ int scols_table_set_symbols(struct libscols_table *tb,
 
 	return 0;
 }
+
 /**
  * scols_table_enable_colors:
  * @tb: table
@@ -677,13 +706,14 @@ int scols_table_enable_colors(struct libscols_table *tb, int enable)
 	tb->colors_wanted = enable;
 	return 0;
 }
+
 /**
  * scols_table_enable_raw:
  * @tb: table
  * @enable: 1 or 0
  *
  * Enable/disable raw output format. The parsable output formats
- * (export and raw) are mutually exclusive.
+ * (export, raw, JSON, ...) are mutually exclusive.
  *
  * Returns: 0 on success, negative number in case of an error.
  */
@@ -696,6 +726,29 @@ int scols_table_enable_raw(struct libscols_table *tb, int enable)
 	if (enable)
 		tb->format = SCOLS_FMT_RAW;
 	else if (tb->format == SCOLS_FMT_RAW)
+		tb->format = 0;
+	return 0;
+}
+
+/**
+ * scols_table_enable_json:
+ * @tb: table
+ * @enable: 1 or 0
+ *
+ * Enable/disable JSON output format. The parsable output formats
+ * (export, raw, JSON, ...) are mutually exclusive.
+ *
+ * Returns: 0 on success, negative number in case of an error.
+ */
+int scols_table_enable_json(struct libscols_table *tb, int enable)
+{
+	if (!tb)
+		return -EINVAL;
+
+	DBG(TAB, ul_debugobj(tb, "json: %s", enable ? "ENABLE" : "DISABLE"));
+	if (enable)
+		tb->format = SCOLS_FMT_JSON;
+	else if (tb->format == SCOLS_FMT_JSON)
 		tb->format = 0;
 	return 0;
 }
@@ -849,6 +902,17 @@ int scols_table_is_export(struct libscols_table *tb)
 int scols_table_is_raw(struct libscols_table *tb)
 {
 	return tb && tb->format == SCOLS_FMT_RAW;
+}
+
+/**
+ * scols_table_is_json:
+ * @tb: table
+ *
+ * Returns: 1 if JSON output format is enabled.
+ */
+int scols_table_is_json(struct libscols_table *tb)
+{
+	return tb && tb->format == SCOLS_FMT_JSON;
 }
 
 

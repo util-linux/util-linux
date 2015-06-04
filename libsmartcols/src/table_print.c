@@ -269,21 +269,33 @@ static int print_data(struct libscols_table *tb,
 	if (!data)
 		data = "";
 
-	/* raw mode */
-	if (scols_table_is_raw(tb)) {
+	switch (tb->format) {
+	case SCOLS_FMT_RAW:
 		fputs_nonblank(data, tb->out);
 		if (!is_last_column(tb, cl))
 			fputs(colsep(tb), tb->out);
 		return 0;
-	}
 
-	/* NAME=value mode */
-	if (scols_table_is_export(tb)) {
+	case SCOLS_FMT_EXPORT:
 		fprintf(tb->out, "%s=", scols_cell_get_data(&cl->header));
 		fputs_quoted(data, tb->out);
 		if (!is_last_column(tb, cl))
 			fputs(colsep(tb), tb->out);
 		return 0;
+
+	case SCOLS_FMT_JSON:
+		fputs_quoted(scols_cell_get_data(&cl->header), tb->out);
+		fputs(": ", tb->out);
+		if (!data || !*data)
+			fputs("null", tb->out);
+		else
+			fputs_quoted(data, tb->out);
+		if (!is_last_column(tb, cl))
+			fputs(", ", tb->out);
+		return 0;
+
+	case SCOLS_FMT_HUMAN:
+		break;		/* continue below */
 	}
 
 	if (tb->colors_wanted) {
@@ -384,7 +396,7 @@ static int cell_to_buffer(struct libscols_table *tb,
 	/*
 	 * Tree stuff
 	 */
-	if (ln->parent) {
+	if (ln->parent && !scols_table_is_json(tb)) {
 		rc = line_ascii_art_to_buffer(tb, ln->parent, buf);
 
 		if (!rc && list_entry_is_last(&ln->ln_children, &ln->parent->ln_branch))
@@ -398,6 +410,95 @@ static int cell_to_buffer(struct libscols_table *tb,
 	if (!rc)
 		rc = buffer_append_data(buf, data);
 	return rc;
+}
+
+static void fput_indent(struct libscols_table *tb)
+{
+	int i;
+
+	for (i = 0; i <= tb->indent; i++)
+		fputs("   ", tb->out);
+}
+
+static void fput_table_open(struct libscols_table *tb)
+{
+	tb->indent = 0;
+
+	if (scols_table_is_json(tb)) {
+		fputc('{', tb->out);
+		fputs(linesep(tb), tb->out);
+
+		fput_indent(tb);
+		fputs_quoted(tb->name, tb->out);
+		fputs(": [", tb->out);
+		fputs(linesep(tb), tb->out);
+
+		tb->indent++;
+		tb->indent_last_sep = 1;
+	}
+}
+
+static void fput_table_close(struct libscols_table *tb)
+{
+	tb->indent--;
+
+	if (scols_table_is_json(tb)) {
+		fput_indent(tb);
+		fputc(']', tb->out);
+		tb->indent--;
+		fputs(linesep(tb), tb->out);
+		fputc('}', tb->out);
+		fputs(linesep(tb), tb->out);
+		tb->indent_last_sep = 1;
+	}
+}
+
+static void fput_children_open(struct libscols_table *tb)
+{
+	if (scols_table_is_json(tb)) {
+		fputc(',', tb->out);
+		fputs(linesep(tb), tb->out);
+		fput_indent(tb);
+		fputs("\"children\": [", tb->out);
+	}
+	/* between parent and child is separator */
+	fputs(linesep(tb), tb->out);
+	tb->indent_last_sep = 1;
+	tb->indent++;
+}
+
+static void fput_children_close(struct libscols_table *tb)
+{
+	tb->indent--;
+
+	if (scols_table_is_json(tb)) {
+		fput_indent(tb);
+		fputc(']', tb->out);
+		fputs(linesep(tb), tb->out);
+		tb->indent_last_sep = 1;
+	}
+}
+
+static void fput_line_open(struct libscols_table *tb)
+{
+	if (scols_table_is_json(tb)) {
+		fput_indent(tb);
+		fputc('{', tb->out);
+		tb->indent_last_sep = 0;
+	}
+	tb->indent++;
+}
+
+static void fput_line_close(struct libscols_table *tb, int last)
+{
+	tb->indent--;
+	if (scols_table_is_json(tb)) {
+		if (tb->indent_last_sep)
+			fput_indent(tb);
+		fputs(last ? "}" : "},", tb->out);
+	}
+	fputs(linesep(tb), tb->out);
+	tb->indent_last_sep = 1;
 }
 
 /*
@@ -425,8 +526,6 @@ static int print_line(struct libscols_table *tb,
 					buf);
 	}
 
-	if (rc == 0)
-		fputs(linesep(tb), tb->out);
 	return 0;
 }
 
@@ -460,63 +559,82 @@ static int print_header(struct libscols_table *tb, struct libscols_buffer *buf)
 
 static int print_table(struct libscols_table *tb, struct libscols_buffer *buf)
 {
-	int rc;
+	int rc = 0;
 	struct libscols_line *ln;
 	struct libscols_iter itr;
 
 	assert(tb);
 
-	rc = print_header(tb, buf);
-
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-	while (rc == 0 && scols_table_next_line(tb, &itr, &ln) == 0)
+	while (rc == 0 && scols_table_next_line(tb, &itr, &ln) == 0) {
+		fput_line_open(tb);
 		rc = print_line(tb, ln, buf);
+		fput_line_close(tb, scols_iter_is_last(&itr));
+	}
 
 	return rc;
 }
 
 static int print_tree_line(struct libscols_table *tb,
 			   struct libscols_line *ln,
-			   struct libscols_buffer *buf)
+			   struct libscols_buffer *buf,
+			   int last)
 {
 	int rc;
 	struct list_head *p;
 
+	fput_line_open(tb);
+
 	rc = print_line(tb, ln, buf);
 	if (rc)
-		return rc;
-	if (list_empty(&ln->ln_branch))
+		goto done;
+
+	if (list_empty(&ln->ln_branch)) {
+		fput_line_close(tb, last);
 		return 0;
+	}
+
+	fput_children_open(tb);
 
 	/* print all children */
 	list_for_each(p, &ln->ln_branch) {
 		struct libscols_line *chld =
 				list_entry(p, struct libscols_line, ln_children);
-		rc = print_tree_line(tb, chld, buf);
+
+		rc = print_tree_line(tb, chld, buf, p->next == &ln->ln_branch);
 		if (rc)
-			break;
+			goto done;
 	}
 
+	fput_children_close(tb);
+
+	if (scols_table_is_json(tb))
+		fput_line_close(tb, last);
+done:
 	return rc;
 }
 
 static int print_tree(struct libscols_table *tb, struct libscols_buffer *buf)
 {
-	int rc;
-	struct libscols_line *ln;
+	int rc = 0;
+	struct libscols_line *ln, *last = NULL;
 	struct libscols_iter itr;
 
 	assert(tb);
 
 	DBG(TAB, ul_debugobj(tb, "printing tree"));
 
-	rc = print_header(tb, buf);
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+
+	while (scols_table_next_line(tb, &itr, &ln) == 0)
+		if (!last || !ln->parent)
+			last = ln;
 
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (rc == 0 && scols_table_next_line(tb, &itr, &ln) == 0) {
 		if (ln->parent)
 			continue;
-		rc = print_tree_line(tb, ln, buf);
+		rc = print_tree_line(tb, ln, buf, ln == last);
 	}
 
 	return rc;
@@ -852,11 +970,20 @@ int scols_print_table(struct libscols_table *tb)
 			goto done;
 	}
 
+	fput_table_open(tb);
+
+	if (!scols_table_is_json(tb)) {
+		rc = print_header(tb, buf);
+		if (rc)
+			goto done;
+	}
+
 	if (scols_table_is_tree(tb))
 		rc = print_tree(tb, buf);
 	else
 		rc = print_table(tb, buf);
 
+	fput_table_close(tb);
 done:
 	free_buffer(buf);
 	return rc;

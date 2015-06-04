@@ -122,7 +122,8 @@ struct libscols_line {
 enum {
 	SCOLS_FMT_HUMAN = 0,		/* default, human readable */
 	SCOLS_FMT_RAW,			/* space separated */
-	SCOLS_FMT_EXPORT		/* COLNAME="data" ... */
+	SCOLS_FMT_EXPORT,		/* COLNAME="data" ... */
+	SCOLS_FMT_JSON			/* http://en.wikipedia.org/wiki/JSON */
 };
 
 /*
@@ -130,6 +131,7 @@ enum {
  */
 struct libscols_table {
 	int	refcount;
+	char	*name;		/* optional table table */
 	size_t	ncols;		/* number of columns */
 	size_t  ntreecols;	/* number of columns with SCOLS_FL_TREE */
 	size_t	nlines;		/* number of lines */
@@ -144,6 +146,8 @@ struct libscols_table {
 	struct list_head	tb_lines;
 	struct libscols_symbols	*symbols;
 
+	int	indent;		/* indention counter */
+	int	indent_last_sep;/* last printed has been line separator */
 	int	format;		/* SCOLS_FMT_* */
 
 	/* flags */
@@ -170,5 +174,14 @@ struct libscols_table {
 		(itr)->p = IS_ITER_FORWARD(itr) ? \
 				(itr)->p->next : (itr)->p->prev; \
 	} while(0)
+
+
+static inline int scols_iter_is_last(struct libscols_iter *itr)
+{
+	if (!itr || !itr->head || !itr->p)
+		return 0;
+
+	return itr->p == itr->head;
+}
 
 #endif /* _LIBSMARTCOLS_PRIVATE_H */

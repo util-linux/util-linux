@@ -93,6 +93,7 @@ scols_table_colors_wanted
 scols_table_enable_ascii
 scols_table_enable_colors
 scols_table_enable_export
+scols_table_enable_json
 scols_table_enable_maxout
 scols_table_enable_noheadings
 scols_table_enable_raw
@@ -106,6 +107,7 @@ scols_table_get_stream
 scols_table_is_ascii
 scols_table_is_empty
 scols_table_is_export
+scols_table_is_json
 scols_table_is_maxout
 scols_table_is_noheadings
 scols_table_is_raw
@@ -121,6 +123,7 @@ scols_table_remove_line
 scols_table_remove_lines
 scols_table_set_column_separator
 scols_table_set_line_separator
+scols_table_set_name
 scols_table_set_stream
 scols_table_set_symbols
 scols_sort_table

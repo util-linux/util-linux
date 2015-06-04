@@ -1,7 +1,7 @@
 /*
  * symbols since util-linux 2.25
  *
- * Copyright (C) 2014 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2014-2015 Karel Zak <kzak@redhat.com>
  */
 SMARTCOLS_2.25 {
 global:
@@ -112,3 +112,11 @@ global:
 local:
 	*;
 };
+
+
+SMARTCOLS_2.27 {
+global:
+	scols_table_enable_json;
+	scols_table_is_json;
+	scols_table_set_name;
+} SMARTCOLS_2.25;
