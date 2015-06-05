@@ -1,7 +1,7 @@
 /*
  * findmnt(8)
  *
- * Copyright (C) 2010-2014 Red Hat, Inc. All rights reserved.
+ * Copyright (C) 2010-2015 Red Hat, Inc. All rights reserved.
  * Written by Karel Zak <kzak@redhat.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -69,7 +69,8 @@ enum {
 	FL_RAW		= (1 << 21),
 	FL_NOHEADINGS	= (1 << 22),
 	FL_EXPORT	= (1 << 23),
-	FL_TREE		= (1 << 24)
+	FL_TREE		= (1 << 24),
+	FL_JSON		= (1 << 25),
 };
 
 /* column IDs */
@@ -593,7 +594,7 @@ static char *get_data(struct libmnt_fs *fs, int num)
 		if (!devno)
 			break;
 
-		if ((flags & FL_RAW) || (flags & FL_EXPORT))
+		if ((flags & FL_RAW) || (flags & FL_EXPORT) || (flags & FL_JSON))
 			xasprintf(&str, "%u:%u", major(devno), minor(devno));
 		else
 			xasprintf(&str, "%3u:%-3u", major(devno), minor(devno));
@@ -1236,6 +1237,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -F, --tab-file <path>  alternative file for -s, -m or -k options\n"), out);
 	fputs(_(" -f, --first-only       print the first found filesystem only\n"), out);
 	fputs(_(" -i, --invert           invert the sense of matching\n"), out);
+	fputs(_(" -J, --json             use JSON output format\n"), out);
 	fputs(_(" -l, --list             use list format output\n"), out);
 	fputs(_(" -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"), out);
 	fputs(_(" -n, --noheadings       don't print column headings\n"), out);
@@ -1291,6 +1293,7 @@ int main(int argc, char *argv[])
 	    { "fstab",        0, 0, 's' },
 	    { "help",         0, 0, 'h' },
 	    { "invert",       0, 0, 'i' },
+	    { "json",         0, 0, 'J' },
 	    { "kernel",       0, 0, 'k' },
 	    { "list",         0, 0, 'l' },
 	    { "mountpoint",   1, 0, 'M' },
@@ -1320,6 +1323,7 @@ int main(int argc, char *argv[])
 	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
 		{ 'C', 'c'},                    /* [no]canonicalize */
 		{ 'C', 'e' },			/* nocanonicalize, evaluate */
+		{ 'J', 'P', 'r' },		/* json,pairs,raw */
 		{ 'M', 'T' },			/* mountpoint, target */
 		{ 'N','k','m','s' },		/* task,kernel,mtab,fstab */
 		{ 'P','l','r' },		/* pairs,list,raw */
@@ -1337,7 +1341,7 @@ int main(int argc, char *argv[])
 	flags |= FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"AabCcDd:ehifF:o:O:p::PklmM:nN:rst:uvRS:T:Uw:V",
+				"AabCcDd:ehiJfF:o:O:p::PklmM:nN:rst:uvRS:T:Uw:V",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1379,6 +1383,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'i':
 			flags |= FL_INVERT;
+			break;
+		case 'J':
+			flags |= FL_JSON;
 			break;
 		case 'f':
 			flags |= FL_FIRSTONLY;
@@ -1577,8 +1584,12 @@ int main(int argc, char *argv[])
 	}
 	scols_table_enable_raw(table,        !!(flags & FL_RAW));
 	scols_table_enable_export(table,     !!(flags & FL_EXPORT));
+	scols_table_enable_json(table,       !!(flags & FL_JSON));
 	scols_table_enable_ascii(table,      !!(flags & FL_ASCII));
 	scols_table_enable_noheadings(table, !!(flags & FL_NOHEADINGS));
+
+	if (flags & FL_JSON)
+		scols_table_set_name(table, "filesystems");
 
 	for (i = 0; i < ncolumns; i++) {
 		int fl = get_column_flags(i);
