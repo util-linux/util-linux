@@ -539,6 +539,7 @@ static int print_header(struct libscols_table *tb, struct libscols_buffer *buf)
 
 	if (scols_table_is_noheadings(tb) ||
 	    scols_table_is_export(tb) ||
+	    scols_table_is_json(tb) ||
 	    list_empty(&tb->tb_lines))
 		return 0;
 
@@ -942,6 +943,12 @@ int scols_print_table(struct libscols_table *tb)
 		return -EINVAL;
 
 	DBG(TAB, ul_debugobj(tb, "printing"));
+
+	if (list_empty(&tb->tb_lines)) {
+		DBG(TAB, ul_debugobj(tb, "ignore -- epmty table"));
+		return 0;
+	}
+
 	if (!tb->symbols)
 		scols_table_set_symbols(tb, NULL);	/* use default */
 
@@ -964,7 +971,7 @@ int scols_print_table(struct libscols_table *tb)
 	if (!buf)
 		return -ENOMEM;
 
-	if (!(scols_table_is_raw(tb) || scols_table_is_export(tb))) {
+	if (tb->format == SCOLS_FMT_HUMAN) {
 		rc = recount_widths(tb, buf);
 		if (rc != 0)
 			goto done;
@@ -972,11 +979,9 @@ int scols_print_table(struct libscols_table *tb)
 
 	fput_table_open(tb);
 
-	if (!scols_table_is_json(tb)) {
-		rc = print_header(tb, buf);
-		if (rc)
-			goto done;
-	}
+	rc = print_header(tb, buf);
+	if (rc)
+		goto done;
 
 	if (scols_table_is_tree(tb))
 		rc = print_tree(tb, buf);

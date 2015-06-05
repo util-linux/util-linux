@@ -100,11 +100,14 @@ Otherwise, just print its name.
 Show the status of all loop devices associated with the given
 .IR file .
 .TP
+.IP "\fB\-J, \fB\-\-json\fP"
+Use JSON format for \fB\-\-list\fP output.
+.TP
 .BR \-l , " \-\-list"
 If a loop device or the \fB-a\fR option is specified, print the default columns
 for either the specified loop device or all loop devices; the default is to
 print info about all devices.  See also \fB\-\-output\fP, \fB\-\-noheadings\fP
-and \fB\-\-raw\fP.
+\fB\-\-json\fP and \fB\-\-raw\fP.
 .TP
 .BR \-n , " \-\-noheadings"
 Don't print headings for \fB\-\-list\fP output format.

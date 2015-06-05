@@ -53,6 +53,7 @@ enum {
 /* basic output flags */
 static int no_headings;
 static int raw;
+static int json;
 
 struct colinfo {
 	const char *name;
@@ -302,7 +303,11 @@ static int show_table(struct loopdev_cxt *lc,
 	if (!(tb = scols_new_table()))
 		err(EXIT_FAILURE, _("failed to initialize output table"));
 	scols_table_enable_raw(tb, raw);
+	scols_table_enable_json(tb, json);
 	scols_table_enable_noheadings(tb, no_headings);
+
+	if (json)
+		scols_table_set_name(tb, "loopdevices");
 
 	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *ci = get_column_info(i);
@@ -397,6 +402,7 @@ static void usage(FILE *out)
 	fputs(_(" -O, --output <cols>           specify columns to output for --list\n"), out);
 	fputs(_(" -n, --noheadings              don't print headings for --list output\n"), out);
 	fputs(_("     --raw                     use raw --list output format\n"), out);
+	fputs(_(" -J, --json                    use JSON --list output format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -454,6 +460,7 @@ int main(int argc, char **argv)
 		{ "find", 0, 0, 'f' },
 		{ "help", 0, 0, 'h' },
 		{ "associated", 1, 0, 'j' },
+		{ "json", 0, 0, 'J' },
 		{ "list", 0, 0, 'l' },
 		{ "noheadings", 0, 0, 'n' },
 		{ "offset", 1, 0, 'o' },
@@ -472,6 +479,7 @@ int main(int argc, char **argv)
 		{ 'D','a','c','d','f','j' },
 		{ 'D','c','d','f','l' },
 		{ 'D','c','d','f','O' },
+		{ 'J',OPT_RAW },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -484,7 +492,7 @@ int main(int argc, char **argv)
 	if (loopcxt_init(&lc, 0))
 		err(EXIT_FAILURE, _("failed to initialize loopcxt"));
 
-	while ((c = getopt_long(argc, argv, "ac:d:Dfhj:lno:O:PrvV",
+	while ((c = getopt_long(argc, argv, "ac:d:Dfhj:Jlno:O:PrvV",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -518,6 +526,9 @@ int main(int argc, char **argv)
 			break;
 		case 'h':
 			usage(stdout);
+			break;
+		case 'J':
+			json = 1;
 			break;
 		case 'j':
 			act = A_SHOW;
@@ -562,6 +573,11 @@ int main(int argc, char **argv)
 
 	/* default is --list --all */
 	if (argc == 1) {
+		act = A_SHOW;
+		list = 1;
+	}
+
+	if (!act && argc == 2 && (raw || json)) {
 		act = A_SHOW;
 		list = 1;
 	}
