@@ -284,7 +284,7 @@ static int print_data(struct libscols_table *tb,
 		return 0;
 
 	case SCOLS_FMT_JSON:
-		fputs_quoted(scols_cell_get_data(&cl->header), tb->out);
+		fputs_quoted_lower(scols_cell_get_data(&cl->header), tb->out);
 		fputs(": ", tb->out);
 		if (!data || !*data)
 			fputs("null", tb->out);
