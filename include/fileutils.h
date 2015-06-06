@@ -25,6 +25,7 @@ static inline FILE *xfmkstemp(char **tmpname, char *dir)
 	return ret;
 }
 
+extern int dup_fd_cloexec(int oldfd, int lowfd);
 extern int get_fd_tabsize(void);
 
 extern int mkdir_p(const char *path, mode_t mode);
