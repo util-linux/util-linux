@@ -231,6 +231,12 @@ static inline int dirfd(DIR *d)
 #define O_CLOEXEC 0
 #endif
 
+#ifdef __FreeBSD_kernel__
+#ifndef F_DUPFD_CLOEXEC
+#define F_DUPFD_CLOEXEC	17	/* Like F_DUPFD, but FD_CLOEXEC is set */
+#endif
+#endif
+
 
 #ifndef AI_ADDRCONFIG
 #define AI_ADDRCONFIG 0x0020
