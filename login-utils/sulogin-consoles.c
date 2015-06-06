@@ -154,13 +154,15 @@ char *oneline(const char *file)
 {
 	FILE *fp;
 	char *ret = NULL;
-	size_t len = 0;
+	size_t dummy = 0;
+	ssize_t len;
 
 	DBG(dbgprint("reading %s", file));
 
 	if (!(fp = fopen(file, "re")))
 		return NULL;
-	if (getline(&ret, &len, fp) >= 0) {
+	len = getline(&ret, &dummy, fp);
+	if (len >= 0) {
 		char *nl;
 
 		if (len)
