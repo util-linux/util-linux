@@ -207,7 +207,7 @@ static int get_basetimes(struct rtcwake_control *ctl, int fd)
 static int setup_alarm(struct rtcwake_control *ctl, int fd, time_t *wakeup)
 {
 	struct tm		*tm;
-	struct rtc_wkalrm	wake;
+	struct rtc_wkalrm	wake = { 0 };
 
 	/* The wakeup time is in POSIX time (more or less UTC).  Ideally
 	 * RTCs use that same time; but PCs can't do that if they need to
