@@ -1028,6 +1028,8 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	struct fdisk_dos_label *l = self_label(cxt);
 	struct dos_partition *p = self_partition(cxt, n);
 	struct pte *ext_pe = l->ext_offset ? self_pte(cxt, l->ext_index) : NULL;
+	struct fdisk_ask *ask = NULL;
+
 
 	fdisk_sector_t start, stop = 0, limit, temp,
 		first[cxt->label->nparts_max],
@@ -1157,37 +1159,51 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	else if (pa && pa->end_follow_default)
 		stop = limit;
 	else if (pa && fdisk_partition_has_size(pa)) {
-		stop = start + pa->size - 1;
+		stop = start + pa->size;
 		isrel = pa->size_explicit ? 0 : 1;
+		if (!isrel && stop > start)
+			stop -= 1;
 	} else {
 		/* ask user by dialog */
-		struct fdisk_ask *ask = fdisk_new_ask();
+		for (;;) {
+			if (!ask)
+				ask = fdisk_new_ask();
+			else
+				fdisk_reset_ask(ask);
+			if (!ask)
+				return -ENOMEM;
 
-		if (!ask)
-			return -ENOMEM;
-		fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
+			fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 
-		if (fdisk_use_cylinders(cxt)) {
-			fdisk_ask_set_query(ask, _("Last cylinder, +cylinders or +size{K,M,G,T,P}"));
-			fdisk_ask_number_set_unit(ask,
-				     cxt->sector_size *
-				     fdisk_get_units_per_sector(cxt));
-		} else {
-			fdisk_ask_set_query(ask, _("Last sector, +sectors or +size{K,M,G,T,P}"));
-			fdisk_ask_number_set_unit(ask,cxt->sector_size);
+			if (fdisk_use_cylinders(cxt)) {
+				fdisk_ask_set_query(ask, _("Last cylinder, +cylinders or +size{K,M,G,T,P}"));
+				fdisk_ask_number_set_unit(ask,
+					     cxt->sector_size *
+					     fdisk_get_units_per_sector(cxt));
+			} else {
+				fdisk_ask_set_query(ask, _("Last sector, +sectors or +size{K,M,G,T,P}"));
+				fdisk_ask_number_set_unit(ask,cxt->sector_size);
+			}
+
+			fdisk_ask_number_set_low(ask, fdisk_cround(cxt, start));
+			fdisk_ask_number_set_default(ask, fdisk_cround(cxt, limit));
+			fdisk_ask_number_set_high(ask, fdisk_cround(cxt, limit));
+			fdisk_ask_number_set_base(ask, fdisk_cround(cxt, start));	/* base for relative input */
+
+			rc = fdisk_do_ask(cxt, ask);
+			if (rc)
+				goto done;
+
+			stop = fdisk_ask_number_get_result(ask);
+			isrel = fdisk_ask_number_is_relative(ask);
+
+			if (isrel && stop == start) {
+				fdisk_warnx(cxt, _("Value out of range."));
+				continue;	/* +0 */
+			}
+			break;
 		}
 
-		fdisk_ask_number_set_low(ask, fdisk_cround(cxt, start));
-		fdisk_ask_number_set_default(ask, fdisk_cround(cxt, limit));
-		fdisk_ask_number_set_high(ask, fdisk_cround(cxt, limit));
-		fdisk_ask_number_set_base(ask, fdisk_cround(cxt, start));	/* base for relative input */
-
-		rc = fdisk_do_ask(cxt, ask);
-		stop = fdisk_ask_number_get_result(ask);
-		isrel = fdisk_ask_number_is_relative(ask);
-		fdisk_unref_ask(ask);
-		if (rc)
-			return rc;
 		if (fdisk_use_cylinders(cxt)) {
 			stop = stop * fdisk_get_units_per_sector(cxt) - 1;
 			if (stop >limit)
@@ -1201,8 +1217,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		stop = limit;
 
 	if (isrel && stop - start < (cxt->grain / fdisk_get_sector_size(cxt))) {
-		/* Don't try to be smart on very small partitions and don't
-		 * align so small sizes, just follow the resurst */
+		/* Don't try to be smart on very small partitions and don't align so small sizes */
 		isrel = 0;
 		if (stop > start)
 			stop -= 1;
@@ -1251,7 +1266,11 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	}
 
 	fdisk_label_set_changed(cxt->label, 1);
-	return 0;
+	rc = 0;
+
+done:
+	fdisk_unref_ask(ask);
+	return rc;
 }
 
 static int add_logical(struct fdisk_context *cxt,

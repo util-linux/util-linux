@@ -2147,6 +2147,8 @@ static int gpt_add_partition(
 				ask = fdisk_new_ask();
 			else
 				fdisk_reset_ask(ask);
+			if (!ask)
+				return -ENOMEM;
 
 			fdisk_ask_set_query(ask, _("Last sector, +sectors or +size{K,M,G,T,P}"));
 			fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
@@ -2162,15 +2164,14 @@ static int gpt_add_partition(
 
 			user_l = fdisk_ask_number_get_result(ask);
 			if (fdisk_ask_number_is_relative(ask)) {
+				if (user_l == user_f) {
+					fdisk_warnx(cxt, _("Value out of range."));
+					continue;	/* +0 */
+				}
 
 				user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l);
 				if (user_l > user_f)
 					user_l -= 1;
-
-				/* no space for anything useful, use all space
-				if (user_l + (cxt->grain / cxt->sector_size) > dflt_l)
-					user_l = dflt_l;
-				*/
 			}
 
 			if (user_l >= user_f && user_l <= disk_l)
