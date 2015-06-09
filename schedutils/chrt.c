@@ -60,7 +60,7 @@ static void __attribute__((__noreturn__)) show_usage(int rc)
 	fputs(_("Show or change the real-time scheduling attributes of a process.\n"), out);
 	fprintf(out, _(
 	"\nSet policy:\n"
-	"  chrt [options] [<policy>] <priority> [-p <pid> | <command> [<arg>...]]\n"
+	"  chrt [options] [-p] [<policy>] <priority> [<pid> | <command> [<arg>...]]\n"
 	"\nGet policy:\n"
 	"  chrt [options] -p <pid>\n"));
 
