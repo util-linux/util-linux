@@ -67,7 +67,7 @@ struct nilfs_super_block {
 #define NILFS_SB_OFFSET		0x400
 #define NILFS_SBB_OFFSET(_sz)	((((_sz) / 0x200) - 8) * 0x200)
 
-static int nilfs_valid_sb(blkid_probe pr, struct nilfs_super_block *sb)
+static int nilfs_valid_sb(blkid_probe pr, struct nilfs_super_block *sb, int is_bak)
 {
 	static unsigned char sum[4];
 	const int sumoff = offsetof(struct nilfs_super_block, s_sum);
@@ -77,7 +77,8 @@ static int nilfs_valid_sb(blkid_probe pr, struct nilfs_super_block *sb)
 	if (!sb || le16_to_cpu(sb->s_magic) != NILFS_SB_MAGIC)
 		return 0;
 
-	if (sb->s_dev_size != pr->size)
+	if (is_bak && blkid_probe_is_wholedisk(pr) &&
+	    sb->s_dev_size != pr->size)
 		return 0;
 
 	bytes = le16_to_cpu(sb->s_bytes);
@@ -110,8 +111,8 @@ static int probe_nilfs2(blkid_probe pr, const struct blkid_idmag *mag)
 	 * Compare two super blocks and set 1 in swp if the secondary
 	 * super block is valid and newer.  Otherwise, set 0 in swp.
 	 */
-	valid[0] = nilfs_valid_sb(pr, sbp);
-	valid[1] = nilfs_valid_sb(pr, sbb);
+	valid[0] = nilfs_valid_sb(pr, sbp, 0);
+	valid[1] = nilfs_valid_sb(pr, sbb, 1);
 	if (!valid[0] && !valid[1])
 		return 1;
 
