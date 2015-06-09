@@ -77,6 +77,9 @@ static int nilfs_valid_sb(blkid_probe pr, struct nilfs_super_block *sb)
 	if (!sb || le16_to_cpu(sb->s_magic) != NILFS_SB_MAGIC)
 		return 0;
 
+	if (sb->s_dev_size != pr->size)
+		return 0;
+
 	bytes = le16_to_cpu(sb->s_bytes);
 	crc = crc32(le32_to_cpu(sb->s_crc_seed), (unsigned char *)sb, sumoff);
 	crc = crc32(crc, sum, 4);
