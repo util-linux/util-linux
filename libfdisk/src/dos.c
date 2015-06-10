@@ -1030,7 +1030,6 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 	struct pte *ext_pe = l->ext_offset ? self_pte(cxt, l->ext_index) : NULL;
 	struct fdisk_ask *ask = NULL;
 
-
 	fdisk_sector_t start, stop = 0, limit, temp,
 		first[cxt->label->nparts_max],
 		last[cxt->label->nparts_max];
@@ -1172,7 +1171,6 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 				fdisk_reset_ask(ask);
 			if (!ask)
 				return -ENOMEM;
-
 			fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 
 			if (fdisk_use_cylinders(cxt)) {
@@ -1196,17 +1194,15 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 
 			stop = fdisk_ask_number_get_result(ask);
 			isrel = fdisk_ask_number_is_relative(ask);
+			if (fdisk_use_cylinders(cxt)) {
+				stop = stop * fdisk_get_units_per_sector(cxt) - 1;
+				if (stop >limit)
+					stop = limit;
+			}
 
 			if (stop >= start && stop <= limit)
 				break;
-
 			fdisk_warnx(cxt, _("Value out of range."));
-		}
-
-		if (fdisk_use_cylinders(cxt)) {
-			stop = stop * fdisk_get_units_per_sector(cxt) - 1;
-			if (stop >limit)
-				stop = limit;
 		}
 	}
 
@@ -1266,7 +1262,6 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 
 	fdisk_label_set_changed(cxt->label, 1);
 	rc = 0;
-
 done:
 	fdisk_unref_ask(ask);
 	return rc;
