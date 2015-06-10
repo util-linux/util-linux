@@ -311,7 +311,7 @@ static int ask_offset(struct fdisk_context *cxt,
 				num, sig, pwr,
 				sig ? "relative" : "absolute"));
 		if (num >= low && num <= high) {
-			if (sig)
+			if (sig && pwr)
 				fdisk_ask_number_set_relative(ask, 1);
 			return fdisk_ask_number_set_result(ask, num);
 		}

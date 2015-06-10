@@ -1197,11 +1197,10 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			stop = fdisk_ask_number_get_result(ask);
 			isrel = fdisk_ask_number_is_relative(ask);
 
-			if (isrel && stop == start) {
-				fdisk_warnx(cxt, _("Value out of range."));
-				continue;	/* +0 */
-			}
-			break;
+			if (stop >= start && stop <= limit)
+				break;
+
+			fdisk_warnx(cxt, _("Value out of range."));
 		}
 
 		if (fdisk_use_cylinders(cxt)) {
