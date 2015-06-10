@@ -147,6 +147,30 @@ static int uniq_fs_target_cmp(
 	return !mnt_fs_streq_target(a, mnt_fs_get_target(b));
 }
 
+static int uniq_fs_source_cmp(
+		struct libmnt_table *tb __attribute__((__unused__)),
+		struct libmnt_fs *a,
+		struct libmnt_fs *b)
+{
+	int eq;
+
+	if (mnt_fs_is_pseudofs(a) || mnt_fs_is_netfs(a) ||
+	    mnt_fs_is_pseudofs(b) || mnt_fs_is_netfs(b))
+		return 1;
+
+	eq = mnt_fs_streq_srcpath(a, mnt_fs_get_srcpath(b));
+	if (eq) {
+		const char *aroot = mnt_fs_get_root(a),
+			   *broot = mnt_fs_get_root(b);
+		if (!aroot || !broot)
+			eq = 0;
+		else if (strcmp(aroot, broot) != 0)
+			eq = 0;
+	}
+
+	return !eq;
+}
+
 /*
  * fstrim --all follows "mount -a" return codes:
  *
@@ -172,8 +196,11 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 	if (!tab)
 		err(MOUNT_EX_FAIL, _("failed to parse %s"), _PATH_PROC_MOUNTINFO);
 
-	/* de-duplicate the table */
+	/* de-duplicate by mountpoints */
 	mnt_table_uniq_fs(tab, 0, uniq_fs_target_cmp);
+
+	/* de-duplicate by source and root */
+	mnt_table_uniq_fs(tab, 0, uniq_fs_source_cmp);
 
 	while (mnt_table_next_fs(tab, itr, &fs) == 0) {
 		const char *src = mnt_fs_get_srcpath(fs),
