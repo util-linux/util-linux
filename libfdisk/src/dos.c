@@ -615,22 +615,6 @@ static void read_extended(struct fdisk_context *cxt, size_t ext)
 	DBG(LABEL, ul_debug("DOS: nparts_max: %zu", cxt->label->nparts_max));
 }
 
-static int dos_get_disklabel_id(struct fdisk_context *cxt, char **id)
-{
-	unsigned int num;
-
-	assert(cxt);
-	assert(id);
-	assert(cxt->label);
-	assert(fdisk_is_label(cxt, DOS));
-
-	num = mbr_get_id(cxt->firstsector);
-	if (asprintf(id, "0x%08x", num) > 0)
-		return 0;
-
-	return -ENOMEM;
-}
-
 static int dos_create_disklabel(struct fdisk_context *cxt)
 {
 	unsigned int id = 0;
@@ -1852,13 +1836,34 @@ static int wrong_p_order(struct fdisk_context *cxt, size_t *prev)
 	return 0;
 }
 
-static int dos_list_disklabel(struct fdisk_context *cxt)
+static int dos_get_disklabel_item(struct fdisk_context *cxt, struct fdisk_labelitem *item)
 {
+	int rc = 0;
+
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_label(cxt, DOS));
 
-	return 0;
+	switch (item->id) {
+	case FDISK_LABELITEM_ID:
+	{
+		unsigned int num = mbr_get_id(cxt->firstsector);
+		item->name = _("Disk identifier");
+		item->type = 's';
+		if (asprintf(&item->data.str, "0x%08x", num) < 0)
+			rc = -ENOMEM;
+		break;
+	}
+	default:
+		if (item->id < __FDISK_NLABELITEMS)
+			rc = 1;	/* unssupported generic item */
+		else
+			rc = 2;	/* out of range */
+		break;
+	}
+
+	return rc;
+
 }
 
 static int dos_get_partition(struct fdisk_context *cxt, size_t n,
@@ -2273,15 +2278,14 @@ static const struct fdisk_label_operations dos_operations =
 	.verify		= dos_verify_disklabel,
 	.create		= dos_create_disklabel,
 	.locate		= dos_locate_disklabel,
-	.list		= dos_list_disklabel,
-	.reorder	= dos_reorder,
-	.get_id		= dos_get_disklabel_id,
+	.get_item	= dos_get_disklabel_item,
 	.set_id		= dos_set_disklabel_id,
 
 	.get_part	= dos_get_partition,
 	.set_part	= dos_set_partition,
 	.add_part	= dos_add_partition,
 	.del_part	= dos_delete_partition,
+	.reorder	= dos_reorder,
 
 	.part_toggle_flag = dos_toggle_partition_flag,
 	.part_is_used	= dos_partition_is_used,

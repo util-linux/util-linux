@@ -89,7 +89,6 @@ struct fdisk_bsd_label {
 #endif
 };
 
-static int bsd_list_disklabel(struct fdisk_context *cxt);
 static int bsd_initlabel(struct fdisk_context *cxt);
 static int bsd_readlabel(struct fdisk_context *cxt);
 static void sync_disks(struct fdisk_context *cxt);
@@ -398,14 +397,8 @@ static int bsd_create_disklabel(struct fdisk_context *cxt)
 
 	rc = bsd_initlabel(cxt);
 	if (!rc) {
-		int org = fdisk_is_details(cxt);
-
 		cxt->label->nparts_cur = d->d_npartitions;
 		cxt->label->nparts_max = BSD_MAXPARTITIONS;
-
-		fdisk_enable_details(cxt, 1);
-		bsd_list_disklabel(cxt);
-		fdisk_enable_details(cxt, org);
 	}
 
 	return rc;
@@ -430,48 +423,114 @@ static int bsd_delete_part(
 	return 0;
 }
 
-static int bsd_list_disklabel(struct fdisk_context *cxt)
+static int bsd_get_disklabel_item(struct fdisk_context *cxt, struct fdisk_labelitem *item)
 {
-	struct bsd_disklabel *d = self_disklabel(cxt);
+	struct bsd_disklabel *d;
+	int rc = 0;
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_label(cxt, BSD));
 
-	if (fdisk_is_details(cxt)) {
-		fdisk_info(cxt, "# %s:", cxt->dev_path);
+	d = self_disklabel(cxt);
 
-		if ((unsigned) d->d_type < BSD_DKMAXTYPES)
-			fdisk_info(cxt, _("type: %s"), bsd_dktypenames[d->d_type]);
-		else
-			fdisk_info(cxt, _("type: %d"), d->d_type);
-
-		fdisk_info(cxt, _("disk: %.*s"), (int) sizeof(d->d_typename), d->d_typename);
-		fdisk_info(cxt, _("label: %.*s"), (int) sizeof(d->d_packname), d->d_packname);
-
-		fdisk_info(cxt, _("flags: %s"),
+	switch (item->id) {
+	case BSD_LABELITEM_TYPE:
+		item->name = _("Type");
+		item->type = 's';
+		if ((unsigned) d->d_type < BSD_DKMAXTYPES) {
+			item->data.str = strdup(bsd_dktypenames[d->d_type]);
+			if (!item->data.str)
+				rc = -ENOMEM;
+		} else if (asprintf(&item->data.str, "%d", d->d_type) < 0)
+			rc = -ENOMEM;
+		break;
+	case BSD_LABELITEM_DISK:
+		item->name = _("Disk");
+		item->type = 's';
+		item->data.str = strndup(d->d_typename, sizeof(d->d_typename));
+		if (!item->data.str)
+			rc = -ENOMEM;
+		break;
+	case BSD_LABELITEM_PACKNAME:
+		item->name = _("Packname");
+		item->type = 's';
+		item->data.str = strndup(d->d_packname, sizeof(d->d_packname));
+		if (!item->data.str)
+			rc = -ENOMEM;
+		break;
+	case BSD_LABELITEM_FLAGS:
+		item->name = _("Flags");
+		item->type = 's';
+		item->data.str = strdup(
 			d->d_flags & BSD_D_REMOVABLE ? _(" removable") :
 			d->d_flags & BSD_D_ECC ? _(" ecc") :
 			d->d_flags & BSD_D_BADSECT ? _(" badsect") : "");
+		if (!item->data.str)
+			rc = -ENOMEM;
+		break;
 
-		/* On various machines the fields of *lp are short/int/long */
-		/* In order to avoid problems, we cast them all to long. */
-		fdisk_info(cxt, _("bytes/sector: %ld"), (long) d->d_secsize);
-		fdisk_info(cxt, _("sectors/track: %ld"), (long) d->d_nsectors);
-		fdisk_info(cxt, _("tracks/cylinder: %ld"), (long) d->d_ntracks);
-		fdisk_info(cxt, _("sectors/cylinder: %ld"), (long) d->d_secpercyl);
-		fdisk_info(cxt, _("cylinders: %ld"), (long) d->d_ncylinders);
-		fdisk_info(cxt, _("rpm: %d"), d->d_rpm);
-		fdisk_info(cxt, _("interleave: %d"), d->d_interleave);
-		fdisk_info(cxt, _("trackskew: %d"), d->d_trackskew);
-		fdisk_info(cxt, _("cylinderskew: %d"), d->d_cylskew);
-		fdisk_info(cxt, _("headswitch: %ld (milliseconds)"), (long) d->d_headswitch);
-		fdisk_info(cxt, _("track-to-track seek: %ld (milliseconds)"), (long) d->d_trkseek);
+	/* On various machines the fields of *lp are short/int/long */
+	/* In order to avoid problems, we cast them all uint64. */
+	case BSD_LABELITEM_SECSIZE:
+		item->name = _("Bytes/Sector");
+		item->type = 'j';
+		item->data.num64 = (uint64_t) d->d_secsize;
+		break;
+	case BSD_LABELITEM_NTRACKS:
+		item->name = _("Tracks/Cylinder");
+		item->type = 'j';
+		item->data.num64 = (uint64_t) d->d_ntracks;
+		break;
+	case BSD_LABELITEM_SECPERCYL:
+		item->name = _("Sectors/Cylinder");
+		item->data.num64 = (uint64_t) d->d_secpercyl;
+		item->type = 'j';
+		break;
+	case BSD_LABELITEM_CYLINDERS:
+		item->name = _("Cylinders");
+		item->data.num64 = (uint64_t) d->d_ncylinders;
+		item->type = 'j';
+		break;
+	case BSD_LABELITEM_RPM:
+		item->name = _("Rpm");
+		item->data.num64 = (uint64_t) d->d_rpm;
+		item->type = 'j';
+		break;
+	case BSD_LABELITEM_INTERLEAVE:
+		item->name = _("Interleave");
+		item->data.num64 = (uint64_t) d->d_interleave;
+		item->type = 'j';
+		break;
+	case BSD_LABELITEM_TRACKSKEW:
+		item->name = _("Trackskew");
+		item->data.num64 = (uint64_t) d->d_trackskew;
+		item->type = 'j';
+		break;
+	case BSD_LABELITEM_CYLINDERSKEW:
+		item->name = _("Cylinderskew");
+		item->data.num64 = (uint64_t) d->d_cylskew;
+		item->type = 'j';
+		break;
+	case BSD_LABELITEM_HEADSWITCH:
+		item->name = _("Headswitch");
+		item->data.num64 = (uint64_t) d->d_headswitch;
+		item->type = 'j';
+		break;
+	case BSD_LABELITEM_TRKSEEK:
+		item->name = _("Track-to-track seek");
+		item->data.num64 = (uint64_t) d->d_trkseek;
+		item->type = 'j';
+		break;
+	default:
+		if (item->id < __FDISK_NLABELITEMS)
+			rc = 1;	/* unssupported generic item */
+		else
+			rc = 2;	/* out of range */
+		break;
 	}
 
-	fdisk_info(cxt, _("partitions: %d"), d->d_npartitions);
-
-	return 0;
+	return rc;
 }
 
 static int bsd_get_partition(struct fdisk_context *cxt, size_t n,
@@ -934,7 +993,7 @@ static int bsd_partition_is_used(
 static const struct fdisk_label_operations bsd_operations =
 {
 	.probe		= bsd_probe_label,
-	.list		= bsd_list_disklabel,
+	.get_item	= bsd_get_disklabel_item,
 	.write		= bsd_write_disklabel,
 	.create		= bsd_create_disklabel,
 

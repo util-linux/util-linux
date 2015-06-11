@@ -264,22 +264,48 @@ static int sgi_probe_label(struct fdisk_context *cxt)
 	return 1;
 }
 
-static int sgi_list_table(struct fdisk_context *cxt)
+static int sgi_get_disklabel_item(struct fdisk_context *cxt, struct fdisk_labelitem *item)
 {
-	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
-	struct sgi_device_parameter *sgiparam = &sgilabel->devparam;
+	struct sgi_disklabel *sgilabel;
+	struct sgi_device_parameter *sgiparam;
 	int rc = 0;
 
-	if (fdisk_is_details(cxt))
-		fdisk_info(cxt, _(
-			"Label geometry: %d heads, %llu sectors\n"
-			"                %llu cylinders, %d physical cylinders\n"
-			"                %d extra sects/cyl, interleave %d:1\n"),
-			cxt->geom.heads, cxt->geom.sectors,
-			cxt->geom.cylinders, be16_to_cpu(sgiparam->pcylcount),
-			(int) sgiparam->sparecyl, be16_to_cpu(sgiparam->ilfact));
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_label(cxt, SGI));
 
-	fdisk_info(cxt, _("Bootfile: %s"), sgilabel->boot_file);
+	sgilabel = self_disklabel(cxt);
+	sgiparam = &sgilabel->devparam;
+
+	switch (item->id) {
+	case SGI_LABELITEM_PCYLCOUNT:
+		item->name = _("Physical cylinders");
+		item->type = 'j';
+		item->data.num64 = (uint64_t) be16_to_cpu(sgiparam->pcylcount);
+		break;
+	case SGI_LABELITEM_SPARECYL:
+		item->name = _("Extra sects/cyl");
+		item->type = 'j';
+		item->data.num64 = (uint64_t) sgiparam->sparecyl;
+		break;
+	case SGI_LABELITEM_ILFACT:
+		item->name = _("Interleave");
+		item->type = 'j';
+		item->data.num64 = (uint64_t) be16_to_cpu(sgiparam->ilfact);
+		break;
+	case SGI_LABELITEM_BOOTFILE:
+		item->name = _("Bootfile");
+		item->type = 's';
+		item->data.str = *sgilabel->boot_file ? strdup((char *) sgilabel->boot_file) : NULL;
+		break;
+	default:
+		if (item->id < __FDISK_NLABELITEMS)
+			rc = 1;	/* unssupported generic item */
+		else
+			rc = 2;	/* out of range */
+		break;
+	}
+
 	return rc;
 }
 
@@ -1145,8 +1171,8 @@ static const struct fdisk_label_operations sgi_operations =
 	.probe		= sgi_probe_label,
 	.write		= sgi_write_disklabel,
 	.verify		= sgi_verify_disklabel,
+	.get_item	= sgi_get_disklabel_item,
 	.create		= sgi_create_disklabel,
-	.list		= sgi_list_table,
 
 	.get_part	= sgi_get_partition,
 	.set_part	= sgi_set_partition,

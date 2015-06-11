@@ -731,10 +731,10 @@ static int sun_delete_partition(struct fdisk_context *cxt,
 	return 0;
 }
 
-
-static int sun_list_disklabel(struct fdisk_context *cxt)
+static int sun_get_disklabel_item(struct fdisk_context *cxt, struct fdisk_labelitem *item)
 {
 	struct sun_disklabel *sunlabel;
+	int rc = 0;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -742,21 +742,51 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 
 	sunlabel = self_disklabel(cxt);
 
-	if (fdisk_is_details(cxt)) {
-		fdisk_info(cxt,
-		_("Label geometry: %d rpm, %d alternate and %d physical cylinders,\n"
-		  "                %d extra sects/cyl, interleave %d:1"),
-		       be16_to_cpu(sunlabel->rpm),
-		       be16_to_cpu(sunlabel->acyl),
-		       be16_to_cpu(sunlabel->pcyl),
-		       be16_to_cpu(sunlabel->apc),
-		       be16_to_cpu(sunlabel->intrlv));
-		fdisk_info(cxt, _("Label ID: %s"), sunlabel->label_id);
-		fdisk_info(cxt, _("Volume ID: %s"),
-		       *sunlabel->vtoc.volume_id ? sunlabel->vtoc.volume_id : _("<none>"));
+	switch (item->id) {
+	case SUN_LABELITEM_LABELID:
+		item->name =_("Label ID");
+		item->type = 's';
+		item->data.str = *sunlabel->label_id ? strndup((char *)sunlabel->label_id, sizeof(sunlabel->label_id)) : NULL;
+		break;
+	case SUN_LABELITEM_VTOCID:
+		item->name =_("Volume ID");
+		item->type = 's';
+		item->data.str = *sunlabel->vtoc.volume_id ? strndup((char *)sunlabel->vtoc.volume_id, sizeof(sunlabel->vtoc.volume_id)) : NULL;
+		break;
+	case SUN_LABELITEM_RPM:
+		item->name =_("Rpm");
+		item->type = 'j';
+		item->data.num64 = be16_to_cpu(sunlabel->rpm);
+		break;
+	case SUN_LABELITEM_ACYL:
+		item->name =_("Alternate cylinders");
+		item->type = 'j';
+		item->data.num64 = be16_to_cpu(sunlabel->acyl);
+		break;
+	case SUN_LABELITEM_PCYL:
+		item->name =_("Physical cylinders");
+		item->type = 'j';
+		item->data.num64 = be16_to_cpu(sunlabel->pcyl);
+		break;
+	case SUN_LABELITEM_APC:
+		item->name =_("Extra sects/cyl");
+		item->type = 'j';
+		item->data.num64 = be16_to_cpu(sunlabel->apc);
+		break;
+	case SUN_LABELITEM_INTRLV:
+		item->name =_("Interleave");
+		item->type = 'j';
+		item->data.num64 = be16_to_cpu(sunlabel->intrlv);
+		break;
+	default:
+		if (item->id < __FDISK_NLABELITEMS)
+			rc = 1;	/* unssupported generic item */
+		else
+			rc = 2;	/* out of range */
+		break;
 	}
 
-	return 0;
+	return rc;
 }
 
 static struct fdisk_parttype *sun_get_parttype(
@@ -1090,7 +1120,7 @@ const struct fdisk_label_operations sun_operations =
 	.write		= sun_write_disklabel,
 	.verify		= sun_verify_disklabel,
 	.create		= sun_create_disklabel,
-	.list		= sun_list_disklabel,
+	.get_item	= sun_get_disklabel_item,
 
 	.get_part	= sun_get_partition,
 	.set_part	= sun_set_partition,

@@ -99,7 +99,7 @@ struct fdisk_field;
 /**
  * fdisk_script
  *
- * library handler for sfdisk compatible scripts
+ * library handler for sfdisk compatible scripts and dumps
  */
 struct fdisk_script;
 
@@ -124,6 +124,14 @@ enum fdisk_labeltype {
 };
 
 /**
+ * fdisk_labelitem
+ *
+ * library handler for label specific information. See
+ * generic FDISK_LABELITEM_* and label specific {GPT,MBR,..}_LABELITEM_*.
+ */
+struct fdisk_labelitem;
+
+/**
  * fdisk_asktype:
  *
  * Ask API dialog types
@@ -139,6 +147,7 @@ enum fdisk_asktype {
 	FDISK_ASKTYPE_STRING,
 	FDISK_ASKTYPE_MENU
 };
+
 
 /* init.c */
 extern void fdisk_init_debug(int mask);
@@ -246,7 +255,7 @@ int fdisk_parttype_is_unknown(const struct fdisk_parttype *t);
 /**
  * fdisk_fieldtype
  *
- * Types of fdisk_field
+ * Types of fdisk_field. The fields describe a partition.
  */
 enum fdisk_fieldtype {
 	FDISK_FIELD_NONE = 0,
@@ -289,6 +298,18 @@ extern int fdisk_locate_disklabel(struct fdisk_context *cxt, int n,
 				  uint64_t *offset,
 				  size_t *size);
 
+/**
+ * fdisk_labelitem_gen
+ *
+ * Generic disklabel items
+ */
+enum fdisk_labelitem_gen {
+	FDISK_LABELITEM_ID = 0,		/* Unique disk identifier */
+
+	__FDISK_NLABELITEMS = 8		/* Specifies reserved range for generic items (0..7) */
+};
+
+extern int fdisk_get_disklabel_item(struct fdisk_context *cxt, int id, struct fdisk_labelitem *item);
 extern int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id);
 extern int fdisk_set_disklabel_id(struct fdisk_context *cxt);
 
@@ -477,16 +498,51 @@ extern int fdisk_sun_set_ilfact(struct fdisk_context *cxt);
 extern int fdisk_sun_set_rspeed(struct fdisk_context *cxt);
 extern int fdisk_sun_set_pcylcount(struct fdisk_context *cxt);
 
+enum fdisk_labelitem_sun {
+	SUN_LABELITEM_LABELID = __FDISK_NLABELITEMS,
+	SUN_LABELITEM_VTOCID,
+	SUN_LABELITEM_RPM,
+	SUN_LABELITEM_ACYL,
+	SUN_LABELITEM_PCYL,
+	SUN_LABELITEM_APC,
+	SUN_LABELITEM_INTRLV
+};
+
 /* bsd.c */
 extern int fdisk_bsd_edit_disklabel(struct fdisk_context *cxt);
 extern int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt);
 extern int fdisk_bsd_link_partition(struct fdisk_context *cxt);
+
+enum fdisk_labelitem_bsd {
+	/* specific */
+	BSD_LABELITEM_TYPE = __FDISK_NLABELITEMS,
+	BSD_LABELITEM_DISK,
+	BSD_LABELITEM_PACKNAME,
+	BSD_LABELITEM_FLAGS,
+	BSD_LABELITEM_SECSIZE,
+	BSD_LABELITEM_NTRACKS,
+	BSD_LABELITEM_SECPERCYL,
+	BSD_LABELITEM_CYLINDERS,
+	BSD_LABELITEM_RPM,
+	BSD_LABELITEM_INTERLEAVE,
+	BSD_LABELITEM_TRACKSKEW,
+	BSD_LABELITEM_CYLINDERSKEW,
+	BSD_LABELITEM_HEADSWITCH,
+	BSD_LABELITEM_TRKSEEK
+};
 
 /* sgi.h */
 #define SGI_FLAG_BOOT	1
 #define SGI_FLAG_SWAP	2
 extern int fdisk_sgi_set_bootfile(struct fdisk_context *cxt);
 extern int fdisk_sgi_create_info(struct fdisk_context *cxt);
+
+enum fdisk_labelitem_sgi {
+	SGI_LABELITEM_PCYLCOUNT = __FDISK_NLABELITEMS,
+	SGI_LABELITEM_SPARECYL,
+	SGI_LABELITEM_ILFACT,
+	SGI_LABELITEM_BOOTFILE
+};
 
 /* gpt */
 
@@ -539,6 +595,16 @@ extern int fdisk_gpt_is_hybrid(struct fdisk_context *cxt);
 extern int fdisk_gpt_get_partition_attrs(struct fdisk_context *cxt, size_t partnum, uint64_t *attrs);
 extern int fdisk_gpt_set_partition_attrs(struct fdisk_context *cxt, size_t partnum, uint64_t attrs);
 
+enum fdisk_labelitem_gpt {
+	/* generic */
+	GPT_LABELITEM_ID = FDISK_LABELITEM_ID,		/* GPT disklabel UUID (!= partition UUID) */
+	/* specific */
+	GPT_LABELITEM_FIRSTLBA = __FDISK_NLABELITEMS,	/* First Usable LBA */
+	GPT_LABELITEM_LASTLBA,				/* Last Usable LBA */
+	GPT_LABELITEM_ALTLBA,				/* Alternative LBA (backup header LBA) */
+	GPT_LABELITEM_ENTRIESLBA,			/* Partitions entires array LBA */
+	GPT_LABELITEM_ENTRIESALLOC			/* Number of allocated entries in entries array */
+};
 
 /* script.c */
 struct fdisk_script *fdisk_new_script(struct fdisk_context *cxt);

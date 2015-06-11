@@ -395,6 +395,16 @@ static inline int partition_unused(const struct gpt_entry *e)
 			sizeof(struct gpt_guid));
 }
 
+static char *gpt_get_header_id(struct gpt_header *header)
+{
+	char str[37];
+
+	guid_to_string(&header->disk_guid, str);
+
+	return strdup(str);
+}
+
+
 /*
  * Builds a clean new valid protective MBR - will wipe out any existing data.
  * Returns 0 on success, otherwise < 0 on error.
@@ -1034,7 +1044,62 @@ static int gpt_locate_disklabel(struct fdisk_context *cxt, int n,
 	return 0;
 }
 
+static int gpt_get_disklabel_item(struct fdisk_context *cxt, struct fdisk_labelitem *item)
+{
+	struct gpt_header *h;
+	int rc = 0;
 
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_label(cxt, GPT));
+
+	h = self_label(cxt)->pheader;
+
+	switch (item->id) {
+	case GPT_LABELITEM_ID:
+		item->name = _("Disk identifier");
+		item->type = 's';
+		item->data.str = gpt_get_header_id(h);
+		if (!item->data.str)
+			rc = -ENOMEM;
+		break;
+	case GPT_LABELITEM_FIRSTLBA:
+		item->name = _("First LBA");
+		item->type = 'j';
+		item->data.num64 = le64_to_cpu(h->first_usable_lba);
+		break;
+	case GPT_LABELITEM_LASTLBA:
+		item->name = _("Last LBA");
+		item->type = 'j';
+		item->data.num64 = le64_to_cpu(h->last_usable_lba);
+		break;
+	case GPT_LABELITEM_ALTLBA:
+		/* TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header. */
+		item->name = _("Alternative LBA");
+		item->type = 'j';
+		item->data.num64 = le64_to_cpu(h->alternative_lba);
+		break;
+	case GPT_LABELITEM_ENTRIESLBA:
+		/* TRANSLATORS: The start of the array of partition entries. */
+		item->name = _("Partition entries LBA");
+		item->type = 'j';
+		item->data.num64 = le64_to_cpu(h->partition_entry_lba);
+		break;
+	case GPT_LABELITEM_ENTRIESALLOC:
+		item->name = _("Allocated partition entries");
+		item->type = 'j';
+		item->data.num64 = le32_to_cpu(h->npartition_entries);
+		break;
+	default:
+		if (item->id < __FDISK_NLABELITEMS)
+			rc = 1;	/* unssupported generic item */
+		else
+			rc = 2;	/* out of range */
+		break;
+	}
+
+	return rc;
+}
 
 /*
  * Returns the number of partitions that are in use.
@@ -1662,29 +1727,6 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 }
 
 
-/*
- * List label partitions.
- */
-static int gpt_list_disklabel(struct fdisk_context *cxt)
-{
-	assert(cxt);
-	assert(cxt->label);
-	assert(fdisk_is_label(cxt, GPT));
-
-	if (fdisk_is_details(cxt)) {
-		struct gpt_header *h = self_label(cxt)->pheader;
-
-		fdisk_info(cxt, _("First LBA: %ju"), le64_to_cpu(h->first_usable_lba));
-		fdisk_info(cxt, _("Last LBA: %ju"), le64_to_cpu(h->last_usable_lba));
-		/* TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header. */
-		fdisk_info(cxt, _("Alternative LBA: %ju"), le64_to_cpu(h->alternative_lba));
-		/* TRANSLATORS: The start of the array of partition entries. */
-		fdisk_info(cxt, _("Partition entries LBA: %ju"), le64_to_cpu(h->partition_entry_lba));
-		fdisk_info(cxt, _("Allocated partition entries: %u"), le32_to_cpu(h->npartition_entries));
-	}
-
-	return 0;
-}
 
 /*
  * Write partitions.
@@ -2329,25 +2371,6 @@ done:
 	return rc;
 }
 
-static int gpt_get_disklabel_id(struct fdisk_context *cxt, char **id)
-{
-	struct fdisk_gpt_label *gpt;
-	char str[37];
-
-	assert(cxt);
-	assert(id);
-	assert(cxt->label);
-	assert(fdisk_is_label(cxt, GPT));
-
-	gpt = self_label(cxt);
-	guid_to_string(&gpt->pheader->disk_guid, str);
-
-	*id = strdup(str);
-	if (!*id)
-		return -ENOMEM;
-	return 0;
-}
-
 static int gpt_set_disklabel_id(struct fdisk_context *cxt)
 {
 	struct fdisk_gpt_label *gpt;
@@ -2372,7 +2395,7 @@ static int gpt_set_disklabel_id(struct fdisk_context *cxt)
 		return rc;
 	}
 
-	gpt_get_disklabel_id(cxt, &old);
+	old = gpt_get_header_id(gpt->pheader);
 
 	gpt->pheader->disk_guid = uuid;
 	gpt->bheader->disk_guid = uuid;
@@ -2380,7 +2403,7 @@ static int gpt_set_disklabel_id(struct fdisk_context *cxt)
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
 
-	gpt_get_disklabel_id(cxt, &new);
+	new = gpt_get_header_id(gpt->pheader);
 
 	fdisk_info(cxt, _("Disk identifier changed from %s to %s."), old, new);
 
@@ -2674,16 +2697,15 @@ static const struct fdisk_label_operations gpt_operations =
 	.write		= gpt_write_disklabel,
 	.verify		= gpt_verify_disklabel,
 	.create		= gpt_create_disklabel,
-	.list		= gpt_list_disklabel,
 	.locate		= gpt_locate_disklabel,
-	.reorder	= gpt_reorder,
-	.get_id		= gpt_get_disklabel_id,
+	.get_item	= gpt_get_disklabel_item,
 	.set_id		= gpt_set_disklabel_id,
 
 	.get_part	= gpt_get_partition,
 	.set_part	= gpt_set_partition,
 	.add_part	= gpt_add_partition,
 	.del_part	= gpt_delete_partition,
+	.reorder	= gpt_reorder,
 
 	.part_is_used	= gpt_part_is_used,
 	.part_toggle_flag = gpt_toggle_partition_flag,

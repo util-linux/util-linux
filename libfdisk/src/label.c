@@ -336,19 +336,46 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
  *
  * Lists details about disklabel, but no partitions.
  *
- * This function uses libfdisk ASK interface to print data. The details about
- * partitions table are printed by FDISK_ASKTYPE_INFO.
+ * This function is based on fdisk_get_disklabel_item() and prints all label
+ * specific information by ASK interface (FDISK_ASKTYPE_INFO, aka fdisk_info()).
+ * The function requires enabled "details" by fdisk_enable_details().
+ *
+ * It's recommended to use fdisk_get_disklabel_item() if you need better
+ * control on output and formmatting.
  *
  * Returns: 0 on success, otherwise, a corresponding error.
  */
 int fdisk_list_disklabel(struct fdisk_context *cxt)
 {
+	int id = 0, rc = 0;
+	struct fdisk_labelitem item = { .id = id };
+
 	if (!cxt || !cxt->label)
 		return -EINVAL;
-	if (!cxt->label->op->list)
-		return -ENOSYS;
 
-	return cxt->label->op->list(cxt);
+	if (!cxt->display_details)
+		return 0;
+
+	/* List all label items */
+	do {
+		/* rc: < 0 error, 0 success, 1 unknown item, 2 out of range */
+		rc = fdisk_get_disklabel_item(cxt, id++, &item);
+		if (rc != 0)
+			continue;
+		switch (item.type) {
+		case 'j':
+			fdisk_info(cxt, "%s: %ju", item.name, item.data.num64);
+			break;
+		case 's':
+			if (item.data.str && item.name)
+				fdisk_info(cxt, "%s: %s", item.name, item.data.str);
+			free(item.data.str);
+			item.data.str = NULL;
+			break;
+		}
+	} while (rc == 0 || rc == 1);
+
+	return rc < 0 ? rc : 0;
 }
 
 /**
@@ -437,13 +464,46 @@ int fdisk_locate_disklabel(struct fdisk_context *cxt, int n, const char **name,
  */
 int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id)
 {
-	if (!cxt || !cxt->label)
+	struct fdisk_labelitem item;
+	int rc;
+
+	if (!cxt || !cxt->label || !id)
 		return -EINVAL;
-	if (!cxt->label->op->get_id)
-		return -ENOSYS;
 
 	DBG(CXT, ul_debugobj(cxt, "asking for disk %s ID", cxt->label->name));
-	return cxt->label->op->get_id(cxt, id);
+
+	rc = fdisk_get_disklabel_item(cxt, FDISK_LABELITEM_ID, &item);
+	if (rc == 0)
+		*id = item.data.str;
+	if (rc > 0)
+		rc = 0;
+	return rc;
+}
+
+/**
+ * fdisk_get_disklabel_item:
+ * @cxt: fdisk context
+ * @id: item ID (FDISK_LABELITEM_* or {GPT,MBR,...}_LABELITEM_*)
+ * @item: specifies and returns the item
+ *
+ * Note that @id is always in range 0..N. It's fine to use the function in loop
+ * until it returns error or 2, the result in @item should be ignored when
+ * function returns 1.
+ *
+ * Returns: 0 on success, < 0 on error, 1 on unssupported item, 2 @id out of range
+ */
+int fdisk_get_disklabel_item(struct fdisk_context *cxt, int id, struct fdisk_labelitem *item)
+{
+	if (!cxt || !cxt->label || !item)
+		return -EINVAL;
+
+	item->id = id;
+	DBG(CXT, ul_debugobj(cxt, "asking for disk %s item %d", cxt->label->name, item->id));
+
+	if (!cxt->label->op->get_item)
+		return -ENOSYS;
+
+	return cxt->label->op->get_item(cxt, item);
 }
 
 /**
