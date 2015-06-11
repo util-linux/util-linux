@@ -63,7 +63,6 @@ Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: bsd
-partitions: 4
 
 Slice Start   End Sectors  Size Type     Fsize Bsize Cpg
 c      4096 20479   16384    8M unused       0     0   0
@@ -93,7 +92,6 @@ Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disklabel type: bsd
-partitions: 4
 
 Slice Start   End Sectors  Size Type     Fsize Bsize Cpg
 a      4096  6144    2049    1M 4.2BSD       0     0   0
