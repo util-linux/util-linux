@@ -55,7 +55,6 @@ if BUILD_RESET
 dist_usrbin_exec_SCRIPTS += term-utils/reset
 dist_man_MANS += term-utils/reset.1
 endif
-EXTRA_DIST += term-utils/reset.033c
 
 
 if BUILD_MESG
