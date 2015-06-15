@@ -89,6 +89,13 @@ $TS_CMD_SFDISK --unit S --dump ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 ts_fdisk_clean $TS_DEVICE
 ts_finalize_subtest
 
+
+ts_init_subtest "write-json"
+$TS_CMD_SFDISK --json ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean $TS_DEVICE
+ts_finalize_subtest
+
+
 #
 # Test first LBA smaller than libfdisk default (~1MiB) and small gaps between
 # logical partitions (just only one sector for EBR).
