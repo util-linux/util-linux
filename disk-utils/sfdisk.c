@@ -98,6 +98,7 @@ struct sfdisk {
 		     backup : 1,	/* backup sectors before write PT */
 		     container : 1,	/* PT contains container (MBR extended) partitions */
 		     append : 1,	/* don't create new PT, append partitions only */
+		     json : 1,		/* JSON dump */
 		     noact  : 1;	/* do not write to device */
 };
 
@@ -644,6 +645,8 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 	if (rc)
 		err(EXIT_FAILURE, _("failed to dump partition table"));
 
+	if (sf->json)
+		fdisk_script_enable_json(dp, 1);
 	fdisk_script_write_file(dp, stdout);
 
 	fdisk_unref_script(dp);
@@ -1405,6 +1408,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_("\nCommands:\n"), out);
 	fputs(_(" -A, --activate <dev> [<part> ...] list or set bootable MBR partitions\n"), out);
 	fputs(_(" -d, --dump <dev>                  dump partition table (usable for later input)\n"), out);
+	fputs(_(" -J, --json <dev>                  dump partition table in JSON format\n"), out);
 	fputs(_(" -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"), out);
 	fputs(_(" -l, --list [<dev> ...]            list partitions of each device\n"), out);
 	fputs(_(" -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"), out);
@@ -1486,6 +1490,7 @@ int main(int argc, char *argv[])
 		{ "dump",    no_argument,	NULL, 'd' },
 		{ "help",    no_argument,       NULL, 'h' },
 		{ "force",   no_argument,       NULL, 'f' },
+		{ "json",    no_argument,	NULL, 'J' },
 		{ "label",   required_argument, NULL, 'X' },
 		{ "label-nested", required_argument, NULL, 'Y' },
 		{ "list",    no_argument,       NULL, 'l' },
@@ -1520,7 +1525,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "aAbcdfghlLo:O:nN:qsTu:vVX:Y:",
+	while ((c = getopt_long(argc, argv, "aAbcdfghJlLo:O:nN:qsTu:vVX:Y:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'A':
@@ -1543,6 +1548,9 @@ int main(int argc, char *argv[])
 			warnx(_("--id is deprecated in favour of --part-type"));
 			sf->act = ACT_PARTTYPE;
 			break;
+		case 'J':
+			sf->json = 1;
+			/* fallthrough */
 		case 'd':
 			sf->act = ACT_DUMP;
 			break;
