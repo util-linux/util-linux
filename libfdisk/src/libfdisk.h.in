@@ -624,6 +624,7 @@ void *fdisk_script_get_userdata(struct fdisk_script *dp);
 int fdisk_script_set_fgets(struct fdisk_script *dp,
 			   char *(*fn_fgets)(struct fdisk_script *, char *, size_t, FILE *));
 int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt);
+int fdisk_script_enable_json(struct fdisk_script *dp, int json);
 int fdisk_script_write_file(struct fdisk_script *dp, FILE *f);
 int fdisk_script_read_file(struct fdisk_script *dp, FILE *f);
 int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t bufsz);

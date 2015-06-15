@@ -251,4 +251,5 @@ FDISK_2.27 {
 	fdisk_script_set_userdata;
 	fdisk_table_get_partition_by_partno;
 	fdisk_get_disklabel_item;
+	fdisk_script_enable_json;
 } FDISK_2.26;
