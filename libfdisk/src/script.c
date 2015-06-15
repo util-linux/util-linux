@@ -511,7 +511,7 @@ static inline int is_header_line(const char *s)
 }
 
 /* parses "<name>: value", note modifies @s*/
-static int parse_header_line(struct fdisk_script *dp, char *s)
+static int parse_line_header(struct fdisk_script *dp, char *s)
 {
 	int rc = -EINVAL;
 	char *name, *value;
@@ -648,7 +648,7 @@ static int partno_from_devname(char *s)
 /* dump format
  * <device>: start=<num>, size=<num>, type=<string>, ...
  */
-static int parse_script_line(struct fdisk_script *dp, char *s)
+static int parse_line_nameval(struct fdisk_script *dp, char *s)
 {
 	char *p, *x;
 	struct fdisk_partition *pa;
@@ -823,7 +823,7 @@ static struct fdisk_parttype *translate_type_shortcuts(struct fdisk_script *dp, 
 /* simple format:
  * <start>, <size>, <type>, <bootable>, ...
  */
-static int parse_commas_line(struct fdisk_script *dp, char *s)
+static int parse_line_valcommas(struct fdisk_script *dp, char *s)
 {
 	int rc = 0;
 	char *p = s, *str;
@@ -975,15 +975,15 @@ int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
 
 	/* parse header lines only if no partition specified yet */
 	if (fdisk_table_is_empty(dp->table) && is_header_line(s))
-		rc = parse_header_line(dp, s);
+		rc = parse_line_header(dp, s);
 
 	/* parse script format */
 	else if (strchr(s, '='))
-		rc = parse_script_line(dp, s);
+		rc = parse_line_nameval(dp, s);
 
 	/* parse simple <value>, ... format */
 	else
-		rc = parse_commas_line(dp, s);
+		rc = parse_line_valcommas(dp, s);
 
 	if (rc)
 		DBG(SCRIPT, ul_debugobj(dp, "%zu: parse error [rc=%d]",
