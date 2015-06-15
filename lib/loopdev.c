@@ -1193,6 +1193,7 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
 int loopcxt_setup_device(struct loopdev_cxt *lc)
 {
 	int file_fd, dev_fd, mode = O_RDWR, rc = -1, cnt = 0;
+	int errsv = 0;
 
 	if (!lc || !*lc->device || !lc->filename)
 		return -EINVAL;
@@ -1257,6 +1258,7 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	 */
 	if (ioctl(dev_fd, LOOP_SET_FD, file_fd) < 0) {
 		rc = -errno;
+		errsv = errno;
 		DBG(SETUP, ul_debugobj(lc, "LOOP_SET_FD failed: %m"));
 		goto err;
 	}
@@ -1264,6 +1266,8 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	DBG(SETUP, ul_debugobj(lc, "LOOP_SET_FD: OK"));
 
 	if (ioctl(dev_fd, LOOP_SET_STATUS64, &lc->info)) {
+		rc = -errno;
+		errsv = errno;
 		DBG(SETUP, ul_debugobj(lc, "LOOP_SET_STATUS64 failed: %m"));
 		goto err;
 	}
@@ -1286,6 +1290,8 @@ err:
 		close(file_fd);
 	if (dev_fd >= 0 && rc != -EBUSY)
 		ioctl(dev_fd, LOOP_CLR_FD, 0);
+	if (errsv)
+		errno = errsv;
 
 	DBG(SETUP, ul_debugobj(lc, "failed [rc=%d]", rc));
 	return rc;
