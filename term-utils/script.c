@@ -80,8 +80,6 @@
 
 #define DEFAULT_TYPESCRIPT_FILENAME "typescript"
 
-enum { POLLFDS = 3 };
-
 struct script_control {
 	char *shell;		/* shell to be executed */
 	char *command;		/* command to be executed */
@@ -234,18 +232,21 @@ static void write_output(struct script_control *ctl, char *obuf,
 	}
 }
 
-static void handle_io(struct script_control *ctl, int fd, int i)
+static void handle_io(struct script_control *ctl, int fd)
 {
 	char buf[BUFSIZ];
 	ssize_t bytes;
 
+	/* read from active FD */
 	bytes = read(fd, buf, sizeof(buf));
 	if (bytes < 0) {
 		if (errno == EAGAIN)
 			return;
 		fail(ctl);
 	}
-	if (i == 0) {
+
+	/* from stdin (user) to command */
+	if (fd == STDIN_FILENO) {
 		if (write_all(ctl->master, buf, bytes)) {
 			warn(_("write failed"));
 			fail(ctl);
@@ -257,7 +258,9 @@ static void handle_io(struct script_control *ctl, int fd, int i)
 			char c = DEF_EOF;
 			write_all(ctl->master, &c, sizeof(char));
 		}
-	} else
+
+	/* from command (master) to stdout */
+	} else if (fd == ctl->master)
 		write_output(ctl, buf, bytes);
 }
 
@@ -268,6 +271,7 @@ static void handle_signal(struct script_control *ctl, int fd)
 
 	bytes = read(fd, &info, sizeof(info));
 	assert(bytes == sizeof(info));
+
 	switch (info.ssi_signo) {
 	case SIGCHLD:
 		finish(ctl, 0);
@@ -286,10 +290,20 @@ static void handle_signal(struct script_control *ctl, int fd)
 
 static void do_io(struct script_control *ctl)
 {
-	struct pollfd pfd[POLLFDS];
-	int ret, i;
+	int ret;
 	time_t tvec = script_time((time_t *)NULL);
 	char buf[128];
+	enum {
+		POLLFD_STDIN = 0,
+		POLLFD_MASTER,
+		POLLFD_SIGNAL,
+	};
+	struct pollfd pfd[] = {
+		[POLLFD_STDIN]	{ .fd = STDIN_FILENO, .events = POLLIN },
+		[POLLFD_MASTER]	{ .fd = ctl->master,  .events = POLLIN },
+		[POLLFD_SIGNAL]	{ .fd = ctl->sigfd,   .events = POLLIN | POLLERR | POLLHUP }
+	};
+
 
 	if ((ctl->typescriptfp = fopen(ctl->fname, ctl->append ? "a" : "w")) == NULL) {
 		warn(_("cannot open %s"), ctl->fname);
@@ -303,20 +317,15 @@ static void do_io(struct script_control *ctl)
 			err(EXIT_FAILURE, _("cannot open %s"), ctl->tname);
 	}
 
-	pfd[0].fd = STDIN_FILENO;
-	pfd[0].events = POLLIN;
-	pfd[1].fd = ctl->master;
-	pfd[1].events = POLLIN;
-	pfd[2].fd = ctl->sigfd;
-	pfd[2].events = POLLIN | POLLERR | POLLHUP;
-
 	strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
 	fprintf(ctl->typescriptfp, _("Script started on %s"), buf);
 	gettime_monotonic(&ctl->oldtime);
 
 	while (!ctl->die) {
+		size_t i;
+
 		/* wait for input or signal */
-		ret = poll(pfd, POLLFDS, ctl->poll_timeout);
+		ret = poll(pfd, ARRAY_SIZE(pfd), ctl->poll_timeout);
 		if (ret < 0) {
 			if (errno == EAGAIN)
 				continue;
@@ -325,20 +334,23 @@ static void do_io(struct script_control *ctl)
 		}
 		if (ret == 0)
 			ctl->die = 1;
-		for (i = 0; i < POLLFDS; i++) {
+
+		for (i = 0; i < ARRAY_SIZE(pfd); i++) {
 			if (pfd[i].revents == 0)
 				continue;
-			if (i < 2) {
-				handle_io(ctl, pfd[i].fd, i);
+			switch (i) {
+			case POLLFD_STDIN:
+			case POLLFD_MASTER:
+				handle_io(ctl, pfd[i].fd);
 				continue;
-			}
-			if (i == 2) {
+			case POLLFD_SIGNAL:
 				handle_signal(ctl, pfd[i].fd);
 				if (!ctl->isterm && -1 < ctl->poll_timeout)
 					/* In situation such as 'date' in
 					* $ echo date | ./script
 					* ignore input when shell has exited.  */
-					pfd[0].fd = -1;
+					pfd[POLLFD_STDIN].fd = -1;
+				break;
 			}
 		}
 	}
