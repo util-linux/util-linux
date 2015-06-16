@@ -390,8 +390,11 @@ static void do_io(struct script_control *ctl)
 			if (pfd[i].revents == 0)
 				continue;
 
-			DBG(POLL, ul_debug(" active pfd[%zu].fd=%d", i, pfd[i].fd));
-
+			DBG(POLL, ul_debug(" active pfd[%zu].fd=%d %s %s %s",
+						i, pfd[i].fd,
+						pfd[i].revents & POLLIN ? "POOLIN" : "",
+						pfd[i].revents & POLLHUP ? "POLLHUP" : "",
+						pfd[i].revents & POLLERR ? "POLLERR" : ""));
 			switch (i) {
 			case POLLFD_STDIN:
 			case POLLFD_MASTER:
