@@ -1,8 +1,5 @@
 #!/bin/bash
 
-#
-# Copyright (C) 2007 Karel Zak <kzak@redhat.com>
-#
 # This file is part of util-linux.
 #
 # This file is free software; you can redistribute it and/or modify
@@ -14,34 +11,16 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
 
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="race conditions"
-
-# Don't execute this test by default, --force required
-TS_OPTIONAL="yes"
+TS_DESC="buffering race"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_SCRIPT"
 
-bingofile="$TS_OUTDIR/${TS_TESTNAME}-bingo"
-
-count=1000
-for i in `seq 1 $count`; do
-	$TS_CMD_SCRIPT -q -c "printf 'Bingo\n'" $bingofile
-done | grep -c Bingo >> $TS_OUTPUT
-
-seen=$(<$TS_OUTPUT)
-if [ $seen = $count ]; then
-	echo "all bingos seen" > $TS_OUTPUT
-else
-	echo "only $seen of $count bingos seen" > $TS_OUTPUT
-fi
-
-rm -f $bingofile
+$TS_CMD_SCRIPT -c "echo Hallo World" /dev/null </dev/null >$TS_OUTPUT
 
 ts_finalize
 

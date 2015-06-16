@@ -1,0 +1,9 @@
+record script output with timing
+Script started, file is typescript
+hello world
+all done
+Script done, file is typescript
+replay script output
+hello world
+all done
+
