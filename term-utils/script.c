@@ -41,9 +41,6 @@
  * - fixed a rare deadlock after child termination
  */
 
-/*
- * script
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <paths.h>
@@ -81,7 +78,7 @@
 # include <utempter.h>
 #endif
 
-#define DEFAULT_OUTPUT "typescript"
+#define DEFAULT_TYPESCRIPT_FILENAME "typescript"
 
 enum { POLLFDS = 3 };
 
@@ -105,13 +102,14 @@ struct script_control {
 #endif
 	unsigned int
 	 aflg:1,		/* append output */
-	 eflg:1,		/* return child exit value */
+	 rc_wanted:1,		/* return child exit value */
 	 fflg:1,		/* flush after each write */
 	 qflg:1,		/* suppress most output */
 	 tflg:1,		/* include timing file */
 	 forceflg:1,		/* write output to links */
 	 isterm:1,		/* is child process running as terminal */
 	 die:1;			/* terminate program */
+
 	sigset_t sigset;	/* catch SIGCHLD and SIGWINCH with signalfd() */
 	int sigfd;		/* file descriptor for signalfd() */
 };
@@ -181,15 +179,16 @@ static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 #endif
 	kill(ctl->child, SIGTERM);	/* make sure we don't create orphans */
 
-	if (ctl->eflg) {
+	if (ctl->timingfp)
+		fclose(ctl->timingfp);
+	fclose(ctl->typescriptfp);
+
+	if (ctl->rc_wanted) {
 		if (WIFSIGNALED(ctl->childstatus))
 			exit(WTERMSIG(ctl->childstatus) + 0x80);
 		else
 			exit(WEXITSTATUS(ctl->childstatus));
 	}
-	if (ctl->timingfp)
-		fclose(ctl->timingfp);
-	fclose(ctl->typescriptfp);
 	exit(EXIT_SUCCESS);
 }
 
@@ -540,7 +539,7 @@ int main(int argc, char **argv)
 			ctl.cflg = optarg;
 			break;
 		case 'e':
-			ctl.eflg = 1;
+			ctl.rc_wanted = 1;
 			break;
 		case 'f':
 			ctl.fflg = 1;
@@ -572,7 +571,7 @@ int main(int argc, char **argv)
 	if (argc > 0)
 		ctl.fname = argv[0];
 	else {
-		ctl.fname = DEFAULT_OUTPUT;
+		ctl.fname = DEFAULT_TYPESCRIPT_FILENAME;
 		die_if_link(&ctl);
 	}
 
