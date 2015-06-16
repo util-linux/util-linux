@@ -70,6 +70,21 @@
 #include "all-io.h"
 #include "monotonic.h"
 
+#include "debug.h"
+
+UL_DEBUG_DEFINE_MASK(script);
+UL_DEBUG_DEFINE_MASKNAMES(script) = UL_DEBUG_EMPTY_MASKNAMES;
+
+#define SCRIPT_DEBUG_INIT	(1 << 1)
+#define SCRIPT_DEBUG_POLL	(1 << 2)
+#define SCRIPT_DEBUG_SIGNAL	(1 << 3)
+#define SCRIPT_DEBUG_IO		(1 << 4)
+#define SCRIPT_DEBUG_MISC	(1 << 5)
+#define SCRIPT_DEBUG_ALL	0xFFFF
+
+#define DBG(m, x)       __UL_DBG(script, SCRIPT_DEBUG_, m, x)
+#define ON_DBG(m, x)    __UL_DBG_CALL(script, SCRIPT_DEBUG_, m, x)
+
 #if defined(HAVE_LIBUTIL) && defined(HAVE_PTY_H)
 # include <pty.h>
 #endif
@@ -111,6 +126,11 @@ struct script_control {
 	sigset_t sigset;	/* catch SIGCHLD and SIGWINCH with signalfd() */
 	int sigfd;		/* file descriptor for signalfd() */
 };
+
+static void script_init_debug(void)
+{
+	__UL_INIT_DEBUG(script, SCRIPT_DEBUG_, 0, SCRIPT_DEBUG);
+}
 
 /*
  * For tests we want to be able to control time output
@@ -167,6 +187,8 @@ static void die_if_link(const struct script_control *ctl)
 
 static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 {
+	DBG(MISC, ul_debug("done!"));
+
 	if (ctl->isterm)
 		tcsetattr(STDIN_FILENO, TCSADRAIN, &ctl->attrs);
 	if (!ctl->quiet)
@@ -192,6 +214,7 @@ static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 
 static void __attribute__((__noreturn__)) fail(struct script_control *ctl)
 {
+	DBG(MISC, ul_debug("fail!"));
 	kill(0, SIGTERM);
 	done(ctl);
 }
@@ -202,6 +225,8 @@ static void finish(struct script_control *ctl, int wait)
 	pid_t pid;
 	int options = wait ? 0 : WNOHANG;
 
+	DBG(MISC, ul_debug("waiting for child"));
+
 	while ((pid = wait3(&status, options, NULL)) > 0)
 		if (pid == ctl->child)
 			ctl->childstatus = status;
@@ -210,8 +235,12 @@ static void finish(struct script_control *ctl, int wait)
 static void write_output(struct script_control *ctl, char *obuf,
 			    ssize_t bytes)
 {
+	DBG(IO, ul_debug(" writing output"));
+
 	if (ctl->timing && ctl->timingfp) {
 		struct timeval now, delta;
+
+		DBG(IO, ul_debug("  writing timing info"));
 
 		gettime_monotonic(&now);
 		timersub(&now, &ctl->oldtime, &delta);
@@ -220,12 +249,18 @@ static void write_output(struct script_control *ctl, char *obuf,
 			fflush(ctl->timingfp);
 		ctl->oldtime = now;
 	}
+
+	DBG(IO, ul_debug("  writing to script file"));
+
 	if (fwrite_all(obuf, 1, bytes, ctl->typescriptfp)) {
 		warn(_("cannot write script file"));
 		fail(ctl);
 	}
 	if (ctl->flush)
 		fflush(ctl->typescriptfp);
+
+	DBG(IO, ul_debug("  writing to output"));
+
 	if (write_all(STDOUT_FILENO, obuf, bytes)) {
 		warn(_("write failed"));
 		fail(ctl);
@@ -237,6 +272,8 @@ static void handle_io(struct script_control *ctl, int fd)
 	char buf[BUFSIZ];
 	ssize_t bytes;
 
+	DBG(IO, ul_debug("%d FD active", fd));
+
 	/* read from active FD */
 	bytes = read(fd, buf, sizeof(buf));
 	if (bytes < 0) {
@@ -247,6 +284,8 @@ static void handle_io(struct script_control *ctl, int fd)
 
 	/* from stdin (user) to command */
 	if (fd == STDIN_FILENO) {
+		DBG(IO, ul_debug("stdin --> master"));
+
 		if (write_all(ctl->master, buf, bytes)) {
 			warn(_("write failed"));
 			fail(ctl);
@@ -256,18 +295,24 @@ static void handle_io(struct script_control *ctl, int fd)
 		fdatasync(ctl->master);
 		if (!ctl->isterm && feof(stdin)) {
 			char c = DEF_EOF;
+
+			DBG(IO, ul_debug("sending EOF to master"));
 			write_all(ctl->master, &c, sizeof(char));
 		}
 
 	/* from command (master) to stdout */
-	} else if (fd == ctl->master)
+	} else if (fd == ctl->master) {
+		DBG(IO, ul_debug("master --> stdout"));
 		write_output(ctl, buf, bytes);
+	}
 }
 
 static void handle_signal(struct script_control *ctl, int fd)
 {
 	struct signalfd_siginfo info;
 	ssize_t bytes;
+
+	DBG(SIGNAL, ul_debug("signal FD %d active", fd));
 
 	bytes = read(fd, &info, sizeof(info));
 	assert(bytes == sizeof(info));
@@ -324,20 +369,29 @@ static void do_io(struct script_control *ctl)
 	while (!ctl->die) {
 		size_t i;
 
+		DBG(POLL, ul_debug("calling poll()"));
+
 		/* wait for input or signal */
 		ret = poll(pfd, ARRAY_SIZE(pfd), ctl->poll_timeout);
+		DBG(POLL, ul_debug("poll() rc=%d", ret));
+
 		if (ret < 0) {
 			if (errno == EAGAIN)
 				continue;
 			warn(_("poll failed"));
 			fail(ctl);
 		}
-		if (ret == 0)
+		if (ret == 0) {
+			DBG(POLL, ul_debug("setting die=1"));
 			ctl->die = 1;
+		}
 
 		for (i = 0; i < ARRAY_SIZE(pfd); i++) {
 			if (pfd[i].revents == 0)
 				continue;
+
+			DBG(POLL, ul_debug(" active pfd[%zu].fd=%d", i, pfd[i].fd));
+
 			switch (i) {
 			case POLLFD_STDIN:
 			case POLLFD_MASTER:
@@ -354,6 +408,9 @@ static void do_io(struct script_control *ctl)
 			}
 		}
 	}
+
+	DBG(POLL, ul_debug("poll() done"));
+
 	if (!ctl->die)
 		finish(ctl, 1); /* wait for children */
 	if (!ctl->quiet && ctl->typescriptfp) {
@@ -412,6 +469,7 @@ static void __attribute__((__noreturn__)) doshell(struct script_control *ctl)
 	 *
 	 * Let's restore the default behavior.
 	 */
+	DBG(SIGNAL, ul_debug("restore shell SIGTERM default"));
 	signal(SIGTERM, SIG_DFL);
 
 	if (access(ctl->shell, X_OK) == 0) {
@@ -542,6 +600,8 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
+	script_init_debug();
+
 	while ((ch = getopt_long(argc, argv, "ac:efqt::Vh", longopts, NULL)) != -1)
 		switch (ch) {
 		case 'a':
@@ -604,8 +664,11 @@ int main(int argc, char **argv)
 	assert(sigaddset(&ctl.sigset, SIGCHLD) == 0);
 	assert(sigaddset(&ctl.sigset, SIGWINCH) == 0);
 	assert(sigprocmask(SIG_BLOCK, &ctl.sigset, NULL) == 0);
+
 	if ((ctl.sigfd = signalfd(-1, &ctl.sigset, 0)) < 0)
 		err(EXIT_FAILURE, _("cannot set signal handler"));
+
+	DBG(SIGNAL, ul_debug("signal fd=%d", ctl.sigfd));
 
 	fflush(stdout);
 	ctl.child = fork();
