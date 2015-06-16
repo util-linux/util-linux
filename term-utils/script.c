@@ -84,7 +84,7 @@ enum { POLLFDS = 3 };
 
 struct script_control {
 	char *shell;		/* shell to be executed */
-	char *cflg;		/* command to be executed */
+	char *command;		/* command to be executed */
 	char *fname;		/* output file path */
 	FILE *typescriptfp;	/* output file pointer */
 	char *tname;		/* timing file path */
@@ -95,18 +95,18 @@ struct script_control {
 	int poll_timeout;	/* poll() timeout, used in end of execution */
 	pid_t child;		/* child pid */
 	int childstatus;	/* child process exit value */
-	struct termios tt;	/* slave terminal runtime attributes */
+	struct termios attrs;	/* slave terminal runtime attributes */
 	struct winsize win;	/* terminal window size */
 #if !HAVE_LIBUTIL || !HAVE_PTY_H
 	char line *;		/* terminal line */
 #endif
 	unsigned int
-	 aflg:1,		/* append output */
+	 append:1,		/* append output */
 	 rc_wanted:1,		/* return child exit value */
-	 fflg:1,		/* flush after each write */
-	 qflg:1,		/* suppress most output */
-	 tflg:1,		/* include timing file */
-	 forceflg:1,		/* write output to links */
+	 flush:1,		/* flush after each write */
+	 quiet:1,		/* suppress most output */
+	 timing:1,		/* include timing file */
+	 force:1,		/* write output to links */
 	 isterm:1,		/* is child process running as terminal */
 	 die:1;			/* terminate program */
 
@@ -158,7 +158,7 @@ static void die_if_link(const struct script_control *ctl)
 {
 	struct stat s;
 
-	if (ctl->forceflg)
+	if (ctl->force)
 		return;
 	if (lstat(ctl->fname, &s) == 0 && (S_ISLNK(s.st_mode) || s.st_nlink > 1))
 		errx(EXIT_FAILURE,
@@ -170,8 +170,8 @@ static void die_if_link(const struct script_control *ctl)
 static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 {
 	if (ctl->isterm)
-		tcsetattr(STDIN_FILENO, TCSADRAIN, &ctl->tt);
-	if (!ctl->qflg)
+		tcsetattr(STDIN_FILENO, TCSADRAIN, &ctl->attrs);
+	if (!ctl->quiet)
 		printf(_("Script done, file is %s\n"), ctl->fname);
 #ifdef HAVE_LIBUTEMPTER
 	if (ctl->master >= 0)
@@ -212,13 +212,13 @@ static void finish(struct script_control *ctl, int wait)
 static void write_output(struct script_control *ctl, char *obuf,
 			    ssize_t bytes)
 {
-	if (ctl->tflg && ctl->timingfp) {
+	if (ctl->timing && ctl->timingfp) {
 		struct timeval now, delta;
 
 		gettime_monotonic(&now);
 		timersub(&now, &ctl->oldtime, &delta);
 		fprintf(ctl->timingfp, "%ld.%06ld %zd\n", delta.tv_sec, delta.tv_usec, bytes);
-		if (ctl->fflg)
+		if (ctl->flush)
 			fflush(ctl->timingfp);
 		ctl->oldtime = now;
 	}
@@ -226,7 +226,7 @@ static void write_output(struct script_control *ctl, char *obuf,
 		warn(_("cannot write script file"));
 		fail(ctl);
 	}
-	if (ctl->fflg)
+	if (ctl->flush)
 		fflush(ctl->typescriptfp);
 	if (write_all(STDOUT_FILENO, obuf, bytes)) {
 		warn(_("write failed"));
@@ -291,11 +291,11 @@ static void do_io(struct script_control *ctl)
 	time_t tvec = script_time((time_t *)NULL);
 	char buf[128];
 
-	if ((ctl->typescriptfp = fopen(ctl->fname, ctl->aflg ? "a" : "w")) == NULL) {
+	if ((ctl->typescriptfp = fopen(ctl->fname, ctl->append ? "a" : "w")) == NULL) {
 		warn(_("cannot open %s"), ctl->fname);
 		fail(ctl);
 	}
-	if (ctl->tflg) {
+	if (ctl->timing) {
 		if (!ctl->tname) {
 			if (!(ctl->timingfp = fopen("/dev/stderr", "w")))
 				err(EXIT_FAILURE, _("cannot open %s"), "/dev/stderr");
@@ -344,7 +344,7 @@ static void do_io(struct script_control *ctl)
 	}
 	if (!ctl->die)
 		finish(ctl, 1); /* wait for children */
-	if (!ctl->qflg && ctl->typescriptfp) {
+	if (!ctl->quiet && ctl->typescriptfp) {
 		tvec = script_time((time_t *)NULL);
 		strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
 		fprintf(ctl->typescriptfp, _("\nScript done on %s"), buf);
@@ -362,7 +362,7 @@ static void getslave(struct script_control *ctl)
 		fail(ctl);
 	}
 	if (ctl->isterm) {
-		tcsetattr(ctl->slave, TCSANOW, &ctl->tt);
+		tcsetattr(ctl->slave, TCSANOW, &ctl->attrs);
 		ioctl(ctl->slave, TIOCSWINSZ, (char *)&ctl->win);
 	}
 #endif
@@ -403,13 +403,13 @@ static void __attribute__((__noreturn__)) doshell(struct script_control *ctl)
 	signal(SIGTERM, SIG_DFL);
 
 	if (access(ctl->shell, X_OK) == 0) {
-		if (ctl->cflg)
-			execl(ctl->shell, shname, "-c", ctl->cflg, NULL);
+		if (ctl->command)
+			execl(ctl->shell, shname, "-c", ctl->command, NULL);
 		else
 			execl(ctl->shell, shname, "-i", NULL);
 	} else {
-		if (ctl->cflg)
-			execlp(shname, "-c", ctl->cflg, NULL);
+		if (ctl->command)
+			execlp(shname, "-c", ctl->command, NULL);
 		else
 			execlp(shname, "-i", NULL);
 	}
@@ -424,7 +424,7 @@ static void fixtty(struct script_control *ctl)
 	if (!ctl->isterm)
 		return;
 
-	rtt = ctl->tt;
+	rtt = ctl->attrs;
 	cfmakeraw(&rtt);
 	rtt.c_lflag &= ~ECHO;
 	tcsetattr(STDIN_FILENO, TCSANOW, &rtt);
@@ -438,10 +438,10 @@ static void getmaster(struct script_control *ctl)
 	ctl->isterm = isatty(STDIN_FILENO);
 
 	if (ctl->isterm) {
-		if (tcgetattr(STDIN_FILENO, &ctl->tt) != 0)
+		if (tcgetattr(STDIN_FILENO, &ctl->attrs) != 0)
 			err(EXIT_FAILURE, _("failed to get terminal attributes"));
 		ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&ctl->win);
-		rc = openpty(&ctl->master, &ctl->slave, NULL, &ctl->tt, &ctl->win);
+		rc = openpty(&ctl->master, &ctl->slave, NULL, &ctl->attrs, &ctl->win);
 	} else
 		rc = openpty(&ctl->master, &ctl->slave, NULL, NULL, NULL);
 
@@ -474,7 +474,7 @@ static void getmaster(struct script_control *ctl)
 				*tp = 'p';
 				if (ok) {
 					if (ctl->isterm) {
-						tcgetattr(STDIN_FILENO, &ctl->tt);
+						tcgetattr(STDIN_FILENO, &ctl->attrs);
 						ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&ctl->win);
 					}
 					return;
@@ -533,27 +533,27 @@ int main(int argc, char **argv)
 	while ((ch = getopt_long(argc, argv, "ac:efqt::Vh", longopts, NULL)) != -1)
 		switch (ch) {
 		case 'a':
-			ctl.aflg = 1;
+			ctl.append = 1;
 			break;
 		case 'c':
-			ctl.cflg = optarg;
+			ctl.command = optarg;
 			break;
 		case 'e':
 			ctl.rc_wanted = 1;
 			break;
 		case 'f':
-			ctl.fflg = 1;
+			ctl.flush = 1;
 			break;
 		case FORCE_OPTION:
-			ctl.forceflg = 1;
+			ctl.force = 1;
 			break;
 		case 'q':
-			ctl.qflg = 1;
+			ctl.quiet = 1;
 			break;
 		case 't':
 			if (optarg)
 				ctl.tname = optarg;
-			ctl.tflg = 1;
+			ctl.timing = 1;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -580,7 +580,7 @@ int main(int argc, char **argv)
 		ctl.shell = _PATH_BSHELL;
 
 	getmaster(&ctl);
-	if (!ctl.qflg)
+	if (!ctl.quiet)
 		printf(_("Script started, file is %s\n"), ctl.fname);
 	fixtty(&ctl);
 
