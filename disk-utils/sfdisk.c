@@ -1413,7 +1413,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -l, --list [<dev> ...]            list partitions of each device\n"), out);
 	fputs(_(" -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"), out);
 	fputs(_(" -T, --list-types                  print the recognized types (see -X)\n"), out);
-	fputs(_(" -V, --verify                      test whether partitions seem correct\n"), out);
+	fputs(_(" -V, --verify [<dev> ...]          test whether partitions seem correct\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" --part-label <dev> <part> [<str>] print or change partition label\n"), out);
