@@ -121,6 +121,7 @@ struct script_control {
 	 timing:1,		/* include timing file */
 	 force:1,		/* write output to links */
 	 isterm:1,		/* is child process running as terminal */
+	 data_on_way:1,		/* sent data to master */
 	 die:1;			/* terminate program */
 
 	sigset_t sigset;	/* catch SIGCHLD and SIGWINCH with signalfd() */
@@ -263,44 +264,91 @@ static void write_output(struct script_control *ctl, char *obuf,
 	DBG(IO, ul_debug("  writing to output"));
 
 	if (write_all(STDOUT_FILENO, obuf, bytes)) {
+		DBG(IO, ul_debug("  writing output *failed*"));
 		warn(_("write failed"));
 		fail(ctl);
 	}
+
+	DBG(IO, ul_debug("  writing output *done*"));
 }
 
-static void handle_io(struct script_control *ctl, int fd)
+static void wait_for_empty_fd(int fd)
+{
+	struct pollfd fds[] = {
+	           { .fd = fd, .events = POLLIN }
+	};
+
+	while (poll(fds, 1, 10) == 1) {
+		DBG(IO, ul_debug("  data to read"));
+	}
+}
+
+/*
+ * The script(1) is usually faster than shell, so it's good idea to wait until
+ * the previous message is has been already read by shell from slave before we
+ * wrate to master. This is necessary expecially for EOF situation when we can
+ * send EOF to master before shell is fully initialized, to workaround this
+ * problem we wait until slave is empty. For example:
+ *
+ *   echo "date" | script
+ */
+static int write_to_shell(struct script_control *ctl, char *buf, size_t bufsz)
+{
+	int rc;
+
+	if (ctl->data_on_way) {
+		wait_for_empty_fd(ctl->slave);
+		ctl->data_on_way = 0;
+	}
+	rc = write_all(ctl->master, buf, bufsz);
+	if (rc == 0)
+		ctl->data_on_way = 1;
+	return rc;
+
+}
+
+static void write_eof_to_shell(struct script_control *ctl)
+{
+	char c = DEF_EOF;
+
+	DBG(IO, ul_debug(" sending EOF to master"));
+	write_to_shell(ctl, &c, sizeof(char));
+}
+
+static void handle_io(struct script_control *ctl, int fd, int *eof)
 {
 	char buf[BUFSIZ];
 	ssize_t bytes;
 
 	DBG(IO, ul_debug("%d FD active", fd));
+	*eof = 0;
 
 	/* read from active FD */
 	bytes = read(fd, buf, sizeof(buf));
 	if (bytes < 0) {
 		DBG(IO, ul_debug(" read failed"));
-		if (errno == EAGAIN)
+		if (errno == EAGAIN || errno == EINTR)
 			return;
 		fail(ctl);
+	}
+
+	if (bytes == 0) {
+		if (errno == 0)
+			*eof = 1;
+		return;
 	}
 
 	/* from stdin (user) to command */
 	if (fd == STDIN_FILENO) {
 		DBG(IO, ul_debug(" stdin --> master %zd bytes", bytes));
 
-		if (write_all(ctl->master, buf, bytes)) {
+		if (write_to_shell(ctl, buf, bytes)) {
 			warn(_("write failed"));
 			fail(ctl);
 		}
 		/* without sync write_output() will write both input &
 		 * shell output that looks like double echoing */
 		fdatasync(ctl->master);
-		if (!ctl->isterm && feof(stdin)) {
-			char c = DEF_EOF;
-
-			DBG(IO, ul_debug(" sending EOF to master"));
-			write_all(ctl->master, &c, sizeof(char));
-		}
 
 	/* from command (master) to stdout */
 	} else if (fd == ctl->master) {
@@ -341,18 +389,19 @@ static void handle_signal(struct script_control *ctl, int fd)
 
 static void do_io(struct script_control *ctl)
 {
-	int ret;
+	int ret, ignore_stdin = 0, eof = 0;
 	time_t tvec = script_time((time_t *)NULL);
 	char buf[128];
 	enum {
-		POLLFD_STDIN = 0,
+		POLLFD_SIGNAL = 0,
 		POLLFD_MASTER,
-		POLLFD_SIGNAL,
+		POLLFD_STDIN	/* optional; keep it last, see ignore_stdin */
+
 	};
 	struct pollfd pfd[] = {
-		[POLLFD_STDIN]	{ .fd = STDIN_FILENO, .events = POLLIN },
-		[POLLFD_MASTER]	{ .fd = ctl->master,  .events = POLLIN },
-		[POLLFD_SIGNAL]	{ .fd = ctl->sigfd,   .events = POLLIN | POLLERR | POLLHUP }
+		[POLLFD_SIGNAL]	{ .fd = ctl->sigfd,   .events = POLLIN | POLLERR | POLLHUP },
+		[POLLFD_MASTER]	{ .fd = ctl->master,  .events = POLLIN | POLLERR | POLLHUP },
+		[POLLFD_STDIN]	{ .fd = STDIN_FILENO, .events = POLLIN | POLLERR | POLLHUP }
 	};
 
 
@@ -368,6 +417,7 @@ static void do_io(struct script_control *ctl)
 			err(EXIT_FAILURE, _("cannot open %s"), ctl->tname);
 	}
 
+
 	strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
 	fprintf(ctl->typescriptfp, _("Script started on %s"), buf);
 	gettime_monotonic(&ctl->oldtime);
@@ -378,7 +428,7 @@ static void do_io(struct script_control *ctl)
 		DBG(POLL, ul_debug("calling poll()"));
 
 		/* wait for input or signal */
-		ret = poll(pfd, ARRAY_SIZE(pfd), ctl->poll_timeout);
+		ret = poll(pfd, ARRAY_SIZE(pfd) - ignore_stdin, ctl->poll_timeout);
 		DBG(POLL, ul_debug("poll() rc=%d", ret));
 
 		if (ret < 0) {
@@ -392,30 +442,40 @@ static void do_io(struct script_control *ctl)
 			ctl->die = 1;
 		}
 
-		for (i = 0; i < ARRAY_SIZE(pfd); i++) {
+		for (i = 0; i < ARRAY_SIZE(pfd) - ignore_stdin; i++) {
 			if (pfd[i].revents == 0)
 				continue;
 
 			DBG(POLL, ul_debug(" active pfd[%s].fd=%d %s %s %s",
-						i == POLLFD_STDIN ? "stdin" :
+						i == POLLFD_STDIN  ? "stdin" :
 						i == POLLFD_MASTER ? "master" :
 						i == POLLFD_SIGNAL ? "signal" : "???",
 						pfd[i].fd,
-						pfd[i].revents & POLLIN ? "POOLIN" : "",
+						pfd[i].revents & POLLIN  ? "POLLIN" : "",
 						pfd[i].revents & POLLHUP ? "POLLHUP" : "",
 						pfd[i].revents & POLLERR ? "POLLERR" : ""));
 			switch (i) {
 			case POLLFD_STDIN:
 			case POLLFD_MASTER:
-				handle_io(ctl, pfd[i].fd);
+				/* data */
+				if (pfd[i].revents & POLLIN)
+					handle_io(ctl, pfd[i].fd, &eof);
+				/* EOF maybe detected by two ways:
+				 *	A) poll() return POLLHUP event after close()
+				 *	B) read() returns no error and no data */
+				if ((pfd[i].revents & POLLHUP) || eof) {
+					DBG(POLL, ul_debug(" ignore FD"));
+					pfd[i].fd = -1;
+					/* according to man poll() set FD to -1 can't be used to ignore
+					 * STDIN, so let's remove the FD from pool at all */
+					if (i == POLLFD_STDIN) {
+						ignore_stdin = 1;
+						write_eof_to_shell(ctl);
+					}
+				}
 				continue;
 			case POLLFD_SIGNAL:
 				handle_signal(ctl, pfd[i].fd);
-				if (!ctl->isterm && -1 < ctl->poll_timeout)
-					/* In situation such as 'date' in
-					* $ echo date | ./script
-					* ignore input when shell has exited.  */
-					pfd[POLLFD_STDIN].fd = -1;
 				break;
 			}
 		}
@@ -451,6 +511,7 @@ static void getslave(struct script_control *ctl)
 	ioctl(ctl->slave, TIOCSCTTY, 0);
 }
 
+/* don't use DBG() stuff here otherwise it will be in  the typescript file */
 static void __attribute__((__noreturn__)) do_shell(struct script_control *ctl)
 {
 	char *shname;
@@ -484,7 +545,6 @@ static void __attribute__((__noreturn__)) do_shell(struct script_control *ctl)
 	 *
 	 * Let's restore the default behavior.
 	 */
-	DBG(SIGNAL, ul_debug("restore shell SIGTERM default"));
 	signal(SIGTERM, SIG_DFL);
 
 	if (access(ctl->shell, X_OK) == 0) {
@@ -573,6 +633,8 @@ static void getmaster(struct script_control *ctl)
 	warn(_("out of pty's"));
 	fail(ctl);
 #endif				/* not HAVE_LIBUTIL */
+
+	DBG(IO, ul_debug("master fd: %d", ctl->master));
 }
 
 int main(int argc, char **argv)
