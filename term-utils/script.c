@@ -124,6 +124,7 @@ struct script_control {
 	 die:1;			/* terminate program */
 
 	sigset_t sigset;	/* catch SIGCHLD and SIGWINCH with signalfd() */
+	sigset_t sigorg;	/* original signal mask */
 	int sigfd;		/* file descriptor for signalfd() */
 };
 
@@ -315,7 +316,11 @@ static void handle_signal(struct script_control *ctl, int fd)
 	DBG(SIGNAL, ul_debug("signal FD %d active", fd));
 
 	bytes = read(fd, &info, sizeof(info));
-	assert(bytes == sizeof(info));
+	if (bytes != sizeof(info)) {
+		if (errno == EAGAIN)
+			return;
+		fail(ctl);
+	}
 
 	switch (info.ssi_signo) {
 	case SIGCHLD:
@@ -442,7 +447,7 @@ static void getslave(struct script_control *ctl)
 	ioctl(ctl->slave, TIOCSCTTY, 0);
 }
 
-static void __attribute__((__noreturn__)) doshell(struct script_control *ctl)
+static void __attribute__((__noreturn__)) do_shell(struct script_control *ctl)
 {
 	char *shname;
 
@@ -450,6 +455,7 @@ static void __attribute__((__noreturn__)) doshell(struct script_control *ctl)
 
 	/* close things irrelevant for this process */
 	close(ctl->master);
+	close(ctl->sigfd);
 
 	dup2(ctl->slave, STDIN_FILENO);
 	dup2(ctl->slave, STDOUT_FILENO);
@@ -463,6 +469,8 @@ static void __attribute__((__noreturn__)) doshell(struct script_control *ctl)
 		shname++;
 	else
 		shname = ctl->shell;
+
+	sigprocmask(SIG_SETMASK, &ctl->sigorg, NULL);
 
 	/*
 	 * When invoked from within /etc/csh.login, script spawns a csh shell
@@ -663,10 +671,13 @@ int main(int argc, char **argv)
 	utempter_add_record(ctl.master, NULL);
 #endif
 	/* setup signal handler */
-	assert(sigemptyset(&ctl.sigset) == 0);
-	assert(sigaddset(&ctl.sigset, SIGCHLD) == 0);
-	assert(sigaddset(&ctl.sigset, SIGWINCH) == 0);
-	assert(sigprocmask(SIG_BLOCK, &ctl.sigset, NULL) == 0);
+	sigemptyset(&ctl.sigset);
+	sigaddset(&ctl.sigset, SIGCHLD);
+	sigaddset(&ctl.sigset, SIGWINCH);
+
+	/* block signals used for signalfd() to prevent the signals being
+	 * handled according to their default dispositions */
+	sigprocmask(SIG_BLOCK, &ctl.sigset, &ctl.sigorg);
 
 	if ((ctl.sigfd = signalfd(-1, &ctl.sigset, 0)) < 0)
 		err(EXIT_FAILURE, _("cannot set signal handler"));
@@ -676,13 +687,19 @@ int main(int argc, char **argv)
 	fflush(stdout);
 	ctl.child = fork();
 
-	if (ctl.child < 0) {
+	switch (ctl.child) {
+	case -1: /* error */
 		warn(_("fork failed"));
 		fail(&ctl);
+		break;
+	case 0: /* child */
+		do_shell(&ctl);
+		break;
+	default: /* parent */
+		do_io(&ctl);
+		break;
 	}
-	if (ctl.child == 0)
-		doshell(&ctl);
-	do_io(&ctl);
-	/* should not happen, do_io() calls done() */
+
+	/* should not happen, all used functions are non-return */
 	return EXIT_FAILURE;
 }
