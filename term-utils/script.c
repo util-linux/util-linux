@@ -278,6 +278,7 @@ static void handle_io(struct script_control *ctl, int fd)
 	/* read from active FD */
 	bytes = read(fd, buf, sizeof(buf));
 	if (bytes < 0) {
+		DBG(IO, ul_debug(" read failed"));
 		if (errno == EAGAIN)
 			return;
 		fail(ctl);
@@ -285,7 +286,7 @@ static void handle_io(struct script_control *ctl, int fd)
 
 	/* from stdin (user) to command */
 	if (fd == STDIN_FILENO) {
-		DBG(IO, ul_debug("stdin --> master"));
+		DBG(IO, ul_debug(" stdin --> master %zd bytes", bytes));
 
 		if (write_all(ctl->master, buf, bytes)) {
 			warn(_("write failed"));
@@ -297,13 +298,13 @@ static void handle_io(struct script_control *ctl, int fd)
 		if (!ctl->isterm && feof(stdin)) {
 			char c = DEF_EOF;
 
-			DBG(IO, ul_debug("sending EOF to master"));
+			DBG(IO, ul_debug(" sending EOF to master"));
 			write_all(ctl->master, &c, sizeof(char));
 		}
 
 	/* from command (master) to stdout */
 	} else if (fd == ctl->master) {
-		DBG(IO, ul_debug("master --> stdout"));
+		DBG(IO, ul_debug(" master --> stdout %zd bytes", bytes));
 		write_output(ctl, buf, bytes);
 	}
 }
@@ -395,8 +396,11 @@ static void do_io(struct script_control *ctl)
 			if (pfd[i].revents == 0)
 				continue;
 
-			DBG(POLL, ul_debug(" active pfd[%zu].fd=%d %s %s %s",
-						i, pfd[i].fd,
+			DBG(POLL, ul_debug(" active pfd[%s].fd=%d %s %s %s",
+						i == POLLFD_STDIN ? "stdin" :
+						i == POLLFD_MASTER ? "master" :
+						i == POLLFD_SIGNAL ? "signal" : "???",
+						pfd[i].fd,
 						pfd[i].revents & POLLIN ? "POOLIN" : "",
 						pfd[i].revents & POLLHUP ? "POLLHUP" : "",
 						pfd[i].revents & POLLERR ? "POLLERR" : ""));
