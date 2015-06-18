@@ -291,7 +291,7 @@ int fdisk_save_user_geometry(struct fdisk_context *cxt,
  *
  * Save user defined sector sizes to use it for partitioning.
  *
- * The user properties are applied by fdisk_assign_device() or 
+ * The user properties are applied by fdisk_assign_device() or
  * fdisk_reset_device_properties().
  *
  * Returns: <0 on error, 0 on success.
@@ -475,8 +475,17 @@ int fdisk_discover_topology(struct fdisk_context *cxt)
 			/* I/O size used by fdisk */
 			cxt->io_size = cxt->optimal_io_size;
 			if (!cxt->io_size)
-				/* optimal IO is optional, default to minimum IO */
+				/* optimal I/O is optional, default to minimum IO */
 				cxt->io_size = cxt->min_io_size;
+
+			/* ignore optimal I/O if not aligned to phy.sector size */
+			if (cxt->io_size
+			    && cxt->phy_sector_size
+			    && (cxt->io_size % cxt->phy_sector_size) != 0) {
+				DBG(CXT, ul_debugobj(cxt, "ignore misaligned I/O size"));
+				cxt->io_size = cxt->phy_sector_size;
+			}
+
 		}
 	}
 	blkid_free_probe(pr);
@@ -494,7 +503,7 @@ int fdisk_discover_topology(struct fdisk_context *cxt)
 
 	DBG(CXT, ul_debugobj(cxt, "result: log/phy sector size: %ld/%ld",
 			cxt->sector_size, cxt->phy_sector_size));
-	DBG(CXT, ul_debugobj(cxt, "result: fdisk/min/optimal io: %ld/%ld/%ld",
+	DBG(CXT, ul_debugobj(cxt, "result: fdisk/optimal/minimal io: %ld/%ld/%ld",
 		       cxt->io_size, cxt->optimal_io_size, cxt->min_io_size));
 	return 0;
 }
