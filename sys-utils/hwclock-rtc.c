@@ -471,7 +471,7 @@ int set_epoch_rtc(unsigned long epoch)
 	}
 
 	if (debug)
-		printf(_("setting epoch to %ld "
+		printf(_("setting epoch to %lu "
 			 "with RTC_EPOCH_SET ioctl to %s.\n"), epoch,
 		       rtc_dev_name);
 

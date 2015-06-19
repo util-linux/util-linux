@@ -169,12 +169,12 @@ char *cpulist_create(char *str, size_t len,
 					break;
 			}
 			if (!run)
-				rlen = snprintf(ptr, len, "%zd,", i);
+				rlen = snprintf(ptr, len, "%zu,", i);
 			else if (run == 1) {
-				rlen = snprintf(ptr, len, "%zd,%zd,", i, i + 1);
+				rlen = snprintf(ptr, len, "%zu,%zu,", i, i + 1);
 				i++;
 			} else {
-				rlen = snprintf(ptr, len, "%zd-%zd,", i, i + run);
+				rlen = snprintf(ptr, len, "%zu-%zu,", i, i + run);
 				i += run;
 			}
 			if (rlen < 0 || (size_t) rlen + 1 > len)

@@ -382,14 +382,14 @@ static void do_uncompress(char *path, int outfd, unsigned long offset,
 		offset += 4;
 		if (curr == next) {
 			if (opt_verbose > 1)
-				printf(_("  hole at %ld (%zd)\n"), curr,
+				printf(_("  hole at %lu (%zu)\n"), curr,
 				       blksize);
 			if (size < blksize)
 				out = size;
 			memset(outbuffer, 0x00, out);
 		} else {
 			if (opt_verbose > 1)
-				printf(_("  uncompressing block at %ld to %ld (%ld)\n"),
+				printf(_("  uncompressing block at %lu to %lu (%lu)\n"),
 				       curr, next, next - curr);
 			out = uncompress_block(romfs_read(curr), next - curr);
 		}
@@ -544,7 +544,7 @@ static void do_symlink(char *path, struct cramfs_inode *i)
 		xasprintf(&str, "%s -> %s", path, outbuffer);
 		print_node('l', i, str);
 		if (opt_verbose > 1)
-			printf(_("  uncompressing block at %ld to %ld (%ld)\n"),
+			printf(_("  uncompressing block at %lu to %lu (%lu)\n"),
 			       curr, next, next - curr);
 		free(str);
 	}

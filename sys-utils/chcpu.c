@@ -84,22 +84,22 @@ static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 		if (!CPU_ISSET(cpu, cpu_set))
 			continue;
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d", cpu)) {
-			warnx(_("CPU %d does not exist"), cpu);
+			warnx(_("CPU %u does not exist"), cpu);
 			fails++;
 			continue;
 		}
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d/online", cpu)) {
-			warnx(_("CPU %d is not hot pluggable"), cpu);
+			warnx(_("CPU %u is not hot pluggable"), cpu);
 			fails++;
 			continue;
 		}
 		online = path_read_s32(_PATH_SYS_CPU "/cpu%d/online", cpu);
 		if ((online == 1) && (enable == 1)) {
-			printf(_("CPU %d is already enabled\n"), cpu);
+			printf(_("CPU %u is already enabled\n"), cpu);
 			continue;
 		}
 		if ((online == 0) && (enable == 0)) {
-			printf(_("CPU %d is already disabled\n"), cpu);
+			printf(_("CPU %u is already disabled\n"), cpu);
 			continue;
 		}
 		if (path_exist(_PATH_SYS_CPU "/cpu%d/configure", cpu))
@@ -107,25 +107,25 @@ static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 		if (enable) {
 			rc = path_write_str("1", _PATH_SYS_CPU "/cpu%d/online", cpu);
 			if ((rc == -1) && (configured == 0)) {
-				warn(_("CPU %d enable failed (CPU is deconfigured)"), cpu);
+				warn(_("CPU %u enable failed (CPU is deconfigured)"), cpu);
 				fails++;
 			} else if (rc == -1) {
-				warn(_("CPU %d enable failed"), cpu);
+				warn(_("CPU %u enable failed"), cpu);
 				fails++;
 			} else
-				printf(_("CPU %d enabled\n"), cpu);
+				printf(_("CPU %u enabled\n"), cpu);
 		} else {
 			if (onlinecpus && num_online_cpus() == 1) {
-				warnx(_("CPU %d disable failed (last enabled CPU)"), cpu);
+				warnx(_("CPU %u disable failed (last enabled CPU)"), cpu);
 				fails++;
 				continue;
 			}
 			rc = path_write_str("0", _PATH_SYS_CPU "/cpu%d/online", cpu);
 			if (rc == -1) {
-				warn(_("CPU %d disable failed"), cpu);
+				warn(_("CPU %u disable failed"), cpu);
 				fails++;
 			} else {
-				printf(_("CPU %d disabled\n"), cpu);
+				printf(_("CPU %u disabled\n"), cpu);
 				if (onlinecpus)
 					CPU_CLR(cpu, onlinecpus);
 			}
@@ -176,44 +176,44 @@ static int cpu_configure(cpu_set_t *cpu_set, size_t setsize, int configure)
 		if (!CPU_ISSET(cpu, cpu_set))
 			continue;
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d", cpu)) {
-			warnx(_("CPU %d does not exist"), cpu);
+			warnx(_("CPU %u does not exist"), cpu);
 			fails++;
 			continue;
 		}
 		if (!path_exist(_PATH_SYS_CPU "/cpu%d/configure", cpu)) {
-			warnx(_("CPU %d is not configurable"), cpu);
+			warnx(_("CPU %u is not configurable"), cpu);
 			fails++;
 			continue;
 		}
 		current = path_read_s32(_PATH_SYS_CPU "/cpu%d/configure", cpu);
 		if ((current == 1) && (configure == 1)) {
-			printf(_("CPU %d is already configured\n"), cpu);
+			printf(_("CPU %u is already configured\n"), cpu);
 			continue;
 		}
 		if ((current == 0) && (configure == 0)) {
-			printf(_("CPU %d is already deconfigured\n"), cpu);
+			printf(_("CPU %u is already deconfigured\n"), cpu);
 			continue;
 		}
 		if ((current == 1) && (configure == 0) && onlinecpus &&
 		    is_cpu_online(cpu)) {
-			warnx(_("CPU %d deconfigure failed (CPU is enabled)"), cpu);
+			warnx(_("CPU %u deconfigure failed (CPU is enabled)"), cpu);
 			fails++;
 			continue;
 		}
 		if (configure) {
 			rc = path_write_str("1", _PATH_SYS_CPU "/cpu%d/configure", cpu);
 			if (rc == -1) {
-				warn(_("CPU %d configure failed"), cpu);
+				warn(_("CPU %u configure failed"), cpu);
 				fails++;
 			} else
-				printf(_("CPU %d configured\n"), cpu);
+				printf(_("CPU %u configured\n"), cpu);
 		} else {
 			rc = path_write_str("0", _PATH_SYS_CPU "/cpu%d/configure", cpu);
 			if (rc == -1) {
-				warn(_("CPU %d deconfigure failed"), cpu);
+				warn(_("CPU %u deconfigure failed"), cpu);
 				fails++;
 			} else
-				printf(_("CPU %d deconfigured\n"), cpu);
+				printf(_("CPU %u deconfigured\n"), cpu);
 		}
 	}
 

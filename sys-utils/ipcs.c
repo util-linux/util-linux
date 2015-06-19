@@ -359,7 +359,7 @@ static void do_sem (char format)
 		printf (_("max semaphores per array = %d\n"), lim.semmsl);
 		printf (_("max semaphores system wide = %d\n"), lim.semmns);
 		printf (_("max ops per semop call = %d\n"), lim.semopm);
-		printf (_("semaphore max value = %d\n"), lim.semvmx);
+		printf (_("semaphore max value = %u\n"), lim.semvmx);
 		return;
 	}
 	case STATUS:
@@ -649,7 +649,7 @@ static void print_sem(int semid)
 
 	for (i = 0; i < semdata->sem_nsems; i++) {
 		struct sem_elem *e = &semdata->elements[i];
-		printf("%-10zd %-10d %-10d %-10d %-10d\n",
+		printf("%-10zu %-10d %-10d %-10d %-10d\n",
 		       i, e->semval, e->ncount, e->zcount, e->pid);
 	}
 	printf("\n");

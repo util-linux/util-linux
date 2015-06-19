@@ -246,12 +246,12 @@ int main(int argc, char **argv)
 		fprintf(stderr, _("FSname: <%-6s>\n"), fsname);
 		fprintf(stderr, _("BlockSize: %d\n"), BFS_BLOCKSIZE);
 		if (ino_blocks == 1)
-			fprintf(stderr, _("Inodes: %lu (in 1 block)\n"),
+			fprintf(stderr, _("Inodes: %ld (in 1 block)\n"),
 				inodes);
 		else
-			fprintf(stderr, _("Inodes: %lu (in %llu blocks)\n"),
+			fprintf(stderr, _("Inodes: %ld (in %llu blocks)\n"),
 				inodes, ino_blocks);
-		fprintf(stderr, _("Blocks: %lld\n"), total_blocks);
+		fprintf(stderr, _("Blocks: %llu\n"), total_blocks);
 		fprintf(stderr, _("Inode end: %d, Data end: %d\n"),
 			le32_to_cpu(sb.s_start) - 1, le32_to_cpu(sb.s_end));
 	}

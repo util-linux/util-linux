@@ -283,7 +283,7 @@ int main(int argc, char **argv)
 
 	step = buf[0];
 	if (optInfo) {
-		printf(_("Sampling_step: %i\n"), step);
+		printf(_("Sampling_step: %u\n"), step);
 		exit(EXIT_SUCCESS);
 	}
 
@@ -364,10 +364,10 @@ int main(int argc, char **argv)
 		} else if ((this || optAll) &&
 			   (fn_len = next_add - fn_add) != 0) {
 			if (optVerbose)
-				printf("%016llx %-40s %6i %8.4f\n", fn_add,
+				printf("%016llx %-40s %6u %8.4f\n", fn_add,
 				       fn_name, this, this / (double)fn_len);
 			else
-				printf("%6i %-40s %8.4f\n",
+				printf("%6u %-40s %8.4f\n",
 				       this, fn_name, this / (double)fn_len);
 			if (optSub) {
 				unsigned long long scan;
@@ -393,14 +393,14 @@ int main(int argc, char **argv)
 	}
 
 	/* clock ticks, out of kernel text - probably modules */
-	printf("%6i %s\n", buf[len / sizeof(*buf) - 1], "*unknown*");
+	printf("%6u %s\n", buf[len / sizeof(*buf) - 1], "*unknown*");
 
 	/* trailer */
 	if (optVerbose)
-		printf("%016x %-40s %6i %8.4f\n",
+		printf("%016x %-40s %6u %8.4f\n",
 		       0, "total", total, total / (double)(fn_add - add0));
 	else
-		printf("%6i %-40s %8.4f\n",
+		printf("%6u %-40s %8.4f\n",
 		       total, _("total"), total / (double)(fn_add - add0));
 
 	popenMap ? pclose(map) : fclose(map);
