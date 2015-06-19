@@ -370,7 +370,7 @@ try_again:
 	}
 	if (dev && !(dev->bid_flags & BLKID_BID_FL_VERIFIED)) {
 		dev = blkid_verify(cache, dev);
-		if (!dev || (dev && (dev->bid_flags & BLKID_BID_FL_VERIFIED)))
+		if (!dev || dev->bid_flags & BLKID_BID_FL_VERIFIED)
 			goto try_again;
 	}
 

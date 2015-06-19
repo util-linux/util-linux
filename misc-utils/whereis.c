@@ -463,7 +463,7 @@ static void lookup(const char *pattern, struct wh_dirlist *ls, int want)
 
 	free(wait);
 
-	if (!uflag || (uflag && count > 1))
+	if (!uflag || count > 1)
 		putchar('\n');
 	return;
 }
