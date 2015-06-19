@@ -1178,7 +1178,7 @@ inline static int extra_insert_pair(struct cfdisk_line *l, const char *name, con
 
 	assert(l);
 
-	if (!data && !*data)
+	if (!data || !*data)
 		return 0;
 
 	lsl = scols_table_new_line(l->extra, NULL);
