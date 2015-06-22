@@ -18,3 +18,12 @@ renxme/aa
 renxme/aa
 renxme/aa
 renxme/aa
+== fullpath ==
+`./rename_path1' -> `./rename_path2'
+./rename_path2
+`rename_path_test1' -> `rename_path_a/test1'
+./rename_path_a/test1
+`rename_path_a/test2' -> `rename_path_b/test2'
+rename_path_a
+rename_path_b
+rename_path_b/test2

@@ -41,4 +41,28 @@ done
 
 rm -rf rename_a{a,b}
 
+echo "== fullpath ==" >> $TS_OUTPUT
+touch rename_path1
+$TS_CMD_RENAME -v ./rename_path1 ./rename_path2 ./rename_path1 >> $TS_OUTPUT 2>&1
+
+find . -name 'rename_path*' >> $TS_OUTPUT 2>&1
+rm -f ./rename_path*
+
+mkdir rename_path_a
+touch rename_path_test1
+
+$TS_CMD_RENAME -v rename_path_test1 rename_path_a/test1 rename_path_test1 >> $TS_OUTPUT 2>&1
+
+find . -name '*test1*' >> $TS_OUTPUT 2>&1
+rm -f rename_path_test1 rename_path_a/test1
+
+mkdir rename_path_b
+touch rename_path_a/test2
+$TS_CMD_RENAME -v rename_path_a/test2 rename_path_b/test2 rename_path_a/test2 >> $TS_OUTPUT 2>&1
+
+find rename_path_a rename_path_b >> $TS_OUTPUT 2>&1
+rm -f rename_path_a/test2 rename_path_b/test2
+
+rmdir rename_path_a rename_path_b
+
 ts_finalize
