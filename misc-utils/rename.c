@@ -92,10 +92,11 @@ static int do_symlink(char *from, char *to, char *s, int verbose)
 
 static int do_file(char *from, char *to, char *s, int verbose)
 {
-	char *newname = NULL, *file;
+	char *newname = NULL, *file=NULL;
 	int ret = 1;
 
-	file = strrchr(s, '/');
+	if (strchr(from, '/') == NULL && strchr(to, '/') == NULL)
+		file = strrchr(s, '/');
 	if (file == NULL)
 		file = s;
 	if (string_replace(from, to, file, s, &newname))
