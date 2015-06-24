@@ -1,16 +1,15 @@
 .\" Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be freely distributed.
-.TH FSCK.MINIX 8 "July 1996" "util-linux" "System Administration"
+.TH FSCK.MINIX 8 "June 2015" "util-linux" "System Administration"
 .SH NAME
 fsck.minix \- check consistency of Minix filesystem
 .SH SYNOPSIS
 .B fsck.minix
-.RB [ \-larvsmf ]
+[options]
 .I device
 .SH DESCRIPTION
 .B fsck.minix
-performs a consistency check for the Linux MINIX filesystem.  The current
-version supports the 14 character and 30 character filename options.
+performs a consistency check for the Linux MINIX filesystem.
 
 The program
 assumes the filesystem is quiescent.
@@ -51,31 +50,37 @@ on a mounted filesystem (i.e., the root filesystem), make sure nothing is
 writing to the disk, and that no files are "zombies" waiting for deletion.
 .SH OPTIONS
 .TP
-.B \-l
+\fB\-l\fR, \fB\-\-list\fR
 List all filenames.
 .TP
-.B \-r
+\fB\-r\fR, \fB\-\-repair\fR
 Perform interactive repairs.
 .TP
-.B \-a
+\fB\-a\fR, \fB\-\-auto\fR
 Perform automatic repairs.  (This option implies
-.B \-r
+.B \-\-repair
 and serves to answer all of the questions asked with the default.)  Note
 that this can be extremely dangerous in the case of extensive filesystem
 damage.
 .TP
-.B \-v
+\fB\-v\fR, \fB\-\-verbose\fR
 Be verbose.
 .TP
-.B \-s
+\fB\-s\fR, \fB\-\-super\fR
 Output super-block information.
 .TP
-.B \-m
+\fB\-m\fR, \fB\-\-uncleared\fR
 Activate MINIX-like "mode not cleared" warnings.
 .TP
-.B \-f
+\fB\-f\fR, \fB\-\-force\fR
 Force a filesystem check even if the filesystem was marked as valid (this
 marking is done by the kernel when the filesystem is unmounted).
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Display version information and exit.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display help text and exit.
 .SH "SEE ALSO"
 .BR fsck (8),
 .BR fsck.ext2 (8),

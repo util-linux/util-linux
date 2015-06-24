@@ -1,16 +1,16 @@
 _fsck.minix_module()
 {
-	local cur prev OPTS
+	local cur OPTS
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
-	prev="${COMP_WORDS[COMP_CWORD-1]}"
-	case $prev in
-		'-V'|'--version')
+	case $cur in
+		-*)
+			OPTS="--list --auto --repair --verbose --super --uncleared --force --help --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
 	esac
-	OPTS="-l -a -r -v -s -m -f --version"
-	COMPREPLY=( $(compgen -W "${OPTS[*]} $(lsblk -pnro name)" -- $cur) )
+	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
 	return 0
 }
 complete -F _fsck.minix_module fsck.minix

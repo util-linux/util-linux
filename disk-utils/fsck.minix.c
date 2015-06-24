@@ -76,17 +76,6 @@
  * unless you can be sure nobody is writing to it (and remember that the
  * kernel can write to it when it searches for files).
  *
- * Usuage: fsck [-larvsm] device
- *	-l for a listing of all the filenames
- *	-a for automatic repairs (not implemented)
- *	-r for repairs (interactive) (not implemented)
- *	-v for verbose (tells how many files)
- *	-s for super-block info
- *	-m for minix-like "mode not cleared" warnings
- *	-f force filesystem check even if filesystem marked as valid
- *
- * The device may be a block device or a image of one, but this isn't
- * enforced (but it's not much fun on a character device :-).
  */
 
 #include <stdio.h>
@@ -101,6 +90,7 @@
 #include <mntent.h>
 #include <sys/stat.h>
 #include <signal.h>
+#include <getopt.h>
 
 #include "c.h"
 #include "exitcodes.h"
@@ -181,33 +171,31 @@ fatalsig(int sig) {
 	raise(sig);
 }
 
-static void
+static void __attribute__((__noreturn__))
 leave(int status) {
 	reset();
 	exit(status);
 }
 
 static void
-usage(void) {
-	fputs(USAGE_HEADER, stderr);
-	fprintf(stderr,
-		_(" %s [options] <device>\n"), program_invocation_short_name);
-
-	fputs(USAGE_SEPARATOR, stderr);
-	fputs(_("Check the consistency of a Minix filesystem.\n"), stderr);
-
-	fputs(USAGE_OPTIONS, stderr);
-	fputs(_(" -l  list all filenames\n"), stderr);
-	fputs(_(" -a  automatic repair\n"), stderr);
-	fputs(_(" -r  interactive repair\n"), stderr);
-	fputs(_(" -v  be verbose\n"), stderr);
-	fputs(_(" -s  output super-block information\n"), stderr);
-	fputs(_(" -m  activate mode not cleared warnings\n"), stderr);
-	fputs(_(" -f  force check\n"), stderr);
-	fputs(USAGE_SEPARATOR, stderr);
-	fputs(USAGE_VERSION, stderr);
-	fprintf(stderr, USAGE_MAN_TAIL("fsck.minix(8)"));
-	leave(FSCK_EX_USAGE);
+usage(FILE *out) {
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] <device>\n"), program_invocation_short_name);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("Check the consistency of a Minix filesystem.\n"), out);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -l, --list       list all filenames\n"), out);
+	fputs(_(" -a, --auto       automatic repair\n"), out);
+	fputs(_(" -r, --repair     interactive repair\n"), out);
+	fputs(_(" -v, --verbose    be verbose\n"), out);
+	fputs(_(" -s, --super      output super-block information\n"), out);
+	fputs(_(" -m, --uncleared  activate mode not cleared warnings\n"), out);
+	fputs(_(" -f, --force      force check\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("fsck.minix(8)"));
+	leave(out == stderr ? FSCK_EX_USAGE : FSCK_EX_OK);
 }
 
 static void die(const char *fmt, ...)
@@ -1259,62 +1247,70 @@ main(int argc, char **argv) {
 	struct termios tmp;
 	int count;
 	int retcode = FSCK_EX_OK;
+	int i;
+	static const struct option longopts[] = {
+		{"list", no_argument, NULL, 'l'},
+		{"auto", no_argument, NULL, 'a'},
+		{"repair", no_argument, NULL, 'r'},
+		{"verbose", no_argument, NULL, 'v'},
+		{"super", no_argument, NULL, 's'},
+		{"uncleared", no_argument, NULL, 'm'},
+		{"force", no_argument, NULL, 'f'},
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	if (argc == 2 &&
-	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-		printf(UTIL_LINUX_VERSION);
-		exit(FSCK_EX_OK);
-	}
-
 	if (INODE_SIZE * MINIX_INODES_PER_BLOCK != MINIX_BLOCK_SIZE)
 		die(_("bad inode size"));
 	if (INODE2_SIZE * MINIX2_INODES_PER_BLOCK != MINIX_BLOCK_SIZE)
 		die(_("bad v2 inode size"));
 
-	while (argc-- > 1) {
-		argv++;
-		if (argv[0][0] != '-') {
-			if (device_name)
-				usage();
-			else
-				device_name = argv[0];
-		} else
-			while (*++argv[0])
-				switch (argv[0][0]) {
-				case 'l':
-					list = 1;
-					break;
-				case 'a':
-					automatic = 1;
-					repair = 1;
-					break;
-				case 'r':
-					automatic = 0;
-					repair = 1;
-					break;
-				case 'v':
-					verbose = 1;
-					break;
-				case 's':
-					show = 1;
-					break;
-				case 'm':
-					warn_mode = 1;
-					break;
-				case 'f':
-					force = 1;
-					break;
-				default:
-					usage();
-				}
-	}
-	if (!device_name)
-		usage();
+	while ((i = getopt_long(argc, argv, "larvsmfVh", longopts, NULL)) != -1)
+		switch (i) {
+		case 'l':
+			list = 1;
+			break;
+		case 'a':
+			automatic = 1;
+			repair = 1;
+			break;
+		case 'r':
+			automatic = 0;
+			repair = 1;
+			break;
+		case 'v':
+			verbose = 1;
+			break;
+		case 's':
+			show = 1;
+			break;
+		case 'm':
+			warn_mode = 1;
+			break;
+		case 'f':
+			force = 1;
+			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return FSCK_EX_OK;
+		case 'h':
+			usage(stdout);
+		default:
+			usage(stderr);
+		}
+	argc -= optind;
+	argv += optind;
+	if (0 < argc) {
+		device_name = argv[0];
+	} else
+		usage(stderr);
+
 	check_mount();		/* trying to check a mounted filesystem? */
 	if (repair && !automatic) {
 		if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO))
