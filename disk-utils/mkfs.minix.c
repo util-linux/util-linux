@@ -659,11 +659,6 @@ int main(int argc, char ** argv) {
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	if (INODE_SIZE * MINIX_INODES_PER_BLOCK != MINIX_BLOCK_SIZE)
-		errx(MKFS_EX_ERROR, _("%s: bad inode size"), device_name);
-	if (INODE2_SIZE * MINIX2_INODES_PER_BLOCK != MINIX_BLOCK_SIZE)
-		errx(MKFS_EX_ERROR, _("%s: bad inode size"), device_name);
-
 	while ((i = getopt_long(argc, argv, "1v23n:i:cl:Vh", longopts, NULL)) != -1)
 		switch (i) {
 		case '1':
@@ -776,9 +771,7 @@ int main(int argc, char ** argv) {
 	} else if (!S_ISBLK(statbuf.st_mode)) {
 		if (!BLOCKS)
 			BLOCKS = statbuf.st_size / MINIX_BLOCK_SIZE;
-		check=0;
-	} else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340)
-		errx(MKFS_EX_ERROR, _("will not try to make filesystem on '%s'"), device_name);
+	}
 	if (BLOCKS < 10)
 		errx(MKFS_EX_ERROR, _("%s: number of blocks too small"), device_name);
 
