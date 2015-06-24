@@ -656,6 +656,39 @@ static int find_super_magic(const struct fs_control *ctl)
 	}
 }
 
+static void determine_device_blocks(struct fs_control *ctl, const struct stat *statbuf)
+{
+	unsigned long long dev_blocks;
+
+	if (S_ISBLK(statbuf->st_mode)) {
+		int sectorsize;
+
+		if (blkdev_get_sector_size(ctl->device_fd, &sectorsize) == -1)
+			sectorsize = DEFAULT_SECTOR_SIZE;	/* kernel < 2.3.3 */
+		if (blkdev_is_misaligned(ctl->device_fd))
+			warnx(_("%s: device is misaligned"), ctl->device_name);
+		if (MINIX_BLOCK_SIZE < sectorsize)
+			errx(MKFS_EX_ERROR, _("block size smaller than physical "
+					      "sector size of %s"), ctl->device_name);
+		if (blkdev_get_size(ctl->device_fd, &dev_blocks) == -1)
+			errx(MKFS_EX_ERROR, _("cannot determine size of %s"), ctl->device_name);
+		dev_blocks /= MINIX_BLOCK_SIZE;
+	} else if (!S_ISBLK(statbuf->st_mode))
+		dev_blocks = statbuf->st_size / MINIX_BLOCK_SIZE;
+	if (!ctl->fs_blocks)
+		ctl->fs_blocks = dev_blocks;
+	else if (dev_blocks < ctl->fs_blocks)
+		errx(MKFS_EX_ERROR,
+		     _("%s: requested blocks (%llu) exceeds available (%llu) blocks\n"),
+		     ctl->device_name, ctl->fs_blocks, dev_blocks);
+	if (ctl->fs_blocks < 10)
+		errx(MKFS_EX_ERROR, _("%s: number of blocks too small"), ctl->device_name);
+	if (fs_version == 1 && ctl->fs_blocks > MINIX_MAX_INODES)
+		ctl->fs_blocks = MINIX_MAX_INODES;
+	if (ctl->fs_blocks > MINIX_MAX_INODES * BITS_PER_BLOCK)
+		ctl->fs_blocks = MINIX_MAX_INODES * BITS_PER_BLOCK;	/* Utter maximum: Clip. */
+}
+
 static void check_user_instructions(struct fs_control *ctl)
 {
 	switch (fs_version) {
@@ -782,38 +815,9 @@ int main(int argc, char ** argv)
 		ctl.device_fd = open(ctl.device_name, O_RDWR | O_EXCL);
 	else
 		ctl.device_fd = open(ctl.device_name, O_RDWR);
-
 	if (ctl.device_fd < 0)
 		err(MKFS_EX_ERROR, _("cannot open %s"), ctl.device_name);
-
-	if (S_ISBLK(statbuf.st_mode)) {
-		int sectorsize;
-
-		if (blkdev_get_sector_size(ctl.device_fd, &sectorsize) == -1)
-			sectorsize = DEFAULT_SECTOR_SIZE;		/* kernel < 2.3.3 */
-
-		if (blkdev_is_misaligned(ctl.device_fd))
-			warnx(_("%s: device is misaligned"), ctl.device_name);
-
-		if (MINIX_BLOCK_SIZE < sectorsize)
-			errx(MKFS_EX_ERROR, _("block size smaller than physical "
-					"sector size of %s"), ctl.device_name);
-		if (!ctl.fs_blocks) {
-			if (blkdev_get_size(ctl.device_fd, &ctl.fs_blocks) == -1)
-				errx(MKFS_EX_ERROR, _("cannot determine size of %s"),
-					ctl.device_name);
-			ctl.fs_blocks /= MINIX_BLOCK_SIZE;
-		}
-	} else if (!S_ISBLK(statbuf.st_mode)) {
-		if (!ctl.fs_blocks)
-			ctl.fs_blocks = statbuf.st_size / MINIX_BLOCK_SIZE;
-	}
-	if (ctl.fs_blocks < 10)
-		errx(MKFS_EX_ERROR, _("%s: number of blocks too small"), ctl.device_name);
-	if (fs_version == 1 && ctl.fs_blocks > MINIX_MAX_INODES)
-		ctl.fs_blocks = MINIX_MAX_INODES;
-	if (ctl.fs_blocks > MINIX_MAX_INODES * BITS_PER_BLOCK)
-		ctl.fs_blocks = MINIX_MAX_INODES * BITS_PER_BLOCK;	/* Utter maximum: Clip. */
+	determine_device_blocks(&ctl, &statbuf);
 	setup_tables(&ctl);
 	if (ctl.check_blocks)
 		check_blocks(&ctl);
