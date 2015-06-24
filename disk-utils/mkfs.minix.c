@@ -49,6 +49,9 @@
  * 06.29.11  -  Overall cleanups for util-linux and v3 support
  *              Davidlohr Bueso <dave@gnu.org>
  *
+ * 06.20.15  -  Do not infinite loop or crash on large devices
+ *              Joshua Hudson <joshudson@gmail.com>
+ *
  * Usage:  mkfs [-c | -l filename ] [-12v3] [-nXX] [-iXX] device [size-in-blocks]
  *
  *	-c for readablility checking (SLOW!)
@@ -504,9 +507,16 @@ static void setup_tables(void) {
 	super_set_nzones();
 	zones = get_nzones();
 
-	/* some magic nrs: 1 inode / 3 blocks */
-	if ( req_nr_inodes == 0 ) 
-		inodes = BLOCKS/3;
+	/* some magic nrs: 1 inode / 3 blocks for smaller filesystems,
+	 * for one inode / 16 blocks for large ones. mkfs will eventually
+	 * crab about too far when getting close to the maximum size. */
+	if (req_nr_inodes == 0)
+		if (2048 * 1024 < BLOCKS)	/* 2GB */
+			inodes = BLOCKS / 16;
+		else if (512 * 1024 < BLOCKS)	/* 0.5GB */
+			inodes = BLOCKS / 8;
+		else
+			inodes = BLOCKS / 3;
 	else
 		inodes = req_nr_inodes;
 	/* Round up inode count to fill block size */
@@ -524,8 +534,13 @@ static void setup_tables(void) {
 		if (inodes > MINIX_MAX_INODES)
 			inodes = MINIX_MAX_INODES;
 	}
-
 	super_set_map_blocks(inodes);
+	if (MINIX_MAX_INODES < first_zone_data())
+		errx(MKFS_EX_ERROR,
+		     _("First data block at %jd, which is too far (max %d).\n"
+		       "Try specifying fewer inodes by passing -i <inodes>"),
+		     first_zone_data(),
+		     MINIX_MAX_INODES);
 	imaps = get_nimaps();
 	zmaps = get_nzmaps();
 
@@ -793,6 +808,8 @@ int main(int argc, char ** argv) {
 	} else /* fs_version == 1 */
 		if (BLOCKS > MINIX_MAX_INODES)
 			BLOCKS = MINIX_MAX_INODES;
+	if (BLOCKS > MINIX_MAX_INODES * BITS_PER_BLOCK)
+		BLOCKS = MINIX_MAX_INODES * BITS_PER_BLOCK;	/* Utter maximum: Clip. */
 	setup_tables();
 	if (check)
 		check_blocks();
