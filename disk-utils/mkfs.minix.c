@@ -77,6 +77,7 @@
 #include "strutils.h"
 #include "all-io.h"
 #include "closestream.h"
+#include "ismounted.h"
 
 #define MINIX_ROOT_INO 1
 #define MINIX_BAD_INO 2
@@ -150,28 +151,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("mkfs.minix(8)"));
 	exit(out == stderr ? MKFS_EX_USAGE : MKFS_EX_OK);
-}
-
-/*
- * Check to make certain that our new filesystem won't be created on
- * an already mounted partition.  Code adapted from mke2fs, Copyright
- * (C) 1994 Theodore Ts'o.  Also licensed under GPL.
- */
-static void check_mount(void) {
-	FILE * f;
-	struct mntent * mnt;
-
-	if ((f = setmntent (_PATH_MOUNTED, "r")) == NULL)
-		return;
-	while ((mnt = getmntent (f)) != NULL)
-		if (strcmp (device_name, mnt->mnt_fsname) == 0)
-			break;
-	endmntent (f);
-	if (!mnt)
-		return;
-
-	errx(MKFS_EX_ERROR, _("%s is mounted; will not make a filesystem here!"),
-			device_name);
 }
 
 static void super_set_state(void)
@@ -743,7 +722,9 @@ int main(int argc, char ** argv) {
 	if (!device_name) {
 		usage(stderr);
 	}
-	check_mount();		/* is it already mounted? */
+	if (is_mounted(device_name))
+		errx(MKFS_EX_ERROR, _("%s is mounted; will not make a filesystem here!"),
+			device_name);
 	tmp = root_block;
 	if (fs_version == 3) {
 		*(uint32_t *)tmp = 1;
