@@ -390,6 +390,27 @@ static void make_root_inode_v2_v3 (struct fs_control *ctl) {
 
 static void make_root_inode(struct fs_control *ctl)
 {
+	char *tmp = root_block;
+
+	if (fs_version == 3) {
+		*(uint32_t *) tmp = 1;
+		strcpy(tmp + 4, ".");
+		tmp += ctl->fs_dirsize;
+		*(uint32_t *) tmp = 1;
+		strcpy(tmp + 4, "..");
+		tmp += ctl->fs_dirsize;
+		*(uint32_t *) tmp = 2;
+		strcpy(tmp + 4, ".badblocks");
+	} else {
+		*(uint16_t *) tmp = 1;
+		strcpy(tmp + 2, ".");
+		tmp += ctl->fs_dirsize;
+		*(uint16_t *) tmp = 1;
+		strcpy(tmp + 2, "..");
+		tmp += ctl->fs_dirsize;
+		*(uint16_t *) tmp = 2;
+		strcpy(tmp + 2, ".badblocks");
+	}
 	if (fs_version < 2) {
 		make_root_inode_v1(ctl);
 		return;
@@ -718,7 +739,6 @@ int main(int argc, char ** argv)
 		0
 	};
 	int i;
-	char * tmp;
 	struct stat statbuf;
 	char * listfile = NULL;
 	static const struct option longopts[] = {
@@ -789,26 +809,6 @@ int main(int argc, char ** argv)
 	if (is_mounted(ctl.device_name))
 		errx(MKFS_EX_ERROR, _("%s is mounted; will not make a filesystem here!"),
 			ctl.device_name);
-	tmp = root_block;
-	if (fs_version == 3) {
-		*(uint32_t *)tmp = 1;
-		strcpy(tmp+4,".");
-		tmp += ctl.fs_dirsize;
-		*(uint32_t *)tmp = 1;
-		strcpy(tmp+4,"..");
-		tmp += ctl.fs_dirsize;
-		*(uint32_t *)tmp = 2;
-		strcpy(tmp+4, ".badblocks");
-	} else {
-		*(uint16_t *)tmp = 1;
-		strcpy(tmp+2,".");
-		tmp += ctl.fs_dirsize;
-		*(uint16_t *)tmp = 1;
-		strcpy(tmp+2,"..");
-		tmp += ctl.fs_dirsize;
-		*(uint16_t *)tmp = 2;
-		strcpy(tmp+2, ".badblocks");
-	}
 	if (stat(ctl.device_name, &statbuf) < 0)
 		err(MKFS_EX_ERROR, _("stat of %s failed"), ctl.device_name);
 	if (S_ISBLK(statbuf.st_mode))
