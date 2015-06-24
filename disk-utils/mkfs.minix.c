@@ -87,10 +87,12 @@
 
 #define MINIX_MAX_INODES 65535
 
+#define DEFAULT_FS_VERSION 1
+
 /*
  * Global variables used in minix_programs.h inline fuctions
  */
-int fs_version = 1;
+int fs_version = DEFAULT_FS_VERSION;
 char *super_block_buffer;
 
 static char *inode_buffer = NULL;
@@ -104,7 +106,7 @@ struct fs_control {
 	unsigned long long fs_blocks;	/* device block count for the file system */
 	int fs_used_blocks;		/* used blocks on a device */
 	int fs_bad_blocks;		/* number of bad blocks found from device */
-	size_t fs_namelen;		/* maximum length of filenames */
+	uint16_t fs_namelen;		/* maximum length of filenames */
 	size_t fs_dirsize;		/* maximum size of directory */
 	unsigned long fs_inodes;	/* number of inodes */
 	int fs_magic;			/* file system magic number */
@@ -632,12 +634,54 @@ static void get_list_blocks(struct fs_control *ctl, char *filename) {
 		printf(P_("%d bad block\n", "%d bad blocks\n", ctl->fs_bad_blocks), ctl->fs_bad_blocks);
 }
 
+static int find_super_magic(const struct fs_control *ctl)
+{
+	switch (fs_version) {
+	case 1:
+		if (ctl->fs_namelen == 14)
+			return MINIX_SUPER_MAGIC;
+		else
+			return MINIX_SUPER_MAGIC2;
+		break;
+	case 2:
+		if (ctl->fs_namelen == 14)
+			return MINIX2_SUPER_MAGIC;
+		else
+			return MINIX2_SUPER_MAGIC2;
+		break;
+	case 3:
+		return MINIX3_SUPER_MAGIC;
+	default:
+		abort();
+	}
+}
+
+static void check_user_instructions(struct fs_control *ctl)
+{
+	switch (fs_version) {
+	case 1:
+	case 2:
+		if (ctl->fs_namelen == 14 || ctl->fs_namelen == 30)
+			ctl->fs_dirsize = ctl->fs_namelen + 2;
+		else
+			errx(MKFS_EX_ERROR, _("unsupported name length: %d"), ctl->fs_namelen);
+		break;
+	case 3:
+		if (ctl->fs_namelen == 60)
+			ctl->fs_dirsize = ctl->fs_namelen + 4;
+		else
+			errx(MKFS_EX_ERROR, _("unsupported name length: %d"), ctl->fs_namelen);
+		break;
+	default:
+		errx(MKFS_EX_ERROR, _("unsupported minix file system version: %d"), fs_version);
+	}
+	ctl->fs_magic = find_super_magic(ctl);
+}
+
 int main(int argc, char ** argv)
 {
 	struct fs_control ctl = {
-		.fs_namelen = 30,
-		.fs_dirsize = 32,
-		.fs_magic = MINIX_SUPER_MAGIC2,		/* version 1, long names */
+		.fs_namelen = 30,	/* keep in sync with DEFAULT_FS_VERSION */
 		0
 	};
 	int i;
@@ -672,19 +716,10 @@ int main(int argc, char ** argv)
 		case '3':
 			fs_version = 3;
 			ctl.fs_namelen = 60;
-			ctl.fs_dirsize = 64;
 			break;
 		case 'n':
-			i = strtoul_or_err(optarg,
+			ctl.fs_namelen = strtou16_or_err(optarg,
 					_("failed to parse maximum length of filenames"));
-			if (i == 14)
-				ctl.fs_magic = MINIX_SUPER_MAGIC;
-			else if (i == 30)
-				ctl.fs_magic = MINIX_SUPER_MAGIC2;
-			else
-				usage(stderr);
-			ctl.fs_namelen = i;
-			ctl.fs_dirsize = i + 2;
 			break;
 		case 'i':
 			ctl.fs_inodes = strtoul_or_err(optarg,
@@ -717,6 +752,7 @@ int main(int argc, char ** argv)
 	if (!ctl.device_name) {
 		usage(stderr);
 	}
+	check_user_instructions(&ctl);
 	if (is_mounted(ctl.device_name))
 		errx(MKFS_EX_ERROR, _("%s is mounted; will not make a filesystem here!"),
 			ctl.device_name);
@@ -774,17 +810,8 @@ int main(int argc, char ** argv)
 	}
 	if (ctl.fs_blocks < 10)
 		errx(MKFS_EX_ERROR, _("%s: number of blocks too small"), ctl.device_name);
-
-	if (fs_version == 3)
-		ctl.fs_magic = MINIX3_SUPER_MAGIC;
-	else if (fs_version == 2) {
-		if (ctl.fs_namelen == 14)
-			ctl.fs_magic = MINIX2_SUPER_MAGIC;
-		else
-			ctl.fs_magic = MINIX2_SUPER_MAGIC2;
-	} else /* fs_version == 1 */
-		if (ctl.fs_blocks > MINIX_MAX_INODES)
-			ctl.fs_blocks = MINIX_MAX_INODES;
+	if (fs_version == 1 && ctl.fs_blocks > MINIX_MAX_INODES)
+		ctl.fs_blocks = MINIX_MAX_INODES;
 	if (ctl.fs_blocks > MINIX_MAX_INODES * BITS_PER_BLOCK)
 		ctl.fs_blocks = MINIX_MAX_INODES * BITS_PER_BLOCK;	/* Utter maximum: Clip. */
 	setup_tables(&ctl);

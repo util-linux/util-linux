@@ -42,10 +42,9 @@ Check the device for bad blocks before creating the filesystem.  If any
 are found, the count is printed.
 .TP
 \fB\-n\fR, \fB\-\-namelength\fR \fIlength\fR
-Specify the maximum length of filenames.
-Currently, the only allowable values are 14 and 30.
-The default is 30.  Note that kernels older than 0.99p7
-only accept namelength 14.
+Specify the maximum length of filenames.  Currently, the only allowable
+values are 14 and 30 for file system versions 1 and 2.  Version 3 allows
+only value 60.  The default is 30.
 .TP
 \fB\-i\fR, \fB\-\-inodes\fR \fInumber\fR
 Specify the number of inodes for the filesystem.
@@ -57,7 +56,7 @@ The file has one bad-block number per line.  The count of bad blocks read
 is printed.
 .TP
 .B \-1
-Make a Minix version 1 filesystem.
+Make a Minix version 1 filesystem.  This is the default.
 .TP
 .BR \-2 , " \-v"
 Make a Minix version 2 filesystem.
