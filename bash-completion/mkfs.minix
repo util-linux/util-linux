@@ -5,25 +5,23 @@ _mkfs.minix_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-i')
+		'-i'|'--inodes')
 			COMPREPLY=( $(compgen -W "inodes" -- $cur) )
 			return 0
 			;;
-		'-l')
-			COMPREPLY=( $(compgen -W "badblocks-file" -- $cur) )
+		'-l'|'--badblocks')
+			compopt -o filenames
+			COMPREPLY=( $(compgen -f -- $cur) )
 			return 0
 			;;
-		'-n')
-			COMPREPLY=( $(compgen -W "14 30" -- $cur) )
-			return 0
-			;;
-		'-V'|'--version')
+		'-n'|'--namelength')
+			COMPREPLY=( $(compgen -W "14 30 60" -- $cur) )
 			return 0
 			;;
 	esac
 	case $cur in
 		-*)
-			OPTS="-c -i -l -n -1 -2 -3"
+			OPTS="--namelength --inodes --check --badblocks --help --version -1 -2 -3"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

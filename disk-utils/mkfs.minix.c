@@ -52,18 +52,6 @@
  * 06.20.15  -  Do not infinite loop or crash on large devices
  *              Joshua Hudson <joshudson@gmail.com>
  *
- * Usage:  mkfs [-c | -l filename ] [-12v3] [-nXX] [-iXX] device [size-in-blocks]
- *
- *	-c for readablility checking (SLOW!)
- *      -l for getting a list of bad blocks from a file.
- *	-n for namelength (currently the kernel only uses 14 or 30)
- *	-i for number of inodes
- *      -1 for v1 filesystem
- *	-2,-v for v2 filesystem
- *      -3 for v3 filesystem
- *
- * The device may be a block device or a image of one, but this isn't
- * enforced (but it's not much fun on a character device :-). 
  */
 
 #include <stdio.h>
@@ -109,7 +97,6 @@ static char *inode_buffer = NULL;
 #define Inode (((struct minix_inode *) inode_buffer) - 1)
 #define Inode2 (((struct minix2_inode *) inode_buffer) - 1)
 
-static char *program_name = "mkfs";
 static char *device_name;
 static int DEV = -1;
 static unsigned long long BLOCKS;
@@ -146,11 +133,23 @@ static char *zone_map;
 #define mark_zone(x) (setbit(zone_map,(x)-get_first_zone()+1))
 #define unmark_zone(x) (clrbit(zone_map,(x)-get_first_zone()+1))
 
-
-static void __attribute__((__noreturn__))
-usage(void) {
-	errx(MKFS_EX_USAGE, _("Usage: %s [-c | -l filename] [-nXX] [-iXX] /dev/name [blocks]"),
-	     program_name);
+static void __attribute__((__noreturn__)) usage(FILE *out)
+{
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] /dev/name [blocks]\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -1                      use Minix version 1\n"), out);
+	fputs(_(" -2, -v                  use Minix version 2\n"), out);
+	fputs(_(" -3                      use Minix version 3\n"), out);
+	fputs(_(" -n, --namelength <num>  maximum length of filenames\n"), out);
+	fputs(_(" -i, --inodes <num>      number of inodes for the filesystem\n"), out);
+	fputs(_(" -c, --check             check the device for bad blocks\n"), out);
+	fputs(_(" -l, --badblocks <file>  list of bad blocks from file\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("mkfs.minix(8)"));
+	exit(out == stderr ? MKFS_EX_USAGE : MKFS_EX_OK);
 }
 
 /*
@@ -538,7 +537,7 @@ static void setup_tables(void) {
 	if (MINIX_MAX_INODES < first_zone_data())
 		errx(MKFS_EX_ERROR,
 		     _("First data block at %jd, which is too far (max %d).\n"
-		       "Try specifying fewer inodes by passing -i <inodes>"),
+		       "Try specifying fewer inodes by passing --inodes <num>"),
 		     first_zone_data(),
 		     MINIX_MAX_INODES);
 	imaps = get_nimaps();
@@ -666,40 +665,41 @@ int main(int argc, char ** argv) {
 	char * tmp;
 	struct stat statbuf;
 	char * listfile = NULL;
-	char * p;
-
-	if (argc && *argv)
-		program_name = *argv;
-	if ((p = strrchr(program_name, '/')) != NULL)
-		program_name = p+1;
+	static const struct option longopts[] = {
+		{"namelength", required_argument, NULL, 'n'},
+		{"inodes", required_argument, NULL, 'i'},
+		{"check", no_argument, NULL, 'c'},
+		{"badblocks", required_argument, NULL, 'l'},
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	if (argc == 2 &&
-	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-		printf(UTIL_LINUX_VERSION);
-		exit(MKFS_EX_OK);
-	}
-
 	if (INODE_SIZE * MINIX_INODES_PER_BLOCK != MINIX_BLOCK_SIZE)
 		errx(MKFS_EX_ERROR, _("%s: bad inode size"), device_name);
 	if (INODE2_SIZE * MINIX2_INODES_PER_BLOCK != MINIX_BLOCK_SIZE)
 		errx(MKFS_EX_ERROR, _("%s: bad inode size"), device_name);
 
-	opterr = 0;
-	while ((i = getopt(argc, argv, "ci:l:n:v123")) != -1)
+	while ((i = getopt_long(argc, argv, "1v23n:i:cl:Vh", longopts, NULL)) != -1)
 		switch (i) {
-		case 'c':
-			check=1; break;
-		case 'i':
-			req_nr_inodes = strtoul_or_err(optarg,
-					_("failed to parse number of inodes"));
+		case '1':
+			fs_version = 1;
 			break;
-		case 'l':
-			listfile = optarg; break;
+		case 'v': /* kept for backwards compatiblitly */
+			warnx(_("-v is ambiguous, use '-2' instead"));
+		case '2':
+			fs_version = 2;
+			break;
+		case '3':
+			fs_version = 3;
+			namelen = 60;
+			dirsize = 64;
+			break;
 		case 'n':
 			i = strtoul_or_err(optarg,
 					_("failed to parse maximum length of filenames"));
@@ -708,24 +708,27 @@ int main(int argc, char ** argv) {
 			else if (i == 30)
 				magic = MINIX_SUPER_MAGIC2;
 			else
-				usage();
+				usage(stderr);
 			namelen = i;
 			dirsize = i+2;
 			break;
-		case '1':
-			fs_version = 1;
+		case 'i':
+			req_nr_inodes = strtoul_or_err(optarg,
+					_("failed to parse number of inodes"));
 			break;
-		case '2':
-		case 'v': /* kept for backwards compatiblitly */
-			fs_version = 2;
+		case 'c':
+			check=1;
 			break;
-		case '3':
-			fs_version = 3;
-			namelen = 60;
-			dirsize = 64;
+		case 'l':
+			listfile = optarg;
 			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return MKFS_EX_OK;
+		case 'h':
+			usage(stdout);
 		default:
-			usage();
+			usage(stderr);
 		}
 	argc -= optind;
 	argv += optind;
@@ -738,7 +741,7 @@ int main(int argc, char ** argv) {
 		BLOCKS = strtoul_or_err(argv[0], _("failed to parse number of blocks"));
 
 	if (!device_name) {
-		usage();
+		usage(stderr);
 	}
 	check_mount();		/* is it already mounted? */
 	tmp = root_block;
