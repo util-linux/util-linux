@@ -399,9 +399,9 @@ static void do_io(struct script_control *ctl)
 
 	};
 	struct pollfd pfd[] = {
-		[POLLFD_SIGNAL]	{ .fd = ctl->sigfd,   .events = POLLIN | POLLERR | POLLHUP },
-		[POLLFD_MASTER]	{ .fd = ctl->master,  .events = POLLIN | POLLERR | POLLHUP },
-		[POLLFD_STDIN]	{ .fd = STDIN_FILENO, .events = POLLIN | POLLERR | POLLHUP }
+		[POLLFD_SIGNAL] = { .fd = ctl->sigfd,   .events = POLLIN | POLLERR | POLLHUP },
+		[POLLFD_MASTER] = { .fd = ctl->master,  .events = POLLIN | POLLERR | POLLHUP },
+		[POLLFD_STDIN]	= { .fd = STDIN_FILENO, .events = POLLIN | POLLERR | POLLHUP }
 	};
 
 
