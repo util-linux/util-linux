@@ -498,10 +498,10 @@ int main(int argc, char **argv)
 	if (ctl.verbose)
 		printf("%s",  ctl.clock_mode == CM_UTC ? _("Using UTC time.\n") :
 				_("Using local time.\n"));
-	if (!alarm && !seconds && suspend != DISABLE_MODE && suspend != SHOW_MODE) {
-		warnx(_("must provide wake time (see --seconds, --time, and --date options)"));
-		usage(stderr);
-	}
+
+	if (!alarm && !seconds && suspend != DISABLE_MODE && suspend != SHOW_MODE)
+		errx(EXIT_FAILURE, _("must provide wake time (see --seconds, --time and --date options)"));
+
 	/* device must exist and (if we'll sleep) be wakeup-enabled */
 	fd = open_dev_rtc(devname);
 	if (suspend != ON_MODE && suspend != NO_MODE && !is_wakeup_enabled(devname))
