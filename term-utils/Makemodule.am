@@ -3,7 +3,7 @@ usrbin_exec_PROGRAMS += script
 dist_man_MANS += term-utils/script.1
 script_SOURCES = term-utils/script.c lib/monotonic.c
 script_CFLAGS = $(AM_CFLAGS) -Wno-format-y2k
-script_LDADD = $(LDADD) libcommon.la $(CLOCKGETTIME_LIBS)
+script_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS)
 if HAVE_UTIL
 script_LDADD += -lutil
 endif
