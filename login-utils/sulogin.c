@@ -522,7 +522,10 @@ static struct passwd *getrootpwent(int try_manually)
 		warnx(_("%s: no entry for root"), _PATH_SHADOW_PASSWD);
 		*pwd.pw_passwd = '\0';
 	}
-	if (!valid(pwd.pw_passwd)) {
+	/* If the password is disabled, NULL it too */
+	if (strcmp(pwd.pw_passwd, "*") == 0 || pwd.pw_passwd[0] == '!')
+		*pwd.pw_passwd = '\0';
+	else if (!valid(pwd.pw_passwd)) {
 		warnx(_("%s: root password garbled"), _PATH_SHADOW_PASSWD);
 		*pwd.pw_passwd = '\0';
 	}
@@ -951,6 +954,15 @@ int main(int argc, char **argv)
 		warnx(_("cannot open password database"));
 		sleep(2);
 		return EXIT_FAILURE;
+	}
+
+	/*
+	 *	If the root password is locked, fire up a shell
+	 */
+	if ((strcmp(pwd->pw_passwd, "*") == 0) ||
+	    pwd->pw_passwd[0] == '!') {
+		/* fprintf(stderr, "sulogin: root account is locked, starting shell\n"); */
+		sushell(pwd);
 	}
 
 	/*
