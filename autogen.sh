@@ -116,7 +116,7 @@ autoheader $AH_OPTS
 
 automake --add-missing $AM_OPTS
 
-cd $THEDIR
+cd "$THEDIR"
 
 echo
 echo "Now type '$srcdir/configure' and 'make' to compile."
