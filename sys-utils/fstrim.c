@@ -60,7 +60,7 @@ struct fstrim_range {
 static int fstrim_filesystem(const char *path, struct fstrim_range *rangetpl,
 			    int verbose)
 {
-	int fd;
+	int fd = -1, rc;
 	struct stat sb;
 	struct fstrim_range range;
 
@@ -70,24 +70,26 @@ static int fstrim_filesystem(const char *path, struct fstrim_range *rangetpl,
 	fd = open(path, O_RDONLY);
 	if (fd < 0) {
 		warn(_("cannot open %s"), path);
-		return -1;
+		rc = -errno;
+		goto done;
 	}
 	if (fstat(fd, &sb) == -1) {
 		warn(_("stat of %s failed"), path);
-		return -1;
+		rc = -errno;
+		goto done;
 	}
 	if (!S_ISDIR(sb.st_mode)) {
 		warnx(_("%s: not a directory"), path);
-		return -1;
+		rc = -EINVAL;
+		goto done;
 	}
 	errno = 0;
 	if (ioctl(fd, FITRIM, &range)) {
-		int rc = errno == EOPNOTSUPP || errno == ENOTTY ? 1 : -1;
+		rc = errno == EOPNOTSUPP || errno == ENOTTY ? 1 : -errno;
 
 		if (rc != 1)
 			warn(_("%s: FITRIM ioctl failed"), path);
-		close(fd);
-		return rc;
+		goto done;
 	}
 
 	if (verbose) {
@@ -99,8 +101,12 @@ static int fstrim_filesystem(const char *path, struct fstrim_range *rangetpl,
 				path, str, (uint64_t) range.len);
 		free(str);
 	}
-	close(fd);
-	return 0;
+
+	rc = 0;
+done:
+	if (fd >= 0)
+		close(fd);
+	return rc;
 }
 
 static int has_discard(const char *devname, struct sysfs_cxt *wholedisk)
