@@ -44,14 +44,13 @@
 #include "xalloc.h"
 
 #ifndef RTC_AF
-# define	RTC_AF	0x20	/* Alarm interrupt */
+# define RTC_AF		0x20	/* Alarm interrupt */
 #endif
 
-#define ADJTIME_ZONE_STRLEN	8
-
+#define ADJTIME_ZONE_BUFSIZ		8
 #define SYS_WAKEUP_PATH_TEMPLATE	"/sys/class/rtc/%s/device/power/wakeup"
-#define SYS_POWER_STATE_PATH	"/sys/power/state"
-#define DEFAULT_DEVICE		"/dev/rtc0"
+#define SYS_POWER_STATE_PATH		"/sys/power/state"
+#define DEFAULT_RTC_DEVICE		"/dev/rtc0"
 
 enum rtc_modes {	/* manual page --mode option explains these. */
 	OFF_MODE = 0,
@@ -85,9 +84,8 @@ struct rtcwake_control {
 	enum clock_modes clock_mode;	/* hwclock timezone */
 	time_t sys_time;		/* system time */
 	time_t rtc_time;		/* hardware time */
-	unsigned int
-	 verbose:1,			/* verbose messaging */
-	 dryrun:1;			/* do not set alarm, suspend system, etc */
+	unsigned int verbose:1,		/* verbose messaging */
+		     dryrun:1;		/* do not set alarm, suspend system, etc */
 };
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
@@ -138,6 +136,7 @@ static int is_wakeup_enabled(const char *devname)
 		warn(_("cannot open %s"), buf);
 		return 0;
 	}
+
 	s = fgets(buf, sizeof buf, f);
 	fclose(f);
 	if (!s)
@@ -152,7 +151,7 @@ static int is_wakeup_enabled(const char *devname)
 
 static int get_basetimes(struct rtcwake_control *ctl, int fd)
 {
-	struct tm	tm = { 0 };
+	struct tm tm = { 0 };
 	struct rtc_time	rtc;
 
 	/* This process works in RTC time, except when working
@@ -168,6 +167,7 @@ static int get_basetimes(struct rtcwake_control *ctl, int fd)
 		warn(_("read rtc time failed"));
 		return -1;
 	}
+
 	ctl->sys_time = time(0);
 	if (ctl->sys_time == (time_t)-1) {
 		warn(_("read system time failed"));
@@ -183,11 +183,13 @@ static int get_basetimes(struct rtcwake_control *ctl, int fd)
 	tm.tm_mon = rtc.tm_mon;
 	tm.tm_year = rtc.tm_year;
 	tm.tm_isdst = -1;  /* assume the system knows better than the RTC */
+
 	ctl->rtc_time = mktime(&tm);
 	if (ctl->rtc_time == (time_t)-1) {
 		warn(_("convert rtc time failed"));
 		return -1;
 	}
+
 	if (ctl->verbose) {
 		/* Unless the system uses UTC, either delta or tzone
 		 * reflects a seconds offset from UTC.  The value can
@@ -230,6 +232,7 @@ static int setup_alarm(struct rtcwake_control *ctl, int fd, time_t *wakeup)
 	wake.time.tm_yday = -1;
 	wake.time.tm_isdst = -1;
 	wake.enabled = 1;
+
 	if (!ctl->dryrun && ioctl(fd, RTC_WKALM_SET, &wake) < 0) {
 		warn(_("set rtc wake alarm failed"));
 		return -1;
@@ -262,6 +265,7 @@ static void suspend_system(struct rtcwake_control *ctl)
 		warn(_("cannot open %s"), SYS_POWER_STATE_PATH);
 		return;
 	}
+
 	if (!ctl->dryrun) {
 		fprintf(f, "%s\n", ctl->mode_str);
 		fflush(f);
@@ -274,7 +278,7 @@ static void suspend_system(struct rtcwake_control *ctl)
 static int read_clock_mode(struct rtcwake_control *ctl)
 {
 	FILE *fp;
-	char linebuf[ADJTIME_ZONE_STRLEN];
+	char linebuf[ADJTIME_ZONE_BUFSIZ];
 
 	fp = fopen(ctl->adjfile, "r");
 	if (!fp)
@@ -289,12 +293,14 @@ static int read_clock_mode(struct rtcwake_control *ctl)
 		fclose(fp);
 		return -1;
 	}
+
 	if (strncmp(linebuf, "UTC", 3) == 0)
 		ctl->clock_mode = CM_UTC;
 	else if (strncmp(linebuf, "LOCAL", 5) == 0)
 		ctl->clock_mode = CM_LOCAL;
 	else if (ctl->verbose)
 		warnx(_("unexpected third line in: %s: %s"), ctl->adjfile, linebuf);
+
 	fclose(fp);
 	return 0;
 }
@@ -309,6 +315,7 @@ static int print_alarm(struct rtcwake_control *ctl, int fd)
 		warn(_("read rtc alarm failed"));
 		return -1;
 	}
+
 	if (wake.enabled != 1 || wake.time.tm_year == -1) {
 		printf(_("alarm: off\n"));
 		return 0;
@@ -320,6 +327,7 @@ static int print_alarm(struct rtcwake_control *ctl, int fd)
 	tm.tm_mon = wake.time.tm_mon;
 	tm.tm_year = wake.time.tm_year;
 	tm.tm_isdst = -1;  /* assume the system knows better than the RTC */
+
 	alarm = mktime(&tm);
 	if (alarm == (time_t)-1) {
 		warn(_("convert time failed"));
@@ -328,6 +336,7 @@ static int print_alarm(struct rtcwake_control *ctl, int fd)
 	/* 0 if both UTC, or expresses diff if RTC in local time */
 	alarm += ctl->sys_time - ctl->rtc_time;
 	printf(_("alarm: on  %s"), ctime(&alarm));
+
 	return 0;
 }
 
@@ -385,10 +394,9 @@ int main(int argc, char **argv)
 	struct rtcwake_control ctl = {
 		.mode_str = "suspend",		/* default mode */
 		.adjfile = _PATH_ADJTIME,
-		.clock_mode = CM_AUTO,
-		0
+		.clock_mode = CM_AUTO
 	};
-	char *devname = DEFAULT_DEVICE;
+	char *devname = DEFAULT_RTC_DEVICE;
 	unsigned seconds = 0;
 	int suspend = SYSFS_MODE;
 	int rc = EXIT_SUCCESS;
@@ -488,6 +496,7 @@ int main(int argc, char **argv)
 			usage(stderr);
 		}
 	}
+
 	if (ctl.clock_mode == CM_AUTO) {
 		if (read_clock_mode(&ctl) < 0) {
 			printf(_("%s: assuming RTC uses UTC ...\n"),
@@ -495,6 +504,7 @@ int main(int argc, char **argv)
 			ctl.clock_mode = CM_UTC;
 		}
 	}
+
 	if (ctl.verbose)
 		printf("%s",  ctl.clock_mode == CM_UTC ? _("Using UTC time.\n") :
 				_("Using local time.\n"));
@@ -504,6 +514,7 @@ int main(int argc, char **argv)
 
 	/* device must exist and (if we'll sleep) be wakeup-enabled */
 	fd = open_dev_rtc(devname);
+
 	if (suspend != ON_MODE && suspend != NO_MODE && !is_wakeup_enabled(devname))
 		errx(EXIT_FAILURE, _("%s not enabled for wakeup events"), devname);
 
@@ -516,8 +527,7 @@ int main(int argc, char **argv)
 				alarm, ctl.sys_time, ctl.rtc_time, seconds);
 
 	if (suspend != DISABLE_MODE && suspend != SHOW_MODE) {
-		/* perform alarm setup when the show or disable modes are
-		 * not set */
+		/* perform alarm setup when the show or disable modes are not set */
 		if (alarm) {
 			if (alarm < ctl.sys_time)
 				errx(EXIT_FAILURE, _("time doesn't go backward to %s"),
@@ -525,8 +535,10 @@ int main(int argc, char **argv)
 			alarm += ctl.sys_time - ctl.rtc_time;
 		} else
 			alarm = ctl.rtc_time + seconds + 1;
+
 		if (setup_alarm(&ctl, fd, &alarm) < 0)
 			exit(EXIT_FAILURE);
+
 		if (suspend == NO_MODE || suspend == ON_MODE)
 			printf(_("%s: wakeup using %s at %s"),
 				program_invocation_short_name, devname,
@@ -617,6 +629,7 @@ int main(int argc, char **argv)
 			}
 		}
 	}
+
 	close(fd);
 	return rc;
 }
