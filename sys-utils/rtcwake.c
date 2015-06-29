@@ -341,7 +341,7 @@ static int get_rtc_mode(struct rtcwake_control *ctl, const char *optarg)
 			return SYSFS_MODE;
 	}
 
-	for (i = 0; i <= ARRAY_SIZE(rtcwake_mode_string); i++)
+	for (i = 0; i < ARRAY_SIZE(rtcwake_mode_string); i++)
 		if (!strcmp(optarg, rtcwake_mode_string[i]))
 			return i;
 
