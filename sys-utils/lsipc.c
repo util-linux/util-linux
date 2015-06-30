@@ -38,7 +38,7 @@
 #include "strutils.h"
 #include "optutils.h"
 #include "xalloc.h"
-
+#include "procutils.h"
 #include "ipcutils.h"
 
 /*
@@ -78,6 +78,7 @@ enum {
 	COL_STATUS,
 	COL_ATTACH,
 	COL_DETACH,
+	COL_COMMAND,
 	COL_CPID,
 	COL_LPID,
 	/* sem-specific */
@@ -156,6 +157,7 @@ static const struct lsipc_coldesc coldescs[] =
 	[COL_STATUS]	= { "STATUS",	N_("Status"), N_("Status"), 1, SCOLS_FL_NOEXTREMES},
 	[COL_ATTACH]	= { "ATTACH",	N_("Attach time"), N_("Attach time"), 1, SCOLS_FL_RIGHT},
 	[COL_DETACH]	= { "DETACH",	N_("Detach time"), N_("Detach time"), 1, SCOLS_FL_RIGHT},
+	[COL_COMMAND]	= { "COMMAND",  N_("Creator command line"), N_("Creator command"), 0, SCOLS_FL_TRUNC},
 	[COL_CPID]	= { "CPID",	N_("PID of the creator"), N_("Creator PID"), 1, SCOLS_FL_RIGHT},
 	[COL_LPID]	= { "LPID",	N_("PID of last user"), N_("Last user PID"), 1, SCOLS_FL_RIGHT},
 
@@ -952,6 +954,10 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					xasprintf(&arg, "%u", shmdsp->shm_lprid);
 					rc = scols_line_set_data(ln, n, arg);
 					break;
+				case COL_COMMAND:
+					arg = proc_get_command(shmdsp->shm_cprid);
+					rc = scols_line_set_data(ln, n, arg);
+					break;
 			}
 			if (rc != 0)
 				err(EXIT_FAILURE, _("failed to set data"));
@@ -1216,6 +1222,7 @@ int main(int argc, char *argv[])
 
 				add_column(columns, ncolumns++, COL_CPID);
 				add_column(columns, ncolumns++, COL_LPID);
+				add_column(columns, ncolumns++, COL_COMMAND);
 			}
 			else if (sem) {
 				add_column(columns, ncolumns++, COL_NSEMS);
