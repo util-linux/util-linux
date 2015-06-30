@@ -1,0 +1,65 @@
+_lsipc_module()
+{
+	local cur prev OPTS ARG
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-i'|'--id')
+			COMPREPLY=( $(compgen -W "id" -- $cur) )
+			return 0
+			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
+		'-o'|'--output')
+			local prefix realcur OUTPUT_ALL OUTPUT
+			realcur="${cur##*,}"
+			prefix="${cur%$realcur}"
+			OUTPUT_ALL="GENERAL KEY ID OWNER PERMS CUID
+			CGID UID GID CHANGE MESSAGE USEDBYTES
+			MSGS SEND RECV LSPID LRPID SHARED BYTES
+			NATTCH STATUS ATTACH DETACH CPID LPID NSEMS
+			LASTOP"
+			for WORD in $OUTPUT_ALL; do
+				if ! [[ $prefix == *"$WORD"* ]]; then
+					OUTPUT="$WORD $OUTPUT"
+				fi
+			done
+			compopt -o nospace
+			COMPREPLY=( $(compgen -P "$prefix" -W "$OUTPUT" -S ',' -- $realcur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="--id
+				--help
+				--version
+				--shmems
+				--queues
+				--semaphores
+				--colon-separate
+				--creator
+				--export
+				--global
+				--json
+				--newline
+				--noheadings
+				--notruncate
+				--output
+				--pid
+				--print0
+				--raw
+				--time
+				--time-format"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	local IFS=$'\n'
+	compopt -o filenames
+	COMPREPLY=( $(compgen -f -- $cur) )
+	return 0
+}
+complete -F _lsipc_module lsipc

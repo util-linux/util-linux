@@ -28,6 +28,16 @@ ipcs_SOURCES =	sys-utils/ipcs.c \
 ipcs_LDADD = $(LDADD) libcommon.la
 endif
 
+if BUILD_LSIPC
+usrbin_exec_PROGRAMS += lsipc
+dist_man_MANS += sys-utils/lsipc.1
+lsipc_SOURCES =	sys-utils/lsipc.c \
+		sys-utils/ipcutils.c \
+		sys-utils/ipcutils.h
+lsipc_LDADD = $(LDADD) libcommon.la libsmartcols.la
+lsipc_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
+endif
+
 if BUILD_RENICE
 usrbin_exec_PROGRAMS += renice
 dist_man_MANS += sys-utils/renice.1

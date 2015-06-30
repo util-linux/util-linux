@@ -1388,6 +1388,11 @@ AM_CONDITIONAL([BUILD_IPCRM], [test "x$build_ipcrm" = xyes])
 UL_BUILD_INIT([ipcs], [yes])
 AM_CONDITIONAL([BUILD_IPCS], [test "x$build_ipcs" = xyes])
 
+UL_BUILD_INIT([lsipc], [check])
+UL_REQUIRES_LINUX([lsipc])
+UL_REQUIRES_BUILD([lsipc], [libsmartcols])
+AM_CONDITIONAL([BUILD_LSIPC], [test "x$build_lsipc" = xyes])
+
 UL_BUILD_INIT([renice], [yes])
 AM_CONDITIONAL([BUILD_RENICE], [test "x$build_renice" = xyes])
 

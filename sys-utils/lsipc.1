@@ -1,0 +1,135 @@
+.\" Copyright 2015 Ondrej Oprala(ooprala@redhat.com)
+.\" May be distributed under the GNU General Public License
+.TH LSIPC "1" "June 2015" "util-linux" "User Commands"
+.SH NAME
+lsipc \- show information on IPC facilities currently employed in the system
+.SH SYNOPSIS
+.B lsipc
+[options]
+.SH DESCRIPTION
+.B lsipc
+shows information on the inter-process communication facilities
+for which the calling process has read access.
+.SH OPTIONS
+.TP
+\fB\-i\fR, \fB\-\-id\fR \fIid\fR
+Show full details on just the one resource element identified by
+.IR id .
+This option needs to be combined with one of the three resource options:
+.BR \-m ,
+.BR \-q " or"
+.BR \-s .
+.TP
+\fB\-g\fR, \fB\-\-global\fR
+Show system-wide usage and limits for a single IPC type.
+This option needs to be combined with one of the three resource options:
+.BR \-m ,
+.BR \-q " or"
+.BR \-s .
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display help text and exit.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Display version information and exit.
+.SS "Resource options"
+.TP
+\fB\-m\fR, \fB\-\-shmems\fR
+Write information about active shared memory segments.
+.TP
+\fB\-q\fR, \fB\-\-queues\fR
+Write information about active message queues.
+.TP
+\fB\-s\fR, \fB\-\-semaphores\fR
+Write information about active semaphore sets.
+.SS "Output formats"
+.TP
+\fB\-c\fR, \fB\-\-creator\fR
+Show creator and owner.
+.TP
+\fB\-\-colon\-separate\fR
+Separate info about each user with a colon instead of a newline.
+.TP
+\fB\-e\fR, \fB\-\-export\fR
+Output data in the format of NAME=VALUE.
+.TP
+\fB\-J\fR, \fB\-\-json\fR
+Use the JSON output format.
+.TP
+\fB\-n\fR, \fB\-\-newline\fR
+Display each piece of information on a separate line.
+.TP
+\fB\-\-noheadings\fR
+Do not print a header line.
+.TP
+\fB\-\-notruncate\fR
+Don't truncate output.
+.TP
+\fB\-o\fR, \fB\-\-output \fIlist\fP
+Specify which output columns to print.  Use
+.B \-\-help
+to get a list of all supported columns.
+.TP
+\fB\-p\fR, \fB\-\-pid\fR
+Show PIDs of creator and last operator.
+.TP
+\fB\-r\fR, \fB\-\-raw\fR
+Raw output (no columnation).
+.TP
+\fB\-t\fR, \fB\-\-time\fR
+Write time information.  The time of the last control operation that changed
+the access permissions for all facilities, the time of the last
+.I msgsnd()
+and
+.I msgrcv()
+operations on message queues, the time of the last
+.I shmat()
+and
+.I shmdt()
+operations on shared memory, and the time of the last
+.I semop()
+operation on semaphores.
+.TP
+\fB\-\-time\-format\fR \fItype\fP
+Display dates in short, full or iso format.  The default is short, this time
+format is designed to be space efficient and human readable.
+.TP
+\fB\-z\fR, \fB\-\-print0\fR
+Delimit user entries with a nul character, instead of a newline.
+
+.SH EXIT STATUS
+.TP
+0
+if OK,
+.TP
+1
+if incorrect arguments specified,
+.TP
+2
+if a serious error occurs.
+.SH SEE ALSO
+.BR ipcrm (1),
+.BR ipcmk (1),
+.BR msgrcv (2),
+.BR msgsnd (2),
+.BR semget (2),
+.BR semop (2),
+.BR shmat (2),
+.BR shmdt (2),
+.BR shmget (2)
+.SH HISTORY
+The \fBlsipc\fP utility is inspired by the \fBipcs\fP utility.
+.SH AUTHORS
+.MT ooprala@redhat.com
+Ondrej Oprala
+.ME
+.br
+.MT kzak@redhat.com
+Karel Zak
+.ME
+
+.SH AVAILABILITY
+The lsipc command is part of the util-linux package and is available from
+.UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .

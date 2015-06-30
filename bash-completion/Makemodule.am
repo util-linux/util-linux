@@ -45,6 +45,9 @@ endif
 if BUILD_LOOK
 dist_bashcompletion_DATA += bash-completion/look
 endif
+if BUILD_LSIPC
+dist_bashcompletion_DATA += bash-completion/lsipc
+endif
 if BUILD_MCOOKIE
 dist_bashcompletion_DATA += bash-completion/mcookie
 endif

@@ -115,6 +115,7 @@ update.log
 /look
 /losetup
 /lsblk
+/lsipc
 /lscpu
 /lslocks
 /lslogins
