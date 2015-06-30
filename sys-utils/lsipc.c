@@ -1211,8 +1211,8 @@ int main(int argc, char *argv[])
 				if (show_time) {
 					add_column(columns, ncolumns++, COL_ATTACH);
 					add_column(columns, ncolumns++, COL_DETACH);
-					add_column(columns, ncolumns++, COL_CTIME);
 				}
+				add_column(columns, ncolumns++, COL_CTIME);
 
 				add_column(columns, ncolumns++, COL_CPID);
 				add_column(columns, ncolumns++, COL_LPID);
