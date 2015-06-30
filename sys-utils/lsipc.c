@@ -55,39 +55,54 @@ enum {
  * IDs
  */
 enum {
-	/* common */
-	COL_KEY = 0,
-	COL_ID,
-	COL_OWNER,
-	COL_PERMS,
-	COL_CUID,
-	COL_CGID,
-	COL_UID,
-	COL_GID,
-	COL_CTIME,
+	/* generic */
+	COLDESC_IDX_GEN_FIRST = 0,
+		COL_KEY = COLDESC_IDX_GEN_FIRST,
+		COL_ID,
+		COL_OWNER,
+		COL_PERMS,
+		COL_CUID,
+		COL_CGID,
+		COL_UID,
+		COL_GID,
+		COL_CTIME,
+	COLDESC_IDX_GEN_LAST = COL_CTIME,
+
 	/* msgq-specific */
-	COL_USEDBYTES,
-	COL_MSGS,
-	COL_SEND,
-	COL_RECV,
-	COL_LSPID,
-	COL_LRPID,
+	COLDESC_IDX_MSG_FIRST,
+		COL_USEDBYTES = COLDESC_IDX_MSG_FIRST,
+		COL_MSGS,
+		COL_SEND,
+		COL_RECV,
+		COL_LSPID,
+		COL_LRPID,
+	COLDESC_IDX_MSG_LAST = COL_LRPID,
+
 	/* shm-specific */
-	COL_SIZE,
-	COL_NATTCH,
-	COL_STATUS,
-	COL_ATTACH,
-	COL_DETACH,
-	COL_COMMAND,
-	COL_CPID,
-	COL_LPID,
+	COLDESC_IDX_SHM_FIRST,
+		COL_SIZE = COLDESC_IDX_SHM_FIRST,
+		COL_NATTCH,
+		COL_STATUS,
+		COL_ATTACH,
+		COL_DETACH,
+		COL_COMMAND,
+		COL_CPID,
+		COL_LPID,
+	COLDESC_IDX_SHM_LAST = COL_LPID,
+
 	/* sem-specific */
-	COL_NSEMS,
-	COL_OTIME,
-	COL_RESOURCE,
-	COL_DESC,
-	COL_USED,
-	COL_LIMIT,
+	COLDESC_IDX_SEM_FIRST,
+		COL_NSEMS = COLDESC_IDX_SEM_FIRST,
+		COL_OTIME,
+	COLDESC_IDX_SEM_LAST = COL_OTIME,
+
+	/* summary (--global) */
+	COLDESC_IDX_SUM_FIRST,
+		COL_RESOURCE,
+		COL_DESC,
+		COL_USED,
+		COL_LIMIT,
+	COLDESC_IDX_SUM_LAST = COL_LIMIT
 };
 
 /* we use the value of outmode to determine
@@ -255,10 +270,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -m, --shmems      shared memory segments\n"), out);
 	fputs(_(" -q, --queues      message queues\n"), out);
 	fputs(_(" -s, --semaphores  semaphores\n"), out);
+	fputs(_(" -g, --global      display info about about system-wide usage\n"), out);
 	fputs(_(" -i, --id <id>     print details on resource identified by <id>\n"), out);
 
-	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Output options:\n"), out);
+	fputs(USAGE_OPTIONS, out);
 	fputs(_("     --colon-separate     display data in a format similar to /etc/passwd\n"), out);
 	fputs(_("     --noheadings         don't print headings\n"), out);
 	fputs(_("     --notruncate         don't truncate output\n"), out);
@@ -266,7 +281,6 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -b, --bytes              print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -c, --creator            show creator and owner\n"), out);
 	fputs(_(" -e, --export             display in an export-able output format\n"), out);
-	fputs(_(" -g, --global             display info about about system-wide usage\n"), out);
 	fputs(_(" -J, --json               use the JSON output format\n"), out);
 	fputs(_(" -n, --newline            display each piece of information on a new line\n"), out);
 	fputs(_(" -o, --output[=<list>]    define the columns to output\n"), out);
@@ -275,24 +289,27 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -t, --time               show attach, detach and change times\n"), out);
 	fputs(_(" -z, --print0             delimit user entries with a nul character\n"), out);
 
-	fprintf(out, _("\nAvailable columns:\n"));
+	fprintf(out, _("\nGeneric columns:\n"));
+	for (i = COLDESC_IDX_GEN_FIRST; i < COLDESC_IDX_GEN_LAST; i++)
+		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
-	fprintf(out, _("GENERAL COLUMNS:\n"));
-	for (i = 0; i < ARRAY_SIZE(coldescs); i++) {
-		if (i == COL_USEDBYTES)
-			fprintf(out, _("MESSAGE QUEUES:\n"));
-		if (i == COL_SIZE)
-			fprintf(out, _("SHARED MEMORY:\n"));
-		if (i == COL_NSEMS)
-			fprintf(out, _("SEMAPHORES:\n"));
-		if (i == COL_RESOURCE)
-			fprintf(out, _("SUMMARIZED INFO:\n"));
-		fprintf(out, " %14s  %s\n", coldescs[i].name,
-				_(coldescs[i].help));
-	}
+	fprintf(out, _("\nShared memory columns (--shmems):\n"));
+	for (i = COLDESC_IDX_SHM_FIRST; i < COLDESC_IDX_SHM_LAST; i++)
+		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
+
+	fprintf(out, _("\nMessages queues columns (--queues):\n"));
+	for (i = COLDESC_IDX_MSG_FIRST; i < COLDESC_IDX_MSG_LAST; i++)
+		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
+
+	fprintf(out, _("\nSemaphores columns (--semaphores):\n"));
+	for (i = COLDESC_IDX_SEM_FIRST; i < COLDESC_IDX_SEM_LAST; i++)
+		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
+
+	fprintf(out, _("\nSummary columns (--global):\n"));
+	for (i = COLDESC_IDX_SUM_FIRST; i < COLDESC_IDX_SUM_LAST; i++)
+		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("lsipc(1)"));
-
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
