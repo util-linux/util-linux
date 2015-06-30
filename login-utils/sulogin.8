@@ -33,6 +33,8 @@ Give root password for system maintenance
 .br
 (or type Control\-D for normal startup):
 .PP
+If the root account is locked and --force is specified, no password is required.
+.PP
 .B sulogin
 will be connected to the current terminal, or to the optional \fItty\fR device that
 can be specified on the command line (typically
@@ -48,9 +50,11 @@ fails, then examine
 .I /etc/passwd
 and
 .I /etc/shadow
-to get the password.  If these files are damaged or nonexistent,
+to get the password.  If these files are damaged or nonexistent, or when
+root account is locked by '!' or '*' at the begin of the password then
 .B sulogin
-will start a root shell without asking for a password.
+will \fBstart a root shell without asking for a password\fP.
+.PP
 .IP
 Only use the
 .B \-e
