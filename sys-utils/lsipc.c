@@ -98,7 +98,7 @@ enum {
 
 	/* summary (--global) */
 	COLDESC_IDX_SUM_FIRST,
-		COL_RESOURCE,
+		COL_RESOURCE = COLDESC_IDX_SUM_FIRST,
 		COL_DESC,
 		COL_USED,
 		COL_LIMIT,
@@ -183,7 +183,7 @@ static const struct lsipc_coldesc coldescs[] =
 	/* cols for summarized information */
 	[COL_RESOURCE]  = { "RESOURCE", N_("Resource name"), N_("Resource"), 1 },
 	[COL_DESC]      = { "DESCRIPTION",N_("Resource description"), N_("Description"), 1 },
-	[COL_USED]      = { "USED",     N_("Currently used"), N_("Used"), 1 },
+	[COL_USED]      = { "USED",     N_("Currently used"), N_("Used"), 1, SCOLS_FL_RIGHT },
 	[COL_LIMIT]     = { "LIMIT",    N_("System-wide limit"), N_("Limit"), 1, SCOLS_FL_RIGHT },
 };
 
@@ -270,7 +270,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -m, --shmems      shared memory segments\n"), out);
 	fputs(_(" -q, --queues      message queues\n"), out);
 	fputs(_(" -s, --semaphores  semaphores\n"), out);
-	fputs(_(" -g, --global      display info about about system-wide usage\n"), out);
+	fputs(_(" -g, --global      info about system-wide usage (may be used with -m, -q and -s)\n"), out);
 	fputs(_(" -i, --id <id>     print details on resource identified by <id>\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
@@ -290,23 +290,23 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -z, --print0             delimit user entries with a nul character\n"), out);
 
 	fprintf(out, _("\nGeneric columns:\n"));
-	for (i = COLDESC_IDX_GEN_FIRST; i < COLDESC_IDX_GEN_LAST; i++)
+	for (i = COLDESC_IDX_GEN_FIRST; i <= COLDESC_IDX_GEN_LAST; i++)
 		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
 	fprintf(out, _("\nShared memory columns (--shmems):\n"));
-	for (i = COLDESC_IDX_SHM_FIRST; i < COLDESC_IDX_SHM_LAST; i++)
+	for (i = COLDESC_IDX_SHM_FIRST; i <= COLDESC_IDX_SHM_LAST; i++)
 		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
 	fprintf(out, _("\nMessages queues columns (--queues):\n"));
-	for (i = COLDESC_IDX_MSG_FIRST; i < COLDESC_IDX_MSG_LAST; i++)
+	for (i = COLDESC_IDX_MSG_FIRST; i <= COLDESC_IDX_MSG_LAST; i++)
 		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
 	fprintf(out, _("\nSemaphores columns (--semaphores):\n"));
-	for (i = COLDESC_IDX_SEM_FIRST; i < COLDESC_IDX_SEM_LAST; i++)
+	for (i = COLDESC_IDX_SEM_FIRST; i <= COLDESC_IDX_SEM_LAST; i++)
 		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
 	fprintf(out, _("\nSummary columns (--global):\n"));
-	for (i = COLDESC_IDX_SUM_FIRST; i < COLDESC_IDX_SUM_LAST; i++)
+	for (i = COLDESC_IDX_SUM_FIRST; i <= COLDESC_IDX_SUM_LAST; i++)
 		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("lsipc(1)"));
@@ -458,6 +458,43 @@ static char *make_time(int mode, time_t time)
 	return xstrdup(buf);
 }
 
+static void global_set_data(struct libscols_table *tb, const char *resource,
+			    const char *desc, uintmax_t used, uintmax_t limit)
+{
+	struct libscols_line *ln;
+	int n;
+
+	ln = scols_table_new_line(tb, NULL);
+	if (!ln)
+		err_oom();
+
+	for (n = 0; n < ncolumns; n++) {
+		int rc = 0;
+		char *arg = NULL;
+
+		switch (columns[n]) {
+		case COL_RESOURCE:
+			rc = scols_line_set_data(ln, n, resource);
+			break;
+		case COL_DESC:
+			rc = scols_line_set_data(ln, n, desc);
+			break;
+		case COL_USED:
+			xasprintf(&arg, "%ju", used);
+			rc = scols_line_set_data(ln, n, arg);
+			break;
+		case COL_LIMIT:
+			xasprintf(&arg, "%ju", limit);
+			rc = scols_line_set_data(ln, n, arg);
+			break;
+		}
+
+		if (rc != 0)
+			err(EXIT_FAILURE, _("failed to set data"));
+		free(arg);
+	}
+}
+
 static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 {
 	int n = 0;
@@ -600,46 +637,20 @@ static void do_sem_global(struct libscols_table *tb)
 {
 	struct sem_data *semds, *semdsp;
 	struct ipc_limits lim;
-	int sems = 0, sets = 0, n = 0;
-	struct libscols_line *ln;
-	char *result = NULL;
+	int nsems = 0, nsets = 0;
 
-	if (ipc_sem_get_info(-1, &semds) < 1)
-		return;
 	ipc_sem_get_limits(&lim);
 
-	for (semdsp = semds; semdsp->next != NULL; semdsp = semdsp->next) {
-		++sets;
-		sems += semds->sem_nsems;
+	if (ipc_sem_get_info(-1, &semds) > 0) {
+		for (semdsp = semds; semdsp->next != NULL; semdsp = semdsp->next) {
+			++nsets;
+			nsems += semds->sem_nsems;
+		}
+		ipc_sem_free_info(semds);
 	}
-	ln = scols_table_new_line(tb, NULL);
-	scols_line_set_data(ln, n++, "SEMMNS");
-	scols_line_set_data(ln, n++, "Total number of semaphores");
 
-	xasprintf(&result, "%d", sems);
-	scols_line_set_data(ln, n++, result);
-	free(result);
-
-	xasprintf(&result, "%d", lim.semmns);
-	scols_line_set_data(ln, n, result);
-	free(result);
-
-
-	n = 0;
-	ln = scols_table_new_line(tb, NULL);
-
-	scols_line_set_data(ln, n++, "SEMMNI");
-	scols_line_set_data(ln, n++, "Number of Semaphore IDs");
-
-	xasprintf(&result, "%d", sets);
-	scols_line_set_data(ln, n++, result);
-	free(result);
-
-	xasprintf(&result, "%d", lim.semmni);
-	scols_line_set_data(ln, n, result);
-	free(result);
-
-	ipc_sem_free_info(semds);
+	global_set_data(tb, "SEMMNS", _("Total number of semaphores"), nsems, lim.semmns);
+	global_set_data(tb, "SEMMNI", _("Number of Semaphore IDs"), nsets, lim.semmni);
 }
 
 static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
@@ -781,34 +792,25 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 	ipc_msg_free_info(msgds);
 }
 
+
 static void do_msg_global(struct libscols_table *tb)
 {
 	struct msg_data *msgds, *msgdsp;
 	struct ipc_limits lim;
-	struct libscols_line *ln = scols_table_new_line(tb, NULL);
-	int msgqs = 0, n = 0;
-	char *result;
+	int msgqs = 0;
 
-	if (ipc_msg_get_info(-1, &msgds) < 1)
-		return;
 	ipc_msg_get_limits(&lim);
 
-	for (msgdsp = msgds; msgdsp->next != NULL; msgdsp = msgdsp->next) {
-		++msgqs;
+	/* count number of used queues */
+	if (ipc_msg_get_info(-1, &msgds) > 0) {
+		for (msgdsp = msgds; msgdsp->next != NULL; msgdsp = msgdsp->next)
+			++msgqs;
+		ipc_msg_free_info(msgds);
 	}
 
-	scols_line_set_data(ln, n++, "MSGMNI");
-	scols_line_set_data(ln, n++, "Number of message queues");
-
-	xasprintf(&result, "%d", msgqs);
-	scols_line_set_data(ln, n++, result);
-	free(result);
-
-	xasprintf(&result, "%d", lim.msgmni);
-	scols_line_set_data(ln, n, result);
-	free(result);
-
-	ipc_msg_free_info(msgds);
+	global_set_data(tb, "MSGMNI", _("Number of message queues"), msgqs, lim.msgmni);
+	global_set_data(tb, "MSGMAX", _("Max size of message (bytes)"),	0, lim.msgmax);
+	global_set_data(tb, "MSGMNB", _("Default max size of queue (bytes)"), 0, lim.msgmnb);
 }
 
 static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
@@ -829,6 +831,8 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 	for (shmdsp = shmds; shmdsp->next != NULL || id > -1 ; shmdsp = shmdsp->next) {
 
 		ln = scols_table_new_line(tb, NULL);
+		if (!ln)
+			err_oom();
 
 		/* no need to call getpwuid() for the same user */
 		if (!(pw && pw->pw_uid == shmdsp->shm_perm.uid))
@@ -991,48 +995,20 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 static void do_shm_global(struct libscols_table *tb)
 {
 	struct shm_data *shmds, *shmdsp;
-	int n = 0;
-	uint64_t segs = 0, segsz = 0;
+	uint64_t nsegs = 0, sum_segsz = 0;
 	struct ipc_limits lim;
-	struct libscols_line *ln;
-	char *result = NULL;
 
-	if (ipc_shm_get_info(-1, &shmds) < 1)
-		return;
 	ipc_shm_get_limits(&lim);
 
-	for (shmdsp = shmds; shmdsp->next != NULL; shmdsp = shmdsp->next) {
-		++segs;
-		segsz += shmdsp->shm_segsz;
+	if (ipc_shm_get_info(-1, &shmds) > 0) {
+		for (shmdsp = shmds; shmdsp->next != NULL; shmdsp = shmdsp->next) {
+			++nsegs;
+			sum_segsz += shmdsp->shm_segsz;
+		}
 	}
 
-	ln = scols_table_new_line(tb, NULL);
-
-	scols_line_set_data(ln, n++, "SHMMNI");
-	scols_line_set_data(ln, n++, "Shared memory segments");
-
-	xasprintf(&result, "%lu", segs);
-	scols_line_set_data(ln, n++, result);
-	free(result);
-
-	xasprintf(&result, "%lu", lim.shmmni);
-	scols_line_set_data(ln, n, result);
-	free(result);
-
-
-	n = 0;
-	ln = scols_table_new_line(tb, NULL);
-
-	scols_line_set_data(ln, n++, "SHMALL");
-	scols_line_set_data(ln, n++, "Shared memory pages");
-
-	xasprintf(&result, "%lu", segsz / getpagesize());
-	scols_line_set_data(ln, n++, result);
-	free(result);
-
-	xasprintf(&result, "%lu", lim.shmall);
-	scols_line_set_data(ln, n, result);
-	free(result);
+	global_set_data(tb, "SHMMNI", _("Shared memory segments"), nsegs, lim.shmmni);
+	global_set_data(tb, "SHMALL", _("Shared memory pages"), sum_segsz / getpagesize(), lim.shmall);
 
 	ipc_shm_free_info(shmds);
 }
@@ -1082,7 +1058,8 @@ int main(int argc, char *argv[])
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'J', 'e', 'n', 'r', 'z', OPT_COLON },
-		{ 'c', 'g', 'i', 'o', 't' },
+		{ 'c', 'g', 'i', 't' },
+		{ 'c', 'i', 'o', 't' },
 		{ 'm', 'q', 's' },
 		{ 0 }
 	};
@@ -1126,16 +1103,18 @@ int main(int argc, char *argv[])
 				break;
 			case 'g':
 				global = 1;
+				LOWER = COLDESC_IDX_SUM_FIRST;
+				UPPER = COLDESC_IDX_SUM_LAST;
 				break;
 			case 'q':
 				msg = 1;
-				LOWER = COL_USEDBYTES;
-				UPPER = COL_LRPID;
+				LOWER = COLDESC_IDX_MSG_FIRST;
+				UPPER = COLDESC_IDX_MSG_LAST;
 				break;
 			case 'm':
 				shm = 1;
-				LOWER = COL_SIZE;
-				UPPER = COL_LPID;
+				LOWER = COLDESC_IDX_SHM_FIRST;
+				UPPER = COLDESC_IDX_SHM_LAST;
 				break;
 			case 'n':
 				outmode = OUT_NEWLINE;
@@ -1145,8 +1124,8 @@ int main(int argc, char *argv[])
 				break;
 			case 's':
 				sem = 1;
-				LOWER = COL_NSEMS;
-				UPPER = COL_OTIME;
+				LOWER = COLDESC_IDX_SEM_FIRST;
+				UPPER = COLDESC_IDX_SEM_LAST;
 				break;
 			case OPT_NOTRUNC:
 				ctl->notrunc = 1;
@@ -1179,11 +1158,13 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (msg + shm + sem != 1)
+	if (msg + shm + sem != 1 && !global)
 		errx (EXIT_FAILURE,
 		      _("One of --shmems, --queues or --semaphores must be specified"));
+	if (global && msg + shm + sem == 0)
+		msg = shm = sem = 1;
 
-	if (global) {
+	if (global && !opt_o) {
 		add_column(columns, ncolumns++, COL_RESOURCE);
 		add_column(columns, ncolumns++, COL_DESC);
 		add_column(columns, ncolumns++, COL_USED);
@@ -1261,16 +1242,18 @@ int main(int argc, char *argv[])
 			do_msg_global(tb);
 		else
 			do_msg(id, ctl, tb);
-	} else if (shm) {
+	}
+	if (shm) {
 		if (global)
 			do_shm_global(tb);
 		else
 			do_shm(id, ctl, tb);
-	} else if (sem) {
+	}
+	if (sem) {
 		if (global)
 			do_sem_global(tb);
 		else
-		do_sem(id, ctl, tb);
+			do_sem(id, ctl, tb);
 	}
 
 	print_table(tb);
