@@ -324,7 +324,8 @@ static int swap_reinitialize(const char *device,
 				warn(_("waitpid failed"));
 				return -1;
 			}
-		} while (0);
+			break;
+		} while (1);
 
 		/* mkswap returns: 0=suss, 1=error */
 		if (WIFEXITED(status) && WEXITSTATUS(status)==0)
