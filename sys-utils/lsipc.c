@@ -48,7 +48,7 @@ enum {
 	TIME_INVALID = 0,
 	TIME_SHORT,
 	TIME_FULL,
-	TIME_ISO,
+	TIME_ISO
 };
 
 /*
@@ -1061,7 +1061,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	ctl->time_mode = TIME_SHORT;
+	ctl->time_mode = 0;
 
 	while ((opt = getopt_long(argc, argv, "bceghi:Jmno:PqrstuVz", longopts, NULL)) != -1) {
 
@@ -1072,7 +1072,7 @@ int main(int argc, char *argv[])
 				ctl->bytes = 1;
 				break;
 			case 'i':
-				id = atoi (optarg);
+				id = strtos32_or_err(optarg, _("failed to parse IPC identifier"));
 				outmode = OUT_PRETTY;
 				break;
 			case OPT_COLON:
@@ -1178,6 +1178,9 @@ int main(int argc, char *argv[])
 
 	if (global && msg + shm + sem == 0)
 		msg = shm = sem = 1;
+
+	if (!ctl->time_mode)
+		ctl->time_mode = outmode == OUT_PRETTY ? TIME_FULL : TIME_SHORT;
 
 	if (outmode == OUT_PRETTY && !optarg) {
 		/* all columns for lsipc --<RESOURCE> --id <ID> */
