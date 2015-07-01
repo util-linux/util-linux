@@ -121,6 +121,7 @@ enum {
 	OUT_NEWLINE,
 	OUT_RAW,
 	OUT_NUL,
+	OUT_JSON,
 	OUT_PRETTY
 };
 
@@ -128,7 +129,6 @@ struct lsipc_control {
 	int outmode;
 	unsigned int noheadings : 1,		/* don't print header line */
 		     notrunc : 1,		/* don't truncate columns */
-		     json : 1,			/* JSON output */
 		     bytes : 1,			/* SIZE in bytes */
 		     numperms : 1,		/* numeric permissions */
 		     time_mode : 2;
@@ -324,8 +324,6 @@ static struct libscols_table *setup_table(struct lsipc_control *ctl)
 		errx(EXIT_FAILURE, _("failed to initialize output table"));
 	if (ctl->noheadings)
 		scols_table_enable_noheadings(table, 1);
-	if (ctl->json)
-		scols_table_enable_json(table, 1);
 
 	switch(ctl->outmode) {
 	case OUT_COLON:
@@ -346,6 +344,10 @@ static struct libscols_table *setup_table(struct lsipc_control *ctl)
 		break;
 	case OUT_PRETTY:
 		scols_table_enable_noheadings(table, 1);
+		break;
+	case OUT_JSON:
+		scols_table_enable_json(table, 1);
+		break;
 	default:
 		break;
 	}
@@ -503,6 +505,8 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 	struct group *gr = NULL, *cgr = NULL;
 	struct sem_data *semds, *semdsp;
 	char *arg = NULL, *time;
+
+	scols_table_set_name(tb, "semaphores");
 
 	if (ipc_sem_get_info(id, &semds) < 1) {
 		if (id > -1)
@@ -680,6 +684,7 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 			warnx(_("id %d not found"), id);
 		return;
 	}
+	scols_table_set_name(tb, "messages");
 
 	for (msgdsp = msgds; msgdsp->next != NULL || id > -1 ; msgdsp = msgdsp->next) {
 		size_t n;
@@ -851,6 +856,8 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 			warnx(_("id %d not found"), id);
 		return;
 	}
+
+	scols_table_set_name(tb, "sharedmemory");
 
 	for (shmdsp = shmds; shmdsp->next != NULL || id > -1 ; shmdsp = shmdsp->next) {
 		size_t n;
@@ -1194,7 +1201,7 @@ int main(int argc, char *argv[])
 			ctl->time_mode = parse_time_mode(optarg);
 			break;
 		case 'J':
-			ctl->json = 1;
+			ctl->outmode = OUT_JSON;
 			break;
 		case 't':
 			show_time = 1;
@@ -1265,6 +1272,10 @@ int main(int argc, char *argv[])
 	tb = setup_table(ctl);
 	if (!tb)
 		return EXIT_FAILURE;
+
+	if (global)
+		scols_table_set_name(tb, "ipclimits");
+
 	if (msg) {
 		if (global)
 			do_msg_global(tb);
