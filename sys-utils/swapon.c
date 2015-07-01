@@ -317,14 +317,13 @@ static int swap_reinitialize(const char *device,
 
 	default: /* parent */
 		do {
-			if ((ret = waitpid(pid, &status, 0)) < 0
-					&& errno == EINTR)
-				continue;
-			else if (ret < 0) {
-				warn(_("waitpid failed"));
-				return -1;
-			}
-		} while (0);
+			ret = waitpid(pid, &status, 0);
+		} while (ret == -1 && errno == EINTR);
+
+		if (ret < 0) {
+			warn(_("waitpid failed"));
+			return -1;
+		}
 
 		/* mkswap returns: 0=suss, 1=error */
 		if (WIFEXITED(status) && WEXITSTATUS(status)==0)
