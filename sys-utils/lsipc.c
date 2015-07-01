@@ -62,9 +62,13 @@ enum {
 		COL_OWNER,
 		COL_PERMS,
 		COL_CUID,
+		COL_CUSER,
 		COL_CGID,
+		COL_CGROUP,
 		COL_UID,
+		COL_USER,
 		COL_GID,
+		COL_GROUP,
 		COL_CTIME,
 	COLDESC_IDX_GEN_LAST = COL_CTIME,
 
@@ -152,10 +156,14 @@ static const struct lsipc_coldesc coldescs[] =
 	[COL_ID]	= { "ID",	N_("Resource ID"), N_("ID"), 1},
 	[COL_OWNER]	= { "OWNER",	N_("Owner"), N_("Owner"), 1, SCOLS_FL_RIGHT},
 	[COL_PERMS]	= { "PERMS",	N_("Permissions"), N_("Permissions"), 1, SCOLS_FL_RIGHT},
-	[COL_CUID]	= { "CUID",	N_("Creator UID"), N_("CUID"), 1, SCOLS_FL_RIGHT},
-	[COL_CGID]	= { "CGID",	N_("Creator GID"), N_("CGID"), 1, SCOLS_FL_RIGHT},
+	[COL_CUID]	= { "CUID",	N_("Creator UID"), N_("Creator UID"), 1, SCOLS_FL_RIGHT},
+	[COL_CUSER]     = { "CUSER",    N_("Creator user"), N_("Creator user"), 1 },
+	[COL_CGID]	= { "CGID",	N_("Creator GID"), N_("Creator GID"), 1, SCOLS_FL_RIGHT},
+	[COL_CGROUP]    = { "CGROUP",   N_("Creator group"), N_("Creator group"), 1 },
 	[COL_UID]	= { "UID",	N_("User ID"), N_("UID"), 1, SCOLS_FL_RIGHT},
+	[COL_USER]	= { "USER",	N_("User name"), N_("User name"), 1},
 	[COL_GID]	= { "GID",	N_("Group ID"), N_("GID"), 1, SCOLS_FL_RIGHT},
+	[COL_GROUP]	= { "GROUP",	N_("Group name"), N_("Group name"), 1},
 	[COL_CTIME]	= { "CTIME",	N_("Time of the last change"), N_("Last change"), 1, SCOLS_FL_RIGHT},
 
 	/* msgq-specific */
@@ -555,25 +563,34 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					rc = scols_line_set_data(ln, n, arg);
 					break;
 				case COL_CUID:
-					if (cpw)
-						xasprintf(&arg, "%s", cpw->pw_name);
-					else
-						xasprintf(&arg, "%u", semdsp->sem_perm.cuid);
+					xasprintf(&arg, "%u", semdsp->sem_perm.cuid);
 					rc = scols_line_set_data(ln, n, arg);
+					break;
+				case COL_CUSER:
+					if (cpw) {
+						xasprintf(&arg, "%s", cpw->pw_name);
+						rc = scols_line_set_data(ln, n, arg);
+					}
 					break;
 				case COL_CGID:
-					if (cgr)
-						xasprintf(&arg, "%s", cgr->gr_name);
-					else
-						xasprintf(&arg, "%u", semdsp->sem_perm.cuid);
+					xasprintf(&arg, "%u", semdsp->sem_perm.cuid);
 					rc = scols_line_set_data(ln, n, arg);
 					break;
+				case COL_CGROUP:
+					if (cgr) {
+						xasprintf(&arg, "%s", cgr->gr_name);
+						rc = scols_line_set_data(ln, n, arg);
+					}
+					break;
 				case COL_UID:
-					if (pw)
-						xasprintf(&arg, "%s", pw->pw_name);
-					else
-						xasprintf(&arg, "%u", semdsp->sem_perm.uid);
+					xasprintf(&arg, "%u", semdsp->sem_perm.uid);
 					rc = scols_line_set_data(ln, n, arg);
+					break;
+				case COL_USER:
+					if (pw) {
+						xasprintf(&arg, "%u", semdsp->sem_perm.uid);
+						rc = scols_line_set_data(ln, n, arg);
+					}
 					break;
 				case COL_GID:
 					if (gr)
@@ -581,6 +598,12 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					else
 						xasprintf(&arg, "%u", semdsp->sem_perm.gid);
 					rc = scols_line_set_data(ln, n, arg);
+					break;
+				case COL_GROUP:
+					if (gr) {
+						xasprintf(&arg, "%s", gr->gr_name);
+						rc = scols_line_set_data(ln, n, arg);
+					}
 					break;
 				case COL_CTIME:
 					if (semdsp->sem_ctime != 0) {
@@ -705,34 +728,48 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					}
 					break;
 				case COL_CUID:
-					if (msgdsp->msg_perm.cuid == msgdsp->msg_perm.uid
-					    || (pw = getpwuid(msgdsp->msg_perm.cuid)))
-						xasprintf(&arg, "%s", pw->pw_name);
-					else
-						xasprintf(&arg, "%u", msgdsp->msg_perm.cuid);
+					xasprintf(&arg, "%u", msgdsp->msg_perm.cuid);
 					rc = scols_line_set_data(ln, n, arg);
+					break;
+				case COL_CUSER:
+					if (msgdsp->msg_perm.cuid == msgdsp->msg_perm.uid
+					    || (pw = getpwuid(msgdsp->msg_perm.cuid))) {
+						xasprintf(&arg, "%s", pw->pw_name);
+						rc = scols_line_set_data(ln, n, arg);
+					}
 					break;
 				case COL_CGID:
-					if (msgdsp->msg_perm.cgid == msgdsp->msg_perm.gid
-					    || (gr = getgrgid(msgdsp->msg_perm.cgid)))
-						xasprintf(&arg, "%s", gr->gr_name);
-					else
-						xasprintf(&arg, "%u", msgdsp->msg_perm.cuid);
+					xasprintf(&arg, "%u", msgdsp->msg_perm.cuid);
 					rc = scols_line_set_data(ln, n, arg);
+					break;
+				case COL_CGROUP:
+					if (msgdsp->msg_perm.cgid == msgdsp->msg_perm.gid
+					    || (gr = getgrgid(msgdsp->msg_perm.cgid))) {
+						xasprintf(&arg, "%s", gr->gr_name);
+						rc = scols_line_set_data(ln, n, arg);
+
+					}
 					break;
 				case COL_UID:
-					if (pw)
-						xasprintf(&arg, "%s", pw->pw_name);
-					else
-						xasprintf(&arg, "%u", msgdsp->msg_perm.uid);
+					xasprintf(&arg, "%u", msgdsp->msg_perm.uid);
 					rc = scols_line_set_data(ln, n, arg);
 					break;
+				case COL_USER:
+					if (pw) {
+						xasprintf(&arg, "%s", pw->pw_name);
+						rc = scols_line_set_data(ln, n, arg);
+					}
+					break;
 				case COL_GID:
-					if (gr)
-						xasprintf(&arg, "%s", gr->gr_name);
-					else
-						xasprintf(&arg, "%u", msgdsp->msg_perm.gid);
+					xasprintf(&arg, "%u", msgdsp->msg_perm.gid);
 					rc = scols_line_set_data(ln, n, arg);
+					break;
+				case COL_GROUP:
+					if (gr) {
+						xasprintf(&arg, "%s", gr->gr_name);
+						rc = scols_line_set_data(ln, n, arg);
+
+					}
 					break;
 				case COL_CTIME:
 					if (msgdsp->q_ctime != 0) {
@@ -864,34 +901,46 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					rc = scols_line_set_data(ln, n, arg);
 					break;
 				case COL_CUID:
-					if (shmdsp->shm_perm.cuid == shmdsp->shm_perm.uid
-							|| (pw = getpwuid(shmdsp->shm_perm.cuid)))
-						xasprintf(&arg, "%s", pw->pw_name);
-					else
-						xasprintf(&arg, "%u", shmdsp->shm_perm.cuid);
+					xasprintf(&arg, "%u", shmdsp->shm_perm.cuid);
 					rc = scols_line_set_data(ln, n, arg);
+					break;
+				case COL_CUSER:
+					if (shmdsp->shm_perm.cuid == shmdsp->shm_perm.uid
+							|| (pw = getpwuid(shmdsp->shm_perm.cuid))) {
+						xasprintf(&arg, "%s", pw->pw_name);
+						rc = scols_line_set_data(ln, n, arg);
+					}
 					break;
 				case COL_CGID:
-					if (shmdsp->shm_perm.cgid == shmdsp->shm_perm.gid
-							|| (gr = getgrgid(shmdsp->shm_perm.cgid)))
-						xasprintf(&arg, "%s", gr->gr_name);
-					else
-						xasprintf(&arg, "%u", shmdsp->shm_perm.cuid);
+					xasprintf(&arg, "%u", shmdsp->shm_perm.cuid);
 					rc = scols_line_set_data(ln, n, arg);
+					break;
+				case COL_CGROUP:
+					if (shmdsp->shm_perm.cgid == shmdsp->shm_perm.gid
+							|| (gr = getgrgid(shmdsp->shm_perm.cgid))) {
+						xasprintf(&arg, "%s", gr->gr_name);
+						rc = scols_line_set_data(ln, n, arg);
+					}
 					break;
 				case COL_UID:
-					if (pw)
-						xasprintf(&arg, "%s", pw->pw_name);
-					else
-						xasprintf(&arg, "%u", shmdsp->shm_perm.uid);
+					xasprintf(&arg, "%u", shmdsp->shm_perm.uid);
 					rc = scols_line_set_data(ln, n, arg);
 					break;
+				case COL_USER:
+					if (pw) {
+						xasprintf(&arg, "%s", pw->pw_name);
+						rc = scols_line_set_data(ln, n, arg);
+					}
+					break;
 				case COL_GID:
-					if (gr)
-						xasprintf(&arg, "%s", gr->gr_name);
-					else
-						xasprintf(&arg, "%u", shmdsp->shm_perm.gid);
+					xasprintf(&arg, "%u", shmdsp->shm_perm.gid);
 					rc = scols_line_set_data(ln, n, arg);
+					break;
+				case COL_GROUP:
+					if (gr) {
+						xasprintf(&arg, "%s", gr->gr_name);
+						rc = scols_line_set_data(ln, n, arg);
+					}
 					break;
 				case COL_CTIME:
 					if (shmdsp->shm_ctim != 0) {
