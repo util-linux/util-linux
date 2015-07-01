@@ -104,9 +104,10 @@ enum {
 	COLDESC_IDX_SUM_FIRST,
 		COL_RESOURCE = COLDESC_IDX_SUM_FIRST,
 		COL_DESC,
-		COL_USED,
 		COL_LIMIT,
-	COLDESC_IDX_SUM_LAST = COL_LIMIT
+		COL_USED,
+		COL_USEPERC,
+	COLDESC_IDX_SUM_LAST = COL_USEPERC
 };
 
 /* not all columns apply to all options, so we specify a legal range for each */
@@ -186,6 +187,7 @@ static const struct lsipc_coldesc coldescs[] =
 	[COL_RESOURCE]  = { "RESOURCE", N_("Resource name"), N_("Resource"), 1 },
 	[COL_DESC]      = { "DESCRIPTION",N_("Resource description"), N_("Description"), 1 },
 	[COL_USED]      = { "USED",     N_("Currently used"), N_("Used"), 1, SCOLS_FL_RIGHT },
+	[COL_USEPERC]	= { "USE%",     N_("Currently use percentage"), N_("Use"), 1, SCOLS_FL_RIGHT },
 	[COL_LIMIT]     = { "LIMIT",    N_("System-wide limit"), N_("Limit"), 1, SCOLS_FL_RIGHT },
 };
 
@@ -490,6 +492,10 @@ static void global_set_data(struct libscols_table *tb, const char *resource,
 			break;
 		case COL_USED:
 			xasprintf(&arg, "%ju", used);
+			rc = scols_line_set_data(ln, n, arg);
+			break;
+		case COL_USEPERC:
+			xasprintf(&arg, "%2.2f%%", (double) used / limit * 100);
 			rc = scols_line_set_data(ln, n, arg);
 			break;
 		case COL_LIMIT:
@@ -1196,8 +1202,9 @@ int main(int argc, char *argv[])
 			global = 1;
 			add_column(columns, ncolumns++, COL_RESOURCE);
 			add_column(columns, ncolumns++, COL_DESC);
-			add_column(columns, ncolumns++, COL_USED);
 			add_column(columns, ncolumns++, COL_LIMIT);
+			add_column(columns, ncolumns++, COL_USED);
+			add_column(columns, ncolumns++, COL_USEPERC);
 			LOWER = COLDESC_IDX_SUM_FIRST;
 			UPPER = COLDESC_IDX_SUM_LAST;
 			break;
