@@ -538,93 +538,93 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 		for (n = 0; n < ncolumns; n++) {
 			int rc = 0;
 			switch (columns[n]) {
-				case COL_KEY:
-					xasprintf(&arg, "0x%08x",semdsp->sem_perm.key);
+			case COL_KEY:
+				xasprintf(&arg, "0x%08x",semdsp->sem_perm.key);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_ID:
+				xasprintf(&arg, "%d",semdsp->sem_perm.id);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_OWNER:
+				if (pw)
+					xasprintf(&arg, "%s", pw->pw_name);
+				else
+					xasprintf(&arg, "%u", semdsp->sem_perm.uid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_PERMS:
+				if (ctl->numperms)
+					xasprintf(&arg, "%#o", semdsp->sem_perm.mode & 0777);
+				else {
+					arg = xmalloc(11);
+					strmode(semdsp->sem_perm.mode & 0777, arg);
+				}
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_CUID:
+				xasprintf(&arg, "%u", semdsp->sem_perm.cuid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_CUSER:
+				if (cpw) {
+					xasprintf(&arg, "%s", cpw->pw_name);
 					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_ID:
-					xasprintf(&arg, "%d",semdsp->sem_perm.id);
+				}
+				break;
+			case COL_CGID:
+				xasprintf(&arg, "%u", semdsp->sem_perm.cuid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_CGROUP:
+				if (cgr) {
+					xasprintf(&arg, "%s", cgr->gr_name);
 					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_OWNER:
-					if (pw)
-						xasprintf(&arg, "%s", pw->pw_name);
-					else
-						xasprintf(&arg, "%u", semdsp->sem_perm.uid);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_PERMS:
-					if (ctl->numperms)
-						xasprintf(&arg, "%#o", semdsp->sem_perm.mode & 0777);
-					else {
-						arg = xmalloc(11);
-						strmode(semdsp->sem_perm.mode & 0777, arg);
-					}
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_CUID:
-					xasprintf(&arg, "%u", semdsp->sem_perm.cuid);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_CUSER:
-					if (cpw) {
-						xasprintf(&arg, "%s", cpw->pw_name);
-						rc = scols_line_set_data(ln, n, arg);
-					}
-					break;
-				case COL_CGID:
-					xasprintf(&arg, "%u", semdsp->sem_perm.cuid);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_CGROUP:
-					if (cgr) {
-						xasprintf(&arg, "%s", cgr->gr_name);
-						rc = scols_line_set_data(ln, n, arg);
-					}
-					break;
-				case COL_UID:
+				}
+				break;
+			case COL_UID:
+				xasprintf(&arg, "%u", semdsp->sem_perm.uid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_USER:
+				if (pw) {
 					xasprintf(&arg, "%u", semdsp->sem_perm.uid);
 					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_USER:
-					if (pw) {
-						xasprintf(&arg, "%u", semdsp->sem_perm.uid);
-						rc = scols_line_set_data(ln, n, arg);
-					}
-					break;
-				case COL_GID:
-					if (gr)
-						xasprintf(&arg, "%s", gr->gr_name);
-					else
-						xasprintf(&arg, "%u", semdsp->sem_perm.gid);
+				}
+				break;
+			case COL_GID:
+				if (gr)
+					xasprintf(&arg, "%s", gr->gr_name);
+				else
+					xasprintf(&arg, "%u", semdsp->sem_perm.gid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_GROUP:
+				if (gr) {
+					xasprintf(&arg, "%s", gr->gr_name);
 					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_GROUP:
-					if (gr) {
-						xasprintf(&arg, "%s", gr->gr_name);
-						rc = scols_line_set_data(ln, n, arg);
-					}
-					break;
-				case COL_CTIME:
-					if (semdsp->sem_ctime != 0) {
-						rc = scols_line_set_data(ln, n,
-							time = make_time(ctl->time_mode,
-								  (time_t)semdsp->sem_ctime));
-						free(time);
-					}
-					break;
-				case COL_NSEMS:
-					xasprintf(&arg, "%ju", semdsp->sem_nsems);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_OTIME:
-					if (semdsp->sem_otime != 0) {
-						rc = scols_line_set_data(ln, n,
-							time = make_time(ctl->time_mode,
-								  (time_t)semdsp->sem_otime));
-						free(time);
-					}
-					break;
+				}
+				break;
+			case COL_CTIME:
+				if (semdsp->sem_ctime != 0) {
+					rc = scols_line_set_data(ln, n,
+						time = make_time(ctl->time_mode,
+							  (time_t)semdsp->sem_ctime));
+					free(time);
+				}
+				break;
+			case COL_NSEMS:
+				xasprintf(&arg, "%ju", semdsp->sem_nsems);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_OTIME:
+				if (semdsp->sem_otime != 0) {
+					rc = scols_line_set_data(ln, n,
+						time = make_time(ctl->time_mode,
+							  (time_t)semdsp->sem_otime));
+					free(time);
+				}
+				break;
 			}
 			if (rc != 0)
 				err(EXIT_FAILURE, _("failed to set data"));
@@ -703,114 +703,114 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 			int rc = 0;
 
 			switch (columns[n]) {
-				case COL_KEY:
-					xasprintf(&arg, "0x%08x",msgdsp->msg_perm.key);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_ID:
-					xasprintf(&arg, "%d",msgdsp->msg_perm.id);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_OWNER:
-					if (pw)
-						xasprintf(&arg, "%s", pw->pw_name);
-					else
-						xasprintf(&arg, "%u", msgdsp->msg_perm.uid);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_PERMS:
-					if (ctl->numperms)
-						xasprintf(&arg, "%#o", msgdsp->msg_perm.mode & 0777);
-					else {
-						arg = xmalloc(11);
-						strmode(msgdsp->msg_perm.mode & 0777, arg);
-						rc = scols_line_set_data(ln, n, arg);
-					}
-					break;
-				case COL_CUID:
-					xasprintf(&arg, "%u", msgdsp->msg_perm.cuid);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_CUSER:
-					if (msgdsp->msg_perm.cuid == msgdsp->msg_perm.uid
-					    || (pw = getpwuid(msgdsp->msg_perm.cuid))) {
-						xasprintf(&arg, "%s", pw->pw_name);
-						rc = scols_line_set_data(ln, n, arg);
-					}
-					break;
-				case COL_CGID:
-					xasprintf(&arg, "%u", msgdsp->msg_perm.cuid);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_CGROUP:
-					if (msgdsp->msg_perm.cgid == msgdsp->msg_perm.gid
-					    || (gr = getgrgid(msgdsp->msg_perm.cgid))) {
-						xasprintf(&arg, "%s", gr->gr_name);
-						rc = scols_line_set_data(ln, n, arg);
-
-					}
-					break;
-				case COL_UID:
+			case COL_KEY:
+				xasprintf(&arg, "0x%08x",msgdsp->msg_perm.key);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_ID:
+				xasprintf(&arg, "%d",msgdsp->msg_perm.id);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_OWNER:
+				if (pw)
+					xasprintf(&arg, "%s", pw->pw_name);
+				else
 					xasprintf(&arg, "%u", msgdsp->msg_perm.uid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_PERMS:
+				if (ctl->numperms)
+					xasprintf(&arg, "%#o", msgdsp->msg_perm.mode & 0777);
+				else {
+					arg = xmalloc(11);
+					strmode(msgdsp->msg_perm.mode & 0777, arg);
 					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_USER:
-					if (pw) {
-						xasprintf(&arg, "%s", pw->pw_name);
-						rc = scols_line_set_data(ln, n, arg);
-					}
-					break;
-				case COL_GID:
-					xasprintf(&arg, "%u", msgdsp->msg_perm.gid);
+				}
+				break;
+			case COL_CUID:
+				xasprintf(&arg, "%u", msgdsp->msg_perm.cuid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_CUSER:
+				if (msgdsp->msg_perm.cuid == msgdsp->msg_perm.uid
+				    || (pw = getpwuid(msgdsp->msg_perm.cuid))) {
+					xasprintf(&arg, "%s", pw->pw_name);
 					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_GROUP:
-					if (gr) {
-						xasprintf(&arg, "%s", gr->gr_name);
-						rc = scols_line_set_data(ln, n, arg);
+				}
+				break;
+			case COL_CGID:
+				xasprintf(&arg, "%u", msgdsp->msg_perm.cuid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_CGROUP:
+				if (msgdsp->msg_perm.cgid == msgdsp->msg_perm.gid
+				    || (gr = getgrgid(msgdsp->msg_perm.cgid))) {
+					xasprintf(&arg, "%s", gr->gr_name);
+					rc = scols_line_set_data(ln, n, arg);
 
-					}
-					break;
-				case COL_CTIME:
-					if (msgdsp->q_ctime != 0) {
-						rc = scols_line_set_data(ln, n,
-							time = make_time(ctl->time_mode,
-								  (time_t)msgdsp->q_ctime));
-						free(time);
-					}
-					break;
-				case COL_USEDBYTES:
-					xasprintf(&arg, "%ju", msgdsp->q_cbytes);
+				}
+				break;
+			case COL_UID:
+				xasprintf(&arg, "%u", msgdsp->msg_perm.uid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_USER:
+				if (pw) {
+					xasprintf(&arg, "%s", pw->pw_name);
 					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_MSGS:
-					xasprintf(&arg, "%ju", msgdsp->q_qnum);
+				}
+				break;
+			case COL_GID:
+				xasprintf(&arg, "%u", msgdsp->msg_perm.gid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_GROUP:
+				if (gr) {
+					xasprintf(&arg, "%s", gr->gr_name);
 					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_SEND:
-					if (msgdsp->q_stime != 0) {
-						rc = scols_line_set_data(ln, n,
-							time = make_time(ctl->time_mode,
-								  (time_t)msgdsp->q_stime));
-						free(time);
-					}
-					break;
-				case COL_RECV:
-					if (msgdsp->q_rtime != 0) {
-						rc = scols_line_set_data(ln, n,
-							time = make_time(ctl->time_mode,
-								  (time_t)msgdsp->q_rtime));
-						free(time);
-					}
-					break;
-				case COL_LSPID:
-					xasprintf(&arg, "%u", msgdsp->q_lspid);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_LRPID:
-					xasprintf(&arg, "%u", msgdsp->q_lrpid);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
+
+				}
+				break;
+			case COL_CTIME:
+				if (msgdsp->q_ctime != 0) {
+					rc = scols_line_set_data(ln, n,
+						time = make_time(ctl->time_mode,
+							  (time_t)msgdsp->q_ctime));
+					free(time);
+				}
+				break;
+			case COL_USEDBYTES:
+				xasprintf(&arg, "%ju", msgdsp->q_cbytes);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_MSGS:
+				xasprintf(&arg, "%ju", msgdsp->q_qnum);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_SEND:
+				if (msgdsp->q_stime != 0) {
+					rc = scols_line_set_data(ln, n,
+						time = make_time(ctl->time_mode,
+							  (time_t)msgdsp->q_stime));
+					free(time);
+				}
+				break;
+			case COL_RECV:
+				if (msgdsp->q_rtime != 0) {
+					rc = scols_line_set_data(ln, n,
+						time = make_time(ctl->time_mode,
+							  (time_t)msgdsp->q_rtime));
+					free(time);
+				}
+				break;
+			case COL_LSPID:
+				xasprintf(&arg, "%u", msgdsp->q_lspid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_LRPID:
+				xasprintf(&arg, "%u", msgdsp->q_lrpid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
 			}
 			if (rc != 0)
 				err(EXIT_FAILURE, _("failed to set data"));
@@ -876,150 +876,150 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 			int rc = 0;
 
 			switch (columns[n]) {
-				case COL_KEY:
-					xasprintf(&arg, "0x%08x",shmdsp->shm_perm.key);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_ID:
-					xasprintf(&arg, "%d",shmdsp->shm_perm.id);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_OWNER:
-					if (pw)
-						xasprintf(&arg, "%s", pw->pw_name);
-					else
-						xasprintf(&arg, "%u", shmdsp->shm_perm.uid);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_PERMS:
-					if (ctl->numperms)
-						xasprintf(&arg, "%#o", shmdsp->shm_perm.mode & 0777);
-					else {
-						arg = xmalloc(11);
-						strmode(shmdsp->shm_perm.mode & 0777, arg);
-					}
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_CUID:
-					xasprintf(&arg, "%u", shmdsp->shm_perm.cuid);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_CUSER:
-					if (shmdsp->shm_perm.cuid == shmdsp->shm_perm.uid
-							|| (pw = getpwuid(shmdsp->shm_perm.cuid))) {
-						xasprintf(&arg, "%s", pw->pw_name);
-						rc = scols_line_set_data(ln, n, arg);
-					}
-					break;
-				case COL_CGID:
-					xasprintf(&arg, "%u", shmdsp->shm_perm.cuid);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_CGROUP:
-					if (shmdsp->shm_perm.cgid == shmdsp->shm_perm.gid
-							|| (gr = getgrgid(shmdsp->shm_perm.cgid))) {
-						xasprintf(&arg, "%s", gr->gr_name);
-						rc = scols_line_set_data(ln, n, arg);
-					}
-					break;
-				case COL_UID:
+			case COL_KEY:
+				xasprintf(&arg, "0x%08x",shmdsp->shm_perm.key);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_ID:
+				xasprintf(&arg, "%d",shmdsp->shm_perm.id);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_OWNER:
+				if (pw)
+					xasprintf(&arg, "%s", pw->pw_name);
+				else
 					xasprintf(&arg, "%u", shmdsp->shm_perm.uid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_PERMS:
+				if (ctl->numperms)
+					xasprintf(&arg, "%#o", shmdsp->shm_perm.mode & 0777);
+				else {
+					arg = xmalloc(11);
+					strmode(shmdsp->shm_perm.mode & 0777, arg);
+				}
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_CUID:
+				xasprintf(&arg, "%u", shmdsp->shm_perm.cuid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_CUSER:
+				if (shmdsp->shm_perm.cuid == shmdsp->shm_perm.uid
+						|| (pw = getpwuid(shmdsp->shm_perm.cuid))) {
+					xasprintf(&arg, "%s", pw->pw_name);
 					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_USER:
-					if (pw) {
-						xasprintf(&arg, "%s", pw->pw_name);
-						rc = scols_line_set_data(ln, n, arg);
-					}
-					break;
-				case COL_GID:
-					xasprintf(&arg, "%u", shmdsp->shm_perm.gid);
+				}
+				break;
+			case COL_CGID:
+				xasprintf(&arg, "%u", shmdsp->shm_perm.cuid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_CGROUP:
+				if (shmdsp->shm_perm.cgid == shmdsp->shm_perm.gid
+						|| (gr = getgrgid(shmdsp->shm_perm.cgid))) {
+					xasprintf(&arg, "%s", gr->gr_name);
 					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_GROUP:
-					if (gr) {
-						xasprintf(&arg, "%s", gr->gr_name);
-						rc = scols_line_set_data(ln, n, arg);
-					}
-					break;
-				case COL_CTIME:
-					if (shmdsp->shm_ctim != 0) {
-						rc = scols_line_set_data(ln, n,
-							time = make_time(ctl->time_mode,
-								  (time_t)shmdsp->shm_ctim));
-						free(time);
-					}
-					break;
-				case COL_SIZE:
-					if (ctl->bytes)
-						xasprintf(&arg, "%ju", shmdsp->shm_segsz);
-					else
-						arg = size_to_human_string(SIZE_SUFFIX_1LETTER, shmdsp->shm_segsz);
+				}
+				break;
+			case COL_UID:
+				xasprintf(&arg, "%u", shmdsp->shm_perm.uid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_USER:
+				if (pw) {
+					xasprintf(&arg, "%s", pw->pw_name);
 					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_NATTCH:
-					xasprintf(&arg, "%ju", shmdsp->shm_nattch);
+				}
+				break;
+			case COL_GID:
+				xasprintf(&arg, "%u", shmdsp->shm_perm.gid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_GROUP:
+				if (gr) {
+					xasprintf(&arg, "%s", gr->gr_name);
 					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_STATUS: {
-						int comma = 0;
-						size_t offt = 0;
-						free (arg);
-						arg = xcalloc(1, sizeof(char) * strlen(_("dest"))
-								+ strlen(_("locked"))
-								+ strlen(_("hugetlb"))
-								+ strlen(_("noreserve")) + 4);
+				}
+				break;
+			case COL_CTIME:
+				if (shmdsp->shm_ctim != 0) {
+					rc = scols_line_set_data(ln, n,
+						time = make_time(ctl->time_mode,
+							  (time_t)shmdsp->shm_ctim));
+					free(time);
+				}
+				break;
+			case COL_SIZE:
+				if (ctl->bytes)
+					xasprintf(&arg, "%ju", shmdsp->shm_segsz);
+				else
+					arg = size_to_human_string(SIZE_SUFFIX_1LETTER, shmdsp->shm_segsz);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_NATTCH:
+				xasprintf(&arg, "%ju", shmdsp->shm_nattch);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_STATUS: {
+					int comma = 0;
+					size_t offt = 0;
+					free (arg);
+					arg = xcalloc(1, sizeof(char) * strlen(_("dest"))
+							+ strlen(_("locked"))
+							+ strlen(_("hugetlb"))
+							+ strlen(_("noreserve")) + 4);
 
-						if (shmdsp->shm_perm.mode & SHM_DEST) {
-							offt += sprintf(arg, "%s", _("dest"));
-							comma++;
-						}
-						if (shmdsp->shm_perm.mode & SHM_LOCKED) {
-							if (comma)
-								arg[offt++] = ',';
-							offt += sprintf(arg + offt, "%s", _("locked"));
-						}
-						if (shmdsp->shm_perm.mode & SHM_HUGETLB) {
-							if (comma)
-								arg[offt++] = ',';
-							offt += sprintf(arg + offt, "%s", _("hugetlb"));
-						}
-						if (shmdsp->shm_perm.mode & SHM_NORESERVE) {
-							if (comma)
-								arg[offt++] = ',';
-							offt += sprintf(arg + offt, "%s", _("noreserve"));
-						}
-						rc = scols_line_set_data(ln, n, arg);
+					if (shmdsp->shm_perm.mode & SHM_DEST) {
+						offt += sprintf(arg, "%s", _("dest"));
+						comma++;
 					}
-					break;
-				case COL_ATTACH:
-					if (shmdsp->shm_atim != 0) {
-						rc = scols_line_set_data(ln, n,
-							time = make_time(ctl->time_mode,
-								  (time_t)shmdsp->shm_atim));
-						free(time);
+					if (shmdsp->shm_perm.mode & SHM_LOCKED) {
+						if (comma)
+							arg[offt++] = ',';
+						offt += sprintf(arg + offt, "%s", _("locked"));
 					}
-					break;
-				case COL_DETACH:
-					if (shmdsp->shm_dtim != 0) {
-						rc = scols_line_set_data(ln, n,
-							time = make_time(ctl->time_mode,
-								  (time_t)shmdsp->shm_dtim));
-						free(time);
+					if (shmdsp->shm_perm.mode & SHM_HUGETLB) {
+						if (comma)
+							arg[offt++] = ',';
+						offt += sprintf(arg + offt, "%s", _("hugetlb"));
 					}
-					break;
-				case COL_CPID:
-					xasprintf(&arg, "%u", shmdsp->shm_cprid);
+					if (shmdsp->shm_perm.mode & SHM_NORESERVE) {
+						if (comma)
+							arg[offt++] = ',';
+						offt += sprintf(arg + offt, "%s", _("noreserve"));
+					}
 					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_LPID:
-					xasprintf(&arg, "%u", shmdsp->shm_lprid);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
-				case COL_COMMAND:
-					arg = proc_get_command(shmdsp->shm_cprid);
-					rc = scols_line_set_data(ln, n, arg);
-					break;
+				}
+				break;
+			case COL_ATTACH:
+				if (shmdsp->shm_atim != 0) {
+					rc = scols_line_set_data(ln, n,
+						time = make_time(ctl->time_mode,
+							  (time_t)shmdsp->shm_atim));
+					free(time);
+				}
+				break;
+			case COL_DETACH:
+				if (shmdsp->shm_dtim != 0) {
+					rc = scols_line_set_data(ln, n,
+						time = make_time(ctl->time_mode,
+							  (time_t)shmdsp->shm_dtim));
+					free(time);
+				}
+				break;
+			case COL_CPID:
+				xasprintf(&arg, "%u", shmdsp->shm_cprid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_LPID:
+				xasprintf(&arg, "%u", shmdsp->shm_lprid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
+			case COL_COMMAND:
+				arg = proc_get_command(shmdsp->shm_cprid);
+				rc = scols_line_set_data(ln, n, arg);
+				break;
 			}
 			if (rc != 0)
 				err(EXIT_FAILURE, _("failed to set data"));
@@ -1117,107 +1117,107 @@ int main(int argc, char *argv[])
 		err_exclusive_options(opt, longopts, excl, excl_st);
 
 		switch (opt) {
-			case 'b':
-				ctl->bytes = 1;
-				break;
-			case 'i':
-				id = strtos32_or_err(optarg, _("failed to parse IPC identifier"));
-				outmode = OUT_PRETTY;
-				break;
-			case OPT_COLON:
-				outmode = OUT_COLON;
-				break;
-			case 'e':
-				outmode = OUT_EXPORT;
-				break;
-			case 'r':
-				outmode = OUT_RAW;
-				break;
-			case 'o':
-				outarg = optarg;
-				break;
-			case 'g':
-				global = 1;
-				add_column(columns, ncolumns++, COL_RESOURCE);
-				add_column(columns, ncolumns++, COL_DESC);
-				add_column(columns, ncolumns++, COL_USED);
-				add_column(columns, ncolumns++, COL_LIMIT);
-				LOWER = COLDESC_IDX_SUM_FIRST;
-				UPPER = COLDESC_IDX_SUM_LAST;
-				break;
-			case 'q':
-				msg = 1;
-				add_column(columns, ncolumns++, COL_KEY);
-				add_column(columns, ncolumns++, COL_ID);
-				add_column(columns, ncolumns++, COL_PERMS);
-				add_column(columns, ncolumns++, COL_OWNER);
-				add_column(columns, ncolumns++, COL_USEDBYTES);
-				add_column(columns, ncolumns++, COL_MSGS);
-				add_column(columns, ncolumns++, COL_LSPID);
-				add_column(columns, ncolumns++, COL_LRPID);
-				LOWER = COLDESC_IDX_MSG_FIRST;
-				UPPER = COLDESC_IDX_MSG_LAST;
-				break;
-			case 'm':
-				shm = 1;
-				add_column(columns, ncolumns++, COL_KEY);
-				add_column(columns, ncolumns++, COL_ID);
-				add_column(columns, ncolumns++, COL_PERMS);
-				add_column(columns, ncolumns++, COL_OWNER);
-				add_column(columns, ncolumns++, COL_SIZE);
-				add_column(columns, ncolumns++, COL_NATTCH);
-				add_column(columns, ncolumns++, COL_STATUS);
-				add_column(columns, ncolumns++, COL_CTIME);
-				add_column(columns, ncolumns++, COL_CPID);
-				add_column(columns, ncolumns++, COL_LPID);
-				add_column(columns, ncolumns++, COL_COMMAND);
-				LOWER = COLDESC_IDX_SHM_FIRST;
-				UPPER = COLDESC_IDX_SHM_LAST;
-				break;
-			case 'n':
-				outmode = OUT_NEWLINE;
-				break;
-			case 'P':
-				ctl->numperms = 1;
-				break;
-			case 's':
-				sem = 1;
-				add_column(columns, ncolumns++, COL_KEY);
-				add_column(columns, ncolumns++, COL_ID);
-				add_column(columns, ncolumns++, COL_PERMS);
-				add_column(columns, ncolumns++, COL_OWNER);
-				add_column(columns, ncolumns++, COL_NSEMS);
-				LOWER = COLDESC_IDX_SEM_FIRST;
-				UPPER = COLDESC_IDX_SEM_LAST;
-				break;
-			case OPT_NOTRUNC:
-				ctl->notrunc = 1;
-				break;
-			case OPT_NOHEAD:
-				ctl->noheadings = 1;
-				break;
-			case OPT_TIME_FMT:
-				ctl->time_mode = parse_time_mode(optarg);
-				break;
-			case 'J':
-				ctl->json = 1;
-				break;
-			case 't':
-				show_time = 1;
-				break;
-			case 'c':
-				show_creat = 1;
-				break;
-			case 'h':
-				usage(stdout);
-			case 'V':
-				printf(UTIL_LINUX_VERSION);
-				return EXIT_SUCCESS;
-			case 'z':
-				outmode = OUT_NUL;
-				break;
-			default:
-				usage(stderr);
+		case 'b':
+			ctl->bytes = 1;
+			break;
+		case 'i':
+			id = strtos32_or_err(optarg, _("failed to parse IPC identifier"));
+			outmode = OUT_PRETTY;
+			break;
+		case OPT_COLON:
+			outmode = OUT_COLON;
+			break;
+		case 'e':
+			outmode = OUT_EXPORT;
+			break;
+		case 'r':
+			outmode = OUT_RAW;
+			break;
+		case 'o':
+			outarg = optarg;
+			break;
+		case 'g':
+			global = 1;
+			add_column(columns, ncolumns++, COL_RESOURCE);
+			add_column(columns, ncolumns++, COL_DESC);
+			add_column(columns, ncolumns++, COL_USED);
+			add_column(columns, ncolumns++, COL_LIMIT);
+			LOWER = COLDESC_IDX_SUM_FIRST;
+			UPPER = COLDESC_IDX_SUM_LAST;
+			break;
+		case 'q':
+			msg = 1;
+			add_column(columns, ncolumns++, COL_KEY);
+			add_column(columns, ncolumns++, COL_ID);
+			add_column(columns, ncolumns++, COL_PERMS);
+			add_column(columns, ncolumns++, COL_OWNER);
+			add_column(columns, ncolumns++, COL_USEDBYTES);
+			add_column(columns, ncolumns++, COL_MSGS);
+			add_column(columns, ncolumns++, COL_LSPID);
+			add_column(columns, ncolumns++, COL_LRPID);
+			LOWER = COLDESC_IDX_MSG_FIRST;
+			UPPER = COLDESC_IDX_MSG_LAST;
+			break;
+		case 'm':
+			shm = 1;
+			add_column(columns, ncolumns++, COL_KEY);
+			add_column(columns, ncolumns++, COL_ID);
+			add_column(columns, ncolumns++, COL_PERMS);
+			add_column(columns, ncolumns++, COL_OWNER);
+			add_column(columns, ncolumns++, COL_SIZE);
+			add_column(columns, ncolumns++, COL_NATTCH);
+			add_column(columns, ncolumns++, COL_STATUS);
+			add_column(columns, ncolumns++, COL_CTIME);
+			add_column(columns, ncolumns++, COL_CPID);
+			add_column(columns, ncolumns++, COL_LPID);
+			add_column(columns, ncolumns++, COL_COMMAND);
+			LOWER = COLDESC_IDX_SHM_FIRST;
+			UPPER = COLDESC_IDX_SHM_LAST;
+			break;
+		case 'n':
+			outmode = OUT_NEWLINE;
+			break;
+		case 'P':
+			ctl->numperms = 1;
+			break;
+		case 's':
+			sem = 1;
+			add_column(columns, ncolumns++, COL_KEY);
+			add_column(columns, ncolumns++, COL_ID);
+			add_column(columns, ncolumns++, COL_PERMS);
+			add_column(columns, ncolumns++, COL_OWNER);
+			add_column(columns, ncolumns++, COL_NSEMS);
+			LOWER = COLDESC_IDX_SEM_FIRST;
+			UPPER = COLDESC_IDX_SEM_LAST;
+			break;
+		case OPT_NOTRUNC:
+			ctl->notrunc = 1;
+			break;
+		case OPT_NOHEAD:
+			ctl->noheadings = 1;
+			break;
+		case OPT_TIME_FMT:
+			ctl->time_mode = parse_time_mode(optarg);
+			break;
+		case 'J':
+			ctl->json = 1;
+			break;
+		case 't':
+			show_time = 1;
+			break;
+		case 'c':
+			show_creat = 1;
+			break;
+		case 'h':
+			usage(stdout);
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
+		case 'z':
+			outmode = OUT_NUL;
+			break;
+		default:
+			usage(stderr);
 		}
 	}
 
