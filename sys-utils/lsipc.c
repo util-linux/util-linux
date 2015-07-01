@@ -193,7 +193,7 @@ static const struct lsipc_coldesc coldescs[] =
  * column twice. That's enough, dynamically allocated array of the columns is
  * unnecessary overkill and over-engineering in this case */
 static int columns[ARRAY_SIZE(coldescs) * 2];
-static int ncolumns;
+static size_t ncolumns;
 
 static inline size_t err_columns_index(size_t arysz, size_t idx)
 {
@@ -316,7 +316,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 static struct libscols_table *setup_table(struct lsipc_control *ctl)
 {
 	struct libscols_table *table = scols_new_table();
-	int n = 0;
+	size_t n;
 
 	if (!table)
 		errx(EXIT_FAILURE, _("failed to initialize output table"));
@@ -348,7 +348,7 @@ static struct libscols_table *setup_table(struct lsipc_control *ctl)
 		break;
 	}
 
-	while (n < ncolumns) {
+	for (n = 0; n < ncolumns; n++) {
 		int flags = coldescs[columns[n]].flag;
 
 		if (ctl->notrunc)
@@ -359,7 +359,6 @@ static struct libscols_table *setup_table(struct lsipc_control *ctl)
 				coldescs[columns[n]].whint,
 				flags))
 			goto fail;
-		++n;
 	}
 	return table;
 fail:
@@ -462,7 +461,7 @@ static void global_set_data(struct libscols_table *tb, const char *resource,
 			    const char *desc, uintmax_t used, uintmax_t limit)
 {
 	struct libscols_line *ln;
-	int n;
+	size_t n;
 
 	ln = scols_table_new_line(tb, NULL);
 	if (!ln)
@@ -497,7 +496,6 @@ static void global_set_data(struct libscols_table *tb, const char *resource,
 
 static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 {
-	int n = 0;
 	struct libscols_line *ln;
 	struct passwd *pw = NULL, *cpw = NULL;
 	struct group *gr = NULL, *cgr = NULL;
@@ -510,6 +508,7 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 		return;
 	}
 	for (semdsp = semds;  semdsp->next != NULL || id > -1; semdsp = semdsp->next) {
+		size_t n;
 		ln = scols_table_new_line(tb, NULL);
 
 		/* no need to call getpwuid() for the same user */
@@ -527,10 +526,9 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 		/* no need to call getcgrgid() for the same cgroup */
 		if (!(cgr && cgr->gr_gid == semdsp->sem_perm.cgid))
 			cgr = getgrgid(semdsp->sem_perm.cgid);
-		n = 0;
-		while (n < ncolumns) {
-			int rc = 0;
 
+		for (n = 0; n < ncolumns; n++) {
+			int rc = 0;
 			switch (columns[n]) {
 				case COL_KEY:
 					xasprintf(&arg, "0x%08x",semdsp->sem_perm.key);
@@ -607,7 +605,6 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 			}
 			if (rc != 0)
 				err(EXIT_FAILURE, _("failed to set data"));
-			++n;
 			free(arg);
 			arg = NULL;
 		}
@@ -655,7 +652,6 @@ static void do_sem_global(struct libscols_table *tb)
 
 static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 {
-	int n = 0;
 	struct libscols_line *ln;
 	struct passwd *pw = NULL;
 	struct group *gr = NULL;
@@ -669,7 +665,7 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 	}
 
 	for (msgdsp = msgds; msgdsp->next != NULL || id > -1 ; msgdsp = msgdsp->next) {
-
+		size_t n;
 		ln = scols_table_new_line(tb, NULL);
 
 		/* no need to call getpwuid() for the same user */
@@ -680,8 +676,7 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 		if (!(gr && gr->gr_gid == msgdsp->msg_perm.gid))
 			gr = getgrgid(msgdsp->msg_perm.gid);
 
-		n = 0;
-		while (n < ncolumns) {
+		for (n = 0; n < ncolumns; n++) {
 			int rc = 0;
 
 			switch (columns[n]) {
@@ -782,7 +777,6 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 			}
 			if (rc != 0)
 				err(EXIT_FAILURE, _("failed to set data"));
-			++n;
 			free(arg);
 			arg = NULL;
 		}
@@ -815,7 +809,6 @@ static void do_msg_global(struct libscols_table *tb)
 
 static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 {
-	int n = 0;
 	struct libscols_line *ln;
 	struct passwd *pw = NULL;
 	struct group *gr = NULL;
@@ -829,7 +822,7 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 	}
 
 	for (shmdsp = shmds; shmdsp->next != NULL || id > -1 ; shmdsp = shmdsp->next) {
-
+		size_t n;
 		ln = scols_table_new_line(tb, NULL);
 		if (!ln)
 			err_oom();
@@ -842,8 +835,7 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 		if (!(gr && gr->gr_gid == shmdsp->shm_perm.gid))
 			gr = getgrgid(shmdsp->shm_perm.gid);
 
-		n = 0;
-		while (n < ncolumns) {
+		for (n = 0; n < ncolumns; n++) {
 			int rc = 0;
 
 			switch (columns[n]) {
@@ -982,7 +974,6 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 			}
 			if (rc != 0)
 				err(EXIT_FAILURE, _("failed to set data"));
-			++n;
 			free(arg);
 			arg = NULL;
 		}
@@ -1015,12 +1006,12 @@ static void do_shm_global(struct libscols_table *tb)
 
 int main(int argc, char *argv[])
 {
-	int opt, msg = 0, sem = 0, shm = 0, opt_o = 0, id = -1;
+	int opt, msg = 0, sem = 0, shm = 0, id = -1;
 	int show_time = 0, show_creat = 0, global = 0;
 	size_t i;
 	struct lsipc_control *ctl = xcalloc(1, sizeof(struct lsipc_control));
 	static struct libscols_table *tb;
-	char *opts = NULL;
+	char *outarg = NULL;
 
 	/* long only options. */
 	enum {
@@ -1094,25 +1085,43 @@ int main(int argc, char *argv[])
 				outmode = OUT_RAW;
 				break;
 			case 'o':
-				if (optarg) {
-					if (*optarg == '=')
-						optarg++;
-					opts = xstrdup(optarg);
-				}
-				opt_o = 1;
+				outarg = optarg;
 				break;
 			case 'g':
 				global = 1;
+				add_column(columns, ncolumns++, COL_RESOURCE);
+				add_column(columns, ncolumns++, COL_DESC);
+				add_column(columns, ncolumns++, COL_USED);
+				add_column(columns, ncolumns++, COL_LIMIT);
 				LOWER = COLDESC_IDX_SUM_FIRST;
 				UPPER = COLDESC_IDX_SUM_LAST;
 				break;
 			case 'q':
 				msg = 1;
+				add_column(columns, ncolumns++, COL_KEY);
+				add_column(columns, ncolumns++, COL_ID);
+				add_column(columns, ncolumns++, COL_PERMS);
+				add_column(columns, ncolumns++, COL_OWNER);
+				add_column(columns, ncolumns++, COL_USEDBYTES);
+				add_column(columns, ncolumns++, COL_MSGS);
+				add_column(columns, ncolumns++, COL_LSPID);
+				add_column(columns, ncolumns++, COL_LRPID);
 				LOWER = COLDESC_IDX_MSG_FIRST;
 				UPPER = COLDESC_IDX_MSG_LAST;
 				break;
 			case 'm':
 				shm = 1;
+				add_column(columns, ncolumns++, COL_KEY);
+				add_column(columns, ncolumns++, COL_ID);
+				add_column(columns, ncolumns++, COL_PERMS);
+				add_column(columns, ncolumns++, COL_OWNER);
+				add_column(columns, ncolumns++, COL_SIZE);
+				add_column(columns, ncolumns++, COL_NATTCH);
+				add_column(columns, ncolumns++, COL_STATUS);
+				add_column(columns, ncolumns++, COL_CTIME);
+				add_column(columns, ncolumns++, COL_CPID);
+				add_column(columns, ncolumns++, COL_LPID);
+				add_column(columns, ncolumns++, COL_COMMAND);
 				LOWER = COLDESC_IDX_SHM_FIRST;
 				UPPER = COLDESC_IDX_SHM_LAST;
 				break;
@@ -1124,6 +1133,11 @@ int main(int argc, char *argv[])
 				break;
 			case 's':
 				sem = 1;
+				add_column(columns, ncolumns++, COL_KEY);
+				add_column(columns, ncolumns++, COL_ID);
+				add_column(columns, ncolumns++, COL_PERMS);
+				add_column(columns, ncolumns++, COL_OWNER);
+				add_column(columns, ncolumns++, COL_NSEMS);
 				LOWER = COLDESC_IDX_SEM_FIRST;
 				UPPER = COLDESC_IDX_SEM_LAST;
 				break;
@@ -1160,83 +1174,51 @@ int main(int argc, char *argv[])
 
 	if (msg + shm + sem != 1 && !global)
 		errx (EXIT_FAILURE,
-		      _("One of --shmems, --queues or --semaphores must be specified"));
+		      _("One of --shmems, --queues, --semaphores or --glocal must be specified"));
+
 	if (global && msg + shm + sem == 0)
 		msg = shm = sem = 1;
 
-	if (global && !opt_o) {
-		add_column(columns, ncolumns++, COL_RESOURCE);
-		add_column(columns, ncolumns++, COL_DESC);
-		add_column(columns, ncolumns++, COL_USED);
-		add_column(columns, ncolumns++, COL_LIMIT);
-	} else if (opt_o) {
-		ncolumns = string_to_idarray(opts,
-				columns, ARRAY_SIZE(columns),
-				column_name_to_id);
-		if (ncolumns < 0)
-			return EXIT_FAILURE;
+	if (outmode == OUT_PRETTY && !optarg) {
+		/* all columns for lsipc --<RESOURCE> --id <ID> */
+		for (ncolumns = 0, i = 0; i < ARRAY_SIZE(coldescs); i++)
+			 columns[ncolumns++] = i;
 	} else {
-		if (outmode == OUT_PRETTY) {
-			/* all columns for lsipc --<RESOURCE> --id <ID> */
-			for (ncolumns = 0, i = 0; i < ARRAY_SIZE(coldescs); i++)
-				 columns[ncolumns++] = i;
-		} else {
-			/* default columns */
-			add_column(columns, ncolumns++, COL_KEY);
-			add_column(columns, ncolumns++, COL_ID);
-			add_column(columns, ncolumns++, COL_PERMS);
-			add_column(columns, ncolumns++, COL_OWNER);
+		if (show_creat) {
+			add_column(columns, ncolumns++, COL_CUID);
+			add_column(columns, ncolumns++, COL_CGID);
+			add_column(columns, ncolumns++, COL_UID);
+			add_column(columns, ncolumns++, COL_GID);
+		}
+		if (msg && show_time) {
+			add_column(columns, ncolumns++, COL_SEND);
+			add_column(columns, ncolumns++, COL_RECV);
+			add_column(columns, ncolumns++, COL_CTIME);
+		}
+		if (shm && show_time) {
+			/* keep "COMMAND" as last column */
+			size_t cmd = columns[ncolumns - 1] == COL_COMMAND;
 
-			if (show_creat) {
-				add_column(columns, ncolumns++, COL_CUID);
-				add_column(columns, ncolumns++, COL_CGID);
-				add_column(columns, ncolumns++, COL_UID);
-				add_column(columns, ncolumns++, COL_GID);
-			}
-
-			if (msg) {
-				add_column(columns, ncolumns++, COL_USEDBYTES);
-				add_column(columns, ncolumns++, COL_MSGS);
-
-				if (show_time) {
-					add_column(columns, ncolumns++, COL_SEND);
-					add_column(columns, ncolumns++, COL_RECV);
-					add_column(columns, ncolumns++, COL_CTIME);
-				}
-
-				add_column(columns, ncolumns++, COL_LSPID);
-				add_column(columns, ncolumns++, COL_LRPID);
-			}
-			else if (shm) {
-				add_column(columns, ncolumns++, COL_SIZE);
-				add_column(columns, ncolumns++, COL_NATTCH);
-				add_column(columns, ncolumns++, COL_STATUS);
-
-				if (show_time) {
-					add_column(columns, ncolumns++, COL_ATTACH);
-					add_column(columns, ncolumns++, COL_DETACH);
-				}
-				add_column(columns, ncolumns++, COL_CTIME);
-
-				add_column(columns, ncolumns++, COL_CPID);
-				add_column(columns, ncolumns++, COL_LPID);
+			if (cmd)
+				ncolumns--;
+			add_column(columns, ncolumns++, COL_ATTACH);
+			add_column(columns, ncolumns++, COL_DETACH);
+			if (cmd)
 				add_column(columns, ncolumns++, COL_COMMAND);
-			}
-			else if (sem) {
-				add_column(columns, ncolumns++, COL_NSEMS);
-
-				if (show_time) {
-					add_column(columns, ncolumns++, COL_OTIME);
-					add_column(columns, ncolumns++, COL_CTIME);
-				}
-			}
+		}
+		if (sem && show_time) {
+			add_column(columns, ncolumns++, COL_OTIME);
+			add_column(columns, ncolumns++, COL_CTIME);
 		}
 	}
+
+	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
+					 &ncolumns, column_name_to_id) < 0)
+		return EXIT_FAILURE;
 
 	tb = setup_table(ctl);
 	if (!tb)
 		return EXIT_FAILURE;
-
 	if (msg) {
 		if (global)
 			do_msg_global(tb);
