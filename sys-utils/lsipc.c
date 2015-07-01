@@ -109,13 +109,6 @@ enum {
 	COLDESC_IDX_SUM_LAST = COL_LIMIT
 };
 
-/* we use the value of outmode to determine
- * appropriate flags for the libsmartcols table
- * (e.g., a value of out_newline would imply a raw
- * table with the column separator set to '\n').
- */
-static int outmode;
-
 /* not all columns apply to all options, so we specify a legal range for each */
 static size_t LOWER, UPPER;
 
@@ -132,6 +125,7 @@ enum {
 };
 
 struct lsipc_control {
+	int outmode;
 	unsigned int noheadings : 1,		/* don't print header line */
 		     notrunc : 1,		/* don't truncate columns */
 		     json : 1,			/* JSON output */
@@ -333,7 +327,7 @@ static struct libscols_table *setup_table(struct lsipc_control *ctl)
 	if (ctl->json)
 		scols_table_enable_json(table, 1);
 
-	switch(outmode) {
+	switch(ctl->outmode) {
 	case OUT_COLON:
 		scols_table_enable_raw(table, 1);
 		scols_table_set_column_separator(table, ":");
@@ -410,9 +404,9 @@ static int print_pretty(struct libscols_table *table)
 
 }
 
-static int print_table(struct libscols_table *tb)
+static int print_table(struct lsipc_control *ctl, struct libscols_table *tb)
 {
-	if (outmode == OUT_PRETTY)
+	if (ctl->outmode == OUT_PRETTY)
 		print_pretty(tb);
 	else
 		scols_print_table(tb);
@@ -1122,16 +1116,16 @@ int main(int argc, char *argv[])
 			break;
 		case 'i':
 			id = strtos32_or_err(optarg, _("failed to parse IPC identifier"));
-			outmode = OUT_PRETTY;
+			ctl->outmode = OUT_PRETTY;
 			break;
 		case OPT_COLON:
-			outmode = OUT_COLON;
+			ctl->outmode = OUT_COLON;
 			break;
 		case 'e':
-			outmode = OUT_EXPORT;
+			ctl->outmode = OUT_EXPORT;
 			break;
 		case 'r':
-			outmode = OUT_RAW;
+			ctl->outmode = OUT_RAW;
 			break;
 		case 'o':
 			outarg = optarg;
@@ -1175,7 +1169,7 @@ int main(int argc, char *argv[])
 			UPPER = COLDESC_IDX_SHM_LAST;
 			break;
 		case 'n':
-			outmode = OUT_NEWLINE;
+			ctl->outmode = OUT_NEWLINE;
 			break;
 		case 'P':
 			ctl->numperms = 1;
@@ -1214,7 +1208,7 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'z':
-			outmode = OUT_NUL;
+			ctl->outmode = OUT_NUL;
 			break;
 		default:
 			usage(stderr);
@@ -1229,9 +1223,9 @@ int main(int argc, char *argv[])
 		msg = shm = sem = 1;
 
 	if (!ctl->time_mode)
-		ctl->time_mode = outmode == OUT_PRETTY ? TIME_FULL : TIME_SHORT;
+		ctl->time_mode = ctl->outmode == OUT_PRETTY ? TIME_FULL : TIME_SHORT;
 
-	if (outmode == OUT_PRETTY && !optarg) {
+	if (ctl->outmode == OUT_PRETTY && !optarg) {
 		/* all columns for lsipc --<RESOURCE> --id <ID> */
 		for (ncolumns = 0, i = 0; i < ARRAY_SIZE(coldescs); i++)
 			 columns[ncolumns++] = i;
@@ -1290,7 +1284,7 @@ int main(int argc, char *argv[])
 			do_sem(id, ctl, tb);
 	}
 
-	print_table(tb);
+	print_table(ctl, tb);
 
 	scols_unref_table(tb);
 	free(ctl);
