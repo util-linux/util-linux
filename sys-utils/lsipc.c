@@ -315,10 +315,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static struct libscols_table *setup_table(struct lsipc_control *ctl)
+static struct libscols_table *new_table(struct lsipc_control *ctl)
 {
 	struct libscols_table *table = scols_new_table();
-	size_t n;
 
 	if (!table)
 		errx(EXIT_FAILURE, _("failed to initialize output table"));
@@ -351,6 +350,13 @@ static struct libscols_table *setup_table(struct lsipc_control *ctl)
 	default:
 		break;
 	}
+	return table;
+}
+
+static struct libscols_table *setup_table(struct lsipc_control *ctl)
+{
+	struct libscols_table *table = new_table(ctl);
+	size_t n;
 
 	for (n = 0; n < ncolumns; n++) {
 		int flags = coldescs[columns[n]].flag;
@@ -376,7 +382,7 @@ static int print_pretty(struct libscols_table *table)
 	struct libscols_column *col;
 	struct libscols_cell *data;
 	struct libscols_line *ln;
-	const char *hstr, *dstr, *estr;
+	const char *hstr, *dstr;
 	int n = 0;
 
 	ln = scols_table_get_line(table, 0);
@@ -394,10 +400,10 @@ static int print_pretty(struct libscols_table *table)
 
 	/* this is used to pretty-print detailed info about a semaphore array */
 	if (ln) {
-		estr = scols_line_get_userdata(ln);
-		if (estr) {
-			printf("%s", (const char *)estr);
-			free((void *)estr);
+		struct libscols_table *subtab = scols_line_get_userdata(ln);
+		if (subtab) {
+			printf(_("Elements:\n\n"));
+			scols_print_table(subtab);
 		}
 	}
 
@@ -496,6 +502,23 @@ static void global_set_data(struct libscols_table *tb, const char *resource,
 			err(EXIT_FAILURE, _("failed to set data"));
 		free(arg);
 	}
+}
+
+static void setup_sem_elements_columns(struct libscols_table *tb)
+{
+	scols_table_set_name(tb, "elements");
+	if (!scols_table_new_column(tb, "SEMNUM", 0, SCOLS_FL_RIGHT))
+		err_oom();
+	if (!scols_table_new_column(tb, "VALUE", 0, SCOLS_FL_RIGHT))
+		err_oom();
+	if (!scols_table_new_column(tb, "NCOUNT", 0, SCOLS_FL_RIGHT))
+		err_oom();
+	if (!scols_table_new_column(tb, "ZCOUNT", 0, SCOLS_FL_RIGHT))
+		err_oom();
+	if (!scols_table_new_column(tb, "PID", 0, SCOLS_FL_RIGHT))
+		err_oom();
+	if (!scols_table_new_column(tb, "COMMAND", 0, SCOLS_FL_RIGHT))
+		err_oom();
 }
 
 static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
@@ -629,22 +652,51 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 			free(arg);
 			arg = NULL;
 		}
-		/* no empty element when ID was specified */
-		if (id > -1) {
-			size_t i = 0, offt;
-			/* line length * (header + nsems) + '\0' */
-			char *data = xcalloc(1, sizeof(char) * 55 * (semds->sem_nsems + 1) + 1);
 
-			/* same as in ipcs.c */
-			offt = sprintf(data, "%-10s %-10s %-10s %-10s %-10s\n",
-			       _("semnum"), _("value"), _("ncount"), _("zcount"), _("pid"));
+		if (id > -1 && semds->sem_nsems) {
+			/* Create extra table with ID specific semaphore elements */
+			struct libscols_table *sub = new_table(ctl);
+			size_t i;
+
+			scols_table_enable_noheadings(sub, 0);
+			setup_sem_elements_columns(sub);
 
 			for (i = 0; i < semds->sem_nsems; i++) {
 				struct sem_elem *e = &semds->elements[i];
-				offt += sprintf(data + offt, "%-10zd %-10d %-10d %-10d %-10d\n",
-				       i, e->semval, e->ncount, e->zcount, e->pid);
+				struct libscols_line *sln = scols_table_new_line(sub, NULL);
+
+				/* SEMNUM */
+				xasprintf(&arg, "%zu", i);
+				scols_line_set_data(sln, 0, arg);
+				free(arg);
+
+				/* VALUE */
+				xasprintf(&arg, "%d", e->semval);
+				scols_line_set_data(sln, 1, arg);
+				free(arg);
+
+				/* NCOUNT */
+				xasprintf(&arg, "%d", e->ncount);
+				scols_line_set_data(sln, 2, arg);
+				free(arg);
+
+				/* ZCOUNT */
+				xasprintf(&arg, "%d", e->zcount);
+				scols_line_set_data(sln, 3, arg);
+				free(arg);
+
+				/* PID */
+				xasprintf(&arg, "%d", e->pid);
+				scols_line_set_data(sln, 4, arg);
+				free(arg);
+
+				/* COMMAND */
+				arg = proc_get_command(e->pid);
+				scols_line_set_data(sln, 5, arg);
+				free(arg);
 			}
-			scols_line_set_userdata(ln, (void *)data);
+
+			scols_line_set_userdata(ln, (void *)sub);
 			break;
 		}
 	}
@@ -1099,6 +1151,7 @@ int main(int argc, char *argv[])
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'J', 'e', 'n', 'r', 'z', OPT_COLON },
+		{ 'J', 'i' },
 		{ 'c', 'g', 'i', 't' },
 		{ 'c', 'i', 'o', 't' },
 		{ 'm', 'q', 's' },
@@ -1112,6 +1165,8 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	ctl->time_mode = 0;
+
+	scols_init_debug(0);
 
 	while ((opt = getopt_long(argc, argv, "bceghi:Jmno:PqrstuVz", longopts, NULL)) != -1) {
 
