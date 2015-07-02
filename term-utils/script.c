@@ -322,20 +322,17 @@ static void handle_io(struct script_control *ctl, int fd, int *eof)
 
 	DBG(IO, ul_debug("%d FD active", fd));
 	*eof = 0;
-	errno = 0;
 
 	/* read from active FD */
 	bytes = read(fd, buf, sizeof(buf));
 	if (bytes < 0) {
-		DBG(IO, ul_debug(" read failed"));
 		if (errno == EAGAIN || errno == EINTR)
 			return;
 		fail(ctl);
 	}
 
 	if (bytes == 0) {
-		if (errno == 0)
-			*eof = 1;
+		*eof = 1;
 		return;
 	}
 
@@ -367,7 +364,7 @@ static void handle_signal(struct script_control *ctl, int fd)
 
 	bytes = read(fd, &info, sizeof(info));
 	if (bytes != sizeof(info)) {
-		if (errno == EAGAIN)
+		if (bytes < 0 && (errno == EAGAIN || errno == EINTR))
 			return;
 		fail(ctl);
 	}
@@ -425,15 +422,17 @@ static void do_io(struct script_control *ctl)
 
 	while (!ctl->die) {
 		size_t i;
+		int errsv;
 
 		DBG(POLL, ul_debug("calling poll()"));
 
 		/* wait for input or signal */
 		ret = poll(pfd, ARRAY_SIZE(pfd) - ignore_stdin, ctl->poll_timeout);
+		errsv = errno;
 		DBG(POLL, ul_debug("poll() rc=%d", ret));
 
 		if (ret < 0) {
-			if (errno == EAGAIN)
+			if (errsv == EAGAIN)
 				continue;
 			warn(_("poll failed"));
 			fail(ctl);
@@ -463,7 +462,7 @@ static void do_io(struct script_control *ctl)
 					handle_io(ctl, pfd[i].fd, &eof);
 				/* EOF maybe detected by two ways:
 				 *	A) poll() return POLLHUP event after close()
-				 *	B) read() returns no error and no data */
+				 *	B) read() returns 0 (no data) */
 				if ((pfd[i].revents & POLLHUP) || eof) {
 					DBG(POLL, ul_debug(" ignore FD"));
 					pfd[i].fd = -1;
