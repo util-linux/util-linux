@@ -322,6 +322,7 @@ static void handle_io(struct script_control *ctl, int fd, int *eof)
 
 	DBG(IO, ul_debug("%d FD active", fd));
 	*eof = 0;
+	errno = 0;
 
 	/* read from active FD */
 	bytes = read(fd, buf, sizeof(buf));
