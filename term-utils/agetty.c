@@ -129,9 +129,12 @@
  */
 #ifdef AGETTY_RELOAD
 # include <sys/inotify.h>
+# include <linux/netlink.h>
+# include <linux/rtnetlink.h>
 # define AGETTY_RELOAD_FILENAME "/run/agetty.reload"	/* trigger file */
 # define AGETTY_RELOAD_FDNONE	-2			/* uninitialized fd */
 static int inotify_fd = AGETTY_RELOAD_FDNONE;
+static int netlink_fd = AGETTY_RELOAD_FDNONE;
 #endif
 
 /*
@@ -1516,6 +1519,80 @@ done:
 }
 
 #ifdef AGETTY_RELOAD
+static void open_netlink(void)
+{
+	struct sockaddr_nl addr = { 0, };
+	int sock;
+
+	if (netlink_fd != AGETTY_RELOAD_FDNONE)
+		return;
+
+	sock = socket(AF_NETLINK, SOCK_RAW, NETLINK_ROUTE);
+	if (sock >= 0) {
+		addr.nl_family = AF_NETLINK;
+		addr.nl_pid = getpid();
+		addr.nl_groups = RTMGRP_IPV4_IFADDR | RTMGRP_IPV6_IFADDR;
+		if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0)
+			close(sock);
+		else
+			netlink_fd = sock;
+	}
+}
+
+static int process_netlink_msg(int *changed)
+{
+	char buf[4096];
+	struct sockaddr_nl snl;
+	struct nlmsghdr *h;
+	int rc;
+
+	struct iovec iov = {
+		.iov_base = buf,
+		.iov_len = sizeof(buf)
+	};
+	struct msghdr msg = {
+		.msg_name = &snl,
+		.msg_namelen = sizeof(snl),
+		.msg_iov = &iov,
+		.msg_iovlen = 1,
+		.msg_control = NULL,
+		.msg_controllen = 0,
+		.msg_flags = 0
+	};
+
+	rc = recvmsg(netlink_fd, &msg, MSG_DONTWAIT);
+	if (rc < 0) {
+		if (errno == EWOULDBLOCK || errno == EAGAIN)
+			return 0;
+
+		/* Failure, just stop listening for changes */
+		close(netlink_fd);
+		netlink_fd = AGETTY_RELOAD_FDNONE;
+		return 0;
+	}
+
+	for (h = (struct nlmsghdr *)buf; NLMSG_OK(h, (unsigned int)rc); h = NLMSG_NEXT(h, rc)) {
+		if (h->nlmsg_type == NLMSG_DONE ||
+		    h->nlmsg_type == NLMSG_ERROR) {
+			close(netlink_fd);
+			netlink_fd = AGETTY_RELOAD_FDNONE;
+			return 0;
+		}
+
+		*changed = 1;
+		break;
+	}
+
+	return 1;
+}
+
+static int process_netlink(void)
+{
+	int changed = 0;
+	while (process_netlink_msg(&changed));
+	return changed;
+}
+
 static int wait_for_term_input(int fd)
 {
 	char buffer[sizeof(struct inotify_event) + NAME_MAX + 1];
@@ -1556,33 +1633,41 @@ static int wait_for_term_input(int fd)
 					AGETTY_RELOAD_FILENAME);
 	}
 
-	FD_ZERO(&rfds);
-	FD_SET(fd, &rfds);
+	while (1) {
+		FD_ZERO(&rfds);
+		FD_SET(fd, &rfds);
 
-	if (inotify_fd >= 0)
-		FD_SET(inotify_fd, &rfds);
+		if (inotify_fd >= 0)
+			FD_SET(inotify_fd, &rfds);
+		if (netlink_fd >= 0)
+			FD_SET(netlink_fd, &rfds);
 
-	/* If waiting fails, just fall through, presumably reading input will fail */
-	if (select(max(fd, inotify_fd) + 1, &rfds, NULL, NULL, NULL) < 0)
-		return 1;
+		/* If waiting fails, just fall through, presumably reading input will fail */
+		if (select(max(fd, inotify_fd) + 1, &rfds, NULL, NULL, NULL) < 0)
+			return 1;
 
-	if (FD_ISSET(fd, &rfds)) {
-		count = read(fd, buffer, sizeof (buffer));
+		if (FD_ISSET(fd, &rfds)) {
+			count = read(fd, buffer, sizeof (buffer));
 
-		tcsetattr(fd, TCSANOW, &orig);
+			tcsetattr(fd, TCSANOW, &orig);
 
-		/* Reinject the bytes we read back into the buffer, usually just one byte */
-		for (i = 0; i < count; i++)
-			ioctl(fd, TIOCSTI, buffer + i);
+			/* Reinject the bytes we read back into the buffer, usually just one byte */
+			for (i = 0; i < count; i++)
+				ioctl(fd, TIOCSTI, buffer + i);
 
-		/* Have terminal input */
-		return 1;
+			/* Have terminal input */
+			return 1;
 
-	} else {
-		tcsetattr(fd, TCSANOW, &orig);
+		} else if (netlink_fd >= 0 && FD_ISSET(netlink_fd, &rfds)) {
+			if (!process_netlink())
+				continue;
 
 		/* Just drain the inotify buffer */
-		while (read(inotify_fd, buffer, sizeof (buffer)) > 0);
+		} else if (inotify_fd >= 0 && FD_ISSET(inotify_fd, &rfds)) {
+			while (read(inotify_fd, buffer, sizeof (buffer)) > 0);
+		}
+
+		tcsetattr(fd, TCSANOW, &orig);
 
 		/* Need to reprompt */
 		return 0;
@@ -2370,6 +2455,10 @@ static void output_special_char(unsigned char c, struct options *op,
 		sa_family_t family = c == '4' ? AF_INET : AF_INET6;
 		struct ifaddrs *addrs = NULL;
 		char iface[128];
+
+#ifdef AGETTY_RELOAD
+		open_netlink();
+#endif
 
 		if (getifaddrs(&addrs))
 			break;
