@@ -62,12 +62,13 @@ struct gsm_config
 #ifndef N_GIGASET_M101
 # define N_GIGASET_M101 16
 #endif
-#ifndef N_GSM0710
-# define N_GSM0710 21
-#endif
 
 #ifndef N_PPS
 # define N_PPS 18
+#endif
+
+#ifndef N_GSM0710
+# define N_GSM0710 21
 #endif
 
 #define MAXINTROPARMLEN 32
@@ -86,7 +87,6 @@ struct ld_table {
 
 /* currently supported line disciplines, plus some aliases */
 static const struct ld_table ld_discs[] = {
-	{ "GSM0710",		N_GSM0710},
 	{ "TTY",		N_TTY },
 	{ "SLIP",		N_SLIP },
 	{ "MOUSE",		N_MOUSE },
@@ -101,10 +101,11 @@ static const struct ld_table ld_discs[] = {
 	{ "SYNC_PPP",		N_SYNC_PPP },
 	{ "SYNCPPP",		N_SYNC_PPP },
 	{ "HCI",		N_HCI },
-	{ "PPS",		N_PPS },
+	{ "GIGASET_M101",	N_GIGASET_M101 },
 	{ "M101",		N_GIGASET_M101 },
 	{ "GIGASET",		N_GIGASET_M101 },
-	{ "GIGASET_M101",	N_GIGASET_M101 },
+	{ "PPS",		N_PPS },
+	{ "GSM0710",		N_GSM0710},
 	{ NULL,	0 }
 };
 
