@@ -365,6 +365,15 @@ int main(int argc, char **argv)
 	if (ldisc < 0)
 		ldisc = strtos32_or_err(argv[optind], _("invalid line discipline argument"));
 
+	/* ldisc specific option settings */
+	if (ldisc == N_GIGASET_M101) {
+		/* device specific defaults for line speed and data format */
+		if (speed == 0) speed = 115200;
+		if (bits == '-') bits = '8';
+		if (parity == '-') parity = 'n';
+		if (stop == '-') stop = '1';
+	}
+
 	/* open device */
 	dev = argv[optind + 1];
 	if ((tty_fd = open(dev, O_RDWR | O_NOCTTY)) < 0)
@@ -447,12 +456,13 @@ int main(int argc, char **argv)
 		}
 	}
 
-	/* Attach the line discpline. */
+	/* Attach the line discipline. */
 	if (ioctl(tty_fd, TIOCSETD, &ldisc) < 0)
 		err(EXIT_FAILURE, _("cannot set line discipline"));
 
 	dbg("line discipline set to %d", ldisc);
 
+	/* ldisc specific post-attach actions */
 	if (ldisc == N_GSM0710)
 		gsm0710_set_conf(tty_fd);
 
