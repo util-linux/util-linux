@@ -161,8 +161,8 @@ static void print_table(FILE * out, const struct ld_table *tab)
 	int i;
 
 	for (t = tab, i = 1; t && t->name; t++, i++) {
-		fprintf(out, "  %-10s", t->name);
-		if (!(i % 6))
+		fprintf(out, "  %-12s", t->name);
+		if (!(i % 5))
 			fputc('\n', out);
 	}
 }
