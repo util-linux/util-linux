@@ -150,6 +150,9 @@ struct gpt_legacy_mbr {
 		.name = (_n),    \
 	}
 
+/* Probably the most complete list of the GUIDs are at:
+ *	 https://wikipedia.org/wiki/GUID_Partition_Table
+ */
 static struct fdisk_parttype gpt_parttypes[] =
 {
 	/* Generic OS */
@@ -160,6 +163,17 @@ static struct fdisk_parttype gpt_parttypes[] =
 
 	/* Hah!IdontneedEFI */
 	DEF_GUID("21686148-6449-6E6F-744E-656564454649", N_("BIOS boot")),
+
+	/* NIH syndrome */
+	DEF_GUID("F4019732-066E-4E12-8273-346C5641494F", N_("Sony boot partition")),
+	DEF_GUID("BFBFAFE7-A34F-448A-9A5B-6213EB736C22", N_("Lenovo boot partition")),
+
+	/* PowerPC reference platform boot partition */
+	DEF_GUID("9E1A2D38-C612-4316-AA26-8B49521E5A8B", N_("PowerPC PReP boot")),
+
+	/* Open Network Install Environment */
+	DEF_GUID("7412F7D5-A156-4B13-81DC-867174929325", N_("ONIE boot")),
+	DEF_GUID("D4E6E2CD-4469-46F3-B5CB-1BFF57AFC149", N_("ONIE config")),
 
 	/* Windows */
 	DEF_GUID("E3C9E316-0B5C-4DB8-817D-F92DF00215AE", N_("Microsoft reserved")),
@@ -187,6 +201,10 @@ static struct fdisk_parttype gpt_parttypes[] =
 	DEF_GUID("A19D880F-05FC-4D3B-A006-743F0F84911E", N_("Linux RAID")),
 	DEF_GUID("BC13C2FF-59E6-4262-A352-B275FD6F7172", N_("Linux extended boot")),
 	DEF_GUID("E6D6D379-F507-44C2-A23C-238F2A3DF928", N_("Linux LVM")),
+	/* ... too crazy, ignore for now:
+	DEF_GUID("7FFEC5C9-2D00-49B7-8941-3EA10A5586B7", N_("Linux plain dm-crypt")),
+	DEF_GUID("CA7D7CCB-63ED-4C53-861C-1742536059CC", N_("Linux LUKS")),
+	*/
 
 	/* FreeBSD */
 	DEF_GUID("516E7CB4-6ECF-11D6-8FF8-00022D09712B", N_("FreeBSD data")),
@@ -243,8 +261,22 @@ static struct fdisk_parttype gpt_parttypes[] =
 	DEF_GUID("85D5E45D-237C-11E1-B4B3-E89A8F7FC3A7", N_("MidnightBSD ZFS")),
 	DEF_GUID("85D5E45C-237C-11E1-B4B3-E89A8F7FC3A7", N_("MidnightBSD Vinum")),
 
-	/* PowerPC reference platform boot partition */
-	DEF_GUID("9E1A2D38-C612-4316-AA26-8B49521E5A8B", N_("PowerPC PReP boot")),
+	/* Ceph */
+	DEF_GUID("45B0969E-9B03-4F30-B4C6-B4B80CEFF106", N_("Ceph Journal")),
+	DEF_GUID("45B0969E-9B03-4F30-B4C6-5EC00CEFF106", N_("Ceph Encrypted Journal")),
+	DEF_GUID("4FBD7E29-9D25-41B8-AFD0-062C0CEFF05D", N_("Ceph OSD")),
+	DEF_GUID("4FBD7E29-9D25-41B8-AFD0-5EC00CEFF05D", N_("Ceph crypt OSD")),
+	DEF_GUID("89C57F98-2FE5-4DC0-89C1-F3AD0CEFF2BE", N_("Ceph disk in creation")),
+	DEF_GUID("89C57F98-2FE5-4DC0-89C1-5EC00CEFF2BE", N_("Ceph crypt disk in creation")),
+
+	/* OpenBSD */
+	DEF_GUID("824CC7A0-36A8-11E3-890A-952519AD3F61", N_("OpenBSD data")),
+
+	/* QNX */
+	DEF_GUID("CEF5A9AD-73BC-4601-89F3-CDEEEEE321A1", N_("QNX6 file system")),
+
+	/* Plan 9 */
+	DEF_GUID("C91818F9-8025-47AF-89D2-F030D7000C2C", N_("Plan 9 partition"))
 };
 
 /* gpt_entry macros */
