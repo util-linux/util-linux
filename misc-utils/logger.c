@@ -92,7 +92,8 @@ enum {
 	OPT_SOCKET_ERRORS,
 	OPT_MSGID,
 	OPT_NOACT,
-	OPT_ID
+	OPT_ID,
+	OPT_OCTET_COUNT
 };
 
 struct logger_ctl {
@@ -116,7 +117,8 @@ struct logger_ctl {
 			rfc5424_time:1,		/* include time stamp */
 			rfc5424_tq:1,		/* include time quality markup */
 			rfc5424_host:1,		/* include hostname */
-			skip_empty_lines:1; /* do not send empty lines when processing files */
+			skip_empty_lines:1,	/* do not send empty lines when processing files */
+			octet_count:1;		/* use RFC6587 octet counting */
 };
 
 /*
@@ -373,19 +375,22 @@ static const char *rfc3164_current_time(void)
 }
 
 /* writes generated buffer to desired destination. For TCP syslog,
- * we use RFC6587 octet-stuffing. This is not great, but doing
- * full blown RFC5425 (TLS) looks like it is too much for the
- * logger utility.
+ * we use RFC6587 octet-stuffing (unless octet-counting is selected).
+ * This is not great, but doing full blown RFC5425 (TLS) looks like
+ * it is too much for the logger utility. If octet-counting is
+ * selected, we use that.
  */
 static void write_output(const struct logger_ctl *ctl, const char *const msg)
 {
 	char *buf;
-	const size_t len = xasprintf(&buf, "%s%s", ctl->hdr, msg);
+	const size_t len = ctl->octet_count ?
+		xasprintf(&buf, "%zu %s%s", strlen(ctl->hdr)+strlen(msg), ctl->hdr, msg):
+		xasprintf(&buf, "%s%s", ctl->hdr, msg);
 
 	if (!ctl->noact) {
 		if (write_all(ctl->fd, buf, len) < 0)
 			warn(_("write failed"));
-		else if (ctl->socket_type == TYPE_TCP) {
+		else if ((ctl->socket_type == TYPE_TCP) && !ctl->octet_count) {
 			/* using an additional write seems like the best compromise:
 			 * - writev() is not yet supported by framework
 			 * - adding the \n to the buffer in formatters violates layers
@@ -706,6 +711,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -e, --skip-empty         do not log empty lines when processing files\n"), out);
 	fputs(_("     --no-act             do everything except the write the log\n"), out);
 	fputs(_(" -p, --priority <prio>    mark given message with this priority\n"), out);
+	fputs(_("     --octet-count        use rfc6587 octet counting\n"), out);
 	fputs(_("     --prio-prefix        look for a prefix on every line read from stdin\n"), out);
 	fputs(_(" -s, --stderr             output message to standard error as well\n"), out);
 	fputs(_(" -S, --size <size>        maximum size for a single message\n"), out);
@@ -781,6 +787,7 @@ int main(int argc, char **argv)
 		{ "port",	   required_argument, 0, 'P'		   },
 		{ "version",	   no_argument,	      0, 'V'		   },
 		{ "help",	   no_argument,	      0, 'h'		   },
+		{ "octet-count",   no_argument,	      0, OPT_OCTET_COUNT   },
 		{ "prio-prefix",   no_argument,	      0, OPT_PRIO_PREFIX   },
 		{ "rfc3164",	   no_argument,	      0, OPT_RFC3164	   },
 		{ "rfc5424",	   optional_argument, 0, OPT_RFC5424	   },
@@ -855,6 +862,9 @@ int main(int argc, char **argv)
 			exit(EXIT_SUCCESS);
 		case 'h':
 			usage(stdout);
+		case OPT_OCTET_COUNT:
+			ctl.octet_count = 1;
+			break;
 		case OPT_PRIO_PREFIX:
 			ctl.prio_prefix = 1;
 			break;

@@ -179,6 +179,11 @@ The RFC 5424 protocol has been the default for
 .B logger
 since version 2.26.
 .TP
+.B \-\-octet\-count
+Use the RFC 6587 octet counting framing method for sending messages. When
+this option is not used, the default is no framing on UDP, and RFC6587
+non-transparent-framing (also known as octet stuffing) on TCP.
+.TP
 .BR \-s , " \-\-stderr"
 Output the message to standard error as well as to the system log.
 .TP
