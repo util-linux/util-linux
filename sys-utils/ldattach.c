@@ -215,11 +215,14 @@ static void __attribute__ ((__noreturn__)) usage(int exitcode)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
+
 	fputs(_("\nKnown <ldisc> names:\n"), out);
 	print_table(out, ld_discs);
+	fputs(USAGE_SEPARATOR, out);
+
 	fputs(_("\nKnown <iflag> names:\n"), out);
 	print_table(out, ld_iflags);
-	fputc('\n', out);
+
 	fprintf(out, USAGE_MAN_TAIL("ldattach(8)"));
 	exit(exitcode);
 }
@@ -369,10 +372,14 @@ int main(int argc, char **argv)
 	/* ldisc specific option settings */
 	if (ldisc == N_GIGASET_M101) {
 		/* device specific defaults for line speed and data format */
-		if (speed == 0) speed = 115200;
-		if (bits == '-') bits = '8';
-		if (parity == '-') parity = 'n';
-		if (stop == '-') stop = '1';
+		if (speed == 0)
+			speed = 115200;
+		if (bits == '-')
+			bits = '8';
+		if (parity == '-')
+			parity = 'n';
+		if (stop == '-')
+			stop = '1';
 	}
 
 	/* open device */
