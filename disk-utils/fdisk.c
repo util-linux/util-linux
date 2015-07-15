@@ -409,7 +409,7 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 	return rc;
 }
 
-struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
+static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
 {
 	const char *q;
 	struct fdisk_label *lb;
@@ -562,6 +562,7 @@ void change_partition_type(struct fdisk_context *cxt)
 			i + 1, old);
 
 	fdisk_unref_partition(pa);
+	fdisk_unref_parttype(t);
 }
 
 int print_partition_info(struct fdisk_context *cxt)

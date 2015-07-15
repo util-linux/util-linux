@@ -302,9 +302,8 @@ struct fdisk_parttype *fdisk_label_parse_parttype(
 				const struct fdisk_label *lb,
 				const char *str)
 {
-	struct fdisk_parttype *types, *ret;
-	unsigned int code = 0;
-	char *typestr = NULL, *end = NULL;
+	struct fdisk_parttype *types, *ret = NULL;
+	char *end = NULL;
 
 	assert(lb);
 
@@ -316,6 +315,7 @@ struct fdisk_parttype *fdisk_label_parse_parttype(
 	types = lb->parttypes;
 
 	if (types[0].typestr == NULL && isxdigit(*str)) {
+		unsigned int code = 0;
 
 		errno = 0;
 		code = strtol(str, &end, 16);
@@ -327,6 +327,8 @@ struct fdisk_parttype *fdisk_label_parse_parttype(
 		ret = fdisk_label_get_parttype_from_code(lb, code);
 		if (ret)
 			goto done;
+
+		ret = fdisk_new_unknown_parttype(code, NULL);
 	} else {
 		int i;
 
@@ -343,11 +345,13 @@ struct fdisk_parttype *fdisk_label_parse_parttype(
 			ret = &types[i - 1];
 			goto done;
 		}
+
+		ret = fdisk_new_unknown_parttype(0, str);
 	}
 
-	ret = fdisk_new_unknown_parttype(code, typestr);
 done:
-	DBG(PARTTYPE, ul_debugobj(ret, "returns parsed '%s' partition type", ret->name));
+	DBG(PARTTYPE, ul_debugobj(ret, "returns parsed '%s' [%s] partition type",
+				ret->name, ret->typestr ? : ""));
 	return ret;
 }
 
