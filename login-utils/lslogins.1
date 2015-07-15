@@ -71,21 +71,21 @@ Display information related to login by password (see also \fB\-afL).
 \fB\-r\fR, \fB\-\-raw\fR
 Raw output (no columnation).
 .TP
-\fB\-s\fR, \fB\-\-system\-accs\fR[=\fIthreshold\fR]
+\fB\-s\fR, \fB\-\-system\-accs\fR
 Show system accounts.  These are by default all accounts with a UID below 1000
-(non-inclusive), with the exception of either nobody or nfsnobody (UID 65534).  The UID
-threshold can also be specified explicitly (necessary for some distributions that
-allocate UIDs starting from 100, 500 - or an entirely different value - rather than 1000).
+(non-inclusive), with the exception of either nobody or nfsnobody (UID 65534).
+This hardcoded default maybe overwritten by parameters SYS_UID_MIN and SYS_UID_MAX in
+the file /etc/login.defs.
 .TP
 \fB\-\-time\-format\fR \fItype\fP
 Display dates in short, full or iso format.  The default is short, this time
 format is designed to be space efficient and human readable.
 .TP
-\fB\-u\fR, \fB\-\-user\-accs\fR[=\fIthreshold\fR]
+\fB\-u\fR, \fB\-\-user\-accs\fR
 Show user accounts.  These are by default all accounts with UID above 1000
-(inclusive), with the exception of either nobody or nfsnobody (UID 65534).  The UID
-threshold can also be specified explicitly (necessary for some distributions that
-allocate UIDs starting from 100, 500 - or an entirely different value - rather than 1000).
+(inclusive), with the exception of either nobody or nfsnobody (UID 65534).
+This hardcoded default maybe overwritten by parameters UID_MIN and UID_MAX in
+the file /etc/login.defs.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
