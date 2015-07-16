@@ -26,6 +26,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/syslog.h>
+#include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
 #include <shadow.h>
@@ -35,7 +36,6 @@
 #include <signal.h>
 #include <err.h>
 #include <limits.h>
-
 #include <search.h>
 
 #include <libsmartcols.h>
@@ -56,7 +56,6 @@
 #include "optutils.h"
 #include "pathnames.h"
 #include "logindefs.h"
-#include "readutmp.h"
 #include "procutils.h"
 
 /*
@@ -474,6 +473,37 @@ static struct utmp *get_last_btmp(struct lslogins_control *ctl, const char *user
 	}while (n--);
 	return NULL;
 
+}
+
+static int read_utmp(char const *file, size_t *nents, struct utmp **res)
+{
+	size_t n_read = 0, n_alloc = 0;
+	struct utmp *utmp = NULL, *u;
+
+	if (utmpname(file) < 0)
+		return -errno;
+
+	setutent();
+	errno = 0;
+
+	while ((u = getutent()) != NULL) {
+		if (n_read == n_alloc) {
+			n_alloc += 32;
+			utmp = xrealloc(utmp, n_alloc * sizeof (struct utmp));
+		}
+		utmp[n_read++] = *u;
+	}
+	if (!u && errno) {
+		free(utmp);
+		return -errno;
+	}
+
+	endutent();
+
+	*nents = n_read;
+	*res = utmp;
+
+	return 0;
 }
 
 static int parse_wtmp(struct lslogins_control *ctl, char *path)
