@@ -18,6 +18,8 @@ Resources can be specified with these options:
 Create a shared memory segment of
 .I size
 bytes.
+The \fIsize\fR argument may be followed by the multiplicative suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, etc. (the
+"iB" is optional, e.g., "K" has the same meaning as "KiB") or the suffixes KB (=1000), MB (=1000*1000), and so on for GB, etc.
 .TP
 .BR \-Q , " \-\-queue"
 Create a message queue.

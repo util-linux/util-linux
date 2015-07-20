@@ -107,7 +107,7 @@ int main(int argc, char **argv)
 	while((opt = getopt_long(argc, argv, "hM:QS:p:Vh", longopts, NULL)) != -1) {
 		switch(opt) {
 		case 'M':
-			size = strtou64_or_err(optarg, _("failed to parse size"));
+			size = strtosize_or_err(optarg, _("failed to parse size"));
 			ask_shm = 1;
 			break;
 		case 'Q':
