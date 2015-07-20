@@ -310,7 +310,7 @@ the enter key is pressed.
 .RE
 .
 .TP
-.B \-\-debug
+.BR \-D ", " \-\-debug
 Display a lot of information about what
 .B \%hwclock
 is doing internally.  Some of its functions are complex and this output
