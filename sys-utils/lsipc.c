@@ -1200,14 +1200,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'g':
 			global = 1;
-			add_column(columns, ncolumns++, COL_RESOURCE);
-			add_column(columns, ncolumns++, COL_DESC);
-			add_column(columns, ncolumns++, COL_LIMIT);
-			add_column(columns, ncolumns++, COL_USED);
-			add_column(columns, ncolumns++, COL_USEPERC);
-			LOWER = COLDESC_IDX_SUM_FIRST;
-			UPPER = COLDESC_IDX_SUM_LAST;
-			break;
+						break;
 		case 'q':
 			msg = 1;
 			add_column(columns, ncolumns++, COL_KEY);
@@ -1284,12 +1277,19 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (msg + shm + sem != 1 && !global)
-		errx (EXIT_FAILURE,
-		      _("One of --shmems, --queues, --semaphores or --glocal must be specified"));
+	/* default is global */
+	if (msg + shm + sem == 0)
+		msg = shm = sem = global = 1;
 
-	if (global && msg + shm + sem == 0)
-		msg = shm = sem = 1;
+	if (global) {
+		add_column(columns, ncolumns++, COL_RESOURCE);
+		add_column(columns, ncolumns++, COL_DESC);
+		add_column(columns, ncolumns++, COL_LIMIT);
+		add_column(columns, ncolumns++, COL_USED);
+		add_column(columns, ncolumns++, COL_USEPERC);
+		LOWER = COLDESC_IDX_SUM_FIRST;
+		UPPER = COLDESC_IDX_SUM_LAST;
+	}
 
 	if (!ctl->time_mode)
 		ctl->time_mode = ctl->outmode == OUT_PRETTY ? TIME_FULL : TIME_SHORT;
