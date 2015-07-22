@@ -443,11 +443,14 @@ static void cfdisk_free_lines(struct cfdisk *cf)
 		DBG(UI, ul_debug("delete window: %p",
 				cf->lines[i].w));
 
-		delwin(cf->lines[i].w);
+		if (cf->lines[i].w)
+			delwin(cf->lines[i].w);
+		cf->lines[i].w = NULL;
 		++i;
 	}
 	cf->act_win = NULL;
 	free(cf->lines);
+	cf->lines = NULL;
 }
 /*
  * Read data about partitions from libfdisk and prepare output lines.
@@ -1177,6 +1180,7 @@ inline static int extra_insert_pair(struct cfdisk_line *l, const char *name, con
 	struct libscols_line *lsl;
 
 	assert(l);
+	assert(l->extra);
 
 	if (!data || !*data)
 		return 0;
@@ -1374,11 +1378,16 @@ static int ui_draw_extra(struct cfdisk *cf)
 
 	DBG(UI, ul_debug("draw extra"));
 
+	assert(ln->extra);
+
 	if (cf->act_win)
 		wclear(cf->act_win);
 
-	if (scols_table_is_empty(ln->extra))
+	if (scols_table_is_empty(ln->extra)) {
 		extra_prepare_data(cf);
+		if (scols_table_is_empty(ln->extra))
+			return 0;
+	}
 
 	ndatalines = fdisk_table_get_nents(cf->table) + 1;
 
@@ -1415,7 +1424,8 @@ static int ui_draw_extra(struct cfdisk *cf)
 	}
 	free(end);
 
-	delwin(ln->w);
+	if (ln->w)
+		delwin(ln->w);
 
 	DBG(UI, ul_debug("draw window: %p", win_ex));
 	touchwin(stdscr);
@@ -1608,7 +1618,7 @@ static int ui_draw_table(struct cfdisk *cf)
 		clrtoeol();
 	}
 
-	if ((size_t) cf->lines_idx > nparts - 1)
+	if (nparts == 0 || (size_t) cf->lines_idx > nparts - 1)
 		cf->lines_idx = nparts ? nparts - 1 : 0;
 
 	/* print header */
@@ -1670,7 +1680,6 @@ static int ui_refresh(struct cfdisk *cf)
         uint64_t bytes = fdisk_get_nsectors(cf->cxt) * fdisk_get_sector_size(cf->cxt);
 	char *strsz;
 
-	erase();
 	if (!ui_enabled)
 		return -EINVAL;
 
@@ -1679,6 +1688,8 @@ static int ui_refresh(struct cfdisk *cf)
 
 	lb = fdisk_get_label(cf->cxt, NULL);
 	assert(lb);
+
+	clear();
 
 	/* header */
 	attron(A_BOLD);
@@ -2409,6 +2420,19 @@ static void ui_resize_refresh(struct cfdisk *cf)
 	ui_draw_extra(cf);
 }
 
+static void toggle_show_extra(struct cfdisk *cf)
+{
+	if (cf->show_extra && cf->act_win) {
+		wclear(cf->act_win);
+		touchwin(stdscr);
+	}
+	cf->show_extra = cf->show_extra ? 0 : 1;
+
+	if (cf->show_extra)
+		ui_draw_extra(cf);
+	DBG(MENU, ul_debug("extra: %s", cf->show_extra ? "ENABLED" : "DISABLED" ));
+}
+
 static int ui_run(struct cfdisk *cf)
 {
 	int rc = 0;
@@ -2434,7 +2458,6 @@ static int ui_run(struct cfdisk *cf)
 	menu_push(cf, main_menuitems);
 	cf->menu->ignore_cb = main_menu_ignore_keys;
 
-
 	rc = ui_refresh(cf);
 	if (rc)
 		return rc;
@@ -2445,7 +2468,7 @@ static int ui_run(struct cfdisk *cf)
 	if (fdisk_is_readonly(cf->cxt))
 		ui_warnx(_("Device open in read-only mode."));
 	else if (cf->wrong_order)
-		 ui_info(_("Note that partition table entries are not in disk order now."));
+		ui_info(_("Note that partition table entries are not in disk order now."));
 
 	do {
 		int key = getch();
@@ -2495,8 +2518,7 @@ static int ui_run(struct cfdisk *cf)
 			rc = main_menu_action(cf, 0);
 			break;
 		case 'x': /* Extra */
-			cf->show_extra = cf->show_extra ? 0 : 1;
-			DBG(MENU, ul_debug("extra: %s", cf->show_extra ? "ENABLED" : "DISABLED" ));
+			toggle_show_extra(cf);
 			break;
 		default:
 			rc = main_menu_action(cf, key);
