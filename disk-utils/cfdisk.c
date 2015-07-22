@@ -1380,8 +1380,10 @@ static int ui_draw_extra(struct cfdisk *cf)
 
 	assert(ln->extra);
 
-	if (cf->act_win)
+	if (cf->act_win) {
 		wclear(cf->act_win);
+		touchwin(stdscr);
+	}
 
 	if (scols_table_is_empty(ln->extra)) {
 		extra_prepare_data(cf);
