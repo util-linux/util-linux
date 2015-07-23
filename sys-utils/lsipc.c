@@ -259,7 +259,6 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
-	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
