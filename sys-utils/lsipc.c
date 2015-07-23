@@ -117,11 +117,9 @@ static size_t LOWER, UPPER;
  * output modes
  */
 enum {
-	OUT_COLON = 1,
-	OUT_EXPORT,
+	OUT_EXPORT = 1,
 	OUT_NEWLINE,
 	OUT_RAW,
-	OUT_NUL,
 	OUT_JSON,
 	OUT_PRETTY
 };
@@ -264,10 +262,6 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Show information on IPC facilities.\n"), out);
 
-	fputs(USAGE_OPTIONS, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
-
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Resource options:\n"), out);
 	fputs(_(" -m, --shmems      shared memory segments\n"), out);
@@ -277,7 +271,6 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -i, --id <id>     print details on resource identified by <id>\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_("     --colon-separate     display data in a format similar to /etc/passwd\n"), out);
 	fputs(_("     --noheadings         don't print headings\n"), out);
 	fputs(_("     --notruncate         don't truncate output\n"), out);
 	fputs(_("     --time-format=<type> display dates in short, full or iso format\n"), out);
@@ -290,7 +283,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -P, --numeric-perms      print numeric permissions (PERMS column)\n"), out);
 	fputs(_(" -r, --raw                display in raw mode\n"), out);
 	fputs(_(" -t, --time               show attach, detach and change times\n"), out);
-	fputs(_(" -z, --print0             delimit user entries with a nul character\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 
 	fprintf(out, _("\nGeneric columns:\n"));
 	for (i = COLDESC_IDX_GEN_FIRST; i <= COLDESC_IDX_GEN_LAST; i++)
@@ -326,19 +322,12 @@ static struct libscols_table *new_table(struct lsipc_control *ctl)
 		scols_table_enable_noheadings(table, 1);
 
 	switch(ctl->outmode) {
-	case OUT_COLON:
-		scols_table_enable_raw(table, 1);
-		scols_table_set_column_separator(table, ":");
-		break;
 	case OUT_NEWLINE:
 		scols_table_set_column_separator(table, "\n");
 		/* fallthrough */
 	case OUT_EXPORT:
 		scols_table_enable_export(table, 1);
 		break;
-	case OUT_NUL:
-		scols_table_set_line_separator(table, "\0");
-		/* fallthrough */
 	case OUT_RAW:
 		scols_table_enable_raw(table, 1);
 		break;
@@ -1124,13 +1113,11 @@ int main(int argc, char *argv[])
 	enum {
 		OPT_NOTRUNC = CHAR_MAX + 1,
 		OPT_NOHEAD,
-		OPT_TIME_FMT,
-		OPT_COLON,
+		OPT_TIME_FMT
 	};
 
 	static const struct option longopts[] = {
 		{ "bytes",          no_argument,        0, 'b' },
-		{ "colon-separate", no_argument,	0, OPT_COLON },
 		{ "creator",        no_argument,	0, 'c' },
 		{ "export",         no_argument,	0, 'e' },
 		{ "global",         no_argument,	0, 'g' },
@@ -1143,7 +1130,6 @@ int main(int argc, char *argv[])
 		{ "numeric-perms",  no_argument,	0, 'P' },
 		{ "output",         required_argument,	0, 'o' },
 		{ "pid",            no_argument,	0, 'p' },
-		{ "print0",         no_argument,	0, 'z' },
 		{ "queues",         no_argument,	0, 'q' },
 		{ "raw",            no_argument,	0, 'r' },
 		{ "semaphores",     no_argument,	0, 's' },
@@ -1155,7 +1141,7 @@ int main(int argc, char *argv[])
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
-		{ 'J', 'e', 'n', 'r', 'z', OPT_COLON },
+		{ 'J', 'e', 'n', 'r' },
 		{ 'J', 'i' },
 		{ 'c', 'g', 'i', 't' },
 		{ 'c', 'i', 'o', 't' },
@@ -1173,7 +1159,7 @@ int main(int argc, char *argv[])
 
 	scols_init_debug(0);
 
-	while ((opt = getopt_long(argc, argv, "bceghi:Jmno:PqrstuVz", longopts, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "bceghi:Jmno:PqrstuV", longopts, NULL)) != -1) {
 
 		err_exclusive_options(opt, longopts, excl, excl_st);
 
@@ -1184,9 +1170,6 @@ int main(int argc, char *argv[])
 		case 'i':
 			id = strtos32_or_err(optarg, _("failed to parse IPC identifier"));
 			ctl->outmode = OUT_PRETTY;
-			break;
-		case OPT_COLON:
-			ctl->outmode = OUT_COLON;
 			break;
 		case 'e':
 			ctl->outmode = OUT_EXPORT;
@@ -1268,9 +1251,6 @@ int main(int argc, char *argv[])
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
-		case 'z':
-			ctl->outmode = OUT_NUL;
-			break;
 		default:
 			usage(stderr);
 		}
