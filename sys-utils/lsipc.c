@@ -1257,9 +1257,11 @@ int main(int argc, char *argv[])
 	}
 
 	/* default is global */
-	if (msg + shm + sem == 0)
+	if (msg + shm + sem == 0) {
 		msg = shm = sem = global = 1;
-
+		if (show_time || show_creat || id)
+			errx(EXIT_FAILURE, _("the --global is mutually exclusive with --creator, --id and --time"));
+	}
 	if (global) {
 		add_column(columns, ncolumns++, COL_RESOURCE);
 		add_column(columns, ncolumns++, COL_DESC);
