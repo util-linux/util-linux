@@ -121,7 +121,8 @@ enum {
 	OUT_NEWLINE,
 	OUT_RAW,
 	OUT_JSON,
-	OUT_PRETTY
+	OUT_PRETTY,
+	OUT_LIST
 };
 
 struct lsipc_control {
@@ -279,6 +280,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -e, --export             display in an export-able output format\n"), out);
 	fputs(_(" -J, --json               use the JSON output format\n"), out);
 	fputs(_(" -n, --newline            display each piece of information on a new line\n"), out);
+	fputs(_(" -l, --list               force list output format (for example with --id)\n"), out);
 	fputs(_(" -o, --output[=<list>]    define the columns to output\n"), out);
 	fputs(_(" -P, --numeric-perms      print numeric permissions (PERMS column)\n"), out);
 	fputs(_(" -r, --raw                display in raw mode\n"), out);
@@ -1124,6 +1126,7 @@ int main(int argc, char *argv[])
 		{ "help",           no_argument,	0, 'h' },
 		{ "id",             required_argument,	0, 'i' },
 		{ "json",           no_argument,	0, 'J' },
+		{ "list",           no_argument,        0, 'l' },
 		{ "newline",        no_argument,	0, 'n' },
 		{ "noheadings",     no_argument,	0, OPT_NOHEAD },
 		{ "notruncate",     no_argument,	0, OPT_NOTRUNC },
@@ -1141,10 +1144,9 @@ int main(int argc, char *argv[])
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
-		{ 'J', 'e', 'n', 'r' },
-		{ 'J', 'i' },
-		{ 'c', 'g', 'i', 't' },
-		{ 'c', 'i', 'o', 't' },
+		{ 'J', 'e', 'l', 'n', 'r' },
+		{ 'g', 'i' },
+		{ 'c', 'o', 't' },
 		{ 'm', 'q', 's' },
 		{ 0 }
 	};
@@ -1159,7 +1161,7 @@ int main(int argc, char *argv[])
 
 	scols_init_debug(0);
 
-	while ((opt = getopt_long(argc, argv, "bceghi:Jmno:PqrstuV", longopts, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "bceghi:Jlmno:PqrstuV", longopts, NULL)) != -1) {
 
 		err_exclusive_options(opt, longopts, excl, excl_st);
 
@@ -1169,7 +1171,6 @@ int main(int argc, char *argv[])
 			break;
 		case 'i':
 			id = strtos32_or_err(optarg, _("failed to parse IPC identifier"));
-			ctl->outmode = OUT_PRETTY;
 			break;
 		case 'e':
 			ctl->outmode = OUT_EXPORT;
@@ -1182,7 +1183,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'g':
 			global = 1;
-						break;
+			break;
 		case 'q':
 			msg = 1;
 			add_column(columns, ncolumns++, COL_KEY);
@@ -1195,6 +1196,9 @@ int main(int argc, char *argv[])
 			add_column(columns, ncolumns++, COL_LRPID);
 			LOWER = COLDESC_IDX_MSG_FIRST;
 			UPPER = COLDESC_IDX_MSG_LAST;
+			break;
+		case 'l':
+			ctl->outmode = OUT_LIST;
 			break;
 		case 'm':
 			shm = 1;
@@ -1259,7 +1263,7 @@ int main(int argc, char *argv[])
 	/* default is global */
 	if (msg + shm + sem == 0) {
 		msg = shm = sem = global = 1;
-		if (show_time || show_creat || id)
+		if (show_time || show_creat || id != -1)
 			errx(EXIT_FAILURE, _("the --global is mutually exclusive with --creator, --id and --time"));
 	}
 	if (global) {
@@ -1272,10 +1276,14 @@ int main(int argc, char *argv[])
 		UPPER = COLDESC_IDX_SUM_LAST;
 	}
 
+	/* default to pretty-print if --id specified */
+	if (id != -1 && !ctl->outmode)
+		ctl->outmode = OUT_PRETTY;
+
 	if (!ctl->time_mode)
 		ctl->time_mode = ctl->outmode == OUT_PRETTY ? TIME_FULL : TIME_SHORT;
 
-	if (ctl->outmode == OUT_PRETTY && !optarg) {
+	if (ctl->outmode == OUT_PRETTY && !(optarg || show_creat || show_time)) {
 		/* all columns for lsipc --<RESOURCE> --id <ID> */
 		for (ncolumns = 0, i = 0; i < ARRAY_SIZE(coldescs); i++)
 			 columns[ncolumns++] = i;

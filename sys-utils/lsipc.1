@@ -19,6 +19,8 @@ This option needs to be combined with one of the three resource options:
 .BR \-m ,
 .BR \-q " or"
 .BR \-s .
+The default \fB\-\-id\fR output format is possible to override by
+the \fB\-\-list \-\-raw \-\-json\fR or \fB\-\-export\fR options.
 .TP
 \fB\-g\fR, \fB\-\-global\fR
 Show system-wide usage and limits for a single IPC type.
@@ -48,14 +50,14 @@ Write information about active semaphore sets.
 \fB\-c\fR, \fB\-\-creator\fR
 Show creator and owner.
 .TP
-\fB\-\-colon\-separate\fR
-Separate info about each user with a colon instead of a newline.
-.TP
 \fB\-e\fR, \fB\-\-export\fR
 Output data in the format of NAME=VALUE.
 .TP
 \fB\-J\fR, \fB\-\-json\fR
 Use the JSON output format.
+.TP
+\fB\-l\fR, \fB\-\-list\fR
+Use the list output format. This is the default except for \fB\-\-id\fR.
 .TP
 \fB\-n\fR, \fB\-\-newline\fR
 Display each piece of information on a separate line.
@@ -94,9 +96,6 @@ operation on semaphores.
 \fB\-\-time\-format\fR \fItype\fP
 Display dates in short, full or iso format.  The default is short, this time
 format is designed to be space efficient and human readable.
-.TP
-\fB\-z\fR, \fB\-\-print0\fR
-Delimit user entries with a nul character, instead of a newline.
 
 .SH EXIT STATUS
 .TP
