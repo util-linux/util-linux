@@ -116,11 +116,11 @@ typedef uint64_t fdisk_sector_t;
  * Supported partition table types (labels)
  */
 enum fdisk_labeltype {
-	FDISK_DISKLABEL_DOS = (1 << 1),
-	FDISK_DISKLABEL_SUN = (1 << 2),
-	FDISK_DISKLABEL_SGI = (1 << 3),
-	FDISK_DISKLABEL_BSD = (1 << 4),
-	FDISK_DISKLABEL_GPT = (1 << 5)
+	FDISK_DISKLABEL_DOS = (1 << 1),		/* MBR label type */
+	FDISK_DISKLABEL_SUN = (1 << 2),		/* SUN label type */
+	FDISK_DISKLABEL_SGI = (1 << 3),		/* SGI label type */
+	FDISK_DISKLABEL_BSD = (1 << 4),		/* BSD label t ype */
+	FDISK_DISKLABEL_GPT = (1 << 5)		/* UEFI GPT type */
 };
 
 /**
@@ -137,15 +137,15 @@ struct fdisk_labelitem;
  * Ask API dialog types
  */
 enum fdisk_asktype {
-	FDISK_ASKTYPE_NONE = 0,
-	FDISK_ASKTYPE_NUMBER,
-	FDISK_ASKTYPE_OFFSET,
-	FDISK_ASKTYPE_WARN,
-	FDISK_ASKTYPE_WARNX,
-	FDISK_ASKTYPE_INFO,
-	FDISK_ASKTYPE_YESNO,
-	FDISK_ASKTYPE_STRING,
-	FDISK_ASKTYPE_MENU
+	FDISK_ASKTYPE_NONE = 0,			/* undefined type */
+	FDISK_ASKTYPE_NUMBER,			/* ask for number */
+	FDISK_ASKTYPE_OFFSET,			/* ask for offset */
+	FDISK_ASKTYPE_WARN,			/* print warning message and errno */
+	FDISK_ASKTYPE_WARNX,			/* print warning message */
+	FDISK_ASKTYPE_INFO,			/* print infor message */
+	FDISK_ASKTYPE_YESNO,			/* ask Yes/No question */
+	FDISK_ASKTYPE_STRING,			/* ask for string */
+	FDISK_ASKTYPE_MENU			/* ask for menu item */
 };
 
 
@@ -261,25 +261,25 @@ enum fdisk_fieldtype {
 	FDISK_FIELD_NONE = 0,
 
 	/* generic */
-	FDISK_FIELD_DEVICE,
-	FDISK_FIELD_START,
-	FDISK_FIELD_END,
-	FDISK_FIELD_SECTORS,
-	FDISK_FIELD_CYLINDERS,
-	FDISK_FIELD_SIZE,
-	FDISK_FIELD_TYPE,
-	FDISK_FIELD_TYPEID,
+	FDISK_FIELD_DEVICE,		/* partition device name */
+	FDISK_FIELD_START,		/* start offset of the partition */
+	FDISK_FIELD_END,		/* end offset of the partition */
+	FDISK_FIELD_SECTORS,		/* number of sectors */
+	FDISK_FIELD_CYLINDERS,		/* number of cylinders (deprecated) */
+	FDISK_FIELD_SIZE,		/* partition size */
+	FDISK_FIELD_TYPE,		/* partition type */
+	FDISK_FIELD_TYPEID,		/* partition type ID */
 
 	/* label specific */
-	FDISK_FIELD_ATTR,
-	FDISK_FIELD_BOOT,
-	FDISK_FIELD_BSIZE,
-	FDISK_FIELD_CPG,
-	FDISK_FIELD_EADDR,
-	FDISK_FIELD_FSIZE,
-	FDISK_FIELD_NAME,
-	FDISK_FIELD_SADDR,
-	FDISK_FIELD_UUID,
+	FDISK_FIELD_ATTR,		/* partition attribute (GPT) */
+	FDISK_FIELD_BOOT,		/* partition boot flag */
+	FDISK_FIELD_BSIZE,		/* size of the boot area (BSD) */
+	FDISK_FIELD_CPG,		/* BSD */
+	FDISK_FIELD_EADDR,		/* End-C/H/S (MBR) */
+	FDISK_FIELD_FSIZE,		/* BSD */
+	FDISK_FIELD_NAME,		/* partition label/name (GPT) */
+	FDISK_FIELD_SADDR,		/* Start-C/H/S (MBR) */
+	FDISK_FIELD_UUID,		/* partition UUID (GPT) */
 
 	FDISK_NFIELDS		/* must be last */
 };
