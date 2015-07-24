@@ -1,5 +1,5 @@
 agetty:  
-blkdiscard:  
+blkdiscard:  librt 
 blockdev:  
 cal:  libncursesw libtinfo 
 chcpu:  
@@ -11,15 +11,15 @@ colcrt:
 colrm:  
 column:  
 ctrlaltdel:  
-dmesg:  
+dmesg:  librt libtinfo 
 fallocate:  
 fdformat:  
-flock:  
+flock:  librt 
 fsck.cramfs:  libz 
 fsck.minix:  
 fsfreeze:  
 getopt:  
-hexdump:  
+hexdump:  libtinfo 
 hwclock:  libm 
 ionice:  
 ipcmk:  
@@ -27,7 +27,7 @@ ipcrm:
 ipcs:  
 isosize:  
 kill:  
-last:  
+last:  librt 
 ldattach:  
 logger:  libsystemd 
 login:  libpam libpam_misc 
@@ -52,7 +52,7 @@ renice:
 rev:  
 rtcwake:  
 runuser:  libpam libpam_misc 
-script:  libutil 
+script:  librt libutil 
 scriptreplay:  
 setarch:  
 setpriv:  ap-ng 

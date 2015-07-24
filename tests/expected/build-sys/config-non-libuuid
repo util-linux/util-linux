@@ -1,33 +1,34 @@
 blkid:  libblkid 
-eject:  libblkid libmount 
+eject:  libblkid libmount librt 
 findfs:  libblkid 
-findmnt:  libblkid libmount libsmartcols libudev 
-fsck:  libblkid libmount 
-fstrim:  libblkid libmount 
+findmnt:  libblkid libmount librt libsmartcols libudev 
+fsck:  libblkid libmount librt 
+fstrim:  libblkid libmount librt 
 libblkid.so.1.1.0:  
-libmount.so.1.1.0:  libblkid 
+libmount.so.1.1.0:  libblkid librt 
 libsmartcols.so.1.1.0:  
 losetup:  libsmartcols 
-lsblk:  libblkid libmount libsmartcols libudev 
+lsblk:  libblkid libmount librt libsmartcols libudev 
 lscpu:  libsmartcols 
-lslocks:  libblkid libmount libsmartcols 
+lsipc:  libsmartcols 
+lslocks:  libblkid libmount librt libsmartcols 
 lslogins:  libsmartcols libsystemd 
 mkswap:  libblkid 
-mount:  libblkid libmount 
-mountpoint:  libblkid libmount 
+mount:  libblkid libmount librt 
+mountpoint:  libblkid libmount librt 
 partx:  libblkid libsmartcols 
 prlimit:  libsmartcols 
-pylibmount.so:  libblkid libmount libpython2 
+pylibmount.so:  libblkid libmount libpython2 librt 
 swaplabel:  libblkid 
-swapoff:  libblkid libmount 
-swapon:  libblkid libmount libsmartcols 
-umount:  libblkid libmount 
+swapoff:  libblkid libmount librt 
+swapon:  libblkid libmount librt libsmartcols 
+umount:  libblkid libmount librt 
 wdctl:  libsmartcols 
 wipefs:  libblkid 
 zramctl:  libsmartcols 
 addpart:  
 agetty:  
-blkdiscard:  
+blkdiscard:  librt 
 blockdev:  
 cal:  libncursesw libtinfo 
 chcpu:  
@@ -40,15 +41,15 @@ colrm:
 column:  
 ctrlaltdel:  
 delpart:  
-dmesg:  
+dmesg:  librt libtinfo 
 fallocate:  
 fdformat:  
-flock:  
+flock:  librt 
 fsck.cramfs:  libz 
 fsck.minix:  
 fsfreeze:  
 getopt:  
-hexdump:  
+hexdump:  libtinfo 
 hwclock:  libm 
 ionice:  
 ipcmk:  
@@ -56,7 +57,7 @@ ipcrm:
 ipcs:  
 isosize:  
 kill:  
-last:  
+last:  librt 
 ldattach:  
 logger:  libsystemd 
 login:  libpam libpam_misc 
@@ -81,7 +82,7 @@ resizepart:
 rev:  
 rtcwake:  
 runuser:  libpam libpam_misc 
-script:  libutil 
+script:  librt libutil 
 scriptreplay:  
 setarch:  
 setpriv:  ap-ng 

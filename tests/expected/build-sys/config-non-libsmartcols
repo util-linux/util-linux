@@ -1,23 +1,23 @@
 blkid:  libblkid libuuid 
-eject:  libblkid libmount libuuid 
+eject:  libblkid libmount librt libuuid 
 findfs:  libblkid libuuid 
-fsck:  libblkid libmount libuuid 
-fstrim:  libblkid libmount libuuid 
+fsck:  libblkid libmount librt libuuid 
+fstrim:  libblkid libmount librt libuuid 
 libblkid.so.1.1.0:  libuuid 
 libfdisk.so.1.1.0:  libblkid libuuid 
-libmount.so.1.1.0:  libblkid libuuid 
+libmount.so.1.1.0:  libblkid librt libuuid 
 libuuid.so.1.3.0:  
 mkswap:  libblkid libuuid 
-mount:  libblkid libmount libuuid 
-mountpoint:  libblkid libmount libuuid 
-pylibmount.so:  libblkid libmount libpython2 libuuid 
+mount:  libblkid libmount librt libuuid 
+mountpoint:  libblkid libmount librt libuuid 
+pylibmount.so:  libblkid libmount libpython2 librt libuuid 
 swaplabel:  libblkid libuuid 
-umount:  libblkid libmount libuuid 
+umount:  libblkid libmount librt libuuid 
 uuidd:  libsystemd libuuid 
 uuidgen:  libuuid 
 wipefs:  libblkid libuuid 
 agetty:  
-blkdiscard:  
+blkdiscard:  librt 
 blockdev:  
 cal:  libncursesw libtinfo 
 chcpu:  
@@ -29,15 +29,15 @@ colcrt:
 colrm:  
 column:  
 ctrlaltdel:  
-dmesg:  
+dmesg:  librt libtinfo 
 fallocate:  
 fdformat:  
-flock:  
+flock:  librt 
 fsck.cramfs:  libz 
 fsck.minix:  
 fsfreeze:  
 getopt:  
-hexdump:  
+hexdump:  libtinfo 
 hwclock:  libm 
 ionice:  
 ipcmk:  
@@ -45,7 +45,7 @@ ipcrm:
 ipcs:  
 isosize:  
 kill:  
-last:  
+last:  librt 
 ldattach:  
 logger:  libsystemd 
 login:  libpam libpam_misc 
@@ -69,7 +69,7 @@ renice:
 rev:  
 rtcwake:  
 runuser:  libpam libpam_misc 
-script:  libutil 
+script:  librt libutil 
 scriptreplay:  
 setarch:  
 setpriv:  ap-ng 
