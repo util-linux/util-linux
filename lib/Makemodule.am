@@ -96,7 +96,7 @@ test_at_CFLAGS = -DTEST_PROGRAM_AT
 test_strutils_SOURCES = lib/strutils.c
 test_strutils_CFLAGS = -DTEST_PROGRAM
 
-test_colors_SOURCES = lib/colors.c
+test_colors_SOURCES = lib/colors.c lib/color-names.c
 test_colors_CFLAGS = -DTEST_PROGRAM $(TINFO_CFLAGS)
 test_colors_LDADD = $(LDADD) $(TINFO_LIBS)
 
