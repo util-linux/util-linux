@@ -92,6 +92,8 @@ function test_label_resize {
 	done
 
 	echo ',10M,L' | $TS_CMD_SFDISK --append ${TS_DEVICE} &> /dev/null
+	udevadm settle
+
 	echo ',10M,L' | $TS_CMD_SFDISK --append ${TS_DEVICE} &> /dev/null
 	udevadm settle
 
