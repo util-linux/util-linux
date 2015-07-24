@@ -22,7 +22,7 @@ libsmartcols_la_SOURCES= \
 
 nodist_libsmartcols_la_SOURCES = libsmartcols/src/smartcolsP.h
 
-libsmartcols_la_LIBADD = libcommon.la libtcolors.la
+libsmartcols_la_LIBADD = libcommon.la
 
 libsmartcols_la_CFLAGS = \
 	$(SOLIB_CFLAGS) \
@@ -31,7 +31,6 @@ libsmartcols_la_CFLAGS = \
 
 libsmartcols_la_DEPENDENCIES = \
 	libcommon.la \
-	libtcolors.la \
 	libsmartcols/src/libsmartcols.sym \
 	libsmartcols/src/libsmartcols.h.in
 

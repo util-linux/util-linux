@@ -13,7 +13,7 @@
 
 #include "c.h"
 #include "list.h"
-#include "colors.h"
+#include "color-names.h"
 #include "debug.h"
 
 #include "libsmartcols.h"

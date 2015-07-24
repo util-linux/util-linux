@@ -10,6 +10,7 @@ libcommon_la_SOURCES = \
 	lib/env.c \
 	lib/fileutils.c \
 	lib/ismounted.c \
+	lib/color-names.c \
 	lib/mangle.c \
 	lib/match.c \
 	lib/mbsalign.c \
@@ -44,7 +45,7 @@ endif
 noinst_LTLIBRARIES += libtcolors.la
 libtcolors_la_CFLAGS = $(AM_CFLAGS) $(TINFO_CFLAGS)
 libtcolors_la_LIBADD = $(TINFO_LIBS)
-libtcolors_la_SOURCES = lib/colors.c include/colors.h
+libtcolors_la_SOURCES = lib/colors.c lib/color-names.c include/colors.h include/color-names.h
 
 dist_man_MANS += lib/terminal-colors.d.5
 

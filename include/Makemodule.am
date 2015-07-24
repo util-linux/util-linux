@@ -9,6 +9,7 @@ dist_noinst_HEADERS += \
 	include/c.h \
 	include/closestream.h \
 	include/colors.h \
+	include/color-names.h \
 	include/cpuset.h \
 	include/crc32.h \
 	include/crc64.h \
