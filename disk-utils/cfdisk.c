@@ -2519,6 +2519,7 @@ static int ui_run(struct cfdisk *cf)
 		case '\r':
 			rc = main_menu_action(cf, 0);
 			break;
+		case 'X':
 		case 'x': /* Extra */
 			toggle_show_extra(cf);
 			break;
