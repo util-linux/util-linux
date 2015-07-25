@@ -1338,7 +1338,7 @@ static void extra_prepare_data(struct cfdisk *cf)
 			if (!blkid_probe_lookup_value(pr, "TYPE", &bdata, NULL))
 				extra_insert_pair(l, _("Filesystem:"), bdata);
 			if (!blkid_probe_lookup_value(pr, "LABEL", &bdata, NULL)) {
-				extra_insert_pair(l, _("Filesystem LABEL:"), bdata);
+				extra_insert_pair(l, _("Filesystem label:"), bdata);
 				devlabel = xstrdup(bdata);
 			}
 			if (!blkid_probe_lookup_value(pr, "UUID", &bdata, NULL)) {
