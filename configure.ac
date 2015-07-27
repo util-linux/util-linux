@@ -1311,8 +1311,14 @@ AS_IF([test "x$build_mkswap" = xyes -a "x$build_libuuid" != xyes], [
   AC_MSG_WARN([uuid library is not found; mkswap(8) will not generate UUIDs])
 ])
 
-UL_BUILD_INIT([cal], [yes])
+
+AC_ARG_ENABLE([cal],
+  AS_HELP_STRING([--disable-cal], [do not build cal]),
+  [], [UL_DEFAULT_ENABLE([cal], [check])]
+)
+UL_BUILD_INIT([cal])
 AM_CONDITIONAL([BUILD_CAL], [test "x$build_cal" = xyes])
+
 
 UL_BUILD_INIT([logger], [yes])
 AM_CONDITIONAL([BUILD_LOGGER], [test "x$build_logger" = xyes])
