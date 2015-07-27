@@ -877,12 +877,15 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 			if (cl->width == cl->width_min)
 				continue;
 
+			DBG(TAB, ul_debugobj(tb, "     tring to reduce: %s (width=%zu)", cl->header.data, cl->width));
+
 			/* truncate column with relative sizes */
 			if (cl->width_hint < 1 && cl->width > 0 && width > 0 &&
-			    cl->width > cl->width_hint * tb->termwidth) {
+			    cl->width >= (size_t) (cl->width_hint * tb->termwidth)) {
 				cl->width--;
 				width--;
 			}
+
 			/* truncate column with absolute size */
 			if (cl->width_hint > 1 && cl->width > 0 && width > 0 &&
 			    !trunc_only) {
