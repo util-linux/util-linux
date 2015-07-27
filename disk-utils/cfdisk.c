@@ -94,7 +94,7 @@
 #define MENU_H_POSTSTR_SZ	(sizeof(MENU_H_POSTSTR) - 1)
 
 #define TABLE_START_LINE	4
-#define MENU_START_LINE		(ui_lines - 5)
+#define MENU_START_LINE		(ui_lines - 4)		/* The menu maybe use two lines */
 #define INFO_LINE		(ui_lines - 2)
 #define WARN_LINE		INFO_LINE
 #define HINT_LINE		(ui_lines - 1)
