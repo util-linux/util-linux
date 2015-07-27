@@ -791,6 +791,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	fdisk_init_debug(0);
+	scols_init_debug(0);
 	fdiskprog_init_debug();
 
 	cxt = fdisk_new_context();

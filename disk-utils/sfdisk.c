@@ -30,6 +30,7 @@
 #include <getopt.h>
 #include <sys/stat.h>
 #include <assert.h>
+#include <libsmartcols.h>
 #ifdef HAVE_LIBREADLINE
 # include <readline/readline.h>
 #endif
@@ -202,6 +203,7 @@ static int ask_callback(struct fdisk_context *cxt,
 static void sfdisk_init(struct sfdisk *sf)
 {
 	fdisk_init_debug(0);
+	scols_init_debug(0);
 	sfdiskprog_init_debug();
 
 	sf->cxt = fdisk_new_context();
