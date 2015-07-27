@@ -1317,16 +1317,6 @@ static void extra_prepare_data(struct cfdisk *cf)
 		free(data);
 	}
 
-	if (!fdisk_partition_to_string(pa, cf->cxt, FDISK_FIELD_SADDR, &data) && data) {
-		extra_insert_pair(l, _("Start C/H/S:"), data);
-		free(data);
-	}
-
-	if (!fdisk_partition_to_string(pa, cf->cxt, FDISK_FIELD_EADDR, &data) && data) {
-		extra_insert_pair(l, _("End C/H/S:"), data);
-		free(data);
-	}
-
 #ifdef HAVE_LIBBLKID
 	if (fdisk_partition_has_start(pa) && fdisk_partition_has_size(pa)) {
 		int fd;
