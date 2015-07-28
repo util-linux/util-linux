@@ -94,6 +94,7 @@ struct menu menu_generic = {
 	.entries	= {
 		MENU_BSEP(N_("Generic")),
 		MENU_ENT  ('d', N_("delete a partition")),
+		MENU_ENT  ('F', N_("list free unpartitioned space")),
 		MENU_ENT  ('l', N_("list known partition types")),
 		MENU_ENT  ('n', N_("add a new partition")),
 		MENU_BENT ('p', N_("print the partition table")),
@@ -560,6 +561,9 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		break;
 	case 'i':
 		rc = print_partition_info(cxt);
+		break;
+	case 'F':
+		list_freespace(cxt);
 		break;
 	}
 

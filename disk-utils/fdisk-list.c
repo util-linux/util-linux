@@ -195,6 +195,100 @@ done:
 	fdisk_free_iter(itr);
 }
 
+void list_freespace(struct fdisk_context *cxt)
+{
+	struct fdisk_table *tb = NULL;
+	struct fdisk_partition *pa = NULL;
+	struct fdisk_iter *itr = NULL;
+	struct libscols_table *out = NULL;
+	const char *bold = NULL;
+	size_t i;
+	uintmax_t sumsize = 0, bytes = 0;
+	char *strsz;
+
+	static const char *colnames[] = { N_("Start"), N_("End"), N_("Sectors"), N_("Size") };
+	static const int colids[] = { FDISK_FIELD_START, FDISK_FIELD_END, FDISK_FIELD_SECTORS, FDISK_FIELD_SIZE };
+
+	if (fdisk_get_freespaces(cxt, &tb))
+		goto done;
+
+	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
+	if (!itr) {
+		fdisk_warn(cxt, _("failed to allocate iterator"));
+		goto done;
+	}
+
+	out = scols_new_table();
+	if (!out) {
+		fdisk_warn(cxt, _("failed to allocate output table"));
+		goto done;
+	}
+
+	if (colors_wanted()) {
+		scols_table_enable_colors(out, 1);
+		bold = color_scheme_get_sequence("header", UL_COLOR_BOLD);
+	}
+
+	for (i = 0; i < ARRAY_SIZE(colnames); i++) {
+		struct libscols_column *co = scols_table_new_column(out, _(colnames[i]), 5, SCOLS_FL_RIGHT);
+
+		if (!co)
+			goto done;
+		if (bold)
+			scols_cell_set_color(scols_column_get_header(co), bold);
+	}
+
+	/* fill-in output table */
+	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
+		struct libscols_line *ln = scols_table_new_line(out, NULL);
+		char *data;
+
+		if (!ln) {
+			fdisk_warn(cxt, _("failed to allocate output line"));
+			goto done;
+		}
+		for (i = 0; i < ARRAY_SIZE(colids); i++) {
+			if (fdisk_partition_to_string(pa, cxt, colids[i], &data))
+				continue;
+			scols_line_refer_data(ln, i, data);
+		}
+
+		if (fdisk_partition_has_size(pa))
+			sumsize += fdisk_partition_get_size(pa);
+	}
+
+	bytes = sumsize * fdisk_get_sector_size(cxt);
+	strsz = size_to_human_string(SIZE_SUFFIX_SPACE
+					   | SIZE_SUFFIX_3LETTER, bytes);
+
+	color_scheme_enable("header", UL_COLOR_BOLD);
+	fdisk_info(cxt,	_("Unpartitioned space %s: %s, %ju bytes, %ju sectors"),
+			fdisk_get_devname(cxt), strsz,
+			bytes, sumsize);
+	color_disable();
+	free(strsz);
+
+	fdisk_info(cxt, _("Units: %s of %d * %ld = %ld bytes"),
+	       fdisk_get_unit(cxt, FDISK_PLURAL),
+	       fdisk_get_units_per_sector(cxt),
+	       fdisk_get_sector_size(cxt),
+	       fdisk_get_units_per_sector(cxt) * fdisk_get_sector_size(cxt));
+
+	fdisk_info(cxt, _("Sector size (logical/physical): %lu bytes / %lu bytes"),
+				fdisk_get_sector_size(cxt),
+				fdisk_get_physector_size(cxt));
+
+	/* print */
+	if (!scols_table_is_empty(out)) {
+		fputc('\n', stdout);
+		scols_print_table(out);
+	}
+done:
+	scols_unref_table(out);
+	fdisk_unref_table(tb);
+	fdisk_free_iter(itr);
+}
+
 char *next_proc_partition(FILE **f)
 {
 	char line[128 + 1];
@@ -257,6 +351,19 @@ int print_device_pt(struct fdisk_context *cxt, char *device, int warnme, int ver
 	return 0;
 }
 
+int print_device_freespace(struct fdisk_context *cxt, char *device, int warnme)
+{
+	if (fdisk_assign_device(cxt, device, 1) != 0) {	/* read-only */
+		if (warnme || errno == EACCES)
+			warn(_("cannot open %s"), device);
+		return -1;
+	}
+
+	list_freespace(cxt);
+	fdisk_deassign_device(cxt, 1);
+	return 0;
+}
+
 void print_all_devices_pt(struct fdisk_context *cxt, int verify)
 {
 	FILE *f = NULL;
@@ -267,6 +374,21 @@ void print_all_devices_pt(struct fdisk_context *cxt, int verify)
 		if (ct)
 			fputs("\n\n", stdout);
 		if (print_device_pt(cxt, dev, 0, verify) == 0)
+			ct++;
+		free(dev);
+	}
+}
+
+void print_all_devices_freespace(struct fdisk_context *cxt)
+{
+	FILE *f = NULL;
+	int ct = 0;
+	char *dev;
+
+	while ((dev = next_proc_partition(&f))) {
+		if (ct)
+			fputs("\n\n", stdout);
+		if (print_device_freespace(cxt, dev, 0) == 0)
 			ct++;
 		free(dev);
 	}
