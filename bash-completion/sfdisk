@@ -33,6 +33,7 @@ _sfdisk_module()
 				--change-id
 				--print-id
 				--list
+				--list-free
 				--dump
 				--increment
 				--unit

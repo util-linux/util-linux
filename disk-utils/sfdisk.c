@@ -71,6 +71,7 @@ enum {
 	ACT_CHANGE_ID,
 	ACT_DUMP,
 	ACT_LIST,
+	ACT_LIST_FREE,
 	ACT_LIST_TYPES,
 	ACT_SHOW_SIZE,
 	ACT_SHOW_GEOM,
@@ -356,6 +357,28 @@ static int command_list_partitions(struct sfdisk *sf, int argc, char **argv)
 		}
 	} else
 		print_all_devices_pt(sf->cxt, sf->verify);
+
+	return 0;
+}
+
+/*
+ * sfdisk --list-free [<device ..]
+ */
+static int command_list_freespace(struct sfdisk *sf, int argc, char **argv)
+{
+	fdisk_enable_listonly(sf->cxt, 1);
+
+	if (argc) {
+		int i, ct = 0;
+
+		for (i = 0; i < argc; i++) {
+			if (ct)
+				fputs("\n\n", stdout);
+			if (print_device_freespace(sf->cxt, argv[i], 0) == 0)
+				ct++;
+		}
+	} else
+		print_all_devices_freespace(sf->cxt);
 
 	return 0;
 }
@@ -1413,6 +1436,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -J, --json <dev>                  dump partition table in JSON format\n"), out);
 	fputs(_(" -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"), out);
 	fputs(_(" -l, --list [<dev> ...]            list partitions of each device\n"), out);
+	fputs(_(" -F, --list-free [<dev> ...]       list unpartitions free areas of each device\n"), out);
 	fputs(_(" -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"), out);
 	fputs(_(" -T, --list-types                  print the recognized types (see -X)\n"), out);
 	fputs(_(" -V, --verify [<dev> ...]          test whether partitions seem correct\n"), out);
@@ -1496,6 +1520,7 @@ int main(int argc, char *argv[])
 		{ "label",   required_argument, NULL, 'X' },
 		{ "label-nested", required_argument, NULL, 'Y' },
 		{ "list",    no_argument,       NULL, 'l' },
+		{ "list-free", no_argument,     NULL, 'F' },
 		{ "list-types", no_argument,	NULL, 'T' },
 		{ "no-act",  no_argument,       NULL, 'n' },
 		{ "no-reread", no_argument,     NULL, OPT_NOREREAD },
@@ -1527,7 +1552,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "aAbcdfghJlLo:O:nN:qsTu:vVX:Y:",
+	while ((c = getopt_long(argc, argv, "aAbcdfFghJlLo:O:nN:qsTu:vVX:Y:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'A':
@@ -1555,6 +1580,9 @@ int main(int argc, char *argv[])
 			/* fallthrough */
 		case 'd':
 			sf->act = ACT_DUMP;
+			break;
+		case 'F':
+			sf->act = ACT_LIST_FREE;
 			break;
 		case 'f':
 			sf->force = 1;
@@ -1665,6 +1693,10 @@ int main(int argc, char *argv[])
 
 	case ACT_LIST_TYPES:
 		rc = command_list_types(sf);
+		break;
+
+	case ACT_LIST_FREE:
+		rc = command_list_freespace(sf, argc - optind, argv + optind);
 		break;
 
 	case ACT_FDISK:
