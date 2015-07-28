@@ -221,7 +221,7 @@ static void __attribute__((__noreturn__)) fail(struct script_control *ctl)
 	done(ctl);
 }
 
-static void finish(struct script_control *ctl, int wait)
+static void wait_for_child(struct script_control *ctl, int wait)
 {
 	int status;
 	pid_t pid;
@@ -371,7 +371,7 @@ static void handle_signal(struct script_control *ctl, int fd)
 
 	switch (info.ssi_signo) {
 	case SIGCHLD:
-		finish(ctl, 0);
+		wait_for_child(ctl, 0);
 		ctl->poll_timeout = 10;
 		return;
 	case SIGWINCH:
@@ -380,6 +380,15 @@ static void handle_signal(struct script_control *ctl, int fd)
 			ioctl(ctl->slave, TIOCSWINSZ, (char *)&ctl->win);
 		}
 		break;
+	case SIGTERM:
+		/* fallthrough */
+	case SIGINT:
+		/* fallthrough */
+	case SIGQUIT:
+		fprintf(stderr, _("\nSession terminated.\n"));
+		/* Child termination is going to generate SIGCHILD (see above) */
+		kill(ctl->child, SIGTERM);
+		return;
 	default:
 		abort();
 	}
@@ -440,6 +449,7 @@ static void do_io(struct script_control *ctl)
 		if (ret == 0) {
 			DBG(POLL, ul_debug("setting die=1"));
 			ctl->die = 1;
+			break;
 		}
 
 		for (i = 0; i < ARRAY_SIZE(pfd) - ignore_stdin; i++) {
@@ -484,7 +494,7 @@ static void do_io(struct script_control *ctl)
 	DBG(POLL, ul_debug("poll() done"));
 
 	if (!ctl->die)
-		finish(ctl, 1); /* wait for children */
+		wait_for_child(ctl, 1);
 	if (!ctl->quiet && ctl->typescriptfp) {
 		tvec = script_time((time_t *)NULL);
 		strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
@@ -740,6 +750,9 @@ int main(int argc, char **argv)
 	sigemptyset(&ctl.sigset);
 	sigaddset(&ctl.sigset, SIGCHLD);
 	sigaddset(&ctl.sigset, SIGWINCH);
+	sigaddset(&ctl.sigset, SIGTERM);
+	sigaddset(&ctl.sigset, SIGINT);
+	sigaddset(&ctl.sigset, SIGQUIT);
 
 	/* block signals used for signalfd() to prevent the signals being
 	 * handled according to their default dispositions */
