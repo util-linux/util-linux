@@ -151,15 +151,14 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	if (2 < argc)
-		ctl.files = xmalloc(sizeof(char *) * argc);
-
 	while ((c = getopt_long(argc, argv, "f:m:vVh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'v':
 			ctl.verbose = 1;
 			break;
 		case 'f':
+			if (!ctl.files)
+				ctl.files = xmalloc(sizeof(char *) * argc);
 			ctl.files[ctl.nfiles++] = optarg;
 			break;
 		case 'm':
