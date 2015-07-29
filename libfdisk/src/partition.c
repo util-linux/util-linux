@@ -1232,7 +1232,7 @@ int fdisk_delete_partition(struct fdisk_context *cxt, size_t partno)
 int fdisk_delete_all_partitions(struct fdisk_context *cxt)
 {
 	size_t i;
-	int rc;
+	int rc = 0;
 
 	if (!cxt || !cxt->label)
 		return -EINVAL;
