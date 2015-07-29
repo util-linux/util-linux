@@ -1260,7 +1260,7 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 		 const bool testing, const bool predict, const bool get)
 {
 	/* Contents of the adjtime file, or what they should be. */
-	struct adjtime adjtime;
+	struct adjtime adjtime = { 0 };
 	bool universal;
 	/* Set if user lacks necessary authorization to access the clock */
 	bool no_auth;
