@@ -214,20 +214,19 @@ int scols_line_add_child(struct libscols_line *ln, struct libscols_line *child)
 	if (!ln || !child)
 		return -EINVAL;
 
+	DBG(LINE, ul_debugobj(ln, "add child %p", child));
+	scols_ref_line(child);
+	scols_ref_line(ln);
+
 	/* unref old<->parent */
 	if (child->parent)
 		scols_line_remove_child(child->parent, child);
 
-	DBG(LINE, ul_debugobj(ln, "add child %p", child));
-
 	/* new reference from parent to child */
 	list_add_tail(&child->ln_children, &ln->ln_branch);
-	scols_ref_line(child);
 
 	/* new reference from child to parent */
 	child->parent = ln;
-	scols_ref_line(ln);
-
 	return 0;
 }
 
