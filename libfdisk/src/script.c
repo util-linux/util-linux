@@ -1245,7 +1245,7 @@ int fdisk_script_read_line(struct fdisk_script *dp, FILE *f, char *buf, size_t b
 int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
 {
 	char buf[BUFSIZ];
-	int rc;
+	int rc = 1;
 
 	assert(dp);
 	assert(f);
