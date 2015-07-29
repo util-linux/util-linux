@@ -26,7 +26,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/syslog.h>
-#include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
 #include <shadow.h>
