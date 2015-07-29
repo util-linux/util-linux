@@ -1013,7 +1013,8 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 			case COL_STATUS: {
 					int comma = 0;
 					size_t offt = 0;
-					free (arg);
+
+					free(arg);
 					arg = xcalloc(1, sizeof(char) * strlen(_("dest"))
 							+ strlen(_("locked"))
 							+ strlen(_("hugetlb"))
@@ -1036,7 +1037,7 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 					if (shmdsp->shm_perm.mode & SHM_NORESERVE) {
 						if (comma)
 							arg[offt++] = ',';
-						offt += sprintf(arg + offt, "%s", _("noreserve"));
+						sprintf(arg + offt, "%s", _("noreserve"));
 					}
 					rc = scols_line_set_data(ln, n, arg);
 				}
