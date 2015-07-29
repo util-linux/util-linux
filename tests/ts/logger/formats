@@ -61,6 +61,10 @@ ts_init_subtest "rfc5424_msgid"
 logger_fun -t "rfc5424" --rfc5424 --msgid "MSGID" "message"
 ts_finalize_subtest
 
+ts_init_subtest "octet_counting"
+logger_fun -t "octen" --octet-count "message"
+ts_finalize_subtest
+
 ts_init_subtest "priorities"
 for facility in auth authpriv cron daemon ftp lpr mail news syslog user uucp local{0..7}; do
 	for level in emerg alert crit err warning notice info debug; do
