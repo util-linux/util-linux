@@ -26,10 +26,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/mount.h>
-
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 /* we only need some defines missing in sys/mount.h, no libmount linkage */
 #include <libmount.h>
