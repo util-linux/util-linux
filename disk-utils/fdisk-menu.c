@@ -433,7 +433,6 @@ int process_fdisk_menu(struct fdisk_context **cxt0)
 		return -EINVAL;
 	}
 
-	rc = 0;
 	DBG(MENU, ul_debug("selected: key=%c, entry='%s'",
 				key, ent->title));
 
