@@ -442,7 +442,7 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
 void list_partition_types(struct fdisk_context *cxt)
 {
 	size_t ntypes = 0;
-	struct fdisk_label *lb = fdisk_get_label(cxt, NULL);
+	struct fdisk_label *lb;
 
 	assert(cxt);
 	lb = fdisk_get_label(cxt, NULL);
