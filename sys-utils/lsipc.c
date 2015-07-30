@@ -148,7 +148,7 @@ static const struct lsipc_coldesc coldescs[] =
 	/* common */
 	[COL_KEY]	= { "KEY",	N_("Resource key"), N_("Key"), 1},
 	[COL_ID]	= { "ID",	N_("Resource ID"), N_("ID"), 1},
-	[COL_OWNER]	= { "OWNER",	N_("Owner"), N_("Owner"), 1, SCOLS_FL_RIGHT},
+	[COL_OWNER]	= { "OWNER",	N_("Owner's username or UID"), N_("Owner"), 1, SCOLS_FL_RIGHT},
 	[COL_PERMS]	= { "PERMS",	N_("Permissions"), N_("Permissions"), 1, SCOLS_FL_RIGHT},
 	[COL_CUID]	= { "CUID",	N_("Creator UID"), N_("Creator UID"), 1, SCOLS_FL_RIGHT},
 	[COL_CUSER]     = { "CUSER",    N_("Creator user"), N_("Creator user"), 1 },
@@ -891,6 +891,22 @@ static void do_msg_global(struct libscols_table *tb)
 	global_set_data(tb, "MSGMNB", _("Default max size of queue (bytes)"), 0, lim.msgmnb);
 }
 
+static char *get_username(struct passwd **pw, uid_t id)
+{
+	if (!*pw || (*pw)->pw_uid != id)
+		*pw = getpwuid(id);
+
+	return *pw ? xstrdup((*pw)->pw_name) : NULL;
+}
+
+static char *get_groupname(struct group **gr, gid_t id)
+{
+	if (!*gr || (*gr)->gr_gid != id)
+		*gr = getgrgid(id);
+
+	return *gr ? xstrdup((*gr)->gr_name) : NULL;
+}
+
 static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 {
 	struct libscols_line *ln;
@@ -913,14 +929,6 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 		if (!ln)
 			err_oom();
 
-		/* no need to call getpwuid() for the same user */
-		if (!(pw && pw->pw_uid == shmdsp->shm_perm.uid))
-			pw = getpwuid(shmdsp->shm_perm.uid);
-
-		/* no need to call getgrgid() for the same user */
-		if (!(gr && gr->gr_gid == shmdsp->shm_perm.gid))
-			gr = getgrgid(shmdsp->shm_perm.gid);
-
 		for (n = 0; n < ncolumns; n++) {
 			int rc = 0;
 
@@ -934,9 +942,8 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				rc = scols_line_set_data(ln, n, arg);
 				break;
 			case COL_OWNER:
-				if (pw)
-					xasprintf(&arg, "%s", pw->pw_name);
-				else
+				arg = get_username(&pw, shmdsp->shm_perm.uid);
+				if (!arg)
 					xasprintf(&arg, "%u", shmdsp->shm_perm.uid);
 				rc = scols_line_set_data(ln, n, arg);
 				break;
@@ -954,42 +961,36 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				rc = scols_line_set_data(ln, n, arg);
 				break;
 			case COL_CUSER:
-				if (shmdsp->shm_perm.cuid == shmdsp->shm_perm.uid
-						|| (pw = getpwuid(shmdsp->shm_perm.cuid))) {
-					xasprintf(&arg, "%s", pw->pw_name);
+				arg = get_username(&pw, shmdsp->shm_perm.cuid);
+				if (arg)
 					rc = scols_line_set_data(ln, n, arg);
-				}
 				break;
 			case COL_CGID:
 				xasprintf(&arg, "%u", shmdsp->shm_perm.cuid);
 				rc = scols_line_set_data(ln, n, arg);
 				break;
 			case COL_CGROUP:
-				if (shmdsp->shm_perm.cgid == shmdsp->shm_perm.gid
-						|| (gr = getgrgid(shmdsp->shm_perm.cgid))) {
-					xasprintf(&arg, "%s", gr->gr_name);
+				arg = get_groupname(&gr, shmdsp->shm_perm.cgid);
+				if (arg)
 					rc = scols_line_set_data(ln, n, arg);
-				}
 				break;
 			case COL_UID:
 				xasprintf(&arg, "%u", shmdsp->shm_perm.uid);
 				rc = scols_line_set_data(ln, n, arg);
 				break;
 			case COL_USER:
-				if (pw) {
-					xasprintf(&arg, "%s", pw->pw_name);
+				arg = get_username(&pw, shmdsp->shm_perm.uid);
+				if (arg)
 					rc = scols_line_set_data(ln, n, arg);
-				}
 				break;
 			case COL_GID:
 				xasprintf(&arg, "%u", shmdsp->shm_perm.gid);
 				rc = scols_line_set_data(ln, n, arg);
 				break;
 			case COL_GROUP:
-				if (gr) {
-					xasprintf(&arg, "%s", gr->gr_name);
+				arg = get_groupname(&gr, shmdsp->shm_perm.gid);
+				if (arg)
 					rc = scols_line_set_data(ln, n, arg);
-				}
 				break;
 			case COL_CTIME:
 				if (shmdsp->shm_ctim != 0) {
