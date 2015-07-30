@@ -166,7 +166,7 @@ void list_disklabel(struct fdisk_context *cxt)
 
 	/* print */
 	if (!scols_table_is_empty(out)) {
-		fputc('\n', stdout);
+		fdisk_info(cxt, "");	/* just line break */
 		scols_print_table(out);
 	}
 
@@ -177,7 +177,7 @@ void list_disklabel(struct fdisk_context *cxt)
 			continue;
 		if (!fdisk_lba_is_phy_aligned(cxt, fdisk_partition_get_start(pa))) {
 			if (!post)
-				fputc('\n', stdout);
+				fdisk_info(cxt, ""); /* line break */
 			fdisk_warnx(cxt, _("Partition %zu does not start on physical sector boundary."),
 					  fdisk_partition_get_partno(pa) + 1);
 			post++;
@@ -186,7 +186,7 @@ void list_disklabel(struct fdisk_context *cxt)
 
 	if (fdisk_table_wrong_order(tb)) {
 		if (!post)
-			fputc('\n', stdout);
+			fdisk_info(cxt, ""); /* line break */
 		fdisk_info(cxt, _("Partition table entries are not in disk order."));
 	}
 done:
@@ -280,7 +280,7 @@ void list_freespace(struct fdisk_context *cxt)
 
 	/* print */
 	if (!scols_table_is_empty(out)) {
-		fputc('\n', stdout);
+		fdisk_info(cxt, "");	/* line break */
 		scols_print_table(out);
 	}
 done:
