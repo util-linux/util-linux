@@ -1528,7 +1528,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 		goto done;
 
 	/* pa specifies that extended partition is wanted */
-	} else if (pa && pa->type && pa->type->code == MBR_DOS_EXTENDED_PARTITION) {
+	} else if (pa && pa->type && IS_EXTENDED(pa->type->code)) {
 		DBG(LABEL, ul_debug("DOS: pa template %p: add extened", pa));
 		if (l->ext_offset) {
 			fdisk_warnx(cxt, _("Extended partition already exists."));
@@ -1914,11 +1914,25 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 	return 0;
 }
 
+static int has_logical(struct fdisk_context *cxt)
+{
+	size_t i;
+	struct fdisk_dos_label *l = self_label(cxt);
+
+	for (i = 4; i < cxt->label->nparts_max; i++) {
+		if (l->ptes[i].pt_entry)
+			return 1;
+	}
+	return 0;
+}
+
 static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 			     struct fdisk_partition *pa)
 {
+	struct fdisk_dos_label *l;
 	struct dos_partition *p;
 	struct pte *pe;
+	int orgtype;
 	fdisk_sector_t start, size;
 
 	assert(cxt);
@@ -1929,17 +1943,29 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 	if (n >= cxt->label->nparts_max)
 		return -EINVAL;
 
-	if (pa->type && IS_EXTENDED(pa->type->code)) {
-		fdisk_warnx(cxt, _("You cannot change a partition into an "
-			"extended one or vice versa. Delete it first."));
-		return -EINVAL;
-	}
-
-	if (pa->type && !pa->type->code)
-		fdisk_warnx(cxt, _("Type 0 means free space to many systems. "
-				   "Having partitions of type 0 is probably unwise."));
+	l = self_label(cxt);
 	p = self_partition(cxt, n);
 	pe = self_pte(cxt, n);
+	orgtype = p->sys_ind;
+
+	if (pa->type) {
+		if (IS_EXTENDED(pa->type->code) && l->ext_offset) {
+			fdisk_warnx(cxt, _("Extended partition already exists."));
+			return -EINVAL;
+		}
+
+		if (!pa->type->code)
+			fdisk_warnx(cxt, _("Type 0 means free space to many systems. "
+				   "Having partitions of type 0 is probably unwise."));
+
+		if (IS_EXTENDED(p->sys_ind) && !IS_EXTENDED(pa->type->code) && has_logical(cxt)) {
+			fdisk_warnx(cxt, _(
+				"Cannot change type of the extended partition which is "
+				"already used by logical partitons. Delete logical "
+				"partitions first."));
+			return -EINVAL;
+		}
+	}
 
 	FDISK_INIT_UNDEF(start);
 	FDISK_INIT_UNDEF(size);
@@ -1968,6 +1994,21 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 			p->sys_ind = pa->type->code;
 		if (!FDISK_IS_UNDEF(pa->boot))
 			p->boot_ind = fdisk_partition_is_bootable(pa) ? ACTIVE_FLAG : 0;
+	}
+
+	if (pa->type) {
+		if (IS_EXTENDED(pa->type->code) && !IS_EXTENDED(orgtype)) {
+			/* new extended partition - create a reference  */
+			l->ext_index = n;
+			l->ext_offset = dos_partition_get_start(p);
+			pe->ex_entry = p;
+		 } else if (IS_EXTENDED(orgtype)) {
+			/* remove extended partition */
+			cxt->label->nparts_max = 4;
+			l->ptes[l->ext_index].ex_entry = NULL;
+			l->ext_offset = 0;
+			l->ext_index = 0;
+		 }
 	}
 
 	partition_set_changed(cxt, n, 1);
