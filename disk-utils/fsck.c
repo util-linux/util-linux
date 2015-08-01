@@ -1523,10 +1523,10 @@ static void parse_argv(int argc, char *argv[])
 			case 'r':
 				report_stats = 1;
 				if (arg[j+1]) {					/* -r<fd> */
-					report_stats_fd = strtou32_or_err(arg+j+1, _("invalid argument -r"));
+					report_stats_fd = strtou32_or_err(arg+j+1, _("invalid argument of -r"));
 					goto next_arg;
 				} else if (i+1 < argc && *argv[i+1] >= '0' && *argv[i+1] <= '9') {	/* -r <fd> */
-					report_stats_fd = strtou32_or_err(argv[i+1], _("invalid argument -r"));
+					report_stats_fd = strtou32_or_err(argv[i+1], _("invalid argument of -r"));
 					++i;
 					goto next_arg;
 				}
@@ -1574,7 +1574,7 @@ static void parse_argv(int argc, char *argv[])
 		report_stats_file = fdopen(report_stats_fd, "w");
 		if (!report_stats_file)
 			err(FSCK_EX_ERROR,
-				_("invalid argument -r %d"),
+				_("invalid argument of -r: %d"),
 				report_stats_fd);
 	}
 

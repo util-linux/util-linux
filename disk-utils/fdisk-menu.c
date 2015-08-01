@@ -535,7 +535,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		break;
 	case 'w':
 		if (fdisk_is_readonly(cxt)) {
-			fdisk_warnx(cxt, _("Device open in read-only mode."));
+			fdisk_warnx(cxt, _("Device is open in read-only mode."));
 			break;
 		}
 		rc = fdisk_write_disklabel(cxt);

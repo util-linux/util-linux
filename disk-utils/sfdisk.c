@@ -698,7 +698,7 @@ static void assign_device_partition(struct sfdisk *sf,
 
 	lb = fdisk_get_label(sf->cxt, NULL);
 	if (!lb)
-		errx(EXIT_FAILURE, _("%s: not found partition table."), devname);
+		errx(EXIT_FAILURE, _("%s: no partition table found"), devname);
 
 	n = fdisk_get_npartitions(sf->cxt);
 	if (partno > n)
@@ -980,10 +980,10 @@ static void command_fdisk_help(void)
 	fputs(_("   write    write table to disk and exit\n"), stdout);
 	fputs(_("   quit     show new situation and wait for user's feedback before write\n"), stdout);
 	fputs(_("   abort    exit sfdisk shell\n"), stdout);
-	fputs(_("   print    print partition table.\n"), stdout);
-	fputs(_("   help     this help.\n"), stdout);
+	fputs(_("   print    display the partition table\n"), stdout);
+	fputs(_("   help     show this help text\n"), stdout);
 	fputc('\n', stdout);
-	fputs(_("   CTRL-D   the same like 'quit' command\n"), stdout);
+	fputs(_("   Ctrl-D   the same as 'quit'\n"), stdout);
 
 	fputc('\n', stdout);
 	color_scheme_enable("help-title", UL_COLOR_BOLD);
@@ -992,28 +992,28 @@ static void command_fdisk_help(void)
 	fputs(_("   <start>, <size>, <type>, <bootable>\n"), stdout);
 
 	fputc('\n', stdout);
-	fputs(_("   <start>  begin of the partition in sectors or bytes if specified\n"
-		"            in format <number>{K,M,G,T,P,E,Z,Y}. The default is\n"
-		"            the first free space.\n"), stdout);
+	fputs(_("   <start>  Beginning of the partition in sectors, or bytes if\n"
+		"            specified in the format <number>{K,M,G,T,P,E,Z,Y}.\n"
+		"            The default is the first free space.\n"), stdout);
 
 	fputc('\n', stdout);
-	fputs(_("   <size>   size of the partition in sectors if specified in format\n"
-		"            <number>{K,M,G,T,P,E,Z,Y} then it's interpreted as size\n"
-		"            in bytes. The default is all available space.\n"), stdout);
+	fputs(_("   <size>   Size of the partition in sectors, or bytes if\n"
+		"            specified in the format <number>{K,M,G,T,P,E,Z,Y}.\n"
+		"            The default is all available space.\n"), stdout);
 
 	fputc('\n', stdout);
-	fputs(_("   <type>   partition type. The default is Linux data partition.\n"), stdout);
+	fputs(_("   <type>   The partition type.  Default is a Linux data partition.\n"), stdout);
 	fputs(_("            MBR: hex or L,S,E,X shortcuts.\n"), stdout);
-	fputs(_("            GPT: uuid or L,S,H shortcuts.\n"), stdout);
+	fputs(_("            GPT: UUID or L,S,H shortcuts.\n"), stdout);
 
 	fputc('\n', stdout);
-	fputs(_("   <bootable>  '*' to mark MBR partition as bootable. \n"), stdout);
+	fputs(_("   <bootable>  Use '*' to mark an MBR partition as bootable.\n"), stdout);
 
 	fputc('\n', stdout);
 	color_scheme_enable("help-title", UL_COLOR_BOLD);
 	fputs(_(" Example:\n"), stdout);
 	color_disable();
-	fputs(_("   , 4G     creates 4GiB partition on default start offset.\n"), stdout);
+	fputs(_("   , 4G     Creates a 4GiB partition at default start offset.\n"), stdout);
 	fputc('\n', stdout);
 }
 

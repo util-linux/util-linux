@@ -294,15 +294,15 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	for (i = COLDESC_IDX_GEN_FIRST; i <= COLDESC_IDX_GEN_LAST; i++)
 		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
-	fprintf(out, _("\nShared memory columns (--shmems):\n"));
+	fprintf(out, _("\nShared-memory columns (--shmems):\n"));
 	for (i = COLDESC_IDX_SHM_FIRST; i <= COLDESC_IDX_SHM_LAST; i++)
 		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
-	fprintf(out, _("\nMessages queues columns (--queues):\n"));
+	fprintf(out, _("\nMessage-queue columns (--queues):\n"));
 	for (i = COLDESC_IDX_MSG_FIRST; i <= COLDESC_IDX_MSG_LAST; i++)
 		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
-	fprintf(out, _("\nSemaphores columns (--semaphores):\n"));
+	fprintf(out, _("\nSemaphore columns (--semaphores):\n"));
 	for (i = COLDESC_IDX_SEM_FIRST; i <= COLDESC_IDX_SEM_LAST; i++)
 		fprintf(out, " %14s  %s\n", coldescs[i].name, _(coldescs[i].help));
 
@@ -716,7 +716,7 @@ static void do_sem_global(struct libscols_table *tb)
 	}
 
 	global_set_data(tb, "SEMMNS", _("Total number of semaphores"), nsems, lim.semmns);
-	global_set_data(tb, "SEMMNI", _("Number of Semaphore IDs"), nsets, lim.semmni);
+	global_set_data(tb, "SEMMNI", _("Number of semaphore IDs"), nsets, lim.semmni);
 }
 
 static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
@@ -1266,7 +1266,7 @@ int main(int argc, char *argv[])
 	if (msg + shm + sem == 0) {
 		msg = shm = sem = global = 1;
 		if (show_time || show_creat || id != -1)
-			errx(EXIT_FAILURE, _("the --global is mutually exclusive with --creator, --id and --time"));
+			errx(EXIT_FAILURE, _("--global is mutually exclusive with --creator, --id and --time"));
 	}
 	if (global) {
 		add_column(columns, ncolumns++, COL_RESOURCE);

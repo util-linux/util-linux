@@ -23,10 +23,10 @@ enum colortmode {
 	__UL_NCOLORMODES	/* last */
 };
 
-#ifdef USE_COLORS_BY_DEFAUL
-# define USAGE_COLORS_DEFAULT	N_("colors enabled by default")
+#ifdef USE_COLORS_BY_DEFAULT
+# define USAGE_COLORS_DEFAULT	N_("colors are enabled by default")
 #else
-# define USAGE_COLORS_DEFAULT   N_("colors disabled by default")
+# define USAGE_COLORS_DEFAULT   N_("colors are disabled by default")
 #endif
 
 extern int colormode_from_string(const char *str);

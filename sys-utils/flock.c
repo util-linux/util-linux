@@ -250,7 +250,7 @@ int main(int argc, char *argv[])
 			block = LOCK_NB;
 		} else
 			if (setup_timer(&t_id, &timeout, &timeout_handler))
-				err(EX_OSERR, _("cannot not setup timer"));
+				err(EX_OSERR, _("cannot set up timer"));
 	}
 
 	if (verbose)

@@ -950,7 +950,7 @@ int main(int argc, char **argv)
 		if (rc == -EACCES) {
 			rc = fdisk_assign_device(cxt, argv[optind], 1);
 			if (rc == 0)
-				fdisk_warnx(cxt, _("Device open in read-only mode."));
+				fdisk_warnx(cxt, _("Device is open in read-only mode."));
 		}
 		if (rc)
 			err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
