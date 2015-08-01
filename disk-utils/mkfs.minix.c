@@ -706,8 +706,8 @@ static void determine_device_blocks(struct fs_control *ctl, const struct stat *s
 		errx(MKFS_EX_ERROR, _("%s: number of blocks too small"), ctl->device_name);
 	if (fs_version == 1 && ctl->fs_blocks > MINIX_MAX_INODES)
 		ctl->fs_blocks = MINIX_MAX_INODES;
-	if (ctl->fs_blocks > MINIX_MAX_INODES * BITS_PER_BLOCK)
-		ctl->fs_blocks = MINIX_MAX_INODES * BITS_PER_BLOCK;	/* Utter maximum: Clip. */
+	if (ctl->fs_blocks > (4 + ((MINIX_MAX_INODES - 4) * BITS_PER_BLOCK)))
+		ctl->fs_blocks = 4 + ((MINIX_MAX_INODES - 4) * BITS_PER_BLOCK);	/* Utter maximum: Clip. */
 }
 
 static void check_user_instructions(struct fs_control *ctl)
