@@ -518,14 +518,16 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_("List local system locks.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -J, --json             use JSON output format\n"
-		" -p, --pid <pid>        process id\n"
-		" -o, --output <list>    define which output columns to use\n"
-		" -n, --noheadings       don't print headings\n"
-		" -r, --raw              use the raw output format\n"
-		" -u, --notruncate       don't truncate text in columns\n"
-		" -h, --help             display this help and exit\n"
-		" -V, --version          output version information and exit\n"), out);
+	fputs(_(" -J, --json             use JSON output format\n"), out);
+	fputs(_(" -n, --noheadings       don't print headings\n"), out);
+	fputs(_(" -o, --output <list>    define which output columns to use\n"), out);
+	fputs(_(" -p, --pid <pid>        display only locks held by this process\n"), out);
+	fputs(_(" -r, --raw              use the raw output format\n"), out);
+	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 
 	fputs(_("\nAvailable columns (for --output):\n"), out);
 
