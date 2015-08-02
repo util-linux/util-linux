@@ -85,6 +85,12 @@ _findmnt_module()
 			COMPREPLY=( $(compgen -W "$DEV_MPOINT" -- $cur) )
 			return 0
 			;;
+		'-M'|'--mountpoint')
+			local IFS=$'\n'
+			compopt -o filenames
+			COMPREPLY=( $(compgen -o dirnames -- ${cur:-"/") )
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -105,6 +111,7 @@ _findmnt_module()
 				--tab-file
 				--first-only
 				--invert
+				--json
 				--list
 				--task
 				--noheadings
@@ -118,6 +125,7 @@ _findmnt_module()
 				--submounts
 				--source
 				--target
+				--mountpoint
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

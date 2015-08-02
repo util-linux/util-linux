@@ -34,6 +34,7 @@ _lslocks_module()
 	case $cur in
 		-*)
 			OPTS="--pid
+				--json
 				--output
 				--noheadings
 				--raw

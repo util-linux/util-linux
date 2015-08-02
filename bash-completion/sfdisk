@@ -5,12 +5,12 @@ _sfdisk_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-u'|'--unit')
-			COMPREPLY=( $(compgen -W "S C B M" -- $cur) )
-			return 0
-			;;
 		'-n'|'-C'|'--cylinders'|'-H'|'--heads'|'-S'|'--sectors')
 			COMPREPLY=( $(compgen -W "number" -- $cur) )
+			return 0
+			;;
+		'--color')
+			COMPREPLY=( $(compgen -W "auto never always" -- $cur) )
 			return 0
 			;;
 		'-O'|'-I')
@@ -28,48 +28,36 @@ _sfdisk_module()
 			cur=${cur#=}
 			;;
 		-*)
-			OPTS="--show-size
-				--id
-				--change-id
-				--print-id
+			OPTS="
+				--activate
+				--dump
+				--json
+				--show-geometry
 				--list
 				--list-free
-				--dump
-				--increment
-				--unit
-				--one-only
+				--show-size
 				--list-types
-				--DOS
-				--DOS-extended
-				--re-read
-				-N
-				-n
-				-O
-				-I
 				--verify
-				--version
-				--help
+				--part-label
+				--part-type
+				--part-uuid
+				--part-attrs
+				--append
+				--backup
+				--bytes
 				--force
+				--color
+				--partno
+				--no-act
 				--no-reread
+				--backup-file
+				--output
 				--quiet
-				--Linux
-				--show-geometry
-				--show-pt-geometry
-				--activate=
-				--unhide=
-				--show-extended
-				--leave-last
-				--IBM
-				--in-order
-				--not-in-order
-				--inside-outer
-				--not-inside-outer
-				--nested
-				--chained
-				--onesector
-				--cylinders
-				--heads
-				--sectors"
+				--label
+				--label-nested
+				--help
+				--version
+			"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

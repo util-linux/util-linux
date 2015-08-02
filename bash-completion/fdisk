@@ -36,6 +36,7 @@ _fdisk_module()
 	case $cur in
 		-*)
 			OPTS="--sector-size
+				--protect-boot
 				--compatibility
 				--color
 				--list
