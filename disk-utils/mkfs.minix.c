@@ -148,6 +148,20 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? MKFS_EX_USAGE : MKFS_EX_OK);
 }
 
+#ifdef TEST_SCRIPT
+static inline time_t mkfs_minix_time(time_t *t)
+{
+	const char *str = getenv("MKFS_MINIX_TEST_SECOND_SINCE_EPOCH");
+	time_t sec;
+
+	if (str && sscanf(str, "%ld", &sec) == 1)
+		return sec;
+	return time(t);
+}
+#else				/* !TEST_SCRIPT */
+# define mkfs_minix_time(x) time(x)
+#endif
+
 static void super_set_state(void)
 {
 	switch (fs_version) {
@@ -251,7 +265,7 @@ static void make_bad_inode_v1(struct fs_control *ctl)
 		return;
 	mark_inode(MINIX_BAD_INO);
 	inode->i_nlinks = 1;
-	inode->i_time = time(NULL);
+	inode->i_time = mkfs_minix_time(NULL);
 	inode->i_mode = S_IFREG + 0000;
 	inode->i_size = ctl->fs_bad_blocks * MINIX_BLOCK_SIZE;
 	zone = next(0);
@@ -299,7 +313,7 @@ static void make_bad_inode_v2_v3 (struct fs_control *ctl)
 		return;
 	mark_inode (MINIX_BAD_INO);
 	inode->i_nlinks = 1;
-	inode->i_atime = inode->i_mtime = inode->i_ctime = time (NULL);
+	inode->i_atime = inode->i_mtime = inode->i_ctime = mkfs_minix_time(NULL);
 	inode->i_mode = S_IFREG + 0000;
 	inode->i_size = ctl->fs_bad_blocks * MINIX_BLOCK_SIZE;
 	zone = next (0);
@@ -351,7 +365,7 @@ static void make_root_inode_v1(struct fs_control *ctl) {
 	mark_inode(MINIX_ROOT_INO);
 	inode->i_zone[0] = get_free_block(ctl);
 	inode->i_nlinks = 2;
-	inode->i_time = time(NULL);
+	inode->i_time = mkfs_minix_time(NULL);
 	if (ctl->fs_bad_blocks)
 		inode->i_size = 3 * ctl->fs_dirsize;
 	else {
@@ -372,7 +386,7 @@ static void make_root_inode_v2_v3 (struct fs_control *ctl) {
 	mark_inode (MINIX_ROOT_INO);
 	inode->i_zone[0] = get_free_block (ctl);
 	inode->i_nlinks = 2;
-	inode->i_atime = inode->i_mtime = inode->i_ctime = time (NULL);
+	inode->i_atime = inode->i_mtime = inode->i_ctime = mkfs_minix_time(NULL);
 
 	if (ctl->fs_bad_blocks)
 		inode->i_size = 3 * ctl->fs_dirsize;

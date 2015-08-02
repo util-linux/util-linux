@@ -22,6 +22,7 @@ TS_HELPER_PYLIBMOUNT_UPDATE="$top_srcdir/libmount/python/test_mount_tab_update.p
 TS_HELPER_LOGGER="$top_builddir/test_logger"
 TS_HELPER_LOGINDEFS="$top_builddir/test_logindefs"
 TS_HELPER_MD5="$top_builddir/test_md5"
+TS_HELPER_MKFS_MINIX="$top_builddir/test_mkfs_minix"
 TS_HELPER_MORE=${TS_HELPER_MORE-"$top_builddir/test_more"}
 TS_HELPER_PARTITIONS="$top_builddir/sample-partitions"
 TS_HELPER_PATHS="$top_builddir/test_pathnames"
