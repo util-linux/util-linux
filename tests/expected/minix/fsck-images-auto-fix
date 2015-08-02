@@ -1,0 +1,31 @@
+Filesystem auto-fix is dirty, needs checking.
+Read error: bad block in file '/'
+16 inodes
+16 blocks
+Firstdatazone=5 (5)
+Zonesize=1024
+Maxsize=2147483647
+namelen=60
+
+Read error: bad block in file '/'
+/: bad directory: '.' isn't first
+Read error: bad block in file '/'
+/: bad directory: '..' isn't second
+Inode 1 not used, marked used in the bitmap.
+
+     0 inodes used (0%)
+     6 zones used (37%)
+
+     0 regular files
+     0 directories
+     0 character device files
+     0 block device files
+     1 links
+     0 symbolic links
+------
+     1 files
+----------------------------
+FILE SYSTEM HAS BEEN CHANGED
+----------------------------
+0
+29f0edbcb7e405bbc56e614af3c3cb7c auto-fix

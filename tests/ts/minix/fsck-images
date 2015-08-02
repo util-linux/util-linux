@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="fsck images"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_CMD_FSCKMINIX"
+ts_check_test_command "$TS_HELPER_MKFS_MINIX"
+
+export MKFS_MINIX_TEST_SECOND_SINCE_EPOCH='1438460212'
+
+check_minix_fs_type() {
+	ts_init_subtest $1
+	dd if=/dev/zero bs=1024 count=16 of=$TS_OUTDIR/$1 >/dev/null 2>&1
+	$TS_HELPER_MKFS_MINIX $2 $TS_OUTDIR/$1 >> $TS_OUTPUT 2>&1
+	echo "mkfs return value: $?" >> $TS_OUTPUT
+	$TS_CMD_FSCKMINIX $TS_OUTDIR/$1 >> $TS_OUTPUT 2>&1
+	echo "fsck return value: $?" >> $TS_OUTPUT
+	md5sum $TS_OUTDIR/$1 | awk '{print $1}' >> $TS_OUTPUT 2>&1
+	rm -f $TS_OUTDIR/$1
+	ts_finalize_subtest
+}
+
+check_minix_fs_type 'v1c14' '-1 -n 14'
+check_minix_fs_type 'v1c30' '-1 -n 30'
+check_minix_fs_type 'v2c14' '-2 -n 14'
+check_minix_fs_type 'v2c30' '-2 -n 30'
+check_minix_fs_type 'v3c60' '-3 -n 60'
+
+ts_init_subtest "auto-fix"
+cp "$TS_SELF/broken-root" "$TS_OUTDIR/auto-fix"
+"$TS_CMD_FSCKMINIX" -sav "$TS_OUTDIR/auto-fix" |
+	sed 's/Filesystem on .*auto-fix is dirty/Filesystem auto-fix is dirty/' > $TS_OUTPUT 2>&1
+echo $? >> $TS_OUTPUT
+md5sum "$TS_OUTDIR/auto-fix" |
+	sed 's/  .*auto-fix/ auto-fix/' >> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "bug.773892"
+"$TS_CMD_FSCKMINIX" "$TS_SELF/debian.bug.773892" > $TS_OUTPUT 2>&1
+echo $? >> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "broken-root"
+"$TS_CMD_FSCKMINIX" "$TS_SELF/broken-root" > $TS_OUTPUT 2>&1
+echo $? >> $TS_OUTPUT
+ts_finalize_subtest
+
+echo "42" > $TS_OUTDIR/badlist
+check_minix_fs_type 'check-blocks' "-l $TS_OUTDIR/badlist -c"
+rm -f $TS_OUTDIR/badlist
+
+ts_finalize

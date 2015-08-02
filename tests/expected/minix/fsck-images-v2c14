@@ -1,0 +1,9 @@
+16 inodes
+16 blocks
+Firstdatazone=5 (5)
+Zonesize=1024
+Maxsize=2147483647
+
+mkfs return value: 0
+fsck return value: 0
+d836636da820de16325370caf494cdab
