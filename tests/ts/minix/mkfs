@@ -21,27 +21,32 @@ TS_DESC="mkfs"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_MKMINIX"
-
 ts_skip_nonroot
-ts_check_losetup
 
-IMAGE="$TS_OUTDIR/${TS_TESTNAME}-loop.img"
-ts_device_init
-DEVICE=$TS_LODEV
+ts_scsi_debug_init dev_size_mb=10 num_parts=1
 
-ts_log "create minix fs"
-$TS_CMD_MKMINIX $DEVICE 2>&1 >> $TS_OUTPUT
+mkfs_and_mount_minix() {
+	ts_init_subtest $1
+	dev=${TS_DEVICE}1
+	ts_log "create minix fs $2"
+	$TS_CMD_MKMINIX $2 $dev >> $TS_OUTPUT 2>&1
+	echo "mkfs return value: $?" >> $TS_OUTPUT
+	udevadm settle
+	[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
+	ts_mount "minix" $dev $TS_MOUNTPOINT
+	ts_is_mounted $dev || ts_die "Cannot find $dev in /proc/mounts"
+	ts_log "umount the image"
+	$TS_CMD_UMOUNT $dev
+	ts_finalize_subtest
+}
 
-ts_log "create mountpoint dir"
-[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
+mkfs_and_mount_minix 'v1c14' '-1 -n 14'
+mkfs_and_mount_minix 'v1c30' '-1 -n 30'
+mkfs_and_mount_minix 'v2c14' '-2 -n 14'
+mkfs_and_mount_minix 'v2c30' '-2 -n 30'
+mkfs_and_mount_minix 'v3c60' '-3 -n 60'
 
-ts_log "mount the filesystem"
-ts_mount "minix" $DEVICE $TS_MOUNTPOINT
-
-# check it
-ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
-
-ts_log "umount the image"
-$TS_CMD_UMOUNT $DEVICE
+udevadm settle
+rmmod scsi_debug &>/dev/null
 ts_finalize
 
