@@ -18,6 +18,9 @@ TS_DESC="fsck images"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+# inode contains UID and GID, use always UID=0 to get the same checksum
+ts_skip_nonroot
+
 ts_check_test_command "$TS_CMD_FSCKMINIX"
 ts_check_test_command "$TS_HELPER_MKFS_MINIX"
 
@@ -25,13 +28,14 @@ export MKFS_MINIX_TEST_SECOND_SINCE_EPOCH='1438460212'
 
 check_minix_fs_type() {
 	ts_init_subtest $1
-	dd if=/dev/zero bs=1024 count=16 of=$TS_OUTDIR/$1 >/dev/null 2>&1
-	$TS_HELPER_MKFS_MINIX $2 $TS_OUTDIR/$1 >> $TS_OUTPUT 2>&1
+	img=${TS_OUTPUT}.img
+	dd if=/dev/zero bs=1024 count=16 of=$img >/dev/null 2>&1
+	$TS_HELPER_MKFS_MINIX $2 $img >> $TS_OUTPUT 2>&1
 	echo "mkfs return value: $?" >> $TS_OUTPUT
-	$TS_CMD_FSCKMINIX $TS_OUTDIR/$1 >> $TS_OUTPUT 2>&1
+	$TS_CMD_FSCKMINIX $img >> $TS_OUTPUT 2>&1
 	echo "fsck return value: $?" >> $TS_OUTPUT
-	md5sum $TS_OUTDIR/$1 | awk '{print $1}' >> $TS_OUTPUT 2>&1
-	rm -f $TS_OUTDIR/$1
+	md5sum $img | awk '{print $1}' >> $TS_OUTPUT 2>&1
+	rm -f $img
 	ts_finalize_subtest
 }
 
