@@ -1020,26 +1020,33 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 							+ strlen(_("locked"))
 							+ strlen(_("hugetlb"))
 							+ strlen(_("noreserve")) + 4);
-
+#ifdef SHM_DEST
 					if (shmdsp->shm_perm.mode & SHM_DEST) {
 						offt += sprintf(arg, "%s", _("dest"));
 						comma++;
 					}
+#endif
+#ifdef SHM_LOCKED
 					if (shmdsp->shm_perm.mode & SHM_LOCKED) {
 						if (comma)
 							arg[offt++] = ',';
 						offt += sprintf(arg + offt, "%s", _("locked"));
 					}
+#endif
+#ifdef SHM_HUGETLB
 					if (shmdsp->shm_perm.mode & SHM_HUGETLB) {
 						if (comma)
 							arg[offt++] = ',';
 						offt += sprintf(arg + offt, "%s", _("hugetlb"));
 					}
+#endif
+#ifdef SHM_NORESERVE
 					if (shmdsp->shm_perm.mode & SHM_NORESERVE) {
 						if (comma)
 							arg[offt++] = ',';
 						sprintf(arg + offt, "%s", _("noreserve"));
 					}
+#endif
 					rc = scols_line_set_data(ln, n, arg);
 				}
 				break;
