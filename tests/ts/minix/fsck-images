@@ -46,12 +46,12 @@ check_minix_fs_type 'v2c30' '-2 -n 30'
 check_minix_fs_type 'v3c60' '-3 -n 60'
 
 ts_init_subtest "auto-fix"
-cp "$TS_SELF/broken-root" "$TS_OUTDIR/auto-fix"
-"$TS_CMD_FSCKMINIX" -sav "$TS_OUTDIR/auto-fix" |
-	sed 's/Filesystem on .*auto-fix is dirty/Filesystem auto-fix is dirty/' > $TS_OUTPUT 2>&1
+img=${TS_OUTPUT}.img
+cp "$TS_SELF/broken-root" $img
+"$TS_CMD_FSCKMINIX" -sav $img |
+	sed 's/Filesystem on .* is dirty/Filesystem auto-fix is dirty/' > $TS_OUTPUT 2>&1
 echo $? >> $TS_OUTPUT
-md5sum "$TS_OUTDIR/auto-fix" |
-	sed 's/  .*auto-fix/ auto-fix/' >> $TS_OUTPUT
+md5sum $img | sed 's/  .*auto-fix/ auto-fix/' >> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "bug.773892"
@@ -64,8 +64,9 @@ ts_init_subtest "broken-root"
 echo $? >> $TS_OUTPUT
 ts_finalize_subtest
 
-echo "42" > $TS_OUTDIR/badlist
-check_minix_fs_type 'check-blocks' "-l $TS_OUTDIR/badlist -c"
-rm -f $TS_OUTDIR/badlist
+img="$TS_OUTDIR/${TS_TESTNAME}.badlist"
+echo "42" > $img
+check_minix_fs_type 'check-blocks' "-l $img -c"
+rm -f $img
 
 ts_finalize
