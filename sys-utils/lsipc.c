@@ -649,6 +649,7 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 			/* Create extra table with ID specific semaphore elements */
 			struct libscols_table *sub = new_table(ctl);
 			size_t i;
+			int rc = 0;
 
 			scols_table_enable_noheadings(sub, 0);
 			setup_sem_elements_columns(sub);
@@ -659,28 +660,43 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 
 				/* SEMNUM */
 				xasprintf(&arg, "%zu", i);
-				scols_line_refer_data(sln, 0, arg);
+				rc = scols_line_refer_data(sln, 0, arg);
+				if (rc)
+					break;
 
 				/* VALUE */
 				xasprintf(&arg, "%d", e->semval);
-				scols_line_refer_data(sln, 1, arg);
+				rc = scols_line_refer_data(sln, 1, arg);
+				if (rc)
+					break;
 
 				/* NCOUNT */
 				xasprintf(&arg, "%d", e->ncount);
-				scols_line_refer_data(sln, 2, arg);
+				rc = scols_line_refer_data(sln, 2, arg);
+				if (rc)
+					break;
 
 				/* ZCOUNT */
 				xasprintf(&arg, "%d", e->zcount);
-				scols_line_refer_data(sln, 3, arg);
+				rc = scols_line_refer_data(sln, 3, arg);
+				if (rc)
+					break;
 
 				/* PID */
 				xasprintf(&arg, "%d", e->pid);
-				scols_line_refer_data(sln, 4, arg);
+				rc = scols_line_refer_data(sln, 4, arg);
+				if (rc)
+					break;
 
 				/* COMMAND */
 				arg = proc_get_command(e->pid);
-				scols_line_refer_data(sln, 5, arg);
+				rc = scols_line_refer_data(sln, 5, arg);
+				if (rc)
+					break;
 			}
+
+			if (rc != 0)
+				err(EXIT_FAILURE, _("failed to set data"));
 
 			scols_line_set_userdata(ln, (void *)sub);
 			break;
