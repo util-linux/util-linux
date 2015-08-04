@@ -1065,8 +1065,6 @@ int fdisk_missing_geometry(struct fdisk_context *cxt)
 {
 	int rc;
 
-	assert(cxt);
-
 	if (!cxt || !cxt->label)
 		return 0;
 
