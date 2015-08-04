@@ -169,6 +169,7 @@ UL_SET_ARCH([MIPS], [mips*])
 UL_SET_ARCH([HPPA], [hppa*])
 
 AC_SYS_LARGEFILE
+AC_HEADER_ASSERT
 
 dnl Don't forget to maintain alternatively allowed versions in autogen.sh!
 AM_GNU_GETTEXT_VERSION([0.18.3])

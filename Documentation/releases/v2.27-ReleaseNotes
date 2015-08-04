@@ -50,6 +50,8 @@ The command rtcwake supports a new option --list-modes to list available modes,
 and a new option --date for human-readable times. rtcwake does not support
 RTC_ALM_READ and RTC_ALM_SET fallbacks any more.
 
+The util-linux code is possible rebuild with --disable-assert now.
+
 
 Stable maintenance releases between v2.26 and v2.27
 ---------------------------------------------------

@@ -25,15 +25,6 @@
 #include "debug.h"
 #include "libmount.h"
 
-/* features */
-#define CONFIG_LIBMOUNT_ASSERT
-
-#ifdef CONFIG_LIBMOUNT_ASSERT
-# include <assert.h>
-#else
-# define assert(x)
-#endif
-
 /*
  * Debug
  */

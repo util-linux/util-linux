@@ -15,6 +15,8 @@
 #include <string.h>
 #include <errno.h>
 
+#include <assert.h>
+
 #ifdef HAVE_ERR_H
 # include <err.h>
 #endif

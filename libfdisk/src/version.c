@@ -17,7 +17,7 @@
 
 static const char *lib_version = LIBFDISK_VERSION;
 static const char *lib_features[] = {
-#ifdef CONFIG_LIBFDISK_ASSERT
+#if !defined(NDEBUG)	/* libc assert.h stuff */
 	"assert",
 #endif
 	"debug",	/* always enabled */

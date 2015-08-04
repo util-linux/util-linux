@@ -17,7 +17,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-
 #include "c.h"
 #include "libfdisk.h"
 
@@ -26,13 +25,6 @@
 #include "debug.h"
 #include <stdio.h>
 #include <stdarg.h>
-
-/* features */
-#define CONFIG_LIBFDISK_ASSERT
-
-#ifdef CONFIG_LIBFDISK_ASSERT
-#include <assert.h>
-#endif
 
 /*
  * Debug

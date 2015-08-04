@@ -25,8 +25,8 @@ static const char *lib_features[] = {
 #ifdef HAVE_SMACK
 	"smack",
 #endif
-#ifdef CONFIG_LIBMOUNT_ASSERT
-	"assert",
+#if !defined(NDEBUG)
+	"assert",	/* libc assert.h stuff */
 #endif
 	"debug",	/* always enabled */
 	NULL
