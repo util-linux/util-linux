@@ -259,7 +259,6 @@ const char *mnt_context_get_writable_tabpath(struct libmnt_context *cxt)
 
 static int set_flag(struct libmnt_context *cxt, int flag, int enable)
 {
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 	if (enable) {
@@ -1391,7 +1390,6 @@ int mnt_context_get_mflags(struct libmnt_context *cxt, unsigned long *flags)
  */
 int mnt_context_set_user_mflags(struct libmnt_context *cxt, unsigned long flags)
 {
-	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
 	cxt->user_mountflags = flags;
@@ -1463,9 +1461,6 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 	assert(cxt);
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
-
-	if (!cxt || !cxt->fs)
-		return -EINVAL;
 
 	DBG(CXT, ul_debugobj(cxt, "preparing source path"));
 
@@ -1582,9 +1577,6 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	if (!cxt || !cxt->fs)
-		return -EINVAL;
-
 	DBG(CXT, ul_debugobj(cxt, "preparing target path"));
 
 	tgt = mnt_fs_get_target(cxt->fs);
@@ -1666,9 +1658,6 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
 	DBG(CXT, ul_debugobj(cxt, "preparing fstype"));
-
-	if (!cxt || !cxt->fs)
-		return -EINVAL;
 
 	if ((cxt->mountflags & (MS_BIND | MS_MOVE))
 	    || mnt_context_propagation_only(cxt))
@@ -1920,9 +1909,6 @@ static int apply_table(struct libmnt_context *cxt, struct libmnt_table *tb,
 
 	assert(cxt);
 	assert(cxt->fs);
-
-	if (!cxt->fs)
-		return -EINVAL;
 
 	src = mnt_fs_get_source(cxt->fs);
 	tgt = mnt_fs_get_target(cxt->fs);

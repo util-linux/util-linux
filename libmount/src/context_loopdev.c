@@ -147,9 +147,6 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	if (!cxt)
-		return -EINVAL;
-
 	backing_file = mnt_fs_get_srcpath(cxt->fs);
 	if (!backing_file)
 		return -EINVAL;
@@ -317,9 +314,6 @@ int mnt_context_delete_loopdev(struct libmnt_context *cxt)
 	assert(cxt);
 	assert(cxt->fs);
 
-	if (!cxt)
-		return -EINVAL;
-
 	src = mnt_fs_get_srcpath(cxt->fs);
 	if (!src)
 		return -EINVAL;
@@ -342,9 +336,6 @@ int mnt_context_delete_loopdev(struct libmnt_context *cxt)
 int mnt_context_clear_loopdev(struct libmnt_context *cxt)
 {
 	assert(cxt);
-
-	if (!cxt)
-		return -EINVAL;
 
 	if (mnt_context_get_status(cxt) == 0 &&
 	    (cxt->flags & MNT_FL_LOOPDEV_READY)) {

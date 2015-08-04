@@ -159,11 +159,8 @@ static int fix_optstr(struct libmnt_context *cxt)
 	};
 #endif
 	assert(cxt);
-	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	if (!cxt)
-		return -EINVAL;
 	if (!cxt->fs || (cxt->flags & MNT_FL_MOUNTOPTS_FIXED))
 		return 0;
 
@@ -390,11 +387,8 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	unsigned long u_flags = 0;
 
 	assert(cxt);
-	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	if (!cxt)
-		return -EINVAL;
 	if (!cxt->fs)
 		return 0;
 
@@ -816,7 +810,6 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 	assert(cxt);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-
 	/*
 	 * Use the pattern as list of the filesystems
 	 */
@@ -861,17 +854,15 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 {
 	int rc = -EINVAL;
 
-	assert(cxt);
-	assert(cxt->fs);
-	assert(cxt->helper_exec_status == 1);
-	assert(cxt->syscall_status == 1);
-
 	if (!cxt || !cxt->fs || mnt_fs_is_swaparea(cxt->fs))
 		return -EINVAL;
 	if (!mnt_fs_get_source(cxt->fs) && !mnt_fs_get_target(cxt->fs))
 		return -EINVAL;
 	if (cxt->flags & MNT_FL_PREPARED)
 		return 0;
+
+	assert(cxt->helper_exec_status == 1);
+	assert(cxt->syscall_status == 1);
 
 	cxt->action = MNT_ACT_MOUNT;
 

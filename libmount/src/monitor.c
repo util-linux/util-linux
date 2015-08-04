@@ -168,9 +168,6 @@ static int monitor_next_entry(struct libmnt_monitor *mn,
 	assert(itr);
 	assert(me);
 
-	if (!mn || !itr || !me)
-		return -EINVAL;
-
 	*me = NULL;
 
 	if (!itr->head)
@@ -276,9 +273,6 @@ static int userspace_monitor_get_fd(struct libmnt_monitor *mn,
 				    struct monitor_entry *me)
 {
 	int rc;
-
-	assert(mn);
-	assert(me);
 
 	if (!me || me->enable == 0)	/* not-initialized or disabled */
 		return -EINVAL;
@@ -456,9 +450,6 @@ static int kernel_monitor_get_fd(struct libmnt_monitor *mn,
 				 struct monitor_entry *me)
 {
 	int rc;
-
-	assert(mn);
-	assert(me);
 
 	if (!me || me->enable == 0)	/* not-initialized or disabled */
 		return -EINVAL;

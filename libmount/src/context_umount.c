@@ -368,9 +368,6 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	if (!cxt || !cxt->fs)
-		return -EINVAL;
-
 	if (!mnt_context_is_restricted(cxt))
 		 return 0;		/* superuser mount */
 
@@ -749,17 +746,15 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 {
 	int rc;
 
-	assert(cxt);
-	assert(cxt->fs);
-	assert(cxt->helper_exec_status == 1);
-	assert(cxt->syscall_status == 1);
-
 	if (!cxt || !cxt->fs || mnt_fs_is_swaparea(cxt->fs))
 		return -EINVAL;
 	if (!mnt_context_get_source(cxt) && !mnt_context_get_target(cxt))
 		return -EINVAL;
 	if (cxt->flags & MNT_FL_PREPARED)
 		return 0;
+
+	assert(cxt->helper_exec_status == 1);
+	assert(cxt->syscall_status == 1);
 
 	free(cxt->helper);	/* be paranoid */
 	cxt->helper = NULL;
