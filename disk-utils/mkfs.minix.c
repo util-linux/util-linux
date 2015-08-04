@@ -78,6 +78,7 @@
 #include "all-io.h"
 #include "closestream.h"
 #include "ismounted.h"
+#include "xalloc.h"
 
 #define MINIX_ROOT_INO 1
 #define MINIX_BAD_INO 2
@@ -495,10 +496,7 @@ static void super_set_magic(const struct fs_control *ctl)
 static void setup_tables(const struct fs_control *ctl) {
 	unsigned long inodes, zmaps, imaps, zones, i;
 
-	super_block_buffer = calloc(1, MINIX_BLOCK_SIZE);
-	if (!super_block_buffer)
-		err(MKFS_EX_ERROR, _("%s: unable to allocate buffer for superblock"),
-				ctl->device_name);
+	super_block_buffer = xcalloc(1, MINIX_BLOCK_SIZE);
 
 	memset(boot_block_buffer,0,512);
 	super_set_magic(ctl);
@@ -552,22 +550,19 @@ static void setup_tables(const struct fs_control *ctl) {
 	imaps = get_nimaps();
 	zmaps = get_nzmaps();
 
-	inode_map = malloc(imaps * MINIX_BLOCK_SIZE);
-	zone_map = malloc(zmaps * MINIX_BLOCK_SIZE);
-	if (!inode_map || !zone_map)
-		err(MKFS_EX_ERROR, _("%s: unable to allocate buffers for maps"),
-				ctl->device_name);
+	inode_map = xmalloc(imaps * MINIX_BLOCK_SIZE);
+	zone_map = xmalloc(zmaps * MINIX_BLOCK_SIZE);
 	memset(inode_map,0xff,imaps * MINIX_BLOCK_SIZE);
 	memset(zone_map,0xff,zmaps * MINIX_BLOCK_SIZE);
+
 	for (i = get_first_zone() ; i<zones ; i++)
 		unmark_zone(i);
 	for (i = MINIX_ROOT_INO ; i<=inodes; i++)
 		unmark_inode(i);
-	inode_buffer = malloc(get_inode_buffer_size());
-	if (!inode_buffer)
-		err(MKFS_EX_ERROR, _("%s: unable to allocate buffer for inodes"),
-				ctl->device_name);
+
+	inode_buffer = xmalloc(get_inode_buffer_size());
 	memset(inode_buffer,0, get_inode_buffer_size());
+
 	printf(P_("%lu inode\n", "%lu inodes\n", inodes), inodes);
 	printf(P_("%lu block\n", "%lu blocks\n", zones), zones);
 	printf(_("Firstdatazone=%jd (%jd)\n"), get_first_zone(), first_zone_data());
