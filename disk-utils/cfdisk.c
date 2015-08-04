@@ -1189,6 +1189,7 @@ static void ui_draw_menu(struct cfdisk *cf)
 inline static int extra_insert_pair(struct cfdisk_line *l, const char *name, const char *data)
 {
 	struct libscols_line *lsl;
+	int rc;
 
 	assert(l);
 	assert(l->extra);
@@ -1200,10 +1201,11 @@ inline static int extra_insert_pair(struct cfdisk_line *l, const char *name, con
 	if (!lsl)
 		return -ENOMEM;
 
-	scols_line_set_data(lsl, 0, name);
-	scols_line_set_data(lsl, 1, data);
+	rc = scols_line_set_data(lsl, 0, name);
+	if (!rc)
+		rc = scols_line_set_data(lsl, 1, data);
 
-	return 0;
+	return rc;
 }
 
 #ifdef HAVE_LIBMOUNT
