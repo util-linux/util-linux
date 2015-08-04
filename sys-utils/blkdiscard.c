@@ -185,7 +185,7 @@ int main(int argc, char **argv)
 	stats[0] = range[0], stats[1] = 0;
 	gettime_monotonic(&last);
 
-	for (range[0] = range[0]; range[0] < end; range[0] += range[1]) {
+	for (/* nothing */; range[0] < end; range[0] += range[1]) {
 		if (range[0] + range[1] > end)
 			range[1] = end - range[0];
 

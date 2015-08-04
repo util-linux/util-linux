@@ -60,7 +60,7 @@ struct fstrim_range {
 static int fstrim_filesystem(const char *path, struct fstrim_range *rangetpl,
 			    int verbose)
 {
-	int fd = -1, rc;
+	int fd, rc;
 	struct stat sb;
 	struct fstrim_range range;
 
