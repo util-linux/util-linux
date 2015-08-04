@@ -930,7 +930,7 @@ check_zones2(unsigned int i) {
 
 static void
 check_file(struct minix_inode *dir, unsigned int offset) {
-	static char blk[MINIX_BLOCK_SIZE];
+	static char blk[MINIX_BLOCK_SIZE + 2];
 	struct minix_inode *inode;
 	unsigned int ino;
 	char *name;
@@ -1002,7 +1002,7 @@ check_file(struct minix_inode *dir, unsigned int offset) {
 
 static void
 check_file2(struct minix2_inode *dir, unsigned int offset) {
-	static char blk[MINIX_BLOCK_SIZE];
+	static char blk[MINIX_BLOCK_SIZE + 4];
 	struct minix2_inode *inode;
 	ino_t ino;
 	char *name;
