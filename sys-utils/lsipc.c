@@ -233,6 +233,22 @@ static int column_name_to_id(const char *name, size_t namesz)
 	return -1;
 }
 
+static char *get_username(struct passwd **pw, uid_t id)
+{
+	if (!*pw || (*pw)->pw_uid != id)
+		*pw = getpwuid(id);
+
+	return *pw ? xstrdup((*pw)->pw_name) : NULL;
+}
+
+static char *get_groupname(struct group **gr, gid_t id)
+{
+	if (!*gr || (*gr)->gr_gid != id)
+		*gr = getgrgid(id);
+
+	return *gr ? xstrdup((*gr)->gr_name) : NULL;
+}
+
 static int parse_time_mode(const char *optarg)
 {
 	struct lsipc_timefmt {
@@ -535,22 +551,6 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 		size_t n;
 		ln = scols_table_new_line(tb, NULL);
 
-		/* no need to call getpwuid() for the same user */
-		if (!(pw && pw->pw_uid == semdsp->sem_perm.uid))
-			pw = getpwuid(semdsp->sem_perm.uid);
-
-		/* no need to call getgrgid() for the same group */
-		if (!(gr && gr->gr_gid == semdsp->sem_perm.gid))
-			gr = getgrgid(semdsp->sem_perm.gid);
-
-		/* no need to call getpwuid() for the same user */
-		if (!(cpw && cpw->pw_uid == semdsp->sem_perm.cuid))
-			cpw = getpwuid(semdsp->sem_perm.cuid);
-
-		/* no need to call getcgrgid() for the same cgroup */
-		if (!(cgr && cgr->gr_gid == semdsp->sem_perm.cgid))
-			cgr = getgrgid(semdsp->sem_perm.cgid);
-
 		for (n = 0; n < ncolumns; n++) {
 			int rc = 0;
 			switch (columns[n]) {
@@ -563,9 +563,8 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_OWNER:
-				if (pw)
-					xasprintf(&arg, "%s", pw->pw_name);
-				else
+				arg = get_username(&pw, semdsp->sem_perm.uid);
+				if (!arg)
 					xasprintf(&arg, "%u", semdsp->sem_perm.uid);
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
@@ -583,43 +582,36 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_CUSER:
-				if (cpw) {
-					xasprintf(&arg, "%s", cpw->pw_name);
+				arg = get_username(&cpw, semdsp->sem_perm.cuid);
+				if (arg)
 					rc = scols_line_refer_data(ln, n, arg);
-				}
 				break;
 			case COL_CGID:
-				xasprintf(&arg, "%u", semdsp->sem_perm.cuid);
+				xasprintf(&arg, "%u", semdsp->sem_perm.cgid);
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_CGROUP:
-				if (cgr) {
-					xasprintf(&arg, "%s", cgr->gr_name);
+				arg = get_groupname(&cgr, semdsp->sem_perm.cgid);
+				if (arg)
 					rc = scols_line_refer_data(ln, n, arg);
-				}
 				break;
 			case COL_UID:
 				xasprintf(&arg, "%u", semdsp->sem_perm.uid);
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_USER:
-				if (pw) {
-					xasprintf(&arg, "%u", semdsp->sem_perm.uid);
+				arg = get_username(&pw, semdsp->sem_perm.uid);
+				if (arg)
 					rc = scols_line_refer_data(ln, n, arg);
-				}
 				break;
 			case COL_GID:
-				if (gr)
-					xasprintf(&arg, "%s", gr->gr_name);
-				else
-					xasprintf(&arg, "%u", semdsp->sem_perm.gid);
+				xasprintf(&arg, "%u", semdsp->sem_perm.gid);
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_GROUP:
-				if (gr) {
-					xasprintf(&arg, "%s", gr->gr_name);
+				arg = get_groupname(&gr, semdsp->sem_perm.gid);
+				if (arg)
 					rc = scols_line_refer_data(ln, n, arg);
-				}
 				break;
 			case COL_CTIME:
 				if (semdsp->sem_ctime != 0) {
@@ -765,9 +757,8 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_OWNER:
-				if (pw)
-					xasprintf(&arg, "%s", pw->pw_name);
-				else
+				arg = get_username(&pw, msgdsp->msg_perm.uid);
+				if (!arg)
 					xasprintf(&arg, "%u", msgdsp->msg_perm.uid);
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
@@ -785,44 +776,36 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_CUSER:
-				if (msgdsp->msg_perm.cuid == msgdsp->msg_perm.uid
-				    || (pw = getpwuid(msgdsp->msg_perm.cuid))) {
-					xasprintf(&arg, "%s", pw->pw_name);
+				arg = get_username(&pw, msgdsp->msg_perm.cuid);
+				if (arg)
 					rc = scols_line_refer_data(ln, n, arg);
-				}
 				break;
 			case COL_CGID:
 				xasprintf(&arg, "%u", msgdsp->msg_perm.cuid);
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_CGROUP:
-				if (msgdsp->msg_perm.cgid == msgdsp->msg_perm.gid
-				    || (gr = getgrgid(msgdsp->msg_perm.cgid))) {
-					xasprintf(&arg, "%s", gr->gr_name);
+				arg = get_groupname(&gr, msgdsp->msg_perm.cgid);
+				if (arg)
 					rc = scols_line_refer_data(ln, n, arg);
-
-				}
 				break;
 			case COL_UID:
 				xasprintf(&arg, "%u", msgdsp->msg_perm.uid);
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_USER:
-				if (pw) {
-					xasprintf(&arg, "%s", pw->pw_name);
+				arg = get_username(&pw, msgdsp->msg_perm.uid);
+				if (arg)
 					rc = scols_line_refer_data(ln, n, arg);
-				}
 				break;
 			case COL_GID:
 				xasprintf(&arg, "%u", msgdsp->msg_perm.gid);
 				rc = scols_line_refer_data(ln, n, arg);
 				break;
 			case COL_GROUP:
-				if (gr) {
-					xasprintf(&arg, "%s", gr->gr_name);
+				arg = get_groupname(&gr,msgdsp->msg_perm.gid);
+				if (arg)
 					rc = scols_line_refer_data(ln, n, arg);
-
-				}
 				break;
 			case COL_CTIME:
 				if (msgdsp->q_ctime != 0)
@@ -890,21 +873,6 @@ static void do_msg_global(struct libscols_table *tb)
 	global_set_data(tb, "MSGMNB", _("Default max size of queue (bytes)"), 0, lim.msgmnb);
 }
 
-static char *get_username(struct passwd **pw, uid_t id)
-{
-	if (!*pw || (*pw)->pw_uid != id)
-		*pw = getpwuid(id);
-
-	return *pw ? xstrdup((*pw)->pw_name) : NULL;
-}
-
-static char *get_groupname(struct group **gr, gid_t id)
-{
-	if (!*gr || (*gr)->gr_gid != id)
-		*gr = getgrgid(id);
-
-	return *gr ? xstrdup((*gr)->gr_name) : NULL;
-}
 
 static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 {
