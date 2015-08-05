@@ -36,10 +36,10 @@
 
 static int parse_sec(const char *t, usec_t *usec)
 {
-	 static const struct {
+	static const struct {
 		const char *suffix;
 		usec_t usec;
-	 } table[] = {
+	} table[] = {
 		{ "seconds",	USEC_PER_SEC },
 		{ "second",	USEC_PER_SEC },
 		{ "sec",	USEC_PER_SEC },
@@ -68,7 +68,7 @@ static int parse_sec(const char *t, usec_t *usec)
 		{ "usec",	1ULL },
 		{ "us",		1ULL },
 		{ "",		USEC_PER_SEC },	/* default is sec */
-	 };
+	};
 
 	const char *p;
 	usec_t r = 0;
@@ -148,10 +148,10 @@ static int parse_sec(const char *t, usec_t *usec)
 
 int parse_timestamp(const char *t, usec_t *usec)
 {
-	 static const struct {
+	static const struct {
 		const char *name;
 		const int nr;
-	 } day_nr[] = {
+	} day_nr[] = {
 		{ "Sunday",	0 },
 		{ "Sun",	0 },
 		{ "Monday",	1 },
@@ -166,7 +166,7 @@ int parse_timestamp(const char *t, usec_t *usec)
 		{ "Fri",	5 },
 		{ "Saturday",	6 },
 		{ "Sat",	6 },
-	 };
+	};
 
 	const char *k;
 	struct tm tm, copy;
