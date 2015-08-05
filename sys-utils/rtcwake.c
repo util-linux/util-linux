@@ -242,19 +242,24 @@ static int setup_alarm(struct rtcwake_control *ctl, int fd, time_t *wakeup)
 
 static char **get_sys_power_states(struct rtcwake_control *ctl)
 {
+	int fd = -1;
+
 	if (!ctl->possible_modes) {
-		int fd;
 		char buf[256] = { 0 };
 
-		if (!(fd = open(SYS_POWER_STATE_PATH, O_RDONLY)))
-			return NULL;
-		if (read(fd, &buf, sizeof buf) < 0) {
-			close(fd);
-			return NULL;
-		}
+		fd = open(SYS_POWER_STATE_PATH, O_RDONLY);
+		if (fd < 0)
+			goto nothing;
+		if (read(fd, &buf, sizeof buf) <= 0)
+			goto nothing;
 		ctl->possible_modes = strv_split(buf, " \n");
+		close(fd);
 	}
 	return ctl->possible_modes;
+nothing:
+	if (fd >= 0)
+		close(fd);
+	return NULL;
 }
 
 static void suspend_system(struct rtcwake_control *ctl)
