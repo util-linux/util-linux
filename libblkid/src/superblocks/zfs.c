@@ -186,9 +186,9 @@ static int find_uberblocks(const void *label, loff_t *ub_offset, int *swap_endia
 			found++;
 			zdebug("probe_zfs: found big-endian uberblock at %llu\n", offset >> 10);
 		}
-  }
+	}
 
-  return found;
+	return found;
 }
 
 /* ZFS has 128x1kB host-endian root blocks, stored in 2 areas at the start

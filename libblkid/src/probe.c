@@ -1504,7 +1504,7 @@ dev_t blkid_probe_get_wholedisk_devno(blkid_probe pr)
 		if (!devno)
 			return 0;
 
-		 if (blkid_devno_to_wholedisk(devno, NULL, 0, &disk_devno) == 0)
+		if (blkid_devno_to_wholedisk(devno, NULL, 0, &disk_devno) == 0)
 			pr->disk_devno = disk_devno;
 	}
 	return pr->disk_devno;
