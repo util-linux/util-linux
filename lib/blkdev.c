@@ -124,7 +124,7 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 		struct floppy_struct this_floppy;
 
 		if (ioctl(fd, FDGETPRM, &this_floppy) >= 0) {
-			*bytes = this_floppy.size << 9;
+			*bytes = ((unsigned long long) this_floppy.size) << 9;
 			return 0;
 		}
 	}
