@@ -62,7 +62,8 @@ static void tailf(const char *filename, size_t lines, struct stat *st)
 	size_t i;
 	char *data;
 
-	if (!(fd = open(filename, O_RDONLY)))
+	fd = open(filename, O_RDONLY);
+	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), filename);
 	data = mmap(0, st->st_size, PROT_READ, MAP_SHARED, fd, 0);
 	i = (size_t) st->st_size - 1;
