@@ -282,8 +282,6 @@ static int parse_blank(char **argv, char *optarg, int *optind)
 			errx(EXIT_FAILURE, _("argument error: %s"), arg);
 		return ret;
 	}
-	/* should be impossible to reach */
-	abort();
 }
 
 static int parse_powersave(const char *arg)
