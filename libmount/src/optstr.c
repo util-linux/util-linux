@@ -247,13 +247,14 @@ int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
 int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value)
 {
 	int rc = 0;
-	char *tmp = *optstr;
+	char *tmp;
 
 	if (!optstr)
 		return -EINVAL;
 	if (!name || !*name)
 		return 0;
 
+	*tmp = *optstr;
 	*optstr = NULL;
 
 	rc = mnt_optstr_append_option(optstr, name, value);
