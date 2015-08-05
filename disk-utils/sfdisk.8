@@ -222,11 +222,12 @@ is specified in the input.
 .RE
 where each line fills one partition descriptor.
 .sp
-Fields are separated by whitespace, or by comma or semicolon possibly followed by
-whitespace; initial and trailing whitespace is ignored.  Numbers can be octal,
-decimal or hexadecimal; decimal is the default.  When  a field is absent or empty,
-a default value is used.  But when the \fB-N\fR option (change a single partition)
-is given, the default for each field is its previous value.
+Fields are separated by whitespace, comma or semicolon possibly
+followed by whitespace; initial and trailing whitespace is ignored.
+Numbers can be octal, decimal or hexadecimal; decimal is the default.
+When a field is absent, empty or specified as '-' a default value is
+used.  But when the \fB-N\fR option (change a single partition) is
+given, the default for each field is its previous value.
 .sp
 The default value of
 .I start
@@ -237,12 +238,15 @@ EiB, ZiB and YiB) then the number is interpreted as offset in bytes.
 .sp
 The default value of
 .I size
-is as much as possible (until the next partition or end-of-device).  A '+' can be
-used instead of a number for size, which also means as much as possible.  The
-size may be followed by the multiplicative suffixes (KiB, MiB, GiB, TiB, PiB,
-EiB, ZiB and YiB), then the number is interpreted as size of the partition in
-bytes and then the size is aligned according to the device I/O limits.
-The default is to interpret the number as number of sectors.
+indicates "as much as possible"; i.e. until the next partition or
+end-of-device.  A numerical argument is by default interpreted as a
+number of sectors, however if the size is followed by one of the
+multiplicative suffixes (KiB, MiB, GiB, TiB, PiB, EiB, ZiB and YiB)
+then the number is interpreted as the size of the partition in bytes
+and it is then aligned according to the device I/O limits.  A '+' can
+be used instead of a number to enlarge the partition as much as
+possible.  Note '+' is equivalent to the default behaviour for a new
+partition; existing partitions will be resized as required.
 .sp
 The partition
 .I type
@@ -265,11 +269,17 @@ home partition; means 933AC7E1-2EB4-4F13-B844-0E14E2AEF915 for GPT
 .B X
 linux extended partition; means 85 for MBR.
 .RE
+.PP
+The default
+.I type
+value is
+.I L
 
 .I bootable
-is specified as [\fB*\fR|\fB-\fR], with as default not-bootable.  (The value of
-this field is irrelevant for Linux - when Linux runs it has been booted already -
-but might play a role for certain boot loaders and for other operating systems.)
+is specified as [\fB*\fR|\fB-\fR], with as default not-bootable.  The
+value of this field is irrelevant for Linux - when Linux runs it has
+been booted already - but ir might play a role for certain boot
+loaders and for other operating systems.
 .RE
 
 .B Named-fields format
