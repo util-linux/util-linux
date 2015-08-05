@@ -137,6 +137,9 @@ static int inotify_fd = AGETTY_RELOAD_FDNONE;
 static int netlink_fd = AGETTY_RELOAD_FDNONE;
 #endif
 
+#define AGETTY_PLYMOUTH		"/usr/bin/plymouth"
+#define AGETTY_PLYMOUTH_FDFILE	"/dev/null"
+
 /*
  * When multiple baud rates are specified on the command line, the first one
  * we will try is the first one specified.
@@ -2580,7 +2583,6 @@ err:
  */
 static int plymouth_command(const char* arg)
 {
-	const char *cmd = "/usr/bin/plymouth";
 	static int has_plymouth = 1;
 	pid_t pid;
 
@@ -2589,12 +2591,16 @@ static int plymouth_command(const char* arg)
 
 	pid = fork();
 	if (!pid) {
-		int fd = open("/dev/null", O_RDWR);
+		int fd = open(AGETTY_PLYMOUTH_FDFILE, O_RDWR);
+
+		if (fd < 0)
+			err(EXIT_FAILURE,_("cannot open %s"),
+					AGETTY_PLYMOUTH_FDFILE);
 		dup2(fd, 0);
 		dup2(fd, 1);
 		dup2(fd, 2);
 		close(fd);
-		execl(cmd, cmd, arg, (char *) NULL);
+		execl(AGETTY_PLYMOUTH, AGETTY_PLYMOUTH, arg, (char *) NULL);
 		exit(127);
 	} else if (pid > 0) {
 		int status;
