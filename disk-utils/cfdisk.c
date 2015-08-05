@@ -602,12 +602,12 @@ static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 
 /* libfdisk callback
  */
-static int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
-		    void *data __attribute__((__unused__)))
+static int ask_callback(struct fdisk_context *cxt __attribute__((__unused__)),
+			struct fdisk_ask *ask,
+			void *data __attribute__((__unused__)))
 {
 	int rc = 0;
 
-	assert(cxt);
 	assert(ask);
 
 	switch(fdisk_ask_get_type(ask)) {
@@ -1715,14 +1715,13 @@ static int ui_refresh(struct cfdisk *cf)
 	return 0;
 }
 
-static ssize_t ui_get_string(struct cfdisk *cf, const char *prompt,
+static ssize_t ui_get_string(const char *prompt,
 			     const char *hint, char *buf, size_t len)
 {
 	size_t cells = 0;
 	ssize_t i = 0, rc = -1;
 	int ln = MENU_START_LINE, cl = 1;
 
-	assert(cf);
 	assert(buf);
 	assert(len);
 
@@ -1859,7 +1858,7 @@ static int ui_get_size(struct cfdisk *cf, const char *prompt, uintmax_t *res,
 	do {
 		int pwr = 0, insec = 0;
 
-		rc = ui_get_string(cf, prompt,
+		rc = ui_get_string(prompt,
 				_("May be followed by M for MiB, G for GiB, "
 				  "T for TiB, or S for sectors."),
 				buf, sizeof(buf));
@@ -2008,7 +2007,7 @@ static int ui_script_read(struct cfdisk *cf)
 	int rc;
 
 	erase();
-	rc = ui_get_string(cf,	_("Enter script file name: "),
+	rc = ui_get_string(	_("Enter script file name: "),
 				_("The script file will be applied to in-memory partition table."),
 				buf, sizeof(buf));
 	if (rc <= 0)
@@ -2038,7 +2037,7 @@ static int ui_script_write(struct cfdisk *cf)
 	FILE *f = NULL;
 	int rc;
 
-	rc = ui_get_string(cf,	_("Enter script file name: "),
+	rc = ui_get_string(	_("Enter script file name: "),
 				_("The current in-memory partition table will be dumped to the file."),
 				buf, sizeof(buf));
 	if (rc <= 0)
@@ -2371,7 +2370,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 			break;
 		}
 
-		rc = ui_get_string(cf,
+		rc = ui_get_string(
 			  _("Are you sure you want to write the partition "
 			    "table to disk? "),
 			  _("Type \"yes\" or \"no\", or press ESC to leave this dialog."),

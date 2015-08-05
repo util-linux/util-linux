@@ -146,14 +146,13 @@ static int get_user_reply(const char *prompt, char *buf, size_t bufsz)
 	return 0;
 }
 
-static int ask_callback(struct fdisk_context *cxt,
+static int ask_callback(struct fdisk_context *cxt __attribute__((__unused__)),
 			struct fdisk_ask *ask,
 			void *data)
 {
 	struct sfdisk *sf = (struct sfdisk *) data;
 	int rc = 0;
 
-	assert(cxt);
 	assert(ask);
 
 	switch(fdisk_ask_get_type(ask)) {
