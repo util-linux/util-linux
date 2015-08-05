@@ -1942,8 +1942,10 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 	assert(fdisk_is_label(cxt, GPT));
 
 	gpt = self_label(cxt);
+	if (!gpt)
+		return -EINVAL;
 
-	if (!gpt || !gpt->bheader) {
+	if (!gpt->bheader) {
 		nerror++;
 		fdisk_warnx(cxt, _("Disk does not contain a valid backup header."));
 	}
