@@ -99,7 +99,7 @@ static void setgroups_control(int action)
 	if (fd < 0) {
 		if (errno == ENOENT)
 			return;
-		 err(EXIT_FAILURE, _("cannot open %s"), file);
+		err(EXIT_FAILURE, _("cannot open %s"), file);
 	}
 
 	if (write_all(fd, cmd, strlen(cmd)))

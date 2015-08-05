@@ -170,7 +170,7 @@ static int is_nul(void *buf, size_t bufsize)
 	while (*cp++ == 0)
 		continue;
 
-	  return cbuf + bufsize < cp;
+	return cbuf + bufsize < cp;
 }
 
 static void dig_holes(int fd, off_t off, off_t len)
