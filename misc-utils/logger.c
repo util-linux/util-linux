@@ -243,11 +243,11 @@ static int unix_socket(struct logger_ctl *ctl, const char *path, const int socke
 	if (i == 0) {
 		if (ctl->unix_socket_errors)
 			err(EXIT_FAILURE, _("socket %s"), path);
-		else
-			/* openlog(3) compatibility, socket errors are
-			 * not reported, but ignored silently */
-			ctl->noact = 1;
-			return -1;
+
+		/* openlog(3) compatibility, socket errors are
+		 * not reported, but ignored silently */
+		ctl->noact = 1;
+		return -1;
 	}
 	return fd;
 }
