@@ -1068,9 +1068,6 @@ static int sgi_set_partition(struct fdisk_context *cxt,
 	if (pa->type) {
 		struct fdisk_parttype *t = pa->type;
 
-		if (t->code > UINT32_MAX)
-			return -EINVAL;
-
 		if (sgi_get_num_sectors(cxt, i) == 0)	/* caught already before, ... */ {
 			fdisk_warnx(cxt, _("Sorry, only for non-empty partitions you can change the tag."));
 			return -EINVAL;
