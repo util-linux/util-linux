@@ -432,9 +432,9 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 
 	DBG(ASK, ul_debug("%s: asking for %s partition number "
 			  "(max: %zu, inchar: %s)",
-			cxt->label->name,
+			cxt->label ? cxt->label->name : "???",
 			wantnew ? "new" : "used",
-			cxt->label->nparts_max,
+			cxt->label ? cxt->label->nparts_max : 0,
 			inchar ? "yes" : "not"));
 
 	ask = fdisk_new_ask();

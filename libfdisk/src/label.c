@@ -416,12 +416,13 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 		return -ENOSYS;
 
 	__fdisk_switch_label(cxt, lb);
+	assert(cxt->label == lb);
 
 	if (haslabel && !cxt->parent)
 		fdisk_reset_device_properties(cxt);
 
 	DBG(CXT, ul_debugobj(cxt, "create a new %s label", lb->name));
-	return cxt->label->op->create(cxt);
+	return lb->op->create(cxt);
 }
 
 /**
