@@ -1922,11 +1922,13 @@ int readch(void)
 static char *BS = "\b";
 static char *BSB = "\b \b";
 static char *CARAT = "^";
-#define ERASEONECOLUMN \
-    if (docrterase) \
-	putserr(BSB); \
-    else \
-	putserr(BS);
+#define ERASEONECOLUMN(x) \
+		do { \
+		    if (x) \
+			putserr(BSB); \
+		    else \
+			putserr(BS); \
+		} while(0)
 
 void ttyin(char buf[], register int nmax, char pchar)
 {
@@ -1976,14 +1978,16 @@ void ttyin(char buf[], register int nmax, char pchar)
 					}
 
 					if (mblength == 1) {
-					ERASEONECOLUMN} else {
+						ERASEONECOLUMN(docrterase);
+					} else {
 						int wc_width;
 						wc_width = wcwidth(wc);
 						wc_width =
 						    (wc_width <
 						     1) ? 1 : wc_width;
 						while (wc_width--) {
-						ERASEONECOLUMN}
+							ERASEONECOLUMN(docrterase);
+						}
 					}
 
 					while (mblength--) {
@@ -1994,12 +1998,14 @@ void ttyin(char buf[], register int nmax, char pchar)
 #endif	/* HAVE_WIDECHAR */
 				{
 					--promptlen;
-					ERASEONECOLUMN-- sp;
+					ERASEONECOLUMN(docrterase);
+					--sp;
 				}
 
 				if ((*sp < ' ' && *sp != '\n') || *sp == RUBOUT) {
 					--promptlen;
-				ERASEONECOLUMN}
+					ERASEONECOLUMN(docrterase);
+				}
 				continue;
 			} else {
 				if (!eraseln)
@@ -2027,7 +2033,8 @@ void ttyin(char buf[], register int nmax, char pchar)
 		}
 		if (slash && ((cc_t) c == otty.c_cc[VKILL]
 			      || (cc_t) c == otty.c_cc[VERASE])) {
-			ERASEONECOLUMN-- sp;
+			ERASEONECOLUMN(docrterase);
+			--sp;
 		}
 		if (c != '\\')
 			slash = 0;
