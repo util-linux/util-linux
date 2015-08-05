@@ -254,7 +254,7 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
 	if (!name || !*name)
 		return 0;
 
-	*tmp = *optstr;
+	tmp = *optstr;
 	*optstr = NULL;
 
 	rc = mnt_optstr_append_option(optstr, name, value);
