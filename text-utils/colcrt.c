@@ -201,6 +201,8 @@ void colcrt(FILE *f) {
 			/* fallthrough */
 		default:
 			w = wcwidth(c);
+			if (w < 0)
+				continue;
 			if (outcol + w > PAGE_ARRAY_COLS) {
 				outcol++;
 				continue;
