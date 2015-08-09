@@ -71,7 +71,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out);
 #define FLUSH_SIZE 62
 #define PAGE_ARRAY_ROWS 267
 #define PAGE_ARRAY_COLS 132
-wchar_t	page[PAGE_ARRAY_ROWS][PAGE_ARRAY_COLS];
+wchar_t	page[PAGE_ARRAY_ROWS + 1][PAGE_ARRAY_COLS + 1];
 
 int	outline = 1;
 int	outcol;
