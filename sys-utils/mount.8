@@ -963,6 +963,8 @@ system.
 .TP
 .B diratime
 Update directory inode access times on this filesystem.  This is the default.
+Directory inode will not be updated when noatime is set, regardless of this
+option.
 .TP
 .B nodiratime
 Do not update directory inode access times on this filesystem. If noatime
