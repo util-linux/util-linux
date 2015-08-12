@@ -103,7 +103,7 @@ char *proc_get_command(pid_t pid)
 	char buf[BUFSIZ], *res = NULL;
 	ssize_t sz = 0;
 	size_t i;
-	int fd = -1;
+	int fd;
 
 	snprintf(buf, sizeof(buf), "/proc/%d/cmdline", (int) pid);
 	fd = open(buf, O_RDONLY);

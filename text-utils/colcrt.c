@@ -68,7 +68,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out);
  * Option -2 forces printing of all half lines.
  */
 
-wchar_t	page[267][132];
+#define FLUSH_SIZE 62
+#define PAGE_ARRAY_ROWS 267
+#define PAGE_ARRAY_COLS 132
+wchar_t	page[PAGE_ARRAY_ROWS + 1][PAGE_ARRAY_COLS + 1];
 
 int	outline = 1;
 int	outcol;
@@ -158,8 +161,8 @@ void colcrt(FILE *f) {
 		}
 		switch (c) {
 		case '\n':
-			if (outline >= 265)
-				pflush(62);
+			if (outline >= (PAGE_ARRAY_ROWS - 2))
+				pflush(FLUSH_SIZE);
 			outline += 2;
 			outcol = 0;
 			continue;
@@ -170,8 +173,8 @@ void colcrt(FILE *f) {
 			c = getwc(f);
 			switch (c) {
 			case '9':
-				if (outline >= 266)
-					pflush(62);
+				if (outline >= (PAGE_ARRAY_ROWS - 1))
+					pflush(FLUSH_SIZE);
 				outline++;
 				continue;
 			case '8':
@@ -198,7 +201,9 @@ void colcrt(FILE *f) {
 			/* fallthrough */
 		default:
 			w = wcwidth(c);
-			if (outcol + w > 132) {
+			if (w < 0)
+				continue;
+			if (outcol + w > PAGE_ARRAY_COLS) {
 				outcol++;
 				continue;
 			}
@@ -207,7 +212,7 @@ void colcrt(FILE *f) {
 			if (c == '_') {
 				if (suppresul)
 					continue;
-				cp += 132;
+				cp += PAGE_ARRAY_COLS;
 				c = '-';
 			}
 			if (*cp == 0) {
@@ -250,8 +255,8 @@ void pflush(int ol)
 
 	l = ol;
 	lastomit = 0;
-	if (l > 266)
-		l = 266;
+	if (l > (PAGE_ARRAY_ROWS - 1))
+		l = PAGE_ARRAY_ROWS - 1;
 	else
 		l |= 1;
 	for (i = first | 1; i < l; i++) {
@@ -274,8 +279,8 @@ void pflush(int ol)
 		}
 		putwchar('\n');
 	}
-	memmove(page, page[ol], (267 - ol) * 132 * sizeof(wchar_t));
-	memset(page[267 - ol], '\0', ol * 132 * sizeof(wchar_t));
+	memmove(page, page[ol], (PAGE_ARRAY_ROWS - ol) * PAGE_ARRAY_COLS * sizeof(wchar_t));
+	memset(page[PAGE_ARRAY_ROWS - ol], '\0', ol * PAGE_ARRAY_COLS * sizeof(wchar_t));
 	outline -= ol;
 	outcol = 0;
 	first = 1;

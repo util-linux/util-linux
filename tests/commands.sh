@@ -37,6 +37,7 @@ TS_CMD_DELPART=${TS_CMD_DELPART:-"$top_builddir/delpart"}
 TS_CMD_BLKDISCARD=${TS_CMD_BLKID-"$top_builddir/blkdiscard"}
 TS_CMD_BLKID=${TS_CMD_BLKID-"$top_builddir/blkid"}
 TS_CMD_CAL=${TS_CMD_CAL-"$top_builddir/cal"}
+TS_CMD_COLCRT=${TS_CMD_COLCRT:-"$top_builddir/colcrt"}
 TS_CMD_COLRM=${TS_CMD_COLRM:-"$top_builddir/colrm"}
 TS_CMD_COL=${TS_CMD_COL:-"$top_builddir/col"}
 TS_CMD_COLUMN=${TS_CMD_COLUMN:-"$top_builddir/column"}
