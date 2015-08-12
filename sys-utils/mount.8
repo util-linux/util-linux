@@ -863,7 +863,8 @@ mount options.
 .TP
 .B noatime
 Do not update inode access times on this filesystem (e.g., for faster
-access on the news spool to speed up news servers).
+access on the news spool to speed up news servers). This works for all
+inode types (directories too), so implies nodiratime.
 .TP
 .B auto
 Can be mounted with the
@@ -962,9 +963,12 @@ system.
 .TP
 .B diratime
 Update directory inode access times on this filesystem.  This is the default.
+Directory inode will not be updated when noatime is set, regardless of this
+option.
 .TP
 .B nodiratime
-Do not update directory inode access times on this filesystem.
+Do not update directory inode access times on this filesystem. If noatime
+option is set, this option is not needed.
 .TP
 .B dirsync
 All directory updates within the filesystem should be done synchronously.
