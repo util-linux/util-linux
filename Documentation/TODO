@@ -1,6 +1,13 @@
 
  Note that items with (!) have high priority.
 
+lsblk
+-----
+  - currently it does not show mountpoint for all devices in btrfs RAID. It's because
+    /proc/#/mountinfo contains reference to the one device only. Maybe we can add some
+    btrfs specific code to provide a better output for FS based stacks. Not sure.
+    https://bugzilla.redhat.com/show_bug.cgi?id=1084453
+
 cfdisk
 ------
   - (!) add auto-sort support (sort partitions automatically) and
