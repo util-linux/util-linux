@@ -197,12 +197,12 @@ The output is in the list format (see \fB--list\fR).
 .TP
 .BR \-T , " \-\-target \fIpath\fP"
 Define the mount target. If the \fIpath\fR
-is not a mountpoint file or directory than
+is not a mountpoint file or directory, then
 .B findmnt
-checks \fIpath\fR elements in reverse order for get the mountpoint (this feature is 
+checks \fIpath\fR elements in reverse order to get the mountpoint (this feature is 
 supported only if search in kernel files and unsupported for \fB\-\-fstab\fP). It's
-recommended to use the option \fB--mountpoint\fR when checks \fIpath\fR elements is
-unwanted and \fIpath\fR is strictly specified mountpoint.
+recommended to use the option \fB--mountpoint\fR when checks of \fIpath\fR elements is
+unwanted and \fIpath\fR is a strictly specified mountpoint.
 .TP
 .BR \-t , " \-\-types \fIlist\fP"
 Limit the set of printed filesystems.  More than one type may be
