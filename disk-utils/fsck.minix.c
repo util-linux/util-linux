@@ -1361,16 +1361,16 @@ main(int argc, char **argv) {
 		check();
 	}
 	if (verbose) {
-		unsigned long i, free;
+		unsigned long inode, free;
 
-		for (i = 1, free = 0; i <= get_ninodes(); i++)
-			if (!inode_in_use(i))
+		for (inode = 1, free = 0; inode <= get_ninodes(); inode++)
+			if (!inode_in_use(inode))
 				free++;
 		printf(_("\n%6ld inodes used (%ld%%)\n"),
 		       (get_ninodes() - free),
 		       100 * (get_ninodes() - free) / get_ninodes());
-		for (i = get_first_zone(), free = 0; i < get_nzones(); i++)
-			if (!zone_in_use(i))
+		for (inode = get_first_zone(), free = 0; inode < get_nzones(); inode++)
+			if (!zone_in_use(inode))
 				free++;
 		printf(_("%6ld zones used (%ld%%)\n"), (get_nzones() - free),
 		       100 * (get_nzones() - free) / get_nzones());

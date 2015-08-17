@@ -273,7 +273,7 @@ static struct zram *find_free_zram(void)
 
 #include "path.h"
 
-static char *get_mm_stat(struct zram *z, size_t idx, int inbytes)
+static char *get_mm_stat(struct zram *z, size_t idx, int bytes)
 {
 	struct sysfs_cxt *sysfs;
 	const char *name;
@@ -302,7 +302,7 @@ static char *get_mm_stat(struct zram *z, size_t idx, int inbytes)
 	}
 
 	if (z->mm_stat) {
-		if (inbytes)
+		if (bytes)
 			return xstrdup(z->mm_stat[idx]);
 
 		num = strtou64_or_err(z->mm_stat[idx], _("Failed to parse mm_stat"));
@@ -311,7 +311,7 @@ static char *get_mm_stat(struct zram *z, size_t idx, int inbytes)
 
 	/* Linux < 4.1 uses /sys/block/zram<id>/<attrname> */
 	name = mm_stat_names[idx];
-	if (inbytes)
+	if (bytes)
 		return sysfs_strdup(sysfs, name);
 	else if (sysfs_read_u64(sysfs, name, &num) == 0)
 		return size_to_human_string(SIZE_SUFFIX_1LETTER, num);
