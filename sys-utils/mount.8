@@ -362,28 +362,25 @@ a second place by using:
 .RE
 
 Note that the filesystem mount options will remain the same as those
-on the original mount point, and cannot be changed by passing the
+on the original mount point.
+
+.BR mount(8)
+since v2.27 allow to change the options by passing the
 .B \-o
 option along with
-.BR \-\-bind / \-\-rbind .
-The mount options can be
-changed by a separate remount command, for example:
+.BR \-\-bind
+for example:
 
 .RS
 .br
-.B mount \-\-bind
-.I olddir newdir
-.br
-.B mount \-o remount,ro
-.I newdir
+.B mount \-\-bind,ro foo foo
 .RE
 
-Note that the behavior of the remount operation depends on the /etc/mtab file.
-The first command stores the 'bind' flag in the /etc/mtab file and the second
-command reads the flag from the file.  If you have a system without the
-/etc/mtab file or if you explicitly define source and target for the remount
-command (then \fBmount\fR(8) does not read /etc/mtab), then you have to use
-the bind flag (or option) for the remount command too.  For example:
+This feature is not supported by Linux kernel and it is implemented in userspace
+by additional remount mount(2) syscall. This solution is not atomic.
+
+The alternative (classic) way to create a read-only bind mount is to use remount
+operation, for example:
 
 .RS
 .br
@@ -394,14 +391,14 @@ the bind flag (or option) for the remount command too.  For example:
 .I olddir newdir
 .RE
 
-Note that
-.B remount,ro,bind
-will create a read-only mountpoint (VFS entry), but the original filesystem
-superblock will still be writable, meaning that the
+Note that read-only bind will create a read-only mountpoint (VFS entry), but the
+original filesystem superblock will still be writable, meaning that the
 .I olddir
 will be writable, but the
 .I newdir
 will be read-only.
+
+It's impossible to change mount options recursively (for example b \fB -o rbind,ro\fR).
 .RE
 
 .B The move operation.

@@ -9,6 +9,10 @@ new default unifies unshare behavior and makes it independent of distribution
 default. The unshare supports persistent namespaces too (no process has to run
 to keep namespace in existence).
 
+The command mount(8) supports read-only binds in one step by the options
+"bind,ro" (command line or fstab). This feature is implemented by additional
+remount mount(2) syscall and it is not atomic.
+
 The commands fdisk and sfdisk can be compiled with GNU readline support to
 improve their line-editing functionality.
 
