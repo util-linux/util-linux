@@ -103,6 +103,7 @@ static const struct blkid_idinfo *idinfos[] =
 
 	&bcache_idinfo,
 	&drbd_idinfo,
+	&drbdmanage_idinfo,
 	&drbdproxy_datalog_idinfo,
 	&lvm2_idinfo,
 	&lvm1_idinfo,

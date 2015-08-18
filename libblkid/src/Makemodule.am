@@ -52,6 +52,7 @@ libblkid_la_SOURCES = \
 	libblkid/src/superblocks/ddf_raid.c \
 	libblkid/src/superblocks/drbd.c \
 	libblkid/src/superblocks/drbdproxy_datalog.c \
+	libblkid/src/superblocks/drbdmanage.c \
 	libblkid/src/superblocks/exfat.c \
 	libblkid/src/superblocks/ext.c \
 	libblkid/src/superblocks/f2fs.c \
