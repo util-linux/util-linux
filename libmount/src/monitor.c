@@ -813,7 +813,7 @@ int mnt_monitor_next_change(struct libmnt_monitor *mn,
  * This function cleanups (drain) internal buffers. It's necessary to call
  * this function after event if you do not call mnt_monitor_next_change().
  *
- * Returns: 0 on success, 1 no change, <0 on error
+ * Returns: 0 on success, <0 on error
  */
 int mnt_monitor_event_cleanup(struct libmnt_monitor *mn)
 {
