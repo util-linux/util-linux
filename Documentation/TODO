@@ -112,17 +112,6 @@ libblkid
 libfdisk
 --------
 
-   [always check libfdisk branch at github!]
-
- - (!) add to "First sector" fdisk dialog a line with information about available
-   gaps (free areas) to make it more user friendly if you want to skip
-   any useless (small) areas between existing partitions. 
-   See https://bugzilla.redhat.com/show_bug.cgi?id=715114
-
-   (Note that libfdisk already supports freespace lists.)
-
- - (!) add to fdisk "free space" command to print all available gaps
-
  - add support for Apple Partition Map (see libblkid/src/partitions/mac.c)
    http://en.wikipedia.org/wiki/Apple_Partition_Map
 
