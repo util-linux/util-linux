@@ -137,7 +137,7 @@ int debug;
 bool badyear;
 
 /* User-specified epoch, used when rtc fails to return epoch. */
-unsigned long epoch_option = -1;
+unsigned long epoch_option = ULONG_MAX;
 
 /*
  * Almost all Award BIOS's made between 04/26/94 and 05/31/95 have a nasty
@@ -1452,7 +1452,7 @@ manipulate_epoch(const bool getepoch,
 			printf(_("Kernel is assuming an epoch value of %lu\n"),
 			       epoch);
 	} else if (setepoch) {
-		if (epoch_opt == -1)
+		if (epoch_opt == ULONG_MAX)
 			warnx(_
 			      ("To set the epoch value, you must use the 'epoch' "
 			       "option to tell to what value to set it."));
