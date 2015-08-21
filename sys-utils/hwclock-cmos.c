@@ -152,15 +152,15 @@ static int is_in_cpuinfo(char *fmt, char *str)
 
 	sprintf(format, "%s : %s", fmt, "%255s");
 
-	if ((cpuinfo = fopen("/proc/cpuinfo", "r")) != NULL) {
-		while (!feof(cpuinfo)) {
+	cpuinfo = fopen("/proc/cpuinfo", "r");
+	if (cpuinfo) {
+		do {
 			if (fscanf(cpuinfo, format, field) == 1) {
 				if (strncmp(field, str, strlen(str)) == 0)
 					found = 1;
 				break;
 			}
-			fgets(field, 256, cpuinfo);
-		}
+		} while (fgets(field, 256, cpuinfo));
 		fclose(cpuinfo);
 	}
 	return found;
