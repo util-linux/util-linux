@@ -79,9 +79,14 @@ int inb(int c __attribute__ ((__unused__)))
 #endif				/* __i386__ __x86_64__ */
 
 #elif defined(__alpha__)
+# ifdef HAVE_SYS_IO_H
+#  include <sys/io.h>
+# else
 /* <asm/io.h> fails to compile, probably because of u8 etc */
 extern unsigned int inb(unsigned long port);
 extern void outb(unsigned char b, unsigned long port);
+extern int iopl(int level);
+# endif
 #else
 static void outb(int a __attribute__ ((__unused__)),
 	  int b __attribute__ ((__unused__)))
