@@ -52,6 +52,7 @@ delpart:
 dmesg:  librt libtinfo 
 fallocate:  
 fdformat:  
+fdisk.static: STATIC
 flock:  librt 
 fsck.cramfs:  libz 
 fsck.minix:  
@@ -99,6 +100,7 @@ setarch:
 setpriv:  ap-ng 
 setsid:  
 setterm:  libtinfo 
+sfdisk.static: STATIC
 su:  libpam libpam_misc 
 sulogin:  rypt 
 switch_root:  
