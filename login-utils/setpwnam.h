@@ -11,6 +11,8 @@
  *  published by the Free Software Foundation; either version 2 of the
  *  License, or (at your option) any later version.
  */
+#ifndef UTIL_LINUX_SETPWNAM_H
+#define UTIL_LINUX_SETPWNAM_H
 
 #include "pathnames.h"
 
@@ -26,4 +28,6 @@
 # define SGROUP_FILE	"/tmp/gshadow"
 #endif
 
-extern int setpwnam (struct passwd *pwd);
+extern int setpwnam (struct passwd *pwd, const char *prefix);
+
+#endif /* UTIL_LINUX_SETPWNAM_H */

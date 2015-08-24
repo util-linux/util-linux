@@ -71,7 +71,7 @@ static void pw_init(void);
  *	If the given username exists in the passwd file, the entry is
  *	replaced with the given entry.
  */
-int setpwnam(struct passwd *pwd)
+int setpwnam(struct passwd *pwd, const char *prefix)
 {
 	FILE *fp = NULL, *pwf = NULL;
 	int save_errno;
@@ -81,11 +81,10 @@ int setpwnam(struct passwd *pwd)
 	int contlen, rc;
 	char *linebuf = NULL;
 	char *tmpname = NULL;
-	char *atomic_dir = "/etc";
 
 	pw_init();
 
-	if ((fp = xfmkstemp(&tmpname, atomic_dir)) == NULL)
+	if ((fp = xfmkstemp(&tmpname, "/etc", prefix)) == NULL)
 		return -1;
 
 	/* ptmp should be owned by root.root or root.wheel */

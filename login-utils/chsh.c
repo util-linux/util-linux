@@ -323,7 +323,7 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("Shell *NOT* changed.  Try again later."));
 #else
 	pw->pw_shell = info.shell;
-	if (setpwnam(pw) < 0)
+	if (setpwnam(pw, ".chsh") < 0)
 		err(EXIT_FAILURE, _("setpwnam failed\n"
 			"Shell *NOT* changed.  Try again later."));
 #endif

@@ -373,7 +373,7 @@ static int save_new_data(struct chfn_control *ctl)
 #else /* HAVE_LIBUSER */
 	/* write the new struct passwd to the passwd file. */
 	ctl->pw->pw_gecos = gecos;
-	if (setpwnam(ctl->pw) < 0) {
+	if (setpwnam(ctl->pw, ".chfn") < 0) {
 		warn("setpwnam failed");
 #endif
 		printf(_
