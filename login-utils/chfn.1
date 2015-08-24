@@ -69,6 +69,32 @@ Display help text and exit.
 .TP
 .BR \-v , " \-\-version"
 Display version information and exit.
+.SH CONFIG FILE ITEMS
+.B chfn
+reads the
+.IR /etc\:/login.defs (5)
+configuration file.  Note that the configuration file could be
+distributed with another package (e.g. shadow-utils).  The following
+configuration items are relevant for
+.BR chfn (1):
+.PP
+.B CHFN_RESTRICT
+(string)
+.RS 4
+Indicate which fields are changeable by \fBchfn\fR.
+
+The boolean setting "yes" means that Office, Office Phone and Home Phone items
+are changeable and boolean setting "no" means that Full Name, Office, Office
+Phone and Home Phone are changeable.
+
+The another way is to specify changeable fields by abbreviations, f =
+Full Name, r = Office (room), w = Office (work) Phone, h = Home Phone. For
+example CHFN_RESTRICT "wh" allows to change work and home phone numbers.
+
+If the CHFN_RESTRICT is undefined then all finger information are read-only.
+This is default.
+.RE
+.PP
 .SH "EXIT STATUS"
 Returns 0 if operation was successful, 1 if operation failed or command syntax was not valid.
 .SH "SEE ALSO"
