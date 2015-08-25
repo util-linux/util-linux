@@ -1961,7 +1961,7 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 		if (IS_EXTENDED(p->sys_ind) && !IS_EXTENDED(pa->type->code) && has_logical(cxt)) {
 			fdisk_warnx(cxt, _(
 				"Cannot change type of the extended partition which is "
-				"already used by logical partitons. Delete logical "
+				"already used by logical partitions. Delete logical "
 				"partitions first."));
 			return -EINVAL;
 		}
