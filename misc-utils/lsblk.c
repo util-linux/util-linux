@@ -762,8 +762,10 @@ static char *get_subsystems(struct blkdev_cxt *cxt)
 		size_t sz;
 
 		/* don't create "block:scsi:scsi", but "block:scsi" */
-		if (len && strcmp(res + last, sub) == 0)
+		if (len && strcmp(res + last, sub) == 0) {
+			free(sub);
 			continue;
+		}
 
 		sz = strlen(sub);
 		res = xrealloc(res, len + sz + 2);
