@@ -198,10 +198,13 @@ int parse_switch(const char *arg, const char *errmesg, ...)
 		if (!b)
 			break;
 
-		if (strcmp(arg, a) == 0)
+		if (strcmp(arg, a) == 0) {
+			va_end(ap);
 			return 1;
-		else if (strcmp(arg, b) == 0)
+		} else if (strcmp(arg, b) == 0) {
+			va_end(ap);
 			return 0;
+		}
 	} while (1);
 	va_end(ap);
 
