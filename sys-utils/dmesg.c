@@ -289,7 +289,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -x, --decode                decode facility and level to readable string\n"), out);
 	fputs(_(" -d, --show-delta            show time delta between printed messages\n"), out);
 	fputs(_(" -e, --reltime               show local time and time delta in readable format\n"), out);
-	fputs(_(" -T, --ctime                 show human readable timestamp\n"), out);
+	fputs(_(" -T, --ctime                 show human readable timestamp (may be inaccurate!)\n"), out);
 	fputs(_(" -t, --notime                don't print messages timestamp\n"), out);
 	fputs(_("     --time-format <format>  show time stamp using format:\n"
 		"                               [delta|reltime|ctime|notime|iso]\n"

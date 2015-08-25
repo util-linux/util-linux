@@ -45,7 +45,9 @@ then only the time delta without the timestamp is printed.
 .IP "\fB\-E\fR, \fB\-\-console\-on\fR"
 Enable printing messages to the console.
 .IP "\fB\-e\fR, \fB\-\-reltime\fR"
-Display the local time and the delta in human-readable format.
+Display the local time and the delta in human-readable format. Be aware that
+conversion to the local time could be inaccurate (see \fB\-T\fR) for more
+details.
 .IP "\fB\-F\fR, \fB\-\-file \fIfile\fR"
 Read the messages from the given
 .IR file .
@@ -142,7 +144,7 @@ then this option can be used to view the entire buffer.
 .IP "\fB\-T\fR, \fB\-\-ctime\fR"
 Print human-readable timestamps.
 .IP
-Be aware that the timestamp could be inaccurate!
+.B Be aware that the timestamp could be inaccurate!
 The
 .B time
 source used for the logs is
