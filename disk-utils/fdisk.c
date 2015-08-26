@@ -723,7 +723,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -b, --sector-size <size>      physical and logical sector size\n"), out);
-	fputs(_(" -B, --protect-boot            don't erase bootbits when creat a new label\n"), out);
+	fputs(_(" -B, --protect-boot            don't erase bootbits when create a new label\n"), out);
 	fputs(_(" -c, --compatibility[=<mode>]  mode is 'dos' or 'nondos' (default)\n"), out);
 	fputs(_(" -L, --color[=<when>]          colorize output (auto, always or never)\n"), out);
 	fprintf(out,

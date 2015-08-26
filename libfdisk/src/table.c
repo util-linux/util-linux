@@ -660,7 +660,7 @@ int fdisk_table_wrong_order(struct fdisk_table *tb)
  * @tb: table
  *
  * Add partitions from table @tb to the in-memory disk label. See
- * fdisk_add_partition(), fdisk_delete_all_partitions(). The partitons
+ * fdisk_add_partition(), fdisk_delete_all_partitions(). The partitions
  * that does not define start (or does not follow the default start)
  * are ingored.
  *
