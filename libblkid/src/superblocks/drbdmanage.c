@@ -84,9 +84,10 @@ const struct blkid_idinfo drbdmanage_idinfo =
 	.name		= "drbdmanage_control_volume",
 	.usage		= BLKID_USAGE_OTHER,
 	.probefunc	= probe_drbdmanage,
-	.minsz      = 64 * 1024,
+	.minsz		= 64 * 1024,
 	.magics		= {
 		{ .magic = "$DRBDmgr=q", .len = 10, .sboff = 0 },
+		{ NULL }
 	},
 };
 
