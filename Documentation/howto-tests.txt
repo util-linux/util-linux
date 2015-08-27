@@ -117,12 +117,12 @@ Travis CI - automatically executed for all github commits.
     UID=0, it means that tests are executed on travis "legacy infrastructure".
 
 
-Drone.oi - automatically executed for all github commits.
+Drone.io - automatically executed for all github commits.
 
     URL: https://drone.io/github.com/karelzak/util-linux
 
     The drone.io does not use any in-tree config file (like travis-ci), the
-    currently used configuration (maintained by Drone.oi web UI):
+    currently used configuration (maintained by Drone.io web UI):
 
 	MAKE_CHECK="root"
 	MAKE_CHECK_OPTS="--skip-loopdevs --exclude=mount/move"
