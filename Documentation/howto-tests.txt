@@ -102,3 +102,36 @@ TS_OPT_testdir_[testscript_]verbose="<yes|no>"
 TS_OPT_testdir_[testscript_]memcheck="<yes|no>"
 
     Run certain tests with valgrind. Similar usage like TS_OPT_*_fake above.
+
+
+External services 
+-----------------
+
+Travis CI - automatically executed for all github commits.
+
+    URL: https://travis-ci.org/karelzak/util-linux/
+
+    See .travis.yml for more details.
+
+    We require "sudo" to install additional stuff and to run the tests with
+    UID=0, it means that tests are executed on travis "legacy infrastructure".
+
+
+Drone.oi - automatically executed for all github commits.
+
+    URL: https://drone.io/github.com/karelzak/util-linux
+
+    The drone.io does not use any in-tree config file (like travis-ci), the
+    currently used configuration (maintained by Drone.oi web UI):
+
+	MAKE_CHECK="root"
+	MAKE_CHECK_OPTS="--skip-loopdevs --exclude=mount/move"
+	source ./.travis-functions.sh
+	travis_install_script || exit
+	travis_before_script || exit
+	ret=0
+	travis_script || ret=$?
+	travis_after_script
+	exit $ret  
+	
+    yes, it shares the setup functions with travis-ci.
