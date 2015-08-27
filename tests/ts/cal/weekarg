@@ -129,5 +129,31 @@ if [ "$USETERM" == "yes" ]; then
 fi
 $TS_CMD_CAL -3mj $WEEK $MYTIME >> $TS_OUTPUT
 
+MYTIME="31 12 2000"
+PWEEK="week 54 with colors"
+WEEK="--week=54 --color=always"
+ts_log "Gregorian - Sunday-based, $PWEEK, 3 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL --three --sunday $WEEK $MYTIME
+fi
+$TS_CMD_CAL --three --sunday $WEEK $MYTIME >> $TS_OUTPUT
+
+PWEEK="week 53 with colors"
+WEEK="--week=53 --color=always"
+ts_log "Gregorian - Monday-based, $PWEEK, 3 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL --three --monday $WEEK $MYTIME
+fi
+$TS_CMD_CAL --three --monday $WEEK $MYTIME >> $TS_OUTPUT 2>&1
+
+PWEEK="week 52 with colors"
+WEEK="--week=52 --color=always"
+ts_log "Gregorian - Monday-based, $PWEEK, 3 month $x"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL --three --monday $WEEK $MYTIME
+fi
+$TS_CMD_CAL --three --monday $WEEK $MYTIME >> $TS_OUTPUT 2>&1
+
+
 ts_finalize
 

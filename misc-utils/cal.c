@@ -484,7 +484,7 @@ int main(int argc, char **argv)
 					ctl.req.year, ctl.req.week);
 		while (m <= DECEMBER && yday > days_in_month[leap][m])
 			yday -= days_in_month[leap][m++];
-		if (m > DECEMBER) {
+		if (DECEMBER < m && ctl.weektype & WEEK_NUM_ISO) {
 			/* In some years (e.g. 2010 in ISO mode) it's possible
 			 * to have a remnant of week 53 starting the year yet
 			 * the year in question ends during 52, in this case
