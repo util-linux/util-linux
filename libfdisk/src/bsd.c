@@ -896,7 +896,11 @@ static int bsd_write_disklabel(struct fdisk_context *cxt)
 	}
 	sync_disks(cxt);
 
-	fdisk_info(cxt, _("Disklabel written to %s."), cxt->dev_path);
+	if (cxt->parent && fdisk_label_is_changed(cxt->parent->label))
+		fdisk_info(cxt, _("Disklabel written to %s (don't forget to write %s disklable too)."),
+				cxt->dev_path, cxt->parent->dev_path);
+	else
+		fdisk_info(cxt, _("Disklabel written to %s."), cxt->dev_path);
 	return 0;
 }
 
