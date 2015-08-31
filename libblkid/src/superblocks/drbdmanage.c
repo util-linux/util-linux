@@ -66,8 +66,7 @@ static int probe_drbdmanage(blkid_probe pr,
 		return errno ? -errno : 1;
 
 	if (memcmp(prs->magic, persistence_magic, sizeof(prs->magic)) == 0 &&
-	    blkid_probe_sprintf_value(pr, "PERSISTENCE_VERSION",
-					"%d", be32_to_cpu(prs->version_le)) != 0)
+	    blkid_probe_sprintf_version(pr, "%d", be32_to_cpu(prs->version_le)) != 0)
 		return errno ? -errno : 1;
 
 	return 0;
