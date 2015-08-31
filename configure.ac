@@ -429,7 +429,7 @@ AS_CASE([$have_dirfd:$have_ddfd],
 
 AC_MSG_CHECKING([whether program_invocation_short_name is defined])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-	#include <argp.h>
+	#include <errno.h>
 ]], [[
 	program_invocation_short_name = "test";
 ]])], [
