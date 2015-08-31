@@ -24,7 +24,7 @@
 
 struct libmnt_parser {
 	FILE	*f;		/* fstab, mtab, swaps or mountinfo ... */
-	char	*filename;	/* file name or NULL */
+	const char *filename;	/* file name or NULL */
 	char	*buf;		/* buffer (the current line content) */
 	size_t	bufsiz;		/* size of the buffer */
 	size_t	line;		/* current line */
