@@ -1127,6 +1127,7 @@ int main(int argc, char **argv)
 	char *buff;
 	int childArgc = 0;
 	int retcode;
+	struct sigaction act;
 
 	char *pwdbuf = NULL;
 	struct passwd *pwd = NULL, _pwd;
@@ -1145,7 +1146,9 @@ int main(int argc, char **argv)
 	timeout = (unsigned int)getlogindefs_num("LOGIN_TIMEOUT", LOGIN_TIMEOUT);
 
 	signal(SIGALRM, timedout);
-	siginterrupt(SIGALRM, 1);	/* we have to interrupt syscalls like ioctl() */
+	(void) sigaction(SIGALRM, NULL, &act);
+	act.sa_flags &= ~SA_RESTART;
+	sigaction(SIGALRM, &act, NULL);
 	alarm(timeout);
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, SIG_IGN);
