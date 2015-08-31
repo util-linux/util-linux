@@ -658,6 +658,8 @@ int sysfs_next_subsystem(struct sysfs_cxt *cxt __attribute__((unused)),
 	if (!subsys || !devchain)
 		return -EINVAL;
 
+	*subsys = NULL;
+
 	while ((sub = get_subsystem(devchain, subbuf, sizeof(subbuf)))) {
 		*subsys = strdup(sub);
 		if (!*subsys)
