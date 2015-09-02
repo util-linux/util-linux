@@ -73,6 +73,7 @@ enum {
 	ACT_LIST,
 	ACT_LIST_FREE,
 	ACT_LIST_TYPES,
+	ACT_REORDER,
 	ACT_SHOW_SIZE,
 	ACT_SHOW_GEOM,
 	ACT_VERIFY,
@@ -642,6 +643,35 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 		rc = write_changes(sf);
 	return rc;
 }
+
+/*
+ * sfdisk --reorder <device>
+ */
+static int command_reorder(struct sfdisk *sf, int argc, char **argv)
+{
+	const char *devname = NULL;
+	int rc;
+
+	if (argc)
+		devname = argv[0];
+	if (!devname)
+		errx(EXIT_FAILURE, _("no disk device specified"));
+
+	rc = fdisk_assign_device(sf->cxt, devname, 0);	/* read-write */
+	if (rc)
+		err(EXIT_FAILURE, _("cannot open %s"), devname);
+
+	if (sf->backup)
+		backup_partition_table(sf, devname);
+
+	if (fdisk_reorder_partitions(sf->cxt) == 1)	/* unchnaged */
+		rc = fdisk_deassign_device(sf->cxt, 1);
+	else
+		rc = write_changes(sf);
+
+	return rc;
+}
+
 
 /*
  * sfdisk --dump <device>
@@ -1436,6 +1466,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"), out);
 	fputs(_(" -l, --list [<dev> ...]            list partitions of each device\n"), out);
 	fputs(_(" -F, --list-free [<dev> ...]       list unpartitions free areas of each device\n"), out);
+	fputs(_(" -r, --reorder <dev>               fix partitions order (by start offset)\n"), out);
 	fputs(_(" -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"), out);
 	fputs(_(" -T, --list-types                  print the recognized types (see -X)\n"), out);
 	fputs(_(" -V, --verify [<dev> ...]          test whether partitions seem correct\n"), out);
@@ -1525,6 +1556,7 @@ int main(int argc, char *argv[])
 		{ "no-reread", no_argument,     NULL, OPT_NOREREAD },
 		{ "output",  required_argument, NULL, 'o' },
 		{ "partno",  required_argument, NULL, 'N' },
+		{ "reorder", no_argument,       NULL, 'r' },
 		{ "show-size", no_argument,	NULL, 's' },
 		{ "show-geometry", no_argument, NULL, 'g' },
 		{ "quiet",   no_argument,       NULL, 'q' },
@@ -1551,7 +1583,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "aAbcdfFghJlLo:O:nN:qsTu:vVX:Y:",
+	while ((c = getopt_long(argc, argv, "aAbcdfFghJlLo:O:nN:qrsTu:vVX:Y:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'A':
@@ -1613,6 +1645,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'q':
 			sf->quiet = 1;
+			break;
+		case 'r':
+			sf->act = ACT_REORDER;
 			break;
 		case 's':
 			sf->act = ACT_SHOW_SIZE;
@@ -1734,6 +1769,9 @@ int main(int argc, char *argv[])
 		rc = command_partattrs(sf, argc - optind, argv + optind);
 		break;
 
+	case ACT_REORDER:
+		rc = command_reorder(sf, argc - optind, argv + optind);
+		break;
 	}
 
 	sfdisk_deinit(sf);
