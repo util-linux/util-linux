@@ -2661,7 +2661,7 @@ static int gpt_entry_cmp_start(const void *a, const void *b)
 static int gpt_reorder(struct fdisk_context *cxt)
 {
 	struct fdisk_gpt_label *gpt;
-	size_t nparts;
+	size_t i, nparts, mess;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -2670,6 +2670,16 @@ static int gpt_reorder(struct fdisk_context *cxt)
 	gpt = self_label(cxt);
 	nparts = le32_to_cpu(gpt->pheader->npartition_entries);
 
+	for (i = 0, mess = 0; mess == 0 && i + 1 < nparts; i++)
+		mess = gpt_entry_cmp_start(
+				(const void *) &gpt->ents[i],
+				(const void *) &gpt->ents[i + 1]) > 0;
+
+	if (!mess) {
+		fdisk_info(cxt, _("Nothing to do. Ordering is correct already."));
+		return 1;
+	}
+
 	qsort(gpt->ents, nparts, sizeof(struct gpt_entry),
 			gpt_entry_cmp_start);
 
@@ -2677,7 +2687,6 @@ static int gpt_reorder(struct fdisk_context *cxt)
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
 	fdisk_label_set_changed(cxt->label, 1);
 
-	fdisk_info(cxt, _("Done."));
 	return 0;
 }
 

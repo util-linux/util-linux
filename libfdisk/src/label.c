@@ -585,7 +585,7 @@ int fdisk_toggle_partition_flag(struct fdisk_context *cxt,
  *
  * Sort partitions according to the partition start sector.
  *
- * Returns: 0 on success, otherwise, a corresponding error.
+ * Returns: 0 on success, 1 reorder unnecessary, otherwise a corresponding error.
  */
 int fdisk_reorder_partitions(struct fdisk_context *cxt)
 {
