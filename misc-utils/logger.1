@@ -81,7 +81,13 @@ for details.  The use of a MESSAGE_ID field is generally a good idea, as it
 makes finding entries easy.  Examples:
 .IP
 .nf
-\fB    printf \(dq%s\\n%s\\n%s\\n\(dq MESSAGE_ID=42 DOGS=bark \(dqCARAVAN=goes on\(dq | logger --journald
+\fB    logger --journald <<end
+\fB    MESSAGE_ID=67feb6ffbaf24c5cbec13c008dd72309
+\fB    MESSAGE=The dogs bark, but the caravan goes on.
+\fB    DOGS=bark
+\fB    CARAVAN=goes on
+\fB    end
+.IP
 \fB    logger --journald=entry.txt
 .fi
 .IP
