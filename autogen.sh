@@ -21,7 +21,7 @@ autopoint_fun ()
 
 	# check against this hardcoded set of alternative gettext versions
 	gt_ver=`gettext --version |\
-		sed -n -e 's/.* \(0\.18\|0\.18\.[1-2]\)$/\1/p'`
+		sed -n -e 's/.* \(0\.17\|0\.18\|0\.18\.[1-2]\)$/\1/p'`
 
 	if [ -n "$gt_ver" ]; then
 		echo "warning: forcing autopoint to use old gettext $gt_ver"
