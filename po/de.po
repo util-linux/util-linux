@@ -52,7 +52,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2015-08-24 12:23+0200\n"
+"POT-Creation-Date: 2015-09-07 09:45+0200\n"
 "PO-Revision-Date: 2015-02-10 22:01+0100\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -259,7 +259,7 @@ msgstr "%s ist fehlgeschlagen.\n"
 msgid "%s succeeded.\n"
 msgstr "%s wurde erfolgreich beendet.\n"
 
-#: disk-utils/blockdev.c:457 misc-utils/lsblk.c:1175 misc-utils/lsblk.c:1182
+#: disk-utils/blockdev.c:457 misc-utils/lsblk.c:1177 misc-utils/lsblk.c:1184
 #, c-format
 msgid "%s: failed to initialize sysfs handler"
 msgstr "%s: sysfs-Handler kann nicht initialisiert werden"
@@ -310,8 +310,8 @@ msgstr "Ende"
 msgid "Quit program without writing partition table"
 msgstr "Das Programm beenden, ohne die Partitionstabelle zu speichern"
 
-#: disk-utils/cfdisk.c:184 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1016
-#: libfdisk/src/dos.c:2306 libfdisk/src/gpt.c:2765 libfdisk/src/sgi.c:1162
+#: disk-utils/cfdisk.c:184 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1020
+#: libfdisk/src/dos.c:2305 libfdisk/src/gpt.c:2774 libfdisk/src/sgi.c:1162
 #: libfdisk/src/sun.c:1113
 msgid "Type"
 msgstr "Typ"
@@ -653,8 +653,8 @@ msgstr "Sind Sie sicher, dass Sie die Partitionstabelle schreiben wollen?"
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Geben Sie »yes« oder »no« ein, oder drücken Sie ESC, um den Dialog zu verlassen."
 
-#: disk-utils/cfdisk.c:2381 login-utils/lslogins.c:208 sys-utils/lscpu.c:1267
-#: sys-utils/lscpu.c:1277
+#: disk-utils/cfdisk.c:2381 login-utils/lslogins.c:208 sys-utils/lscpu.c:1262
+#: sys-utils/lscpu.c:1272
 msgid "yes"
 msgstr "ja"
 
@@ -702,7 +702,7 @@ msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -z, --zero              mit zurückgesetzter Partitionstabelle beginnen\n"
 
 #: disk-utils/cfdisk.c:2597 disk-utils/fdisk.c:863 disk-utils/sfdisk.c:1663
-#: misc-utils/cal.c:402 sys-utils/dmesg.c:1333 text-utils/hexdump.c:114
+#: misc-utils/cal.c:411 sys-utils/dmesg.c:1333 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "nicht unterstützter Farbmodus"
 
@@ -815,7 +815,7 @@ msgstr "Ungültiges Argument - repair"
 msgid "stat of %s failed"
 msgstr "stat für %s ist fehlgeschlagen"
 
-#: disk-utils/fdformat.c:223 disk-utils/partx.c:950 misc-utils/lsblk.c:1468
+#: disk-utils/fdformat.c:223 disk-utils/partx.c:950 misc-utils/lsblk.c:1470
 #: sys-utils/blkdiscard.c:159 sys-utils/mountpoint.c:107
 #, c-format
 msgid "%s: not a block device"
@@ -1000,7 +1000,7 @@ msgid " -b, --sector-size <size>      physical and logical sector size\n"
 msgstr " -b, --sector-size <size>      physische und logische Sektorgröße\n"
 
 #: disk-utils/fdisk.c:726
-msgid " -B, --protect-boot            don't erase bootbits when creat a new label\n"
+msgid " -B, --protect-boot            don't erase bootbits when create a new label\n"
 msgstr ""
 
 #: disk-utils/fdisk.c:727
@@ -1165,23 +1165,23 @@ msgstr "Partition %zu beginnt nicht an einer physikalischen Sektorgrenze."
 msgid "Partition table entries are not in disk order."
 msgstr "Partitionstabelleneinträge sind nicht in Festplatten-Reihenfolge."
 
-#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1011 libfdisk/src/dos.c:2300
-#: libfdisk/src/gpt.c:2761 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1107
+#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1015 libfdisk/src/dos.c:2299
+#: libfdisk/src/gpt.c:2770 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1107
 msgid "Start"
 msgstr "Anfang"
 
-#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1012 libfdisk/src/dos.c:2301
-#: libfdisk/src/gpt.c:2762 libfdisk/src/sgi.c:1157 libfdisk/src/sun.c:1108
+#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1016 libfdisk/src/dos.c:2300
+#: libfdisk/src/gpt.c:2771 libfdisk/src/sgi.c:1157 libfdisk/src/sun.c:1108
 msgid "End"
 msgstr "Ende"
 
-#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1013 libfdisk/src/dos.c:2302
-#: libfdisk/src/gpt.c:2763 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1109
+#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2301
+#: libfdisk/src/gpt.c:2772 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1109
 msgid "Sectors"
 msgstr "Sektoren"
 
-#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1015 libfdisk/src/dos.c:2304
-#: libfdisk/src/gpt.c:2764 libfdisk/src/sgi.c:1160 libfdisk/src/sun.c:1111
+#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2303
+#: libfdisk/src/gpt.c:2773 libfdisk/src/sgi.c:1160 libfdisk/src/sun.c:1111
 msgid "Size"
 msgstr "Größe"
 
@@ -3592,15 +3592,15 @@ msgid "failed to add data to output table"
 msgstr "Hinzufügen von Daten zur Ausgabetabelle ist fehlgeschlagen"
 
 #: disk-utils/partx.c:633 login-utils/lslogins.c:928 misc-utils/findmnt.c:1582
-#: misc-utils/lsblk.c:1849 misc-utils/lslocks.c:465 sys-utils/losetup.c:304
-#: sys-utils/lscpu.c:1438 sys-utils/lsipc.c:338 sys-utils/prlimit.c:297
+#: misc-utils/lsblk.c:1851 misc-utils/lslocks.c:465 sys-utils/losetup.c:304
+#: sys-utils/lscpu.c:1433 sys-utils/lsipc.c:338 sys-utils/prlimit.c:297
 #: sys-utils/swapon.c:266 sys-utils/wdctl.c:259 sys-utils/zramctl.c:418
 msgid "failed to initialize output table"
 msgstr "Ausgabetabelle konnte nicht initialisiert werden"
 
-#: disk-utils/partx.c:644 misc-utils/findmnt.c:1608 misc-utils/lsblk.c:1869
+#: disk-utils/partx.c:644 misc-utils/findmnt.c:1608 misc-utils/lsblk.c:1871
 #: misc-utils/lslocks.c:479 sys-utils/losetup.c:316 sys-utils/losetup.c:352
-#: sys-utils/lscpu.c:1443 sys-utils/prlimit.c:306 sys-utils/swapon.c:275
+#: sys-utils/lscpu.c:1438 sys-utils/prlimit.c:306 sys-utils/swapon.c:275
 #: sys-utils/wdctl.c:270 sys-utils/zramctl.c:427
 msgid "failed to initialize output column"
 msgstr "Ausgabespalte konnte nicht initialisiert werden"
@@ -3654,7 +3654,7 @@ msgstr ""
 " -s, --show           Partitionen auflisten\n"
 "\n"
 
-#: disk-utils/partx.c:725 misc-utils/lsblk.c:1606
+#: disk-utils/partx.c:725 misc-utils/lsblk.c:1608
 msgid " -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 msgstr " -b, --bytes          GRÖSSE in Bytes ausgeben, anstatt im menschenlesbaren Format\n"
 
@@ -3670,11 +3670,11 @@ msgstr " -n, --nr <n:m>       den Partitionsbereich angeben (z.B. --nr 2:4)\n"
 msgid " -o, --output <list>  define which output columns to use\n"
 msgstr " -o, --output <Liste> die zu verwendenden Ausgabespalten festlegen\n"
 
-#: disk-utils/partx.c:729 misc-utils/lsblk.c:1620
+#: disk-utils/partx.c:729 misc-utils/lsblk.c:1622
 msgid " -P, --pairs          use key=\"value\" output format\n"
 msgstr " -P, --pairs          Ausgabeformat Schlüssel=\"Wert\" verwenden\n"
 
-#: disk-utils/partx.c:730 misc-utils/lsblk.c:1621
+#: disk-utils/partx.c:730 misc-utils/lsblk.c:1623
 msgid " -r, --raw            use raw output format\n"
 msgstr " -r, --raw            Rohausgabeformat verwenden\n"
 
@@ -5032,7 +5032,7 @@ msgstr "Spuren/Zylinder"
 msgid "Sectors/Cylinder"
 msgstr "Sektoren/Zylinder"
 
-#: libfdisk/src/bsd.c:491 libfdisk/src/bsd.c:1014 libfdisk/src/dos.c:2303
+#: libfdisk/src/bsd.c:491 libfdisk/src/bsd.c:1018 libfdisk/src/dos.c:2302
 #: libfdisk/src/sgi.c:1159 libfdisk/src/sun.c:196 libfdisk/src/sun.c:1110
 msgid "Cylinders"
 msgstr "Zylinder"
@@ -5130,37 +5130,42 @@ msgstr "Bootstrap überlappt mit der Festplattenbezeichnung!"
 msgid "Bootstrap installed on %s."
 msgstr "Bootstrap auf %s installiert."
 
-#: libfdisk/src/bsd.c:899
+#: libfdisk/src/bsd.c:900
+#, c-format
+msgid "Disklabel written to %s (don't forget to write %s disklable too)."
+msgstr ""
+
+#: libfdisk/src/bsd.c:903
 #, c-format
 msgid "Disklabel written to %s."
 msgstr "Festplattenbezeichnung geschrieben nach %s."
 
-#: libfdisk/src/bsd.c:905 libfdisk/src/context.c:611
+#: libfdisk/src/bsd.c:909 libfdisk/src/context.c:611
 msgid "Syncing disks."
 msgstr "Festplatten werden synchronisiert."
 
-#: libfdisk/src/bsd.c:946
+#: libfdisk/src/bsd.c:950
 msgid "BSD label is not nested within a DOS partition."
 msgstr "BSD-Bezeichnung ist nicht in einer DOS-Partition verschachtelt."
 
-#: libfdisk/src/bsd.c:974
+#: libfdisk/src/bsd.c:978
 #, c-format
 msgid "BSD partition '%c' linked to DOS partition %zu."
 msgstr "BSD-Partition »%c« ist mit DOS-Partition %zu verknüpft."
 
-#: libfdisk/src/bsd.c:1010
+#: libfdisk/src/bsd.c:1014
 msgid "Slice"
 msgstr "Slice"
 
-#: libfdisk/src/bsd.c:1017
+#: libfdisk/src/bsd.c:1021
 msgid "Fsize"
 msgstr "Dgröße"
 
-#: libfdisk/src/bsd.c:1018
+#: libfdisk/src/bsd.c:1022
 msgid "Bsize"
 msgstr "Bl.größe"
 
-#: libfdisk/src/bsd.c:1019
+#: libfdisk/src/bsd.c:1023
 msgid "Cpg"
 msgstr "Cpg"
 
@@ -5441,63 +5446,59 @@ msgid "Type 0 means free space to many systems. Having partitions of type 0 is p
 msgstr "Typ 0 bedeutet für viele Systeme freier Platz. Partitionen mit Typ 0 zu haben ist wahrscheinlich unklug."
 
 #: libfdisk/src/dos.c:1963
-msgid "Cannot change type of the extended partition which is already used by logical partitons. Delete logical partitions first."
+msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr ""
 
-#: libfdisk/src/dos.c:2142
+#: libfdisk/src/dos.c:2142 libfdisk/src/gpt.c:2679
 msgid "Nothing to do. Ordering is correct already."
 msgstr "Keine Änderungen notwendig. Die Anordnung ist bereits korrekt."
 
-#: libfdisk/src/dos.c:2171 libfdisk/src/gpt.c:2680
-msgid "Done."
-msgstr "Fertig."
-
-#: libfdisk/src/dos.c:2192
+#: libfdisk/src/dos.c:2191
 #, c-format
 msgid "Partition %zu: no data area."
 msgstr "Partition %zu: kein Datenbereich."
 
-#: libfdisk/src/dos.c:2222
+#: libfdisk/src/dos.c:2221
 msgid "New beginning of data"
 msgstr "Neuer Datenanfang"
 
-#: libfdisk/src/dos.c:2278
+#: libfdisk/src/dos.c:2277
 #, c-format
 msgid "Partition %zu: is an extended partition."
 msgstr "Partition %zu: ist eine erweiterte Partition."
 
-#: libfdisk/src/dos.c:2284
+#: libfdisk/src/dos.c:2283
 #, c-format
 msgid "The bootable flag on partition %zu is enabled now."
 msgstr "Die Bootfähig-Markierung auf Partition %zu ist nun aktiviert."
 
-#: libfdisk/src/dos.c:2285
+#: libfdisk/src/dos.c:2284
 #, c-format
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Die Bootfähig-Markierung auf Partition %zu ist nun deaktiviert."
 
-#: libfdisk/src/dos.c:2298 libfdisk/src/gpt.c:2760 libfdisk/src/sgi.c:1155
+#: libfdisk/src/dos.c:2297 libfdisk/src/gpt.c:2769 libfdisk/src/sgi.c:1155
 #: libfdisk/src/sun.c:1106
 msgid "Device"
 msgstr "Gerät"
 
-#: libfdisk/src/dos.c:2299 libfdisk/src/sun.c:41
+#: libfdisk/src/dos.c:2298 libfdisk/src/sun.c:41
 msgid "Boot"
 msgstr "Boot"
 
-#: libfdisk/src/dos.c:2305 libfdisk/src/sgi.c:1161 libfdisk/src/sun.c:1112
+#: libfdisk/src/dos.c:2304 libfdisk/src/sgi.c:1161 libfdisk/src/sun.c:1112
 msgid "Id"
 msgstr "Kn"
 
-#: libfdisk/src/dos.c:2309
+#: libfdisk/src/dos.c:2308
 msgid "Start-C/H/S"
 msgstr "Start-C/H/S"
 
-#: libfdisk/src/dos.c:2310
+#: libfdisk/src/dos.c:2309
 msgid "End-C/H/S"
 msgstr "Ende-C/H/S"
 
-#: libfdisk/src/dos.c:2311 libfdisk/src/gpt.c:2770 libfdisk/src/sgi.c:1163
+#: libfdisk/src/dos.c:2310 libfdisk/src/gpt.c:2779 libfdisk/src/sgi.c:1163
 msgid "Attrs"
 msgstr "Attr."
 
@@ -6075,16 +6076,16 @@ msgstr "Die %s-Markierung auf Partition %zu ist nun aktiviert."
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "Die %s-Markierung auf Partition %zu ist nun deaktiviert."
 
-#: libfdisk/src/gpt.c:2767
+#: libfdisk/src/gpt.c:2776
 msgid "Type-UUID"
 msgstr "Typ-UUID"
 
 # I think this should not be translated
-#: libfdisk/src/gpt.c:2768
+#: libfdisk/src/gpt.c:2777
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:2769 login-utils/chfn.c:151 login-utils/chfn.c:153
+#: libfdisk/src/gpt.c:2778 login-utils/chfn.c:151 login-utils/chfn.c:153
 #: login-utils/chfn.c:308
 msgid "Name"
 msgstr "Name"
@@ -6520,7 +6521,7 @@ msgstr ""
 msgid "waitpid failed (%s)"
 msgstr "waitpid fehlgeschlagen (%s)"
 
-#: lib/path.c:209 sys-utils/lscpu.c:1543
+#: lib/path.c:209 sys-utils/lscpu.c:1538
 msgid "failed to callocate cpu set"
 msgstr "callocate für CPU-Satz fehlgeschlagen"
 
@@ -7029,7 +7030,7 @@ msgstr ""
 "\n"
 "Anmeldung falsch\n"
 
-#: login-utils/login.c:893 login-utils/login.c:1237 login-utils/login.c:1260
+#: login-utils/login.c:893 login-utils/login.c:1240 login-utils/login.c:1263
 msgid ""
 "\n"
 "Session setup problem, abort."
@@ -7047,63 +7048,63 @@ msgstr "LEERER Benutzername in %s:%d. Abbruch."
 msgid "TIOCSCTTY failed: %m"
 msgstr "TIOCSCTTY fehlgeschlagen: %m"
 
-#: login-utils/login.c:1179
+#: login-utils/login.c:1182
 #, c-format
 msgid "login: -h is for superuser only\n"
 msgstr "Anmeldung: -h ist nur für den Administrator zulässig.\n"
 
-#: login-utils/login.c:1194
+#: login-utils/login.c:1197
 #, c-format
 msgid "Usage: login [-p] [-h <host>] [-H] [[-f] <username>]\n"
 msgstr "Aufruf: login [-p] [-h <Rechner>] [-H] [[-f] <Benutzername>]\n"
 
-#: login-utils/login.c:1196
+#: login-utils/login.c:1199
 msgid "Begin a session on the system.\n"
 msgstr "Eine Sitzung auf dem System starten.\n"
 
-#: login-utils/login.c:1238
+#: login-utils/login.c:1241
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Ungültiger Benutzername »%s« in %s:%d. Abbruch."
 
-#: login-utils/login.c:1259
+#: login-utils/login.c:1262
 #, c-format
 msgid "groups initialization failed: %m"
 msgstr "Gruppeninitialisierung fehlgeschlagen: %m"
 
-#: login-utils/login.c:1284
+#: login-utils/login.c:1287
 msgid "setgid() failed"
 msgstr "setgid() fehlgeschlagen"
 
-#: login-utils/login.c:1314
+#: login-utils/login.c:1317
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Sie haben neue E-Mail.\n"
 
-#: login-utils/login.c:1316
+#: login-utils/login.c:1319
 #, c-format
 msgid "You have mail.\n"
 msgstr "Sie haben E-Mail.\n"
 
-#: login-utils/login.c:1330
+#: login-utils/login.c:1333
 msgid "setuid() failed"
 msgstr "setuid() fehlgeschlagen"
 
-#: login-utils/login.c:1336 login-utils/sulogin.c:763
+#: login-utils/login.c:1339 login-utils/sulogin.c:763
 #, c-format
 msgid "%s: change directory failed"
 msgstr "%s: Verzeichniswechsel fehlgeschlagen"
 
-#: login-utils/login.c:1343 login-utils/sulogin.c:764
+#: login-utils/login.c:1346 login-utils/sulogin.c:764
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Wird angemeldet mit Heimatverzeichnis = »/«.\n"
 
-#: login-utils/login.c:1372
+#: login-utils/login.c:1375
 msgid "couldn't exec shell script"
 msgstr "Shellskipt konnte nicht ausgeführt werden"
 
-#: login-utils/login.c:1374
+#: login-utils/login.c:1377
 msgid "no shell"
 msgstr "keine Shell"
 
@@ -7116,7 +7117,7 @@ msgstr "%s: %s enthält ungültigen Zahlenwert: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "Status stille Anmeldung: Wiederherstellung der ursprünglichen IDs gescheitert"
 
-#: login-utils/lslogins.c:207 sys-utils/lscpu.c:1267 sys-utils/lscpu.c:1277
+#: login-utils/lslogins.c:207 sys-utils/lscpu.c:1262 sys-utils/lscpu.c:1272
 msgid "no"
 msgstr "nein"
 
@@ -7356,7 +7357,7 @@ msgstr ""
 #: login-utils/lslogins.c:1234 login-utils/nologin.c:25
 #: misc-utils/lslocks.c:515 misc-utils/mcookie.c:82 misc-utils/uuidd.c:73
 #: misc-utils/uuidgen.c:33 sys-utils/dmesg.c:264 sys-utils/ipcmk.c:66
-#: sys-utils/lscpu.c:1651 sys-utils/lsipc.c:277 sys-utils/readprofile.c:104
+#: sys-utils/lscpu.c:1646 sys-utils/lsipc.c:277 sys-utils/readprofile.c:104
 #: sys-utils/rtcwake.c:95 term-utils/setterm.c:388 text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
@@ -7459,7 +7460,7 @@ msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <Pfad>   alternativen Pfad für btmp festlegen\n"
 
 #: login-utils/lslogins.c:1265 misc-utils/findmnt.c:1262
-#: sys-utils/lscpu.c:1668
+#: sys-utils/lscpu.c:1663
 #, c-format
 msgid ""
 "\n"
@@ -7947,116 +7948,117 @@ msgstr "Sie benutzen Shadow-Passwörter auf diesem System.\n"
 msgid "Would you like to edit %s now [y/n]? "
 msgstr "Würden Sie jetzt gern %s bearbeiten [j/n]? "
 
-#: misc-utils/cal.c:387
+#: misc-utils/cal.c:396
 #, fuzzy
 msgid "invalid month argument"
 msgstr "ungültiges Längenargument"
 
-#: misc-utils/cal.c:392
+#: misc-utils/cal.c:401
 msgid "invalid week argument"
 msgstr "ungültiges Wochen-Argument"
 
-#: misc-utils/cal.c:394
-msgid "illegal week value: use 1-53"
+#: misc-utils/cal.c:403
+#, fuzzy
+msgid "illegal week value: use 1-54"
 msgstr "falscher Wert für die Woche: benutzen Sie 1-53"
 
-#: misc-utils/cal.c:430
+#: misc-utils/cal.c:439
 msgid "illegal day value"
 msgstr "falscher Wert für den Tag"
 
-#: misc-utils/cal.c:432 misc-utils/cal.c:448
+#: misc-utils/cal.c:441 misc-utils/cal.c:457
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "falscher Wert für den Tag: benutzen Sie 1-%d"
 
-#: misc-utils/cal.c:435 misc-utils/cal.c:437
+#: misc-utils/cal.c:444 misc-utils/cal.c:446
 msgid "illegal month value: use 1-12"
 msgstr "falscher Wert für den Monat: benutzen Sie 1-12"
 
-#: misc-utils/cal.c:440 misc-utils/cal.c:444
+#: misc-utils/cal.c:449 misc-utils/cal.c:453
 msgid "illegal year value"
 msgstr "falscher Wert für das Jahr"
 
-#: misc-utils/cal.c:442
+#: misc-utils/cal.c:451
 msgid "illegal year value: use positive integer"
 msgstr "falscher Wert für das Jahr: benutzen Sie eine positive Ganzzahl"
 
-#: misc-utils/cal.c:473 misc-utils/cal.c:486
+#: misc-utils/cal.c:482 misc-utils/cal.c:495
 #, c-format
 msgid "illegal week value: year %d doesn't have week %d"
 msgstr "falscher Wert für die Woche: das Jahr %d hat keine Woche %d"
 
-#: misc-utils/cal.c:627
+#: misc-utils/cal.c:634
 #, c-format
 msgid "%s"
 msgstr "%s"
 
-#: misc-utils/cal.c:633
+#: misc-utils/cal.c:640
 #, c-format
 msgid "%d"
 msgstr "%d"
 
-#: misc-utils/cal.c:639
+#: misc-utils/cal.c:646
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:942
+#: misc-utils/cal.c:948
 #, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr " %s [Optionen] [[[Tag] Monat] Jahr]\n"
 
-#: misc-utils/cal.c:945
+#: misc-utils/cal.c:951
 msgid "Display a calendar, or some part of it.\n"
 msgstr "Einen Kalender oder einen Teil davon anzeigen.\n"
 
-#: misc-utils/cal.c:946
+#: misc-utils/cal.c:952
 msgid "Without any arguments, display the current month.\n"
 msgstr "Ohne Argumente wird der aktuelle Monat angezeigt.\n"
 
-#: misc-utils/cal.c:949
+#: misc-utils/cal.c:955
 msgid " -1, --one             show only a single month (default)\n"
 msgstr " -1, --one             nur einen Monat ausgeben (Vorgabe)\n"
 
-#: misc-utils/cal.c:950
+#: misc-utils/cal.c:956
 msgid " -3, --three           show three months spanning the date\n"
 msgstr ""
 " -3, --three           einen Bereich von drei Monaten im Bereich\n"
 "                       des Datums anzeigen\n"
 
-#: misc-utils/cal.c:951
+#: misc-utils/cal.c:957
 #, fuzzy
 msgid " -n, --months <num>    show num months starting with date's month\n"
 msgstr ""
 " -3, --three           einen Bereich von drei Monaten im Bereich\n"
 "                       des Datums anzeigen\n"
 
-#: misc-utils/cal.c:952
+#: misc-utils/cal.c:958
 msgid " -s, --sunday          Sunday as first day of week\n"
 msgstr " -s, --sunday          Sonntag als erster Tag der Woche\n"
 
-#: misc-utils/cal.c:953
+#: misc-utils/cal.c:959
 msgid " -m, --monday          Monday as first day of week\n"
 msgstr " -m, --monday          Montag als erster Tag der Woche\n"
 
-#: misc-utils/cal.c:954
+#: misc-utils/cal.c:960
 msgid " -j, --julian          output Julian dates\n"
 msgstr " -j, --julian          Julianische Daten ausgeben\n"
 
-#: misc-utils/cal.c:955
+#: misc-utils/cal.c:961
 msgid " -y, --year            show the whole year\n"
 msgstr " -y, --year            ein ganzes Jahr anzeigen\n"
 
-#: misc-utils/cal.c:956
+#: misc-utils/cal.c:962
 #, fuzzy
 msgid " -Y, --twelve          show the next twelve months\n"
 msgstr " -y, --year            ein ganzes Jahr anzeigen\n"
 
-#: misc-utils/cal.c:957
+#: misc-utils/cal.c:963
 msgid " -w, --week[=<num>]    show US or ISO-8601 week numbers\n"
 msgstr " -w, --week[=<Zahl>]   US- oder ISO-8601-Wochennummern anzeigen\n"
 
-#: misc-utils/cal.c:958
+#: misc-utils/cal.c:964
 msgid "     --color[=<when>]  colorize messages (auto, always or never)\n"
 msgstr "     --color[=<Wann>]  Nachrichten einfärben (»auto«, »always« oder »never«)\n"
 
@@ -8972,148 +8974,148 @@ msgstr "Geräterevision"
 msgid "device vendor"
 msgstr "Gerätehersteller"
 
-#: misc-utils/lsblk.c:1161
+#: misc-utils/lsblk.c:1163
 #, c-format
 msgid "%s: failed to get device path"
 msgstr "%s: Gerätepfad kann nicht ermittelt werden"
 
-#: misc-utils/lsblk.c:1169
+#: misc-utils/lsblk.c:1171
 #, c-format
 msgid "%s: unknown device name"
 msgstr "%s: unbekannter Gerätename"
 
-#: misc-utils/lsblk.c:1206
+#: misc-utils/lsblk.c:1208
 #, c-format
 msgid "%s: failed to get dm name"
 msgstr "%s: der dm-Name konnte nicht ermittelt werden"
 
-#: misc-utils/lsblk.c:1255
+#: misc-utils/lsblk.c:1257
 msgid "failed to open device directory in sysfs"
 msgstr "Geräteverzeichnis in sysfs konnte nicht geöffnet werden"
 
-#: misc-utils/lsblk.c:1445
+#: misc-utils/lsblk.c:1447
 #, c-format
 msgid "%s: failed to compose sysfs path"
 msgstr "%s: sysfs-Pfad konnte nicht erstellt werden"
 
-#: misc-utils/lsblk.c:1451
+#: misc-utils/lsblk.c:1453
 #, c-format
 msgid "%s: failed to read link"
 msgstr "%s: Lesen einer Verknüpfung fehlschlagen"
 
-#: misc-utils/lsblk.c:1473
+#: misc-utils/lsblk.c:1475
 #, c-format
 msgid "%s: failed to get sysfs name"
 msgstr "%s: sysfs-Name konnte nicht ermittelt werden"
 
-#: misc-utils/lsblk.c:1482
+#: misc-utils/lsblk.c:1484
 #, c-format
 msgid "%s: failed to get whole-disk device number"
 msgstr "%s: Gerätenummer für das Gesamtlaufwerk konnte nicht ermittelt werden"
 
-#: misc-utils/lsblk.c:1534 misc-utils/lsblk.c:1536 misc-utils/lsblk.c:1561
-#: misc-utils/lsblk.c:1563
+#: misc-utils/lsblk.c:1536 misc-utils/lsblk.c:1538 misc-utils/lsblk.c:1563
+#: misc-utils/lsblk.c:1565
 #, c-format
 msgid "failed to parse list '%s'"
 msgstr "Liste »%s« konnte nicht eingelesen werden"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1541
+#: misc-utils/lsblk.c:1543
 #, c-format
 msgid "the list of excluded devices is too large (limit is %d devices)"
 msgstr "Die Liste ausgeschlossener Geräte ist zu lang (Maximum ist %d Geräte)"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1568
+#: misc-utils/lsblk.c:1570
 #, c-format
 msgid "the list of included devices is too large (limit is %d devices)"
 msgstr "Die Liste einbezogener Geräte ist zu lang (Maximum ist %d Geräte)"
 
-#: misc-utils/lsblk.c:1599 sys-utils/wdctl.c:174
+#: misc-utils/lsblk.c:1601 sys-utils/wdctl.c:174
 #, c-format
 msgid " %s [options] [<device> ...]\n"
 msgstr " %s [Optionen] [<Gerät> …]\n"
 
-#: misc-utils/lsblk.c:1602
+#: misc-utils/lsblk.c:1604
 msgid "List information about block devices.\n"
 msgstr "Informationen zu blockorientierten Geräten ausgeben.\n"
 
-#: misc-utils/lsblk.c:1605
+#: misc-utils/lsblk.c:1607
 msgid " -a, --all            print all devices\n"
 msgstr " -a, --all            alle Geräte ausgeben\n"
 
-#: misc-utils/lsblk.c:1607
+#: misc-utils/lsblk.c:1609
 msgid " -d, --nodeps         don't print slaves or holders\n"
 msgstr ""
 " -d, --nodeps         keine unter- oder übergeordneten\n"
 "                        Geräte ausgeben\n"
 
-#: misc-utils/lsblk.c:1608
+#: misc-utils/lsblk.c:1610
 msgid " -D, --discard        print discard capabilities\n"
 msgstr " -D, --discard        Verwerfungsfähigkeiten ausgeben\n"
 
-#: misc-utils/lsblk.c:1609
+#: misc-utils/lsblk.c:1611
 msgid " -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
 msgstr " -e, --exclude <Liste>   Geräte nach Major-Nummer auschließen (Vorgabe: RAM-Disks)\n"
 
-#: misc-utils/lsblk.c:1610
+#: misc-utils/lsblk.c:1612
 msgid " -f, --fs             output info about filesystems\n"
 msgstr " -f, --fs             Infos über Dateisysteme ausgeben\n"
 
-#: misc-utils/lsblk.c:1611
+#: misc-utils/lsblk.c:1613
 msgid " -i, --ascii          use ascii characters only\n"
 msgstr " -i, --ascii          nur ASCII-Zeichen verwenden\n"
 
-#: misc-utils/lsblk.c:1612
+#: misc-utils/lsblk.c:1614
 msgid " -I, --include <list> show only devices with specified major numbers\n"
 msgstr " -I, --include <Liste>   nur Geräte mit angegebenen Major-Nummern anzeigen\n"
 
-#: misc-utils/lsblk.c:1613
+#: misc-utils/lsblk.c:1615
 #, fuzzy
 msgid " -J, --json           use JSON output format\n"
 msgstr " -r, --raw            Rohausgabeformat verwenden\n"
 
-#: misc-utils/lsblk.c:1614
+#: misc-utils/lsblk.c:1616
 msgid " -l, --list           use list format output\n"
 msgstr " -l, --list           im Listenformat ausgeben\n"
 
-#: misc-utils/lsblk.c:1615
+#: misc-utils/lsblk.c:1617
 msgid " -m, --perms          output info about permissions\n"
 msgstr " -m, --perms          Information zu Zugriffsrechten ausgeben\n"
 
-#: misc-utils/lsblk.c:1616
+#: misc-utils/lsblk.c:1618
 msgid " -n, --noheadings     don't print headings\n"
 msgstr " -n, --noheadings     keine Überschriften anzeigen\n"
 
-#: misc-utils/lsblk.c:1617
+#: misc-utils/lsblk.c:1619
 msgid " -o, --output <list>  output columns\n"
 msgstr " -o, --output <Liste> Spalten der Ausgabe\n"
 
-#: misc-utils/lsblk.c:1618
+#: misc-utils/lsblk.c:1620
 msgid " -O, --output-all     output all columns\n"
 msgstr " -O, --output-all     alle Spalten ausgeben\n"
 
-#: misc-utils/lsblk.c:1619
+#: misc-utils/lsblk.c:1621
 msgid " -p, --paths          print complete device path\n"
 msgstr " -p, --paths          vollständigen Gerätepfad ausgeben\n"
 
-#: misc-utils/lsblk.c:1622
+#: misc-utils/lsblk.c:1624
 msgid " -s, --inverse        inverse dependencies\n"
 msgstr " -s, --inverse        Abhängigkeiten umkehren\n"
 
-#: misc-utils/lsblk.c:1623
+#: misc-utils/lsblk.c:1625
 msgid " -S, --scsi           output info about SCSI devices\n"
 msgstr " -S, --scsi           Information zu SCSI-Geräten ausgeben\n"
 
-#: misc-utils/lsblk.c:1624
+#: misc-utils/lsblk.c:1626
 msgid " -t, --topology       output info about topology\n"
 msgstr " -t, --topology       Information zur Topologie ausgeben\n"
 
-#: misc-utils/lsblk.c:1625
+#: misc-utils/lsblk.c:1627
 msgid " -x, --sort <column>  sort output by <column>\n"
 msgstr " -x, --sort <Spalte>  Ausgabe nach <Spalte> sortieren\n"
 
-#: misc-utils/lsblk.c:1630 misc-utils/lslocks.c:532 sys-utils/prlimit.c:196
+#: misc-utils/lsblk.c:1632 misc-utils/lslocks.c:532 sys-utils/prlimit.c:196
 #: sys-utils/zramctl.c:478
 #, c-format
 msgid ""
@@ -9123,12 +9125,12 @@ msgstr ""
 "\n"
 "Verfügbare Spalten (für --output):\n"
 
-#: misc-utils/lsblk.c:1643
+#: misc-utils/lsblk.c:1645
 #, c-format
 msgid "failed to access sysfs directory: %s"
 msgstr "Auf sysfs-Verzeichnis konnte nicht zugegriffen werden: %s"
 
-#: misc-utils/lsblk.c:1840
+#: misc-utils/lsblk.c:1842
 msgid "the sort column has to be among the output columns"
 msgstr "Die Sortierspalte muss zwischen den Ausgabespalten liegen."
 
@@ -10500,7 +10502,8 @@ msgid " -e, --reltime               show local time and time delta in readable f
 msgstr " -e, --reltime               lokale Zeit und Zeitspanne in lesbarem Format ausgeben\n"
 
 #: sys-utils/dmesg.c:292
-msgid " -T, --ctime                 show human readable timestamp\n"
+#, fuzzy
+msgid " -T, --ctime                 show human readable timestamp (may be inaccurate!)\n"
 msgstr " -T, --ctime                 menschenlesbaren Zeitstempel anzeigen\n"
 
 #: sys-utils/dmesg.c:293
@@ -10959,7 +10962,8 @@ msgid " -z, --zero-range     zero and ensure allocation of a range\n"
 msgstr " -z, --zero-range     nullen und die Anfordeung eines Bereichs sicherstellen\n"
 
 #: sys-utils/fallocate.c:126
-msgid "keep size mode (-n option) unsupported"
+#, fuzzy
+msgid "fallocate failed: keep size mode is unsupported"
 msgstr "Größenerhaltungsmodus (Option -n) wird nicht unterstützt"
 
 #: sys-utils/fallocate.c:127
@@ -11600,8 +11604,8 @@ msgid "To set the epoch value, you must use the 'epoch' option to tell to what v
 msgstr "Um den Epochenwert zu ändern, müssen sie die »epoch«-Option benutzen, um anzugeben, auf welchen Wert er gesetzt werden soll."
 
 #: sys-utils/hwclock.c:1461
-#, c-format
-msgid "Not setting the epoch to %d - testing only.\n"
+#, fuzzy, c-format
+msgid "Not setting the epoch to %lu - testing only.\n"
 msgstr "Der Epochenwert wird nicht auf %d gesetzt – Testmodus.\n"
 
 # Egger
@@ -12888,7 +12892,7 @@ msgstr ", Verschlüsselung %s (Typ %u)"
 msgid "%s: detach failed"
 msgstr "%s: Trennen fehlgeschlagen"
 
-#: sys-utils/losetup.c:323 sys-utils/lscpu.c:1460 sys-utils/prlimit.c:229
+#: sys-utils/losetup.c:323 sys-utils/lscpu.c:1455 sys-utils/prlimit.c:229
 #: sys-utils/swapon.c:162 sys-utils/wdctl.c:215 sys-utils/zramctl.c:339
 msgid "failed to initialize output line"
 msgstr "Ausgabezeile konnte nicht initialisiert werden"
@@ -13115,27 +13119,27 @@ msgstr "Fehler: uname fehlgeschlagen"
 msgid "failed to determine number of CPUs: %s"
 msgstr "Anzahl der CPUs konnte nicht ermittelt werden: %s"
 
-#: sys-utils/lscpu.c:732
+#: sys-utils/lscpu.c:727
 msgid "error: can not set signal handler"
 msgstr "Fehler: Signalhandler kann nicht festgelegt werden"
 
-#: sys-utils/lscpu.c:737
+#: sys-utils/lscpu.c:732
 msgid "error: can not restore signal handler"
 msgstr "Fehler: Signalhandler kann nicht wiederhergestellt werden"
 
-#: sys-utils/lscpu.c:1172
+#: sys-utils/lscpu.c:1167
 msgid "Failed to extract the node number"
 msgstr "Node-Nummer kann nicht entpackt werden"
 
-#: sys-utils/lscpu.c:1264 sys-utils/lscpu.c:1274
+#: sys-utils/lscpu.c:1259 sys-utils/lscpu.c:1269
 msgid "Y"
 msgstr "Y"
 
-#: sys-utils/lscpu.c:1264 sys-utils/lscpu.c:1274
+#: sys-utils/lscpu.c:1259 sys-utils/lscpu.c:1269
 msgid "N"
 msgstr "N"
 
-#: sys-utils/lscpu.c:1356
+#: sys-utils/lscpu.c:1351
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -13147,167 +13151,167 @@ msgstr ""
 "# Jeder Eintrag in jeder Spalte hat eine eindeutige ID, beginnend\n"
 "# mit 0.\n"
 
-#: sys-utils/lscpu.c:1506
+#: sys-utils/lscpu.c:1501
 msgid "Architecture:"
 msgstr "Architektur:"
 
-#: sys-utils/lscpu.c:1520
+#: sys-utils/lscpu.c:1515
 msgid "CPU op-mode(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1523 sys-utils/lscpu.c:1525
+#: sys-utils/lscpu.c:1518 sys-utils/lscpu.c:1520
 msgid "Byte Order:"
 msgstr "Byte-Reihenfolge:"
 
-#: sys-utils/lscpu.c:1527
+#: sys-utils/lscpu.c:1522
 msgid "CPU(s):"
 msgstr "CPU(s):"
 
-#: sys-utils/lscpu.c:1530
+#: sys-utils/lscpu.c:1525
 msgid "On-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1531
+#: sys-utils/lscpu.c:1526
 msgid "On-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1550
+#: sys-utils/lscpu.c:1545
 msgid "Off-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1551
+#: sys-utils/lscpu.c:1546
 msgid "Off-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1582
+#: sys-utils/lscpu.c:1577
 msgid "Thread(s) per core:"
 msgstr "Thread(s) pro Kern:"
 
-#: sys-utils/lscpu.c:1583
+#: sys-utils/lscpu.c:1578
 msgid "Core(s) per socket:"
 msgstr "Kern(e) pro Socket:"
 
-#: sys-utils/lscpu.c:1586
+#: sys-utils/lscpu.c:1581
 msgid "Socket(s) per book:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1588
+#: sys-utils/lscpu.c:1583
 msgid "Book(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1590
+#: sys-utils/lscpu.c:1585
 msgid "Socket(s):"
 msgstr "Socket(s):"
 
-#: sys-utils/lscpu.c:1594
+#: sys-utils/lscpu.c:1589
 msgid "NUMA node(s):"
 msgstr "NUMA-Knoten:"
 
-#: sys-utils/lscpu.c:1596
+#: sys-utils/lscpu.c:1591
 msgid "Vendor ID:"
 msgstr "Anbieterkennung:"
 
-#: sys-utils/lscpu.c:1598
+#: sys-utils/lscpu.c:1593
 msgid "CPU family:"
 msgstr "Prozessorfamilie:"
 
-#: sys-utils/lscpu.c:1600
+#: sys-utils/lscpu.c:1595
 msgid "Model:"
 msgstr "Modell:"
 
-#: sys-utils/lscpu.c:1602
+#: sys-utils/lscpu.c:1597
 msgid "Model name:"
 msgstr "Modellname:"
 
-#: sys-utils/lscpu.c:1604
+#: sys-utils/lscpu.c:1599
 msgid "Stepping:"
 msgstr "Stepping:"
 
-#: sys-utils/lscpu.c:1606
+#: sys-utils/lscpu.c:1601
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:1608
+#: sys-utils/lscpu.c:1603
 msgid "CPU max MHz:"
 msgstr "Maximale Taktfrequenz der CPU:"
 
-#: sys-utils/lscpu.c:1610
+#: sys-utils/lscpu.c:1605
 msgid "CPU min MHz:"
 msgstr "Minimale Taktfrequenz der CPU:"
 
-#: sys-utils/lscpu.c:1612
+#: sys-utils/lscpu.c:1607
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:1615 sys-utils/lscpu.c:1617
+#: sys-utils/lscpu.c:1610 sys-utils/lscpu.c:1612
 msgid "Virtualization:"
 msgstr "Virtualisierung:"
 
-#: sys-utils/lscpu.c:1620
+#: sys-utils/lscpu.c:1615
 msgid "Hypervisor:"
 msgstr "Hypervisor:"
 
-#: sys-utils/lscpu.c:1622
+#: sys-utils/lscpu.c:1617
 msgid "Hypervisor vendor:"
 msgstr "Hypervisor-Anbieter:"
 
-#: sys-utils/lscpu.c:1623
+#: sys-utils/lscpu.c:1618
 msgid "Virtualization type:"
 msgstr "Virtualisierungstyp:"
 
-#: sys-utils/lscpu.c:1626
+#: sys-utils/lscpu.c:1621
 msgid "Dispatching mode:"
 msgstr "Dispatching-Modus:"
 
-#: sys-utils/lscpu.c:1632
+#: sys-utils/lscpu.c:1627
 #, c-format
 msgid "%s cache:"
 msgstr "%s Cache:"
 
-#: sys-utils/lscpu.c:1638
+#: sys-utils/lscpu.c:1633
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "NUMA-Knoten%d CPU(s):"
 
 # I currently don't know a better translation
-#: sys-utils/lscpu.c:1643
+#: sys-utils/lscpu.c:1638
 #, fuzzy
 msgid "Flags:"
 msgstr "Markierungen"
 
-#: sys-utils/lscpu.c:1654
+#: sys-utils/lscpu.c:1649
 msgid "Display information about the CPU architecture.\n"
 msgstr "Informationen zur CPU-Architektur anzeigen.\n"
 
-#: sys-utils/lscpu.c:1657
+#: sys-utils/lscpu.c:1652
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr " -a, --all               sowohl Online- als auch Offline-CPUs ausgeben (Vorgabe für -e)\n"
 
-#: sys-utils/lscpu.c:1658
+#: sys-utils/lscpu.c:1653
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr " -b, --online            nur Online-CPUs ausgeben (Vorgabe für -p)\n"
 
-#: sys-utils/lscpu.c:1659
+#: sys-utils/lscpu.c:1654
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline           nur Offline-CPUs ausgeben\n"
 
-#: sys-utils/lscpu.c:1660
+#: sys-utils/lscpu.c:1655
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:1661
+#: sys-utils/lscpu.c:1656
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<Liste>]   in auswertbarem Format ausgeben\n"
 
-#: sys-utils/lscpu.c:1662
+#: sys-utils/lscpu.c:1657
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <Verz>    angegebenes Verzeichnis als Systemwurzel verwenden\n"
 
-#: sys-utils/lscpu.c:1663
+#: sys-utils/lscpu.c:1658
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr " -x, --hex               Hexadezimalmasken anstelle von CPU-Listen ausgeben\n"
 
-#: sys-utils/lscpu.c:1760
+#: sys-utils/lscpu.c:1755
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: die Optionen --all, --online und --offline können nur zusammen mit den Optionen --extended oder --parse verwendet werden.\n"
@@ -16415,8 +16419,9 @@ msgid "memory zram have consumed to store compressed data"
 msgstr ""
 
 #: sys-utils/zramctl.c:81
-msgid "number of objects migrated migrated by compaction"
-msgstr ""
+#, fuzzy
+msgid "number of objects migrated by compaction"
+msgstr "Anzahl der konkurrierenden Komprimierungsvorgänge"
 
 #: sys-utils/zramctl.c:297 sys-utils/zramctl.c:308
 #, fuzzy
@@ -18152,6 +18157,9 @@ msgstr "Unbekannte Escape-Sequenz in der Eingabe: %o, %o"
 #: text-utils/ul.c:630
 msgid "Input line too long."
 msgstr "Eingabezeile ist zu lang."
+
+#~ msgid "Done."
+#~ msgstr "Fertig."
 
 #~ msgid "Device open in read-only mode."
 #~ msgstr "Gerät im schreibgeschützten Modus geöffnet."
