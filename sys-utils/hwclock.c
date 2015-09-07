@@ -1458,7 +1458,7 @@ manipulate_epoch(const bool getepoch,
 			       "option to tell to what value to set it."));
 		else if (testing)
 			printf(_
-			       ("Not setting the epoch to %d - testing only.\n"),
+			       ("Not setting the epoch to %lu - testing only.\n"),
 			       epoch_opt);
 		else if (set_epoch_rtc(epoch_opt))
 			printf(_
