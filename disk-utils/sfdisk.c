@@ -359,7 +359,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	struct fdisk_partition *pa = get_partition(sf->cxt, partno);
 	char *devname, *typescript;
 	FILE *f;
-	int ok = 0, fd, backward;
+	int ok = 0, fd, backward = 0;
 	fdisk_sector_t nsectors, from, to, step, i;
 	size_t ss, step_bytes, cc;
 	uintmax_t src, dst;
@@ -386,26 +386,43 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	if (!ok)
 		return -EINVAL;
 
+	DBG(MISC, ul_debug("moving data"));
+
 	fd = fdisk_get_devfd(sf->cxt);
 
 	ss = fdisk_get_sector_size(sf->cxt);
 	nsectors = fdisk_partition_get_size(orig_pa);
 	from = fdisk_partition_get_start(orig_pa);
 	to = fdisk_partition_get_start(pa);
-	backward = from < to;
 
-	/* step cannot be bigger than gap between new and old location */
-	step = from > to ? from - to : to - from;
-	/* step cannot be bigger than original partition size */
-	if (step > fdisk_partition_get_size(orig_pa))
-		step = fdisk_partition_get_size(orig_pa);
-	/* step cannot be begger than ~1MiB */
-	if (step > (getpagesize() * 256) / ss)
+	if ((to >= from && from + nsectors >= to) ||
+	    (from >= to && to + nsectors >= from)) {
+		/* source and target overlay, check if we need to copy
+		 * backwardly from end of the source */
+		DBG(MISC, ul_debug("overlay between source and target"));
+		backward = from < to;
+		DBG(MISC, ul_debug(" copy order: %s", backward ? "backward" : "forward"));
+
+		step = from > to ? from - to : to - from;
+		if (step > nsectors)
+			step = nsectors;
+	} else
+		step = nsectors;
+
+	/* make step usable for malloc() */
+	if (step * ss > (getpagesize() * 256U))
 		step = (getpagesize() * 256) / ss;
+
+	/* align the step (note that nsectors does not have to be power of 2) */
+	while (nsectors % step)
+		step--;
+
 	step_bytes = step * ss;
+	DBG(MISC, ul_debug(" step: %ju (%ju bytes)", step, step_bytes));
 
 #if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
-	posix_fadvise(fd, from * ss, nsectors * ss, POSIX_FADV_SEQUENTIAL);
+	if (!backward)
+		posix_fadvise(fd, from * ss, nsectors * ss, POSIX_FADV_SEQUENTIAL);
 #endif
 	devname = fdisk_partname(fdisk_get_devname(sf->cxt), partno+1);
 	typescript = mk_backup_filename_tpl(sf->move_typescript, devname, ".move");
@@ -439,9 +456,10 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	fprintf(f, "# Disk: %s\n", devname);
 	fprintf(f, "# Partition: %zu\n", partno + 1);
 	fprintf(f, "# Operation: move data\n");
-	fprintf(f, "# Original start offset (in sectors): %ju\n", fdisk_partition_get_start(orig_pa));
-	fprintf(f, "# New start offset (in sectors): %ju\n", fdisk_partition_get_start(pa));
-	fprintf(f, "# Area size (in sectors): %ju\n", nsectors);
+	fprintf(f, "# Original start offset (sectors/bytes): %ju/%ju\n", from, from * ss);
+	fprintf(f, "# New start offset (sectors/bytes): %ju/%ju\n", to, to * ss);
+	fprintf(f, "# Area size (sectors/bytes): %ju/%ju\n", nsectors, nsectors * ss);
+	fprintf(f, "# Sector size: %zu\n", ss);
 	fprintf(f, "# Step size (in bytes): %zu\n", step_bytes);
 	fprintf(f, "# Steps: %zu\n", nsectors / step);
 	fprintf(f, "#\n");
@@ -451,17 +469,11 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	dst = (backward ? to + nsectors : to) * ss;
 	buf = xmalloc(step_bytes);
 
-	/*
-	fprintf(stderr, ">>>%s: src=%ju, dst=%ju, step=%ju (%ju bytes)\n",
-			backward ? "backward" : "forward", src, dst, step, step_bytes);
-	*/
-
 	for (cc = 1, i = 0; i < nsectors; i += step, cc++) {
 		ssize_t rc;
 
 		if (backward)
 			src -= step_bytes, dst -= step_bytes;
-
 
 		lseek(fd, src, SEEK_SET);
 		rc = read(fd, buf, step_bytes);
