@@ -609,7 +609,7 @@ function ts_fdisk_clean {
 
 	# remove non comparable parts of fdisk output
 	if [ x"${DEVNAME}" != x"" ]; then
-	       sed -i -e "s:${DEVNAME}:<removed>:g" $TS_OUTPUT
+	        sed -i -e "s:${DEVNAME}:<removed>:g;" $TS_OUTPUT
 	fi
 
 	sed -i -e 's/Disk identifier:.*/Disk identifier: <removed>/g' \
@@ -618,6 +618,7 @@ function ts_fdisk_clean {
 	       -e 's/^Device[[:blank:]]*Boot/Device     Boot/g' \
 	       -e 's/^Device[[:blank:]]*Flag/Device     Flag/g' \
 	       -e 's/Welcome to fdisk.*/Welcome to fdisk <removed>./g' \
+	       -e 's/typescript file.*/typescript file <removed>./g' \
 	       $TS_OUTPUT
 }
 
