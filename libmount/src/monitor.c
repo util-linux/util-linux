@@ -220,7 +220,7 @@ static int userspace_add_watch(struct monitor_entry *me, int *final, int *fd)
 	assert(me->path);
 
 	/*
-	 * libmount uses rename(2) to atomically update utab/mtab, monitor
+	 * libmount uses rename(2) to atomically update utab, monitor
 	 * rename changes is too tricky. It seems better to monitor utab
 	 * lockfile close.
 	 */
@@ -398,10 +398,6 @@ int mnt_monitor_enable_userspace(struct libmnt_monitor *mn, int enable, const ch
 		return 0;
 
 	DBG(MONITOR, ul_debugobj(mn, "allocate new userspace monitor"));
-
-	/* create a new entry */
-	if (mnt_has_regular_mtab(NULL, NULL))
-		return -ENOSYS;
 
 	if (!filename)
 		filename = mnt_get_utab_path();		/* /run/mount/utab */
