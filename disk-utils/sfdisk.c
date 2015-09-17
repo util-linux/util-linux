@@ -83,6 +83,7 @@ enum {
 	ACT_PARTUUID,
 	ACT_PARTLABEL,
 	ACT_PARTATTRS,
+	ACT_DELETE
 };
 
 struct sfdisk {
@@ -838,6 +839,45 @@ static int command_activate(struct sfdisk *sf, int argc, char **argv)
 	else
 		rc = write_changes(sf);
 	return rc;
+}
+
+/*
+ * sfdisk --delete <device> [<partno> ...]
+ */
+static int command_delete(struct sfdisk *sf, int argc, char **argv)
+{
+	size_t i;
+	const char *devname = NULL;
+
+	if (argc < 1)
+		errx(EXIT_FAILURE, _("no disk device specified"));
+	devname = argv[0];
+
+	if (fdisk_assign_device(sf->cxt, devname, 0) != 0)
+		err(EXIT_FAILURE, _("cannot open %s"), devname);
+
+	if (sf->backup)
+		backup_partition_table(sf, devname);
+
+	/* delate all */
+	if (argc == 1) {
+		size_t nparts = fdisk_get_npartitions(sf->cxt);
+		for (i = 0; i < nparts; i++) {
+			if (fdisk_is_partition_used(sf->cxt, i) &&
+			    fdisk_delete_partition(sf->cxt, i) != 0)
+				errx(EXIT_FAILURE, _("%s: partition %zu: failed to delete"), devname, i + 1);
+		}
+	/* delete specified */
+	} else {
+		for (i = 1; i < (size_t) argc; i++) {
+			size_t n = strtou32_or_err(argv[i], _("failed to parse partition number"));
+
+			if (fdisk_delete_partition(sf->cxt, n - 1) != 0)
+				errx(EXIT_FAILURE, _("%s: partition %zu: failed to delete"), devname, n);
+		}
+	}
+
+	return write_changes(sf);
 }
 
 /*
@@ -1670,6 +1710,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"), out);
 	fputs(_(" -T, --list-types                  print the recognized types (see -X)\n"), out);
 	fputs(_(" -V, --verify [<dev> ...]          test whether partitions seem correct\n"), out);
+	fputs(_("     --delete <dev> [<part> ...]   delete all or specified partitions\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" --part-label <dev> <part> [<str>] print or change partition label\n"), out);
@@ -1736,6 +1777,7 @@ int main(int argc, char *argv[])
 		OPT_BYTES,
 		OPT_COLOR,
 		OPT_MOVEDATA,
+		OPT_DELETE
 	};
 
 	static const struct option longopts[] = {
@@ -1745,6 +1787,7 @@ int main(int argc, char *argv[])
 		{ "backup-file", required_argument, NULL, 'O' },
 		{ "bytes",   no_argument,	NULL, OPT_BYTES },
 		{ "color",   optional_argument, NULL, OPT_COLOR },
+		{ "delete",  no_argument,	NULL, OPT_DELETE },
 		{ "dump",    no_argument,	NULL, 'd' },
 		{ "help",    no_argument,       NULL, 'h' },
 		{ "force",   no_argument,       NULL, 'f' },
@@ -1904,6 +1947,9 @@ int main(int argc, char *argv[])
 			sf->movedata = 1;
 			sf->move_typescript = optarg;
 			break;
+		case OPT_DELETE:
+			sf->act = ACT_DELETE;
+			break;
 		default:
 			usage(stderr);
 		}
@@ -1929,6 +1975,10 @@ int main(int argc, char *argv[])
 	switch (sf->act) {
 	case ACT_ACTIVATE:
 		rc = command_activate(sf, argc - optind, argv + optind);
+		break;
+
+	case ACT_DELETE:
+		rc = command_delete(sf, argc - optind, argv + optind);
 		break;
 
 	case ACT_LIST:
