@@ -1146,6 +1146,7 @@ int fdisk_set_partition(struct fdisk_context *cxt, size_t partno,
 
 	rc = cxt->label->op->set_part(cxt, partno, xpa);
 done:
+	DBG(CXT, ul_debugobj(cxt, "set_partition() rc=%d", rc));
 	if (xpa != pa)
 		fdisk_unref_partition(xpa);
 	return rc;

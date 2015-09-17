@@ -1751,11 +1751,20 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 		end = xstart + xsize - 1ULL;
 	}
 
-	if (!FDISK_IS_UNDEF(start))
+	if (!FDISK_IS_UNDEF(start)) {
+		if (start < le64_to_cpu(gpt->pheader->first_usable_lba)) {
+			fdisk_warnx(cxt, _("The begin of the partition overflows FirstUsableLBA."));
+			return -EINVAL;
+		}
 		e->lba_start = cpu_to_le64(start);
-	if (!FDISK_IS_UNDEF(end))
+	}
+	if (!FDISK_IS_UNDEF(end)) {
+		if (end > le64_to_cpu(gpt->pheader->last_usable_lba)) {
+			fdisk_warnx(cxt, _("The end of the partition overflows LastUsableLBA."));
+			return -EINVAL;
+		}
 		e->lba_end = cpu_to_le64(end);
-
+	}
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
 
