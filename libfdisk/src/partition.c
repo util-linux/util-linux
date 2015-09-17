@@ -971,13 +971,16 @@ static int resize_get_last_possible(
 		    fdisk_partition_is_container(pa))
 			continue;
 
+		DBG(PART, ul_debugobj(pa, "checking start=%ju, size=%ju", pa->start, pa->size));
+
 		if (!last) {
 			if (start >= pa->start &&  start < pa->start + pa->size) {
 				if (fdisk_partition_is_freespace(pa) || pa == cur)
 					last = pa;
 				else
 					break;
-				*maxsz = pa->size - (pa->start - start);
+
+				*maxsz = pa->size - (start - pa->start);
 			}
 		} else if (!fdisk_partition_is_freespace(pa) && pa != cur) {
 			break;
@@ -989,8 +992,10 @@ static int resize_get_last_possible(
 
 	if (last)
 		DBG(PART, ul_debugobj(cur, "resize: max size=%ju", (uintmax_t) *maxsz));
-	return last ? 0 : -1;
+	else
+		DBG(PART, ul_debugobj(cur, "resize: nothing usable after %ju", (uintmax_t) start));
 
+	return last ? 0 : -1;
 }
 
 /*
@@ -1001,7 +1006,7 @@ static int recount_resize(
 			struct fdisk_context *cxt, size_t partno,
 			struct fdisk_partition *res, struct fdisk_partition *tpl)
 {
-	fdisk_sector_t start, size;
+	fdisk_sector_t start, size, xsize;
 	struct fdisk_partition *cur = NULL;
 	struct fdisk_table *tb = NULL;
 	int rc;
@@ -1086,15 +1091,20 @@ static int recount_resize(
 	}
 
 	/* 4) verify that size is within the current partition or next free space */
-	if (!FDISK_IS_UNDEF(size)) {
+	xsize = !FDISK_IS_UNDEF(size) ? size : fdisk_partition_get_size(cur);
+
+	if (fdisk_partition_has_size(cur)) {
 		fdisk_sector_t maxsz;
+
 		if (resize_get_last_possible(tb, cur, start, &maxsz))
 			goto erange;
-		DBG(PART, ul_debugobj(tpl, "resize: size wanted=%ju, max=%ju",
-					(uintmax_t) size, (uintmax_t) maxsz));
-		if (size > maxsz)
+		DBG(PART, ul_debugobj(tpl, "resize: size=%ju, max=%ju",
+					(uintmax_t) xsize, (uintmax_t) maxsz));
+		if (xsize > maxsz)
 			goto erange;
-	} else {
+	}
+
+	if (!FDISK_IS_UNDEF(size)) {
 		DBG(PART, ul_debugobj(tpl, "resize: size unchanged (undefined)"));
 	}
 
