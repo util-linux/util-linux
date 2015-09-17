@@ -469,23 +469,32 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	dst = (backward ? to + nsectors : to) * ss;
 	buf = xmalloc(step_bytes);
 
+	DBG(MISC, ul_debug(" initial: src=%ju dst=%ju", src, dst));
+
 	for (cc = 1, i = 0; i < nsectors; i += step, cc++) {
 		ssize_t rc;
 
 		if (backward)
 			src -= step_bytes, dst -= step_bytes;
 
-		lseek(fd, src, SEEK_SET);
+		DBG(MISC, ul_debug("#%05zu: src=%ju dst=%ju", cc, src, dst));
+
+		/* read source */
+		if (lseek(fd, src, SEEK_SET) == (off_t) -1)
+			goto fail;
 		rc = read(fd, buf, step_bytes);
 		if (rc < 0 || rc != (ssize_t) step_bytes)
 			goto fail;
 
-		lseek(fd, dst, SEEK_SET);
+		/* write target */
+		if (lseek(fd, dst, SEEK_SET) == (off_t) -1)
+			goto fail;
 		rc = write(fd, buf, step_bytes);
 		if (rc < 0 || rc != (ssize_t) step_bytes)
 			goto fail;
 		fsync(fd);
 
+		/* write log */
 		fprintf(f, "%05zu: %12ju %12ju\n", cc, src, dst);
 
 #if defined(POSIX_FADV_DONTNEED) && defined(HAVE_POSIX_FADVISE)
@@ -501,8 +510,9 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	free(typescript);
 	return 0;
 fail:
+	warn(_("%s: failed to move data"), devname);
 	fclose(f);
-	err(EXIT_FAILURE, _("%s: failed to move data"), devname);
+	return -errno;
 }
 
 static int write_changes(struct sfdisk *sf)
@@ -1583,8 +1593,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			}
 			if (!rc && partno >= 0) {	/* -N <partno>, modify partition */
 				rc = fdisk_set_partition(sf->cxt, partno, pa);
-				if (rc == 0)
-					rc = SFDISK_DONE_ASK;
+				rc = rc == 0 ? SFDISK_DONE_ASK : SFDISK_DONE_ABORT;
 				break;
 			} else if (!rc) {		/* add partition */
 				rc = fdisk_add_partition(sf->cxt, pa, &cur_partno);
