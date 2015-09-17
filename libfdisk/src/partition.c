@@ -1006,7 +1006,7 @@ static int recount_resize(
 	struct fdisk_table *tb = NULL;
 	int rc;
 
-	DBG(PART, ul_debugobj(tpl, "resize requested"));
+	DBG(PART, ul_debugobj(tpl, ">>> resize requested"));
 
 	FDISK_INIT_UNDEF(start);
 	FDISK_INIT_UNDEF(size);
@@ -1033,9 +1033,14 @@ static int recount_resize(
 		} else
 			start += fdisk_partition_get_start(tpl);
 
+		DBG(PART, ul_debugobj(tpl, "resize: moving start %s relative, new start: %ju",
+				tpl->movestart == FDISK_MOVE_DOWN  ? "DOWN" : "UP", start));
+
 	/* 1b) set new start - absolute number */
-	} else if (fdisk_partition_has_start(tpl))
+	} else if (fdisk_partition_has_start(tpl)) {
 		start = fdisk_partition_get_start(tpl);
+		DBG(PART, ul_debugobj(tpl, "resize: moving start to absolute offset: %ju", start));
+	}
 
 	/* 2) verify that start is within the current partition or any freespace area */
 	if (!FDISK_IS_UNDEF(start)) {
@@ -1050,6 +1055,7 @@ static int recount_resize(
 			goto erange;
 	} else {
 		/* no change, start points to the current partition */
+		DBG(PART, ul_debugobj(tpl, "resize: start unchanged"));
 		start = fdisk_partition_get_start(cur);
 	}
 
@@ -1088,9 +1094,12 @@ static int recount_resize(
 					(uintmax_t) size, (uintmax_t) maxsz));
 		if (size > maxsz)
 			goto erange;
+	} else {
+		DBG(PART, ul_debugobj(tpl, "resize: size unchanged (undefined)"));
 	}
 
-	DBG(PART, ul_debugobj(tpl, "resize: SUCCESS: start %ju->%ju; size %ju->%ju",
+
+	DBG(PART, ul_debugobj(tpl, "<<< resize: SUCCESS: start %ju->%ju; size %ju->%ju",
 			(uintmax_t) fdisk_partition_get_start(cur), (uintmax_t) start,
 			(uintmax_t) fdisk_partition_get_size(cur), (uintmax_t) size));
 	res->start = start;
@@ -1098,7 +1107,7 @@ static int recount_resize(
 	fdisk_unref_table(tb);
 	return 0;
 erange:
-	DBG(PART, ul_debugobj(tpl, "resize: FAILED"));
+	DBG(PART, ul_debugobj(tpl, "<<< resize: FAILED"));
 	fdisk_warnx(cxt, _("Failed to resize partition #%zu."), partno + 1);
 	fdisk_unref_table(tb);
 	return -ERANGE;
