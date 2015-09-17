@@ -597,7 +597,12 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 					pa->partno,
 					(uintmax_t) fdisk_partition_get_start(pa),
 					(uintmax_t) fdisk_partition_get_end(pa)));
-		if (last + grain <= pa->start) {
+
+		/* We ignore small free spaces (smaller than grain) to keep partitions
+		 * aligned, the exception is space before the first partition where
+		 * we assume that cxt->first_lba is aligned. */
+		if (last + grain <= pa->start
+		    || (last < pa->start && last == cxt->first_lba)) {
 			rc = table_add_freespace(cxt, *tb,
 				last + (last > cxt->first_lba ? 1 : 0),
 				pa->start - 1, NULL);
