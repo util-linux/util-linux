@@ -845,10 +845,30 @@ fail:
 	return NULL;
 }
 
-static inline uint32_t count_crc32(const unsigned char *buf, size_t len)
+static inline uint32_t count_crc32(const unsigned char *buf, size_t len,
+				   size_t ex_off, size_t ex_len)
 {
-	return (crc32(~0L, buf, len) ^ ~0L);
+	return (crc32_exclude_offset(~0L, buf, len, ex_off, ex_len) ^ ~0L);
 }
+
+static inline uint32_t gpt_header_count_crc32(struct gpt_header *header)
+{
+        return count_crc32((unsigned char *) header,		/* buffer */
+			le32_to_cpu(header->size),		/* size of buffer */
+			offsetof(struct gpt_header, crc32),	/* exclude */
+			sizeof(header->crc32));			/* size of excluded area */
+}
+
+static inline uint32_t gpt_entryarr_count_crc32(struct gpt_header *header, struct gpt_entry *ents)
+{
+	size_t arysz = 0;
+
+	arysz = le32_to_cpu(header->npartition_entries) *
+		le32_to_cpu(header->sizeof_partition_entry);
+
+	return count_crc32((unsigned char *) ents, arysz, 0, 0);
+}
+
 
 /*
  * Recompute header and partition array 32bit CRC checksums.
@@ -857,24 +877,13 @@ static inline uint32_t count_crc32(const unsigned char *buf, size_t len)
  */
 static void gpt_recompute_crc(struct gpt_header *header, struct gpt_entry *ents)
 {
-	uint32_t crc = 0;
-	size_t entry_sz = 0;
-
 	if (!header)
 		return;
 
-	/* header CRC */
-	header->crc32 = 0;
-	crc = count_crc32((unsigned char *) header, le32_to_cpu(header->size));
-	header->crc32 = cpu_to_le32(crc);
+	header->partition_entry_array_crc32 =
+			cpu_to_le32( gpt_entryarr_count_crc32(header, ents) );
 
-	/* partition entry array CRC */
-	header->partition_entry_array_crc32 = 0;
-	entry_sz = le32_to_cpu(header->npartition_entries) *
-		le32_to_cpu(header->sizeof_partition_entry);
-
-	crc = count_crc32((unsigned char *) ents, entry_sz);
-	header->partition_entry_array_crc32 = cpu_to_le32(crc);
+	header->crc32 = cpu_to_le32( gpt_header_count_crc32(header) );
 }
 
 /*
@@ -883,28 +892,20 @@ static void gpt_recompute_crc(struct gpt_header *header, struct gpt_entry *ents)
  */
 static int gpt_check_header_crc(struct gpt_header *header, struct gpt_entry *ents)
 {
-	uint32_t crc, orgcrc = le32_to_cpu(header->crc32);
+	uint32_t orgcrc = le32_to_cpu(header->crc32),
+		 crc = gpt_header_count_crc32(header);
 
-	header->crc32 = 0;
-	crc = count_crc32((unsigned char *) header, le32_to_cpu(header->size));
-	header->crc32 = cpu_to_le32(orgcrc);
-
-	if (crc == le32_to_cpu(header->crc32))
+	if (crc == orgcrc)
 		return 1;
 
 	/*
-	 * If we have checksum mismatch it may be due to stale data,
-	 * like a partition being added or deleted. Recompute the CRC again
-	 * and make sure this is not the case.
+	 * If we have checksum mismatch it may be due to stale data, like a
+	 * partition being added or deleted. Recompute the CRC again and make
+	 * sure this is not the case.
 	 */
 	if (ents) {
 		gpt_recompute_crc(header, ents);
-		orgcrc = le32_to_cpu(header->crc32);
-		header->crc32 = 0;
-		crc = count_crc32((unsigned char *) header, le32_to_cpu(header->size));
-		header->crc32 = cpu_to_le32(orgcrc);
-
-		return crc == le32_to_cpu(header->crc32);
+		return gpt_header_count_crc32(header) == orgcrc;
 	}
 
 	return 0;
@@ -917,23 +918,11 @@ static int gpt_check_header_crc(struct gpt_header *header, struct gpt_entry *ent
 static int gpt_check_entryarr_crc(struct gpt_header *header,
 				  struct gpt_entry *ents)
 {
-	int ret = 0;
-	ssize_t entry_sz;
-	uint32_t crc;
-
 	if (!header || !ents)
-		goto done;
+		return 0;
 
-	entry_sz = le32_to_cpu(header->npartition_entries) *
-		   le32_to_cpu(header->sizeof_partition_entry);
-
-	if (!entry_sz)
-		goto done;
-
-	crc = count_crc32((unsigned char *) ents, entry_sz);
-	ret = (crc == le32_to_cpu(header->partition_entry_array_crc32));
-done:
-	return ret;
+	return gpt_entryarr_count_crc32(header, ents) ==
+			le32_to_cpu(header->partition_entry_array_crc32);
 }
 
 static int gpt_check_lba_sanity(struct fdisk_context *cxt, struct gpt_header *header)

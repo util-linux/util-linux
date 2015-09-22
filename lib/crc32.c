@@ -98,6 +98,11 @@ static const uint32_t crc32_tab[] = {
 	0x2d02ef8dL
 };
 
+static inline uint32_t crc32_add_char(uint32_t crc, unsigned char c)
+{
+	return crc32_tab[(crc ^ c) & 0xff] ^ (crc >> 8);
+}
+
 /*
  * This a generic crc32() function, it takes seed as an argument,
  * and does __not__ xor at the end. Then individual users can do
@@ -109,8 +114,27 @@ uint32_t crc32(uint32_t seed, const unsigned char *buf, size_t len)
 	const unsigned char *p = buf;
 
 	while (len) {
-		crc = crc32_tab[(crc ^ *p++) & 0xff] ^ (crc >> 8);
+		crc = crc32_add_char(crc, *p++);
 		len--;
+	}
+
+	return crc;
+}
+
+uint32_t crc32_exclude_offset(uint32_t seed, const unsigned char *buf, size_t len,
+			      size_t exclude_off, size_t exclude_len)
+{
+	uint32_t crc = seed;
+	const unsigned char *p = buf;
+	size_t i;
+
+	for (i = 0; i < len; i++) {
+		unsigned char x = *p++;
+
+		if (i >= exclude_off && i < exclude_off + exclude_len)
+			x = 0;
+
+		crc = crc32_add_char(crc, x);
 	}
 
 	return crc;
