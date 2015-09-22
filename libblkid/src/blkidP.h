@@ -180,6 +180,7 @@ struct blkid_struct_probe
 	int			fd;		/* device file descriptor */
 	blkid_loff_t		off;		/* begin of data on the device */
 	blkid_loff_t		size;		/* end of data on the device */
+	size_t			mmap_granularity; /* minimal size of mmaped buffer (PAGE_SIZE) */
 
 	dev_t			devno;		/* device number (st.st_rdev) */
 	dev_t			disk_devno;	/* devno of the whole-disk or 0 */
@@ -318,6 +319,7 @@ struct blkid_struct_cache
 #define BLKID_DEBUG_READ	(1 << 10)
 #define BLKID_DEBUG_SAVE	(1 << 11)
 #define BLKID_DEBUG_TAG		(1 << 12)
+#define BLKID_DEBUG_BUFFER	(1 << 13)
 #define BLKID_DEBUG_ALL		0xFFFF		/* (1 << 16) aka FFFF is expected by API */
 
 UL_DEBUG_DECLARE_MASK(libblkid);

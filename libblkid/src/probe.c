@@ -104,6 +104,7 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <limits.h>
+#include <sys/mman.h>
 
 #ifdef HAVE_LIBUUID
 # include <uuid.h>
@@ -580,14 +581,109 @@ int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[
 	return 0;
 }
 
+/* align to mmap granularity */
+#define PROBE_ALIGN_OFF(p, o)	((o) & ~((p)->mmap_granularity - 1))
+/* default buffer sizes */
+#define PROBE_MMAP_BEGINSIZ	(1024 * 1024 * 2)	/* begin of the device */
+#define PROBE_MMAP_ENDSIZ	(1024 * 1024 * 2)	/* end of the device */
+#define PROBE_MMAP_MIDSIZ	(1024 * 1024)		/* middle of the device */
+
+static struct blkid_bufinfo *mmap_buffer(blkid_probe pr,
+					 blkid_loff_t real_off,
+					 blkid_loff_t len)
+{
+	size_t map_len;
+	blkid_loff_t map_off = 0;
+	struct blkid_bufinfo *bf = NULL;
+
+	/*
+	 * libblkid heavily reads begin and end of the device, so it seems
+	 * better to mmap ~2MiB from the begin and end of the device to reduces
+	 * number of syscalls and necessary buffers. For random accees
+	 * somewhere in the middle of the device we use 1MiB buffers.
+	 */
+	if (!pr->mmap_granularity)
+		pr->mmap_granularity = getpagesize();
+
+	/* begin of the device */
+	if (real_off == 0 || real_off + len < PROBE_MMAP_BEGINSIZ) {
+		DBG(BUFFER, ul_debug("\tmapping begin of the device"));
+		map_off = 0;
+		map_len = PROBE_MMAP_BEGINSIZ > pr->size ? pr->size : PROBE_MMAP_BEGINSIZ;
+
+
+	/* end of the device */
+	} else if (real_off > pr->off + pr->size - PROBE_MMAP_ENDSIZ) {
+		DBG(BUFFER, ul_debug("\tmapping end of the device"));
+
+		map_off = PROBE_ALIGN_OFF(pr, pr->off + pr->size - PROBE_MMAP_ENDSIZ);
+		map_len = pr->off + pr->size - map_off;
+
+	/* middle of the device */
+	} else {
+		blkid_loff_t minlen;
+
+		map_off = PROBE_ALIGN_OFF(pr, real_off);
+		minlen = real_off + len - map_off;
+
+		map_len = minlen > PROBE_MMAP_MIDSIZ ? minlen : PROBE_MMAP_MIDSIZ;
+
+		if (map_off + map_len > pr->off + pr->size)
+			map_len = pr->size - map_off;
+	}
+
+	assert(map_off <= real_off);
+	assert(map_off + map_len >= real_off + len);
+
+	/* allocate buffer handler */
+	bf = malloc(sizeof(*bf));
+	if (!bf) {
+		errno = ENOMEM;
+		return NULL;
+	}
+
+	/* mmap into memmory */
+	bf->data = mmap(NULL, map_len, PROT_READ, MAP_SHARED, pr->fd, map_off);
+	if (bf->data == MAP_FAILED) {
+		DBG(BUFFER, ul_debug("\tmmap failed: %m"));
+		free(bf);
+		return NULL;
+	}
+
+	bf->off = map_off;
+	bf->len = map_len;
+	INIT_LIST_HEAD(&bf->bufs);
+
+	DBG(BUFFER, ul_debug("\tmmap  %p: off=%ju, len=%ju (%ju pages)",
+				bf->data, map_off, map_len,
+				map_len / pr->mmap_granularity));
+	return bf;
+}
+
+/*
+ * Note that @off is offset within probing area, the probing area is defined by
+ * pr->off and pr->size.
+ */
 unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 				blkid_loff_t off, blkid_loff_t len)
 {
 	struct list_head *p;
 	struct blkid_bufinfo *bf = NULL;
+	blkid_loff_t real_off = pr->off + off;
+
+	/*
+	DBG(BUFFER, ul_debug("\t>>>> off=%ju, real-off=%ju (probe <%ju..%ju>, len=%ju",
+				off, real_off, pr->off, pr->off + pr->size, len));
+	*/
 
 	if (pr->size <= 0) {
 		errno = EINVAL;
+		return NULL;
+	}
+
+	if (len == 0 || pr->off + pr->size < real_off + len) {
+		DBG(BUFFER, ul_debug("\t  ignore: request out of probing area"));
+		errno = 0;
 		return NULL;
 	}
 
@@ -600,88 +696,64 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 		 * parent. Let's use parent's buffers.
 		 *
 		 * Note that pr->off (and pr->parent->off) is always from the
-		 * beginig of the device.
+		 * begin of the device.
 		 */
 		return blkid_probe_get_buffer(pr->parent,
 				pr->off + off - pr->parent->off, len);
 	}
 
+	/* try buffers we already have in memmory */
 	list_for_each(p, &pr->buffers) {
 		struct blkid_bufinfo *x =
 				list_entry(p, struct blkid_bufinfo, bufs);
 
-		if (x->off <= off && off + len <= x->off + x->len) {
-			DBG(LOWPROBE, ul_debug("\treuse buffer: off=%jd len=%jd pr=%p",
-							x->off, x->len, pr));
+		if (real_off >= x->off && real_off + len <= x->off + x->len) {
+			DBG(BUFFER, ul_debug("\treuse %p: off=%jd len=%jd",
+						x->data, x->off, x->len));
 			bf = x;
 			break;
 		}
 	}
+
+	/* not found; read from disk */
 	if (!bf) {
-		ssize_t ret;
-
-		if (blkid_llseek(pr->fd, pr->off + off, SEEK_SET) < 0) {
-			errno = 0;
+		bf = mmap_buffer(pr, real_off, len);
+		if (!bf)
 			return NULL;
-		}
 
-		/* someone trying to overflow some buffers? */
-		if (len > ULONG_MAX - sizeof(struct blkid_bufinfo)) {
-			errno = ENOMEM;
-			return NULL;
-		}
-
-		/* allocate info and space for data by why call */
-		bf = calloc(1, sizeof(struct blkid_bufinfo) + len);
-		if (!bf) {
-			errno = ENOMEM;
-			return NULL;
-		}
-
-		bf->data = ((unsigned char *) bf) + sizeof(struct blkid_bufinfo);
-		bf->len = len;
-		bf->off = off;
-		INIT_LIST_HEAD(&bf->bufs);
-
-		DBG(LOWPROBE, ul_debug("\tbuffer read: off=%jd len=%jd pr=%p",
-				off, len, pr));
-
-		ret = read(pr->fd, bf->data, len);
-		if (ret != (ssize_t) len) {
-			DBG(LOWPROBE, ul_debug("\tbuffer read: return %zd error %m", ret));
-			free(bf);
-			if (ret >= 0)
-				errno = 0;
-			return NULL;
-		}
 		list_add_tail(&bf->bufs, &pr->buffers);
 	}
 
+	assert(bf->off <= real_off);
+	assert(bf->off + bf->len >= real_off + len);
+
 	errno = 0;
-	return off ? bf->data + (off - bf->off) : bf->data;
+	return real_off ? bf->data + (real_off - bf->off) : bf->data;
 }
 
 static void blkid_probe_reset_buffer(blkid_probe pr)
 {
-	uint64_t read_ct = 0, len_ct = 0;
+	uint64_t mmap_ct = 0, len_ct = 0;
 
 	if (!pr || list_empty(&pr->buffers))
 		return;
 
-	DBG(LOWPROBE, ul_debug("reseting probing buffers pr=%p", pr));
+	DBG(BUFFER, ul_debug("reseting probing buffers pr=%p", pr));
 
 	while (!list_empty(&pr->buffers)) {
 		struct blkid_bufinfo *bf = list_entry(pr->buffers.next,
 						struct blkid_bufinfo, bufs);
-		read_ct++;
+		mmap_ct++;
 		len_ct += bf->len;
 		list_del(&bf->bufs);
+
+		DBG(BUFFER, ul_debug(" unmap: %p [off=%ju, len=%ju]", bf->data, bf->off, bf->len));
+		munmap(bf->data, bf->len);
 		free(bf);
 	}
 
-	DBG(LOWPROBE, ul_debug("buffers summary: %"PRIu64" bytes "
-			"by %"PRIu64" read() call(s)",
-			len_ct, read_ct));
+	DBG(LOWPROBE, ul_debug("buffers summary: %ju bytes (%ju pages) by %ju mmap() call(s)",
+			len_ct, len_ct / pr->mmap_granularity, mmap_ct));
 
 	INIT_LIST_HEAD(&pr->buffers);
 }
@@ -734,6 +806,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		blkid_loff_t off, blkid_loff_t size)
 {
 	struct stat sb;
+	blkid_loff_t devsiz = 0;
 
 	if (!pr)
 		return -1;
@@ -766,33 +839,35 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	if (fstat(fd, &sb))
 		goto err;
 
-	if (!S_ISBLK(sb.st_mode) && !S_ISCHR(sb.st_mode) && !S_ISREG(sb.st_mode))
+	if (!S_ISBLK(sb.st_mode) && !S_ISCHR(sb.st_mode) && !S_ISREG(sb.st_mode)) {
+		 errno = EINVAL;
 		goto err;
-
+	}
 
 	pr->mode = sb.st_mode;
 	if (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode))
 		pr->devno = sb.st_rdev;
 
-	if (size)
-		pr->size = size;
-	else {
-		if (S_ISBLK(sb.st_mode)) {
-			if (blkdev_get_size(fd, (unsigned long long *) &pr->size)) {
-				DBG(LOWPROBE, ul_debug("failed to get device size"));
-				goto err;
-			}
-		} else if (S_ISCHR(sb.st_mode))
-			pr->size = 1;		/* UBI devices are char... */
-		else if (S_ISREG(sb.st_mode))
-			pr->size = sb.st_size;	/* regular file */
-
-		if (pr->off > pr->size)
+	if (S_ISBLK(sb.st_mode)) {
+		if (blkdev_get_size(fd, (unsigned long long *) &devsiz)) {
+			DBG(LOWPROBE, ul_debug("failed to get device size"));
 			goto err;
+		}
+	} else if (S_ISCHR(sb.st_mode))
+		devsiz = 1;		/* UBI devices are char... */
+	else if (S_ISREG(sb.st_mode))
+		devsiz = sb.st_size;	/* regular file */
 
-		/* The probing area cannot be larger than whole device, pr->off
-		 * is offset within the device */
-		pr->size -= pr->off;
+	pr->size = size ? size : devsiz;
+
+	if (off && size == 0)
+		/* only offset without size specified */
+		pr->size -= off;
+
+	if (pr->off + pr->size > devsiz) {
+		DBG(LOWPROBE, ul_debug("area specified by offset and size is bigger than device"));
+		errno = EINVAL;
+		goto err;
 	}
 
 	if (pr->size <= 1440 * 1024 && !S_ISCHR(sb.st_mode))
@@ -887,8 +962,10 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 
 		if (!buf && errno)
 			return -errno;
+
 		if (buf && !memcmp(mag->magic,
 				buf + (mag->sboff & 0x3ff), mag->len)) {
+
 			DBG(LOWPROBE, ul_debug("\tmagic sboff=%u, kboff=%ld",
 				mag->sboff, mag->kboff));
 			if (offset)

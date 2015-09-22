@@ -27,6 +27,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libblkid) =
 	{ "evaluate", BLKID_DEBUG_EVALUATE, "tags resolving" },
 	{ "help", BLKID_DEBUG_HELP,	"this help" },
 	{ "lowprobe", BLKID_DEBUG_LOWPROBE, "superblock/raids/partitions probing" },
+	{ "buffer", BLKID_DEBUG_BUFFER, "low-probing buffers" },
 	{ "probe", BLKID_DEBUG_PROBE,	"devices verification" },
 	{ "read", BLKID_DEBUG_READ,	"cache parsing" },
 	{ "save", BLKID_DEBUG_SAVE,	"cache writing" },
