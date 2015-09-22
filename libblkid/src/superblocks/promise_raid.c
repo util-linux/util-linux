@@ -27,21 +27,27 @@ struct promise_metadata {
 static int probe_pdcraid(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
-	unsigned int i;
+	size_t i;
 	static unsigned int sectors[] = {
-	  63, 255, 256, 16, 399, 591, 675, 735, 911, 974, 991, 951, 3087, 0
+	  63, 255, 256, 16, 399, 591, 675, 735, 911, 974, 991, 951, 3087
 	};
+	uint64_t nsectors;
 
 	if (pr->size < 0x40000)
 		return 1;
 	if (!S_ISREG(pr->mode) && !blkid_probe_is_wholedisk(pr))
 		return 1;
 
-	for (i = 0; sectors[i] != 0; i++) {
+	nsectors = pr->size >> 9;
+
+	for (i = 0; i < ARRAY_SIZE(sectors); i++) {
 		uint64_t off;
 		struct promise_metadata *pdc;
 
-		off = ((pr->size / 0x200) - sectors[i]) * 0x200;
+		if (nsectors < sectors[i])
+			return 1;
+
+		off = (nsectors - sectors[i]) << 9;
 		pdc = (struct promise_metadata *)
 				blkid_probe_get_buffer(pr,
 					off,
