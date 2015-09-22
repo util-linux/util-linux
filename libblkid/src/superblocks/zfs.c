@@ -70,9 +70,10 @@ struct nvlist {
 
 static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 {
+	unsigned char *p, buff[4096];
 	struct nvlist *nvl;
 	struct nvpair *nvp;
-	size_t left = 4096;
+	size_t left = sizeof(buff);
 	int found = 0;
 
 	offset = (offset & ~(VDEV_LABEL_SIZE - 1)) + VDEV_LABEL_NVPAIR;
@@ -81,9 +82,13 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 	 * the first 4k (left) of the nvlist.  This is true for all pools
 	 * I've seen, and simplifies this code somewhat, because we don't
 	 * have to handle an nvpair crossing a buffer boundary. */
-	nvl = (struct nvlist *)blkid_probe_get_buffer(pr, offset, left);
-	if (nvl == NULL)
+	p = blkid_probe_get_buffer(pr, offset, left);
+	if (!p)
 		return;
+
+	/* libblkid buffers are strictly readonly, but the code below modifies nvpair etc. */
+	memcpy(buff, p, sizeof(buff));
+	nvl = (struct nvlist *) buff;
 
 	nvdebug("zfs_extract: nvlist offset %llu\n", offset);
 
