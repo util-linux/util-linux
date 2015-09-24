@@ -588,6 +588,8 @@ int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[
 #define PROBE_MMAP_ENDSIZ	(1024 * 1024 * 2)	/* end of the device */
 #define PROBE_MMAP_MIDSIZ	(1024 * 1024)		/* middle of the device */
 
+#define probe_is_mmap_wanted(p)		(!S_ISCHR((p)->mode))
+
 static struct blkid_bufinfo *mmap_buffer(blkid_probe pr,
 					 blkid_loff_t real_off,
 					 blkid_loff_t len)
@@ -660,6 +662,50 @@ static struct blkid_bufinfo *mmap_buffer(blkid_probe pr,
 	return bf;
 }
 
+static struct blkid_bufinfo *read_buffer(blkid_probe pr,
+					 blkid_loff_t real_off,
+					 blkid_loff_t len)
+{
+	ssize_t ret;
+	struct blkid_bufinfo *bf = NULL;
+
+	if (blkid_llseek(pr->fd, real_off, SEEK_SET) < 0) {
+		errno = 0;
+		return NULL;
+	}
+
+	/* someone trying to overflow some buffers? */
+	if (len > ULONG_MAX - sizeof(struct blkid_bufinfo)) {
+		errno = ENOMEM;
+		return NULL;
+	}
+
+	/* allocate info and space for data by one malloc call */
+	bf = calloc(1, sizeof(struct blkid_bufinfo) + len);
+	if (!bf) {
+		errno = ENOMEM;
+		return NULL;
+	}
+
+	bf->data = ((unsigned char *) bf) + sizeof(struct blkid_bufinfo);
+	bf->len = len;
+	bf->off = real_off;
+	INIT_LIST_HEAD(&bf->bufs);
+
+	DBG(LOWPROBE, ul_debug("\tread %p: off=%jd len=%jd", bf->data, real_off, len));
+
+	ret = read(pr->fd, bf->data, len);
+	if (ret != (ssize_t) len) {
+		DBG(LOWPROBE, ul_debug("\tread failed: %m"));
+		free(bf);
+		if (ret >= 0)
+			errno = 0;
+		return NULL;
+	}
+
+	return bf;
+}
+
 /*
  * Note that @off is offset within probing area, the probing area is defined by
  * pr->off and pr->size.
@@ -717,7 +763,10 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 
 	/* not found; read from disk */
 	if (!bf) {
-		bf = mmap_buffer(pr, real_off, len);
+		if (probe_is_mmap_wanted(pr))
+			bf = mmap_buffer(pr, real_off, len);
+		else
+			bf = read_buffer(pr, real_off, len);
 		if (!bf)
 			return NULL;
 
@@ -733,7 +782,7 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 
 static void blkid_probe_reset_buffer(blkid_probe pr)
 {
-	uint64_t mmap_ct = 0, len_ct = 0;
+	uint64_t ct = 0, len = 0;
 
 	if (!pr || list_empty(&pr->buffers))
 		return;
@@ -743,17 +792,19 @@ static void blkid_probe_reset_buffer(blkid_probe pr)
 	while (!list_empty(&pr->buffers)) {
 		struct blkid_bufinfo *bf = list_entry(pr->buffers.next,
 						struct blkid_bufinfo, bufs);
-		mmap_ct++;
-		len_ct += bf->len;
+		ct++;
+		len += bf->len;
 		list_del(&bf->bufs);
 
-		DBG(BUFFER, ul_debug(" unmap: %p [off=%ju, len=%ju]", bf->data, bf->off, bf->len));
-		munmap(bf->data, bf->len);
+		DBG(BUFFER, ul_debug(" remove buffer: %p [off=%ju, len=%ju]", bf->data, bf->off, bf->len));
+
+		if (probe_is_mmap_wanted(pr))
+			munmap(bf->data, bf->len);
 		free(bf);
 	}
 
-	DBG(LOWPROBE, ul_debug("buffers summary: %ju bytes (%ju pages) by %ju mmap() call(s)",
-			len_ct, len_ct / pr->mmap_granularity, mmap_ct));
+	DBG(LOWPROBE, ul_debug(" buffers summary: %ju bytes by %ju read/mmap() calls",
+			len, ct));
 
 	INIT_LIST_HEAD(&pr->buffers);
 }
@@ -840,7 +891,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		goto err;
 
 	if (!S_ISBLK(sb.st_mode) && !S_ISCHR(sb.st_mode) && !S_ISREG(sb.st_mode)) {
-		 errno = EINVAL;
+		errno = EINVAL;
 		goto err;
 	}
 
