@@ -35,6 +35,7 @@
 #include "optutils.h"
 #include "ismounted.h"
 #include "strv.h"
+#include "path.h"
 
 /*#define CONFIG_ZRAM_DEBUG*/
 
@@ -145,6 +146,15 @@ static int column_name_to_id(const char *name, size_t namesz)
 	return -1;
 }
 
+static void zram_reset_stat(struct zram *z)
+{
+	if (z) {
+		strv_free(z->mm_stat);
+		z->mm_stat = NULL;
+		z->mm_stat_probed = 0;
+	}
+}
+
 static void zram_set_devname(struct zram *z, const char *devname, size_t n)
 {
 	assert(z);
@@ -158,6 +168,7 @@ static void zram_set_devname(struct zram *z, const char *devname, size_t n)
 
 	DBG(fprintf(stderr, "set devname: %s", z->devname));
 	sysfs_deinit(&z->sysfs);
+	zram_reset_stat(z);
 }
 
 static struct zram *new_zram(const char *devname)
@@ -176,8 +187,7 @@ static void free_zram(struct zram *z)
 		return;
 	DBG(fprintf(stderr, "free: %p", z));
 	sysfs_deinit(&z->sysfs);
-
-	strv_free(z->mm_stat);
+	zram_reset_stat(z);
 	free(z);
 }
 
@@ -271,7 +281,6 @@ static struct zram *find_free_zram(void)
 	return z;
 }
 
-#include "path.h"
 
 static char *get_mm_stat(struct zram *z, size_t idx, int bytes)
 {
