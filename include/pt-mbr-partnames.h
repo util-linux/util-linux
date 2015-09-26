@@ -88,6 +88,7 @@
 	{0xe3, N_("DOS R/O")},		/* DOS R/O or SpeedStor */
 	{0xe4, N_("SpeedStor")},	/* SpeedStor 16-bit FAT extended
 					   partition < 1024 cyl. */
+	{0xea, N_("Rufus alignment")},	/* Rufus extra partition for alignment */
 	{0xeb, N_("BeOS fs")},
 	{0xee, N_("GPT")},		/* Intel EFI GUID Partition Table */
 	{0xef, N_("EFI (FAT-12/16/32)")},/* Intel EFI System Partition */
