@@ -163,6 +163,7 @@ enum {
 	MBR_DOS_ACCESS_PARTITION	= 0xe1, /* DOS access or SpeedStor 12-bit FAT extended partition */
 	MBR_DOS_RO_PARTITION		= 0xe3, /* DOS R/O or SpeedStor */
 	MBR_SPEEDSTOR_EXTENDED_PARTITION = 0xe4, /* SpeedStor 16-bit FAT extended partition < 1024 cyl. */
+	MBR_RUFUS_EXTRA_PARTITION	= 0xea, /* Rufus extra partition for alignment */
 	MBR_BEOS_FS_PARTITION		= 0xeb,
 	MBR_GPT_PARTITION		= 0xee, /* Intel EFI GUID Partition Table */
 	MBR_EFI_SYSTEM_PARTITION	= 0xef, /* Intel EFI System Partition */
