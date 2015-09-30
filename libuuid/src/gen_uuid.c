@@ -85,6 +85,7 @@
 #include "uuidP.h"
 #include "uuidd.h"
 #include "randutils.h"
+#include "strutils.h"
 #include "c.h"
 
 #ifdef HAVE_TLS
@@ -329,6 +330,7 @@ try_again:
 }
 
 #if defined(HAVE_UUIDD) && defined(HAVE_SYS_UN_H)
+
 /*
  * Try using the uuidd daemon to generate the UUID
  *
@@ -343,11 +345,14 @@ static int get_uuid_via_daemon(int op, uuid_t out, int *num)
 	int32_t reply_len = 0, expected = 16;
 	struct sockaddr_un srv_addr;
 
+	if (sizeof(UUIDD_SOCKET_PATH) > sizeof(srv_addr.sun_path))
+		return -1;
+
 	if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
 		return -1;
 
 	srv_addr.sun_family = AF_UNIX;
-	strcpy(srv_addr.sun_path, UUIDD_SOCKET_PATH);
+	xstrncpy(srv_addr.sun_path, UUIDD_SOCKET_PATH, sizeof(srv_addr.sun_path));
 
 	if (connect(s, (const struct sockaddr *) &srv_addr,
 		    sizeof(struct sockaddr_un)) < 0)
