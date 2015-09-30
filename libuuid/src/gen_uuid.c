@@ -343,11 +343,14 @@ static int get_uuid_via_daemon(int op, uuid_t out, int *num)
 	int32_t reply_len = 0, expected = 16;
 	struct sockaddr_un srv_addr;
 
+	srv_addr.sun_family = AF_UNIX;
+	if (snprintf(srv_addr.sun_path, sizeof(srv_addr.sun_path), "%s",
+		UUIDD_SOCKET_PATH) >= sizeof(srv_addr.sun_path)) {
+		return -1;
+	}
+
 	if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
 		return -1;
-
-	srv_addr.sun_family = AF_UNIX;
-	strcpy(srv_addr.sun_path, UUIDD_SOCKET_PATH);
 
 	if (connect(s, (const struct sockaddr *) &srv_addr,
 		    sizeof(struct sockaddr_un)) < 0)
