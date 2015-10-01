@@ -373,6 +373,17 @@ int strv_extendf(char ***l, const char *format, ...) {
         return strv_consume(l, x);
 }
 
+int strv_extendv(char ***l, const char *format, va_list ap) {
+        char *x;
+        int r;
+
+        r = vasprintf(&x, format, ap);
+        if (r < 0)
+                return -ENOMEM;
+
+        return strv_consume(l, x);
+}
+
 char **strv_reverse(char **l) {
         unsigned n, i;
 
