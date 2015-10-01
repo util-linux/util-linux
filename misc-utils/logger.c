@@ -59,6 +59,7 @@
 #include "pathnames.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "strv.h"
 
 #define	SYSLOG_NAMES
 #include <syslog.h>
@@ -106,6 +107,7 @@ struct logger_ctl {
 	char *unix_socket;		/* -u <path> or default to _PATH_DEVLOG */
 	char *server;
 	char *port;
+	char **rfc5424_data;		/* user define structured data */
 	int socket_type;
 	size_t max_message_size;
 	void (*syslogfp)(struct logger_ctl *ctl);
@@ -457,7 +459,8 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 	char *const app_name = ctl->tag;
 	char *procid;
 	char *const msgid = xstrdup(ctl->msgid ? ctl->msgid : NILVALUE);
-	char *structured_data;
+	char **structured_data = NULL;
+	char *structured = NULL;
 
 	if (ctl->fd < 0)
 		return;
@@ -501,19 +504,32 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 		procid = xstrdup(NILVALUE);
 
 	if (ctl->rfc5424_tq) {
+		strv_extend(&structured_data, "timeQuality");
+		strv_extend(&structured_data, "tzKnown=\"1\"");
+
 #ifdef HAVE_NTP_GETTIME
 		struct ntptimeval ntptv;
 
-		if (ntp_gettime(&ntptv) == TIME_OK)
-			xasprintf(&structured_data,
-				 "[timeQuality tzKnown=\"1\" isSynced=\"1\" syncAccuracy=\"%ld\"]",
-				 ntptv.maxerror);
-		else
+		if (ntp_gettime(&ntptv) == TIME_OK) {
+			strv_extend(&structured_data, "isSynced=\"1\"");
+			strv_extendf(&structured_data, "syncAccuracy=\"%ld\"", ntptv.maxerror);
+		} else
 #endif
-			xasprintf(&structured_data,
-				 "[timeQuality tzKnown=\"1\" isSynced=\"0\"]");
-	} else
-		structured_data = xstrdup(NILVALUE);
+			strv_extend(&structured_data, "isSynced=\"0\"");
+	}
+
+	/* user defined structored data */
+	if (ctl->rfc5424_data)
+		strv_extend_strv(&structured_data, ctl->rfc5424_data);
+
+	/* convert to string */
+	if (strv_isempty(structured_data))
+		structured = xstrdup(NILVALUE);
+	else {
+		char *tmp;
+		xasprintf(&structured, "[%s]", (tmp = strv_join(structured_data, " ")));
+		free(tmp);
+	}
 
 	xasprintf(&ctl->hdr, "<%d>1 %s %s %s %s %s %s ",
 		ctl->pri,
@@ -522,14 +538,15 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 		app_name,
 		procid,
 		msgid,
-		structured_data);
+		structured);
 
 	free(time);
 	free(hostname);
 	/* app_name points to ctl->tag, do NOT free! */
 	free(procid);
 	free(msgid);
-	free(structured_data);
+	strv_free(structured_data);
+	free(structured);
 }
 
 static void parse_rfc5424_flags(struct logger_ctl *ctl, char *optarg)
@@ -696,6 +713,22 @@ static void logger_close(const struct logger_ctl *ctl)
 	free(ctl->hdr);
 }
 
+static int valid_structured_data(const char *str)
+{
+	char *eq  = strchr(str, '='),
+	     *qm1 = strchr(str, '"'),
+	     *qm2 = qm1 ? strchr(qm1 + 1, '"') : NULL;
+
+	if (!eq && !qm1 && !qm2)
+		return 1;			/* alone 'foo' */
+
+	if (!eq || !qm1 || !qm2)		/* something is missing */
+		return 0;
+
+	/* foo="bar" */
+	return eq > str && eq < qm1 && eq + 1 == qm1 && qm1 < qm2 && *(qm2 + 1) == '\0';
+}
+
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
@@ -723,6 +756,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_("     --rfc3164            use the obsolete BSD syslog protocol\n"), out);
 	fputs(_("     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
 		"                            <snip> can be notime, or notq, and/or nohost\n"), out);
+	fputs(_(" -D  --hdr-data <string>  additional structured data for rfc5424 header\n"), out);
 	fputs(_("     --msgid <msgid>      set rfc5424 message id field\n"), out);
 	fputs(_(" -u, --socket <socket>    write to this Unix socket\n"), out);
 	fputs(_("     --socket-errors[=<on|off|auto>]\n"
@@ -759,6 +793,7 @@ int main(int argc, char **argv)
 		.port = NULL,
 		.hdr = NULL,
 		.msgid = NULL,
+		.rfc5424_data = NULL,
 		.socket_type = ALL_TYPES,
 		.max_message_size = 1024,
 		.rfc5424_time = 1,
@@ -792,6 +827,7 @@ int main(int argc, char **argv)
 		{ "rfc3164",	   no_argument,	      0, OPT_RFC3164	   },
 		{ "rfc5424",	   optional_argument, 0, OPT_RFC5424	   },
 		{ "size",	   required_argument, 0, 'S'		   },
+		{ "hdr-data",      required_argument, 0, 'D'             },
 		{ "msgid",	   required_argument, 0, OPT_MSGID	   },
 		{ "skip-empty",	   no_argument,	      0, 'e'		   },
 #ifdef HAVE_LIBSYSTEMD
@@ -805,9 +841,15 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((ch = getopt_long(argc, argv, "ef:ip:S:st:u:dTn:P:Vh",
+	while ((ch = getopt_long(argc, argv, "D:ef:ip:S:st:u:dTn:P:Vh",
 					    longopts, NULL)) != -1) {
 		switch (ch) {
+		case 'D':
+			if (!valid_structured_data(optarg))
+				errx(EXIT_FAILURE, _("invalid structured data: '%s'"), optarg);
+			if (strv_extend(&ctl.rfc5424_data, optarg) < 0)
+				err_oom();
+			break;
 		case 'f':		/* file to log */
 			if (freopen(optarg, "r", stdin) == NULL)
 				err(EXIT_FAILURE, _("file %s"), optarg);
