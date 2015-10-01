@@ -185,25 +185,6 @@ The RFC 5424 protocol has been the default for
 .B logger
 since version 2.26.
 .TP
-.BR \-D , " \-\-hdr\-data "\fIstring
-Specifies additional structured field for RFC 5424 message header.  The option
-may be used more than once. This option is only used if \fB\-\-rfc5424\fR is specified
-as well. Otherwise, it  is silently ignored. The string format has to be fo
-compatible with RFC 5424, the usual form is NAME or NAME="value". For example:
-.IP
-.nf
-\fB    logger --rfc5424 --hdr-data myAnimal=\\"cat\\" \\
-\fB                     --hdr-data isHungry  "message string"
-.fi
-.IP
-produces:
-.IP
-.nf
-\fB    <13>1 2015-10-01T11:28:01.309337+02:00 ws kzak - - [timeQuality tzKnown="1" isSynced="1" syncAccuracy="66047" myAnimal="cat" isHungry] message string
-.fi
-.IP
-Note that quotation marks are required and must be escaped on command line.
-.TP
 .B \-\-octet\-count
 Use the RFC 6587 octet counting framing method for sending messages. When
 this option is not used, the default is no framing on UDP, and RFC6587
