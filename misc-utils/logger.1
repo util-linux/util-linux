@@ -171,12 +171,16 @@ Use the RFC 3164 BSD syslog protocol to submit messages to a remote server.
 Use the RFC 5424 syslog protocol to submit messages to a remote server.
 The optional \fIwithout\fR argument can be a comma-separated list of
 the following values: \fBnotq\fR, \fBnotime\fR, \fBnohost\fR.
+
 The \fBnotq\fR value suppresses the time-quality structured data
-from the submitted message.  (The time-quality information shows whether
+from the submitted message.  The time-quality information shows whether
 the local clock was synchronized plus the maximum number of microseconds
-the timestamp might be off.)  The \fBnotime\fR value (which implies
-\fBnotq\fR) suppresses the complete sender timestamp that is in
+the timestamp might be off. The time-quality is also automatically suppressed when
+\fB\-\-sd\-id timeQuality\fR is specified.
+
+The \fBnotime\fR value (which implies \fBnotq\fR) suppresses the complete sender timestamp that is in
 ISO-8601 format, including microseconds and timezone.
+
 The \fBnohost\fR value suppresses
 .BR gethostname (2)
 information from the message header.
@@ -184,6 +188,42 @@ information from the message header.
 The RFC 5424 protocol has been the default for
 .B logger
 since version 2.26.
+.TP
+.BR "\-\-sd\-id " \fIname[@digits]
+Specifies structured data element ID for RFC 5424 message header. The option
+has to be used before \fB\-\-sd\-param\fR to introduce a new element. The
+number of structured data elements is unlimited. ID is case-sensitive and
+uniquely identify the type and purpose of the element. The same ID must not
+exist more than once in a message. The '@digit' is required for user defined non-standardized
+IDs.
+
+\fBlogger\fR currently generates \fBtimeQuality\fR standardized element only. RFC
+5424 also describes elements \fBorigin\fR (with params: ip, enterpriseId, software
+and swVersion) and \fBmeta\fR (with params: sequenceId, sysUpTime and language).
+These IDs may be specified without the @digit suffix.
+
+.TP
+.BR "\-\-sd\-param " \fIname="value"
+Specifies structured data element paramameter name and value. The option has to
+be used after \fB\-\-sd\-id\fR and may be specified more than once for the same
+element. Note that quotation marks are required and must be escaped on command
+line.
+.IP
+.nf
+\fB    logger --rfc5424 --sd-id zoo@123                \\
+\fB                     --sd-param tiger=\\"hungry\\"    \\
+\fB                     --sd-param zebra=\\"running\\"   \\
+\fB                     --sd-id manager@123            \\
+\fB                     --sd-param onMeeting=\\"yes\\"   \\
+\fB                     "this is message"
+.fi
+.IP
+produces:
+.IP
+.nf
+\fB  <13>1 2015-10-01T14:07:59.168662+02:00 ws kzak - - [timeQuality tzKnown="1" isSynced="1" syncAccuracy="218616"][zoo@123 tiger="hungry" zebra="running"][manager@123 onMeeting="yes"] this is message
+.fi
+.IP
 .TP
 .B \-\-octet\-count
 Use the RFC 6587 octet counting framing method for sending messages. When
