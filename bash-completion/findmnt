@@ -88,7 +88,7 @@ _findmnt_module()
 		'-M'|'--mountpoint')
 			local IFS=$'\n'
 			compopt -o filenames
-			COMPREPLY=( $(compgen -o dirnames -- ${cur:-"/") )
+			COMPREPLY=( $(compgen -o dirnames -- ${cur:-"/"}) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
