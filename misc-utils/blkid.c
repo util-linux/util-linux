@@ -17,13 +17,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
-#ifdef HAVE_GETOPT_H
 #include <getopt.h>
-#else
-extern int getopt(int argc, char * const argv[], const char *optstring);
-extern char *optarg;
-extern int optind;
-#endif
 
 #define OUTPUT_VALUE_ONLY	(1 << 1)
 #define OUTPUT_DEVICE_ONLY	(1 << 2)

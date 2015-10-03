@@ -10,16 +10,8 @@
  */
 
 #include <stdio.h>
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
-#ifdef HAVE_GETOPT_H
 #include <getopt.h>
-#else
-extern int getopt(int argc, char * const argv[], const char *optstring);
-extern char *optarg;
-extern int optind;
-#endif
 
 #include "uuid.h"
 #include "nls.h"

@@ -9,9 +9,7 @@
  * %End-Header%
  */
 #include <stdio.h>
-#ifdef HAVE_STDLIB_H
 #include <stdlib.h>
-#endif
 #include <unistd.h>
 #include <inttypes.h>
 #include <errno.h>
@@ -23,13 +21,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <string.h>
-#ifdef HAVE_GETOPT_H
 #include <getopt.h>
-#else
-extern int getopt(int argc, char * const argv[], const char *optstring);
-extern char *optarg;
-extern int optind;
-#endif
 
 #include "uuid.h"
 #include "uuidd.h"
