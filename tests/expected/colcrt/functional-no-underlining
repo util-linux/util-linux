@@ -1,12 +1,12 @@
-   100  
-   101  
-   102  
+   100
+   101
+   102
    103   x
    104  shift
    105  esc9
-
    106  esc8
-   107  esc7
+   107  esc
+   108  esc6
    109  backspace
    110  tab     tab
    111  abc  efg
@@ -16,9 +16,9 @@
    115  line longer than 132 characters line longer than 132 characters line longer than 132 characters line longer than 132 ch01234
    116  nulls
    117  next line ascii 0 - 127
-   118  
-)*+119/0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^ `abcdefghijklmnopqrstuvwxyz{|}~
-   200  
+   118
+   119
+   200
    201  abc
    202   abc
    203  a bc
