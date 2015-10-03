@@ -69,28 +69,26 @@ struct uuidd_cxt_t {
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out,
-	      _(" %s [options]\n"), program_invocation_short_name);
-
+	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("A daemon for generating UUIDs.\n"), out);
-
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -p, --pid <path>        path to pid file\n"
-		" -s, --socket <path>     path to socket\n"
-		" -T, --timeout <sec>     specify inactivity timeout\n"
-		" -k, --kill              kill running daemon\n"
-		" -r, --random            test random-based generation\n"
-		" -t, --time              test time-based generation\n"
-		" -n, --uuids <num>       request number of uuids\n"
-		" -P, --no-pid            do not create pid file\n"
-		" -F, --no-fork           do not daemonize using double-fork\n"
-		" -S, --socket-activation do not create listening socket\n"
-		" -d, --debug             run in debugging mode\n"
-		" -q, --quiet             turn on quiet mode\n"
-		" -V, --version           output version information and exit\n"
-		" -h, --help              display this help and exit\n\n"), out);
-
+	fputs(_(" -p, --pid <path>        path to pid file\n"), out);
+	fputs(_(" -s, --socket <path>     path to socket\n"), out);
+	fputs(_(" -T, --timeout <sec>     specify inactivity timeout\n"), out);
+	fputs(_(" -k, --kill              kill running daemon\n"), out);
+	fputs(_(" -r, --random            test random-based generation\n"), out);
+	fputs(_(" -t, --time              test time-based generation\n"), out);
+	fputs(_(" -n, --uuids <num>       request number of uuids\n"), out);
+	fputs(_(" -P, --no-pid            do not create pid file\n"), out);
+	fputs(_(" -F, --no-fork           do not daemonize using double-fork\n"), out);
+	fputs(_(" -S, --socket-activation do not create listening socket\n"), out);
+	fputs(_(" -d, --debug             run in debugging mode\n"), out);
+	fputs(_(" -q, --quiet             turn on quiet mode\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("uuidd(8)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
