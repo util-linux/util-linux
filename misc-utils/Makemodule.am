@@ -90,10 +90,10 @@ endif
 if BUILD_UUIDD
 usrsbin_exec_PROGRAMS += uuidd
 dist_man_MANS += misc-utils/uuidd.8
-uuidd_LDADD = $(LDADD) libuuid.la libcommon.la
+uuidd_LDADD = $(LDADD) libuuid.la libcommon.la -lrt
 uuidd_CFLAGS = $(DAEMON_CFLAGS) $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 uuidd_LDFLAGS = $(DAEMON_LDFLAGS) $(AM_LDFLAGS)
-uuidd_SOURCES = misc-utils/uuidd.c
+uuidd_SOURCES = misc-utils/uuidd.c lib/monotonic.c lib/timer.c
 if HAVE_SYSTEMD
 uuidd_LDADD += $(SYSTEMD_LIBS) $(SYSTEMD_DAEMON_LIBS)
 uuidd_CFLAGS += $(SYSTEMD_CFLAGS) $(SYSTEMD_DAEMON_CFLAGS)
