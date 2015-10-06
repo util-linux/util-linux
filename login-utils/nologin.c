@@ -3,6 +3,7 @@
  */
 
 #include <stdio.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
 #include <string.h>
@@ -38,6 +39,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 int main(int argc, char *argv[])
 {
 	int c, fd;
+	struct stat st;
 	static const struct option longopts[] = {
 		{ "help",    0, 0, 'h' },
 		{ "version", 0, 0, 'V' },
@@ -63,7 +65,8 @@ int main(int argc, char *argv[])
 	}
 
 	fd = open(_PATH_NOLOGIN_TXT, O_RDONLY);
-	if (fd >= 0) {
+	c = fstat(fd, &st);
+	if (fd >= 0 && !c && S_ISREG(st.st_mode)) {
 		char buf[BUFSIZ];
 		ssize_t rd;
 
