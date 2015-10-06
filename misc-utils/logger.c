@@ -213,9 +213,9 @@ static int pencode(char *s)
 	return ((level & LOG_PRIMASK) | (facility & LOG_FACMASK));
 }
 
-static int unix_socket(struct logger_ctl *ctl, const char *path, const int socket_type)
+static int unix_socket(struct logger_ctl *ctl, const char *path, int *socket_type)
 {
-	int fd, i;
+	int fd, i, type = -1;
 	static struct sockaddr_un s_addr;	/* AF_UNIX address of local logger */
 
 	if (strlen(path) >= sizeof(s_addr.sun_path))
@@ -227,10 +227,14 @@ static int unix_socket(struct logger_ctl *ctl, const char *path, const int socke
 	for (i = 2; i; i--) {
 		int st = -1;
 
-		if (i == 2 && socket_type & TYPE_UDP)
+		if (i == 2 && *socket_type & TYPE_UDP) {
 			st = SOCK_DGRAM;
-		if (i == 1 && socket_type & TYPE_TCP)
+			type = TYPE_UDP;
+		}
+		if (i == 1 && *socket_type & TYPE_TCP) {
 			st = SOCK_STREAM;
+			type = TYPE_TCP;
+		}
 		if (st == -1 || (fd = socket(AF_UNIX, st, 0)) == -1)
 			continue;
 		if (connect(fd, (struct sockaddr *)&s_addr, sizeof(s_addr)) == -1) {
@@ -249,25 +253,30 @@ static int unix_socket(struct logger_ctl *ctl, const char *path, const int socke
 		ctl->noact = 1;
 		return -1;
 	}
+
+	/* replace ALL_TYPES with the real TYPE_* */
+	if (type > 0 && type != *socket_type)
+		*socket_type = type;
 	return fd;
 }
 
-static int inet_socket(const char *servername, const char *port,
-		       const int socket_type)
+static int inet_socket(const char *servername, const char *port, int *socket_type)
 {
-	int fd, errcode, i;
+	int fd, errcode, i, type = -1;
 	struct addrinfo hints, *res;
 	const char *p = port;
 
 	for (i = 2; i; i--) {
 		memset(&hints, 0, sizeof(hints));
-		if (i == 2 && socket_type & TYPE_UDP) {
+		if (i == 2 && *socket_type & TYPE_UDP) {
 			hints.ai_socktype = SOCK_DGRAM;
+			type = TYPE_UDP;
 			if (port == NULL)
 				p = "syslog";
 		}
-		if (i == 1 && socket_type & TYPE_TCP) {
+		if (i == 1 && *socket_type & TYPE_TCP) {
 			hints.ai_socktype = SOCK_STREAM;
+			type = TYPE_TCP;
 			if (port == NULL)
 				p = "syslog-conn";
 		}
@@ -295,6 +304,9 @@ static int inet_socket(const char *servername, const char *port,
 	if (i == 0)
 		errx(EXIT_FAILURE, _("failed to connect to %s port %s"), servername, p);
 
+	/* replace ALL_TYPES with the real TYPE_* */
+	if (type > 0 && type != *socket_type)
+		*socket_type = type;
 	return fd;
 }
 
@@ -585,14 +597,14 @@ static void generate_syslog_header(struct logger_ctl *const ctl)
 static void logger_open(struct logger_ctl *ctl)
 {
 	if (ctl->server) {
-		ctl->fd = inet_socket(ctl->server, ctl->port, ctl->socket_type);
+		ctl->fd = inet_socket(ctl->server, ctl->port, &ctl->socket_type);
 		if (!ctl->syslogfp)
 			ctl->syslogfp = syslog_rfc5424_header;
 	} else {
 		if (!ctl->unix_socket)
 			ctl->unix_socket = _PATH_DEVLOG;
 
-		ctl->fd = unix_socket(ctl, ctl->unix_socket, ctl->socket_type);
+		ctl->fd = unix_socket(ctl, ctl->unix_socket, &ctl->socket_type);
 		if (!ctl->syslogfp)
 			ctl->syslogfp = syslog_local_header;
 	}
