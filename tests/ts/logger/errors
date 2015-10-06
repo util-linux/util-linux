@@ -46,8 +46,10 @@ function logger_fun {
 
 function logger_printf {
 	# logger without --no-act to write all data to the socket
+	local fmt="$1"
+	shift
 	echo "socket data, ${TS_SUBNAME}:" |socat -u - UNIX-CONNECT:$DEVLOG
-	printf "$1" | $TS_HELPER_LOGGER -u $DEVLOG --stderr >> "$TS_OUTPUT" 2>&1
+	printf "$fmt" | $TS_HELPER_LOGGER -u $DEVLOG --stderr "$@" >> "$TS_OUTPUT" 2>&1
 	echo "ret: $?" >> "$TS_OUTPUT"
 	echo |socat -u - UNIX-CONNECT:$DEVLOG
 }
@@ -85,7 +87,7 @@ logger_fun --tcp -t "tcp" "message"
 ts_finalize_subtest
 
 ts_init_subtest "multi-line"
-logger_printf "AAA\nBBB\nCCC\n"
+logger_printf "AAA\nBBB\nCCC\n" -t "multi"
 ts_finalize_subtest
 
 ts_init_subtest "rfc5424_msgid_with_space"
