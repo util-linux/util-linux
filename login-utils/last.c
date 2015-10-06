@@ -543,7 +543,7 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t logout_ti
 }
 
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(const struct last_control *ctl, FILE *out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
@@ -557,7 +557,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -a, --hostlast       display hostnames in the last column\n"), out);
 	fputs(_(" -d, --dns            translate the IP number back into a hostname\n"), out);
 	fprintf(out,
-	      _(" -f, --file <file>    use a specific file instead of %s\n"), _PATH_WTMP);
+	      _(" -f, --file <file>    use a specific file instead of %s\n"), ctl->lastb ? _PATH_BTMP : _PATH_WTMP);
 	fputs(_(" -F, --fulltimes      print full login and logout times and dates\n"), out);
 	fputs(_(" -i, --ip             display IP numbers in numbers-and-dots notation\n"), out);
 	fputs(_(" -n, --limit <number> how many lines to show\n"), out);
@@ -911,7 +911,10 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
-
+	/*
+	 * Which file do we want to read?
+	 */
+	ctl.lastb = strcmp(program_invocation_short_name, "lastb") == 0 ? 1 : 0;
 	while ((c = getopt_long(argc, argv,
 			"hVf:n:RxadFit:p:s:0123456789w", long_opts, NULL)) != -1) {
 
@@ -919,7 +922,7 @@ int main(int argc, char **argv)
 
 		switch(c) {
 		case 'h':
-			usage(stdout);
+			usage(&ctl, stdout);
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -979,7 +982,7 @@ int main(int argc, char **argv)
 			ctl.time_fmt = which_time_format(optarg);
 			break;
 		default:
-			usage(stderr);
+			usage(&ctl, stderr);
 			break;
 		}
 	}
@@ -987,10 +990,6 @@ int main(int argc, char **argv)
 	if (optind < argc)
 		ctl.show = argv + optind;
 
-	/*
-	 * Which file do we want to read?
-	 */
-	ctl.lastb = strcmp(program_invocation_short_name, "lastb") == 0 ? 1 : 0;
 	if (!files) {
 		files = xmalloc(sizeof(char *));
 		files[nfiles++] = xstrdup(ctl.lastb ? _PATH_BTMP : _PATH_WTMP);
