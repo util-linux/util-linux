@@ -16,20 +16,27 @@
 # define BLKPG_RESIZE_PARTITION	3		/* since Linux 3.6 */
 #endif
 
+
+#define INIT_BLKPG_PARTITION(_partno, _start, _size) {	\
+		.pno    = (_partno),			\
+		.start  = (_start) << 9,		\
+		.length = (_size) << 9,			\
+		.devname[0] = 0,			\
+		.volname[0] = 0				\
+}
+
+#define INIT_BLKPG_ARG(_action, _part) {		\
+		.op      = (_action),			\
+		.flags   = 0,				\
+		.datalen = sizeof(*(_part)),		\
+		.data = (_part)				\
+}
+
+
 static inline int partx_del_partition(int fd, unsigned int partno)
 {
-	struct blkpg_ioctl_arg a;
-	struct blkpg_partition p;
-
-	p.pno = partno;
-	p.start = 0;
-	p.length = 0;
-	p.devname[0] = 0;
-	p.volname[0] = 0;
-	a.op = BLKPG_DEL_PARTITION;
-	a.flags = 0;
-	a.datalen = sizeof(p);
-	a.data = &p;
+	struct blkpg_partition p = INIT_BLKPG_PARTITION(partno, 0, 0);
+	struct blkpg_ioctl_arg a = INIT_BLKPG_ARG(BLKPG_DEL_PARTITION, &p);
 
 	return ioctl(fd, BLKPG, &a);
 }
@@ -37,18 +44,8 @@ static inline int partx_del_partition(int fd, unsigned int partno)
 static inline int partx_add_partition(int fd, int partno,
 			uint64_t start, uint64_t size)
 {
-	struct blkpg_ioctl_arg a;
-	struct blkpg_partition p;
-
-	p.pno = partno;
-	p.start = start << 9;
-	p.length = size << 9;
-	p.devname[0] = 0;
-	p.volname[0] = 0;
-	a.op = BLKPG_ADD_PARTITION;
-	a.flags = 0;
-	a.datalen = sizeof(p);
-	a.data = &p;
+	struct blkpg_partition p = INIT_BLKPG_PARTITION(partno, start, size);
+	struct blkpg_ioctl_arg a = INIT_BLKPG_ARG(BLKPG_ADD_PARTITION, &p);
 
 	return ioctl(fd, BLKPG, &a);
 }
@@ -56,18 +53,8 @@ static inline int partx_add_partition(int fd, int partno,
 static inline int partx_resize_partition(int fd, int partno,
 			uint64_t start, uint64_t size)
 {
-	struct blkpg_ioctl_arg a;
-	struct blkpg_partition p;
-
-	p.pno = partno;
-	p.start = start << 9;
-	p.length = size << 9;
-	p.devname[0] = 0;
-	p.volname[0] = 0;
-	a.op = BLKPG_RESIZE_PARTITION;
-	a.flags = 0;
-	a.datalen = sizeof(p);
-	a.data = &p;
+	struct blkpg_partition p = INIT_BLKPG_PARTITION(partno, start, size);
+	struct blkpg_ioctl_arg a = INIT_BLKPG_ARG(BLKPG_RESIZE_PARTITION, &p);
 
 	return ioctl(fd, BLKPG, &a);
 }
