@@ -44,6 +44,14 @@ function logger_fun {
 	echo |socat -u - UNIX-CONNECT:$DEVLOG
 }
 
+function logger_printf {
+	# logger without --no-act to write all data to the socket
+	echo "socket data, ${TS_SUBNAME}:" |socat -u - UNIX-CONNECT:$DEVLOG
+	printf "$1" | $TS_HELPER_LOGGER -u $DEVLOG --stderr >> "$TS_OUTPUT" 2>&1
+	echo "ret: $?" >> "$TS_OUTPUT"
+	echo |socat -u - UNIX-CONNECT:$DEVLOG
+}
+
 ts_init_subtest "kern_priority"
 logger_fun -t "prio" -p kern.emerg "message"
 ts_finalize_subtest
@@ -70,6 +78,14 @@ ts_finalize_subtest
 ts_init_subtest "tag_with_space"
 logger_fun -t "A B" "tag_with_space"
 logger_fun -t "A B" --rfc5424 "tag_with_space_rfc5424"
+ts_finalize_subtest
+
+ts_init_subtest "tcp"
+logger_fun --tcp -t "tcp" "message"
+ts_finalize_subtest
+
+ts_init_subtest "multi-line"
+logger_printf "AAA\nBBB\nCCC\n"
 ts_finalize_subtest
 
 ts_init_subtest "rfc5424_msgid_with_space"
