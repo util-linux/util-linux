@@ -1598,8 +1598,11 @@ static int dos_add_partition(struct fdisk_context *cxt,
 			}
 			rc = add_logical(cxt, pa, &res);
 		} else {
+			if (free_primary)
+				fdisk_info(cxt, _("All space for primary partitions is in use."));
+			else
 			/* TRANSLATORS: Try to keep this within 80 characters. */
-			fdisk_info(cxt, _("To create more partitions, first replace "
+				fdisk_info(cxt, _("To create more partitions, first replace "
 					  "a primary with an extended partition."));
 			return -EINVAL;
 		}
