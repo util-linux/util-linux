@@ -196,19 +196,18 @@ static int call_daemon(const char *socket_path, int op, char *buf,
  *
  * Return file descriptor of the created pid_file.
  */
-static int create_pidfile(struct uuidd_cxt_t *uuidd_cxt,
-			  const char *pidfile_path, int quiet)
+static int create_pidfile(struct uuidd_cxt_t *cxt, const char *pidfile_path)
 {
 	int		fd_pidfile;
 	struct flock	fl;
 
 	fd_pidfile = open(pidfile_path, O_CREAT | O_RDWR, 0664);
 	if (fd_pidfile < 0) {
-		if (!quiet)
+		if (!cxt->quiet)
 			warn(_("cannot open %s"), pidfile_path);
 		exit(EXIT_FAILURE);
 	}
-	uuidd_cxt->cleanup_pidfile = pidfile_path;
+	cxt->cleanup_pidfile = pidfile_path;
 
 	fl.l_type = F_WRLCK;
 	fl.l_whence = SEEK_SET;
@@ -218,7 +217,7 @@ static int create_pidfile(struct uuidd_cxt_t *uuidd_cxt,
 	while (fcntl(fd_pidfile, F_SETLKW, &fl) < 0) {
 		if ((errno == EAGAIN) || (errno == EINTR))
 			continue;
-		if (!quiet)
+		if (!cxt->quiet)
 			warn(_("cannot lock %s"), pidfile_path);
 		exit(EXIT_FAILURE);
 	}
@@ -240,7 +239,7 @@ static int create_socket(struct uuidd_cxt_t *uuidd_cxt,
 {
 	struct sockaddr_un	my_addr;
 	mode_t			save_umask;
-	int 			s;
+	int			s;
 
 	if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
 		if (!uuidd_cxt->quiet)
@@ -345,7 +344,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		if (setup_timer(&t_id, &timeout, &timeout_handler))
 			err(EXIT_FAILURE, _("cannot not setup timer"));
 		if (pidfile_path)
-			fd_pidfile = create_pidfile(uuidd_cxt, pidfile_path, uuidd_cxt->quiet);
+			fd_pidfile = create_pidfile(uuidd_cxt, pidfile_path);
 		ret = call_daemon(socket_path, UUIDD_OP_GETPID, reply_buf,
 				  sizeof(reply_buf), 0, NULL);
 		cancel_timer(&t_id);
