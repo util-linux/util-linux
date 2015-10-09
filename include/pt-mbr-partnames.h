@@ -51,7 +51,7 @@
 	{0x81, N_("Minix / old Linux")},/* Minix 1.4b and later */
 	{0x82, N_("Linux swap / Solaris")},
 	{0x83, N_("Linux")},
-	{0x84, N_("OS/2 h. C:|Intel hibernation")},/* OS/2 hidden C: drive,
+	{0x84, N_("OS/2 hidden or Intel hibernation")},/* OS/2 hidden C: drive,
 					   hibernation type Microsoft APM
 					   or hibernation Intel Rapid Start */
 	{0x85, N_("Linux extended")},
