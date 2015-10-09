@@ -324,7 +324,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	int			s = 0;
 	int			fd_pidfile = -1;
 	int			ret;
-	struct pollfd 		pfd[2];
+	struct pollfd		pfd[2];
 	sigset_t		sigmask;
 	int			sigfd;
 	enum {
@@ -421,8 +421,11 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			warn(_("poll failed"));
 				all_done(uuidd_cxt, EXIT_FAILURE);
 		}
-		if (ret == 0)		/* truen when poll() times out */
+		if (ret == 0) {		/* truen when poll() times out */
+			if (uuidd_cxt->debug)
+				fprintf(stderr, _("timeout [%d sec]\n"), uuidd_cxt->timeout),
 			all_done(uuidd_cxt, EXIT_SUCCESS);
+		}
 		if (pfd[POLLFD_SIGNAL].revents != 0)
 			handle_signal(uuidd_cxt, sigfd);
 		if (pfd[POLLFD_SOCKET].revents == 0)
