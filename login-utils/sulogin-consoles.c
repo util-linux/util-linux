@@ -612,6 +612,14 @@ int detect_consoles(const char *device, int fallback, struct list_head *consoles
 #ifdef TIOCGDEV
 		unsigned int devnum;
 #endif
+#ifdef __GNU__
+		/*
+		 * The Hurd always gives st_rdev as 0, which causes this
+		 * method to select the first terminal it finds.
+		 */
+		close(fd);
+		goto fallback;
+#endif
 		DBG(dbgprint("trying device/fallback file descriptor"));
 
 		if (fstat(fd, &st) < 0) {
