@@ -297,6 +297,7 @@ int main(int argc, char **argv)
 		{"monday", no_argument, NULL, 'm'},
 		{"julian", no_argument, NULL, 'j'},
 		{"months", required_argument, NULL, 'n'},
+		{"span", no_argument, NULL, 'S'},
 		{"year", no_argument, NULL, 'y'},
 		{"week", optional_argument, NULL, 'w'},
 		{"color", optional_argument, NULL, OPT_COLOR},
@@ -365,7 +366,7 @@ int main(int argc, char **argv)
 		ctl.weekstart = (wfd + *nl_langinfo(_NL_TIME_FIRST_WEEKDAY) - 1) % DAYS_IN_WEEK;
 	}
 #endif
-	while ((ch = getopt_long(argc, argv, "13mjn:sywYVh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "13mjn:sSywYVh", longopts, NULL)) != -1) {
 
 		err_exclusive_options(ch, longopts, excl, excl_st);
 
@@ -397,6 +398,9 @@ int main(int argc, char **argv)
 		case 'n':
 			ctl.num_months = strtou32_or_err(optarg,
 						_("invalid month argument"));
+			break;
+		case 'S':
+			ctl.span_months = 1;
 			break;
 		case 'w':
 			if (optarg) {
@@ -736,16 +740,18 @@ static void cal_output_months(struct cal_month *month, const struct cal_control 
 static void monthly(const struct cal_control *ctl)
 {
 	struct cal_month m1,m2,m3, *m;
-	int i, rows, month = ctl->req.start_month ? ctl->req.start_month : ctl->req.month;
+	int i, rows, new_month, month = ctl->req.start_month ? ctl->req.start_month : ctl->req.month;
 	int32_t year = ctl->req.year;
 
-	/* cal -3 */
-	if (ctl->num_months == 3 && ctl->span_months) {
-		if (month == 1){
-			month = MONTHS_IN_YEAR;
+	/* cal -3, cal -Y --span, etc. */
+	if (ctl->span_months) {
+		new_month = month - ctl->num_months / 2;
+		if (new_month < 1) {
+			month = new_month + MONTHS_IN_YEAR;
 			year--;
-		} else
-			month--;
+		}
+		else
+			month = new_month;
 	}
 
 	m1.next = (ctl->months_in_row > 1) ? &m2 : NULL;
@@ -958,6 +964,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -1, --one             show only a single month (default)\n"), out);
 	fputs(_(" -3, --three           show three months spanning the date\n"), out);
 	fputs(_(" -n, --months <num>    show num months starting with date's month\n"), out);
+	fputs(_(" -S, --span            span the date when displaying multiple months\n"), out);
 	fputs(_(" -s, --sunday          Sunday as first day of week\n"), out);
 	fputs(_(" -m, --monday          Monday as first day of week\n"), out);
 	fputs(_(" -j, --julian          output Julian dates\n"), out);
