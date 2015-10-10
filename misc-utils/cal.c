@@ -232,6 +232,7 @@ struct cal_control {
 	const char *full_month[MONTHS_IN_YEAR];	/* month names */
 	int colormode;			/* day and week number highlight */
 	int num_months;			/* number of requested mounths */
+	int span_months;		/* span the date */
 	int months_in_row;		/* number of months horizontally in print out */
 	int weekstart;			/* day the week starts, often Sun or Mon */
 	int weektype;			/* WEEK_TYPE_{NONE,ISO,US} */
@@ -276,6 +277,7 @@ int main(int argc, char **argv)
 	static struct cal_control ctl = {
 		.weekstart = SUNDAY,
 		.num_months = 1,		/* default is "cal -1" */
+		.span_months = 0,
 		.colormode = UL_COLORMODE_UNDEF,
 		.weektype = WEEK_NUM_DISABLED,
 		.day_width = DAY_LEN,
@@ -373,6 +375,7 @@ int main(int argc, char **argv)
 			break;
 		case '3':
 			ctl.num_months = 3;
+			ctl.span_months = 1;
 			ctl.months_in_row = 3;
 			break;
 		case 's':
@@ -737,7 +740,7 @@ static void monthly(const struct cal_control *ctl)
 	int32_t year = ctl->req.year;
 
 	/* cal -3 */
-	if (ctl->num_months == 3 && ctl->months_in_row == 3) {
+	if (ctl->num_months == 3 && ctl->span_months) {
 		if (month == 1){
 			month = MONTHS_IN_YEAR;
 			year--;
