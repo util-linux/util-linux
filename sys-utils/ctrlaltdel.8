@@ -1,21 +1,23 @@
 .\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be distributed under the GNU General Public License
-.TH CTRLALTDEL 8 "August 2011" "util-linux" "System Administration"
+.TH CTRLALTDEL 8 "October 2015" "util-linux" "System Administration"
 .SH NAME
 ctrlaltdel \- set the function of the Ctrl-Alt-Del combination
 .SH SYNOPSIS
 .BR "ctrlaltdel hard" | soft
 .SH DESCRIPTION
 Based on examination of the
-.I linux/kernel/sys.c
+.I linux/kernel/reboot.c
 code, it is clear that there are two supported functions that the
-Ctrl-Alt-Del sequence can perform: a
-.I hard
-reset, which immediately reboots the computer without calling
+Ctrl-Alt-Del sequence can perform.
+.TP
+.B hard
+Immediately reboot the computer without calling
 .BR sync (2)
-and without any other preparation; and a
-.I soft
-reset, which sends the SIGINT (interrupt) signal to the
+and without any other preparation.  This is the default.
+.TP
+.B soft
+Will make kernel to send the SIGINT (interrupt) signal to the
 .B init
 process (this is always the process with PID 1).  If this option is used,
 the
@@ -39,7 +41,8 @@ Display help text and exit.
 .SH FILES
 .I /etc/rc.local
 .SH "SEE ALSO"
-.BR init (8)
+.BR init (8),
+.BR systemd (1)
 .SH AUTHOR
 .UR poe@daimi.aau.dk
 Peter Orbaek
