@@ -21,7 +21,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out, _(" %s hard|soft\n"), program_invocation_short_name);
 
 	fprintf(out, USAGE_SEPARATOR);
-	fprintf(out, "Set the function of the Ctrl-Alt-Del combination.\n");
+	fprintf(out, _("Set the function of the Ctrl-Alt-Del combination.\n"));
 
 	fprintf(out, USAGE_OPTIONS);
 	fprintf(out, USAGE_HELP);
@@ -33,6 +33,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 int main(int argc, char **argv)
 {
 	int ch;
+	unsigned int cmd;
 	static const struct option longopts[] = {
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -59,15 +60,15 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE,
 		     _("You must be root to set the Ctrl-Alt-Del behavior"));
 
-	if (argc == 2 && !strcmp("hard", argv[1])) {
-		if (my_reboot(LINUX_REBOOT_CMD_CAD_ON) < 0)
-			err(EXIT_FAILURE, "reboot");
-	} else if (argc == 2 && !strcmp("soft", argv[1])) {
-		if (my_reboot(LINUX_REBOOT_CMD_CAD_OFF) < 0)
-			err(EXIT_FAILURE, "reboot");
-	} else {
-		usage(stderr);
-	}
-
+	if (argc < 2)
+		errx(EXIT_FAILURE, _("not enough arguments"));
+	if (!strcmp("hard", argv[1]))
+		cmd = LINUX_REBOOT_CMD_CAD_ON;
+	else if (!strcmp("soft", argv[1]))
+		cmd = LINUX_REBOOT_CMD_CAD_OFF;
+	else
+		errx(EXIT_FAILURE, _("unknown argument: %s"), argv[1]);
+	if (my_reboot(cmd) < 0)
+		err(EXIT_FAILURE, "reboot");
 	return EXIT_SUCCESS;
 }
