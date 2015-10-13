@@ -260,6 +260,12 @@ static int probe_xfs_log(blkid_probe pr, const struct blkid_idmag *mag)
 
 		if (xlog_valid_rec_header(rhead)) {
 			blkid_probe_set_uuid_as(pr, rhead->h_uuid, "LOGUUID");
+
+			if (blkid_probe_set_magic(pr, i * 512,
+						sizeof(rhead->h_magicno),
+						(unsigned char *) &rhead->h_magicno))
+				return 1;
+
 			return 0;
 		}
 	}
