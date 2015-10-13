@@ -14,6 +14,7 @@
 #include "nls.h"
 #include "c.h"
 #include "closestream.h"
+#include "pathnames.h"
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
@@ -30,10 +31,59 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+static int get_cad(void)
+{
+	FILE *fp;
+	int val;
+
+	if (!(fp = fopen(_PATH_PROC_CTRL_ALT_DEL, "r"))) {
+		warn("%s", _PATH_PROC_CTRL_ALT_DEL);
+		return EXIT_FAILURE;
+	}
+	if (fscanf(fp, "%d", &val) != 1)
+		val = -1;
+	fclose(fp);
+	switch (val) {
+	case 0:
+		fputs("soft\n", stdout);
+		break;
+	case 1:
+		fputs("hard\n", stdout);
+		break;
+	default:
+		printf("%s hard\n", _("implicit"));
+		warnx(_("unexpected value in %s: %d"), _PATH_PROC_CTRL_ALT_DEL, val);
+		return EXIT_FAILURE;
+	}
+	return EXIT_SUCCESS;
+}
+
+static int set_cad(const char *arg)
+{
+	unsigned int cmd;
+
+	if (geteuid()) {
+		warnx(_("You must be root to set the Ctrl-Alt-Del behavior"));
+		return EXIT_FAILURE;
+	}
+	if (!strcmp("hard", arg))
+		cmd = LINUX_REBOOT_CMD_CAD_ON;
+	else if (!strcmp("soft", arg))
+		cmd = LINUX_REBOOT_CMD_CAD_OFF;
+	else {
+		warnx(_("unknown argument: %s"), arg);
+		return EXIT_FAILURE;
+	}
+	if (my_reboot(cmd) < 0) {
+		warnx("reboot");
+		return EXIT_FAILURE;
+	}
+	return EXIT_SUCCESS;
+}
+
 int main(int argc, char **argv)
 {
-	int ch;
-	unsigned int cmd;
+	int ch, ret;
 	static const struct option longopts[] = {
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
@@ -56,19 +106,9 @@ int main(int argc, char **argv)
 			usage(stderr);
 		}
 
-	if (geteuid())
-		errx(EXIT_FAILURE,
-		     _("You must be root to set the Ctrl-Alt-Del behavior"));
-
 	if (argc < 2)
-		errx(EXIT_FAILURE, _("not enough arguments"));
-	if (!strcmp("hard", argv[1]))
-		cmd = LINUX_REBOOT_CMD_CAD_ON;
-	else if (!strcmp("soft", argv[1]))
-		cmd = LINUX_REBOOT_CMD_CAD_OFF;
+		ret = get_cad();
 	else
-		errx(EXIT_FAILURE, _("unknown argument: %s"), argv[1]);
-	if (my_reboot(cmd) < 0)
-		err(EXIT_FAILURE, "reboot");
-	return EXIT_SUCCESS;
+		ret = set_cad(argv[1]);
+	return ret;
 }

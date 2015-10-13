@@ -208,5 +208,8 @@
 /* logger paths */
 #define _PATH_DEVLOG		"/dev/log"
 
+/* ctrlaltdel paths */
+#define _PATH_PROC_CTRL_ALT_DEL	"/proc/sys/kernel/ctrl-alt-del"
+
 #endif /* PATHNAMES_H */
 
