@@ -651,7 +651,7 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 		}
 
 		if (rc) {
-			if (rc == 1) {
+			if (rc > 0) {
 				mnt_reset_fs(fs);
 				assert(fs->refcount == 1);
 				continue;	/* recoverable error, reuse fs*/
