@@ -471,7 +471,7 @@ static int parser_errcb(struct libmnt_table *tb __attribute__ ((__unused__)),
 			const char *filename, int line)
 {
 	warnx(_("%s: parse error at line %d -- ignore"), filename, line);
-	return 0;
+	return 1;
 }
 
 /*
