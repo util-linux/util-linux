@@ -426,6 +426,15 @@ static char *get_device_path(struct blkdev_cxt *cxt)
 	return xstrdup(path);
 }
 
+static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)),
+			const char *filename, int line)
+{
+	if (filename)
+		warnx(_("%s: parse error: ignore entry at line %d."),
+							filename, line);
+	return 1;
+}
+
 static int is_active_swap(const char *filename)
 {
 	if (!swaps) {
@@ -435,6 +444,7 @@ static int is_active_swap(const char *filename)
 		if (!mntcache)
 			mntcache = mnt_new_cache();
 
+		mnt_table_set_parser_errcb(swaps, table_parser_errcb);
 		mnt_table_set_cache(swaps, mntcache);
 		mnt_table_parse_swaps(swaps, NULL);
 	}
@@ -457,6 +467,7 @@ static char *get_device_mountpoint(struct blkdev_cxt *cxt)
 		if (!mntcache)
 			mntcache = mnt_new_cache();
 
+		mnt_table_set_parser_errcb(mtab, table_parser_errcb);
 		mnt_table_set_cache(mtab, mntcache);
 		mnt_table_parse_mtab(mtab, NULL);
 	}
