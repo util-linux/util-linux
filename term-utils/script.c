@@ -62,6 +62,7 @@
 #include <poll.h>
 #include <sys/signalfd.h>
 #include <assert.h>
+#include <inttypes.h>
 
 #include "closestream.h"
 #include "nls.h"
@@ -143,7 +144,7 @@ static inline time_t script_time(time_t *t)
 	const char *str = getenv("SCRIPT_TEST_SECOND_SINCE_EPOCH");
 	int64_t sec;
 
-	if (!str || sscanf(str, "%jd", &sec) != 1)
+	if (!str || sscanf(str, "%"SCNi64, &sec) != 1)
 		return time(t);
 	if (t)
 		*t = (time_t)sec;
