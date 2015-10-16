@@ -141,11 +141,13 @@ static void script_init_debug(void)
 static inline time_t script_time(time_t *t)
 {
 	const char *str = getenv("SCRIPT_TEST_SECOND_SINCE_EPOCH");
-	time_t sec;
+	int64_t sec;
 
-	if (str && sscanf(str, "%ld", &sec) == 1)
-		return sec;
-	return time(t);
+	if (!str || sscanf(str, "%jd", &sec) != 1)
+		return time(t);
+	if (t)
+		*t = (time_t)sec;
+	return (time_t)sec;
 }
 #else	/* !TEST_SCRIPT */
 # define script_time(x) time(x)
