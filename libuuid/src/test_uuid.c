@@ -69,13 +69,15 @@ static int test_uuid(const char * uuid, int isValid)
 int
 main(int argc ATTR((unused)) , char **argv ATTR((unused)))
 {
+	int failed = 0;
+/* Code commented out will print random uuid's that are unsuitable output
+ * for test suite.
 	uuid_t		buf, tst;
 	char		str[100];
 	struct timeval	tv;
 	time_t		time_reg;
 	unsigned char	*cp;
 	int i;
-	int failed = 0;
 	int type, variant;
 
 	uuid_generate(buf);
@@ -160,6 +162,7 @@ main(int argc ATTR((unused)) , char **argv ATTR((unused)))
 		printf("UUID copy and compare failed!\n");
 		failed++;
 	}
+*/
 	failed += test_uuid("84949cc5-4701-4a84-895b-354c584a981b", 1);
 	failed += test_uuid("84949CC5-4701-4A84-895B-354C584A981B", 1);
 	failed += test_uuid("84949cc5-4701-4a84-895b-354c584a981bc", 0);
@@ -171,6 +174,9 @@ main(int argc ATTR((unused)) , char **argv ATTR((unused)))
 	failed += test_uuid("84949cc5-4701-4a84-895b0354c584a981b", 0);
 	failed += test_uuid("g4949cc5-4701-4a84-895b-354c584a981b", 0);
 	failed += test_uuid("84949cc5-4701-4a84-895b-354c584a981g", 0);
+	failed += test_uuid("00000000-0000-0000-0000-000000000000", 1);
+	failed += test_uuid("01234567-89ab-cdef-0134-567890abcedf", 1);
+	failed += test_uuid("ffffffff-ffff-ffff-ffff-ffffffffffff", 1);
 
 	if (failed) {
 		printf("%d failures.\n", failed);
