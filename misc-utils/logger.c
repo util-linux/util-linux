@@ -402,6 +402,22 @@ static const char *rfc3164_current_time(void)
 	return time;
 }
 
+#define next_iovec(ary, idx) __extension__ ({		\
+		assert(ARRAY_SIZE(ary) > idx);	\
+		assert(idx >= 0);			\
+		&ary[idx++];				\
+})
+
+#define iovec_add_string(ary, idx, str, len)		\
+	do {						\
+		struct iovec *v = next_iovec(ary, idx);	\
+		v->iov_base = (void *) str;		\
+		v->iov_len = len ? len : strlen(str);	\
+	} while (0)
+
+#define iovec_memcmp(ary, idx, str, len)		\
+		memcmp((ary)[(idx) - 1].iov_base, str, len)
+
 /* writes generated buffer to desired destination. For TCP syslog,
  * we use RFC6587 octet-stuffing (unless octet-counting is selected).
  * This is not great, but doing full blown RFC5425 (TLS) looks like
@@ -410,26 +426,28 @@ static const char *rfc3164_current_time(void)
  */
 static void write_output(const struct logger_ctl *ctl, const char *const msg)
 {
-	char *buf;
-	const size_t len = ctl->octet_count ?
-		xasprintf(&buf, "%zu %s%s", strlen(ctl->hdr)+strlen(msg), ctl->hdr, msg):
-		xasprintf(&buf, "%s%s", ctl->hdr, msg);
+	struct iovec iov[4];
+	int iovlen = 0;
+	char *octet = NULL;
+
+	/* 1) octen count */
+	if (ctl->octet_count) {
+		size_t len = xasprintf(&octet, "%zu ", strlen(ctl->hdr) + strlen(msg));
+		iovec_add_string(iov, iovlen, octet, len);
+	}
+
+	/* 2) header */
+	iovec_add_string(iov, iovlen, ctl->hdr, 0);
+
+	/* 3) message */
+	iovec_add_string(iov, iovlen, msg, 0);
 
 	if (!ctl->noact) {
 		struct msghdr msg = { 0 };
-		struct iovec iov[2];
-		size_t iovlen = 0;
 
-		iov[0].iov_base = buf;
-		iov[0].iov_len = len;
-		iovlen++;
-
-		/* add extra \n to make sure message is terminated */
-		if ((ctl->socket_type == TYPE_TCP) && !ctl->octet_count) {
-			iov[1].iov_base = "\n";
-			iov[1].iov_len = 1;
-			iovlen++;
-		}
+		/* 4) add extra \n to make sure message is terminated */
+		if ((ctl->socket_type == TYPE_TCP) && !ctl->octet_count)
+			iovec_add_string(iov, iovlen, "\n", 1);
 
 		msg.msg_iov = iov;
 		msg.msg_iovlen = iovlen;
@@ -437,9 +455,16 @@ static void write_output(const struct logger_ctl *ctl, const char *const msg)
 		if (sendmsg(ctl->fd, &msg, 0) < 0)
 			warn(_("send message failed"));
 	}
-	if (ctl->stderr_printout)
-		fprintf(stderr, "%s\n", buf);
-	free(buf);
+
+	if (ctl->stderr_printout) {
+		/* make sure it's terminated for stderr */
+		if (iovec_memcmp(iov, iovlen, "\n", 1) != 0)
+			iovec_add_string(iov, iovlen, "\n", 1);
+
+		ignore_result( writev(STDERR_FILENO, iov, iovlen) );
+	}
+
+	free(octet);
 }
 
 #define NILVALUE "-"
