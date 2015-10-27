@@ -416,18 +416,26 @@ static void write_output(const struct logger_ctl *ctl, const char *const msg)
 		xasprintf(&buf, "%s%s", ctl->hdr, msg);
 
 	if (!ctl->noact) {
-		if (write_all(ctl->fd, buf, len) < 0)
-			warn(_("write failed"));
-		else if ((ctl->socket_type == TYPE_TCP) && !ctl->octet_count) {
-			/* using an additional write seems like the best compromise:
-			 * - writev() is not yet supported by framework
-			 * - adding the \n to the buffer in formatters violates layers
-			 * - adding \n after the fact requires memory copy
-			 * - logger is not a high-performance app
-			 */
-			if (write_all(ctl->fd, "\n", 1) < 0)
-				warn(_("write failed"));
+		struct msghdr msg = { 0 };
+		struct iovec iov[2];
+		size_t iovlen = 0;
+
+		iov[0].iov_base = buf;
+		iov[0].iov_len = len;
+		iovlen++;
+
+		/* add extra \n to make sure message is terminated */
+		if ((ctl->socket_type == TYPE_TCP) && !ctl->octet_count) {
+			iov[1].iov_base = "\n";
+			iov[1].iov_len = 1;
+			iovlen++;
 		}
+
+		msg.msg_iov = iov;
+		msg.msg_iovlen = iovlen;
+
+		if (sendmsg(ctl->fd, &msg, 0) < 0)
+			warn(_("send message failed"));
 	}
 	if (ctl->stderr_printout)
 		fprintf(stderr, "%s\n", buf);
