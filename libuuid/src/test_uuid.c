@@ -38,9 +38,13 @@
 #define UUID MYUUID
 #endif
 
+#include <ctype.h>
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 
+#include "c.h"
 #include "uuid.h"
 
 static int test_uuid(const char * uuid, int isValid)
@@ -60,118 +64,54 @@ static int test_uuid(const char * uuid, int isValid)
 	return 0;
 }
 
-#ifdef __GNUC__
-#define ATTR(x) __attribute__(x)
-#else
-#define ATTR(x)
-#endif
+static int check_uuids_in_file(const char *file)
+{
+	int fd, ret = 0;
+	size_t sz;
+	char str[sizeof("01234567-89ab-cdef-0134-567890abcedf")];
+	uuid_t uuidBits;
+
+	if ((fd = open(file, O_RDONLY)) < 0) {
+		warn("%s", file);
+		return 1;
+	}
+	while ((sz = read(fd, str, sizeof(str))) != 0) {
+		if (isspace(str[sizeof(str) - 1]))
+			str[sizeof(str) - 1] = '\0';
+		if (uuid_parse(str, uuidBits)) {
+			warnx("%s: %s", file, str);
+			ret++;
+		}
+	}
+	return ret;
+}
 
 int
-main(int argc ATTR((unused)) , char **argv ATTR((unused)))
+main(int argc, char **argv)
 {
-	uuid_t		buf, tst;
-	char		str[100];
-	struct timeval	tv;
-	time_t		time_reg;
-	unsigned char	*cp;
-	int i;
 	int failed = 0;
-	int type, variant;
 
-	uuid_generate(buf);
-	uuid_unparse(buf, str);
-	printf("UUID generate = %s\n", str);
-	printf("UUID: ");
-	for (i=0, cp = (unsigned char *) &buf; i < 16; i++) {
-		printf("%02x", *cp++);
-	}
-	printf("\n");
-	type = uuid_type(buf); 	variant = uuid_variant(buf);
-	printf("UUID type = %d, UUID variant = %d\n", type, variant);
-	if (variant != UUID_VARIANT_DCE) {
-		printf("Incorrect UUID Variant; was expecting DCE!\n");
-		failed++;
-	}
-	printf("\n");
+	if (argc < 2) {
+		failed += test_uuid("84949cc5-4701-4a84-895b-354c584a981b", 1);
+		failed += test_uuid("84949CC5-4701-4A84-895B-354C584A981B", 1);
+		failed += test_uuid("84949cc5-4701-4a84-895b-354c584a981bc", 0);
+		failed += test_uuid("84949cc5-4701-4a84-895b-354c584a981", 0);
+		failed += test_uuid("84949cc5x4701-4a84-895b-354c584a981b", 0);
+		failed += test_uuid("84949cc504701-4a84-895b-354c584a981b", 0);
+		failed += test_uuid("84949cc5-470104a84-895b-354c584a981b", 0);
+		failed += test_uuid("84949cc5-4701-4a840895b-354c584a981b", 0);
+		failed += test_uuid("84949cc5-4701-4a84-895b0354c584a981b", 0);
+		failed += test_uuid("g4949cc5-4701-4a84-895b-354c584a981b", 0);
+		failed += test_uuid("84949cc5-4701-4a84-895b-354c584a981g", 0);
+		failed += test_uuid("00000000-0000-0000-0000-000000000000", 1);
+		failed += test_uuid("01234567-89ab-cdef-0134-567890abcedf", 1);
+		failed += test_uuid("ffffffff-ffff-ffff-ffff-ffffffffffff", 1);
+	} else {
+		int i;
 
-	uuid_generate_random(buf);
-	uuid_unparse(buf, str);
-	printf("UUID random string = %s\n", str);
-	printf("UUID: ");
-	for (i=0, cp = (unsigned char *) &buf; i < 16; i++) {
-		printf("%02x", *cp++);
+		for (i = 1; i < argc; i++)
+			failed += check_uuids_in_file(argv[i]);
 	}
-	printf("\n");
-	type = uuid_type(buf); 	variant = uuid_variant(buf);
-	printf("UUID type = %d, UUID variant = %d\n", type, variant);
-	if (variant != UUID_VARIANT_DCE) {
-		printf("Incorrect UUID Variant; was expecting DCE!\n");
-		failed++;
-	}
-	if (type != 4) {
-		printf("Incorrect UUID type; was expecting "
-		       "4 (random type)!\n");
-		failed++;
-	}
-	printf("\n");
-
-	uuid_generate_time(buf);
-	uuid_unparse(buf, str);
-	printf("UUID string = %s\n", str);
-	printf("UUID time: ");
-	for (i=0, cp = (unsigned char *) &buf; i < 16; i++) {
-		printf("%02x", *cp++);
-	}
-	printf("\n");
-	type = uuid_type(buf); 	variant = uuid_variant(buf);
-	printf("UUID type = %d, UUID variant = %d\n", type, variant);
-	if (variant != UUID_VARIANT_DCE) {
-		printf("Incorrect UUID Variant; was expecting DCE!\n");
-		failed++;
-	}
-	if (type != 1) {
-		printf("Incorrect UUID type; was expecting "
-		       "1 (time-based type)!\\n");
-		failed++;
-	}
-	tv.tv_sec = 0;
-	tv.tv_usec = 0;
-	time_reg = uuid_time(buf, &tv);
-	printf("UUID time is: (%ld, %ld): %s\n", tv.tv_sec, tv.tv_usec,
-	       ctime(&time_reg));
-	uuid_parse(str, tst);
-	if (!uuid_compare(buf, tst))
-		printf("UUID parse and compare succeeded.\n");
-	else {
-		printf("UUID parse and compare failed!\n");
-		failed++;
-	}
-	uuid_clear(tst);
-	if (uuid_is_null(tst))
-		printf("UUID clear and is null succeeded.\n");
-	else {
-		printf("UUID clear and is null failed!\n");
-		failed++;
-	}
-	uuid_copy(buf, tst);
-	if (!uuid_compare(buf, tst))
-		printf("UUID copy and compare succeeded.\n");
-	else {
-		printf("UUID copy and compare failed!\n");
-		failed++;
-	}
-	failed += test_uuid("84949cc5-4701-4a84-895b-354c584a981b", 1);
-	failed += test_uuid("84949CC5-4701-4A84-895B-354C584A981B", 1);
-	failed += test_uuid("84949cc5-4701-4a84-895b-354c584a981bc", 0);
-	failed += test_uuid("84949cc5-4701-4a84-895b-354c584a981", 0);
-	failed += test_uuid("84949cc5x4701-4a84-895b-354c584a981b", 0);
-	failed += test_uuid("84949cc504701-4a84-895b-354c584a981b", 0);
-	failed += test_uuid("84949cc5-470104a84-895b-354c584a981b", 0);
-	failed += test_uuid("84949cc5-4701-4a840895b-354c584a981b", 0);
-	failed += test_uuid("84949cc5-4701-4a84-895b0354c584a981b", 0);
-	failed += test_uuid("g4949cc5-4701-4a84-895b-354c584a981b", 0);
-	failed += test_uuid("84949cc5-4701-4a84-895b-354c584a981g", 0);
-
 	if (failed) {
 		printf("%d failures.\n", failed);
 		exit(1);
