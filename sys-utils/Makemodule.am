@@ -95,6 +95,7 @@ if BUILD_CTRLALTDEL
 sbin_PROGRAMS += ctrlaltdel
 dist_man_MANS += sys-utils/ctrlaltdel.8
 ctrlaltdel_SOURCES = sys-utils/ctrlaltdel.c
+ctrlaltdel_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_FSFREEZE

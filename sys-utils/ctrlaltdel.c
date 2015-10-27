@@ -15,6 +15,7 @@
 #include "c.h"
 #include "closestream.h"
 #include "pathnames.h"
+#include "path.h"
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
@@ -33,16 +34,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 static int get_cad(void)
 {
-	FILE *fp;
-	int val;
+	uint64_t val = path_read_u64(_PATH_PROC_CTRL_ALT_DEL);
 
-	if (!(fp = fopen(_PATH_PROC_CTRL_ALT_DEL, "r"))) {
-		warn("%s", _PATH_PROC_CTRL_ALT_DEL);
-		return EXIT_FAILURE;
-	}
-	if (fscanf(fp, "%d", &val) != 1)
-		val = -1;
-	fclose(fp);
 	switch (val) {
 	case 0:
 		fputs("soft\n", stdout);
@@ -52,7 +45,7 @@ static int get_cad(void)
 		break;
 	default:
 		printf("%s hard\n", _("implicit"));
-		warnx(_("unexpected value in %s: %d"), _PATH_PROC_CTRL_ALT_DEL, val);
+		warnx(_("unexpected value in %s: %ju"), _PATH_PROC_CTRL_ALT_DEL, val);
 		return EXIT_FAILURE;
 	}
 	return EXIT_SUCCESS;
