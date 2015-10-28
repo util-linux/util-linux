@@ -1884,7 +1884,7 @@ UL_REQUIRES_HAVE([pylibsmartcols], [libpython], [libpython])
 UL_REQUIRES_BUILD([pylibsmartcols], [libsmartcols])
 AM_CONDITIONAL([BUILD_PYLIBSMARTCOLS], [test "x$build_pylibsmartcols" = "xyes"])
 AS_IF([test "x$build_pylibsmartcols" = "xyes"], [
-  AX_PKG_SWIG(3.0.0, [], [ AC_MSG_ERROR([SWIG is required to build..]) ])
+  AX_PKG_SWIG(2.0.0, [], [ AC_MSG_ERROR([SWIG is required to build..]) ])
   AX_SWIG_PYTHON
 ])
 
