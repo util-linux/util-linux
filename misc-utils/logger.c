@@ -469,7 +469,7 @@ static void write_output(const struct logger_ctl *ctl, const char *const msg)
 		    && geteuid() == 0 && kill(ctl->pid, 0) == 0) {
 
 			msg.msg_control = cbuf.control;
-			msg.msg_controllen = CMSG_SPACE(sizeof(struct ucred)); //sizeof(cbuf);
+			msg.msg_controllen = CMSG_SPACE(sizeof(struct ucred));
 
 			cmhp = CMSG_FIRSTHDR(&msg);
 			cmhp->cmsg_len = CMSG_LEN(sizeof(struct ucred));
