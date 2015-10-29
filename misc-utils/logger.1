@@ -71,6 +71,14 @@ Log the PID of the logger process with each line.  When the optional
 argument \fIid\fR is specified, then it is used instead of the logger
 command's PID.  The use of \fB\-\-id=$$\fR
 (PPID) is recommended in scripts that send several messages.
+
+Note that system logging infrastructure (for example systemd when listen on
+/dev/log) may follow local socket credentials to overwrite in the message
+specified PID.
+.BR logger(1)
+is able to to set the socket credentials to the \fIid\fR if you have
+root permissions and process with the specified PID exists, otherwise
+the socket credentials are not modified and the problem is silently ignored.
 .TP
 .BR \-\-journald [ =\fIfile ]
 Write a systemd journal entry.  The entry is read from the given \fIfile\fR,

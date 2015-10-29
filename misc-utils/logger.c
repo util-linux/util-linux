@@ -51,6 +51,8 @@
 #include <netdb.h>
 #include <getopt.h>
 #include <pwd.h>
+#include <sys/types.h>
+#include <signal.h>
 
 #include "all-io.h"
 #include "c.h"
@@ -444,6 +446,12 @@ static void write_output(const struct logger_ctl *ctl, const char *const msg)
 
 	if (!ctl->noact) {
 		struct msghdr msg = { 0 };
+		struct cmsghdr *cmhp;
+		struct ucred *cred;
+		union {
+			struct cmsghdr cmh;
+			char   control[CMSG_SPACE(sizeof(struct ucred))];
+		} cbuf;
 
 		/* 4) add extra \n to make sure message is terminated */
 		if ((ctl->socket_type == TYPE_TCP) && !ctl->octet_count)
@@ -451,6 +459,26 @@ static void write_output(const struct logger_ctl *ctl, const char *const msg)
 
 		msg.msg_iov = iov;
 		msg.msg_iovlen = iovlen;
+
+		/* syslog/journald may follow local socket credentials rather
+		 * than in the message PID. If we use --id as root than we can
+		 * force kernel to accept another valid PID than the real logger(1)
+		 * PID.
+		 */
+		if (ctl->pid && !ctl->server && ctl->pid != getpid()
+		    && geteuid() == 0 && kill(ctl->pid, 0) == 0) {
+
+			msg.msg_control = cbuf.control;
+			msg.msg_controllen = CMSG_SPACE(sizeof(struct ucred)); //sizeof(cbuf);
+
+			cmhp = CMSG_FIRSTHDR(&msg);
+			cmhp->cmsg_len = CMSG_LEN(sizeof(struct ucred));
+			cmhp->cmsg_level = SOL_SOCKET;
+			cmhp->cmsg_type = SCM_CREDENTIALS;
+			cred = (struct ucred *) CMSG_DATA(cmhp);
+
+			cred->pid = ctl->pid;
+		}
 
 		if (sendmsg(ctl->fd, &msg, 0) < 0)
 			warn(_("send message failed"));
