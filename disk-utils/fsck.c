@@ -547,14 +547,13 @@ static char *find_fsck(const char *type)
 	const char *tpl;
 	static char prog[256];
 	char *p = xstrdup(fsck_path);
-	struct stat st;
 
 	/* Are we looking for a program or just a type? */
 	tpl = (strncmp(type, "fsck.", 5) ? "%s/fsck.%s" : "%s/%s");
 
 	for(s = strtok(p, ":"); s; s = strtok(NULL, ":")) {
 		sprintf(prog, tpl, s, type);
-		if (stat(prog, &st) == 0)
+		if (access(prog, X_OK) == 0)
 			break;
 	}
 	free(p);
