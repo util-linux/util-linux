@@ -97,6 +97,9 @@ struct hd_geometry {
 /* are we working with block device? */
 int is_blkdev(int fd);
 
+/* open block device or file */
+int open_blkdev_or_file(const struct stat *st, const char *name, const int oflag);
+
 /* Determine size in bytes */
 off_t blkdev_find_size (int fd);
 
