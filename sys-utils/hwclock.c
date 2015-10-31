@@ -258,15 +258,12 @@ hw_clock_is_utc(const bool utc, const bool local_opt,
 static int read_adjtime(struct adjtime *adjtime_p)
 {
 	FILE *adjfile;
-	int rc;			/* local return code */
-	struct stat statbuf;	/* We don't even use the contents of this. */
 	char line1[81];		/* String: first line of adjtime file */
 	char line2[81];		/* String: second line of adjtime file */
 	char line3[81];		/* String: third line of adjtime file */
 	long timeval;
 
-	rc = stat(adj_file_name, &statbuf);
-	if (rc < 0 && errno == ENOENT) {
+	if (access(adj_file_name, R_OK) != 0) {
 		/* He doesn't have a adjtime file, so we'll use defaults. */
 		adjtime_p->drift_factor = 0;
 		adjtime_p->last_adj_time = 0;

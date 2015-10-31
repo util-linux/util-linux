@@ -609,7 +609,6 @@ static void getmaster(struct script_control *ctl)
 	}
 #else
 	char *pty, *bank, *cp;
-	struct stat stb;
 
 	ctl->isterm = isatty(STDIN_FILENO);
 
@@ -617,7 +616,7 @@ static void getmaster(struct script_control *ctl)
 	for (bank = "pqrs"; *bank; bank++) {
 		ctl->line[strlen("/dev/pty")] = *bank;
 		*pty = '0';
-		if (stat(ctl->line, &stb) < 0)
+		if (access(ctl->line, F_OK) != 0)
 			break;
 		for (cp = "0123456789abcdef"; *cp; cp++) {
 			*pty = *cp;
