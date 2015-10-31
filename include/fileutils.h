@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/stat.h>
 
 #include "c.h"
 
@@ -23,6 +24,17 @@ static inline FILE *xfmkstemp(char **tmpname, const char *dir, const char *prefi
 		return NULL;
 	}
 	return ret;
+}
+
+static inline int is_same_inode(const int fd, const struct stat *st)
+{
+	struct stat f;
+
+	if (fstat(fd, &f) < 0)
+		return 0;
+	else if (f.st_dev != st->st_dev || f.st_ino != st->st_ino)
+		return 0;
+	return 1;
 }
 
 extern int dup_fd_cloexec(int oldfd, int lowfd);
