@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 {
 	struct stat sb;
 	char *tty;
-	int ch, verbose = FALSE;
+	int ch, fd, verbose = FALSE, ret;
 
 	static const struct option longopts[] = {
 		{ "verbose",    no_argument,       0, 'v' },
@@ -123,11 +123,13 @@ int main(int argc, char *argv[])
 
 	if ((tty = ttyname(STDERR_FILENO)) == NULL)
 		err(MESG_EXIT_FAILURE, _("ttyname failed"));
-
-	if (stat(tty, &sb) < 0)
+	if ((fd = open(tty, O_RDONLY)) < 0)
+		err(MESG_EXIT_FAILURE, _("cannot open %s"), tty);
+	if (fstat(fd, &sb))
 		err(MESG_EXIT_FAILURE, _("stat of %s failed"), tty);
 
 	if (!*argv) {
+		close(fd);
 		if (sb.st_mode & (S_IWGRP | S_IWOTH)) {
 			puts(_("is y"));
 			return IS_ALLOWED;
@@ -139,24 +141,28 @@ int main(int argc, char *argv[])
 	switch (rpmatch(argv[0])) {
 	case RPMATCH_YES:
 #ifdef USE_TTY_GROUP
-		if (chmod(tty, sb.st_mode | S_IWGRP) < 0)
+		if (fchmod(fd, sb.st_mode | S_IWGRP) < 0)
 #else
-		if (chmod(tty, sb.st_mode | S_IWGRP | S_IWOTH) < 0)
+		if (fchmod(fd, sb.st_mode | S_IWGRP | S_IWOTH) < 0)
 #endif
 			err(MESG_EXIT_FAILURE, _("change %s mode failed"), tty);
 		if (verbose)
 			puts(_("write access to your terminal is allowed"));
-		return IS_ALLOWED;
+		ret = IS_ALLOWED;
+		break;
 	case RPMATCH_NO:
-		if (chmod(tty, sb.st_mode & ~(S_IWGRP|S_IWOTH)) < 0)
+		if (fchmod(fd, sb.st_mode & ~(S_IWGRP|S_IWOTH)) < 0)
 			 err(MESG_EXIT_FAILURE, _("change %s mode failed"), tty);
 		if (verbose)
 			puts(_("write access to your terminal is denied"));
-		return IS_NOT_ALLOWED;
+		ret = IS_NOT_ALLOWED;
+		break;
 	case RPMATCH_INVALID:
 		warnx(_("invalid argument: %s"), argv[0]);
 		usage(stderr);
         default:
                 abort();
 	}
+	close(fd);
+	return ret;
 }
