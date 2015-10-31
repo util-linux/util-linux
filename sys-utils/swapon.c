@@ -475,7 +475,13 @@ static int swapon_checks(const char *special)
 	unsigned long long devsize = 0;
 	int permMask;
 
-	if (stat(special, &st) < 0) {
+	fd = open(special, O_RDONLY);
+	if (fd == -1) {
+		warn(_("cannot open %s"), special);
+		goto err;
+	}
+
+	if (fstat(fd, &st) < 0) {
 		warn(_("stat of %s failed"), special);
 		goto err;
 	}
@@ -498,12 +504,6 @@ static int swapon_checks(const char *special)
 			goto err;
 		}
 		devsize = st.st_size;
-	}
-
-	fd = open(special, O_RDONLY);
-	if (fd == -1) {
-		warn(_("cannot open %s"), special);
-		goto err;
 	}
 
 	if (S_ISBLK(st.st_mode) && blkdev_get_size(fd, &devsize)) {
