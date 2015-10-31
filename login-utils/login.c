@@ -256,13 +256,11 @@ static void motd(void)
 		struct stat st;
 		int fd;
 
-		if (stat(motdfile, &st) || !st.st_size)
-			continue;
 		fd = open(motdfile, O_RDONLY, 0);
 		if (fd < 0)
 			continue;
-
-		sendfile(fileno(stdout), fd, NULL, st.st_size);
+		if (!fstat(fd, &st) && st.st_size)
+			sendfile(fileno(stdout), fd, NULL, st.st_size);
 		close(fd);
 	}
 
