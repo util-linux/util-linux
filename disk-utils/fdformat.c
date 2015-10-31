@@ -12,6 +12,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "blkdev.h"
 #include "strutils.h"
 #include "closestream.h"
 #include "nls.h"
@@ -221,10 +222,7 @@ int main(int argc, char **argv)
 	if (!S_ISBLK(st.st_mode))
 		/* do not test major - perhaps this was an USB floppy */
 		errx(EXIT_FAILURE, _("%s: not a block device"), argv[0]);
-	if (access(argv[0], W_OK) < 0)
-		err(EXIT_FAILURE, _("cannot access file %s"), argv[0]);
-
-	ctrl = open(argv[0], O_RDWR);
+	ctrl = open_blkdev_or_file(&st, argv[0], O_RDWR);
 	if (ctrl < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), argv[0]);
 	if (ioctl(ctrl, FDGETPRM, (long) &param) < 0)
