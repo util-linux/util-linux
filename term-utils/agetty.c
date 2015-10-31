@@ -1004,22 +1004,22 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 		     (int)sizeof(buf)) || (len < 0))
 			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
 
+		/* Open the tty as standard input. */
+		if ((fd = open(buf, O_RDWR|O_NOCTTY|O_NONBLOCK, 0)) < 0)
+			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
+
 		/*
 		 * There is always a race between this reset and the call to
 		 * vhangup() that s.o. can use to get access to your tty.
 		 * Linux login(1) will change tty permissions. Use root owner and group
 		 * with permission -rw------- for the period between getty and login.
 		 */
-		if (chown(buf, 0, gid) || chmod(buf, (gid ? 0620 : 0600))) {
+		if (fchown(fd, 0, gid) || fchmod(fd, (gid ? 0620 : 0600))) {
 			if (errno == EROFS)
 				log_warn("%s: %m", buf);
 			else
 				log_err("%s: %m", buf);
 		}
-
-		/* Open the tty as standard input. */
-		if ((fd = open(buf, O_RDWR|O_NOCTTY|O_NONBLOCK, 0)) < 0)
-			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
 
 		/* Sanity checks... */
 		if (fstat(fd, &st) < 0)
