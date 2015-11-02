@@ -1362,8 +1362,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			}
 			if (!rc && partno >= 0) {	/* -N <partno>, modify partition */
 				rc = fdisk_set_partition(sf->cxt, partno, pa);
-				if (rc == 0)
-					rc = SFDISK_DONE_ASK;
+				rc = rc == 0 ? SFDISK_DONE_ASK : SFDISK_DONE_ABORT;
 				break;
 			} else if (!rc) {		/* add partition */
 				rc = fdisk_add_partition(sf->cxt, pa, &cur_partno);
