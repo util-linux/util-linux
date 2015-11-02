@@ -1,3 +1,7 @@
+util-linux 2.27.1: Nov 02 2015
+* see Documentation/releases/v2.27.1-ReleaseNotes or the complete changelog at
+  ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.27/v2.27.1-ChangeLog
+
 util-linux 2.27: Sep 07 2015
 * see Documentation/releases/v2.27-ReleaseNotes or the complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.27/v2.27-ChangeLog
