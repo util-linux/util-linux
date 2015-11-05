@@ -9,6 +9,7 @@ _cal_module()
 				--three
 				--months
 				--sunday
+				--span
 				--monday
 				--julian
 				--year
