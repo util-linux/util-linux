@@ -73,20 +73,20 @@ struct prlimit_desc {
 static struct prlimit_desc prlimit_desc[] =
 {
 	[AS]         = { "AS",         N_("address space limit"),                N_("bytes"),     RLIMIT_AS },
-	[CORE]       = { "CORE",       N_("max core file size"),                 N_("blocks"),    RLIMIT_CORE },
+	[CORE]       = { "CORE",       N_("max core file size"),                 N_("bytes"),     RLIMIT_CORE },
 	[CPU]        = { "CPU",        N_("CPU time"),                           N_("seconds"),   RLIMIT_CPU },
 	[DATA]       = { "DATA",       N_("max data size"),                      N_("bytes"),     RLIMIT_DATA },
-	[FSIZE]      = { "FSIZE",      N_("max file size"),                      N_("blocks"),    RLIMIT_FSIZE },
-	[LOCKS]      = { "LOCKS",      N_("max number of file locks held"),      NULL,            RLIMIT_LOCKS },
+	[FSIZE]      = { "FSIZE",      N_("max file size"),                      N_("bytes"),     RLIMIT_FSIZE },
+	[LOCKS]      = { "LOCKS",      N_("max number of file locks held"),      N_("locks"),     RLIMIT_LOCKS },
 	[MEMLOCK]    = { "MEMLOCK",    N_("max locked-in-memory address space"), N_("bytes"),     RLIMIT_MEMLOCK },
 	[MSGQUEUE]   = { "MSGQUEUE",   N_("max bytes in POSIX mqueues"),         N_("bytes"),     RLIMIT_MSGQUEUE },
 	[NICE]       = { "NICE",       N_("max nice prio allowed to raise"),     NULL,            RLIMIT_NICE },
-	[NOFILE]     = { "NOFILE",     N_("max number of open files"),           NULL,            RLIMIT_NOFILE },
-	[NPROC]      = { "NPROC",      N_("max number of processes"),            NULL,            RLIMIT_NPROC },
-	[RSS]        = { "RSS",        N_("max resident set size"),              N_("pages"),     RLIMIT_RSS },
+	[NOFILE]     = { "NOFILE",     N_("max number of open files"),           N_("files"),     RLIMIT_NOFILE },
+	[NPROC]      = { "NPROC",      N_("max number of processes"),            N_("processes"), RLIMIT_NPROC },
+	[RSS]        = { "RSS",        N_("max resident set size"),              N_("bytes"),     RLIMIT_RSS },
 	[RTPRIO]     = { "RTPRIO",     N_("max real-time priority"),             NULL,            RLIMIT_RTPRIO },
 	[RTTIME]     = { "RTTIME",     N_("timeout for real-time tasks"),        N_("microsecs"), RLIMIT_RTTIME },
-	[SIGPENDING] = { "SIGPENDING", N_("max number of pending signals"),      NULL,            RLIMIT_SIGPENDING },
+	[SIGPENDING] = { "SIGPENDING", N_("max number of pending signals"),      N_("signals"),   RLIMIT_SIGPENDING },
 	[STACK]      = { "STACK",      N_("max stack size"),                     N_("bytes"),     RLIMIT_STACK }
 };
 
