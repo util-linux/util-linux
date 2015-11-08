@@ -1,6 +1,6 @@
 .\" Copyright 2015 Ondrej Oprala(ooprala@redhat.com)
 .\" May be distributed under the GNU General Public License
-.TH LSIPC "1" "June 2015" "util-linux" "User Commands"
+.TH LSIPC "1" "November 2015" "util-linux" "User Commands"
 .SH NAME
 lsipc \- show information on IPC facilities currently employed in the system
 .SH SYNOPSIS
@@ -19,11 +19,11 @@ This option needs to be combined with one of the three resource options:
 .BR \-m ,
 .BR \-q " or"
 .BR \-s .
-The default \fB\-\-id\fR output format is possible to override by
-the \fB\-\-list \-\-raw \-\-json\fR or \fB\-\-export\fR options.
+It is possible to override the default output format for this option with the
+\fB\-\-list\fR, \fB\-\-raw\fR, \fB\-\-json\fR or \fB\-\-export\fR option.
 .TP
 \fB\-g\fR, \fB\-\-global\fR
-Show system-wide usage and limits for a single IPC type.
+Show system-wide usage and limits of IPC resources.
 This option may be combined with one of the three resource options:
 .BR \-m ,
 .BR \-q " or"
@@ -45,7 +45,7 @@ Write information about active message queues.
 .TP
 \fB\-s\fR, \fB\-\-semaphores\fR
 Write information about active semaphore sets.
-.SS "Output formats"
+.SS "Output formatting"
 .TP
 \fB\-c\fR, \fB\-\-creator\fR
 Show creator and owner.
@@ -57,7 +57,8 @@ Output data in the format of NAME=VALUE.
 Use the JSON output format.
 .TP
 \fB\-l\fR, \fB\-\-list\fR
-Use the list output format. This is the default except for \fB\-\-id\fR.
+Use the list output format.  This is the default, except when \fB\-\-id\fR
+is used.
 .TP
 \fB\-n\fR, \fB\-\-newline\fR
 Display each piece of information on a separate line.
