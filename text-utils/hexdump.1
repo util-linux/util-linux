@@ -84,8 +84,9 @@ are ignored.
 \fB\-L\fR, \fB\-\-color\fR[=\fIwhen\fR]
 Accept color units for the output.  The optional argument \fIwhen\fP
 can be \fBauto\fR, \fBnever\fR or \fBalways\fR.  If the \fIwhen\fR argument is omitted,
-it defaults to \fBauto\fR.  The colors can be disabled, for the current built-in default 
-see \fB\-\-help\fR output. See also the COLORS section.
+it defaults to \fBauto\fR.  The colors can be disabled; for the current built-in default
+see the \fB\-\-help\fR output.  See also the \fBColors\fR subsection and
+the \fBCOLORS\fR section below.
 .TP
 \fB\-n\fR, \fB\-\-length\fR \fIlength\fR
 Interpret only
@@ -335,9 +336,9 @@ conversion character or conversion string but with any
 .RB ' \&# '
 conversion flag characters removed, and referencing a NULL string.
 .PP
-If no format strings are specified, the default display is very simular to the
-\fB\-x\fR
-output format (the \fB\-x\fR uses more space between format units than the default output).
+If no format strings are specified, the default display is very similar to
+the \fB\-x\fR output format (the \fB\-x\fR option causes more space to be
+used between format units than in the default output).
 .SH "EXIT STATUS"
 .B hexdump
 exits 0 on success and >0 if an error occurred.
