@@ -955,6 +955,28 @@ int loopcxt_is_readonly(struct loopdev_cxt *lc)
 
 /*
  * @lc: context
+ *
+ * Returns: 1 if the dio flags is set.
+ */
+int loopcxt_is_dio(struct loopdev_cxt *lc)
+{
+	struct sysfs_cxt *sysfs = loopcxt_get_sysfs(lc);
+
+	if (sysfs) {
+		int fl;
+		if (sysfs_read_int(sysfs, "loop/dio", &fl) == 0)
+			return fl;
+	}
+	if (loopcxt_ioctl_enabled(lc)) {
+		struct loop_info64 *lo = loopcxt_get_info(lc);
+		if (lo)
+			return lo->lo_flags & LO_FLAGS_DIRECT_IO;
+	}
+	return 0;
+}
+
+/*
+ * @lc: context
  * @st: backing file stat or NULL
  * @backing_file: filename
  * @offset: offset

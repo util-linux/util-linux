@@ -49,6 +49,7 @@ enum {
 	COL_PARTSCAN,
 	COL_RO,
 	COL_SIZELIMIT,
+	COL_DIO,
 };
 
 /* basic output flags */
@@ -74,6 +75,7 @@ static struct colinfo infos[] = {
 	[COL_RO]          = { "RO",           1, SCOLS_FL_RIGHT, N_("read-only device")},
 	[COL_SIZELIMIT]   = { "SIZELIMIT",    5, SCOLS_FL_RIGHT, N_("size limit of the file in bytes")},
 	[COL_MAJMIN]      = { "MAJ:MIN",      3, 0, N_("loop device major:minor number")},
+	[COL_DIO]         = { "DIO",          1, SCOLS_FL_RIGHT, N_("access backing file with direct-io")},
 };
 
 static int columns[ARRAY_SIZE(infos) * 2] = {-1};
@@ -270,6 +272,9 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 			break;
 		case COL_RO:
 			p = loopcxt_is_readonly(lc) ? "1" : "0";
+			break;
+		case COL_DIO:
+			p = loopcxt_is_dio(lc) ? "1" : "0";
 			break;
 		case COL_PARTSCAN:
 			p = loopcxt_is_partscan(lc) ? "1" : "0";
@@ -599,6 +604,7 @@ int main(int argc, char **argv)
 		columns[ncolumns++] = COL_AUTOCLR;
 		columns[ncolumns++] = COL_RO;
 		columns[ncolumns++] = COL_BACK_FILE;
+		columns[ncolumns++] = COL_DIO;
 	}
 
 	if (act == A_FIND_FREE && optind < argc) {
