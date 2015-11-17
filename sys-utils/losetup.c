@@ -35,6 +35,7 @@ enum {
 	A_SHOW_ONE,		/* print info about one device */
 	A_FIND_FREE,		/* find first unused */
 	A_SET_CAPACITY,		/* set device capacity */
+	A_SET_DIRECT_IO,	/* set accessing backing file by direct io */
 };
 
 enum {
@@ -393,6 +394,7 @@ static void usage(FILE *out)
 	fputs(_("     --sizelimit <num>         device is limited to <num> bytes of the file\n"), out);
 	fputs(_(" -P, --partscan                create a partitioned loop device\n"), out);
 	fputs(_(" -r, --read-only               set up a read-only loop device\n"), out);
+	fputs(_("     --direct-io               open backing file with O_DIRECT\n"), out);
 	fputs(_("     --show                    print device name after setup (with -f)\n"), out);
 	fputs(_(" -v, --verbose                 verbose mode\n"), out);
 
@@ -446,11 +448,13 @@ int main(int argc, char **argv)
 	int res = 0, showdev = 0, lo_flags = 0;
 	char *outarg = NULL;
 	int list = 0;
+	unsigned long use_dio = 0, set_dio = 0;
 
 	enum {
 		OPT_SIZELIMIT = CHAR_MAX + 1,
 		OPT_SHOW,
-		OPT_RAW
+		OPT_RAW,
+		OPT_DIO
 	};
 	static const struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
@@ -468,6 +472,7 @@ int main(int argc, char **argv)
 		{ "sizelimit", 1, 0, OPT_SIZELIMIT },
 		{ "partscan", 0, 0, 'P' },
 		{ "read-only", 0, 0, 'r' },
+		{ "direct-io", 1, 0, OPT_DIO },
 		{ "raw", 0, 0, OPT_RAW },
 		{ "show", 0, 0, OPT_SHOW },
 		{ "verbose", 0, 0, 'v' },
@@ -557,6 +562,10 @@ int main(int argc, char **argv)
 		case OPT_SHOW:
 			showdev = 1;
 			break;
+		case OPT_DIO:
+			set_dio = 1;
+			use_dio = strtoul_or_err(optarg, _("failed to parse dio"));
+			break;
 		case 'v':
 			break;
 		case 'V':
@@ -609,8 +618,13 @@ int main(int argc, char **argv)
 	if (!act && optind + 1 == argc) {
 		/*
 		 * losetup [--list] <device>
+		 * OR
+		 * losetup --direct-io DIO <device>
 		 */
-		act = A_SHOW_ONE;
+		if (!set_dio)
+			act = A_SHOW_ONE;
+		else
+			act = A_SET_DIRECT_IO;
 		if (!is_loopdev(argv[optind]) ||
 		    loopcxt_set_device(&lc, argv[optind]))
 			err(EXIT_FAILURE, _("%s: failed to use device"),
@@ -695,6 +709,8 @@ int main(int argc, char **argv)
 			if (showdev)
 				printf("%s\n", loopcxt_get_device(&lc));
 			warn_size(file, sizelimit);
+			if (set_dio)
+				goto lo_set_dio;
 		}
 		break;
 	}
@@ -745,6 +761,13 @@ int main(int argc, char **argv)
 		res = loopcxt_set_capacity(&lc);
 		if (res)
 			warn(_("%s: set capacity failed"),
+			        loopcxt_get_device(&lc));
+		break;
+	case A_SET_DIRECT_IO:
+ lo_set_dio:
+		res = loopcxt_set_dio(&lc, use_dio);
+		if (res)
+			warn(_("%s: set direct io failed"),
 			        loopcxt_get_device(&lc));
 		break;
 	default:

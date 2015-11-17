@@ -23,6 +23,7 @@
 #define LOOP_GET_STATUS64	0x4C05
 /* #define LOOP_CHANGE_FD	0x4C06 */
 #define LOOP_SET_CAPACITY	0x4C07
+#define LOOP_SET_DIRECT_IO	0x4C08
 
 /* /dev/loop-control interface */
 #ifndef LOOP_CTL_ADD
@@ -164,6 +165,7 @@ extern int loopcxt_next(struct loopdev_cxt *lc);
 extern int loopcxt_setup_device(struct loopdev_cxt *lc);
 extern int loopcxt_delete_device(struct loopdev_cxt *lc);
 extern int loopcxt_set_capacity(struct loopdev_cxt *lc);
+extern int loopcxt_set_dio(struct loopdev_cxt *lc, unsigned long use_dio);
 
 int loopcxt_set_offset(struct loopdev_cxt *lc, uint64_t offset);
 int loopcxt_set_sizelimit(struct loopdev_cxt *lc, uint64_t sizelimit);

@@ -1315,6 +1315,24 @@ int loopcxt_set_capacity(struct loopdev_cxt *lc)
 	return 0;
 }
 
+int loopcxt_set_dio(struct loopdev_cxt *lc, unsigned long use_dio)
+{
+	int fd = loopcxt_get_fd(lc);
+
+	if (fd < 0)
+		return -EINVAL;
+
+	/* Kernels prior to v4.4 don't support this ioctl */
+	if (ioctl(fd, LOOP_SET_DIRECT_IO, use_dio) < 0) {
+		int rc = -errno;
+		DBG(CXT, ul_debugobj(lc, "LOOP_SET_DIRECT_IO failed: %m"));
+		return rc;
+	}
+
+	DBG(CXT, ul_debugobj(lc, "direct io set"));
+	return 0;
+}
+
 int loopcxt_delete_device(struct loopdev_cxt *lc)
 {
 	int fd = loopcxt_get_fd(lc);
