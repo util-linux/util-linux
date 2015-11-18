@@ -263,7 +263,7 @@ static int probe_zfs(blkid_probe pr, const struct blkid_idmag *mag)
 const struct blkid_idinfo zfs_idinfo =
 {
 	.name		= "zfs_member",
-	.usage		= BLKID_USAGE_RAID,
+	.usage		= BLKID_USAGE_FILESYSTEM,
 	.probefunc	= probe_zfs,
 	.minsz		= 64 * 1024 * 1024,
 	.magics		= BLKID_NONE_MAGIC

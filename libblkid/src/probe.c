@@ -754,8 +754,9 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 				list_entry(p, struct blkid_bufinfo, bufs);
 
 		if (real_off >= x->off && real_off + len <= x->off + x->len) {
-			DBG(BUFFER, ul_debug("\treuse %p: off=%jd len=%jd",
-						x->data, x->off, x->len));
+			DBG(BUFFER, ul_debug("\treuse %p: off=%jd len=%jd (for off=%jd len=%jd)",
+						x->data, x->off, x->len,
+						real_off, len));
 			bf = x;
 			break;
 		}
