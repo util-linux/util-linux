@@ -10,12 +10,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include "linux_reboot.h"
+#include <unistd.h>
+#include <sys/reboot.h>
 #include "nls.h"
 #include "c.h"
 #include "closestream.h"
 #include "pathnames.h"
 #include "path.h"
+
+#define LINUX_REBOOT_CMD_CAD_ON 0x89ABCDEF
+#define LINUX_REBOOT_CMD_CAD_OFF 0x00000000
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
@@ -67,7 +71,7 @@ static int set_cad(const char *arg)
 		warnx(_("unknown argument: %s"), arg);
 		return EXIT_FAILURE;
 	}
-	if (my_reboot(cmd) < 0) {
+	if (reboot(cmd) < 0) {
 		warnx("reboot");
 		return EXIT_FAILURE;
 	}

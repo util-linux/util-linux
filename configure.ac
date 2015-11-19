@@ -378,6 +378,7 @@ AC_CHECK_FUNCS([ioperm iopl], [have_io=yes])
 AC_CHECK_FUNCS([futimens], [have_futimens=yes])
 AC_CHECK_FUNCS([inotify_init1], [have_inotify_init1=yes])
 AC_CHECK_FUNCS([open_memstream], [have_open_memstream=yes],[have_open_memstream=no])
+AC_CHECK_FUNCS([reboot], [have_reboot=yes],[have_reboot=no])
 
 dnl lib/mononotic.c may require -lrt
 AC_CHECK_FUNCS([clock_gettime], [],
@@ -1420,6 +1421,11 @@ AM_CONDITIONAL([BUILD_DMESG], [test "x$build_dmesg" = xyes])
 
 UL_BUILD_INIT([ctrlaltdel], [check])
 UL_REQUIRES_LINUX([ctrlaltdel])
+dnl we assume reboot() to be the 1-argument variant, because even considering
+dnl widely used alternative C libraries like uclibc, dietlibc and musl,
+dnl reboot() with multiple arguments is yet only found in glibc versions
+dnl earlier than 2.x.
+UL_REQUIRES_HAVE([ctrlaltdel], [reboot])
 AM_CONDITIONAL([BUILD_CTRLALTDEL], [test "x$build_ctrlaltdel" = xyes])
 
 UL_BUILD_INIT([fsfreeze], [check])
