@@ -19,7 +19,6 @@ dist_noinst_HEADERS += \
 	include/exitcodes.h \
 	include/fileutils.h \
 	include/ismounted.h \
-	include/linux_reboot.h \
 	include/linux_version.h \
 	include/list.h \
 	include/loopdev.h \
