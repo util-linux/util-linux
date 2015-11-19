@@ -399,7 +399,7 @@ static void usage(FILE *out)
 	fputs(_("     --sizelimit <num>         device is limited to <num> bytes of the file\n"), out);
 	fputs(_(" -P, --partscan                create a partitioned loop device\n"), out);
 	fputs(_(" -r, --read-only               set up a read-only loop device\n"), out);
-	fputs(_("     --direct-io               open backing file with O_DIRECT\n"), out);
+	fputs(_("     --direct-io[=<on|off>]    open backing file with O_DIRECT\n"), out);
 	fputs(_("     --show                    print device name after setup (with -f)\n"), out);
 	fputs(_(" -v, --verbose                 verbose mode\n"), out);
 
@@ -477,7 +477,7 @@ int main(int argc, char **argv)
 		{ "sizelimit", 1, 0, OPT_SIZELIMIT },
 		{ "partscan", 0, 0, 'P' },
 		{ "read-only", 0, 0, 'r' },
-		{ "direct-io", 1, 0, OPT_DIO },
+		{ "direct-io", 2, 0, OPT_DIO },
 		{ "raw", 0, 0, OPT_RAW },
 		{ "show", 0, 0, OPT_SHOW },
 		{ "verbose", 0, 0, 'v' },
@@ -568,8 +568,9 @@ int main(int argc, char **argv)
 			showdev = 1;
 			break;
 		case OPT_DIO:
-			set_dio = 1;
-			use_dio = strtoul_or_err(optarg, _("failed to parse dio"));
+			use_dio = set_dio = 1;
+			if (optarg)
+				use_dio = parse_switch(optarg, _("argument error"), "on", "off", NULL);
 			break;
 		case 'v':
 			break;

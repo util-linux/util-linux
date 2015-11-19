@@ -91,6 +91,10 @@ Detach the file or device associated with the specified loop device(s).
 .BR \-D , " \-\-detach\-all"
 Detach all associated loop devices.
 .TP
+.BR "\-\-direct\-io"[\fI=on|off\fR]
+Enable or disable direct I/O for the backing file. The optional argument can be
+\fIon\fR or \fIoff\fR.  If the optional argument is omitted, it defaults to \fIon\fR.
+.TP
 .BR \-f , " \-\-find"
 Find the first unused loop device.  If a
 .I file
