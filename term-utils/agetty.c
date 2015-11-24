@@ -1637,16 +1637,22 @@ static int wait_for_term_input(int fd)
 	}
 
 	while (1) {
+		int nfds = fd;
+
 		FD_ZERO(&rfds);
 		FD_SET(fd, &rfds);
 
-		if (inotify_fd >= 0)
+		if (inotify_fd >= 0) {
 			FD_SET(inotify_fd, &rfds);
-		if (netlink_fd >= 0)
+			nfds = max(nfds, inotify_fd);
+		}
+		if (netlink_fd >= 0) {
 			FD_SET(netlink_fd, &rfds);
+			nfds = max(nfds, netlink_fd);
+		}
 
 		/* If waiting fails, just fall through, presumably reading input will fail */
-		if (select(max(fd, inotify_fd) + 1, &rfds, NULL, NULL, NULL) < 0)
+		if (select(nfds + 1, &rfds, NULL, NULL, NULL) < 0)
 			return 1;
 
 		if (FD_ISSET(fd, &rfds)) {
