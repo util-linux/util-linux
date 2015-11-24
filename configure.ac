@@ -391,8 +391,8 @@ AC_CHECK_FUNCS([timer_createx],
 	[have_time="yes"],
 	[AC_CHECK_LIB([rt], [timer_create], [
 		have_timer="yes"
-		REALTIME_LIBS="-lrt"
-	])]
+		REALTIME_LIBS="-lrt -lpthread"
+	],[],[-lpthread])]
 )
 
 
