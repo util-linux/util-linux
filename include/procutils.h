@@ -29,5 +29,6 @@ extern void proc_processes_filter_by_uid(struct proc_processes *ps, uid_t uid);
 extern int proc_next_pid(struct proc_processes *ps, pid_t *pid);
 
 extern char *proc_get_command(pid_t pid);
+extern char *proc_get_command_name(pid_t pid);
 
 #endif /* UTIL_LINUX_PROCUTILS */

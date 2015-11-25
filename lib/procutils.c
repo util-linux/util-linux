@@ -97,15 +97,15 @@ int proc_next_tid(struct proc_tasks *tasks, pid_t *tid)
 	return 0;
 }
 
-/* returns process command name, use free() for result */
-char *proc_get_command(pid_t pid)
+/* returns process command path, use free() for result */
+static char *proc_file_strdup(pid_t pid, const char *name)
 {
 	char buf[BUFSIZ], *res = NULL;
 	ssize_t sz = 0;
 	size_t i;
 	int fd;
 
-	snprintf(buf, sizeof(buf), "/proc/%d/cmdline", (int) pid);
+	snprintf(buf, sizeof(buf), "/proc/%d/%s", (int) pid, name);
 	fd = open(buf, O_RDONLY);
 	if (fd < 0)
 		goto done;
@@ -125,6 +125,18 @@ done:
 	if (fd >= 0)
 		close(fd);
 	return res;
+}
+
+/* returns process command path, use free() for result */
+char *proc_get_command(pid_t pid)
+{
+	return proc_file_strdup(pid, "cmdline");
+}
+
+/* returns process command name, use free() for result */
+char *proc_get_command_name(pid_t pid)
+{
+	return proc_file_strdup(pid, "comm");
 }
 
 struct proc_processes *proc_open_processes(void)
