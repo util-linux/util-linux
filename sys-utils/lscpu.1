@@ -9,12 +9,20 @@ lscpu \- display information about the CPU architecture
 .BR \-h | \-V
 .SH DESCRIPTION
 .B lscpu
-gathers CPU architecture information from sysfs and /proc/cpuinfo.  The
+gathers CPU architecture information from sysfs, /proc/cpuinfo and any
+applicable architecture-specific libraries (e.g. librtas on Powerpc). The
 command output can be optimized for parsing or for easy readability by humans.
 The information includes, for example, the number of CPUs, threads, cores,
 sockets, and Non-Uniform Memory Access (NUMA) nodes.  There is also information
 about the CPU caches and cache sharing, family, model, bogoMIPS, byte order,
 and stepping.
+
+In virtualized environments, the CPU architecture information displayed
+reflects the configuration of the guest operating system which is
+typically different from the physical (host) system. On architectures that
+support retreiving physical topology information,
+.B lscpu
+also displays the number of physical sockets, chips, cores in the host system.
 
 Options that result in an output table have a \fIlist\fP argument.  Use this
 argument to customize the command output.  Specify a comma-separated list of

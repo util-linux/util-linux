@@ -52,6 +52,10 @@
 # endif
 #endif
 
+#if defined(HAVE_LIBRTAS)
+#include <librtas.h>
+#endif
+
 #include <libsmartcols.h>
 
 #include "cpuset.h"
@@ -242,6 +246,9 @@ struct lscpu_desc {
 	int		*polarization;	/* cpu polarization */
 	int		*addresses;	/* physical cpu addresses */
 	int		*configured;	/* cpu configured */
+	int		physsockets;	/* Physical sockets (modules) */
+	int		physchips;	/* Physical chips */
+	int		physcoresperchip;	/* Physical cores per chip */
 };
 
 enum {
@@ -400,6 +407,45 @@ init_mode(struct lscpu_modifier *mod)
 	return m;
 }
 
+#if defined(HAVE_LIBRTAS)
+#define PROCESSOR_MODULE_INFO	43
+static int strbe16toh(const char *buf, int offset)
+{
+	return (buf[offset] << 8) + buf[offset+1];
+}
+
+static void read_physical_info_powerpc(struct lscpu_desc *desc)
+{
+	char buf[BUFSIZ];
+	int rc, len, ntypes;
+
+	desc->physsockets = desc->physchips = desc->physcoresperchip = 0;
+
+	rc = rtas_get_sysparm(PROCESSOR_MODULE_INFO, sizeof(buf), buf);
+	if (rc < 0)
+		return;
+
+	len = strbe16toh(buf, 0);
+	if (len < 8)
+		return;
+
+	ntypes = strbe16toh(buf, 2);
+
+	assert(ntypes <= 1);
+	if (!ntypes)
+		return;
+
+	desc->physsockets = strbe16toh(buf, 4);
+	desc->physchips = strbe16toh(buf, 6);
+	desc->physcoresperchip = strbe16toh(buf, 8);
+}
+#else
+static void read_physical_info_powerpc(
+		struct lscpu_desc *desc __attribute__((__unused__)))
+{
+}
+#endif
+
 static void
 read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 {
@@ -506,6 +552,9 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		desc->dispatching = path_read_s32(_PATH_SYS_CPU "/dispatching");
 	else
 		desc->dispatching = -1;
+
+	if (mod->system == SYSTEM_LIVE)
+		read_physical_info_powerpc(desc);
 }
 
 static int
@@ -1636,6 +1685,12 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	if (desc->flags)
 		print_s(_("Flags:"), desc->flags);
+
+	if (desc->physsockets) {
+		print_n(_("Physical sockets:"), desc->physsockets);
+		print_n(_("Physical chips:"), desc->physchips);
+		print_n(_("Physical cores/chip:"), desc->physcoresperchip);
+	}
 }
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
