@@ -50,7 +50,7 @@ endif
 if BUILD_NAMEI
 usrbin_exec_PROGRAMS += namei
 dist_man_MANS += misc-utils/namei.1
-namei_SOURCES = misc-utils/namei.c lib/strutils.c
+namei_SOURCES = misc-utils/namei.c lib/strutils.c lib/idcache.c
 endif
 
 if BUILD_WHEREIS
