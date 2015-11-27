@@ -26,7 +26,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-
+#include <wchar.h>
 #include <libsmartcols.h>
 
 #include "pathnames.h"
@@ -40,6 +40,7 @@
 #include "strutils.h"
 #include "namespace.h"
 #include "path.h"
+#include "idcache.h"
 
 #include "debug.h"
 
@@ -54,6 +55,8 @@ UL_DEBUG_DEFINE_MASKNAMES(lsns) = UL_DEBUG_EMPTY_MASKNAMES;
 #define DBG(m, x)       __UL_DBG(lsns, LSNS_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(lsns, LSNS_DEBUG_, m, x)
 
+struct idcache *uid_cache = NULL;
+
 /* column IDs */
 enum {
 	COL_NS = 0,
@@ -61,7 +64,9 @@ enum {
 	COL_PATH,
 	COL_NPROCS,
 	COL_PID,
-	COL_COMMAND
+	COL_COMMAND,
+	COL_UID,
+	COL_USER
 };
 
 /* column names */
@@ -79,7 +84,9 @@ static struct colinfo infos[] = {
 	[COL_PATH]    = { "PATH",    0, 0, N_("path to the namespace")},
 	[COL_NPROCS]  = { "NPROCS",  5, SCOLS_FL_RIGHT, N_("number of processes in the namespace") },
 	[COL_PID]     = { "PID",     5, SCOLS_FL_RIGHT, N_("lowers PID in the namespace") },
-	[COL_COMMAND] = { "COMMAND", 0, SCOLS_FL_TRUNC, N_("command line of the PID")}
+	[COL_COMMAND] = { "COMMAND", 0, SCOLS_FL_TRUNC, N_("command line of the PID")},
+	[COL_UID]     = { "UID",     0, SCOLS_FL_RIGHT, N_("user ID of the PID")},
+	[COL_USER]    = { "USER",    0, 0, N_("username of the PID")}
 };
 
 static int columns[ARRAY_SIZE(infos) * 2];
@@ -107,7 +114,8 @@ struct lsns_namespace {
 	ino_t id;
 	int type;			/* LSNS_* */
 	int nprocs;
-	pid_t pid;
+
+	struct lsns_process *proc;
 
 	struct list_head namespaces;	/* lsns->processes member */
 	struct list_head processes;	/* head of lsns_process *siblings */
@@ -118,6 +126,7 @@ struct lsns_process {
 	pid_t ppid;		/* parent's PID */
 	pid_t tpid;		/* thread group */
 	char state;
+	uid_t uid;
 
 	ino_t            ns_ids[ARRAY_SIZE(ns_names)];
 	struct list_head ns_siblings[ARRAY_SIZE(ns_names)];
@@ -202,6 +211,7 @@ static int read_process(struct lsns *ls, pid_t pid)
 	int rc = 0, fd;
 	FILE *f = NULL;
 	size_t i;
+	struct stat st;
 
 	DBG(PROC, ul_debug("reading %d", (int) pid));
 
@@ -214,6 +224,11 @@ static int read_process(struct lsns *ls, pid_t pid)
 	if (!p) {
 		rc = -ENOMEM;
 		goto done;
+	}
+
+	if (fstat(dirfd(dir), &st) == 0) {
+		p->uid = st.st_uid;
+		add_uid(uid_cache, st.st_uid);
 	}
 
 	fd = openat(dirfd(dir), "stat", O_RDONLY);
@@ -325,8 +340,8 @@ static int add_process_to_namespace(struct lsns_namespace *ns, struct lsns_proce
 	list_add_tail(&proc->ns_siblings[ns->type], &ns->processes);
 	ns->nprocs++;
 
-	if (ns->pid == 0 || ns->pid > proc->pid)
-		ns->pid = proc->pid;
+	if (!ns->proc || ns->proc->pid > proc->pid)
+		ns->proc = proc;
 	return 0;
 }
 
@@ -378,7 +393,7 @@ static void add_scols_line(struct libscols_table *table, struct lsns_namespace *
 			xasprintf(&str, "%lu", ns->id);
 			break;
 		case COL_PID:
-			xasprintf(&str, "%d", (int) ns->pid);
+			xasprintf(&str, "%d", (int) ns->proc->pid);
 			break;
 		case COL_TYPE:
 			xasprintf(&str, "%s", ns_names[ns->type]);
@@ -387,11 +402,18 @@ static void add_scols_line(struct libscols_table *table, struct lsns_namespace *
 			xasprintf(&str, "%d", ns->nprocs);
 			break;
 		case COL_COMMAND:
-			str = proc_get_command(ns->pid);
+			str = proc_get_command(ns->proc->pid);
 			if (!str)
-				str = proc_get_command_name(ns->pid);
+				str = proc_get_command_name(ns->proc->pid);
 			break;
 		case COL_PATH:
+			xasprintf(&str, "/proc/%d/ns/%s", (int) ns->proc->pid, ns_names[ns->type]);
+			break;
+		case COL_UID:
+			xasprintf(&str, "%d", (int) ns->proc->uid);
+			break;
+		case COL_USER:
+			xasprintf(&str, "%s", get_id(uid_cache, ns->proc->uid)->name);
 			break;
 		default:
 			break;
@@ -553,6 +575,7 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_TYPE;
 		columns[ncolumns++] = COL_NPROCS;
 		columns[ncolumns++] = COL_PID;
+		columns[ncolumns++] = COL_USER;
 		columns[ncolumns++] = COL_COMMAND;
 	}
 
@@ -562,11 +585,16 @@ int main(int argc, char *argv[])
 
 	scols_init_debug(0);
 
+	uid_cache = new_idcache();
+	if (!uid_cache)
+		err(EXIT_FAILURE, _("failed to allocate UID cache"));
+
 	r = read_processes(&ls);
 	if (!r)
 		r = read_namespaces(&ls);
 	if (!r)
 		r = show_namespaces(&ls);
 
+	free_idcache(uid_cache);
 	return r == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
