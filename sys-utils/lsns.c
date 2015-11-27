@@ -260,7 +260,7 @@ static int read_process(struct lsns *ls, pid_t pid)
 	INIT_LIST_HEAD(&p->branch);
 	INIT_LIST_HEAD(&p->children);
 
-	DBG(PROC, ul_debug("add %d", p->pid));
+	DBG(PROC, ul_debugobj(p, "new pid=%d", p->pid));
 	list_add_tail(&p->processes, &ls->processes);
 done:
 	if (f)
@@ -276,11 +276,6 @@ static int read_processes(struct lsns *ls)
 	struct proc_processes *proc = NULL;
 	pid_t pid;
 	int rc = 0;
-
-	if (ls->pid) {
-		rc = read_process(ls, ls->pid);
-		goto done;
-	}
 
 	DBG(PROC, ul_debug("opening /proc"));
 
@@ -314,6 +309,19 @@ static struct lsns_namespace *get_namespace(struct lsns *ls, int type, ino_t ino
 	return NULL;
 }
 
+static int namespace_has_process(struct lsns_namespace *ns, pid_t pid)
+{
+	struct list_head *p;
+
+	list_for_each(p, &ns->processes) {
+		struct lsns_process *proc = list_entry(p, struct lsns_process, ns_siblings[ns->type]);
+
+		if (proc->pid == pid)
+			return 1;
+	}
+	return 0;
+}
+
 static struct lsns_namespace *add_namespace(struct lsns *ls, int type, ino_t ino)
 {
 	struct lsns_namespace *ns = calloc(1, sizeof(*ns));
@@ -321,7 +329,7 @@ static struct lsns_namespace *add_namespace(struct lsns *ls, int type, ino_t ino
 	if (!ns)
 		return NULL;
 
-	DBG(NS, ul_debug("add %s[%lu]", ns_names[type], ino));
+	DBG(NS, ul_debugobj(ns, "new %s[%lu]", ns_names[type], ino));
 
 	INIT_LIST_HEAD(&ns->processes);
 	INIT_LIST_HEAD(&ns->namespaces);
@@ -335,7 +343,7 @@ static struct lsns_namespace *add_namespace(struct lsns *ls, int type, ino_t ino
 
 static int add_process_to_namespace(struct lsns_namespace *ns, struct lsns_process *proc)
 {
-	DBG(NS, ul_debug("add process %d to %s[%lu]", proc->pid, ns_names[ns->type], ns->id));
+	DBG(NS, ul_debugobj(ns, "add process [%p] pid=%d to %s[%lu]", proc, proc->pid, ns_names[ns->type], ns->id));
 
 	list_add_tail(&proc->ns_siblings[ns->type], &ns->processes);
 	ns->nprocs++;
@@ -456,6 +464,10 @@ static int show_namespaces(struct lsns *ls)
 
 	list_for_each(p, &ls->namespaces) {
 		struct lsns_namespace *ns = list_entry(p, struct lsns_namespace, namespaces);
+
+		if (ls->pid != 0 && !namespace_has_process(ns, ls->pid))
+			continue;
+
 		add_scols_line(tab, ns);
 	}
 
@@ -479,7 +491,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -J, --json             use JSON output format\n"), out);
-	fputs(_(" -p, --task <pid>       print process namespace\n"), out);
+	fputs(_(" -p, --task <pid>       print process namespaces\n"), out);
 	fputs(_(" -n, --noheadings       don't print headings\n"), out);
 	fputs(_(" -o, --output <list>    define which output columns to use\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
