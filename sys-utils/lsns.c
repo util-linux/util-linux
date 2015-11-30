@@ -64,6 +64,7 @@ enum {
 	COL_PATH,
 	COL_NPROCS,
 	COL_PID,
+	COL_PPID,
 	COL_COMMAND,
 	COL_UID,
 	COL_USER
@@ -78,12 +79,13 @@ struct colinfo {
 };
 
 /* columns descriptions */
-static struct colinfo infos[] = {
+static const struct colinfo infos[] = {
 	[COL_NS]      = { "NS",     10, SCOLS_FL_RIGHT, N_("command of the process holding the lock") },
 	[COL_TYPE]    = { "TYPE",    5, 0, N_("kind of namespace") },
 	[COL_PATH]    = { "PATH",    0, 0, N_("path to the namespace")},
 	[COL_NPROCS]  = { "NPROCS",  5, SCOLS_FL_RIGHT, N_("number of processes in the namespace") },
 	[COL_PID]     = { "PID",     5, SCOLS_FL_RIGHT, N_("lowers PID in the namespace") },
+	[COL_PPID]    = { "PPID",    5, SCOLS_FL_RIGHT, N_("PPID of the PID") },
 	[COL_COMMAND] = { "COMMAND", 0, SCOLS_FL_TRUNC, N_("command line of the PID")},
 	[COL_UID]     = { "UID",     0, SCOLS_FL_RIGHT, N_("user ID of the PID")},
 	[COL_USER]    = { "USER",    0, 0, N_("username of the PID")}
@@ -131,33 +133,30 @@ struct lsns_process {
 	ino_t            ns_ids[ARRAY_SIZE(ns_names)];
 	struct list_head ns_siblings[ARRAY_SIZE(ns_names)];
 
-	struct list_head branch;	/* head of children list */
-	struct list_head children;	/* list of children */
 	struct list_head processes;	/* list of processes */
+
+	struct libscols_line *outline;
+	struct lsns_process *parent;
 };
 
 struct lsns {
 	struct list_head processes;
 	struct list_head namespaces;
 
-	pid_t	pid;
+	pid_t	pid;		/* filter out by PID */
+	ino_t	ns;		/* filter out by namespace */
 
 	unsigned int raw	: 1,
 		     json	: 1,
+		     tree	: 1,
+		     list	: 1,
+		     notrunc	: 1,
 		     no_headings: 1;
 };
 
 static void lsns_init_debug(void)
 {
 	__UL_INIT_DEBUG(lsns, LSNS_DEBUG_, 0, LSNS_DEBUG);
-}
-
-static void disable_columns_truncate(void)
-{
-	size_t i;
-
-	for (i = 0; i < ARRAY_SIZE(infos); i++)
-		infos[i].flags &= ~SCOLS_FL_TRUNC;
 }
 
 static int column_name_to_id(const char *name, size_t namesz)
@@ -185,7 +184,7 @@ static inline int get_column_id(int num)
 	return columns[num];
 }
 
-static inline struct colinfo *get_column_info(unsigned num)
+static inline const struct colinfo *get_column_info(unsigned num)
 {
 	return &infos[ get_column_id(num) ];
 }
@@ -257,8 +256,6 @@ static int read_process(struct lsns *ls, pid_t pid)
 	}
 
 	INIT_LIST_HEAD(&p->processes);
-	INIT_LIST_HEAD(&p->branch);
-	INIT_LIST_HEAD(&p->children);
 
 	DBG(PROC, ul_debugobj(p, "new pid=%d", p->pid));
 	list_add_tail(&p->processes, &ls->processes);
@@ -296,14 +293,14 @@ done:
 	return rc;
 }
 
-static struct lsns_namespace *get_namespace(struct lsns *ls, int type, ino_t ino)
+static struct lsns_namespace *get_namespace(struct lsns *ls, ino_t ino)
 {
 	struct list_head *p;
 
 	list_for_each(p, &ls->namespaces) {
 		struct lsns_namespace *ns = list_entry(p, struct lsns_namespace, namespaces);
 
-		if (ns->id == ino && ns->type == type)
+		if (ns->id == ino)
 			return ns;
 	}
 	return NULL;
@@ -341,15 +338,27 @@ static struct lsns_namespace *add_namespace(struct lsns *ls, int type, ino_t ino
 	return ns;
 }
 
-static int add_process_to_namespace(struct lsns_namespace *ns, struct lsns_process *proc)
+static int add_process_to_namespace(struct lsns *ls, struct lsns_namespace *ns, struct lsns_process *proc)
 {
+	struct list_head *p;
+
 	DBG(NS, ul_debugobj(ns, "add process [%p] pid=%d to %s[%lu]", proc, proc->pid, ns_names[ns->type], ns->id));
+
+	list_for_each(p, &ls->processes) {
+		struct lsns_process *xproc = list_entry(p, struct lsns_process, processes);
+
+		if (xproc->pid == proc->ppid)		/* my parent */
+			proc->parent = xproc;
+		else if (xproc->ppid == proc->pid)	/* my child */
+			xproc->parent = proc;
+	}
 
 	list_add_tail(&proc->ns_siblings[ns->type], &ns->processes);
 	ns->nprocs++;
 
 	if (!ns->proc || ns->proc->pid > proc->pid)
 		ns->proc = proc;
+
 	return 0;
 }
 
@@ -367,19 +376,20 @@ static int read_namespaces(struct lsns *ls)
 		for (i = 0; i < ARRAY_SIZE(proc->ns_ids); i++) {
 			if (proc->ns_ids[i] == 0)
 				continue;
-			if (!(ns = get_namespace(ls, i, proc->ns_ids[i]))) {
+			if (!(ns = get_namespace(ls, proc->ns_ids[i]))) {
 				ns = add_namespace(ls, i, proc->ns_ids[i]);
 				if (!ns)
 					return -ENOMEM;
 			}
-			add_process_to_namespace(ns, proc);
+			add_process_to_namespace(ls, ns, proc);
 		}
 	}
 
 	return 0;
 }
 
-static void add_scols_line(struct libscols_table *table, struct lsns_namespace *ns)
+static void add_scols_line(struct lsns *ls, struct libscols_table *table,
+			   struct lsns_namespace *ns, struct lsns_process *proc)
 {
 	size_t i;
 	struct libscols_line *line;
@@ -387,7 +397,8 @@ static void add_scols_line(struct libscols_table *table, struct lsns_namespace *
 	assert(ns);
 	assert(table);
 
-	line = scols_table_new_line(table, NULL);
+	line = scols_table_new_line(table,
+			ls->tree && proc->parent ? proc->parent->outline : NULL);
 	if (!line) {
 		warn(_("failed to add line to output"));
 		return;
@@ -401,7 +412,10 @@ static void add_scols_line(struct libscols_table *table, struct lsns_namespace *
 			xasprintf(&str, "%lu", ns->id);
 			break;
 		case COL_PID:
-			xasprintf(&str, "%d", (int) ns->proc->pid);
+			xasprintf(&str, "%d", (int) proc->pid);
+			break;
+		case COL_PPID:
+			xasprintf(&str, "%d", (int) proc->ppid);
 			break;
 		case COL_TYPE:
 			xasprintf(&str, "%s", ns_names[ns->type]);
@@ -410,18 +424,18 @@ static void add_scols_line(struct libscols_table *table, struct lsns_namespace *
 			xasprintf(&str, "%d", ns->nprocs);
 			break;
 		case COL_COMMAND:
-			str = proc_get_command(ns->proc->pid);
+			str = proc_get_command(proc->pid);
 			if (!str)
-				str = proc_get_command_name(ns->proc->pid);
+				str = proc_get_command_name(proc->pid);
 			break;
 		case COL_PATH:
-			xasprintf(&str, "/proc/%d/ns/%s", (int) ns->proc->pid, ns_names[ns->type]);
+			xasprintf(&str, "/proc/%d/ns/%s", (int) proc->pid, ns_names[ns->type]);
 			break;
 		case COL_UID:
-			xasprintf(&str, "%d", (int) ns->proc->uid);
+			xasprintf(&str, "%d", (int) proc->uid);
 			break;
 		case COL_USER:
-			xasprintf(&str, "%s", get_id(uid_cache, ns->proc->uid)->name);
+			xasprintf(&str, "%s", get_id(uid_cache, proc->uid)->name);
 			break;
 		default:
 			break;
@@ -430,19 +444,19 @@ static void add_scols_line(struct libscols_table *table, struct lsns_namespace *
 		if (str)
 			scols_line_set_data(line, i, str);
 	}
+
+	proc->outline = line;
 }
 
-static int show_namespaces(struct lsns *ls)
+static struct libscols_table *init_scols_table(struct lsns *ls)
 {
 	struct libscols_table *tab;
-	struct list_head *p;
 	size_t i;
-	int rc = 0;
 
 	tab = scols_new_table();
 	if (!tab) {
 		warn(_("failed to initialize output table"));
-		return -ENOMEM;
+		return NULL;
 	}
 
 	scols_table_enable_raw(tab, ls->raw);
@@ -453,14 +467,35 @@ static int show_namespaces(struct lsns *ls)
 		scols_table_set_name(tab, "namespaces");
 
 	for (i = 0; i < ncolumns; i++) {
-		struct colinfo *col = get_column_info(i);
+		const struct colinfo *col = get_column_info(i);
+		int flags = col->flags;
 
-		if (!scols_table_new_column(tab, col->name, col->whint, col->flags)) {
+		if (ls->notrunc)
+		       flags &= ~SCOLS_FL_TRUNC;
+		if (ls->tree && get_column_id(i) == COL_COMMAND)
+			flags |= SCOLS_FL_TREE;
+
+		if (!scols_table_new_column(tab, col->name, col->whint, flags)) {
 			warnx(_("failed to initialize output column"));
-			rc = -errno;
-			goto done;
+			goto err;
 		}
 	}
+
+	return tab;
+err:
+	scols_unref_table(tab);
+	return NULL;
+}
+
+static int show_namespaces(struct lsns *ls)
+{
+	struct libscols_table *tab;
+	struct list_head *p;
+	int rc = 0;
+
+	tab = init_scols_table(ls);
+	if (!tab)
+		return -ENOMEM;
 
 	list_for_each(p, &ls->namespaces) {
 		struct lsns_namespace *ns = list_entry(p, struct lsns_namespace, namespaces);
@@ -468,13 +503,49 @@ static int show_namespaces(struct lsns *ls)
 		if (ls->pid != 0 && !namespace_has_process(ns, ls->pid))
 			continue;
 
-		add_scols_line(tab, ns);
+		add_scols_line(ls, tab, ns, ns->proc);
 	}
 
 	scols_print_table(tab);
-done:
 	scols_unref_table(tab);
 	return rc;
+}
+
+static void show_process(struct lsns *ls, struct libscols_table *tab,
+			 struct lsns_process *proc, struct lsns_namespace *ns)
+{
+	/*
+	 * create a tree from parent->child relation, but only if the parent is
+	 * within the same namespace
+	 */
+	if (ls->tree
+	    && proc->parent
+	    && !proc->parent->outline
+	    && proc->parent->ns_ids[ns->type] == proc->ns_ids[ns->type])
+		show_process(ls, tab, proc->parent, ns);
+
+	add_scols_line(ls, tab, ns, proc);
+}
+
+
+static int show_namespace_processes(struct lsns *ls, struct lsns_namespace *ns)
+{
+	struct libscols_table *tab;
+	struct list_head *p;
+
+	tab = init_scols_table(ls);
+	if (!tab)
+		return -ENOMEM;
+
+	list_for_each(p, &ns->processes) {
+		struct lsns_process *proc = list_entry(p, struct lsns_process, ns_siblings[ns->type]);
+		show_process(ls, tab, proc, ns);
+	}
+
+
+	scols_print_table(tab);
+	scols_unref_table(tab);
+	return 0;
 }
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
@@ -484,16 +555,17 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,
-		_(" %s [options]\n"), program_invocation_short_name);
+		_(" %s [options] [<namespace>]\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_("List local system locks.\n"), out);
+	fputs(_("List system namespaces.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -J, --json             use JSON output format\n"), out);
-	fputs(_(" -p, --task <pid>       print process namespaces\n"), out);
+	fputs(_(" -l, --list             use list format output\n"), out);
 	fputs(_(" -n, --noheadings       don't print headings\n"), out);
 	fputs(_(" -o, --output <list>    define which output columns to use\n"), out);
+	fputs(_(" -p, --task <pid>       print process namespaces\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
 
@@ -506,7 +578,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
-	fprintf(out, USAGE_MAN_TAIL("lslocks(8)"));
+	fprintf(out, USAGE_MAN_TAIL("lsns(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -517,6 +589,7 @@ int main(int argc, char *argv[])
 	int c;
 	int r = 0;
 	char *outarg = NULL;
+	ino_t ns_ino = 0;
 	static const struct option long_opts[] = {
 		{ "json",       no_argument,       NULL, 'J' },
 		{ "task",       required_argument, NULL, 'p' },
@@ -525,6 +598,7 @@ int main(int argc, char *argv[])
 		{ "notruncate", no_argument,       NULL, 'u' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "noheadings", no_argument,       NULL, 'n' },
+		{ "list",       no_argument,       NULL, 'l' },
 		{ "raw",        no_argument,       NULL, 'r' },
 		{ NULL, 0, NULL, 0 }
 	};
@@ -547,13 +621,16 @@ int main(int argc, char *argv[])
 	INIT_LIST_HEAD(&ls.namespaces);
 
 	while ((c = getopt_long(argc, argv,
-				"Jp:o:nruhV", long_opts, NULL)) != -1) {
+				"Jlp:o:nruhV", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
 		switch(c) {
 		case 'J':
 			ls.json = 1;
+			break;
+		case 'l':
+			ls.list = 1;
 			break;
 		case 'o':
 			outarg = optarg;
@@ -573,7 +650,7 @@ int main(int argc, char *argv[])
 			ls.raw = 1;
 			break;
 		case 'u':
-			disable_columns_truncate();
+			ls.notrunc = 1;
 			break;
 		case '?':
 		default:
@@ -581,8 +658,21 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	if (optind < argc) {
+		if (ls.pid)
+			errx(EXIT_FAILURE, _("--task is mutually exclusive with <namespace>"));
+		ns_ino = strtou64_or_err(argv[optind], _("invalid namespace argument"));
+		ls.tree = ls.list ? 0 : 1;
+
+		if (!ncolumns) {
+			columns[ncolumns++] = COL_PID;
+			columns[ncolumns++] = COL_PPID;
+			columns[ncolumns++] = COL_USER;
+			columns[ncolumns++] = COL_COMMAND;
+		}
+	}
+
 	if (!ncolumns) {
-		/* default columns */
 		columns[ncolumns++] = COL_NS;
 		columns[ncolumns++] = COL_TYPE;
 		columns[ncolumns++] = COL_NPROCS;
@@ -604,8 +694,16 @@ int main(int argc, char *argv[])
 	r = read_processes(&ls);
 	if (!r)
 		r = read_namespaces(&ls);
-	if (!r)
-		r = show_namespaces(&ls);
+	if (!r) {
+		if (ns_ino) {
+			struct lsns_namespace *ns = get_namespace(&ls, ns_ino);
+
+			if (!ns)
+				err(EXIT_FAILURE, _("not found namespace: %ju"), (uintmax_t) ns_ino);
+			r = show_namespace_processes(&ls, ns);
+		} else
+			r = show_namespaces(&ls);
+	}
 
 	free_idcache(uid_cache);
 	return r == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
