@@ -143,8 +143,10 @@ struct lsns {
 	struct list_head processes;
 	struct list_head namespaces;
 
-	pid_t	pid;		/* filter out by PID */
-	ino_t	ns;		/* filter out by namespace */
+	pid_t	fltr_pid;	/* filter out by PID */
+	ino_t	fltr_ns;	/* filter out by namespace */
+	int	fltr_types[ARRAY_SIZE(ns_names)];
+	int	fltr_ntypes;
 
 	unsigned int raw	: 1,
 		     json	: 1,
@@ -157,6 +159,17 @@ struct lsns {
 static void lsns_init_debug(void)
 {
 	__UL_INIT_DEBUG(lsns, LSNS_DEBUG_, 0, LSNS_DEBUG);
+}
+
+static int ns_name2type(const char *name)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(ns_names); i++) {
+		if (strcmp(ns_names[i], name) == 0)
+			return i;
+	}
+	return -1;
 }
 
 static int column_name_to_id(const char *name, size_t namesz)
@@ -201,6 +214,7 @@ static ino_t get_ns_ino(int dir, const char *nsname, ino_t *ino)
 	*ino = st.st_ino;
 	return 0;
 }
+
 
 static int read_process(struct lsns *ls, pid_t pid)
 {
@@ -248,6 +262,9 @@ static int read_process(struct lsns *ls, pid_t pid)
 
 	for (i = 0; i < ARRAY_SIZE(p->ns_ids); i++) {
 		INIT_LIST_HEAD(&p->ns_siblings[i]);
+
+		if (!ls->fltr_types[i])
+			continue;
 
 		rc = get_ns_ino(dirfd(dir), ns_names[i], &p->ns_ids[i]);
 		if (rc && rc != -EACCES)
@@ -500,7 +517,7 @@ static int show_namespaces(struct lsns *ls)
 	list_for_each(p, &ls->namespaces) {
 		struct lsns_namespace *ns = list_entry(p, struct lsns_namespace, namespaces);
 
-		if (ls->pid != 0 && !namespace_has_process(ns, ls->pid))
+		if (ls->fltr_pid != 0 && !namespace_has_process(ns, ls->fltr_pid))
 			continue;
 
 		add_scols_line(ls, tab, ns, ns->proc);
@@ -568,6 +585,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -p, --task <pid>       print process namespaces\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
+	fputs(_(" -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -583,13 +601,13 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+
 int main(int argc, char *argv[])
 {
 	struct lsns ls;
 	int c;
 	int r = 0;
 	char *outarg = NULL;
-	ino_t ns_ino = 0;
 	static const struct option long_opts[] = {
 		{ "json",       no_argument,       NULL, 'J' },
 		{ "task",       required_argument, NULL, 'p' },
@@ -600,6 +618,7 @@ int main(int argc, char *argv[])
 		{ "noheadings", no_argument,       NULL, 'n' },
 		{ "list",       no_argument,       NULL, 'l' },
 		{ "raw",        no_argument,       NULL, 'r' },
+		{ "type",       required_argument, NULL, 't' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -615,13 +634,13 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	lsns_init_debug();
-
 	memset(&ls, 0, sizeof(ls));
+
 	INIT_LIST_HEAD(&ls.processes);
 	INIT_LIST_HEAD(&ls.namespaces);
 
 	while ((c = getopt_long(argc, argv,
-				"Jlp:o:nruhV", long_opts, NULL)) != -1) {
+				"Jlp:o:nruhVt:", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
@@ -639,7 +658,7 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'p':
-			ls.pid = strtos32_or_err(optarg, _("invalid PID argument"));
+			ls.fltr_pid = strtos32_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'h':
 			usage(stdout);
@@ -652,16 +671,32 @@ int main(int argc, char *argv[])
 		case 'u':
 			ls.notrunc = 1;
 			break;
+		case 't':
+		{
+			int type = ns_name2type(optarg);
+			if (type < 0)
+				errx(EXIT_FAILURE, _("unknown namespace type: %s"), optarg);
+			ls.fltr_types[type] = 1;
+			ls.fltr_ntypes++;
+			break;
+		}
 		case '?':
 		default:
 			usage(stderr);
 		}
 	}
 
+	/* no filter, enable all *
+	if (!ls.fltr_ntypes) {
+		size_t i;
+		for (i = 0; i < ARRAY_SIZE(ns_names); i++)
+			ls.fltr_types[i] = 1;
+	}*/
+
 	if (optind < argc) {
-		if (ls.pid)
+		if (ls.fltr_pid)
 			errx(EXIT_FAILURE, _("--task is mutually exclusive with <namespace>"));
-		ns_ino = strtou64_or_err(argv[optind], _("invalid namespace argument"));
+		ls.fltr_ns = strtou64_or_err(argv[optind], _("invalid namespace argument"));
 		ls.tree = ls.list ? 0 : 1;
 
 		if (!ncolumns) {
@@ -695,11 +730,11 @@ int main(int argc, char *argv[])
 	if (!r)
 		r = read_namespaces(&ls);
 	if (!r) {
-		if (ns_ino) {
-			struct lsns_namespace *ns = get_namespace(&ls, ns_ino);
+		if (ls.fltr_ns) {
+			struct lsns_namespace *ns = get_namespace(&ls, ls.fltr_ns);
 
 			if (!ns)
-				err(EXIT_FAILURE, _("not found namespace: %ju"), (uintmax_t) ns_ino);
+				err(EXIT_FAILURE, _("not found namespace: %ju"), (uintmax_t) ls.fltr_ns);
 			r = show_namespace_processes(&ls, ns);
 		} else
 			r = show_namespaces(&ls);
