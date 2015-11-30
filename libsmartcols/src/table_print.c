@@ -88,7 +88,6 @@ static int buffer_append_data(struct libscols_buffer *buf, const char *str)
 
 	if (maxsz <= sz)
 		return -EINVAL;
-
 	memcpy(buf->cur, str, sz + 1);
 	buf->cur += sz;
 	return 0;
@@ -696,7 +695,7 @@ static int count_column_width(struct libscols_table *tb,
 
 		rc = cell_to_buffer(tb, ln, cl, buf);
 		if (rc)
-			return rc;
+			goto done;
 
 		data = buffer_get_data(buf);
 		len = data ? mbs_safe_width(data) : 0;
@@ -739,10 +738,11 @@ static int count_column_width(struct libscols_table *tb,
 
 		cl->width = (size_t) cl->width_hint;
 
+done:
 	ON_DBG(COL, dbg_column(tb, cl));
+	DBG(COL, ul_debugobj(cl, "column width=%zu, rc=%d", cl->width, rc));
 	return rc;
 }
-
 
 /*
  * This is core of the scols_* voodo...
@@ -764,14 +764,16 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 	while (scols_table_next_column(tb, &itr, &cl) == 0) {
 		rc = count_column_width(tb, cl, buf);
 		if (rc)
-			return rc;
+			goto done;
 
 		width += cl->width + (is_last_column(tb, cl) ? 0 : 1);
 		extremes += cl->is_extreme;
 	}
 
-	if (!tb->is_term)
-		return 0;
+	if (!tb->is_term) {
+		DBG(TAB, ul_debugobj(tb, "   non-terminal output"));
+		goto done;
+	}
 
 	/* reduce columns with extreme fields */
 	if (width > tb->termwidth && extremes) {
@@ -787,7 +789,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 			org_width = cl->width;
 			rc = count_column_width(tb, cl, buf);
 			if (rc)
-				return rc;
+				goto done;
 
 			if (org_width > cl->width)
 				width -= org_width - cl->width;
@@ -908,7 +910,8 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 		}
 	}
 
-	DBG(TAB, ul_debugobj(tb, "  result: %zu", width));
+done:
+	DBG(TAB, ul_debugobj(tb, "  final width: %zu (rc=%d)", width, rc));
 	ON_DBG(TAB, dbg_columns(tb));
 
 	return rc;
@@ -971,7 +974,7 @@ int scols_print_table(struct libscols_table *tb)
 
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (scols_table_next_line(tb, &itr, &ln) == 0) {
-		size_t sz = strlen_line(ln);
+		size_t sz = strlen_line(ln) + tb->termwidth;
 		if (sz > bufsz)
 			bufsz = sz;
 	}
