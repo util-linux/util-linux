@@ -703,8 +703,7 @@ static int count_column_width(struct libscols_table *tb,
 
 		if (len == (size_t) -1)		/* ignore broken multibyte strings */
 			len = 0;
-		if (len > cl->width_max)
-			cl->width_max = len;
+		cl->width_max = max(len, cl->width_max);
 
 		if (cl->is_extreme && len > cl->width_avg * 2)
 			continue;
@@ -712,8 +711,11 @@ static int count_column_width(struct libscols_table *tb,
 			sum += len;
 			count++;
 		}
-		if (len > cl->width)
-			cl->width = len;
+		cl->width = max(len, cl->width);
+		if (scols_column_is_tree(cl)) {
+			size_t treewidth = buffer_get_safe_art_size(buf);
+			cl->width_treeart = max(cl->width_treeart, treewidth);
+		}
 	}
 
 	if (count && cl->width_avg == 0) {
@@ -866,11 +868,15 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 
 		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 		while (scols_table_next_column(tb, &itr, &cl) == 0) {
+
+			DBG(TAB, ul_debugobj(cl, "     checking %s (width=%zu, treeart=%zu)",
+						cl->header.data, cl->width, cl->width_treeart));
+
 			if (width <= tb->termwidth)
 				break;
 			if (cl->width_hint > 1 && !scols_column_is_trunc(cl))
 				continue;	/* never truncate columns with absolute sizes */
-			if (scols_column_is_tree(cl))
+			if (scols_column_is_tree(cl) && width <= cl->width_treeart)
 				continue;	/* never truncate the tree */
 			if (trunc_only && !scols_column_is_trunc(cl))
 				continue;

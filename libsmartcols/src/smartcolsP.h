@@ -75,6 +75,7 @@ struct libscols_column {
 	size_t	width_min;	/* minimal width (usually header width) */
 	size_t  width_max;	/* maximal width */
 	size_t  width_avg;	/* average width, used to detect extreme fields */
+	size_t	width_treeart;	/* size of the tree ascii art */
 	double	width_hint;	/* hint (N < 1 is in percent of termwidth) */
 
 	int	flags;
