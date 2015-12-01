@@ -17,8 +17,13 @@ lsns \- list namespaces
 lists information about all the currently accessible namespaces or about the
 given \fInamespace\fP.  The \fInamespace\fP identifier is an inode number.
 
+The default output is subject to change.  So whenever possible, you should
+avoid using default outputs in your scripts.  Always explicitly define expected
+columns by using --output columns-list in environments where a stable output is
+required.
+
 Note that lsns reads information directly from /proc filesystem and for
-non-root users it may returns incomplete information. The current 
+non-root users it may returns incomplete information.  The current 
 /proc filesystem may be unshared and affected by PID namespace (see \fBunshare --mount-proc\fP
 for more details).
 .B lsns
