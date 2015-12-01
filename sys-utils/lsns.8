@@ -1,0 +1,74 @@
+.\" Man page for the lslocks command.
+.\" Copyright 2015 Karel Zak <kzak@redhat.com>
+.\" May be distributed under the GNU General Public License
+
+.TH LSNS 8 "December 2015" "util-linux" "System Administration"
+.SH NAME
+lsns \- list namespaces
+.SH SYNOPSIS
+.B lsns
+[options]
+.RB [
+.I namespace
+.RB ]
+
+.SH DESCRIPTION
+.B lsns
+lists information about all the currently accessible namespaces or about the
+given \fInamespace\fP.  The \fInamespace\fP identifier is an inode number.
+
+Note that lsns reads information directly from /proc filesystem and for
+non-root users it may returns incomplte information.
+
+.SH OPTIONS
+.TP
+.BR \-J , " \-\-json"
+Use JSON output format.
+.TP
+.BR \-l , " \-\-list"
+Use list output format.
+.TP
+.BR \-n , " \-\-noheadings"
+Do not print a header line.
+.TP
+.BR \-o , " \-\-output " \fIlist\fP
+Specify which output columns to print.  Use
+.B "--help"
+to get a list of all supported columns.
+
+The default list of columns may be extended if \fIlist\fP is
+specified in the format \fI+list\fP (e.g. \fBlsns -o +PATH\fP).
+.TP
+.BR \-p , " \-\-task " \fIpid\fP
+Display only the namepsaces held by the process with this \fIpid\fR.
+.TP
+.BR \-r , " \-\-raw"
+Use the raw output format.
+.TP
+.BR \-t , " \-\-type " \fItype\fP
+Display specified \fItype\fP of the namespaces only. The supported types are
+\fBmnt\fP, \fBnet\fP, \fBipc\fP, \fBuser\fP, \fBpid\fP and \fButs\fP. This
+option may be given more than once.
+.TP
+.BR \-u , " \-\-notruncate"
+Do not truncate text in columns.
+.TP
+.BR \-V , " \-\-version"
+Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
+
+.SH AUTHORS
+.nf
+Karel Zak <kzak@redhat.com>
+.fi
+
+.SH "SEE ALSO"
+.BR unshare (1),
+.BR nsenter (1),
+.BR clone (2)
+
+.SH AVAILABILITY
+The lsns command is part of the util-linux package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
