@@ -686,12 +686,11 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/* no filter, enable all *
 	if (!ls.fltr_ntypes) {
 		size_t i;
 		for (i = 0; i < ARRAY_SIZE(ns_names); i++)
 			ls.fltr_types[i] = 1;
-	}*/
+	}
 
 	if (optind < argc) {
 		if (ls.fltr_pid)
@@ -734,7 +733,7 @@ int main(int argc, char *argv[])
 			struct lsns_namespace *ns = get_namespace(&ls, ls.fltr_ns);
 
 			if (!ns)
-				err(EXIT_FAILURE, _("not found namespace: %ju"), (uintmax_t) ls.fltr_ns);
+				errx(EXIT_FAILURE, _("not found namespace: %ju"), (uintmax_t) ls.fltr_ns);
 			r = show_namespace_processes(&ls, ns);
 		} else
 			r = show_namespaces(&ls);
