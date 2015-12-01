@@ -379,6 +379,15 @@ static int add_process_to_namespace(struct lsns *ls, struct lsns_namespace *ns, 
 	return 0;
 }
 
+static int cmp_namespaces(struct list_head *a, struct list_head *b,
+			  __attribute__((__unused__)) void *data)
+{
+	struct lsns_namespace *xa = list_entry(a, struct lsns_namespace, namespaces),
+			      *xb = list_entry(b, struct lsns_namespace, namespaces);
+
+	return cmp_numbers(xa->id, xb->id);
+}
+
 static int read_namespaces(struct lsns *ls)
 {
 	struct list_head *p;
@@ -401,6 +410,8 @@ static int read_namespaces(struct lsns *ls)
 			add_process_to_namespace(ls, ns, proc);
 		}
 	}
+
+	list_sort(&ls->namespaces, cmp_namespaces, NULL);
 
 	return 0;
 }
@@ -556,7 +567,9 @@ static int show_namespace_processes(struct lsns *ls, struct lsns_namespace *ns)
 
 	list_for_each(p, &ns->processes) {
 		struct lsns_process *proc = list_entry(p, struct lsns_process, ns_siblings[ns->type]);
-		show_process(ls, tab, proc, ns);
+
+		if (!proc->outline)
+			show_process(ls, tab, proc, ns);
 	}
 
 
