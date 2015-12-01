@@ -80,14 +80,14 @@ struct colinfo {
 
 /* columns descriptions */
 static const struct colinfo infos[] = {
-	[COL_NS]      = { "NS",     10, SCOLS_FL_RIGHT, N_("command of the process holding the lock") },
+	[COL_NS]      = { "NS",     10, SCOLS_FL_RIGHT, N_("namespace identifier (inode number)") },
 	[COL_TYPE]    = { "TYPE",    5, 0, N_("kind of namespace") },
 	[COL_PATH]    = { "PATH",    0, 0, N_("path to the namespace")},
 	[COL_NPROCS]  = { "NPROCS",  5, SCOLS_FL_RIGHT, N_("number of processes in the namespace") },
 	[COL_PID]     = { "PID",     5, SCOLS_FL_RIGHT, N_("lowers PID in the namespace") },
 	[COL_PPID]    = { "PPID",    5, SCOLS_FL_RIGHT, N_("PPID of the PID") },
 	[COL_COMMAND] = { "COMMAND", 0, SCOLS_FL_TRUNC, N_("command line of the PID")},
-	[COL_UID]     = { "UID",     0, SCOLS_FL_RIGHT, N_("user ID of the PID")},
+	[COL_UID]     = { "UID",     0, SCOLS_FL_RIGHT, N_("UID of the PID")},
 	[COL_USER]    = { "USER",    0, 0, N_("username of the PID")}
 };
 
