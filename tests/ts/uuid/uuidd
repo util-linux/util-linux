@@ -33,7 +33,7 @@ fi
 test_flag() {
 	echo "options: $*" >> $TS_OUTPUT
 	$TS_CMD_UUIDD -s $UUIDD_SOCKET $* |
-		sed -E '/List of UUIDs:/d; s/^[[:space:]]+//' > "$OUTPUT_FILE" 2>>$TS_OUTPUT
+		sed '/List of UUIDs:/d; s/^[[:space:]]*//' > "$OUTPUT_FILE" 2>>$TS_OUTPUT
 	$TS_HELPER_UUID_PARSER "$OUTPUT_FILE" >> $TS_OUTPUT 2>&1
 	ret=$?
 	if [ $ret -ne 0 ]; then
