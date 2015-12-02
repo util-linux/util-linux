@@ -1240,21 +1240,33 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 			goto dflt;
 		}
 
-		/* on btrfs the subvolume is used as fs-root in
-		 * /proc/self/mountinfo, so we have to get the original subvolume
-		 * name from src_fs and prepend the subvolume name to the
-		 * fs-root path
+		/* It's possible that fstab_fs source is subdirectory on btrfs
+		 * subvolume or anothe bind mount. For example:
+		 *
+		 * /dev/sdc        /mnt/test       btrfs   subvol=/anydir
+		 * /mnt/test/foo   /mnt/test2      auto    bind
+		 *
+		 * in this case, the root for /mnt/test2 will be /anydir/foo on
+		 * /dev/sdc. It means we have to compose the final root from
+		 * root and src_root.
 		 */
 		src_root = mnt_fs_get_root(src_fs);
-		if (src_root && !startswith(root, src_root)) {
-			size_t sz = strlen(root) + strlen(src_root) + 1;
-			char *tmp = malloc(sz);
 
-			if (!tmp)
-				goto err;
-			snprintf(tmp, sz, "%s%s", src_root, root);
-			free(root);
-			root = tmp;
+		DBG(FS, ul_debugobj(fs, "source root: %s, source FS root: %s", root, src_root));
+
+		if (src_root && !startswith(root, src_root)) {
+			if (strcmp(root, "/") == 0) {
+				free(root);
+				root = strdup(src_root);
+				if (!root)
+					goto err;
+			} else {
+				char *tmp;
+				if (asprintf(&tmp, "%s%s", src_root, root) < 0)
+					goto err;
+				free(root);
+				root = tmp;
+			}
 		}
 	}
 
@@ -1371,6 +1383,8 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 		goto done;
 	}
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+
+	DBG(FS, ul_debugobj(fstab_fs, "is mounted: src=%s, tgt=%s, root=%s", src, tgt, root));
 
 	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
 
