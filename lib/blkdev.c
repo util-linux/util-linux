@@ -25,9 +25,15 @@
 # include <sys/disk.h>
 #endif
 
+#ifndef EBADFD
+# define EBADFD 77		/* File descriptor in bad state */
+#endif
+
 #include "blkdev.h"
 #include "c.h"
 #include "linux_version.h"
+#include "fileutils.h"
+#include "nls.h"
 
 static long
 blkdev_valid_offset (int fd, off_t offset) {
@@ -252,6 +258,24 @@ int blkdev_is_misaligned(int fd)
 #else
 	return 0;
 #endif
+}
+
+int open_blkdev_or_file(const struct stat *st, const char *name, const int oflag)
+{
+	int fd;
+
+	if (S_ISBLK(st->st_mode)) {
+		fd = open(name, oflag | O_EXCL);
+	} else
+		fd = open(name, oflag);
+	if (-1 < fd && !is_same_inode(fd, st)) {
+		close(fd);
+		errno = EBADFD;
+		return -1;
+	}
+	if (-1 < fd && S_ISBLK(st->st_mode) && blkdev_is_misaligned(fd))
+		warnx(_("warning: %s is misaligned"), name);
+	return fd;
 }
 
 int blkdev_is_cdrom(int fd)

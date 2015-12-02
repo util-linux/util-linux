@@ -695,8 +695,6 @@ static void determine_device_blocks(struct fs_control *ctl, const struct stat *s
 
 		if (blkdev_get_sector_size(ctl->device_fd, &sectorsize) == -1)
 			sectorsize = DEFAULT_SECTOR_SIZE;	/* kernel < 2.3.3 */
-		if (blkdev_is_misaligned(ctl->device_fd))
-			warnx(_("%s: device is misaligned"), ctl->device_name);
 		if (MINIX_BLOCK_SIZE < sectorsize)
 			errx(MKFS_EX_ERROR, _("block size smaller than physical "
 					      "sector size of %s"), ctl->device_name);
@@ -821,10 +819,7 @@ int main(int argc, char ** argv)
 			ctl.device_name);
 	if (stat(ctl.device_name, &statbuf) < 0)
 		err(MKFS_EX_ERROR, _("stat of %s failed"), ctl.device_name);
-	if (S_ISBLK(statbuf.st_mode))
-		ctl.device_fd = open(ctl.device_name, O_RDWR | O_EXCL);
-	else
-		ctl.device_fd = open(ctl.device_name, O_RDWR);
+	ctl.device_fd = open_blkdev_or_file(&statbuf, ctl.device_name, O_RDWR);
 	if (ctl.device_fd < 0)
 		err(MKFS_EX_ERROR, _("cannot open %s"), ctl.device_name);
 	determine_device_blocks(&ctl, &statbuf);

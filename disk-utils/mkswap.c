@@ -240,23 +240,14 @@ static void open_device(struct mkswap_control *ctl)
 
 	if (stat(ctl->devname, &ctl->devstat) < 0)
 		err(EXIT_FAILURE, _("stat of %s failed"), ctl->devname);
-
-	if (S_ISBLK(ctl->devstat.st_mode))
-		ctl->fd = open(ctl->devname, O_RDWR | O_EXCL);
-	else {
-		if (ctl->check) {
-			ctl->check = 0;
-			warnx(_("warning: checking bad blocks from swap file is not supported: %s"),
-				ctl->devname);
-		}
-		ctl->fd = open(ctl->devname, O_RDWR);
-	}
+	ctl->fd = open_blkdev_or_file(&ctl->devstat, ctl->devname, O_RDWR);
 	if (ctl->fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), ctl->devname);
-
-	if (S_ISBLK(ctl->devstat.st_mode))
-		if (blkdev_is_misaligned(ctl->fd))
-			warnx(_("warning: %s is misaligned"), ctl->devname);
+	if (ctl->check && S_ISREG(ctl->devstat.st_mode)) {
+		ctl->check = 0;
+		warnx(_("warning: checking bad blocks from swap file is not supported: %s"),
+		       ctl->devname);
+	}
 }
 
 static void wipe_device(struct mkswap_control *ctl)

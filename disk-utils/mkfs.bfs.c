@@ -184,10 +184,7 @@ int main(int argc, char **argv)
 	if (stat(device, &statbuf) < 0)
 		err(EXIT_FAILURE, _("stat of %s failed"), device);
 
-	if (!S_ISBLK(statbuf.st_mode))
-		errx(EXIT_FAILURE, _("%s is not a block special device"), device);
-
-	fd = open(device, O_RDWR | O_EXCL);
+	fd = open_blkdev_or_file(&statbuf, device, O_RDWR);
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), device);
 
