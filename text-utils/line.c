@@ -67,6 +67,7 @@ int main(int argc, char **argv)
 			usage(stderr);
 		}
 
+	setvbuf(stdin, NULL, _IONBF, 0);
 	for (;;) {
 		c = getwchar();
 		if (c == WEOF) {
