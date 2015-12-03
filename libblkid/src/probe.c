@@ -582,11 +582,11 @@ int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[
 }
 
 /* align to mmap granularity */
-#define PROBE_ALIGN_OFF(p, o)	((o) & ~((p)->mmap_granularity - 1))
+#define PROBE_ALIGN_OFF(p, o)	((o) & ~((p)->mmap_granularity - 1ULL))
 /* default buffer sizes */
-#define PROBE_MMAP_BEGINSIZ	(1024 * 1024 * 2)	/* begin of the device */
-#define PROBE_MMAP_ENDSIZ	(1024 * 1024 * 2)	/* end of the device */
-#define PROBE_MMAP_MIDSIZ	(1024 * 1024)		/* middle of the device */
+#define PROBE_MMAP_BEGINSIZ	(1024ULL * 1024ULL * 2ULL)	/* begin of the device */
+#define PROBE_MMAP_ENDSIZ	(1024ULL * 1024ULL * 2ULL)	/* end of the device */
+#define PROBE_MMAP_MIDSIZ	(1024ULL * 1024ULL)		/* middle of the device */
 
 #define probe_is_mmap_wanted(p)		(!S_ISCHR((p)->mode))
 
@@ -594,7 +594,7 @@ static struct blkid_bufinfo *mmap_buffer(blkid_probe pr,
 					 blkid_loff_t real_off,
 					 blkid_loff_t len)
 {
-	size_t map_len;
+	blkid_loff_t map_len;
 	blkid_loff_t map_off = 0;
 	struct blkid_bufinfo *bf = NULL;
 
@@ -609,14 +609,17 @@ static struct blkid_bufinfo *mmap_buffer(blkid_probe pr,
 
 	/* begin of the device */
 	if (real_off == 0 || real_off + len < PROBE_MMAP_BEGINSIZ) {
-		DBG(BUFFER, ul_debug("\tmapping begin of the device"));
+		DBG(BUFFER, ul_debug("\tmapping begin of the device (max size: %ju)",
+					(uintmax_t) pr->size));
 		map_off = 0;
 		map_len = PROBE_MMAP_BEGINSIZ > pr->size ? pr->size : PROBE_MMAP_BEGINSIZ;
 
 
 	/* end of the device */
 	} else if (real_off > pr->off + pr->size - PROBE_MMAP_ENDSIZ) {
-		DBG(BUFFER, ul_debug("\tmapping end of the device"));
+		DBG(BUFFER, ul_debug("\tmapping end of the device (probing area: "
+					"off=%ju, size=%ju)",
+					(uintmax_t) pr->off, (uintmax_t) pr->size));
 
 		map_off = PROBE_ALIGN_OFF(pr, pr->off + pr->size - PROBE_MMAP_ENDSIZ);
 		map_len = pr->off + pr->size - map_off;
@@ -657,8 +660,8 @@ static struct blkid_bufinfo *mmap_buffer(blkid_probe pr,
 	INIT_LIST_HEAD(&bf->bufs);
 
 	DBG(BUFFER, ul_debug("\tmmap  %p: off=%ju, len=%ju (%ju pages)",
-				bf->data, map_off, map_len,
-				map_len / pr->mmap_granularity));
+				bf->data, (uintmax_t) map_off, (uintmax_t) map_len,
+				(uintmax_t) map_len / pr->mmap_granularity));
 	return bf;
 }
 
