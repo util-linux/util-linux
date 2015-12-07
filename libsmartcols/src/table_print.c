@@ -343,7 +343,9 @@ static int print_data(struct libscols_table *tb,
 			size_t xw = cl->width;
 			if (color)
 				fputs(color, tb->out);
-			fprintf(tb->out, "%*s", (int) xw, data);
+			for (i = len; i < width; i++)
+				fputc(' ', tb->out);
+			fputs(data, tb->out);
 			if (color)
 				fputs(UL_COLOR_RESET, tb->out);
 			if (len < xw)
