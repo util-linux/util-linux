@@ -176,8 +176,19 @@ static int line_ascii_art_to_buffer(struct libscols_table *tb,
 	return buffer_append_data(buf, art);
 }
 
-#define is_last_column(_tb, _cl) \
-		list_entry_is_last(&(_cl)->cl_columns, &(_tb)->tb_columns)
+static int is_last_column(struct libscols_table *tb, struct libscols_column *cl) 
+{
+	int rc = list_entry_is_last(&cl->cl_columns, &tb->tb_columns);
+	struct libscols_column *next;
+
+	if (rc)
+		return 1;
+
+	next = list_entry(cl->cl_columns.next, struct libscols_column, cl_columns);
+	if (next && next->ignore)
+		return 1;
+	return 0;
+}
 
 #define colsep(tb) ((tb)->colsep ? (tb)->colsep : " ")
 #define linesep(tb) ((tb)->linesep ? (tb)->linesep : "\n")
@@ -518,6 +529,8 @@ static int print_line(struct libscols_table *tb,
 
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
+		if (cl->ignore)
+			continue;
 		rc = cell_to_buffer(tb, ln, cl, buf);
 		if (!rc)
 			rc = print_data(tb, cl, ln,
@@ -547,6 +560,8 @@ static int print_header(struct libscols_table *tb, struct libscols_buffer *buf)
 	/* set the width according to the size of the data */
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
+		if (cl->ignore)
+			continue;
 		rc = buffer_set_data(buf, scols_cell_get_data(&cl->header));
 		if (!rc)
 			rc = print_data(tb, cl, NULL, &cl->header, buf);
@@ -642,9 +657,14 @@ static int print_tree(struct libscols_table *tb, struct libscols_buffer *buf)
 
 static void dbg_column(struct libscols_table *tb, struct libscols_column *cl)
 {
+	if (cl->ignore) {
+		DBG(COL, ul_debugobj(cl, "%s ignored", cl->header.data));
+		return;
+	}
+
 	DBG(COL, ul_debugobj(cl, "%15s seq=%zu, width=%zd, "
 				 "hint=%d, avg=%zu, max=%zu, min=%zu, "
-				 "extreme=%s",
+				 "extreme=%s %s",
 
 		cl->header.data, cl->seqnum, cl->width,
 		cl->width_hint > 1 ? (int) cl->width_hint :
@@ -652,7 +672,8 @@ static void dbg_column(struct libscols_table *tb, struct libscols_column *cl)
 		cl->width_avg,
 		cl->width_max,
 		cl->width_min,
-		cl->is_extreme ? "yes" : "not"));
+		cl->is_extreme ? "yes" : "not",
+		cl->flags & SCOLS_FL_TRUNC ? "trunc" : ""));
 }
 
 static void dbg_columns(struct libscols_table *tb)
@@ -766,7 +787,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 		if (rc)
 			goto done;
 
-		width += cl->width + (is_last_column(tb, cl) ? 0 : 1);
+		width += cl->width + (is_last_column(tb, cl) ? 0 : 1);	/* separator for non-last column */
 		extremes += cl->is_extreme;
 	}
 
@@ -910,6 +931,26 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 		}
 	}
 
+	/* ignore last column(s) or force last column to be truncated if
+	 * nowrap mode enabled */
+	if (tb->no_wrap && width > tb->termwidth) {
+		scols_reset_iter(&itr, SCOLS_ITER_BACKWARD);
+		while (scols_table_next_column(tb, &itr, &cl) == 0) {
+
+			if (width <= tb->termwidth)
+				break;
+			if (width - cl->width < tb->termwidth) {
+				size_t r =  width - tb->termwidth;
+
+				cl->flags |= SCOLS_FL_TRUNC;
+				cl->width -= r;
+				width -= r;
+			} else {
+				cl->ignore = 1;
+				width -= cl->width + 1;		/* +1 means separator between columns */
+			}
+		}
+	}
 done:
 	DBG(TAB, ul_debugobj(tb, "  final width: %zu (rc=%d)", width, rc));
 	ON_DBG(TAB, dbg_columns(tb));

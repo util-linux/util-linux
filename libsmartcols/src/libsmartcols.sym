@@ -120,3 +120,8 @@ global:
 	scols_table_is_json;
 	scols_table_set_name;
 } SMARTCOLS_2.25;
+
+SMARTCOLS_2.28 {
+global:
+	scols_table_enable_nowrap;
+} SMARTCOLS_2.27;

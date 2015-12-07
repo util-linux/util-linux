@@ -89,6 +89,8 @@ struct libscols_column {
 
 	struct libscols_cell	header;
 	struct list_head	cl_columns;
+
+	unsigned int ignore : 1;
 };
 
 /*
@@ -147,7 +149,8 @@ struct libscols_table {
 			colors_wanted	:1,	/* enable colors */
 			is_term		:1,	/* isatty() */
 			maxout		:1,	/* maximalize output */
-			no_headings	:1;	/* don't print header */
+			no_headings	:1,	/* don't print header */
+			no_wrap		:1;	/* never wrap lines */
 };
 
 #define IS_ITER_FORWARD(_i)	((_i)->direction == SCOLS_ITER_FORWARD)

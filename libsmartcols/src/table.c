@@ -839,6 +839,24 @@ int scols_table_enable_maxout(struct libscols_table *tb, int enable)
 }
 
 /**
+ * scols_table_enable_nowrap:
+ * @tb: table
+ * @enable: 1 or 0
+ *
+ * Never continue on next line, remove last column(s) when too large, truncate last column.
+ *
+ * Returns: 0 on success, negative number in case of an error.
+ */
+int scols_table_enable_nowrap(struct libscols_table *tb, int enable)
+{
+	if (!tb)
+		return -EINVAL;
+	DBG(TAB, ul_debugobj(tb, "nowrap: %s", enable ? "ENABLE" : "DISABLE"));
+	tb->no_wrap = enable ? 1 : 0;
+	return 0;
+}
+
+/**
  * scols_table_colors_wanted:
  * @tb: table
  *
