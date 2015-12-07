@@ -324,7 +324,10 @@ static int print_data(struct libscols_table *tb,
 	width = cl->width;
 	bytes = strlen(data);
 
-	if (is_last_column(tb, cl) && len < width && !scols_table_is_maxout(tb))
+	if (is_last_column(tb, cl)
+	    && len < width
+	    && !scols_table_is_maxout(tb)
+	    && !scols_column_is_right(cl))
 		width = len;
 
 	/* truncate data */
@@ -340,7 +343,6 @@ static int print_data(struct libscols_table *tb,
 
 	if (data) {
 		if (scols_column_is_right(cl)) {
-			size_t xw = cl->width;
 			if (color)
 				fputs(color, tb->out);
 			for (i = len; i < width; i++)
@@ -348,8 +350,7 @@ static int print_data(struct libscols_table *tb,
 			fputs(data, tb->out);
 			if (color)
 				fputs(UL_COLOR_RESET, tb->out);
-			if (len < xw)
-				len = xw;
+			len = width;
 		} else if (color) {
 			char *p = data;
 			size_t art = buffer_get_safe_art_size(buf);
