@@ -24,16 +24,17 @@ TS_DESC="low-level superblocks probing"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_BLKID"
+ts_check_prog "xz"
 
 mkdir -p $TS_OUTDIR/images-fs
 
-for img in $(ls $TS_SELF/images-fs/*.img.bz2 | sort); do
-	name=$(basename $img .img.bz2)
+for img in $(ls $TS_SELF/images-fs/*.img.xz | sort); do
+	name=$(basename $img .img.xz)
 	outimg=$TS_OUTDIR/images-fs/${name}.img
 
 	ts_init_subtest $name
 
-	bunzip2 < $img > $outimg
+	xz -dc $img > $outimg
 
 	$TS_CMD_BLKID -p -o udev $outimg 2>&1 | sort > $TS_OUTPUT
 	ts_finalize_subtest
