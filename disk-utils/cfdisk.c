@@ -497,23 +497,12 @@ static int lines_refresh(struct cfdisk *cf)
 	cf->lines = xcalloc(cf->nlines, sizeof(struct cfdisk_line));
 
 	for (p = cf->linesbuf, i = 0; p && i < cf->nlines; i++) {
-		char *begin = p;
-		size_t sz;
-
-		cf->lines[i].data = begin;
-		p = strchr(begin, '\n');
-		sz = p ? (size_t) (p - begin) : strlen(begin);
+		cf->lines[i].data = p;
+		p = strchr(p, '\n');
 		if (p) {
 			*p = '\0';
 			p++;
 		}
-		/* libsmartcols reduces columns width as much as possible to
-		 * fit terminal width, but for very small terminals it preffers
-		 * long lines rather than remove columns from output. This is fine
-		 * for normal utils, but it's problematic for ncurses -- so we
-		 * manually cut the end of the line to fit terminal width. */
-		if (sz + ARROW_CURSOR_WIDTH > ui_cols)
-			*(begin + (ui_cols - ARROW_CURSOR_WIDTH)) = '\0';
 		cf->lines[i].extra = scols_new_table();
 		scols_table_enable_noheadings(cf->lines[i].extra, 1);
 		scols_table_new_column(cf->lines[i].extra, NULL, 0, SCOLS_FL_RIGHT);
