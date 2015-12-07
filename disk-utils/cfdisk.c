@@ -354,6 +354,7 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	if (!table)
 		goto done;
 	scols_table_enable_maxout(table, 1);
+	scols_table_enable_nowrap(table, 1);
 
 	/* headers */
 	for (i = 0; i < cf->nfields; i++) {
