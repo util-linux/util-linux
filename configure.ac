@@ -384,22 +384,24 @@ dnl lib/mononotic.c may require -lrt
 AC_CHECK_FUNCS([clock_gettime], [],
 	[AC_CHECK_LIB([rt], [clock_gettime], [REALTIME_LIBS="-lrt"])]
 )
-AC_SUBST([REALTIME_LIBS])
-
-AC_CHECK_LIB([rtas], [rtas_get_sysparm], [
-	RTAS_LIBS="-lrtas"
-	AC_DEFINE_UNQUOTED([HAVE_LIBRTAS], [1], [Define if librtas exists]), [],
-])
-AC_SUBST([RTAS_LIBS])
 
 have_timer="no"
-AC_CHECK_FUNCS([timer_createx],
+AC_CHECK_FUNCS([timer_create],
 	[have_time="yes"],
 	[AC_CHECK_LIB([rt], [timer_create], [
 		have_timer="yes"
 		REALTIME_LIBS="-lrt"
 	])]
 )
+
+AC_SUBST([REALTIME_LIBS])
+
+
+AC_CHECK_LIB([rtas], [rtas_get_sysparm], [
+	RTAS_LIBS="-lrtas"
+	AC_DEFINE_UNQUOTED([HAVE_LIBRTAS], [1], [Define if librtas exists]), [],
+])
+AC_SUBST([RTAS_LIBS])
 
 
 AC_CHECK_MEMBER([struct sockaddr.sa_len],
