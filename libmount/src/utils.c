@@ -257,6 +257,7 @@ int mnt_fstype_is_pseudofs(const char *type)
 		"bdev",
 		"binfmt_misc",
 		"cgroup",
+		"cgroup2",
 		"configfs",
 		"cpuset",
 		"debugfs",
