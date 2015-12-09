@@ -1,39 +1,70 @@
 create loop device from image
 testing offsets with full block size
 Discarded 10485760 bytes from the offset 0
+ret: 0
 blkdiscard: offset 1 is not aligned to sector size 512
+ret: 1
 blkdiscard: offset 511 is not aligned to sector size 512
+ret: 1
 Discarded 10485248 bytes from the offset 512
+ret: 0
 Discarded 10484736 bytes from the offset 1024
+ret: 0
 testing offsets with specific length
 Discarded 5242880 bytes from the offset 0
+ret: 0
 blkdiscard: length 5242881 is not aligned to sector size 512
+ret: 1
 blkdiscard: length 5243391 is not aligned to sector size 512
+ret: 1
 blkdiscard: offset 1 is not aligned to sector size 512
+ret: 1
 blkdiscard: offset 511 is not aligned to sector size 512
+ret: 1
 Discarded 5242880 bytes from the offset 512
+ret: 0
 Discarded 5242880 bytes from the offset 1024
+ret: 0
 testing aligned steps full device
 Discarded 10485760 bytes from the offset 0
+ret: 0
 Discarded 10485760 bytes from the offset 0
+ret: 0
 testing aligned steps with offsets and length
 Discarded 1024 bytes from the offset 0
+ret: 0
 blkdiscard: offset 1 is not aligned to sector size 512
+ret: 1
 blkdiscard: offset 1 is not aligned to sector size 512
+ret: 1
 blkdiscard: offset 511 is not aligned to sector size 512
+ret: 1
 Discarded 1536 bytes from the offset 512
+ret: 0
 Discarded 1024 bytes from the offset 1024
+ret: 0
 testing misaligned steps full device
 blkdiscard: length 1 is not aligned to sector size 512
+ret: 1
 blkdiscard: length 256 is not aligned to sector size 512
+ret: 1
 blkdiscard: length 511 is not aligned to sector size 512
+ret: 1
 blkdiscard: length 513 is not aligned to sector size 512
+ret: 1
 blkdiscard: length 768 is not aligned to sector size 512
+ret: 1
 testing misaligned steps with offsets and length
 blkdiscard: length 511 is not aligned to sector size 512
+ret: 1
 blkdiscard: offset 1 is not aligned to sector size 512
+ret: 1
 blkdiscard: offset 511 is not aligned to sector size 512
+ret: 1
 blkdiscard: length 511 is not aligned to sector size 512
+ret: 1
 blkdiscard: offset 1 is not aligned to sector size 512
+ret: 1
 blkdiscard: offset 511 is not aligned to sector size 512
+ret: 1
 detach loop device from image
