@@ -211,7 +211,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (verbose)
+	if (verbose && stats[1])
 		print_stats(path, stats);
 
 	close(fd);
