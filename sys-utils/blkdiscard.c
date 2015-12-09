@@ -197,18 +197,18 @@ int main(int argc, char **argv)
 				err(EXIT_FAILURE, _("%s: BLKDISCARD ioctl failed"), path);
 		}
 
+		stats[1] += range[1];
+
 		/* reporting progress at most once per second */
 		if (verbose && step) {
 			gettime_monotonic(&now);
 			if (now.tv_sec > last.tv_sec &&
 			    (now.tv_usec >= last.tv_usec || now.tv_sec > last.tv_sec + 1)) {
 				print_stats(path, stats);
-				stats[0] = range[0], stats[1] = 0;
+				stats[0] += stats[1], stats[1] = 0;
 				last = now;
 			}
 		}
-
-		stats[1] += range[1];
 	}
 
 	if (verbose)
