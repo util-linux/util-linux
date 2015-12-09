@@ -1,6 +1,10 @@
 
  Note that items with (!) have high priority.
 
+canonicalize
+------------
+  - reimplement realpath(3) (for lib/canonicalize()) to use fstatat(AT_NO_AUTOMOUNT)
+
 lsblk
 -----
   - currently it does not show mountpoint for all devices in btrfs RAID. It's because

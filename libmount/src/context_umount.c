@@ -129,7 +129,7 @@ try_loopdev:
 		 */
 		struct stat st;
 
-		if (stat(tgt, &st) == 0 && S_ISREG(st.st_mode)) {
+		if (mnt_stat_mountpoint(tgt, &st) == 0 && S_ISREG(st.st_mode)) {
 			int count;
 			struct libmnt_cache *cache = mnt_context_get_cache(cxt);
 			const char *bf = cache ? mnt_resolve_path(tgt, cache) : tgt;
@@ -242,7 +242,7 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 	    && !mnt_context_is_force(cxt)
 	    && !mnt_context_is_lazy(cxt)
 	    && !mnt_context_is_loopdel(cxt)
-	    && stat(tgt, &st) == 0 && S_ISDIR(st.st_mode)
+	    && mnt_stat_mountpoint(tgt, &st) == 0 && S_ISDIR(st.st_mode)
 	    && !has_utab_entry(cxt, tgt)) {
 
 		const char *type = mnt_fs_get_fstype(cxt->fs);

@@ -1069,7 +1069,7 @@ int mnt_context_get_mtab_for_target(struct libmnt_context *cxt,
 	char *cn_tgt = NULL;
 	int rc;
 
-	if (stat(tgt, &st) == 0 && S_ISDIR(st.st_mode)) {
+	if (mnt_stat_mountpoint(tgt, &st) == 0 && S_ISDIR(st.st_mode)) {
 		cache = mnt_context_get_cache(cxt);
 		cn_tgt = mnt_resolve_path(tgt, cache);
 		if (cn_tgt)
@@ -1540,7 +1540,7 @@ static int mkdir_target(const char *tgt, struct libmnt_fs *fs)
 
 	if (mnt_optstr_get_option(fs->user_optstr, "x-mount.mkdir", &mstr, &mstr_sz) != 0)
 		return 0;
-	if (stat(tgt, &st) == 0)
+	if (mnt_stat_mountpoint(tgt, &st) == 0)
 		return 0;
 
 	if (mstr && mstr_sz) {

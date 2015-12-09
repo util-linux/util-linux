@@ -117,6 +117,15 @@ static int fstype_cmp(const void *v1, const void *v2)
 	return strcmp(s1, s2);
 }
 
+int mnt_stat_mountpoint(const char *target, struct stat *st)
+{
+#ifdef AT_NO_AUTOMOUNT
+	return fstatat(-1, target, st, AT_NO_AUTOMOUNT);
+#else
+	return stat(target, st);
+#endif
+}
+
 /*
  * Note that the @target has to be an absolute path (so at least "/").  The
  * @filename returns an allocated buffer with the last path component, for example:
@@ -983,7 +992,7 @@ char *mnt_get_mountpoint(const char *path)
 	if (*mnt == '/' && *(mnt + 1) == '\0')
 		goto done;
 
-	if (stat(mnt, &st))
+	if (mnt_stat_mountpoint(mnt, &st))
 		goto err;
 	base = st.st_dev;
 
@@ -992,7 +1001,7 @@ char *mnt_get_mountpoint(const char *path)
 
 		if (!p)
 			break;
-		if (stat(*mnt ? mnt : "/", &st))
+		if (mnt_stat_mountpoint(*mnt ? mnt : "/", &st))
 			goto err;
 		dir = st.st_dev;
 		if (dir != base) {
