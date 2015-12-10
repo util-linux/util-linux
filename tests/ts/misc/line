@@ -20,7 +20,18 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_LINE"
 
+# usually behave like "head -n 1"
 printf "a\nb\n" |
 	$TS_CMD_LINE > $TS_OUTPUT 2>&1
+echo "ret: $?" >> $TS_OUTPUT
+
+# never consume more than one line
+printf "1\n2\n" |
+	($TS_CMD_LINE && $TS_CMD_LINE) >> $TS_OUTPUT 2>&1
+echo "ret: $?" >> $TS_OUTPUT
+
+# always print one newline, return 1 on EOF
+$TS_CMD_LINE </dev/null >> $TS_OUTPUT 2>&1
+echo "ret: $?" >> $TS_OUTPUT
 
 ts_finalize

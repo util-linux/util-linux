@@ -24,16 +24,17 @@ TS_DESC="partitions probing"
 ts_init "$*"
 
 ts_check_test_command "$TS_HELPER_PARTITIONS"
+ts_check_prog "xz"
 
 mkdir -p $TS_OUTDIR/images-pt
 
-for img in $(ls $TS_SELF/images-pt/*.img.bz2 | sort); do
-	name=$(basename $img .img.bz2)
+for img in $(ls $TS_SELF/images-pt/*.img.xz | sort); do
+	name=$(basename $img .img.xz)
 	outimg=$TS_OUTDIR/images-pt/${name}.img
 
 	ts_init_subtest $name
 
-	bunzip2 < $img > $outimg
+	xz -dc $img > $outimg
 
 	$TS_HELPER_PARTITIONS $outimg &> $TS_OUTPUT
 	ts_finalize_subtest

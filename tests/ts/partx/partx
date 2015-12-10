@@ -22,6 +22,7 @@ TS_IMGDIR="$TS_TOPDIR/ts/blkid/images-pt"
 PARTS=3
 
 . $TS_TOPDIR/functions.sh
+ts_check_prog "xz"
 
 ts_init "$*"
 
@@ -32,13 +33,13 @@ ts_check_test_command "$TS_CMD_DELPART"
 ts_skip_nonroot
 
 mkdir -p $TS_OUTDIR/images-pt
-for img in $(ls $TS_IMGDIR/*.img.bz2 | sort); do
-	name=$(basename $img .img.bz2)
+for img in $(ls $TS_IMGDIR/*.img.xz | sort); do
+	name=$(basename $img .img.xz)
 	outimg=$TS_OUTDIR/images-pt/${name}.img
 
 	ts_init_subtest $name
 
-	bunzip2 < $img > $outimg
+	xz -dc $img > $outimg
 
 	$TS_CMD_PARTX $outimg &> $TS_OUTPUT
 	ts_finalize_subtest

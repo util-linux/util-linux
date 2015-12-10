@@ -20,7 +20,7 @@ $TS_CMD_WIPEFS --all --backup ${TS_DEVICE} &>/dev/null || ts_die "wipefs failed"
 
 #there should be just one magic string/backup file in this case
 INFILE=$(ls $HOME/wipefs-$(basename ${TS_DEVICE})-*.bak)
-OFFT=$(echo $INFILE | sed -E 's/^.*-(.*).bak$/\1/')
+OFFT=$(echo $INFILE | sed 's/^.*-\(.*\).bak$/\1/')
 dd if=$INFILE of=$TS_DEVICE bs=1 conv=notrunc seek=$(($OFFT)) &>/dev/null
 
 #the bytes should be copied back, check if wipefs can recognize it
