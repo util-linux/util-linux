@@ -64,13 +64,6 @@ libmount (mount/umount)
 
    (all this already supported by libmount)
 
-libsmartcols
------------
-
- - (!) add SCOLS_FL_HIDDEN flag to make it possible to hide a column. Then we 
-   can use such column in lsblk(8) to only sort lines, but do not print the column.
-
-     lsblk -o NAME --sort SIZE
 
 partx
 -----

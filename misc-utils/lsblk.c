@@ -214,6 +214,7 @@ struct lsblk {
 	unsigned int nodeps:1;		/* don't print slaves/holders */
 	unsigned int scsi:1;		/* print only device with HCTL (SCSI) */
 	unsigned int paths:1;		/* print devnames with "/dev" prefix */
+	unsigned int sort_hidden:1;	/* sort column not between output columns */
 };
 
 struct lsblk *lsblk;	/* global handler */
@@ -1849,8 +1850,11 @@ int main(int argc, char *argv[])
 	if (nexcludes == 0 && nincludes == 0)
 		excludes[nexcludes++] = 1;	/* default: ignore RAM disks */
 
-	if (lsblk->sort_id >= 0 && column_id_to_number(lsblk->sort_id) < 0)
-		errx(EXIT_FAILURE, _("the sort column has to be among the output columns"));
+	if (lsblk->sort_id >= 0 && column_id_to_number(lsblk->sort_id) < 0) {
+		/* the sort column is not between output columns -- add as hidden */
+		add_column(columns, ncolumns++, lsblk->sort_id);
+		lsblk->sort_hidden = 1;
+	}
 
 	mnt_init_debug(0);
 	scols_init_debug(0);
@@ -1876,6 +1880,8 @@ int main(int argc, char *argv[])
 
 		if (!(scols_flags & LSBLK_TREE) && id == COL_NAME)
 			fl &= ~SCOLS_FL_TREE;
+		if (lsblk->sort_hidden && lsblk->sort_id == id)
+			fl |= SCOLS_FL_HIDDEN;
 
 		cl = scols_table_new_column(lsblk->table, ci->name, ci->whint, fl);
 		if (!cl) {
