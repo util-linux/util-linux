@@ -259,6 +259,21 @@ int scols_column_set_cmpfunc(struct libscols_column *cl,
 }
 
 /**
+ * scols_column_is_hidden:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Gets the value of @cl's flag hidden.
+ *
+ * Returns: hidden flag value, negative value in case of an error.
+ */
+int scols_column_is_hidden(struct libscols_column *cl)
+{
+	if (!cl)
+		return -EINVAL;
+	return cl->flags & SCOLS_FL_HIDDEN;
+}
+
+/**
  * scols_column_is_trunc:
  * @cl: a pointer to a struct libscols_column instance
  *

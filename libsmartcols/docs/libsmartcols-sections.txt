@@ -20,6 +20,7 @@ scols_column_get_color
 scols_column_get_flags
 scols_column_get_header
 scols_column_get_whint
+scols_column_is_hidden
 scols_column_is_noextremes
 scols_column_is_right
 scols_column_is_strict_width

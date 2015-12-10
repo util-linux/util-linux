@@ -89,8 +89,6 @@ struct libscols_column {
 
 	struct libscols_cell	header;
 	struct list_head	cl_columns;
-
-	unsigned int ignore : 1;
 };
 
 /*
