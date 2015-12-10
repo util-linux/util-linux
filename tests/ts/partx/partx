@@ -22,8 +22,6 @@ TS_IMGDIR="$TS_TOPDIR/ts/blkid/images-pt"
 PARTS=3
 
 . $TS_TOPDIR/functions.sh
-ts_check_prog "xz"
-
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_PARTX"
@@ -31,6 +29,7 @@ ts_check_test_command "$TS_CMD_ADDPART"
 ts_check_test_command "$TS_CMD_DELPART"
 
 ts_skip_nonroot
+ts_check_prog "xz"
 
 mkdir -p $TS_OUTDIR/images-pt
 for img in $(ls $TS_IMGDIR/*.img.xz | sort); do

@@ -12,8 +12,9 @@ ts_check_test_command "$TS_CMD_FDISK"
 ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_CMD_WIPEFS"
 ts_check_test_command "$TS_CMD_UUIDGEN"
-ts_check_prog "mkfs.ext4"
+
 ts_skip_nonroot
+ts_check_prog "mkfs.ext4"
 
 TESTPROG="$TS_HELPER_LIBMOUNT_CONTEXT"
 LABEL=libmount-test

@@ -5,6 +5,7 @@ TS_DESC="tags"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+
 ts_skip_nonroot
 
 if [ -f "$ASAN_SYMBOLIZER_PATH" ]; then

@@ -8,9 +8,9 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_FDISK"
 ts_check_test_command "$TS_CMD_EJECT"
-ts_check_prog "mkfs.ext2"
 
 ts_skip_nonroot
+ts_check_prog "mkfs.ext2"
 
 #
 # Note that eject --force is required because scsi_debug is

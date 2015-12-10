@@ -13,10 +13,11 @@ ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
 ts_check_test_command "$TS_CMD_UUIDGEN"
+
+ts_skip_nonroot
 ts_check_prog "mkfs.ext3"
 ts_check_prog "mkfs.ext4"
 
-ts_skip_nonroot
 TESTPROG="$TS_HELPER_LIBMOUNT_CONTEXT"
 LABEL=libmount-test
 UUID=$($TS_CMD_UUIDGEN)

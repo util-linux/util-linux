@@ -31,10 +31,10 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
-ts_check_prog "mkfs.ext3"
 
 ts_skip_nonroot
 ts_check_losetup
+ts_check_prog "mkfs.ext3"
 
 [ -L /etc/mtab ] && ts_skip "mtab is symlink"
 [ "$(stat --format '%s' /etc/mtab)" -gt "1024" ] || ts_skip "mtab is too small"
