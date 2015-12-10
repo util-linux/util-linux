@@ -48,7 +48,6 @@ systemdsystemunit_DATA =
 dist_bashcompletion_DATA =
 check_PROGRAMS =
 dist_check_SCRIPTS =
-TESTS =
 
 PATHFILES =
 
