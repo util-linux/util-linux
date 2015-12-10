@@ -504,7 +504,7 @@ main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "afhno:pqt:V", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "abfhno:pqt:V", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
