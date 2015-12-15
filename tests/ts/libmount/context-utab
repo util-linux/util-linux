@@ -40,7 +40,6 @@ EOF
 
 DEVICE="${TS_DEVICE}1"
 
-sleep 1
 udevadm settle
 
 grep -q $DEVNAME /proc/partitions
