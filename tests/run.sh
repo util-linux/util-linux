@@ -65,11 +65,9 @@ while [ -n "$1" ]; do
 		;;
 	--parallel=*)
 		paraller_jobs="${1##--parallel=}"
-		OPTS="$OPTS --parallel"
 		;;
 	--parallel)
 		paraller_jobs=$(num_cpus)
-		OPTS="$OPTS --parallel"
 		;;
 	--exclude=*)
 		EXCLUDETESTS="${1##--exclude=}"
@@ -164,6 +162,7 @@ echo
 if [ $paraller_jobs -gt 1 ]; then
 	echo "              Executing the tests in parallel ($paraller_jobs jobs)    "
 	echo
+	OPTS="$OPTS --parallel"
 fi
 
 count=0
