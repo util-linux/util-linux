@@ -1062,7 +1062,7 @@ done:
 int scols_print_table_to_string(struct libscols_table *tb, char **data)
 {
 #ifdef HAVE_OPEN_MEMSTREAM
-	FILE *stream;
+	FILE *stream, *old_stream;
 	size_t sz;
 	int rc;
 
@@ -1076,9 +1076,11 @@ int scols_print_table_to_string(struct libscols_table *tb, char **data)
 	if (!stream)
 		return -ENOMEM;
 
+	old_stream = scols_table_get_stream(tb);
 	scols_table_set_stream(tb, stream);
 	rc = scols_print_table(tb);
 	fclose(stream);
+	scols_table_set_stream(tb, old_stream);
 
 	return rc;
 #else
