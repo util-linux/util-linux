@@ -129,7 +129,7 @@ label: gpt
 ,10M,S,*
 EOF
 udevadm settle
-echo ',+' | $TS_CMD_SFDISK -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+echo ',+' | $TS_CMD_SFDISK --no-reread -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 ts_finalize_subtest
@@ -149,6 +149,7 @@ ${TS_DEVICE}3 : start=20480, size=81887
 ${TS_DEVICE}4 : start=14336, size=6144
 EOF
 udevadm settle
+# why --reorder does not re-read?
 $TS_CMD_SFDISK --reorder ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 $TS_CMD_SFDISK --list ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 ts_fdisk_clean $TS_DEVICE

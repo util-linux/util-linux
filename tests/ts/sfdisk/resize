@@ -75,7 +75,7 @@ function test_label_resize {
 	udevadm settle
 
 	# create a partition
-	echo ',10M,L' | $TS_CMD_SFDISK --label ${label} ${TS_DEVICE} &> /dev/null
+	echo ',10M,L' | $TS_CMD_SFDISK --no-reread --label ${label} ${TS_DEVICE} &> /dev/null
 	udevadm settle
 
 	for idx in $(seq 0 $(( ${#COMM[*]} - 1 ))); do
@@ -85,23 +85,23 @@ function test_label_resize {
 
 		ts_init_subtest "$label-$idx-$name"
 		echo -e "$cmd\n" >> $TS_OUTPUT
-		echo "$cmd" | $TS_CMD_SFDISK -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+		echo "$cmd" | $TS_CMD_SFDISK --no-reread -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 		ts_fdisk_clean $TS_DEVICE
 		udevadm settle
 		ts_finalize_subtest
 	done
 
-	echo ',10M,L' | $TS_CMD_SFDISK --append ${TS_DEVICE} &> /dev/null
+	echo ',10M,L' | $TS_CMD_SFDISK --no-reread --append ${TS_DEVICE} &> /dev/null
 	udevadm settle
 
-	echo ',10M,L' | $TS_CMD_SFDISK --append ${TS_DEVICE} &> /dev/null
+	echo ',10M,L' | $TS_CMD_SFDISK --no-reread --append ${TS_DEVICE} &> /dev/null
 	udevadm settle
 
 	idx=$(( $idx + 1 ))
 	ts_init_subtest "$label-$idx-reduce-midle"
 	cmd=',-5M'
 	echo -e "$cmd\n" >> $TS_OUTPUT
-	echo "$cmd" | $TS_CMD_SFDISK -N2 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+	echo "$cmd" | $TS_CMD_SFDISK --no-reread -N2 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 	ts_fdisk_clean $TS_DEVICE
 	udevadm settle
 	ts_finalize_subtest
@@ -110,7 +110,7 @@ function test_label_resize {
 	ts_init_subtest "$label-$idx-max-last"
 	cmd='-5M,+'
 	echo -e "$cmd\n" >> $TS_OUTPUT
-	echo $cmd | $TS_CMD_SFDISK -N3 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+	echo $cmd | $TS_CMD_SFDISK --no-reread -N3 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 	ts_fdisk_clean $TS_DEVICE
 	udevadm settle
 	ts_finalize_subtest

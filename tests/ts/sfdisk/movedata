@@ -30,7 +30,7 @@ ts_check_prog "mkfs.ext4"
 ts_scsi_debug_init dev_size_mb=100 sector_size=512
 
 # create a partition
-echo ',10M,L' | $TS_CMD_SFDISK ${TS_DEVICE} &> /dev/null
+echo ',10M,L' | $TS_CMD_SFDISK --no-reread ${TS_DEVICE} &> /dev/null
 udevadm settle
 
 mkfs.ext4 ${TS_DEVICE}1 &> /dev/null
@@ -46,7 +46,7 @@ function checksum() {
 }
 
 ts_init_subtest "up"
-echo '+1000,' | $TS_CMD_SFDISK --move-data=$TS_OUTPUT.log -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+echo '+1000,' | $TS_CMD_SFDISK --no-reread --move-data=$TS_OUTPUT.log -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 checksum ${TS_DEVICE}1
@@ -55,7 +55,7 @@ ts_finalize_subtest
 udevadm settle
 
 ts_init_subtest "down"
-echo "-500," | $TS_CMD_SFDISK --move-data=$TS_OUTPUT.log -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+echo "-500," | $TS_CMD_SFDISK --no-reread --move-data=$TS_OUTPUT.log -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 checksum ${TS_DEVICE}1
@@ -64,7 +64,7 @@ ts_finalize_subtest
 udevadm settle
 
 ts_init_subtest "non-overlay"
-echo "+30M," | $TS_CMD_SFDISK --move-data=$TS_OUTPUT.log -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+echo "+30M," | $TS_CMD_SFDISK --no-reread --move-data=$TS_OUTPUT.log -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 checksum ${TS_DEVICE}1
