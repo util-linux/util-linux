@@ -346,4 +346,13 @@ static inline int xusleep(useconds_t usec)
 # define UL_ASAN_BLACKLIST	/* nothing */
 #endif
 
+
+
+/*
+ * Note that sysconf(_SC_GETPW_R_SIZE_MAX) returns *initial* suggested size for
+ * pwd buffer and in some cases it is not large enough. See POSIX and
+ * getpwnam_r man page for more details.
+ */
+#define UL_GETPW_BUFSIZ	(16 * 1024)
+
 #endif /* UTIL_LINUX_C_H */

@@ -674,22 +674,14 @@ static struct passwd *get_passwd_entry(const char *username,
 					 struct passwd *pwd)
 {
 	struct passwd *res = NULL;
-	size_t sz = 16384;
 	int x;
 
 	if (!pwdbuf || !username)
 		return NULL;
 
-#ifdef _SC_GETPW_R_SIZE_MAX
-	{
-		long xsz = sysconf(_SC_GETPW_R_SIZE_MAX);
-		if (xsz > 0)
-			sz = (size_t) xsz;
-	}
-#endif
-	*pwdbuf = xrealloc(*pwdbuf, sz);
+	*pwdbuf = xrealloc(*pwdbuf, UL_GETPW_BUFSIZ);
 
-	x = getpwnam_r(username, pwd, *pwdbuf, sz, &res);
+	x = getpwnam_r(username, pwd, *pwdbuf, UL_GETPW_BUFSIZ, &res);
 	if (!res) {
 		errno = x;
 		return NULL;

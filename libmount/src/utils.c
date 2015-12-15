@@ -635,16 +635,6 @@ int mnt_get_filesystems(char ***filesystems, const char *pattern)
 	return rc;
 }
 
-static size_t get_pw_record_size(void)
-{
-#ifdef _SC_GETPW_R_SIZE_MAX
-	long sz = sysconf(_SC_GETPW_R_SIZE_MAX);
-	if (sz > 0)
-		return sz;
-#endif
-	return 16384;
-}
-
 /*
  * Returns an allocated string with username or NULL.
  */
@@ -652,14 +642,13 @@ char *mnt_get_username(const uid_t uid)
 {
         struct passwd pwd;
 	struct passwd *res;
-	size_t sz = get_pw_record_size();
 	char *buf, *username = NULL;
 
-	buf = malloc(sz);
+	buf = malloc(UL_GETPW_BUFSIZ);
 	if (!buf)
 		return NULL;
 
-	if (!getpwuid_r(uid, &pwd, buf, sz, &res) && res)
+	if (!getpwuid_r(uid, &pwd, buf, UL_GETPW_BUFSIZ, &res) && res)
 		username = strdup(pwd.pw_name);
 
 	free(buf);
@@ -671,17 +660,16 @@ int mnt_get_uid(const char *username, uid_t *uid)
 	int rc = -1;
         struct passwd pwd;
 	struct passwd *pw;
-	size_t sz = get_pw_record_size();
 	char *buf;
 
 	if (!username || !uid)
 		return -EINVAL;
 
-	buf = malloc(sz);
+	buf = malloc(UL_GETPW_BUFSIZ);
 	if (!buf)
 		return -ENOMEM;
 
-	if (!getpwnam_r(username, &pwd, buf, sz, &pw) && pw) {
+	if (!getpwnam_r(username, &pwd, buf, UL_GETPW_BUFSIZ, &pw) && pw) {
 		*uid= pw->pw_uid;
 		rc = 0;
 	} else {
@@ -699,17 +687,16 @@ int mnt_get_gid(const char *groupname, gid_t *gid)
 	int rc = -1;
         struct group grp;
 	struct group *gr;
-	size_t sz = get_pw_record_size();
 	char *buf;
 
 	if (!groupname || !gid)
 		return -EINVAL;
 
-	buf = malloc(sz);
+	buf = malloc(UL_GETPW_BUFSIZ);
 	if (!buf)
 		return -ENOMEM;
 
-	if (!getgrnam_r(groupname, &grp, buf, sz, &gr) && gr) {
+	if (!getgrnam_r(groupname, &grp, buf, UL_GETPW_BUFSIZ, &gr) && gr) {
 		*gid= gr->gr_gid;
 		rc = 0;
 	} else {
