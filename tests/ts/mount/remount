@@ -23,10 +23,10 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_FINDMNT"
-ts_check_prog "mkfs.ext2"
 
 ts_skip_nonroot
 ts_check_losetup
+ts_check_prog "mkfs.ext2"
 
 # mountpoint
 [ -d $TS_MOUNTPOINT ] || mkdir -p $TS_MOUNTPOINT

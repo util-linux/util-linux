@@ -13,11 +13,12 @@ ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
 ts_check_test_command "$TS_CMD_UUIDGEN"
+
+ts_skip_nonroot
 ts_check_prog "mkfs.ext3"
 ts_check_prog "mkfs.ext4"
 
 ts_init_py libmount
-ts_skip_nonroot
 
 TESTPROG="$TS_HELPER_PYLIBMOUNT_CONTEXT"
 [ -x $TESTPROG ] || ts_die "test script missing"

@@ -5,8 +5,10 @@ TS_DESC="tags-py"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
-ts_init_py libmount
+
 ts_skip_nonroot
+
+ts_init_py libmount
 
 if [ -f "$ASAN_SYMBOLIZER_PATH" ]; then
 	TS_KNOWN_FAIL="yes"

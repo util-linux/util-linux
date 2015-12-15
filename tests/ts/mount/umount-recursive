@@ -11,9 +11,9 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
 ts_check_test_command "$TS_CMD_FDISK"
-ts_check_prog "mkfs.ext2"
 
 ts_skip_nonroot
+ts_check_prog "mkfs.ext2"
 
 $TS_CMD_UMOUNT --help | grep -q recursive
 [ $? -eq 1 ] && ts_skip "recursive unsupported"
