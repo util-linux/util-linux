@@ -464,7 +464,8 @@ function ts_image_init {
 	local mib=${1:-"5"}	# size in MiBs
 	local img=${2:-"$TS_OUTDIR/${TS_TESTNAME}.img"}
 
-	dd if=/dev/zero of="$img" bs=1M count=$mib &> /dev/null
+	rm -f $img
+	truncate -s "${mib}M" "$img"
 	echo "$img"
 	return 0
 }
