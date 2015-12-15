@@ -641,7 +641,6 @@ function ts_scsi_debug_init {
 	lsmod | grep -q "^scsi_debug " \
 		|| ts_skip "scsi_debug module not loaded (lsmod)"
 
-	sleep 1
 	udevadm settle
 
 	devname=$(grep --with-filename scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
