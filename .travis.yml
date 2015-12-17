@@ -23,6 +23,8 @@ before_install:
   - which $CC
   # workaround clang not system wide, fail on sudo make install
   - export CC=`which $CC`
+  # workaround travis-ci issue #5301
+  - unset PYTHON_CFLAGS
 
 install:
   - source ./.travis-functions.sh
