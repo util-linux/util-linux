@@ -18,6 +18,12 @@ branches:
     - /^stable.*/
     - /^travis.*/
 
+before_install:
+  - $CC --version
+  - which $CC
+  # workaround clang not system wide, fail on sudo make install
+  - export CC=`which $CC`
+
 install:
   - source ./.travis-functions.sh
   - travis_install_script
@@ -31,8 +37,3 @@ script:
 after_script:
   - travis_after_script
 
-before_install:
-  - $CC --version
-  - which $CC
-  # workaround clang not system wide, fail on sudo make install
-  - export CC=`which $CC`
