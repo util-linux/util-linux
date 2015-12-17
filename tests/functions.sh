@@ -46,11 +46,15 @@ function ts_cd {
 }
 
 function ts_report {
-	if [ "$TS_PARALLEL" == "yes" ]; then
-		echo "$TS_TITLE $1"
+	local desc=
+	local title
+	if [ -n "$TS_SUBNAME" ]; then
+		desc=$(printf "%s: [%02d] %s" "$TS_DESC" "$TS_NSUBTESTS" "$TS_SUBNAME")
 	else
-		echo "$1"
+		desc=$TS_DESC
 	fi
+	title=$(printf "%13s: %-60s ..." "$TS_COMPONENT" "$desc")
+	echo "$title $1"
 }
 
 function ts_check_test_command {
@@ -168,6 +172,7 @@ function ts_option_argument {
 }
 
 function ts_init_core_env {
+	TS_SUBNAME=""
 	TS_NS="$TS_COMPONENT/$TS_TESTNAME"
 	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME"
 	TS_VGDUMP="$TS_OUTDIR/$TS_TESTNAME.vgdump"
@@ -294,15 +299,7 @@ function ts_init_subtest {
 
 	ts_init_core_subtest_env
 
-	[ $TS_NSUBTESTS -eq 0 ] && echo
 	TS_NSUBTESTS=$(( $TS_NSUBTESTS + 1 ))
-
-	if [ "$TS_PARALLEL" == "yes" ]; then
-		TS_TITLE=$(printf "%13s: %-30s ...\n%16s: %-27s ..." "$TS_COMPONENT" "$TS_DESC" "" "$TS_SUBNAME")
-	else
-		TS_TITLE=$(printf "%16s: %-27s ..." "" "$TS_SUBNAME")
-		echo -n "$TS_TITLE"
-	fi
 }
 
 function ts_init {
@@ -310,13 +307,6 @@ function ts_init {
 
 	local is_fake=$( ts_has_option "fake" "$*")
 	local is_force=$( ts_has_option "force" "$*")
-
-	if [ "$TS_PARALLEL" == "yes" ]; then
-		TS_TITLE=$(printf "%13s: %-30s ..." "$TS_COMPONENT" "$TS_DESC")
-	else
-		TS_TITLE=$(printf "%13s: %-30s ..." "$TS_COMPONENT" "$TS_DESC")
-		echo -n "$TS_TITLE"
-	fi
 
 	[ "$is_fake" == "yes" ] && ts_skip "fake mode"
 	[ "$TS_OPTIONAL" == "yes" -a "$is_force" != "yes" ] && ts_skip "optional"
@@ -417,7 +407,6 @@ function ts_finalize {
 	ts_cleanup_on_exit
 
 	if [ $TS_NSUBTESTS -ne 0 ]; then
-		printf "%11s..."
 		if [ $TS_NSUBFAILED -ne 0 ]; then
 			ts_failed "$TS_NSUBFAILED from $TS_NSUBTESTS sub-tests"
 		else
