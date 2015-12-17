@@ -49,11 +49,11 @@ function ts_report {
 	local desc=
 	local title
 	if [ -n "$TS_SUBNAME" ]; then
-		desc=$(printf "%s: [%02d] %s" "$TS_DESC" "$TS_NSUBTESTS" "$TS_SUBNAME")
+		desc=$(printf "%s: [%02d] %s" "$TS_TESTNAME" "$TS_NSUBTESTS" "$TS_SUBNAME")
 	else
-		desc=$TS_DESC
+		desc=$TS_TESTNAME
 	fi
-	title=$(printf "%13s: %-60s ..." "$TS_COMPONENT" "$desc")
+	title=$(printf "%13s: %-45s ..." "$TS_COMPONENT" "$desc")
 	echo "$title $1"
 }
 
@@ -234,6 +234,7 @@ function ts_init_env {
 	TS_SUBDIR=$(dirname $TS_SCRIPT)
 	TS_TESTNAME=$(basename $TS_SCRIPT)
 	TS_COMPONENT=$(basename $TS_SUBDIR)
+	TS_DESC=${TS_DESC:-$TS_TESTNAME}
 
 	TS_NSUBTESTS=0
 	TS_NSUBFAILED=0
