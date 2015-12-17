@@ -4,10 +4,11 @@ TS_TOPDIR="${0%/*}/../.."
 TS_DESC="wipefs"
 
 . $TS_TOPDIR/functions.sh
-ts_skip_nonroot
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_WIPEFS"
+
+ts_skip_nonroot
 
 # set global variable TS_DEVICE
 ts_scsi_debug_init dev_size_mb=50 num_parts=2
