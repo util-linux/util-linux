@@ -85,6 +85,7 @@ function travis_install_script
 		libudev-dev \
 		gtk-doc-tools \
 		ntp \
+		swig \
 		|| return
 
 	# install/upgrade custom stuff from non-official sources

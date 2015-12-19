@@ -1898,6 +1898,20 @@ UL_REQUIRES_BUILD([pylibmount], [libmount])
 AM_CONDITIONAL([BUILD_PYLIBMOUNT], [test "x$build_pylibmount" = "xyes"])
 
 
+AC_ARG_ENABLE([pylibsmartcols],
+  AS_HELP_STRING([--disable-pylibsmartcols], [do not build pylibsmartcols]),
+  [], [UL_DEFAULT_ENABLE([pylibsmartcols], [check])]
+)
+UL_BUILD_INIT([pylibsmartcols])
+UL_REQUIRES_HAVE([pylibsmartcols], [libpython], [libpython])
+UL_REQUIRES_BUILD([pylibsmartcols], [libsmartcols])
+AM_CONDITIONAL([BUILD_PYLIBSMARTCOLS], [test "x$build_pylibsmartcols" = "xyes"])
+AS_IF([test "x$build_pylibsmartcols" = "xyes"], [
+  AX_PKG_SWIG(2.0.0, [], [ AC_MSG_ERROR([SWIG is required to build..]) ])
+  AX_SWIG_PYTHON
+])
+
+
 AC_ARG_ENABLE([pg-bell],
   AS_HELP_STRING([--disable-pg-bell], [let pg not ring the bell on invalid keys]),
   [], [enable_pg_bell=yes]

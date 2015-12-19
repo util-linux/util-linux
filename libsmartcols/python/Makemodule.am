@@ -1,0 +1,40 @@
+if BUILD_PYLIBSMARTCOLS
+
+libsmartcols/python/libsmartcols_wrap.c:
+	$(SWIG) -I$(ul_libsmartcols_incdir) $(AX_SWIG_PYTHON_OPT) -o $@ $(top_srcdir)/libsmartcols/python/libsmartcols.i
+
+libsmartcols/python/libsmartcols.py: libsmartcols/python/libsmartcols_wrap.c
+	@true
+
+pylibsmartcolsexecdir = $(pyexecdir)/libsmartcols
+
+# Please, don't use $pythondir for the scripts. We have to use the same
+# directory for binary stuff as well as for the scripts otherwise it's
+# not possible to install 32-bit and 64-bit version on the same system.
+pylibsmartcolsexec_LTLIBRARIES = _libsmartcols.la
+pylibsmartcolsexec_PYTHON = libsmartcols/python/libsmartcols.py
+
+_libsmartcols_la_SOURCES = \
+	libsmartcols/python/libsmartcols_wrap.c
+
+_libsmartcols_la_LIBADD = libsmartcols.la $(PYTHON_LIBS)
+
+_libsmartcols_la_CFLAGS = \
+	$(AM_CFLAGS) \
+	$(AX_SWIG_PYTHON_CPPFLAGS) \
+	-I$(ul_libsmartcols_incdir) \
+	-fno-strict-aliasing #-ggdb3 -O0
+
+_libsmartcols_la_LDFLAGS = \
+	-avoid-version -module -shared -export-dynamic
+
+#dist_check_SCRIPTS += lbsmartcols/python/test_scols
+#dist_check_SCRIPTS += libmount/python/test_mount_context.py
+#dist_check_SCRIPTS += libmount/python/test_mount_tab.py
+#dist_check_SCRIPTS += libmount/python/test_mount_tab_update.py
+
+EXTRA_DIST += libsmartcols.i
+
+CLEANFILES += lbsmartcols/python/libsmartcols.py libsmartcols/python/libsmartcols_wrap.c
+
+endif # BUILD_PYLIBSMARTCOLS
