@@ -8,6 +8,10 @@ if ENABLE_GTK_DOC
 SUBDIRS += libsmartcols/docs
 endif
 
+if ENABLE_SPHINX_DOC
+SUBDIRS += libsmartcols/docs/python
+endif
+
 pkgconfig_DATA += libsmartcols/smartcols.pc
 PATHFILES      += libsmartcols/smartcols.pc
 EXTRA_DIST     += libsmartcols/COPYING

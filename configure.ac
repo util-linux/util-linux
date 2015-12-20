@@ -149,6 +149,8 @@ PKG_PROG_PKG_CONFIG
 
 GTK_DOC_CHECK([1.10])
 AC_PATH_PROG([XSLTPROC], [xsltproc])
+AC_PATH_PROG([SPHINX_BUILD], [sphinx-build], [no])
+AM_CONDITIONAL([ENABLE_SPHINX_DOC], [test "x$SPHINX_BUILD" != xno])
 
 
 linux_os=no
@@ -2051,6 +2053,8 @@ libmount/docs/version.xml
 libmount/src/libmount.h
 libsmartcols/docs/Makefile
 libsmartcols/docs/version.xml
+libsmartcols/docs/python/Makefile
+libsmartcols/docs/python/conf.py
 libsmartcols/src/libsmartcols.h
 po/Makefile.in
 ])
