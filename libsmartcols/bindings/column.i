@@ -74,7 +74,7 @@ class Column {
         }
 
         const char *name() const {
-            scols_cell_get_data(scols_column_get_header(this->cl));
+            return scols_cell_get_data(scols_column_get_header(this->cl));
         }
         void name(const char *name) {
             scols_cell_set_data(scols_column_get_header(this->cl), name);
