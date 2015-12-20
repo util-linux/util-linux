@@ -1912,6 +1912,7 @@ AM_CONDITIONAL([BUILD_PYLIBSMARTCOLS], [test "x$build_pylibsmartcols" = "xyes"])
 AS_IF([test "x$build_pylibsmartcols" = "xyes"], [
   AX_PKG_SWIG(2.0.0, [], [ AC_MSG_ERROR([SWIG is required to build..]) ])
   AX_SWIG_ENABLE_CXX
+  AX_CXX_COMPILE_STDCXX_11
   AX_SWIG_PYTHON
 ])
 
