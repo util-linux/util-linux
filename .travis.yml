@@ -3,6 +3,13 @@ language: c
 git:
   depth: 1500
 
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-4.8
+
 compiler:
   - gcc
   - clang
@@ -19,7 +26,10 @@ branches:
     - /^travis.*/
 
 before_install:
+  - if [ "$CC" == "gcc" ]; then export CXX="g++-4.8"; fi
+  - if [ "$CC" == "clang" ]; then export CXX="clang++"; fi
   - $CC --version
+  - $CXX --version
   - which $CC
   # workaround clang not system wide, fail on sudo make install
   - export CC=`which $CC`
