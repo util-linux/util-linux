@@ -19,6 +19,12 @@ class Table {
             HANDLE_RC(scols_print_table_to_string(this->tb, &data));
             return data;
         }
+         char *__json() {
+            this->json(true);
+            char *data = this->__str__();
+            this->json(false);
+            return data;
+         }
 #else
         void print() {
             HANDLE_RC(scols_print_table(this->tb));
@@ -37,13 +43,6 @@ class Table {
         }
         void colors(bool colors) {
             HANDLE_RC(scols_table_enable_colors(this->tb, (int) colors));
-        }
-
-        bool _export() const {
-            return (bool) scols_table_is_export(this->tb);
-        }
-        void _export(bool _export) {
-            HANDLE_RC(scols_table_enable_export(this->tb, (int) _export));
         }
 
         bool json() const {
@@ -65,13 +64,6 @@ class Table {
         }
         void noheadings(bool noheadings) {
             HANDLE_RC(scols_table_enable_noheadings(this->tb, (int) noheadings));
-        }
-
-        bool raw() const {
-            return (bool) scols_table_is_raw(this->tb);
-        }
-        void raw(bool raw) {
-            HANDLE_RC(scols_table_enable_raw(this->tb, (int) raw));
         }
 
         const char *column_separator() const {
@@ -126,9 +118,9 @@ class Table {
         __swig_setmethods__["colors"] = colors
         if _newclass: colors = property(colors, colors)
 
-        __swig_getmethods__["export"] = _export
-        __swig_setmethods__["export"] = _export
-        if _newclass: export = property(_export, _export)
+        def json(self):
+            from json import loads
+            return loads(self.__json())
 
         __swig_getmethods__["json"] = json
         __swig_setmethods__["json"] = json
@@ -141,10 +133,6 @@ class Table {
         __swig_getmethods__["noheadings"] = noheadings
         __swig_setmethods__["noheadings"] = noheadings
         if _newclass: noheadings = property(noheadings, noheadings)
-
-        __swig_getmethods__["raw"] = raw
-        __swig_setmethods__["raw"] = raw
-        if _newclass: raw = property(raw, raw)
 
         __swig_getmethods__["column_separator"] = column_separator
         __swig_setmethods__["column_separator"] = column_separator

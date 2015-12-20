@@ -38,3 +38,4 @@ ln.set_data(Col.name, "Aunt Gaga")
 ln.set_data(Col.age, "35")
 
 print(tb)
+print(tb.json())
