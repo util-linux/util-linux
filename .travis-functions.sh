@@ -86,6 +86,7 @@ function travis_install_script
 		gtk-doc-tools \
 		ntp \
 		swig \
+		python-sphinx \
 		|| return
 
 	# install/upgrade custom stuff from non-official sources
