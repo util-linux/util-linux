@@ -104,6 +104,7 @@ AC_CANONICAL_HOST
 AC_C_CONST
 AC_C_VOLATILE
 AC_C_BIGENDIAN
+AC_PROG_CXX
 
 dnl Compiler warnings
 UL_WARN_ADD([-fno-common])
@@ -148,6 +149,8 @@ PKG_PROG_PKG_CONFIG
 
 GTK_DOC_CHECK([1.10])
 AC_PATH_PROG([XSLTPROC], [xsltproc])
+AC_PATH_PROG([SPHINX_BUILD], [sphinx-build], [no])
+AM_CONDITIONAL([ENABLE_SPHINX_DOC], [test "x$SPHINX_BUILD" != xno])
 
 
 linux_os=no
@@ -1898,6 +1901,22 @@ UL_REQUIRES_BUILD([pylibmount], [libmount])
 AM_CONDITIONAL([BUILD_PYLIBMOUNT], [test "x$build_pylibmount" = "xyes"])
 
 
+AC_ARG_ENABLE([pylibsmartcols],
+  AS_HELP_STRING([--disable-pylibsmartcols], [do not build pylibsmartcols]),
+  [], [UL_DEFAULT_ENABLE([pylibsmartcols], [check])]
+)
+UL_BUILD_INIT([pylibsmartcols])
+UL_REQUIRES_HAVE([pylibsmartcols], [libpython], [libpython])
+UL_REQUIRES_BUILD([pylibsmartcols], [libsmartcols])
+AM_CONDITIONAL([BUILD_PYLIBSMARTCOLS], [test "x$build_pylibsmartcols" = "xyes"])
+AS_IF([test "x$build_pylibsmartcols" = "xyes"], [
+  AX_PKG_SWIG(2.0.0, [], [ AC_MSG_ERROR([SWIG is required to build..]) ])
+  AX_SWIG_ENABLE_CXX
+  AX_CXX_COMPILE_STDCXX_11
+  AX_SWIG_PYTHON
+])
+
+
 AC_ARG_ENABLE([pg-bell],
   AS_HELP_STRING([--disable-pg-bell], [let pg not ring the bell on invalid keys]),
   [], [enable_pg_bell=yes]
@@ -2035,6 +2054,8 @@ libmount/docs/version.xml
 libmount/src/libmount.h
 libsmartcols/docs/Makefile
 libsmartcols/docs/version.xml
+libsmartcols/docs/python/Makefile
+libsmartcols/docs/python/conf.py
 libsmartcols/src/libsmartcols.h
 po/Makefile.in
 ])

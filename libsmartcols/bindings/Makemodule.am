@@ -1,0 +1,41 @@
+if BUILD_PYLIBSMARTCOLS
+
+libsmartcols/bindings/smartcolsPYTHON_wrap.cxx:
+	$(SWIG) -I$(ul_libsmartcols_incdir) $(AX_SWIG_PYTHON_OPT) -o $@ $(top_srcdir)/libsmartcols/bindings/smartcols.i
+
+libsmartcols/bindings/smartcols.py: libsmartcols/bindings/smartcolsPYTHON_wrap.cxx
+	@true
+
+pylibsmartcolsexecdir = $(pyexecdir)
+pylibsmartcolsexec_LTLIBRARIES = _smartcols.la
+pylibsmartcolsexec_PYTHON = libsmartcols/bindings/smartcols.py
+
+_smartcols_la_SOURCES = \
+	libsmartcols/bindings/smartcolsPYTHON_wrap.cxx
+
+_smartcols_la_CPPFLAGS = \
+	$(AM_CPPFLAGS) \
+	$(AX_SWIG_PYTHON_CPPFLAGS) \
+	-DFLAGS_HIDDEN \
+	$(NULL)
+_smartcols_la_CXXFLAGS = \
+	$(AM_CXXFLAGS) \
+	-I$(ul_libsmartcols_incdir) \
+	$(NULL)
+_smartcols_la_LIBADD = libsmartcols.la $(PYTHON_LIBS)
+_smartcols_la_LDFLAGS = \
+	-avoid-version -module -shared -export-dynamic
+
+dist_check_SCRIPTS += libsmartcols/bindings/example.py
+
+EXTRA_DIST += \
+	smartcols/bindings/column.i \
+	smartcols/bindings/smartcols.i \
+	smartcols/bindings/line.i \
+	smartcols/bindings/symbols.i \
+	smartcols/bindings/table.i \
+	$(NULL)
+
+CLEANFILES += lbsmartcols/bindings/smartcols.py libsmartcols/bindings/smartcolsPYTHON_wrap.cxx
+
+endif # BUILD_PYLIBSMARTCOLS

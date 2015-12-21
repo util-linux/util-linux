@@ -85,6 +85,8 @@ function travis_install_script
 		libudev-dev \
 		gtk-doc-tools \
 		ntp \
+		swig \
+		python-sphinx \
 		|| return
 
 	# install/upgrade custom stuff from non-official sources
@@ -105,7 +107,12 @@ function travis_before_script
 
 	# workaround for broken pylibmount install relink
 	[ $ret -eq 0 ] && \
-		sed -i 's/\(link_all_deplibs\)=no/\1=unknown/' ./configure
+		sed -i 's/\(link_all_deplibs\)=no/\1=unknown/' ./configure && \
+		sed -i \
+			-e 's/alabaster/default/' \
+			-e "/html_theme_options/,/^}/d" \
+			-e "/html_sidebars/,/^}/d" \
+				./libsmartcols/docs/python/conf.py.in
 
 	set +o xtrace
 	popd
