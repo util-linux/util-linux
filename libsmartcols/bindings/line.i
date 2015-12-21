@@ -31,9 +31,11 @@ public:
 %}
 
 %extend Line {
+#ifdef SWIGPYTHON
     %pythoncode %{
         __swig_getmethods__["color"] = color
         __swig_setmethods__["color"] = color
         if _newclass: color = property(color, color)
     %}
+#endif
 }

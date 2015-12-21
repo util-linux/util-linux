@@ -42,6 +42,7 @@ public:
 %}
 
 %extend Symbols {
+#ifdef SWIGPYTHON
     %pythoncode %{
         __swig_getmethods__["branch"] = branch
         __swig_setmethods__["branch"] = branch
@@ -55,4 +56,5 @@ public:
         __swig_setmethods__["vertical"] = vertical
         if _newclass: vertical = property(vertical, vertical)
     %}
+#endif
 }

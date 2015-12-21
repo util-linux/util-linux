@@ -13,18 +13,18 @@ class Table {
         ~Table() {
             scols_unref_table(this->tb);
         }
-#ifdef SWIGPYTHON
         char *__str__() {
             char *data = NULL;
             HANDLE_RC(scols_print_table_to_string(this->tb, &data));
             return data;
         }
-         char *__json() {
+#ifdef SWIGPYTHON
+        char *__json() {
             this->json(true);
             char *data = this->__str__();
             this->json(false);
             return data;
-         }
+        }
 #else
         void print() {
             HANDLE_RC(scols_print_table(this->tb));
@@ -109,6 +109,7 @@ class Table {
 %}
 
 %extend Table {
+#ifdef SWIGPYTHON
     %pythoncode %{
         __swig_getmethods__["ascii"] = ascii
         __swig_setmethods__["ascii"] = ascii
@@ -142,4 +143,5 @@ class Table {
         __swig_setmethods__["line_separator"] = line_separator
         if _newclass: line_separator = property(line_separator, line_separator)
     %}
+#endif
 }

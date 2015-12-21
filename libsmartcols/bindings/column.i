@@ -98,6 +98,7 @@ class Column {
 %}
 
 %extend Column {
+#ifdef SWIGPYTHON
     %pythoncode %{
         __swig_getmethods__["trunc"] = trunc
         __swig_setmethods__["trunc"] = trunc
@@ -135,4 +136,5 @@ class Column {
         __swig_setmethods__["whint"] = whint
         if _newclass: whint = property(whint, whint)
     %}
+#endif
 }
