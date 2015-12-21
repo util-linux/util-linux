@@ -528,20 +528,23 @@ static int parse_btmp(struct lslogins_control *ctl, char *path)
 static int get_sgroups(gid_t **list, size_t *len, struct passwd *pwd)
 {
 	size_t n = 0;
+	int ngroups = 0;
 
 	*len = 0;
 	*list = NULL;
 
 	/* first let's get a supp. group count */
-	getgrouplist(pwd->pw_name, pwd->pw_gid, *list, (int *) len);
-	if (!*len)
+	getgrouplist(pwd->pw_name, pwd->pw_gid, *list, &ngroups);
+	if (!ngroups)
 		return -1;
 
-	*list = xcalloc(1, *len * sizeof(gid_t));
+	*list = xcalloc(1, ngroups * sizeof(gid_t));
 
 	/* now for the actual list of GIDs */
-	if (-1 == getgrouplist(pwd->pw_name, pwd->pw_gid, *list, (int *) len))
+	if (-1 == getgrouplist(pwd->pw_name, pwd->pw_gid, *list, &ngroups))
 		return -1;
+
+	*len = (size_t) ngroups;
 
 	/* getgroups also returns the user's primary GID - dispose of it */
 	while (n < *len) {
@@ -552,6 +555,7 @@ static int get_sgroups(gid_t **list, size_t *len, struct passwd *pwd)
 
 	if (*len)
 		(*list)[n] = (*list)[--(*len)];
+
 	return 0;
 }
 
