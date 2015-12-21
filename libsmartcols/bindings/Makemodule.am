@@ -16,6 +16,7 @@ _smartcols_la_SOURCES = \
 _smartcols_la_CPPFLAGS = \
 	$(AM_CPPFLAGS) \
 	$(AX_SWIG_PYTHON_CPPFLAGS) \
+	-DFLAGS_HIDDEN \
 	$(NULL)
 _smartcols_la_CXXFLAGS = \
 	$(AM_CXXFLAGS) \

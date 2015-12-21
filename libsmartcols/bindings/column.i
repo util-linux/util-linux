@@ -22,7 +22,9 @@ class Column {
             this->right(right);
             this->strict_width(strict_width);
             this->noextremes(noextremes);
+#ifdef FLAGS_HIDDEN
             this->hidden(hidden);
+#endif
         }
         ~Column() {
             scols_unref_column(this->cl);
@@ -66,13 +68,14 @@ class Column {
             this->set_flag(SCOLS_FL_NOEXTREMES, v);
         }
 
+#ifdef FLAGS_HIDDEN
         bool hidden() const {
             return (bool) scols_column_is_hidden(this->cl);
         }
         void hidden(bool v) {
             this->set_flag(SCOLS_FL_HIDDEN, v);
         }
-
+#endif
         const char *name() const {
             return scols_cell_get_data(scols_column_get_header(this->cl));
         }
@@ -119,11 +122,21 @@ class Column {
         __swig_getmethods__["noextremes"] = noextremes
         __swig_setmethods__["noextremes"] = noextremes
         if _newclass: noextremes = property(noextremes, noextremes)
+    %}
+#endif
 
+#ifdef FLAGS_HIDDEN
+#ifdef SWIGPYTHON
+    %pythoncode %{
         __swig_getmethods__["hidden"] = hidden
         __swig_setmethods__["hidden"] = hidden
         if _newclass: hidden = property(hidden, hidden)
+    %}
+#endif
+#endif
 
+#ifdef SWIGPYTHON
+    %pythoncode %{
         __swig_getmethods__["name"] = name
         __swig_setmethods__["name"] = name
         if _newclass: name = property(name, name)
