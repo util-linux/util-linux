@@ -1,5 +1,6 @@
 %newobject Table::new_column;
 %newobject Table::new_line;
+%newobject Table::__json;
 
 %inline %{
 
@@ -122,10 +123,6 @@ class Table {
         def json(self):
             from json import loads
             return loads(self.__json())
-
-        __swig_getmethods__["json"] = json
-        __swig_setmethods__["json"] = json
-        if _newclass: json = property(json, json)
 
         __swig_getmethods__["maxout"] = maxout
         __swig_setmethods__["maxout"] = maxout
