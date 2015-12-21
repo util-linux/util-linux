@@ -1,7 +1,7 @@
 Symbols
 =======
 
-.. py:class:: libsmartcols.Symbols()
+.. py:class:: smartcols.Symbols()
 
    .. py:attribute:: branch
 

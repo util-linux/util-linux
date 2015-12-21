@@ -1,9 +1,9 @@
 Line
 ====
 
-.. py:class:: libsmartcols.Line(parent=None)
+.. py:class:: smartcols.Line(parent=None)
 
-   :param libsmartcols.Line parent: Parent line
+   :param smartcols.Line parent: Parent line
 
    .. py:attribute:: color
 

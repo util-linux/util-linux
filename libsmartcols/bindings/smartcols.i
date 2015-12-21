@@ -1,4 +1,4 @@
-%module(docstring="Python API for the util-linux libsmartcols library") libsmartcols
+%module(docstring="Python API for the util-linux libsmartcols library") smartcols
 %{
 #include <libsmartcols.h>
 %}

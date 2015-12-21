@@ -1,13 +1,13 @@
 Table
 =====
 
-.. py:class:: libsmartcols.Table()
+.. py:class:: smartcols.Table()
 
    .. py:attribute:: ascii
 
       Force the library to use ASCII chars for the
-      :py:class:`libsmartcols.Column` with
-      :py:attr:`libsmartcols.Column.tree` activated.
+      :py:class:`smartcols.Column` with
+      :py:attr:`smartcols.Column.tree` activated.
 
    .. py:attribute:: colors
 
@@ -37,13 +37,13 @@ Table
       :param str name: Title
       :param float whint: Width hint
       :return: Column
-      :rtype: libsmartcols.Column
+      :rtype: smartcols.Column
 
    .. py:function:: add_column(column)
 
       Adds column to table.
 
-      :param libsmartcols.Column column: Column
+      :param smartcols.Column column: Column
 
    .. py:function:: remove_columns()
 
@@ -53,15 +53,15 @@ Table
 
       Creates new column and adds to table.
 
-      :param libsmartcols.Line parent: Parent
+      :param smartcols.Line parent: Parent
       :return: Line
-      :rtype: libsmartcols.Line
+      :rtype: smartcols.Line
 
    .. py:function:: add_line(line)
 
       Adds line to table.
 
-      :param libsmartcols.Line line: Line
+      :param smartcols.Line line: Line
 
    .. py:function:: remove_lines()
 

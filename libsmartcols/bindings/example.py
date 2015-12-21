@@ -1,5 +1,5 @@
 from __future__ import print_function
-from libsmartcols import *
+from smartcols import *
 
 class Col:
     name = 0
@@ -37,5 +37,5 @@ ln = tb.new_line(gdad)
 ln.set_data(Col.name, "Aunt Gaga")
 ln.set_data(Col.age, "35")
 
-print(tb)
 print(tb.json())
+print(tb)
