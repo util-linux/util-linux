@@ -21,6 +21,10 @@
 %newobject *::__str__;
 %typemap(newfree) char * "free($1);";
 
+#ifdef SWIGPERL
+    %rename("str") __str__;
+#endif
+
 %nodefaultctor;
 %nodefaultdtor;
 
