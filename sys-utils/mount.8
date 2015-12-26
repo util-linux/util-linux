@@ -2389,6 +2389,41 @@ Set the file permission on the filesystem.
 The umask value is given in octal.
 By default, the files are owned by root and not readable by somebody else.
 
+.SH "Mount options for overlay"
+Since Linux 3.18 the overlay pseudo filesystem implements a union mount for
+other file systems.
+
+An overlay filesystem combines two filesystems - an \fBupper\fR filesystem and
+a \fBlower\fR filesystem.  When a name exists in both filesystems, the object
+in the upper filesystem is visible while the object in the lower filesystem is
+either hidden or, in the case of directories, merged with the upper object.
+
+The lower filesystem can be any filesystem supported by Linux and does not need
+to be writable.  The lower filesystem can even be another overlayfs.  The upper
+filesystem will normally be writable and if it is it must support the creation
+of trusted.* extended attributes, and must provide valid d_type in readdir
+responses, so NFS is not suitable.
+ 
+A read-only overlay of two read-only filesystems may use any filesystem type.
+The options \fBlowerdir\fR and \fBupperdir\fR are combined into a merged
+directory by using:
+
+.RS
+.br
+.BR "mount \-t overlay overlay \-olowerdir=/lower,upperdir=/upper,workdir=/work  /merged"
+.br
+.RE
+
+.TP
+.BI lowerdir= directory
+Any filesystem, does not need to be on a writable filesystem.
+.TP
+.BI upperdir= directory
+The upperdir is normally on a writable filesystem.
+.TP
+.BI workdir= directory
+The workdir needs to be an empty directory on the same filesystem as upperdir.
+
 .SH "Mount options for proc"
 .TP
 \fBuid=\fP\,\fIvalue\fP and \fBgid=\fP\,\fIvalue\fP
