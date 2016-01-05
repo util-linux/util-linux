@@ -142,9 +142,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	termwidth = get_terminal_width();
-	if (termwidth <= 0)
-		termwidth = 80;
+	termwidth = get_terminal_width(80);
 	colsep = mbs_to_wcs("  ");
 
 	while ((ch = getopt_long(argc, argv, "hVc:s:txo:", longopts, NULL)) != -1)
