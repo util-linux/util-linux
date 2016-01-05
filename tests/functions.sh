@@ -46,11 +46,15 @@ function ts_cd {
 }
 
 function ts_report {
-	if [ "$TS_PARALLEL" == "yes" ]; then
-		echo "$TS_TITLE $1"
+	local desc=
+	local title
+	if [ -n "$TS_SUBNAME" ]; then
+		desc=$(printf "%s: [%02d] %s" "$TS_TESTNAME" "$TS_NSUBTESTS" "$TS_SUBNAME")
 	else
-		echo "$1"
+		desc=$TS_TESTNAME
 	fi
+	title=$(printf "%13s: %-45s ..." "$TS_COMPONENT" "$desc")
+	echo "$title $1"
 }
 
 function ts_check_test_command {
@@ -168,6 +172,7 @@ function ts_option_argument {
 }
 
 function ts_init_core_env {
+	TS_SUBNAME=""
 	TS_NS="$TS_COMPONENT/$TS_TESTNAME"
 	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME"
 	TS_VGDUMP="$TS_OUTDIR/$TS_TESTNAME.vgdump"
@@ -229,6 +234,7 @@ function ts_init_env {
 	TS_SUBDIR=$(dirname $TS_SCRIPT)
 	TS_TESTNAME=$(basename $TS_SCRIPT)
 	TS_COMPONENT=$(basename $TS_SUBDIR)
+	TS_DESC=${TS_DESC:-$TS_TESTNAME}
 
 	TS_NSUBTESTS=0
 	TS_NSUBFAILED=0
@@ -294,15 +300,7 @@ function ts_init_subtest {
 
 	ts_init_core_subtest_env
 
-	[ $TS_NSUBTESTS -eq 0 ] && echo
 	TS_NSUBTESTS=$(( $TS_NSUBTESTS + 1 ))
-
-	if [ "$TS_PARALLEL" == "yes" ]; then
-		TS_TITLE=$(printf "%13s: %-30s ...\n%16s: %-27s ..." "$TS_COMPONENT" "$TS_DESC" "" "$TS_SUBNAME")
-	else
-		TS_TITLE=$(printf "%16s: %-27s ..." "" "$TS_SUBNAME")
-		echo -n "$TS_TITLE"
-	fi
 }
 
 function ts_init {
@@ -310,13 +308,6 @@ function ts_init {
 
 	local is_fake=$( ts_has_option "fake" "$*")
 	local is_force=$( ts_has_option "force" "$*")
-
-	if [ "$TS_PARALLEL" == "yes" ]; then
-		TS_TITLE=$(printf "%13s: %-30s ..." "$TS_COMPONENT" "$TS_DESC")
-	else
-		TS_TITLE=$(printf "%13s: %-30s ..." "$TS_COMPONENT" "$TS_DESC")
-		echo -n "$TS_TITLE"
-	fi
 
 	[ "$is_fake" == "yes" ] && ts_skip "fake mode"
 	[ "$TS_OPTIONAL" == "yes" -a "$is_force" != "yes" ] && ts_skip "optional"
@@ -417,7 +408,6 @@ function ts_finalize {
 	ts_cleanup_on_exit
 
 	if [ $TS_NSUBTESTS -ne 0 ]; then
-		printf "%11s..."
 		if [ $TS_NSUBFAILED -ne 0 ]; then
 			ts_failed "$TS_NSUBFAILED from $TS_NSUBTESTS sub-tests"
 		else
@@ -464,7 +454,8 @@ function ts_image_init {
 	local mib=${1:-"5"}	# size in MiBs
 	local img=${2:-"$TS_OUTDIR/${TS_TESTNAME}.img"}
 
-	dd if=/dev/zero of="$img" bs=1M count=$mib &> /dev/null
+	rm -f $img
+	truncate -s "${mib}M" "$img"
 	echo "$img"
 	return 0
 }
@@ -641,7 +632,6 @@ function ts_scsi_debug_init {
 	lsmod | grep -q "^scsi_debug " \
 		|| ts_skip "scsi_debug module not loaded (lsmod)"
 
-	sleep 1
 	udevadm settle
 
 	devname=$(grep --with-filename scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')

@@ -126,7 +126,7 @@ label: dos
 ,10M,S,*
 EOF
 udevadm settle
-echo ',+' | $TS_CMD_SFDISK -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+echo ',+' | $TS_CMD_SFDISK --no-reread -N1 ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 ts_fdisk_clean $TS_DEVICE
 udevadm settle
 ts_finalize_subtest

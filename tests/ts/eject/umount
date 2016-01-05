@@ -48,7 +48,6 @@ EOF
 
 function deinit_device {
 	udevadm settle
-	sleep 1
 	rmmod scsi_debug
 }
 
