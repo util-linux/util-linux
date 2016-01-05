@@ -229,6 +229,7 @@ function ts_init_env {
 	TS_SUBDIR=$(dirname $TS_SCRIPT)
 	TS_TESTNAME=$(basename $TS_SCRIPT)
 	TS_COMPONENT=$(basename $TS_SUBDIR)
+	TS_DESC=${TS_DESC:-$TS_TESTNAME}
 
 	TS_NSUBTESTS=0
 	TS_NSUBFAILED=0
