@@ -218,11 +218,7 @@ static void print_all_signals(FILE *fp, int pretty)
 	}
 
 	/* pretty print */
-	width = get_terminal_width();
-	if (width == 0)
-		width = KILL_OUTPUT_WIDTH;
-	else
-		width -= 1;
+	width = get_terminal_width(KILL_OUTPUT_WIDTH + 1) - 1;
 	for (n = 0; n < ARRAY_SIZE(sys_signame); n++)
 		pretty_print_signal(fp, width, &lpos,
 				    sys_signame[n].val, sys_signame[n].name);

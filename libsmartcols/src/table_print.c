@@ -1009,9 +1009,7 @@ int scols_print_table(struct libscols_table *tb)
 		scols_table_set_symbols(tb, NULL);	/* use default */
 
 	tb->is_term = isatty(STDOUT_FILENO) ? 1 : 0;
-	tb->termwidth = tb->is_term ? get_terminal_width() : 0;
-	if (tb->termwidth <= 0)
-		tb->termwidth = 80;
+	tb->termwidth = tb->is_term ? get_terminal_width(80) : 0;
 	tb->termwidth -= tb->termreduce;
 
 	bufsz = tb->termwidth;
