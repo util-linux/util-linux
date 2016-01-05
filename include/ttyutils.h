@@ -50,7 +50,7 @@ struct chardata {
 	        (ptr)->capslock = 0;         \
 	} while (0)
 
-extern int get_terminal_width(void);
+extern int get_terminal_width(int default_width);
 extern int get_terminal_name(int fd, const char **path, const char **name,
 			     const char **number);
 

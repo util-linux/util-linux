@@ -9,37 +9,37 @@
 #include "c.h"
 #include "ttyutils.h"
 
-int get_terminal_width(void)
+int get_terminal_width(int default_width)
 {
-#ifdef TIOCGSIZE
-	struct ttysize	t_win;
-#endif
-#ifdef TIOCGWINSZ
+	int width = 0;
+
+#if defined(TIOCGWINSZ)
 	struct winsize	w_win;
-#endif
-        const char	*cp;
-
-#ifdef TIOCGSIZE
-	if (ioctl (STDIN_FILENO, TIOCGSIZE, &t_win) == 0)
-		return t_win.ts_cols;
-#endif
-#ifdef TIOCGWINSZ
 	if (ioctl (STDIN_FILENO, TIOCGWINSZ, &w_win) == 0)
-		return w_win.ws_col;
+		width = w_win.ws_col;
+#elif defined(TIOCGSIZE)
+	struct ttysize	t_win;
+	if (ioctl (STDIN_FILENO, TIOCGSIZE, &t_win) == 0)
+		width = t_win.ts_cols;
 #endif
-        cp = getenv("COLUMNS");
-	if (cp) {
-		char *end = NULL;
-		long c;
 
-		errno = 0;
-		c = strtol(cp, &end, 10);
+	if (width <= 0) {
+		const char *cp = getenv("COLUMNS");
 
-		if (errno == 0 && end && *end == '\0' && end > cp &&
-		    c > 0 && c <= INT_MAX)
-			return c;
+		if (cp) {
+			char *end = NULL;
+			long c;
+
+			errno = 0;
+			c = strtol(cp, &end, 10);
+
+			if (errno == 0 && end && *end == '\0' && end > cp &&
+			    c > 0 && c <= INT_MAX)
+				width = c;
+		}
 	}
-	return 0;
+
+	return width > 0 ? width : default_width;
 }
 
 int get_terminal_name(int fd,
@@ -88,7 +88,7 @@ int main(void)
 		fprintf(stderr, "tty name:   %s\n", name);
 		fprintf(stderr, "tty number: %s\n", num);
 	}
-	fprintf(stderr,         "tty width:  %d\n", get_terminal_width());
+	fprintf(stderr,         "tty width:  %d\n", get_terminal_width(0));
 
 	return EXIT_SUCCESS;
 }

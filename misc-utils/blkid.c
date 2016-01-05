@@ -154,9 +154,7 @@ static void pretty_print_line(const char *device, const char *fs_type,
 	int len, w;
 
 	if (term_width < 0) {
-		term_width = get_terminal_width();
-		if (term_width <= 0)
-			term_width = 80;
+		term_width = get_terminal_width(80);
 	}
 	if (term_width > 80) {
 		term_width -= 80;
@@ -192,7 +190,7 @@ static void pretty_print_dev(blkid_dev dev)
 	if (dev == NULL) {
 		pretty_print_line("device", "fs_type", "label",
 				  "mount point", "UUID");
-		for (len=get_terminal_width()-1; len > 0; len--)
+		for (len=get_terminal_width(0)-1; len > 0; len--)
 			fputc('-', stdout);
 		fputc('\n', stdout);
 		return;

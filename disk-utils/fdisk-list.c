@@ -405,9 +405,7 @@ void list_available_columns(FILE *out)
 	if (!cxt)
 		return;
 
-	termwidth = get_terminal_width();
-	if (termwidth <= 0)
-		termwidth = 80;
+	termwidth = get_terminal_width(80);
 
 	fprintf(out, _("\nAvailable columns (for -o):\n"));
 
