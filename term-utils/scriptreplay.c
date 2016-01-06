@@ -138,7 +138,7 @@ main(int argc, char *argv[])
 	double divi = 1, maxdelay = 0;
 	int c, diviopt = FALSE, maxdelayopt = FALSE, idx;
 	unsigned long line;
-	char ch;
+	int ch;
 
 	static const struct option longopts[] = {
 		{ "timing",	required_argument,	0, 't' },

@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
 	struct passwd *pw_entry;
 	struct group *gr_entry;
 	char *shell;
-	char ch;
+	int ch;
 	static const struct option longopts[] = {
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
