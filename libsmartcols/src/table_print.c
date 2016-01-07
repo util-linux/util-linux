@@ -990,7 +990,7 @@ static size_t strlen_line(struct libscols_line *ln)
 int scols_print_table(struct libscols_table *tb)
 {
 	int rc = 0;
-	size_t bufsz;
+	size_t bufsz, extra_bufsz = 0;
 	struct libscols_line *ln;
 	struct libscols_iter itr;
 	struct libscols_buffer *buf;
@@ -1008,15 +1008,56 @@ int scols_print_table(struct libscols_table *tb)
 	if (!tb->symbols)
 		scols_table_set_symbols(tb, NULL);	/* use default */
 
-	tb->is_term = isatty(STDOUT_FILENO) ? 1 : 0;
-	tb->termwidth = tb->is_term ? get_terminal_width(80) : 0;
-	tb->termwidth -= tb->termreduce;
+	if (tb->format == SCOLS_FMT_HUMAN)
+		tb->is_term = isatty(STDOUT_FILENO) ? 1 : 0;
 
-	bufsz = tb->termwidth;
+	if (tb->is_term) {
+		tb->termwidth = get_terminal_width(80);
+		if (tb->termreduce < tb->termwidth)
+			tb->termwidth -= tb->termreduce;
+		bufsz = tb->termwidth;
+	} else
+		bufsz = BUFSIZ;
 
+	/*
+	 * Estimate extra space necessary for tree, JSON or another output
+	 * decoration.
+	 */
+	if (scols_table_is_tree(tb))
+		extra_bufsz += tb->nlines * strlen(tb->symbols->vert);
+
+	switch (tb->format) {
+	case SCOLS_FMT_RAW:
+		extra_bufsz += tb->ncols;			/* separator between columns */
+		break;
+	case SCOLS_FMT_JSON:
+		if (tb->format == SCOLS_FMT_JSON)
+			extra_bufsz += tb->nlines * 3;		/* indention */
+		/* fallthrough */
+	case SCOLS_FMT_EXPORT:
+	{
+		struct libscols_column *cl;
+		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+		while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
+			if (scols_column_is_hidden(cl))
+				continue;
+			extra_bufsz += strlen(scols_cell_get_data(&cl->header));	/* data */
+			extra_bufsz += 2;						/* separators */
+		}
+		break;
+	}
+	case SCOLS_FMT_HUMAN:
+		break;
+	}
+
+
+	/*
+	 * Enlarge buffer if necessary, the buffer should be large enough to
+	 * store line data and tree ascii art (or another decoration).
+	 */
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (scols_table_next_line(tb, &itr, &ln) == 0) {
-		size_t sz = strlen_line(ln) + tb->termwidth;
+		size_t sz = strlen_line(ln) + extra_bufsz;
 		if (sz > bufsz)
 			bufsz = sz;
 	}

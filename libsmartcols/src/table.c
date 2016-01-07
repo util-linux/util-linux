@@ -362,7 +362,11 @@ FILE *scols_table_get_stream(struct libscols_table *tb)
  * @tb: table
  * @reduce: width
  *
- * Reduce the output width to @reduce.
+ * If necessary then libsmartcols use all terminal width, the @reduce setting
+ * provides extra space (for example for borders in ncurses applications).
+ *
+ * The @reduce must be smaller than terminal width, otherwise it's sillently
+ * ignored. The reduction is not applied when STDOUT_FILENO is not terminal.
  *
  * Returns: 0, a negative value in case of an error.
  */
