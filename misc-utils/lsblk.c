@@ -1012,7 +1012,7 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		if (!cxt->size)
 			break;
 		if (lsblk->bytes)
-			xasprintf(&str, "%jd", cxt->size);
+			xasprintf(&str, "%ju", cxt->size);
 		else
 			str = size_to_human_string(SIZE_SUFFIX_1LETTER, cxt->size);
 		if (sort)
