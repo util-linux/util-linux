@@ -60,9 +60,11 @@ scols_line_get_parent
 scols_line_get_userdata
 scols_line_has_children
 scols_line_next_child
+scols_line_refer_column_data
 scols_line_refer_data
 scols_line_remove_child
 scols_line_set_color
+scols_line_set_column_data
 scols_line_set_data
 scols_line_set_userdata
 scols_new_line

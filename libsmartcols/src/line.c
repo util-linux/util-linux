@@ -386,6 +386,23 @@ int scols_line_set_data(struct libscols_line *ln, size_t n, const char *data)
 }
 
 /**
+ * scols_line_set_column_data:
+ * @ln: a pointer to a struct libscols_cell instance
+ * @cl: column, whose data is to be set
+ * @data: actual data to set
+ *
+ * The same as scols_line_set_data() but cell is referenced by column object.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_line_set_column_data(struct libscols_line *ln,
+			       struct libscols_column *cl,
+			       const char *data)
+{
+	return scols_line_set_data(ln, cl->seqnum, data);
+}
+
+/**
  * scols_line_refer_data:
  * @ln: a pointer to a struct libscols_cell instance
  * @n: number of the cell which will refer to @data
@@ -400,6 +417,23 @@ int scols_line_refer_data(struct libscols_line *ln, size_t n, char *data)
 	if (!ce)
 		return -EINVAL;
 	return scols_cell_refer_data(ce, data);
+}
+
+/**
+ * scols_line_refer_column_data:
+ * @ln: a pointer to a struct libscols_cell instance
+ * @cl: column, whose data is to be set
+ * @data: actual data to refer to
+ *
+ * The same as scols_line_refer_data() but cell is referenced by column object.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_line_refer_column_data(struct libscols_line *ln,
+			       struct libscols_column *cl,
+			       char *data)
+{
+	return scols_line_refer_data(ln, cl->seqnum, data);
 }
 
 /**
