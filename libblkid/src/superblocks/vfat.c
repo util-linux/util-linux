@@ -132,7 +132,7 @@ static unsigned char *search_fat_label(blkid_probe pr,
 		dir = (struct vfat_dir_entry *)
 			blkid_probe_get_buffer(pr,
 					offset,
-					(blkid_loff_t) entries *
+					(uint64_t) entries *
 						sizeof(struct vfat_dir_entry));
 		if (!dir)
 			return NULL;
@@ -147,7 +147,7 @@ static unsigned char *search_fat_label(blkid_probe pr,
 		if (!dir)
 			ent = (struct vfat_dir_entry *)
 				blkid_probe_get_buffer(pr,
-					(blkid_loff_t) offset + (i *
+					(uint64_t) offset + (i *
 						sizeof(struct vfat_dir_entry)),
 					sizeof(struct vfat_dir_entry));
 		else
@@ -395,7 +395,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 			struct fat32_fsinfo *fsinfo;
 
 			buf = blkid_probe_get_buffer(pr,
-					(blkid_loff_t) fsinfo_sect * sector_size,
+					(uint64_t) fsinfo_sect * sector_size,
 					sizeof(struct fat32_fsinfo));
 			if (buf == NULL)
 				return errno ? -errno : 1;

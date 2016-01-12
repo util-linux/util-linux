@@ -166,7 +166,7 @@ nsr:
 	for (b = 0; b < 64; b++) {
 		vsd = (struct volume_structure_descriptor *)
 			blkid_probe_get_buffer(pr,
-					UDF_VSD_OFFSET + ((blkid_loff_t) b * 0x800),
+					UDF_VSD_OFFSET + ((uint64_t) b * 0x800),
 					sizeof(*vsd));
 		if (!vsd)
 			return errno ? -errno : 1;
@@ -205,7 +205,7 @@ real_blksz:
 	for (b = 0; b < count; b++) {
 		vd = (struct volume_descriptor *)
 			blkid_probe_get_buffer(pr,
-					(blkid_loff_t) (loc + b) * bs,
+					(uint64_t) (loc + b) * bs,
 					sizeof(*vd));
 		if (!vd)
 			return errno ? -errno : 1;
@@ -225,7 +225,7 @@ real_blksz:
 	for (b = 0; b < count; b++) {
 		vd = (struct volume_descriptor *)
 			blkid_probe_get_buffer(pr,
-					(blkid_loff_t) (loc + b) * bs,
+					(uint64_t) (loc + b) * bs,
 					sizeof(*vd));
 		if (!vd)
 			return errno ? -errno : 1;

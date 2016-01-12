@@ -7,14 +7,14 @@
 extern int blkid_partitions_get_flags(blkid_probe pr);
 
 extern blkid_parttable blkid_partlist_new_parttable(blkid_partlist ls,
-				const char *type, blkid_loff_t offset);
+				const char *type, uint64_t offset);
 
 extern int blkid_parttable_set_uuid(blkid_parttable tab, const unsigned char *id);
 extern int blkid_parttable_set_id(blkid_parttable tab, const unsigned char *id);
 
 extern blkid_partition blkid_partlist_add_partition(blkid_partlist ls,
 				blkid_parttable tab,
-				blkid_loff_t start, blkid_loff_t size);
+				uint64_t start, uint64_t size);
 
 extern int blkid_partlist_set_partno(blkid_partlist ls, int partno);
 extern int blkid_partlist_increment_partno(blkid_partlist ls);
@@ -30,7 +30,7 @@ extern int blkid_partitions_strcpy_ptuuid(blkid_probe pr, char *str);
 
 
 extern int blkid_is_nested_dimension(blkid_partition par,
-                        blkid_loff_t start, blkid_loff_t size);
+                        uint64_t start, uint64_t size);
 
 extern int blkid_partition_set_name(blkid_partition par,
 		const unsigned char *name, size_t len);

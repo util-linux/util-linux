@@ -126,12 +126,12 @@ static unsigned char *get_block_run(blkid_probe pr, const struct befs_super_bloc
 					const struct block_run *br, int fs_le)
 {
 	return blkid_probe_get_buffer(pr,
-			((blkid_loff_t) FS32_TO_CPU(br->allocation_group, fs_le)
+			((uint64_t) FS32_TO_CPU(br->allocation_group, fs_le)
 					<< FS32_TO_CPU(bs->ag_shift, fs_le)
 					<< FS32_TO_CPU(bs->block_shift, fs_le))
-				+ ((blkid_loff_t) FS16_TO_CPU(br->start, fs_le)
+				+ ((uint64_t) FS16_TO_CPU(br->start, fs_le)
 					<< FS32_TO_CPU(bs->block_shift, fs_le)),
-			(blkid_loff_t) FS16_TO_CPU(br->len, fs_le)
+			(uint64_t) FS16_TO_CPU(br->len, fs_le)
 					<< FS32_TO_CPU(bs->block_shift, fs_le));
 }
 
@@ -145,10 +145,10 @@ static unsigned char *get_custom_block_run(blkid_probe pr,
 		return NULL;
 
 	return blkid_probe_get_buffer(pr,
-			((blkid_loff_t) FS32_TO_CPU(br->allocation_group, fs_le)
+			((uint64_t) FS32_TO_CPU(br->allocation_group, fs_le)
 					<< FS32_TO_CPU(bs->ag_shift, fs_le)
 					<< FS32_TO_CPU(bs->block_shift, fs_le))
-				+ ((blkid_loff_t) FS16_TO_CPU(br->start, fs_le)
+				+ ((uint64_t) FS16_TO_CPU(br->start, fs_le)
 					<< FS32_TO_CPU(bs->block_shift, fs_le))
 				+ offset,
 			length);

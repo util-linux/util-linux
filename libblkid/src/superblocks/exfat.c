@@ -45,21 +45,21 @@ struct exfat_entry_label {
 #define EXFAT_ENTRY_EOD		0x00
 #define EXFAT_ENTRY_LABEL	0x83
 
-static blkid_loff_t block_to_offset(const struct exfat_super_block *sb,
-		blkid_loff_t block)
+static uint64_t block_to_offset(const struct exfat_super_block *sb,
+		uint64_t block)
 {
-	return (blkid_loff_t) block << sb->block_bits;
+	return block << sb->block_bits;
 }
 
-static blkid_loff_t cluster_to_block(const struct exfat_super_block *sb,
+static uint64_t cluster_to_block(const struct exfat_super_block *sb,
 		uint32_t cluster)
 {
 	return le32_to_cpu(sb->cluster_block_start) +
-			((blkid_loff_t) (cluster - EXFAT_FIRST_DATA_CLUSTER)
+			((uint64_t) (cluster - EXFAT_FIRST_DATA_CLUSTER)
 					<< sb->bpc_bits);
 }
 
-static blkid_loff_t cluster_to_offset(const struct exfat_super_block *sb,
+static uint64_t cluster_to_offset(const struct exfat_super_block *sb,
 		uint32_t cluster)
 {
 	return block_to_offset(sb, cluster_to_block(sb, cluster));
@@ -69,10 +69,10 @@ static uint32_t next_cluster(blkid_probe pr,
 		const struct exfat_super_block *sb, uint32_t cluster)
 {
 	uint32_t *next;
-	blkid_loff_t fat_offset;
+	uint64_t fat_offset;
 
 	fat_offset = block_to_offset(sb, le32_to_cpu(sb->fat_block_start))
-		+ (blkid_loff_t) cluster * sizeof(cluster);
+		+ (uint64_t) cluster * sizeof(cluster);
 	next = (uint32_t *) blkid_probe_get_buffer(pr, fat_offset,
 			sizeof(uint32_t));
 	if (!next)
@@ -84,7 +84,7 @@ static struct exfat_entry_label *find_label(blkid_probe pr,
 		const struct exfat_super_block *sb)
 {
 	uint32_t cluster = le32_to_cpu(sb->rootdir_cluster);
-	blkid_loff_t offset = cluster_to_offset(sb, cluster);
+	uint64_t offset = cluster_to_offset(sb, cluster);
 	uint8_t *entry;
 
 	for (;;) {

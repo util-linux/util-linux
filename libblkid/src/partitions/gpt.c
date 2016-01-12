@@ -133,7 +133,7 @@ static void swap_efi_guid(efi_guid_t *uid)
 
 static int last_lba(blkid_probe pr, uint64_t *lba)
 {
-	blkid_loff_t sz = blkid_probe_get_size(pr);
+	uint64_t sz = blkid_probe_get_size(pr);
 	unsigned int ssz = blkid_probe_get_sectorsize(pr);
 
 	if (sz < ssz)

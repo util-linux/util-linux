@@ -590,12 +590,10 @@ int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[
 
 #define probe_is_mmap_wanted(p)		(!S_ISCHR((p)->mode))
 
-static struct blkid_bufinfo *mmap_buffer(blkid_probe pr,
-					 blkid_loff_t real_off,
-					 blkid_loff_t len)
+static struct blkid_bufinfo *mmap_buffer(blkid_probe pr, uint64_t real_off, uint64_t len)
 {
-	blkid_loff_t map_len;
-	blkid_loff_t map_off = 0;
+	uint64_t map_len;
+	uint64_t map_off = 0;
 	struct blkid_bufinfo *bf = NULL;
 
 	/*
@@ -609,8 +607,7 @@ static struct blkid_bufinfo *mmap_buffer(blkid_probe pr,
 
 	/* begin of the device */
 	if (real_off == 0 || real_off + len < PROBE_MMAP_BEGINSIZ) {
-		DBG(BUFFER, ul_debug("\tmapping begin of the device (max size: %ju)",
-					(uintmax_t) pr->size));
+		DBG(BUFFER, ul_debug("\tmapping begin of the device (max size: %ju)", pr->size));
 		map_off = 0;
 		map_len = PROBE_MMAP_BEGINSIZ > pr->size ? pr->size : PROBE_MMAP_BEGINSIZ;
 
@@ -618,15 +615,14 @@ static struct blkid_bufinfo *mmap_buffer(blkid_probe pr,
 	/* end of the device */
 	} else if (real_off > pr->off + pr->size - PROBE_MMAP_ENDSIZ) {
 		DBG(BUFFER, ul_debug("\tmapping end of the device (probing area: "
-					"off=%ju, size=%ju)",
-					(uintmax_t) pr->off, (uintmax_t) pr->size));
+					"off=%ju, size=%ju)", pr->off, pr->size));
 
 		map_off = PROBE_ALIGN_OFF(pr, pr->off + pr->size - PROBE_MMAP_ENDSIZ);
 		map_len = pr->off + pr->size - map_off;
 
 	/* middle of the device */
 	} else {
-		blkid_loff_t minlen;
+		uint64_t minlen;
 
 		map_off = PROBE_ALIGN_OFF(pr, real_off);
 		minlen = real_off + len - map_off;
@@ -660,14 +656,11 @@ static struct blkid_bufinfo *mmap_buffer(blkid_probe pr,
 	INIT_LIST_HEAD(&bf->bufs);
 
 	DBG(BUFFER, ul_debug("\tmmap  %p: off=%ju, len=%ju (%ju pages)",
-				bf->data, (uintmax_t) map_off, (uintmax_t) map_len,
-				(uintmax_t) map_len / pr->mmap_granularity));
+				bf->data, map_off, map_len, map_len / pr->mmap_granularity));
 	return bf;
 }
 
-static struct blkid_bufinfo *read_buffer(blkid_probe pr,
-					 blkid_loff_t real_off,
-					 blkid_loff_t len)
+static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint64_t len)
 {
 	ssize_t ret;
 	struct blkid_bufinfo *bf = NULL;
@@ -695,7 +688,7 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr,
 	bf->off = real_off;
 	INIT_LIST_HEAD(&bf->bufs);
 
-	DBG(LOWPROBE, ul_debug("\tread %p: off=%jd len=%jd", bf->data, real_off, len));
+	DBG(LOWPROBE, ul_debug("\tread %p: off=%ju len=%ju", bf->data, real_off, len));
 
 	ret = read(pr->fd, bf->data, len);
 	if (ret != (ssize_t) len) {
@@ -713,19 +706,18 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr,
  * Note that @off is offset within probing area, the probing area is defined by
  * pr->off and pr->size.
  */
-unsigned char *blkid_probe_get_buffer(blkid_probe pr,
-				blkid_loff_t off, blkid_loff_t len)
+unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len)
 {
 	struct list_head *p;
 	struct blkid_bufinfo *bf = NULL;
-	blkid_loff_t real_off = pr->off + off;
+	uint64_t real_off = pr->off + off;
 
 	/*
 	DBG(BUFFER, ul_debug("\t>>>> off=%ju, real-off=%ju (probe <%ju..%ju>, len=%ju",
 				off, real_off, pr->off, pr->off + pr->size, len));
 	*/
 
-	if (pr->size <= 0) {
+	if (pr->size == 0) {
 		errno = EINVAL;
 		return NULL;
 	}
@@ -757,9 +749,8 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 				list_entry(p, struct blkid_bufinfo, bufs);
 
 		if (real_off >= x->off && real_off + len <= x->off + x->len) {
-			DBG(BUFFER, ul_debug("\treuse %p: off=%jd len=%jd (for off=%jd len=%jd)",
-						x->data, x->off, x->len,
-						real_off, len));
+			DBG(BUFFER, ul_debug("\treuse %p: off=%ju len=%ju (for off=%ju len=%ju)",
+						x->data, x->off, x->len, real_off, len));
 			bf = x;
 			break;
 		}
@@ -861,7 +852,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		blkid_loff_t off, blkid_loff_t size)
 {
 	struct stat sb;
-	blkid_loff_t devsiz = 0;
+	uint64_t devsiz = 0;
 
 	if (!pr)
 		return -1;
@@ -877,7 +868,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	pr->flags &= ~BLKID_FL_CDROM_DEV;
 	pr->prob_flags = 0;
 	pr->fd = fd;
-	pr->off = off;
+	pr->off = (uint64_t) off;
 	pr->size = 0;
 	pr->devno = 0;
 	pr->disk_devno = 0;
@@ -917,7 +908,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 
 	if (off && size == 0)
 		/* only offset without size specified */
-		pr->size -= off;
+		pr->size -= (uint64_t) off;
 
 	if (pr->off + pr->size > devsiz) {
 		DBG(LOWPROBE, ul_debug("area specified by offset and size is bigger than device"));
@@ -941,7 +932,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		pr->flags |= BLKID_FL_CDROM_DEV;
 #endif
 
-	DBG(LOWPROBE, ul_debug("ready for low-probing, offset=%jd, size=%jd",
+	DBG(LOWPROBE, ul_debug("ready for low-probing, offset=%ju, size=%ju",
 				pr->off, pr->size));
 	DBG(LOWPROBE, ul_debug("whole-disk: %s, regfile: %s",
 		blkid_probe_is_wholedisk(pr) ?"YES" : "NO",
@@ -954,8 +945,7 @@ err:
 
 }
 
-int blkid_probe_get_dimension(blkid_probe pr,
-		blkid_loff_t *off, blkid_loff_t *size)
+int blkid_probe_get_dimension(blkid_probe pr, uint64_t *off, uint64_t *size)
 {
 	if (!pr)
 		return -1;
@@ -965,26 +955,21 @@ int blkid_probe_get_dimension(blkid_probe pr,
 	return 0;
 }
 
-int blkid_probe_set_dimension(blkid_probe pr,
-		blkid_loff_t off, blkid_loff_t size)
+int blkid_probe_set_dimension(blkid_probe pr, uint64_t off, uint64_t size)
 {
 	if (!pr)
 		return -1;
 
 	DBG(LOWPROBE, ul_debug(
-		"changing probing area pr=%p: size=%llu, off=%llu "
-		"-to-> size=%llu, off=%llu",
-		pr,
-		(unsigned long long) pr->size,
-		(unsigned long long) pr->off,
-		(unsigned long long) size,
-		(unsigned long long) off));
+		"changing probing area pr=%p: size=%ju, off=%ju "
+		"-to-> size=%ju, off=%ju",
+		pr, pr->size, pr->off, size, off));
 
 	pr->off = off;
 	pr->size = size;
 	pr->flags &= ~BLKID_FL_TINY_DEV;
 
-	if (pr->size <= 1440 * 1024 && !S_ISCHR(pr->mode))
+	if (pr->size <= 1440ULL * 1024ULL && !S_ISCHR(pr->mode))
 		pr->flags |= BLKID_FL_TINY_DEV;
 
 	blkid_probe_reset_buffer(pr);
@@ -998,10 +983,10 @@ int blkid_probe_set_dimension(blkid_probe pr,
  * or no magic present, or negative value on error.
  */
 int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
-			blkid_loff_t *offset, const struct blkid_idmag **res)
+			uint64_t *offset, const struct blkid_idmag **res)
 {
 	const struct blkid_idmag *mag = NULL;
-	blkid_loff_t off = 0;
+	uint64_t off = 0;
 
 	if (id)
 		mag = &id->magics[0];
@@ -1190,7 +1175,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 {
 	const char *off = NULL;
 	size_t len = 0;
-	loff_t offset, l;
+	uint64_t offset, l;
 	char buf[BUFSIZ];
 	int fd, rc = 0;
 	struct blkid_chain *chn;
@@ -1220,7 +1205,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	if (rc || len == 0 || off == NULL)
 		return 0;
 
-	offset = strtoll(off, NULL, 10);
+	offset = strtoumax(off, NULL, 10);
 	fd = blkid_probe_get_fd(pr);
 	if (fd < 0)
 		return -1;
@@ -1229,10 +1214,10 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 		len = sizeof(buf);
 
 	DBG(LOWPROBE, ul_debug(
-	    "do_wipe [offset=0x%jx, len=%zd, chain=%s, idx=%d, dryrun=%s]\n",
-	    offset, len, chn->driver->name, chn->idx, dryrun ? "yes" : "not"));
+	    "do_wipe [offset=0x%jx (%ju), len=%zd, chain=%s, idx=%d, dryrun=%s]\n",
+	    offset, offset, len, chn->driver->name, chn->idx, dryrun ? "yes" : "not"));
 
-	l = lseek(fd, offset, SEEK_SET);
+	l = blkid_llseek(fd, offset, SEEK_SET);
 	if (l == (off_t) -1)
 		return -1;
 
@@ -1457,7 +1442,7 @@ done:
 unsigned char *blkid_probe_get_sector(blkid_probe pr, unsigned int sector)
 {
 	return pr ? blkid_probe_get_buffer(pr,
-			((blkid_loff_t) sector) << 9, 0x200) : NULL;
+			((uint64_t) sector) << 9, 0x200) : NULL;
 }
 
 struct blkid_prval *blkid_probe_assign_value(
@@ -1552,7 +1537,7 @@ int blkid_probe_sprintf_value(blkid_probe pr, const char *name,
 	return rc;
 }
 
-int blkid_probe_set_magic(blkid_probe pr, blkid_loff_t offset,
+int blkid_probe_set_magic(blkid_probe pr, uint64_t offset,
 			size_t len, unsigned char *magic)
 {
 	int rc = 0;
@@ -1714,7 +1699,7 @@ blkid_probe blkid_probe_get_wholedisk_probe(blkid_probe pr)
  */
 blkid_loff_t blkid_probe_get_size(blkid_probe pr)
 {
-	return pr ? pr->size : -1;
+	return pr ? (blkid_loff_t) pr->size : -1;
 }
 
 /**
@@ -1727,7 +1712,7 @@ blkid_loff_t blkid_probe_get_size(blkid_probe pr)
  */
 blkid_loff_t blkid_probe_get_offset(blkid_probe pr)
 {
-	return pr ? pr->off : -1;
+	return pr ? (blkid_loff_t) pr->off : -1;
 }
 
 /**
@@ -1771,7 +1756,7 @@ unsigned int blkid_probe_get_sectorsize(blkid_probe pr)
  */
 blkid_loff_t blkid_probe_get_sectors(blkid_probe pr)
 {
-	return pr ? pr->size >> 9 : -1;
+	return pr ? (blkid_loff_t) (pr->size >> 9) : -1;
 }
 
 /**
@@ -1986,7 +1971,7 @@ size_t blkid_ltrim_whitespace(unsigned char *str)
  * Note that there is not relation between _wiper and blkid_to_wipe().
  *
  */
-void blkid_probe_set_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
+void blkid_probe_set_wiper(blkid_probe pr, uint64_t off, uint64_t size)
 {
 	struct blkid_chain *chn;
 
@@ -2021,8 +2006,7 @@ void blkid_probe_set_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
 /*
  * Returns 1 if the <@off,@size> area was wiped
  */
-int blkid_probe_is_wiped(blkid_probe pr, struct blkid_chain **chn,
-		     blkid_loff_t off, blkid_loff_t size)
+int blkid_probe_is_wiped(blkid_probe pr, struct blkid_chain **chn, uint64_t off, uint64_t size)
 {
 	if (!pr || !size)
 		return 0;
@@ -2039,7 +2023,7 @@ int blkid_probe_is_wiped(blkid_probe pr, struct blkid_chain **chn,
  *  Try to use any area -- if the area has been previously wiped then the
  *  previous probing result should be ignored (reseted).
  */
-void blkid_probe_use_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
+void blkid_probe_use_wiper(blkid_probe pr, uint64_t off, uint64_t size)
 {
 	struct blkid_chain *chn = NULL;
 

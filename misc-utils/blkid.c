@@ -474,7 +474,7 @@ static int lowprobe_topology(blkid_probe pr)
 
 static int lowprobe_device(blkid_probe pr, const char *devname,
 			int chain, char *show[], int output,
-			blkid_loff_t offset, blkid_loff_t size)
+			uint64_t offset, uint64_t size)
 {
 	const char *data;
 	const char *name;
@@ -848,8 +848,8 @@ int main(int argc, char **argv)
 		for (i = 0; i < numdev; i++) {
 			err = lowprobe_device(pr, devices[i], lowprobe, show,
 					output_format,
-					(blkid_loff_t) offset,
-					(blkid_loff_t) size);
+					(uint64_t) offset,
+					(uint64_t) size);
 			if (err)
 				break;
 		}

@@ -361,7 +361,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 	for ( ; i < ARRAY_SIZE(idinfos); i++) {
 		const struct blkid_idinfo *id;
 		const struct blkid_idmag *mag = NULL;
-		blkid_loff_t off = 0;
+		uint64_t off = 0;
 
 		chn->idx = i;
 		id = idinfos[i];

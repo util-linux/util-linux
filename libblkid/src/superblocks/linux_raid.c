@@ -99,7 +99,7 @@ struct mdp1_super_block {
 #define MD_RESERVED_BYTES		0x10000
 #define MD_SB_MAGIC			0xa92b4efc
 
-static int probe_raid0(blkid_probe pr, blkid_loff_t off)
+static int probe_raid0(blkid_probe pr, uint64_t off)
 {
 	struct mdp0_super_block *mdp0;
 	union {
