@@ -301,7 +301,7 @@ mbs_truncate(char *str, size_t *width)
 done:
 	free(wcs);
 #else
-	if (*width < bytes)
+	if (bytes >= 0 && *width < (size_t) bytes)
 		bytes = *width;
 #endif
 	if (bytes >= 0)
@@ -350,10 +350,11 @@ mbsalign (const char *src, char *dest, size_t dest_size,
   size_t n_cols = src_size - 1;
   size_t n_used_bytes = n_cols; /* Not including NUL */
   size_t n_spaces = 0, space_left;
+
+#ifdef HAVE_WIDECHAR
   bool conversion = false;
   bool wc_enabled = false;
 
-#ifdef HAVE_WIDECHAR
   /* In multi-byte locales convert to wide characters
      to allow easy truncation. Also determine number
      of screen columns used.  */
@@ -407,9 +408,9 @@ mbsalign (const char *src, char *dest, size_t dest_size,
         n_cols = wc_truncate (str_wc, *width);
         n_used_bytes = wcstombs (newstr, str_wc, src_size);
     }
-#endif
 
 mbsalign_unibyte:
+#endif
 
   if (n_cols > *width) /* Unibyte truncation required.  */
     {
@@ -456,9 +457,9 @@ mbsalign_unibyte:
       dest = mempcpy (dest, str_to_print, min (n_used_bytes, space_left));
       mbs_align_pad (dest, dest_end, end_spaces);
     }
-
+#ifdef HAVE_WIDECHAR
 mbsalign_cleanup:
-
+#endif
   free (str_wc);
   free (newstr);
 

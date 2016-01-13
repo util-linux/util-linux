@@ -32,6 +32,7 @@
 # define wcschr strchr
 # define wcsdup strdup
 # define wcslen strlen
+# define wcspbrk strpbrk
 
 # define wcwidth(c) 1
 
