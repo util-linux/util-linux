@@ -58,10 +58,8 @@
 #include "ttyutils.h"
 
 #ifdef HAVE_WIDECHAR
-#define wcs_width(s) wcswidth(s,wcslen(s))
 static wchar_t *mbs_to_wcs(const char *);
 #else
-#define wcs_width(s) strlen(s)
 #define mbs_to_wcs(s) xstrdup(s)
 static char *mtsafe_strtok(char *, const char *, char **);
 #define wcstok mtsafe_strtok
@@ -83,6 +81,33 @@ typedef struct _tbl {
 	wchar_t **list;
 	int cols, *len;
 } TBL;
+
+
+#ifdef HAVE_WIDECHAR
+/* Don't use wcswidth(), we need to ignore non-printable chars. */
+static int width(const wchar_t *str)
+{
+	int x, width = 0;
+
+	for (; *str != '\0'; str++) {
+		x = wcwidth(*str);
+		if (x > 0)
+			width += x;
+	}
+	return width;
+}
+#else
+static int width(const char *str)
+{
+	int width = 0;
+
+	for (; *str != '\0'; str++) {
+		if (isprint(*str))
+			width++;
+	}
+	return width;
+}
+#endif
 
 static void __attribute__((__noreturn__)) usage(int rc)
 {
@@ -223,7 +248,7 @@ static void c_columnate(int maxlength, long termwidth, wchar_t **list, int entri
 	endcol = maxlength;
 	for (chcnt = col = 0, lp = list;; ++lp) {
 		fputws(*lp, stdout);
-		chcnt += wcs_width(*lp);
+		chcnt += width(*lp);
 		if (!--entries)
 			break;
 		if (++col == numcols) {
@@ -248,7 +273,7 @@ static void r_columnate(int maxlength, long termwidth, wchar_t **list, int entri
 
 	maxlength = (maxlength + TAB) & ~(TAB - 1);
 	numcols = termwidth / maxlength;
-	if (!numcols) 
+	if (!numcols)
 		numcols = 1;
 	numrows = entries / numcols;
 	if (entries % numcols)
@@ -258,7 +283,7 @@ static void r_columnate(int maxlength, long termwidth, wchar_t **list, int entri
 		endcol = maxlength;
 		for (base = row, chcnt = col = 0; col < numcols; ++col) {
 			fputws(list[base], stdout);
-			chcnt += wcs_width(list[base]);
+			chcnt += width(list[base]);
 			if ((base += numrows) >= entries)
 				break;
 			while ((cnt = ((chcnt + TAB) & ~(TAB - 1))) <= endcol) {
@@ -339,7 +364,7 @@ static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy,
 		t->len = xcalloc(coloff, sizeof(int));
 		for (t->cols = coloff; --coloff >= 0;) {
 			t->list[coloff] = cols[coloff];
-			t->len[coloff] = wcs_width(cols[coloff]);
+			t->len[coloff] = width(cols[coloff]);
 			if (t->len[coloff] > lens[coloff])
 				lens[coloff] = t->len[coloff];
 		}
@@ -348,7 +373,11 @@ static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy,
 	for (t = tbl, cnt = 0; cnt < entries; ++cnt, ++t) {
 		for (coloff = 0; coloff < t->cols - 1; ++coloff) {
 			fputws(t->list[coloff], stdout);
+#ifdef HAVE_WIDECHAR
 			wprintf(L"%*s", lens[coloff] - t->len[coloff], "");
+#else
+			printf("%*s", (int) lens[coloff] - t->len[coloff], "");
+#endif
 			fputws(colsep, stdout);
 		}
 		if (coloff < t->cols) {
@@ -400,7 +429,7 @@ static int input(FILE *fp, int *maxlength, wchar_t ***list, int *entries)
 		lineno++;
 		if (!feof(fp) && p)
 			*p = '\0';
-		len = wcs_width(buf);	/* len = p - buf; */
+		len = width(buf);	/* len = p - buf; */
 		if (*maxlength < len)
 			*maxlength = len;
 		if (local_entries == maxentry) {
