@@ -300,7 +300,7 @@ static int read_processes(struct lsns *ls)
 
 	while (proc_next_pid(proc, &pid) == 0) {
 		rc = read_process(ls, pid);
-		if (rc && rc != -EACCES)
+		if (rc && rc != -EACCES && rc != -ENOENT)
 			break;
 		rc = 0;
 	}
