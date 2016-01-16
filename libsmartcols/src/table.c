@@ -141,6 +141,7 @@ int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl
 	DBG(TAB, ul_debugobj(tb, "add column %p", cl));
 	list_add_tail(&cl->cl_columns, &tb->tb_columns);
 	cl->seqnum = tb->ncols++;
+	cl->table = tb;
 	scols_ref_column(cl);
 
 	/* TODO:
@@ -173,6 +174,7 @@ int scols_table_remove_column(struct libscols_table *tb,
 	DBG(TAB, ul_debugobj(tb, "remove column %p", cl));
 	list_del_init(&cl->cl_columns);
 	tb->ncols--;
+	cl->table = NULL;
 	scols_unref_column(cl);
 	return 0;
 }

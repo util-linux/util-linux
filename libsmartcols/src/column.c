@@ -157,6 +157,13 @@ int scols_column_set_flags(struct libscols_column *cl, int flags)
 	if (!cl)
 		return -EINVAL;
 
+	if (cl->table) {
+		if (!(cl->flags & SCOLS_FL_TREE) && (flags & SCOLS_FL_TREE))
+			cl->table->ntreecols++;
+		else if ((cl->flags & SCOLS_FL_TREE) && !(flags & SCOLS_FL_TREE))
+			cl->table->ntreecols--;
+	}
+
 	cl->flags = flags;
 	return 0;
 }
