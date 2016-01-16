@@ -85,77 +85,41 @@ static const char *Senter = "", *Sexit = "";	/* enter and exit standout mode */
 #  include <ncurses/ncurses.h>
 # endif
 # include <term.h>
+#endif
 
 static int setup_terminal(char *term)
 {
+#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
 	int ret;
 
 	if (setupterm(term, STDOUT_FILENO, &ret) != OK || ret != 1)
 		return -1;
+#endif
 	return 0;
 }
 
 static void my_putstring(char *s)
 {
+#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
 	if (has_term)
 		putp(s);
 	else
+#endif
 		fputs(s, stdout);
 }
 
-static const char *my_tgetstr(char *s __attribute__((__unused__)), char *ss)
+static const char *my_tgetstr(char *s __attribute__ ((__unused__)), char *ss)
 {
 	const char *ret = NULL;
 
+#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
 	if (has_term)
 		ret = tigetstr(ss);
+#endif
 	if (!ret || ret == (char *)-1)
 		return "";
 	return ret;
 }
-
-#elif defined(HAVE_LIBTERMCAP)
-# include <termcap.h>
-
-static char termbuffer[4096];
-static char tcbuffer[4096];
-static char *strbuf = termbuffer;
-
-static int setup_terminal(char *term)
-{
-	if (tgetent(tcbuffer, term) < 0)
-		return -1;
-	return 0;
-}
-
-static void my_putstring(char *s)
-{
-	if (has_term)
-		tputs(s, 1, putchar);
-	else
-		fputs(s, stdout);
-}
-
-static const char *my_tgetstr(char *s, char *ss __attribute__((__unused__)))
-{
-	const char *ret = NULL;
-
-	if (has_term)
-		ret = tgetstr(s, &strbuf);
-	if (!ret)
-		return "";
-	return ret;
-}
-
-#else	/* ! (HAVE_LIBTERMCAP || HAVE_LIBNCURSES || HAVE_LIBNCURSESW) */
-
-static void my_putstring(char *s)
-{
-	fputs(s, stdout);
-}
-
-#endif	/* end of LIBTERMCAP / NCURSES */
-
 
 #include "widechar.h"
 
@@ -318,15 +282,14 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW) || defined(HAVE_LIBTERMCAP)
+#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
 	{
 		char *term = getenv("TERM");
-
 		if (term) {
 			has_term = setup_terminal(term) == 0;
 			if (has_term) {
-				Senter = my_tgetstr("so","smso");
-				Sexit = my_tgetstr("se","rmso");
+				Senter = my_tgetstr("so", "smso");
+				Sexit = my_tgetstr("se", "rmso");
 			}
 		}
 	}

@@ -95,10 +95,6 @@ more_CFLAGS += $(NCURSES_CFLAGS)
 more_LDADD += $(NCURSES_LIBS)
 endif
 
-if HAVE_TERMCAP
-more_LDADD += -ltermcap
-endif
-
 check_PROGRAMS += test_more
 test_more_SOURCES = $(more_SOURCES)
 test_more_CFLAGS = -DTEST_PROGRAM

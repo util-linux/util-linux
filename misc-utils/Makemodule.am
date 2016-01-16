@@ -12,9 +12,6 @@ endif
 
 cal_CFLAGS = $(AM_CFLAGS) $(NCURSES_CFLAGS)
 cal_LDADD = $(LDADD) libcommon.la libtcolors.la $(NCURSES_LIBS)
-if HAVE_TERMCAP
-cal_LDADD += -ltermcap
-endif
 endif # BUILD_CAL
 
 

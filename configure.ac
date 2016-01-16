@@ -580,17 +580,6 @@ AS_IF([test "x$with_util" = xno], [
 ])
 
 
-AC_ARG_WITH([termcap], AS_HELP_STRING([--without-termcap], [compile without libtermcap]),
-  [], [with_termcap=auto]
-)
-AS_IF([test "x$with_termcap" = xno], [
-  AM_CONDITIONAL([HAVE_TERMCAP], [false])
-  have_termcap=no
-], [
-  UL_CHECK_LIB([termcap], [tgetnum])
-])
-
-
 AC_CHECK_TYPES([union semun], [], [], [[
 #include <sys/sem.h>
 ]])
