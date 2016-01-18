@@ -1075,7 +1075,7 @@ static int cells_cmp_wrapper(struct list_head *a, struct list_head *b, void *dat
  */
 int scols_sort_table(struct libscols_table *tb, struct libscols_column *cl)
 {
-	if (!tb || !cl)
+	if (!tb || !cl || !cl->cmpfunc)
 		return -EINVAL;
 
 	DBG(TAB, ul_debugobj(tb, "sorting table"));
