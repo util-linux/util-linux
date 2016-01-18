@@ -90,7 +90,8 @@ static int probe_minix(blkid_probe pr, const struct blkid_idmag *mag)
 		struct minix_super_block *sb = (struct minix_super_block *) data;
 		int zones, ninodes, imaps, zmaps, firstz;
 
-		if (sb->s_imap_blocks == 0 || sb->s_zmap_blocks == 0)
+		if (sb->s_imap_blocks == 0 || sb->s_zmap_blocks == 0 ||
+		    sb->s_log_zone_size != 0)
 			return 1;
 
 		zones = version == 2 ? minix_swab32(swabme, sb->s_zones) :
@@ -105,7 +106,6 @@ static int probe_minix(blkid_probe pr, const struct blkid_idmag *mag)
 			return 1;
 		if (zmaps * MINIX_BLOCK_SIZE * 8 < zones - firstz + 1)
 			return 1;
-
 	} else if (version == 3) {
 		struct minix3_super_block *sb = (struct minix3_super_block *) data;
 
