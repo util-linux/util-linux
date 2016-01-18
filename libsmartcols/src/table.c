@@ -126,13 +126,14 @@ int scols_table_set_name(struct libscols_table *tb, const char *name)
  * @tb: a pointer to a struct libscols_table instance
  * @cl: a pointer to a struct libscols_column instance
  *
- * Adds @cl to @tb's column list.
+ * Adds @cl to @tb's column list. The column cannot be shared between more
+ * tables.
  *
  * Returns: 0, a negative number in case of an error.
  */
 int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl)
 {
-	if (!tb || !cl || !list_empty(&tb->tb_lines))
+	if (!tb || !cl || !list_empty(&tb->tb_lines) || cl->table)
 		return -EINVAL;
 
 	if (cl->flags & SCOLS_FL_TREE)
