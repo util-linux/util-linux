@@ -150,8 +150,8 @@ static inline int update_str(char **dest, const char *src)
 
 static inline int cpy_str_at_offset(void *new, const void *old, size_t offset)
 {
-	char **o = (char **) (old + offset);
-	char **n = (char **) (new + offset);
+	char **o = (char **) ((char *) old + offset);
+	char **n = (char **) ((char *) new + offset);
 
 	if (*n)
 		return 0;	/* already set, don't overwrite */

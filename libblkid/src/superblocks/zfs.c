@@ -176,7 +176,7 @@ static int find_uberblocks(const void *label, loff_t *ub_offset, int *swap_endia
 	loff_t offset = VDEV_LABEL_UBERBLOCK;
 
 	for (i = 0; i < UBERBLOCKS_COUNT; i++, offset += UBERBLOCK_SIZE) {
-		ub = (struct zfs_uberblock *)(label + offset);
+		ub = (struct zfs_uberblock *)((char *) label + offset);
 
 		if (ub->ub_magic == UBERBLOCK_MAGIC) {
 			*ub_offset = offset;
@@ -234,7 +234,7 @@ static int probe_zfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 		if (found_in_label > 0) {
 			found+= found_in_label;
-			ub = (struct zfs_uberblock *)(label + ub_offset);
+			ub = (struct zfs_uberblock *)((char *) label + ub_offset);
 			ub_offset += offset;
 
 			if (found >= ZFS_WANT)
