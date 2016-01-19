@@ -60,6 +60,7 @@ struct chrt_ctl {
 
 	unsigned int all_tasks : 1,		/* all threads of the PID */
 		     reset_on_fork : 1,		/* SCHED_RESET_ON_FORK */
+		     altered : 1,		/* sched_set**() used */
 		     verbose : 1;		/* verbose output */
 };
 
@@ -104,7 +105,7 @@ static void __attribute__((__noreturn__)) show_usage(int rc)
 	exit(rc);
 }
 
-static void show_rt_info(pid_t pid, int isnew)
+static void show_sched_pid_info(struct chrt_ctl *ctl, pid_t pid)
 {
 	struct sched_param sp;
 	int policy;
@@ -117,7 +118,7 @@ static void show_rt_info(pid_t pid, int isnew)
 	if (policy == -1)
 		err(EXIT_FAILURE, _("failed to get pid %d's policy"), pid);
 
-	if (isnew)
+	if (ctl->altered)
 		printf(_("pid %d's new scheduling policy: "), pid);
 	else
 		printf(_("pid %d's current scheduling policy: "), pid);
@@ -159,12 +160,30 @@ static void show_rt_info(pid_t pid, int isnew)
 	if (sched_getparam(pid, &sp))
 		err(EXIT_FAILURE, _("failed to get pid %d's attributes"), pid);
 
-	if (isnew)
+	if (ctl->altered)
 		printf(_("pid %d's new scheduling priority: %d\n"),
 		       pid, sp.sched_priority);
 	else
 		printf(_("pid %d's current scheduling priority: %d\n"),
 		       pid, sp.sched_priority);
+}
+
+
+static void show_sched_info(struct chrt_ctl *ctl)
+{
+	if (ctl->all_tasks) {
+		pid_t tid;
+		struct proc_tasks *ts = proc_open_tasks(ctl->pid);
+
+		if (!ts)
+			err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
+
+		while (!proc_next_tid(ts, &tid))
+			show_sched_pid_info(ctl, tid);
+
+		proc_close_tasks(ts);
+	} else
+		show_sched_pid_info(ctl, ctl->pid);
 }
 
 static void show_min_max(void)
@@ -288,18 +307,7 @@ int main(int argc, char **argv)
 		show_usage(EXIT_FAILURE);
 
 	if ((ctl->pid > -1) && (ctl->verbose || argc - optind == 1)) {
-		if (ctl->all_tasks) {
-			pid_t tid;
-			struct proc_tasks *ts = proc_open_tasks(ctl->pid);
-
-			if (!ts)
-				err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
-			while (!proc_next_tid(ts, &tid))
-				show_rt_info(tid, FALSE);
-			proc_close_tasks(ts);
-		} else
-			show_rt_info(ctl->pid, FALSE);
-
+		show_sched_info(ctl);
 		if (argc - optind == 1)
 			return EXIT_SUCCESS;
 	}
@@ -333,8 +341,10 @@ int main(int argc, char **argv)
 	} else if (sched_setscheduler(ctl->pid, ctl->policy, &sp) == -1)
 		err(EXIT_FAILURE, _("failed to set pid %d's policy"), ctl->pid);
 
+	ctl->altered = 1;
+
 	if (ctl->verbose)
-		show_rt_info(ctl->pid, TRUE);
+		show_sched_info(ctl);
 
 	if (!ctl->pid) {
 		argv += optind + 1;
