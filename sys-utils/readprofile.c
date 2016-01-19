@@ -298,7 +298,7 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, "%s", mapFile);
 
 	while (fgets(mapline, S_LEN, map)) {
-		if (sscanf(mapline, "%llx %s %s", &fn_add, mode, fn_name) != 3)
+		if (sscanf(mapline, "%llx %7[^\n ] %127[^\n ]", &fn_add, mode, fn_name) != 3)
 			errx(EXIT_FAILURE, _("%s(%i): wrong map line"), mapFile,
 			     maplineno);
 		/* only elf works like this */
@@ -319,7 +319,7 @@ int main(int argc, char **argv)
 		unsigned int this = 0;
 		int done = 0;
 
-		if (sscanf(mapline, "%llx %s %s", &next_add, mode, next_name) != 3)
+		if (sscanf(mapline, "%llx %7[^\n ] %127[^\n ]", &next_add, mode, next_name) != 3)
 			errx(EXIT_FAILURE, _("%s(%i): wrong map line"), mapFile,
 			     maplineno);
 		header_printed = 0;
