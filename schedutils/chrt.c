@@ -52,6 +52,16 @@
 #define SCHED_RESET_ON_FORK 0x40000000
 #endif
 
+/* control struct */
+struct chrt_ctl {
+	pid_t	pid;
+	int	policy;				/* SCHED_* */
+	int	priority;
+
+	unsigned int all_tasks : 1,		/* all threads of the PID */
+		     reset_on_fork : 1,		/* SCHED_RESET_ON_FORK */
+		     verbose : 1;		/* verbose output */
+};
 
 static void __attribute__((__noreturn__)) show_usage(int rc)
 {
@@ -197,10 +207,9 @@ static void show_min_max(void)
 
 int main(int argc, char **argv)
 {
-	int i, policy = SCHED_RR, priority = 0, verbose = 0, policy_flag = 0,
-	    all_tasks = 0;
+	struct chrt_ctl _ctl = { .pid = -1 }, *ctl = &_ctl;
 	struct sched_param sp;
-	pid_t pid = -1;
+	int i;
 
 	static const struct option longopts[] = {
 		{ "all-tasks",  0, NULL, 'a' },
@@ -229,41 +238,39 @@ int main(int argc, char **argv)
 
 		switch (i) {
 		case 'a':
-			all_tasks = 1;
+			ctl->all_tasks = 1;
 			break;
 		case 'b':
 #ifdef SCHED_BATCH
-			policy = SCHED_BATCH;
+			ctl->policy = SCHED_BATCH;
 #endif
 			break;
 		case 'f':
-			policy = SCHED_FIFO;
+			ctl->policy = SCHED_FIFO;
 			break;
 		case 'R':
-#ifdef SCHED_RESET_ON_FORK
-			policy_flag |= SCHED_RESET_ON_FORK;
-#endif
+			ctl->reset_on_fork = 1;
 			break;
 		case 'i':
 #ifdef SCHED_IDLE
-			policy = SCHED_IDLE;
+			ctl->policy = SCHED_IDLE;
 #endif
 			break;
 		case 'm':
 			show_min_max();
 			return EXIT_SUCCESS;
 		case 'o':
-			policy = SCHED_OTHER;
+			ctl->policy = SCHED_OTHER;
 			break;
 		case 'p':
 			errno = 0;
-			pid = strtos32_or_err(argv[argc - 1], _("invalid PID argument"));
+			ctl->pid = strtos32_or_err(argv[argc - 1], _("invalid PID argument"));
 			break;
 		case 'r':
-			policy = SCHED_RR;
+			ctl->policy = SCHED_RR;
 			break;
 		case 'v':
-			verbose = 1;
+			ctl->verbose = 1;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -276,14 +283,14 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (((pid > -1) && argc - optind < 1) ||
-	    ((pid == -1) && argc - optind < 2))
+	if (((ctl->pid > -1) && argc - optind < 1) ||
+	    ((ctl->pid == -1) && argc - optind < 2))
 		show_usage(EXIT_FAILURE);
 
-	if ((pid > -1) && (verbose || argc - optind == 1)) {
-		if (all_tasks) {
+	if ((ctl->pid > -1) && (ctl->verbose || argc - optind == 1)) {
+		if (ctl->all_tasks) {
 			pid_t tid;
-			struct proc_tasks *ts = proc_open_tasks(pid);
+			struct proc_tasks *ts = proc_open_tasks(ctl->pid);
 
 			if (!ts)
 				err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
@@ -291,46 +298,45 @@ int main(int argc, char **argv)
 				show_rt_info(tid, FALSE);
 			proc_close_tasks(ts);
 		} else
-			show_rt_info(pid, FALSE);
+			show_rt_info(ctl->pid, FALSE);
 
 		if (argc - optind == 1)
 			return EXIT_SUCCESS;
 	}
 
 	errno = 0;
-	priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
+	ctl->priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
 
 #ifdef SCHED_RESET_ON_FORK
-	/* sanity check */
-	if ((policy_flag & SCHED_RESET_ON_FORK) &&
-	    !(policy == SCHED_FIFO || policy == SCHED_RR))
-		errx(EXIT_FAILURE, _("SCHED_RESET_ON_FORK flag is supported for "
-				     "SCHED_FIFO and SCHED_RR policies only"));
+	if (ctl->reset_on_fork) {
+		if (ctl->policy != SCHED_FIFO && ctl->policy != SCHED_RR)
+			errx(EXIT_FAILURE, _("SCHED_RESET_ON_FORK flag is supported for "
+					     "SCHED_FIFO and SCHED_RR policies only"));
+		ctl->policy |= SCHED_RESET_ON_FORK;
+	}
 #endif
 
-	policy |= policy_flag;
+	if (ctl->pid == -1)
+		ctl->pid = 0;
+	sp.sched_priority = ctl->priority;
 
-	if (pid == -1)
-		pid = 0;
-	sp.sched_priority = priority;
-
-	if (all_tasks) {
+	if (ctl->all_tasks) {
 		pid_t tid;
-		struct proc_tasks *ts = proc_open_tasks(pid);
+		struct proc_tasks *ts = proc_open_tasks(ctl->pid);
 
 		if (!ts)
 			err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
 		while (!proc_next_tid(ts, &tid))
-			if (sched_setscheduler(tid, policy, &sp) == -1)
+			if (sched_setscheduler(tid, ctl->policy, &sp) == -1)
 				err(EXIT_FAILURE, _("failed to set tid %d's policy"), tid);
 		proc_close_tasks(ts);
-	} else if (sched_setscheduler(pid, policy, &sp) == -1)
-		err(EXIT_FAILURE, _("failed to set pid %d's policy"), pid);
+	} else if (sched_setscheduler(ctl->pid, ctl->policy, &sp) == -1)
+		err(EXIT_FAILURE, _("failed to set pid %d's policy"), ctl->pid);
 
-	if (verbose)
-		show_rt_info(pid, TRUE);
+	if (ctl->verbose)
+		show_rt_info(ctl->pid, TRUE);
 
-	if (!pid) {
+	if (!ctl->pid) {
 		argv += optind + 1;
 		execvp(argv[0], argv);
 		err(EXIT_FAILURE, _("failed to execute %s"), argv[0]);
