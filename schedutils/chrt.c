@@ -72,7 +72,7 @@ static void __attribute__((__noreturn__)) show_usage(int rc)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Set policy:\n"
 	" chrt [options] <priority> <command> [<arg>...]\n"
-	" chrt [options] -p <priority> <pid>\n"), out);
+	" chrt [options] --pid <priority> <pid>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Get policy:\n"
 	" chrt [options] -p <pid>\n"), out);
