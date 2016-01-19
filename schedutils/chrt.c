@@ -224,11 +224,33 @@ static void show_min_max(void)
 	}
 }
 
+static void set_sched(struct chrt_ctl *ctl)
+{
+	struct sched_param sp = { .sched_priority = ctl->priority };
+
+	if (ctl->all_tasks) {
+		pid_t tid;
+		struct proc_tasks *ts = proc_open_tasks(ctl->pid);
+
+		if (!ts)
+			err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
+
+		while (!proc_next_tid(ts, &tid))
+			if (sched_setscheduler(tid, ctl->policy, &sp) == -1)
+				err(EXIT_FAILURE, _("failed to set tid %d's policy"), tid);
+
+		proc_close_tasks(ts);
+
+	} else if (sched_setscheduler(ctl->pid, ctl->policy, &sp) == -1)
+		err(EXIT_FAILURE, _("failed to set pid %d's policy"), ctl->pid);
+
+	ctl->altered = 1;
+}
+
 int main(int argc, char **argv)
 {
 	struct chrt_ctl _ctl = { .pid = -1 }, *ctl = &_ctl;
-	struct sched_param sp;
-	int i;
+	int c;
 
 	static const struct option longopts[] = {
 		{ "all-tasks",  0, NULL, 'a' },
@@ -251,11 +273,11 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while((i = getopt_long(argc, argv, "+abfiphmoRrvV", longopts, NULL)) != -1)
+	while((c = getopt_long(argc, argv, "+abfiphmoRrvV", longopts, NULL)) != -1)
 	{
 		int ret = EXIT_FAILURE;
 
-		switch (i) {
+		switch (c) {
 		case 'a':
 			ctl->all_tasks = 1;
 			break;
@@ -326,22 +348,8 @@ int main(int argc, char **argv)
 
 	if (ctl->pid == -1)
 		ctl->pid = 0;
-	sp.sched_priority = ctl->priority;
 
-	if (ctl->all_tasks) {
-		pid_t tid;
-		struct proc_tasks *ts = proc_open_tasks(ctl->pid);
-
-		if (!ts)
-			err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
-		while (!proc_next_tid(ts, &tid))
-			if (sched_setscheduler(tid, ctl->policy, &sp) == -1)
-				err(EXIT_FAILURE, _("failed to set tid %d's policy"), tid);
-		proc_close_tasks(ts);
-	} else if (sched_setscheduler(ctl->pid, ctl->policy, &sp) == -1)
-		err(EXIT_FAILURE, _("failed to set pid %d's policy"), ctl->pid);
-
-	ctl->altered = 1;
+	set_sched(ctl);
 
 	if (ctl->verbose)
 		show_sched_info(ctl);
