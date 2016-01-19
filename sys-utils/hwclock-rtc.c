@@ -432,7 +432,7 @@ int get_epoch_rtc(unsigned long *epoch_p, int silent)
 	}
 
 	if (debug)
-		printf(_("we have read epoch %ld from %s "
+		printf(_("we have read epoch %lu from %s "
 			 "with RTC_EPOCH_READ ioctl.\n"), *epoch_p,
 		       rtc_dev_name);
 
