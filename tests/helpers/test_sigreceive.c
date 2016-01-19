@@ -44,9 +44,8 @@ void exiter(int signo __attribute__((__unused__)),
 {
 	int ret = info->si_signo;
 
-	if (info)
-		if (info->si_code == SI_QUEUE && info->si_value.sival_int != 0)
-			ret = info->si_value.sival_int;
+	if (info->si_code == SI_QUEUE && info->si_value.sival_int != 0)
+		ret = info->si_value.sival_int;
 	_exit(ret);
 }
 
