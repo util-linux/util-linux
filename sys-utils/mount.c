@@ -628,6 +628,9 @@ try_readonly:
 		break;
 
 	case ENOMEDIUM:
+		if (uflags & MNT_MS_NOFAIL)
+			return MOUNT_EX_SUCCESS;
+
 		warnx(_("no medium found on %s"), src);
 		break;
 
