@@ -359,6 +359,7 @@ AC_CHECK_FUNCS([ \
 	scandirat \
 	setresgid \
 	setresuid \
+	sched_setattr \
 	sigqueue \
 	srandom \
 	strnchr \
@@ -1775,6 +1776,10 @@ AM_CONDITIONAL([BUILD_TASKSET], [test "x$build_taskset" = xyes])
 UL_BUILD_INIT([chrt], [check])
 UL_REQUIRES_BUILD([chrt], [schedutils])
 AM_CONDITIONAL([BUILD_CHRT], [test "x$build_chrt" = xyes])
+
+AS_IF([test "x$build_chrt" = xyes], [
+	UL_CHECK_SYSCALL([sched_setattr])
+])
 
 
 AC_ARG_ENABLE([wall],

@@ -52,6 +52,42 @@
 #define SCHED_RESET_ON_FORK 0x40000000
 #endif
 
+#if defined (__linux__) && !defined(HAVE_SCHED_SETATTR)
+# include <sys/syscall.h>
+#endif
+
+#if defined (__linux__) && !defined(HAVE_SCHED_SETATTR) && defined(SYS_sched_setattr)
+# define HAVE_SCHED_SETATTR
+
+struct sched_attr {
+	uint32_t size;
+	uint32_t sched_policy;
+	uint64_t sched_flags;
+
+	/* SCHED_NORMAL, SCHED_BATCH */
+	int32_t sched_nice;
+
+	/* SCHED_FIFO, SCHED_RR */
+	uint32_t sched_priority;
+
+	/* SCHED_DEADLINE (nsec) */
+	uint64_t sched_runtime;
+	uint64_t sched_deadline;
+	uint64_t sched_period;
+};
+
+static int sched_setattr(pid_t pid, const struct sched_attr *attr, unsigned int flags)
+{
+	return syscall(SYS_sched_setattr, pid, attr, flags);
+}
+
+static int sched_getattr(pid_t pid, struct sched_attr *attr, unsigned int size, unsigned int flags)
+{
+	return syscall(SYS_sched_getattr, pid, attr, size, flags);
+}
+#endif /* !HAVE_SCHED_SETATTR */
+
+
 /* control struct */
 struct chrt_ctl {
 	pid_t	pid;
@@ -224,10 +260,36 @@ static void show_min_max(void)
 	}
 }
 
-static void set_sched(struct chrt_ctl *ctl)
+#ifndef HAVE_SCHED_SETATTR
+static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 {
 	struct sched_param sp = { .sched_priority = ctl->priority };
+	int policy = ctl->policy;
 
+# ifdef SCHED_RESET_ON_FORK
+	if (ctl->reset_on_fork)
+		policy |= SCHED_RESET_ON_FORK;
+# endif
+	return sched_setscheduler(pid, policy, &sp);
+}
+
+#else /* !HAVE_SCHED_SETATTR */
+static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
+{
+	struct sched_attr sa = {
+		.sched_policy	= ctl->policy,
+		.sched_priority	= ctl->priority
+	};
+# ifdef SCHED_RESET_ON_FORK
+	if (ctl->reset_on_fork)
+		sa.sched_flags |= SCHED_RESET_ON_FORK;
+# endif
+	return sched_setattr(pid, &sa, 0);
+}
+#endif /* HAVE_SCHED_SETATTR */
+
+static void set_sched(struct chrt_ctl *ctl)
+{
 	if (ctl->all_tasks) {
 		pid_t tid;
 		struct proc_tasks *ts = proc_open_tasks(ctl->pid);
@@ -236,12 +298,12 @@ static void set_sched(struct chrt_ctl *ctl)
 			err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
 
 		while (!proc_next_tid(ts, &tid))
-			if (sched_setscheduler(tid, ctl->policy, &sp) == -1)
+			if (set_sched_one(ctl, tid) == -1)
 				err(EXIT_FAILURE, _("failed to set tid %d's policy"), tid);
 
 		proc_close_tasks(ts);
 
-	} else if (sched_setscheduler(ctl->pid, ctl->policy, &sp) == -1)
+	} else if (set_sched_one(ctl, ctl->pid) == -1)
 		err(EXIT_FAILURE, _("failed to set pid %d's policy"), ctl->pid);
 
 	ctl->altered = 1;
@@ -338,14 +400,11 @@ int main(int argc, char **argv)
 	ctl->priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
 
 #ifdef SCHED_RESET_ON_FORK
-	if (ctl->reset_on_fork) {
+	if (ctl->reset_on_fork)
 		if (ctl->policy != SCHED_FIFO && ctl->policy != SCHED_RR)
 			errx(EXIT_FAILURE, _("SCHED_RESET_ON_FORK flag is supported for "
 					     "SCHED_FIFO and SCHED_RR policies only"));
-		ctl->policy |= SCHED_RESET_ON_FORK;
-	}
 #endif
-
 	if (ctl->pid == -1)
 		ctl->pid = 0;
 
