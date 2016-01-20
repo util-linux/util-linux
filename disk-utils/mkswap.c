@@ -344,7 +344,7 @@ static void write_header_to_device(struct mkswap_control *ctl)
 int main(int argc, char **argv)
 {
 	struct mkswap_control ctl = { .fd = -1 };
-	int c;
+	int c, permMask;
 	uint64_t sz;
 	int version = SWAP_VERSION;
 	char *block_count = NULL, *strsz = NULL;
@@ -464,6 +464,15 @@ int main(int argc, char **argv)
 			ctl.devname);
 
 	open_device(&ctl);
+	permMask = S_ISBLK(ctl.devstat.st_mode) ? 07007 : 07077;
+	if ((ctl.devstat.st_mode & permMask) != 0)
+		warnx(_("%s: insecure permissions %04o, %04o suggested."),
+			ctl.devname, ctl.devstat.st_mode & 07777,
+			~permMask & 0666);
+	if (getuid() == 0 && S_ISREG(ctl.devstat.st_mode) && ctl.devstat.st_uid != 0)
+		warnx(_("%s: insecure file owner %d, 0 (root) suggested."),
+			ctl.devname, ctl.devstat.st_uid);
+
 
 	if (ctl.check)
 		check_blocks(&ctl);
