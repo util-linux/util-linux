@@ -1,6 +1,7 @@
 .\" chrt(1) manpage
 .\"
 .\" Copyright (C) 2004 Robert Love
+.\" Copyright (C) 2015 Karel Zak <kzak@redhat.com>
 .\"
 .\" This is free documentation; you can redistribute it and/or
 .\" modify it under the terms of the GNU General Public License,
@@ -20,7 +21,7 @@
 .\" with this program; if not, write to the Free Software Foundation, Inc.,
 .\" 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 .\"
-.TH CHRT 1 "August 2014" "util-linux" "User Commands"
+.TH CHRT 1 "January 2016" "util-linux" "User Commands"
 .SH NAME
 chrt \- manipulate the real-time attributes of a process
 .SH SYNOPSIS
@@ -36,86 +37,50 @@ chrt \- manipulate the real-time attributes of a process
 .PP
 .B chrt
 sets or retrieves the real-time scheduling attributes of an existing \fIpid\fR,
-or runs \fIcommand\fR with the given attributes.  Both the policy (one of
-.BR SCHED_OTHER ,
-.BR SCHED_FIFO ,
-.BR SCHED_RR ,
-.BR SCHED_BATCH ,
-.BR SCHED_DEADLINE ,
-or
-.BR SCHED_IDLE )
-and the priority can be set and retrieved.
-.PP
-The
-.BR SCHED_BATCH
-policy is supported since Linux 2.6.16.  The
-.BR SCHED_IDLE
-policy is supported since Linux 2.6.23.  The
-.BR SCHED_DEADLINE
-policy is supported since Linux 3.14.
-.PP
-The
-.BR SCHED_RESET_ON_FORK
-flag for policies SCHED_RR and SCHED_FIFO is supported
-since Linux 2.6.31.
-.SH OPTIONS
+or runs \fIcommand\fR with the given attributes.
+
+.SH POLICIES
 .TP
-.BR -a ,\  --all-tasks
-Set or retrieve the scheduling attributes of all the tasks (threads) for a
-given PID.
+\fB\-o\fR, \fB\-\-other\fR
+Set policy scheduling policy to
+.BR SCHED_OTHER .
+This is the default Linux scheduling policy.
 .TP
-.BR -b ,\  --batch
+\fB\-f\fR, \fB\-\-fifo\fR 
+Set policy scheduling policy to SCHED_FIFO.
+.TP
+\fB\-r\fR, \fB\-\-rr\fR
+Set scheduling policy to
+.BR SCHED_RR .
+When policy is not defined the
+.B SCHED_RR
+is used as default.
+.TP
+\fB\-b\fR, \fB\-\-batch\fR
 Set scheduling policy to
 .B SCHED_BATCH
-(Linux-specific). The priority argument has to be set to zero.
+(Linux-specific, supported since 2.6.16). The priority argument has to be set to zero.
+.TP
+\fB\-i\fR, \fB\-\-idle\fR
+Set scheduling policy to
+.B SCHED_IDLE
+(Linux-specific, supported since 2.6.23). The priority argument has to be set to zero.
 .TP
 .BR -d ,\  --deadline
 Set policy scheduling policy to
 .BR SCHED_DEADLINE
-(Linux-specific). The priority argument has to be set to zero. See also \fB\-\-sched\-runtime\fR,
-\fB\-\-sched\-deadline\fR and \fB\-\-sched\-period\fR. The relation between
-the options required by kernel is runtime <= deadline <= period.
+(Linux-specific, supported since 3.14). The priority argument has to be set to
+zero. See also \fB\-\-sched\-runtime\fR, \fB\-\-sched\-deadline\fR and
+\fB\-\-sched\-period\fR. The relation between the options required by kernel is
+runtime <= deadline <= period.
 .B chrt
 copies \fIperiod\fR to \fIdeadline\fR if \fB\-\-sched\-deadline\fR is no specified and
 \fIdeadline\fR to \fIruntime\fR if \fB\-\-sched\-runtime\fR is no specified. It means at least
 \fB\-\-sched\-period\fR has to be specified. See
 .BR sched (7)
 for more details.
-.TP
-.BR -f ,\  --fifo
-Set scheduling policy to
-.BR SCHED_FIFO .
-.TP
-.BR -i ,\  --idle
-Set scheduling policy to
-.B SCHED_IDLE
-(Linux-specific). The priority argument has to be set to zero.
-.TP
-.BR -m ,\  --max
-Show minimum and maximum valid priorities, then exit.
-.TP
-.BR -o ,\  --other
-Set policy scheduling policy to
-.BR SCHED_OTHER .
-.TP
-.BR -p ,\  --pid
-Operate on an existing PID and do not launch a new task.
-.TP
-.BR -R ,\  --reset-on-fork
-Add
-.B SCHED_RESET_ON_FORK
-flag to the
-.B SCHED_FIFO
-or
-.B SCHED_RR
-scheduling policy (Linux-specific).
-.TP
-.BR -r ,\  --rr
-Set scheduling policy to
-.BR SCHED_RR .
-When policy is not defined the
-.B SCHED_RR
-is used as default.
+
+.SH "SCHEDULING OPTIONS"
 .TP
 \fB\-T\fR, \fB\-\-sched\-runtime\fR \fInanoseconds\fR
 Specifies runtime parameter for SCHED_DEADLINE policy (Linux-specific).
@@ -125,6 +90,27 @@ Specifies period parameter for SCHED_DEADLINE policy (Linux-specific).
 .TP
 \fB\-D\fR, \fB\-\-sched\-deadline\fR \fInanoseconds\fR
 Specifies deadline parameter for SCHED_DEADLINE policy (Linux-specific).
+.TP
+\fB\-R\fR, \fB\-\-reset-on-fork\fR
+Add
+.B SCHED_RESET_ON_FORK
+flag to the
+.B SCHED_FIFO
+or
+.B SCHED_RR
+scheduling policy (Linux-specific, supported since 2.6.31).
+
+.SH OPTIONS
+.TP
+.BR -a ,\  --all-tasks
+Set or retrieve the scheduling attributes of all the tasks (threads) for a
+given PID.
+.TP
+.BR -m ,\  --max
+Show minimum and maximum valid priorities, then exit.
+.TP
+.BR -p ,\  --pid
+Operate on an existing PID and do not launch a new task.
 .TP
 .BR -v ,\  --verbose
 Show status information.
@@ -153,6 +139,7 @@ A user must possess
 .BR CAP_SYS_NICE
 to change the scheduling attributes of a process.  Any user can retrieve the
 scheduling information.
+
 .SH NOTES
 Only
 .BR SCHED_FIFO ,
@@ -167,18 +154,20 @@ Linux default scheduling policy is
 .SH SEE ALSO
 .BR taskset (1),
 .BR nice (1),
-.BR renice (1)
+.BR renice (1),
 .BR sched (7)
 .sp
 See
 .BR sched_setscheduler (2)
 for a description of the Linux scheduling scheme.
-.SH AUTHOR
-Written by Robert M. Love.
-.SH COPYRIGHT
-Copyright \(co 2004 Robert M. Love.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH AUTHORS
+.UR rml@tech9.net
+Robert Love
+.UE
+.br
+.UR kzak@redhat.com
+Karel Zak
+.UE
 .SH AVAILABILITY
 The chrt command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
