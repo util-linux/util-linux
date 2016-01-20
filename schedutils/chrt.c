@@ -48,8 +48,14 @@
 # define SCHED_IDLE 5
 #endif
 
+/* flag by sched_getscheduler() */
 #if defined(__linux__) && !defined(SCHED_RESET_ON_FORK)
-#define SCHED_RESET_ON_FORK 0x40000000
+# define SCHED_RESET_ON_FORK 0x40000000
+#endif
+
+/* flag by sched_getattr() */
+#if defined(__linux__) && !defined(SCHED_FLAG_RESET_ON_FORK)
+# define SCHED_FLAG_RESET_ON_FORK 0x01
 #endif
 
 
@@ -95,7 +101,6 @@ static int sched_getattr(pid_t pid, struct sched_attr *attr, unsigned int size, 
 #if defined (__linux__) && !defined(SCHED_DEADLINE) && defined(HAVE_SCHED_SETATTR)
 # define SCHED_DEADLINE 6
 #endif
-
 
 /* control struct */
 struct chrt_ctl {
@@ -157,72 +162,104 @@ static void __attribute__((__noreturn__)) show_usage(int rc)
 	exit(rc);
 }
 
+static const char *get_policy_name(int policy)
+{
+	switch (policy) {
+	case SCHED_OTHER:
+		return "SCHED_OTHER";
+	case SCHED_FIFO:
+	case SCHED_FIFO | SCHED_RESET_ON_FORK:
+		return "SCHED_FIFO";
+#ifdef SCHED_IDLE
+	case SCHED_IDLE:
+		return "SCHED_IDLE";
+#endif
+	case SCHED_RR:
+		return "SCHED_RR";
+#ifdef SCHED_BATCH
+	case SCHED_BATCH:
+	case SCHED_RR | SCHED_RESET_ON_FORK:
+		return "SCHED_BATCH";
+#endif
+#ifdef SCHED_DEADLINE
+	case SCHED_DEADLINE:
+		return "SCHED_DEADLINE";
+#endif
+	default:
+		break;
+	}
+
+	return _("unknown");
+}
+
 static void show_sched_pid_info(struct chrt_ctl *ctl, pid_t pid)
 {
-	struct sched_param sp;
-	int policy;
+	int policy, reset_on_fork = 0, prio = 0;
+#ifdef SCHED_DEADLINE
+	uint64_t deadline = 0, runtime = 0, period = 0;
+#endif
 
 	/* don't display "pid 0" as that is confusing */
 	if (!pid)
 		pid = getpid();
 
-	policy = sched_getscheduler(pid);
-	if (policy == -1)
-		err(EXIT_FAILURE, _("failed to get pid %d's policy"), pid);
+#ifdef HAVE_SCHED_SETATTR
+	{
+		struct sched_attr sa;
 
-	if (ctl->altered)
-		printf(_("pid %d's new scheduling policy: "), pid);
-	else
-		printf(_("pid %d's current scheduling policy: "), pid);
+		if (sched_getattr(pid, &sa, sizeof(sa), 0) != 0)
+			err(EXIT_FAILURE, _("failed to get pid %d's policy"), pid);
 
-	switch (policy) {
-	case SCHED_OTHER:
-		printf("SCHED_OTHER\n");
-		break;
-	case SCHED_FIFO:
-		printf("SCHED_FIFO\n");
-		break;
-#ifdef SCHED_RESET_ON_FORK
-	case SCHED_FIFO | SCHED_RESET_ON_FORK:
-		printf("SCHED_FIFO|SCHED_RESET_ON_FORK\n");
-		break;
-#endif
-#ifdef SCHED_IDLE
-	case SCHED_IDLE:
-		printf("SCHED_IDLE\n");
-		break;
-#endif
-	case SCHED_RR:
-		printf("SCHED_RR\n");
-		break;
-#ifdef SCHED_RESET_ON_FORK
-	case SCHED_RR | SCHED_RESET_ON_FORK:
-		printf("SCHED_RR|SCHED_RESET_ON_FORK\n");
-		break;
-#endif
-#ifdef SCHED_BATCH
-	case SCHED_BATCH:
-		printf("SCHED_BATCH\n");
-		break;
-#endif
-#ifdef SCHED_DEADLINE
-	case SCHED_DEADLINE:
-		printf("SCHED_DEADLINE\n");
-		break;
-#endif
-	default:
-		warnx(_("unknown scheduling policy"));
+		policy = sa.sched_policy;
+		prio = sa.sched_priority;
+		reset_on_fork = sa.sched_flags & SCHED_FLAG_RESET_ON_FORK;
+		deadline = sa.sched_deadline;
+		runtime = sa.sched_runtime;
+		period = sa.sched_period;
 	}
+#else /* !HAVE_SCHED_SETATTR */
+	{
+		struct sched_param sp;
 
-	if (sched_getparam(pid, &sp))
-		err(EXIT_FAILURE, _("failed to get pid %d's attributes"), pid);
+		policy = sched_getscheduler(pid);
+		if (policy == -1)
+			err(EXIT_FAILURE, _("failed to get pid %d's policy"), pid);
+
+		if (sched_getparam(pid, &sp) != 0)
+			err(EXIT_FAILURE, _("failed to get pid %d's attributes"), pid);
+		else
+			prio = sp.sched_priority;
+# ifdef SCHED_RESET_ON_FORK
+		if (policy == (SCHED_FIFO|SCHED_RESET_ON_FORK) || policy == (SCHED_BATCH|SCHED_RESET_ON_FORK))
+			reset_on_fork = 1;
+# endif
+	}
+#endif /* !HAVE_SCHED_SETATTR */
 
 	if (ctl->altered)
-		printf(_("pid %d's new scheduling priority: %d\n"),
-		       pid, sp.sched_priority);
+		printf(_("pid %d's new scheduling policy: %s"), pid, get_policy_name(policy));
 	else
-		printf(_("pid %d's current scheduling priority: %d\n"),
-		       pid, sp.sched_priority);
+		printf(_("pid %d's current scheduling policy: %s"), pid, get_policy_name(policy));
+
+	if (reset_on_fork)
+		printf("|SCHED_RESET_ON_FORK");
+	putchar('\n');
+
+	if (ctl->altered)
+		printf(_("pid %d's new scheduling priority: %d\n"), pid, prio);
+	else
+		printf(_("pid %d's current scheduling priority: %d\n"), pid, prio);
+
+#ifdef SCHED_DEADLINE
+	if (policy == SCHED_DEADLINE) {
+		if (ctl->altered)
+			printf(_("pid %d's new runtime/deadline/period parameters: %ju/%ju/%ju\n"),
+					pid, runtime, deadline, period);
+		else
+			printf(_("pid %d's current runtime/deadline/period parameters: %ju/%ju/%ju\n"),
+					pid, runtime, deadline, period);
+	}
+#endif
 }
 
 
@@ -260,30 +297,17 @@ static void show_min_max(void)
 		SCHED_DEADLINE,
 #endif
 	};
-	const char *names[] = {
-		"OTHER",
-		"FIFO",
-		"RR",
-#ifdef SCHED_BATCH
-		"BATCH",
-#endif
-#ifdef SCHED_IDLE
-		"IDLE",
-#endif
-#ifdef SCHED_DEADLINE
-		"DEADLINE",
-#endif
-	};
 
 	for (i = 0; i < ARRAY_SIZE(policies); i++) {
-		int max = sched_get_priority_max(policies[i]);
-		int min = sched_get_priority_min(policies[i]);
+		int plc = policies[i];
+		int max = sched_get_priority_max(plc);
+		int min = sched_get_priority_min(plc);
 
 		if (max >= 0 && min >= 0)
 			printf(_("SCHED_%s min/max priority\t: %d/%d\n"),
-					names[i], min, max);
+					get_policy_name(plc), min, max);
 		else
-			printf(_("SCHED_%s not supported?\n"), names[i]);
+			printf(_("SCHED_%s not supported?\n"), get_policy_name(plc));
 	}
 }
 
@@ -305,10 +329,11 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 {
 	/* use main() to check if the setting makes sense */
 	struct sched_attr sa = {
+		.size		= sizeof(struct sched_attr),
 		.sched_policy	= ctl->policy,
 		.sched_priority	= ctl->priority,
-		.sched_runtime = ctl->runtime,
-		.sched_period = ctl->period,
+		.sched_runtime  = ctl->runtime,
+		.sched_period   = ctl->period,
 		.sched_deadline = ctl->deadline
 	};
 # ifdef SCHED_RESET_ON_FORK
