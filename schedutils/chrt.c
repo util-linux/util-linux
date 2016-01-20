@@ -52,6 +52,7 @@
 #define SCHED_RESET_ON_FORK 0x40000000
 #endif
 
+
 #if defined (__linux__) && !defined(HAVE_SCHED_SETATTR)
 # include <sys/syscall.h>
 #endif
@@ -85,7 +86,15 @@ static int sched_getattr(pid_t pid, struct sched_attr *attr, unsigned int size, 
 {
 	return syscall(SYS_sched_getattr, pid, attr, size, flags);
 }
-#endif /* !HAVE_SCHED_SETATTR */
+#endif
+
+/* the SCHED_DEADLINE is supported since Linux 3.14
+ * commit id aab03e05e8f7e26f51dee792beddcb5cca9215a5
+ * -- sched_setattr() is required for this policy!
+ */
+#if defined (__linux__) && !defined(SCHED_DEADLINE) && defined(HAVE_SCHED_SETATTR)
+# define SCHED_DEADLINE 6
+#endif
 
 
 /* control struct */
@@ -93,6 +102,10 @@ struct chrt_ctl {
 	pid_t	pid;
 	int	policy;				/* SCHED_* */
 	int	priority;
+
+	uint64_t runtime;			/* --sched-* options */
+	uint64_t deadline;
+	uint64_t period;
 
 	unsigned int all_tasks : 1,		/* all threads of the PID */
 		     reset_on_fork : 1,		/* SCHED_RESET_ON_FORK */
@@ -116,16 +129,19 @@ static void __attribute__((__noreturn__)) show_usage(int rc)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Policy options:\n"), out);
 	fputs(_(" -b, --batch          set policy to SCHED_BATCH\n"), out);
+	fputs(_(" -d, --deadline       set policy to SCHED_DEADLINE\n"), out);
 	fputs(_(" -f, --fifo           set policy to SCHED_FIFO\n"), out);
 	fputs(_(" -i, --idle           set policy to SCHED_IDLE\n"), out);
 	fputs(_(" -o, --other          set policy to SCHED_OTHER\n"), out);
 	fputs(_(" -r, --rr             set policy to SCHED_RR (default)\n"), out);
 
-#ifdef SCHED_RESET_ON_FORK
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Scheduling flag:\n"), out);
-	fputs(_(" -R, --reset-on-fork  set SCHED_RESET_ON_FORK for FIFO or RR\n"), out);
-#endif
+	fputs(_("Scheduling options:\n"), out);
+	fputs(_(" -R, --reset-on-fork       set SCHED_RESET_ON_FORK for FIFO or RR\n"), out);
+	fputs(_(" -T, --sched-runtime <ns>  runtime parameter for DEADLINE\n"), out);
+	fputs(_(" -P, --sched-period <ns>   period parameter for DEADLINE\n"), out);
+	fputs(_(" -D, --sched-deadline <ns> deadline parameter for DEADLINE\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Other options:\n"), out);
 	fputs(_(" -a, --all-tasks      operate on all the tasks (threads) for a given pid\n"), out);
@@ -189,6 +205,11 @@ static void show_sched_pid_info(struct chrt_ctl *ctl, pid_t pid)
 		printf("SCHED_BATCH\n");
 		break;
 #endif
+#ifdef SCHED_DEADLINE
+	case SCHED_DEADLINE:
+		printf("SCHED_DEADLINE\n");
+		break;
+#endif
 	default:
 		warnx(_("unknown scheduling policy"));
 	}
@@ -235,6 +256,9 @@ static void show_min_max(void)
 #ifdef SCHED_IDLE
 		SCHED_IDLE,
 #endif
+#ifdef SCHED_DEADLINE
+		SCHED_DEADLINE,
+#endif
 	};
 	const char *names[] = {
 		"OTHER",
@@ -245,6 +269,9 @@ static void show_min_max(void)
 #endif
 #ifdef SCHED_IDLE
 		"IDLE",
+#endif
+#ifdef SCHED_DEADLINE
+		"DEADLINE",
 #endif
 	};
 
@@ -276,9 +303,13 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 #else /* !HAVE_SCHED_SETATTR */
 static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 {
+	/* use main() to check if the setting makes sense */
 	struct sched_attr sa = {
 		.sched_policy	= ctl->policy,
-		.sched_priority	= ctl->priority
+		.sched_priority	= ctl->priority,
+		.sched_runtime = ctl->runtime,
+		.sched_period = ctl->period,
+		.sched_deadline = ctl->deadline
 	};
 # ifdef SCHED_RESET_ON_FORK
 	if (ctl->reset_on_fork)
@@ -315,19 +346,23 @@ int main(int argc, char **argv)
 	int c;
 
 	static const struct option longopts[] = {
-		{ "all-tasks",  0, NULL, 'a' },
-		{ "batch",	0, NULL, 'b' },
-		{ "fifo",	0, NULL, 'f' },
-		{ "idle",	0, NULL, 'i' },
-		{ "pid",	0, NULL, 'p' },
-		{ "help",	0, NULL, 'h' },
-		{ "max",        0, NULL, 'm' },
-		{ "other",	0, NULL, 'o' },
-		{ "rr",		0, NULL, 'r' },
-		{ "reset-on-fork", 0, NULL, 'R' },
-		{ "verbose",	0, NULL, 'v' },
-		{ "version",	0, NULL, 'V' },
-		{ NULL,		0, NULL, 0 }
+		{ "all-tasks",  no_argument, NULL, 'a' },
+		{ "batch",	no_argument, NULL, 'b' },
+		{ "deadline",   no_argument, NULL, 'd' },
+		{ "fifo",	no_argument, NULL, 'f' },
+		{ "idle",	no_argument, NULL, 'i' },
+		{ "pid",	no_argument, NULL, 'p' },
+		{ "help",	no_argument, NULL, 'h' },
+		{ "max",        no_argument, NULL, 'm' },
+		{ "other",	no_argument, NULL, 'o' },
+		{ "rr",		no_argument, NULL, 'r' },
+		{ "sched-runtime",  required_argument, NULL, 'T' },
+		{ "sched-period",   required_argument, NULL, 'P' },
+		{ "sched-deadline", required_argument, NULL, 'D' },
+		{ "reset-on-fork",  no_argument,       NULL, 'R' },
+		{ "verbose",	no_argument, NULL, 'v' },
+		{ "version",	no_argument, NULL, 'V' },
+		{ NULL,		no_argument, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");
@@ -335,7 +370,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while((c = getopt_long(argc, argv, "+abfiphmoRrvV", longopts, NULL)) != -1)
+	while((c = getopt_long(argc, argv, "+abdDfiphmoPTrRvV", longopts, NULL)) != -1)
 	{
 		int ret = EXIT_FAILURE;
 
@@ -346,6 +381,12 @@ int main(int argc, char **argv)
 		case 'b':
 #ifdef SCHED_BATCH
 			ctl->policy = SCHED_BATCH;
+#endif
+			break;
+
+		case 'd':
+#ifdef SCHED_DEADLINE
+			ctl->policy = SCHED_DEADLINE;
 #endif
 			break;
 		case 'f':
@@ -375,6 +416,15 @@ int main(int argc, char **argv)
 		case 'v':
 			ctl->verbose = 1;
 			break;
+		case 'T':
+			ctl->runtime = strtou64_or_err(optarg, _("invalid runtime argument"));
+			break;
+		case 'P':
+			ctl->period = strtou64_or_err(optarg, _("invalid period argument"));
+			break;
+		case 'D':
+			ctl->deadline = strtou64_or_err(optarg, _("invalid deadline argument"));
+			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
@@ -400,10 +450,28 @@ int main(int argc, char **argv)
 	ctl->priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
 
 #ifdef SCHED_RESET_ON_FORK
-	if (ctl->reset_on_fork)
-		if (ctl->policy != SCHED_FIFO && ctl->policy != SCHED_RR)
-			errx(EXIT_FAILURE, _("SCHED_RESET_ON_FORK flag is supported for "
-					     "SCHED_FIFO and SCHED_RR policies only"));
+	if (ctl->reset_on_fork && ctl->policy != SCHED_FIFO && ctl->policy != SCHED_RR)
+		errx(EXIT_FAILURE, _("--reset-on-fork option is supported for "
+				     "SCHED_FIFO and SCHED_RR policies only"));
+#endif
+#ifdef SCHED_DEADLINE
+	if ((ctl->runtime || ctl->deadline || ctl->period) && ctl->policy != SCHED_DEADLINE)
+		errx(EXIT_FAILURE, _("--sched-{runtime,deadline,period} options "
+				     "are supported for SCHED_DEADLINE only"));
+	if (ctl->policy == SCHED_DEADLINE) {
+		/* The basic rule is runtime <= deadline <= period, so we can
+		 * make deadline and runtime optional on command line. Note we
+		 * don't check any values or set any defaults, it's kernel
+		 * responsibility.
+		 */
+		if (ctl->deadline == 0)
+			ctl->deadline = ctl->period;
+		if (ctl->runtime == 0)
+			ctl->runtime = ctl->deadline;
+	}
+#else
+	if (ctl->runtime || ctl->deadline || ctl->period)
+		errx(EXIT_FAILURE, _("SCHED_DEADLINE is unsupported"));
 #endif
 	if (ctl->pid == -1)
 		ctl->pid = 0;

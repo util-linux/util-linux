@@ -41,6 +41,7 @@ or runs \fIcommand\fR with the given attributes.  Both the policy (one of
 .BR SCHED_FIFO ,
 .BR SCHED_RR ,
 .BR SCHED_BATCH ,
+.BR SCHED_DEADLINE ,
 or
 .BR SCHED_IDLE )
 and the priority can be set and retrieved.
@@ -49,7 +50,9 @@ The
 .BR SCHED_BATCH
 policy is supported since Linux 2.6.16.  The
 .BR SCHED_IDLE
-policy is supported since Linux 2.6.23.
+policy is supported since Linux 2.6.23.  The
+.BR SCHED_DEADLINE
+policy is supported since Linux 3.14.
 .PP
 The
 .BR SCHED_RESET_ON_FORK
@@ -65,6 +68,19 @@ given PID.
 Set scheduling policy to
 .B SCHED_BATCH
 (Linux-specific). The priority argument has to be set to zero.
+.TP
+.BR -d ,\  --deadline
+Set policy scheduling policy to
+.BR SCHED_DEADLINE
+(Linux-specific). The priority argument has to be set to zero. See also \fB\-\-sched\-runtime\fR,
+\fB\-\-sched\-deadline\fR and \fB\-\-sched\-period\fR. The relation between
+the options required by kernel is runtime <= deadline <= period.
+.B chrt
+copies \fIperiod\fR to \fIdeadline\fR if \fB\-\-sched\-deadline\fR is no specified and
+\fIdeadline\fR to \fIruntime\fR if \fB\-\-sched\-runtime\fR is no specified. It means at least
+\fB\-\-sched\-period\fR has to be specified. See
+.BR sched (7)
+for more details.
 .TP
 .BR -f ,\  --fifo
 Set scheduling policy to
@@ -100,6 +116,15 @@ Set scheduling policy to
 When policy is not defined the
 .B SCHED_RR
 is used as default.
+.TP
+\fB\-T\fR, \fB\-\-sched\-runtime\fR \fInanoseconds\fR
+Specifies runtime parameter for SCHED_DEADLINE policy (Linux-specific).
+.TP
+\fB\-P\fR, \fB\-\-sched\-period\fR \fInanoseconds\fR
+Specifies period parameter for SCHED_DEADLINE policy (Linux-specific).
+.TP
+\fB\-D\fR, \fB\-\-sched\-deadline\fR \fInanoseconds\fR
+Specifies deadline parameter for SCHED_DEADLINE policy (Linux-specific).
 .TP
 .BR -v ,\  --verbose
 Show status information.
@@ -143,6 +168,7 @@ Linux default scheduling policy is
 .BR taskset (1),
 .BR nice (1),
 .BR renice (1)
+.BR sched (7)
 .sp
 See
 .BR sched_setscheduler (2)
