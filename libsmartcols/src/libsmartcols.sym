@@ -126,6 +126,7 @@ SMARTCOLS_2.28 {
 global:
 	scols_line_refer_column_data;
 	scols_line_set_column_data;
+	scols_symbols_set_title_wrap;
 	scols_table_enable_nowrap;
 	scols_table_set_title;
 } SMARTCOLS_2.27;

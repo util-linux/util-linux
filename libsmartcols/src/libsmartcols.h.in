@@ -115,6 +115,7 @@ extern struct libscols_symbols *scols_copy_symbols(const struct libscols_symbols
 extern int scols_symbols_set_branch(struct libscols_symbols *sb, const char *str);
 extern int scols_symbols_set_vertical(struct libscols_symbols *sb, const char *str);
 extern int scols_symbols_set_right(struct libscols_symbols *sb, const char *str);
+extern int scols_symbols_set_title_wrap(struct libscols_symbols *sb, const char *str);
 
 /* cell.c */
 extern int scols_reset_cell(struct libscols_cell *ce);

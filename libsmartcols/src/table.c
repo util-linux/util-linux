@@ -737,6 +737,7 @@ int scols_table_set_symbols(struct libscols_table *tb,
 			scols_symbols_set_vertical(tb->symbols, "| ");
 			scols_symbols_set_right(tb->symbols, "`-");
 		}
+		scols_symbols_set_title_wrap(tb->symbols, " ");
 	}
 
 	return 0;

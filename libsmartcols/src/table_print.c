@@ -567,23 +567,23 @@ static void print_title(struct libscols_table *tb)
 		fputs(tb->title, tb->out);
 
 		for (i = len; i < tb->termwidth; i++)
-			fputs(" ", tb->out);
+			fputs(tb->symbols->title_wrap, tb->out);
 
 		break;
 	case SCOLS_TITLE_CENTER:
 		for (i = 0; i <= (tb->termwidth - len) / 2; i++)
-			fputs(" ", tb->out);
+			fputs(tb->symbols->title_wrap, tb->out);
 
 		fputs(tb->title, tb->out);
 		i += len;
 
 		for (; i < tb->termwidth; i++)
-			fputs(" ", tb->out);
+			fputs(tb->symbols->title_wrap, tb->out);
 
 		break;
 	case SCOLS_TITLE_RIGHT:
 		for (i = 0; i < tb->termwidth - len; i++)
-			fputs(" ", tb->out);
+			fputs(tb->symbols->title_wrap, tb->out);
 
 		fputs(tb->title, tb->out);
 
