@@ -1059,6 +1059,50 @@ struct libmnt_fs *mnt_table_find_tag(struct libmnt_table *tb, const char *tag,
 }
 
 /**
+ * mnt_table_find_target_with_option:
+ * @tb: tab pointer
+ * @path: mountpoint directory
+ * @option: option name (e.g "subvol", "subvolid", ...)
+ * @val: option value or NULL
+ * @direction: MNT_ITER_{FORWARD,BACKWARD}
+ *
+ * Try to lookup an entry in the given tab that matches combination of @path
+ * and @option. In difference to mnt_table_find_target(), only @path iteration
+ * is done. No lookup by device name, no canonicalization.
+ *
+ * Returns: a tab entry or NULL.
+ *
+ * Since: 2.28
+ */
+struct libmnt_fs *mnt_table_find_target_with_option(
+			struct libmnt_table *tb, const char *path,
+			const char *option, const char *val, int direction)
+{
+	struct libmnt_iter itr;
+	struct libmnt_fs *fs = NULL;
+	char *optval = NULL;
+	size_t optvalsz = 0, valsz = val ? strlen(val) : 0;
+
+	if (!tb || !path || !*path || !option || !*option || !val)
+		return NULL;
+	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
+		return NULL;
+
+	DBG(TAB, ul_debugobj(tb, "lookup TARGET: '%s' with OPTION %s %s", path, option, val));
+
+	/* look up by native @target with OPTION */
+	mnt_reset_iter(&itr, direction);
+	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
+		if (mnt_fs_streq_target(fs, path)
+		    && mnt_fs_get_option(fs, option, &optval, &optvalsz) == 0
+		    && (!val || (optvalsz == valsz
+				 && strncmp(optval, val, optvalsz) == 0)))
+			return fs;
+	}
+	return NULL;
+}
+
+/**
  * mnt_table_find_source:
  * @tb: tab pointer
  * @source: TAG or path
@@ -1241,9 +1285,10 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 		}
 
 		/* It's possible that fstab_fs source is subdirectory on btrfs
-		 * subvolume or anothe bind mount. For example:
+		 * subvolume or another bind mount. For example:
 		 *
 		 * /dev/sdc        /mnt/test       btrfs   subvol=/anydir
+		 * /dev/sdc        /mnt/test       btrfs   defaults
 		 * /mnt/test/foo   /mnt/test2      auto    bind
 		 *
 		 * in this case, the root for /mnt/test2 will be /anydir/foo on
@@ -1277,10 +1322,52 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 		char *vol = NULL, *p;
 		size_t sz, volsz = 0;
 
-		if (mnt_fs_get_option(fs, "subvol", &vol, &volsz))
-			goto dflt;
+		DBG(BTRFS, ul_debug("lookup for FS root"));
 
-		DBG(TAB, ul_debug("setting FS root: btrfs subvol"));
+		if (mnt_fs_get_option(fs, "subvol", &vol, &volsz)) {
+			/* If fstab entry does not contain "subvol", we have to
+			 * check, whether btrfs has default subvolume defined.
+			 */
+			uint64_t default_id;
+			char *target;
+			struct libmnt_fs *f;
+			char default_id_str[sizeof(stringify_value(UINT64_MAX))];
+
+			default_id = btrfs_get_default_subvol_id(mnt_fs_get_target(fs));
+			if (default_id == UINT64_MAX)
+				goto dflt;
+
+			/* Volume has default subvolume. Check if it matches to
+			 * the one in mountinfo.
+			 *
+			 * Only kernel >= 4.2 reports subvolid. On older
+			 * kernels, there is no reasonable way to detect which
+			 * subvolume was mounted.
+			 */
+			target = mnt_resolve_spec(mnt_fs_get_target(fs), tb->cache);
+			if (!target)
+				goto err;
+
+			snprintf(default_id_str, sizeof(default_id_str), "%llu",
+					(unsigned long long int) default_id);
+
+			DBG(BTRFS, ul_debug("target=%s subvolid=%s", target, default_id_str));
+			f = mnt_table_find_target_with_option(tb, target,
+						"subvolid", default_id_str,
+						MNT_ITER_BACKWARD);
+			if (!tb->cache)
+				free(target);
+			if (!f)
+				goto dflt;
+
+			/* Instead of set of BACKREF queries constructing
+			 * subvol path, use the one in mountinfo. Kernel does
+			 * the evaluation for us. */
+			DBG(BTRFS, ul_debug("setting FS root: btrfs default subvolid = %s", default_id_str));
+			if (mnt_fs_get_option(f, "subvol", &vol, &volsz))
+				goto dflt;
+		} else
+			DBG(BTRFS, ul_debug("setting FS root: btrfs subvol"));
 
 		sz = volsz;
 		if (*vol != '/')

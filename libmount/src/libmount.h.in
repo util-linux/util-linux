@@ -483,6 +483,8 @@ extern struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb,
 				const char *path, int direction);
 extern struct libmnt_fs *mnt_table_find_tag(struct libmnt_table *tb, const char *tag,
 				const char *val, int direction);
+extern struct libmnt_fs *mnt_table_find_target_with_option(struct libmnt_table *tb, const char *path,
+			const char *option, const char *val, int direction);
 extern struct libmnt_fs *mnt_table_find_source(struct libmnt_table *tb,
 				const char *source, int direction);
 extern struct libmnt_fs *mnt_table_find_pair(struct libmnt_table *tb,

@@ -309,6 +309,7 @@ mnt_table_find_source
 mnt_table_find_srcpath
 mnt_table_find_tag
 mnt_table_find_target
+mnt_table_find_target_with_option
 mnt_table_first_fs
 mnt_table_get_cache
 mnt_table_get_intro_comment

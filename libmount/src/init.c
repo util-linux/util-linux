@@ -30,6 +30,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libmount) =
 	{ "update", MNT_DEBUG_UPDATE,	"mtab, utab updates" },
 	{ "utils", MNT_DEBUG_UTILS,	"misc library utils" },
 	{ "monitor", MNT_DEBUG_MONITOR,	"mount tables monitor" },
+	{ "btrfs", MNT_DEBUG_BTRFS,	"btrfs specific routines" },
 
 	{ NULL, 0 }
 };

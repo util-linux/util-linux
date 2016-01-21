@@ -310,3 +310,7 @@ MOUNT_2.26 {
 	mnt_ref_monitor;
 	mnt_unref_monitor;
 } MOUNT_2.25;
+
+MOUNT_2.28 {
+	mnt_table_find_target_with_option;
+} MOUNT_2.26;

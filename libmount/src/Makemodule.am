@@ -27,6 +27,8 @@ libmount_la_SOURCES = \
 
 if LINUX
 libmount_la_SOURCES += \
+	libmount/src/btrfs.c \
+	libmount/src/btrfs.h \
 	libmount/src/context.c \
 	libmount/src/context_loopdev.c \
 	libmount/src/context_mount.c \
