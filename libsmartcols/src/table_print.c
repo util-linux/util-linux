@@ -2,6 +2,7 @@
  * table.c - functions handling the data at the table level
  *
  * Copyright (C) 2010-2014 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
@@ -544,6 +545,55 @@ static int print_line(struct libscols_table *tb,
 	return 0;
 }
 
+static void print_title(struct libscols_table *tb)
+{
+	int i = 0;
+	size_t len;
+
+	assert(tb);
+
+	if (!tb->title)
+		return;
+
+	len = strlen(tb->title);
+
+	DBG(TAB, ul_debugobj(tb, "printing title"));
+
+	if (tb->title_color)
+		fputs(tb->title_color, tb->out);
+
+	switch (tb->title_pos) {
+	case SCOLS_TITLE_LEFT:
+		fputs(tb->title, tb->out);
+
+		for (i = len; i < tb->termwidth; i++)
+			fputs(" ", tb->out);
+
+		break;
+	case SCOLS_TITLE_CENTER:
+		for (i = 0; i <= (tb->termwidth - len) / 2; i++)
+			fputs(" ", tb->out);
+
+		fputs(tb->title, tb->out);
+		i += len;
+
+		for (; i < tb->termwidth; i++)
+			fputs(" ", tb->out);
+
+		break;
+	case SCOLS_TITLE_RIGHT:
+		for (i = 0; i < tb->termwidth - len; i++)
+			fputs(" ", tb->out);
+
+		fputs(tb->title, tb->out);
+
+		break;
+	}
+
+	if (tb->title_color)
+		fputs(UL_COLOR_RESET, tb->out);
+}
+
 static int print_header(struct libscols_table *tb, struct libscols_buffer *buf)
 {
 	int rc = 0;
@@ -1073,6 +1123,8 @@ int scols_print_table(struct libscols_table *tb)
 	}
 
 	fput_table_open(tb);
+
+	print_title(tb);
 
 	rc = print_header(tb, buf);
 	if (rc)

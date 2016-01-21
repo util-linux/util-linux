@@ -127,4 +127,5 @@ global:
 	scols_line_refer_column_data;
 	scols_line_set_column_data;
 	scols_table_enable_nowrap;
+	scols_table_set_title;
 } SMARTCOLS_2.27;
