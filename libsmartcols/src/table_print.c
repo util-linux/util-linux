@@ -595,6 +595,8 @@ static void print_title(struct libscols_table *tb)
 
 	if (tb->title_color)
 		fputs(UL_COLOR_RESET, tb->out);
+
+	fputc('\n', tb->out);
 }
 
 static int print_header(struct libscols_table *tb, struct libscols_buffer *buf)
