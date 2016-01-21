@@ -78,7 +78,7 @@ static const struct colinfo infos[] = {
 	[COL_ZEROPAGES] = { "ZERO-PAGES",   3, SCOLS_FL_RIGHT, N_("empty pages with no allocated memory") },
 	[COL_MEMTOTAL]  = { "TOTAL",        5, SCOLS_FL_RIGHT, N_("all memory including allocator fragmentation and metadata overhead") },
 	[COL_MEMLIMIT]  = { "MEM-LIMIT",    5, SCOLS_FL_RIGHT, N_("memory limit used to store compressed data") },
-	[COL_MEMUSED]   = { "MEM-USED",     5, SCOLS_FL_RIGHT, N_("memory zram have consumed to store compressed data") },
+	[COL_MEMUSED]   = { "MEM-USED",     5, SCOLS_FL_RIGHT, N_("memory zram have been consumed to store compressed data") },
 	[COL_MIGRATED]  = { "MIGRATED",     5, SCOLS_FL_RIGHT, N_("number of objects migrated by compaction") },
 	[COL_MOUNTPOINT]= { "MOUNTPOINT",0.10, SCOLS_FL_TRUNC, N_("where the device is mounted") },
 };
