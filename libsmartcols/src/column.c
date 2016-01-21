@@ -350,3 +350,17 @@ int scols_column_is_noextremes(struct libscols_column *cl)
 		return -EINVAL;
 	return cl->flags & SCOLS_FL_NOEXTREMES;
 }
+/**
+ * scols_column_is_wrap:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Gets the value of @cl's flag wrap.
+ *
+ * Returns: wrap flag value, negative value in case of an error.
+ */
+int scols_column_is_wrap(struct libscols_column *cl)
+{
+	if (!cl)
+		return -EINVAL;
+	return cl->flags & SCOLS_FL_WRAP;
+}

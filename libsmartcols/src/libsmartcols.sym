@@ -124,6 +124,7 @@ global:
 
 SMARTCOLS_2.28 {
 global:
+	scols_column_is_wrap;
 	scols_line_refer_column_data;
 	scols_line_set_column_data;
 	scols_table_enable_nowrap;
