@@ -574,7 +574,7 @@ static void print_title(struct libscols_table *tb)
 
 		break;
 	case SCOLS_TITLE_CENTER:
-		for (i = 0; i <= (tb->termwidth - len) / 2; i++)
+		for (i = 0; i < (tb->termwidth - len) / 2; i++)
 			fputs(tb->symbols->title_wrap, tb->out);
 
 		fputs(tb->title, tb->out);
