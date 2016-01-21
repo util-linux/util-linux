@@ -557,6 +557,9 @@ static void print_title(struct libscols_table *tb)
 
 	len = strlen(tb->title);
 
+	if (len > tb->termwidth)
+		len = tb->termwidth;
+
 	DBG(TAB, ul_debugobj(tb, "printing title"));
 
 	if (tb->title_color)
