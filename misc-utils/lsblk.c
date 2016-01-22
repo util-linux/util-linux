@@ -1172,7 +1172,7 @@ static int set_cxt(struct blkdev_cxt *cxt,
 
 	cxt->filename = get_device_path(cxt);
 	if (!cxt->filename) {
-		warnx(_("%s: failed to get device path"), cxt->name);
+		DBG(CXT, ul_debugobj(cxt, "%s: failed to get device path", cxt->name));
 		return -1;
 	}
 	DBG(CXT, ul_debugobj(cxt, "%s: filename=%s", cxt->name, cxt->filename));
@@ -1180,20 +1180,20 @@ static int set_cxt(struct blkdev_cxt *cxt,
 	devno = sysfs_devname_to_devno(cxt->name, wholedisk ? wholedisk->name : NULL);
 
 	if (!devno) {
-		warnx(_("%s: unknown device name"), cxt->name);
+		DBG(CXT, ul_debugobj(cxt, "%s: unknown device name", cxt->name));
 		return -1;
 	}
 
 	if (lsblk->inverse) {
 		if (sysfs_init(&cxt->sysfs, devno, wholedisk ? &wholedisk->sysfs : NULL)) {
-			warnx(_("%s: failed to initialize sysfs handler"), cxt->name);
+			DBG(CXT, ul_debugobj(cxt, "%s: failed to initialize sysfs handler", cxt->name));
 			return -1;
 		}
 		if (parent)
 			parent->sysfs.parent = &cxt->sysfs;
 	} else {
 		if (sysfs_init(&cxt->sysfs, devno, parent ? &parent->sysfs : NULL)) {
-			warnx(_("%s: failed to initialize sysfs handler"), cxt->name);
+			DBG(CXT, ul_debugobj(cxt, "%s: failed to initialize sysfs handler", cxt->name));
 			return -1;
 		}
 	}
@@ -1217,7 +1217,7 @@ static int set_cxt(struct blkdev_cxt *cxt,
 	if (is_dm(cxt->name)) {
 		cxt->dm_name = sysfs_strdup(&cxt->sysfs, "dm/name");
 		if (!cxt->dm_name) {
-			warnx(_("%s: failed to get dm name"), cxt->name);
+			DBG(CXT, ul_debugobj(cxt, "%s: failed to get dm name", cxt->name));
 			return -1;
 		}
 	}
