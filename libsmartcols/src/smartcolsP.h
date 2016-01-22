@@ -52,6 +52,7 @@ struct libscols_symbols {
 	char	*branch;
 	char	*vert;
 	char	*right;
+	char	*title_wrap;
 };
 
 /*
@@ -125,7 +126,8 @@ enum {
  */
 struct libscols_table {
 	int	refcount;
-	char	*name;		/* optional table table */
+	char	*name;		/* optional table name (for JSON) */
+	char	*title;		/* optional table title (for humans) */
 	size_t	ncols;		/* number of columns */
 	size_t  ntreecols;	/* number of columns with SCOLS_FL_TREE */
 	size_t	nlines;		/* number of lines */
@@ -151,6 +153,8 @@ struct libscols_table {
 			maxout		:1,	/* maximalize output */
 			no_headings	:1,	/* don't print header */
 			no_wrap		:1;	/* never wrap lines */
+	unsigned int	title_pos;		/* title position */
+	char		*title_color;		/* title color */
 };
 
 #define IS_ITER_FORWARD(_i)	((_i)->direction == SCOLS_ITER_FORWARD)

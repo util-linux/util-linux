@@ -2,6 +2,7 @@
  * symbols.c - routines for symbol handling
  *
  * Copyright (C) 2014 Ondrej Oprala <ooprala@redhat.com>
+ * Copyright (C) 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
@@ -61,6 +62,7 @@ void scols_unref_symbols(struct libscols_symbols *sy)
 		free(sy->branch);
 		free(sy->vert);
 		free(sy->right);
+		free(sy->title_wrap);
 		free(sy);
 	}
 }
@@ -141,6 +143,31 @@ int scols_symbols_set_right(struct libscols_symbols *sb, const char *str)
 }
 
 /**
+ * scols_symbols_set_title_wrap:
+ * @sb: a pointer to a struct libscols_symbols instance
+ * @str: a string which will represent the symbols which wraps title output
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_symbols_set_title_wrap(struct libscols_symbols *sb, const char *str)
+{
+	char *p = NULL;
+
+	assert(sb);
+
+	if (!sb)
+		return -EINVAL;
+	if (str) {
+		p = strdup(str);
+		if (!p)
+			return -ENOMEM;
+	}
+	free(sb->title_wrap);
+	sb->title_wrap = p;
+	return 0;
+}
+
+/**
  * scols_copy_symbols:
  * @sb: a pointer to a struct libscols_symbols instance
  *
@@ -165,11 +192,11 @@ struct libscols_symbols *scols_copy_symbols(const struct libscols_symbols *sb)
 	if (!rc)
 		rc = scols_symbols_set_right(ret, sb->right);
 	if (!rc)
+		rc = scols_symbols_set_title_wrap(ret, sb->title_wrap);
+	if (!rc)
 		return ret;
 
 	scols_unref_symbols(ret);
 	return NULL;
 
 }
-
-

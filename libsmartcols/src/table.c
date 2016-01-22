@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2010-2014 Karel Zak <kzak@redhat.com>
  * Copyright (C) 2014 Ondrej Oprala <ooprala@redhat.com>
+ * Copytight (C) 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
@@ -118,6 +119,51 @@ int scols_table_set_name(struct libscols_table *tb, const char *name)
 	}
 	free(tb->name);
 	tb->name = p;
+	return 0;
+}
+
+/**
+ * scols_table_set_title:
+ * @tb: a pointer to a struct libscols_table instance
+ * @title: a title
+ * @position: a position
+ * @color: color name or ESC sequence
+ *
+ * The table title is used to print header of table.
+ *
+ * Returns: 0, a negative number in case of an error.
+ */
+int scols_table_set_title(struct libscols_table *tb, const char *title, int position, const char *color)
+{
+	char *p = NULL;
+	char *q = NULL;
+
+	if (!tb)
+		return -EINVAL;
+
+	if (title) {
+		p = strdup(title);
+		if (!p)
+			return -ENOMEM;
+	}
+
+	if (color) {
+		if (isalpha(*color)) {
+			color = color_sequence_from_colorname(color);
+
+			if (!color)
+				return -EINVAL;
+		}
+		q = strdup(color);
+		if (!q)
+			return -ENOMEM;
+	}
+
+	free(tb->title);
+	free(tb->title_color);
+	tb->title = p;
+	tb->title_color = q;
+	tb->title_pos = position;
 	return 0;
 }
 
@@ -690,6 +736,7 @@ int scols_table_set_symbols(struct libscols_table *tb,
 			scols_symbols_set_vertical(tb->symbols, "| ");
 			scols_symbols_set_right(tb->symbols, "`-");
 		}
+		scols_symbols_set_title_wrap(tb->symbols, " ");
 	}
 
 	return 0;

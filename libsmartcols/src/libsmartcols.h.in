@@ -86,6 +86,15 @@ enum {
 	SCOLS_FL_HIDDEN	     = (1 << 5),   /* maintain data, but don't print */
 };
 
+/*
+ * Position of table's title
+ */
+enum {
+	SCOLS_TITLE_LEFT = 0,
+	SCOLS_TITLE_CENTER,
+	SCOLS_TITLE_RIGHT
+};
+
 extern struct libscols_iter *scols_new_iter(int direction);
 extern void scols_free_iter(struct libscols_iter *itr);
 extern void scols_reset_iter(struct libscols_iter *itr, int direction);
@@ -106,6 +115,7 @@ extern struct libscols_symbols *scols_copy_symbols(const struct libscols_symbols
 extern int scols_symbols_set_branch(struct libscols_symbols *sb, const char *str);
 extern int scols_symbols_set_vertical(struct libscols_symbols *sb, const char *str);
 extern int scols_symbols_set_right(struct libscols_symbols *sb, const char *str);
+extern int scols_symbols_set_title_wrap(struct libscols_symbols *sb, const char *str);
 
 /* cell.c */
 extern int scols_reset_cell(struct libscols_cell *ce);
@@ -177,6 +187,7 @@ extern struct libscols_line *scols_copy_line(struct libscols_line *ln);
 /* table */
 extern int scols_table_colors_wanted(struct libscols_table *tb);
 extern int scols_table_set_name(struct libscols_table *tb, const char *name);
+extern int scols_table_set_title(struct libscols_table *tb, const char *title, int position, const char *color);
 extern int scols_table_is_raw(struct libscols_table *tb);
 extern int scols_table_is_ascii(struct libscols_table *tb);
 extern int scols_table_is_json(struct libscols_table *tb);
