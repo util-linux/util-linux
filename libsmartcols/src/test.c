@@ -147,6 +147,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(" -l, --list           use list format output\n", out);
 	fputs(" -n, --noheadings     don't print headings\n", out);
 	fputs(" -p, --pairs          use key=\"value\" output format\n", out);
+	fputs(" -J, --json           use JSON output format\n", out);
 	fputs(" -r, --raw            use raw output format\n", out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
@@ -163,7 +164,8 @@ int main(int argc, char *argv[])
 		{ "list",       0, 0, 'l' },
 		{ "noheadings",	0, 0, 'n' },
 		{ "pairs",      0, 0, 'p' },
-		{ "raw",      0, 0, 'r' },
+		{ "json",       0, 0, 'J' },
+		{ "raw",        0, 0, 'r' },
 
 		{ NULL, 0, 0, 0 },
 	};
@@ -176,7 +178,7 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "faild to create output table");
 
-	while((c = getopt_long(argc, argv, "cilnpr", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "ciJlnpr", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'c':
 			scols_table_set_column_separator(tb, ",");
@@ -185,6 +187,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'i':
 			scols_table_enable_ascii(tb, 1);
+			break;
+		case 'J':
+			scols_table_set_name(tb, "scolstest");
+			scols_table_enable_json(tb, 1);
 			break;
 		case 'l':
 			notree = 1;
