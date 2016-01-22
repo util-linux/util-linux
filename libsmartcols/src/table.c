@@ -136,6 +136,7 @@ int scols_table_set_name(struct libscols_table *tb, const char *name)
 int scols_table_set_title(struct libscols_table *tb, const char *title, int position, const char *color)
 {
 	char *p = NULL;
+	char *q = NULL;
 
 	if (!tb)
 		return -EINVAL;
@@ -145,12 +146,7 @@ int scols_table_set_title(struct libscols_table *tb, const char *title, int posi
 		if (!p)
 			return -ENOMEM;
 	}
-	free(tb->title);
-	tb->title = p;
 
-	tb->title_pos = position;
-
-	p = NULL;
 	if (color) {
 		if (isalpha(*color)) {
 			color = color_sequence_from_colorname(color);
@@ -158,13 +154,16 @@ int scols_table_set_title(struct libscols_table *tb, const char *title, int posi
 			if (!color)
 				return -EINVAL;
 		}
-		p = strdup(color);
-		if (!p)
+		q = strdup(color);
+		if (!q)
 			return -ENOMEM;
 	}
-	free(tb->title_color);
-	tb->title_color = p;
 
+	free(tb->title);
+	free(tb->title_color);
+	tb->title = p;
+	tb->title_color = q;
+	tb->title_pos = position;
 	return 0;
 }
 
