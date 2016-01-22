@@ -356,6 +356,9 @@ static int print_data(struct libscols_table *tb,
 			char *p = data;
 			i = 0;
 
+			if (color)
+				fputs(color, tb->out);
+
 			while (*p) {
 				len = width;
 				p = strdup(p);
@@ -373,6 +376,9 @@ static int print_data(struct libscols_table *tb,
 						print_empty_cell (tb, scols_table_get_column(tb, j),
 						                  NULL, buf->bufsz);
 			}
+
+			if (color)
+				fputs(UL_COLOR_RESET, tb->out);
 		} else if (color) {
 			char *p = data;
 			size_t art = buffer_get_safe_art_size(buf);
