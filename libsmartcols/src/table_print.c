@@ -352,15 +352,25 @@ static int print_data(struct libscols_table *tb,
 			if (color)
 				fputs(UL_COLOR_RESET, tb->out);
 			len = width;
-		} else if (scols_column_is_wrap(cl)) {
+		} else if (len > width && scols_column_is_wrap(cl)) {
 			char *p = data;
+			i = 0;
 
 			while (*p) {
-				fprintf(tb->out, "%.*s", (int) width, p);
-				p += width;
+				len = width;
+				p = strdup(p);
+				bytes = mbs_truncate(p, &len);
+				if (bytes == (size_t) -1) {
+					free(p);
+					break;
+				}
+				fputs(p, tb->out);
+				free(p);
+				i += bytes;
+				p = data + i;
 				if (*p)
-					for (i = 0; i < cl->seqnum; i++)
-						print_empty_cell (tb, scols_table_get_column(tb, i),
+					for (size_t j = 0; j < cl->seqnum; j++)
+						print_empty_cell (tb, scols_table_get_column(tb, j),
 						                  NULL, buf->bufsz);
 			}
 		} else if (color) {
