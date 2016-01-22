@@ -26,6 +26,7 @@ scols_column_is_right
 scols_column_is_strict_width
 scols_column_is_tree
 scols_column_is_trunc
+scols_column_is_wrap
 scols_column_set_cmpfunc
 scols_column_set_color
 scols_column_set_flags
