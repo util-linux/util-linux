@@ -315,14 +315,21 @@ done:
    A pointer to the terminating NUL is returned.  */
 
 static char*
-mbs_align_pad (char *dest, const char* dest_end, size_t n_spaces)
+mbs_align_pad (char *dest, const char* dest_end, size_t n_spaces, int padchar)
 {
   /* FIXME: Should we pad with "figure space" (\u2007)
      if non ascii data present?  */
   for (/* nothing */; n_spaces && (dest < dest_end); n_spaces--)
-    *dest++ = ' ';
+    *dest++ = padchar;
   *dest = '\0';
   return dest;
+}
+
+size_t
+mbsalign (const char *src, char *dest, size_t dest_size,
+          size_t *width, mbs_align_t align, int flags)
+{
+	return mbsalign_with_padding(src, dest, dest_size, width, align, flags, ' ');
 }
 
 /* Align a string, SRC, in a field of *WIDTH columns, handling multi-byte
@@ -339,8 +346,9 @@ mbs_align_pad (char *dest, const char* dest_end, size_t n_spaces)
    Update *WIDTH to indicate how many columns were used before padding.  */
 
 size_t
-mbsalign (const char *src, char *dest, size_t dest_size,
-          size_t *width, mbs_align_t align, int flags)
+mbsalign_with_padding (const char *src, char *dest, size_t dest_size,
+	               size_t *width, mbs_align_t align, int flags,
+		       int padchar)
 {
   size_t ret = -1;
   size_t src_size = strlen (src) + 1;
@@ -452,10 +460,10 @@ mbsalign_unibyte:
 	  abort();
         }
 
-      dest = mbs_align_pad (dest, dest_end, start_spaces);
+      dest = mbs_align_pad (dest, dest_end, start_spaces, padchar);
       space_left = dest_end - dest;
       dest = mempcpy (dest, str_to_print, min (n_used_bytes, space_left));
-      mbs_align_pad (dest, dest_end, end_spaces);
+      mbs_align_pad (dest, dest_end, end_spaces, padchar);
     }
 #ifdef HAVE_WIDECHAR
 mbsalign_cleanup:

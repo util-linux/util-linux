@@ -62,7 +62,7 @@ void scols_unref_symbols(struct libscols_symbols *sy)
 		free(sy->branch);
 		free(sy->vert);
 		free(sy->right);
-		free(sy->title_wrap);
+		free(sy->title_padding);
 		free(sy);
 	}
 }
@@ -143,13 +143,16 @@ int scols_symbols_set_right(struct libscols_symbols *sb, const char *str)
 }
 
 /**
- * scols_symbols_set_title_wrap:
+ * scols_symbols_set_title_padding:
  * @sb: a pointer to a struct libscols_symbols instance
  * @str: a string which will represent the symbols which wraps title output
  *
+ * The current implemetation uses only the first byte from the padding string.
+ * A multibyte chars are not supported yet.
+ *
  * Returns: 0, a negative value in case of an error.
  */
-int scols_symbols_set_title_wrap(struct libscols_symbols *sb, const char *str)
+int scols_symbols_set_title_padding(struct libscols_symbols *sb, const char *str)
 {
 	char *p = NULL;
 
@@ -162,8 +165,8 @@ int scols_symbols_set_title_wrap(struct libscols_symbols *sb, const char *str)
 		if (!p)
 			return -ENOMEM;
 	}
-	free(sb->title_wrap);
-	sb->title_wrap = p;
+	free(sb->title_padding);
+	sb->title_padding = p;
 	return 0;
 }
 
@@ -192,7 +195,7 @@ struct libscols_symbols *scols_copy_symbols(const struct libscols_symbols *sb)
 	if (!rc)
 		rc = scols_symbols_set_right(ret, sb->right);
 	if (!rc)
-		rc = scols_symbols_set_title_wrap(ret, sb->title_wrap);
+		rc = scols_symbols_set_title_padding(ret, sb->title_padding);
 	if (!rc)
 		return ret;
 

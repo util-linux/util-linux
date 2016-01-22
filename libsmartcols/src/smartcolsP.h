@@ -52,7 +52,7 @@ struct libscols_symbols {
 	char	*branch;
 	char	*vert;
 	char	*right;
-	char	*title_wrap;
+	char	*title_padding;
 };
 
 /*

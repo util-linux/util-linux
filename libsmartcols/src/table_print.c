@@ -545,58 +545,66 @@ static int print_line(struct libscols_table *tb,
 	return 0;
 }
 
-static void print_title(struct libscols_table *tb)
+static int print_title(struct libscols_table *tb)
 {
-	int i = 0;
-	size_t len;
+	int rc;
+	size_t len = 0, width;
+	char *title = NULL, *buf = NULL;
 
 	assert(tb);
 
 	if (!tb->title)
-		return;
-
-	len = strlen(tb->title);
-
-	if (len > tb->termwidth)
-		len = tb->termwidth;
+		return 0;
 
 	DBG(TAB, ul_debugobj(tb, "printing title"));
+
+	/* encode data */
+	len = mbs_safe_encode_size(strlen(tb->title)) + 1;
+	if (len == 1)
+		return 0;
+	buf = malloc(len);
+	if (!buf) {
+		rc = -ENOMEM;
+		goto done;
+	}
+
+	if (!mbs_safe_encode_to_buffer(tb->title, &len, buf) ||
+	    !len || len == (size_t) -1) {
+		rc = -EINVAL;
+		goto done;
+	}
+
+	/* truncate and align */
+	title = malloc(tb->termwidth + len);
+	if (!title) {
+		rc = -EINVAL;
+		goto done;
+	}
+
+	width = tb->termwidth;
+	rc = mbsalign_with_padding(
+			buf, title, tb->termwidth + len, &width,
+			tb->title_pos == SCOLS_TITLE_LEFT ? MBS_ALIGN_LEFT :
+			tb->title_pos == SCOLS_TITLE_RIGHT ? MBS_ALIGN_RIGHT :
+			MBS_ALIGN_CENTER, 0, (int) *tb->symbols->title_padding);
+	if (rc == (size_t) -1) {
+		rc = -EINVAL;
+		goto done;
+	}
 
 	if (tb->title_color)
 		fputs(tb->title_color, tb->out);
 
-	switch (tb->title_pos) {
-	case SCOLS_TITLE_LEFT:
-		fputs(tb->title, tb->out);
-
-		for (i = len; i < tb->termwidth; i++)
-			fputs(tb->symbols->title_wrap, tb->out);
-
-		break;
-	case SCOLS_TITLE_CENTER:
-		for (i = 0; i < (tb->termwidth - len) / 2; i++)
-			fputs(tb->symbols->title_wrap, tb->out);
-
-		fputs(tb->title, tb->out);
-		i += len;
-
-		for (; i < tb->termwidth; i++)
-			fputs(tb->symbols->title_wrap, tb->out);
-
-		break;
-	case SCOLS_TITLE_RIGHT:
-		for (i = 0; i < tb->termwidth - len; i++)
-			fputs(tb->symbols->title_wrap, tb->out);
-
-		fputs(tb->title, tb->out);
-
-		break;
-	}
+	fputs(title, tb->out);
 
 	if (tb->title_color)
 		fputs(UL_COLOR_RESET, tb->out);
-
 	fputc('\n', tb->out);
+	rc = 0;
+done:
+	free(buf);
+	free(title);
+	return rc;
 }
 
 static int print_header(struct libscols_table *tb, struct libscols_buffer *buf)

@@ -81,7 +81,7 @@ scols_ref_symbols
 scols_symbols_set_branch
 scols_symbols_set_right
 scols_symbols_set_vertical
-scols_symbols_set_title_wrap
+scols_symbols_set_title_padding
 scols_unref_symbols
 </SECTION>
 
