@@ -81,6 +81,7 @@ scols_ref_symbols
 scols_symbols_set_branch
 scols_symbols_set_right
 scols_symbols_set_vertical
+scols_symbols_set_title_wrap
 scols_unref_symbols
 </SECTION>
 
@@ -130,6 +131,7 @@ scols_table_set_line_separator
 scols_table_set_name
 scols_table_set_stream
 scols_table_set_symbols
+scols_table_set_title
 scols_sort_table
 scols_unref_table
 </SECTION>
