@@ -133,7 +133,7 @@ int scols_table_set_name(struct libscols_table *tb, const char *name)
  *
  * Returns: 0, a negative number in case of an error.
  */
-int scols_table_set_title(struct libscols_table *tb, const char *title, int position, const char *color)
+int scols_table_set_title(struct libscols_table *tb, const char *title, unsigned int position, const char *color)
 {
 	char *p = NULL;
 	char *q = NULL;
