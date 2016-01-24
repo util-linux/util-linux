@@ -168,6 +168,45 @@ int scols_table_set_title(struct libscols_table *tb, const char *title, unsigned
 }
 
 /**
+ * scols_table_get_title:
+ * @tb: a pointer to a struct libscols_table instance
+ *
+ * Returns: Title of the table, or %NULL in case of blank title.
+ *
+ * Since: 2.28
+ */
+const char *scols_table_get_title(struct libscols_table *tb)
+{
+	return tb->title;
+}
+
+/**
+ * scols_table_get_title_position:
+ * @tb: a pointer to a struct libscols_table instance
+ *
+ * Returns: Title's position of the table.
+ *
+ * Since: 2.28
+ */
+unsigned int scols_table_get_title_position(struct libscols_table *tb)
+{
+	return tb->title_pos;
+}
+
+/**
+ * scols_table_get_title_color:
+ * @tb: a pointer to a struct libscols_table instance
+ *
+ * Returns: Title's color of the table, or %NULL in case of not set color.
+ *
+ * Since: 2.28
+ */
+const char *scols_table_get_title_color(struct libscols_table *tb)
+{
+	return tb->title_color;
+}
+
+/**
  * scols_table_add_column:
  * @tb: a pointer to a struct libscols_table instance
  * @cl: a pointer to a struct libscols_column instance

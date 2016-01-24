@@ -129,4 +129,7 @@ global:
 	scols_symbols_set_title_padding;
 	scols_table_enable_nowrap;
 	scols_table_set_title;
+	scols_table_get_title;
+	scols_table_get_title_position;
+	scols_table_get_title_color;
 } SMARTCOLS_2.27;
