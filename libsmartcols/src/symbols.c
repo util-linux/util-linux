@@ -151,6 +151,8 @@ int scols_symbols_set_right(struct libscols_symbols *sb, const char *str)
  * A multibyte chars are not supported yet.
  *
  * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.28
  */
 int scols_symbols_set_title_padding(struct libscols_symbols *sb, const char *str)
 {

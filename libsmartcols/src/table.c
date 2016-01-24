@@ -132,6 +132,8 @@ int scols_table_set_name(struct libscols_table *tb, const char *name)
  * The table title is used to print header of table.
  *
  * Returns: 0, a negative number in case of an error.
+ *
+ * Since: 2.28
  */
 int scols_table_set_title(struct libscols_table *tb, const char *title, unsigned int position, const char *color)
 {
@@ -939,6 +941,8 @@ int scols_table_enable_maxout(struct libscols_table *tb, int enable)
  * Never continue on next line, remove last column(s) when too large, truncate last column.
  *
  * Returns: 0 on success, negative number in case of an error.
+ *
+ * Since: 2.28
  */
 int scols_table_enable_nowrap(struct libscols_table *tb, int enable)
 {

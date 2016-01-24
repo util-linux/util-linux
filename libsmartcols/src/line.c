@@ -394,6 +394,8 @@ int scols_line_set_data(struct libscols_line *ln, size_t n, const char *data)
  * The same as scols_line_set_data() but cell is referenced by column object.
  *
  * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.28
  */
 int scols_line_set_column_data(struct libscols_line *ln,
 			       struct libscols_column *cl,
@@ -428,6 +430,8 @@ int scols_line_refer_data(struct libscols_line *ln, size_t n, char *data)
  * The same as scols_line_refer_data() but cell is referenced by column object.
  *
  * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.28
  */
 int scols_line_refer_column_data(struct libscols_line *ln,
 			       struct libscols_column *cl,
@@ -474,5 +478,3 @@ err:
 	scols_unref_line(ret);
 	return NULL;
 }
-
-
