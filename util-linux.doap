@@ -16,7 +16,7 @@
     </description>
     <bug-database rdf:resource="https://github.com/karelzak/util-linux/issues" />
     <mailing-list rdf:resource="http://vger.kernel.org/vger-lists.html#util-linux" />
-    <download-page rdf:resource="http://ftp://ftp.kernel.org/pub/linux/utils/util-linux/" />
+    <download-page rdf:resource="http://ftp.kernel.org/pub/linux/utils/util-linux/" />
     <programming-language>C</programming-language>
     <repository>
       <GitRepository>
