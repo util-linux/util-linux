@@ -272,6 +272,8 @@ int scols_column_set_cmpfunc(struct libscols_column *cl,
  * Gets the value of @cl's flag hidden.
  *
  * Returns: hidden flag value, negative value in case of an error.
+ *
+ * Since: 2.27
  */
 int scols_column_is_hidden(struct libscols_column *cl)
 {

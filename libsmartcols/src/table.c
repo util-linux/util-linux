@@ -104,6 +104,8 @@ void scols_unref_table(struct libscols_table *tb)
  * The table name is used for example for JSON top level object name.
  *
  * Returns: 0, a negative number in case of an error.
+ *
+ * Since: 2.27
  */
 int scols_table_set_name(struct libscols_table *tb, const char *name)
 {
@@ -834,6 +836,8 @@ int scols_table_enable_raw(struct libscols_table *tb, int enable)
  * (export, raw, JSON, ...) are mutually exclusive.
  *
  * Returns: 0 on success, negative number in case of an error.
+ *
+ * Since: 2.27
  */
 int scols_table_enable_json(struct libscols_table *tb, int enable)
 {
@@ -1024,6 +1028,8 @@ int scols_table_is_raw(struct libscols_table *tb)
  * @tb: table
  *
  * Returns: 1 if JSON output format is enabled.
+ *
+ * Since: 2.27
  */
 int scols_table_is_json(struct libscols_table *tb)
 {
