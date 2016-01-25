@@ -44,7 +44,7 @@ static void add_line(struct libscols_table *tb, const char *name, const char *da
 
 	if (scols_line_set_data(ln, COL_NAME, name))
 		goto fail;
-	if (scols_line_set_data(ln, COL_NAME, data))
+	if (scols_line_set_data(ln, COL_DATA, data))
 		goto fail;
 	return;
 fail:
