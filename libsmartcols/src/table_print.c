@@ -375,7 +375,7 @@ static int print_data(struct libscols_table *tb,
 				if (*p)
 					for (size_t j = 0; j < cl->seqnum; j++)
 						print_empty_cell (tb, scols_table_get_column(tb, j),
-						                  NULL, buf->bufsz);
+						                  ln, buf->bufsz);
 			}
 
 			if (color)

@@ -26,7 +26,7 @@ enum { COL_NAME, COL_DATA };
 /* add columns to the @tb */
 static void setup_columns(struct libscols_table *tb)
 {
-	if (!scols_table_new_column(tb, "NAME", 0, 0))
+	if (!scols_table_new_column(tb, "NAME", 0, SCOLS_FL_TREE))
 		goto fail;
 	if (!scols_table_new_column(tb, "DATA", 0, SCOLS_FL_WRAP))
 		goto fail;
@@ -36,9 +36,12 @@ fail:
 	err(EXIT_FAILURE, "faild to create output columns");
 }
 
-static void add_line(struct libscols_table *tb, const char *name, const char *data)
+static struct libscols_line * add_line(	struct libscols_table *tb,
+					struct libscols_line *parent,
+					const char *name,
+					const char *data)
 {
-	struct libscols_line *ln = scols_table_new_line(tb, NULL);
+	struct libscols_line *ln = scols_table_new_line(tb, parent);
 	if (!ln)
 		err(EXIT_FAILURE, "failed to create output line");
 
@@ -46,7 +49,7 @@ static void add_line(struct libscols_table *tb, const char *name, const char *da
 		goto fail;
 	if (scols_line_set_data(ln, COL_DATA, data))
 		goto fail;
-	return;
+	return ln;
 fail:
 	scols_unref_table(tb);
 	err(EXIT_FAILURE, "faild to create output line");
@@ -55,6 +58,7 @@ fail:
 int main(int argc, char *argv[])
 {
 	struct libscols_table *tb;
+	struct libscols_line *ln;
 
 	setlocale(LC_ALL, "");	/* just to have enable UTF8 chars */
 
@@ -67,11 +71,13 @@ int main(int argc, char *argv[])
 	scols_table_enable_colors(tb, 1);
 	setup_columns(tb);
 
-	add_line(tb, "keelboat", "riverine cargo-capable working boat, or a small to mid-sized recreational sailing yacht.");
-	add_line(tb, "dinghy", "type of small boat, often carried or towed for use as a ship's boat by a larger vessel.");
-	add_line(tb, "monohull", "type of boat having only one hull, unlike multihulled boats which can have two or more individual hulls connected to one another.");
-	add_line(tb, "catamaran", "geometry-stabilized craft; that is, it derives its stability from its wide beam, rather than from a ballasted keel, like a monohull.");
-	add_line(tb, "trimaran ", "multihull boat that comprises a main hull and two smaller outrigger hulls (or \"floats\") which are attached to the main hull with lateral beams.");
+	ln = add_line(tb, NULL, "monohull", "type of boat having only one hull, unlike multihulled boats which can have two or more individual hulls connected to one another.");
+	add_line(tb, ln, "keelboat", "riverine cargo-capable working boat, or a small to mid-sized recreational sailing yacht.");
+	add_line(tb, ln, "dinghy", "type of small boat, often carried or towed for use as a ship's boat by a larger vessel.");
+
+	ln = add_line(tb, NULL, "multihull", "ship, vessel, craft or boat with more than one hull.");
+	add_line(tb, ln, "catamaran", "geometry-stabilized craft; that is, it derives its stability from its wide beam, rather than from a ballasted keel, like a monohull.");
+	add_line(tb, ln, "trimaran ", "multihull boat that comprises a main hull and two smaller outrigger hulls (or \"floats\") which are attached to the main hull with lateral beams.");
 
 	scols_print_table(tb);
 	scols_unref_table(tb);
