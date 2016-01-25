@@ -995,7 +995,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 				continue;	/* never truncate columns with absolute sizes */
 			if (scols_column_is_tree(cl) && width <= cl->width_treeart)
 				continue;	/* never truncate the tree */
-			if (trunc_only && !scols_column_is_trunc(cl))
+			if (trunc_only && !(scols_column_is_trunc(cl) || scols_column_is_wrap(cl)))
 				continue;
 			if (cl->width == cl->width_min)
 				continue;
@@ -1015,7 +1015,6 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 				cl->width--;
 				width--;
 			}
-
 		}
 		if (org == width) {
 			if (trunc_only)
