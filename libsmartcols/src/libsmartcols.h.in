@@ -84,6 +84,7 @@ enum {
 	SCOLS_FL_STRICTWIDTH = (1 << 3),   /* don't reduce width if column is empty */
 	SCOLS_FL_NOEXTREMES  = (1 << 4),   /* ignore extreme fields when count column width*/
 	SCOLS_FL_HIDDEN	     = (1 << 5),   /* maintain data, but don't print */
+	SCOLS_FL_WRAP	     = (1 << 6),   /* wrap long cells across lines */
 };
 
 /*
@@ -139,6 +140,7 @@ extern int scols_column_is_right(struct libscols_column *cl);
 extern int scols_column_is_strict_width(struct libscols_column *cl);
 extern int scols_column_is_hidden(struct libscols_column *cl);
 extern int scols_column_is_noextremes(struct libscols_column *cl);
+extern int scols_column_is_wrap(struct libscols_column *cl);
 
 extern int scols_column_set_flags(struct libscols_column *cl, int flags);
 extern int scols_column_get_flags(struct libscols_column *cl);
