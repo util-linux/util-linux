@@ -146,10 +146,7 @@ update.log
 /rev
 /rtcwake
 /runuser
-/sample-mkfs
-/sample-partitions
-/sample-superblocks
-/sample-topology
+/sample-*
 /script
 /scriptreplay
 /setarch
