@@ -359,6 +359,8 @@ int scols_column_is_noextremes(struct libscols_column *cl)
  * Gets the value of @cl's flag wrap.
  *
  * Returns: wrap flag value, negative value in case of an error.
+ *
+ * Since: 2.28
  */
 int scols_column_is_wrap(struct libscols_column *cl)
 {

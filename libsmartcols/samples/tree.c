@@ -212,11 +212,11 @@ int main(int argc, char *argv[])
 	}
 
 	scols_table_enable_colors(tb, 1);
-	scols_table_set_title(tb, "This is table title", SCOLS_TITLE_CENTER, "red");
-
 	setup_columns(tb, notree);
 
-	while (optind < argc)
+	if (optind == argc)
+		add_lines(tb, ".");
+	else while (optind < argc)
 		add_lines(tb, argv[optind++]);
 
 	scols_print_table(tb);

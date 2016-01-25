@@ -43,19 +43,6 @@ EXTRA_DIST += \
 	libsmartcols/src/libsmartcols.sym \
 	libsmartcols/src/libsmartcols.h.in
 
-
-if BUILD_LIBSMARTCOLS_TESTS
-check_PROGRAMS += test_smartcols
-
-libsmartcols_tests_cflags = $(libsmartcols_la_CFLAGS)
-libsmartcols_tests_ldadd  = libsmartcols.la libcommon.la libtcolors.la
-
-test_smartcols_SOURCES = libsmartcols/src/test.c
-test_smartcols_CFLAGS = $(libsmartcols_tests_cflags)
-test_smartcols_LDADD = $(libsmartcols_tests_ldadd)
-endif # BUILD_LIBSMARTCOLS_TESTS
-
-
 # move lib from $(usrlib_execdir) to $(libdir) if needed
 install-exec-hook-libsmartcols:
 	if test "$(usrlib_execdir)" != "$(libdir)" -a -f "$(DESTDIR)$(usrlib_execdir)/libsmartcols.so"; then \

@@ -954,7 +954,6 @@ AC_ARG_ENABLE([libsmartcols],
 )
 UL_BUILD_INIT([libsmartcols])
 AM_CONDITIONAL([BUILD_LIBSMARTCOLS], [test "x$build_libsmartcols" = xyes])
-AM_CONDITIONAL([BUILD_LIBSMARTCOLS_TESTS], [test "x$build_libsmartcols" = xyes -a "x$enable_static" = xyes])
 
 AC_SUBST([LIBSMARTCOLS_VERSION])
 AC_SUBST([LIBSMARTCOLS_VERSION_INFO])
