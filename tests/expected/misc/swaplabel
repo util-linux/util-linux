@@ -1,4 +1,5 @@
 mkswap: error: swap area needs to be at least 10 pages
+mkswap: <swapfile>: insecure permissions 0644, 0600 suggested.
 mkswap: Label was truncated.
 Setting up swapspace version 1, size = 9 pages (9xPGSZ bytes)
 LABEL=1234567890abcde, UUID=12345678-abcd-abcd-abcd-1234567890ab
