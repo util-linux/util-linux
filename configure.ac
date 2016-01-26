@@ -197,6 +197,7 @@ AC_CHECK_HEADERS([ \
 	fcntl.h \
 	getopt.h \
 	inttypes.h \
+	linux/btrfs.h \
 	linux/cdrom.h \
 	linux/falloc.h \
 	linux/watchdog.h \
@@ -264,6 +265,7 @@ AC_CHECK_HEADERS([langinfo.h],
 
 dnl Convert some ac_cv_header_* variables to have_*
 dnl
+have_linux_btrfs_h=$ac_cv_header_linux_btrfs_h
 have_linux_raw_h=$ac_cv_header_linux_raw_h
 have_linux_securebits_h=$ac_cv_header_linux_securebits_h
 have_linux_watchdog_h=$ac_cv_header_linux_watchdog_h
@@ -1786,6 +1788,25 @@ UL_BUILD_INIT([write])
 AM_CONDITIONAL([BUILD_WRITE], [test "x$build_write" = xyes])
 
 
+AC_ARG_WITH([btrfs],
+  AS_HELP_STRING([--with-btrfs], [build with support for btrfs]),
+  [], [with_btrfs=check]
+)
+have_btrfs=no
+AS_IF([test "x$with_btrfs" != xno], [
+  AS_CASE([$with_btrfs:$have_linux_btrfs_h],
+    [yes:no],
+    [AC_MSG_ERROR([btrfs selected but linux/btrfs.h not found])],
+    [check:no],
+       [AC_MSG_WARN([linux/btrfs.h not found, do not build with btrfs support])],
+    [*:yes],
+       [have_btrfs=yes
+	AC_DEFINE([HAVE_BTRFS_SUPPORT], [1], [Define if btrfs stuff is available])]
+  )
+])
+AM_CONDITIONAL([HAVE_BTRFS], [test "x$have_btrfs" = xyes])
+
+
 AC_ARG_WITH([systemd],
   AS_HELP_STRING([--with-systemd], [build with support for systemd]),
   [], [with_systemd=check]
@@ -2061,6 +2082,7 @@ AC_MSG_RESULT([
 
 	Bash completions:  ${with_bashcompletiondir}
 	Systemd support:   ${have_systemd}
+	Btrfs support:     ${have_btrfs}
 
 	warnings:
 

@@ -1315,6 +1315,7 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 		}
 	}
 
+#ifdef HAVE_BTRFS_SUPPORT
 	/*
 	 * btrfs-subvolume mount -- get subvolume name and use it as a root-fs path
 	 */
@@ -1381,6 +1382,8 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 		memcpy(p, vol, volsz);
 		*(root + sz) = '\0';
 	}
+#endif /* HAVE_BTRFS_SUPPORT */
+
 dflt:
 	if (!root) {
 		root = strdup("/");
