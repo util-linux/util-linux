@@ -1,12 +1,12 @@
 /*
- * Copyright (C) 1999 Andrea Arcangeli <andrea@suse.de>
  * Copyright (C) 2016 David Sterba <dsterba@suse.cz>
  * Copyright (C) 2016 Stanislav Brabec <sbrabec@suse.cz>
+ *
+ * Based on kernel ctree.h, rbtree.h and btrfs-progs.
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  */
-
 #include <dirent.h>
 #include <sys/ioctl.h>
 #include <libio.h>
