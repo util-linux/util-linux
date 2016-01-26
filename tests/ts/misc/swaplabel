@@ -44,6 +44,7 @@ $TS_CMD_MKSWAP \
 	$IMAGE 2>&1 |\
 	sed -e "s/ $MIN_SWAP_SIZE_KB KiB/ 10 pages/" \
 	    -e "s:$IMAGE:<swapfile>:g" \
+	    -e "s/insecure permissions [0-9]*/insecure permissions <perm>/g" \
 	>> $TS_OUTPUT 2>&1
 
 rm -f $IMAGE
@@ -55,6 +56,7 @@ $TS_CMD_MKSWAP \
 	sed -e "s/ $(( $MIN_SWAP_SIZE_KB - $PAGE_SIZE_KB )) KiB/ 9 pages/" \
 	    -e "s/($(( $MIN_SWAP_SIZE - $PAGE_SIZE )) bytes)/(9xPGSZ bytes)/" \
 	    -e "s:$IMAGE:<swapfile>:g" \
+	    -e "s/insecure permissions [0-9]*/insecure permissions <perm>/g" \
 	>> $TS_OUTPUT 2>&1
 $TS_CMD_SWAPLABEL $IMAGE >> $TS_OUTPUT 2>&1
 
