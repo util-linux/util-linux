@@ -1319,7 +1319,7 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 	/*
 	 * btrfs-subvolume mount -- get subvolume name and use it as a root-fs path
 	 */
-	else if (fstype && !strcmp(fstype, "btrfs")) {
+	else if (fstype && (!strcmp(fstype, "btrfs") || !strcmp(fstype, "auto"))) {
 		char *vol = NULL, *p;
 		size_t sz, volsz = 0;
 
