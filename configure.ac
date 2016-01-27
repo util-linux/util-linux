@@ -394,7 +394,14 @@ AC_CHECK_FUNCS([timer_create],
 	[AC_CHECK_LIB([rt], [timer_create], [
 		have_timer="yes"
 		REALTIME_LIBS="-lrt"
-	])]
+	],[
+		AC_SEARCH_LIBS([timer_create], [rt], [
+			AC_MSG_RESULT(yes)
+			have_timer="yes"
+			REALTIME_LIBS="-lrt -lpthread"
+		],[], [-lpthread]
+		)
+		])]
 )
 
 AC_SUBST([REALTIME_LIBS])
