@@ -94,6 +94,10 @@ in UTC.  See the
 .B \%\-\-localtime
 option.
 .sp
+The time shown is in same format as that of 
+.BR \%date (1)
+by default, and additionally, the number of microseconds is shown.
+.sp 
 Showing the Hardware Clock time is the default when no function is specified.
 .sp
 The
@@ -298,7 +302,7 @@ The value of this option is used as an argument to the
 option.  For example:
 .RS
 .IP "" 4
-.B "hwclock\ \-\-set\ \-\-date='2011-08-14\ 16:45:05'
+.B "hwclock\ \-\-set\ \-\-date='2011-08-14\ 16:45:05'"
 .PP
 The argument must be in local time, even if you keep your Hardware Clock in
 UTC.  See the
