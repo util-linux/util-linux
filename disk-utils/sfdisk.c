@@ -1591,13 +1591,15 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			sf->prompt = xstrdup(SFDISK_PROMPT);
 		}
 
+		if (sf->prompt && (sf->interactive || !sf->quiet)) {
 #ifndef HAVE_LIBREADLINE
-		if (sf->prompt)
 			fputs(sf->prompt, stdout);
 #else
-		if (!sf->interactive && sf->prompt)
-			fputs(sf->prompt, stdout);
+			if (!sf->interactive)
+				fputs(sf->prompt, stdout);
 #endif
+		}
+
 		rc = fdisk_script_read_line(dp, stdin, buf, sizeof(buf));
 		if (rc < 0) {
 			DBG(PARSE, ul_debug("script parsing failed, trying sfdisk specific commands"));
