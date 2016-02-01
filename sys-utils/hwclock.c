@@ -693,7 +693,7 @@ display_time(const bool hclock_valid, struct timeval hwctime)
 
 		lt = localtime(&hwctime.tv_sec);
 		strftime(ctime_now, sizeof(ctime_now), format, lt);
-		printf(_("%s  and %06d microseconds\n"), ctime_now, (int)hwctime.tv_usec);
+		printf(_("%s and %06d microseconds\n"), ctime_now, (int)hwctime.tv_usec);
 	}
 }
 
