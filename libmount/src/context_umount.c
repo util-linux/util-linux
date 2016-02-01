@@ -992,7 +992,8 @@ int mnt_context_next_umount(struct libmnt_context *cxt,
 		tgt = mnt_fs_get_target(*fs);
 	} while (!tgt);
 
-	DBG(CXT, ul_debugobj(cxt, "next-umount: trying %s", tgt));
+	DBG(CXT, ul_debugobj(cxt, "next-umount: trying %s [fstype: %s, t-pattern: %s, options: %s, O-pattern: %s]", tgt,
+				 mnt_fs_get_fstype(*fs), cxt->fstype_pattern, mnt_fs_get_options(*fs), cxt->optstr_pattern));
 
 	/* ignore filesystems which don't match options patterns */
 	if ((cxt->fstype_pattern && !mnt_fs_match_fstype(*fs,
@@ -1003,12 +1004,8 @@ int mnt_context_next_umount(struct libmnt_context *cxt,
 					cxt->optstr_pattern))) {
 		if (ignored)
 			*ignored = 1;
-		DBG(CXT, ul_debugobj(cxt, "next-umount: not-match "
-				"[fstype: %s, t-pattern: %s, options: %s, O-pattern: %s]",
-				mnt_fs_get_fstype(*fs),
-				cxt->fstype_pattern,
-				mnt_fs_get_options(*fs),
-				cxt->optstr_pattern));
+
+		DBG(CXT, ul_debugobj(cxt, "next-umount: not-match"));
 		return 0;
 	}
 

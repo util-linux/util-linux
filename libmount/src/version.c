@@ -28,6 +28,9 @@ static const char *lib_features[] = {
 #ifdef HAVE_BTRFS_SUPPORT
 	"btrfs",
 #endif
+#ifdef USE_LIBMOUNT_FORCE_MOUNTINFO
+	"force-mountinfo",
+#endif
 #if !defined(NDEBUG)
 	"assert",	/* libc assert.h stuff */
 #endif
