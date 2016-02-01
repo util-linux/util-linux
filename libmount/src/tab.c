@@ -1267,7 +1267,6 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 			if (f)
 				mnt = mnt_fs_get_target(f);
 		}
-
 		if (mnt)
 			root = remove_mountpoint_from_path(src, mnt);
 
@@ -1323,10 +1322,10 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 		char *vol = NULL, *p;
 		size_t sz, volsz = 0;
 
-		DBG(BTRFS, ul_debug("lookup for FS root"));
+		DBG(BTRFS, ul_debug("lookup for btrfs FS root"));
 
-		if (mnt_fs_get_option(fs, "subvolid", &vol, &volsz)) {
-			if (mnt_fs_get_option(fs, "subvol", &vol, &volsz)) {
+		if (mnt_fs_get_option(fs, "subvolid", &vol, &volsz) != 0) {
+			if (mnt_fs_get_option(fs, "subvol", &vol, &volsz) != 0) {
 				/* If fstab entry does not contain "subvol", we
 				 * have to check, whether btrfs has default
 				 * subvolume defined.
@@ -1335,6 +1334,8 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 				char *target;
 				struct libmnt_fs *f;
 				char default_id_str[sizeof(stringify_value(UINT64_MAX))];
+
+				DBG(BTRFS, ul_debug(" subvolid/subvol not set, checking default"));
 
 				default_id = btrfs_get_default_subvol_id(mnt_fs_get_target(fs));
 				if (default_id == UINT64_MAX)
@@ -1347,14 +1348,14 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 				 * kernels, there is no reasonable way to detect
 				 * which subvolume was mounted.
 				 */
-				target = mnt_resolve_spec(mnt_fs_get_target(fs), tb->cache);
+				target = mnt_resolve_target(mnt_fs_get_target(fs), tb->cache);
 				if (!target)
 					goto err;
 
 				snprintf(default_id_str, sizeof(default_id_str), "%llu",
 						(unsigned long long int) default_id);
 
-				DBG(BTRFS, ul_debug("target=%s default subvolid=%s", target, default_id_str));
+				DBG(BTRFS, ul_debug(" tring target=%s default subvolid=%s", target, default_id_str));
 				f = mnt_table_find_target_with_option(tb, target,
 							"subvolid", default_id_str,
 							MNT_ITER_BACKWARD);
@@ -1370,21 +1371,23 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 				if (mnt_fs_get_option(f, "subvol", &vol, &volsz))
 					goto dflt;
 			} else
-				DBG(BTRFS, ul_debug("setting FS root: btrfs subvol"));
+				DBG(BTRFS, ul_debug(" found subvol=%s", vol));
 		} else {
 			char *target;
 			struct libmnt_fs *f;
 			char subvolidstr[sizeof(stringify_value(UINT64_MAX))];
 
+			DBG(BTRFS, ul_debug(" found subvolid=%s, checking", vol));
+
 			assert (volsz + 1 < sizeof(stringify_value(UINT64_MAX)));
 			memcpy(subvolidstr, vol, volsz);
 			subvolidstr[volsz] = '\0';
 
-			target = mnt_resolve_spec(mnt_fs_get_target(fs), tb->cache);
+			target = mnt_resolve_target(mnt_fs_get_target(fs), tb->cache);
 			if (!target)
 				goto err;
 
-			DBG(BTRFS, ul_debug("target=%s subvolid=%s", target, subvolidstr));
+			DBG(BTRFS, ul_debug(" tring target=%s subvolid=%s", target, subvolidstr));
 			f = mnt_table_find_target_with_option(tb, target,
 						"subvolid", subvolidstr,
 						MNT_ITER_BACKWARD);
@@ -1401,6 +1404,8 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 			 */
 			if (mnt_fs_get_option(f, "subvol", &vol, &volsz))
 				goto dflt;
+
+			DBG(BTRFS, ul_debug(" found subvol=%s", vol));
 		}
 
 		sz = volsz;
