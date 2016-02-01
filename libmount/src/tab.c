@@ -1223,6 +1223,120 @@ static char *remove_mountpoint_from_path(const char *path, const char *mnt)
 	return res;
 }
 
+#ifdef HAVE_BTRFS_SUPPORT
+static int get_btrfs_fs_root(struct libmnt_table *tb, struct libmnt_fs *fs, char **root)
+{
+	char *vol = NULL, *p;
+	size_t sz, volsz = 0;
+
+	DBG(BTRFS, ul_debug("lookup for btrfs FS root"));
+	*root = NULL;
+
+	if (mnt_fs_get_option(fs, "subvolid", &vol, &volsz) == 0) {
+		char *target;
+		struct libmnt_fs *f;
+		char subvolidstr[sizeof(stringify_value(UINT64_MAX))];
+
+		DBG(BTRFS, ul_debug(" found subvolid=%s, checking", vol));
+
+		assert (volsz + 1 < sizeof(stringify_value(UINT64_MAX)));
+		memcpy(subvolidstr, vol, volsz);
+		subvolidstr[volsz] = '\0';
+
+		target = mnt_resolve_target(mnt_fs_get_target(fs), tb->cache);
+		if (!target)
+			goto err;
+
+		DBG(BTRFS, ul_debug(" tring target=%s subvolid=%s", target, subvolidstr));
+		f = mnt_table_find_target_with_option(tb, target,
+					"subvolid", subvolidstr,
+					MNT_ITER_BACKWARD);
+		if (!tb->cache)
+			free(target);
+		if (!f)
+			goto not_found;
+
+		/* Instead of set of BACKREF queries constructing subvol path
+		 * corresponding to a particular subvolid, use the one in
+		 * mountinfo. Kernel keeps subvol path up to date.
+		 */
+		if (mnt_fs_get_option(f, "subvol", &vol, &volsz) != 0)
+			goto not_found;
+
+	} else if (mnt_fs_get_option(fs, "subvol", &vol, &volsz) != 0) {
+		/* If fstab entry does not contain "subvol", we have to
+		 * check, whether btrfs has default subvolume defined.
+		 */
+		uint64_t default_id;
+		char *target;
+		struct libmnt_fs *f;
+		char default_id_str[sizeof(stringify_value(UINT64_MAX))];
+
+		DBG(BTRFS, ul_debug(" subvolid/subvol not found, checking default"));
+
+		default_id = btrfs_get_default_subvol_id(mnt_fs_get_target(fs));
+		if (default_id == UINT64_MAX)
+			goto not_found;
+
+		/* Volume has default subvolume. Check if it matches to
+		 * the one in mountinfo.
+		 *
+		 * Only kernel >= 4.2 reports subvolid. On older
+		 * kernels, there is no reasonable way to detect which
+		 * subvolume was mounted.
+		 */
+		target = mnt_resolve_target(mnt_fs_get_target(fs), tb->cache);
+		if (!target)
+			goto err;
+
+		snprintf(default_id_str, sizeof(default_id_str), "%llu",
+				(unsigned long long int) default_id);
+
+		DBG(BTRFS, ul_debug(" tring target=%s default subvolid=%s",
+					target, default_id_str));
+
+		f = mnt_table_find_target_with_option(tb, target,
+					"subvolid", default_id_str,
+					MNT_ITER_BACKWARD);
+		if (!tb->cache)
+			free(target);
+		if (!f)
+			goto not_found;
+
+		/* Instead of set of BACKREF queries constructing
+		 * subvol path, use the one in mountinfo. Kernel does
+		 * the evaluation for us.
+		 */
+		DBG(BTRFS, ul_debug("setting FS root: btrfs default subvolid = %s",
+					default_id_str));
+
+		if (mnt_fs_get_option(f, "subvol", &vol, &volsz) != 0)
+			goto not_found;
+	}
+
+	DBG(BTRFS, ul_debug(" using subvol=%s", vol));
+	sz = volsz;
+	if (*vol != '/')
+		sz++;
+	*root = malloc(sz + 1);
+	if (!*root)
+		goto err;
+	p = *root;
+	if (*vol != '/')
+		*p++ = '/';
+	memcpy(p, vol, volsz);
+	*(*root + sz) = '\0';
+	return 0;
+
+not_found:
+	DBG(BTRFS, ul_debug(" not found btrfs volume setting"));
+	return 1;
+err:
+	DBG(BTRFS, ul_debug(" error on btrfs volume setting evaluation"));
+	return errno ? -errno : -1;
+}
+#endif /* HAVE_BTRFS_SUPPORT */
+
 /*
  * tb: /proc/self/mountinfo
  * fs: filesystem
@@ -1319,106 +1433,8 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 	 * btrfs-subvolume mount -- get subvolume name and use it as a root-fs path
 	 */
 	else if (fstype && (!strcmp(fstype, "btrfs") || !strcmp(fstype, "auto"))) {
-		char *vol = NULL, *p;
-		size_t sz, volsz = 0;
-
-		DBG(BTRFS, ul_debug("lookup for btrfs FS root"));
-
-		if (mnt_fs_get_option(fs, "subvolid", &vol, &volsz) != 0) {
-			if (mnt_fs_get_option(fs, "subvol", &vol, &volsz) != 0) {
-				/* If fstab entry does not contain "subvol", we
-				 * have to check, whether btrfs has default
-				 * subvolume defined.
-				 */
-				uint64_t default_id;
-				char *target;
-				struct libmnt_fs *f;
-				char default_id_str[sizeof(stringify_value(UINT64_MAX))];
-
-				DBG(BTRFS, ul_debug(" subvolid/subvol not set, checking default"));
-
-				default_id = btrfs_get_default_subvol_id(mnt_fs_get_target(fs));
-				if (default_id == UINT64_MAX)
-					goto dflt;
-
-				/* Volume has default subvolume. Check if it
-				 * matches to the one in mountinfo.
-				 *
-				 * Only kernel >= 4.2 reports subvolid. On older
-				 * kernels, there is no reasonable way to detect
-				 * which subvolume was mounted.
-				 */
-				target = mnt_resolve_target(mnt_fs_get_target(fs), tb->cache);
-				if (!target)
-					goto err;
-
-				snprintf(default_id_str, sizeof(default_id_str), "%llu",
-						(unsigned long long int) default_id);
-
-				DBG(BTRFS, ul_debug(" tring target=%s default subvolid=%s", target, default_id_str));
-				f = mnt_table_find_target_with_option(tb, target,
-							"subvolid", default_id_str,
-							MNT_ITER_BACKWARD);
-				if (!tb->cache)
-					free(target);
-				if (!f)
-					goto dflt;
-
-				/* Instead of set of BACKREF queries constructing
-				 * subvol path, use the one in mountinfo. Kernel
-				 * does the evaluation for us. */
-				DBG(BTRFS, ul_debug("setting FS root: btrfs default subvolid = %s", default_id_str));
-				if (mnt_fs_get_option(f, "subvol", &vol, &volsz))
-					goto dflt;
-			} else
-				DBG(BTRFS, ul_debug(" found subvol=%s", vol));
-		} else {
-			char *target;
-			struct libmnt_fs *f;
-			char subvolidstr[sizeof(stringify_value(UINT64_MAX))];
-
-			DBG(BTRFS, ul_debug(" found subvolid=%s, checking", vol));
-
-			assert (volsz + 1 < sizeof(stringify_value(UINT64_MAX)));
-			memcpy(subvolidstr, vol, volsz);
-			subvolidstr[volsz] = '\0';
-
-			target = mnt_resolve_target(mnt_fs_get_target(fs), tb->cache);
-			if (!target)
-				goto err;
-
-			DBG(BTRFS, ul_debug(" tring target=%s subvolid=%s", target, subvolidstr));
-			f = mnt_table_find_target_with_option(tb, target,
-						"subvolid", subvolidstr,
-						MNT_ITER_BACKWARD);
-			if (!tb->cache)
-				free(target);
-
-			if (!f)
-				goto dflt;
-
-			/* Instead of set of BACKREF queries constructing
-			 * subvol path corresponding to a particular subvolid,
-			 * use the one in mountinfo. Kernel keeps subvol path
-			 * up to date.
-			 */
-			if (mnt_fs_get_option(f, "subvol", &vol, &volsz))
-				goto dflt;
-
-			DBG(BTRFS, ul_debug(" found subvol=%s", vol));
-		}
-
-		sz = volsz;
-		if (*vol != '/')
-			sz++;
-		root = malloc(sz + 1);
-		if (!root)
+		if (get_btrfs_fs_root(tb, fs, &root) < 0)
 			goto err;
-		p = root;
-		if (*vol != '/')
-			*p++ = '/';
-		memcpy(p, vol, volsz);
-		*(root + sz) = '\0';
 	}
 #endif /* HAVE_BTRFS_SUPPORT */
 
