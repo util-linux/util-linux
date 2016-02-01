@@ -972,6 +972,9 @@ static struct fdisk_parttype *translate_type_shortcuts(struct fdisk_script *dp, 
 		case 'H':	/* Home */
 			type = "933AC7E1-2EB4-4F13-B844-0E14E2AEF915";
 			break;
+		case 'U':	/* UEFI system */
+			type = "C12A7328-F81F-11D2-BA4B-00A0C93EC93B";
+			break;
 		}
 	}
 
