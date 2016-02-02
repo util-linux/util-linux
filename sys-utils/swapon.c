@@ -297,6 +297,10 @@ static int swap_reinitialize(struct swapon_ctl *ctl)
 	char const *cmd[7];
 	int idx=0;
 
+	if (geteuid() != getuid()) {
+		warnx(_("will not execute mkswap when swapon is setuid binary"));
+		return -1;
+	}
 	warnx(_("%s: reinitializing the swap."), ctl->device);
 
 	switch((pid=fork())) {
