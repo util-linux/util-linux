@@ -7,7 +7,7 @@ Create new DOS partition table
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 -------------------
@@ -19,7 +19,7 @@ e21e16b7452d82e2a2810a1de8c3db05 mbr-nondos-mode.img
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
@@ -34,7 +34,7 @@ Set primary partition active
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
@@ -49,7 +49,7 @@ a5543ee1e3d2cf79913a56bae893a0f0 mbr-nondos-mode.img
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
@@ -64,7 +64,7 @@ Create 2nd primary partition
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
@@ -80,7 +80,7 @@ Create extended partition
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
@@ -97,7 +97,7 @@ db4406e7bc0773f234fd1db1b58b5997 mbr-nondos-mode.img
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
@@ -118,7 +118,7 @@ de85b8d74f52f307b9467ea4c33438cb mbr-nondos-mode.img
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
@@ -136,7 +136,7 @@ Create another logical partition
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
@@ -157,7 +157,7 @@ Delete primary partition
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
@@ -177,7 +177,7 @@ Delete primary partition
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
@@ -196,7 +196,7 @@ e1ef48d3d42f4ebcfd5bf4baf5e370e9 mbr-nondos-mode.img
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 -------------------

@@ -621,6 +621,7 @@ function ts_fdisk_clean {
 		-e 's/^Device[[:blank:]]*Boot/Device     Boot/' \
 		-e 's/Welcome to fdisk.*/Welcome to fdisk <removed>./' \
 		-e 's/typescript file.*/typescript file <removed>./' \
+		-e 's@^\(I/O size (minimum/op.* bytes /\) [1-9][0-9]* @\1 <removed> @' \
 		$TS_OUTPUT
 }
 

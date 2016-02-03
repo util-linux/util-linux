@@ -24,7 +24,7 @@ Created a new <removed>.
 Command (m for help): Disk <removed>: 99.9 MiB, 104726528 bytes, 204544 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 65536 bytes / 131072 bytes
+I/O size (minimum/optimal): 65536 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 

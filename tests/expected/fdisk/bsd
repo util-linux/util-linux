@@ -7,7 +7,7 @@ Create new DOS partition table
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 -------------------
@@ -19,7 +19,7 @@ ada64ace122978d00d1d1c0e5ee45d26 bsd.img
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
@@ -36,7 +36,7 @@ Set 2nd partition type
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
@@ -61,7 +61,7 @@ Command (m for help): Disk <removed>2: 10 MiB, 10485760 bytes, 20480 sectors
 Geometry: 255 heads, 63 sectors/track, 1 cylinders
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: bsd
 
 Slice Start   End Sectors  Size Type     Fsize Bsize Cpg
@@ -90,7 +90,7 @@ Command (m for help): Disk <removed>2: 10 MiB, 10485760 bytes, 20480 sectors
 Geometry: 255 heads, 63 sectors/track, 1 cylinders
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: bsd
 
 Slice Start   End Sectors  Size Type     Fsize Bsize Cpg

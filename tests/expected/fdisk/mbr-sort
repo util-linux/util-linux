@@ -5,7 +5,7 @@ Create new DOS partition table
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 -------------------
@@ -16,7 +16,7 @@ Create primary partitions
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
@@ -35,7 +35,7 @@ Create logical partitions
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
@@ -58,7 +58,7 @@ Fix order.
 Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
 Disklabel type: dos
 Disk identifier: <removed>
 
