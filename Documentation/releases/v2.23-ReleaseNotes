@@ -1123,7 +1123,7 @@ umount:
    - add --all-targets  [Karel Zak]
    - add -R, --recursive option  [Dave Reisner]
    - add note about namespaces too --all-targets  [Karel Zak]
-   - allways return MOUNT_EX_*  [Karel Zak]
+   - always return MOUNT_EX_*  [Karel Zak]
    - clean --recursive  [Karel Zak]
    - improve --recursive docs  [Karel Zak]
    - make usage() translator friendly  [Sami Kerola]

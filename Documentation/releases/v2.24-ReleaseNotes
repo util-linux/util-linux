@@ -190,7 +190,7 @@ chfn:
    - assigned value is never read [clang-analyzer]  [Sami Kerola]
 column:
    - dereference of null pointer [clang-analyzer]  [Sami Kerola]
-   - use variable lenght printf field width to wprint blanks  [Sami Kerola]
+   - use variable length printf field width to wprint blanks  [Sami Kerola]
 cytune:
    - fix glush typo in cytune  [Rafael Ferreira]
 dmesg:
@@ -692,7 +692,7 @@ more:
    - fix warning when compiled --without-ncurses  [Karel Zak]
    - guarantee space for multibyte  [Karel Zak]
    - make output redirection more efficient  [Sami Kerola]
-   - use variable lenght printf field width to print blanks  [Sami Kerola]
+   - use variable length printf field width to print blanks  [Sami Kerola]
 mount:
    - (deprecated) fix typo tailed->failed  [Yuri Chornoivan]
    - add notes about UUIDs to the man page  [Karel Zak]

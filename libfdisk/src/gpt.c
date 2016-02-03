@@ -2263,7 +2263,7 @@ static int gpt_add_partition(
 		goto done;
 	}
 
-	/* Be paranoid and check agains on-disk setting rather than against libfdisk cxt */
+	/* Be paranoid and check against on-disk setting rather than against libfdisk cxt */
 	if (user_l > le64_to_cpu(pheader->last_usable_lba)) {
 		fdisk_warnx(cxt, _("The last usable GPT sector is %ju, but %ju is requested."),
 				le64_to_cpu(pheader->last_usable_lba), user_l);

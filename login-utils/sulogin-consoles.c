@@ -225,7 +225,7 @@ dev_t devattr(const char *tty)
 #endif /* __linux__ */
 
 /*
- * Search below /dev for the characer device in `dev_t comparedev' variable.
+ * Search below /dev for the character device in `dev_t comparedev' variable.
  */
 static
 #ifdef __GNUC__

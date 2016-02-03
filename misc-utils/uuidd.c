@@ -229,7 +229,7 @@ static int create_pidfile(struct uuidd_cxt_t *cxt, const char *pidfile_path)
  * Create AF_UNIX, SOCK_STREAM socket and bind to @socket_path
  *
  * If @will_fork is true, then make sure the descriptor
- * of the socket is >2, so that it wont be later closed
+ * of the socket is >2, so that it won't be later closed
  * during create_daemon().
  *
  * Return file descriptor corresponding to created socket.

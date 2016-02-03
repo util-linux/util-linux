@@ -5,7 +5,7 @@ Disk testimage: 10 MiB, 10485760 bytes, 20480 sectors
 Units: cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
-Nonexistant file
+Nonexistent file
 fdisk: cannot open _a_file_that_does_not_exist_: No such file or directory
 Too small file
 fdisk: cannot open oddinput.toosmall: Inappropriate ioctl for device

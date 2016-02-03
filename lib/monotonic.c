@@ -51,7 +51,7 @@ int gettime_monotonic(struct timeval *tv)
 	struct timespec ts;
 
 # ifdef CLOCK_MONOTONIC_RAW
-	/* Linux specific, cant slew */
+	/* Linux specific, can't slew */
 	if (!(ret = clock_gettime(CLOCK_MONOTONIC_RAW, &ts))) {
 # else
 	if (!(ret = clock_gettime(CLOCK_MONOTONIC, &ts))) {

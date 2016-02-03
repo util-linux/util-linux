@@ -141,7 +141,7 @@ void list_disklabel(struct fdisk_context *cxt)
 		if (!co)
 			goto done;
 
-		/* set colum header color */
+		/* set column header color */
 		if (bold)
 			scols_cell_set_color(scols_column_get_header(co), bold);
 	}

@@ -289,7 +289,7 @@ static void wait_for_empty_fd(int fd)
 /*
  * The script(1) is usually faster than shell, so it's good idea to wait until
  * the previous message is has been already read by shell from slave before we
- * wrate to master. This is necessary expecially for EOF situation when we can
+ * wrate to master. This is necessary especially for EOF situation when we can
  * send EOF to master before shell is fully initialized, to workaround this
  * problem we wait until slave is empty. For example:
  *

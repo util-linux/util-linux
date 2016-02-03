@@ -336,7 +336,7 @@ libfdisk:
    - (gpt) check header size before verify CRC  [Karel Zak]
    - (gpt) fix "MidnightBSD UFS" UUID  [Karel Zak]
    - (gpt) fix LE usage  [Karel Zak]
-   - (gpt) fix attributes endianess  [Ruediger Meier]
+   - (gpt) fix attributes endianness  [Ruediger Meier]
    - (gpt) fix check for beginning of protective partition  [Michael Marineau]
    - (gpt) fix end sector calculation on resize  [Karel Zak]
    - (gpt) fix label pointer usage [smatch scan]  [Karel Zak]

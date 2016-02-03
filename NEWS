@@ -328,7 +328,7 @@ util-linux 2.12i
 * fdisk: fix default SGI volume header size (Eric Sandeen)
 * fstab.c: use strsignal() instead of sys_siglist[]
 * hwclock: use <sys/io.h> when available on i386
-* hwclock: dont try KDGHWCLK on archs other than __m68k__
+* hwclock: don't try KDGHWCLK on archs other than __m68k__
 * sfdisk: correct typo in __attribute__used nonsense
 * sfdisk: use PACKED on __arm__ (Jeroen Dobbelaere)
 * sfdisk: fix warning printout

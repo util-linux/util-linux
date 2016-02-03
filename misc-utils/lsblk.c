@@ -205,7 +205,7 @@ static struct colinfo infos[] = {
 
 struct lsblk {
 	struct libscols_table *table;	/* output table */
-	struct libscols_column *sort_col;/* sort output by this colum */
+	struct libscols_column *sort_col;/* sort output by this column */
 	int sort_id;
 
 	unsigned int all_devices:1;	/* print all devices, including empty */

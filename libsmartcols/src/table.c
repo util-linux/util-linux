@@ -309,7 +309,7 @@ int scols_table_remove_columns(struct libscols_table *tb)
  *
  *  @whint = 0..1    : relative width, percent of terminal width
  *
- *  @whint = 1..N    : absolute width, empty colum will be truncated to
+ *  @whint = 1..N    : absolute width, empty column will be truncated to
  *                     the column header width
  *
  *  @whint = 1..N

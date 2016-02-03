@@ -1476,8 +1476,8 @@ static struct blkid_prval *blkid_probe_new_value(void)
 }
 
 /* Note that value data is always terminated by zero to keep things robust,
- * this extra zero is not count to the value lenght. It's caller responsibility
- * to set proper value lenght (for strings we count terminator to the lenght,
+ * this extra zero is not count to the value length. It's caller responsibility
+ * to set proper value length (for strings we count terminator to the length,
  * for binary data it's without terminator).
  */
 int blkid_probe_value_set_data(struct blkid_prval *v,
