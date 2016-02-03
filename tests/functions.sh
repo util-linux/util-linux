@@ -610,18 +610,18 @@ function ts_fdisk_clean {
 	local DEVNAME=$1
 
 	# remove non comparable parts of fdisk output
-	if [ x"${DEVNAME}" != x"" ]; then
-	        sed -i -e "s:${DEVNAME}:<removed>:g;" $TS_OUTPUT
+	if [ -n "${DEVNAME}" ]; then
+		sed -i -e "s@${DEVNAME}@<removed>@;" $TS_OUTPUT
 	fi
 
-	sed -i -e 's/Disk identifier:.*/Disk identifier: <removed>/g' \
-	       -e 's/Created a new.*/Created a new <removed>./g' \
-	       -e 's/^Device[[:blank:]]*Start/Device             Start/g' \
-	       -e 's/^Device[[:blank:]]*Boot/Device     Boot/g' \
-	       -e 's/^Device[[:blank:]]*Flag/Device     Flag/g' \
-	       -e 's/Welcome to fdisk.*/Welcome to fdisk <removed>./g' \
-	       -e 's/typescript file.*/typescript file <removed>./g' \
-	       $TS_OUTPUT
+	sed -i \
+		-e 's/Disk identifier:.*/Disk identifier: <removed>/' \
+		-e 's/Created a new.*/Created a new <removed>./' \
+		-e 's/^Device[[:blank:]]*Start/Device             Start/' \
+		-e 's/^Device[[:blank:]]*Boot/Device     Boot/' \
+		-e 's/Welcome to fdisk.*/Welcome to fdisk <removed>./' \
+		-e 's/typescript file.*/typescript file <removed>./' \
+		$TS_OUTPUT
 }
 
 function ts_scsi_debug_init {
