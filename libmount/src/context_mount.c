@@ -112,7 +112,7 @@ static int init_propagation(struct libmnt_context *cxt)
  *
  * Note that we don't remove "ro" from the first syscall (kernel silently
  * ignores this flags for bind operation) -- maybe one day kernel will support
- * read-only binds in one step and then all will be done by the firts mount(2) and the
+ * read-only binds in one step and then all will be done by the first mount(2) and the
  * second remount will be noop...
  */
 static int init_robind(struct libmnt_context *cxt)

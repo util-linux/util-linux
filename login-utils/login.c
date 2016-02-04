@@ -407,7 +407,7 @@ static void init_tty(struct login_context *cxt)
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
 
-	signal(SIGHUP, SIG_IGN);	/* so vhangup() wont kill us */
+	signal(SIGHUP, SIG_IGN);	/* so vhangup() won't kill us */
 	vhangup();
 	signal(SIGHUP, SIG_DFL);
 

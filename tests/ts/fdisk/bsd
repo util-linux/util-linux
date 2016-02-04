@@ -40,7 +40,7 @@ FDISK_CMD_BSD_LIST_TYPES="b\nl\nq\n"         # list supported PT types and quit
 
 #set -x
 
-# BSD disklabel depends on sector/offset and endianess. We convert the md5sums
+# BSD disklabel depends on sector/offset and endianness. We convert the md5sums
 # into the most common values (little endian, BSD_LABELSECTOR = 1, 
 # BSD_LABELOFFSET = 0) so that they can be easily compared to the expected
 # ones.

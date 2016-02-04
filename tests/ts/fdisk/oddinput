@@ -36,7 +36,7 @@ ts_log "Empty image listing" # this should report empty partition table
 # TEST_IMAGE_NAME has absolute path, and is by definition different on each computer, we need to sed it away
 $TS_CMD_FDISK -c=dos -u=cylinders -l ${TEST_IMAGE_NAME} 2>&1 | sed -e "s/${TEST_IMAGE_NAME//\//\\/}/testimage/" >> $TS_OUTPUT
 
-ts_log "Nonexistant file" # this originally does absolutely nothing
+ts_log "Nonexistent file" # this originally does absolutely nothing
 $TS_CMD_FDISK -c=dos -u=cylinders -l _a_file_that_does_not_exist_ >> $TS_OUTPUT 2>&1
 
 ts_log "Too small file" # same here

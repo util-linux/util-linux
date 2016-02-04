@@ -485,7 +485,7 @@ mkswap:
    - remove v0 swap space support  [Karel Zak]
    - zap bootbits  [Karel Zak]
 more:
-   - dont use a.out.h  [Mike Frysinger]
+   - don't use a.out.h  [Mike Frysinger]
    - minor fixes to magic()  [James Youngman]
 mount:
    - Add strictatime support  [Matthew Garrett]

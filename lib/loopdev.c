@@ -135,7 +135,7 @@ int loopcxt_has_device(struct loopdev_cxt *lc)
  * @lc: context
  * @flags: LOOPDEV_FL_* flags
  *
- * Initilize loop handler.
+ * Initialize loop handler.
  *
  * We have two sets of the flags:
  *

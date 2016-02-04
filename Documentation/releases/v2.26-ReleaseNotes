@@ -259,7 +259,7 @@ docs:
    - fix two paths of the v2.20-ReleaseNotes  [Benno Schulenberg]
    - fix two spellings in man page of logger  [Benno Schulenberg]
    - fix typos  [Karel Zak]
-   - fix-up man-pages flaged by checkmans.sh  [J William Piggott]
+   - fix-up man-pages flagged by checkmans.sh  [J William Piggott]
    - give the man page of utmpdump the proper User Commands header  [Benno Schulenberg]
    - improve some wordings in the man page of mount  [Benno Schulenberg]
    - improve some wordings on the man page of wipefs  [Benno Schulenberg]
@@ -384,7 +384,7 @@ hwclock:
    - persistent_clock_is_local  [J William Piggott]
    - persistent_clock_is_local MAN  [J William Piggott]
    - remove automatic ISA fallback  [J William Piggott]
-   - remove referal to deprecated keyboard interface  [Sami Kerola]
+   - remove referral to deprecated keyboard interface  [Sami Kerola]
    - update man page for v2.26 rc  [JWP]
    - update man-page for directisa change  [J William Piggott]
    - use fabs() instead abs() when argument is double  [Sami Kerola]
@@ -430,7 +430,7 @@ ldattach:
    - GSM0710 support, add intro modem command  [Karel Zak]
    - add fallback for N_GSM0710  [Karel Zak]
 lib:
-   - fix crc32 and crc64 interger overflows [AddressSanitizer]  [Sami Kerola]
+   - fix crc32 and crc64 integer overflows [AddressSanitizer]  [Sami Kerola]
    - remove xgetpass()  [Sami Kerola]
 lib/blkdev:
    - report correct disk size on GNU/kFreeBSD. Thanks Tuco.  [Robert Millan]
