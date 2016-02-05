@@ -96,6 +96,14 @@ include bash-completion/Makemodule.am
 
 include tests/Makemodule.am
 
+# pylibmountexec module must be installed after usrlib_exec libraries,
+# otherwise the libtool relink step will fail to find libmount.la and
+# will try -lmount which is possibly not available.
+#
+# So introduce this dependency rule:
+# install-pylibmountexecLTLIBRARIES: install-usrlib_execLTLIBRARIES
+@verbatim_pylibmount_dependency@
+
 #
 # Don't rely on configure.ac AC_CONFIG_FILES for install paths.
 #
