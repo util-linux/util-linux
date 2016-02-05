@@ -2,21 +2,11 @@ if BUILD_PYLIBMOUNT
 
 pylibmountexecdir = $(pyexecdir)/libmount
 
-# Use a zz_ prefix to ensure this is last on `make install` (automake orders
-# the entries in alphabetical order) since we need to ensure that the
-# install-zz_pylibmountexecLTLIBRARIES step is only executed after the
-# install-usrlib_execLTLIBRARIES step, otherwise libtool fails to find
-# libmount under DESTDIR when it tries to relink pylibmount.so.
-#
-# Keep the pylibmountexecdir variable, in order to be backwards compatible with
-# invocation of `make install` that override that variable in the command line.
-zz_pylibmountexecdir = $(pylibmountexecdir)
-
 # Please, don't use $pythondir for the scripts. We have to use the same
 # directory for binary stuff as well as for the scripts otherwise it's
 # not possible to install 32-bit and 64-bit version on the same system.
-zz_pylibmountexec_LTLIBRARIES = pylibmount.la
-zz_pylibmountexec_PYTHON = libmount/python/__init__.py
+pylibmountexec_LTLIBRARIES = pylibmount.la
+pylibmountexec_PYTHON = libmount/python/__init__.py
 
 pylibmount_la_SOURCES = \
 	libmount/python/pylibmount.c \
