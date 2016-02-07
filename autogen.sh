@@ -66,23 +66,29 @@ test -f sys-utils/mount.c || {
 	echo
 	DIE=1
 }
-(libtoolize --version) < /dev/null > /dev/null 2>&1 || {
+
+LIBTOOLIZE=libtoolize
+case `uname` in Darwin*) LIBTOOLIZE=glibtoolize ;; esac
+if ! ($LIBTOOLIZE --version) < /dev/null > /dev/null 2>&1; then
 	echo
 	echo "You must have libtool-2 installed to generate the util-linux build system."
 	echo
 	DIE=1
-}
+else
+	ltver=$($LIBTOOLIZE --version | awk '/^libtoolize/ { print $4 }')
+	ltver=${ltver:-"none"}
+	test ${ltver##2.} = "$ltver" && {
+		echo
+		echo "You must have libtool version >= 2.x.x, but you have $ltver."
+		echo
+		DIE=1
+	}
+fi
+
 (automake --version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have automake installed to generate the util-linux build system."
 	echo
-	DIE=1
-}
-
-ltver=$(libtoolize --version | awk '/^libtoolize/ { print $4 }')
-ltver=${ltver:-"none"}
-test ${ltver##2.} = "$ltver" && {
-	echo "You must have libtool version >= 2.x.x, but you have $ltver."
 	DIE=1
 }
 
@@ -97,7 +103,7 @@ echo "   aclocal:    $(aclocal --version | head -1)"
 echo "   autoconf:   $(autoconf --version | head -1)"
 echo "   autoheader: $(autoheader --version | head -1)"
 echo "   automake:   $(automake --version | head -1)"
-echo "   libtoolize: $(libtoolize --version | head -1)"
+echo "   libtoolize: $($LIBTOOLIZE --version | head -1)"
 
 rm -rf autom4te.cache
 
@@ -109,7 +115,7 @@ if ! grep -q datarootdir po/Makefile.in.in; then
 	sed -i -e 's/^datadir *=\(.*\)/datarootdir = @datarootdir@\
 datadir = @datadir@/g' po/Makefile.in.in
 fi
-libtoolize --force $LT_OPTS
+$LIBTOOLIZE --force $LT_OPTS
 aclocal -I m4 $AL_OPTS
 autoconf $AC_OPTS
 autoheader $AH_OPTS
