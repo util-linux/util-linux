@@ -288,7 +288,7 @@ print_namei(struct namei *nm, char *path)
 			return -1;
 		}
 
-		strmode(nm->st.st_mode, md);
+		xstrmode(nm->st.st_mode, md);
 
 		if (nm->mountpoint)
 			md[0] = 'D';

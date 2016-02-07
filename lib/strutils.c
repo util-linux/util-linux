@@ -425,7 +425,7 @@ void strtotimeval_or_err(const char *str, struct timeval *tv, const char *errmes
  * Converts stat->st_mode to ls(1)-like mode string. The size of "str" must
  * be 11 bytes.
  */
-void strmode(mode_t mode, char *str)
+void xstrmode(mode_t mode, char *str)
 {
 	unsigned short i = 0;
 

@@ -911,7 +911,7 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		char md[11];
 
 		if (!st_rc) {
-			strmode(cxt->st.st_mode, md);
+			xstrmode(cxt->st.st_mode, md);
 			str = xstrdup(md);
 		}
 		break;
