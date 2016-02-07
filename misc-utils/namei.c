@@ -44,10 +44,6 @@
 #define MAXSYMLINKS 256
 #endif
 
-#ifndef LOGIN_NAME_MAX
-#define LOGIN_NAME_MAX 256
-#endif
-
 #define NAMEI_NOLINKS	(1 << 1)
 #define NAMEI_MODES	(1 << 2)
 #define NAMEI_MNTS	(1 << 3)
