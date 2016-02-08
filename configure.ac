@@ -1420,10 +1420,18 @@ AM_CONDITIONAL([BUILD_FLOCK], [test "x$build_flock" = xyes])
 UL_BUILD_INIT([ipcmk], [yes])
 AM_CONDITIONAL([BUILD_IPCMK], [test "x$build_ipcmk" = xyes])
 
-UL_BUILD_INIT([ipcrm], [yes])
+AC_ARG_ENABLE([ipcrm],
+  AS_HELP_STRING([--disable-ipcrm], [do not build ipcrm]),
+  [], [UL_DEFAULT_ENABLE([ipcrm], [yes])]
+)
+UL_BUILD_INIT([ipcrm])
 AM_CONDITIONAL([BUILD_IPCRM], [test "x$build_ipcrm" = xyes])
 
-UL_BUILD_INIT([ipcs], [yes])
+AC_ARG_ENABLE([ipcs],
+  AS_HELP_STRING([--disable-ipcs], [do not build ipcs]),
+  [], [UL_DEFAULT_ENABLE([ipcs], [yes])]
+)
+UL_BUILD_INIT([ipcs])
 AM_CONDITIONAL([BUILD_IPCS], [test "x$build_ipcs" = xyes])
 
 UL_BUILD_INIT([lsipc], [check])
