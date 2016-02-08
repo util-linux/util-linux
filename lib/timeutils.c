@@ -21,8 +21,6 @@
 #include <assert.h>
 #include <ctype.h>
 #include <string.h>
-#include <sys/sysinfo.h>
-#include <sys/time.h>
 #include <time.h>
 
 #include "c.h"
