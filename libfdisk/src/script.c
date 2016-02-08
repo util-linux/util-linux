@@ -960,6 +960,8 @@ static struct fdisk_parttype *translate_type_shortcuts(struct fdisk_script *dp, 
 		case 'X':	/* Linux extended */
 			type = "85";
 			break;
+		case 'U':	/* UEFI system */
+			type = "EF";
 		}
 	} else if (lb->id == FDISK_DISKLABEL_GPT) {
 		switch (*str) {
