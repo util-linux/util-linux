@@ -35,11 +35,11 @@
 # define SHM_INFO	14
 struct shm_info {
 	int used_ids;
-	ulong shm_tot;		/* total allocated shm */
-	ulong shm_rss;		/* total resident shm */
-	ulong shm_swp;		/* total swapped shm */
-	ulong swap_attempts;
-	ulong swap_successes;
+	unsigned long shm_tot;		/* total allocated shm */
+	unsigned long shm_rss;		/* total resident shm */
+	unsigned long shm_swp;		/* total swapped shm */
+	unsigned long swap_attempts;
+	unsigned long swap_successes;
 };
 #endif
 
