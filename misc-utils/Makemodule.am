@@ -98,6 +98,11 @@ systemdsystemunit_DATA += \
 	misc-utils/uuidd.service \
 	misc-utils/uuidd.socket
 endif
+
+check_PROGRAMS += test_uuidd
+test_uuidd_SOURCES = misc-utils/test_uuidd.c
+test_uuidd_LDADD =  $(LDADD) libcommon.la libuuid.la -lpthread
+test_uuidd_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 endif # BUILD_UUIDD
 
 PATHFILES += \
