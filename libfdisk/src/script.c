@@ -962,6 +962,7 @@ static struct fdisk_parttype *translate_type_shortcuts(struct fdisk_script *dp, 
 			break;
 		case 'U':	/* UEFI system */
 			type = "EF";
+			break;
 		}
 	} else if (lb->id == FDISK_DISKLABEL_GPT) {
 		switch (*str) {
