@@ -103,9 +103,13 @@ function travis_before_script
 	./autogen.sh
 	ret=$?
 
-	# workaround for broken pylibmount install relink
-	[ $ret -eq 0 ] && \
+	[ $ret -eq 0 ] && {
+		# workaround for broken pylibmount install relink
 		sed -i 's/\(link_all_deplibs\)=no/\1=unknown/' ./configure
+		# workaround to make parallel install work reliably,
+		# by adding the proper make dependency
+		echo 'install-zz_pylibmountexecLTLIBRARIES: install-usrlib_execLTLIBRARIES' >>Makefile.in
+	}
 
 	set +o xtrace
 	popd
