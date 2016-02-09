@@ -23,6 +23,7 @@ TS_DESC="losetup"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_LOSETUP"
+ts_check_test_command "$TS_CMD_LSBLK"
 
 # Before checking for loop support we would need to test if losetup -f works at
 # all. At least we do a simple executable test for now.

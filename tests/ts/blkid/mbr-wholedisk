@@ -23,6 +23,8 @@ TS_DESC="mbr-wholedisk"
 
 ts_init "$*"
 
+ts_check_test_command "$TS_CMD_BLKID"
+
 ts_skip_nonroot
 
 # set global variable TS_DEVICE
