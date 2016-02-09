@@ -84,6 +84,7 @@ function travis_install_script
 		libpam-dev \
 		libudev-dev \
 		gtk-doc-tools \
+		mdadm \
 		ntp \
 		|| return
 
