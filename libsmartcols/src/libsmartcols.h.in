@@ -88,12 +88,12 @@ enum {
 };
 
 /*
- * Position of table's title
+ * Cell flags, see scols_cell_set_flags() before use
  */
 enum {
-	SCOLS_TITLE_LEFT = 0,
-	SCOLS_TITLE_CENTER,
-	SCOLS_TITLE_RIGHT
+	SCOLS_CELL_FL_LEFT = 0,
+	SCOLS_CELL_FL_CENTER,
+	SCOLS_CELL_FL_RIGHT
 };
 
 extern struct libscols_iter *scols_new_iter(int direction);
@@ -127,6 +127,9 @@ extern int scols_cell_refer_data(struct libscols_cell *ce, char *str);
 extern const char *scols_cell_get_data(const struct libscols_cell *ce);
 extern int scols_cell_set_color(struct libscols_cell *ce, const char *color);
 extern const char *scols_cell_get_color(const struct libscols_cell *ce);
+
+extern int scols_cell_set_flags(struct libscols_cell *ce, int flags);
+extern int scols_cell_get_flags(const struct libscols_cell *ce);
 
 extern void *scols_cell_get_userdata(struct libscols_cell *ce);
 extern int scols_cell_set_userdata(struct libscols_cell *ce, void *data);
@@ -189,10 +192,7 @@ extern struct libscols_line *scols_copy_line(struct libscols_line *ln);
 /* table */
 extern int scols_table_colors_wanted(struct libscols_table *tb);
 extern int scols_table_set_name(struct libscols_table *tb, const char *name);
-extern int scols_table_set_title(struct libscols_table *tb, const char *title, unsigned int position, const char *color);
-extern const char *scols_table_get_title(struct libscols_table *tb);
-extern unsigned int scols_table_get_title_position(struct libscols_table *tb);
-extern const char *scols_table_get_title_color(struct libscols_table *tb);
+extern struct libscols_cell *scols_table_get_title(struct libscols_table *tb);
 extern int scols_table_is_raw(struct libscols_table *tb);
 extern int scols_table_is_ascii(struct libscols_table *tb);
 extern int scols_table_is_json(struct libscols_table *tb);

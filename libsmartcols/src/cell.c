@@ -209,6 +209,35 @@ const char *scols_cell_get_color(const struct libscols_cell *ce)
 }
 
 /**
+ * scols_cell_set_flags:
+ * @ce: a pointer to a struct libscols_cell instance
+ * @flags: SCOLS_CELL_FL_* flags
+ *
+ * Note that cells in the table are always aligned by column flags. The cell
+ * flags are used for table title only (now).
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_cell_set_flags(struct libscols_cell *ce, int flags)
+{
+	if (!ce)
+		return -EINVAL;
+	ce->flags = flags;
+	return 0;
+}
+
+/**
+ * scols_cell_get_flags:
+ * @ce: a pointer to a struct libscols_cell instance
+ *
+ * Returns: the current flags or -1 in case of an error.
+ */
+int scols_cell_get_flags(const struct libscols_cell *ce)
+{
+	return ce ? ce->flags : -1;
+}
+
+/**
  * scols_cell_copy_content:
  * @dest: a pointer to a struct libscols_cell instance
  * @src: a pointer to an immutable struct libscols_cell instance

@@ -575,19 +575,19 @@ static int print_line(struct libscols_table *tb,
 
 static int print_title(struct libscols_table *tb)
 {
-	int rc;
+	int rc, align;
 	size_t len = 0, width;
 	char *title = NULL, *buf = NULL;
 
 	assert(tb);
 
-	if (!tb->title)
+	if (!tb->title.data)
 		return 0;
 
 	DBG(TAB, ul_debugobj(tb, "printing title"));
 
 	/* encode data */
-	len = mbs_safe_encode_size(strlen(tb->title)) + 1;
+	len = mbs_safe_encode_size(strlen(tb->title.data)) + 1;
 	if (len == 1)
 		return 0;
 	buf = malloc(len);
@@ -596,7 +596,7 @@ static int print_title(struct libscols_table *tb)
 		goto done;
 	}
 
-	if (!mbs_safe_encode_to_buffer(tb->title, &len, buf) ||
+	if (!mbs_safe_encode_to_buffer(tb->title.data, &len, buf) ||
 	    !len || len == (size_t) -1) {
 		rc = -EINVAL;
 		goto done;
@@ -609,23 +609,31 @@ static int print_title(struct libscols_table *tb)
 		goto done;
 	}
 
+	if (tb->title.flags & SCOLS_CELL_FL_LEFT)
+		align = MBS_ALIGN_LEFT;
+	else if (tb->title.flags & SCOLS_CELL_FL_RIGHT)
+		align = MBS_ALIGN_RIGHT;
+	else if (tb->title.flags & SCOLS_CELL_FL_CENTER)
+		align = MBS_ALIGN_CENTER;
+	else
+		align = MBS_ALIGN_LEFT;	/* default */
+
 	width = tb->termwidth;
-	rc = mbsalign_with_padding(
-			buf, title, tb->termwidth + len, &width,
-			tb->title_pos == SCOLS_TITLE_LEFT ? MBS_ALIGN_LEFT :
-			tb->title_pos == SCOLS_TITLE_RIGHT ? MBS_ALIGN_RIGHT :
-			MBS_ALIGN_CENTER, 0, (int) *tb->symbols->title_padding);
+	rc = mbsalign_with_padding(buf, title, tb->termwidth + len,
+			&width, align,
+			0, (int) *tb->symbols->title_padding);
+
 	if (rc == (size_t) -1) {
 		rc = -EINVAL;
 		goto done;
 	}
 
-	if (tb->title_color)
-		fputs(tb->title_color, tb->out);
+	if (tb->title.color)
+		fputs(tb->title.color, tb->out);
 
 	fputs(title, tb->out);
 
-	if (tb->title_color)
+	if (tb->title.color)
 		fputs(UL_COLOR_RESET, tb->out);
 	fputc('\n', tb->out);
 	rc = 0;

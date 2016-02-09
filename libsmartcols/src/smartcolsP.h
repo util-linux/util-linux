@@ -62,6 +62,7 @@ struct libscols_cell {
 	char	*data;
 	char	*color;
 	void    *userdata;
+	int	flags;
 };
 
 
@@ -127,7 +128,6 @@ enum {
 struct libscols_table {
 	int	refcount;
 	char	*name;		/* optional table name (for JSON) */
-	char	*title;		/* optional table title (for humans) */
 	size_t	ncols;		/* number of columns */
 	size_t  ntreecols;	/* number of columns with SCOLS_FL_TREE */
 	size_t	nlines;		/* number of lines */
@@ -141,6 +141,7 @@ struct libscols_table {
 	struct list_head	tb_columns;
 	struct list_head	tb_lines;
 	struct libscols_symbols	*symbols;
+	struct libscols_cell	title;		/* optional table title (for humans) */
 
 	int	indent;		/* indention counter */
 	int	indent_last_sep;/* last printed has been line separator */
@@ -153,8 +154,6 @@ struct libscols_table {
 			maxout		:1,	/* maximalize output */
 			no_headings	:1,	/* don't print header */
 			no_wrap		:1;	/* never wrap lines */
-	unsigned int	title_pos;		/* title position */
-	char		*title_color;		/* title color */
 };
 
 #define IS_ITER_FORWARD(_i)	((_i)->direction == SCOLS_ITER_FORWARD)

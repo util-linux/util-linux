@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
 {
 	struct libscols_table *tb;
 	struct libscols_symbols *sy;
+	struct libscols_cell *title;
 
 	setlocale(LC_ALL, "");	/* just to have enable UTF8 chars */
 
@@ -70,8 +71,12 @@ int main(int argc, char *argv[])
 	add_line(tb, "foo", "bla bla bla");
 	add_line(tb, "bar", "alb alb alb");
 
+	title = scols_table_get_title(tb);
+
 	/* right */
-	scols_table_set_title(tb, "This is right title", SCOLS_TITLE_RIGHT, "red");
+	scols_cell_set_data(title, "This is right title");
+	scols_cell_set_color(title, "red");
+	scols_cell_set_flags(title, SCOLS_CELL_FL_RIGHT);
 	scols_print_table(tb);
 
 	/* center */
@@ -81,12 +86,16 @@ int main(int argc, char *argv[])
 	scols_table_set_symbols(tb, sy);
 
 	scols_symbols_set_title_padding(sy, "=");
-	scols_table_set_title(tb, "This is center title (with padding)", SCOLS_TITLE_CENTER, "green");
+	scols_cell_set_data(title, "This is center title (with padding)");
+	scols_cell_set_color(title, "green");
+	scols_cell_set_flags(title, SCOLS_CELL_FL_CENTER);
 	scols_print_table(tb);
 
 	/* left */
 	scols_symbols_set_title_padding(sy, "-");
-	scols_table_set_title(tb, "This is left title (with padding)", SCOLS_TITLE_LEFT, "blue");
+	scols_cell_set_data(title, "This is left title (with padding)");
+	scols_cell_set_color(title, "blue");
+	scols_cell_set_flags(title, SCOLS_CELL_FL_LEFT);
 	scols_print_table(tb);
 
 	scols_unref_table(tb);

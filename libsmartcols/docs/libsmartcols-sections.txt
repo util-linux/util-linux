@@ -4,10 +4,12 @@ libscols_cell
 scols_cell_copy_content
 scols_cell_get_color
 scols_cell_get_data
+scols_cell_get_flags
 scols_cell_get_userdata
 scols_cell_refer_data
 scols_cell_set_color
 scols_cell_set_data
+scols_cell_set_flags
 scols_cell_set_userdata
 scols_cmpstr_cells
 scols_reset_cell
@@ -132,10 +134,7 @@ scols_table_set_line_separator
 scols_table_set_name
 scols_table_set_stream
 scols_table_set_symbols
-scols_table_set_title
 scols_table_get_title
-scols_table_get_title_position
-scols_table_get_title_color
 scols_sort_table
 scols_unref_table
 </SECTION>

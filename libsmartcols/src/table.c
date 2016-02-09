@@ -88,6 +88,7 @@ void scols_unref_table(struct libscols_table *tb)
 		scols_table_remove_lines(tb);
 		scols_table_remove_columns(tb);
 		scols_unref_symbols(tb->symbols);
+		scols_reset_cell(&tb->title);
 		free(tb->linesep);
 		free(tb->colsep);
 		free(tb->name);
@@ -125,53 +126,6 @@ int scols_table_set_name(struct libscols_table *tb, const char *name)
 }
 
 /**
- * scols_table_set_title:
- * @tb: a pointer to a struct libscols_table instance
- * @title: a title
- * @position: a position
- * @color: color name or ESC sequence
- *
- * The table title is used to print header of table.
- *
- * Returns: 0, a negative number in case of an error.
- *
- * Since: 2.28
- */
-int scols_table_set_title(struct libscols_table *tb, const char *title, unsigned int position, const char *color)
-{
-	char *p = NULL;
-	char *q = NULL;
-
-	if (!tb)
-		return -EINVAL;
-
-	if (title) {
-		p = strdup(title);
-		if (!p)
-			return -ENOMEM;
-	}
-
-	if (color) {
-		if (isalpha(*color)) {
-			color = color_sequence_from_colorname(color);
-
-			if (!color)
-				return -EINVAL;
-		}
-		q = strdup(color);
-		if (!q)
-			return -ENOMEM;
-	}
-
-	free(tb->title);
-	free(tb->title_color);
-	tb->title = p;
-	tb->title_color = q;
-	tb->title_pos = position;
-	return 0;
-}
-
-/**
  * scols_table_get_title:
  * @tb: a pointer to a struct libscols_table instance
  *
@@ -179,35 +133,9 @@ int scols_table_set_title(struct libscols_table *tb, const char *title, unsigned
  *
  * Since: 2.28
  */
-const char *scols_table_get_title(struct libscols_table *tb)
+struct libscols_cell *scols_table_get_title(struct libscols_table *tb)
 {
-	return tb->title;
-}
-
-/**
- * scols_table_get_title_position:
- * @tb: a pointer to a struct libscols_table instance
- *
- * Returns: Title's position of the table.
- *
- * Since: 2.28
- */
-unsigned int scols_table_get_title_position(struct libscols_table *tb)
-{
-	return tb->title_pos;
-}
-
-/**
- * scols_table_get_title_color:
- * @tb: a pointer to a struct libscols_table instance
- *
- * Returns: Title's color of the table, or %NULL in case of not set color.
- *
- * Since: 2.28
- */
-const char *scols_table_get_title_color(struct libscols_table *tb)
-{
-	return tb->title_color;
+	return &tb->title;
 }
 
 /**
