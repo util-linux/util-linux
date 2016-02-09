@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
 		printf("%32s ", d->d_name);
 
 		if (fstat_at(dirfd(dir), dirname, d->d_name, &st, 0) == 0)
-			printf("%16jd bytes ", st.st_size);
+			printf("%16zd bytes ", st.st_size);
 		else
 			printf("%16s bytes ", "???");
 

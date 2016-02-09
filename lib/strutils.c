@@ -519,7 +519,7 @@ char *size_to_human_string(int options, uint64_t bytes)
 
 		if (!dp || !*dp)
 			dp = ".";
-		snprintf(buf, sizeof(buf), "%d%s%jd%s", dec, dp, frac, suffix);
+		snprintf(buf, sizeof(buf), "%d%s%" PRIu64 "%s", dec, dp, frac, suffix);
 	} else
 		snprintf(buf, sizeof(buf), "%d%s", dec, suffix);
 

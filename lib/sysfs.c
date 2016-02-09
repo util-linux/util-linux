@@ -462,7 +462,7 @@ int sysfs_write_u64(struct sysfs_cxt *cxt, const char *attr, uint64_t num)
 	if (fd < 0)
 		return -errno;
 
-	len = snprintf(buf, sizeof(buf), "%ju", num);
+	len = snprintf(buf, sizeof(buf), "%" PRIu64, num);
 	if (len < 0 || (size_t) len + 1 > sizeof(buf))
 		rc = -errno;
 	else
