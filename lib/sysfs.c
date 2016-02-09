@@ -5,6 +5,7 @@
  * Written by Karel Zak <kzak@redhat.com>
  */
 #include <ctype.h>
+#include <libgen.h>
 
 #include "c.h"
 #include "at.h"
