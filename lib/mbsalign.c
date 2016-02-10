@@ -246,6 +246,7 @@ wc_truncate (wchar_t *wc, size_t width)
         }
       if (cells + next_cells > width)
         break;
+
       cells += next_cells;
       wc++;
     }
@@ -290,7 +291,7 @@ mbs_truncate(char *str, size_t *width)
 	if (sz == (ssize_t) -1)
 		goto done;
 
-	wcs = malloc((sz + 1) * sizeof(wchar_t));
+	wcs = calloc(1, (sz + 1) * sizeof(wchar_t));
 	if (!wcs)
 		goto done;
 

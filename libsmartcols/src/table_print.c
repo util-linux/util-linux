@@ -194,6 +194,22 @@ static int is_last_column(struct libscols_table *tb, struct libscols_column *cl)
 #define colsep(tb) ((tb)->colsep ? (tb)->colsep : " ")
 #define linesep(tb) ((tb)->linesep ? (tb)->linesep : "\n")
 
+
+static int has_pending_data(struct libscols_table *tb)
+{
+	struct libscols_column *cl;
+	struct libscols_iter itr;
+
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+	while (scols_table_next_column(tb, &itr, &cl) == 0) {
+		if (scols_column_is_hidden(cl))
+			continue;
+		if (cl->pending_data)
+			return 1;
+	}
+	return 0;
+}
+
 /* print padding or asci-art instead of data of @cl */
 static void print_empty_cell(struct libscols_table *tb,
 			  struct libscols_column *cl,
@@ -205,7 +221,7 @@ static void print_empty_cell(struct libscols_table *tb,
 	/* generate tree asci-art rather than padding */
 	if (ln && scols_column_is_tree(cl)) {
 		if (!ln->parent) {
-			/* only print symbols->vert if followed by something */
+			/* only print symbols->vert if followed by child */
 			if (!list_empty(&ln->ln_branch)) {
 				fputs(tb->symbols->vert, tb->out);
 				len_pad = mbs_safe_width(tb->symbols->vert);
@@ -218,6 +234,8 @@ static void print_empty_cell(struct libscols_table *tb,
 			if (art) {
 				/* whatever the rc, len_pad will be sensible */
 				line_ascii_art_to_buffer(tb, ln, art);
+				if (!list_empty(&ln->ln_branch) && has_pending_data(tb))
+					buffer_append_data(art, tb->symbols->vert);
 				data = buffer_get_safe_data(art, &len_pad);
 				if (data && len_pad)
 					fputs(data, tb->out);
@@ -228,6 +246,25 @@ static void print_empty_cell(struct libscols_table *tb,
 	/* fill rest of cell with space */
 	for(; len_pad <= cl->width; ++len_pad)
 		fputc(' ', tb->out);
+}
+
+
+static const char *get_cell_color(struct libscols_table *tb,
+				  struct libscols_column *cl,
+				  struct libscols_line *ln,	/* optional */
+				  struct libscols_cell *ce)	/* optional */
+{
+	const char *color = NULL;
+
+	if (tb && tb->colors_wanted) {
+		if (ce && !color)
+			color = ce->color;
+		if (ln && !color)
+			color = ln->color;
+		if (!color)
+			color = cl->color;
+	}
+	return color;
 }
 
 /* Fill the start of a line with padding (or with tree ascii-art).
@@ -257,6 +294,98 @@ static void print_newline_padding(struct libscols_table *tb,
 	/* fill cells after line break */
 	for (i = 0; i <= (size_t) cl->seqnum; i++)
 		print_empty_cell(tb, scols_table_get_column(tb, i), ln, bufsz);
+}
+
+/*
+ * Pending data
+ *
+ * The first line in the multi-line cells (columns with SCOLS_FL_WRAP flag) is
+ * printed as usually and output is truncated to match column width.
+ *
+ * The rest of the long text is printed on next extra line(s). The extra lines
+ * don't exist in the table (not represented by libscols_line). The data for
+ * the extra lines are stored in libscols_column->pending_data_buf and the
+ * function print_line() adds extra lines until the buffer is not empty in all
+ * columns.
+ */
+
+/* set data that will be printed by extra lines */
+static int set_pending_data(struct libscols_column *cl, const char *data, size_t sz)
+{
+	char *p = NULL;
+
+	if (data) {
+		DBG(COL, ul_debugobj(cl, "setting pending data"));
+		assert(sz);
+		p = strdup(data);
+		if (!p)
+			return -ENOMEM;
+	}
+
+	free(cl->pending_data_buf);
+	cl->pending_data_buf = p;
+	cl->pending_data_sz = sz;
+	cl->pending_data = cl->pending_data_buf;
+	return 0;
+}
+
+/* the next extra line has been printed, move pending data cursor */
+static int step_pending_data(struct libscols_column *cl, size_t bytes)
+{
+	DBG(COL, ul_debugobj(cl, "step pending data %zu -= %zu", cl->pending_data_sz, bytes));
+
+	if (bytes >= cl->pending_data_sz)
+		return set_pending_data(cl, NULL, 0);
+
+	cl->pending_data += bytes;
+	cl->pending_data_sz -= bytes;
+	return 0;
+}
+
+/* print next pending data for the column @cl */
+static int print_pending_data(
+		struct libscols_table *tb,
+		struct libscols_column *cl,
+		struct libscols_line *ln,	/* optional */
+		struct libscols_cell *ce)
+{
+	const char *color = get_cell_color(tb, cl, ln, ce);
+	size_t width = cl->width, bytes;
+	size_t len = width, i;
+	char *data;
+
+	if (!cl->pending_data)
+		return 0;
+
+	DBG(COL, ul_debugobj(cl, "printing pending data"));
+
+	data = strdup(cl->pending_data);
+	if (!data)
+		goto err;
+	bytes = mbs_truncate(data, &len);
+	if (bytes == (size_t) -1)
+		goto err;
+
+	step_pending_data(cl, bytes);
+
+	if (color)
+		fputs(color, tb->out);
+	fputs(data, tb->out);
+	if (color)
+		fputs(UL_COLOR_RESET, tb->out);
+	free(data);
+
+	for (i = len; i < width; i++)
+		fputc('x', tb->out);		/* padding */
+
+	if (is_last_column(tb, cl))
+		return 0;
+
+	fputs(colsep(tb), tb->out);		/* columns separator */
+	return 0;
+err:
+	free(data);
+	return -errno;
 }
 
 static int print_data(struct libscols_table *tb,
@@ -309,14 +438,7 @@ static int print_data(struct libscols_table *tb,
 		break;		/* continue below */
 	}
 
-	if (tb->colors_wanted) {
-		if (ce && !color)
-			color = ce->color;
-		if (ln && !color)
-			color = ln->color;
-		if (!color)
-			color = cl->color;
-	}
+	color = get_cell_color(tb, cl, ln, ce);
 
 	/* encode, note that 'len' and 'width' are number of cells, not bytes */
 	data = buffer_get_safe_data(buf, &len);
@@ -336,11 +458,21 @@ static int print_data(struct libscols_table *tb,
 	if (len > width && scols_column_is_trunc(cl)) {
 		len = width;
 		bytes = mbs_truncate(data, &len);	/* updates 'len' */
+	}
 
-		if (bytes == (size_t) -1) {
-			bytes = len = 0;
-			data = NULL;
-		}
+	/* multi-line cell */
+	if (len > width && scols_column_is_wrap(cl)) {
+		set_pending_data(cl, data, bytes);
+
+		len = width;
+		bytes = mbs_truncate(data, &len);
+		if (bytes  != (size_t) -1 && bytes > 0)
+			step_pending_data(cl, bytes);
+	}
+
+	if (bytes == (size_t) -1) {
+		bytes = len = 0;
+		data = NULL;
 	}
 
 	if (data) {
@@ -353,33 +485,7 @@ static int print_data(struct libscols_table *tb,
 			if (color)
 				fputs(UL_COLOR_RESET, tb->out);
 			len = width;
-		} else if (len > width && scols_column_is_wrap(cl)) {
-			char *p = data;
-			i = 0;
 
-			if (color)
-				fputs(color, tb->out);
-
-			while (*p) {
-				len = width;
-				p = strdup(p);
-				bytes = mbs_truncate(p, &len);
-				if (bytes == (size_t) -1) {
-					free(p);
-					break;
-				}
-				fputs(p, tb->out);
-				free(p);
-				i += bytes;
-				p = data + i;
-				if (*p)
-					for (size_t j = 0; j < cl->seqnum; j++)
-						print_empty_cell (tb, scols_table_get_column(tb, j),
-						                  ln, buf->bufsz);
-			}
-
-			if (color)
-				fputs(UL_COLOR_RESET, tb->out);
 		} else if (color) {
 			char *p = data;
 			size_t art = buffer_get_safe_art_size(buf);
@@ -551,7 +657,7 @@ static int print_line(struct libscols_table *tb,
 		      struct libscols_line *ln,
 		      struct libscols_buffer *buf)
 {
-	int rc = 0;
+	int rc = 0, pending = 0;
 	struct libscols_column *cl;
 	struct libscols_iter itr;
 
@@ -559,15 +665,36 @@ static int print_line(struct libscols_table *tb,
 
 	DBG(TAB, ul_debugobj(tb, "printing line, line=%p, buff=%p", ln, buf));
 
+	/* regular line */
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
 		if (scols_column_is_hidden(cl))
 			continue;
 		rc = cell_to_buffer(tb, ln, cl, buf);
-		if (!rc)
+		if (rc == 0)
 			rc = print_data(tb, cl, ln,
 					scols_line_get_cell(ln, cl->seqnum),
 					buf);
+		if (rc == 0 && cl->pending_data)
+			pending = 1;
+	}
+
+	/* extra lines of the multi-line cells */
+	while (rc == 0 && pending) {
+		pending = 0;
+		fputs(linesep(tb), tb->out);
+		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+		while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
+			if (scols_column_is_hidden(cl))
+				continue;
+
+			if (cl->pending_data) {
+				rc = print_pending_data(tb, cl, ln, scols_line_get_cell(ln, cl->seqnum));
+				if (rc == 0 && cl->pending_data)
+					pending = 1;
+			} else
+				print_empty_cell(tb, cl, ln, buf->bufsz);
+		}
 	}
 
 	return 0;

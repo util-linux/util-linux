@@ -70,6 +70,7 @@ void scols_unref_column(struct libscols_column *cl)
 		list_del(&cl->cl_columns);
 		scols_reset_cell(&cl->header);
 		free(cl->color);
+		free(cl->pending_data_buf);
 		free(cl);
 	}
 }

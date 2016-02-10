@@ -84,6 +84,10 @@ struct libscols_column {
 	int	is_extreme;
 	char	*color;		/* default column color */
 
+	char	*pending_data;
+	size_t	pending_data_sz;
+	char	*pending_data_buf;
+
 	int (*cmpfunc)(struct libscols_cell *,
 		       struct libscols_cell *,
 		       void *);			/* cells comparison function */
