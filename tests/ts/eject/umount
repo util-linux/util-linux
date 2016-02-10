@@ -12,6 +12,13 @@ ts_check_test_command "$TS_CMD_EJECT"
 ts_skip_nonroot
 ts_check_prog "mkfs.ext2"
 
+# scsi_debug could not eject for kernel >=3.19 and <4.4
+if x=$(echo "3.19" && uname -r && echo "4.4") \
+   && test "$x" = "$(echo "$x" | sort --version-sort)"
+then
+	ts_skip "3.19 <= $(uname -sr) < 4.4"
+fi
+
 #
 # Note that eject --force is required because scsi_debug is
 # not removable device.
