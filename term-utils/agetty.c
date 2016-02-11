@@ -2339,6 +2339,9 @@ static void output_special_char(unsigned char c, struct options *op,
 	uname(&uts);
 
 	switch (c) {
+	case 'e':
+		fputs("\033", stdout);
+		break;
 	case 's':
 		printf("%s", uts.sysname);
 		break;
