@@ -30,10 +30,10 @@ ts_device_init
 DEVICE=$TS_LODEV
 
 ts_log "create minix fs"
-$TS_CMD_MKMINIX $DEVICE 2>&1 >> $TS_OUTPUT
+$TS_CMD_MKMINIX $DEVICE >> $TS_OUTPUT 2>&1
 
 ts_log "fsck minix fs"
-$TS_CMD_FSCKMINIX $DEVICE 2>&1 >> $TS_OUTPUT
+$TS_CMD_FSCKMINIX $DEVICE >> $TS_OUTPUT 2>&1
 
 ts_finalize
 

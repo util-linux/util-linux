@@ -39,7 +39,7 @@ test_image() {
 
 	rm -rf "$IMAGE_DATA"
 	ts_log "extract from $FROM_ENDIANNESS endian"
-	$TS_CMD_FSCKCRAMFS -v -b 4096 --extract=$IMAGE_DATA $FROM_IMAGE | head -n1 | cut -d" " -f4 2>&1 >> $TS_OUTPUT
+	$TS_CMD_FSCKCRAMFS -v -b 4096 --extract=$IMAGE_DATA $FROM_IMAGE | head -n1 | cut -d" " -f4 >> $TS_OUTPUT 2>&1
 
 	ts_log "create $TO_ENDIANNESS endian"
 	$TS_CMD_MKCRAMFS -N "$TO_ENDIANNESS" -b 4096 "$IMAGE_DATA" \

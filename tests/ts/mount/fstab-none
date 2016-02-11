@@ -16,7 +16,7 @@ ts_fstab_add "none" "$TS_MOUNTPOINT" "tmpfs" "rw,nosuid,nodev,relatime"
 
 mkdir -p $TS_MOUNTPOINT
 
-$TS_CMD_MOUNT $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
+$TS_CMD_MOUNT $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 [ "$?" = "0" ] || ts_log "error: mount $TS_MOUNTPOINT"
 
 $TS_CMD_FINDMNT --mountpoint "$TS_MOUNTPOINT" &> /dev/null

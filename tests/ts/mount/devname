@@ -38,7 +38,7 @@ ts_device_has "TYPE" "ext3" $DEVICE || ts_die "Cannot find ext3 on $DEVICE"
 
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 
-$TS_CMD_MOUNT $DEVICE $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
+$TS_CMD_MOUNT $DEVICE $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 
 ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
 

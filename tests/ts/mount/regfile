@@ -21,7 +21,7 @@ mkfs.ext3 -F $IMAGE &> /dev/null || ts_die "Cannot make ext3 on $IMAGE"
 
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 
-$TS_CMD_MOUNT $IMAGE $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
+$TS_CMD_MOUNT $IMAGE $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 
 DEVICE=$(awk '/regfile/ { print $1 }' /proc/mounts)
 

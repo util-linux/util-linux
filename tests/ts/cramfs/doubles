@@ -41,7 +41,7 @@ echo hello > $IMAGE_SRC/a
 echo hello > $IMAGE_SRC/b
 
 ts_log "create cramfs image"
-$TS_CMD_MKCRAMFS $IMAGE_SRC $IMAGE_PATH 2>&1 >> $TS_OUTPUT
+$TS_CMD_MKCRAMFS $IMAGE_SRC $IMAGE_PATH >> $TS_OUTPUT 2>&1
 [ -s "$IMAGE_PATH" ] || ts_die "Cannot create $IMAGE_PATH"
 
 ts_mount "cramfs" -r $IMAGE_PATH $TS_MOUNTPOINT

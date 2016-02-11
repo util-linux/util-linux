@@ -41,7 +41,7 @@ UUID=$(ts_uuid_by_devname $DEVICE)
 
 ts_fstab_add "UUID=$UUID"
 
-$TS_CMD_MOUNT $DEVICE 2>&1 >> $TS_OUTPUT
+$TS_CMD_MOUNT $DEVICE >> $TS_OUTPUT 2>&1
 ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $DEVICE || ts_die "Cannot umount $DEVICE"
 

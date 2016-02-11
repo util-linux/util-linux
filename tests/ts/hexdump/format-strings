@@ -32,9 +32,9 @@ BE_EXT=$(test "$BYTE_ORDER" = "BE" && echo ".BE")
 ts_init_subtest "empty-format"
 TS_EXPECTED+=$BE_EXT
 INPUT=$(printf \\1)
-$TS_CMD_HEXDUMP -n1 -ve '2 "" "%x"' <<< $INPUT 2>&1 >> $TS_OUTPUT
+$TS_CMD_HEXDUMP -n1 -ve '2 "" "%x"' <<< $INPUT >> $TS_OUTPUT 2>&1
 
-$TS_CMD_HEXDUMP -n1 -ve '4 "%x"' -e '2 ""' <<< $INPUT 2>&1 >> $TS_OUTPUT
+$TS_CMD_HEXDUMP -n1 -ve '4 "%x"' -e '2 ""' <<< $INPUT >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 #basic formats

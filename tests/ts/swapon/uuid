@@ -38,7 +38,7 @@ ts_device_has_uuid $DEVICE || ts_die "Cannot find UUID on $DEVICE"
 
 UUID=$(ts_uuid_by_devname $DEVICE)
 
-$TS_CMD_SWAPON -U $UUID 2>&1 >> $TS_OUTPUT
+$TS_CMD_SWAPON -U $UUID >> $TS_OUTPUT 2>&1
 
 grep -q $DEVICE /proc/swaps || ts_die "Cannot find $DEVICE in /proc/swaps"
 

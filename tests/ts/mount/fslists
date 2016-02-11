@@ -42,7 +42,7 @@ ts_device_has "TYPE" "ext3" $DEVICE || ts_die "Cannot find ext3 on $DEVICE"
 
 ts_init_subtest "one-type"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-$TS_CMD_MOUNT -t ext3 $DEVICE $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
+$TS_CMD_MOUNT -t ext3 $DEVICE $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $TS_MOUNTPOINT
 ts_log "Success"
@@ -51,7 +51,7 @@ ts_finalize_subtest
 
 ts_init_subtest "more-types"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-$TS_CMD_MOUNT -t foo,bar,ext3 $DEVICE $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
+$TS_CMD_MOUNT -t foo,bar,ext3 $DEVICE $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $TS_MOUNTPOINT
 ts_log "Success"
@@ -61,7 +61,7 @@ ts_finalize_subtest
 ts_init_subtest "more-types-fstab"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 ts_fstab_add $DEVICE $TS_MOUNTPOINT "foo,bar,ext3"
-$TS_CMD_MOUNT $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
+$TS_CMD_MOUNT $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 ts_fstab_clean
 ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $TS_MOUNTPOINT
@@ -71,7 +71,7 @@ ts_finalize_subtest
 
 ts_init_subtest "type-pattern"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
-$TS_CMD_MOUNT -t nofoo,bar $DEVICE $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
+$TS_CMD_MOUNT -t nofoo,bar $DEVICE $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 ts_is_mounted $DEVICE || ts_die "Cannot find $DEVICE in /proc/mounts"
 $TS_CMD_UMOUNT $TS_MOUNTPOINT
 ts_log "Success"
