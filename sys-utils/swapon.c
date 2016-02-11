@@ -295,10 +295,6 @@ static int swap_reinitialize(struct swapon_ctl *ctl)
 	char const *cmd[7];
 	int idx=0;
 
-	if (geteuid() != getuid()) {
-		warnx(_("will not execute mkswap when swapon is setuid binary"));
-		return -1;
-	}
 	warnx(_("%s: reinitializing the swap."), ctl->device);
 
 	switch ((pid=fork())) {
@@ -307,6 +303,14 @@ static int swap_reinitialize(struct swapon_ctl *ctl)
 		return -1;
 
 	case 0:	/* child */
+		if (geteuid() != getuid()) {
+			/* in case someone uses swapon as setuid binary */
+			if (setgid(getgid()) < 0)
+				exit(EXIT_FAILURE);
+			if (setuid(getuid()) < 0)
+				exit(EXIT_FAILURE);
+		}
+
 		cmd[idx++] = "mkswap";
 		if (ctl->label) {
 			cmd[idx++] = "-L";
