@@ -1,4 +1,7 @@
 /*
+ * Copyright (C) 2016 Sami Kerola <kerolasa@iki.fi>
+ * Copyright (C) 2016 Karel Zak <kzak@redhat.com>
+ *
  * Copyright (c) 1980, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -33,9 +36,9 @@
 
 /*
  * 1999-02-22 Arkadiusz Miśkiewicz <misiek@pld.ORG.PL>
- * 	added Native Language Support
+ *	added Native Language Support
  * 1999-09-19 Bruno Haible <haible@clisp.cons.org>
- * 	modified to work correctly in multi-byte locales
+ *	modified to work correctly in multi-byte locales
  */
 
 #include <stdio.h>
@@ -63,29 +66,33 @@
 enum { OUTPUT_COLS = 132 };
 
 struct colcrt_control {
-	FILE *f;
-	wchar_t line[OUTPUT_COLS + 1];
-	wchar_t line_under[OUTPUT_COLS + 1];
-	unsigned int
-	 print_nl:1,
-	 need_line_under:1,
-	 no_underlining:1,
-	 half_lines:1;
+	FILE		*f;
+	wchar_t		line[OUTPUT_COLS + 1];
+	wchar_t		line_under[OUTPUT_COLS + 1];
+	unsigned int	print_nl:1,
+			need_line_under:1,
+			no_underlining:1,
+			half_lines:1;
 };
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [<file>...]\n"), program_invocation_short_name);
+
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Filter nroff output for CRT previewing.\n"), out);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -,  --no-underlining    suppress all underlining\n"), out);
 	fputs(_(" -2, --half-lines        print all half-lines\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
+
 	fprintf(out, USAGE_MAN_TAIL("colcrt(1)"));
+
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
@@ -109,11 +116,14 @@ static void output_lines(struct colcrt_control *ctl, int col)
 	/* first line */
 	trim_trailing_spaces(ctl->line);
 	fputws(ctl->line, stdout);
+
 	if (ctl->print_nl)
 		fputwc(L'\n', stdout);
 	if (!ctl->half_lines && !ctl->no_underlining)
 		ctl->print_nl = 0;
+
 	wmemset(ctl->line, L'\0', OUTPUT_COLS);
+
 	/* second line */
 	if (ctl->need_line_under) {
 		ctl->need_line_under = 0;
@@ -122,6 +132,7 @@ static void output_lines(struct colcrt_control *ctl, int col)
 		fputws(ctl->line_under, stdout);
 		fputwc(L'\n', stdout);
 		wmemset(ctl->line_under, L' ', OUTPUT_COLS);
+
 	} else if (ctl->half_lines && 0 < col)
 		fputwc(L'\n', stdout);
 }
@@ -145,6 +156,7 @@ static void colcrt(struct colcrt_control *ctl)
 	ctl->print_nl = 1;
 	if (ctl->half_lines)
 		fputwc(L'\n', stdout);
+
 	for (col = 0; /* nothing */; col++) {
 		if (OUTPUT_COLS - 1 < col) {
 			output_lines(ctl, col);
@@ -221,8 +233,9 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
+
 	/* Take care of lonely hyphen option. */
-	for (opt = 0; opt < argc; opt++)
+	for (opt = 0; opt < argc; opt++) {
 		if (argv[opt][0] == '-' && argv[opt][1] == '\0') {
 			ctl.no_underlining = 1;
 			argc--;
@@ -230,7 +243,9 @@ int main(int argc, char **argv)
 				sizeof(char *) * (argc - opt));
 			opt--;
 		}
-	while ((opt = getopt_long(argc, argv, "2Vh", longopts, NULL)) != -1)
+	}
+
+	while ((opt = getopt_long(argc, argv, "2Vh", longopts, NULL)) != -1) {
 		switch (opt) {
 		case NO_UL_OPTION:
 			ctl.no_underlining = 1;
@@ -246,21 +261,27 @@ int main(int argc, char **argv)
 		default:
 			usage(stderr);
 		}
+	}
+
 	argc -= optind;
 	argv += optind;
+
 	do {
 		wmemset(ctl.line, L'\0', OUTPUT_COLS);
 		wmemset(ctl.line_under, L' ', OUTPUT_COLS);
+
 		if (argc > 0) {
-			if (!(ctl.f = fopen(argv[0], "r")))
-				err(EXIT_FAILURE, _("cannot open %s"), argv[0]);
+			if (!(ctl.f = fopen(*argv, "r")))
+				err(EXIT_FAILURE, _("cannot open %s"), *argv);
 			argc--;
 			argv++;
 		} else
 			ctl.f = stdin;
+
 		colcrt(&ctl);
 		if (ctl.f != stdin)
 			fclose(ctl.f);
 	} while (argc > 0);
+
 	return EXIT_SUCCESS;
 }
