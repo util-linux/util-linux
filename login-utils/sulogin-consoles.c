@@ -36,8 +36,9 @@
 # include <linux/serial.h>
 # include <linux/major.h>
 #endif
-#include <fcntl.h>
 #include <dirent.h>
+#include <errno.h>
+#include <fcntl.h>
 #include <unistd.h>
 
 #ifdef USE_SULOGIN_EMERGENCY_MOUNT
@@ -226,6 +227,8 @@ dev_t devattr(const char *tty)
 
 /*
  * Search below /dev for the character device in `dev_t comparedev' variable.
+ * Note that realpath(3) is used here to avoid not existent devices due the
+ * strdup(3) used in our canonicalize_path()!
  */
 static
 #ifdef __GNUC__
@@ -233,16 +236,28 @@ __attribute__((__nonnull__,__malloc__,__hot__))
 #endif
 char* scandev(DIR *dir, dev_t comparedev)
 {
+	char path[PATH_MAX];
 	char *name = NULL;
 	struct dirent *dent;
-	int fd;
+	int len, fd;
 
 	DBG(dbgprint("scanning /dev for %u:%u", major(comparedev), minor(comparedev)));
+
+	/*
+	 * Try udev links on character devices first.
+	 */
+	if ((len = snprintf(path, sizeof(path),
+			    "/dev/char/%u:%u", major(comparedev), minor(comparedev))) > 0 &&
+	    (size_t)len < sizeof(path)) {
+
+	    name = realpath(path, NULL);
+	    if (name)
+		    goto out;
+	}
 
 	fd = dirfd(dir);
 	rewinddir(dir);
 	while ((dent = readdir(dir))) {
-		char path[PATH_MAX];
 		struct stat st;
 
 #ifdef _DIRENT_HAVE_D_TYPE
@@ -255,17 +270,33 @@ char* scandev(DIR *dir, dev_t comparedev)
 			continue;
 		if (comparedev != st.st_rdev)
 			continue;
-		if ((size_t)snprintf(path, sizeof(path), "/dev/%s", dent->d_name) >= sizeof(path))
+		if ((len = snprintf(path, sizeof(path), "/dev/%s", dent->d_name)) < 0 ||
+		    (size_t)len >= sizeof(path))
 			continue;
-#ifdef USE_SULOGIN_EMERGENCY_MOUNT
-		if (emergency_flags & MNT_DEVTMPFS)
-			mknod(path, S_IFCHR|S_IRUSR|S_IWUSR, comparedev);
-#endif
 
-		name = canonicalize_path(path);
-		break;
+		name = realpath(path, NULL);
+		if (name)
+			goto out;
 	}
 
+#ifdef USE_SULOGIN_EMERGENCY_MOUNT
+	/*
+	 * There was no /dev mounted hence and no device was found hence we create our own.
+	 */
+	if (!name && (emergency_flags & MNT_DEVTMPFS)) {
+
+		if ((len = snprintf(path, sizeof(path),
+				    "/dev/tmp-%u:%u", major(comparedev), minor(comparedev))) < 0 ||
+		    (size_t)len >= sizeof(path))
+			goto out;
+
+		if (mknod(path, S_IFCHR|S_IRUSR|S_IWUSR, comparedev) < 0 && errno != EEXIST)
+			goto out;
+
+		name = realpath(path, NULL);
+	}
+#endif
+out:
 	return name;
 }
 
@@ -307,7 +338,7 @@ int append_console(struct list_head *consoles, const char *name)
 	tail->flags = 0;
 	tail->fd = -1;
 	tail->id = last ? last->id + 1 : 0;
-	tail->pid = 0;
+	tail->pid = -1;
 	memset(&tail->tio, 0, sizeof(tail->tio));
 
 	return 0;

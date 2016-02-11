@@ -66,7 +66,6 @@
 static unsigned int timeout;
 static int profile;
 static volatile uint32_t openfd;		/* Remember higher file descriptors */
-static volatile uint32_t *usemask;
 
 struct sigaction saved_sigint;
 struct sigaction saved_sigtstp;
@@ -109,7 +108,8 @@ static int plymouth_command(const char* arg)
 		dup2(fd, 0);
 		dup2(fd, 1);
 		dup2(fd, 2);
-		close(fd);
+		if (fd > 2)
+			close(fd);
 		execl(cmd, cmd, arg, (char *) NULL);
 		exit(127);
 	} else if (pid > 0) {
@@ -857,9 +857,12 @@ int main(int argc, char **argv)
 	struct console *con;
 	char *tty = NULL;
 	struct passwd *pwd;
-	int c, status = 0;
-	int reconnect = 0;
+	struct timespec sigwait = {0, 50000000};
+	siginfo_t status = {};
+	sigset_t set = {};
+	int c, reconnect = 0;
 	int opt_e = 0;
+	int wait = 0;
 	pid_t pid;
 
 	static const struct option longopts[] = {
@@ -985,9 +988,6 @@ int main(int argc, char **argv)
 		tcinit(con);
 	}
 	ptr = (&consoles)->next;
-	usemask = (uint32_t*) mmap(NULL, sizeof(uint32_t),
-					PROT_READ|PROT_WRITE,
-					MAP_ANONYMOUS|MAP_SHARED, -1, 0);
 
 	if (ptr->next == &consoles) {
 		con = list_entry(ptr, struct console, entry);
@@ -1033,9 +1033,7 @@ int main(int argc, char **argv)
 				}
 
 				if (doshell) {
-					*usemask |= (1<<con->id);
 					sushell(pwd);
-					*usemask &= ~(1<<con->id);
 					failed++;
 				}
 
@@ -1068,28 +1066,82 @@ int main(int argc, char **argv)
 
 	} while (ptr != &consoles);
 
-	while ((pid = wait(&status))) {
-		if (errno == ECHILD)
+	do {
+		int ret;
+
+		status.si_pid = 0;
+		ret = waitid(P_ALL, 0, &status, WEXITED);
+
+		if (ret == 0)
 			break;
-		if (pid < 0)
+		if (ret < 0) {
+			if (errno == ECHILD)
+				break;
+			if (errno == EINTR)
+				continue;
+		}
+
+		errx(EXIT_FAILURE, _("Can not wait on su shell\n\n"));
+
+	} while (1);
+
+	list_for_each(ptr, &consoles) {
+		con = list_entry(ptr, struct console, entry);
+
+		if (con->fd < 0)
 			continue;
-		list_for_each(ptr, &consoles) {
-			con = list_entry(ptr, struct console, entry);
-			if (con->pid == pid) {
-				*usemask &= ~(1<<con->id);
-				continue;
-			}
-			if (kill(con->pid, 0) < 0) {
-				*usemask &= ~(1<<con->id);
-				continue;
-			}
-			if (*usemask & (1<<con->id))
-				continue;
-			kill(con->pid, SIGHUP);
-			xusleep(50000);
-			kill(con->pid, SIGKILL);
+		if (con->pid < 0)
+			continue;
+		if (con->pid == status.si_pid)
+			con->pid = -1;
+		else {
+			kill(con->pid, SIGTERM);
+			wait++;
 		}
 	}
+
+	sigemptyset(&set);
+	sigaddset(&set, SIGCHLD);
+
+	do {
+		int signum, ret;
+
+		if (!wait)
+			break;
+
+		status.si_pid = 0;
+		ret = waitid(P_ALL, 0, &status, WEXITED|WNOHANG);
+
+		if (ret < 0) {
+			if (errno == ECHILD)
+				break;
+			if (errno == EINTR)
+				continue;
+		}
+
+		if (!ret && status.si_pid > 0) {
+			list_for_each(ptr, &consoles) {
+				con = list_entry(ptr, struct console, entry);
+
+				if (con->fd < 0)
+					continue;
+				if (con->pid < 0)
+					continue;
+				if (con->pid == status.si_pid) {
+					con->pid = -1;
+					wait--;
+				}
+			}
+			continue;
+		}
+
+		signum = sigtimedwait(&set, NULL, &sigwait);
+		if (signum != SIGCHLD) {
+			if (signum < 0 && errno == EAGAIN)
+				break;
+		}
+
+	} while (1);
 
 	mask_signal(SIGCHLD, SIG_DFL, NULL);
 	return EXIT_SUCCESS;
