@@ -101,9 +101,8 @@ struct colinfo infos[] = {
 
 /* control struct */
 struct swapon_ctl {
-	char *device;			/* device or file to be turned on */
-	char *dev_canonical;		/* canonical path to device */
-	char *options;			/* fstab-compatible option string */
+	const char *device;		/* device or file to be turned on */
+	const char *options;		/* fstab-compatible option string */
 	const char *label;		/* swap label */
 	const char *uuid;		/* unique identifier */
 	int discard;			/* discard policy */
@@ -114,7 +113,6 @@ struct swapon_ctl {
 	unsigned int
 		all:1,			/* turn on all swap devices */
 		bytes:1,		/* display --show in bytes */
-		canonic:1,		/* is device path canonical */
 		fix_page_size:1,	/* reinitialize page size */
 		no_fail:1,		/* skip devices that do not exist */
 		no_heading:1,		/* toggle --show headers */
@@ -303,7 +301,7 @@ static int swap_reinitialize(struct swapon_ctl *ctl)
 	}
 	warnx(_("%s: reinitializing the swap."), ctl->device);
 
-	switch((pid=fork())) {
+	switch ((pid=fork())) {
 	case -1: /* fork error */
 		warn(_("fork failed"));
 		return -1;
@@ -345,7 +343,7 @@ static int swap_rewrite_signature(const struct swapon_ctl *ctl)
 {
 	int fd, rc = -1;
 
-	fd = open(ctl->dev_canonical, O_WRONLY);
+	fd = open(ctl->device, O_WRONLY);
 	if (fd == -1) {
 		warn(_("cannot open %s"), ctl->device);
 		return -1;
@@ -455,10 +453,10 @@ static void swap_get_info(struct swapon_ctl *ctl, const char *hdr)
 {
 	struct swap_header_v1_2 *s = (struct swap_header_v1_2 *) hdr;
 
-	if (s && *s->volume_name && ctl->label)
+	if (s && *s->volume_name)
 		ctl->label = xstrdup(s->volume_name);
 
-	if (s && *s->uuid && ctl->uuid) {
+	if (s && *s->uuid) {
 		const unsigned char *u = s->uuid;
 		char str[37];
 
@@ -481,7 +479,7 @@ static int swapon_checks(struct swapon_ctl *ctl)
 	unsigned long long devsize = 0;
 	int permMask;
 
-	fd = open(ctl->dev_canonical, O_RDONLY);
+	fd = open(ctl->device, O_RDONLY);
 	if (fd == -1) {
 		warn(_("cannot open %s"), ctl->device);
 		goto err;
@@ -575,20 +573,23 @@ err:
 	return -1;
 }
 
-static int do_swapon(struct swapon_ctl *ctl)
+static int do_swapon(struct swapon_ctl *ctl, const char *spec, int canonic)
 {
 	int status;
 	int flags = 0;
 
+	/* all initilized by do_swapon() */
+	ctl->device = ctl->label = ctl->uuid = NULL;
+
 	if (ctl->verbose)
 		printf(_("swapon %s\n"), ctl->device);
 
-	if (!ctl->canonic) {
-		ctl->dev_canonical = mnt_resolve_spec(ctl->device, mntcache);
-		if (!ctl->dev_canonical)
-			return cannot_find(ctl->device);
+	if (!canonic) {
+		ctl->device = mnt_resolve_spec(spec, mntcache);
+		if (!ctl->device)
+			return cannot_find(spec);
 	} else
-		ctl->dev_canonical = ctl->device;
+		ctl->device = spec;
 
 	if (swapon_checks(ctl))
 		return -1;
@@ -619,23 +620,23 @@ static int do_swapon(struct swapon_ctl *ctl)
 			flags |= ctl->discard;
 	}
 
-	status = swapon(ctl->dev_canonical, flags);
+	status = swapon(ctl->device, flags);
 	if (status < 0)
 		warn(_("%s: swapon failed"), ctl->device);
 
 	return status;
 }
 
-static int swapon_by_label(struct swapon_ctl *ctl)
+static int swapon_by_label(struct swapon_ctl *ctl, const char *label)
 {
-	ctl->device = mnt_resolve_tag("LABEL", ctl->label, mntcache);
-	return ctl->device ? do_swapon(ctl) :  cannot_find(ctl->label);
+	char *device = mnt_resolve_tag("LABEL", label, mntcache);
+	return device ? do_swapon(ctl, device, TRUE) :  cannot_find(label);
 }
 
-static int swapon_by_uuid(struct swapon_ctl *ctl)
+static int swapon_by_uuid(struct swapon_ctl *ctl, const char *uuid)
 {
-	ctl->device = mnt_resolve_tag("UUID", ctl->uuid, mntcache);
-	return ctl->device ? do_swapon(ctl) : cannot_find(ctl->uuid);
+	char *device = mnt_resolve_tag("UUID", uuid, mntcache);
+	return device ? do_swapon(ctl, device, TRUE) : cannot_find(uuid);
 }
 
 /* -o <options> or fstab */
@@ -690,6 +691,7 @@ static int swapon_all(struct swapon_ctl *ctl)
 	while (mnt_table_find_next_fs(tb, itr, match_swap, NULL, &fs) == 0) {
 		/* defaults */
 		const char *opts;
+		const char *device;
 
 		if (mnt_fs_get_option(fs, "noauto", NULL, NULL) == 0)
 			continue;
@@ -698,16 +700,16 @@ static int swapon_all(struct swapon_ctl *ctl)
 		if (opts)
 			parse_options(ctl);
 
-		ctl->device = mnt_resolve_spec(mnt_fs_get_source(fs), mntcache);
-		if (!ctl->device) {
+		device = mnt_resolve_spec(mnt_fs_get_source(fs), mntcache);
+		if (!device) {
 			if (!ctl->no_fail)
 				status |= cannot_find(mnt_fs_get_source(fs));
 			continue;
 		}
 
-		if (!is_active_swap(ctl->device) &&
-		    (!ctl->no_fail || !access(ctl->device, R_OK)))
-			status |= do_swapon(ctl);
+		if (!is_active_swap(device) &&
+		    (!ctl->no_fail || !access(device, R_OK)))
+			status |= do_swapon(ctl, device, TRUE);
 	}
 
 	mnt_free_iter(itr);
@@ -804,7 +806,7 @@ int main(int argc, char *argv[])
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
-	struct swapon_ctl ctl = { .priority = -1, .canonic = 1, 0 };
+	struct swapon_ctl ctl = { .priority = -1 };
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -919,22 +921,14 @@ int main(int argc, char *argv[])
 	if (ctl.options)
 		parse_options(&ctl);
 
-	for (i = 0; i < numof_labels(); i++) {
-		ctl.label = get_label(i);
-		status |= swapon_by_label(&ctl);
-	}
+	for (i = 0; i < numof_labels(); i++)
+		status |= swapon_by_label(&ctl, get_label(i));
 
-	for (i = 0; i < numof_uuids(); i++) {
-		ctl.uuid = get_uuid(i);
-		status |= swapon_by_uuid(&ctl);
-	}
-	if (*argv != NULL) {
-		ctl.canonic = 0;
-		while (*argv != NULL) {
-			ctl.device = *argv++;
-			status |= do_swapon(&ctl);
-		}
-	}
+	for (i = 0; i < numof_uuids(); i++)
+		status |= swapon_by_uuid(&ctl, get_uuid(i));
+
+	while (*argv != NULL)
+		status |= do_swapon(&ctl, *argv++, FALSE);
 
 	free_tables();
 	mnt_unref_cache(mntcache);
