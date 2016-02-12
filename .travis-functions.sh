@@ -103,10 +103,6 @@ function travis_before_script
 	./autogen.sh
 	ret=$?
 
-	# workaround for broken pylibmount install relink
-	[ $ret -eq 0 ] && \
-		sed -i 's/\(link_all_deplibs\)=no/\1=unknown/' ./configure
-
 	set +o xtrace
 	popd
 	return $ret
