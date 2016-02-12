@@ -249,7 +249,8 @@ static void write_output(struct script_control *ctl, char *obuf,
 
 		gettime_monotonic(&now);
 		timersub(&now, &ctl->oldtime, &delta);
-		fprintf(ctl->timingfp, "%ld.%06ld %zd\n", delta.tv_sec, delta.tv_usec, bytes);
+		fprintf(ctl->timingfp, "%ld.%06ld %zd\n",
+		        (long)delta.tv_sec, (long)delta.tv_usec, bytes);
 		if (ctl->flush)
 			fflush(ctl->timingfp);
 		ctl->oldtime = now;

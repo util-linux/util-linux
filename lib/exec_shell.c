@@ -20,6 +20,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <libgen.h>
 
 #include "nls.h"
 #include "c.h"
@@ -31,12 +32,15 @@
 
 void exec_shell(void)
 {
-	const char *shell = getenv("SHELL"), *shell_basename;
+	const char *shell = getenv("SHELL");
+	char *shellc = xstrdup(shell);
+	const char *shell_basename;
 	char *arg0;
+
 	if (!shell)
 		shell = DEFAULT_SHELL;
 
-	shell_basename = basename(shell);
+	shell_basename = basename(shellc);
 	arg0 = xmalloc(strlen(shell_basename) + 2);
 	arg0[0] = '-';
 	strcpy(arg0 + 1, shell_basename);

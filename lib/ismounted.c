@@ -311,9 +311,7 @@ leave:
 int check_mount_point(const char *device, int *mount_flags,
 				  char *mtpt, int mtlen)
 {
-	struct stat	st_buf;
 	int	retval = 0;
-	int		fd;
 
 	if (is_swap_device(device)) {
 		*mount_flags = MF_MOUNTED | MF_SWAP;
@@ -337,15 +335,19 @@ int check_mount_point(const char *device, int *mount_flags,
 		return retval;
 
 #ifdef __linux__ /* This only works on Linux 2.6+ systems */
-	if ((stat(device, &st_buf) != 0) ||
-	    !S_ISBLK(st_buf.st_mode))
-		return 0;
-	fd = open(device, O_RDONLY|O_EXCL|O_CLOEXEC);
-	if (fd < 0) {
-		if (errno == EBUSY)
-			*mount_flags |= MF_BUSY;
-	} else
-		close(fd);
+	{
+		struct stat st_buf;
+		int fd;
+		if ((stat(device, &st_buf) != 0) ||
+		    !S_ISBLK(st_buf.st_mode))
+			return 0;
+		fd = open(device, O_RDONLY|O_EXCL|O_CLOEXEC);
+		if (fd < 0) {
+			if (errno == EBUSY)
+				*mount_flags |= MF_BUSY;
+		} else
+			close(fd);
+	}
 #endif
 
 	return 0;

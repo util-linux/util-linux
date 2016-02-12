@@ -591,26 +591,26 @@ static void print_stats(struct fsck_instance *inst)
 
 	if (report_stats_file)
 		fprintf(report_stats_file, "%s %d %ld "
-					   "%ld.%06ld %d.%06d %d.%06d\n",
+					   "%ld.%06ld %ld.%06ld %ld.%06ld\n",
 			fs_get_device(inst->fs),
 			inst->exit_status,
 			inst->rusage.ru_maxrss,
-			delta.tv_sec, delta.tv_usec,
-			(int)inst->rusage.ru_utime.tv_sec,
-			(int)inst->rusage.ru_utime.tv_usec,
-			(int)inst->rusage.ru_stime.tv_sec,
-			(int)inst->rusage.ru_stime.tv_usec);
+			(long)delta.tv_sec, (long)delta.tv_usec,
+			(long)inst->rusage.ru_utime.tv_sec,
+			(long)inst->rusage.ru_utime.tv_usec,
+			(long)inst->rusage.ru_stime.tv_sec,
+			(long)inst->rusage.ru_stime.tv_usec);
 	else
 		fprintf(stdout, "%s: status %d, rss %ld, "
-				"real %ld.%06ld, user %d.%06d, sys %d.%06d\n",
+				"real %ld.%06ld, user %ld.%06ld, sys %ld.%06ld\n",
 			fs_get_device(inst->fs),
 			inst->exit_status,
 			inst->rusage.ru_maxrss,
-			delta.tv_sec, delta.tv_usec,
-			(int)inst->rusage.ru_utime.tv_sec,
-			(int)inst->rusage.ru_utime.tv_usec,
-			(int)inst->rusage.ru_stime.tv_sec,
-			(int)inst->rusage.ru_stime.tv_usec);
+			(long)delta.tv_sec, (long)delta.tv_usec,
+			(long)inst->rusage.ru_utime.tv_sec,
+			(long)inst->rusage.ru_utime.tv_usec,
+			(long)inst->rusage.ru_stime.tv_sec,
+			(long)inst->rusage.ru_stime.tv_usec);
 }
 
 /*

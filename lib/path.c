@@ -244,8 +244,6 @@ path_read_cpulist(int maxcpus, const char *path, ...)
 	return set;
 }
 
-#endif /* HAVE_CPU_SET_T */
-
 void
 path_set_prefix(const char *prefix)
 {
@@ -253,3 +251,5 @@ path_set_prefix(const char *prefix)
 	strncpy(pathbuf, prefix, sizeof(pathbuf));
 	pathbuf[sizeof(pathbuf) - 1] = '\0';
 }
+
+#endif /* HAVE_CPU_SET_T */

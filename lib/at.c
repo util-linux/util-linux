@@ -22,8 +22,8 @@ int fstat_at(int dir, const char *dirname __attribute__ ((__unused__)),
 			nofollow ? AT_SYMLINK_NOFOLLOW : 0);
 }
 #else
-int fstat_at(int dir, const char *dirname, const char *filename,
-				struct stat *st, int nofollow)
+int fstat_at(int dir __attribute__ ((__unused__)), const char *dirname,
+	     const char *filename, struct stat *st, int nofollow)
 {
 
 	if (*filename != '/') {
@@ -48,7 +48,8 @@ int open_at(int dir, const char *dirname __attribute__ ((__unused__)),
 	return openat(dir, filename, flags);
 }
 #else
-int open_at(int dir, const char *dirname, const char *filename, int flags)
+int open_at(int dir __attribute__((__unused__)), const char *dirname,
+	    const char *filename, int flags)
 {
 	if (*filename != '/') {
 		char path[PATH_MAX];
@@ -82,8 +83,8 @@ ssize_t readlink_at(int dir, const char *dirname __attribute__ ((__unused__)),
 	return readlinkat(dir, pathname, buf, bufsiz);
 }
 #else
-ssize_t readlink_at(int dir, const char *dirname, const char *pathname,
-		    char *buf, size_t bufsiz)
+ssize_t readlink_at(int dir __attribute__((__unused__)), const char *dirname,
+		    const char *pathname, char *buf, size_t bufsiz)
 {
 	if (*pathname != '/') {
 		char path[PATH_MAX];
@@ -128,7 +129,7 @@ int main(int argc, char *argv[])
 		printf("%32s ", d->d_name);
 
 		if (fstat_at(dirfd(dir), dirname, d->d_name, &st, 0) == 0)
-			printf("%16jd bytes ", st.st_size);
+			printf("%16zd bytes ", st.st_size);
 		else
 			printf("%16s bytes ", "???");
 
