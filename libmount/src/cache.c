@@ -635,6 +635,7 @@ char *mnt_pretty_path(const char *path, struct libmnt_cache *cache)
 		if (loopcxt_is_autoclear(&lc)) {
 			char *tmp = loopcxt_get_backing_file(&lc);
 			if (tmp) {
+				loopcxt_deinit(&lc);
 				if (!cache)
 					free(pretty);	/* not cached, deallocate */
 				return tmp;		/* return backing file */
