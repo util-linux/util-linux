@@ -610,18 +610,18 @@ set_hardware_clock_exact(const time_t sethwtime,
 		if (ticksize < 0) {
 			if (debug)
 				printf(_("time jumped backward %.6f seconds "
-					 "to %ld.%06d - retargeting\n"),
+					 "to %ld.%06ld - retargeting\n"),
 				       ticksize, (long)nowsystime.tv_sec,
-				       (int)nowsystime.tv_usec);
+				       (long)nowsystime.tv_usec);
 			/* The retarget is handled at the end of the loop. */
 		} else if (deltavstarget < 0) {
 			/* deltavstarget < 0 if current time < target time */
 			if (debug >= 2)
-				printf(_("%ld.%06d < %ld.%06d (%.6f)\n"),
+				printf(_("%ld.%06ld < %ld.%06ld (%.6f)\n"),
 				       (long)nowsystime.tv_sec,
-				       (int)nowsystime.tv_usec,
+				       (long)nowsystime.tv_usec,
 				       (long)targetsystime.tv_sec,
-				       (int)targetsystime.tv_usec,
+				       (long)targetsystime.tv_usec,
 				       deltavstarget);
 			continue;  /* not there yet - keep spinning */
 		} else if (deltavstarget <= target_time_tolerance_secs) {
@@ -633,12 +633,12 @@ set_hardware_clock_exact(const time_t sethwtime,
 			 * aim for the next opportunity.
 			 */
 			if (debug)
-				printf(_("missed it - %ld.%06d is too far "
-					 "past %ld.%06d (%.6f > %.6f)\n"),
+				printf(_("missed it - %ld.%06ld is too far "
+					 "past %ld.%06ld (%.6f > %.6f)\n"),
 				       (long)nowsystime.tv_sec,
-				       (int)nowsystime.tv_usec,
+				       (long)nowsystime.tv_usec,
 				       (long)targetsystime.tv_sec,
-				       (int)targetsystime.tv_usec,
+				       (long)targetsystime.tv_usec,
 				       deltavstarget,
 				       target_time_tolerance_secs);
 			target_time_tolerance_secs += tolerance_incr_secs;
@@ -661,14 +661,14 @@ set_hardware_clock_exact(const time_t sethwtime,
 			    - RTC_SET_DELAY_SECS /* don't count this */
 			    + 0.5 /* for rounding */);
 	if (debug)
-		printf(_("%ld.%06d is close enough to %ld.%06d (%.6f < %.6f)\n"
-			 "Set RTC to %ld (%ld + %d; refsystime = %ld.%06d)\n"),
-		       (long)nowsystime.tv_sec, (int)nowsystime.tv_usec,
-		       (long)targetsystime.tv_sec, (int)targetsystime.tv_usec,
+		printf(_("%ld.%06ld is close enough to %ld.%06ld (%.6f < %.6f)\n"
+			 "Set RTC to %ld (%ld + %d; refsystime = %ld.%06ld)\n"),
+		       (long)nowsystime.tv_sec, (long)nowsystime.tv_usec,
+		       (long)targetsystime.tv_sec, (long)targetsystime.tv_usec,
 		       deltavstarget, target_time_tolerance_secs,
 		       (long)newhwtime, (long)sethwtime,
 		       (int)(newhwtime - sethwtime),
-		       (long)refsystime.tv_sec, (int)refsystime.tv_usec);
+		       (long)refsystime.tv_sec, (long)refsystime.tv_usec);
 
 	set_hardware_clock(newhwtime, universal, testing);
 }
@@ -693,7 +693,8 @@ display_time(const bool hclock_valid, struct timeval hwctime)
 
 		lt = localtime(&hwctime.tv_sec);
 		strftime(ctime_now, sizeof(ctime_now), format, lt);
-		printf(_("%s and %06d microseconds\n"), ctime_now, (int)hwctime.tv_usec);
+		printf(_("%s and %06ld microseconds\n"),
+		       ctime_now, (long)hwctime.tv_usec);
 	}
 }
 
@@ -1099,8 +1100,8 @@ calculate_adjustment(const double factor,
 			"Time since last adjustment is %d seconds\n",
 		       (int)(systime - last_time)),
 		       (int)(systime - last_time));
-		printf(_("Calculated Hardware Clock drift is %ld.%06d seconds\n"),
-		       (long)tdrift_p->tv_sec, (int)tdrift_p->tv_usec);
+		printf(_("Calculated Hardware Clock drift is %ld.%06ld seconds\n"),
+		       (long)tdrift_p->tv_sec, (long)tdrift_p->tv_usec);
 	}
 }
 
