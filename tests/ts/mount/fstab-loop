@@ -30,7 +30,7 @@ ts_check_prog "mkfs.ext3"
 
 IMG=$(ts_image_init)
 
-mkfs.ext3 $IMG &> /dev/null || ts_die "Cannot make ext3 on $DEVICE"
+mkfs.ext3 -F $IMG &> /dev/null || ts_die "Cannot make ext3 on $IMG"
 
 [ -d "$TS_MOUNTPOINT-1" ] || mkdir -p $TS_MOUNTPOINT-1
 [ -d "$TS_MOUNTPOINT-2" ] || mkdir -p $TS_MOUNTPOINT-2
