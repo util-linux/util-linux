@@ -1485,8 +1485,9 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	int rc = 0;
 	dev_t devno = 0;
 
-	DBG(FS, ul_debugobj(fstab_fs, "is FS mounted? [target=%s]",
-				mnt_fs_get_target(fstab_fs)));
+	DBG(FS, ul_debugobj(fstab_fs, "is FS mounted? [target=%s, source=%s]",
+				mnt_fs_get_target(fstab_fs),
+				mnt_fs_get_source(fstab_fs)));
 
 	if (mnt_fs_is_swaparea(fstab_fs) || mnt_table_is_empty(tb)) {
 		DBG(FS, ul_debugobj(fstab_fs, "- ignore (swap or no data)"));
@@ -1558,9 +1559,12 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 			} else
 				flags = LOOPDEV_FL_OFFSET;
 
+			DBG(FS, ul_debugobj(fs, "checking for loop: src=%s", mnt_fs_get_srcpath(fs)));
 #if __linux__
-			if (loopdev_is_used(mnt_fs_get_srcpath(fs), src, offset, flags))
-				break;
+			if (!loopdev_is_used(mnt_fs_get_srcpath(fs), src, offset, flags))
+				continue;
+
+			DBG(FS, ul_debugobj(fs, "used loop"));
 #endif
 		}
 
