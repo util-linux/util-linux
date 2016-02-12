@@ -857,7 +857,7 @@ int main(int argc, char **argv)
 	struct console *con;
 	char *tty = NULL;
 	struct passwd *pwd;
-	struct timespec sigwait = {0, 50000000};
+	struct timespec sigwait = { .tv_sec = 0, .tv_nsec = 50000000 };
 	siginfo_t status = {};
 	sigset_t set = {};
 	int c, reconnect = 0;
