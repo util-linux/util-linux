@@ -1299,7 +1299,8 @@ int scols_print_table(struct libscols_table *tb)
 
 	fput_table_open(tb);
 
-	print_title(tb);
+	if (tb->format == SCOLS_FMT_HUMAN)
+		print_title(tb);
 
 	rc = print_header(tb, buf);
 	if (rc)
