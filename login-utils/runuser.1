@@ -67,7 +67,8 @@ shell.
 The primary group to be used.  This option is allowed for the root user only.
 .TP
 .BR \-G , " \-\-supp\-group" = \fIgroup
-A supplemental group to be used.  This option is allowed for the root user only.
+Specify a supplemental group.  This option is available to the root user only.  The first specified
+supplementary group is also used as a primary group if the option \fB\-\-group\fR is unspecified.
 .TP
 .BR \- , " \-l" , " \-\-login"
 Start the shell as a login shell with an environment similar to a real
