@@ -843,6 +843,7 @@ struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt)
 		return NULL;
 	tb = mnt_new_table();
 	if (tb) {
+		DBG(TAB, ul_debugobj(tb, "new tab for file: %s", filename));
 		tb->fmt = fmt;
 		if (mnt_table_parse_file(tb, filename) != 0) {
 			mnt_unref_table(tb);

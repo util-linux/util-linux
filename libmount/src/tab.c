@@ -1485,7 +1485,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	int rc = 0;
 	dev_t devno = 0;
 
-	DBG(FS, ul_debugobj(fstab_fs, "is FS mounted? [target=%s, source=%s]",
+	DBG(FS, ul_debugobj(fstab_fs, "mnt_table_is_fs_mounted: target=%s, source=%s",
 				mnt_fs_get_target(fstab_fs),
 				mnt_fs_get_source(fstab_fs)));
 
@@ -1529,7 +1529,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	}
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
-	DBG(FS, ul_debugobj(fstab_fs, "is mounted: src=%s, tgt=%s, root=%s", src, tgt, root));
+	DBG(FS, ul_debugobj(fstab_fs, "mnt_table_is_fs_mounted: src=%s, tgt=%s, root=%s", src, tgt, root));
 
 	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
 
@@ -1545,19 +1545,19 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 			uint64_t offset = 0;
 			char *val;
 			size_t len;
-			int flags;
+			int flags = 0;
 
-			if (!mnt_fs_is_kernel(fs) ||
-			    !mnt_fs_get_srcpath(fs) ||
+			if (!mnt_fs_get_srcpath(fs) ||
 			    !startswith(mnt_fs_get_srcpath(fs), "/dev/loop"))
 				continue;	/* does not look like loopdev */
 
-			if (mnt_fs_get_option(fstab_fs, "offset", &val, &len) == 0 &&
-			    mnt_parse_offset(val, len, &offset)) {
-				DBG(FS, ul_debugobj(fstab_fs, "failed to parse offset="));
-				continue;
-			} else
+			if (mnt_fs_get_option(fstab_fs, "offset", &val, &len) == 0) {
+				if (mnt_parse_offset(val, len, &offset)) {
+					DBG(FS, ul_debugobj(fstab_fs, "failed to parse offset="));
+					continue;
+				}
 				flags = LOOPDEV_FL_OFFSET;
+			}
 
 			DBG(FS, ul_debugobj(fs, "checking for loop: src=%s", mnt_fs_get_srcpath(fs)));
 #if __linux__
@@ -1808,9 +1808,14 @@ static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
 	struct libmnt_fs *fs;
 	struct libmnt_iter *itr = NULL;
 	struct libmnt_cache *mpc = NULL;
-	int rc;
+	int rc, writable = 0;
+	const char *path = NULL;
 
-	tb = mnt_new_table_from_file("/proc/self/mountinfo");
+	if (mnt_has_regular_mtab(&path, &writable) == 1 && writable == 0)
+		tb = mnt_new_table_from_file(path);
+	else
+		tb = mnt_new_table_from_file("/proc/self/mountinfo");
+
 	if (!tb) {
 		fprintf(stderr, "failed to parse mountinfo\n");
 		return -1;
@@ -1830,7 +1835,7 @@ static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
 	mnt_table_set_cache(tb, mpc);
 	mnt_unref_cache(mpc);
 
-	while(mnt_table_next_fs(fstab, itr, &fs) == 0) {
+	while (mnt_table_next_fs(fstab, itr, &fs) == 0) {
 		if (mnt_table_is_fs_mounted(tb, fs))
 			printf("%s already mounted on %s\n",
 					mnt_fs_get_source(fs),
@@ -1900,7 +1905,7 @@ int main(int argc, char *argv[])
 	{ "--find-pair",     test_find_pair, "<file> <source> <target>" },
 	{ "--find-mountpoint", test_find_mountpoint, "<path>" },
 	{ "--copy-fs",       test_copy_fs, "<file>  copy root FS from the file" },
-	{ "--is-mounted",    test_is_mounted, "<fstab> check what from <file> are already mounted" },
+	{ "--is-mounted",    test_is_mounted, "<fstab> check what from fstab is already mounted" },
 	{ NULL }
 	};
 

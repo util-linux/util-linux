@@ -785,6 +785,7 @@ int mnt_has_regular_mtab(const char **mtab, int *writable)
 		if (S_ISREG(st.st_mode)) {
 			if (writable)
 				*writable = !try_write(filename);
+			DBG(UTILS, ul_debug("%s: writable", filename));
 			return 1;
 		}
 		goto done;
@@ -793,8 +794,10 @@ int mnt_has_regular_mtab(const char **mtab, int *writable)
 	/* try to create the file */
 	if (writable) {
 		*writable = !try_write(filename);
-		if (*writable)
+		if (*writable) {
+			DBG(UTILS, ul_debug("%s: writable", filename));
 			return 1;
+		}
 	}
 
 done:
