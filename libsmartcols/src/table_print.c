@@ -376,7 +376,7 @@ static int print_pending_data(
 	free(data);
 
 	for (i = len; i < width; i++)
-		fputc('x', tb->out);		/* padding */
+		fputc(' ', tb->out);		/* padding */
 
 	if (is_last_column(tb, cl))
 		return 0;
