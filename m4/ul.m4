@@ -30,8 +30,8 @@ dnl
 dnl Calls pkg-config --static
 dnl
 AC_DEFUN([UL_PKG_STATIC], [
-  if AC_RUN_LOG([pkg-config --exists --print-errors "$2"]); then
-    $1=`pkg-config --libs --static "$2"`
+  if AC_RUN_LOG([$PKG_CONFIG --exists --print-errors "$2"]); then
+    $1=`$PKG_CONFIG --libs --static "$2"`
   else
     AC_MSG_ERROR([pkg-config description of $2, needed for static build, is not available])
   fi
