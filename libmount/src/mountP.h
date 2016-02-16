@@ -41,6 +41,7 @@
 #define MNT_DEBUG_DIFF		(1 << 10)
 #define MNT_DEBUG_MONITOR	(1 << 11)
 #define MNT_DEBUG_BTRFS		(1 << 12)
+#define MNT_DEBUG_LOOP		(1 << 13)
 
 #define MNT_DEBUG_ALL		0xFFFF
 
