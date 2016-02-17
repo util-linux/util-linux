@@ -70,7 +70,7 @@ remove_repeats()
 cd $(git rev-parse --show-toplevel)
 
 for I in $(
-	find -path './autom4te.cache' -prune -o -path './.libs' -prune -o -name '*[[:alpha:]].[1-8]' -print
+	find . -type f -name '*[[:alpha:]].[1-8]' |grep -v "autom4te.cache\|\.libs/"
 ); do
 	MAN_FILE=${I##*/}
 	MAN_LIST[${MAN_FILE%%.[0-9]}]=1

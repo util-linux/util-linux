@@ -32,7 +32,7 @@ for conf in $config_gen_dir/config-gen.d/*.conf; do
 	./configure $opts &> /dev/null
 	make -j &> /dev/null
 
-	bins=$(find . -type f -perm /a+x | sort)
+	bins=$(find . -type f \( -perm -u=x -o -perm -g=x -o -perm -o=x \) | sort)
 	for b in $bins; do
 		libs=$(readelf --dynamic $b 2> /dev/null   | \
 			awk '/NEEDED/ { print $5 }' | \

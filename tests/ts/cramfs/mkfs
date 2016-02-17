@@ -66,7 +66,7 @@ fi
 ts_cd "$IMAGE_SRC"
 
 ts_log "list checksums from original data"
-find -type f -exec md5sum {} \; | sort >> $TS_OUTPUT
+find . -type f -exec md5sum {} \; | sort >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "create cramfs image"
