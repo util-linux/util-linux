@@ -61,7 +61,9 @@ libmount_la_DEPENDENCIES = \
 
 libmount_la_LDFLAGS = \
 	$(SOLIB_LDFLAGS) \
-	-Wl,--version-script=$(top_srcdir)/libmount/src/libmount.sym \
+if HAVE_VSCRIPT
+	$(VSCRIPT_LDFLAGS),$(top_srcdir)/libmount/src/libmount.sym \
+endif
 	-version-info $(LIBMOUNT_VERSION_INFO)
 
 EXTRA_DIST += \

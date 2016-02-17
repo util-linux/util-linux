@@ -138,6 +138,9 @@ AC_SUBST([BSD_WARN_CFLAGS])
 dnl libtool-2
 LT_INIT
 
+dnl check supported linker flags
+AX_CHECK_VSCRIPT
+
 m4_ifndef([PKG_PROG_PKG_CONFIG],
   [m4_fatal([Could not locate the pkg-config autoconf
     macros. These are usually located in /usr/share/aclocal/pkg.m4.

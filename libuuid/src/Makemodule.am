@@ -37,7 +37,9 @@ libuuid_la_CFLAGS = \
 
 libuuid_la_LDFLAGS = \
 	$(SOLIB_LDFLAGS) \
-	-Wl,--version-script=$(top_srcdir)/libuuid/src/libuuid.sym \
+if HAVE_VSCRIPT
+	libuuid_la_LDFLAGS += $(VSCRIPT_LDFLAGS),$(top_srcdir)/libuuid/src/libuuid.sym \
+endif
 	-version-info $(LIBUUID_VERSION_INFO)
 
 EXTRA_DIST += libuuid/src/libuuid.sym
