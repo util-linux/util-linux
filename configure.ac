@@ -237,6 +237,7 @@ AC_CHECK_HEADERS([ \
 	sys/ioccom.h \
 	sys/ioctl.h \
 	sys/mkdev.h \
+	sys/mount.h \
 	sys/param.h \
 	sys/prctl.h \
 	sys/queue.h \
@@ -251,6 +252,7 @@ AC_CHECK_HEADERS([ \
 	sys/timex.h \
 	sys/ttydefaults.h \
 	sys/types.h \
+	sys/ucred.h \
 	sys/un.h \
 	unistd.h \
 ])
