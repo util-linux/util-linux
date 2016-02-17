@@ -88,16 +88,14 @@ command, such as \%'11\ minute\ mode' or from dual-booting another OS.
 .TQ
 .B \-\-get
 .br
-Read the Hardware Clock and print the time on standard output.
+Read the Hardware Clock and print its time to standard output in the
+.B ISO 8601
+format.
 The time shown is always in local time, even if you keep your Hardware Clock
 in UTC.  See the
 .B \%\-\-localtime
 option.
 .sp
-The time shown is in same format as that of 
-.BR \%date (1)
-by default, and additionally, the number of microseconds is shown.
-.sp 
 Showing the Hardware Clock time is the default when no function is specified.
 .sp
 The

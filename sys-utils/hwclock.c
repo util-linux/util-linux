@@ -687,14 +687,15 @@ display_time(const bool hclock_valid, struct timeval hwctime)
 		       "either invalid (e.g. 50th day of month) or beyond the range "
 		       "we can handle (e.g. Year 2095)."));
 	else {
-		struct tm *lt;
-		char *format = "%c";
-		char ctime_now[200];
+		struct tm lt;
+		int zhour, zmin;
 
-		lt = localtime(&hwctime.tv_sec);
-		strftime(ctime_now, sizeof(ctime_now), format, lt);
-		printf(_("%s and %06ld microseconds\n"),
-		       ctime_now, (long)hwctime.tv_usec);
+		lt = *localtime(&hwctime.tv_sec);
+		zhour = - timezone / 60 / 60;
+		zmin = abs(timezone / 60 % 60);
+		printf(_("%4d-%.2d-%.2d %02d:%02d:%02d.%06ld%+02d:%02d\n"),
+		       lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday, lt.tm_hour,
+		       lt.tm_min, lt.tm_sec, (long)hwctime.tv_usec, zhour, zmin);
 	}
 }
 
