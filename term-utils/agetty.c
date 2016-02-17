@@ -44,6 +44,7 @@
 #include "c.h"
 #include "widechar.h"
 #include "ttyutils.h"
+#include "color-names.h"
 
 #ifdef HAVE_SYS_PARAM_H
 # include <sys/param.h>
@@ -2340,8 +2341,17 @@ static void output_special_char(unsigned char c, struct options *op,
 
 	switch (c) {
 	case 'e':
-		fputs("\033", stdout);
+	{
+		char escname[UL_COLORNAME_MAXSZ];
+
+		if (get_escape_argument(fp, escname, sizeof(escname))) {
+			const char *esc = color_sequence_from_colorname(escname);
+			if (esc)
+				fputs(esc, stdout);
+		} else
+			fputs("\033", stdout);
 		break;
+	}
 	case 's':
 		printf("%s", uts.sysname);
 		break;

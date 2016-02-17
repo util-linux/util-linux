@@ -333,8 +333,13 @@ Insert the baudrate of the current line.
 d
 Insert the current date.
 .TP
-e
-Insert \\033 to handle esc sequences, for example "\\e[31m RED \\e[0m" prints red text.
+e or e{name}
+Translate the human readable \fIname\fP to esc sequence and insert the sequence
+(e.g. \\e{red}Alert text.\\e{reset}).  If the name argument is not specified then
+insert \\033. The currently supported names are: black, blink, blue, bold, brown, cyan,
+darkgray, gray, green, halfbright, lightblue, lightcyan, lightgray, lightgreen,
+lightmagenta, lightred, magenta, red, reset, reverse, and yellow.  All unknown
+names are silently ignored.
 .TP
 s
 Insert the system name, the name of the operating system. Same as `uname \-s'.
