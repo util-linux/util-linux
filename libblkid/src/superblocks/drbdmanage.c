@@ -11,7 +11,6 @@
  * (a DRBDmanage "cluster"); this file detects its control volume,
  * which is replicated (via DRBD 9) on some of the nodes.
  */
-#include <endian.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -21,6 +20,7 @@
 #include <inttypes.h>
 #include <stddef.h>
 
+#include "bitops.h"
 #include "superblocks.h"
 
 struct drbdmanage_hdr {
