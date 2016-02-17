@@ -48,7 +48,9 @@
 #include <utmp.h>
 #include <stdlib.h>
 #include <sys/syslog.h>
+#ifdef HAVE_SYS_SYSMACROS_H
 #include <sys/sysmacros.h>
+#endif
 #ifdef HAVE_LINUX_MAJOR_H
 # include <linux/major.h>
 #endif

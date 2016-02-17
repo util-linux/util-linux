@@ -244,6 +244,7 @@ AC_CHECK_HEADERS([ \
 	sys/socket.h \
 	sys/sockio.h \
 	sys/stat.h \
+	sys/sysmacros.h \
 	sys/swap.h \
 	sys/syscall.h \
 	sys/time.h \

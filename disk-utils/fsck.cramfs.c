@@ -49,7 +49,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#ifdef HAVE_SYS_SYSMACROS_H
 #include <sys/sysmacros.h>	/* for major, minor */
+#endif
 
 #include "cramfs.h"
 #include "nls.h"
