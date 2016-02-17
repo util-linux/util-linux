@@ -24,12 +24,15 @@ const char *color_sequence_from_colorname(const char *str)
 {
 	static const struct ul_color_name basic_schemes[] = {
 		{ "black",	UL_COLOR_BLACK           },
+		{ "blink",      UL_COLOR_BLINK           },
 		{ "blue",	UL_COLOR_BLUE            },
+		{ "bold",       UL_COLOR_BOLD		 },
 		{ "brown",	UL_COLOR_BROWN           },
 		{ "cyan",	UL_COLOR_CYAN            },
 		{ "darkgray",	UL_COLOR_DARK_GRAY       },
 		{ "gray",	UL_COLOR_GRAY            },
 		{ "green",	UL_COLOR_GREEN           },
+		{ "halfbright", UL_COLOR_HALFBRIGHT	 },
 		{ "lightblue",	UL_COLOR_BOLD_BLUE       },
 		{ "lightcyan",	UL_COLOR_BOLD_CYAN       },
 		{ "lightgray,",	UL_COLOR_GRAY            },
@@ -38,6 +41,8 @@ const char *color_sequence_from_colorname(const char *str)
 		{ "lightred",	UL_COLOR_BOLD_RED        },
 		{ "magenta",	UL_COLOR_MAGENTA         },
 		{ "red",	UL_COLOR_RED             },
+		{ "reset",      UL_COLOR_RESET,          },
+		{ "reverse",    UL_COLOR_REVERSE         },
 		{ "yellow",	UL_COLOR_BOLD_YELLOW     },
 	};
 	struct ul_color_name key = { .name = (char *) str }, *res;
