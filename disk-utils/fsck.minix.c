@@ -87,7 +87,6 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <termios.h>
-#include <mntent.h>
 #include <sys/stat.h>
 #include <signal.h>
 #include <getopt.h>

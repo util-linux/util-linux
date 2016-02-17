@@ -14,7 +14,6 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <limits.h>
-#include <mntent.h>
 #include <sys/utsname.h>
 #include <sys/stat.h>
 #include <errno.h>
