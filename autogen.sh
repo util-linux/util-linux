@@ -75,7 +75,7 @@ if ! ($LIBTOOLIZE --version) < /dev/null > /dev/null 2>&1; then
 	echo
 	DIE=1
 else
-	ltver=$($LIBTOOLIZE --version | awk '/^libtoolize/ { print $4 }')
+	ltver=$($LIBTOOLIZE --version | awk '/^[g]*libtoolize/ { print $4 }')
 	ltver=${ltver:-"none"}
 	test ${ltver##2.} = "$ltver" && {
 		echo
