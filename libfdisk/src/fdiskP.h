@@ -355,7 +355,10 @@ struct fdisk_context {
 		     display_in_cyl_units : 1,	/* for obscure labels */
 		     display_details : 1,	/* expert display mode */
 		     protect_bootbits : 1,	/* don't zeroize fll irst sector */
+		     wipe_device : 1,		/* wipe device before write */
 		     listonly : 1;		/* list partition, nothing else */
+
+	char *collision;			/* name of already existing FS/PT */
 
 	int sizeunit;				/* SIZE fields, FDISK_SIZEUNIT_* */
 
@@ -385,6 +388,8 @@ struct fdisk_context {
 	struct fdisk_context	*parent;	/* for nested PT */
 	struct fdisk_script	*script;	/* what we want to follow */
 };
+
+int fdisk_wipe_collisions(struct fdisk_context *cxt);
 
 /* partition.c */
 int fdisk_partition_next_partno(struct fdisk_partition *pa,

@@ -190,6 +190,10 @@ int fdisk_is_details(struct fdisk_context *cxt);
 int fdisk_enable_listonly(struct fdisk_context *cxt, int enable);
 int fdisk_is_listonly(struct fdisk_context *cxt);
 
+int fdisk_enable_wipe(struct fdisk_context *cxt, int enable);
+int fdisk_has_wipe(struct fdisk_context *cxt);
+const char *fdisk_get_collision(struct fdisk_context *cxt);
+
 int fdisk_set_unit(struct fdisk_context *cxt, const char *str);
 const char *fdisk_get_unit(struct fdisk_context *cxt, int n);
 int fdisk_use_cylinders(struct fdisk_context *cxt);

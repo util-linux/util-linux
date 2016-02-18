@@ -293,7 +293,9 @@ fdisk_deassign_device
 fdisk_enable_bootbits_protection
 fdisk_enable_details
 fdisk_enable_listonly
+fdisk_enable_wipe
 fdisk_get_alignment_offset
+fdisk_get_collision
 fdisk_get_devfd
 fdisk_get_devname
 fdisk_get_first_lba
@@ -313,6 +315,7 @@ fdisk_get_unit
 fdisk_get_units_per_sector
 fdisk_has_label
 fdisk_has_protected_bootbits
+fdisk_has_wipe
 fdisk_is_details
 fdisk_is_labeltype
 fdisk_is_listonly

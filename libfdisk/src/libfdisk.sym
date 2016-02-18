@@ -253,3 +253,9 @@ FDISK_2.27 {
 	fdisk_get_disklabel_item;
 	fdisk_script_enable_json;
 } FDISK_2.26;
+
+FDISK_2.28 {
+	fdisk_enable_wipe;
+	fdisk_get_collision;
+	fdisk_has_wipe;
+} FDISK_2.27;

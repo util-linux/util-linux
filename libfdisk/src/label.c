@@ -303,6 +303,12 @@ int fdisk_write_disklabel(struct fdisk_context *cxt)
 		return -EINVAL;
 	if (!cxt->label->op->write)
 		return -ENOSYS;
+
+	if (cxt->collision && cxt->wipe_device) {
+		int rc = fdisk_wipe_collisions(cxt);
+		if (rc)
+			return rc;
+	}
 	return cxt->label->op->write(cxt);
 }
 
