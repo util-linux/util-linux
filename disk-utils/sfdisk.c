@@ -35,6 +35,7 @@
 #ifdef HAVE_LIBREADLINE
 # include <readline/readline.h>
 #endif
+#include <libgen.h>
 
 #include "c.h"
 #include "xalloc.h"

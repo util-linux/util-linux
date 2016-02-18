@@ -29,6 +29,7 @@
 #include <getopt.h>
 #include <string.h>
 #include <limits.h>
+#include <libgen.h>
 
 #include <blkid.h>
 
@@ -378,9 +379,12 @@ do_wipe(struct wipe_desc *wp, const char *devname, int flags)
 
 	if (zap && (flags & WP_FL_BACKUP)) {
 		const char *home = getenv ("HOME");
+		char *tmp = xstrdup(devname);
+
 		if (!home)
 			errx(EXIT_FAILURE, _("failed to create a signature backup, $HOME undefined"));
-		xasprintf (&backup, "%s/wipefs-%s-", home, basename(devname));
+		xasprintf (&backup, "%s/wipefs-%s-", home, basename(tmp));
+		free(tmp);
 	}
 
 	wp0 = clone_offset(wp);
