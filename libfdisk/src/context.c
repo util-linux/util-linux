@@ -530,7 +530,7 @@ static int check_collisions(struct fdisk_context *cxt)
 
 	blkid_free_probe(pr);
 	return rc;
-#elif
+#else
 	return 0;
 #endif
 }
