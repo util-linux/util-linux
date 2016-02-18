@@ -2435,6 +2435,14 @@ static int ui_run(struct cfdisk *cf)
 	ui_cols = COLS;
 	DBG(UI, ul_debug("start cols=%zu, lines=%zu", ui_cols, ui_lines));
 
+	if (fdisk_get_collision(cf->cxt)) {
+		ui_warnx(_("Device already contains %s signature, it will be removed by write command."),
+				fdisk_get_collision(cf->cxt));
+		fdisk_enable_wipe(cf->cxt, 1);
+		ui_hint(_("Press a key to continue."));
+		getch();
+	}
+
 	if (!fdisk_has_label(cf->cxt) || cf->zero_start) {
 		rc = ui_create_label(cf);
 		if (rc < 0)
