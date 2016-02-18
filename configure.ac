@@ -158,11 +158,17 @@ bsd_os=no
 AS_CASE([${host_os}],
   [*linux*],
      [linux_os=yes],
+  [*darwin*],
+     [darwin_os=yes],
   [*bsd*],
      [bsd_os=yes])
 AM_CONDITIONAL([LINUX], [test "x$linux_os" = xyes])
+AM_CONDITIONAL([DARWIN], [test "x$darwin_os" = xyes])
 AM_CONDITIONAL([BSD], [test "x$bsd_os" = xyes])
 
+AS_IF([test  "x$darwin_os" = xyes], [
+  AC_DEFINE([_DARWIN_C_SOURCE], [1], [Enable MAP_ANON in sys/mman.h on Mac OS X])
+])
 
 dnl define ARCH_<NAME> conditionals
 UL_SET_ARCH([I86], [i?86-*])
