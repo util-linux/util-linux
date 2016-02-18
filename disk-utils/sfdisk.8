@@ -208,6 +208,17 @@ is no label on the device yet, then the type defaults to \fBdos\fR.
 .BR \-Y , " \-\-label\-nested " \fItype
 Force editing of a nested disk label.  The primary disk label has to exist already.
 This option allows to edit for example a hybrid/protective MBR on devices with GPT.
+
+.TP
+.BR -w , " \-\-wipe "\fImode
+Wipe filesystems, RAIDs and partition tables signatures from the device, in
+order to avoid possible collisions.  The \fImode\fR can be \fBauto\fR,
+\fBnever\fR or \fBalways\fR.  The default is \fBauto\fR, in this case signatures
+are wiped in the interactive mode only, in all cases detected signatures are
+reported by warning message before a new partition table is created. See also
+.BR wipefs (8)
+command.
+
 .TP
 .BR \-v , " \-\-version"
 Display version information and exit.

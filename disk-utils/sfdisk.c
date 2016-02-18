@@ -89,6 +89,7 @@ enum {
 struct sfdisk {
 	int		act;		/* ACT_* */
 	int		partno;		/* -N <partno>, default -1 */
+	int		wipemode;	/* remove foreign signatures */
 	const char	*label;		/* --label <label> */
 	const char	*label_nested;	/* --label-nested <label> */
 	const char	*backup_file;	/* -O <path> */
@@ -1528,6 +1529,26 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			fputs(_(" OK\n\n"), stdout);
 	}
 
+	if (fdisk_get_collision(sf->cxt)) {
+		int dowipe = sf->wipemode == WIPEMODE_ALWAYS ? 1 : 0;
+
+		fdisk_warnx(sf->cxt, _("%s: device already contains %s signature."),
+			devname, fdisk_get_collision(sf->cxt));
+
+		if (sf->interactive && sf->wipemode == WIPEMODE_AUTO)
+			dowipe = 1;	/* do it in interactive mode */
+
+		fdisk_enable_wipe(sf->cxt, dowipe);
+		if (dowipe)
+			fdisk_warnx(sf->cxt, _(
+				"The signature will be removed by write command."));
+		else
+			fdisk_warnx(sf->cxt, _(
+				"It is strongly recommended to wipe the device with "
+				"wipefs(8), in order to avoid possible collisions."));
+		fputc('\n', stderr);
+	}
+
 	if (sf->backup)
 		backup_partition_table(sf, devname);
 
@@ -1547,6 +1568,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		label = "dos";	/* just for backward compatibility */
 
 	fdisk_script_set_header(dp, "label", label);
+
 
 	if (!sf->quiet && sf->interactive) {
 		if (!fdisk_has_label(sf->cxt) && !sf->label)
@@ -1740,6 +1762,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -O, --backup-file <path>  override default backup file name\n"), out);
 	fputs(_(" -o, --output <list>       output columns\n"), out);
 	fputs(_(" -q, --quiet               suppress extra info messages\n"), out);
+	fputs(_(" -w, --wipe <mode>         wipe signatures (auto, always or never)\n"), out);
 	fputs(_(" -X, --label <name>        specify label type (dos, gpt, ...)\n"), out);
 	fputs(_(" -Y, --label-nested <name> specify nested label type (dos, bsd)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -1764,6 +1787,7 @@ int main(int argc, char *argv[])
 	int colormode = UL_COLORMODE_UNDEF;
 	struct sfdisk _sf = {
 		.partno = -1,
+		.wipemode = WIPEMODE_AUTO,
 		.interactive = isatty(STDIN_FILENO) ? 1 : 0,
 	}, *sf = &_sf;
 
@@ -1810,6 +1834,7 @@ int main(int argc, char *argv[])
 		{ "quiet",   no_argument,       NULL, 'q' },
 		{ "verify",  no_argument,       NULL, 'V' },
 		{ "version", no_argument,       NULL, 'v' },
+		{ "wipe",    required_argument, NULL, 'w' },
 
 		{ "part-uuid",  no_argument,    NULL, OPT_PARTUUID },
 		{ "part-label", no_argument,    NULL, OPT_PARTLABEL },
@@ -1831,7 +1856,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "aAbcdfFghJlLo:O:nN:qrsTu:vVX:Y:",
+	while ((c = getopt_long(argc, argv, "aAbcdfFghJlLo:O:nN:qrsTu:vVX:Y:w:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'A':
@@ -1913,6 +1938,11 @@ int main(int argc, char *argv[])
 			return EXIT_SUCCESS;
 		case 'V':
 			sf->verify = 1;
+			break;
+		case 'w':
+			sf->wipemode = wipemode_from_string(optarg);
+			if (sf->wipemode < 0)
+				errx(EXIT_FAILURE, _("unsupported wipe mode"));
 			break;
 		case 'X':
 			sf->label = optarg;
