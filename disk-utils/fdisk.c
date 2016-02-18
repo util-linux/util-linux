@@ -734,6 +734,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -u, --units[=<unit>]          display units: 'cylinders' or 'sectors' (default)\n"), out);
 	fputs(_(" -s, --getsz                   display device size in 512-byte sectors [DEPRECATED]\n"), out);
 	fputs(_("     --bytes                   print SIZE in bytes rather than in human readable format\n"), out);
+	fputs(_(" -w, --wipe <mode>             wipe signatures (auto, always or never)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -C, --cylinders <number>      specify the number of cylinders\n"), out);
@@ -761,6 +762,7 @@ int main(int argc, char **argv)
 {
 	int rc, i, c, act = ACT_FDISK;
 	int colormode = UL_COLORMODE_UNDEF;
+	int wipemode = WIPEMODE_AUTO;
 	struct fdisk_context *cxt;
 	char *outarg = NULL;
 	enum {
@@ -782,6 +784,7 @@ int main(int argc, char **argv)
 		{ "version",        no_argument,       NULL, 'V' },
 		{ "output",         no_argument,       NULL, 'o' },
 		{ "protect-boot",   no_argument,       NULL, 'B' },
+		{ "wipe",           required_argument, NULL, 'w' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -800,7 +803,7 @@ int main(int argc, char **argv)
 
 	fdisk_set_ask(cxt, ask_callback, NULL);
 
-	while ((c = getopt_long(argc, argv, "b:Bc::C:hH:lL::o:sS:t:u::vV",
+	while ((c = getopt_long(argc, argv, "b:Bc::C:hH:lL::o:sS:t:u::vVw:",
 				longopts, NULL)) != -1) {
 		switch (c) {
 		case 'b':
@@ -891,6 +894,11 @@ int main(int argc, char **argv)
 		case 'v': /* for backward compatibility only */
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
+		case 'w':
+			wipemode = wipemode_from_string(optarg);
+			if (wipemode < 0)
+				errx(EXIT_FAILURE, _("unsupported wipe mode"));
+			break;
 		case 'h':
 			usage(stdout);
 		case OPT_BYTES:
@@ -957,6 +965,24 @@ int main(int argc, char **argv)
 
 		fflush(stdout);
 
+		if (fdisk_get_collision(cxt)) {
+			int dowipe = wipemode == WIPEMODE_ALWAYS ? 1 : 0;
+
+			fdisk_warnx(cxt, _("%s: device already contains %s signature."),
+				argv[optind], fdisk_get_collision(cxt));
+
+			if (isatty(STDIN_FILENO) && wipemode == WIPEMODE_AUTO)
+				dowipe = 1;	/* do it in interactive mode */
+
+			fdisk_enable_wipe(cxt, dowipe);
+			if (dowipe)
+				fdisk_warnx(cxt, _(
+					"The signature will be removed by write command."));
+			else
+				fdisk_warnx(cxt, _(
+					"It is strongly recommended to wipe the device with "
+					"wipefs(8), in order to avoid possible collisions."));
+		}
 		if (!fdisk_has_label(cxt)) {
 			fdisk_info(cxt, _("Device does not contain a recognized partition table."));
 			fdisk_create_disklabel(cxt, NULL);
