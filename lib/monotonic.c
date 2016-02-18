@@ -4,7 +4,9 @@
  */
 #include <time.h>
 #include <signal.h>
+#ifdef HAVE_SYSINFO
 #include <sys/sysinfo.h>
+#endif
 #include <sys/time.h>
 
 #include "c.h"
