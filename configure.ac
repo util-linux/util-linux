@@ -402,7 +402,7 @@ AC_CHECK_FUNCS([clock_gettime], [],
 
 have_timer="no"
 AC_CHECK_FUNCS([timer_create],
-	[have_time="yes"],
+	[have_timer="yes"],
 	[AC_CHECK_LIB([rt], [timer_create], [
 		have_timer="yes"
 		REALTIME_LIBS="-lrt"
