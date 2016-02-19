@@ -2,7 +2,8 @@
 check_PROGRAMS += \
 	sample-scols-tree \
 	sample-scols-title \
-	sample-scols-wrap
+	sample-scols-wrap \
+	sample-scols-continuous
 
 sample_scols_tree_SOURCES = libsmartcols/samples/tree.c
 sample_scols_tree_LDADD = libsmartcols.la libcommon.la
@@ -15,3 +16,8 @@ sample_scols_title_CFLAGS = -I$(ul_libsmartcols_incdir)
 sample_scols_wrap_SOURCES = libsmartcols/samples/wrap.c
 sample_scols_wrap_LDADD = libsmartcols.la
 sample_scols_wrap_CFLAGS = -I$(ul_libsmartcols_incdir)
+
+sample_scols_continuous_SOURCES = libsmartcols/samples/continuous.c
+sample_scols_continuous_LDADD = libsmartcols.la libcommon.la
+sample_scols_continuous_CFLAGS = -I$(ul_libsmartcols_incdir)
+
