@@ -138,6 +138,9 @@ AC_SUBST([BSD_WARN_CFLAGS])
 dnl libtool-2
 LT_INIT
 
+dnl check supported linker flags
+AX_CHECK_VSCRIPT
+
 m4_ifndef([PKG_PROG_PKG_CONFIG],
   [m4_fatal([Could not locate the pkg-config autoconf
     macros. These are usually located in /usr/share/aclocal/pkg.m4.
@@ -155,11 +158,17 @@ bsd_os=no
 AS_CASE([${host_os}],
   [*linux*],
      [linux_os=yes],
+  [*darwin*],
+     [darwin_os=yes],
   [*bsd*],
      [bsd_os=yes])
 AM_CONDITIONAL([LINUX], [test "x$linux_os" = xyes])
+AM_CONDITIONAL([DARWIN], [test "x$darwin_os" = xyes])
 AM_CONDITIONAL([BSD], [test "x$bsd_os" = xyes])
 
+AS_IF([test  "x$darwin_os" = xyes], [
+  AC_DEFINE([_DARWIN_C_SOURCE], [1], [Enable MAP_ANON in sys/mman.h on Mac OS X])
+])
 
 dnl define ARCH_<NAME> conditionals
 UL_SET_ARCH([I86], [i?86-*])
@@ -228,6 +237,7 @@ AC_CHECK_HEADERS([ \
 	sys/ioccom.h \
 	sys/ioctl.h \
 	sys/mkdev.h \
+	sys/mount.h \
 	sys/param.h \
 	sys/prctl.h \
 	sys/queue.h \
@@ -235,12 +245,14 @@ AC_CHECK_HEADERS([ \
 	sys/socket.h \
 	sys/sockio.h \
 	sys/stat.h \
+	sys/sysmacros.h \
 	sys/swap.h \
 	sys/syscall.h \
 	sys/time.h \
 	sys/timex.h \
 	sys/ttydefaults.h \
 	sys/types.h \
+	sys/ucred.h \
 	sys/un.h \
 	unistd.h \
 ])

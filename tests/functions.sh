@@ -158,13 +158,15 @@ function ts_has_option {
 	fi
 
 	# or just check the global command line options
-	echo -n $ALL | sed 's/ //g' | awk 'BEGIN { FS="="; RS="--" } /('$NAME'$|'$NAME'=)/ { print "yes" }'
+	if [[ $ALL =~ ([$' \t\n']|^)--$NAME([$'= \t\n']|$) ]]; then echo yes; fi
 }
 
 function ts_option_argument {
 	NAME="$1"
 	ALL="$2"
-	echo -n $ALL | sed 's/ //g' | awk 'BEGIN { FS="="; RS="--" } /'$NAME'=/ { print $2 }'
+
+	# last option wins!
+	echo "$ALL" | sed -n "s/.*[ \t\n]--$NAME=\([^ \t\n]*\).*/\1/p" | tail -n 1
 }
 
 function ts_init_core_env {

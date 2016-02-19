@@ -19,6 +19,8 @@ branches:
     - /^travis.*/
 
 before_install:
+  # print some host info
+  - env | grep -v "encrypted" | LC_ALL=C sort
   - $CC --version
   - which $CC
   # workaround clang not system wide, fail on sudo make install

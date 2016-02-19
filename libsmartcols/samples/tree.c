@@ -59,7 +59,7 @@ static int add_line_from_stat(struct libscols_table *tb,
 		err(EXIT_FAILURE, "failed to create output line");
 
 	/* MODE; local buffer, use scols_line_set_data() that calls strdup() */
-	strmode(mode, modbuf);
+	xstrmode(mode, modbuf);
 	if (scols_line_set_data(ln, COL_MODE, modbuf))
 		goto fail;
 

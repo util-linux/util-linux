@@ -18,9 +18,14 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include <sys/param.h>
-#ifdef __APPLE__
-#include <sys/ucred.h>
-#include <sys/mount.h>
+
+#ifndef __linux__
+# ifdef HAVE_SYS_UCRED_H
+#  include <sys/ucred.h>
+# endif
+# ifdef HAVE_SYS_MOUNT_H
+#  include <sys/mount.h>
+# endif
 #endif
 
 #include "pathnames.h"

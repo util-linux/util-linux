@@ -233,7 +233,7 @@ static int read_process(struct lsns *ls, pid_t pid)
 	if (!dir)
 		return -errno;
 
-	p = calloc(1, sizeof(*p));
+	p = xcalloc(1, sizeof(*p));
 	if (!p) {
 		rc = -ENOMEM;
 		goto done;
@@ -338,7 +338,7 @@ static int namespace_has_process(struct lsns_namespace *ns, pid_t pid)
 
 static struct lsns_namespace *add_namespace(struct lsns *ls, int type, ino_t ino)
 {
-	struct lsns_namespace *ns = calloc(1, sizeof(*ns));
+	struct lsns_namespace *ns = xcalloc(1, sizeof(*ns));
 
 	if (!ns)
 		return NULL;

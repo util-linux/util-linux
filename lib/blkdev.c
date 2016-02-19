@@ -150,7 +150,6 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 		int part = -1;
 		struct disklabel lab;
 		struct partition *pp;
-		char ch;
 		struct stat st;
 
 		if ((fstat(fd, &st) >= 0) &&

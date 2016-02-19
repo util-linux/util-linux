@@ -64,7 +64,6 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <sys/stat.h>
-#include <mntent.h>
 #include <getopt.h>
 #include <err.h>
 

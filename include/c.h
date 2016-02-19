@@ -355,4 +355,12 @@ static inline int xusleep(useconds_t usec)
  */
 #define UL_GETPW_BUFSIZ	(16 * 1024)
 
+/*
+ * Darwin or other BSDs may only have MAP_ANON. To get it on Darwin we must
+ * define _DARWIN_C_SOURCE before including sys/mman.h. We do this in config.h.
+ */
+#if !defined MAP_ANONYMOUS && defined MAP_ANON
+# define MAP_ANONYMOUS  (MAP_ANON)
+#endif
+
 #endif /* UTIL_LINUX_C_H */

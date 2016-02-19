@@ -129,7 +129,9 @@ endif
 
 libblkid_la_LDFLAGS = \
 	$(SOLIB_LDFLAGS) \
-	-Wl,--version-script=$(top_srcdir)/libblkid/src/libblkid.sym \
+if HAVE_VSCRIPT
+	$(VSCRIPT_LDFLAGS),$(top_srcdir)/libblkid/src/libblkid.sym \
+endif
 	-version-info $(LIBBLKID_VERSION_INFO)
 
 EXTRA_DIST += \
