@@ -85,7 +85,7 @@ int program;
 char orig_file[FILENAMELEN];	/* original file /etc/passwd or /etc/group */
 char *tmp_file;			/* tmp file */
 
-void pw_error __P((char *, int, int));
+void pw_error (char *, int, int);
 
 static void copyfile(int from, int to)
 {
