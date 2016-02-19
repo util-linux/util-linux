@@ -692,7 +692,7 @@ display_time(const bool hclock_valid, struct timeval hwctime)
 
 		lt = *localtime(&hwctime.tv_sec);
 		zhour = - timezone / 60 / 60;
-		zmin = abs(timezone / 60 % 60);
+		zmin = labs(timezone / 60 % 60);
 		printf(_("%4d-%.2d-%.2d %02d:%02d:%02d.%06ld%+02d:%02d\n"),
 		       lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday, lt.tm_hour,
 		       lt.tm_min, lt.tm_sec, (long)hwctime.tv_usec, zhour, zmin);
