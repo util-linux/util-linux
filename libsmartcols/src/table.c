@@ -572,13 +572,7 @@ err:
  * @tb: table
  * @n: column number (0..N)
  *
- * This is a shortcut for
- *
- *   ln = scols_new_line();
- *   scols_line_set_....(cl, ...);
- *   scols_table_add_line(tb, ln);
- *
- * Returns: a newly allocate line
+ * Returns: a line or NULL
  */
 struct libscols_line *scols_table_get_line(struct libscols_table *tb,
 					   size_t n)

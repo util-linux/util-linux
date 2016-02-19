@@ -801,23 +801,38 @@ static int print_header(struct libscols_table *tb, struct libscols_buffer *buf)
 	return rc;
 }
 
-static int print_table(struct libscols_table *tb, struct libscols_buffer *buf)
+static int print_range(	struct libscols_table *tb,
+			struct libscols_buffer *buf,
+			struct libscols_iter *itr,
+			struct libscols_line *end)
 {
 	int rc = 0;
 	struct libscols_line *ln;
-	struct libscols_iter itr;
 
 	assert(tb);
 
-	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-	while (rc == 0 && scols_table_next_line(tb, &itr, &ln) == 0) {
+	while (rc == 0 && scols_table_next_line(tb, itr, &ln) == 0) {
+
 		fput_line_open(tb);
 		rc = print_line(tb, ln, buf);
-		fput_line_close(tb, scols_iter_is_last(&itr));
+		fput_line_close(tb, scols_iter_is_last(itr));
+
+		if (end && ln == end)
+			break;
 	}
 
 	return rc;
+
 }
+
+static int print_table(struct libscols_table *tb, struct libscols_buffer *buf)
+{
+	struct libscols_iter itr;
+
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+	return print_range(tb, buf, &itr, NULL);
+}
+
 
 static int print_tree_line(struct libscols_table *tb,
 			   struct libscols_line *ln,
@@ -1202,33 +1217,14 @@ static size_t strlen_line(struct libscols_line *ln)
 	return sz;
 }
 
-
-
-/**
- * scols_print_table:
- * @tb: table
- *
- * Prints the table to the output stream.
- *
- * Returns: 0, a negative value in case of an error.
- */
-int scols_print_table(struct libscols_table *tb)
+static int initialize_printting(struct libscols_table *tb, struct libscols_buffer **buf)
 {
-	int rc = 0;
 	size_t bufsz, extra_bufsz = 0;
 	struct libscols_line *ln;
 	struct libscols_iter itr;
-	struct libscols_buffer *buf;
+	int rc;
 
-	if (!tb)
-		return -EINVAL;
-
-	DBG(TAB, ul_debugobj(tb, "printing"));
-
-	if (list_empty(&tb->tb_lines)) {
-		DBG(TAB, ul_debugobj(tb, "ignore -- epmty table"));
-		return 0;
-	}
+	DBG(TAB, ul_debugobj(tb, "initialize printting"));
 
 	if (!tb->symbols)
 		scols_table_set_symbols(tb, NULL);	/* use default */
@@ -1262,7 +1258,9 @@ int scols_print_table(struct libscols_table *tb)
 	case SCOLS_FMT_EXPORT:
 	{
 		struct libscols_column *cl;
+
 		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+
 		while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
 			if (scols_column_is_hidden(cl))
 				continue;
@@ -1275,7 +1273,6 @@ int scols_print_table(struct libscols_table *tb)
 		break;
 	}
 
-
 	/*
 	 * Enlarge buffer if necessary, the buffer should be large enough to
 	 * store line data and tree ascii art (or another decoration).
@@ -1287,15 +1284,86 @@ int scols_print_table(struct libscols_table *tb)
 			bufsz = sz;
 	}
 
-	buf = new_buffer(bufsz + 1);	/* data + space for \0 */
-	if (!buf)
+	*buf = new_buffer(bufsz + 1);	/* data + space for \0 */
+	if (!*buf)
 		return -ENOMEM;
 
 	if (tb->format == SCOLS_FMT_HUMAN) {
-		rc = recount_widths(tb, buf);
+		rc = recount_widths(tb, *buf);
 		if (rc != 0)
-			goto done;
+			goto err;
 	}
+
+	return 0;
+err:
+	free_buffer(*buf);
+	return rc;
+}
+
+/**
+ * scola_table_print_range:
+ * @tb: table
+ * @start: first printed line or NULL to print from the beggin of the table
+ * @end: last printed line or NULL to print all from start.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_table_print_range(	struct libscols_table *tb,
+				struct libscols_line *start,
+				struct libscols_line *end)
+{
+	struct libscols_buffer *buf;
+	struct libscols_iter itr;
+	int rc;
+
+	if (scols_table_is_tree(tb))
+		return -EINVAL;
+
+	DBG(TAB, ul_debugobj(tb, "printing range"));
+
+	rc = initialize_printting(tb, &buf);
+	if (rc)
+		return rc;
+
+	if (start) {
+		itr.direction = SCOLS_ITER_FORWARD;
+		itr.head = &tb->tb_lines;
+		itr.p = &start->ln_lines;
+	} else
+		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+
+	rc = print_range(tb, buf, &itr, end);
+
+	free_buffer(buf);
+	return 0;
+}
+
+/**
+ * scols_print_table:
+ * @tb: table
+ *
+ * Prints the table to the output stream.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_print_table(struct libscols_table *tb)
+{
+	int rc = 0;
+	struct libscols_buffer *buf;
+
+	if (!tb)
+		return -EINVAL;
+
+	DBG(TAB, ul_debugobj(tb, "printing"));
+
+	if (list_empty(&tb->tb_lines)) {
+		DBG(TAB, ul_debugobj(tb, "ignore -- epmty table"));
+		return 0;
+	}
+
+	rc = initialize_printting(tb, &buf);
+	if (rc)
+		return rc;
 
 	fput_table_open(tb);
 

@@ -132,4 +132,5 @@ global:
 	scols_table_get_title;
 	scols_cell_get_flags;
 	scols_cell_set_flags;
+	scols_table_print_range;
 } SMARTCOLS_2.27;
