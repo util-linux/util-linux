@@ -103,6 +103,7 @@ scols_table_enable_export
 scols_table_enable_json
 scols_table_enable_maxout
 scols_table_enable_noheadings
+scols_table_enable_nolinesep
 scols_table_enable_nowrap
 scols_table_enable_raw
 scols_table_get_column

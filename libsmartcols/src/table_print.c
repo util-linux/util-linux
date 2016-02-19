@@ -645,7 +645,8 @@ static void fput_line_close(struct libscols_table *tb, int last)
 			fput_indent(tb);
 		fputs(last ? "}" : "},", tb->out);
 	}
-	fputs(linesep(tb), tb->out);
+	if (!tb->no_linesep)
+		fputs(linesep(tb), tb->out);
 	tb->indent_last_sep = 1;
 }
 
@@ -778,7 +779,8 @@ static int print_header(struct libscols_table *tb, struct libscols_buffer *buf)
 
 	assert(tb);
 
-	if (scols_table_is_noheadings(tb) ||
+	if (tb->header_printed == 1 ||
+	    scols_table_is_noheadings(tb) ||
 	    scols_table_is_export(tb) ||
 	    scols_table_is_json(tb) ||
 	    list_empty(&tb->tb_lines))
@@ -798,6 +800,8 @@ static int print_header(struct libscols_table *tb, struct libscols_buffer *buf)
 
 	if (rc == 0)
 		fputs(linesep(tb), tb->out);
+
+	tb->header_printed = 1;
 	return rc;
 }
 
@@ -1306,6 +1310,9 @@ err:
  * @start: first printed line or NULL to print from the beggin of the table
  * @end: last printed line or NULL to print all from start.
  *
+ * If the start is the first line in the table than prints table header too.
+ * The header is printed only once.
+ *
  * Returns: 0, a negative value in case of an error.
  */
 int scols_table_print_range(	struct libscols_table *tb,
@@ -1332,10 +1339,16 @@ int scols_table_print_range(	struct libscols_table *tb,
 	} else
 		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 
-	rc = print_range(tb, buf, &itr, end);
+	if (itr.p == tb->tb_lines.next) {
+		rc = print_header(tb, buf);
+		if (rc)
+			goto done;
+	}
 
+	rc = print_range(tb, buf, &itr, end);
+done:
 	free_buffer(buf);
-	return 0;
+	return rc;
 }
 
 /**
@@ -1361,6 +1374,7 @@ int scols_print_table(struct libscols_table *tb)
 		return 0;
 	}
 
+	tb->header_printed = 0;
 	rc = initialize_printting(tb, &buf);
 	if (rc)
 		return rc;

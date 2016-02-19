@@ -156,7 +156,9 @@ struct libscols_table {
 			colors_wanted	:1,	/* enable colors */
 			is_term		:1,	/* isatty() */
 			maxout		:1,	/* maximalize output */
+			header_printed  :1,	/* header already printed */
 			no_headings	:1,	/* don't print header */
+			no_linesep	:1,	/* don't print line separator */
 			no_wrap		:1;	/* never wrap lines */
 };
 

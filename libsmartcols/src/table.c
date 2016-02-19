@@ -708,6 +708,27 @@ int scols_table_set_symbols(struct libscols_table *tb,
 }
 
 /**
+ * scols_table_enable_nolinesep
+ * @tb: table
+ * @enable: 1 or 0
+ *
+ * Enable/disable line separator printing. This is usefull if you want to
+ * re-printing the same line more than once (e.g. progress bar). Don't use it
+ * if you're not sure.
+ *
+ * Returns: 0 on success, negative number in case of an error.
+ */
+int scols_table_enable_nolinesep(struct libscols_table *tb, int enable)
+{
+	if (!tb)
+		return -EINVAL;
+
+	DBG(TAB, ul_debugobj(tb, "nolinesep: %s", enable ? "ENABLE" : "DISABLE"));
+	tb->no_linesep = enable;
+	return 0;
+}
+
+/**
  * scols_table_enable_colors:
  * @tb: table
  * @enable: 1 or 0

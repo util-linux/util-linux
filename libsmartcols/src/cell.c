@@ -56,7 +56,7 @@ int scols_reset_cell(struct libscols_cell *ce)
  * @ce: a pointer to a struct libscols_cell instance
  * @str: data (used for scols_print_table())
  *
- * Stores a copy of the @str in @ce.
+ * Stores a copy of the @str in @ce, the old data are deallocated by free().
  *
  * Returns: 0, a negative value in case of an error.
  */
