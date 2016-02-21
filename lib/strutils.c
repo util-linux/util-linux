@@ -298,9 +298,9 @@ int64_t strtos64_or_err(const char *str, const char *errmesg)
 	int64_t num;
 	char *end = NULL;
 
+	errno = 0;
 	if (str == NULL || *str == '\0')
 		goto err;
-	errno = 0;
 	num = strtoimax(str, &end, 10);
 
 	if (errno || str == end || (end && *end))
@@ -308,7 +308,7 @@ int64_t strtos64_or_err(const char *str, const char *errmesg)
 
 	return num;
 err:
-	if (errno)
+	if (errno == ERANGE)
 		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 
 	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
@@ -319,9 +319,9 @@ uint64_t strtou64_or_err(const char *str, const char *errmesg)
 	uintmax_t num;
 	char *end = NULL;
 
+	errno = 0;
 	if (str == NULL || *str == '\0')
 		goto err;
-	errno = 0;
 	num = strtoumax(str, &end, 10);
 
 	if (errno || str == end || (end && *end))
@@ -329,7 +329,7 @@ uint64_t strtou64_or_err(const char *str, const char *errmesg)
 
 	return num;
 err:
-	if (errno)
+	if (errno == ERANGE)
 		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 
 	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
@@ -341,9 +341,9 @@ double strtod_or_err(const char *str, const char *errmesg)
 	double num;
 	char *end = NULL;
 
+	errno = 0;
 	if (str == NULL || *str == '\0')
 		goto err;
-	errno = 0;
 	num = strtod(str, &end);
 
 	if (errno || str == end || (end && *end))
@@ -351,7 +351,7 @@ double strtod_or_err(const char *str, const char *errmesg)
 
 	return num;
 err:
-	if (errno)
+	if (errno == ERANGE)
 		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 
 	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
@@ -362,9 +362,9 @@ long strtol_or_err(const char *str, const char *errmesg)
 	long num;
 	char *end = NULL;
 
+	errno = 0;
 	if (str == NULL || *str == '\0')
 		goto err;
-	errno = 0;
 	num = strtol(str, &end, 10);
 
 	if (errno || str == end || (end && *end))
@@ -372,8 +372,9 @@ long strtol_or_err(const char *str, const char *errmesg)
 
 	return num;
 err:
-	if (errno)
+	if (errno == ERANGE)
 		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
+
 	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 }
 
@@ -382,9 +383,9 @@ unsigned long strtoul_or_err(const char *str, const char *errmesg)
 	unsigned long num;
 	char *end = NULL;
 
+	errno = 0;
 	if (str == NULL || *str == '\0')
 		goto err;
-	errno = 0;
 	num = strtoul(str, &end, 10);
 
 	if (errno || str == end || (end && *end))
@@ -392,7 +393,7 @@ unsigned long strtoul_or_err(const char *str, const char *errmesg)
 
 	return num;
 err:
-	if (errno)
+	if (errno == ERANGE)
 		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 
 	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
