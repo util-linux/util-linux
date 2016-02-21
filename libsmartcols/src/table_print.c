@@ -1352,6 +1352,50 @@ done:
 }
 
 /**
+ * scols_table_print_range_to_string:
+ * @tb: table
+ * @start: first printed line or NULL to print from the beggin of the table
+ * @end: last printed line or NULL to print all from start.
+ * @data: pointer to the beginning of a memory area to print to
+ *
+ * The same as scols_table_print_range(), but prints to @data instead of
+ * stream.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_table_print_range_to_string(	struct libscols_table *tb,
+					struct libscols_line *start,
+					struct libscols_line *end,
+					char **data)
+{
+#ifdef HAVE_OPEN_MEMSTREAM
+	FILE *stream, *old_stream;
+	size_t sz;
+	int rc;
+
+	if (!tb)
+		return -EINVAL;
+
+	DBG(TAB, ul_debugobj(tb, "printing range to string"));
+
+	/* create a stream for output */
+	stream = open_memstream(data, &sz);
+	if (!stream)
+		return -ENOMEM;
+
+	old_stream = scols_table_get_stream(tb);
+	scols_table_set_stream(tb, stream);
+	rc = scols_table_print_range(tb, start, end);
+	fclose(stream);
+	scols_table_set_stream(tb, old_stream);
+
+	return rc;
+#else
+	return -ENOSYS;
+#endif
+}
+
+/**
  * scols_print_table:
  * @tb: table
  *
