@@ -91,7 +91,7 @@ int parse_size(const char *str, uintmax_t *res, int *power)
 
 	if (p == str ||
 	    (errno != 0 && (x == UINTMAX_MAX || x == 0))) {
-		rc = errno ? -errno : -1;
+		rc = errno ? -errno : -EINVAL;
 		goto err;
 	}
 	if (!p || !*p)
@@ -119,7 +119,7 @@ check_suffix:
 			frac = strtoumax(fstr, &p, 0);
 			if (p == fstr ||
 			    (errno != 0 && (frac == UINTMAX_MAX || frac == 0))) {
-				rc = errno ? -errno : -1;
+				rc = errno ? -errno : -EINVAL;
 				goto err;
 			}
 			if (frac && (!p  || !*p)) {
@@ -164,6 +164,8 @@ check_suffix:
 done:
 	*res = x;
 err:
+	if (rc < 0)
+		errno = -rc;
 	return rc;
 }
 
