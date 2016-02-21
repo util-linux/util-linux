@@ -257,9 +257,10 @@ int16_t strtos16_or_err(const char *str, const char *errmesg)
 {
 	int32_t num = strtos32_or_err(str, errmesg);
 
-	if (num < INT16_MIN || num > INT16_MAX)
-		errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-
+	if (num < INT16_MIN || num > INT16_MAX) {
+		errno = ERANGE;
+		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
+	}
 	return num;
 }
 
@@ -267,9 +268,10 @@ uint16_t strtou16_or_err(const char *str, const char *errmesg)
 {
 	uint32_t num = strtou32_or_err(str, errmesg);
 
-	if (num > UINT16_MAX)
-		errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-
+	if (num > UINT16_MAX) {
+		errno = ERANGE;
+		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
+	}
 	return num;
 }
 
@@ -277,9 +279,10 @@ int32_t strtos32_or_err(const char *str, const char *errmesg)
 {
 	int64_t num = strtos64_or_err(str, errmesg);
 
-	if (num < INT32_MIN || num > INT32_MAX)
-		errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-
+	if (num < INT32_MIN || num > INT32_MAX) {
+		errno = ERANGE;
+		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
+	}
 	return num;
 }
 
@@ -287,9 +290,10 @@ uint32_t strtou32_or_err(const char *str, const char *errmesg)
 {
 	uint64_t num = strtou64_or_err(str, errmesg);
 
-	if (num > UINT32_MAX)
-		errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
-
+	if (num > UINT32_MAX) {
+		errno = ERANGE;
+		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
+	}
 	return num;
 }
 
