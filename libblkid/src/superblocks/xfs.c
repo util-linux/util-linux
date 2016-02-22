@@ -241,7 +241,8 @@ static int xlog_valid_rec_header(struct xlog_rec_header *rhead)
 }
 
 /* xlog record header will be in some sector in the first 256k */
-static int probe_xfs_log(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_xfs_log(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	int i;
 	struct xlog_rec_header *rhead;

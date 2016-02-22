@@ -199,7 +199,8 @@ static int find_uberblocks(const void *label, loff_t *ub_offset, int *swap_endia
 /* ZFS has 128x1kB host-endian root blocks, stored in 2 areas at the start
  * of the disk, and 2 areas at the end of the disk.  Check only some of them...
  * #4 (@ 132kB) is the first one written on a new filesystem. */
-static int probe_zfs(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_zfs(blkid_probe pr,
+	const struct blkid_idmag *mag  __attribute__((__unused__)))
 {
 	int swab_endian = 0;
 	struct zfs_uberblock *ub;
