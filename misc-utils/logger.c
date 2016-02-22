@@ -53,6 +53,7 @@
 #include <pwd.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <sys/uio.h>
 
 #include "all-io.h"
 #include "c.h"

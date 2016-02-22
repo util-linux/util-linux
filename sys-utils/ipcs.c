@@ -16,7 +16,6 @@
  */
 
 #include <errno.h>
-#include <features.h>
 #include <getopt.h>
 
 #include "c.h"

@@ -58,7 +58,6 @@
 #include <unistd.h>
 #include <signal.h>
 #include <setjmp.h>
-#include <libgen.h>
 
 #ifdef HAVE_NCURSES_H
 # include <ncurses.h>

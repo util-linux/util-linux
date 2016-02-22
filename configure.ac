@@ -242,7 +242,6 @@ AC_CHECK_HEADERS([ \
 	sys/mount.h \
 	sys/param.h \
 	sys/prctl.h \
-	sys/queue.h \
 	sys/resource.h \
 	sys/socket.h \
 	sys/sockio.h \
