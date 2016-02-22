@@ -78,15 +78,15 @@ endif
 
 test_ttyutils_SOURCES = lib/ttyutils.c
 test_ttyutils_CFLAGS = -DTEST_PROGRAM
-test_ttyutils_LDADD = libcommon.la
+test_ttyutils_LDADD = $(LDADD) libcommon.la
 
 test_blkdev_SOURCES = lib/blkdev.c
 test_blkdev_CFLAGS = -DTEST_PROGRAM_BLKDEV
-test_blkdev_LDADD = libcommon.la
+test_blkdev_LDADD = $(LDADD) libcommon.la
 
 test_ismounted_SOURCES = lib/ismounted.c
 test_ismounted_CFLAGS = -DTEST_PROGRAM
-test_ismounted_LDADD = libcommon.la
+test_ismounted_LDADD = $(LDADD) libcommon.la
 
 test_mangle_SOURCES = lib/mangle.c
 test_mangle_CFLAGS = -DTEST_PROGRAM
@@ -113,7 +113,7 @@ test_cpuset_CFLAGS = -DTEST_PROGRAM
 
 test_sysfs_SOURCES = lib/sysfs.c
 test_sysfs_CFLAGS = -DTEST_PROGRAM_SYSFS
-test_sysfs_LDADD = libcommon.la
+test_sysfs_LDADD = $(LDADD) libcommon.la
 
 test_pager_SOURCES = lib/pager.c
 test_pager_CFLAGS = -DTEST_PROGRAM

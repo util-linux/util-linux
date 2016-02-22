@@ -158,7 +158,7 @@ blkid_tests_ldadd   = libblkid.la
 
 if BUILD_LIBUUID
 blkid_tests_ldflags += libuuid.la
-blkid_tests_ldadd   += $(UUID_LIBS)
+blkid_tests_ldadd   += $(LDADD) $(UUID_LIBS)
 endif
 
 blkid_tests_ldflags += -static
