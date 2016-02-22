@@ -572,7 +572,7 @@ static void print_shm(int shmid, int unit)
 
 	printf(_("\nShared memory Segment shmid=%d\n"), shmid);
 	printf(_("uid=%u\tgid=%u\tcuid=%u\tcgid=%u\n"),
-	       shmdata->shm_perm.uid, shmdata->shm_perm.uid,
+	       shmdata->shm_perm.uid, shmdata->shm_perm.gid,
 	       shmdata->shm_perm.cuid, shmdata->shm_perm.cgid);
 	printf(_("mode=%#o\taccess_perms=%#o\n"), shmdata->shm_perm.mode,
 	       shmdata->shm_perm.mode & 0777);
@@ -602,7 +602,7 @@ void print_msg(int msgid, int unit)
 
 	printf(_("\nMessage Queue msqid=%d\n"), msgid);
 	printf(_("uid=%u\tgid=%u\tcuid=%u\tcgid=%u\tmode=%#o\n"),
-	       msgdata->msg_perm.uid, msgdata->msg_perm.uid,
+	       msgdata->msg_perm.uid, msgdata->msg_perm.gid,
 	       msgdata->msg_perm.cuid, msgdata->msg_perm.cgid,
 	       msgdata->msg_perm.mode);
 	ipc_print_size(unit, unit == IPC_UNIT_HUMAN ? _("csize=") : _("cbytes="),
@@ -635,7 +635,7 @@ static void print_sem(int semid)
 
 	printf(_("\nSemaphore Array semid=%d\n"), semid);
 	printf(_("uid=%u\t gid=%u\t cuid=%u\t cgid=%u\n"),
-	       semdata->sem_perm.uid, semdata->sem_perm.uid,
+	       semdata->sem_perm.uid, semdata->sem_perm.gid,
 	       semdata->sem_perm.cuid, semdata->sem_perm.cgid);
 	printf(_("mode=%#o, access_perms=%#o\n"),
 	       semdata->sem_perm.mode, semdata->sem_perm.mode & 0777);
