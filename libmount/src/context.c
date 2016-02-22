@@ -2412,7 +2412,7 @@ static void lock_fallback(void)
 		mnt_unlock_file(lock);
 }
 
-int test_mount(struct libmnt_test *ts, int argc, char *argv[])
+static int test_mount(struct libmnt_test *ts, int argc, char *argv[])
 {
 	int idx = 1, rc = 0;
 	struct libmnt_context *cxt;
@@ -2462,7 +2462,7 @@ int test_mount(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_umount(struct libmnt_test *ts, int argc, char *argv[])
+static int test_umount(struct libmnt_test *ts, int argc, char *argv[])
 {
 	int idx = 1, rc = 0;
 	struct libmnt_context *cxt;
@@ -2517,7 +2517,7 @@ err:
 	return rc;
 }
 
-int test_flags(struct libmnt_test *ts, int argc, char *argv[])
+static int test_flags(struct libmnt_test *ts, int argc, char *argv[])
 {
 	int idx = 1, rc = 0;
 	struct libmnt_context *cxt;
@@ -2555,7 +2555,7 @@ int test_flags(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_mountall(struct libmnt_test *ts, int argc, char *argv[])
+static int test_mountall(struct libmnt_test *ts, int argc, char *argv[])
 {
 	struct libmnt_context *cxt;
 	struct libmnt_iter *itr;

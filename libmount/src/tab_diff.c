@@ -303,7 +303,7 @@ done:
 
 #ifdef TEST_PROGRAM
 
-int test_diff(struct libmnt_test *ts, int argc, char *argv[])
+static int test_diff(struct libmnt_test *ts, int argc, char *argv[])
 {
 	struct libmnt_table *tb_old = NULL, *tb_new = NULL;
 	struct libmnt_tabdiff *diff = NULL;

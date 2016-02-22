@@ -1373,7 +1373,7 @@ int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp)
 }
 
 #ifdef TEST_PROGRAM
-int test_dump(struct fdisk_test *ts, int argc, char *argv[])
+static int test_dump(struct fdisk_test *ts, int argc, char *argv[])
 {
 	char *devname = argv[1];
 	struct fdisk_context *cxt;
@@ -1392,7 +1392,7 @@ int test_dump(struct fdisk_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_read(struct fdisk_test *ts, int argc, char *argv[])
+static int test_read(struct fdisk_test *ts, int argc, char *argv[])
 {
 	char *filename = argv[1];
 	struct fdisk_script *dp;
@@ -1415,7 +1415,7 @@ int test_read(struct fdisk_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
+static int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
 {
 	char buf[BUFSIZ];
 	struct fdisk_script *dp;
@@ -1450,7 +1450,7 @@ int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_apply(struct fdisk_test *ts, int argc, char *argv[])
+static int test_apply(struct fdisk_test *ts, int argc, char *argv[])
 {
 	char *devname = argv[1], *scriptname = argv[2];
 	struct fdisk_context *cxt;

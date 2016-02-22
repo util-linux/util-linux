@@ -1096,7 +1096,7 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 }
 
 #ifdef TEST_PROGRAM
-int test_match_fstype(struct libmnt_test *ts, int argc, char *argv[])
+static int test_match_fstype(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *type = argv[1];
 	char *pattern = argv[2];
@@ -1105,7 +1105,7 @@ int test_match_fstype(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_match_options(struct libmnt_test *ts, int argc, char *argv[])
+static int test_match_options(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *optstr = argv[1];
 	char *pattern = argv[2];
@@ -1114,7 +1114,7 @@ int test_match_options(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_startswith(struct libmnt_test *ts, int argc, char *argv[])
+static int test_startswith(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *optstr = argv[1];
 	char *pattern = argv[2];
@@ -1123,7 +1123,7 @@ int test_startswith(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_endswith(struct libmnt_test *ts, int argc, char *argv[])
+static int test_endswith(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *optstr = argv[1];
 	char *pattern = argv[2];
@@ -1132,7 +1132,7 @@ int test_endswith(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_appendstr(struct libmnt_test *ts, int argc, char *argv[])
+static int test_appendstr(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *str = strdup(argv[1]);
 	const char *ap = argv[2];
@@ -1144,7 +1144,7 @@ int test_appendstr(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_mountpoint(struct libmnt_test *ts, int argc, char *argv[])
+static int test_mountpoint(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *path = canonicalize_path(argv[1]),
 	     *mnt = path ? mnt_get_mountpoint(path) :  NULL;
@@ -1155,7 +1155,7 @@ int test_mountpoint(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_filesystems(struct libmnt_test *ts, int argc, char *argv[])
+static int test_filesystems(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char **filesystems = NULL;
 	int rc;
@@ -1170,7 +1170,7 @@ int test_filesystems(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_chdir(struct libmnt_test *ts, int argc, char *argv[])
+static int test_chdir(struct libmnt_test *ts, int argc, char *argv[])
 {
 	int rc;
 	char *path = canonicalize_path(argv[1]),
@@ -1189,7 +1189,7 @@ int test_chdir(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_kernel_cmdline(struct libmnt_test *ts, int argc, char *argv[])
+static int test_kernel_cmdline(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *name = argv[1];
 	char *res;
@@ -1207,7 +1207,7 @@ int test_kernel_cmdline(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_mkdir(struct libmnt_test *ts, int argc, char *argv[])
+static int test_mkdir(struct libmnt_test *ts, int argc, char *argv[])
 {
 	int rc;
 
@@ -1219,7 +1219,7 @@ int test_mkdir(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_statfs_type(struct libmnt_test *ts, int argc, char *argv[])
+static int test_statfs_type(struct libmnt_test *ts, int argc, char *argv[])
 {
 	struct statfs vfs;
 	int rc;

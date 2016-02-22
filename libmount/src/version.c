@@ -105,7 +105,7 @@ int mnt_get_library_features(const char ***features)
 }
 
 #ifdef TEST_PROGRAM
-int test_version(struct libmnt_test *ts, int argc, char *argv[])
+static int test_version(struct libmnt_test *ts, int argc, char *argv[])
 {
 	const char *ver;
 	const char **features;

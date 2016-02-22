@@ -1002,7 +1002,7 @@ int fdisk_info_new_partition(
 }
 
 #ifdef TEST_PROGRAM
-int test_ranges(struct fdisk_test *ts, int argc, char *argv[])
+static int test_ranges(struct fdisk_test *ts, int argc, char *argv[])
 {
 	/*                1  -  3,       6,    8, 9,   11    13 */
 	size_t nums[] = { 1, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1 };

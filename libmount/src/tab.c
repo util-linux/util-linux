@@ -1608,7 +1608,7 @@ static int parser_errcb(struct libmnt_table *tb, const char *filename, int line)
 	return 1;	/* all errors are recoverable -- this is the default */
 }
 
-struct libmnt_table *create_table(const char *file, int comments)
+static struct libmnt_table *create_table(const char *file, int comments)
 {
 	struct libmnt_table *tb;
 
@@ -1630,7 +1630,7 @@ err:
 	return NULL;
 }
 
-int test_copy_fs(struct libmnt_test *ts, int argc, char *argv[])
+static int test_copy_fs(struct libmnt_test *ts, int argc, char *argv[])
 {
 	struct libmnt_table *tb;
 	struct libmnt_fs *fs;
@@ -1660,7 +1660,7 @@ done:
 	return rc;
 }
 
-int test_parse(struct libmnt_test *ts, int argc, char *argv[])
+static int test_parse(struct libmnt_test *ts, int argc, char *argv[])
 {
 	struct libmnt_table *tb = NULL;
 	struct libmnt_iter *itr = NULL;
@@ -1696,7 +1696,7 @@ done:
 	return rc;
 }
 
-int test_find(struct libmnt_test *ts, int argc, char *argv[], int dr)
+static int test_find(struct libmnt_test *ts, int argc, char *argv[], int dr)
 {
 	struct libmnt_table *tb;
 	struct libmnt_fs *fs = NULL;
@@ -1738,17 +1738,17 @@ done:
 	return rc;
 }
 
-int test_find_bw(struct libmnt_test *ts, int argc, char *argv[])
+static int test_find_bw(struct libmnt_test *ts, int argc, char *argv[])
 {
 	return test_find(ts, argc, argv, MNT_ITER_BACKWARD);
 }
 
-int test_find_fw(struct libmnt_test *ts, int argc, char *argv[])
+static int test_find_fw(struct libmnt_test *ts, int argc, char *argv[])
 {
 	return test_find(ts, argc, argv, MNT_ITER_FORWARD);
 }
 
-int test_find_pair(struct libmnt_test *ts, int argc, char *argv[])
+static int test_find_pair(struct libmnt_test *ts, int argc, char *argv[])
 {
 	struct libmnt_table *tb;
 	struct libmnt_fs *fs;
@@ -1775,7 +1775,7 @@ done:
 	return rc;
 }
 
-int test_find_mountpoint(struct libmnt_test *ts, int argc, char *argv[])
+static int test_find_mountpoint(struct libmnt_test *ts, int argc, char *argv[])
 {
 	struct libmnt_table *tb;
 	struct libmnt_fs *fs;

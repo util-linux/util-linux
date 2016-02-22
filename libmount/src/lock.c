@@ -566,7 +566,7 @@ struct libmnt_lock *lock;
  * read number from @filename, increment the number and
  * write the number back to the file
  */
-void increment_data(const char *filename, int verbose, int loopno)
+static void increment_data(const char *filename, int verbose, int loopno)
 {
 	long num;
 	FILE *f;
@@ -594,7 +594,7 @@ void increment_data(const char *filename, int verbose, int loopno)
 				filename, num - 1, num, loopno);
 }
 
-void clean_lock(void)
+static void clean_lock(void)
 {
 	if (!lock)
 		return;
@@ -602,12 +602,12 @@ void clean_lock(void)
 	mnt_free_lock(lock);
 }
 
-void __attribute__((__noreturn__)) sig_handler(int sig)
+static void __attribute__((__noreturn__)) sig_handler(int sig)
 {
 	errx(EXIT_FAILURE, "\n%d: catch signal: %s\n", getpid(), strsignal(sig));
 }
 
-int test_lock(struct libmnt_test *ts, int argc, char *argv[])
+static int test_lock(struct libmnt_test *ts, int argc, char *argv[])
 {
 	time_t synctime = 0;
 	unsigned int usecs;
