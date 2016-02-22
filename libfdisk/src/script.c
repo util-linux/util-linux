@@ -1123,7 +1123,7 @@ static int parse_line_valcommas(struct fdisk_script *dp, char *s)
 }
 
 /* modifies @s ! */
-int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
+static int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
 {
 	int rc = 0;
 
