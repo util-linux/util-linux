@@ -17,7 +17,7 @@ mkfs_minix_LDADD = $(LDADD) libcommon.la
 check_PROGRAMS += test_mkfs_minix
 test_mkfs_minix_SOURCES = $(mkfs_minix_SOURCES)
 test_mkfs_minix_LDADD = $(mkfs_minix_LDADD)
-test_mkfs_minix_CFLAGS = -DTEST_SCRIPT
+test_mkfs_minix_CFLAGS = $(AM_CFLAGS) -DTEST_SCRIPT
 endif
 
 
@@ -255,7 +255,7 @@ resizepart_LDADD = $(LDADD) libcommon.la
 partx_SOURCES = \
 	disk-utils/partx.c \
 	disk-utils/partx.h
-partx_CFLAGS = -I$(ul_libblkid_incdir) -I$(ul_libsmartcols_incdir)
+partx_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libsmartcols_incdir)
 partx_LDADD = $(LDADD) libblkid.la libcommon.la libsmartcols.la
 
 endif # BUILD_PARTX

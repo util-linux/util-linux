@@ -117,6 +117,7 @@ libblkid_la_DEPENDENCIES = \
 	libblkid/src/blkid.h.in
 
 libblkid_la_CFLAGS = \
+	$(AM_CFLAGS) \
 	$(SOLIB_CFLAGS) \
 	-I$(ul_libblkid_incdir) \
 	-I$(top_srcdir)/libblkid/src

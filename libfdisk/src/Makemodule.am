@@ -35,6 +35,7 @@ nodist_libfdisk_la_SOURCES = libfdisk/src/fdiskP.h
 libfdisk_la_LIBADD = libcommon.la libuuid.la
 
 libfdisk_la_CFLAGS = \
+	$(AM_CFLAGS) \
 	$(SOLIB_CFLAGS) \
 	-I$(ul_libuuid_incdir) \
 	-I$(ul_libfdisk_incdir) \
