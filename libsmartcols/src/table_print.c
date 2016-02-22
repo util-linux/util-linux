@@ -1339,7 +1339,7 @@ int scols_table_print_range(	struct libscols_table *tb,
 	} else
 		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 
-	if (itr.p == tb->tb_lines.next) {
+	if (!start || itr.p == tb->tb_lines.next) {
 		rc = print_header(tb, buf);
 		if (rc)
 			goto done;
