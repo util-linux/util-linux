@@ -74,6 +74,10 @@ ts_finalize_subtest
 ts_init_subtest "id_with_space"
 logger_fun -t "id_with_space" --id="A B" "message"
 logger_fun -t "rfc5424_id_with_space" --rfc5424 --id="A B" "message"
+logger_fun -t "id_with_space" --id="1 23" "message"
+logger_fun -t "id_with_leading space" --id=" 123" "message"
+logger_fun -t "id_with_trailing space" --id="123 " "message"
+
 ts_finalize_subtest
 
 # should not fail

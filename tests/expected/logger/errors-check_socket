@@ -14,6 +14,13 @@ socket data, id_with_space:
 
 socket data, id_with_space:
 
+socket data, id_with_space:
+
+socket data, id_with_space:
+<13>Feb 13 23:31:30 id_with_leading space[123]: message
+
+socket data, id_with_space:
+
 socket data, tag_with_space:
 <13>Feb 13 23:31:30 A B: tag_with_space
 

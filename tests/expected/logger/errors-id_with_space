@@ -2,3 +2,9 @@ test_logger: failed to parse id: 'A B'
 ret: 1
 test_logger: failed to parse id: 'A B'
 ret: 1
+test_logger: failed to parse id: '1 23'
+ret: 1
+<13>Feb 13 23:31:30 id_with_leading space[123]: message
+ret: 0
+test_logger: failed to parse id: '123 '
+ret: 1
