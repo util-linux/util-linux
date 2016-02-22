@@ -14,6 +14,7 @@
 #endif
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/stat.h>
 
 #ifdef HAVE_SYS_MKDEV_H
 # include <sys/mkdev.h>		/* major and minor on Solaris */
