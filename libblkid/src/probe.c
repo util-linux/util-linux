@@ -390,7 +390,7 @@ static const char *blkid_probe_get_probername(blkid_probe pr)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
 
-	if (chn && chn->idx >= 0 && chn->idx < chn->driver->nidinfos)
+	if (chn && chn->idx >= 0 && (unsigned)chn->idx < chn->driver->nidinfos)
 		return chn->driver->idinfos[chn->idx]->name;
 
 	return NULL;
@@ -904,7 +904,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	else if (S_ISREG(sb.st_mode))
 		devsiz = sb.st_size;	/* regular file */
 
-	pr->size = size ? size : devsiz;
+	pr->size = size ? (uint64_t)size : devsiz;
 
 	if (off && size == 0)
 		/* only offset without size specified */
@@ -1218,7 +1218,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	    offset, offset, len, chn->driver->name, chn->idx, dryrun ? "yes" : "not"));
 
 	l = blkid_llseek(fd, offset, SEEK_SET);
-	if (l == (off_t) -1)
+	if ((blkid_loff_t)l == (off_t) -1)
 		return -1;
 
 	memset(buf, 0, len);

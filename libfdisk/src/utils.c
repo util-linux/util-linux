@@ -30,7 +30,7 @@ static int read_from_device(struct fdisk_context *cxt,
 	}
 
 	r = read(cxt->dev_fd, buf, size);
-	if (r < 0 || r != size) {
+	if (r < 0 || (size_t)r != size) {
 		if (!errno)
 			errno = EINVAL;	/* probably too small file/device */
 		DBG(CXT, ul_debugobj(cxt, "failed to read %zu from offset %ju: %m",

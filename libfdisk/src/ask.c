@@ -361,7 +361,7 @@ static char *mk_string_list(char *ptr, size_t *len, size_t *begin,
 			return ptr;
 		}
 
-		if (*begin + *run == cur) {	/* no gap, continue */
+		if (*begin + *run == (size_t)cur) {	/* no gap, continue */
 			(*run)++;
 			return ptr;
 		}

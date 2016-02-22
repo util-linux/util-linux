@@ -330,7 +330,7 @@ int scols_table_next_column(struct libscols_table *tb,
  */
 int scols_table_get_ncols(struct libscols_table *tb)
 {
-	return tb ? tb->ncols : -EINVAL;
+	return tb ? (int)tb->ncols : -EINVAL;
 }
 
 /**
@@ -341,7 +341,7 @@ int scols_table_get_ncols(struct libscols_table *tb)
  */
 int scols_table_get_nlines(struct libscols_table *tb)
 {
-	return tb ? tb->nlines : -EINVAL;
+	return tb ? (int)tb->nlines : -EINVAL;
 }
 
 /**

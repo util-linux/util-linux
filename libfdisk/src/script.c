@@ -554,7 +554,7 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 		if (fdisk_partition_is_bootable(pa))
 			fprintf(f, ", \"bootable\": true");
 
-		if (ct < fdisk_table_get_nents(dp->table))
+		if ((size_t)ct < fdisk_table_get_nents(dp->table))
 			fputs("},\n", f);
 		else
 			fputs("}\n", f);

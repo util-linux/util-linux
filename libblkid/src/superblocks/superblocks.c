@@ -372,7 +372,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 			continue;
 		}
 
-		if (id->minsz && id->minsz > pr->size) {
+		if (id->minsz && (unsigned)id->minsz > pr->size) {
 			rc = BLKID_PROBE_NONE;
 			continue;	/* the device is too small */
 		}

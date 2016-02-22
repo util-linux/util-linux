@@ -405,7 +405,7 @@ static const char *rfc3164_current_time(void)
 }
 
 #define next_iovec(ary, idx) __extension__ ({		\
-		assert(ARRAY_SIZE(ary) > idx);	\
+		assert(ARRAY_SIZE(ary) > (size_t)idx);	\
 		assert(idx >= 0);			\
 		&ary[idx++];				\
 })

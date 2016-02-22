@@ -810,7 +810,7 @@ static ssize_t read_lba(struct fdisk_context *cxt, uint64_t lba,
 
 	if (lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1)
 		return -1;
-	return read(cxt->dev_fd, buffer, bytes) != bytes;
+	return (size_t)read(cxt->dev_fd, buffer, bytes) != bytes;
 }
 
 

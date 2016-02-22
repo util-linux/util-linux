@@ -148,11 +148,11 @@ static int probe_raid0(blkid_probe pr, uint64_t off)
 
 	size <<= 10;	/* convert KiB to bytes */
 
-	if (pr->size < 0 || (uint64_t) pr->size < size + MD_RESERVED_BYTES)
+	if (pr->size < size + MD_RESERVED_BYTES)
 		/* device is too small */
 		return 1;
 
-	if (off < 0 || (uint64_t) off < size)
+	if (off < size)
 		/* no space before superblock */
 		return 1;
 

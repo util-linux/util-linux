@@ -750,7 +750,7 @@ static int print_title(struct libscols_table *tb)
 			&width, align,
 			0, (int) *tb->symbols->title_padding);
 
-	if (rc == (size_t) -1) {
+	if (rc == -1) {
 		rc = -EINVAL;
 		goto done;
 	}
