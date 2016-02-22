@@ -1057,7 +1057,7 @@ int fdisk_set_size_unit(struct fdisk_context *cxt, int unit)
  *
  * Returns: unit
  */
-int fdisk_get_size_units(struct fdisk_context *cxt)
+int fdisk_get_size_unit(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->sizeunit;
