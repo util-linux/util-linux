@@ -36,7 +36,7 @@ static int probe_drbdproxy_datalog(blkid_probe pr,
 		return errno ? -errno : 1;
 
 	blkid_probe_set_uuid(pr, lh->uuid);
-	blkid_probe_sprintf_version(pr, "v%jd", le64_to_cpu(lh->version));
+	blkid_probe_sprintf_version(pr, "v%"PRIu64, le64_to_cpu(lh->version));
 
 	return 0;
 }

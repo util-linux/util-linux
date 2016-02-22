@@ -543,7 +543,7 @@ static void setup_tables(const struct fs_control *ctl) {
 		errx(MKFS_EX_ERROR,
 		     _("First data block at %jd, which is too far (max %d).\n"
 		       "Try specifying fewer inodes by passing --inodes <num>"),
-		     first_zone_data(),
+		     (intmax_t)first_zone_data(),
 		     MINIX_MAX_INODES);
 	imaps = get_nimaps();
 	zmaps = get_nzmaps();
@@ -563,7 +563,8 @@ static void setup_tables(const struct fs_control *ctl) {
 
 	printf(P_("%lu inode\n", "%lu inodes\n", inodes), inodes);
 	printf(P_("%lu block\n", "%lu blocks\n", zones), zones);
-	printf(_("Firstdatazone=%jd (%jd)\n"), get_first_zone(), first_zone_data());
+	printf(_("Firstdatazone=%jd (%jd)\n"),
+		(intmax_t)get_first_zone(), (intmax_t)first_zone_data());
 	printf(_("Zonesize=%zu\n"), (size_t) MINIX_BLOCK_SIZE << get_zone_size());
 	printf(_("Maxsize=%zu\n\n"),get_max_size());
 }

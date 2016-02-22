@@ -119,7 +119,7 @@ fdisk_sector_t fdisk_align_lba(struct fdisk_context *cxt, fdisk_sector_t lba, in
 				(uintmax_t) res,
 				cxt->grain / cxt->sector_size));
 	else
-		DBG(CXT, ul_debugobj(cxt, "LBA %ju -unchanged-", lba));
+		DBG(CXT, ul_debugobj(cxt, "LBA %ju -unchanged-", (uintmax_t)lba));
 
 	return res;
 }

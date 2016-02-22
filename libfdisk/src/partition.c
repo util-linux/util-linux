@@ -780,16 +780,16 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 		if (fdisk_partition_has_start(pa)) {
 			x = fdisk_cround(cxt, pa->start);
 			rc = pa->start_post ?
-				asprintf(&p, "%ju%c", x, pa->start_post) :
-				asprintf(&p, "%ju", x);
+				asprintf(&p, "%"PRIu64"%c", x, pa->start_post) :
+				asprintf(&p, "%"PRIu64, x);
 		}
 		break;
 	case FDISK_FIELD_END:
 		if (fdisk_partition_has_end(pa)) {
 			x = fdisk_cround(cxt, fdisk_partition_get_end(pa));
 			rc = pa->end_post ?
-					asprintf(&p, "%ju%c", x, pa->end_post) :
-					asprintf(&p, "%ju", x);
+					asprintf(&p, "%"PRIu64"%c", x, pa->end_post) :
+					asprintf(&p, "%"PRIu64, x);
 		}
 		break;
 	case FDISK_FIELD_SIZE:
@@ -798,13 +798,13 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 
 			switch (cxt->sizeunit) {
 			case FDISK_SIZEUNIT_BYTES:
-				rc = asprintf(&p, "%ju", sz);
+				rc = asprintf(&p, "%"PRIu64"", sz);
 				break;
 			case FDISK_SIZEUNIT_HUMAN:
 				if (fdisk_is_details(cxt))
 					rc = pa->size_post ?
-							asprintf(&p, "%ju%c", sz, pa->size_post) :
-							asprintf(&p, "%ju", sz);
+							asprintf(&p, "%"PRIu64"%c", sz, pa->size_post) :
+							asprintf(&p, "%"PRIu64, sz);
 				else {
 					p = size_to_human_string(SIZE_SUFFIX_1LETTER, sz);
 					if (!p)
@@ -818,7 +818,8 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 	{
 		uintmax_t sz = fdisk_partition_has_size(pa) ? pa->size : 0;
 		if (sz)
-			rc = asprintf(&p, "%ju", (sz / (cxt->geom.heads * cxt->geom.sectors)) + 1);
+			/* Why we need to cast that to uintmax_t? */
+			rc = asprintf(&p, "%ju", (uintmax_t)(sz / (cxt->geom.heads * cxt->geom.sectors)) + 1);
 		break;
 	}
 	case FDISK_FIELD_SECTORS:
@@ -826,13 +827,13 @@ int fdisk_partition_to_string(struct fdisk_partition *pa,
 			fdisk_partition_has_size(pa) ? (uintmax_t) pa->size : 0);
 		break;
 	case FDISK_FIELD_BSIZE:
-		rc = asprintf(&p, "%ju", pa->bsize);
+		rc = asprintf(&p, "%"PRIu64, pa->bsize);
 		break;
 	case FDISK_FIELD_FSIZE:
-		rc = asprintf(&p, "%ju", pa->fsize);
+		rc = asprintf(&p, "%"PRIu64, pa->fsize);
 		break;
 	case FDISK_FIELD_CPG:
-		rc = asprintf(&p, "%ju", pa->cpg);
+		rc = asprintf(&p, "%"PRIu64, pa->cpg);
 		break;
 	case FDISK_FIELD_TYPE:
 		p = pa->type && pa->type->name ? strdup(_(pa->type->name)) : NULL;
@@ -971,7 +972,8 @@ static int resize_get_last_possible(
 		    fdisk_partition_is_container(pa))
 			continue;
 
-		DBG(PART, ul_debugobj(pa, "checking start=%ju, size=%ju", pa->start, pa->size));
+		DBG(PART, ul_debugobj(pa, "checking start=%ju, size=%ju",
+		                      (uintmax_t)pa->start, (uintmax_t)pa->size));
 
 		if (!last) {
 			if (start >= pa->start &&  start < pa->start + pa->size) {
@@ -1039,12 +1041,13 @@ static int recount_resize(
 			start += fdisk_partition_get_start(tpl);
 
 		DBG(PART, ul_debugobj(tpl, "resize: moving start %s relative, new start: %ju",
-				tpl->movestart == FDISK_MOVE_DOWN  ? "DOWN" : "UP", start));
+				tpl->movestart == FDISK_MOVE_DOWN  ? "DOWN" : "UP", (uintmax_t)start));
 
 	/* 1b) set new start - absolute number */
 	} else if (fdisk_partition_has_start(tpl)) {
 		start = fdisk_partition_get_start(tpl);
-		DBG(PART, ul_debugobj(tpl, "resize: moving start to absolute offset: %ju", start));
+		DBG(PART, ul_debugobj(tpl, "resize: moving start to absolute offset: %ju",
+		                      (uintmax_t)start));
 	}
 
 	/* 2) verify that start is within the current partition or any freespace area */

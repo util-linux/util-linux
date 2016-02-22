@@ -1201,7 +1201,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		if (stop > start)
 			stop -= 1;
 		DBG(LABEL, ul_debug("DOS: don't align end os tiny partition [start=%ju, stop=%ju, grain=%lu]",
-			   start, stop, cxt->grain));
+			    (uintmax_t)start,  (uintmax_t)stop, cxt->grain));
 	}
 
 	if (stop < limit) {

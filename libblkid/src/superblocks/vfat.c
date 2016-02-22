@@ -15,6 +15,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 #include "pt-mbr.h"
 #include "superblocks.h"
@@ -125,7 +126,7 @@ static unsigned char *search_fat_label(blkid_probe pr,
 	uint32_t i;
 
 	DBG(LOWPROBE, ul_debug("\tlook for label in root-dir "
-			"(entries: %d, offset: %jd)", entries, offset));
+			"(entries: %"PRIu32", offset: %"PRIu64")", entries, offset));
 
 	if (!blkid_probe_is_tiny(pr)) {
 		/* large disk, read whole root directory */

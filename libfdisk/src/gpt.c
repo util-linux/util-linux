@@ -621,7 +621,8 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 		if (rc < 0)
 			return rc;
 
-		DBG(LABEL, ul_debug("FirstLBA: script=%ju, uefi=%ju, topology=%ju.", *first, flba, cxt->first_lba));
+		DBG(LABEL, ul_debug("FirstLBA: script=%"PRIu64", uefi=%"PRIu64", topology=%ju.",
+		                    *first, flba,  (uintmax_t)cxt->first_lba));
 
 		if (rc == 0 && (*first < flba || *first > llba)) {
 			fdisk_warnx(cxt, _("First LBA specified by script is out of range."));
@@ -632,7 +633,8 @@ static int count_first_last_lba(struct fdisk_context *cxt,
 		if (rc < 0)
 			return rc;
 
-		DBG(LABEL, ul_debug("LastLBA: script=%ju, uefi=%ju, topology=%ju.", *last, llba, cxt->last_lba));
+		DBG(LABEL, ul_debug("LastLBA: script=%"PRIu64", uefi=%"PRIu64", topology=%ju.",
+		                    *last, llba,  (uintmax_t)cxt->last_lba));
 
 		if (rc == 0 && (*last > llba || *last < flba)) {
 			fdisk_warnx(cxt, _("Last LBA specified by script is out of range."));
@@ -799,7 +801,7 @@ static uint64_t last_lba(struct fdisk_context *cxt)
 	else
 		fdisk_warnx(cxt, _("gpt: cannot handle files with mode %o"), s.st_mode);
 
-	DBG(LABEL, ul_debug("GPT last LBA: %ju", sectors));
+	DBG(LABEL, ul_debug("GPT last LBA: %"PRIu64"", sectors));
 	return sectors;
 }
 
@@ -1024,13 +1026,13 @@ static struct gpt_header *gpt_read_header(struct fdisk_context *cxt,
 	else
 		free(ents);
 
-	DBG(LABEL, ul_debug("found valid GPT Header on LBA %ju", lba));
+	DBG(LABEL, ul_debug("found valid GPT Header on LBA %"PRIu64"", lba));
 	return header;
 invalid:
 	free(header);
 	free(ents);
 
-	DBG(LABEL, ul_debug("read GPT Header on LBA %ju failed", lba));
+	DBG(LABEL, ul_debug("read GPT Header on LBA %"PRIu64" failed", lba));
 	return NULL;
 }
 
@@ -2141,14 +2143,14 @@ static int gpt_add_partition(
 
 		do {
 			uint64_t x;
-			DBG(LABEL, ul_debug("testing first sector %ju", disk_f));
+			DBG(LABEL, ul_debug("testing first sector %"PRIu64"", disk_f));
 			disk_f = find_first_available(pheader, ents, disk_f);
 			if (!disk_f)
 				break;
 			x = find_last_free(pheader, ents, disk_f);
 			if (x - disk_f >= cxt->grain / cxt->sector_size)
 				break;
-			DBG(LABEL, ul_debug("first sector %ju addresses to small space, continue...", disk_f));
+			DBG(LABEL, ul_debug("first sector %"PRIu64" addresses to small space, continue...", disk_f));
 			disk_f = x + 1;
 		} while(1);
 
@@ -2170,9 +2172,9 @@ static int gpt_add_partition(
 		user_f = dflt_f;
 
 	} else if (pa && fdisk_partition_has_start(pa)) {
-		DBG(LABEL, ul_debug("first sector defined: %ju", pa->start));
+		DBG(LABEL, ul_debug("first sector defined: %ju",  (uintmax_t)pa->start));
 		if (pa->start != find_first_available(pheader, ents, pa->start)) {
-			fdisk_warnx(cxt, _("Sector %ju already used."), pa->start);
+			fdisk_warnx(cxt, _("Sector %ju already used."),  (uintmax_t)pa->start);
 			return -ERANGE;
 		}
 		user_f = pa->start;
@@ -2213,8 +2215,8 @@ static int gpt_add_partition(
 
 	} else if (pa && fdisk_partition_has_size(pa)) {
 		user_l = user_f + pa->size - 1;
-		DBG(LABEL, ul_debug("size defined: %ju, end: %ju (last possible: %ju)",
-					pa->size, user_l, dflt_l));
+		DBG(LABEL, ul_debug("size defined: %ju, end: %"PRIu64" (last possible: %"PRIu64")",
+					 (uintmax_t)pa->size, user_l, dflt_l));
 		if (user_l != dflt_l && !pa->size_explicit
 		    && user_l - user_f > (cxt->grain / fdisk_get_sector_size(cxt))) {
 			user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l);
@@ -2308,7 +2310,7 @@ static int gpt_add_partition(
 	if (pa && pa->attrs)
 		gpt_entry_attrs_from_string(cxt, e, pa->attrs);
 
-	DBG(LABEL, ul_debug("GPT new partition: partno=%zu, start=%ju, end=%ju, size=%ju",
+	DBG(LABEL, ul_debug("GPT new partition: partno=%zu, start=%"PRIu64", end=%"PRIu64", size=%"PRIu64"",
 				partnum,
 				gpt_partition_start(e),
 				gpt_partition_end(e),

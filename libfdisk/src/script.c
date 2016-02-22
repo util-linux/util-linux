@@ -405,7 +405,7 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 
 		rc = fdisk_get_disklabel_item(cxt, GPT_LABELITEM_FIRSTLBA, &item);
 		if (rc == 0) {
-			snprintf(buf, sizeof(buf), "%ju", item.data.num64);
+			snprintf(buf, sizeof(buf), "%"PRIu64, item.data.num64);
 			rc = fdisk_script_set_header(dp, "first-lba", buf);
 		}
 		if (rc < 0)
@@ -413,7 +413,7 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 
 		rc = fdisk_get_disklabel_item(cxt, GPT_LABELITEM_LASTLBA, &item);
 		if (rc == 0) {
-			snprintf(buf, sizeof(buf), "%ju", item.data.num64);
+			snprintf(buf, sizeof(buf), "%"PRIu64, item.data.num64);
 			rc = fdisk_script_set_header(dp, "last-lba", buf);
 		}
 		if (rc < 0)
@@ -528,9 +528,9 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 		}
 
 		if (fdisk_partition_has_start(pa))
-			fprintf(f, ", \"start\": %ju", pa->start);
+			fprintf(f, ", \"start\": %ju", (uintmax_t)pa->start);
 		if (fdisk_partition_has_size(pa))
-			fprintf(f, ", \"size\": %ju", pa->size);
+			fprintf(f, ", \"size\": %ju", (uintmax_t)pa->size);
 
 		if (pa->type && fdisk_parttype_get_string(pa->type))
 			fprintf(f, ", \"type\": \"%s\"", fdisk_parttype_get_string(pa->type));
@@ -614,9 +614,9 @@ static int write_file_sfdisk(struct fdisk_script *dp, FILE *f)
 			fprintf(f, "%zu :", pa->partno + 1);
 
 		if (fdisk_partition_has_start(pa))
-			fprintf(f, " start=%12ju", pa->start);
+			fprintf(f, " start=%12ju", (uintmax_t)pa->start);
 		if (fdisk_partition_has_size(pa))
-			fprintf(f, ", size=%12ju", pa->size);
+			fprintf(f, ", size=%12ju", (uintmax_t)pa->size);
 
 		if (pa->type && fdisk_parttype_get_string(pa->type))
 			fprintf(f, ", type=%s", fdisk_parttype_get_string(pa->type));
@@ -1437,8 +1437,8 @@ static int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
 		if (rc == 0) {
 			pa = fdisk_table_get_partition(dp->table, n);
 			printf(" #%zu  %12ju %12ju\n",	n + 1,
-						fdisk_partition_get_start(pa),
-						fdisk_partition_get_size(pa));
+						(uintmax_t)fdisk_partition_get_start(pa),
+						(uintmax_t)fdisk_partition_get_size(pa));
 		}
 	} while (rc == 0);
 
@@ -1479,8 +1479,8 @@ static int test_apply(struct fdisk_test *ts, int argc, char *argv[])
 	itr = fdisk_new_iter(FDISK_ITER_FORWARD);
 	while (fdisk_table_next_partition(tb, itr, &pa) == 0) {
 		printf(" #%zu  %12ju %12ju\n",	fdisk_partition_get_partno(pa),
-						fdisk_partition_get_start(pa),
-						fdisk_partition_get_size(pa));
+						(uintmax_t)fdisk_partition_get_start(pa),
+						(uintmax_t)fdisk_partition_get_size(pa));
 	}
 
 done:

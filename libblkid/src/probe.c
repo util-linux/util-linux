@@ -607,7 +607,7 @@ static struct blkid_bufinfo *mmap_buffer(blkid_probe pr, uint64_t real_off, uint
 
 	/* begin of the device */
 	if (real_off == 0 || real_off + len < PROBE_MMAP_BEGINSIZ) {
-		DBG(BUFFER, ul_debug("\tmapping begin of the device (max size: %ju)", pr->size));
+		DBG(BUFFER, ul_debug("\tmapping begin of the device (max size: %"PRIu64")", pr->size));
 		map_off = 0;
 		map_len = PROBE_MMAP_BEGINSIZ > pr->size ? pr->size : PROBE_MMAP_BEGINSIZ;
 
@@ -615,7 +615,7 @@ static struct blkid_bufinfo *mmap_buffer(blkid_probe pr, uint64_t real_off, uint
 	/* end of the device */
 	} else if (real_off > pr->off + pr->size - PROBE_MMAP_ENDSIZ) {
 		DBG(BUFFER, ul_debug("\tmapping end of the device (probing area: "
-					"off=%ju, size=%ju)", pr->off, pr->size));
+					"off=%"PRIu64", size=%"PRIu64")", pr->off, pr->size));
 
 		map_off = PROBE_ALIGN_OFF(pr, pr->off + pr->size - PROBE_MMAP_ENDSIZ);
 		map_len = pr->off + pr->size - map_off;
@@ -655,7 +655,7 @@ static struct blkid_bufinfo *mmap_buffer(blkid_probe pr, uint64_t real_off, uint
 	bf->len = map_len;
 	INIT_LIST_HEAD(&bf->bufs);
 
-	DBG(BUFFER, ul_debug("\tmmap  %p: off=%ju, len=%ju (%ju pages)",
+	DBG(BUFFER, ul_debug("\tmmap  %p: off=%"PRIu64", len=%"PRIu64" (%"PRIu64" pages)",
 				bf->data, map_off, map_len, map_len / pr->mmap_granularity));
 	return bf;
 }
@@ -688,7 +688,8 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint
 	bf->off = real_off;
 	INIT_LIST_HEAD(&bf->bufs);
 
-	DBG(LOWPROBE, ul_debug("\tread %p: off=%ju len=%ju", bf->data, real_off, len));
+	DBG(LOWPROBE, ul_debug("\tread %p: off=%"PRIu64" len=%"PRIu64"",
+	                       bf->data, real_off, len));
 
 	ret = read(pr->fd, bf->data, len);
 	if (ret != (ssize_t) len) {
@@ -749,7 +750,7 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len
 				list_entry(p, struct blkid_bufinfo, bufs);
 
 		if (real_off >= x->off && real_off + len <= x->off + x->len) {
-			DBG(BUFFER, ul_debug("\treuse %p: off=%ju len=%ju (for off=%ju len=%ju)",
+			DBG(BUFFER, ul_debug("\treuse %p: off=%"PRIu64" len=%"PRIu64" (for off=%"PRIu64" len=%"PRIu64")",
 						x->data, x->off, x->len, real_off, len));
 			bf = x;
 			break;
@@ -791,14 +792,15 @@ static void blkid_probe_reset_buffer(blkid_probe pr)
 		len += bf->len;
 		list_del(&bf->bufs);
 
-		DBG(BUFFER, ul_debug(" remove buffer: %p [off=%ju, len=%ju]", bf->data, bf->off, bf->len));
+		DBG(BUFFER, ul_debug(" remove buffer: %p [off=%"PRIu64", len=%"PRIu64"]",
+		                     bf->data, bf->off, bf->len));
 
 		if (probe_is_mmap_wanted(pr))
 			munmap(bf->data, bf->len);
 		free(bf);
 	}
 
-	DBG(LOWPROBE, ul_debug(" buffers summary: %ju bytes by %ju read/mmap() calls",
+	DBG(LOWPROBE, ul_debug(" buffers summary: %"PRIu64" bytes by %"PRIu64" read/mmap() calls",
 			len, ct));
 
 	INIT_LIST_HEAD(&pr->buffers);
@@ -932,7 +934,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		pr->flags |= BLKID_FL_CDROM_DEV;
 #endif
 
-	DBG(LOWPROBE, ul_debug("ready for low-probing, offset=%ju, size=%ju",
+	DBG(LOWPROBE, ul_debug("ready for low-probing, offset=%"PRIu64", size=%"PRIu64"",
 				pr->off, pr->size));
 	DBG(LOWPROBE, ul_debug("whole-disk: %s, regfile: %s",
 		blkid_probe_is_wholedisk(pr) ?"YES" : "NO",
@@ -961,8 +963,8 @@ int blkid_probe_set_dimension(blkid_probe pr, uint64_t off, uint64_t size)
 		return -1;
 
 	DBG(LOWPROBE, ul_debug(
-		"changing probing area pr=%p: size=%ju, off=%ju "
-		"-to-> size=%ju, off=%ju",
+		"changing probing area pr=%p: size=%"PRIu64", off=%"PRIu64" "
+		"-to-> size=%"PRIu64", off=%"PRIu64"",
 		pr, pr->size, pr->off, size, off));
 
 	pr->off = off;
@@ -1214,7 +1216,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 		len = sizeof(buf);
 
 	DBG(LOWPROBE, ul_debug(
-	    "do_wipe [offset=0x%jx (%ju), len=%zd, chain=%s, idx=%d, dryrun=%s]\n",
+	    "do_wipe [offset=0x%"PRIx64" (%"PRIu64"), len=%zu, chain=%s, idx=%d, dryrun=%s]\n",
 	    offset, offset, len, chn->driver->name, chn->idx, dryrun ? "yes" : "not"));
 
 	l = blkid_llseek(fd, offset, SEEK_SET);
@@ -1577,7 +1579,7 @@ int blkid_probe_verify_csum(blkid_probe pr, uint64_t csum, uint64_t expected)
 
 		DBG(LOWPROBE, ul_debug(
 				"incorrect checksum for type %s,"
-				" got %jX, expected %jX",
+				" got %"PRIX64", expected %"PRIX64"",
 				blkid_probe_get_probername(pr),
 				csum, expected));
 		/*
@@ -1996,7 +1998,7 @@ void blkid_probe_set_wiper(blkid_probe pr, uint64_t off, uint64_t size)
 	pr->wipe_chain = chn;
 
 	DBG(LOWPROBE,
-		ul_debug("wiper set to %s::%s off=%jd size=%jd",
+		ul_debug("wiper set to %s::%s off=%"PRIu64" size=%"PRIu64"",
 			chn->driver->name,
 			chn->driver->idinfos[chn->idx]->name,
 			pr->wipe_off, pr->wipe_size));

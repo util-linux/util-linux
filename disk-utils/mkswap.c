@@ -443,7 +443,7 @@ int main(int argc, char **argv)
 	else if (ctl.npages > sz && !ctl.force)
 		errx(EXIT_FAILURE,
 			_("error: "
-			  "size %llu KiB is larger than device size %ju KiB"),
+			  "size %llu KiB is larger than device size %"PRIu64" KiB"),
 			ctl.npages * (ctl.pagesize / 1024), sz * (ctl.pagesize / 1024));
 
 	if (ctl.npages < MIN_GOODPAGES)
@@ -489,7 +489,7 @@ int main(int argc, char **argv)
 	sz = (ctl.npages - ctl.nbadpages - 1) * ctl.pagesize;
 	strsz = size_to_human_string(SIZE_SUFFIX_SPACE | SIZE_SUFFIX_3LETTER, sz);
 
-	printf(_("Setting up swapspace version %d, size = %s (%ju bytes)\n"),
+	printf(_("Setting up swapspace version %d, size = %s (%"PRIu64" bytes)\n"),
 		version, strsz, sz);
 	free(strsz);
 

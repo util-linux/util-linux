@@ -194,7 +194,7 @@ static int ask_number(struct fdisk_context *cxt,
 	assert(q);
 
 	DBG(ASK, ul_debug("asking for number "
-			"['%s', <%ju,%ju>, default=%ju, range: %s]",
+			"['%s', <%"PRIu64",%"PRIu64">, default=%"PRIu64", range: %s]",
 			q, low, high, dflt, range));
 
 	if (range && dflt >= low && dflt <= high) {
@@ -202,7 +202,7 @@ static int ask_number(struct fdisk_context *cxt,
 			snprintf(prompt, sizeof(prompt), _("%s (%s, default %c): "),
 					q, range, tochar(dflt));
 		else
-			snprintf(prompt, sizeof(prompt), _("%s (%s, default %ju): "),
+			snprintf(prompt, sizeof(prompt), _("%s (%s, default %"PRIu64"): "),
 					q, range, dflt);
 
 	} else if (dflt >= low && dflt <= high) {
@@ -210,13 +210,14 @@ static int ask_number(struct fdisk_context *cxt,
 			snprintf(prompt, sizeof(prompt), _("%s (%c-%c, default %c): "),
 					q, tochar(low), tochar(high), tochar(dflt));
 		else
-			snprintf(prompt, sizeof(prompt), _("%s (%ju-%ju, default %ju): "),
+			snprintf(prompt, sizeof(prompt),
+					_("%s (%"PRIu64"-%"PRIu64", default %"PRIu64"): "),
 					q, low, high, dflt);
 	} else if (inchar)
 		snprintf(prompt, sizeof(prompt), _("%s (%c-%c): "),
 				q, tochar(low), tochar(high));
 	else
-		snprintf(prompt, sizeof(prompt), _("%s (%ju-%ju): "),
+		snprintf(prompt, sizeof(prompt), _("%s (%"PRIu64"-%"PRIu64"): "),
 				q, low, high);
 
 	do {
@@ -264,15 +265,19 @@ static int ask_offset(struct fdisk_context *cxt,
 
 	assert(q);
 
-	DBG(ASK, ul_debug("asking for offset ['%s', <%ju,%ju>, base=%ju, default=%ju, range: %s]",
+	DBG(ASK, ul_debug("asking for offset ['%s', <%"PRIu64",%"PRIu64">, base=%"PRIu64", default=%"PRIu64", range: %s]",
 				q, low, high, base, dflt, range));
 
 	if (range && dflt >= low && dflt <= high)
-		snprintf(prompt, sizeof(prompt), _("%s (%s, default %ju): "), q, range, dflt);
+		snprintf(prompt, sizeof(prompt), _("%s (%s, default %"PRIu64"): "),
+		         q, range, dflt);
 	else if (dflt >= low && dflt <= high)
-		snprintf(prompt, sizeof(prompt), _("%s (%ju-%ju, default %ju): "), q, low, high, dflt);
+		snprintf(prompt, sizeof(prompt),
+		         _("%s (%"PRIu64"-%"PRIu64", default %"PRIu64"): "),
+		         q, low, high, dflt);
 	else
-		snprintf(prompt, sizeof(prompt), _("%s (%ju-%ju): "), q, low, high);
+		snprintf(prompt, sizeof(prompt), _("%s (%"PRIu64"-%"PRIu64"): "),
+		         q, low, high);
 
 	do {
 		uintmax_t num = 0;
@@ -629,7 +634,7 @@ static void dump_buffer(off_t base, unsigned char *buf, size_t sz, int all)
 		if (l == 0) {
 			if (all == 0 && !next)
 				next = skip_empty(buf, i, sz);
-			printf("%08jx ", base + i);
+			printf("%08jx ", (intmax_t)base + i);
 		}
 		printf(" %02x", buf[i]);
 		if (l == 7)				/* words separator */
@@ -653,7 +658,7 @@ static void dump_blkdev(struct fdisk_context *cxt, const char *name,
 {
 	int fd = fdisk_get_devfd(cxt);
 
-	fdisk_info(cxt, _("\n%s: offset = %ju, size = %zu bytes."),
+	fdisk_info(cxt, _("\n%s: offset = %"PRIu64", size = %zu bytes."),
 			name, offset, size);
 
 	assert(fd >= 0);

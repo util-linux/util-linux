@@ -789,9 +789,9 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 				"%d", blkid_partition_get_partno(par));
 
 		blkid_probe_sprintf_value(pr, "PART_ENTRY_OFFSET", "%jd",
-				blkid_partition_get_start(par));
+				(intmax_t)blkid_partition_get_start(par));
 		blkid_probe_sprintf_value(pr, "PART_ENTRY_SIZE", "%jd",
-				blkid_partition_get_size(par));
+				(intmax_t)blkid_partition_get_size(par));
 
 		blkid_probe_sprintf_value(pr, "PART_ENTRY_DISK", "%u:%u",
 				major(disk), minor(disk));
@@ -820,7 +820,7 @@ int blkid_probe_is_covered_by_pt(blkid_probe pr,
 	int nparts, i, rc = 0;
 
 	DBG(LOWPROBE, ul_debug(
-		"=> checking if off=%jd size=%jd covered by PT",
+		"=> checking if off=%"PRIu64" size=%"PRIu64" covered by PT",
 		offset, size));
 
 	if (pr->flags & BLKID_FL_NOSCAN_DEV)

@@ -278,7 +278,7 @@ static void backup_sectors(struct sfdisk *sf,
 	devfd = fdisk_get_devfd(sf->cxt);
 	assert(devfd >= 0);
 
-	xasprintf(&fname, "%s0x%08jx.bak", tpl, offset);
+	xasprintf(&fname, "%s0x%08"PRIx64".bak", tpl, offset);
 
 	fd = open(fname, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
 	if (fd < 0)
@@ -421,7 +421,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 		step--;
 
 	step_bytes = step * ss;
-	DBG(MISC, ul_debug(" step: %ju (%ju bytes)", step, step_bytes));
+	DBG(MISC, ul_debug(" step: %ju (%zu bytes)", (uintmax_t)step, step_bytes));
 
 #if defined(POSIX_FADV_SEQUENTIAL) && defined(HAVE_POSIX_FADVISE)
 	if (!backward)
@@ -437,7 +437,7 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 		color_disable();
 		fdisk_info(sf->cxt, _(" typescript file: %s"), typescript);
 		printf(_(" old start: %ju, new start: %ju (move %ju sectors)\n"),
-			(uintmax_t) from, (uintmax_t) to, nsectors);
+			(uintmax_t) from, (uintmax_t) to, (uintmax_t) nsectors);
 		fflush(stdout);
 	}
 
@@ -459,12 +459,15 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	fprintf(f, "# Disk: %s\n", devname);
 	fprintf(f, "# Partition: %zu\n", partno + 1);
 	fprintf(f, "# Operation: move data\n");
-	fprintf(f, "# Original start offset (sectors/bytes): %ju/%ju\n", from, from * ss);
-	fprintf(f, "# New start offset (sectors/bytes): %ju/%ju\n", to, to * ss);
-	fprintf(f, "# Area size (sectors/bytes): %ju/%ju\n", nsectors, nsectors * ss);
+	fprintf(f, "# Original start offset (sectors/bytes): %ju/%ju\n",
+	        (uintmax_t)from, (uintmax_t)from * ss);
+	fprintf(f, "# New start offset (sectors/bytes): %ju/%ju\n",
+	        (uintmax_t)to, (uintmax_t)to * ss);
+	fprintf(f, "# Area size (sectors/bytes): %ju/%ju\n",
+	        (uintmax_t)nsectors, (uintmax_t)nsectors * ss);
 	fprintf(f, "# Sector size: %zu\n", ss);
 	fprintf(f, "# Step size (in bytes): %zu\n", step_bytes);
-	fprintf(f, "# Steps: %zu\n", nsectors / step);
+	fprintf(f, "# Steps: %ju\n", (uintmax_t)(nsectors / step));
 	fprintf(f, "#\n");
 	fprintf(f, "# <step>: <from> <to> (step offsets in bytes)\n");
 
