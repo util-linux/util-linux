@@ -2564,7 +2564,8 @@ static int gpt_toggle_partition_flag(
 		unsigned long flag)
 {
 	struct fdisk_gpt_label *gpt;
-	uint64_t attrs, tmp;
+	uint64_t attrs;
+	uintmax_t tmp;
 	char *bits;
 	const char *name = NULL;
 	int bit = -1, rc;
