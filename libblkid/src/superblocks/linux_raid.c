@@ -212,7 +212,7 @@ static int probe_raid1(blkid_probe pr, off_t off)
 	return 0;
 }
 
-int probe_raid(blkid_probe pr,
+static int probe_raid(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	const char *ver = NULL;

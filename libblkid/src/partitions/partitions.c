@@ -481,7 +481,7 @@ int blkid_partlist_increment_partno(blkid_partlist ls)
 }
 
 /* allows to set "parent" for the next nested partition */
-int blkid_partlist_set_parent(blkid_partlist ls, blkid_partition par)
+static int blkid_partlist_set_parent(blkid_partlist ls, blkid_partition par)
 {
 	if (!ls)
 		return -1;
