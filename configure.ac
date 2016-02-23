@@ -256,6 +256,8 @@ AC_CHECK_HEADERS([ \
 	sys/ucred.h \
 	sys/un.h \
 	unistd.h \
+	shadow.h \
+	utmp.h \
 ])
 
 AC_CHECK_HEADERS([security/pam_misc.h],
@@ -285,6 +287,8 @@ have_linux_watchdog_h=$ac_cv_header_linux_watchdog_h
 have_security_pam_appl_h=$ac_cv_header_security_pam_appl_h
 have_security_pam_misc_h=$ac_cv_header_security_pam_misc_h
 have_security_openpam_h=$ac_cv_header_security_openpam_h
+have_shadow_h=$ac_cv_header_shadow_h
+have_utmp_h=$ac_cv_header_utmp_h
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <time.h>
@@ -1202,9 +1206,10 @@ AM_CONDITIONAL([BUILD_EJECT], [test "x$build_eject" = xyes])
 
 AC_ARG_ENABLE([agetty],
   AS_HELP_STRING([--disable-agetty], [do not build agetty]),
-  [], [UL_DEFAULT_ENABLE([agetty], [yes])]
+  [], [UL_DEFAULT_ENABLE([agetty], [check])]
 )
 UL_BUILD_INIT([agetty])
+UL_REQUIRES_HAVE([agetty], [utmp_h], [utmp.h header])
 AM_CONDITIONAL([BUILD_AGETTY], [test "x$build_agetty" = xyes])
 AS_IF([test "x$have_futimens" = xyes -a "x$have_inotify_init1" = xyes ], [
   AC_DEFINE([AGETTY_RELOAD], [1], [Enable agetty --reload feature])
@@ -1305,6 +1310,8 @@ AM_CONDITIONAL([BUILD_LSCPU], [test "x$build_lscpu" = xyes])
 
 UL_BUILD_INIT([lslogins], [check])
 UL_REQUIRES_BUILD([lslogins], [libsmartcols])
+UL_REQUIRES_HAVE([lslogins], [shadow_h], [shadow.h header])
+UL_REQUIRES_HAVE([lslogins], [utmp_h], [utmp.h header])
 AM_CONDITIONAL([BUILD_LSLOGINS], [test "x$build_lslogins" = xyes])
 
 
@@ -1524,14 +1531,16 @@ AC_ARG_ENABLE([last],
   [], [UL_DEFAULT_ENABLE([last], [check])]
 )
 UL_BUILD_INIT([last])
+UL_REQUIRES_HAVE([last], [utmp_h], [utmp.h header])
 AM_CONDITIONAL([BUILD_LAST], [test "x$build_last" = xyes])
 
 
 AC_ARG_ENABLE([utmpdump],
   AS_HELP_STRING([--disable-utmpdump], [do not build utmpdump]),
-  [], [UL_DEFAULT_ENABLE([utmpdump], [yes])]
+  [], [UL_DEFAULT_ENABLE([utmpdump], [check])]
 )
 UL_BUILD_INIT([utmpdump])
+UL_REQUIRES_HAVE([utmpdump], [utmp_h], [utmp.h header])
 AM_CONDITIONAL([BUILD_UTMPDUMP], [test "x$build_utmpdump" = xyes])
 
 
@@ -1582,6 +1591,7 @@ AC_ARG_ENABLE([vipw],
   [], [UL_DEFAULT_ENABLE([vipw], [no])]
 )
 UL_BUILD_INIT([vipw])
+UL_REQUIRES_HAVE([vipw], [shadow_h], [shadow.h header])
 AM_CONDITIONAL([BUILD_VIPW], [test "x$build_vipw" = xyes])
 
 
@@ -1623,6 +1633,7 @@ AC_ARG_ENABLE([chfn-chsh],
   [], [UL_DEFAULT_ENABLE([chfn_chsh], [check])]
 )
 UL_BUILD_INIT([chfn_chsh])
+UL_REQUIRES_HAVE([chfn_chsh], [shadow_h], [shadow.h header])
 
 AS_IF([test "x$enable_chfn_chsh_password" = xyes -o "x$have_user" = xyes], [
   UL_REQUIRES_HAVE([chfn_chsh], [security_pam_appl_h], [PAM header file])
@@ -1648,6 +1659,7 @@ AC_ARG_ENABLE([login],
 UL_BUILD_INIT([login])
 UL_REQUIRES_HAVE([login], [security_pam_appl_h], [PAM header file])
 UL_REQUIRES_HAVE([login], [security_pam_misc_h, security_openpam_h], [PAM conversation functions])
+UL_REQUIRES_HAVE([login], [utmp_h], [utmp.h header])
 AM_CONDITIONAL([BUILD_LOGIN], [test "x$build_login" = xyes])
 
 AC_ARG_ENABLE([login-chown-vcs],
@@ -1679,9 +1691,10 @@ AM_CONDITIONAL([BUILD_NOLOGIN], [test "x$build_nologin" = xyes])
 
 AC_ARG_ENABLE([sulogin],
   AS_HELP_STRING([--disable-sulogin], [do not build sulogin]),
-  [], [UL_DEFAULT_ENABLE([sulogin], [yes])]
+  [], [UL_DEFAULT_ENABLE([sulogin], [check])]
 )
 UL_BUILD_INIT([sulogin])
+UL_REQUIRES_HAVE([sulogin], [shadow_h], [shadow.h header])
 AM_CONDITIONAL([BUILD_SULOGIN], [test "x$build_sulogin" = xyes])
 
 
@@ -1691,6 +1704,7 @@ AC_ARG_ENABLE([su],
 )
 UL_BUILD_INIT([su])
 UL_REQUIRES_HAVE([su], [security_pam_appl_h], [PAM header file])
+UL_REQUIRES_HAVE([su], [utmp_h], [utmp.h header])
 AM_CONDITIONAL([BUILD_SU], [test "x$build_su" = xyes])
 
 
@@ -1700,6 +1714,7 @@ AC_ARG_ENABLE([runuser],
 )
 UL_BUILD_INIT([runuser])
 UL_REQUIRES_HAVE([runuser], [security_pam_appl_h], [PAM header file])
+UL_REQUIRES_HAVE([runuser], [utmp_h], [utmp.h header])
 AM_CONDITIONAL([BUILD_RUNUSER], [test "x$build_runuser" = xyes])
 
 
@@ -1794,9 +1809,10 @@ AS_IF([test "x$build_chrt" = xyes], [
 
 AC_ARG_ENABLE([wall],
   AS_HELP_STRING([--disable-wall], [do not build wall]),
-  [], [UL_DEFAULT_ENABLE([wall], [yes])]
+  [], [UL_DEFAULT_ENABLE([wall], [check])]
 )
 UL_BUILD_INIT([wall])
+UL_REQUIRES_HAVE([wall], [utmp_h], [utmp.h header])
 AM_CONDITIONAL([BUILD_WALL], [test "x$build_wall" = xyes])
 
 
@@ -1805,6 +1821,7 @@ AC_ARG_ENABLE([write],
   [], [UL_DEFAULT_ENABLE([write], [no])]
 )
 UL_BUILD_INIT([write])
+UL_REQUIRES_HAVE([write], [utmp_h], [utmp.h header])
 AM_CONDITIONAL([BUILD_WRITE], [test "x$build_write" = xyes])
 
 
