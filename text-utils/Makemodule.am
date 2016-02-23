@@ -97,7 +97,7 @@ endif
 
 check_PROGRAMS += test_more
 test_more_SOURCES = $(more_SOURCES)
-test_more_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
+test_more_CFLAGS = -DTEST_PROGRAM $(more_CFLAGS)
 test_more_LDADD = $(more_LDADD)
 
 endif # BUILD_MORE

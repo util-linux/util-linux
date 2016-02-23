@@ -72,7 +72,7 @@ check_PROGRAMS += \
 	test_fdisk_utils \
 	test_fdisk_version 
 
-libfdisk_tests_cflags  = -DTEST_PROGRAM $(libfdisk_la_CFLAGS)
+libfdisk_tests_cflags  = -DTEST_PROGRAM $(libfdisk_la_CFLAGS) $(NO_UNUSED_WARN_CFLAGS)
 libfdisk_tests_ldflags = libuuid.la -static
 libfdisk_tests_ldadd   = $(LDADD) libfdisk.la $(UUID_LIBS)
 

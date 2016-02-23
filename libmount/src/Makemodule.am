@@ -85,7 +85,7 @@ check_PROGRAMS += \
 	test_mount_monitor \
 	test_mount_debug
 
-libmount_tests_cflags  = -DTEST_PROGRAM $(libmount_la_CFLAGS)
+libmount_tests_cflags  = -DTEST_PROGRAM $(libmount_la_CFLAGS) $(NO_UNUSED_WARN_CFLAGS)
 libmount_tests_ldflags = libblkid.la -static
 libmount_tests_ldadd   = $(LDADD) libmount.la $(UUID_LIBS) $(REALTIME_LIBS)
 
