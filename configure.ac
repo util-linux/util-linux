@@ -379,6 +379,7 @@ AC_CHECK_FUNCS([ \
 	setresgid \
 	setresuid \
 	sched_setattr \
+	sched_setscheduler \
 	sigqueue \
 	srandom \
 	strnchr \
@@ -1806,8 +1807,14 @@ UL_REQUIRES_SYSCALL_CHECK([taskset],
 	[sched_getaffinity])
 AM_CONDITIONAL([BUILD_TASKSET], [test "x$build_taskset" = xyes])
 
+
+have_schedsetter=no
+AS_IF([test "x$ac_cv_func_sched_setscheduler" = xyes], [have_schedsetter=yes],
+      [test "x$ac_cv_func_sched_setattr" = xyes], [have_schedsetter=yes])
+
 UL_BUILD_INIT([chrt], [check])
 UL_REQUIRES_BUILD([chrt], [schedutils])
+UL_REQUIRES_HAVE([chrt], [schedsetter], [sched_set functions])
 AM_CONDITIONAL([BUILD_CHRT], [test "x$build_chrt" = xyes])
 
 AS_IF([test "x$build_chrt" = xyes], [
