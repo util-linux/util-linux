@@ -62,7 +62,7 @@ static char *xgetpass(FILE *input, const char *prompt)
 
 /* Ensure memory is set to value c without compiler optimization getting
  * into way that could happen with memset(3). */
-static int memset_s(void *v, size_t sz, const int c)
+static int xmemset_s(void *v, size_t sz, const int c)
 {
 	volatile unsigned char *p = v;
 
@@ -148,7 +148,7 @@ static int allow_setgid(const struct passwd *pe, const struct group *ge)
 	if (pwd && *pwd && (xpwd = xgetpass(stdin, _("Password: ")))) {
 		char *cbuf = crypt(xpwd, pwd);
 
-		memset_s(xpwd, strlen(xpwd), 0);
+		xmemset_s(xpwd, strlen(xpwd), 0);
 		free(xpwd);
 		if (!cbuf)
 			warn(_("crypt failed"));
