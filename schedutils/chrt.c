@@ -168,14 +168,18 @@ static const char *get_policy_name(int policy)
 	case SCHED_OTHER:
 		return "SCHED_OTHER";
 	case SCHED_FIFO:
+#ifdef SCHED_RESET_ON_FORK
 	case SCHED_FIFO | SCHED_RESET_ON_FORK:
+#endif
 		return "SCHED_FIFO";
 #ifdef SCHED_IDLE
 	case SCHED_IDLE:
 		return "SCHED_IDLE";
 #endif
 	case SCHED_RR:
+#ifdef SCHED_RESET_ON_FORK
 	case SCHED_RR | SCHED_RESET_ON_FORK:
+#endif
 		return "SCHED_RR";
 #ifdef SCHED_BATCH
 	case SCHED_BATCH:
