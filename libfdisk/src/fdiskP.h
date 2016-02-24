@@ -391,11 +391,6 @@ struct fdisk_context {
 
 int fdisk_wipe_collisions(struct fdisk_context *cxt);
 
-/* partition.c */
-int fdisk_partition_next_partno(struct fdisk_partition *pa,
-				       struct fdisk_context *cxt,
-				       size_t *n);
-
 /* context.c */
 extern int __fdisk_switch_label(struct fdisk_context *cxt,
 				    struct fdisk_label *lb);
@@ -415,7 +410,6 @@ extern void fdisk_zeroize_device_properties(struct fdisk_context *cxt);
 extern int fdisk_init_firstsector_buffer(struct fdisk_context *cxt,
 			unsigned int protect_off, unsigned int protect_size);
 extern int fdisk_read_firstsector(struct fdisk_context *cxt);
-extern char *fdisk_partname(const char *dev, size_t partno);
 
 /* label.c */
 extern int fdisk_probe_labels(struct fdisk_context *cxt);

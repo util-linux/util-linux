@@ -19,6 +19,7 @@
 #include <ctype.h>
 
 #include "superblocks.h"
+#include "iso9660.h"
 
 struct iso9660_date {
 	unsigned char year[4];

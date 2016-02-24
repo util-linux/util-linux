@@ -810,7 +810,7 @@ static ssize_t read_lba(struct fdisk_context *cxt, uint64_t lba,
 
 	if (lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1)
 		return -1;
-	return read(cxt->dev_fd, buffer, bytes) != bytes;
+	return (size_t)read(cxt->dev_fd, buffer, bytes) != bytes;
 }
 
 
@@ -2807,7 +2807,7 @@ struct fdisk_label *fdisk_new_gpt_label(struct fdisk_context *cxt)
 }
 
 #ifdef TEST_PROGRAM
-int test_getattr(struct fdisk_test *ts, int argc, char *argv[])
+static int test_getattr(struct fdisk_test *ts, int argc, char *argv[])
 {
 	const char *disk = argv[1];
 	size_t part = strtoul(argv[2], NULL, 0) - 1;
@@ -2829,7 +2829,7 @@ int test_getattr(struct fdisk_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_setattr(struct fdisk_test *ts, int argc, char *argv[])
+static int test_setattr(struct fdisk_test *ts, int argc, char *argv[])
 {
 	const char *disk = argv[1];
 	size_t part = strtoul(argv[2], NULL, 0) - 1;

@@ -720,7 +720,7 @@ char *mnt_resolve_spec(const char *spec, struct libmnt_cache *cache)
 
 #ifdef TEST_PROGRAM
 
-int test_resolve_path(struct libmnt_test *ts, int argc, char *argv[])
+static int test_resolve_path(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char line[BUFSIZ];
 	struct libmnt_cache *cache;
@@ -743,7 +743,7 @@ int test_resolve_path(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_resolve_spec(struct libmnt_test *ts, int argc, char *argv[])
+static int test_resolve_spec(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char line[BUFSIZ];
 	struct libmnt_cache *cache;
@@ -766,7 +766,7 @@ int test_resolve_spec(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_read_tags(struct libmnt_test *ts, int argc, char *argv[])
+static int test_read_tags(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char line[BUFSIZ];
 	struct libmnt_cache *cache;

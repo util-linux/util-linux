@@ -46,7 +46,7 @@ static char *gen_text(const char *prefix, const char *sub_prefix, char *buf, siz
 {
 	int x = snprintf(buf, sz,  "%s-%s-", prefix, sub_prefix);
 
-	for ( ; x < sz - 1; x++)
+	for ( ; (size_t)x < sz - 1; x++)
 		buf[x] = *prefix;
 
 	buf[x++] = 'x';

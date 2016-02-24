@@ -432,7 +432,7 @@ int fdisk_is_labeltype(struct fdisk_context *cxt, enum fdisk_labeltype id)
 {
 	assert(cxt);
 
-	return cxt->label && fdisk_label_get_type(cxt->label) == id;
+	return cxt->label && (unsigned)fdisk_label_get_type(cxt->label) == id;
 }
 
 /**
@@ -715,7 +715,7 @@ int fdisk_is_readonly(struct fdisk_context *cxt)
  */
 void fdisk_unref_context(struct fdisk_context *cxt)
 {
-	int i;
+	unsigned i;
 
 	if (!cxt)
 		return;
@@ -1057,7 +1057,7 @@ int fdisk_set_size_unit(struct fdisk_context *cxt, int unit)
  *
  * Returns: unit
  */
-int fdisk_get_size_units(struct fdisk_context *cxt)
+int fdisk_get_size_unit(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->sizeunit;

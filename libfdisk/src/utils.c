@@ -30,7 +30,7 @@ static int read_from_device(struct fdisk_context *cxt,
 	}
 
 	r = read(cxt->dev_fd, buf, size);
-	if (r < 0 || r != size) {
+	if (r < 0 || (size_t)r != size) {
 		if (!errno)
 			errno = EINVAL;	/* probably too small file/device */
 		DBG(CXT, ul_debugobj(cxt, "failed to read %zu from offset %ju: %m",
@@ -167,7 +167,7 @@ char *fdisk_partname(const char *dev, size_t partno)
 struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt) { return NULL; }
 struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt) { return NULL; }
 
-int test_partnames(struct fdisk_test *ts, int argc, char *argv[])
+static int test_partnames(struct fdisk_test *ts, int argc, char *argv[])
 {
 	size_t i;
 	const char *disk = argv[1];

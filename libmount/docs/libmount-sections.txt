@@ -226,6 +226,7 @@ mnt_fs_set_freq
 mnt_fs_set_fstype
 mnt_fs_set_options
 mnt_fs_set_passno
+mnt_fs_set_priority
 mnt_fs_set_root
 mnt_fs_set_source
 mnt_fs_set_target

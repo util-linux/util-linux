@@ -138,7 +138,7 @@ static int xfs_verify_sb(struct xfs_super_block *ondisk)
 	    sbp->sb_blocksize > XFS_MAX_BLOCKSIZE			||
 	    sbp->sb_blocklog < XFS_MIN_BLOCKSIZE_LOG			||
 	    sbp->sb_blocklog > XFS_MAX_BLOCKSIZE_LOG			||
-	    sbp->sb_blocksize != (1 << sbp->sb_blocklog)		||
+	    sbp->sb_blocksize != (1ULL << sbp->sb_blocklog)		||
 	    sbp->sb_inodesize < XFS_DINODE_MIN_SIZE			||
 	    sbp->sb_inodesize > XFS_DINODE_MAX_SIZE			||
 	    sbp->sb_inodelog < XFS_DINODE_MIN_LOG			||
@@ -241,7 +241,8 @@ static int xlog_valid_rec_header(struct xlog_rec_header *rhead)
 }
 
 /* xlog record header will be in some sector in the first 256k */
-static int probe_xfs_log(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_xfs_log(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	int i;
 	struct xlog_rec_header *rhead;

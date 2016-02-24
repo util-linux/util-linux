@@ -35,6 +35,7 @@ nodist_libfdisk_la_SOURCES = libfdisk/src/fdiskP.h
 libfdisk_la_LIBADD = libcommon.la libuuid.la
 
 libfdisk_la_CFLAGS = \
+	$(AM_CFLAGS) \
 	$(SOLIB_CFLAGS) \
 	-I$(ul_libuuid_incdir) \
 	-I$(ul_libfdisk_incdir) \
@@ -71,9 +72,9 @@ check_PROGRAMS += \
 	test_fdisk_utils \
 	test_fdisk_version 
 
-libfdisk_tests_cflags  = -DTEST_PROGRAM $(libfdisk_la_CFLAGS)
+libfdisk_tests_cflags  = -DTEST_PROGRAM $(libfdisk_la_CFLAGS) $(NO_UNUSED_WARN_CFLAGS)
 libfdisk_tests_ldflags = libuuid.la -static
-libfdisk_tests_ldadd   = libfdisk.la $(UUID_LIBS)
+libfdisk_tests_ldadd   = $(LDADD) libfdisk.la $(UUID_LIBS)
 
 if BUILD_LIBBLKID
 libfdisk_tests_ldflags += libblkid.la

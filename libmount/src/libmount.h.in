@@ -391,6 +391,7 @@ extern const char *mnt_fs_get_swaptype(struct libmnt_fs *fs);
 extern off_t mnt_fs_get_size(struct libmnt_fs *fs);
 extern off_t mnt_fs_get_usedsize(struct libmnt_fs *fs);
 extern int mnt_fs_get_priority(struct libmnt_fs *fs);
+extern int mnt_fs_set_priority(struct libmnt_fs *fs, int prio);
 
 extern const char *mnt_fs_get_comment(struct libmnt_fs *fs);
 extern int mnt_fs_set_comment(struct libmnt_fs *fs, const char *comm);

@@ -148,11 +148,11 @@ static int probe_raid0(blkid_probe pr, uint64_t off)
 
 	size <<= 10;	/* convert KiB to bytes */
 
-	if (pr->size < 0 || (uint64_t) pr->size < size + MD_RESERVED_BYTES)
+	if (pr->size < size + MD_RESERVED_BYTES)
 		/* device is too small */
 		return 1;
 
-	if (off < 0 || (uint64_t) off < size)
+	if (off < size)
 		/* no space before superblock */
 		return 1;
 
@@ -212,7 +212,7 @@ static int probe_raid1(blkid_probe pr, off_t off)
 	return 0;
 }
 
-int probe_raid(blkid_probe pr,
+static int probe_raid(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	const char *ver = NULL;

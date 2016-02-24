@@ -71,7 +71,8 @@ static int get_minix_version(const unsigned char *data, int *other_endian)
 	return version;
 }
 
-static int probe_minix(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_minix(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	unsigned char *ext;
 	const unsigned char *data;

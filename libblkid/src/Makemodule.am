@@ -117,6 +117,7 @@ libblkid_la_DEPENDENCIES = \
 	libblkid/src/blkid.h.in
 
 libblkid_la_CFLAGS = \
+	$(AM_CFLAGS) \
 	$(SOLIB_CFLAGS) \
 	-I$(ul_libblkid_incdir) \
 	-I$(top_srcdir)/libblkid/src
@@ -158,7 +159,7 @@ blkid_tests_ldadd   = libblkid.la
 
 if BUILD_LIBUUID
 blkid_tests_ldflags += libuuid.la
-blkid_tests_ldadd   += $(UUID_LIBS)
+blkid_tests_ldadd   += $(LDADD) $(UUID_LIBS)
 endif
 
 blkid_tests_ldflags += -static

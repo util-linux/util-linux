@@ -262,6 +262,9 @@ static int fat_valid_superblock(blkid_probe pr,
 	return 1;	/* valid */
 }
 
+/* function prototype to avoid warnings (duplicate in partitions/dos.c) */
+extern int blkid_probe_is_vfat(blkid_probe pr);
+
 /*
  * This function is used by MBR partition table parser to avoid
  * misinterpretation of FAT filesystem.

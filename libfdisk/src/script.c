@@ -40,7 +40,7 @@ struct fdisk_script {
 };
 
 
-static void fdisk_script_free_header(struct fdisk_script *dp, struct fdisk_scriptheader *fi)
+static void fdisk_script_free_header(struct fdisk_scriptheader *fi)
 {
 	if (!fi)
 		return;
@@ -152,7 +152,7 @@ static void fdisk_reset_script(struct fdisk_script *dp)
 	while (!list_empty(&dp->headers)) {
 		struct fdisk_scriptheader *fi = list_entry(dp->headers.next,
 						  struct fdisk_scriptheader, headers);
-		fdisk_script_free_header(dp, fi);
+		fdisk_script_free_header(fi);
 	}
 	INIT_LIST_HEAD(&dp->headers);
 }
@@ -275,7 +275,7 @@ int fdisk_script_set_header(struct fdisk_script *dp,
 		DBG(SCRIPT, ul_debugobj(dp, "freeing header %s", name));
 
 		/* no data, remove the header */
-		fdisk_script_free_header(dp, fi);
+		fdisk_script_free_header(fi);
 		return 0;
 	}
 
@@ -290,7 +290,7 @@ int fdisk_script_set_header(struct fdisk_script *dp,
 		fi->name = strdup(name);
 		fi->data = strdup(data);
 		if (!fi->data || !fi->name) {
-			fdisk_script_free_header(dp, fi);
+			fdisk_script_free_header(fi);
 			return -ENOMEM;
 		}
 		list_add_tail(&fi->headers, &dp->headers);
@@ -554,7 +554,7 @@ static int write_file_json(struct fdisk_script *dp, FILE *f)
 		if (fdisk_partition_is_bootable(pa))
 			fprintf(f, ", \"bootable\": true");
 
-		if (ct < fdisk_table_get_nents(dp->table))
+		if ((size_t)ct < fdisk_table_get_nents(dp->table))
 			fputs("},\n", f);
 		else
 			fputs("}\n", f);
@@ -1123,7 +1123,7 @@ static int parse_line_valcommas(struct fdisk_script *dp, char *s)
 }
 
 /* modifies @s ! */
-int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
+static int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
 {
 	int rc = 0;
 
@@ -1373,7 +1373,7 @@ int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp)
 }
 
 #ifdef TEST_PROGRAM
-int test_dump(struct fdisk_test *ts, int argc, char *argv[])
+static int test_dump(struct fdisk_test *ts, int argc, char *argv[])
 {
 	char *devname = argv[1];
 	struct fdisk_context *cxt;
@@ -1392,7 +1392,7 @@ int test_dump(struct fdisk_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_read(struct fdisk_test *ts, int argc, char *argv[])
+static int test_read(struct fdisk_test *ts, int argc, char *argv[])
 {
 	char *filename = argv[1];
 	struct fdisk_script *dp;
@@ -1415,7 +1415,7 @@ int test_read(struct fdisk_test *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
+static int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
 {
 	char buf[BUFSIZ];
 	struct fdisk_script *dp;
@@ -1450,7 +1450,7 @@ int test_stdin(struct fdisk_test *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_apply(struct fdisk_test *ts, int argc, char *argv[])
+static int test_apply(struct fdisk_test *ts, int argc, char *argv[])
 {
 	char *devname = argv[1], *scriptname = argv[2];
 	struct fdisk_context *cxt;

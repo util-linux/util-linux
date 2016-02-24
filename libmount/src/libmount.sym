@@ -313,4 +313,5 @@ MOUNT_2.26 {
 
 MOUNT_2.28 {
 	mnt_table_find_target_with_option;
+	mnt_fs_set_priority;
 } MOUNT_2.26;

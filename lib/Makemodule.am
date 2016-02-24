@@ -77,51 +77,51 @@ check_PROGRAMS += \
 endif
 
 test_ttyutils_SOURCES = lib/ttyutils.c
-test_ttyutils_CFLAGS = -DTEST_PROGRAM
-test_ttyutils_LDADD = libcommon.la
+test_ttyutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
+test_ttyutils_LDADD = $(LDADD) libcommon.la
 
 test_blkdev_SOURCES = lib/blkdev.c
-test_blkdev_CFLAGS = -DTEST_PROGRAM_BLKDEV
-test_blkdev_LDADD = libcommon.la
+test_blkdev_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_BLKDEV
+test_blkdev_LDADD = $(LDADD) libcommon.la
 
 test_ismounted_SOURCES = lib/ismounted.c
-test_ismounted_CFLAGS = -DTEST_PROGRAM
-test_ismounted_LDADD = libcommon.la
+test_ismounted_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
+test_ismounted_LDADD = $(LDADD) libcommon.la
 
 test_mangle_SOURCES = lib/mangle.c
-test_mangle_CFLAGS = -DTEST_PROGRAM
+test_mangle_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 
 test_at_SOURCES = lib/at.c
-test_at_CFLAGS = -DTEST_PROGRAM_AT
+test_at_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_AT
 
 test_strutils_SOURCES = lib/strutils.c
-test_strutils_CFLAGS = -DTEST_PROGRAM
+test_strutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 
 test_colors_SOURCES = lib/colors.c lib/color-names.c
-test_colors_CFLAGS = -DTEST_PROGRAM $(TINFO_CFLAGS)
+test_colors_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM $(TINFO_CFLAGS)
 test_colors_LDADD = $(LDADD) $(TINFO_LIBS)
 
 test_randutils_SOURCES = lib/randutils.c
-test_randutils_CFLAGS = -DTEST_PROGRAM
+test_randutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 
 test_procutils_SOURCES = lib/procutils.c lib/at.c
-test_procutils_CFLAGS = -DTEST_PROGRAM
+test_procutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 
 if LINUX
 test_cpuset_SOURCES = lib/cpuset.c
-test_cpuset_CFLAGS = -DTEST_PROGRAM
+test_cpuset_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 
 test_sysfs_SOURCES = lib/sysfs.c
-test_sysfs_CFLAGS = -DTEST_PROGRAM_SYSFS
-test_sysfs_LDADD = libcommon.la
+test_sysfs_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_SYSFS
+test_sysfs_LDADD = $(LDADD) libcommon.la
 
 test_pager_SOURCES = lib/pager.c
-test_pager_CFLAGS = -DTEST_PROGRAM
+test_pager_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 endif
 
 test_fileutils_SOURCES = lib/fileutils.c
-test_fileutils_CFLAGS = -DTEST_PROGRAM
+test_fileutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 
 test_canonicalize_SOURCES = lib/canonicalize.c
-test_canonicalize_CFLAGS = -DTEST_PROGRAM_CANONICALIZE
+test_canonicalize_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_CANONICALIZE
 

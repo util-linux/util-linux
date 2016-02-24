@@ -89,7 +89,8 @@ static int nilfs_valid_sb(blkid_probe pr, struct nilfs_super_block *sb, int is_b
 	return blkid_probe_verify_csum(pr, crc, le32_to_cpu(sb->s_sum));
 }
 
-static int probe_nilfs2(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_nilfs2(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct nilfs_super_block *sb, *sbp, *sbb;
 	int valid[2], swp = 0;

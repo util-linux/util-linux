@@ -137,7 +137,7 @@ static void assoc_loopdev(const char *fname)
 static inline int get_column_id(int num)
 {
 	assert(ARRAY_SIZE(columns) == NCOLS);
-	assert(num < ncolumns);
+	assert((size_t)num < ncolumns);
 	assert(columns[num] < (int) NCOLS);
 	return columns[num];
 }
@@ -548,7 +548,7 @@ static int add_scols_line(struct libscols_table *table, blkid_partition par)
 		return -ENOMEM;
 	}
 
-	for (i = 0; i < ncolumns; i++) {
+	for (i = 0; (size_t)i < ncolumns; i++) {
 		char *str = NULL;			/* allocated string */
 		const char *cstr = NULL;		/* foreign string */
 
@@ -637,7 +637,7 @@ static int show_parts(blkid_partlist ls, int scols_flags, int lower, int upper)
 	scols_table_enable_export(table, !!(scols_flags & PARTX_EXPORT));
 	scols_table_enable_noheadings(table, !!(scols_flags & PARTX_NOHEADINGS));
 
-	for (i = 0; i < ncolumns; i++) {
+	for (i = 0; (size_t)i < ncolumns; i++) {
 		struct colinfo *col = get_column_info(i);
 
 		if (!scols_table_new_column(table, col->name, col->whint, col->flags)) {

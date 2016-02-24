@@ -985,7 +985,7 @@ static fdisk_sector_t get_possible_last(struct fdisk_context *cxt, size_t n)
  * last[] are fill_bounds() results */
 static fdisk_sector_t get_unused_last(struct fdisk_context *cxt, size_t n,
 				fdisk_sector_t start,
-				fdisk_sector_t first[], fdisk_sector_t last[])
+				fdisk_sector_t first[])
 {
 	size_t i;
 	fdisk_sector_t limit = get_possible_last(cxt, n);
@@ -1127,7 +1127,7 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 		}
 	}
 
-	limit = get_unused_last(cxt, n, start, first, last);
+	limit = get_unused_last(cxt, n, start, first);
 
 	if (start > limit) {
 		fdisk_warnx(cxt, _("No free sectors available."));
@@ -1788,7 +1788,7 @@ static int dos_locate_disklabel(struct fdisk_context *cxt, int n,
 		break;
 	default:
 		/* extended partitions */
-		if (n - 1 + 4 < cxt->label->nparts_max) {
+		if ((size_t)n - 1 + 4 < cxt->label->nparts_max) {
 			struct pte *pe = self_pte(cxt, n - 1 + 4);
 
 			assert(pe->private_sectorbuffer);

@@ -281,8 +281,7 @@ static const char *get_cell_color(struct libscols_table *tb,
 static void print_newline_padding(struct libscols_table *tb,
 				  struct libscols_column *cl,
 				  struct libscols_line *ln,	/* optional */
-				  size_t bufsz,
-				  size_t len)
+				  size_t bufsz)
 {
 	size_t i;
 
@@ -509,7 +508,7 @@ static int print_data(struct libscols_table *tb,
 		return 0;
 
 	if (len > width && !scols_column_is_trunc(cl))
-		print_newline_padding(tb, cl, ln, buf->bufsz, len);	/* next column starts on next line */
+		print_newline_padding(tb, cl, ln, buf->bufsz);	/* next column starts on next line */
 	else
 		fputs(colsep(tb), tb->out);		/* columns separator */
 
@@ -751,7 +750,7 @@ static int print_title(struct libscols_table *tb)
 			&width, align,
 			0, (int) *tb->symbols->title_padding);
 
-	if (rc == (size_t) -1) {
+	if (rc == -1) {
 		rc = -EINVAL;
 		goto done;
 	}

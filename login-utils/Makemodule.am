@@ -31,8 +31,8 @@ endif
 
 check_PROGRAMS += test_consoles
 test_consoles_SOURCES = login-utils/sulogin-consoles.c
-test_consoles_CFLAGS = -DTEST_PROGRAM
-test_consoles_LDADD = libcommon.la
+test_consoles_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
+test_consoles_LDADD = $(LDADD) libcommon.la
 endif # BUILD_SULOGIN
 
 

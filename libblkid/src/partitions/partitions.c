@@ -481,7 +481,7 @@ int blkid_partlist_increment_partno(blkid_partlist ls)
 }
 
 /* allows to set "parent" for the next nested partition */
-int blkid_partlist_set_parent(blkid_partlist ls, blkid_partition par)
+static int blkid_partlist_set_parent(blkid_partlist ls, blkid_partition par)
 {
 	if (!ls)
 		return -1;
@@ -537,7 +537,7 @@ static int idinfo_probe(blkid_probe pr, const struct blkid_idinfo *id,
 	uint64_t off;
 	int rc = BLKID_PROBE_NONE;		/* default is nothing */
 
-	if (pr->size <= 0 || (id->minsz && id->minsz > pr->size))
+	if (pr->size <= 0 || (id->minsz && (unsigned)id->minsz > pr->size))
 		goto nothing;	/* the device is too small */
 	if (pr->flags & BLKID_FL_NOSCAN_DEV)
 		goto nothing;
@@ -1040,7 +1040,7 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 			 if (partno != blkid_partition_get_partno(par))
 				 continue;
 
-			 if (size == blkid_partition_get_size(par) ||
+			 if (size == (uint64_t)blkid_partition_get_size(par) ||
 			     (blkid_partition_is_extended(par) && size <= 1024ULL))
 				 return par;
 
@@ -1053,12 +1053,12 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 	for (i = 0; i < ls->nparts; i++) {
 		blkid_partition par = &ls->parts[i];
 
-		if (blkid_partition_get_start(par) == start &&
-		    blkid_partition_get_size(par) == size)
+		if ((uint64_t)blkid_partition_get_start(par) == start &&
+		    (uint64_t)blkid_partition_get_size(par) == size)
 			return par;
 
 		/* exception for extended dos partitions */
-		if (blkid_partition_get_start(par) == start &&
+		if ((uint64_t)blkid_partition_get_start(par) == start &&
 		    blkid_partition_is_extended(par) && size <= 1024ULL)
 			return par;
 
@@ -1196,7 +1196,7 @@ blkid_partition blkid_parttable_get_parent(blkid_parttable tab)
  */
 blkid_loff_t blkid_parttable_get_offset(blkid_parttable tab)
 {
-	return tab ? tab->offset : -1;
+	return tab ? (blkid_loff_t)tab->offset : -1;
 }
 
 /**
@@ -1407,7 +1407,7 @@ int blkid_partition_get_partno(blkid_partition par)
  */
 blkid_loff_t blkid_partition_get_start(blkid_partition par)
 {
-	return par ? par->start : -1;
+	return par ? (blkid_loff_t)par->start : -1;
 }
 
 /**
@@ -1428,7 +1428,7 @@ blkid_loff_t blkid_partition_get_start(blkid_partition par)
  */
 blkid_loff_t blkid_partition_get_size(blkid_partition par)
 {
-	return par ? par->size : -1;
+	return par ? (blkid_loff_t)par->size : -1;
 }
 
 /**
