@@ -62,7 +62,9 @@ by bind mount.
 .TP
 .BR \-m , " \-\-mount"[=\fIfile\fP]
 Unshare the mount namespace. If \fIfile\fP is specified then persistent namespace is created
-by bind mount.
+by bind mount. Note that \fIfile\fP has to be located on filesystem with
+propagation flag set to \fBprivate\fP. Use command \fBfindmnt -o+PROPAGATION\fP
+if not sure about the current setting. See also examples below.
 .TP
 .BR \-n , " \-\-net"[=\fIfile\fP]
 Unshare the network namespace. If \fIfile\fP is specified then persistent namespace is created
@@ -153,6 +155,21 @@ FOO
 .br
 Establish a persistent UTS namespace, modify hostname. The namespace maybe later entered
 by nsenter. The namespace is destroyed by umount the bind reference.
+
+.TP
+.TQ
+.B # mount --bind /root/namespaces /root/namespaces
+.TQ
+.B # mount --make-private /root/namespaces
+.TQ
+.B # touch /root/namespaces/mnt
+.TQ
+.B # unshare --mount=/root/namespaces/mnt
+.br
+Establish a persistent mount namespace referenced by the bind mount
+/root/namespaces/mnt. This example provides portable solution, because it makes
+sure that the bind mount is created on shared filesystem.
+
 .SH SEE ALSO
 .BR unshare (2),
 .BR clone (2),
