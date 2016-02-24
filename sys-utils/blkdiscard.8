@@ -3,12 +3,11 @@
 blkdiscard \- discard sectors on a device
 .SH SYNOPSIS
 .B blkdiscard
+[options]
 .RB [ \-o
 .IR offset ]
 .RB [ \-l
 .IR length ]
-.RB [ \-s ]
-.RB [ \-v ]
 .I device
 .SH DESCRIPTION
 .B blkdiscard
@@ -57,6 +56,9 @@ all by one ioctl call.
 Perform a secure discard.  A secure discard is the same as a regular discard
 except that all copies of the discarded blocks that were possibly created by
 garbage collection must also be erased.  This requires support from the device.
+.TP
+.BR \-z , " \-\-zeroout"
+Zero-fill rather than discard.
 .TP
 .BR \-v , " \-\-verbose"
 Display the aligned values of
