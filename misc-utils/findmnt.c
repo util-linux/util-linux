@@ -1165,7 +1165,7 @@ static int poll_table(struct libmnt_table *tb, const char *tabfile,
 		}
 
 		if (count) {
-			rc = scols_print_table(table);
+			rc = scols_table_print_range(table, NULL, NULL);
 			if (rc)
 				goto done;
 		}
@@ -1175,6 +1175,7 @@ static int poll_table(struct libmnt_table *tb, const char *tabfile,
 		tb = tb_new;
 		tb_new = tmp;
 
+		/* remove allredy printed lines to reduce memory usage */
 		scols_table_remove_lines(table);
 		mnt_reset_table(tb_new);
 
