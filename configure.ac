@@ -1406,7 +1406,7 @@ UL_REQUIRES_SYSCALL_CHECK([pivot_root], [UL_CHECK_SYSCALL([pivot_root])])
 AM_CONDITIONAL([BUILD_PIVOT_ROOT], [test "x$build_pivot_root" = xyes])
 
 
-UL_BUILD_INIT([flock], [yes])
+UL_BUILD_INIT([flock], [check])
 UL_REQUIRES_HAVE([flock], [timer], [timer_create function])
 AM_CONDITIONAL([BUILD_FLOCK], [test "x$build_flock" = xyes])
 
