@@ -175,10 +175,10 @@ static const char *get_policy_name(int policy)
 		return "SCHED_IDLE";
 #endif
 	case SCHED_RR:
+	case SCHED_RR | SCHED_RESET_ON_FORK:
 		return "SCHED_RR";
 #ifdef SCHED_BATCH
 	case SCHED_BATCH:
-	case SCHED_RR | SCHED_RESET_ON_FORK:
 		return "SCHED_BATCH";
 #endif
 #ifdef SCHED_DEADLINE
