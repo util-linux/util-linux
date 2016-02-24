@@ -233,17 +233,19 @@ int scols_table_remove_columns(struct libscols_table *tb)
  *   scols_column_set_....(cl, ...);
  *   scols_table_add_column(tb, cl);
  *
- * The column width is possible to define by three ways:
+ * The column width is possible to define by:
  *
  *  @whint = 0..1    : relative width, percent of terminal width
  *
  *  @whint = 1..N    : absolute width, empty column will be truncated to
- *                     the column header width
+ *                     the column header width if no specified STRICTWIDTH flag
  *
- *  @whint = 1..N
+ * Note that if table has disabled "maxout" flag (disabled by default) than
+ * relative width is used as a hint only. It's possible that column will be
+ * narrow if the specified size is too large for column data.
  *
- * The column is necessary to address by
- * sequential number. The first defined column has the colnum = 0. For example:
+ * The column is necessary to address by sequential number. The first defined
+ * column has the colnum = 0. For example:
  *
  *	scols_table_new_column(tab, "FOO", 0.5, 0);		// colnum = 0
  *	scols_table_new_column(tab, "BAR", 0.5, 0);		// colnum = 1

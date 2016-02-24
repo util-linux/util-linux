@@ -30,11 +30,12 @@ static double time_diff(struct timeval *a, struct timeval *b)
 /* add columns to the @tb */
 static void setup_columns(struct libscols_table *tb)
 {
-	if (!scols_table_new_column(tb, "#NUM", 0, SCOLS_FL_RIGHT))
+	scols_table_enable_maxout(tb, 1);
+	if (!scols_table_new_column(tb, "#NUM", 0.1, SCOLS_FL_RIGHT))
 		goto fail;
-	if (!scols_table_new_column(tb, "DATA", 0, 0))
+	if (!scols_table_new_column(tb, "DATA", 0.7, 0))
 		goto fail;
-	if (!scols_table_new_column(tb, "TIME", 0, 0))
+	if (!scols_table_new_column(tb, "TIME", 0.2, 0))
 		goto fail;
 	return;
 fail:

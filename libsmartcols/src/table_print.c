@@ -177,9 +177,9 @@ static int line_ascii_art_to_buffer(struct libscols_table *tb,
 	return buffer_append_data(buf, art);
 }
 
-static int is_last_column(struct libscols_table *tb, struct libscols_column *cl) 
+static int is_last_column(struct libscols_column *cl)
 {
-	int rc = list_entry_is_last(&cl->cl_columns, &tb->tb_columns);
+	int rc = list_entry_is_last(&cl->cl_columns, &cl->table->tb_columns);
 	struct libscols_column *next;
 
 	if (rc)
@@ -378,7 +378,7 @@ static int print_pending_data(
 	for (i = len; i < width; i++)
 		fputc(' ', tb->out);		/* padding */
 
-	if (is_last_column(tb, cl))
+	if (is_last_column(cl))
 		return 0;
 
 	fputs(colsep(tb), tb->out);		/* columns separator */
@@ -412,14 +412,14 @@ static int print_data(struct libscols_table *tb,
 	switch (tb->format) {
 	case SCOLS_FMT_RAW:
 		fputs_nonblank(data, tb->out);
-		if (!is_last_column(tb, cl))
+		if (!is_last_column(cl))
 			fputs(colsep(tb), tb->out);
 		return 0;
 
 	case SCOLS_FMT_EXPORT:
 		fprintf(tb->out, "%s=", scols_cell_get_data(&cl->header));
 		fputs_quoted(data, tb->out);
-		if (!is_last_column(tb, cl))
+		if (!is_last_column(cl))
 			fputs(colsep(tb), tb->out);
 		return 0;
 
@@ -430,7 +430,7 @@ static int print_data(struct libscols_table *tb,
 			fputs("null", tb->out);
 		else
 			fputs_quoted(data, tb->out);
-		if (!is_last_column(tb, cl))
+		if (!is_last_column(cl))
 			fputs(", ", tb->out);
 		return 0;
 
@@ -447,7 +447,7 @@ static int print_data(struct libscols_table *tb,
 	width = cl->width;
 	bytes = strlen(data);
 
-	if (is_last_column(tb, cl)
+	if (is_last_column(cl)
 	    && len < width
 	    && !scols_table_is_maxout(tb)
 	    && !scols_column_is_right(cl)
@@ -505,7 +505,7 @@ static int print_data(struct libscols_table *tb,
 	for (i = len; i < width; i++)
 		fputc(' ', tb->out);		/* padding */
 
-	if (is_last_column(tb, cl))
+	if (is_last_column(cl))
 		return 0;
 
 	if (len > width && !scols_column_is_trunc(cl))
@@ -957,6 +957,16 @@ static int count_column_width(struct libscols_table *tb,
 
 	cl->width = 0;
 
+
+	if (cl->width_min) {
+		if (cl->width_hint < 1 && scols_table_is_maxout(tb))
+			cl->width_min = (size_t) (cl->width_hint * tb->termwidth) - (is_last_column(cl) ? 0 : 1);
+		if (scols_cell_get_data(&cl->header)) {
+			size_t len = mbs_safe_width(scols_cell_get_data(&cl->header));
+			cl->width_min = max(cl->width_min, len);
+		}
+	}
+
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 	while (scols_table_next_line(tb, &itr, &ln) == 0) {
 		size_t len;
@@ -988,20 +998,15 @@ static int count_column_width(struct libscols_table *tb,
 
 	if (count && cl->width_avg == 0) {
 		cl->width_avg = sum / count;
-
 		if (cl->width_max > cl->width_avg * 2)
 			cl->is_extreme = 1;
 	}
-
-	/* check and set minimal column width */
-	if (scols_cell_get_data(&cl->header))
-		cl->width_min = mbs_safe_width(scols_cell_get_data(&cl->header));
 
 	/* enlarge to minimal width */
 	if (cl->width < cl->width_min && !scols_column_is_strict_width(cl))
 		cl->width = cl->width_min;
 
-	/* use relative size for large columns */
+	/* use absolute size for large columns */
 	else if (cl->width_hint >= 1 && cl->width < (size_t) cl->width_hint
 		 && cl->width_min < (size_t) cl->width_hint)
 
@@ -1009,7 +1014,6 @@ static int count_column_width(struct libscols_table *tb,
 
 done:
 	ON_DBG(COL, dbg_column(tb, cl));
-	DBG(COL, ul_debugobj(cl, "column width=%zu, rc=%d", cl->width, rc));
 	return rc;
 }
 
@@ -1020,7 +1024,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 {
 	struct libscols_column *cl;
 	struct libscols_iter itr;
-	size_t width = 0;		/* output width */
+	size_t width = 0, width_min = 0;	/* output width */
 	int trunc_only, rc = 0;
 	int extremes = 0;
 
@@ -1035,18 +1039,32 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 		if (rc)
 			goto done;
 
-		width += cl->width + (is_last_column(tb, cl) ? 0 : 1);	/* separator for non-last column */
+		width += cl->width + (is_last_column(cl) ? 0 : 1);		/* separator for non-last column */
+		width_min += cl->width_min + (is_last_column(cl) ? 0 : 1);
 		extremes += cl->is_extreme;
 	}
 
 	if (!tb->is_term) {
-		DBG(TAB, ul_debugobj(tb, "   non-terminal output"));
+		DBG(TAB, ul_debugobj(tb, " non-terminal output"));
 		goto done;
+	}
+
+	/* be paranoid */
+	if (width_min > tb->termwidth && scols_table_is_maxout(tb)) {
+		DBG(TAB, ul_debugobj(tb, " min width larger than terminal! [width=%zu, term=%zu]", width_min, tb->termwidth));
+
+		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+		while (width_min > tb->termwidth
+		       && scols_table_next_column(tb, &itr, &cl) == 0) {
+			width_min--;
+			cl->width_min--;
+		}
+		DBG(TAB, ul_debugobj(tb, " min width reduced to %zu", width_min));
 	}
 
 	/* reduce columns with extreme fields */
 	if (width > tb->termwidth && extremes) {
-		DBG(TAB, ul_debugobj(tb, "   reduce width (extreme columns)"));
+		DBG(TAB, ul_debugobj(tb, " reduce width (extreme columns)"));
 
 		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 		while (scols_table_next_column(tb, &itr, &cl) == 0) {
@@ -1069,7 +1087,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 
 	if (width < tb->termwidth) {
 		if (extremes) {
-			DBG(TAB, ul_debugobj(tb, "   enlarge width (extreme columns)"));
+			DBG(TAB, ul_debugobj(tb, " enlarge width (extreme columns)"));
 
 			/* enlarge the first extreme column */
 			scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
@@ -1098,7 +1116,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 		}
 
 		if (width < tb->termwidth && scols_table_is_maxout(tb)) {
-			DBG(TAB, ul_debugobj(tb, "   enlarge width (max-out)"));
+			DBG(TAB, ul_debugobj(tb, " enlarge width (max-out)"));
 
 			/* try enlarging all columns */
 			while (width < tb->termwidth) {
@@ -1115,7 +1133,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 			struct libscols_column *col = list_entry(
 				tb->tb_columns.prev, struct libscols_column, cl_columns);
 
-			DBG(TAB, ul_debugobj(tb, "   enlarge width (last column)"));
+			DBG(TAB, ul_debugobj(tb, " enlarge width (last column)"));
 
 			if (!scols_column_is_right(col) && tb->termwidth - width > 0) {
 				col->width += tb->termwidth - width;
@@ -1132,7 +1150,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 	while (width > tb->termwidth) {
 		size_t org = width;
 
-		DBG(TAB, ul_debugobj(tb, "   reduce width (current=%zu, "
+		DBG(TAB, ul_debugobj(tb, " reduce width (current=%zu, "
 					 "wanted=%zu, mode=%s)",
 					width, tb->termwidth,
 					trunc_only ? "trunc-only" : "all-relative"));
@@ -1140,7 +1158,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 		while (scols_table_next_column(tb, &itr, &cl) == 0) {
 
-			DBG(TAB, ul_debugobj(cl, "     checking %s (width=%zu, treeart=%zu)",
+			DBG(TAB, ul_debugobj(cl, "  checking %s (width=%zu, treeart=%zu)",
 						cl->header.data, cl->width, cl->width_treeart));
 
 			if (width <= tb->termwidth)
@@ -1154,7 +1172,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 			if (cl->width == cl->width_min)
 				continue;
 
-			DBG(TAB, ul_debugobj(tb, "     tring to reduce: %s (width=%zu)", cl->header.data, cl->width));
+			DBG(TAB, ul_debugobj(tb, "  tring to reduce: %s (width=%zu)", cl->header.data, cl->width));
 
 			/* truncate column with relative sizes */
 			if (cl->width_hint < 1 && cl->width > 0 && width > 0 &&
@@ -1199,7 +1217,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 		}
 	}
 done:
-	DBG(TAB, ul_debugobj(tb, "  final width: %zu (rc=%d)", width, rc));
+	DBG(TAB, ul_debugobj(tb, " final width: %zu (rc=%d)", width, rc));
 	ON_DBG(TAB, dbg_columns(tb));
 
 	return rc;

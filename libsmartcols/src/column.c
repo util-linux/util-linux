@@ -119,7 +119,7 @@ err:
  * @cl: a pointer to a struct libscols_column instance
  * @whint: a width hint
  *
- * Sets the width hint of column @cl to @whint.
+ * Sets the width hint of column @cl to @whint. See scols_table_new_column().
  *
  * Returns: 0, a negative value in case of an error.
  */
