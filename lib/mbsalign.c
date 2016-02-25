@@ -27,6 +27,7 @@
 
 #include "c.h"
 #include "mbsalign.h"
+#include "strutils.h"
 #include "widechar.h"
 
 #ifdef HAVE_WIDECHAR
