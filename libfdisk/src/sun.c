@@ -225,7 +225,6 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	sunlabel->vtoc.sanity = cpu_to_be32(SUN_VTOC_SANITY);
 	sunlabel->vtoc.nparts = cpu_to_be16(SUN_MAXPARTITIONS);
 
-#ifdef HDIO_GETGEO
 	if (cxt->geom.heads && cxt->geom.sectors) {
 		fdisk_sector_t llsectors;
 
@@ -246,7 +245,6 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 				cxt->dev_path, cxt->geom.cylinders);
 		}
 	} else
-#endif
 		ask_geom(cxt);
 
 	sunlabel->acyl   = cpu_to_be16(0);
