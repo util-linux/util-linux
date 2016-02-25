@@ -1903,15 +1903,15 @@ static int dos_get_partition(struct fdisk_context *cxt, size_t n,
 	/* start C/H/S */
 	if (asprintf(&pa->start_chs, "%d/%d/%d",
 				cylinder(p->bs, p->bc),
-				sector(p->bs),
-				p->bh) < 0)
+				p->bh,
+				sector(p->bs)) < 0)
 		return -ENOMEM;
 
 	/* end C/H/S */
 	if (asprintf(&pa->end_chs, "%d/%d/%d",
 				cylinder(p->es, p->ec),
-				sector(p->es),
-				p->eh) < 0)
+				p->eh,
+				sector(p->es)) < 0)
 		return -ENOMEM;
 
 	return 0;
