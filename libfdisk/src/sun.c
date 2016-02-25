@@ -378,6 +378,11 @@ static void fetch_sun(struct fdisk_context *cxt,
 	}
 }
 
+/* non-Linux qsort_r(3) has usually differently ordered arguments */
+#if !defined (__linux__) || !defined (__GLIBC__)
+# undef HAVE_QSORT_R
+#endif
+
 #ifdef HAVE_QSORT_R
 static int verify_sun_cmp(int *a, int *b, void *data)
 {
