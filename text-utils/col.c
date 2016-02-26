@@ -362,7 +362,7 @@ int main(int argc, char **argv)
 			int need;
 
 			need = l->l_lsize ? l->l_lsize * 2 : 90;
-			l->l_line = (CHAR *)xrealloc((void *) l->l_line,
+			l->l_line = xrealloc((void *) l->l_line,
 						    (unsigned) need * sizeof(CHAR));
 			l->l_lsize = need;
 		}
@@ -472,7 +472,7 @@ void flush_line(LINE *l)
 		 */
 		if (l->l_lsize > sorted_size) {
 			sorted_size = l->l_lsize;
-			sorted = (CHAR *)xrealloc((void *)sorted,
+			sorted = xrealloc((void *)sorted,
 						  (unsigned)sizeof(CHAR) * sorted_size);
 		}
 		if (l->l_max_col >= count_size) {

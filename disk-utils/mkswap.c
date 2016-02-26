@@ -87,7 +87,7 @@ static void init_signature_page(struct mkswap_control *ctl)
 	} else
 		ctl->pagesize = kernel_pagesize;
 
-	ctl->signature_page = (unsigned long *) xcalloc(1, ctl->pagesize);
+	ctl->signature_page = xcalloc(1, ctl->pagesize);
 	ctl->hdr = (struct swap_header_v1_2 *) ctl->signature_page;
 }
 

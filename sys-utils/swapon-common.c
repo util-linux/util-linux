@@ -86,7 +86,7 @@ static size_t ulct;
 
 void add_label(const char *label)
 {
-	llist = (const char **) xrealloc(llist, (++llct) * sizeof(char *));
+	llist = xrealloc(llist, (++llct) * sizeof(char *));
 	llist[llct - 1] = label;
 }
 
@@ -102,7 +102,7 @@ size_t numof_labels(void)
 
 void add_uuid(const char *uuid)
 {
-	ulist = (const char **) xrealloc(ulist, (++ulct) * sizeof(char *));
+	ulist = xrealloc(ulist, (++ulct) * sizeof(char *));
 	ulist[ulct - 1] = uuid;
 }
 

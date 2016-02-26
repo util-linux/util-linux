@@ -1970,7 +1970,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 		if (len < 0)
 			log_err(_("%s: invalid character conversion for login name"), op->tty);
 
-		wcs = (wchar_t *) malloc((len + 1) * sizeof(wchar_t));
+		wcs = malloc((len + 1) * sizeof(wchar_t));
 		if (!wcs)
 			log_err(_("failed to allocate memory: %m"));
 

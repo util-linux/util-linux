@@ -102,7 +102,7 @@ int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
 	DBG(CACHE, ul_debug("creating blkid cache (using %s)",
 				filename ? filename : "default cache"));
 
-	if (!(cache = (blkid_cache) calloc(1, sizeof(struct blkid_struct_cache))))
+	if (!(cache = calloc(1, sizeof(struct blkid_struct_cache))))
 		return -BLKID_ERR_MEM;
 
 	INIT_LIST_HEAD(&cache->bic_devs);

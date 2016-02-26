@@ -1039,7 +1039,7 @@ static void init_environ(struct login_context *cxt)
 
 	/* destroy environment unless user has requested preservation (-p) */
 	if (!cxt->keep_env) {
-		environ = (char **) xmalloc(sizeof(char *));
+		environ = xmalloc(sizeof(char *));
 		memset(environ, 0, sizeof(char *));
 	}
 

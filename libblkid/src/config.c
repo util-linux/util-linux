@@ -120,7 +120,7 @@ struct blkid_config *blkid_read_config(const char *filename)
 	if (!filename)
 		filename = BLKID_CONFIG_FILE;
 
-	conf = (struct blkid_config *) calloc(1, sizeof(*conf));
+	conf = calloc(1, sizeof(*conf));
 	if (!conf)
 		return NULL;
 	conf->uevent = -1;

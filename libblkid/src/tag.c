@@ -21,7 +21,7 @@ static blkid_tag blkid_new_tag(void)
 {
 	blkid_tag tag;
 
-	if (!(tag = (blkid_tag) calloc(1, sizeof(struct blkid_struct_tag))))
+	if (!(tag = calloc(1, sizeof(struct blkid_struct_tag))))
 		return NULL;
 
 	INIT_LIST_HEAD(&tag->bit_tags);

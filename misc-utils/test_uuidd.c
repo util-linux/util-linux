@@ -161,7 +161,7 @@ static void create_nthreads(process_t *proc, size_t index)
 	size_t i, ncreated = 0;
 	int rc;
 
-	threads = (thread_t *) xcalloc(nthreads, sizeof(thread_t));
+	threads = xcalloc(nthreads, sizeof(thread_t));
 
 	for (i = 0; i < nthreads; i++) {
 		thread_t *th = &threads[i];
@@ -209,7 +209,7 @@ static void create_nprocesses(void)
 	process_t *process;
 	size_t i;
 
-	process = (process_t *) xcalloc(nprocesses, sizeof(process_t));
+	process = xcalloc(nprocesses, sizeof(process_t));
 
 	for (i = 0; i < nprocesses; i++) {
 		process_t *proc = &process[i];

@@ -33,7 +33,7 @@ void initproctitle (int argc, char **argv)
 	for (i = 0; envp[i] != NULL; i++)
 		continue;
 
-	environ = (char **) malloc(sizeof(char *) * (i + 1));
+	environ = malloc(sizeof(char *) * (i + 1));
 	if (environ == NULL)
 		return;
 
