@@ -1273,12 +1273,14 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 			if (cpuset_ary_isset(cpu, ca->sharedmaps,
 					     ca->nsharedmaps, setsize, &i) == 0) {
 				int x = snprintf(p, sz, "%zu", i);
-				if (x <= 0 || (size_t) x + 2 >= sz)
+				if (x < 0 || (size_t) x >= sz)
 					return NULL;
 				p += x;
 				sz -= x;
 			}
 			if (j != 0) {
+				if (sz < 2)
+					return NULL;
 				*p++ = mod->compat ? ',' : ':';
 				*p = '\0';
 				sz--;
@@ -1346,11 +1348,13 @@ get_cell_header(struct lscpu_desc *desc, int col,
 
 		for (i = desc->ncaches - 1; i >= 0; i--) {
 			int x = snprintf(p, sz, "%s", desc->caches[i].name);
-			if (x <= 0 || (size_t) x + 2 > sz)
+			if (x < 0 || (size_t) x >= sz)
 				return NULL;
 			sz -= x;
 			p += x;
 			if (i > 0) {
+				if (sz < 2)
+					return NULL;
 				*p++ = mod->compat ? ',' : ':';
 				*p = '\0';
 				sz--;

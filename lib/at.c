@@ -31,7 +31,7 @@ int fstat_at(int dir __attribute__ ((__unused__)), const char *dirname,
 		int len;
 
 		len = snprintf(path, sizeof(path), "%s/%s", dirname, filename);
-		if (len < 0 || len + 1 > sizeof(path))
+		if (len < 0 || (size_t)len >= sizeof(path))
 			return -1;
 
 		return nofollow ? lstat(path, st) : stat(path, st);
@@ -56,7 +56,7 @@ int open_at(int dir __attribute__((__unused__)), const char *dirname,
 		int len;
 
 		len = snprintf(path, sizeof(path), "%s/%s", dirname, filename);
-		if (len < 0 || len + 1 > sizeof(path))
+		if (len < 0 || (size_t)len >= sizeof(path))
 			return -1;
 
 		return open(path, flags);
@@ -91,7 +91,7 @@ ssize_t readlink_at(int dir __attribute__((__unused__)), const char *dirname,
 		int len;
 
 		len = snprintf(path, sizeof(path), "%s/%s", dirname, pathname);
-		if (len < 0 || len + 1 > sizeof(path))
+		if (len < 0 || (size_t)len >= sizeof(path))
 			return -1;
 
 		return readlink(path, buf, bufsiz);

@@ -514,9 +514,14 @@ static void headers_init(struct cal_control *ctl)
 	size_t i, wd;
 	char *cur_dh = day_headings;
 	char tmp[FMT_ST_CHARS];
-	size_t year_len;
+	int year_len;
 
 	year_len = snprintf(tmp, sizeof(tmp), "%d", ctl->req.year);
+
+	if (year_len < 0 || (size_t)year_len >= sizeof(tmp)) {
+		/* XXX impossible error */
+		return;
+	}
 
 	for (i = 0; i < DAYS_IN_WEEK; i++) {
 		size_t space_left;

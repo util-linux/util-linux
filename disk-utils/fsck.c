@@ -316,7 +316,7 @@ static int is_irrotational_disk(dev_t disk)
 			"/sys/dev/block/%d:%d/queue/rotational",
 			major(disk), minor(disk));
 
-	if (rc < 0 || (unsigned int) (rc + 1) > sizeof(path))
+	if (rc < 0 || (unsigned int) rc >= sizeof(path))
 		return 0;
 
 	f = fopen(path, "r");

@@ -397,7 +397,7 @@ again:
 			x = snprintf(p, len, "%s,", grp->gr_name);
 		}
 
-		if (x < 0 || (size_t) x + 1 > len) {
+		if (x < 0 || (size_t) x >= len) {
 			size_t cur = p - res;
 
 			maxlen *= 2;

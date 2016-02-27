@@ -1057,7 +1057,7 @@ static void init_environ(struct login_context *cxt)
 
 	/* mailx will give a funny error msg if you forget this one */
 	len = snprintf(tmp, sizeof(tmp), "%s/%s", _PATH_MAILDIR, pwd->pw_name);
-	if (len > 0 && (size_t) len + 1 <= sizeof(tmp))
+	if (len > 0 && (size_t) len < sizeof(tmp))
 		setenv("MAIL", tmp, 0);
 
 	/* LOGNAME is not documented in login(1) but HP-UX 6.5 does it. We'll

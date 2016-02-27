@@ -383,15 +383,11 @@ static char *mk_string_list(char *ptr, size_t *len, size_t *begin,
 			snprintf(ptr, *len, "%c-%c,", tochar(*begin), tochar(*begin + *run)) :
 			snprintf(ptr, *len, "%zu-%zu,", *begin, *begin + *run);
 
-	if (rlen < 0 || (size_t) rlen + 1 > *len)
+	if (rlen < 0 || (size_t) rlen >= *len)
 		return NULL;
 
 	ptr += rlen;
-
-	if (rlen > 0 && *len > (size_t) rlen)
-		*len -= rlen;
-	else
-		*len = 0;
+	*len -= rlen;
 
 	if (cur == -1 && *begin) {
 		/* end of the list */

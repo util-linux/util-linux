@@ -1001,8 +1001,8 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 		if ((gr = getgrnam("tty")))
 			gid = gr->gr_gid;
 
-		if (((len = snprintf(buf, sizeof(buf), "/dev/%s", tty)) >=
-		     (int)sizeof(buf)) || (len < 0))
+		len = snprintf(buf, sizeof(buf), "/dev/%s", tty);
+		if (len < 0 || (size_t)len >= sizeof(buf))
 			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
 
 		/* Open the tty as standard input. */

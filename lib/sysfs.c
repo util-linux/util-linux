@@ -26,7 +26,7 @@ char *sysfs_devno_attribute_path(dev_t devno, char *buf,
 		len = snprintf(buf, bufsiz, _PATH_SYS_DEVBLOCK "/%d:%d",
 			major(devno), minor(devno));
 
-	return (len < 0 || (size_t) len + 1 > bufsiz) ? NULL : buf;
+	return (len < 0 || (size_t) len >= bufsiz) ? NULL : buf;
 }
 
 int sysfs_devno_has_attribute(dev_t devno, const char *attr)
@@ -82,7 +82,7 @@ dev_t sysfs_devname_to_devno(const char *name, const char *parent)
 				_PATH_SYS_BLOCK "/%s/%s/dev", _parent, _name);
 		free(_name);
 		free(_parent);
-		if (len < 0 || (size_t) len + 1 > sizeof(buf))
+		if (len < 0 || (size_t) len >= sizeof(buf))
 			return 0;
 		path = buf;
 
@@ -100,7 +100,7 @@ dev_t sysfs_devname_to_devno(const char *name, const char *parent)
 		len = snprintf(buf, sizeof(buf),
 				_PATH_SYS_BLOCK "/%s/dev", _name);
 		free(_name);
-		if (len < 0 || (size_t) len + 1 > sizeof(buf))
+		if (len < 0 || (size_t) len >= sizeof(buf))
 			return 0;
 		path = buf;
 	}
@@ -463,7 +463,7 @@ int sysfs_write_u64(struct sysfs_cxt *cxt, const char *attr, uint64_t num)
 		return -errno;
 
 	len = snprintf(buf, sizeof(buf), "%" PRIu64, num);
-	if (len < 0 || (size_t) len + 1 > sizeof(buf))
+	if (len < 0 || (size_t) len >= sizeof(buf))
 		rc = len < 0 ? -errno : -E2BIG;
 	else
 		rc = write_all(fd, buf, len);
@@ -930,7 +930,7 @@ static char *sysfs_scsi_host_attribute_path(struct sysfs_cxt *cxt,
 		len = snprintf(buf, bufsz, _PATH_SYS_CLASS "/%s_host/host%d",
 				type, host);
 
-	return (len < 0 || (size_t) len + 1 > bufsz) ? NULL : buf;
+	return (len < 0 || (size_t) len >= bufsz) ? NULL : buf;
 }
 
 char *sysfs_scsi_host_strdup_attribute(struct sysfs_cxt *cxt,
@@ -979,7 +979,7 @@ static char *sysfs_scsi_attribute_path(struct sysfs_cxt *cxt,
 	else
 		len = snprintf(buf, bufsz, _PATH_SYS_SCSI "/devices/%d:%d:%d:%d",
 				h,c,t,l);
-	return (len < 0 || (size_t) len + 1 > bufsz) ? NULL : buf;
+	return (len < 0 || (size_t) len >= bufsz) ? NULL : buf;
 }
 
 int sysfs_scsi_has_attribute(struct sysfs_cxt *cxt, const char *attr)

@@ -177,13 +177,10 @@ char *cpulist_create(char *str, size_t len,
 				rlen = snprintf(ptr, len, "%zu-%zu,", i, i + run);
 				i += run;
 			}
-			if (rlen < 0 || (size_t) rlen + 1 > len)
+			if (rlen < 0 || (size_t) rlen >= len)
 				return NULL;
 			ptr += rlen;
-			if (rlen > 0 && len > (size_t) rlen)
-				len -= rlen;
-			else
-				len = 0;
+			len -= rlen;
 		}
 	}
 	ptr -= entry_made;

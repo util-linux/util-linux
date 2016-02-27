@@ -71,7 +71,7 @@ static int dir_to_device(struct mountpoint_control *ctl)
 		len = snprintf(buf, sizeof(buf), "%s/..", cn ? cn : ctl->path);
 		free(cn);
 
-		if (len < 0 || (size_t) len + 1 > sizeof(buf))
+		if (len < 0 || (size_t) len >= sizeof(buf))
 			return -1;
 		if (stat(buf, &pst) !=0)
 			return -1;
