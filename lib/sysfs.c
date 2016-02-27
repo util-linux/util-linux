@@ -464,7 +464,7 @@ int sysfs_write_u64(struct sysfs_cxt *cxt, const char *attr, uint64_t num)
 
 	len = snprintf(buf, sizeof(buf), "%" PRIu64, num);
 	if (len < 0 || (size_t) len + 1 > sizeof(buf))
-		rc = -errno;
+		rc = len < 0 ? -errno : -E2BIG;
 	else
 		rc = write_all(fd, buf, len);
 

@@ -255,7 +255,7 @@ static int read_process(struct lsns *ls, pid_t pid)
 	}
 	rc = fscanf(f, "%d %*s %c %d*[^\n]", &p->pid, &p->state, &p->ppid);
 	if (rc != 3) {
-		rc = -errno;
+		rc = rc < 0 ? -errno : -EINVAL;
 		goto done;
 	}
 	rc = 0;
