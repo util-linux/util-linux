@@ -368,6 +368,7 @@ AC_CHECK_FUNCS([ \
 	llseek \
 	lseek64 \
 	mempcpy \
+	mkostemp \
 	nanosleep \
 	ntp_gettime \
 	personality \

@@ -13,6 +13,35 @@
 #include "fileutils.h"
 #include "pathnames.h"
 
+int mkstemp_cloexec(char *template)
+{
+#ifdef HAVE_MKOSTEMP
+	return mkostemp(template, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
+#else
+	int fd, old_flags, errno_save;
+
+	fd = mkstemp(template);
+	if (fd < 0)
+		return fd;
+
+	old_flags = fcntl(fd, F_GETFD, 0);
+	if (old_flags < 0)
+		goto unwind;
+	if (fcntl(fd, F_SETFD, old_flags | O_CLOEXEC) < 0)
+		goto unwind;
+
+	return fd;
+
+unwind:
+	errno_save = errno;
+	unlink(template);
+	close(fd);
+	errno = errno_save;
+
+	return -1;
+#endif
+}
+
 /* Create open temporary file in safe way.  Please notice that the
  * file permissions are -rw------- by default. */
 int xmkstemp(char **tmpname, const char *dir, const char *prefix)
@@ -33,7 +62,7 @@ int xmkstemp(char **tmpname, const char *dir, const char *prefix)
 		return -1;
 
 	old_mode = umask(077);
-	fd = mkostemp(localtmp, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
+	fd = mkstemp_cloexec(localtmp);
 	umask(old_mode);
 	if (fd == -1) {
 		free(localtmp);
