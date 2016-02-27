@@ -1281,7 +1281,7 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 			if (j != 0) {
 				*p++ = mod->compat ? ',' : ':';
 				*p = '\0';
-				sz++;
+				sz--;
 			}
 		}
 		break;
@@ -1353,7 +1353,7 @@ get_cell_header(struct lscpu_desc *desc, int col,
 			if (i > 0) {
 				*p++ = mod->compat ? ',' : ':';
 				*p = '\0';
-				sz++;
+				sz--;
 			}
 		}
 		if (desc->ncaches)
