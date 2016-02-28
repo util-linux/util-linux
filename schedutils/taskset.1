@@ -73,9 +73,9 @@ CPU.
 .BR \-a ,\  \-\-all\-tasks
 Set or retrieve the CPU affinity of all the tasks (threads) for a given PID.
 .TP
-.BR \-c ,\  \-\-cpu\-list \ \fInumbers
-Specify a numerical list of processors instead of a bitmask.  The \fInumbers\fR
-are separated by commas and may include ranges.  For example:
+.BR \-c ,\  \-\-cpu\-list
+Interpret \fImask\fR as numerical list of processors instead of a bitmask.
+Numbers are separated by commas and may include ranges.  For example:
 .BR 0,5,8-11 .
 .TP
 .BR \-p ,\  \-\-pid
