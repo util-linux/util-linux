@@ -34,7 +34,6 @@
 
 #include "blkidP.h"
 #include "pathnames.h"
-#include "at.h"
 #include "sysfs.h"
 
 static char *blkid_strconcat(const char *a, const char *b, const char *c)
@@ -126,7 +125,7 @@ void blkid__scan_dir(char *dirname, dev_t devno, struct dir_list **list,
 		     ((dp->d_name[1] == '.') && (dp->d_name[2] == 0))))
 			continue;
 
-		if (fstat_at(dirfd(dir), dirname, dp->d_name, &st, 0))
+		if (fstatat(dirfd(dir), dp->d_name, &st, 0))
 			continue;
 
 		if (S_ISBLK(st.st_mode) && st.st_rdev == devno) {
@@ -146,7 +145,7 @@ void blkid__scan_dir(char *dirname, dev_t devno, struct dir_list **list,
 		if (dp->d_type == DT_UNKNOWN)
 #endif
 		{
-			if (fstat_at(dirfd(dir), dirname, dp->d_name, &st, 1) ||
+			if (fstatat(dirfd(dir), dp->d_name, &st, 1) ||
 			    !S_ISDIR(st.st_mode))
 				continue;	/* symlink or lstat() failed */
 		}

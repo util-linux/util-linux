@@ -16,17 +16,7 @@
 
 #include "c.h"
 
-extern int fstat_at(int dir, const char *dirname,
-			const char *filename, struct stat *st, int nofollow);
-
-extern int open_at(int dir, const char *dirname,
-			const char *filename, int flags);
-
-extern FILE *fopen_at(int dir, const char *dirname, const char *filename,
+extern FILE *fopen_at(int dir, const char *filename,
 			int flags, const char *mode);
-
-extern ssize_t readlink_at(int dir, const char *dirname, const char *pathname,
-                    char *buf, size_t bufsiz);
-
 
 #endif /* UTIL_LINUX_AT_H */

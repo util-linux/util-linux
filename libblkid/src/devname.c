@@ -39,7 +39,6 @@
 #include "canonicalize.h"		/* $(top_srcdir)/include */
 #include "pathnames.h"
 #include "sysfs.h"
-#include "at.h"
 
 /*
  * Find a dev struct in the cache by device name, if available.
@@ -397,7 +396,7 @@ ubi_probe_all(blkid_cache cache, int only_if_new)
 				continue;
 			if (!strcmp(name, "ubi_ctrl"))
 				continue;
-			if (fstat_at(dirfd(dir), *dirname, name, &st, 0))
+			if (fstatat(dirfd(dir), name, &st, 0))
 				continue;
 
 			dev = st.st_rdev;

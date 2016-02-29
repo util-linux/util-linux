@@ -52,7 +52,6 @@ dist_man_MANS += lib/terminal-colors.d.5
 
 
 check_PROGRAMS += \
-	test_at \
 	test_blkdev \
 	test_canonicalize \
 	test_colors \
@@ -90,9 +89,6 @@ test_ismounted_LDADD = $(LDADD) libcommon.la
 
 test_mangle_SOURCES = lib/mangle.c
 test_mangle_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
-
-test_at_SOURCES = lib/at.c
-test_at_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_AT
 
 test_strutils_SOURCES = lib/strutils.c
 test_strutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
