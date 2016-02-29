@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
 #include <ctype.h>
@@ -199,7 +200,7 @@ int proc_next_pid(struct proc_processes *ps, pid_t *pid)
 		if (ps->has_fltr_uid) {
 			struct stat st;
 
-			if (fstat_at(dirfd(ps->dir), "/proc", d->d_name, &st, 0))
+			if (fstatat(dirfd(ps->dir), d->d_name, &st, 0))
 				continue;
 			if (ps->fltr_uid != st.st_uid)
 				continue;
@@ -211,8 +212,7 @@ int proc_next_pid(struct proc_processes *ps, pid_t *pid)
 			FILE *f;
 
 			snprintf(buf, sizeof(buf), "%s/stat", d->d_name);
-			f = fopen_at(dirfd(ps->dir), "/proc", buf,
-						O_CLOEXEC|O_RDONLY, "r");
+			f = fopen_at(dirfd(ps->dir), buf, O_CLOEXEC|O_RDONLY, "r");
 			if (!f)
 				continue;
 

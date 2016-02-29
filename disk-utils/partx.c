@@ -32,7 +32,6 @@
 #include "partx.h"
 #include "sysfs.h"
 #include "loopdev.h"
-#include "at.h"
 #include "closestream.h"
 #include "optutils.h"
 
@@ -249,7 +248,7 @@ static int get_max_partno(const char *disk, dev_t devno)
 			continue;
 		snprintf(path, sizeof(path), "%s/partition", d->d_name);
 
-		fd = open_at(dirfd(dir), dirname, path, O_RDONLY);
+		fd = openat(dirfd(dir), path, O_RDONLY);
 		if (fd) {
 			int x = 0;
 			FILE *f = fdopen(fd, "r");

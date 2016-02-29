@@ -39,7 +39,6 @@
 #include "canonicalize.h"
 #include "nls.h"
 #include "xalloc.h"
-#include "at.h"
 #include "strutils.h"
 #include "c.h"
 #include "list.h"
@@ -180,12 +179,11 @@ static char *get_filename_sz(ino_t inode, pid_t lock_pid, size_t *size)
 		if (!strtol(dp->d_name, (char **) NULL, 10))
 			continue;
 
-		if (!fstat_at(fd, path, dp->d_name, &sb, 0)
+		if (!fstatat(fd, dp->d_name, &sb, 0)
 		    && inode != sb.st_ino)
 			continue;
 
-		if ((len = readlink_at(fd, path, dp->d_name,
-				       sym, sizeof(sym) - 1)) < 1)
+		if ((len = readlinkat(fd, dp->d_name, sym, sizeof(sym) - 1)) < 1)
 			goto out;
 
 		*size = sb.st_size;

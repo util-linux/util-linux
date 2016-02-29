@@ -6,9 +6,11 @@
  */
 #include <ctype.h>
 #include <libgen.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "c.h"
-#include "at.h"
 #include "pathnames.h"
 #include "sysfs.h"
 #include "fileutils.h"
@@ -203,7 +205,7 @@ void sysfs_deinit(struct sysfs_cxt *cxt)
 
 int sysfs_stat(struct sysfs_cxt *cxt, const char *attr, struct stat *st)
 {
-	int rc = fstat_at(cxt->dir_fd, cxt->dir_path, attr, st, 0);
+	int rc = fstatat(cxt->dir_fd, attr, st, 0);
 
 	if (rc != 0 && errno == ENOENT &&
 	    strncmp(attr, "queue/", 6) == 0 && cxt->parent) {
@@ -211,8 +213,7 @@ int sysfs_stat(struct sysfs_cxt *cxt, const char *attr, struct stat *st)
 		/* Exception for "queue/<attr>". These attributes are available
 		 * for parental devices only
 		 */
-		return fstat_at(cxt->parent->dir_fd,
-				cxt->parent->dir_path, attr, st, 0);
+		return fstatat(cxt->parent->dir_fd, attr, st, 0);
 	}
 	return rc;
 }
@@ -226,7 +227,7 @@ int sysfs_has_attribute(struct sysfs_cxt *cxt, const char *attr)
 
 static int sysfs_open(struct sysfs_cxt *cxt, const char *attr, int flags)
 {
-	int fd = open_at(cxt->dir_fd, cxt->dir_path, attr, flags);
+	int fd = openat(cxt->dir_fd, attr, flags);
 
 	if (fd == -1 && errno == ENOENT &&
 	    strncmp(attr, "queue/", 6) == 0 && cxt->parent) {
@@ -234,7 +235,7 @@ static int sysfs_open(struct sysfs_cxt *cxt, const char *attr, int flags)
 		/* Exception for "queue/<attr>". These attributes are available
 		 * for parental devices only
 		 */
-		fd = open_at(cxt->parent->dir_fd, cxt->dir_path, attr, flags);
+		fd = openat(cxt->parent->dir_fd, attr, flags);
 	}
 	return fd;
 }
@@ -246,7 +247,7 @@ ssize_t sysfs_readlink(struct sysfs_cxt *cxt, const char *attr,
 		return -1;
 
 	if (attr)
-		return readlink_at(cxt->dir_fd, cxt->dir_path, attr, buf, bufsiz);
+		return readlinkat(cxt->dir_fd, attr, buf, bufsiz);
 
 	/* read /sys/dev/block/<maj:min> link */
 	return readlink(cxt->dir_path, buf, bufsiz);

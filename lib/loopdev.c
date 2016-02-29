@@ -40,7 +40,6 @@
 #include "pathnames.h"
 #include "loopdev.h"
 #include "canonicalize.h"
-#include "at.h"
 #include "blkdev.h"
 #include "debug.h"
 
@@ -546,7 +545,7 @@ static int loopcxt_next_from_sysfs(struct loopdev_cxt *lc)
 			continue;
 
 		snprintf(name, sizeof(name), "%s/loop/backing_file", d->d_name);
-		if (fstat_at(fd, _PATH_SYS_BLOCK, name, &st, 0) != 0)
+		if (fstatat(fd, name, &st, 0) != 0)
 			continue;
 
 		if (loopiter_set_device(lc, d->d_name) == 0)
