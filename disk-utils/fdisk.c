@@ -37,7 +37,6 @@
 #include "canonicalize.h"
 #include "strutils.h"
 #include "closestream.h"
-#include "sysfs.h"
 
 #include "fdisk.h"
 
