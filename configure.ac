@@ -397,6 +397,8 @@ AC_CHECK_FUNCS([inotify_init1], [have_inotify_init1=yes])
 AC_CHECK_FUNCS([open_memstream], [have_open_memstream=yes],[have_open_memstream=no])
 AC_CHECK_FUNCS([reboot], [have_reboot=yes],[have_reboot=no])
 
+AM_CONDITIONAL([HAVE_OPENAT], [test "x$have_openat" = xyes])
+
 dnl lib/mononotic.c may require -lrt
 AC_CHECK_FUNCS([clock_gettime], [],
 	[AC_CHECK_LIB([rt], [clock_gettime], [REALTIME_LIBS="-lrt"])]
@@ -910,9 +912,10 @@ dnl libblkid
 dnl
 AC_ARG_ENABLE([libblkid],
   AS_HELP_STRING([--disable-libblkid], [do not build libblkid and many related utilities]),
-  [], [UL_DEFAULT_ENABLE([libblkid], [yes])]
+  [], [UL_DEFAULT_ENABLE([libblkid], [check])]
 )
 UL_BUILD_INIT([libblkid])
+UL_REQUIRES_HAVE([libblkid], [openat], [openat functions])
 AC_SUBST([LIBBLKID_DATE])
 AC_SUBST([LIBBLKID_VERSION])
 AC_SUBST([LIBBLKID_VERSION_INFO])
@@ -997,12 +1000,14 @@ AC_DEFINE_UNQUOTED([LIBFDISK_VERSION], ["$LIBFDISK_VERSION"], [libfdisk version 
 
 
 UL_BUILD_INIT([fdisk], [check])
+UL_REQUIRES_HAVE([fdisk], [openat], [openat functions])
 UL_REQUIRES_BUILD([fdisk], [libfdisk])
 UL_REQUIRES_BUILD([fdisk], [libsmartcols])
 AM_CONDITIONAL([BUILD_FDISK], [test "x$build_fdisk" = xyes])
 
 
 UL_BUILD_INIT([sfdisk], [check])
+UL_REQUIRES_HAVE([sfdisk], [openat], [openat functions])
 UL_REQUIRES_BUILD([sfdisk], [libfdisk])
 UL_REQUIRES_BUILD([sfdisk], [libsmartcols])
 AM_CONDITIONAL([BUILD_SFDISK], [test "x$build_sfdisk" = xyes])

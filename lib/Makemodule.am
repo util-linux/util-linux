@@ -17,11 +17,9 @@ libcommon_la_SOURCES = \
 	lib/md5.c \
 	lib/pager.c \
 	lib/path.c \
-	lib/procutils.c \
 	lib/randutils.c \
 	lib/setproctitle.c \
 	lib/strutils.c \
-	lib/sysfs.c \
 	lib/timeutils.c \
 	lib/ttyutils.c \
 	lib/exec_shell.c \
@@ -41,6 +39,10 @@ if HAVE_CPU_SET_T
 libcommon_la_SOURCES += lib/cpuset.c
 endif
 
+if HAVE_OPENAT
+libcommon_la_SOURCES += lib/procutils.c
+libcommon_la_SOURCES += lib/sysfs.c
+endif
 
 noinst_LTLIBRARIES += libtcolors.la
 libtcolors_la_CFLAGS = $(AM_CFLAGS) $(TINFO_CFLAGS)
@@ -57,11 +59,9 @@ check_PROGRAMS += \
 	test_fileutils \
 	test_ismounted \
 	test_mangle \
-	test_procutils \
 	test_randutils \
 	test_strutils \
 	test_ttyutils
-
 
 
 
@@ -72,6 +72,10 @@ endif
 check_PROGRAMS += \
 	test_sysfs \
 	test_pager
+endif
+
+if HAVE_OPENAT
+check_PROGRAMS += test_procutils
 endif
 
 test_ttyutils_SOURCES = lib/ttyutils.c
@@ -99,8 +103,10 @@ test_colors_LDADD = $(LDADD) $(TINFO_LIBS)
 test_randutils_SOURCES = lib/randutils.c
 test_randutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 
+if HAVE_OPENAT
 test_procutils_SOURCES = lib/procutils.c
 test_procutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
+endif
 
 if LINUX
 test_cpuset_SOURCES = lib/cpuset.c

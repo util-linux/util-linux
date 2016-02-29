@@ -26,6 +26,7 @@ static inline FILE *xfmkstemp(char **tmpname, const char *dir, const char *prefi
 	return ret;
 }
 
+#ifdef HAVE_OPENAT
 static inline FILE *fopen_at(int dir, const char *filename,
                              int flags, const char *mode)
 {
@@ -35,6 +36,7 @@ static inline FILE *fopen_at(int dir, const char *filename,
 
 	return fdopen(fd, mode);
 }
+#endif
 
 static inline int is_same_inode(const int fd, const struct stat *st)
 {
