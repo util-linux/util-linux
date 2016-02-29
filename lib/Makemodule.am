@@ -2,7 +2,6 @@
 noinst_LTLIBRARIES += libcommon.la
 libcommon_la_CFLAGS = $(AM_CFLAGS)
 libcommon_la_SOURCES = \
-	lib/at.c \
 	lib/blkdev.c \
 	lib/canonicalize.c \
 	lib/crc32.c \
@@ -100,7 +99,7 @@ test_colors_LDADD = $(LDADD) $(TINFO_LIBS)
 test_randutils_SOURCES = lib/randutils.c
 test_randutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 
-test_procutils_SOURCES = lib/procutils.c lib/at.c
+test_procutils_SOURCES = lib/procutils.c
 test_procutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM
 
 if LINUX

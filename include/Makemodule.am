@@ -1,7 +1,6 @@
 
 dist_noinst_HEADERS += \
 	include/all-io.h \
-	include/at.h \
 	include/bitops.h \
 	include/blkdev.h \
 	include/canonicalize.h \
