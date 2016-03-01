@@ -369,8 +369,7 @@ static void make_root_inode_v1(struct fs_control *ctl) {
 	if (ctl->fs_bad_blocks)
 		inode->i_size = 3 * ctl->fs_dirsize;
 	else {
-		root_block[2 * ctl->fs_dirsize] = '\0';
-		root_block[2 * ctl->fs_dirsize + 1] = '\0';
+		memset(&root_block[2 * ctl->fs_dirsize], 0, ctl->fs_dirsize);
 		inode->i_size = 2 * ctl->fs_dirsize;
 	}
 	inode->i_mode = S_IFDIR + 0755;
@@ -391,7 +390,7 @@ static void make_root_inode_v2_v3 (struct fs_control *ctl) {
 	if (ctl->fs_bad_blocks)
 		inode->i_size = 3 * ctl->fs_dirsize;
 	else {
-		root_block[2 * ctl->fs_dirsize] = '\0';
+		memset(&root_block[2 * ctl->fs_dirsize], 0, ctl->fs_dirsize);
 		inode->i_size = 2 * ctl->fs_dirsize;
 	}
 
