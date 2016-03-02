@@ -26,10 +26,15 @@ ts_check_test_command "$TS_CMD_FSCKMINIX"
 ts_check_test_command "$TS_HELPER_MKFS_MINIX"
 ts_check_test_command "$TS_CMD_HEXDUMP"
 
+# on big endian systems some of the subtests have different expected output
+BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
+BE_EXT=$(test "$BYTE_ORDER" = "BE" && echo ".BE")
+
 export MKFS_MINIX_TEST_SECOND_SINCE_EPOCH='1438460212'
 
 check_minix_fs_type() {
 	ts_init_subtest $1
+	TS_EXPECTED+=$BE_EXT
 	img=${TS_OUTPUT}.img
 	dd if=/dev/zero bs=1024 count=16 of=$img >/dev/null 2>&1
 	$TS_HELPER_MKFS_MINIX $2 $img >> $TS_OUTPUT 2>&1
@@ -56,6 +61,11 @@ check_minix_fs_type 'check-blocks' "-l $bad -c"
 check_minix_fs_type 'badblocks' "-l $bad"
 
 rm -f $bad
+
+# no more big endian tests below
+if test "$BYTE_ORDER" = "BE"; then
+	ts_finalize
+fi
 
 # NOTE this seems odd: a 2nd fsck run would again modify the FS
 ts_init_subtest "auto-fix"
