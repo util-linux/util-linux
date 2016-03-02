@@ -19,6 +19,7 @@ TS_DESC="fsck images"
 ts_init "$*"
 
 # inode contains UID and GID, use always UID=0 to get the same checksum
+# TODO any mkfs should use UID=0 per default (custom uid optionally) like mk2fs
 ts_skip_nonroot
 
 ts_check_test_command "$TS_CMD_FSCKMINIX"
@@ -46,28 +47,34 @@ check_minix_fs_type 'v2c14' '-2 -n 14'
 check_minix_fs_type 'v2c30' '-2 -n 30'
 check_minix_fs_type 'v3c60' '-3 -n 60'
 
+bad="$TS_OUTDIR/${TS_TESTNAME}.badlist"
+# TODO seems that mkfs produces non-sense if badblocks are greater than device.
+echo -e "8\n9" > $bad
+
+# NOTE, -c with -l ignores -l.
+check_minix_fs_type 'check-blocks' "-l $bad -c"
+check_minix_fs_type 'badblocks' "-l $bad"
+
+rm -f $bad
+
+# NOTE this seems odd: a 2nd fsck run would again modify the FS
 ts_init_subtest "auto-fix"
 img=${TS_OUTPUT}.img
 cp "$TS_SELF/broken-root" $img
-"$TS_CMD_FSCKMINIX" -sav $img |
-	sed 's/Filesystem on .* is dirty/Filesystem auto-fix is dirty/' > $TS_OUTPUT 2>&1
-echo $? >> $TS_OUTPUT
+$TS_CMD_FSCKMINIX -sav $img >> $TS_OUTPUT 2>&1
+echo "fsck reports changed and uncorrected: $?" >> $TS_OUTPUT
 $TS_CMD_HEXDUMP -C $img >> $TS_OUTPUT 2>&1
+sed -i 's/Filesystem on .* is dirty/Filesystem auto-fix is dirty/' $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "bug.773892"
-"$TS_CMD_FSCKMINIX" "$TS_SELF/debian.bug.773892" > $TS_OUTPUT 2>&1
-echo $? >> $TS_OUTPUT
+"$TS_CMD_FSCKMINIX" -f "$TS_SELF/debian.bug.773892" >>$TS_OUTPUT 2>&1 >/dev/null
+echo "fsck reports uncorrected: $?" >> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "broken-root"
 "$TS_CMD_FSCKMINIX" "$TS_SELF/broken-root" > $TS_OUTPUT 2>&1
-echo $? >> $TS_OUTPUT
+echo "fsck reports uncorrected: $?" >> $TS_OUTPUT
 ts_finalize_subtest
-
-img="$TS_OUTDIR/${TS_TESTNAME}.badlist"
-echo "42" > $img
-check_minix_fs_type 'check-blocks' "-l $img -c"
-rm -f $img
 
 ts_finalize

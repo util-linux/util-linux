@@ -27,7 +27,7 @@ Inode 1 not used, marked used in the bitmap.
 ----------------------------
 FILE SYSTEM HAS BEEN CHANGED
 ----------------------------
-0
+fsck reports changed and uncorrected: 7
 00000000  00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00  |................|
 *
 00000400  10 00 00 00 00 00 01 00  01 00 05 00 00 00 00 00  |................|
