@@ -32,6 +32,7 @@ TS_HELPER_SCRIPT="$top_builddir/test_script"
 TS_HELPER_SIGRECEIVE="$top_builddir/test_sigreceive"
 TS_HELPER_STRUTILS="$top_builddir/test_strutils"
 TS_HELPER_SYSINFO="$top_builddir/test_sysinfo"
+TS_HELPER_TIOCSTI="$top_builddir/test_tiocsti"
 TS_HELPER_UUID_PARSER="$top_builddir/test_uuid_parser"
 
 # paths to commands
@@ -75,6 +76,7 @@ TS_CMD_MOUNTPOINT=${TS_CMD_MOUNTPOINT:-"$top_builddir/mountpoint"}
 TS_CMD_NAMEI=${TS_CMD_NAMEI-"$top_builddir/namei"}
 TS_CMD_PARTX=${TS_CMD_PARTX-"$top_builddir/partx"}
 TS_CMD_RENAME=${TS_CMD_RENAME-"$top_builddir/rename"}
+TS_CMD_RUNUSER=${TS_CMD_RUNUSER-"$top_builddir/runuser"}
 TS_CMD_REV=${TS_CMD_REV:-"$top_builddir/rev"}
 TS_CMD_SCRIPT=${TS_CMD_SCRIPT-"$top_builddir/script"}
 TS_CMD_SCRIPTREPLAY=${TS_CMD_SCRIPTREPLAY-"$top_builddir/scriptreplay"}

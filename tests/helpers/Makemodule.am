@@ -15,3 +15,6 @@ check_PROGRAMS += test_sigreceive
 test_sigreceive_SOURCES = tests/helpers/test_sigreceive.c
 test_sigreceive_LDADD = $(LDADD) libcommon.la
 
+check_PROGRAMS += test_tiocsti
+test_tiocsti_SOURCES = tests/helpers/test_tiocsti.c
+
