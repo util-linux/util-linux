@@ -23,6 +23,7 @@ ts_skip_nonroot
 
 ts_check_test_command "$TS_CMD_FSCKMINIX"
 ts_check_test_command "$TS_HELPER_MKFS_MINIX"
+ts_check_test_command "$TS_CMD_HEXDUMP"
 
 export MKFS_MINIX_TEST_SECOND_SINCE_EPOCH='1438460212'
 
@@ -34,7 +35,7 @@ check_minix_fs_type() {
 	echo "mkfs return value: $?" >> $TS_OUTPUT
 	$TS_CMD_FSCKMINIX $img >> $TS_OUTPUT 2>&1
 	echo "fsck return value: $?" >> $TS_OUTPUT
-	md5sum $img | awk '{print $1}' >> $TS_OUTPUT 2>&1
+	$TS_CMD_HEXDUMP -C $img >> $TS_OUTPUT 2>&1
 	rm -f $img
 	ts_finalize_subtest
 }
@@ -51,7 +52,7 @@ cp "$TS_SELF/broken-root" $img
 "$TS_CMD_FSCKMINIX" -sav $img |
 	sed 's/Filesystem on .* is dirty/Filesystem auto-fix is dirty/' > $TS_OUTPUT 2>&1
 echo $? >> $TS_OUTPUT
-md5sum $img | sed 's/  .*auto-fix/ auto-fix/' >> $TS_OUTPUT
+$TS_CMD_HEXDUMP -C $img >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 ts_init_subtest "bug.773892"
