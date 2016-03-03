@@ -53,12 +53,13 @@ static struct namespace_file {
 	const char	*name;		/* ns/<type> */
 	const char	*target;	/* user specified target for bind mount */
 } namespace_files[] = {
-	{ .type = CLONE_NEWUSER, .name = "ns/user" },
-	{ .type = CLONE_NEWIPC,  .name = "ns/ipc"  },
-	{ .type = CLONE_NEWUTS,  .name = "ns/uts"  },
-	{ .type = CLONE_NEWNET,  .name = "ns/net"  },
-	{ .type = CLONE_NEWPID,  .name = "ns/pid"  },
-	{ .type = CLONE_NEWNS,   .name = "ns/mnt"  },
+	{ .type = CLONE_NEWUSER,  .name = "ns/user" },
+	{ .type = CLONE_NEWCGROUP,.name = "ns/cgroup" },
+	{ .type = CLONE_NEWIPC,   .name = "ns/ipc"  },
+	{ .type = CLONE_NEWUTS,   .name = "ns/uts"  },
+	{ .type = CLONE_NEWNET,   .name = "ns/net"  },
+	{ .type = CLONE_NEWPID,   .name = "ns/pid"  },
+	{ .type = CLONE_NEWNS,    .name = "ns/mnt"  },
 	{ .name = NULL }
 };
 
@@ -255,6 +256,7 @@ static void usage(int status)
 	fputs(_(" -n, --net[=<file>]        unshare network namespace\n"), out);
 	fputs(_(" -p, --pid[=<file>]        unshare pid namespace\n"), out);
 	fputs(_(" -U, --user[=<file>]       unshare user namespace\n"), out);
+	fputs(_(" -C, --cgroup[=<file>]     unshare cgroup namespace\n"), out);
 	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
 	fputs(_("     --mount-proc[=<dir>]  mount proc filesystem first (implies --mount)\n"), out);
 	fputs(_(" -r, --map-root-user       map current user to root (implies --user)\n"), out);
@@ -281,12 +283,13 @@ int main(int argc, char *argv[])
 		{ "help", no_argument, 0, 'h' },
 		{ "version", no_argument, 0, 'V'},
 
-		{ "mount", optional_argument, 0, 'm' },
-		{ "uts",   optional_argument, 0, 'u' },
-		{ "ipc",   optional_argument, 0, 'i' },
-		{ "net",   optional_argument, 0, 'n' },
-		{ "pid",   optional_argument, 0, 'p' },
-		{ "user",  optional_argument, 0, 'U' },
+		{ "mount",  optional_argument, 0, 'm' },
+		{ "uts",    optional_argument, 0, 'u' },
+		{ "ipc",    optional_argument, 0, 'i' },
+		{ "net",    optional_argument, 0, 'n' },
+		{ "pid",    optional_argument, 0, 'p' },
+		{ "user",   optional_argument, 0, 'U' },
+		{ "cgroup", optional_argument, 0, 'C' },
 
 		{ "fork", no_argument, 0, 'f' },
 		{ "mount-proc", optional_argument, 0, OPT_MOUNTPROC },
@@ -312,7 +315,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "+fhVmuinpUr", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+fhVmuinpCUr", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'f':
 			forkit = 1;
@@ -351,6 +354,11 @@ int main(int argc, char *argv[])
 			unshare_flags |= CLONE_NEWUSER;
 			if (optarg)
 				set_ns_target(CLONE_NEWUSER, optarg);
+			break;
+		case 'C':
+			unshare_flags |= CLONE_NEWCGROUP;
+			if (optarg)
+				set_ns_target(CLONE_NEWCGROUP, optarg);
 			break;
 		case OPT_MOUNTPROC:
 			unshare_flags |= CLONE_NEWNS;

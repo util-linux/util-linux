@@ -52,12 +52,13 @@ static struct namespace_file {
 	 * first.  This gives an unprivileged user the potential to
 	 * enter the other namespaces.
 	 */
-	{ .nstype = CLONE_NEWUSER, .name = "ns/user", .fd = -1 },
-	{ .nstype = CLONE_NEWIPC,  .name = "ns/ipc",  .fd = -1 },
-	{ .nstype = CLONE_NEWUTS,  .name = "ns/uts",  .fd = -1 },
-	{ .nstype = CLONE_NEWNET,  .name = "ns/net",  .fd = -1 },
-	{ .nstype = CLONE_NEWPID,  .name = "ns/pid",  .fd = -1 },
-	{ .nstype = CLONE_NEWNS,   .name = "ns/mnt",  .fd = -1 },
+	{ .nstype = CLONE_NEWUSER,  .name = "ns/user", .fd = -1 },
+	{ .nstype = CLONE_NEWCGROUP,.name = "ns/cgroup", .fd = -1 },
+	{ .nstype = CLONE_NEWIPC,   .name = "ns/ipc",  .fd = -1 },
+	{ .nstype = CLONE_NEWUTS,   .name = "ns/uts",  .fd = -1 },
+	{ .nstype = CLONE_NEWNET,   .name = "ns/net",  .fd = -1 },
+	{ .nstype = CLONE_NEWPID,   .name = "ns/pid",  .fd = -1 },
+	{ .nstype = CLONE_NEWNS,    .name = "ns/mnt",  .fd = -1 },
 	{ .nstype = 0, .name = NULL, .fd = -1 }
 };
 
@@ -79,6 +80,7 @@ static void usage(int status)
 	fputs(_(" -i, --ipc[=<file>]     enter System V IPC namespace\n"), out);
 	fputs(_(" -n, --net[=<file>]     enter network namespace\n"), out);
 	fputs(_(" -p, --pid[=<file>]     enter pid namespace\n"), out);
+	fputs(_(" -C, --cgroup[=<file>]  enter cgroup namespace\n"), out);
 	fputs(_(" -U, --user[=<file>]    enter user namespace\n"), out);
 	fputs(_(" -S, --setuid <uid>     set uid in entered namespace\n"), out);
 	fputs(_(" -G, --setgid <gid>     set gid in entered namespace\n"), out);
@@ -186,6 +188,7 @@ int main(int argc, char *argv[])
 		{ "net", optional_argument, NULL, 'n' },
 		{ "pid", optional_argument, NULL, 'p' },
 		{ "user", optional_argument, NULL, 'U' },
+		{ "cgroup", optional_argument, NULL, 'C' },
 		{ "setuid", required_argument, NULL, 'S' },
 		{ "setgid", required_argument, NULL, 'G' },
 		{ "root", optional_argument, NULL, 'r' },
@@ -214,7 +217,7 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	while ((c =
-		getopt_long(argc, argv, "+hVt:m::u::i::n::p::U::S:G:r::w::FZ",
+		getopt_long(argc, argv, "+hVt:m::u::i::n::p::C::U::S:G:r::w::FZ",
 			    longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
@@ -255,6 +258,12 @@ int main(int argc, char *argv[])
 				open_namespace_fd(CLONE_NEWPID, optarg);
 			else
 				namespaces |= CLONE_NEWPID;
+			break;
+		case 'C':
+			if (optarg)
+				open_namespace_fd(CLONE_NEWCGROUP, optarg);
+			else
+				namespaces |= CLONE_NEWCGROUP;
 			break;
 		case 'U':
 			if (optarg)

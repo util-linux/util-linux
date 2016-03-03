@@ -54,6 +54,12 @@ The process will have a distinct set of UIDs, GIDs and capabilities.
 .RB ( CLONE_\:NEWUSER
 flag)
 .TP
+.B cgroup namespace
+The process will have a virtualized view of \fI/proc\:/self\:/cgroup\fP, and new
+cgroup mounts will be rooted at the namespace cgroup root.
+.RB ( CLONE_\:NEWCGROUP
+flag)
+.TP
 See \fBclone\fP(2) for the exact semantics of the flags.
 .TP
 If \fIprogram\fP is not given, then ``${SHELL}'' is run (default: /bin\:/sh).
@@ -86,6 +92,9 @@ the PID namespace
 .TP
 /proc/\fIpid\fR/ns/user
 the user namespace
+.TP
+/proc/\fIpid\fR/ns/cgroup
+the cgroup namespace
 .TP
 /proc/\fIpid\fR/root
 the root directory
@@ -124,6 +133,11 @@ file.
 Enter the user namespace.  If no file is specified, enter the user namespace of
 the target process.  If file is specified, enter the user namespace specified by
 file.  See also the \fB\-\-setuid\fR and \fB\-\-setgid\fR options.
+.TP
+\fB\-C\fR, \fB\-\-cgroup\fR[=\fIfile\fR]
+Enter the cgroup namespace.  If no file is specified, enter the cgroup namespace of
+the target process.  If file is specified, enter the cgroup namespace specified by
+file.
 .TP
 \fB\-G\fR, \fB\-\-setgid\fR \fIgid\fR
 Set the group ID which will be used in the entered namespace and drop
