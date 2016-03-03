@@ -9,7 +9,7 @@
  */
 #include <dirent.h>
 #include <sys/ioctl.h>
-#include <libio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <linux/btrfs.h>
 
