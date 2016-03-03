@@ -51,17 +51,16 @@ ts_log "create mountpoint dir"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 
 ts_log "generate data"
-if [ ! -d "$IMAGE_SRC" ]; then
-	mkdir -p $IMAGE_SRC
-	for d in `seq 0 110`; do
-		DIRNAME="$IMAGE_SRC/$(printf "dir-%03d" $d)"
-		mkdir -p $DIRNAME
-		for f in `seq 0 10`; do
-			FILENAME="$DIRNAME/$(printf "data.%03d" $f)"
-			printf "data in %03d-%03d" $d $f >> $FILENAME
-		done
+rm -rf "$IMAGE_SRC"
+mkdir -p $IMAGE_SRC
+for d in `seq 0 110`; do
+	DIRNAME="$IMAGE_SRC/$(printf "dir-%03d" $d)"
+	mkdir -p $DIRNAME
+	for f in `seq 0 10`; do
+		FILENAME="$DIRNAME/$(printf "data.%03d" $f)"
+		printf "data in %03d-%03d" $d $f >> $FILENAME
 	done
-fi
+done
 
 ts_cd "$IMAGE_SRC"
 
