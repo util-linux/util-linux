@@ -236,8 +236,18 @@ static int set_arch(const char *pers, unsigned long options, int list)
 	if (transitions[i].perval < 0)
 		errx(EXIT_FAILURE, _("%s: Unrecognized architecture"), pers);
 	pers_value = transitions[i].perval | options;
-	if (personality(pers_value) == -EINVAL)
-		return 1;
+	if (personality(pers_value) < 0) {
+		/*
+		 * Depending on architecture and kernel version, personality
+		 * syscall is either capable or incapable of returning an error.
+		 * If the return value is not an error, then it's the previous
+		 * personality value, which can be an arbitrary value
+		 * undistinguishable from an error value.
+		 * To make things clear, a second call is needed.
+		 */
+		if (personality(pers_value) < 0)
+			return 1;
+	}
 	uname(&un);
 	if (transitions[i].result_arch && strcmp(un.machine, transitions[i].result_arch)) {
 		if (strcmp(transitions[i].result_arch, "i386")
