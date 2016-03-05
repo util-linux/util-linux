@@ -48,7 +48,7 @@ function ts_cd {
 function ts_report {
 	local desc=
 
-	if [ "$TS_PARALLEL" != "yes" ]; then
+	if [ "$TS_PARSABLE" != "yes" ]; then
 		if [ $TS_NSUBTESTS -ne 0 ] && [ -z "$TS_SUBNAME" ]; then
 			desc=$(printf "%11s...")
 		fi
@@ -169,7 +169,14 @@ function ts_has_option {
 	fi
 
 	# or just check the global command line options
-	if [[ $ALL =~ ([$' \t\n']|^)--$NAME([$'= \t\n']|$) ]]; then echo yes; fi
+	if [[ $ALL =~ ([$' \t\n']|^)--$NAME([$'= \t\n']|$) ]]; then
+		echo yes
+		return
+	fi
+
+	# or the _global_ env, e.g TS_OPT_parsable="yes"
+	eval local env_opt=\$TS_OPT_${v_name}
+	if [ "$env_opt" = "yes" ]; then echo "yes"; fi
 }
 
 function ts_option_argument {
@@ -259,6 +266,8 @@ function ts_init_env {
 	TS_PARALLEL=$(ts_has_option "parallel" "$*")
 	TS_KNOWN_FAIL=$(ts_has_option "known-fail" "$*")
 	TS_SKIP_LOOPDEVS=$(ts_has_option "skip-loopdevs" "$*")
+	TS_PARSABLE=$(ts_has_option "parsable" "$*")
+	[ "$TS_PARSABLE" = "yes" ] || TS_PARSABLE="$TS_PARALLEL"
 
 	tmp=$( ts_has_option "memcheck" "$*")
 	if [ "$tmp" == "yes" -a -f /usr/bin/valgrind ]; then
@@ -309,7 +318,7 @@ function ts_init_subtest {
 	ts_init_core_subtest_env
 	TS_NSUBTESTS=$(( $TS_NSUBTESTS + 1 ))
 
-	if [ "$TS_PARALLEL" != "yes" ]; then
+	if [ "$TS_PARSABLE" != "yes" ]; then
 		[ $TS_NSUBTESTS -eq 1 ] && echo
 		printf "%16s: %-27s ..." "" "$TS_SUBNAME"
 	fi
@@ -321,7 +330,7 @@ function ts_init {
 	local is_fake=$( ts_has_option "fake" "$*")
 	local is_force=$( ts_has_option "force" "$*")
 
-	if [ "$TS_PARALLEL" != "yes" ]; then
+	if [ "$TS_PARSABLE" != "yes" ]; then
 		printf "%13s: %-30s ..." "$TS_COMPONENT" "$TS_DESC"
 	fi
 

@@ -15,6 +15,7 @@ fi
 # travis docs say we get 1.5 CPUs
 MAKE="make -j2"
 DUMP_CONFIG_LOG="short"
+export TS_OPT_parsable="yes"
 
 function xconfigure
 {
