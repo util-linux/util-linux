@@ -30,7 +30,6 @@ ts_check_test_command "$TS_CMD_LSBLK"
 $TS_CMD_LOSETUP --version >/dev/null 2>$TS_OUTPUT || ts_failed
 $TS_CMD_LOSETUP --unknownopt >>$TS_OUTPUT 2>/dev/null && ts_failed
 test -s $TS_OUTPUT && ts_failed
-rm -f $TS_OUTPUT
 
 ts_skip_nonroot
 ts_check_losetup

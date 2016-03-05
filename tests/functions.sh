@@ -378,22 +378,21 @@ function ts_valgrind {
 function ts_gen_diff {
 	local res=0
 
-	if [ -s "$TS_OUTPUT" ]; then
+	[ -f "$TS_OUTPUT" ] || return 1
+	[ -f "$TS_EXPECTED" ] || TS_EXPECTED=/dev/null
 
-		# remove libtool lt- prefixes
-		sed --in-place 's/^lt\-\(.*\: \)/\1/g' $TS_OUTPUT
+	# remove libtool lt- prefixes
+	sed --in-place 's/^lt\-\(.*\: \)/\1/g' $TS_OUTPUT
 
-		[ -d "$TS_DIFFDIR" ] || mkdir -p "$TS_DIFFDIR"
-		diff -u $TS_EXPECTED $TS_OUTPUT > $TS_DIFF
+	[ -d "$TS_DIFFDIR" ] || mkdir -p "$TS_DIFFDIR"
+	diff -u $TS_EXPECTED $TS_OUTPUT > $TS_DIFF
 
-		if [ -s $TS_DIFF ]; then
-			res=1
-		else
-			rm -f $TS_DIFF;
-		fi
-	else
+	if [ $? -ne 0 ] || [ -s $TS_DIFF ]; then
 		res=1
+	else
+		rm -f $TS_DIFF;
 	fi
+
 	return $res
 }
 
@@ -409,16 +408,12 @@ function tt_gen_mem_report {
 function ts_finalize_subtest {
 	local res=0
 
-	if [ -s "$TS_EXPECTED" ]; then
-		ts_gen_diff
-		if [ $? -eq 1 ]; then
-			ts_failed_subtest "$1"
-			res=1
-		else
-			ts_ok_subtest "$(tt_gen_mem_report "$1")"
-		fi
+	ts_gen_diff
+	if [ $? -eq 1 ]; then
+		ts_failed_subtest "$1"
+		res=1
 	else
-		ts_skip_subtest "output undefined"
+		ts_ok_subtest "$(tt_gen_mem_report "$1")"
 	fi
 
 	[ $res -ne 0 ] && TS_NSUBFAILED=$(( $TS_NSUBFAILED + 1 ))
@@ -433,22 +428,15 @@ function ts_finalize {
 	ts_cleanup_on_exit
 
 	if [ $TS_NSUBTESTS -ne 0 ]; then
-		if [ $TS_NSUBFAILED -ne 0 ]; then
+		if ! ts_gen_diff || [ $TS_NSUBFAILED -ne 0 ]; then
 			ts_failed "$TS_NSUBFAILED from $TS_NSUBTESTS sub-tests"
 		else
 			ts_ok "all $TS_NSUBTESTS sub-tests PASSED"
 		fi
 	fi
 
-	if [ -s $TS_EXPECTED ]; then
-		ts_gen_diff
-		if [ $? -eq 1 ]; then
-			ts_failed "$1"
-		fi
-		ts_ok "$1"
-	fi
-
-	ts_skip "output undefined"
+	ts_gen_diff || ts_failed "$1"
+	ts_ok "$1"
 }
 
 function ts_die {

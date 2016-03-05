@@ -14,6 +14,7 @@ ts_check_test_command "$TS_CMD_UUIDGEN"
 
 ts_skip_nonroot
 ts_check_prog "mkfs.ext4"
+ts_check_prog "mkfs.btrfs"
 
 ts_init_py libmount
 
@@ -93,35 +94,34 @@ grep -q $DEVICE $LIBMOUNT_UTAB && \
 	echo "umount (mountpoint) failed: found $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
-if [ -x "/sbin/mkfs.btrfs" ]; then
-	$TS_CMD_WIPEFS -a  $DEVICE &> /dev/null
-	ts_log "Create filesystem [btrfs]"
-	mkfs.btrfs -L "$LABEL" $DEVICE &> /dev/null
-	udevadm settle
 
-	mount -t btrfs $DEVICE $MOUNTPOINT &> /dev/null
-	btrfs subvolume create $MOUNTPOINT/sub &> /dev/null
-	umount $MOUNTPOINT &> /dev/null
+$TS_CMD_WIPEFS -a  $DEVICE &> /dev/null
+ts_log "Create filesystem [btrfs]"
+mkfs.btrfs -L "$LABEL" $DEVICE &> /dev/null
+udevadm settle
 
-	udevadm settle
+mount -t btrfs $DEVICE $MOUNTPOINT &> /dev/null
+btrfs subvolume create $MOUNTPOINT/sub &> /dev/null
+umount $MOUNTPOINT &> /dev/null
 
-	ts_init_subtest "mount-uhelper-subvol"
-	mkdir -p $MOUNTPOINT &>  /dev/null
-	$PYTHON $TESTPROG --mount -o uhelper=foo,rw,subvol=sub $DEVICE  $MOUNTPOINT >> $TS_OUTPUT 2>&1
-	grep -q $DEVICE $LIBMOUNT_UTAB || \
-		echo "cannot find $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
-	ts_finalize_subtest
+udevadm settle
 
-	ts_log "All mount options (btrfs subvolume + utab) ---"
-	$TS_CMD_FINDMNT --mtab $MOUNTPOINT -o OPTIONS -n >> $TS_OUTPUT 2>&1
-	ts_log "---"
+ts_init_subtest "mount-uhelper-subvol"
+mkdir -p $MOUNTPOINT &>  /dev/null
+$PYTHON $TESTPROG --mount -o uhelper=foo,rw,subvol=sub $DEVICE  $MOUNTPOINT >> $TS_OUTPUT 2>&1
+grep -q $DEVICE $LIBMOUNT_UTAB || \
+	echo "cannot find $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
 
-	ts_init_subtest "umount-subvol"
-	$PYTHON $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
-	grep -q $DEVICE $LIBMOUNT_UTAB && \
-		echo "umount (mountpoint) failed: found $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
-	ts_finalize_subtest
-fi
+ts_log "All mount options (btrfs subvolume + utab) ---"
+$TS_CMD_FINDMNT --mtab $MOUNTPOINT -o OPTIONS -n >> $TS_OUTPUT 2>&1
+ts_log "---"
+
+ts_init_subtest "umount-subvol"
+$PYTHON $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+grep -q $DEVICE $LIBMOUNT_UTAB && \
+	echo "umount (mountpoint) failed: found $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
 
 ts_log "...done."
 rmmod scsi_debug
