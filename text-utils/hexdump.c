@@ -66,10 +66,10 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 
 	static const struct option longopts[] = {
 		{"one-byte-octal", no_argument, NULL, 'b'},
-		{"one-byte-char", required_argument, NULL, 'c'},
-		{"canonical", required_argument, NULL, 'C'},
+		{"one-byte-char", no_argument, NULL, 'c'},
+		{"canonical", no_argument, NULL, 'C'},
 		{"two-bytes-decimal", no_argument, NULL, 'd'},
-		{"two-bytes-octal", required_argument, NULL, 'o'},
+		{"two-bytes-octal", no_argument, NULL, 'o'},
 		{"two-bytes-hex", no_argument, NULL, 'x'},
 		{"format", required_argument, NULL, 'e'},
 		{"format-file", required_argument, NULL, 'f'},
