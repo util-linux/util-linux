@@ -586,7 +586,7 @@ static int is_phantom(const struct last_control *ctl, struct utmp *ut)
 
 	if (ut->UL_UT_TIME < ctl->boot_time.tv_sec)
 		return 1;
-	pw = getpwnam(ut->ut_name);
+	pw = getpwnam(ut->ut_user);
 	if (!pw)
 		return 1;
 	sprintf(path, "/proc/%u/loginuid", ut->ut_pid);

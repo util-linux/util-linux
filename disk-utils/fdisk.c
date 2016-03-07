@@ -276,7 +276,7 @@ static int ask_offset(struct fdisk_context *cxt,
 		snprintf(prompt, sizeof(prompt), _("%s (%ju-%ju): "), q, low, high);
 
 	do {
-		uint64_t num = 0;
+		uintmax_t num = 0;
 		char sig = 0, *p;
 		int pwr = 0;
 
@@ -313,7 +313,7 @@ static int ask_offset(struct fdisk_context *cxt,
 		if (num >= low && num <= high) {
 			if (sig && pwr)
 				fdisk_ask_number_set_relative(ask, 1);
-			return fdisk_ask_number_set_result(ask, num);
+			return fdisk_ask_number_set_result(ask, (uint64_t)num);
 		}
 		fdisk_warnx(cxt, _("Value out of range."));
 	} while (1);

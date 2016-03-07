@@ -25,7 +25,6 @@
  */
 
 #include <errno.h>
-#include <features.h>
 #include <getopt.h>
 #include <sys/time.h>
 #include <unistd.h>

@@ -23,6 +23,7 @@
 #endif
 
 #include "closestream.h"
+#include "fileutils.h"
 
 #include "blkidP.h"
 
@@ -133,7 +134,7 @@ int blkid_flush_cache(blkid_cache cache)
 		tmp = malloc(strlen(filename) + 8);
 		if (tmp) {
 			sprintf(tmp, "%s-XXXXXX", filename);
-			fd = mkostemp(tmp, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
+			fd = mkstemp_cloexec(tmp);
 			if (fd >= 0) {
 				if (fchmod(fd, 0644) != 0)
 					DBG(SAVE, ul_debug("%s: fchmod failed", filename));

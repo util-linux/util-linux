@@ -24,7 +24,6 @@
  *	make uuidd uuidgen localstatedir=/var
  */
 #include <error.h>
-#include <libgen.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>

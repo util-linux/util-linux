@@ -1281,7 +1281,7 @@ static int initialize_printting(struct libscols_table *tb, struct libscols_buffe
 
 		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
 
-		while (rc == 0 && scols_table_next_column(tb, &itr, &cl) == 0) {
+		while (scols_table_next_column(tb, &itr, &cl) == 0) {
 			if (scols_column_is_hidden(cl))
 				continue;
 			extra_bufsz += strlen(scols_cell_get_data(&cl->header));	/* data */

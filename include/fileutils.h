@@ -8,6 +8,8 @@
 
 #include "c.h"
 
+extern int mkstemp_cloexec(char *template);
+
 extern int xmkstemp(char **tmpname, const char *dir, const char *prefix);
 
 static inline FILE *xfmkstemp(char **tmpname, const char *dir, const char *prefix)

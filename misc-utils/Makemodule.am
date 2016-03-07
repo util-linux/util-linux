@@ -1,15 +1,7 @@
 if BUILD_CAL
 usrbin_exec_PROGRAMS += cal
 dist_man_MANS += misc-utils/cal.1
-cal_SOURCES = \
-	misc-utils/cal.c \
-	lib/mbsalign.c \
-	lib/strutils.c
-
-if !HAVE_LANGINFO
-cal_SOURCES += lib/langinfo.c
-endif
-
+cal_SOURCES = misc-utils/cal.c
 cal_CFLAGS = $(AM_CFLAGS) $(NCURSES_CFLAGS)
 cal_LDADD = $(LDADD) libcommon.la libtcolors.la $(NCURSES_LIBS)
 endif # BUILD_CAL

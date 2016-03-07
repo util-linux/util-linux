@@ -53,6 +53,7 @@
 #include <pwd.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <sys/uio.h>
 
 #include "all-io.h"
 #include "c.h"
@@ -446,12 +447,14 @@ static void write_output(const struct logger_ctl *ctl, const char *const msg)
 
 	if (!ctl->noact) {
 		struct msghdr message = { 0 };
+#ifdef SCM_CREDENTIALS
 		struct cmsghdr *cmhp;
 		struct ucred *cred;
 		union {
 			struct cmsghdr cmh;
 			char   control[CMSG_SPACE(sizeof(struct ucred))];
 		} cbuf;
+#endif
 
 		/* 4) add extra \n to make sure message is terminated */
 		if ((ctl->socket_type == TYPE_TCP) && !ctl->octet_count)
@@ -460,6 +463,7 @@ static void write_output(const struct logger_ctl *ctl, const char *const msg)
 		message.msg_iov = iov;
 		message.msg_iovlen = iovlen;
 
+#ifdef SCM_CREDENTIALS
 		/* syslog/journald may follow local socket credentials rather
 		 * than in the message PID. If we use --id as root than we can
 		 * force kernel to accept another valid PID than the real logger(1)
@@ -479,6 +483,7 @@ static void write_output(const struct logger_ctl *ctl, const char *const msg)
 
 			cred->pid = ctl->pid;
 		}
+#endif
 
 		if (sendmsg(ctl->fd, &message, 0) < 0)
 			warn(_("send message failed"));
