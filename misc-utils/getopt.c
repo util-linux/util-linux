@@ -62,6 +62,9 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <getopt.h>
+#ifdef HAVE_SYS_PARAM_H
+# include <sys/param.h> /* BSD */
+#endif
 
 #include "closestream.h"
 #include "nls.h"
@@ -447,9 +450,13 @@ int main(int argc, char *argv[])
 			optind++;
 		}
 	}
-	if (name)
+
+	if (name) {
 		argv[optind - 1] = name;
-	else
+#if defined (BSD) || defined (__APPLE__)
+		setprogname(name);
+#endif
+	} else
 		argv[optind - 1] = argv[0];
 
 	return generate_output(&ctl, argv + optind - 1, argc - optind + 1);
