@@ -1011,13 +1011,14 @@ check_file2(struct minix2_inode *dir, unsigned int offset) {
 	block = map_block2(dir, offset / MINIX_BLOCK_SIZE);
 	read_block(block, blk);
 	name = blk + (offset % MINIX_BLOCK_SIZE) + version_offset;
-	ino = *(unsigned short *)(name - version_offset);
+	ino = version_offset == 4 ? *(uint32_t *)(name - version_offset)
+	                          : *(uint16_t *)(name - version_offset);
 	if (ino > get_ninodes()) {
 		get_current_name();
 		printf(_("The directory '%s' contains a bad inode number "
 			 "for file '%.*s'."), current_name, (int)namelen, name);
 		if (ask(_(" Remove"), 1)) {
-			*(unsigned short *)(name - version_offset) = 0;
+			memset(name - version_offset, 0, version_offset);
 			write_block(block, blk);
 		}
 		ino = 0;

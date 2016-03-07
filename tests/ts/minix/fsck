@@ -15,25 +15,42 @@
 # GNU General Public License for more details.
 #
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="mkfs checksums"
+TS_DESC="mkfs fsck"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_MKMINIX"
+ts_check_test_command "$TS_CMD_FSCKMINIX"
 
-ts_skip_nonroot
-ts_check_losetup
+mkfs_and_fsck_minix() {
+	local ret
+	ts_log "#####################################"
+	ts_log "$ mkfs.minix $1 image"
+	$TS_CMD_MKMINIX $1 $img >> $TS_OUTPUT 2>&1
+	ret=$?
+	echo "return mkfs: $ret" >> $TS_OUTPUT
+	test $ret = 0 || return $ret
 
-IMAGE="$TS_OUTDIR/${TS_TESTNAME}-loop.img"
-ts_device_init
-DEVICE=$TS_LODEV
+	ts_log "$ fsck.minix -lavsf image"
+	$TS_CMD_FSCKMINIX -lavsf $img >> $TS_OUTPUT 2>&1
+	ret=$?
+	echo "return fsck: $ret" >> $TS_OUTPUT
+	return $ret
+}
 
-ts_log "create minix fs"
-$TS_CMD_MKMINIX $DEVICE >> $TS_OUTPUT 2>&1
+img=$(ts_image_init)
 
-ts_log "fsck minix fs"
-$TS_CMD_FSCKMINIX $DEVICE >> $TS_OUTPUT 2>&1
+# TODO looping over arbitrary badblock files (-l bad) gives a lot segfaults
+for ver in "" "-1" "-2" "-3"; do
+for n in "" "-n 14" "-n 30" "-n 60"; do
+	mkfs_and_fsck_minix "$ver $n"
+done
+done
+
+rm -f $img
+
+sed -i "s@$img@image@g" $TS_OUTPUT
 
 ts_finalize
 
