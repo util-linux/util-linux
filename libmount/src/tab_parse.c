@@ -16,6 +16,7 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/sysmacros.h>
 
 #include "fileutils.h"
 #include "mangle.h"

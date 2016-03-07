@@ -27,6 +27,7 @@
 
 #include "pylibmount.h"
 #include <errno.h>
+#include <sys/sysmacros.h>
 
 #define Fs_HELP "Fs(source=None, root=None, target=None, fstype=None, options=None, attributes=None, freq=0, passno=0)"
 

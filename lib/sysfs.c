@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include <libgen.h>
 #include <fcntl.h>
+#include <sys/sysmacros.h>
 #include <sys/stat.h>
 #include <unistd.h>
 

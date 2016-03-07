@@ -15,6 +15,7 @@
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/sysmacros.h>
 #include <errno.h>
 #include <stdint.h>
 #include <inttypes.h>

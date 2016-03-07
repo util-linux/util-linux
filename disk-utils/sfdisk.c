@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <getopt.h>
 #include <sys/stat.h>
+#include <sys/sysmacros.h>
 #include <assert.h>
 #include <fcntl.h>
 #include <libsmartcols.h>

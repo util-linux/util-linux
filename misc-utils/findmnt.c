@@ -31,6 +31,7 @@
 #include <assert.h>
 #include <poll.h>
 #include <sys/statvfs.h>
+#include <sys/sysmacros.h>
 #include <sys/types.h>
 #ifdef HAVE_LIBUDEV
 # include <libudev.h>
