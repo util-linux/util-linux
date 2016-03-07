@@ -43,20 +43,14 @@ function find_test_scripts()
 
 while [ -n "$1" ]; do
 	case "$1" in
-	--force)
-		OPTS="$OPTS --force"
-		;;
-	--fake)
-		OPTS="$OPTS --fake"
-		;;
-	--memcheck)
-		OPTS="$OPTS --memcheck"
-		;;
-	--verbose)
-		OPTS="$OPTS --verbose"
-		;;
-	--skip-loopdevs)
-		OPTS="$OPTS --skip-loopdevs"
+	--force |\
+	--fake |\
+	--memcheck |\
+	--verbose  |\
+	--skip-loopdevs |\
+	--parsable)
+		# these options are simply forwarded to the test scripts
+		OPTS="$OPTS $1"
 		;;
 	--nonroot)
 		if [ $(id -ru) -eq 0 ]; then
