@@ -112,9 +112,13 @@ grep -q $DEVICE $LIBMOUNT_UTAB || \
 	echo "cannot find $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
-ts_log "All mount options (btrfs subvolume + utab) ---"
-$TS_CMD_FINDMNT --mtab $MOUNTPOINT -o OPTIONS -n >> $TS_OUTPUT 2>&1
-ts_log "---"
+# Don't temporary write btrfs mount options to the test output,
+# the options depend on kernel version (since 4.2 it contains
+# subvol= and subvolid=).
+#
+#ts_log "All mount options (btrfs subvolume + utab) ---"
+#$TS_CMD_FINDMNT --mtab $MOUNTPOINT -o OPTIONS -n >> $TS_OUTPUT 2>&1
+#ts_log "---"
 
 ts_init_subtest "umount-subvol"
 ts_valgrind $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
