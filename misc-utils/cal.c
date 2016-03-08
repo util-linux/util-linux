@@ -108,7 +108,7 @@ static void my_putstring(char *s)
 		fputs(s, stdout);
 }
 
-static const char *my_tgetstr(char *s __attribute__ ((__unused__)), char *ss)
+static const char *my_tgetstr(char *ss)
 {
 	const char *ret = NULL;
 
@@ -288,8 +288,8 @@ int main(int argc, char **argv)
 		if (term) {
 			has_term = setup_terminal(term) == 0;
 			if (has_term) {
-				Senter = my_tgetstr("so", "smso");
-				Sexit = my_tgetstr("se", "rmso");
+				Senter = my_tgetstr("smso");
+				Sexit = my_tgetstr("rmso");
 			}
 		}
 	}
