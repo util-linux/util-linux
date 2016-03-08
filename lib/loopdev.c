@@ -29,7 +29,6 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
-#include <sys/sysmacros.h>
 #include <inttypes.h>
 #include <dirent.h>
 #include <linux/posix_types.h>
