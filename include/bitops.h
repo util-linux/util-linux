@@ -29,28 +29,33 @@
 
 /*
  * Fallbacks
+ * casts are necessary for constants, because we never know how for sure
+ * how U/UL/ULL map to __u16, __u32, __u64. At least not in a portable way.
  */
 #ifndef bswap_16
-# define bswap_16(x)   ((((x) & 0x00FF) << 8) | \
-			(((x) & 0xFF00) >> 8))
+# define bswap_16(x) ((uint16_t)( \
+	(((uint16_t)(x) & 0x00FF) << 8) | \
+	(((uint16_t)(x) & 0xFF00) >> 8)))
 #endif
 
 #ifndef bswap_32
-# define bswap_32(x)   ((((x) & 0x000000FF) << 24) | \
-			(((x) & 0x0000FF00) << 8)  | \
-			(((x) & 0x00FF0000) >> 8)  | \
-			(((x) & 0xFF000000) >> 24))
+# define bswap_32(x) ((uint32_t)( \
+	(((uint32_t)(x) & 0x000000FF) << 24) | \
+	(((uint32_t)(x) & 0x0000FF00) << 8)  | \
+	(((uint32_t)(x) & 0x00FF0000) >> 8)  | \
+	(((uint32_t)(x) & 0xFF000000) >> 24)))
 #endif
 
 #ifndef bswap_64
-# define bswap_64(x) ((((x) & 0x00000000000000FFULL) << 56) | \
-                      (((x) & 0x000000000000FF00ULL) << 40) | \
-                      (((x) & 0x0000000000FF0000ULL) << 24) | \
-                      (((x) & 0x00000000FF000000ULL) << 8)  | \
-                      (((x) & 0x000000FF00000000ULL) >> 8)  | \
-                      (((x) & 0x0000FF0000000000ULL) >> 24) | \
-                      (((x) & 0x00FF000000000000ULL) >> 40) | \
-                      (((x) & 0xFF00000000000000ULL) >> 56))
+# define bswap_64(x) ((uint64_t)( \
+	(((uint64_t)(x) & 0x00000000000000FFULL) << 56) | \
+	(((uint64_t)(x) & 0x000000000000FF00ULL) << 40) | \
+	(((uint64_t)(x) & 0x0000000000FF0000ULL) << 24) | \
+	(((uint64_t)(x) & 0x00000000FF000000ULL) << 8)  | \
+	(((uint64_t)(x) & 0x000000FF00000000ULL) >> 8)  | \
+	(((uint64_t)(x) & 0x0000FF0000000000ULL) >> 24) | \
+	(((uint64_t)(x) & 0x00FF000000000000ULL) >> 40) | \
+	(((uint64_t)(x) & 0xFF00000000000000ULL) >> 56)))
 #endif
 
 #ifndef htobe16
