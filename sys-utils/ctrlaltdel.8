@@ -17,7 +17,7 @@ Immediately reboot the computer without calling
 and without any other preparation.  This is the default.
 .TP
 .B soft
-Will make kernel to send the SIGINT (interrupt) signal to the
+Make the kernel send the SIGINT (interrupt) signal to the
 .B init
 process (this is always the process with PID 1).  If this option is used,
 the
@@ -27,11 +27,12 @@ program must support this feature.  Since there are now several
 programs in the Linux community, please consult the documentation for the
 version that you are currently using.
 .PP
-When command is ran without arguments it will display current function in
-use.
+When the command is run without any argument, it will display the current
+setting.
 .PP
+The function of
 .B ctrlaltdel
-function is usually set in the
+is usually set in the
 .I /etc/rc.local
 file.
 .SH OPTIONS
