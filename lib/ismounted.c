@@ -18,7 +18,6 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include <sys/param.h>
-#include <sys/sysmacros.h>
 
 #ifndef __linux__
 # ifdef HAVE_SYS_UCRED_H

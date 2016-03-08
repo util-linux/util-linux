@@ -31,7 +31,6 @@
 #endif
 #include <fcntl.h>
 #include <inttypes.h>
-#include <sys/sysmacros.h>
 
 #include "blkidP.h"
 #include "pathnames.h"

@@ -14,7 +14,6 @@
 #include <ctype.h>
 #include <blkid.h>
 #include <stddef.h>
-#include <sys/sysmacros.h>
 
 #include "mountP.h"
 #include "strutils.h"
