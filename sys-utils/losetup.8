@@ -1,4 +1,4 @@
-.TH LOSETUP 8 "July 2014" "util-linux" "System Administration"
+.TH LOSETUP 8 "November 2015" "util-linux" "System Administration"
 .SH NAME
 losetup \- set up and control loop devices
 .SH SYNOPSIS
@@ -91,20 +91,22 @@ Detach the file or device associated with the specified loop device(s).
 .BR \-D , " \-\-detach\-all"
 Detach all associated loop devices.
 .TP
-.BR "\-\-direct\-io"[\fI=on|off\fR]
-Enable or disable direct I/O for the backing file. The optional argument can be
-\fIon\fR or \fIoff\fR.  If the optional argument is omitted, it defaults to \fIon\fR.
+.BR \-\-direct\-io [ =on | off ]
+Enable or disable direct I/O for the backing file.  The optional argument
+can be either \fBon\fR or \fBoff\fR.  If the argument is omitted, it defaults
+to \fBon\fR.
 .TP
 .BR \-f , " \-\-find"
 Find the first unused loop device.  If a
 .I file
 argument is present, use the found device as loop device.
 Otherwise, just print its name.
-.IP "\fB\-j, \-\-associated \fIfile\fP"
+.TP
+.BR \-j , " \-\-associated " \fIfile
 Show the status of all loop devices associated with the given
 .IR file .
 .TP
-.IP "\fB\-J, \fB\-\-json\fP"
+.BR \-J , " \-\-json"
 Use JSON format for \fB\-\-list\fP output.
 .TP
 .BR \-l , " \-\-list"
