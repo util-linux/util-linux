@@ -119,12 +119,13 @@ Specify the number of sectors per track of the disk.
 partition tables.) A reasonable value is 63.
 
 .TP
-\fB\-w\fR, \fB\-\-wipe\fR \fImode\fR
-Wipe filesystems, RAIDs and partition tables signatures from the device, in
-order to avoid possible collisions.  The \fImode\fR can be \fBauto\fR,
-\fBnever\fR or \fBalways\fR.  The default is \fBauto\fR, in this case signatures
-are wiped in the interactive mode only, in all cases detected signatures are
-reported by warning message before a new partition table is created. See also
+\fB\-w\fR, \fB\-\-wipe\fR \fIwhen\fR
+Wipe filesystem, RAID and partition-table signatures from the device, in order
+to avoid possible collisions.  The argument \fIwhen\fR can be \fBauto\fR,
+\fBnever\fR or \fBalways\fR.  When this option is not given, the default is
+\fBauto\fR, in which case signatures are wiped only when in interactive mode.
+In all cases detected signatures are reported by warning messages
+before a new partition table is created.  See also
 .BR wipefs (8)
 command.
 
