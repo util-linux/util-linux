@@ -136,7 +136,7 @@ Back up the current partition table sectors before starting the partitioning.
 The default backup file name is ~/sfdisk-<device>-<offset>.bak; to use another
 name see option \fB\-O\fR, \fB\-\-backup\-file\fR.
 .TP
-.BR \-\-color[\fI=when]
+.BR \-\-color [ =\fIwhen ]
 Colorize the output.  The optional argument \fIwhen\fP
 can be \fBauto\fR, \fBnever\fR or \fBalways\fR.  If the \fIwhen\fR argument is omitted,
 it defaults to \fBauto\fR.  The colors can be disabled; for the current built-in default
@@ -159,7 +159,7 @@ Do not check through the re-read-partition-table ioctl whether the device is in 
 Override the default backup file name.  Note that the device name and offset
 are always appended to the file name.
 .TP
-.BR \-\-move-data[\fI=path]
+.BR \-\-move-data [ =\fIpath ]
 Move data after partition relocation, for example when move begin of the
 partition to another place on the disk. The size of the partition has to be the
 same, the new and old location may overlap. The option requires \fB\-N\fR to be
