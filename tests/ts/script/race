@@ -24,6 +24,10 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_SCRIPT"
 
+# this test may fail on systems with very heavy load
+# https://github.com/karelzak/util-linux/issues/296
+TS_KNOWN_FAIL="yes"
+
 bingofile="$TS_OUTDIR/${TS_TESTNAME}-bingo"
 
 count=1000
