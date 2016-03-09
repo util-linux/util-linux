@@ -44,6 +44,9 @@ grep -q $DEVICE /proc/swaps || ts_die "Cannot find $DEVICE in /proc/swaps"
 
 $TS_CMD_SWAPOFF $DEVICE
 
+# swapon/mkswap warns if system sets different permissions for loop devices
+sed --in-place '/insecure permissions .*, 0660 suggested/d' $TS_OUTPUT
+
 ts_log "Success"
 ts_finalize
 
