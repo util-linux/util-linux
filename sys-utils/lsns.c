@@ -343,7 +343,7 @@ static struct lsns_namespace *add_namespace(struct lsns *ls, int type, ino_t ino
 	if (!ns)
 		return NULL;
 
-	DBG(NS, ul_debugobj(ns, "new %s[%lu]", ns_names[type], ino));
+	DBG(NS, ul_debugobj(ns, "new %s[%ju]", ns_names[type], (uintmax_t)ino));
 
 	INIT_LIST_HEAD(&ns->processes);
 	INIT_LIST_HEAD(&ns->namespaces);
@@ -359,7 +359,8 @@ static int add_process_to_namespace(struct lsns *ls, struct lsns_namespace *ns, 
 {
 	struct list_head *p;
 
-	DBG(NS, ul_debugobj(ns, "add process [%p] pid=%d to %s[%lu]", proc, proc->pid, ns_names[ns->type], ns->id));
+	DBG(NS, ul_debugobj(ns, "add process [%p] pid=%d to %s[%ju]",
+		proc, proc->pid, ns_names[ns->type], (uintmax_t)ns->id));
 
 	list_for_each(p, &ls->processes) {
 		struct lsns_process *xproc = list_entry(p, struct lsns_process, processes);
@@ -437,7 +438,7 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 
 		switch (get_column_id(i)) {
 		case COL_NS:
-			xasprintf(&str, "%lu", ns->id);
+			xasprintf(&str, "%ju", (uintmax_t)ns->id);
 			break;
 		case COL_PID:
 			xasprintf(&str, "%d", (int) proc->pid);
