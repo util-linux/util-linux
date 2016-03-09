@@ -24,10 +24,13 @@ ts_check_test_command "$TS_CMD_MKMINIX"
 ts_skip_nonroot
 
 ts_scsi_debug_init dev_size_mb=10 num_parts=1
+dev=${TS_DEVICE}1
+
+# hotfix, wait for partition to appear (slow on Debian 7/linux-3.2)
+test -b $dev || sleep 1
 
 mkfs_and_mount_minix() {
 	ts_init_subtest $1
-	dev=${TS_DEVICE}1
 	ts_log "create minix fs $2"
 	$TS_CMD_MKMINIX $2 $dev >> $TS_OUTPUT 2>&1
 	echo "mkfs return value: $?" >> $TS_OUTPUT
