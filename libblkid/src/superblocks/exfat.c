@@ -19,8 +19,8 @@ struct exfat_super_block {
 	uint32_t rootdir_cluster;
 	uint8_t volume_serial[4];
 	struct {
-		uint8_t minor;
-		uint8_t major;
+		uint8_t vermin;
+		uint8_t vermaj;
 	} version;
 	uint16_t volume_state;
 	uint8_t block_bits;
@@ -130,7 +130,7 @@ static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 			sb->volume_serial[1], sb->volume_serial[0]);
 
 	blkid_probe_sprintf_version(pr, "%u.%u",
-			sb->version.major, sb->version.minor);
+			sb->version.vermaj, sb->version.vermin);
 
 	return BLKID_PROBE_OK;
 }

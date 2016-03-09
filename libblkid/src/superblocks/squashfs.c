@@ -31,19 +31,19 @@ struct sqsh_super_block {
 static int probe_squashfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct sqsh_super_block *sq;
-	uint16_t major;
-	uint16_t minor;
+	uint16_t vermaj;
+	uint16_t vermin;
 
 	sq = blkid_probe_get_sb(pr, mag, struct sqsh_super_block);
 	if (!sq)
 		return errno ? -errno : 1;
 
-	major = le16_to_cpu(sq->s_major);
-	minor = le16_to_cpu(sq->s_minor);
-	if (major < 4)
+	vermaj = le16_to_cpu(sq->s_major);
+	vermin = le16_to_cpu(sq->s_minor);
+	if (vermaj < 4)
 		return 1;
 
-	blkid_probe_sprintf_version(pr, "%u.%u", major, minor);
+	blkid_probe_sprintf_version(pr, "%u.%u", vermaj, vermin);
 
 	return 0;
 }
@@ -51,25 +51,25 @@ static int probe_squashfs(blkid_probe pr, const struct blkid_idmag *mag)
 static int probe_squashfs3(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct sqsh_super_block *sq;
-	uint16_t major;
-	uint16_t minor;
+	uint16_t vermaj;
+	uint16_t vermin;
 
 	sq = blkid_probe_get_sb(pr, mag, struct sqsh_super_block);
 	if (!sq)
 		return errno ? -errno : 1;
 
 	if (strcmp(mag->magic, "sqsh") == 0) {
-		major = be16_to_cpu(sq->s_major);
-		minor = be16_to_cpu(sq->s_minor);
+		vermaj = be16_to_cpu(sq->s_major);
+		vermin = be16_to_cpu(sq->s_minor);
 	} else {
-		major = le16_to_cpu(sq->s_major);
-		minor = le16_to_cpu(sq->s_minor);
+		vermaj = le16_to_cpu(sq->s_major);
+		vermin = le16_to_cpu(sq->s_minor);
 	}
 
-	if (major > 3)
+	if (vermaj > 3)
 		return 1;
 
-	blkid_probe_sprintf_version(pr, "%u.%u", major, minor);
+	blkid_probe_sprintf_version(pr, "%u.%u", vermaj, vermin);
 
 	return 0;
 }
