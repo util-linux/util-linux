@@ -43,7 +43,7 @@ DEVICE=$TS_LODEV
 [ -d "$TS_MOUNTPOINT_SUBVOL" ] || mkdir -p "$TS_MOUNTPOINT_SUBVOL"
 [ -d "$TS_MOUNTPOINT_SUBVOLID" ] || mkdir -p "$TS_MOUNTPOINT_SUBVOLID"
 [ -d "$TS_MOUNTPOINT_BIND" ] || mkdir -p "$TS_MOUNTPOINT_BIND"
-mkfs.btrfs -f -d single -m single $DEVICE &> /dev/null || ts_die "Cannot make btrfs on $DEVICE"
+mkfs.btrfs -d single -m single $DEVICE &> /dev/null || ts_die "Cannot make btrfs on $DEVICE"
 
 $TS_CMD_MOUNT -o loop "$DEVICE" "$TS_MOUNTPOINT_CREATE"
 pushd . >/dev/null
