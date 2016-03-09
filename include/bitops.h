@@ -25,32 +25,58 @@
 # define be16toh(x) betoh16(x)
 # define be32toh(x) betoh32(x)
 # define be64toh(x) betoh64(x)
+#elif defined(__NetBSD__) || defined(__FreeBSD__) || defined(__DragonFly__)
+# define bswap_16(x) bswap16(x)
+# define bswap_32(x) bswap32(x)
+# define bswap_64(x) bswap64(x)
+#elif defined(__APPLE__)
+# include <libkern/OSByteOrder.h>
+# define htobe16(x) OSSwapHostToBigInt16(x)
+# define htole16(x) OSSwapHostToLittleInt16(x)
+# define be16toh(x) OSSwapBigToHostInt16(x)
+# define le16toh(x) OSSwapLittleToHostInt16(x)
+# define htobe32(x) OSSwapHostToBigInt32(x)
+# define htole32(x) OSSwapHostToLittleInt32(x)
+# define be32toh(x) OSSwapBigToHostInt32(x)
+# define le32toh(x) OSSwapLittleToHostInt32(x)
+# define htobe64(x) OSSwapHostToBigInt64(x)
+# define htole64(x) OSSwapHostToLittleInt64(x)
+# define be64toh(x) OSSwapBigToHostInt64(x)
+# define le64toh(x) OSSwapLittleToHostInt64(x)
+# define bswap_16(x) OSSwapInt16(x)
+# define bswap_32(x) OSSwapInt32(x)
+# define bswap_64(x) OSSwapInt64(x)
 #endif
 
 /*
  * Fallbacks
+ * casts are necessary for constants, because we never know how for sure
+ * how U/UL/ULL map to __u16, __u32, __u64. At least not in a portable way.
  */
 #ifndef bswap_16
-# define bswap_16(x)   ((((x) & 0x00FF) << 8) | \
-			(((x) & 0xFF00) >> 8))
+# define bswap_16(x) ((uint16_t)( \
+	(((uint16_t)(x) & 0x00FF) << 8) | \
+	(((uint16_t)(x) & 0xFF00) >> 8)))
 #endif
 
 #ifndef bswap_32
-# define bswap_32(x)   ((((x) & 0x000000FF) << 24) | \
-			(((x) & 0x0000FF00) << 8)  | \
-			(((x) & 0x00FF0000) >> 8)  | \
-			(((x) & 0xFF000000) >> 24))
+# define bswap_32(x) ((uint32_t)( \
+	(((uint32_t)(x) & 0x000000FF) << 24) | \
+	(((uint32_t)(x) & 0x0000FF00) << 8)  | \
+	(((uint32_t)(x) & 0x00FF0000) >> 8)  | \
+	(((uint32_t)(x) & 0xFF000000) >> 24)))
 #endif
 
 #ifndef bswap_64
-# define bswap_64(x) ((((x) & 0x00000000000000FFULL) << 56) | \
-                      (((x) & 0x000000000000FF00ULL) << 40) | \
-                      (((x) & 0x0000000000FF0000ULL) << 24) | \
-                      (((x) & 0x00000000FF000000ULL) << 8)  | \
-                      (((x) & 0x000000FF00000000ULL) >> 8)  | \
-                      (((x) & 0x0000FF0000000000ULL) >> 24) | \
-                      (((x) & 0x00FF000000000000ULL) >> 40) | \
-                      (((x) & 0xFF00000000000000ULL) >> 56))
+# define bswap_64(x) ((uint64_t)( \
+	(((uint64_t)(x) & 0x00000000000000FFULL) << 56) | \
+	(((uint64_t)(x) & 0x000000000000FF00ULL) << 40) | \
+	(((uint64_t)(x) & 0x0000000000FF0000ULL) << 24) | \
+	(((uint64_t)(x) & 0x00000000FF000000ULL) << 8)  | \
+	(((uint64_t)(x) & 0x000000FF00000000ULL) >> 8)  | \
+	(((uint64_t)(x) & 0x0000FF0000000000ULL) >> 24) | \
+	(((uint64_t)(x) & 0x00FF000000000000ULL) >> 40) | \
+	(((uint64_t)(x) & 0xFF00000000000000ULL) >> 56)))
 #endif
 
 #ifndef htobe16

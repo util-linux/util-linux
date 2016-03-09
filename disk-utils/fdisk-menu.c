@@ -578,7 +578,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		case 'f':
 			rc = fdisk_reorder_partitions(cxt);
 			if (rc)
-				fdisk_warnx(cxt, _("Failed to fix partitions order."), n + 1);
+				fdisk_warnx(cxt, _("Failed to fix partitions order."));
 			else
 				fdisk_info(cxt, _("Partitions order fixed."));
 			break;

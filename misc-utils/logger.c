@@ -184,9 +184,9 @@ static inline pid_t logger_getpid(void)
 #endif
 
 
-static int decode(const char *name, CODE *codetab)
+static int decode(const char *name, const CODE *codetab)
 {
-	register CODE *c;
+	register const CODE *c;
 
 	if (name == NULL || *name == '\0')
 		return -1;
