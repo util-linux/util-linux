@@ -87,16 +87,17 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_("Discard the content of sectors on a device.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -o, --offset <num>  offset in bytes to discard from\n"
-		" -l, --length <num>  length of bytes to discard from the offset\n"
-		" -p, --step <num>    size of the discard iterations within the offset\n"
-		" -s, --secure        perform secure discard\n"
-		" -z, --zeroout       zero-fill rather than discard\n"
-		" -v, --verbose       print aligned length and offset\n"),
-		out);
+	fputs(_(" -o, --offset <num>  offset in bytes to discard from\n"), out);
+	fputs(_(" -l, --length <num>  length of bytes to discard from the offset\n"), out);
+	fputs(_(" -p, --step <num>    size of the discard iterations within the offset\n"), out);
+	fputs(_(" -s, --secure        perform secure discard\n"), out);
+	fputs(_(" -z, --zeroout       zero-fill rather than discard\n"), out);
+	fputs(_(" -v, --verbose       print aligned length and offset\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
+
 	fprintf(out, USAGE_MAN_TAIL("blkdiscard(8)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
