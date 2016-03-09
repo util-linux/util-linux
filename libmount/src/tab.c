@@ -1247,7 +1247,7 @@ static int get_btrfs_fs_root(struct libmnt_table *tb, struct libmnt_fs *fs, char
 		if (!target)
 			goto err;
 
-		DBG(BTRFS, ul_debug(" tring target=%s subvolid=%s", target, subvolidstr));
+		DBG(BTRFS, ul_debug(" trying target=%s subvolid=%s", target, subvolidstr));
 		f = mnt_table_find_target_with_option(tb, target,
 					"subvolid", subvolidstr,
 					MNT_ITER_BACKWARD);
@@ -1292,7 +1292,7 @@ static int get_btrfs_fs_root(struct libmnt_table *tb, struct libmnt_fs *fs, char
 		snprintf(default_id_str, sizeof(default_id_str), "%llu",
 				(unsigned long long int) default_id);
 
-		DBG(BTRFS, ul_debug(" tring target=%s default subvolid=%s",
+		DBG(BTRFS, ul_debug(" trying target=%s default subvolid=%s",
 					target, default_id_str));
 
 		f = mnt_table_find_target_with_option(tb, target,
