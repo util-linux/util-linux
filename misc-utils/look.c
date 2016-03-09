@@ -174,7 +174,7 @@ look(char *front, char *back)
 	/* Reformat string string to avoid doing it multiple times later. */
 	if (dflag) {
 		for (readp = writep = string; (ch = *readp++) != 0;) {
-			if (isalnum(ch))
+			if (isalnum(ch) || isblank(ch))
 				*(writep++) = ch;
 		}
 		*writep = '\0';
@@ -333,7 +333,7 @@ compare(char *s2, char *s2end) {
 	p = comparbuf;
 	i = stringlen;
 	while(s2 < s2end && *s2 != '\n' && i) {
-		if (!dflag || isalnum(*s2))
+		if (!dflag || isalnum(*s2) || isblank(*s2))
 		{
 			*p++ = *s2;
 			i--;
@@ -361,7 +361,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --alternative        use the alternative dictionary\n"), out);
-	fputs(_(" -d, --alphanum           compare only alphanumeric characters\n"), out);
+	fputs(_(" -d, --alphanum           compare only blanks and alphanumeric characters\n"), out);
 	fputs(_(" -f, --ignore-case        ignore case differences when comparing\n"), out);
 	fputs(_(" -t, --terminate <char>   define the string-termination character\n"), out);
 

@@ -68,12 +68,16 @@ alphabetic characters is ignored.
 Use the alternative dictionary file.
 .TP
 .BR \-d , " \-\-alphanum"
-Use normal dictionary character set and order, i.e. only alphanumeric characters
-are compared.  (This is on by default if no file is specified.)
+Use normal dictionary character set and order, i.e. only blanks and
+alphanumeric characters are compared.  This is on by default if no file is
+specified.
+
+Note that blanks have been added to dictionary character set for
+compatibility with \fBsort \-d\fR command since version 2.28.
 .TP
 .BR \-f , " \-\-ignore\-case"
-Ignore the case of alphabetic characters.  (This is on by default if no file is
-specified.)
+Ignore the case of alphabetic characters.  This is on by default if no file is
+specified.
 .TP
 .BR \-t , " \-\-terminate " \fIcharacter\fR
 Specify a string termination character, i.e. only the characters
@@ -105,10 +109,6 @@ the alternative dictionary
 .SH "SEE ALSO"
 .BR grep (1),
 .BR sort (1)
-.SH COMPATIBILITY
-The original manual page stated that tabs and blank characters participated
-in comparisons when the \fB\-\-alphanum\fR option was specified.  This was
-incorrect, and the current man page matches the historic implementation.
 .SH HISTORY
 The
 .B look
