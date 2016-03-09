@@ -42,6 +42,7 @@ if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
 lo_print $LODEV >> $TS_OUTPUT
+udevadm settle
 $TS_CMD_LOSETUP -d $LODEV
 ts_finalize_subtest
 
@@ -51,6 +52,7 @@ if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
 lo_print $LODEV >> $TS_OUTPUT
+udevadm settle
 $TS_CMD_LOSETUP -d $LODEV
 ts_finalize_subtest
 
@@ -61,6 +63,7 @@ if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
 lo_print $LODEV >> $TS_OUTPUT
+udevadm settle
 $TS_CMD_LOSETUP -d $LODEV
 ts_finalize_subtest
 
@@ -71,6 +74,7 @@ if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
 lo_print $LODEV >> $TS_OUTPUT
+udevadm settle
 $TS_CMD_LOSETUP -d $LODEV
 ts_finalize_subtest
 
