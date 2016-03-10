@@ -29,6 +29,10 @@ ts_check_losetup
 ts_check_prog "mkfs.btrfs"
 ts_check_prog "btrfs"
 
+# btrfs feature check
+btrfs inspect rootid bla 2>&1 | grep -q "unknown token" \
+	&& ts_skip "btrfs too old"
+
 TS_MOUNTPOINT_ANY="$TS_MOUNTPOINT"
 TS_MOUNTPOINT_CREATE="$TS_MOUNTPOINT-create"
 TS_MOUNTPOINT_DEFAULT="$TS_MOUNTPOINT-default"
