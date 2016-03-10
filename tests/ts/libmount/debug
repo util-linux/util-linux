@@ -19,12 +19,12 @@ ts_finalize_subtest
 
 # CACHE | LOCKS
 ts_init_subtest "set-from-env-str"
-LIBMOUNT_DEBUG=cache,locks ts_valgrind $TESTPROG 2>&1 $TS_OUTPUT | grep -o '0x.*' &> $TS_OUTPUT
+LIBMOUNT_DEBUG=cache,locks ts_valgrind $TESTPROG 2>&1 | grep -o '0x.*' &> $TS_OUTPUT
 ts_finalize_subtest
 
 # CACHE | LOCKS
 ts_init_subtest "set-from-env-int"
-LIBMOUNT_DEBUG=20 ts_valgrind $TESTPROG 2>&1 $TS_OUTPUT | grep -o '0x.*' &> $TS_OUTPUT
+LIBMOUNT_DEBUG=20 ts_valgrind $TESTPROG 2>&1 | grep -o '0x.*' &> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_finalize
