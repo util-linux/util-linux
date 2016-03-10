@@ -48,7 +48,6 @@
 #include "all-io.h"
 #include "rpmatch.h"
 #include "loopdev.h"
-#include "xalloc.h"
 
 #include "libfdisk.h"
 #include "fdisk-list.h"

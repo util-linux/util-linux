@@ -51,7 +51,6 @@
 #include <netdb.h>
 #include <getopt.h>
 #include <pwd.h>
-#include <sys/types.h>
 #include <signal.h>
 #include <sys/uio.h>
 
