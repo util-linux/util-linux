@@ -47,12 +47,12 @@ libfdisk_la_DEPENDENCIES = \
 	libfdisk/src/libfdisk.sym \
 	libfdisk/src/libfdisk.h.in
 
-libfdisk_la_LDFLAGS = \
-	$(SOLIB_LDFLAGS) \
+libfdisk_la_LDFLAGS = $(SOLIB_LDFLAGS)
 if HAVE_VSCRIPT
-	$(VSCRIPT_LDFLAGS),$(top_srcdir)/libfdisk/src/libfdisk.sym \
+libfdisk_la_LDFLAGS += $(VSCRIPT_LDFLAGS),$(top_srcdir)/libfdisk/src/libfdisk.sym
 endif
-	-version-info $(LIBFDISK_VERSION_INFO)
+libfdisk_la_LDFLAGS += -version-info $(LIBFDISK_VERSION_INFO)
+
 
 if BUILD_LIBBLKID
 libfdisk_la_LIBADD += libblkid.la

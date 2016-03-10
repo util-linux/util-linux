@@ -36,12 +36,12 @@ libuuid_la_CFLAGS = \
 	 -I$(ul_libuuid_incdir) \
 	 -Ilibuuid/src
 
-libuuid_la_LDFLAGS = \
-	$(SOLIB_LDFLAGS) \
+libuuid_la_LDFLAGS = $(SOLIB_LDFLAGS)
 if HAVE_VSCRIPT
-	libuuid_la_LDFLAGS += $(VSCRIPT_LDFLAGS),$(top_srcdir)/libuuid/src/libuuid.sym \
+libuuid_la_LDFLAGS += libuuid_la_LDFLAGS += $(VSCRIPT_LDFLAGS),$(top_srcdir)/libuuid/src/libuuid.sym
 endif
-	-version-info $(LIBUUID_VERSION_INFO)
+libuuid_la_LDFLAGS += -version-info $(LIBUUID_VERSION_INFO)
+
 
 EXTRA_DIST += libuuid/src/libuuid.sym
 

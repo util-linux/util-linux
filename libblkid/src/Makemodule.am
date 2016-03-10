@@ -128,12 +128,11 @@ libblkid_la_DEPENDENCIES += libuuid.la
 libblkid_la_CFLAGS += -I$(ul_libuuid_incdir)
 endif
 
-libblkid_la_LDFLAGS = \
-	$(SOLIB_LDFLAGS) \
+libblkid_la_LDFLAGS = $(SOLIB_LDFLAGS)
 if HAVE_VSCRIPT
-	$(VSCRIPT_LDFLAGS),$(top_srcdir)/libblkid/src/libblkid.sym \
+libblkid_la_LDFLAGS += $(VSCRIPT_LDFLAGS),$(top_srcdir)/libblkid/src/libblkid.sym
 endif
-	-version-info $(LIBBLKID_VERSION_INFO)
+libblkid_la_LDFLAGS += -version-info $(LIBBLKID_VERSION_INFO)
 
 EXTRA_DIST += \
 	libblkid/src/libblkid.sym \
