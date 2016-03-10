@@ -17,6 +17,7 @@ lscpu:  libsmartcols
 lsipc:  libsmartcols 
 lslocks:  libblkid libmount librt libsmartcols libuuid 
 lslogins:  libsmartcols libsystemd 
+lsns:  libsmartcols 
 mkswap:  libblkid libuuid 
 mount:  libblkid libmount librt libuuid 
 mountpoint:  libblkid libmount librt libuuid 
@@ -28,7 +29,7 @@ swaplabel:  libblkid libuuid
 swapoff:  libblkid libmount librt libuuid 
 swapon:  libblkid libmount librt libsmartcols libuuid 
 umount:  libblkid libmount librt libuuid 
-uuidd:  libsystemd libuuid 
+uuidd:  librt libsystemd libuuid 
 uuidgen:  libuuid 
 wdctl:  libsmartcols 
 wipefs:  libblkid libuuid 

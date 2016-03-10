@@ -7,10 +7,11 @@ losetup:  libsmartcols
 lscpu:  libsmartcols 
 lsipc:  libsmartcols 
 lslogins:  libsmartcols libsystemd 
+lsns:  libsmartcols 
 mkswap:  libuuid 
 prlimit:  libsmartcols 
 sfdisk:  libfdisk libreadline libsmartcols libtinfo libuuid 
-uuidd:  libsystemd libuuid 
+uuidd:  librt libsystemd libuuid 
 uuidgen:  libuuid 
 wdctl:  libsmartcols 
 zramctl:  libsmartcols 

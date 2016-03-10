@@ -10,12 +10,13 @@ losetup:  libsmartcols
 lscpu:  libsmartcols 
 lsipc:  libsmartcols 
 lslogins:  libsmartcols libsystemd 
+lsns:  libsmartcols 
 mkswap:  libblkid libuuid 
 partx:  libblkid libsmartcols libuuid 
 prlimit:  libsmartcols 
 sfdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
 swaplabel:  libblkid libuuid 
-uuidd:  libsystemd libuuid 
+uuidd:  librt libsystemd libuuid 
 uuidgen:  libuuid 
 wdctl:  libsmartcols 
 wipefs:  libblkid libuuid 

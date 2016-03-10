@@ -13,7 +13,7 @@ mountpoint:  libblkid libmount librt libuuid
 pylibmount.so:  libblkid libmount libpython2 librt libuuid 
 swaplabel:  libblkid libuuid 
 umount:  libblkid libmount librt libuuid 
-uuidd:  libsystemd libuuid 
+uuidd:  librt libsystemd libuuid 
 uuidgen:  libuuid 
 wipefs:  libblkid libuuid 
 agetty:  
