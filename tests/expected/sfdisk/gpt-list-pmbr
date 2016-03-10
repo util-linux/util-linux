@@ -1,4 +1,3 @@
-Partition 1 does not start on physical sector boundary.
 Disk <removed>: 50 MiB, 52428800 bytes, 102400 sectors
 Units: sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 4096 bytes
@@ -9,3 +8,4 @@ Disk identifier: <removed>
 Device     Boot Start    End Sectors Size Id Type
 <removed>1           1 102399  102399  50M ee GPT
 
+Partition 1 does not start on physical sector boundary.

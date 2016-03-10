@@ -172,12 +172,14 @@ static int ask_callback(struct fdisk_context *cxt __attribute__((__unused__)),
 		fputc('\n', stdout);
 		break;
 	case FDISK_ASKTYPE_WARNX:
+		fflush(stdout);
 		color_scheme_fenable("warn", UL_COLOR_RED, stderr);
 		fputs(fdisk_ask_print_get_mesg(ask), stderr);
 		color_fdisable(stderr);
 		fputc('\n', stderr);
 		break;
 	case FDISK_ASKTYPE_WARN:
+		fflush(stdout);
 		color_scheme_fenable("warn", UL_COLOR_RED, stderr);
 		fputs(fdisk_ask_print_get_mesg(ask), stderr);
 		errno = fdisk_ask_print_get_errno(ask);

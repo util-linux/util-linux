@@ -1,10 +1,3 @@
-Partition 1 does not start on physical sector boundary.
-Partition 2 does not start on physical sector boundary.
-Partition 3 does not start on physical sector boundary.
-Partition 4 does not start on physical sector boundary.
-Partition 5 does not start on physical sector boundary.
-Partition 6 does not start on physical sector boundary.
-Partition 7 does not start on physical sector boundary.
 Checking that no-one is using this disk right now ... OK
 
 Disk <removed>: 50 MiB, 52428800 bytes, 102400 sectors
@@ -33,6 +26,13 @@ Device     Boot Start    End Sectors  Size Id Type
 <removed>6        4003   5002    1000  500K 83 Linux
 <removed>7        5004 102399   97396 47.6M 83 Linux
 
+Partition 1 does not start on physical sector boundary.
+Partition 2 does not start on physical sector boundary.
+Partition 3 does not start on physical sector boundary.
+Partition 4 does not start on physical sector boundary.
+Partition 5 does not start on physical sector boundary.
+Partition 6 does not start on physical sector boundary.
+Partition 7 does not start on physical sector boundary.
 
 The partition table has been altered.
 Calling ioctl() to re-read partition table.
