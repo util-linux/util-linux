@@ -71,6 +71,7 @@ function travis_install_script
 	sudo apt-get -qq update || return
 	sudo apt-get install -qq >/dev/null \
 		bc \
+		btrfs-tools \
 		dnsutils \
 		libcap-ng-dev \
 		libpam-dev \
@@ -78,14 +79,14 @@ function travis_install_script
 		gtk-doc-tools \
 		mdadm \
 		ntp \
-		|| return
-
-	# install/upgrade custom stuff from non-official sources
-	sudo add-apt-repository -y ppa:malcscott/socat || return
-	sudo apt-get -qq update || return
-	sudo apt-get install -qq >/dev/null \
 		socat \
 		|| return
+
+	# install only if available (e.g. Ubuntu Trusty)
+	sudo apt-get install -qq >/dev/null \
+		libsystemd-daemon-dev \
+		libsystemd-journal-dev \
+		|| true
 }
 
 function travis_before_script
