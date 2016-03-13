@@ -150,6 +150,9 @@ endif
 if BUILD_LAST
 dist_bashcompletion_DATA += bash-completion/last
 endif
+if BUILD_LSLOGINS
+dist_bashcompletion_DATA += bash-completion/lslogins
+endif
 if BUILD_NEWGRP
 dist_bashcompletion_DATA += bash-completion/newgrp
 endif
