@@ -144,7 +144,7 @@ EXTRA_DIST += $(PATHFILES:=.in)
 
 $(PATHFILES): Makefile
 	@ rm -f $@ $@.tmp
-	$(AM_V_at) test -d $(dir $@) || mkdir -p $(dir $@)
+	$(AM_V_at) $(MKDIR_P) $$(dirname $@)
 	$(AM_V_GEN) srcdir=''; \
 		test -f ./$@.in || srcdir=$(srcdir)/; \
 		$(edit_cmd) $${srcdir}$@.in >$@.tmp
