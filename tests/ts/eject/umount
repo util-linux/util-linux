@@ -8,6 +8,7 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_FDISK"
 ts_check_test_command "$TS_CMD_EJECT"
+ts_check_test_command "$TS_CMD_MOUNT"
 
 ts_skip_nonroot
 ts_check_prog "mkfs.ext2"
@@ -71,7 +72,7 @@ init_device
 mkfs.ext2 -q -F $TS_DEVICE
 udevadm settle
 mkdir -p $TS_MOUNTPOINT
-mount $TS_DEVICE $TS_MOUNTPOINT
+$TS_CMD_MOUNT $TS_DEVICE $TS_MOUNTPOINT
 $TS_CMD_EJECT --force $TS_DEVICE && ts_log "Success"
 deinit_device
 ts_finalize_subtest
@@ -82,8 +83,8 @@ init_device
 init_partitions $TS_DEVICE
 mkdir -p ${TS_MOUNTPOINT}1
 mkdir -p ${TS_MOUNTPOINT}2
-mount ${TS_DEVICE}1 ${TS_MOUNTPOINT}1
-mount ${TS_DEVICE}2 ${TS_MOUNTPOINT}2
+$TS_CMD_MOUNT ${TS_DEVICE}1 ${TS_MOUNTPOINT}1
+$TS_CMD_MOUNT ${TS_DEVICE}2 ${TS_MOUNTPOINT}2
 $TS_CMD_EJECT --force $TS_DEVICE && ts_log "Success"
 deinit_device
 ts_finalize_subtest
@@ -102,8 +103,8 @@ init_device
 init_partitions $TS_DEVICE
 mkdir -p ${TS_MOUNTPOINT}1
 mkdir -p ${TS_MOUNTPOINT}2
-mount ${TS_DEVICE}1 ${TS_MOUNTPOINT}1
-mount ${TS_DEVICE}2 ${TS_MOUNTPOINT}2
+$TS_CMD_MOUNT ${TS_DEVICE}1 ${TS_MOUNTPOINT}1
+$TS_CMD_MOUNT ${TS_DEVICE}2 ${TS_MOUNTPOINT}2
 $TS_CMD_EJECT --force ${TS_DEVICE}1 && ts_log "Success"
 deinit_device
 ts_finalize_subtest

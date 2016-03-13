@@ -29,7 +29,7 @@ TS_NOEXIST="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-noex"
 [ -x $TESTPROG ] || ts_skip "test not compiled"
 
 ts_log "Init device"
-umount $MOUNTPOINT &> /dev/null
+$TS_CMD_UMOUNT $MOUNTPOINT &> /dev/null
 
 # set global variable TS_DEVICE
 ts_scsi_debug_init dev_size_mb=100

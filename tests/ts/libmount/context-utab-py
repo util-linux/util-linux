@@ -9,6 +9,8 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_FDISK"
 ts_check_test_command "$TS_CMD_FINDMNT"
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
 ts_check_test_command "$TS_CMD_WIPEFS"
 ts_check_test_command "$TS_CMD_UUIDGEN"
 
@@ -100,9 +102,9 @@ if type "mkfs.btrfs" &>/dev/null && mkfs.btrfs --version &>/dev/null; then
 	mkfs.btrfs -L "$LABEL" $DEVICE &> /dev/null
 	udevadm settle
 
-	mount -t btrfs $DEVICE $MOUNTPOINT &> /dev/null
+	$TS_CMD_MOUNT -t btrfs $DEVICE $MOUNTPOINT &> /dev/null
 	btrfs subvolume create $MOUNTPOINT/sub &> /dev/null
-	umount $MOUNTPOINT &> /dev/null
+	$TS_CMD_UMOUNT $MOUNTPOINT &> /dev/null
 
 	udevadm settle
 
