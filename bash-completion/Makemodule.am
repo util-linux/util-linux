@@ -51,6 +51,9 @@ endif
 if BUILD_LSIPC
 dist_bashcompletion_DATA += bash-completion/lsipc
 endif
+if BUILD_LSNS
+dist_bashcompletion_DATA += bash-completion/lsns
+endif
 if BUILD_MCOOKIE
 dist_bashcompletion_DATA += bash-completion/mcookie
 endif
