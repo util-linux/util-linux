@@ -13,8 +13,15 @@ _isosize_module()
 			return 0
 			;;
 	esac
-	OPTS='--divisor --sectors --help --version'
-	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+	case $cur in
+		-*)
+			COMPREPLY=( $(compgen -W "--divisor --sectors --help --version" -- $cur) )
+			return 0
+			;;
+	esac
+	local IFS=$'\n'
+	compopt -o filenames
+	COMPREPLY=( $(compgen -f -- $cur) )
 	return 0
 }
 complete -F _isosize_module isosize

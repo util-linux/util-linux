@@ -15,8 +15,15 @@ _fsck.cramfs_module()
 			return 0
 			;;
 	esac
-	OPTS='--verbose --destination --help --version file'
-	COMPREPLY=( $(compgen -W "${OPTS[*]}" -S ' ' -- $cur) )
+	case $cur in
+		-*)
+			COMPREPLY=( $(compgen -W "--verbose --blocksize --extract --help --version" -- $cur) )
+			return 0
+			;;
+	esac
+	local IFS=$'\n'
+	compopt -o filenames
+	COMPREPLY=( $(compgen -f -- $cur) )
 	return 0
 }
 complete -F _fsck.cramfs_module fsck.cramfs
