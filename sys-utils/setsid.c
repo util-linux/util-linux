@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 			usage(stderr);
 		}
 
-	if (argc < 2)
+	if (argc - optind < 1)
 		usage(stderr);
 
 	if (getpgrp() == getpid()) {
