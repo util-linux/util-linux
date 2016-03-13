@@ -30,6 +30,9 @@ endif
 if BUILD_HEXDUMP
 dist_bashcompletion_DATA += bash-completion/hexdump
 endif
+if BUILD_IPCMK
+dist_bashcompletion_DATA += bash-completion/ipcmk
+endif
 if BUILD_IPCRM
 dist_bashcompletion_DATA += bash-completion/ipcrm
 endif
