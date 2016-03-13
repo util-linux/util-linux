@@ -244,6 +244,7 @@ AC_CHECK_HEADERS([ \
 	sys/param.h \
 	sys/prctl.h \
 	sys/resource.h \
+	sys/signalfd.h \
 	sys/socket.h \
 	sys/sockio.h \
 	sys/stat.h \
@@ -289,6 +290,7 @@ have_security_pam_appl_h=$ac_cv_header_security_pam_appl_h
 have_security_pam_misc_h=$ac_cv_header_security_pam_misc_h
 have_security_openpam_h=$ac_cv_header_security_openpam_h
 have_shadow_h=$ac_cv_header_shadow_h
+have_sys_signalfd_h=$ac_cv_header_sys_signalfd_h
 have_utmp_h=$ac_cv_header_utmp_h
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
@@ -1079,6 +1081,8 @@ AC_ARG_ENABLE([uuidd],
 )
 UL_BUILD_INIT([uuidd])
 UL_REQUIRES_BUILD([uuidd], [libuuid])
+UL_REQUIRES_HAVE([uuidd], [timer], [timer_create function])
+UL_REQUIRES_HAVE([uuidd], [sys_signalfd_h], [sys/signalfd.h header])
 AS_IF([test "x$build_uuidd" = xyes], [
   AC_DEFINE([HAVE_UUIDD], [1], [Define to 1 if you want to use uuid daemon.])
 ])
@@ -1494,7 +1498,7 @@ UL_REQUIRES_LINUX([setarch])
 AM_CONDITIONAL([BUILD_SETARCH], [test "x$build_setarch" = xyes])
 
 UL_BUILD_INIT([script], [check])
-UL_REQUIRES_LINUX([script])
+UL_REQUIRES_HAVE([script], [sys_signalfd_h], [sys/signalfd.h header])
 AM_CONDITIONAL([BUILD_SCRIPT], [test "x$build_script" = xyes])
 
 UL_BUILD_INIT([scriptreplay], [yes])
