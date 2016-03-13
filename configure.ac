@@ -1019,7 +1019,7 @@ AM_CONDITIONAL([BUILD_SFDISK], [test "x$build_sfdisk" = xyes])
 UL_BUILD_INIT([cfdisk], [check])
 UL_REQUIRES_BUILD([cfdisk], [libfdisk])
 UL_REQUIRES_BUILD([cfdisk], [libsmartcols])
-UL_REQUIRES_HAVE([cfdisk], [open_memstream])
+UL_REQUIRES_HAVE([cfdisk], [open_memstream], [open_memstream function])
 UL_REQUIRES_HAVE([cfdisk], [ncurses,slang], [ncurses or slang library])
 AM_CONDITIONAL([BUILD_CFDISK], [test "x$build_cfdisk" = xyes])
 
@@ -1469,7 +1469,7 @@ dnl we assume reboot() to be the 1-argument variant, because even considering
 dnl widely used alternative C libraries like uclibc, dietlibc and musl,
 dnl reboot() with multiple arguments is yet only found in glibc versions
 dnl earlier than 2.x.
-UL_REQUIRES_HAVE([ctrlaltdel], [reboot])
+UL_REQUIRES_HAVE([ctrlaltdel], [reboot], [reboot function])
 AM_CONDITIONAL([BUILD_CTRLALTDEL], [test "x$build_ctrlaltdel" = xyes])
 
 UL_BUILD_INIT([fsfreeze], [check])
