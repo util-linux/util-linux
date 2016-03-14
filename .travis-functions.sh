@@ -76,7 +76,7 @@ function travis_install_script
 	fi
 
 	# install some packages from Ubuntu's default sources
-	sudo apt-get -qq update || return
+	sudo apt-get -qq update
 	sudo apt-get install -qq >/dev/null \
 		bc \
 		btrfs-tools \
