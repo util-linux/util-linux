@@ -859,7 +859,7 @@ int main(int argc, char **argv)
 	struct passwd *pwd;
 	struct timespec sigwait = { .tv_sec = 0, .tv_nsec = 50000000 };
 	siginfo_t status = {};
-	sigset_t set = {};
+	sigset_t set;
 	int c, reconnect = 0;
 	int opt_e = 0;
 	int wait = 0;
