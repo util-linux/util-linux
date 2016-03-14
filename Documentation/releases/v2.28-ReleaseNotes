@@ -1,35 +1,35 @@
 Util-linux 2.28 Release Notes
 =============================
 
-Now cfdisk, sfdisk and fdisk wipe all filesystems and RAID signatures when
-create a new disk label in interactive mode. It's possible to control this
-feature by --wipe=<auto,never,always>. The feature is disabled by default for
-not-terminals.
+Now cfdisk, sfdisk and fdisk wipe all filesystem and RAID signatures when
+creating a new disk label in interactive mode.  It's possible to control this
+feature with --wipe[=auto|never|always].  For non-terminals the feature is
+disabled by default.
 
-lsns -- this NEW COMMAND lists information about all the currently accessible
-namespaces or about the given namespace. 
+lsns -- this NEW COMMAND lists information about all currently accessible
+namespaces or about the given namespace.
 
 The command sfdisk supports new operations --delete, --move-data and --reorder.
 
 The command blkdiscard supports a new option --zeroout to zero-fill rather than
-discard specified area.
+discard a specified area.
 
 The command cal supports a new option --span to span the date when displaying
 multiple months (e.g. "cal --span --months 5" to display two months before and
 two months after the current month).
 
-The command chrt supports DEADLINE scheduling class and new options
+The command chrt supports the DEADLINE scheduling class and the new options
 --sched-runtime --sched-period and --sched-deadline.
 
-The command logger supports RFC 5424 structured data by new options --sd-id and
---sd-param.
+The command logger supports RFC 5424 structured data through the new options
+--sd-id and --sd-param.
 
 The command losetup supports a new option --direct-io[=on|off].
 
-The command lsblk allows to sort output by non-printed columns (e.g. lsblk
+The command lsblk allows to sort output by unprinted columns (e.g. lsblk
 --output NAME --sort SIZE).
 
-The command mount applies nofail mount option to ENOMEDIUM errors.
+The command mount applies the nofail mount option to ENOMEDIUM errors.
 
 The library libmount has been improved to properly detect already mounted btrfs
 subvolumes.
@@ -47,13 +47,13 @@ anymore.
 Security issues
 ---------------
 
-CVE-2016-2779 
+CVE-2016-2779
 
-This security issue is NOT FIXED yet. The ioctl TIOCSTI is possible to disable
-by setsid() only. Unfortunately, setsid() has well define use-cases in su(1)
-and runuser(1) and possible changes will introduce regressions. It seems we
-need a better way -- ideally another ioctl (or whatever supported by kernel) to 
-disable TIOCSTI without setsid().
+This security issue is NOT FIXED yet.  It is possible to disable the ioctl
+TIOCSTI by setsid() only.  Unfortunately, setsid() has well-defined use cases
+in su(1) and runuser(1) and any changes would introduce regressions.  It seems
+we need a better way -- ideally another ioctl (or whatever is supported by the
+kernel) to disable TIOCSTI without setsid().
 
 
 Stable maintenance releases between v2.27 and v2.28
