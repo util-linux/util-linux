@@ -5,6 +5,8 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="lock"
 
+TS_OPTIONAL="yes"
+
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
