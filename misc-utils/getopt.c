@@ -86,6 +86,7 @@ struct getopt_control {
 	int long_options_length;	/* length of options array */
 	int long_options_nr;		/* number of used elements in array */
 	unsigned int
+		free_name:1,		/* free up argv[0] after printout */
 		compatible:1,		/* compatibility mode for 'difficult' programs */
 		quiet_errors:1,		/* print errors */
 		quiet_output:1,		/* print output */
@@ -181,7 +182,7 @@ static void print_normalized(const struct getopt_control *ctl, const char *arg)
  * optstr must contain the short options, and longopts the long options.
  * Other settings are found in global variables.
  */
-static int generate_output(const struct getopt_control *ctl, char *argv[], int argc)
+static int generate_output(struct getopt_control *ctl, char *argv[], int argc)
 {
 	int exit_code = EXIT_SUCCESS;	/* Assume everything will be OK */
 	int opt;
@@ -195,8 +196,10 @@ static int generate_output(const struct getopt_control *ctl, char *argv[], int a
 	optind = 0;
 
 	while ((opt =
-		(getopt_long_fp(argc, argv, ctl->optstr, ctl->long_options, &longindex)))
-	       != EOF)
+		(getopt_long_fp
+		 (argc, argv, ctl->optstr,
+		  (const struct option *)ctl->long_options, &longindex)))
+	       != EOF) {
 		if (opt == '?' || opt == ':')
 			exit_code = GETOPT_EXIT_CODE;
 		else if (!ctl->quiet_output) {
@@ -216,13 +219,19 @@ static int generate_output(const struct getopt_control *ctl, char *argv[], int a
 					print_normalized(ctl, optarg ? optarg : "");
 			}
 		}
-
+	}
 	if (!ctl->quiet_output) {
 		printf(" --");
 		while (optind < argc)
 			print_normalized(ctl, argv[optind++]);
 		printf("\n");
 	}
+	for (longindex = 0; longindex < ctl->long_options_nr; longindex++)
+		free((char *)ctl->long_options[longindex].name);
+	free(ctl->long_options);
+	free(ctl->optstr);
+	if (ctl->free_name)
+		free(argv[0]);
 	return exit_code;
 }
 
@@ -373,9 +382,6 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	add_longopt(&ctl, NULL, 0);	/* init */
-	getopt_long_fp = getopt_long;
-
 	if (getenv("GETOPT_COMPATIBLE"))
 		ctl.compatible = 1;
 
@@ -390,6 +396,9 @@ int main(int argc, char *argv[])
 		} else
 			parse_error(_("missing optstring argument"));
 	}
+
+	add_longopt(&ctl, NULL, 0);	/* init */
+	getopt_long_fp = getopt_long;
 
 	if (argv[1][0] != '-' || ctl.compatible) {
 		ctl.quote = 0;
@@ -417,6 +426,7 @@ int main(int argc, char *argv[])
 		case 'n':
 			free(name);
 			name = xstrdup(optarg);
+			ctl.free_name = 1;
 			break;
 		case 'q':
 			ctl.quiet_errors = 1;
@@ -428,6 +438,7 @@ int main(int argc, char *argv[])
 			ctl.shell = shell_type(optarg);
 			break;
 		case 'T':
+			free(ctl.long_options);
 			return TEST_EXIT_CODE;
 		case 'u':
 			ctl.quote = 0;
