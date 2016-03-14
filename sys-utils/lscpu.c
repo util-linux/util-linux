@@ -465,8 +465,13 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		else if (lookup(buf, "vendor_id", &desc->vendor)) ;
 		else if (lookup(buf, "family", &desc->family)) ;
 		else if (lookup(buf, "cpu family", &desc->family)) ;
+#if defined(__powerpc__) || defined(__powerpc64__)
+		else if (lookup(buf, "revision", &desc->model)) ;
+		else if (lookup(buf, "cpu", &desc->modelname)) ;
+#else
 		else if (lookup(buf, "model", &desc->model)) ;
 		else if (lookup(buf, "model name", &desc->modelname)) ;
+#endif
 		else if (lookup(buf, "stepping", &desc->stepping)) ;
 		else if (lookup(buf, "cpu MHz", &desc->mhz)) ;
 		else if (lookup(buf, "flags", &desc->flags)) ;		/* x86 */
