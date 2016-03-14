@@ -9,12 +9,13 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_FDISK"
 ts_check_test_command "$TS_CMD_FINDMNT"
+ts_check_test_command "$TS_CMD_MOUNT"
+ts_check_test_command "$TS_CMD_UMOUNT"
 ts_check_test_command "$TS_CMD_WIPEFS"
 ts_check_test_command "$TS_CMD_UUIDGEN"
 
 ts_skip_nonroot
 ts_check_prog "mkfs.ext4"
-ts_check_prog "mkfs.btrfs"
 
 ts_init_py libmount
 
@@ -26,7 +27,7 @@ UUID=$($TS_CMD_UUIDGEN)
 MOUNTPOINT="$TS_MOUNTPOINT"
 
 # set global variable TS_DEVICE
-ts_scsi_debug_init dev_size_mb=100
+ts_scsi_debug_init dev_size_mb=257
 DEVNAME=$(basename $TS_DEVICE)
 
 ts_log "Create partitions"
@@ -95,38 +96,39 @@ grep -q $DEVICE $LIBMOUNT_UTAB && \
 ts_finalize_subtest
 
 
-$TS_CMD_WIPEFS -a  $DEVICE &> /dev/null
-ts_log "Create filesystem [btrfs]"
-mkfs.btrfs -L "$LABEL" $DEVICE &> /dev/null
-udevadm settle
+if type "mkfs.btrfs" &>/dev/null && mkfs.btrfs --version &>/dev/null; then
+	$TS_CMD_WIPEFS -a  $DEVICE &> /dev/null
+	#ts_log "Create filesystem [btrfs]"
+	mkfs.btrfs -L "$LABEL" $DEVICE &> /dev/null
+	udevadm settle
 
-mount -t btrfs $DEVICE $MOUNTPOINT &> /dev/null
-btrfs subvolume create $MOUNTPOINT/sub &> /dev/null
-umount $MOUNTPOINT &> /dev/null
+	$TS_CMD_MOUNT -t btrfs $DEVICE $MOUNTPOINT &> /dev/null
+	btrfs subvolume create $MOUNTPOINT/sub &> /dev/null
+	$TS_CMD_UMOUNT $MOUNTPOINT &> /dev/null
 
-udevadm settle
+	udevadm settle
 
-ts_init_subtest "mount-uhelper-subvol"
-mkdir -p $MOUNTPOINT &>  /dev/null
-$PYTHON $TESTPROG --mount -o uhelper=foo,rw,subvol=sub $DEVICE  $MOUNTPOINT >> $TS_OUTPUT 2>&1
-grep -q $DEVICE $LIBMOUNT_UTAB || \
-	echo "cannot find $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
-ts_finalize_subtest
+	ts_init_subtest "mount-uhelper-subvol"
+	mkdir -p $MOUNTPOINT &>  /dev/null
+	$PYTHON $TESTPROG --mount -o uhelper=foo,rw,subvol=sub $DEVICE  $MOUNTPOINT >> $TS_OUTPUT 2>&1
+	grep -q $DEVICE $LIBMOUNT_UTAB || \
+		echo "cannot find $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
+	ts_finalize_subtest
 
+	# Don't temporary write btrfs mount options to the test output,
+	# the options depend on kernel version (since 4.2 it contains
+	# subvol= and subvolid=).
+	#
+	#ts_log "All mount options (btrfs subvolume + utab) ---"
+	#$TS_CMD_FINDMNT --mtab $MOUNTPOINT -o OPTIONS -n >> $TS_OUTPUT 2>&1
+	#ts_log "---"
 
-# Don't temporary write btrfs mount options to the test output,
-# the options depend on kernel version (since 4.2 it contains
-# subvol= and subvolid=).
-#
-#ts_log "All mount options (btrfs subvolume + utab) ---"
-#$TS_CMD_FINDMNT --mtab $MOUNTPOINT -o OPTIONS -n >> $TS_OUTPUT 2>&1
-#ts_log "---"
-
-ts_init_subtest "umount-subvol"
-$PYTHON $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
-grep -q $DEVICE $LIBMOUNT_UTAB && \
-	echo "umount (mountpoint) failed: found $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
-ts_finalize_subtest
+	ts_init_subtest "umount-subvol"
+	$PYTHON $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+	grep -q $DEVICE $LIBMOUNT_UTAB && \
+		echo "umount (mountpoint) failed: found $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
+	ts_finalize_subtest
+fi
 
 ts_log "...done."
 rmmod scsi_debug

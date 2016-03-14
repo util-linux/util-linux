@@ -699,22 +699,23 @@ function ts_init_socket_to_file {
 	ts_check_prog "socat"
 	rm -f "$socket" "$outfile"
 
+	# if socat is too old for these options we'll skip it below
 	socat -u UNIX-LISTEN:$socket,fork,max-children=1,backlog=128 \
-		STDOUT > "$outfile" &
+		STDOUT > "$outfile" 2>/dev/null &
 	pid=$!
 
 	# check for running background process
-	if [ "$pid" -le "0" ] || ! kill -s 0 "$pid"; then
+	if [ "$pid" -le "0" ] || ! kill -s 0 "$pid" &>/dev/null; then
 		ts_skip "unable to run socat"
 	fi
 	# wait for the socket listener
-	if ! socat -u /dev/null UNIX-CONNECT:$socket,retry=30,interval=0.1; then
-		kill -9 "$pid"
-		ts_skip "timeout waiting for socket"
+	if ! socat -u /dev/null UNIX-CONNECT:$socket,retry=30,interval=0.1 &>/dev/null; then
+		kill -9 "$pid" &>/dev/null
+		ts_skip "timeout waiting for socat socket"
 	fi
 	# check socket again
-	if ! socat -u /dev/null UNIX-CONNECT:$socket; then
-		kill -9 "$pid"
-		ts_skip "socket stopped listening"
+	if ! socat -u /dev/null UNIX-CONNECT:$socket &>/dev/null; then
+		kill -9 "$pid" &>/dev/null
+		ts_skip "socat socket stopped listening"
 	fi
 }

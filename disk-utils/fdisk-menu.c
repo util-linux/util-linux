@@ -19,7 +19,7 @@ struct menu_entry {
 						   but don't print it in help */
 
 	enum fdisk_labeltype	label;		/* only for this label */
-	enum fdisk_labeltype	exclude;	/* all labels except this */
+	int                     exclude;    /* all labels except these */
 	enum fdisk_labeltype	parent;		/* for nested PT */
 };
 
@@ -28,7 +28,7 @@ struct menu_entry {
 
 struct menu {
 	enum fdisk_labeltype	label;		/* only for this label */
-	enum fdisk_labeltype	exclude;	/* all labels except this */
+	int                     exclude;    /* all labels except these */
 
 	unsigned int		nonested : 1;	/* don't make this menu active in nested PT */
 

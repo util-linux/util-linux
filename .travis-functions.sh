@@ -19,7 +19,7 @@ export TS_OPT_parsable="yes"
 
 function xconfigure
 {
-	./configure "$@"
+	./configure "$@" $OSX_CONFOPTS
 	err=$?
 	if [ "$DUMP_CONFIG_LOG" = "short" ]; then
 		grep -B1 -A10000 "^## Output variables" config.log | grep -v "_FALSE="
@@ -35,12 +35,13 @@ function check_nonroot
 
 	xconfigure \
 		--disable-use-tty-group \
-		--with-python \
 		--enable-all-programs \
-		--enable-gtk-doc \
 		|| return
 	$MAKE || return
+
+	osx_prepare_check
 	$MAKE check TS_OPTS="$opts" || return
+
 	$MAKE install DESTDIR=/tmp/dest || return
 }
 
@@ -49,12 +50,14 @@ function check_root
 	local opts="$MAKE_CHECK_OPTS --parallel=1"
 
 	xconfigure \
-		--with-python \
 		--enable-all-programs \
 		|| return
 	$MAKE || return
+
 	$MAKE check TS_COMMAND="true" || return
+	osx_prepare_check
 	sudo -E $MAKE check TS_OPTS="$opts" || return
+
 	sudo $MAKE install || return
 }
 
@@ -67,10 +70,16 @@ function check_dist
 
 function travis_install_script
 {
+	if [ "$TRAVIS_OS_NAME" = "osx" ]; then
+		osx_install_script
+		return
+	fi
+
 	# install some packages from Ubuntu's default sources
 	sudo apt-get -qq update || return
 	sudo apt-get install -qq >/dev/null \
 		bc \
+		btrfs-tools \
 		dnsutils \
 		libcap-ng-dev \
 		libpam-dev \
@@ -78,14 +87,56 @@ function travis_install_script
 		gtk-doc-tools \
 		mdadm \
 		ntp \
-		|| return
-
-	# install/upgrade custom stuff from non-official sources
-	sudo add-apt-repository -y ppa:malcscott/socat || return
-	sudo apt-get -qq update || return
-	sudo apt-get install -qq >/dev/null \
 		socat \
 		|| return
+
+	# install only if available (e.g. Ubuntu Trusty)
+	sudo apt-get install -qq >/dev/null \
+		libsystemd-daemon-dev \
+		libsystemd-journal-dev \
+		|| true
+}
+
+function osx_install_script
+{
+	brew update >/dev/null
+	brew tap homebrew/dupes
+
+	brew install gettext ncurses socat xz
+	brew link --force gettext
+	brew link --force ncurses
+
+	OSX_CONFOPTS="
+		--disable-runuser \
+		--disable-su \
+		--disable-login \
+		--disable-last \
+		--disable-utmpdump \
+		--disable-agetty \
+		--disable-wall \
+		--disable-ipcrm \
+		--disable-ipcs \
+		--disable-write \
+	"
+}
+
+function osx_prepare_check
+{
+	[ "$TRAVIS_OS_NAME" = "osx" ] || return 0
+
+	# these ones only need to be gnu for our test-suite
+	brew install coreutils findutils gnu-tar gnu-sed
+
+	# symlink minimally needed gnu commands into PATH
+	mkdir ~/bin
+	for cmd in md5sum readlink seq truncate find xargs tar sed; do
+		ln -s /usr/local/bin/g$cmd $HOME/bin/$cmd
+	done
+	hash -r
+
+	export TS_OPT_col_multibyte_known_fail=yes
+	export TS_OPT_colcrt_regressions_known_fail=yes
+	export TS_OPT_column_invalid_multibyte_known_fail=yes
 }
 
 function travis_before_script

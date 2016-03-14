@@ -163,7 +163,7 @@ man_MANS += $(SETARCH_MAN_LINKS)
 CLEANFILES += $(SETARCH_MAN_LINKS)
 
 $(SETARCH_MAN_LINKS):
-	$(AM_V_at) test -d $(dir $@) || mkdir -p $(dir $@)
+	$(AM_V_at) $(MKDIR_P) sys-utils
 	$(AM_V_GEN)echo ".so man8/setarch.8" > $@
 
 install-exec-hook-setarch:

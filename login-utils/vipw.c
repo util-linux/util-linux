@@ -343,7 +343,7 @@ int main(int argc, char *argv[])
 	if (access(orig_file, F_OK) == 0) {
 		char response[80];
 
-		printf((program == VIGR)
+		printf("%s", (program == VIGR)
 		       ? _("You are using shadow groups on this system.\n")
 		       : _("You are using shadow passwords on this system.\n"));
 		/* TRANSLATORS: this program uses for y and n rpmatch(3),

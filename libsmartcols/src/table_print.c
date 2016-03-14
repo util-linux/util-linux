@@ -702,7 +702,8 @@ static int print_line(struct libscols_table *tb,
 
 static int print_title(struct libscols_table *tb)
 {
-	int rc, align;
+	int rc;
+	mbs_align_t align;
 	size_t len = 0, width;
 	char *title = NULL, *buf = NULL;
 

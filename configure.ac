@@ -99,6 +99,7 @@ AC_SUBST([usrlib_execdir])
 
 
 AM_PROG_CC_C_O
+AC_PROG_MKDIR_P
 AC_PROG_CC_STDC
 AC_CANONICAL_HOST
 AC_C_CONST
@@ -243,6 +244,7 @@ AC_CHECK_HEADERS([ \
 	sys/param.h \
 	sys/prctl.h \
 	sys/resource.h \
+	sys/signalfd.h \
 	sys/socket.h \
 	sys/sockio.h \
 	sys/stat.h \
@@ -288,6 +290,7 @@ have_security_pam_appl_h=$ac_cv_header_security_pam_appl_h
 have_security_pam_misc_h=$ac_cv_header_security_pam_misc_h
 have_security_openpam_h=$ac_cv_header_security_openpam_h
 have_shadow_h=$ac_cv_header_shadow_h
+have_sys_signalfd_h=$ac_cv_header_sys_signalfd_h
 have_utmp_h=$ac_cv_header_utmp_h
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
@@ -539,16 +542,15 @@ AC_DEFUN([UL_SCANF_TYPE_MODIFIER], [dnl
 int main()
 {
 	int i;
+	int rc = 1;
 	char *s;
 	i = sscanf("x", $1, &s);
+	if (i == 1  && *s == 'x')
+		rc = 0;
 	free(s);
-	if (i == 1)
-		return 0;
-	return 1;
+	return rc;
 }])
 
-ul_save_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="-Werror ${CPPFLAGS}"
 AC_CACHE_VAL([scanf_cv_alloc_modifier],
   AC_RUN_IFELSE([AC_LANG_SOURCE([UL_SCANF_TYPE_MODIFIER(["%ms"])])],
     [scanf_cv_alloc_modifier=ms],
@@ -582,7 +584,6 @@ AC_CACHE_VAL([scanf_cv_alloc_modifier],
     [scanf_cv_alloc_modifier=no])]
   )
 )
-CPPFLAGS="$ul_save_CPPFLAGS"
 
 AC_MSG_CHECKING([scanf string alloc modifiers])
 AS_CASE([$scanf_cv_alloc_modifier],
@@ -1021,7 +1022,7 @@ AM_CONDITIONAL([BUILD_SFDISK], [test "x$build_sfdisk" = xyes])
 UL_BUILD_INIT([cfdisk], [check])
 UL_REQUIRES_BUILD([cfdisk], [libfdisk])
 UL_REQUIRES_BUILD([cfdisk], [libsmartcols])
-UL_REQUIRES_HAVE([cfdisk], [open_memstream])
+UL_REQUIRES_HAVE([cfdisk], [open_memstream], [open_memstream function])
 UL_REQUIRES_HAVE([cfdisk], [ncurses,slang], [ncurses or slang library])
 AM_CONDITIONAL([BUILD_CFDISK], [test "x$build_cfdisk" = xyes])
 
@@ -1080,6 +1081,8 @@ AC_ARG_ENABLE([uuidd],
 )
 UL_BUILD_INIT([uuidd])
 UL_REQUIRES_BUILD([uuidd], [libuuid])
+UL_REQUIRES_HAVE([uuidd], [timer], [timer_create function])
+UL_REQUIRES_HAVE([uuidd], [sys_signalfd_h], [sys/signalfd.h header])
 AS_IF([test "x$build_uuidd" = xyes], [
   AC_DEFINE([HAVE_UUIDD], [1], [Define to 1 if you want to use uuid daemon.])
 ])
@@ -1471,7 +1474,7 @@ dnl we assume reboot() to be the 1-argument variant, because even considering
 dnl widely used alternative C libraries like uclibc, dietlibc and musl,
 dnl reboot() with multiple arguments is yet only found in glibc versions
 dnl earlier than 2.x.
-UL_REQUIRES_HAVE([ctrlaltdel], [reboot])
+UL_REQUIRES_HAVE([ctrlaltdel], [reboot], [reboot function])
 AM_CONDITIONAL([BUILD_CTRLALTDEL], [test "x$build_ctrlaltdel" = xyes])
 
 UL_BUILD_INIT([fsfreeze], [check])
@@ -1495,7 +1498,7 @@ UL_REQUIRES_LINUX([setarch])
 AM_CONDITIONAL([BUILD_SETARCH], [test "x$build_setarch" = xyes])
 
 UL_BUILD_INIT([script], [check])
-UL_REQUIRES_LINUX([script])
+UL_REQUIRES_HAVE([script], [sys_signalfd_h], [sys/signalfd.h header])
 AM_CONDITIONAL([BUILD_SCRIPT], [test "x$build_script" = xyes])
 
 UL_BUILD_INIT([scriptreplay], [yes])

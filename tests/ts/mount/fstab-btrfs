@@ -30,8 +30,10 @@ ts_check_prog "mkfs.btrfs"
 ts_check_prog "btrfs"
 
 # btrfs feature check
-btrfs inspect rootid bla 2>&1 | grep -q "unknown token" \
-	&& ts_skip "btrfs too old"
+if ! btrfs inspect-internal --help &>/dev/null || \
+   btrfs inspect-internal rootid bla 2>&1 | grep -q "unknown token"; then
+	ts_skip "btrfs too old"
+fi
 
 TS_MOUNTPOINT_ANY="$TS_MOUNTPOINT"
 TS_MOUNTPOINT_CREATE="$TS_MOUNTPOINT-create"
@@ -62,7 +64,7 @@ mkdir bind-point
 mkdir -p d1/dd1/ddd1
 cd ./d1/dd1/ddd1
 btrfs subvol create s2 >/dev/null
-DEFAULT_SUBVOLID=$(btrfs inspect rootid s2)
+DEFAULT_SUBVOLID=$(btrfs inspect-internal rootid s2)
 btrfs subvol set-default $DEFAULT_SUBVOLID . >/dev/null
 NON_DEFAULT_SUBVOLID=$(btrfs subvol list "$TS_MOUNTPOINT_CREATE" | while read dummy id rest ; do if test $id = $DEFAULT_SUBVOLID ; then continue ; fi ; echo $id ; done)
 cd ../../../..

@@ -1808,7 +1808,7 @@ static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
 	struct libmnt_fs *fs;
 	struct libmnt_iter *itr = NULL;
 	struct libmnt_cache *mpc = NULL;
-	int rc, writable = 0;
+	int writable = 0;
 	const char *path = NULL;
 
 	if (mnt_has_regular_mtab(&path, &writable) == 1 && writable == 0)
@@ -1846,12 +1846,11 @@ static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
 					mnt_fs_get_target(fs));
 	}
 
-	rc = 0;
 done:
 	mnt_unref_table(tb);
 	mnt_unref_table(fstab);
 	mnt_free_iter(itr);
-	return rc;
+	return 0;
 }
 
 /* returns 0 if @a and @b targets are the same */

@@ -345,7 +345,7 @@ static int userspace_event_verify(struct libmnt_monitor *mn,
 		}
 	} while (1);
 
-	DBG(MONITOR, ul_debugobj(mn, status == 1 ? " success" : " nothing"));
+	DBG(MONITOR, ul_debugobj(mn, "%s", status == 1 ? " success" : " nothing"));
 	return status;
 }
 

@@ -1,5 +1,8 @@
 language: c
 
+sudo: required
+dist: trusty
+
 git:
   depth: 1500
 
@@ -11,6 +14,17 @@ env:
   - MAKE_CHECK="nonroot"
   - MAKE_CHECK="root"
   - MAKE_CHECK="dist"
+
+matrix:
+  include:
+    - os: linux
+      dist: precise
+      compiler: gcc
+      env: PRECISE="yes" MAKE_CHECK="root"
+    - os: osx
+      osx_image: xcode7.3
+      compiler: clang
+      env: MAKE_CHECK="nonroot"
 
 branches:
   only:
