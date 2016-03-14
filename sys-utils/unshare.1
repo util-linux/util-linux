@@ -118,7 +118,7 @@ syscall in user namespaces.
 
 .BR setgroups (2)
 is only callable with CAP_SETGID and CAP_SETGID in a user
-namespace.  Linux kernel since 3.19 does not give you permission to call setgroups(2)
+namespace.  Linux kernel (since 3.19) does not give you permission to call setgroups(2)
 until after GID map has been set.  The GID map is writable by root when
 .BR setgroups (2)
 is enabled and the GID map becomes writable by unprivileged processes when
