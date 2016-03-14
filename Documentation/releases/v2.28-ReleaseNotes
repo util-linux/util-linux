@@ -43,6 +43,9 @@ non-Linux systems (BSD, XOs).
 The package does not provide fallback solutions for openat-family functions
 anymore.
 
+The python binding for libsmartcols is available in separate project at
+https://github.com/ignatenkobrain/python-smartcols.
+
 
 Security issues
 ---------------
