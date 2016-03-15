@@ -649,9 +649,6 @@ static int parse_options(struct swapon_ctl *ctl)
 	char *arg = NULL;
 
 	assert(ctl->options);
-	assert(ctl->priority);
-	assert(ctl->discard);
-	assert(ctl->no_fail);
 
 	if (mnt_optstr_get_option(ctl->options, "nofail", NULL, 0) == 0)
 		ctl->no_fail = 1;
