@@ -101,6 +101,7 @@ extern int mnt_get_filesystems(char ***filesystems, const char *pattern);
 extern void mnt_free_filesystems(char **filesystems);
 
 extern char *mnt_get_kernel_cmdline_option(const char *name);
+extern int mnt_guess_system_root(dev_t devno, struct libmnt_cache *cache, char **path);
 extern int mnt_stat_mountpoint(const char *target, struct stat *st);
 
 /* tab.c */

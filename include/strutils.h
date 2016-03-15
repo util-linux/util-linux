@@ -36,6 +36,7 @@ extern void strtotimeval_or_err(const char *str, struct timeval *tv,
 		const char *errmesg);
 
 extern int isdigit_string(const char *str);
+extern int isxdigit_string(const char *str);
 
 extern int parse_switch(const char *arg, const char *errmesg, ...);
 

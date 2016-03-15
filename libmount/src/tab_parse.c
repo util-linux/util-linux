@@ -580,19 +580,16 @@ static int kernel_fs_postparse(struct libmnt_table *tb,
 	 * Convert obscure /dev/root to something more usable
 	 */
 	if (src && strcmp(src, "/dev/root") == 0) {
-		char *spec = mnt_get_kernel_cmdline_option("root=");
 		char *real = NULL;
 
-		DBG(TAB, ul_debugobj(tb, "root FS: %s", spec));
-		if (spec)
-			real = mnt_resolve_spec(spec, tb->cache);
-		if (real) {
+		rc = mnt_guess_system_root(fs->devno, tb->cache, &real);
+		if (rc < 0)
+			return rc;
+
+		if (rc == 0 && real) {
 			DBG(TAB, ul_debugobj(tb, "canonical root FS: %s", real));
-			rc = mnt_fs_set_source(fs, real);
-			if (!tb->cache)
-				free(real);
+			rc = __mnt_fs_set_source_ptr(fs, real);
 		}
-		free(spec);
 	}
 
 	return rc;

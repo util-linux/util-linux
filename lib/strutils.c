@@ -183,6 +183,15 @@ int isdigit_string(const char *str)
 	return p && p > str && !*p;
 }
 
+int isxdigit_string(const char *str)
+{
+	const char *p;
+
+	for (p = str; p && *p && isxdigit((unsigned char) *p); p++);
+
+	return p && p > str && !*p;
+}
+
 /*
  *  parse_switch(argv[i], "on", "off",  "yes", "no",  NULL);
  */
