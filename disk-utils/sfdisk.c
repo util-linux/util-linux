@@ -372,19 +372,19 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	assert(sf->movedata);
 
 	if (!pa)
-		warnx(_("failed to read new partition from device (ignore --move-data)"));
+		warnx(_("failed to read new partition from device; ignoring --move-data"));
 	else if (!fdisk_partition_has_size(pa))
-		warnx(_("failed to get size of the new partition (ignore --move-data)"));
+		warnx(_("failed to get size of the new partition; ignoring --move-data"));
 	else if (!fdisk_partition_has_start(pa))
-		warnx(_("failed to get start of the new partition (ignore --move-data)"));
+		warnx(_("failed to get start of the new partition; ignoring --move-data"));
 	else if (!fdisk_partition_has_size(orig_pa))
-		warnx(_("failed to get size of the old partition (ignore --move-data)"));
+		warnx(_("failed to get size of the old partition; ignoring --move-data"));
 	else if (!fdisk_partition_has_start(orig_pa))
-		warnx(_("failed to get start of the old partition (ignore --move-data)"));
+		warnx(_("failed to get start of the old partition; ignoring --move-data"));
 	else if (fdisk_partition_get_start(pa) == fdisk_partition_get_start(orig_pa))
-		warnx(_("begin of the partition has not been moved (ignore --move-data)"));
+		warnx(_("start of the partition has not been moved; ignoring --move-data"));
 	else if (fdisk_partition_get_size(orig_pa) < fdisk_partition_get_size(pa))
-		warnx(_("new partition is smaller than original (ignore --move-data)"));
+		warnx(_("new partition is smaller than original; ignoring --move-data"));
 	else
 		ok = 1;
 	if (!ok)
