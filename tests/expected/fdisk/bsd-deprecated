@@ -1,7 +1,7 @@
 Initialize empty image
-f1c9645dbc14efddc7d8a322685f26eb bsd.img
+f1c9645dbc14efddc7d8a322685f26eb bsd-deprecated.img
 Create new DOS partition table
-57e721e38d1266c2df055067c18f2cf9 bsd.img
+57e721e38d1266c2df055067c18f2cf9 bsd-deprecated.img
 
 ---layout----------
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
@@ -13,7 +13,7 @@ Disk identifier: <removed>
 -------------------
 
 Create 1st primary partition
-ada64ace122978d00d1d1c0e5ee45d26 bsd.img
+ada64ace122978d00d1d1c0e5ee45d26 bsd-deprecated.img
 
 ---layout----------
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
@@ -28,9 +28,9 @@ Device     Boot Start   End Sectors Size Id Type
 -------------------
 
 Create 2st primary partition
-1bebf87248e05d6e4e62b749da65d023 bsd.img
+1bebf87248e05d6e4e62b749da65d023 bsd-deprecated.img
 Set 2nd partition type
-2d8e8dff51a88a045db233418dd73fbe bsd.img
+2d8e8dff51a88a045db233418dd73fbe bsd-deprecated.img
 
 ---layout----------
 Disk <removed>: 10 MiB, 10485760 bytes, 20480 sectors
@@ -46,7 +46,7 @@ Device     Boot Start   End Sectors Size Id Type
 -------------------
 
 Create default BSD
-2e1cee529cb59c9341afef0443f196a1 bsd.img
+2e1cee529cb59c9341afef0443f196a1 bsd-deprecated.img
 
 ---layout----------
 
@@ -75,7 +75,7 @@ Command (m for help): Leaving nested disklabel.
 Command (m for help): 
 -------------------
 
-b5c121c2091b2ff26b880551feac7112 bsd.img
+b5c121c2091b2ff26b880551feac7112 bsd-deprecated.img
 
 ---layout----------
 
