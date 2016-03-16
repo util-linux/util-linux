@@ -13,7 +13,7 @@ Stepping:              5
 CPU MHz:               1199.000
 CPU max MHz:           2667.0000
 CPU min MHz:           1199.0000
-BogoMIPS:              5319.97
+BogoMIPS:              5319.92
 Virtualization:        VT-x
 L1d cache:             32K
 L1i cache:             32K

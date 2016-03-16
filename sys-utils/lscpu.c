@@ -353,7 +353,8 @@ lookup(char *line, char *pattern, char **value)
 	char *p, *v;
 	int len = strlen(pattern);
 
-	if (!*line)
+	/* don't re-fill already found tags, first one wins */
+	if (!*line || *value)
 		return 0;
 
 	/* pattern */
