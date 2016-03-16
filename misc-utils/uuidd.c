@@ -342,7 +342,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		memset(&timeout, 0, sizeof timeout);
 		timeout.it_value.tv_sec = 30;
 		if (setup_timer(&t_id, &timeout, &timeout_handler))
-			err(EXIT_FAILURE, _("cannot not setup timer"));
+			err(EXIT_FAILURE, _("cannot set up timer"));
 		if (pidfile_path)
 			fd_pidfile = create_pidfile(uuidd_cxt, pidfile_path);
 		ret = call_daemon(socket_path, UUIDD_OP_GETPID, reply_buf,
