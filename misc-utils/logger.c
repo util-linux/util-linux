@@ -572,7 +572,7 @@ static void add_structured_data_param(struct list_head *ls, const char *param)
 	struct structured_data *sd;
 
 	if (list_empty(ls))
-		errx(EXIT_FAILURE, _("--sd-id no specified for --sd-param %s"), param);
+		errx(EXIT_FAILURE, _("--sd-id was not specified for --sd-param %s"), param);
 
 	assert(param);
 
