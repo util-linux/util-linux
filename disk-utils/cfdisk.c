@@ -2436,7 +2436,7 @@ static int ui_run(struct cfdisk *cf)
 	DBG(UI, ul_debug("start cols=%zu, lines=%zu", ui_cols, ui_lines));
 
 	if (fdisk_get_collision(cf->cxt)) {
-		ui_warnx(_("Device already contains %s signature, it will be removed by write command."),
+		ui_warnx(_("Device already contains a %s signature; it will be removed by a write command."),
 				fdisk_get_collision(cf->cxt));
 		fdisk_enable_wipe(cf->cxt, 1);
 		ui_hint(_("Press a key to continue."));

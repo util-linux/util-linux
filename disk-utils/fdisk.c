@@ -974,7 +974,7 @@ int main(int argc, char **argv)
 		if (fdisk_get_collision(cxt)) {
 			int dowipe = wipemode == WIPEMODE_ALWAYS ? 1 : 0;
 
-			fdisk_warnx(cxt, _("%s: device already contains %s signature."),
+			fdisk_warnx(cxt, _("Device %s already contains a %s signature."),
 				argv[optind], fdisk_get_collision(cxt));
 
 			if (isatty(STDIN_FILENO) && wipemode == WIPEMODE_AUTO)
@@ -983,7 +983,7 @@ int main(int argc, char **argv)
 			fdisk_enable_wipe(cxt, dowipe);
 			if (dowipe)
 				fdisk_warnx(cxt, _(
-					"The signature will be removed by write command."));
+					"The signature will be removed by a write command."));
 			else
 				fdisk_warnx(cxt, _(
 					"It is strongly recommended to wipe the device with "

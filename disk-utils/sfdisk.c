@@ -1537,7 +1537,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 	if (fdisk_get_collision(sf->cxt)) {
 		int dowipe = sf->wipemode == WIPEMODE_ALWAYS ? 1 : 0;
 
-		fdisk_warnx(sf->cxt, _("%s: device already contains %s signature."),
+		fdisk_warnx(sf->cxt, _("Device %s already contains a %s signature."),
 			devname, fdisk_get_collision(sf->cxt));
 
 		if (sf->interactive && sf->wipemode == WIPEMODE_AUTO)
@@ -1546,7 +1546,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		fdisk_enable_wipe(sf->cxt, dowipe);
 		if (dowipe)
 			fdisk_warnx(sf->cxt, _(
-				"The signature will be removed by write command."));
+				"The signature will be removed by a write command."));
 		else
 			fdisk_warnx(sf->cxt, _(
 				"It is strongly recommended to wipe the device with "
