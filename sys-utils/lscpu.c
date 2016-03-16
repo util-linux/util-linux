@@ -453,36 +453,25 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	char buf[BUFSIZ];
 	struct utsname utsbuf;
 	size_t setsize;
-	int overwrite_model = 0;
 
 	/* architecture */
 	if (uname(&utsbuf) == -1)
 		err(EXIT_FAILURE, _("error: uname failed"));
 	desc->arch = xstrdup(utsbuf.machine);
 
-	/* Use another records from cpuinfo for PPC, on snapshot follow
-	 * standard behavior.
-	 *
-	 * TODO: use runtime detection to make model overwrite possible on
-	 *       snapshots too.
-	 */
-#if defined(__powerpc__) || defined(__powerpc64__)
-	if (mod->system == SYSTEM_LIVE)
-		overwrite_model = 1;
-#endif
 	/* details */
 	while (fgets(buf, sizeof(buf), fp) != NULL) {
 		if (lookup(buf, "vendor", &desc->vendor)) ;
 		else if (lookup(buf, "vendor_id", &desc->vendor)) ;
 		else if (lookup(buf, "family", &desc->family)) ;
 		else if (lookup(buf, "cpu family", &desc->family)) ;
-
-		else if (overwrite_model && lookup(buf, "revision", &desc->model)) ;
-		else if (overwrite_model && lookup(buf, "cpu", &desc->modelname)) ;
-
-		else if (!overwrite_model && lookup(buf, "model", &desc->model)) ;
-		else if (!overwrite_model && lookup(buf, "model name", &desc->modelname)) ;
-
+#if defined(__powerpc__) || defined(__powerpc64__)
+		else if (lookup(buf, "revision", &desc->model)) ;
+		else if (lookup(buf, "cpu", &desc->modelname)) ;
+#else
+		else if (lookup(buf, "model", &desc->model)) ;
+		else if (lookup(buf, "model name", &desc->modelname)) ;
+#endif
 		else if (lookup(buf, "stepping", &desc->stepping)) ;
 		else if (lookup(buf, "cpu MHz", &desc->mhz)) ;
 		else if (lookup(buf, "flags", &desc->flags)) ;		/* x86 */
