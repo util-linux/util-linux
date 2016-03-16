@@ -4,7 +4,8 @@ Thread(s) per core:    4
 Core(s) per socket:    1
 Socket(s):             16
 NUMA node(s):          2
-Model:                 IBM,8231-E2B
+Model:                 2.1 (pvr 003f 0201)
+Model name:            POWER7 (architected), altivec supported
 Hypervisor vendor:     pHyp
 Virtualization type:   para
 L1d cache:             32K

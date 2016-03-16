@@ -191,6 +191,8 @@ struct lscpu_desc {
 	char	*family;
 	char	*model;
 	char	*modelname;
+	char	*revision;  /* alternative for model (ppc) */
+	char	*cpu;       /* alternative for modelname (ppc, sparc) */
 	char	*virtflag;	/* virtualization flag (vmx, svm) */
 	char	*hypervisor;	/* hypervisor software */
 	int	hyper;		/* hypervisor vendor ID */
@@ -465,13 +467,8 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		else if (lookup(buf, "vendor_id", &desc->vendor)) ;
 		else if (lookup(buf, "family", &desc->family)) ;
 		else if (lookup(buf, "cpu family", &desc->family)) ;
-#if defined(__powerpc__) || defined(__powerpc64__)
-		else if (lookup(buf, "revision", &desc->model)) ;
-		else if (lookup(buf, "cpu", &desc->modelname)) ;
-#else
 		else if (lookup(buf, "model", &desc->model)) ;
 		else if (lookup(buf, "model name", &desc->modelname)) ;
-#endif
 		else if (lookup(buf, "stepping", &desc->stepping)) ;
 		else if (lookup(buf, "cpu MHz", &desc->mhz)) ;
 		else if (lookup(buf, "flags", &desc->flags)) ;		/* x86 */
@@ -479,6 +476,8 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		else if (lookup(buf, "type", &desc->flags)) ;		/* sparc64 */
 		else if (lookup(buf, "bogomips", &desc->bogomips)) ;
 		else if (lookup(buf, "bogomips per cpu", &desc->bogomips)) ; /* s390 */
+		else if (lookup(buf, "cpu", &desc->cpu)) ;
+		else if (lookup(buf, "revision", &desc->revision)) ;
 		else
 			continue;
 	}
@@ -1649,10 +1648,10 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		print_s(_("Vendor ID:"), desc->vendor);
 	if (desc->family)
 		print_s(_("CPU family:"), desc->family);
-	if (desc->model)
-		print_s(_("Model:"), desc->model);
-	if (desc->modelname)
-		print_s(_("Model name:"), desc->modelname);
+	if (desc->model || desc->revision)
+		print_s(_("Model:"), desc->revision ? desc->revision : desc->model);
+	if (desc->modelname || desc->cpu)
+		print_s(_("Model name:"), desc->cpu ? desc->cpu : desc->modelname);
 	if (desc->stepping)
 		print_s(_("Stepping:"), desc->stepping);
 	if (desc->mhz)
