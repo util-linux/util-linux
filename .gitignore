@@ -55,16 +55,6 @@ tests/run.sh.log
 tests/run.sh.trs
 update.log
 
-# libuuid depends on AX_TLS macro
-!m4/tls.m4
-
-# GTK_DOC_CHECK depends on gtk-doc.m4
-!m4/gtk-doc.m4
-
-# util-linux specific macros
-!m4/ul.m4
-!m4/compiler.m4
-
 #
 # binaries
 #
