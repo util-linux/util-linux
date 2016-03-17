@@ -181,6 +181,9 @@ checkxalloc:
 checkdecl:
 	@ $(top_srcdir)/tools/checkdecl.sh
 
+checkcompletion:
+	@ $(top_srcdir)/tools/checkcompletion.sh $(top_srcdir)
+
 DISTCHECK_CONFIGURE_FLAGS = \
 	--disable-use-tty-group \
 	--disable-silent-rules \
