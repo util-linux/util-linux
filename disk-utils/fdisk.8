@@ -3,7 +3,7 @@
 .\" Copyright 2012 Davidlohr Bueso <dave@gnu.org>
 .\" Copyright (C) 2013 Karel Zak <kzak@redhat.com>
 .\" May be distributed under the GNU General Public License
-.TH FDISK 8 "September 2013" "util-linux" "System Administration"
+.TH FDISK 8 "February 2016" "util-linux" "System Administration"
 
 .SH NAME
 fdisk \- manipulate disk partition table
@@ -54,10 +54,10 @@ between logical and physical sector size.  This option changes both sector sizes
 .IB sectorsize .
 .TP
 \fB\-B\fR, \fB\-\-protect\-boot\fP
-Don't erase the begin of the first disk sector when create a new disk label. This
+Don't erase the begin of the first disk sector when create a new disk label.  This
 feature is supported for GPT and MBR.
 .TP
-\fB\-c\fR, \fB\-\-compatibility\fR[\fI=mode\fR]
+\fB\-c\fR, \fB\-\-compatibility\fR[=\fImode\fR]
 Specify the compatibility mode, 'dos' or 'nondos'.  The default is non-DOS
 mode.  For backward compatibility, it is possible to use the option without
 the \fImode\fR argument -- then the default is used.  Note that the optional
@@ -96,7 +96,7 @@ in favour of
 Enable support only for disklabels of the specified \fItype\fP, and disable
 support for all other types.
 .TP
-\fB\-u\fR, \fB\-\-units\fR[\fI=unit\fR]
+\fB\-u\fR, \fB\-\-units\fR[=\fIunit\fR]
 When listing partition tables, show sizes in 'sectors' or in 'cylinders'.  The
 default is to show sizes in sectors.  For backward compatibility, it is possible
 to use the option without the \fIunit\fR argument -- then the default is used.

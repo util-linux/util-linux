@@ -2374,7 +2374,7 @@ By default, the files are owned by root and not readable by somebody else.
 
 .SS "Mount options for overlay"
 Since Linux 3.18 the overlay pseudo filesystem implements a union mount for
-other file systems.
+other filesystems.
 
 An overlay filesystem combines two filesystems - an \fBupper\fR filesystem and
 a \fBlower\fR filesystem.  When a name exists in both filesystems, the object
@@ -2384,9 +2384,9 @@ either hidden or, in the case of directories, merged with the upper object.
 The lower filesystem can be any filesystem supported by Linux and does not need
 to be writable.  The lower filesystem can even be another overlayfs.  The upper
 filesystem will normally be writable and if it is it must support the creation
-of trusted.* extended attributes, and must provide valid d_type in readdir
+of trusted.* extended attributes, and must provide a valid d_type in readdir
 responses, so NFS is not suitable.
- 
+
 A read-only overlay of two read-only filesystems may use any filesystem type.
 The options \fBlowerdir\fR and \fBupperdir\fR are combined into a merged
 directory by using:
@@ -2616,10 +2616,8 @@ mount options.  It can be added later, when the tmpfs is already mounted
 on MountPoint, by 'mount \-o remount,mpol=Policy:NodeList MountPoint'.
 
 .SS "Mount options for ubifs"
-UBIFS is a flash file system which works on top of UBI volumes.  Note that
-.B
-atime
-is not supported and is always turned off.
+UBIFS is a flash filesystem which works on top of UBI volumes.  Note that
+\fBatime\fR is not supported and is always turned off.
 .TP
 The device name may be specified as
 .RS

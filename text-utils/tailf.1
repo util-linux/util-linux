@@ -21,7 +21,7 @@
 .\" Formatted or processed versions of this manual, if unaccompanied by
 .\" the source, must acknowledge the copyright and authors of this work.
 .\"
-.TH TAILF 1 "July 2014" "util-linux" "User Commands"
+.TH TAILF 1 "March 2015" "util-linux" "User Commands"
 .SH NAME
 tailf \- follow the growth of a log file
 .SH SYNOPSIS
@@ -30,10 +30,10 @@ tailf \- follow the growth of a log file
 .I file
 .SH DESCRIPTION
 .B tailf is deprecated.
-It may have unfixed bugs and will be removed in March 2017. Nowadays it's safe
-to use
+It may have unfixed bugs and will be removed from util-linux in March 2017.
+Nowadays it's safe to use
 .B tail -f
-(coreutils) in contrast to the original documentation below.
+(from coreutils), in contrast to what the original documentation below says.
 .PP
 .B tailf
 will print out the last 10 lines of the given \fIfile\fR and then wait
@@ -45,7 +45,7 @@ does not occur periodically when no log activity is happening.
 .PP
 .B tailf
 is extremely useful for monitoring log files on a laptop when logging is
-infrequent and the user desires that the hard disk spin down to conserve
+infrequent and the user wishes the hard disk to spin down to conserve
 battery life.
 .TP
 .BR \-n , " -\-lines=\fInumber\fR" , " \-\fInumber\fR"
