@@ -20,6 +20,14 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_SETARCH"
 
+ARCH=$(uname -m)
+case $ARCH in
+	#  setarch --uname-2.6 fails on platforms without VDS
+	*sparc* )
+		ts_skip "unsupported arch"
+		;;
+esac
+
 $TS_CMD_SETARCH $(uname -m) -vRFZLXBIST3 --uname-2.6 echo "success" >$TS_OUTPUT 2>&1
 
 ts_finalize
