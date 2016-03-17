@@ -94,6 +94,10 @@ option.
 .BR \-f , " \-\-force"
 Force an unmount (in case of an unreachable NFS system).  (Requires kernel
 2.1.116 or later.)
+
+Note that this option does not guarantee that umount command does not hang.
+It's strongly recommended to use absolute paths without symlinks to avoid
+unwanted readlink and stat syscalls on unreachable NFS in umount.
 .TP
 .BR \-i , " \-\-internal\-only"
 Do not call the \fB/sbin/umount.\fIfilesystem\fR helper even if it exists.
