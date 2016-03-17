@@ -223,6 +223,10 @@ endif
 if BUILD_LOSETUP
 dist_bashcompletion_DATA += bash-completion/losetup
 endif
+if BUILD_MOUNT
+dist_bashcompletion_DATA += bash-completion/mount
+dist_bashcompletion_DATA += bash-completion/umount
+endif
 if BUILD_MOUNTPOINT
 dist_bashcompletion_DATA += bash-completion/mountpoint
 endif
@@ -237,6 +241,7 @@ dist_bashcompletion_DATA += bash-completion/setpriv
 endif
 if BUILD_SWAPON
 dist_bashcompletion_DATA += bash-completion/swapon
+dist_bashcompletion_DATA += bash-completion/swapoff
 endif
 if BUILD_UNSHARE
 dist_bashcompletion_DATA += bash-completion/unshare
