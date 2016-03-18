@@ -9,6 +9,7 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_MKSWAP"
 ts_check_test_command "$TS_CMD_SWAPON"
 ts_check_test_command "$TS_CMD_SWAPOFF"
+ts_check_test_command "$TS_HELPER_SYSINFO"
 
 ts_skip_nonroot
 ts_check_losetup
