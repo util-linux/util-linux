@@ -99,6 +99,7 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 {
 	FILE *f;
 	int i = 0, maxid;
+	char buf[BUFSIZ];
 	struct shm_data *p;
 	struct shmid_ds dummy;
 
@@ -111,8 +112,8 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 
 	while (fgetc(f) != '\n');		/* skip header */
 
-	while (feof(f) == 0) {
-		if (fscanf(f,
+	while (fgets(buf, sizeof(buf), f) != NULL) {
+		if (sscanf(buf,
 			  "%d %d  %o %"SCNu64 " %u %u  "
 			  "%"SCNu64 " %u %u %u %u %"SCNi64 " %"SCNi64 " %"SCNi64
 			  " %"SCNu64 " %"SCNu64 "\n",
@@ -132,7 +133,7 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 			   &p->shm_ctim,
 			   &p->shm_rss,
 			   &p->shm_swp) != 16)
-			continue;
+			continue; /* ivalid line, skipped */
 
 		if (id > -1) {
 			/* ID specified */
