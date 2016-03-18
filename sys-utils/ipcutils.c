@@ -113,6 +113,9 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 	while (fgetc(f) != '\n');		/* skip header */
 
 	while (fgets(buf, sizeof(buf), f) != NULL) {
+		/* scan for the first 14-16 columns (e.g. Linux 2.6.32 has 14) */
+		p->shm_rss = 0xdead;
+		p->shm_swp = 0xdead;
 		if (sscanf(buf,
 			  "%d %d  %o %"SCNu64 " %u %u  "
 			  "%"SCNu64 " %u %u %u %u %"SCNi64 " %"SCNi64 " %"SCNi64
@@ -132,7 +135,7 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 			   &p->shm_dtim,
 			   &p->shm_ctim,
 			   &p->shm_rss,
-			   &p->shm_swp) != 16)
+			   &p->shm_swp) < 14)
 			continue; /* ivalid line, skipped */
 
 		if (id > -1) {
