@@ -12,8 +12,10 @@ pylibmount_la_SOURCES = \
 	libmount/python/pylibmount.c \
 	libmount/python/pylibmount.h \
 	libmount/python/fs.c \
-	libmount/python/tab.c \
-	libmount/python/context.c
+	libmount/python/tab.c
+if LINUX
+pylibmount_la_SOURCES += libmount/python/context.c
+endif
 
 pylibmount_la_LIBADD = libmount.la $(PYTHON_LIBS)
 

@@ -94,6 +94,8 @@ extern void Table_AddModuleObject(PyObject *mod);
 
 extern int pymnt_table_parser_errcb(struct libmnt_table *tb, const char *filename, int line);
 
+#ifdef __linux__
+
 /*
  * context.c
  */
@@ -107,6 +109,8 @@ typedef struct {
 
 extern PyTypeObject ContextType;
 extern void Context_AddModuleObject(PyObject *mod);
+
+#endif /* __linux__ */
 
 /*
  * misc

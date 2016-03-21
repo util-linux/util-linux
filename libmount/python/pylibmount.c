@@ -229,7 +229,9 @@ PyMODINIT_FUNC initpylibmount(void)
 
 	FS_AddModuleObject(m);
 	Table_AddModuleObject(m);
+#ifdef __linux__
 	Context_AddModuleObject(m);
+#endif
 
 	/*
 	 * mount(8) userspace options masks (MNT_MAP_USERSPACE map)
