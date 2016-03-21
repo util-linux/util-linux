@@ -16,6 +16,8 @@
 # GNU General Public License for more details.
 #
 
+test -f /proc/sys/kernel/shmall || ts_skip "no /proc"
+
 PAGE_SIZE=$($TS_HELPER_SYSINFO pagesize)
 
 # kernel files
