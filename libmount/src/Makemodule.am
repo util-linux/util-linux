@@ -74,7 +74,6 @@ EXTRA_DIST += \
 if BUILD_LIBMOUNT_TESTS
 check_PROGRAMS += \
 	test_mount_cache \
-	test_mount_context \
 	test_mount_lock \
 	test_mount_optstr \
 	test_mount_tab \
@@ -82,8 +81,11 @@ check_PROGRAMS += \
 	test_mount_tab_update \
 	test_mount_utils \
 	test_mount_version \
-	test_mount_monitor \
 	test_mount_debug
+if LINUX
+check_PROGRAMS += test_mount_context
+check_PROGRAMS += test_mount_monitor
+endif
 
 libmount_tests_cflags  = -DTEST_PROGRAM $(libmount_la_CFLAGS) $(NO_UNUSED_WARN_CFLAGS)
 libmount_tests_ldflags = libblkid.la -static
