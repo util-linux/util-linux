@@ -199,9 +199,11 @@ static void do_shm (char format, int unit)
 	{
 		struct ipc_limits lim;
 
-		printf (_("------ Shared Memory Limits --------\n"));
-		if (ipc_shm_get_limits(&lim))
+		if (ipc_shm_get_limits(&lim)) {
+			printf (_("unable to fetch shared memory limits\n"));
 			return;
+		}
+		printf (_("------ Shared Memory Limits --------\n"));
 		printf (_("max number of segments = %ju\n"), lim.shmmni);
 		ipc_print_size(unit == IPC_UNIT_DEFAULT ? IPC_UNIT_KB : unit,
 			       _("max seg size"), lim.shmmax, "\n", 0);
@@ -351,9 +353,11 @@ static void do_sem (char format)
 	{
 		struct ipc_limits lim;
 
-		printf (_("------ Semaphore Limits --------\n"));
-		if (ipc_sem_get_limits(&lim))
+		if (ipc_sem_get_limits(&lim)) {
+			printf (_("unable to fetch semaphore limits\n"));
 			return;
+		}
+		printf (_("------ Semaphore Limits --------\n"));
 		printf (_("max number of arrays = %d\n"), lim.semmni);
 		printf (_("max semaphores per array = %d\n"), lim.semmsl);
 		printf (_("max semaphores system wide = %d\n"), lim.semmns);
@@ -451,8 +455,10 @@ static void do_msg (char format, int unit)
 	{
 		struct ipc_limits lim;
 
-		if (ipc_msg_get_limits(&lim))
+		if (ipc_msg_get_limits(&lim)) {
+			printf (_("unable to fetch message limits\n"));
 			return;
+		}
 		printf (_("------ Messages Limits --------\n"));
 		printf (_("max queues system wide = %d\n"), lim.msgmni);
 		ipc_print_size(unit == IPC_UNIT_DEFAULT ? IPC_UNIT_BYTES : unit,
