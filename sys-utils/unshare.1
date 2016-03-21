@@ -50,6 +50,11 @@ sockets, etc.  (\fBCLONE_NEWNET\fP flag)
 Children will have a distinct set of PID-to-process mappings from their parent.
 (\fBCLONE_NEWPID\fP flag)
 .TP
+.BR "cgroup namespace"
+The process will have a virtualized view of \fI/proc\:/self\:/cgroup\fP, and new
+cgroup mounts will be rooted at the namespace cgroup root.
+(\fBCLONE_NEWCGROUP\fP flag)
+.TP
 .BR "user namespace"
 The process will have a distinct set of UIDs, GIDs and capabilities.
 (\fBCLONE_NEWUSER\fP flag)
@@ -84,6 +89,10 @@ namespace is created by a bind mount.
 .BR \-U , " \-\-user" [ =\fIfile ]
 Unshare the user namespace.  If \fIfile\fP is specified, then a persistent
 namespace is created by a bind mount.
+.TP
+.BR \-C , " \-\-cgroup"[=\fIfile\fP]
+Unshare the cgroup namespace. If \fIfile\fP is specified then persistent namespace is created
+by bind mount.
 .TP
 .BR \-f , " \-\-fork"
 Fork the specified \fIprogram\fR as a child process of \fBunshare\fR rather than
