@@ -80,6 +80,11 @@ static volatile sig_atomic_t sigchild;
 # define IUCLC		0
 #endif
 
+#ifndef WEXITED
+# warning "WEXITED is missing, sulogin may not work as expected"
+# define WEXITED 0
+#endif
+
 static int locked_account_password(const char *passwd)
 {
 	if (passwd && (*passwd == '*' || *passwd == '!'))
