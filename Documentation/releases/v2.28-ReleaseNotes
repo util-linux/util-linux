@@ -31,6 +31,9 @@ The command lsblk allows to sort output by unprinted columns (e.g. lsblk
 
 The command mount applies the nofail mount option to ENOMEDIUM errors.
 
+The commands nsenter and unshare support a new option --cgroup for work with 
+cgroups namespaces (CLONE_NEWCGROUP).
+
 The library libmount has been improved to properly detect already mounted btrfs
 subvolumes.
 
