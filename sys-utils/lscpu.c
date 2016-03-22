@@ -824,7 +824,7 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	if (desc->hyper) {
 		desc->virtype = VIRT_FULL;
 
-		if (desc->hyper == HYPER_XEN && path_exist(_PATH_SYS_HYP_FEATURES)) {
+		if (desc->hyper == HYPER_XEN) {
 			uint32_t features;
 
 			fd = path_fopen("r", 0, _PATH_SYS_HYP_FEATURES);
