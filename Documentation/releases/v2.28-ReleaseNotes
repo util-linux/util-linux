@@ -41,7 +41,7 @@ The library libsmartcols has been massively improved to print table ranges,
 multi-line cells, table titles and to support continuous printing.
 
 The package build system and code have been improved to be more portable to
-non-Linux systems (BSD, XOs).
+non-Linux systems (BSD, OSX).
 
 The package does not provide fallback solutions for openat-family functions
 anymore.

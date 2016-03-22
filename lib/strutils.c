@@ -734,7 +734,7 @@ int parse_range(const char *str, int *lower, int *upper, int def)
 			return -1;
 
 		if (*end == ':' && !*(end + 1))		/* <M:> */
-			*upper = 0;
+			*upper = def;
 		else if (*end == '-' || *end == ':') {	/* <M:N> <M-N> */
 			str = end + 1;
 			end = NULL;
