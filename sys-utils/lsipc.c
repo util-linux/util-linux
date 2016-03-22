@@ -1071,14 +1071,13 @@ static void do_shm_global(struct libscols_table *tb)
 			++nsegs;
 			sum_segsz += shmdsp->shm_segsz;
 		}
+		ipc_shm_free_info(shmds);
 	}
 
 	global_set_data(tb, "SHMMNI", _("Shared memory segments"), nsegs, lim.shmmni, 1);
 	global_set_data(tb, "SHMALL", _("Shared memory pages"), sum_segsz / getpagesize(), lim.shmall, 1);
 	global_set_data(tb, "SHMMAX", _("Max size of shared memory segment (bytes)"), 0, lim.shmmax, 0);
 	global_set_data(tb, "SHMMIN", _("Min size of shared memory segment (bytes)"), 0, lim.shmmin, 0);
-
-	ipc_shm_free_info(shmds);
 }
 
 int main(int argc, char *argv[])
