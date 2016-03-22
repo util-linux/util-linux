@@ -744,8 +744,7 @@ quit:
 	alarm(0);
 	if (tc)
 		tcsetattr(fd, TCSAFLUSH, &con->tio);
-	if (ret && *ret != '\0')
-		tcfinal(con);
+	tcfinal(con);
 	printf("\r\n");
 out:
 	return ret;
