@@ -9,4 +9,5 @@ Switching on WHOLE_SECONDS.
 Switching on STICKY_TIMEOUTS.
 Switching on ADDR_LIMIT_3GB.
 Switching on UNAME26.
+Execute command `echo'.
 success
