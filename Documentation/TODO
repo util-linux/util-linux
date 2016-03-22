@@ -12,6 +12,12 @@
    - it would be also nice to have a way how to redirect sysfs.c functions 
      to /sys snapshots (e.g. lsblk regression tests)
 	
+
+lscpu
+-----
+  - read cpuid and uname information from file if --sysroot is specified, then
+    we can prepare regression tests completely independent on hw and architecture.
+
 lsblk
 -----
   - currently it does not show mountpoint for all devices in btrfs RAID. It's because
