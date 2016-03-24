@@ -867,6 +867,20 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 		if (mnt_fs_streq_target(fs, path))
 			return fs;
 	}
+
+	/* try absolute path */
+	if (is_relative_path(path) && (cn = absolute_path(path))) {
+		DBG(TAB, ul_debugobj(tb, "lookup absolute TARGET: '%s'", cn));
+		mnt_reset_iter(&itr, direction);
+		while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
+			if (mnt_fs_streq_target(fs, cn)) {
+				free(cn);
+				return fs;
+			}
+		}
+		free(cn);
+	}
+
 	if (!tb->cache || !(cn = mnt_resolve_path(path, tb->cache)))
 		return NULL;
 

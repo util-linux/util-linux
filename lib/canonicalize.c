@@ -66,6 +66,47 @@ static int is_dm_devname(char *canonical, char **name)
 	return 1;
 }
 
+/*
+ * This function does not cannonicalize the path! It just prepends CWD before a
+ * relative path. If the path is no relative than returns NULL. The path does
+ * not have to exist.
+ */
+char *absolute_path(const char *path)
+{
+	char cwd[PATH_MAX], *res, *p;
+	size_t psz, csz;
+
+	if (!is_relative_path(path)) {
+		errno = EINVAL;
+		return NULL;
+	}
+	if (!getcwd(cwd, sizeof(cwd)))
+		return NULL;
+
+	/* simple clean up */
+	if (startswith(path, "./"))
+		path += 2;
+	else if (strcmp(path, ".") == 0)
+		path = NULL;
+
+	if (!path || !*path)
+		return strdup(cwd);
+
+	csz = strlen(cwd);
+	psz = strlen(path);
+
+	p = res = malloc(csz + 1 + psz + 1);
+	if (!res)
+		return NULL;
+
+	memcpy(p, cwd, csz);
+	p += csz;
+	*p++ = '/';
+	memcpy(p, path, psz + 1);
+
+	return res;
+}
+
 char *canonicalize_path(const char *path)
 {
 	char *canonical, *dmname;
@@ -139,7 +180,6 @@ int main(int argc, char **argv)
 
 	fprintf(stdout, "orig: %s\n", argv[1]);
 	fprintf(stdout, "real: %s\n", canonicalize_path(argv[1]));
-
 	exit(EXIT_SUCCESS);
 }
 #endif
