@@ -11,6 +11,7 @@
 *.so
 *.so.*
 *.static
+*.swp
 *.vim
 *.[ao]
 *~

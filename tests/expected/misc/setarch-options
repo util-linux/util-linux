@@ -1,3 +1,14 @@
+###### unknown arch
+setarch: qubit: Unrecognized architecture
+exit: 1
+###### unknown command
+Execute command `/das/gibs/nicht'.
+setarch: /das/gibs/nicht: No such file or directory
+exit: 1
+###### noop uname -a
+Execute command `uname'.
+uname -a unchanged
+###### almost all options
 Switching on ADDR_NO_RANDOMIZE.
 Switching on FDPIC_FUNCPTRS.
 Switching on MMAP_PAGE_ZERO.
@@ -8,5 +19,5 @@ Switching on SHORT_INODE.
 Switching on WHOLE_SECONDS.
 Switching on STICKY_TIMEOUTS.
 Switching on ADDR_LIMIT_3GB.
-Switching on UNAME26.
+Execute command `echo'.
 success
