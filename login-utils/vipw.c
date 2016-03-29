@@ -181,6 +181,7 @@ static void pw_write(void)
 	}
 	unlink(tmp_file);
 	free(tmp_file);
+	tmp_file = NULL;
 }
 
 static void pw_edit(void)
@@ -233,7 +234,9 @@ pw_error(char *name, int err, int eval)
 			warn(NULL);
 	}
 	warnx(_("%s unchanged"), orig_file);
-	unlink(tmp_file);
+
+	if (tmp_file)
+		unlink(tmp_file);
 	ulckpwdf();
 	exit(eval);
 }
@@ -269,7 +272,7 @@ static void edit_file(int is_shadow)
 		if (close_stream(tmp_fd) != 0)
 			err(EXIT_FAILURE, _("write error"));
 		tmp_fd = fopen(tmp_file, "r");
-		if (!tmp_file)
+		if (!tmp_fd)
 			err(EXIT_FAILURE, _("cannot open %s"), tmp_file);
 		if (fstat(fileno(tmp_fd), &end))
 			pw_error(tmp_file, 1, 1);
