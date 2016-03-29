@@ -54,7 +54,7 @@ int ipc_sem_get_limits(struct ipc_limits *lim)
 	}
 
 	if (rc != 4) {
-		struct seminfo seminfo;
+		struct seminfo seminfo = { .semmni = 0 };
 		union semun arg = { .array = (ushort *) &seminfo };
 
 		if (semctl(0, 0, IPC_INFO, arg) < 0)
