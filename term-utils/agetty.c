@@ -152,7 +152,7 @@ static int netlink_fd = AGETTY_RELOAD_FDNONE;
 
 struct options {
 	int flags;			/* toggle switches, see below */
-	int timeout;			/* time-out period */
+	unsigned int timeout;			/* time-out period */
 	char *autolog;			/* login the user automatically */
 	char *chdir;			/* Chdir before the login */
 	char *chroot;			/* Chroot before the login */
@@ -166,7 +166,7 @@ struct options {
 	char *erasechars;		/* string with erase chars */
 	char *killchars;		/* string with kill chars */
 	char *osrelease;		/* /etc/os-release data */
-	int delay;			/* Sleep seconds before prompt */
+	unsigned int delay;			/* Sleep seconds before prompt */
 	int nice;			/* Run login with this priority */
 	int numspeed;			/* number of baud rates to try */
 	int clocal;			/* CLOCAL_MODE_* */
@@ -421,7 +421,7 @@ int main(int argc, char **argv)
 
 	/* Set the optional timer. */
 	if (options.timeout)
-		alarm((unsigned) options.timeout);
+		alarm(options.timeout);
 
 	/* Optionally wait for CR or LF before writing /etc/issue */
 	if (serial_tty_option(&options, F_WAITCRLF)) {
@@ -681,7 +681,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 			op->chdir = optarg;
 			break;
 		case 'd':
-			op->delay = atoi(optarg);
+			op->delay = strtou32_or_err(optarg,  _("invalid delay argument"));
 			break;
 		case 'E':
 			op->flags |= F_REMOTE;
@@ -739,7 +739,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 			op->flags |= F_LOGINPAUSE;
 			break;
 		case 'P':
-			op->nice = atoi(optarg);
+			op->nice = strtos32_or_err(optarg,  _("invalid nice argument"));
 			break;
 		case 'r':
 			op->chroot = optarg;
@@ -751,8 +751,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 			op->flags |= F_KEEPSPEED;
 			break;
 		case 't':
-			if ((op->timeout = atoi(optarg)) <= 0)
-				log_err(_("bad timeout value: %s"), optarg);
+			op->timeout = strtou32_or_err(optarg,  _("invalid timeout argument"));
 			break;
 		case 'U':
 			op->flags |= F_LCUC;
