@@ -313,7 +313,7 @@ static int userspace_event_verify(struct libmnt_monitor *mn,
 
 	DBG(MONITOR, ul_debugobj(mn, "drain and verify userspace monitor inotify"));
 
-	/* the 'fd' is non-blocking */
+	/* the me->fd is non-blocking */
 	do {
 		ssize_t len;
 		char *p;
@@ -326,7 +326,7 @@ static int userspace_event_verify(struct libmnt_monitor *mn,
 		for (p = buf; p < buf + len;
 		     p += sizeof(struct inotify_event) + e->len) {
 
-			int fd;
+			int fd = -1;
 
 			e = (const struct inotify_event *) p;
 			DBG(MONITOR, ul_debugobj(mn, " inotify event 0x%x [%s]\n", e->mask, e->len ? e->name : ""));
