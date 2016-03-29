@@ -83,13 +83,19 @@ agetty:
 bash-completion:
    - add cal --span  [Karel Zak]
    - curly brace missed for findmnt  [Alexander Kuleshov]
+   - fsck.cramfs, isosize  find files an argument  [Sami Kerola]
    - fstrim  use mountpoint, not device  [Andreas Henriksson]
+   - ipcmk  add missing completion file  [Sami Kerola]
+   - lslogins  add missing completion file  [Sami Kerola]
+   - lsns  add missing completion file  [Sami Kerola]
 blkdiscard:
    - add --zeroout (BLKZEROOUT ioctl)  [Karel Zak]
    - don't report "zero range" at the end  [Ruediger Meier]
    - fix stats reporting (off by one)  [Ruediger Meier]
    - fix timeval comparison inclusive usecs  [Ruediger Meier]
    - slice up the recently changed usage text  [Benno Schulenberg]
+blkid:
+   - don't mark zfs as RAID  [Karel Zak]
 blkid, uuidd, uuidgen:
    - assume getopt.h and getopt.h are available  [Sami Kerola]
 build-sys:
@@ -97,6 +103,7 @@ build-sys:
    - add --disable-ipcrm --disable-ipcs  [Ruediger Meier]
    - add and use openat build conditionals  [Ruediger Meier]
    - add lsns to gitignore  [Karel Zak]
+   - add missing "not found" strings  [Ruediger Meier]
    - always add AM_CFLAGS  [Ruediger Meier]
    - always use global LDADD  [Ruediger Meier]
    - build_init should check for flock  [Ruediger Meier]
@@ -106,15 +113,24 @@ build-sys:
    - disable login-utils if shadow.h or utmp.h is missing  [Ruediger Meier]
    - disable unused parameter warnings for some test progs  [Ruediger Meier]
    - fix [g]libtoolize version for OSX  [Ruediger Meier]
+   - fix again UL_SCANF_TYPE_MODIFIER  [Ruediger Meier]
    - fix if..endif for *_la_LDFLAGS  [Karel Zak]
    - fix libtoolize for OSX  [Ruediger Meier]
    - fix typo  [Romain Naour]
    - fix typo and more all RT to the same place  [Karel Zak]
+   - ignore vim .swp files  [Ruediger Meier]
+   - improve uuidd and script build conditions  [Ruediger Meier]
+   - install missing bash completions  [Ruediger Meier]
+   - no need to un-ignore tracked files  [Ruediger Meier]
    - portable usage of find command  [Ruediger Meier]
+   - pylibmount, mount context is Linux only  [Ruediger Meier]
+   - release++ (v2.28-rc1)  [Karel Zak]
    - remove AM_CONDITIONAL from UL_CHECK_SYSCALL  [Karel Zak]
    - remove duplicate cal sources  [Ruediger Meier]
    - remove libtermcap support  [Sami Kerola]
+   - some libmount test progs are Linux only  [Ruediger Meier]
    - use $PKG_CONFIG  [Karel Zak]
+   - use AC_PROG_MKDIR_P and remove a few gnuisms  [Ruediger Meier]
    - use REALTIME_LIBS  [Karel Zak]
 buildsys:
    - fix static configuration and building  [Lada Trimasova]
@@ -134,6 +150,7 @@ chrt:
    - make man page more structured  [Karel Zak]
    - make usage more readable  [Karel Zak]
    - output function refactoring  [Karel Zak]
+   - remove duplicate words and tweak some phrasings in the man page  [Benno Schulenberg]
    - restore removed ifdef SCHED_RESET_ON_FORK  [Ruediger Meier]
    - set function refactoring  [Karel Zak]
    - use sched_getattr()  [Karel Zak]
@@ -149,20 +166,34 @@ ctrlaltdel:
    - tweak the wording in the man page  [Benno Schulenberg]
    - use path.h to read /proc  [Karel Zak]
    - use reboot() provided by libc, assuming it is 1-adic.  [Casper Ti. Vector]
+dmesg:
+   - improve grammar and consistency of usage text  [Benno Schulenberg]
 dmseg:
    - slightly improve punctuation and formatting of the manpage  [Benno Schulenberg]
 doap:
    - fix download URL  [Karel Zak]
 docs:
+   - add note about CLONE_NEWCGROUP support  [Karel Zak]
+   - add note about libsmartcols Python binding  [Karel Zak]
+   - add to TODO file  [Karel Zak]
    - fix typos found by codespell  [Ruediger Meier]
+   - improve grammar and wording in the 2.28 release notes  [Benno Schulenberg]
+   - miscellaneous tiny tweaks of man pages  [Benno Schulenberg]
    - update AUTHORS file  [Karel Zak]
+   - update AUTHORS file  [Sami Kerola]
+   - update TODO file  [Karel Zak]
    - update ctrlaltdel.8 man page  [Sami Kerola]
+   - update v2.28-ReleaseNotes  [Karel Zak]
 exec_shell:
    - prevent basename from modifying env  [Ruediger Meier]
+fallocate:
+   - improve synopsis and spelling in man page  [Benno Schulenberg]
+   - restore man-page content that was deleted in commit 5b033bfd  [Benno Schulenberg]
 fdformat:
    - fix block device open race  [Sami Kerola]
 fdisk:
    - add --wipe  [Karel Zak]
+   - fix the grammar of an option description  [Benno Schulenberg]
    - fix warning, incompatible pointer types passing 'uint64_t *'  [Ruediger Meier]
    - fix warning, uninitialized variable  [Ruediger Meier]
    - make 'f' command more verbose  [Karel Zak]
@@ -170,6 +201,8 @@ fdisk:
    - sun, undef HAVE_QSORT_R for non-Linux  [Ruediger Meier]
    - to recognize Intel Rapid Start hibernation partition  [Jörg Jenderek]
    - to recognize partition type 0xEA (Rufus)  [Jörg Jenderek]
+fdisk, cfdisk, sfdisk:
+   - improve the grammar of three messages  [Benno Schulenberg]
 fdisk, sfdisk:
    - adjust some formatting in the man pages  [Benno Schulenberg]
    - adjust the wording of the --wipe option  [Benno Schulenberg]
@@ -213,9 +246,14 @@ include/fileutils:
 include/pt-mbr-partnames:
    - remove '|' from partition type name  [Karel Zak]
 ipcs:
+   - --shmems, upward/backward compatibility  [Ruediger Meier]
+   - consolidate output header printing  [Ruediger Meier]
    - fix ipc_sem_get_limits()  [Karel Zak]
+   - make sure to parse whole lines for shm_data  [Ruediger Meier]
    - show gid instead of uid  [Hushan Jia]
    - ulong -> unsigned long  [Ruediger Meier]
+isosize:
+   - stop unmeaningful printing errno message  [Sami Kerola]
 last:
    - display input file in usage() according to command name  [Sami Kerola]
 lib:
@@ -252,10 +290,10 @@ lib/sysfs:
 lib/tty:
    - Pass default width to get_terminal_width()  [Boris Egorov]
 libblkid:
-   - don't mark zfs as RAID  [Karel Zak]
    - (promise raid) cleanup code  [Karel Zak]
    - (zfs) add cast to fix UB [cppcheck]  [Boris Egorov]
    - (zfs) keep bufferes read-only  [Karel Zak]
+   - Update for newer bcache superblocks  [Kent Overstreet]
    - add read() based fallback for char (UBI) devs  [Karel Zak]
    - check limits before indexing array [cppcheck]  [Boris Egorov]
    - don't include endian.h  [Ruediger Meier]
@@ -270,7 +308,9 @@ libblkid,libmount:
 libcommon:
    - don't include sysinfo.h  [Ruediger Meier]
 libfdisk:
+   - (bsd) fix spelling in warning message  [Benno Schulenberg]
    - (gpt) control ranges in set_partition  [Karel Zak]
+   - (gpt) reword two error messages with a sense of direction  [Benno Schulenberg]
    - Add GPT type GUID for Itanium Linux root  [Andrew Wilcox]
    - Detect out-of-space when adding new primary partition  [Ian Wienand]
    - Fix order of C/H/S numbers output  [Andreas Henriksson]
@@ -304,6 +344,7 @@ libmount:
    - fix uid= and gid= translation  [Karel Zak]
    - follow docs with parse-error callback return code  [Karel Zak]
    - handle btrfs default subvolume mount  [Stanislav Brabec]
+   - improve conversion from root= to the devname  [Karel Zak]
    - move btrfs subvol code refactoring  [Karel Zak]
    - run btrfs subvol checks for "auto" fs type  [Stanislav Brabec]
    - run btrfs subvol checks for "subvolid" option  [Stanislav Brabec]
@@ -365,7 +406,9 @@ line:
 logger:
    - add --sd-id and -sd-param  [Karel Zak]
    - always update header when writing stdin line  [Karel Zak]
+   - correct the grammar of an error message  [Benno Schulenberg]
    - fix compiler warning, const facilitynames  [Ruediger Meier]
+   - fix memory leak [ASAN and valgrind]  [Sami Kerola]
    - fix messages separation on UNIX socket  [Karel Zak]
    - improve grammar and formatting of the manpage  [Benno Schulenberg]
    - keep man page consistent and use \- everywhere  [Karel Zak]
@@ -395,9 +438,17 @@ lsblk:
    - tiny man page update for --sort  [Karel Zak]
    - use unsigned type for SIZE  [Karel Zak]
 lscpu:
+   - Fix model and model name on Power Systems  [Vasant Hegde]
    - Print physical cpu information  [Sukadev Bhattiprolu]
+   - correct the Virtualization type on Xen DomU PV guest  [Dongli Zhang]
    - fix backward buffer size adjustment after adding delimiter  [Yuriy M. Kaminskiy]
+   - fix memleak because of ambiguous tags  [Ruediger Meier]
+   - improve spacing and spelling in the man page  [Benno Schulenberg]
+   - keep lscpu usable on snapshots  [Karel Zak]
+   - revert unnecessary path_exist()  [Karel Zak]
+   - use cpu and revision tag if available  [Ruediger Meier]
 lsipc:
+   - don't free shm data if no shm id is found  [Romain Naour]
    - tweak a few wordings on the manpage  [Benno Schulenberg]
 lsln:
    - allows to list namespace processes  [Karel Zak]
@@ -429,6 +480,8 @@ misc:
    - always cast timeval.tv_usec to long rather than int  [Ruediger Meier]
    - avoid shadowing  [Karel Zak]
    - fix compiler warnungs (unsigned/signed)  [Ruediger Meier]
+   - fix icc/clang compiler warnings  [Ruediger Meier]
+   - fix printf i386 compiler warnings  [Ruediger Meier]
    - fix some includes  [Ruediger Meier]
    - fix some printf format strings  [Ruediger Meier]
    - fix warnings "unused parameter" [-Wunused-parameter]  [Ruediger Meier]
@@ -456,6 +509,7 @@ mount:
    - hardwrap an overlong example in the man page  [Benno Schulenberg]
    - mount.8 Add documentation of overlay mount options  [Osamu Aoki]
 mount, umount, swapon, fsck, lsblk, findmnt:
+   - harmonize six error messages  [Benno Schulenberg]
    - ignore malformed lines  [Karel Zak]
 namei:
    - move icache to lib/  [Karel Zak]
@@ -464,11 +518,13 @@ newgrp:
 nologin:
    - require /etc/nologin.txt to be file  [Sami Kerola]
 partx:
+   - fix --nr usage  [Karel Zak]
    - prevent code duplication  [Karel Zak]
 po:
    - merge changes  [Karel Zak]
    - update cs.po (from translationproject.org)  [Petr Písař]
    - update de.po (from translationproject.org)  [Philipp Thomas]
+   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
    - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
    - update ru.po (from translationproject.org)  [Evgeniy Yakushev]
    - update zh_CN.po (from translationproject.org)  [Wylmer Wang]
@@ -482,12 +538,16 @@ script:
    - be pedantic and use "%"SCNi64  [Karel Zak]
    - don't assume that time_t is compatible with long  [Isaac Dunham]
    - fix misspelling  [Ruediger Meier]
+   - tweak spacing and wording, and restore filling in the man page  [Benno Schulenberg]
 script, hwclock:
    - check file exist with access(3) rather than stat(3)  [Sami Kerola]
 scriptreplay/newgrp:
    - use signed int to store return of getopt_long  [Filipe Brandenburger]
 setarch:
+   - add "exec" message to --verbose  [Ruediger Meier]
    - fix personality syscall return code check  [Dmitry V. Levin]
+setsid:
+   - fix argument count bug  [Sami Kerola]
 sfdisk:
    - add 'U' shortcut for ESP  [Karel Zak]
    - add --delete  [Karel Zak]
@@ -498,21 +558,28 @@ sfdisk:
    - adjust more wordings and formatting in the man page  [Benno Schulenberg]
    - cleanup and optimize --move-data  [Karel Zak]
    - fix -N return code detection, add debug messages  [Karel Zak]
+   - improve the wording of seven error messages  [Benno Schulenberg]
    - make --quiet really quiet  [Karel Zak]
 sfdisk, fdisk:
    - add fflush()  [Karel Zak]
 su:
    - clean up groups initialization  [Karel Zak]
 sulogin:
+   - Always make echo work after performing getpasswd even if root account is locked  [Werner Fink]
    - Use fallback method on the Hurd for detecting consoles  [James Clarke]
    - avoid shared memory area usemask but use waitid() for childs  [Werner Fink]
+   - fix sigset_t initialization  [Karel Zak]
+   - ignore missing WEXITED, add warning  [Ruediger Meier]
    - keep initialization more robust  [Karel Zak]
 swapon:
    - add control struct  [Sami Kerola]
    - do not run execvp() calls when swapon is setuid binary  [Sami Kerola]
    - drop perms if setuid before call mkswap  [Karel Zak]
+   - fix discard=pages docs  [Richard Yao]
    - fix stat(3) and open(3) race  [Sami Kerola]
    - move function arguments to control structure  [Sami Kerola]
+   - remove unnecessary assert  [Karel Zak]
+   - rewrite control struct usage  [Karel Zak]
    - simplify ctl->device usage  [Karel Zak]
 taskset:
    - fix description of `-c` option in the man page  [Yuriy M. Kaminskiy]
@@ -522,6 +589,7 @@ tests:
    - add colcrt functional tests  [Sami Kerola]
    - add logger tests "id _numbers_ with spaces"  [Ruediger Meier]
    - add missing files  [Karel Zak]
+   - add new fdisk bsd test  [Karel Zak]
    - add option --parsable  [Ruediger Meier]
    - add sfdisk --move-data test  [Karel Zak]
    - add some check_test_command requirements  [Ruediger Meier]
@@ -533,13 +601,16 @@ tests:
    - always create sparse image files  [Ruediger Meier]
    - avoid sed -E  [Ruediger Meier]
    - blkdiscard, check return values  [Ruediger Meier]
+   - check for TS_HELPER_SYSINFO in swap tests  [Karel Zak]
    - cramfs, fix root group  [Ruediger Meier]
    - disable eject for broken kernels  [Ruediger Meier]
    - don't compare btrfs mount options  [Karel Zak]
    - don't skip case "output undefined"  [Ruediger Meier]
    - don't use mkfs.btrfs option -f  [Ruediger Meier]
+   - don't use system's mount commands  [Ruediger Meier]
    - fallback for missing TS_DESC  [Karel Zak]
    - fix compiler warnings [-Wmissing-prototypes]  [Ruediger Meier]
+   - fix fdisk/bsd for alpha  [Ruediger Meier]
    - fix minix tests for big endian  [Ruediger Meier]
    - fix non-working udevadm settle for scsi_debug  [Ruediger Meier]
    - fix redirection  [Stanislav Brabec]
@@ -547,10 +618,15 @@ tests:
    - fix ts_option helpers  [Ruediger Meier]
    - getopt2, add function gnu_getopt_clean()  [Ruediger Meier]
    - hotfix, wait for scsi_debug partion  [Ruediger Meier]
+   - ignore setarch on sparc  [Karel Zak]
    - ignore swapon warnings  [Ruediger Meier]
    - improve getopt loop error case  [Ruediger Meier]
+   - improve setarch tests, regarding --uname-2.6 issues  [Ruediger Meier]
+   - improve skipping of old btrfs-tools  [Ruediger Meier]
+   - make libmount/lock optional  [Karel Zak]
    - make swaplabel test more robust  [Karel Zak]
    - make test_uuid_parser to read files  [Sami Kerola]
+   - mark old bsd fdisk test as deprecated  [Karel Zak]
    - mark script race test as "known fail"  [Karel Zak]
    - minix, add a useful non-root check  [Ruediger Meier]
    - minix, some corrections and cleanup  [Ruediger Meier]
@@ -558,13 +634,16 @@ tests:
    - minor cleanup ts_fdisk_clean()  [Ruediger Meier]
    - mkfs.ext3 image-file needs option -F  [Ruediger Meier]
    - no more sleep, udevadm settle only  [Ruediger Meier]
+   - remove invalid argument in libmount/debug  [Ruediger Meier]
    - remove redundant check for NULL [cppcheck]  [Boris Egorov]
    - replace username with tag in logger test  [Karel Zak]
    - sfdisk/gpt-reorder, add missing results  [Ruediger Meier]
    - skip BLKDISCARD if unsupported  [Ruediger Meier]
    - skip automake's empty "Testsuite summary"  [Ruediger Meier]
    - skip btrfs tests if version too old  [Ruediger Meier]
+   - skip ipcs test which require /proc  [Ruediger Meier]
    - skip nonroot before checking for progs in PATH  [Ruediger Meier]
+   - skip old socat silently  [Ruediger Meier]
    - ts_fdisk_clean(), remove optimal iosize  [Ruediger Meier]
    - udevadm settle before losetup -d  [Ruediger Meier]
    - update ZFS test  [Karel Zak]
@@ -575,17 +654,31 @@ tests:
    - use sfdisk --no-reread wherever it's needed  [Ruediger Meier]
    - use xz instead of bzip2 for blkid images  [Ruediger Meier]
    - wipefs fix, ts_init was called too late  [Ruediger Meier]
+tools:
+   - add checkcompletion.sh  [Karel Zak]
+   - add missing checkcompletion.sh  [Karel Zak]
 travis:
    - Remove workaround for libtool install of pylibmount  [Filipe Brandenburger]
+   - add OSX build  [Ruediger Meier]
    - cosmetics, order scripts like they are executed  [Ruediger Meier]
    - install mdadm  [Ruediger Meier]
+   - let's ignore apt-get return code  [Karel Zak]
    - minor cleanup  [Ruediger Meier]
+   - switch to Ubuntu 14.04 Trusty  [Ruediger Meier]
    - workaround env pollution, PYTHON_CFLAGS  [Ruediger Meier]
+umount:
+   - add man page note that --force is not perfect  [Karel Zak]
 unshare:
    - add example for persistent mount namespace  [Karel Zak]
+   - describe the setgroups restriction more explicitly  [Benno Schulenberg]
    - fix busyloop and reduce racing probability  [Yuriy M. Kaminskiy]
+   - fix incomplete sentence in man page  [Karel Zak]
+   - improve wording and formatting in the man page  [Benno Schulenberg]
+   - replace a special character in the man page with a space  [Benno Schulenberg]
+   - tiny change  [Karel Zak]
 uuidd:
    - add debug message for timeout  [Karel Zak]
+   - correct the wording of an error message  [Benno Schulenberg]
    - fix compiler warning [-Wsign-compare]  [Karel Zak]
    - fix shadow declaration  [Sami Kerola]
    - improve socket activation error messaging  [Sami Kerola]
@@ -594,6 +687,8 @@ uuidd:
    - use signalfd() and setup_timer()  [Sami Kerola]
 vipw:
    - Remove pre-ANSI compiler support  [Romain Naour]
+   - print only one new line when asking about shadow file  [Sami Kerola]
+   - use puts() when formatting unnecessary  [Karel Zak]
 wipefs:
    - Allow b to be used as the short option for backup  [Bill Pemberton]
 wipefs, sfdisk:
