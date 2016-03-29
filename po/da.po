@@ -74,7 +74,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2016-03-10 14:40+0100\n"
+"POT-Creation-Date: 2016-03-29 10:35+0200\n"
 "PO-Revision-Date: 2015-03-29 19:30+01:00\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -102,26 +102,26 @@ msgstr "Fortæl kernen om eksistensen af en specificeret partition.\n"
 #: disk-utils/isosize.c:134 disk-utils/mkfs.bfs.c:189
 #: disk-utils/mkfs.cramfs.c:164 disk-utils/mkfs.cramfs.c:655
 #: disk-utils/mkfs.cramfs.c:782 disk-utils/mkfs.minix.c:823
-#: disk-utils/mkswap.c:215 disk-utils/mkswap.c:244 disk-utils/partx.c:952
+#: disk-utils/mkswap.c:215 disk-utils/mkswap.c:244 disk-utils/partx.c:994
 #: disk-utils/resizepart.c:101 disk-utils/sfdisk.c:630 disk-utils/sfdisk.c:686
 #: disk-utils/sfdisk.c:740 disk-utils/sfdisk.c:799 disk-utils/sfdisk.c:863
 #: disk-utils/sfdisk.c:904 disk-utils/sfdisk.c:934 disk-utils/sfdisk.c:968
 #: disk-utils/sfdisk.c:1466 disk-utils/swaplabel.c:60 libfdisk/src/bsd.c:641
 #: lib/path.c:70 lib/path.c:82 login-utils/islocal.c:87 login-utils/last.c:653
-#: login-utils/sulogin.c:475 login-utils/sulogin.c:512
+#: login-utils/sulogin.c:480 login-utils/sulogin.c:517
 #: login-utils/utmpdump.c:126 login-utils/utmpdump.c:348
 #: login-utils/utmpdump.c:370 login-utils/vipw.c:255 login-utils/vipw.c:273
-#: misc-utils/findmnt.c:1121 misc-utils/logger.c:1178 misc-utils/mcookie.c:115
+#: misc-utils/findmnt.c:1121 misc-utils/logger.c:1180 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:207 sys-utils/blkdiscard.c:183 sys-utils/dmesg.c:522
 #: sys-utils/eject.c:500 sys-utils/eject.c:700 sys-utils/fallocate.c:374
 #: sys-utils/fsfreeze.c:128 sys-utils/fstrim.c:72 sys-utils/hwclock.c:280
 #: sys-utils/hwclock-cmos.c:638 sys-utils/hwclock-rtc.c:162
 #: sys-utils/hwclock-rtc.c:256 sys-utils/hwclock-rtc.c:401
 #: sys-utils/hwclock-rtc.c:422 sys-utils/hwclock-rtc.c:469
-#: sys-utils/ldattach.c:388 sys-utils/nsenter.c:124 sys-utils/rtcwake.c:135
+#: sys-utils/ldattach.c:388 sys-utils/nsenter.c:126 sys-utils/rtcwake.c:135
 #: sys-utils/rtcwake.c:269 sys-utils/setpriv.c:230 sys-utils/setpriv.c:529
-#: sys-utils/setpriv.c:552 sys-utils/swapon.c:352 sys-utils/swapon.c:488
-#: sys-utils/switch_root.c:163 sys-utils/unshare.c:105 sys-utils/unshare.c:120
+#: sys-utils/setpriv.c:552 sys-utils/swapon.c:371 sys-utils/swapon.c:514
+#: sys-utils/switch_root.c:163 sys-utils/unshare.c:106 sys-utils/unshare.c:121
 #: sys-utils/wdctl.c:321 sys-utils/wdctl.c:377 term-utils/agetty.c:2616
 #: term-utils/agetty.c:2640 term-utils/mesg.c:127 term-utils/script.c:420
 #: term-utils/script.c:426 term-utils/script.c:428 term-utils/script.c:516
@@ -669,8 +669,8 @@ msgstr "Er du sikker på, at du vil skrive partitionstabellen til disken? "
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Tast »ja« eller »nej«, eller tryk ESC for at forlade denne dialog."
 
-#: disk-utils/cfdisk.c:2371 login-utils/lslogins.c:208 sys-utils/lscpu.c:1313
-#: sys-utils/lscpu.c:1323
+#: disk-utils/cfdisk.c:2371 login-utils/lslogins.c:208 sys-utils/lscpu.c:1346
+#: sys-utils/lscpu.c:1356
 msgid "yes"
 msgstr "ja"
 
@@ -692,7 +692,7 @@ msgstr "Bemærk at partitionstabellens indgange ikke er i diskrækkefølge nu."
 
 #: disk-utils/cfdisk.c:2439
 #, c-format
-msgid "Device already contains %s signature, it will be removed by write command."
+msgid "Device already contains a %s signature; it will be removed by a write command."
 msgstr ""
 
 #: disk-utils/cfdisk.c:2450
@@ -823,18 +823,18 @@ msgstr "ugyldig parameter - repair (reparer)"
 #: disk-utils/fdformat.c:221 disk-utils/fsck.cramfs.c:145
 #: disk-utils/mkfs.bfs.c:185 disk-utils/mkfs.cramfs.c:330
 #: disk-utils/mkfs.cramfs.c:742 disk-utils/mkfs.cramfs.c:779
-#: disk-utils/mkfs.minix.c:820 disk-utils/mkswap.c:241 disk-utils/partx.c:891
+#: disk-utils/mkfs.minix.c:820 disk-utils/mkswap.c:241 disk-utils/partx.c:933
 #: login-utils/last.c:667 login-utils/utmpdump.c:129 misc-utils/namei.c:135
 #: misc-utils/rename.c:63 sys-utils/blkdiscard.c:186 sys-utils/dmesg.c:524
 #: sys-utils/fallocate.c:198 sys-utils/fsfreeze.c:131 sys-utils/fstrim.c:77
-#: sys-utils/swapon.c:493 sys-utils/switch_root.c:93
+#: sys-utils/swapon.c:519 sys-utils/switch_root.c:93
 #: sys-utils/switch_root.c:133 term-utils/mesg.c:129 text-utils/more.c:509
 #: text-utils/tailf.c:104 text-utils/tailf.c:281
 #, c-format
 msgid "stat of %s failed"
 msgstr "stat for %s mislykkedes"
 
-#: disk-utils/fdformat.c:224 disk-utils/partx.c:949 misc-utils/lsblk.c:1477
+#: disk-utils/fdformat.c:224 disk-utils/partx.c:991 misc-utils/lsblk.c:1476
 #: sys-utils/blkdiscard.c:188 sys-utils/mountpoint.c:107
 #, c-format
 msgid "%s: not a block device"
@@ -869,7 +869,7 @@ msgstr "brugerdefineret slutspor er højere end det mediumspecificeret maksimum"
 msgid "user defined start track exceeds the user defined end track"
 msgstr "brugerdefineret startspor er højere end det brugerdefineret slutspor"
 
-#: disk-utils/fdformat.c:251 misc-utils/logger.c:977
+#: disk-utils/fdformat.c:251 misc-utils/logger.c:979
 msgid "close failed"
 msgstr "close (luk) mislykkedes"
 
@@ -1012,7 +1012,7 @@ msgid " -b, --sector-size <size>      physical and logical sector size\n"
 msgstr " -b, --sector-size <str>       fysisk og logisk sektorstørrelse\n"
 
 #: disk-utils/fdisk.c:732
-msgid " -B, --protect-boot            don't erase bootbits when create a new label\n"
+msgid " -B, --protect-boot            don't erase bootbits when creating a new label\n"
 msgstr ""
 
 #: disk-utils/fdisk.c:733
@@ -1118,11 +1118,11 @@ msgstr ""
 
 #: disk-utils/fdisk.c:977 disk-utils/sfdisk.c:1540
 #, c-format
-msgid "%s: device already contains %s signature."
+msgid "Device %s already contains a %s signature."
 msgstr ""
 
 #: disk-utils/fdisk.c:986 disk-utils/sfdisk.c:1549
-msgid "The signature will be removed by write command."
+msgid "The signature will be removed by a write command."
 msgstr ""
 
 #: disk-utils/fdisk.c:989 disk-utils/sfdisk.c:1552
@@ -1641,7 +1641,7 @@ msgstr "%s er ikke monteret\n"
 #: disk-utils/fsck.cramfs.c:175 disk-utils/fsck.cramfs.c:229
 #: disk-utils/fsck.cramfs.c:247 disk-utils/sfdisk.c:295 libfdisk/src/bsd.c:646
 #: lib/path.c:110 lib/path.c:131 lib/path.c:152 lib/path.c:200
-#: login-utils/last.c:191 login-utils/last.c:228 login-utils/sulogin.c:689
+#: login-utils/last.c:191 login-utils/last.c:228 login-utils/sulogin.c:694
 #: sys-utils/setpriv.c:239 term-utils/setterm.c:725 term-utils/setterm.c:782
 #: term-utils/setterm.c:786 term-utils/setterm.c:793
 #, c-format
@@ -1688,9 +1688,10 @@ msgid "failed to setup description for %s"
 msgstr "kunne ikke opsætte beskrivelse for %s"
 
 # evt. "i linje "
-#: disk-utils/fsck.c:473
-#, c-format
-msgid "%s: parse error at line %d -- ignore"
+#: disk-utils/fsck.c:473 misc-utils/findmnt.c:807 misc-utils/lsblk.c:433
+#: sys-utils/mount.c:102 sys-utils/swapon-common.c:19 sys-utils/umount.c:46
+#, fuzzy, c-format
+msgid "%s: parse error at line %d -- ignored"
 msgstr "%s: fortolk fejl på linje %d - ignorer"
 
 #: disk-utils/fsck.c:505 disk-utils/fsck.c:507
@@ -1698,9 +1699,9 @@ msgstr "%s: fortolk fejl på linje %d - ignorer"
 msgid "%s: failed to parse fstab"
 msgstr "%s: kunne ikke fortolke fstab"
 
-#: disk-utils/fsck.c:679 login-utils/login.c:967 login-utils/sulogin.c:1059
-#: login-utils/vipw.c:203 sys-utils/flock.c:326 sys-utils/nsenter.c:149
-#: sys-utils/swapon.c:302 sys-utils/unshare.c:218 sys-utils/unshare.c:412
+#: disk-utils/fsck.c:679 login-utils/login.c:967 login-utils/sulogin.c:1063
+#: login-utils/vipw.c:203 sys-utils/flock.c:326 sys-utils/nsenter.c:151
+#: sys-utils/swapon.c:316 sys-utils/unshare.c:219 sys-utils/unshare.c:420
 #: term-utils/script.c:774
 msgid "fork failed"
 msgstr "forgrening mislykkedes"
@@ -1714,8 +1715,8 @@ msgstr "%s: kør mislykkedes"
 msgid "wait: no more child process?!?"
 msgstr "vent: Ikke flere underprocesser?!?"
 
-#: disk-utils/fsck.c:777 sys-utils/flock.c:343 sys-utils/swapon.c:334
-#: sys-utils/unshare.c:396 sys-utils/unshare.c:417
+#: disk-utils/fsck.c:777 sys-utils/flock.c:343 sys-utils/swapon.c:348
+#: sys-utils/unshare.c:404 sys-utils/unshare.c:425
 msgid "waitpid failed"
 msgstr "waitpid mislykkedes"
 
@@ -2043,7 +2044,7 @@ msgstr "ikke-størrelse (%ld mod %ld) byte"
 
 #: disk-utils/fsck.cramfs.c:408 disk-utils/fsck.cramfs.c:512
 #: disk-utils/swaplabel.c:104 misc-utils/uuidd.c:376 sys-utils/fallocate.c:382
-#: sys-utils/setpriv.c:535 sys-utils/setpriv.c:558 sys-utils/swapon.c:370
+#: sys-utils/setpriv.c:535 sys-utils/setpriv.c:558 sys-utils/swapon.c:389
 #: term-utils/ttymsg.c:175
 #, c-format
 msgid "write failed: %s"
@@ -2600,7 +2601,7 @@ msgstr ""
 "----------------------------\n"
 
 #: disk-utils/fsck.minix.c:1404 disk-utils/mkfs.minix.c:837
-#: disk-utils/mkswap.c:539 disk-utils/partx.c:1004 disk-utils/resizepart.c:112
+#: disk-utils/mkswap.c:539 disk-utils/partx.c:1035 disk-utils/resizepart.c:112
 #: login-utils/utmpdump.c:388 sys-utils/dmesg.c:657 sys-utils/wdctl.c:346
 #: sys-utils/wdctl.c:411 term-utils/script.c:272 term-utils/script.c:348
 #: text-utils/pg.c:1248
@@ -2844,11 +2845,11 @@ msgstr " -h, --help         vis denne hjælpetekst og afslut\n"
 
 #: disk-utils/mkfs.c:139 lib/exec_shell.c:49 login-utils/newgrp.c:233
 #: login-utils/su-common.c:651 login-utils/su-common.c:986
-#: login-utils/sulogin.c:825 login-utils/sulogin.c:829 schedutils/chrt.c:516
+#: login-utils/sulogin.c:829 login-utils/sulogin.c:833 schedutils/chrt.c:516
 #: schedutils/ionice.c:260 schedutils/taskset.c:239 sys-utils/flock.c:332
-#: sys-utils/nsenter.c:407 sys-utils/prlimit.c:644 sys-utils/rtcwake.c:579
-#: sys-utils/setarch.c:324 sys-utils/setarch.c:399 sys-utils/setsid.c:117
-#: sys-utils/swapon.c:326 sys-utils/switch_root.c:243 sys-utils/unshare.c:453
+#: sys-utils/nsenter.c:416 sys-utils/prlimit.c:644 sys-utils/rtcwake.c:579
+#: sys-utils/setarch.c:324 sys-utils/setarch.c:402 sys-utils/setsid.c:117
+#: sys-utils/swapon.c:340 sys-utils/switch_root.c:243 sys-utils/unshare.c:461
 #: term-utils/script.c:575 text-utils/pg.c:1375
 #, c-format
 msgid "failed to execute %s"
@@ -3425,12 +3426,12 @@ msgstr "fejl: afkorter swap-området til %llu KiB"
 msgid "error: %s is mounted; will not make swapspace"
 msgstr "fejl: %s er monteret; vil ikke oprette swapområde"
 
-#: disk-utils/mkswap.c:468 sys-utils/swapon.c:499
+#: disk-utils/mkswap.c:468 sys-utils/swapon.c:525
 #, c-format
 msgid "%s: insecure permissions %04o, %04o suggested."
 msgstr "%s: usikre tilladelser %04o, %04o anbefales."
 
-#: disk-utils/mkswap.c:472 sys-utils/swapon.c:504
+#: disk-utils/mkswap.c:472 sys-utils/swapon.c:530
 #, c-format
 msgid "%s: insecure file owner %d, 0 (root) suggested."
 msgstr "%s: usikker filejer %d, 0 (root) anbefales."
@@ -3533,8 +3534,8 @@ msgstr "%s: klargøring af løkkeenhed mislykkedes"
 
 #: disk-utils/partx.c:161 login-utils/lslogins.c:322 misc-utils/findmnt.c:401
 #: misc-utils/lsblk.c:354 misc-utils/lslocks.c:319 sys-utils/losetup.c:107
-#: sys-utils/lscpu.c:339 sys-utils/lsipc.c:231 sys-utils/lsns.c:187
-#: sys-utils/prlimit.c:277 sys-utils/swapon.c:136 sys-utils/wdctl.c:151
+#: sys-utils/lscpu.c:351 sys-utils/lsipc.c:231 sys-utils/lsns.c:187
+#: sys-utils/prlimit.c:277 sys-utils/swapon.c:147 sys-utils/wdctl.c:151
 #: sys-utils/zramctl.c:145
 #, c-format
 msgid "unknown column: %s"
@@ -3545,82 +3546,87 @@ msgstr "ukendt kolonne: %s"
 msgid "%s: failed to get partition number"
 msgstr "%s: kunne ikke indhente partitionsnummer"
 
-#: disk-utils/partx.c:273
-#, c-format
-msgid "%s: error deleting partition %d"
-msgstr "%s: fejl under sletning af partition %d"
-
-#: disk-utils/partx.c:275
-#, c-format
-msgid "%s: error deleting partitions %d-%d"
-msgstr "%s: fejl under sletning af partitionerne %d-%d"
-
-#: disk-utils/partx.c:299 disk-utils/partx.c:446 disk-utils/partx.c:974
+#: disk-utils/partx.c:286 disk-utils/partx.c:324 disk-utils/partx.c:477
 #, c-format
 msgid "specified range <%d:%d> does not make sense"
 msgstr "det angivet interval <%d:%d> giver ikke mening"
 
-#: disk-utils/partx.c:308
+#: disk-utils/partx.c:290
+#, c-format
+msgid "range recount: max partno=%d, lower=%d, upper=%d\n"
+msgstr ""
+
+#: disk-utils/partx.c:297
+#, c-format
+msgid "%s: error deleting partition %d"
+msgstr "%s: fejl under sletning af partition %d"
+
+#: disk-utils/partx.c:299
+#, c-format
+msgid "%s: error deleting partitions %d-%d"
+msgstr "%s: fejl under sletning af partitionerne %d-%d"
+
+#: disk-utils/partx.c:333
 #, c-format
 msgid "%s: partition #%d removed\n"
 msgstr "%s: partition #%d fjernet\n"
 
-#: disk-utils/partx.c:312
+#: disk-utils/partx.c:337
 #, c-format
 msgid "%s: partition #%d doesn't exist\n"
 msgstr "%s: partition #%d findes ikke\n"
 
-#: disk-utils/partx.c:317
+#: disk-utils/partx.c:342
 #, c-format
 msgid "%s: deleting partition #%d failed"
 msgstr "%s: sletning af partition #%d mislykkedes"
 
-#: disk-utils/partx.c:337
+#: disk-utils/partx.c:362
 #, c-format
 msgid "%s: error adding partition %d"
 msgstr "%s: fejl under tilføjelse af partition %d"
 
-#: disk-utils/partx.c:339
+#: disk-utils/partx.c:364
 #, c-format
 msgid "%s: error adding partitions %d-%d"
 msgstr "%s: fejl under tilføjelse af partitioner %d-%d"
 
-#: disk-utils/partx.c:376 disk-utils/partx.c:482
+#: disk-utils/partx.c:405 disk-utils/partx.c:513
 #, c-format
 msgid "%s: partition #%d added\n"
 msgstr "%s: partition #%d tilføjet\n"
 
-#: disk-utils/partx.c:381
+#: disk-utils/partx.c:410
 #, c-format
 msgid "%s: adding partition #%d failed"
 msgstr "%s: tilføjelse af partition #%d mislykkedes"
 
-#: disk-utils/partx.c:416
+#: disk-utils/partx.c:445
 #, c-format
 msgid "%s: error updating partition %d"
 msgstr "%s: fejl under opdatering af partition %d"
 
-#: disk-utils/partx.c:418
+#: disk-utils/partx.c:447
 #, c-format
 msgid "%s: error updating partitions %d-%d"
 msgstr "%s: fejl under opdatering af partitionerne %d-%d"
 
-#: disk-utils/partx.c:455
+#: disk-utils/partx.c:486
 #, c-format
 msgid "%s: no partition #%d"
 msgstr "%s: ingen partition #%d"
 
-#: disk-utils/partx.c:476
+#: disk-utils/partx.c:507
 #, c-format
 msgid "%s: partition #%d resized\n"
 msgstr "%s: partition #%d har fået ændret størrelse\n"
 
-#: disk-utils/partx.c:490
+#: disk-utils/partx.c:521
 #, c-format
 msgid "%s: updating partition #%d failed"
 msgstr "%s: opdatering af partition #%d mislykkedes"
 
-#: disk-utils/partx.c:527
+#: disk-utils/partx.c:562
 #, c-format
 msgid "#%2d: %9ju-%9ju (%9ju sector, %6ju MB)\n"
 msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
@@ -3628,72 +3634,72 @@ msgstr[0] "#%2d: %9ju-%9ju (%9ju sektor, %6ju MB)\n"
 msgstr[1] "#%2d: %9ju-%9ju (%9ju sektorer, %6ju MB)\n"
 
 # måske udskrift
-#: disk-utils/partx.c:546 misc-utils/findmnt.c:713 misc-utils/findmnt.c:730
-#: misc-utils/lslocks.c:382 sys-utils/lsns.c:431
+#: disk-utils/partx.c:581 misc-utils/findmnt.c:713 misc-utils/findmnt.c:730
+#: misc-utils/lslocks.c:382 sys-utils/lsns.c:432
 msgid "failed to add line to output"
 msgstr "kunne ikke tilføje linje til uddata"
 
-#: disk-utils/partx.c:609
+#: disk-utils/partx.c:644
 msgid "failed to add data to output table"
 msgstr "kunne ikke tilføje data til uddatatabel"
 
-#: disk-utils/partx.c:632 login-utils/lslogins.c:932 misc-utils/findmnt.c:1583
-#: misc-utils/lsblk.c:1861 misc-utils/lslocks.c:442 sys-utils/losetup.c:310
-#: sys-utils/lscpu.c:1486 sys-utils/lsipc.c:337 sys-utils/lsns.c:486
-#: sys-utils/prlimit.c:297 sys-utils/swapon.c:269 sys-utils/wdctl.c:259
+#: disk-utils/partx.c:667 login-utils/lslogins.c:932 misc-utils/findmnt.c:1583
+#: misc-utils/lsblk.c:1860 misc-utils/lslocks.c:442 sys-utils/losetup.c:310
+#: sys-utils/lscpu.c:1519 sys-utils/lsipc.c:337 sys-utils/lsns.c:487
+#: sys-utils/prlimit.c:297 sys-utils/swapon.c:280 sys-utils/wdctl.c:259
 #: sys-utils/zramctl.c:427
 msgid "failed to initialize output table"
 msgstr "kunne ikke initialisere uddatatabel"
 
-#: disk-utils/partx.c:643 misc-utils/findmnt.c:1609 misc-utils/lsblk.c:1883
+#: disk-utils/partx.c:678 misc-utils/findmnt.c:1609 misc-utils/lsblk.c:1882
 #: misc-utils/lslocks.c:456 sys-utils/losetup.c:322 sys-utils/losetup.c:358
-#: sys-utils/lscpu.c:1491 sys-utils/lsns.c:507 sys-utils/prlimit.c:306
-#: sys-utils/swapon.c:278 sys-utils/wdctl.c:270 sys-utils/zramctl.c:436
+#: sys-utils/lscpu.c:1524 sys-utils/lsns.c:508 sys-utils/prlimit.c:306
+#: sys-utils/swapon.c:289 sys-utils/wdctl.c:270 sys-utils/zramctl.c:436
 msgid "failed to initialize output column"
 msgstr "kunne ikke initialisere uddatakolonne"
 
-#: disk-utils/partx.c:683
+#: disk-utils/partx.c:722
 #, c-format
 msgid "failed to initialize blkid filter for '%s'"
 msgstr "kunne ikke initialisere blkid-filter for »%s«"
 
-#: disk-utils/partx.c:691
+#: disk-utils/partx.c:730
 #, c-format
 msgid "%s: failed to read partition table"
 msgstr "%s: kunne ikke læse partitionstabel"
 
-#: disk-utils/partx.c:697
+#: disk-utils/partx.c:736
 #, c-format
 msgid "%s: partition table type '%s' detected\n"
 msgstr "%s: partitionstabeltype »%s« detekteret\n"
 
-#: disk-utils/partx.c:701
+#: disk-utils/partx.c:740
 #, c-format
 msgid "%s: partition table with no partitions"
 msgstr "%s: partitionstabel uden partitioner"
 
-#: disk-utils/partx.c:713
+#: disk-utils/partx.c:752
 #, c-format
 msgid " %s [-a|-d|-s|-u] [--nr <n:m> | <partition>] <disk>\n"
 msgstr " %s [-a|-d|-s|-u] [--nr <n:m> | <partition>] <disk>\n"
 
-#: disk-utils/partx.c:717
+#: disk-utils/partx.c:756
 msgid "Tell the kernel about the presence and numbering of partitions.\n"
 msgstr "Fortæl kernen om tilstedeværelsen og antallet af partitioner.\n"
 
-#: disk-utils/partx.c:720
+#: disk-utils/partx.c:759
 msgid " -a, --add            add specified partitions or all of them\n"
 msgstr " - a, --add           tilføj specificerede partitioner eller dem alle\n"
 
-#: disk-utils/partx.c:721
+#: disk-utils/partx.c:760
 msgid " -d, --delete         delete specified partitions or all of them\n"
 msgstr " -d --delete          slet specificerede partitioner eller dem alle\n"
 
-#: disk-utils/partx.c:722
+#: disk-utils/partx.c:761
 msgid " -u, --update         update specified partitions or all of them\n"
 msgstr " -u, --update         opdater specificerede partitioner eller dem alle\n"
 
-#: disk-utils/partx.c:723
+#: disk-utils/partx.c:762
 msgid ""
 " -s, --show           list partitions\n"
 "\n"
@@ -3701,39 +3707,39 @@ msgstr ""
 " -s, --show           vis partitioner\n"
 "\n"
 
-#: disk-utils/partx.c:724 misc-utils/lsblk.c:1615
+#: disk-utils/partx.c:763 misc-utils/lsblk.c:1614
 msgid " -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 msgstr " -b, --bytes          udskriv STØRRELSE i byte frem for i et læsevenligt format\n"
 
-#: disk-utils/partx.c:725
+#: disk-utils/partx.c:764
 msgid " -g, --noheadings     don't print headings for --show\n"
 msgstr " -g, --noheadings     udskriv ikke overskrifter for --show\n"
 
-#: disk-utils/partx.c:726
+#: disk-utils/partx.c:765
 msgid " -n, --nr <n:m>       specify the range of partitions (e.g. --nr 2:4)\n"
 msgstr " -n, --nr <n:m>       angiv interval for partitionerne (f.eks. --nr 2:4\n"
 
-#: disk-utils/partx.c:727
+#: disk-utils/partx.c:766
 msgid " -o, --output <list>  define which output columns to use\n"
 msgstr " -o, --output <vis>   definer hvilken resultatkolonne, der skal bruges\n"
 
-#: disk-utils/partx.c:728 misc-utils/lsblk.c:1629
+#: disk-utils/partx.c:767 misc-utils/lsblk.c:1628
 msgid " -P, --pairs          use key=\"value\" output format\n"
 msgstr " -P, --pairs          brug uddataformat for nøgle=»værdi«\n"
 
-#: disk-utils/partx.c:729 misc-utils/lsblk.c:1630
+#: disk-utils/partx.c:768 misc-utils/lsblk.c:1629
 msgid " -r, --raw            use raw output format\n"
 msgstr " -r, --raw            brug rå uddataformat\n"
 
-#: disk-utils/partx.c:730
+#: disk-utils/partx.c:769
 msgid " -t, --type <type>    specify the partition type (dos, bsd, solaris, etc.)\n"
 msgstr " -t, --type <type>    angiv partitionstypen (dos, bsd, solaris etc.)\n"
 
-#: disk-utils/partx.c:731 sys-utils/fallocate.c:91
+#: disk-utils/partx.c:770 sys-utils/fallocate.c:91
 msgid " -v, --verbose        verbose mode\n"
 msgstr " -v, --verbose        uddybende tilstand\n"
 
-#: disk-utils/partx.c:737
+#: disk-utils/partx.c:776
 msgid ""
 "\n"
 "Available columns (for --show, --raw or --pairs):\n"
@@ -3741,30 +3747,35 @@ msgstr ""
 "\n"
 "Tilgængelige kolonner (for --show, --raw eller --pairs):\n"
 
-#: disk-utils/partx.c:810
+#: disk-utils/partx.c:849
 msgid "failed to parse --nr <M-N> range"
 msgstr "kunne ikke fortolke --nr <M-N>-interval"
 
-#: disk-utils/partx.c:910
+#: disk-utils/partx.c:924
+#, fuzzy
+msgid "partition and disk name do not match"
+msgstr "Partitionstabellen er uændret (--no-act)."
+
+#: disk-utils/partx.c:952
 msgid "--nr and <partition> are mutually exclusive"
 msgstr "--nr og <partition> udelukker hinanden"
 
-#: disk-utils/partx.c:929
+#: disk-utils/partx.c:971
 #, c-format
 msgid "partition: %s, disk: %s, lower: %d, upper: %d\n"
 msgstr "partition: %s, disk: %s, nedre: %d, øvre: %d\n"
 
-#: disk-utils/partx.c:941
+#: disk-utils/partx.c:983
 #, c-format
 msgid "%s: cannot delete partitions"
 msgstr "%s: kan ikke slette partitioner"
 
-#: disk-utils/partx.c:944
+#: disk-utils/partx.c:986
 #, c-format
 msgid "%s: partitioned loop devices unsupported"
 msgstr "%s: partitionerede løkkenheder er ikke understøttet"
 
-#: disk-utils/partx.c:961
+#: disk-utils/partx.c:1003
 #, c-format
 msgid "%s: failed to initialize blkid prober"
 msgstr "%s: kunne ikke initialisere blkid-testprogram"
@@ -3903,35 +3914,36 @@ msgstr "Lav sikkerhedskopi af filer:"
 
 #: disk-utils/sfdisk.c:375
 #, fuzzy
-msgid "failed to read new partition from device (ignore --move-data)"
+msgid "failed to read new partition from device; ignoring --move-data"
 msgstr "Kunne ikke læse udvidet partitionstabel (forskydning=%ju)"
 
 #: disk-utils/sfdisk.c:377
 #, fuzzy
-msgid "failed to get size of the new partition (ignore --move-data)"
+msgid "failed to get size of the new partition; ignoring --move-data"
 msgstr "%s: kunne ikke indhente begyndelse på partitionsnummer %s"
 
 #: disk-utils/sfdisk.c:379
 #, fuzzy
-msgid "failed to get start of the new partition (ignore --move-data)"
+msgid "failed to get start of the new partition; ignoring --move-data"
 msgstr "%s: kunne ikke indhente begyndelse på partitionsnummer %s"
 
 #: disk-utils/sfdisk.c:381
 #, fuzzy
-msgid "failed to get size of the old partition (ignore --move-data)"
+msgid "failed to get size of the old partition; ignoring --move-data"
 msgstr "%s: kunne ikke indhente begyndelse på partitionsnummer %s"
 
 #: disk-utils/sfdisk.c:383
 #, fuzzy
-msgid "failed to get start of the old partition (ignore --move-data)"
+msgid "failed to get start of the old partition; ignoring --move-data"
 msgstr "%s: kunne ikke indhente begyndelse på partitionsnummer %s"
 
 #: disk-utils/sfdisk.c:385
-msgid "begin of the partition has not been moved (ignore --move-data)"
-msgstr ""
+#, fuzzy
+msgid "start of the partition has not been moved; ignoring --move-data"
+msgstr "%s: kunne ikke indhente begyndelse på partitionsnummer %s"
 
 #: disk-utils/sfdisk.c:387
-msgid "new partition is smaller than original (ignore --move-data)"
+msgid "new partition is smaller than original; ignoring --move-data"
 msgstr ""
 
 #: disk-utils/sfdisk.c:437
@@ -5228,7 +5240,7 @@ msgstr "Opstartsigangsætter installeret på %s."
 
 #: libfdisk/src/bsd.c:900
 #, c-format
-msgid "Disklabel written to %s (don't forget to write %s disklable too)."
+msgid "Disklabel written to %s.  (Don't forget to write the %s disklabel too.)"
 msgstr ""
 
 #: libfdisk/src/bsd.c:903
@@ -6017,12 +6029,12 @@ msgstr "Partitionsnavn ændret fra »%s« til »%.*s«."
 
 #: libfdisk/src/gpt.c:1748
 #, fuzzy
-msgid "The begin of the partition overflows FirstUsableLBA."
+msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "Opstartspartitionen findes ikke."
 
 #: libfdisk/src/gpt.c:1755
 #, fuzzy
-msgid "The end of the partition overflows LastUsableLBA."
+msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "slutning på partitionen i sektorer"
 
 #: libfdisk/src/gpt.c:1914
@@ -6638,7 +6650,7 @@ msgstr ""
 msgid "waitpid failed (%s)"
 msgstr "waitpid mislykkedes (%s)"
 
-#: lib/path.c:209 sys-utils/lscpu.c:1591
+#: lib/path.c:209 sys-utils/lscpu.c:1624
 msgid "failed to callocate cpu set"
 msgstr "kunne ikke udføre calloc for cpu-sæt"
 
@@ -7112,7 +7124,7 @@ msgstr "Kunne ikke klargøre PAM: %s"
 msgid "FAILED LOGIN %u FROM %s FOR %s, %s"
 msgstr "MISLYKKET LOGIND %u FRA %s FOR %s, %s"
 
-#: login-utils/login.c:824 login-utils/sulogin.c:1048
+#: login-utils/login.c:824 login-utils/sulogin.c:1052
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -7202,12 +7214,12 @@ msgstr "Du har post.\n"
 msgid "setuid() failed"
 msgstr "setuid() mislykkedes"
 
-#: login-utils/login.c:1327 login-utils/sulogin.c:763
+#: login-utils/login.c:1327 login-utils/sulogin.c:767
 #, c-format
 msgid "%s: change directory failed"
 msgstr "%s: Kunne ikke ændre mappe"
 
-#: login-utils/login.c:1334 login-utils/sulogin.c:764
+#: login-utils/login.c:1334 login-utils/sulogin.c:768
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Logger ind med hjemmemappe = \"/\".\n"
@@ -7229,7 +7241,7 @@ msgstr "%s: %s indeholder ugyldig numerisk værdi: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "hush-logindstatus: gendan af oprindelige id'er mislykkedes"
 
-#: login-utils/lslogins.c:207 sys-utils/lscpu.c:1313 sys-utils/lscpu.c:1323
+#: login-utils/lslogins.c:207 sys-utils/lscpu.c:1346 sys-utils/lscpu.c:1356
 msgid "no"
 msgstr "nej"
 
@@ -7468,7 +7480,7 @@ msgstr ""
 #: login-utils/lslogins.c:1238 login-utils/nologin.c:26
 #: misc-utils/lslocks.c:492 misc-utils/mcookie.c:82 misc-utils/uuidd.c:70
 #: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:264 sys-utils/ipcmk.c:66
-#: sys-utils/lscpu.c:1705 sys-utils/lsipc.c:276 sys-utils/readprofile.c:104
+#: sys-utils/lscpu.c:1738 sys-utils/lsipc.c:276 sys-utils/readprofile.c:104
 #: sys-utils/rtcwake.c:94 term-utils/setterm.c:388 text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
@@ -7563,7 +7575,7 @@ msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <sti>    angiv en alternativ sti for btmp\n"
 
 #: login-utils/lslogins.c:1269 misc-utils/findmnt.c:1263
-#: sys-utils/lscpu.c:1722
+#: sys-utils/lscpu.c:1755
 #, c-format
 msgid ""
 "\n"
@@ -7592,7 +7604,7 @@ msgstr "getline() mislykkedes"
 msgid "Password: "
 msgstr "Adgangskode: "
 
-#: login-utils/newgrp.c:154 login-utils/sulogin.c:1030
+#: login-utils/newgrp.c:154 login-utils/sulogin.c:1034
 msgid "crypt failed"
 msgstr "crypt mislykkedes"
 
@@ -7609,7 +7621,7 @@ msgstr "Log ind til en ny gruppe.\n"
 msgid "who are you?"
 msgstr "hvem er du?"
 
-#: login-utils/newgrp.c:211 login-utils/newgrp.c:223 sys-utils/nsenter.c:400
+#: login-utils/newgrp.c:211 login-utils/newgrp.c:223 sys-utils/nsenter.c:409
 msgid "setgid failed"
 msgstr "setgid mislykkedes"
 
@@ -7617,11 +7629,11 @@ msgstr "setgid mislykkedes"
 msgid "no such group"
 msgstr "ingen sådan gruppe"
 
-#: login-utils/newgrp.c:221 sys-utils/mount.c:480
+#: login-utils/newgrp.c:221 sys-utils/mount.c:479
 msgid "permission denied"
 msgstr "adgang nægtet"
 
-#: login-utils/newgrp.c:227 sys-utils/nsenter.c:402
+#: login-utils/newgrp.c:227 sys-utils/nsenter.c:411
 msgid "setuid failed"
 msgstr "setuid mislykkedes"
 
@@ -7818,30 +7830,30 @@ msgstr "bruger begrænset skal %s"
 msgid "warning: cannot change directory to %s"
 msgstr "advarsel: kan ikke ændre mappe til %s"
 
-#: login-utils/sulogin.c:159
+#: login-utils/sulogin.c:164
 msgid "tcgetattr failed"
 msgstr "tcgetattr mislykkedes"
 
-#: login-utils/sulogin.c:236
+#: login-utils/sulogin.c:241
 msgid "tcsetattr failed"
 msgstr "tcsetattr mislykkedes"
 
-#: login-utils/sulogin.c:501
+#: login-utils/sulogin.c:506
 #, c-format
 msgid "%s: no entry for root\n"
 msgstr "%s: ingen indgang for root\n"
 
-#: login-utils/sulogin.c:528
+#: login-utils/sulogin.c:533
 #, c-format
 msgid "%s: no entry for root"
 msgstr "%s: ingen indgang for root"
 
-#: login-utils/sulogin.c:533
+#: login-utils/sulogin.c:538
 #, c-format
 msgid "%s: root password garbled"
 msgstr "%s: rodadgangskode ulæselig"
 
-#: login-utils/sulogin.c:561
+#: login-utils/sulogin.c:566
 #, c-format
 msgid ""
 "\n"
@@ -7851,49 +7863,49 @@ msgid ""
 "Press Enter to continue.\n"
 msgstr ""
 
-#: login-utils/sulogin.c:567
+#: login-utils/sulogin.c:572
 #, c-format
 msgid "Give root password for login: "
 msgstr "Giv administratoradgangskode (root) for logind: "
 
-#: login-utils/sulogin.c:569
+#: login-utils/sulogin.c:574
 #, c-format
 msgid "Press Enter for login: "
 msgstr "Tryk Retur for at logge ind: "
 
-#: login-utils/sulogin.c:572
+#: login-utils/sulogin.c:577
 #, c-format
 msgid "Give root password for maintenance\n"
 msgstr "Giv rodadgangskode for vedligeholdelse\n"
 
-#: login-utils/sulogin.c:574
+#: login-utils/sulogin.c:579
 #, fuzzy, c-format
 msgid "Press Enter for maintenance\n"
 msgstr "Tryk Retur for vedligeholdelse"
 
-#: login-utils/sulogin.c:575
+#: login-utils/sulogin.c:580
 #, c-format
 msgid "(or press Control-D to continue): "
 msgstr "(eller tast Kontrol-D for at fortsætte): "
 
-#: login-utils/sulogin.c:767
+#: login-utils/sulogin.c:771
 msgid "change directory to system root failed"
 msgstr "ændring af mappe til systemrod mislykkedes"
 
-#: login-utils/sulogin.c:816
+#: login-utils/sulogin.c:820
 msgid "setexeccon failed"
 msgstr "setexeccon mislykkedes"
 
-#: login-utils/sulogin.c:836
+#: login-utils/sulogin.c:840
 #, c-format
 msgid " %s [options] [tty device]\n"
 msgstr " %s [tilvalg] {tty-enhed]\n"
 
-#: login-utils/sulogin.c:839
+#: login-utils/sulogin.c:843
 msgid "Single-user login.\n"
 msgstr "Enkelbruger-logind.\n"
 
-#: login-utils/sulogin.c:842
+#: login-utils/sulogin.c:846
 msgid ""
 " -p, --login-shell        start a login shell\n"
 " -t, --timeout <seconds>  max time to wait for a password (default: no limit)\n"
@@ -7903,24 +7915,24 @@ msgstr ""
 " -t, --timeout <sekunder>  maks. ventetid for en adgangskode (standard: ingen begrænsning)\n"
 " -e, --force              undersøg adgangskodefiler direkte hvis getpwnam(3) mislykkes\n"
 
-#: login-utils/sulogin.c:896 misc-utils/findmnt.c:1472 sys-utils/wdctl.c:523
+#: login-utils/sulogin.c:900 misc-utils/findmnt.c:1472 sys-utils/wdctl.c:523
 #: term-utils/wall.c:135
 msgid "invalid timeout argument"
 msgstr "ugyldig parameter for tidsudløb"
 
-#: login-utils/sulogin.c:918
+#: login-utils/sulogin.c:922
 msgid "only superuser can run this program"
 msgstr "kun en superbruger kan køre dette program"
 
-#: login-utils/sulogin.c:961
+#: login-utils/sulogin.c:965
 msgid "cannot open console"
 msgstr "kan ikke åbne konsol"
 
-#: login-utils/sulogin.c:968
+#: login-utils/sulogin.c:972
 msgid "cannot open password database"
 msgstr "kan ikke åbne adgangskodedatabase"
 
-#: login-utils/sulogin.c:1045
+#: login-utils/sulogin.c:1049
 #, c-format
 msgid ""
 "Can not execute su shell\n"
@@ -7929,7 +7941,7 @@ msgstr ""
 "Kan ikke køre su shell\n"
 "\n"
 
-#: login-utils/sulogin.c:1052
+#: login-utils/sulogin.c:1056
 msgid ""
 "Timed out\n"
 "\n"
@@ -7937,7 +7949,7 @@ msgstr ""
 "Tidsudløb\n"
 "\n"
 
-#: login-utils/sulogin.c:1084
+#: login-utils/sulogin.c:1088
 #, fuzzy
 msgid ""
 "Can not wait on su shell\n"
@@ -8037,18 +8049,16 @@ msgid "Edit the password or group file.\n"
 msgstr "Rediger adgangskoden eller gruppefilen.\n"
 
 #: login-utils/vipw.c:347
-#, c-format
 msgid "You are using shadow groups on this system.\n"
 msgstr "Du bruger skyggegrupper (shadow groups) på dette system.\n"
 
 #: login-utils/vipw.c:348
-#, c-format
 msgid "You are using shadow passwords on this system.\n"
 msgstr "Du bruger skyggeadgangskoder (shadow passwords) på dette system.\n"
 
 #. TRANSLATORS: this program uses for y and n rpmatch(3),
 #. * which means they can be translated.
-#: login-utils/vipw.c:351
+#: login-utils/vipw.c:352
 #, c-format
 msgid "Would you like to edit %s now [y/n]? "
 msgstr "Vil du redigere %s nu [y/n]? "
@@ -8302,14 +8312,8 @@ msgstr "genmonter"
 msgid "move"
 msgstr "flyt"
 
-# evt. "i linje "
-#: misc-utils/findmnt.c:807
-#, c-format
-msgid "%s: parse error at line %d"
-msgstr "%s: fortolkningsfejl på linje %d"
-
 #: misc-utils/findmnt.c:836 misc-utils/findmnt.c:1099 sys-utils/eject.c:719
-#: sys-utils/mount.c:653
+#: sys-utils/mount.c:652
 msgid "failed to initialize libmount table"
 msgstr "kunne ikke initialisere libmount-tabel"
 
@@ -8319,9 +8323,9 @@ msgid "can't read %s"
 msgstr "kan ikke læse %s"
 
 #: misc-utils/findmnt.c:1039 misc-utils/findmnt.c:1105 sys-utils/fstrim.c:199
-#: sys-utils/mount.c:135 sys-utils/mount.c:183 sys-utils/swapoff.c:56
-#: sys-utils/swapoff.c:152 sys-utils/swapon.c:233 sys-utils/swapon.c:263
-#: sys-utils/swapon.c:693 sys-utils/umount.c:275
+#: sys-utils/mount.c:134 sys-utils/mount.c:182 sys-utils/swapoff.c:56
+#: sys-utils/swapoff.c:152 sys-utils/swapon.c:244 sys-utils/swapon.c:274
+#: sys-utils/swapon.c:732 sys-utils/umount.c:274
 msgid "failed to initialize libmount iterator"
 msgstr "kunne ikke initialisere libmount-iterator"
 
@@ -8423,12 +8427,12 @@ msgstr " -f, --first-only       vis kun det først fundet filsystem\n"
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -i, --invert           vend fornemmelsen for match om\n"
 
-#: misc-utils/findmnt.c:1241 misc-utils/lslocks.c:498 sys-utils/lsns.c:594
+#: misc-utils/findmnt.c:1241 misc-utils/lslocks.c:498 sys-utils/lsns.c:595
 #, fuzzy
 msgid " -J, --json             use JSON output format\n"
 msgstr " -r, --raw              brug rå uddataformat\n"
 
-#: misc-utils/findmnt.c:1242 sys-utils/lsns.c:595
+#: misc-utils/findmnt.c:1242 sys-utils/lsns.c:596
 msgid " -l, --list             use list format output\n"
 msgstr " -l, --list             brug listeformat\n"
 
@@ -8486,7 +8490,7 @@ msgstr " -t, --types <liste>      begræns sættet af filsystemer efter FS-typer
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -U, --uniq             ignorer filsystemer med duplikate mål\n"
 
-#: misc-utils/findmnt.c:1256 misc-utils/lslocks.c:503 sys-utils/lsns.c:600
+#: misc-utils/findmnt.c:1256 misc-utils/lslocks.c:503 sys-utils/lsns.c:601
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -u, --notruncate       forkort ikke tekst i kolonner\n"
 
@@ -8735,129 +8739,129 @@ msgstr "kunne ikke slå navnet %s for port %s op: %s"
 msgid "failed to connect to %s port %s"
 msgstr "kunne ikke forbinde til %s port %s"
 
-#: misc-utils/logger.c:353
+#: misc-utils/logger.c:355
 #, c-format
 msgid "maximum input lines (%d) exceeded"
 msgstr "maksimum for inddatalinjer (%d) overskredet"
 
-#: misc-utils/logger.c:488
+#: misc-utils/logger.c:490
 #, fuzzy
 msgid "send message failed"
 msgstr "oprettelse af beskedkø mislykkedes"
 
-#: misc-utils/logger.c:559
+#: misc-utils/logger.c:561
 #, c-format
 msgid "structured data ID '%s' is not unique"
 msgstr ""
 
-#: misc-utils/logger.c:573
+#: misc-utils/logger.c:575
 #, c-format
-msgid "--sd-id no specified for --sd-param %s"
+msgid "--sd-id was not specified for --sd-param %s"
 msgstr ""
 
-#: misc-utils/logger.c:744
+#: misc-utils/logger.c:746
 msgid "localtime() failed"
 msgstr "localtime() mislykkedes"
 
-#: misc-utils/logger.c:754
+#: misc-utils/logger.c:756
 #, c-format
 msgid "hostname '%s' is too long"
 msgstr "værtsnavn »%s« er for langt"
 
-#: misc-utils/logger.c:760
+#: misc-utils/logger.c:762
 #, c-format
 msgid "tag '%s' is too long"
 msgstr "mærke »%s« er for langt"
 
-#: misc-utils/logger.c:823
+#: misc-utils/logger.c:825
 #, c-format
 msgid "ignoring unknown option argument: %s"
 msgstr "ignorerer ukendt tilvalgsparameter: %s"
 
-#: misc-utils/logger.c:835
+#: misc-utils/logger.c:837
 #, fuzzy, c-format
 msgid "invalid argument: %s: using automatic errors"
 msgstr "ugyldig parameter for tilvalget --auto/-a"
 
-#: misc-utils/logger.c:984
+#: misc-utils/logger.c:986
 #, c-format
 msgid " %s [options] [<message>]\n"
 msgstr " %s [tilvalg] [<besked>]\n"
 
-#: misc-utils/logger.c:987
+#: misc-utils/logger.c:989
 msgid "Enter messages into the system log.\n"
 msgstr "Indtast beskeder i systemloggen.\n"
 
-#: misc-utils/logger.c:990
+#: misc-utils/logger.c:992
 #, fuzzy
 msgid " -i                       log the logger command's PID\n"
 msgstr " --help                            vis denne hjælpetekst og afslut\n"
 
-#: misc-utils/logger.c:991
+#: misc-utils/logger.c:993
 #, fuzzy
 msgid "     --id[=<id>]          log the given <id>, or otherwise the PID\n"
 msgstr " -i, --id[=<id>}          log <id> (standard er PID)\n"
 
-#: misc-utils/logger.c:992
+#: misc-utils/logger.c:994
 msgid " -f, --file <file>        log the contents of this file\n"
 msgstr " -f, --file <fil>         log indholdet af denne fil\n"
 
-#: misc-utils/logger.c:993
+#: misc-utils/logger.c:995
 #, fuzzy
 msgid " -e, --skip-empty         do not log empty lines when processing files\n"
 msgstr " -n, --skip-login           spørg ikke om logind\n"
 
-#: misc-utils/logger.c:994
+#: misc-utils/logger.c:996
 #, fuzzy
 msgid "     --no-act             do everything except the write the log\n"
 msgstr " -n, --no-act              gør alt undtagen at skrive til enhed\n"
 
-#: misc-utils/logger.c:995
+#: misc-utils/logger.c:997
 msgid " -p, --priority <prio>    mark given message with this priority\n"
 msgstr " -p, --priority <prio>    marker angivne besked med denne prioritet\n"
 
-#: misc-utils/logger.c:996
+#: misc-utils/logger.c:998
 msgid "     --octet-count        use rfc6587 octet counting\n"
 msgstr ""
 
-#: misc-utils/logger.c:997
+#: misc-utils/logger.c:999
 msgid "     --prio-prefix        look for a prefix on every line read from stdin\n"
 msgstr "     --prio-prefix        kig efter et præfiks på hver læst linje fra standardind\n"
 
-#: misc-utils/logger.c:998
+#: misc-utils/logger.c:1000
 msgid " -s, --stderr             output message to standard error as well\n"
 msgstr " -s, --stderr             vis også besked på standardfejl\n"
 
-#: misc-utils/logger.c:999
+#: misc-utils/logger.c:1001
 #, fuzzy
 msgid " -S, --size <size>        maximum size for a single message\n"
 msgstr " -s, --size <størrelse>    enhedstørrelse\n"
 
-#: misc-utils/logger.c:1000
+#: misc-utils/logger.c:1002
 msgid " -t, --tag <tag>          mark every line with this tag\n"
 msgstr " -t, --tag <mærke>        marker hver linje med dette mærke\n"
 
-#: misc-utils/logger.c:1001
+#: misc-utils/logger.c:1003
 msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr " -n, --server <navn>      skriv til denne eksterne syslog-server\n"
 
-#: misc-utils/logger.c:1002
+#: misc-utils/logger.c:1004
 msgid " -P, --port <number>      use this UDP port\n"
 msgstr " -P, --port <nummer>      brug denne UDP-port\n"
 
-#: misc-utils/logger.c:1003
+#: misc-utils/logger.c:1005
 msgid " -T, --tcp                use TCP only\n"
 msgstr " -T, --tcp                brug kun TCP\n"
 
-#: misc-utils/logger.c:1004
+#: misc-utils/logger.c:1006
 msgid " -d, --udp                use UDP only\n"
 msgstr " -d, --udp                brug kun UDP\n"
 
-#: misc-utils/logger.c:1005
+#: misc-utils/logger.c:1007
 msgid "     --rfc3164            use the obsolete BSD syslog protocol\n"
 msgstr "     --rfc3164            brug den forældede BSD-syslogprotokol\n"
 
-#: misc-utils/logger.c:1006
+#: misc-utils/logger.c:1008
 #, fuzzy
 msgid ""
 "     --rfc5424[=<snip>]   use the syslog protocol (the default for remote);\n"
@@ -8866,67 +8870,67 @@ msgstr ""
 "     --rfc5424[=<snip>]   brug syslogprotokollen (standarden);\n"
 "                            <snip> kan være notime, eller notq, og/eller nohost\n"
 
-#: misc-utils/logger.c:1008
+#: misc-utils/logger.c:1010
 #, fuzzy
 msgid "     --sd-id <id>         rfc5424 structured data ID\n"
 msgstr " --rgid <gid>             angiv reel gid\n"
 
-#: misc-utils/logger.c:1009
+#: misc-utils/logger.c:1011
 msgid "     --sd-param <data>    rfc5424 structured data name=value\n"
 msgstr ""
 
-#: misc-utils/logger.c:1010
+#: misc-utils/logger.c:1012
 #, fuzzy
 msgid "     --msgid <msgid>      set rfc5424 message id field\n"
 msgstr " --rgid <gid>             angiv reel gid\n"
 
-#: misc-utils/logger.c:1011
+#: misc-utils/logger.c:1013
 msgid " -u, --socket <socket>    write to this Unix socket\n"
 msgstr " -u, --socket <sokkel>    skriv til denne Unix-sokkel\n"
 
-#: misc-utils/logger.c:1012
+#: misc-utils/logger.c:1014
 msgid ""
 "     --socket-errors[=<on|off|auto>]\n"
 "                          print connection errors when using Unix sockets\n"
 msgstr ""
 
-#: misc-utils/logger.c:1015
+#: misc-utils/logger.c:1017
 msgid "     --journald[=<file>]  write journald entry\n"
 msgstr "     --journald[=<fil>]   skriv journald-post\n"
 
-#: misc-utils/logger.c:1102
+#: misc-utils/logger.c:1104
 #, c-format
 msgid "file %s"
 msgstr "fil %s"
 
-#: misc-utils/logger.c:1117
+#: misc-utils/logger.c:1119
 msgid "failed to parse id"
 msgstr "kunne ikke fortolke id"
 
-#: misc-utils/logger.c:1135
+#: misc-utils/logger.c:1137
 #, fuzzy
 msgid "failed to parse message size"
 msgstr "kunne ikke fortolke størrelse"
 
-#: misc-utils/logger.c:1170
+#: misc-utils/logger.c:1172
 msgid "--msgid cannot contain space"
 msgstr ""
 
-#: misc-utils/logger.c:1192
+#: misc-utils/logger.c:1194
 #, fuzzy, c-format
 msgid "invalid structured data ID: '%s'"
 msgstr "ugyldig parameter: %s"
 
-#: misc-utils/logger.c:1197
+#: misc-utils/logger.c:1199
 #, fuzzy, c-format
 msgid "invalid structured data parameter: '%s'"
 msgstr "ugyldig parameter for tidsudløb: %s"
 
-#: misc-utils/logger.c:1208
+#: misc-utils/logger.c:1210
 msgid "--file <file> and <message> are mutually exclusive, message is ignored"
 msgstr "--file <fil> og <besked> udelukker hinanden, beskeden bliver ignoreret"
 
-#: misc-utils/logger.c:1215
+#: misc-utils/logger.c:1217
 msgid "journald entry could not be written"
 msgstr "journald-post kunne ikke skrives"
 
@@ -9109,28 +9113,21 @@ msgstr "enhedsrevision"
 msgid "device vendor"
 msgstr "enhedsleverandør"
 
-# evt. "i linje "
-#: misc-utils/lsblk.c:433 sys-utils/mount.c:102 sys-utils/swapon-common.c:19
-#: sys-utils/umount.c:46
-#, c-format
-msgid "%s: parse error: ignore entry at line %d."
-msgstr "%s: fortolkningsfejl: ignorer post på linje %d."
-
-#: misc-utils/lsblk.c:1268
+#: misc-utils/lsblk.c:1267
 msgid "failed to open device directory in sysfs"
 msgstr "kunne ikke åbne enhedsmappe i sysfs"
 
-#: misc-utils/lsblk.c:1454
+#: misc-utils/lsblk.c:1453
 #, c-format
 msgid "%s: failed to compose sysfs path"
 msgstr "%s: kunne ikke sammensætte sysfs-sti"
 
-#: misc-utils/lsblk.c:1460
+#: misc-utils/lsblk.c:1459
 #, c-format
 msgid "%s: failed to read link"
 msgstr "%s: kunne ikke læse henvisning"
 
-#: misc-utils/lsblk.c:1482
+#: misc-utils/lsblk.c:1481
 #, c-format
 msgid "%s: failed to get sysfs name"
 msgstr "%s: kunne ikke indhente sysfs-navn"
@@ -9139,112 +9136,112 @@ msgstr "%s: kunne ikke indhente sysfs-navn"
 # Her repræsenterer sda hele disken mens sda1 og sda2 repræsenterer
 # partitioner af den.  Enheder har også numre.  Nummeret på sda må være
 # hvad de mener med whole-disk device number.
-#: misc-utils/lsblk.c:1491
+#: misc-utils/lsblk.c:1490
 #, c-format
 msgid "%s: failed to get whole-disk device number"
 msgstr "%s: kunne ikke finde enhedsnummer for hele disken"
 
-#: misc-utils/lsblk.c:1543 misc-utils/lsblk.c:1545 misc-utils/lsblk.c:1570
-#: misc-utils/lsblk.c:1572
+#: misc-utils/lsblk.c:1542 misc-utils/lsblk.c:1544 misc-utils/lsblk.c:1569
+#: misc-utils/lsblk.c:1571
 #, c-format
 msgid "failed to parse list '%s'"
 msgstr "kunne ikke fortolke liste »%s«"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1550
+#: misc-utils/lsblk.c:1549
 #, c-format
 msgid "the list of excluded devices is too large (limit is %d devices)"
 msgstr "listen for udelukkede enheder er for stor (begrænsningen er på %d enheder)"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1577
+#: misc-utils/lsblk.c:1576
 #, c-format
 msgid "the list of included devices is too large (limit is %d devices)"
 msgstr "listen for inkluderede enheder er for stor (begrænsningen er på %d enheder)"
 
-#: misc-utils/lsblk.c:1608 sys-utils/wdctl.c:174
+#: misc-utils/lsblk.c:1607 sys-utils/wdctl.c:174
 #, c-format
 msgid " %s [options] [<device> ...]\n"
 msgstr " %s [tilvalg] [<enhed> ...]\n"
 
-#: misc-utils/lsblk.c:1611
+#: misc-utils/lsblk.c:1610
 msgid "List information about block devices.\n"
 msgstr "Vis information om blokenheder.\n"
 
-#: misc-utils/lsblk.c:1614
+#: misc-utils/lsblk.c:1613
 msgid " -a, --all            print all devices\n"
 msgstr " -a, --all            vis alle enheder\n"
 
-#: misc-utils/lsblk.c:1616
+#: misc-utils/lsblk.c:1615
 msgid " -d, --nodeps         don't print slaves or holders\n"
 msgstr " -d, --nodeps         udskriv ikke slaver eller holdere\n"
 
-#: misc-utils/lsblk.c:1617
+#: misc-utils/lsblk.c:1616
 msgid " -D, --discard        print discard capabilities\n"
 msgstr " -D, --discard        vis funktioner for fjern\n"
 
-#: misc-utils/lsblk.c:1618
+#: misc-utils/lsblk.c:1617
 msgid " -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
 msgstr " -e, --exclude <vis>  ekskluder enheder efter major-nummer (standard: RAM-diske)\n"
 
-#: misc-utils/lsblk.c:1619
+#: misc-utils/lsblk.c:1618
 msgid " -f, --fs             output info about filesystems\n"
 msgstr " -f, --fs             vis information om filsystemer\n"
 
-#: misc-utils/lsblk.c:1620
+#: misc-utils/lsblk.c:1619
 msgid " -i, --ascii          use ascii characters only\n"
 msgstr " -i, --ascii          brug kun ascii-tegn\n"
 
-#: misc-utils/lsblk.c:1621
+#: misc-utils/lsblk.c:1620
 msgid " -I, --include <list> show only devices with specified major numbers\n"
 msgstr " -I, --include <vis>  vis kun enheder med angivne major-numre\n"
 
-#: misc-utils/lsblk.c:1622
+#: misc-utils/lsblk.c:1621
 #, fuzzy
 msgid " -J, --json           use JSON output format\n"
 msgstr " -r, --raw            brug rå uddataformat\n"
 
-#: misc-utils/lsblk.c:1623
+#: misc-utils/lsblk.c:1622
 msgid " -l, --list           use list format output\n"
 msgstr " -l, --list           brug listeformat\n"
 
-#: misc-utils/lsblk.c:1624
+#: misc-utils/lsblk.c:1623
 msgid " -m, --perms          output info about permissions\n"
 msgstr " -m, --perms          vis information om tilladelser\n"
 
-#: misc-utils/lsblk.c:1625
+#: misc-utils/lsblk.c:1624
 msgid " -n, --noheadings     don't print headings\n"
 msgstr " -n, --noheadings     udskriv ikke teksthoveder\n"
 
-#: misc-utils/lsblk.c:1626
+#: misc-utils/lsblk.c:1625
 msgid " -o, --output <list>  output columns\n"
 msgstr " -o, --output <vis>   vis kolonner\n"
 
-#: misc-utils/lsblk.c:1627
+#: misc-utils/lsblk.c:1626
 msgid " -O, --output-all     output all columns\n"
 msgstr " -O, --output-all     vis alle kolonner\n"
 
-#: misc-utils/lsblk.c:1628
+#: misc-utils/lsblk.c:1627
 msgid " -p, --paths          print complete device path\n"
 msgstr " -p, --paths          vis fuldstændig enhedsti\n"
 
-#: misc-utils/lsblk.c:1631
+#: misc-utils/lsblk.c:1630
 msgid " -s, --inverse        inverse dependencies\n"
 msgstr " -s, --inverse        omvendte afhængigheder\n"
 
-#: misc-utils/lsblk.c:1632
+#: misc-utils/lsblk.c:1631
 msgid " -S, --scsi           output info about SCSI devices\n"
 msgstr " -S, --scsi           vis information om SCSI-enheder\n"
 
-#: misc-utils/lsblk.c:1633
+#: misc-utils/lsblk.c:1632
 msgid " -t, --topology       output info about topology\n"
 msgstr " -t, --topology       vis information om topologi\n"
 
-#: misc-utils/lsblk.c:1634
+#: misc-utils/lsblk.c:1633
 msgid " -x, --sort <column>  sort output by <column>\n"
 msgstr " -x, --sort <kolonne> sorter uddata efter <kolonne>\n"
 
-#: misc-utils/lsblk.c:1639 misc-utils/lslocks.c:509 sys-utils/lsns.c:607
+#: misc-utils/lsblk.c:1638 misc-utils/lslocks.c:509 sys-utils/lsns.c:608
 #: sys-utils/prlimit.c:196 sys-utils/zramctl.c:487
 #, c-format
 msgid ""
@@ -9254,7 +9251,7 @@ msgstr ""
 "\n"
 "Tilgængelige kolonner (for --output):\n"
 
-#: misc-utils/lsblk.c:1652
+#: misc-utils/lsblk.c:1651
 #, c-format
 msgid "failed to access sysfs directory: %s"
 msgstr "kunne ikke tilgå sysfs-mappe: %s"
@@ -9303,7 +9300,7 @@ msgstr "PID for processen som holder låsen"
 msgid "failed to parse ID"
 msgstr "kunne ikke fortolke id"
 
-#: misc-utils/lslocks.c:264 sys-utils/nsenter.c:227
+#: misc-utils/lslocks.c:264 sys-utils/nsenter.c:230
 msgid "failed to parse pid"
 msgstr "kunne ikke fortolke pid"
 
@@ -9323,12 +9320,12 @@ msgstr "kunne ikke fortolke slut"
 msgid "List local system locks.\n"
 msgstr "Vis lokale systemlåse.\n"
 
-#: misc-utils/lslocks.c:499 sys-utils/lsns.c:596
+#: misc-utils/lslocks.c:499 sys-utils/lsns.c:597
 #, fuzzy
 msgid " -n, --noheadings       don't print headings\n"
 msgstr " -n, --noheadings     udskriv ikke teksthoveder\n"
 
-#: misc-utils/lslocks.c:500 sys-utils/lsns.c:597
+#: misc-utils/lslocks.c:500 sys-utils/lsns.c:598
 #, fuzzy
 msgid " -o, --output <list>    define which output columns to use\n"
 msgstr " -o, --output <vis>   definer hvilken resultatkolonne, der skal bruges\n"
@@ -9338,13 +9335,13 @@ msgstr " -o, --output <vis>   definer hvilken resultatkolonne, der skal bruges\n
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr " -p, --pid <pid>...     reager på disse allerede kørende processer\n"
 
-#: misc-utils/lslocks.c:502 sys-utils/lsns.c:599
+#: misc-utils/lslocks.c:502 sys-utils/lsns.c:600
 #, fuzzy
 msgid " -r, --raw              use the raw output format\n"
 msgstr " -r, --raw              brug rå uddataformat\n"
 
 #: misc-utils/lslocks.c:556 schedutils/chrt.c:440 schedutils/ionice.c:177
-#: schedutils/taskset.c:163 sys-utils/lsns.c:674 sys-utils/prlimit.c:586
+#: schedutils/taskset.c:163 sys-utils/lsns.c:675 sys-utils/prlimit.c:586
 msgid "invalid PID argument"
 msgstr "ugyldig PID-parameter"
 
@@ -9435,7 +9432,7 @@ msgstr ""
 msgid "pathname argument is missing"
 msgstr "parametret til stinavn mangler"
 
-#: misc-utils/namei.c:414 sys-utils/lsns.c:739
+#: misc-utils/namei.c:414 sys-utils/lsns.c:740
 #, fuzzy
 msgid "failed to allocate UID cache"
 msgstr "kunne ikke allokere GPT-teksthoved"
@@ -9608,9 +9605,9 @@ msgstr ""
 "Tidsudløb\n"
 "\n"
 
-#: misc-utils/uuidd.c:345
+#: misc-utils/uuidd.c:345 sys-utils/flock.c:253
 #, fuzzy
-msgid "cannot not setup timer"
+msgid "cannot set up timer"
 msgstr "kan ikke angive gruppe-id"
 
 #: misc-utils/uuidd.c:353
@@ -10801,16 +10798,18 @@ msgstr " -e, --reltime               vis lokal tid og tidsforskel i læsbart for
 
 #: sys-utils/dmesg.c:292
 #, fuzzy
-msgid " -T, --ctime                 show human readable timestamp (may be inaccurate!)\n"
+msgid " -T, --ctime                 show human-readable timestamp (may be inaccurate!)\n"
 msgstr " -T, --ctime                 vis læsbart tidsstempel\n"
 
 #: sys-utils/dmesg.c:293
-msgid " -t, --notime                don't print messages timestamp\n"
+#, fuzzy
+msgid " -t, --notime                don't show any timestamp with messages\n"
 msgstr " -t, --notime                udskriv ikke beskedernes tidsstempel\n"
 
 #: sys-utils/dmesg.c:294
+#, fuzzy
 msgid ""
-"     --time-format <format>  show time stamp using format:\n"
+"     --time-format <format>  show timestamp using the given format:\n"
 "                               [delta|reltime|ctime|notime|iso]\n"
 "Suspending/resume will make ctime and iso timestamps inaccurate.\n"
 msgstr ""
@@ -11092,8 +11091,8 @@ msgstr "%s: kunne ikke finde enhed"
 msgid "device name is `%s'"
 msgstr "enhedsnavn er »%s«"
 
-#: sys-utils/eject.c:894 sys-utils/umount.c:207 sys-utils/umount.c:236
-#: sys-utils/umount.c:410 sys-utils/umount.c:433
+#: sys-utils/eject.c:894 sys-utils/umount.c:206 sys-utils/umount.c:235
+#: sys-utils/umount.c:409 sys-utils/umount.c:432
 #, c-format
 msgid "%s: not mounted"
 msgstr "%s: ikke monteret"
@@ -11364,11 +11363,6 @@ msgstr "ugyldig filbeskrivelse"
 msgid "requires file descriptor, file or directory"
 msgstr "kræver filbeskrivelse, fil eller mappe"
 
-#: sys-utils/flock.c:253
-#, fuzzy
-msgid "cannot set up timer"
-msgstr "kan ikke angive gruppe-id"
-
 #: sys-utils/flock.c:263
 #, fuzzy
 msgid "failed to get lock"
@@ -11441,7 +11435,7 @@ msgstr "%s: FITRIM ioctl mislykkedes"
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s: %s (%<PRIu64> byte) trimmet\n"
 
-#: sys-utils/fstrim.c:203 sys-utils/swapon.c:689 sys-utils/umount.c:330
+#: sys-utils/fstrim.c:203 sys-utils/swapon.c:728 sys-utils/umount.c:329
 #, c-format
 msgid "failed to parse %s"
 msgstr "kunne ikke fortolke %s"
@@ -12426,34 +12420,39 @@ msgstr " -b, --bytes       vis størrelser i byte\n"
 msgid "when using an ID, a single resource must be specified"
 msgstr "når der bruges id, skal en enkelt ressource være angivet"
 
-#: sys-utils/ipcs.c:202
+#: sys-utils/ipcs.c:203
+#, fuzzy, c-format
+msgid "unable to fetch shared memory limits\n"
+msgstr "maks. samlet delt hukommelse"
+
+#: sys-utils/ipcs.c:206
 #, c-format
 msgid "------ Shared Memory Limits --------\n"
 msgstr "---- Grænser for delt hukommelse ---\n"
 
-#: sys-utils/ipcs.c:205
+#: sys-utils/ipcs.c:207
 #, c-format
 msgid "max number of segments = %ju\n"
 msgstr "maks. antal segmenter = %ju\n"
 
-#: sys-utils/ipcs.c:207
+#: sys-utils/ipcs.c:209
 msgid "max seg size"
 msgstr "maks. seg-størrelse"
 
-#: sys-utils/ipcs.c:209
+#: sys-utils/ipcs.c:211
 msgid "max total shared memory"
 msgstr "maks. samlet delt hukommelse"
 
-#: sys-utils/ipcs.c:212
+#: sys-utils/ipcs.c:214
 msgid "min seg size"
 msgstr "min. seg-størrelse"
 
-#: sys-utils/ipcs.c:224
+#: sys-utils/ipcs.c:226
 #, c-format
 msgid "kernel not configured for shared memory\n"
 msgstr "kernen er ikke konfigureret til brug af delt hukommelse\n"
 
-#: sys-utils/ipcs.c:228
+#: sys-utils/ipcs.c:230
 #, c-format
 msgid "------ Shared Memory Status --------\n"
 msgstr "---- Status for delt hukommelse ----\n"
@@ -12468,7 +12467,7 @@ msgstr "---- Status for delt hukommelse ----\n"
 #. "pages swapped = %ld\n"
 #. "swap performance = %ld attempts, %ld successes\n"
 #.
-#: sys-utils/ipcs.c:240
+#: sys-utils/ipcs.c:242
 #, c-format
 msgid ""
 "segments allocated %d\n"
@@ -12483,305 +12482,317 @@ msgstr ""
 "sidet swappet   %ld\n"
 "Swapydelse: %ld forsøg\t %ld successer\n"
 
-#: sys-utils/ipcs.c:257
+#: sys-utils/ipcs.c:259
 #, c-format
 msgid "------ Shared Memory Segment Creators/Owners --------\n"
 msgstr "---- Delte hukommelsessegmenters skabere/ejere ------\n"
 
-#: sys-utils/ipcs.c:259 sys-utils/ipcs.c:265 sys-utils/ipcs.c:272
-#: sys-utils/ipcs.c:278
+#: sys-utils/ipcs.c:261 sys-utils/ipcs.c:267 sys-utils/ipcs.c:274
+#: sys-utils/ipcs.c:280
 msgid "shmid"
 msgstr "dthid"
 
-#: sys-utils/ipcs.c:259 sys-utils/ipcs.c:278 sys-utils/ipcs.c:382
-#: sys-utils/ipcs.c:397 sys-utils/ipcs.c:483 sys-utils/ipcs.c:501
+#: sys-utils/ipcs.c:261 sys-utils/ipcs.c:280 sys-utils/ipcs.c:386
+#: sys-utils/ipcs.c:401 sys-utils/ipcs.c:489 sys-utils/ipcs.c:507
 msgid "perms"
 msgstr "adgng"
 
-#: sys-utils/ipcs.c:259 sys-utils/ipcs.c:382 sys-utils/ipcs.c:483
+#: sys-utils/ipcs.c:261 sys-utils/ipcs.c:386 sys-utils/ipcs.c:489
 msgid "cuid"
 msgstr "cuid"
 
-#: sys-utils/ipcs.c:259 sys-utils/ipcs.c:382 sys-utils/ipcs.c:483
+#: sys-utils/ipcs.c:261 sys-utils/ipcs.c:386 sys-utils/ipcs.c:489
 msgid "cgid"
 msgstr "cgid"
 
-#: sys-utils/ipcs.c:259 sys-utils/ipcs.c:382 sys-utils/ipcs.c:483
+#: sys-utils/ipcs.c:261 sys-utils/ipcs.c:386 sys-utils/ipcs.c:489
 msgid "uid"
 msgstr "uid"
 
-#: sys-utils/ipcs.c:259 sys-utils/ipcs.c:382 sys-utils/ipcs.c:483
+#: sys-utils/ipcs.c:261 sys-utils/ipcs.c:386 sys-utils/ipcs.c:489
 msgid "gid"
 msgstr "gid"
 
-#: sys-utils/ipcs.c:263
+#: sys-utils/ipcs.c:265
 #, c-format
 msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
 msgstr "--- Delt hukommelse til-/afkoblings-/ændringstider -----\n"
 
-#: sys-utils/ipcs.c:265 sys-utils/ipcs.c:272 sys-utils/ipcs.c:278
-#: sys-utils/ipcs.c:388 sys-utils/ipcs.c:397 sys-utils/ipcs.c:489
-#: sys-utils/ipcs.c:495 sys-utils/ipcs.c:501
+#: sys-utils/ipcs.c:267 sys-utils/ipcs.c:274 sys-utils/ipcs.c:280
+#: sys-utils/ipcs.c:392 sys-utils/ipcs.c:401 sys-utils/ipcs.c:495
+#: sys-utils/ipcs.c:501 sys-utils/ipcs.c:507
 msgid "owner"
 msgstr "ejer"
 
-#: sys-utils/ipcs.c:265
+#: sys-utils/ipcs.c:267
 msgid "attached"
 msgstr "tilkoblet"
 
-#: sys-utils/ipcs.c:265
+#: sys-utils/ipcs.c:267
 msgid "detached"
 msgstr "afkoblet"
 
-#: sys-utils/ipcs.c:266
+#: sys-utils/ipcs.c:268
 msgid "changed"
 msgstr "ændret"
 
-#: sys-utils/ipcs.c:270
+#: sys-utils/ipcs.c:272
 #, c-format
 msgid "------ Shared Memory Creator/Last-op PIDs --------\n"
 msgstr "----- Delt hukommelse skaber/Sidste-op PID'er ----\n"
 
-#: sys-utils/ipcs.c:272
+#: sys-utils/ipcs.c:274
 msgid "cpid"
 msgstr "cpid"
 
-#: sys-utils/ipcs.c:272
+#: sys-utils/ipcs.c:274
 msgid "lpid"
 msgstr "lpid"
 
-#: sys-utils/ipcs.c:276
+#: sys-utils/ipcs.c:278
 #, c-format
 msgid "------ Shared Memory Segments --------\n"
 msgstr "----- Delte hukommelsessegmenter -----\n"
 
-#: sys-utils/ipcs.c:278 sys-utils/ipcs.c:397 sys-utils/ipcs.c:501
+#: sys-utils/ipcs.c:280 sys-utils/ipcs.c:401 sys-utils/ipcs.c:507
 msgid "key"
 msgstr "nøgle"
 
-#: sys-utils/ipcs.c:279 sys-utils/ipcs.c:502
+#: sys-utils/ipcs.c:281 sys-utils/ipcs.c:508
 msgid "size"
 msgstr "størrelse"
 
-#: sys-utils/ipcs.c:279 sys-utils/prlimit.c:75 sys-utils/prlimit.c:76
+#: sys-utils/ipcs.c:281 sys-utils/prlimit.c:75 sys-utils/prlimit.c:76
 #: sys-utils/prlimit.c:78 sys-utils/prlimit.c:79 sys-utils/prlimit.c:81
 #: sys-utils/prlimit.c:82 sys-utils/prlimit.c:86 sys-utils/prlimit.c:90
 msgid "bytes"
 msgstr "byte"
 
 # måske ntilsl
-#: sys-utils/ipcs.c:280
+#: sys-utils/ipcs.c:282
 msgid "nattch"
 msgstr "atlkbl"
 
-#: sys-utils/ipcs.c:280
+#: sys-utils/ipcs.c:282
 msgid "status"
 msgstr "status"
 
-#: sys-utils/ipcs.c:304 sys-utils/ipcs.c:306 sys-utils/ipcs.c:308
-#: sys-utils/ipcs.c:420 sys-utils/ipcs.c:422 sys-utils/ipcs.c:526
-#: sys-utils/ipcs.c:528 sys-utils/ipcs.c:530 sys-utils/ipcs.c:584
-#: sys-utils/ipcs.c:586 sys-utils/ipcs.c:615 sys-utils/ipcs.c:617
-#: sys-utils/ipcs.c:619 sys-utils/ipcs.c:643
+#: sys-utils/ipcs.c:306 sys-utils/ipcs.c:308 sys-utils/ipcs.c:310
+#: sys-utils/ipcs.c:424 sys-utils/ipcs.c:426 sys-utils/ipcs.c:532
+#: sys-utils/ipcs.c:534 sys-utils/ipcs.c:536 sys-utils/ipcs.c:590
+#: sys-utils/ipcs.c:592 sys-utils/ipcs.c:621 sys-utils/ipcs.c:623
+#: sys-utils/ipcs.c:625 sys-utils/ipcs.c:649
 msgid "Not set"
 msgstr "Ikke sat"
 
-#: sys-utils/ipcs.c:334 sys-utils/lsipc.c:992 sys-utils/lsipc.c:998
+#: sys-utils/ipcs.c:336 sys-utils/lsipc.c:992 sys-utils/lsipc.c:998
 msgid "dest"
 msgstr "mål"
 
-#: sys-utils/ipcs.c:335 sys-utils/lsipc.c:993 sys-utils/lsipc.c:1006
+#: sys-utils/ipcs.c:337 sys-utils/lsipc.c:993 sys-utils/lsipc.c:1006
 msgid "locked"
 msgstr "låst"
 
-#: sys-utils/ipcs.c:354
+# jeg tror %s er en proces eller sådan noget
+# evt. "ressourcebegrænsningen for %s"
+#: sys-utils/ipcs.c:357
+#, fuzzy, c-format
+msgid "unable to fetch semaphore limits\n"
+msgstr "kunne ikke angive ressourcebegrænsningen for %s"
+
+#: sys-utils/ipcs.c:360
 #, c-format
 msgid "------ Semaphore Limits --------\n"
 msgstr "-------- Semaforgrænser  -------\n"
 
-#: sys-utils/ipcs.c:357
+#: sys-utils/ipcs.c:361
 #, c-format
 msgid "max number of arrays = %d\n"
 msgstr "maks. antal tabeller = %d\n"
 
-#: sys-utils/ipcs.c:358
+#: sys-utils/ipcs.c:362
 #, c-format
 msgid "max semaphores per array = %d\n"
 msgstr "maks. semaforer per tabel = %d\n"
 
-#: sys-utils/ipcs.c:359
+#: sys-utils/ipcs.c:363
 #, c-format
 msgid "max semaphores system wide = %d\n"
 msgstr "maks. semaforer i hele systemet = %d\n"
 
 # op er operationer; jeg synes godt vi kan bruge den på dansk uden flertals-s (eller -r)
-#: sys-utils/ipcs.c:360
+#: sys-utils/ipcs.c:364
 #, c-format
 msgid "max ops per semop call = %d\n"
 msgstr "maks. op per semop-kald = %d\n"
 
-#: sys-utils/ipcs.c:361
+#: sys-utils/ipcs.c:365
 #, fuzzy, c-format
 msgid "semaphore max value = %u\n"
 msgstr "maksværdi for semafor = %d\n"
 
-#: sys-utils/ipcs.c:370
+#: sys-utils/ipcs.c:374
 #, c-format
 msgid "kernel not configured for semaphores\n"
 msgstr "kernen ikke konfigureret til semaforer\n"
 
-#: sys-utils/ipcs.c:373
+#: sys-utils/ipcs.c:377
 #, c-format
 msgid "------ Semaphore Status --------\n"
 msgstr "-------- Semaforstatus  --------\n"
 
-#: sys-utils/ipcs.c:374
+#: sys-utils/ipcs.c:378
 #, c-format
 msgid "used arrays = %d\n"
 msgstr "brugte tabeller = %d\n"
 
-#: sys-utils/ipcs.c:375
+#: sys-utils/ipcs.c:379
 #, c-format
 msgid "allocated semaphores = %d\n"
 msgstr "allokerede semaforer = %d\n"
 
-#: sys-utils/ipcs.c:380
+#: sys-utils/ipcs.c:384
 #, c-format
 msgid "------ Semaphore Arrays Creators/Owners --------\n"
 msgstr "------- Semafortabellers skabere/ejere ---------\n"
 
-#: sys-utils/ipcs.c:382 sys-utils/ipcs.c:388 sys-utils/ipcs.c:397
+#: sys-utils/ipcs.c:386 sys-utils/ipcs.c:392 sys-utils/ipcs.c:401
 msgid "semid"
 msgstr "semid"
 
-#: sys-utils/ipcs.c:386
+#: sys-utils/ipcs.c:390
 #, c-format
 msgid "------ Semaphore Operation/Change Times --------\n"
 msgstr "------ Semaforhandling/ændringstider -----\n"
 
-#: sys-utils/ipcs.c:388
+#: sys-utils/ipcs.c:392
 msgid "last-op"
 msgstr "sidstop"
 
-#: sys-utils/ipcs.c:388
+#: sys-utils/ipcs.c:392
 msgid "last-changed"
 msgstr "sidst-ændret"
 
-#: sys-utils/ipcs.c:395
+#: sys-utils/ipcs.c:399
 #, c-format
 msgid "------ Semaphore Arrays --------\n"
 msgstr "-------- Semafortabeller --------\n"
 
-#: sys-utils/ipcs.c:397
+#: sys-utils/ipcs.c:401
 msgid "nsems"
 msgstr "nsemf"
 
-#: sys-utils/ipcs.c:456
+#: sys-utils/ipcs.c:459
+#, fuzzy, c-format
+msgid "unable to fetch message limits\n"
+msgstr "Antal hoveder"
+
+#: sys-utils/ipcs.c:462
 #, c-format
 msgid "------ Messages Limits --------\n"
 msgstr "------ Beskeder Grænser -------\n"
 
-#: sys-utils/ipcs.c:457
+#: sys-utils/ipcs.c:463
 #, c-format
 msgid "max queues system wide = %d\n"
 msgstr "maks. køer på systemet = %d\n"
 
-#: sys-utils/ipcs.c:459
+#: sys-utils/ipcs.c:465
 msgid "max size of message"
 msgstr "maks. beskedstørrelse"
 
-#: sys-utils/ipcs.c:461
+#: sys-utils/ipcs.c:467
 msgid "default max size of queue"
 msgstr "standard for maks. køstørrelse"
 
-#: sys-utils/ipcs.c:468
+#: sys-utils/ipcs.c:474
 #, c-format
 msgid "kernel not configured for message queues\n"
 msgstr "kernen er ikke konfigureret til beskedkøer\n"
 
-#: sys-utils/ipcs.c:471
+#: sys-utils/ipcs.c:477
 #, c-format
 msgid "------ Messages Status --------\n"
 msgstr "------ Beskeder Status --------\n"
 
-#: sys-utils/ipcs.c:473
+#: sys-utils/ipcs.c:479
 #, c-format
 msgid "allocated queues = %d\n"
 msgstr "allokerede køer= %d\n"
 
-#: sys-utils/ipcs.c:474
+#: sys-utils/ipcs.c:480
 #, c-format
 msgid "used headers = %d\n"
 msgstr "brugte hoveder = %d\n"
 
-#: sys-utils/ipcs.c:476
+#: sys-utils/ipcs.c:482
 msgid "used space"
 msgstr "brugt plads"
 
-#: sys-utils/ipcs.c:477
+#: sys-utils/ipcs.c:483
 msgid " bytes\n"
 msgstr " byte\n"
 
-#: sys-utils/ipcs.c:481
+#: sys-utils/ipcs.c:487
 #, c-format
 msgid "------ Message Queues Creators/Owners --------\n"
 msgstr "--------- Beskedkøer Skabere/ejere  ----------\n"
 
-#: sys-utils/ipcs.c:483 sys-utils/ipcs.c:489 sys-utils/ipcs.c:495
-#: sys-utils/ipcs.c:501
+#: sys-utils/ipcs.c:489 sys-utils/ipcs.c:495 sys-utils/ipcs.c:501
+#: sys-utils/ipcs.c:507
 msgid "msqid"
 msgstr "bkøid"
 
-#: sys-utils/ipcs.c:487
+#: sys-utils/ipcs.c:493
 #, c-format
 msgid "------ Message Queues Send/Recv/Change Times --------\n"
 msgstr "------ Beskedkøer send/modtag/ændringstider ---------\n"
 
-#: sys-utils/ipcs.c:489
+#: sys-utils/ipcs.c:495
 msgid "send"
 msgstr "send"
 
-#: sys-utils/ipcs.c:489
+#: sys-utils/ipcs.c:495
 msgid "recv"
 msgstr "modt"
 
-#: sys-utils/ipcs.c:489
+#: sys-utils/ipcs.c:495
 msgid "change"
 msgstr "ændrng"
 
-#: sys-utils/ipcs.c:493
+#: sys-utils/ipcs.c:499
 #, c-format
 msgid "------ Message Queues PIDs --------\n"
 msgstr "------ Beskedkøers PID'er  ---------\n"
 
-#: sys-utils/ipcs.c:495
+#: sys-utils/ipcs.c:501
 msgid "lspid"
 msgstr "lspid"
 
-#: sys-utils/ipcs.c:495
+#: sys-utils/ipcs.c:501
 msgid "lrpid"
 msgstr "lrpid"
 
-#: sys-utils/ipcs.c:499
+#: sys-utils/ipcs.c:505
 #, c-format
 msgid "------ Message Queues --------\n"
 msgstr "-------- Beskedkøer ----------\n"
 
-#: sys-utils/ipcs.c:502
+#: sys-utils/ipcs.c:508
 msgid "used-bytes"
 msgstr "brugte-byte"
 
-#: sys-utils/ipcs.c:503
+#: sys-utils/ipcs.c:509
 msgid "messages"
 msgstr "beskeder"
 
-#: sys-utils/ipcs.c:568 sys-utils/ipcs.c:598 sys-utils/ipcs.c:631
+#: sys-utils/ipcs.c:574 sys-utils/ipcs.c:604 sys-utils/ipcs.c:637
 #: sys-utils/lsipc.c:552 sys-utils/lsipc.c:738 sys-utils/lsipc.c:895
 #, c-format
 msgid "id %d not found"
 msgstr "id %d ikke fundet"
 
-#: sys-utils/ipcs.c:572
+#: sys-utils/ipcs.c:578
 #, c-format
 msgid ""
 "\n"
@@ -12790,45 +12801,45 @@ msgstr ""
 "\n"
 "Delt hukommelsessegment dhsid=%d\n"
 
-#: sys-utils/ipcs.c:573
+#: sys-utils/ipcs.c:579
 #, c-format
 msgid "uid=%u\tgid=%u\tcuid=%u\tcgid=%u\n"
 msgstr "uid=%u\tgid=%u\tcuid=%u\tcgid=%u\n"
 
-#: sys-utils/ipcs.c:576
+#: sys-utils/ipcs.c:582
 #, c-format
 msgid "mode=%#o\taccess_perms=%#o\n"
 msgstr "tilstand=%#o\tadgangsrett=%#o\n"
 
-#: sys-utils/ipcs.c:578
+#: sys-utils/ipcs.c:584
 msgid "size="
 msgstr "størrelse="
 
-#: sys-utils/ipcs.c:578
+#: sys-utils/ipcs.c:584
 msgid "bytes="
 msgstr "byte="
 
-#: sys-utils/ipcs.c:580
+#: sys-utils/ipcs.c:586
 #, c-format
 msgid "lpid=%u\tcpid=%u\tnattch=%jd\n"
 msgstr "lpid=%u\tcpid=%u\tattch=%jd\n"
 
-#: sys-utils/ipcs.c:583
+#: sys-utils/ipcs.c:589
 #, c-format
 msgid "att_time=%-26.24s\n"
 msgstr "tilk_tid=%-26.24s\n"
 
-#: sys-utils/ipcs.c:585
+#: sys-utils/ipcs.c:591
 #, c-format
 msgid "det_time=%-26.24s\n"
 msgstr "frak_tid=%-26.24s\n"
 
-#: sys-utils/ipcs.c:587 sys-utils/ipcs.c:618
+#: sys-utils/ipcs.c:593 sys-utils/ipcs.c:624
 #, c-format
 msgid "change_time=%-26.24s\n"
 msgstr "ændrings_tid=%-26.24s\n"
 
-#: sys-utils/ipcs.c:602
+#: sys-utils/ipcs.c:608
 #, c-format
 msgid ""
 "\n"
@@ -12837,38 +12848,38 @@ msgstr ""
 "\n"
 "Msqid for beskedkø=%d\n"
 
-#: sys-utils/ipcs.c:603
+#: sys-utils/ipcs.c:609
 #, c-format
 msgid "uid=%u\tgid=%u\tcuid=%u\tcgid=%u\tmode=%#o\n"
 msgstr "uid=%u\tgid=%u\tcuid=%u\tcgid=%u\ttilstand=%#o\n"
 
-#: sys-utils/ipcs.c:607
+#: sys-utils/ipcs.c:613
 msgid "csize="
 msgstr "cstørrelse="
 
-#: sys-utils/ipcs.c:607
+#: sys-utils/ipcs.c:613
 msgid "cbytes="
 msgstr "cbyte="
 
-#: sys-utils/ipcs.c:609
+#: sys-utils/ipcs.c:615
 msgid "qsize="
 msgstr "qstørrelse="
 
-#: sys-utils/ipcs.c:609
+#: sys-utils/ipcs.c:615
 msgid "qbytes="
 msgstr "qbyte="
 
-#: sys-utils/ipcs.c:614
+#: sys-utils/ipcs.c:620
 #, c-format
 msgid "send_time=%-26.24s\n"
 msgstr "send_tid=%-26.24s\n"
 
-#: sys-utils/ipcs.c:616
+#: sys-utils/ipcs.c:622
 #, c-format
 msgid "rcv_time=%-26.24s\n"
 msgstr "modt_tid=%-26.24s\n"
 
-#: sys-utils/ipcs.c:635
+#: sys-utils/ipcs.c:641
 #, c-format
 msgid ""
 "\n"
@@ -12877,27 +12888,27 @@ msgstr ""
 "\n"
 "Semafortabel semid=%d\n"
 
-#: sys-utils/ipcs.c:636
+#: sys-utils/ipcs.c:642
 #, c-format
 msgid "uid=%u\t gid=%u\t cuid=%u\t cgid=%u\n"
 msgstr "uid=%u\t gid=%u\t cuid=%u\t cgid=%u\n"
 
-#: sys-utils/ipcs.c:639
+#: sys-utils/ipcs.c:645
 #, c-format
 msgid "mode=%#o, access_perms=%#o\n"
 msgstr "tilstand=%#o, adgangsrett=%#o\n"
 
-#: sys-utils/ipcs.c:641
+#: sys-utils/ipcs.c:647
 #, c-format
 msgid "nsems = %ju\n"
 msgstr "nsems = %ju\n"
 
-#: sys-utils/ipcs.c:642
+#: sys-utils/ipcs.c:648
 #, c-format
 msgid "otime = %-26.24s\n"
 msgstr "otid  = %-26.24s\n"
 
-#: sys-utils/ipcs.c:644
+#: sys-utils/ipcs.c:650
 #, c-format
 msgid "ctime = %-26.24s\n"
 msgstr "ætid = %-26.24s\n"
@@ -12908,38 +12919,38 @@ msgstr "ætid = %-26.24s\n"
 # eller "interrupts" som programmer kan sende til hinanden (der er
 # givetvis forskel på signaler og interrupts, men jeg kender ikke så
 # meget til det).
-#: sys-utils/ipcs.c:647
+#: sys-utils/ipcs.c:653
 msgid "semnum"
 msgstr "semtal"
 
-#: sys-utils/ipcs.c:647
+#: sys-utils/ipcs.c:653
 msgid "value"
 msgstr "værdi"
 
-#: sys-utils/ipcs.c:647
+#: sys-utils/ipcs.c:653
 msgid "ncount"
 msgstr "nantal"
 
-#: sys-utils/ipcs.c:647
+#: sys-utils/ipcs.c:653
 msgid "zcount"
 msgstr "zantal"
 
-#: sys-utils/ipcs.c:647
+#: sys-utils/ipcs.c:653
 msgid "pid"
 msgstr "pid"
 
-#: sys-utils/ipcutils.c:226 sys-utils/ipcutils.c:230 sys-utils/ipcutils.c:234
-#: sys-utils/ipcutils.c:238
+#: sys-utils/ipcutils.c:230 sys-utils/ipcutils.c:234 sys-utils/ipcutils.c:238
+#: sys-utils/ipcutils.c:242
 #, c-format
 msgid "%s failed"
 msgstr "%s mislykkedes"
 
-#: sys-utils/ipcutils.c:499
+#: sys-utils/ipcutils.c:503
 #, c-format
 msgid "%s (bytes) = "
 msgstr "%s (byte) = "
 
-#: sys-utils/ipcutils.c:501
+#: sys-utils/ipcutils.c:505
 #, c-format
 msgid "%s (kbytes) = "
 msgstr "%s (kbyte) = "
@@ -13130,8 +13141,8 @@ msgstr ", kryptering %s (type %u>)"
 msgid "%s: detach failed"
 msgstr "%s: afkobl mislykkedes"
 
-#: sys-utils/losetup.c:329 sys-utils/lscpu.c:1508 sys-utils/prlimit.c:229
-#: sys-utils/swapon.c:165 sys-utils/wdctl.c:215 sys-utils/zramctl.c:348
+#: sys-utils/losetup.c:329 sys-utils/lscpu.c:1541 sys-utils/prlimit.c:229
+#: sys-utils/swapon.c:176 sys-utils/wdctl.c:215 sys-utils/zramctl.c:348
 msgid "failed to initialize output line"
 msgstr "kunne ikke initialisere uddatalinje"
 
@@ -13281,108 +13292,113 @@ msgstr "%s: sæt funktion mislykkedes"
 msgid "%s: set direct io failed"
 msgstr "%s: Kunne ikke ændre mappe"
 
-#: sys-utils/lscpu.c:97
+#: sys-utils/lscpu.c:107
 msgid "none"
 msgstr "ingen"
 
-#: sys-utils/lscpu.c:98
+#: sys-utils/lscpu.c:108
 msgid "para"
 msgstr "para"
 
-#: sys-utils/lscpu.c:99
+#: sys-utils/lscpu.c:109
 msgid "full"
 msgstr "fuld"
 
-#: sys-utils/lscpu.c:100
+#: sys-utils/lscpu.c:110
 msgid "container"
 msgstr "container"
 
-#: sys-utils/lscpu.c:161
+#: sys-utils/lscpu.c:171
 msgid "horizontal"
 msgstr "vandret"
 
-#: sys-utils/lscpu.c:162
+#: sys-utils/lscpu.c:172
 msgid "vertical"
 msgstr "lodret"
 
-#: sys-utils/lscpu.c:314
+#: sys-utils/lscpu.c:326
 msgid "logical CPU number"
 msgstr "logisk CPU-nummer"
 
-#: sys-utils/lscpu.c:315
+#: sys-utils/lscpu.c:327
 msgid "logical core number"
 msgstr "logisk kernenummer"
 
-#: sys-utils/lscpu.c:316
+#: sys-utils/lscpu.c:328
 msgid "logical socket number"
 msgstr "logisk sokkelnummer"
 
-#: sys-utils/lscpu.c:317
+#: sys-utils/lscpu.c:329
 msgid "logical NUMA node number"
 msgstr "logisk NUMA-knudenummer"
 
-#: sys-utils/lscpu.c:318
+#: sys-utils/lscpu.c:330
 msgid "logical book number"
 msgstr "logisk bognummer"
 
-#: sys-utils/lscpu.c:319
+#: sys-utils/lscpu.c:331
 msgid "shows how caches are shared between CPUs"
 msgstr "viser hvordan mellemlagre deles mellem CPU'er"
 
-#: sys-utils/lscpu.c:320
+#: sys-utils/lscpu.c:332
 msgid "CPU dispatching mode on virtual hardware"
 msgstr "CPU-afsendelsestilstand på virtuelt udstyr"
 
-#: sys-utils/lscpu.c:321
+#: sys-utils/lscpu.c:333
 msgid "physical address of a CPU"
 msgstr "fysisk adresse for en cpu"
 
-#: sys-utils/lscpu.c:322
+#: sys-utils/lscpu.c:334
 msgid "shows if the hypervisor has allocated the CPU"
 msgstr "viser om hypervisoren har allokereret cpu'en"
 
-#: sys-utils/lscpu.c:323
+#: sys-utils/lscpu.c:335
 msgid "shows if Linux currently makes use of the CPU"
 msgstr "viser om Linux i øjeblikket gør brug af CPU'en"
 
-#: sys-utils/lscpu.c:324
+#: sys-utils/lscpu.c:336
 msgid "shows the maximum MHz of the CPU"
 msgstr "viser maksimum-MHZ for cpu'en"
 
-#: sys-utils/lscpu.c:325
+#: sys-utils/lscpu.c:337
 msgid "shows the minimum MHz of the CPU"
 msgstr "viser minimum-MHZ for cpu'en"
 
-#: sys-utils/lscpu.c:459
+#: sys-utils/lscpu.c:472
 msgid "error: uname failed"
 msgstr "fejl: uname mislykkedes"
 
-#: sys-utils/lscpu.c:534
+#: sys-utils/lscpu.c:549
 #, c-format
 msgid "failed to determine number of CPUs: %s"
 msgstr "kunne ikke bestemme antallet af CPU'er: %s"
 
-#: sys-utils/lscpu.c:776
+#: sys-utils/lscpu.c:791
 msgid "error: can not set signal handler"
 msgstr "fejl: kan ikke angive signalhåndteringen"
 
-#: sys-utils/lscpu.c:781
+#: sys-utils/lscpu.c:796
 msgid "error: can not restore signal handler"
 msgstr "fejl: kan ikke gendanne signalhåndteringen"
 
-#: sys-utils/lscpu.c:1216
+#: sys-utils/lscpu.c:841
+#, fuzzy, c-format
+msgid "failed to read from: %s"
+msgstr "kunne ikke læse symbolsk henvisning: %s"
+
+#: sys-utils/lscpu.c:1249
 msgid "Failed to extract the node number"
 msgstr "Kunne ikke udtrække knudenummeret"
 
-#: sys-utils/lscpu.c:1310 sys-utils/lscpu.c:1320
+#: sys-utils/lscpu.c:1343 sys-utils/lscpu.c:1353
 msgid "Y"
 msgstr "J"
 
-#: sys-utils/lscpu.c:1310 sys-utils/lscpu.c:1320
+#: sys-utils/lscpu.c:1343 sys-utils/lscpu.c:1353
 msgid "N"
 msgstr "N"
 
-#: sys-utils/lscpu.c:1404
+#: sys-utils/lscpu.c:1437
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -13393,181 +13409,181 @@ msgstr ""
 "# programmer. Hvert element i kolonnerne har en unik id der\n"
 "# starter fra nul.\n"
 
-#: sys-utils/lscpu.c:1554
+#: sys-utils/lscpu.c:1587
 msgid "Architecture:"
 msgstr "Arkitektur:"
 
-#: sys-utils/lscpu.c:1568
+#: sys-utils/lscpu.c:1601
 msgid "CPU op-mode(s):"
 msgstr "Op-tilstande for CPU:"
 
-#: sys-utils/lscpu.c:1571 sys-utils/lscpu.c:1573
+#: sys-utils/lscpu.c:1604 sys-utils/lscpu.c:1606
 msgid "Byte Order:"
 msgstr "Byterækkefølge:"
 
-#: sys-utils/lscpu.c:1575
+#: sys-utils/lscpu.c:1608
 msgid "CPU(s):"
 msgstr "CPU'er:"
 
-#: sys-utils/lscpu.c:1578
+#: sys-utils/lscpu.c:1611
 msgid "On-line CPU(s) mask:"
 msgstr "Tilkoblet cpu(er) maske:"
 
-#: sys-utils/lscpu.c:1579
+#: sys-utils/lscpu.c:1612
 msgid "On-line CPU(s) list:"
 msgstr "Tilkoblet cpu(er) liste:"
 
-#: sys-utils/lscpu.c:1598
+#: sys-utils/lscpu.c:1631
 msgid "Off-line CPU(s) mask:"
 msgstr "Frakoblet cpu(er) maske:"
 
-#: sys-utils/lscpu.c:1599
+#: sys-utils/lscpu.c:1632
 msgid "Off-line CPU(s) list:"
 msgstr "Frakoblet cpu(er) liste:"
 
-#: sys-utils/lscpu.c:1630
+#: sys-utils/lscpu.c:1663
 msgid "Thread(s) per core:"
 msgstr "Tråde per kerne:"
 
-#: sys-utils/lscpu.c:1631
+#: sys-utils/lscpu.c:1664
 msgid "Core(s) per socket:"
 msgstr "Kerner per sokkel:"
 
-#: sys-utils/lscpu.c:1634
+#: sys-utils/lscpu.c:1667
 msgid "Socket(s) per book:"
 msgstr "Sokler per bog:"
 
-#: sys-utils/lscpu.c:1636
+#: sys-utils/lscpu.c:1669
 msgid "Book(s):"
 msgstr "Bøger:"
 
-#: sys-utils/lscpu.c:1638
+#: sys-utils/lscpu.c:1671
 msgid "Socket(s):"
 msgstr "Sokler:"
 
-#: sys-utils/lscpu.c:1642
+#: sys-utils/lscpu.c:1675
 msgid "NUMA node(s):"
 msgstr "NUMA-knuder:"
 
-#: sys-utils/lscpu.c:1644
+#: sys-utils/lscpu.c:1677
 msgid "Vendor ID:"
 msgstr "Leverandør-id:"
 
-#: sys-utils/lscpu.c:1646
+#: sys-utils/lscpu.c:1679
 msgid "CPU family:"
 msgstr "CPU-familie:"
 
-#: sys-utils/lscpu.c:1648
+#: sys-utils/lscpu.c:1681
 msgid "Model:"
 msgstr "Model:"
 
-#: sys-utils/lscpu.c:1650
+#: sys-utils/lscpu.c:1683
 msgid "Model name:"
 msgstr "Modelnavn:"
 
-#: sys-utils/lscpu.c:1652
+#: sys-utils/lscpu.c:1685
 msgid "Stepping:"
 msgstr "Modelserie:"
 
-#: sys-utils/lscpu.c:1654
+#: sys-utils/lscpu.c:1687
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:1656
+#: sys-utils/lscpu.c:1689
 msgid "CPU max MHz:"
 msgstr "CPU maks. MHz:"
 
-#: sys-utils/lscpu.c:1658
+#: sys-utils/lscpu.c:1691
 msgid "CPU min MHz:"
 msgstr "CPU min. MHz:"
 
-#: sys-utils/lscpu.c:1660
+#: sys-utils/lscpu.c:1693
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:1663 sys-utils/lscpu.c:1665
+#: sys-utils/lscpu.c:1696 sys-utils/lscpu.c:1698
 msgid "Virtualization:"
 msgstr "Virtualisation:"
 
-#: sys-utils/lscpu.c:1668
+#: sys-utils/lscpu.c:1701
 msgid "Hypervisor:"
 msgstr "Hypervisor:"
 
-#: sys-utils/lscpu.c:1670
+#: sys-utils/lscpu.c:1703
 msgid "Hypervisor vendor:"
 msgstr "Hypervisorleverandør:"
 
-#: sys-utils/lscpu.c:1671
+#: sys-utils/lscpu.c:1704
 msgid "Virtualization type:"
 msgstr "Virtualisationstype:"
 
-#: sys-utils/lscpu.c:1674
+#: sys-utils/lscpu.c:1707
 msgid "Dispatching mode:"
 msgstr "Afsendelsestilstand:"
 
-#: sys-utils/lscpu.c:1680
+#: sys-utils/lscpu.c:1713
 #, c-format
 msgid "%s cache:"
 msgstr "%s mellemlager:"
 
-#: sys-utils/lscpu.c:1686
+#: sys-utils/lscpu.c:1719
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "NUMA-knuder%d CPU'er:"
 
-#: sys-utils/lscpu.c:1691
+#: sys-utils/lscpu.c:1724
 #, fuzzy
 msgid "Flags:"
 msgstr "Flag"
 
-#: sys-utils/lscpu.c:1694
+#: sys-utils/lscpu.c:1727
 #, fuzzy
 msgid "Physical sockets:"
 msgstr "Antal fysiske cylindre"
 
-#: sys-utils/lscpu.c:1695
+#: sys-utils/lscpu.c:1728
 #, fuzzy
 msgid "Physical chips:"
 msgstr "Antal fysiske cylindre"
 
-#: sys-utils/lscpu.c:1696
+#: sys-utils/lscpu.c:1729
 #, fuzzy
 msgid "Physical cores/chip:"
 msgstr "fysisk blokstørrelse (sektorstørrelse)"
 
-#: sys-utils/lscpu.c:1708
+#: sys-utils/lscpu.c:1741
 msgid "Display information about the CPU architecture.\n"
 msgstr "Vis information om CPU-arkitekturen.\n"
 
-#: sys-utils/lscpu.c:1711
+#: sys-utils/lscpu.c:1744
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr " -a, --all               vis både tilkoblede og frakoblede cpu'er (standard for -e)\n"
 
-#: sys-utils/lscpu.c:1712
+#: sys-utils/lscpu.c:1745
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr " -b, --online            vis kun tilkoblede cpu'er (standard for -p)\n"
 
-#: sys-utils/lscpu.c:1713
+#: sys-utils/lscpu.c:1746
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline           vis kun frakoblede cpu'er\n"
 
-#: sys-utils/lscpu.c:1714
+#: sys-utils/lscpu.c:1747
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr " -e, --extended[=<liste>] vis kun et udvidet læsbart format\n"
 
-#: sys-utils/lscpu.c:1715
+#: sys-utils/lscpu.c:1748
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<liste>]   vis kun et format der kan fortolkes\n"
 
-#: sys-utils/lscpu.c:1716
+#: sys-utils/lscpu.c:1749
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <mappe>   brug specificeret mappe som system-root\n"
 
-#: sys-utils/lscpu.c:1717
+#: sys-utils/lscpu.c:1750
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr " -x, --hex               vis hexadecimal masker frem for lister med cpu'er\n"
 
-#: sys-utils/lscpu.c:1814
+#: sys-utils/lscpu.c:1847
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: tilvalg -all, --online og --offline kan kun bruges med tilvalgene --extended eller --parse.\n"
@@ -13967,34 +13983,34 @@ msgstr ""
 msgid "noreserve"
 msgstr "Linux-reserverede"
 
-#: sys-utils/lsipc.c:1076
+#: sys-utils/lsipc.c:1077
 #, fuzzy
 msgid "Shared memory segments"
 msgstr ""
 "\n"
 "Delt hukommelsessegment dhsid=%d\n"
 
-#: sys-utils/lsipc.c:1077
+#: sys-utils/lsipc.c:1078
 #, fuzzy
 msgid "Shared memory pages"
 msgstr "Delt hukommelses-id: %d\n"
 
-#: sys-utils/lsipc.c:1078
+#: sys-utils/lsipc.c:1079
 #, fuzzy
 msgid "Max size of shared memory segment (bytes)"
 msgstr "maks. beskedstørrelse"
 
-#: sys-utils/lsipc.c:1079
+#: sys-utils/lsipc.c:1080
 #, fuzzy
 msgid "Min size of shared memory segment (bytes)"
 msgstr "maks. beskedstørrelse"
 
-#: sys-utils/lsipc.c:1152
+#: sys-utils/lsipc.c:1151
 #, fuzzy
 msgid "failed to parse IPC identifier"
 msgstr "kunne ikke fortolke id"
 
-#: sys-utils/lsipc.c:1246
+#: sys-utils/lsipc.c:1245
 #, fuzzy
 msgid "--global is mutually exclusive with --creator, --id and --time"
 msgstr "tilvalget --find og <enhed> udelukker hinanden"
@@ -14038,105 +14054,105 @@ msgstr ""
 msgid "username of the PID"
 msgstr ""
 
-#: sys-utils/lsns.c:588
+#: sys-utils/lsns.c:589
 #, fuzzy, c-format
 msgid " %s [options] [<namespace>]\n"
 msgstr " %s [tilvalg] [<besked>]\n"
 
-#: sys-utils/lsns.c:591
+#: sys-utils/lsns.c:592
 #, fuzzy
 msgid "List system namespaces.\n"
 msgstr "Vis lokale systemlåse.\n"
 
-#: sys-utils/lsns.c:598
+#: sys-utils/lsns.c:599
 #, fuzzy
 msgid " -p, --task <pid>       print process namespaces\n"
 msgstr " -t, --target <pid>     målproces at hente navnerum fra\n"
 
-#: sys-utils/lsns.c:601
+#: sys-utils/lsns.c:602
 msgid " -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts)\n"
 msgstr ""
 
-#: sys-utils/lsns.c:691
+#: sys-utils/lsns.c:692
 #, fuzzy, c-format
 msgid "unknown namespace type: %s"
 msgstr "ukendt filsystemtype »%s«"
 
-#: sys-utils/lsns.c:710
+#: sys-utils/lsns.c:711
 #, fuzzy
 msgid "--task is mutually exclusive with <namespace>"
 msgstr "tilvalget --find og <enhed> udelukker hinanden"
 
-#: sys-utils/lsns.c:711
+#: sys-utils/lsns.c:712
 #, fuzzy
 msgid "invalid namespace argument"
 msgstr "ugyldig pauseparameter"
 
-#: sys-utils/lsns.c:749
+#: sys-utils/lsns.c:750
 #, c-format
 msgid "not found namespace: %ju"
 msgstr ""
 
-#: sys-utils/mount.c:66 sys-utils/umount.c:118
+#: sys-utils/mount.c:66 sys-utils/umount.c:117
 #, c-format
 msgid "only root can use \"--%s\" option (effective UID is %u)"
 msgstr "kun root kan bruge tilvalget »--%s« (effektiv UID er %u)"
 
-#: sys-utils/mount.c:69 sys-utils/umount.c:121
+#: sys-utils/mount.c:69 sys-utils/umount.c:120
 #, c-format
 msgid "only root can do that (effective UID is %u)"
 msgstr "dette kan kun root gøre (effektiv UID er %u)"
 
-#: sys-utils/mount.c:73 sys-utils/umount.c:125
+#: sys-utils/mount.c:73 sys-utils/umount.c:124
 #, c-format
 msgid "only root can use \"--%s\" option"
 msgstr "kun root kan bruge tilvalget »--%s«"
 
-#: sys-utils/mount.c:74 sys-utils/umount.c:126
+#: sys-utils/mount.c:74 sys-utils/umount.c:125
 msgid "only root can do that"
 msgstr "dette kan kun root gøre"
 
-#: sys-utils/mount.c:85 sys-utils/umount.c:60
+#: sys-utils/mount.c:85 sys-utils/umount.c:59
 #, c-format
 msgid "%s from %s (libmount %s"
 msgstr "%s fra %s (libmount %s"
 
-#: sys-utils/mount.c:131
+#: sys-utils/mount.c:130
 msgid "failed to read mtab"
 msgstr "kunne ikke læse mtab"
 
-#: sys-utils/mount.c:193 sys-utils/umount.c:285
+#: sys-utils/mount.c:192 sys-utils/umount.c:284
 #, c-format
 msgid "%-25s: ignored\n"
 msgstr "%-25s: ignoreret\n"
 
-#: sys-utils/mount.c:194
+#: sys-utils/mount.c:193
 #, c-format
 msgid "%-25s: already mounted\n"
 msgstr "%-25s: allerede monteret\n"
 
-#: sys-utils/mount.c:250
+#: sys-utils/mount.c:249
 #, c-format
 msgid "%s: %s moved to %s.\n"
 msgstr "%s: %s flyttet til %s.\n"
 
-#: sys-utils/mount.c:252
+#: sys-utils/mount.c:251
 #, c-format
 msgid "%s: %s bound on %s.\n"
 msgstr "%s: %s bundet på %s.\n"
 
-#: sys-utils/mount.c:255 sys-utils/mount.c:259
+#: sys-utils/mount.c:254 sys-utils/mount.c:258
 #, c-format
 msgid "%s: %s mounted on %s.\n"
 msgstr "%s: %s monteret på %s.\n"
 
 # hmm.  Umuligt at vide om det er %s-propa....
-#: sys-utils/mount.c:257
+#: sys-utils/mount.c:256
 #, c-format
 msgid "%s: %s propagation flags changed.\n"
 msgstr "%s: %s-propagationsflag ændrede sig.\n"
 
-#: sys-utils/mount.c:311
+#: sys-utils/mount.c:310
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -14152,36 +14168,36 @@ msgstr ""
 "       til dette filsystem. For yderligere detaljer se restorecon(8) og\n"
 "       mount(8).\n"
 
-#: sys-utils/mount.c:379
+#: sys-utils/mount.c:378
 msgid "WARNING: failed to apply propagation flags"
 msgstr "ADVARSEL: kunne ikke anvende propagationsflag"
 
-#: sys-utils/mount.c:401
+#: sys-utils/mount.c:400
 #, c-format
 msgid "only root can mount %s on %s"
 msgstr "kun root (administrator) kan montere %s på %s"
 
-#: sys-utils/mount.c:404
+#: sys-utils/mount.c:403
 #, c-format
 msgid "%s is already mounted"
 msgstr "%s er allerede monteret"
 
-#: sys-utils/mount.c:408
+#: sys-utils/mount.c:407
 #, c-format
 msgid "can't find %s in %s"
 msgstr "kan ikke finde %s i %s"
 
-#: sys-utils/mount.c:415
+#: sys-utils/mount.c:414
 #, c-format
 msgid "can't find mountpoint %s in %s"
 msgstr "kan ikke finde monteringspunkt %s i %s"
 
-#: sys-utils/mount.c:418
+#: sys-utils/mount.c:417
 #, c-format
 msgid "can't find mount source %s in %s"
 msgstr "kan ikke finde monteringskilde %s i %s"
 
-#: sys-utils/mount.c:422
+#: sys-utils/mount.c:421
 #, c-format
 msgid ""
 "%s: more filesystems detected. This should not happen,\n"
@@ -14192,101 +14208,101 @@ msgstr ""
 "       brug -t <type> for specifikt at angive filsystemtype eller\n"
 "       brug wipefs(8) for at rydde enheden op."
 
-#: sys-utils/mount.c:428
+#: sys-utils/mount.c:427
 msgid "I could not determine the filesystem type, and none was specified"
 msgstr "Jeg kunne ikke bestemme filsystemtypen, og ingen var angivet"
 
-#: sys-utils/mount.c:431
+#: sys-utils/mount.c:430
 msgid "you must specify the filesystem type"
 msgstr "du skal angive filsystemtypen"
 
-#: sys-utils/mount.c:437
+#: sys-utils/mount.c:436
 #, c-format
 msgid "can't find %s"
 msgstr "kan ikke finde %s"
 
-#: sys-utils/mount.c:439
+#: sys-utils/mount.c:438
 msgid "mount source not defined"
 msgstr "monteringskilde er ikke defineret"
 
-#: sys-utils/mount.c:443 sys-utils/mount.c:445
+#: sys-utils/mount.c:442 sys-utils/mount.c:444
 msgid "failed to parse mount options"
 msgstr "kunne ikke fortolke monteringsindstillinger"
 
-#: sys-utils/mount.c:448
+#: sys-utils/mount.c:447
 #, c-format
 msgid "%s: failed to setup loop device"
 msgstr "%s: klargøring af løkkeenhed mislykkedes"
 
-#: sys-utils/mount.c:451
+#: sys-utils/mount.c:450
 #, c-format
 msgid "%s: mount failed"
 msgstr "%s: montering mislykkedes"
 
-#: sys-utils/mount.c:461
+#: sys-utils/mount.c:460
 #, c-format
 msgid "%s: filesystem mounted, but mount(8) failed"
 msgstr "%s: filsystem monteret, men mount(8) mislykkedes"
 
-#: sys-utils/mount.c:478 sys-utils/mount.c:530
+#: sys-utils/mount.c:477 sys-utils/mount.c:529
 #, c-format
 msgid "mount point %s is not a directory"
 msgstr "monteringspunkt %s er ikke en mappe"
 
-#: sys-utils/mount.c:482
+#: sys-utils/mount.c:481
 msgid "must be superuser to use mount"
 msgstr "skal være superbruger for at bruge mount"
 
-#: sys-utils/mount.c:490
+#: sys-utils/mount.c:489
 #, c-format
 msgid "%s is busy"
 msgstr "%s er optaget"
 
-#: sys-utils/mount.c:494
+#: sys-utils/mount.c:493
 #, c-format
 msgid "%s is already mounted or %s busy"
 msgstr "%s er allerede monteret eller %s optaget"
 
-#: sys-utils/mount.c:506
+#: sys-utils/mount.c:505
 #, c-format
 msgid "       %s is already mounted on %s\n"
 msgstr "       %s er allerede monteret som %s\n"
 
-#: sys-utils/mount.c:514
+#: sys-utils/mount.c:513
 #, c-format
 msgid "mount point %s does not exist"
 msgstr "monteringspunkt %s findes ikke"
 
-#: sys-utils/mount.c:516
+#: sys-utils/mount.c:515
 #, c-format
 msgid "mount point %s is a symbolic link to nowhere"
 msgstr "monteringspunkt %s er en symbolsk henvisning ud i ingenting"
 
-#: sys-utils/mount.c:521
+#: sys-utils/mount.c:520
 #, c-format
 msgid "special device %s does not exist"
 msgstr "specielenhed %s findes ikke"
 
-#: sys-utils/mount.c:524 sys-utils/mount.c:539
+#: sys-utils/mount.c:523 sys-utils/mount.c:538
 msgid "mount(2) failed"
 msgstr "mount(2) mislykkedes"
 
-#: sys-utils/mount.c:535
+#: sys-utils/mount.c:534
 #, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr "specielenhed %s findes ikke (et stipræfiks er ikke en mappe)"
 
-#: sys-utils/mount.c:545
+#: sys-utils/mount.c:544
 #, c-format
 msgid "%s not mounted or bad option"
 msgstr "%s er ikke monteret, eller forkert tilvalg"
 
-#: sys-utils/mount.c:547
+#: sys-utils/mount.c:546
 #, c-format
 msgid "%s is not mountpoint or bad option"
 msgstr "%s er ikke et monteringspunkt, eller forkert tilvalg"
 
-#: sys-utils/mount.c:549
+#: sys-utils/mount.c:548
 msgid ""
 "bad option. Note that moving a mount residing under a shared\n"
 "       mount is unsupported."
@@ -14294,7 +14310,7 @@ msgstr ""
 "Forkert tilvalg. Bemærk at flytning af en montering under en\n"
 "       delt montering ikke er understøttet."
 
-#: sys-utils/mount.c:552
+#: sys-utils/mount.c:551
 #, c-format
 msgid ""
 "wrong fs type, bad option, bad superblock on %s,\n"
@@ -14303,7 +14319,7 @@ msgstr ""
 "forkert filsystemtype, forkert tilvalg, ugyldig superblok på %s,\n"
 "       manglende tegnsæt, hjælpeprogram eller anden fejl"
 
-#: sys-utils/mount.c:558
+#: sys-utils/mount.c:557
 #, c-format
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
@@ -14312,7 +14328,7 @@ msgstr ""
 "       (for flere filsystemer (f.eks. nfs, cifs) skal du måske\n"
 "       bruge et /sbin/mount.<type>-hjælpeprogram)\n"
 
-#: sys-utils/mount.c:561
+#: sys-utils/mount.c:560
 #, c-format
 msgid ""
 "\n"
@@ -14323,30 +14339,30 @@ msgstr ""
 "       I nogle tilfælde vil du finde nyttige oplysninger i systemlogggen\n"
 "       - prøv dmesg | tail  eller lignende.\n"
 
-#: sys-utils/mount.c:567
+#: sys-utils/mount.c:566
 msgid "mount table full"
 msgstr "monteringstabellen er fuld"
 
-#: sys-utils/mount.c:571
+#: sys-utils/mount.c:570
 #, c-format
 msgid "%s: can't read superblock"
 msgstr "%s: kan ikke læse superblokken"
 
-#: sys-utils/mount.c:576
+#: sys-utils/mount.c:575
 #, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "ukendt filsystemtype »%s«"
 
-#: sys-utils/mount.c:578
+#: sys-utils/mount.c:577
 msgid "unknown filesystem type"
 msgstr "ukendt filsystemtype"
 
-#: sys-utils/mount.c:586
+#: sys-utils/mount.c:585
 #, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "%s er ikke en blokenhed, og stat(2) fejler?"
 
-#: sys-utils/mount.c:588
+#: sys-utils/mount.c:587
 #, c-format
 msgid ""
 "the kernel does not recognize %s as a block device\n"
@@ -14355,68 +14371,68 @@ msgstr ""
 "kernen genkender ikke %s som en blokenhed\n"
 "       (måske »modprobe driver«?)"
 
-#: sys-utils/mount.c:591
+#: sys-utils/mount.c:590
 #, c-format
 msgid "%s is not a block device (maybe try `-o loop'?)"
 msgstr "%s er ikke en blokenhed (brug eventuelt »-o loop«?)"
 
-#: sys-utils/mount.c:593
+#: sys-utils/mount.c:592
 #, c-format
 msgid " %s is not a block device"
 msgstr " %s er ikke en blokenhed"
 
-#: sys-utils/mount.c:600
+#: sys-utils/mount.c:599
 #, c-format
 msgid "%s is not a valid block device"
 msgstr " %s er ikke en gyldig blokenhed"
 
-#: sys-utils/mount.c:606
+#: sys-utils/mount.c:605
 #, c-format
 msgid "cannot mount %s read-only"
 msgstr "kan ikke montere %s skrivebeskyttet"
 
-#: sys-utils/mount.c:609
+#: sys-utils/mount.c:608
 #, c-format
 msgid "%s is write-protected but explicit `-w' flag given"
 msgstr "%s er skrivebeskyttet, men eksplicit flag -w er angivet"
 
-#: sys-utils/mount.c:612
+#: sys-utils/mount.c:611
 #, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "kan ikke montere %s læs/skriv igen, er skrivebeskyttet"
 
-#: sys-utils/mount.c:615 sys-utils/mount.c:638 sys-utils/unshare.c:187
+#: sys-utils/mount.c:614 sys-utils/mount.c:637 sys-utils/unshare.c:188
 #, c-format
 msgid "mount %s on %s failed"
 msgstr "montering %s på %s mislykkedes"
 
 # hvad er forskel på engelsk write-protected og read-only
-#: sys-utils/mount.c:618
+#: sys-utils/mount.c:617
 #, c-format
 msgid "%s is write-protected, mounting read-only"
 msgstr "%s er skrivebeskyttet, monterer skrivebeskyttet"
 
-#: sys-utils/mount.c:634
+#: sys-utils/mount.c:633
 #, c-format
 msgid "no medium found on %s"
 msgstr "intet medie fundet på %s"
 
-#: sys-utils/mount.c:662
+#: sys-utils/mount.c:661
 #, c-format
 msgid "%s: failed to parse"
 msgstr "%s: Kunne ikke fortolke"
 
-#: sys-utils/mount.c:701
+#: sys-utils/mount.c:700
 #, c-format
 msgid "unsupported option format: %s"
 msgstr "ikke understøttet tilvalgsformat: %s"
 
-#: sys-utils/mount.c:703
+#: sys-utils/mount.c:702
 #, c-format
 msgid "failed to append option '%s'"
 msgstr "kunne ikke tilføje tilvalg »%s«"
 
-#: sys-utils/mount.c:720
+#: sys-utils/mount.c:719
 #, c-format
 msgid ""
 " %1$s [-lhV]\n"
@@ -14431,11 +14447,11 @@ msgstr ""
 " %1$s [tilvalg] <kilde> <mappe>\n"
 " %1$s <operation> <monteringspunkt> [<mål>]\n"
 
-#: sys-utils/mount.c:728
+#: sys-utils/mount.c:727
 msgid "Mount a filesystem.\n"
 msgstr "Monter et filsystem.\n"
 
-#: sys-utils/mount.c:732
+#: sys-utils/mount.c:731
 #, c-format
 msgid ""
 " -a, --all               mount all filesystems mentioned in fstab\n"
@@ -14450,22 +14466,22 @@ msgstr ""
 " -F, --fork              forgren hver enhed (brug med -a)\n"
 " -T, --fstab <sti>       alternativ fil til /etc/fstab\n"
 
-#: sys-utils/mount.c:738
+#: sys-utils/mount.c:737
 #, fuzzy, c-format
 msgid " -i, --internal-only     don't call the mount.<type> helpers\n"
 msgstr " -i, --internal-only     kald ikke umount.<type>-hjælpeprogrammerne\n"
 
-#: sys-utils/mount.c:740
+#: sys-utils/mount.c:739
 #, fuzzy, c-format
 msgid " -l, --show-labels       show also filesystem labels\n"
 msgstr " -b, --bytes       vis størrelser i byte\n"
 
-#: sys-utils/mount.c:742 sys-utils/umount.c:93
+#: sys-utils/mount.c:741 sys-utils/umount.c:92
 #, c-format
 msgid " -n, --no-mtab           don't write to /etc/mtab\n"
 msgstr " -n, --no-mtab           skriv ikke til /etc/mtab\n"
 
-#: sys-utils/mount.c:744
+#: sys-utils/mount.c:743
 #, c-format
 msgid ""
 " -o, --options <list>    comma-separated list of mount options\n"
@@ -14478,7 +14494,7 @@ msgstr ""
 " -r, --read-only         monter filsystemet skrivebeskyttet (det samme som -o ro)\n"
 " -t, --types <liste>     begræns sættet af filsystemtyper\n"
 
-#: sys-utils/mount.c:749
+#: sys-utils/mount.c:748
 #, c-format
 msgid ""
 "     --source <src>      explicitly specifies source (path, label, uuid)\n"
@@ -14487,17 +14503,17 @@ msgstr ""
 "     --source <src>      specificerer eksplicit kilde (sti, etiket, uuid)\n"
 "     --target <mål>      specificerer eksplicit monteringspunkt\n"
 
-#: sys-utils/mount.c:752 sys-utils/umount.c:99
+#: sys-utils/mount.c:751 sys-utils/umount.c:98
 #, c-format
 msgid " -v, --verbose           say what is being done\n"
 msgstr " -v, --verbose           vis hvad der sker\n"
 
-#: sys-utils/mount.c:754
+#: sys-utils/mount.c:753
 #, c-format
 msgid " -w, --rw, --read-write  mount the filesystem read-write (default)\n"
 msgstr ""
 
-#: sys-utils/mount.c:761
+#: sys-utils/mount.c:760
 #, c-format
 msgid ""
 "\n"
@@ -14518,7 +14534,7 @@ msgstr ""
 " PARTLABEL=<etiket>      specificerer enhed efter partitionsetikel\n"
 " PARTUUID=<uuid>         specificerer enhed efter partitions-UUID\n"
 
-#: sys-utils/mount.c:770
+#: sys-utils/mount.c:769
 #, c-format
 msgid ""
 " <device>                specifies device by path\n"
@@ -14529,7 +14545,7 @@ msgstr ""
 " <mappe>                 monteringspunkt for bind-monteringer (se --bind/rbind)\n"
 " <fil>                   normal fil for loopdev-opsætning\n"
 
-#: sys-utils/mount.c:775
+#: sys-utils/mount.c:774
 #, c-format
 msgid ""
 "\n"
@@ -14544,7 +14560,7 @@ msgstr ""
 " -M, --move              flyt til et undertræ et andet sted\n"
 " -R, --rbind             monter et undertræ og alle undermonteringer et andet sted\n"
 
-#: sys-utils/mount.c:780
+#: sys-utils/mount.c:779
 #, c-format
 msgid ""
 " --make-shared           mark a subtree as shared\n"
@@ -14557,7 +14573,7 @@ msgstr ""
 " --make-private          marker et undertræ som privat\n"
 " --make-unbindable       marker et undertræ som om det ikke kan bindes\n"
 
-#: sys-utils/mount.c:785
+#: sys-utils/mount.c:784
 #, c-format
 msgid ""
 " --make-rshared          recursively mark a whole subtree as shared\n"
@@ -14570,15 +14586,15 @@ msgstr ""
 " --make-rprivate         rekursivt marker et helt undertræ som privat\n"
 " --make-runbindable      rekursivt marker et helt undertræ som om det ikke kan bindes\n"
 
-#: sys-utils/mount.c:871 sys-utils/umount.c:549
+#: sys-utils/mount.c:870 sys-utils/umount.c:548
 msgid "libmount context allocation failed"
 msgstr "kontekstallokering for libmount mislykkedes"
 
-#: sys-utils/mount.c:928 sys-utils/umount.c:602
+#: sys-utils/mount.c:927 sys-utils/umount.c:601
 msgid "failed to set options pattern"
 msgstr "kunne ikke angive tilvalgsmønster"
 
-#: sys-utils/mount.c:1081
+#: sys-utils/mount.c:1080
 msgid "source specified more than once"
 msgstr "kilde specificeret mere end en gang"
 
@@ -14615,120 +14631,125 @@ msgstr "%s: er ikke et monteringspunkt\n"
 msgid "%s is a mountpoint\n"
 msgstr "%s er et monteringspunkt\n"
 
-#: sys-utils/nsenter.c:69 sys-utils/setpriv.c:93 sys-utils/unshare.c:245
+#: sys-utils/nsenter.c:70 sys-utils/setpriv.c:93 sys-utils/unshare.c:246
 #, c-format
 msgid " %s [options] <program> [<argument>...]\n"
 msgstr " %s [tilvalg] <program> [<parametre> ...]\n"
 
-#: sys-utils/nsenter.c:73
+#: sys-utils/nsenter.c:74
 msgid "Run a program with namespaces of other processes.\n"
 msgstr "Kør et program med navnerum for andre processer.\n"
 
-#: sys-utils/nsenter.c:76
+#: sys-utils/nsenter.c:77
 msgid " -t, --target <pid>     target process to get namespaces from\n"
 msgstr " -t, --target <pid>     målproces at hente navnerum fra\n"
 
-#: sys-utils/nsenter.c:77
+#: sys-utils/nsenter.c:78
 msgid " -m, --mount[=<file>]   enter mount namespace\n"
 msgstr " -m, --mount [=<fil>]   gå i monteringsnavnerum\n"
 
-#: sys-utils/nsenter.c:78
+#: sys-utils/nsenter.c:79
 msgid " -u, --uts[=<file>]     enter UTS namespace (hostname etc)\n"
 msgstr " -u, --uts[=<fil>]      gå i UTS-navnerum (værtsnavn etc)\n"
 
-#: sys-utils/nsenter.c:79
+#: sys-utils/nsenter.c:80
 msgid " -i, --ipc[=<file>]     enter System V IPC namespace\n"
 msgstr " -i, --ipc[=<fil>]      gå i System V IPC-navnerum\n"
 
-#: sys-utils/nsenter.c:80
+#: sys-utils/nsenter.c:81
 msgid " -n, --net[=<file>]     enter network namespace\n"
 msgstr " -n, --net[=<fil>]      gå i netværksnavnerum\n"
 
-#: sys-utils/nsenter.c:81
+#: sys-utils/nsenter.c:82
 msgid " -p, --pid[=<file>]     enter pid namespace\n"
 msgstr " -p, --pid[=<fil>]      gå i pid-navnerum\n"
 
-#: sys-utils/nsenter.c:82
+#: sys-utils/nsenter.c:83
+#, fuzzy
+msgid " -C, --cgroup[=<file>]  enter cgroup namespace\n"
+msgstr " -m, --mount [=<fil>]   gå i monteringsnavnerum\n"
+
+#: sys-utils/nsenter.c:84
 msgid " -U, --user[=<file>]    enter user namespace\n"
 msgstr " -U, --user[=<fil>]     gå i brugernavnerum\n"
 
-#: sys-utils/nsenter.c:83
+#: sys-utils/nsenter.c:85
 msgid " -S, --setuid <uid>     set uid in entered namespace\n"
 msgstr " -S, --setuid <uid>     angiv uid i indtastet navnerum\n"
 
-#: sys-utils/nsenter.c:84
+#: sys-utils/nsenter.c:86
 msgid " -G, --setgid <gid>     set gid in entered namespace\n"
 msgstr " -G, --setgid <gid>     angiv gid i indtastet navnerum\n"
 
-#: sys-utils/nsenter.c:85
+#: sys-utils/nsenter.c:87
 msgid "     --preserve-credentials do not touch uids or gids\n"
 msgstr "     --preserve-credentials rører ikke uid'er eller gid'er\n"
 
-#: sys-utils/nsenter.c:86
+#: sys-utils/nsenter.c:88
 msgid " -r, --root[=<dir>]     set the root directory\n"
 msgstr " -r, --root[=<mappe>]   angiv rodmappen\n"
 
-#: sys-utils/nsenter.c:87
+#: sys-utils/nsenter.c:89
 msgid " -w, --wd[=<dir>]       set the working directory\n"
 msgstr " -w, --wd[=<mappe>]     angiv arbejdsmappen\n"
 
-#: sys-utils/nsenter.c:88
+#: sys-utils/nsenter.c:90
 msgid " -F, --no-fork          do not fork before exec'ing <program>\n"
 msgstr " -F, --no-fork          forgren ikke før kørsel af <program>\n"
 
-#: sys-utils/nsenter.c:90
+#: sys-utils/nsenter.c:92
 msgid " -Z, --follow-context   set SELinux context according to --target PID\n"
 msgstr ""
 
-#: sys-utils/nsenter.c:116
+#: sys-utils/nsenter.c:118
 #, c-format
 msgid "neither filename nor target pid supplied for %s"
 msgstr "hverken filnavn eller mål-pid angivet for %s"
 
-#: sys-utils/nsenter.c:266
+#: sys-utils/nsenter.c:275
 msgid "failed to parse uid"
 msgstr "kunne ikke fortolke uid"
 
-#: sys-utils/nsenter.c:270
+#: sys-utils/nsenter.c:279
 msgid "failed to parse gid"
 msgstr "kunne ikke fortolke gid"
 
-#: sys-utils/nsenter.c:306
+#: sys-utils/nsenter.c:315
 msgid "no target PID specified for --follow-context"
 msgstr ""
 
-#: sys-utils/nsenter.c:308
+#: sys-utils/nsenter.c:317
 #, fuzzy, c-format
 msgid "failed to get %d SELinux context"
 msgstr "kunne ikke oprette ny selinuxkontekst"
 
-#: sys-utils/nsenter.c:311
+#: sys-utils/nsenter.c:320
 #, fuzzy, c-format
 msgid "failed to set exec context to '%s'"
 msgstr "kunne ikke angive personlighed som %s"
 
-#: sys-utils/nsenter.c:356
+#: sys-utils/nsenter.c:365
 #, c-format
 msgid "reassociate to namespace '%s' failed"
 msgstr "genassociering til navnerum »%s« mislykkedes"
 
-#: sys-utils/nsenter.c:367
+#: sys-utils/nsenter.c:376
 msgid "cannot open current working directory"
 msgstr "kan ikke åbne nuværende arbejdsmappe"
 
-#: sys-utils/nsenter.c:374
+#: sys-utils/nsenter.c:383
 msgid "change directory by root file descriptor failed"
 msgstr "ændring af mappe med rodfilbeskriver mislykkedes"
 
-#: sys-utils/nsenter.c:377
+#: sys-utils/nsenter.c:386
 msgid "chroot failed"
 msgstr "chroot mislykkedes"
 
-#: sys-utils/nsenter.c:387
+#: sys-utils/nsenter.c:396
 msgid "change directory by working directory file descriptor failed"
 msgstr "ændring af mappe med arbejdsmappefilbeskriver mislykkedes"
 
-#: sys-utils/nsenter.c:398 sys-utils/setpriv.c:816 sys-utils/setpriv.c:820
+#: sys-utils/nsenter.c:407 sys-utils/setpriv.c:816 sys-utils/setpriv.c:820
 msgid "setgroups failed"
 msgstr "setgroups mislykkedes"
 
@@ -15470,6 +15491,11 @@ msgstr "ingen arkitekturparamter angivet"
 msgid "failed to set personality to %s"
 msgstr "kunne ikke angive personlighed som %s"
 
+#: sys-utils/setarch.c:395
+#, fuzzy, c-format
+msgid "Execute command `%s'.\n"
+msgstr "Udfører kommandoen date: %s\n"
+
 #: sys-utils/setpriv.c:97
 msgid "Run a program with different privilege settings.\n"
 msgstr "Kør et program med forskellige privilegieindstillinger.\n"
@@ -15872,7 +15898,7 @@ msgstr "Ikke superbruger."
 msgid "%s: swapoff failed"
 msgstr "%s: swapoff mislykkedes"
 
-#: sys-utils/swapoff.c:119 sys-utils/swapon.c:728
+#: sys-utils/swapoff.c:119 sys-utils/swapon.c:787
 #, c-format
 msgid " %s [options] [<spec>]\n"
 msgstr " %s [tilvalg] [<spec>]\n"
@@ -15937,150 +15963,159 @@ msgstr "swap-uuid"
 msgid "swap label"
 msgstr "swapetiket"
 
-#: sys-utils/swapon.c:235
+#: sys-utils/swapon.c:246
 #, c-format
 msgid "%s\t\t\t\tType\t\tSize\tUsed\tPriority\n"
 msgstr "%s\t\t\t\tType\t\tStr.\tBrugt\tPrioritet\n"
 
-#: sys-utils/swapon.c:235
+#: sys-utils/swapon.c:246
 msgid "Filename"
 msgstr "Filnavn"
 
-#: sys-utils/swapon.c:298
+#: sys-utils/swapon.c:312
 #, c-format
 msgid "%s: reinitializing the swap."
 msgstr "%s: Geninitialiserer swappen."
 
-#: sys-utils/swapon.c:357
+#: sys-utils/swapon.c:376
 #, c-format
 msgid "%s: lseek failed"
 msgstr "%s: lseek mislykkedes"
 
-#: sys-utils/swapon.c:363
+#: sys-utils/swapon.c:382
 #, c-format
 msgid "%s: write signature failed"
 msgstr "%s: skrivningssignatur mislykkedes"
 
-#: sys-utils/swapon.c:446
-#, c-format
-msgid "%s: found swap signature: version %ud, page-size %d, %s byte order"
-msgstr "%s: fandt swapsignatur: version %ud, sidestørrelse %d, %s byterækkefølge"
-
-#: sys-utils/swapon.c:451
-msgid "different"
-msgstr "forskellig"
-
-#: sys-utils/swapon.c:451
-msgid "same"
-msgstr "ens"
-
-#: sys-utils/swapon.c:510
+#: sys-utils/swapon.c:536
 #, c-format
 msgid "%s: skipping - it appears to have holes."
 msgstr "%s: springer over - den lader til at være fragmenteret."
 
 # Hent størrelse mislykkedes
-#: sys-utils/swapon.c:518
+#: sys-utils/swapon.c:544
 #, c-format
 msgid "%s: get size failed"
 msgstr "%s: Kunne ikke finde størrelse"
 
-#: sys-utils/swapon.c:524
+#: sys-utils/swapon.c:550
 #, c-format
 msgid "%s: read swap header failed"
 msgstr "%s: Læsning af swaphoved mislykkedes"
 
+#: sys-utils/swapon.c:555
+#, fuzzy, c-format
+msgid "%s: found signature [pagesize=%d, signature=%s]"
+msgstr "%s: fandt swapsignatur: version %ud, sidestørrelse %d, %s byterækkefølge"
+
 # uhh forsigtig her, det der kunne godt være noget som er en del af en
 # syntaks. Jeg tror det dog ikke, men det ville være meget rart at være
 # sikker.
-#: sys-utils/swapon.c:534
+#: sys-utils/swapon.c:566
 #, c-format
 msgid "%s: pagesize=%d, swapsize=%llu, devsize=%llu"
 msgstr "%s: sidestørrelse=%d, swapstørrelse=%llu, enhedsstørrelse=%llu"
 
-#: sys-utils/swapon.c:539
+#: sys-utils/swapon.c:571
 #, c-format
 msgid "%s: last_page 0x%08llx is larger than actual size of swapspace"
 msgstr "%s: sidste_side 0x%08llx er større end aktuel størrelse på swapplads"
 
-#: sys-utils/swapon.c:548
+#: sys-utils/swapon.c:581
 #, c-format
 msgid "%s: swap format pagesize does not match."
 msgstr "%s: swapformatets sidestørrelse er ikke ens."
 
-#: sys-utils/swapon.c:554
+#: sys-utils/swapon.c:587
 #, c-format
 msgid "%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
 msgstr "%s: swapformatets sidestørrelse er ikke ens. (Brug --fixpgsz til at geninitialisere den.)"
 
-#: sys-utils/swapon.c:563
+#: sys-utils/swapon.c:596
 #, c-format
 msgid "%s: software suspend data detected. Rewriting the swap signature."
 msgstr "%s: Hviledata for software detekteret. Genskriver swapsignaturen."
 
-#: sys-utils/swapon.c:589
+#: sys-utils/swapon.c:666
 #, c-format
 msgid "swapon %s\n"
 msgstr "swapon %s\n"
 
-#: sys-utils/swapon.c:629
+#: sys-utils/swapon.c:670
 #, c-format
 msgid "%s: swapon failed"
 msgstr "%s: swapon mislykkedes"
 
-#: sys-utils/swapon.c:731
+# evt. "i linje "
+#: sys-utils/swapon.c:742
+#, fuzzy, c-format
+msgid "%s: noauto option -- ignored"
+msgstr "%s: fortolk fejl på linje %d - ignorer"
+
+# evt. "i linje "
+#: sys-utils/swapon.c:764
+#, fuzzy, c-format
+msgid "%s: already active -- ignored"
+msgstr "%s: fortolk fejl på linje %d - ignorer"
+
+#: sys-utils/swapon.c:770
+#, fuzzy, c-format
+msgid "%s: unaccessible -- ignored"
+msgstr "%s: kunne ikke skrive inoder"
+
+#: sys-utils/swapon.c:790
 msgid "Enable devices and files for paging and swapping.\n"
 msgstr "Aktiver enheder og filer for tekstvisning og swapping.\n"
 
-#: sys-utils/swapon.c:734
+#: sys-utils/swapon.c:793
 msgid " -a, --all                enable all swaps from /etc/fstab\n"
 msgstr " -a, --all                aktiver alle swap fra /etc/fstab\n"
 
-#: sys-utils/swapon.c:735
+#: sys-utils/swapon.c:794
 msgid " -d, --discard[=<policy>] enable swap discards, if supported by device\n"
 msgstr " -d, --discard[=<politik>] aktiver swap-fjernelser, hvis understøttet af enhed\n"
 
-#: sys-utils/swapon.c:736
+#: sys-utils/swapon.c:795
 msgid " -e, --ifexists           silently skip devices that do not exist\n"
 msgstr " -e, --ifexists           udelad i stilhed enheder som ikke findes\n"
 
-#: sys-utils/swapon.c:737
+#: sys-utils/swapon.c:796
 msgid " -f, --fixpgsz            reinitialize the swap space if necessary\n"
 msgstr " -f, --fixpgsz            geninitialiser swapområdet om nødvendigt\n"
 
-#: sys-utils/swapon.c:738
+#: sys-utils/swapon.c:797
 msgid " -o, --options <list>     comma-separated list of swap options\n"
 msgstr " -o, --options <liste>    kommaadskilt liste over swapindstillinger\n"
 
-#: sys-utils/swapon.c:739
+#: sys-utils/swapon.c:798
 msgid " -p, --priority <prio>    specify the priority of the swap device\n"
 msgstr " -p, --priority <prio>    specificer prioriteten for swapenheden\n"
 
-#: sys-utils/swapon.c:740
+#: sys-utils/swapon.c:799
 msgid " -s, --summary            display summary about used swap devices (DEPRECATED)\n"
 msgstr " -s, --summary            vis referat om anvendte swapenheder (FORÆLDET)\n"
 
-#: sys-utils/swapon.c:741
+#: sys-utils/swapon.c:800
 msgid "     --show[=<columns>]   display summary in definable table\n"
 msgstr "     --show[=<kolonner>]  vis refereat i definerbar tabel\n"
 
-#: sys-utils/swapon.c:742
+#: sys-utils/swapon.c:801
 msgid "     --noheadings         don't print table heading (with --show)\n"
 msgstr "     --noheadings         vis ikke tabeloverskrifter (med --show)\n"
 
-#: sys-utils/swapon.c:743
+#: sys-utils/swapon.c:802
 msgid "     --raw                use the raw output format (with --show)\n"
 msgstr "     --raw                brug rå uddataformat (med --show)\n"
 
-#: sys-utils/swapon.c:744
+#: sys-utils/swapon.c:803
 msgid "     --bytes              display swap size in bytes in --show output\n"
 msgstr "     --bytes              vis swapstørrelse i byte i --show-uddata\n"
 
-#: sys-utils/swapon.c:745
+#: sys-utils/swapon.c:804
 msgid " -v, --verbose            verbose mode\n"
 msgstr " -v, --verbose            uddybende tilstand\n"
 
-#: sys-utils/swapon.c:751
+#: sys-utils/swapon.c:810
 msgid ""
 "\n"
 "The <spec> parameter:\n"
@@ -16104,7 +16139,7 @@ msgstr ""
 " <enhed>                navn på enhed der skal bruges\n"
 " <fil>                  navn på fil der skal bruges\n"
 
-#: sys-utils/swapon.c:761
+#: sys-utils/swapon.c:820
 msgid ""
 "\n"
 "Available discard policy types (for --discard):\n"
@@ -16118,7 +16153,7 @@ msgstr ""
 " pages   : freed-sider kasseret før de genbruges\n"
 "Hvis ingen politik er valgt, er begge kasseringstyper aktiveret (standard).\n"
 
-#: sys-utils/swapon.c:766
+#: sys-utils/swapon.c:825
 msgid ""
 "\n"
 "Available columns (for --show):\n"
@@ -16126,17 +16161,17 @@ msgstr ""
 "\n"
 "Tilgængelige kolonner (for --show):\n"
 
-#: sys-utils/swapon.c:840
+#: sys-utils/swapon.c:903
 msgid "failed to parse priority"
 msgstr "kunne ikke fortolke prioritet"
 
 # evt. fjernelsespolitik. Ellers misforstås det nok (fjern-politik var den før)
-#: sys-utils/swapon.c:859
+#: sys-utils/swapon.c:922
 #, c-format
 msgid "unsupported discard policy: %s"
 msgstr "ikke understøttet fjernelsespolitik: %s"
 
-#: sys-utils/swapon-common.c:74
+#: sys-utils/swapon-common.c:73
 #, c-format
 msgid "cannot find the device for %s"
 msgstr "kan ikke finde enheden for %s"
@@ -16317,7 +16352,7 @@ msgstr "%s bruger IRQ %d\n"
 msgid "%s using polling\n"
 msgstr "%s bruger overvågning (polling)\n"
 
-#: sys-utils/umount.c:76
+#: sys-utils/umount.c:75
 #, c-format
 msgid ""
 " %1$s [-hV]\n"
@@ -16328,15 +16363,15 @@ msgstr ""
 " %1$s -a [tilvalg]\n"
 " %1$s [tilvalg] <kilde> | <mappe>\n"
 
-#: sys-utils/umount.c:82
+#: sys-utils/umount.c:81
 msgid "Unmount filesystems.\n"
 msgstr "Afmonter filsystemer.\n"
 
-#: sys-utils/umount.c:85
+#: sys-utils/umount.c:84
 msgid " -a, --all               unmount all filesystems\n"
 msgstr " -a, --all               afmonter alle filsystemer\n"
 
-#: sys-utils/umount.c:86
+#: sys-utils/umount.c:85
 msgid ""
 " -A, --all-targets       unmount all mountpoints for the given device in the\n"
 "                           current namespace\n"
@@ -16344,77 +16379,77 @@ msgstr ""
 " -A, --all-targets       afmonter alle monteringspunkter for den angivne enhed\n"
 "                           i det nuværende navnerum\n"
 
-#: sys-utils/umount.c:88
+#: sys-utils/umount.c:87
 msgid " -c, --no-canonicalize   don't canonicalize paths\n"
 msgstr " -c, --no-canonicalize   kanoniser ikke stier\n"
 
-#: sys-utils/umount.c:89
+#: sys-utils/umount.c:88
 msgid " -d, --detach-loop       if mounted loop device, also free this loop device\n"
 msgstr " -d, --detach-loop       hvis monteret loopenhed, så befri også denne loopenhed\n"
 
-#: sys-utils/umount.c:90
+#: sys-utils/umount.c:89
 msgid "     --fake              dry run; skip the umount(2) syscall\n"
 msgstr "     --fake              tør-kørsel; udelad systemkaldet umount(2)\n"
 
-#: sys-utils/umount.c:91
+#: sys-utils/umount.c:90
 msgid " -f, --force             force unmount (in case of an unreachable NFS system)\n"
 msgstr " -f, --force             fremtving afmontering (i tilfælde af et NFT-system, der ikke kan nås)\n"
 
-#: sys-utils/umount.c:92
+#: sys-utils/umount.c:91
 msgid " -i, --internal-only     don't call the umount.<type> helpers\n"
 msgstr " -i, --internal-only     kald ikke umount.<type>-hjælpeprogrammerne\n"
 
-#: sys-utils/umount.c:94
+#: sys-utils/umount.c:93
 msgid " -l, --lazy              detach the filesystem now, clean up things later\n"
 msgstr " -l, --lazy              afkobl filsystemet nu, ryd op senere\n"
 
-#: sys-utils/umount.c:95
+#: sys-utils/umount.c:94
 msgid " -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"
 msgstr " -O, --test-opts <liste> begræns sættet af filsystemer (brug med -a)\n"
 
-#: sys-utils/umount.c:96
+#: sys-utils/umount.c:95
 msgid " -R, --recursive         recursively unmount a target with all its children\n"
 msgstr " -R, --recursive         afmonter rekursivt et mål med alle undermål\n"
 
-#: sys-utils/umount.c:97
+#: sys-utils/umount.c:96
 msgid " -r, --read-only         in case unmounting fails, try to remount read-only\n"
 msgstr " -r, --read-only         i tilfælde af at afmontering mislykkedes, forsøg så at genmontere skrivebeskyttet\n"
 
-#: sys-utils/umount.c:98
+#: sys-utils/umount.c:97
 msgid " -t, --types <list>      limit the set of filesystem types\n"
 msgstr " -t, --types <liste>     begræns sættet af filsystemtyper\n"
 
-#: sys-utils/umount.c:143
+#: sys-utils/umount.c:142
 #, c-format
 msgid "%s (%s) unmounted"
 msgstr "%s (%s) afmonteret"
 
-#: sys-utils/umount.c:145
+#: sys-utils/umount.c:144
 #, c-format
 msgid "%s unmounted"
 msgstr "%s afmonteret"
 
-#: sys-utils/umount.c:210
+#: sys-utils/umount.c:209
 #, c-format
 msgid "%s: umount failed"
 msgstr "%s: umount mislykkedes"
 
-#: sys-utils/umount.c:219
+#: sys-utils/umount.c:218
 #, c-format
 msgid "%s: filesystem was unmounted, but mount(8) failed"
 msgstr "%s: filsystem blev afmonteret, men mount(8) mislykkedes"
 
-#: sys-utils/umount.c:233
+#: sys-utils/umount.c:232
 #, c-format
 msgid "%s: invalid block device"
 msgstr "%s: ugyldig blokenhed"
 
-#: sys-utils/umount.c:239
+#: sys-utils/umount.c:238
 #, c-format
 msgid "%s: can't write superblock"
 msgstr "%s: kan ikke skrive superblok"
 
-#: sys-utils/umount.c:242
+#: sys-utils/umount.c:241
 #, c-format
 msgid ""
 "%s: target is busy\n"
@@ -16425,156 +16460,161 @@ msgstr ""
 "        (I nogle tilfælde kan brugbar information om processer,\n"
 "        som bruger enheden findes af lsof(8) eller fuser(1))"
 
-#: sys-utils/umount.c:249
+#: sys-utils/umount.c:248
 #, c-format
 msgid "%s: mountpoint not found"
 msgstr "%s: monteringspunkt blev ikke fundet"
 
-#: sys-utils/umount.c:251
+#: sys-utils/umount.c:250
 msgid "undefined mountpoint"
 msgstr "udefineret monteringspunkt"
 
-#: sys-utils/umount.c:254
+#: sys-utils/umount.c:253
 #, c-format
 msgid "%s: must be superuser to unmount"
 msgstr "%s: skal være superbruger for at afmontere"
 
-#: sys-utils/umount.c:257
+#: sys-utils/umount.c:256
 #, c-format
 msgid "%s: block devices are not permitted on filesystem"
 msgstr "%s: blokenheder tillades ikke på dette filsystem"
 
-#: sys-utils/umount.c:308
+#: sys-utils/umount.c:307
 msgid "failed to set umount target"
 msgstr "kunne ikke angive umount-mål"
 
-#: sys-utils/umount.c:324
+#: sys-utils/umount.c:323
 msgid "libmount table allocation failed"
 msgstr "libmount-tabelallokering mislykkedes"
 
-#: sys-utils/umount.c:367 sys-utils/umount.c:447
+#: sys-utils/umount.c:366 sys-utils/umount.c:446
 msgid "libmount iterator allocation failed"
 msgstr "libmount-iteratorallokering mislykkedes"
 
-#: sys-utils/umount.c:373
+#: sys-utils/umount.c:372
 #, c-format
 msgid "failed to get child fs of %s"
 msgstr "kunne ikke indhente underfilsystem for %s"
 
-#: sys-utils/umount.c:411 sys-utils/umount.c:434
+#: sys-utils/umount.c:410 sys-utils/umount.c:433
 #, c-format
 msgid "%s: not found"
 msgstr "%s: ikke fundet"
 
-#: sys-utils/umount.c:441
+#: sys-utils/umount.c:440
 #, c-format
 msgid "%s: failed to determine source (--all-targets is unsupported on systems with regular mtab file)."
 msgstr "%s: kunne ikke bestemme kilde (--all-targets er ikke understøttet på systemer med normal mtab-fil)."
 
-#: sys-utils/unshare.c:88
+#: sys-utils/unshare.c:89
 #, c-format
 msgid "unsupported --setgroups argument '%s'"
 msgstr "ikke understøttet --setgroups-parameter »%s«"
 
-#: sys-utils/unshare.c:109 sys-utils/unshare.c:124
+#: sys-utils/unshare.c:110 sys-utils/unshare.c:125
 #, c-format
 msgid "write failed %s"
 msgstr "skrivning mislykkedes %s"
 
-#: sys-utils/unshare.c:147
+#: sys-utils/unshare.c:148
 #, fuzzy, c-format
 msgid "unsupported propagation mode: %s"
 msgstr "ikke understøttet tilvalgsformat: %s"
 
-#: sys-utils/unshare.c:156
+#: sys-utils/unshare.c:157
 #, fuzzy
 msgid "cannot change root filesystem propagation"
 msgstr "Ændr rodfilsystemet.\n"
 
-#: sys-utils/unshare.c:201
+#: sys-utils/unshare.c:202
 #, fuzzy, c-format
 msgid "cannot stat %s"
 msgstr "kan ikke søge (seek) %s"
 
-#: sys-utils/unshare.c:212
+#: sys-utils/unshare.c:213
 #, fuzzy
 msgid "pipe failed"
 msgstr "open mislykkedes"
 
-#: sys-utils/unshare.c:226
+#: sys-utils/unshare.c:227
 #, fuzzy
 msgid "failed to read pipe"
 msgstr "kunne ikke læse hastigheden"
 
-#: sys-utils/unshare.c:249
+#: sys-utils/unshare.c:250
 msgid "Run a program with some namespaces unshared from the parent.\n"
 msgstr "Kør et program med nogle navnerum udelt fra overdelen.\n"
 
-#: sys-utils/unshare.c:252
+#: sys-utils/unshare.c:253
 #, fuzzy
 msgid " -m, --mount[=<file>]      unshare mounts namespace\n"
 msgstr " -m, --mount [=<fil>]   gå i monteringsnavnerum\n"
 
-#: sys-utils/unshare.c:253
+#: sys-utils/unshare.c:254
 #, fuzzy
 msgid " -u, --uts[=<file>]        unshare UTS namespace (hostname etc)\n"
 msgstr " -u, --uts[=<fil>]      gå i UTS-navnerum (værtsnavn etc)\n"
 
-#: sys-utils/unshare.c:254
+#: sys-utils/unshare.c:255
 #, fuzzy
 msgid " -i, --ipc[=<file>]        unshare System V IPC namespace\n"
 msgstr " -i, --ipc[=<fil>]      gå i System V IPC-navnerum\n"
 
-#: sys-utils/unshare.c:255
+#: sys-utils/unshare.c:256
 #, fuzzy
 msgid " -n, --net[=<file>]        unshare network namespace\n"
 msgstr " -n, --net[=<fil>]      gå i netværksnavnerum\n"
 
-#: sys-utils/unshare.c:256
+#: sys-utils/unshare.c:257
 #, fuzzy
 msgid " -p, --pid[=<file>]        unshare pid namespace\n"
 msgstr " -p, --pid[=<fil>]      gå i pid-navnerum\n"
 
-#: sys-utils/unshare.c:257
+#: sys-utils/unshare.c:258
 #, fuzzy
 msgid " -U, --user[=<file>]       unshare user namespace\n"
 msgstr " -U, --user[=<fil>]     gå i brugernavnerum\n"
 
-#: sys-utils/unshare.c:258
+#: sys-utils/unshare.c:259
+#, fuzzy
+msgid " -C, --cgroup[=<file>]     unshare cgroup namespace\n"
+msgstr " -m, --mount [=<fil>]   gå i monteringsnavnerum\n"
+
+#: sys-utils/unshare.c:260
 msgid " -f, --fork                fork before launching <program>\n"
 msgstr " -f, --fork                forgren før <program> startes\n"
 
-#: sys-utils/unshare.c:259
+#: sys-utils/unshare.c:261
 msgid "     --mount-proc[=<dir>]  mount proc filesystem first (implies --mount)\n"
 msgstr "     --mount-proc[=<dir>]  monter proc-filsystem først (medfører --mount)\n"
 
-#: sys-utils/unshare.c:260
+#: sys-utils/unshare.c:262
 msgid " -r, --map-root-user       map current user to root (implies --user)\n"
 msgstr " -r, --map-root-user       oversæt nuværende bruger til root (medfører --user)\n"
 
-#: sys-utils/unshare.c:261
+#: sys-utils/unshare.c:263
 msgid ""
 "     --propagation slave|shared|private|unchanged\n"
 "                           modify mount propagation in mount namespace\n"
 msgstr ""
 
-#: sys-utils/unshare.c:263
+#: sys-utils/unshare.c:265
 msgid " -s, --setgroups allow|deny  control the setgroups syscall in user namespaces\n"
 msgstr " -s, --setgroups allow|deny  kontroller systemkald for setgroups i brugernavnerum\n"
 
-#: sys-utils/unshare.c:378
+#: sys-utils/unshare.c:386
 msgid "unshare failed"
 msgstr "unshare mislykkedes"
 
-#: sys-utils/unshare.c:422
+#: sys-utils/unshare.c:430
 msgid "child exit failed"
 msgstr "afslutning af underproces mislykkedes"
 
-#: sys-utils/unshare.c:429
+#: sys-utils/unshare.c:437
 msgid "options --setgroups=allow and --map-root-user are mutually exclusive"
 msgstr "tilvalg --setgroups=allow og --map-root-user udelukker hinanden"
 
-#: sys-utils/unshare.c:449
+#: sys-utils/unshare.c:457
 #, c-format
 msgid "mount %s failed"
 msgstr "montering %s mislykkedes"
@@ -18540,6 +18580,24 @@ msgstr "ukendt undvigelsessekvens i inddata: %o, %o"
 #: text-utils/ul.c:630
 msgid "Input line too long."
 msgstr "For lang inddatalinje."
+
+# evt. "i linje "
+#~ msgid "%s: parse error at line %d"
+#~ msgstr "%s: fortolkningsfejl på linje %d"
+
+# evt. "i linje "
+#~ msgid "%s: parse error: ignore entry at line %d."
+#~ msgstr "%s: fortolkningsfejl: ignorer post på linje %d."
+
+#, fuzzy
+#~ msgid "cannot not setup timer"
+#~ msgstr "kan ikke angive gruppe-id"
+
+#~ msgid "different"
+#~ msgstr "forskellig"
+
+#~ msgid "same"
+#~ msgstr "ens"
 
 #~ msgid "cannot access file %s"
 #~ msgstr "kan ikke åbne filen %s"
