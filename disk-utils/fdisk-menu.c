@@ -797,7 +797,6 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 
 			fdisk_info(cxt, _("Leaving nested disklabel."));
 			fdisk_unref_context(cxt);
-			cxt = *cxt0;
 		}
 		break;
 	}
