@@ -1270,10 +1270,13 @@ int fdisk_script_read_file(struct fdisk_script *dp, FILE *f)
  * @cxt: context
  * @dp: script (or NULL to remove previous reference)
  *
- * Sets reference to the @dp script. The script headers might be used by label
- * drivers to overwrite built-in defaults (for example disk label Id) and label
- * driver might optimize the default semantic to be more usable for scripts
- * (for example to not ask for primary/logical/extended partition type).
+ * Sets reference to the @dp script and remove reference to the previously used
+ * script.
+ *
+ * The script headers might be used by label drivers to overwrite
+ * built-in defaults (for example disk label Id) and label driver might
+ * optimize the default semantic to be more usable for scripts (for example to
+ * not ask for primary/logical/extended partition type).
  *
  * Note that script also contains reference to the fdisk context (see
  * fdisk_new_script()). This context may be completely independent on
@@ -1359,6 +1362,7 @@ int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp)
 	DBG(CXT, ul_debugobj(cxt, "applying script %p", dp));
 
 	old = fdisk_get_script(cxt);
+	fdisk_ref_script(old);
 
 	/* create empty disk label */
 	rc = fdisk_apply_script_headers(cxt, dp);
@@ -1368,6 +1372,8 @@ int fdisk_apply_script(struct fdisk_context *cxt, struct fdisk_script *dp)
 		rc = fdisk_apply_table(cxt, dp->table);
 
 	fdisk_set_script(cxt, old);
+	fdisk_unref_script(old);
+
 	DBG(CXT, ul_debugobj(cxt, "script done [rc=%d]", rc));
 	return rc;
 }
