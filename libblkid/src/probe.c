@@ -104,7 +104,6 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <limits.h>
-#include <sys/mman.h>
 
 #ifdef HAVE_LIBUUID
 # include <uuid.h>
@@ -581,85 +580,6 @@ int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[
 	return 0;
 }
 
-/* align to mmap granularity */
-#define PROBE_ALIGN_OFF(p, o)	((o) & ~((p)->mmap_granularity - 1ULL))
-/* default buffer sizes */
-#define PROBE_MMAP_BEGINSIZ	(1024ULL * 1024ULL * 2ULL)	/* begin of the device */
-#define PROBE_MMAP_ENDSIZ	(1024ULL * 1024ULL * 2ULL)	/* end of the device */
-#define PROBE_MMAP_MIDSIZ	(1024ULL * 1024ULL)		/* middle of the device */
-
-#define probe_is_mmap_wanted(p)		(!S_ISCHR((p)->mode))
-
-static struct blkid_bufinfo *mmap_buffer(blkid_probe pr, uint64_t real_off, uint64_t len)
-{
-	uint64_t map_len;
-	uint64_t map_off = 0;
-	struct blkid_bufinfo *bf = NULL;
-
-	/*
-	 * libblkid heavily reads begin and end of the device, so it seems
-	 * better to mmap ~2MiB from the begin and end of the device to reduces
-	 * number of syscalls and necessary buffers. For random accees
-	 * somewhere in the middle of the device we use 1MiB buffers.
-	 */
-	if (!pr->mmap_granularity)
-		pr->mmap_granularity = getpagesize();
-
-	/* begin of the device */
-	if (real_off == 0 || real_off + len < PROBE_MMAP_BEGINSIZ) {
-		DBG(BUFFER, ul_debug("\tmapping begin of the device (max size: %"PRIu64")", pr->size));
-		map_off = 0;
-		map_len = PROBE_MMAP_BEGINSIZ > pr->size ? pr->size : PROBE_MMAP_BEGINSIZ;
-
-
-	/* end of the device */
-	} else if (real_off > pr->off + pr->size - PROBE_MMAP_ENDSIZ) {
-		DBG(BUFFER, ul_debug("\tmapping end of the device (probing area: "
-					"off=%"PRIu64", size=%"PRIu64")", pr->off, pr->size));
-
-		map_off = PROBE_ALIGN_OFF(pr, pr->off + pr->size - PROBE_MMAP_ENDSIZ);
-		map_len = pr->off + pr->size - map_off;
-
-	/* middle of the device */
-	} else {
-		uint64_t minlen;
-
-		map_off = PROBE_ALIGN_OFF(pr, real_off);
-		minlen = real_off + len - map_off;
-
-		map_len = minlen > PROBE_MMAP_MIDSIZ ? minlen : PROBE_MMAP_MIDSIZ;
-
-		if (map_off + map_len > pr->off + pr->size)
-			map_len = pr->size - map_off;
-	}
-
-	assert(map_off <= real_off);
-	assert(map_off + map_len >= real_off + len);
-
-	/* allocate buffer handler */
-	bf = malloc(sizeof(*bf));
-	if (!bf) {
-		errno = ENOMEM;
-		return NULL;
-	}
-
-	/* mmap into memmory */
-	bf->data = mmap(NULL, map_len, PROT_READ, MAP_SHARED, pr->fd, map_off);
-	if (bf->data == MAP_FAILED) {
-		DBG(BUFFER, ul_debug("\tmmap failed: %m"));
-		free(bf);
-		return NULL;
-	}
-
-	bf->off = map_off;
-	bf->len = map_len;
-	INIT_LIST_HEAD(&bf->bufs);
-
-	DBG(BUFFER, ul_debug("\tmmap  %p: off=%"PRIu64", len=%"PRIu64" (%"PRIu64" pages)",
-				bf->data, map_off, map_len, map_len / pr->mmap_granularity));
-	return bf;
-}
-
 static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint64_t len)
 {
 	ssize_t ret;
@@ -759,10 +679,7 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len
 
 	/* not found; read from disk */
 	if (!bf) {
-		if (probe_is_mmap_wanted(pr))
-			bf = mmap_buffer(pr, real_off, len);
-		else
-			bf = read_buffer(pr, real_off, len);
+		bf = read_buffer(pr, real_off, len);
 		if (!bf)
 			return NULL;
 
@@ -794,13 +711,10 @@ static void blkid_probe_reset_buffer(blkid_probe pr)
 
 		DBG(BUFFER, ul_debug(" remove buffer: %p [off=%"PRIu64", len=%"PRIu64"]",
 		                     bf->data, bf->off, bf->len));
-
-		if (probe_is_mmap_wanted(pr))
-			munmap(bf->data, bf->len);
 		free(bf);
 	}
 
-	DBG(LOWPROBE, ul_debug(" buffers summary: %"PRIu64" bytes by %"PRIu64" read/mmap() calls",
+	DBG(LOWPROBE, ul_debug(" buffers summary: %"PRIu64" bytes by %"PRIu64" read() calls",
 			len, ct));
 
 	INIT_LIST_HEAD(&pr->buffers);
