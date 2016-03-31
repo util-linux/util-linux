@@ -357,7 +357,7 @@ static int set_fs_root(struct libmnt_update *upd, struct libmnt_fs *fs,
 {
 	struct libmnt_fs *src_fs;
 	char *fsroot = NULL;
-	const char *src;
+	const char *src, *fstype;
 	int rc = 0;
 
 	DBG(UPDATE, ul_debug("setting FS root"));
@@ -366,16 +366,21 @@ static int set_fs_root(struct libmnt_update *upd, struct libmnt_fs *fs,
 	assert(upd->fs);
 	assert(fs);
 
+	fstype = mnt_fs_get_fstype(fs);
+
 	if (mountflags & MS_BIND) {
 		if (!upd->mountinfo)
 			upd->mountinfo = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
-
 		src = mnt_fs_get_srcpath(fs);
 		if (src) {
 			 rc = mnt_fs_set_bindsrc(upd->fs, src);
 			 if (rc)
 				 goto err;
 		}
+
+	} else if (fstype && (strcmp(fstype, "btrfs") == 0 || strcmp(fstype, "auto") == 0)) {
+		if (!upd->mountinfo)
+			upd->mountinfo = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
 	}
 
 	src_fs = mnt_table_get_fs_root(upd->mountinfo, fs,

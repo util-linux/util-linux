@@ -1346,6 +1346,8 @@ err:
  *
  * For btrfs subvolumes this function returns NULL, but @fsroot properly set.
  *
+ * If @tb is NULL then defaults to '/'.
+ *
  * Returns: entry from @tb that will be used as a source for @fs if the @fs is
  *          bindmount.
  *
@@ -1432,7 +1434,7 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 	/*
 	 * btrfs-subvolume mount -- get subvolume name and use it as a root-fs path
 	 */
-	else if (fstype && (!strcmp(fstype, "btrfs") || !strcmp(fstype, "auto"))) {
+	else if (tb && fstype && (!strcmp(fstype, "btrfs") || !strcmp(fstype, "auto"))) {
 		if (get_btrfs_fs_root(tb, fs, &root) < 0)
 			goto err;
 	}
