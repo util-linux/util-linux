@@ -23,12 +23,13 @@ ts_check_test_command "$TS_CMD_COLCRT"
 
 check_input_file() {
 	ts_init_subtest ${1##*/}
-	$TS_CMD_COLCRT < $1 > $TS_OUTPUT 2>&1
+	timeout 2 $TS_CMD_COLCRT < $1 > $TS_OUTPUT 2>&1
 	echo "return value: $?" >> $TS_OUTPUT
 	ts_finalize_subtest
 }
 
 check_input_file "$TS_SELF/crash1"
 check_input_file "$TS_SELF/crash2"
+check_input_file "$TS_SELF/hang1"
 
 ts_finalize
