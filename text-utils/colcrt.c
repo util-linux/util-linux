@@ -152,6 +152,7 @@ static void colcrt(struct colcrt_control *ctl)
 {
 	int col;
 	wint_t c;
+	long old_pos;
 
 	ctl->print_nl = 1;
 	if (ctl->half_lines)
@@ -161,7 +162,13 @@ static void colcrt(struct colcrt_control *ctl)
 		if (OUTPUT_COLS - 1 < col) {
 			output_lines(ctl, col);
 			errno = 0;
+			old_pos = ftell(ctl->f);
 			while ((c = getwc(ctl->f)) != L'\n') {
+				long new_pos = ftell(ctl->f);
+				if (old_pos == new_pos)
+					fseek(ctl->f, 1, SEEK_CUR);
+				else
+					old_pos = new_pos;
 				if (errno == 0 && c == WEOF)
 					return;
 				else
