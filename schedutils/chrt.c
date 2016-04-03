@@ -399,7 +399,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while((c = getopt_long(argc, argv, "+abdDfiphmoPTrRvV", longopts, NULL)) != -1)
+	while((c = getopt_long(argc, argv, "+abdD:fiphmoP:T:rRvV", longopts, NULL)) != -1)
 	{
 		int ret = EXIT_FAILURE;
 
