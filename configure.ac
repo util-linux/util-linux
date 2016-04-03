@@ -491,7 +491,7 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 
 AC_MSG_CHECKING([whether __progname is defined])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([extern char *__progname;],
-	   [if (*__progname == 0) return;])],
+	   [if (*__progname == 0) return 1;])],
 	   AC_DEFINE([HAVE___PROGNAME], [1], [Define if __progname is defined])
 	   AC_MSG_RESULT([yes]),
 	   AC_MSG_RESULT([no]))
