@@ -8,31 +8,45 @@ _chrt_module()
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
+		'-T'|'--sched-runtime'|'-P'|'--sched-period'|'-D'|'--sched-deadline')
+			COMPREPLY=( $(compgen -W "nanoseconds" -- $cur) )
+			return 0
+			;;
 	esac
-	# FIXME: -p is ambiguous, it takes either pid or priority as an
-	# argument depending on whether user wanted to get or set the
-	# values.  Perhaps the command interface should be reconsidered.
 	case $cur in
 		-*)
-			OPTS="--batch
-				--fifo
-				--idle
-				--other
-				--rr
-				--reset-on-fork
+			OPTS="
 				--all-tasks
+				--batch
+				--deadline
+				--fifo
 				--help
+				--idle
 				--max
+				--other
 				--pid
+				--reset-on-fork
+				--rr
+				--sched-deadline
+				--sched-period
+				--sched-runtime
 				--verbose
-				--version"
+				--version
+			"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
 	esac
-	local PIDS
-	PIDS=$(for I in /proc/[0-9]*; do echo ${I##"/proc/"}; done)
-	COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
+	local i
+	for i in ${COMP_WORDS[*]}; do
+		case $i in
+		'-p'|'--pid')
+			COMPREPLY=( $(compgen -W "$(cd /proc && echo [0-9]*)" -- $cur) )
+			return 0
+			;;
+		esac
+	done
+	COMPREPLY=( $(compgen -c -- $cur) )
 	return 0
 }
 complete -F _chrt_module chrt
