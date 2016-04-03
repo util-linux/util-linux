@@ -504,7 +504,11 @@ int main(int argc, char **argv)
 #endif
 	if (ctl->pid == -1)
 		ctl->pid = 0;
-
+	if (ctl->priority < sched_get_priority_min(ctl->policy) ||
+	    sched_get_priority_max(ctl->policy) < ctl->priority)
+		errx(EXIT_FAILURE,
+		     _("unsupported priority value for the policy: %d: see --max for valid range"),
+		     ctl->priority);
 	set_sched(ctl);
 
 	if (ctl->verbose)
