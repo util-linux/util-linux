@@ -883,7 +883,7 @@ const char *split(const char **state, size_t *l, const char *separator, int quot
 /* Rewind file pointer forward to new line.  */
 int skip_fline(FILE *fp)
 {
-	char ch;
+	int ch;
 
 	do {
 		if ((ch = fgetc(fp)) == EOF)
