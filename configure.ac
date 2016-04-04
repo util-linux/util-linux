@@ -380,6 +380,7 @@ AC_CHECK_FUNCS([ \
 	qsort_r \
 	rpmatch \
 	scandirat \
+	setprogname \
 	setresgid \
 	setresuid \
 	sched_setattr \

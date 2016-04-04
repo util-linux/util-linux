@@ -453,7 +453,7 @@ int main(int argc, char *argv[])
 
 	if (name) {
 		argv[optind - 1] = name;
-#if defined (BSD) || defined (__APPLE__)
+#if defined (HAVE_SETPROGNAME) && !defined (__linux__)
 		setprogname(name);
 #endif
 	} else
