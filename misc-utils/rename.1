@@ -50,6 +50,15 @@ rename .htm .html *.htm
 .PP
 .RE
 will fix the extension of your html files.
+Provide an empty string for shortening:
+.RS
+.PP
+.nf
+rename '_with_long_name' '' file_with_long_name.*
+.fi
+.PP
+.RE
+will remove the substring in the filenames.
 .SH WARNING
 The renaming has no safeguards.  If the user has permission to rewrite file names,
 the command will perform the action without any questions.  For example, the
