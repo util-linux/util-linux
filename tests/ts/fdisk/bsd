@@ -46,7 +46,8 @@ BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
 # and also on arch-specific offset (see include/pt-bsd.h)
 ARCH=$(uname -m)
 case $ARCH in
-	*ppc* | *alpha* | *ia64*) 
+	# see include/pt-bsd.h
+	*alpha* | *ppc* | *ia64* | *hppa* )
 		BSD_LABELSECTOR=0
 		BSD_LABELOFFSET=64 
 		;;
