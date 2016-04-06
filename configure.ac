@@ -910,6 +910,11 @@ AC_SUBST([LIBUUID_VERSION])
 AC_SUBST([LIBUUID_VERSION_INFO])
 AM_CONDITIONAL(BUILD_LIBUUID, test "x$build_libuuid" = xyes)
 
+AC_ARG_ENABLE([libuuid-force-uuidd],
+  AS_HELP_STRING([--enable-libuuid-force-uuidd], [support uuidd even though the daemon is not built]),
+  [], [enable_libuuid_force_uuidd=no]
+)
+
 AS_IF([test "x$build_libuuid" = xyes], [
   AC_DEFINE(HAVE_LIBUUID, 1, [Define to 1 if you have the -luuid.])
 ])
@@ -1084,7 +1089,7 @@ UL_BUILD_INIT([uuidd])
 UL_REQUIRES_BUILD([uuidd], [libuuid])
 UL_REQUIRES_HAVE([uuidd], [timer], [timer_create function])
 UL_REQUIRES_HAVE([uuidd], [sys_signalfd_h], [sys/signalfd.h header])
-AS_IF([test "x$build_uuidd" = xyes], [
+AS_IF([test "x$build_uuidd" = xyes || test "x$enable_libuuid_force_uuidd" == xyes ], [
   AC_DEFINE([HAVE_UUIDD], [1], [Define to 1 if you want to use uuid daemon.])
 ])
 AM_CONDITIONAL([BUILD_UUIDD], [test "x$build_uuidd" = xyes])
