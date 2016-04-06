@@ -24,6 +24,6 @@ int main(void)
 
 	for (i = 0; i < MD5LENGTH; i++)
 		printf( "%02x", digest[i] );
-	printf("  -\n");
+	printf("\n");
 	return 0;
 }
