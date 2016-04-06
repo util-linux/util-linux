@@ -1319,7 +1319,11 @@ UL_REQUIRES_HAVE([lscpu], [cpu_set_t], [cpu_set_t type])
 AM_CONDITIONAL([BUILD_LSCPU], [test "x$build_lscpu" = xyes])
 
 
-UL_BUILD_INIT([lslogins], [check])
+AC_ARG_ENABLE([lslogins],
+  AS_HELP_STRING([--disable-lslogins], [do not build lslogins]),
+  [], [UL_DEFAULT_ENABLE([lslogins], [check])]
+)
+UL_BUILD_INIT([lslogins])
 UL_REQUIRES_BUILD([lslogins], [libsmartcols])
 UL_REQUIRES_HAVE([lslogins], [shadow_h], [shadow.h header])
 UL_REQUIRES_HAVE([lslogins], [utmp_h], [utmp.h header])
@@ -1362,8 +1366,11 @@ AC_ARG_ENABLE([cal],
 UL_BUILD_INIT([cal])
 AM_CONDITIONAL([BUILD_CAL], [test "x$build_cal" = xyes])
 
-
-UL_BUILD_INIT([logger], [yes])
+AC_ARG_ENABLE([logger],
+  AS_HELP_STRING([--disable-logger], [do not build logger]),
+  [], [UL_DEFAULT_ENABLE([logger], [check])]
+)
+UL_BUILD_INIT([logger])
 AM_CONDITIONAL([BUILD_LOGGER], [test "x$build_logger" = xyes])
 
 UL_BUILD_INIT([look], [yes])
