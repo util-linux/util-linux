@@ -21,6 +21,7 @@ TS_DESC="invalid input tests"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_FDISK"
+ts_check_test_command "$TS_HELPER_MD5"
 
 #set -x
 

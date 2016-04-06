@@ -21,6 +21,7 @@ TS_DESC="MBR - non-dos mode"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_FDISK"
+ts_check_test_command "$TS_HELPER_MD5"
 
 # cmd to changes system id to 0x1
 FDISK_CMD_INIT="x\ni\n0x1\nr\n"

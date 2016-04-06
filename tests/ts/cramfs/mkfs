@@ -24,6 +24,7 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_MKCRAMFS"
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
+ts_check_test_command "$TS_HELPER_MD5"
 
 ts_skip_nonroot
 ts_check_losetup
@@ -75,7 +76,7 @@ $TS_CMD_MKCRAMFS -n $LABEL $IMAGE_SRC $IMAGE_PATH >> $TS_OUTPUT 2>&1
 ts_cd "$TS_OUTDIR"
 
 ts_log "count MD5 from the image"
-MD5_OUT=$(md5sum "$IMAGE_NAME" | awk '{printf $1}') >> $TS_OUTPUT 2>&1
+MD5_OUT=$("$TS_HELPER_MD5" < "$IMAGE_NAME") >> $TS_OUTPUT 2>&1
 if [ "$MD5_EXP" != "$MD5_OUT" -a "$MD5_EXP" != "unknown" ]; then
 	ts_log "is $MD5_OUT, should be $MD5_EXP"
 fi

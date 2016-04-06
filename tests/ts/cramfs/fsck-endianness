@@ -23,6 +23,7 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_MKCRAMFS"
 ts_check_test_command "$TS_CMD_FSCKCRAMFS"
+ts_check_test_command "$TS_HELPER_MD5"
 
 ts_skip_nonroot
 
@@ -45,7 +46,7 @@ test_image() {
 	$TS_CMD_MKCRAMFS -N "$TO_ENDIANNESS" -b 4096 "$IMAGE_DATA" \
 		"$IMAGE_CREATED" >> $TS_OUTPUT 2>&1
 
-	md5sum $IMAGE_CREATED | cut -d" " -f1 >> $TS_OUTPUT
+	"$TS_HELPER_MD5" < "$IMAGE_CREATED" >> $TS_OUTPUT
 
 	rm "$IMAGE_CREATED"
 }

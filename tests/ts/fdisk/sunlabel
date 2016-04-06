@@ -21,6 +21,7 @@ TS_DESC="sunlabel tests"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_FDISK"
+ts_check_test_command "$TS_HELPER_MD5"
 
 FDISK_CMD_INIT="s\n" # create new sunlabel
 FDISK_CMD_WRITE_CLOSE="w\nq\n"

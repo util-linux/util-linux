@@ -22,6 +22,7 @@ TS_DESC="movedata"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_SFDISK"
+ts_check_test_command "$TS_HELPER_MD5"
 
 ts_skip_nonroot
 ts_check_prog "mkfs.ext4"
@@ -35,11 +36,11 @@ udevadm settle
 
 mkfs.ext4 ${TS_DEVICE}1 &> /dev/null
 udevadm settle
-CHECKSUM=$(md5sum ${TS_DEVICE}1 | awk '{print $1}')
+CHECKSUM=$("$TS_HELPER_MD5" < "${TS_DEVICE}1")
 
 function checksum() {
 	local dev="$1"
-	CHECK=$(md5sum ${dev} | awk '{print $1}')
+	CHECK=$("$TS_HELPER_MD5" < "${dev}")
 	if [ "$CHECKSUM" != "$CHECK" ]; then
 		echo "Checksum does not match!" >> $TS_OUTPUT
 	fi

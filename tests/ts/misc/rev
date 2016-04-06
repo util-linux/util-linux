@@ -19,11 +19,12 @@ TS_DESC="rev"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_REV"
+ts_check_test_command "$TS_HELPER_MD5"
 
-for I in {0..512}; do printf "%s " {a..z}; done | md5sum >> $TS_OUTPUT 2>&1
+for I in {0..512}; do printf "%s " {a..z}; done | "$TS_HELPER_MD5" >> $TS_OUTPUT 2>&1
 
 for I in {0..512}; do printf "%s " {a..z}; done | \
-				    $TS_CMD_REV | md5sum >> $TS_OUTPUT 2>&1
+				    $TS_CMD_REV | "$TS_HELPER_MD5" >> $TS_OUTPUT 2>&1
 
 printf "abc\n123" | $TS_CMD_REV >> $TS_OUTPUT 2>&1
 

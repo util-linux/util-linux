@@ -460,7 +460,7 @@ function ts_cleanup_on_exit {
 
 function ts_image_md5sum {
 	local img=${1:-"$TS_OUTDIR/${TS_TESTNAME}.img"}
-	echo $(md5sum "$img" | awk '{printf $1}') $(basename "$img")
+	echo $("$TS_HELPER_MD5" < "$img") $(basename "$img")
 }
 
 function ts_image_init {
