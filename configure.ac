@@ -1186,10 +1186,13 @@ AC_CHECK_FUNCS([setns])
 
 
 AC_ARG_WITH([cap_ng],
-  AS_HELP_STRING([--without-capng], [compile without libcap-ng]),
+  AS_HELP_STRING([--without-cap-ng], [compile without libcap-ng]),
   [], [with_cap_ng=auto]
 )
-AS_IF([test "x$with_cap_ng" = xno], [have_cap_ng=no],[
+AS_IF([test "x$with_cap_ng" = xno], [
+  AM_CONDITIONAL([HAVE_CAP_NG], [false])
+  have_cap_ng=no
+],[
   UL_CHECK_LIB([cap-ng], [capng_apply], [cap_ng])
 ])
 
