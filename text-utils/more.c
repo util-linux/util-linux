@@ -65,6 +65,7 @@
 #include "xalloc.h"
 #include "widechar.h"
 #include "closestream.h"
+#include "exitcodes.h"
 
 #include <regex.h>
 
@@ -1622,7 +1623,7 @@ void execute(char *filename, char *cmd, ...)
 
 		execvp(cmd, args);
 		putserr(_("exec failed\n"));
-		exit(EXIT_FAILURE);
+		exit(EX_EXEC);
 	}
 	if (id > 0) {
 		signal(SIGINT, SIG_IGN);

@@ -40,6 +40,7 @@
 #include "closestream.h"
 #include "namespace.h"
 #include "exec_shell.h"
+#include "exitcodes.h"
 
 static struct namespace_file {
 	int nstype;
@@ -413,7 +414,7 @@ int main(int argc, char *argv[])
 
 	if (optind < argc) {
 		execvp(argv[optind], argv + optind);
-		err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
+		err(EX_EXEC, _("failed to execute %s"), argv[optind]);
 	}
 	exec_shell();
 }

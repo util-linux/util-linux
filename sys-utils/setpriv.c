@@ -38,6 +38,7 @@
 #include "strutils.h"
 #include "xalloc.h"
 #include "pathnames.h"
+#include "exitcodes.h"
 
 #ifndef PR_SET_NO_NEW_PRIVS
 # define PR_SET_NO_NEW_PRIVS 38
@@ -839,5 +840,5 @@ int main(int argc, char **argv)
 
 	execvp(argv[optind], argv + optind);
 
-	err(EXIT_FAILURE, _("cannot execute: %s"), argv[optind]);
+	err(EX_EXEC, _("cannot execute: %s"), argv[optind]);
 }

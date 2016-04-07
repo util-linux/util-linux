@@ -17,6 +17,7 @@
 #include "c.h"
 #include "xalloc.h"
 #include "nls.h"
+#include "exitcodes.h"
 
 #define NULL_DEVICE	"/dev/null"
 
@@ -73,7 +74,7 @@ static int start_command(struct child_process *cmd)
 
 		cmd->preexec_cb();
 		execvp(cmd->argv[0], (char *const*) cmd->argv);
-		exit(127); /* cmd not found */
+		exit(EX_EXEC); /* cmd not found */
 	}
 
 	if (cmd->pid < 0) {

@@ -32,6 +32,7 @@
 #include "closestream.h"
 #include "strutils.h"
 #include "procutils.h"
+#include "exitcodes.h"
 
 /* the SCHED_BATCH is supported since Linux 2.6.16
  *  -- temporary workaround for people with old glibc headers
@@ -517,7 +518,7 @@ int main(int argc, char **argv)
 	if (!ctl->pid) {
 		argv += optind + 1;
 		execvp(argv[0], argv);
-		err(EXIT_FAILURE, _("failed to execute %s"), argv[0]);
+		err(EX_EXEC, _("failed to execute %s"), argv[0]);
 	}
 
 	return EXIT_SUCCESS;
