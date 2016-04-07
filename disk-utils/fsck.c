@@ -410,7 +410,6 @@ static void unlock_disk(struct fsck_instance *inst)
 		printf(_("Unlocking %s.\n"), inst->lockpath);
 
 	close(inst->lock);			/* unlock */
-	unlink(inst->lockpath);
 
 	free(inst->lockpath);
 
