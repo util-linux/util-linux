@@ -236,10 +236,6 @@ endif
 
 
 if BUILD_MOUNT
-#
-# The original mount is in mount/ directory
-# -- temporary we share some man pages
-#
 bin_PROGRAMS += mount umount
 dist_man_MANS += \
 	sys-utils/mount.8 \
