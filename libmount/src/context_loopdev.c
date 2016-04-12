@@ -210,6 +210,29 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	if (rc)
 		goto done_no_deinit;
 
+	/* It is possible to mount the same file more times. If we set more
+	 * than one loop device referring to the same file, kernel has no
+	 * mechanism to detect it. To prevent data corruption, the same loop
+	 * device has to be recycled.
+	*/
+	rc = loopcxt_init(&lc, 0);
+	if (rc)
+		goto done;
+	if (backing_file && !(loopcxt_find_by_backing_file(&lc,
+			backing_file, offset, LOOPDEV_FL_OFFSET))) {
+		DBG(LOOP, ul_debugobj(cxt, "using existing loop device %s",
+					loopcxt_get_device(&lc)));
+		/* Once a loop is initialized RO, there is no way to safely
+		   mount that file in R/W mode. */
+		if (loopcxt_is_readonly(&lc) && !(lo_flags & LO_FLAGS_READ_ONLY)) {
+			rc = -EROFS;
+			goto done;
+		}
+
+		goto success;
+	}
+	loopcxt_deinit(&lc);
+
 	rc = loopcxt_init(&lc, 0);
 	if (rc == 0 && loopval) {
 		rc = loopcxt_set_device(&lc, loopval);
@@ -267,6 +290,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 		DBG(LOOP, ul_debugobj(cxt, "device stolen...trying again"));
 	} while (1);
 
+success:
 	if (!rc)
 		rc = mnt_fs_set_source(cxt->fs, loopcxt_get_device(&lc));
 
