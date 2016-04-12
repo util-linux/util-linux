@@ -137,7 +137,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 {
 	const char *backing_file, *optstr, *loopdev = NULL;
-	char *val = NULL;
+	char *val = NULL, *loopval = NULL;
 	size_t len;
 	struct loopdev_cxt lc;
 	int rc = 0, lo_flags = 0;
@@ -158,10 +158,6 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 		lo_flags |= LO_FLAGS_READ_ONLY;
 	}
 
-	rc = loopcxt_init(&lc, 0);
-	if (rc)
-		return rc;
-
 	optstr = mnt_fs_get_user_options(cxt->fs);
 
 	/*
@@ -169,13 +165,8 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	 */
 	if (rc == 0 && (cxt->user_mountflags & MNT_MS_LOOP) &&
 	    mnt_optstr_get_option(optstr, "loop", &val, &len) == 0 && val) {
-
-		val = strndup(val, len);
-		rc = val ? loopcxt_set_device(&lc, val) : -ENOMEM;
-		free(val);
-
-		if (rc == 0)
-			loopdev = loopcxt_get_device(&lc);
+		loopval = strndup(val, len);
+		rc = loopval ? 0 : -ENOMEM;
 	}
 
 	/*
@@ -216,6 +207,15 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 				backing_file, offset))
 		rc = -EBUSY;
 
+	if (rc)
+		goto done_no_deinit;
+
+	rc = loopcxt_init(&lc, 0);
+	if (rc == 0 && loopval) {
+		rc = loopcxt_set_device(&lc, loopval);
+		if (rc == 0)
+			loopdev = loopcxt_get_device(&lc);
+	}
 	if (rc)
 		goto done;
 
@@ -301,6 +301,8 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	}
 done:
 	loopcxt_deinit(&lc);
+done_no_deinit:
+	free(loopval);
 	return rc;
 }
 
