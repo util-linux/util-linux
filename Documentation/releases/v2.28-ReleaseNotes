@@ -78,6 +78,7 @@ agetty:
    - add support for \e in issue file to print \033  [Karel Zak]
    - don't ignore netlink on select()  [Karel Zak]
    - fix chown(3), chmod(3) and open(3) race  [Sami Kerola]
+   - remove atoi() from argv[] parsing [clang analyze]  [Karel Zak]
    - support \e{name} for issue file  [Karel Zak]
    - tweak formatting and some wordings in the man page  [Benno Schulenberg]
 bash-completion:
@@ -88,6 +89,7 @@ bash-completion:
    - ipcmk  add missing completion file  [Sami Kerola]
    - lslogins  add missing completion file  [Sami Kerola]
    - lsns  add missing completion file  [Sami Kerola]
+   - update chrt completion  [Sami Kerola]
 blkdiscard:
    - add --zeroout (BLKZEROOUT ioctl)  [Karel Zak]
    - don't report "zero range" at the end  [Ruediger Meier]
@@ -101,6 +103,7 @@ blkid, uuidd, uuidgen:
 build-sys:
    - Properly order install dependencies of pylibmount  [Filipe Brandenburger]
    - add --disable-ipcrm --disable-ipcs  [Ruediger Meier]
+   - add --disable-logger and --disable-lslogins  [Ruediger Meier]
    - add and use openat build conditionals  [Ruediger Meier]
    - add lsns to gitignore  [Karel Zak]
    - add missing "not found" strings  [Ruediger Meier]
@@ -114,10 +117,12 @@ build-sys:
    - disable unused parameter warnings for some test progs  [Ruediger Meier]
    - fix [g]libtoolize version for OSX  [Ruediger Meier]
    - fix again UL_SCANF_TYPE_MODIFIER  [Ruediger Meier]
+   - fix cap-ng configure flag handling  [Mike Frysinger]
    - fix if..endif for *_la_LDFLAGS  [Karel Zak]
    - fix libtoolize for OSX  [Ruediger Meier]
    - fix typo  [Romain Naour]
    - fix typo and more all RT to the same place  [Karel Zak]
+   - happy new year...  [Karel Zak]
    - ignore vim .swp files  [Ruediger Meier]
    - improve uuidd and script build conditions  [Ruediger Meier]
    - install missing bash completions  [Ruediger Meier]
@@ -125,6 +130,7 @@ build-sys:
    - portable usage of find command  [Ruediger Meier]
    - pylibmount, mount context is Linux only  [Ruediger Meier]
    - release++ (v2.28-rc1)  [Karel Zak]
+   - release++ (v2.28-rc2)  [Karel Zak]
    - remove AM_CONDITIONAL from UL_CHECK_SYSCALL  [Karel Zak]
    - remove duplicate cal sources  [Ruediger Meier]
    - remove libtermcap support  [Sami Kerola]
@@ -147,6 +153,7 @@ chrt:
    - add control struct  [Karel Zak]
    - add support for SCHED_DEADLINE  [Karel Zak]
    - fix case SCHED_RR  [Ruediger Meier]
+   - make --sched-* short options to require an argument  [Sami Kerola]
    - make man page more structured  [Karel Zak]
    - make usage more readable  [Karel Zak]
    - output function refactoring  [Karel Zak]
@@ -197,6 +204,7 @@ fdisk:
    - fix warning, incompatible pointer types passing 'uint64_t *'  [Ruediger Meier]
    - fix warning, uninitialized variable  [Ruediger Meier]
    - make 'f' command more verbose  [Karel Zak]
+   - remove dead assignment [clang analyze]  [Karel Zak]
    - remove unused include sysfs.h  [Ruediger Meier]
    - sun, undef HAVE_QSORT_R for non-Linux  [Ruediger Meier]
    - to recognize Intel Rapid Start hibernation partition  [Jörg Jenderek]
@@ -219,6 +227,7 @@ fstrim:
    - systemd timer units should be WantedBy=timers.target  [Peter Hoeg]
 getopt:
    - fix -n name for BSD  [Ruediger Meier]
+   - make sure setprogname provided by non-Linux system  [Karel Zak]
 hexdump:
    - certain long options should not accept arguments  [Phil Ruffwind]
    - fix a typo and tweak some wordings in the manpage  [Benno Schulenberg]
@@ -249,6 +258,7 @@ ipcs:
    - --shmems, upward/backward compatibility  [Ruediger Meier]
    - consolidate output header printing  [Ruediger Meier]
    - fix ipc_sem_get_limits()  [Karel Zak]
+   - make static analyzer happy [clang analyze]  [Karel Zak]
    - make sure to parse whole lines for shm_data  [Ruediger Meier]
    - show gid instead of uid  [Hushan Jia]
    - ulong -> unsigned long  [Ruediger Meier]
@@ -283,6 +293,7 @@ lib/strutils:
    - add more ERANGE messages  [Ruediger Meier]
    - fix errno usage in strtoint functions  [Ruediger Meier]
    - parse_size(), sync errno and return value  [Ruediger Meier]
+   - use int for fgetc()  [Karel Zak]
 lib/strv:
    - add strv_extendv()  [Karel Zak]
 lib/sysfs:
@@ -301,6 +312,7 @@ libblkid:
    - fix compiler warnings [-Wmissing-prototypes]  [Ruediger Meier]
    - make XFS Log visible for wipefs  [Karel Zak]
    - make minix prober more robust  [Karel Zak]
+   - revert mmap usage  [Karel Zak]
    - use internally uint64_t for offsets and sizes  [Karel Zak]
    - use mmap() rather than read()  [Karel Zak]
 libblkid,libmount:
@@ -320,12 +332,14 @@ libfdisk:
    - fix compiler warnings [-Wmissing-prototypes]  [Ruediger Meier]
    - fix missing symbol  [Ruediger Meier]
    - fix partition move/resize code  [Karel Zak]
+   - fix ref.counting in fdisk_apply_script() [clang analyze]  [Karel Zak]
    - fix typo  [Karel Zak]
    - fix warnings, "redundant redeclaration" [-Wredundant-decls]  [Ruediger Meier]
    - remove ifdef HDIO_GETGEO  [Ruediger Meier]
 libmount:
    - (monitor) don't check for regular mtab  [Karel Zak]
    - (monitor) remove unnecessary epoll EPOLLPRI  [Karel Zak]
+   - Fix possible NULL dereference in get_btrfs_fs_root()  [Karel Zak]
    - Typo fix  [Stanislav Brabec]
    - add 'force-mountinfo' to features list, improve debug  [Karel Zak]
    - add cgroup2 pseudo FS  [Karel Zak]
@@ -346,6 +360,7 @@ libmount:
    - handle btrfs default subvolume mount  [Stanislav Brabec]
    - improve conversion from root= to the devname  [Karel Zak]
    - move btrfs subvol code refactoring  [Karel Zak]
+   - result of operation is garbage or undefined [clang analyze]  [Karel Zak]
    - run btrfs subvol checks for "auto" fs type  [Stanislav Brabec]
    - run btrfs subvol checks for "subvolid" option  [Stanislav Brabec]
    - use fstatat(AT_NO_AUTOMOUNT) for mountpoints  [Karel Zak]
@@ -524,14 +539,21 @@ po:
    - merge changes  [Karel Zak]
    - update cs.po (from translationproject.org)  [Petr Písař]
    - update de.po (from translationproject.org)  [Philipp Thomas]
+   - update es.po (from translationproject.org)  [Antonio Ceballos Roa]
    - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+   - update nl.po (from translationproject.org)  [Benno Schulenberg]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
    - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
    - update ru.po (from translationproject.org)  [Evgeniy Yakushev]
+   - update sv.po (from translationproject.org)  [Sebastian Rasmussen]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
    - update zh_CN.po (from translationproject.org)  [Wylmer Wang]
 prlimit:
    - cleanup output units  [Karel Zak]
 readprofile:
    - add scanf field width limits [cppcheck]  [Boris Egorov]
+rename:
+   - add example to the man page  [Kaligule]
 scols/table_print:
    - restore old stream after printing to str  [Igor Gnatenko]
 script:
@@ -585,8 +607,10 @@ taskset:
    - fix description of `-c` option in the man page  [Yuriy M. Kaminskiy]
 tests:
    - --parallel prints results in a single line  [Ruediger Meier]
+   - add DM error target for blkid  [Karel Zak]
    - add btrfs mount tests  [Stanislav Brabec]
    - add colcrt functional tests  [Sami Kerola]
+   - add fdisk/bsd hexdump for alpha  [Ruediger Meier]
    - add logger tests "id _numbers_ with spaces"  [Ruediger Meier]
    - add missing files  [Karel Zak]
    - add new fdisk bsd test  [Karel Zak]
@@ -611,6 +635,7 @@ tests:
    - fallback for missing TS_DESC  [Karel Zak]
    - fix compiler warnings [-Wmissing-prototypes]  [Ruediger Meier]
    - fix fdisk/bsd for alpha  [Ruediger Meier]
+   - fix fdisk/bsd for hppa  [Ruediger Meier]
    - fix minix tests for big endian  [Ruediger Meier]
    - fix non-working udevadm settle for scsi_debug  [Ruediger Meier]
    - fix redirection  [Stanislav Brabec]
@@ -634,6 +659,7 @@ tests:
    - minor cleanup ts_fdisk_clean()  [Ruediger Meier]
    - mkfs.ext3 image-file needs option -F  [Ruediger Meier]
    - no more sleep, udevadm settle only  [Ruediger Meier]
+   - remove deprecated md5sum based fdisk/bsd test  [Ruediger Meier]
    - remove invalid argument in libmount/debug  [Ruediger Meier]
    - remove redundant check for NULL [cppcheck]  [Boris Egorov]
    - replace username with tag in logger test  [Karel Zak]
@@ -687,6 +713,7 @@ uuidd:
    - use signalfd() and setup_timer()  [Sami Kerola]
 vipw:
    - Remove pre-ANSI compiler support  [Romain Naour]
+   - make tmp_file usage more robust [clang analyze]  [Karel Zak]
    - print only one new line when asking about shadow file  [Sami Kerola]
    - use puts() when formatting unnecessary  [Karel Zak]
 wipefs:
