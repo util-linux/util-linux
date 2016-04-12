@@ -402,6 +402,15 @@ try_readonly:
 		case -EBUSY:
 			warnx(_("%s is already mounted"), src);
 			return MOUNT_EX_USAGE;
+		/* -EROFS before syscall can happen only for loop mount */
+		case -EROFS:
+			warnx(_("%s is used as read only loop, mounting read-only"), src);
+			mnt_context_reset_status(cxt);
+			mnt_context_set_mflags(cxt, mflags | MS_RDONLY);
+			rc = mnt_context_mount(cxt);
+			if (!rc)
+				rc = mnt_context_finalize_mount(cxt);
+			goto try_readonly;
 		case -MNT_ERR_NOFSTAB:
 			if (mnt_context_is_swapmatch(cxt)) {
 				warnx(_("can't find %s in %s"),
