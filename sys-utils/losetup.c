@@ -626,7 +626,7 @@ int main(int argc, char **argv)
 		/*
 		 * losetup [--list] <device>
 		 * OR
-		 * losetup --direct-io DIO <device>
+		 * losetup --direct-io[=off] <device>
 		 */
 		if (!set_dio)
 			act = A_SHOW_ONE;
