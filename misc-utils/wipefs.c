@@ -261,8 +261,8 @@ new_probe(const char *devname, int mode)
 			BLKID_SUBLKS_BADCSUM);	/* accept bad checksums */
 
 	blkid_probe_enable_partitions(pr, 1);
-	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_MAGIC);
-
+	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_MAGIC |
+					     BLKID_PARTS_FORCE_GPT);
 	return pr;
 error:
 	blkid_free_probe(pr);
