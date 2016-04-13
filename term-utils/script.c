@@ -122,7 +122,6 @@ struct script_control {
 	 timing:1,		/* include timing file */
 	 force:1,		/* write output to links */
 	 isterm:1,		/* is child process running as terminal */
-	 data_on_way:1,		/* sent data to master */
 	 die:1;			/* terminate program */
 
 	sigset_t sigset;	/* catch SIGCHLD and SIGWINCH with signalfd() */
@@ -276,15 +275,10 @@ static void write_output(struct script_control *ctl, char *obuf,
 	DBG(IO, ul_debug("  writing output *done*"));
 }
 
-static void wait_for_empty_fd(int fd)
+static int write_to_shell(struct script_control *ctl,
+			  char *buf, size_t bufsz)
 {
-	struct pollfd fds[] = {
-	           { .fd = fd, .events = POLLIN }
-	};
-
-	while (poll(fds, 1, 10) == 1) {
-		DBG(IO, ul_debug("  data to read"));
-	}
+	return write_all(ctl->master, buf, bufsz);
 }
 
 /*
@@ -295,25 +289,31 @@ static void wait_for_empty_fd(int fd)
  * problem we wait until slave is empty. For example:
  *
  *   echo "date" | script
+ *
+ * Unfortunately, the child (usually shell) can ignore stdin at all, so we
+ * don't wait forever to avoid dead locks...
+ *
+ * Note that script is primarily designed for interactive sessions as it
+ * maintains master+slave tty stuff within the session. Use pipe to write to
+ * script(1) and assume non-interactive (tee-like) behavior is NOT well
+ * supported.
  */
-static int write_to_shell(struct script_control *ctl, char *buf, size_t bufsz)
-{
-	int rc;
-
-	if (ctl->data_on_way) {
-		wait_for_empty_fd(ctl->slave);
-		ctl->data_on_way = 0;
-	}
-	rc = write_all(ctl->master, buf, bufsz);
-	if (rc == 0)
-		ctl->data_on_way = 1;
-	return rc;
-
-}
-
 static void write_eof_to_shell(struct script_control *ctl)
 {
+	unsigned int tries = 0;
+	struct pollfd fds[] = {
+	           { .fd = ctl->slave, .events = POLLIN }
+	};
 	char c = DEF_EOF;
+
+	DBG(IO, ul_debug(" waiting for empty slave"));
+	while (poll(fds, 1, 10) == 1 && tries < 8) {
+		DBG(IO, ul_debug("   slave is not empty"));
+		xusleep(250000);
+		tries++;
+	}
+	if (tries < 8)
+		DBG(IO, ul_debug("   slave is empty now"));
 
 	DBG(IO, ul_debug(" sending EOF to master"));
 	write_to_shell(ctl, &c, sizeof(char));
@@ -375,10 +375,12 @@ static void handle_signal(struct script_control *ctl, int fd)
 
 	switch (info.ssi_signo) {
 	case SIGCHLD:
+		DBG(SIGNAL, ul_debug(" get signal SIGCHLD"));
 		wait_for_child(ctl, 0);
 		ctl->poll_timeout = 10;
 		return;
 	case SIGWINCH:
+		DBG(SIGNAL, ul_debug(" get signal SIGWINCH"));
 		if (ctl->isterm) {
 			ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&ctl->win);
 			ioctl(ctl->slave, TIOCSWINSZ, (char *)&ctl->win);
@@ -389,6 +391,7 @@ static void handle_signal(struct script_control *ctl, int fd)
 	case SIGINT:
 		/* fallthrough */
 	case SIGQUIT:
+		DBG(SIGNAL, ul_debug(" get signal SIG{TERM,INT,QUIT}"));
 		fprintf(stderr, _("\nSession terminated.\n"));
 		/* Child termination is going to generate SIGCHILD (see above) */
 		kill(ctl->child, SIGTERM);
@@ -485,6 +488,7 @@ static void do_io(struct script_control *ctl)
 					if (i == POLLFD_STDIN) {
 						ignore_stdin = 1;
 						write_eof_to_shell(ctl);
+						DBG(POLL, ul_debug("  ignore STDIN"));
 					}
 				}
 				continue;
