@@ -67,6 +67,7 @@ static void __attribute__((__noreturn__)) usage(int ex)
 	fputs(_(  " -E, --conflict-exit-code <number>  exit code after conflict or timeout\n"), stderr);
 	fputs(_(  " -o, --close              close file descriptor before running command\n"), stderr);
 	fputs(_(  " -c, --command <command>  run a single command string through the shell\n"), stderr);
+	fputs(_(  " -F, --no-fork            execute command without forking\n"), stderr);
 	fputs(_(  "     --verbose            increase verbosity\n"), stderr);
 	fprintf(stderr, USAGE_SEPARATOR);
 	fprintf(stderr, USAGE_HELP);
@@ -125,6 +126,7 @@ int main(int argc, char *argv[])
 	int fd = -1;
 	int opt, ix;
 	int do_close = 0;
+	int no_fork = 0;
 	int status;
 	int verbose = 0;
 	struct timeval time_start, time_done;
@@ -148,6 +150,7 @@ int main(int argc, char *argv[])
 		{"wait", required_argument, NULL, 'w'},
 		{"conflict-exit-code", required_argument, NULL, 'E'},
 		{"close", no_argument, NULL, 'o'},
+		{"no-fork", no_argument, NULL, 'F'},
 		{"verbose", no_argument, NULL, OPT_VERBOSE},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
@@ -166,7 +169,7 @@ int main(int argc, char *argv[])
 
 	optopt = 0;
 	while ((opt =
-		getopt_long(argc, argv, "+sexnouw:E:hV?", long_options,
+		getopt_long(argc, argv, "+sexnoFuw:E:hV?", long_options,
 			    &ix)) != EOF) {
 		switch (opt) {
 		case 's':
@@ -181,6 +184,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'o':
 			do_close = 1;
+			break;
+		case 'F':
+			no_fork = 1;
 			break;
 		case 'n':
 			block = LOCK_NB;
@@ -208,6 +214,10 @@ int main(int argc, char *argv[])
 			break;
 		}
 	}
+
+	if (no_fork && do_close)
+		errx(EX_USAGE,
+			_("the --no-fork and --close options are incompatible"));
 
 	if (argc > optind + 1) {
 		/* Run command */
@@ -320,36 +330,40 @@ int main(int argc, char *argv[])
 		signal(SIGCHLD, SIG_DFL);
 		if (verbose)
 			printf(_("%s: executing %s\n"), program_invocation_short_name, cmd_argv[0]);
-		f = fork();
 
-		if (f < 0) {
-			err(EX_OSERR, _("fork failed"));
-		} else if (f == 0) {
-			if (do_close)
-				close(fd);
-			execvp(cmd_argv[0], cmd_argv);
-			/* execvp() failed */
-			warn(_("failed to execute %s"), cmd_argv[0]);
-			_exit((errno == ENOMEM) ? EX_OSERR : EX_UNAVAILABLE);
-		} else {
-			do {
-				w = waitpid(f, &status, 0);
-				if (w == -1 && errno != EINTR)
-					break;
-			} while (w != f);
+		if (!no_fork) {
+			f = fork();
+			if (f < 0) {
+				err(EX_OSERR, _("fork failed"));
+				if (f != 0) {
+					do {
+						w = waitpid(f, &status, 0);
+						if (w == -1 && errno != EINTR)
+						break;
+					} while (w != f);
 
-			if (w == -1) {
-				status = EXIT_FAILURE;
-				warn(_("waitpid failed"));
-			} else if (WIFEXITED(status))
-				status = WEXITSTATUS(status);
-			else if (WIFSIGNALED(status))
-				status = WTERMSIG(status) + 128;
-			else
-				/* WTF? */
-				status = EX_OSERR;
+					if (w == -1) {
+					status = EXIT_FAILURE;
+					warn(_("waitpid failed"));
+				} else if (WIFEXITED(status))
+					status = WEXITSTATUS(status);
+				else if (WIFSIGNALED(status))
+					status = WTERMSIG(status) + 128;
+				else
+					/* WTF? */
+					status = EX_OSERR;
+				}
+				goto out;
+			}
 		}
+		if (do_close)
+			close(fd);
+		execvp(cmd_argv[0], cmd_argv);
+		/* execvp() failed */
+		warn(_("failed to execute %s"), cmd_argv[0]);
+		_exit((errno == ENOMEM) ? EX_OSERR : EX_UNAVAILABLE);
 	}
 
+out:
 	return status;
 }
