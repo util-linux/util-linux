@@ -962,13 +962,13 @@ AC_SUBST([LIBMOUNT_PATCH_VERSION], $PACKAGE_VERSION_RELEASE)
 AC_SUBST([LIBMOUNT_VERSION_INFO])
 AC_DEFINE_UNQUOTED([LIBMOUNT_VERSION], ["$LIBMOUNT_VERSION"], [libmount version string])
 
-AC_ARG_ENABLE([libmount-force-mountinfo],
-  AS_HELP_STRING([--enable-libmount-force-mountinfo], [ignore /etc/mtab in all situations (recommended for systemd)]),
-  [], [enable_libmount_force_mountinfo=no]
+AC_ARG_ENABLE([libmount-support-mtab],
+  AS_HELP_STRING([--enable-libmount-support-mtab], [support /etc/mtab (default is use /proc/self/mountinfo)]),
+  [], [enable_libmount_support_mtab=no]
 )
 
-AS_IF([test "x$enable_libmount_force_mountinfo" == xyes], [
-  AC_DEFINE([USE_LIBMOUNT_FORCE_MOUNTINFO], [1], [Define to 1 if want to ignore mtab in all situations.])
+AS_IF([test "x$enable_libmount_support_mtab" == xyes], [
+  AC_DEFINE([USE_LIBMOUNT_SUPPORT_MTAB], [1], [Define to 1 if want to support mtab.])
 ])
 
 

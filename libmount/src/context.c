@@ -204,8 +204,10 @@ static int context_init_paths(struct libmnt_context *cxt, int writable)
 {
 	assert(cxt);
 
+#ifdef USE_LIBMOUNT_SUPPORT_MTAB
 	if (!cxt->mtab_path)
 		cxt->mtab_path = mnt_get_mtab_path();
+#endif
 	if (!cxt->utab_path)
 		cxt->utab_path = mnt_get_utab_path();
 
@@ -218,13 +220,12 @@ static int context_init_paths(struct libmnt_context *cxt, int writable)
 
 	DBG(CXT, ul_debugobj(cxt, "checking for writable tab files"));
 
-#ifdef USE_LIBMOUNT_FORCE_MOUNTINFO
 	cxt->mtab_writable = 0;
-#else
-	mnt_has_regular_mtab(&cxt->mtab_path, &cxt->mtab_writable);
-#endif
 
+#ifdef USE_LIBMOUNT_SUPPORT_MTAB
+	mnt_has_regular_mtab(&cxt->mtab_path, &cxt->mtab_writable);
 	if (!cxt->mtab_writable)
+#endif
 		/* use /run/mount/utab if /etc/mtab is useless */
 		mnt_has_regular_utab(&cxt->utab_path, &cxt->utab_writable);
 
@@ -1023,6 +1024,10 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 					cxt->table_fltrcb_data);
 
 		mnt_table_set_cache(cxt->mtab, mnt_context_get_cache(cxt));
+
+		/*
+		 * Note that mtab_path is NULL if mtab is useless or unsupported
+		 */
 		if (cxt->utab)
 			/* utab already parsed, don't parse it again */
 			rc = __mnt_table_parse_mtab(cxt->mtab,

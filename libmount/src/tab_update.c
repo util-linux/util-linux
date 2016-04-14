@@ -105,7 +105,9 @@ int mnt_update_set_filename(struct libmnt_update *upd, const char *filename,
 
 	/* detect tab filename -- /etc/mtab or /run/mount/utab
 	 */
+#ifdef USE_LIBMOUNT_SUPPORT_MTAB
 	mnt_has_regular_mtab(&path, &rw);
+#endif
 	if (!rw) {
 		path = NULL;
 		mnt_has_regular_utab(&path, &rw);

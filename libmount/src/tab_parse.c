@@ -679,7 +679,7 @@ err:
  * @tb: tab pointer
  * @filename: file
  *
- * Parses the whole table (e.g. /etc/mtab) and appends new records to the @tab.
+ * Parses the whole table (e.g. /etc/fstab) and appends new records to the @tab.
  *
  * The libmount parser ignores broken (syntax error) lines, these lines are
  * reported to the caller by the errcb() function (see mnt_table_set_parser_errcb()).
@@ -1051,6 +1051,8 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 	return fs;
 }
 
+/* default filename is /proc/self/mountinfo
+ */
 int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 			   struct libmnt_table *u_tb)
 {
@@ -1058,9 +1060,7 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 
 	assert(tb);
 
-#ifdef USE_LIBMOUNT_FORCE_MOUNTINFO
-	DBG(TAB, ul_debugobj(tb, "mtab parse: ignore %s", filename ? filename : "mtab"));
-#else
+#ifdef USE_LIBMOUNT_SUPPORT_MTAB
 	if (mnt_has_regular_mtab(&filename, NULL)) {
 
 		DBG(TAB, ul_debugobj(tb, "force mtab usage [filename=%s]", filename));
@@ -1085,15 +1085,19 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 	 * useless /etc/mtab
 	 * -- read kernel information from /proc/self/mountinfo
 	 */
-	tb->fmt = MNT_FMT_MOUNTINFO;
-	rc = mnt_table_parse_file(tb, _PATH_PROC_MOUNTINFO);
+	tb->fmt = filename ? MNT_FMT_GUESS : MNT_FMT_MOUNTINFO;
+	rc = mnt_table_parse_file(tb, filename ? filename : _PATH_PROC_MOUNTINFO);
 	if (rc) {
 		/* hmm, old kernel? ...try /proc/mounts */
 		tb->fmt = MNT_FMT_MTAB;
 		return mnt_table_parse_file(tb, _PATH_PROC_MOUNTS);
 	}
 
+	if (!is_mountinfo(tb))
+		return 0;
+#ifdef USE_LIBMOUNT_SUPPORT_MTAB
 read_utab:
+#endif
 	DBG(TAB, ul_debugobj(tb, "mtab parse: #2 read utab"));
 
 	if (mnt_table_get_nents(tb) == 0)
@@ -1139,7 +1143,7 @@ read_utab:
 /**
  * mnt_table_parse_mtab:
  * @tb: table
- * @filename: overwrites default (/etc/mtab or $LIBMOUNT_MTAB) or NULL
+ * @filename: overwrites default or NULL
  *
  * This function parses /etc/mtab or /proc/self/mountinfo +
  * /run/mount/utabs or /proc/mounts.
