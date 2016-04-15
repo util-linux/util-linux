@@ -590,6 +590,9 @@ static int kernel_fs_postparse(struct libmnt_table *tb,
 			DBG(TAB, ul_debugobj(tb, "canonical root FS: %s", real));
 			rc = __mnt_fs_set_source_ptr(fs, real);
 		}
+		/* mnt_guess_system_root() returns 1 if not able to conver to
+		 * the real devname; ignore this problem */
+		rc = 0;
 	}
 
 	return rc;
@@ -644,8 +647,11 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 			rc = mnt_table_add_fs(tb, fs);
 			fs->flags |= flags;
 
-			if (rc == 0 && tb->fmt == MNT_FMT_MOUNTINFO)
+			if (rc == 0 && tb->fmt == MNT_FMT_MOUNTINFO) {
 				rc = kernel_fs_postparse(tb, fs, &tid, filename);
+				if (rc)
+					mnt_table_remove_fs(tb, fs);
+			}
 		}
 
 		if (rc) {
