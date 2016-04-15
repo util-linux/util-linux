@@ -18,7 +18,10 @@ ts_check_prog "mkfs.ext2"
 $TS_CMD_UMOUNT --help | grep -q all-targets
 [ $? -eq 1 ] && ts_skip "all-targets unsupported"
 
-[ -L /etc/mtab ] || ts_skip "regular mtab"
+has_mtab=$( ts_has_mtab_support )
+if [ "$has_mtab" == "yes" ]; then
+	[ -L /etc/mtab ] || ts_skip "regular mtab"
+fi
 
 # set global variable TS_DEVICE
 ts_scsi_debug_init dev_size_mb=50

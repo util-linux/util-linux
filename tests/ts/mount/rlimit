@@ -37,6 +37,9 @@ ts_skip_nonroot
 ts_check_losetup
 ts_check_prog "mkfs.ext3"
 
+has_mtab=$( ts_has_mtab_support )
+[ "$has_mtab" == "yes" ] || ts_skip "mtab unsupported"
+
 [ -L /etc/mtab ] && ts_skip "mtab is symlink"
 [ "$(stat --format '%s' /etc/mtab)" -gt "1024" ] || ts_skip "mtab is too small"
 

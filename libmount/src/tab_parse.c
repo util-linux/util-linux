@@ -1100,7 +1100,9 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 
 	if (!is_mountinfo(tb))
 		return 0;
+#ifdef USE_LIBMOUNT_SUPPORT_MTAB
 read_utab:
+#endif
 	DBG(TAB, ul_debugobj(tb, "mtab parse: #2 read utab"));
 
 	if (mnt_table_get_nents(tb) == 0)

@@ -38,8 +38,8 @@ ts_scsi_debug_init dev_size_mb=100
 DEVNAME=$(basename $TS_DEVICE)
 
 MOUNTINFO_ONLY=yes
-grep -q '#define USE_LIBMOUNT_SUPPORT_MTAB' ${top_builddir}/config.h
-if [ $? == 0 ]; then
+has_mtab=$( ts_has_mtab_support )
+if [ "$has_mtab" == "yes" ]; then
 	MOUNTINFO_ONLY=no
 fi
 

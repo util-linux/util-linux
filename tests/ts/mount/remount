@@ -34,14 +34,20 @@ ts_check_prog "mkfs.ext2"
 ts_device_init
 DEVICE=$TS_LODEV
 
+MTAB_FILE="/proc/mounts"
+has_mtab=$( ts_has_mtab_support )
+if [ "$has_mtab" == "yes" ]; then
+	MTAB_FILE="/etc/mtab"
+fi
+
 mkfs.ext2 $DEVICE &> /dev/null || ts_die "Cannot make ext2 on $DEVICE"
 
 # mount read-write
 $TS_CMD_MOUNT $DEVICE $TS_MOUNTPOINT || ts_die "Cannot mount $TS_MOUNTPOINT"
 
 # check the mount
-egrep -q "^$DEVICE $TS_MOUNTPOINT" /etc/mtab \
- || ts_die "Cannot find $TS_MOUNTPOINT in /etc/mtab"
+egrep -q "^$DEVICE $TS_MOUNTPOINT" $MTAB_FILE \
+ || ts_die "Cannot find $TS_MOUNTPOINT in $MTAB_FILE"
 
 # remount
 $TS_CMD_MOUNT -o remount,ro $TS_MOUNTPOINT \
