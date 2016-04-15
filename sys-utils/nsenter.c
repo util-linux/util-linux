@@ -48,9 +48,11 @@ static struct namespace_file {
 } namespace_files[] = {
 	/* Careful the order is significant in this array.
 	 *
-	 * The user namespace comes first, so that it is entered
-	 * first.  This gives an unprivileged user the potential to
-	 * enter the other namespaces.
+	 * The user namespace comes either first or last: first if
+	 * you're using it to increase your privilege and last if
+	 * you're using it to decrease.  We enter the namespaces in
+	 * two passes starting initially from offset 1 and then offset
+	 * 0 if that fails.
 	 */
 	{ .nstype = CLONE_NEWUSER,  .name = "ns/user", .fd = -1 },
 	{ .nstype = CLONE_NEWCGROUP,.name = "ns/cgroup", .fd = -1 },
@@ -202,7 +204,7 @@ int main(int argc, char *argv[])
 	};
 
 	struct namespace_file *nsfile;
-	int c, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
+	int c, pass, namespaces = 0, setgroups_nerrs = 0, preserve_cred = 0;
 	bool do_rd = false, do_wd = false, force_uid = false, force_gid = false;
 	int do_fork = -1; /* unknown yet */
 	uid_t uid = 0;
@@ -353,19 +355,31 @@ int main(int argc, char *argv[])
 	}
 
 	/*
-	 * Now that we know which namespaces we want to enter, enter them.
+	 * Now that we know which namespaces we want to enter, enter
+	 * them.  Do this in two passes, not entering the user
+	 * namespace on the first pass.  So if we're deprivileging the
+	 * container we'll enter the user namespace last and if we're
+	 * privileging it then we enter the usernamespace first
+	 * (because the initial setns will fail).
 	 */
-	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
-		if (nsfile->fd < 0)
-			continue;
-		if (nsfile->nstype == CLONE_NEWPID && do_fork == -1)
-			do_fork = 1;
-		if (setns(nsfile->fd, nsfile->nstype))
-			err(EXIT_FAILURE,
-			    _("reassociate to namespace '%s' failed"),
-			    nsfile->name);
-		close(nsfile->fd);
-		nsfile->fd = -1;
+	for (pass = 0; pass < 2; pass ++) {
+		for (nsfile = namespace_files + 1 - pass; nsfile->nstype; nsfile++) {
+			if (nsfile->fd < 0)
+				continue;
+			if (nsfile->nstype == CLONE_NEWPID && do_fork == -1)
+				do_fork = 1;
+			if (setns(nsfile->fd, nsfile->nstype)) {
+				if (pass != 0)
+					err(EXIT_FAILURE,
+					    _("reassociate to namespace '%s' failed"),
+					    nsfile->name);
+				else
+					continue;
+			}
+
+			close(nsfile->fd);
+			nsfile->fd = -1;
+		}
 	}
 
 	/* Remember the current working directory if I'm not changing it */
