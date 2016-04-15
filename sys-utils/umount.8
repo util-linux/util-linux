@@ -138,6 +138,12 @@ More than one type may be specified in a comma-separated list.  The list
 of filesystem types can be prefixed with
 .B no
 to indicate that no action should be taken for all of the mentioned types.
+.BR
+Note that
+.B umount
+reads information about mounted filesystems from kernel (/proc/mounts) and
+filesystem names may be different than filesystem names used in the /etc/fstab
+(e.g. "nfs4" vs. "nfs").
 .TP
 .BR \-v , " \-\-verbose"
 Verbose mode.
