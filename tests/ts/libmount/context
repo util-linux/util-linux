@@ -35,9 +35,10 @@ $TS_CMD_UMOUNT $MOUNTPOINT &> /dev/null
 ts_scsi_debug_init dev_size_mb=100
 DEVNAME=$(basename $TS_DEVICE)
 
-grep -q '#define USE_LIBMOUNT_FORCE_MOUNTINFO' ${top_builddir}/config.h
+MOUNTINFO_ONLY=yes
+grep -q '#define USE_LIBMOUNT_SUPPORT_MTAB' ${top_builddir}/config.h
 if [ $? == 0 ]; then
-	MOUNTINFO_ONLY=yes
+	MOUNTINFO_ONLY=no
 fi
 
 ts_log "Create partitions"
