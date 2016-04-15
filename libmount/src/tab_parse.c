@@ -589,10 +589,12 @@ static int kernel_fs_postparse(struct libmnt_table *tb,
 		if (rc == 0 && real) {
 			DBG(TAB, ul_debugobj(tb, "canonical root FS: %s", real));
 			rc = __mnt_fs_set_source_ptr(fs, real);
+
+		} else if (rc == 1) {
+			/* mnt_guess_system_root() returns 1 if not able to conver to
+			 * the real devname; ignore this problem */
+			rc = 0;
 		}
-		/* mnt_guess_system_root() returns 1 if not able to conver to
-		 * the real devname; ignore this problem */
-		rc = 0;
 	}
 
 	return rc;
