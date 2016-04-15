@@ -1060,6 +1060,9 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 
 	assert(tb);
 
+	if (filename)
+		DBG(TAB, ul_debugobj(tb, "%s reuested as mtab", filename));
+
 #ifdef USE_LIBMOUNT_SUPPORT_MTAB
 	if (mnt_has_regular_mtab(&filename, NULL)) {
 
@@ -1077,16 +1080,18 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 		if (!rc)
 			return 0;
 		filename = NULL;	/* failed */
-	}
+	} else
+		filename = NULL;	/* mtab useless */
 #endif
-	DBG(TAB, ul_debugobj(tb, "mtab parse: #1 read mountinfo"));
 
-	/*
-	 * useless /etc/mtab
-	 * -- read kernel information from /proc/self/mountinfo
-	 */
-	tb->fmt = filename ? MNT_FMT_GUESS : MNT_FMT_MOUNTINFO;
-	rc = mnt_table_parse_file(tb, filename ? filename : _PATH_PROC_MOUNTINFO);
+	if (!filename || strcmp(filename, _PATH_PROC_MOUNTINFO) == 0) {
+		filename = _PATH_PROC_MOUNTINFO;
+		tb->fmt = MNT_FMT_MOUNTINFO;
+		DBG(TAB, ul_debugobj(tb, "mtab parse: #1 read mountinfo"));
+	} else
+		tb->fmt = MNT_FMT_GUESS;
+
+	rc = mnt_table_parse_file(tb, filename);
 	if (rc) {
 		/* hmm, old kernel? ...try /proc/mounts */
 		tb->fmt = MNT_FMT_MTAB;
@@ -1095,9 +1100,7 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 
 	if (!is_mountinfo(tb))
 		return 0;
-#ifdef USE_LIBMOUNT_SUPPORT_MTAB
 read_utab:
-#endif
 	DBG(TAB, ul_debugobj(tb, "mtab parse: #2 read utab"));
 
 	if (mnt_table_get_nents(tb) == 0)
@@ -1145,8 +1148,14 @@ read_utab:
  * @tb: table
  * @filename: overwrites default or NULL
  *
- * This function parses /etc/mtab or /proc/self/mountinfo +
- * /run/mount/utabs or /proc/mounts.
+ * The default filename is /proc/self/mountinfo. If the mount table is a
+ * mountinfo file then /run/mount/utabs is parsed too and both files are merged
+ * to the one libmnt_table.
+ *
+ * If libmount is compiled with classic mtab file support, and the /etc/mtab is
+ * a regular file then this file is parsed.
+ *
+ * It's strongly recommended to use NULL as a @filename to keep code portable.
  *
  * See also mnt_table_set_parser_errcb().
  *

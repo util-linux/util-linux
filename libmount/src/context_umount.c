@@ -67,10 +67,10 @@ int mnt_context_find_umount_fs(struct libmnt_context *cxt,
 		return 1; /* empty string is not an error */
 
 	/*
-	 * The mtab file may be huge and on systems with utab we have to merge
+	 * The mount table may be huge, and on systems with utab we have to merge
 	 * userspace mount options into /proc/self/mountinfo. This all is
-	 * expensive. The mtab filter allows to filter out entries, then
-	 * mtab and utab are very tiny files.
+	 * expensive. The tab filter allows to filter out entries, then
+	 * a mount table and utab are very tiny files.
 	 *
 	 * *but*... the filter uses mnt_fs_streq_{target,srcpath} functions
 	 * where LABEL, UUID or symlinks are canonicalized. It means that
