@@ -204,9 +204,11 @@ static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 	kill(ctl->child, SIGTERM);	/* make sure we don't create orphans */
 
 	if (ctl->timingfp)
-		fclose(ctl->timingfp);
+		if (close_stream(ctl->timingfp) != 0)
+			err(EXIT_FAILURE, "write failed: %s", ctl->tname);
 	if (ctl->typescriptfp)
-		fclose(ctl->typescriptfp);
+		if (close_stream(ctl->typescriptfp) != 0)
+			err(EXIT_FAILURE, "write failed: %s", ctl->fname);
 
 	if (ctl->rc_wanted) {
 		if (WIFSIGNALED(ctl->childstatus))
