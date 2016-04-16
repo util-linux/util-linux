@@ -18,7 +18,7 @@
 .\"
 .\" Please read `man 7 groff_man' to see how to use the various macros.
 .\"
-.TH EXAMPLE "1" "July 2014" "util-linux" "User Commands"
+.TH EXAMPLE "1" "April 2016" "util-linux" "User Commands"
 .SH NAME
 example \- a util-linux man-page howto
 .SH SYNOPSIS
@@ -33,7 +33,7 @@ Write such here.
 \fB\-n\fR, \fB\-\-no\-argument\fR
 This option does not use an argument.
 .TP
-\fB\-o\fR, \fB\-\-optional\fR[\fI=argument\fR]
+\fB\-\-optional\fR[\fI=argument\fR]
 Tell in this description that the
 .I argument
 is optional, and what happens when it is or is not given.  Notice that the word
@@ -43,6 +43,24 @@ usage text uses the argument
 .IR num ,
 the manual page should say
 .IR number .
+.IP
+Notice that after release v2.28 it was decided that introducing new options
+taking optional arguments should be limited to long-only options.  This is
+done primarily to avoid problematic behaviour of short options.  Imagine for
+example normal option
+.B \-n
+and optional option
+.BR \-o .
+One will expect
+.B command \ \-no
+and
+.B command \ \-on
+to be the same, but in fact the former is two separate options while the
+later will use
+.B n
+as option argument of
+.BR -o .
+So it is best to avoid short forms of optional options altogether.
 .TP
 \fB\-r\fR, \fB\-\-required\fR \fIargument\fR
 Tell in this description that the

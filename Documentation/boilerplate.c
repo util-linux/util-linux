@@ -35,7 +35,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(" %s [options] file...\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -n, --no-argument       option does not use argument\n"), out);
-	fputs(_(" -o, --optional[=<arg>]  option argument is optional\n"), out);
+	fputs(_("     --optional[=<arg>]  option argument is optional\n"), out);
 	fputs(_(" -r, --required <arg>    option requires an argument\n"), out);
 	fputs(_(" -z                      no long option\n"), out);
 	fputs(_("     --xyzzy             a long option only\n"), out);
@@ -57,11 +57,11 @@ int main(int argc, char **argv)
 	int c;
 
 	enum {
-		OPT_XYZZY = CHAR_MAX + 1
+		OPT_XYZZY = CHAR_MAX + 1,
+		OPT_OPTIONAL	/* see howto-man-page.txt about short option */
 	};
 	static const struct option longopts[] = {
 		{"no-argument", no_argument, NULL, 'n'},
-		{"optional", optional_argument, NULL, 'o'},
 		{"required", required_argument, NULL, 'r'},
 		{"xyzzy", no_argument, NULL, OPT_XYZZY},
 		{"extremely-long-long-option", no_argument, NULL, 'e'},
@@ -77,10 +77,10 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "no::r:elfVh", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "nr:elfVh", longopts, NULL)) != -1)
 		switch (c) {
 		case 'n':
-		case 'o':
+		case OPT_OPTIONAL:
 		case 'r':
 		case OPT_XYZZY:
 		case 'e':
