@@ -40,6 +40,7 @@
 #include "xalloc.h"
 #include "pathnames.h"
 #include "all-io.h"
+#include "exitcodes.h"
 
 /* synchronize parent and child by pipe */
 #define PIPE_SYNC_BYTE	0x06
@@ -458,7 +459,7 @@ int main(int argc, char *argv[])
 
 	if (optind < argc) {
 		execvp(argv[optind], argv + optind);
-		err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
+		err(EX_EXEC, _("failed to execute %s"), argv[optind]);
 	}
 	exec_shell();
 }

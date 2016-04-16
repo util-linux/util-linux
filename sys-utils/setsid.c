@@ -24,6 +24,7 @@
 #include "c.h"
 #include "nls.h"
 #include "closestream.h"
+#include "exitcodes.h"
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
@@ -114,5 +115,5 @@ int main(int argc, char **argv)
 			err(EXIT_FAILURE, _("failed to set the controlling terminal"));
 	}
 	execvp(argv[optind], argv + optind);
-	err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
+	err(EX_EXEC, _("failed to execute %s"), argv[optind]);
 }

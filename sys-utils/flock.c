@@ -45,6 +45,7 @@
 #include "closestream.h"
 #include "monotonic.h"
 #include "timer.h"
+#include "exitcodes.h"
 
 static void __attribute__((__noreturn__)) usage(int ex)
 {
@@ -330,7 +331,8 @@ int main(int argc, char *argv[])
 			execvp(cmd_argv[0], cmd_argv);
 			/* execvp() failed */
 			warn(_("failed to execute %s"), cmd_argv[0]);
-			_exit((errno == ENOMEM) ? EX_OSERR : EX_UNAVAILABLE);
+			/* Behave mostly like the shell */
+			_exit((errno == ENOMEM) ? EX_OSERR : EX_EXEC);
 		} else {
 			do {
 				w = waitpid(f, &status, 0);

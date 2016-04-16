@@ -34,6 +34,7 @@
 #include "procutils.h"
 #include "c.h"
 #include "closestream.h"
+#include "exitcodes.h"
 
 struct taskset {
 	pid_t		pid;		/* task PID */
@@ -236,7 +237,7 @@ int main(int argc, char **argv)
 	if (!pid) {
 		argv += optind + 1;
 		execvp(argv[0], argv);
-		err(EXIT_FAILURE, _("failed to execute %s"), argv[0]);
+		err(EX_EXEC, _("failed to execute %s"), argv[0]);
 	}
 
 	return EXIT_SUCCESS;

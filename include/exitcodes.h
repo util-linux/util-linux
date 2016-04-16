@@ -32,4 +32,11 @@
 #define MOUNT_EX_FAIL		32	/* mount failure */
 #define MOUNT_EX_SOMEOK		64	/* some mount succeeded */
 
+/* Exit codes use by the su program */
+#define SU_EX_EXEC			126 /* faied to execute a program */
+#define SU_EX_NOENT			127 /* program was not found */
+
+/* General exit codes */
+#define EX_EXEC				127 /* faied to execute a program */
+
 #endif	/* UTIL_LINUX_EXITCODES_H */

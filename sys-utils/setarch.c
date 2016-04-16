@@ -35,6 +35,7 @@
 #include "nls.h"
 #include "c.h"
 #include "closestream.h"
+#include "exitcodes.h"
 
 #ifndef HAVE_PERSONALITY
 # include <syscall.h>
@@ -399,10 +400,10 @@ int main(int argc, char *argv[])
 
 	if (!argc) {
 		execl("/bin/sh", "-sh", NULL);
-		err(EXIT_FAILURE, _("failed to execute %s"), "/bin/sh");
+		err(EX_EXEC, _("failed to execute %s"), "/bin/sh");
 	}
 
 	execvp(argv[0], argv);
-	err(EXIT_FAILURE, "%s", argv[0]);
-	return EXIT_FAILURE;
+	err(EX_EXEC, "%s", argv[0]);
+	return EX_EXEC;
 }

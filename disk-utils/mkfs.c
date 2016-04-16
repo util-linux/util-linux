@@ -33,6 +33,7 @@
 #include "closestream.h"
 #include "nls.h"
 #include "xalloc.h"
+#include "exitcodes.h"
 
 #ifndef DEFAULT_FSTYPE
 #define DEFAULT_FSTYPE	"ext2"
@@ -136,5 +137,5 @@ int main(int argc, char **argv)
 
 	/* Execute the program */
 	execvp(progname, argv + optind);
-	err(EXIT_FAILURE, _("failed to execute %s"), progname);
+	err(EX_EXEC, _("failed to execute %s"), progname);
 }

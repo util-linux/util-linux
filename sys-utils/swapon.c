@@ -23,6 +23,7 @@
 #include "strutils.h"
 #include "optutils.h"
 #include "closestream.h"
+#include "exitcodes.h"
 
 #include "swapheader.h"
 #include "swapprober.h"
@@ -337,7 +338,7 @@ static int swap_reinitialize(struct swap_device *dev)
 		cmd[idx++] = dev->path;
 		cmd[idx++] = NULL;
 		execvp(cmd[0], (char * const *) cmd);
-		err(EXIT_FAILURE, _("failed to execute %s"), cmd[0]);
+		err(EX_EXEC, _("failed to execute %s"), cmd[0]);
 
 	default: /* parent */
 		do {
