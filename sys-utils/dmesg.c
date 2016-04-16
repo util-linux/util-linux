@@ -1363,7 +1363,6 @@ int main(int argc, char *argv[])
 			break;
 		case 't':
 			ctl.time_fmt = DMESG_TIMEFTM_NONE;
-			delta = 0;
 			break;
 		case 'u':
 			ctl.fltr_fac = 1;
