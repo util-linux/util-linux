@@ -520,7 +520,12 @@ try_readonly:
 			warnx(_("special device %s does not exist"), src);
 		} else {
 			errno = syserr;
-			warn(_("mount(2) failed"));	/* print errno */
+			if (tgt)
+				warn("%s: %s", _("mount(2) failed"), tgt);
+			else if (src)
+				warn("%s: %s", _("mount(2) failed"), src);
+			else
+				warn(_("mount(2) failed"));
 		}
 		break;
 
@@ -535,7 +540,7 @@ try_readonly:
 				 "(a path prefix is not a directory)"), src);
 		} else {
 			errno = syserr;
-			warn(_("mount(2) failed"));     /* print errno */
+			warn("%s: %s", _("mount(2) failed"), tgt);
 		}
 		break;
 
