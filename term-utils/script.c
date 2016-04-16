@@ -205,7 +205,8 @@ static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 
 	if (ctl->timingfp)
 		fclose(ctl->timingfp);
-	fclose(ctl->typescriptfp);
+	if (ctl->typescriptfp)
+		fclose(ctl->typescriptfp);
 
 	if (ctl->rc_wanted) {
 		if (WIFSIGNALED(ctl->childstatus))
