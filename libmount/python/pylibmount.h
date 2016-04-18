@@ -4,6 +4,7 @@
 #include <Python.h>
 #include <structmember.h>
 
+#include "c.h"
 #include "libmount.h"
 
 #define CONFIG_PYLIBMOUNT_DEBUG
