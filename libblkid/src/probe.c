@@ -1121,7 +1121,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	if (rc || len == 0 || off == NULL)
 		return 0;
 
-	offset = strtoumax(off, NULL, 10);
+	offset = strtoumax(off, NULL, 10) + pr->off;
 	fd = blkid_probe_get_fd(pr);
 	if (fd < 0)
 		return -1;
