@@ -45,7 +45,7 @@ Usage:
 
 Options:
  -n, --no-argument       option does not use argument
- -o, --optional[=<arg>]  option argument is optional
+     --optional[=<arg>]  option argument is optional
  -r, --required <arg>    option requires an argument
  -z                      no long option
      --xyzzy             a long option only

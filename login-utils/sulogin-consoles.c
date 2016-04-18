@@ -160,7 +160,7 @@ char *oneline(const char *file)
 
 	DBG(dbgprint("reading %s", file));
 
-	if (!(fp = fopen(file, "re")))
+	if (!(fp = fopen(file, "r" UL_CLOEXECSTR)))
 		return NULL;
 	len = getline(&ret, &dummy, fp);
 	if (len >= 0) {
@@ -361,7 +361,7 @@ static int detect_consoles_from_proc(struct list_head *consoles)
 
 	DBG(dbgprint("trying /proc"));
 
-	fc = fopen("/proc/consoles", "re");
+	fc = fopen("/proc/consoles", "r" UL_CLOEXECSTR);
 	if (!fc) {
 		rc = 2;
 		goto done;

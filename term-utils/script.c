@@ -204,8 +204,11 @@ static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 	kill(ctl->child, SIGTERM);	/* make sure we don't create orphans */
 
 	if (ctl->timingfp)
-		fclose(ctl->timingfp);
-	fclose(ctl->typescriptfp);
+		if (close_stream(ctl->timingfp) != 0)
+			err(EXIT_FAILURE, "write failed: %s", ctl->tname);
+	if (ctl->typescriptfp)
+		if (close_stream(ctl->typescriptfp) != 0)
+			err(EXIT_FAILURE, "write failed: %s", ctl->fname);
 
 	if (ctl->rc_wanted) {
 		if (WIFSIGNALED(ctl->childstatus))
@@ -419,15 +422,16 @@ static void do_io(struct script_control *ctl)
 	};
 
 
-	if ((ctl->typescriptfp = fopen(ctl->fname, ctl->append ? "a" : "w")) == NULL) {
+	if ((ctl->typescriptfp =
+	     fopen(ctl->fname, ctl->append ? "a" UL_CLOEXECSTR : "w" UL_CLOEXECSTR)) == NULL) {
 		warn(_("cannot open %s"), ctl->fname);
 		fail(ctl);
 	}
 	if (ctl->timing) {
 		if (!ctl->tname) {
-			if (!(ctl->timingfp = fopen("/dev/stderr", "w")))
+			if (!(ctl->timingfp = fopen("/dev/stderr", "w" UL_CLOEXECSTR)))
 				err(EXIT_FAILURE, _("cannot open %s"), "/dev/stderr");
-		} else if (!(ctl->timingfp = fopen(ctl->tname, "w")))
+		} else if (!(ctl->timingfp = fopen(ctl->tname, "w" UL_CLOEXECSTR)))
 			err(EXIT_FAILURE, _("cannot open %s"), ctl->tname);
 	}
 
@@ -515,7 +519,7 @@ static void getslave(struct script_control *ctl)
 {
 #ifndef HAVE_LIBUTIL
 	ctl->line[strlen("/dev/")] = 't';
-	ctl->slave = open(ctl->line, O_RDWR);
+	ctl->slave = open(ctl->line, O_RDWR | O_CLOEXEC);
 	if (ctl->slave < 0) {
 		warn(_("cannot open %s"), ctl->line);
 		fail(ctl);
@@ -625,7 +629,7 @@ static void getmaster(struct script_control *ctl)
 			break;
 		for (cp = "0123456789abcdef"; *cp; cp++) {
 			*pty = *cp;
-			ctl->master = open(ctl->line, O_RDWR);
+			ctl->master = open(ctl->line, O_RDWR | O_CLOEXEC);
 			if (ctl->master >= 0) {
 				char *tp = &ctl->line[strlen("/dev/")];
 				int ok;
@@ -765,7 +769,7 @@ int main(int argc, char **argv)
 	 * handled according to their default dispositions */
 	sigprocmask(SIG_BLOCK, &ctl.sigset, &ctl.sigorg);
 
-	if ((ctl.sigfd = signalfd(-1, &ctl.sigset, 0)) < 0)
+	if ((ctl.sigfd = signalfd(-1, &ctl.sigset, SFD_CLOEXEC)) < 0)
 		err(EXIT_FAILURE, _("cannot set signal handler"));
 
 	DBG(SIGNAL, ul_debug("signal fd=%d", ctl.sigfd));
