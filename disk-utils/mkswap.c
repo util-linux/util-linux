@@ -522,7 +522,7 @@ int main(int argc, char **argv)
 		context_string = context_str(newcontext);
 
 		if (strcmp(context_string, oldcontext)!=0) {
-			if (fsetfilecon(ctl.fd, context_string))
+			if (fsetfilecon(ctl.fd, context_string) && errno != ENOTSUP)
 				err(EXIT_FAILURE, _("unable to relabel %s to %s"),
 						ctl.devname, context_string);
 		}
