@@ -793,7 +793,7 @@ failed:
 	/* 'n' is the failed sector, reduce device size to n-1; */
 	DBG(LOWPROBE, ul_debug("CDROM: reduce size from %ju to %ju.",
 				(uintmax_t) pr->size,
-				(uintmax_t) (n - 1) << 9));
+				(uintmax_t) n << 9));
 	pr->size = n << 9;
 }
 
