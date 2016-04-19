@@ -752,6 +752,51 @@ int blkid_probe_is_cdrom(blkid_probe pr)
 	return pr && (pr->flags & BLKID_FL_CDROM_DEV);
 }
 
+static int is_sector_readable(int fd, uint64_t sector)
+{
+	char buf[512];
+	ssize_t sz;
+
+	if (blkid_llseek(fd, sector * 512, SEEK_SET) < 0)
+		goto failed;
+
+	sz = read(fd, buf, sizeof(buf));
+	if (sz != (ssize_t) sizeof(buf))
+		goto failed;
+
+	return 1;
+failed:
+	DBG(LOWPROBE, ul_debug("CDROM: read sector %ju failed %m", sector));
+	errno = 0;
+	return 0;
+}
+
+/*
+ * Linux kernel reports (BLKGETSIZE) cdrom device size greater than area
+ * readable by read(2). We have to reduce the probing area to avoid unwanted
+ * I/O errors in probing functions. It seems that unreadable are always last 2
+ * or 3 CD blocks (CD block size is 2048 bytes, it means 12 in 512-byte
+ * sectors).
+ */
+static void cdrom_size_correction(blkid_probe pr)
+{
+	uint64_t n, nsectors = pr->size >> 9;
+
+	for (n = nsectors - 12; n < nsectors; n++) {
+		if (!is_sector_readable(pr->fd, n))
+			goto failed;
+	}
+
+	DBG(LOWPROBE, ul_debug("CDROM: full size available"));
+	return;
+failed:
+	/* 'n' is the failed sector, reduce device size to n-1; */
+	DBG(LOWPROBE, ul_debug("CDROM: reduce size from %ju to %ju.",
+				(uintmax_t) pr->size,
+				(uintmax_t) (n - 1) << 9));
+	pr->size = n << 9;
+}
+
 /**
  * blkid_probe_set_device:
  * @pr: probe
@@ -844,8 +889,11 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	else if (S_ISBLK(sb.st_mode) &&
 	    !blkid_probe_is_tiny(pr) &&
 	    blkid_probe_is_wholedisk(pr) &&
-	    ioctl(fd, CDROM_GET_CAPABILITY, NULL) >= 0)
+	    ioctl(fd, CDROM_GET_CAPABILITY, NULL) >= 0) {
+
 		pr->flags |= BLKID_FL_CDROM_DEV;
+		cdrom_size_correction(pr);
+	}
 #endif
 
 	DBG(LOWPROBE, ul_debug("ready for low-probing, offset=%"PRIu64", size=%"PRIu64"",
