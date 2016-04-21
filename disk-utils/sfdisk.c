@@ -535,7 +535,7 @@ static int write_changes(struct sfdisk *sf)
 			rc = move_partition_data(sf, sf->partno, sf->orig_pa);
 		if (!rc) {
 			fdisk_info(sf->cxt, _("\nThe partition table has been altered."));
-			fdisk_reread_partition_table(sf->cxt);
+			rc = fdisk_reread_partition_table(sf->cxt);
 		}
 	}
 	if (!rc)
