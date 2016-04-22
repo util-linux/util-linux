@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <errno.h>
 
 /* default strtoxx_or_err() exit code */
 #ifndef STRTOXX_EXIT_CODE
@@ -60,20 +61,24 @@ static inline void xstrncpy(char *dest, const char *src, size_t n)
 	dest[n-1] = 0;
 }
 
-static inline char *strdup_to_offset(void *stru, size_t offset, const char *str)
+static inline int strdup_to_offset(void *stru, size_t offset, const char *str)
 {
 	char *n = NULL;
-	char **o = (char **) ((char *) stru + offset);
+	char **o;
 
+	if (!stru)
+		return -EINVAL;
+
+	o = (char **) ((char *) stru + offset);
 	if (str) {
 		n = strdup(str);
 		if (!n)
-			return NULL;
+			return -ENOMEM;
 	}
 
 	free(*o);
 	*o = n;
-	return n;
+	return 0;
 }
 
 #define strdup_to_struct_member(_s, _m, _str) \

@@ -287,18 +287,7 @@ const char *mnt_table_get_intro_comment(struct libmnt_table *tb)
  */
 int mnt_table_set_intro_comment(struct libmnt_table *tb, const char *comm)
 {
-	char *p = NULL;
-
-	if (!tb)
-		return -EINVAL;
-	if (comm) {
-		p = strdup(comm);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(tb->comm_intro);
-	tb->comm_intro = p;
-	return 0;
+	return strdup_to_struct_member(tb, comm_intro, comm);
 }
 
 /**
@@ -339,18 +328,7 @@ const char *mnt_table_get_trailing_comment(struct libmnt_table *tb)
  */
 int mnt_table_set_trailing_comment(struct libmnt_table *tb, const char *comm)
 {
-	char *p = NULL;
-
-	if (!tb)
-		return -EINVAL;
-	if (comm) {
-		p = strdup(comm);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(tb->comm_tail);
-	tb->comm_tail = p;
-	return 0;
+	return strdup_to_struct_member(tb, comm_tail, comm);
 }
 
 /**

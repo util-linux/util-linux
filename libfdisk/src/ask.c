@@ -106,7 +106,7 @@ const char *fdisk_ask_get_query(struct fdisk_ask *ask)
 int fdisk_ask_set_query(struct fdisk_ask *ask, const char *str)
 {
 	assert(ask);
-	return !strdup_to_struct_member(ask, query, str) ? -ENOMEM : 0;
+	return strdup_to_struct_member(ask, query, str);
 }
 
 /**

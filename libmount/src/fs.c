@@ -518,27 +518,15 @@ const char *mnt_fs_get_target(struct libmnt_fs *fs)
 /**
  * mnt_fs_set_target:
  * @fs: fstab/mtab/mountinfo entry
- * @target: mountpoint
+ * @tgt: mountpoint
  *
- * This function creates a private copy (strdup()) of @target.
+ * This function creates a private copy (strdup()) of @tgt.
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_set_target(struct libmnt_fs *fs, const char *target)
+int mnt_fs_set_target(struct libmnt_fs *fs, const char *tgt)
 {
-	char *p = NULL;
-
-	if (!fs)
-		return -EINVAL;
-	if (target) {
-		p = strdup(target);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(fs->target);
-	fs->target = p;
-
-	return 0;
+	return strdup_to_struct_member(fs, target, tgt);
 }
 
 static int mnt_fs_get_flags(struct libmnt_fs *fs)
@@ -980,19 +968,7 @@ const char *mnt_fs_get_attributes(struct libmnt_fs *fs)
  */
 int mnt_fs_set_attributes(struct libmnt_fs *fs, const char *optstr)
 {
-	char *p = NULL;
-
-	if (!fs)
-		return -EINVAL;
-	if (optstr) {
-		p = strdup(optstr);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(fs->attrs);
-	fs->attrs = p;
-
-	return 0;
+	return strdup_to_struct_member(fs, attrs, optstr);
 }
 
 /**
@@ -1098,24 +1074,13 @@ const char *mnt_fs_get_root(struct libmnt_fs *fs)
 /**
  * mnt_fs_set_root:
  * @fs: mountinfo entry
- * @root: path
+ * @path: root path
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_set_root(struct libmnt_fs *fs, const char *root)
+int mnt_fs_set_root(struct libmnt_fs *fs, const char *path)
 {
-	char *p = NULL;
-
-	if (!fs)
-		return -EINVAL;
-	if (root) {
-		p = strdup(root);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(fs->root);
-	fs->root = p;
-	return 0;
+	return strdup_to_struct_member(fs, root, path);
 }
 
 /**
@@ -1196,18 +1161,7 @@ const char *mnt_fs_get_bindsrc(struct libmnt_fs *fs)
  */
 int mnt_fs_set_bindsrc(struct libmnt_fs *fs, const char *src)
 {
-	char *p = NULL;
-
-	if (!fs)
-		return -EINVAL;
-	if (src) {
-		p = strdup(src);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(fs->bindsrc);
-	fs->bindsrc = p;
-	return 0;
+	return strdup_to_struct_member(fs, bindsrc, src);
 }
 
 /**
@@ -1326,19 +1280,7 @@ const char *mnt_fs_get_comment(struct libmnt_fs *fs)
  */
 int mnt_fs_set_comment(struct libmnt_fs *fs, const char *comm)
 {
-	char *p = NULL;
-
-	if (!fs)
-		return -EINVAL;
-	if (comm) {
-		p = strdup(comm);
-		if (!p)
-			return -ENOMEM;
-	}
-
-	free(fs->comment);
-	fs->comment = p;
-	return 0;
+	return strdup_to_struct_member(fs, comment, comm);
 }
 
 /**
