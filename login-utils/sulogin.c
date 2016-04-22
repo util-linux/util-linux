@@ -58,6 +58,7 @@
 #include "closestream.h"
 #include "nls.h"
 #include "pathnames.h"
+#include "plymouth-ctrl.h"
 #include "strutils.h"
 #include "ttyutils.h"
 #include "sulogin-consoles.h"
@@ -92,42 +93,6 @@ static int locked_account_password(const char *passwd)
 	return 0;
 }
 
-#ifdef TIOCGLCKTRMIOS
-/*
- * For the case plymouth is found on this system
- */
-static int plymouth_command(const char* arg)
-{
-	const char *cmd = "/usr/bin/plymouth";
-	static int has_plymouth = 1;
-	pid_t pid;
-
-	if (!has_plymouth)
-		return 127;
-
-	pid = fork();
-	if (!pid) {
-		int fd = open("/dev/null", O_RDWR);
-		if (fd < 0)
-			exit(127);
-		dup2(fd, 0);
-		dup2(fd, 1);
-		dup2(fd, 2);
-		if (fd > 2)
-			close(fd);
-		execl(cmd, cmd, arg, (char *) NULL);
-		exit(127);
-	} else if (pid > 0) {
-		int status;
-		waitpid(pid, &status, 0);
-		if (status == 127)
-			has_plymouth = 0;
-		return status;
-	}
-	return 1;
-}
-#endif
-
 /*
  * Fix the tty modes and set reasonable defaults.
  */
@@ -138,8 +103,9 @@ static void tcinit(struct console *con)
 	struct termios lock;
 	int fd = con->fd;
 #ifdef TIOCGLCKTRMIOS
-	int i = (plymouth_command("--ping")) ? 20 : 0;
-
+	int i = (plymouth_command(MAGIC_PING)) ? PLYMOUTH_TERMIOS_FLAGS_DELAY : 0;
+	if (i)
+		plymouth_command(MAGIC_QUIT);
 	while (i-- > 0) {
 		/*
 		 * With plymouth the termios flags become changed after this
@@ -149,8 +115,6 @@ static void tcinit(struct console *con)
 		if (ioctl(fd, TIOCGLCKTRMIOS, &lock) < 0)
 			break;
 		if (!lock.c_iflag && !lock.c_oflag && !lock.c_cflag && !lock.c_lflag)
-			break;
-		if (i == 15 && plymouth_command("quit") != 0)
 			break;
 		sleep(1);
 	}

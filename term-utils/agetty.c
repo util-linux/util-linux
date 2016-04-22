@@ -41,6 +41,7 @@
 #include "all-io.h"
 #include "nls.h"
 #include "pathnames.h"
+#include "plymouth-ctrl.h"
 #include "c.h"
 #include "widechar.h"
 #include "ttyutils.h"
@@ -137,9 +138,6 @@
 static int inotify_fd = AGETTY_RELOAD_FDNONE;
 static int netlink_fd = AGETTY_RELOAD_FDNONE;
 #endif
-
-#define AGETTY_PLYMOUTH		"/usr/bin/plymouth"
-#define AGETTY_PLYMOUTH_FDFILE	"/dev/null"
 
 /*
  * When multiple baud rates are specified on the command line, the first one
@@ -309,7 +307,6 @@ static void log_warn (const char *, ...)
 static ssize_t append(char *dest, size_t len, const char  *sep, const char *src);
 static void check_username (const char* nm);
 static void login_options_to_argv(char *argv[], int *argc, char *str, char *username);
-static int plymouth_command(const char* arg);
 static void reload_agettys(void);
 
 /* Fake hostname for ut_host specified on command line. */
@@ -1180,8 +1177,9 @@ static void termio_init(struct options *op, struct termios *tp)
 	struct winsize ws;
 	struct termios lock;
 #ifdef TIOCGLCKTRMIOS
-	int i =  (plymouth_command("--ping") == 0) ? 30 : 0;
-
+	int i =  (plymouth_command(MAGIC_PING) == 0) ? PLYMOUTH_TERMIOS_FLAGS_DELAY : 0;
+	if (i)
+		plymouth_command(MAGIC_QUIT);
 	while (i-- > 0) {
 		/*
 		 * Even with TTYReset=no it seems with systemd or plymouth
@@ -1194,8 +1192,6 @@ static void termio_init(struct options *op, struct termios *tp)
 		if (!lock.c_iflag && !lock.c_oflag && !lock.c_cflag && !lock.c_lflag)
 			break;
 		debug("termios locked\n");
-		if (i == 15 && plymouth_command("quit") != 0)
-			break;
 		sleep(1);
 	}
 	memset(&lock, 0, sizeof(struct termios));
@@ -1725,7 +1721,9 @@ static void print_issue_file(struct options *op, struct termios *tp)
 /* Show login prompt, optionally preceded by /etc/issue contents. */
 static void do_prompt(struct options *op, struct termios *tp)
 {
+#ifdef AGETTY_RELOAD
 again:
+#endif
 	print_issue_file(op, tp);
 
 	if (op->flags & F_LOGINPAUSE) {
@@ -2594,40 +2592,6 @@ static void check_username(const char* nm)
 err:
 	errno = EPERM;
 	log_err(_("checkname failed: %m"));
-}
-
-/*
- * For the case plymouth is found on this system
- */
-static int plymouth_command(const char* arg)
-{
-	static int has_plymouth = 1;
-	pid_t pid;
-
-	if (!has_plymouth)
-		return 127;
-
-	pid = fork();
-	if (!pid) {
-		int fd = open(AGETTY_PLYMOUTH_FDFILE, O_RDWR);
-
-		if (fd < 0)
-			err(EXIT_FAILURE,_("cannot open %s"),
-					AGETTY_PLYMOUTH_FDFILE);
-		dup2(fd, 0);
-		dup2(fd, 1);
-		dup2(fd, 2);
-		close(fd);
-		execl(AGETTY_PLYMOUTH, AGETTY_PLYMOUTH, arg, (char *) NULL);
-		exit(127);
-	} else if (pid > 0) {
-		int status;
-		waitpid(pid, &status, 0);
-		if (status == 127)
-			has_plymouth = 0;
-		return status;
-	}
-	return 1;
 }
 
 static void reload_agettys(void)
