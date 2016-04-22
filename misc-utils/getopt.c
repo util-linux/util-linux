@@ -82,11 +82,11 @@ typedef enum { BASH, TCSH } shell_t;
 struct getopt_control {
 	shell_t shell;			/* the shell we generate output for */
 	char *optstr;			/* getopt(3) optstring */
+	char *name;
 	struct option *long_options;	/* long options */
 	int long_options_length;	/* length of options array */
 	int long_options_nr;		/* number of used elements in array */
 	unsigned int
-		free_name:1,		/* free up argv[0] after printout */
 		compatible:1,		/* compatibility mode for 'difficult' programs */
 		quiet_errors:1,		/* print errors */
 		quiet_output:1,		/* print output */
@@ -230,8 +230,7 @@ static int generate_output(struct getopt_control *ctl, char *argv[], int argc)
 		free((char *)ctl->long_options[longindex].name);
 	free(ctl->long_options);
 	free(ctl->optstr);
-	if (ctl->free_name)
-		free(argv[0]);
+	free(ctl->name);
 	return exit_code;
 }
 
@@ -357,7 +356,6 @@ int main(int argc, char *argv[])
 		.shell = BASH,
 		.quote = 1
 	};
-	char *name = NULL;
 	int opt;
 
 	/* Stop scanning as soon as a non-option argument is found! */
@@ -424,9 +422,8 @@ int main(int argc, char *argv[])
 			add_long_options(&ctl, optarg);
 			break;
 		case 'n':
-			free(name);
-			name = xstrdup(optarg);
-			ctl.free_name = 1;
+			free(ctl.name);
+			ctl.name = xstrdup(optarg);
 			break;
 		case 'q':
 			ctl.quiet_errors = 1;
@@ -462,10 +459,10 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (name) {
-		argv[optind - 1] = name;
+	if (ctl.name) {
+		argv[optind - 1] = ctl.name;
 #if defined (HAVE_SETPROGNAME) && !defined (__linux__)
-		setprogname(name);
+		setprogname(ctl.name);
 #endif
 	} else
 		argv[optind - 1] = argv[0];
