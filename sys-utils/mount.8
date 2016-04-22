@@ -2931,6 +2931,10 @@ independently of
 You can also free a loop device by hand, using
 .BR "losetup \-d " or " umount \-d" .
 
+Since util-linux v2.29 mount command re-uses the loop device rather than
+initialize a new device if the same backing file is already mounted with the
+same offset.
+
 .SH RETURN CODES
 .B mount
 has the following return codes (the bits can be ORed):
