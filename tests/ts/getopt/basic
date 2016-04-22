@@ -16,7 +16,7 @@
 # file in misc/ directory.
 
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="getopt"
+TS_DESC="basic"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
