@@ -1107,7 +1107,7 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 int mnt_guess_system_root(dev_t devno, struct libmnt_cache *cache, char **path)
 {
 	char buf[PATH_MAX];
-	char *dev = NULL, *spec;
+	char *dev = NULL, *spec = NULL;
 	unsigned int x, y;
 	int allocated = 0;
 
@@ -1169,8 +1169,8 @@ int mnt_guess_system_root(dev_t devno, struct libmnt_cache *cache, char **path)
 		if (dev && !cache)
 			allocated = 1;
 	}
-	free(spec);
 done:
+	free(spec);
 	if (dev) {
 		*path = allocated ? dev : strdup(dev);
 		if (!path)
