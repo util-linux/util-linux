@@ -62,18 +62,7 @@ int scols_reset_cell(struct libscols_cell *ce)
  */
 int scols_cell_set_data(struct libscols_cell *ce, const char *str)
 {
-	char *p = NULL;
-
-	if (!ce)
-		return -EINVAL;
-	if (str) {
-		p = strdup(str);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(ce->data);
-	ce->data = p;
-	return 0;
+	return strdup_to_struct_member(ce, data, str);
 }
 
 /**
@@ -169,32 +158,20 @@ int scols_cmpstr_cells(struct libscols_cell *a,
 /**
  * scols_cell_set_color:
  * @ce: a pointer to a struct libscols_cell instance
- * @color: color name or ESC sequence
+ * @co: color name or ESC sequence
  *
- * Set the color of @ce to @color.
+ * Set the color of @ce to @co.
  *
  * Returns: 0, a negative value in case of an error.
  */
-int scols_cell_set_color(struct libscols_cell *ce, const char *color)
+int scols_cell_set_color(struct libscols_cell *ce, const char *co)
 {
-	char *p = NULL;
-
-	if (!ce)
-		return -EINVAL;
-	if (color) {
-		if (isalpha(*color)) {
-			color = color_sequence_from_colorname(color);
-
-			if (!color)
-				return -EINVAL;
-		}
-		p = strdup(color);
-		if (!p)
-			return -ENOMEM;
+	if (co && isalpha(*co)) {
+		co = color_sequence_from_colorname(co);
+		if (!co)
+			return -EINVAL;
 	}
-	free(ce->color);
-	ce->color = p;
-	return 0;
+	return strdup_to_struct_member(ce, color, co);
 }
 
 /**

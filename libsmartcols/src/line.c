@@ -285,31 +285,18 @@ int scols_line_next_child(struct libscols_line *ln,
 /**
  * scols_line_set_color:
  * @ln: a pointer to a struct libscols_line instance
- * @color: color name or ESC sequence
+ * @co: color name or ESC sequence
  *
  * Returns: 0, a negative value in case of an error.
  */
-int scols_line_set_color(struct libscols_line *ln, const char *color)
+int scols_line_set_color(struct libscols_line *ln, const char *co)
 {
-	char *p = NULL;
-
-	if (!ln)
-		return -EINVAL;
-	if (color) {
-		if (isalnum(*color)) {
-			color = color_sequence_from_colorname(color);
-
-			if (!color)
-				return -EINVAL;
-		}
-		p = strdup(color);
-		if (!p)
-			return -ENOMEM;
+	if (co && isalnum(*co)) {
+		co = color_sequence_from_colorname(co);
+		if (!co)
+			return -EINVAL;
 	}
-
-	free(ln->color);
-	ln->color = p;
-	return 0;
+	return strdup_to_struct_member(ln, color, co);
 }
 
 /**

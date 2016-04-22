@@ -196,7 +196,7 @@ struct libscols_cell *scols_column_get_header(struct libscols_column *cl)
 /**
  * scols_column_set_color:
  * @cl: a pointer to a struct libscols_column instance
- * @color: color name or ESC sequence
+ * @co: color name or ESC sequence
  *
  * The default color for data cells and column header.
  *
@@ -208,27 +208,14 @@ struct libscols_cell *scols_column_get_header(struct libscols_column *cl)
  *
  * Returns: 0, a negative value in case of an error.
  */
-int scols_column_set_color(struct libscols_column *cl, const char *color)
+int scols_column_set_color(struct libscols_column *cl, const char *co)
 {
-	char *p = NULL;
-
-	if (!cl)
-		return -EINVAL;
-	if (color) {
-		if (isalpha(*color)) {
-			color = color_sequence_from_colorname(color);
-
-			if (!color)
-				return -EINVAL;
-		}
-		p = strdup(color);
-		if (!p)
-			return -ENOMEM;
+	if (co && isalpha(*co)) {
+		co = color_sequence_from_colorname(co);
+		if (!co)
+			return -EINVAL;
 	}
-
-	free(cl->color);
-	cl->color = p;
-	return 0;
+	return strdup_to_struct_member(cl, color, co);
 }
 
 /**

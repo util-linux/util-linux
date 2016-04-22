@@ -76,20 +76,7 @@ void scols_unref_symbols(struct libscols_symbols *sy)
  */
 int scols_symbols_set_branch(struct libscols_symbols *sb, const char *str)
 {
-	char *p = NULL;
-
-	assert(sb);
-
-	if (!sb)
-		return -EINVAL;
-	if (str) {
-		p = strdup(str);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(sb->branch);
-	sb->branch = p;
-	return 0;
+	return strdup_to_struct_member(sb, branch, str);
 }
 
 /**
@@ -101,20 +88,7 @@ int scols_symbols_set_branch(struct libscols_symbols *sb, const char *str)
  */
 int scols_symbols_set_vertical(struct libscols_symbols *sb, const char *str)
 {
-	char *p = NULL;
-
-	assert(sb);
-
-	if (!sb)
-		return -EINVAL;
-	if (str) {
-		p = strdup(str);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(sb->vert);
-	sb->vert = p;
-	return 0;
+	return strdup_to_struct_member(sb, vert, str);
 }
 
 /**
@@ -126,20 +100,7 @@ int scols_symbols_set_vertical(struct libscols_symbols *sb, const char *str)
  */
 int scols_symbols_set_right(struct libscols_symbols *sb, const char *str)
 {
-	char *p = NULL;
-
-	assert(sb);
-
-	if (!sb)
-		return -EINVAL;
-	if (str) {
-		p = strdup(str);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(sb->right);
-	sb->right = p;
-	return 0;
+	return strdup_to_struct_member(sb, right, str);
 }
 
 /**
@@ -156,20 +117,7 @@ int scols_symbols_set_right(struct libscols_symbols *sb, const char *str)
  */
 int scols_symbols_set_title_padding(struct libscols_symbols *sb, const char *str)
 {
-	char *p = NULL;
-
-	assert(sb);
-
-	if (!sb)
-		return -EINVAL;
-	if (str) {
-		p = strdup(str);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(sb->title_padding);
-	sb->title_padding = p;
-	return 0;
+	return strdup_to_struct_member(sb, title_padding, str);
 }
 
 /**

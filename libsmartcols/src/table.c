@@ -100,7 +100,7 @@ void scols_unref_table(struct libscols_table *tb)
 /**
  * scols_table_set_name:
  * @tb: a pointer to a struct libscols_table instance
- * @name: a name
+ * @str: a name
  *
  * The table name is used for example for JSON top level object name.
  *
@@ -108,21 +108,9 @@ void scols_unref_table(struct libscols_table *tb)
  *
  * Since: 2.27
  */
-int scols_table_set_name(struct libscols_table *tb, const char *name)
+int scols_table_set_name(struct libscols_table *tb, const char *str)
 {
-	char *p = NULL;
-
-	if (!tb)
-		return -EINVAL;
-
-	if (name) {
-		p = strdup(name);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(tb->name);
-	tb->name = p;
-	return 0;
+	return strdup_to_struct_member(tb, name, str);
 }
 
 /**
@@ -1016,20 +1004,7 @@ int scols_table_is_tree(struct libscols_table *tb)
  */
 int scols_table_set_column_separator(struct libscols_table *tb, const char *sep)
 {
-	char *p = NULL;
-
-	if (!tb)
-		return -EINVAL;
-	if (sep) {
-		p = strdup(sep);
-		if (!p)
-			return -ENOMEM;
-	}
-
-	DBG(TAB, ul_debugobj(tb, "new columns separator: %s", sep));
-	free(tb->colsep);
-	tb->colsep = p;
-	return 0;
+	return strdup_to_struct_member(tb, colsep, sep);
 }
 
 /**
@@ -1043,21 +1018,7 @@ int scols_table_set_column_separator(struct libscols_table *tb, const char *sep)
  */
 int scols_table_set_line_separator(struct libscols_table *tb, const char *sep)
 {
-	char *p = NULL;
-
-	if (!tb)
-		return -EINVAL;
-
-	if (sep) {
-		p = strdup(sep);
-		if (!p)
-			return -ENOMEM;
-	}
-
-	DBG(TAB, ul_debugobj(tb, "new lines separator: %s", sep));
-	free(tb->linesep);
-	tb->linesep = p;
-	return 0;
+	return strdup_to_struct_member(tb, linesep, sep);
 }
 
 /**

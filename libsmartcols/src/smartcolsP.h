@@ -13,6 +13,7 @@
 
 #include "c.h"
 #include "list.h"
+#include "strutils.h"
 #include "color-names.h"
 #include "debug.h"
 
