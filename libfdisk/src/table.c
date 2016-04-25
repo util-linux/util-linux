@@ -394,6 +394,8 @@ static int new_freespace(struct fdisk_context *cxt,
 			 struct fdisk_partition *parent,
 			 struct fdisk_partition **pa)
 {
+	fdisk_sector_t aligned_start, size;
+
 	assert(cxt);
 	assert(pa);
 
@@ -401,17 +403,26 @@ static int new_freespace(struct fdisk_context *cxt,
 
 	if (start == end)
 		return 0;
-	*pa = fdisk_new_partition();
-	if (!*pa)
-		return -ENOMEM;
 
 	assert(start);
 	assert(end);
 	assert(end > start);
 
+	aligned_start = fdisk_align_lba_in_range(cxt, start, start, end);
+	size = end - aligned_start + 1ULL;
+
+	if (size == 0) {
+		DBG(TAB, ul_debug("ignore freespace (aligned size is zero)"));
+		return 0;
+	}
+
+	*pa = fdisk_new_partition();
+	if (!*pa)
+		return -ENOMEM;
+
 	(*pa)->freespace = 1;
-	(*pa)->start = fdisk_align_lba_in_range(cxt, start, start, end);
-	(*pa)->size = end - (*pa)->start + 1ULL;
+	(*pa)->start = aligned_start;
+	(*pa)->size = size;
 
 	if (parent)
 		(*pa)->parent_partno = parent->partno;
