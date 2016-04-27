@@ -772,54 +772,15 @@ failed:
 }
 
 /*
- * Issue #1:
- *
- *  On hybrid mutil-session media (audio+data) we get I/O errors almost
- *  everywhere. The solution is to specify probing offset to the wanted
- *  session. Udev uses this way when it calls libblkid (the proper data session
- *  offset is based on ID_CDROM_MEDIA_SESSION_LAST_OFFSET from by udev cdrom_id
- *  tool).
- *
- *  Unfortunately, it means that blkid will be blind when executed without a
- *  probing offset, to avoid this problem we use CDROMMULTISESSION ioctl to get
- *  last session offset. This way also uses iso9660 fyslesystem kernel driver
- *  when you mount mutil-session CD without a sesssion= mount option.
- *
- * Issue #2:
- *
- *  Linux kernel reports (BLKGETSIZE) cdrom device size greater than area
- *  readable by read(2). We have to reduce the probing area to avoid unwanted
- *  I/O errors in probing functions. It seems that unreadable are always last 2
- *  or 3 CD blocks (CD block size is 2048 bytes, it means 12 in 512-byte
- *  sectors).
+ * Linux kernel reports (BLKGETSIZE) cdrom device size greater than area
+ * readable by read(2). We have to reduce the probing area to avoid unwanted
+ * I/O errors in probing functions. It seems that unreadable are always last 2
+ * or 3 CD blocks (CD block size is 2048 bytes, it means 12 in 512-byte
+ * sectors).
  */
 static void cdrom_size_correction(blkid_probe pr)
 {
-	uint64_t size, n, nsectors;
-
-	/* move offset */
-#ifdef CDROMMULTISESSION
-	if (pr->off == 0) {
-		struct cdrom_multisession ms_info = { 0 };
-		int i;
-
-		ms_info.addr_format = CDROM_LBA;
-		i = ioctl(pr->fd, CDROMMULTISESSION, (unsigned long) &ms_info);
-		if (i == 0 && ms_info.xa_flag) {
-			DBG(LOWPROBE, ul_debug("CDROM: multisession last session start: %u (CD sectors)", ms_info.addr.lba));
-
-			pr->off = (uint64_t) ms_info.addr.lba * 2048;
-			DBG(LOWPROBE, ul_debug("CDROM:  moving probing offset from 0 to %ju", pr->off));
-
-			size = pr->size - pr->off;
-			DBG(LOWPROBE, ul_debug("CDROM:  reduce probing size from %ju to %ju", pr->size, size));
-			pr->size = size;
-		}
-	}
-#endif
-
-	/* reduce size */
-	nsectors = pr->size >> 9;
+	uint64_t n, nsectors = pr->size >> 9;
 
 	for (n = nsectors - 12; n < nsectors; n++) {
 		if (!is_sector_readable(pr->fd, n))
