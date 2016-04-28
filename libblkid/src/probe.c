@@ -615,7 +615,10 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint
 	if (ret != (ssize_t) len) {
 		DBG(LOWPROBE, ul_debug("\tread failed: %m"));
 		free(bf);
-		if (ret >= 0)
+
+		/* I/O errors on CDROMs are non-fatal to work with hybrid
+		 * audio+data disks */
+		if (ret >= 0 || blkid_probe_is_cdrom(pr))
 			errno = 0;
 		return NULL;
 	}
