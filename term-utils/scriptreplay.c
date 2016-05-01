@@ -30,6 +30,7 @@
 
 #include "closestream.h"
 #include "nls.h"
+#include "strutils.h"
 #include "c.h"
 
 #define SCRIPT_MIN_DELAY 0.0001		/* from original sripreplay.pl */
@@ -60,21 +61,11 @@ usage(FILE *out)
 static double
 getnum(const char *s)
 {
-	double d;
-	char *end;
+	const double d = strtod_or_err(s, _("failed to parse number"));
 
-	errno = 0;
-	d = strtod(s, &end);
-
-	if (end && *end != '\0')
-		errx(EXIT_FAILURE, _("expected a number, but got '%s'"), s);
-
-	if ((d == HUGE_VAL || d == -HUGE_VAL) && ERANGE == errno)
-		err(EXIT_FAILURE, _("divisor '%s'"), s);
-
-	if (!(d==d)) { /* did they specify "nan"? */
+	if (isnan(d)) {
 		errno = EINVAL;
-		err(EXIT_FAILURE, _("divisor '%s'"), s);
+		err(EXIT_FAILURE, "%s: %s", _("failed to parse number"), s);
 	}
 	return d;
 }
