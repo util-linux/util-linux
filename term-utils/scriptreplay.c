@@ -211,7 +211,7 @@ main(int argc, char *argv[])
 	/* ignore the first typescript line */
 	while((c = fgetc(sfile)) != EOF && c != '\n');
 
-	for(line = 0; ; line++) {
+	for(line = 1; ; line++) {
 		double delay;
 		size_t blk;
 		char nl;
@@ -223,7 +223,7 @@ main(int argc, char *argv[])
 				err(EXIT_FAILURE,
 					_("failed to read timing file %s"), tname);
 			errx(EXIT_FAILURE,
-				_("timings file %s: %lu: unexpected format"),
+				_("timing file %s: line %lu: unexpected format"),
 				tname, line);
 		}
 		delay /= divi;
