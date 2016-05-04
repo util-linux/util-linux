@@ -97,7 +97,7 @@ int main(int argc, char **argv)
 {
 	time_t atime;
 	uid_t myuid;
-	int msgsok, myttyfd, c;
+	int msgsok = 0, myttyfd, c;
 	char tty[PATH_MAX], *mytty;
 
 	static const struct option longopts[] = {
@@ -151,7 +151,7 @@ int main(int argc, char **argv)
 		if (!msgsok)
 			errx(EXIT_FAILURE,
 			     _("you have write permission turned off"));
-
+		msgsok = 0;
 	} else
 		mytty = "<no tty>";
 
@@ -230,7 +230,7 @@ void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
 	struct utmp u;
 	struct utmp *uptr;
 	time_t bestatime, atime;
-	int nloggedttys, nttys, msgsok, user_is_me;
+	int nloggedttys, nttys, msgsok = 0, user_is_me;
 	char atty[sizeof(u.ut_line) + 1];
 
 	utmpname(_PATH_UTMP);
@@ -300,10 +300,10 @@ int term_chk(char *tty, int *msgsokP, time_t * atimeP, int showerror)
 			warn("%s", path);
 		return 1;
 	}
-
-	*msgsokP = !access(path, W_OK);
-	if (!root_access && *msgsokP)
-		*msgsokP = s.st_mode & S_IWGRP;
+	if (getuid() == 0)	/* root can always write */
+		*msgsokP = 1;
+	else
+		*msgsokP = (s.st_mode & S_IWGRP) && (getegid() == s.st_gid);
 	*atimeP = s.st_atime;
 	return 0;
 }
