@@ -38,6 +38,7 @@
 #define LIBFDISK_DEBUG_PARTTYPE	(1 << 7)
 #define LIBFDISK_DEBUG_TAB	(1 << 8)
 #define LIBFDISK_DEBUG_SCRIPT	(1 << 9)
+#define LIBFDISK_DEBUG_WIPE	(1 << 10)
 #define LIBFDISK_DEBUG_ALL	0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libfdisk);
@@ -121,6 +122,10 @@ struct fdisk_partition {
 	char		*attrs;			/* partition flags/attributes converted to string */
 	struct fdisk_parttype	*type;		/* partition type */
 
+	char		*fstype;		/* filesystem type */
+	char		*fsuuid;		/* filesystem uuid  */
+	char		*fslabel;		/* filesystem label */
+
 	struct list_head	parts;		/* list of partitions */
 
 	/* extra fields for partition_to_string() */
@@ -143,6 +148,7 @@ struct fdisk_partition {
 			partno_follow_default : 1,	/* use default partno */
 			size_explicit : 1,		/* don't align the size */
 			start_follow_default : 1,	/* use default start */
+			fs_probed : 1,			/* already probed by blkid */
 			used : 1,			/* partition already used */
 			wholedisk : 1;			/* special system partition */
 };
@@ -355,10 +361,10 @@ struct fdisk_context {
 		     display_in_cyl_units : 1,	/* for obscure labels */
 		     display_details : 1,	/* expert display mode */
 		     protect_bootbits : 1,	/* don't zeroize fll irst sector */
-		     wipe_device : 1,		/* wipe device before write */
 		     listonly : 1;		/* list partition, nothing else */
 
 	char *collision;			/* name of already existing FS/PT */
+	struct list_head wipes;			/* list of areas to wipe before write */
 
 	int sizeunit;				/* SIZE fields, FDISK_SIZEUNIT_* */
 
@@ -388,8 +394,6 @@ struct fdisk_context {
 	struct fdisk_context	*parent;	/* for nested PT */
 	struct fdisk_script	*script;	/* what we want to follow */
 };
-
-int fdisk_wipe_collisions(struct fdisk_context *cxt);
 
 /* context.c */
 extern int __fdisk_switch_label(struct fdisk_context *cxt,
@@ -454,5 +458,11 @@ int fdisk_info_new_partition(
 extern struct dos_partition *fdisk_dos_get_partition(
 				struct fdisk_context *cxt,
 				size_t i);
+
+/* wipe.c */
+void fdisk_free_wipe_areas(struct fdisk_context *cxt);
+int fdisk_set_wipe_area(struct fdisk_context *cxt, uint64_t start, uint64_t size, int enable);
+int fdisk_do_wipe(struct fdisk_context *cxt);
+int fdisk_has_wipe_area(struct fdisk_context *cxt, uint64_t start, uint64_t size);
 
 #endif /* _LIBFDISK_PRIVATE_H */

@@ -162,6 +162,7 @@ fdisk_delete_partition
 fdisk_get_partition
 fdisk_is_partition_used
 fdisk_set_partition
+fdisk_wipe_partition
 <SUBSECTION>
 fdisk_partition
 fdisk_new_partition

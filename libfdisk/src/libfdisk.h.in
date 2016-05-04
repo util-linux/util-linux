@@ -285,6 +285,10 @@ enum fdisk_fieldtype {
 	FDISK_FIELD_SADDR,		/* Start-C/H/S (MBR) */
 	FDISK_FIELD_UUID,		/* partition UUID (GPT) */
 
+	FDISK_FIELD_FSUUID,
+	FDISK_FIELD_FSLABEL,
+	FDISK_FIELD_FSTYPE,
+
 	FDISK_NFIELDS		/* must be last */
 };
 
@@ -321,8 +325,9 @@ extern int fdisk_get_partition(struct fdisk_context *cxt, size_t partno, struct 
 extern int fdisk_set_partition(struct fdisk_context *cxt, size_t partno, struct fdisk_partition *pa);
 extern int fdisk_add_partition(struct fdisk_context *cxt, struct fdisk_partition *pa, size_t *partno);
 extern int fdisk_delete_partition(struct fdisk_context *cxt, size_t partno);
-
 extern int fdisk_delete_all_partitions(struct fdisk_context *cxt);
+
+extern int fdisk_wipe_partition(struct fdisk_context *cxt, size_t partno, int enable);
 
 extern int fdisk_set_partition_type(struct fdisk_context *cxt, size_t partnum,
 			     struct fdisk_parttype *t);
@@ -389,6 +394,7 @@ size_t fdisk_partition_get_partno(struct fdisk_partition *pa);
 int fdisk_partition_has_partno(struct fdisk_partition *pa);
 int fdisk_partition_cmp_partno(struct fdisk_partition *a,
 	                               struct fdisk_partition *b);
+
 int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int enable);
 
 extern int fdisk_partition_set_type(struct fdisk_partition *pa, struct fdisk_parttype *type);

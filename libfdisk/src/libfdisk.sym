@@ -259,3 +259,7 @@ FDISK_2.28 {
 	fdisk_get_collision;
 	fdisk_has_wipe;
 } FDISK_2.27;
+
+FDISK_2.29 {
+	fdisk_wipe_partition;
+} FDISK_2.28;

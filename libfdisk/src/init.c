@@ -21,6 +21,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libfdisk) =
 	{ "parttype",	LIBFDISK_DEBUG_PARTTYPE,"partition type utils" },
 	{ "script",	LIBFDISK_DEBUG_SCRIPT,	"sfdisk-like scripts" },
 	{ "tab",	LIBFDISK_DEBUG_TAB,	"table utils"},
+	{ "wipe",       LIBFDISK_DEBUG_WIPE,    "wipe area utils" },
 	{ NULL, 0 }
 };
 

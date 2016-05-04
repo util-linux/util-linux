@@ -47,6 +47,8 @@ struct fdisk_context *fdisk_new_context(void)
 	cxt->dev_fd = -1;
 	cxt->refcount = 1;
 
+	INIT_LIST_HEAD(&cxt->wipes);
+
 	/*
 	 * Allocate label specific structs.
 	 *
@@ -111,6 +113,8 @@ static int init_nested_from_parent(struct fdisk_context *cxt, int isnew)
 		if (!cxt->dev_path)
 			return -ENOMEM;
 	}
+
+	INIT_LIST_HEAD(&cxt->wipes);
 
 	return 0;
 }
@@ -339,9 +343,15 @@ int fdisk_enable_bootbits_protection(struct fdisk_context *cxt, int enable)
  * @cxt: fdisk context
  * @enable: 1 or 0
  *
- * The library removes all filesystem/RAID signatures before write PT. This is
- * no-op if any collision has not been detected by fdisk_assign_device(). See
- * fdisk_has_collision(). The default is not wipe a device.
+ * The library removes all filesystem/RAID signatures before it writes
+ * partition table. The probing area where it looks for filesystem/RAID is from
+ * the begin of the disk. The device is wiped by libblkid.
+ *
+ * See also fdisk_wipe_partition().
+ *
+ * This is no-op if any collision has not been detected by
+ * fdisk_assign_device(). See fdisk_has_collision(). The default is not wipe a
+ * device.
  *
  * Returns: 0 on success, < 0 on error.
  */
@@ -349,7 +359,8 @@ int fdisk_enable_wipe(struct fdisk_context *cxt, int enable)
 {
 	if (!cxt)
 		return -EINVAL;
-	cxt->wipe_device = enable ? 1 : 0;
+
+	fdisk_set_wipe_area(cxt, 0, cxt->total_sectors * cxt->sector_size, enable);
 	return 0;
 }
 
@@ -363,7 +374,10 @@ int fdisk_enable_wipe(struct fdisk_context *cxt, int enable)
  */
 int fdisk_has_wipe(struct fdisk_context *cxt)
 {
-	return cxt && cxt->wipe_device;
+	if (!cxt)
+		return 0;
+
+	return fdisk_has_wipe_area(cxt, 0, cxt->total_sectors * cxt->sector_size);
 }
 
 
@@ -484,6 +498,8 @@ static void reset_context(struct fdisk_context *cxt)
 	cxt->script = NULL;
 
 	cxt->label = NULL;
+
+	fdisk_free_wipe_areas(cxt);
 }
 
 /*
@@ -533,37 +549,6 @@ static int check_collisions(struct fdisk_context *cxt)
 #else
 	return 0;
 #endif
-}
-
-int fdisk_wipe_collisions(struct fdisk_context *cxt)
-{
-#ifdef HAVE_LIBBLKID
-	blkid_probe pr;
-	int rc;
-
-	assert(cxt);
-	assert(cxt->dev_fd >= 0);
-
-	DBG(CXT, ul_debugobj(cxt, "wipe: initialize libblkid prober"));
-
-	pr = blkid_new_probe();
-	if (!pr)
-		return -ENOMEM;
-	rc = blkid_probe_set_device(pr, cxt->dev_fd, 0, 0);
-	if (rc)
-		return rc;
-
-	blkid_probe_enable_superblocks(pr, 1);
-	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_MAGIC);
-	blkid_probe_enable_partitions(pr, 1);
-	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_MAGIC);
-
-	while (blkid_do_probe(pr) == 0)
-		blkid_do_wipe(pr, FALSE);
-
-	blkid_free_probe(pr);
-#endif
-	return 0;
 }
 
 /**

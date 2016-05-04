@@ -21,6 +21,7 @@ libfdisk_la_SOURCES = \
 	libfdisk/src/iter.c \
 	libfdisk/src/script.c \
 	libfdisk/src/version.c \
+	libfdisk/src/wipe.c \
 	\
 	libfdisk/src/sun.c \
 	libfdisk/src/sgi.c \
