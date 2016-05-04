@@ -180,7 +180,7 @@ static struct cfdisk_menuitem main_menuitems[] = {
 	{ 'b', N_("Bootable"), N_("Toggle bootable flag of the current partition") },
 	{ 'd', N_("Delete"), N_("Delete the current partition") },
 	{ 'n', N_("New"), N_("Create new partition from free space") },
-	{ 'q', N_("Quit"), N_("Quit program without writing partition table") },
+	{ 'q', N_("Quit"), N_("Quit program without writing changes") },
 	{ 't', N_("Type"), N_("Change the partition type") },
 	{ 'h', N_("Help"), N_("Print help screen") },
 	{ 's', N_("Sort"), N_("Fix partitions order") },
@@ -1309,39 +1309,19 @@ static void extra_prepare_data(struct cfdisk *cf)
 		free(data);
 	}
 
-#ifdef HAVE_LIBBLKID
-	if (fdisk_partition_has_start(pa) && fdisk_partition_has_size(pa)) {
-		int fd;
-		uintmax_t start, size;
-		blkid_probe pr = blkid_new_probe();
-
-		if (!pr)
-			goto done;
-
-		DBG(UI, ul_debug("blkid prober: %p", pr));
-
-		start = fdisk_partition_get_start(pa) * fdisk_get_sector_size(cf->cxt);
-		size = fdisk_partition_get_size(pa) * fdisk_get_sector_size(cf->cxt);
-		fd = fdisk_get_devfd(cf->cxt);
-
-		if (blkid_probe_set_device(pr, fd, start, size) == 0 &&
-		    blkid_do_fullprobe(pr) == 0) {
-			const char *bdata = NULL;
-
-			if (!blkid_probe_lookup_value(pr, "TYPE", &bdata, NULL))
-				extra_insert_pair(l, _("Filesystem:"), bdata);
-			if (!blkid_probe_lookup_value(pr, "LABEL", &bdata, NULL)) {
-				extra_insert_pair(l, _("Filesystem label:"), bdata);
-				devlabel = xstrdup(bdata);
-			}
-			if (!blkid_probe_lookup_value(pr, "UUID", &bdata, NULL)) {
-				extra_insert_pair(l, _("Filesystem UUID:"), bdata);
-				devuuid = xstrdup(bdata);
-			}
-		}
-		blkid_free_probe(pr);
+	if (!fdisk_partition_to_string(pa, cf->cxt, FDISK_FIELD_FSUUID, &data) && data) {
+		extra_insert_pair(l, _("Filesystem UUID:"), data);
+		free(data);
 	}
-#endif /* HAVE_LIBBLKID */
+
+	if (!fdisk_partition_to_string(pa, cf->cxt, FDISK_FIELD_FSLABEL, &data) && data) {
+		extra_insert_pair(l, _("Filesystem LABEL:"), data);
+		free(data);
+	}
+	if (!fdisk_partition_to_string(pa, cf->cxt, FDISK_FIELD_FSTYPE, &data) && data) {
+		extra_insert_pair(l, _("Filesystem:"), data);
+		free(data);
+	}
 
 #ifdef HAVE_LIBMOUNT
 	if (devuuid || devlabel) {
@@ -1352,7 +1332,6 @@ static void extra_prepare_data(struct cfdisk *cf)
 		}
 	}
 #endif /* HAVE_LIBMOUNT */
-done:
 	free(devlabel);
 	free(devuuid);
 }

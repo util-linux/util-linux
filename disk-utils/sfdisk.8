@@ -223,6 +223,18 @@ before a new partition table is created.  See also
 command.
 
 .TP
+.BR -W , " \-\-wipe-partitions "\fIwhen
+Wipe filesystem, RAID and partition-table signatures from a newly created
+partitions, in order to avoid possible collisions.  The argument \fIwhen\fR can
+be \fBauto\fR, \fBnever\fR or \fBalways\fR.  When this option is not given, the
+default is \fBauto\fR, in which case signatures are wiped only when in
+interactive mode and after confirmation by user.  In all cases detected
+signatures are reported by warning messages after a new partition is created.
+See also
+.BR wipefs (8)
+command.
+
+.TP
 .BR \-v , " \-\-version"
 Display version information and exit.
 .TP

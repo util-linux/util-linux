@@ -89,7 +89,8 @@ enum {
 struct sfdisk {
 	int		act;		/* ACT_* */
 	int		partno;		/* -N <partno>, default -1 */
-	int		wipemode;	/* remove foreign signatures */
+	int		wipemode;	/* remove foreign signatures from disk */
+	int		pwipemode;	/* remove foreign signatures from partitions */
 	const char	*label;		/* --label <label> */
 	const char	*label_nested;	/* --label-nested <label> */
 	const char	*backup_file;	/* -O <path> */
@@ -1437,7 +1438,39 @@ static int ignore_partition(struct fdisk_partition *pa)
 	return 0;
 }
 
+static int wipe_partition(struct sfdisk *sf, size_t partno)
+{
+	int rc, yes = 0;
+	char *fstype = NULL;;
+	struct fdisk_partition *tmp = NULL;
 
+	DBG(MISC, ul_debug("checking for signature"));
+
+	rc = fdisk_get_partition(sf->cxt, partno, &tmp);
+	if (rc)
+		goto done;
+
+	rc = fdisk_partition_to_string(tmp, sf->cxt, FDISK_FIELD_FSTYPE, &fstype);
+	if (rc || fstype == NULL)
+		goto done;
+
+	fdisk_warnx(sf->cxt, _("Partition #%zu contains a %s signature."), partno + 1, fstype);
+
+	if (sf->pwipemode == WIPEMODE_AUTO && isatty(STDIN_FILENO))
+		fdisk_ask_yesno(sf->cxt, _("Do you want to remove the signature?"), &yes);
+	else if (sf->pwipemode == WIPEMODE_ALWAYS)
+		yes = 1;
+
+	if (yes) {
+		fdisk_info(sf->cxt, _("The signature will be removed by a write command."));
+		rc = fdisk_wipe_partition(sf->cxt, partno, TRUE);
+	}
+done:
+	fdisk_unref_partition(tmp);
+	free(fstype);
+	DBG(MISC, ul_debug("partition wipe check end [rc=%d]", rc));
+	return rc;
+}
 
 /*
  * sfdisk <device> [[-N] <partno>]
@@ -1446,7 +1479,7 @@ static int ignore_partition(struct fdisk_partition *pa)
  */
 static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 {
-	int rc = 0, partno = sf->partno, created = 0;
+	int rc = 0, partno = sf->partno, created = 0, unused = 0;
 	struct fdisk_script *dp;
 	struct fdisk_table *tb = NULL;
 	const char *devname = NULL, *label;
@@ -1493,9 +1526,11 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 					     "partitions"),
 					devname, partno + 1, n);
 
-		if (!fdisk_is_partition_used(sf->cxt, partno))
+		if (!fdisk_is_partition_used(sf->cxt, partno)) {
 			fdisk_warnx(sf->cxt, _("warning: %s: partition %d is not defined yet"),
 					devname, partno + 1);
+			unused = 1;
+		}
 		created = 1;
 		next_partno = partno;
 
@@ -1669,10 +1704,23 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				if (rc) {
 					errno = -rc;
 					fdisk_warn(sf->cxt, _("Failed to add partition"));
+
 				}
 			}
 
-			if (!rc) {		/* success, print reult */
+			/* wipe partition on success
+			 *
+			 * Note that unused=1 means -N <partno> for unused,
+			 * otherwise we wipe only newly created partitions.
+			 */
+			if (rc == 0 && (unused || partno < 0)) {
+				rc = wipe_partition(sf, unused ? (size_t) partno : cur_partno);
+				if (rc)
+					errno = -rc;
+			}
+
+			if (!rc) {
+				/* success print result */
 				if (sf->interactive)
 					sfdisk_print_partition(sf, cur_partno);
 				next_partno = cur_partno + 1;
@@ -1768,6 +1816,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -o, --output <list>       output columns\n"), out);
 	fputs(_(" -q, --quiet               suppress extra info messages\n"), out);
 	fputs(_(" -w, --wipe <mode>         wipe signatures (auto, always or never)\n"), out);
+	fputs(_(" -W, --wipe-partitons <mode>  wipe signatures from new partitions (auto, always or never)\n"), out);
 	fputs(_(" -X, --label <name>        specify label type (dos, gpt, ...)\n"), out);
 	fputs(_(" -Y, --label-nested <name> specify nested label type (dos, bsd)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -1793,6 +1842,7 @@ int main(int argc, char *argv[])
 	struct sfdisk _sf = {
 		.partno = -1,
 		.wipemode = WIPEMODE_AUTO,
+		.pwipemode = WIPEMODE_AUTO,
 		.interactive = isatty(STDIN_FILENO) ? 1 : 0,
 	}, *sf = &_sf;
 
@@ -1840,6 +1890,7 @@ int main(int argc, char *argv[])
 		{ "verify",  no_argument,       NULL, 'V' },
 		{ "version", no_argument,       NULL, 'v' },
 		{ "wipe",    required_argument, NULL, 'w' },
+		{ "wipe-partitions",    required_argument, NULL, 'W' },
 
 		{ "part-uuid",  no_argument,    NULL, OPT_PARTUUID },
 		{ "part-label", no_argument,    NULL, OPT_PARTLABEL },
@@ -1861,7 +1912,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "aAbcdfFghJlLo:O:nN:qrsTu:vVX:Y:w:",
+	while ((c = getopt_long(argc, argv, "aAbcdfFghJlLo:O:nN:qrsTu:vVX:Y:w:W:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'A':
@@ -1947,6 +1998,11 @@ int main(int argc, char *argv[])
 		case 'w':
 			sf->wipemode = wipemode_from_string(optarg);
 			if (sf->wipemode < 0)
+				errx(EXIT_FAILURE, _("unsupported wipe mode"));
+			break;
+		case 'W':
+			sf->pwipemode = wipemode_from_string(optarg);
+			if (sf->pwipemode < 0)
 				errx(EXIT_FAILURE, _("unsupported wipe mode"));
 			break;
 		case 'X':
