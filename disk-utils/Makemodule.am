@@ -143,16 +143,6 @@ fdisk_LDADD = $(LDADD) libcommon.la libfdisk.la \
 	      libsmartcols.la libtcolors.la $(READLINE_LIBS)
 fdisk_CFLAGS = $(AM_CFLAGS) -I$(ul_libfdisk_incdir) -I$(ul_libsmartcols_incdir)
 
-if BUILD_LIBBLKID
-fdisk_CFLAGS += -I$(ul_libblkid_incdir)
-fdisk_LDADD += libblkid.la
-endif
-
-if BUILD_LIBUUID
-fdisk_CFLAGS += -I$(ul_libuuid_incdir)
-fdisk_LDADD += libuuid.la
-endif
-
 if HAVE_STATIC_FDISK
 sbin_PROGRAMS += fdisk.static
 fdisk_static_SOURCES = $(fdisk_SOURCES)
@@ -174,16 +164,6 @@ sfdisk_SOURCES = \
 sfdisk_LDADD = $(LDADD) libcommon.la libfdisk.la \
 	       libsmartcols.la libtcolors.la $(READLINE_LIBS)
 sfdisk_CFLAGS = $(AM_CFLAGS) -I$(ul_libfdisk_incdir) -I$(ul_libsmartcols_incdir)
-
-if BUILD_LIBUUID
-sfdisk_CFLAGS += -I$(ul_libuuid_incdir)
-sfdisk_LDADD += libuuid.la
-endif
-
-if BUILD_LIBBLKID
-sfdisk_CFLAGS += -I$(ul_libblkid_incdir)
-sfdisk_LDADD += libblkid.la
-endif
 
 if HAVE_STATIC_SFDISK
 sbin_PROGRAMS += sfdisk.static
@@ -209,11 +189,6 @@ cfdisk_CFLAGS = \
 	$(AM_CFLAGS) \
 	-I$(ul_libfdisk_incdir) \
 	-I$(ul_libsmartcols_incdir)
-
-if BUILD_LIBBLKID
-cfdisk_CFLAGS += -I$(ul_libblkid_incdir)
-cfdisk_LDADD += libblkid.la
-endif
 
 if BUILD_LIBMOUNT
 cfdisk_CFLAGS += -I$(ul_libmount_incdir)

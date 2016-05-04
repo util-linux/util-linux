@@ -23,10 +23,6 @@
 #include <sys/ioctl.h>
 #include <libfdisk.h>
 
-#ifdef HAVE_LIBBLKID
-# include <blkid.h>	/* keep it optional */
-#endif
-
 #ifdef HAVE_LIBMOUNT
 # include <libmount.h>	/* keep it optional for non-linux systems */
 #endif
