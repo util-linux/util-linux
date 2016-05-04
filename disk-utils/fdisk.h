@@ -24,6 +24,8 @@
 #define FDISKPROG_DEBUG_ASK	(1 << 5)
 #define FDISKPROG_DEBUG_ALL	0xFFFF
 
+extern int pwipemode;
+
 UL_DEBUG_DECLARE_MASK(fdisk);
 #define DBG(m, x)       __UL_DBG(fdisk, FDISKPROG_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(fdisk, FDISKPROG_DEBUG_, m, x)

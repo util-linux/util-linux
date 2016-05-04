@@ -49,6 +49,8 @@
 # include <linux/blkpg.h>
 #endif
 
+int pwipemode = WIPEMODE_AUTO;
+
 /*
  * fdisk debug stuff (see fdisk.h and include/debug.h)
  */
@@ -741,6 +743,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -s, --getsz                   display device size in 512-byte sectors [DEPRECATED]\n"), out);
 	fputs(_("     --bytes                   print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -w, --wipe <mode>             wipe signatures (auto, always or never)\n"), out);
+	fputs(_(" -W, --wipe-partitions <mode>  wipe signatures from new partitions (auto, always or never)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -C, --cylinders <number>      specify the number of cylinders\n"), out);
@@ -791,6 +794,7 @@ int main(int argc, char **argv)
 		{ "output",         no_argument,       NULL, 'o' },
 		{ "protect-boot",   no_argument,       NULL, 'B' },
 		{ "wipe",           required_argument, NULL, 'w' },
+		{ "wipe-partitions",required_argument, NULL, 'W' },
 		{ NULL, 0, NULL, 0 }
 	};
 
@@ -809,7 +813,7 @@ int main(int argc, char **argv)
 
 	fdisk_set_ask(cxt, ask_callback, NULL);
 
-	while ((c = getopt_long(argc, argv, "b:Bc::C:hH:lL::o:sS:t:u::vVw:",
+	while ((c = getopt_long(argc, argv, "b:Bc::C:hH:lL::o:sS:t:u::vVw:W:",
 				longopts, NULL)) != -1) {
 		switch (c) {
 		case 'b':
@@ -903,6 +907,11 @@ int main(int argc, char **argv)
 		case 'w':
 			wipemode = wipemode_from_string(optarg);
 			if (wipemode < 0)
+				errx(EXIT_FAILURE, _("unsupported wipe mode"));
+			break;
+		case 'W':
+			pwipemode = wipemode_from_string(optarg);
+			if (pwipemode < 0)
 				errx(EXIT_FAILURE, _("unsupported wipe mode"));
 			break;
 		case 'h':
