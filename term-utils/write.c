@@ -63,6 +63,7 @@
 #include "carefulputc.h"
 #include "closestream.h"
 #include "nls.h"
+#include "strutils.h"
 #include "xalloc.h"
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
@@ -164,8 +165,7 @@ static void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
 		memcpy(&u, uptr, sizeof(u));
 		if (strncmp(user, u.ut_user, sizeof(u.ut_user)) == 0) {
 			++nloggedttys;
-			strncpy(atty, u.ut_line, sizeof(u.ut_line));
-			atty[sizeof(u.ut_line)] = '\0';
+			xstrncpy(atty, u.ut_line, sizeof(atty));
 			if (term_chk(atty, &msgsok, &atime, 0))
 				/* bad term? skip */
 				continue;
