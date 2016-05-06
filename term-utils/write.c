@@ -104,7 +104,8 @@ static int term_chk(char *tty, int *msgsokP, time_t * atimeP, int showerror)
 		*msgsokP = 1;
 	else
 		*msgsokP = (s.st_mode & S_IWGRP) && (getegid() == s.st_gid);
-	*atimeP = s.st_atime;
+	if (atimeP)
+		*atimeP = s.st_atime;
 	return 0;
 }
 
@@ -284,7 +285,6 @@ static void do_write(char *tty, char *mytty, uid_t myuid)
 
 int main(int argc, char **argv)
 {
-	time_t atime;
 	uid_t myuid;
 	int msgsok = 0, myttyfd, c;
 	char tty[PATH_MAX], *mytty;
@@ -333,7 +333,7 @@ int main(int argc, char **argv)
 		 */
 		if (!strncmp(mytty, "/dev/", 5))
 			mytty += 5;
-		if (term_chk(mytty, &msgsok, &atime, 1))
+		if (term_chk(mytty, &msgsok, NULL, 1))
 			exit(EXIT_FAILURE);
 		if (!msgsok)
 			errx(EXIT_FAILURE,
@@ -357,7 +357,7 @@ int main(int argc, char **argv)
 			errx(EXIT_FAILURE,
 			     _("%s is not logged in on %s"),
 			     argv[1], argv[2]);
-		if (term_chk(argv[2], &msgsok, &atime, 1))
+		if (term_chk(argv[2], &msgsok, NULL, 1))
 			exit(EXIT_FAILURE);
 		if (myuid && !msgsok)
 			errx(EXIT_FAILURE,
