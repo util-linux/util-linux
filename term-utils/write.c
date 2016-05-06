@@ -312,12 +312,12 @@ int main(int argc, char **argv)
 		}
 
 	/* check that sender has write enabled */
-	if (isatty(fileno(stdin)))
-		myttyfd = fileno(stdin);
-	else if (isatty(fileno(stdout)))
-		myttyfd = fileno(stdout);
-	else if (isatty(fileno(stderr)))
-		myttyfd = fileno(stderr);
+	if (isatty(STDIN_FILENO))
+		myttyfd = STDIN_FILENO;
+	else if (isatty(STDOUT_FILENO))
+		myttyfd = STDOUT_FILENO;
+	else if (isatty(STDERR_FILENO))
+		myttyfd = STDERR_FILENO;
 	else
 		myttyfd = -1;
 
