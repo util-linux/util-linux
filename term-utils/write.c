@@ -73,8 +73,6 @@ static void __attribute__ ((__noreturn__)) done(int);
 int term_chk(char *, int *, time_t *, int);
 int utmp_chk(char *, char *);
 
-static gid_t root_access;
-
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
@@ -121,8 +119,6 @@ int main(int argc, char **argv)
 		default:
 			usage(stderr);
 		}
-
-	root_access = !getegid();
 
 	/* check that sender has write enabled */
 	if (isatty(fileno(stdin)))
