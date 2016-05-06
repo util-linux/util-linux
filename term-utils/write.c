@@ -65,14 +65,6 @@
 #include "nls.h"
 #include "xalloc.h"
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out);
-void search_utmp(char *, char *, char *, uid_t);
-void do_write(char *, char *, uid_t);
-void wr_fputs(char *);
-static void __attribute__ ((__noreturn__)) done(int);
-int term_chk(char *, int *, time_t *, int);
-int utmp_chk(char *, char *);
-
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
@@ -89,6 +81,205 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 	fprintf(out, USAGE_MAN_TAIL("write(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
+/*
+ * term_chk - check that a terminal exists, and get the message bit
+ *     and the access time
+ */
+static int term_chk(char *tty, int *msgsokP, time_t * atimeP, int showerror)
+{
+	struct stat s;
+	char path[PATH_MAX];
+
+	if (strlen(tty) + 6 > sizeof(path))
+		return 1;
+	sprintf(path, "/dev/%s", tty);
+	if (stat(path, &s) < 0) {
+		if (showerror)
+			warn("%s", path);
+		return 1;
+	}
+	if (getuid() == 0)	/* root can always write */
+		*msgsokP = 1;
+	else
+		*msgsokP = (s.st_mode & S_IWGRP) && (getegid() == s.st_gid);
+	*atimeP = s.st_atime;
+	return 0;
+}
+
+/*
+ * utmp_chk - checks that the given user is actually logged in on
+ *     the given tty
+ */
+static int utmp_chk(char *user, char *tty)
+{
+	struct utmp u;
+	struct utmp *uptr;
+	int res = 1;
+
+	utmpname(_PATH_UTMP);
+	setutent();
+
+	while ((uptr = getutent())) {
+		memcpy(&u, uptr, sizeof(u));
+		if (strncmp(user, u.ut_user, sizeof(u.ut_user)) == 0 &&
+		    strncmp(tty, u.ut_line, sizeof(u.ut_line)) == 0) {
+			res = 0;
+			break;
+		}
+	}
+
+	endutent();
+	return res;
+}
+
+/*
+ * search_utmp - search utmp for the "best" terminal to write to
+ *
+ * Ignores terminals with messages disabled, and of the rest, returns
+ * the one with the most recent access time.  Returns as value the number
+ * of the user's terminals with messages enabled, or -1 if the user is
+ * not logged in at all.
+ *
+ * Special case for writing to yourself - ignore the terminal you're
+ * writing from, unless that's the only terminal with messages enabled.
+ */
+static void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
+{
+	struct utmp u;
+	struct utmp *uptr;
+	time_t bestatime, atime;
+	int nloggedttys, nttys, msgsok = 0, user_is_me;
+	char atty[sizeof(u.ut_line) + 1];
+
+	utmpname(_PATH_UTMP);
+	setutent();
+
+	nloggedttys = nttys = 0;
+	bestatime = 0;
+	user_is_me = 0;
+	while ((uptr = getutent())) {
+		memcpy(&u, uptr, sizeof(u));
+		if (strncmp(user, u.ut_user, sizeof(u.ut_user)) == 0) {
+			++nloggedttys;
+			strncpy(atty, u.ut_line, sizeof(u.ut_line));
+			atty[sizeof(u.ut_line)] = '\0';
+			if (term_chk(atty, &msgsok, &atime, 0))
+				/* bad term? skip */
+				continue;
+			if (myuid && !msgsok)
+				/* skip ttys with msgs off */
+				continue;
+			if (strcmp(atty, mytty) == 0) {
+				user_is_me = 1;
+				/* don't write to yourself */
+				continue;
+			}
+			if (u.ut_type != USER_PROCESS)
+				/* it's not a valid entry */
+				continue;
+			++nttys;
+			if (atime > bestatime) {
+				bestatime = atime;
+				strcpy(tty, atty);
+			}
+		}
+	}
+
+	endutent();
+	if (nloggedttys == 0)
+		errx(EXIT_FAILURE, _("%s is not logged in"), user);
+	if (nttys == 0) {
+		if (user_is_me) {
+			/* ok, so write to yourself! */
+			strcpy(tty, mytty);
+			return;
+		}
+		errx(EXIT_FAILURE, _("%s has messages disabled"), user);
+	} else if (nttys > 1) {
+		warnx(_("%s is logged in more than once; writing to %s"),
+		      user, tty);
+	}
+}
+
+/*
+ * done - cleanup and exit
+ */
+static void __attribute__ ((__noreturn__))
+    done(int dummy __attribute__ ((__unused__)))
+{
+	printf("EOF\r\n");
+	_exit(EXIT_SUCCESS);
+}
+
+/*
+ * wr_fputs - like fputs(), but makes control characters visible and
+ *     turns \n into \r\n.
+ */
+static void wr_fputs(char *s)
+{
+	char c;
+
+#define	PUTC(c)	if (fputc_careful(c, stdout, '^') == EOF) \
+    err(EXIT_FAILURE, _("carefulputc failed"));
+	while (*s) {
+		c = *s++;
+		if (c == '\n')
+			PUTC('\r');
+		PUTC(c);
+	}
+	return;
+#undef PUTC
+}
+
+/*
+ * do_write - actually make the connection
+ */
+static void do_write(char *tty, char *mytty, uid_t myuid)
+{
+	char *login, *pwuid, *nows;
+	struct passwd *pwd;
+	time_t now;
+	char path[PATH_MAX], *host, line[512];
+
+	/* Determine our login name(s) before the we reopen() stdout */
+	if ((pwd = getpwuid(myuid)) != NULL)
+		pwuid = pwd->pw_name;
+	else
+		pwuid = "???";
+	if ((login = getlogin()) == NULL)
+		login = pwuid;
+
+	if (strlen(tty) + 6 > sizeof(path))
+		errx(EXIT_FAILURE, _("tty path %s too long"), tty);
+	snprintf(path, sizeof(path), "/dev/%s", tty);
+	if ((freopen(path, "w", stdout)) == NULL)
+		err(EXIT_FAILURE, "%s", path);
+
+	signal(SIGINT, done);
+	signal(SIGHUP, done);
+
+	/* print greeting */
+	host = xgethostname();
+	if (!host)
+		host = xstrdup("???");
+
+	now = time((time_t *) NULL);
+	nows = ctime(&now);
+	nows[16] = '\0';
+	printf("\r\n\007\007\007");
+	if (strcmp(login, pwuid))
+		printf(_("Message from %s@%s (as %s) on %s at %s ..."),
+		       login, host, pwuid, mytty, nows + 11);
+	else
+		printf(_("Message from %s@%s on %s at %s ..."),
+		       login, host, mytty, nows + 11);
+	free(host);
+	printf("\r\n");
+
+	while (fgets(line, sizeof(line), stdin) != NULL)
+		wr_fputs(line);
 }
 
 int main(int argc, char **argv)
@@ -181,204 +372,4 @@ int main(int argc, char **argv)
 	done(0);
 	/* NOTREACHED */
 	return EXIT_FAILURE;
-}
-
-
-/*
- * utmp_chk - checks that the given user is actually logged in on
- *     the given tty
- */
-int utmp_chk(char *user, char *tty)
-{
-	struct utmp u;
-	struct utmp *uptr;
-	int res = 1;
-
-	utmpname(_PATH_UTMP);
-	setutent();
-
-	while ((uptr = getutent())) {
-		memcpy(&u, uptr, sizeof(u));
-		if (strncmp(user, u.ut_user, sizeof(u.ut_user)) == 0 &&
-		    strncmp(tty, u.ut_line, sizeof(u.ut_line)) == 0) {
-			res = 0;
-			break;
-		}
-	}
-
-	endutent();
-	return res;
-}
-
-/*
- * search_utmp - search utmp for the "best" terminal to write to
- *
- * Ignores terminals with messages disabled, and of the rest, returns
- * the one with the most recent access time.  Returns as value the number
- * of the user's terminals with messages enabled, or -1 if the user is
- * not logged in at all.
- *
- * Special case for writing to yourself - ignore the terminal you're
- * writing from, unless that's the only terminal with messages enabled.
- */
-void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
-{
-	struct utmp u;
-	struct utmp *uptr;
-	time_t bestatime, atime;
-	int nloggedttys, nttys, msgsok = 0, user_is_me;
-	char atty[sizeof(u.ut_line) + 1];
-
-	utmpname(_PATH_UTMP);
-	setutent();
-
-	nloggedttys = nttys = 0;
-	bestatime = 0;
-	user_is_me = 0;
-	while ((uptr = getutent())) {
-		memcpy(&u, uptr, sizeof(u));
-		if (strncmp(user, u.ut_user, sizeof(u.ut_user)) == 0) {
-			++nloggedttys;
-			strncpy(atty, u.ut_line, sizeof(u.ut_line));
-			atty[sizeof(u.ut_line)] = '\0';
-			if (term_chk(atty, &msgsok, &atime, 0))
-				/* bad term? skip */
-				continue;
-			if (myuid && !msgsok)
-				/* skip ttys with msgs off */
-				continue;
-			if (strcmp(atty, mytty) == 0) {
-				user_is_me = 1;
-				/* don't write to yourself */
-				continue;
-			}
-			if (u.ut_type != USER_PROCESS)
-				/* it's not a valid entry */
-				continue;
-			++nttys;
-			if (atime > bestatime) {
-				bestatime = atime;
-				strcpy(tty, atty);
-			}
-		}
-	}
-
-	endutent();
-	if (nloggedttys == 0)
-		errx(EXIT_FAILURE, _("%s is not logged in"), user);
-	if (nttys == 0) {
-		if (user_is_me) {
-			/* ok, so write to yourself! */
-			strcpy(tty, mytty);
-			return;
-		}
-		errx(EXIT_FAILURE, _("%s has messages disabled"), user);
-	} else if (nttys > 1) {
-		warnx(_("%s is logged in more than once; writing to %s"),
-		      user, tty);
-	}
-}
-
-/*
- * term_chk - check that a terminal exists, and get the message bit
- *     and the access time
- */
-int term_chk(char *tty, int *msgsokP, time_t * atimeP, int showerror)
-{
-	struct stat s;
-	char path[PATH_MAX];
-
-	if (strlen(tty) + 6 > sizeof(path))
-		return 1;
-	sprintf(path, "/dev/%s", tty);
-	if (stat(path, &s) < 0) {
-		if (showerror)
-			warn("%s", path);
-		return 1;
-	}
-	if (getuid() == 0)	/* root can always write */
-		*msgsokP = 1;
-	else
-		*msgsokP = (s.st_mode & S_IWGRP) && (getegid() == s.st_gid);
-	*atimeP = s.st_atime;
-	return 0;
-}
-
-/*
- * do_write - actually make the connection
- */
-void do_write(char *tty, char *mytty, uid_t myuid)
-{
-	char *login, *pwuid, *nows;
-	struct passwd *pwd;
-	time_t now;
-	char path[PATH_MAX], *host, line[512];
-
-	/* Determine our login name(s) before the we reopen() stdout */
-	if ((pwd = getpwuid(myuid)) != NULL)
-		pwuid = pwd->pw_name;
-	else
-		pwuid = "???";
-	if ((login = getlogin()) == NULL)
-		login = pwuid;
-
-	if (strlen(tty) + 6 > sizeof(path))
-		errx(EXIT_FAILURE, _("tty path %s too long"), tty);
-	snprintf(path, sizeof(path), "/dev/%s", tty);
-	if ((freopen(path, "w", stdout)) == NULL)
-		err(EXIT_FAILURE, "%s", path);
-
-	signal(SIGINT, done);
-	signal(SIGHUP, done);
-
-	/* print greeting */
-	host = xgethostname();
-	if (!host)
-		host = xstrdup("???");
-
-	now = time((time_t *) NULL);
-	nows = ctime(&now);
-	nows[16] = '\0';
-	printf("\r\n\007\007\007");
-	if (strcmp(login, pwuid))
-		printf(_("Message from %s@%s (as %s) on %s at %s ..."),
-		       login, host, pwuid, mytty, nows + 11);
-	else
-		printf(_("Message from %s@%s on %s at %s ..."),
-		       login, host, mytty, nows + 11);
-	free(host);
-	printf("\r\n");
-
-	while (fgets(line, sizeof(line), stdin) != NULL)
-		wr_fputs(line);
-}
-
-/*
- * done - cleanup and exit
- */
-static void __attribute__ ((__noreturn__))
-    done(int dummy __attribute__ ((__unused__)))
-{
-	printf("EOF\r\n");
-	_exit(EXIT_SUCCESS);
-}
-
-/*
- * wr_fputs - like fputs(), but makes control characters visible and
- *     turns \n into \r\n.
- */
-void wr_fputs(char *s)
-{
-	char c;
-
-#define	PUTC(c)	if (fputc_careful(c, stdout, '^') == EOF) \
-    err(EXIT_FAILURE, _("carefulputc failed"));
-	while (*s) {
-		c = *s++;
-		if (c == '\n')
-			PUTC('\r');
-		PUTC(c);
-	}
-	return;
-#undef PUTC
 }
