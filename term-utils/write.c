@@ -113,8 +113,13 @@ static int check_tty(char *tty, int *tty_writeable, time_t *tty_atime, int showe
 	}
 	if (getuid() == 0)	/* root can always write */
 		*tty_writeable = 1;
-	else
-		*tty_writeable = (s.st_mode & S_IWGRP) && (getegid() == s.st_gid);
+	else {
+		if (getegid() != s.st_gid) {
+			warnx(_("effective gid does not match group of %s"), path);
+			return 1;
+		}
+		*tty_writeable = s.st_mode & S_IWGRP;
+	}
 	if (tty_atime)
 		*tty_atime = s.st_atime;
 	return 0;
