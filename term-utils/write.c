@@ -66,6 +66,8 @@
 #include "strutils.h"
 #include "xalloc.h"
 
+static sig_atomic_t signal_received = 0;
+
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
@@ -205,13 +207,11 @@ static void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
 }
 
 /*
- * done - cleanup and exit
+ * signal_handler - cause write loop to exit
  */
-static void __attribute__ ((__noreturn__))
-    done(int dummy __attribute__ ((__unused__)))
+static void signal_handler(int signo)
 {
-	printf("EOF\r\n");
-	_exit(EXIT_SUCCESS);
+	signal_received = signo;
 }
 
 /*
@@ -243,6 +243,7 @@ static void do_write(char *tty, char *mytty, uid_t myuid)
 	struct passwd *pwd;
 	time_t now;
 	char path[PATH_MAX], *host, line[512];
+	struct sigaction sigact;
 
 	/* Determine our login name(s) before the we reopen() stdout */
 	if ((pwd = getpwuid(myuid)) != NULL)
@@ -258,8 +259,11 @@ static void do_write(char *tty, char *mytty, uid_t myuid)
 	if ((freopen(path, "w", stdout)) == NULL)
 		err(EXIT_FAILURE, "%s", path);
 
-	signal(SIGINT, done);
-	signal(SIGHUP, done);
+	sigact.sa_handler = signal_handler;
+	sigemptyset(&sigact.sa_mask);
+	sigact.sa_flags = 0;
+	sigaction(SIGINT, &sigact, NULL);
+	sigaction(SIGHUP, &sigact, NULL);
 
 	/* print greeting */
 	host = xgethostname();
@@ -279,8 +283,12 @@ static void do_write(char *tty, char *mytty, uid_t myuid)
 	free(host);
 	printf("\r\n");
 
-	while (fgets(line, sizeof(line), stdin) != NULL)
+	while (fgets(line, sizeof(line), stdin) != NULL) {
+		if (signal_received)
+			break;
 		wr_fputs(line);
+	}
+	printf("EOF\r\n");
 }
 
 int main(int argc, char **argv)
@@ -368,8 +376,5 @@ int main(int argc, char **argv)
 	default:
 		usage(stderr);
 	}
-
-	done(0);
-	/* NOTREACHED */
-	return EXIT_FAILURE;
+	return EXIT_SUCCESS;
 }
