@@ -126,17 +126,15 @@ static int check_tty(char *tty, int *tty_writeable, time_t *tty_atime, int showe
  */
 static int check_utmp(const struct write_control *ctl)
 {
-	struct utmp u;
-	struct utmp *uptr;
+	struct utmp *u;
 	int res = 1;
 
 	utmpname(_PATH_UTMP);
 	setutent();
 
-	while ((uptr = getutent())) {
-		memcpy(&u, uptr, sizeof(u));
-		if (strncmp(ctl->dst_login, u.ut_user, sizeof(u.ut_user)) == 0 &&
-		    strncmp(ctl->dst_tty, u.ut_line, sizeof(u.ut_line)) == 0) {
+	while ((u = getutent())) {
+		if (strncmp(ctl->dst_login, u->ut_user, sizeof(u->ut_user)) == 0 &&
+		    strncmp(ctl->dst_tty, u->ut_line, sizeof(u->ut_line)) == 0) {
 			res = 0;
 			break;
 		}
@@ -159,38 +157,34 @@ static int check_utmp(const struct write_control *ctl)
  */
 static void search_utmp(struct write_control *ctl)
 {
-	struct utmp u;
-	struct utmp *uptr;
+	struct utmp *u;
 	time_t best_atime = 0, tty_atime;
 	int num_ttys = 0, valid_ttys = 0, tty_writeable = 0, user_is_me = 0;
-	char atty[sizeof(u.ut_line) + 1];
 
 	utmpname(_PATH_UTMP);
 	setutent();
 
-	while ((uptr = getutent())) {
-		memcpy(&u, uptr, sizeof(u));
-		if (strncmp(ctl->dst_login, u.ut_user, sizeof(u.ut_user)) == 0) {
+	while ((u = getutent())) {
+		if (strncmp(ctl->dst_login, u->ut_user, sizeof(u->ut_user)) == 0) {
 			num_ttys++;
-			xstrncpy(atty, u.ut_line, sizeof(atty));
-			if (check_tty(atty, &tty_writeable, &tty_atime, 0))
+			if (check_tty(u->ut_line, &tty_writeable, &tty_atime, 0))
 				/* bad term? skip */
 				continue;
 			if (ctl->src_uid && !tty_writeable)
 				/* skip ttys with msgs off */
 				continue;
-			if (strcmp(atty, ctl->src_tty) == 0) {
+			if (strcmp(u->ut_line, ctl->src_tty) == 0) {
 				user_is_me = 1;
 				/* don't write to yourself */
 				continue;
 			}
-			if (u.ut_type != USER_PROCESS)
+			if (u->ut_type != USER_PROCESS)
 				/* it's not a valid entry */
 				continue;
 			valid_ttys++;
 			if (tty_atime > best_atime) {
 				best_atime = tty_atime;
-				xstrncpy(ctl->dst_tty, atty, sizeof(ctl->dst_tty));
+				xstrncpy(ctl->dst_tty, u->ut_line, sizeof(ctl->dst_tty));
 			}
 		}
 	}
