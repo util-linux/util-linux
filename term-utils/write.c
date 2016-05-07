@@ -239,9 +239,10 @@ static void write_line(char *s)
  */
 static void do_write(const struct write_control *ctl)
 {
-	char *login, *pwuid, *time_stamp;
+	char *login, *pwuid, timestamp[6];
 	struct passwd *pwd;
 	time_t now;
+	struct tm *tm;
 	char path[PATH_MAX], *host, line[512];
 	struct sigaction sigact;
 
@@ -265,21 +266,21 @@ static void do_write(const struct write_control *ctl)
 	sigaction(SIGINT, &sigact, NULL);
 	sigaction(SIGHUP, &sigact, NULL);
 
-	/* print greeting */
 	host = xgethostname();
 	if (!host)
 		host = xstrdup("???");
 
-	now = time((time_t *) NULL);
-	time_stamp = ctime(&now);
-	time_stamp[16] = '\0';
-	printf("\r\n\007\007\007");
+	now = time((time_t *)NULL);
+	tm = localtime(&now);
+	strftime(timestamp, sizeof(timestamp), "%H:%M", tm);
+	/* print greeting */
+	printf("\r\n\a\a\a");
 	if (strcmp(login, pwuid))
 		printf(_("Message from %s@%s (as %s) on %s at %s ..."),
-		       login, host, pwuid, ctl->src_tty, time_stamp + 11);
+		       login, host, pwuid, ctl->src_tty, timestamp);
 	else
 		printf(_("Message from %s@%s on %s at %s ..."),
-		       login, host, ctl->src_tty, time_stamp + 11);
+		       login, host, ctl->src_tty, timestamp);
 	free(host);
 	printf("\r\n");
 
