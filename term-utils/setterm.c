@@ -213,7 +213,7 @@ static int parse_febg_color(const char *arg)
 		color = strtos32_or_err(arg, _("argument error"));
 
 	if (!is_valid_color(color) || color == GREY)
-		errx(EXIT_FAILURE, _("argument error: %s"), arg);
+		errx(EXIT_FAILURE, "%s: %s", _("argument error"), arg);
 	return color;
 }
 
@@ -234,7 +234,7 @@ static int parse_ulhb_color(char **argv, int *optind)
 	if (color < 0)
 		color = strtos32_or_err(color_name, _("argument error"));
 	if (!is_valid_color(color))
-		errx(EXIT_FAILURE, _("argument error: %s"), color_name);
+		errx(EXIT_FAILURE, "%s: %s", _("argument error"), color_name);
 	if (bright && (color == BLACK || color == GREY))
 		errx(EXIT_FAILURE, _("argument error: bright %s is not supported"), color_name);
 
@@ -271,7 +271,7 @@ static int parse_blank(char **argv, char *optarg, int *optind)
 
 		ret = strtos32_or_err(arg, _("argument error"));
 		if (ret < 0 || BLANK_MAX < ret)
-			errx(EXIT_FAILURE, _("argument error: %s"), arg);
+			errx(EXIT_FAILURE, "%s: %s", _("argument error"), arg);
 		return ret;
 	}
 }
@@ -288,7 +288,7 @@ static int parse_powersave(const char *arg)
 		return VESA_BLANK_MODE_POWERDOWN;
 	else if (strcmp(arg, "off") == 0)
 		return VESA_BLANK_MODE_OFF;
-	errx(EXIT_FAILURE, _("argument error: %s"), arg);
+	errx(EXIT_FAILURE, "%s: %s", _("argument error"), arg);
 }
 
 static int parse_msglevel(const char *arg)
@@ -297,7 +297,7 @@ static int parse_msglevel(const char *arg)
 
 	ret = strtos32_or_err(arg, _("argument error"));
 	if (ret < CONSOLE_LEVEL_MIN || CONSOLE_LEVEL_MAX < ret)
-		errx(EXIT_FAILURE, _("argument error: %s"), arg);
+		errx(EXIT_FAILURE, "%s: %s", _("argument error"), arg);
 	return ret;
 }
 
@@ -311,7 +311,7 @@ static int parse_snap(char **argv, char *optarg, int *optind)
 		return 0;
 	ret = strtos32_or_err(arg, _("argument error"));
 	if (ret < 1)
-		errx(EXIT_FAILURE, _("argument error: %s"), arg);
+		errx(EXIT_FAILURE, "%s: %s", _("argument error"), arg);
 	return ret;
 }
 
@@ -345,7 +345,7 @@ static int parse_regtabs(char **argv, char *optarg, int *optind)
 		return DEFAULT_TAB_LEN;
 	ret = strtos32_or_err(arg, _("argument error"));
 	if (ret < 1 || TABS_MAX < ret)
-		errx(EXIT_FAILURE, _("argument error: %s"), arg);
+		errx(EXIT_FAILURE, "%s: %s", _("argument error"), arg);
 	return ret;
 }
 
@@ -359,7 +359,7 @@ static int parse_blength(char **argv, char *optarg, int *optind)
 		return 0;
 	ret = strtos32_or_err(arg, _("argument error"));
 	if (ret < 0 || BLENGTH_MAX < ret)
-		errx(EXIT_FAILURE, _("argument error: %s"), arg);
+		errx(EXIT_FAILURE, "%s: %s", _("argument error"), arg);
 	return ret;
 }
 
