@@ -70,6 +70,14 @@ The exit code used when the \fB\-n\fP option is in use, and the
 conflicting lock exists, or the \fB\-w\fP option is in use,
 and the timeout is reached.  The default value is \fB1\fR.
 .TP
+.BR \-F , " \-\-no\-fork"
+Do not fork before executing
+.IR command .
+Upon execution the flock process is replaced by
+.IR command
+which continues to hold the lock. This option is incompatible with
+\fB\-\-close\fR as there would otherwise be nothing left to hold the lock.
+.TP
 .BR \-e , " \-x" , " \-\-exclusive"
 Obtain an exclusive lock, sometimes called a write lock.  This is the
 default.
