@@ -101,6 +101,21 @@ enum {
 	DEFAULT
 };
 
+static const char *colornames[] = {
+	[BLACK] = "black",
+	[RED]	= "red",
+	[GREEN]	= "green",
+	[YELLOW]= "yellow",
+	[BLUE]	= "blue",
+	[MAGENTA]="magenta",
+	[CYAN]	= "cyan",
+	[WHITE]	= "white",
+	[GREY]	= "grey",
+	[DEFAULT] = "default"
+};
+
+#define is_valid_color(x)	(x >= 0 && (size_t) x < ARRAY_SIZE(colornames))
+
 /* Blank commands */
 enum {
 	BLANKSCREEN	= -1,
@@ -178,31 +193,26 @@ struct setterm_control {
 	    opt_powerdown:1, opt_blength:1, opt_bfreq:1;
 };
 
+static int parse_color(const char *arg)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(colornames); i++) {
+		if (strcmp(colornames[i], arg) == 0)
+			return i;
+	}
+
+	return -EINVAL;
+}
+
 static int parse_febg_color(const char *arg)
 {
-	int color;
+	int color = parse_color(arg);
 
-	if (strcmp(arg, "black") == 0)
-		return BLACK;
-	else if (strcmp(arg, "red") == 0)
-		return RED;
-	else if (strcmp(arg, "green") == 0)
-		return GREEN;
-	else if (strcmp(arg, "yellow") == 0)
-		return YELLOW;
-	else if (strcmp(arg, "blue") == 0)
-		return BLUE;
-	else if (strcmp(arg, "magenta") == 0)
-		return MAGENTA;
-	else if (strcmp(arg, "cyan") == 0)
-		return CYAN;
-	else if (strcmp(arg, "white") == 0)
-		return WHITE;
-	else if (strcmp(arg, "default") == 0)
-		return DEFAULT;
-	else
+	if (color < 0)
 		color = strtos32_or_err(arg, _("argument error"));
-	if (color < BLACK || DEFAULT < color || color == GREY)
+
+	if (!is_valid_color(color) || color == GREY)
 		errx(EXIT_FAILURE, _("argument error: %s"), arg);
 	return color;
 }
@@ -220,29 +230,11 @@ static int parse_ulhb_color(char **argv, int *optind)
 	} else
 		color_name = argv[*optind - 1];
 
-	if (strcmp(color_name, "black") == 0)
-		color = BLACK;
-	else if (strcmp(color_name, "grey") == 0)
-		color = GREY;
-	else if (strcmp(color_name, "red") == 0)
-		color = RED;
-	else if (strcmp(color_name, "green") == 0)
-		color = GREEN;
-	else if (strcmp(color_name, "yellow") == 0)
-		color = YELLOW;
-	else if (strcmp(color_name, "blue") == 0)
-		color = BLUE;
-	else if (strcmp(color_name, "magenta") == 0)
-		color = MAGENTA;
-	else if (strcmp(color_name, "cyan") == 0)
-		color = CYAN;
-	else if (strcmp(color_name, "white") == 0)
-		color = WHITE;
-	else {
+	color = parse_color(color_name);
+	if (color < 0)
 		color = strtos32_or_err(color_name, _("argument error"));
-		if (color < BLACK || DEFAULT < color)
-			errx(EXIT_FAILURE, _("argument error: %s"), color_name);
-	}
+	if (!is_valid_color(color))
+		errx(EXIT_FAILURE, _("argument error: %s"), color_name);
 	if (bright && (color == BLACK || color == GREY))
 		errx(EXIT_FAILURE, _("argument error: bright %s is not supported"), color_name);
 
