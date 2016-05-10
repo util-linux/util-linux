@@ -75,7 +75,7 @@ command's PID.  The use of \fB\-\-id=$$\fR
 Note that the system logging infrastructure (for example \fBsystemd\fR when
 listening on /dev/log) may follow local socket credentials to overwrite the
 PID specified in the message.
-.BR logger(1)
+.BR logger (1)
 is able to set those socket credentials to the given \fIid\fR, but only if you
 have root permissions and a process with the specified PID exists, otherwise
 the socket credentials are not modified and the problem is silently ignored.

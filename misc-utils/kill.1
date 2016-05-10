@@ -118,7 +118,7 @@ It is not possible to send a signal to an explicitly selected thread in a
 multithreaded process using the
 .BR kill (2)
 syscall.  If
-.BR kill(2)
+.BR kill (2)
 is used to send a signal to a thread group, then the kernel selects an arbitrary
 member of the thread group that has not blocked the signal.  For more details
 see
