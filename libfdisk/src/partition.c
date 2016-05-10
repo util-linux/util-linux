@@ -1235,6 +1235,11 @@ int fdisk_set_partition(struct fdisk_context *cxt, size_t partno,
 
 	pa->fs_probed = 0;
 
+	if (!fdisk_is_partition_used(cxt, partno)) {
+		pa->partno = partno;
+		return fdisk_add_partition(cxt, pa, NULL);
+	}
+
 	if (pa->resize || fdisk_partition_has_start(pa) || fdisk_partition_has_size(pa)) {
 		xpa = __copy_partition(pa);
 		xpa->movestart = 0;
