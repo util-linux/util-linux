@@ -816,6 +816,23 @@ char *strappend(const char *s, const char *suffix)
         return strnappend(s, suffix, suffix ? strlen(suffix) : 0);
 }
 
+char *strfappend(const char *s, const char *format, ...)
+{
+	va_list ap;
+	char *val, *res;
+	int sz;
+
+	va_start(ap, format);
+	sz = vasprintf(&val, format, ap);
+	va_end(ap);
+
+	if (sz < 0)
+		return NULL;
+
+	res = strnappend(s, val, sz);
+	free(val);
+	return res;
+}
 
 static size_t strcspn_escaped(const char *s, const char *reject)
 {

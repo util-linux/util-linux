@@ -338,3 +338,84 @@ int parse_timestamp(const char *t, usec_t *usec)
 
 	return 0;
 }
+
+static char *format_iso_time(struct tm *tm, suseconds_t usec, int flags)
+{
+	char *s = NULL;
+
+	if (flags & ISO_8601_DATE)
+		s = strfappend(s, "%4d-%.2d-%.2d", tm->tm_year + 1900,
+						tm->tm_mon + 1, tm->tm_mday);
+	if ((flags & ISO_8601_DATE) && (flags & ISO_8601_TIME))
+		s = strnappend(s, (flags & ISO_8601_SPACE) ? " " : "T", 1);
+
+	if (flags & ISO_8601_TIME)
+		s = strfappend(s, "%02d:%02d:%02d", tm->tm_hour,
+						 tm->tm_min, tm->tm_sec);
+	if (flags & ISO_8601_USEC)
+		s = strfappend(s, ".%06ld", (long) usec);
+
+	if (flags & ISO_8601_TIMEZONE) {
+	        int zhour = - timezone / 60 / 60;
+		int zmin = labs(timezone / 60 % 60);
+
+		s = strfappend(s, "%+02d:%02d", zhour, zmin);
+	}
+
+	return s;
+}
+
+char *strtimeval_iso(struct timeval *tv, int flags)
+{
+	struct tm tm = *localtime(&tv->tv_sec);
+	return format_iso_time(&tm, tv->tv_usec, flags);
+}
+
+char *strtm_iso(struct tm *tm, int flags)
+{
+	return format_iso_time(tm, 0, flags);
+}
+
+char *strtime_iso(time_t t, int flags)
+{
+	struct tm tm = *localtime(&t);
+	return format_iso_time(&tm, 0, flags);
+}
+
+
+#ifdef TEST_PROGRAM_TIMEUTILS
+
+int main(int argc, char *argv[])
+{
+	struct timeval tv = { 0 };
+	char *p;
+
+	if (argc < 2) {
+		fprintf(stderr, "usage: %s <time> [<usec>]\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+
+	tv.tv_sec = strtos64_or_err(argv[1], "failed to parse <time>");
+	if (argc == 3)
+		tv.tv_usec = strtos64_or_err(argv[2], "failed to parse <usec>");
+
+	p = strtimeval_iso(&tv, ISO_8601_DATE);
+	printf("Date: '%s'\n", p);
+	free(p);
+
+	p = strtimeval_iso(&tv, ISO_8601_TIME);
+	printf("Time: '%s'\n", p);
+	free(p);
+
+	p = strtimeval_iso(&tv, ISO_8601_DATE | ISO_8601_TIME | ISO_8601_USEC);
+	printf("Full: '%s'\n", p);
+	free(p);
+
+	p = strtimeval_iso(&tv, ISO_8601_DATE | ISO_8601_TIME | ISO_8601_USEC | ISO_8601_TIMEZONE | ISO_8601_SPACE);
+	printf("Zone: '%s'\n", p);
+	free(p);
+
+	return EXIT_SUCCESS;
+}
+
+#endif /* TEST_PROGRAM */
