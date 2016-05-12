@@ -705,7 +705,8 @@ static int parse_line_header(struct fdisk_script *dp, char *s)
 	} else if (strcmp(name, "label-id") == 0
 		   || strcmp(name, "device") == 0
 		   || strcmp(name, "first-lba") == 0
-		   || strcmp(name, "last-lba") == 0) {
+		   || strcmp(name, "last-lba") == 0
+		   || strcmp(name, "table-length") == 0) {
 		;					/* whatever is posssible */
 	} else
 		goto done;				/* unknown header */
@@ -1326,6 +1327,8 @@ struct fdisk_script *fdisk_get_script(struct fdisk_context *cxt)
 int fdisk_apply_script_headers(struct fdisk_context *cxt, struct fdisk_script *dp)
 {
 	const char *name;
+	const char *str;
+	int rc;
 
 	assert(cxt);
 	assert(dp);
@@ -1338,7 +1341,15 @@ int fdisk_apply_script_headers(struct fdisk_context *cxt, struct fdisk_script *d
 	if (!name)
 		return -EINVAL;
 
-	return fdisk_create_disklabel(cxt, name);
+	rc = fdisk_create_disklabel(cxt, name);
+	if (rc)
+		return rc;
+
+	str = fdisk_script_get_header(dp, "table-length");
+	if (str)
+		return fdisk_gpt_set_npartitions(cxt, strtoul(str, NULL, 0));
+
+	return 0;
 }
 
 /**
