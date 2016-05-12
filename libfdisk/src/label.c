@@ -243,52 +243,6 @@ const struct fdisk_field *fdisk_label_get_field_by_name(
 	return NULL;
 }
 
-
-/**
- * fdisk_field_get_id:
- * @field: field instance
- *
- * Returns: field Id (FDISK_FIELD_*)
- */
-int fdisk_field_get_id(const struct fdisk_field *field)
-{
-	return field ? field->id : -EINVAL;
-}
-
-/**
- * fdisk_field_get_name:
- * @field: field instance
- *
- * Returns: field name
- */
-const char *fdisk_field_get_name(const struct fdisk_field *field)
-{
-	return field ? field->name : NULL;
-}
-
-/**
- * fdisk_field_get_width:
- * @field: field instance
- *
- * Returns: libsmartcols compatible width.
- */
-double fdisk_field_get_width(const struct fdisk_field *field)
-{
-	return field ? field->width : -EINVAL;
-}
-
-/**
- * fdisk_field_is_number:
- * @field: field instance
- *
- * Returns: 1 if field represent number
- */
-int fdisk_field_is_number(const struct fdisk_field *field)
-{
-	return field->flags ? field->flags & FDISK_FIELDFL_NUMBER : 0;
-}
-
-
 /**
  * fdisk_write_disklabel:
  * @cxt: fdisk context

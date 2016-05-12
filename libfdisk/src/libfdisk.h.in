@@ -254,6 +254,14 @@ unsigned int fdisk_parttype_get_code(const struct fdisk_parttype *t);
 const char *fdisk_parttype_get_name(const struct fdisk_parttype *t);
 int fdisk_parttype_is_unknown(const struct fdisk_parttype *t);
 
+
+/* field.c */
+extern int fdisk_field_get_id(const struct fdisk_field *field);
+extern const char *fdisk_field_get_name(const struct fdisk_field *field);
+extern double fdisk_field_get_width(const struct fdisk_field *field);
+extern int fdisk_field_is_number(const struct fdisk_field *field);
+
+
 /* label.c */
 
 /**
@@ -347,12 +355,6 @@ extern const struct fdisk_field *fdisk_label_get_field(const struct fdisk_label 
 extern const struct fdisk_field *fdisk_label_get_field_by_name(
 			const struct fdisk_label *lb,
 			const char *name);
-
-extern int fdisk_field_get_id(const struct fdisk_field *field);
-extern const char *fdisk_field_get_name(const struct fdisk_field *field);
-extern double fdisk_field_get_width(const struct fdisk_field *field);
-extern int fdisk_field_is_number(const struct fdisk_field *field);
-
 
 extern void fdisk_label_set_changed(struct fdisk_label *lb, int changed);
 extern int fdisk_label_is_changed(const struct fdisk_label *lb);
