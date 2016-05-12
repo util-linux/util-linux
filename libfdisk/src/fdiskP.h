@@ -39,6 +39,7 @@
 #define LIBFDISK_DEBUG_TAB	(1 << 8)
 #define LIBFDISK_DEBUG_SCRIPT	(1 << 9)
 #define LIBFDISK_DEBUG_WIPE	(1 << 10)
+#define LIBFDISK_DEBUG_ITEM	(1 << 11)
 #define LIBFDISK_DEBUG_ALL	0xFFFF
 
 UL_DEBUG_DECLARE_MASK(libfdisk);
@@ -420,9 +421,10 @@ extern int fdisk_probe_labels(struct fdisk_context *cxt);
 extern void fdisk_deinit_label(struct fdisk_label *lb);
 
 struct fdisk_labelitem {
+	int		refcount;	/* reference counter */
 	int		id;		/* <label>_ITEM_* */
 	char		type;		/* s = string, j = uint64 */
-	const char	*name;
+	const char	*name;		/* human readable name */
 
 	union {
 		char		*str;

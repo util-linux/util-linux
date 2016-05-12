@@ -262,4 +262,14 @@ FDISK_2.28 {
 
 FDISK_2.29 {
 	fdisk_wipe_partition;
+	fdisk_new_labelitem;
+	fdisk_ref_labelitem;
+	fdisk_reset_labelitem;
+	fdisk_unref_labelitem;
+	fdisk_labelitem_get_name;
+	fdisk_labelitem_get_id;
+	fdisk_labelitem_get_data_u64;
+	fdisk_labelitem_get_data_string;
+	fdisk_labelitem_is_string;
+	fdisk_labelitem_is_number;
 } FDISK_2.28;

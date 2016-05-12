@@ -321,10 +321,9 @@ int fdisk_list_disklabel(struct fdisk_context *cxt)
 		case 's':
 			if (item.data.str && item.name)
 				fdisk_info(cxt, "%s: %s", item.name, item.data.str);
-			free(item.data.str);
-			item.data.str = NULL;
 			break;
 		}
+		fdisk_reset_labelitem(&item);
 	} while (rc == 0 || rc == 1);
 
 	return rc < 0 ? rc : 0;
@@ -426,8 +425,11 @@ int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id)
 	DBG(CXT, ul_debugobj(cxt, "asking for disk %s ID", cxt->label->name));
 
 	rc = fdisk_get_disklabel_item(cxt, FDISK_LABELITEM_ID, &item);
-	if (rc == 0)
+	if (rc == 0) {
 		*id = item.data.str;
+		item.data.str = NULL;
+	}
+	fdisk_reset_labelitem(&item);
 	if (rc > 0)
 		rc = 0;
 	return rc;
@@ -441,7 +443,7 @@ int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id)
  *
  * Note that @id is always in range 0..N. It's fine to use the function in loop
  * until it returns error or 2, the result in @item should be ignored when
- * function returns 1.
+ * function returns 1. Don't forget to use fdisk_reset_labelitem() or fdisk_unref_labelitem().
  *
  * Returns: 0 on success, < 0 on error, 1 on unssupported item, 2 @id out of range
  */
@@ -450,6 +452,7 @@ int fdisk_get_disklabel_item(struct fdisk_context *cxt, int id, struct fdisk_lab
 	if (!cxt || !cxt->label || !item)
 		return -EINVAL;
 
+	fdisk_reset_labelitem(item);
 	item->id = id;
 	DBG(CXT, ul_debugobj(cxt, "asking for disk %s item %d", cxt->label->name, item->id));
 

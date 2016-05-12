@@ -148,7 +148,6 @@ enum fdisk_asktype {
 	FDISK_ASKTYPE_MENU			/* ask for menu item */
 };
 
-
 /* init.c */
 extern void fdisk_init_debug(int mask);
 
@@ -325,7 +324,20 @@ enum fdisk_labelitem_gen {
 	__FDISK_NLABELITEMS = 8		/* Specifies reserved range for generic items (0..7) */
 };
 
+/* item.c */
+extern struct fdisk_labelitem *fdisk_new_labelitem(void);
+extern void fdisk_ref_labelitem(struct fdisk_labelitem *li);
+extern int fdisk_reset_labelitem(struct fdisk_labelitem *li);
+extern void fdisk_unref_labelitem(struct fdisk_labelitem *li);
+extern const char *fdisk_labelitem_get_name(struct fdisk_labelitem *li);
+extern int fdisk_labelitem_get_id(struct fdisk_labelitem *li);
+extern int fdisk_labelitem_get_data_u64(struct fdisk_labelitem *li, uint64_t *data);
+extern int fdisk_labelitem_get_data_string(struct fdisk_labelitem *li, const char **data);
+extern int fdisk_labelitem_is_string(struct fdisk_labelitem *li);
+extern int fdisk_labelitem_is_number(struct fdisk_labelitem *li);
+
 extern int fdisk_get_disklabel_item(struct fdisk_context *cxt, int id, struct fdisk_labelitem *item);
+
 extern int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id);
 extern int fdisk_set_disklabel_id(struct fdisk_context *cxt);
 
