@@ -1027,7 +1027,7 @@ fdisk_sector_t fdisk_set_last_lba(struct fdisk_context *cxt, fdisk_sector_t lba)
 {
 	assert(cxt);
 
-	if (lba > cxt->total_sectors - 1 && lba < 1)
+	if (lba > cxt->total_sectors - 1 || lba < 1)
 		return -ERANGE;
 	cxt->last_lba = lba;
 	return 0;
