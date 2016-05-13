@@ -272,4 +272,5 @@ FDISK_2.29 {
 	fdisk_labelitem_get_data_string;
 	fdisk_labelitem_is_string;
 	fdisk_labelitem_is_number;
+	fdisk_gpt_set_npartitions;
 } FDISK_2.28;

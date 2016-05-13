@@ -616,6 +616,7 @@ enum fdisk_labelitem_sgi {
 #define GPT_FLAG_GUIDSPECIFIC	4
 
 extern int fdisk_gpt_is_hybrid(struct fdisk_context *cxt);
+extern int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, unsigned long entries);
 extern int fdisk_gpt_get_partition_attrs(struct fdisk_context *cxt, size_t partnum, uint64_t *attrs);
 extern int fdisk_gpt_set_partition_attrs(struct fdisk_context *cxt, size_t partnum, uint64_t attrs);
 

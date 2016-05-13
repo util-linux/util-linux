@@ -2453,6 +2453,106 @@ static int gpt_set_disklabel_id(struct fdisk_context *cxt)
 	return 0;
 }
 
+static int gpt_check_table_overlap(struct fdisk_context *cxt,
+				   uint64_t first_usable,
+				   uint64_t last_usable)
+{
+	struct fdisk_gpt_label *gpt = self_label(cxt);
+	unsigned int i;
+	int rc = 0;
+
+	/* First check if there's enough room for the table. last_lba may have wrapped */
+	if (first_usable > cxt->total_sectors || /* far too little space */
+	    last_usable > cxt->total_sectors || /* wrapped */
+	    first_usable > last_usable) { /* too little space */
+		fdisk_warnx(cxt, _("Not enough space for new partition table!"));
+		return -ENOSPC;
+	}
+
+	/* check that all partitions fit in the remaining space */
+	for (i = 0; i < le32_to_cpu(gpt->pheader->npartition_entries); i++) {
+		if (partition_unused(&gpt->ents[i]))
+		        continue;
+		if (gpt_partition_start(&gpt->ents[i]) < first_usable) {
+			fdisk_warnx(cxt, _("Partition #%u out of range (minimal start is %"PRIu64" sectors)"),
+		                    i + 1, first_usable);
+			rc = -EINVAL;
+		}
+		if (gpt_partition_end(&gpt->ents[i]) > last_usable) {
+			fdisk_warnx(cxt, _("Partition #%u out of range (maximal end is %"PRIu64" sectors)"),
+		                    i + 1, last_usable - 1);
+			rc = -EINVAL;
+		}
+	}
+	return rc;
+}
+
+int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, unsigned long new)
+{
+	struct fdisk_gpt_label *gpt;
+	size_t old_size, new_size;
+	unsigned long old;
+	struct gpt_entry *ents;
+	uint64_t first_usable, last_usable;
+	int rc;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_label(cxt, GPT));
+
+	gpt = self_label(cxt);
+
+	old = le32_to_cpu(gpt->pheader->npartition_entries);
+
+	/* calculate the size (bytes) of the entries array */
+	new_size = new * le32_to_cpu(gpt->pheader->sizeof_partition_entry);
+	old_size = old * le32_to_cpu(gpt->pheader->sizeof_partition_entry);
+
+	/* calculate new range of usable LBAs */
+	first_usable = (new_size / cxt->sector_size) + 2;
+	last_usable = cxt->total_sectors - 2 - (new_size / cxt->sector_size);
+
+	/* if expanding the table, first check that everything fits,
+	 * then allocate more memory and zero. */
+	if (new > old) {
+		rc = gpt_check_table_overlap(cxt, first_usable, last_usable);
+		if (rc)
+			return rc;
+		ents = realloc(gpt->ents, new_size);
+		if (!ents) {
+			fdisk_warnx(cxt, _("Cannot allocate memory!"));
+			return -ENOMEM;
+		}
+		memset(ents + old, 0, new_size - old_size);
+		gpt->ents = ents;
+	}
+
+	/* everything's ok, apply the new size */
+	gpt->pheader->npartition_entries = cpu_to_le32(new);
+	gpt->bheader->npartition_entries = cpu_to_le32(new);
+
+	/* usable LBA addresses will have changed */
+	fdisk_set_first_lba(cxt, first_usable);
+	fdisk_set_last_lba(cxt, last_usable);
+	gpt->pheader->first_usable_lba = cpu_to_le64(first_usable);
+	gpt->bheader->first_usable_lba = cpu_to_le64(first_usable);
+	gpt->pheader->last_usable_lba = cpu_to_le64(last_usable);
+	gpt->bheader->last_usable_lba = cpu_to_le64(last_usable);
+
+
+	/* The backup header must be recalculated */
+	gpt_mknew_header_common(cxt, gpt->bheader, le64_to_cpu(gpt->pheader->alternative_lba));
+
+	/* CRCs will have changed */
+	gpt_recompute_crc(gpt->pheader, gpt->ents);
+	gpt_recompute_crc(gpt->bheader, gpt->ents);
+
+	fdisk_info(cxt, _("Partition table length changed from %lu to %lu."), old, new);
+
+	fdisk_label_set_changed(cxt->label, 1);
+	return 0;
+}
+
 static int gpt_part_is_used(struct fdisk_context *cxt, size_t i)
 {
 	struct fdisk_gpt_label *gpt;
