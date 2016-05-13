@@ -165,6 +165,7 @@ struct menu menu_gpt = {
 		MENU_XENT('i', N_("change disk GUID")),
 		MENU_XENT('n', N_("change partition name")),
 		MENU_XENT('u', N_("change partition UUID")),
+		MENU_XENT('l', N_("change table length")),
 		MENU_XENT('M', N_("enter protective/hybrid MBR")),
 
 		MENU_XSEP(""),
@@ -691,6 +692,7 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 	struct fdisk_partition *pa = NULL;
 	size_t n;
 	int rc = 0;
+	unsigned long length;
 
 	assert(cxt);
 	assert(ent);
@@ -702,6 +704,12 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 		switch (ent->key) {
 		case 'i':
 			return fdisk_set_disklabel_id(cxt);
+		case 'l':
+	                rc =  fdisk_ask_number(cxt, 1, fdisk_get_npartitions(cxt),
+	                                ~(uint32_t)0, _("New maximum entries"), &length);
+			if (rc)
+				return rc;
+			return fdisk_gpt_set_npartitions(cxt, length);
 		case 'M':
 			mbr = fdisk_new_nested_context(cxt, "dos");
 			if (!mbr)
