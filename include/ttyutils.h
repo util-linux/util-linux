@@ -51,7 +51,7 @@ struct chardata {
 	} while (0)
 
 extern int get_terminal_width(int default_width);
-extern int get_terminal_name(int fd, const char **path, const char **name,
+extern int get_terminal_name(const char **path, const char **name,
 			     const char **number);
 
 #define UL_TTY_KEEPCFLAGS	(1 << 1)

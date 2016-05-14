@@ -296,7 +296,7 @@ static void do_write(const struct write_control *ctl)
 
 int main(int argc, char **argv)
 {
-	int tty_writeable = 0, src_fd, c;
+	int tty_writeable = 0, c;
 	struct write_control ctl = { 0 };
 
 	static const struct option longopts[] = {
@@ -321,18 +321,8 @@ int main(int argc, char **argv)
 			usage(stderr);
 		}
 
-	/* check that sender has write enabled */
-	if (isatty(STDIN_FILENO))
-		src_fd = STDIN_FILENO;
-	else if (isatty(STDOUT_FILENO))
-		src_fd = STDOUT_FILENO;
-	else if (isatty(STDERR_FILENO))
-		src_fd = STDERR_FILENO;
-	else
-		src_fd = -1;
-
-	if (src_fd != -1 &&
-	    get_terminal_name(src_fd, &ctl.src_tty_path, &ctl.src_tty_name, NULL) == 0) {
+	if (get_terminal_name(&ctl.src_tty_path, &ctl.src_tty_name, NULL) == 0) {
+		/* check that sender has write enabled */
 		if (check_tty(ctl.src_tty_path, &tty_writeable, NULL, 1))
 			exit(EXIT_FAILURE);
 		if (!tty_writeable)
