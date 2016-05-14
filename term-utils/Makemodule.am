@@ -93,6 +93,7 @@ dist_man_MANS += term-utils/write.1
 write_SOURCES = term-utils/write.c
 write_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 write_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
+write_LDADD = $(LDADD) libcommon.la
 
 if USE_TTY_GROUP
 if MAKEINSTALL_DO_CHOWN
