@@ -220,18 +220,13 @@ static void signal_handler(int signo)
  */
 static void write_line(char *s)
 {
-	char c;
-
-#define	PUTC(c)	if (fputc_careful(c, stdout, '^') == EOF) \
-    err(EXIT_FAILURE, _("carefulputc failed"));
 	while (*s) {
-		c = *s++;
-		if (c == '\n')
-			PUTC('\r');
-		PUTC(c);
+		const int c = *s++;
+
+		if ((c == '\n' && fputc_careful('\r', stdout, '^') == EOF)
+		    || fputc_careful(c, stdout, '^') == EOF)
+			err(EXIT_FAILURE, _("carefulputc failed"));
 	}
-	return;
-#undef PUTC
 }
 
 /*
