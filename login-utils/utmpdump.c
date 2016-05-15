@@ -47,10 +47,10 @@
 
 static char *timetostr(const time_t time)
 {
-	static char s[29];	/* [Sun Sep 01 00:00:00 1998 PST] */
+	static char s[29];	/* [Tue Sep 01 00:00:00 1998 GMT] */
 	struct tm *tmp;
 
-	if (time != 0 && (tmp = localtime(&time)))
+	if (time != 0 && (tmp = gmtime(&time)))
 		strftime(s, 29, "%a %b %d %T %Y %Z", tmp);
 	else
 		s[0] = '\0';
@@ -73,7 +73,7 @@ static time_t strtotime(const char *s_time)
 	if (s_time[26] == 'D')
 		tm.tm_isdst = 1;
 
-	return mktime(&tm);
+	return timegm(&tm);
 }
 
 #define cleanse(x) xcleanse(x, sizeof(x))
