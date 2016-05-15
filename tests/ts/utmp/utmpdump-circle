@@ -22,7 +22,7 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_UTMPDUMP"
 
 export LANG=C
-export TZ=GMT
+export TZ=Asia/Tokyo
 OUT_BIN1=${TS_OUTDIR}/${TS_TESTNAME}.bin1
 OUT_BIN2=${TS_OUTDIR}/${TS_TESTNAME}.bin2
 OUT_TXT=${TS_OUTDIR}/${TS_TESTNAME}.txt
