@@ -2503,6 +2503,8 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, unsigned long new)
 	gpt = self_label(cxt);
 
 	old = le32_to_cpu(gpt->pheader->npartition_entries);
+	if (old == new)
+		return 0;	/* do nothing, say nothing */
 
 	/* calculate the size (bytes) of the entries array */
 	new_size = new * le32_to_cpu(gpt->pheader->sizeof_partition_entry);

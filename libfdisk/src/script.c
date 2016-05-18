@@ -1346,10 +1346,15 @@ int fdisk_apply_script_headers(struct fdisk_context *cxt, struct fdisk_script *d
 		return rc;
 
 	str = fdisk_script_get_header(dp, "table-length");
-	if (str)
-		return fdisk_gpt_set_npartitions(cxt, strtoul(str, NULL, 0));
+	if (str) {
+		uintmax_t sz;
 
-	return 0;
+		rc = parse_size(str, &sz, NULL);
+		if (rc == 0)
+			rc = fdisk_gpt_set_npartitions(cxt, sz);
+	}
+
+	return rc;
 }
 
 /**
