@@ -195,7 +195,7 @@ static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 
 	if (ctl->isterm)
 		tcsetattr(STDIN_FILENO, TCSADRAIN, &ctl->attrs);
-	if (!ctl->quiet)
+	if (!ctl->quiet && ctl->typescriptfp)
 		printf(_("Script done, file is %s\n"), ctl->fname);
 #ifdef HAVE_LIBUTEMPTER
 	if (ctl->master >= 0)
@@ -203,12 +203,10 @@ static void __attribute__((__noreturn__)) done(struct script_control *ctl)
 #endif
 	kill(ctl->child, SIGTERM);	/* make sure we don't create orphans */
 
-	if (ctl->timingfp)
-		if (close_stream(ctl->timingfp) != 0)
-			err(EXIT_FAILURE, "write failed: %s", ctl->tname);
-	if (ctl->typescriptfp)
-		if (close_stream(ctl->typescriptfp) != 0)
-			err(EXIT_FAILURE, "write failed: %s", ctl->fname);
+	if (ctl->timingfp && close_stream(ctl->timingfp) != 0)
+		err(EXIT_FAILURE, "write failed: %s", ctl->tname);
+	if (ctl->typescriptfp && close_stream(ctl->typescriptfp) != 0)
+		err(EXIT_FAILURE, "write failed: %s", ctl->fname);
 
 	if (ctl->rc_wanted) {
 		if (WIFSIGNALED(ctl->childstatus))
