@@ -403,24 +403,31 @@ int fdisk_script_read_context(struct fdisk_script *dp, struct fdisk_context *cxt
 		struct fdisk_labelitem item;
 		char buf[64];
 
+		/* first-lba */
 		rc = fdisk_get_disklabel_item(cxt, GPT_LABELITEM_FIRSTLBA, &item);
-		if (rc == 0) {
+		if (!rc) {
 			snprintf(buf, sizeof(buf), "%"PRIu64, item.data.num64);
 			rc = fdisk_script_set_header(dp, "first-lba", buf);
 		}
-		if (rc < 0)
-			goto done;
 
-		rc = fdisk_get_disklabel_item(cxt, GPT_LABELITEM_LASTLBA, &item);
-		if (rc == 0) {
+		/* last-lba */
+		if (!rc)
+			rc = fdisk_get_disklabel_item(cxt, GPT_LABELITEM_LASTLBA, &item);
+		if (!rc) {
 			snprintf(buf, sizeof(buf), "%"PRIu64, item.data.num64);
 			rc = fdisk_script_set_header(dp, "last-lba", buf);
 		}
-		if (rc < 0)
-			goto done;
+
+		/* table-length */
+		if (!rc) {
+			size_t n = fdisk_get_npartitions(cxt);
+			if (n != FDISK_GPT_NPARTITIONS_DEFAULT) {
+				snprintf(buf, sizeof(buf), "%zu", n);
+				rc = fdisk_script_set_header(dp, "table-length", buf);
+			}
+		}
 	}
 
-done:
 	DBG(SCRIPT, ul_debugobj(dp, "read context done [rc=%d]", rc));
 	return rc;
 }

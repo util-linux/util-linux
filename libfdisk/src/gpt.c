@@ -50,7 +50,7 @@
 #define EFI_PMBR_OSTYPE     0xEE
 #define MSDOS_MBR_SIGNATURE 0xAA55
 #define GPT_PART_NAME_LEN   (72 / sizeof(uint16_t))
-#define GPT_NPARTITIONS     128
+#define GPT_NPARTITIONS     FDISK_GPT_NPARTITIONS_DEFAULT
 
 /* Globally unique identifier */
 struct gpt_guid {

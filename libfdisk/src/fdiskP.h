@@ -58,6 +58,7 @@ struct fdisk_test {
 extern int fdisk_run_test(struct fdisk_test *tests, int argc, char *argv[]);
 #endif
 
+#define FDISK_GPT_NPARTITIONS_DEFAULT	128
 
 /*
  * Generic iterator
