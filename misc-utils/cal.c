@@ -516,7 +516,7 @@ static void headers_init(struct cal_control *ctl)
 	char tmp[FMT_ST_CHARS];
 	int year_len;
 
-	year_len = snprintf(tmp, sizeof(tmp), "%d", ctl->req.year);
+	year_len = snprintf(tmp, sizeof(tmp), "%04d", ctl->req.year);
 
 	if (year_len < 0 || (size_t)year_len >= sizeof(tmp)) {
 		/* XXX impossible error */
@@ -612,13 +612,13 @@ static void cal_output_header(struct cal_month *month, const struct cal_control 
 		if (!ctl->header_year) {
 			my_putstring("\n");
 			for (i = month; i; i = i->next) {
-				sprintf(out, _("%d"), i->year);
+				sprintf(out, _("%04d"), i->year);
 				center(out, ctl->week_width - 1, i->next == NULL ? 0 : ctl->gutter_width);
 			}
 		}
 	} else {
 		for (i = month; i; i = i->next) {
-			sprintf(out, _("%s %d"), ctl->full_month[i->month - 1], i->year);
+			sprintf(out, _("%s %04d"), ctl->full_month[i->month - 1], i->year);
 			center(out, ctl->week_width - 1, i->next == NULL ? 0 : ctl->gutter_width);
 		}
 	}
@@ -762,7 +762,7 @@ static void yearly(const struct cal_control *ctl)
 		year_width--;
 
 	if (ctl->header_year) {
-		sprintf(out, "%d", ctl->req.year);
+		sprintf(out, "%04d", ctl->req.year);
 		center(out, year_width, 0);
 		my_putstring("\n\n");
 	}
