@@ -376,9 +376,9 @@ char *strtm_iso(struct tm *tm, int flags)
 	return format_iso_time(tm, 0, flags);
 }
 
-char *strtime_iso(time_t t, int flags)
+char *strtime_iso(const time_t *t, int flags)
 {
-	struct tm tm = *localtime(&t);
+	struct tm tm = *localtime(t);
 	return format_iso_time(&tm, 0, flags);
 }
 

@@ -64,6 +64,6 @@ enum {
 };
 char *strtimeval_iso(struct timeval *tv, int flags);
 char *strtm_iso(struct tm *tm, int flags);
-char *strtime_iso(time_t t, int flags);
+char *strtime_iso(const time_t *t, int flags);
 
 #endif /* UTIL_LINUX_TIME_UTIL_H */
