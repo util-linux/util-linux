@@ -955,7 +955,7 @@ static void print_record(struct dmesg_control *ctl,
 		               (long)rec->tv.tv_usec, record_count_delta(ctl, rec));
 		break;
 	case DMESG_TIMEFTM_ISO8601:
-		printf("%s ", iso_8601_time(ctl, rec, buf, sizeof(buf)));
+		ctl->indent = printf("%s ", iso_8601_time(ctl, rec, buf, sizeof(buf)));
 		break;
 	default:
 		abort();
