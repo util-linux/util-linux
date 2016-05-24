@@ -825,19 +825,18 @@ static char *short_ctime(struct tm *tm, char *buf, size_t bufsiz)
 }
 
 static char *iso_8601_time(struct dmesg_control *ctl, struct dmesg_record *rec,
-			   char *buf, size_t bufsiz)
+			   char *buf, size_t bufsz)
 {
-	struct tm tm;
-	size_t len;
-	record_localtime(ctl, rec, &tm);
-	if (strftime(buf, bufsiz, "%Y-%m-%dT%H:%M:%S", &tm) == 0) {
-		*buf = '\0';
-		return buf;
-	}
-	len = strlen(buf);
-	snprintf(buf + len, bufsiz - len, ",%06ld", (long)rec->tv.tv_usec);
-	len = strlen(buf);
-	strftime(buf + len, bufsiz - len, "%z", &tm);
+	struct timeval tv = {
+		.tv_sec = ctl->boot_time.tv_sec + rec->tv.tv_sec,
+		.tv_usec = rec->tv.tv_usec
+	};
+
+	if (strtimeval_iso(&tv,	ISO_8601_DATE|ISO_8601_TIME|ISO_8601_COMMAUSEC|
+				ISO_8601_TIMEZONE,
+				buf, bufsz) != 0)
+		return NULL;
+
 	return buf;
 }
 
@@ -956,7 +955,7 @@ static void print_record(struct dmesg_control *ctl,
 		               (long)rec->tv.tv_usec, record_count_delta(ctl, rec));
 		break;
 	case DMESG_TIMEFTM_ISO8601:
-		ctl->indent = printf("%s ", iso_8601_time(ctl, rec, buf, sizeof(buf)));
+		printf("%s ", iso_8601_time(ctl, rec, buf, sizeof(buf)));
 		break;
 	default:
 		abort();
