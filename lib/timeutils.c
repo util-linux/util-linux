@@ -22,6 +22,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <time.h>
+#include <sys/time.h>
 
 #include "c.h"
 #include "nls.h"
@@ -339,47 +340,77 @@ int parse_timestamp(const char *t, usec_t *usec)
 	return 0;
 }
 
-static char *format_iso_time(struct tm *tm, suseconds_t usec, int flags)
+static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf, size_t bufsz)
 {
-	char *s = NULL;
+	char *p = buf;
+	int len;
 
-	if (flags & ISO_8601_DATE)
-		s = strfappend(s, "%4d-%.2d-%.2d", tm->tm_year + 1900,
+	if (flags & ISO_8601_DATE) {
+		len = snprintf(p, bufsz, "%4d-%.2d-%.2d", tm->tm_year + 1900,
 						tm->tm_mon + 1, tm->tm_mday);
-	if ((flags & ISO_8601_DATE) && (flags & ISO_8601_TIME))
-		s = strnappend(s, (flags & ISO_8601_SPACE) ? " " : "T", 1);
-
-	if (flags & ISO_8601_TIME)
-		s = strfappend(s, "%02d:%02d:%02d", tm->tm_hour,
-						 tm->tm_min, tm->tm_sec);
-	if (flags & ISO_8601_USEC)
-		s = strfappend(s, ".%06ld", (long) usec);
-
-	if (flags & ISO_8601_TIMEZONE) {
-	        int zhour = - timezone / 60 / 60;
-		int zmin = labs(timezone / 60 % 60);
-
-		s = strfappend(s, "%+02d:%02d", zhour, zmin);
+		if (len < 0 || (size_t) len > bufsz)
+			return -1;
+		bufsz -= len;
+		p += len;
 	}
 
-	return s;
+	if ((flags & ISO_8601_DATE) && (flags & ISO_8601_TIME)) {
+		if (bufsz < 1)
+			return -1;
+		*p++ = (flags & ISO_8601_SPACE) ? ' ' : 'T';
+		bufsz--;
+	}
+
+	if (flags & ISO_8601_TIME) {
+		len = snprintf(p, bufsz, "%02d:%02d:%02d", tm->tm_hour,
+						 tm->tm_min, tm->tm_sec);
+		if (len < 0 || (size_t) len > bufsz)
+			return -1;
+		bufsz -= len;
+		p += len;
+	}
+
+	if (flags & ISO_8601_DOTUSEC) {
+		len = snprintf(p, bufsz, ".%06ld", (long) usec);
+		if (len < 0 || (size_t) len > bufsz)
+			return -1;
+		bufsz -= len;
+		p += len;
+
+	} else if (flags & ISO_8601_COMMAUSEC) {
+		len = snprintf(p, bufsz, ",%06ld", (long) usec);
+		if (len < 0 || (size_t) len > bufsz)
+			return -1;
+		bufsz -= len;
+		p += len;
+	}
+
+	if (flags & ISO_8601_TIMEZONE) {
+		if (strftime(p, bufsz, "%z", tm) <= 0)
+			return -1;
+	}
+
+	return 0;
 }
 
-char *strtimeval_iso(struct timeval *tv, int flags)
+/* timeval to ISO 8601 */
+int strtimeval_iso(struct timeval *tv, int flags, char *buf, size_t bufsz)
 {
 	struct tm tm = *localtime(&tv->tv_sec);
-	return format_iso_time(&tm, tv->tv_usec, flags);
+	return format_iso_time(&tm, tv->tv_usec, flags, buf, bufsz);
 }
 
-char *strtm_iso(struct tm *tm, int flags)
+/* struct tm to ISO 8601 */
+int strtm_iso(struct tm *tm, int flags, char *buf, size_t bufsz)
 {
-	return format_iso_time(tm, 0, flags);
+	return format_iso_time(tm, 0, flags, buf, bufsz);
 }
 
-char *strtime_iso(const time_t *t, int flags)
+/* time_t to ISO 8601 */
+int strtime_iso(const time_t *t, int flags, char *buf, size_t bufsz)
 {
 	struct tm tm = *localtime(t);
-	return format_iso_time(&tm, 0, flags);
+	return format_iso_time(&tm, 0, flags, buf, bufsz);
 }
 
 
@@ -388,7 +419,7 @@ char *strtime_iso(const time_t *t, int flags)
 int main(int argc, char *argv[])
 {
 	struct timeval tv = { 0 };
-	char *p;
+	char buf[ISO_8601_BUFSIZ];
 
 	if (argc < 2) {
 		fprintf(stderr, "usage: %s <time> [<usec>]\n", argv[0]);
@@ -399,21 +430,20 @@ int main(int argc, char *argv[])
 	if (argc == 3)
 		tv.tv_usec = strtos64_or_err(argv[2], "failed to parse <usec>");
 
-	p = strtimeval_iso(&tv, ISO_8601_DATE);
-	printf("Date: '%s'\n", p);
-	free(p);
+	strtimeval_iso(&tv, ISO_8601_DATE, buf, sizeof(buf));
+	printf("Date: '%s'\n", buf);
 
-	p = strtimeval_iso(&tv, ISO_8601_TIME);
-	printf("Time: '%s'\n", p);
-	free(p);
+	strtimeval_iso(&tv, ISO_8601_TIME, buf, sizeof(buf));
+	printf("Time: '%s'\n", buf);
 
-	p = strtimeval_iso(&tv, ISO_8601_DATE | ISO_8601_TIME | ISO_8601_USEC);
-	printf("Full: '%s'\n", p);
-	free(p);
+	strtimeval_iso(&tv, ISO_8601_DATE | ISO_8601_TIME | ISO_8601_COMMAUSEC,
+			    buf, sizeof(buf));
+	printf("Full: '%s'\n", buf);
 
-	p = strtimeval_iso(&tv, ISO_8601_DATE | ISO_8601_TIME | ISO_8601_USEC | ISO_8601_TIMEZONE | ISO_8601_SPACE);
-	printf("Zone: '%s'\n", p);
-	free(p);
+	strtimeval_iso(&tv, ISO_8601_DATE | ISO_8601_TIME | ISO_8601_DOTUSEC |
+			    ISO_8601_TIMEZONE | ISO_8601_SPACE,
+			    buf, sizeof(buf));
+	printf("Zone: '%s'\n", buf);
 
 	return EXIT_SUCCESS;
 }
