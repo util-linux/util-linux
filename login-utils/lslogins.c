@@ -294,22 +294,6 @@ static inline size_t err_columns_index(size_t arysz, size_t idx)
 #define add_column(ary, n, id)	\
 		((ary)[ err_columns_index(ARRAY_SIZE(ary), (n)) ] = (id))
 
-static struct timeval now;
-
-static int date_is_today(time_t t)
-{
-	if (now.tv_sec == 0)
-		gettimeofday(&now, NULL);
-	return t / (3600 * 24) == now.tv_sec / (3600 * 24);
-}
-
-static int date_is_thisyear(time_t t)
-{
-	if (now.tv_sec == 0)
-		gettimeofday(&now, NULL);
-	return t / (3600 * 24 * 365) == now.tv_sec / (3600 * 24 * 365);
-}
-
 static int column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
@@ -324,40 +308,44 @@ static int column_name_to_id(const char *name, size_t namesz)
 	return -1;
 }
 
+static struct timeval now;
+
 static char *make_time(int mode, time_t time)
 {
-	char *s;
-	struct tm tm;
+	int rc = 0;
 	char buf[64] = {0};
-
-	localtime_r(&time, &tm);
 
 	switch(mode) {
 	case TIME_FULL:
+	{
+		char *s;
+		struct tm tm;
+		localtime_r(&time, &tm);
+
 		asctime_r(&tm, buf);
 		if (*(s = buf + strlen(buf) - 1) == '\n')
 			*s = '\0';
+		rc = 0;
 		break;
+	}
 	case TIME_SHORT:
-		if (date_is_today(time))
-			strftime(buf, sizeof(buf), "%H:%M:%S", &tm);
-		else if (date_is_thisyear(time))
-			strftime(buf, sizeof(buf), "%b%d/%H:%M", &tm);
-		else
-			strftime(buf, sizeof(buf), "%Y-%b%d", &tm);
+		rc = strtime_short(&time, &now, UL_SHORTTIME_THISYEAR_HHMM,
+				buf, sizeof(buf));
 		break;
 	case TIME_ISO:
-		if (strtm_iso(&tm, ISO_8601_DATE|ISO_8601_TIME|ISO_8601_TIMEZONE,
-				   buf, sizeof(buf)) != 0)
-			err(EXIT_FAILURE, _("failed to formate ISO time"));
-		s = buf;
+		rc = strtime_iso(&time, ISO_8601_DATE|ISO_8601_TIME|ISO_8601_TIMEZONE,
+				   buf, sizeof(buf));
 		break;
 	case TIME_ISO_SHORT:
-		strftime(buf, sizeof(buf), "%Y-%m-%d", &tm);
+		rc = strtime_iso(&time, ISO_8601_DATE, buf, sizeof(buf));
 		break;
 	default:
 		errx(EXIT_FAILURE, _("unsupported time type"));
 	}
+
+	if (rc)
+		 errx(EXIT_FAILURE, _("failed to compose time string"));
+
 	return xstrdup(buf);
 }
 
