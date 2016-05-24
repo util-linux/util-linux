@@ -117,22 +117,44 @@ enum {
 
 enum {
 	LAST_TIMEFTM_NONE = 0,
-	LAST_TIMEFTM_SHORT_CTIME,
-	LAST_TIMEFTM_FULL_CTIME,
-	LAST_TIMEFTM_ISO8601
+	LAST_TIMEFTM_SHORT,
+	LAST_TIMEFTM_CTIME,
+	LAST_TIMEFTM_ISO8601,
+
+	LAST_TIMEFTM_HHMM,	/* non-public */
 };
 
 struct last_timefmt {
 	const char *name;
-	int in;
-	int out;
+	int in_len;	/* log-in */
+	int in_fmt;
+	int out_len;	/* log-out */
+	int out_fmt;
 };
 
 static struct last_timefmt timefmts[] = {
-	[LAST_TIMEFTM_NONE]	   = { "notime", 0, 0 },
-	[LAST_TIMEFTM_SHORT_CTIME] = { "short", 16, 7},
-	[LAST_TIMEFTM_FULL_CTIME]  = { "full",  24, 26},
-	[LAST_TIMEFTM_ISO8601]	   = { "iso", 24, 26}
+	[LAST_TIMEFTM_NONE] = { .name = "notime" },
+	[LAST_TIMEFTM_SHORT] = {
+		.name    = "short",
+		.in_len  = 16,
+		.out_len = 7,
+		.in_fmt  = LAST_TIMEFTM_CTIME,
+		.out_fmt = LAST_TIMEFTM_HHMM
+	},
+	[LAST_TIMEFTM_CTIME] = {
+		.name    = "full",
+		.in_len  = 24,
+		.out_len = 26,
+		.in_fmt  = LAST_TIMEFTM_CTIME,
+		.out_fmt = LAST_TIMEFTM_CTIME
+	},
+	[LAST_TIMEFTM_ISO8601] = {
+		.name    = "iso",
+		.in_len  = 24,
+		.out_len = 26,
+		.in_fmt  = LAST_TIMEFTM_ISO8601,
+		.out_fmt = LAST_TIMEFTM_ISO8601
+	}
 };
 
 /* Global variables */
@@ -312,38 +334,26 @@ static int dns_lookup(char *result, int size, int useip, int32_t *a)
 	return getnameinfo(sa, salen, result, size, NULL, 0, flags);
 }
 
-static int time_formatter(const struct last_control *ctl, char *dst,
-			  size_t dlen, time_t *when, int pos)
+static int time_formatter(int fmt, char *dst, size_t dlen, time_t *when)
 {
-	struct tm *tm;
 	int ret = 0;
 
-	switch (ctl->time_fmt) {
+	switch (fmt) {
 	case LAST_TIMEFTM_NONE:
 		*dst = 0;
 		break;
-	case LAST_TIMEFTM_SHORT_CTIME:
-		if (pos == 0)
-			ret = sprintf(dst, "%s", ctime(when));
-		else {
-			tm = localtime(when);
-			if (!strftime(dst, dlen, "- %H:%M", tm))
-				ret = -1;
-		}
+	case LAST_TIMEFTM_HHMM:
+	{
+		struct tm *tm = localtime(when);
+		if (!snprintf(dst, dlen, "%02d:%02d", tm->tm_hour, tm->tm_min))
+			ret = -1;
 		break;
-	case LAST_TIMEFTM_FULL_CTIME:
-		if (pos == 0)
-			ret = sprintf(dst, "%s", ctime(when));
-		else
-			ret = sprintf(dst, "- %s", ctime(when));
+	}
+	case LAST_TIMEFTM_CTIME:
+		ret = snprintf(dst, dlen, "%s", ctime(when));
 		break;
 	case LAST_TIMEFTM_ISO8601:
-		tm = localtime(when);
-		if (pos == 0) {
-			if (!strftime(dst, dlen, "%Y-%m-%dT%H:%M:%S%z", tm))
-				ret = -1;
-		} else if (!strftime(dst, dlen, "- %Y-%m-%dT%H:%M:%S%z", tm))
-			ret = -1;
+		ret = strtime_iso(when, ISO_8601_DATE|ISO_8601_TIME|ISO_8601_TIMEZONE, dst, dlen);
 		break;
 	default:
 		abort();
@@ -412,6 +422,8 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t logout_ti
 	/*
 	 *	Calculate times
 	 */
+	fmt = &timefmts[ctl->time_fmt];
+
 	utmp_time = p->UL_UT_TIME;
 
 	if (ctl->present) {
@@ -420,27 +432,31 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t logout_ti
 		if (0 < logout_time && logout_time < ctl->present)
 			return 0;
 	}
-	if (time_formatter(ctl, &logintime[0], sizeof(logintime), &utmp_time, 0) < 0 ||
-	    time_formatter(ctl, &logouttime[0], sizeof(logouttime), &logout_time, 1) < 0)
+
+	/* log-in time */
+	if (time_formatter(fmt->in_fmt, logintime,
+			   sizeof(logintime), &utmp_time) < 0)
 		errx(EXIT_FAILURE, _("preallocation size exceeded"));
 
+	/* log-out time */
 	secs  = logout_time - utmp_time;
 	mins  = (secs / 60) % 60;
 	hours = (secs / 3600) % 24;
 	days  = secs / 86400;
 
 	if (logout_time == currentdate) {
-		if (ctl->time_fmt > LAST_TIMEFTM_SHORT_CTIME) {
+		if (ctl->time_fmt > LAST_TIMEFTM_SHORT) {
 			sprintf(logouttime, "  still running");
 			length[0] = 0;
 		} else {
 			sprintf(logouttime, "  still");
 			sprintf(length, "running");
 		}
-	} else if (days)
+	} else if (days) {
 		sprintf(length, "(%d+%02d:%02d)", days, hours, mins);
-	else
+	} else {
 		sprintf(length, " (%02d:%02d)", hours, mins);
+	}
 
 	switch(what) {
 		case R_CRASH:
@@ -450,7 +466,7 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t logout_ti
 			sprintf(logouttime, "- down ");
 			break;
 		case R_NOW:
-			if (ctl->time_fmt > LAST_TIMEFTM_SHORT_CTIME) {
+			if (ctl->time_fmt > LAST_TIMEFTM_SHORT) {
 				sprintf(logouttime, "  still logged in");
 				length[0] = 0;
 			} else {
@@ -459,10 +475,10 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t logout_ti
 			}
 			break;
 		case R_PHANTOM:
-			if (ctl->time_fmt > LAST_TIMEFTM_SHORT_CTIME) {
+			if (ctl->time_fmt > LAST_TIMEFTM_SHORT) {
 				sprintf(logouttime, "  gone - no logout");
 				length[0] = 0;
-			} else if (ctl->time_fmt == LAST_TIMEFTM_SHORT_CTIME) {
+			} else if (ctl->time_fmt == LAST_TIMEFTM_SHORT) {
 				sprintf(logouttime, "   gone");
 				sprintf(length, "- no logout");
 			} else {
@@ -470,13 +486,16 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t logout_ti
 				sprintf(length, "no logout");
 			}
 			break;
-		case R_REBOOT:
-			break;
 		case R_TIMECHANGE:
 			logouttime[0] = 0;
 			length[0] = 0;
 			break;
 		case R_NORMAL:
+		case R_REBOOT:
+			strcpy(logouttime, "- ");
+			if (time_formatter(fmt->out_fmt, logouttime + 2,
+					   sizeof(logouttime) - 2, &logout_time) < 0)
+				errx(EXIT_FAILURE, _("preallocation size exceeded"));
 			break;
 		default:
 			abort();
@@ -495,7 +514,6 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t logout_ti
 		strncat(domain, p->ut_host, len);
 	}
 
-	fmt = &timefmts[ctl->time_fmt];
 
 	if (ctl->showhost) {
 		if (!ctl->altlist) {
@@ -503,20 +521,20 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t logout_ti
 				"%-8.*s %-12.12s %-16.*s %-*.*s %-*.*s %s\n",
 				ctl->name_len, p->ut_user, utline,
 				ctl->domain_len, domain,
-				fmt->in, fmt->in, logintime, fmt->out, fmt->out,
+				fmt->in_len, fmt->in_len, logintime, fmt->out_len, fmt->out_len,
 				logouttime, length);
 		} else {
 			len = snprintf(final, sizeof(final),
 				"%-8.*s %-12.12s %-*.*s %-*.*s %-12.12s %s\n",
 				ctl->name_len, p->ut_user, utline,
-				fmt->in, fmt->in, logintime, fmt->out, fmt->out,
+				fmt->in_len, fmt->in_len, logintime, fmt->out_len, fmt->out_len,
 				logouttime, length, domain);
 		}
 	} else
 		len = snprintf(final, sizeof(final),
 			"%-8.*s %-12.12s %-*.*s %-*.*s %s\n",
 			ctl->name_len, p->ut_user, utline,
-			fmt->in, fmt->in, logintime, fmt->out, fmt->out,
+			fmt->in_len, fmt->in_len, logintime, fmt->out_len, fmt->out_len,
 			logouttime, length);
 
 #if defined(__GLIBC__)
@@ -872,7 +890,7 @@ int main(int argc, char **argv)
 	struct last_control ctl = {
 		.showhost = TRUE,
 		.name_len = LAST_LOGIN_LEN,
-		.time_fmt = LAST_TIMEFTM_SHORT_CTIME,
+		.time_fmt = LAST_TIMEFTM_SHORT,
 		.domain_len = LAST_DOMAIN_LEN
 	};
 	char **files = NULL;
@@ -951,7 +969,7 @@ int main(int argc, char **argv)
 			ctl.altlist = 1;
 			break;
 		case 'F':
-			ctl.time_fmt = LAST_TIMEFTM_FULL_CTIME;
+			ctl.time_fmt = LAST_TIMEFTM_CTIME;
 			break;
 		case 'p':
 			if (parse_timestamp(optarg, &p) < 0)
