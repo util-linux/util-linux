@@ -70,4 +70,11 @@ int strtimeval_iso(struct timeval *tv, int flags, char *buf, size_t bufsz);
 int strtm_iso(struct tm *tm, int flags, char *buf, size_t bufsz);
 int strtime_iso(const time_t *t, int flags, char *buf, size_t bufsz);
 
+#define UL_SHORTTIME_THISYEAR_HHMM (1 << 1)
+
+int time_is_today(const time_t *t, struct timeval *now);
+int time_is_thisyear(const time_t *t, struct timeval *now);
+
+int strtime_short(const time_t *t, struct timeval *now, int flags, char *buf, size_t bufsz);
+
 #endif /* UTIL_LINUX_TIME_UTIL_H */

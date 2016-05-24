@@ -413,6 +413,44 @@ int strtime_iso(const time_t *t, int flags, char *buf, size_t bufsz)
 	return format_iso_time(&tm, 0, flags, buf, bufsz);
 }
 
+/* relative time functions */
+int time_is_today(const time_t *t, struct timeval *now)
+{
+	if (now->tv_sec == 0)
+		gettimeofday(now, NULL);
+	return *t / (3600 * 24) == now->tv_sec / (3600 * 24);
+}
+
+int time_is_thisyear(const time_t *t, struct timeval *now)
+{
+	if (now->tv_sec == 0)
+		gettimeofday(now, NULL);
+	return *t / (3600 * 24 * 365) == now->tv_sec / (3600 * 24 * 365);
+}
+
+int strtime_short(const time_t *t, struct timeval *now, int flags, char *buf, size_t bufsz)
+{
+        struct tm tm;
+	int rc = 0;
+
+        localtime_r(t, &tm);
+
+	if (time_is_today(t, now)) {
+		rc = snprintf(buf, bufsz, "%02d:%02d", tm.tm_hour, tm.tm_min);
+		if (rc < 0 || (size_t) rc > bufsz)
+			return -1;
+		rc = 1;
+
+	} else if (time_is_thisyear(t, now)) {
+		if (flags & UL_SHORTTIME_THISYEAR_HHMM)
+			rc = strftime(buf, bufsz, "%b%d/%H:%M", &tm);
+		else
+			rc = strftime(buf, bufsz, "%b%d", &tm);
+	} else
+		rc = strftime(buf, bufsz, "%Y-%b%d", &tm);
+
+	return rc <= 0 ? -1 : 0;
+}
 
 #ifdef TEST_PROGRAM_TIMEUTILS
 
