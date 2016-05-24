@@ -56,6 +56,7 @@
 #include "pathnames.h"
 #include "logindefs.h"
 #include "procutils.h"
+#include "timeutils.h"
 
 /*
  * column description
@@ -346,7 +347,10 @@ static char *make_time(int mode, time_t time)
 			strftime(buf, sizeof(buf), "%Y-%b%d", &tm);
 		break;
 	case TIME_ISO:
-		strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%S%z", &tm);
+		if (strtm_iso(&tm, ISO_8601_DATE|ISO_8601_TIME|ISO_8601_TIMEZONE,
+				   buf, sizeof(buf)) != 0)
+			err(EXIT_FAILURE, _("failed to formate ISO time"));
+		s = buf;
 		break;
 	case TIME_ISO_SHORT:
 		strftime(buf, sizeof(buf), "%Y-%m-%d", &tm);
