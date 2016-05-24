@@ -39,6 +39,7 @@
 #include "xalloc.h"
 #include "procutils.h"
 #include "ipcutils.h"
+#include "timeutils.h"
 
 /*
  * time modes
@@ -466,7 +467,7 @@ static char *make_time(int mode, time_t time)
 			strftime(buf, sizeof(buf), "%Y-%b%d", &tm);
 		break;
 	case TIME_ISO:
-		strftime(buf, sizeof(buf), "%Y-%m-%dT%H:%M:%S%z", &tm);
+		strtm_iso(&tm, ISO_8601_DATE|ISO_8601_TIME|ISO_8601_TIMEZONE, buf, sizeof(buf));
 		break;
 	default:
 		errx(EXIT_FAILURE, _("unsupported time type"));
