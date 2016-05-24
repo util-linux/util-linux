@@ -444,6 +444,11 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t logout_ti
 	hours = (secs / 3600) % 24;
 	days  = secs / 86400;
 
+	strcpy(logouttime, "- ");
+	if (time_formatter(fmt->out_fmt, logouttime + 2,
+			   sizeof(logouttime) - 2, &logout_time) < 0)
+		errx(EXIT_FAILURE, _("preallocation size exceeded"));
+
 	if (logout_time == currentdate) {
 		if (ctl->time_fmt > LAST_TIMEFTM_SHORT) {
 			sprintf(logouttime, "  still running");
@@ -492,10 +497,6 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t logout_ti
 			break;
 		case R_NORMAL:
 		case R_REBOOT:
-			strcpy(logouttime, "- ");
-			if (time_formatter(fmt->out_fmt, logouttime + 2,
-					   sizeof(logouttime) - 2, &logout_time) < 0)
-				errx(EXIT_FAILURE, _("preallocation size exceeded"));
 			break;
 		default:
 			abort();
