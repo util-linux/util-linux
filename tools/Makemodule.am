@@ -1,0 +1,9 @@
+
+EXTRA_DIST += \
+	tools/git-version-gen \
+	tools/checkcompletion.sh \
+       	tools/checkconfig.sh \
+       	tools/checkdecl.sh \
+      	tools/checkincludes.pl \
+	tools/checkmans.sh \
+       	tools/checkxalloc.sh

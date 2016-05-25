@@ -72,10 +72,9 @@ EXTRA_DIST += \
 	autogen.sh \
 	Documentation \
 	po/update-potfiles \
-	README.licensing \
-	tools/git-version-gen
+	README.licensing
 
-
+include tools/Makemodule.am
 include include/Makemodule.am
 include lib/Makemodule.am
 include libuuid/Makemodule.am
