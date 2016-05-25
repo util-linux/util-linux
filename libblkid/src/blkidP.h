@@ -326,7 +326,6 @@ UL_DEBUG_DECLARE_MASK(libblkid);
 #define ON_DBG(m, x)    __UL_DBG_CALL(libblkid, BLKID_DEBUG_, m, x)
 
 extern void blkid_debug_dump_dev(blkid_dev dev);
-extern void blkid_debug_dump_tag(blkid_tag tag);
 
 
 /* devno.c */

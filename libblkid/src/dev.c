@@ -37,6 +37,7 @@ blkid_dev blkid_new_dev(void)
 	if (!(dev = calloc(1, sizeof(struct blkid_struct_dev))))
 		return NULL;
 
+	DBG(DEV, ul_debugobj(dev, "alloc"));
 	INIT_LIST_HEAD(&dev->bid_devs);
 	INIT_LIST_HEAD(&dev->bid_tags);
 
@@ -48,10 +49,7 @@ void blkid_free_dev(blkid_dev dev)
 	if (!dev)
 		return;
 
-	DBG(DEV,
-	    ul_debug("  freeing dev %s (%s)", dev->bid_name, dev->bid_type ?
-		   dev->bid_type : "(null)"));
-	DBG(DEV, blkid_debug_dump_dev(dev));
+	DBG(DEV, ul_debugobj(dev, "freeing (%s)", dev->bid_name));
 
 	list_del(&dev->bid_devs);
 	while (!list_empty(&dev->bid_tags)) {

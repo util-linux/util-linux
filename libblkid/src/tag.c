@@ -24,20 +24,11 @@ static blkid_tag blkid_new_tag(void)
 	if (!(tag = calloc(1, sizeof(struct blkid_struct_tag))))
 		return NULL;
 
+	DBG(TAG, ul_debugobj(tag, "alloc"));
 	INIT_LIST_HEAD(&tag->bit_tags);
 	INIT_LIST_HEAD(&tag->bit_names);
 
 	return tag;
-}
-
-void blkid_debug_dump_tag(blkid_tag tag)
-{
-	if (!tag) {
-		fprintf(stderr, "    tag: NULL\n");
-		return;
-	}
-
-	fprintf(stderr, "    tag: %s=\"%s\"\n", tag->bit_name, tag->bit_val);
 }
 
 void blkid_free_tag(blkid_tag tag)
@@ -45,9 +36,7 @@ void blkid_free_tag(blkid_tag tag)
 	if (!tag)
 		return;
 
-	DBG(TAG, ul_debug("    freeing tag %s=%s", tag->bit_name,
-		   tag->bit_val ? tag->bit_val : "(NULL)"));
-	DBG(TAG, blkid_debug_dump_tag(tag));
+	DBG(TAG, ul_debugobj(tag, "freeing tag %s (%s)", tag->bit_name, tag->bit_val));
 
 	list_del(&tag->bit_tags);	/* list of tags for this device */
 	list_del(&tag->bit_names);	/* list of tags with this type */
@@ -107,7 +96,7 @@ static blkid_tag blkid_find_head_cache(blkid_cache cache, const char *type)
 	list_for_each(p, &cache->bic_tags) {
 		tmp = list_entry(p, struct blkid_struct_tag, bit_tags);
 		if (!strcmp(tmp->bit_name, type)) {
-			DBG(TAG, ul_debug("    found cache tag head %s", type));
+			DBG(TAG, ul_debug("found cache tag head %s", type));
 			head = tmp;
 			break;
 		}
@@ -155,6 +144,7 @@ int blkid_set_tag(blkid_dev dev, const char *name,
 			free(val);
 			return 0;
 		}
+		DBG(TAG, ul_debugobj(t, "update (%s) '%s' -> '%s'", t->bit_name, t->bit_val, val));
 		free(t->bit_val);
 		t->bit_val = val;
 	} else {
@@ -165,6 +155,7 @@ int blkid_set_tag(blkid_dev dev, const char *name,
 		t->bit_val = val;
 		t->bit_dev = dev;
 
+		DBG(TAG, ul_debugobj(t, "setting (%s) '%s'", t->bit_name, t->bit_val));
 		list_add_tail(&t->bit_tags, &dev->bid_tags);
 
 		if (dev->bid_cache) {
@@ -175,7 +166,7 @@ int blkid_set_tag(blkid_dev dev, const char *name,
 				if (!head)
 					goto errout;
 
-				DBG(TAG, ul_debug("    creating new cache tag head %s", name));
+				DBG(TAG, ul_debugobj(head, "creating new cache tag head %s", name));
 				head->bit_name = strdup(name);
 				if (!head->bit_name)
 					goto errout;

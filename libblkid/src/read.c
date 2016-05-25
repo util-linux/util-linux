@@ -321,6 +321,8 @@ static int parse_tag(blkid_cache cache, blkid_dev dev, char **cp)
 	    (ret = parse_xml(&name, &value, cp)) <= 0 */)
 		return ret;
 
+	DBG(READ, ul_debug("tag: %s=\"%s\"", name, value));
+
 	/* Some tags are stored directly in the device struct */
 	if (!strcmp(name, "DEVNO"))
 		dev->bid_devno = strtoull(value, 0, 0);
@@ -333,8 +335,6 @@ static int parse_tag(blkid_cache cache, blkid_dev dev, char **cp)
 			dev->bid_utime = strtoull(end + 1, 0, 0);
 	} else
 		ret = blkid_set_tag(dev, name, value, strlen(value));
-
-	DBG(READ, ul_debug("    tag: %s=\"%s\"", name, value));
 
 	return ret < 0 ? ret : 1;
 }
@@ -377,7 +377,7 @@ static int blkid_parse_line(blkid_cache cache, blkid_dev *dev_p, char *cp)
 		goto done;
 	}
 
-	DBG(READ, blkid_debug_dump_dev(dev));
+	/*DBG(READ, blkid_debug_dump_dev(dev));*/
 
 done:
 	return ret;
