@@ -41,11 +41,14 @@
 #include "all-io.h"
 #include "nls.h"
 #include "pathnames.h"
-#include "plymouth-ctrl.h"
 #include "c.h"
 #include "widechar.h"
 #include "ttyutils.h"
 #include "color-names.h"
+
+#ifdef USE_PLYMOUTH_SUPPORT
+# include "plymouth-ctrl.h"
+#endif
 
 #ifdef HAVE_SYS_PARAM_H
 # include <sys/param.h>
@@ -1175,8 +1178,8 @@ static void termio_init(struct options *op, struct termios *tp)
 {
 	speed_t ispeed, ospeed;
 	struct winsize ws;
+#ifdef USE_PLYMOUTH_SUPPORT
 	struct termios lock;
-#ifdef TIOCGLCKTRMIOS
 	int i =  (plymouth_command(MAGIC_PING) == 0) ? PLYMOUTH_TERMIOS_FLAGS_DELAY : 0;
 	if (i)
 		plymouth_command(MAGIC_QUIT);

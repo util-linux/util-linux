@@ -351,6 +351,22 @@ AC_CHECK_DECL([strsignal],
 		[Define to 1 if have strsignal function prototype])],
 )
 
+AC_CHECK_DECL([TIOCGLCKTRMIOS],
+	      [have_tiocglcktrmios=yes], [have_tiocglcktrmios=no],
+              [#include <sys/ioctl.h>])
+AC_CHECK_DECL([SOCK_CLOEXEC],
+	      [have_sock_cloexec=yes], [have_sock_cloexec=no],
+	      [#include <sys/types.h>
+               #include <sys/socket.h>])
+AC_CHECK_DECL([SOCK_NONBLOCK],
+	      [have_sock_nonblock=yes], [have_sock_nonblock=no],
+	      [#include <sys/types.h>
+               #include <sys/socket.h>])
+AC_CHECK_DECL([SO_PASSCRED],
+	      [have_so_passcred=yes], [have_so_passcred=no],
+	      [#include <sys/types.h>
+               #include <sys/socket.h>])
+
 AC_CHECK_FUNCS([ \
 	__fpending \
 	secure_getenv \
@@ -1234,6 +1250,21 @@ AS_IF([test "x$have_futimens" = xyes -a "x$have_inotify_init1" = xyes ], [
   AC_DEFINE([AGETTY_RELOAD], [1], [Enable agetty --reload feature])
 ],[
   AC_MSG_WARN([futimens or inotify_init1 not found; agetty(8) will not provide ---reload functionality])
+])
+
+
+AC_ARG_ENABLE([plymouth_support],
+  AS_HELP_STRING([--disable-plymouth_support], [don not care about plymouth in sylogin(8) and agetty(8)]),
+  [], [UL_DEFAULT_ENABLE([plymouth_support], [check])]
+)
+UL_BUILD_INIT([plymouth_support])
+UL_REQUIRES_HAVE([plymouth_support], [tiocglcktrmios], [TIOCGLCKTRMIOS flag])
+UL_REQUIRES_HAVE([plymouth_support], [sock_cloexec], [SOCK_CLOEXEC flag])
+UL_REQUIRES_HAVE([plymouth_support], [sock_nonblock], [SOCK_NONBLOCK flag])
+UL_REQUIRES_HAVE([plymouth_support], [so_passcred], [SO_PASSCRED flag])
+AM_CONDITIONAL([USE_PLYMOUTH_SUPPORT], [test "x$build_plymouth_support" = xyes])
+AS_IF([test "x$build_plymouth_support" = xyes ], [
+    AC_DEFINE([USE_PLYMOUTH_SUPPORT], [1], [Enable plymouth support feature for sulogin and aggety])
 ])
 
 

@@ -16,7 +16,6 @@ libcommon_la_SOURCES = \
 	lib/md5.c \
 	lib/pager.c \
 	lib/path.c \
-	lib/plymouth-ctrl.c \
 	lib/randutils.c \
 	lib/setproctitle.c \
 	lib/strutils.c \
@@ -29,6 +28,10 @@ if LINUX
 libcommon_la_SOURCES += \
 	lib/linux_version.c \
 	lib/loopdev.c
+endif
+
+if USE_PLYMOUTH_SUPPORT
+libcommon_la_SOURCES += lib/plymouth-ctrl.c
 endif
 
 if !HAVE_LANGINFO

@@ -58,7 +58,9 @@
 #include "closestream.h"
 #include "nls.h"
 #include "pathnames.h"
-#include "plymouth-ctrl.h"
+#ifdef USE_PLYMOUTH_SUPPORT
+# include "plymouth-ctrl.h"
+#endif
 #include "strutils.h"
 #include "ttyutils.h"
 #include "sulogin-consoles.h"
@@ -100,9 +102,9 @@ static void tcinit(struct console *con)
 {
 	int mode = 0, flags = 0;
 	struct termios *tio = &con->tio;
-	struct termios lock;
 	int fd = con->fd;
-#ifdef TIOCGLCKTRMIOS
+#ifdef USE_PLYMOUTH_SUPPORT
+	struct termios lock;
 	int i = (plymouth_command(MAGIC_PING)) ? PLYMOUTH_TERMIOS_FLAGS_DELAY : 0;
 	if (i)
 		plymouth_command(MAGIC_QUIT);
@@ -121,7 +123,6 @@ static void tcinit(struct console *con)
 	memset(&lock, 0, sizeof(struct termios));
 	ioctl(fd, TIOCSLCKTRMIOS, &lock);
 #endif
-
 	errno = 0;
 
 	if (tcgetattr(fd, tio) < 0) {
