@@ -58,16 +58,23 @@ void blkid_free_dev(blkid_dev dev)
 					   bit_tags);
 		blkid_free_tag(tag);
 	}
+	free(dev->bid_xname);
 	free(dev->bid_name);
 	free(dev);
 }
 
 /*
- * Given a blkid device, return its name
+ * Given a blkid device, return its name. The function returns the name
+ * previously used for blkid_get_dev(). This name does not have to be canonical
+ * (real path) name, but for example symlink.
  */
 const char *blkid_dev_devname(blkid_dev dev)
 {
-	return dev ? dev->bid_name : NULL;
+	if (!dev)
+		return NULL;
+	if (dev->bid_xname)
+		return dev->bid_xname;
+	return dev->bid_name;
 }
 
 void blkid_debug_dump_dev(blkid_dev dev)

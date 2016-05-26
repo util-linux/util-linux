@@ -50,28 +50,55 @@ blkid_dev blkid_get_dev(blkid_cache cache, const char *devname, int flags)
 {
 	blkid_dev dev = NULL, tmp;
 	struct list_head *p, *pnext;
+	char *cn = NULL;
 
 	if (!cache || !devname)
 		return NULL;
 
+	/* search by name */
 	list_for_each(p, &cache->bic_devs) {
 		tmp = list_entry(p, struct blkid_struct_dev, bid_devs);
 		if (strcmp(tmp->bid_name, devname))
 			continue;
-
-		DBG(DEVNAME, ul_debug("found devname %s in cache", tmp->bid_name));
 		dev = tmp;
 		break;
 	}
 
+	/* try canonicalize the name */
+	if (!dev && (cn = canonicalize_path(devname))) {
+		if (strcmp(cn, devname) != 0) {
+			DBG(DEVNAME, ul_debug("search cannonical %s", cn));
+			list_for_each(p, &cache->bic_devs) {
+				tmp = list_entry(p, struct blkid_struct_dev, bid_devs);
+				if (strcmp(tmp->bid_name, cn))
+					continue;
+				dev = tmp;
+
+				/* update name returned by blkid_dev_devname() */
+				free(dev->bid_xname);
+				dev->bid_xname = strdup(devname);
+				break;
+			}
+		} else {
+			free(cn);
+			cn = NULL;
+		}
+	}
+
 	if (!dev && (flags & BLKID_DEV_CREATE)) {
 		if (access(devname, F_OK) < 0)
-			return NULL;
+			goto done;
 		dev = blkid_new_dev();
 		if (!dev)
-			return NULL;
+			goto done;
 		dev->bid_time = INT_MIN;
-		dev->bid_name = strdup(devname);
+		if (cn) {
+			dev->bid_name = cn;
+			dev->bid_xname = strdup(devname);
+			cn = NULL;	/* see free() below */
+		} else
+			dev->bid_name = strdup(devname);
+
 		dev->bid_cache = cache;
 		list_add_tail(&dev->bid_devs, &cache->bic_devs);
 		cache->bic_flags |= BLKID_BIC_FL_CHANGED;
@@ -80,7 +107,7 @@ blkid_dev blkid_get_dev(blkid_cache cache, const char *devname, int flags)
 	if (flags & BLKID_DEV_VERIFY) {
 		dev = blkid_verify(cache, dev);
 		if (!dev || !(dev->bid_flags & BLKID_BID_FL_VERIFIED))
-			return dev;
+			goto done;
 		/*
 		 * If the device is verified, then search the blkid
 		 * cache for any entries that match on the type, uuid,
@@ -111,6 +138,10 @@ blkid_dev blkid_get_dev(blkid_cache cache, const char *devname, int flags)
 				blkid_free_dev(dev2);
 		}
 	}
+done:
+	if (dev)
+		DBG(DEVNAME, ul_debug("%s requested, found %s in cache", devname, dev->bid_name));
+	free(cn);
 	return dev;
 }
 

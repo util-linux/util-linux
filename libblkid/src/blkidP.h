@@ -42,7 +42,8 @@ struct blkid_struct_dev
 	struct list_head	bid_devs;	/* All devices in the cache */
 	struct list_head	bid_tags;	/* All tags for this device */
 	blkid_cache		bid_cache;	/* Dev belongs to this cache */
-	char			*bid_name;	/* Device inode pathname */
+	char			*bid_name;	/* Device real pathn (as used in cache) */
+	char			*bid_xname;	/* Device path as used by application (maybe symlink..) */
 	char			*bid_type;	/* Preferred device TYPE */
 	int			bid_pri;	/* Device priority */
 	dev_t			bid_devno;	/* Device major/minor number */
