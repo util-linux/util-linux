@@ -128,10 +128,10 @@ int blkid_probe_enable_topology(blkid_probe pr, int enable)
  *
  * WARNING: the returned object will be overwritten by the next
  *          blkid_probe_get_topology() call for the same @pr. If you want to
- *          use more blkid_topopogy objects in the same time you have to create
+ *          use more blkid_topology objects in the same time you have to create
  *          more blkid_probe handlers (see blkid_new_probe()).
  *
- * Returns: blkid_topopogy, or NULL in case of error.
+ * Returns: blkid_topology, or NULL in case of error.
  */
 blkid_topology blkid_probe_get_topology(blkid_probe pr)
 {

@@ -987,7 +987,7 @@ static struct libmnt_fs *get_next_fs(struct libmnt_table *tb,
 
 	} else if (is_mount_compatible_mode()) {
 		/*
-		 * Look up for FS in the same way how mount(8) searchs in fstab
+		 * Look up for FS in the same way how mount(8) searches in fstab
 		 *
 		 *   findmnt -f <spec>
 		 */
@@ -1175,7 +1175,7 @@ static int poll_table(struct libmnt_table *tb, const char *tabfile,
 		tb = tb_new;
 		tb_new = tmp;
 
-		/* remove allredy printed lines to reduce memory usage */
+		/* remove already printed lines to reduce memory usage */
 		scols_table_remove_lines(table);
 		mnt_reset_table(tb_new);
 
@@ -1622,7 +1622,7 @@ int main(int argc, char *argv[])
 		/* whole tree */
 		rc = create_treenode(table, tb, NULL, NULL);
 	} else {
-		/* whole lits of sub-tree */
+		/* whole list of sub-tree */
 		rc = add_matching_lines(tb, table, direction);
 
 		if (rc != 0

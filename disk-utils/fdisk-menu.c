@@ -681,7 +681,7 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 
 /*
  * This is fdisk frontend for GPT specific libfdisk functions that
- * are not expported by generic libfdisk API.
+ * are not exported by generic libfdisk API.
  */
 static int gpt_menu_cb(struct fdisk_context **cxt0,
 		       const struct menu *menu __attribute__((__unused__)),
@@ -777,7 +777,7 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 
 /*
  * This is fdisk frontend for MBR specific libfdisk functions that
- * are not expported by generic libfdisk API.
+ * are not exported by generic libfdisk API.
  */
 static int dos_menu_cb(struct fdisk_context **cxt0,
 		       const struct menu *menu __attribute__((__unused__)),
@@ -942,7 +942,7 @@ static int sgi_menu_cb(struct fdisk_context **cxt0,
 
 /*
  * This is fdisk frontend for BSD specific libfdisk functions that
- * are not expported by generic libfdisk API.
+ * are not exported by generic libfdisk API.
  */
 static int bsd_menu_cb(struct fdisk_context **cxt0,
 		       const struct menu *menu __attribute__((__unused__)),

@@ -124,7 +124,7 @@ static void set_uuid_and_label(const struct mkswap_control *ctl)
 			warnx(_("Label was truncated."));
 	}
 
-	/* report resuls */
+	/* report results */
 	if (ctl->uuid || ctl->opt_label) {
 		if (ctl->opt_label)
 			printf("LABEL=%s, ", ctl->hdr->volume_name);

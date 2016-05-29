@@ -66,7 +66,7 @@
  *
  * pr = blkid_new_probe_from_filename(devname);
  * if (!pr)
- *	err("%s: faild to open device", devname);
+ *	err("%s: failed to open device", devname);
  *
  * blkid_probe_enable_partitions(pr, TRUE);
  * blkid_do_fullprobe(pr);
@@ -90,7 +90,7 @@
  *
  * pr = blkid_new_probe_from_filename(devname);
  * if (!pr)
- *	err("%s: faild to open device", devname);
+ *	err("%s: failed to open device", devname);
  *
  * ls = blkid_probe_get_partitions(pr);
  * nparts = blkid_partlist_numof_partitions(ls);
@@ -183,7 +183,7 @@ struct blkid_struct_partition {
 
 	int		partno;		/* partition number */
 	char		uuid[37];	/* UUID (when supported by PT), e.g GPT */
-	unsigned char	name[128];	/* Partition in UTF8 name (when supporte by PT), e.g. Mac */
+	unsigned char	name[128];	/* Partition in UTF8 name (when supported by PT), e.g. Mac */
 
 	blkid_parttable	tab;		/* partition table */
 };
@@ -429,7 +429,7 @@ static blkid_partition new_partition(blkid_partlist ls, blkid_parttable tab)
 
 	if (ls->nparts + 1 > ls->nparts_max) {
 		/* Linux kernel has DISK_MAX_PARTS=256, but it's too much for
-		 * generic Linux machine -- let start with 32 partititions.
+		 * generic Linux machine -- let start with 32 partitions.
 		 */
 		void *tmp = realloc(ls->parts, (ls->nparts_max + 32) *
 					sizeof(struct blkid_struct_partition));
@@ -871,7 +871,7 @@ done:
 
 /**
  * blkid_known_pttype:
- * @pttype: partiton name
+ * @pttype: partition name
  *
  * Returns: 1 for known or 0 for unknown partition type.
  */
@@ -990,7 +990,7 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 	if (!ls)
 		return NULL;
 
-	DBG(LOWPROBE, ul_debug("triyng to convert devno 0x%llx to partition",
+	DBG(LOWPROBE, ul_debug("trying to convert devno 0x%llx to partition",
 			(long long) devno));
 
 	if (sysfs_init(&sysfs, devno, NULL)) {
@@ -1031,7 +1031,7 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 		/*
 		 * Partition mapped by kpartx does not provide "start" offset
 		 * in /sys, but if we know partno and size of the partition
-		 * that we can probably make the releation bettween the device
+		 * that we can probably make the relation between the device
 		 * and an entry in partition table.
 		 */
 		 for (i = 0; i < ls->nparts; i++) {
@@ -1163,7 +1163,7 @@ const char *blkid_parttable_get_type(blkid_parttable tab)
  * blkid_parttable_get_parent:
  * @tab: partition table
  *
- * Returns: parent for nexted partitition tables or NULL.
+ * Returns: parent for nested partition tables or NULL.
  */
 blkid_partition blkid_parttable_get_parent(blkid_parttable tab)
 {
@@ -1176,7 +1176,7 @@ blkid_partition blkid_parttable_get_parent(blkid_parttable tab)
  *
  * Note the position is relative to begin of the device as defined by
  * blkid_probe_set_device() for primary partition table, and relative
- * to parental partition for nested patition tables.
+ * to parental partition for nested partition tables.
  *
  * <informalexample>
  *   <programlisting>
@@ -1379,8 +1379,8 @@ const char *blkid_partition_get_uuid(blkid_partition par)
  * blkid_partition_get_partno:
  * @par: partition
  *
- * Returns: proposed partitin number (e.g. 'N' from sda'N') or -1 in case of
- * error. Note that the number is generate by library independenly on your OS.
+ * Returns: proposed partition number (e.g. 'N' from sda'N') or -1 in case of
+ * error. Note that the number is generate by library independently on your OS.
  */
 int blkid_partition_get_partno(blkid_partition par)
 {
@@ -1393,14 +1393,14 @@ int blkid_partition_get_partno(blkid_partition par)
  *
  * Be careful if you _not_ probe whole disk:
  *
- * 1) the offset is usully relative to begin of the disk -- but if you probe a
+ * 1) the offset is usually relative to begin of the disk -- but if you probe a
  *    fragment of the disk only -- then the offset could be still relative to
  *    the begin of the disk rather that relative to the fragment.
  *
- * 2) the offset for nested partitions could be releative to parent (e.g. Solaris)
+ * 2) the offset for nested partitions could be relative to parent (e.g. Solaris)
  *    _or_ relative to the begin of the whole disk (e.g. bsd).
  *
- * You don't have to care about such details if you proble whole disk. In such
+ * You don't have to care about such details if you probe whole disk. In such
  * a case libblkid always returns the offset relative to the begin of the disk.
  *
  * Returns: start of the partition (in 512-sectors).
@@ -1418,7 +1418,7 @@ blkid_loff_t blkid_partition_get_start(blkid_partition par)
  *          library always returns full size of the partition. If you want add
  *          the partition to the Linux system (BLKPG_ADD_PARTITION ioctl) you
  *          need to reduce the size of the partition to 1 or 2 blocks. The
- *          rest of the partition has to be unaccessible for mkfs or mkswap
+ *          rest of the partition has to be inaccessible for mkfs or mkswap
  *          programs, we need a small space for boot loaders only.
  *
  *          For some unknown reason this (safe) practice is not to used for

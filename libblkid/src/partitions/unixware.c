@@ -7,7 +7,7 @@
  * GNU Lesser General Public License.
  *
  *
- * The intersting information about unixware PT:
+ * The interesting information about unixware PT:
  *   - Linux kernel / partx
  *   - vtoc(7) SCO UNIX command man page
  *   - evms source code (http://evms.sourceforge.net/)

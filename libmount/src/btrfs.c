@@ -37,7 +37,7 @@
 
 /*
  * the key defines the order in the tree, and so it also defines (optimal)
- * block layout.  objectid corresonds to the inode number.  The flags
+ * block layout.  objectid corresponds with the inode number.  The flags
  * tells us things about the object, and is a kind of stream selector.
  * so for a given inode, keys with flags of 1 might refer to the inode
  * data, flags of 2 may point to file data in the btree and flags == 3

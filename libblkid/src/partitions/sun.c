@@ -69,7 +69,7 @@ static int probe_sun_pt(blkid_probe pr,
 
 	/*
 	 * So that old Linux-Sun partitions continue to work,
-	 * alow the VTOC to be used under the additional condition ...
+	 * allow the VTOC to be used under the additional condition ...
 	 */
 	use_vtoc = use_vtoc || !(l->vtoc.sanity || l->vtoc.version || l->vtoc.nparts);
 

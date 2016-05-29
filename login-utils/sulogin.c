@@ -498,7 +498,7 @@ static struct passwd *getrootpwent(int try_manually)
 		warnx(_("%s: no entry for root"), _PATH_SHADOW_PASSWD);
 		*pwd.pw_passwd = '\0';
 	}
-	/* locked accont passwords are valid too */
+	/* locked account passwords are valid too */
 	if (!locked_account_password(pwd.pw_passwd) && !valid(pwd.pw_passwd)) {
 		warnx(_("%s: root password garbled"), _PATH_SHADOW_PASSWD);
 		*pwd.pw_passwd = '\0';
@@ -911,7 +911,7 @@ int main(int argc, char **argv)
 	reconnect = detect_consoles(tty, STDIN_FILENO, &consoles);
 
 	/*
-	 * If previous stdin was not the speified tty and therefore reconnected
+	 * If previous stdin was not the specified tty and therefore reconnected
 	 * to the specified tty also reconnect stdout and stderr.
 	 */
 	if (reconnect) {

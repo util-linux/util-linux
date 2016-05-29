@@ -72,7 +72,7 @@ const struct blkid_idinfo highpoint37x_idinfo = {
 	.probefunc	= probe_highpoint37x,
 	.magics		= {
 		/*
-		 * Superblok offset:                      4608 bytes  (9 sectors)
+		 * Superblock offset:                     4608 bytes  (9 sectors)
 		 * Magic string offset within superblock:   32 bytes
 		 *
 		 * kboff = (4608 + 32) / 1024

@@ -591,7 +591,7 @@ static int kernel_fs_postparse(struct libmnt_table *tb,
 			rc = __mnt_fs_set_source_ptr(fs, real);
 
 		} else if (rc == 1) {
-			/* mnt_guess_system_root() returns 1 if not able to conver to
+			/* mnt_guess_system_root() returns 1 if not able to convert to
 			 * the real devname; ignore this problem */
 			rc = 0;
 		}
@@ -1069,7 +1069,7 @@ int __mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename,
 	assert(tb);
 
 	if (filename)
-		DBG(TAB, ul_debugobj(tb, "%s reuested as mtab", filename));
+		DBG(TAB, ul_debugobj(tb, "%s requested as mtab", filename));
 
 #ifdef USE_LIBMOUNT_SUPPORT_MTAB
 	if (mnt_has_regular_mtab(&filename, NULL)) {

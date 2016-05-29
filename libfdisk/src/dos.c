@@ -404,7 +404,7 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 	if (!pe)
 		return -EINVAL;
 
-	DBG(LABEL, ul_debug("DOS: delete partiton %zu (max=%zu)", partnum,
+	DBG(LABEL, ul_debug("DOS: delete partition %zu (max=%zu)", partnum,
 				cxt->label->nparts_max));
 
 	l = self_label(cxt);
@@ -743,7 +743,7 @@ static int dos_reset_alignment(struct fdisk_context *cxt)
 
 	/* overwrite necessary stuff by DOS deprecated stuff */
 	if (is_dos_compatible(cxt)) {
-		DBG(LABEL, ul_debug("DOS: reseting alignemnt for DOS-comaptiblem PT"));
+		DBG(LABEL, ul_debug("DOS: resetting alignment for DOS-compatible PT"));
 		if (cxt->geom.sectors)
 			cxt->first_lba = cxt->geom.sectors;	/* usually 63 */
 
@@ -908,7 +908,7 @@ static int get_start_from_user(	struct fdisk_context *cxt,
 {
 	assert(start);
 
-	/* try to use tepmlate from 'pa' */
+	/* try to use template from 'pa' */
 	if (pa && pa->start_follow_default)
 		*start = dflt;
 
@@ -1529,7 +1529,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 
 	/* pa specifies that extended partition is wanted */
 	} else if (pa && pa->type && IS_EXTENDED(pa->type->code)) {
-		DBG(LABEL, ul_debug("DOS: pa template %p: add extened", pa));
+		DBG(LABEL, ul_debug("DOS: pa template %p: add extended", pa));
 		if (l->ext_offset) {
 			fdisk_warnx(cxt, _("Extended partition already exists."));
 			return -EINVAL;
@@ -1703,7 +1703,7 @@ static int write_sector(struct fdisk_context *cxt, fdisk_sector_t secno,
 		return rc;
 	}
 
-	DBG(LABEL, ul_debug("DOS: writting to sector %ju", (uintmax_t) secno));
+	DBG(LABEL, ul_debug("DOS: writing to sector %ju", (uintmax_t) secno));
 
 	if (write(cxt->dev_fd, buf, cxt->sector_size) != (ssize_t) cxt->sector_size)
 		return -errno;
@@ -1734,7 +1734,7 @@ static int dos_write_disklabel(struct fdisk_context *cxt)
 		}
 	}
 	if (mbr_changed) {
-		DBG(LABEL, ul_debug("DOS: MBR changed, writting"));
+		DBG(LABEL, ul_debug("DOS: MBR changed, writing"));
 		mbr_set_magic(cxt->firstsector);
 		rc = write_sector(cxt, 0, cxt->firstsector);
 		if (rc)
@@ -1859,7 +1859,7 @@ static int dos_get_disklabel_item(struct fdisk_context *cxt, struct fdisk_labeli
 	}
 	default:
 		if (item->id < __FDISK_NLABELITEMS)
-			rc = 1;	/* unssupported generic item */
+			rc = 1;	/* unsupported generic item */
 		else
 			rc = 2;	/* out of range */
 		break;
@@ -2096,7 +2096,7 @@ again:
 			*nxt->pt_entry = tmp;
 
 			/* Recount starts according to EBR offsets, the absolute
-			 * address tas to be still the same! */
+			 * address still has to be the same! */
 			dos_partition_set_start(cur->pt_entry, nxt_start - cur->offset);
 			dos_partition_set_start(nxt->pt_entry, cur_start - nxt->offset);
 

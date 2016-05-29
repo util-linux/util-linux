@@ -609,7 +609,7 @@ static PyMethodDef Fs_methods[] = {
 
 static void Fs_destructor(FsObject *self)
 {
-	DBG(FS, pymnt_debug_h(self->fs, "destrutor py-obj: %p, py-refcnt=%d",
+	DBG(FS, pymnt_debug_h(self->fs, "destructor py-obj: %p, py-refcnt=%d",
 				self, (int) ((PyObject *) self)->ob_refcnt));
 	mnt_unref_fs(self->fs);
 	PyFree(self);
@@ -748,7 +748,7 @@ PyObject *PyObjectResultFs(struct libmnt_fs *fs)
 		return (PyObject *) result;
 	}
 
-	/* Creating an encapsualing object: increment the refcount, so that code
+	/* Creating an encapsulating object: increment the refcount, so that code
 	 * such as tab.next_fs() doesn't call the destructor, which would free
 	 * our fs struct as well
 	 */

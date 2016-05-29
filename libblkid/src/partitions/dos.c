@@ -191,11 +191,11 @@ static int probe_dos_pt(blkid_probe pr,
 		snprintf(idstr, sizeof(idstr), "%08x", id);
 
 	/*
-	 * Well, all checks pass, it's MS-DOS partiton table
+	 * Well, all checks pass, it's MS-DOS partition table
 	 */
 	if (blkid_partitions_need_typeonly(pr)) {
 		/* Non-binary interface -- caller does not ask for details
-		 * about partitions, just set generic varibles only. */
+		 * about partitions, just set generic variables only. */
 		if (id)
 			blkid_partitions_strcpy_ptuuid(pr, idstr);
 		return 0;

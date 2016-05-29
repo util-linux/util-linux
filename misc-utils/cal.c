@@ -41,7 +41,7 @@
  *
  * 2000-09-01  Michael Charles Pruznick <dummy@netwiz.net>
  *             Added "-3" option to print prev/next month with current.
- *             Added over-ridable default MONTHS_IN_ROW and "-1" option to
+ *             Added overridable default MONTHS_IN_ROW and "-1" option to
  *             get traditional output when -3 is the default.  I hope that
  *             enough people will like -3 as the default that one day the
  *             product can be shipped that way.
@@ -196,7 +196,7 @@ struct cal_request {
 struct cal_control {
 	const char *full_month[MONTHS_IN_YEAR];	/* month names */
 	int colormode;			/* day and week number highlight */
-	int num_months;			/* number of requested mounths */
+	int num_months;			/* number of requested monts */
 	int span_months;		/* span the date */
 	int months_in_row;		/* number of months horizontally in print out */
 	int weekstart;			/* day the week starts, often Sun or Mon */

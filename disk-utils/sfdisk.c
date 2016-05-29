@@ -101,7 +101,7 @@ struct sfdisk {
 	struct fdisk_partition  *orig_pa;	/* -N <partno> before the change */
 
 	unsigned int verify : 1,	/* call fdisk_verify_disklabel() */
-		     quiet  : 1,	/* suppres extra messages */
+		     quiet  : 1,	/* suppress extra messages */
 		     interactive : 1,	/* running on tty */
 		     noreread : 1,	/* don't check device is in use */
 		     force  : 1,	/* do also stupid things */
@@ -866,7 +866,7 @@ static int command_delete(struct sfdisk *sf, int argc, char **argv)
 	if (sf->backup)
 		backup_partition_table(sf, devname);
 
-	/* delate all */
+	/* delete all */
 	if (argc == 1) {
 		size_t nparts = fdisk_get_npartitions(sf->cxt);
 		for (i = 0; i < nparts; i++) {
@@ -907,7 +907,7 @@ static int command_reorder(struct sfdisk *sf, int argc, char **argv)
 	if (sf->backup)
 		backup_partition_table(sf, devname);
 
-	if (fdisk_reorder_partitions(sf->cxt) == 1)	/* unchnaged */
+	if (fdisk_reorder_partitions(sf->cxt) == 1)	/* unchanged */
 		rc = fdisk_deassign_device(sf->cxt, 1);
 	else
 		rc = write_changes(sf);
@@ -1782,7 +1782,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -J, --json <dev>                  dump partition table in JSON format\n"), out);
 	fputs(_(" -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"), out);
 	fputs(_(" -l, --list [<dev> ...]            list partitions of each device\n"), out);
-	fputs(_(" -F, --list-free [<dev> ...]       list unpartitions free areas of each device\n"), out);
+	fputs(_(" -F, --list-free [<dev> ...]       list unpartitioned free areas of each device\n"), out);
 	fputs(_(" -r, --reorder <dev>               fix partitions order (by start offset)\n"), out);
 	fputs(_(" -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"), out);
 	fputs(_(" -T, --list-types                  print the recognized types (see -X)\n"), out);
@@ -1816,7 +1816,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -o, --output <list>       output columns\n"), out);
 	fputs(_(" -q, --quiet               suppress extra info messages\n"), out);
 	fputs(_(" -w, --wipe <mode>         wipe signatures (auto, always or never)\n"), out);
-	fputs(_(" -W, --wipe-partitons <mode>  wipe signatures from new partitions (auto, always or never)\n"), out);
+	fputs(_(" -W, --wipe-partitions <mode>  wipe signatures from new partitions (auto, always or never)\n"), out);
 	fputs(_(" -X, --label <name>        specify label type (dos, gpt, ...)\n"), out);
 	fputs(_(" -Y, --label-nested <name> specify nested label type (dos, bsd)\n"), out);
 	fputs(USAGE_SEPARATOR, out);

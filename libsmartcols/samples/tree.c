@@ -39,7 +39,7 @@ static void setup_columns(struct libscols_table *tb, int notree)
 	return;
 fail:
 	scols_unref_table(tb);
-	err(EXIT_FAILURE, "faild to create output columns");
+	err(EXIT_FAILURE, "failed to create output columns");
 }
 
 /* add a new line to @tb, the content is based on @st */
@@ -104,7 +104,7 @@ fail:
 	return -1;
 }
 
-/* read all entrines from directory addressed by @fd */
+/* read all entries from directory addressed by @fd */
 static int add_children(struct libscols_table *tb,
 			struct libscols_line *ln,
 			int fd)
@@ -180,7 +180,7 @@ int main(int argc, char *argv[])
 
 	tb = scols_new_table();
 	if (!tb)
-		err(EXIT_FAILURE, "faild to create output table");
+		err(EXIT_FAILURE, "failed to create output table");
 
 	while((c = getopt_long(argc, argv, "ciJlnprS:E:", longopts, NULL)) != -1) {
 		switch(c) {

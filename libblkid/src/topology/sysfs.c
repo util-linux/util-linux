@@ -28,7 +28,7 @@ static struct topology_val {
 	/* /sys/dev/block/<maj>:<min>/<ATTR> */
 	const char *attr;
 
-	/* functions to set probing resut */
+	/* functions to set probing result */
 	int (*set_ulong)(blkid_probe, unsigned long);
 	int (*set_int)(blkid_probe, int);
 
@@ -63,7 +63,7 @@ static int probe_sysfs_tp(blkid_probe pr,
 		if (!ok) {
 			if (!disk) {
 				/*
-				 * Read atrributes from "disk" if the current
+				 * Read attributes from "disk" if the current
 				 * device is a partition.
 				 */
 				disk = blkid_probe_get_wholedisk_devno(pr);

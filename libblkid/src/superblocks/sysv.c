@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
  *
- * This is written from sratch according to Linux kernel fs/sysv/super.c file.
+ * This is written from scratch according to Linux kernel fs/sysv/super.c file.
  * It seems that sysv probing code in libvolume_id and also in the original
  * blkid is useless.
  *

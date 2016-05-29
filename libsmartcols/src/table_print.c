@@ -210,7 +210,7 @@ static int has_pending_data(struct libscols_table *tb)
 	return 0;
 }
 
-/* print padding or asci-art instead of data of @cl */
+/* print padding or ASCII-art instead of data of @cl */
 static void print_empty_cell(struct libscols_table *tb,
 			  struct libscols_column *cl,
 			  struct libscols_line *ln,	/* optional */
@@ -218,7 +218,7 @@ static void print_empty_cell(struct libscols_table *tb,
 {
 	size_t len_pad = 0;		/* in screen cells as opposed to bytes */
 
-	/* generate tree asci-art rather than padding */
+	/* generate tree ASCII-art rather than padding */
 	if (ln && scols_column_is_tree(cl)) {
 		if (!ln->parent) {
 			/* only print symbols->vert if followed by child */
@@ -1017,7 +1017,7 @@ done:
 }
 
 /*
- * This is core of the scols_* voodo...
+ * This is core of the scols_* voodoo...
  */
 static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf)
 {
@@ -1096,7 +1096,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 				if (!cl->is_extreme)
 					continue;
 
-				/* this column is tooo large, ignore?
+				/* this column is too large, ignore?
 				if (cl->width_max - cl->width >
 						(tb->termwidth - width))
 					continue;
@@ -1171,7 +1171,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 			if (cl->width == cl->width_min)
 				continue;
 
-			DBG(TAB, ul_debugobj(tb, "  tring to reduce: %s (width=%zu)", cl->header.data, cl->width));
+			DBG(TAB, ul_debugobj(tb, "  trying to reduce: %s (width=%zu)", cl->header.data, cl->width));
 
 			/* truncate column with relative sizes */
 			if (cl->width_hint < 1 && cl->width > 0 && width > 0 &&
@@ -1238,14 +1238,14 @@ static size_t strlen_line(struct libscols_line *ln)
 	return sz;
 }
 
-static int initialize_printting(struct libscols_table *tb, struct libscols_buffer **buf)
+static int initialize_printing(struct libscols_table *tb, struct libscols_buffer **buf)
 {
 	size_t bufsz, extra_bufsz = 0;
 	struct libscols_line *ln;
 	struct libscols_iter itr;
 	int rc;
 
-	DBG(TAB, ul_debugobj(tb, "initialize printting"));
+	DBG(TAB, ul_debugobj(tb, "initialize printing"));
 
 	if (!tb->symbols)
 		scols_table_set_symbols(tb, NULL);	/* use default */
@@ -1324,7 +1324,7 @@ err:
 /**
  * scola_table_print_range:
  * @tb: table
- * @start: first printed line or NULL to print from the beggin of the table
+ * @start: first printed line or NULL to print from the begin of the table
  * @end: last printed line or NULL to print all from start.
  *
  * If the start is the first line in the table than prints table header too.
@@ -1345,7 +1345,7 @@ int scols_table_print_range(	struct libscols_table *tb,
 
 	DBG(TAB, ul_debugobj(tb, "printing range"));
 
-	rc = initialize_printting(tb, &buf);
+	rc = initialize_printing(tb, &buf);
 	if (rc)
 		return rc;
 
@@ -1431,12 +1431,12 @@ int scols_print_table(struct libscols_table *tb)
 	DBG(TAB, ul_debugobj(tb, "printing"));
 
 	if (list_empty(&tb->tb_lines)) {
-		DBG(TAB, ul_debugobj(tb, "ignore -- epmty table"));
+		DBG(TAB, ul_debugobj(tb, "ignore -- empty table"));
 		return 0;
 	}
 
 	tb->header_printed = 0;
-	rc = initialize_printting(tb, &buf);
+	rc = initialize_printing(tb, &buf);
 	if (rc)
 		return rc;
 

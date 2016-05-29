@@ -359,7 +359,7 @@ int main(int argc, char *argv[])
 	 * them.  Do this in two passes, not entering the user
 	 * namespace on the first pass.  So if we're deprivileging the
 	 * container we'll enter the user namespace last and if we're
-	 * privileging it then we enter the usernamespace first
+	 * privileging it then we enter the user namespace first
 	 * (because the initial setns will fail).
 	 */
 	for (pass = 0; pass < 2; pass ++) {

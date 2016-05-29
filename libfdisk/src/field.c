@@ -6,7 +6,7 @@
  * @title: Field
  * @short_description: description of the partition fields
  *
- * The fdisk fields are static user-freindly descriptions of the partition. The
+ * The fdisk fields are static user-friendly descriptions of the partition. The
  * fields are used to avoid label specific stuff in the functions that list disk
  * partitions (e.g. fdisk -l). The field Id is the same as Id for fdisk_partition_to_string().
  *
@@ -37,7 +37,7 @@
  * </informalexample>
  *
  * This example lists all information about the first partition. It will work
- * for MBR as well as for GPT because fields are not hardcoded in the execmple.
+ * for MBR as well as for GPT because fields are not hardcoded in the example.
  *
  * See also fdisk_label_get_field_by_name(), fdisk_label_get_fields_ids_all()
  * and fdisk_label_get_fields_ids().

@@ -508,11 +508,11 @@ failed:
  *
  *   1. create linkfile (e.g. /etc/mtab~.$PID)
  *   2. link linkfile --> lockfile (e.g. /etc/mtab~.$PID --> /etc/mtab~)
- *   3. a) link() success: setups F_SETLK lock (see fcnlt(2))
+ *   3. a) link() success: setups F_SETLK lock (see fcntl(2))
  *      b) link() failed:  wait (max 30s) on F_SETLKW lock, goto 2.
  *
  * Note that when the lock is used by mnt_update_table() interface then libmount
- * uses flock() for private library file /run/mount/utab. The fcnlt(2) is used only
+ * uses flock() for private library file /run/mount/utab. The fcntl(2) is used only
  * for backwardly compatible stuff like /etc/mtab.
  *
  * Returns: 0 on success or negative number in case of error (-ETIMEOUT is case

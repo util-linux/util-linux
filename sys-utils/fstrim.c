@@ -121,7 +121,7 @@ static int has_discard(const char *devname, struct sysfs_cxt *wholedisk)
 		return 1;
 	/*
 	 * This is tricky to read the info from sys/, because the queue
-	 * atrributes are provided for whole devices (disk) only. We're trying
+	 * attributes are provided for whole devices (disk) only. We're trying
 	 * to reuse the whole-disk sysfs context to optimize this stuff (as
 	 * system usually have just one disk only).
 	 */
@@ -220,7 +220,7 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 			continue;
 
 		/* Is it really accessible mountpoint? Not all mountpoints are
-		 * accessible (maybe over mounted by another fylesystem) */
+		 * accessible (maybe over mounted by another filesystem) */
 		path = mnt_get_mountpoint(tgt);
 		if (path && strcmp(path, tgt) == 0)
 			rc = 0;

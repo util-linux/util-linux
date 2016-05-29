@@ -130,7 +130,7 @@ struct logger_ctl {
 	unsigned int
 			unix_socket_errors:1,	/* whether to report or not errors */
 			noact:1,		/* do not write to sockets */
-			prio_prefix:1,		/* read priority from intput */
+			prio_prefix:1,		/* read priority from input */
 			stderr_printout:1,	/* output message to stderr */
 			rfc5424_time:1,		/* include time stamp */
 			rfc5424_tq:1,		/* include time quality markup */
@@ -768,7 +768,7 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 
 	sd = get_reserved_structured_data(ctl);
 
-	/* time quality structured data (maybe overwriten by --sd-id timeQuality) */
+	/* time quality structured data (maybe overwritten by --sd-id timeQuality) */
 	if (ctl->rfc5424_tq && !has_structured_data_id(sd, "timeQuality")) {
 
 		add_structured_data_id(sd, "timeQuality");

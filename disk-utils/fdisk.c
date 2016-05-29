@@ -736,7 +736,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -L, --color[=<when>]          colorize output (auto, always or never)\n"), out);
 	fprintf(out,
 	        "                                 %s\n", USAGE_COLORS_DEFAULT);
-	fputs(_(" -l, --list                    display partitions end exit\n"), out);
+	fputs(_(" -l, --list                    display partitions and exit\n"), out);
 	fputs(_(" -o, --output <list>           output columns\n"), out);
 	fputs(_(" -t, --type <type>             recognize specified partition table type only\n"), out);
 	fputs(_(" -u, --units[=<unit>]          display units: 'cylinders' or 'sectors' (default)\n"), out);

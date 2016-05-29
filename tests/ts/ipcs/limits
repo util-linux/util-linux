@@ -34,7 +34,7 @@ for i in $IPCS_IDX; do
 	SHM_ORG[$i]=$(cat ${IPCS_PROCFILES[$i]})
 done >> $TS_OUTPUT
 
-ts_log "maximalize kernel setting"
+ts_log "maximize kernel setting"
 for i in $IPCS_IDX; do
 	echo ${IPCS_LIMITS[$i]} >> ${IPCS_PROCFILES[$i]}
 done >> $TS_OUTPUT

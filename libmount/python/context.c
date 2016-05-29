@@ -311,10 +311,10 @@ static PyObject *Context_enable_fork(ContextObjext *self, PyObject *args, PyObje
 
 #define Context_disable_canonicalize_HELP "disable_canonicalize(disable)\n\n" \
 	"Enable/disable paths canonicalization and tags evaluation. The libmount context\n" \
-	"canonicalies paths when search in fstab and when prepare source and target paths\n" \
+	"canonicalizes paths when searching fstab and when preparing source and target paths\n" \
 	"for mount(2) syscall.\n" \
 	"\n" \
-	"This fuction has effect to the private (within context) fstab instance only\n" \
+	"This function has effect to the private (within context) fstab instance only\n" \
 	"(see Cxt.fstab).\n" \
 	"Returns self or raises an exception in case of an error."
 static PyObject *Context_disable_canonicalize(ContextObjext *self, PyObject *args, PyObject *kwds)
@@ -1074,11 +1074,11 @@ static PyObject *Context_helper_setopt(ContextObjext *self, PyObject *args, PyOb
 }
 
 #define Context_init_helper_HELP "init_helper(action, flags)\n\n" \
-	"This function infors libmount that used from [u]mount.type helper.\n" \
+	"This function informs libmount that it is used from [u]mount.type helper.\n" \
 	"\n" \
-	"The function also calls Cxt.disable_helpers() to avoid recursive\n" \
-	"mount.type helpers calling. It you really want to call another\n" \
-	"mount.type helper from your helper than you have to explicitly enable this\n" \
+	"The function also calls Cxt.disable_helpers() to avoid calling\n" \
+	"mount.type helpers recursively. If you really want to call another\n" \
+	"mount.type helper from your helper then you have to explicitly enable this\n" \
 	"feature by:\n" \
 	"\n" \
 	"Cxt.disable_helpers(False);\n" \

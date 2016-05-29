@@ -421,7 +421,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			warn(_("poll failed"));
 				all_done(uuidd_cxt, EXIT_FAILURE);
 		}
-		if (ret == 0) {		/* truen when poll() times out */
+		if (ret == 0) {		/* true when poll() times out */
 			if (uuidd_cxt->debug)
 				fprintf(stderr, _("timeout [%d sec]\n"), uuidd_cxt->timeout),
 			all_done(uuidd_cxt, EXIT_SUCCESS);

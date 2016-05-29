@@ -90,7 +90,7 @@
 #define DEFAULT_FS_VERSION 1
 
 /*
- * Global variables used in minix_programs.h inline fuctions
+ * Global variables used in minix_programs.h inline functions
  */
 int fs_version = DEFAULT_FS_VERSION;
 char *super_block_buffer;
@@ -571,7 +571,7 @@ static void setup_tables(const struct fs_control *ctl) {
 
 /*
  * Perform a test of a block; return the number of
- * blocks readable/writeable.
+ * blocks readable/writable.
  */
 static size_t do_check(const struct fs_control *ctl, char * buffer, int try, unsigned int current_block) {
 	ssize_t got;
@@ -767,7 +767,7 @@ int main(int argc, char ** argv)
 		case '1':
 			fs_version = 1;
 			break;
-		case 'v': /* kept for backwards compatiblitly */
+		case 'v': /* kept for backwards compatibility */
 			warnx(_("-v is ambiguous, use '-2' instead"));
 			/* fallthrough */
 		case '2':

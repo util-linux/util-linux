@@ -14,7 +14,7 @@
  *
  *	@mountflags: (see MS_* macros in linux/fs.h)
  *
- *	@mountdata: (usully a comma separated string of options)
+ *	@mountdata: (usually a comma separated string of options)
  *
  * The libmount uses options-map(s) to describe mount options.
  *
@@ -182,7 +182,7 @@ static const struct libmnt_optmap userspace_opts_map[] =
  * MNT_LINUX_MAP - Linux kernel fs-independent mount options
  *                 (usually MS_* flags, see linux/fs.h)
  *
- * MNT_USERSPACE_MAP - userpace mount(8) specific mount options
+ * MNT_USERSPACE_MAP - userspace mount(8) specific mount options
  *                     (e.g user=, _netdev, ...)
  *
  * Returns: static built-in libmount map.

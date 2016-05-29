@@ -4,7 +4,7 @@
  * Copyright (C) 2012 Davidlohr Bueso <dave@gnu.org>
  *
  * Very generally based on lslk(8) by Victor A. Abell <abe@purdue.edu>
- * Since it stopped being maingained over a decade ago, this
+ * Since it stopped being maintained over a decade ago, this
  * program should be considered its replacement.
  *
  * This program is free software; you can redistribute it and/or modify

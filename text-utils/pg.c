@@ -805,7 +805,7 @@ static char *colb(char *s)
 }
 
 #ifdef HAVE_WIDECHAR
-/* Convert nonprintable characters to spaces in case MB_CUR_MAX > 1.  */
+/* Convert non-printable characters to spaces in case MB_CUR_MAX > 1.  */
 static void makeprint_for_mb(char *s, size_t l)
 {
 	char *t = s;
@@ -825,7 +825,7 @@ static void makeprint_for_mb(char *s, size_t l)
 }
 #endif
 
-/* Convert nonprintable characters to spaces. */
+/* Convert non-printable characters to spaces. */
 static void makeprint(char *s, size_t l)
 {
 #ifdef HAVE_WIDECHAR
@@ -938,7 +938,7 @@ static void pgfile(FILE *f, const char *name)
 	}
 	find = tmpfile();
 	if (fbuf == NULL || find == NULL) {
-		warn(_("Cannot create tempfile"));
+		warn(_("Cannot create temporary file"));
 		quit(++exitstatus);
 	}
 	if (searchfor) {

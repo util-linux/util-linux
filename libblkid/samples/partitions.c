@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	devname = argv[1];
 	pr = blkid_new_probe_from_filename(devname);
 	if (!pr)
-		err(EXIT_FAILURE, "%s: faild to create a new libblkid probe",
+		err(EXIT_FAILURE, "%s: failed to create a new libblkid probe",
 				devname);
 	/* Binary interface */
 	ls = blkid_probe_get_partitions(pr);

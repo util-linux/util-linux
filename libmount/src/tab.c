@@ -152,7 +152,7 @@ void mnt_unref_table(struct libmnt_table *tb)
  * Deallocates the table. This function does not care about reference count. Don't
  * use this function directly -- it's better to use use mnt_unref_table().
  *
- * The table entries (filesystems) are unrefrenced by mnt_reset_table() and
+ * The table entries (filesystems) are unreferenced by mnt_reset_table() and
  * cache by mnt_unref_cache().
  */
 void mnt_free_table(struct libmnt_table *tb)
@@ -359,7 +359,7 @@ int mnt_table_append_trailing_comment(struct libmnt_table *tb, const char *comm)
  * same cache between more threads -- currently the cache does not provide any
  * locking method.
  *
- * This function increments cache reference counter. It's recomented to use
+ * This function increments cache reference counter. It's recommended to use
  * mnt_unref_cache() after mnt_table_set_cache() if you want to keep the cache
  * referenced by @tb only.
  *
@@ -690,7 +690,7 @@ static int mnt_table_move_parent(struct libmnt_table *tb, int oldid, int newid)
  * backward mode iterator).
  *
  * @MNT_UNIQ_FORWARD:  remove later mounted filesystems
- * @MNT_UNIQ_KEEPTREE: keep parent->id relation ship stil valid
+ * @MNT_UNIQ_KEEPTREE: keep parent->id relationship still valid
  *
  * Returns: negative number in case of error, or 0 o success.
  */
@@ -871,7 +871,7 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 			return fs;
 	}
 
-	/* non-canonicaled path in struct libmnt_table
+	/* non-canonical path in struct libmnt_table
 	 * -- note that mountpoint in /proc/self/mountinfo is already
 	 *    canonicalized by the kernel
 	 */

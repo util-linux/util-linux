@@ -13,7 +13,7 @@
 #endif
 
 /*
- *  Unfortunately, Linux kernel hedeader file <linux/magic.h> is incomplete
+ *  Unfortunately, Linux kernel header file <linux/magic.h> is incomplete
  *  mess and kernel returns by statfs f_type many numbers that are nowhere
  *  specified (in API).
  *

@@ -731,7 +731,7 @@ static char *merge_optstr(const char *vfs, const char *fs)
  * @fs: fstab/mtab/mountinfo entry pointer
  *
  * Merges all mount options (VFS, FS and userspace) to one options string
- * and returns the result. This function does not modigy @fs.
+ * and returns the result. This function does not modify @fs.
  *
  * Returns: pointer to string (can be freed by free(3)) or NULL in case of error.
  */

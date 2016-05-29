@@ -221,7 +221,7 @@ int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 			continue;
 		}
 
-		/* Not a Boot record, lets see if its supplemntary volume descriptor */
+		/* Not a Boot record, lets see if its supplementary volume descriptor */
 		iso = (struct iso_volume_descriptor *) boot;
 
 		if (iso->vd_type != ISO_VD_SUPPLEMENTARY) {
@@ -236,8 +236,8 @@ int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 			blkid_probe_set_version(pr, "Joliet Extension");
 
 			/* Is the Joliet (UTF16BE) label equal to the label in
-			 * the PVD? If yes, use PVD label.  The Jolied version
-			 * of the label could be trimed (because UTF16..).
+			 * the PVD? If yes, use PVD label.  The Joliet version
+			 * of the label could be trimmed (because UTF16..).
 			 */
 			if (ascii_eq_utf16be(label, iso->volume_id, 32))
 				break;

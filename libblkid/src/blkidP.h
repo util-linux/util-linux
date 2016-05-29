@@ -42,7 +42,7 @@ struct blkid_struct_dev
 	struct list_head	bid_devs;	/* All devices in the cache */
 	struct list_head	bid_tags;	/* All tags for this device */
 	blkid_cache		bid_cache;	/* Dev belongs to this cache */
-	char			*bid_name;	/* Device real pathn (as used in cache) */
+	char			*bid_name;	/* Device real path (as used in cache) */
 	char			*bid_xname;	/* Device path as used by application (maybe symlink..) */
 	char			*bid_type;	/* Preferred device TYPE */
 	int			bid_pri;	/* Device priority */
@@ -187,7 +187,7 @@ struct blkid_struct_probe
 	unsigned int		blkssz;		/* sector size (BLKSSZGET ioctl) */
 	mode_t			mode;		/* struct stat.sb_mode */
 
-	int			flags;		/* private libray flags */
+	int			flags;		/* private library flags */
 	int			prob_flags;	/* always zeroized by blkid_do_*() */
 
 	uint64_t		wipe_off;	/* begin of the wiped area */
@@ -405,7 +405,7 @@ extern int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 			uint64_t *offset, const struct blkid_idmag **res)
 			__attribute__((nonnull(1)));
 
-/* returns superblok according to 'struct blkid_idmag' */
+/* returns superblock according to 'struct blkid_idmag' */
 #define blkid_probe_get_sb(_pr, _mag, type) \
 			((type *) blkid_probe_get_buffer((_pr),\
 					(_mag)->kboff << 10, sizeof(type)))

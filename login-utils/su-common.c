@@ -35,7 +35,7 @@
    (setting argv[0] to "-su", passing -c only to certain shells, etc.).
    I don't see the point in doing that, and it's ugly.
 
-   Based on an implemenation by David MacKenzie <djm@gnu.ai.mit.edu>.  */
+   Based on an implementation by David MacKenzie <djm@gnu.ai.mit.edu>.  */
 
 enum
 {

@@ -36,7 +36,7 @@
 #define UL_COLOR_WHITE		"\033[1;37m"
 
 
-/* maximal lenght of human readable name of ESC seq. */
+/* maximal length of human readable name of ESC seq. */
 #define UL_COLORNAME_MAXSZ	32
 
 extern const char *color_sequence_from_colorname(const char *str);

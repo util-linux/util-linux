@@ -28,7 +28,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libfdisk) =
 
 /**
  * fdisk_init_debug:
- * @mask: debug mask (0xffff to enable full debuging)
+ * @mask: debug mask (0xffff to enable full debugging)
  *
  * If the @mask is not specified then this function reads
  * LIBFDISK_DEBUG environment variable to get the mask.

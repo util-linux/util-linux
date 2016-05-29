@@ -857,7 +857,7 @@ int loopcxt_get_backing_inode(struct loopdev_cxt *lc, ino_t *ino)
  *
  * Notes:
  *   - kernels < 3.2 support partitioned loop devices and PT scanning
- *     only if max_part= module paremeter is non-zero
+ *     only if max_part= module parameter is non-zero
  *
  *   - kernels >= 3.2 always support partitioned loop devices
  *
@@ -889,7 +889,7 @@ int loopmod_supports_partscan(void)
  * @lc: context
  *
  * Returns: 1 if the partscan flags is set *or* (for old kernels) partitions
- * scannig is enabled for all loop devices.
+ * scanning is enabled for all loop devices.
  */
 int loopcxt_is_partscan(struct loopdev_cxt *lc)
 {
@@ -1168,7 +1168,7 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
 
 	if (expected_size != size) {
 		DBG(CXT, ul_debugobj(lc, "warning: loopdev and expected "
-				      "size dismatch (%ju/%ju)",
+				      "size mismatch (%ju/%ju)",
 				      size, expected_size));
 
 		if (loopcxt_set_capacity(lc)) {

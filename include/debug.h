@@ -29,7 +29,7 @@
  * subsystem names (e.g. "LIBMOUNT_DEBUG=options,tab"). In this case is
  * necessary to define mask names array. This functionality is optional.
  *
- * It's stringly recommended to use UL_* macros to define/declare/use
+ * It's strongly recommended to use UL_* macros to define/declare/use
  * the debug stuff.
  *
  * See disk-utils/cfdisk.c: cfdisk_init_debug()  for programs debug

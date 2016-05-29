@@ -20,7 +20,7 @@
 #include "c.h"
 #include "libfdisk.h"
 
-#include "nls.h"		/* temporary before dialog API will be implamented */
+#include "nls.h"		/* temporary before dialog API will be implemented */
 #include "list.h"
 #include "debug.h"
 #include <stdio.h>
@@ -246,7 +246,7 @@ struct fdisk_field {
 	int		flags;		/* FDISK_FIELDFL_* */
 };
 
-/* note that the defauls is to display a column always */
+/* note that the defaults is to display a column always */
 enum {
 	FDISK_FIELDFL_DETAIL	= (1 << 1),	/* only display if fdisk_is_details() */
 	FDISK_FIELDFL_EYECANDY	= (1 << 2),	/* don't display if fdisk_is_details() */
@@ -336,7 +336,7 @@ struct fdisk_ask {
 		} str;
 		/* FDISK_ASKTYPE_MENU */
 		struct ask_menu {
-			int		dfl;		/* default meni item */
+			int		dfl;		/* default menu item */
 			int		result;
 			struct ask_menuitem *first;
 		} menu;
@@ -362,7 +362,7 @@ struct fdisk_context {
 	unsigned int readonly : 1,		/* don't write to the device */
 		     display_in_cyl_units : 1,	/* for obscure labels */
 		     display_details : 1,	/* expert display mode */
-		     protect_bootbits : 1,	/* don't zeroize fll irst sector */
+		     protect_bootbits : 1,	/* don't zeroize first sector */
 		     listonly : 1;		/* list partition, nothing else */
 
 	char *collision;			/* name of already existing FS/PT */
@@ -373,7 +373,7 @@ struct fdisk_context {
 	/* alignment */
 	unsigned long grain;		/* alignment unit */
 	fdisk_sector_t first_lba;		/* recommended begin of the first partition */
-	fdisk_sector_t last_lba;		/* recomennded end of last partition */
+	fdisk_sector_t last_lba;		/* recommended end of last partition */
 
 	/* geometry */
 	fdisk_sector_t total_sectors;	/* in logical sectors */

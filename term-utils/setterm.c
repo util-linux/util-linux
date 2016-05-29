@@ -166,10 +166,10 @@ struct setterm_control {
 	int opt_bl_min;		/* blank screen */
 	int opt_blength_l;	/* bell duration in milliseconds */
 	int opt_bfreq_f;	/* bell frequency in Hz */
-	int opt_sn_num;		/* console number to be snapshoted */
+	int opt_sn_num;		/* console number to be snapshot */
 	char *opt_sn_name;	/* path to write snap */
 	char *in_device;	/* device to snapshot */
-	int opt_msglevel_num;	/* printk() loging level */
+	int opt_msglevel_num;	/* printk() logging level */
 	int opt_ps_mode;	/* powersave mode */
 	int opt_pd_min;		/* powerdown time */
 	int opt_rt_len;		/* regular tab length */

@@ -55,7 +55,7 @@ struct gpt_header {
 
 	uint64_t	my_lba;			/* location of this header copy */
 	uint64_t	alternate_lba;		/* location of the other header copy */
-	uint64_t	first_usable_lba;	/* lirst usable LBA for partitions */
+	uint64_t	first_usable_lba;	/* first usable LBA for partitions */
 	uint64_t	last_usable_lba;	/* last usable LBA for partitions */
 
 	efi_guid_t	disk_guid;		/* disk UUID */
@@ -155,7 +155,7 @@ static int last_lba(blkid_probe pr, uint64_t *lba)
  * (due DOS PT limitations).
  *
  * Note that the PMBR detection is optional (enabled by default) and could be
- * disabled by BLKID_PARTS_FOPCE_GPT flag (see also blkid_paertitions_set_flags()).
+ * disabled by BLKID_PARTS_FOPCE_GPT flag (see also blkid_partitions_set_flags()).
  */
 static int is_pmbr_valid(blkid_probe pr, int *has)
 {
@@ -343,7 +343,7 @@ static int probe_gpt_pt(blkid_probe pr,
 
 	if (blkid_partitions_need_typeonly(pr)) {
 		/* Non-binary interface -- caller does not ask for details
-		 * about partitions, just set generic varibles only. */
+		 * about partitions, just set generic variables only. */
 		blkid_partitions_set_ptuuid(pr, (unsigned char *) &guid);
 		return BLKID_PROBE_OK;
 	}
@@ -423,7 +423,7 @@ const struct blkid_idinfo gpt_pt_idinfo =
 
 	/*
 	 * It would be possible to check for DOS signature (0xAA55), but
-	 * unfortunately almost all EFI GPT implemenations allow to optionaly
+	 * unfortunately almost all EFI GPT implementations allow to optionally
 	 * skip the legacy MBR. We follows this behavior and MBR is optional.
 	 * See is_valid_pmbr().
 	 *

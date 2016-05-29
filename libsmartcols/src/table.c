@@ -3,7 +3,7 @@
  *
  * Copyright (C) 2010-2014 Karel Zak <kzak@redhat.com>
  * Copyright (C) 2014 Ondrej Oprala <ooprala@redhat.com>
- * Copytight (C) 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com>
+ * Copyright (C) 2016 Igor Gnatenko <i.gnatenko.brain@gmail.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
@@ -375,7 +375,7 @@ FILE *scols_table_get_stream(struct libscols_table *tb)
  * If necessary then libsmartcols use all terminal width, the @reduce setting
  * provides extra space (for example for borders in ncurses applications).
  *
- * The @reduce must be smaller than terminal width, otherwise it's sillently
+ * The @reduce must be smaller than terminal width, otherwise it's silently
  * ignored. The reduction is not applied when STDOUT_FILENO is not terminal.
  *
  * Returns: 0, a negative value in case of an error.
@@ -702,7 +702,7 @@ int scols_table_set_symbols(struct libscols_table *tb,
  * @tb: table
  * @enable: 1 or 0
  *
- * Enable/disable line separator printing. This is usefull if you want to
+ * Enable/disable line separator printing. This is useful if you want to
  * re-printing the same line more than once (e.g. progress bar). Don't use it
  * if you're not sure.
  *

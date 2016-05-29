@@ -767,7 +767,7 @@ static int swapon_all(struct swapon_ctl *ctl)
 
 		if (prop.no_fail && access(device, R_OK) != 0) {
 			if (ctl->verbose)
-				warnx(_("%s: unaccessible -- ignored"), device);
+				warnx(_("%s: inaccessible -- ignored"), device);
 			continue;
 		}
 

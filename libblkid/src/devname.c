@@ -67,7 +67,7 @@ blkid_dev blkid_get_dev(blkid_cache cache, const char *devname, int flags)
 	/* try canonicalize the name */
 	if (!dev && (cn = canonicalize_path(devname))) {
 		if (strcmp(cn, devname) != 0) {
-			DBG(DEVNAME, ul_debug("search cannonical %s", cn));
+			DBG(DEVNAME, ul_debug("search canonical %s", cn));
 			list_for_each(p, &cache->bic_devs) {
 				tmp = list_entry(p, struct blkid_struct_dev, bid_devs);
 				if (strcmp(tmp->bid_name, cn))

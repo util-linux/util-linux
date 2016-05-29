@@ -206,7 +206,7 @@ void fdisk_ref_context(struct fdisk_context *cxt)
  * If no @name specified then returns the current context label.
  *
  * The label is allocated and maintained within the context #cxt. There is
- * nothing like reference counting for labels, you cannot delallocate the
+ * nothing like reference counting for labels, you cannot deallocate the
  * label.
  *
  * Returns: label struct or NULL in case of error.
@@ -613,7 +613,7 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 	if (fdisk_read_firstsector(cxt) < 0)
 		goto fail;
 
-	/* detect labels and apply labes specific stuff (e.g geomery)
+	/* detect labels and apply labels specific stuff (e.g geometry)
 	 * to the context */
 	fdisk_probe_labels(cxt);
 
@@ -732,7 +732,7 @@ void fdisk_unref_context(struct fdisk_context *cxt)
 /**
  * fdisk_enable_details:
  * @cxt: context
- * @enable: true/flase
+ * @enable: true/false
  *
  * Enables or disables "details" display mode. This function has effect to
  * fdisk_partition_to_string() function.
@@ -761,7 +761,7 @@ int fdisk_is_details(struct fdisk_context *cxt)
 /**
  * fdisk_enable_listonly:
  * @cxt: context
- * @enable: true/flase
+ * @enable: true/false
  *
  * Just list partition only, don't care about another details, mistakes, ...
  *
@@ -795,7 +795,7 @@ int fdisk_is_listonly(struct fdisk_context *cxt)
  * This is pure shit, unfortunately for example Sun addresses begin of the
  * partition by cylinders...
  *
- * Returns: 0 on succes, <0 on error.
+ * Returns: 0 on success, <0 on error.
  */
 int fdisk_set_unit(struct fdisk_context *cxt, const char *str)
 {
@@ -961,7 +961,7 @@ fdisk_sector_t fdisk_get_first_lba(struct fdisk_context *cxt)
  * @lba: first possible logical sector for data
  *
  * It's strongly recommended to use the default library setting. The first LBA
- * is always reseted by fdisk_assign_device(), fdisk_override_geometry()
+ * is always reset by fdisk_assign_device(), fdisk_override_geometry()
  * and fdisk_reset_alignment(). This is very low level function and library
  * does not check if your setting makes any sense.
  *
@@ -999,7 +999,7 @@ fdisk_sector_t fdisk_get_last_lba(struct fdisk_context *cxt)
  * @lba: last possible logical sector
  *
  * It's strongly recommended to use the default library setting. The last LBA
- * is always reseted by fdisk_assign_device(), fdisk_override_geometry() and
+ * is always reset by fdisk_assign_device(), fdisk_override_geometry() and
  * fdisk_reset_alignment().
  *
  * The default is number of sectors on the device, but maybe modified by the
@@ -1076,7 +1076,7 @@ const char *fdisk_get_devname(struct fdisk_context *cxt)
  * fdisk_get_devfd:
  * @cxt: context
  *
- * Retruns: device file descriptor.
+ * Returns: device file descriptor.
  */
 int fdisk_get_devfd(struct fdisk_context *cxt)
 {

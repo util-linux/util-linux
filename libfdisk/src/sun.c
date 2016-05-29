@@ -56,7 +56,7 @@ static struct fdisk_parttype sun_parttypes[] = {
 	{ 0, NULL }
 };
 
-/* return poiter buffer with on-disk data */
+/* return pointer buffer with on-disk data */
 static inline struct sun_disklabel *self_disklabel(struct fdisk_context *cxt)
 {
 	assert(cxt);
@@ -783,7 +783,7 @@ static int sun_get_disklabel_item(struct fdisk_context *cxt, struct fdisk_labeli
 		break;
 	default:
 		if (item->id < __FDISK_NLABELITEMS)
-			rc = 1;	/* unssupported generic item */
+			rc = 1;	/* unsupported generic item */
 		else
 			rc = 2;	/* out of range */
 		break;

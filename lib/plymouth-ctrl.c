@@ -1,8 +1,8 @@
 /*
- * plymouth-ctrl.c	Simply communcations with plymouthd
+ * plymouth-ctrl.c	Simply communications with plymouthd
  *			to avoid forked sub processes and/or
- *			misssed plymouth send commands tool
- *			due a plymouthd replacment.
+ *			missed plymouth send commands tool
+ *			due a plymouthd replacement.
  *
  * Copyright (c) 2016 SUSE Linux GmbH, All rights reserved.
  * Copyright (c) 2016 Werner Fink <werner@suse.de>

@@ -133,7 +133,7 @@ done:
  * fdisk_ref_script:
  * @dp: script pointer
  *
- * Incremparts reference counter.
+ * Increments reference counter.
  */
 void fdisk_ref_script(struct fdisk_script *dp)
 {
@@ -161,7 +161,7 @@ static void fdisk_reset_script(struct fdisk_script *dp)
  * fdisk_unref_script:
  * @dp: script pointer
  *
- * De-incremparts reference counter, on zero the @dp is automatically
+ * Decrements reference counter, on zero the @dp is automatically
  * deallocated.
  */
 void fdisk_unref_script(struct fdisk_script *dp)
@@ -656,7 +656,7 @@ static int write_file_sfdisk(struct fdisk_script *dp, FILE *f)
  * @dp: script
  * @f: output file
  *
- * Writes script @dp to the ile @f.
+ * Writes script @dp to the file @f.
  *
  * Returns: 0 on success, <0 on error.
  */
@@ -714,7 +714,7 @@ static int parse_line_header(struct fdisk_script *dp, char *s)
 		   || strcmp(name, "first-lba") == 0
 		   || strcmp(name, "last-lba") == 0
 		   || strcmp(name, "table-length") == 0) {
-		;					/* whatever is posssible */
+		;					/* whatever is possible */
 	} else
 		goto done;				/* unknown header */
 
@@ -905,7 +905,7 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 
 		} else if (!strncasecmp(p, "type=", 5) ||
 
-			   !strncasecmp(p, "Id=", 3)) {		/* backward compatiility */
+			   !strncasecmp(p, "Id=", 3)) {		/* backward compatibility */
 			char *type;
 
 			p += (*p == 'I' ? 3 : 5);		/* "Id=" or "type=" */
@@ -1059,7 +1059,7 @@ static int parse_line_valcommas(struct fdisk_script *dp, char *s)
 			if (*p == ',' || *p == ';' || alone_sign(sign, p)) {
 				fdisk_partition_end_follow_default(pa, 1);
 				if (sign == TK_PLUS)
-					/* alone '+' means use all possible space, elone '-' means nothing */
+					/* '+' alone means use all possible space, '-' alone means nothing */
 					pa->resize = FDISK_RESIZE_ENLARGE;
 			} else {
 				int pow = 0;
@@ -1174,7 +1174,7 @@ static int fdisk_script_read_buffer(struct fdisk_script *dp, char *s)
  * @fn_fgets: callback function
  *
  * The library uses fgets() function to read the next line from the script.
- * This default maybe overrided to another function. Note that the function has
+ * This default maybe overridden by another function. Note that the function has
  * to return the line terminated by \n (for example readline(3) removes \n).
  *
  * Return: 0 on success, <0 on error
@@ -1327,7 +1327,7 @@ struct fdisk_script *fdisk_get_script(struct fdisk_context *cxt)
  * @cxt: context
  * @dp: script
  *
- * Associte context @cxt with script @dp and creates a new empty disklabel.
+ * Associate context @cxt with script @dp and creates a new empty disklabel.
  *
  * Returns: 0 on success, <0 on error.
  */

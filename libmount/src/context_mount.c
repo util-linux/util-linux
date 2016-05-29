@@ -378,7 +378,7 @@ static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 		 * However, if you call mount.<type> as root, then the helper follows
 		 * the command line. If there is (for example) "user,exec" in fstab,
 		 * then we have to manually append the "exec" back to the options
-		 * string, bacause there is nothing like MS_EXEC (we only have
+		 * string, because there is nothing like MS_EXEC (we only have
 		 * MS_NOEXEC in mount flags and we don't care about the original
 		 * mount string in libmount for VFS options).
 		 */

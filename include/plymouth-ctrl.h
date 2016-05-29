@@ -1,5 +1,5 @@
 /*
- * plymouth-ctrl.h	Header file for communcations with plymouthd
+ * plymouth-ctrl.h	Header file for communications with plymouthd
  *
  * Copyright (c) 2016 SUSE Linux GmbH, All rights reserved.
  * Copyright (c) 2016 Werner Fink <werner@suse.de>

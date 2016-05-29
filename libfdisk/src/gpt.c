@@ -674,7 +674,7 @@ static int gpt_mknew_header(struct fdisk_context *cxt,
 
 	/* According to EFI standard it's valid to count all the first
 	 * sector into header size, but some tools may have a problem
-	 * to accept it, so use the header without the zerozied area.
+	 * to accept it, so use the header without the zeroed area.
 	 * This does not have any impact to CRC, etc.   --kzak Jan-2015
 	 */
 	header->size = cpu_to_le32(sizeof(struct gpt_header)
@@ -712,7 +712,7 @@ static int gpt_mknew_header(struct fdisk_context *cxt,
 /*
  * Checks if there is a valid protective MBR partition table.
  * Returns 0 if it is invalid or failure. Otherwise, return
- * GPT_MBR_PROTECTIVE or GPT_MBR_HYBRID, depeding on the detection.
+ * GPT_MBR_PROTECTIVE or GPT_MBR_HYBRID, depending on the detection.
  */
 static int valid_pmbr(struct fdisk_context *cxt)
 {
@@ -876,7 +876,7 @@ static inline uint32_t gpt_entryarr_count_crc32(struct gpt_header *header, struc
 /*
  * Recompute header and partition array 32bit CRC checksums.
  * This function does not fail - if there's corruption, then it
- * will be reported when checksuming it again (ie: probing or verify).
+ * will be reported when checksumming it again (ie: probing or verify).
  */
 static void gpt_recompute_crc(struct gpt_header *header, struct gpt_entry *ents)
 {
@@ -1121,7 +1121,7 @@ static int gpt_get_disklabel_item(struct fdisk_context *cxt, struct fdisk_labeli
 		break;
 	default:
 		if (item->id < __FDISK_NLABELITEMS)
-			rc = 1;	/* unssupported generic item */
+			rc = 1;	/* unsupported generic item */
 		else
 			rc = 2;	/* out of range */
 		break;
@@ -1171,7 +1171,7 @@ static uint32_t check_too_big_partitions(struct gpt_header *header,
  * Check if a partition ends before it begins
  * Returns the faulting partition number, otherwise 0.
  */
-static uint32_t check_start_after_end_paritions(struct gpt_header *header,
+static uint32_t check_start_after_end_partitions(struct gpt_header *header,
 						struct gpt_entry *ents)
 {
 	uint32_t i;
@@ -1930,7 +1930,7 @@ err1:
 /*
  * Verify data integrity and report any found problems for:
  *   - primary and backup header validations
- *   - paritition validations
+ *   - partition validations
  */
 static int gpt_verify_disklabel(struct fdisk_context *cxt)
 {
@@ -2012,7 +2012,7 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 				ptnum);
 	}
 
-	ptnum = check_start_after_end_paritions(gpt->pheader, gpt->ents);
+	ptnum = check_start_after_end_partitions(gpt->pheader, gpt->ents);
 	if (ptnum) {
 		nerror++;
 		fdisk_warnx(cxt, _("Partition %u ends before it starts."),

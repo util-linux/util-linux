@@ -347,7 +347,7 @@ static void chown_tty(struct login_context *cxt)
 }
 
 /*
- * Reads the currect terminal path and initializes cxt->tty_* variables.
+ * Reads the current terminal path and initializes cxt->tty_* variables.
  */
 static void init_tty(struct login_context *cxt)
 {
@@ -398,7 +398,7 @@ static void init_tty(struct login_context *cxt)
 	tcsetattr(0, TCSANOW, &ttt);
 
 	/*
-	 * Let's close file decriptors before vhangup
+	 * Let's close file descriptors before vhangup
 	 * https://lkml.org/lkml/2012/6/5/145
 	 */
 	close(STDIN_FILENO);

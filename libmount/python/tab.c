@@ -546,7 +546,7 @@ void Table_unref(struct libmnt_table *tab)
 
 static void Table_destructor(TableObject *self)
 {
-	DBG(TAB, pymnt_debug_h(self->tab, "destrutor py-obj: %p, py-refcnt=%d",
+	DBG(TAB, pymnt_debug_h(self->tab, "destructor py-obj: %p, py-refcnt=%d",
 				self, (int) ((PyObject *) self)->ob_refcnt));
 	Table_unref(self->tab);
 	self->tab = NULL;
@@ -686,7 +686,7 @@ PyObject *PyObjectResultTab(struct libmnt_table *tab)
 		return (PyObject *) result;
 	}
 
-	/* Creating an encapsualing object: increment the refcount, so that
+	/* Creating an encapsulating object: increment the refcount, so that
 	 * code such as: cxt.get_fstab() doesn't call the destructor, which
 	 * would free our tab struct as well
 	 */

@@ -250,7 +250,7 @@ struct lscpu_desc {
 	int		nsockets;	/* number of all online sockets */
 	cpu_set_t	**socketmaps;	/* unique core_siblings */
 
-	/* cores -- based on thread_siblings (internel kernel map of cpuX's
+	/* cores -- based on thread_siblings (internal kernel map of cpuX's
 	 * hardware threads within the same core as cpuX) */
 	int		ncores;		/* number of all online cores */
 	cpu_set_t	**coremaps;	/* unique thread_siblings */

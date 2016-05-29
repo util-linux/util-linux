@@ -389,7 +389,7 @@ int main(int argc, char **argv)
 
 	tcsetpgrp(STDIN_FILENO, getpid());
 
-	/* Default is to follow the current line speend and then default to 9600 */
+	/* Default is to follow the current line speed and then default to 9600 */
 	if ((options.flags & F_VCONSOLE) == 0 && options.numspeed == 0) {
 		options.speeds[options.numspeed++] = bcode("9600");
 		options.flags |= F_KEEPSPEED;
@@ -559,7 +559,7 @@ static char *replace_u(char *str, char *username)
 			log_err(_("failed to allocate memory: %m"));
 
 		if (p != str) {
-			/* copy chars befor \u */
+			/* copy chars before \u */
 			memcpy(tp, str, p - str);
 			tp += p - str;
 		}
@@ -1043,7 +1043,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 				debug("TIOCNOTTY ioctl failed\n");
 
 			/*
-			 * Let's close all file decriptors before vhangup
+			 * Let's close all file descriptors before vhangup
 			 * https://lkml.org/lkml/2012/6/5/145
 			 */
 			close(fd);
@@ -1268,7 +1268,7 @@ static void termio_init(struct options *op, struct termios *tp)
 
 	/*
 	 * Note that the speed is stored in the c_cflag termios field, so we have
-	 * set the speed always when the cflag se reseted.
+	 * set the speed always when the cflag is reset.
 	 */
 	cfsetispeed(tp, ispeed);
 	cfsetospeed(tp, ospeed);

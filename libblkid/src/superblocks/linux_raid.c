@@ -79,7 +79,7 @@ struct mdp1_super_block {
 	uint8_t		pad2[64-57];	/* set to 0 when writing */
 
 	/* array state information - 64 bytes */
-	uint64_t	utime;		/* 40 bits second, 24 btes microseconds */
+	uint64_t	utime;		/* 40 bits second, 24 bits microseconds */
 	uint64_t	events;		/* incremented when superblock updated */
 	uint64_t	resync_offset;	/* data before this offset (from data_offset) known to be in sync */
 	uint32_t	sb_csum;	/* checksum up to dev_roles[max_dev] */

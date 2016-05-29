@@ -449,7 +449,7 @@ static int lowprobe_superblocks(blkid_probe pr)
 
 		rc = blkid_do_fullprobe(pr);
 		if (rc < 0)
-			return rc;	/* -1 = error, 1 = nothing, 0 = succes */
+			return rc;	/* -1 = error, 1 = nothing, 0 = success */
 
 		if (blkid_probe_lookup_value(pr, "PTTYPE", NULL, NULL) == 0)
 			return 0;	/* partition table detected */

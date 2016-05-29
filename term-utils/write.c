@@ -37,7 +37,7 @@
  * Wed Jun 22 21:41:56 1994, faith@cs.unc.edu:
  *      Added fix from Mike Grupenhoff (kashmir@umiacs.umd.edu)
  * Mon Jul  1 17:01:39 MET DST 1996, janl@math.uio.no:
- *      - Added fix from David.Chapell@mail.trincoll.edu enabeling daemons
+ *      - Added fix from David.Chapell@mail.trincoll.edu enabling daemons
  *	  to use write.
  *      - ANSIed it since I was working on it anyway.
  * 1999-02-22 Arkadiusz Miśkiewicz <misiek@pld.ORG.PL>

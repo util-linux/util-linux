@@ -20,7 +20,7 @@
 
 /*
  * Old version would die on largish filesystems. Change to mmap the
- * files one by one instaed of all simultaneously. - aeb, 2002-11-01
+ * files one by one instead of all simultaneously. - aeb, 2002-11-01
  */
 
 #include <sys/types.h>

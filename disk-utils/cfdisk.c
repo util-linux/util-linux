@@ -529,7 +529,7 @@ static int is_freespace(struct cfdisk *cf, size_t i)
 }
 
 /* converts libfdisk FDISK_ASKTYPE_MENU to cfdisk menu and returns user's
- * responseback to libfdisk
+ * response back to libfdisk
  */
 static int ask_menu(struct fdisk_ask *ask, struct cfdisk *cf)
 {

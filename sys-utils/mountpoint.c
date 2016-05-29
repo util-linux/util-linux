@@ -1,7 +1,7 @@
 /*
  * mountpoint(1) - see if a directory is a mountpoint
  *
- * This is libmount based reimplementation of the mountpoit(1)
+ * This is libmount based reimplementation of the mountpoint(1)
  * from sysvinit project.
  *
  *

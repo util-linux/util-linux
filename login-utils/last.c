@@ -635,7 +635,7 @@ static int is_phantom(const struct last_control *ctl, struct utmp *ut)
 static void process_wtmp_file(const struct last_control *ctl,
 			      const char *filename)
 {
-	FILE *fp;		/* Filepointer of wtmp file */
+	FILE *fp;		/* File pointer of wtmp file */
 
 	struct utmp ut;		/* Current utmp entry */
 	struct utmplist *ulist = NULL;	/* All entries */
@@ -858,7 +858,7 @@ static void process_wtmp_file(const struct last_control *ctl,
 			break;
 
 		default:
-			warnx("unrecogized ut_type: %d", ut.ut_type);
+			warnx("unrecognized ut_type: %d", ut.ut_type);
 		}
 
 		/*

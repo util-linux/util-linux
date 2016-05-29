@@ -36,7 +36,7 @@ struct fdisk_parttype *fdisk_new_parttype(void)
  * fdisk_ref_parttype:
  * @t: partition type
  *
- * Incremparts reference counter for allocated types
+ * Increments reference counter for allocated types
  */
 void fdisk_ref_parttype(struct fdisk_parttype *t)
 {
@@ -48,7 +48,7 @@ void fdisk_ref_parttype(struct fdisk_parttype *t)
  * fdisk_unref_parttype
  * @t: partition pointer
  *
- * De-incremparts reference counter, on zero the @t is automatically
+ * Decrements reference counter, on zero the @t is automatically
  * deallocated.
  */
 void fdisk_unref_parttype(struct fdisk_parttype *t)
@@ -95,7 +95,7 @@ int fdisk_parttype_set_name(struct fdisk_parttype *t, const char *str)
 /**
  * fdisk_parttype_set_typestr:
  * @t: partition type
- * @str: type identificator (e.g. GUID for GPT)
+ * @str: type identifier (e.g. GUID for GPT)
  *
  * Sets type string to allocated partition type, for static types
  * it returns -EINVAL. Don't use this function for MBR, see
@@ -123,7 +123,7 @@ int fdisk_parttype_set_typestr(struct fdisk_parttype *t, const char *str)
 /**
  * fdisk_parttype_set_code:
  * @t: partition type
- * @code: type identificator (e.g. MBR type codes)
+ * @code: type identifier (e.g. MBR type codes)
  *
  * Sets type code to allocated partition type, for static types it returns
  * -EINVAL. Don't use this function for GPT, see fdisk_parttype_set_typestr().
@@ -291,7 +291,7 @@ struct fdisk_parttype *fdisk_copy_parttype(const struct fdisk_parttype *type)
  * @lb: label
  * @str: string to parse from
  *
- * Parses partition type from @str according to the label. Thefunction returns
+ * Parses partition type from @str according to the label. The function returns
  * a pointer to static table of the partition types, or newly allocated
  * partition type for unknown types (see fdisk_parttype_is_unknown(). It's
  * safe to call fdisk_unref_parttype() for all results.
@@ -397,7 +397,7 @@ const char *fdisk_parttype_get_name(const struct fdisk_parttype *t)
  *
  * Checks for example result from fdisk_label_parse_parttype().
  *
- * Returns: 1 is type is "unknonw" or 0.
+ * Returns: 1 is type is "unknown" or 0.
  */
 int fdisk_parttype_is_unknown(const struct fdisk_parttype *t)
 {

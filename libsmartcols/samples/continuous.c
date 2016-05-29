@@ -40,7 +40,7 @@ static void setup_columns(struct libscols_table *tb)
 	return;
 fail:
 	scols_unref_table(tb);
-	err(EXIT_FAILURE, "faild to create output columns");
+	err(EXIT_FAILURE, "failed to create output columns");
 }
 
 static struct libscols_line *add_line(struct libscols_table *tb, size_t i)
@@ -62,7 +62,7 @@ static struct libscols_line *add_line(struct libscols_table *tb, size_t i)
 	return ln;
 fail:
 	scols_unref_table(tb);
-	err(EXIT_FAILURE, "faild to create output line");
+	err(EXIT_FAILURE, "failed to create output line");
 }
 
 int main(int argc, char *argv[])
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 
 	tb = scols_new_table();
 	if (!tb)
-		err(EXIT_FAILURE, "faild to create output table");
+		err(EXIT_FAILURE, "failed to create output table");
 
 	setup_columns(tb);
 	gettimeofday(&last, NULL);

@@ -119,7 +119,7 @@ static const struct dmesg_name level_names[] =
 
 /*
  * sys/syslog.h uses (f << 3) for all facility codes.
- * We want to use the codes as array idexes, so shift back...
+ * We want to use the codes as array indexes, so shift back...
  *
  * Note that libc LOG_FAC() macro returns the base codes, not the
  * shifted code :-)
@@ -244,7 +244,7 @@ static int set_level_color(int log_level, const char *mesg, size_t mesgsz)
 		break;
 	}
 
-	/* well, sometimes the messges contains important keywords, but in
+	/* well, sometimes the messages contains important keywords, but in
 	 * non-warning/error messages
 	 */
 	if (id < 0 && memmem(mesg, mesgsz, "segfault at", 11))
@@ -320,7 +320,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
  *  <name>   ::= case-insensitive text
  *
  *  Note that @len argument is not set when parsing "-n <level>" command line
- *  option. The console_level is intepreted as "log level less than the value".
+ *  option. The console_level is interpreted as "log level less than the value".
  *
  *  For example "dmesg -n 8" or "dmesg -n debug" enables debug console log
  *  level by klogctl(SYSLOG_ACTION_CONSOLE_LEVEL, NULL, 8). The @str argument
@@ -1066,7 +1066,7 @@ static int init_kmsg(struct dmesg_control *ctl)
 /*
  * /dev/kmsg record format:
  *
- *     faclev,seqnum,timestamp[optional, ...];messgage\n
+ *     faclev,seqnum,timestamp[optional, ...];message\n
  *      TAGNAME=value
  *      ...
  *
@@ -1130,7 +1130,7 @@ mesg:
 	rec->mesg_size = p - rec->mesg;
 
 	/*
-	 * Kernel escapes non-printable characters, unfortuately kernel
+	 * Kernel escapes non-printable characters, unfortunately kernel
 	 * definition of "non-printable" is too strict. On UTF8 console we can
 	 * print many chars, so let's decode from kernel.
 	 */

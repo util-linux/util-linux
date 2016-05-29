@@ -66,7 +66,7 @@ extern int __cpuset_count_s(size_t setsize, const cpu_set_t *set);
 #define cpuset_nbits(setsize)	(8 * (setsize))
 
 /*
- * The @idx parametr returns an index of the first mask from @ary array where
+ * The @idx parameter returns an index of the first mask from @ary array where
  * the @cpu is set.
  *
  * Returns: 0 if found, otherwise 1.

@@ -215,7 +215,7 @@ static void recount_geometry(struct fdisk_context *cxt)
  *
  * The difference between fdisk_override_geometry() and fdisk_save_user_geometry()
  * is that saved user geometry is persistent setting and it's applied always
- * when device is assigned to the context or device properties are reseted.
+ * when device is assigned to the context or device properties are reset.
  *
  * Returns: 0 on success, < 0 on error.
  */
@@ -287,7 +287,7 @@ int fdisk_save_user_geometry(struct fdisk_context *cxt,
  * fdisk_save_user_sector_size:
  * @cxt: context
  * @phy: physical sector size
- * @log: logicla sector size
+ * @log: logical sector size
  *
  * Save user defined sector sizes to use it for partitioning.
  *
@@ -331,7 +331,7 @@ int fdisk_apply_user_device_properties(struct fdisk_context *cxt)
 	if (!cxt)
 		return -EINVAL;
 
-	DBG(CXT, ul_debugobj(cxt, "appling user device properties"));
+	DBG(CXT, ul_debugobj(cxt, "applying user device properties"));
 
 	if (cxt->user_pyh_sector)
 		cxt->phy_sector_size = cxt->user_pyh_sector;
@@ -403,7 +403,7 @@ int fdisk_reset_device_properties(struct fdisk_context *cxt)
 	if (!cxt)
 		return -EINVAL;
 
-	DBG(CXT, ul_debugobj(cxt, "*** reseting device properties"));
+	DBG(CXT, ul_debugobj(cxt, "*** resetting device properties"));
 
 	fdisk_zeroize_device_properties(cxt);
 	fdisk_discover_topology(cxt);
@@ -546,7 +546,7 @@ static fdisk_sector_t topology_get_first_lba(struct fdisk_context *cxt)
 	 *  a2) alignment offset
 	 *  a1) or physical sector (minimal_io_size, aka "grain")
 	 *
-	 * b) or default to 1MiB (2048 sectrors, Windows Vista default)
+	 * b) or default to 1MiB (2048 sectors, Windows Vista default)
 	 *
 	 * c) or for very small devices use 1 phy.sector
 	 */
@@ -608,7 +608,7 @@ int fdisk_reset_alignment(struct fdisk_context *cxt)
 	if (!cxt)
 		return -EINVAL;
 
-	DBG(CXT, ul_debugobj(cxt, "reseting alignment..."));
+	DBG(CXT, ul_debugobj(cxt, "resetting alignment..."));
 
 	/* default */
 	cxt->grain = topology_get_grain(cxt);
@@ -619,7 +619,7 @@ int fdisk_reset_alignment(struct fdisk_context *cxt)
 	if (cxt->label && cxt->label->op->reset_alignment)
 		rc = cxt->label->op->reset_alignment(cxt);
 
-	DBG(CXT, ul_debugobj(cxt, "alignment reseted to: "
+	DBG(CXT, ul_debugobj(cxt, "alignment reset to: "
 			    "first LBA=%ju, last LBA=%ju, grain=%lu [rc=%d]",
 			    (uintmax_t) cxt->first_lba, (uintmax_t) cxt->last_lba,
 			    cxt->grain,	rc));

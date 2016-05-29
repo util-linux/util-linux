@@ -342,7 +342,7 @@ static inline unsigned long cmos_read(unsigned long reg)
 		 *  outb (0x0d, 0x70);  // 0x0d: random read-only location
 		 *
 		 * Other docs state that "any write to 0x70 should be
-		 * followed by an action to 0x71 or the RTC wil be left in
+		 * followed by an action to 0x71 or the RTC will be left in
 		 * an unknown state". Most docs say that it doesn't matter at
 		 * all what one does.
 		 */

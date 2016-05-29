@@ -718,7 +718,7 @@ int detect_consoles(const char *device, int fallback, struct list_head *consoles
 #ifdef __linux__
 console:
 	/*
-	 * Detection of devices used for Linux system consolei using
+	 * Detection of devices used for Linux system console using
 	 * the /proc/consoles API with kernel 2.6.38 and higher.
 	 */
 	rc = detect_consoles_from_proc(consoles);

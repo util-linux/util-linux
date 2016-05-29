@@ -6,7 +6,7 @@
  */
 
 /*
- * 09.11.91  -  made the first rudimetary functions
+ * 09.11.91  -  made the first rudimentary functions
  *
  * 10.11.91  -  updated, does checking, no repairs yet.
  *		Sent out to the mailing-list for testing.
@@ -22,7 +22,7 @@
  *
  *
  * 19.04.92  -	Had to start over again from this old version, as a
- *		kernel bug ate my enhanced fsck in february.
+ *		kernel bug ate my enhanced fsck in February.
  *
  * 28.02.93  -	added support for different directory entry sizes..
  *
@@ -106,7 +106,7 @@
 #define ROOT_INO 1
 #define YESNO_LENGTH 64
 
-/* Global variables used in minix_programs.h inline fuctions */
+/* Global variables used in minix_programs.h inline functions */
 int fs_version = 1;
 char *super_block_buffer;
 

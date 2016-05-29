@@ -62,7 +62,7 @@ void fdisk_reset_ask(struct fdisk_ask *ask)
  * fdisk_ref_ask:
  * @ask: ask instance
  *
- * Incremparts reference counter.
+ * Increments reference counter.
  */
 void fdisk_ref_ask(struct fdisk_ask *ask)
 {
@@ -75,7 +75,7 @@ void fdisk_ref_ask(struct fdisk_ask *ask)
  * fdisk_unref_ask:
  * @ask: ask instance
  *
- * De-incremparts reference counter, on zero the @ask is automatically
+ * Decrements reference counter, on zero the @ask is automatically
  * deallocated.
  */
 void fdisk_unref_ask(struct fdisk_ask *ask)
@@ -318,7 +318,7 @@ int fdisk_ask_number_is_relative(struct fdisk_ask *ask)
  *
  * Inform libfdisk that user specified number in relative notation rather than
  * by explicit number. This info allows to fdisk do some optimization (e.g.
- * align end of partiton, etc.)
+ * align end of partition, etc.)
  *
  * Returns: 0 on success, <0 on error
  */
@@ -467,7 +467,7 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 
 	if (!rc && !wantnew && num->low == num->hig) {
 		if (num->low > 0) {
-			/* only one existing partiton, don't ask, return the number */
+			/* only one existing partition, don't ask, return the number */
 			fdisk_ask_number_set_result(ask, num->low);
 			fdisk_info(cxt, _("Selected partition %ju"), num->low);
 
@@ -627,7 +627,7 @@ int fdisk_ask_string(struct fdisk_context *cxt,
  * @query: question string
  * @result: returns 0 (no) or 1 (yes)
  *
- * Hight-level API to ask Yes/No questions
+ * High-level API to ask Yes/No questions
  *
  * Returns: 0 on success, <0 on error
  */
@@ -919,7 +919,7 @@ static int do_vprint(struct fdisk_context *cxt, int errnum, int type,
  * fdisk_info:
  * @cxt: context
  * @fmt: printf-like formatted string
- * @...: variable parametrs
+ * @...: variable parameters
  *
  * High-level API to print info messages,
  *
@@ -941,7 +941,7 @@ int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...)
  * fdisk_info:
  * @cxt: context
  * @fmt: printf-like formatted string
- * @...: variable parametrs
+ * @...: variable parameters
  *
  * High-level API to print warning message (errno expected)
  *

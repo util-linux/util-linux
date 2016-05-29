@@ -474,7 +474,7 @@ int main(int argc, char **argv)
 			seconds = strtou32_or_err(optarg, _("invalid seconds argument"));
 			break;
 		case 't':
-			/* alarm time, time_t (absolute, seconds since epoc) */
+			/* alarm time, time_t (absolute, seconds since epoch) */
 			alarm = strtou32_or_err(optarg, _("invalid time argument"));
 			break;
 		case OPT_DATE:

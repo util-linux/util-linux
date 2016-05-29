@@ -217,7 +217,7 @@ static void buf_printf(struct buffer *bs, const char *fmt, ...)
 	rc = vsnprintf(bs->data + bs->used, limit, fmt, ap);
 	va_end(ap);
 
-	if (rc >= 0 && (size_t) rc >= limit) {	/* not enoght, enlarge */
+	if (rc >= 0 && (size_t) rc >= limit) {	/* not enough, enlarge */
 		buf_enlarge(bs, (size_t)rc + 1);
 		limit = bs->sz - bs->used;
 		va_start(ap, fmt);

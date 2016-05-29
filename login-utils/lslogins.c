@@ -822,7 +822,7 @@ static int get_ulist(struct lslogins_control *ctl, char *logins, char *groups)
 	}
 
 	if (groups) {
-		/* FIXME: this might lead to duplicit entries, although not visible
+		/* FIXME: this might lead to duplicate entries, although not visible
 		 * in output, crunching a user's info multiple times is very redundant */
 		while ((g = strtok(groups, ","))) {
 			n = 0;

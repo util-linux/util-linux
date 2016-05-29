@@ -8,7 +8,7 @@
 /**
  * SECTION: init
  * @title: Library initialization
- * @short_description: initialize debuging
+ * @short_description: initialize debugging
  */
 
 #include <stdarg.h>
@@ -23,7 +23,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libblkid) =
 	{ "config", BLKID_DEBUG_CONFIG, "config file utils" },
 	{ "dev", BLKID_DEBUG_DEV,       "device utils" },
 	{ "devname", BLKID_DEBUG_DEVNAME, "/proc/partitions evaluation" },
-	{ "devno", BLKID_DEBUG_DEVNO,	"convertions to device name" },
+	{ "devno", BLKID_DEBUG_DEVNO,	"conversions to device name" },
 	{ "evaluate", BLKID_DEBUG_EVALUATE, "tags resolving" },
 	{ "help", BLKID_DEBUG_HELP,	"this help" },
 	{ "lowprobe", BLKID_DEBUG_LOWPROBE, "superblock/raids/partitions probing" },
@@ -37,7 +37,7 @@ UL_DEBUG_DEFINE_MASKNAMES(libblkid) =
 
 /**
  * blkid_init_debug:
- * @mask: debug mask (0xffff to enable full debuging)
+ * @mask: debug mask (0xffff to enable full debugging)
  *
  * If the @mask is not specified then this function reads
  * LIBBLKID_DEBUG environment variable to get the mask.

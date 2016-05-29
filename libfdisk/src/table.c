@@ -38,7 +38,7 @@ struct fdisk_table *fdisk_new_table(void)
  * fdisk_reset_table:
  * @tb: tab pointer
  *
- * Removes all entries (partitions) from the table. The parititons with zero
+ * Removes all entries (partitions) from the table. The partitions with zero
  * reference count will be deallocated. This function does not modify partition
  * table.
  *
@@ -65,7 +65,7 @@ int fdisk_reset_table(struct fdisk_table *tb)
  * fdisk_ref_table:
  * @tb: table pointer
  *
- * Incremparts reference counter.
+ * Increments reference counter.
  */
 void fdisk_ref_table(struct fdisk_table *tb)
 {
@@ -77,7 +77,7 @@ void fdisk_ref_table(struct fdisk_table *tb)
  * fdisk_unref_table:
  * @tb: table pointer
  *
- * De-incremparts reference counter, on zero the @tb is automatically
+ * Descrements reference counter, on zero the @tb is automatically
  * deallocated.
  */
 void fdisk_unref_table(struct fdisk_table *tb)
@@ -682,7 +682,7 @@ int fdisk_table_wrong_order(struct fdisk_table *tb)
  * Add partitions from table @tb to the in-memory disk label. See
  * fdisk_add_partition(), fdisk_delete_all_partitions(). The partitions
  * that does not define start (or does not follow the default start)
- * are ingored.
+ * are ignored.
  *
  * Returns: 0 on success, <0 on error.
  */

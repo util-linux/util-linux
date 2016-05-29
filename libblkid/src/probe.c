@@ -165,7 +165,7 @@ blkid_probe blkid_new_probe(void)
  * Clone @parent, the new clone shares all, but except:
  *
  *	- probing result
- *	- bufferes if another device (or offset) is set to the prober
+ *	- buffers if another device (or offset) is set to the prober
  */
 blkid_probe blkid_clone_probe(blkid_probe parent)
 {
@@ -292,7 +292,7 @@ void blkid_probe_chain_reset_values(blkid_probe pr, struct blkid_chain *chn)
 	if (!pr || list_empty(&pr->values))
 		return;
 
-	DBG(LOWPROBE, ul_debug("reseting %s values", chn->driver->name));
+	DBG(LOWPROBE, ul_debug("Resetting %s values", chn->driver->name));
 
 	list_for_each_safe(p, pnext, &pr->values) {
 		struct blkid_prval *v = list_entry(p,
@@ -667,7 +667,7 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len
 				pr->off + off - pr->parent->off, len);
 	}
 
-	/* try buffers we already have in memmory */
+	/* try buffers we already have in memory */
 	list_for_each(p, &pr->buffers) {
 		struct blkid_bufinfo *x =
 				list_entry(p, struct blkid_bufinfo, bufs);
@@ -703,7 +703,7 @@ static void blkid_probe_reset_buffer(blkid_probe pr)
 	if (!pr || list_empty(&pr->buffers))
 		return;
 
-	DBG(BUFFER, ul_debug("reseting probing buffers pr=%p", pr));
+	DBG(BUFFER, ul_debug("Resetting probing buffers pr=%p", pr));
 
 	while (!list_empty(&pr->buffers)) {
 		struct blkid_bufinfo *bf = list_entry(pr->buffers.next,
@@ -1112,7 +1112,7 @@ int blkid_do_probe(blkid_probe pr)
  *
  * This function erases the current signature detected by @pr. The @pr has to
  * be open in O_RDWR mode, BLKID_SUBLKS_MAGIC or/and BLKID_PARTS_MAGIC flags
- * has to be enabled (if you want to errase also superblock with broken check
+ * has to be enabled (if you want to erase also superblock with broken check
  * sums then use BLKID_SUBLKS_BADCSUM too).
  *
  * After successful signature removing the @pr prober will be moved one step
@@ -1238,7 +1238,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
  *			continue;
  *
  *		// convert ostr to the real offset by off = strtoll(ostr, NULL, 10);
- *              // use your stuff to errase @len bytes at the @off
+ *              // use your stuff to erase @len bytes at the @off
  *              ....
  *
  *		// retry the last probing to check for backup superblocks ..etc.
@@ -1296,13 +1296,13 @@ int blkid_probe_step_back(blkid_probe pr)
  *
  * This is string-based NAME=value interface only.
  *
- * Note about suberblocks chain -- the function does not check for filesystems
+ * Note about superblocks chain -- the function does not check for filesystems
  * when a RAID signature is detected.  The function also does not check for
  * collision between RAIDs. The first detected RAID is returned. The function
  * checks for collision between partition table and RAID signature -- it's
  * recommended to enable partitions chain together with superblocks chain.
  *
- * Returns: 0 on success, 1 if nothing is detected, -2 if ambivalen result is
+ * Returns: 0 on success, 1 if nothing is detected, -2 if ambivalent result is
  * detected and -1 on case of error.
  */
 int blkid_do_safeprobe(blkid_probe pr)
@@ -1988,7 +1988,7 @@ int blkid_probe_is_wiped(blkid_probe pr, struct blkid_chain **chn, uint64_t off,
 
 /*
  *  Try to use any area -- if the area has been previously wiped then the
- *  previous probing result should be ignored (reseted).
+ *  previous probing result should be ignored (reset).
  */
 void blkid_probe_use_wiper(blkid_probe pr, uint64_t off, uint64_t size)
 {

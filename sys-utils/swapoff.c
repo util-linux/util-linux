@@ -27,7 +27,7 @@ static int all;
 #define CANONIC	1
 
 /*
- * This function works like mnt_resolve_tag(), but it's able to read UUiD/LABEL
+ * This function works like mnt_resolve_tag(), but it's able to read UUID/LABEL
  * from regular swap files too (according to entries in /proc/swaps). Note that
  * mnt_resolve_tag() and mnt_resolve_spec() works with system visible block
  * devices only.

@@ -44,7 +44,7 @@ static int do_scale_by_power (uintmax_t *x, int base, int power)
  * for example:
  *		10KB	= 10000
  *
- * The optinal 'power' variable returns number associated with used suffix
+ * The optional 'power' variable returns number associated with used suffix
  * {K,M,G,T,P,E,Z,Y}  = {1,2,3,4,5,6,7,8}.
  *
  * The function also supports decimal point, for example:

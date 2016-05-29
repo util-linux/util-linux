@@ -536,7 +536,7 @@ static void initinfo(void)
 
 	/*
 	 * Note that we use REVERSE for the alternate character set,
-	 * not the as/ae capabilities.  This is because we are modelling
+	 * not the as/ae capabilities.  This is because we are modeling
 	 * the model 37 teletype (since that's what nroff outputs) and
 	 * the typical as/ae is more of a graphics set, not the greek
 	 * letters the 37 has.

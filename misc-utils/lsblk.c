@@ -269,9 +269,9 @@ struct blkdev_cxt {
 	char *fstype;		/* detected fs, NULL or "?" if cannot detect */
 	char *uuid;		/* filesystem UUID (or stack uuid) */
 	char *label;		/* filesystem label */
-	char *parttype;		/* partiton type UUID */
+	char *parttype;		/* partition type UUID */
 	char *partuuid;		/* partition UUID */
-	char *partlabel;	/* partiton label */
+	char *partlabel;	/* partition label */
 	char *partflags;	/* partition flags */
 	char *wwn;		/* storage WWN */
 	char *serial;		/* disk serial number */
@@ -298,7 +298,7 @@ static int is_maj_excluded(int maj)
 	assert(ARRAY_SIZE(excludes) > nexcludes);
 
 	if (!nexcludes)
-		return 0;	/* filter not enabled, device not exluded */
+		return 0;	/* filter not enabled, device not excluded */
 
 	for (i = 0; i < nexcludes; i++) {
 		if (excludes[i] == maj) {
@@ -471,7 +471,7 @@ static char *get_device_mountpoint(struct blkdev_cxt *cxt)
 		mnt_table_parse_mtab(mtab, NULL);
 	}
 
-	/* Note that maj:min in /proc/self/mouninfo does not have to match with
+	/* Note that maj:min in /proc/self/mountinfo does not have to match with
 	 * devno as returned by stat(), so we have to try devname too
 	 */
 	fs = mnt_table_find_devno(mtab, makedev(cxt->maj, cxt->min), MNT_ITER_BACKWARD);
@@ -1390,7 +1390,7 @@ static int list_deps(struct blkdev_cxt *cxt)
 			DBG(CXT, ul_debugobj(cxt, "%s: %s: dependence is whole-disk",
 								cxt->name, d->d_name));
 			/* For inverse tree we don't want to show partitions
-			 * if the dependence is pn whle-disk */
+			 * if the dependence is on whole-disk */
 			process_blkdev(&dep, cxt, lsblk->inverse ? 0 : 1, NULL);
 		}
 		reset_blkdev_cxt(&dep);
@@ -1405,7 +1405,7 @@ static int process_blkdev(struct blkdev_cxt *cxt, struct blkdev_cxt *parent,
 			  int do_partitions, const char *part_name)
 {
 	if (do_partitions && cxt->npartitions)
-		list_partitions(cxt, parent, part_name);		/* partitoins + whole-disk */
+		list_partitions(cxt, parent, part_name);		/* partitions + whole-disk */
 	else
 		fill_table_line(cxt, parent ? parent->scols_line : NULL); /* whole-disk only */
 

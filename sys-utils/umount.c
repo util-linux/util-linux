@@ -344,7 +344,7 @@ static int umount_one_if_mounted(struct libmnt_context *cxt, const char *spec)
 
 	rc = mnt_context_find_umount_fs(cxt, spec, &fs);
 	if (rc == 1) {
-		rc = MOUNT_EX_SUCCESS;		/* alredy unmounted */
+		rc = MOUNT_EX_SUCCESS;		/* already unmounted */
 		mnt_reset_context(cxt);
 	} else if (rc < 0) {
 		rc = mk_exit_code(cxt, rc);	/* error */
@@ -365,7 +365,7 @@ static int umount_do_recurse(struct libmnt_context *cxt,
 	if (!itr)
 		err(MOUNT_EX_SYSERR, _("libmount iterator allocation failed"));
 
-	/* umount all childern */
+	/* umount all children */
 	for (;;) {
 		rc = mnt_table_next_child_fs(tb, itr, fs, &child);
 		if (rc < 0) {
@@ -452,7 +452,7 @@ static int umount_alltargets(struct libmnt_context *cxt, const char *spec, int r
 		goto done;
 	}
 
-	/* Note that @fs is from mount context and the context will be reseted
+	/* Note that @fs is from mount context and the context will be reset
 	 * after each umount() call */
 	devno = mnt_fs_get_devno(fs);
 	fs = NULL;

@@ -89,7 +89,7 @@ static const char *really_wanted[] = {
 };
 
 /*
- * Internal structure for mount tabel entries.
+ * Internal structure for mount table entries.
  */
 struct fsck_fs_data
 {
@@ -490,7 +490,7 @@ static void load_fs_info(void)
 	errno = 0;
 
 	/*
-	 * Let's follow libmount defauls if $FSTAB_FILE is not specified
+	 * Let's follow libmount defaults if $FSTAB_FILE is not specified
 	 */
 	path = getenv("FSTAB_FILE");
 
@@ -1279,7 +1279,7 @@ static int check_all(void)
 
 	/*
 	 * This is for the bone-headed user who enters the root
-	 * filesystem twice.  Skip root will skep all root entries.
+	 * filesystem twice.  Skip root will skip all root entries.
 	 */
 	if (skip_root) {
 		mnt_reset_iter(itr, MNT_ITER_FORWARD);

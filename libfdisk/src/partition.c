@@ -106,7 +106,7 @@ static struct fdisk_partition *__copy_partition(struct fdisk_partition *o)
  * fdisk_ref_partition:
  * @pa: partition pointer
  *
- * Incremparts reference counter.
+ * Increments reference counter.
  */
 void fdisk_ref_partition(struct fdisk_partition *pa)
 {
@@ -118,7 +118,7 @@ void fdisk_ref_partition(struct fdisk_partition *pa)
  * fdisk_unref_partition:
  * @pa: partition pointer
  *
- * De-incremparts reference counter, on zero the @pa is automatically
+ * Decrements reference counter, on zero the @pa is automatically
  * deallocated.
  */
 void fdisk_unref_partition(struct fdisk_partition *pa)
@@ -345,7 +345,7 @@ int fdisk_partition_size_explicit(struct fdisk_partition *pa, int enable)
 /**
  * fdisk_partition_set_partno:
  * @pa: partition
- * @num: partitin number (0 is the first partition, maximal is SIZE_MAX-1)
+ * @num: partition number (0 is the first partition, maximal is SIZE_MAX-1)
  *
  * Note that zero is valid partno too. Use fdisk_partition_unset_partno() to
  * undefine the partno.
@@ -444,7 +444,7 @@ int fdisk_partition_partno_follow_default(struct fdisk_partition *pa, int enable
  * @pa: partition
  * @type: partition type
  *
- * Sets parititon type.
+ * Sets partition type.
  *
  * Returns: 0 on success, <0 on error.
  */
@@ -808,7 +808,7 @@ done:
  * For example
  * <informalexample>
  *   <programlisting>
- *      struct fdisk_parition *pa;
+ *      struct fdisk_partition *pa;
  *
  *      fdisk_get_partition(cxt, 0, &pa);
  *	fdisk_partition_to_string(pa, FDISK_FIELD_UUID, &data);
@@ -1310,7 +1310,7 @@ int fdisk_wipe_partition(struct fdisk_context *cxt, size_t partno, int enable)
  * @pa: template for the partition (or NULL)
  * @partno: NULL or returns new partition number
  *
- * If @pa is not specified or any @pa item is missiong the libfdisk will ask by
+ * If @pa is not specified or any @pa item is missing the libfdisk will ask by
  * fdisk_ask_ API.
  *
  * Adds a new partition to disklabel.

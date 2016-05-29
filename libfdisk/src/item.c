@@ -48,7 +48,7 @@ struct fdisk_labelitem *fdisk_new_labelitem(void)
  * fdisk_ref_labelitem:
  * @li: label item
  *
- * Incremparts reference counter.
+ * Increments reference counter.
  *
  * Since: v2.29
  */
@@ -85,7 +85,7 @@ int fdisk_reset_labelitem(struct fdisk_labelitem *li)
  * fdisk_unref_labelitem:
  * @li: label item
  *
- * De-incremparts reference counter, on zero the @li is automatically
+ * Decrements reference counter, on zero the @li is automatically
  * deallocated.
  *
  * Since: v2.29
@@ -215,7 +215,7 @@ static int test_listitems(struct fdisk_test *ts, int argc, char *argv[])
 				printf("%s: %ju\n", name, num);
 			break;
 		}
-		case 1: /* item unssuported by label -- ignore */
+		case 1: /* item unsuported by label -- ignore */
 			rc = 0;
 			break;
 		case 2:	/* end (out of range) */

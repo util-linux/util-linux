@@ -67,7 +67,7 @@ static int is_dm_devname(char *canonical, char **name)
 }
 
 /*
- * This function does not cannonicalize the path! It just prepends CWD before a
+ * This function does not canonicalize the path! It just prepends CWD before a
  * relative path. If the path is no relative than returns NULL. The path does
  * not have to exist.
  */

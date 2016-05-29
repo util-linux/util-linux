@@ -136,7 +136,7 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 			   &p->shm_ctim,
 			   &p->shm_rss,
 			   &p->shm_swp) < 14)
-			continue; /* ivalid line, skipped */
+			continue; /* invalid line, skipped */
 
 		if (id > -1) {
 			/* ID specified */

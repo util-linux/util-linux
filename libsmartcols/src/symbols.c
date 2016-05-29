@@ -108,7 +108,7 @@ int scols_symbols_set_right(struct libscols_symbols *sb, const char *str)
  * @sb: a pointer to a struct libscols_symbols instance
  * @str: a string which will represent the symbols which wraps title output
  *
- * The current implemetation uses only the first byte from the padding string.
+ * The current implementation uses only the first byte from the padding string.
  * A multibyte chars are not supported yet.
  *
  * Returns: 0, a negative value in case of an error.
@@ -124,7 +124,7 @@ int scols_symbols_set_title_padding(struct libscols_symbols *sb, const char *str
  * scols_copy_symbols:
  * @sb: a pointer to a struct libscols_symbols instance
  *
- * Returns: a newly allocated copy of the @sb symbol group or NULL in caes of an error.
+ * Returns: a newly allocated copy of the @sb symbol group or NULL in case of an error.
  */
 struct libscols_symbols *scols_copy_symbols(const struct libscols_symbols *sb)
 {

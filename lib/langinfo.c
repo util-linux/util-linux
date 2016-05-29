@@ -1,6 +1,6 @@
 /*
  * This is callback solution for systems without nl_langinfo(), this function
- * returns hardcoded and on locale setting independed value.
+ * returns hardcoded and on locale setting indepndent value.
  *
  * See langinfo.h man page for more details.
  *

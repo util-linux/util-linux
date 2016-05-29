@@ -128,7 +128,7 @@ int blkid_send_uevent(const char *devname, const char *action)
 			DBG(EVALUATE, ul_debug("write failed: %s", uevent));
 	}
 	DBG(EVALUATE, ul_debug("%s: send uevent %s",
-			uevent, rc == 0 ? "SUCCES" : "FAILED"));
+			uevent, rc == 0 ? "SUCCESS" : "FAILED"));
 	return rc;
 }
 

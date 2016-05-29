@@ -156,7 +156,7 @@ struct libscols_table {
 	unsigned int	ascii		:1,	/* don't use unicode */
 			colors_wanted	:1,	/* enable colors */
 			is_term		:1,	/* isatty() */
-			maxout		:1,	/* maximalize output */
+			maxout		:1,	/* maximize output */
 			header_printed  :1,	/* header already printed */
 			no_headings	:1,	/* don't print header */
 			no_linesep	:1,	/* don't print line separator */

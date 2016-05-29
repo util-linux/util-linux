@@ -1013,7 +1013,7 @@ err:
 }
 
 /*
- * Search for @name kernel command parametr.
+ * Search for @name kernel command parameter.
  *
  * Returns newly allocated string with a parameter argument if the @name is
  * specified as "name=" or returns pointer to @name or returns NULL if not

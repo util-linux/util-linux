@@ -86,7 +86,7 @@ char *blkid_get_cache_filename(struct blkid_config *conf)
  * @cache: pointer to return cache handler
  * @filename: path to the cache file or NULL for the default path
  *
- * Allocates and initialize librray cache handler.
+ * Allocates and initialize library cache handler.
  *
  * Returns: 0 on success or number less than zero in case of error.
  */

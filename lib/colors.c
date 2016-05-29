@@ -265,7 +265,7 @@ static int colors_readdir(struct ul_color_ctl *cc, const char *dirname)
 				       &tk_term, &tk_termsz, &type) != 0)
 			continue;
 
-		/* count teoretical score before we check names to avoid
+		/* count theoretical score before we check names to avoid
 		 * unnecessary strcmp() */
 		if (tk_name)
 			score += 20;
@@ -400,7 +400,7 @@ static int cn_sequence(const char *str, char **seq)
 			*out++ = '#';	/* Hash mark */
 			break;
 		case '?':
-			*out++ = '?';	/* Qestion mark */
+			*out++ = '?';	/* Question mark */
 			break;
 		default:
 			*out++ = *in;

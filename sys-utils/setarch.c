@@ -274,7 +274,7 @@ int main(int argc, char *argv[])
 		OPT_LIST
 	};
 
-	/* Options --3gb and --4gb are for compatibitity with an old
+	/* Options --3gb and --4gb are for compatibility with an old
 	 * Debian setarch implementation.  */
 	static const struct option longopts[] = {
 		{"help",		no_argument,	NULL,	'h'},

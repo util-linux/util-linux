@@ -164,7 +164,7 @@ err:
  * stored in context->utab and deallocated by mnt_free_context().
  *
  * This function exists to avoid (if possible) /proc/self/mountinfo usage, so
- * don't use thigs like mnt_resolve_target(), mnt_context_get_mtab() etc here.
+ * don't use things like mnt_resolve_target(), mnt_context_get_mtab() etc here.
  * See lookup_umount_fs() for more details.
  */
 static int has_utab_entry(struct libmnt_context *cxt, const char *target)

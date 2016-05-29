@@ -188,7 +188,7 @@ static void create_nthreads(process_t *proc, size_t index)
 	}
 
 	if (ncreated != nthreads)
-		fprintf(stderr, "%d: %zu threads not craeted and ~%zu objects will be ignored\n",
+		fprintf(stderr, "%d: %zu threads not created and ~%zu objects will be ignored\n",
 				proc->pid, nthreads - ncreated,
 				(nthreads - ncreated) * nobjects);
 

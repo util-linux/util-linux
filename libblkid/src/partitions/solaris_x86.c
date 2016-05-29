@@ -19,7 +19,7 @@
  * offset (start) of the slice is always relatively to the primary dos
  * partition.
  *
- * Note that Solaris-SPARC uses entire disk with a different partitionning
+ * Note that Solaris-SPARC uses entire disk with a different partitioning
  * scheme.
  */
 
@@ -61,7 +61,7 @@ static int probe_solaris_pt(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct solaris_vtoc *l;	/* disk label */
-	struct solaris_slice *p;	/* partitsion */
+	struct solaris_slice *p;	/* partition */
 	blkid_parttable tab = NULL;
 	blkid_partition parent;
 	blkid_partlist ls;

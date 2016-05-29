@@ -623,7 +623,7 @@ static char *get_subsystem(char *chain, char *buf, size_t bufsz)
 }
 
 /*
- * Returns complete path to the device, the patch contains all all sybsystems
+ * Returns complete path to the device, the patch contains all all subsystems
  * used for the device.
  */
 char *sysfs_get_devchain(struct sysfs_cxt *cxt, char *buf, size_t bufsz)
@@ -741,7 +741,7 @@ static int get_dm_wholedisk(struct sysfs_cxt *cxt, char *diskname,
 }
 
 /*
- * Returns by @diskdevno whole disk device devno and (optionaly) by
+ * Returns by @diskdevno whole disk device devno and (optionally) by
  * @diskname the whole disk device name.
  */
 int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
@@ -758,7 +758,7 @@ int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
         /*
          * Extra case for partitions mapped by device-mapper.
          *
-         * All regualar partitions (added by BLKPG ioctl or kernel PT
+         * All regular partitions (added by BLKPG ioctl or kernel PT
          * parser) have the /sys/.../partition file. The partitions
          * mapped by DM don't have such file, but they have "part"
          * prefix in DM UUID.

@@ -33,7 +33,7 @@ static void setup_columns(struct libscols_table *tb)
 	return;
 fail:
 	scols_unref_table(tb);
-	err(EXIT_FAILURE, "faild to create output columns");
+	err(EXIT_FAILURE, "failed to create output columns");
 }
 
 static void add_line(struct libscols_table *tb, const char *name, const char *data)
@@ -49,7 +49,7 @@ static void add_line(struct libscols_table *tb, const char *name, const char *da
 	return;
 fail:
 	scols_unref_table(tb);
-	err(EXIT_FAILURE, "faild to create output line");
+	err(EXIT_FAILURE, "failed to create output line");
 }
 
 int main(int argc, char *argv[])
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
 
 	tb = scols_new_table();
 	if (!tb)
-		err(EXIT_FAILURE, "faild to create output table");
+		err(EXIT_FAILURE, "failed to create output table");
 
 	scols_table_enable_colors(tb, 1);
 	setup_columns(tb);
