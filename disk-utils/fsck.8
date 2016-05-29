@@ -113,7 +113,7 @@ example:
 GUI front-ends may specify a file descriptor
 .IR fd ,
 in which case the progress bar information will be sent to that file descriptor
-in a machine parseable format.  For example:
+in a machine parsable format.  For example:
 
 /dev/sda1 0 92828 4.002804 2.677592 0.86186
 .TP
@@ -238,7 +238,7 @@ multiple filesystem checks on the same physical disk.
 .B fsck
 does not check stacked devices (RAIDs, dm-crypt, \&...\&) in parallel with any other
 device.  See below for FSCK_FORCE_ALL_PARALLEL setting.  The /sys filesystem is
-used to detemine dependencies between devices.
+used to determine dependencies between devices.
 .sp
 Hence, a very common configuration in
 .I /etc/fstab

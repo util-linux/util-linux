@@ -1372,7 +1372,7 @@ has gone wrong.
 .BR ssd | nossd | ssd_spread
 Options to control ssd allocation schemes.  By default, BTRFS will
 enable or disable ssd allocation heuristics depending on whether a
-rotational or nonrotational disk is in use.  The \fBssd\fR and
+rotational or non-rotational disk is in use.  The \fBssd\fR and
 \fBnossd\fR options can override this autodetection.
 
 The \fBssd_spread\fR mount option attempts to allocate into big chunks
@@ -1923,7 +1923,7 @@ normal check is too inflexible.  With this option you can relax it.
 .RE
 .TP
 .BI check= value
-Three different levels of pickiness can be chosen:
+Three different levels of pickyness can be chosen:
 .RS
 .TP
 .BR r [ elaxed ]
@@ -2029,13 +2029,13 @@ spurious
 errors.
 
 .BR nostale_ro :
-This option bases the inode number and filehandle
+This option bases the inode number and file handle
 on the on-disk location of a file in the FAT directory entry.
 This ensures that
 .B ESTALE
 will not be returned after a file is
 evicted from the inode cache.  However, it means that operations
-such as rename, create and unlink could cause filehandles that
+such as rename, create and unlink could cause file handles that
 previously pointed at one file to point at a different file,
 potentially causing data corruption.  For this reason, this
 option also mounts the filesystem readonly.

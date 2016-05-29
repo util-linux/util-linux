@@ -26,13 +26,13 @@ UUID= tags instead of hard-coding specific block device names into
 configuration files.
     </para>
     <para>
-The libblkid librray
-was written by Andreas Dilger for the ext2 filesystem utilties, with input
+The libblkid library
+was written by Andreas Dilger for the ext2 filesystem utilities, with input
 from Ted Ts'o.  The library was subsequently heavily modified by Ted Ts'o.
     </para>
     <para>
 The low-level probing code, topology and partitions support was written
-by Karel Zak. Currently, the library is mainatned by Karel Zak.
+by Karel Zak. Currently, the library is maintained by Karel Zak.
     </para>
     <para>
 The library is part of the util-linux package since version 2.15 and is

@@ -35,7 +35,7 @@ available from ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
     <xi:include href="xml/script.xml"/>
   </part>
    <part>
-    <title>Partitining</title>
+    <title>Partitioning</title>
     <xi:include href="xml/label.xml"/>
     <xi:include href="xml/partition.xml"/>
     <xi:include href="xml/table.xml"/>
