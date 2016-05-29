@@ -76,7 +76,15 @@ ts_finalize_subtest
 
 
 ts_init_subtest "attrs"
-$TS_CMD_SFDISK --part-attrs ${TS_DEVICE} 2 "RequiredPartiton,NoBlockIOProtocol,48,51" >> $TS_OUTPUT 2>&1 
+$TS_CMD_SFDISK --part-attrs ${TS_DEVICE} 2 "RequiredPartition,NoBlockIOProtocol,48,51" >> $TS_OUTPUT 2>&1
+$TS_CMD_SFDISK --part-attrs ${TS_DEVICE} 2 >> $TS_OUTPUT 2>&1
+echo -e 'x\nD\n' | $TS_CMD_FDISK ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+ts_fdisk_clean $TS_DEVICE
+udevadm settle
+ts_finalize_subtest
+
+ts_init_subtest "attrs-with-typo"
+$TS_CMD_SFDISK --part-attrs ${TS_DEVICE} 2 "RequiredPartiton,NoBlockIOProtocol,48,51" >> $TS_OUTPUT 2>&1
 $TS_CMD_SFDISK --part-attrs ${TS_DEVICE} 2 >> $TS_OUTPUT 2>&1
 echo -e 'x\nD\n' | $TS_CMD_FDISK ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 ts_fdisk_clean $TS_DEVICE

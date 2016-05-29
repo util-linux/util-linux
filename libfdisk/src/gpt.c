@@ -85,7 +85,8 @@ enum {
 	GPT_ATTRBIT_GUID_COUNT	= 16
 };
 
-#define GPT_ATTRSTR_REQ		"RequiredPartiton"
+#define GPT_ATTRSTR_REQ		"RequiredPartition"
+#define GPT_ATTRSTR_REQ_TYPO	"RequiredPartiton"
 #define GPT_ATTRSTR_NOBLOCK	"NoBlockIOProtocol"
 #define GPT_ATTRSTR_LEGACY	"LegacyBIOSBootable"
 
@@ -1591,6 +1592,10 @@ static int gpt_entry_attrs_from_string(
 					sizeof(GPT_ATTRSTR_REQ) - 1) == 0) {
 			bit = GPT_ATTRBIT_REQ;
 			p += sizeof(GPT_ATTRSTR_REQ) - 1;
+		} else if (strncmp(p, GPT_ATTRSTR_REQ_TYPO,
+					sizeof(GPT_ATTRSTR_REQ_TYPO) - 1) == 0) {
+			bit = GPT_ATTRBIT_REQ;
+			p += sizeof(GPT_ATTRSTR_REQ_TYPO) - 1;
 		} else if (strncmp(p, GPT_ATTRSTR_LEGACY,
 					sizeof(GPT_ATTRSTR_LEGACY) - 1) == 0) {
 			bit = GPT_ATTRBIT_LEGACY;

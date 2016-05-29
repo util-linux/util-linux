@@ -31,6 +31,19 @@ $TS_CMD_SFDISK --unit S ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>&1 <<EOF
 label: gpt
 label-id: b181c399-4711-4c52-8b65-9e764541218d
 
+size=5M, attrs="RequiredPartition,48"
+attrs="52,53,62"
+EOF
+ts_fdisk_clean ${TEST_IMAGE_NAME}
+ts_finalize_subtest
+
+TEST_IMAGE_NAME=$(ts_image_init 10)
+
+ts_init_subtest "all-defaults-with-typo"
+$TS_CMD_SFDISK --unit S ${TEST_IMAGE_NAME} >> $TS_OUTPUT 2>&1 <<EOF
+label: gpt
+label-id: b181c399-4711-4c52-8b65-9e764541218d
+
 size=5M, attrs="RequiredPartiton,48"
 attrs="52,53,62"
 EOF
