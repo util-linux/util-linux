@@ -573,8 +573,12 @@ read_superblock(void) {
 		die(_("bad magic number in super-block"));
 	if (get_zone_size() != 0 || MINIX_BLOCK_SIZE != 1024)
 		die(_("Only 1k blocks/zones supported"));
+	if (get_ninodes() == 0 || get_ninodes() == UINT32_MAX)
+		die(_("bad s_ninodes field in super-block"));
 	if (get_nimaps() * MINIX_BLOCK_SIZE * 8 < get_ninodes() + 1)
 		die(_("bad s_imap_blocks field in super-block"));
+	if (get_first_zone() > (off_t) get_nzones())
+		die(_("bad s_firstdatazone field in super-block"));
 	if (get_nzmaps() * MINIX_BLOCK_SIZE * 8 <
 	    get_nzones() - get_first_zone() + 1)
 		die(_("bad s_zmap_blocks field in super-block"));
