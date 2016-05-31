@@ -219,6 +219,7 @@ struct cal_month {
 
 /* function prototypes */
 static int leap_year(int32_t year);
+static int monthname_to_number(struct cal_control *ctl, const char *name);
 static void headers_init(struct cal_control *ctl);
 static void cal_fill_month(struct cal_month *month, const struct cal_control *ctl);
 static void cal_output_header(struct cal_month *month, const struct cal_control *ctl);
@@ -411,7 +412,10 @@ int main(int argc, char **argv)
 			errx(EXIT_FAILURE, _("illegal day value: use 1-%d"), DAYS_IN_MONTH);
 		/* FALLTHROUGH */
 	case 2:
-		ctl.req.month = strtos32_or_err(*argv++, _("illegal month value: use 1-12"));
+		if (isdigit(**argv))
+			ctl.req.month = strtos32_or_err(*argv++, _("illegal month value: use 1-12"));
+		else
+			ctl.req.month = monthname_to_number(&ctl, *argv++);
 		if (ctl.req.month < 1 || MONTHS_IN_YEAR < ctl.req.month)
 			errx(EXIT_FAILURE, _("illegal month value: use 1-12"));
 		/* FALLTHROUGH */
@@ -509,6 +513,30 @@ static int leap_year(int32_t year)
 		return ( !(year % 4) && (year % 100) ) || !(year % 400);
 }
 
+static void init_monthnames(struct cal_control *ctl)
+{
+	size_t i;
+
+	if (ctl->full_month[0] != '\0')
+		return;		/* already initialized */
+
+	for (i = 0; i < MONTHS_IN_YEAR; i++)
+		ctl->full_month[i] = nl_langinfo(MON_1 + i);
+}
+
+static int monthname_to_number(struct cal_control *ctl, const char *name)
+{
+	size_t i;
+
+	init_monthnames(ctl);
+
+	for (i = 0; i < MONTHS_IN_YEAR; i++)
+		if (strcasecmp(ctl->full_month[i], name) == 0)
+			return i + 1;
+
+	errx(EXIT_FAILURE, _("unknown month name: %s"), name);
+}
+
 static void headers_init(struct cal_control *ctl)
 {
 	size_t i, wd;
@@ -537,8 +565,9 @@ static void headers_init(struct cal_control *ctl)
 				     space_left, ctl->day_width - 1);
 	}
 
+	init_monthnames(ctl);
+
 	for (i = 0; i < MONTHS_IN_YEAR; i++) {
-		ctl->full_month[i] = nl_langinfo(MON_1 + i);
 		/* The +1 after year_len is space in between month and year. */
 		if (ctl->week_width < strlen(ctl->full_month[i]) + year_len + 1)
 			ctl->header_hint = 1;
