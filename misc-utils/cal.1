@@ -41,6 +41,10 @@ cal \- display a calendar
 .B cal
 [options]
 .RI [[[ day ] " month" ] " year" ]
+.br
+.B cal
+[options]
+.RI <timestamp>
 .SH DESCRIPTION
 .B cal
 displays a simple calendar.  If no arguments are specified, the current
@@ -48,6 +52,19 @@ month is displayed.
 .sp
 The \fImonth\fR may be specified as a number (1-12) or as a month name according
 to the current locales.
+.sp
+.B cal
+accepts special placeholders when parsing \fItimestamp\fR, "now" may be used to
+refer to the current time, "today", "yesterday", "tomorrow" refer to
+of the current day, the day before or the next day, respectively.
+.sp
+The relative date specifications are also accepted, in this case "+" is
+evaluated to the current time plus the specified time span. Correspondingly, a
+time span that is prefixed with "-" is evaluated to the current time minus the
+specified time span, for example '+2days'. Instead of prefixing the time span
+with "+" or "-", it may also be suffixed with a space and the word "left" or
+"ago" (for example '1 week ago').
+
 .SH OPTIONS
 .TP
 \fB\-1\fR, \fB\-\-one\fR

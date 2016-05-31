@@ -74,6 +74,7 @@
 #include "mbsalign.h"
 #include "strutils.h"
 #include "optutils.h"
+#include "timeutils.h"
 
 static int has_term = 0;
 static const char *Senter = "", *Sexit = "";	/* enter and exit standout mode */
@@ -402,7 +403,16 @@ int main(int argc, char **argv)
 	} else
 		ctl.week_width = ctl.day_width * DAYS_IN_WEEK;
 
-	time(&now);
+	if (argc == 1 && !isdigit_string(*argv)) {
+		usec_t x;
+		if (parse_timestamp(*argv, &x) == 0)
+			now = (time_t) (x / 1000000);
+		else
+			errx(EXIT_FAILURE, _("failed to parse timestamp"));
+		argc = 0;
+	} else
+		time(&now);
+
 	local_time = localtime(&now);
 
 	switch(argc) {
