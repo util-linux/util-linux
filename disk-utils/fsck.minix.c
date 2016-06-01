@@ -296,6 +296,16 @@ check_mount(void) {
 	return;
 }
 
+
+static int is_valid_zone_nr(unsigned short nr)
+{
+	if (nr < get_first_zone())
+		return 0;
+	else if (nr >= get_nzones())
+		return 0;
+	return 1;
+}
+
 /* check_zone_nr checks to see that *nr is a valid zone nr.  If it isn't, it
  * will possibly be repaired.  Check_zone_nr sets *corrected if an error was
  * corrected, and returns the zone (0 for no zone or a bad zone-number).  */
@@ -1086,6 +1096,12 @@ recursive_check(unsigned int ino) {
 		get_current_name();
 		printf(_("%s: bad directory: size < 32"), current_name);
 		errors_uncorrected = 1;
+	}
+
+	if ((!repair || automatic) && !is_valid_zone_nr(*dir->i_zone)) {
+		get_current_name();
+		printf(_("%s: bad directory: invalid i_zone, use --repair to fix\n"), current_name);
+		return;
 	}
 	for (offset = 0; offset < dir->i_size; offset += dirsize)
 		check_file(dir, offset);
