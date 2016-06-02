@@ -1255,7 +1255,7 @@ static int initialize_printing(struct libscols_table *tb, struct libscols_buffer
 
 	if (tb->is_term) {
 		tb->termwidth = get_terminal_width(80);
-		if (tb->termreduce < tb->termwidth)
+		if (tb->termreduce > 0 && tb->termreduce < tb->termwidth)
 			tb->termwidth -= tb->termreduce;
 		bufsz = tb->termwidth;
 	} else

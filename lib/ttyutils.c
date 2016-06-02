@@ -15,11 +15,11 @@ int get_terminal_width(int default_width)
 
 #if defined(TIOCGWINSZ)
 	struct winsize	w_win;
-	if (ioctl (STDIN_FILENO, TIOCGWINSZ, &w_win) == 0)
+	if (ioctl (STDOUT_FILENO, TIOCGWINSZ, &w_win) == 0)
 		width = w_win.ws_col;
 #elif defined(TIOCGSIZE)
 	struct ttysize	t_win;
-	if (ioctl (STDIN_FILENO, TIOCGSIZE, &t_win) == 0)
+	if (ioctl (STDOUT_FILENO, TIOCGSIZE, &t_win) == 0)
 		width = t_win.ts_cols;
 #endif
 
