@@ -882,11 +882,12 @@ int sysfs_scsi_get_hctl(struct sysfs_cxt *cxt, int *h, int *c, int *t, int *l)
 	char buf[PATH_MAX], *hctl;
 	ssize_t len;
 
-	if (!cxt)
+	if (!cxt || cxt->hctl_error)
 		return -EINVAL;
 	if (cxt->has_hctl)
 		goto done;
 
+	cxt->hctl_error = 1;
 	len = sysfs_readlink(cxt, "device", buf, sizeof(buf) - 1);
 	if (len < 0)
 		return len;
@@ -911,6 +912,8 @@ done:
 		*t = cxt->scsi_target;
 	if (l)
 		*l = cxt->scsi_lun;
+
+	cxt->hctl_error = 0;
 	return 0;
 }
 

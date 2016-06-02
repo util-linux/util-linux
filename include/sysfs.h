@@ -27,7 +27,8 @@ struct sysfs_cxt {
 			scsi_target,
 			scsi_lun;
 
-	unsigned int	has_hctl : 1;
+	unsigned int	has_hctl   : 1,
+			hctl_error : 1 ;
 };
 
 #define UL_SYSFSCXT_EMPTY { 0, -1, NULL, NULL, 0, 0, 0, 0, 0 }
