@@ -758,7 +758,9 @@ static char *get_transport(struct blkdev_cxt *cxt)
 		else if (strstr(attr, "ata"))
 			trans = "ata";
 		free(attr);
-	}
+
+	} else if (strncmp(cxt->name, "nvme", 4) == 0)
+		trans = "nvme";
 
 	return trans ? xstrdup(trans) : NULL;
 }
@@ -1001,6 +1003,8 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 			get_udev_properties(cxt);
 			if (cxt->serial)
 				str = xstrdup(cxt->serial);
+			else
+				str = sysfs_strdup(&cxt->sysfs, "device/serial");
 		}
 		break;
 	case COL_REV:
