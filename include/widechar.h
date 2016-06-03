@@ -13,7 +13,9 @@
   /* Fallback for types */
 # define wchar_t char
 # define wint_t int
-# define WEOF EOF
+# ifndef WEOF
+#  define WEOF EOF
+# endif
 
  /* Fallback for input operations */
 # define fgetwc fgetc
