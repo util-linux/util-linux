@@ -25,7 +25,6 @@
 #include <ctype.h>
 
 #include "nls.h"
-#include "widechar.h"
 #include "smartcolsP.h"
 
 #ifdef HAVE_WIDECHAR

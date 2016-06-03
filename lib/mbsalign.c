@@ -351,7 +351,12 @@ mbsalign (const char *src, char *dest, size_t dest_size,
 
 size_t
 mbsalign_with_padding (const char *src, char *dest, size_t dest_size,
-	               size_t *width, mbs_align_t align, int flags,
+	               size_t *width, mbs_align_t align,
+#ifdef HAVE_WIDECHAR
+		       int flags,
+#else
+		       int flags __attribute__((__unused__)),
+#endif
 		       int padchar)
 {
   size_t ret = -1;

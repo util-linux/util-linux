@@ -22,9 +22,7 @@
 #include <termios.h>
 #include <ctype.h>
 
-#include "nls.h"
 #include "mbsalign.h"
-#include "widechar.h"
 #include "ttyutils.h"
 #include "carefulputc.h"
 #include "smartcolsP.h"
