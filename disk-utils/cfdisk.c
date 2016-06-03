@@ -356,6 +356,10 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 	scols_table_enable_maxout(table, 1);
 	scols_table_enable_nowrap(table, 1);
 
+#if !defined(HAVE_LIBNCURSESW) || !defined(HAVE_WIDECHAR)
+	scols_table_enable_ascii(table, 1);
+#endif
+
 	/* headers */
 	for (i = 0; i < cf->nfields; i++) {
 		int fl = 0;
