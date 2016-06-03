@@ -437,7 +437,7 @@ int mnt_fs_streq_srcpath(struct libmnt_fs *fs, const char *path)
 	p = mnt_fs_get_srcpath(fs);
 
 	if (!mnt_fs_is_pseudofs(fs))
-		return streq_except_trailing_slash(p, path);
+		return streq_except_redundant_slashes(p, path);
 
 	if (!p && !path)
 		return 1;

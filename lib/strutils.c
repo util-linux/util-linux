@@ -780,6 +780,42 @@ int streq_except_trailing_slash(const char *s1, const char *s2)
 	return equal;
 }
 
+/*
+ * Compare two strings for equality, ignoring at most one trailing
+ * slash, and furthermore if there are double slashes right after
+ * the ':' in the string, it ignores them. That is, these strings
+ * are equal:
+ *   host:/path
+ *   host://path
+ *   host:/path/
+ *   host://path/
+ */
+int streq_except_redundant_slashes(const char *s1, const char *s2)
+{
+	const char *l1, *l2;
+
+	if (!s1 && !s2)
+		return 1;
+	if (!s1 || !s2)
+		return 0;
+
+	if ((l1 = strchr(s1, ':'))
+		&& (l2 = strchr(s2, ':'))
+		&& ((l1 - s1) == (l2 - s2))) {
+
+		if (strncmp(s1, s2, l1 - s1))
+			return 0;
+
+		l1++;
+		l2++;
+
+		if (*l1 == '/' && *(l1+1) == '/') l1++;
+		if (*l2 == '/' && *(l2+1) == '/') l2++;
+
+		return (streq_except_trailing_slash(l1, l2));
+	} else
+		return (streq_except_trailing_slash(s1, s2));
+}
 
 char *strnappend(const char *s, const char *suffix, size_t b)
 {
