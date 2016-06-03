@@ -248,6 +248,43 @@ AC_DEFUN([UL_REQUIRES_HAVE], [
   fi
 ])
 
+dnl UL_REQUIRES_HAVE(NAME, PROGRAM_PROLOGUE, PROGRAM_BODY, DESC, [VARSUFFIX=$1])
+dnl
+dnl Modifies $build_<name> variable according to $enable_<name> and
+dnl ability compile AC_LANG_PROGRAM(<program_prologue>, <program_body>).  
+dnl
+dnl The <desc> is description used for warning/error dnl message (e.g. "foo support").
+dnl
+dnl The default <name> for $build_ and $enable_ could be overwrited by option $5.
+
+AC_DEFUN([UL_REQUIRES_COMPILE], [
+  m4_define([suffix], m4_default([$5],$1))
+
+  if test "x$[build_]suffix" != xno; then
+
+    AC_MSG_CHECKING([$4])
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([$2], [$3])],
+	[AC_MSG_RESULT([yes])
+	 [ul_haveprogram_]suffix=yes],
+	[AC_MSG_RESULT([no])
+	 [ul_haveprogram_]suffix=no])
+
+    case $[enable_]suffix:$[ul_haveprogram_]suffix in #(
+    no:*)
+      [build_]suffix=no ;;
+    yes:yes)
+      [build_]suffix=yes ;;
+    yes:*)
+      AC_MSG_ERROR([$1 selected, but required $4 not available]);;
+    check:yes)
+      [build_]suffix=yes ;;
+    check:*)
+      AC_MSG_WARN([$4 not found; not building $1])
+      [build_]suffix=no ;;
+    esac
+  fi
+])
+
 dnl
 dnl UL_CONFLICTS_BUILD(NAME, ANOTHER, ANOTHERDESC, [VARSUFFIX=$1])
 dnl
