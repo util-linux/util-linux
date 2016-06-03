@@ -190,11 +190,6 @@ struct {
 } context, screen_start;
 extern char PC;			/* pad character */
 
-#ifdef HAVE_NCURSES_H
-# include <ncurses.h>
-#elif defined(HAVE_NCURSES_NCURSES_H)
-# include <ncurses/ncurses.h>
-#endif
 #include <term.h>		/* include after <curses.h> */
 
 #define TERM_AUTO_RIGHT_MARGIN    "am"
@@ -1007,6 +1002,7 @@ void clreos(void)
 }
 
 
+#ifdef HAVE_WIDECHAR
 static UL_ASAN_BLACKLIST size_t xmbrtowc(wchar_t *wc, const char *s, size_t n,
 				  mbstate_t *mbstate)
 {
@@ -1015,6 +1011,7 @@ static UL_ASAN_BLACKLIST size_t xmbrtowc(wchar_t *wc, const char *s, size_t n,
 		return 1;
 	return mblength;
 }
+#endif
 
 /* Print a buffer of n characters */
 void prbuf(register char *s, register int n)
