@@ -633,20 +633,30 @@ AC_CHECK_TYPES([union semun], [], [], [[
 ]])
 AC_CHECK_TYPES([loff_t])
 
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#include <wchar.h>
-#include <wctype.h>
-#include <stdio.h>
-]], [[
-  wchar_t wc;
-  wint_t w;
-  w = fgetwc(stdin);
-  if (w == WEOF) exit(1);
-  wc = w;
-  fputwc(wc,stdout);
-]])],
-[AC_DEFINE([HAVE_WIDECHAR], [1], [Do we have wide character support?])
+
+AC_ARG_ENABLE([widechar],
+  AS_HELP_STRING([--disable-widechar], [do not compile wide character support]),
+  [], [enable_widechar=check]
+)
+UL_BUILD_INIT([widechar])
+UL_REQUIRES_COMPILE([widechar], [[
+  #include <wchar.h>
+  #include <wctype.h>
+  #include <stdio.h>
+  ]], [[
+    wchar_t wc;
+    wint_t w;
+    w = fgetwc(stdin);
+    if (w == WEOF) exit(1);
+    wc = w;
+    fputwc(wc,stdout);
+  ]],
+  [wchar_t support])
+
+AS_IF([test "x$build_widechar" = xyes ], [
+  AC_DEFINE([HAVE_WIDECHAR], [1], [Do we have wide character support?])
 ])
+
 
 AC_CHECK_TYPES([cpu_set_t], [have_cpu_set_t=yes], [], [[
 #include <sched.h>
