@@ -565,7 +565,7 @@ AC_CACHE_VAL([scanf_cv_alloc_modifier],
      #include <stdio.h>
      #include <unistd.h>
 
-     #ifdef __GLIBC__
+     #if defined(__GLIBC__) && !defined(__UCLIBC__)
 
      #if !(__GLIBC_PREREQ(2, 7))
      #error %m is not available
