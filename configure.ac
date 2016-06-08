@@ -765,68 +765,51 @@ AS_IF([test "x$with_udev" = xno], [
   )
 ])
 
-AC_ARG_WITH([ncurses],
-  AS_HELP_STRING([--with-ncurses], [build with non-wide ncurses, default is wide version
-				    (--without-ncurses disables all ncurses(w) support)]),
-  [], [with_ncurses=auto]
-)
-AM_CONDITIONAL([HAVE_NCURSES], [false])
-AS_IF([test "x$with_ncurses" != xno], [
-  have_ncurses=no
 
-  dnl First try to find the pkg-config module.
+dnl wide-char ncurses
+AC_ARG_WITH([ncursesw],
+  AS_HELP_STRING([--with-ncursesw], [build with wide-char ncurses, enabled by default]),
+  [], [with_ncursesw=auto]
+)
+have_ncursesw=no
+AS_IF([test "x$with_ncursesw" != xno], [
   PKG_CHECK_MODULES(NCURSESW, [ncursesw], [
-    have_ncurses=yes
+    have_ncursesw=yes
     NCURSES_LIBS=${NCURSESW_LIBS}
     NCURSES_CFLAGS=${NCURSESW_CFLAGS}
-    AC_DEFINE([HAVE_LIBNCURSESW])
+    AC_DEFINE([HAVE_LIBNCURSESW], [1], [Define if ncursesw library available])
     CURSES_LIB_NAME="ncursesw"
-  ], [
-    PKG_CHECK_MODULES(NCURSES, [ncurses], [
-      have_ncurses=yes
-      AC_DEFINE([HAVE_LIBNCURSES])
-      CURSES_LIB_NAME="ncursesw"
-    ], [:])
+    AC_CHECK_HEADERS([ncursesw/ncurses.h ncurses.h])
   ])
-
-  AS_IF([test "x$have_ncurses" = xyes], [
-    dnl If that worked, setup the defines that the code expects.
-    save_CPPFLAGS="$CPPFLAGS"
-    CPPFLAGS="$CPPFLAGS $NCURSES_CFLAGS"
-    AC_CHECK_HEADERS([ncurses.h])
-    CPPFLAGS="$save_CPPFLAGS"
-  ], [
-    dnl If that failed, fall back to classic searching.
-    AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h], [
-      AS_IF([test "x$with_ncurses" = xauto], [
-	UL_CHECK_LIB([ncursesw], [initscr], [ncurses])
-	AS_IF([test "x$have_ncurses" = xyes], [
-	  AC_CHECK_HEADERS([ncursesw/ncurses.h])
-	  NCURSES_LIBS="-lncursesw"
-	  CURSES_LIB_NAME="ncursesw"
-	])
-      ])
-      AS_IF([test "x$have_ncurses" = xno], [
-	UL_CHECK_LIB(ncurses, initscr)
-	AS_IF([test "x$have_ncurses" = xyes], [
-	  NCURSES_LIBS="-lncurses"
-	  CURSES_LIB_NAME="ncurses"
-	])
-      ])
-    ])
-  ])
-
-  AS_CASE([$with_ncurses:$have_ncurses],
-    [yes:no], [AC_MSG_ERROR([ncurses or ncursesw selected, but library not found])]
-  )
-
 ])
+AS_CASE([$with_ncursesw:$have_ncursesw],
+  [yes:no], [AC_MSG_ERROR([ncursesw selected, but library not found])])
+
+
+dnl non-wide ncurses
+AC_ARG_WITH([ncurses],
+  AS_HELP_STRING([--with-ncurses], [build with non-wide ncurses, disabled by default]),
+  [], [with_ncurses=auto]
+)
+have_ncurses=no
+AS_IF([test "x$have_ncursesw" = xno -a "x$with_ncurses" != xno ], [
+  PKG_CHECK_MODULES(NCURSES, [ncurses], [
+    have_ncurses=yes
+    AC_DEFINE([HAVE_LIBNCURSES], [1], [Define if ncurses library available])
+    CURSES_LIB_NAME="ncurses"
+    AC_CHECK_HEADERS([ncurses/ncurses.h ncurses.h])
+  ])
+])
+AS_CASE([$with_ncurses:$have_ncurses],
+  [yes:no], [AC_MSG_ERROR([ncurses selected, but library not found])])
+
 AC_SUBST([NCURSES_CFLAGS])
 AC_SUBST([NCURSES_LIBS])
+AM_CONDITIONAL([HAVE_NCURSES], [test "x$have_ncursesw" = xyes -o  "x$have_ncurses" = xyes])
 
 
 AC_ARG_WITH([slang],
-  AS_HELP_STRING([--with-slang], [compile cfdisk with slang]),
+  AS_HELP_STRING([--with-slang], [compile cfdisk with slang rather than ncurses]),
   [], [with_slang=no]
 )
 have_slang=no
@@ -848,7 +831,7 @@ AS_IF([test "x$with_slang" = xyes], [
 AM_CONDITIONAL([HAVE_SLANG], [test "x$have_slang" = xyes])
 
 
-AS_IF([test "x$have_slang" = xyes -o "x$have_ncurses" = xyes], [
+AS_IF([test "x$have_slang" = xyes -o "x$have_ncursesw" = xyes -o "x$have_ncurses" = xyes], [
 	AC_CHECK_LIB([$CURSES_LIB_NAME], use_default_colors, [
 		     AC_DEFINE(HAVE_USE_DEFAULT_COLORS, 1,
 			       [Define if curses library has the use_default_colors().])
@@ -1055,7 +1038,7 @@ UL_BUILD_INIT([cfdisk], [check])
 UL_REQUIRES_BUILD([cfdisk], [libfdisk])
 UL_REQUIRES_BUILD([cfdisk], [libsmartcols])
 UL_REQUIRES_HAVE([cfdisk], [open_memstream], [open_memstream function])
-UL_REQUIRES_HAVE([cfdisk], [ncurses,slang], [ncurses or slang library])
+UL_REQUIRES_HAVE([cfdisk], [ncursesw,slang,ncurses], [ncursesw, ncurses or slang library])
 AM_CONDITIONAL([BUILD_CFDISK], [test "x$build_cfdisk" = xyes])
 
 
@@ -1798,7 +1781,7 @@ AC_ARG_ENABLE([ul],
   [], [UL_DEFAULT_ENABLE([ul], [check])]
 )
 UL_BUILD_INIT([ul])
-UL_REQUIRES_HAVE([ul], [ncurses, tinfo], [ncurses or tinfo libraries])
+UL_REQUIRES_HAVE([ul], [ncursesw, tinfo, ncurses], [ncursesw, ncurses or tinfo libraries])
 AM_CONDITIONAL([BUILD_UL], [test "x$build_ul" = xyes])
 
 
@@ -1807,7 +1790,7 @@ AC_ARG_ENABLE([more],
   [], [UL_DEFAULT_ENABLE([more], [check])]
 )
 UL_BUILD_INIT([more])
-UL_REQUIRES_HAVE([more], [ncurses, tinfo, termcap], [ncurses, tinfo or termcap libraries])
+UL_REQUIRES_HAVE([more], [ncursesw, tinfo, ncurses, termcap], [ncursesw, ncurses, tinfo or termcap libraries])
 AM_CONDITIONAL([BUILD_MORE], [test "x$build_more" = xyes])
 
 
@@ -1816,7 +1799,7 @@ AC_ARG_ENABLE([pg],
   [], [UL_DEFAULT_ENABLE([pg], [check])]
 )
 UL_BUILD_INIT([pg])
-UL_REQUIRES_HAVE([pg], [ncurses], [ncurses or ncursesw library])
+UL_REQUIRES_HAVE([pg], [ncursesw, ncurses], [ncurses or ncursesw library])
 AM_CONDITIONAL([BUILD_PG], [test "x$build_pg" = xyes])
 
 
@@ -1826,7 +1809,7 @@ AC_ARG_ENABLE([setterm],
 )
 UL_BUILD_INIT([setterm])
 UL_REQUIRES_LINUX([setterm])
-UL_REQUIRES_HAVE([setterm], [ncurses], [ncurses library])
+UL_REQUIRES_HAVE([setterm], [ncursesw, ncurses], [ncurses or ncurses library])
 AM_CONDITIONAL([BUILD_SETTERM], [test "x$build_setterm" = xyes])
 
 # build_schedutils= is just configure-only variable to control
