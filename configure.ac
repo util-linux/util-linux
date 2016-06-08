@@ -216,7 +216,6 @@ AC_CHECK_HEADERS([ \
 	linux/fd.h \
 	linux/raw.h \
 	linux/tiocl.h \
-	linux/gsmmux.h \
 	linux/version.h \
 	linux/securebits.h \
 	locale.h \
@@ -260,6 +259,12 @@ AC_CHECK_HEADERS([ \
 	unistd.h \
 	shadow.h \
 	utmp.h \
+])
+
+AC_CHECK_HEADERS([linux/gsmmux.h ], [], [],
+ [#ifdef LINUX_GSMMUX_H
+   # include <linux/gsmmux.h>
+   #endif
 ])
 
 AC_CHECK_HEADERS([security/pam_misc.h],
