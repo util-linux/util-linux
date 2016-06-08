@@ -780,7 +780,7 @@ AS_IF([test "x$with_ncursesw" != xno], [
     AC_DEFINE([HAVE_LIBNCURSESW], [1], [Define if ncursesw library available])
     CURSES_LIB_NAME="ncursesw"
     AC_CHECK_HEADERS([ncursesw/ncurses.h ncurses.h])
-  ])
+  ], [have_ncursesw=no])
 ])
 AS_CASE([$with_ncursesw:$have_ncursesw],
   [yes:no], [AC_MSG_ERROR([ncursesw selected, but library not found])])
@@ -806,7 +806,7 @@ AS_IF([test "x$have_ncursesw" = xno -a "x$with_ncurses" != xno ], [
     AC_DEFINE([HAVE_LIBNCURSES], [1], [Define if ncurses library available])
     CURSES_LIB_NAME="ncurses"
     AC_CHECK_HEADERS([ncurses/ncurses.h ncurses.h])
-  ])
+  ],[have_ncurses=no])
 ])
 AS_CASE([$with_ncurses:$have_ncurses],
   [yes:no], [AC_MSG_ERROR([ncurses selected, but library not found])])
