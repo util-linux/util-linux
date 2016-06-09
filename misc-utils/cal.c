@@ -88,7 +88,11 @@ static const char *Senter = "", *Sexit = "";	/* enter and exit standout mode */
 # include <term.h>
 #endif
 
-static int setup_terminal(char *term)
+static int setup_terminal(char *term
+#if !defined(HAVE_LIBNCURSES) && !defined(HAVE_LIBNCURSESW)
+			__attribute__((__unused__))
+#endif
+		)
 {
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
 	int ret;
@@ -109,7 +113,11 @@ static void my_putstring(char *s)
 		fputs(s, stdout);
 }
 
-static const char *my_tgetstr(char *ss)
+static const char *my_tgetstr(char *ss
+	#if !defined(HAVE_LIBNCURSES) && !defined(HAVE_LIBNCURSESW)
+			__attribute__((__unused__))
+#endif
+		)
 {
 	const char *ret = NULL;
 
@@ -238,6 +246,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out);
 int main(int argc, char **argv)
 {
 	struct tm *local_time;
+	char *term;
 	time_t now;
 	int ch = 0, yflag = 0, Yflag = 0;
 	static struct cal_control ctl = {
@@ -284,18 +293,14 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
-	{
-		char *term = getenv("TERM");
-		if (term) {
-			has_term = setup_terminal(term) == 0;
-			if (has_term) {
-				Senter = my_tgetstr("smso");
-				Sexit = my_tgetstr("rmso");
-			}
+	term = getenv("TERM");
+	if (term) {
+		has_term = setup_terminal(term) == 0;
+		if (has_term) {
+			Senter = my_tgetstr("smso");
+			Sexit = my_tgetstr("rmso");
 		}
 	}
-#endif
 
 /*
  * The traditional Unix cal utility starts the week at Sunday,
