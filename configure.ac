@@ -801,10 +801,6 @@ have_ncurses=no
 AS_CASE([$with_ncurses:$build_widechar],
   [yes:yes], [AC_MSG_ERROR([wide-char support enabled, but non-wide ncurses selects])])
 
-AS_CASE([$have_ncursesw:$with_ncurses:$build_widechar],
-  [no:auto:yes],[AC_MSG_WARN( [wide-char support enabled, ncursesw not found, force --without-ncurses])
-                 with_ncurses=no])
-
 AS_IF([test "x$have_ncursesw" = xno -a "x$with_ncurses" != xno ], [
   PKG_CHECK_MODULES(NCURSES, [ncurses], [
     have_ncurses=yes
