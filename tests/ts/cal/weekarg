@@ -23,6 +23,11 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_CAL"
 
+has_ncurses=$( ts_has_ncurses_support )
+if [ "$has_ncurses" != "yes" ]; then
+	ts_skip "without-ncurses"
+fi
+
 export TERM=linux
 
 USETERM=$( ts_has_option "useterm" "$*" )
