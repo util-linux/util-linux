@@ -185,8 +185,6 @@ const struct blkid_chaindrv superblocks_drv = {
  */
 int blkid_probe_enable_superblocks(blkid_probe pr, int enable)
 {
-	if (!pr)
-		return -1;
 	pr->chains[BLKID_CHAIN_SUBLKS].enabled = enable;
 	return 0;
 }
@@ -203,9 +201,6 @@ int blkid_probe_enable_superblocks(blkid_probe pr, int enable)
  */
 int blkid_probe_set_superblocks_flags(blkid_probe pr, int flags)
 {
-	if (!pr)
-		return -1;
-
 	pr->chains[BLKID_CHAIN_SUBLKS].flags = flags;
 	return 0;
 }
@@ -300,9 +295,6 @@ int blkid_known_fstype(const char *fstype)
 {
 	size_t i;
 
-	if (!fstype)
-		return 0;
-
 	for (i = 0; i < ARRAY_SIZE(idinfos); i++) {
 		const struct blkid_idinfo *id = idinfos[i];
 		if (strcmp(id->name, fstype) == 0)
@@ -339,7 +331,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 	size_t i;
 	int rc = BLKID_PROBE_NONE;
 
-	if (!pr || chn->idx < -1)
+	if (chn->idx < -1)
 		return -EINVAL;
 
 	blkid_probe_chain_reset_values(pr, chn);

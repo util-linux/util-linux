@@ -213,8 +213,6 @@ static int blkid_partitions_probe_partition(blkid_probe pr);
  */
 int blkid_probe_enable_partitions(blkid_probe pr, int enable)
 {
-	if (!pr)
-		return -1;
 	pr->chains[BLKID_CHAIN_PARTS].enabled = enable;
 	return 0;
 }
@@ -230,8 +228,6 @@ int blkid_probe_enable_partitions(blkid_probe pr, int enable)
  */
 int blkid_probe_set_partitions_flags(blkid_probe pr, int flags)
 {
-	if (!pr)
-		return -1;
 	pr->chains[BLKID_CHAIN_PARTS].flags = flags;
 	return 0;
 }
@@ -898,7 +894,7 @@ int blkid_known_pttype(const char *pttype)
  */
 int blkid_partlist_numof_partitions(blkid_partlist ls)
 {
-	return ls ? ls->nparts : -1;
+	return ls->nparts;
 }
 
 /**
@@ -910,7 +906,7 @@ int blkid_partlist_numof_partitions(blkid_partlist ls)
  */
 blkid_parttable blkid_partlist_get_table(blkid_partlist ls)
 {
-	if (!ls || list_empty(&ls->l_tabs))
+	if (list_empty(&ls->l_tabs))
 		return NULL;
 
 	return list_entry(ls->l_tabs.next,
@@ -933,7 +929,7 @@ blkid_parttable blkid_partlist_get_table(blkid_partlist ls)
  */
 blkid_partition blkid_partlist_get_partition(blkid_partlist ls, int n)
 {
-	if (!ls || n < 0 || n >= ls->nparts)
+	if (n < 0 || n >= ls->nparts)
 		return NULL;
 
 	return &ls->parts[n];
@@ -954,9 +950,6 @@ blkid_partition blkid_partlist_get_partition_by_partno(blkid_partlist ls, int n)
 {
 	int i, nparts;
 	blkid_partition par;
-
-	if (!ls)
-		return NULL;
 
 	nparts = blkid_partlist_numof_partitions(ls);
 	for (i = 0; i < nparts; i++) {
@@ -986,9 +979,6 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 	struct sysfs_cxt sysfs;
 	uint64_t start, size;
 	int i, rc, partno = 0;
-
-	if (!ls)
-		return NULL;
 
 	DBG(LOWPROBE, ul_debug("trying to convert devno 0x%llx to partition",
 			(long long) devno));
@@ -1136,14 +1126,12 @@ int blkid_partitions_strcpy_ptuuid(blkid_probe pr, char *str)
  */
 const char *blkid_parttable_get_id(blkid_parttable tab)
 {
-	return tab && *tab->id ? tab->id : NULL;
+	return *tab->id ? tab->id : NULL;
 }
 
 
 int blkid_partition_set_type(blkid_partition par, int type)
 {
-	if (!par)
-		return -1;
 	par->type = type;
 	return 0;
 }
@@ -1156,7 +1144,7 @@ int blkid_partition_set_type(blkid_partition par, int type)
  */
 const char *blkid_parttable_get_type(blkid_parttable tab)
 {
-	return tab ? tab->type : NULL;
+	return tab->type;
 }
 
 /**
@@ -1167,7 +1155,7 @@ const char *blkid_parttable_get_type(blkid_parttable tab)
  */
 blkid_partition blkid_parttable_get_parent(blkid_parttable tab)
 {
-	return tab ? tab->parent : NULL;
+	return tab->parent;
 }
 
 /**
@@ -1196,7 +1184,7 @@ blkid_partition blkid_parttable_get_parent(blkid_parttable tab)
  */
 blkid_loff_t blkid_parttable_get_offset(blkid_parttable tab)
 {
-	return tab ? (blkid_loff_t)tab->offset : -1;
+	return (blkid_loff_t)tab->offset;
 }
 
 /**
@@ -1232,7 +1220,7 @@ blkid_loff_t blkid_parttable_get_offset(blkid_parttable tab)
  */
 blkid_parttable blkid_partition_get_table(blkid_partition par)
 {
-	return par ? par->tab : NULL;
+	return par->tab;
 }
 
 static int partition_get_logical_type(blkid_partition par)
@@ -1361,7 +1349,7 @@ int blkid_partition_gen_uuid(blkid_partition par)
  */
 const char *blkid_partition_get_name(blkid_partition par)
 {
-	return par && *par->name ? (char *) par->name : NULL;
+	return *par->name ? (char *) par->name : NULL;
 }
 
 /**
@@ -1372,7 +1360,7 @@ const char *blkid_partition_get_name(blkid_partition par)
  */
 const char *blkid_partition_get_uuid(blkid_partition par)
 {
-	return par && *par->uuid ? par->uuid : NULL;
+	return *par->uuid ? par->uuid : NULL;
 }
 
 /**
@@ -1384,7 +1372,7 @@ const char *blkid_partition_get_uuid(blkid_partition par)
  */
 int blkid_partition_get_partno(blkid_partition par)
 {
-	return par ? par->partno : -1;
+	return par->partno;
 }
 
 /**
@@ -1407,7 +1395,7 @@ int blkid_partition_get_partno(blkid_partition par)
  */
 blkid_loff_t blkid_partition_get_start(blkid_partition par)
 {
-	return par ? (blkid_loff_t)par->start : -1;
+	return (blkid_loff_t)par->start;
 }
 
 /**
@@ -1428,7 +1416,7 @@ blkid_loff_t blkid_partition_get_start(blkid_partition par)
  */
 blkid_loff_t blkid_partition_get_size(blkid_partition par)
 {
-	return par ? (blkid_loff_t)par->size : -1;
+	return (blkid_loff_t)par->size;
 }
 
 /**
@@ -1448,9 +1436,6 @@ int blkid_partition_get_type(blkid_partition par)
 int blkid_partition_set_type_string(blkid_partition par,
 		const unsigned char *type, size_t len)
 {
-	if (!par)
-		return -1;
-
 	set_string((unsigned char *) par->typestr,
 			sizeof(par->typestr), type, len);
 	return 0;
@@ -1461,9 +1446,6 @@ int blkid_partition_set_type_string(blkid_partition par,
  */
 int blkid_partition_set_type_uuid(blkid_partition par, const unsigned char *uuid)
 {
-	if (!par)
-		return -1;
-
 	blkid_unparse_uuid(uuid, par->typestr, sizeof(par->typestr));
 	return 0;
 }
@@ -1480,14 +1462,12 @@ int blkid_partition_set_type_uuid(blkid_partition par, const unsigned char *uuid
  */
 const char *blkid_partition_get_type_string(blkid_partition par)
 {
-	return par && *par->typestr ? par->typestr : NULL;
+	return *par->typestr ? par->typestr : NULL;
 }
 
 
 int blkid_partition_set_flags(blkid_partition par, unsigned long long flags)
 {
-	if (!par)
-		return -1;
 	par->flags = flags;
 	return 0;
 }

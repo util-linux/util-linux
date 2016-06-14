@@ -395,9 +395,6 @@ void blkid_read_cache(blkid_cache cache)
 	int fd, lineno = 0;
 	struct stat st;
 
-	if (!cache)
-		return;
-
 	/*
 	 * If the file doesn't exist, then we just return an empty
 	 * struct so that the cache can be populated.

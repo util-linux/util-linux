@@ -214,9 +214,6 @@ blkid_probe blkid_new_probe_from_filename(const char *filename)
 	int fd = -1;
 	blkid_probe pr = NULL;
 
-	if (!filename)
-		return NULL;
-
 	fd = open(filename, O_RDONLY|O_CLOEXEC);
 	if (fd < 0)
 		return NULL;
@@ -289,7 +286,7 @@ void blkid_probe_chain_reset_values(blkid_probe pr, struct blkid_chain *chn)
 
 	struct list_head *p, *pnext;
 
-	if (!pr || list_empty(&pr->values))
+	if (list_empty(&pr->values))
 		return;
 
 	DBG(LOWPROBE, ul_debug("Resetting %s values", chn->driver->name));
@@ -305,8 +302,7 @@ void blkid_probe_chain_reset_values(blkid_probe pr, struct blkid_chain *chn)
 
 static void blkid_probe_chain_reset_position(struct blkid_chain *chn)
 {
-	if (chn)
-		chn->idx = -1;
+	chn->idx = -1;
 }
 
 /*
@@ -400,9 +396,6 @@ void *blkid_probe_get_binary_data(blkid_probe pr, struct blkid_chain *chn)
 	int rc, org_prob_flags;
 	struct blkid_chain *org_chn;
 
-	if (!pr || !chn)
-		return NULL;
-
 	/* save the current setting -- the binary API has to be completely
 	 * independent on the current probing status
 	 */
@@ -443,9 +436,6 @@ void *blkid_probe_get_binary_data(blkid_probe pr, struct blkid_chain *chn)
 void blkid_reset_probe(blkid_probe pr)
 {
 	int i;
-
-	if (!pr)
-		return;
 
 	blkid_probe_reset_values(pr);
 	blkid_probe_set_wiper(pr, 0, 0);
@@ -490,7 +480,7 @@ unsigned long *blkid_probe_get_filter(blkid_probe pr, int chain, int create)
 {
 	struct blkid_chain *chn;
 
-	if (!pr || chain < 0 || chain >= BLKID_NCHAINS)
+	if (chain < 0 || chain >= BLKID_NCHAINS)
 		return NULL;
 
 	chn = &pr->chains[chain];
@@ -520,9 +510,6 @@ int __blkid_probe_invert_filter(blkid_probe pr, int chain)
 {
 	size_t i;
 	struct blkid_chain *chn;
-
-	if (!pr)
-		return -1;
 
 	chn = &pr->chains[chain];
 
@@ -700,7 +687,7 @@ static void blkid_probe_reset_buffer(blkid_probe pr)
 {
 	uint64_t ct = 0, len = 0;
 
-	if (!pr || list_empty(&pr->buffers))
+	if (list_empty(&pr->buffers))
 		return;
 
 	DBG(BUFFER, ul_debug("Resetting probing buffers pr=%p", pr));
@@ -725,7 +712,7 @@ static void blkid_probe_reset_buffer(blkid_probe pr)
 
 static void blkid_probe_reset_values(blkid_probe pr)
 {
-	if (!pr || list_empty(&pr->values))
+	if (list_empty(&pr->values))
 		return;
 
 	DBG(LOWPROBE, ul_debug("resetting results pr=%p", pr));
@@ -744,7 +731,7 @@ static void blkid_probe_reset_values(blkid_probe pr)
  */
 int blkid_probe_is_tiny(blkid_probe pr)
 {
-	return pr && (pr->flags & BLKID_FL_TINY_DEV);
+	return (pr->flags & BLKID_FL_TINY_DEV);
 }
 
 /*
@@ -752,7 +739,7 @@ int blkid_probe_is_tiny(blkid_probe pr)
  */
 int blkid_probe_is_cdrom(blkid_probe pr)
 {
-	return pr && (pr->flags & BLKID_FL_CDROM_DEV);
+	return (pr->flags & BLKID_FL_CDROM_DEV);
 }
 
 static int is_sector_readable(int fd, uint64_t sector)
@@ -817,9 +804,6 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 {
 	struct stat sb;
 	uint64_t devsiz = 0;
-
-	if (!pr)
-		return -1;
 
 	blkid_reset_probe(pr);
 	blkid_probe_reset_buffer(pr);
@@ -914,9 +898,6 @@ err:
 
 int blkid_probe_get_dimension(blkid_probe pr, uint64_t *off, uint64_t *size)
 {
-	if (!pr)
-		return -1;
-
 	*off = pr->off;
 	*size = pr->size;
 	return 0;
@@ -924,9 +905,6 @@ int blkid_probe_get_dimension(blkid_probe pr, uint64_t *off, uint64_t *size)
 
 int blkid_probe_set_dimension(blkid_probe pr, uint64_t off, uint64_t size)
 {
-	if (!pr)
-		return -1;
-
 	DBG(LOWPROBE, ul_debug(
 		"changing probing area pr=%p: size=%"PRIu64", off=%"PRIu64" "
 		"-to-> size=%"PRIu64", off=%"PRIu64"",
@@ -993,22 +971,18 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 
 static inline void blkid_probe_start(blkid_probe pr)
 {
-	if (pr) {
-		DBG(LOWPROBE, ul_debug("%p: start probe", pr));
-		pr->cur_chain = NULL;
-		pr->prob_flags = 0;
-		blkid_probe_set_wiper(pr, 0, 0);
-	}
+	DBG(LOWPROBE, ul_debug("%p: start probe", pr));
+	pr->cur_chain = NULL;
+	pr->prob_flags = 0;
+	blkid_probe_set_wiper(pr, 0, 0);
 }
 
 static inline void blkid_probe_end(blkid_probe pr)
 {
-	if (pr) {
-		DBG(LOWPROBE, ul_debug("%p: end probe", pr));
-		pr->cur_chain = NULL;
-		pr->prob_flags = 0;
-		blkid_probe_set_wiper(pr, 0, 0);
-	}
+	DBG(LOWPROBE, ul_debug("%p: end probe", pr));
+	pr->cur_chain = NULL;
+	pr->prob_flags = 0;
+	blkid_probe_set_wiper(pr, 0, 0);
 }
 
 /**
@@ -1053,9 +1027,6 @@ static inline void blkid_probe_end(blkid_probe pr)
 int blkid_do_probe(blkid_probe pr)
 {
 	int rc = 1;
-
-	if (!pr)
-		return -1;
 
 	if (pr->flags & BLKID_FL_NOSCAN_DEV)
 		return 1;
@@ -1146,9 +1117,6 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	char buf[BUFSIZ];
 	int fd, rc = 0;
 	struct blkid_chain *chn;
-
-	if (!pr)
-		return -1;
 
 	chn = pr->cur_chain;
 	if (!chn)
@@ -1253,9 +1221,6 @@ int blkid_probe_step_back(blkid_probe pr)
 {
 	struct blkid_chain *chn;
 
-	if (!pr)
-		return -1;
-
 	chn = pr->cur_chain;
 	if (!chn)
 		return -1;
@@ -1309,8 +1274,6 @@ int blkid_do_safeprobe(blkid_probe pr)
 {
 	int i, count = 0, rc = 0;
 
-	if (!pr)
-		return -1;
 	if (pr->flags & BLKID_FL_NOSCAN_DEV)
 		return 1;
 
@@ -1365,8 +1328,6 @@ int blkid_do_fullprobe(blkid_probe pr)
 {
 	int i, count = 0, rc = 0;
 
-	if (!pr)
-		return -1;
 	if (pr->flags & BLKID_FL_NOSCAN_DEV)
 		return 1;
 
@@ -1408,16 +1369,12 @@ done:
 /* same sa blkid_probe_get_buffer() but works with 512-sectors */
 unsigned char *blkid_probe_get_sector(blkid_probe pr, unsigned int sector)
 {
-	return pr ? blkid_probe_get_buffer(pr,
-			((uint64_t) sector) << 9, 0x200) : NULL;
+	return blkid_probe_get_buffer(pr, ((uint64_t) sector) << 9, 0x200);
 }
 
-struct blkid_prval *blkid_probe_assign_value(
-			blkid_probe pr, const char *name)
+struct blkid_prval *blkid_probe_assign_value(blkid_probe pr, const char *name)
 {
 	struct blkid_prval *v;
-	if (!name)
-		return NULL;
 
 	v = blkid_probe_new_value();
 	if (!v)
@@ -1510,7 +1467,7 @@ int blkid_probe_set_magic(blkid_probe pr, uint64_t offset,
 	int rc = 0;
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
 
-	if (!chn || !magic || !len || chn->binary)
+	if (!chn || !len || chn->binary)
 		return 0;
 
 	switch (chn->driver->id) {
@@ -1666,7 +1623,7 @@ blkid_probe blkid_probe_get_wholedisk_probe(blkid_probe pr)
  */
 blkid_loff_t blkid_probe_get_size(blkid_probe pr)
 {
-	return pr ? (blkid_loff_t) pr->size : -1;
+	return (blkid_loff_t) pr->size;
 }
 
 /**
@@ -1679,7 +1636,7 @@ blkid_loff_t blkid_probe_get_size(blkid_probe pr)
  */
 blkid_loff_t blkid_probe_get_offset(blkid_probe pr)
 {
-	return pr ? (blkid_loff_t) pr->off : -1;
+	return (blkid_loff_t) pr->off;
 }
 
 /**
@@ -1690,7 +1647,7 @@ blkid_loff_t blkid_probe_get_offset(blkid_probe pr)
  */
 int blkid_probe_get_fd(blkid_probe pr)
 {
-	return pr ? pr->fd : -1;
+	return pr->fd;
 }
 
 /**
@@ -1701,9 +1658,6 @@ int blkid_probe_get_fd(blkid_probe pr)
  */
 unsigned int blkid_probe_get_sectorsize(blkid_probe pr)
 {
-	if (!pr)
-		return DEFAULT_SECTOR_SIZE;  /*... and good luck! */
-
 	if (pr->blkssz)
 		return pr->blkssz;
 
@@ -1723,7 +1677,7 @@ unsigned int blkid_probe_get_sectorsize(blkid_probe pr)
  */
 blkid_loff_t blkid_probe_get_sectors(blkid_probe pr)
 {
-	return pr ? (blkid_loff_t) (pr->size >> 9) : -1;
+	return (blkid_loff_t) (pr->size >> 9);
 }
 
 /**
@@ -1736,8 +1690,6 @@ int blkid_probe_numof_values(blkid_probe pr)
 {
 	int i = 0;
 	struct list_head *p;
-	if (!pr)
-		return -1;
 
 	list_for_each(p, &pr->values)
 		++i;
@@ -1817,7 +1769,7 @@ int blkid_probe_has_value(blkid_probe pr, const char *name)
 
 struct blkid_prval *blkid_probe_last_value(blkid_probe pr)
 {
-	if (!pr || list_empty(&pr->values))
+	if (list_empty(&pr->values))
 		return NULL;
 
 	return list_last_entry(&pr->values, struct blkid_prval, prvals);
@@ -1829,7 +1781,7 @@ struct blkid_prval *__blkid_probe_get_value(blkid_probe pr, int num)
 	int i = 0;
 	struct list_head *p;
 
-	if (!pr || num < 0)
+	if (num < 0)
 		return NULL;
 
 	list_for_each(p, &pr->values) {
@@ -1844,7 +1796,7 @@ struct blkid_prval *__blkid_probe_lookup_value(blkid_probe pr, const char *name)
 {
 	struct list_head *p;
 
-	if (!pr || list_empty(&pr->values) || !name)
+	if (list_empty(&pr->values))
 		return NULL;
 
 	list_for_each(p, &pr->values) {
@@ -1942,9 +1894,6 @@ void blkid_probe_set_wiper(blkid_probe pr, uint64_t off, uint64_t size)
 {
 	struct blkid_chain *chn;
 
-	if (!pr)
-		return;
-
 	if (!size) {
 		DBG(LOWPROBE, ul_debug("zeroize wiper"));
 		pr->wipe_size = pr->wipe_off = 0;
@@ -1975,12 +1924,11 @@ void blkid_probe_set_wiper(blkid_probe pr, uint64_t off, uint64_t size)
  */
 int blkid_probe_is_wiped(blkid_probe pr, struct blkid_chain **chn, uint64_t off, uint64_t size)
 {
-	if (!pr || !size)
+	if (!size)
 		return 0;
 
 	if (pr->wipe_off <= off && off + size <= pr->wipe_off + pr->wipe_size) {
-		if (chn)
-			*chn = pr->wipe_chain;
+		*chn = pr->wipe_chain;
 		return 1;
 	}
 	return 0;

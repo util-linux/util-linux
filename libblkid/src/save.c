@@ -86,9 +86,6 @@ int blkid_flush_cache(blkid_cache cache)
 	int fd, ret = 0;
 	struct stat st;
 
-	if (!cache)
-		return -BLKID_ERR_PARAM;
-
 	if (list_empty(&cache->bic_devs) ||
 	    !(cache->bic_flags & BLKID_BIC_FL_CHANGED)) {
 		DBG(SAVE, ul_debug("skipping cache file write"));

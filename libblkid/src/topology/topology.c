@@ -110,8 +110,6 @@ const struct blkid_chaindrv topology_drv = {
  */
 int blkid_probe_enable_topology(blkid_probe pr, int enable)
 {
-	if (!pr)
-		return -1;
 	pr->chains[BLKID_CHAIN_TOPLGY].enabled = enable;
 	return 0;
 }
@@ -146,7 +144,7 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 {
 	size_t i;
 
-	if (!pr || chn->idx < -1)
+	if (chn->idx < -1)
 		return -1;
 
 	if (!S_ISBLK(pr->mode))

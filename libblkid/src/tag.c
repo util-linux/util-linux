@@ -55,9 +55,6 @@ blkid_tag blkid_find_tag_dev(blkid_dev dev, const char *type)
 {
 	struct list_head *p;
 
-	if (!dev || !type)
-		return NULL;
-
 	list_for_each(p, &dev->bid_tags) {
 		blkid_tag tmp = list_entry(p, struct blkid_struct_tag,
 					   bit_tags);
@@ -115,9 +112,6 @@ int blkid_set_tag(blkid_dev dev, const char *name,
 	blkid_tag	t = 0, head = 0;
 	char		*val = 0;
 	char		**dev_var = 0;
-
-	if (!dev || !name)
-		return -BLKID_ERR_PARAM;
 
 	if (value && !(val = strndup(value, vlength)))
 		return -BLKID_ERR_MEM;
