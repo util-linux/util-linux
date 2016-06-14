@@ -369,7 +369,7 @@ int mnt_context_disable_canonicalize(struct libmnt_context *cxt, int disable)
  */
 int mnt_context_is_nocanonicalize(struct libmnt_context *cxt)
 {
-	return cxt && (cxt->flags & MNT_FL_NOCANONICALIZE) ? 1 : 0;
+	return cxt->flags & MNT_FL_NOCANONICALIZE ? 1 : 0;
 }
 
 /**

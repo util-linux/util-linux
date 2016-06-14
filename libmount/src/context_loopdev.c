@@ -93,7 +93,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	if (!target || !backing_file || mnt_context_get_mtab(cxt, &tb))
+	if (mnt_context_get_mtab(cxt, &tb))
 		return 0;
 
 	DBG(LOOP, ul_debugobj(cxt, "checking if %s mounted on %s",
