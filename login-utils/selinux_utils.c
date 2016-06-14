@@ -1,6 +1,4 @@
-#include <selinux/av_permissions.h>
 #include <selinux/context.h>
-#include <selinux/flask.h>
 #include <selinux/selinux.h>
 #include <stdio.h>
 #include <string.h>
@@ -8,31 +6,11 @@
 
 #include "selinux_utils.h"
 
-int checkAccess(char *chuser, int access)
+access_vector_t get_access_vector(const char *tclass, const char *op)
 {
-	int status = -1;
-	security_context_t user_context;
-	const char *user = NULL;
-	if (getprevcon(&user_context) == 0) {
-		context_t c = context_new(user_context);
-		user = context_user_get(c);
-		if (strcmp(chuser, user) == 0) {
-			status = 0;
-		} else {
-			struct av_decision avd;
-			int retval = security_compute_av(user_context,
-							 user_context,
-							 SECCLASS_PASSWD,
-							 access,
-							 &avd);
-			if ((retval == 0) &&
-			    ((access & avd.allowed) == (unsigned)access))
-				status = 0;
-		}
-		context_free(c);
-		freecon(user_context);
-	}
-	return status;
+	security_class_t tc = string_to_security_class(tclass);
+
+	return tc ? string_to_av_perm(tc, op) : 0;
 }
 
 int setupDefaultContext(char *orig_file)
