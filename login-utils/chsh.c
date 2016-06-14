@@ -46,7 +46,6 @@
 
 #ifdef HAVE_LIBSELINUX
 # include <selinux/selinux.h>
-# include <selinux/av_permissions.h>
 # include "selinux_utils.h"
 #endif
 
@@ -257,7 +256,9 @@ int main(int argc, char **argv)
 #ifdef HAVE_LIBSELINUX
 	if (is_selinux_enabled() > 0) {
 		if (uid == 0) {
-			if (checkAccess(pw->pw_name, PASSWD__CHSH) != 0) {
+			access_vector_t av = get_access_vector("passwd", "chsh");
+
+			if (selinux_check_passwd_access(av) != 0) {
 				security_context_t user_context;
 				if (getprevcon(&user_context) < 0)
 					user_context =
