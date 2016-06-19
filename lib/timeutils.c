@@ -396,7 +396,12 @@ static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf
 /* timeval to ISO 8601 */
 int strtimeval_iso(struct timeval *tv, int flags, char *buf, size_t bufsz)
 {
-	struct tm tm = *localtime(&tv->tv_sec);
+	struct tm tm;
+
+	if (flags & ISO_8601_GMTIME)
+		tm = *gmtime(&tv->tv_sec);
+	else
+		tm = *localtime(&tv->tv_sec);
 	return format_iso_time(&tm, tv->tv_usec, flags, buf, bufsz);
 }
 
@@ -409,7 +414,12 @@ int strtm_iso(struct tm *tm, int flags, char *buf, size_t bufsz)
 /* time_t to ISO 8601 */
 int strtime_iso(const time_t *t, int flags, char *buf, size_t bufsz)
 {
-	struct tm tm = *localtime(t);
+	struct tm tm;
+
+	if (flags & ISO_8601_GMTIME)
+		tm = *gmtime(t);
+	else
+		tm = *localtime(t);
 	return format_iso_time(&tm, 0, flags, buf, bufsz);
 }
 
