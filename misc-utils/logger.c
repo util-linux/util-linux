@@ -1001,7 +1001,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -S, --size <size>        maximum size for a single message\n"), out);
 	fputs(_(" -t, --tag <tag>          mark every line with this tag\n"), out);
 	fputs(_(" -n, --server <name>      write to this remote syslog server\n"), out);
-	fputs(_(" -P, --port <number>      use this UDP port\n"), out);
+	fputs(_(" -P, --port <port>        use this port for UDP or TCP connection\n"), out);
 	fputs(_(" -T, --tcp                use TCP only\n"), out);
 	fputs(_(" -d, --udp                use UDP only\n"), out);
 	fputs(_("     --rfc3164            use the obsolete BSD syslog protocol\n"), out);
