@@ -2490,11 +2490,23 @@ static int gpt_check_table_overlap(struct fdisk_context *cxt,
 	return rc;
 }
 
-int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, unsigned long new)
+/**
+ * fdisk_gpt_set_npartitions:
+ * @cxt: context
+ * @new: new size
+ *
+ * Elarge GPT entries array if possible. The function check if an existing
+ * partition does not overlap the entries array area. If yes, then it report
+ * warning and returns -EINVAL.
+ *
+ * Returns: 0 on success, < 0 on error.
+ * Since: v2.29
+ */
+int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t new)
 {
 	struct fdisk_gpt_label *gpt;
 	size_t old_size, new_size;
-	unsigned long old;
+	uint32_t old;
 	struct gpt_entry *ents;
 	uint64_t first_usable, last_usable;
 	int rc;
@@ -2514,8 +2526,8 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, unsigned long new)
 	old_size = old * le32_to_cpu(gpt->pheader->sizeof_partition_entry);
 
 	/* calculate new range of usable LBAs */
-	first_usable = (new_size / cxt->sector_size) + 2;
-	last_usable = cxt->total_sectors - 2ULL - (new_size / cxt->sector_size);
+	first_usable = (uint64_t) (new_size / cxt->sector_size) + 2ULL;
+	last_usable = cxt->total_sectors - 2ULL - (uint64_t) (new_size / cxt->sector_size);
 
 	/* if expanding the table, first check that everything fits,
 	 * then allocate more memory and zero. */
@@ -2552,7 +2564,7 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, unsigned long new)
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
 
-	fdisk_info(cxt, _("Partition table length changed from %lu to %lu."), old, new);
+	fdisk_info(cxt, _("Partition table length changed from %"PRIu32" to %"PRIu64"."), old, new);
 
 	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
