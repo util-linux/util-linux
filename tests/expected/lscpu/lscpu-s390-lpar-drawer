@@ -5,7 +5,7 @@ Thread(s) per core:    1
 Core(s) per socket:    8
 Socket(s) per book:    3
 Book(s) per drawer:    2
-Drawers(s):            4
+Drawer(s):             4
 NUMA node(s):          1
 Vendor ID:             IBM/S390
 Model name:            0

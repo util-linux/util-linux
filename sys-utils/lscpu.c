@@ -1696,7 +1696,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 			if (desc->ndrawers) {
 				print_n(_("Book(s) per drawer:"),
 					books_per_drawer ?: desc->nbooks / desc->ndrawers);
-				print_n(_("Drawers(s):"), drawers ?: desc->ndrawers);
+				print_n(_("Drawer(s):"), drawers ?: desc->ndrawers);
 			} else {
 				print_n(_("Book(s):"), books_per_drawer ?: desc->nbooks);
 			}
