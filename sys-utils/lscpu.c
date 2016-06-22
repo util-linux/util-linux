@@ -229,6 +229,9 @@ struct lscpu_desc {
 	int		ncaches;
 	struct cpu_cache *caches;
 
+	int		necaches;	/* extra caches (s390) */
+	struct cpu_cache *ecaches;
+
 	/*
 	 * All maps are sequentially indexed (0..ncpuspos), the array index
 	 * does not have match with cpuX number as presented by kernel. You
@@ -405,6 +408,58 @@ lookup(char *line, char *pattern, char **value)
 	return 1;
 }
 
+/* Parse extra cache lines contained within /proc/cpuinfo but which are not
+ * part of the cache topology information within the sysfs filesystem.
+ * This is true for all shared caches on e.g. s390. When there are layers of
+ * hypervisors in between it is not knows which CPUs share which caches.
+ * Therefore information about shared caches is only available in
+ * /proc/cpuinfo.
+ * Format is:
+ * "cache<nr> : level=<lvl> type=<type> scope=<scope> size=<size> line_size=<lsz> associativity=<as>"
+ */
+static int
+lookup_cache(char *line, struct lscpu_desc *desc)
+{
+	struct cpu_cache *cache;
+	long long size;
+	char *p, type;
+	int level;
+
+	/* Make sure line starts with "cache<nr> :" */
+	if (strncmp(line, "cache", 5))
+		return 0;
+	for (p = line + 5; isdigit(*p); p++);
+	for (; isspace(*p); p++);
+	if (*p != ':')
+		return 0;
+
+	p = strstr(line, "scope=") + 6;
+	/* Skip private caches, also present in sysfs */
+	if (!p || strncmp(p, "Private", 7) == 0)
+		return 0;
+	p = strstr(line, "level=");
+	sscanf(p, "level=%d", &level);
+	p = strstr(line, "type=") + 5;
+	type = 0;
+	if (strncmp(p, "Data", 4) == 0)
+		type = 'd';
+	if (strncmp(p, "Instruction", 11) == 0)
+		type = 'i';
+	p = strstr(line, "size=");
+	sscanf(p, "size=%lld", &size);
+	desc->necaches++;
+	desc->ecaches = xrealloc(desc->ecaches,
+				 desc->necaches * sizeof(struct cpu_cache));
+	cache = &desc->ecaches[desc->necaches - 1];
+	memset(cache, 0 , sizeof(*cache));
+	if (type)
+		xasprintf(&cache->name, "L%d%c", level, type);
+	else
+		xasprintf(&cache->name, "L%d", level);
+	xasprintf(&cache->size, "%lldK", size);
+	return 1;
+}
+
 /* Don't init the mode for platforms where we are not able to
  * detect that CPU supports 64-bit mode.
  */
@@ -501,6 +556,7 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		else if (lookup(buf, "bogomips per cpu", &desc->bogomips)) ; /* s390 */
 		else if (lookup(buf, "cpu", &desc->cpu)) ;
 		else if (lookup(buf, "revision", &desc->revision)) ;
+		else if (lookup_cache(buf, desc)) ;
 		else
 			continue;
 	}
@@ -1768,6 +1824,16 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		}
 	}
 
+	if (desc->necaches) {
+		char cbuf[512];
+
+		for (i = desc->necaches - 1; i >= 0; i--) {
+			snprintf(cbuf, sizeof(cbuf),
+					_("%s cache:"), desc->ecaches[i].name);
+			print_s(cbuf, desc->ecaches[i].size);
+		}
+	}
+
 	for (i = 0; i < desc->nnodes; i++) {
 		snprintf(buf, sizeof(buf), _("NUMA node%d CPU(s):"), desc->idx2nodenum[i]);
 		print_cpuset(buf, desc->nodemaps[i], mod->hex);
@@ -1926,6 +1992,10 @@ int main(int argc, char *argv[])
 
 	if (desc->caches)
 		qsort(desc->caches, desc->ncaches,
+				sizeof(struct cpu_cache), cachecmp);
+
+	if (desc->ecaches)
+		qsort(desc->ecaches, desc->necaches,
 				sizeof(struct cpu_cache), cachecmp);
 
 	read_nodes(desc);

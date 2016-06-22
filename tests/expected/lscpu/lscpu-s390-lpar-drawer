@@ -21,6 +21,8 @@ L1d cache:             128K
 L1i cache:             96K
 L2d cache:             2048K
 L2i cache:             2048K
+L3 cache:              65536K
+L4 cache:              491520K
 NUMA node0 CPU(s):     0-140
 Flags:                 esan3 zarch stfle msa ldisp eimm dfp edat etf3eh highgprs te vx sie
 
