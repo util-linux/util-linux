@@ -9,7 +9,6 @@ Drawer(s):             4
 NUMA node(s):          1
 Vendor ID:             IBM/S390
 Machine type:          2964
-Model name:            0
 CPU dynamic MHz:       5000
 CPU static MHz:        5000
 BogoMIPS:              20325.00
@@ -32,7 +31,7 @@ Flags:                 esan3 zarch stfle msa ldisp eimm dfp edat etf3eh highgprs
 # CPU,Core,Socket,Node,,L1d,L1i,L2d,L2i
 0,0,0,0,,0,0,0,0
 1,1,0,0,,1,1,1,1
-2,2,0,0,,2,2,2,2
+2,2,1,0,,2,2,2,2
 3,3,1,0,,3,3,3,3
 4,4,1,0,,4,4,4,4
 5,5,1,0,,5,5,5,5
