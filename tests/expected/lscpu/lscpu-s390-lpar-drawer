@@ -8,6 +8,7 @@ Book(s) per drawer:    2
 Drawer(s):             4
 NUMA node(s):          1
 Vendor ID:             IBM/S390
+Machine type:          2964
 Model name:            0
 CPU dynamic MHz:       5000
 CPU static MHz:        5000

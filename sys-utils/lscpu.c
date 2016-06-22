@@ -198,6 +198,7 @@ struct polarization_modes polar_modes[] = {
 struct lscpu_desc {
 	char	*arch;
 	char	*vendor;
+	char	*machinetype;	/* s390 */
 	char	*family;
 	char	*model;
 	char	*modelname;
@@ -581,6 +582,15 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	if (mod->system == SYSTEM_LIVE)
 		read_physical_info_powerpc(desc);
+
+	if (path_exist(_PATH_PROC_SYSINFO)) {
+		FILE *fd = path_fopen("r", 0, _PATH_PROC_SYSINFO);
+
+		while (fd && fgets(buf, sizeof(buf), fd) != NULL && !desc->machinetype)
+			lookup(buf, "Type", &desc->machinetype);
+		if (fd)
+			fclose(fd);
+	}
 }
 
 static int
@@ -1712,6 +1722,8 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		print_n(_("NUMA node(s):"), desc->nnodes);
 	if (desc->vendor)
 		print_s(_("Vendor ID:"), desc->vendor);
+	if (desc->machinetype)
+		print_s(_("Machine type:"), desc->machinetype);
 	if (desc->family)
 		print_s(_("CPU family:"), desc->family);
 	if (desc->model || desc->revision)

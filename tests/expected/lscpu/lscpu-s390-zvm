@@ -6,6 +6,7 @@ Core(s) per socket:    1
 Socket(s) per book:    1
 Book(s):               4
 Vendor ID:             IBM/S390
+Machine type:          2817
 BogoMIPS:              14367.00
 Hypervisor:            z/VM 6.1.0
 Hypervisor vendor:     IBM
