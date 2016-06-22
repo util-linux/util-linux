@@ -9,6 +9,8 @@ Drawer(s):             4
 NUMA node(s):          1
 Vendor ID:             IBM/S390
 Model name:            0
+CPU dynamic MHz:       5000
+CPU static MHz:        5000
 BogoMIPS:              20325.00
 Hypervisor:            PR/SM
 Hypervisor vendor:     IBM

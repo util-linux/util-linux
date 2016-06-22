@@ -208,6 +208,8 @@ struct lscpu_desc {
 	int	hyper;		/* hypervisor vendor ID */
 	int	virtype;	/* VIRT_PARA|FULL|NONE ? */
 	char	*mhz;
+	char	*dynamic_mhz;	/* dynamic mega hertz (s390) */
+	char	*static_mhz;	/* static mega hertz (s390) */
 	char	**maxmhz;	/* maximum mega hertz */
 	char	**minmhz;	/* minimum mega hertz */
 	char	*stepping;
@@ -489,6 +491,8 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		else if (lookup(buf, "model name", &desc->modelname)) ;
 		else if (lookup(buf, "stepping", &desc->stepping)) ;
 		else if (lookup(buf, "cpu MHz", &desc->mhz)) ;
+		else if (lookup(buf, "cpu MHz dynamic", &desc->dynamic_mhz)) ; /* s390 */
+		else if (lookup(buf, "cpu MHz static", &desc->static_mhz)) ;   /* s390 */
 		else if (lookup(buf, "flags", &desc->flags)) ;		/* x86 */
 		else if (lookup(buf, "features", &desc->flags)) ;	/* s390 */
 		else if (lookup(buf, "type", &desc->flags)) ;		/* sparc64 */
@@ -1718,6 +1722,10 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		print_s(_("Stepping:"), desc->stepping);
 	if (desc->mhz)
 		print_s(_("CPU MHz:"), desc->mhz);
+	if (desc->dynamic_mhz)
+		print_s(_("CPU dynamic MHz:"), desc->dynamic_mhz);
+	if (desc->static_mhz)
+		print_s(_("CPU static MHz:"), desc->static_mhz);
 	if (desc->maxmhz)
 		print_s(_("CPU max MHz:"), desc->maxmhz[0]);
 	if (desc->minmhz)
