@@ -25,11 +25,11 @@ struct isw_metadata {
 
 #define ISW_SIGNATURE		"Intel Raid ISM Cfg Sig. "
 
-
 static int probe_iswraid(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	uint64_t off;
+	unsigned int sector_size;
 	struct isw_metadata *isw;
 
 	if (pr->size < 0x10000)
@@ -37,16 +37,17 @@ static int probe_iswraid(blkid_probe pr,
 	if (!S_ISREG(pr->mode) && !blkid_probe_is_wholedisk(pr))
 		return 1;
 
-	off = ((pr->size / 0x200) - 2) * 0x200;
-	isw = (struct isw_metadata *)
-			blkid_probe_get_buffer(pr,
-					off,
-					sizeof(struct isw_metadata));
+	sector_size = blkid_probe_get_sectorsize(pr);
+	off = ((pr->size / sector_size) - 2) * sector_size;
+
+	isw = (struct isw_metadata *)blkid_probe_get_buffer(pr,
+			off, sizeof(struct isw_metadata));
 	if (!isw)
 		return errno ? -errno : 1;
 
 	if (memcmp(isw->sig, ISW_SIGNATURE, sizeof(ISW_SIGNATURE)-1) != 0)
 		return 1;
+
 	if (blkid_probe_sprintf_version(pr, "%6s",
 			&isw->sig[sizeof(ISW_SIGNATURE)-1]) != 0)
 		return 1;
