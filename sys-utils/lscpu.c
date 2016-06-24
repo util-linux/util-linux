@@ -438,15 +438,20 @@ lookup_cache(char *line, struct lscpu_desc *desc)
 	if (!p || strncmp(p, "Private", 7) == 0)
 		return 0;
 	p = strstr(line, "level=");
-	sscanf(p, "level=%d", &level);
+	if (!p || sscanf(p, "level=%d", &level) != 1)
+		return 0;
 	p = strstr(line, "type=") + 5;
+	if (!p || !*p)
+		return 0;
 	type = 0;
 	if (strncmp(p, "Data", 4) == 0)
 		type = 'd';
 	if (strncmp(p, "Instruction", 11) == 0)
 		type = 'i';
 	p = strstr(line, "size=");
-	sscanf(p, "size=%lld", &size);
+	if (!p || sscanf(p, "size=%lld", &size) != 1)
+	       return 0;
+
 	desc->necaches++;
 	desc->ecaches = xrealloc(desc->ecaches,
 				 desc->necaches * sizeof(struct cpu_cache));
