@@ -57,6 +57,18 @@ bogus entries, and reintegrated using:
 But be warned,
 .B utmpdump
 was written for debugging purposes only.
+.SS File formats
+.PP
+The only binary version of the
+.BR utmp (5)
+is standardised.  Textual dumps may become incompatible in future.
+.PP
+The version 2.28 was the last one that printed text output using
+.BR ctime (3)
+timestamp format.  Newer dumps use millisecond precision ISO-8601 timestamp
+format in UTC-0 timezone.  Conversion from former timestamp format can be
+made to binary, although attempt to do so can lead the timestamps to drift
+amount of timezone offset.
 .SH BUGS
 You may
 .B not
