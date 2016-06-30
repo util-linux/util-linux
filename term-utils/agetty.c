@@ -868,15 +868,20 @@ static void parse_args(int argc, char **argv, struct options *op)
 static void parse_speeds(struct options *op, char *arg)
 {
 	char *cp;
+	char *str = strdup(arg);
 
-	debug("entered parse_speeds\n");
-	for (cp = strtok(arg, ","); cp != NULL; cp = strtok((char *)0, ",")) {
+	if (!str)
+		log_err(_("failed to allocate memory: %m"));
+
+	debug("entered parse_speeds:\n");
+	for (cp = strtok(str, ","); cp != NULL; cp = strtok((char *)0, ",")) {
 		if ((op->speeds[op->numspeed++] = bcode(cp)) <= 0)
 			log_err(_("bad speed: %s"), cp);
 		if (op->numspeed >= MAX_SPEED)
 			log_err(_("too many alternate speeds"));
 	}
 	debug("exiting parsespeeds\n");
+	free(str);
 }
 
 #ifdef	SYSV_STYLE
