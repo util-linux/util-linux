@@ -470,8 +470,8 @@ static void add_scols_line(struct lsns *ls, struct libscols_table *table,
 			break;
 		}
 
-		if (str)
-			scols_line_set_data(line, i, str);
+		if (str && scols_line_set_data(line, i, str) != 0)
+			err_oom();
 	}
 
 	proc->outline = line;
