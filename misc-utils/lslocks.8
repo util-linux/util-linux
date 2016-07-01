@@ -15,6 +15,9 @@ lists information about all the currently held file locks in a Linux system.
 
 .SH OPTIONS
 .TP
+.BR \-i , " \-\-noinaccessible"
+Ignore lock files which are inaccessible for the current user.
+.TP
 .BR \-J , " \-\-json"
 Use JSON output format.
 .TP
@@ -65,8 +68,9 @@ Relative byte offset of the lock.
 .IP "END"
 Ending offset of the lock.
 .IP "PATH"
-Full path of the lock.  If none is found, or there are no permissions to read the path,
-it will fall back to the device's mountpoint.  The path might be truncated; use
+Full path of the lock.  If none is found, or there are no permissions to read
+the path, it will fall back to the device's mountpoint and "..." is appended to
+the path.  The path might be truncated; use
 \fB\-\-notruncate\fR to get the full path.
 .IP "BLOCKER"
 The PID of the process which blocks the lock.
