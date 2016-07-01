@@ -67,6 +67,7 @@ if BUILD_UTMPDUMP
 usrbin_exec_PROGRAMS += utmpdump
 dist_man_MANS += login-utils/utmpdump.1
 utmpdump_SOURCES = login-utils/utmpdump.c
+utmpdump_LDADD = $(LDADD) libcommon.la
 endif
 
 

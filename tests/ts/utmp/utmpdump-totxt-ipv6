@@ -22,7 +22,7 @@ ts_init "$*"
 [ $SIZEOF_UTMP -eq 384 ] || ts_skip "utmp struct size $SIZEOF_UTMP"
 
 export LANG=C
-export TZ=GMT
+export TZ=Asia/Tokyo
 $TS_CMD_UTMPDUMP $TS_SELF/wtmp-ipv6.$BYTE_ORDER >| $TS_OUTPUT 2>/dev/null
 
 ts_finalize

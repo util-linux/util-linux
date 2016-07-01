@@ -61,7 +61,8 @@ enum {
 	ISO_8601_DOTUSEC	= (1 << 3),
 	ISO_8601_COMMAUSEC	= (1 << 4),
 	ISO_8601_TIMEZONE	= (1 << 5),
-	ISO_8601_SPACE		= (1 << 6)
+	ISO_8601_SPACE		= (1 << 6),
+	ISO_8601_GMTIME		= (1 << 7)
 };
 
 #define ISO_8601_BUFSIZ	32

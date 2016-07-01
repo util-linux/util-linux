@@ -42,21 +42,9 @@
 
 #include "c.h"
 #include "nls.h"
+#include "timeutils.h"
 #include "xalloc.h"
 #include "closestream.h"
-
-static char *timetostr(const time_t time)
-{
-	static char s[29];	/* [Sun Sep 01 00:00:00 1998 PST] */
-	struct tm *tmp;
-
-	if (time != 0 && (tmp = localtime(&time)))
-		strftime(s, 29, "%a %b %d %T %Y %Z", tmp);
-	else
-		s[0] = '\0';
-
-	return s;
-}
 
 static time_t strtotime(const char *s_time)
 {
@@ -67,14 +55,31 @@ static time_t strtotime(const char *s_time)
 	if (s_time[0] == ' ' || s_time[0] == '\0')
 		return (time_t)0;
 
-	strptime(s_time, "%a %b %d %T %Y", &tm);
-
-	/* Cheesy way of checking for DST */
-	if (s_time[26] == 'D')
-		tm.tm_isdst = 1;
-
-	return mktime(&tm);
+	if (isdigit(s_time[0])) {
+		/* [1998-09-01T01:00:00,000000+00:00]
+		 * Subseconds are parsed with strtousec().  Timezone is
+		 * always UTC-0 */
+		strptime(s_time, "%Y-%m-%dT%H:%M:%S", &tm);
+	} else {
+		/* [Tue Sep 01 00:00:00 1998 GMT] */
+		strptime(s_time, "%a %b %d %T %Y", &tm);
+		/* Cheesy way of checking for DST.  This could be needed
+		 * with legacy dumps that used localtime(3).  */
+		if (s_time[26] == 'D')
+			tm.tm_isdst = 1;
+	}
+	return timegm(&tm);
 }
+
+#if defined(_HAVE_UT_TV)
+static suseconds_t strtousec(const char *s_time)
+{
+	const char *s = strchr(s_time, ',');
+	if (s)
+		return (suseconds_t) atoi(s + 1);
+	return 0;
+}
+#endif
 
 #define cleanse(x) xcleanse(x, sizeof(x))
 static void xcleanse(char *s, int len)
@@ -86,26 +91,31 @@ static void xcleanse(char *s, int len)
 
 static void print_utline(struct utmp *ut, FILE *out)
 {
-	const char *addr_string, *time_string;
+	const char *addr_string;
 	char buffer[INET6_ADDRSTRLEN];
+	char time_string[40];
+	struct timeval tv;
 
 	if (ut->ut_addr_v6[1] || ut->ut_addr_v6[2] || ut->ut_addr_v6[3])
 		addr_string = inet_ntop(AF_INET6, &(ut->ut_addr_v6), buffer, sizeof(buffer));
 	else
 		addr_string = inet_ntop(AF_INET, &(ut->ut_addr_v6), buffer, sizeof(buffer));
 
-#if defined(_HAVE_UT_TV)
-	time_string = timetostr(ut->ut_tv.tv_sec);
-#else
-	time_string = timetostr((time_t)ut->ut_time);	/* ut_time is not always a time_t */
-#endif
+	tv.tv_sec = ut->ut_tv.tv_sec;
+	tv.tv_usec = ut->ut_tv.tv_usec;
+
+	if (strtimeval_iso(&tv,
+			   ISO_8601_DATE | ISO_8601_TIME | ISO_8601_COMMAUSEC |
+			   ISO_8601_TIMEZONE | ISO_8601_GMTIME, time_string,
+			   sizeof(time_string)) != 0)
+		return;
 	cleanse(ut->ut_id);
 	cleanse(ut->ut_user);
 	cleanse(ut->ut_line);
 	cleanse(ut->ut_host);
 
 	/*            pid    id       user     line     host     addr       time */
-	fprintf(out, "[%d] [%05d] [%-4.4s] [%-*.*s] [%-*.*s] [%-*.*s] [%-15s] [%-28.28s]\n",
+	fprintf(out, "[%d] [%05d] [%-4.4s] [%-*.*s] [%-*.*s] [%-*.*s] [%-15s] [%s]\n",
 	       ut->ut_type, ut->ut_pid, ut->ut_id, 8, UT_NAMESIZE, ut->ut_user,
 	       12, UT_LINESIZE, ut->ut_line, 20, UT_HOSTSIZE, ut->ut_host,
 	       addr_string, time_string);
@@ -279,6 +289,7 @@ static void undump(FILE *in, FILE *out)
 			inet_pton(AF_INET6, s_addr, &(ut.ut_addr_v6));
 #if defined(_HAVE_UT_TV)
 		ut.ut_tv.tv_sec = strtotime(s_time);
+		ut.ut_tv.tv_usec = strtousec(s_time);
 #else
 		ut.ut_time = strtotime(s_time);
 #endif
