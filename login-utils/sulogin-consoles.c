@@ -311,7 +311,7 @@ out:
  */
 static
 #ifdef __GNUC__
-__attribute__((__nonnull__,__hot__))
+__attribute__((__hot__))
 #endif
 int append_console(struct list_head *consoles, const char *name)
 {
