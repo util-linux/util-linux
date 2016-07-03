@@ -620,7 +620,6 @@ int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg)
 		break;
 	default:
 		return 1;
-		break;
 	}
 
 	return rc;
