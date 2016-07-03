@@ -176,22 +176,21 @@ static int switchroot(const char *newroot)
 		return -1;
 	}
 
-	if (cfd >= 0) {
-		pid = fork();
-		if (pid <= 0) {
-			struct statfs stfs;
-			if (fstatfs(cfd, &stfs) == 0 &&
-			    (F_TYPE_EQUAL(stfs.f_type, STATFS_RAMFS_MAGIC) ||
-			     F_TYPE_EQUAL(stfs.f_type, STATFS_TMPFS_MAGIC)))
-				recursiveRemove(cfd);
-			else
-				warn(_("old root filesystem is not an initramfs"));
+	pid = fork();
+	if (pid <= 0) {
+		struct statfs stfs;
 
-			if (pid == 0)
-				exit(EXIT_SUCCESS);
-		}
-		close(cfd);
+		if (fstatfs(cfd, &stfs) == 0 &&
+		    (F_TYPE_EQUAL(stfs.f_type, STATFS_RAMFS_MAGIC) ||
+		     F_TYPE_EQUAL(stfs.f_type, STATFS_TMPFS_MAGIC)))
+			recursiveRemove(cfd);
+		else
+			warn(_("old root filesystem is not an initramfs"));
+		if (pid == 0)
+			exit(EXIT_SUCCESS);
 	}
+
+	close(cfd);
 	return 0;
 }
 
