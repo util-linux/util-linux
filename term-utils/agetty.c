@@ -1424,7 +1424,7 @@ static char *xgetdomainname(void)
 {
 #ifdef HAVE_GETDOMAINNAME
 	char *name;
-	size_t sz = get_hostname_max() + 1;
+	const size_t sz = get_hostname_max() + 1;
 
 	name = malloc(sizeof(char) * sz);
 	if (!name)
@@ -1436,8 +1436,9 @@ static char *xgetdomainname(void)
 	}
 	name[sz - 1] = '\0';
 	return name;
-#endif
+#else
 	return NULL;
+#endif
 }
 
 static char *read_os_release(struct options *op, const char *varname)
