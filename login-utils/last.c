@@ -163,15 +163,15 @@ static time_t lastdate;		/* Last date we've seen */
 static time_t currentdate;	/* date when we started processing the file */
 
 /* --time-format=option parser */
-static int which_time_format(const char *optarg)
+static int which_time_format(const char *s)
 {
 	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(timefmts); i++) {
-		if (strcmp(timefmts[i].name, optarg) == 0)
+		if (strcmp(timefmts[i].name, s) == 0)
 			return i;
 	}
-	errx(EXIT_FAILURE, _("unknown time format: %s"), optarg);
+	errx(EXIT_FAILURE, _("unknown time format: %s"), s);
 }
 
 /*

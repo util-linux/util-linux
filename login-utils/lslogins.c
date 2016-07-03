@@ -1200,7 +1200,7 @@ static void free_user(void *f)
 	free(u);
 }
 
-static int parse_time_mode(const char *optarg)
+static int parse_time_mode(const char *s)
 {
 	struct lslogins_timefmt {
 		const char *name;
@@ -1214,10 +1214,10 @@ static int parse_time_mode(const char *optarg)
 	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(timefmts); i++) {
-		if (strcmp(timefmts[i].name, optarg) == 0)
+		if (strcmp(timefmts[i].name, s) == 0)
 			return timefmts[i].val;
 	}
-	errx(EXIT_FAILURE, _("unknown time format: %s"), optarg);
+	errx(EXIT_FAILURE, _("unknown time format: %s"), s);
 }
 
 static void __attribute__((__noreturn__)) usage(FILE *out)

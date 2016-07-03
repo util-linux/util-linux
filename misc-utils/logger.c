@@ -804,11 +804,11 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 	free(structured);
 }
 
-static void parse_rfc5424_flags(struct logger_ctl *ctl, char *optarg)
+static void parse_rfc5424_flags(struct logger_ctl *ctl, char *s)
 {
 	char *in, *tok;
 
-	in = optarg;
+	in = s;
 	while ((tok = strtok(in, ","))) {
 		in = NULL;
 		if (!strcmp(tok, "notime")) {
@@ -823,15 +823,15 @@ static void parse_rfc5424_flags(struct logger_ctl *ctl, char *optarg)
 	}
 }
 
-static int parse_unix_socket_errors_flags(char *optarg)
+static int parse_unix_socket_errors_flags(char *s)
 {
-	if (!strcmp(optarg, "off"))
+	if (!strcmp(s, "off"))
 		return AF_UNIX_ERRORS_OFF;
-	if (!strcmp(optarg, "on"))
+	if (!strcmp(s, "on"))
 		return AF_UNIX_ERRORS_ON;
-	if (!strcmp(optarg, "auto"))
+	if (!strcmp(s, "auto"))
 		return AF_UNIX_ERRORS_AUTO;
-	warnx(_("invalid argument: %s: using automatic errors"), optarg);
+	warnx(_("invalid argument: %s: using automatic errors"), s);
 	return AF_UNIX_ERRORS_AUTO;
 }
 

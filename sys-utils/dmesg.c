@@ -1178,19 +1178,19 @@ static int read_kmsg(struct dmesg_control *ctl)
 	return 0;
 }
 
-static int which_time_format(const char *optarg)
+static int which_time_format(const char *s)
 {
-	if (!strcmp(optarg, "notime"))
+	if (!strcmp(s, "notime"))
 		return DMESG_TIMEFTM_NONE;
-	if (!strcmp(optarg, "ctime"))
+	if (!strcmp(s, "ctime"))
 		return DMESG_TIMEFTM_CTIME;
-	if (!strcmp(optarg, "delta"))
+	if (!strcmp(s, "delta"))
 		return DMESG_TIMEFTM_DELTA;
-	if (!strcmp(optarg, "reltime"))
+	if (!strcmp(s, "reltime"))
 		return DMESG_TIMEFTM_RELTIME;
-	if (!strcmp(optarg, "iso"))
+	if (!strcmp(s, "iso"))
 		return DMESG_TIMEFTM_ISO8601;
-	errx(EXIT_FAILURE, _("unknown time format: %s"), optarg);
+	errx(EXIT_FAILURE, _("unknown time format: %s"), s);
 }
 
 #ifdef TEST_DMESG
