@@ -175,10 +175,10 @@ static int print_caps(FILE *f, capng_type_t which)
 static void dump_one_secbit(int *first, int *bits, int bit, const char *name)
 {
 	if (*bits & bit) {
-		if (!*first)
-			printf(",");
-		else
+		if (*first)
 			*first = 0;
+		else
+			printf(",");
 		fputs(name, stdout);
 		*bits &= ~bit;
 	}
@@ -206,10 +206,10 @@ static void dump_securebits(void)
 	dump_one_secbit(&first, &bits, SECBIT_KEEP_CAPS_LOCKED,
 			"keep_caps_locked");
 	if (bits) {
-		if (!first)
-			printf(",");
-		else
+		if (first)
 			first = 0;
+		else
+			printf(",");
 		printf("0x%x", (unsigned)bits);
 	}
 
