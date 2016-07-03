@@ -591,6 +591,8 @@ static ssize_t read_buffer(struct dmesg_control *ctl, char **buf)
 		if (n == 0 && ctl->action == SYSLOG_ACTION_READ_CLEAR)
 			n = klogctl(SYSLOG_ACTION_CLEAR, NULL, 0);
 		break;
+	default:
+		abort();	/* impossible method -> drop core */
 	}
 
 	return n;
