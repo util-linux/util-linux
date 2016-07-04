@@ -454,10 +454,8 @@ static int check_option(const char *haystack, size_t len,
 		size_t plen = sep ? (size_t) (sep - p) :
 				    len - (p - haystack);
 
-		if (plen == needle_len) {
-			if (!strncmp(p, needle, plen))
-				return !no;	/* foo or nofoo was found */
-		}
+		if (plen == needle_len && !strncmp(p, needle, plen))
+			return !no;	/* foo or nofoo was found */
 		p += plen;
 	}
 

@@ -385,10 +385,8 @@ static int format_iso_time(struct tm *tm, suseconds_t usec, int flags, char *buf
 		p += len;
 	}
 
-	if (flags & ISO_8601_TIMEZONE) {
-		if (strftime(p, bufsz, "%z", tm) <= 0)
-			return -1;
-	}
+	if (flags & ISO_8601_TIMEZONE && strftime(p, bufsz, "%z", tm) <= 0)
+		return -1;
 
 	return 0;
 }

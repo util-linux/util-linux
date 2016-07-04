@@ -501,12 +501,9 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (ctl.clock_mode == CM_AUTO) {
-		if (read_clock_mode(&ctl) < 0) {
-			printf(_("%s: assuming RTC uses UTC ...\n"),
-					program_invocation_short_name);
-			ctl.clock_mode = CM_UTC;
-		}
+	if (ctl.clock_mode == CM_AUTO && read_clock_mode(&ctl) < 0) {
+		printf(_("%s: assuming RTC uses UTC ...\n"),  program_invocation_short_name);
+		ctl.clock_mode = CM_UTC;
 	}
 
 	if (ctl.verbose)

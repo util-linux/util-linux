@@ -313,10 +313,9 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 		if (dirent->d_name[0] == '.') {
 			if (dirent->d_name[1] == '\0')
 				continue;
-			if (dirent->d_name[1] == '.') {
-				if (dirent->d_name[2] == '\0')
-					continue;
-			}
+			if (dirent->d_name[1] == '.' &&
+			    dirent->d_name[2] == '\0')
+				continue;
 		}
 		namelen = strlen(dirent->d_name);
 		if (namelen > MAX_INPUT_NAMELEN) {
@@ -352,11 +351,9 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 			entry->size = parse_directory(root_entry, path, &entry->child, fslen_ub);
 		} else if (S_ISREG(st.st_mode)) {
 			entry->path = xstrdup(path);
-			if (entry->size) {
-				if (entry->size >= (1 << CRAMFS_SIZE_WIDTH)) {
-					warn_size = 1;
-					entry->size = (1 << CRAMFS_SIZE_WIDTH) - 1;
-				}
+			if (entry->size && entry->size >= (1 << CRAMFS_SIZE_WIDTH)) {
+				warn_size = 1;
+				entry->size = (1 << CRAMFS_SIZE_WIDTH) - 1;
 			}
 		} else if (S_ISLNK(st.st_mode)) {
 			entry->path = xstrdup(path);

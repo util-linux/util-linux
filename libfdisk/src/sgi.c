@@ -592,9 +592,8 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 		if (sgi_get_num_sectors(cxt, i) != 0) {
 			Index[sortcount++] = i;
 			if (sgi_get_sysid(cxt, i) == SGI_TYPE_ENTIRE_DISK
-			    && entire++ == 1) {
-				if (verbose)
-					fdisk_info(cxt, _("More than one entire "
+			    && entire++ == 1 && verbose) {
+				fdisk_info(cxt, _("More than one entire "
 						"disk entry present."));
 			}
 		}

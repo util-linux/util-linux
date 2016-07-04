@@ -394,9 +394,8 @@ int main(int argc, char **argv)
 		in = dump(in, filename, follow, out);
 	}
 
-	if (out != stdout)
-		if (close_stream(out))
-			err(EXIT_FAILURE, _("write failed"));
+	if (out != stdout && close_stream(out))
+		err(EXIT_FAILURE, _("write failed"));
 
 	if (in && in != stdin)
 		fclose(in);

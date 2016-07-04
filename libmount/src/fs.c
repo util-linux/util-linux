@@ -749,11 +749,10 @@ char *mnt_fs_strdup_options(struct libmnt_fs *fs)
 	res = merge_optstr(fs->vfs_optstr, fs->fs_optstr);
 	if (!res && errno)
 		return NULL;
-	if (fs->user_optstr) {
-		if (mnt_optstr_append_option(&res, fs->user_optstr, NULL)) {
-			free(res);
-			res = NULL;
-		}
+	if (fs->user_optstr &&
+	    mnt_optstr_append_option(&res, fs->user_optstr, NULL)) {
+		free(res);
+		res = NULL;
 	}
 	return res;
 }

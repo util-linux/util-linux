@@ -502,21 +502,16 @@ int main(int argc, char **argv)
 
 	login_argv[login_argc] = NULL;	/* last login argv */
 
-	if (options.chroot) {
-		if (chroot(options.chroot) < 0)
-			log_err(_("%s: can't change root directory %s: %m"),
-				options.tty, options.chroot);
-	}
-	if (options.chdir) {
-		if (chdir(options.chdir) < 0)
-			log_err(_("%s: can't change working directory %s: %m"),
-				options.tty, options.chdir);
-	}
-	if (options.nice) {
-		if (nice(options.nice) < 0)
-			log_warn(_("%s: can't change process priority: %m"),
-				options.tty);
-	}
+	if (options.chroot && chroot(options.chroot) < 0)
+		log_err(_("%s: can't change root directory %s: %m"),
+			options.tty, options.chroot);
+	if (options.chdir && chdir(options.chdir) < 0)
+		log_err(_("%s: can't change working directory %s: %m"),
+			options.tty, options.chdir);
+	if (options.nice && nice(options.nice) < 0)
+		log_warn(_("%s: can't change process priority: %m"),
+			 options.tty);
+
 	free(options.osrelease);
 #ifdef DEBUGGING
 	if (close_stream(dbf) != 0)

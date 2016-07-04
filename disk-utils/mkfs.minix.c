@@ -669,15 +669,11 @@ static int find_super_magic(const struct fs_control *ctl)
 	case 1:
 		if (ctl->fs_namelen == 14)
 			return MINIX_SUPER_MAGIC;
-		else
-			return MINIX_SUPER_MAGIC2;
-		break;
+		return MINIX_SUPER_MAGIC2;
 	case 2:
 		if (ctl->fs_namelen == 14)
 			return MINIX2_SUPER_MAGIC;
-		else
-			return MINIX2_SUPER_MAGIC2;
-		break;
+		return MINIX2_SUPER_MAGIC2;
 	case 3:
 		return MINIX3_SUPER_MAGIC;
 	default:

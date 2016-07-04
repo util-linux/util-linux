@@ -1116,8 +1116,6 @@ static int parse_kmsg_record(struct dmesg_control *ctl,
 
 	/* D) optional fields (ignore) */
 	p = skip_item(p, end, ";");
-	if (LAST_KMSG_FIELD(p))
-		goto mesg;
 
 mesg:
 	/* E) message text */
@@ -1391,12 +1389,11 @@ int main(int argc, char *argv[])
 	if (argc > 1)
 		usage(stderr);
 
-	if (is_timefmt(&ctl, RELTIME) ||
-	    is_timefmt(&ctl, CTIME) ||
-	    is_timefmt(&ctl, ISO8601)) {
-		if (dmesg_get_boot_time(&ctl.boot_time) != 0)
-			ctl.time_fmt = DMESG_TIMEFTM_NONE;
-	}
+	if ((is_timefmt(&ctl, RELTIME) ||
+	     is_timefmt(&ctl, CTIME)   ||
+	     is_timefmt(&ctl, ISO8601))
+	    && dmesg_get_boot_time(&ctl.boot_time) != 0)
+		ctl.time_fmt = DMESG_TIMEFTM_NONE;
 
 	if (delta)
 		switch (ctl.time_fmt) {

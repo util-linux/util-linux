@@ -460,15 +460,12 @@ isint:				cs[3] = '\0';
 			fs->bcnt < hex->blocksize &&
 			!(fu->flags&F_SETREP) && fu->bcnt)
 				fu->reps += (hex->blocksize - fs->bcnt) / fu->bcnt;
-		if (fu->reps > 1) {
-			if (!list_empty(&fu->prlist)) {
-				pr = list_last_entry(&fu->prlist,
-				  struct hexdump_pr, prlist);
-				for (p1 = pr->fmt, p2 = NULL; *p1; ++p1)
-					p2 = isspace(*p1) ? p1 : NULL;
-				if (p2)
-					pr->nospace = p2;
-			}
+		if (fu->reps > 1 && !list_empty(&fu->prlist)) {
+			pr = list_last_entry(&fu->prlist, struct hexdump_pr, prlist);
+			for (p1 = pr->fmt, p2 = NULL; *p1; ++p1)
+				p2 = isspace(*p1) ? p1 : NULL;
+			if (p2)
+				pr->nospace = p2;
 		}
 	}
 }

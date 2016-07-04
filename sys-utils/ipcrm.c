@@ -407,9 +407,8 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (rm_all)
-		if (remove_all(what_all))
-			ret++;
+	if (rm_all && remove_all(what_all))
+		ret++;
 
 	/* print usage if we still have some arguments left over */
 	if (optind < argc) {

@@ -809,11 +809,9 @@ static void screendump(struct setterm_control *ctl)
 /* Some options are applicable when terminal is virtual console. */
 static int vc_only(struct setterm_control *ctl, const char *err)
 {
-	if (!ctl->vcterm) {
-		if (err)
-			warnx(_("terminal %s does not support %s"),
-			      ctl->opt_te_terminal_name, err);
-	}
+	if (!ctl->vcterm && err)
+		warnx(_("terminal %s does not support %s"),
+		      ctl->opt_te_terminal_name, err);
 	return ctl->vcterm;
 }
 

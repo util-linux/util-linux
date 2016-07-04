@@ -632,22 +632,21 @@ static int execute(const char *progname, const char *progpath,
 	for (i=0; i <num_args; i++)
 		argv[argc++] = xstrdup(args[i]);
 
-	if (progress) {
-		if ((strcmp(type, "ext2") == 0) ||
-		    (strcmp(type, "ext3") == 0) ||
-		    (strcmp(type, "ext4") == 0) ||
-		    (strcmp(type, "ext4dev") == 0)) {
-			char tmp[80];
+	if (progress &&
+	       ((strcmp(type, "ext2") == 0) ||
+		(strcmp(type, "ext3") == 0) ||
+		(strcmp(type, "ext4") == 0) ||
+		(strcmp(type, "ext4dev") == 0))) {
 
-			tmp[0] = 0;
-			if (!progress_active()) {
-				snprintf(tmp, 80, "-C%d", progress_fd);
-				inst->flags |= FLAG_PROGRESS;
-			} else if (progress_fd)
-				snprintf(tmp, 80, "-C%d", progress_fd * -1);
-			if (tmp[0])
-				argv[argc++] = xstrdup(tmp);
-		}
+		char tmp[80];
+		tmp[0] = 0;
+		if (!progress_active()) {
+			snprintf(tmp, 80, "-C%d", progress_fd);
+			inst->flags |= FLAG_PROGRESS;
+		} else if (progress_fd)
+			snprintf(tmp, 80, "-C%d", progress_fd * -1);
+		if (tmp[0])
+			argv[argc++] = xstrdup(tmp);
 	}
 
 	argv[argc++] = xstrdup(fs_get_device(fs));

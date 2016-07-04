@@ -1105,10 +1105,8 @@ int main(int argc, char **argv)
 		}
 
 		signum = sigtimedwait(&set, NULL, &sigwait);
-		if (signum != SIGCHLD) {
-			if (signum < 0 && errno == EAGAIN)
-				break;
-		}
+		if (signum != SIGCHLD && signum < 0 && errno == EAGAIN)
+			break;
 
 	} while (1);
 
