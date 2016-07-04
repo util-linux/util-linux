@@ -924,32 +924,32 @@ static void logger_stdin(struct logger_ctl *ctl)
 	c = getchar();
 	while (c != EOF) {
 		i = 0;
-		if (ctl->prio_prefix) {
-			if (c == '<') {
-				pri = 0;
+		if (ctl->prio_prefix && c == '<') {
+			pri = 0;
+			buf[i++] = c;
+			while (isdigit(c = getchar()) && pri <= 191) {
 				buf[i++] = c;
-				while (isdigit(c = getchar()) && pri <= 191) {
-					buf[i++] = c;
-					pri = pri * 10 + c - '0';
-				}
-				if (c != EOF && c != '\n')
-					buf[i++] = c;
-				if (c == '>' && 0 <= pri && pri <= 191) { /* valid RFC PRI values */
-					i = 0;
-					if (pri < 8)
-						pri |= 8; /* kern facility is forbidden */
-					ctl->pri = pri;
-				} else
-					ctl->pri = default_priority;
-
-				if (ctl->pri != last_pri) {
-					has_header = 0;
-					max_usrmsg_size = ctl->max_message_size - strlen(ctl->hdr);
-					last_pri = ctl->pri;
-				}
-				if (c != EOF && c != '\n')
-					c = getchar();
+				pri = pri * 10 + c - '0';
 			}
+			if (c != EOF && c != '\n')
+				buf[i++] = c;
+			if (c == '>' && 0 <= pri && pri <= 191) {
+				/* valid RFC PRI values */
+				i = 0;
+				if (pri < 8)	/* kern facility is forbidden */
+					pri |= 8;
+				ctl->pri = pri;
+			} else
+				ctl->pri = default_priority;
+
+			if (ctl->pri != last_pri) {
+				has_header = 0;
+				max_usrmsg_size =
+				    ctl->max_message_size - strlen(ctl->hdr);
+				last_pri = ctl->pri;
+			}
+			if (c != EOF && c != '\n')
+				c = getchar();
 		}
 
 		while (c != EOF && c != '\n' && i < max_usrmsg_size) {
