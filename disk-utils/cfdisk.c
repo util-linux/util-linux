@@ -60,16 +60,19 @@
 #include "debug.h"
 #include "list.h"
 
+static const char *default_disks[] = {
 #ifdef __GNU__
-# define DEFAULT_DEVICE "/dev/hd0"
-# define ALTERNATE_DEVICE "/dev/sd0"
+		"/dev/hd0",
+		"/dev/sd0",
 #elif defined(__FreeBSD__)
-# define DEFAULT_DEVICE "/dev/ad0"
-# define ALTERNATE_DEVICE "/dev/da0"
+		"/dev/ad0",
+		"/dev/da0",
 #else
-# define DEFAULT_DEVICE "/dev/sda"
-# define ALTERNATE_DEVICE "/dev/hda"
+		"/dev/sda",
+		"/dev/vda",
+		"/dev/hda",
 #endif
+};
 
 #define ARROW_CURSOR_STRING	">>  "
 #define ARROW_CURSOR_DUMMY	"    "
@@ -2544,7 +2547,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char *argv[])
 {
-	const char *diskpath;
+	const char *diskpath = NULL;
 	int rc, c, colormode = UL_COLORMODE_UNDEF;
 	struct cfdisk _cf = { .lines_idx = 0 },
 		      *cf = &_cf;
@@ -2593,18 +2596,25 @@ int main(int argc, char *argv[])
 
 	fdisk_set_ask(cf->cxt, ask_callback, (void *) cf);
 
-	if (optind == argc)
-		diskpath = access(DEFAULT_DEVICE, F_OK) == 0 ?
-					DEFAULT_DEVICE : ALTERNATE_DEVICE;
-	else
+	if (optind == argc) {
+		size_t i;
+
+		for (i = 0; i < ARRAY_SIZE(default_disks); i++) {
+			if (access(default_disks[i], F_OK) == 0) {
+				diskpath = default_disks[i];
+				break;
+			}
+		}
+		if (!diskpath)
+			diskpath = default_disks[0];	/* default, used for "cannot open" */
+	} else
 		diskpath = argv[optind];
 
 	rc = fdisk_assign_device(cf->cxt, diskpath, 0);
 	if (rc == -EACCES)
 		rc = fdisk_assign_device(cf->cxt, diskpath, 1);
 	if (rc != 0)
-		err(EXIT_FAILURE, _("cannot open %s"),
-				optind == argc ? DEFAULT_DEVICE : diskpath);
+		err(EXIT_FAILURE, _("cannot open %s"), diskpath);
 
 	/* Don't use err(), warn() from this point */
 	ui_init(cf);
