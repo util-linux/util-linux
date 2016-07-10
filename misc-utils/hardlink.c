@@ -12,9 +12,10 @@
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    General Public License for more details.
 
-   You should have received a copy of the GNU General Public License 
-   along with this program; if not, write to the Free Software Foundation, 
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
+   You should have received a copy of the GNU General Public
+   License along with this program; see the file COPYING.  If not,
+   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+   Boston, MA 02111-1307, USA.  */
 
 /*  Changes by Rémy Card to use constants and add option -n.  */
 /*  Changes by Jindrich Novy to add option -h, -f, replace mmap(2), fix overflows */
@@ -29,6 +30,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #define NHASH	(1<<17)	/* Must be a power of 2! */
 #define NIOBUF	(1<<12)
@@ -267,21 +269,22 @@ void rf (const char *name)
           growstr(&nam2, add2(n2len, suffixlen));
           memcpy(nam2.buf, n2, n2len);
           memcpy(&nam2.buf[n2len], suffix, suffixlen + 1);
-          if (rename (n2, nam2.buf)) {
-            fprintf(stderr, "\nFailed to rename %s to %s\n", n2, nam2.buf);
+          /* First create a temporary link to n1 under a new name */
+          if (link(n1, nam2.buf)) {
+            fprintf(stderr, "\nFailed to hardlink %s to %s (create temporary link as %s failed - %s)\n", n1, n2, nam2.buf, strerror(errno));
             free(nam2.buf);
             continue;
           }
-          if (link (n1, n2)) {
-            fprintf(stderr, "\nFailed to hardlink %s to %s\n", n1, n2);
-            if (rename (nam2.buf, n2)) {
-              fprintf(stderr, "\nBad bad - failed to rename back %s to %s\n", nam2.buf, n2);
+          /* Then rename into place over the existing n2 */
+          if (rename (nam2.buf, n2)) {
+            fprintf(stderr, "\nFailed to hardlink %s to %s (rename temporary link to %s failed - %s)\n", n1, n2, n2, strerror(errno));
+            /* Something went wrong, try to remove the now redundant temporary link */
+            if (unlink(nam2.buf)) {
+              fprintf(stderr, "\nFailed to remove temporary link %s - %s\n", nam2.buf, strerror(errno));
             }
-            close(fd);
             free(nam2.buf);
-            return;
+            continue;
           }
-          unlink (nam2.buf);
           free(nam2.buf);
         }
         nlinks++;
