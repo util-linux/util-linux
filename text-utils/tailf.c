@@ -42,6 +42,7 @@
 #include <errno.h>
 #include <getopt.h>
 #include <sys/mman.h>
+#include <limits.h>
 
 #ifdef HAVE_INOTIFY_INIT
 #include <sys/inotify.h>
@@ -55,7 +56,7 @@
 
 #define DEFAULT_LINES  10
 
-/* st->st_size has to be greater than zero! */
+/* st->st_size has to be greater than zero and smaller or equal to SIZE_MAX! */
 static void tailf(const char *filename, size_t lines, struct stat *st)
 {
 	int fd;
@@ -281,7 +282,9 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("stat of %s failed"), filename);
 	if (!S_ISREG(st.st_mode))
 		errx(EXIT_FAILURE, _("%s: is not a file"), filename);
-	if (st.st_size)
+
+	/* mmap is based on size_t */
+	if (st.st_size && (size_t) st.st_size <= SIZE_MAX)
 		tailf(filename, lines, &st);
 
 #ifdef HAVE_INOTIFY_INIT
