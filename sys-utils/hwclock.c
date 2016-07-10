@@ -389,27 +389,11 @@ static void
 mktime_tz(struct tm tm, const bool universal,
 	  bool * valid_p, time_t * systime_p)
 {
-	time_t mktime_result;	/* The value returned by our mktime() call */
-	char *zone;		/* Local time zone name */
-
-	/*
-	 * We use the C library function mktime(), but since it only works
-	 * on local time zone input, we may have to fake it out by
-	 * temporarily changing the local time zone to UTC.
-	 */
-	zone = getenv("TZ");	/* remember original time zone */
-	if (universal) {
-		/* Set timezone to UTC */
-		xsetenv("TZ", "", TRUE);
-		/*
-		 * Note: tzset() gets called implicitly by the time code,
-		 * but only the first time. When changing the environment
-		 * variable, better call tzset() explicitly.
-		 */
-		tzset();
-	}
-	mktime_result = mktime(&tm);
-	if (mktime_result == -1) {
+	if (universal)
+		*systime_p = timegm(&tm);
+	else
+		*systime_p = mktime(&tm);
+	if (*systime_p == -1) {
 		/*
 		 * This apparently (not specified in mktime() documentation)
 		 * means the 'tm' structure does not contain valid values
@@ -417,7 +401,6 @@ mktime_tz(struct tm tm, const bool universal,
 		 * mktime() returns -1).
 		 */
 		*valid_p = FALSE;
-		*systime_p = 0;
 		if (debug)
 			printf(_("Invalid values in hardware clock: "
 				 "%4d/%.2d/%.2d %.2d:%.2d:%.2d\n"),
@@ -425,7 +408,6 @@ mktime_tz(struct tm tm, const bool universal,
 			       tm.tm_hour, tm.tm_min, tm.tm_sec);
 	} else {
 		*valid_p = TRUE;
-		*systime_p = mktime_result;
 		if (debug)
 			printf(_
 			       ("Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = "
@@ -433,12 +415,6 @@ mktime_tz(struct tm tm, const bool universal,
 			       tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min,
 			       tm.tm_sec, (long)*systime_p);
 	}
-	/* now put back the original zone. */
-	if (zone)
-		xsetenv("TZ", zone, TRUE);
-	else
-		unsetenv("TZ");
-	tzset();
 }
 
 /*
