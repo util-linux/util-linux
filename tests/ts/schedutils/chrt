@@ -45,8 +45,8 @@ if [ $? == 0 ]; then
 	do_chrt --fifo 1
 	do_chrt --fifo 99
 	cleanup_output
+	ts_finalize_subtest
 fi
-ts_finalize_subtest
 
 
 ts_init_subtest "batch"
@@ -54,8 +54,8 @@ skip_policy SCHED_BATCH
 if [ $? == 0 ]; then
 	do_chrt --batch 0
 	cleanup_output
+	ts_finalize_subtest
 fi
-ts_finalize_subtest
 
 
 ts_init_subtest "other"
@@ -63,8 +63,8 @@ skip_policy SCHED_OTHER
 if [ $? == 0 ]; then
 	do_chrt --other 0
 	cleanup_output
+	ts_finalize_subtest
 fi
-ts_finalize_subtest
 
 
 ts_init_subtest "rr"
@@ -73,8 +73,8 @@ if [ $? == 0 ]; then
 	do_chrt --rr 1
 	do_chrt --rr 99
 	cleanup_output
+	ts_finalize_subtest
 fi
-ts_finalize_subtest
 
 
 ts_init_subtest "idle"
@@ -82,8 +82,8 @@ skip_policy SCHED_IDLE
 if [ $? == 0 ]; then
 	do_chrt --idle 0
 	cleanup_output
+	ts_finalize_subtest
 fi
-ts_finalize_subtest
 
 
 ts_init_subtest "deadline"
@@ -93,7 +93,7 @@ if [ $? == 0 ]; then
 	do_chrt --deadline --sched-period 13000 --sched-deadline 12000 0
 	do_chrt --deadline --sched-period 13000 --sched-deadline 12000 --sched-runtime 10000 0
 	cleanup_output
+	ts_finalize_subtest
 fi
-ts_finalize_subtest
 
 ts_finalize

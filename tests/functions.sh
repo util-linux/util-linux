@@ -91,12 +91,12 @@ function ts_check_losetup {
 	ts_skip "no loop-device support"
 }
 
-function ts_skip_subtest {
+function ts_report_skip {
 	ts_report " SKIPPED ($1)"
 }
 
 function ts_skip {
-	ts_skip_subtest "$1"
+	ts_report_skip "$1"
 
 	ts_cleanup_on_exit
 	exit 0
@@ -130,7 +130,7 @@ function ts_failed {
 	exit $?
 }
 
-function ts_ok_subtest {
+function ts_report_ok {
 	if [ x"$1" == x"" ]; then
 		ts_report " OK"
 	else
@@ -139,7 +139,7 @@ function ts_ok_subtest {
 }
 
 function ts_ok {
-	ts_ok_subtest "$1"
+	ts_report_ok "$1"
 	exit 0
 }
 
@@ -413,7 +413,7 @@ function ts_finalize_subtest {
 		ts_failed_subtest "$1"
 		res=1
 	else
-		ts_ok_subtest "$(tt_gen_mem_report "$1")"
+		ts_report_ok "$(tt_gen_mem_report "$1")"
 	fi
 
 	[ $res -ne 0 ] && TS_NSUBFAILED=$(( $TS_NSUBFAILED + 1 ))
@@ -422,6 +422,13 @@ function ts_finalize_subtest {
 	ts_init_core_env
 
 	return $res
+}
+
+function ts_skip_subtest {
+	ts_report_skip "$1"
+	# reset environment back to parental test
+	ts_init_core_env
+
 }
 
 function ts_finalize {
