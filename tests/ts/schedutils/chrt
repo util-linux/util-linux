@@ -20,6 +20,7 @@ TS_DESC="chrt"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_CHRT"
+ts_skip_nonroot
 
 function do_chrt {
 	$TS_CMD_CHRT $* $TS_CMD_CHRT --pid 0 | sed 's/.* policy: //; s/.* priority: //' &>> $TS_OUTPUT
