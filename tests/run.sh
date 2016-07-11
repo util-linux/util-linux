@@ -160,6 +160,11 @@ echo "                    For development purpose only.                    "
 echo "                 Don't execute on production system!                 "
 echo
 
+# TODO: add more information about system
+printf "%13s: %-30s    " "kernel" "$(uname -r)"
+echo
+echo
+
 if [ $paraller_jobs -gt 1 ]; then
 	echo "              Executing the tests in parallel ($paraller_jobs jobs)    "
 	echo

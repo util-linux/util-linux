@@ -97,4 +97,11 @@ if [ $? == 0 ]; then
 	ts_finalize_subtest
 fi
 
+# failed -- let's report kernel limits
+#
+if [ $TS_NSUBFAILED -ne 0 ]; then
+	echo "Supported policies:"
+	$TS_CMD_CHRT --max
+fi
+
 ts_finalize
