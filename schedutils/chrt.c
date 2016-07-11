@@ -58,9 +58,17 @@
 # define SCHED_FLAG_RESET_ON_FORK 0x01
 #endif
 
-
 #if defined (__linux__) && !defined(HAVE_SCHED_SETATTR)
 # include <sys/syscall.h>
+#endif
+
+/* usable kernel-headers, but old glibc-headers */
+#if defined (__linux__) && !defined(SYS_sched_setattr) && defined(__NR_sched_setattr)
+# define SYS_sched_setattr __NR_sched_setattr
+#endif
+
+#if defined (__linux__) && !defined(SYS_sched_getattr) && defined(__NR_sched_getattr)
+# define SYS_sched_getattr __NR_sched_getattr
 #endif
 
 #if defined (__linux__) && !defined(HAVE_SCHED_SETATTR) && defined(SYS_sched_setattr)
@@ -207,12 +215,20 @@ static void show_sched_pid_info(struct chrt_ctl *ctl, pid_t pid)
 	if (!pid)
 		pid = getpid();
 
+	errno = 0;
+
+	/*
+	 * New way
+	 */
 #ifdef HAVE_SCHED_SETATTR
 	{
 		struct sched_attr sa;
 
-		if (sched_getattr(pid, &sa, sizeof(sa), 0) != 0)
+		if (sched_getattr(pid, &sa, sizeof(sa), 0) != 0) {
+			if (errno == ENOSYS)
+				goto fallback;
 			err(EXIT_FAILURE, _("failed to get pid %d's policy"), pid);
+		}
 
 		policy = sa.sched_policy;
 		prio = sa.sched_priority;
@@ -221,8 +237,13 @@ static void show_sched_pid_info(struct chrt_ctl *ctl, pid_t pid)
 		runtime = sa.sched_runtime;
 		period = sa.sched_period;
 	}
-#else /* !HAVE_SCHED_SETATTR */
-	{
+#endif
+
+	/*
+	 * Old way
+	 */
+fallback:
+	if (errno == ENOSYS) {
 		struct sched_param sp;
 
 		policy = sched_getscheduler(pid);
@@ -238,7 +259,6 @@ static void show_sched_pid_info(struct chrt_ctl *ctl, pid_t pid)
 			reset_on_fork = 1;
 # endif
 	}
-#endif /* !HAVE_SCHED_SETATTR */
 
 	if (ctl->altered)
 		printf(_("pid %d's new scheduling policy: %s"), pid, get_policy_name(policy));
@@ -315,8 +335,7 @@ static void show_min_max(void)
 	}
 }
 
-#ifndef HAVE_SCHED_SETATTR
-static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
+static int set_sched_one_by_setscheduler(struct chrt_ctl *ctl, pid_t pid)
 {
 	struct sched_param sp = { .sched_priority = ctl->priority };
 	int policy = ctl->policy;
@@ -326,6 +345,13 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 		policy |= SCHED_RESET_ON_FORK;
 # endif
 	return sched_setscheduler(pid, policy, &sp);
+}
+
+
+#ifndef HAVE_SCHED_SETATTR
+static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
+{
+	return set_sched_one_by_setscheduler(ctl, pid);
 }
 
 #else /* !HAVE_SCHED_SETATTR */
@@ -340,11 +366,20 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 		.sched_period   = ctl->period,
 		.sched_deadline = ctl->deadline
 	};
+	int rc;
+
 # ifdef SCHED_RESET_ON_FORK
 	if (ctl->reset_on_fork)
 		sa.sched_flags |= SCHED_RESET_ON_FORK;
 # endif
-	return sched_setattr(pid, &sa, 0);
+	errno = 0;
+	rc = sched_setattr(pid, &sa, 0);
+
+	if (rc != 0 && errno == ENOSYS && ctl->policy != SCHED_DEADLINE)
+		/* fallback -- build with new kernel/libc, but executed on old kernels */
+		rc = set_sched_one_by_setscheduler(ctl, pid);
+
+	return rc;
 }
 #endif /* HAVE_SCHED_SETATTR */
 
