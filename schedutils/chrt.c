@@ -308,10 +308,10 @@ static void show_min_max(void)
 		int min = sched_get_priority_min(plc);
 
 		if (max >= 0 && min >= 0)
-			printf(_("SCHED_%s min/max priority\t: %d/%d\n"),
+			printf(_("%s min/max priority\t: %d/%d\n"),
 					get_policy_name(plc), min, max);
 		else
-			printf(_("SCHED_%s not supported?\n"), get_policy_name(plc));
+			printf(_("%s not supported?\n"), get_policy_name(plc));
 	}
 }
 
