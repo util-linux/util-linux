@@ -416,6 +416,7 @@ AC_CHECK_FUNCS([ \
 	strnlen \
 	sysconf \
 	sysinfo \
+	timegm \
 	usleep \
 	warn \
 	warnx \

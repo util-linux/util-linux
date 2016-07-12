@@ -20,6 +20,7 @@
 
 #include <assert.h>
 #include <ctype.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <sys/time.h>
@@ -459,6 +460,24 @@ int strtime_short(const time_t *t, struct timeval *now, int flags, char *buf, si
 
 	return rc <= 0 ? -1 : 0;
 }
+
+#ifndef HAVE_TIMEGM
+time_t timegm(struct tm *tm)
+{
+	const char *zone = getenv("TZ");
+	time_t ret;
+
+	setenv("TZ", "", 1);
+	tzset();
+	ret = mktime(tm);
+	if (zone)
+		setenv("TZ", zone, 1);
+	else
+		unsetenv("TZ");
+	tzset();
+	return ret;
+}
+#endif /* HAVE_TIMEGM */
 
 #ifdef TEST_PROGRAM_TIMEUTILS
 
