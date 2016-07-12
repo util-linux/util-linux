@@ -105,6 +105,13 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 					continue;
 			}
 
+			/* Avoid recursive non-empty links, see ct_nodata counter */
+			if (blkid_partlist_get_partition_by_start(ls, abs_start)) {
+				DBG(LOWPROBE, ul_debug("#%d: EBR duplicate data partition [abs start=%u] -- ignore",
+							i + 1, abs_start));
+				continue;
+			}
+
 			par = blkid_partlist_add_partition(ls, tab, abs_start, size);
 			if (!par)
 				return -ENOMEM;

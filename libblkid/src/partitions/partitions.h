@@ -21,6 +21,8 @@ extern int blkid_partlist_increment_partno(blkid_partlist ls);
 
 extern blkid_partition blkid_partlist_get_parent(blkid_partlist ls);
 
+extern blkid_partition blkid_partlist_get_partition_by_start(blkid_partlist ls, uint64_t start);
+
 extern int blkid_partitions_do_subprobe(blkid_probe pr,
 			blkid_partition parent, const struct blkid_idinfo *id);
 
