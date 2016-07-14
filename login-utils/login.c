@@ -356,7 +356,7 @@ static void init_tty(struct login_context *cxt)
 
 	cxt->tty_mode = (mode_t) getlogindefs_num("TTYPERM", TTY_MODE);
 
-	get_terminal_name(0, &cxt->tty_path, &cxt->tty_name, &cxt->tty_number);
+	get_terminal_name(&cxt->tty_path, &cxt->tty_name, &cxt->tty_number);
 
 	/*
 	 * In case login is suid it was possible to use a hardlink as stdin

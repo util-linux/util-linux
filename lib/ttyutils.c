@@ -5,6 +5,7 @@
  * Written by Karel Zak <kzak@redhat.com>
  */
 #include <ctype.h>
+#include <unistd.h>
 
 #include "c.h"
 #include "ttyutils.h"
@@ -42,13 +43,14 @@ int get_terminal_width(int default_width)
 	return width > 0 ? width : default_width;
 }
 
-int get_terminal_name(int fd,
-		      const char **path,
+int get_terminal_name(const char **path,
 		      const char **name,
 		      const char **number)
 {
 	const char *tty;
 	const char *p;
+	int fd;
+
 
 	if (name)
 		*name = NULL;
@@ -56,6 +58,15 @@ int get_terminal_name(int fd,
 		*path = NULL;
 	if (number)
 		*number = NULL;
+
+	if (isatty(STDIN_FILENO))
+		fd = STDIN_FILENO;
+	else if (isatty(STDOUT_FILENO))
+		fd = STDOUT_FILENO;
+	else if (isatty(STDERR_FILENO))
+		fd = STDERR_FILENO;
+	else
+		return -1;
 
 	tty = ttyname(fd);
 	if (!tty)
