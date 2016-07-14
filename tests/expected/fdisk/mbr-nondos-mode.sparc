@@ -1,0 +1,189 @@
+Initialize empty image
+8f4e33f3dc3e414ff94e5fb6905cba8c mbr-nondos-mode.img
+Create new DOS partition table
+8f4e33f3dc3e414ff94e5fb6905cba8c mbr-nondos-mode.img
+
+---layout----------
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+-------------------
+
+Create 1st primary partition
+d5ad6d4e743430c2a61e558bb3319175 mbr-nondos-mode.img
+
+---layout----------
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Geometry: 255 heads, 63 sectors/track, 2 cylinders
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: sun
+
+Device             Start   End Sectors  Size Id Type         Flags
+<removed>1     0 16064   16065  7.9M 83 Linux native      
+<removed>2 16065 32129   16065  7.9M 82 Linux swap      u 
+<removed>3     0 32129   32130 15.7M  5 Whole disk        
+-------------------
+
+Set primary partition active
+d59bb4ba5914242f9a63a2d13fb68752 mbr-nondos-mode.img
+
+---layout----------
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Geometry: 255 heads, 63 sectors/track, 2 cylinders
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: sun
+
+Device             Start   End Sectors  Size Id Type         Flags
+<removed>1     0 16064   16065  7.9M 83 Linux native     r
+<removed>2 16065 32129   16065  7.9M 82 Linux swap      u 
+<removed>3     0 32129   32130 15.7M  5 Whole disk        
+-------------------
+
+Re-create 1st primary partition
+d8ba04bdd46cec690fa672ac8fcaf387 mbr-nondos-mode.img
+
+---layout----------
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Geometry: 255 heads, 63 sectors/track, 2 cylinders
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: sun
+
+Device             Start   End Sectors  Size Id Type         Flags
+<removed>1     0 16064   16065  7.9M 83 Linux native     r
+<removed>2 16065 32129   16065  7.9M 82 Linux swap      u 
+-------------------
+
+Create 2nd primary partition
+d8ba04bdd46cec690fa672ac8fcaf387 mbr-nondos-mode.img
+
+---layout----------
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Geometry: 255 heads, 63 sectors/track, 2 cylinders
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: sun
+
+Device             Start   End Sectors  Size Id Type         Flags
+<removed>1     0 16064   16065  7.9M 83 Linux native     r
+<removed>2 16065 32129   16065  7.9M 82 Linux swap      u 
+-------------------
+
+Create extended partition
+d59bb4ba5914242f9a63a2d13fb68752 mbr-nondos-mode.img
+
+---layout----------
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Geometry: 255 heads, 63 sectors/track, 2 cylinders
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: sun
+
+Device             Start   End Sectors  Size Id Type         Flags
+<removed>1     0 16064   16065  7.9M 83 Linux native     r
+<removed>2 16065 32129   16065  7.9M 82 Linux swap      u 
+<removed>3     0 32129   32130 15.7M  5 Whole disk        
+-------------------
+
+Create logical partitions
+d59bb4ba5914242f9a63a2d13fb68752 mbr-nondos-mode.img
+
+---layout----------
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Geometry: 255 heads, 63 sectors/track, 2 cylinders
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: sun
+
+Device             Start   End Sectors  Size Id Type         Flags
+<removed>1     0 16064   16065  7.9M 83 Linux native     r
+<removed>2 16065 32129   16065  7.9M 82 Linux swap      u 
+<removed>3     0 32129   32130 15.7M  5 Whole disk        
+-------------------
+
+Delete logical partitions
+d59bb4ba5914242f9a63a2d13fb68752 mbr-nondos-mode.img
+
+---layout----------
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Geometry: 255 heads, 63 sectors/track, 2 cylinders
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: sun
+
+Device             Start   End Sectors  Size Id Type         Flags
+<removed>1     0 16064   16065  7.9M 83 Linux native     r
+<removed>2 16065 32129   16065  7.9M 82 Linux swap      u 
+<removed>3     0 32129   32130 15.7M  5 Whole disk        
+-------------------
+
+Create another logical partition
+d59bb4ba5914242f9a63a2d13fb68752 mbr-nondos-mode.img
+
+---layout----------
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Geometry: 255 heads, 63 sectors/track, 2 cylinders
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: sun
+
+Device             Start   End Sectors  Size Id Type         Flags
+<removed>1     0 16064   16065  7.9M 83 Linux native     r
+<removed>2 16065 32129   16065  7.9M 82 Linux swap      u 
+<removed>3     0 32129   32130 15.7M  5 Whole disk        
+-------------------
+
+Delete primary partition
+0bd87175c4c5c3ef9a46595027b6369c mbr-nondos-mode.img
+
+---layout----------
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Geometry: 255 heads, 63 sectors/track, 2 cylinders
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: sun
+
+Device             Start   End Sectors  Size Id Type       Flags
+<removed>2 16065 32129   16065  7.9M 82 Linux swap    u 
+<removed>3     0 32129   32130 15.7M  5 Whole disk      
+-------------------
+
+Delete primary partition
+33f6e541ddcafed65d231ce3f2b76a59 mbr-nondos-mode.img
+
+---layout----------
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Geometry: 255 heads, 63 sectors/track, 2 cylinders
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: sun
+
+Device             Start   End Sectors  Size Id Type       Flags
+<removed>3     0 32129   32130 15.7M  5 Whole disk      
+-------------------
+
+Delete extended partition
+e923755cbc0054eb85341fe119be07f9 mbr-nondos-mode.img
+
+---layout----------
+Disk <removed>: 20 MiB, 20971520 bytes, 40960 sectors
+Geometry: 255 heads, 63 sectors/track, 2 cylinders
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / <removed> bytes
+Disklabel type: sun
+-------------------
+

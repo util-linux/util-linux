@@ -1,0 +1,3 @@
+Initialize empty image
+Create MBR with ID=0x1
+Create MBR with ID=0x2

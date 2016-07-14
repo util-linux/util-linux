@@ -25,6 +25,19 @@ ts_check_test_command "$TS_CMD_FDISK"
 FDISK_CMD_ID1="x\ni\n0x1\nr\nw\n"
 FDISK_CMD_ID2="x\ni\n0x2\nr\nw\n"
 
+# Sparc uses SUN disk labels by default and thus has a different output
+ARCH=$(uname -m)
+case $ARCH in
+	*sparc* )
+		ARCH_EXT=".sparc"
+		;;
+	*)
+		ARCH_EXT=""
+		;;
+esac
+
+TS_EXPECTED+="${ARCH_EXT}"
+
 ts_log "Initialize empty image"
 TEST_IMAGE_NAME=$(ts_image_init 10)
 
