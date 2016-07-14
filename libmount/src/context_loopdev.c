@@ -217,7 +217,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	*/
 	rc = loopcxt_init(&lc, 0);
 	if (rc)
-		goto done;
+		goto done_no_deinit;
 	if (backing_file && !(loopcxt_find_by_backing_file(&lc,
 			backing_file, offset, LOOPDEV_FL_OFFSET))) {
 		DBG(LOOP, ul_debugobj(cxt, "using existing loop device %s",
@@ -234,7 +234,9 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	loopcxt_deinit(&lc);
 
 	rc = loopcxt_init(&lc, 0);
-	if (rc == 0 && loopval) {
+	if (rc)
+		goto done_no_deinit;
+	if (loopval) {
 		rc = loopcxt_set_device(&lc, loopval);
 		if (rc == 0)
 			loopdev = loopcxt_get_device(&lc);
