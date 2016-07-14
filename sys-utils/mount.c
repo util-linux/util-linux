@@ -455,6 +455,9 @@ try_readonly:
 		case -MNT_ERR_LOOPDEV:
 			warn(_("%s: failed to setup loop device"), src);
 			return MOUNT_EX_FAIL;
+		case -MNT_ERR_LOOPOVERLAP:
+			warnx(_("%s: overlapping loop device exists"), src);
+			return MOUNT_EX_FAIL;
 		default:
 			return handle_generic_errors(rc, _("%s: mount failed"),
 					     tgt ? tgt : src);
