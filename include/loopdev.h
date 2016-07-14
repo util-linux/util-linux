@@ -133,9 +133,9 @@ extern int loopdev_is_autoclear(const char *device);
 
 extern char *loopdev_get_backing_file(const char *device);
 extern int loopdev_is_used(const char *device, const char *filename,
-			   uint64_t offset, int flags);
+			   uint64_t offset, uint64_t sizelimit, int flags);
 extern char *loopdev_find_by_backing_file(const char *filename,
-					  uint64_t offset, int flags);
+				uint64_t offset, uint64_t sizelimit, int flags);
 extern int loopcxt_find_unused(struct loopdev_cxt *lc);
 extern int loopdev_delete(const char *device);
 extern int loopdev_count_by_backing_file(const char *filename, char **loopdev);
@@ -186,12 +186,14 @@ extern int loopcxt_is_dio(struct loopdev_cxt *lc);
 extern int loopcxt_is_partscan(struct loopdev_cxt *lc);
 extern int loopcxt_find_by_backing_file(struct loopdev_cxt *lc,
 				const char *filename,
-                                uint64_t offset, int flags);
+				uint64_t offset, uint64_t sizelimit,
+				int flags);
 
 extern int loopcxt_is_used(struct loopdev_cxt *lc,
                     struct stat *st,
                     const char *backing_file,
                     uint64_t offset,
+                    uint64_t sizelimit,
                     int flags);
 
 #endif /* UTIL_LINUX_LOOPDEV_H */

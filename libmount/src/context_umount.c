@@ -328,7 +328,7 @@ static int is_associated_fs(const char *devname, struct libmnt_fs *fs)
 			return 0;
 	}
 
-	return loopdev_is_used(devname, src, offset, flags);
+	return loopdev_is_used(devname, src, offset, 0, flags);
 }
 
 static int prepare_helper_from_options(struct libmnt_context *cxt,

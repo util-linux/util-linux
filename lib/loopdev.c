@@ -980,11 +980,14 @@ int loopcxt_is_dio(struct loopdev_cxt *lc)
  * @backing_file: filename
  * @offset: offset
  * @flags: LOOPDEV_FL_OFFSET if @offset should not be ignored
+ * @flags: LOOPDEV_FL_SIZELIMIT if @sizelimit should not be ignored
  *
  * Returns 1 if the current @lc loopdev is associated with the given backing
  * file. Note that the preferred way is to use devno and inode number rather
  * than filename. The @backing_file filename is poor solution usable in case
  * that you don't have rights to call stat().
+ *
+ * LOOPDEV_FL_SIZELIMIT requires LOOPDEV_FL_OFFSET being set as well.
  *
  * Don't forget that old kernels provide very restricted (in size) backing
  * filename by LOOP_GET_STAT64 ioctl only.
@@ -993,6 +996,7 @@ int loopcxt_is_used(struct loopdev_cxt *lc,
 		    struct stat *st,
 		    const char *backing_file,
 		    uint64_t offset,
+		    uint64_t sizelimit,
 		    int flags)
 {
 	ino_t ino;
@@ -1030,7 +1034,15 @@ found:
 	if (flags & LOOPDEV_FL_OFFSET) {
 		uint64_t off;
 
-		return loopcxt_get_offset(lc, &off) == 0 && off == offset;
+		int rc = loopcxt_get_offset(lc, &off) == 0 && off == offset;
+
+		if (rc && flags & LOOPDEV_FL_SIZELIMIT) {
+			uint64_t sz;
+
+			return loopcxt_get_sizelimit(lc, &sz) == 0 && sz == sizelimit;
+		}
+		else
+			return rc;
 	}
 	return 1;
 }
@@ -1485,7 +1497,7 @@ char *loopdev_get_backing_file(const char *device)
  * Returns: TRUE/FALSE
  */
 int loopdev_is_used(const char *device, const char *filename,
-		    uint64_t offset, int flags)
+		    uint64_t offset, uint64_t sizelimit, int flags)
 {
 	struct loopdev_cxt lc;
 	struct stat st;
@@ -1501,7 +1513,7 @@ int loopdev_is_used(const char *device, const char *filename,
 		return rc;
 
 	rc = !stat(filename, &st);
-	rc = loopcxt_is_used(&lc, rc ? &st : NULL, filename, offset, flags);
+	rc = loopcxt_is_used(&lc, rc ? &st : NULL, filename, offset, sizelimit, flags);
 
 	loopcxt_deinit(&lc);
 	return rc;
@@ -1528,7 +1540,7 @@ int loopdev_delete(const char *device)
  * Returns: 0 = success, < 0 error, 1 not found
  */
 int loopcxt_find_by_backing_file(struct loopdev_cxt *lc, const char *filename,
-				 uint64_t offset, int flags)
+				 uint64_t offset, uint64_t sizelimit, int flags)
 {
 	int rc, hasst;
 	struct stat st;
@@ -1545,7 +1557,7 @@ int loopcxt_find_by_backing_file(struct loopdev_cxt *lc, const char *filename,
 	while ((rc = loopcxt_next(lc)) == 0) {
 
 		if (loopcxt_is_used(lc, hasst ? &st : NULL,
-					filename, offset, flags))
+				    filename, offset, sizelimit, flags))
 			break;
 	}
 
@@ -1556,7 +1568,7 @@ int loopcxt_find_by_backing_file(struct loopdev_cxt *lc, const char *filename,
 /*
  * Returns allocated string with device name
  */
-char *loopdev_find_by_backing_file(const char *filename, uint64_t offset, int flags)
+char *loopdev_find_by_backing_file(const char *filename, uint64_t offset, uint64_t sizelimit, int flags)
 {
 	struct loopdev_cxt lc;
 	char *res = NULL;
@@ -1566,7 +1578,7 @@ char *loopdev_find_by_backing_file(const char *filename, uint64_t offset, int fl
 
 	if (loopcxt_init(&lc, 0))
 		return NULL;
-	if (loopcxt_find_by_backing_file(&lc, filename, offset, flags) == 0)
+	if (loopcxt_find_by_backing_file(&lc, filename, offset, sizelimit, flags) == 0)
 		res = loopcxt_strdup_device(&lc);
 	loopcxt_deinit(&lc);
 

@@ -178,10 +178,10 @@ static int show_all_loops(struct loopdev_cxt *lc, const char *file,
 			int used;
 			const char *bf = cn_file ? cn_file : file;
 
-			used = loopcxt_is_used(lc, st, bf, offset, flags);
+			used = loopcxt_is_used(lc, st, bf, offset, 0, flags);
 			if (!used && !cn_file) {
 				bf = cn_file = canonicalize_path(file);
-				used = loopcxt_is_used(lc, st, bf, offset, flags);
+				used = loopcxt_is_used(lc, st, bf, offset, 0, flags);
 			}
 			if (!used)
 				continue;
@@ -344,10 +344,10 @@ static int show_table(struct loopdev_cxt *lc,
 				int used;
 				const char *bf = cn_file ? cn_file : file;
 
-				used = loopcxt_is_used(lc, st, bf, offset, flags);
+				used = loopcxt_is_used(lc, st, bf, offset, 0, flags);
 				if (!used && !cn_file) {
 					bf = cn_file = canonicalize_path(file);
-					used = loopcxt_is_used(lc, st, bf, offset, flags);
+					used = loopcxt_is_used(lc, st, bf, offset, 0, flags);
 				}
 				if (!used)
 					continue;

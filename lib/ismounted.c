@@ -85,7 +85,7 @@ static int check_mntent_file(const char *mtab_file, const char *file,
 			/* maybe the file is loopdev backing file */
 			if (file_dev
 			    && major(st_buf.st_rdev) == LOOPDEV_MAJOR
-			    && loopdev_is_used(mnt->mnt_fsname, file, 0, 0))
+			    && loopdev_is_used(mnt->mnt_fsname, file, 0, 0, 0))
 				break;
 #endif /* __linux__ */
 #endif	/* __GNU__ */

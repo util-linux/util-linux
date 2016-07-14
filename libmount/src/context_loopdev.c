@@ -119,13 +119,13 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 		rc = 0;
 
 		if (strncmp(src, "/dev/loop", 9) == 0) {
-			rc = loopdev_is_used((char *) src, bf, offset, LOOPDEV_FL_OFFSET);
+			rc = loopdev_is_used((char *) src, bf, offset, 0, LOOPDEV_FL_OFFSET);
 
 		} else if (opts && (cxt->user_mountflags & MNT_MS_LOOP) &&
 		    mnt_optstr_get_option(opts, "loop", &val, &len) == 0 && val) {
 
 			val = strndup(val, len);
-			rc = loopdev_is_used((char *) val, bf, offset, LOOPDEV_FL_OFFSET);
+			rc = loopdev_is_used((char *) val, bf, offset, 0, LOOPDEV_FL_OFFSET);
 			free(val);
 		}
 	}
@@ -219,7 +219,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	if (rc)
 		goto done_no_deinit;
 	if (backing_file && !(loopcxt_find_by_backing_file(&lc,
-			backing_file, offset, LOOPDEV_FL_OFFSET))) {
+			backing_file, offset, sizelimit, LOOPDEV_FL_OFFSET))) {
 		DBG(LOOP, ul_debugobj(cxt, "using existing loop device %s",
 					loopcxt_get_device(&lc)));
 		/* Once a loop is initialized RO, there is no way to safely
