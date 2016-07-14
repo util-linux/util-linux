@@ -1566,6 +1566,61 @@ int loopcxt_find_by_backing_file(struct loopdev_cxt *lc, const char *filename,
 }
 
 /*
+ * Returns: 0 = conflict, < 0 error, 1 no conflicting device
+ */
+int loopcxt_check_conflict(struct loopdev_cxt *lc, const char *filename,
+			   uint64_t offset, uint64_t sizelimit)
+{
+	int rc, hasst;
+	struct stat st;
+
+	if (!filename)
+		return -EINVAL;
+
+	hasst = !stat(filename, &st);
+
+	rc = loopcxt_init_iterator(lc, LOOPITER_FL_USED);
+	if (rc)
+		return rc;
+
+	while ((rc = loopcxt_next(lc)) == 0) {
+		uint64_t lc_sizelimit, lc_offset;
+
+		rc = loopcxt_is_used(lc, hasst ? &st : NULL,
+				     filename, offset, sizelimit, 0);
+		if (!rc)
+			continue;
+		if (rc != 1)
+			break;
+		DBG(CXT, ul_debugobj(lc, "found %s backed by %s",
+			loopcxt_get_device(lc), filename));
+		rc = loopcxt_get_offset(lc, &lc_offset);
+		if (rc) {
+			DBG(CXT, ul_debugobj(lc, "failed to get offset for device %s",
+				loopcxt_get_device(lc)));
+			break;
+		}
+		rc = loopcxt_get_sizelimit(lc, &lc_sizelimit);
+		if (rc) {
+			DBG(CXT, ul_debugobj(lc, "failed to get sizelimit for device %s",
+				loopcxt_get_device(lc)));
+			break;
+		}
+
+		if (lc_sizelimit != 0 && offset >= lc_offset + lc_sizelimit)
+			continue;
+		if (sizelimit != 0 && offset + sizelimit <= lc_offset)
+			continue;
+		DBG(CXT, ul_debugobj(lc, "overlapping loop device %s",
+			loopcxt_get_device(lc)));
+			rc = 0;
+			break;
+	}
+	loopcxt_deinit_iterator(lc);
+	return rc;
+}
+
+/*
  * Returns allocated string with device name
  */
 char *loopdev_find_by_backing_file(const char *filename, uint64_t offset, uint64_t sizelimit, int flags)
