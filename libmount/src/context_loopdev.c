@@ -215,23 +215,62 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	 * mechanism to detect it. To prevent data corruption, the same loop
 	 * device has to be recycled.
 	*/
-	rc = loopcxt_init(&lc, 0);
-	if (rc)
-		goto done_no_deinit;
-	if (backing_file && !(loopcxt_find_by_backing_file(&lc,
-			backing_file, offset, sizelimit, LOOPDEV_FL_OFFSET))) {
-		DBG(LOOP, ul_debugobj(cxt, "using existing loop device %s",
+	if (backing_file) {
+		rc = loopcxt_init(&lc, 0);
+		if (rc)
+			goto done_no_deinit;
+
+		rc = loopcxt_find_by_backing_file(&lc,
+				backing_file, offset, sizelimit,
+				LOOPDEV_FL_OFFSET | LOOPDEV_FL_SIZELIMIT);
+		if (rc < 0)
+			goto done;
+		if (rc == 0) {
+			uint32_t lc_encrypt_type;
+
+			DBG(LOOP, ul_debugobj(cxt, "using existing loop device %s",
+				loopcxt_get_device(&lc)));
+
+			/* Once a loop is initialized RO, there is no
+			   way to change its parameters. */
+			if (loopcxt_is_readonly(&lc) && !(lo_flags & LO_FLAGS_READ_ONLY)) {
+				rc = -EROFS;
+				goto done;
+			}
+
+			/* This is no more supported, but check to be
+			 * safe. */
+			if (loopcxt_get_encrypt_type(&lc, &lc_encrypt_type)) {
+				DBG(LOOP, ul_debugobj(cxt, "failed to get crypt type for device %s",
 					loopcxt_get_device(&lc)));
-		/* Once a loop is initialized RO, there is no way to safely
-		   mount that file in R/W mode. */
-		if (loopcxt_is_readonly(&lc) && !(lo_flags & LO_FLAGS_READ_ONLY)) {
-			rc = -EROFS;
+				rc = -MNT_ERR_LOOPDEV;
+				goto done;
+			}
+			if (lc_encrypt_type != LO_CRYPT_NONE) {
+				DBG(LOOP, ul_debugobj(cxt, "encryption no longer supported for device %s",
+					loopcxt_get_device(&lc)));
+				rc = -MNT_ERR_LOOPOVERLAP;
+				goto done;
+			}
+			goto success;
+		}
+		loopcxt_deinit(&lc);
+		/* No existing loop device matches. Now we need to
+		 * check that no loop device overlaps our target range
+		 * inside the backing file. */
+		rc = loopcxt_init(&lc, 0);
+		if (rc)
+			goto done_no_deinit;
+		rc = loopcxt_check_conflict(&lc,
+			backing_file, offset, sizelimit);
+		if (rc < 0)
+			goto done;
+		if (rc == 0) {
+			rc = -MNT_ERR_LOOPOVERLAP;
 			goto done;
 		}
-
-		goto success;
+		loopcxt_deinit(&lc);
 	}
-	loopcxt_deinit(&lc);
 
 	rc = loopcxt_init(&lc, 0);
 	if (rc)
