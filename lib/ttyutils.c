@@ -94,7 +94,7 @@ int main(void)
 {
 	const char *path, *name, *num;
 
-	if (get_terminal_name(STDERR_FILENO, &path, &name, &num) == 0) {
+	if (get_terminal_name(&path, &name, &num) == 0) {
 		fprintf(stderr, "tty path:   %s\n", path);
 		fprintf(stderr, "tty name:   %s\n", name);
 		fprintf(stderr, "tty number: %s\n", num);
