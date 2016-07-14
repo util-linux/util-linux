@@ -36,6 +36,19 @@ FDISK_CMD_DELETE_1PRIMARY="d\n1\n" # delete first primary
 FDISK_CMD_DELETE_2PRIMARY="d\n2\n" # delete first primary
 FDISK_CMD_DELETE_EXTENDED="d\n3\n" # delete second primary
 
+# Sparc uses SUN disk labels by default and thus has a different output
+ARCH=$(uname -m)
+case $ARCH in
+	*sparc* )
+		ARCH_EXT=".sparc"
+		;;
+	*)
+		ARCH_EXT=""
+		;;
+esac
+
+TS_EXPECTED+="${ARCH_EXT}"
+
 function print_layout {
 	echo -ne "\n---layout----------\n" >> $TS_OUTPUT
 	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} >> $TS_OUTPUT
