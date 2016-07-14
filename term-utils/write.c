@@ -244,7 +244,7 @@ static void write_line(char *s)
  */
 static void do_write(const struct write_control *ctl)
 {
-	char *login, *pwuid, timestamp[6];
+	char *login, *pwuid;
 	struct passwd *pwd;
 	time_t now;
 	struct tm *tm;
@@ -274,15 +274,16 @@ static void do_write(const struct write_control *ctl)
 
 	now = time((time_t *)NULL);
 	tm = localtime(&now);
-	strftime(timestamp, sizeof(timestamp), "%H:%M", tm);
 	/* print greeting */
 	printf("\r\n\a\a\a");
 	if (strcmp(login, pwuid))
-		printf(_("Message from %s@%s (as %s) on %s at %s ..."),
-		       login, host, pwuid, ctl->src_tty_name, timestamp);
+		printf(_("Message from %s@%s (as %s) on %s at %02d:%02d ..."),
+		       login, host, pwuid, ctl->src_tty_name,
+		       tm->tm_hour, tm->tm_min);
 	else
-		printf(_("Message from %s@%s on %s at %s ..."),
-		       login, host, ctl->src_tty_name, timestamp);
+		printf(_("Message from %s@%s on %s at %02d:%02d ..."),
+		       login, host, ctl->src_tty_name,
+		       tm->tm_hour, tm->tm_min);
 	free(host);
 	printf("\r\n");
 
