@@ -109,18 +109,29 @@ static int probe_nilfs2(blkid_probe pr,
 	if (!sbp)
 		return errno ? -errno : 1;
 
+	valid[0] = nilfs_valid_sb(pr, sbp, 0);
+
+
 	/* backup */
 	sbb = (struct nilfs_super_block *) blkid_probe_get_buffer(
 			pr, NILFS_SBB_OFFSET(pr->size), sizeof(struct nilfs_super_block));
-	if (!sbb)
-		return errno ? -errno : 1;
+	if (!sbb) {
+		valid[1] = 0;
+
+		/* If the primary block is valid then continue and ignore also
+		 * I/O errors for backup block. Note the this is probably CD
+		 * where I/O errors and the end of the disk/session are "normal".
+		 */
+		if (!valid[0])
+			return errno ? -errno : 1;
+	} else
+		valid[1] = nilfs_valid_sb(pr, sbb, 1);
+
 
 	/*
 	 * Compare two super blocks and set 1 in swp if the secondary
 	 * super block is valid and newer.  Otherwise, set 0 in swp.
 	 */
-	valid[0] = nilfs_valid_sb(pr, sbp, 0);
-	valid[1] = nilfs_valid_sb(pr, sbb, 1);
 	if (!valid[0] && !valid[1])
 		return 1;
 
