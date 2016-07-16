@@ -178,7 +178,6 @@ static int is_in_cpuinfo(char *fmt, char *str)
 void set_cmos_epoch(const struct hwclock_control *ctl)
 {
 	unsigned long epoch;
-	int set_epoc;
 
 	/* Believe the user */
 	if (ctl->epoch_option) {
@@ -219,25 +218,22 @@ void set_cmos_epoch(const struct hwclock_control *ctl)
 	 * different "epoch" ideas.
 	 */
 	if (is_in_cpuinfo("system serial number", "MILO")) {
-		set_epoc = 1;
 		if (ctl->debug)
 			printf(_("booted from MILO\n"));
+		/*
+		 * See whether we are dealing with a RUFFIAN aka Alpha PC-164
+		 * UX (or BX), as they have REALLY different TOY (TimeOfYear)
+		 * format: BCD, and not an ARC-style epoch.  BCD is detected
+		 * dynamically, but we must NOT adjust like ARC.
+		 */
+		if (is_in_cpuinfo("system type", "Ruffian")) {
+			if (debug)
+				printf(_("Ruffian BCD clock\n"));
+			return;
+		}
 	}
 
-	/*
-	 * See whether we are dealing with a RUFFIAN aka Alpha PC-164 UX (or
-	 * BX), as they have REALLY different TOY (TimeOfYear) format: BCD,
-	 * and not an ARC-style epoch. BCD is detected dynamically, but we
-	 * must NOT adjust like ARC.
-	 */
-	if (set_epoc && is_in_cpuinfo("system type", "Ruffian")) {
-		set_epoc = 0;
-		if (ctl->debug)
-			printf(_("Ruffian BCD clock\n"));
-	}
-
-	if (set_epoc)
-		cmos_epoch = 1980;
+	cmos_epoch = 1980;
 }
 
 void set_cmos_access(const struct hwclock_control *ctl)
