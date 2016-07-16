@@ -284,7 +284,7 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("%s: is not a file"), filename);
 
 	/* mmap is based on size_t */
-	if (st.st_size && (size_t) st.st_size <= SIZE_MAX)
+	if (st.st_size > 0 && (uintmax_t) st.st_size <= (uintmax_t) SIZE_MAX)
 		tailf(filename, lines, &st);
 
 #ifdef HAVE_INOTIFY_INIT
