@@ -1912,22 +1912,18 @@ int main(int argc, char **argv)
 	return rc;		/* Not reached */
 }
 
-#ifdef HAVE_LIBAUDIT
-/*
- * hwclock_exit calls either this function or plain exit depending
- * HAVE_LIBAUDIT see also clock.h
- */
-void __attribute__((__noreturn__)) hwaudit_exit(int status)
+void __attribute__((__noreturn__)) hwclock_exit(int status)
 {
+#ifdef HAVE_LIBAUDIT
 	if (hwaudit_on) {
 		audit_log_user_message(hwaudit_fd, AUDIT_USYS_CONFIG,
 				       "op=change-system-time", NULL, NULL, NULL,
 				       status ? 0 : 1);
 		close(hwaudit_fd);
 	}
+#endif
 	exit(status);
 }
-#endif
 
 /*
  * History of this program:
