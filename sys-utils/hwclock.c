@@ -717,8 +717,8 @@ static int interpret_date_string(const char *date_opt, time_t * const time_p)
 		return 12;
 	}
 
-	sprintf(date_command, "date --date=\"%s\" +seconds-into-epoch=%%s",
-		date_opt);
+	sprintf(date_command, "date --date=\"%s\" +%s%%s",
+		date_opt, magic);
 	if (debug)
 		printf(_("Issuing date command: %s\n"), date_command);
 
