@@ -104,8 +104,7 @@ struct linux_rtc_time {
  */
 
 /* default or user defined dev (by hwclock --rtc=<path>) */
-char *rtc_dev_name;
-
+static char *rtc_dev_name;
 static int rtc_dev_fd = -1;
 
 static void close_rtc(void)
@@ -115,7 +114,7 @@ static void close_rtc(void)
 	rtc_dev_fd = -1;
 }
 
-static int open_rtc(void)
+static int open_rtc(const struct hwclock_control *ctl)
 {
 	char *fls[] = {
 #ifdef __ia64__
@@ -133,9 +132,10 @@ static int open_rtc(void)
 		return rtc_dev_fd;
 
 	/* --rtc option has been given */
-	if (rtc_dev_name)
+	if (ctl->rtc_dev_name) {
+		rtc_dev_name = ctl->rtc_dev_name;
 		rtc_dev_fd = open(rtc_dev_name, O_RDONLY);
-	else {
+	} else {
 		for (p = fls; *p; ++p) {
 			rtc_dev_fd = open(*p, O_RDONLY);
 
@@ -154,13 +154,13 @@ static int open_rtc(void)
 	return rtc_dev_fd;
 }
 
-static int open_rtc_or_exit(void)
+static int open_rtc_or_exit(const struct hwclock_control *ctl)
 {
-	int rtc_fd = open_rtc();
+	int rtc_fd = open_rtc(ctl);
 
 	if (rtc_fd < 0) {
 		warn(_("cannot open %s"), rtc_dev_name);
-		hwclock_exit(EX_OSFILE);
+		hwclock_exit(ctl, EX_OSFILE);
 	}
 	return rtc_fd;
 }
@@ -205,7 +205,8 @@ static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
  * Wait for the top of a clock tick by reading /dev/rtc in a busy loop until
  * we see it.
  */
-static int busywait_for_rtc_clock_tick(const int rtc_fd)
+static int busywait_for_rtc_clock_tick(const struct hwclock_control *ctl,
+				       const int rtc_fd)
 {
 	struct tm start_time;
 	/* The time when we were called (and started waiting) */
@@ -213,7 +214,7 @@ static int busywait_for_rtc_clock_tick(const int rtc_fd)
 	int rc;
 	struct timeval begin, now;
 
-	if (debug)
+	if (ctl->debug)
 		printf(_("Waiting in loop for time from %s to change\n"),
 		       rtc_dev_name);
 
@@ -246,12 +247,12 @@ static int busywait_for_rtc_clock_tick(const int rtc_fd)
 /*
  * Same as synchronize_to_clock_tick(), but just for /dev/rtc.
  */
-static int synchronize_to_clock_tick_rtc(void)
+static int synchronize_to_clock_tick_rtc(const struct hwclock_control *ctl)
 {
 	int rtc_fd;		/* File descriptor of /dev/rtc */
 	int ret;
 
-	rtc_fd = open_rtc();
+	rtc_fd = open_rtc(ctl);
 	if (rtc_fd == -1) {
 		warn(_("cannot open %s"), rtc_dev_name);
 		ret = 1;
@@ -275,10 +276,10 @@ static int synchronize_to_clock_tick_rtc(void)
 			 * Clock interrupts are used by the kernel for the
 			 * system clock, so aren't at the user's disposal.
 			 */
-			if (debug)
+			if (ctl->debug)
 				printf(_("%s does not have interrupt functions. "),
 				       rtc_dev_name);
-			ret = busywait_for_rtc_clock_tick(rtc_fd);
+			ret = busywait_for_rtc_clock_tick(ctl, rtc_fd);
 		} else if (rc == 0) {
 			/*
 			 * Just reading rtc_fd fails on broken hardware: no
@@ -302,7 +303,7 @@ static int synchronize_to_clock_tick_rtc(void)
 				warn(_("select() to %s to wait for clock tick failed"),
 				     rtc_dev_name);
 			else if (rc == 0) {
-				if (debug)
+				if (ctl->debug)
 					printf(_("select() to %s to wait for clock tick timed out"),
 					       rtc_dev_name);
 			} else
@@ -321,11 +322,12 @@ static int synchronize_to_clock_tick_rtc(void)
 	return ret;
 }
 
-static int read_hardware_clock_rtc(struct tm *tm)
+static int read_hardware_clock_rtc(const struct hwclock_control *ctl,
+				   struct tm *tm)
 {
 	int rtc_fd, rc;
 
-	rtc_fd = open_rtc_or_exit();
+	rtc_fd = open_rtc_or_exit(ctl);
 
 	/* Read the RTC time/date, return answer via tm */
 	rc = do_rtc_read_ioctl(rtc_fd, tm);
@@ -337,13 +339,14 @@ static int read_hardware_clock_rtc(struct tm *tm)
  * Set the Hardware Clock to the broken down time <new_broken_time>. Use
  * ioctls to "rtc" device /dev/rtc.
  */
-static int set_hardware_clock_rtc(const struct tm *new_broken_time)
+static int set_hardware_clock_rtc(const struct hwclock_control *ctl,
+				  const struct tm *new_broken_time)
 {
 	int rc = -1;
 	int rtc_fd;
 	char *ioctlname;
 
-	rtc_fd = open_rtc_or_exit();
+	rtc_fd = open_rtc_or_exit(ctl);
 
 #ifdef __sparc__
 	{
@@ -369,10 +372,10 @@ static int set_hardware_clock_rtc(const struct tm *new_broken_time)
 	if (rc == -1) {
 		warn(_("ioctl(%s) to %s to set the time failed."),
 			ioctlname, rtc_dev_name);
-		hwclock_exit(EX_IOERR);
+		hwclock_exit(ctl, EX_IOERR);
 	}
 
-	if (debug)
+	if (ctl->debug)
 		printf(_("ioctl(%s) was successful.\n"), ioctlname);
 
 	return 0;
@@ -392,24 +395,25 @@ static struct clock_ops rtc = {
 };
 
 /* return &rtc if /dev/rtc can be opened, NULL otherwise */
-struct clock_ops *probe_for_rtc_clock(void)
+struct clock_ops *probe_for_rtc_clock(const struct hwclock_control *ctl)
 {
-	int rtc_fd = open_rtc();
+	int rtc_fd = open_rtc(ctl);
 	if (rtc_fd >= 0)
 		return &rtc;
-	if (debug)
-		warn(_("cannot open %s"), rtc_dev_name);
+	if (ctl->debug)
+		warn(_("cannot open %s"), ctl->rtc_dev_name);
 	return NULL;
 }
 
 /*
  * Get the Hardware Clock epoch setting from the kernel.
  */
-int get_epoch_rtc(unsigned long *epoch_p, int silent)
+int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch_p,
+		  int silent)
 {
 	int rtc_fd;
 
-	rtc_fd = open_rtc();
+	rtc_fd = open_rtc(ctl);
 	if (rtc_fd < 0) {
 		if (!silent) {
 			if (errno == ENOENT)
@@ -431,7 +435,7 @@ int get_epoch_rtc(unsigned long *epoch_p, int silent)
 		return 1;
 	}
 
-	if (debug)
+	if (ctl->debug)
 		printf(_("we have read epoch %lu from %s "
 			 "with RTC_EPOCH_READ ioctl.\n"), *epoch_p,
 		       rtc_dev_name);
@@ -442,22 +446,22 @@ int get_epoch_rtc(unsigned long *epoch_p, int silent)
 /*
  * Set the Hardware Clock epoch in the kernel.
  */
-int set_epoch_rtc(unsigned long epoch)
+int set_epoch_rtc(const struct hwclock_control *ctl)
 {
 	int rtc_fd;
 
-	if (epoch < 1900) {
+	if (ctl->epoch_option < 1900) {
 		/* kernel would not accept this epoch value
 		 *
 		 * Bad habit, deciding not to do what the user asks just
 		 * because one believes that the kernel might not like it.
 		 */
 		warnx(_("The epoch value may not be less than 1900.  "
-			"You requested %ld"), epoch);
+			"You requested %ld"), ctl->epoch_option);
 		return 1;
 	}
 
-	rtc_fd = open_rtc();
+	rtc_fd = open_rtc(ctl);
 	if (rtc_fd < 0) {
 		if (errno == ENOENT)
 			warnx(_
@@ -466,16 +470,16 @@ int set_epoch_rtc(unsigned long epoch)
 			       "file %s.  This file does not exist on this system."),
 			      rtc_dev_name);
 		else
-			warn(_("cannot open %s"), rtc_dev_name);
+			warn(_("cannot open %s"), ctl->rtc_dev_name);
 		return 1;
 	}
 
-	if (debug)
+	if (ctl->debug)
 		printf(_("setting epoch to %lu "
-			 "with RTC_EPOCH_SET ioctl to %s.\n"), epoch,
+			 "with RTC_EPOCH_SET ioctl to %s.\n"), ctl->epoch_option,
 		       rtc_dev_name);
 
-	if (ioctl(rtc_fd, RTC_EPOCH_SET, epoch) == -1) {
+	if (ioctl(rtc_fd, RTC_EPOCH_SET, ctl->epoch_option) == -1) {
 		if (errno == EINVAL)
 			warnx(_("The kernel device driver for %s "
 				"does not have the RTC_EPOCH_SET ioctl."),
