@@ -387,7 +387,7 @@ static int get_permissions_rtc(void)
 }
 
 static struct clock_ops rtc = {
-	N_("Using the /dev interface to the clock."),
+	N_("Using the rtc interface to the clock."),
 	get_permissions_rtc,
 	read_hardware_clock_rtc,
 	set_hardware_clock_rtc,

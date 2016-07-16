@@ -1189,17 +1189,24 @@ static void determine_clock_access_method(const struct hwclock_control *ctl)
 
 	if (ctl->directisa)
 		ur = probe_for_cmos_clock();
-
 #ifdef __linux__
 	if (!ur)
 		ur = probe_for_rtc_clock(ctl);
 #endif
+	if (ur) {
+		if (ctl->debug)
+			puts(ur->interface_name);
 
-	if (ctl->debug) {
-		if (ur)
-			puts(_(ur->interface_name));
-		else
+	} else {
+		if (ctl->debug)
 			printf(_("No usable clock interface found.\n"));
+		warnx(_("Cannot access the Hardware Clock via "
+			"any known method."));
+		if (!ctl->debug)
+			warnx(_("Use the --debug option to see the "
+				"details of our search for an access "
+				"method."));
+		hwclock_exit(ctl, EX_SOFTWARE);
 	}
 }
 
@@ -1821,18 +1828,8 @@ int main(int argc, char **argv)
 	if (ctl.debug)
 		out_version();
 
-	if (!ctl.systz && !ctl.predict) {
+	if (!ctl.systz && !ctl.predict)
 		determine_clock_access_method(&ctl);
-		if (!ur) {
-			warnx(_("Cannot access the Hardware Clock via "
-				"any known method."));
-			if (!ctl.debug)
-				warnx(_("Use the --debug option to see the "
-					"details of our search for an access "
-					"method."));
-			hwclock_exit(&ctl, EX_SOFTWARE);
-		}
-	}
 
 	if (!ctl.noadjfile && !(ctl.systz && (ctl.utc || ctl.local_opt))) {
 		if ((rc = read_adjtime(&ctl, &adjtime)) != 0)
