@@ -92,8 +92,6 @@ static int hwaudit_on;
 /* The struct that holds our hardware access routines */
 struct clock_ops *ur;
 
-#define FLOOR(arg) ((arg >= 0 ? (int) arg : ((int) arg) - 1));
-
 /* Maximal clock adjustment in seconds per day.
    (adjtime() glibc call has 2145 seconds limit on i386, so it is good enough for us as well,
    43219 is a maximal safe value preventing exact_adjustment overflow.) */
@@ -1068,7 +1066,7 @@ calculate_adjustment(const double factor,
 	exact_adjustment =
 	    ((double)(systime - last_time)) * factor / (24 * 60 * 60)
 	    + not_adjusted;
-	tdrift_p->tv_sec = FLOOR(exact_adjustment);
+	tdrift_p->tv_sec = (time_t) floor(exact_adjustment);
 	tdrift_p->tv_usec = (exact_adjustment -
 				 (double)tdrift_p->tv_sec) * 1E6;
 	if (debug) {
