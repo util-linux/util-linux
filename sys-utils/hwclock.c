@@ -1399,9 +1399,10 @@ static int compare_clock(const struct hwclock_control *ctl)
 
 		mktime_tz(ctl, tm, &hclock_valid, &time2_hw);
 
-		res = (((double) time1_hw - time1_sys) -
-		       ((double) time2_hw - time2_sys))
-		      / (double) (time2_hw - time1_hw);
+		if ((res = time2_hw - time1_hw))
+			res = (((double)time1_hw - time1_sys) -
+			       ((double)time2_hw - time2_sys))
+			    / res;
 
 		if (!first_pass)
 			printf("%10.0f   %10.6f   %15.0f   %4.0f\n",
