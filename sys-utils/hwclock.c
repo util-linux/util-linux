@@ -658,23 +658,17 @@ display_time(const bool hclock_valid, struct timeval hwctime)
 static int interpret_date_string(const struct hwclock_control *ctl,
 				 time_t *const time_p)
 {
-	FILE *date_child_fp;
-	char *date_command;
+	FILE *date_child_fp = NULL;
+	char *date_command = NULL;
 	char *date_resp = NULL;
 	size_t len = 0;
 	const char magic[] = "seconds-into-epoch=";
-	int retcode;		/* our eventual return code */
-	int rc;			/* local return code */
+	int retcode = 1;
+	long seconds_since_epoch;
 
 	if (!ctl->date_opt) {
 		warnx(_("No --date option specified."));
-		return 14;
-	}
-
-	/* prevent overflow - a security risk */
-	if (strlen(ctl->date_opt) > sizeof(date_command) - 50) {
-		warnx(_("--date argument too long"));
-		return 13;
+		return retcode;
 	}
 
 	/* Quotes in date_opt would ruin the date command we construct. */
@@ -682,7 +676,7 @@ static int interpret_date_string(const struct hwclock_control *ctl,
 		warnx(_
 		      ("The value of the --date option is not a valid date.\n"
 		       "In particular, it contains quotation marks."));
-		return 12;
+		return retcode;
 	}
 
 	xasprintf(&date_command, "date --date=\"%s\" +%s%%s",
@@ -694,14 +688,12 @@ static int interpret_date_string(const struct hwclock_control *ctl,
 	if (date_child_fp == NULL) {
 		warn(_("Unable to run 'date' program in /bin/sh shell. "
 			    "popen() failed"));
-		free(date_command);
-		return 10;
+		goto out;
 	}
 
 	if (getline(&date_resp, &len, date_child_fp) < 0) {
 		warn(_("getline() failed"));
-		free(date_command);
-		return 15;
+		goto out;
 	}
 	if (ctl->debug)
 		printf(_("response from date command = %s\n"), date_resp);
@@ -711,32 +703,29 @@ static int interpret_date_string(const struct hwclock_control *ctl,
 				  "The command was:\n  %s\n"
 				  "The response was:\n  %s"),
 			program_invocation_short_name, date_command, date_resp);
-		retcode = 8;
-	} else {
-		long seconds_since_epoch;
-		rc = sscanf(date_resp + sizeof(magic) - 1, "%ld",
-			    &seconds_since_epoch);
-		if (rc < 1) {
-			warnx(_("The date command issued by %s returned "
-				"something other than an integer where the "
-				"converted time value was expected.\n"
-				"The command was:\n  %s\n"
-				"The response was:\n %s\n"),
-			      program_invocation_short_name, date_command,
-			      date_resp);
-			retcode = 6;
-		} else {
-			retcode = 0;
-			*time_p = seconds_since_epoch;
-			if (ctl->debug)
-				printf(_("date string %s equates to "
-					 "%ld seconds since 1969.\n"),
-				       ctl->date_opt, *time_p);
-		}
+		goto out;
 	}
+
+	if (sscanf(date_resp + sizeof(magic) - 1, "%ld", &seconds_since_epoch) < 1) {
+		warnx(_("The date command issued by %s returned "
+			"something other than an integer where the "
+			"converted time value was expected.\n"
+			"The command was:\n  %s\n"
+			"The response was:\n %s\n"),
+		      program_invocation_short_name, date_command, date_resp);
+	} else {
+		retcode = 0;
+		*time_p = seconds_since_epoch;
+		if (ctl->debug)
+			printf(_("date string %s equates to "
+				 "%ld seconds since 1969.\n"),
+			       ctl->date_opt, *time_p);
+	}
+ out:
 	free(date_command);
 	free(date_resp);
-	pclose(date_child_fp);
+	if (date_child_fp)
+		pclose(date_child_fp);
 
 	return retcode;
 }
