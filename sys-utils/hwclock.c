@@ -82,6 +82,7 @@
 #include "hwclock.h"
 #include "timeutils.h"
 #include "env.h"
+#include "xalloc.h"
 
 #ifdef HAVE_LIBAUDIT
 #include <libaudit.h>
@@ -1076,57 +1077,42 @@ calculate_adjustment(const struct hwclock_control *ctl,
 static void save_adjtime(const struct hwclock_control *ctl,
 			 const struct adjtime *adjtime)
 {
-	char newfile[412];	/* Stuff to write to disk file */
+	char *content;		/* Stuff to write to disk file */
+	FILE *fp;
+	int err = 0;
 
-	if (adjtime->dirty) {
-		/*
-		 * snprintf is not always available, but this is safe as
-		 * long as libc does not use more than 100 positions for %ld
-		 * or %f
-		 */
-		sprintf(newfile, "%f %ld %f\n%ld\n%s\n",
-			adjtime->drift_factor,
-			adjtime->last_adj_time,
-			adjtime->not_adjusted,
-			adjtime->last_calib_time,
-			(adjtime->local_utc == LOCAL) ? "LOCAL" : "UTC");
+	if (!adjtime->dirty)
+		return;
 
-		if (ctl->testing) {
-			printf(_
-			       ("Not updating adjtime file because of testing mode.\n"));
-			printf(_("Would have written the following to %s:\n%s"),
-			       ctl->adj_file_name, newfile);
-		} else {
-			FILE *adjfile;
-			int err = 0;
+	xasprintf(&content, "%f %ld %f\n%ld\n%s\n",
+		  adjtime->drift_factor,
+		  adjtime->last_adj_time,
+		  adjtime->not_adjusted,
+		  adjtime->last_calib_time,
+		  (adjtime->local_utc == LOCAL) ? "LOCAL" : "UTC");
 
-			adjfile = fopen(ctl->adj_file_name, "w");
-			if (adjfile == NULL) {
-				warn(_
-				     ("Could not open file with the clock adjustment parameters "
-				      "in it (%s) for writing"), ctl->adj_file_name);
-				err = 1;
-			} else {
-				if (fputs(newfile, adjfile) < 0) {
-					warn(_
-					     ("Could not update file with the clock adjustment "
-					      "parameters (%s) in it"),
-					     ctl->adj_file_name);
-					err = 1;
-				}
-				if (close_stream(adjfile) != 0) {
-					warn(_
-					     ("Could not update file with the clock adjustment "
-					      "parameters (%s) in it"),
-					     ctl->adj_file_name);
-					err = 1;
-				}
-			}
-			if (err)
-				warnx(_
-				      ("Drift adjustment parameters not updated."));
-		}
+	if (ctl->testing) {
+		printf(_
+		       ("Not updating adjtime file because of testing mode.\n"));
+		printf(_("Would have written the following to %s:\n%s"),
+		       ctl->adj_file_name, content);
+		free(content);
+		return;
 	}
+
+	fp = fopen(ctl->adj_file_name, "w");
+	if (fp == NULL) {
+		warn(_("Could not open file with the clock adjustment parameters "
+		       "in it (%s) for writing"), ctl->adj_file_name);
+		err = 1;
+	} else if (fputs(content, fp) < 0 || close_stream(fp) != 0) {
+		warn(_("Could not update file with the clock adjustment "
+		       "parameters (%s) in it"), ctl->adj_file_name);
+		err = 1;
+	}
+	free(content);
+	if (err)
+		warnx(_("Drift adjustment parameters not updated."));
 }
 
 /*
