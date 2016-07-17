@@ -9,6 +9,12 @@
 
 #include "c.h"
 
+enum {
+	RTC_BUSYWAIT_OK = 0,
+	RTC_BUSYWAIT_FAILED,
+	RTC_BUSYWAIT_TIMEOUT
+};
+
 struct hwclock_control {
 	char *date_opt;
 	unsigned long epoch_option;

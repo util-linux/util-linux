@@ -1226,14 +1226,12 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 		rc = synchronize_to_clock_tick(ctl);
 
 		/*
-		 * 2 = synchronization timeout. We don't
-		 * error out if the user is attempting to
-		 * set the RTC - the RTC could be
-		 * functioning but contain invalid time data
-		 * so we still want to allow a user to set
-		 * the RTC time.
+		 * We don't error out if the user is attempting to set the
+		 * RTC and synchronization timeout happens - the RTC could
+		 * be functioning but contain invalid time data so we still
+		 * want to allow a user to set the RTC time.
 		 */
-		if (rc && rc != 2 && !ctl->set && !ctl->systohc)
+		if (rc == RTC_BUSYWAIT_FAILED && !ctl->set && !ctl->systohc)
 			return EX_IOERR;
 		gettimeofday(&read_time, NULL);
 

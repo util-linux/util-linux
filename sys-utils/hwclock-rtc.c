@@ -208,7 +208,7 @@ static int busywait_for_rtc_clock_tick(const struct hwclock_control *ctl,
 
 	rc = do_rtc_read_ioctl(rtc_fd, &start_time);
 	if (rc)
-		return 1;
+		return RTC_BUSYWAIT_FAILED;
 
 	/*
 	 * Wait for change.  Should be within a second, but in case
@@ -223,13 +223,13 @@ static int busywait_for_rtc_clock_tick(const struct hwclock_control *ctl,
 		gettimeofday(&now, NULL);
 		if (time_diff(now, begin) > 1.5) {
 			warnx(_("Timed out waiting for time change."));
-			return 2;
+			return RTC_BUSYWAIT_TIMEOUT;
 		}
 	} while (1);
 
 	if (rc)
-		return 3;
-	return 0;
+		return RTC_BUSYWAIT_FAILED;
+	return RTC_BUSYWAIT_OK;
 }
 
 /*

@@ -104,6 +104,8 @@ static int inb(int c __attribute__ ((__unused__)))
 #define BCD_TO_BIN(val) ((val)=((val)&15) + ((val)>>4)*10)
 #define BIN_TO_BCD(val) ((val)=(((val)/10)<<4) + (val)%10)
 
+#define IOPL_NOT_IMPLEMENTED -2
+
 /*
  * The epoch.
  *
@@ -633,7 +635,7 @@ static int i386_iopl(const int level __attribute__ ((__unused__)))
 #else
 static int i386_iopl(const int level __attribute__ ((__unused__)))
 {
-	return -2;
+	return IOPL_NOT_IMPLEMENTED;
 }
 #endif
 
@@ -649,7 +651,7 @@ static int get_permissions_cmos(void)
 			rc = 0;
 	} else {
 		rc = i386_iopl(3);
-		if (rc == -2) {
+		if (rc == IOPL_NOT_IMPLEMENTED) {
 			warnx(_("I failed to get permission because I didn't try."));
 		} else if (rc != 0) {
 			rc = errno;
