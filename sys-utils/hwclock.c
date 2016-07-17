@@ -118,7 +118,7 @@ struct adjtime {
 	 * authority (as opposed to just doing a drift adjustment)
 	 */
 	/* line 3 */
-	enum a_local_utc { LOCAL, UTC, UNKNOWN } local_utc;
+	enum a_local_utc { UTC = 0, LOCAL, UNKNOWN } local_utc;
 	/*
 	 * To which time zone, local or UTC, we most recently set the
 	 * hardware clock.
@@ -248,26 +248,15 @@ static int read_adjtime(const struct hwclock_control *ctl,
 	char line1[81];		/* String: first line of adjtime file */
 	char line2[81];		/* String: second line of adjtime file */
 	char line3[81];		/* String: third line of adjtime file */
-	long timeval;
 
-	if (access(ctl->adj_file_name, R_OK) != 0) {
-		/* He doesn't have a adjtime file, so we'll use defaults. */
-		adjtime_p->drift_factor = 0;
-		adjtime_p->last_adj_time = 0;
-		adjtime_p->not_adjusted = 0;
-		adjtime_p->last_calib_time = 0;
-		adjtime_p->local_utc = UTC;
-		adjtime_p->dirty = FALSE;	/* don't create a zero adjfile */
-
+	if (access(ctl->adj_file_name, R_OK) != 0)
 		return 0;
-	}
 
 	adjfile = fopen(ctl->adj_file_name, "r");	/* open file for reading */
 	if (adjfile == NULL) {
 		warn(_("cannot open %s"), ctl->adj_file_name);
 		return EX_OSFILE;
 	}
-
 
 	if (!fgets(line1, sizeof(line1), adjfile))
 		line1[0] = '\0';	/* In case fgets fails */
@@ -278,20 +267,12 @@ static int read_adjtime(const struct hwclock_control *ctl,
 
 	fclose(adjfile);
 
-	/* Set defaults in case values are missing from file */
-	adjtime_p->drift_factor = 0;
-	adjtime_p->last_adj_time = 0;
-	adjtime_p->not_adjusted = 0;
-	adjtime_p->last_calib_time = 0;
-	timeval = 0;
-
 	sscanf(line1, "%lf %ld %lf",
 	       &adjtime_p->drift_factor,
-	       &timeval, &adjtime_p->not_adjusted);
-	adjtime_p->last_adj_time = timeval;
+	       &adjtime_p->last_adj_time,
+	       &adjtime_p->not_adjusted);
 
-	sscanf(line2, "%ld", &timeval);
-	adjtime_p->last_calib_time = timeval;
+	sscanf(line2, "%ld", &adjtime_p->last_calib_time);
 
 	if (!strcmp(line3, "UTC\n")) {
 		adjtime_p->local_utc = UTC;
@@ -304,8 +285,6 @@ static int read_adjtime(const struct hwclock_control *ctl,
 				"(Expected: `UTC' or `LOCAL' or nothing.)"));
 		}
 	}
-
-	adjtime_p->dirty = FALSE;
 
 	if (ctl->debug) {
 		printf(_
