@@ -53,18 +53,6 @@ struct sparc_rtc_time
 #define RTCGET _IOR('p', 20, struct sparc_rtc_time)
 #define RTCSET _IOW('p', 21, struct sparc_rtc_time)
 
-/* non-sparc stuff */
-#if 0
-# include <linux/version.h>
-/*
- * Check if the /dev/rtc interface is available in this version of the
- * system headers. 131072 is linux 2.0.0.
- */
-# if LINUX_VERSION_CODE >= 131072
-#  include <linux/mc146818rtc.h>
-# endif
-#endif
-
 /*
  * struct rtc_time is present since 1.3.99.
  * Earlier (since 1.3.89), a struct tm was used.

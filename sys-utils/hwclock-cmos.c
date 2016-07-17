@@ -269,7 +269,7 @@ void set_cmos_access(const struct hwclock_control *ctl)
 }
 #endif				/* __alpha */
 
-#if __alpha__
+#ifdef __alpha__
 /*
  * The Alpha doesn't allow user-level code to disable interrupts (for good
  * reasons). Instead, we ensure atomic operation by performing the operation

@@ -972,7 +972,7 @@ adjust_drift_factor(const struct hwclock_control *ctl,
 			printf(_("Not adjusting drift factor because it has "
 				 "been less than four hours since the last "
 				 "calibration.\n"));
-	} else if (adjtime_p->last_calib_time != 0) {
+	} else {
 		/*
 		 * At adjustment time we drift correct the hardware clock
 		 * according to the contents of the adjtime file and refresh
@@ -1221,8 +1221,6 @@ static int
 manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 		 const struct timeval startup_time, struct adjtime *adjtime)
 {
-	/* Set if user lacks necessary authorization to access the clock */
-	bool no_auth;
 	/* The time at which we read the Hardware Clock */
 	struct timeval read_time;
 	/*
@@ -1240,11 +1238,9 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 	/* local return code */
 	int rc = 0;
 
-	if (!ctl->systz && !ctl->predict) {
-		no_auth = ur->get_permissions();
-		if (no_auth)
+	if (!ctl->systz && !ctl->predict)
+		if (ur->get_permissions())
 			return EX_NOPERM;
-	}
 
 	if ((ctl->set || ctl->systohc || ctl->adjust) &&
 	    (adjtime->local_utc == UTC) != ctl->universal) {
