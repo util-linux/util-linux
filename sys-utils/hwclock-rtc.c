@@ -92,7 +92,7 @@ struct linux_rtc_time {
  */
 
 /* default or user defined dev (by hwclock --rtc=<path>) */
-static char *rtc_dev_name;
+static const char *rtc_dev_name;
 static int rtc_dev_fd = -1;
 
 static void close_rtc(void)
@@ -104,17 +104,16 @@ static void close_rtc(void)
 
 static int open_rtc(const struct hwclock_control *ctl)
 {
-	char *fls[] = {
+	static const char *fls[] = {
 #ifdef __ia64__
 		"/dev/efirtc",
 		"/dev/misc/efirtc",
 #endif
 		"/dev/rtc",
 		"/dev/rtc0",
-		"/dev/misc/rtc",
-		NULL
+		"/dev/misc/rtc"
 	};
-	char **p;
+	size_t i;
 
 	if (rtc_dev_fd != -1)
 		return rtc_dev_fd;
@@ -124,19 +123,20 @@ static int open_rtc(const struct hwclock_control *ctl)
 		rtc_dev_name = ctl->rtc_dev_name;
 		rtc_dev_fd = open(rtc_dev_name, O_RDONLY);
 	} else {
-		for (p = fls; *p; ++p) {
-			rtc_dev_fd = open(*p, O_RDONLY);
+		for (i = 0; i < ARRAY_SIZE(fls); i++) {
+			if (ctl->debug)
+				printf(_("Trying to open: %s\n"), fls[i]);
+			rtc_dev_fd = open(fls[i], O_RDONLY);
 
 			if (rtc_dev_fd < 0
 			    && (errno == ENOENT || errno == ENODEV))
 				continue;
-			rtc_dev_name = *p;
+			rtc_dev_name = fls[i];
 			break;
 		}
 		if (rtc_dev_fd < 0)
 			rtc_dev_name = *fls;	/* default for error messages */
 	}
-
 	if (rtc_dev_fd != 1)
 		atexit(close_rtc);
 	return rtc_dev_fd;
@@ -147,7 +147,7 @@ static int open_rtc_or_exit(const struct hwclock_control *ctl)
 	int rtc_fd = open_rtc(ctl);
 
 	if (rtc_fd < 0) {
-		warn(_("cannot open %s"), rtc_dev_name);
+		warn(_("cannot open rtc device"));
 		hwclock_exit(ctl, EX_OSFILE);
 	}
 	return rtc_fd;
@@ -242,7 +242,7 @@ static int synchronize_to_clock_tick_rtc(const struct hwclock_control *ctl)
 
 	rtc_fd = open_rtc(ctl);
 	if (rtc_fd == -1) {
-		warn(_("cannot open %s"), rtc_dev_name);
+		warn(_("cannot open rtc device"));
 		ret = 1;
 	} else {
 		int rc;		/* Return code from ioctl */
@@ -389,7 +389,7 @@ struct clock_ops *probe_for_rtc_clock(const struct hwclock_control *ctl)
 	if (rtc_fd >= 0)
 		return &rtc;
 	if (ctl->debug)
-		warn(_("cannot open %s"), ctl->rtc_dev_name);
+		warn(_("cannot open rtc device"));
 	return NULL;
 }
 
@@ -408,10 +408,9 @@ int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch_p,
 				warnx(_
 				      ("To manipulate the epoch value in the kernel, we must "
 				       "access the Linux 'rtc' device driver via the device special "
-				       "file %s.  This file does not exist on this system."),
-				      rtc_dev_name);
+				       "file.  This file does not exist on this system."));
 			else
-				warn(_("cannot open %s"), rtc_dev_name);
+				warn(_("cannot open rtc device"));
 		}
 		return 1;
 	}
@@ -455,10 +454,9 @@ int set_epoch_rtc(const struct hwclock_control *ctl)
 			warnx(_
 			      ("To manipulate the epoch value in the kernel, we must "
 			       "access the Linux 'rtc' device driver via the device special "
-			       "file %s.  This file does not exist on this system."),
-			      rtc_dev_name);
+			       "file.  This file does not exist on this system."));
 		else
-			warn(_("cannot open %s"), ctl->rtc_dev_name);
+			warn(_("cannot open rtc device"));
 		return 1;
 	}
 
