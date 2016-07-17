@@ -680,9 +680,10 @@ static int interpret_date_string(const struct hwclock_control *ctl,
 				 time_t *const time_p)
 {
 	FILE *date_child_fp;
-	char date_resp[100];
+	char *date_command;
+	char *date_resp = NULL;
+	size_t len = 0;
 	const char magic[] = "seconds-into-epoch=";
-	char date_command[100];
 	int retcode;		/* our eventual return code */
 	int rc;			/* local return code */
 
@@ -705,7 +706,7 @@ static int interpret_date_string(const struct hwclock_control *ctl,
 		return 12;
 	}
 
-	sprintf(date_command, "date --date=\"%s\" +%s%%s",
+	xasprintf(&date_command, "date --date=\"%s\" +%s%%s",
 		ctl->date_opt, magic);
 	if (ctl->debug)
 		printf(_("Issuing date command: %s\n"), date_command);
@@ -714,11 +715,15 @@ static int interpret_date_string(const struct hwclock_control *ctl,
 	if (date_child_fp == NULL) {
 		warn(_("Unable to run 'date' program in /bin/sh shell. "
 			    "popen() failed"));
+		free(date_command);
 		return 10;
 	}
 
-	if (!fgets(date_resp, sizeof(date_resp), date_child_fp))
-		date_resp[0] = '\0';	/* in case fgets fails */
+	if (getline(&date_resp, &len, date_child_fp) < 0) {
+		warn(_("getline() failed"));
+		free(date_command);
+		return 15;
+	}
 	if (ctl->debug)
 		printf(_("response from date command = %s\n"), date_resp);
 	if (strncmp(date_resp, magic, sizeof(magic) - 1) != 0) {
@@ -750,6 +755,8 @@ static int interpret_date_string(const struct hwclock_control *ctl,
 				       ctl->date_opt, *time_p);
 		}
 	}
+	free(date_command);
+	free(date_resp);
 	pclose(date_child_fp);
 
 	return retcode;
