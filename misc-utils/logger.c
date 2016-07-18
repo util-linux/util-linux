@@ -341,13 +341,10 @@ static int journald_entry(struct logger_ctl *ctl, FILE *fp)
 	for (lines = 0; /* nothing */ ; lines++) {
 		buf = NULL;
 		sz = getline(&buf, &dummy, fp);
-		if (sz == -1) {
+		if (sz == -1 ||
+		   (sz = rtrim_whitespace((unsigned char *) buf)) == 0) {
 			free(buf);
 			break;
-		}
-		if (0 < sz && buf[sz - 1] == '\n') {
-			sz--;
-			buf[sz] = '\0';
 		}
 		if (lines == vectors) {
 			vectors *= 2;
