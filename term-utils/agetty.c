@@ -2342,8 +2342,6 @@ static void output_special_char(unsigned char c, struct options *op,
 {
 	struct utsname uts;
 
-	uname(&uts);
-
 	switch (c) {
 	case 'e':
 	{
@@ -2358,18 +2356,23 @@ static void output_special_char(unsigned char c, struct options *op,
 		break;
 	}
 	case 's':
+		uname(&uts);
 		printf("%s", uts.sysname);
 		break;
 	case 'n':
+		uname(&uts);
 		printf("%s", uts.nodename);
 		break;
 	case 'r':
+		uname(&uts);
 		printf("%s", uts.release);
 		break;
 	case 'v':
+		uname(&uts);
 		printf("%s", uts.version);
 		break;
 	case 'm':
+		uname(&uts);
 		printf("%s", uts.machine);
 		break;
 	case 'o':
@@ -2461,6 +2464,7 @@ static void output_special_char(unsigned char c, struct options *op,
 
 		/* \S and PRETTY_NAME not found */
 		} else {
+			uname(&uts);
 			fputs(uts.sysname, stdout);
 		}
 		break;
