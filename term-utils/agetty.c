@@ -2446,17 +2446,22 @@ static void output_special_char(unsigned char c, struct options *op,
 	{
 		char *var = NULL, varname[64];
 
-		if (get_escape_argument(fp, varname, sizeof(varname)))
+		/* \S{varname} */
+		if (get_escape_argument(fp, varname, sizeof(varname))) {
 			var = read_os_release(op, varname);
-		else if (!(var = read_os_release(op, "PRETTY_NAME")))
-			var = uts.sysname;
-		if (var) {
-			if (strcmp(varname, "ANSI_COLOR") == 0)
-				printf("\033[%sm", var);
-			else
-				printf("%s", var);
-			if (var != uts.sysname)
-				free(var);
+			if (var) {
+				if (strcmp(varname, "ANSI_COLOR") == 0)
+					printf("\033[%sm", var);
+				else
+					fputs(var, stdout);
+			}
+		/* \S */
+		} else if ((var = read_os_release(op, "PRETTY_NAME"))) {
+			fputs(var, stdout);
+
+		/* \S and PRETTY_NAME not found */
+		} else {
+			fputs(uts.sysname, stdout);
 		}
 		break;
 	}
