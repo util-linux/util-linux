@@ -38,6 +38,7 @@
 # include <asm/rtc.h>
 #endif
  */
+#ifdef __sparc__
 /* The following is roughly equivalent */
 struct sparc_rtc_time
 {
@@ -49,9 +50,9 @@ struct sparc_rtc_time
 	int month;	/* Month of year	1-12 */
 	int year;	/* Year			0-99 */
 };
-
 #define RTCGET _IOR('p', 20, struct sparc_rtc_time)
 #define RTCSET _IOW('p', 21, struct sparc_rtc_time)
+#endif
 
 /*
  * struct rtc_time is present since 1.3.99.
@@ -374,7 +375,7 @@ static int get_permissions_rtc(void)
 	return 0;
 }
 
-static struct clock_ops rtc = {
+static struct clock_ops rtc_interface = {
 	N_("Using the rtc interface to the clock."),
 	get_permissions_rtc,
 	read_hardware_clock_rtc,
@@ -385,14 +386,14 @@ static struct clock_ops rtc = {
 /* return &rtc if /dev/rtc can be opened, NULL otherwise */
 struct clock_ops *probe_for_rtc_clock(const struct hwclock_control *ctl)
 {
-	int rtc_fd = open_rtc(ctl);
-	if (rtc_fd >= 0)
-		return &rtc;
-	if (ctl->debug)
-		warn(_("cannot open rtc device"));
-	return NULL;
+	const int rtc_fd = open_rtc(ctl);
+
+	if (rtc_fd < 0)
+		return NULL;
+	return &rtc_interface;
 }
 
+#ifdef __alpha__
 /*
  * Get the Hardware Clock epoch setting from the kernel.
  */
@@ -478,3 +479,4 @@ int set_epoch_rtc(const struct hwclock_control *ctl)
 
 	return 0;
 }
+#endif	/* __alpha__ */

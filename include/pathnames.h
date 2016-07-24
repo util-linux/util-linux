@@ -195,5 +195,9 @@
 /* ctrlaltdel paths */
 #define _PATH_PROC_CTRL_ALT_DEL	"/proc/sys/kernel/ctrl-alt-del"
 
+/* hwclock-cmos paths */
+#define _PATH_DEV_PORT		"/dev/port"
+#define _PATH_PROC_CPUINFO	"/proc/cpuinfo"
+
 #endif /* PATHNAMES_H */
 

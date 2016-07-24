@@ -54,6 +54,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "pathnames.h"
 
 #if defined(__i386__) || defined(__x86_64__)
 # ifdef HAVE_SYS_IO_H
@@ -154,12 +155,12 @@ static int is_in_cpuinfo(char *fmt, char *str)
 {
 	FILE *cpuinfo;
 	char field[256];
-	char format[256];
+	char format[sizeof(field)];
 	int found = 0;
 
 	sprintf(format, "%s : %s", fmt, "%255s");
 
-	cpuinfo = fopen("/proc/cpuinfo", "r");
+	cpuinfo = fopen(_PATH_PROC_CPUINFO, "r");
 	if (cpuinfo) {
 		do {
 			if (fscanf(cpuinfo, format, field) == 1) {
@@ -525,9 +526,7 @@ static int read_hardware_clock_cmos(const struct hwclock_control *ctl
 				    __attribute__((__unused__)), struct tm *tm)
 {
 	bool got_time = FALSE;
-	unsigned char status, pmbit;
-
-	status = pmbit = 0;	/* just for gcc */
+	unsigned char status = 0, pmbit = 0;
 
 	while (!got_time) {
 		/*
@@ -644,8 +643,8 @@ static int get_permissions_cmos(void)
 	int rc;
 
 	if (use_dev_port) {
-		if ((dev_port_fd = open("/dev/port", O_RDWR)) < 0) {
-			warn(_("cannot open %s"), "/dev/port");
+		if ((dev_port_fd = open(_PATH_DEV_PORT, O_RDWR)) < 0) {
+			warn(_("cannot open %s"), _PATH_DEV_PORT);
 			rc = 1;
 		} else
 			rc = 0;
@@ -664,7 +663,7 @@ static int get_permissions_cmos(void)
 	return rc ? 1 : 0;
 }
 
-static struct clock_ops cmos = {
+static struct clock_ops cmos_interface = {
 	N_("Using direct I/O instructions to ISA clock."),
 	get_permissions_cmos,
 	read_hardware_clock_cmos,
@@ -678,11 +677,11 @@ static struct clock_ops cmos = {
  */
 struct clock_ops *probe_for_cmos_clock(void)
 {
-	int have_cmos =
+	static const int have_cmos =
 #if defined(__i386__) || defined(__alpha__) || defined(__x86_64__)
 	    TRUE;
 #else
 	    FALSE;
 #endif
-	return have_cmos ? &cmos : NULL;
+	return have_cmos ? &cmos_interface : NULL;
 }
