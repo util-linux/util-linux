@@ -138,7 +138,7 @@ static int open_rtc(const struct hwclock_control *ctl)
 		if (rtc_dev_fd < 0)
 			rtc_dev_name = *fls;	/* default for error messages */
 	}
-	if (rtc_dev_fd != 1)
+	if (rtc_dev_fd != -1)
 		atexit(close_rtc);
 	return rtc_dev_fd;
 }
