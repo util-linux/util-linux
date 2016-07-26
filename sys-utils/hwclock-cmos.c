@@ -56,29 +56,26 @@
 #include "nls.h"
 #include "pathnames.h"
 
+/* for inb, outb */
 #if defined(__i386__) || defined(__x86_64__)
 # ifdef HAVE_SYS_IO_H
 #  include <sys/io.h>
 # elif defined(HAVE_ASM_IO_H)
-#  include <asm/io.h>		/* for inb, outb */
+#  include <asm/io.h>
 # else
-/*
- * Disable cmos access; we can no longer use asm/io.h, since the kernel does
- * not export that header.
- */
-#undef __i386__
-#undef __x86_64__
-void outb(int a __attribute__ ((__unused__)),
-	  int b __attribute__ ((__unused__)))
+#  undef __i386__
+#  undef __x86_64__
+#  warning "disable cmos access - no sys/io.h or asm/io.h"
+void outb(int a __attribute__((__unused__)),
+	  int b __attribute__((__unused__)))
 {
 }
 
-int inb(int c __attribute__ ((__unused__)))
+int inb(int c __attribute__((__unused__)))
 {
 	return 0;
 }
-#endif				/* __i386__ __x86_64__ */
-
+# endif				/* __i386__ __x86_64__ */
 #elif defined(__alpha__)
 # ifdef HAVE_SYS_IO_H
 #  include <sys/io.h>
@@ -88,17 +85,18 @@ extern unsigned int inb(unsigned long port);
 extern void outb(unsigned char b, unsigned long port);
 extern int iopl(int level);
 # endif
-#else
-static void outb(int a __attribute__ ((__unused__)),
-	  int b __attribute__ ((__unused__)))
+#else				/* __alpha__ */
+# warning "disable cmos access - not i386, x86_64, or alpha"
+static void outb(int a __attribute__((__unused__)),
+		 int b __attribute__((__unused__)))
 {
 }
 
-static int inb(int c __attribute__ ((__unused__)))
+static int inb(int c __attribute__((__unused__)))
 {
 	return 0;
 }
-#endif				/* __alpha__ */
+#endif				/* for inb, outb */
 
 #include "hwclock.h"
 
