@@ -158,28 +158,31 @@ static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 {
 	int rc = -1;
 	char *ioctlname;
-
 #ifdef __sparc__
 	/* some but not all sparcs use a different ioctl and struct */
 	struct sparc_rtc_time stm;
+#endif
 
-	ioctlname = "RTCGET";
-	rc = ioctl(rtc_fd, RTCGET, &stm);
-	if (rc == 0) {
-		tm->tm_sec = stm.sec;
-		tm->tm_min = stm.min;
-		tm->tm_hour = stm.hour;
-		tm->tm_mday = stm.dom;
-		tm->tm_mon = stm.month - 1;
-		tm->tm_year = stm.year - 1900;
-		tm->tm_wday = stm.dow - 1;
-		tm->tm_yday = -1;	/* day in the year */
+	ioctlname = "RTC_RD_TIME";
+	rc = ioctl(rtc_fd, RTC_RD_TIME, tm);
+
+#ifdef __sparc__
+	if (rc == -1) {		/* sparc sbus */
+		ioctlname = "RTCGET";
+		rc = ioctl(rtc_fd, RTCGET, &stm);
+		if (rc == 0) {
+			tm->tm_sec = stm.sec;
+			tm->tm_min = stm.min;
+			tm->tm_hour = stm.hour;
+			tm->tm_mday = stm.dom;
+			tm->tm_mon = stm.month - 1;
+			tm->tm_year = stm.year - 1900;
+			tm->tm_wday = stm.dow - 1;
+			tm->tm_yday = -1;	/* day in the year */
+		}
 	}
 #endif
-	if (rc == -1) {		/* no sparc, or RTCGET failed */
-		ioctlname = "RTC_RD_TIME";
-		rc = ioctl(rtc_fd, RTC_RD_TIME, tm);
-	}
+
 	if (rc == -1) {
 		warn(_("ioctl(%s) to %s to read the time failed"),
 			ioctlname, rtc_dev_name);
@@ -334,8 +337,11 @@ static int set_hardware_clock_rtc(const struct hwclock_control *ctl,
 
 	rtc_fd = open_rtc_or_exit(ctl);
 
+	ioctlname = "RTC_SET_TIME";
+	rc = ioctl(rtc_fd, RTC_SET_TIME, new_broken_time);
+
 #ifdef __sparc__
-	{
+	if (rc == -1) {		/* sparc sbus */
 		struct sparc_rtc_time stm;
 
 		stm.sec = new_broken_time->tm_sec;
@@ -350,10 +356,6 @@ static int set_hardware_clock_rtc(const struct hwclock_control *ctl,
 		rc = ioctl(rtc_fd, RTCSET, &stm);
 	}
 #endif
-	if (rc == -1) {		/* no sparc, or RTCSET failed */
-		ioctlname = "RTC_SET_TIME";
-		rc = ioctl(rtc_fd, RTC_SET_TIME, new_broken_time);
-	}
 
 	if (rc == -1) {
 		warn(_("ioctl(%s) to %s to set the time failed."),
