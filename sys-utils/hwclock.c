@@ -672,10 +672,12 @@ static int interpret_date_string(const struct hwclock_control *ctl,
 	}
 
 	/* Quotes in date_opt would ruin the date command we construct. */
-	if (strchr(ctl->date_opt, '"') != NULL) {
+	if (strchr(ctl->date_opt, '"') != NULL ||
+	    strchr(ctl->date_opt, '`') != NULL ||
+	    strchr(ctl->date_opt, '$') != NULL) {
 		warnx(_
 		      ("The value of the --date option is not a valid date.\n"
-		       "In particular, it contains quotation marks."));
+		       "In particular, it contains illegal character(s)."));
 		return retcode;
 	}
 
