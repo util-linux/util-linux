@@ -216,6 +216,7 @@ struct lscpu_desc {
 	char	*stepping;
 	char    *bogomips;
 	char	*flags;
+	char	*mtid;		/* maximum thread id (s390) */
 	int	dispatching;	/* none, horizontal or vertical */
 	int	mode;		/* rm, lm or/and tm */
 
@@ -566,6 +567,7 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		else if (lookup(buf, "bogomips per cpu", &desc->bogomips)) ; /* s390 */
 		else if (lookup(buf, "cpu", &desc->cpu)) ;
 		else if (lookup(buf, "revision", &desc->revision)) ;
+		else if (lookup(buf, "max thread id", &desc->mtid)) ; /* s390 */
 		else if (lookup_cache(buf, desc)) ;
 		else
 			continue;
@@ -1804,9 +1806,11 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	}
 
 	if (desc->nsockets) {
-		int cores_per_socket, sockets_per_book, books_per_drawer, drawers;
+		int threads_per_core, cores_per_socket, sockets_per_book;
+		int books_per_drawer, drawers;
 
-		cores_per_socket = sockets_per_book = books_per_drawer = drawers = 0;
+		threads_per_core = cores_per_socket = sockets_per_book = 0;
+		books_per_drawer = drawers = 0;
 		/* s390 detects its cpu topology via /proc/sysinfo, if present.
 		 * Using simply the cpu topology masks in sysfs will not give
 		 * usable results since everything is virtualized. E.g.
@@ -1830,7 +1834,10 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 			if (fd)
 				fclose(fd);
 		}
-		print_n(_("Thread(s) per core:"), desc->nthreads / desc->ncores);
+		if (desc->mtid)
+			threads_per_core = atoi(desc->mtid) + 1;
+		print_n(_("Thread(s) per core:"),
+			threads_per_core ?: desc->nthreads / desc->ncores);
 		print_n(_("Core(s) per socket:"),
 			cores_per_socket ?: desc->ncores / desc->nsockets);
 		if (desc->nbooks) {
