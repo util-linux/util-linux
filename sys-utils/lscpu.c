@@ -2059,6 +2059,10 @@ int main(int argc, char *argv[])
 	read_basicinfo(desc, mod);
 
 	for (i = 0; i < desc->ncpuspos; i++) {
+		/* only consider present CPUs */
+		if (desc->present &&
+		    !CPU_ISSET(real_cpu_num(desc, i), desc->present))
+			continue;
 		read_topology(desc, i);
 		read_cache(desc, i);
 		read_polarization(desc, i);
