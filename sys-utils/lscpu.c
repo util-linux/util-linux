@@ -250,21 +250,25 @@ struct lscpu_desc {
 	 * hardware threads within the same drawer */
 	int		ndrawers;	/* number of all online drawers */
 	cpu_set_t	**drawermaps;	/* unique drawer_siblings */
+	int		*drawerids;	/* physical drawer ids */
 
 	/* books -- based on book_siblings (internal kernel map of cpuX's
 	 * hardware threads within the same book */
 	int		nbooks;		/* number of all online books */
 	cpu_set_t	**bookmaps;	/* unique book_siblings */
+	int		*bookids;	/* physical book ids */
 
 	/* sockets -- based on core_siblings (internal kernel map of cpuX's
 	 * hardware threads within the same physical_package_id (socket)) */
 	int		nsockets;	/* number of all online sockets */
 	cpu_set_t	**socketmaps;	/* unique core_siblings */
+	int		*socketids;	/* physical socket ids */
 
 	/* cores -- based on thread_siblings (internal kernel map of cpuX's
 	 * hardware threads within the same core as cpuX) */
 	int		ncores;		/* number of all online cores */
 	cpu_set_t	**coremaps;	/* unique thread_siblings */
+	int		*coreids;	/* physical core ids */
 
 	int		*polarization;	/* cpu polarization */
 	int		*addresses;	/* physical cpu addresses */
@@ -291,7 +295,8 @@ struct lscpu_modifier {
 	unsigned int	hex:1,		/* print CPU masks rather than CPU lists */
 			compat:1,	/* use backwardly compatible format */
 			online:1,	/* print online CPUs */
-			offline:1;	/* print offline CPUs */
+			offline:1,	/* print offline CPUs */
+			physical:1;	/* use physical numbers */
 };
 
 static int maxcpus;		/* size in bits of kernel cpu mask */
@@ -1058,7 +1063,8 @@ read_topology(struct lscpu_desc *desc, int idx)
 {
 	cpu_set_t *thread_siblings, *core_siblings;
 	cpu_set_t *book_siblings, *drawer_siblings;
-	int num = real_cpu_num(desc, idx);
+	int coreid, socketid, bookid, drawerid;
+	int i, num = real_cpu_num(desc, idx);
 
 	if (!path_exist(_PATH_SYS_CPU "/cpu%d/topology/thread_siblings", num))
 		return;
@@ -1075,6 +1081,22 @@ read_topology(struct lscpu_desc *desc, int idx)
 	if (path_exist(_PATH_SYS_CPU "/cpu%d/topology/drawer_siblings", num))
 		drawer_siblings = path_read_cpuset(maxcpus, _PATH_SYS_CPU
 					    "/cpu%d/topology/drawer_siblings", num);
+	coreid = -1;
+	if (path_exist(_PATH_SYS_CPU "/cpu%d/topology/core_id", num))
+		coreid = path_read_s32(_PATH_SYS_CPU
+				       "/cpu%d/topology/core_id", num);
+	socketid = -1;
+	if (path_exist(_PATH_SYS_CPU "/cpu%d/topology/physical_package_id", num))
+		socketid = path_read_s32(_PATH_SYS_CPU
+				       "/cpu%d/topology/physical_package_id", num);
+	bookid = -1;
+	if (path_exist(_PATH_SYS_CPU "/cpu%d/topology/book_id", num))
+		bookid = path_read_s32(_PATH_SYS_CPU
+				       "/cpu%d/topology/book_id", num);
+	drawerid = -1;
+	if (path_exist(_PATH_SYS_CPU "/cpu%d/topology/drawer_id", num))
+		drawerid = path_read_s32(_PATH_SYS_CPU
+				       "/cpu%d/topology/drawer_id", num);
 
 	if (!desc->coremaps) {
 		int ndrawers, nbooks, nsockets, ncores, nthreads;
@@ -1123,18 +1145,36 @@ read_topology(struct lscpu_desc *desc, int idx)
 		 */
 		desc->coremaps = xcalloc(desc->ncpuspos, sizeof(cpu_set_t *));
 		desc->socketmaps = xcalloc(desc->ncpuspos, sizeof(cpu_set_t *));
-		if (book_siblings)
+		desc->coreids = xcalloc(desc->ncpuspos, sizeof(*desc->drawerids));
+		desc->socketids = xcalloc(desc->ncpuspos, sizeof(*desc->drawerids));
+		for (i = 0; i < desc->ncpuspos; i++)
+			desc->coreids[i] = desc->socketids[i] = -1;
+		if (book_siblings) {
 			desc->bookmaps = xcalloc(desc->ncpuspos, sizeof(cpu_set_t *));
-		if (drawer_siblings)
+			desc->bookids = xcalloc(desc->ncpuspos, sizeof(*desc->drawerids));
+			for (i = 0; i < desc->ncpuspos; i++)
+				desc->bookids[i] = -1;
+		}
+		if (drawer_siblings) {
 			desc->drawermaps = xcalloc(desc->ncpuspos, sizeof(cpu_set_t *));
+			desc->drawerids = xcalloc(desc->ncpuspos, sizeof(*desc->drawerids));
+			for (i = 0; i < desc->ncpuspos; i++)
+				desc->drawerids[i] = -1;
+		}
 	}
 
 	add_cpuset_to_array(desc->socketmaps, &desc->nsockets, core_siblings);
+	desc->coreids[idx] = coreid;
 	add_cpuset_to_array(desc->coremaps, &desc->ncores, thread_siblings);
-	if (book_siblings)
+	desc->socketids[idx] = socketid;
+	if (book_siblings) {
 		add_cpuset_to_array(desc->bookmaps, &desc->nbooks, book_siblings);
-	if (drawer_siblings)
+		desc->bookids[idx] = bookid;
+	}
+	if (drawer_siblings) {
 		add_cpuset_to_array(desc->drawermaps, &desc->ndrawers, drawer_siblings);
+		desc->drawerids[idx] = drawerid;
+	}
 }
 
 static void
@@ -1371,14 +1411,28 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 		snprintf(buf, bufsz, "%d", cpu);
 		break;
 	case COL_CORE:
-		if (cpuset_ary_isset(cpu, desc->coremaps,
-				     desc->ncores, setsize, &i) == 0)
-			snprintf(buf, bufsz, "%zu", i);
+		if (mod->physical) {
+			if (desc->coreids[idx] == -1)
+				snprintf(buf, bufsz, "-");
+			else
+				snprintf(buf, bufsz, "%d", desc->coreids[idx]);
+		} else {
+			if (cpuset_ary_isset(cpu, desc->coremaps,
+					     desc->ncores, setsize, &i) == 0)
+				snprintf(buf, bufsz, "%zu", i);
+		}
 		break;
 	case COL_SOCKET:
-		if (cpuset_ary_isset(cpu, desc->socketmaps,
-				     desc->nsockets, setsize, &i) == 0)
-			snprintf(buf, bufsz, "%zu", i);
+		if (mod->physical) {
+			if (desc->socketids[idx] ==  -1)
+				snprintf(buf, bufsz, "-");
+			else
+				snprintf(buf, bufsz, "%d", desc->socketids[idx]);
+		} else {
+			if (cpuset_ary_isset(cpu, desc->socketmaps,
+					     desc->nsockets, setsize, &i) == 0)
+				snprintf(buf, bufsz, "%zu", i);
+		}
 		break;
 	case COL_NODE:
 		if (cpuset_ary_isset(cpu, desc->nodemaps,
@@ -1386,14 +1440,28 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 			snprintf(buf, bufsz, "%d", desc->idx2nodenum[i]);
 		break;
 	case COL_DRAWER:
-		if (cpuset_ary_isset(cpu, desc->drawermaps,
-				     desc->ndrawers, setsize, &i) == 0)
-			snprintf(buf, bufsz, "%zu", i);
+		if (mod->physical) {
+			if (desc->drawerids[idx] == -1)
+				snprintf(buf, bufsz, "-");
+			else
+				snprintf(buf, bufsz, "%d", desc->drawerids[idx]);
+		} else {
+			if (cpuset_ary_isset(cpu, desc->drawermaps,
+					     desc->ndrawers, setsize, &i) == 0)
+				snprintf(buf, bufsz, "%zu", i);
+		}
 		break;
 	case COL_BOOK:
-		if (cpuset_ary_isset(cpu, desc->bookmaps,
-				     desc->nbooks, setsize, &i) == 0)
-			snprintf(buf, bufsz, "%zu", i);
+		if (mod->physical) {
+			if (desc->bookids[idx] == -1)
+				snprintf(buf, bufsz, "-");
+			else
+				snprintf(buf, bufsz, "%d", desc->bookids[idx]);
+		} else {
+			if (cpuset_ary_isset(cpu, desc->bookmaps,
+					     desc->nbooks, setsize, &i) == 0)
+				snprintf(buf, bufsz, "%zu", i);
+		}
 		break;
 	case COL_CACHE:
 	{
@@ -1872,6 +1940,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -p, --parse[=<list>]    print out a parsable format\n"), out);
 	fputs(_(" -s, --sysroot <dir>     use specified directory as system root\n"), out);
 	fputs(_(" -x, --hex               print hexadecimal masks rather than lists of CPUs\n"), out);
+	fputs(_(" -y, --physical          print physical instead of logical IDs\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -1902,6 +1971,7 @@ int main(int argc, char *argv[])
 		{ "extended",	optional_argument, 0, 'e' },
 		{ "parse",	optional_argument, 0, 'p' },
 		{ "sysroot",	required_argument, 0, 's' },
+		{ "physical",	no_argument,	   0, 'y' },
 		{ "hex",	no_argument,	   0, 'x' },
 		{ "version",	no_argument,	   0, 'V' },
 		{ NULL,		0, 0, 0 }
@@ -1919,7 +1989,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "abce::hp::s:xV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "abce::hp::s:xyV", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1957,6 +2027,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'x':
 			mod->hex = 1;
+			break;
+		case 'y':
+			mod->physical = 1;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);

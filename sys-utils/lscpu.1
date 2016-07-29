@@ -3,7 +3,7 @@
 lscpu \- display information about the CPU architecture
 .SH SYNOPSIS
 .B lscpu
-.RB [ \-a | \-b | \-c "] [" \-x "] [" \-s " \fIdirectory\fP] [" \-e [=\fIlist\fP]| \-p [=\fIlist\fP]]
+.RB [ \-a | \-b | \-c "] [" \-x "] [" \-y "] [" \-s " \fIdirectory\fP] [" \-e [=\fIlist\fP]| \-p [=\fIlist\fP]]
 .br
 .B lscpu
 .BR \-h | \-V
@@ -144,6 +144,16 @@ of the Linux instance to be inspected.
 .BR \-x , " \-\-hex"
 Use hexadecimal masks for CPU sets (for example 0x3).  The default is to print
 the sets in list format (for example 0,1).
+.TP
+.BR \-y , " \-\-physical"
+Display physical IDs for all columns with topology elements (core, socket, etc.).
+Other than logical IDs, which are assigned by \fBlscpu\fP, physical IDs are
+platform-specific values that are provided by the kernel. Physical IDs are not
+necessarily unique and they might not be arranged sequentially.
+If the kernel could not retrieve a physical ID for an element \fBlscpu\fP prints
+the dash (-) character.
+
+The CPU logical numbers are not affected by this option.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
