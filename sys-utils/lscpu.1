@@ -54,7 +54,7 @@ The logical book number.  A book can contain several sockets.
 The logical drawer number.  A drawer can contain several books.
 .TP
 .B NODE
-The logical NUMA node number.  A node may contain several drawers.
+The logical NUMA node number.  A node can contain several drawers.
 .TP
 .B CACHE
 Information about how caches are shared between CPUs.
@@ -90,7 +90,7 @@ and hypervisor support CPU polarization.
 .RE
 .TP
 .B MAXMHZ
-Maximum megahertz value for the CPU.  Useful when lscpu is used as hardware
+Maximum megahertz value for the CPU. Useful when \fBlscpu\fP is used as hardware
 inventory information gathering tool.  Notice that the megahertz value is
 dynamic, and driven by CPU governor depending on current resource need.
 .TP
