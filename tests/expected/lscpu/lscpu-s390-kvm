@@ -21,3 +21,11 @@ Flags:                 esan3 zarch stfle msa ldisp eimm dfp edat etf3eh highgprs
 0,0,0,
 1,1,1,
 2,2,2,
+
+# The following is the parsable format, which can be fed to other
+# programs. Each different item in every column has an unique ID
+# starting from zero.
+# CPU,Core,Socket,Node
+0,0,-,
+1,0,-,
+2,0,-,

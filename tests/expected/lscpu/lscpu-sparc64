@@ -17,3 +17,14 @@ Flags:                 sun4u
 11,3,3,
 14,4,4,
 15,5,5,
+
+# The following is the parsable format, which can be fed to other
+# programs. Each different item in every column has an unique ID
+# starting from zero.
+# CPU,Core,Socket,Node
+6,0,-,
+7,0,-,
+10,0,-,
+11,0,-,
+14,0,-,
+15,0,-,

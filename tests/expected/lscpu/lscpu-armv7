@@ -12,3 +12,10 @@ CPU min MHz:           200.0000
 # CPU,Core,Socket,Node
 0,0,0,
 1,1,0,
+
+# The following is the parsable format, which can be fed to other
+# programs. Each different item in every column has an unique ID
+# starting from zero.
+# CPU,Core,Socket,Node
+0,0,0,
+1,1,0,

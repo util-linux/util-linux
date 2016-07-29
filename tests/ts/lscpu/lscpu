@@ -42,6 +42,11 @@ for dump in $(ls $TS_SELF/dumps/*.tar.gz | sort); do
 	"${TS_CMD_LSCPU}" -p -s "${dumpdir}/${name}" \
 		 >>"${TS_OUTPUT}" 2>&1
 
+	echo >>"${TS_OUTPUT}"
+
+	"${TS_CMD_LSCPU}" -p -y -s "${dumpdir}/${name}" \
+		 >>"${TS_OUTPUT}" 2>&1
+
 	# LE/BE depends on binary
 	sed -i -e '/Byte Order:.*/d' $TS_OUTPUT
 
