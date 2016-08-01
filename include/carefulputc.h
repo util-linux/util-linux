@@ -33,6 +33,8 @@ static inline void fputs_quoted_case(const char *data, FILE *out, int dir, int j
 	fputc('"', out);
 	for (p = data; p && *p; p++) {
 		if (json == 0) {
+			// Looks like the original here is intended for escaping Bash
+			// strings; will leave alone for non-json output.
 			if ((unsigned char) *p == 0x22 ||		/* " */
 				(unsigned char) *p == 0x5c ||		/* \ */
 				(unsigned char) *p == 0x60 ||		/* ` */
@@ -45,26 +47,44 @@ static inline void fputs_quoted_case(const char *data, FILE *out, int dir, int j
 					  *p, out);
 			}
 		} else {
+			/**
+			 * Requirements enumerated via testing (V8, Firefox, IE11):
+			 * var charsToEscape = [];
+			 * for (var i = 0; i < 65535; i += 1) {
+			 * 	try {
+			 * 		JSON.parse('{"sample": " + String.fromCodePoint(i) + "}');
+			 * 	} catch (e) {
+			 * 		charsToEscape.push(i);
+			 * 	}
+			 * }
+			 **/
 			unsigned char c = (unsigned char) *p;
 			// From http://www.json.org
-			if (((unsigned char) *p) < 0x20) {
-				if (c == '"' || c == '\\') { fputc('\\', out); fputc(c, out); }
+			// Would break out a string or init an escape sequence if not escaped
+			if (c == '"' || c == '\\') { fputc('\\', out); fputc(c, out); }
+			// In addition, all chars under ' ' break Node's/V8/Chrome's, and
+			// 	Firefox's JSON.parse function
+			else if (c < 0x20 || c == '"' || c == '\\') {
+				// Handle short-hand cases to reduce output size.  C has most of
+				// the same stuff here, so if there's an "Escape for C" function
+				// somewhere in the STL, we should probably be using it.
 				else if (c == '\r') { fputs("\\r", out); }
 				else if (c == '\n') { fputs("\\n", out); }
 				else if (c == '\t') { fputs("\\t", out); }
 				else if (c == '\v') { fputs("\\v", out); }
 				else if (c == '\b') { fputs("\\b", out); }
 				else if (c == '\f') { fputs("\\f", out); }
-				// single-quotes don't break double-quoted strings; readability better without escapes.
+				// single-quotes and forward slashes, while they're in the JSON
+				//	spec, don't break double-quoted strings, aren't below 0x20,
+				//	and are more redable without the leading backslashes anyway
 				//else if (c == '\'') { fputs("\\'", out); }
-				// forward-slashes don't break double-quoted strings; readability better without escapes.
 				//else if (c == '/') { fputs("\\/", out); }
 				else {
 					// Other assorted control characters
 					fprintf(out, "\\u00%02x", (unsigned char) *p);
 				}
 			} else {
-				// All other characters OK
+				// All other characters OK; do the case swap as required.
 				fputc(dir ==  1 ? toupper(*p) :
 					  dir == -1 ? tolower(*p) :
 					  *p, out);
