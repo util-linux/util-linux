@@ -53,7 +53,7 @@ static inline void fputs_quoted_case(const char *data, FILE *out, int dir, int j
 			 * var charsToEscape = [];
 			 * for (var i = 0; i < 65535; i += 1) {
 			 * 	try {
-			 * 		JSON.parse('{"sample": " + String.fromCodePoint(i) + "}');
+			 * 		JSON.parse('{"sample": "' + String.fromCodePoint(i) + '"}');
 			 * 	} catch (e) {
 			 * 		charsToEscape.push(i);
 			 * 	}
