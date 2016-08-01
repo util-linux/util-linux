@@ -69,7 +69,7 @@ static inline void fputs_quoted_case(const char *data, FILE *out, int dir, int j
 				// Handle short-hand cases to reduce output size.  C has most of
 				// the same stuff here, so if there's an "Escape for C" function
 				// somewhere in the STL, we should probably be using it.
-				else if (c == '\b') { fputs("\\b", out); }
+				     if (c == '\b') { fputs("\\b", out); }
 				else if (c == '\t') { fputs("\\t", out); }
 				else if (c == '\n') { fputs("\\n", out); }
 				else if (c == '\f') { fputs("\\f", out); }
