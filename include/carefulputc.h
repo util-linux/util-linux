@@ -65,7 +65,7 @@ static inline void fputs_quoted_case(const char *data, FILE *out, int dir, int j
 			if (c == '"' || c == '\\') { fputc('\\', out); fputc(c, out); }
 			// In addition, all chars under ' ' break Node's/V8/Chrome's, and
 			// 	Firefox's JSON.parse function
-			else if (c < 0x20 || c == '"' || c == '\\') {
+			else if (c < 0x20) {
 				// Handle short-hand cases to reduce output size.  C has most of
 				// the same stuff here, so if there's an "Escape for C" function
 				// somewhere in the STL, we should probably be using it.
