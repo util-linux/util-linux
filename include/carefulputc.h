@@ -35,11 +35,12 @@ static inline void fputs_quoted_case(const char *data, FILE *out, int dir, int j
 		if (json == 0) {
 			// Looks like the original here is intended for escaping Bash
 			// strings; will leave alone for non-json output.
-			if ((unsigned char) *p == 0x22 ||		/* " */
-				(unsigned char) *p == 0x5c ||		/* \ */
-				(unsigned char) *p == 0x60 ||		/* ` */
-				(unsigned char) *p == 0x24)			/* $ */
-			{
+			if ((unsigned char) *p == 0x22   ||		/* " */
+			    (unsigned char) *p == 0x5c   ||		/* \ */
+			    (unsigned char) *p == 0x60   ||		/* ` */
+			    (unsigned char) *p == 0x24   ||		/* $ */
+			    !isprint((unsigned char) *p) ||
+-			    iscntrl((unsigned char) *p)) {
 				fprintf(out, "\\x%02x", (unsigned char) *p);
 			} else {
 				fputc(dir ==  1 ? toupper(*p) :
