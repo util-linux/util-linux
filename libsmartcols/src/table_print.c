@@ -423,12 +423,12 @@ static int print_data(struct libscols_table *tb,
 		return 0;
 
 	case SCOLS_FMT_JSON:
-		fputs_quoted_lower(scols_cell_get_data(&cl->header), tb->out);
+		fputs_quoted_json_lower(scols_cell_get_data(&cl->header), tb->out);
 		fputs(": ", tb->out);
 		if (!data || !*data)
 			fputs("null", tb->out);
 		else
-			fputs_quoted(data, tb->out);
+			fputs_quoted_json(data, tb->out);
 		if (!is_last_column(cl))
 			fputs(", ", tb->out);
 		return 0;
