@@ -164,6 +164,7 @@ extern int loopcxt_deinit_iterator(struct loopdev_cxt *lc);
 extern int loopcxt_next(struct loopdev_cxt *lc);
 
 extern int loopcxt_setup_device(struct loopdev_cxt *lc);
+extern int loopcxt_set_status(struct loopdev_cxt *lc);
 extern int loopcxt_delete_device(struct loopdev_cxt *lc);
 extern int loopcxt_set_capacity(struct loopdev_cxt *lc);
 extern int loopcxt_set_dio(struct loopdev_cxt *lc, unsigned long use_dio);

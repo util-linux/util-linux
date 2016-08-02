@@ -1204,7 +1204,7 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
 }
 
 /*
- * @cl: context
+ * @lc: context
  *
  * Associate the current device (see loopcxt_{set,get}_device()) with
  * a file (see loopcxt_set_backing_file()).
@@ -1326,6 +1326,40 @@ err:
 
 	DBG(SETUP, ul_debugobj(lc, "failed [rc=%d]", rc));
 	return rc;
+}
+
+/*
+ * @lc: context
+ *
+ * Update status of the current device (see loopcxt_{set,get}_device()).
+ *
+ * Note that once initialized, kernel accepts only selected changes:
+ * LO_FLAGS_AUTOCLEAR and LO_FLAGS_PARTSCAN
+ * For more see linux/drivers/block/loop.c:loop_set_status()
+ *
+ * Returns: <0 on error, 0 on success.
+ */
+int loopcxt_set_status(struct loopdev_cxt *lc)
+{
+	int dev_fd, rc = -1;
+
+	errno = 0;
+	dev_fd = loopcxt_get_fd(lc);
+
+	if (dev_fd < 0) {
+		rc = -errno;
+		return rc;
+	}
+	DBG(SETUP, ul_debugobj(lc, "device open: OK"));
+
+	if (ioctl(dev_fd, LOOP_SET_STATUS64, &lc->info)) {
+		rc = -errno;
+		DBG(SETUP, ul_debugobj(lc, "LOOP_SET_STATUS64 failed: %m"));
+		return rc;
+	}
+
+	DBG(SETUP, ul_debugobj(lc, "LOOP_SET_STATUS64: OK"));
+	return 0;
 }
 
 int loopcxt_set_capacity(struct loopdev_cxt *lc)
