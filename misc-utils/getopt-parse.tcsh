@@ -1,9 +1,9 @@
 #!/bin/tcsh
 
-# A small example program for using the new getopt(1) program.
-# This program will only work with tcsh(1)
-# An similar program using the bash(1) script language can be found
-# as parse.bash
+# A small example script for using the getopt(1) program.
+# This script will only work with tcsh(1).
+# A similar script using the bash(1) language can be found
+# as getopt-parse.bash.
 
 # Example input and output (from the tcsh prompt):
 # ./parse.tcsh -a par1 'another arg' --c-long 'wow\!*\?' -cmore -b " very long "
