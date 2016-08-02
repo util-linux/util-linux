@@ -74,11 +74,9 @@ static void tailf(const char *filename, size_t lines, struct stat *st)
 	if (data[i] == '\n')
 		lines++;
 	while (i) {
-		if (data[i] == '\n') {
-			if (--lines == 0) {
-				i++;
-				break;
-			}
+		if (data[i] == '\n' && --lines == 0) {
+			i++;
+			break;
 		}
 		i--;
 	}

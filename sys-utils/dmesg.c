@@ -591,6 +591,8 @@ static ssize_t read_buffer(struct dmesg_control *ctl, char **buf)
 		if (n == 0 && ctl->action == SYSLOG_ACTION_READ_CLEAR)
 			n = klogctl(SYSLOG_ACTION_CLEAR, NULL, 0);
 		break;
+	default:
+		abort();	/* impossible method -> drop core */
 	}
 
 	return n;
@@ -1116,8 +1118,6 @@ static int parse_kmsg_record(struct dmesg_control *ctl,
 
 	/* D) optional fields (ignore) */
 	p = skip_item(p, end, ";");
-	if (LAST_KMSG_FIELD(p))
-		goto mesg;
 
 mesg:
 	/* E) message text */
@@ -1178,19 +1178,19 @@ static int read_kmsg(struct dmesg_control *ctl)
 	return 0;
 }
 
-static int which_time_format(const char *optarg)
+static int which_time_format(const char *s)
 {
-	if (!strcmp(optarg, "notime"))
+	if (!strcmp(s, "notime"))
 		return DMESG_TIMEFTM_NONE;
-	if (!strcmp(optarg, "ctime"))
+	if (!strcmp(s, "ctime"))
 		return DMESG_TIMEFTM_CTIME;
-	if (!strcmp(optarg, "delta"))
+	if (!strcmp(s, "delta"))
 		return DMESG_TIMEFTM_DELTA;
-	if (!strcmp(optarg, "reltime"))
+	if (!strcmp(s, "reltime"))
 		return DMESG_TIMEFTM_RELTIME;
-	if (!strcmp(optarg, "iso"))
+	if (!strcmp(s, "iso"))
 		return DMESG_TIMEFTM_ISO8601;
-	errx(EXIT_FAILURE, _("unknown time format: %s"), optarg);
+	errx(EXIT_FAILURE, _("unknown time format: %s"), s);
 }
 
 #ifdef TEST_DMESG
@@ -1391,12 +1391,11 @@ int main(int argc, char *argv[])
 	if (argc > 1)
 		usage(stderr);
 
-	if (is_timefmt(&ctl, RELTIME) ||
-	    is_timefmt(&ctl, CTIME) ||
-	    is_timefmt(&ctl, ISO8601)) {
-		if (dmesg_get_boot_time(&ctl.boot_time) != 0)
-			ctl.time_fmt = DMESG_TIMEFTM_NONE;
-	}
+	if ((is_timefmt(&ctl, RELTIME) ||
+	     is_timefmt(&ctl, CTIME)   ||
+	     is_timefmt(&ctl, ISO8601))
+	    && dmesg_get_boot_time(&ctl.boot_time) != 0)
+		ctl.time_fmt = DMESG_TIMEFTM_NONE;
 
 	if (delta)
 		switch (ctl.time_fmt) {

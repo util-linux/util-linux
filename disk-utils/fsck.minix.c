@@ -1333,10 +1333,9 @@ main(int argc, char **argv) {
 		usage(stderr);
 
 	check_mount();		/* trying to check a mounted filesystem? */
-	if (repair && !automatic) {
-		if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO))
-			die(_("need terminal for interactive repairs"));
-	}
+	if (repair && !automatic && (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO)))
+		die(_("need terminal for interactive repairs"));
+
 	device_fd = open(device_name, repair ? O_RDWR : O_RDONLY);
 	if (device_fd < 0)
 		die(_("cannot open %s: %s"), device_name, strerror(errno));

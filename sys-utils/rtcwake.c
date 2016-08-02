@@ -344,18 +344,18 @@ static int print_alarm(struct rtcwake_control *ctl, int fd)
 	return 0;
 }
 
-static int get_rtc_mode(struct rtcwake_control *ctl, const char *optarg)
+static int get_rtc_mode(struct rtcwake_control *ctl, const char *s)
 {
 	size_t i;
 	char **modes = get_sys_power_states(ctl), **m;
 
 	STRV_FOREACH(m, modes) {
-		if (strcmp(optarg, *m) == 0)
+		if (strcmp(s, *m) == 0)
 			return SYSFS_MODE;
 	}
 
 	for (i = 0; i < ARRAY_SIZE(rtcwake_mode_string); i++)
-		if (!strcmp(optarg, rtcwake_mode_string[i]))
+		if (!strcmp(s, rtcwake_mode_string[i]))
 			return i;
 
 	return -EINVAL;
@@ -501,12 +501,9 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (ctl.clock_mode == CM_AUTO) {
-		if (read_clock_mode(&ctl) < 0) {
-			printf(_("%s: assuming RTC uses UTC ...\n"),
-					program_invocation_short_name);
-			ctl.clock_mode = CM_UTC;
-		}
+	if (ctl.clock_mode == CM_AUTO && read_clock_mode(&ctl) < 0) {
+		printf(_("%s: assuming RTC uses UTC ...\n"),  program_invocation_short_name);
+		ctl.clock_mode = CM_UTC;
 	}
 
 	if (ctl.verbose)

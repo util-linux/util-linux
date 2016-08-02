@@ -354,10 +354,9 @@ int main(int argc, char *argv[])
 		 * which means they can be translated. */
 		printf(_("Would you like to edit %s now [y/n]? "), orig_file);
 
-		if (fgets(response, sizeof(response), stdin)) {
-			if (rpmatch(response) == RPMATCH_YES)
-				edit_file(1);
-		}
+		if (fgets(response, sizeof(response), stdin) &&
+		    rpmatch(response) == RPMATCH_YES)
+			edit_file(1);
 	}
 	exit(EXIT_SUCCESS);
 }

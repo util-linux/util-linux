@@ -785,10 +785,8 @@ int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
         /*
          * unpartitioned device
          */
-        if (diskname && len) {
-            if (!sysfs_get_devname(&cxt, diskname, len))
-                goto err;
-        }
+        if (diskname && len && !sysfs_get_devname(&cxt, diskname, len))
+            goto err;
         if (diskdevno)
             *diskdevno = dev;
 

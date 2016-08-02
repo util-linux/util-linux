@@ -1204,20 +1204,18 @@ static int add_partition(struct fdisk_context *cxt, size_t n,
 			    (uintmax_t)start,  (uintmax_t)stop, cxt->grain));
 	}
 
-	if (stop < limit) {
-		if (isrel && alignment_required(cxt)) {
-			/* the last sector has not been exactly requested (but
-			 * defined by +size{K,M,G} convention), so be smart and
-			 * align the end of the partition. The next partition
-			 * will start at phy.block boundary.
-			 */
-			stop = fdisk_align_lba_in_range(cxt, stop, start, limit);
-			if (stop > start)
-				stop -= 1;
-			if (stop > limit)
-				stop = limit;
-			DBG(LABEL, ul_debug("DOS: aligned stop: %ju", (uintmax_t) stop));
-		}
+	if (stop < limit && isrel && alignment_required(cxt)) {
+		/* the last sector has not been exactly requested (but
+		 * defined by +size{K,M,G} convention), so be smart and
+		 * align the end of the partition. The next partition
+		 * will start at phy.block boundary.
+		 */
+		stop = fdisk_align_lba_in_range(cxt, stop, start, limit);
+		if (stop > start)
+			stop -= 1;
+		if (stop > limit)
+			stop = limit;
+		DBG(LABEL, ul_debug("DOS: aligned stop: %ju", (uintmax_t) stop));
 	}
 
 	set_partition(cxt, n, 0, start, stop, sys, fdisk_partition_is_bootable(pa));

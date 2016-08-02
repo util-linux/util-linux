@@ -552,13 +552,11 @@ int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[
 				break;
 			}
 		}
-		if (flag & BLKID_FLTR_ONLYIN) {
-		       if (!has)
+		if (has) {
+			if (flag & BLKID_FLTR_NOTIN)
 				blkid_bmp_set_item(fltr, i);
-		} else if (flag & BLKID_FLTR_NOTIN) {
-			if (has)
-				blkid_bmp_set_item(fltr, i);
-		}
+		} else if (flag & BLKID_FLTR_ONLYIN)
+			blkid_bmp_set_item(fltr, i);
 	}
 
 	DBG(LOWPROBE, ul_debug("%s: a new probing type-filter initialized",

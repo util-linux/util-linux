@@ -766,14 +766,6 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	return user;
 }
 
-/* some UNIX implementations set errno iff a passwd/grp/...
- * entry was not found. The original UNIX logins(1) utility always
- * ignores invalid login/group names, so we're going to as well.*/
-#define IS_REAL_ERRNO(e) !((e) == ENOENT || (e) == ESRCH || \
-		(e) == EBADF || (e) == EPERM || (e) == EAGAIN)
-
-/* get a definitive list of users we want info about... */
-
 static int str_to_uint(char *s, unsigned int *ul)
 {
 	char *end;
@@ -785,6 +777,7 @@ static int str_to_uint(char *s, unsigned int *ul)
 	return 1;
 }
 
+/* get a definitive list of users we want info about... */
 static int get_ulist(struct lslogins_control *ctl, char *logins, char *groups)
 {
 	char *u, *g;
@@ -878,13 +871,18 @@ static struct lslogins_user *get_next_user(struct lslogins_control *ctl)
 	return u;
 }
 
+/* some UNIX implementations set errno iff a passwd/grp/...
+ * entry was not found. The original UNIX logins(1) utility always
+ * ignores invalid login/group names, so we're going to as well.*/
+#define IS_REAL_ERRNO(e) !((e) == ENOENT || (e) == ESRCH || \
+		(e) == EBADF || (e) == EPERM || (e) == EAGAIN)
+
 static int get_user(struct lslogins_control *ctl, struct lslogins_user **user,
 		    const char *username)
 {
 	*user = get_user_info(ctl, username);
-	if (!*user)
-		if (IS_REAL_ERRNO(errno))
-			return -1;
+	if (!*user && IS_REAL_ERRNO(errno))
+		return -1;
 	return 0;
 }
 
@@ -1202,7 +1200,7 @@ static void free_user(void *f)
 	free(u);
 }
 
-static int parse_time_mode(const char *optarg)
+static int parse_time_mode(const char *s)
 {
 	struct lslogins_timefmt {
 		const char *name;
@@ -1216,10 +1214,10 @@ static int parse_time_mode(const char *optarg)
 	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(timefmts); i++) {
-		if (strcmp(timefmts[i].name, optarg) == 0)
+		if (strcmp(timefmts[i].name, s) == 0)
 			return timefmts[i].val;
 	}
-	errx(EXIT_FAILURE, _("unknown time format: %s"), optarg);
+	errx(EXIT_FAILURE, _("unknown time format: %s"), s);
 }
 
 static void __attribute__((__noreturn__)) usage(FILE *out)

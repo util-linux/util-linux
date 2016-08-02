@@ -892,10 +892,8 @@ static int week_number(int day, int month, int32_t year, const struct cal_contro
 		month = JANUARY;
 
 	yday = day_in_year(day,month,year);
-	if (year == REFORMATION_YEAR) {
-		if (yday >= YDAY_AFTER_MISSING)
-			fday -= NUMBER_MISSING_DAYS;
-	}
+	if (year == REFORMATION_YEAR && yday >= YDAY_AFTER_MISSING)
+		fday -= NUMBER_MISSING_DAYS;
 
 	/* Last year is last year */
 	if (yday + fday < DAYS_IN_WEEK)

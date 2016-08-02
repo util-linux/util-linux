@@ -191,13 +191,13 @@ static unsigned long strtokey(const char *str, const char *errmesg)
 	return 0;
 }
 
-static int key_to_id(type_id type, char *optarg)
+static int key_to_id(type_id type, char *s)
 {
 	int id;
 	/* keys are in hex or decimal */
-	key_t key = strtokey(optarg, "failed to parse argument");
+	key_t key = strtokey(s, "failed to parse argument");
 	if (key == IPC_PRIVATE) {
-		warnx(_("illegal key (%s)"), optarg);
+		warnx(_("illegal key (%s)"), s);
 		return -1;
 	}
 	switch (type) {
@@ -230,7 +230,7 @@ static int key_to_id(type_id type, char *optarg)
 		default:
 			err(EXIT_FAILURE, _("key failed"));
 		}
-		warnx("%s (%s)", errmsg, optarg);
+		warnx("%s (%s)", errmsg, s);
 	}
 	return id;
 }
@@ -407,9 +407,8 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (rm_all)
-		if (remove_all(what_all))
-			ret++;
+	if (rm_all && remove_all(what_all))
+		ret++;
 
 	/* print usage if we still have some arguments left over */
 	if (optind < argc) {

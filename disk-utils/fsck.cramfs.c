@@ -403,10 +403,8 @@ static void do_uncompress(char *path, int outfd, unsigned long offset,
 				     size);
 		}
 		size -= out;
-		if (*extract_dir != '\0')
-			if (write(outfd, outbuffer, out) < 0)
-				err(FSCK_EX_ERROR, _("write failed: %s"),
-				    path);
+		if (*extract_dir != '\0' && write(outfd, outbuffer, out) < 0)
+			err(FSCK_EX_ERROR, _("write failed: %s"), path);
 		curr = next;
 	} while (size);
 }
@@ -629,9 +627,8 @@ static void test_fs(int start)
 			     _("directory data end (%lu) != file data start (%lu)"),
 			     end_dir, start_data);
 	}
-	if (super.flags & CRAMFS_FLAG_FSID_VERSION_2)
-		if (end_data > super.size)
-			errx(FSCK_EX_UNCORRECTED, _("invalid file data offset"));
+	if (super.flags & CRAMFS_FLAG_FSID_VERSION_2 && end_data > super.size)
+		errx(FSCK_EX_UNCORRECTED, _("invalid file data offset"));
 
 	iput(root);		/* free(root) */
 }

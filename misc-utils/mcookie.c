@@ -121,10 +121,8 @@ static void randomness_from_files(struct mcookie_control *ctl)
 					   "Got %zu bytes from %s\n", count),
 					count, fname);
 
-			if (fd != STDIN_FILENO)
-				if (close(fd))
-					err(EXIT_FAILURE,
-					    _("closing %s failed"), fname);
+			if (fd != STDIN_FILENO && close(fd))
+				err(EXIT_FAILURE, _("closing %s failed"), fname);
 		}
 	}
 }
