@@ -26,6 +26,82 @@ static inline int fputc_careful(int c, FILE *fp, const char fail)
 	return (ret < 0) ? EOF : 0;
 }
 
+/*
+ * Requirements enumerated via testing (V8, Firefox, IE11):
+ *
+ * var charsToEscape = [];
+ * for (var i = 0; i < 65535; i += 1) {
+ *	try {
+ *		JSON.parse('{"sample": "' + String.fromCodePoint(i) + '"}');
+ *	} catch (e) {
+ *		charsToEscape.push(i);
+ *	}
+ * }
+ */
+static inline void fputs_quoted_case_json(const char *data, FILE *out, int dir)
+{
+	const char *p;
+
+	fputc('"', out);
+	for (p = data; p && *p; p++) {
+
+		const unsigned char c = (unsigned char) *p;
+
+		/* From http://www.json.org
+		 *
+		 * The double-quote and backslashes would break out a string or
+		 * init an escape sequence if not escaped.
+		 *
+		 * Note that single-quotes and forward slashes, while they're
+		 * in the JSON spec, don't break double-quoted strings.
+		 */
+		if (c == '"' || c == '\\') {
+			fputc('\\', out);
+			fputc(c, out);
+			continue;
+		}
+
+		/* All non-control characters OK; do the case swap as required. */
+		if (c >= 0x20) {
+			fputc(dir ==  1 ? toupper(c) :
+			      dir == -1 ? tolower(c) : *p, out);
+			continue;
+		}
+
+		/* In addition, all chars under ' ' break Node's/V8/Chrome's, and
+		 * Firefox's JSON.parse function
+		 */
+		switch (c) {
+			/* Handle short-hand cases to reduce output size.  C
+			 * has most of the same stuff here, so if there's an
+			 * "Escape for C" function somewhere in the STL, we
+			 * should probably be using it.
+			 */
+			case '\b':
+				fputs("\\b", out);
+				break;
+			case '\t':
+				fputs("\\t", out);
+				break;
+			case '\n':
+				fputs("\\n", out);
+				break;
+			case '\f':
+				fputs("\\f", out);
+				break;
+			case '\r':
+				fputs("\\r", out);
+				break;
+			default:
+				/* Other assorted control characters */
+				fprintf(out, "\\u00%02x", c);
+				break;
+		}
+	}
+	fputc('"', out);
+}
+
+
 static inline void fputs_quoted_case(const char *data, FILE *out, int dir)
 {
 	const char *p;
@@ -51,6 +127,10 @@ static inline void fputs_quoted_case(const char *data, FILE *out, int dir)
 #define fputs_quoted(_d, _o)		fputs_quoted_case(_d, _o, 0)
 #define fputs_quoted_upper(_d, _o)	fputs_quoted_case(_d, _o, 1)
 #define fputs_quoted_lower(_d, _o)	fputs_quoted_case(_d, _o, -1)
+
+#define fputs_quoted_json(_d, _o)       fputs_quoted_case_json(_d, _o, 0)
+#define fputs_quoted_json_upper(_d, _o) fputs_quoted_case_json(_d, _o, 1)
+#define fputs_quoted_json_lower(_d, _o) fputs_quoted_case_json(_d, _o, -1)
 
 static inline void fputs_nonblank(const char *data, FILE *out)
 {
