@@ -1886,6 +1886,7 @@ int main(int argc, char *argv[])
 		{ "reorder", no_argument,       NULL, 'r' },
 		{ "show-size", no_argument,	NULL, 's' },
 		{ "show-geometry", no_argument, NULL, 'g' },
+		{ "show-pt-geometry", no_argument, NULL, 'G' },
 		{ "quiet",   no_argument,       NULL, 'q' },
 		{ "verify",  no_argument,       NULL, 'V' },
 		{ "version", no_argument,       NULL, 'v' },
@@ -1912,7 +1913,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "aAbcdfFghJlLo:O:nN:qrsTu:vVX:Y:w:W:",
+	while ((c = getopt_long(argc, argv, "aAbcdfFgGhJlLo:O:nN:qrsTu:vVX:Y:w:W:",
 					longopts, &longidx)) != -1) {
 		switch(c) {
 		case 'A':
@@ -1947,6 +1948,8 @@ int main(int argc, char *argv[])
 		case 'f':
 			sf->force = 1;
 			break;
+		case 'G':
+			warnx(_("--show-pt-geometry is no more implemented. Using --show-geometry."));
 		case 'g':
 			sf->act = ACT_SHOW_GEOM;
 			break;
