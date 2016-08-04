@@ -1555,7 +1555,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 
 			DBG(FS, ul_debugobj(fs, "checking for loop: src=%s", mnt_fs_get_srcpath(fs)));
 #if __linux__
-			if (!loopdev_is_used(mnt_fs_get_srcpath(fs), src, offset, flags))
+			if (!loopdev_is_used(mnt_fs_get_srcpath(fs), src, offset, 0, flags))
 				continue;
 
 			DBG(FS, ul_debugobj(fs, "used loop"));

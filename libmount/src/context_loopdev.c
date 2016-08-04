@@ -119,13 +119,13 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 		rc = 0;
 
 		if (strncmp(src, "/dev/loop", 9) == 0) {
-			rc = loopdev_is_used((char *) src, bf, offset, LOOPDEV_FL_OFFSET);
+			rc = loopdev_is_used((char *) src, bf, offset, 0, LOOPDEV_FL_OFFSET);
 
 		} else if (opts && (cxt->user_mountflags & MNT_MS_LOOP) &&
 		    mnt_optstr_get_option(opts, "loop", &val, &len) == 0 && val) {
 
 			val = strndup(val, len);
-			rc = loopdev_is_used((char *) val, bf, offset, LOOPDEV_FL_OFFSET);
+			rc = loopdev_is_used((char *) val, bf, offset, 0, LOOPDEV_FL_OFFSET);
 			free(val);
 		}
 	}
@@ -215,26 +215,62 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	 * mechanism to detect it. To prevent data corruption, the same loop
 	 * device has to be recycled.
 	*/
-	rc = loopcxt_init(&lc, 0);
-	if (rc)
-		goto done;
-	if (backing_file && !(loopcxt_find_by_backing_file(&lc,
-			backing_file, offset, LOOPDEV_FL_OFFSET))) {
-		DBG(LOOP, ul_debugobj(cxt, "using existing loop device %s",
+	if (backing_file) {
+		rc = loopcxt_init(&lc, 0);
+		if (rc)
+			goto done_no_deinit;
+
+		rc = loopcxt_find_overlap(&lc, backing_file, offset, sizelimit);
+		switch (rc) {
+		case 0: /* not found */
+			DBG(LOOP, ul_debugobj(cxt, "not found overlaping loopdev"));
+			loopcxt_deinit(&lc);
+			break;
+
+		case 1:	/* overlap */
+			DBG(LOOP, ul_debugobj(cxt, "overlaping %s detected",
+						loopcxt_get_device(&lc)));
+			rc = -MNT_ERR_LOOPOVERLAP;
+			goto done;
+
+		case 2: /* overlap -- full size and offset match (reuse) */
+		{
+			uint32_t lc_encrypt_type;
+
+			DBG(LOOP, ul_debugobj(cxt, "re-using existing loop device %s",
+				loopcxt_get_device(&lc)));
+
+			/* Once a loop is initialized RO, there is no
+			 * way to change its parameters. */
+			if (loopcxt_is_readonly(&lc)
+			    && !(lo_flags & LO_FLAGS_READ_ONLY)) {
+				DBG(LOOP, ul_debugobj(cxt, "%s is read-only",
+						loopcxt_get_device(&lc)));
+				rc = -EROFS;
+				goto done;
+			}
+
+			/* This is no more supported, but check to be safe. */
+			if (loopcxt_get_encrypt_type(&lc, &lc_encrypt_type) == 0
+			    && lc_encrypt_type != LO_CRYPT_NONE) {
+				DBG(LOOP, ul_debugobj(cxt, "encryption no longer supported for device %s",
 					loopcxt_get_device(&lc)));
-		/* Once a loop is initialized RO, there is no way to safely
-		   mount that file in R/W mode. */
-		if (loopcxt_is_readonly(&lc) && !(lo_flags & LO_FLAGS_READ_ONLY)) {
-			rc = -EROFS;
+				rc = -MNT_ERR_LOOPOVERLAP;
+				goto done;
+			}
+			rc = 0;
+			goto success;
+		}
+		default: /* error */
 			goto done;
 		}
-
-		goto success;
 	}
-	loopcxt_deinit(&lc);
 
+	DBG(LOOP, ul_debugobj(cxt, "not found; create a new loop device"));
 	rc = loopcxt_init(&lc, 0);
-	if (rc == 0 && loopval) {
+	if (rc)
+		goto done_no_deinit;
+	if (loopval) {
 		rc = loopcxt_set_device(&lc, loopval);
 		if (rc == 0)
 			loopdev = loopcxt_get_device(&lc);
@@ -321,7 +357,11 @@ success:
 		 * otherwise it will be auto-cleared by kernel
 		 */
 		cxt->loopdev_fd = loopcxt_get_fd(&lc);
-		loopcxt_set_fd(&lc, -1, 0);
+		if (cxt->loopdev_fd < 0) {
+			DBG(LOOP, ul_debugobj(cxt, "failed to get loopdev FD"));
+			rc = -errno;
+		} else
+			loopcxt_set_fd(&lc, -1, 0);
 	}
 done:
 	loopcxt_deinit(&lc);
