@@ -16,7 +16,7 @@
 # GNU General Public License for more details.
 #
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="loop (fstab)"
+TS_DESC="loop overlay"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
@@ -29,14 +29,13 @@ ts_skip_nonroot
 ts_check_prog "mkfs.ext3"
 ts_check_prog "dd"
 ts_check_prog "stat"
-# Default from functions.sh:ts_image_init()
-mib=${1:-"5"}
 
 IMG=$(ts_image_init)
 
 mkfs.ext3 -F "$IMG" &> /dev/null || ts_die "Cannot make ext3 on $IMG"
-OFFSET=`stat -c %s "$IMG"`
-dd if=$IMG of=$IMG oflag=append bs=${mib}M count=1 conv=notrunc status=none
+OFFSET=$(stat -c %s "$IMG")
+
+dd if="$IMG" of="$IMG" oflag=append bs=5MiB count=1 conv=notrunc status=none
 
 [ -d "$TS_MOUNTPOINT-1" ] || mkdir -p $TS_MOUNTPOINT-1
 [ -d "$TS_MOUNTPOINT-2" ] || mkdir -p $TS_MOUNTPOINT-2
