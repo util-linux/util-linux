@@ -220,58 +220,53 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 		if (rc)
 			goto done_no_deinit;
 
-		rc = loopcxt_find_by_backing_file(&lc,
-				backing_file, offset, sizelimit,
-				LOOPDEV_FL_OFFSET | LOOPDEV_FL_SIZELIMIT);
-		if (rc < 0)
+		rc = loopcxt_find_overlap(&lc, backing_file, offset, sizelimit);
+		switch (rc) {
+		case 0: /* not found */
+			DBG(LOOP, ul_debugobj(cxt, "not found overlaping loopdev"));
+			loopcxt_deinit(&lc);
+			break;
+
+		case 1:	/* overlap */
+			DBG(LOOP, ul_debugobj(cxt, "overlaping %s detected",
+						loopcxt_get_device(&lc)));
+			rc = -MNT_ERR_LOOPOVERLAP;
 			goto done;
-		if (rc == 0) {
+
+		case 2: /* overlap -- full size and offset match (reuse) */
+		{
 			uint32_t lc_encrypt_type;
 
-			DBG(LOOP, ul_debugobj(cxt, "using existing loop device %s",
+			DBG(LOOP, ul_debugobj(cxt, "re-using existing loop device %s",
 				loopcxt_get_device(&lc)));
 
 			/* Once a loop is initialized RO, there is no
-			   way to change its parameters. */
-			if (loopcxt_is_readonly(&lc) && !(lo_flags & LO_FLAGS_READ_ONLY)) {
+			 * way to change its parameters. */
+			if (loopcxt_is_readonly(&lc)
+			    && !(lo_flags & LO_FLAGS_READ_ONLY)) {
+				DBG(LOOP, ul_debugobj(cxt, "%s is read-only",
+						loopcxt_get_device(&lc)));
 				rc = -EROFS;
 				goto done;
 			}
 
-			/* This is no more supported, but check to be
-			 * safe. */
-			if (loopcxt_get_encrypt_type(&lc, &lc_encrypt_type)) {
-				DBG(LOOP, ul_debugobj(cxt, "failed to get crypt type for device %s",
-					loopcxt_get_device(&lc)));
-				rc = -MNT_ERR_LOOPDEV;
-				goto done;
-			}
-			if (lc_encrypt_type != LO_CRYPT_NONE) {
+			/* This is no more supported, but check to be safe. */
+			if (loopcxt_get_encrypt_type(&lc, &lc_encrypt_type) == 0
+			    && lc_encrypt_type != LO_CRYPT_NONE) {
 				DBG(LOOP, ul_debugobj(cxt, "encryption no longer supported for device %s",
 					loopcxt_get_device(&lc)));
 				rc = -MNT_ERR_LOOPOVERLAP;
 				goto done;
 			}
+			rc = 0;
 			goto success;
 		}
-		loopcxt_deinit(&lc);
-		/* No existing loop device matches. Now we need to
-		 * check that no loop device overlaps our target range
-		 * inside the backing file. */
-		rc = loopcxt_init(&lc, 0);
-		if (rc)
-			goto done_no_deinit;
-
-		rc = loopcxt_find_overlap(&lc, backing_file, offset, sizelimit);
-		if (rc < 0)
-			goto done;
-		if (rc == 0) {
-			rc = -MNT_ERR_LOOPOVERLAP;
+		default: /* error */
 			goto done;
 		}
-		loopcxt_deinit(&lc);
 	}
 
+	DBG(LOOP, ul_debugobj(cxt, "not found; create a new loop device"));
 	rc = loopcxt_init(&lc, 0);
 	if (rc)
 		goto done_no_deinit;
@@ -362,7 +357,11 @@ success:
 		 * otherwise it will be auto-cleared by kernel
 		 */
 		cxt->loopdev_fd = loopcxt_get_fd(&lc);
-		loopcxt_set_fd(&lc, -1, 0);
+		if (cxt->loopdev_fd < 0) {
+			DBG(LOOP, ul_debugobj(cxt, "failed to get loopdev FD"));
+			rc = -errno;
+		} else
+			loopcxt_set_fd(&lc, -1, 0);
 	}
 done:
 	loopcxt_deinit(&lc);

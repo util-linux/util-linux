@@ -1566,7 +1566,7 @@ int loopcxt_find_by_backing_file(struct loopdev_cxt *lc, const char *filename,
 }
 
 /*
- * Returns: 0 = success, < 0 error, 1 not found
+ * Returns: 0 = not found, < 0 error, 1 found, 2 found full size and offset match
  */
 int loopcxt_find_overlap(struct loopdev_cxt *lc, const char *filename,
 			   uint64_t offset, uint64_t sizelimit)
@@ -1590,7 +1590,7 @@ int loopcxt_find_overlap(struct loopdev_cxt *lc, const char *filename,
 				     filename, offset, sizelimit, 0);
 		if (!rc)
 			continue;	/* unused */
-		if (rc != 1)
+		if (rc < 0)
 			break;		/* error */
 
 		DBG(CXT, ul_debugobj(lc, "found %s backed by %s",
@@ -1609,15 +1609,29 @@ int loopcxt_find_overlap(struct loopdev_cxt *lc, const char *filename,
 			break;
 		}
 
+		/* full match */
+		if (lc_sizelimit == sizelimit && lc_offset == offset) {
+			DBG(CXT, ul_debugobj(lc, "overlapping loop device %s (full match)",
+						loopcxt_get_device(lc)));
+			rc = 2;
+			goto found;
+		}
+
+		/* overlap */
 		if (lc_sizelimit != 0 && offset >= lc_offset + lc_sizelimit)
 			continue;
 		if (sizelimit != 0 && offset + sizelimit <= lc_offset)
 			continue;
+
 		DBG(CXT, ul_debugobj(lc, "overlapping loop device %s",
 			loopcxt_get_device(lc)));
-			rc = 0;
-			break;
+			rc = 1;
+			goto found;
 	}
+
+	if (rc == 1)
+		rc = 0;	/* not found */
+found:
 	loopcxt_deinit_iterator(lc);
 	return rc;
 }
