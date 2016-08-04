@@ -1,3 +1,4 @@
+
 /*
  * No copyright is claimed.  This code is in the public domain; do with
  * it what you wish.
@@ -978,9 +979,9 @@ int loopcxt_is_dio(struct loopdev_cxt *lc)
  * @lc: context
  * @st: backing file stat or NULL
  * @backing_file: filename
- * @offset: offset
- * @flags: LOOPDEV_FL_OFFSET if @offset should not be ignored
- * @flags: LOOPDEV_FL_SIZELIMIT if @sizelimit should not be ignored
+ * @offset: offset (use LOOPDEV_FL_OFFSET if specified)
+ * @sizelimit: size limit (use LOOPDEV_FL_SIZELIMIT if specified)
+ * @flags: LOOPDEV_FL_{OFFSET,SIZELIMIT}
  *
  * Returns 1 if the current @lc loopdev is associated with the given backing
  * file. Note that the preferred way is to use devno and inode number rather
@@ -1040,8 +1041,7 @@ found:
 			uint64_t sz;
 
 			return loopcxt_get_sizelimit(lc, &sz) == 0 && sz == sizelimit;
-		}
-		else
+		} else
 			return rc;
 	}
 	return 1;
@@ -1566,9 +1566,9 @@ int loopcxt_find_by_backing_file(struct loopdev_cxt *lc, const char *filename,
 }
 
 /*
- * Returns: 0 = conflict, < 0 error, 1 no conflicting device
+ * Returns: 0 = success, < 0 error, 1 not found
  */
-int loopcxt_check_conflict(struct loopdev_cxt *lc, const char *filename,
+int loopcxt_find_overlap(struct loopdev_cxt *lc, const char *filename,
 			   uint64_t offset, uint64_t sizelimit)
 {
 	int rc, hasst;
@@ -1589,11 +1589,13 @@ int loopcxt_check_conflict(struct loopdev_cxt *lc, const char *filename,
 		rc = loopcxt_is_used(lc, hasst ? &st : NULL,
 				     filename, offset, sizelimit, 0);
 		if (!rc)
-			continue;
+			continue;	/* unused */
 		if (rc != 1)
-			break;
+			break;		/* error */
+
 		DBG(CXT, ul_debugobj(lc, "found %s backed by %s",
 			loopcxt_get_device(lc), filename));
+
 		rc = loopcxt_get_offset(lc, &lc_offset);
 		if (rc) {
 			DBG(CXT, ul_debugobj(lc, "failed to get offset for device %s",

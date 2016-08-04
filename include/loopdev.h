@@ -188,9 +188,9 @@ extern int loopcxt_find_by_backing_file(struct loopdev_cxt *lc,
 				const char *filename,
 				uint64_t offset, uint64_t sizelimit,
 				int flags);
-extern int loopcxt_check_conflict(struct loopdev_cxt *lc,
-				  const char *filename,
-				  uint64_t offset, uint64_t sizelimit);
+extern int loopcxt_find_overlap(struct loopdev_cxt *lc,
+				const char *filename,
+				uint64_t offset, uint64_t sizelimit);
 
 extern int loopcxt_is_used(struct loopdev_cxt *lc,
                     struct stat *st,

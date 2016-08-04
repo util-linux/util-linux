@@ -261,8 +261,8 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 		rc = loopcxt_init(&lc, 0);
 		if (rc)
 			goto done_no_deinit;
-		rc = loopcxt_check_conflict(&lc,
-			backing_file, offset, sizelimit);
+
+		rc = loopcxt_find_overlap(&lc, backing_file, offset, sizelimit);
 		if (rc < 0)
 			goto done;
 		if (rc == 0) {
