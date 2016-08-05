@@ -23,6 +23,11 @@ why:    unnecessary option, only 'S'ector unit is supported
 
 --------------------------
 
+what:   sfdisk --show-pt-geometry
+why:    equal to --show-geometry for a long time
+
+--------------------------
+
 what:  "swapon --summary" output format
 why:   does not provide control on output data formatting. The recommended solution
        is to use --show=<columns> in all scripts.
