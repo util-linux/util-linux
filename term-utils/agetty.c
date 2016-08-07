@@ -45,6 +45,7 @@
 #include "widechar.h"
 #include "ttyutils.h"
 #include "color-names.h"
+#include "env.h"
 
 #ifdef USE_PLYMOUTH_SUPPORT
 # include "plymouth-ctrl.h"
@@ -1155,7 +1156,8 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 			op->term = DEFAULT_STERM;
 	}
 
-	setenv("TERM", op->term, 1);
+	if (setenv("TERM", op->term, 1) != 0)
+		log_err(_("failed to set the %s environment variable"), "TERM");
 }
 
 /* Initialize termios settings. */

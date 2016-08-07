@@ -138,7 +138,8 @@ static void pager_preexec(void)
 	FD_SET(STDIN_FILENO, &in);
 	select(1, &in, NULL, &in, NULL);
 
-	setenv("LESS", "FRSX", 0);
+	if (setenv("LESS", "FRSX", 0) != 0)
+		warn(_("failed to set the %s environment variable"), "LESS");
 }
 
 static void wait_for_pager(void)

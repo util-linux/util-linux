@@ -56,6 +56,7 @@
 
 #include "c.h"
 #include "closestream.h"
+#include "env.h"
 #include "nls.h"
 #include "pathnames.h"
 #ifdef USE_PLYMOUTH_SUPPORT
@@ -219,18 +220,18 @@ static void tcfinal(struct console *con)
 	int fd;
 
 	if ((con->flags & CON_SERIAL) == 0) {
-		setenv("TERM", "linux", 1);
+		xsetenv("TERM", "linux", 1);
 		return;
 	}
 	if (con->flags & CON_NOTTY) {
-		setenv("TERM", "dumb", 1);
+		xsetenv("TERM", "dumb", 1);
 		return;
 	}
 
 #if defined (__s390__) || defined (__s390x__)
-	setenv("TERM", "dumb", 1);
+	xsetenv("TERM", "dumb", 1);
 #else
-	setenv("TERM", "vt102", 1);
+	xsetenv("TERM", "vt102", 1);
 #endif
 	tio = &con->tio;
 	fd = con->fd;
@@ -759,16 +760,16 @@ static void sushell(struct passwd *pwd)
 	if (getcwd(home, sizeof(home)) == NULL)
 		strcpy(home, "/");
 
-	setenv("HOME", home, 1);
-	setenv("LOGNAME", "root", 1);
-	setenv("USER", "root", 1);
+	xsetenv("HOME", home, 1);
+	xsetenv("LOGNAME", "root", 1);
+	xsetenv("USER", "root", 1);
 	if (!profile)
-		setenv("SHLVL","0",1);
+		xsetenv("SHLVL","0",1);
 
 	/*
 	 * Try to execute a shell.
 	 */
-	setenv("SHELL", su_shell, 1);
+	xsetenv("SHELL", su_shell, 1);
 	unmask_signal(SIGINT, &saved_sigint);
 	unmask_signal(SIGTSTP, &saved_sigtstp);
 	unmask_signal(SIGQUIT, &saved_sigquit);
@@ -793,7 +794,7 @@ static void sushell(struct passwd *pwd)
 	execl(su_shell, shell, NULL);
 	warn(_("failed to execute %s"), su_shell);
 
-	setenv("SHELL", "/bin/sh", 1);
+	xsetenv("SHELL", "/bin/sh", 1);
 	execl("/bin/sh", profile ? "-sh" : "sh", NULL);
 	warn(_("failed to execute %s"), "/bin/sh");
 }

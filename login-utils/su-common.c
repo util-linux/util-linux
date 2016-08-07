@@ -520,7 +520,7 @@ set_path(const struct passwd* pw)
     r = logindefs_setenv("PATH", "ENV_SUPATH", _PATH_DEFPATH_ROOT);
 
   if (r != 0)
-    err (EXIT_FAILURE,  _("failed to set PATH"));
+    err (EXIT_FAILURE,  _("failed to set the %s environment variable"), "PATH");
 }
 
 /* Update `environ' for the new shell based on PW, with SHELL being
