@@ -248,7 +248,7 @@ static const char *cache_find_path(struct libmnt_cache *cache, const char *path)
 		struct mnt_cache_entry *e = &cache->ents[i];
 		if (!(e->flag & MNT_CACHE_ISPATH))
 			continue;
-		if (streq_except_trailing_slash(path, e->key))
+		if (streq_paths(path, e->key))
 			return e->value;
 	}
 	return NULL;

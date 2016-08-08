@@ -422,8 +422,9 @@ int mnt_fs_set_source(struct libmnt_fs *fs, const char *source)
  * @fs: fs
  * @path: source path
  *
- * Compares @fs source path with @path. The trailing slash is ignored.
- * See also mnt_fs_match_source().
+ * Compares @fs source path with @path. The redundant slashs are ignored.
+ * This function compares strings and does not cannonicalize the paths.
+ * See also more heavy and generic mnt_fs_match_source().
  *
  * Returns: 1 if @fs source path equal to @path, otherwise 0.
  */
@@ -437,7 +438,7 @@ int mnt_fs_streq_srcpath(struct libmnt_fs *fs, const char *path)
 	p = mnt_fs_get_srcpath(fs);
 
 	if (!mnt_fs_is_pseudofs(fs))
-		return streq_except_trailing_slash(p, path);
+		return streq_paths(p, path);
 
 	if (!p && !path)
 		return 1;
@@ -450,14 +451,15 @@ int mnt_fs_streq_srcpath(struct libmnt_fs *fs, const char *path)
  * @fs: fs
  * @path: mount point
  *
- * Compares @fs target path with @path. The trailing slash is ignored.
- * See also mnt_fs_match_target().
+ * Compares @fs target path with @path. The redundant slashs are ignored.
+ * This function compares strings and does not cannonicalize the paths.
+ * See also more generic mnt_fs_match_target().
  *
  * Returns: 1 if @fs target path equal to @path, otherwise 0.
  */
 int mnt_fs_streq_target(struct libmnt_fs *fs, const char *path)
 {
-	return fs && streq_except_trailing_slash(mnt_fs_get_target(fs), path);
+	return fs && streq_paths(mnt_fs_get_target(fs), path);
 }
 
 /**

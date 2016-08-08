@@ -748,38 +748,55 @@ int parse_range(const char *str, int *lower, int *upper, int def)
 	return 0;
 }
 
-/*
- * Compare two strings for equality, ignoring at most one trailing
- * slash.
- */
-int streq_except_trailing_slash(const char *s1, const char *s2)
+static const char *next_path_segment(const char *str, size_t *sz)
 {
-	int equal;
+	const char *start, *p;
 
-	if (!s1 && !s2)
-		return 1;
-	if (!s1 || !s2)
-		return 0;
+	start = str;
+	*sz = 0;
+	while (start && *start == '/' && *(start + 1) == '/')
+		start++;
 
-	equal = !strcmp(s1, s2);
+	if (!start || !*start)
+		return NULL;
 
-	if (!equal) {
-		size_t len1 = strlen(s1);
-		size_t len2 = strlen(s2);
-
-		if (len1 && *(s1 + len1 - 1) == '/')
-			len1--;
-		if (len2 && *(s2 + len2 - 1) == '/')
-			len2--;
-		if (len1 != len2)
-			return 0;
-
-		equal = !strncmp(s1, s2, len1);
+	for (*sz = 1, p = start + 1; *p && *p != '/'; p++) {
+		(*sz)++;
 	}
 
-	return equal;
+	return start;
 }
 
+int streq_paths(const char *a, const char *b)
+{
+	while (a && b) {
+		size_t a_sz, b_sz;
+		const char *a_seg = next_path_segment(a, &a_sz);
+		const char *b_seg = next_path_segment(b, &b_sz);
+
+		/*
+		fprintf(stderr, "A>>>(%zu) '%s'\n", a_sz, a_seg);
+		fprintf(stderr, "B>>>(%zu) '%s'\n", b_sz, b_seg);
+		*/
+
+		/* end of the path */
+		if (a_sz + b_sz == 0)
+			return 1;
+
+		/* ignore tailing slash */
+		if (a_sz + b_sz == 1 &&
+		    ((a_seg && *a_seg == '/') || (b_seg && *b_seg == '/')))
+			return 1;
+
+		if (a_sz != b_sz || strncmp(a_seg, b_seg, a_sz) != 0)
+			return 0;
+
+		a = a_seg + a_sz;
+		b = b_seg + b_sz;
+	};
+
+	return 0;
+}
 
 char *strnappend(const char *s, const char *suffix, size_t b)
 {
@@ -912,15 +929,13 @@ int skip_fline(FILE *fp)
 
 #ifdef TEST_PROGRAM
 
-int main(int argc, char *argv[])
+static int test_strutils_sizes(int argc, char *argv[])
 {
 	uintmax_t size = 0;
 	char *hum, *hum2;
 
-	if (argc < 2) {
-		fprintf(stderr, "usage: %s <number>[suffix]\n",	argv[0]);
-		exit(EXIT_FAILURE);
-	}
+	if (argc < 2)
+		return EXIT_FAILURE;
 
 	if (strtosize(argv[1], &size))
 		errx(EXIT_FAILURE, "invalid size '%s' value", argv[1]);
@@ -934,5 +949,34 @@ int main(int argc, char *argv[])
 	free(hum2);
 
 	return EXIT_SUCCESS;
+}
+
+static int test_strutils_cmp_paths(int argc, char *argv[])
+{
+	int rc = streq_paths(argv[1], argv[2]);
+
+	if (argc < 3)
+		return EXIT_FAILURE;
+
+	printf("%s: '%s' '%s'\n", rc == 1 ? "YES" : "NOT", argv[1], argv[2]);
+	return EXIT_SUCCESS;
+}
+
+int main(int argc, char *argv[])
+{
+	if (argc == 3 && strcmp(argv[1], "--size") == 0)
+		return test_strutils_sizes(argc - 1, argv + 1);
+
+	else if (argc == 4 && strcmp(argv[1], "--cmp-paths") == 0)
+		return test_strutils_cmp_paths(argc - 1, argv + 1);
+
+	else {
+		fprintf(stderr, "usage: %1$s --size <number>[suffix]\n"
+				"       %1$s --cmp-paths <path> <path>\n",
+				argv[0]);
+		exit(EXIT_FAILURE);
+	}
+
+	return EXIT_FAILURE;
 }
 #endif /* TEST_PROGRAM */

@@ -110,7 +110,7 @@ extern int string_to_bitmask(const char *list,
 			     long (*name2flag)(const char *, size_t));
 extern int parse_range(const char *str, int *lower, int *upper, int def);
 
-extern int streq_except_trailing_slash(const char *s1, const char *s2);
+extern int streq_paths(const char *a, const char *b);
 
 /*
  * Match string beginning.
