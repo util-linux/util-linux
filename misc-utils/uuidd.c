@@ -543,7 +543,6 @@ int main(int argc, char **argv)
 {
 	const char	*socket_path = UUIDD_SOCKET_PATH;
 	const char	*pidfile_path = NULL;
-	const char	*pidfile_path_param = NULL;
 	const char	*err_context = NULL;
 	char		buf[1024], *cp;
 	char		str[UUID_STR_LEN];
@@ -601,7 +600,7 @@ int main(int argc, char **argv)
 						_("failed to parse --uuids"));
 			break;
 		case 'p':
-			pidfile_path_param = optarg;
+			pidfile_path = optarg;
 			break;
 		case 'P':
 			no_pid = 1;
@@ -646,10 +645,8 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (!no_pid && !pidfile_path_param)
+	if (!no_pid && !pidfile_path)
 		pidfile_path = UUIDD_PIDFILE_PATH;
-	else if (pidfile_path_param)
-		pidfile_path = pidfile_path_param;
 
 	/* custom socket path and socket-activation make no sense */
 	if (s_flag && uuidd_cxt.no_sock && !uuidd_cxt.quiet)
