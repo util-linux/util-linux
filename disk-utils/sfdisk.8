@@ -79,7 +79,9 @@ Dump the partitions of a device in a format that is usable as input to \fBsfdisk
 See the section \fBBACKING UP THE PARTITION TABLE\fR.
 .TP
 .BR \-g , " \-\-show\-geometry " [ \fIdevice ...]
-List the geometry of all or the specified devices.
+List the geometry of all or the specified devices. For backward
+compatibility the deprecated option \fB\-\-show\-pt\-geometry\fR have the same
+meaning as this one.
 .TP
 .BR \-J , " \-\-json " \fIdevice\fR
 Dump the partitions of a device in JSON format.  Note that \fBsfdisk\fR is
