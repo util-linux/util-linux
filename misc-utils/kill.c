@@ -472,10 +472,6 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	ctl.do_pid = (!strcmp(program_invocation_short_name, "pid"));	/* Yecch */
-	if (ctl.do_pid)	/* FIXME: remove in March 2016.  */
-		warnx(_("use of 'kill --pid' option as command name is deprecated"));
-
 	argv = parse_arguments(argc, argv, &ctl);
 
 	/* The rest of the arguments should be process ids and names. */
