@@ -1820,6 +1820,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -X, --label <name>        specify label type (dos, gpt, ...)\n"), out);
 	fputs(_(" -Y, --label-nested <name> specify nested label type (dos, bsd)\n"), out);
 	fputs(USAGE_SEPARATOR, out);
+	fputs(_(" -G, --show-pt-geometry    deprecated, alias to --show-geometry\n"), out);
 	fputs(_(" -L, --Linux               deprecated, only for backward compatibility\n"), out);
 	fputs(_(" -u, --unit S              deprecated, only sector unit is supported\n"), out);
 
@@ -1886,7 +1887,6 @@ int main(int argc, char *argv[])
 		{ "reorder", no_argument,       NULL, 'r' },
 		{ "show-size", no_argument,	NULL, 's' },
 		{ "show-geometry", no_argument, NULL, 'g' },
-		{ "show-pt-geometry", no_argument, NULL, 'G' },
 		{ "quiet",   no_argument,       NULL, 'q' },
 		{ "verify",  no_argument,       NULL, 'V' },
 		{ "version", no_argument,       NULL, 'v' },
@@ -1898,6 +1898,7 @@ int main(int argc, char *argv[])
 		{ "part-type",  no_argument,    NULL, OPT_PARTTYPE },
 		{ "part-attrs", no_argument,    NULL, OPT_PARTATTRS },
 
+		{ "show-pt-geometry", no_argument, NULL, 'G' },		/* deprecated */
 		{ "unit",    required_argument, NULL, 'u' },
 		{ "Linux",   no_argument,       NULL, 'L' },		/* deprecated */
 
