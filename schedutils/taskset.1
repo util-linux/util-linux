@@ -51,7 +51,10 @@ to the last logical CPU.  Not all CPUs may exist on a given system but a mask
 may specify more CPUs than are present.  A retrieved mask will reflect only the
 bits that correspond to CPUs physically on the system.  If an invalid mask is
 given (i.e., one that corresponds to no valid CPUs on the current system) an
-error is returned.  The masks are typically given in hexadecimal.  For example,
+error is returned.  The masks may be specified in hexadecimal (with or without
+a leading "0x"), or as a cpu list with the
+.BR \-\-cpu\-list
+option.  For example,
 .RS 4
 .TP 12
 .BR 0x00000001
@@ -61,7 +64,13 @@ is processor #0,
 is processors #0 and #1,
 .TP
 .BR 0xFFFFFFFF
-is all processors (#0 through #31).
+is processors #0 through #31,
+.TP
+.BR 32
+is processors #1, #4, and #5,
+.TP
+.BR \-\-cpu\-list\ 0-2,6
+is processors #0, #1, #2, and #6.
 .RE
 .PP
 When
