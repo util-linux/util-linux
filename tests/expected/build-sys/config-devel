@@ -103,6 +103,7 @@ sulogin:  libselinux rypt
 switch_root:  
 tailf:  
 taskset:  
+colcrt:  
 tunelp:  
 ul:  libtinfo 
 unshare:  

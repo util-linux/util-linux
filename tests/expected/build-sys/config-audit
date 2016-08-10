@@ -101,6 +101,7 @@ sulogin:  rypt
 switch_root:  
 tailf:  
 taskset:  
+colcrt:  
 ul:  libtinfo 
 unshare:  
 utmpdump:  

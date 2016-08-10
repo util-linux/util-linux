@@ -107,6 +107,7 @@ sulogin:  rypt
 switch_root:  
 tailf:  
 taskset:  
+colcrt:  
 ul:  libtinfo 
 umount.static: STATIC
 unshare:  
