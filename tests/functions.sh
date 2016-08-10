@@ -367,11 +367,11 @@ function ts_init_py {
 
 function ts_valgrind {
 	if [ -z "$TS_VALGRIND_CMD" ]; then
-		$*
+		"$@"
 	else
 		$TS_VALGRIND_CMD --tool=memcheck --leak-check=full \
 				 --leak-resolution=high --num-callers=20 \
-				 --log-file="$TS_VGDUMP" $*
+				 --log-file="$TS_VGDUMP" "$@"
 	fi
 }
 
