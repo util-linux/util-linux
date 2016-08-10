@@ -185,7 +185,7 @@ static int __mnt_optstr_append_option(char **optstr,
 	sz = osz + nsz + 1;		/* 1: '\0' */
 	if (osz)
 		sz++;			/* ',' options separator */
-	if (vsz)
+	if (value)
 		sz += vsz + 1;		/* 1: '=' */
 
 	p = realloc(*optstr, sz);
@@ -201,7 +201,7 @@ static int __mnt_optstr_append_option(char **optstr,
 	memcpy(p, name, nsz);
 	p += nsz;
 
-	if (vsz) {
+	if (value) {
 		*p++ = '=';
 		memcpy(p, value, vsz);
 		p += vsz;
