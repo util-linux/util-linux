@@ -20,12 +20,20 @@ ts_init_subtest "append-value"
 ts_valgrind $TESTPROG --append "aaa,bbb=BBB,ccc" "ddd" "DDD" &> $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "append-empty-value"
+ts_valgrind $TESTPROG --append "aaa,bbb=BBB,ccc" "ddd" "" &> $TS_OUTPUT
+ts_finalize_subtest
+
 ts_init_subtest "prepend"
 ts_valgrind $TESTPROG --prepend "aaa,bbb=BBB,ccc" "ddd" &> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "prepend-value"
 ts_valgrind $TESTPROG --prepend "aaa,bbb=BBB,ccc" "ddd" "DDD" &> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "prepend-empty-value"
+ts_valgrind $TESTPROG --prepend "aaa,bbb=BBB,ccc" "ddd" "" &> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "set-remove"
@@ -40,12 +48,24 @@ ts_init_subtest "set-large"
 ts_valgrind $TESTPROG --set "aaa,bbb=BBB,ccc" "bbb" "XXX-YYY-ZZZ" &> $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "set-empty"
+ts_valgrind $TESTPROG --set "aaa,bbb=BBB,ccc" "bbb" "" &> $TS_OUTPUT
+ts_finalize_subtest
+
 ts_init_subtest "set-new"
 ts_valgrind $TESTPROG --set "aaa,bbb=BBB,ccc" "aaa" "XXX" &> $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "set-new-empty"
+ts_valgrind $TESTPROG --set "aaa,bbb=BBB,ccc" "aaa" "" &> $TS_OUTPUT
+ts_finalize_subtest
+
 ts_init_subtest "set-new-end"
 ts_valgrind $TESTPROG --set "aaa,bbb=BBB,ccc" "ccc" "XXX" &> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "set-new-end-empty"
+ts_valgrind $TESTPROG --set "aaa,bbb=BBB,ccc" "ccc" "" &> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "get"
@@ -66,6 +86,10 @@ ts_finalize_subtest
 
 ts_init_subtest "remove-value"
 ts_valgrind $TESTPROG --remove "aaa,bbb=BBB,ccc" "bbb" &> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "remove-empty-value"
+ts_valgrind $TESTPROG --remove "aaa,bbb=,ccc" "bbb" &> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "split"
@@ -90,6 +114,10 @@ ts_finalize_subtest
 
 ts_init_subtest "deduplicate"
 ts_valgrind $TESTPROG --dedup bbb,ccc,AAA,xxx,AAA=a,AAA=bbb,ddd,AAA=ccc,fff=eee AAA &> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "deduplicate-empty"
+ts_valgrind $TESTPROG --dedup bbb,ccc,AAA,xxx,AAA=a,AAA=bbb,ddd,AAA=,fff=eee AAA &> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_finalize
