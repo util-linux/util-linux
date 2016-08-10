@@ -117,7 +117,7 @@ declare -a comps
 if [ -n "$SUBTESTS" ]; then
 	# selected tests only
 	for s in $SUBTESTS; do
-		if [ -d "$top_srcdir/tests/ts/$s" ]; then
+		if [ -e "$top_srcdir/tests/ts/$s" ]; then
 			comps+=( $(find_test_scripts "$top_srcdir/tests/ts/$s") ) || exit 1
 		else
 			echo "Unknown test component '$s'"
