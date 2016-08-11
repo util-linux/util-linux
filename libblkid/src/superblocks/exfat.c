@@ -114,7 +114,7 @@ static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
 	struct exfat_entry_label *label;
 
 	sb = blkid_probe_get_sb(pr, mag, struct exfat_super_block);
-	if (!sb)
+	if (!sb || !CLUSTER_SIZE(sb))
 		return errno ? -errno : BLKID_PROBE_NONE;
 
 	label = find_label(pr, sb);
