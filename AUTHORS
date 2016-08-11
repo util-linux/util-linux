@@ -89,6 +89,8 @@ CONTRIBUTORS:
       Alex Bligh <alex@alex.org.uk>
       Alexey Galakhov <agalakhov@gmail.com>
       Alexey Gladkov <gladkov.alexey@gmail.com>
+      Alexey Obitotskiy <aleksey.obitotskiy@intel.com>
+      Allon Mureinik <amureini@redhat.com>
       Alon Bar-Lev <alon.barlev@gmail.com>
       Alvaro M. Echevarria
       Américo Wang <xiyou.wangcong@gmail.com>
@@ -146,6 +148,7 @@ CONTRIBUTORS:
       Chow Loong Jin <hyperair@ubuntu.com>
       Chris Frost <chris@frostnet.net>
       Chris MacGregor <chrismacgregor@google.com>
+      Chris Metcalf <cmetcalf@mellanox.com>
       Christian von Roques <roques@juliet.ka.sub.org>
       Christian Wiese <chris@opensde.org>
       Christophe Blaess <Christophe@Blaess.fr>
@@ -470,6 +473,7 @@ CONTRIBUTORS:
       Sander van Malssen <svm@kozmix.ow.nl>
       Santiago Vila Doncel <sanvila@unex.es>
       Sascha Sommer <ssommer@suse.de>
+      Sassan Panahinejad <sassan@sassan.me.uk>
       Scott James Remnant <scott@ubuntu.com>
       Scott Moser <smoser@ubuntu.com>
       Scott Telford <st@epcc.ed.ac.uk>
@@ -504,6 +508,7 @@ CONTRIBUTORS:
       Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>
       Theodore Ts'o <tytso@mit.edu>
       Thierry Reding <thierry.reding@avionic-design.de>
+      Thierry Vignaud <thierry.vignaud@gmail.com>
       Thomas Bächler <thomas@archlinux.org>
       Thomas Fehr <fehr@suse.de>
       Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
@@ -521,10 +526,12 @@ CONTRIBUTORS:
       Tommi Kyntola <kynde@iki.fi>
       Tommy Thorn
       Tom Prince <tom.prince@ualberta.net>
+      Torsten Hilbrich <torsten.hilbrich@secunet.com>
       Toshi Kani <toshi.kani@hp.com>
       Trần Ngọc Quân <vnwildman@gmail.com>
       Valerie Aurora <vaurora@redhat.com>
       Vasant Hegde <hegdevasant@linux.vnet.ibm.com>
+      Victor Dodon <dodonvictor@gmail.com>
       Ville Skyttä <ville.skytta@iki.fi>
       Vincent Deffontaines <vincent@gryzor.com>
       Vitezslav Cizek <vcizek@suse.cz>
@@ -535,6 +542,7 @@ CONTRIBUTORS:
       Waldemar Brodkorb <wbx@openadk.org>
       WANG Chao <wcwxyz@gmail.com>
       Wanlong Gao <wanlong.gao@gmail.com>
+      Wayne Pollock <profwaynepollock@gmail.com>
       Wayne R. Roth <wayneroth42@gmail.com>
       Wei-Lun Chao <bluebat@member.fsf.org>
       Werner Almesberger <almesber@bernina.ethz.ch>
