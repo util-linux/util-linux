@@ -118,6 +118,9 @@ function osx_install_script
 		--disable-ipcs \
 		--disable-write \
 	"
+
+	# workaround: glibtoolize could not find sed
+	export SED="sed"
 }
 
 function osx_prepare_check
