@@ -18,8 +18,13 @@
 TS_TOPDIR="${0%/*}/../.."
 TS_DESC="built-in"
 
+# Don't execute this test by default, --force required
+TS_OPTIONAL="yes"
+
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+
+ts_check_test_command "$TS_HELPER_PATHS"
 
 $TS_HELPER_PATHS &> $TS_OUTPUT
 
