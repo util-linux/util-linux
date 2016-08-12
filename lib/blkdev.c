@@ -133,7 +133,7 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 	}
 #endif /* FDGETPRM */
 
-#ifdef HAVE_SYS_DISKLABEL_H
+#if defined(HAVE_SYS_DISKLABEL_H) && defined(DIOCGDINFO)
 	{
 		/*
 		 * This code works for FreeBSD 4.11 i386, except for the full device
@@ -161,7 +161,7 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 			}
 		}
 	}
-#endif /* HAVE_SYS_DISKLABEL_H */
+#endif /* defined(HAVE_SYS_DISKLABEL_H) && defined(DIOCGDINFO) */
 
 	{
 		struct stat st;
