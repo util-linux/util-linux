@@ -100,7 +100,8 @@ enum {
 	LSNS_ID_PID,
 	LSNS_ID_UTS,
 	LSNS_ID_IPC,
-	LSNS_ID_USER
+	LSNS_ID_USER,
+	LSNS_ID_CGROUP
 };
 
 static char *ns_names[] = {
@@ -109,7 +110,8 @@ static char *ns_names[] = {
 	[LSNS_ID_PID] = "pid",
 	[LSNS_ID_UTS] = "uts",
 	[LSNS_ID_IPC] = "ipc",
-	[LSNS_ID_USER] = "user"
+	[LSNS_ID_USER] = "user",
+	[LSNS_ID_CGROUP] = "cgroup"
 };
 
 struct lsns_namespace {
@@ -599,7 +601,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -p, --task <pid>       print process namespaces\n"), out);
 	fputs(_(" -r, --raw              use the raw output format\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
-	fputs(_(" -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts)\n"), out);
+	fputs(_(" -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
