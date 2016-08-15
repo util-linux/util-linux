@@ -202,7 +202,7 @@ static inline const struct colinfo *get_column_info(unsigned num)
 	return &infos[ get_column_id(num) ];
 }
 
-static ino_t get_ns_ino(int dir, const char *nsname, ino_t *ino)
+static int get_ns_ino(int dir, const char *nsname, ino_t *ino)
 {
 	struct stat st;
 	char path[16];
@@ -267,7 +267,7 @@ static int read_process(struct lsns *ls, pid_t pid)
 			continue;
 
 		rc = get_ns_ino(dirfd(dir), ns_names[i], &p->ns_ids[i]);
-		if (rc && rc != -EACCES)
+		if (rc && rc != -EACCES && rc != -ENOENT)
 			goto done;
 		rc = 0;
 	}
