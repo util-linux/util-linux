@@ -48,7 +48,7 @@ BYTE_ORDER=$($TS_HELPER_SYSINFO byte-order)
 ARCH=$(uname -m)
 case $ARCH in
 	# see include/pt-bsd.h
-	*alpha* | *ppc* | *ia64* | *hppa* )
+	*alpha* | *ppc* | *ia64* | *parisc* )
 		BSD_LABELSECTOR=0
 		BSD_LABELOFFSET=64
 		;;
