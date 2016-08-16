@@ -1804,8 +1804,8 @@ AM_CONDITIONAL([BUILD_MORE], [test "x$build_more" = xyes])
 
 
 AC_ARG_ENABLE([pg],
-  AS_HELP_STRING([--disable-pg], [do not build pg]),
-  [], [UL_DEFAULT_ENABLE([pg], [check])]
+  AS_HELP_STRING([--enable-pg], [build pg]),
+  [], [UL_DEFAULT_ENABLE([pg], [no])]
 )
 UL_BUILD_INIT([pg])
 UL_REQUIRES_HAVE([pg], [ncursesw, ncurses], [ncurses or ncursesw library])

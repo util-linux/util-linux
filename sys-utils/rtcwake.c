@@ -34,6 +34,7 @@
 
 #include "c.h"
 #include "closestream.h"
+#include "env.h"
 #include "nls.h"
 #include "optutils.h"
 #include "pathnames.h"
@@ -157,7 +158,7 @@ static int get_basetimes(struct rtcwake_control *ctl, int fd)
 	 * with the system clock (which always uses UTC).
 	 */
 	if (ctl->clock_mode == CM_UTC)
-		setenv("TZ", "UTC", 1);
+		xsetenv("TZ", "UTC", 1);
 	tzset();
 	/* Read rtc and system clocks "at the same time", or as
 	 * precisely (+/- a second) as we can read them.

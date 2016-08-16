@@ -34,11 +34,6 @@ why:   does not provide control on output data formatting. The recommended solut
 
 --------------------------
 
-what:  "pid" as binary name for "kill --pid"
-why:   too ugly, too obscure
-
---------------------------
-
 What:   mkfs
 Why:    use filesystem specific mkfs.<type>.
 

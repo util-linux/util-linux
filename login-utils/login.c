@@ -69,6 +69,7 @@
 #include "pathnames.h"
 #include "strutils.h"
 #include "nls.h"
+#include "env.h"
 #include "xalloc.h"
 #include "all-io.h"
 #include "fileutils.h"
@@ -1040,27 +1041,29 @@ static void init_environ(struct login_context *cxt)
 		memset(environ, 0, sizeof(char *));
 	}
 
-	setenv("HOME", pwd->pw_dir, 0);	/* legal to override */
-	setenv("USER", pwd->pw_name, 1);
-	setenv("SHELL", pwd->pw_shell, 1);
-	setenv("TERM", termenv ? termenv : "dumb", 1);
+	xsetenv("HOME", pwd->pw_dir, 0);	/* legal to override */
+	xsetenv("USER", pwd->pw_name, 1);
+	xsetenv("SHELL", pwd->pw_shell, 1);
+	xsetenv("TERM", termenv ? termenv : "dumb", 1);
 	free(termenv);
 
 	if (pwd->pw_uid)
-		logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH);
+		if (logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH) != 0)
+			err(EXIT_FAILURE, _("failed to set the %s environment variable"), "PATH");
 
 	else if (logindefs_setenv("PATH", "ENV_ROOTPATH", NULL) != 0)
-		logindefs_setenv("PATH", "ENV_SUPATH", _PATH_DEFPATH_ROOT);
+		if (logindefs_setenv("PATH", "ENV_SUPATH", _PATH_DEFPATH_ROOT) != 0)
+			err(EXIT_FAILURE, _("failed to set the %s environment variable"), "PATH");
 
 	/* mailx will give a funny error msg if you forget this one */
 	len = snprintf(tmp, sizeof(tmp), "%s/%s", _PATH_MAILDIR, pwd->pw_name);
 	if (len > 0 && (size_t) len < sizeof(tmp))
-		setenv("MAIL", tmp, 0);
+		xsetenv("MAIL", tmp, 0);
 
 	/* LOGNAME is not documented in login(1) but HP-UX 6.5 does it. We'll
 	 * not allow modifying it.
 	 */
-	setenv("LOGNAME", pwd->pw_name, 1);
+	xsetenv("LOGNAME", pwd->pw_name, 1);
 
 	env = pam_getenvlist(cxt->pamh);
 	for (i = 0; env && env[i]; i++)

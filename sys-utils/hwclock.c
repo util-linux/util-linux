@@ -81,6 +81,7 @@
 #include "strutils.h"
 #include "hwclock.h"
 #include "timeutils.h"
+#include "env.h"
 
 #ifdef HAVE_LIBAUDIT
 #include <libaudit.h>
@@ -399,7 +400,7 @@ mktime_tz(struct tm tm, const bool universal,
 	zone = getenv("TZ");	/* remember original time zone */
 	if (universal) {
 		/* Set timezone to UTC */
-		setenv("TZ", "", TRUE);
+		xsetenv("TZ", "", TRUE);
 		/*
 		 * Note: tzset() gets called implicitly by the time code,
 		 * but only the first time. When changing the environment
@@ -434,7 +435,7 @@ mktime_tz(struct tm tm, const bool universal,
 	}
 	/* now put back the original zone. */
 	if (zone)
-		setenv("TZ", zone, TRUE);
+		xsetenv("TZ", zone, TRUE);
 	else
 		unsetenv("TZ");
 	tzset();
