@@ -1047,13 +1047,14 @@ static void init_environ(struct login_context *cxt)
 	xsetenv("TERM", termenv ? termenv : "dumb", 1);
 	free(termenv);
 
-	if (pwd->pw_uid)
+	if (pwd->pw_uid) {
 		if (logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH) != 0)
 			err(EXIT_FAILURE, _("failed to set the %s environment variable"), "PATH");
 
-	else if (logindefs_setenv("PATH", "ENV_ROOTPATH", NULL) != 0)
-		if (logindefs_setenv("PATH", "ENV_SUPATH", _PATH_DEFPATH_ROOT) != 0)
+	} else if (logindefs_setenv("PATH", "ENV_ROOTPATH", NULL) != 0 &&
+		   logindefs_setenv("PATH", "ENV_SUPATH", _PATH_DEFPATH_ROOT) != 0) {
 			err(EXIT_FAILURE, _("failed to set the %s environment variable"), "PATH");
+	}
 
 	/* mailx will give a funny error msg if you forget this one */
 	len = snprintf(tmp, sizeof(tmp), "%s/%s", _PATH_MAILDIR, pwd->pw_name);
