@@ -182,7 +182,7 @@ UL_SET_ARCH([SPARC], [sparc*])
 UL_SET_ARCH([PPC], [ppc*|powerpc*])
 UL_SET_ARCH([M68K], [m68*])
 UL_SET_ARCH([MIPS], [mips*])
-UL_SET_ARCH([HPPA], [hppa*])
+UL_SET_ARCH([HPPA], [hppa*|parisc*])
 
 AC_SYS_LARGEFILE
 AC_HEADER_ASSERT
