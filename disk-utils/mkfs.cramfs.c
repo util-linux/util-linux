@@ -40,11 +40,14 @@
 
 #include "c.h"
 #include "cramfs.h"
-#include "closestream.h"
 #include "md5.h"
 #include "nls.h"
 #include "exitcodes.h"
 #include "strutils.h"
+
+#define CLOSE_EXIT_CODE	 MKFS_EX_ERROR
+#include "closestream.h"
+
 #define XALLOC_EXIT_CODE MKFS_EX_ERROR
 #include "xalloc.h"
 

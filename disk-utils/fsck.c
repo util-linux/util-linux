@@ -52,7 +52,6 @@
 #include "pathnames.h"
 #include "exitcodes.h"
 #include "c.h"
-#include "closestream.h"
 #include "fileutils.h"
 #include "monotonic.h"
 
@@ -61,6 +60,9 @@
 
 #define XALLOC_EXIT_CODE	FSCK_EX_ERROR
 #include "xalloc.h"
+
+#define CLOSE_EXIT_CODE		FSCK_EX_ERROR
+#include "closestream.h"
 
 #ifndef DEFAULT_FSTYPE
 # define DEFAULT_FSTYPE	"ext2"

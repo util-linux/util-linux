@@ -40,8 +40,9 @@
 #include "strutils.h"
 #define OPTUTILS_EXIT_CODE	BLKID_EXIT_OTHER	/* exclusive_option() */
 #include "optutils.h"
-
+#define CLOSE_EXIT_CODE		BLKID_EXIT_OTHER	/* close_stdout() */
 #include "closestream.h"
+
 #include "ttyutils.h"
 #include "xalloc.h"
 

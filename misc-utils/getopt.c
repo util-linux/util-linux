@@ -54,6 +54,7 @@
 #define GETOPT_EXIT_CODE	1
 #define PARAMETER_EXIT_CODE	2
 #define XALLOC_EXIT_CODE	3
+#define CLOSE_EXIT_CODE		XALLOC_EXIT_CODE
 #define TEST_EXIT_CODE		4
 
 #include <stdio.h>

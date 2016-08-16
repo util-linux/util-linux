@@ -10,6 +10,10 @@
 #include "c.h"
 #include "nls.h"
 
+#ifndef CLOSE_EXIT_CODE
+# define CLOSE_EXIT_CODE EXIT_FAILURE
+#endif
+
 #ifndef HAVE___FPENDING
 static inline int
 __fpending(FILE *stream __attribute__((__unused__)))
@@ -42,11 +46,11 @@ close_stdout(void)
 			warn(_("write error"));
 		else
 			warnx(_("write error"));
-		_exit(EXIT_FAILURE);
+		_exit(CLOSE_EXIT_CODE);
 	}
 
 	if (close_stream(stderr) != 0)
-		_exit(EXIT_FAILURE);
+		_exit(CLOSE_EXIT_CODE);
 }
 
 #ifndef HAVE_FSYNC
