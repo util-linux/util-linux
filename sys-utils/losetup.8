@@ -67,6 +67,11 @@ device is shown.  If no option is given, all loop devices are shown.
 .sp
 Note that the old output format (i.e. \fBlosetup -a\fR) with comma-delimited
 strings is deprecated in favour of the \fB--list\fR output format.
+.sp
+It's possible to create more independent loop devices for the same backing
+file.
+.B This setup may be dangerous, can cause data loss, corruption and overwrites.
+Use \fB\-\-nooverlap\fR to avoid this problem.
 
 .SH OPTIONS
 The \fIsize\fR and \fIoffset\fR
@@ -101,6 +106,12 @@ Find the first unused loop device.  If a
 .I file
 argument is present, use the found device as loop device.
 Otherwise, just print its name.
+.TP
+.BR \-L , " \-\-nooverlap"
+Check for conflicts between loop devices to avoid situation when the same
+backing file is shared between more loop devices. If the file is already used
+by another device then re-use the device rather than a new one. The option
+makes sense only with \fB\-\-find\fP.
 .TP
 .BR \-j , " \-\-associated " \fIfile
 Show the status of all loop devices associated with the given

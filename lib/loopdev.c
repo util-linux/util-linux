@@ -353,10 +353,8 @@ int loopcxt_deinit_iterator(struct loopdev_cxt *lc)
 		fclose(iter->proc);
 	if (iter->sysblock)
 		closedir(iter->sysblock);
-	iter->minors = NULL;
-	iter->proc = NULL;
-	iter->sysblock = NULL;
-	iter->done = 1;
+
+	memset(iter, 0, sizeof(*iter));
 	return 0;
 }
 
@@ -1426,8 +1424,11 @@ int loopcxt_find_unused(struct loopdev_cxt *lc)
 	DBG(CXT, ul_debugobj(lc, "find_unused requested"));
 
 	if (lc->flags & LOOPDEV_FL_CONTROL) {
-		int ctl = open(_PATH_DEV_LOOPCTL, O_RDWR|O_CLOEXEC);
+		int ctl;
 
+		DBG(CXT, ul_debugobj(lc, "using loop-control"));
+
+		ctl = open(_PATH_DEV_LOOPCTL, O_RDWR|O_CLOEXEC);
 		if (ctl >= 0)
 			rc = ioctl(ctl, LOOP_CTL_GET_FREE);
 		if (rc >= 0) {
@@ -1443,6 +1444,7 @@ int loopcxt_find_unused(struct loopdev_cxt *lc)
 	}
 
 	if (rc < 0) {
+		DBG(CXT, ul_debugobj(lc, "using loop scan"));
 		rc = loopcxt_init_iterator(lc, LOOPITER_FL_FREE);
 		if (rc)
 			return rc;
@@ -1577,6 +1579,7 @@ int loopcxt_find_overlap(struct loopdev_cxt *lc, const char *filename,
 	if (!filename)
 		return -EINVAL;
 
+	DBG(CXT, ul_debugobj(lc, "find_overlap requested"));
 	hasst = !stat(filename, &st);
 
 	rc = loopcxt_init_iterator(lc, LOOPITER_FL_USED);
@@ -1633,6 +1636,7 @@ int loopcxt_find_overlap(struct loopdev_cxt *lc, const char *filename,
 		rc = 0;	/* not found */
 found:
 	loopcxt_deinit_iterator(lc);
+	DBG(CXT, ul_debugobj(lc, "find_overlap done [rc=%d]", rc));
 	return rc;
 }
 
