@@ -41,9 +41,9 @@ BACKFILE="$TS_DEVICE"
 # whether re-use of this device works.
 
 ts_init_subtest "find-race-condition"
-LODEV=$( $TS_CMD_LOSETUP --find --show $BACKFILE )
+LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
 $TS_CMD_LOSETUP -d $LODEV
-LODEV=$( $TS_CMD_LOSETUP --find --show $BACKFILE )
+LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
 sleep 3
 dd if=/dev/zero of=$LODEV count=1 bs=1 >/dev/null 2>&1
 sleep 3
@@ -56,11 +56,11 @@ ts_finalize_subtest
 sleep 3
 
 ts_init_subtest "find-re-use"
-LODEV=$( $TS_CMD_LOSETUP --find --show $BACKFILE )
+LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
 if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
-LODEVR=$( $TS_CMD_LOSETUP --find --show $BACKFILE )
+LODEVR=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
 if [ -z "$LODEVR" ]; then
 	ts_log "Failed to create loop device"
 fi
@@ -79,11 +79,11 @@ ts_finalize_subtest
 sleep 3
 
 ts_init_subtest "find-no-re-use"
-LODEV=$( $TS_CMD_LOSETUP --find --show --offset=0 --sizelimit=1MiB $BACKFILE )
+LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=0 --sizelimit=1MiB $BACKFILE )
 if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
-LODEVR=$( $TS_CMD_LOSETUP --find --show --offset=1MiB --sizelimit=1MiB $BACKFILE )
+LODEVR=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=1MiB --sizelimit=1MiB $BACKFILE )
 if [ -z "$LODEVR" ]; then
 	ts_log "Failed to create loop device"
 fi
@@ -102,11 +102,11 @@ ts_finalize_subtest
 sleep 3
 
 ts_init_subtest "find-conflict"
-LODEV=$( $TS_CMD_LOSETUP --find --show --offset=1MiB --sizelimit=2MiB $BACKFILE )
+LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=1MiB --sizelimit=2MiB $BACKFILE )
 if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
-LODEVR=$( $TS_CMD_LOSETUP --find --show --offset=2MiB --sizelimit=2MiB $BACKFILE >/dev/null 2>&1 )
+LODEVR=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=2MiB --sizelimit=2MiB $BACKFILE >/dev/null 2>&1 )
 if [ -z "$LODEVR" ]; then
 	ts_log "Failed to create loop device"
 fi
@@ -125,11 +125,11 @@ ts_finalize_subtest
 sleep 3
 
 ts_init_subtest "find-conflict-no-sizelimit"
-LODEV=$( $TS_CMD_LOSETUP --find --show --offset=1MiB $BACKFILE )
+LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=1MiB $BACKFILE )
 if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
-LODEVR=$( $TS_CMD_LOSETUP --find --show --offset=2MiB --sizelimit=2MiB $BACKFILE >/dev/null 2>&1 )
+LODEVR=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=2MiB --sizelimit=2MiB $BACKFILE >/dev/null 2>&1 )
 if [ -z "$LODEVR" ]; then
 	ts_log "Failed to create loop device"
 fi
@@ -148,11 +148,11 @@ ts_finalize_subtest
 sleep 3
 
 ts_init_subtest "find-conflict-readonly"
-LODEV=$( $TS_CMD_LOSETUP --find --show --read-only $BACKFILE )
+LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --read-only $BACKFILE )
 if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
-LODEVR=$( $TS_CMD_LOSETUP --find --show --offset=2MiB --sizelimit=2MiB $BACKFILE >/dev/null 2>&1 )
+LODEVR=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=2MiB --sizelimit=2MiB $BACKFILE >/dev/null 2>&1 )
 if [ -z "$LODEVR" ]; then
 	ts_log "Failed to create loop device"
 fi
@@ -172,11 +172,11 @@ ts_finalize_subtest
 sleep 3
 
 ts_init_subtest "find-ok-no-sizelimit"
-LODEV=$( $TS_CMD_LOSETUP --find --show --offset=1MiB --sizelimit=1MiB $BACKFILE )
+LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=1MiB --sizelimit=1MiB $BACKFILE )
 if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
-LODEVR=$( $TS_CMD_LOSETUP --find --show --offset=2MiB $BACKFILE )
+LODEVR=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=2MiB $BACKFILE )
 if [ -z "$LODEVR" ]; then
 	ts_log "Failed to create loop device"
 fi
@@ -195,12 +195,12 @@ ts_finalize_subtest
 sleep 3
 
 ts_init_subtest "plain-conflict"
-LODEV=$( $TS_CMD_LOSETUP --find --show $BACKFILE )
+LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
 if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
 LODEVR=$( $TS_CMD_LOSETUP --find )
-$TS_CMD_LOSETUP $LODEVR $BACKFILE >/dev/null 2>&1
+$TS_CMD_LOSETUP --nooverlap $LODEVR $BACKFILE >/dev/null 2>&1
 ts_log $?
 $TS_CMD_LOSETUP -d $LODEV
 $TS_CMD_LOSETUP -d $LODEVR >/dev/null 2>&1
@@ -210,12 +210,12 @@ ts_finalize_subtest
 sleep 3
 
 ts_init_subtest "plain-readonly"
-LODEV=$( $TS_CMD_LOSETUP --find --show --read-only $BACKFILE )
+LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --read-only $BACKFILE )
 if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
 LODEVR=$( $TS_CMD_LOSETUP --find )
-$TS_CMD_LOSETUP $LODEVR $BACKFILE >/dev/null 2>&1
+$TS_CMD_LOSETUP --nooverlap $LODEVR $BACKFILE >/dev/null 2>&1
 ts_log $?
 $TS_CMD_LOSETUP -d $LODEV
 $TS_CMD_LOSETUP -d $LODEVR >/dev/null 2>&1
