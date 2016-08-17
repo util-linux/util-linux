@@ -452,7 +452,7 @@ static int create_loop(struct loopdev_cxt *lc,
 	int hasdev = loopcxt_has_device(lc);
 	int rc = 0;
 
-	/* Check for conflicts and re-user loop device if possible */
+	/* losetup --find --noverlap file.img */
 	if (!hasdev && nooverlap) {
 		rc = loopcxt_find_overlap(lc, file, offset, sizelimit);
 		switch (rc) {
@@ -498,6 +498,25 @@ static int create_loop(struct loopdev_cxt *lc,
 
 	if (hasdev && !is_loopdev(loopcxt_get_device(lc)))
 		loopcxt_add_device(lc);
+
+	/* losetup --noverlap /dev/loopN file.img */
+	if (hasdev && nooverlap) {
+		struct loopdev_cxt lc2;
+
+		if (loopcxt_init(&lc2, 0)) {
+			loopcxt_deinit(lc);
+			err(EXIT_FAILURE, _("failed to initialize loopcxt"));
+		}
+		rc = loopcxt_find_overlap(&lc2, file, offset, sizelimit);
+		loopcxt_deinit(&lc2);
+
+		if (rc) {
+			loopcxt_deinit(lc);
+			if (rc > 0)
+				errx(EXIT_FAILURE, _("%s: overlapping loop device exists"), file);
+			err(EXIT_FAILURE, _("%s: failed to check for conflicting loop devices"), file);
+		}
+	}
 
 	/* Create a new device */
 	do {
