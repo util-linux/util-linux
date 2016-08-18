@@ -26,6 +26,10 @@ The command
 .B runuser
 does not have to be installed with suid permissions.
 .PP
+If the PAM session is not required then recommended solution is to use
+.BR setpriv (1)
+command.
+.PP
 When called without arguments,
 .B runuser
 defaults to running an interactive shell as
@@ -223,7 +227,8 @@ global logindef config file
 .BR pam (8),
 .BR shells (5),
 .BR login.defs (5),
-.BR su (1)
+.BR su (1),
+.BR setpriv (1)
 .SH HISTORY
 This \fB runuser\fR command was
 derived from coreutils' \fBsu\fR, which was based on an implementation by

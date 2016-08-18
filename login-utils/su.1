@@ -39,6 +39,16 @@ configuration options found in other
 .B su
 implementations, such as support for a wheel group, have to be
 configured via PAM.
+.PP
+.B su
+is mostly designed for unprivileged users, the recommended solution for
+privileged users (e.g. scripts executed by root) is to use non-suid command
+.BR runuser (1)
+that does not require authentication and provide separate PAM configuration. If
+the PAM session is not required at all then the recommend solution is to use
+command
+.BR setpriv (1).
+
 .SH OPTIONS
 .TP
 .BR \-c , " \-\-command" = \fIcommand
@@ -241,6 +251,7 @@ session  required  pam_lastlog.so nowtmp
 .RE
 .SH "SEE ALSO"
 .BR runuser (8),
+.BR setpriv (1),
 .BR pam (8),
 .BR shells (5),
 .BR login.defs (5)
