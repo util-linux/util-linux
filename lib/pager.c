@@ -269,7 +269,7 @@ int main(int argc __attribute__ ((__unused__)),
 {
 	int i;
 
-	pager_setup();
+	pager_redirect();
 	for (i = 0; i < MAX; i++)
 		printf("%d\n", i);
 	return EXIT_SUCCESS;
