@@ -33,6 +33,11 @@ struct child_process {
 
 	int org_err;
 	int org_out;
+	struct sigaction orig_sigint;
+	struct sigaction orig_sighup;
+	struct sigaction orig_sigterm;
+	struct sigaction orig_sigquit;
+	struct sigaction orig_sigpipe;
 
 	unsigned no_stdin:1;
 	void (*preexec_cb)(void);
@@ -168,6 +173,7 @@ static void wait_for_pager_signal(int signo)
 static void __setup_pager(void)
 {
 	const char *pager = getenv("PAGER");
+	struct sigaction sa;
 
 	if (!isatty(STDOUT_FILENO))
 		return;
@@ -192,12 +198,15 @@ static void __setup_pager(void)
 		dup2(pager_process.in, STDERR_FILENO);
 	close(pager_process.in);
 
+	memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = wait_for_pager_signal;
+
 	/* this makes sure that the parent terminates after the pager */
-	signal(SIGINT, wait_for_pager_signal);
-	signal(SIGHUP, wait_for_pager_signal);
-	signal(SIGTERM, wait_for_pager_signal);
-	signal(SIGQUIT, wait_for_pager_signal);
-	signal(SIGPIPE, wait_for_pager_signal);
+	sigaction(SIGINT,  &sa, &pager_process.orig_sigint);
+	sigaction(SIGHUP,  &sa, &pager_process.orig_sighup);
+	sigaction(SIGTERM, &sa, &pager_process.orig_sigterm);
+	sigaction(SIGQUIT, &sa, &pager_process.orig_sigquit);
+	sigaction(SIGPIPE, &sa, &pager_process.orig_sigpipe);
 }
 
 /* Setup pager and redirects output to the $PAGER. The pager is closed at exit.
@@ -233,11 +242,20 @@ void pager_close(void)
 		return;
 
 	wait_for_pager();
+
+	/* restore original output */
 	dup2(pager_process.org_out, STDOUT_FILENO);
 	dup2(pager_process.org_err, STDERR_FILENO);
 
 	close(pager_process.org_out);
 	close(pager_process.org_err);
+
+	/* restore original segnals setting */
+	sigaction(SIGINT,  &pager_process.orig_sigint, NULL);
+	sigaction(SIGHUP,  &pager_process.orig_sighup, NULL);
+	sigaction(SIGTERM, &pager_process.orig_sigterm, NULL);
+	sigaction(SIGQUIT, &pager_process.orig_sigquit, NULL);
+	sigaction(SIGPIPE, &pager_process.orig_sigpipe, NULL);
 
 	memset(&pager_process, 0, sizeof(pager_process));
 }
