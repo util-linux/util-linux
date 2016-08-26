@@ -1418,7 +1418,7 @@ int main(int argc, char *argv[])
 		nopager = 1;
 	ctl.pager = nopager ? 0 : ctl.pager;
 	if (ctl.pager)
-		setup_pager();
+		pager_redirect();
 
 	switch (ctl.action) {
 	case SYSLOG_ACTION_READ_ALL:
@@ -1432,7 +1432,7 @@ int main(int argc, char *argv[])
 			    errx(EXIT_FAILURE, _("--raw can be used together with --level or "
 				 "--facility only when reading messages from /dev/kmsg"));
 		if (ctl.pager)
-			setup_pager();
+			pager_redirect();
 		n = read_buffer(&ctl, &buf);
 		if (n > 0)
 			print_buffer(&ctl, buf, n);
