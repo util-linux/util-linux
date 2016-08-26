@@ -37,6 +37,7 @@
 #include "canonicalize.h"
 #include "strutils.h"
 #include "closestream.h"
+#include "pager.h"
 
 #include "fdisk.h"
 
@@ -447,6 +448,7 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
 	return NULL;
 }
 
+
 void list_partition_types(struct fdisk_context *cxt)
 {
 	size_t ntypes = 0;
@@ -507,12 +509,16 @@ void list_partition_types(struct fdisk_context *cxt)
 		 */
 		size_t i;
 
+		pager_open();
+
 		for (i = 0; i < ntypes; i++) {
 			const struct fdisk_parttype *t = fdisk_label_get_parttype(lb, i);
 			printf("%3zu %-30s %s\n", i + 1,
 					fdisk_parttype_get_name(t),
 					fdisk_parttype_get_string(t));
 		}
+
+		pager_close();
 	}
 	putchar('\n');
 }
