@@ -617,9 +617,9 @@ int fdisk_get_freespaces(struct fdisk_context *cxt, struct fdisk_table **tb)
 		 * aligned, the exception is space before the first partition where
 		 * we assume that cxt->first_lba is aligned. */
 		if (last + grain < pa->start
-		    || (last < pa->start && last == cxt->first_lba)) {
+		    || (last < pa->start && nparts == 0)) {
 			rc = table_add_freespace(cxt, *tb,
-				last + (last > cxt->first_lba ? 1 : 0),
+				last + (nparts == 0 ? 0 : 1),
 				pa->start - 1, NULL);
 		}
 		/* add gaps between logical partitions */
