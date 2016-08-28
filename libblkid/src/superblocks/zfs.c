@@ -112,7 +112,7 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 
 			nvs->nvs_type = be32_to_cpu(nvs->nvs_type);
 			nvs->nvs_strlen = be32_to_cpu(nvs->nvs_strlen);
-			if (nvs->nvs_strlen > UINT_MAX - sizeof(*nvs))
+			if (nvs->nvs_strlen > INT_MAX - sizeof(*nvs))
 				break;
 			avail -= nvs->nvs_strlen + sizeof(*nvs);
 			DBG(LOWPROBE, ul_debug("nvstring: type %u string %*s\n", nvs->nvs_type,
