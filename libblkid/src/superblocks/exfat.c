@@ -86,8 +86,10 @@ static struct exfat_entry_label *find_label(blkid_probe pr,
 	uint32_t cluster = le32_to_cpu(sb->rootdir_cluster);
 	uint64_t offset = cluster_to_offset(sb, cluster);
 	uint8_t *entry;
+	const size_t max_iter = 10000;
+	size_t i = 0;
 
-	for (;;) {
+	for (; i < max_iter; i++) {
 		entry = (uint8_t *) blkid_probe_get_buffer(pr, offset,
 				EXFAT_ENTRY_SIZE);
 		if (!entry)
@@ -96,6 +98,7 @@ static struct exfat_entry_label *find_label(blkid_probe pr,
 			return NULL;
 		if (entry[0] == EXFAT_ENTRY_LABEL)
 			return (struct exfat_entry_label *) entry;
+
 		offset += EXFAT_ENTRY_SIZE;
 		if (offset % CLUSTER_SIZE(sb) == 0) {
 			cluster = next_cluster(pr, sb, cluster);
@@ -106,6 +109,8 @@ static struct exfat_entry_label *find_label(blkid_probe pr,
 			offset = cluster_to_offset(sb, cluster);
 		}
 	}
+
+	return NULL;
 }
 
 static int probe_exfat(blkid_probe pr, const struct blkid_idmag *mag)
