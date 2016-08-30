@@ -1765,15 +1765,6 @@ int blkid_probe_has_value(blkid_probe pr, const char *name)
 	return 0;
 }
 
-struct blkid_prval *blkid_probe_last_value(blkid_probe pr)
-{
-	if (list_empty(&pr->values))
-		return NULL;
-
-	return list_last_entry(&pr->values, struct blkid_prval, prvals);
-}
-
-
 struct blkid_prval *__blkid_probe_get_value(blkid_probe pr, int num)
 {
 	int i = 0;

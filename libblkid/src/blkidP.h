@@ -443,8 +443,6 @@ extern struct blkid_chain *blkid_probe_get_chain(blkid_probe pr)
 			__attribute__((nonnull))
 			__attribute__((warn_unused_result));
 
-extern struct blkid_prval *blkid_probe_last_value(blkid_probe pr);
-
 extern struct blkid_prval *__blkid_probe_get_value(blkid_probe pr, int num)
 			__attribute__((nonnull))
 			__attribute__((warn_unused_result));
