@@ -634,12 +634,13 @@ int is_loopdev(const char *device)
 {
 	struct stat st;
 
-	if (!device)
-		return 0;
-
-	return (stat(device, &st) == 0 &&
+	if (device && stat(device, &st) == 0 &&
 		S_ISBLK(st.st_mode) &&
-		major(st.st_rdev) == LOOPDEV_MAJOR);
+		major(st.st_rdev) == LOOPDEV_MAJOR)
+		return 1;
+
+	errno = ENODEV;
+	return 0;
 }
 
 /*
