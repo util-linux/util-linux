@@ -146,6 +146,27 @@ leave:
 	return BLKID_PROBE_OK;
 }
 
+static inline int is_lvm(blkid_probe pr)
+{
+	struct blkid_prval *v = __blkid_probe_lookup_value(pr, "TYPE");
+
+	return (v && v->data && strcmp((char *) v->data, "LVM2_member") == 0);
+}
+
+static inline int is_empty_mbr(unsigned char *mbr)
+{
+	struct dos_partition *p = mbr_get_partition(mbr, 0);
+	int i, nparts = 0;
+
+	for (i = 0; i < 4; i++) {
+		if (dos_partition_get_size(p) > 0)
+			nparts++;
+		p++;
+	}
+
+	return nparts == 0;
+}
+
 static int probe_dos_pt(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
@@ -198,6 +219,16 @@ static int probe_dos_pt(blkid_probe pr,
 	 */
 	if (blkid_probe_is_vfat(pr) == 1) {
 		DBG(LOWPROBE, ul_debug("probably FAT -- ignore"));
+		goto nothing;
+	}
+
+	/*
+	 * Ugly exception, if the device contains a valid LVM physical volume
+	 * and empty MBR (=no partition defined) then it's LVM and MBR should
+	 * be ignored. Crazy people use it to boot from LVM devices.
+	 */
+	if (is_lvm(pr) && is_empty_mbr(data)) {
+		DBG(LOWPROBE, ul_debug("empty MBR on LVM device -- ignore"));
 		goto nothing;
 	}
 
