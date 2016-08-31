@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	scols_table_enable_colors(tb, 1);
+	scols_table_enable_colors(tb, isatty(STDOUT_FILENO));
 	setup_columns(tb, notree);
 
 	if (optind == argc)

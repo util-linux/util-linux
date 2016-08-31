@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 
-	scols_table_enable_colors(tb, 1);
+	scols_table_enable_colors(tb, isatty(STDOUT_FILENO));
 	setup_columns(tb);
 
 	ln = add_line(tb, NULL, "A");
