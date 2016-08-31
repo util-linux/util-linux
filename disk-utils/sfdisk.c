@@ -1472,6 +1472,25 @@ done:
 	return rc;
 }
 
+static void refresh_prompt_buffer(struct sfdisk *sf, const char *devname,
+		                  size_t next_partno, int created)
+{
+	if (created) {
+		char *partname = fdisk_partname(devname, next_partno + 1);
+		if (!partname)
+			err(EXIT_FAILURE, _("failed to allocate partition name"));
+
+		if (!sf->prompt || !startswith(sf->prompt, partname)) {
+			free(sf->prompt);
+			xasprintf(&sf->prompt,"%s: ", partname);
+		}
+		free(partname);
+	} else if (!sf->prompt || !startswith(sf->prompt, SFDISK_PROMPT)) {
+		free(sf->prompt);
+		sf->prompt = xstrdup(SFDISK_PROMPT);
+	}
+}
+
 /*
  * sfdisk <device> [[-N] <partno>]
  *
@@ -1639,20 +1658,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			break;
 		}
 
-		if (created) {
-			char *partname = fdisk_partname(devname, next_partno + 1);
-			if (!partname)
-				err(EXIT_FAILURE, _("failed to allocate partition name"));
-			if (!sf->prompt || !startswith(sf->prompt, partname)) {
-				free(sf->prompt);
-				xasprintf(&sf->prompt,"%s: ", partname);
-			}
-			free(partname);
-		} else if (!sf->prompt || !startswith(sf->prompt, SFDISK_PROMPT)) {
-			free(sf->prompt);
-			sf->prompt = xstrdup(SFDISK_PROMPT);
-		}
-
+		refresh_prompt_buffer(sf, devname, next_partno, created);
 		if (sf->prompt && (sf->interactive || !sf->quiet)) {
 #ifndef HAVE_LIBREADLINE
 			fputs(sf->prompt, stdout);
@@ -1672,6 +1678,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			continue;
 		} else if (rc == 1) {
 			rc = SFDISK_DONE_EOF;
+			fputs(_("Done.\n"), stdout);
 			break;
 		}
 
@@ -1700,6 +1707,11 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				rc = rc == 0 ? SFDISK_DONE_ASK : SFDISK_DONE_ABORT;
 				break;
 			} else if (!rc) {		/* add partition */
+				if (!sf->interactive &&
+				    (!sf->prompt || startswith(sf->prompt, SFDISK_PROMPT))) {
+					refresh_prompt_buffer(sf, devname, next_partno, created);
+					fputs(sf->prompt, stdout);
+				}
 				rc = fdisk_add_partition(sf->cxt, pa, &cur_partno);
 				if (rc) {
 					errno = -rc;
