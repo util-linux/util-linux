@@ -702,7 +702,7 @@ static int print_title(struct libscols_table *tb)
 {
 	int rc, color = 0;
 	mbs_align_t align;
-	size_t len = 0, width;
+	size_t width, bufsz, titlesz;
 	char *title = NULL, *buf = NULL;
 
 	assert(tb);
@@ -713,23 +713,28 @@ static int print_title(struct libscols_table *tb)
 	DBG(TAB, ul_debugobj(tb, "printing title"));
 
 	/* encode data */
-	len = mbs_safe_encode_size(strlen(tb->title.data)) + 1;
-	if (len == 1)
+	bufsz = mbs_safe_encode_size(strlen(tb->title.data)) + 1;
+	if (bufsz == 1) {
+		DBG(TAB, ul_debugobj(tb, "title is empty string -- ignore"));
 		return 0;
-	buf = malloc(len);
+	}
+	buf = malloc(bufsz);
 	if (!buf) {
 		rc = -ENOMEM;
 		goto done;
 	}
 
-	if (!mbs_safe_encode_to_buffer(tb->title.data, &len, buf) ||
-	    !len || len == (size_t) -1) {
+	if (!mbs_safe_encode_to_buffer(tb->title.data, &bufsz, buf) ||
+	    !bufsz || bufsz == (size_t) -1) {
 		rc = -EINVAL;
 		goto done;
 	}
 
 	/* truncate and align */
-	title = malloc(tb->termwidth + len);
+	width = tb->is_term ? tb->termwidth : 80;
+	titlesz = width + bufsz;
+
+	title = malloc(titlesz);
 	if (!title) {
 		rc = -EINVAL;
 		goto done;
@@ -744,8 +749,8 @@ static int print_title(struct libscols_table *tb)
 	else
 		align = MBS_ALIGN_LEFT;	/* default */
 
-	width = tb->termwidth;
-	rc = mbsalign_with_padding(buf, title, tb->termwidth + len,
+	/* copy from buf to title and align to width with title_padding */
+	rc = mbsalign_with_padding(buf, title, titlesz,
 			&width, align,
 			0, (int) *tb->symbols->title_padding);
 
@@ -769,6 +774,7 @@ static int print_title(struct libscols_table *tb)
 done:
 	free(buf);
 	free(title);
+	DBG(TAB, ul_debugobj(tb, "printing title done [rc=%d]", rc));
 	return rc;
 }
 
