@@ -272,14 +272,15 @@ Thus, given a line
 any user can mount the iso9660 filesystem found on an inserted CDROM
 using the command:
 .RS
-.sp
-.B "mount /dev/cdrom"
-.RE
-or
-.RS
 .B "mount /cd"
 .sp
 .RE
+Note that \fBmount\fR is very strict about non-root users and all paths
+specified on command line are verified before fstab is parsed or a helper
+program is executed. It's strogly recommended to use a valid mountpoint to
+specify filesystem, otherwise \fBmount\fR may fail. For example it's bad idea
+to use NFS or CIFS source on command line.
+.PP
 For more details, see
 .BR fstab (5).
 Only the user that mounted a filesystem can unmount it again.
