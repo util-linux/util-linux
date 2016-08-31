@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 		goto done;
 	if (!scols_table_new_column(tb, "FOO", 0, 0))
 		goto done;
-	if (!scols_table_new_column(tb, "RIGHT", 0, /*SCOLS_FL_RIGHT*/0 ))
+	if (!scols_table_new_column(tb, "RIGHT", 0, SCOLS_FL_RIGHT))
 		goto done;
 
 	while (nlines--) {
