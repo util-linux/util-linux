@@ -700,7 +700,7 @@ static int print_line(struct libscols_table *tb,
 
 static int print_title(struct libscols_table *tb)
 {
-	int rc;
+	int rc, color = 0;
 	mbs_align_t align;
 	size_t len = 0, width;
 	char *title = NULL, *buf = NULL;
@@ -754,13 +754,16 @@ static int print_title(struct libscols_table *tb)
 		goto done;
 	}
 
-	if (tb->title.color)
+	if (tb->colors_wanted && tb->title.color)
+		color = 1;
+	if (color)
 		fputs(tb->title.color, tb->out);
 
 	fputs(title, tb->out);
 
-	if (tb->title.color)
+	if (color)
 		fputs(UL_COLOR_RESET, tb->out);
+
 	fputc('\n', tb->out);
 	rc = 0;
 done:
