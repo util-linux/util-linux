@@ -963,10 +963,12 @@ static int count_column_width(struct libscols_table *tb,
 	assert(cl);
 
 	cl->width = 0;
-
 	if (!cl->width_min) {
-		if (cl->width_hint < 1 && scols_table_is_maxout(tb) && tb->is_term)
-			cl->width_min = (size_t) (cl->width_hint * tb->termwidth) - (is_last_column(cl) ? 0 : 1);
+		if (cl->width_hint < 1 && scols_table_is_maxout(tb) && tb->is_term) {
+			cl->width_min = (size_t) (cl->width_hint * tb->termwidth);
+			if (cl->width_min && !is_last_column(cl))
+				cl->width_min--;
+		}
 		if (scols_cell_get_data(&cl->header)) {
 			size_t len = mbs_safe_width(scols_cell_get_data(&cl->header));
 			cl->width_min = max(cl->width_min, len);
