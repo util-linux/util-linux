@@ -6,10 +6,11 @@ Sector size (logical/physical): 512 bytes / 4096 bytes
 I/O size (minimum/optimal): 4096 bytes / <removed> bytes
 
 >>> Created a new <removed>.
-Created a new <removed>.
+<removed>1: Created a new <removed>.
 <removed>2: Created a new <removed>.
 <removed>3: Created a new <removed>.
-<removed>4: 
+<removed>4: Done.
+
 New situation:
 
 Device     Boot Start    End Sectors Size Id Type
