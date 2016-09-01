@@ -1329,6 +1329,20 @@ err:
 }
 #endif /* HAVE_BTRFS_SUPPORT */
 
+static const char *get_cifs_unc_subdir_path (const char *unc)
+{
+	/*
+	 *  1 or more slash:     %*[/]
+	 *  1 or more non-slash: %*[^/]
+	 *  number of byte read: %n
+	 */
+	int share_end = 0;
+	int r = sscanf(unc, "%*[/]%*[^/]%*[/]%*[^/]%n", &share_end);
+	if (r == EOF || share_end == 0)
+		return NULL;
+	return unc + share_end;
+}
+
 /*
  * tb: /proc/self/mountinfo
  * fs: filesystem
@@ -1563,9 +1577,16 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 		}
 
 		if (root) {
-			const char *r = mnt_fs_get_root(fs);
-			if (!r || strcmp(r, root) != 0)
-				continue;
+			if (strcmp(mnt_fs_get_fstype(fs), "cifs") == 0) {
+				const char *unc_subdir = get_cifs_unc_subdir_path(src);
+				const char *path_on_fs = mnt_fs_get_root(fs);
+				if (!unc_subdir || !path_on_fs || !streq_paths(unc_subdir, path_on_fs))
+					continue;
+			} else {
+				const char *r = mnt_fs_get_root(fs);
+				if (!r || strcmp(r, root) != 0)
+					continue;
+			}
 		}
 
 		/*
