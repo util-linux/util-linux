@@ -110,6 +110,7 @@ struct sfdisk {
 		     append : 1,	/* don't create new PT, append partitions only */
 		     json : 1,		/* JSON dump */
 		     movedata: 1,	/* move data after resize */
+		     notell : 1,	/* don't tell kernel aout new PT */
 		     noact  : 1;	/* do not write to device */
 };
 
@@ -535,11 +536,13 @@ static int write_changes(struct sfdisk *sf)
 			rc = move_partition_data(sf, sf->partno, sf->orig_pa);
 		if (!rc) {
 			fdisk_info(sf->cxt, _("\nThe partition table has been altered."));
-			fdisk_reread_partition_table(sf->cxt);
+			if (!sf->notell)
+				fdisk_reread_partition_table(sf->cxt);
 		}
 	}
 	if (!rc)
-		rc = fdisk_deassign_device(sf->cxt, sf->noact);	/* no-sync when no-act */
+		rc = fdisk_deassign_device(sf->cxt,
+				sf->noact || sf->notell);	/* no-sync */
 	return rc;
 }
 
@@ -1824,6 +1827,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -N, --partno <num>        specify partition number\n"), out);
 	fputs(_(" -n, --no-act              do everything except write to device\n"), out);
 	fputs(_("     --no-reread           do not check whether the device is in use\n"), out);
+	fputs(_("     --no-tell-kernel      do not tell kernel about changes\n"), out);
 	fputs(_(" -O, --backup-file <path>  override default backup file name\n"), out);
 	fputs(_(" -o, --output <list>       output columns\n"), out);
 	fputs(_(" -q, --quiet               suppress extra info messages\n"), out);
@@ -1871,7 +1875,8 @@ int main(int argc, char *argv[])
 		OPT_BYTES,
 		OPT_COLOR,
 		OPT_MOVEDATA,
-		OPT_DELETE
+		OPT_DELETE,
+		OPT_NOTELL
 	};
 
 	static const struct option longopts[] = {
@@ -1893,6 +1898,7 @@ int main(int argc, char *argv[])
 		{ "list-types", no_argument,	NULL, 'T' },
 		{ "no-act",  no_argument,       NULL, 'n' },
 		{ "no-reread", no_argument,     NULL, OPT_NOREREAD },
+		{ "no-tell-kernel", no_argument, NULL, OPT_NOTELL },
 		{ "move-data", optional_argument, NULL, OPT_MOVEDATA },
 		{ "output",  required_argument, NULL, 'o' },
 		{ "partno",  required_argument, NULL, 'N' },
@@ -2058,6 +2064,9 @@ int main(int argc, char *argv[])
 			break;
 		case OPT_DELETE:
 			sf->act = ACT_DELETE;
+			break;
+		case OPT_NOTELL:
+			sf->notell = 1;
 			break;
 		default:
 			usage(stderr);

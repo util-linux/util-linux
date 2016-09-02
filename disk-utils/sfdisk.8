@@ -158,6 +158,11 @@ Do everything except writing to the device.
 .B \-\-no\-reread
 Do not check through the re-read-partition-table ioctl whether the device is in use.
 .TP
+.B \-\-no\-tell\-kernel
+Don't tell the kernel about partition changes. This option is recommended together
+with \fB\-\-no\-reread\fR to modify a partition on used disk. The modified partition
+should not be used (e.g. mounted).
+.TP
 .BR \-O , " \-\-backup\-file " \fIpath
 Override the default backup file name.  Note that the device name and offset
 are always appended to the file name.
