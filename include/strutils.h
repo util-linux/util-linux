@@ -178,8 +178,11 @@ static inline const char *skip_blank(const char *p)
  */
 static inline size_t rtrim_whitespace(unsigned char *str)
 {
-	size_t i = strlen((char *) str);
+	size_t i;
 
+	if (!str)
+		return 0;
+	i = strlen((char *) str);
 	while (i) {
 		i--;
 		if (!isspace(str[i])) {
@@ -200,7 +203,9 @@ static inline size_t ltrim_whitespace(unsigned char *str)
 	size_t len;
 	unsigned char *p;
 
-	for (p = str; p && isspace(*p); p++);
+	if (!str)
+		return 0;
+	for (p = str; *p && isspace(*p); p++);
 
 	len = strlen((char *) p);
 
