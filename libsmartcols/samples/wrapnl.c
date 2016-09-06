@@ -23,16 +23,18 @@
 
 static int opt_random;
 
-enum { COL_NAME, COL_DATA, COL_LIKE };
+enum { COL_NAME, COL_DATA1, COL_LIKE, COL_DATA2 };
 
 /* add columns to the @tb */
 static void setup_columns(struct libscols_table *tb)
 {
 	if (!scols_table_new_column(tb, "NAME", 0, SCOLS_FL_TREE))
 		goto fail;
-	if (!scols_table_new_column(tb, "DATA", 0, SCOLS_FL_WRAPNL))
+	if (!scols_table_new_column(tb, "DATA1", 0, SCOLS_FL_WRAPNL))
 		goto fail;
 	if (!scols_table_new_column(tb, "LIKE", 0, SCOLS_FL_RIGHT))
+		goto fail;
+	if (!scols_table_new_column(tb, "DATA2", 0, SCOLS_FL_WRAPNL))
 		goto fail;
 	return;
 fail:
@@ -72,11 +74,12 @@ static struct libscols_line * add_line(	struct libscols_table *tb,
 
 	if (scols_line_set_data(ln, COL_NAME, gen_text(prefix, "N", buf, 15, 0)))
 		goto fail;
-	if (scols_line_set_data(ln, COL_DATA, gen_text(prefix, "F", buf, 40, 1)))
+	if (scols_line_set_data(ln, COL_DATA1, gen_text(prefix, "D", buf, 40, 1)))
 		goto fail;
 	if (scols_line_set_data(ln, COL_LIKE, "1"))
 		goto fail;
-
+	if (scols_line_set_data(ln, COL_DATA2, gen_text(prefix, "E", buf, 40, 1)))
+		goto fail;
 	return ln;
 fail:
 	scols_unref_table(tb);
@@ -90,16 +93,26 @@ int main(int argc, char *argv[])
 	int c;
 
 	static const struct option longopts[] = {
-		{ "random",	0, 0, 'r' },
+		{ "random", 0, 0, 'r' },
+		{ "maxout", 0, 0, 'm' },
 		{ NULL, 0, 0, 0 },
 	};
 
 	setlocale(LC_ALL, "");	/* just to have enable UTF8 chars */
 
-	while((c = getopt_long(argc, argv, "r", longopts, NULL)) != -1) {
+	scols_init_debug(0);
+
+	tb = scols_new_table();
+	if (!tb)
+		err(EXIT_FAILURE, "failed to create output table");
+
+	while((c = getopt_long(argc, argv, "rm", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'r':
 			opt_random = 1;
+			break;
+		case 'm':
+			scols_table_enable_maxout(tb, TRUE);
 			break;
 		default:
 			err(EXIT_FAILURE, "%s [-r|--random]\n", program_invocation_short_name);
@@ -108,12 +121,6 @@ int main(int argc, char *argv[])
 
 	if (opt_random)
 		xsrand();
-
-	scols_init_debug(0);
-
-	tb = scols_new_table();
-	if (!tb)
-		err(EXIT_FAILURE, "failed to create output table");
 
 	scols_table_enable_colors(tb, isatty(STDOUT_FILENO));
 	setup_columns(tb);
