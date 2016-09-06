@@ -70,16 +70,12 @@ static struct libscols_line * add_line(	struct libscols_table *tb,
 	if (!ln)
 		err(EXIT_FAILURE, "failed to create output line");
 
-static int x = 0;
-
 	if (scols_line_set_data(ln, COL_NAME, gen_text(prefix, "N", buf, 15, 0)))
 		goto fail;
-	if (scols_line_set_data(ln, COL_DATA, gen_text(prefix, "F", buf, x % 2 ? 40 : 5, x % 2 ? 1 : 0)))
+	if (scols_line_set_data(ln, COL_DATA, gen_text(prefix, "F", buf, 40, 1)))
 		goto fail;
 	if (scols_line_set_data(ln, COL_LIKE, "1"))
 		goto fail;
-
-x++;
 
 	return ln;
 fail:
