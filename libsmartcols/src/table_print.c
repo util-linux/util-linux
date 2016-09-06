@@ -244,8 +244,11 @@ static void print_empty_cell(struct libscols_table *tb,
 		}
 	}
 	/* fill rest of cell with space */
-	for(; len_pad <= cl->width; ++len_pad)
+	for(; len_pad < cl->width; ++len_pad)
 		fputc(' ', tb->out);
+
+	if (!is_last_column(cl))
+		fputs(colsep(tb), tb->out);
 }
 
 
