@@ -242,12 +242,15 @@ static void print_empty_cell(struct libscols_table *tb,
 			}
 		}
 	}
+
+	if (is_last_column(cl))
+		return;
+
 	/* fill rest of cell with space */
 	for(; len_pad < cl->width; ++len_pad)
 		fputc(' ', tb->out);
 
-	if (!is_last_column(cl))
-		fputs(colsep(tb), tb->out);
+	fputs(colsep(tb), tb->out);
 }
 
 
@@ -386,12 +389,13 @@ static int print_pending_data(
 		fputs(UL_COLOR_RESET, tb->out);
 	free(data);
 
+	if (is_last_column(cl))
+		return 0;
+
 	for (i = len; i < width; i++)
 		fputc(' ', tb->out);		/* padding */
 
-	if (!is_last_column(cl))
-		fputs(colsep(tb), tb->out);	/* columns separator */
-
+	fputs(colsep(tb), tb->out);	/* columns separator */
 	return 0;
 err:
 	free(data);
@@ -472,9 +476,7 @@ static int print_data(struct libscols_table *tb,
 	if (is_last_column(cl)
 	    && len < width
 	    && !scols_table_is_maxout(tb)
-	    && !scols_column_is_right(cl)
-	    && !scols_column_is_wrap(cl)
-	    && !scols_column_is_wrapnl(cl))
+	    && !scols_column_is_right(cl))
 		width = len;
 
 	/* truncate data */
