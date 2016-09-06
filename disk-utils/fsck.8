@@ -309,23 +309,22 @@ Don't show the title on startup.
 .B \-V
 Produce verbose output, including all filesystem-specific commands
 that are executed.
-.TP
-.B fs-specific-options
-Options which are not understood by
-.B fsck
-are passed to the filesystem-specific checker.  These options
+.SH FILESYSTEM SPECIFIC OPTIONS
+.B Options which are not understood by fsck are passed to the filesystem-specific checker! 
+.PP
+These options
 .B must
 not take arguments, as there is no
 way for
 .B fsck
 to be able to properly guess which options take arguments and which
 don't.
-.IP
+.PP
 Options and arguments which follow the
 .B \-\-
 are treated as filesystem-specific options to be passed to the
 filesystem-specific checker.
-.IP
+.PP
 Please note that \fBfsck\fR is not
 designed to pass arbitrarily complicated options to filesystem-specific
 checkers.  If you're doing something complicated, please just
@@ -337,62 +336,9 @@ what you expect,
 You're almost certainly doing something that you shouldn't be doing
 with
 .BR fsck .
-.PP
 Options to different filesystem-specific fsck's are not standardized.
-If in doubt, please consult the man pages of the filesystem-specific
-checker.  Although not guaranteed, the following options are supported
-by most filesystem checkers:
-.TP
-.B \-a
-Automatically repair the filesystem without any questions (use
-this option with caution).  Note that
-.BR e2fsck (8)
-supports
-.B \-a
-for backward compatibility only.  This option is mapped to
-.BR e2fsck 's
-.B \-p
-option which is safe to use, unlike the
-.B \-a
-option that some filesystem checkers support.
-.TP
-.B \-n
-For some filesystem-specific checkers, the
-.B \-n
-option will cause the fs-specific fsck to avoid attempting to repair any
-problems, but simply report such problems to stdout.  This is however
-not true for all filesystem-specific checkers.  In particular,
-.BR fsck.reiserfs (8)
-will not report any corruption if given this option.
-.BR fsck.minix (8)
-does not support the
-.B \-n
-option at all.
-.TP
-.B \-r
-Interactively repair the filesystem (ask for confirmations).  Note: It
-is generally a bad idea to use this option if multiple fsck's are being
-run in parallel.  Also note that this is
-.BR e2fsck 's
-default behavior; it supports this option for backward compatibility
-reasons only.
-.TP
-.B \-y
-For some filesystem-specific checkers, the
-.B \-y
-option will cause the fs-specific fsck to always attempt to fix any
-detected filesystem corruption automatically.  Sometimes an expert may
-be able to do better driving the fsck manually.  Note that
-.B not
-all filesystem-specific checkers implement this option.  In particular
-.BR fsck.minix (8)
-and
-.BR fsck.cramfs (8)
-do not support the
-.B \-y
-option as of this writing.
 .SH FILES
-.IR /etc/fstab .
+.IR /etc/fstab
 .SH ENVIRONMENT VARIABLES
 The
 .B fsck
@@ -454,10 +400,11 @@ or
 .BR fsck.xfs (8),
 .BR reiserfsck (8).
 .ad
-.SH AUTHOR
-.MT tytso@mit.edu
-Theodore Ts'o
-.ME
+.SH AUTHORS
+.nf
+Theodore Ts'o <tytso@mit.edu>
+Karel Zak <kzak@redhat.com>
+.fi.
 .SH AVAILABILITY
 The fsck command is part of the util-linux package and is available from
 .UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
