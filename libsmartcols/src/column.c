@@ -356,3 +356,19 @@ int scols_column_is_wrap(struct libscols_column *cl)
 		return -EINVAL;
 	return cl->flags & SCOLS_FL_WRAP;
 }
+/**
+ * scols_column_is_wrapnl:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Gets the value of @cl's flag wrap.
+ *
+ * Returns: wrapnl flag value, negative value in case of an error.
+ *
+ * Since: 2.29
+ */
+int scols_column_is_wrapnl(struct libscols_column *cl)
+{
+	if (!cl)
+		return -EINVAL;
+	return cl->flags & SCOLS_FL_WRAPNL;
+}

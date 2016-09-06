@@ -107,12 +107,13 @@ size_t mbs_safe_width(const char *s)
 
 /*
  * Copy @s to @buf and replace control and non-printable chars with
- * \x?? hex sequence. The @width returns number of cells.
+ * \x?? hex sequence. The @width returns number of cells. The @safechars
+ * are not encoded.
  *
  * The @buf has to be big enough to store mbs_safe_encode_size(strlen(s)))
  * bytes.
  */
-char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf)
+char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, const char *safechars)
 {
 	const char *p = s;
 	char *r;
@@ -129,6 +130,11 @@ char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf)
 	*width = 0;
 
 	while (p && *p) {
+		if (safechars && strchr(safechars, *p)) {
+			*r++ = *p++;
+			continue;
+		}
+
 		if (iscntrl((unsigned char) *p)) {
 			sprintf(r, "\\x%02x", (unsigned char) *p);
 			r += 4;
@@ -208,7 +214,7 @@ char *mbs_safe_encode(const char *s, size_t *width)
 	if (!buf)
 		return NULL;
 
-	return mbs_safe_encode_to_buffer(s, width, buf);
+	return mbs_safe_encode_to_buffer(s, width, buf, NULL);
 }
 
 #ifdef HAVE_WIDECHAR

@@ -136,3 +136,8 @@ global:
 	scols_table_print_range_to_string;
 	scols_table_enable_nolinesep;
 } SMARTCOLS_2.27;
+
+SMARTCOLS_2.29 {
+global:
+	scols_column_is_wrapnl;
+} SMARTCOLS_2.28;

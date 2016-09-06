@@ -2,6 +2,7 @@
 check_PROGRAMS += \
 	sample-scols-title \
 	sample-scols-wrap \
+	sample-scols-wrapnl \
 	sample-scols-continuous \
 	sample-scols-maxout
 
@@ -23,6 +24,10 @@ sample_scols_title_CFLAGS = $(sample_scols_cflags)
 sample_scols_wrap_SOURCES = libsmartcols/samples/wrap.c
 sample_scols_wrap_LDADD = $(sample_scols_ldadd)
 sample_scols_wrap_CFLAGS = $(sample_scols_cflags)
+
+sample_scols_wrapnl_SOURCES = libsmartcols/samples/wrapnl.c
+sample_scols_wrapnl_LDADD = $(sample_scols_ldadd) libcommon.la
+sample_scols_wrapnl_CFLAGS = $(sample_scols_cflags)
 
 sample_scols_continuous_SOURCES = libsmartcols/samples/continuous.c
 sample_scols_continuous_LDADD = $(sample_scols_ldadd) libcommon.la

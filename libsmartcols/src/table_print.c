@@ -113,7 +113,8 @@ static char *buffer_get_data(struct libscols_buffer *buf)
 }
 
 /* encode data by mbs_safe_encode() to avoid control and non-printable chars */
-static char *buffer_get_safe_data(struct libscols_buffer *buf, size_t *cells)
+static char *buffer_get_safe_data(struct libscols_buffer *buf, size_t *cells,
+				  const char *safechars)
 {
 	char *data = buffer_get_data(buf);
 	char *res = NULL;
@@ -127,7 +128,7 @@ static char *buffer_get_safe_data(struct libscols_buffer *buf, size_t *cells)
 			goto nothing;
 	}
 
-	res = mbs_safe_encode_to_buffer(data, cells, buf->encdata);
+	res = mbs_safe_encode_to_buffer(data, cells, buf->encdata, safechars);
 	if (!res || !*cells || *cells == (size_t) -1)
 		goto nothing;
 	return res;
@@ -234,7 +235,7 @@ static void print_empty_cell(struct libscols_table *tb,
 				line_ascii_art_to_buffer(tb, ln, art);
 				if (!list_empty(&ln->ln_branch) && has_pending_data(tb))
 					buffer_append_data(art, tb->symbols->vert);
-				data = buffer_get_safe_data(art, &len_pad);
+				data = buffer_get_safe_data(art, &len_pad, NULL);
 				if (data && len_pad)
 					fputs(data, tb->out);
 				free_buffer(art);
@@ -242,8 +243,11 @@ static void print_empty_cell(struct libscols_table *tb,
 		}
 	}
 	/* fill rest of cell with space */
-	for(; len_pad <= cl->width; ++len_pad)
+	for(; len_pad < cl->width; ++len_pad)
 		fputc(' ', tb->out);
+
+	if (!is_last_column(cl))
+		fputs(colsep(tb), tb->out);
 }
 
 
@@ -350,6 +354,7 @@ static int print_pending_data(
 	size_t width = cl->width, bytes;
 	size_t len = width, i;
 	char *data;
+	char *wrapnl = NULL;
 
 	if (!cl->pending_data)
 		return 0;
@@ -359,7 +364,16 @@ static int print_pending_data(
 	data = strdup(cl->pending_data);
 	if (!data)
 		goto err;
-	bytes = mbs_truncate(data, &len);
+
+	if (scols_column_is_wrapnl(cl) && (wrapnl = strchr(data, '\n'))) {
+		*wrapnl = '\0';
+		wrapnl++;
+		bytes = wrapnl - data;
+
+		len = mbs_safe_nwidth(data, bytes, NULL);
+	} else
+		bytes = mbs_truncate(data, &len);
+
 	if (bytes == (size_t) -1)
 		goto err;
 
@@ -375,10 +389,9 @@ static int print_pending_data(
 	for (i = len; i < width; i++)
 		fputc(' ', tb->out);		/* padding */
 
-	if (is_last_column(cl))
-		return 0;
+	if (!is_last_column(cl))
+		fputs(colsep(tb), tb->out);	/* columns separator */
 
-	fputs(colsep(tb), tb->out);		/* columns separator */
 	return 0;
 err:
 	free(data);
@@ -393,7 +406,7 @@ static int print_data(struct libscols_table *tb,
 {
 	size_t len = 0, i, width, bytes;
 	const char *color = NULL;
-	char *data;
+	char *data, *wrapnl;
 
 	assert(tb);
 	assert(cl);
@@ -437,18 +450,31 @@ static int print_data(struct libscols_table *tb,
 
 	color = get_cell_color(tb, cl, ln, ce);
 
-	/* encode, note that 'len' and 'width' are number of cells, not bytes */
-	data = buffer_get_safe_data(buf, &len);
+	/* Encode. Note that 'len' and 'width' are number of cells, not bytes.
+	 * For the columns with WRAPNL we mark \n as a safe char.
+	 */
+	data = buffer_get_safe_data(buf, &len,
+			scols_column_is_wrapnl(cl) ? "\n" : NULL);
 	if (!data)
 		data = "";
-	width = cl->width;
 	bytes = strlen(data);
+	width = cl->width;
+
+	/* multi-line cell based on '\n' */
+	if (*data && scols_column_is_wrapnl(cl) && (wrapnl = strchr(data, '\n'))) {
+		*wrapnl = '\0';
+		wrapnl++;
+		set_pending_data(cl, wrapnl, bytes - (wrapnl - data));
+		bytes = wrapnl - data;
+		len = mbs_safe_nwidth(data, bytes, NULL);
+	}
 
 	if (is_last_column(cl)
 	    && len < width
 	    && !scols_table_is_maxout(tb)
 	    && !scols_column_is_right(cl)
-	    && !scols_column_is_wrap(cl))
+	    && !scols_column_is_wrap(cl)
+	    && !scols_column_is_wrapnl(cl))
 		width = len;
 
 	/* truncate data */
@@ -724,7 +750,7 @@ static int print_title(struct libscols_table *tb)
 		goto done;
 	}
 
-	if (!mbs_safe_encode_to_buffer(tb->title.data, &bufsz, buf) ||
+	if (!mbs_safe_encode_to_buffer(tb->title.data, &bufsz, buf, NULL) ||
 	    !bufsz || bufsz == (size_t) -1) {
 		rc = -EINVAL;
 		goto done;
@@ -941,6 +967,29 @@ static void dbg_columns(struct libscols_table *tb)
 		dbg_column(tb, cl);
 }
 
+/* count the maximal size of \n terminated chunk in the @data
+ * for example for "AAA\nBBBB\nXX" the wrap size is 4 ('BBBB').
+ */
+static size_t count_wrapnl_size(const char *data)
+{
+	size_t sum = 0;
+
+	while (data && *data) {
+		const char *p = data;
+
+		p = strchr(data, '\n');
+		if (p) {
+			size_t sz = mbs_safe_nwidth(data, p - data, NULL);
+
+			sum = max(sum, sz);
+			p++;
+		}
+		data = p;;
+	}
+
+	return sum;
+}
+
 /*
  * This function counts column width.
  *
@@ -985,7 +1034,13 @@ static int count_column_width(struct libscols_table *tb,
 			goto done;
 
 		data = buffer_get_data(buf);
-		len = data ? mbs_safe_width(data) : 0;
+
+		if (!data)
+			len = 0;
+		else if (scols_column_is_wrapnl(cl))
+			len = count_wrapnl_size(data);
+		else
+			len = mbs_safe_width(data);
 
 		if (len == (size_t) -1)		/* ignore broken multibyte strings */
 			len = 0;

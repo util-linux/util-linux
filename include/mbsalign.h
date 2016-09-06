@@ -54,7 +54,7 @@ extern size_t mbs_safe_nwidth(const char *buf, size_t bufsz, size_t *sz);
 extern size_t mbs_safe_width(const char *s);
 
 extern char *mbs_safe_encode(const char *s, size_t *width);
-extern char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf);
+extern char *mbs_safe_encode_to_buffer(const char *s, size_t *width, char *buf, const char *safechars);
 extern size_t mbs_safe_encode_size(size_t bytes);
 
 #endif /* UTIL_LINUX_MBSALIGN_H */
