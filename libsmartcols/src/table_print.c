@@ -29,7 +29,18 @@
 
 #define colsep(tb)	((tb)->colsep ? (tb)->colsep : " ")
 #define linesep(tb)	((tb)->linesep ? (tb)->linesep : "\n")
-#define cellpadding(tb)	((tb) && (tb)->symbols && (tb)->symbols->cell_padding ? (tb)->symbols->cell_padding : " ")
+
+/* Fallback for symbols
+ *
+ * Note that by default library define all the symbols, but in case user does
+ * not define all symbols or if we extended the symbols struct then we need
+ * fallback to be more robust and backwardly compatible.
+ */
+#define titlepadding_symbol(tb)	((tb)->symbols->title_padding ? (tb)->symbols->title_padding : " ")
+#define cellpadding_symbol(tb)  ((tb)->symbols->cell_padding ? (tb)->symbols->cell_padding: " ")
+#define branch_symbol(tb)	((tb)->symbols->branch ? (tb)->symbols->branch : "|-")
+#define vertical_symbol(tb)	((tb)->symbols->vert ? (tb)->symbols->vert : "|")
+#define right_symbol(tb)	((tb)->symbols->right ? (tb)->symbols->right : "-")
 
 
 /* This is private struct to work with output data */
@@ -174,9 +185,9 @@ static int line_ascii_art_to_buffer(struct libscols_table *tb,
 		return rc;
 
 	if (list_entry_is_last(&ln->ln_children, &ln->parent->ln_branch))
-		art = "  ";
+		art = cellpadding_symbol(tb);
 	else
-		art = tb->symbols->vert;
+		art = vertical_symbol(tb);
 
 	return buffer_append_data(buf, art);
 }
@@ -224,8 +235,8 @@ static void print_empty_cell(struct libscols_table *tb,
 		if (!ln->parent) {
 			/* only print symbols->vert if followed by child */
 			if (!list_empty(&ln->ln_branch)) {
-				fputs(tb->symbols->vert, tb->out);
-				len_pad = mbs_safe_width(tb->symbols->vert);
+				fputs(vertical_symbol(tb), tb->out);
+				len_pad = mbs_safe_width(vertical_symbol(tb));
 			}
 		} else {
 			/* use the same draw function as though we were intending to draw an L-shape */
@@ -236,7 +247,7 @@ static void print_empty_cell(struct libscols_table *tb,
 				/* whatever the rc, len_pad will be sensible */
 				line_ascii_art_to_buffer(tb, ln, art);
 				if (!list_empty(&ln->ln_branch) && has_pending_data(tb))
-					buffer_append_data(art, tb->symbols->vert);
+					buffer_append_data(art, vertical_symbol(tb));
 				data = buffer_get_safe_data(art, &len_pad, NULL);
 				if (data && len_pad)
 					fputs(data, tb->out);
@@ -250,7 +261,7 @@ static void print_empty_cell(struct libscols_table *tb,
 
 	/* fill rest of cell with space */
 	for(; len_pad < cl->width; ++len_pad)
-		fputs(cellpadding(tb), tb->out);
+		fputs(cellpadding_symbol(tb), tb->out);
 
 	fputs(colsep(tb), tb->out);
 }
@@ -395,7 +406,7 @@ static int print_pending_data(
 		return 0;
 
 	for (i = len; i < width; i++)
-		fputs(cellpadding(tb), tb->out);		/* padding */
+		fputs(cellpadding_symbol(tb), tb->out);		/* padding */
 
 	fputs(colsep(tb), tb->out);	/* columns separator */
 	return 0;
@@ -507,7 +518,7 @@ static int print_data(struct libscols_table *tb,
 			if (color)
 				fputs(color, tb->out);
 			for (i = len; i < width; i++)
-				fputs(cellpadding(tb), tb->out);
+				fputs(cellpadding_symbol(tb), tb->out);
 			fputs(data, tb->out);
 			if (color)
 				fputs(UL_COLOR_RESET, tb->out);
@@ -530,7 +541,7 @@ static int print_data(struct libscols_table *tb,
 			fputs(data, tb->out);
 	}
 	for (i = len; i < width; i++)
-		fputs(cellpadding(tb), tb->out);	/* padding */
+		fputs(cellpadding_symbol(tb), tb->out);	/* padding */
 
 	if (is_last_column(cl))
 		return 0;
@@ -575,9 +586,9 @@ static int cell_to_buffer(struct libscols_table *tb,
 		rc = line_ascii_art_to_buffer(tb, ln->parent, buf);
 
 		if (!rc && list_entry_is_last(&ln->ln_children, &ln->parent->ln_branch))
-			rc = buffer_append_data(buf, tb->symbols->right);
+			rc = buffer_append_data(buf, right_symbol(tb));
 		else if (!rc)
-			rc = buffer_append_data(buf, tb->symbols->branch);
+			rc = buffer_append_data(buf, branch_symbol(tb));
 		if (!rc)
 			buffer_set_art_index(buf);
 	}
@@ -782,7 +793,7 @@ static int print_title(struct libscols_table *tb)
 	/* copy from buf to title and align to width with title_padding */
 	rc = mbsalign_with_padding(buf, title, titlesz,
 			&width, align,
-			0, (int) *tb->symbols->title_padding);
+			0, (int) *titlepadding_symbol(tb));
 
 	if (rc == -1) {
 		rc = -EINVAL;
@@ -1334,7 +1345,7 @@ static int initialize_printing(struct libscols_table *tb, struct libscols_buffer
 	 * decoration.
 	 */
 	if (scols_table_is_tree(tb))
-		extra_bufsz += tb->nlines * strlen(tb->symbols->vert);
+		extra_bufsz += tb->nlines * strlen(vertical_symbol(tb));
 
 	switch (tb->format) {
 	case SCOLS_FMT_RAW:
