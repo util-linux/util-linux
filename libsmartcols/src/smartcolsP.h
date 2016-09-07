@@ -54,6 +54,7 @@ struct libscols_symbols {
 	char	*vert;
 	char	*right;
 	char	*title_padding;
+	char	*cell_padding;
 };
 
 /*

@@ -27,6 +27,11 @@
 #include "carefulputc.h"
 #include "smartcolsP.h"
 
+#define colsep(tb)	((tb)->colsep ? (tb)->colsep : " ")
+#define linesep(tb)	((tb)->linesep ? (tb)->linesep : "\n")
+#define cellpadding(tb)	((tb) && (tb)->symbols && (tb)->symbols->cell_padding ? (tb)->symbols->cell_padding : " ")
+
+
 /* This is private struct to work with output data */
 struct libscols_buffer {
 	char	*begin;		/* begin of the buffer */
@@ -190,9 +195,6 @@ static int is_last_column(struct libscols_column *cl)
 	return 0;
 }
 
-#define colsep(tb) ((tb)->colsep ? (tb)->colsep : " ")
-#define linesep(tb) ((tb)->linesep ? (tb)->linesep : "\n")
-
 
 static int has_pending_data(struct libscols_table *tb)
 {
@@ -248,7 +250,7 @@ static void print_empty_cell(struct libscols_table *tb,
 
 	/* fill rest of cell with space */
 	for(; len_pad < cl->width; ++len_pad)
-		fputc(' ', tb->out);
+		fputs(cellpadding(tb), tb->out);
 
 	fputs(colsep(tb), tb->out);
 }
@@ -393,7 +395,7 @@ static int print_pending_data(
 		return 0;
 
 	for (i = len; i < width; i++)
-		fputc(' ', tb->out);		/* padding */
+		fputs(cellpadding(tb), tb->out);		/* padding */
 
 	fputs(colsep(tb), tb->out);	/* columns separator */
 	return 0;
@@ -505,7 +507,7 @@ static int print_data(struct libscols_table *tb,
 			if (color)
 				fputs(color, tb->out);
 			for (i = len; i < width; i++)
-				fputc(' ', tb->out);
+				fputs(cellpadding(tb), tb->out);
 			fputs(data, tb->out);
 			if (color)
 				fputs(UL_COLOR_RESET, tb->out);
@@ -528,7 +530,7 @@ static int print_data(struct libscols_table *tb,
 			fputs(data, tb->out);
 	}
 	for (i = len; i < width; i++)
-		fputc(' ', tb->out);		/* padding */
+		fputs(cellpadding(tb), tb->out);	/* padding */
 
 	if (is_last_column(cl))
 		return 0;

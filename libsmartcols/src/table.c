@@ -695,6 +695,7 @@ int scols_table_set_symbols(struct libscols_table *tb,
 			scols_symbols_set_right(tb->symbols, "`-");
 		}
 		scols_symbols_set_title_padding(tb->symbols, " ");
+		scols_symbols_set_cell_padding(tb->symbols, " ");
 	}
 
 	return 0;
