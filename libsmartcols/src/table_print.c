@@ -37,10 +37,12 @@
  * fallback to be more robust and backwardly compatible.
  */
 #define titlepadding_symbol(tb)	((tb)->symbols->title_padding ? (tb)->symbols->title_padding : " ")
-#define cellpadding_symbol(tb)  ((tb)->symbols->cell_padding ? (tb)->symbols->cell_padding: " ")
 #define branch_symbol(tb)	((tb)->symbols->branch ? (tb)->symbols->branch : "|-")
 #define vertical_symbol(tb)	((tb)->symbols->vert ? (tb)->symbols->vert : "|")
 #define right_symbol(tb)	((tb)->symbols->right ? (tb)->symbols->right : "-")
+
+#define cellpadding_symbol(tb)  ((tb)->padding_debug ? "." : \
+				 ((tb)->symbols->cell_padding ? (tb)->symbols->cell_padding: " "))
 
 
 /* This is private struct to work with output data */

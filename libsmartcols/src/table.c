@@ -38,6 +38,20 @@
 		list_entry_is_last(&(_cl)->cl_columns, &(_tb)->tb_columns)
 
 
+static void check_padding_debug(struct libscols_table *tb)
+{
+	const char *str;
+
+	assert(libsmartcols_debug_mask);	/* debug has to be enabled! */
+
+	str = getenv("LIBSMARTCOLS_DEBUG_PADDING");
+	if (!str || (strcmp(str, "on") != 0 && strcmp(str, "1") != 0))
+		return;
+
+	DBG(INIT, ul_debugobj(tb, "padding debug: ENABLE"));
+	tb->padding_debug = 1;
+}
+
 /**
  * scols_new_table:
  *
@@ -58,6 +72,8 @@ struct libscols_table *scols_new_table(void)
 	INIT_LIST_HEAD(&tb->tb_columns);
 
 	DBG(TAB, ul_debugobj(tb, "alloc"));
+	ON_DBG(INIT, check_padding_debug(tb));
+
 	return tb;
 }
 
