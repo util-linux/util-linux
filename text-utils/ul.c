@@ -402,11 +402,7 @@ static void flushln(void)
 static void overstrike(void)
 {
 	register int i;
-#ifdef __GNUC__
-	register wchar_t *lbuf = __builtin_alloca((maxcol + 1) * sizeof(wchar_t));
-#else
-	wchar_t lbuf[BUFSIZ];
-#endif
+	register wchar_t *lbuf = xmalloc((maxcol + 1) * sizeof(wchar_t));
 	register wchar_t *cp = lbuf;
 	int hadbold=0;
 
@@ -439,16 +435,13 @@ static void overstrike(void)
 		for (cp = lbuf; *cp; cp++)
 			putwchar(*cp == '_' ? ' ' : *cp);
 	}
+	free(lbuf);
 }
 
 static void iattr(void)
 {
 	register int i;
-#ifdef __GNUC__
-	register wchar_t *lbuf = __builtin_alloca((maxcol+1)*sizeof(wchar_t));
-#else
-	wchar_t lbuf[BUFSIZ];
-#endif
+	register wchar_t *lbuf = xmalloc((maxcol + 1) * sizeof(wchar_t));
 	register wchar_t *cp = lbuf;
 
 	for (i = 0; i < maxcol; i++)
@@ -465,6 +458,7 @@ static void iattr(void)
 		*cp = 0;
 	fputws(lbuf, stdout);
 	putwchar('\n');
+	free(lbuf);
 }
 
 static void initbuf(void)
