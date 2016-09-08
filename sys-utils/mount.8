@@ -368,7 +368,7 @@ operation, for example:
 .B mount \-\-bind
 .I olddir newdir
 .br
-.B mount \-o remount,ro,bind
+.B mount \-o remount,bind,ro
 .I olddir newdir
 .RE
 
@@ -379,8 +379,9 @@ will be writable, but the
 .I newdir
 will be read-only.
 
-It's impossible to change mount options recursively
-(for example with \fB-o rbind,ro\fR).
+It's also possible to change nosuid, nodev, noexec, noatime, nodiratime and
+relatime VFS entry flags by "remount,bind" operation. It's impossible to change
+mount options recursively (for example with \fB-o rbind,ro\fR).
 .RE
 
 .SS The move operation
