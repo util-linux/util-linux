@@ -993,14 +993,16 @@ static size_t count_wrapnl_size(const char *data)
 
 	while (data && *data) {
 		const char *p = data;
+		size_t sz;
 
 		p = strchr(data, '\n');
 		if (p) {
-			size_t sz = mbs_safe_nwidth(data, p - data, NULL);
-
-			sum = max(sum, sz);
+			sz = mbs_safe_nwidth(data, p - data, NULL);
 			p++;
-		}
+		} else
+			sz = mbs_safe_width(data);
+
+		sum = max(sum, sz);
 		data = p;;
 	}
 
