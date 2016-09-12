@@ -333,7 +333,7 @@ static int set_pending_data(struct libscols_column *cl, const char *data, size_t
 {
 	char *p = NULL;
 
-	if (data) {
+	if (data && *data) {
 		DBG(COL, ul_debugobj(cl, "setting pending data"));
 		assert(sz);
 		p = strdup(data);
