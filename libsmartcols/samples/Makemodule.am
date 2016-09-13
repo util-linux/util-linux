@@ -4,6 +4,7 @@ check_PROGRAMS += \
 	sample-scols-wrap \
 	sample-scols-wrapnl \
 	sample-scols-continuous \
+	sample-scols-fromfile \
 	sample-scols-maxout
 
 sample_scols_cflags = $(AM_CFLAGS) $(NO_UNUSED_WARN_CFLAGS) \
@@ -36,4 +37,8 @@ sample_scols_continuous_CFLAGS = $(sample_scols_cflags)
 sample_scols_maxout_SOURCES = libsmartcols/samples/maxout.c
 sample_scols_maxout_LDADD = $(sample_scols_ldadd)
 sample_scols_maxout_CFLAGS = $(sample_scols_cflags)
+
+sample_scols_fromfile_SOURCES = libsmartcols/samples/fromfile.c
+sample_scols_fromfile_LDADD = $(sample_scols_ldadd) libcommon.la
+sample_scols_fromfile_CFLAGS = $(sample_scols_cflags)
 
