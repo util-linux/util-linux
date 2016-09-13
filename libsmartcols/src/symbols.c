@@ -63,6 +63,7 @@ void scols_unref_symbols(struct libscols_symbols *sy)
 		free(sy->vert);
 		free(sy->right);
 		free(sy->title_padding);
+		free(sy->cell_padding);
 		free(sy);
 	}
 }
