@@ -156,6 +156,7 @@ int main(int argc, char *argv[])
 		{ "maxout", 0, 0, 'm' },
 		{ "column", 1, 0, 'c' },
 		{ "nlines", 1, 0, 'n' },
+		{ "width",  1, 0, 'w' },
 		{ NULL, 0, 0, 0 },
 	};
 
@@ -167,7 +168,7 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 
-	while((c = getopt_long(argc, argv, "c:mn:", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "c:mn:w:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'c': /* add column from file */
 		{
@@ -188,6 +189,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'n':
 			nlines = strtou32_or_err(optarg, "failed to parse number of lines");
+			break;
+		case 'w':
+			scols_table_set_termforce(tb, SCOLS_TERMFORCE_ALWAYS);
+			scols_table_set_termwidth(tb, strtou32_or_err(optarg, "failed to parse terminal width"));
 			break;
 		default:
 			err(EXIT_FAILURE, "%s [-r|--random]\n", program_invocation_short_name);

@@ -35,6 +35,15 @@ $TESTPROG --nlines 10 \
 	>> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
+ts_init_subtest "right-maxout"
+$TESTPROG --nlines 10 --maxout --width 80\
+       	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-number \
+	$TS_SELF/files/data-string \
+	$TS_SELF/files/data-number \
+	>> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
 ts_init_subtest "wrapnl"
 $TESTPROG --nlines 10 \
        	--column $TS_SELF/files/col-name \
