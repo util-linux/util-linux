@@ -246,6 +246,20 @@ extern int scols_table_reduce_termwidth(struct libscols_table *tb, size_t reduce
 
 extern int scols_sort_table(struct libscols_table *tb, struct libscols_column *cl);
 
+/*
+ *
+ */
+enum {
+	SCOLS_TERMFORCE_AUTO = 0,
+	SCOLS_TERMFORCE_NEVER,
+	SCOLS_TERMFORCE_ALWAYS
+};
+extern int scols_table_set_termforce(struct libscols_table *tb, int force);
+extern int scols_table_get_termforce(struct libscols_table *tb);
+extern int scols_table_set_termwidth(struct libscols_table *tb, size_t width);
+extern size_t scols_table_get_termwidth(struct libscols_table *tb);
+
+
 /* table_print.c */
 extern int scols_print_table(struct libscols_table *tb);
 extern int scols_print_table_to_string(struct libscols_table *tb, char **data);

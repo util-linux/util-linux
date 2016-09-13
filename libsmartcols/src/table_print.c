@@ -23,7 +23,6 @@
 #include <ctype.h>
 
 #include "mbsalign.h"
-#include "ttyutils.h"
 #include "carefulputc.h"
 #include "smartcolsP.h"
 
@@ -1334,13 +1333,18 @@ static int initialize_printing(struct libscols_table *tb, struct libscols_buffer
 		scols_table_set_symbols(tb, NULL);	/* use default */
 
 	if (tb->format == SCOLS_FMT_HUMAN)
-		tb->is_term = isatty(STDOUT_FILENO) ? 1 : 0;
+		tb->is_term = tb->termforce == SCOLS_TERMFORCE_NEVER  ? 0 :
+			      tb->termforce == SCOLS_TERMFORCE_ALWAYS ? 1 :
+			      isatty(STDOUT_FILENO);
 
 	if (tb->is_term) {
-		tb->termwidth = get_terminal_width(80);
-		if (tb->termreduce > 0 && tb->termreduce < tb->termwidth)
-			tb->termwidth -= tb->termreduce;
-		bufsz = tb->termwidth;
+		size_t width = (size_t) scols_table_get_termwidth(tb);
+
+		if (tb->termreduce > 0 && tb->termreduce < width) {
+			width -= tb->termreduce;
+			scols_table_set_termwidth(tb, width);
+		}
+		bufsz = width;
 	} else
 		bufsz = BUFSIZ;
 

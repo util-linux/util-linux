@@ -139,6 +139,7 @@ struct libscols_table {
 	size_t	nlines;		/* number of lines */
 	size_t	termwidth;	/* terminal width */
 	size_t  termreduce;	/* extra blank space */
+	int	termforce;	/* SCOLS_TERMFORCE_* */
 	FILE	*out;		/* output stream */
 
 	char	*colsep;	/* column separator */

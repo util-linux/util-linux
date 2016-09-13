@@ -96,6 +96,7 @@ libscols_table
 scols_copy_table
 scols_new_table
 scols_ref_table
+scols_sort_table
 scols_table_add_column
 scols_table_add_line
 scols_table_colors_wanted
@@ -115,6 +116,9 @@ scols_table_get_line_separator
 scols_table_get_ncols
 scols_table_get_nlines
 scols_table_get_stream
+scols_table_get_termforce
+scols_table_get_termwidth
+scols_table_get_title
 scols_table_is_ascii
 scols_table_is_empty
 scols_table_is_export
@@ -137,8 +141,8 @@ scols_table_set_line_separator
 scols_table_set_name
 scols_table_set_stream
 scols_table_set_symbols
-scols_table_get_title
-scols_sort_table
+scols_table_set_termforce
+scols_table_set_termwidth
 scols_unref_table
 </SECTION>
 

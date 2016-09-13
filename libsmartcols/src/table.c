@@ -25,6 +25,7 @@
 #include <ctype.h>
 
 #include "nls.h"
+#include "ttyutils.h"
 #include "smartcolsP.h"
 
 #ifdef HAVE_WIDECHAR
@@ -1103,4 +1104,62 @@ int scols_sort_table(struct libscols_table *tb, struct libscols_column *cl)
 	DBG(TAB, ul_debugobj(tb, "sorting table"));
 	list_sort(&tb->tb_lines, cells_cmp_wrapper, cl);
 	return 0;
+}
+
+/**
+ * scols_table_set_termforce:
+ * @tb: table
+ * @force: SCOLS_TERMFORCE_{NEVER,ALWAYS,AUTO}
+ *
+ * Forces library to use stdout as terminal, non-terminal or use automatical
+ * detection (default).
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_table_set_termforce(struct libscols_table *tb, int force)
+{
+	if (!tb)
+		return -EINVAL;
+	tb->termforce = force;
+	return 0;
+}
+
+/**
+ * scols_table_get_termforce:
+ * @tb: table
+ *
+ * Returns: SCOLS_TERMFORCE_{NEVER,ALWAYS,AUTO} or a negative value in case of an error.
+ */
+int scols_table_get_termforce(struct libscols_table *tb)
+{
+	return tb->termforce;
+}
+
+/**
+ * scols_table_set_termwidth
+ * @tb: table
+ * @width: terminal width
+ *
+ * The library automatically detects terminal width or defaults to 80 chars if
+ * detections is unsuccessful. This function override this behaviour.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_table_set_termwidth(struct libscols_table *tb, size_t width)
+{
+	tb->termwidth = width;
+	return 0;
+}
+
+/**
+ * scols_table_get_termwidth
+ * @tb: table
+ *
+ * Returns: terminal width or a negative value in case of an error.
+ */
+size_t scols_table_get_termwidth(struct libscols_table *tb)
+{
+	if (tb->termwidth == 0)
+		tb->termwidth = get_terminal_width(80);
+	return tb->termwidth;
 }
