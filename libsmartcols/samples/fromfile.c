@@ -194,8 +194,6 @@ int main(int argc, char *argv[])
 			scols_table_set_termforce(tb, SCOLS_TERMFORCE_ALWAYS);
 			scols_table_set_termwidth(tb, strtou32_or_err(optarg, "failed to parse terminal width"));
 			break;
-		default:
-			err(EXIT_FAILURE, "%s [-r|--random]\n", program_invocation_short_name);
 		}
 	}
 

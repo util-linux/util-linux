@@ -18,7 +18,7 @@ sample_scols_tree_CFLAGS = $(sample_scols_cflags)
 endif
 
 sample_scols_title_SOURCES = libsmartcols/samples/title.c
-sample_scols_title_LDADD = $(sample_scols_ldadd)
+sample_scols_title_LDADD = $(sample_scols_ldadd) libcommon.la
 sample_scols_title_CFLAGS = $(sample_scols_cflags)
 
 sample_scols_wrap_SOURCES = libsmartcols/samples/wrap.c

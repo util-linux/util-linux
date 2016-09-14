@@ -57,6 +57,13 @@ int main(int argc, char *argv[])
 	struct libscols_table *tb;
 	struct libscols_symbols *sy;
 	struct libscols_cell *title;
+	int c;
+
+	static const struct option longopts[] = {
+		{ "maxout", 0, 0, 'm' },
+		{ "width",  1, 0, 'w' },
+		{ NULL, 0, 0, 0 },
+	};
 
 	setlocale(LC_ALL, "");	/* just to have enable UTF8 chars */
 
@@ -65,6 +72,18 @@ int main(int argc, char *argv[])
 	tb = scols_new_table();
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
+
+	while((c = getopt_long(argc, argv, "mw:", longopts, NULL)) != -1) {
+		switch(c) {
+		case 'm':
+			scols_table_enable_maxout(tb, TRUE);
+			break;
+		case 'w':
+			scols_table_set_termforce(tb, SCOLS_TERMFORCE_ALWAYS);
+			scols_table_set_termwidth(tb, strtou32_or_err(optarg, "failed to parse terminal width"));
+			break;
+		}
+	}
 
 	scols_table_enable_colors(tb, isatty(STDOUT_FILENO));
 	setup_columns(tb);
