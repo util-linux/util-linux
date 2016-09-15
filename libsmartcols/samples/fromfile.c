@@ -47,7 +47,7 @@ static long name_to_flag(const char *name, long unsigned int namesz)
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return flags[i].mask;
 	}
-	warnx(_("unknown flag: %s"), name);
+	warnx("unknown flag: %s", name);
 	return -1;
 }
 
@@ -119,7 +119,7 @@ fail:
 	return NULL;
 }
 
-static int parse_column_data(FILE *f, struct libscols_table *tb, int column)
+static int parse_column_data(FILE *f, struct libscols_table *tb, int col)
 {
 	size_t len = 0, nlines = 0;
 	int i;
@@ -140,23 +140,83 @@ static int parse_column_data(FILE *f, struct libscols_table *tb, int column)
 		ln = scols_table_get_line(tb, nlines++);
 		if (!ln)
 			break;
-		scols_line_set_data(ln, column, str);
+
+		scols_line_set_data(ln, col, str);
 	}
 
 	return 0;
 
 }
 
+static struct libscols_line *get_line_with_id(struct libscols_table *tb,
+						int col_id, const char *id)
+{
+	struct libscols_line *ln;
+	struct libscols_iter *itr = scols_new_iter(SCOLS_ITER_FORWARD);
+
+	while (scols_table_next_line(tb, itr, &ln) == 0) {
+		struct libscols_cell *ce = scols_line_get_cell(ln, col_id);
+		const char *data = ce ? scols_cell_get_data(ce) : NULL;
+
+		if (data && strcmp(data, id) == 0)
+			break;
+	}
+
+	scols_free_iter(itr);
+	return ln;
+}
+
+static void compose_tree(struct libscols_table *tb, int parent_col, int id_col)
+{
+	struct libscols_line *ln;
+	struct libscols_iter *itr = scols_new_iter(SCOLS_ITER_FORWARD);
+
+	while (scols_table_next_line(tb, itr, &ln) == 0) {
+		struct libscols_line *parent = NULL;
+		struct libscols_cell *ce = scols_line_get_cell(ln, parent_col);
+		const char *data = ce ? scols_cell_get_data(ce) : NULL;
+
+		if (data)
+			parent = get_line_with_id(tb, id_col, data);
+		if (parent)
+			scols_line_add_child(parent, ln);
+	}
+
+	scols_free_iter(itr);
+}
+
+
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
+{
+	fprintf(out,
+		"\n %s [options] <column-data-file> ...\n\n", program_invocation_short_name);
+
+	fputs(" -m, --maxout                   fill all terminal width\n", out);
+	fputs(" -c, --column <file>            column definition\n", out);
+	fputs(" -n, --nlines <num>             number of lines\n", out);
+	fputs(" -w, --width <num>              hardcode terminal width\n", out);
+	fputs(" -p, --tree-parent-column <n>   parent column\n", out);
+	fputs(" -i, --tree-id-column <n>       id column\n", out);
+	fputs(" -h, --help                     this help\n", out);
+	fputs("\n", out);
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 int main(int argc, char *argv[])
 {
 	struct libscols_table *tb;
 	int c, n, nlines = 0;
+	int parent_col = -1, id_col = -1;
 
 	static const struct option longopts[] = {
 		{ "maxout", 0, 0, 'm' },
 		{ "column", 1, 0, 'c' },
 		{ "nlines", 1, 0, 'n' },
 		{ "width",  1, 0, 'w' },
+		{ "tree-parent-column", 1, 0, 'p' },
+		{ "tree-id-column",	1, 0, 'i' },
+		{ "help",   0, 0, 'h' },
 		{ NULL, 0, 0, 0 },
 	};
 
@@ -168,7 +228,7 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 
-	while((c = getopt_long(argc, argv, "c:mn:w:", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "hc:i:mn:p:w:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'c': /* add column from file */
 		{
@@ -184,6 +244,12 @@ int main(int argc, char *argv[])
 			fclose(f);
 			break;
 		}
+		case 'p':
+			parent_col = strtou32_or_err(optarg, "failed to parse tree PARENT column");
+			break;
+		case 'i':
+			id_col = strtou32_or_err(optarg, "failed to parse tree ID column");
+			break;
 		case 'm':
 			scols_table_enable_maxout(tb, TRUE);
 			break;
@@ -194,6 +260,10 @@ int main(int argc, char *argv[])
 			scols_table_set_termforce(tb, SCOLS_TERMFORCE_ALWAYS);
 			scols_table_set_termwidth(tb, strtou32_or_err(optarg, "failed to parse terminal width"));
 			break;
+		case 'h':
+			usage(stdout);
+		default:
+			usage(stderr);
 		}
 	}
 
@@ -219,6 +289,9 @@ int main(int argc, char *argv[])
 		optind++;
 		n++;
 	}
+
+	if (scols_table_is_tree(tb) && parent_col >= 0 && id_col >= 0)
+		compose_tree(tb, parent_col, id_col);
 
 	scols_table_enable_colors(tb, isatty(STDOUT_FILENO));
 

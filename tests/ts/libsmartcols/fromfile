@@ -23,6 +23,21 @@ ts_init "$*"
 TESTPROG="$TS_HELPER_LIBSMARTCOLS_FROMFILE"
 ts_check_test_command "$TESTPROG"
 
+ts_init_subtest "tree"
+$TESTPROG --nlines 10 \
+	--tree-id-column 1 \
+	--tree-parent-column 2 \
+	--column $TS_SELF/files/col-tree \
+	--column $TS_SELF/files/col-id \
+	--column $TS_SELF/files/col-parent \
+	--column $TS_SELF/files/col-string \
+	$TS_SELF/files/data-string \
+	$TS_SELF/files/data-id \
+	$TS_SELF/files/data-parent \
+	$TS_SELF/files/data-string-long \
+	>> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
 ts_init_subtest "trunc"
 $TESTPROG --nlines 10 --width 40 \
        	--column $TS_SELF/files/col-name \
@@ -112,7 +127,6 @@ $TESTPROG --nlines 10 \
 	$TS_SELF/files/data-string-nl \
 	>> $TS_OUTPUT 2>&1
 ts_finalize_subtest
-
 
 ts_log "...done."
 ts_finalize
