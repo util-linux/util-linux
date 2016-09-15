@@ -687,7 +687,7 @@ static void fput_line_close(struct libscols_table *tb, int last)
 		fputs(last ? "}" : "},", tb->out);
 	}
 	if (!tb->no_linesep)
-		fputs(linesep(tb), tb->out);
+		fputs(last ? linesep(tb) : "\n", tb->out);
 	tb->indent_last_sep = 1;
 }
 
