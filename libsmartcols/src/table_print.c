@@ -37,12 +37,11 @@
  */
 #define titlepadding_symbol(tb)	((tb)->symbols->title_padding ? (tb)->symbols->title_padding : " ")
 #define branch_symbol(tb)	((tb)->symbols->branch ? (tb)->symbols->branch : "|-")
-#define vertical_symbol(tb)	((tb)->symbols->vert ? (tb)->symbols->vert : "|")
-#define right_symbol(tb)	((tb)->symbols->right ? (tb)->symbols->right : "-")
+#define vertical_symbol(tb)	((tb)->symbols->vert ? (tb)->symbols->vert : "| ")
+#define right_symbol(tb)	((tb)->symbols->right ? (tb)->symbols->right : "`-")
 
 #define cellpadding_symbol(tb)  ((tb)->padding_debug ? "." : \
 				 ((tb)->symbols->cell_padding ? (tb)->symbols->cell_padding: " "))
-
 
 /* This is private struct to work with output data */
 struct libscols_buffer {
@@ -186,7 +185,7 @@ static int line_ascii_art_to_buffer(struct libscols_table *tb,
 		return rc;
 
 	if (list_entry_is_last(&ln->ln_children, &ln->parent->ln_branch))
-		art = cellpadding_symbol(tb);
+		art = "  ";
 	else
 		art = vertical_symbol(tb);
 
