@@ -117,6 +117,21 @@ $TESTPROG --nlines 10 --width 40 \
 	>> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
+ts_init_subtest "wrap-tree"
+$TESTPROG --nlines 10 --width 45 \
+	--tree-id-column 1 \
+	--tree-parent-column 2 \
+	--column $TS_SELF/files/col-tree \
+	--column $TS_SELF/files/col-id \
+	--column $TS_SELF/files/col-parent \
+	--column $TS_SELF/files/col-wrap \
+	$TS_SELF/files/data-string \
+	$TS_SELF/files/data-id \
+	$TS_SELF/files/data-parent \
+	$TS_SELF/files/data-string-long \
+	>> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
 ts_init_subtest "wrapnl"
 $TESTPROG --nlines 10 \
        	--column $TS_SELF/files/col-name \
@@ -124,6 +139,21 @@ $TESTPROG --nlines 10 \
 	--column $TS_SELF/files/col-wrapnl \
 	$TS_SELF/files/data-string \
 	$TS_SELF/files/data-number \
+	$TS_SELF/files/data-string-nl \
+	>> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "wrapnl-tree"
+$TESTPROG --nlines 10 \
+	--tree-id-column 1 \
+	--tree-parent-column 2 \
+	--column $TS_SELF/files/col-tree \
+	--column $TS_SELF/files/col-id \
+	--column $TS_SELF/files/col-parent \
+	--column $TS_SELF/files/col-wrapnl \
+	$TS_SELF/files/data-string \
+	$TS_SELF/files/data-id \
+	$TS_SELF/files/data-parent \
 	$TS_SELF/files/data-string-nl \
 	>> $TS_OUTPUT 2>&1
 ts_finalize_subtest
