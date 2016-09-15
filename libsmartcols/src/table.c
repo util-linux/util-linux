@@ -1111,7 +1111,7 @@ int scols_sort_table(struct libscols_table *tb, struct libscols_column *cl)
  * @tb: table
  * @force: SCOLS_TERMFORCE_{NEVER,ALWAYS,AUTO}
  *
- * Forces library to use stdout as terminal, non-terminal or use automatical
+ * Forces library to use stdout as terminal, non-terminal or use automatic
  * detection (default).
  *
  * Returns: 0, a negative value in case of an error.
