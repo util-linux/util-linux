@@ -194,6 +194,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(" -m, --maxout                   fill all terminal width\n", out);
 	fputs(" -c, --column <file>            column definition\n", out);
 	fputs(" -n, --nlines <num>             number of lines\n", out);
+	fputs(" -J, --json                     JSON output format\n", out);
 	fputs(" -w, --width <num>              hardcode terminal width\n", out);
 	fputs(" -p, --tree-parent-column <n>   parent column\n", out);
 	fputs(" -i, --tree-id-column <n>       id column\n", out);
@@ -216,6 +217,7 @@ int main(int argc, char *argv[])
 		{ "width",  1, 0, 'w' },
 		{ "tree-parent-column", 1, 0, 'p' },
 		{ "tree-id-column",	1, 0, 'i' },
+		{ "json",   0, 0, 'J' },
 		{ "help",   0, 0, 'h' },
 		{ NULL, 0, 0, 0 },
 	};
@@ -228,7 +230,7 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 
-	while((c = getopt_long(argc, argv, "hc:i:mn:p:w:", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "hc:i:Jmn:p:w:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'c': /* add column from file */
 		{
@@ -249,6 +251,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'i':
 			id_col = strtou32_or_err(optarg, "failed to parse tree ID column");
+			break;
+		case 'J':
+			scols_table_enable_json(tb, 1);
+			scols_table_set_name(tb, "testtable");
 			break;
 		case 'm':
 			scols_table_enable_maxout(tb, TRUE);
