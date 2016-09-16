@@ -725,7 +725,7 @@ int scols_table_set_symbols(struct libscols_table *tb,
  *
  * Enable/disable line separator printing. This is useful if you want to
  * re-printing the same line more than once (e.g. progress bar). Don't use it
- * if you're not sure. This option may be ignored for JSON output.
+ * if you're not sure.
  *
  * Returns: 0 on success, negative number in case of an error.
  */
