@@ -203,5 +203,27 @@ $TESTPROG --nlines 10 \
 	>> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
+ts_init_subtest "raw"
+$TESTPROG --nlines 10 --raw \
+       	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-number \
+	--column $TS_SELF/files/col-trunc \
+	$TS_SELF/files/data-string \
+	$TS_SELF/files/data-number \
+	$TS_SELF/files/data-string-long \
+	>> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "export"
+$TESTPROG --nlines 10 --export \
+       	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-number \
+	--column $TS_SELF/files/col-trunc \
+	$TS_SELF/files/data-string \
+	$TS_SELF/files/data-number \
+	$TS_SELF/files/data-string-long \
+	>> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
 ts_log "...done."
 ts_finalize

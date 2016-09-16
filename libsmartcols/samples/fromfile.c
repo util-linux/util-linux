@@ -17,6 +17,7 @@
 #include "nls.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "optutils.h"
 
 #include "libsmartcols.h"
 
@@ -195,6 +196,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(" -c, --column <file>            column definition\n", out);
 	fputs(" -n, --nlines <num>             number of lines\n", out);
 	fputs(" -J, --json                     JSON output format\n", out);
+	fputs(" -r, --raw                      RAW output format\n", out);
+	fputs(" -E, --export                   use key=\"value\" output format\n", out); 
 	fputs(" -w, --width <num>              hardcode terminal width\n", out);
 	fputs(" -p, --tree-parent-column <n>   parent column\n", out);
 	fputs(" -i, --tree-id-column <n>       id column\n", out);
@@ -218,19 +221,29 @@ int main(int argc, char *argv[])
 		{ "tree-parent-column", 1, 0, 'p' },
 		{ "tree-id-column",	1, 0, 'i' },
 		{ "json",   0, 0, 'J' },
+		{ "raw",    0, 0, 'r' },
+		{ "export", 0, 0, 'E' },
 		{ "help",   0, 0, 'h' },
 		{ NULL, 0, 0, 0 },
 	};
 
-	setlocale(LC_ALL, "");	/* just to have enable UTF8 chars */
+	static const ul_excl_t excl[] = {       /* rows and cols in in ASCII order */
+		{ 'E', 'J', 'r' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
+	setlocale(LC_ALL, "");	/* just to have enable UTF8 chars */
 	scols_init_debug(0);
 
 	tb = scols_new_table();
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 
-	while((c = getopt_long(argc, argv, "hc:i:Jmn:p:w:", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "hc:Ei:Jmn:p:rw:", longopts, NULL)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch(c) {
 		case 'c': /* add column from file */
 		{
@@ -258,6 +271,12 @@ int main(int argc, char *argv[])
 			break;
 		case 'm':
 			scols_table_enable_maxout(tb, TRUE);
+			break;
+		case 'r':
+			scols_table_enable_raw(tb, TRUE);
+			break;
+		case 'E':
+			scols_table_enable_export(tb, TRUE);
 			break;
 		case 'n':
 			nlines = strtou32_or_err(optarg, "failed to parse number of lines");
