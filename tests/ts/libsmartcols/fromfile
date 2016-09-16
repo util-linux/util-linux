@@ -85,7 +85,7 @@ ts_finalize_subtest
 
 ts_init_subtest "trunc"
 $TESTPROG --nlines 10 --width 40 \
-       	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-number \
 	--column $TS_SELF/files/col-trunc \
 	$TS_SELF/files/data-string \
@@ -96,7 +96,7 @@ ts_finalize_subtest
 
 ts_init_subtest "right"
 $TESTPROG --nlines 10 \
-       	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-number \
 	--column $TS_SELF/files/col-string \
 	$TS_SELF/files/data-string \
@@ -107,7 +107,7 @@ ts_finalize_subtest
 
 ts_init_subtest "right-maxout"
 $TESTPROG --nlines 10 --maxout --width 80\
-       	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-number \
 	$TS_SELF/files/data-string \
 	$TS_SELF/files/data-number \
@@ -116,7 +116,7 @@ ts_finalize_subtest
 
 ts_init_subtest "strictwidth"
 $TESTPROG --nlines 10 \
-       	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-strict \
 	--column $TS_SELF/files/col-number \
 	$TS_SELF/files/data-string \
@@ -127,7 +127,7 @@ ts_finalize_subtest
 
 ts_init_subtest "noextremes"
 $TESTPROG --nlines 10 --width 45 \
-       	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-noextremes \
 	--column $TS_SELF/files/col-number \
 	--column $TS_SELF/files/col-name \
@@ -142,7 +142,7 @@ ts_finalize_subtest
 
 ts_init_subtest "hidden"
 $TESTPROG --nlines 10 \
-       	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-hidden \
 	--column $TS_SELF/files/col-number \
 	$TS_SELF/files/data-string \
@@ -205,7 +205,7 @@ ts_finalize_subtest
 
 ts_init_subtest "raw"
 $TESTPROG --nlines 10 --raw \
-       	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-number \
 	--column $TS_SELF/files/col-trunc \
 	$TS_SELF/files/data-string \
@@ -216,7 +216,18 @@ ts_finalize_subtest
 
 ts_init_subtest "export"
 $TESTPROG --nlines 10 --export \
-       	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-name \
+	--column $TS_SELF/files/col-number \
+	--column $TS_SELF/files/col-trunc \
+	$TS_SELF/files/data-string \
+	$TS_SELF/files/data-number \
+	$TS_SELF/files/data-string-long \
+	>> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "column-separator"
+$TESTPROG --nlines 10 --colsep \| \
+	--column $TS_SELF/files/col-name \
 	--column $TS_SELF/files/col-number \
 	--column $TS_SELF/files/col-trunc \
 	$TS_SELF/files/data-string \

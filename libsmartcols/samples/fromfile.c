@@ -197,7 +197,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(" -n, --nlines <num>             number of lines\n", out);
 	fputs(" -J, --json                     JSON output format\n", out);
 	fputs(" -r, --raw                      RAW output format\n", out);
-	fputs(" -E, --export                   use key=\"value\" output format\n", out); 
+	fputs(" -E, --export                   use key=\"value\" output format\n", out);
+	fputs(" -C, --colsep <str>             set columns separator\n", out);
 	fputs(" -w, --width <num>              hardcode terminal width\n", out);
 	fputs(" -p, --tree-parent-column <n>   parent column\n", out);
 	fputs(" -i, --tree-id-column <n>       id column\n", out);
@@ -223,6 +224,7 @@ int main(int argc, char *argv[])
 		{ "json",   0, 0, 'J' },
 		{ "raw",    0, 0, 'r' },
 		{ "export", 0, 0, 'E' },
+		{ "colsep",  1, 0, 'C' },
 		{ "help",   0, 0, 'h' },
 		{ NULL, 0, 0, 0 },
 	};
@@ -240,7 +242,7 @@ int main(int argc, char *argv[])
 	if (!tb)
 		err(EXIT_FAILURE, "failed to create output table");
 
-	while((c = getopt_long(argc, argv, "hc:Ei:Jmn:p:rw:", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "hCc:Ei:Jmn:p:rw:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -277,6 +279,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'E':
 			scols_table_enable_export(tb, TRUE);
+			break;
+		case 'C':
+			scols_table_set_column_separator(tb, optarg);
 			break;
 		case 'n':
 			nlines = strtou32_or_err(optarg, "failed to parse number of lines");
