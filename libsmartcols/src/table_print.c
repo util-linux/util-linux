@@ -637,7 +637,6 @@ static void fput_table_close(struct libscols_table *tb)
 		tb->indent--;
 		fputs(linesep(tb), tb->out);
 		fputc('}', tb->out);
-		fputs(linesep(tb), tb->out);
 		tb->indent_last_sep = 1;
 	}
 }
@@ -678,16 +677,18 @@ static void fput_line_open(struct libscols_table *tb)
 	tb->indent++;
 }
 
-static void fput_line_close(struct libscols_table *tb, int last)
+static void fput_line_close(struct libscols_table *tb, int last, int last_in_table)
 {
 	tb->indent--;
 	if (scols_table_is_json(tb)) {
 		if (tb->indent_last_sep)
 			fput_indent(tb);
 		fputs(last ? "}" : "},", tb->out);
-	}
-	if (!tb->no_linesep)
 		fputs(linesep(tb), tb->out);
+
+	} else if (tb->no_linesep == 0 && last_in_table == 0)
+		fputs(linesep(tb), tb->out);
+
 	tb->indent_last_sep = 1;
 }
 
@@ -867,9 +868,11 @@ static int print_range(	struct libscols_table *tb,
 
 	while (rc == 0 && scols_table_next_line(tb, itr, &ln) == 0) {
 
+		int last = scols_iter_is_last(itr);
+
 		fput_line_open(tb);
 		rc = print_line(tb, ln, buf);
-		fput_line_close(tb, scols_iter_is_last(itr));
+		fput_line_close(tb, last, last);
 
 		if (end && ln == end)
 			break;
@@ -891,38 +894,39 @@ static int print_table(struct libscols_table *tb, struct libscols_buffer *buf)
 static int print_tree_line(struct libscols_table *tb,
 			   struct libscols_line *ln,
 			   struct libscols_buffer *buf,
-			   int last)
+			   int last,
+			   int last_in_table)
 {
 	int rc;
-	struct list_head *p;
 
+	/* print the line */
 	fput_line_open(tb);
-
 	rc = print_line(tb, ln, buf);
 	if (rc)
 		goto done;
 
-	if (list_empty(&ln->ln_branch)) {
-		fput_line_close(tb, last);
-		return 0;
+	/* print children */
+	if (!list_empty(&ln->ln_branch)) {
+		struct list_head *p;
+
+		fput_children_open(tb);
+
+		/* print all children */
+		list_for_each(p, &ln->ln_branch) {
+			struct libscols_line *chld =
+					list_entry(p, struct libscols_line, ln_children);
+			int last_child = p->next == &ln->ln_branch;
+
+			rc = print_tree_line(tb, chld, buf, last_child, last_in_table && last_child);
+			if (rc)
+				goto done;
+		}
+
+		fput_children_close(tb);
 	}
 
-	fput_children_open(tb);
-
-	/* print all children */
-	list_for_each(p, &ln->ln_branch) {
-		struct libscols_line *chld =
-				list_entry(p, struct libscols_line, ln_children);
-
-		rc = print_tree_line(tb, chld, buf, p->next == &ln->ln_branch);
-		if (rc)
-			goto done;
-	}
-
-	fput_children_close(tb);
-
-	if (scols_table_is_json(tb))
-		fput_line_close(tb, last);
+	if (list_empty(&ln->ln_branch) || scols_table_is_json(tb))
+		fput_line_close(tb, last, last_in_table);
 done:
 	return rc;
 }
@@ -947,7 +951,7 @@ static int print_tree(struct libscols_table *tb, struct libscols_buffer *buf)
 	while (rc == 0 && scols_table_next_line(tb, &itr, &ln) == 0) {
 		if (ln->parent)
 			continue;
-		rc = print_tree_line(tb, ln, buf, ln == last);
+		rc = print_tree_line(tb, ln, buf, ln == last, ln == last);
 	}
 
 	return rc;
@@ -1515,15 +1519,7 @@ int scols_table_print_range_to_string(	struct libscols_table *tb,
 #endif
 }
 
-/**
- * scols_print_table:
- * @tb: table
- *
- * Prints the table to the output stream.
- *
- * Returns: 0, a negative value in case of an error.
- */
-int scols_print_table(struct libscols_table *tb)
+static int __scols_print_table(struct libscols_table *tb)
 {
 	int rc = 0;
 	struct libscols_buffer *buf;
@@ -1564,6 +1560,23 @@ done:
 }
 
 /**
+ * scols_print_table:
+ * @tb: table
+ *
+ * Prints the table to the output stream and terminate by \n.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_print_table(struct libscols_table *tb)
+{
+	int rc = __scols_print_table(tb);
+
+	if (rc == 0)
+		fputc('\n', tb->out);
+	return rc;
+}
+
+/**
  * scols_print_table_to_string:
  * @tb: table
  * @data: pointer to the beginning of a memory area to print to
@@ -1591,7 +1604,7 @@ int scols_print_table_to_string(struct libscols_table *tb, char **data)
 
 	old_stream = scols_table_get_stream(tb);
 	scols_table_set_stream(tb, stream);
-	rc = scols_print_table(tb);
+	rc = __scols_print_table(tb);
 	fclose(stream);
 	scols_table_set_stream(tb, old_stream);
 
