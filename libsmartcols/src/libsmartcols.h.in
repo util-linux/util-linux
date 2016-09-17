@@ -113,12 +113,12 @@ extern int scols_get_library_version(const char **ver_string);
 extern struct libscols_symbols *scols_new_symbols(void);
 extern void scols_ref_symbols(struct libscols_symbols *sy);
 extern void scols_unref_symbols(struct libscols_symbols *sy);
-extern struct libscols_symbols *scols_copy_symbols(const struct libscols_symbols *sb);
-extern int scols_symbols_set_branch(struct libscols_symbols *sb, const char *str);
-extern int scols_symbols_set_vertical(struct libscols_symbols *sb, const char *str);
-extern int scols_symbols_set_right(struct libscols_symbols *sb, const char *str);
-extern int scols_symbols_set_title_padding(struct libscols_symbols *sb, const char *str);
-extern int scols_symbols_set_cell_padding(struct libscols_symbols *sb, const char *str);
+extern struct libscols_symbols *scols_copy_symbols(const struct libscols_symbols *sy);
+extern int scols_symbols_set_branch(struct libscols_symbols *sy, const char *str);
+extern int scols_symbols_set_vertical(struct libscols_symbols *sy, const char *str);
+extern int scols_symbols_set_right(struct libscols_symbols *sy, const char *str);
+extern int scols_symbols_set_title_padding(struct libscols_symbols *sy, const char *str);
+extern int scols_symbols_set_cell_padding(struct libscols_symbols *sy, const char *str);
 
 /* cell.c */
 extern int scols_reset_cell(struct libscols_cell *ce);
