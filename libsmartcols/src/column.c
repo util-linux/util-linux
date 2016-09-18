@@ -29,7 +29,7 @@
  *
  * Allocates space for a new column.
  *
- * Returns: a pointer to a new struct libscols_cell instance, NULL in case of an ENOMEM error.
+ * Returns: a pointer to a new struct libscols_column instance, NULL in case of an ENOMEM error.
  */
 struct libscols_column *scols_new_column(void)
 {
