@@ -313,7 +313,7 @@ const char *scols_line_get_color(struct libscols_line *ln)
  * scols_line_get_ncells:
  * @ln: a pointer to a struct libscols_line instance
  *
- * Returns: @ln's number of cells or a negative value in case of an error.
+ * Returns: number of cells
  */
 size_t scols_line_get_ncells(struct libscols_line *ln)
 {
