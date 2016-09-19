@@ -356,7 +356,7 @@ struct libscols_cell *scols_line_get_column_cell(
 
 /**
  * scols_line_set_data:
- * @ln: a pointer to a struct libscols_cell instance
+ * @ln: a pointer to a struct libscols_line instance
  * @n: number of the cell, whose data is to be set
  * @data: actual data to set
  *
@@ -373,7 +373,7 @@ int scols_line_set_data(struct libscols_line *ln, size_t n, const char *data)
 
 /**
  * scols_line_set_column_data:
- * @ln: a pointer to a struct libscols_cell instance
+ * @ln: a pointer to a struct libscols_line instance
  * @cl: column, whose data is to be set
  * @data: actual data to set
  *
@@ -392,7 +392,7 @@ int scols_line_set_column_data(struct libscols_line *ln,
 
 /**
  * scols_line_refer_data:
- * @ln: a pointer to a struct libscols_cell instance
+ * @ln: a pointer to a struct libscols_line instance
  * @n: number of the cell which will refer to @data
  * @data: actual data to refer to
  *
@@ -409,7 +409,7 @@ int scols_line_refer_data(struct libscols_line *ln, size_t n, char *data)
 
 /**
  * scols_line_refer_column_data:
- * @ln: a pointer to a struct libscols_cell instance
+ * @ln: a pointer to a struct libscols_line instance
  * @cl: column, whose data is to be set
  * @data: actual data to refer to
  *
@@ -428,7 +428,7 @@ int scols_line_refer_column_data(struct libscols_line *ln,
 
 /**
  * scols_copy_line:
- * @ln: a pointer to a struct libscols_cell instance
+ * @ln: a pointer to a struct libscols_line instance
  *
  * Returns: A newly allocated copy of @ln, NULL in case of an error.
  */
