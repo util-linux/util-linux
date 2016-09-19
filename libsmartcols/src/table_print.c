@@ -1520,7 +1520,7 @@ int scols_table_print_range_to_string(	struct libscols_table *tb,
 #endif
 }
 
-static int __scols_print_table(struct libscols_table *tb)
+static int __scols_print_table(struct libscols_table *tb, int *is_empty)
 {
 	int rc = 0;
 	struct libscols_buffer *buf;
@@ -1529,9 +1529,17 @@ static int __scols_print_table(struct libscols_table *tb)
 		return -EINVAL;
 
 	DBG(TAB, ul_debugobj(tb, "printing"));
+	if (is_empty)
+		*is_empty = 0;
 
+	if (list_empty(&tb->tb_columns)) {
+		DBG(TAB, ul_debugobj(tb, "error -- no columns"));
+		return -EINVAL;
+	}
 	if (list_empty(&tb->tb_lines)) {
-		DBG(TAB, ul_debugobj(tb, "ignore -- empty table"));
+		DBG(TAB, ul_debugobj(tb, "ignore -- no lines"));
+		if (is_empty)
+			*is_empty = 1;
 		return 0;
 	}
 
@@ -1570,9 +1578,10 @@ done:
  */
 int scols_print_table(struct libscols_table *tb)
 {
-	int rc = __scols_print_table(tb);
+	int empty = 0;
+	int rc = __scols_print_table(tb, &empty);
 
-	if (rc == 0)
+	if (rc == 0 && !empty)
 		fputc('\n', tb->out);
 	return rc;
 }
@@ -1605,7 +1614,7 @@ int scols_print_table_to_string(struct libscols_table *tb, char **data)
 
 	old_stream = scols_table_get_stream(tb);
 	scols_table_set_stream(tb, stream);
-	rc = __scols_print_table(tb);
+	rc = __scols_print_table(tb, NULL);
 	fclose(stream);
 	scols_table_set_stream(tb, old_stream);
 

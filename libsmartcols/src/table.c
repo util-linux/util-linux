@@ -448,7 +448,7 @@ struct libscols_column *scols_table_get_column(struct libscols_table *tb,
  */
 int scols_table_add_line(struct libscols_table *tb, struct libscols_line *ln)
 {
-	if (!tb || !ln)
+	if (!tb || !ln || tb->ncols == 0)
 		return -EINVAL;
 
 	if (tb->ncols > ln->ncells) {
