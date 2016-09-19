@@ -336,11 +336,11 @@ int scols_table_next_column(struct libscols_table *tb,
  * scols_table_get_ncols:
  * @tb: table
  *
- * Returns: the ncols table member, a negative number in case of an error.
+ * Returns: the ncols table member
  */
-int scols_table_get_ncols(struct libscols_table *tb)
+size_t scols_table_get_ncols(struct libscols_table *tb)
 {
-	return tb ? (int)tb->ncols : -EINVAL;
+	return tb->ncols;
 }
 
 /**
@@ -349,9 +349,9 @@ int scols_table_get_ncols(struct libscols_table *tb)
  *
  * Returns: the nlines table member, a negative number in case of an error.
  */
-int scols_table_get_nlines(struct libscols_table *tb)
+size_t scols_table_get_nlines(struct libscols_table *tb)
 {
-	return tb ? (int)tb->nlines : -EINVAL;
+	return tb->nlines;
 }
 
 /**
@@ -384,7 +384,7 @@ int scols_table_set_stream(struct libscols_table *tb, FILE *stream)
  */
 FILE *scols_table_get_stream(struct libscols_table *tb)
 {
-	return tb ? tb->out: NULL;
+	return tb->out;
 }
 
 /**
@@ -495,7 +495,6 @@ int scols_table_remove_line(struct libscols_table *tb,
  */
 void scols_table_remove_lines(struct libscols_table *tb)
 {
-	assert(tb);
 	if (!tb)
 		return;
 
@@ -919,7 +918,7 @@ int scols_table_enable_nowrap(struct libscols_table *tb, int enable)
  */
 int scols_table_colors_wanted(struct libscols_table *tb)
 {
-	return tb && tb->colors_wanted;
+	return tb->colors_wanted;
 }
 
 /**
@@ -930,7 +929,7 @@ int scols_table_colors_wanted(struct libscols_table *tb)
  */
 int scols_table_is_empty(struct libscols_table *tb)
 {
-	return !tb || !tb->nlines;
+	return !tb->nlines;
 }
 
 /**
@@ -941,7 +940,7 @@ int scols_table_is_empty(struct libscols_table *tb)
  */
 int scols_table_is_ascii(struct libscols_table *tb)
 {
-	return tb && tb->ascii;
+	return tb->ascii;
 }
 
 /**
@@ -952,7 +951,7 @@ int scols_table_is_ascii(struct libscols_table *tb)
  */
 int scols_table_is_noheadings(struct libscols_table *tb)
 {
-	return tb && tb->no_headings;
+	return tb->no_headings;
 }
 
 /**
@@ -963,7 +962,7 @@ int scols_table_is_noheadings(struct libscols_table *tb)
  */
 int scols_table_is_export(struct libscols_table *tb)
 {
-	return tb && tb->format == SCOLS_FMT_EXPORT;
+	return tb->format == SCOLS_FMT_EXPORT;
 }
 
 /**
@@ -974,7 +973,7 @@ int scols_table_is_export(struct libscols_table *tb)
  */
 int scols_table_is_raw(struct libscols_table *tb)
 {
-	return tb && tb->format == SCOLS_FMT_RAW;
+	return tb->format == SCOLS_FMT_RAW;
 }
 
 /**
@@ -987,7 +986,7 @@ int scols_table_is_raw(struct libscols_table *tb)
  */
 int scols_table_is_json(struct libscols_table *tb)
 {
-	return tb && tb->format == SCOLS_FMT_JSON;
+	return tb->format == SCOLS_FMT_JSON;
 }
 
 
@@ -995,11 +994,11 @@ int scols_table_is_json(struct libscols_table *tb)
  * scols_table_is_maxout
  * @tb: table
  *
- * Returns: 1 if output maximization is enabled, negative value in case of an error.
+ * Returns: 1 if output maximization is enabled or 0
  */
 int scols_table_is_maxout(struct libscols_table *tb)
 {
-	return tb && tb->maxout;
+	return tb->maxout;
 }
 
 /**
@@ -1010,7 +1009,7 @@ int scols_table_is_maxout(struct libscols_table *tb)
  */
 int scols_table_is_tree(struct libscols_table *tb)
 {
-	return tb && tb->ntreecols > 0;
+	return tb->ntreecols > 0;
 }
 
 /**
@@ -1050,8 +1049,6 @@ int scols_table_set_line_separator(struct libscols_table *tb, const char *sep)
  */
 char *scols_table_get_column_separator(struct libscols_table *tb)
 {
-	if (!tb)
-		return NULL;
 	return tb->colsep;
 }
 
@@ -1063,8 +1060,6 @@ char *scols_table_get_column_separator(struct libscols_table *tb)
  */
 char *scols_table_get_line_separator(struct libscols_table *tb)
 {
-	if (!tb)
-		return NULL;
 	return tb->linesep;
 
 }

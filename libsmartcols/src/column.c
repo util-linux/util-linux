@@ -140,8 +140,7 @@ int scols_column_set_whint(struct libscols_column *cl, double whint)
  */
 double scols_column_get_whint(struct libscols_column *cl)
 {
-	assert(cl);
-	return cl ? cl->width_hint : -EINVAL;
+	return cl->width_hint;
 }
 
 /**
@@ -177,8 +176,7 @@ int scols_column_set_flags(struct libscols_column *cl, int flags)
  */
 int scols_column_get_flags(struct libscols_column *cl)
 {
-	assert(cl);
-	return cl ? cl->flags : -EINVAL;
+	return cl->flags;
 }
 
 /**
@@ -190,7 +188,7 @@ int scols_column_get_flags(struct libscols_column *cl)
  */
 struct libscols_cell *scols_column_get_header(struct libscols_column *cl)
 {
-	return cl ? &cl->header : NULL;
+	return &cl->header;
 }
 
 /**
@@ -226,8 +224,7 @@ int scols_column_set_color(struct libscols_column *cl, const char *co)
  */
 const char *scols_column_get_color(struct libscols_column *cl)
 {
-	assert(cl);
-	return cl ? cl->color : NULL;
+	return cl->color;
 }
 
 
@@ -259,15 +256,13 @@ int scols_column_set_cmpfunc(struct libscols_column *cl,
  *
  * Gets the value of @cl's flag hidden.
  *
- * Returns: hidden flag value, negative value in case of an error.
+ * Returns: 0 or 1
  *
  * Since: 2.27
  */
 int scols_column_is_hidden(struct libscols_column *cl)
 {
-	if (!cl)
-		return -EINVAL;
-	return cl->flags & SCOLS_FL_HIDDEN;
+	return cl->flags & SCOLS_FL_HIDDEN ? 1 : 0;
 }
 
 /**
@@ -276,13 +271,11 @@ int scols_column_is_hidden(struct libscols_column *cl)
  *
  * Gets the value of @cl's flag trunc.
  *
- * Returns: trunc flag value, negative value in case of an error.
+ * Returns: 0 or 1
  */
 int scols_column_is_trunc(struct libscols_column *cl)
 {
-	if (!cl)
-		return -EINVAL;
-	return cl->flags & SCOLS_FL_TRUNC;
+	return cl->flags & SCOLS_FL_TRUNC ? 1 : 0;
 }
 /**
  * scols_column_is_tree:
@@ -290,13 +283,11 @@ int scols_column_is_trunc(struct libscols_column *cl)
  *
  * Gets the value of @cl's flag tree.
  *
- * Returns: tree flag value, negative value in case of an error.
+ * Returns: 0 or 1
  */
 int scols_column_is_tree(struct libscols_column *cl)
 {
-	if (!cl)
-		return -EINVAL;
-	return cl->flags & SCOLS_FL_TREE;
+	return cl->flags & SCOLS_FL_TREE ? 1 : 0;
 }
 /**
  * scols_column_is_right:
@@ -304,13 +295,11 @@ int scols_column_is_tree(struct libscols_column *cl)
  *
  * Gets the value of @cl's flag right.
  *
- * Returns: right flag value, negative value in case of an error.
+ * Returns: 0 or 1
  */
 int scols_column_is_right(struct libscols_column *cl)
 {
-	if (!cl)
-		return -EINVAL;
-	return cl->flags & SCOLS_FL_RIGHT;
+	return cl->flags & SCOLS_FL_RIGHT ? 1 : 0;
 }
 /**
  * scols_column_is_strict_width:
@@ -318,13 +307,11 @@ int scols_column_is_right(struct libscols_column *cl)
  *
  * Gets the value of @cl's flag strict_width.
  *
- * Returns: strict_width flag value, negative value in case of an error.
+ * Returns: 0 or 1
  */
 int scols_column_is_strict_width(struct libscols_column *cl)
 {
-	if (!cl)
-		return -EINVAL;
-	return cl->flags & SCOLS_FL_STRICTWIDTH;
+	return cl->flags & SCOLS_FL_STRICTWIDTH ? 1 : 0;
 }
 /**
  * scols_column_is_noextremes:
@@ -332,13 +319,11 @@ int scols_column_is_strict_width(struct libscols_column *cl)
  *
  * Gets the value of @cl's flag no_extremes.
  *
- * Returns: no_extremes flag value, negative value in case of an error.
+ * Returns: 0 or 1
  */
 int scols_column_is_noextremes(struct libscols_column *cl)
 {
-	if (!cl)
-		return -EINVAL;
-	return cl->flags & SCOLS_FL_NOEXTREMES;
+	return cl->flags & SCOLS_FL_NOEXTREMES ? 1 : 0;
 }
 /**
  * scols_column_is_wrap:
@@ -346,15 +331,13 @@ int scols_column_is_noextremes(struct libscols_column *cl)
  *
  * Gets the value of @cl's flag wrap.
  *
- * Returns: wrap flag value, negative value in case of an error.
+ * Returns: 0 or 1
  *
  * Since: 2.28
  */
 int scols_column_is_wrap(struct libscols_column *cl)
 {
-	if (!cl)
-		return -EINVAL;
-	return cl->flags & SCOLS_FL_WRAP;
+	return cl->flags & SCOLS_FL_WRAP ? 1 : 0;
 }
 /**
  * scols_column_is_wrapnl:
@@ -362,13 +345,11 @@ int scols_column_is_wrap(struct libscols_column *cl)
  *
  * Gets the value of @cl's flag wrap.
  *
- * Returns: wrapnl flag value, negative value in case of an error.
+ * Returns: 0 or 1
  *
  * Since: 2.29
  */
 int scols_column_is_wrapnl(struct libscols_column *cl)
 {
-	if (!cl)
-		return -EINVAL;
-	return cl->flags & SCOLS_FL_WRAPNL;
+	return cl->flags & SCOLS_FL_WRAPNL ? 1 : 0;
 }

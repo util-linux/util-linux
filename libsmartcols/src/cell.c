@@ -120,7 +120,7 @@ int scols_cell_set_userdata(struct libscols_cell *ce, void *data)
  */
 void *scols_cell_get_userdata(struct libscols_cell *ce)
 {
-	return ce ? ce->userdata : NULL;
+	return ce->userdata;
 }
 
 /**
@@ -182,7 +182,7 @@ int scols_cell_set_color(struct libscols_cell *ce, const char *co)
  */
 const char *scols_cell_get_color(const struct libscols_cell *ce)
 {
-	return ce ? ce->color : NULL;
+	return ce->color;
 }
 
 /**
@@ -207,11 +207,11 @@ int scols_cell_set_flags(struct libscols_cell *ce, int flags)
  * scols_cell_get_flags:
  * @ce: a pointer to a struct libscols_cell instance
  *
- * Returns: the current flags or -1 in case of an error.
+ * Returns: the current flags
  */
 int scols_cell_get_flags(const struct libscols_cell *ce)
 {
-	return ce ? ce->flags : -1;
+	return ce->flags;
 }
 
 /**

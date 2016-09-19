@@ -168,12 +168,11 @@ int scols_line_set_userdata(struct libscols_line *ln, void *data)
  * scols_line_get_userdata:
  * @ln: a pointer to a struct libscols_line instance
  *
- * Returns: 0, a negative value in case of an error.
+ * Returns: user data
  */
 void *scols_line_get_userdata(struct libscols_line *ln)
 {
-	assert(ln);
-	return ln ? ln->userdata : NULL;
+	return ln->userdata;
 }
 
 /**
@@ -307,18 +306,18 @@ int scols_line_set_color(struct libscols_line *ln, const char *co)
  */
 const char *scols_line_get_color(struct libscols_line *ln)
 {
-	return ln ? ln->color : NULL;
+	return ln->color;
 }
 
 /**
  * scols_line_get_ncells:
  * @ln: a pointer to a struct libscols_line instance
  *
- * Returns: @ln's number of cells
+ * Returns: @ln's number of cells or a negative value in case of an error.
  */
 size_t scols_line_get_ncells(struct libscols_line *ln)
 {
-	return ln ? ln->ncells : 0;
+	return ln->ncells;
 }
 
 /**
