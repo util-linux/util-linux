@@ -47,31 +47,7 @@
 #include "optutils.h"
 #include "mangle.h"
 
-/* flags */
-enum {
-	FL_EVALUATE	= (1 << 1),
-	FL_CANONICALIZE = (1 << 2),
-	FL_FIRSTONLY	= (1 << 3),
-	FL_INVERT	= (1 << 4),
-	FL_NOSWAPMATCH	= (1 << 6),
-	FL_NOFSROOT	= (1 << 7),
-	FL_SUBMOUNTS	= (1 << 8),
-	FL_POLL		= (1 << 9),
-	FL_DF		= (1 << 10),
-	FL_ALL		= (1 << 11),
-	FL_UNIQ		= (1 << 12),
-	FL_BYTES	= (1 << 13),
-	FL_NOCACHE	= (1 << 14),
-	FL_STRICTTARGET = (1 << 15),
-
-	/* basic table settings */
-	FL_ASCII	= (1 << 20),
-	FL_RAW		= (1 << 21),
-	FL_NOHEADINGS	= (1 << 22),
-	FL_EXPORT	= (1 << 23),
-	FL_TREE		= (1 << 24),
-	FL_JSON		= (1 << 25),
-};
+#include "findmnt.h"
 
 /* column IDs */
 enum {
@@ -166,17 +142,16 @@ static inline size_t err_columns_index(size_t arysz, size_t idx)
 #define add_column(ary, n, id)	\
 		((ary)[ err_columns_index(ARRAY_SIZE(ary), (n)) ] = (id))
 
-/* global flags */
-static int flags;
-
-
 /* poll actions (parsed --poll=<list> */
 #define FINDMNT_NACTIONS	4		/* mount, umount, move, remount */
 static int actions[FINDMNT_NACTIONS];
 static int nactions;
 
-/* libmount cache */
-static struct libmnt_cache *cache;
+/* global (accessed from findmnt-verify.c too) */
+int flags;
+int parse_nerrors;
+struct libmnt_cache *cache;
+
 
 #ifdef HAVE_LIBUDEV
 struct udev *udev;
@@ -315,7 +290,7 @@ static int is_tabdiff_column(int id)
 /*
  * "findmnt" without any filter
  */
-static int is_listall_mode(void)
+int is_listall_mode(void)
 {
 	if ((flags & FL_DF) && !(flags & FL_ALL))
 		return 0;
@@ -805,6 +780,7 @@ static int parser_errcb(struct libmnt_table *tb __attribute__ ((__unused__)),
 			const char *filename, int line)
 {
 	warnx(_("%s: parse error at line %d -- ignored"), filename, line);
+	++parse_nerrors;
 	return 1;
 }
 
@@ -973,7 +949,7 @@ static int match_func(struct libmnt_fs *fs,
 }
 
 /* iterate over filesystems in @tb */
-static struct libmnt_fs *get_next_fs(struct libmnt_table *tb,
+struct libmnt_fs *get_next_fs(struct libmnt_table *tb,
 				     struct libmnt_iter *itr)
 {
 	struct libmnt_fs *fs = NULL;
@@ -1254,7 +1230,12 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -t, --types <list>     limit the set of filesystems by FS types\n"), out);
 	fputs(_(" -U, --uniq             ignore filesystems with duplicate target\n"), out);
 	fputs(_(" -u, --notruncate       don't truncate text in columns\n"), out);
-	fputs(_(" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"), out);
+	fputs(_(" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"), out);	
+
+	fputc('\n', out);
+	fputs(_(" -x, --verify           verify mount table content (default is fstab)\n"), out);
+	fputs(_("     --verbose          print more details\n"), out);
+	fputc('\n', out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -1275,12 +1256,17 @@ int main(int argc, char *argv[])
 	struct libmnt_table *tb = NULL;
 	char **tabfiles = NULL;
 	int direction = MNT_ITER_FORWARD;
+	int verify = 0;
 	int c, rc = -1, timeout = -1;
 	int ntabfiles = 0, tabtype = 0;
 	char *outarg = NULL;
 	size_t i;
 
 	struct libscols_table *table = NULL;
+
+	enum {
+                FINDMNT_OPT_VERBOSE = CHAR_MAX + 1
+	};
 
 	static const struct option longopts[] = {
 	    { "all",          0, 0, 'A' },
@@ -1316,18 +1302,20 @@ int main(int argc, char *argv[])
 	    { "target",       1, 0, 'T' },
 	    { "timeout",      1, 0, 'w' },
 	    { "uniq",         0, 0, 'U' },
+	    { "verify",       0, 0, 'x' },
 	    { "version",      0, 0, 'V' },
-
+	    { "verbose",      0, 0, FINDMNT_OPT_VERBOSE },
 	    { NULL,           0, 0, 0 }
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
 		{ 'C', 'c'},                    /* [no]canonicalize */
 		{ 'C', 'e' },			/* nocanonicalize, evaluate */
-		{ 'J', 'P', 'r' },		/* json,pairs,raw */
+		{ 'J', 'P', 'r','x' },		/* json,pairs,raw,verify */
 		{ 'M', 'T' },			/* mountpoint, target */
 		{ 'N','k','m','s' },		/* task,kernel,mtab,fstab */
-		{ 'P','l','r' },		/* pairs,list,raw */
+		{ 'P','l','r','x' },		/* pairs,list,raw,verify */
+		{ 'p','x' },			/* poll,verify */
 		{ 'm','p','s' },		/* mtab,poll,fstab */
 		{ 0 }
 	};
@@ -1342,7 +1330,7 @@ int main(int argc, char *argv[])
 	flags |= FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"AabCcDd:ehiJfF:o:O:p::PklmM:nN:rst:uvRS:T:Uw:V",
+				"AabCcDd:ehiJfF:o:O:p::PklmM:nN:rst:uvRS:T:Uw:Vx",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1474,6 +1462,12 @@ int main(int argc, char *argv[])
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
+		case 'x':
+			verify = 1;
+			break;
+		case FINDMNT_OPT_VERBOSE:
+			flags |= FL_VERBOSE;
+			break;
 		default:
 			usage(stderr);
 			break;
@@ -1506,7 +1500,7 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 
 	if (!tabtype)
-		tabtype = TABTYPE_KERNEL;
+		tabtype = verify ? TABTYPE_FSTAB : TABTYPE_KERNEL;
 
 	if ((flags & FL_POLL) && ntabfiles > 1)
 		errx(EXIT_FAILURE, _("--poll accepts only one file, but more specified by --tab-file"));
@@ -1548,7 +1542,6 @@ int main(int argc, char *argv[])
 	 * initialize libmount
 	 */
 	mnt_init_debug(0);
-	scols_init_debug(0);
 
 	tb = parse_tabfiles(tabfiles, ntabfiles, tabtype);
 	if (!tb)
@@ -1575,9 +1568,15 @@ int main(int argc, char *argv[])
 	if (flags & FL_UNIQ)
 		mnt_table_uniq_fs(tb, MNT_UNIQ_KEEPTREE, uniq_fs_target_cmp);
 
+	if (verify) {
+		rc = verify_table(tb);
+		goto leave;
+	}
+
 	/*
-	 * initialize output formatting (libsmartcols.h)
+	 * initialize libsmartcols
 	 */
+	scols_init_debug(0);
 	table = scols_new_table();
 	if (!table) {
 		warn(_("failed to initialize output table"));

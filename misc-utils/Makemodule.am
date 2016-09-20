@@ -143,7 +143,9 @@ bin_PROGRAMS += findmnt
 dist_man_MANS += misc-utils/findmnt.8
 findmnt_LDADD = $(LDADD) libmount.la libcommon.la libsmartcols.la
 findmnt_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir) -I$(ul_libsmartcols_incdir)
-findmnt_SOURCES = misc-utils/findmnt.c
+findmnt_SOURCES = misc-utils/findmnt.c \
+		  misc-utils/findmnt-verify.c \
+		  misc-utils/findmnt.h
 if HAVE_UDEV
 findmnt_LDADD += -ludev
 endif
