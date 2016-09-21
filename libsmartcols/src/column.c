@@ -138,7 +138,7 @@ int scols_column_set_whint(struct libscols_column *cl, double whint)
  *
  * Returns: The width hint of column @cl, a negative value in case of an error.
  */
-double scols_column_get_whint(struct libscols_column *cl)
+double scols_column_get_whint(const struct libscols_column *cl)
 {
 	return cl->width_hint;
 }
@@ -174,7 +174,7 @@ int scols_column_set_flags(struct libscols_column *cl, int flags)
  *
  * Returns: The flag mask of @cl, a negative value in case of an error.
  */
-int scols_column_get_flags(struct libscols_column *cl)
+int scols_column_get_flags(const struct libscols_column *cl)
 {
 	return cl->flags;
 }
@@ -222,7 +222,7 @@ int scols_column_set_color(struct libscols_column *cl, const char *co)
  *
  * Returns: The current color setting of the column @cl.
  */
-const char *scols_column_get_color(struct libscols_column *cl)
+const char *scols_column_get_color(const struct libscols_column *cl)
 {
 	return cl->color;
 }
@@ -260,7 +260,7 @@ int scols_column_set_cmpfunc(struct libscols_column *cl,
  *
  * Since: 2.27
  */
-int scols_column_is_hidden(struct libscols_column *cl)
+int scols_column_is_hidden(const struct libscols_column *cl)
 {
 	return cl->flags & SCOLS_FL_HIDDEN ? 1 : 0;
 }
@@ -273,7 +273,7 @@ int scols_column_is_hidden(struct libscols_column *cl)
  *
  * Returns: 0 or 1
  */
-int scols_column_is_trunc(struct libscols_column *cl)
+int scols_column_is_trunc(const struct libscols_column *cl)
 {
 	return cl->flags & SCOLS_FL_TRUNC ? 1 : 0;
 }
@@ -285,7 +285,7 @@ int scols_column_is_trunc(struct libscols_column *cl)
  *
  * Returns: 0 or 1
  */
-int scols_column_is_tree(struct libscols_column *cl)
+int scols_column_is_tree(const struct libscols_column *cl)
 {
 	return cl->flags & SCOLS_FL_TREE ? 1 : 0;
 }
@@ -297,7 +297,7 @@ int scols_column_is_tree(struct libscols_column *cl)
  *
  * Returns: 0 or 1
  */
-int scols_column_is_right(struct libscols_column *cl)
+int scols_column_is_right(const struct libscols_column *cl)
 {
 	return cl->flags & SCOLS_FL_RIGHT ? 1 : 0;
 }
@@ -309,7 +309,7 @@ int scols_column_is_right(struct libscols_column *cl)
  *
  * Returns: 0 or 1
  */
-int scols_column_is_strict_width(struct libscols_column *cl)
+int scols_column_is_strict_width(const struct libscols_column *cl)
 {
 	return cl->flags & SCOLS_FL_STRICTWIDTH ? 1 : 0;
 }
@@ -321,7 +321,7 @@ int scols_column_is_strict_width(struct libscols_column *cl)
  *
  * Returns: 0 or 1
  */
-int scols_column_is_noextremes(struct libscols_column *cl)
+int scols_column_is_noextremes(const struct libscols_column *cl)
 {
 	return cl->flags & SCOLS_FL_NOEXTREMES ? 1 : 0;
 }
@@ -335,7 +335,7 @@ int scols_column_is_noextremes(struct libscols_column *cl)
  *
  * Since: 2.28
  */
-int scols_column_is_wrap(struct libscols_column *cl)
+int scols_column_is_wrap(const struct libscols_column *cl)
 {
 	return cl->flags & SCOLS_FL_WRAP ? 1 : 0;
 }
@@ -349,7 +349,7 @@ int scols_column_is_wrap(struct libscols_column *cl)
  *
  * Since: 2.29
  */
-int scols_column_is_wrapnl(struct libscols_column *cl)
+int scols_column_is_wrapnl(const struct libscols_column *cl)
 {
 	return cl->flags & SCOLS_FL_WRAPNL ? 1 : 0;
 }

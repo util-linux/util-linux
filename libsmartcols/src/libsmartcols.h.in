@@ -100,7 +100,7 @@ enum {
 extern struct libscols_iter *scols_new_iter(int direction);
 extern void scols_free_iter(struct libscols_iter *itr);
 extern void scols_reset_iter(struct libscols_iter *itr, int direction);
-extern int scols_iter_get_direction(struct libscols_iter *itr);
+extern int scols_iter_get_direction(const struct libscols_iter *itr);
 
 /* init.c */
 extern void scols_init_debug(int mask);
@@ -139,26 +139,26 @@ extern int scols_cell_set_userdata(struct libscols_cell *ce, void *data);
 extern int scols_cmpstr_cells(struct libscols_cell *a,
 			      struct libscols_cell *b, void *data);
 /* column.c */
-extern int scols_column_is_tree(struct libscols_column *cl);
-extern int scols_column_is_trunc(struct libscols_column *cl);
-extern int scols_column_is_right(struct libscols_column *cl);
-extern int scols_column_is_strict_width(struct libscols_column *cl);
-extern int scols_column_is_hidden(struct libscols_column *cl);
-extern int scols_column_is_noextremes(struct libscols_column *cl);
-extern int scols_column_is_wrap(struct libscols_column *cl);
-extern int scols_column_is_wrapnl(struct libscols_column *cl);
+extern int scols_column_is_tree(const struct libscols_column *cl);
+extern int scols_column_is_trunc(const struct libscols_column *cl);
+extern int scols_column_is_right(const struct libscols_column *cl);
+extern int scols_column_is_strict_width(const struct libscols_column *cl);
+extern int scols_column_is_hidden(const struct libscols_column *cl);
+extern int scols_column_is_noextremes(const struct libscols_column *cl);
+extern int scols_column_is_wrap(const struct libscols_column *cl);
+extern int scols_column_is_wrapnl(const struct libscols_column *cl);
 
 extern int scols_column_set_flags(struct libscols_column *cl, int flags);
-extern int scols_column_get_flags(struct libscols_column *cl);
+extern int scols_column_get_flags(const struct libscols_column *cl);
 extern struct libscols_column *scols_new_column(void);
 extern void scols_ref_column(struct libscols_column *cl);
 extern void scols_unref_column(struct libscols_column *cl);
 extern struct libscols_column *scols_copy_column(const struct libscols_column *cl);
 extern int scols_column_set_whint(struct libscols_column *cl, double whint);
-extern double scols_column_get_whint(struct libscols_column *cl);
+extern double scols_column_get_whint(const struct libscols_column *cl);
 extern struct libscols_cell *scols_column_get_header(struct libscols_column *cl);
 extern int scols_column_set_color(struct libscols_column *cl, const char *color);
-extern const char *scols_column_get_color(struct libscols_column *cl);
+extern const char *scols_column_get_color(const struct libscols_column *cl);
 
 extern int scols_column_set_cmpfunc(struct libscols_column *cl,
 			int (*cmp)(struct libscols_cell *a,
@@ -178,10 +178,10 @@ extern int scols_line_add_child(struct libscols_line *ln, struct libscols_line *
 extern int scols_line_has_children(struct libscols_line *ln);
 extern int scols_line_next_child(struct libscols_line *ln,
 			  struct libscols_iter *itr, struct libscols_line **chld);
-extern struct libscols_line *scols_line_get_parent(struct libscols_line *ln);
+extern struct libscols_line *scols_line_get_parent(const struct libscols_line *ln);
 extern int scols_line_set_color(struct libscols_line *ln, const char *color);
-extern const char *scols_line_get_color(struct libscols_line *ln);
-extern size_t scols_line_get_ncells(struct libscols_line *ln);
+extern const char *scols_line_get_color(const struct libscols_line *ln);
+extern size_t scols_line_get_ncells(const struct libscols_line *ln);
 extern struct libscols_cell *scols_line_get_cell(struct libscols_line *ln, size_t n);
 extern struct libscols_cell *scols_line_get_column_cell(
 		                        struct libscols_line *ln,
@@ -190,20 +190,20 @@ extern int scols_line_set_data(struct libscols_line *ln, size_t n, const char *d
 extern int scols_line_refer_data(struct libscols_line *ln, size_t n, char *data);
 extern int scols_line_set_column_data(struct libscols_line *ln, struct libscols_column *cl, const char *data);
 extern int scols_line_refer_column_data(struct libscols_line *ln, struct libscols_column *cl, char *data);
-extern struct libscols_line *scols_copy_line(struct libscols_line *ln);
+extern struct libscols_line *scols_copy_line(const struct libscols_line *ln);
 
 /* table */
-extern int scols_table_colors_wanted(struct libscols_table *tb);
+extern int scols_table_colors_wanted(const struct libscols_table *tb);
 extern int scols_table_set_name(struct libscols_table *tb, const char *name);
 extern struct libscols_cell *scols_table_get_title(struct libscols_table *tb);
-extern int scols_table_is_raw(struct libscols_table *tb);
-extern int scols_table_is_ascii(struct libscols_table *tb);
-extern int scols_table_is_json(struct libscols_table *tb);
-extern int scols_table_is_noheadings(struct libscols_table *tb);
-extern int scols_table_is_empty(struct libscols_table *tb);
-extern int scols_table_is_export(struct libscols_table *tb);
-extern int scols_table_is_maxout(struct libscols_table *tb);
-extern int scols_table_is_tree(struct libscols_table *tb);
+extern int scols_table_is_raw(const struct libscols_table *tb);
+extern int scols_table_is_ascii(const struct libscols_table *tb);
+extern int scols_table_is_json(const struct libscols_table *tb);
+extern int scols_table_is_noheadings(const struct libscols_table *tb);
+extern int scols_table_is_empty(const struct libscols_table *tb);
+extern int scols_table_is_export(const struct libscols_table *tb);
+extern int scols_table_is_maxout(const struct libscols_table *tb);
+extern int scols_table_is_tree(const struct libscols_table *tb);
 
 extern int scols_table_enable_colors(struct libscols_table *tb, int enable);
 extern int scols_table_enable_raw(struct libscols_table *tb, int enable);
@@ -226,10 +226,10 @@ extern int scols_table_remove_column(struct libscols_table *tb, struct libscols_
 extern int scols_table_remove_columns(struct libscols_table *tb);
 extern struct libscols_column *scols_table_new_column(struct libscols_table *tb, const char *name, double whint, int flags);
 extern int scols_table_next_column(struct libscols_table *tb, struct libscols_iter *itr, struct libscols_column **cl);
-extern const char *scols_table_get_column_separator(struct libscols_table *tb);
-extern const char *scols_table_get_line_separator(struct libscols_table *tb);
-extern size_t scols_table_get_ncols(struct libscols_table *tb);
-extern size_t scols_table_get_nlines(struct libscols_table *tb);
+extern const char *scols_table_get_column_separator(const struct libscols_table *tb);
+extern const char *scols_table_get_line_separator(const struct libscols_table *tb);
+extern size_t scols_table_get_ncols(const struct libscols_table *tb);
+extern size_t scols_table_get_nlines(const struct libscols_table *tb);
 extern struct libscols_column *scols_table_get_column(struct libscols_table *tb, size_t n);
 extern int scols_table_add_line(struct libscols_table *tb, struct libscols_line *ln);
 extern int scols_table_remove_line(struct libscols_table *tb, struct libscols_line *ln);
@@ -241,7 +241,7 @@ extern struct libscols_table *scols_copy_table(struct libscols_table *tb);
 extern int scols_table_set_symbols(struct libscols_table *tb, struct libscols_symbols *sy);
 
 extern int scols_table_set_stream(struct libscols_table *tb, FILE *stream);
-extern FILE *scols_table_get_stream(struct libscols_table *tb);
+extern FILE *scols_table_get_stream(const struct libscols_table *tb);
 extern int scols_table_reduce_termwidth(struct libscols_table *tb, size_t reduce);
 
 extern int scols_sort_table(struct libscols_table *tb, struct libscols_column *cl);
@@ -255,7 +255,7 @@ enum {
 	SCOLS_TERMFORCE_ALWAYS
 };
 extern int scols_table_set_termforce(struct libscols_table *tb, int force);
-extern int scols_table_get_termforce(struct libscols_table *tb);
+extern int scols_table_get_termforce(const struct libscols_table *tb);
 extern int scols_table_set_termwidth(struct libscols_table *tb, size_t width);
 extern size_t scols_table_get_termwidth(struct libscols_table *tb);
 

@@ -68,7 +68,7 @@ void scols_reset_iter(struct libscols_iter *itr, int direction)
  *
  * Returns: SCOLS_INTER_{FOR,BACK}WARD
  */
-int scols_iter_get_direction(struct libscols_iter *itr)
+int scols_iter_get_direction(const struct libscols_iter *itr)
 {
 	return itr->direction;
 }

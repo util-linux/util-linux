@@ -170,5 +170,4 @@ struct libscols_symbols *scols_copy_symbols(const struct libscols_symbols *sy)
 
 	scols_unref_symbols(ret);
 	return NULL;
-
 }
