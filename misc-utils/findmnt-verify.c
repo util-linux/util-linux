@@ -235,17 +235,45 @@ static int verify_options(struct verify_context *vfy)
 	return 0;
 }
 
+static int verify_swaparea(struct verify_context *vfy)
+{
+	char *arg;
+	size_t argsz = 0;
+
+	if (mnt_fs_get_option(vfy->fs, "discard", &arg, &argsz) == 0
+	    && arg
+	    && strncmp(arg, "once", argsz) != 0
+	    && strncmp(arg, "pages", argsz) != 0)
+		verify_err(vfy, _("unsupported swaparea discard policy: %s"), arg);
+
+	if (mnt_fs_get_option(vfy->fs, "pri", &arg, &argsz) == 0 && arg) {
+		char *p = arg;
+		if (*p == '-')
+			p++;
+		for (; p < arg + argsz; p++) {
+			if (!isdigit((unsigned char) *p)) {
+				verify_err(vfy, _("failed to parse swaparea priority option"));
+				break;
+			}
+		}
+	}
+
+	return 0;
+}
+
 static int verify_filesystem(struct verify_context *vfy)
 {
 	int rc = 0;
 
-	if (!mnt_fs_is_swaparea(vfy->fs)) {
+	if (mnt_fs_is_swaparea(vfy->fs))
+		rc = verify_swaparea(vfy);
+	else {
 		rc = verify_target(vfy);
 		if (!rc)
 			rc = verify_options(vfy);
 	}
 	if (!rc)
-		verify_source(vfy);
+		rc = verify_source(vfy);
 
 	return rc;
 }
