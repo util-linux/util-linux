@@ -688,6 +688,7 @@ static int swapon_by_uuid(struct swapon_ctl *ctl, const char *uuid)
 static int parse_options(struct swap_prop *props, const char *options)
 {
 	char *arg = NULL;
+	size_t argsz = 0;
 
 	assert(props);
 	assert(options);
@@ -695,16 +696,16 @@ static int parse_options(struct swap_prop *props, const char *options)
 	if (mnt_optstr_get_option(options, "nofail", NULL, 0) == 0)
 		props->no_fail = 1;
 
-	if (mnt_optstr_get_option(options, "discard", &arg, NULL) == 0) {
+	if (mnt_optstr_get_option(options, "discard", &arg, &argsz) == 0) {
 		props->discard |= SWAP_FLAG_DISCARD;
 
 		if (arg) {
 			/* only single-time discards are wanted */
-			if (strcmp(arg, "once") == 0)
+			if (strncmp(arg, "once", argsz) == 0)
 				props->discard |= SWAP_FLAG_DISCARD_ONCE;
 
 			/* do discard for every released swap page */
-			if (strcmp(arg, "pages") == 0)
+			if (strncmp(arg, "pages", argsz) == 0)
 				props->discard |= SWAP_FLAG_DISCARD_PAGES;
 		}
 	}
