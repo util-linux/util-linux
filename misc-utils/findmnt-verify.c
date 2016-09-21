@@ -216,12 +216,34 @@ done:
 	return 0;
 }
 
+static int verify_options(struct verify_context *vfy)
+{
+	const char *opts;
+
+	opts = mnt_fs_get_vfs_options(vfy->fs);
+	if (opts)
+		verify_ok(vfy, _("VFS options: %s"), opts);
+
+	opts = mnt_fs_get_fs_options(vfy->fs);
+	if (opts)
+		verify_ok(vfy, _("FS options: %s"), opts);
+
+	opts = mnt_fs_get_user_options(vfy->fs);
+	if (opts)
+		verify_ok(vfy, _("userspace options: %s"), opts);
+
+	return 0;
+}
+
 static int verify_filesystem(struct verify_context *vfy)
 {
 	int rc = 0;
 
-	if (!mnt_fs_is_swaparea(vfy->fs))
+	if (!mnt_fs_is_swaparea(vfy->fs)) {
 		rc = verify_target(vfy);
+		if (!rc)
+			rc = verify_options(vfy);
+	}
 	if (!rc)
 		verify_source(vfy);
 
