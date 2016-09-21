@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <libmount.h>
+#include <blkid.h>
 
 #include "nls.h"
 #include "c.h"
@@ -28,8 +29,10 @@ struct verify_context {
 
 static void verify_mesg(struct verify_context *vfy, char type, const char *fmt, va_list ap)
 {
-	if (!vfy->target_printed)
+	if (!vfy->target_printed) {
 		fprintf(stdout, "%s\n", mnt_fs_get_target(vfy->fs));
+		vfy->target_printed = 1;
+	}
 
 	fprintf(stdout, "   [%c] ", type);
 	vfprintf(stdout, fmt, ap);
@@ -65,7 +68,7 @@ static int verify_ok(struct verify_context *vfy __attribute__((unused)),
 		return 0;
 
 	va_start(ap, fmt);
-	verify_mesg(vfy, '+', fmt, ap);
+	verify_mesg(vfy, ' ', fmt, ap);
 	va_end(ap);
 	return 0;
 }
@@ -123,7 +126,7 @@ static int verify_target(struct verify_context *vfy)
 	struct stat sb;
 
 	if (!tgt)
-		return verify_err(vfy, _("undefined target (mountpoint)"));
+		return verify_err(vfy, _("undefined target (fs_file)"));
 
 	if (!(flags & FL_NOCACHE)) {
 		cn = mnt_resolve_target(tgt, cache);
@@ -135,16 +138,81 @@ static int verify_target(struct verify_context *vfy)
 	}
 	if (stat(tgt, &sb) != 0) {
 		if (mnt_fs_get_option(vfy->fs, "noauto", NULL, NULL) == 1)
-			verify_err(vfy, _("on boot required target unaccessible: %m"));
+			verify_err(vfy, _("unreachable on boot required target: %m"));
 		else
-			verify_warn(vfy, _("target unaccessible: %m"));
+			verify_warn(vfy, _("unreachable target: %m"));
 
 	} else if (!S_ISDIR(sb.st_mode)
 		 && mnt_fs_get_option(vfy->fs, "bind", NULL, NULL) == 1) {
 		verify_err(vfy, _("target is not a directory"));
 	} else
-		verify_ok(vfy, _("target accessible"));
+		verify_ok(vfy, _("target exists"));
 
+	return 0;
+}
+
+static char *verify_tag(struct verify_context *vfy, const char *name,
+		      const char *value)
+{
+	char *src = mnt_resolve_tag(name, value, cache);
+
+	if (!src) {
+		if (mnt_fs_get_option(vfy->fs, "noauto", NULL, NULL) == 1)
+			verify_err(vfy, _("unreachable on boot required source: %s=%s"), name, value);
+		else
+			verify_warn(vfy, _("unreachable: %s=%s"), name, value);
+	} else
+		verify_ok(vfy, _("%s=%s translated to %s"), name, value, src);
+
+	return src;
+}
+
+/* Note that mount source is very FS specific and we should not
+ * interpret unreachable source as error. The exception is only
+ * NAME=value, this has to be convertible to device name.
+ */
+static int verify_source(struct verify_context *vfy)
+{
+	const char *src = mnt_fs_get_srcpath(vfy->fs);
+	char *t = NULL, *v = NULL;
+	struct stat sb;
+	int isbind;
+
+	/* source is NAME=value tag */
+	if (!src) {
+		const char *tag = NULL, *val = NULL;
+
+		if (mnt_fs_get_tag(vfy->fs, &tag, &val) != 0)
+			return verify_err(vfy, _("undefined source (fs_spec)"));
+
+		src = verify_tag(vfy, tag, val);
+		if (!src)
+			goto done;
+
+	/* blkid is able to parse it, but libmount does not see it as a tag --
+	 * it means unsupported tag */
+	} else if (blkid_parse_tag_string(src, &t, &v) == 0 && stat(src, &sb) != 0)
+		return verify_err(vfy, _("unsupported source tag: %s"), src);
+
+	isbind = mnt_fs_get_option(vfy->fs, "bind", NULL, NULL) == 0;
+
+	/* source is path */
+	if (mnt_fs_is_pseudofs(vfy->fs) || mnt_fs_is_netfs(vfy->fs))
+		verify_ok(vfy, _("do not check %s (pseudo/net filesystem)"), src);
+
+	else if (stat(src, &sb) != 0)
+		verify_warn(vfy, _("unreachable source: %s: %m"), src);
+
+	else if ((S_ISDIR(sb.st_mode) || S_ISREG(sb.st_mode)) && !isbind)
+		verify_warn(vfy, _("non-bind mount source %s is a directory or regular file"), src);
+
+	else if (!S_ISBLK(sb.st_mode) && !isbind)
+		verify_warn(vfy, _("source %s is not a block device"), src);
+	else
+		verify_ok(vfy, _("source %s exists"), src);
+done:
+	free(t);
+	free(v);
 	return 0;
 }
 
@@ -154,6 +222,9 @@ static int verify_filesystem(struct verify_context *vfy)
 
 	if (!mnt_fs_is_swaparea(vfy->fs))
 		rc = verify_target(vfy);
+	if (!rc)
+		verify_source(vfy);
+
 	return rc;
 }
 
