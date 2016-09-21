@@ -1047,7 +1047,7 @@ int scols_table_set_line_separator(struct libscols_table *tb, const char *sep)
  *
  * Returns: @tb column separator, NULL in case of an error
  */
-char *scols_table_get_column_separator(struct libscols_table *tb)
+const char *scols_table_get_column_separator(struct libscols_table *tb)
 {
 	return tb->colsep;
 }
@@ -1058,10 +1058,9 @@ char *scols_table_get_column_separator(struct libscols_table *tb)
  *
  * Returns: @tb line separator, NULL in case of an error
  */
-char *scols_table_get_line_separator(struct libscols_table *tb)
+const char *scols_table_get_line_separator(struct libscols_table *tb)
 {
 	return tb->linesep;
-
 }
 
 static int cells_cmp_wrapper(struct list_head *a, struct list_head *b, void *data)

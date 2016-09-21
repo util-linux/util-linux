@@ -226,8 +226,8 @@ extern int scols_table_remove_column(struct libscols_table *tb, struct libscols_
 extern int scols_table_remove_columns(struct libscols_table *tb);
 extern struct libscols_column *scols_table_new_column(struct libscols_table *tb, const char *name, double whint, int flags);
 extern int scols_table_next_column(struct libscols_table *tb, struct libscols_iter *itr, struct libscols_column **cl);
-extern char *scols_table_get_column_separator(struct libscols_table *tb);
-extern char *scols_table_get_line_separator(struct libscols_table *tb);
+extern const char *scols_table_get_column_separator(struct libscols_table *tb);
+extern const char *scols_table_get_line_separator(struct libscols_table *tb);
 extern size_t scols_table_get_ncols(struct libscols_table *tb);
 extern size_t scols_table_get_nlines(struct libscols_table *tb);
 extern struct libscols_column *scols_table_get_column(struct libscols_table *tb, size_t n);
