@@ -310,7 +310,7 @@ struct fdisk_parttype *fdisk_label_parse_parttype(
 	if (!lb->nparttypes)
 		return NULL;
 
-	DBG(LABEL, ul_debugobj((void *) lb, "parsing '%s' (%s) partition type",
+	DBG(LABEL, ul_debugobj(lb, "parsing '%s' (%s) partition type",
 				str, lb->name));
 	types = lb->parttypes;
 
@@ -321,7 +321,7 @@ struct fdisk_parttype *fdisk_label_parse_parttype(
 		code = strtol(str, &end, 16);
 
 		if (errno || *end != '\0') {
-			DBG(LABEL, ul_debugobj((void *) lb, "parsing failed: %m"));
+			DBG(LABEL, ul_debugobj(lb, "parsing failed: %m"));
 			return NULL;
 		}
 		ret = fdisk_label_get_parttype_from_code(lb, code);
