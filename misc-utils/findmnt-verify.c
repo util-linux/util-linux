@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <libmount.h>
 #include <blkid.h>
+#include <sys/utsname.h>
 
 #include "nls.h"
 #include "c.h"
@@ -20,6 +21,10 @@
 struct verify_context {
 	struct libmnt_fs	*fs;
 	struct libmnt_table	*tb;
+
+	char	**fs_ary;
+	size_t	fs_num;
+	size_t  fs_alloc;
 
 	int	nwarnings;
 	int	nerrors;
@@ -261,6 +266,187 @@ static int verify_swaparea(struct verify_context *vfy)
 	return 0;
 }
 
+static int is_supported_filesystem(struct verify_context *vfy, const char *name)
+{
+	size_t n;
+
+	if (!vfy->fs_num)
+		return 0;
+
+	for (n = 0; n < vfy->fs_num; n++ ) {
+		if (strcmp(vfy->fs_ary[n], name) == 0)
+			return 1;
+	}
+
+	return 0;
+}
+
+static int add_filesystem(struct verify_context *vfy, const char *name)
+{
+	#define MYCHUNK	16
+
+	if (is_supported_filesystem(vfy, name))
+		return 0;
+
+	if (vfy->fs_alloc == 0 || vfy->fs_num + 1 <= vfy->fs_alloc) {
+		vfy->fs_alloc = ((vfy->fs_alloc + 1 + MYCHUNK) / MYCHUNK) * MYCHUNK;
+		vfy->fs_ary = xrealloc(vfy->fs_ary, vfy->fs_alloc * sizeof(char *));
+	}
+
+	vfy->fs_ary[vfy->fs_num] = xstrdup(name);
+	vfy->fs_num++;
+
+	return 0;
+}
+
+static int read_proc_filesystems(struct verify_context *vfy)
+{
+	int rc = 0;
+	FILE *f;
+	char buf[80], *cp, *t;
+
+	f = fopen("/proc/filesystems", "r");
+	if (!f)
+		return -errno;
+
+	while (!feof(f)) {
+		if (!fgets(buf, sizeof(buf), f))
+			break;
+		cp = buf;
+		if (!isspace(*cp)) {
+			while (*cp && !isspace(*cp))
+				cp++;
+		}
+		while (*cp && isspace(*cp))
+			cp++;
+		if ((t = strchr(cp, '\n')) != NULL)
+			*t = 0;
+		if ((t = strchr(cp, '\t')) != NULL)
+			*t = 0;
+		if ((t = strchr(cp, ' ')) != NULL)
+			*t = 0;
+
+		rc = add_filesystem(vfy, cp);
+		if (rc)
+			return rc;
+	}
+	fclose(f);
+	return 0;
+}
+
+static int read_kernel_filesystems(struct verify_context *vfy)
+{
+#ifdef __linux__
+	struct utsname uts;
+	FILE *f;
+	char buf[1024];
+
+	if (uname(&uts))
+		return 0;
+	snprintf(buf, sizeof(buf), "/lib/modules/%s/modules.dep", uts.release);
+
+	f = fopen(buf, "r");
+	if (!f)
+		return 0;
+
+	while (!feof(f)) {
+		char *p, *name;
+		int rc;
+
+		if (!fgets(buf, sizeof(buf), f))
+			break;
+
+		if (strncmp("kernel/fs/", buf, 10) != 0 ||
+		    strncmp("kernel/fs/nls/", buf, 14) == 0)
+			continue;
+
+		p = strchr(buf, ':');
+		if (!p)
+			continue;
+		*p = '\0';
+
+		name = strrchr(buf, '/');
+		if (!name)
+			continue;
+		name++;
+
+		p = strstr(name, ".ko");
+		if (!p)
+			continue;
+		*p = '\0';
+
+		rc = add_filesystem(vfy, name);
+		if (rc)
+			return rc;
+	}
+	fclose(f);
+#endif /* __linux__ */
+	return 0;
+}
+
+static int verify_fstype(struct verify_context *vfy)
+{
+	const char *src = mnt_resolve_spec(mnt_fs_get_source(vfy->fs), cache);
+	const char *type, *realtype;
+	int ambi = 0, isauto = 0, isswap = 0;
+
+	if (!src)
+		return 0;
+	if (mnt_fs_is_pseudofs(vfy->fs) || mnt_fs_is_netfs(vfy->fs))
+		return verify_ok(vfy, _("do not check %s FS type (pseudo/net filesystem)"), src);
+
+	type = mnt_fs_get_fstype(vfy->fs);
+
+	if (type) {
+		int none = strcmp(type, "none") == 0;
+
+		if (none
+		    && mnt_fs_get_option(vfy->fs, "bind", NULL, NULL) == 1
+		    && mnt_fs_get_option(vfy->fs, "move", NULL, NULL) == 1)
+			return verify_warn(vfy, _("\"none\" FS type is recommended for bind or move oprations only"));
+
+		else if (strcmp(type, "auto") == 0)
+			isauto = 1;
+		else if (strcmp(type, "swap") == 0)
+			isswap = 1;
+
+		if (!isswap && !isauto && !none && !is_supported_filesystem(vfy, type))
+			verify_warn(vfy, _("%s seems unspported by the current kernel"), type);
+	}
+	realtype = mnt_get_fstype(src, &ambi, cache);
+
+	if (!realtype) {
+		if (isauto)
+			return verify_err(vfy, _("cannot detect on-disk filesystem type"));
+		return verify_warn(vfy, _("cannot detect on-disk filesystem type"));
+	}
+
+	if (realtype) {
+		isswap = strcmp(realtype, "swap") == 0;
+
+		if (type && !isauto && strcmp(type, realtype) != 0)
+			return verify_err(vfy, _("%s does not match with on-disk %s"), type, realtype);
+
+		if (!isswap && !is_supported_filesystem(vfy, realtype))
+			return verify_err(vfy, _("on-disk %s seems unspported by the current kernel"), realtype);
+
+		verify_ok(vfy, _("FS type is %s"), realtype);
+	}
+
+	return 0;
+}
+
+static int verify_passno(struct verify_context *vfy)
+{
+	int passno = mnt_fs_get_passno(vfy->fs);
+	const char *tgt = mnt_fs_get_target(vfy->fs);
+
+	if (tgt && strcmp("/", tgt) == 0 && passno != 1)
+		return verify_warn(vfy, _("recommended root FS passno is 1 (current %d)"), passno);
+
+	return 0;
+}
+
 static int verify_filesystem(struct verify_context *vfy)
 {
 	int rc = 0;
@@ -272,8 +458,13 @@ static int verify_filesystem(struct verify_context *vfy)
 		if (!rc)
 			rc = verify_options(vfy);
 	}
+
 	if (!rc)
 		rc = verify_source(vfy);
+	if (!rc)
+		rc = verify_fstype(vfy);
+	if (!rc)
+		rc = verify_passno(vfy);
 
 	return rc;
 }
@@ -284,6 +475,7 @@ int verify_table(struct libmnt_table *tb)
 	struct libmnt_iter *itr = NULL;
 	int rc = 0;		/* overall return code (alloc errors, etc.) */
 	int check_order = is_listall_mode();
+	static int has_read_fs = 0;
 
 	itr = mnt_new_iter(MNT_ITER_FORWARD);
 	if (!itr) {
@@ -292,6 +484,12 @@ int verify_table(struct libmnt_table *tb)
 	}
 
 	vfy.tb = tb;
+
+	if (has_read_fs == 0) {
+		read_proc_filesystems(&vfy);
+		read_kernel_filesystems(&vfy);
+		has_read_fs = 1;
+	}
 
 	while (rc == 0 && (vfy.fs = get_next_fs(tb, itr))) {
 		vfy.target_printed = 0;
