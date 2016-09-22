@@ -68,6 +68,7 @@ struct libscols_table *scols_new_table(void)
 
 	tb->refcount = 1;
 	tb->out = stdout;
+	tb->termwidth = get_terminal_width(80);
 
 	INIT_LIST_HEAD(&tb->tb_lines);
 	INIT_LIST_HEAD(&tb->tb_columns);
@@ -1154,7 +1155,5 @@ int scols_table_set_termwidth(struct libscols_table *tb, size_t width)
  */
 size_t scols_table_get_termwidth(struct libscols_table *tb)
 {
-	if (tb->termwidth == 0)
-		tb->termwidth = get_terminal_width(80);
 	return tb->termwidth;
 }
