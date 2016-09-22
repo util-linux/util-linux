@@ -203,7 +203,7 @@ static int verify_source(struct verify_context *vfy)
 
 	/* source is path */
 	if (mnt_fs_is_pseudofs(vfy->fs) || mnt_fs_is_netfs(vfy->fs))
-		verify_ok(vfy, _("do not check %s (pseudo/net filesystem)"), src);
+		verify_ok(vfy, _("do not check %s source (pseudo/net)"), src);
 
 	else if (stat(src, &sb) != 0)
 		verify_warn(vfy, _("unreachable source: %s: %m"), src);
@@ -393,7 +393,7 @@ static int verify_fstype(struct verify_context *vfy)
 	if (!src)
 		return 0;
 	if (mnt_fs_is_pseudofs(vfy->fs) || mnt_fs_is_netfs(vfy->fs))
-		return verify_ok(vfy, _("do not check %s FS type (pseudo/net filesystem)"), src);
+		return verify_ok(vfy, _("do not check %s FS type (pseudo/net)"), src);
 
 	type = mnt_fs_get_fstype(vfy->fs);
 
@@ -442,7 +442,7 @@ static int verify_passno(struct verify_context *vfy)
 	const char *tgt = mnt_fs_get_target(vfy->fs);
 
 	if (tgt && strcmp("/", tgt) == 0 && passno != 1)
-		return verify_warn(vfy, _("recommended root FS passno is 1 (current %d)"), passno);
+		return verify_warn(vfy, _("recommended root FS passno is 1 (current is %d)"), passno);
 
 	return 0;
 }
