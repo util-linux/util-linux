@@ -116,7 +116,7 @@ void scols_unref_table(struct libscols_table *tb)
 /**
  * scols_table_set_name:
  * @tb: a pointer to a struct libscols_table instance
- * @str: a name
+ * @name: a name
  *
  * The table name is used for example for JSON top level object name.
  *
@@ -124,9 +124,9 @@ void scols_unref_table(struct libscols_table *tb)
  *
  * Since: 2.27
  */
-int scols_table_set_name(struct libscols_table *tb, const char *str)
+int scols_table_set_name(struct libscols_table *tb, const char *name)
 {
-	return strdup_to_struct_member(tb, name, str);
+	return strdup_to_struct_member(tb, name, name);
 }
 
 /**

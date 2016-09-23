@@ -54,21 +54,21 @@ int scols_reset_cell(struct libscols_cell *ce)
 /**
  * scols_cell_set_data:
  * @ce: a pointer to a struct libscols_cell instance
- * @str: data (used for scols_print_table())
+ * @data: data (used for scols_print_table())
  *
  * Stores a copy of the @str in @ce, the old data are deallocated by free().
  *
  * Returns: 0, a negative value in case of an error.
  */
-int scols_cell_set_data(struct libscols_cell *ce, const char *str)
+int scols_cell_set_data(struct libscols_cell *ce, const char *data)
 {
-	return strdup_to_struct_member(ce, data, str);
+	return strdup_to_struct_member(ce, data, data);
 }
 
 /**
  * scols_cell_refer_data:
  * @ce: a pointer to a struct libscols_cell instance
- * @str: data (used for scols_print_table())
+ * @data: data (used for scols_print_table())
  *
  * Adds a reference to @str to @ce. The pointer is deallocated by
  * scols_reset_cell() or scols_unref_line(). This function is mostly designed
@@ -77,12 +77,12 @@ int scols_cell_set_data(struct libscols_cell *ce, const char *str)
  *
  * Returns: 0, a negative value in case of an error.
  */
-int scols_cell_refer_data(struct libscols_cell *ce, char *str)
+int scols_cell_refer_data(struct libscols_cell *ce, char *data)
 {
 	if (!ce)
 		return -EINVAL;
 	free(ce->data);
-	ce->data = str;
+	ce->data = data;
 	return 0;
 }
 
@@ -158,20 +158,20 @@ int scols_cmpstr_cells(struct libscols_cell *a,
 /**
  * scols_cell_set_color:
  * @ce: a pointer to a struct libscols_cell instance
- * @co: color name or ESC sequence
+ * @color: color name or ESC sequence
  *
- * Set the color of @ce to @co.
+ * Set the color of @ce to @color.
  *
  * Returns: 0, a negative value in case of an error.
  */
-int scols_cell_set_color(struct libscols_cell *ce, const char *co)
+int scols_cell_set_color(struct libscols_cell *ce, const char *color)
 {
-	if (co && isalpha(*co)) {
-		co = color_sequence_from_colorname(co);
-		if (!co)
+	if (color && isalpha(*color)) {
+		color = color_sequence_from_colorname(color);
+		if (!color)
 			return -EINVAL;
 	}
-	return strdup_to_struct_member(ce, color, co);
+	return strdup_to_struct_member(ce, color, color);
 }
 
 /**

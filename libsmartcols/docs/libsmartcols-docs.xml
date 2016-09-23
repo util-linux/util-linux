@@ -14,7 +14,7 @@
     </copyright>
   </bookinfo>
 
-  <part id="gtk">
+  <part id="overview">
     <title>libsmartcols Overview</title>
     <partintro>
     <para>
@@ -56,5 +56,9 @@ available from ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
   <index role="2.28">
     <title>Index of new symbols in 2.28</title>
     <xi:include href="xml/api-index-2.28.xml"><xi:fallback /></xi:include>
+  </index>
+  <index role="2.29">
+    <title>Index of new symbols in 2.29</title>
+    <xi:include href="xml/api-index-2.29.xml"><xi:fallback /></xi:include>
   </index>
 </book>

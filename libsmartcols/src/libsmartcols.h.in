@@ -123,8 +123,8 @@ extern int scols_symbols_set_cell_padding(struct libscols_symbols *sy, const cha
 extern int scols_reset_cell(struct libscols_cell *ce);
 extern int scols_cell_copy_content(struct libscols_cell *dest,
 				   const struct libscols_cell *src);
-extern int scols_cell_set_data(struct libscols_cell *ce, const char *str);
-extern int scols_cell_refer_data(struct libscols_cell *ce, char *str);
+extern int scols_cell_set_data(struct libscols_cell *ce, const char *data);
+extern int scols_cell_refer_data(struct libscols_cell *ce, char *data);
 extern const char *scols_cell_get_data(const struct libscols_cell *ce);
 extern int scols_cell_set_color(struct libscols_cell *ce, const char *color);
 extern const char *scols_cell_get_color(const struct libscols_cell *ce);
