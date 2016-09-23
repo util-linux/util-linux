@@ -71,7 +71,6 @@ void scols_ref_line(struct libscols_line *ln)
  */
 void scols_unref_line(struct libscols_line *ln)
 {
-
 	if (ln && --ln->refcount <= 0) {
 		DBG(CELL, ul_debugobj(ln, "dealloc"));
 		list_del(&ln->ln_lines);
@@ -235,7 +234,7 @@ int scols_line_add_child(struct libscols_line *ln, struct libscols_line *child)
  *
  * Returns: a pointer to @ln's parent, NULL in case it has no parent or if there was an error.
  */
-struct libscols_line *scols_line_get_parent(struct libscols_line *ln)
+struct libscols_line *scols_line_get_parent(const struct libscols_line *ln)
 {
 	return ln ? ln->parent : NULL;
 }
@@ -304,7 +303,7 @@ int scols_line_set_color(struct libscols_line *ln, const char *co)
  *
  * Returns: @ln's color string, NULL in case of an error.
  */
-const char *scols_line_get_color(struct libscols_line *ln)
+const char *scols_line_get_color(const struct libscols_line *ln)
 {
 	return ln->color;
 }
@@ -315,7 +314,7 @@ const char *scols_line_get_color(struct libscols_line *ln)
  *
  * Returns: number of cells
  */
-size_t scols_line_get_ncells(struct libscols_line *ln)
+size_t scols_line_get_ncells(const struct libscols_line *ln)
 {
 	return ln->ncells;
 }
@@ -432,7 +431,7 @@ int scols_line_refer_column_data(struct libscols_line *ln,
  *
  * Returns: A newly allocated copy of @ln, NULL in case of an error.
  */
-struct libscols_line *scols_copy_line(struct libscols_line *ln)
+struct libscols_line *scols_copy_line(const struct libscols_line *ln)
 {
 	struct libscols_line *ret;
 	size_t i;

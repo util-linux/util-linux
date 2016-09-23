@@ -184,7 +184,7 @@ struct libscols_table {
 	} while(0)
 
 
-static inline int scols_iter_is_last(struct libscols_iter *itr)
+static inline int scols_iter_is_last(const struct libscols_iter *itr)
 {
 	if (!itr || !itr->head || !itr->p)
 		return 0;

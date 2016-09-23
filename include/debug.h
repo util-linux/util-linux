@@ -105,7 +105,7 @@ ul_debug(const char *mesg, ...)
 }
 
 static inline void __attribute__ ((__format__ (__printf__, 2, 3)))
-ul_debugobj(void *handler, const char *mesg, ...)
+ul_debugobj(const void *handler, const char *mesg, ...)
 {
 	va_list ap;
 
