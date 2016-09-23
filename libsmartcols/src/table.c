@@ -1148,7 +1148,7 @@ int scols_table_set_termwidth(struct libscols_table *tb, size_t width)
  *
  * Returns: terminal width or a negative value in case of an error.
  */
-size_t scols_table_get_termwidth(struct libscols_table *tb)
+size_t scols_table_get_termwidth(const struct libscols_table *tb)
 {
 	return tb->termwidth;
 }
