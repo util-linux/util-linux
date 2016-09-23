@@ -514,7 +514,7 @@ done:
 		fprintf(stderr, P_(", %d warning",   ", %d warnings", vfy.nwarnings), vfy.nwarnings);
 		fputc('\n', stderr);
 	} else
-		fprintf(stdout, _("\nSuccess, no errors or warnings detected\n"));
+		fprintf(stdout, _("Success, no errors or warnings detected\n"));
 
 	return rc != 0 ? rc : vfy.nerrors + parse_nerrors;
 }

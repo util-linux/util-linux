@@ -515,6 +515,10 @@ Mount all filesystems (of the given types) mentioned in
 .B noauto
 keyword).  The filesystems are mounted following their order in
 .IR fstab .
+.sp
+Note that it is a bad manner to use \fBmount \-a\fR for
+.IR fstab
+checking. The recommended solution is \fBfindmnt \-\-verify\fR.
 .TP
 .BR \-B , " \-\-bind"
 Remount a subtree somewhere else (so that its contents are available

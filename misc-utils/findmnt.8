@@ -233,6 +233,16 @@ Do not print a [/dir] in the SOURCE column for bind mounts or btrfs subvolumes.
 .TP
 .BR \-w , " \-\-timeout \fImilliseconds\fP"
 Specify an upper limit on the time for which \fB\-\-poll\fR will block, in milliseconds.
+.TP
+.BR \-x , " \-\-verify"
+Check mount table content. The default is to verify
+.IR /etc/fstab
+parsability and usability. It's possible to use this option also with \fB\-\-tab\-file\fP.
+It's possible to specify source (device) or target (mountpoint) to filter mount table. The option
+\fB\-\-verbose\fP forces findmnt to print more details.
+.TP
+.BR " \-\-verbose"
+Force findmnt to print more information (\fB\-\-verify\fP only for now).
 .SH EXAMPLES
 .IP "\fBfindmnt \-\-fstab \-t nfs\fP"
 Prints all NFS filesystems defined in
