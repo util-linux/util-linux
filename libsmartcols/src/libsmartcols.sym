@@ -147,4 +147,5 @@ global:
 	scols_table_set_termwidth;
 	scols_table_get_name;
 	scols_table_is_nowrap;
+	scols_table_is_nolinesep;
 } SMARTCOLS_2.28;

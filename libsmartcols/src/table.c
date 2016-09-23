@@ -729,7 +729,7 @@ int scols_table_set_symbols(struct libscols_table *tb,
 }
 
 /**
- * scols_table_enable_nolinesep
+ * scols_table_enable_nolinesep:
  * @tb: table
  * @enable: 1 or 0
  *
@@ -745,8 +745,21 @@ int scols_table_enable_nolinesep(struct libscols_table *tb, int enable)
 		return -EINVAL;
 
 	DBG(TAB, ul_debugobj(tb, "nolinesep: %s", enable ? "ENABLE" : "DISABLE"));
-	tb->no_linesep = enable;
+	tb->no_linesep = enable ? 1 : 0;
 	return 0;
+}
+
+/**
+ * scols_table_is_nolinesep:
+ * @tb: a pointer to a struct libscols_table instance
+ *
+ * Returns: 1 if line separator printing is disabled.
+ *
+ * Since: 2.29
+ */
+int scols_table_is_nolinesep(const struct libscols_table *tb)
+{
+	return tb->no_linesep;
 }
 
 /**

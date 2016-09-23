@@ -205,6 +205,7 @@ extern int scols_table_is_empty(const struct libscols_table *tb);
 extern int scols_table_is_export(const struct libscols_table *tb);
 extern int scols_table_is_maxout(const struct libscols_table *tb);
 extern int scols_table_is_nowrap(const struct libscols_table *tb);
+extern int scols_table_is_nolinesep(const struct libscols_table *tb);
 extern int scols_table_is_tree(const struct libscols_table *tb);
 
 extern int scols_table_enable_colors(struct libscols_table *tb, int enable);
