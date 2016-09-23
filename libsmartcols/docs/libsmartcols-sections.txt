@@ -113,6 +113,7 @@ scols_table_get_column
 scols_table_get_column_separator
 scols_table_get_line
 scols_table_get_line_separator
+scols_table_get_name
 scols_table_get_ncols
 scols_table_get_nlines
 scols_table_get_stream
@@ -126,6 +127,8 @@ scols_table_is_export
 scols_table_is_json
 scols_table_is_maxout
 scols_table_is_noheadings
+scols_table_is_nolinesep
+scols_table_is_nowrap
 scols_table_is_raw
 scols_table_is_tree
 scols_table_new_column
