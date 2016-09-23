@@ -130,6 +130,19 @@ int scols_table_set_name(struct libscols_table *tb, const char *str)
 }
 
 /**
+ * scols_table_get_name:
+ * @tb: a pointer to a struct libscols_table instance
+ *
+ * Returns: The current name setting of the table @tb
+ *
+ * Since: 2.29
+ */
+const char *scols_table_get_name(const struct libscols_table *tb)
+{
+	return tb->name;
+}
+
+/**
  * scols_table_get_title:
  * @tb: a pointer to a struct libscols_table instance
  *
@@ -760,7 +773,7 @@ struct libscols_symbols *scols_table_get_symbols(const struct libscols_table *tb
 }
 
 /**
- * scols_table_enable_nolinesep
+ * scols_table_enable_nolinesep:
  * @tb: table
  * @enable: 1 or 0
  *
@@ -776,8 +789,21 @@ int scols_table_enable_nolinesep(struct libscols_table *tb, int enable)
 		return -EINVAL;
 
 	DBG(TAB, ul_debugobj(tb, "nolinesep: %s", enable ? "ENABLE" : "DISABLE"));
-	tb->no_linesep = enable;
+	tb->no_linesep = enable ? 1 : 0;
 	return 0;
+}
+
+/**
+ * scols_table_is_nolinesep:
+ * @tb: a pointer to a struct libscols_table instance
+ *
+ * Returns: 1 if line separator printing is disabled.
+ *
+ * Since: 2.29
+ */
+int scols_table_is_nolinesep(const struct libscols_table *tb)
+{
+	return tb->no_linesep;
 }
 
 /**
@@ -953,6 +979,19 @@ int scols_table_enable_nowrap(struct libscols_table *tb, int enable)
 }
 
 /**
+ * scols_table_is_nowrap:
+ * @tb: a pointer to a struct libscols_table instance
+ *
+ * Returns: 1 if nowrap is enabled.
+ *
+ * Since: 2.29
+ */
+int scols_table_is_nowrap(const struct libscols_table *tb)
+{
+	return tb->no_wrap;
+}
+
+/**
  * scols_table_colors_wanted:
  * @tb: table
  *
@@ -967,7 +1006,7 @@ int scols_table_colors_wanted(const struct libscols_table *tb)
  * scols_table_is_empty:
  * @tb: table
  *
- * Returns: 1  if the table is empty.
+ * Returns: 1 if the table is empty.
  */
 int scols_table_is_empty(const struct libscols_table *tb)
 {
