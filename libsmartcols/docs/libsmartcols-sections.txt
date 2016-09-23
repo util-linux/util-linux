@@ -116,6 +116,7 @@ scols_table_get_line_separator
 scols_table_get_ncols
 scols_table_get_nlines
 scols_table_get_stream
+scols_table_get_symbols
 scols_table_get_termforce
 scols_table_get_termwidth
 scols_table_get_title
@@ -137,6 +138,7 @@ scols_table_remove_columns
 scols_table_remove_line
 scols_table_remove_lines
 scols_table_set_column_separator
+scols_table_set_default_symbols
 scols_table_set_line_separator
 scols_table_set_name
 scols_table_set_stream

@@ -1339,6 +1339,19 @@ static size_t strlen_line(struct libscols_line *ln)
 	return sz;
 }
 
+static void cleanup_printing(struct libscols_table *tb, struct libscols_buffer *buf)
+{
+	if (!tb)
+		return;
+
+	free_buffer(buf);
+
+	if (tb->priv_symbols) {
+		scols_table_set_symbols(tb, NULL);
+		tb->priv_symbols = 0;
+	}
+}
+
 static int initialize_printing(struct libscols_table *tb, struct libscols_buffer **buf)
 {
 	size_t bufsz, extra_bufsz = 0;
@@ -1348,8 +1361,11 @@ static int initialize_printing(struct libscols_table *tb, struct libscols_buffer
 
 	DBG(TAB, ul_debugobj(tb, "initialize printing"));
 
-	if (!tb->symbols)
-		scols_table_set_symbols(tb, NULL);	/* use default */
+	if (!tb->symbols) {
+		scols_table_set_default_symbols(tb);
+		tb->priv_symbols = 1;
+	} else
+		tb->priv_symbols = 0;
 
 	if (tb->format == SCOLS_FMT_HUMAN)
 		tb->is_term = tb->termforce == SCOLS_TERMFORCE_NEVER  ? 0 :
@@ -1414,8 +1430,10 @@ static int initialize_printing(struct libscols_table *tb, struct libscols_buffer
 	}
 
 	*buf = new_buffer(bufsz + 1);	/* data + space for \0 */
-	if (!*buf)
-		return -ENOMEM;
+	if (!*buf) {
+		rc = -ENOMEM;
+		goto err;
+	}
 
 	if (tb->format == SCOLS_FMT_HUMAN) {
 		rc = recount_widths(tb, *buf);
@@ -1425,7 +1443,7 @@ static int initialize_printing(struct libscols_table *tb, struct libscols_buffer
 
 	return 0;
 err:
-	free_buffer(*buf);
+	cleanup_printing(tb, *buf);
 	return rc;
 }
 
@@ -1436,7 +1454,7 @@ err:
  * @end: last printed line or NULL to print all from start.
  *
  * If the start is the first line in the table than prints table header too.
- * The header is printed only once.
+ * The header is printed only once. This does not work for trees.
  *
  * Returns: 0, a negative value in case of an error.
  */
@@ -1472,7 +1490,7 @@ int scols_table_print_range(	struct libscols_table *tb,
 
 	rc = print_range(tb, buf, &itr, end);
 done:
-	free_buffer(buf);
+	cleanup_printing(tb, buf);
 	return rc;
 }
 
@@ -1564,7 +1582,7 @@ static int __scols_print_table(struct libscols_table *tb, int *is_empty)
 
 	fput_table_close(tb);
 done:
-	free_buffer(buf);
+	cleanup_printing(tb, buf);
 	return rc;
 }
 

@@ -239,6 +239,8 @@ extern struct libscols_line *scols_table_new_line(struct libscols_table *tb, str
 extern struct libscols_line *scols_table_get_line(struct libscols_table *tb, size_t n);
 extern struct libscols_table *scols_copy_table(struct libscols_table *tb);
 extern int scols_table_set_symbols(struct libscols_table *tb, struct libscols_symbols *sy);
+extern int scols_table_set_default_symbols(struct libscols_table *tb);
+extern struct libscols_symbols *scols_table_get_symbols(const struct libscols_table *tb);
 
 extern int scols_table_set_stream(struct libscols_table *tb, FILE *stream);
 extern FILE *scols_table_get_stream(const struct libscols_table *tb);

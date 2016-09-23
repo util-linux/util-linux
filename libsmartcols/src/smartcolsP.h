@@ -161,6 +161,7 @@ struct libscols_table {
 			padding_debug	:1,	/* output visible padding chars */
 			maxout		:1,	/* maximize output */
 			header_printed  :1,	/* header already printed */
+			priv_symbols	:1,	/* default private symbols */
 			no_headings	:1,	/* don't print header */
 			no_linesep	:1,	/* don't print line separator */
 			no_wrap		:1;	/* never wrap lines */

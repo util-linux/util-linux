@@ -141,8 +141,10 @@ SMARTCOLS_2.29 {
 global:
 	scols_column_is_wrapnl;
 	scols_symbols_set_cell_padding;
+	scols_table_get_symbols;
 	scols_table_get_termforce;
 	scols_table_get_termwidth;
+	scols_table_set_default_symbols;
 	scols_table_set_termforce;
 	scols_table_set_termwidth;
 } SMARTCOLS_2.28;

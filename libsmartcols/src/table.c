@@ -667,14 +667,62 @@ err:
 }
 
 /**
+ * scols_table_set_default_symbols:
+ * @tb: table
+ *
+ * The library check the current environment to select ASCII or UTF8 symbols.
+ * This default behavior could be controlled by scols_table_enable_ascii().
+ *
+ * Use scols_table_set_symbols() to unset symbols or use your own setting.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_table_set_default_symbols(struct libscols_table *tb)
+{
+	struct libscols_symbols *sy;
+	int rc;
+
+	if (!tb)
+		return -EINVAL;
+
+	DBG(TAB, ul_debugobj(tb, "setting default symbols"));
+
+	sy = scols_new_symbols();
+	if (!sy)
+		return -ENOMEM;
+
+#if defined(HAVE_WIDECHAR)
+	if (!scols_table_is_ascii(tb) &&
+	    !strcmp(nl_langinfo(CODESET), "UTF-8")) {
+		scols_symbols_set_branch(sy, UTF_VR UTF_H);
+		scols_symbols_set_vertical(sy, UTF_V " ");
+		scols_symbols_set_right(sy, UTF_UR UTF_H);
+	} else
+#endif
+	{
+		scols_symbols_set_branch(sy, "|-");
+		scols_symbols_set_vertical(sy, "| ");
+		scols_symbols_set_right(sy, "`-");
+	}
+	scols_symbols_set_title_padding(sy, " ");
+	scols_symbols_set_cell_padding(sy, " ");
+
+	rc = scols_table_set_symbols(tb, sy);
+	scols_unref_symbols(sy);
+	return rc;
+}
+
+
+/**
  * scols_table_set_symbols:
  * @tb: table
  * @sy: symbols or NULL
  *
  * Add a reference to @sy from the table. The symbols are used by library to
- * draw tree output. If no symbols are specified then library checks the
- * current environment to select ASCII or UTF8 symbols. This default behavior
- * could be controlled by scols_table_enable_ascii().
+ * draw tree output. If no symbols are used for the table then library creates
+ * default temporary symbols to draw output by scols_table_set_default_symbols().
+ *
+ * If @sy is NULL then remove reference from the currenly uses symbols.
  *
  * Returns: 0, a negative value in case of an error.
  */
@@ -684,35 +732,31 @@ int scols_table_set_symbols(struct libscols_table *tb,
 	if (!tb)
 		return -EINVAL;
 
-	DBG(TAB, ul_debugobj(tb, "setting alternative symbols %p", sy));
-
-	if (tb->symbols)				/* unref old */
+	/* remove old */
+	if (tb->symbols) {
+		DBG(TAB, ul_debugobj(tb, "remove symbols %p refrence", tb->symbols));
 		scols_unref_symbols(tb->symbols);
-	if (sy) {					/* ref user defined */
-		tb->symbols = sy;
-		scols_ref_symbols(sy);
-	} else {					/* default symbols */
-		tb->symbols = scols_new_symbols();
-		if (!tb->symbols)
-			return -ENOMEM;
-#if defined(HAVE_WIDECHAR)
-		if (!scols_table_is_ascii(tb) &&
-		    !strcmp(nl_langinfo(CODESET), "UTF-8")) {
-			scols_symbols_set_branch(tb->symbols, UTF_VR UTF_H);
-			scols_symbols_set_vertical(tb->symbols, UTF_V " ");
-			scols_symbols_set_right(tb->symbols, UTF_UR UTF_H);
-		} else
-#endif
-		{
-			scols_symbols_set_branch(tb->symbols, "|-");
-			scols_symbols_set_vertical(tb->symbols, "| ");
-			scols_symbols_set_right(tb->symbols, "`-");
-		}
-		scols_symbols_set_title_padding(tb->symbols, " ");
-		scols_symbols_set_cell_padding(tb->symbols, " ");
+		tb->symbols = NULL;
 	}
 
+	/* set new */
+	if (sy) {					/* ref user defined */
+		DBG(TAB, ul_debugobj(tb, "set symbols so %p", sy));
+		tb->symbols = sy;
+		scols_ref_symbols(sy);
+	}
 	return 0;
+}
+
+/**
+ * scols_table_get_symbols:
+ * @tb: table
+ *
+ * Returns: pointer to symbols table.
+ */
+struct libscols_symbols *scols_table_get_symbols(const struct libscols_table *tb)
+{
+	return tb->symbols;
 }
 
 /**
