@@ -146,4 +146,5 @@ global:
 	scols_table_set_termforce;
 	scols_table_set_termwidth;
 	scols_table_get_name;
+	scols_table_is_nowrap;
 } SMARTCOLS_2.28;

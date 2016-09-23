@@ -922,6 +922,19 @@ int scols_table_enable_nowrap(struct libscols_table *tb, int enable)
 }
 
 /**
+ * scols_table_is_nowrap:
+ * @tb: a pointer to a struct libscols_table instance
+ *
+ * Returns: 1 if nowrap is enabled.
+ *
+ * Since: 2.29
+ */
+int scols_table_is_nowrap(const struct libscols_table *tb)
+{
+	return tb->no_wrap;
+}
+
+/**
  * scols_table_colors_wanted:
  * @tb: table
  *
@@ -936,7 +949,7 @@ int scols_table_colors_wanted(const struct libscols_table *tb)
  * scols_table_is_empty:
  * @tb: table
  *
- * Returns: 1  if the table is empty.
+ * Returns: 1 if the table is empty.
  */
 int scols_table_is_empty(const struct libscols_table *tb)
 {
