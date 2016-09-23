@@ -130,6 +130,19 @@ int scols_table_set_name(struct libscols_table *tb, const char *str)
 }
 
 /**
+ * scols_table_get_name:
+ * @tb: a pointer to a struct libscols_table instance
+ *
+ * Returns: The current name setting of the table @tb
+ *
+ * Since: 2.29
+ */
+const char *scols_table_get_name(const struct libscols_table *tb)
+{
+	return tb->name;
+}
+
+/**
  * scols_table_get_title:
  * @tb: a pointer to a struct libscols_table instance
  *

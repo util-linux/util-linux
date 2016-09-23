@@ -195,6 +195,7 @@ extern struct libscols_line *scols_copy_line(const struct libscols_line *ln);
 /* table */
 extern int scols_table_colors_wanted(const struct libscols_table *tb);
 extern int scols_table_set_name(struct libscols_table *tb, const char *name);
+extern const char *scols_table_get_name(const struct libscols_table *tb);
 extern struct libscols_cell *scols_table_get_title(struct libscols_table *tb);
 extern int scols_table_is_raw(const struct libscols_table *tb);
 extern int scols_table_is_ascii(const struct libscols_table *tb);
