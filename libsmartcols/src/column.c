@@ -22,6 +22,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#include "mbsalign.h"
+
 #include "smartcolsP.h"
 
 /**
@@ -169,6 +171,17 @@ int scols_column_set_flags(struct libscols_column *cl, int flags)
 }
 
 /**
+ * scols_column_get_table:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Returns: pointer to the table where columns is used
+ */
+struct libscols_table *scols_column_get_table(struct libscols_column *cl)
+{
+	return cl->table;
+}
+
+/**
  * scols_column_get_flags:
  * @cl: a pointer to a struct libscols_column instance
  *
@@ -227,6 +240,69 @@ const char *scols_column_get_color(const struct libscols_column *cl)
 	return cl->color;
 }
 
+/**
+ * scols_wrapnl_nextchunk:
+ * @cl: a pointer to a struct libscols_column instance
+ * @data: string
+ * @userdata: any data or NULL
+ *
+ * This is build-in function for scols_column_set_wrapfunc(). This function
+ * terminates the current chunk by \0 and returns pointer to the begin of
+ * the next chunk. The chunks are based on \n.
+ *
+ * For example for data "AAA\nBBB\nCCC" the next chunk is "BBB".
+ *
+ * Returns: next chunk
+ */
+char *scols_wrapnl_nextchunk(const struct libscols_column *cl __attribute__((unused)),
+			char *data,
+			void *userdata __attribute__((unused)))
+{
+	char *p = data ? strchr(data, '\n') : NULL;
+
+	if (p) {
+		*p = '\0';
+		return p + 1;
+	}
+	return NULL;
+}
+
+/**
+ * scols_wrapnl_chunksize:
+ * @cl: a pointer to a struct libscols_column instance
+ * @data: string
+ *
+ * Analyzes @data and returns size of the largest chunk. The chunks are based
+ * on \n. For example for data "AAA\nBBB\nCCCC" the largest chunk size is 4.
+ *
+ * Note that the size has to be based on number of terminal cells rather than
+ * bytes to support multu-byte output.
+ *
+ * Returns: size of the largest chunk.
+ */
+size_t scols_wrapnl_chunksize(const struct libscols_column *cl __attribute__((unused)),
+		const char *data,
+		void *userdata __attribute__((unused)))
+{
+	size_t sum = 0;
+
+	while (data && *data) {
+		const char *p = data;
+		size_t sz;
+
+		p = strchr(data, '\n');
+		if (p) {
+			sz = mbs_safe_nwidth(data, p - data, NULL);
+			p++;
+		} else
+			sz = mbs_safe_width(data);
+
+		sum = max(sum, sz);
+		data = p;;
+	}
+
+	return sum;
+}
 
 /**
  * scols_column_set_cmpfunc:
@@ -248,6 +324,66 @@ int scols_column_set_cmpfunc(struct libscols_column *cl,
 	cl->cmpfunc = cmp;
 	cl->cmpfunc_data = data;
 	return 0;
+}
+
+/**
+ * scols_column_set_wrapfunc:
+ * @cl: a pointer to a struct libscols_column instance
+ * @wrap_chunksize: function to return size of the largest chink of data
+ * @wrap_nextchunk: function to return next zero terminated data
+ *
+ * Extends SCOLS_FL_WRAP and allows to set custom wrap function. The default
+ * is to wrap by column size, but you can create functions to wrap for example
+ * after \n or after words, etc.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_column_set_wrapfunc(struct libscols_column *cl,
+			size_t (*wrap_chunksize)(const struct libscols_column *,
+						 const char *,
+						 void *),
+			char * (*wrap_nextchunk)(const struct libscols_column *,
+						 char *,
+						 void *),
+			void *data)
+{
+	if (!cl)
+		return -EINVAL;
+
+	cl->wrap_nextchunk = wrap_nextchunk;
+	cl->wrap_chunksize = wrap_chunksize;
+	cl->wrapfunc_data = data;
+	return 0;
+}
+
+/**
+ * scols_column_set_safechars:
+ * @cl: a pointer to a struct libscols_column instance
+ * @safe: safe characters (e.g. "\n\t")
+ *
+ * Use for bytes you don't want to encode on output. This is for example
+ * necessary if you want to use custom wrap function based on \n, in this case
+ * you have to set "\n" as a safe char.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_column_set_safechars(struct libscols_column *cl, const char *safe)
+{
+	if (!cl)
+		return -EINVAL;
+	cl->safechars = safe;
+	return 0;
+}
+
+/**
+ * scols_column_get_safechars:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Returns: safe chars
+ */
+const char *scols_column_get_safechars(const struct libscols_column *cl)
+{
+	return cl->safechars;
 }
 
 /**
@@ -340,16 +476,16 @@ int scols_column_is_wrap(const struct libscols_column *cl)
 	return cl->flags & SCOLS_FL_WRAP ? 1 : 0;
 }
 /**
- * scols_column_is_wrapnl:
+ * scols_column_is_customwrap:
  * @cl: a pointer to a struct libscols_column instance
- *
- * Gets the value of @cl's flag wrap.
  *
  * Returns: 0 or 1
  *
  * Since: 2.29
  */
-int scols_column_is_wrapnl(const struct libscols_column *cl)
+int scols_column_is_customwrap(const struct libscols_column *cl)
 {
-	return cl->flags & SCOLS_FL_WRAPNL ? 1 : 0;
+	return (cl->flags & SCOLS_FL_WRAP)
+		&& cl->wrap_chunksize
+		&& cl->wrap_nextchunk ? 1 : 0;
 }

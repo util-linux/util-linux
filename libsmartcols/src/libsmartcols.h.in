@@ -84,8 +84,7 @@ enum {
 	SCOLS_FL_STRICTWIDTH = (1 << 3),   /* don't reduce width if column is empty */
 	SCOLS_FL_NOEXTREMES  = (1 << 4),   /* ignore extreme fields when count column width*/
 	SCOLS_FL_HIDDEN	     = (1 << 5),   /* maintain data, but don't print */
-	SCOLS_FL_WRAP	     = (1 << 6),   /* wrap long lines to multi-line cells */
-	SCOLS_FL_WRAPNL	     = (1 << 7)    /* wrap based on '\n' char */
+	SCOLS_FL_WRAP	     = (1 << 6)    /* wrap long lines to multi-line cells */
 };
 
 /*
@@ -146,7 +145,10 @@ extern int scols_column_is_strict_width(const struct libscols_column *cl);
 extern int scols_column_is_hidden(const struct libscols_column *cl);
 extern int scols_column_is_noextremes(const struct libscols_column *cl);
 extern int scols_column_is_wrap(const struct libscols_column *cl);
-extern int scols_column_is_wrapnl(const struct libscols_column *cl);
+extern int scols_column_is_customwrap(const struct libscols_column *cl);
+
+extern int scols_column_set_safechars(struct libscols_column *cl, const char *safe);
+extern const char *scols_column_get_safechars(const struct libscols_column *cl);
 
 extern int scols_column_set_flags(struct libscols_column *cl, int flags);
 extern int scols_column_get_flags(const struct libscols_column *cl);
@@ -159,11 +161,22 @@ extern double scols_column_get_whint(const struct libscols_column *cl);
 extern struct libscols_cell *scols_column_get_header(struct libscols_column *cl);
 extern int scols_column_set_color(struct libscols_column *cl, const char *color);
 extern const char *scols_column_get_color(const struct libscols_column *cl);
+extern struct libscols_table *scols_column_get_table(struct libscols_column *cl);
 
 extern int scols_column_set_cmpfunc(struct libscols_column *cl,
 			int (*cmp)(struct libscols_cell *a,
 				   struct libscols_cell *b, void *),
 			void *data);
+
+extern int scols_column_set_wrapfunc(struct libscols_column *cl,
+			size_t (*wrap_chunksize)(const struct libscols_column *,
+					 const char *, void *),
+			char * (*wrap_nextchunk)(const struct libscols_column *,
+					 char *, void *),
+			void *data);
+
+extern char *scols_wrapnl_nextchunk(const struct libscols_column *cl, char *data, void *userdata);
+extern size_t scols_wrapnl_chunksize(const struct libscols_column *cl, const char *data, void *userdata);
 
 /* line.c */
 extern struct libscols_line *scols_new_line(void);

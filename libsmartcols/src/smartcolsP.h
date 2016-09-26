@@ -95,6 +95,14 @@ struct libscols_column {
 		       void *);			/* cells comparison function */
 	void *cmpfunc_data;
 
+	size_t (*wrap_chunksize)(const struct libscols_column *,
+			const char *, void *);
+	char *(*wrap_nextchunk)(const struct libscols_column *,
+			char *, void *);
+	void *wrapfunc_data;
+
+	const char *safechars;	/* do not encode this bytes */
+
 	struct libscols_cell	header;
 	struct list_head	cl_columns;
 

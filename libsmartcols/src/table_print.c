@@ -370,7 +370,7 @@ static int print_pending_data(
 	size_t width = cl->width, bytes;
 	size_t len = width, i;
 	char *data;
-	char *wrapnl = NULL;
+	char *nextchunk = NULL;
 
 	if (!cl->pending_data)
 		return 0;
@@ -381,10 +381,9 @@ static int print_pending_data(
 	if (!data)
 		goto err;
 
-	if (scols_column_is_wrapnl(cl) && (wrapnl = strchr(data, '\n'))) {
-		*wrapnl = '\0';
-		wrapnl++;
-		bytes = wrapnl - data;
+	if (scols_column_is_customwrap(cl)
+	    && (nextchunk = cl->wrap_nextchunk(cl, data, cl->wrapfunc_data))) {
+		bytes = nextchunk - data;
 
 		len = mbs_safe_nwidth(data, bytes, NULL);
 	} else
@@ -423,7 +422,7 @@ static int print_data(struct libscols_table *tb,
 {
 	size_t len = 0, i, width, bytes;
 	const char *color = NULL;
-	char *data, *wrapnl;
+	char *data, *nextchunk;
 	int is_last;
 
 	assert(tb);
@@ -471,21 +470,18 @@ static int print_data(struct libscols_table *tb,
 	color = get_cell_color(tb, cl, ln, ce);
 
 	/* Encode. Note that 'len' and 'width' are number of cells, not bytes.
-	 * For the columns with WRAPNL we mark \n as a safe char.
 	 */
-	data = buffer_get_safe_data(buf, &len,
-			scols_column_is_wrapnl(cl) ? "\n" : NULL);
+	data = buffer_get_safe_data(buf, &len, scols_column_get_safechars(cl));
 	if (!data)
 		data = "";
 	bytes = strlen(data);
 	width = cl->width;
 
-	/* multi-line cell based on '\n' */
-	if (*data && scols_column_is_wrapnl(cl) && (wrapnl = strchr(data, '\n'))) {
-		*wrapnl = '\0';
-		wrapnl++;
-		set_pending_data(cl, wrapnl, bytes - (wrapnl - data));
-		bytes = wrapnl - data;
+	/* custom multi-line cell based */
+	if (*data && scols_column_is_customwrap(cl)
+	    && (nextchunk = cl->wrap_nextchunk(cl, data, cl->wrapfunc_data))) {
+		set_pending_data(cl, nextchunk, bytes - (nextchunk - data));
+		bytes = nextchunk - data;
 		len = mbs_safe_nwidth(data, bytes, NULL);
 	}
 
@@ -501,8 +497,9 @@ static int print_data(struct libscols_table *tb,
 		bytes = mbs_truncate(data, &len);	/* updates 'len' */
 	}
 
-	/* multi-line cell */
-	if (len > width && scols_column_is_wrap(cl)) {
+	/* standard multi-line cell */
+	if (len > width && scols_column_is_wrap(cl)
+	    && !scols_column_is_customwrap(cl)) {
 		set_pending_data(cl, data, bytes);
 
 		len = width;
@@ -989,30 +986,6 @@ static void dbg_columns(struct libscols_table *tb)
 		dbg_column(tb, cl);
 }
 
-/* count the maximal size of \n terminated chunk in the @data
- * for example for "AAA\nBBBB\nXX" the wrap size is 4 ('BBBB').
- */
-static size_t count_wrapnl_size(const char *data)
-{
-	size_t sum = 0;
-
-	while (data && *data) {
-		const char *p = data;
-		size_t sz;
-
-		p = strchr(data, '\n');
-		if (p) {
-			sz = mbs_safe_nwidth(data, p - data, NULL);
-			p++;
-		} else
-			sz = mbs_safe_width(data);
-
-		sum = max(sum, sz);
-		data = p;;
-	}
-
-	return sum;
-}
 
 /*
  * This function counts column width.
@@ -1061,8 +1034,8 @@ static int count_column_width(struct libscols_table *tb,
 
 		if (!data)
 			len = 0;
-		else if (scols_column_is_wrapnl(cl))
-			len = count_wrapnl_size(data);
+		else if (scols_column_is_customwrap(cl))
+			len = cl->wrap_chunksize(cl, data, cl->wrapfunc_data);
 		else
 			len = mbs_safe_width(data);
 
@@ -1265,7 +1238,8 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 				continue;	/* never truncate columns with absolute sizes */
 			if (scols_column_is_tree(cl) && width <= cl->width_treeart)
 				continue;	/* never truncate the tree */
-			if (trunc_only && !(scols_column_is_trunc(cl) || scols_column_is_wrap(cl)))
+			if (trunc_only && !(scols_column_is_trunc(cl) ||
+					(scols_column_is_wrap(cl) && !scols_column_is_customwrap(cl))))
 				continue;
 			if (cl->width == cl->width_min)
 				continue;
