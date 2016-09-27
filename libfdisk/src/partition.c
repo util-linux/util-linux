@@ -1287,6 +1287,7 @@ done:
  * Enable/disable filesystems/RAIDs wiping in area defined by partition start and size.
  *
  * Returns: <0 in case of error, 0 on success
+ * Since: 2.29
  */
 int fdisk_wipe_partition(struct fdisk_context *cxt, size_t partno, int enable)
 {

@@ -32,7 +32,6 @@
  * fdisk_new_labelitem
  *
  * Returns: new instance.
- *
  * Since: v2.29
  */
 struct fdisk_labelitem *fdisk_new_labelitem(void)
@@ -49,7 +48,6 @@ struct fdisk_labelitem *fdisk_new_labelitem(void)
  * @li: label item
  *
  * Increments reference counter.
- *
  * Since: v2.29
  */
 void fdisk_ref_labelitem(struct fdisk_labelitem *li)
@@ -64,6 +62,7 @@ void fdisk_ref_labelitem(struct fdisk_labelitem *li)
  *
  * Zeroize data stored in the @li (does not modify anything in disk label).
  *
+ * Returns: 0 on success, or <0 in case of error
  * Since: v2.29
  */
 int fdisk_reset_labelitem(struct fdisk_labelitem *li)
@@ -169,6 +168,7 @@ int fdisk_labelitem_get_data_string(struct fdisk_labelitem *li, const char **dat
  * @li: label item
  *
  * Returns: 0 or 1
+ * Since: v2.29
  */
 int fdisk_labelitem_is_string(struct fdisk_labelitem *li)
 {
@@ -180,6 +180,7 @@ int fdisk_labelitem_is_string(struct fdisk_labelitem *li)
  * @li: label item
  *
  * Returns: 0 or 1
+ * Since: v2.29
  */
 int fdisk_labelitem_is_number(struct fdisk_labelitem *li)
 {
