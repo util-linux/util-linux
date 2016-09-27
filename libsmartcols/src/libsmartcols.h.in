@@ -173,7 +173,7 @@ extern int scols_column_set_wrapfunc(struct libscols_column *cl,
 					 const char *, void *),
 			char * (*wrap_nextchunk)(const struct libscols_column *,
 					 char *, void *),
-			void *data);
+			void *userdata);
 
 extern char *scols_wrapnl_nextchunk(const struct libscols_column *cl, char *data, void *userdata);
 extern size_t scols_wrapnl_chunksize(const struct libscols_column *cl, const char *data, void *userdata);

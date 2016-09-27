@@ -244,7 +244,7 @@ const char *scols_column_get_color(const struct libscols_column *cl)
  * scols_wrapnl_nextchunk:
  * @cl: a pointer to a struct libscols_column instance
  * @data: string
- * @userdata: any data or NULL
+ * @userdata: callback private data
  *
  * This is build-in function for scols_column_set_wrapfunc(). This function
  * terminates the current chunk by \0 and returns pointer to the begin of
@@ -273,6 +273,7 @@ char *scols_wrapnl_nextchunk(const struct libscols_column *cl __attribute__((unu
  * scols_wrapnl_chunksize:
  * @cl: a pointer to a struct libscols_column instance
  * @data: string
+ * @userdata: callback private data
  *
  * Analyzes @data and returns size of the largest chunk. The chunks are based
  * on \n. For example for data "AAA\nBBB\nCCCC" the largest chunk size is 4.
@@ -335,6 +336,7 @@ int scols_column_set_cmpfunc(struct libscols_column *cl,
  * @cl: a pointer to a struct libscols_column instance
  * @wrap_chunksize: function to return size of the largest chink of data
  * @wrap_nextchunk: function to return next zero terminated data
+ * @userdata: optional stuff for callbacks
  *
  * Extends SCOLS_FL_WRAP and allows to set custom wrap function. The default
  * is to wrap by column size, but you can create functions to wrap for example
@@ -351,14 +353,14 @@ int scols_column_set_wrapfunc(struct libscols_column *cl,
 			char * (*wrap_nextchunk)(const struct libscols_column *,
 						 char *,
 						 void *),
-			void *data)
+			void *userdata)
 {
 	if (!cl)
 		return -EINVAL;
 
 	cl->wrap_nextchunk = wrap_nextchunk;
 	cl->wrap_chunksize = wrap_chunksize;
-	cl->wrapfunc_data = data;
+	cl->wrapfunc_data = userdata;
 	return 0;
 }
 

@@ -40,6 +40,8 @@ available from ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
     <xi:include href="xml/partition.xml"/>
     <xi:include href="xml/table.xml"/>
     <xi:include href="xml/parttype.xml"/>
+    <xi:include href="xml/item.xml"/>
+    <xi:include href="xml/field.xml"/>
   </part>
   <part>
     <title>Label specific functions</title>

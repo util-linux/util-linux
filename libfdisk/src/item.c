@@ -2,7 +2,7 @@
 #include "fdiskP.h"
 
 /**
- * SECTION: labelitem
+ * SECTION: item
  * @title: Labelitem
  * @short_description: disk label items
  *
@@ -32,7 +32,7 @@
  * fdisk_new_labelitem
  *
  * Returns: new instance.
- * Since: v2.29
+ * Since: 2.29
  */
 struct fdisk_labelitem *fdisk_new_labelitem(void)
 {
@@ -48,7 +48,7 @@ struct fdisk_labelitem *fdisk_new_labelitem(void)
  * @li: label item
  *
  * Increments reference counter.
- * Since: v2.29
+ * Since: 2.29
  */
 void fdisk_ref_labelitem(struct fdisk_labelitem *li)
 {
@@ -63,7 +63,7 @@ void fdisk_ref_labelitem(struct fdisk_labelitem *li)
  * Zeroize data stored in the @li (does not modify anything in disk label).
  *
  * Returns: 0 on success, or <0 in case of error
- * Since: v2.29
+ * Since: 2.29
  */
 int fdisk_reset_labelitem(struct fdisk_labelitem *li)
 {
@@ -87,7 +87,7 @@ int fdisk_reset_labelitem(struct fdisk_labelitem *li)
  * Decrements reference counter, on zero the @li is automatically
  * deallocated.
  *
- * Since: v2.29
+ * Since: 2.29
  */
 void fdisk_unref_labelitem(struct fdisk_labelitem *li)
 {
@@ -107,7 +107,7 @@ void fdisk_unref_labelitem(struct fdisk_labelitem *li)
  * @li: label item
  *
  * Returns: item name or NULL.
- * Since: v2.29
+ * Since: 2.29
  */
 const char *fdisk_labelitem_get_name(struct fdisk_labelitem *li)
 {
@@ -119,7 +119,7 @@ const char *fdisk_labelitem_get_name(struct fdisk_labelitem *li)
  * @li: label item
  *
  * Returns: item Id or <0 in case of error.
- * Since: v2.29
+ * Since: 2.29
  */
 int fdisk_labelitem_get_id(struct fdisk_labelitem *li)
 {
@@ -133,7 +133,7 @@ int fdisk_labelitem_get_id(struct fdisk_labelitem *li)
  * @data: returns data
  *
  * Returns: 0 on success, <0 on error
- * Since: v2.29
+ * Since: 2.29
  */
 int fdisk_labelitem_get_data_u64(struct fdisk_labelitem *li, uint64_t *data)
 {
@@ -151,7 +151,7 @@ int fdisk_labelitem_get_data_u64(struct fdisk_labelitem *li, uint64_t *data)
  * @data: returns data
  *
  * Returns: 0 on success, <0 on error.
- * Since: v2.29
+ * Since: 2.29
  */
 int fdisk_labelitem_get_data_string(struct fdisk_labelitem *li, const char **data)
 {
@@ -168,7 +168,7 @@ int fdisk_labelitem_get_data_string(struct fdisk_labelitem *li, const char **dat
  * @li: label item
  *
  * Returns: 0 or 1
- * Since: v2.29
+ * Since: 2.29
  */
 int fdisk_labelitem_is_string(struct fdisk_labelitem *li)
 {
@@ -180,7 +180,7 @@ int fdisk_labelitem_is_string(struct fdisk_labelitem *li)
  * @li: label item
  *
  * Returns: 0 or 1
- * Since: v2.29
+ * Since: 2.29
  */
 int fdisk_labelitem_is_number(struct fdisk_labelitem *li)
 {

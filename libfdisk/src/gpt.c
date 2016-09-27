@@ -2493,16 +2493,16 @@ static int gpt_check_table_overlap(struct fdisk_context *cxt,
 /**
  * fdisk_gpt_set_npartitions:
  * @cxt: context
- * @new: new size
+ * @entries: new size
  *
  * Elarge GPT entries array if possible. The function check if an existing
  * partition does not overlap the entries array area. If yes, then it report
  * warning and returns -EINVAL.
  *
  * Returns: 0 on success, < 0 on error.
- * Since: v2.29
+ * Since: 2.29
  */
-int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t new)
+int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries)
 {
 	struct fdisk_gpt_label *gpt;
 	size_t old_size, new_size;
@@ -2518,11 +2518,11 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t new)
 	gpt = self_label(cxt);
 
 	old = le32_to_cpu(gpt->pheader->npartition_entries);
-	if (old == new)
+	if (old == entries)
 		return 0;	/* do nothing, say nothing */
 
 	/* calculate the size (bytes) of the entries array */
-	new_size = new * le32_to_cpu(gpt->pheader->sizeof_partition_entry);
+	new_size = entries * le32_to_cpu(gpt->pheader->sizeof_partition_entry);
 	old_size = old * le32_to_cpu(gpt->pheader->sizeof_partition_entry);
 
 	/* calculate new range of usable LBAs */
@@ -2531,7 +2531,7 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t new)
 
 	/* if expanding the table, first check that everything fits,
 	 * then allocate more memory and zero. */
-	if (new > old) {
+	if (entries > old) {
 		rc = gpt_check_table_overlap(cxt, first_usable, last_usable);
 		if (rc)
 			return rc;
@@ -2545,8 +2545,8 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t new)
 	}
 
 	/* everything's ok, apply the new size */
-	gpt->pheader->npartition_entries = cpu_to_le32(new);
-	gpt->bheader->npartition_entries = cpu_to_le32(new);
+	gpt->pheader->npartition_entries = cpu_to_le32(entries);
+	gpt->bheader->npartition_entries = cpu_to_le32(entries);
 
 	/* usable LBA addresses will have changed */
 	fdisk_set_first_lba(cxt, first_usable);
@@ -2564,7 +2564,7 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t new)
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
 
-	fdisk_info(cxt, _("Partition table length changed from %"PRIu32" to %"PRIu64"."), old, new);
+	fdisk_info(cxt, _("Partition table length changed from %"PRIu32" to %"PRIu64"."), old, entries);
 
 	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
