@@ -72,6 +72,7 @@ void scols_unref_column(struct libscols_column *cl)
 		list_del(&cl->cl_columns);
 		scols_reset_cell(&cl->header);
 		free(cl->color);
+		free(cl->safechars);
 		free(cl->pending_data_buf);
 		free(cl);
 	}
@@ -176,7 +177,7 @@ int scols_column_set_flags(struct libscols_column *cl, int flags)
  *
  * Returns: pointer to the table where columns is used
  */
-struct libscols_table *scols_column_get_table(struct libscols_column *cl)
+struct libscols_table *scols_column_get_table(const struct libscols_column *cl)
 {
 	return cl->table;
 }
@@ -246,7 +247,7 @@ const char *scols_column_get_color(const struct libscols_column *cl)
  * @data: string
  * @userdata: callback private data
  *
- * This is build-in function for scols_column_set_wrapfunc(). This function
+ * This is built-in function for scols_column_set_wrapfunc(). This function
  * terminates the current chunk by \0 and returns pointer to the begin of
  * the next chunk. The chunks are based on \n.
  *
@@ -379,10 +380,7 @@ int scols_column_set_wrapfunc(struct libscols_column *cl,
  */
 int scols_column_set_safechars(struct libscols_column *cl, const char *safe)
 {
-	if (!cl)
-		return -EINVAL;
-	cl->safechars = safe;
-	return 0;
+	return strdup_to_struct_member(cl, safechars, safe);
 }
 
 /**

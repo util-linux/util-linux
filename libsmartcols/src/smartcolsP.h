@@ -85,6 +85,7 @@ struct libscols_column {
 	int	flags;
 	int	is_extreme;
 	char	*color;		/* default column color */
+	char	*safechars;	/* do not encode this bytes */
 
 	char	*pending_data;
 	size_t	pending_data_sz;
@@ -101,7 +102,6 @@ struct libscols_column {
 			char *, void *);
 	void *wrapfunc_data;
 
-	const char *safechars;	/* do not encode this bytes */
 
 	struct libscols_cell	header;
 	struct list_head	cl_columns;

@@ -161,7 +161,7 @@ extern double scols_column_get_whint(const struct libscols_column *cl);
 extern struct libscols_cell *scols_column_get_header(struct libscols_column *cl);
 extern int scols_column_set_color(struct libscols_column *cl, const char *color);
 extern const char *scols_column_get_color(const struct libscols_column *cl);
-extern struct libscols_table *scols_column_get_table(struct libscols_column *cl);
+extern struct libscols_table *scols_column_get_table(const struct libscols_column *cl);
 
 extern int scols_column_set_cmpfunc(struct libscols_column *cl,
 			int (*cmp)(struct libscols_cell *a,
