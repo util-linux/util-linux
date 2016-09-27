@@ -113,7 +113,6 @@ local:
 	*;
 };
 
-
 SMARTCOLS_2.27 {
 global:
 	scols_column_is_hidden;

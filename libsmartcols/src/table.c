@@ -689,6 +689,8 @@ err:
  * Use scols_table_set_symbols() to unset symbols or use your own setting.
  *
  * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.29
  */
 int scols_table_set_default_symbols(struct libscols_table *tb)
 {
@@ -766,6 +768,8 @@ int scols_table_set_symbols(struct libscols_table *tb,
  * @tb: table
  *
  * Returns: pointer to symbols table.
+ *
+ * Since: 2.29
  */
 struct libscols_symbols *scols_table_get_symbols(const struct libscols_table *tb)
 {
@@ -1189,6 +1193,8 @@ int scols_sort_table(struct libscols_table *tb, struct libscols_column *cl)
  * detection (default).
  *
  * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.29
  */
 int scols_table_set_termforce(struct libscols_table *tb, int force)
 {
@@ -1203,6 +1209,8 @@ int scols_table_set_termforce(struct libscols_table *tb, int force)
  * @tb: table
  *
  * Returns: SCOLS_TERMFORCE_{NEVER,ALWAYS,AUTO} or a negative value in case of an error.
+ *
+ * Since: 2.29
  */
 int scols_table_get_termforce(const struct libscols_table *tb)
 {
@@ -1218,6 +1226,8 @@ int scols_table_get_termforce(const struct libscols_table *tb)
  * detections is unsuccessful. This function override this behaviour.
  *
  * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.29
  */
 int scols_table_set_termwidth(struct libscols_table *tb, size_t width)
 {

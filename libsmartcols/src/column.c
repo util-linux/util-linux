@@ -253,6 +253,8 @@ const char *scols_column_get_color(const struct libscols_column *cl)
  * For example for data "AAA\nBBB\nCCC" the next chunk is "BBB".
  *
  * Returns: next chunk
+ *
+ * Since: 2.29
  */
 char *scols_wrapnl_nextchunk(const struct libscols_column *cl __attribute__((unused)),
 			char *data,
@@ -279,6 +281,8 @@ char *scols_wrapnl_nextchunk(const struct libscols_column *cl __attribute__((unu
  * bytes to support multu-byte output.
  *
  * Returns: size of the largest chunk.
+ *
+ * Since: 2.29
  */
 size_t scols_wrapnl_chunksize(const struct libscols_column *cl __attribute__((unused)),
 		const char *data,
@@ -337,6 +341,8 @@ int scols_column_set_cmpfunc(struct libscols_column *cl,
  * after \n or after words, etc.
  *
  * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.29
  */
 int scols_column_set_wrapfunc(struct libscols_column *cl,
 			size_t (*wrap_chunksize)(const struct libscols_column *,
@@ -366,6 +372,8 @@ int scols_column_set_wrapfunc(struct libscols_column *cl,
  * you have to set "\n" as a safe char.
  *
  * Returns: 0, a negative value in case of an error.
+ *
+ * Since: 2.29
  */
 int scols_column_set_safechars(struct libscols_column *cl, const char *safe)
 {
@@ -380,6 +388,8 @@ int scols_column_set_safechars(struct libscols_column *cl, const char *safe)
  * @cl: a pointer to a struct libscols_column instance
  *
  * Returns: safe chars
+ *
+ * Since: 2.29
  */
 const char *scols_column_get_safechars(const struct libscols_column *cl)
 {
