@@ -59,6 +59,9 @@ enum
 #include <sys/wait.h>
 #include <syslog.h>
 #include <utmp.h>
+#ifdef HAVE_LIBSECCOMP
+# include <seccomp.h>
+#endif
 
 #include "err.h"
 
@@ -674,6 +677,21 @@ restricted_shell (const char *shell)
   return true;
 }
 
+static void disable_tty_hijack(void)
+{
+#ifdef HAVE_LIBSECCOMP
+  scmp_filter_ctx ctx = seccomp_init(SCMP_ACT_ALLOW);
+  if (!ctx)
+    err(EXIT_FAILURE, _("failed to initialize seccomp context"));
+  if (seccomp_rule_add(ctx, SCMP_ACT_ERRNO(EPERM), SCMP_SYS(ioctl), 1,
+			    SCMP_A1(SCMP_CMP_EQ, (int)TIOCSTI)) < 0)
+    err(EXIT_FAILURE, _("failed to add seccomp rule"));
+  if (seccomp_load(ctx) < 0)
+    err(EXIT_FAILURE, _("failed to load seccomp rule"));
+  seccomp_release(ctx);
+#endif /* HAVE_LIBSECCOMP */
+}
+
 static void __attribute__((__noreturn__))
 usage (int status)
 {
@@ -970,6 +988,8 @@ su_main (int argc, char **argv, int mode)
   change_identity (pw);
   if (!same_session)
     setsid ();
+  else
+    disable_tty_hijack();
 
   /* Set environment after pam_open_session, which may put KRB5CCNAME
      into the pam_env, etc.  */
