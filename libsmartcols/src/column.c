@@ -397,6 +397,25 @@ const char *scols_column_get_safechars(const struct libscols_column *cl)
 }
 
 /**
+ * scols_column_get_width:
+ * @cl: a pointer to a struct libscols_column instance
+ *
+ * Important note: the column width is unknown until library starts printing
+ * (width is calculated before printing). The function is usable for example in
+ * nextchunk() callback specified by scols_column_set_wrapfunc().
+ *
+ * See also scols_column_get_whint(), it returns wanted size (!= final size).
+ *
+ * Returns: column width
+ *
+ * Since: 2.29
+ */
+size_t scols_column_get_width(const struct libscols_column *cl)
+{
+	return cl->width;
+}
+
+/**
  * scols_column_is_hidden:
  * @cl: a pointer to a struct libscols_column instance
  *

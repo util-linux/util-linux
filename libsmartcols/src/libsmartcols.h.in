@@ -147,6 +147,8 @@ extern int scols_column_is_noextremes(const struct libscols_column *cl);
 extern int scols_column_is_wrap(const struct libscols_column *cl);
 extern int scols_column_is_customwrap(const struct libscols_column *cl);
 
+extern size_t scols_column_get_width(const struct libscols_column *cl);
+
 extern int scols_column_set_safechars(struct libscols_column *cl, const char *safe);
 extern const char *scols_column_get_safechars(const struct libscols_column *cl);
 

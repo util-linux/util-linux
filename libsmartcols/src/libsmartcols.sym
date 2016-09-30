@@ -140,6 +140,7 @@ SMARTCOLS_2.29 {
 global:
 	scols_column_get_safechars;
 	scols_column_get_table;
+	scols_column_get_width;
 	scols_column_is_customwrap;
 	scols_column_set_safechars;
 	scols_column_set_wrapfunc;
