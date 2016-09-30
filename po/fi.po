@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2016-09-06 11:16+0200\n"
+"POT-Creation-Date: 2016-09-30 11:02+0200\n"
 "PO-Revision-Date: 2015-08-02 17:53+0300\n"
 "Last-Translator: Lauri Nurmi <lanurmi@iki.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -58,7 +58,7 @@ msgstr ""
 #: login-utils/sulogin.c:446 login-utils/sulogin.c:483
 #: login-utils/utmpdump.c:136 login-utils/utmpdump.c:359
 #: login-utils/utmpdump.c:381 login-utils/vipw.c:258 login-utils/vipw.c:276
-#: misc-utils/findmnt.c:1121 misc-utils/logger.c:1177 misc-utils/mcookie.c:115
+#: misc-utils/findmnt.c:1097 misc-utils/logger.c:1177 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:207 sys-utils/blkdiscard.c:183 sys-utils/dmesg.c:522
 #: sys-utils/eject.c:500 sys-utils/eject.c:700 sys-utils/fallocate.c:374
 #: sys-utils/fsfreeze.c:128 sys-utils/fstrim.c:72 sys-utils/hwclock.c:282
@@ -1747,7 +1747,7 @@ msgstr "%s %s%s\n"
 msgid "failed to setup description for %s"
 msgstr "%s: tyhjää kategoriakuvausta ei sallita"
 
-#: disk-utils/fsck.c:474 misc-utils/findmnt.c:807 misc-utils/lsblk.c:433
+#: disk-utils/fsck.c:474 misc-utils/findmnt.c:782 misc-utils/lsblk.c:433
 #: sys-utils/mount.c:102 sys-utils/swapon-common.c:19 sys-utils/umount.c:46
 #, fuzzy, c-format
 msgid "%s: parse error at line %d -- ignored"
@@ -2913,7 +2913,7 @@ msgid " -h, --help         display this help text and exit\n"
 msgstr "      --help     näytä tämä ohje ja poistu\n"
 
 #: disk-utils/mkfs.c:139 lib/exec_shell.c:49 login-utils/newgrp.c:233
-#: login-utils/su-common.c:651 login-utils/su-common.c:986
+#: login-utils/su-common.c:654 login-utils/su-common.c:1006
 #: login-utils/sulogin.c:795 login-utils/sulogin.c:799 schedutils/chrt.c:555
 #: schedutils/ionice.c:260 schedutils/taskset.c:239 sys-utils/flock.c:363
 #: sys-utils/nsenter.c:430 sys-utils/prlimit.c:644 sys-utils/rtcwake.c:577
@@ -3549,7 +3549,7 @@ msgstr "helppolukuinen koko"
 msgid "partition name"
 msgstr "osion nimi"
 
-#: disk-utils/partx.c:92 misc-utils/findmnt.c:132 misc-utils/lsblk.c:168
+#: disk-utils/partx.c:92 misc-utils/findmnt.c:108 misc-utils/lsblk.c:168
 msgid "partition UUID"
 msgstr "osion UUID"
 
@@ -3590,7 +3590,7 @@ msgstr "tiedostoa %s ei löytynyt"
 msgid "%s: failed to set up loop device"
 msgstr "sivutuslaitteella ei voi siirtyä taaksepäin"
 
-#: disk-utils/partx.c:161 login-utils/lslogins.c:307 misc-utils/findmnt.c:401
+#: disk-utils/partx.c:161 login-utils/lslogins.c:307 misc-utils/findmnt.c:376
 #: misc-utils/lsblk.c:354 misc-utils/lslocks.c:342 sys-utils/losetup.c:107
 #: sys-utils/lscpu.c:370 sys-utils/lsipc.c:232 sys-utils/lsns.c:189
 #: sys-utils/prlimit.c:277 sys-utils/swapon.c:147 sys-utils/wdctl.c:151
@@ -3691,7 +3691,7 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] "#%2d: %9ju-%9ju (%9ju sektori, %6ju MB)\n"
 msgstr[1] "#%2d: %9ju-%9ju (%9ju sectoria, %6ju MB)\n"
 
-#: disk-utils/partx.c:581 misc-utils/findmnt.c:713 misc-utils/findmnt.c:730
+#: disk-utils/partx.c:581 misc-utils/findmnt.c:688 misc-utils/findmnt.c:705
 #: misc-utils/lslocks.c:391 sys-utils/lsns.c:434
 #, fuzzy
 msgid "failed to add line to output"
@@ -3702,7 +3702,7 @@ msgstr "Puskuria ei voi varata.\n"
 msgid "failed to add data to output table"
 msgstr "Puskuria ei voi varata.\n"
 
-#: disk-utils/partx.c:667 login-utils/lslogins.c:922 misc-utils/findmnt.c:1583
+#: disk-utils/partx.c:667 login-utils/lslogins.c:922 misc-utils/findmnt.c:1582
 #: misc-utils/lsblk.c:1869 misc-utils/lslocks.c:451 sys-utils/losetup.c:310
 #: sys-utils/lscpu.c:1690 sys-utils/lsipc.c:338 sys-utils/lsns.c:489
 #: sys-utils/prlimit.c:297 sys-utils/swapon.c:280 sys-utils/wdctl.c:259
@@ -3711,7 +3711,7 @@ msgstr "Puskuria ei voi varata.\n"
 msgid "failed to initialize output table"
 msgstr "Osiotaulun uudelleenluku epäonnistui."
 
-#: disk-utils/partx.c:678 misc-utils/findmnt.c:1609 misc-utils/lsblk.c:1891
+#: disk-utils/partx.c:678 misc-utils/findmnt.c:1608 misc-utils/lsblk.c:1891
 #: misc-utils/lslocks.c:465 sys-utils/losetup.c:322 sys-utils/losetup.c:358
 #: sys-utils/lscpu.c:1695 sys-utils/lsns.c:510 sys-utils/prlimit.c:306
 #: sys-utils/swapon.c:289 sys-utils/wdctl.c:270 sys-utils/zramctl.c:493
@@ -4738,7 +4738,7 @@ msgid "colors are disabled by default"
 msgstr "Kirjautuminen päätteelle %s osoitteesta %s evätty oletuksena.\n"
 
 #: include/env.h:18 lib/pager.c:151 login-utils/login.c:1052
-#: login-utils/login.c:1056 login-utils/su-common.c:523
+#: login-utils/login.c:1056 login-utils/su-common.c:526
 #: term-utils/agetty.c:1160
 #, fuzzy, c-format
 msgid "failed to set the %s environment variable"
@@ -6408,7 +6408,7 @@ msgstr "Vapaa tila"
 msgid "Failed to resize partition #%zu."
 msgstr "osion koon muuttaminen epäonnistui"
 
-#: libfdisk/src/parttype.c:259 misc-utils/findmnt.c:680 schedutils/chrt.c:204
+#: libfdisk/src/parttype.c:259 misc-utils/findmnt.c:655 schedutils/chrt.c:204
 #: schedutils/ionice.c:79 sys-utils/hwclock.c:334
 msgid "unknown"
 msgstr "tuntemattomassa "
@@ -7716,7 +7716,7 @@ msgstr "Ohjelman nscd ajaminen käyttäjän ”%s” oikeuksilla epäonnistui"
 msgid "Running processes"
 msgstr "Ei lapsiprosesseja"
 
-#: login-utils/lslogins.c:288 misc-utils/findmnt.c:160 misc-utils/lsblk.c:231
+#: login-utils/lslogins.c:288 misc-utils/findmnt.c:136 misc-utils/lsblk.c:231
 #: sys-utils/lsipc.c:204
 #, c-format
 msgid "too many columns specified, the limit is %zu columns"
@@ -7867,7 +7867,7 @@ msgstr ""
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1263 sys-utils/lscpu.c:1955
+#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1244 sys-utils/lscpu.c:1955
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -7939,85 +7939,100 @@ msgstr ""
 msgid "This account is currently not available.\n"
 msgstr "ohjelma %lu ei ole käytettävissä\n"
 
-#: login-utils/su-common.c:292
+#: login-utils/su-common.c:295
 #, fuzzy, c-format
 msgid "cannot open session: %s"
 msgstr "ei voi avata laitetta %s lukutilaan"
 
-#: login-utils/su-common.c:304
+#: login-utils/su-common.c:307
 #, fuzzy
 msgid "cannot create child process"
 msgstr "odotetaan lapsiprosessia"
 
-#: login-utils/su-common.c:316
+#: login-utils/su-common.c:319
 #, fuzzy, c-format
 msgid "cannot change directory to %s"
 msgstr "hakemistoon %s ei voi siirtyä"
 
-#: login-utils/su-common.c:321
+#: login-utils/su-common.c:324
 #, fuzzy
 msgid "cannot block signals"
 msgstr "%s: useita signaaleja annettu"
 
-#: login-utils/su-common.c:335 login-utils/su-common.c:343
-#: login-utils/su-common.c:349 misc-utils/uuidd.c:407 term-utils/script.c:771
+#: login-utils/su-common.c:338 login-utils/su-common.c:346
+#: login-utils/su-common.c:352 misc-utils/uuidd.c:407 term-utils/script.c:771
 #, fuzzy
 msgid "cannot set signal handler"
 msgstr "signaalin yhdistäminen valitsimen -l tai -t kanssa ei onnistu"
 
-#: login-utils/su-common.c:374
+#: login-utils/su-common.c:377
 #, fuzzy
 msgid " (core dumped)"
 msgstr "%s %s%s\n"
 
-#: login-utils/su-common.c:390
+#: login-utils/su-common.c:393
 #, c-format
 msgid ""
 "\n"
 "Session terminated, killing shell..."
 msgstr ""
 
-#: login-utils/su-common.c:400
+#: login-utils/su-common.c:403
 #, c-format
 msgid " ...killed.\n"
 msgstr " ...tapettu.\n"
 
-#: login-utils/su-common.c:480
+#: login-utils/su-common.c:483
 msgid "may not be used by non-root users"
 msgstr ""
 
-#: login-utils/su-common.c:508
+#: login-utils/su-common.c:511
 msgid "incorrect password"
 msgstr "virheellinen salasana"
 
-#: login-utils/su-common.c:592
+#: login-utils/su-common.c:595
 #, fuzzy
 msgid "cannot set groups"
 msgstr " ryhmät="
 
-#: login-utils/su-common.c:607 sys-utils/eject.c:665
+#: login-utils/su-common.c:610 sys-utils/eject.c:665
 #, fuzzy
 msgid "cannot set group id"
 msgstr "ryhmä-ID:tä %lu vastaavaa nimeä ei löydy"
 
-#: login-utils/su-common.c:609 sys-utils/eject.c:668
+#: login-utils/su-common.c:612 sys-utils/eject.c:668
 #, fuzzy
 msgid "cannot set user id"
 msgstr "käyttäjä-ID"
 
-#: login-utils/su-common.c:682
+#: login-utils/su-common.c:685
+#, fuzzy
+msgid "failed to initialize seccomp context"
+msgstr " -initialize\n"
+
+#: login-utils/su-common.c:688
+#, fuzzy
+msgid "failed to add seccomp rule"
+msgstr "lukeminen epäonnistui"
+
+#: login-utils/su-common.c:690
+#, fuzzy
+msgid "failed to load seccomp rule"
+msgstr "lukeminen epäonnistui"
+
+#: login-utils/su-common.c:700
 #, fuzzy, c-format
 msgid " %s [options] -u <user> <command>\n"
 msgstr ""
 "\n"
 "Käyttö: %s [valitsimet] polku [polku ...]\n"
 
-#: login-utils/su-common.c:683 login-utils/su-common.c:695
+#: login-utils/su-common.c:701 login-utils/su-common.c:713
 #, fuzzy, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr "%s [valitsimet] [<tiedosto> ...]\n"
 
-#: login-utils/su-common.c:684
+#: login-utils/su-common.c:702
 msgid ""
 "\n"
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
@@ -8025,98 +8040,98 @@ msgid ""
 "The options -c, -f, -l, and -s are mutually exclusive with -u.\n"
 msgstr ""
 
-#: login-utils/su-common.c:691
+#: login-utils/su-common.c:709
 #, fuzzy
 msgid " -u, --user <user>             username\n"
 msgstr "Käyttäjän antama sivukoko %u on virheellinen"
 
-#: login-utils/su-common.c:696
+#: login-utils/su-common.c:714
 msgid ""
 "\n"
 "Change the effective user ID and group ID to that of <user>.\n"
 "A mere - implies -l.  If <user> is not given, root is assumed.\n"
 msgstr ""
 
-#: login-utils/su-common.c:703
+#: login-utils/su-common.c:721
 msgid " -m, -p, --preserve-environment  do not reset environment variables\n"
 msgstr ""
 
-#: login-utils/su-common.c:704
+#: login-utils/su-common.c:722
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr ""
 
-#: login-utils/su-common.c:705
+#: login-utils/su-common.c:723
 msgid ""
 " -G, --supp-group <group>        specify a supplemental group\n"
 "\n"
 msgstr ""
 
-#: login-utils/su-common.c:707
+#: login-utils/su-common.c:725
 #, fuzzy
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr "  -s, --shell <kuori>            määrittele kirjautumiskuori\n"
 
-#: login-utils/su-common.c:708
+#: login-utils/su-common.c:726
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr ""
 
-#: login-utils/su-common.c:709
+#: login-utils/su-common.c:727
 #, fuzzy
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
 msgstr "               Alku-      Loppu-\n"
 
-#: login-utils/su-common.c:711
+#: login-utils/su-common.c:729
 #, fuzzy
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: login-utils/su-common.c:712
+#: login-utils/su-common.c:730
 #, fuzzy
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr "  -s, --shell=kuori            Aseta kuoren lainauskäytännöt\n"
 
-#: login-utils/su-common.c:756
+#: login-utils/su-common.c:774
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "yli %d lisäryhmän määritteleminen ei ole mahdollista"
 msgstr[1] "yli %d lisäryhmän määritteleminen ei ole mahdollista"
 
-#: login-utils/su-common.c:762
+#: login-utils/su-common.c:780
 #, c-format
 msgid "group %s does not exist"
 msgstr "ryhmää %s ei ole olemassa"
 
-#: login-utils/su-common.c:880
+#: login-utils/su-common.c:898
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr ""
 
-#: login-utils/su-common.c:891
+#: login-utils/su-common.c:909
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr ""
 
-#: login-utils/su-common.c:895
+#: login-utils/su-common.c:913
 #, fuzzy
 msgid "no command was specified"
 msgstr "Valitsinta --date ei ole annettu.\n"
 
-#: login-utils/su-common.c:909
+#: login-utils/su-common.c:927
 msgid "only root can specify alternative groups"
 msgstr ""
 
-#: login-utils/su-common.c:916
+#: login-utils/su-common.c:934
 #, c-format
 msgid "user %s does not exist"
 msgstr "käyttäjää %s ei ole olemassa"
 
-#: login-utils/su-common.c:956
+#: login-utils/su-common.c:974
 #, fuzzy, c-format
 msgid "using restricted shell %s"
 msgstr "tuntematon kuori argumentin -s tai --shell jälkeen"
 
-#: login-utils/su-common.c:980
+#: login-utils/su-common.c:1000
 #, fuzzy, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "hakemistoon %s ei voi siirtyä"
@@ -8204,7 +8219,7 @@ msgid ""
 " -e, --force              examine password files directly if getpwnam(3) fails\n"
 msgstr ""
 
-#: login-utils/sulogin.c:866 misc-utils/findmnt.c:1472 sys-utils/wdctl.c:523
+#: login-utils/sulogin.c:866 misc-utils/findmnt.c:1460 sys-utils/wdctl.c:523
 #: term-utils/agetty.c:750 term-utils/wall.c:135
 #, fuzzy
 msgid "invalid timeout argument"
@@ -8501,175 +8516,176 @@ msgstr "Pakotetaan tiedostojärjestelmän tarkistus laitteella %s.\n"
 msgid "unable to resolve '%s'"
 msgstr "ei voida avata dynaamista riippuvuutta ”%s”"
 
-#: misc-utils/findmnt.c:123
+#: misc-utils/findmnt.c:99
 #, fuzzy
 msgid "source device"
 msgstr "Laitetta ei ole"
 
-#: misc-utils/findmnt.c:124
+#: misc-utils/findmnt.c:100
 #, fuzzy
 msgid "mountpoint"
 msgstr "%s ei ole liitospiste tai virheellinen valitsin"
 
-#: misc-utils/findmnt.c:125 misc-utils/lsblk.c:161
+#: misc-utils/findmnt.c:101 misc-utils/lsblk.c:161
 #, fuzzy
 msgid "filesystem type"
 msgstr "  t          Muuta tiedostojärjestelmän tyyppiä"
 
-#: misc-utils/findmnt.c:126
+#: misc-utils/findmnt.c:102
 #, fuzzy
 msgid "all mount options"
 msgstr "%s: avaaminen epäonnistui: %s\n"
 
-#: misc-utils/findmnt.c:127
+#: misc-utils/findmnt.c:103
 msgid "VFS specific mount options"
 msgstr ""
 
-#: misc-utils/findmnt.c:128
+#: misc-utils/findmnt.c:104
 #, fuzzy
 msgid "FS specific mount options"
 msgstr "hyödylliset valitsimet:"
 
-#: misc-utils/findmnt.c:129
+#: misc-utils/findmnt.c:105
 #, fuzzy
 msgid "filesystem label"
 msgstr "nimiö "
 
-#: misc-utils/findmnt.c:130 misc-utils/lsblk.c:164
+#: misc-utils/findmnt.c:106 misc-utils/lsblk.c:164
 #, fuzzy
 msgid "filesystem UUID"
 msgstr "UUID"
 
-#: misc-utils/findmnt.c:131
+#: misc-utils/findmnt.c:107
 #, fuzzy
 msgid "partition label"
 msgstr "nimiö "
 
-#: misc-utils/findmnt.c:133 misc-utils/lsblk.c:160
+#: misc-utils/findmnt.c:109 misc-utils/lsblk.c:160
 msgid "major:minor device number"
 msgstr ""
 
-#: misc-utils/findmnt.c:134
+#: misc-utils/findmnt.c:110
 #, fuzzy
 msgid "action detected by --poll"
 msgstr "Yleislähetyskiertokyselyongelma"
 
-#: misc-utils/findmnt.c:135
+#: misc-utils/findmnt.c:111
 msgid "old mount options saved by --poll"
 msgstr ""
 
-#: misc-utils/findmnt.c:136
+#: misc-utils/findmnt.c:112
 msgid "old mountpoint saved by --poll"
 msgstr ""
 
-#: misc-utils/findmnt.c:137
+#: misc-utils/findmnt.c:113
 #, fuzzy
 msgid "filesystem size"
 msgstr "Tiedostojärjestelmä"
 
-#: misc-utils/findmnt.c:138
+#: misc-utils/findmnt.c:114
 #, fuzzy
 msgid "filesystem size available"
 msgstr "Vapaana"
 
-#: misc-utils/findmnt.c:139
+#: misc-utils/findmnt.c:115
 #, fuzzy
 msgid "filesystem size used"
 msgstr "Tiedostojärjestelmä"
 
-#: misc-utils/findmnt.c:140
+#: misc-utils/findmnt.c:116
 #, fuzzy
 msgid "filesystem use percentage"
 msgstr "Tiedostojärjestelmä"
 
-#: misc-utils/findmnt.c:141
+#: misc-utils/findmnt.c:117
 #, fuzzy
 msgid "filesystem root"
 msgstr "Tiedostojärjestelmä"
 
-#: misc-utils/findmnt.c:142
+#: misc-utils/findmnt.c:118
 #, fuzzy
 msgid "task ID"
 msgstr "id="
 
-#: misc-utils/findmnt.c:143
+#: misc-utils/findmnt.c:119
 #, fuzzy
 msgid "mount ID"
 msgstr "id="
 
-#: misc-utils/findmnt.c:144
+#: misc-utils/findmnt.c:120
 #, fuzzy
 msgid "optional mount fields"
 msgstr "Valinnainen tulostiedoston pääte"
 
-#: misc-utils/findmnt.c:145
+#: misc-utils/findmnt.c:121
 #, fuzzy
 msgid "VFS propagation flags"
 msgstr "Liput"
 
-#: misc-utils/findmnt.c:146
+#: misc-utils/findmnt.c:122
 msgid "dump(8) period in days [fstab only]"
 msgstr ""
 
-#: misc-utils/findmnt.c:147
+#: misc-utils/findmnt.c:123
 msgid "pass number on parallel fsck(8) [fstab only]"
 msgstr ""
 
-#: misc-utils/findmnt.c:358
+#: misc-utils/findmnt.c:333
 #, fuzzy, c-format
 msgid "unknown action: %s"
 msgstr "tuntematon käyttäjä-ID: %s"
 
-#: misc-utils/findmnt.c:668
+#: misc-utils/findmnt.c:643
 #, fuzzy
 msgid "mount"
 msgstr "mount: liitos epäonnistui"
 
-#: misc-utils/findmnt.c:671
+#: misc-utils/findmnt.c:646
 #, fuzzy
 msgid "umount"
 msgstr "umount: %s: vaaditaan pääkäyttäjän oikeudet"
 
-#: misc-utils/findmnt.c:674
+#: misc-utils/findmnt.c:649
 #, fuzzy
 msgid "remount"
 msgstr "umount: kohteen %s uudelleenliittäminen vain luku -tilassa epäonnistui\n"
 
-#: misc-utils/findmnt.c:677
+#: misc-utils/findmnt.c:652
 #, fuzzy
 msgid "move"
 msgstr "tiedostoa %s ei voi siirtää kohteeseen %s"
 
-#: misc-utils/findmnt.c:836 misc-utils/findmnt.c:1099 sys-utils/eject.c:719
+#: misc-utils/findmnt.c:812 misc-utils/findmnt.c:1075 sys-utils/eject.c:719
 #: sys-utils/mount.c:669
 #, fuzzy
 msgid "failed to initialize libmount table"
 msgstr "Osiotaulun uudelleenluku epäonnistui."
 
-#: misc-utils/findmnt.c:863 text-utils/hexdump-parse.c:84
+#: misc-utils/findmnt.c:839 text-utils/hexdump-parse.c:84
 #, fuzzy, c-format
 msgid "can't read %s"
 msgstr "%s: superlohkoa ei voi lukea"
 
-#: misc-utils/findmnt.c:1039 misc-utils/findmnt.c:1105 sys-utils/fstrim.c:199
-#: sys-utils/mount.c:134 sys-utils/mount.c:182 sys-utils/swapoff.c:56
-#: sys-utils/swapoff.c:152 sys-utils/swapon.c:244 sys-utils/swapon.c:274
-#: sys-utils/swapon.c:732 sys-utils/umount.c:274
+#: misc-utils/findmnt.c:1015 misc-utils/findmnt.c:1081
+#: misc-utils/findmnt-verify.c:94 misc-utils/findmnt-verify.c:481
+#: sys-utils/fstrim.c:199 sys-utils/mount.c:134 sys-utils/mount.c:182
+#: sys-utils/swapoff.c:56 sys-utils/swapoff.c:152 sys-utils/swapon.c:244
+#: sys-utils/swapon.c:274 sys-utils/swapon.c:733 sys-utils/umount.c:274
 #, fuzzy
 msgid "failed to initialize libmount iterator"
 msgstr "Puskuria ei voi varata.\n"
 
-#: misc-utils/findmnt.c:1111
+#: misc-utils/findmnt.c:1087
 #, fuzzy
 msgid "failed to initialize libmount tabdiff"
 msgstr "Puskuria ei voi varata.\n"
 
-#: misc-utils/findmnt.c:1139
+#: misc-utils/findmnt.c:1115
 #, fuzzy
 msgid "poll() failed"
 msgstr "svc_run: - kiertokysely epäonnistui"
 
-#: misc-utils/findmnt.c:1210
+#: misc-utils/findmnt.c:1186
 #, c-format
 msgid ""
 " %1$s [options]\n"
@@ -8678,193 +8694,380 @@ msgid ""
 " %1$s [options] [--source <device>] [--target <path> | --mountpoint <dir>]\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1217
+#: misc-utils/findmnt.c:1193
 #, fuzzy
 msgid "Find a (mounted) filesystem.\n"
 msgstr "Anna tiedostojärjestelmän tyyppi: "
 
-#: misc-utils/findmnt.c:1220
+#: misc-utils/findmnt.c:1196
 #, fuzzy
 msgid " -s, --fstab            search in static table of filesystems\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: misc-utils/findmnt.c:1221
+#: misc-utils/findmnt.c:1197
 #, fuzzy
 msgid " -m, --mtab             search in table of mounted filesystems\n"
 msgstr " -clear <all|rest>\n"
 
-#: misc-utils/findmnt.c:1222
+#: misc-utils/findmnt.c:1198
 msgid ""
 " -k, --kernel           search in kernel table of mounted\n"
 "                          filesystems (default)\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1225
+#: misc-utils/findmnt.c:1201
 #, fuzzy
 msgid " -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
 msgstr "   l    listaa tunnetut tiedostojärjestelmätyypit"
 
-#: misc-utils/findmnt.c:1226
+#: misc-utils/findmnt.c:1202
 msgid " -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1229
+#: misc-utils/findmnt.c:1205
 #, fuzzy
 msgid " -A, --all              disable all built-in filters, print all filesystems\n"
 msgstr " -clear <all|rest>\n"
 
-#: misc-utils/findmnt.c:1230
+#: misc-utils/findmnt.c:1206
 #, fuzzy
 msgid " -a, --ascii            use ASCII chars for tree formatting\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: misc-utils/findmnt.c:1231
+#: misc-utils/findmnt.c:1207
 #, fuzzy
 msgid " -b, --bytes            print sizes in bytes rather than in human readable format\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: misc-utils/findmnt.c:1232
+#: misc-utils/findmnt.c:1208
 msgid " -C, --nocanonicalize   don't canonicalize when comparing paths\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1233
+#: misc-utils/findmnt.c:1209
 msgid " -c, --canonicalize     canonicalize printed paths\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1234
+#: misc-utils/findmnt.c:1210
 msgid " -D, --df               imitate the output of df(1)\n"
 msgstr " -D, --df               jäljittele df(1):n tulostetta\n"
 
-#: misc-utils/findmnt.c:1235
+#: misc-utils/findmnt.c:1211
 msgid " -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1236
+#: misc-utils/findmnt.c:1212
 msgid ""
 " -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          to device names\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1238
+#: misc-utils/findmnt.c:1214
 msgid " -F, --tab-file <path>  alternative file for -s, -m or -k options\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1239
+#: misc-utils/findmnt.c:1215
 #, fuzzy
 msgid " -f, --first-only       print the first found filesystem only\n"
 msgstr "   l    listaa tunnetut tiedostojärjestelmätyypit"
 
-#: misc-utils/findmnt.c:1240
+#: misc-utils/findmnt.c:1216
 #, fuzzy
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: misc-utils/findmnt.c:1241 misc-utils/lslocks.c:507 sys-utils/lsns.c:597
+#: misc-utils/findmnt.c:1217 misc-utils/lslocks.c:507 sys-utils/lsns.c:597
 #, fuzzy
 msgid " -J, --json             use JSON output format\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: misc-utils/findmnt.c:1242 sys-utils/lsns.c:598
+#: misc-utils/findmnt.c:1218 sys-utils/lsns.c:598
 #, fuzzy
 msgid " -l, --list             use list format output\n"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: misc-utils/findmnt.c:1243
+#: misc-utils/findmnt.c:1219
 msgid " -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1244
+#: misc-utils/findmnt.c:1220
 #, fuzzy
 msgid " -n, --noheadings       don't print column headings\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: misc-utils/findmnt.c:1245
+#: misc-utils/findmnt.c:1221
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1246
+#: misc-utils/findmnt.c:1222
 #, fuzzy
 msgid " -o, --output <list>    the output columns to be shown\n"
 msgstr "  -o, --options=valitsimet     Lyhyet tunnistettavat valitsimet\n"
 
-#: misc-utils/findmnt.c:1247
+#: misc-utils/findmnt.c:1223
 #, fuzzy
 msgid " -P, --pairs            use key=\"value\" output format\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: misc-utils/findmnt.c:1248
+#: misc-utils/findmnt.c:1224
 #, fuzzy
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: misc-utils/findmnt.c:1249
+#: misc-utils/findmnt.c:1225
 #, fuzzy
 msgid " -r, --raw              use raw output format\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: misc-utils/findmnt.c:1250
+#: misc-utils/findmnt.c:1226
 msgid ""
 " -S, --source <string>  the device to mount (by name, maj:min, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1252
+#: misc-utils/findmnt.c:1228
 #, fuzzy
 msgid " -T, --target <path>    the path to the filesystem to use\n"
 msgstr "  -o, --options=valitsimet     Lyhyet tunnistettavat valitsimet\n"
 
-#: misc-utils/findmnt.c:1253
+#: misc-utils/findmnt.c:1229
 #, fuzzy
 msgid " -M, --mountpoint <dir> the mountpoint directory\n"
 msgstr ""
 "Aja KOMENTO siten, että UUSIJUURI on asetettuna juurihakemistoksi.\n"
 "\n"
 
-#: misc-utils/findmnt.c:1254
+#: misc-utils/findmnt.c:1230
 #, fuzzy
 msgid " -t, --types <list>     limit the set of filesystems by FS types\n"
 msgstr "   l    listaa tunnetut tiedostojärjestelmätyypit"
 
-#: misc-utils/findmnt.c:1255
+#: misc-utils/findmnt.c:1231
 #, fuzzy
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr "  -Q, --quiet-output           Ei normaalia tulostetta\n"
 
-#: misc-utils/findmnt.c:1256 misc-utils/lslocks.c:513 sys-utils/lsns.c:603
+#: misc-utils/findmnt.c:1232 misc-utils/lslocks.c:513 sys-utils/lsns.c:603
 #, fuzzy
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: misc-utils/findmnt.c:1257
+#: misc-utils/findmnt.c:1233
 #, fuzzy
 msgid " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: misc-utils/findmnt.c:1377
+#: misc-utils/findmnt.c:1236
+#, fuzzy
+msgid " -x, --verify           verify mount table content (default is fstab)\n"
+msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
+
+#: misc-utils/findmnt.c:1237
+#, fuzzy
+msgid "     --verbose          print more details\n"
+msgstr "  -V, --version                Näytä versiotiedot\n"
+
+#: misc-utils/findmnt.c:1365
 #, c-format
 msgid "unknown direction '%s'"
 msgstr "tuntematon suunta ”%s”"
 
-#: misc-utils/findmnt.c:1449
+#: misc-utils/findmnt.c:1437
 msgid "invalid TID argument"
 msgstr "virheellinen TID-argumentti"
 
-#: misc-utils/findmnt.c:1512
+#: misc-utils/findmnt.c:1506
 msgid "--poll accepts only one file, but more specified by --tab-file"
 msgstr ""
 
-#: misc-utils/findmnt.c:1516
+#: misc-utils/findmnt.c:1510
 msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr ""
 
-#: misc-utils/findmnt.c:1566
+#: misc-utils/findmnt.c:1559
 #, fuzzy
 msgid "failed to initialize libmount cache"
 msgstr "Välimuistidatan kirjoitus epäonnistui"
 
-#: misc-utils/findmnt.c:1603
+#: misc-utils/findmnt.c:1602
 #, c-format
 msgid "%s column is requested, but --poll is not enabled"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:116
+#, fuzzy
+msgid "target specified more than once"
+msgstr "Annettu sylinterimäärä ei mahdu levylle"
+
+#: misc-utils/findmnt-verify.c:118
+#, c-format
+msgid "wrong order: %s specified before %s"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:133
+msgid "undefined target (fs_file)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:140
+#, c-format
+msgid "non-canonical target path (real: %s)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:145
+#, c-format
+msgid "unreachable on boot required target: %m"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:147
+#, fuzzy, c-format
+msgid "unreachable target: %m"
+msgstr "Laitetta %s ei voi lukea\n"
+
+#: misc-utils/findmnt-verify.c:151
+#, fuzzy
+msgid "target is not a directory"
+msgstr "%s: ei ole hakemisto"
+
+#: misc-utils/findmnt-verify.c:153
+msgid "target exists"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:165
+#, c-format
+msgid "unreachable on boot required source: %s=%s"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:167
+#, fuzzy, c-format
+msgid "unreachable: %s=%s"
+msgstr "lukeminen epäonnistui: %s"
+
+#: misc-utils/findmnt-verify.c:169
+#, fuzzy, c-format
+msgid "%s=%s translated to %s"
+msgstr "%s %s%s\n"
+
+#: misc-utils/findmnt-verify.c:190
+msgid "undefined source (fs_spec)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:199
+#, fuzzy, c-format
+msgid "unsupported source tag: %s"
+msgstr "ei-tuettu argumentti funktiolle %<__builtin_frame_address%>"
+
+#: misc-utils/findmnt-verify.c:205
+#, c-format
+msgid "do not check %s source (pseudo/net)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:208
+#, fuzzy, c-format
+msgid "unreachable source: %s: %m"
+msgstr "laitetta ”%s” ei voi avata: %s"
+
+#: misc-utils/findmnt-verify.c:211
+#, c-format
+msgid "non-bind mount source %s is a directory or regular file"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:214
+#, fuzzy, c-format
+msgid "source %s is not a block device"
+msgstr " %s ei ole lohkolaite"
+
+#: misc-utils/findmnt-verify.c:216
+#, fuzzy, c-format
+msgid "source %s exists"
+msgstr "Laitetta ei ole"
+
+#: misc-utils/findmnt-verify.c:229
+#, fuzzy, c-format
+msgid "VFS options: %s"
+msgstr "%s valitsimet "
+
+#: misc-utils/findmnt-verify.c:233
+#, fuzzy, c-format
+msgid "FS options: %s"
+msgstr "%s valitsimet "
+
+#: misc-utils/findmnt-verify.c:237
+#, fuzzy, c-format
+msgid "userspace options: %s"
+msgstr "resurssi(t) poistettu\n"
+
+#: misc-utils/findmnt-verify.c:251
+#, fuzzy, c-format
+msgid "unsupported swaparea discard policy: %s"
+msgstr "%s: tuntematon argumentti: %s\n"
+
+#: misc-utils/findmnt-verify.c:259
+#, fuzzy
+msgid "failed to parse swaparea priority option"
+msgstr "sivutuksen prioriteetti"
+
+#: misc-utils/findmnt-verify.c:395
+#, c-format
+msgid "do not check %s FS type (pseudo/net)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:405
+msgid "\"none\" FS type is recommended for bind or move oprations only"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:413
+#, c-format
+msgid "%s seems unspported by the current kernel"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:419 misc-utils/findmnt-verify.c:420
+#, fuzzy
+msgid "cannot detect on-disk filesystem type"
+msgstr "tuntematon tiedostojärjestelmän tyyppi ”%s”"
+
+#: misc-utils/findmnt-verify.c:427
+#, c-format
+msgid "%s does not match with on-disk %s"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:430
+#, c-format
+msgid "on-disk %s seems unspported by the current kernel"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:432
+#, fuzzy, c-format
+msgid "FS type is %s"
+msgstr "tyyppi: %s"
+
+#: misc-utils/findmnt-verify.c:444
+#, c-format
+msgid "recommended root FS passno is 1 (current is %d)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:511
+#, fuzzy, c-format
+msgid "%d parse error"
+msgid_plural "%d parse errors"
+msgstr[0] "siirtymisvirhe"
+msgstr[1] "siirtymisvirhe"
+
+#: misc-utils/findmnt-verify.c:512
+#, fuzzy, c-format
+msgid ", %d error"
+msgid_plural ", %d errors"
+msgstr[0] ", virhe"
+msgstr[1] ", virhe"
+
+#: misc-utils/findmnt-verify.c:513
+#, c-format
+msgid ", %d warning"
+msgid_plural ", %d warnings"
+msgstr[0] ""
+msgstr[1] ""
+
+#: misc-utils/findmnt-verify.c:516
+#, c-format
+msgid "Success, no errors or warnings detected\n"
 msgstr ""
 
 #: misc-utils/getopt.c:246
@@ -11851,7 +12054,7 @@ msgstr "ioctl() ei onnistunut lukemaan aikaa kohteesta %s"
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s: taulukko luokalle ”%s”: %lu tavua\n"
 
-#: sys-utils/fstrim.c:203 sys-utils/swapon.c:728 sys-utils/umount.c:329
+#: sys-utils/fstrim.c:203 sys-utils/swapon.c:729 sys-utils/umount.c:329
 #, fuzzy, c-format
 msgid "failed to parse %s"
 msgstr "Jäsennysvirhe: %s"
@@ -16444,7 +16647,7 @@ msgstr "mountin käyttöön vaaditaan pääkäyttäjän oikeudet"
 msgid "%s: swapoff failed"
 msgstr "%s: swapoff epäonnistui"
 
-#: sys-utils/swapoff.c:119 sys-utils/swapon.c:787
+#: sys-utils/swapoff.c:119 sys-utils/swapon.c:788
 #, fuzzy, c-format
 msgid " %s [options] [<spec>]\n"
 msgstr "%s [valitsimet] [<tiedosto> ...]\n"
@@ -16581,80 +16784,80 @@ msgstr "swapon %s\n"
 msgid "%s: swapon failed"
 msgstr "%s: swapon epäonnistui"
 
-#: sys-utils/swapon.c:742
+#: sys-utils/swapon.c:743
 #, fuzzy, c-format
 msgid "%s: noauto option -- ignored"
 msgstr "Tuntematon valitsin ”%c” jätetty huomiotta"
 
-#: sys-utils/swapon.c:764
+#: sys-utils/swapon.c:765
 #, fuzzy, c-format
 msgid "%s: already active -- ignored"
 msgstr "siirtymisvirhe"
 
-#: sys-utils/swapon.c:770
+#: sys-utils/swapon.c:771
 #, fuzzy, c-format
 msgid "%s: inaccessible -- ignored"
 msgstr "%s: i-solmuja ei voi kirjoittaa"
 
-#: sys-utils/swapon.c:790
+#: sys-utils/swapon.c:791
 msgid "Enable devices and files for paging and swapping.\n"
 msgstr ""
 
-#: sys-utils/swapon.c:793
+#: sys-utils/swapon.c:794
 #, fuzzy
 msgid " -a, --all                enable all swaps from /etc/fstab\n"
 msgstr "  -h, --help                   Tämä pieni käyttöopas\n"
 
-#: sys-utils/swapon.c:794
+#: sys-utils/swapon.c:795
 msgid " -d, --discard[=<policy>] enable swap discards, if supported by device\n"
 msgstr ""
 
-#: sys-utils/swapon.c:795
+#: sys-utils/swapon.c:796
 msgid " -e, --ifexists           silently skip devices that do not exist\n"
 msgstr ""
 
-#: sys-utils/swapon.c:796
+#: sys-utils/swapon.c:797
 msgid " -f, --fixpgsz            reinitialize the swap space if necessary\n"
 msgstr ""
 
-#: sys-utils/swapon.c:797
+#: sys-utils/swapon.c:798
 msgid " -o, --options <list>     comma-separated list of swap options\n"
 msgstr ""
 
-#: sys-utils/swapon.c:798
+#: sys-utils/swapon.c:799
 msgid " -p, --priority <prio>    specify the priority of the swap device\n"
 msgstr ""
 
-#: sys-utils/swapon.c:799
+#: sys-utils/swapon.c:800
 #, fuzzy
 msgid " -s, --summary            display summary about used swap devices (DEPRECATED)\n"
 msgstr "    -l [tai --list]:     listaa kaikkien laitteiden osiot"
 
-#: sys-utils/swapon.c:800
+#: sys-utils/swapon.c:801
 msgid "     --show[=<columns>]   display summary in definable table\n"
 msgstr ""
 
-#: sys-utils/swapon.c:801
+#: sys-utils/swapon.c:802
 #, fuzzy
 msgid "     --noheadings         don't print table heading (with --show)\n"
 msgstr "  -u, --unquote                Ei lainausmerkkejä tulosteeseen\n"
 
-#: sys-utils/swapon.c:802
+#: sys-utils/swapon.c:803
 #, fuzzy
 msgid "     --raw                use the raw output format (with --show)\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: sys-utils/swapon.c:803
+#: sys-utils/swapon.c:804
 #, fuzzy
 msgid "     --bytes              display swap size in bytes in --show output\n"
 msgstr "      --help                näytä tämä ohje ja poistu\n"
 
-#: sys-utils/swapon.c:804
+#: sys-utils/swapon.c:805
 #, fuzzy
 msgid " -v, --verbose            verbose mode\n"
 msgstr "  -V, --version                Näytä versiotiedot\n"
 
-#: sys-utils/swapon.c:810
+#: sys-utils/swapon.c:811
 msgid ""
 "\n"
 "The <spec> parameter:\n"
@@ -16668,7 +16871,7 @@ msgid ""
 " <file>                 name of file to be used\n"
 msgstr ""
 
-#: sys-utils/swapon.c:820
+#: sys-utils/swapon.c:821
 msgid ""
 "\n"
 "Available discard policy types (for --discard):\n"
@@ -16677,19 +16880,19 @@ msgid ""
 "If no policy is selected, both discard types are enabled (default).\n"
 msgstr ""
 
-#: sys-utils/swapon.c:825
+#: sys-utils/swapon.c:826
 #, fuzzy
 msgid ""
 "\n"
 "Available columns (for --show):\n"
 msgstr "Sarakkeita          :\n"
 
-#: sys-utils/swapon.c:903
+#: sys-utils/swapon.c:904
 #, fuzzy
 msgid "failed to parse priority"
 msgstr "sivutuksen prioriteetti"
 
-#: sys-utils/swapon.c:922
+#: sys-utils/swapon.c:923
 #, fuzzy, c-format
 msgid "unsupported discard policy: %s"
 msgstr "%s: tuntematon argumentti: %s\n"
@@ -19119,7 +19322,7 @@ msgstr ""
 msgid "unknown escape sequence in input: %o, %o"
 msgstr "tuntematon ohjaussarja syötteessä: %o, %o"
 
-#: text-utils/ul.c:630
+#: text-utils/ul.c:624
 msgid "Input line too long."
 msgstr "Syöterivi on liian pitkä."
 
@@ -19247,9 +19450,6 @@ msgstr "Syöterivi on liian pitkä."
 
 #~ msgid "will not try to make filesystem on '%s'"
 #~ msgstr "ei yritetä luoda tiedostojärjestelmää kohteeseen ”%s”"
-
-#~ msgid "type: %s"
-#~ msgstr "tyyppi: %s"
 
 #~ msgid "type: %d"
 #~ msgstr "tyyppi: %d"
@@ -20157,9 +20357,6 @@ msgstr "Syöterivi on liian pitkä."
 #, fuzzy
 #~ msgid " %s [options] file\n"
 #~ msgstr "%s [valitsimet] [<tiedosto> ...]\n"
-
-#~ msgid "%s: options "
-#~ msgstr "%s valitsimet "
 
 #~ msgid "are mutually exclusive."
 #~ msgstr "ovat toisensa poissulkevia."
@@ -21264,10 +21461,6 @@ msgstr "Syöterivi on liian pitkä."
 #~ msgid "Could not find %s in mtab\n"
 #~ msgstr "%s ei löytynyt tiedostosta mtab\n"
 
-#, fuzzy
-#~ msgid "%s is associated with %s\n"
-#~ msgstr "%s %s%s\n"
-
 #~ msgid "umount: %s is not mounted (according to mtab)"
 #~ msgstr "umount: %s ei ole liitetty (mtab-tiedoston mukaan)"
 
@@ -21496,9 +21689,6 @@ msgstr "Syöterivi on liian pitkä."
 #~ msgid "set blocksize"
 #~ msgstr "aseta lohkokoko"
 
-#~ msgid "read failed: %s"
-#~ msgstr "lukeminen epäonnistui: %s"
-
 #~ msgid "one bad block\n"
 #~ msgstr "yksi viallinen lohko\n"
 
@@ -21636,10 +21826,6 @@ msgstr "Syöterivi on liian pitkä."
 #~ msgstr ""
 #~ "\n"
 #~ "Synkronoidaan levyt.\n"
-
-#, fuzzy
-#~ msgid "unable to read %s"
-#~ msgstr "Laitetta %s ei voi lukea\n"
 
 #, fuzzy
 #~ msgid "unable to seek on %s"
@@ -22225,10 +22411,6 @@ msgstr "Syöterivi on liian pitkä."
 #, fuzzy
 #~ msgid "couldn't open %s"
 #~ msgstr "Tiedostoa %s ei voitu avata\n"
-
-#, fuzzy
-#~ msgid "unable to open '%s': %s"
-#~ msgstr "laitetta ”%s” ei voi avata: %s"
 
 #, fuzzy
 #~ msgid "failed to open %s"
@@ -23042,10 +23224,6 @@ msgstr "Syöterivi on liian pitkä."
 
 #~ msgid "%s: cannot open %s\n"
 #~ msgstr "%s: tiedostoa %s ei voi avata\n"
-
-#, fuzzy
-#~ msgid "parse error\n"
-#~ msgstr "siirtymisvirhe"
 
 #~ msgid "usage: %s [ -n ] device\n"
 #~ msgstr "käyttö: %s [ -n ] laite\n"

@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2016-09-06 11:16+0200\n"
+"POT-Creation-Date: 2016-09-30 11:02+0200\n"
 "PO-Revision-Date: 2015-02-15 08:31+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -49,7 +49,7 @@ msgstr "Cho nhân biết về sự tồn tại của một phân vùng chỉ đ�
 #: login-utils/sulogin.c:446 login-utils/sulogin.c:483
 #: login-utils/utmpdump.c:136 login-utils/utmpdump.c:359
 #: login-utils/utmpdump.c:381 login-utils/vipw.c:258 login-utils/vipw.c:276
-#: misc-utils/findmnt.c:1121 misc-utils/logger.c:1177 misc-utils/mcookie.c:115
+#: misc-utils/findmnt.c:1097 misc-utils/logger.c:1177 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:207 sys-utils/blkdiscard.c:183 sys-utils/dmesg.c:522
 #: sys-utils/eject.c:500 sys-utils/eject.c:700 sys-utils/fallocate.c:374
 #: sys-utils/fsfreeze.c:128 sys-utils/fstrim.c:72 sys-utils/hwclock.c:282
@@ -1654,7 +1654,7 @@ msgstr "Đang mở khóa %s.\n"
 msgid "failed to setup description for %s"
 msgstr "gặp lỗi khi cài đặt mô tả cho %s"
 
-#: disk-utils/fsck.c:474 misc-utils/findmnt.c:807 misc-utils/lsblk.c:433
+#: disk-utils/fsck.c:474 misc-utils/findmnt.c:782 misc-utils/lsblk.c:433
 #: sys-utils/mount.c:102 sys-utils/swapon-common.c:19 sys-utils/umount.c:46
 #, fuzzy, c-format
 msgid "%s: parse error at line %d -- ignored"
@@ -2817,7 +2817,7 @@ msgid " -h, --help         display this help text and exit\n"
 msgstr " -h, --help         hiển thị trợ giúp này rồi thoát\n"
 
 #: disk-utils/mkfs.c:139 lib/exec_shell.c:49 login-utils/newgrp.c:233
-#: login-utils/su-common.c:651 login-utils/su-common.c:986
+#: login-utils/su-common.c:654 login-utils/su-common.c:1006
 #: login-utils/sulogin.c:795 login-utils/sulogin.c:799 schedutils/chrt.c:555
 #: schedutils/ionice.c:260 schedutils/taskset.c:239 sys-utils/flock.c:363
 #: sys-utils/nsenter.c:430 sys-utils/prlimit.c:644 sys-utils/rtcwake.c:577
@@ -3454,7 +3454,7 @@ msgstr "định dạng kích thước cho người đọc"
 msgid "partition name"
 msgstr "tên phân vùng"
 
-#: disk-utils/partx.c:92 misc-utils/findmnt.c:132 misc-utils/lsblk.c:168
+#: disk-utils/partx.c:92 misc-utils/findmnt.c:108 misc-utils/lsblk.c:168
 msgid "partition UUID"
 msgstr "UUID phân vùng"
 
@@ -3494,7 +3494,7 @@ msgstr "%s: gặp lỗi khi đặt tập tin đứng sau"
 msgid "%s: failed to set up loop device"
 msgstr "%s: gặp lỗi khi cài đặt thiết bị loop"
 
-#: disk-utils/partx.c:161 login-utils/lslogins.c:307 misc-utils/findmnt.c:401
+#: disk-utils/partx.c:161 login-utils/lslogins.c:307 misc-utils/findmnt.c:376
 #: misc-utils/lsblk.c:354 misc-utils/lslocks.c:342 sys-utils/losetup.c:107
 #: sys-utils/lscpu.c:370 sys-utils/lsipc.c:232 sys-utils/lsns.c:189
 #: sys-utils/prlimit.c:277 sys-utils/swapon.c:147 sys-utils/wdctl.c:151
@@ -3594,7 +3594,7 @@ msgid "#%2d: %9ju-%9ju (%9ju sector, %6ju MB)\n"
 msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] "#%2d: %9ju-%9ju (%9ju cung từ, %6ju MB)\n"
 
-#: disk-utils/partx.c:581 misc-utils/findmnt.c:713 misc-utils/findmnt.c:730
+#: disk-utils/partx.c:581 misc-utils/findmnt.c:688 misc-utils/findmnt.c:705
 #: misc-utils/lslocks.c:391 sys-utils/lsns.c:434
 msgid "failed to add line to output"
 msgstr "không thêm được dòng vào kết xuất"
@@ -3603,7 +3603,7 @@ msgstr "không thêm được dòng vào kết xuất"
 msgid "failed to add data to output table"
 msgstr "gặp lỗi khi thêm dữ liệu vào bảng kết xuất"
 
-#: disk-utils/partx.c:667 login-utils/lslogins.c:922 misc-utils/findmnt.c:1583
+#: disk-utils/partx.c:667 login-utils/lslogins.c:922 misc-utils/findmnt.c:1582
 #: misc-utils/lsblk.c:1869 misc-utils/lslocks.c:451 sys-utils/losetup.c:310
 #: sys-utils/lscpu.c:1690 sys-utils/lsipc.c:338 sys-utils/lsns.c:489
 #: sys-utils/prlimit.c:297 sys-utils/swapon.c:280 sys-utils/wdctl.c:259
@@ -3611,7 +3611,7 @@ msgstr "gặp lỗi khi thêm dữ liệu vào bảng kết xuất"
 msgid "failed to initialize output table"
 msgstr "lỗi khởi tạo bảng kết xuất"
 
-#: disk-utils/partx.c:678 misc-utils/findmnt.c:1609 misc-utils/lsblk.c:1891
+#: disk-utils/partx.c:678 misc-utils/findmnt.c:1608 misc-utils/lsblk.c:1891
 #: misc-utils/lslocks.c:465 sys-utils/losetup.c:322 sys-utils/losetup.c:358
 #: sys-utils/lscpu.c:1695 sys-utils/lsns.c:510 sys-utils/prlimit.c:306
 #: sys-utils/swapon.c:289 sys-utils/wdctl.c:270 sys-utils/zramctl.c:493
@@ -4620,7 +4620,7 @@ msgid "colors are disabled by default"
 msgstr "Đăng nhập trên %s từ %s bị cấm theo mặc định.\n"
 
 #: include/env.h:18 lib/pager.c:151 login-utils/login.c:1052
-#: login-utils/login.c:1056 login-utils/su-common.c:523
+#: login-utils/login.c:1056 login-utils/su-common.c:526
 #: term-utils/agetty.c:1160
 #, fuzzy, c-format
 msgid "failed to set the %s environment variable"
@@ -6222,7 +6222,7 @@ msgstr "Chỗ trống"
 msgid "Failed to resize partition #%zu."
 msgstr "thay đổi kích thước phân vùng gặp lỗi"
 
-#: libfdisk/src/parttype.c:259 misc-utils/findmnt.c:680 schedutils/chrt.c:204
+#: libfdisk/src/parttype.c:259 misc-utils/findmnt.c:655 schedutils/chrt.c:204
 #: schedutils/ionice.c:79 sys-utils/hwclock.c:334
 msgid "unknown"
 msgstr "không hiểu"
@@ -7454,7 +7454,7 @@ msgstr "số lượng tiến trình chạy bởi người dùng"
 msgid "Running processes"
 msgstr "Các tiến trình đang chạy"
 
-#: login-utils/lslogins.c:288 misc-utils/findmnt.c:160 misc-utils/lsblk.c:231
+#: login-utils/lslogins.c:288 misc-utils/findmnt.c:136 misc-utils/lsblk.c:231
 #: sys-utils/lsipc.c:204
 #, c-format
 msgid "too many columns specified, the limit is %zu columns"
@@ -7588,7 +7588,7 @@ msgstr "     --wtmp-file <đường_dẫn>  đặt đường dẫn thay thế ch
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <đường_dẫn>  đặt đường dẫn thay thế cho btmp\n"
 
-#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1263 sys-utils/lscpu.c:1955
+#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1244 sys-utils/lscpu.c:1955
 #, c-format
 msgid ""
 "\n"
@@ -7659,34 +7659,34 @@ msgstr "Từ chối một đăng nhập một cách tao nhã.\n"
 msgid "This account is currently not available.\n"
 msgstr "Tài khoản này hiện tại không sẵn sàng.\n"
 
-#: login-utils/su-common.c:292
+#: login-utils/su-common.c:295
 #, c-format
 msgid "cannot open session: %s"
 msgstr "không thể mở phiên: %s"
 
-#: login-utils/su-common.c:304
+#: login-utils/su-common.c:307
 msgid "cannot create child process"
 msgstr "không thể tạo tiến trình con"
 
-#: login-utils/su-common.c:316
+#: login-utils/su-common.c:319
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "không chuyển đổi được sang thư mục %s"
 
-#: login-utils/su-common.c:321
+#: login-utils/su-common.c:324
 msgid "cannot block signals"
 msgstr "không thể ngăn cản các tín hiệu"
 
-#: login-utils/su-common.c:335 login-utils/su-common.c:343
-#: login-utils/su-common.c:349 misc-utils/uuidd.c:407 term-utils/script.c:771
+#: login-utils/su-common.c:338 login-utils/su-common.c:346
+#: login-utils/su-common.c:352 misc-utils/uuidd.c:407 term-utils/script.c:771
 msgid "cannot set signal handler"
 msgstr "không đặt bộ tiếp hợp tín hiệu"
 
-#: login-utils/su-common.c:374
+#: login-utils/su-common.c:377
 msgid " (core dumped)"
 msgstr "(lõi được đổ)"
 
-#: login-utils/su-common.c:390
+#: login-utils/su-common.c:393
 #, c-format
 msgid ""
 "\n"
@@ -7695,42 +7695,57 @@ msgstr ""
 "\n"
 "Phiên làm việc bị chấm dứt, đang giết shell…"
 
-#: login-utils/su-common.c:400
+#: login-utils/su-common.c:403
 #, c-format
 msgid " ...killed.\n"
 msgstr " …bị giết.\n"
 
-#: login-utils/su-common.c:480
+#: login-utils/su-common.c:483
 msgid "may not be used by non-root users"
 msgstr "không thể được dùng bởi một tài khoản không phải siêu quản trị"
 
-#: login-utils/su-common.c:508
+#: login-utils/su-common.c:511
 msgid "incorrect password"
 msgstr "sai mật khẩu"
 
-#: login-utils/su-common.c:592
+#: login-utils/su-common.c:595
 msgid "cannot set groups"
 msgstr "không đặt được các nhóm"
 
-#: login-utils/su-common.c:607 sys-utils/eject.c:665
+#: login-utils/su-common.c:610 sys-utils/eject.c:665
 msgid "cannot set group id"
 msgstr "không đặt được mã số nhóm (GID)"
 
-#: login-utils/su-common.c:609 sys-utils/eject.c:668
+#: login-utils/su-common.c:612 sys-utils/eject.c:668
 msgid "cannot set user id"
 msgstr "không đặt được mã số người dùng (UID)"
 
-#: login-utils/su-common.c:682
+#: login-utils/su-common.c:685
+#, fuzzy
+msgid "failed to initialize seccomp context"
+msgstr "gặp lỗi khi khởi tạo loopcxt"
+
+#: login-utils/su-common.c:688
+#, fuzzy
+msgid "failed to add seccomp rule"
+msgstr "đọc tốc độ gặp lỗi"
+
+#: login-utils/su-common.c:690
+#, fuzzy
+msgid "failed to load seccomp rule"
+msgstr "đọc tốc độ gặp lỗi"
+
+#: login-utils/su-common.c:700
 #, c-format
 msgid " %s [options] -u <user> <command>\n"
 msgstr " %s [các tùy chọn ] -u <tài-khoản> <lệnh>\n"
 
-#: login-utils/su-common.c:683 login-utils/su-common.c:695
+#: login-utils/su-common.c:701 login-utils/su-common.c:713
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [các tùy chọn] [-] [<tài-khoản> [<đối số>…]]\n"
 
-#: login-utils/su-common.c:684
+#: login-utils/su-common.c:702
 msgid ""
 "\n"
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
@@ -7742,11 +7757,11 @@ msgstr ""
 "thì có tác dụng giống với su(1) và hệ vỏ tiêu chuẩn được thực thi.\n"
 "Các tùy chọn -c, -f, -l và -s là xung đột với -u.\n"
 
-#: login-utils/su-common.c:691
+#: login-utils/su-common.c:709
 msgid " -u, --user <user>             username\n"
 msgstr " -u, --user <tài-khoản>        tài khoản\n"
 
-#: login-utils/su-common.c:696
+#: login-utils/su-common.c:714
 msgid ""
 "\n"
 "Change the effective user ID and group ID to that of <user>.\n"
@@ -7756,15 +7771,15 @@ msgstr ""
 "Thay đổi ID người dùng và nhóm cho những cái đó của <NGƯỜI-DÙNG>.\n"
 "- hiểu là -1. Nếu không chỉ ra <NGƯỜI-DÙNG> thì coi là siêu người dùng.\n"
 
-#: login-utils/su-common.c:703
+#: login-utils/su-common.c:721
 msgid " -m, -p, --preserve-environment  do not reset environment variables\n"
 msgstr " -m, -p, --preserve-environment  không đặt lại các biến môi trường\n"
 
-#: login-utils/su-common.c:704
+#: login-utils/su-common.c:722
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <nhóm>              chỉ định nhóm chính\n"
 
-#: login-utils/su-common.c:705
+#: login-utils/su-common.c:723
 msgid ""
 " -G, --supp-group <group>        specify a supplemental group\n"
 "\n"
@@ -7772,15 +7787,15 @@ msgstr ""
 " -G, --supp-group <nhóm>         chỉ định nhóm phụ thêm vào\n"
 "\n"
 
-#: login-utils/su-common.c:707
+#: login-utils/su-common.c:725
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -, -l, --login                  làm hệ vỏ đăng nhập hệ vỏ\n"
 
-#: login-utils/su-common.c:708
+#: login-utils/su-common.c:726
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c  --command <lệnh>            chuyển một câu lệnh đơn cho hệ vỏ với -c\n"
 
-#: login-utils/su-common.c:709
+#: login-utils/su-common.c:727
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -7788,52 +7803,52 @@ msgstr ""
 " --session-command <lệnh>        chuyển một câu lệnh đơn cho hệ vỏ với -c\n"
 "                                    và không tạo một phiên mới\n"
 
-#: login-utils/su-common.c:711
+#: login-utils/su-common.c:729
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                      chuyển -f tới hệ vỏ (cho csh hay tcsh)\n"
 
-#: login-utils/su-common.c:712
+#: login-utils/su-common.c:730
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <hệ vỏ>             chạy hệ vỏ nếu /etc/shells cho phép nó\n"
 
-#: login-utils/su-common.c:756
+#: login-utils/su-common.c:774
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "không thể chỉ định nhiều hơn %d nhóm phụ thêm"
 
-#: login-utils/su-common.c:762
+#: login-utils/su-common.c:780
 #, c-format
 msgid "group %s does not exist"
 msgstr "nhóm %s không tồn tại"
 
-#: login-utils/su-common.c:880
+#: login-utils/su-common.c:898
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "bỏ qua --preserve-environment, nó loại trừ qua lại với --login"
 
-#: login-utils/su-common.c:891
+#: login-utils/su-common.c:909
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "các tùy chọn --{shell,fast,command,session-command,login} và --user loại trừ lẫn nhau"
 
-#: login-utils/su-common.c:895
+#: login-utils/su-common.c:913
 msgid "no command was specified"
 msgstr "chưa chỉ ra lệnh"
 
-#: login-utils/su-common.c:909
+#: login-utils/su-common.c:927
 msgid "only root can specify alternative groups"
 msgstr "chỉ root có thể chỉ định các nhóm thay thế"
 
-#: login-utils/su-common.c:916
+#: login-utils/su-common.c:934
 #, c-format
 msgid "user %s does not exist"
 msgstr "người dùng %s không tồn tại"
 
-#: login-utils/su-common.c:956
+#: login-utils/su-common.c:974
 #, c-format
 msgid "using restricted shell %s"
 msgstr "sử dụng shell (hệ vỏ) bị giới hạn %s"
 
-#: login-utils/su-common.c:980
+#: login-utils/su-common.c:1000
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "cảnh báo: không thể chuyển đổi thư mục sang %s"
@@ -7924,7 +7939,7 @@ msgstr ""
 " -e, --force              xem xét đến các tập tin mật khẩu một cách trực\n"
 "                          tiếp nếu getpwnam(3) gặp lỗi\n"
 
-#: login-utils/sulogin.c:866 misc-utils/findmnt.c:1472 sys-utils/wdctl.c:523
+#: login-utils/sulogin.c:866 misc-utils/findmnt.c:1460 sys-utils/wdctl.c:523
 #: term-utils/agetty.c:750 term-utils/wall.c:135
 msgid "invalid timeout argument"
 msgstr "đối số quá giờ không hợp lệ"
@@ -8214,149 +8229,150 @@ msgstr "Tìm một hệ thống tập tin theo nhãn hay UUID.\n"
 msgid "unable to resolve '%s'"
 msgstr "không thể phân giải “%s”"
 
-#: misc-utils/findmnt.c:123
+#: misc-utils/findmnt.c:99
 msgid "source device"
 msgstr "thiết bị nguồn"
 
-#: misc-utils/findmnt.c:124
+#: misc-utils/findmnt.c:100
 msgid "mountpoint"
 msgstr "điểm gắn"
 
-#: misc-utils/findmnt.c:125 misc-utils/lsblk.c:161
+#: misc-utils/findmnt.c:101 misc-utils/lsblk.c:161
 msgid "filesystem type"
 msgstr "kiểu hệ thống tập tin"
 
-#: misc-utils/findmnt.c:126
+#: misc-utils/findmnt.c:102
 msgid "all mount options"
 msgstr "tất cả tùy chọn cho gắn"
 
-#: misc-utils/findmnt.c:127
+#: misc-utils/findmnt.c:103
 msgid "VFS specific mount options"
 msgstr "VFS chỉ định tùy chọn gắn"
 
-#: misc-utils/findmnt.c:128
+#: misc-utils/findmnt.c:104
 msgid "FS specific mount options"
 msgstr "FS chỉ định tùy chọn gắn"
 
-#: misc-utils/findmnt.c:129
+#: misc-utils/findmnt.c:105
 msgid "filesystem label"
 msgstr "nhãn hệ thống tập tin"
 
-#: misc-utils/findmnt.c:130 misc-utils/lsblk.c:164
+#: misc-utils/findmnt.c:106 misc-utils/lsblk.c:164
 msgid "filesystem UUID"
 msgstr "UUID hệ thống tập tin"
 
-#: misc-utils/findmnt.c:131
+#: misc-utils/findmnt.c:107
 msgid "partition label"
 msgstr "nhãn của phân vùng"
 
-#: misc-utils/findmnt.c:133 misc-utils/lsblk.c:160
+#: misc-utils/findmnt.c:109 misc-utils/lsblk.c:160
 msgid "major:minor device number"
 msgstr "số lớn:nhỏ thiết bị"
 
-#: misc-utils/findmnt.c:134
+#: misc-utils/findmnt.c:110
 msgid "action detected by --poll"
 msgstr "hành động được nhận ra vởi --poll"
 
-#: misc-utils/findmnt.c:135
+#: misc-utils/findmnt.c:111
 msgid "old mount options saved by --poll"
 msgstr "các tùy chọn cũ được ghi lại bằng tùy chọn --poll"
 
-#: misc-utils/findmnt.c:136
+#: misc-utils/findmnt.c:112
 msgid "old mountpoint saved by --poll"
 msgstr "điểm gắn cũ được ghi lại bởi tùy chọn --poll"
 
-#: misc-utils/findmnt.c:137
+#: misc-utils/findmnt.c:113
 msgid "filesystem size"
 msgstr "kích thước hệ thống tập tin"
 
-#: misc-utils/findmnt.c:138
+#: misc-utils/findmnt.c:114
 msgid "filesystem size available"
 msgstr "kích thước hệ thống tập tin có thể dùng"
 
-#: misc-utils/findmnt.c:139
+#: misc-utils/findmnt.c:115
 msgid "filesystem size used"
 msgstr "kích thước hệ thống tập tin đã dùng"
 
-#: misc-utils/findmnt.c:140
+#: misc-utils/findmnt.c:116
 msgid "filesystem use percentage"
 msgstr "phần trăm hệ thống tập tin đã dùng"
 
-#: misc-utils/findmnt.c:141
+#: misc-utils/findmnt.c:117
 msgid "filesystem root"
 msgstr "GỐC của hệ thống tập tin"
 
-#: misc-utils/findmnt.c:142
+#: misc-utils/findmnt.c:118
 msgid "task ID"
 msgstr "ID tác vụ"
 
-#: misc-utils/findmnt.c:143
+#: misc-utils/findmnt.c:119
 msgid "mount ID"
 msgstr "ID gắn"
 
-#: misc-utils/findmnt.c:144
+#: misc-utils/findmnt.c:120
 msgid "optional mount fields"
 msgstr "các trường tùy chọn gắn"
 
-#: misc-utils/findmnt.c:145
+#: misc-utils/findmnt.c:121
 msgid "VFS propagation flags"
 msgstr "Cờ lan truyền VFS"
 
-#: misc-utils/findmnt.c:146
+#: misc-utils/findmnt.c:122
 msgid "dump(8) period in days [fstab only]"
 msgstr "chu kỳ dump(8) tính bằng ngày [chỉ fstab]"
 
-#: misc-utils/findmnt.c:147
+#: misc-utils/findmnt.c:123
 msgid "pass number on parallel fsck(8) [fstab only]"
 msgstr "chuyển số trên fsck(8) song song [chỉ fstab]"
 
-#: misc-utils/findmnt.c:358
+#: misc-utils/findmnt.c:333
 #, c-format
 msgid "unknown action: %s"
 msgstr "không hiểu hành động: %s"
 
-#: misc-utils/findmnt.c:668
+#: misc-utils/findmnt.c:643
 msgid "mount"
 msgstr "gắn"
 
-#: misc-utils/findmnt.c:671
+#: misc-utils/findmnt.c:646
 msgid "umount"
 msgstr "bỏ gắn"
 
-#: misc-utils/findmnt.c:674
+#: misc-utils/findmnt.c:649
 msgid "remount"
 msgstr "gắn lại"
 
-#: misc-utils/findmnt.c:677
+#: misc-utils/findmnt.c:652
 msgid "move"
 msgstr "di chuyển"
 
-#: misc-utils/findmnt.c:836 misc-utils/findmnt.c:1099 sys-utils/eject.c:719
+#: misc-utils/findmnt.c:812 misc-utils/findmnt.c:1075 sys-utils/eject.c:719
 #: sys-utils/mount.c:669
 msgid "failed to initialize libmount table"
 msgstr "gặp lỗi khi khởi tạo bảng libmount"
 
-#: misc-utils/findmnt.c:863 text-utils/hexdump-parse.c:84
+#: misc-utils/findmnt.c:839 text-utils/hexdump-parse.c:84
 #, c-format
 msgid "can't read %s"
 msgstr "không đọc được %s"
 
-#: misc-utils/findmnt.c:1039 misc-utils/findmnt.c:1105 sys-utils/fstrim.c:199
-#: sys-utils/mount.c:134 sys-utils/mount.c:182 sys-utils/swapoff.c:56
-#: sys-utils/swapoff.c:152 sys-utils/swapon.c:244 sys-utils/swapon.c:274
-#: sys-utils/swapon.c:732 sys-utils/umount.c:274
+#: misc-utils/findmnt.c:1015 misc-utils/findmnt.c:1081
+#: misc-utils/findmnt-verify.c:94 misc-utils/findmnt-verify.c:481
+#: sys-utils/fstrim.c:199 sys-utils/mount.c:134 sys-utils/mount.c:182
+#: sys-utils/swapoff.c:56 sys-utils/swapoff.c:152 sys-utils/swapon.c:244
+#: sys-utils/swapon.c:274 sys-utils/swapon.c:733 sys-utils/umount.c:274
 msgid "failed to initialize libmount iterator"
 msgstr "lỗi khởi tạo bộ lặp lại libmount"
 
-#: misc-utils/findmnt.c:1111
+#: misc-utils/findmnt.c:1087
 msgid "failed to initialize libmount tabdiff"
 msgstr "gặp lỗi khi khởi tạo bảng tabdiff libmount"
 
-#: misc-utils/findmnt.c:1139
+#: misc-utils/findmnt.c:1115
 msgid "poll() failed"
 msgstr "poll() gặp lỗi"
 
-#: misc-utils/findmnt.c:1210
+#: misc-utils/findmnt.c:1186
 #, fuzzy, c-format
 msgid ""
 " %1$s [options]\n"
@@ -8369,19 +8385,19 @@ msgstr ""
 " %1$s [tuỳ_chọn] <thiết_bị> <điểm_lắp>\n"
 " %1$s [tuỳ_chọn] [--source <thiết_bị>] [--target <điểm_lắp>]\n"
 
-#: misc-utils/findmnt.c:1217
+#: misc-utils/findmnt.c:1193
 msgid "Find a (mounted) filesystem.\n"
 msgstr "Tìm một hệ thống tập tin (đã gắn).\n"
 
-#: misc-utils/findmnt.c:1220
+#: misc-utils/findmnt.c:1196
 msgid " -s, --fstab            search in static table of filesystems\n"
 msgstr " -s, --fstab            tìm trong bảng cố định của hệ thống tập tin\n"
 
-#: misc-utils/findmnt.c:1221
+#: misc-utils/findmnt.c:1197
 msgid " -m, --mtab             search in table of mounted filesystems\n"
 msgstr " -m, --mtab             tìm trong bảng của hệ thống tập tin đã gắn\n"
 
-#: misc-utils/findmnt.c:1222
+#: misc-utils/findmnt.c:1198
 msgid ""
 " -k, --kernel           search in kernel table of mounted\n"
 "                          filesystems (default)\n"
@@ -8389,43 +8405,43 @@ msgstr ""
 " -k, --kernel           tìm kiếm bảng nhân của hệ thống tập tin\n"
 "                          đã gắn (mặc định)\n"
 
-#: misc-utils/findmnt.c:1225
+#: misc-utils/findmnt.c:1201
 msgid " -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
 msgstr " -p, --poll[=<list>]    theo dõi các thay đổi trong bảng của hệ thống tập tin đã gắn\n"
 
-#: misc-utils/findmnt.c:1226
+#: misc-utils/findmnt.c:1202
 msgid " -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"
 msgstr " -w, --timeout <số>     giới hạn trên theo milli-giây mà --poll sẽ khóa\n"
 
-#: misc-utils/findmnt.c:1229
+#: misc-utils/findmnt.c:1205
 msgid " -A, --all              disable all built-in filters, print all filesystems\n"
 msgstr " -A, --all              tắt tất cả các bộ lọc dựng sẵn, in mọi hệ thống tập tin\n"
 
-#: misc-utils/findmnt.c:1230
+#: misc-utils/findmnt.c:1206
 msgid " -a, --ascii            use ASCII chars for tree formatting\n"
 msgstr " -a, --ascii            dùng các ký tự ASCII để định dạng cây\n"
 
-#: misc-utils/findmnt.c:1231
+#: misc-utils/findmnt.c:1207
 msgid " -b, --bytes            print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes            hiển thị cỡ theo byte thay vì dạng dành cho con người đọc\n"
 
-#: misc-utils/findmnt.c:1232
+#: misc-utils/findmnt.c:1208
 msgid " -C, --nocanonicalize   don't canonicalize when comparing paths\n"
 msgstr " -C, --no-canonicalize  không canonical hóa đường dẫn khi so sánh các đường dẫn\n"
 
-#: misc-utils/findmnt.c:1233
+#: misc-utils/findmnt.c:1209
 msgid " -c, --canonicalize     canonicalize printed paths\n"
 msgstr " -c, --canonicalize     canonical hóa đường dẫn\n"
 
-#: misc-utils/findmnt.c:1234
+#: misc-utils/findmnt.c:1210
 msgid " -D, --df               imitate the output of df(1)\n"
 msgstr " -D, --df               xuất theo kiểu df(1)\n"
 
-#: misc-utils/findmnt.c:1235
+#: misc-utils/findmnt.c:1211
 msgid " -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 msgstr " -d, --direction <từ>   hướng tìm kiếm, “forward” hoặc “backward”\n"
 
-#: misc-utils/findmnt.c:1236
+#: misc-utils/findmnt.c:1212
 msgid ""
 " -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          to device names\n"
@@ -8433,56 +8449,56 @@ msgstr ""
 " -e, --evaluate         chuyển đổi các thẻ (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          thành tên thiết bị\n"
 
-#: misc-utils/findmnt.c:1238
+#: misc-utils/findmnt.c:1214
 msgid " -F, --tab-file <path>  alternative file for -s, -m or -k options\n"
 msgstr " -F, --tab-file <đường_dẫn>  tập tin thay thế cho tùy chọn -s, -m hay -k\n"
 
-#: misc-utils/findmnt.c:1239
+#: misc-utils/findmnt.c:1215
 msgid " -f, --first-only       print the first found filesystem only\n"
 msgstr " -f, --first-only       chỉ hiển thị hệ thống tập tin tìm thấy đầu tiên\n"
 
-#: misc-utils/findmnt.c:1240
+#: misc-utils/findmnt.c:1216
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -s, --inverse          đảo ngược phần khớp\n"
 
-#: misc-utils/findmnt.c:1241 misc-utils/lslocks.c:507 sys-utils/lsns.c:597
+#: misc-utils/findmnt.c:1217 misc-utils/lslocks.c:507 sys-utils/lsns.c:597
 #, fuzzy
 msgid " -J, --json             use JSON output format\n"
 msgstr " -r, --raw              dùng định dạng thô\n"
 
-#: misc-utils/findmnt.c:1242 sys-utils/lsns.c:598
+#: misc-utils/findmnt.c:1218 sys-utils/lsns.c:598
 msgid " -l, --list             use list format output\n"
 msgstr " -l, --list             dùng định dạng kết xuất liệt kê\n"
 
-#: misc-utils/findmnt.c:1243
+#: misc-utils/findmnt.c:1219
 msgid " -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
 msgstr " -N, --task <tid>       dùng không gian tên thay thế (tập tin /proc/<tid>/mountinfo)\n"
 
-#: misc-utils/findmnt.c:1244
+#: misc-utils/findmnt.c:1220
 msgid " -n, --noheadings       don't print column headings\n"
 msgstr " -n, --noheadings       không hiển thị phần đầu của cột\n"
 
-#: misc-utils/findmnt.c:1245
+#: misc-utils/findmnt.c:1221
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr " -O, --options <d.sách> giới hạn tập hợp hệ thống tập tin bởi tùy chọn gắn\n"
 
-#: misc-utils/findmnt.c:1246
+#: misc-utils/findmnt.c:1222
 msgid " -o, --output <list>    the output columns to be shown\n"
 msgstr " -o, --options <d.sách> các cột sẽ hiển thị\n"
 
-#: misc-utils/findmnt.c:1247
+#: misc-utils/findmnt.c:1223
 msgid " -P, --pairs            use key=\"value\" output format\n"
 msgstr " -P, --pairs            dùng kết xuất theo định dạng khóa=\"giá trị\"\n"
 
-#: misc-utils/findmnt.c:1248
+#: misc-utils/findmnt.c:1224
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
 msgstr " -R, --submounts        hiển thị mọi gắn con cho hệ thống tập tin khớp\n"
 
-#: misc-utils/findmnt.c:1249
+#: misc-utils/findmnt.c:1225
 msgid " -r, --raw              use raw output format\n"
 msgstr " -r, --raw              dùng định dạng thô\n"
 
-#: misc-utils/findmnt.c:1250
+#: misc-utils/findmnt.c:1226
 msgid ""
 " -S, --source <string>  the device to mount (by name, maj:min, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
@@ -8490,57 +8506,241 @@ msgstr ""
 " -S, --source <chuỗi>   thiết bị để gắn (bằng tên, lớn:nhỏ, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
 
-#: misc-utils/findmnt.c:1252
+#: misc-utils/findmnt.c:1228
 #, fuzzy
 msgid " -T, --target <path>    the path to the filesystem to use\n"
 msgstr " -T, --target <chuỗi>   điểm gắn được dùng\n"
 
-#: misc-utils/findmnt.c:1253
+#: misc-utils/findmnt.c:1229
 #, fuzzy
 msgid " -M, --mountpoint <dir> the mountpoint directory\n"
 msgstr " -r, --root[=<t.mục>] đặt thư mục gốc\n"
 
-#: misc-utils/findmnt.c:1254
+#: misc-utils/findmnt.c:1230
 msgid " -t, --types <list>     limit the set of filesystems by FS types\n"
 msgstr " -t, --types <d.sách>   giới hạn tập hợp hệ thống tập tin theo kiểu\n"
 
-#: misc-utils/findmnt.c:1255
+#: misc-utils/findmnt.c:1231
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -U, --uniq             bỏ qua hệ thống tập tin với đích trùng lặp\n"
 
-#: misc-utils/findmnt.c:1256 misc-utils/lslocks.c:513 sys-utils/lsns.c:603
+#: misc-utils/findmnt.c:1232 misc-utils/lslocks.c:513 sys-utils/lsns.c:603
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -u, --notruncate       đừng cắt ngắn trong các cột\n"
 
-#: misc-utils/findmnt.c:1257
+#: misc-utils/findmnt.c:1233
 msgid " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 msgstr " -v, --nofsroot         đừng in [/dir] cho gắn bind hay btrfs\n"
 
-#: misc-utils/findmnt.c:1377
+#: misc-utils/findmnt.c:1236
+#, fuzzy
+msgid " -x, --verify           verify mount table content (default is fstab)\n"
+msgstr " -1, --one             chỉ hiển thị một tháng (mặc định)\n"
+
+#: misc-utils/findmnt.c:1237
+#, fuzzy
+msgid "     --verbose          print more details\n"
+msgstr " -v, --verbose             hiển thị dữ liệu dạng đầy đủ\n"
+
+#: misc-utils/findmnt.c:1365
 #, c-format
 msgid "unknown direction '%s'"
 msgstr "không hiểu hướng “%s”"
 
-#: misc-utils/findmnt.c:1449
+#: misc-utils/findmnt.c:1437
 msgid "invalid TID argument"
 msgstr "đối số TID không hợp lệ"
 
-#: misc-utils/findmnt.c:1512
+#: misc-utils/findmnt.c:1506
 msgid "--poll accepts only one file, but more specified by --tab-file"
 msgstr "--poll thừa nhận chỉ một tập tin, nhưng phải được chỉ định bởi --tab-file"
 
-#: misc-utils/findmnt.c:1516
+#: misc-utils/findmnt.c:1510
 msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr "không thể sử dụng cả hai tùy chọn “--target” (đích) và “--source” (nguồn) với một yếu tố dòng lệnh mà không thể là một tùy chọn"
 
-#: misc-utils/findmnt.c:1566
+#: misc-utils/findmnt.c:1559
 msgid "failed to initialize libmount cache"
 msgstr "lỗi khởi tạo vùng nhớ tạm libmount"
 
-#: misc-utils/findmnt.c:1603
+#: misc-utils/findmnt.c:1602
 #, c-format
 msgid "%s column is requested, but --poll is not enabled"
 msgstr "%s cột được yêu cầu, nhưng tùy chọn --poll lại không được bật"
+
+#: misc-utils/findmnt-verify.c:116
+#, fuzzy
+msgid "target specified more than once"
+msgstr "nguồn được ghi nhiều hơn một lần"
+
+#: misc-utils/findmnt-verify.c:118
+#, c-format
+msgid "wrong order: %s specified before %s"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:133
+msgid "undefined target (fs_file)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:140
+#, c-format
+msgid "non-canonical target path (real: %s)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:145
+#, c-format
+msgid "unreachable on boot required target: %m"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:147
+#, fuzzy, c-format
+msgid "unreachable target: %m"
+msgstr "không thể đọc %s"
+
+#: misc-utils/findmnt-verify.c:151
+#, fuzzy
+msgid "target is not a directory"
+msgstr "%s: không phải là một thư mục"
+
+#: misc-utils/findmnt-verify.c:153
+msgid "target exists"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:165
+#, c-format
+msgid "unreachable on boot required source: %s=%s"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:167
+#, fuzzy, c-format
+msgid "unreachable: %s=%s"
+msgstr "gặp lỗi khi đọc: %s"
+
+#: misc-utils/findmnt-verify.c:169
+#, fuzzy, c-format
+msgid "%s=%s translated to %s"
+msgstr "%s tương ứng với %s\n"
+
+#: misc-utils/findmnt-verify.c:190
+msgid "undefined source (fs_spec)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:199
+#, fuzzy, c-format
+msgid "unsupported source tag: %s"
+msgstr "tham số không hỗ trợ: %s"
+
+#: misc-utils/findmnt-verify.c:205
+#, c-format
+msgid "do not check %s source (pseudo/net)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:208
+#, fuzzy, c-format
+msgid "unreachable source: %s: %m"
+msgstr "không thể mở đư��c “%s”: %m"
+
+#: misc-utils/findmnt-verify.c:211
+#, c-format
+msgid "non-bind mount source %s is a directory or regular file"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:214
+#, fuzzy, c-format
+msgid "source %s is not a block device"
+msgstr "%s không phải thiết bị đặc biệt khối."
+
+#: misc-utils/findmnt-verify.c:216
+#, fuzzy, c-format
+msgid "source %s exists"
+msgstr "thiết bị nguồn"
+
+#: misc-utils/findmnt-verify.c:229
+#, fuzzy, c-format
+msgid "VFS options: %s"
+msgstr "%s: các tùy chọn "
+
+#: misc-utils/findmnt-verify.c:233
+#, fuzzy, c-format
+msgid "FS options: %s"
+msgstr "%s: các tùy chọn "
+
+#: misc-utils/findmnt-verify.c:237
+#, fuzzy, c-format
+msgid "userspace options: %s"
+msgstr "Tùy chọn tài nguyên:\n"
+
+#: misc-utils/findmnt-verify.c:251
+#, fuzzy, c-format
+msgid "unsupported swaparea discard policy: %s"
+msgstr "không hỗ trợ chính sách loại bỏ: %s"
+
+#: misc-utils/findmnt-verify.c:259
+#, fuzzy
+msgid "failed to parse swaparea priority option"
+msgstr "gặp lỗi khi phân tích mức ưu tiên"
+
+#: misc-utils/findmnt-verify.c:395
+#, c-format
+msgid "do not check %s FS type (pseudo/net)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:405
+msgid "\"none\" FS type is recommended for bind or move oprations only"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:413
+#, c-format
+msgid "%s seems unspported by the current kernel"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:419 misc-utils/findmnt-verify.c:420
+#, fuzzy
+msgid "cannot detect on-disk filesystem type"
+msgstr "không hiểu kiểu hệ thống tập tin"
+
+#: misc-utils/findmnt-verify.c:427
+#, c-format
+msgid "%s does not match with on-disk %s"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:430
+#, c-format
+msgid "on-disk %s seems unspported by the current kernel"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:432
+#, fuzzy, c-format
+msgid "FS type is %s"
+msgstr "kiểu: %s"
+
+#: misc-utils/findmnt-verify.c:444
+#, c-format
+msgid "recommended root FS passno is 1 (current is %d)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:511
+#, fuzzy, c-format
+msgid "%d parse error"
+msgid_plural "%d parse errors"
+msgstr[0] "lỗi phân tích cú pháp\n"
+
+#: misc-utils/findmnt-verify.c:512
+#, fuzzy, c-format
+msgid ", %d error"
+msgid_plural ", %d errors"
+msgstr[0] ", gặp lỗi"
+
+#: misc-utils/findmnt-verify.c:513
+#, c-format
+msgid ", %d warning"
+msgid_plural ", %d warnings"
+msgstr[0] ""
+
+#: misc-utils/findmnt-verify.c:516
+#, c-format
+msgid "Success, no errors or warnings detected\n"
+msgstr ""
 
 #: misc-utils/getopt.c:246
 #, c-format
@@ -11437,7 +11637,7 @@ msgstr "%s: FITRIM ioctl không thành công"
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s: %s (%<PRIu64> bytes) bị xén\n"
 
-#: sys-utils/fstrim.c:203 sys-utils/swapon.c:728 sys-utils/umount.c:329
+#: sys-utils/fstrim.c:203 sys-utils/swapon.c:729 sys-utils/umount.c:329
 #, c-format
 msgid "failed to parse %s"
 msgstr "gặp lỗi phân tích %s"
@@ -15937,7 +16137,7 @@ msgstr "Không phải siêu người dùng.s"
 msgid "%s: swapoff failed"
 msgstr "%s swapoff bị lỗi"
 
-#: sys-utils/swapoff.c:119 sys-utils/swapon.c:787
+#: sys-utils/swapoff.c:119 sys-utils/swapon.c:788
 #, c-format
 msgid " %s [options] [<spec>]\n"
 msgstr " %s [các tùy chọn] [<spec>]\n"
@@ -16081,74 +16281,74 @@ msgstr "swapon %s\n"
 msgid "%s: swapon failed"
 msgstr "%s swapon bị lỗi"
 
-#: sys-utils/swapon.c:742
+#: sys-utils/swapon.c:743
 #, fuzzy, c-format
 msgid "%s: noauto option -- ignored"
 msgstr "%s: lỗi phân tích cú pháp tại dòng %d -- ignore"
 
-#: sys-utils/swapon.c:764
+#: sys-utils/swapon.c:765
 #, fuzzy, c-format
 msgid "%s: already active -- ignored"
 msgstr "%s: lỗi phân tích cú pháp tại dòng %d -- ignore"
 
-#: sys-utils/swapon.c:770
+#: sys-utils/swapon.c:771
 #, fuzzy, c-format
 msgid "%s: inaccessible -- ignored"
 msgstr "%s: không thể ghi các inode"
 
-#: sys-utils/swapon.c:790
+#: sys-utils/swapon.c:791
 msgid "Enable devices and files for paging and swapping.\n"
 msgstr "Bật các thiết bị và tập tin để dùng cho việc đánh trang và tráo đổi.\n"
 
-#: sys-utils/swapon.c:793
+#: sys-utils/swapon.c:794
 msgid " -a, --all                enable all swaps from /etc/fstab\n"
 msgstr " -a, --all                bật mọi bộ nhớ tráo đổi có trong /etc/fstab\n"
 
-#: sys-utils/swapon.c:794
+#: sys-utils/swapon.c:795
 msgid " -d, --discard[=<policy>] enable swap discards, if supported by device\n"
 msgstr " -d, --discard[=<policy>] bật loại bỏ tráo đổi, nếu được hỗ trợ bởi thiết bị\n"
 
-#: sys-utils/swapon.c:795
+#: sys-utils/swapon.c:796
 msgid " -e, --ifexists           silently skip devices that do not exist\n"
 msgstr " -e, --ifexists           bỏ qua một cách âm thầm các thiết bị mà nó không tồn tại\n"
 
-#: sys-utils/swapon.c:796
+#: sys-utils/swapon.c:797
 msgid " -f, --fixpgsz            reinitialize the swap space if necessary\n"
 msgstr " -f, --fixpgsz            khởi tạo lại chỗ tráo đổi nếu thấy cần thiết\n"
 
-#: sys-utils/swapon.c:797
+#: sys-utils/swapon.c:798
 msgid " -o, --options <list>     comma-separated list of swap options\n"
 msgstr " -o, --options <d.sách> danh sách định giới bằng dấu phẩy của các tùy chọn tráo đổi\n"
 
-#: sys-utils/swapon.c:798
+#: sys-utils/swapon.c:799
 msgid " -p, --priority <prio>    specify the priority of the swap device\n"
 msgstr " -p, --priority <prio>    chỉ định mức ưu tiên của thiết bị tráo đổi\n"
 
-#: sys-utils/swapon.c:799
+#: sys-utils/swapon.c:800
 msgid " -s, --summary            display summary about used swap devices (DEPRECATED)\n"
 msgstr " -s, --summary            hiển thị thông tin thổng hợp về thiết bị tráo đổi (ĐÃ LỖI THỜI)\n"
 
-#: sys-utils/swapon.c:800
+#: sys-utils/swapon.c:801
 msgid "     --show[=<columns>]   display summary in definable table\n"
 msgstr "     --show[=<columns>]   hiển thị thông tin tổng hợp trong bảng định nghĩa\n"
 
-#: sys-utils/swapon.c:801
+#: sys-utils/swapon.c:802
 msgid "     --noheadings         don't print table heading (with --show)\n"
 msgstr "     --noheadings         không in phần đầu bảng (với --show)\n"
 
-#: sys-utils/swapon.c:802
+#: sys-utils/swapon.c:803
 msgid "     --raw                use the raw output format (with --show)\n"
 msgstr "     -r, --raw            dùng định dạng thô cho kết xuất (với --show)\n"
 
-#: sys-utils/swapon.c:803
+#: sys-utils/swapon.c:804
 msgid "     --bytes              display swap size in bytes in --show output\n"
 msgstr "     --bytes              hiển thị cỡ bộ nhớ tráo đổi tính theo byte ở kết xuất --show\n"
 
-#: sys-utils/swapon.c:804
+#: sys-utils/swapon.c:805
 msgid " -v, --verbose            verbose mode\n"
 msgstr " -v, --verbose            chế độ chi tiết\n"
 
-#: sys-utils/swapon.c:810
+#: sys-utils/swapon.c:811
 msgid ""
 "\n"
 "The <spec> parameter:\n"
@@ -16173,7 +16373,7 @@ msgstr ""
 " <file>                 tên của tập tin được dùng\n"
 "\n"
 
-#: sys-utils/swapon.c:820
+#: sys-utils/swapon.c:821
 msgid ""
 "\n"
 "Available discard policy types (for --discard):\n"
@@ -16187,7 +16387,7 @@ msgstr ""
 " pages\t  : loại bỏ các trang đã giải phóng trước khi dùng lại nó.\n"
 "Nếu không chọn chính sách nào thì cả hai kiểu trên đều bật (mặc định).\n"
 
-#: sys-utils/swapon.c:825
+#: sys-utils/swapon.c:826
 msgid ""
 "\n"
 "Available columns (for --show):\n"
@@ -16195,11 +16395,11 @@ msgstr ""
 "\n"
 "Các cột sẵn dùng (cho --show):\n"
 
-#: sys-utils/swapon.c:903
+#: sys-utils/swapon.c:904
 msgid "failed to parse priority"
 msgstr "gặp lỗi khi phân tích mức ưu tiên"
 
-#: sys-utils/swapon.c:922
+#: sys-utils/swapon.c:923
 #, c-format
 msgid "unsupported discard policy: %s"
 msgstr "không hỗ trợ chính sách loại bỏ: %s"
@@ -18582,7 +18782,7 @@ msgstr "thiết bị cuối “%s” không hiểu, mặc định là “dumb”
 msgid "unknown escape sequence in input: %o, %o"
 msgstr "không hiểu dãy thoát trong dữ liệu đầu vào: %o, %o"
 
-#: text-utils/ul.c:630
+#: text-utils/ul.c:624
 msgid "Input line too long."
 msgstr "Dòng đầu vào quá dài."
 
@@ -18781,9 +18981,6 @@ msgstr "Dòng đầu vào quá dài."
 
 #~ msgid "will not try to make filesystem on '%s'"
 #~ msgstr "sẽ không thử tạo hệ thống tập tin trên “%s”"
-
-#~ msgid "type: %s"
-#~ msgstr "kiểu: %s"
 
 #~ msgid "type: %d"
 #~ msgstr "kiểu: %d"
@@ -19962,9 +20159,6 @@ msgstr "Dòng đầu vào quá dài."
 
 #~ msgid " %s [options] file\n"
 #~ msgstr "%s [TUỲ_CHỌN] [TẬP_TIN]\n"
-
-#~ msgid "%s: options "
-#~ msgstr "%s: các tùy chọn "
 
 #~ msgid "are mutually exclusive."
 #~ msgstr "là loại từ lẫn nhau."
@@ -21173,9 +21367,6 @@ msgstr "Dòng đầu vào quá dài."
 #~ msgid "Could not find %s in mtab\n"
 #~ msgstr "Không tìm thấy %s trong mtab\n"
 
-#~ msgid "%s is associated with %s\n"
-#~ msgstr "%s tương ứng với %s\n"
-
 #~ msgid "umount: warning: %s is associated with more than one loop device\n"
 #~ msgstr "bỏ gắn: cảnh báo: %s được tiếp hợp với nhiều hơn một thiết bị vòng lặp\n"
 
@@ -21503,9 +21694,6 @@ msgstr "Dòng đầu vào quá dài."
 #~ msgid "set blocksize"
 #~ msgstr "đặt kích cỡ khối"
 
-#~ msgid "read failed: %s"
-#~ msgstr "gặp lỗi khi đọc: %s"
-
 #~ msgid "one bad block\n"
 #~ msgstr "một khối sai\n"
 
@@ -21676,9 +21864,6 @@ msgstr "Dòng đầu vào quá dài."
 #~ " -H <số>               ghi rõ số các đầu từ\n"
 #~ " -S <số>               ghi rõ số các cung từ trên mỗi rãnh\n"
 #~ "\n"
-
-#~ msgid "unable to read %s"
-#~ msgstr "không thể đọc %s"
 
 #~ msgid "unable to seek on %s"
 #~ msgstr "không thể di chuyển vị trí đọc trên %s"
@@ -22983,9 +23168,6 @@ msgstr "Dòng đầu vào quá dài."
 #~ msgid "Usage: %s [-larvsmf] /dev/name\n"
 #~ msgstr "Cách dùng: %s [-larvsmf] /dev/TÊN\n"
 
-#~ msgid "unable to open '%s': %m"
-#~ msgstr "không thể mở đư��c “%s”: %m"
-
 #~ msgid "failed to open %s"
 #~ msgstr "lỗi mở %s"
 
@@ -23271,9 +23453,6 @@ msgstr "Dòng đầu vào quá dài."
 
 #~ msgid "%s: cannot open %s\n"
 #~ msgstr "%s: không thể mở %s\n"
-
-#~ msgid "parse error\n"
-#~ msgstr "lỗi phân tích cú pháp\n"
 
 #~ msgid "usage: %s [ -n ] device\n"
 #~ msgstr "cách dùng: %s [ -n ] thiết bị\n"

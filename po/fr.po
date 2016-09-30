@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2016-09-06 11:16+0200\n"
+"POT-Creation-Date: 2016-09-30 11:02+0200\n"
 "PO-Revision-Date: 2015-05-07 13:41-0400\n"
 "Last-Translator: David Prévot <david@tilapin.org>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -52,7 +52,7 @@ msgstr "Informer le noyau de l’existence d’une partition indiquée.\n"
 #: login-utils/sulogin.c:446 login-utils/sulogin.c:483
 #: login-utils/utmpdump.c:136 login-utils/utmpdump.c:359
 #: login-utils/utmpdump.c:381 login-utils/vipw.c:258 login-utils/vipw.c:276
-#: misc-utils/findmnt.c:1121 misc-utils/logger.c:1177 misc-utils/mcookie.c:115
+#: misc-utils/findmnt.c:1097 misc-utils/logger.c:1177 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:207 sys-utils/blkdiscard.c:183 sys-utils/dmesg.c:522
 #: sys-utils/eject.c:500 sys-utils/eject.c:700 sys-utils/fallocate.c:374
 #: sys-utils/fsfreeze.c:128 sys-utils/fstrim.c:72 sys-utils/hwclock.c:282
@@ -1647,7 +1647,7 @@ msgstr "Déverrouillage de %s.\n"
 msgid "failed to setup description for %s"
 msgstr "échec de configuration de la description de %s"
 
-#: disk-utils/fsck.c:474 misc-utils/findmnt.c:807 misc-utils/lsblk.c:433
+#: disk-utils/fsck.c:474 misc-utils/findmnt.c:782 misc-utils/lsblk.c:433
 #: sys-utils/mount.c:102 sys-utils/swapon-common.c:19 sys-utils/umount.c:46
 #, fuzzy, c-format
 msgid "%s: parse error at line %d -- ignored"
@@ -2815,7 +2815,7 @@ msgid " -h, --help         display this help text and exit\n"
 msgstr " -h, --help         afficher cette aide et quitter\n"
 
 #: disk-utils/mkfs.c:139 lib/exec_shell.c:49 login-utils/newgrp.c:233
-#: login-utils/su-common.c:651 login-utils/su-common.c:986
+#: login-utils/su-common.c:654 login-utils/su-common.c:1006
 #: login-utils/sulogin.c:795 login-utils/sulogin.c:799 schedutils/chrt.c:555
 #: schedutils/ionice.c:260 schedutils/taskset.c:239 sys-utils/flock.c:363
 #: sys-utils/nsenter.c:430 sys-utils/prlimit.c:644 sys-utils/rtcwake.c:577
@@ -3456,7 +3456,7 @@ msgstr "taille lisible par l'utilisateur"
 msgid "partition name"
 msgstr "nom de partition"
 
-#: disk-utils/partx.c:92 misc-utils/findmnt.c:132 misc-utils/lsblk.c:168
+#: disk-utils/partx.c:92 misc-utils/findmnt.c:108 misc-utils/lsblk.c:168
 msgid "partition UUID"
 msgstr "UUID de partition"
 
@@ -3496,7 +3496,7 @@ msgstr "%s : échec de configuration du fichier associé"
 msgid "%s: failed to set up loop device"
 msgstr "%s : échec de configuration du périphérique boucle"
 
-#: disk-utils/partx.c:161 login-utils/lslogins.c:307 misc-utils/findmnt.c:401
+#: disk-utils/partx.c:161 login-utils/lslogins.c:307 misc-utils/findmnt.c:376
 #: misc-utils/lsblk.c:354 misc-utils/lslocks.c:342 sys-utils/losetup.c:107
 #: sys-utils/lscpu.c:370 sys-utils/lsipc.c:232 sys-utils/lsns.c:189
 #: sys-utils/prlimit.c:277 sys-utils/swapon.c:147 sys-utils/wdctl.c:151
@@ -3597,7 +3597,7 @@ msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] "nº %2d : %9ju-%9ju (%9ju secteur, %6ju Mo)\n"
 msgstr[1] "nº %2d : %9ju-%9ju (%9ju secteurs, %6ju Mo)\n"
 
-#: disk-utils/partx.c:581 misc-utils/findmnt.c:713 misc-utils/findmnt.c:730
+#: disk-utils/partx.c:581 misc-utils/findmnt.c:688 misc-utils/findmnt.c:705
 #: misc-utils/lslocks.c:391 sys-utils/lsns.c:434
 msgid "failed to add line to output"
 msgstr "échec d'ajout d'une ligne en sortie"
@@ -3606,7 +3606,7 @@ msgstr "échec d'ajout d'une ligne en sortie"
 msgid "failed to add data to output table"
 msgstr "échec d'ajout de données au tableau de sortie"
 
-#: disk-utils/partx.c:667 login-utils/lslogins.c:922 misc-utils/findmnt.c:1583
+#: disk-utils/partx.c:667 login-utils/lslogins.c:922 misc-utils/findmnt.c:1582
 #: misc-utils/lsblk.c:1869 misc-utils/lslocks.c:451 sys-utils/losetup.c:310
 #: sys-utils/lscpu.c:1690 sys-utils/lsipc.c:338 sys-utils/lsns.c:489
 #: sys-utils/prlimit.c:297 sys-utils/swapon.c:280 sys-utils/wdctl.c:259
@@ -3614,7 +3614,7 @@ msgstr "échec d'ajout de données au tableau de sortie"
 msgid "failed to initialize output table"
 msgstr "échec d'initialisation du tableau de sortie"
 
-#: disk-utils/partx.c:678 misc-utils/findmnt.c:1609 misc-utils/lsblk.c:1891
+#: disk-utils/partx.c:678 misc-utils/findmnt.c:1608 misc-utils/lsblk.c:1891
 #: misc-utils/lslocks.c:465 sys-utils/losetup.c:322 sys-utils/losetup.c:358
 #: sys-utils/lscpu.c:1695 sys-utils/lsns.c:510 sys-utils/prlimit.c:306
 #: sys-utils/swapon.c:289 sys-utils/wdctl.c:270 sys-utils/zramctl.c:493
@@ -4624,7 +4624,7 @@ msgid "colors are disabled by default"
 msgstr "Login sur %s de %s n'est pas permis par défaut.\n"
 
 #: include/env.h:18 lib/pager.c:151 login-utils/login.c:1052
-#: login-utils/login.c:1056 login-utils/su-common.c:523
+#: login-utils/login.c:1056 login-utils/su-common.c:526
 #: term-utils/agetty.c:1160
 #, fuzzy, c-format
 msgid "failed to set the %s environment variable"
@@ -6228,7 +6228,7 @@ msgstr "Espace libre"
 msgid "Failed to resize partition #%zu."
 msgstr "échec de redimensionnement de partition"
 
-#: libfdisk/src/parttype.c:259 misc-utils/findmnt.c:680 schedutils/chrt.c:204
+#: libfdisk/src/parttype.c:259 misc-utils/findmnt.c:655 schedutils/chrt.c:204
 #: schedutils/ionice.c:79 sys-utils/hwclock.c:334
 msgid "unknown"
 msgstr "inconnu"
@@ -7471,7 +7471,7 @@ msgstr "nombre de processus exécutés par l’utilisateur"
 msgid "Running processes"
 msgstr "Processus en cours d'exécution"
 
-#: login-utils/lslogins.c:288 misc-utils/findmnt.c:160 misc-utils/lsblk.c:231
+#: login-utils/lslogins.c:288 misc-utils/findmnt.c:136 misc-utils/lsblk.c:231
 #: sys-utils/lsipc.c:204
 #, c-format
 msgid "too many columns specified, the limit is %zu columns"
@@ -7616,7 +7616,7 @@ msgstr "     --wtmp-file <chemin>  définir un chemin alternatif pour wtmp\n"
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <chemin>  définir un chemin alternatif pour btmp\n"
 
-#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1263 sys-utils/lscpu.c:1955
+#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1244 sys-utils/lscpu.c:1955
 #, c-format
 msgid ""
 "\n"
@@ -7687,34 +7687,34 @@ msgstr "Refuser poliment une connexion.\n"
 msgid "This account is currently not available.\n"
 msgstr "Ce compte n’est actuellement pas disponible.\n"
 
-#: login-utils/su-common.c:292
+#: login-utils/su-common.c:295
 #, c-format
 msgid "cannot open session: %s"
 msgstr "impossible d'ouvrir la session : %s"
 
-#: login-utils/su-common.c:304
+#: login-utils/su-common.c:307
 msgid "cannot create child process"
 msgstr "impossible de créer un processus fils"
 
-#: login-utils/su-common.c:316
+#: login-utils/su-common.c:319
 #, c-format
 msgid "cannot change directory to %s"
 msgstr "impossible de changer le répertoire vers %s"
 
-#: login-utils/su-common.c:321
+#: login-utils/su-common.c:324
 msgid "cannot block signals"
 msgstr "impossible de bloquer les signaux"
 
-#: login-utils/su-common.c:335 login-utils/su-common.c:343
-#: login-utils/su-common.c:349 misc-utils/uuidd.c:407 term-utils/script.c:771
+#: login-utils/su-common.c:338 login-utils/su-common.c:346
+#: login-utils/su-common.c:352 misc-utils/uuidd.c:407 term-utils/script.c:771
 msgid "cannot set signal handler"
 msgstr "impossible d'initialiser le traitement de signaux"
 
-#: login-utils/su-common.c:374
+#: login-utils/su-common.c:377
 msgid " (core dumped)"
 msgstr " (core dump)"
 
-#: login-utils/su-common.c:390
+#: login-utils/su-common.c:393
 #, c-format
 msgid ""
 "\n"
@@ -7723,42 +7723,57 @@ msgstr ""
 "\n"
 "Session terminée, l'interpréteur est en train d'être tué…"
 
-#: login-utils/su-common.c:400
+#: login-utils/su-common.c:403
 #, c-format
 msgid " ...killed.\n"
 msgstr " … tué.\n"
 
-#: login-utils/su-common.c:480
+#: login-utils/su-common.c:483
 msgid "may not be used by non-root users"
 msgstr "ne peut pas être utilisé par les utilisateurs normaux (non superutilisateur)"
 
-#: login-utils/su-common.c:508
+#: login-utils/su-common.c:511
 msgid "incorrect password"
 msgstr "mot de passe incorrect"
 
-#: login-utils/su-common.c:592
+#: login-utils/su-common.c:595
 msgid "cannot set groups"
 msgstr "impossible de configurer les groupes"
 
-#: login-utils/su-common.c:607 sys-utils/eject.c:665
+#: login-utils/su-common.c:610 sys-utils/eject.c:665
 msgid "cannot set group id"
 msgstr "impossible de configurer l'identifiant de groupe"
 
-#: login-utils/su-common.c:609 sys-utils/eject.c:668
+#: login-utils/su-common.c:612 sys-utils/eject.c:668
 msgid "cannot set user id"
 msgstr "impossible de configurer l'identifiant d'utilisateur"
 
-#: login-utils/su-common.c:682
+#: login-utils/su-common.c:685
+#, fuzzy
+msgid "failed to initialize seccomp context"
+msgstr "échec d'initialisation de loopcxt"
+
+#: login-utils/su-common.c:688
+#, fuzzy
+msgid "failed to add seccomp rule"
+msgstr "échec de lecture de la vitesse"
+
+#: login-utils/su-common.c:690
+#, fuzzy
+msgid "failed to load seccomp rule"
+msgstr "échec de lecture de la vitesse"
+
+#: login-utils/su-common.c:700
 #, c-format
 msgid " %s [options] -u <user> <command>\n"
 msgstr " %s [options] -u <utilisateur> <commande>\n"
 
-#: login-utils/su-common.c:683 login-utils/su-common.c:695
+#: login-utils/su-common.c:701 login-utils/su-common.c:713
 #, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [options] [-] [<utilisateur> [<argument>...]]\n"
 
-#: login-utils/su-common.c:684
+#: login-utils/su-common.c:702
 msgid ""
 "\n"
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
@@ -7771,11 +7786,11 @@ msgstr ""
 "compatible avec su(1) et exécuter une invite de commande standard.\n"
 "Les options -c, -f, -l et -s s'excluent mutuellement avec -u.\n"
 
-#: login-utils/su-common.c:691
+#: login-utils/su-common.c:709
 msgid " -u, --user <user>             username\n"
 msgstr " -u, --user <utilisateur>      nom d'utilisateur\n"
 
-#: login-utils/su-common.c:696
+#: login-utils/su-common.c:714
 msgid ""
 "\n"
 "Change the effective user ID and group ID to that of <user>.\n"
@@ -7785,17 +7800,17 @@ msgstr ""
 "Modifier les UID et GID effectifs à ceux de l'<utilisateur>.\n"
 "Un simple - implique -l. En absence d'<utilisateur>, root est utilisé.\n"
 
-#: login-utils/su-common.c:703
+#: login-utils/su-common.c:721
 msgid " -m, -p, --preserve-environment  do not reset environment variables\n"
 msgstr ""
 " -m, -p, --preserve-environment  ne pas réinitialiser les variables\n"
 "                                   d'environnement\n"
 
-#: login-utils/su-common.c:704
+#: login-utils/su-common.c:722
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -g, --group <groupe>            indiquer le groupe primaire\n"
 
-#: login-utils/su-common.c:705
+#: login-utils/su-common.c:723
 msgid ""
 " -G, --supp-group <group>        specify a supplemental group\n"
 "\n"
@@ -7803,19 +7818,19 @@ msgstr ""
 " -G, --supp-group <group>        indiquer un groupe supplémentaire\n"
 "\n"
 
-#: login-utils/su-common.c:707
+#: login-utils/su-common.c:725
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr ""
 " -, -l, --login                  faire de l'interpréteur de commande un\n"
 "                                   interpréteur de connexion\n"
 
-#: login-utils/su-common.c:708
+#: login-utils/su-common.c:726
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr ""
 " -c  --command <commande>        passer une seule commande à l'interpréteur\n"
 "                                   avec -c\n"
 
-#: login-utils/su-common.c:709
+#: login-utils/su-common.c:727
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
@@ -7823,56 +7838,56 @@ msgstr ""
 " --session-command <commande>    passer une seule commande à l'interpréteur\n"
 "                                   avec -c sans créer de nouvelle session\n"
 
-#: login-utils/su-common.c:711
+#: login-utils/su-common.c:729
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -f, --fast                      passer -f à l'interpréteur (pour csh ou tcsh)\n"
 
 # getopt-1.1.2/getopt.c:335
-#: login-utils/su-common.c:712
+#: login-utils/su-common.c:730
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr ""
 " -s, --shell <interpréteur>      exécuter <interpréteur> si permis par\n"
 "                                   /etc/shells\n"
 
-#: login-utils/su-common.c:756
+#: login-utils/su-common.c:774
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] "l’indication d’%d groupe supplémentaire n’est pas possible"
 msgstr[1] "l’indication de %d groupes supplémentaires n’est pas possible"
 
-#: login-utils/su-common.c:762
+#: login-utils/su-common.c:780
 #, c-format
 msgid "group %s does not exist"
 msgstr "le groupe %s n'existe pas."
 
-#: login-utils/su-common.c:880
+#: login-utils/su-common.c:898
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr "--preserve-environment ignorée, cette option s'exclue mutuellement avec --login"
 
-#: login-utils/su-common.c:891
+#: login-utils/su-common.c:909
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr "les options --{shell,fast,command,session-command,login} et --user s'excluent mutuellement"
 
-#: login-utils/su-common.c:895
+#: login-utils/su-common.c:913
 msgid "no command was specified"
 msgstr "aucune commande n’a été indiquée"
 
-#: login-utils/su-common.c:909
+#: login-utils/su-common.c:927
 msgid "only root can specify alternative groups"
 msgstr "seul le superutilisateur peut indiquer des groupes alternatifs"
 
-#: login-utils/su-common.c:916
+#: login-utils/su-common.c:934
 #, c-format
 msgid "user %s does not exist"
 msgstr "l'identifiant %s n'existe pas."
 
-#: login-utils/su-common.c:956
+#: login-utils/su-common.c:974
 #, c-format
 msgid "using restricted shell %s"
 msgstr "utilisation de l'interpréteur restreint %s"
 
-#: login-utils/su-common.c:980
+#: login-utils/su-common.c:1000
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "avertissement : impossible de changer le répertoire vers %s"
@@ -7964,7 +7979,7 @@ msgstr ""
 " -e, --force              examiner directement les fichier de mots de passe\n"
 "                            en cas d'échec de getpwnam(3)\n"
 
-#: login-utils/sulogin.c:866 misc-utils/findmnt.c:1472 sys-utils/wdctl.c:523
+#: login-utils/sulogin.c:866 misc-utils/findmnt.c:1460 sys-utils/wdctl.c:523
 #: term-utils/agetty.c:750 term-utils/wall.c:135
 msgid "invalid timeout argument"
 msgstr "argument d'expiration de la minuterie incorrect"
@@ -8250,149 +8265,150 @@ msgstr "Trouver un système de fichiers par étiquette ou UUID.\n"
 msgid "unable to resolve '%s'"
 msgstr "impossible de résoudre « %s »"
 
-#: misc-utils/findmnt.c:123
+#: misc-utils/findmnt.c:99
 msgid "source device"
 msgstr "périphérique source"
 
-#: misc-utils/findmnt.c:124
+#: misc-utils/findmnt.c:100
 msgid "mountpoint"
 msgstr "point de montage"
 
-#: misc-utils/findmnt.c:125 misc-utils/lsblk.c:161
+#: misc-utils/findmnt.c:101 misc-utils/lsblk.c:161
 msgid "filesystem type"
 msgstr "type de système de fichiers"
 
-#: misc-utils/findmnt.c:126
+#: misc-utils/findmnt.c:102
 msgid "all mount options"
 msgstr "toutes les options de montage"
 
-#: misc-utils/findmnt.c:127
+#: misc-utils/findmnt.c:103
 msgid "VFS specific mount options"
 msgstr "options de montage spécifiques au VFS"
 
-#: misc-utils/findmnt.c:128
+#: misc-utils/findmnt.c:104
 msgid "FS specific mount options"
 msgstr "options de montage spécifiques au système de fichiers"
 
-#: misc-utils/findmnt.c:129
+#: misc-utils/findmnt.c:105
 msgid "filesystem label"
 msgstr "étiquette du système de fichiers"
 
-#: misc-utils/findmnt.c:130 misc-utils/lsblk.c:164
+#: misc-utils/findmnt.c:106 misc-utils/lsblk.c:164
 msgid "filesystem UUID"
 msgstr "UUID du système de fichiers"
 
-#: misc-utils/findmnt.c:131
+#: misc-utils/findmnt.c:107
 msgid "partition label"
 msgstr "étiquette de partition"
 
-#: misc-utils/findmnt.c:133 misc-utils/lsblk.c:160
+#: misc-utils/findmnt.c:109 misc-utils/lsblk.c:160
 msgid "major:minor device number"
 msgstr "numéro majeur:mineur du périphérique"
 
-#: misc-utils/findmnt.c:134
+#: misc-utils/findmnt.c:110
 msgid "action detected by --poll"
 msgstr "action détectée par --poll"
 
-#: misc-utils/findmnt.c:135
+#: misc-utils/findmnt.c:111
 msgid "old mount options saved by --poll"
 msgstr "ancienne options de montage sauvegardée par --poll"
 
-#: misc-utils/findmnt.c:136
+#: misc-utils/findmnt.c:112
 msgid "old mountpoint saved by --poll"
 msgstr "ancien point de montage sauvegardé par --poll"
 
-#: misc-utils/findmnt.c:137
+#: misc-utils/findmnt.c:113
 msgid "filesystem size"
 msgstr "taille du système de fichiers"
 
-#: misc-utils/findmnt.c:138
+#: misc-utils/findmnt.c:114
 msgid "filesystem size available"
 msgstr "taille disponible sur le système de fichiers"
 
-#: misc-utils/findmnt.c:139
+#: misc-utils/findmnt.c:115
 msgid "filesystem size used"
 msgstr "taille utilisée du système de fichiers"
 
-#: misc-utils/findmnt.c:140
+#: misc-utils/findmnt.c:116
 msgid "filesystem use percentage"
 msgstr "pourcentage d'utilisation du système de fichiers"
 
-#: misc-utils/findmnt.c:141
+#: misc-utils/findmnt.c:117
 msgid "filesystem root"
 msgstr "système de fichiers racine"
 
-#: misc-utils/findmnt.c:142
+#: misc-utils/findmnt.c:118
 msgid "task ID"
 msgstr "identifiant de tâche"
 
-#: misc-utils/findmnt.c:143
+#: misc-utils/findmnt.c:119
 msgid "mount ID"
 msgstr "identifiant de montage"
 
-#: misc-utils/findmnt.c:144
+#: misc-utils/findmnt.c:120
 msgid "optional mount fields"
 msgstr "champs de montage facultatifs"
 
-#: misc-utils/findmnt.c:145
+#: misc-utils/findmnt.c:121
 msgid "VFS propagation flags"
 msgstr "indicateurs de propagation VFS"
 
-#: misc-utils/findmnt.c:146
+#: misc-utils/findmnt.c:122
 msgid "dump(8) period in days [fstab only]"
 msgstr "période de dump(8) en jour [seulement pour fstab]"
 
-#: misc-utils/findmnt.c:147
+#: misc-utils/findmnt.c:123
 msgid "pass number on parallel fsck(8) [fstab only]"
 msgstr "nombre de passes en fsck(8) parallèle [seulement pour fstab]"
 
-#: misc-utils/findmnt.c:358
+#: misc-utils/findmnt.c:333
 #, c-format
 msgid "unknown action: %s"
 msgstr "action inconnue : %s"
 
-#: misc-utils/findmnt.c:668
+#: misc-utils/findmnt.c:643
 msgid "mount"
 msgstr "montage"
 
-#: misc-utils/findmnt.c:671
+#: misc-utils/findmnt.c:646
 msgid "umount"
 msgstr "démontage"
 
-#: misc-utils/findmnt.c:674
+#: misc-utils/findmnt.c:649
 msgid "remount"
 msgstr "remontage"
 
-#: misc-utils/findmnt.c:677
+#: misc-utils/findmnt.c:652
 msgid "move"
 msgstr "déplacement"
 
-#: misc-utils/findmnt.c:836 misc-utils/findmnt.c:1099 sys-utils/eject.c:719
+#: misc-utils/findmnt.c:812 misc-utils/findmnt.c:1075 sys-utils/eject.c:719
 #: sys-utils/mount.c:669
 msgid "failed to initialize libmount table"
 msgstr "échec d'initialisation de la table de libmount"
 
-#: misc-utils/findmnt.c:863 text-utils/hexdump-parse.c:84
+#: misc-utils/findmnt.c:839 text-utils/hexdump-parse.c:84
 #, c-format
 msgid "can't read %s"
 msgstr "impossible de lire %s"
 
-#: misc-utils/findmnt.c:1039 misc-utils/findmnt.c:1105 sys-utils/fstrim.c:199
-#: sys-utils/mount.c:134 sys-utils/mount.c:182 sys-utils/swapoff.c:56
-#: sys-utils/swapoff.c:152 sys-utils/swapon.c:244 sys-utils/swapon.c:274
-#: sys-utils/swapon.c:732 sys-utils/umount.c:274
+#: misc-utils/findmnt.c:1015 misc-utils/findmnt.c:1081
+#: misc-utils/findmnt-verify.c:94 misc-utils/findmnt-verify.c:481
+#: sys-utils/fstrim.c:199 sys-utils/mount.c:134 sys-utils/mount.c:182
+#: sys-utils/swapoff.c:56 sys-utils/swapoff.c:152 sys-utils/swapon.c:244
+#: sys-utils/swapon.c:274 sys-utils/swapon.c:733 sys-utils/umount.c:274
 msgid "failed to initialize libmount iterator"
 msgstr "échec d'initialisation de l'itérateur libmount"
 
-#: misc-utils/findmnt.c:1111
+#: misc-utils/findmnt.c:1087
 msgid "failed to initialize libmount tabdiff"
 msgstr "échec d'initialisation de la tabdiff de libmount"
 
-#: misc-utils/findmnt.c:1139
+#: misc-utils/findmnt.c:1115
 msgid "poll() failed"
 msgstr "échec de poll()"
 
-#: misc-utils/findmnt.c:1210
+#: misc-utils/findmnt.c:1186
 #, fuzzy, c-format
 msgid ""
 " %1$s [options]\n"
@@ -8405,19 +8421,19 @@ msgstr ""
 " %1$s [options] <périphérique> <pointdemontage>\n"
 " %1$s [options] [--source <périphérique>] [--target <pointdemontage>]\n"
 
-#: misc-utils/findmnt.c:1217
+#: misc-utils/findmnt.c:1193
 msgid "Find a (mounted) filesystem.\n"
 msgstr "Trouver un système de fichiers (monté).\n"
 
-#: misc-utils/findmnt.c:1220
+#: misc-utils/findmnt.c:1196
 msgid " -s, --fstab            search in static table of filesystems\n"
 msgstr " -s, --fstab            chercher dans la table statique des systèmes de fichiers\n"
 
-#: misc-utils/findmnt.c:1221
+#: misc-utils/findmnt.c:1197
 msgid " -m, --mtab             search in table of mounted filesystems\n"
 msgstr " -m, --mtab             chercher dans la table des systèmes de fichiers montés\n"
 
-#: misc-utils/findmnt.c:1222
+#: misc-utils/findmnt.c:1198
 msgid ""
 " -k, --kernel           search in kernel table of mounted\n"
 "                          filesystems (default)\n"
@@ -8425,47 +8441,47 @@ msgstr ""
 " -k, --kernel           rechercher dans la table du noyau des systèmes de\n"
 "                          fichiers montés (par défaut)\n"
 
-#: misc-utils/findmnt.c:1225
+#: misc-utils/findmnt.c:1201
 msgid " -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
 msgstr ""
 " -p, --poll[=<liste>]   surveiller les modifications dans la table des systèmes\n"
 "                          de fichiers montés\n"
 
-#: misc-utils/findmnt.c:1226
+#: misc-utils/findmnt.c:1202
 msgid " -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"
 msgstr " -w, --timeout <nombre> limite maximale en milliseconde que --poll bloquera\n"
 
-#: misc-utils/findmnt.c:1229
+#: misc-utils/findmnt.c:1205
 msgid " -A, --all              disable all built-in filters, print all filesystems\n"
 msgstr ""
 " -A, --all              désactiver tous les filtres intégrés, afficher tous les\n"
 "                          systèmes de fichiers\n"
 
-#: misc-utils/findmnt.c:1230
+#: misc-utils/findmnt.c:1206
 msgid " -a, --ascii            use ASCII chars for tree formatting\n"
 msgstr " -a, --ascii            utiliser des caractères ASCII pour l'arborescence\n"
 
-#: misc-utils/findmnt.c:1231
+#: misc-utils/findmnt.c:1207
 msgid " -b, --bytes            print sizes in bytes rather than in human readable format\n"
 msgstr " -b, --bytes            afficher les tailles en octet plutôt qu'en format lisible\n"
 
-#: misc-utils/findmnt.c:1232
+#: misc-utils/findmnt.c:1208
 msgid " -C, --nocanonicalize   don't canonicalize when comparing paths\n"
 msgstr " -C, --nocanonicalize   ne pas canoniser les chemins lors d’une comparaison\n"
 
-#: misc-utils/findmnt.c:1233
+#: misc-utils/findmnt.c:1209
 msgid " -c, --canonicalize     canonicalize printed paths\n"
 msgstr " -c, --canonicalize     affichage des chemins canoniques\n"
 
-#: misc-utils/findmnt.c:1234
+#: misc-utils/findmnt.c:1210
 msgid " -D, --df               imitate the output of df(1)\n"
 msgstr " -D, --df               imiter la sortie de df(1)\n"
 
-#: misc-utils/findmnt.c:1235
+#: misc-utils/findmnt.c:1211
 msgid " -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 msgstr " -d, --direction <mot>  direction de recherche : « forward » ou « backward »\n"
 
-#: misc-utils/findmnt.c:1236
+#: misc-utils/findmnt.c:1212
 msgid ""
 " -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          to device names\n"
@@ -8473,62 +8489,62 @@ msgstr ""
 " -e, --evaluate         convertir toutes les étiquettes (LABEL, UUID, PARTUUID,\n"
 "                          PARTLABEL) en noms de périphérique\n"
 
-#: misc-utils/findmnt.c:1238
+#: misc-utils/findmnt.c:1214
 msgid " -F, --tab-file <path>  alternative file for -s, -m or -k options\n"
 msgstr " -F, --tab-file <chem.>  autre fichier pour les options -s, -m ou -k\n"
 
-#: misc-utils/findmnt.c:1239
+#: misc-utils/findmnt.c:1215
 msgid " -f, --first-only       print the first found filesystem only\n"
 msgstr " -f, --first-only       n'afficher que le premier système de fichiers trouvé\n"
 
-#: misc-utils/findmnt.c:1240
+#: misc-utils/findmnt.c:1216
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -i, --invert           inverser le sens de correspondance\n"
 
-#: misc-utils/findmnt.c:1241 misc-utils/lslocks.c:507 sys-utils/lsns.c:597
+#: misc-utils/findmnt.c:1217 misc-utils/lslocks.c:507 sys-utils/lsns.c:597
 #, fuzzy
 msgid " -J, --json             use JSON output format\n"
 msgstr " -r, --raw              utiliser le format de sortie brut\n"
 
-#: misc-utils/findmnt.c:1242 sys-utils/lsns.c:598
+#: misc-utils/findmnt.c:1218 sys-utils/lsns.c:598
 msgid " -l, --list             use list format output\n"
 msgstr " -l, --list             utiliser le format de sortie en liste\n"
 
-#: misc-utils/findmnt.c:1243
+#: misc-utils/findmnt.c:1219
 msgid " -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
 msgstr ""
 " -N, --task <tid>       utiliser l'espace de noms alternatif (fichier\n"
 "                          /proc/<tid>/mountinfo)\n"
 
-#: misc-utils/findmnt.c:1244
+#: misc-utils/findmnt.c:1220
 msgid " -n, --noheadings       don't print column headings\n"
 msgstr " -n, --noheadings       ne pas afficher les en-têtes de colonne\n"
 
-#: misc-utils/findmnt.c:1245
+#: misc-utils/findmnt.c:1221
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr ""
 " -O, --options <liste>  limiter l'ensemble de systèmes de fichiers par options\n"
 "                          de montage\n"
 
-#: misc-utils/findmnt.c:1246
+#: misc-utils/findmnt.c:1222
 msgid " -o, --output <list>    the output columns to be shown\n"
 msgstr " -o, --output <liste>   les colonnes de sortie à montrer\n"
 
-#: misc-utils/findmnt.c:1247
+#: misc-utils/findmnt.c:1223
 msgid " -P, --pairs            use key=\"value\" output format\n"
 msgstr " -P, --pairs            utiliser le format de sortie clef=\"valeur\"\n"
 
-#: misc-utils/findmnt.c:1248
+#: misc-utils/findmnt.c:1224
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
 msgstr ""
 " -R, --submounts        afficher tous les sous-montages des systèmes de\n"
 "                          fichiers correspondants\n"
 
-#: misc-utils/findmnt.c:1249
+#: misc-utils/findmnt.c:1225
 msgid " -r, --raw              use raw output format\n"
 msgstr " -r, --raw              utiliser le format de sortie brut\n"
 
-#: misc-utils/findmnt.c:1250
+#: misc-utils/findmnt.c:1226
 msgid ""
 " -S, --source <string>  the device to mount (by name, maj:min, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
@@ -8536,58 +8552,245 @@ msgstr ""
 " -S, --source <chaîne>  le périphérique à monter (par nom, maj:min,\n"
 "                          LABEL=, UUID=, PARTUUID= ou PARTLABEL=)\n"
 
-#: misc-utils/findmnt.c:1252
+#: misc-utils/findmnt.c:1228
 #, fuzzy
 msgid " -T, --target <path>    the path to the filesystem to use\n"
 msgstr " -T, --target <chaîne>  le point de montage à utiliser\n"
 
-#: misc-utils/findmnt.c:1253
+#: misc-utils/findmnt.c:1229
 #, fuzzy
 msgid " -M, --mountpoint <dir> the mountpoint directory\n"
 msgstr " -r, --root[=<rép.>]    définir le répertoire racine\n"
 
-#: misc-utils/findmnt.c:1254
+#: misc-utils/findmnt.c:1230
 msgid " -t, --types <list>     limit the set of filesystems by FS types\n"
 msgstr " -t, --types <liste>    limiter l'ensemble de systèmes de fichiers par types\n"
 
-#: misc-utils/findmnt.c:1255
+#: misc-utils/findmnt.c:1231
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -U, --uniq             ignorer les systèmes de fichiers avec plusieurs cibles\n"
 
-#: misc-utils/findmnt.c:1256 misc-utils/lslocks.c:513 sys-utils/lsns.c:603
+#: misc-utils/findmnt.c:1232 misc-utils/lslocks.c:513 sys-utils/lsns.c:603
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -u, --notruncate       ne pas tronquer le texte des colonnes\n"
 
-#: misc-utils/findmnt.c:1257
+#: misc-utils/findmnt.c:1233
 msgid " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 msgstr " -v, --nofsroot         ne pas afficher [/rép] pour les montages bind ou Btrfs\n"
 
-#: misc-utils/findmnt.c:1377
+#: misc-utils/findmnt.c:1236
+#, fuzzy
+msgid " -x, --verify           verify mount table content (default is fstab)\n"
+msgstr " -1, --one             n'afficher qu’un seul mois (par défaut)\n"
+
+#: misc-utils/findmnt.c:1237
+#, fuzzy
+msgid "     --verbose          print more details\n"
+msgstr " -v, --verbose             afficher les données en mode bavard\n"
+
+#: misc-utils/findmnt.c:1365
 #, c-format
 msgid "unknown direction '%s'"
 msgstr "direction inconnue : « %s »"
 
-#: misc-utils/findmnt.c:1449
+#: misc-utils/findmnt.c:1437
 msgid "invalid TID argument"
 msgstr "argument TID incorrect"
 
 # NOTE: s/more/more can be/ ?
-#: misc-utils/findmnt.c:1512
+#: misc-utils/findmnt.c:1506
 msgid "--poll accepts only one file, but more specified by --tab-file"
 msgstr "--poll ne permet d'indiquer qu'un fichier, mais d'autres peuvent être indiqués avec --tab-file"
 
-#: misc-utils/findmnt.c:1516
+#: misc-utils/findmnt.c:1510
 msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr "les options --target et --source ne peuvent être utilisées ensemble avec un élément de ligne de commande qui n'est pas une option"
 
-#: misc-utils/findmnt.c:1566
+#: misc-utils/findmnt.c:1559
 msgid "failed to initialize libmount cache"
 msgstr "échec d'initialisation du cache libmount"
 
-#: misc-utils/findmnt.c:1603
+#: misc-utils/findmnt.c:1602
 #, c-format
 msgid "%s column is requested, but --poll is not enabled"
 msgstr "la colonne %s est demandée, mais --poll n'est pas activé"
+
+#: misc-utils/findmnt-verify.c:116
+#, fuzzy
+msgid "target specified more than once"
+msgstr "source indiquée plusieurs fois"
+
+#: misc-utils/findmnt-verify.c:118
+#, c-format
+msgid "wrong order: %s specified before %s"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:133
+msgid "undefined target (fs_file)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:140
+#, c-format
+msgid "non-canonical target path (real: %s)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:145
+#, c-format
+msgid "unreachable on boot required target: %m"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:147
+#, fuzzy, c-format
+msgid "unreachable target: %m"
+msgstr "impossible de lire %s"
+
+#: misc-utils/findmnt-verify.c:151
+#, fuzzy
+msgid "target is not a directory"
+msgstr "%s : n'est pas un répertoire"
+
+#: misc-utils/findmnt-verify.c:153
+msgid "target exists"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:165
+#, c-format
+msgid "unreachable on boot required source: %s=%s"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:167
+#, fuzzy, c-format
+msgid "unreachable: %s=%s"
+msgstr "échec de lecture : %s"
+
+#: misc-utils/findmnt-verify.c:169
+#, fuzzy, c-format
+msgid "%s=%s translated to %s"
+msgstr "%s est associé à %s\n"
+
+#: misc-utils/findmnt-verify.c:190
+msgid "undefined source (fs_spec)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:199
+#, fuzzy, c-format
+msgid "unsupported source tag: %s"
+msgstr "argument non pris en charge : %s"
+
+#: misc-utils/findmnt-verify.c:205
+#, c-format
+msgid "do not check %s source (pseudo/net)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:208
+#, fuzzy, c-format
+msgid "unreachable source: %s: %m"
+msgstr "impossible d'ouvrir « %s » : %m"
+
+#: misc-utils/findmnt-verify.c:211
+#, c-format
+msgid "non-bind mount source %s is a directory or regular file"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:214
+#, fuzzy, c-format
+msgid "source %s is not a block device"
+msgstr " %s n'est pas un périphérique bloc"
+
+#: misc-utils/findmnt-verify.c:216
+#, fuzzy, c-format
+msgid "source %s exists"
+msgstr "périphérique source"
+
+#: misc-utils/findmnt-verify.c:229
+#, fuzzy, c-format
+msgid "VFS options: %s"
+msgstr "%s : les options "
+
+#: misc-utils/findmnt-verify.c:233
+#, fuzzy, c-format
+msgid "FS options: %s"
+msgstr "%s : les options "
+
+#: misc-utils/findmnt-verify.c:237
+#, fuzzy, c-format
+msgid "userspace options: %s"
+msgstr "Options de ressource :\n"
+
+#: misc-utils/findmnt-verify.c:251
+#, fuzzy, c-format
+msgid "unsupported swaparea discard policy: %s"
+msgstr "stratégie d’abandon non prise en charge : %s"
+
+#: misc-utils/findmnt-verify.c:259
+#, fuzzy
+msgid "failed to parse swaparea priority option"
+msgstr "échec d'analyse de priorité"
+
+#: misc-utils/findmnt-verify.c:395
+#, c-format
+msgid "do not check %s FS type (pseudo/net)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:405
+msgid "\"none\" FS type is recommended for bind or move oprations only"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:413
+#, c-format
+msgid "%s seems unspported by the current kernel"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:419 misc-utils/findmnt-verify.c:420
+#, fuzzy
+msgid "cannot detect on-disk filesystem type"
+msgstr "type de système de fichiers inconnu"
+
+#: misc-utils/findmnt-verify.c:427
+#, c-format
+msgid "%s does not match with on-disk %s"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:430
+#, c-format
+msgid "on-disk %s seems unspported by the current kernel"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:432
+#, fuzzy, c-format
+msgid "FS type is %s"
+msgstr "type : %s"
+
+#: misc-utils/findmnt-verify.c:444
+#, c-format
+msgid "recommended root FS passno is 1 (current is %d)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:511
+#, fuzzy, c-format
+msgid "%d parse error"
+msgid_plural "%d parse errors"
+msgstr[0] "erreur d'analyse\n"
+msgstr[1] "erreur d'analyse\n"
+
+#: misc-utils/findmnt-verify.c:512
+#, fuzzy, c-format
+msgid ", %d error"
+msgid_plural ", %d errors"
+msgstr[0] ", erreur"
+msgstr[1] ", erreur"
+
+#: misc-utils/findmnt-verify.c:513
+#, c-format
+msgid ", %d warning"
+msgid_plural ", %d warnings"
+msgstr[0] ""
+msgstr[1] ""
+
+#: misc-utils/findmnt-verify.c:516
+#, c-format
+msgid "Success, no errors or warnings detected\n"
+msgstr ""
 
 #: misc-utils/getopt.c:246
 #, c-format
@@ -11522,7 +11725,7 @@ msgstr "%s : échec d'ioctl FITRIM"
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s : %s (%<PRIu64> octets) taillés\n"
 
-#: sys-utils/fstrim.c:203 sys-utils/swapon.c:728 sys-utils/umount.c:329
+#: sys-utils/fstrim.c:203 sys-utils/swapon.c:729 sys-utils/umount.c:329
 #, c-format
 msgid "failed to parse %s"
 msgstr "échec d'analyse de %s"
@@ -16046,7 +16249,7 @@ msgstr "Vous n'êtes pas le superutilisateur."
 msgid "%s: swapoff failed"
 msgstr "%s : échec de swapoff"
 
-#: sys-utils/swapoff.c:119 sys-utils/swapon.c:787
+#: sys-utils/swapoff.c:119 sys-utils/swapon.c:788
 #, c-format
 msgid " %s [options] [<spec>]\n"
 msgstr " %s [options] [<fichier_spécial>]\n"
@@ -16190,84 +16393,84 @@ msgstr "swapon %s\n"
 msgid "%s: swapon failed"
 msgstr "%s : échec de swapon"
 
-#: sys-utils/swapon.c:742
+#: sys-utils/swapon.c:743
 #, fuzzy, c-format
 msgid "%s: noauto option -- ignored"
 msgstr "%s : erreur d'analyse à la ligne %d — ignorée"
 
-#: sys-utils/swapon.c:764
+#: sys-utils/swapon.c:765
 #, fuzzy, c-format
 msgid "%s: already active -- ignored"
 msgstr "%s : erreur d'analyse à la ligne %d — ignorée"
 
-#: sys-utils/swapon.c:770
+#: sys-utils/swapon.c:771
 #, fuzzy, c-format
 msgid "%s: inaccessible -- ignored"
 msgstr "%s : impossible d'écrire les inœuds"
 
-#: sys-utils/swapon.c:790
+#: sys-utils/swapon.c:791
 msgid "Enable devices and files for paging and swapping.\n"
 msgstr "Activer les périphériques et fichiers pour la pagination sur disque.\n"
 
-#: sys-utils/swapon.c:793
+#: sys-utils/swapon.c:794
 msgid " -a, --all                enable all swaps from /etc/fstab\n"
 msgstr " -a, --all                activer tous les espaces d’échange de /etc/fstab\n"
 
-#: sys-utils/swapon.c:794
+#: sys-utils/swapon.c:795
 msgid " -d, --discard[=<policy>] enable swap discards, if supported by device\n"
 msgstr ""
 " -d, --discard[=<stratégie>]  activer les abandons d’espace d’échange,\n"
 "                                si le périphérique le permet\n"
 
-#: sys-utils/swapon.c:795
+#: sys-utils/swapon.c:796
 msgid " -e, --ifexists           silently skip devices that do not exist\n"
 msgstr ""
 " -e, --ifexists           passer silencieusement les périphériques qui\n"
 "                            n’existent pas\n"
 
-#: sys-utils/swapon.c:796
+#: sys-utils/swapon.c:797
 msgid " -f, --fixpgsz            reinitialize the swap space if necessary\n"
 msgstr " -f, --fixpgsz            réinitialiser l’espace d’échange si nécessaire\n"
 
-#: sys-utils/swapon.c:797
+#: sys-utils/swapon.c:798
 msgid " -o, --options <list>     comma-separated list of swap options\n"
 msgstr ""
 " -o, --options <liste>    liste d’options d’espace d’échange séparées par\n"
 "                            des virgules\n"
 
-#: sys-utils/swapon.c:798
+#: sys-utils/swapon.c:799
 msgid " -p, --priority <prio>    specify the priority of the swap device\n"
 msgstr " -p, --priority <prio>    indiquer la priorité du périphérique d’échange\n"
 
-#: sys-utils/swapon.c:799
+#: sys-utils/swapon.c:800
 msgid " -s, --summary            display summary about used swap devices (DEPRECATED)\n"
 msgstr ""
 " -s, --summary            afficher un résumé sur les périphériques d’échange\n"
 "                            utilisés (obsolète)\n"
 
-#: sys-utils/swapon.c:800
+#: sys-utils/swapon.c:801
 msgid "     --show[=<columns>]   display summary in definable table\n"
 msgstr "     --show[=<colonnes>]  afficher un résumé en tableau définissable\n"
 
-#: sys-utils/swapon.c:801
+#: sys-utils/swapon.c:802
 msgid "     --noheadings         don't print table heading (with --show)\n"
 msgstr "     --noheadings         ne pas afficher l’en-tête du tableau (avec --show)\n"
 
-#: sys-utils/swapon.c:802
+#: sys-utils/swapon.c:803
 msgid "     --raw                use the raw output format (with --show)\n"
 msgstr "     --raw                utiliser le format de sortie brut (avec --show)\n"
 
-#: sys-utils/swapon.c:803
+#: sys-utils/swapon.c:804
 msgid "     --bytes              display swap size in bytes in --show output\n"
 msgstr ""
 "     --bytes              afficher la taille de l’espace d’échange en octet dans\n"
 "                            la sortie de --show\n"
 
-#: sys-utils/swapon.c:804
+#: sys-utils/swapon.c:805
 msgid " -v, --verbose            verbose mode\n"
 msgstr " -v, --verbose            mode bavard\n"
 
-#: sys-utils/swapon.c:810
+#: sys-utils/swapon.c:811
 msgid ""
 "\n"
 "The <spec> parameter:\n"
@@ -16291,7 +16494,7 @@ msgstr ""
 " <périphérique>         nom du périphérique à utiliser\n"
 " <fichier>              nom du fichier à utiliser\n"
 
-#: sys-utils/swapon.c:820
+#: sys-utils/swapon.c:821
 msgid ""
 "\n"
 "Available discard policy types (for --discard):\n"
@@ -16306,7 +16509,7 @@ msgstr ""
 "Si aucune stratégie n’est sélectionnée, les deux types d’abandon sont activés\n"
 "(comportement par défaut).\n"
 
-#: sys-utils/swapon.c:825
+#: sys-utils/swapon.c:826
 msgid ""
 "\n"
 "Available columns (for --show):\n"
@@ -16314,11 +16517,11 @@ msgstr ""
 "\n"
 "Colonnes disponibles (pour --show) :\n"
 
-#: sys-utils/swapon.c:903
+#: sys-utils/swapon.c:904
 msgid "failed to parse priority"
 msgstr "échec d'analyse de priorité"
 
-#: sys-utils/swapon.c:922
+#: sys-utils/swapon.c:923
 #, c-format
 msgid "unsupported discard policy: %s"
 msgstr "stratégie d’abandon non prise en charge : %s"
@@ -18718,7 +18921,7 @@ msgstr "terminal « %s » inconnu, utilisation de « dumb » par défaut"
 msgid "unknown escape sequence in input: %o, %o"
 msgstr "séquence de protection inconnue en entrée : %o, %o"
 
-#: text-utils/ul.c:630
+#: text-utils/ul.c:624
 msgid "Input line too long."
 msgstr "Ligne d'entrée trop longue."
 
@@ -18920,9 +19123,6 @@ msgstr "Ligne d'entrée trop longue."
 
 #~ msgid "will not try to make filesystem on '%s'"
 #~ msgstr "abandon de la création d'un système de fichiers sur « %s »"
-
-#~ msgid "type: %s"
-#~ msgstr "type : %s"
 
 #~ msgid "type: %d"
 #~ msgstr "type : %d"
@@ -20077,9 +20277,6 @@ msgstr "Ligne d'entrée trop longue."
 
 #~ msgid " %s [options] file\n"
 #~ msgstr " %s [options] fichier\n"
-
-#~ msgid "%s: options "
-#~ msgstr "%s : les options "
 
 #~ msgid "are mutually exclusive."
 #~ msgstr "s'excluent mutuellement."
@@ -21261,9 +21458,6 @@ msgstr "Ligne d'entrée trop longue."
 #~ msgid "Could not find %s in mtab\n"
 #~ msgstr "%s introuvable dans mtab\n"
 
-#~ msgid "%s is associated with %s\n"
-#~ msgstr "%s est associé à %s\n"
-
 #~ msgid "umount: warning: %s is associated with more than one loop device\n"
 #~ msgstr "umount : avertissement : %s est associé à plusieurs périphériques boucle\n"
 
@@ -21588,9 +21782,6 @@ msgstr "Ligne d'entrée trop longue."
 #~ msgid "set blocksize"
 #~ msgstr "configurer la taille de bloc"
 
-#~ msgid "read failed: %s"
-#~ msgstr "échec de lecture : %s"
-
 #~ msgid "one bad block\n"
 #~ msgstr "un bloc corrompu\n"
 
@@ -21767,9 +21958,6 @@ msgstr "Ligne d'entrée trop longue."
 #~ " -H <nombre>         indiquer le nombre de têtes\n"
 #~ " -S <nombre>         indiquer le nombre de secteurs par piste\n"
 #~ "\n"
-
-#~ msgid "unable to read %s"
-#~ msgstr "impossible de lire %s"
 
 #~ msgid "unable to seek on %s"
 #~ msgstr "impossible de se positionner sur %s"
@@ -23086,9 +23274,6 @@ msgstr "Ligne d'entrée trop longue."
 #~ msgid "Usage: %s [-larvsmf] /dev/name\n"
 #~ msgstr "Utilisation : %s [-larvsmf] /dev/nom\n"
 
-#~ msgid "unable to open '%s': %m"
-#~ msgstr "impossible d'ouvrir « %s » : %m"
-
 #~ msgid "failed to open %s"
 #~ msgstr "échec d'ouverture de %s"
 
@@ -23846,9 +24031,6 @@ msgstr "Ligne d'entrée trop longue."
 
 #~ msgid "%s: cannot open %s\n"
 #~ msgstr "%s : impossible d'ouvrir %s\n"
-
-#~ msgid "parse error\n"
-#~ msgstr "erreur d'analyse\n"
 
 #~ msgid "usage: %s [ -n ] device\n"
 #~ msgstr "Utilisation : %s [ -n ] périphérique\n"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23.1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2016-09-06 11:16+0200\n"
+"POT-Creation-Date: 2016-09-30 11:02+0200\n"
 "PO-Revision-Date: 2013-06-07 23:29+0800\n"
 "Last-Translator: Wei-Lun Chao <bluebat@member.fsf.org>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -44,7 +44,7 @@ msgstr ""
 #: login-utils/sulogin.c:446 login-utils/sulogin.c:483
 #: login-utils/utmpdump.c:136 login-utils/utmpdump.c:359
 #: login-utils/utmpdump.c:381 login-utils/vipw.c:258 login-utils/vipw.c:276
-#: misc-utils/findmnt.c:1121 misc-utils/logger.c:1177 misc-utils/mcookie.c:115
+#: misc-utils/findmnt.c:1097 misc-utils/logger.c:1177 misc-utils/mcookie.c:115
 #: misc-utils/uuidd.c:207 sys-utils/blkdiscard.c:183 sys-utils/dmesg.c:522
 #: sys-utils/eject.c:500 sys-utils/eject.c:700 sys-utils/fallocate.c:374
 #: sys-utils/fsfreeze.c:128 sys-utils/fstrim.c:72 sys-utils/hwclock.c:282
@@ -1777,7 +1777,7 @@ msgstr "正在使用 %s。\n"
 msgid "failed to setup description for %s"
 msgstr "設定描述用於 %s 時失敗"
 
-#: disk-utils/fsck.c:474 misc-utils/findmnt.c:807 misc-utils/lsblk.c:433
+#: disk-utils/fsck.c:474 misc-utils/findmnt.c:782 misc-utils/lsblk.c:433
 #: sys-utils/mount.c:102 sys-utils/swapon-common.c:19 sys-utils/umount.c:46
 #, fuzzy, c-format
 msgid "%s: parse error at line %d -- ignored"
@@ -2969,7 +2969,7 @@ msgid " -h, --help         display this help text and exit\n"
 msgstr " -h, --help     顯示這份說明然後離開\n"
 
 #: disk-utils/mkfs.c:139 lib/exec_shell.c:49 login-utils/newgrp.c:233
-#: login-utils/su-common.c:651 login-utils/su-common.c:986
+#: login-utils/su-common.c:654 login-utils/su-common.c:1006
 #: login-utils/sulogin.c:795 login-utils/sulogin.c:799 schedutils/chrt.c:555
 #: schedutils/ionice.c:260 schedutils/taskset.c:239 sys-utils/flock.c:363
 #: sys-utils/nsenter.c:430 sys-utils/prlimit.c:644 sys-utils/rtcwake.c:577
@@ -3621,7 +3621,7 @@ msgstr "人類 readable 大小"
 msgid "partition name"
 msgstr "分割名稱"
 
-#: disk-utils/partx.c:92 misc-utils/findmnt.c:132 misc-utils/lsblk.c:168
+#: disk-utils/partx.c:92 misc-utils/findmnt.c:108 misc-utils/lsblk.c:168
 #, fuzzy
 msgid "partition UUID"
 msgstr "分割 UUID"
@@ -3665,7 +3665,7 @@ msgstr "%s：無法設定上一步檔案"
 msgid "%s: failed to set up loop device"
 msgstr "%s：無法設定迴圈裝置"
 
-#: disk-utils/partx.c:161 login-utils/lslogins.c:307 misc-utils/findmnt.c:401
+#: disk-utils/partx.c:161 login-utils/lslogins.c:307 misc-utils/findmnt.c:376
 #: misc-utils/lsblk.c:354 misc-utils/lslocks.c:342 sys-utils/losetup.c:107
 #: sys-utils/lscpu.c:370 sys-utils/lsipc.c:232 sys-utils/lsns.c:189
 #: sys-utils/prlimit.c:277 sys-utils/swapon.c:147 sys-utils/wdctl.c:151
@@ -3765,7 +3765,7 @@ msgid "#%2d: %9ju-%9ju (%9ju sector, %6ju MB)\n"
 msgid_plural "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr[0] "#%2d：%9 ju-%9 ju (%9 ju 磁區，%6 ju MB)\n"
 
-#: disk-utils/partx.c:581 misc-utils/findmnt.c:713 misc-utils/findmnt.c:730
+#: disk-utils/partx.c:581 misc-utils/findmnt.c:688 misc-utils/findmnt.c:705
 #: misc-utils/lslocks.c:391 sys-utils/lsns.c:434
 msgid "failed to add line to output"
 msgstr "加入輸出列時失敗"
@@ -3775,7 +3775,7 @@ msgstr "加入輸出列時失敗"
 msgid "failed to add data to output table"
 msgstr "加入輸出列時失敗"
 
-#: disk-utils/partx.c:667 login-utils/lslogins.c:922 misc-utils/findmnt.c:1583
+#: disk-utils/partx.c:667 login-utils/lslogins.c:922 misc-utils/findmnt.c:1582
 #: misc-utils/lsblk.c:1869 misc-utils/lslocks.c:451 sys-utils/losetup.c:310
 #: sys-utils/lscpu.c:1690 sys-utils/lsipc.c:338 sys-utils/lsns.c:489
 #: sys-utils/prlimit.c:297 sys-utils/swapon.c:280 sys-utils/wdctl.c:259
@@ -3783,7 +3783,7 @@ msgstr "加入輸出列時失敗"
 msgid "failed to initialize output table"
 msgstr "初始化輸出表格時失敗"
 
-#: disk-utils/partx.c:678 misc-utils/findmnt.c:1609 misc-utils/lsblk.c:1891
+#: disk-utils/partx.c:678 misc-utils/findmnt.c:1608 misc-utils/lsblk.c:1891
 #: misc-utils/lslocks.c:465 sys-utils/losetup.c:322 sys-utils/losetup.c:358
 #: sys-utils/lscpu.c:1695 sys-utils/lsns.c:510 sys-utils/prlimit.c:306
 #: sys-utils/swapon.c:289 sys-utils/wdctl.c:270 sys-utils/zramctl.c:493
@@ -4826,7 +4826,7 @@ msgid "colors are disabled by default"
 msgstr "預設會拒絕從 %2$s 登入到 %1$s。\n"
 
 #: include/env.h:18 lib/pager.c:151 login-utils/login.c:1052
-#: login-utils/login.c:1056 login-utils/su-common.c:523
+#: login-utils/login.c:1056 login-utils/su-common.c:526
 #: term-utils/agetty.c:1160
 #, fuzzy, c-format
 msgid "failed to set the %s environment variable"
@@ -6526,7 +6526,7 @@ msgstr "剩餘空間"
 msgid "Failed to resize partition #%zu."
 msgstr "調整大小分割時失敗"
 
-#: libfdisk/src/parttype.c:259 misc-utils/findmnt.c:680 schedutils/chrt.c:204
+#: libfdisk/src/parttype.c:259 misc-utils/findmnt.c:655 schedutils/chrt.c:204
 #: schedutils/ionice.c:79 sys-utils/hwclock.c:334
 msgid "unknown"
 msgstr "不明的"
@@ -7895,7 +7895,7 @@ msgstr "最大行程數量"
 msgid "Running processes"
 msgstr "%s：找不到行程「%s」\n"
 
-#: login-utils/lslogins.c:288 misc-utils/findmnt.c:160 misc-utils/lsblk.c:231
+#: login-utils/lslogins.c:288 misc-utils/findmnt.c:136 misc-utils/lsblk.c:231
 #: sys-utils/lsipc.c:204
 #, c-format
 msgid "too many columns specified, the limit is %zu columns"
@@ -8045,7 +8045,7 @@ msgstr ""
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1263 sys-utils/lscpu.c:1955
+#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1244 sys-utils/lscpu.c:1955
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8125,37 +8125,37 @@ msgstr ""
 msgid "This account is currently not available.\n"
 msgstr "這個磁碟為目前在使用中。\n"
 
-#: login-utils/su-common.c:292
+#: login-utils/su-common.c:295
 #, fuzzy, c-format
 msgid "cannot open session: %s"
 msgstr "無法無法開啟作業階段：%s"
 
-#: login-utils/su-common.c:304
+#: login-utils/su-common.c:307
 #, fuzzy
 msgid "cannot create child process"
 msgstr "無法建立子行程"
 
-#: login-utils/su-common.c:316
+#: login-utils/su-common.c:319
 #, fuzzy, c-format
 msgid "cannot change directory to %s"
 msgstr "無法變更目錄到 %s"
 
-#: login-utils/su-common.c:321
+#: login-utils/su-common.c:324
 #, fuzzy
 msgid "cannot block signals"
 msgstr "無法區塊信號"
 
-#: login-utils/su-common.c:335 login-utils/su-common.c:343
-#: login-utils/su-common.c:349 misc-utils/uuidd.c:407 term-utils/script.c:771
+#: login-utils/su-common.c:338 login-utils/su-common.c:346
+#: login-utils/su-common.c:352 misc-utils/uuidd.c:407 term-utils/script.c:771
 #, fuzzy
 msgid "cannot set signal handler"
 msgstr "無法設定信號處理程式"
 
-#: login-utils/su-common.c:374
+#: login-utils/su-common.c:377
 msgid " (core dumped)"
 msgstr ""
 
-#: login-utils/su-common.c:390
+#: login-utils/su-common.c:393
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8164,44 +8164,59 @@ msgstr ""
 "\n"
 "作業階段終止，killing 命令殼…"
 
-#: login-utils/su-common.c:400
+#: login-utils/su-common.c:403
 #, fuzzy, c-format
 msgid " ...killed.\n"
 msgstr "...killed。\n"
 
-#: login-utils/su-common.c:480
+#: login-utils/su-common.c:483
 msgid "may not be used by non-root users"
 msgstr ""
 
-#: login-utils/su-common.c:508
+#: login-utils/su-common.c:511
 #, fuzzy
 msgid "incorrect password"
 msgstr "不正確密碼"
 
-#: login-utils/su-common.c:592
+#: login-utils/su-common.c:595
 #, fuzzy
 msgid "cannot set groups"
 msgstr "無法設定群組"
 
-#: login-utils/su-common.c:607 sys-utils/eject.c:665
+#: login-utils/su-common.c:610 sys-utils/eject.c:665
 msgid "cannot set group id"
 msgstr "無法設定群組識別號"
 
-#: login-utils/su-common.c:609 sys-utils/eject.c:668
+#: login-utils/su-common.c:612 sys-utils/eject.c:668
 msgid "cannot set user id"
 msgstr "無法設定使用者識別號"
 
-#: login-utils/su-common.c:682
+#: login-utils/su-common.c:685
+#, fuzzy
+msgid "failed to initialize seccomp context"
+msgstr "初始化 loopcxt 時失敗"
+
+#: login-utils/su-common.c:688
+#, fuzzy
+msgid "failed to add seccomp rule"
+msgstr "讀取速度時失敗"
+
+#: login-utils/su-common.c:690
+#, fuzzy
+msgid "failed to load seccomp rule"
+msgstr "讀取速度時失敗"
+
+#: login-utils/su-common.c:700
 #, fuzzy, c-format
 msgid " %s [options] -u <user> <command>\n"
 msgstr " %s [選項] <user> [<ttyname>]\n"
 
-#: login-utils/su-common.c:683 login-utils/su-common.c:695
+#: login-utils/su-common.c:701 login-utils/su-common.c:713
 #, fuzzy, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [選項] <program> [引數...]\n"
 
-#: login-utils/su-common.c:684
+#: login-utils/su-common.c:702
 msgid ""
 "\n"
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
@@ -8209,12 +8224,12 @@ msgid ""
 "The options -c, -f, -l, and -s are mutually exclusive with -u.\n"
 msgstr ""
 
-#: login-utils/su-common.c:691
+#: login-utils/su-common.c:709
 #, fuzzy
 msgid " -u, --user <user>             username\n"
 msgstr " -v, --verbose            是更多詳細的\n"
 
-#: login-utils/su-common.c:696
+#: login-utils/su-common.c:714
 #, fuzzy
 msgid ""
 "\n"
@@ -8225,87 +8240,87 @@ msgstr ""
 " 變更有效使用者識別號和群組識別號到該的使用者。\n"
 " mere - 意味著 -l.   如果使用者無法給定的，假設根。\n"
 
-#: login-utils/su-common.c:703
+#: login-utils/su-common.c:721
 msgid " -m, -p, --preserve-environment  do not reset environment variables\n"
 msgstr ""
 
-#: login-utils/su-common.c:704
+#: login-utils/su-common.c:722
 #, fuzzy
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -i, --irq <num>              指定並列埠 irq\n"
 
-#: login-utils/su-common.c:705
+#: login-utils/su-common.c:723
 msgid ""
 " -G, --supp-group <group>        specify a supplemental group\n"
 "\n"
 msgstr ""
 
-#: login-utils/su-common.c:707
+#: login-utils/su-common.c:725
 #, fuzzy
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -h, --help                   這個小用法指導\n"
 
-#: login-utils/su-common.c:708
+#: login-utils/su-common.c:726
 #, fuzzy
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c  --command <command>  運行單一命令字串透過命令殼\n"
 
-#: login-utils/su-common.c:709
+#: login-utils/su-common.c:727
 #, fuzzy
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
 msgstr " -c  --command <command>  運行單一命令字串透過命令殼\n"
 
-#: login-utils/su-common.c:711
+#: login-utils/su-common.c:729
 #, fuzzy
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -r, --reset                  重置通訊埠\n"
 
-#: login-utils/su-common.c:712
+#: login-utils/su-common.c:730
 #, fuzzy
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <shell>          設定命令殼引言慣例\n"
 
-#: login-utils/su-common.c:756
+#: login-utils/su-common.c:774
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] ""
 
-#: login-utils/su-common.c:762
+#: login-utils/su-common.c:780
 #, fuzzy, c-format
 msgid "group %s does not exist"
 msgstr "使用者 %s 不存在"
 
-#: login-utils/su-common.c:880
+#: login-utils/su-common.c:898
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr ""
 
-#: login-utils/su-common.c:891
+#: login-utils/su-common.c:909
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr ""
 
-#: login-utils/su-common.c:895
+#: login-utils/su-common.c:913
 #, fuzzy
 msgid "no command was specified"
 msgstr "未指定任何動作"
 
-#: login-utils/su-common.c:909
+#: login-utils/su-common.c:927
 msgid "only root can specify alternative groups"
 msgstr ""
 
-#: login-utils/su-common.c:916
+#: login-utils/su-common.c:934
 #, fuzzy, c-format
 msgid "user %s does not exist"
 msgstr "使用者 %s 不存在"
 
-#: login-utils/su-common.c:956
+#: login-utils/su-common.c:974
 #, fuzzy, c-format
 msgid "using restricted shell %s"
 msgstr "使用限制的命令殼 %s"
 
-#: login-utils/su-common.c:980
+#: login-utils/su-common.c:1000
 #, fuzzy, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "警告：無法變更目錄到 %s"
@@ -8400,7 +8415,7 @@ msgstr ""
 " -t, --timeout <seconds>  最大時間到等待密碼 (預設：沒有限制)\n"
 " -e, --force              檢查密碼檔案直接如果 getpwnam (3) 失敗\n"
 
-#: login-utils/sulogin.c:866 misc-utils/findmnt.c:1472 sys-utils/wdctl.c:523
+#: login-utils/sulogin.c:866 misc-utils/findmnt.c:1460 sys-utils/wdctl.c:523
 #: term-utils/agetty.c:750 term-utils/wall.c:135
 #, fuzzy
 msgid "invalid timeout argument"
@@ -8709,178 +8724,179 @@ msgstr "強制檢查 %s 檔案系統。\n"
 msgid "unable to resolve '%s'"
 msgstr "無法解決「%s」"
 
-#: misc-utils/findmnt.c:123
+#: misc-utils/findmnt.c:99
 #, fuzzy
 msgid "source device"
 msgstr "來源裝置"
 
-#: misc-utils/findmnt.c:124
+#: misc-utils/findmnt.c:100
 #, fuzzy
 msgid "mountpoint"
 msgstr "mountpoint"
 
-#: misc-utils/findmnt.c:125 misc-utils/lsblk.c:161
+#: misc-utils/findmnt.c:101 misc-utils/lsblk.c:161
 #, fuzzy
 msgid "filesystem type"
 msgstr "檔案系統型態"
 
-#: misc-utils/findmnt.c:126
+#: misc-utils/findmnt.c:102
 #, fuzzy
 msgid "all mount options"
 msgstr "所有掛載選項"
 
-#: misc-utils/findmnt.c:127
+#: misc-utils/findmnt.c:103
 #, fuzzy
 msgid "VFS specific mount options"
 msgstr "VFS 特定的掛載選項"
 
-#: misc-utils/findmnt.c:128
+#: misc-utils/findmnt.c:104
 #, fuzzy
 msgid "FS specific mount options"
 msgstr "FS 特定的掛載選項"
 
-#: misc-utils/findmnt.c:129
+#: misc-utils/findmnt.c:105
 #, fuzzy
 msgid "filesystem label"
 msgstr "檔案系統標貼"
 
-#: misc-utils/findmnt.c:130 misc-utils/lsblk.c:164
+#: misc-utils/findmnt.c:106 misc-utils/lsblk.c:164
 #, fuzzy
 msgid "filesystem UUID"
 msgstr "檔案系統 UUID"
 
-#: misc-utils/findmnt.c:131
+#: misc-utils/findmnt.c:107
 #, fuzzy
 msgid "partition label"
 msgstr "分割標貼"
 
-#: misc-utils/findmnt.c:133 misc-utils/lsblk.c:160
+#: misc-utils/findmnt.c:109 misc-utils/lsblk.c:160
 #, fuzzy
 msgid "major:minor device number"
 msgstr "主要的：次級裝置數字"
 
-#: misc-utils/findmnt.c:134
+#: misc-utils/findmnt.c:110
 #, fuzzy
 msgid "action detected by --poll"
 msgstr "動作偵測到由 --poll"
 
-#: misc-utils/findmnt.c:135
+#: misc-utils/findmnt.c:111
 #, fuzzy
 msgid "old mount options saved by --poll"
 msgstr "舊的掛載選項儲存的由 --poll"
 
-#: misc-utils/findmnt.c:136
+#: misc-utils/findmnt.c:112
 #, fuzzy
 msgid "old mountpoint saved by --poll"
 msgstr "舊的 mountpoint 儲存的由 --poll"
 
-#: misc-utils/findmnt.c:137
+#: misc-utils/findmnt.c:113
 #, fuzzy
 msgid "filesystem size"
 msgstr "檔案系統大小"
 
-#: misc-utils/findmnt.c:138
+#: misc-utils/findmnt.c:114
 #, fuzzy
 msgid "filesystem size available"
 msgstr "檔案系統大小可用"
 
-#: misc-utils/findmnt.c:139
+#: misc-utils/findmnt.c:115
 #, fuzzy
 msgid "filesystem size used"
 msgstr "檔案系統大小使用"
 
-#: misc-utils/findmnt.c:140
+#: misc-utils/findmnt.c:116
 #, fuzzy
 msgid "filesystem use percentage"
 msgstr "檔案系統使用百分比"
 
-#: misc-utils/findmnt.c:141
+#: misc-utils/findmnt.c:117
 #, fuzzy
 msgid "filesystem root"
 msgstr "檔案系統根"
 
-#: misc-utils/findmnt.c:142
+#: misc-utils/findmnt.c:118
 #, fuzzy
 msgid "task ID"
 msgstr "任務識別號"
 
-#: misc-utils/findmnt.c:143
+#: misc-utils/findmnt.c:119
 #, fuzzy
 msgid "mount ID"
 msgstr "掛載"
 
-#: misc-utils/findmnt.c:144
+#: misc-utils/findmnt.c:120
 #, fuzzy
 msgid "optional mount fields"
 msgstr "mount：掛載時失敗"
 
-#: misc-utils/findmnt.c:145
+#: misc-utils/findmnt.c:121
 #, fuzzy
 msgid "VFS propagation flags"
 msgstr "分割旗標"
 
-#: misc-utils/findmnt.c:146
+#: misc-utils/findmnt.c:122
 msgid "dump(8) period in days [fstab only]"
 msgstr ""
 
-#: misc-utils/findmnt.c:147
+#: misc-utils/findmnt.c:123
 msgid "pass number on parallel fsck(8) [fstab only]"
 msgstr ""
 
-#: misc-utils/findmnt.c:358
+#: misc-utils/findmnt.c:333
 #, fuzzy, c-format
 msgid "unknown action: %s"
 msgstr "不明動作：%s"
 
-#: misc-utils/findmnt.c:668
+#: misc-utils/findmnt.c:643
 #, fuzzy
 msgid "mount"
 msgstr "掛載"
 
-#: misc-utils/findmnt.c:671
+#: misc-utils/findmnt.c:646
 #, fuzzy
 msgid "umount"
 msgstr "umount"
 
-#: misc-utils/findmnt.c:674
+#: misc-utils/findmnt.c:649
 #, fuzzy
 msgid "remount"
 msgstr "remount"
 
-#: misc-utils/findmnt.c:677
+#: misc-utils/findmnt.c:652
 #, fuzzy
 msgid "move"
 msgstr "移動"
 
-#: misc-utils/findmnt.c:836 misc-utils/findmnt.c:1099 sys-utils/eject.c:719
+#: misc-utils/findmnt.c:812 misc-utils/findmnt.c:1075 sys-utils/eject.c:719
 #: sys-utils/mount.c:669
 #, fuzzy
 msgid "failed to initialize libmount table"
 msgstr "初始化 libmount 表格時失敗"
 
-#: misc-utils/findmnt.c:863 text-utils/hexdump-parse.c:84
+#: misc-utils/findmnt.c:839 text-utils/hexdump-parse.c:84
 #, fuzzy, c-format
 msgid "can't read %s"
 msgstr "無法讀取 %s"
 
-#: misc-utils/findmnt.c:1039 misc-utils/findmnt.c:1105 sys-utils/fstrim.c:199
-#: sys-utils/mount.c:134 sys-utils/mount.c:182 sys-utils/swapoff.c:56
-#: sys-utils/swapoff.c:152 sys-utils/swapon.c:244 sys-utils/swapon.c:274
-#: sys-utils/swapon.c:732 sys-utils/umount.c:274
+#: misc-utils/findmnt.c:1015 misc-utils/findmnt.c:1081
+#: misc-utils/findmnt-verify.c:94 misc-utils/findmnt-verify.c:481
+#: sys-utils/fstrim.c:199 sys-utils/mount.c:134 sys-utils/mount.c:182
+#: sys-utils/swapoff.c:56 sys-utils/swapoff.c:152 sys-utils/swapon.c:244
+#: sys-utils/swapon.c:274 sys-utils/swapon.c:733 sys-utils/umount.c:274
 msgid "failed to initialize libmount iterator"
 msgstr "初始化 libmount 迭代器時失敗"
 
-#: misc-utils/findmnt.c:1111
+#: misc-utils/findmnt.c:1087
 #, fuzzy
 msgid "failed to initialize libmount tabdiff"
 msgstr "初始化 libmount tabdiff 時失敗"
 
-#: misc-utils/findmnt.c:1139
+#: misc-utils/findmnt.c:1115
 #, fuzzy
 msgid "poll() failed"
 msgstr "意見調查() 失敗"
 
-#: misc-utils/findmnt.c:1210
+#: misc-utils/findmnt.c:1186
 #, fuzzy, c-format
 msgid ""
 " %1$s [options]\n"
@@ -8893,22 +8909,22 @@ msgstr ""
 " %1$s [選項]<裝置><mountpoint>\n"
 " %1$s [選項] [--source<裝置>] [--target<mountpoint>]\n"
 
-#: misc-utils/findmnt.c:1217
+#: misc-utils/findmnt.c:1193
 #, fuzzy
 msgid "Find a (mounted) filesystem.\n"
 msgstr "檔案系統型態"
 
-#: misc-utils/findmnt.c:1220
+#: misc-utils/findmnt.c:1196
 #, fuzzy
 msgid " -s, --fstab            search in static table of filesystems\n"
 msgstr " -i, --info                列印只有資訊關於取樣步驟\n"
 
-#: misc-utils/findmnt.c:1221
+#: misc-utils/findmnt.c:1197
 #, fuzzy
 msgid " -m, --mtab             search in table of mounted filesystems\n"
 msgstr " -a, --all                 列印所有符號，即使計數是 0\n"
 
-#: misc-utils/findmnt.c:1222
+#: misc-utils/findmnt.c:1198
 #, fuzzy
 msgid ""
 " -k, --kernel           search in kernel table of mounted\n"
@@ -8922,7 +8938,7 @@ msgstr ""
 "                          檔案系統 (預設)\n"
 "\n"
 
-#: misc-utils/findmnt.c:1225
+#: misc-utils/findmnt.c:1201
 #, fuzzy
 msgid " -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
 msgstr ""
@@ -8930,7 +8946,7 @@ msgstr ""
 " -w, --timeout<num>   上限在中毫秒該 --poll 將區塊\n"
 "\n"
 
-#: misc-utils/findmnt.c:1226
+#: misc-utils/findmnt.c:1202
 #, fuzzy
 msgid " -w, --timeout <num>    upper limit in milliseconds that --poll will block\n"
 msgstr ""
@@ -8938,164 +8954,348 @@ msgstr ""
 " -w, --timeout<num>   上限在中毫秒該 --poll 將區塊\n"
 "\n"
 
-#: misc-utils/findmnt.c:1229
+#: misc-utils/findmnt.c:1205
 #, fuzzy
 msgid " -A, --all              disable all built-in filters, print all filesystems\n"
 msgstr " -a, --all                 列印所有符號，即使計數是 0\n"
 
-#: misc-utils/findmnt.c:1230
+#: misc-utils/findmnt.c:1206
 #, fuzzy
 msgid " -a, --ascii            use ASCII chars for tree formatting\n"
 msgstr " -V, --version                輸出版本資訊\n"
 
-#: misc-utils/findmnt.c:1231
+#: misc-utils/findmnt.c:1207
 #, fuzzy
 msgid " -b, --bytes            print sizes in bytes rather than in human readable format\n"
 msgstr " -u, --unquote                不引言輸出\n"
 
-#: misc-utils/findmnt.c:1232
+#: misc-utils/findmnt.c:1208
 msgid " -C, --nocanonicalize   don't canonicalize when comparing paths\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1233
+#: misc-utils/findmnt.c:1209
 msgid " -c, --canonicalize     canonicalize printed paths\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1234
+#: misc-utils/findmnt.c:1210
 #, fuzzy
 msgid " -D, --df               imitate the output of df(1)\n"
 msgstr " -u, --unquote                不引言輸出\n"
 
-#: misc-utils/findmnt.c:1235
+#: misc-utils/findmnt.c:1211
 msgid " -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1236
+#: misc-utils/findmnt.c:1212
 msgid ""
 " -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          to device names\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1238
+#: misc-utils/findmnt.c:1214
 msgid " -F, --tab-file <path>  alternative file for -s, -m or -k options\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1239
+#: misc-utils/findmnt.c:1215
 #, fuzzy
 msgid " -f, --first-only       print the first found filesystem only\n"
 msgstr "   l   列出已知檔案系統類型"
 
-#: misc-utils/findmnt.c:1240
+#: misc-utils/findmnt.c:1216
 #, fuzzy
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -v, --verbose             列印詳細的資料\n"
 
-#: misc-utils/findmnt.c:1241 misc-utils/lslocks.c:507 sys-utils/lsns.c:597
+#: misc-utils/findmnt.c:1217 misc-utils/lslocks.c:507 sys-utils/lsns.c:597
 #, fuzzy
 msgid " -J, --json             use JSON output format\n"
 msgstr " -V, --version                輸出版本資訊\n"
 
-#: misc-utils/findmnt.c:1242 sys-utils/lsns.c:598
+#: misc-utils/findmnt.c:1218 sys-utils/lsns.c:598
 #, fuzzy
 msgid " -l, --list             use list format output\n"
 msgstr " -Q, --quiet-output           沒有一般輸出\n"
 
-#: misc-utils/findmnt.c:1243
+#: misc-utils/findmnt.c:1219
 msgid " -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1244
+#: misc-utils/findmnt.c:1220
 #, fuzzy
 msgid " -n, --noheadings       don't print column headings\n"
 msgstr " -d, --debug             列印詳細的訊息到標準勘誤\n"
 
-#: misc-utils/findmnt.c:1245
+#: misc-utils/findmnt.c:1221
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1246
+#: misc-utils/findmnt.c:1222
 #, fuzzy
 msgid " -o, --output <list>    the output columns to be shown\n"
 msgstr " -o, --options <optstring>    短選項為辨識的\n"
 
-#: misc-utils/findmnt.c:1247
+#: misc-utils/findmnt.c:1223
 #, fuzzy
 msgid " -P, --pairs            use key=\"value\" output format\n"
 msgstr " -V, --version                輸出版本資訊\n"
 
-#: misc-utils/findmnt.c:1248
+#: misc-utils/findmnt.c:1224
 #, fuzzy
 msgid " -R, --submounts        print all submounts for the matching filesystems\n"
 msgstr " -i, --info                列印只有資訊關於取樣步驟\n"
 
-#: misc-utils/findmnt.c:1249
+#: misc-utils/findmnt.c:1225
 #, fuzzy
 msgid " -r, --raw              use raw output format\n"
 msgstr " -V, --version                輸出版本資訊\n"
 
-#: misc-utils/findmnt.c:1250
+#: misc-utils/findmnt.c:1226
 msgid ""
 " -S, --source <string>  the device to mount (by name, maj:min, \n"
 "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1252
+#: misc-utils/findmnt.c:1228
 #, fuzzy
 msgid " -T, --target <path>    the path to the filesystem to use\n"
 msgstr " -o, --options <optstring>    短選項為辨識的\n"
 
-#: misc-utils/findmnt.c:1253
+#: misc-utils/findmnt.c:1229
 #, fuzzy
 msgid " -M, --mountpoint <dir> the mountpoint directory\n"
 msgstr " -x, --destination <dir>  抽出進入目錄\n"
 
-#: misc-utils/findmnt.c:1254
+#: misc-utils/findmnt.c:1230
 #, fuzzy
 msgid " -t, --types <list>     limit the set of filesystems by FS types\n"
 msgstr "   l   列出已知檔案系統類型"
 
-#: misc-utils/findmnt.c:1255
+#: misc-utils/findmnt.c:1231
 #, fuzzy
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -i, --info                列印只有資訊關於取樣步驟\n"
 
-#: misc-utils/findmnt.c:1256 misc-utils/lslocks.c:513 sys-utils/lsns.c:603
+#: misc-utils/findmnt.c:1232 misc-utils/lslocks.c:513 sys-utils/lsns.c:603
 #, fuzzy
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -n, --noparity          設定同位到無\n"
 
-#: misc-utils/findmnt.c:1257
+#: misc-utils/findmnt.c:1233
 #, fuzzy
 msgid " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 msgstr " -d, --debug             列印詳細的訊息到標準勘誤\n"
 
-#: misc-utils/findmnt.c:1377
+#: misc-utils/findmnt.c:1236
+#, fuzzy
+msgid " -x, --verify           verify mount table content (default is fstab)\n"
+msgstr " -i, --info                列印只有資訊關於取樣步驟\n"
+
+#: misc-utils/findmnt.c:1237
+#, fuzzy
+msgid "     --verbose          print more details\n"
+msgstr " -v, --verbose             列印詳細的資料\n"
+
+#: misc-utils/findmnt.c:1365
 #, c-format
 msgid "unknown direction '%s'"
 msgstr "不明方向「%s」"
 
-#: misc-utils/findmnt.c:1449
+#: misc-utils/findmnt.c:1437
 #, fuzzy
 msgid "invalid TID argument"
 msgstr "無效的 TID 引數"
 
-#: misc-utils/findmnt.c:1512
+#: misc-utils/findmnt.c:1506
 #, fuzzy
 msgid "--poll accepts only one file, but more specified by --tab-file"
 msgstr "--poll 接受只有一個檔案，但是更多指定的由 --tab-file"
 
-#: misc-utils/findmnt.c:1516
+#: misc-utils/findmnt.c:1510
 msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr "選項 --target 和 --source 無法與不是選項的命令列元素一起使用"
 
-#: misc-utils/findmnt.c:1566
+#: misc-utils/findmnt.c:1559
 msgid "failed to initialize libmount cache"
 msgstr "初始化 libmount 快取時失敗"
 
-#: misc-utils/findmnt.c:1603
+#: misc-utils/findmnt.c:1602
 #, fuzzy, c-format
 msgid "%s column is requested, but --poll is not enabled"
 msgstr "%s 欄被要求的，但是 --poll 未被已啟用"
+
+#: misc-utils/findmnt-verify.c:116
+#, fuzzy
+msgid "target specified more than once"
+msgstr "您指定了比磁碟上還多的磁柱數"
+
+#: misc-utils/findmnt-verify.c:118
+#, c-format
+msgid "wrong order: %s specified before %s"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:133
+msgid "undefined target (fs_file)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:140
+#, c-format
+msgid "non-canonical target path (real: %s)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:145
+#, c-format
+msgid "unreachable on boot required target: %m"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:147
+#, fuzzy, c-format
+msgid "unreachable target: %m"
+msgstr "無法讀取 %s"
+
+#: misc-utils/findmnt-verify.c:151
+#, fuzzy
+msgid "target is not a directory"
+msgstr "%s：並非目錄"
+
+#: misc-utils/findmnt-verify.c:153
+msgid "target exists"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:165
+#, c-format
+msgid "unreachable on boot required source: %s=%s"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:167
+#, fuzzy, c-format
+msgid "unreachable: %s=%s"
+msgstr "讀取失敗：%s"
+
+#: misc-utils/findmnt-verify.c:169
+#, fuzzy, c-format
+msgid "%s=%s translated to %s"
+msgstr "%s 被關聯的與 %s\n"
+
+#: misc-utils/findmnt-verify.c:190
+msgid "undefined source (fs_spec)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:199
+#, fuzzy, c-format
+msgid "unsupported source tag: %s"
+msgstr "不受支援的引數：%s"
+
+#: misc-utils/findmnt-verify.c:205
+#, c-format
+msgid "do not check %s source (pseudo/net)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:208
+#, fuzzy, c-format
+msgid "unreachable source: %s: %m"
+msgstr "無法開啟「%s」：%s"
+
+#: misc-utils/findmnt-verify.c:211
+#, c-format
+msgid "non-bind mount source %s is a directory or regular file"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:214
+#, fuzzy, c-format
+msgid "source %s is not a block device"
+msgstr " %s 並非區塊裝置"
+
+#: misc-utils/findmnt-verify.c:216
+#, fuzzy, c-format
+msgid "source %s exists"
+msgstr "來源裝置"
+
+#: misc-utils/findmnt-verify.c:229
+#, fuzzy, c-format
+msgid "VFS options: %s"
+msgstr "%s：選項 "
+
+#: misc-utils/findmnt-verify.c:233
+#, fuzzy, c-format
+msgid "FS options: %s"
+msgstr "%s：選項 "
+
+#: misc-utils/findmnt-verify.c:237
+#, fuzzy, c-format
+msgid "userspace options: %s"
+msgstr "資源選項：\n"
+
+#: misc-utils/findmnt-verify.c:251
+#, fuzzy, c-format
+msgid "unsupported swaparea discard policy: %s"
+msgstr "不受支援的引數：%s"
+
+#: misc-utils/findmnt-verify.c:259
+#, fuzzy
+msgid "failed to parse swaparea priority option"
+msgstr "剖析 pid 時失敗"
+
+#: misc-utils/findmnt-verify.c:395
+#, c-format
+msgid "do not check %s FS type (pseudo/net)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:405
+msgid "\"none\" FS type is recommended for bind or move oprations only"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:413
+#, c-format
+msgid "%s seems unspported by the current kernel"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:419 misc-utils/findmnt-verify.c:420
+#, fuzzy
+msgid "cannot detect on-disk filesystem type"
+msgstr "不明檔案系統型態『%s』"
+
+#: misc-utils/findmnt-verify.c:427
+#, c-format
+msgid "%s does not match with on-disk %s"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:430
+#, c-format
+msgid "on-disk %s seems unspported by the current kernel"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:432
+#, fuzzy, c-format
+msgid "FS type is %s"
+msgstr "類型：%s\n"
+
+#: misc-utils/findmnt-verify.c:444
+#, c-format
+msgid "recommended root FS passno is 1 (current is %d)"
+msgstr ""
+
+#: misc-utils/findmnt-verify.c:511
+#, fuzzy, c-format
+msgid "%d parse error"
+msgid_plural "%d parse errors"
+msgstr[0] "剖析錯誤\n"
+
+#: misc-utils/findmnt-verify.c:512
+#, fuzzy, c-format
+msgid ", %d error"
+msgid_plural ", %d errors"
+msgstr[0] "，錯誤"
+
+#: misc-utils/findmnt-verify.c:513
+#, c-format
+msgid ", %d warning"
+msgid_plural ", %d warnings"
+msgstr[0] ""
+
+#: misc-utils/findmnt-verify.c:516
+#, c-format
+msgid "Success, no errors or warnings detected\n"
+msgstr ""
 
 #: misc-utils/getopt.c:246
 #, fuzzy, c-format
@@ -12196,7 +12396,7 @@ msgstr "%s：FITRIM ioctl 失敗"
 msgid "%s: %s (%<PRIu64> bytes) trimmed\n"
 msgstr "%s：%<PRIu64> 位元組被已修整\n"
 
-#: sys-utils/fstrim.c:203 sys-utils/swapon.c:728 sys-utils/umount.c:329
+#: sys-utils/fstrim.c:203 sys-utils/swapon.c:729 sys-utils/umount.c:329
 #, fuzzy, c-format
 msgid "failed to parse %s"
 msgstr "剖析 %s 時失敗"
@@ -16953,7 +17153,7 @@ msgstr "並非系統管理者。"
 msgid "%s: swapoff failed"
 msgstr "%s：swapoff 失敗"
 
-#: sys-utils/swapoff.c:119 sys-utils/swapon.c:787
+#: sys-utils/swapoff.c:119 sys-utils/swapon.c:788
 #, fuzzy, c-format
 msgid " %s [options] [<spec>]\n"
 msgstr " %s [選項] [<spec>]\n"
@@ -17106,80 +17306,80 @@ msgstr "swapon %s\n"
 msgid "%s: swapon failed"
 msgstr "%s：swapon 失敗"
 
-#: sys-utils/swapon.c:742
+#: sys-utils/swapon.c:743
 #, fuzzy, c-format
 msgid "%s: noauto option -- ignored"
 msgstr "%s：剖析錯誤於列 %d -- 忽略"
 
-#: sys-utils/swapon.c:764
+#: sys-utils/swapon.c:765
 #, fuzzy, c-format
 msgid "%s: already active -- ignored"
 msgstr "%s：剖析錯誤於列 %d -- 忽略"
 
-#: sys-utils/swapon.c:770
+#: sys-utils/swapon.c:771
 #, fuzzy, c-format
 msgid "%s: inaccessible -- ignored"
 msgstr "%s：無法寫入 inodes"
 
-#: sys-utils/swapon.c:790
+#: sys-utils/swapon.c:791
 msgid "Enable devices and files for paging and swapping.\n"
 msgstr ""
 
-#: sys-utils/swapon.c:793
+#: sys-utils/swapon.c:794
 #, fuzzy
 msgid " -a, --all                enable all swaps from /etc/fstab\n"
 msgstr " -a, --all                 列印所有符號，即使計數是 0\n"
 
-#: sys-utils/swapon.c:794
+#: sys-utils/swapon.c:795
 msgid " -d, --discard[=<policy>] enable swap discards, if supported by device\n"
 msgstr ""
 
-#: sys-utils/swapon.c:795
+#: sys-utils/swapon.c:796
 msgid " -e, --ifexists           silently skip devices that do not exist\n"
 msgstr ""
 
-#: sys-utils/swapon.c:796
+#: sys-utils/swapon.c:797
 msgid " -f, --fixpgsz            reinitialize the swap space if necessary\n"
 msgstr ""
 
-#: sys-utils/swapon.c:797
+#: sys-utils/swapon.c:798
 msgid " -o, --options <list>     comma-separated list of swap options\n"
 msgstr ""
 
-#: sys-utils/swapon.c:798
+#: sys-utils/swapon.c:799
 #, fuzzy
 msgid " -p, --priority <prio>    specify the priority of the swap device\n"
 msgstr " -i, --irq <num>              指定並列埠 irq\n"
 
-#: sys-utils/swapon.c:799
+#: sys-utils/swapon.c:800
 msgid " -s, --summary            display summary about used swap devices (DEPRECATED)\n"
 msgstr ""
 
-#: sys-utils/swapon.c:800
+#: sys-utils/swapon.c:801
 msgid "     --show[=<columns>]   display summary in definable table\n"
 msgstr ""
 
-#: sys-utils/swapon.c:801
+#: sys-utils/swapon.c:802
 #, fuzzy
 msgid "     --noheadings         don't print table heading (with --show)\n"
 msgstr " -f           不分割長列\n"
 
-#: sys-utils/swapon.c:802
+#: sys-utils/swapon.c:803
 #, fuzzy
 msgid "     --raw                use the raw output format (with --show)\n"
 msgstr " -V, --version                輸出版本資訊\n"
 
-#: sys-utils/swapon.c:803
+#: sys-utils/swapon.c:804
 #, fuzzy
 msgid "     --bytes              display swap size in bytes in --show output\n"
 msgstr " -h           顯示這份說明然後離開\n"
 
-#: sys-utils/swapon.c:804
+#: sys-utils/swapon.c:805
 #, fuzzy
 msgid " -v, --verbose            verbose mode\n"
 msgstr " -v, --verbose             列印詳細的資料\n"
 
-#: sys-utils/swapon.c:810
+#: sys-utils/swapon.c:811
 #, fuzzy
 msgid ""
 "\n"
@@ -17204,7 +17404,7 @@ msgstr ""
 "<裝置>              名稱的裝置為使用\n"
 "<檔案>                名稱的檔案為使用\n"
 
-#: sys-utils/swapon.c:820
+#: sys-utils/swapon.c:821
 msgid ""
 "\n"
 "Available discard policy types (for --discard):\n"
@@ -17213,7 +17413,7 @@ msgid ""
 "If no policy is selected, both discard types are enabled (default).\n"
 msgstr ""
 
-#: sys-utils/swapon.c:825
+#: sys-utils/swapon.c:826
 #, fuzzy
 msgid ""
 "\n"
@@ -17222,12 +17422,12 @@ msgstr ""
 "\n"
 "可用欄位 (用於 --show)：\n"
 
-#: sys-utils/swapon.c:903
+#: sys-utils/swapon.c:904
 #, fuzzy
 msgid "failed to parse priority"
 msgstr "剖析 pid 時失敗"
 
-#: sys-utils/swapon.c:922
+#: sys-utils/swapon.c:923
 #, fuzzy, c-format
 msgid "unsupported discard policy: %s"
 msgstr "不受支援的引數：%s"
@@ -19769,7 +19969,7 @@ msgstr "終端機『%s』不是已知，預設到『dumb』"
 msgid "unknown escape sequence in input: %o, %o"
 msgstr "不明的退出序列在中輸入：%o，%o"
 
-#: text-utils/ul.c:630
+#: text-utils/ul.c:624
 #, fuzzy
 msgid "Input line too long."
 msgstr "輸入列太長。"
@@ -19981,10 +20181,6 @@ msgstr "輸入列太長。"
 
 #~ msgid "will not try to make filesystem on '%s'"
 #~ msgstr "將不會試著於「%s」製作檔案系統"
-
-#, fuzzy
-#~ msgid "type: %s"
-#~ msgstr "類型：%s\n"
 
 #, fuzzy
 #~ msgid "type: %d"
@@ -20301,9 +20497,6 @@ msgstr "輸入列太長。"
 #, fuzzy
 #~ msgid " -x, --destination <dir>  extract into directory\n"
 #~ msgstr " -x, --destination <dir>  抽出進入目錄\n"
-
-#~ msgid "read failed: %s"
-#~ msgstr "讀取失敗：%s"
 
 #~ msgid "compiled without -x support"
 #~ msgstr "編譯時不具 -x 支援"
@@ -20854,10 +21047,6 @@ msgstr "輸入列太長。"
 #~ " -H<數字>          指定前端數量\n"
 #~ " -S<數字>          指定磁區數量各軌段\n"
 #~ "\n"
-
-#, fuzzy
-#~ msgid "unable to read %s"
-#~ msgstr "無法讀取 %s"
 
 #, fuzzy
 #~ msgid "unable to seek on %s"
@@ -21845,10 +22034,6 @@ msgstr "輸入列太長。"
 #~ msgstr "\n"
 
 #, fuzzy
-#~ msgid "%s: options "
-#~ msgstr "%s：選項 "
-
-#, fuzzy
 #~ msgid "Partition %zd is already defined. Delete it before re-adding it."
 #~ msgstr "分割區 %d 已經定義。 在重新加入之前刪除它。\n"
 
@@ -22644,10 +22829,6 @@ msgstr "輸入列太長。"
 
 #~ msgid "Could not find %s in mtab\n"
 #~ msgstr "在 mtab 中找不到 %s\n"
-
-#, fuzzy
-#~ msgid "%s is associated with %s\n"
-#~ msgstr "%s 被關聯的與 %s\n"
 
 #, fuzzy
 #~ msgid "umount: warning: %s is associated with more than one loop device\n"
@@ -24196,9 +24377,6 @@ msgstr "輸入列太長。"
 #~ msgid "%s: cannot open %s\n"
 #~ msgstr "%s：無法開啟 %s\n"
 
-#~ msgid "parse error\n"
-#~ msgstr "剖析錯誤\n"
-
 #~ msgid "usage: %s [ -n ] device\n"
 #~ msgstr "用法：%s [-n] 裝置\n"
 
@@ -24220,9 +24398,6 @@ msgstr "輸入列太長。"
 
 #~ msgid "Usage: %s [-larvsmf] /dev/name\n"
 #~ msgstr "用法：%s [-larvsmf] /dev/name\n"
-
-#~ msgid "unable to open '%s': %s"
-#~ msgstr "無法開啟「%s」：%s"
 
 #~ msgid "%s: failed to open: %s\n"
 #~ msgstr "%s：開啟失敗：%s\n"
