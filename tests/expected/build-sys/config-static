@@ -85,7 +85,6 @@ namei:
 nologin:  
 nsenter:  
 nsenter.static: STATIC
-pg:  libncursesw libtinfo 
 pivot_root:  
 raw:  
 readprofile:  
@@ -94,7 +93,7 @@ renice:
 resizepart:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc 
+runuser:  libpam libpam_misc libseccomp 
 script:  librt libutil 
 scriptreplay:  
 setarch:  
@@ -102,7 +101,7 @@ setpriv:  ap-ng
 setsid:  
 setterm:  libtinfo 
 sfdisk.static: STATIC
-su:  libpam libpam_misc 
+su:  libpam libpam_misc libseccomp 
 sulogin:  rypt 
 switch_root:  
 tailf:  

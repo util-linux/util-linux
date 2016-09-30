@@ -60,7 +60,6 @@ more:  libtinfo
 namei:  
 nologin:  
 nsenter:  
-pg:  libncursesw libtinfo 
 pivot_root:  
 raw:  
 readprofile:  
@@ -68,14 +67,14 @@ rename:
 renice:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc 
+runuser:  libpam libpam_misc libseccomp 
 script:  librt libutil 
 scriptreplay:  
 setarch:  
 setpriv:  ap-ng 
 setsid:  
 setterm:  libtinfo 
-su:  libpam libpam_misc 
+su:  libpam libpam_misc libseccomp 
 sulogin:  rypt 
 switch_root:  
 tailf:  

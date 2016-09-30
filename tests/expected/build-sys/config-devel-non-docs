@@ -91,14 +91,14 @@ renice:
 resizepart:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc 
+runuser:  libpam libpam_misc libseccomp 
 script:  librt libutempter libutil 
 scriptreplay:  
 setarch:  
 setpriv:  ap-ng 
 setsid:  
 setterm:  libtinfo 
-su:  libpam libpam_misc 
+su:  libpam libpam_misc libseccomp 
 sulogin:  libselinux rypt 
 switch_root:  
 tailf:  
