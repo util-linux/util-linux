@@ -27,7 +27,8 @@ VERSION_MAJOR=$(echo $VERSION | sed 's/-rc[0-9]//; s/\(.*\..*\)\..*/\1/')
 VERSION_DOCS=$(echo $VERSION | sed 's/-rc[0-9]//')
 DISTDIR=${1:-"kernel.org"}/v${VERSION_MAJOR}
 
-GPG_CMD="gpg --use-agent --armor --detach-sign --quiet"
+GPG_PROG=${GPG_PROG:-"gpg"}
+GPG_CMD="$GPG_PROG --use-agent --armor --detach-sign --quiet"
 
 die() {
 	echo $1
