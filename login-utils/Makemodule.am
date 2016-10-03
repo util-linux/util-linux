@@ -140,9 +140,9 @@ su_SOURCES = \
 	login-utils/su-common.h \
 	login-utils/logindefs.c \
 	login-utils/logindefs.h
-su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS) $(SECCOMP_CFLAGS)
+su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-su_LDADD = $(LDADD) libcommon.la -lpam $(SECCOMP_LIBS)
+su_LDADD = $(LDADD) libcommon.la -lpam
 if HAVE_LINUXPAM
 su_LDADD += -lpam_misc
 endif
@@ -158,8 +158,7 @@ runuser_SOURCES = \
 	login-utils/su-common.h \
 	login-utils/logindefs.c \
 	login-utils/logindefs.h
-runuser_LDADD = $(LDADD) libcommon.la -lpam $(SECCOMP_LIBS)
-runuser_CFLAGS = $(AM_CFLAGS) $(SECCOMP_CFLAGS)
+runuser_LDADD = $(LDADD) libcommon.la -lpam
 if HAVE_LINUXPAM
 runuser_LDADD += -lpam_misc
 endif

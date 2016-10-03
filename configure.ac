@@ -1691,22 +1691,6 @@ AS_IF([test "x$with_user" != xno], [
 ])
 AM_CONDITIONAL([HAVE_USER], [test "x$have_user" = xyes])
 
-
-AC_ARG_WITH([libseccomp], AS_HELP_STRING([--without-seccomp], [compile without libseccomp]),
-  [], [with_seccomp=check]
-)
-have_seccomp=no
-AS_IF([test "x$with_seccomp" != xno], [
-  PKG_CHECK_MODULES(SECCOMP,[libseccomp], [have_seccomp=yes], [have_seccomp=no])
-  AS_CASE([$with_seccomp:$have_seccomp],
-    [yes:no],
-      [AC_MSG_ERROR([seccomp selected but libseccomp not found])],
-    [*:yes],
-      [AC_DEFINE([HAVE_LIBSECCOMP], [1], [Define if libseccomp is available])]
-  )
-])
-
-
 AC_ARG_ENABLE([chfn-chsh-password],
   AS_HELP_STRING([--disable-chfn-chsh-password], [do not require the user to enter the password in chfn and chsh]),
   [], [enable_chfn_chsh_password=yes]
