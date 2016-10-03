@@ -451,7 +451,7 @@ static int probe_befs(blkid_probe pr, const struct blkid_idmag *mag)
 	/*
 	 * all checks pass, set LABEL, VERSION and UUID
 	 */
-	if (strlen(bs->name))
+	if (*bs->name != '\0')
 		blkid_probe_set_label(pr, (unsigned char *) bs->name,
 							sizeof(bs->name));
 	if (version)

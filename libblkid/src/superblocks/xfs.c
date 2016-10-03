@@ -169,7 +169,7 @@ static int probe_xfs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!xfs_verify_sb(xs))
 		return 1;
 
-	if (strlen(xs->sb_fname))
+	if (*xs->sb_fname != '\0')
 		blkid_probe_set_label(pr, (unsigned char *) xs->sb_fname,
 				sizeof(xs->sb_fname));
 	blkid_probe_set_uuid(pr, xs->sb_uuid);

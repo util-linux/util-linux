@@ -170,7 +170,7 @@ static void ext_get_info(blkid_probe pr, int ver, struct ext2_super_block *es)
 		   le32_to_cpu(es->s_feature_incompat),
 		   le32_to_cpu(es->s_feature_ro_compat)));
 
-	if (strlen(es->s_volume_name))
+	if (*es->s_volume_name != '\0')
 		blkid_probe_set_label(pr, (unsigned char *) es->s_volume_name,
 					sizeof(es->s_volume_name));
 	blkid_probe_set_uuid(pr, es->s_uuid);

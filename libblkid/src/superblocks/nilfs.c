@@ -143,7 +143,7 @@ static int probe_nilfs2(blkid_probe pr,
 	DBG(LOWPROBE, ul_debug("nilfs2: primary=%d, backup=%d, swap=%d",
 				valid[0], valid[1], swp));
 
-	if (strlen(sb->s_volume_name))
+	if (*(sb->s_volume_name) != '\0')
 		blkid_probe_set_label(pr, (unsigned char *) sb->s_volume_name,
 				      sizeof(sb->s_volume_name));
 
