@@ -26,6 +26,8 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <errno.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #include "c.h"
 #include "nls.h"
@@ -340,6 +342,7 @@ static int set_sched_one_by_setscheduler(struct chrt_ctl *ctl, pid_t pid)
 	struct sched_param sp = { .sched_priority = ctl->priority };
 	int policy = ctl->policy;
 
+	errno = 0;
 # ifdef SCHED_RESET_ON_FORK
 	if (ctl->reset_on_fork)
 		policy |= SCHED_RESET_ON_FORK;
@@ -357,29 +360,28 @@ static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 #else /* !HAVE_SCHED_SETATTR */
 static int set_sched_one(struct chrt_ctl *ctl, pid_t pid)
 {
+	struct sched_attr sa = { .size = sizeof(struct sched_attr) };
+
+	/* old API is good enough for non-deadline */
+	if (ctl->policy != SCHED_DEADLINE)
+		return set_sched_one_by_setscheduler(ctl, pid);
+
+	/* no changeed by chrt, follow the current setting */
+	sa.sched_nice = getpriority(PRIO_PROCESS, pid);
+
 	/* use main() to check if the setting makes sense */
-	struct sched_attr sa = {
-		.size		= sizeof(struct sched_attr),
-		.sched_policy	= ctl->policy,
-		.sched_priority	= ctl->priority,
-		.sched_runtime  = ctl->runtime,
-		.sched_period   = ctl->period,
-		.sched_deadline = ctl->deadline
-	};
-	int rc;
+	sa.sched_policy	  = ctl->policy;
+	sa.sched_priority = ctl->priority;
+	sa.sched_runtime  = ctl->runtime;
+	sa.sched_period   = ctl->period;
+	sa.sched_deadline = ctl->deadline;
 
 # ifdef SCHED_RESET_ON_FORK
 	if (ctl->reset_on_fork)
 		sa.sched_flags |= SCHED_RESET_ON_FORK;
 # endif
 	errno = 0;
-	rc = sched_setattr(pid, &sa, 0);
-
-	if (rc != 0 && errno == ENOSYS && ctl->policy != SCHED_DEADLINE)
-		/* fallback -- build with new kernel/libc, but executed on old kernels */
-		rc = set_sched_one_by_setscheduler(ctl, pid);
-
-	return rc;
+	return sched_setattr(pid, &sa, 0);
 }
 #endif /* HAVE_SCHED_SETATTR */
 
