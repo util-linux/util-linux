@@ -149,6 +149,9 @@ int main(int argc, char *argv[])
 		while (fgetws(buf, bufsiz, fp)) {
 			len = wcslen(buf);
 
+			if (len == 0)
+				continue;
+
 			/* This is my hack from setpwnam.c -janl */
 			while (buf[len-1] != '\n' && !feof(fp)) {
 				/* Extend input buffer if it failed getting the whole line */
