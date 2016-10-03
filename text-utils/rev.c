@@ -68,7 +68,6 @@ wchar_t *buf;
 
 static void sig_handler(int signo __attribute__ ((__unused__)))
 {
-	free(buf);
 	_exit(EXIT_SUCCESS);
 }
 
