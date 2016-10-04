@@ -365,13 +365,13 @@ static void backup_partition_table(struct sfdisk *sf, const char *devname)
 static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_partition *orig_pa)
 {
 	struct fdisk_partition *pa = get_partition(sf->cxt, partno);
-	char *devname, *typescript;
-	FILE *f;
+	char *devname = NULL, *typescript = NULL, *buf = NULL;
+	FILE *f = NULL;
 	int ok = 0, fd, backward = 0;
 	fdisk_sector_t nsectors, from, to, step, i;
 	size_t ss, step_bytes, cc;
 	uintmax_t src, dst;
-	char *buf;
+	int errsv;
 
 	assert(sf->movedata);
 
@@ -519,11 +519,18 @@ static int move_partition_data(struct sfdisk *sf, size_t partno, struct fdisk_pa
 	free(buf);
 	free(devname);
 	free(typescript);
+
 	return 0;
 fail:
+	errsv = -errno;
 	warn(_("%s: failed to move data"), devname);
-	fclose(f);
-	return -errno;
+	if (f)
+		fclose(f);
+	free(buf);
+	free(devname);
+	free(typescript);
+
+	return errsv;
 }
 
 static int write_changes(struct sfdisk *sf)
