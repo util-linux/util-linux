@@ -1171,7 +1171,7 @@ done:
 	free(spec);
 	if (dev) {
 		*path = allocated ? dev : strdup(dev);
-		if (!path)
+		if (!*path)
 			return -ENOMEM;
 		return 0;
 	}
