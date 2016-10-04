@@ -1201,16 +1201,24 @@ inline static int extra_insert_pair(struct cfdisk_line *l, const char *name, con
 	return rc;
 }
 
-#ifdef HAVE_LIBMOUNT
-static char *get_mountpoint(struct cfdisk *cf, const char *uuid, const char *label)
+#ifndef HAVE_LIBMOUNT
+static char *get_mountpoint(	struct cfdisk *cf __attribute__((unused)),
+				const char *tagname __attribute__((unused)),
+				const char *tagdata __attribute__((unused)))
+{
+	return NULL;
+}
+#else
+static char *get_mountpoint(struct cfdisk *cf, const char *tagname, const char *tagdata)
 {
 	struct libmnt_fs *fs = NULL;
 	char *target = NULL;
 	int mounted = 0;
 
-	assert(uuid || label);
+	assert(tagname);
+	assert(tagdata);
 
-	DBG(UI, ul_debug("asking for mountpoint [uuid=%s, label=%s]", uuid, label));
+	DBG(UI, ul_debug("asking for mountpoint [%s=%s]", tagname, tagdata));
 
 	if (!cf->mntcache)
 		cf->mntcache = mnt_new_cache();
@@ -1225,9 +1233,7 @@ static char *get_mountpoint(struct cfdisk *cf, const char *uuid, const char *lab
 	}
 
 	if (cf->mtab)
-		fs = mnt_table_find_tag(cf->mtab,
-					uuid ? "UUID" : "LABEL",
-					uuid ? : label,	MNT_ITER_FORWARD);
+		fs = mnt_table_find_tag(cf->mtab, tagname, tagdata, MNT_ITER_FORWARD);
 
 	/* 2nd try fstab */
 	if (!fs) {
@@ -1239,9 +1245,7 @@ static char *get_mountpoint(struct cfdisk *cf, const char *uuid, const char *lab
 			}
 		}
 		if (cf->fstab)
-			fs = mnt_table_find_tag(cf->fstab,
-					uuid ? "UUID" : "LABEL",
-					uuid ? : label,	MNT_ITER_FORWARD);
+			fs = mnt_table_find_tag(cf->fstab, tagname, tagdata, MNT_ITER_FORWARD);
 	} else
 		mounted = 1;
 
@@ -1261,18 +1265,22 @@ static void extra_prepare_data(struct cfdisk *cf)
 	struct fdisk_partition *pa = get_current_partition(cf);
 	struct cfdisk_line *l = &cf->lines[cf->lines_idx];
 	char *data = NULL;
-	char *devuuid = NULL, *devlabel = NULL;
+	char *mountpoint = NULL;
 
 	DBG(UI, ul_debug("preparing extra data"));
 
 	/* string data should not equal an empty string */
 	if (!fdisk_partition_to_string(pa, cf->cxt, FDISK_FIELD_NAME, &data) && data) {
 		extra_insert_pair(l, _("Partition name:"), data);
+		if (!mountpoint)
+			mountpoint = get_mountpoint(cf, "PARTLABEL", data);
 		free(data);
 	}
 
 	if (!fdisk_partition_to_string(pa, cf->cxt, FDISK_FIELD_UUID, &data) && data) {
 		extra_insert_pair(l, _("Partition UUID:"), data);
+		if (!mountpoint)
+			mountpoint = get_mountpoint(cf, "PARTUUID", data);
 		free(data);
 	}
 
@@ -1314,11 +1322,15 @@ static void extra_prepare_data(struct cfdisk *cf)
 
 	if (!fdisk_partition_to_string(pa, cf->cxt, FDISK_FIELD_FSUUID, &data) && data) {
 		extra_insert_pair(l, _("Filesystem UUID:"), data);
+		if (!mountpoint)
+			mountpoint = get_mountpoint(cf, "UUID", data);
 		free(data);
 	}
 
 	if (!fdisk_partition_to_string(pa, cf->cxt, FDISK_FIELD_FSLABEL, &data) && data) {
 		extra_insert_pair(l, _("Filesystem LABEL:"), data);
+		if (!mountpoint)
+			mountpoint = get_mountpoint(cf, "LABEL", data);
 		free(data);
 	}
 	if (!fdisk_partition_to_string(pa, cf->cxt, FDISK_FIELD_FSTYPE, &data) && data) {
@@ -1326,17 +1338,10 @@ static void extra_prepare_data(struct cfdisk *cf)
 		free(data);
 	}
 
-#ifdef HAVE_LIBMOUNT
-	if (devuuid || devlabel) {
-		data = get_mountpoint(cf, devuuid, devlabel);
-		if (data) {
-			extra_insert_pair(l, _("Mountpoint:"), data);
-			free(data);
-		}
+	if (mountpoint) {
+		extra_insert_pair(l, _("Mountpoint:"), mountpoint);
+		free(mountpoint);
 	}
-#endif /* HAVE_LIBMOUNT */
-	free(devlabel);
-	free(devuuid);
 }
 
 static int ui_draw_extra(struct cfdisk *cf)
