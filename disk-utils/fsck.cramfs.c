@@ -225,7 +225,7 @@ static void test_crc(int start)
 		if (buf != MAP_FAILED) {
 			if (lseek(fd, 0, SEEK_SET) == (off_t) -1)
 				err(FSCK_EX_ERROR, _("seek on %s failed"), filename);
-			if (read(fd, buf, super.size) < 0)
+			if (read(fd, buf, super.size) != (ssize_t) super.size)
 				err(FSCK_EX_ERROR, _("cannot read %s"), filename);
 		}
 	}
