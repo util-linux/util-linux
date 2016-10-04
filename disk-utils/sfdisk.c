@@ -295,10 +295,12 @@ static void backup_sectors(struct sfdisk *sf,
 
 		if (read_all(devfd, (char *) buf, size) != (ssize_t) size) {
 			fdisk_warn(sf->cxt, _("cannot read %s"), devname);
+			free(buf);
 			goto fail;
 		}
 		if (write_all(fd, buf, size) != 0) {
 			fdisk_warn(sf->cxt, _("cannot write %s"), fname);
+			free(buf);
 			goto fail;
 		}
 		free(buf);
