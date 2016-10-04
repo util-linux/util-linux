@@ -30,14 +30,6 @@
 THREAD_LOCAL unsigned short ul_jrand_seed[3];
 #endif
 
-void xsrand(void)
-{
-	struct timeval tv;
-
-	gettimeofday(&tv, 0);
-	srand((getpid() << 16) ^ getuid() ^ tv.tv_sec ^ tv.tv_usec);
-}
-
 int rand_get_number(int low_n, int high_n)
 {
 	return rand() % (high_n - low_n + 1) + low_n;
@@ -56,7 +48,9 @@ int random_get_fd(void)
 		if (i >= 0)
 			fcntl(fd, F_SETFD, i | FD_CLOEXEC);
 	}
-	xsrand();
+
+	gettimeofday(&tv, 0);
+	srand((getpid() << 16) ^ getuid() ^ tv.tv_sec ^ tv.tv_usec);
 
 #ifdef DO_JRAND_MIX
 	ul_jrand_seed[0] = getpid() ^ (tv.tv_sec & 0xFFFF);

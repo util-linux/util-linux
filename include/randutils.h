@@ -7,7 +7,6 @@
 #endif
 
 /* rand() based */
-extern void xsrand(void);
 extern int rand_get_number(int low_n, int high_n);
 
 /* /dev/urandom based with fallback to rand() */
