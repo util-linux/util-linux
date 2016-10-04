@@ -138,7 +138,7 @@ static void isosize(int argc, char *filenamep, int xflag, long divisor)
 	if (lseek(fd, 16 << 11, 0) == (off_t) - 1)
 		err(EXIT_FAILURE, _("seek error on %s"), filenamep);
 
-	if (read(fd, &ipd, sizeof(ipd)) != (ssize_t) sizeof(ipd))
+	if (read(fd, &ipd, sizeof(ipd)) <= 0)
 		err(EXIT_FAILURE, _("read error on %s"), filenamep);
 
 	nsecs = isonum_733(ipd.volume_space_size, xflag);
