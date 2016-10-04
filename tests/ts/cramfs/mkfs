@@ -25,6 +25,7 @@ ts_check_test_command "$TS_CMD_MKCRAMFS"
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
 ts_check_test_command "$TS_HELPER_MD5"
+ts_check_test_command "$TS_HELPER_SYSINFO"
 
 ts_skip_nonroot
 ts_check_losetup
