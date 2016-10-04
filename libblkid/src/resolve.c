@@ -76,8 +76,7 @@ char *blkid_get_devname(blkid_cache cache, const char *token,
 			ret = strdup(token);
 			goto out;
 		}
-		blkid_parse_tag_string(token, &t, &v);
-		if (!t || !v)
+		if (blkid_parse_tag_string(token, &t, &v) != 0 || !t || !v)
 			goto out;
 		token = t;
 		value = v;
