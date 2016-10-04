@@ -206,15 +206,16 @@ size_t mbs_safe_encode_size(size_t bytes)
 char *mbs_safe_encode(const char *s, size_t *width)
 {
 	size_t sz = s ? strlen(s) : 0;
-	char *buf;
+	char *buf, *ret = NULL;;
 
 	if (!sz)
 		return NULL;
 	buf = malloc(mbs_safe_encode_size(sz));
-	if (!buf)
-		return NULL;
-
-	return mbs_safe_encode_to_buffer(s, width, buf, NULL);
+	if (buf)
+		ret = mbs_safe_encode_to_buffer(s, width, buf, NULL);
+	if (!ret)
+		free(buf);
+	return ret;
 }
 
 #ifdef HAVE_WIDECHAR
