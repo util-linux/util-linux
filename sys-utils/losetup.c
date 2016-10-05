@@ -579,7 +579,7 @@ int main(int argc, char **argv)
 		{ "detach", 1, 0, 'd' },
 		{ "detach-all", 0, 0, 'D' },
 		{ "find", 0, 0, 'f' },
-		{ "nooverlaps", 0, 0, 'L' },
+		{ "nooverlap", 0, 0, 'L' },
 		{ "help", 0, 0, 'h' },
 		{ "associated", 1, 0, 'j' },
 		{ "json", 0, 0, 'J' },
