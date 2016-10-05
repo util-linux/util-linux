@@ -250,7 +250,7 @@ static char **get_sys_power_states(struct rtcwake_control *ctl)
 		fd = open(SYS_POWER_STATE_PATH, O_RDONLY);
 		if (fd < 0)
 			goto nothing;
-		if (read(fd, &buf, sizeof buf) <= 0)
+		if (read(fd, &buf, sizeof(buf) - 1) <= 0)
 			goto nothing;
 		ctl->possible_modes = strv_split(buf, " \n");
 		close(fd);
