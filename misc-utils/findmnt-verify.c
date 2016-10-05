@@ -180,7 +180,7 @@ static int verify_source(struct verify_context *vfy)
 	const char *src = mnt_fs_get_srcpath(vfy->fs);
 	char *t = NULL, *v = NULL;
 	struct stat sb;
-	int isbind;
+	int isbind, rc = 0;
 
 	/* source is NAME=value tag */
 	if (!src) {
@@ -195,9 +195,10 @@ static int verify_source(struct verify_context *vfy)
 
 	/* blkid is able to parse it, but libmount does not see it as a tag --
 	 * it means unsupported tag */
-	} else if (blkid_parse_tag_string(src, &t, &v) == 0 && stat(src, &sb) != 0)
-		return verify_err(vfy, _("unsupported source tag: %s"), src);
-
+	} else if (blkid_parse_tag_string(src, &t, &v) == 0 && stat(src, &sb) != 0) {
+		rc = verify_err(vfy, _("unsupported source tag: %s"), src);
+		goto done;
+	}
 	isbind = mnt_fs_get_option(vfy->fs, "bind", NULL, NULL) == 0;
 
 	/* source is path */
@@ -217,7 +218,7 @@ static int verify_source(struct verify_context *vfy)
 done:
 	free(t);
 	free(v);
-	return 0;
+	return rc;
 }
 
 static int verify_options(struct verify_context *vfy)
