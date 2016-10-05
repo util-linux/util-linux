@@ -377,6 +377,7 @@ int main(int argc, char *argv[])
 				return EXIT_SUCCESS;
 			} else
 				warnx(_("unrecognized option '--list'"));
+			/* fallthrough */
 		default:
 			show_usage(NULL);
 		}
