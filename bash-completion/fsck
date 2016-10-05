@@ -32,7 +32,7 @@ _fsck_module()
 			return 0
 			;;
 	esac
-	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
+	COMPREPLY=( $(compgen -W "$(find -L /dev/ -type b 2>/dev/null)" -- $cur) )
 	return 0
 }
 complete -F _fsck_module fsck
