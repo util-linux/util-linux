@@ -165,7 +165,7 @@ static struct colinfo *get_column_info(unsigned num)
 	return &infos[ get_column_id(num) ];
 }
 
-static void usage(FILE *out)
+static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
 	size_t i;
 
