@@ -1,6 +1,10 @@
 
  Note that items with (!) have high priority.
 
+su/runuser:
+  - (!) implement pty container for all su/runuser session (something like
+    script(1)) to separate user from the original terminal (see CVE-2016-2779)
+
 - add functions strtime_short(), strtime_iso(), strtime_ctime(), ...
 
 - cleanup lib/path.c:

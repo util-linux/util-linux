@@ -4,8 +4,15 @@ Util-linux 2.29 Release Notes
 Security issues
 ---------------
 
-CVE-2016-2779 -- fixed by workeround based on libseccomp, the workaround
-                 disables TIOCSTI ioctl in su/runuser session.
+CVE-2016-2779
+
+This security issue is NOT FIXED yet.  It is possible to disable the ioctl
+TIOCSTI by setsid() only.  Unfortunately, setsid() has well-defined use cases
+in su(1) and runuser(1) and any changes would introduce regressions.  It seems
+we need a better way -- ideally another ioctl to disable TIOCSTI without
+setsid() or in userspace implemented pty container (planned as experimental
+feature).
+
 
 Stable maintenance releases between v2.28 and v2.29
 ---------------------------------------------------
