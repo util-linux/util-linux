@@ -44,7 +44,7 @@ cal \- display a calendar
 .br
 .B cal
 [options]
-.RI <timestamp>
+.RI <timestamp|monthname>
 .SH DESCRIPTION
 .B cal
 displays a simple calendar.  If no arguments are specified, the current
@@ -103,10 +103,13 @@ Specifies the \fIyear\fR to be displayed; note the year must be fully specified:
 .B "cal 89"
 will not display a calendar for 1989.
 .TP
-\fBSingle string parameter (e.g. 'cal tomorrow')\fR
-Specifies \fItimestamp\fR. The special placeholders are accepted when parsing timestamp, "now" may be used to
-refer to the current time, "today", "yesterday", "tomorrow" refer to
-of the current day, the day before or the next day, respectively.
+\fBSingle string parameter (e.g. 'cal tomorrow' or 'cal August')\fR
+Specifies \fItimestamp\fR or a \fImonth name\fR according to the current
+locales.
+.sp
+The special placeholders are accepted when parsing timestamp, "now" may be used
+to refer to the current time, "today", "yesterday", "tomorrow" refer to of the
+current day, the day before or the next day, respectively.
 .sp
 The relative date specifications are also accepted, in this case "+" is
 evaluated to the current time plus the specified time span. Correspondingly, a

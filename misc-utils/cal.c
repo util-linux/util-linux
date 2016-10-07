@@ -410,10 +410,14 @@ int main(int argc, char **argv)
 
 	if (argc == 1 && !isdigit_string(*argv)) {
 		usec_t x;
+		/* cal <timestamp> */
 		if (parse_timestamp(*argv, &x) == 0)
 			now = (time_t) (x / 1000000);
+		/* cal <monthname> */
+		else if ((ctl.req.month = monthname_to_number(&ctl, *argv)) > 0)
+			time(&now);	/* this year */
 		else
-			errx(EXIT_FAILURE, _("failed to parse timestamp"));
+			errx(EXIT_FAILURE, _("failed to parse timestamp or unknown month name: %s"), *argv);
 		argc = 0;
 	} else
 		time(&now);
@@ -460,7 +464,8 @@ int main(int argc, char **argv)
 	case 0:
 		ctl.req.day = local_time->tm_yday + 1;
 		ctl.req.year = local_time->tm_year + 1900;
-		ctl.req.month = local_time->tm_mon + 1;
+		if (!ctl.req.month)
+			ctl.req.month = local_time->tm_mon + 1;
 		break;
 	default:
 		usage(stderr);
@@ -969,6 +974,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [[[day] month] year]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] <timestamp|monthname>\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Display a calendar, or some part of it.\n"), out);
