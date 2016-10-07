@@ -50,8 +50,8 @@ cal \- display a calendar
 displays a simple calendar.  If no arguments are specified, the current
 month is displayed.
 .sp
-The \fImonth\fR may be specified as a number (1-12) or as a month name according
-to the current locales.
+The \fImonth\fR may be specified as a number (1-12), as a month name or as an
+abbreviated month name according to the current locales.
 .SH OPTIONS
 .TP
 \fB\-1\fR, \fB\-\-one\fR
@@ -104,7 +104,7 @@ Specifies the \fIyear\fR to be displayed; note the year must be fully specified:
 will not display a calendar for 1989.
 .TP
 \fBSingle string parameter (e.g. 'cal tomorrow' or 'cal August')\fR
-Specifies \fItimestamp\fR or a \fImonth name\fR according to the current
+Specifies \fItimestamp\fR or a \fImonth name\fR (or abbreviated name) according to the current
 locales.
 .sp
 The special placeholders are accepted when parsing timestamp, "now" may be used

@@ -203,6 +203,8 @@ struct cal_request {
 
 struct cal_control {
 	const char *full_month[MONTHS_IN_YEAR];	/* month names */
+	const char *abbr_month[MONTHS_IN_YEAR];	/* abbreviated month names */
+
 	int colormode;			/* day and week number highlight */
 	int num_months;			/* number of requested monts */
 	int span_months;		/* span the date */
@@ -548,14 +550,29 @@ static void init_monthnames(struct cal_control *ctl)
 		ctl->full_month[i] = nl_langinfo(MON_1 + i);
 }
 
+static void init_abbr_monthnames(struct cal_control *ctl)
+{
+	size_t i;
+
+	if (ctl->abbr_month[0] != '\0')
+		return;		/* already initialized */
+
+	for (i = 0; i < MONTHS_IN_YEAR; i++)
+		ctl->abbr_month[i] = nl_langinfo(ABMON_1 + i);
+}
+
 static int monthname_to_number(struct cal_control *ctl, const char *name)
 {
 	size_t i;
 
 	init_monthnames(ctl);
-
 	for (i = 0; i < MONTHS_IN_YEAR; i++)
 		if (strcasecmp(ctl->full_month[i], name) == 0)
+			return i + 1;
+
+	init_abbr_monthnames(ctl);
+	for (i = 0; i < MONTHS_IN_YEAR; i++)
+		if (strcasecmp(ctl->abbr_month[i], name) == 0)
 			return i + 1;
 
 	return -EINVAL;
