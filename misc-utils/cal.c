@@ -429,8 +429,12 @@ int main(int argc, char **argv)
 	case 2:
 		if (isdigit(**argv))
 			ctl.req.month = strtos32_or_err(*argv++, _("illegal month value: use 1-12"));
-		else
-			ctl.req.month = monthname_to_number(&ctl, *argv++);
+		else {
+			ctl.req.month = monthname_to_number(&ctl, *argv);
+			if (ctl.req.month < 0)
+				errx(EXIT_FAILURE, _("unknown month name: %s"), *argv);
+			argv++;
+		}
 		if (ctl.req.month < 1 || MONTHS_IN_YEAR < ctl.req.month)
 			errx(EXIT_FAILURE, _("illegal month value: use 1-12"));
 		/* FALLTHROUGH */
@@ -549,7 +553,7 @@ static int monthname_to_number(struct cal_control *ctl, const char *name)
 		if (strcasecmp(ctl->full_month[i], name) == 0)
 			return i + 1;
 
-	errx(EXIT_FAILURE, _("unknown month name: %s"), name);
+	return -EINVAL;
 }
 
 static void headers_init(struct cal_control *ctl)
