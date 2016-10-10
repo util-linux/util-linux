@@ -406,7 +406,7 @@ static unsigned int write_superblock(struct entry *root, char *base, int size)
 	super->size = size;
 	memcpy(super->signature, CRAMFS_SIGNATURE, sizeof(super->signature));
 
-	super->fsid.crc = crc32(0L, Z_NULL, 0);
+	super->fsid.crc = ul_crc32(0L, Z_NULL, 0);
 	super->fsid.edition = opt_edition;
 	super->fsid.blocks = total_blocks;
 	super->fsid.files = total_nodes;
@@ -700,7 +700,7 @@ int main(int argc, char **argv)
 	loff_t fslen_ub = sizeof(struct cramfs_super);
 	unsigned int fslen_max;
 	char const *dirname, *outfile;
-	uint32_t crc = crc32(0L, Z_NULL, 0);
+	uint32_t crc = ul_crc32(0L, Z_NULL, 0);
 	int c;
 	cramfs_is_big_endian = HOST_IS_BIG_ENDIAN; /* default is to use host order */
 
@@ -856,7 +856,7 @@ int main(int argc, char **argv)
 		       sizeof(struct cramfs_super));
 
 	/* Put the checksum in. */
-	crc = crc32(crc, (unsigned char *) (rom_image+opt_pad), (offset-opt_pad));
+	crc = ul_crc32(crc, (unsigned char *) (rom_image+opt_pad), (offset-opt_pad));
 	((struct cramfs_super *) (rom_image+opt_pad))->fsid.crc = u32_toggle_endianness(cramfs_is_big_endian, crc);
 	if (verbose)
 		printf(_("CRC: %x\n"), crc);

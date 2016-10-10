@@ -214,7 +214,7 @@ static void test_crc(int start)
 		return;
 	}
 
-	crc = crc32(0L, Z_NULL, 0);
+	crc = ul_crc32(0L, Z_NULL, 0);
 
 	buf =
 	    mmap(NULL, super.size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
@@ -231,8 +231,8 @@ static void test_crc(int start)
 	}
 	if (buf != MAP_FAILED) {
 		((struct cramfs_super *)((unsigned char *) buf + start))->fsid.crc =
-		    crc32(0L, Z_NULL, 0);
-		crc = crc32(crc, (unsigned char *) buf + start, super.size - start);
+		    ul_crc32(0L, Z_NULL, 0);
+		crc = ul_crc32(crc, (unsigned char *) buf + start, super.size - start);
 		munmap(buf, super.size);
 	} else {
 		int retval;
@@ -249,15 +249,15 @@ static void test_crc(int start)
 				break;
 			if (length == 0)
 				((struct cramfs_super *)buf)->fsid.crc =
-				    crc32(0L, Z_NULL, 0);
+				    ul_crc32(0L, Z_NULL, 0);
 			length += retval;
 			if (length > (super.size - start)) {
-				crc = crc32(crc, buf,
+				crc = ul_crc32(crc, buf,
 					  retval - (length -
 						    (super.size - start)));
 				break;
 			}
-			crc = crc32(crc, buf, retval);
+			crc = ul_crc32(crc, buf, retval);
 		}
 		free(buf);
 	}

@@ -850,7 +850,7 @@ fail:
 static inline uint32_t count_crc32(const unsigned char *buf, size_t len,
 				   size_t ex_off, size_t ex_len)
 {
-	return (crc32_exclude_offset(~0L, buf, len, ex_off, ex_len) ^ ~0L);
+	return (ul_crc32_exclude_offset(~0L, buf, len, ex_off, ex_len) ^ ~0L);
 }
 
 static inline uint32_t gpt_header_count_crc32(struct gpt_header *header)

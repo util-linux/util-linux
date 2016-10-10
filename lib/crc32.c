@@ -108,7 +108,7 @@ static inline uint32_t crc32_add_char(uint32_t crc, unsigned char c)
  * and does __not__ xor at the end. Then individual users can do
  * whatever they need.
  */
-uint32_t crc32(uint32_t seed, const unsigned char *buf, size_t len)
+uint32_t ul_crc32(uint32_t seed, const unsigned char *buf, size_t len)
 {
 	uint32_t crc = seed;
 	const unsigned char *p = buf;
@@ -121,7 +121,7 @@ uint32_t crc32(uint32_t seed, const unsigned char *buf, size_t len)
 	return crc;
 }
 
-uint32_t crc32_exclude_offset(uint32_t seed, const unsigned char *buf, size_t len,
+uint32_t ul_crc32_exclude_offset(uint32_t seed, const unsigned char *buf, size_t len,
 			      size_t exclude_off, size_t exclude_len)
 {
 	uint32_t crc = seed;

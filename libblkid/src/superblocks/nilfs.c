@@ -89,9 +89,9 @@ static int nilfs_valid_sb(blkid_probe pr, struct nilfs_super_block *sb, int is_b
 	if (bytes < crc_start || bytes > sizeof(struct nilfs_super_block))
 		return 0;
 
-	crc = crc32(le32_to_cpu(sb->s_crc_seed), (unsigned char *)sb, sumoff);
-	crc = crc32(crc, sum, 4);
-	crc = crc32(crc, (unsigned char *)sb + crc_start, bytes - crc_start);
+	crc = ul_crc32(le32_to_cpu(sb->s_crc_seed), (unsigned char *)sb, sumoff);
+	crc = ul_crc32(crc, sum, 4);
+	crc = ul_crc32(crc, (unsigned char *)sb + crc_start, bytes - crc_start);
 
 	return blkid_probe_verify_csum(pr, crc, le32_to_cpu(sb->s_sum));
 }
