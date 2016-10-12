@@ -264,6 +264,9 @@ char *strndup(const char *s, size_t n)
 }
 #endif
 
+static uint32_t _strtou32_or_err(const char *str, const char *errmesg, int base);
+static uint64_t _strtou64_or_err(const char *str, const char *errmesg, int base);
+
 int16_t strtos16_or_err(const char *str, const char *errmesg)
 {
 	int32_t num = strtos32_or_err(str, errmesg);
@@ -275,15 +278,25 @@ int16_t strtos16_or_err(const char *str, const char *errmesg)
 	return num;
 }
 
-uint16_t strtou16_or_err(const char *str, const char *errmesg)
+static uint16_t _strtou16_or_err(const char *str, const char *errmesg, int base)
 {
-	uint32_t num = strtou32_or_err(str, errmesg);
+	uint32_t num = _strtou32_or_err(str, errmesg, base);
 
 	if (num > UINT16_MAX) {
 		errno = ERANGE;
 		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 	}
 	return num;
+}
+
+uint16_t strtou16_or_err(const char *str, const char *errmesg)
+{
+	return _strtou16_or_err(str, errmesg, 10);
+}
+
+uint16_t strtox16_or_err(const char *str, const char *errmesg)
+{
+	return _strtou16_or_err(str, errmesg, 16);
 }
 
 int32_t strtos32_or_err(const char *str, const char *errmesg)
@@ -297,15 +310,25 @@ int32_t strtos32_or_err(const char *str, const char *errmesg)
 	return num;
 }
 
-uint32_t strtou32_or_err(const char *str, const char *errmesg)
+static uint32_t _strtou32_or_err(const char *str, const char *errmesg, int base)
 {
-	uint64_t num = strtou64_or_err(str, errmesg);
+	uint64_t num = _strtou64_or_err(str, errmesg, base);
 
 	if (num > UINT32_MAX) {
 		errno = ERANGE;
 		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 	}
 	return num;
+}
+
+uint32_t strtou32_or_err(const char *str, const char *errmesg)
+{
+	return _strtou32_or_err(str, errmesg, 10);
+}
+
+uint32_t strtox32_or_err(const char *str, const char *errmesg)
+{
+	return _strtou32_or_err(str, errmesg, 16);
 }
 
 int64_t strtos64_or_err(const char *str, const char *errmesg)
@@ -329,7 +352,7 @@ err:
 	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 }
 
-uint64_t strtou64_or_err(const char *str, const char *errmesg)
+static uint64_t _strtou64_or_err(const char *str, const char *errmesg, int base)
 {
 	uintmax_t num;
 	char *end = NULL;
@@ -337,7 +360,7 @@ uint64_t strtou64_or_err(const char *str, const char *errmesg)
 	errno = 0;
 	if (str == NULL || *str == '\0')
 		goto err;
-	num = strtoumax(str, &end, 10);
+	num = strtoumax(str, &end, base);
 
 	if (errno || str == end || (end && *end))
 		goto err;
@@ -350,6 +373,15 @@ err:
 	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 }
 
+uint64_t strtou64_or_err(const char *str, const char *errmesg)
+{
+	return _strtou64_or_err(str, errmesg, 10);
+}
+
+uint64_t strtox64_or_err(const char *str, const char *errmesg)
+{
+	return _strtou64_or_err(str, errmesg, 16);
+}
 
 double strtod_or_err(const char *str, const char *errmesg)
 {
