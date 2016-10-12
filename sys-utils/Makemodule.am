@@ -1,3 +1,11 @@
+if BUILD_LSMEM
+usrbin_exec_PROGRAMS += lsmem
+dist_man_MANS += sys-utils/lsmem.1
+lsmem_SOURCES = sys-utils/lsmem.c
+lsmem_LDADD = $(LDADD) libcommon.la libsmartcols.la
+lsmem_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
+endif
+
 if BUILD_FLOCK
 usrbin_exec_PROGRAMS += flock
 dist_man_MANS += sys-utils/flock.1

@@ -110,6 +110,7 @@ update.log
 /lscpu
 /lslocks
 /lslogins
+/lsmem
 /lsns
 /mcookie
 /mesg
