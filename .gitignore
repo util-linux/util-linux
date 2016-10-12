@@ -68,6 +68,7 @@ update.log
 /cfdisk
 /chcpu
 /chfn
+/chmem
 /chrt
 /chsh
 /col

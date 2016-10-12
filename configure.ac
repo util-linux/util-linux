@@ -1482,6 +1482,13 @@ AC_ARG_ENABLE([lsmem],
 UL_BUILD_INIT([lsmem])
 AM_CONDITIONAL([BUILD_LSMEM], [test "x$build_lsmem" = xyes])
 
+AC_ARG_ENABLE([chmem],
+  AS_HELP_STRING([--disable-chmem], [do not build chmem]),
+  [], [UL_DEFAULT_ENABLE([chmem], [yes])]
+)
+UL_BUILD_INIT([chmem])
+AM_CONDITIONAL([BUILD_CHMEM], [test "x$build_chmem" = xyes])
+
 UL_BUILD_INIT([ipcmk], [yes])
 AM_CONDITIONAL([BUILD_IPCMK], [test "x$build_ipcmk" = xyes])
 

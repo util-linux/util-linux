@@ -6,6 +6,13 @@ lsmem_LDADD = $(LDADD) libcommon.la libsmartcols.la
 lsmem_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
 endif
 
+if BUILD_CHMEM
+usrbin_exec_PROGRAMS += chmem
+dist_man_MANS += sys-utils/chmem.8
+chmem_SOURCES = sys-utils/chmem.c
+chmem_LDADD = $(LDADD) libcommon.la
+endif
+
 if BUILD_FLOCK
 usrbin_exec_PROGRAMS += flock
 dist_man_MANS += sys-utils/flock.1
