@@ -103,6 +103,13 @@ static void run_shell(struct su_context *, char const *, char const *, char **, 
 
 static sig_atomic_t volatile caught_signal = false;
 
+/* Signal handler for parent process.  */
+static void
+su_catch_sig(int sig)
+{
+	caught_signal = sig;
+}
+
 
 static const struct passwd *
 current_getpwuid(void)
@@ -183,57 +190,46 @@ static void log_btmp(struct passwd const * const pw)
 	updwtmpx(_PATH_BTMP, &ut);
 }
 
-static int
-su_pam_conv(int num_msg, const struct pam_message **msg,
-	    struct pam_response **resp, void *appdata_ptr)
+static int supam_conv(	int num_msg,
+			const struct pam_message **msg,
+			struct pam_response **resp,
+			void *data)
 {
-	struct su_context *su = (struct su_context *) appdata_ptr;
+	struct su_context *su = (struct su_context *) data;
 
 	if (su->suppress_pam_info
-	    && num_msg == 1 && msg && msg[0]->msg_style == PAM_TEXT_INFO)
+	    && num_msg == 1
+	    && msg && msg[0]->msg_style == PAM_TEXT_INFO)
 		return PAM_SUCCESS;
 
 #ifdef HAVE_SECURITY_PAM_MISC_H
-	return misc_conv(num_msg, msg, resp, appdata_ptr);
+	return misc_conv(num_msg, msg, resp, data);
 #elif defined(HAVE_SECURITY_OPENPAM_H)
-	return openpam_ttyconv(num_msg, msg, resp, appdata_ptr);
+	return openpam_ttyconv(num_msg, msg, resp, data);
 #endif
 }
 
-static void
-cleanup_pam(struct su_context *su, int retcode)
+static void supam_cleanup(struct su_context *su, int retcode)
 {
 	const int saved_errno = errno;
 
 	if (su->pam_has_session)
 		pam_close_session(su->pamh, 0);
-
 	if (su->pam_has_cred)
 		pam_setcred(su->pamh, PAM_DELETE_CRED | PAM_SILENT);
-
 	pam_end(su->pamh, retcode);
-
 	errno = saved_errno;
 }
 
-/* Signal handler for parent process.  */
-static void
-su_catch_sig(int sig)
-{
-	caught_signal = sig;
-}
 
-/* Export env variables declared by PAM modules.  */
-static void
-export_pamenv(struct su_context *su)
+static void supam_export_environment(struct su_context *su)
 {
-	char **env;
-
 	/* This is a copy but don't care to free as we exec later anyways.  */
-	env = pam_getenvlist(su->pamh);
+	char **env = pam_getenvlist(su->pamh);
+
 	while (env && *env) {
 		if (putenv(*env) != 0)
-			err(EXIT_FAILURE, NULL);
+			err(EXIT_FAILURE, _("failed to modify environment"));
 		env++;
 	}
 }
@@ -249,7 +245,7 @@ create_watching_parent(struct su_context *su)
 
 	retval = pam_open_session(su->pamh, 0);
 	if (is_pam_failure(retval)) {
-		cleanup_pam(su, retval);
+		supam_cleanup(su, retval);
 		errx(EXIT_FAILURE, _("cannot open session: %s"),
 		     pam_strerror(su->pamh, retval));
 	} else
@@ -259,7 +255,7 @@ create_watching_parent(struct su_context *su)
 
 	child = fork();
 	if (child == (pid_t) - 1) {
-		cleanup_pam(su, PAM_ABORT);
+		supam_cleanup(su, PAM_ABORT);
 		err(EXIT_FAILURE, _("cannot create child process"));
 	}
 
@@ -341,7 +337,7 @@ create_watching_parent(struct su_context *su)
 		kill(child, SIGTERM);
 	}
 
-	cleanup_pam(su, PAM_SUCCESS);
+	supam_cleanup(su, PAM_SUCCESS);
 
 	if (caught_signal) {
 		sleep(2);
@@ -501,7 +497,7 @@ modify_environment(struct su_context *su, const struct passwd *pw, const char *s
 		}
 	}
 
-	export_pamenv(su);
+	supam_export_environment(su);
 }
 
 /* Become the user and group(s) specified by PW.  */
@@ -519,7 +515,7 @@ init_groups(struct su_context *su, const struct passwd *pw, gid_t * groups, size
 		retval = initgroups(pw->pw_name, pw->pw_gid);
 
 	if (retval == -1) {
-		cleanup_pam(su, PAM_ABORT);
+		supam_cleanup(su, PAM_ABORT);
 		err(EXIT_FAILURE, _("cannot set groups"));
 	}
 	endgrent();
@@ -718,7 +714,7 @@ int
 su_main(int argc, char **argv, int mode)
 {
 	struct su_context _su = {
-		.conv			= { su_pam_conv, NULL },
+		.conv			= { supam_conv, NULL },
 		.runuser		= (mode == RUNUSER_MODE ? 1 : 0),
 		.change_environment	= 1
 	}, *su = &_su;
