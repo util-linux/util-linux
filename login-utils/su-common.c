@@ -1,48 +1,26 @@
-/* su for Linux.  Run a shell with substitute user and group IDs.
-   Copyright (C) 1992-2006 Free Software Foundation, Inc.
-   Copyright (C) 2012 SUSE Linux Products GmbH, Nuernberg
-
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
-
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation,
-   Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.  */
-
-/* Run a shell with the real and effective UID and GID and groups
-   of USER, default `root'.
-
-   The shell run is taken from USER's password entry, /bin/sh if
-   none is specified there.  If the account has a password, su
-   prompts for a password unless run by a user with real UID 0.
-
-   Does not change the current directory.
-   Sets `HOME' and `SHELL' from the password entry for USER, and if
-   USER is not root, sets `USER' and `LOGNAME' to USER.
-   The subshell is not a login shell.
-
-   If one or more ARGs are given, they are passed as additional
-   arguments to the subshell.
-
-   Does not handle /bin/sh or other shells specially
-   (setting argv[0] to "-su", passing -c only to certain shells, etc.).
-   I don't see the point in doing that, and it's ugly.
-
-   Based on an implementation by David MacKenzie <djm@gnu.ai.mit.edu>.  */
-
-enum {
-	EXIT_CANNOT_INVOKE = 126,
-	EXIT_ENOENT = 127
-};
-
-#include <config.h>
+/*
+ * su(1) for Linux.  Run a shell with substitute user and group IDs.
+ *
+ * Copyright (C) 1992-2006 Free Software Foundation, Inc.
+ * Copyright (C) 2012 SUSE Linux Products GmbH, Nuernberg
+ * Copyright (C) 2016 Karel Zak <kzak@redhat.com>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2, or (at your option) any later
+ * version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.  You should have received a copy of the GNU General Public
+ * License along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
+ * USA.
+ *
+ *
+ * Based on an implementation by David MacKenzie <djm@gnu.ai.mit.edu>.
+ */
 #include <stdio.h>
 #include <getopt.h>
 #include <sys/types.h>
@@ -50,9 +28,9 @@ enum {
 #include <grp.h>
 #include <security/pam_appl.h>
 #ifdef HAVE_SECURITY_PAM_MISC_H
-#include <security/pam_misc.h>
+# include <security/pam_misc.h>
 #elif defined(HAVE_SECURITY_OPENPAM_H)
-#include <security/openpam.h>
+# include <security/openpam.h>
 #endif
 #include <signal.h>
 #include <sys/wait.h>
@@ -62,6 +40,7 @@ enum {
 #include "err.h"
 
 #include <stdbool.h>
+
 #include "c.h"
 #include "xalloc.h"
 #include "nls.h"
@@ -70,6 +49,9 @@ enum {
 #include "closestream.h"
 #include "strutils.h"
 #include "ttyutils.h"
+
+#include "logindefs.h"
+#include "su-common.h"
 
 /* name of the pam configuration files. separate configs for su and su -  */
 #define PAM_SRVNAME_SU "su"
@@ -83,9 +65,6 @@ enum {
 
 #define is_pam_failure(_rc)	((_rc) != PAM_SUCCESS)
 
-#include "logindefs.h"
-#include "su-common.h"
-
 /* The shell to run if none is given in the user's passwd entry.  */
 #define DEFAULT_SHELL "/bin/sh"
 
@@ -95,6 +74,11 @@ enum {
 #ifndef HAVE_ENVIRON_DECL
 extern char **environ;
 #endif
+
+enum {
+	EXIT_CANNOT_INVOKE = 126,
+	EXIT_ENOENT = 127
+};
 
 static void run_shell(char const *, char const *, char **, size_t)
     __attribute__ ((__noreturn__));
