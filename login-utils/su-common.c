@@ -80,33 +80,29 @@ enum {
 	EXIT_ENOENT = 127
 };
 
-static void run_shell(char const *, char const *, char **, size_t)
-    __attribute__ ((__noreturn__));
+/*
+ * su/runuser control struct
+ */
+struct su_context {
+	pam_handle_t	*pamh;			/* PAM handler */
+	struct pam_conv conv;			/* PAM conversation */
 
-/* If true, pass the `-f' option to the subshell.  */
-static bool fast_startup;
+	unsigned int runuser :1,		/* flase=su, true=runuser */
+		     fast_startup :1,		/* pass the `-f' option to the subshell. */
+		     simulate_login :1,		/* simulate a login instead of just starting a shell. */
+		     change_environment :1,	/* change some environment vars to indicate the user su'd to.*/
+		     same_session :1,		/* don't call setsid() with a command. */
+		     suppress_pam_info:1,	/* don't print PAM info messages (Last login, etc.). */
+		     pam_has_session :1,	/* PAM session opened */
+		     pam_has_cred :1,		/* PAM cred established */
+		     restricted :1;		/* false for root user */
+};
 
-/* If true, simulate a login instead of just starting a shell.  */
-static bool simulate_login;
 
-/* If true, change some environment vars to indicate the user su'd to.  */
-static bool change_environment;
+static void run_shell(struct su_context *, char const *, char const *, char **, size_t);
 
-/* If true, then don't call setsid() with a command. */
-static int same_session = 0;
-
-/* SU_MODE_{RUNUSER,SU} */
-static int su_mode;
-
-/* Don't print PAM info messages (Last login, etc.). */
-static int suppress_pam_info;
-
-static bool _pam_session_opened;
-static bool _pam_cred_established;
 static sig_atomic_t volatile caught_signal = false;
-static pam_handle_t *pamh = NULL;
 
-static int restricted = 1;	/* zero for root user */
 
 static const struct passwd *
 current_getpwuid(void)
@@ -131,7 +127,7 @@ current_getpwuid(void)
    if SUCCESSFUL is true, they gave the correct password, etc.  */
 
 static void
-log_syslog(struct passwd const * const pw, const bool successful)
+log_syslog(struct su_context *su, struct passwd const *pw, bool successful)
 {
 	const char *new_user, *old_user, *tty;
 
@@ -152,7 +148,7 @@ log_syslog(struct passwd const * const pw, const bool successful)
 	openlog(program_invocation_short_name, 0, LOG_AUTH);
 	syslog(LOG_NOTICE, "%s(to %s) %s on %s",
 	       successful ? "" :
-	       su_mode == RUNUSER_MODE ? "FAILED RUNUSER " : "FAILED SU ",
+	       su->runuser ? "FAILED RUNUSER " : "FAILED SU ",
 	       new_user, old_user, tty);
 	closelog();
 }
@@ -191,9 +187,12 @@ static int
 su_pam_conv(int num_msg, const struct pam_message **msg,
 	    struct pam_response **resp, void *appdata_ptr)
 {
-	if (suppress_pam_info
+	struct su_context *su = (struct su_context *) appdata_ptr;
+
+	if (su->suppress_pam_info
 	    && num_msg == 1 && msg && msg[0]->msg_style == PAM_TEXT_INFO)
 		return PAM_SUCCESS;
+
 #ifdef HAVE_SECURITY_PAM_MISC_H
 	return misc_conv(num_msg, msg, resp, appdata_ptr);
 #elif defined(HAVE_SECURITY_OPENPAM_H)
@@ -201,23 +200,18 @@ su_pam_conv(int num_msg, const struct pam_message **msg,
 #endif
 }
 
-static struct pam_conv conv = {
-	su_pam_conv,
-	NULL
-};
-
 static void
-cleanup_pam(const int retcode)
+cleanup_pam(struct su_context *su, int retcode)
 {
 	const int saved_errno = errno;
 
-	if (_pam_session_opened)
-		pam_close_session(pamh, 0);
+	if (su->pam_has_session)
+		pam_close_session(su->pamh, 0);
 
-	if (_pam_cred_established)
-		pam_setcred(pamh, PAM_DELETE_CRED | PAM_SILENT);
+	if (su->pam_has_cred)
+		pam_setcred(su->pamh, PAM_DELETE_CRED | PAM_SILENT);
 
-	pam_end(pamh, retcode);
+	pam_end(su->pamh, retcode);
 
 	errno = saved_errno;
 }
@@ -231,12 +225,12 @@ su_catch_sig(int sig)
 
 /* Export env variables declared by PAM modules.  */
 static void
-export_pamenv(void)
+export_pamenv(struct su_context *su)
 {
 	char **env;
 
 	/* This is a copy but don't care to free as we exec later anyways.  */
-	env = pam_getenvlist(pamh);
+	env = pam_getenvlist(su->pamh);
 	while (env && *env) {
 		if (putenv(*env) != 0)
 			err(EXIT_FAILURE, NULL);
@@ -245,7 +239,7 @@ export_pamenv(void)
 }
 
 static void
-create_watching_parent(void)
+create_watching_parent(struct su_context *su)
 {
 	pid_t child;
 	sigset_t ourset;
@@ -253,19 +247,19 @@ create_watching_parent(void)
 	int status = 0;
 	int retval;
 
-	retval = pam_open_session(pamh, 0);
+	retval = pam_open_session(su->pamh, 0);
 	if (is_pam_failure(retval)) {
-		cleanup_pam(retval);
+		cleanup_pam(su, retval);
 		errx(EXIT_FAILURE, _("cannot open session: %s"),
-		     pam_strerror(pamh, retval));
+		     pam_strerror(su->pamh, retval));
 	} else
-		_pam_session_opened = 1;
+		su->pam_has_session = 1;
 
 	memset(oldact, 0, sizeof(oldact));
 
 	child = fork();
 	if (child == (pid_t) - 1) {
-		cleanup_pam(PAM_ABORT);
+		cleanup_pam(su, PAM_ABORT);
 		err(EXIT_FAILURE, _("cannot create child process"));
 	}
 
@@ -291,7 +285,7 @@ create_watching_parent(void)
 		sigemptyset(&action.sa_mask);
 		action.sa_flags = 0;
 		sigemptyset(&ourset);
-		if (!same_session) {
+		if (!su->same_session) {
 			if (sigaddset(&ourset, SIGINT)
 			    || sigaddset(&ourset, SIGQUIT)) {
 				warn(_("cannot set signal handler"));
@@ -307,7 +301,7 @@ create_watching_parent(void)
 			warn(_("cannot set signal handler"));
 			caught_signal = true;
 		}
-		if (!caught_signal && !same_session
+		if (!caught_signal && !su->same_session
 		    && (sigaction(SIGINT, &action, &oldact[1])
 			|| sigaction(SIGQUIT, &action, &oldact[2]))) {
 			warn(_("cannot set signal handler"));
@@ -347,7 +341,7 @@ create_watching_parent(void)
 		kill(child, SIGTERM);
 	}
 
-	cleanup_pam(PAM_SUCCESS);
+	cleanup_pam(su, PAM_SUCCESS);
 
 	if (caught_signal) {
 		sleep(2);
@@ -382,27 +376,17 @@ create_watching_parent(void)
 }
 
 static void
-authenticate(const struct passwd *pw)
+authenticate(struct su_context *su, const struct passwd *pw)
 {
 	const struct passwd *lpw = NULL;
 	const char *cp, *srvname = NULL;
 	int retval;
 
-	switch (su_mode) {
-	case SU_MODE:
-		srvname = simulate_login ? PAM_SRVNAME_SU_L : PAM_SRVNAME_SU;
-		break;
-	case RUNUSER_MODE:
-		srvname =
-		    simulate_login ? PAM_SRVNAME_RUNUSER_L :
-		    PAM_SRVNAME_RUNUSER;
-		break;
-	default:
-		abort();
-		break;
-	}
+	srvname = su->runuser ?
+		   (su->simulate_login ? PAM_SRVNAME_RUNUSER_L : PAM_SRVNAME_RUNUSER) :
+		   (su->simulate_login ? PAM_SRVNAME_SU_L : PAM_SRVNAME_SU);
 
-	retval = pam_start(srvname, pw->pw_name, &conv, &pamh);
+	retval = pam_start(srvname, pw->pw_name, &su->conv, &su->pamh);
 	if (is_pam_failure(retval))
 		goto done;
 
@@ -413,51 +397,49 @@ authenticate(const struct passwd *pw)
 			tty = cp + 5;
 		else
 			tty = cp;
-		retval = pam_set_item(pamh, PAM_TTY, tty);
+		retval = pam_set_item(su->pamh, PAM_TTY, tty);
 		if (is_pam_failure(retval))
 			goto done;
 	}
 
 	lpw = current_getpwuid();
 	if (lpw && lpw->pw_name) {
-		retval =
-		    pam_set_item(pamh, PAM_RUSER, (const void *)lpw->pw_name);
+		retval = pam_set_item(su->pamh, PAM_RUSER, (const void *)lpw->pw_name);
 		if (is_pam_failure(retval))
 			goto done;
 	}
 
-	if (su_mode == RUNUSER_MODE) {
+	if (su->runuser) {
 		/*
 		 * This is the only difference between runuser(1) and su(1). The command
 		 * runuser(1) does not required authentication, because user is root.
 		 */
-		if (restricted)
-			errx(EXIT_FAILURE,
-			     _("may not be used by non-root users"));
+		if (su->restricted)
+			errx(EXIT_FAILURE, _("may not be used by non-root users"));
 		return;
 	}
 
-	retval = pam_authenticate(pamh, 0);
+	retval = pam_authenticate(su->pamh, 0);
 	if (is_pam_failure(retval))
 		goto done;
 
-	retval = pam_acct_mgmt(pamh, 0);
+	retval = pam_acct_mgmt(su->pamh, 0);
 	if (retval == PAM_NEW_AUTHTOK_REQD) {
 		/* Password has expired.  Offer option to change it.  */
-		retval = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
+		retval = pam_chauthtok(su->pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
 	}
 
  done:
 
-	log_syslog(pw, !is_pam_failure(retval));
+	log_syslog(su, pw, !is_pam_failure(retval));
 
 	if (is_pam_failure(retval)) {
 		const char *msg;
 
 		log_btmp(pw);
 
-		msg = pam_strerror(pamh, retval);
-		pam_end(pamh, retval);
+		msg = pam_strerror(su->pamh, retval);
+		pam_end(su->pamh, retval);
 		sleep(getlogindefs_num("FAIL_DELAY", 1));
 		errx(EXIT_FAILURE, "%s", msg ? msg : _("incorrect password"));
 	}
@@ -482,9 +464,9 @@ set_path(const struct passwd * const pw)
    the value for the SHELL environment variable.  */
 
 static void
-modify_environment (const struct passwd * const pw, const char * const shell)
+modify_environment(struct su_context *su, const struct passwd *pw, const char *shell)
 {
-	if (simulate_login) {
+	if (su->simulate_login) {
 		/* Leave TERM unchanged.  Set HOME, SHELL, USER, LOGNAME, PATH.
 		   Unset all other environment variables.  */
 		char *term = getenv("TERM");
@@ -505,7 +487,7 @@ modify_environment (const struct passwd * const pw, const char * const shell)
 	} else {
 		/* Set HOME, SHELL, and (if not becoming a superuser)
 		   USER and LOGNAME.  */
-		if (change_environment) {
+		if (su->change_environment) {
 			xsetenv("HOME", pw->pw_dir, 1);
 			if (shell)
 				xsetenv("SHELL", shell, 1);
@@ -519,13 +501,13 @@ modify_environment (const struct passwd * const pw, const char * const shell)
 		}
 	}
 
-	export_pamenv();
+	export_pamenv(su);
 }
 
 /* Become the user and group(s) specified by PW.  */
 
 static void
-init_groups (const struct passwd * const pw, const gid_t * const groups, const size_t num_groups)
+init_groups(struct su_context *su, const struct passwd *pw, gid_t * groups, size_t num_groups)
 {
 	int retval;
 
@@ -537,16 +519,16 @@ init_groups (const struct passwd * const pw, const gid_t * const groups, const s
 		retval = initgroups(pw->pw_name, pw->pw_gid);
 
 	if (retval == -1) {
-		cleanup_pam(PAM_ABORT);
+		cleanup_pam(su, PAM_ABORT);
 		err(EXIT_FAILURE, _("cannot set groups"));
 	}
 	endgrent();
 
-	retval = pam_setcred(pamh, PAM_ESTABLISH_CRED);
+	retval = pam_setcred(su->pamh, PAM_ESTABLISH_CRED);
 	if (is_pam_failure(retval))
-		errx(EXIT_FAILURE, "%s", pam_strerror(pamh, retval));
+		errx(EXIT_FAILURE, "%s", pam_strerror(su->pamh, retval));
 	else
-		_pam_cred_established = 1;
+		su->pam_has_cred = 1;
 }
 
 static void
@@ -564,15 +546,16 @@ change_identity (const struct passwd * const pw)
    are N_ADDITIONAL_ARGS extra arguments.  */
 
 static void
-run_shell (char const * const shell, char const * const command, char ** const additional_args,
-	   const size_t n_additional_args)
+run_shell(struct su_context *su,
+	  char const *shell, char const *command, char **additional_args,
+	  size_t n_additional_args)
 {
 	size_t n_args =
-	    1 + fast_startup + 2 * ! !command + n_additional_args + 1;
+	    1 + su->fast_startup + 2 * ! !command + n_additional_args + 1;
 	char const **args = xcalloc(n_args, sizeof *args);
 	size_t argno = 1;
 
-	if (simulate_login) {
+	if (su->simulate_login) {
 		char *arg0;
 		char *shell_basename;
 
@@ -583,7 +566,7 @@ run_shell (char const * const shell, char const * const command, char ** const a
 		args[0] = arg0;
 	} else
 		args[0] = basename(shell);
-	if (fast_startup)
+	if (su->fast_startup)
 		args[argno++] = "-f";
 	if (command) {
 		args[argno++] = "-c";
@@ -620,10 +603,9 @@ restricted_shell (const char * const shell)
 	return true;
 }
 
-
-static void __attribute__ ((__noreturn__)) usage(int status)
+static void __attribute__ ((__noreturn__)) usage(int status, int mode)
 {
-	if (su_mode == RUNUSER_MODE) {
+	if (mode == RUNUSER_MODE) {
 		fputs(USAGE_HEADER, stdout);
 		printf(_(" %s [options] -u <user> <command>\n"),
 		       program_invocation_short_name);
@@ -681,22 +663,15 @@ static void __attribute__ ((__noreturn__)) usage(int status)
 
 	fputs(USAGE_SEPARATOR, stdout);
 	printf(USAGE_HELP_OPTIONS(22));
-	printf(USAGE_MAN_TAIL(su_mode == SU_MODE ? "su(1)" : "runuser(1)"));
+	printf(USAGE_MAN_TAIL(mode == SU_MODE ? "su(1)" : "runuser(1)"));
 	exit(status);
 }
 
-static void
-load_config(void)
+static void load_config(void *data)
 {
-	switch (su_mode) {
-	case SU_MODE:
-		logindefs_load_file(_PATH_LOGINDEFS_SU);
-		break;
-	case RUNUSER_MODE:
-		logindefs_load_file(_PATH_LOGINDEFS_RUNUSER);
-		break;
-	}
+	struct su_context *su = (struct su_context *) data;
 
+	logindefs_load_file(su->runuser ? _PATH_LOGINDEFS_RUNUSER : _PATH_LOGINDEFS_SU);
 	logindefs_load_file(_PATH_LOGINDEFS);
 }
 
@@ -739,6 +714,12 @@ add_supp_group(const char *name, gid_t ** groups, size_t * ngroups)
 int
 su_main(int argc, char **argv, int mode)
 {
+	struct su_context _su = {
+		.conv			= { su_pam_conv, NULL },
+		.runuser		= (mode == RUNUSER_MODE ? 1 : 0),
+		.change_environment	= 1
+	}, *su = &_su;
+
 	int optc;
 	const char *new_user = DEFAULT_USER, *runuser_user = NULL;
 	char *command = NULL;
@@ -773,10 +754,7 @@ su_main(int argc, char **argv, int mode)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	su_mode = mode;
-	fast_startup = false;
-	simulate_login = false;
-	change_environment = true;
+	su->conv.appdata_ptr = (void *) su;
 
 	while ((optc =
 		getopt_long(argc, argv, "c:fg:G:lmps:u:hV", longopts,
@@ -792,7 +770,7 @@ su_main(int argc, char **argv, int mode)
 			break;
 
 		case 'f':
-			fast_startup = true;
+			su->fast_startup = true;
 			break;
 
 		case 'g':
@@ -806,12 +784,12 @@ su_main(int argc, char **argv, int mode)
 			break;
 
 		case 'l':
-			simulate_login = true;
+			su->simulate_login = true;
 			break;
 
 		case 'm':
 		case 'p':
-			change_environment = false;
+			su->change_environment = false;
 			break;
 
 		case 's':
@@ -819,42 +797,42 @@ su_main(int argc, char **argv, int mode)
 			break;
 
 		case 'u':
-			if (su_mode != RUNUSER_MODE)
-				usage(EXIT_FAILURE);
+			if (!su->runuser)
+				usage(mode, EXIT_FAILURE);
 			runuser_user = optarg;
 			break;
 
 		case 'h':
-			usage(0);
+			usage(mode, 0);
 
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
 
 		default:
-			usage(EXIT_FAILURE);
+			usage(mode, EXIT_FAILURE);
 		}
 	}
 
-	restricted = evaluate_uid();
+	su->restricted = evaluate_uid();
 
 	if (optind < argc && !strcmp(argv[optind], "-")) {
-		simulate_login = true;
+		su->simulate_login = true;
 		++optind;
 	}
 
-	if (simulate_login && !change_environment) {
+	if (su->simulate_login && !su->change_environment) {
 		warnx(_
 		      ("ignoring --preserve-environment, it's mutually exclusive with --login"));
-		change_environment = true;
+		su->change_environment = true;
 	}
 
-	switch (su_mode) {
+	switch (mode) {
 	case RUNUSER_MODE:
 		if (runuser_user) {
 			/* runuser -u <user> <command> */
 			new_user = runuser_user;
-			if (shell || fast_startup || command || simulate_login) {
+			if (shell || su->fast_startup || command || su->simulate_login) {
 				errx(EXIT_FAILURE,
 				     _
 				     ("options --{shell,fast,command,session-command,login} and "
@@ -875,11 +853,11 @@ su_main(int argc, char **argv, int mode)
 		break;
 	}
 
-	if ((use_supp || use_gid) && restricted)
+	if ((use_supp || use_gid) && su->restricted)
 		errx(EXIT_FAILURE,
 		     _("only root can specify alternative groups"));
 
-	logindefs_load_defaults = load_config;
+	logindefs_set_loader(load_config, (void *) su);
 
 	pw = getpwnam(new_user);
 	if (!(pw && pw->pw_name && pw->pw_name[0] && pw->pw_dir && pw->pw_dir[0]
@@ -906,16 +884,16 @@ su_main(int argc, char **argv, int mode)
 	else if (use_gid)
 		pw->pw_gid = gid;
 
-	authenticate(pw);
+	authenticate(su, pw);
 
 	if (request_same_session || !command || !pw->pw_uid)
-		same_session = 1;
+		su->same_session = 1;
 
 	/* initialize shell variable only if "-u <user>" not specified */
 	if (runuser_user) {
 		shell = NULL;
 	} else {
-		if (!shell && !change_environment)
+		if (!shell && !su->change_environment)
 			shell = getenv("SHELL");
 		if (shell && getuid() != 0 && restricted_shell(pw->pw_shell)) {
 			/* The user being su'd to has a nonstandard shell, and so is
@@ -928,30 +906,29 @@ su_main(int argc, char **argv, int mode)
 		shell = xstrdup(shell ? shell : pw->pw_shell);
 	}
 
-	init_groups(pw, groups, ngroups);
+	init_groups(su, pw, groups, ngroups);
 
-	if (!simulate_login || command)
-		suppress_pam_info = 1;	/* don't print PAM info messages */
+	if (!su->simulate_login || command)
+		su->suppress_pam_info = 1;	/* don't print PAM info messages */
 
-	create_watching_parent();
+	create_watching_parent(su);
 	/* Now we're in the child.  */
 
 	change_identity(pw);
-	if (!same_session)
+	if (!su->same_session)
 		setsid();
 
 	/* Set environment after pam_open_session, which may put KRB5CCNAME
 	   into the pam_env, etc.  */
 
-	modify_environment(pw, shell);
+	modify_environment(su, pw, shell);
 
-	if (simulate_login && chdir(pw->pw_dir) != 0)
+	if (su->simulate_login && chdir(pw->pw_dir) != 0)
 		warn(_("warning: cannot change directory to %s"), pw->pw_dir);
 
 	if (shell)
-		run_shell(shell, command, argv + optind, max(0, argc - optind));
-	else {
-		execvp(argv[optind], &argv[optind]);
-		err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
-	}
+		run_shell(su, shell, command, argv + optind, max(0, argc - optind));
+
+	execvp(argv[optind], &argv[optind]);
+	err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
 }

@@ -48,7 +48,8 @@ struct item {
 
 static struct item *list = NULL;
 
-void (*logindefs_load_defaults)(void) = NULL;
+static void (*logindefs_loader)(void *) = NULL;
+static void *logindefs_loader_data = NULL;
 
 void free_getlogindefs_data(void)
 {
@@ -144,10 +145,16 @@ void logindefs_load_file(const char *filename)
 	fclose(f);
 }
 
+void logindefs_set_loader(void (*loader)(void *data), void *data)
+{
+	logindefs_loader = loader;
+	logindefs_loader_data = data;
+}
+
 static void load_defaults(void)
 {
-	if (logindefs_load_defaults)
-		logindefs_load_defaults();
+	if (logindefs_loader)
+		logindefs_loader(logindefs_loader_data);
 	else
 		logindefs_load_file(_PATH_LOGINDEFS);
 }
