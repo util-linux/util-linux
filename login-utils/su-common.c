@@ -49,6 +49,7 @@
 #include "closestream.h"
 #include "strutils.h"
 #include "ttyutils.h"
+#include "pwdutils.h"
 
 #include "logindefs.h"
 #include "su-common.h"
@@ -86,6 +87,9 @@ enum {
 struct su_context {
 	pam_handle_t	*pamh;			/* PAM handler */
 	struct pam_conv conv;			/* PAM conversation */
+
+	struct passwd	*pwd;			/* new user info */
+	char		*pwdbuf;		/* pwd strings */
 
 	const char	*tty_name;		/* tty_path without /dev prefix */
 	const char	*tty_number;		/* end of the tty_path */
@@ -145,17 +149,17 @@ static void init_tty(struct su_context *su)
 /* Log the fact that someone has run su to the user given by PW;
    if SUCCESSFUL is true, they gave the correct password, etc.  */
 
-static void log_syslog(struct su_context *su, struct passwd const *pw, bool successful)
+static void log_syslog(struct su_context *su, bool successful)
 {
-	const char *new_user, *old_user;
+	const char *new_user = su->pwd->pw_name,
+		   *old_user;
 
-	new_user = pw->pw_name;
 	/* The utmp entry (via getlogin) is probably the best way to identify
-	   the user, especially if someone su's from a su-shell.  */
+	 * the user, especially if someone su's from a su-shell.
+	 */
 	old_user = getlogin();
 	if (!old_user) {
-		/* getlogin can fail -- usually due to lack of utmp entry.
-		   Resort to getpwuid.  */
+		/* probably lack of utmp entry; resort to getpwuid. */
 		const struct passwd *pwd = current_getpwuid();
 		old_user = pwd ? pwd->pw_name : "";
 	}
@@ -172,14 +176,14 @@ static void log_syslog(struct su_context *su, struct passwd const *pw, bool succ
 /*
  * Log failed login attempts in _PATH_BTMP if that exists.
  */
-static void log_btmp(struct su_context *su, struct passwd const * const pw)
+static void log_btmp(struct su_context *su)
 {
 	struct utmpx ut;
 	struct timeval tv;
 
 	memset(&ut, 0, sizeof(ut));
 	strncpy(ut.ut_user,
-		pw && pw->pw_name ? pw->pw_name : "(unknown)",
+		su->pwd && su->pwd->pw_name ? su->pwd->pw_name : "(unknown)",
 		sizeof(ut.ut_user));
 
 	if (su->tty_number)
@@ -240,7 +244,7 @@ static void supam_export_environment(struct su_context *su)
 	}
 }
 
-static void supam_authenticate(struct su_context *su, const struct passwd *pw)
+static void supam_authenticate(struct su_context *su)
 {
 	const struct passwd *lpw = NULL;
 	const char *srvname = NULL;
@@ -250,7 +254,7 @@ static void supam_authenticate(struct su_context *su, const struct passwd *pw)
 		   (su->simulate_login ? PAM_SRVNAME_RUNUSER_L : PAM_SRVNAME_RUNUSER) :
 		   (su->simulate_login ? PAM_SRVNAME_SU_L : PAM_SRVNAME_SU);
 
-	retval = pam_start(srvname, pw->pw_name, &su->conv, &su->pamh);
+	retval = pam_start(srvname, su->pwd->pw_name, &su->conv, &su->pamh);
 	if (is_pam_failure(retval))
 		goto done;
 
@@ -289,12 +293,12 @@ static void supam_authenticate(struct su_context *su, const struct passwd *pw)
 
  done:
 
-	log_syslog(su, pw, !is_pam_failure(retval));
+	log_syslog(su, !is_pam_failure(retval));
 
 	if (is_pam_failure(retval)) {
 		const char *msg;
 
-		log_btmp(su, pw);
+		log_btmp(su);
 
 		msg = pam_strerror(su->pamh, retval);
 		pam_end(su->pamh, retval);
@@ -460,8 +464,10 @@ set_path(const struct passwd * const pw)
    the value for the SHELL environment variable.  */
 
 static void
-modify_environment(struct su_context *su, const struct passwd *pw, const char *shell)
+modify_environment(struct su_context *su, const char *shell)
 {
+	const struct passwd *pw = su->pwd;
+
 	if (su->simulate_login) {
 		/* Leave TERM unchanged.  Set HOME, SHELL, USER, LOGNAME, PATH.
 		   Unset all other environment variables.  */
@@ -503,7 +509,7 @@ modify_environment(struct su_context *su, const struct passwd *pw, const char *s
 /* Become the user and group(s) specified by PW.  */
 
 static void
-init_groups(struct su_context *su, const struct passwd *pw, gid_t * groups, size_t num_groups)
+init_groups(struct su_context *su, gid_t * groups, size_t num_groups)
 {
 	int retval;
 
@@ -512,7 +518,7 @@ init_groups(struct su_context *su, const struct passwd *pw, gid_t * groups, size
 	if (num_groups)
 		retval = setgroups(num_groups, groups);
 	else
-		retval = initgroups(pw->pw_name, pw->pw_gid);
+		retval = initgroups(su->pwd->pw_name, su->pwd->pw_gid);
 
 	if (retval == -1) {
 		supam_cleanup(su, PAM_ABORT);
@@ -724,8 +730,6 @@ su_main(int argc, char **argv, int mode)
 	char *command = NULL;
 	int request_same_session = 0;
 	char *shell = NULL;
-	struct passwd *pw;
-	struct passwd pw_copy;
 
 	gid_t *groups = NULL;
 	size_t ngroups = 0;
@@ -859,34 +863,24 @@ su_main(int argc, char **argv, int mode)
 	logindefs_set_loader(load_config, (void *) su);
 	init_tty(su);
 
-	pw = getpwnam(new_user);
-	if (!(pw && pw->pw_name && pw->pw_name[0] && pw->pw_dir && pw->pw_dir[0]
-	      && pw->pw_passwd))
+	su->pwd = xgetpwnam(new_user, &su->pwdbuf);
+	if (!su->pwd
+	    || !su->pwd->pw_passwd
+	    || !su->pwd->pw_name || !*su->pwd->pw_name
+	    || !su->pwd->pw_dir  || !*su->pwd->pw_dir)
 		errx(EXIT_FAILURE, _("user %s does not exist"), new_user);
 
-	/* Make a copy of the password information and point pw at the local
-	   copy instead.  Otherwise, some systems (e.g. Linux) would clobber
-	   the static data through the getlogin call from log_su.
-	   Also, make sure pw->pw_shell is a nonempty string.
-	   It may be NULL when NEW_USER is a username that is retrieved via NIS (YP),
-	   but that doesn't have a default shell listed.  */
-	pw_copy = *pw;
-	pw = &pw_copy;
-	pw->pw_name = xstrdup(pw->pw_name);
-	pw->pw_passwd = xstrdup(pw->pw_passwd);
-	pw->pw_dir = xstrdup(pw->pw_dir);
-	pw->pw_shell = xstrdup(pw->pw_shell && pw->pw_shell[0]
-			       ? pw->pw_shell : DEFAULT_SHELL);
-	endpwent();
+	if (!su->pwd->pw_shell || !*su->pwd->pw_shell)
+		su->pwd->pw_shell = DEFAULT_SHELL;
 
 	if (use_supp && !use_gid)
-		pw->pw_gid = groups[0];
+		su->pwd->pw_gid = groups[0];
 	else if (use_gid)
-		pw->pw_gid = gid;
+		su->pwd->pw_gid = gid;
 
-	supam_authenticate(su, pw);
+	supam_authenticate(su);
 
-	if (request_same_session || !command || !pw->pw_uid)
+	if (request_same_session || !command || !su->pwd->pw_uid)
 		su->same_session = 1;
 
 	/* initialize shell variable only if "-u <user>" not specified */
@@ -895,18 +889,18 @@ su_main(int argc, char **argv, int mode)
 	} else {
 		if (!shell && !su->change_environment)
 			shell = getenv("SHELL");
-		if (shell && getuid() != 0 && restricted_shell(pw->pw_shell)) {
+		if (shell && getuid() != 0 && restricted_shell(su->pwd->pw_shell)) {
 			/* The user being su'd to has a nonstandard shell, and so is
 			   probably a uucp account or has restricted access.  Don't
 			   compromise the account by allowing access with a standard
 			   shell.  */
-			warnx(_("using restricted shell %s"), pw->pw_shell);
+			warnx(_("using restricted shell %s"), su->pwd->pw_shell);
 			shell = NULL;
 		}
-		shell = xstrdup(shell ? shell : pw->pw_shell);
+		shell = xstrdup(shell ? shell : su->pwd->pw_shell);
 	}
 
-	init_groups(su, pw, groups, ngroups);
+	init_groups(su, groups, ngroups);
 
 	if (!su->simulate_login || command)
 		su->suppress_pam_info = 1;	/* don't print PAM info messages */
@@ -914,17 +908,17 @@ su_main(int argc, char **argv, int mode)
 	create_watching_parent(su);
 	/* Now we're in the child.  */
 
-	change_identity(pw);
+	change_identity(su->pwd);
 	if (!su->same_session)
 		setsid();
 
 	/* Set environment after pam_open_session, which may put KRB5CCNAME
 	   into the pam_env, etc.  */
 
-	modify_environment(su, pw, shell);
+	modify_environment(su, shell);
 
-	if (su->simulate_login && chdir(pw->pw_dir) != 0)
-		warn(_("warning: cannot change directory to %s"), pw->pw_dir);
+	if (su->simulate_login && chdir(su->pwd->pw_dir) != 0)
+		warn(_("warning: cannot change directory to %s"), su->pwd->pw_dir);
 
 	if (shell)
 		run_shell(su, shell, command, argv + optind, max(0, argc - optind));
