@@ -87,7 +87,11 @@ struct su_context {
 	pam_handle_t	*pamh;			/* PAM handler */
 	struct pam_conv conv;			/* PAM conversation */
 
+	const char	*tty_name;		/* tty_path without /dev prefix */
+	const char	*tty_number;		/* end of the tty_path */
+
 	unsigned int runuser :1,		/* flase=su, true=runuser */
+		     isterm :1,			/* is stdin terminal? */
 		     fast_startup :1,		/* pass the `-f' option to the subshell. */
 		     simulate_login :1,		/* simulate a login instead of just starting a shell. */
 		     change_environment :1,	/* change some environment vars to indicate the user su'd to.*/
@@ -130,13 +134,20 @@ current_getpwuid(void)
 	return errno == 0 ? getpwuid(ruid) : NULL;
 }
 
+
+static void init_tty(struct su_context *su)
+{
+	su->isterm = isatty(STDIN_FILENO) ? 1 : 0;
+	if (su->isterm)
+		get_terminal_name(NULL, &su->tty_name, &su->tty_number);
+}
+
 /* Log the fact that someone has run su to the user given by PW;
    if SUCCESSFUL is true, they gave the correct password, etc.  */
 
-static void
-log_syslog(struct su_context *su, struct passwd const *pw, bool successful)
+static void log_syslog(struct su_context *su, struct passwd const *pw, bool successful)
 {
-	const char *new_user, *old_user, *tty;
+	const char *new_user, *old_user;
 
 	new_user = pw->pw_name;
 	/* The utmp entry (via getlogin) is probably the best way to identify
@@ -149,37 +160,32 @@ log_syslog(struct su_context *su, struct passwd const *pw, bool successful)
 		old_user = pwd ? pwd->pw_name : "";
 	}
 
-	if (get_terminal_name(NULL, &tty, NULL) != 0 || !tty)
-		tty = "none";
-
 	openlog(program_invocation_short_name, 0, LOG_AUTH);
 	syslog(LOG_NOTICE, "%s(to %s) %s on %s",
 	       successful ? "" :
 	       su->runuser ? "FAILED RUNUSER " : "FAILED SU ",
-	       new_user, old_user, tty);
+	       new_user, old_user,
+	       su->tty_name ? : "none");
 	closelog();
 }
 
 /*
  * Log failed login attempts in _PATH_BTMP if that exists.
  */
-static void log_btmp(struct passwd const * const pw)
+static void log_btmp(struct su_context *su, struct passwd const * const pw)
 {
 	struct utmpx ut;
 	struct timeval tv;
-	const char *tty_name, *tty_num;
 
 	memset(&ut, 0, sizeof(ut));
-
 	strncpy(ut.ut_user,
 		pw && pw->pw_name ? pw->pw_name : "(unknown)",
 		sizeof(ut.ut_user));
 
-	get_terminal_name(NULL, &tty_name, &tty_num);
-	if (tty_num)
-		xstrncpy(ut.ut_id, tty_num, sizeof(ut.ut_id));
-	if (tty_name)
-		xstrncpy(ut.ut_line, tty_name, sizeof(ut.ut_line));
+	if (su->tty_number)
+		xstrncpy(ut.ut_id, su->tty_number, sizeof(ut.ut_id));
+	if (su->tty_name)
+		xstrncpy(ut.ut_line, su->tty_name, sizeof(ut.ut_line));
 
 	gettimeofday(&tv, NULL);
 	ut.ut_tv.tv_sec = tv.tv_sec;
@@ -237,7 +243,7 @@ static void supam_export_environment(struct su_context *su)
 static void supam_authenticate(struct su_context *su, const struct passwd *pw)
 {
 	const struct passwd *lpw = NULL;
-	const char *cp, *srvname = NULL;
+	const char *srvname = NULL;
 	int retval;
 
 	srvname = su->runuser ?
@@ -248,14 +254,8 @@ static void supam_authenticate(struct su_context *su, const struct passwd *pw)
 	if (is_pam_failure(retval))
 		goto done;
 
-	if (isatty(0) && (cp = ttyname(0)) != NULL) {
-		const char *tty;
-
-		if (strncmp(cp, "/dev/", 5) == 0)
-			tty = cp + 5;
-		else
-			tty = cp;
-		retval = pam_set_item(su->pamh, PAM_TTY, tty);
+	if (su->tty_name) {
+		retval = pam_set_item(su->pamh, PAM_TTY, su->tty_name);
 		if (is_pam_failure(retval))
 			goto done;
 	}
@@ -294,7 +294,7 @@ static void supam_authenticate(struct su_context *su, const struct passwd *pw)
 	if (is_pam_failure(retval)) {
 		const char *msg;
 
-		log_btmp(pw);
+		log_btmp(su, pw);
 
 		msg = pam_strerror(su->pamh, retval);
 		pam_end(su->pamh, retval);
@@ -857,6 +857,7 @@ su_main(int argc, char **argv, int mode)
 		     _("only root can specify alternative groups"));
 
 	logindefs_set_loader(load_config, (void *) su);
+	init_tty(su);
 
 	pw = getpwnam(new_user);
 	if (!(pw && pw->pw_name && pw->pw_name[0] && pw->pw_dir && pw->pw_dir[0]
