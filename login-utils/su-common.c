@@ -189,14 +189,14 @@ static int supam_conv(	int num_msg,
 
 static void supam_cleanup(struct su_context *su, int retcode)
 {
-	const int saved_errno = errno;
+	const int errsv = errno;
 
 	if (su->pam_has_session)
 		pam_close_session(su->pamh, 0);
 	if (su->pam_has_cred)
 		pam_setcred(su->pamh, PAM_DELETE_CRED | PAM_SILENT);
 	pam_end(su->pamh, retcode);
-	errno = saved_errno;
+	errno = errsv;
 }
 
 
@@ -215,24 +215,24 @@ static void supam_export_environment(struct su_context *su)
 static void supam_authenticate(struct su_context *su)
 {
 	const char *srvname = NULL;
-	int retval;
+	int rc;
 
 	srvname = su->runuser ?
 		   (su->simulate_login ? PAM_SRVNAME_RUNUSER_L : PAM_SRVNAME_RUNUSER) :
 		   (su->simulate_login ? PAM_SRVNAME_SU_L : PAM_SRVNAME_SU);
 
-	retval = pam_start(srvname, su->pwd->pw_name, &su->conv, &su->pamh);
-	if (is_pam_failure(retval))
+	rc = pam_start(srvname, su->pwd->pw_name, &su->conv, &su->pamh);
+	if (is_pam_failure(rc))
 		goto done;
 
 	if (su->tty_name) {
-		retval = pam_set_item(su->pamh, PAM_TTY, su->tty_name);
-		if (is_pam_failure(retval))
+		rc = pam_set_item(su->pamh, PAM_TTY, su->tty_name);
+		if (is_pam_failure(rc))
 			goto done;
 	}
 	if (su->old_user) {
-		retval = pam_set_item(su->pamh, PAM_RUSER, (const void *) su->old_user);
-		if (is_pam_failure(retval))
+		rc = pam_set_item(su->pamh, PAM_RUSER, (const void *) su->old_user);
+		if (is_pam_failure(rc))
 			goto done;
 	}
 	if (su->runuser) {
@@ -245,27 +245,24 @@ static void supam_authenticate(struct su_context *su)
 		return;
 	}
 
-	retval = pam_authenticate(su->pamh, 0);
-	if (is_pam_failure(retval))
+	rc = pam_authenticate(su->pamh, 0);
+	if (is_pam_failure(rc))
 		goto done;
 
-	retval = pam_acct_mgmt(su->pamh, 0);
-	if (retval == PAM_NEW_AUTHTOK_REQD) {
-		/* Password has expired.  Offer option to change it.  */
-		retval = pam_chauthtok(su->pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
-	}
-
+	/* Check password expiration and offer option to change it.  */
+	rc = pam_acct_mgmt(su->pamh, 0);
+	if (rc == PAM_NEW_AUTHTOK_REQD)
+		rc = pam_chauthtok(su->pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
  done:
+	log_syslog(su, !is_pam_failure(rc));
 
-	log_syslog(su, !is_pam_failure(retval));
-
-	if (is_pam_failure(retval)) {
+	if (is_pam_failure(rc)) {
 		const char *msg;
 
 		log_btmp(su);
 
-		msg = pam_strerror(su->pamh, retval);
-		pam_end(su->pamh, retval);
+		msg = pam_strerror(su->pamh, rc);
+		pam_end(su->pamh, rc);
 		sleep(getlogindefs_num("FAIL_DELAY", 1));
 		errx(EXIT_FAILURE, "%s", msg ? msg : _("incorrect password"));
 	}
@@ -278,13 +275,13 @@ create_watching_parent(struct su_context *su)
 	sigset_t ourset;
 	struct sigaction oldact[3];
 	int status = 0;
-	int retval;
+	int rc;
 
-	retval = pam_open_session(su->pamh, 0);
-	if (is_pam_failure(retval)) {
-		supam_cleanup(su, retval);
+	rc = pam_open_session(su->pamh, 0);
+	if (is_pam_failure(rc)) {
+		supam_cleanup(su, rc);
 		errx(EXIT_FAILURE, _("cannot open session: %s"),
-		     pam_strerror(su->pamh, retval));
+		     pam_strerror(su->pamh, rc));
 	} else
 		su->pam_has_session = 1;
 
@@ -408,20 +405,18 @@ create_watching_parent(struct su_context *su)
 	exit(status);
 }
 
-
 static void setenv_path(const struct passwd *pw)
 {
-	int r;
+	int rc;
 
 	if (pw->pw_uid)
-		r = logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH);
+		rc = logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH);
 
-	else if ((r = logindefs_setenv("PATH", "ENV_ROOTPATH", NULL)) != 0)
-		r = logindefs_setenv("PATH", "ENV_SUPATH", _PATH_DEFPATH_ROOT);
+	else if ((rc = logindefs_setenv("PATH", "ENV_ROOTPATH", NULL)) != 0)
+		rc = logindefs_setenv("PATH", "ENV_SUPATH", _PATH_DEFPATH_ROOT);
 
-	if (r != 0)
-		err(EXIT_FAILURE,
-		    _("failed to set the %s environment variable"), "PATH");
+	if (rc)
+		err(EXIT_FAILURE, _("failed to set the PATH environment variable"));
 }
 
 static void modify_environment(struct su_context *su, const char *shell)
@@ -647,17 +642,15 @@ evaluate_uid(void)
 	return (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
 }
 
-static gid_t
-add_supp_group(const char *name, gid_t ** groups, size_t * ngroups)
+static gid_t add_supp_group(const char *name, gid_t **groups, size_t *ngroups)
 {
 	struct group *gr;
 
 	if (*ngroups >= NGROUPS_MAX)
 		errx(EXIT_FAILURE,
-		     P_
-		     ("specifying more than %d supplemental group is not possible",
-		      "specifying more than %d supplemental groups is not possible",
-		      NGROUPS_MAX - 1), NGROUPS_MAX - 1);
+		     P_("specifying more than %d supplemental group is not possible",
+		        "specifying more than %d supplemental groups is not possible",
+			NGROUPS_MAX - 1), NGROUPS_MAX - 1);
 
 	gr = getgrnam(name);
 	if (!gr)
@@ -670,8 +663,7 @@ add_supp_group(const char *name, gid_t ** groups, size_t * ngroups)
 	return gr->gr_gid;
 }
 
-int
-su_main(int argc, char **argv, int mode)
+int su_main(int argc, char **argv, int mode)
 {
 	struct su_context _su = {
 		.conv			= { supam_conv, NULL },
