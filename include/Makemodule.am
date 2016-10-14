@@ -19,6 +19,7 @@ dist_noinst_HEADERS += \
 	include/fileutils.h \
 	include/idcache.h \
 	include/ismounted.h \
+	include/pwdutils.h \
 	include/linux_version.h \
 	include/list.h \
 	include/loopdev.h \

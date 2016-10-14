@@ -77,6 +77,7 @@
 #include "all-io.h"
 #include "fileutils.h"
 #include "ttyutils.h"
+#include "pwdutils.h"
 
 #include "logindefs.h"
 
@@ -107,6 +108,7 @@ struct login_context {
 	char		*username;	/* from command line or PAM */
 
 	struct passwd	*pwd;		/* user info */
+	char		*pwdbuf;	/* pwd strings */
 
 	pam_handle_t	*pamh;		/* PAM handler */
 	struct pam_conv	conv;		/* PAM conversation */
@@ -652,26 +654,6 @@ static void log_syslog(struct login_context *cxt)
 	}
 }
 
-static struct passwd *get_passwd_entry(const char *username,
-					 char **pwdbuf,
-					 struct passwd *pwd)
-{
-	struct passwd *res = NULL;
-	int x;
-
-	if (!pwdbuf || !username)
-		return NULL;
-
-	*pwdbuf = xrealloc(*pwdbuf, UL_GETPW_BUFSIZ);
-
-	x = getpwnam_r(username, pwd, *pwdbuf, UL_GETPW_BUFSIZ, &res);
-	if (!res) {
-		errno = x;
-		return NULL;
-	}
-	return res;
-}
-
 /* encapsulate stupid "void **" pam_get_item() API */
 static int loginpam_get_username(pam_handle_t *pamh, char **name)
 {
@@ -1129,9 +1111,7 @@ int main(int argc, char **argv)
 	int childArgc = 0;
 	int retcode;
 	struct sigaction act;
-
-	char *pwdbuf = NULL;
-	struct passwd *pwd = NULL, _pwd;
+	struct passwd *pwd;
 
 	struct login_context cxt = {
 		.tty_mode = TTY_MODE,		  /* tty chmod() */
@@ -1243,7 +1223,8 @@ int main(int argc, char **argv)
 	 */
 	loginpam_acct(&cxt);
 
-	if (!(cxt.pwd = get_passwd_entry(cxt.username, &pwdbuf, &_pwd))) {
+	cxt.pwd = xgetpwnam(cxt.username, &cxt.pwdbuf);
+	if (!cxt.pwd) {
 		warnx(_("\nSession setup problem, abort."));
 		syslog(LOG_ERR, _("Invalid user name \"%s\" in %s:%d. Abort."),
 		       cxt.username, __FUNCTION__, __LINE__);
