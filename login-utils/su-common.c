@@ -409,10 +409,10 @@ create_watching_parent(struct su_context *su)
 }
 
 
-static void
-set_path(const struct passwd * const pw)
+static void setenv_path(const struct passwd *pw)
 {
 	int r;
+
 	if (pw->pw_uid)
 		r = logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH);
 
@@ -424,46 +424,45 @@ set_path(const struct passwd * const pw)
 		    _("failed to set the %s environment variable"), "PATH");
 }
 
-/* Update `environ' for the new shell based on PW, with SHELL being
-   the value for the SHELL environment variable.  */
-
-static void
-modify_environment(struct su_context *su, const char *shell)
+static void modify_environment(struct su_context *su, const char *shell)
 {
 	const struct passwd *pw = su->pwd;
 
+	/* Leave TERM unchanged.  Set HOME, SHELL, USER, LOGNAME, PATH.
+	 * Unset all other environment variables.
+	 */
 	if (su->simulate_login) {
-		/* Leave TERM unchanged.  Set HOME, SHELL, USER, LOGNAME, PATH.
-		   Unset all other environment variables.  */
 		char *term = getenv("TERM");
 		if (term)
 			term = xstrdup(term);
+
 		environ = xmalloc((6 + ! !term) * sizeof(char *));
 		environ[0] = NULL;
 		if (term) {
 			xsetenv("TERM", term, 1);
 			free(term);
 		}
+
 		xsetenv("HOME", pw->pw_dir, 1);
 		if (shell)
 			xsetenv("SHELL", shell, 1);
 		xsetenv("USER", pw->pw_name, 1);
 		xsetenv("LOGNAME", pw->pw_name, 1);
-		set_path(pw);
-	} else {
-		/* Set HOME, SHELL, and (if not becoming a superuser)
-		   USER and LOGNAME.  */
-		if (su->change_environment) {
-			xsetenv("HOME", pw->pw_dir, 1);
-			if (shell)
-				xsetenv("SHELL", shell, 1);
-			if (getlogindefs_bool("ALWAYS_SET_PATH", 0))
-				set_path(pw);
+		setenv_path(pw);
 
-			if (pw->pw_uid) {
-				xsetenv("USER", pw->pw_name, 1);
-				xsetenv("LOGNAME", pw->pw_name, 1);
-			}
+	/* Set HOME, SHELL, and (if not becoming a superuser) USER and LOGNAME.
+	 */
+	} else if (su->change_environment) {
+		xsetenv("HOME", pw->pw_dir, 1);
+		if (shell)
+			xsetenv("SHELL", shell, 1);
+
+		if (getlogindefs_bool("ALWAYS_SET_PATH", 0))
+			setenv_path(pw);
+
+		if (pw->pw_uid) {
+			xsetenv("USER", pw->pw_name, 1);
+			xsetenv("LOGNAME", pw->pw_name, 1);
 		}
 	}
 
