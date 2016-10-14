@@ -469,35 +469,30 @@ static void modify_environment(struct su_context *su, const char *shell)
 	supam_export_environment(su);
 }
 
-/* Become the user and group(s) specified by PW.  */
-
-static void
-init_groups(struct su_context *su, gid_t * groups, size_t num_groups)
+static void init_groups(struct su_context *su, gid_t *groups, size_t ngroups)
 {
-	int retval;
+	int rc;
 
 	errno = 0;
-
-	if (num_groups)
-		retval = setgroups(num_groups, groups);
+	if (ngroups)
+		rc = setgroups(ngroups, groups);
 	else
-		retval = initgroups(su->pwd->pw_name, su->pwd->pw_gid);
+		rc = initgroups(su->pwd->pw_name, su->pwd->pw_gid);
 
-	if (retval == -1) {
+	if (rc == -1) {
 		supam_cleanup(su, PAM_ABORT);
 		err(EXIT_FAILURE, _("cannot set groups"));
 	}
 	endgrent();
 
-	retval = pam_setcred(su->pamh, PAM_ESTABLISH_CRED);
-	if (is_pam_failure(retval))
-		errx(EXIT_FAILURE, "%s", pam_strerror(su->pamh, retval));
-	else
-		su->pam_has_cred = 1;
+	rc = pam_setcred(su->pamh, PAM_ESTABLISH_CRED);
+	if (is_pam_failure(rc))
+		errx(EXIT_FAILURE, _("failed to user credentials: %s"),
+					pam_strerror(su->pamh, rc));
+	su->pam_has_cred = 1;
 }
 
-static void
-change_identity (const struct passwd * const pw)
+static void change_identity(const struct passwd *pw)
 {
 	if (setgid(pw->pw_gid))
 		err(EXIT_FAILURE, _("cannot set group id"));
