@@ -111,8 +111,6 @@ struct su_context {
 };
 
 
-static void run_shell(struct su_context *, char const *, char const *, char **, size_t);
-
 static sig_atomic_t volatile caught_signal = false;
 
 /* Signal handler for parent process.  */
@@ -508,20 +506,19 @@ change_identity (const struct passwd * const pw)
 		err(EXIT_FAILURE, _("cannot set user id"));
 }
 
-/* Run SHELL, or DEFAULT_SHELL if SHELL is empty.
-   If COMMAND is nonzero, pass it to the shell with the -c option.
-   Pass ADDITIONAL_ARGS to the shell as more arguments; there
-   are N_ADDITIONAL_ARGS extra arguments.  */
-
-static void
-run_shell(struct su_context *su,
-	  char const *shell, char const *command, char **additional_args,
-	  size_t n_additional_args)
+/* Run SHELL, if COMMAND is nonzero, pass it to the shell with the -c option.
+ * Pass ADDITIONAL_ARGS to the shell as more arguments; there are
+ * N_ADDITIONAL_ARGS extra arguments.
+ */
+static void run_shell(
+		struct su_context *su,
+		char const *shell, char const *command, char **additional_args,
+		size_t n_additional_args)
 {
-	size_t n_args =
-	    1 + su->fast_startup + 2 * ! !command + n_additional_args + 1;
+	size_t n_args = 1 + su->fast_startup + 2 * ! !command + n_additional_args + 1;
 	char const **args = xcalloc(n_args, sizeof *args);
 	size_t argno = 1;
+	int rc;
 
 	if (su->simulate_login) {
 		char *arg0;
@@ -534,29 +531,26 @@ run_shell(struct su_context *su,
 		args[0] = arg0;
 	} else
 		args[0] = basename(shell);
+
 	if (su->fast_startup)
 		args[argno++] = "-f";
 	if (command) {
 		args[argno++] = "-c";
 		args[argno++] = command;
 	}
+
 	memcpy(args + argno, additional_args, n_additional_args * sizeof *args);
 	args[argno + n_additional_args] = NULL;
 	execv(shell, (char **)args);
 
-	{
-		int exit_status =
-		    (errno == ENOENT ? EXIT_ENOENT : EXIT_CANNOT_INVOKE);
-		warn(_("failed to execute %s"), shell);
-		exit(exit_status);
-	}
+	rc = errno == ENOENT ? EXIT_ENOENT : EXIT_CANNOT_INVOKE;
+	err(rc, _("failed to execute %s"), shell);
 }
 
 /* Return true if SHELL is a restricted shell (one not returned by
-   getusershell), else false, meaning it is a standard shell.  */
-
-static bool
-restricted_shell (const char * const shell)
+ * getusershell), else false, meaning it is a standard shell.
+ */
+static bool is_restricted_shell(const char *shell)
 {
 	char *line;
 
@@ -854,11 +848,15 @@ su_main(int argc, char **argv, int mode)
 	} else {
 		if (!shell && !su->change_environment)
 			shell = getenv("SHELL");
-		if (shell && getuid() != 0 && restricted_shell(su->pwd->pw_shell)) {
-			/* The user being su'd to has a nonstandard shell, and so is
-			   probably a uucp account or has restricted access.  Don't
-			   compromise the account by allowing access with a standard
-			   shell.  */
+
+		if (shell
+		    && getuid() != 0
+		    && is_restricted_shell(su->pwd->pw_shell)) {
+			/* The user being su'd to has a nonstandard shell, and
+			 * so is probably a uucp account or has restricted
+			 * access.  Don't compromise the account by allowing
+			 * access with a standard shell.
+			 */
 			warnx(_("using restricted shell %s"), su->pwd->pw_shell);
 			shell = NULL;
 		}
