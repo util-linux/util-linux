@@ -40,6 +40,7 @@
 
 #include "c.h"
 #include "cramfs.h"
+#include "crc32.h"
 #include "md5.h"
 #include "nls.h"
 #include "exitcodes.h"

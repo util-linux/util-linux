@@ -53,6 +53,7 @@
 #include "c.h"
 #include "cramfs.h"
 #include "nls.h"
+#include "crc32.h"
 #include "blkdev.h"
 #include "exitcodes.h"
 #include "strutils.h"
