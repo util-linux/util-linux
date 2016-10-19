@@ -44,6 +44,12 @@
 #include <getopt.h>
 #include <utime.h>
 #include <fcntl.h>
+
+/* We don't use our include/crc32.h, but crc32 from zlib!
+ *
+ * The zlib implemenation performs pre/post-conditioning. The util-linux
+ * imlemenation requires post-conditioning (xor) in the applications.
+ */
 #include <zlib.h>
 
 #include <sys/types.h>
@@ -53,7 +59,6 @@
 #include "c.h"
 #include "cramfs.h"
 #include "nls.h"
-#include "crc32.h"
 #include "blkdev.h"
 #include "exitcodes.h"
 #include "strutils.h"
@@ -215,7 +220,7 @@ static void test_crc(int start)
 		return;
 	}
 
-	crc = ul_crc32(0L, Z_NULL, 0);
+	crc = crc32(0L, Z_NULL, 0);
 
 	buf =
 	    mmap(NULL, super.size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
@@ -232,8 +237,8 @@ static void test_crc(int start)
 	}
 	if (buf != MAP_FAILED) {
 		((struct cramfs_super *)((unsigned char *) buf + start))->fsid.crc =
-		    ul_crc32(0L, Z_NULL, 0);
-		crc = ul_crc32(crc, (unsigned char *) buf + start, super.size - start);
+		    crc32(0L, Z_NULL, 0);
+		crc = crc32(crc, (unsigned char *) buf + start, super.size - start);
 		munmap(buf, super.size);
 	} else {
 		int retval;
@@ -250,15 +255,15 @@ static void test_crc(int start)
 				break;
 			if (length == 0)
 				((struct cramfs_super *)buf)->fsid.crc =
-				    ul_crc32(0L, Z_NULL, 0);
+				    crc32(0L, Z_NULL, 0);
 			length += retval;
 			if (length > (super.size - start)) {
-				crc = ul_crc32(crc, buf,
+				crc = crc32(crc, buf,
 					  retval - (length -
 						    (super.size - start)));
 				break;
 			}
-			crc = ul_crc32(crc, buf, retval);
+			crc = crc32(crc, buf, retval);
 		}
 		free(buf);
 	}
