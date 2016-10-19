@@ -93,7 +93,7 @@ renice:
 resizepart:  
 rev:  
 rtcwake:  
-runuser:  libpam libpam_misc libseccomp 
+runuser:  libpam libpam_misc 
 script:  librt libutil 
 scriptreplay:  
 setarch:  
@@ -101,7 +101,7 @@ setpriv:  ap-ng
 setsid:  
 setterm:  libtinfo 
 sfdisk.static: STATIC
-su:  libpam libpam_misc libseccomp 
+su:  libpam libpam_misc 
 sulogin:  rypt 
 switch_root:  
 tailf:  
