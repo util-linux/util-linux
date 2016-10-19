@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23.1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2016-09-30 11:02+0200\n"
+"POT-Creation-Date: 2016-10-19 14:24+0200\n"
 "PO-Revision-Date: 2013-06-07 23:29+0800\n"
 "Last-Translator: Wei-Lun Chao <bluebat@member.fsf.org>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -27,19 +27,19 @@ msgid "Tell the kernel about the existence of a specified partition.\n"
 msgstr ""
 
 #: disk-utils/addpart.c:56 disk-utils/blockdev.c:276 disk-utils/blockdev.c:420
-#: disk-utils/blockdev.c:446 disk-utils/cfdisk.c:2617 disk-utils/delpart.c:57
+#: disk-utils/blockdev.c:446 disk-utils/cfdisk.c:2622 disk-utils/delpart.c:57
 #: disk-utils/fdformat.c:227 disk-utils/fdisk.c:718 disk-utils/fdisk.c:990
 #: disk-utils/fdisk-list.c:299 disk-utils/fdisk-list.c:339
 #: disk-utils/fdisk-list.c:358 disk-utils/fsck.c:1448
-#: disk-utils/fsck.cramfs.c:149 disk-utils/fsck.cramfs.c:504
+#: disk-utils/fsck.cramfs.c:155 disk-utils/fsck.cramfs.c:510
 #: disk-utils/isosize.c:134 disk-utils/mkfs.bfs.c:189
-#: disk-utils/mkfs.cramfs.c:167 disk-utils/mkfs.cramfs.c:655
-#: disk-utils/mkfs.cramfs.c:782 disk-utils/mkfs.minix.c:819
+#: disk-utils/mkfs.cramfs.c:173 disk-utils/mkfs.cramfs.c:661
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/mkfs.minix.c:819
 #: disk-utils/mkswap.c:215 disk-utils/mkswap.c:244 disk-utils/partx.c:994
-#: disk-utils/resizepart.c:101 disk-utils/sfdisk.c:634 disk-utils/sfdisk.c:690
-#: disk-utils/sfdisk.c:744 disk-utils/sfdisk.c:803 disk-utils/sfdisk.c:867
-#: disk-utils/sfdisk.c:908 disk-utils/sfdisk.c:938 disk-utils/sfdisk.c:972
-#: disk-utils/sfdisk.c:1521 disk-utils/swaplabel.c:60 libfdisk/src/bsd.c:641
+#: disk-utils/resizepart.c:101 disk-utils/sfdisk.c:643 disk-utils/sfdisk.c:699
+#: disk-utils/sfdisk.c:753 disk-utils/sfdisk.c:812 disk-utils/sfdisk.c:876
+#: disk-utils/sfdisk.c:917 disk-utils/sfdisk.c:947 disk-utils/sfdisk.c:981
+#: disk-utils/sfdisk.c:1530 disk-utils/swaplabel.c:60 libfdisk/src/bsd.c:641
 #: lib/path.c:70 lib/path.c:82 login-utils/islocal.c:87 login-utils/last.c:672
 #: login-utils/sulogin.c:446 login-utils/sulogin.c:483
 #: login-utils/utmpdump.c:136 login-utils/utmpdump.c:359
@@ -60,7 +60,7 @@ msgstr ""
 #: term-utils/script.c:433 term-utils/script.c:522
 #: term-utils/scriptreplay.c:197 term-utils/scriptreplay.c:200
 #: term-utils/wall.c:331 text-utils/colcrt.c:282 text-utils/more.c:513
-#: text-utils/rev.c:142 text-utils/tailf.c:68 text-utils/tailf.c:100
+#: text-utils/rev.c:141 text-utils/tailf.c:68 text-utils/tailf.c:100
 #: text-utils/ul.c:225
 #, c-format
 msgid "cannot open %s"
@@ -321,383 +321,383 @@ msgstr "印出分割表至螢幕或檔案"
 msgid "internal error: unsupported dialog type %d"
 msgstr ""
 
-#: disk-utils/cfdisk.c:1250
+#: disk-utils/cfdisk.c:1254
 #, fuzzy, c-format
 msgid "%s (mounted)"
 msgstr "%s：無法掛載"
 
-#: disk-utils/cfdisk.c:1270
+#: disk-utils/cfdisk.c:1274
 #, fuzzy
 msgid "Partition name:"
 msgstr "分割名稱"
 
-#: disk-utils/cfdisk.c:1275
+#: disk-utils/cfdisk.c:1281
 #, fuzzy
 msgid "Partition UUID:"
 msgstr "分割 UUID"
 
-#: disk-utils/cfdisk.c:1285
+#: disk-utils/cfdisk.c:1293
 #, fuzzy
 msgid "Partition type:"
 msgstr "分割區編號"
 
-#: disk-utils/cfdisk.c:1292
+#: disk-utils/cfdisk.c:1300
 msgid "Attributes:"
 msgstr ""
 
-#: disk-utils/cfdisk.c:1316
+#: disk-utils/cfdisk.c:1324
 #, fuzzy
 msgid "Filesystem UUID:"
 msgstr "檔案系統 UUID"
 
-#: disk-utils/cfdisk.c:1321
+#: disk-utils/cfdisk.c:1331
 #, fuzzy
 msgid "Filesystem LABEL:"
 msgstr "檔案系統標貼"
 
-#: disk-utils/cfdisk.c:1325
+#: disk-utils/cfdisk.c:1337
 #, fuzzy
 msgid "Filesystem:"
 msgstr "郵件系統"
 
-#: disk-utils/cfdisk.c:1333
+#: disk-utils/cfdisk.c:1342
 #, fuzzy
 msgid "Mountpoint:"
 msgstr "mountpoint"
 
-#: disk-utils/cfdisk.c:1673
+#: disk-utils/cfdisk.c:1678
 #, fuzzy, c-format
 msgid "Disk: %s"
 msgstr "磁碟：%.*s\n"
 
-#: disk-utils/cfdisk.c:1675
+#: disk-utils/cfdisk.c:1680
 #, c-format
 msgid "Size: %s, %ju bytes, %ju sectors"
 msgstr ""
 
-#: disk-utils/cfdisk.c:1678
+#: disk-utils/cfdisk.c:1683
 #, fuzzy, c-format
 msgid "Label: %s, identifier: %s"
 msgstr "磁碟識別碼：0x%08x\n"
 
-#: disk-utils/cfdisk.c:1681
+#: disk-utils/cfdisk.c:1686
 #, fuzzy, c-format
 msgid "Label: %s"
 msgstr "標籤：%.*s\n"
 
-#: disk-utils/cfdisk.c:1834
+#: disk-utils/cfdisk.c:1839
 msgid "May be followed by M for MiB, G for GiB, T for TiB, or S for sectors."
 msgstr ""
 
-#: disk-utils/cfdisk.c:1840
+#: disk-utils/cfdisk.c:1845
 #, fuzzy
 msgid "Please, specify size."
 msgstr "未指定任何檔名。"
 
-#: disk-utils/cfdisk.c:1862
+#: disk-utils/cfdisk.c:1867
 #, fuzzy, c-format
 msgid "Minimum size is %ju bytes."
 msgstr "以位元組為單位取得大小"
 
-#: disk-utils/cfdisk.c:1871
+#: disk-utils/cfdisk.c:1876
 #, fuzzy, c-format
 msgid "Maximum size is %ju bytes."
 msgstr "以位元組為單位取得大小"
 
-#: disk-utils/cfdisk.c:1878
+#: disk-utils/cfdisk.c:1883
 #, fuzzy
 msgid "Failed to parse size."
 msgstr "剖析大小時失敗"
 
-#: disk-utils/cfdisk.c:1936
+#: disk-utils/cfdisk.c:1941
 #, fuzzy
 msgid "Select partition type"
 msgstr "已選分割區 %d\n"
 
-#: disk-utils/cfdisk.c:1982 disk-utils/cfdisk.c:2012
+#: disk-utils/cfdisk.c:1987 disk-utils/cfdisk.c:2017
 #, fuzzy
 msgid "Enter script file name: "
 msgstr "無法寫入指令稿檔案"
 
-#: disk-utils/cfdisk.c:1983
+#: disk-utils/cfdisk.c:1988
 #, fuzzy
 msgid "The script file will be applied to in-memory partition table."
 msgstr "您將不能寫入分割表。\n"
 
-#: disk-utils/cfdisk.c:1992 disk-utils/cfdisk.c:2034
+#: disk-utils/cfdisk.c:1997 disk-utils/cfdisk.c:2039
 #: disk-utils/fdisk-menu.c:465 disk-utils/fdisk-menu.c:503
 #, fuzzy, c-format
 msgid "Cannot open %s"
 msgstr "無法開啟 %s\n"
 
-#: disk-utils/cfdisk.c:1994 disk-utils/fdisk-menu.c:467
+#: disk-utils/cfdisk.c:1999 disk-utils/fdisk-menu.c:467
 #, fuzzy, c-format
 msgid "Failed to parse script file %s"
 msgstr "讀取 typescript 檔案 %s 時失敗"
 
-#: disk-utils/cfdisk.c:1996 disk-utils/fdisk-menu.c:469
+#: disk-utils/cfdisk.c:2001 disk-utils/fdisk-menu.c:469
 #, fuzzy, c-format
 msgid "Failed to apply script %s"
 msgstr "讀取 typescript 檔案 %s 時失敗"
 
-#: disk-utils/cfdisk.c:2013
+#: disk-utils/cfdisk.c:2018
 msgid "The current in-memory partition table will be dumped to the file."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2021 disk-utils/fdisk-menu.c:491
+#: disk-utils/cfdisk.c:2026 disk-utils/fdisk-menu.c:491
 #, fuzzy
 msgid "Failed to allocate script handler"
 msgstr "配置迭代器時失敗"
 
-#: disk-utils/cfdisk.c:2027
+#: disk-utils/cfdisk.c:2032
 #, fuzzy
 msgid "Failed to read disk layout into script."
 msgstr "加入輸出列時失敗"
 
-#: disk-utils/cfdisk.c:2041
+#: disk-utils/cfdisk.c:2046
 msgid "Disk layout successfully dumped."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2044 disk-utils/fdisk-menu.c:509
+#: disk-utils/cfdisk.c:2049 disk-utils/fdisk-menu.c:509
 #, fuzzy, c-format
 msgid "Failed to write script %s"
 msgstr "讀取 typescript 檔案 %s 時失敗"
 
-#: disk-utils/cfdisk.c:2080
+#: disk-utils/cfdisk.c:2085
 #, fuzzy
 msgid "Select label type"
 msgstr "不合法的類型\n"
 
-#: disk-utils/cfdisk.c:2083 disk-utils/fdisk.c:1013
+#: disk-utils/cfdisk.c:2088 disk-utils/fdisk.c:1013
 #, fuzzy
 msgid "Device does not contain a recognized partition table."
 msgstr "裝置不包含辨識的分割表\n"
 
-#: disk-utils/cfdisk.c:2089
+#: disk-utils/cfdisk.c:2094
 msgid "Select a type to create a new label or press 'L' to load script file."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2134
+#: disk-utils/cfdisk.c:2139
 #, fuzzy
 msgid "This is cfdisk, a curses-based disk partitioning program."
 msgstr "本程式 cfdisk，是一個以游標操作為基礎的硬碟分割程式，"
 
-#: disk-utils/cfdisk.c:2135
+#: disk-utils/cfdisk.c:2140
 #, fuzzy
 msgid "It lets you create, delete, and modify partitions on a block device."
 msgstr "可供您新增、刪除和修改硬碟中的分割區"
 
-#: disk-utils/cfdisk.c:2137
+#: disk-utils/cfdisk.c:2142
 msgid "Command      Meaning"
 msgstr "按鍵命令     意義"
 
-#: disk-utils/cfdisk.c:2138
+#: disk-utils/cfdisk.c:2143
 msgid "-------      -------"
 msgstr "-------      -------"
 
-#: disk-utils/cfdisk.c:2139
+#: disk-utils/cfdisk.c:2144
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b          切換目前分割區的開機屬性旗標"
 
-#: disk-utils/cfdisk.c:2140
+#: disk-utils/cfdisk.c:2145
 msgid "  d          Delete the current partition"
 msgstr "  d          刪除目前的分割區"
 
-#: disk-utils/cfdisk.c:2141
+#: disk-utils/cfdisk.c:2146
 msgid "  h          Print this screen"
 msgstr "  h          顯示本說明畫面"
 
-#: disk-utils/cfdisk.c:2142
+#: disk-utils/cfdisk.c:2147
 msgid "  n          Create new partition from free space"
 msgstr "  n          由剩餘空間中新增一塊分割區"
 
-#: disk-utils/cfdisk.c:2143
+#: disk-utils/cfdisk.c:2148
 msgid "  q          Quit program without writing partition table"
 msgstr "  q          離開本程式並且不寫入分割表"
 
-#: disk-utils/cfdisk.c:2144
+#: disk-utils/cfdisk.c:2149
 msgid "  s          Fix partitions order (only when in disarray)"
 msgstr ""
 
-#: disk-utils/cfdisk.c:2145
+#: disk-utils/cfdisk.c:2150
 #, fuzzy
 msgid "  t          Change the partition type"
 msgstr "  t          變更檔案系統的類型"
 
-#: disk-utils/cfdisk.c:2146
+#: disk-utils/cfdisk.c:2151
 msgid "  u          Dump disk layout to sfdisk compatible script file"
 msgstr ""
 
-#: disk-utils/cfdisk.c:2147
+#: disk-utils/cfdisk.c:2152
 #, fuzzy
 msgid "  W          Write partition table to disk (you must enter uppercase W);"
 msgstr "  W          寫入分割表 (寫入一定要用大寫 W)"
 
-#: disk-utils/cfdisk.c:2148
+#: disk-utils/cfdisk.c:2153
 #, fuzzy
 msgid "               since this might destroy data on the disk, you must either"
 msgstr "             因為這將會使您的硬碟中的資料消失，您必須"
 
-#: disk-utils/cfdisk.c:2149
+#: disk-utils/cfdisk.c:2154
 #, fuzzy
 msgid "               confirm or deny the write by entering 'yes' or 'no'"
 msgstr "             明確地回答 'yes' 代表寫入，若不要寫入請回答"
 
-#: disk-utils/cfdisk.c:2150
+#: disk-utils/cfdisk.c:2155
 #, fuzzy
 msgid "  x          Display/hide extra information about a partition"
 msgstr " -V           輸出版本資訊然後離開\n"
 
-#: disk-utils/cfdisk.c:2151
+#: disk-utils/cfdisk.c:2156
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "向上鍵       移動往上鍵可移至上一個分割區"
 
-#: disk-utils/cfdisk.c:2152
+#: disk-utils/cfdisk.c:2157
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "向下鍵       移動往下鍵可移至下一個分割區"
 
-#: disk-utils/cfdisk.c:2153
+#: disk-utils/cfdisk.c:2158
 #, fuzzy
 msgid "Left Arrow   Move cursor to the previous menu item"
 msgstr "向上鍵       移動往上鍵可移至上一個分割區"
 
-#: disk-utils/cfdisk.c:2154
+#: disk-utils/cfdisk.c:2159
 #, fuzzy
 msgid "Right Arrow  Move cursor to the next menu item"
 msgstr "向下鍵       移動往下鍵可移至下一個分割區"
 
-#: disk-utils/cfdisk.c:2156
+#: disk-utils/cfdisk.c:2161
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "注意: 以上所有的按鍵命令均不區分大小寫"
 
-#: disk-utils/cfdisk.c:2157
+#: disk-utils/cfdisk.c:2162
 #, fuzzy
 msgid "case letters (except for Write)."
 msgstr "(除了 '寫入' 之外)。"
 
-#: disk-utils/cfdisk.c:2159
+#: disk-utils/cfdisk.c:2164
 msgid "Use lsblk(8) or partx(8) to see more details about the device."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2166 disk-utils/cfdisk.c:2424
+#: disk-utils/cfdisk.c:2171 disk-utils/cfdisk.c:2429
 #, fuzzy
 msgid "Press a key to continue."
 msgstr "按任何鍵繼續"
 
-#: disk-utils/cfdisk.c:2248
+#: disk-utils/cfdisk.c:2253
 msgid "Could not toggle the flag."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2258
+#: disk-utils/cfdisk.c:2263
 #, fuzzy, c-format
 msgid "Could not delete partition %zu."
 msgstr "已選分割區 %d\n"
 
-#: disk-utils/cfdisk.c:2260 disk-utils/fdisk-menu.c:633
+#: disk-utils/cfdisk.c:2265 disk-utils/fdisk-menu.c:633
 #, fuzzy, c-format
 msgid "Partition %zu has been deleted."
 msgstr "分割 %d 被刪除\n"
 
-#: disk-utils/cfdisk.c:2281
+#: disk-utils/cfdisk.c:2286
 #, fuzzy
 msgid "Partition size: "
 msgstr "分割區 (a-%c)："
 
-#: disk-utils/cfdisk.c:2322
+#: disk-utils/cfdisk.c:2327
 #, fuzzy, c-format
 msgid "Changed type of partition %zu."
 msgstr "分割區 %d 的系統類型已變更為 %x (%s)\n"
 
-#: disk-utils/cfdisk.c:2324
+#: disk-utils/cfdisk.c:2329
 #, fuzzy, c-format
 msgid "The type of partition %zu is unchanged."
 msgstr "分割區 %d 的系統類型未被變更：%x (%s)\n"
 
-#: disk-utils/cfdisk.c:2341 disk-utils/cfdisk.c:2453 disk-utils/fdisk.c:987
+#: disk-utils/cfdisk.c:2346 disk-utils/cfdisk.c:2458 disk-utils/fdisk.c:987
 #: disk-utils/fdisk-menu.c:570
 msgid "Device is open in read-only mode."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2346
+#: disk-utils/cfdisk.c:2351
 #, fuzzy
 msgid "Are you sure you want to write the partition table to disk? "
 msgstr "您確定要將分割表寫入硬碟中嗎? (yes 或 no):"
 
-#: disk-utils/cfdisk.c:2348
+#: disk-utils/cfdisk.c:2353
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2353 login-utils/lslogins.c:209 sys-utils/lscpu.c:1517
+#: disk-utils/cfdisk.c:2358 login-utils/lslogins.c:209 sys-utils/lscpu.c:1517
 #: sys-utils/lscpu.c:1527
 msgid "yes"
 msgstr "是"
 
-#: disk-utils/cfdisk.c:2354
+#: disk-utils/cfdisk.c:2359
 #, fuzzy
 msgid "Did not write partition table to disk."
 msgstr "不要將分割表寫入硬碟"
 
-#: disk-utils/cfdisk.c:2359
+#: disk-utils/cfdisk.c:2364
 #, fuzzy
 msgid "Failed to write disklabel."
 msgstr "%s：無法寫入標籤"
 
-#: disk-utils/cfdisk.c:2362 disk-utils/fdisk-menu.c:578
+#: disk-utils/cfdisk.c:2367 disk-utils/fdisk-menu.c:578
 #, fuzzy
 msgid "The partition table has been altered."
 msgstr ""
 "分割表已變更！\n"
 "\n"
 
-#: disk-utils/cfdisk.c:2385 disk-utils/cfdisk.c:2455
+#: disk-utils/cfdisk.c:2390 disk-utils/cfdisk.c:2460
 #, fuzzy
 msgid "Note that partition table entries are not in disk order now."
 msgstr ""
 "\n"
 "分割表項目未按磁碟排序\n"
 
-#: disk-utils/cfdisk.c:2421
+#: disk-utils/cfdisk.c:2426
 #, c-format
 msgid "Device already contains a %s signature; it will be removed by a write command."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2432
+#: disk-utils/cfdisk.c:2437
 #, fuzzy
 msgid "failed to create a new disklabel"
 msgstr "建立新的清空 Sun disklabel"
 
-#: disk-utils/cfdisk.c:2440
+#: disk-utils/cfdisk.c:2445
 #, fuzzy
 msgid "failed to read partitions"
 msgstr "加入分割時失敗"
 
-#: disk-utils/cfdisk.c:2529
+#: disk-utils/cfdisk.c:2534
 #, fuzzy, c-format
 msgid " %1$s [options] <disk>\n"
 msgstr " %s [選項] <device>\n"
 
-#: disk-utils/cfdisk.c:2532 disk-utils/fdisk.c:736 disk-utils/sfdisk.c:1792
+#: disk-utils/cfdisk.c:2537 disk-utils/fdisk.c:736 disk-utils/sfdisk.c:1801
 #, fuzzy
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "%s：無法讀取分割表"
 
-#: disk-utils/cfdisk.c:2535
+#: disk-utils/cfdisk.c:2540
 #, fuzzy
 msgid " -L, --color[=<when>]     colorize output (auto, always or never)\n"
 msgstr " -Q, --queue              建立訊息佇列\n"
 
-#: disk-utils/cfdisk.c:2538
+#: disk-utils/cfdisk.c:2543
 #, fuzzy
 msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -Q, --queue              建立訊息佇列\n"
 
-#: disk-utils/cfdisk.c:2577 disk-utils/fdisk.c:882 disk-utils/sfdisk.c:2059
-#: misc-utils/cal.c:388 sys-utils/dmesg.c:1333 text-utils/hexdump.c:114
+#: disk-utils/cfdisk.c:2582 disk-utils/fdisk.c:882 disk-utils/sfdisk.c:2068
+#: misc-utils/cal.c:390 sys-utils/dmesg.c:1333 text-utils/hexdump.c:114
 #, fuzzy
 msgid "unsupported color mode"
 msgstr "不受支援的命令"
 
-#: disk-utils/cfdisk.c:2595 disk-utils/fdisk.c:818 disk-utils/sfdisk.c:223
+#: disk-utils/cfdisk.c:2600 disk-utils/fdisk.c:818 disk-utils/sfdisk.c:223
 #, fuzzy
 msgid "failed to allocate libfdisk context"
 msgstr "配置迭代器時失敗"
@@ -795,9 +795,9 @@ msgstr "無效的引數：%s"
 msgid "invalid argument - repair"
 msgstr "無效的引數：%s"
 
-#: disk-utils/fdformat.c:221 disk-utils/fsck.cramfs.c:145
-#: disk-utils/mkfs.bfs.c:185 disk-utils/mkfs.cramfs.c:332
-#: disk-utils/mkfs.cramfs.c:742 disk-utils/mkfs.cramfs.c:779
+#: disk-utils/fdformat.c:221 disk-utils/fsck.cramfs.c:151
+#: disk-utils/mkfs.bfs.c:185 disk-utils/mkfs.cramfs.c:338
+#: disk-utils/mkfs.cramfs.c:748 disk-utils/mkfs.cramfs.c:785
 #: disk-utils/mkfs.minix.c:816 disk-utils/mkswap.c:241 disk-utils/partx.c:933
 #: login-utils/last.c:686 login-utils/utmpdump.c:139 misc-utils/namei.c:135
 #: misc-utils/rename.c:63 sys-utils/blkdiscard.c:186 sys-utils/dmesg.c:524
@@ -1037,7 +1037,7 @@ msgstr " -d, --debug             列印詳細的訊息到標準勘誤\n"
 msgid " -w, --wipe <mode>             wipe signatures (auto, always or never)\n"
 msgstr " -Q, --queue              建立訊息佇列\n"
 
-#: disk-utils/fdisk.c:752 disk-utils/sfdisk.c:1835
+#: disk-utils/fdisk.c:752 disk-utils/sfdisk.c:1844
 #, fuzzy
 msgid " -W, --wipe-partitions <mode>  wipe signatures from new partitions (auto, always or never)\n"
 msgstr " -Q, --queue              建立訊息佇列\n"
@@ -1092,8 +1092,8 @@ msgstr "無效的磁區引數"
 msgid "unsupported disklabel: %s"
 msgstr "不受支援的引數：%s"
 
-#: disk-utils/fdisk.c:916 disk-utils/fdisk.c:921 disk-utils/sfdisk.c:2023
-#: disk-utils/sfdisk.c:2028
+#: disk-utils/fdisk.c:916 disk-utils/fdisk.c:921 disk-utils/sfdisk.c:2032
+#: disk-utils/sfdisk.c:2037
 #, fuzzy
 msgid "unsupported wipe mode"
 msgstr "不受支援的命令"
@@ -1108,7 +1108,7 @@ msgstr "警告：-b (設定磁區大小) 選項應該與一個指定裝置共同
 msgid "Welcome to fdisk (%s)."
 msgstr ""
 
-#: disk-utils/fdisk.c:980 disk-utils/sfdisk.c:1572
+#: disk-utils/fdisk.c:980 disk-utils/sfdisk.c:1581
 #, fuzzy
 msgid ""
 "Changes will remain in memory only, until you decide to write them.\n"
@@ -1120,17 +1120,17 @@ msgstr ""
 "請小心之前使用寫入命令。\n"
 "\n"
 
-#: disk-utils/fdisk.c:997 disk-utils/sfdisk.c:1597
+#: disk-utils/fdisk.c:997 disk-utils/sfdisk.c:1606
 #, c-format
 msgid "Device %s already contains a %s signature."
 msgstr ""
 
-#: disk-utils/fdisk.c:1006 disk-utils/fdisk-menu.c:542 disk-utils/sfdisk.c:1468
-#: disk-utils/sfdisk.c:1606
+#: disk-utils/fdisk.c:1006 disk-utils/fdisk-menu.c:542 disk-utils/sfdisk.c:1477
+#: disk-utils/sfdisk.c:1615
 msgid "The signature will be removed by a write command."
 msgstr ""
 
-#: disk-utils/fdisk.c:1009 disk-utils/sfdisk.c:1609
+#: disk-utils/fdisk.c:1009 disk-utils/sfdisk.c:1618
 msgid "It is strongly recommended to wipe the device with wipefs(8), in order to avoid possible collisions."
 msgstr ""
 
@@ -1593,7 +1593,7 @@ msgid ""
 "Help (expert commands):\n"
 msgstr ""
 
-#: disk-utils/fdisk-menu.c:371 disk-utils/sfdisk.c:1249
+#: disk-utils/fdisk-menu.c:371 disk-utils/sfdisk.c:1258
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -1636,12 +1636,12 @@ msgstr "加入輸出列時失敗"
 msgid "Script successfully saved."
 msgstr ""
 
-#: disk-utils/fdisk-menu.c:534 disk-utils/sfdisk.c:1460
+#: disk-utils/fdisk-menu.c:534 disk-utils/sfdisk.c:1469
 #, fuzzy, c-format
 msgid "Partition #%zu contains a %s signature."
 msgstr "警告：分割區 %d 含有磁區 0\n"
 
-#: disk-utils/fdisk-menu.c:537 disk-utils/sfdisk.c:1463
+#: disk-utils/fdisk-menu.c:537 disk-utils/sfdisk.c:1472
 #, fuzzy
 msgid "Do you want to remove the signature?"
 msgstr "您要將這個寫入磁碟嗎？[ynq] "
@@ -1725,9 +1725,9 @@ msgstr "%s 被掛載\n"
 msgid "%s is not mounted\n"
 msgstr "%s 未被掛載\n"
 
-#: disk-utils/fsck.c:331 disk-utils/fsck.cramfs.c:168
-#: disk-utils/fsck.cramfs.c:175 disk-utils/fsck.cramfs.c:229
-#: disk-utils/fsck.cramfs.c:247 disk-utils/sfdisk.c:297 libfdisk/src/bsd.c:646
+#: disk-utils/fsck.c:331 disk-utils/fsck.cramfs.c:174
+#: disk-utils/fsck.cramfs.c:181 disk-utils/fsck.cramfs.c:235
+#: disk-utils/fsck.cramfs.c:253 disk-utils/sfdisk.c:297 libfdisk/src/bsd.c:646
 #: lib/path.c:110 lib/path.c:131 lib/path.c:152 lib/path.c:200
 #: login-utils/last.c:213 login-utils/last.c:250 login-utils/sulogin.c:660
 #: sys-utils/setpriv.c:239 term-utils/setterm.c:717 term-utils/setterm.c:774
@@ -1994,155 +1994,155 @@ msgstr "無效的引數：%s"
 msgid "the -l option can be used with one device only -- ignore"
 msgstr "-l 選項可以被使用與一個裝置只有 -- 忽略"
 
-#: disk-utils/fsck.cramfs.c:107
+#: disk-utils/fsck.cramfs.c:113
 #, fuzzy, c-format
 msgid " %s [options] <file>\n"
 msgstr " %s [選項] [<file>]\n"
 
-#: disk-utils/fsck.cramfs.c:110
+#: disk-utils/fsck.cramfs.c:116
 msgid "Check and repair a compressed ROM filesystem.\n"
 msgstr ""
 
-#: disk-utils/fsck.cramfs.c:113
+#: disk-utils/fsck.cramfs.c:119
 msgid " -a                       for compatibility only, ignored\n"
 msgstr ""
 
-#: disk-utils/fsck.cramfs.c:114
+#: disk-utils/fsck.cramfs.c:120
 #, fuzzy
 msgid " -v, --verbose            be more verbose\n"
 msgstr " -v, --verbose            是更多詳細的\n"
 
-#: disk-utils/fsck.cramfs.c:115
+#: disk-utils/fsck.cramfs.c:121
 msgid " -y                       for compatibility only, ignored\n"
 msgstr ""
 
-#: disk-utils/fsck.cramfs.c:116
+#: disk-utils/fsck.cramfs.c:122
 msgid " -b, --blocksize <size>   use this blocksize, defaults to page size\n"
 msgstr ""
 
-#: disk-utils/fsck.cramfs.c:117
+#: disk-utils/fsck.cramfs.c:123
 msgid "     --extract[=<dir>]    test uncompression, optionally extract into <dir>\n"
 msgstr ""
 
-#: disk-utils/fsck.cramfs.c:155
+#: disk-utils/fsck.cramfs.c:161
 #, c-format
 msgid "ioctl failed: unable to determine device size: %s"
 msgstr "ioctl 失敗：無法決定裝置大小：%s"
 
-#: disk-utils/fsck.cramfs.c:161
+#: disk-utils/fsck.cramfs.c:167
 #, c-format
 msgid "not a block device or file: %s"
 msgstr "不是區塊裝置或檔案：%s"
 
-#: disk-utils/fsck.cramfs.c:164 disk-utils/fsck.cramfs.c:200
+#: disk-utils/fsck.cramfs.c:170 disk-utils/fsck.cramfs.c:206
 msgid "file length too short"
 msgstr "檔案長度太短"
 
-#: disk-utils/fsck.cramfs.c:173 disk-utils/fsck.cramfs.c:227
-#: disk-utils/fsck.cramfs.c:243 libfdisk/src/bsd.c:718 libfdisk/src/bsd.c:890
+#: disk-utils/fsck.cramfs.c:179 disk-utils/fsck.cramfs.c:233
+#: disk-utils/fsck.cramfs.c:249 libfdisk/src/bsd.c:718 libfdisk/src/bsd.c:890
 #: login-utils/last.c:208 login-utils/last.c:242 sys-utils/fallocate.c:203
 #, fuzzy, c-format
 msgid "seek on %s failed"
 msgstr "搜尋失敗"
 
-#: disk-utils/fsck.cramfs.c:179 disk-utils/fsck.cramfs.c:181
+#: disk-utils/fsck.cramfs.c:185 disk-utils/fsck.cramfs.c:187
 msgid "superblock magic not found"
 msgstr "找不到超區塊的魔術標記"
 
-#: disk-utils/fsck.cramfs.c:184
+#: disk-utils/fsck.cramfs.c:190
 #, fuzzy, c-format
 msgid "cramfs endianness is %s\n"
 msgstr "cramfs 尾序是 %s\n"
 
-#: disk-utils/fsck.cramfs.c:185
+#: disk-utils/fsck.cramfs.c:191
 #, fuzzy
 msgid "big"
 msgstr "大"
 
-#: disk-utils/fsck.cramfs.c:185
+#: disk-utils/fsck.cramfs.c:191
 #, fuzzy
 msgid "little"
 msgstr "小型"
 
-#: disk-utils/fsck.cramfs.c:189
+#: disk-utils/fsck.cramfs.c:195
 msgid "unsupported filesystem features"
 msgstr "不受支援的檔案系統特徵"
 
-#: disk-utils/fsck.cramfs.c:193
+#: disk-utils/fsck.cramfs.c:199
 #, c-format
 msgid "superblock size (%d) too small"
 msgstr "超區塊大小 (%d) 太小"
 
-#: disk-utils/fsck.cramfs.c:198
+#: disk-utils/fsck.cramfs.c:204
 msgid "zero file count"
 msgstr "零個檔案計數"
 
-#: disk-utils/fsck.cramfs.c:202
+#: disk-utils/fsck.cramfs.c:208
 #, fuzzy
 msgid "file extends past end of filesystem"
 msgstr "警告：檔案延伸超過檔案系統末端\n"
 
-#: disk-utils/fsck.cramfs.c:204
+#: disk-utils/fsck.cramfs.c:210
 #, fuzzy
 msgid "old cramfs format"
 msgstr "警告：舊的 cramfs 格式\n"
 
-#: disk-utils/fsck.cramfs.c:213
+#: disk-utils/fsck.cramfs.c:219
 msgid "unable to test CRC: old cramfs format"
 msgstr "無法測試循環冗餘檢查：舊的 cramfs 格式"
 
-#: disk-utils/fsck.cramfs.c:266
+#: disk-utils/fsck.cramfs.c:272
 msgid "crc error"
 msgstr "循環冗餘檢查錯誤"
 
-#: disk-utils/fsck.cramfs.c:296 disk-utils/fsck.minix.c:554
+#: disk-utils/fsck.cramfs.c:302 disk-utils/fsck.minix.c:554
 msgid "seek failed"
 msgstr "搜尋失敗"
 
-#: disk-utils/fsck.cramfs.c:300
+#: disk-utils/fsck.cramfs.c:306
 #, fuzzy
 msgid "read romfs failed"
 msgstr "fread 失敗"
 
-#: disk-utils/fsck.cramfs.c:332
+#: disk-utils/fsck.cramfs.c:338
 msgid "root inode is not directory"
 msgstr "根 inode 並非目錄"
 
-#: disk-utils/fsck.cramfs.c:336
+#: disk-utils/fsck.cramfs.c:342
 #, c-format
 msgid "bad root offset (%lu)"
 msgstr "不當的根偏移 (%lu)"
 
-#: disk-utils/fsck.cramfs.c:354
+#: disk-utils/fsck.cramfs.c:360
 msgid "data block too large"
 msgstr "資料區塊太大"
 
-#: disk-utils/fsck.cramfs.c:358
+#: disk-utils/fsck.cramfs.c:364
 #, fuzzy, c-format
 msgid "decompression error: %s"
 msgstr "解壓縮錯誤 %p(%d)：%s"
 
-#: disk-utils/fsck.cramfs.c:384
+#: disk-utils/fsck.cramfs.c:390
 #, fuzzy, c-format
 msgid "  hole at %lu (%zu)\n"
 msgstr "  漏洞位於 %ld (%zd)\n"
 
-#: disk-utils/fsck.cramfs.c:391 disk-utils/fsck.cramfs.c:544
+#: disk-utils/fsck.cramfs.c:397 disk-utils/fsck.cramfs.c:550
 #, fuzzy, c-format
 msgid "  uncompressing block at %lu to %lu (%lu)\n"
 msgstr "  解壓縮區塊位於 %ld 到 %ld (%ld)\n"
 
-#: disk-utils/fsck.cramfs.c:398
+#: disk-utils/fsck.cramfs.c:404
 #, c-format
 msgid "non-block (%ld) bytes"
 msgstr "非區塊 (%ld) 位元組"
 
-#: disk-utils/fsck.cramfs.c:402
+#: disk-utils/fsck.cramfs.c:408
 #, c-format
 msgid "non-size (%ld vs %ld) bytes"
 msgstr "非大小 (%ld vs %ld) 位元組"
 
-#: disk-utils/fsck.cramfs.c:407 disk-utils/fsck.cramfs.c:510
+#: disk-utils/fsck.cramfs.c:413 disk-utils/fsck.cramfs.c:516
 #: disk-utils/swaplabel.c:104 misc-utils/uuidd.c:375 sys-utils/fallocate.c:382
 #: sys-utils/setpriv.c:535 sys-utils/setpriv.c:558 sys-utils/swapon.c:389
 #: term-utils/ttymsg.c:175
@@ -2150,114 +2150,114 @@ msgstr "非大小 (%ld vs %ld) 位元組"
 msgid "write failed: %s"
 msgstr "寫入失敗：%s"
 
-#: disk-utils/fsck.cramfs.c:418
+#: disk-utils/fsck.cramfs.c:424
 #, c-format
 msgid "lchown failed: %s"
 msgstr "lchown 失敗：%s"
 
-#: disk-utils/fsck.cramfs.c:422
+#: disk-utils/fsck.cramfs.c:428
 #, c-format
 msgid "chown failed: %s"
 msgstr "chown 失敗：%s"
 
-#: disk-utils/fsck.cramfs.c:427
+#: disk-utils/fsck.cramfs.c:433
 #, c-format
 msgid "utime failed: %s"
 msgstr "utime 失敗：%s"
 
-#: disk-utils/fsck.cramfs.c:439
+#: disk-utils/fsck.cramfs.c:445
 #, c-format
 msgid "directory inode has zero offset and non-zero size: %s"
 msgstr "目錄 inode 有零偏移值和非零大小：%s"
 
-#: disk-utils/fsck.cramfs.c:454
+#: disk-utils/fsck.cramfs.c:460
 #, c-format
 msgid "mkdir failed: %s"
 msgstr "mkdir 失敗：%s"
 
-#: disk-utils/fsck.cramfs.c:470
+#: disk-utils/fsck.cramfs.c:476
 msgid "filename length is zero"
 msgstr "檔名長度為零"
 
-#: disk-utils/fsck.cramfs.c:472
+#: disk-utils/fsck.cramfs.c:478
 msgid "bad filename length"
 msgstr "不當的檔名長度"
 
-#: disk-utils/fsck.cramfs.c:478
+#: disk-utils/fsck.cramfs.c:484
 msgid "bad inode offset"
 msgstr "不當的 inode 偏移值"
 
-#: disk-utils/fsck.cramfs.c:493
+#: disk-utils/fsck.cramfs.c:499
 msgid "file inode has zero offset and non-zero size"
 msgstr "檔案 inode 有零偏移值和非零大小"
 
-#: disk-utils/fsck.cramfs.c:496
+#: disk-utils/fsck.cramfs.c:502
 msgid "file inode has zero size and non-zero offset"
 msgstr "檔案 inode 有零大小和非零偏移值"
 
-#: disk-utils/fsck.cramfs.c:525
+#: disk-utils/fsck.cramfs.c:531
 msgid "symbolic link has zero offset"
 msgstr "符號連結有零偏移值"
 
-#: disk-utils/fsck.cramfs.c:527
+#: disk-utils/fsck.cramfs.c:533
 msgid "symbolic link has zero size"
 msgstr "符號連結有零大小"
 
-#: disk-utils/fsck.cramfs.c:536
+#: disk-utils/fsck.cramfs.c:542
 #, c-format
 msgid "size error in symlink: %s"
 msgstr "大小錯誤發生於符號連結：%s"
 
-#: disk-utils/fsck.cramfs.c:550
+#: disk-utils/fsck.cramfs.c:556
 #, c-format
 msgid "symlink failed: %s"
 msgstr "符號連結失敗：%s"
 
-#: disk-utils/fsck.cramfs.c:563
+#: disk-utils/fsck.cramfs.c:569
 #, c-format
 msgid "special file has non-zero offset: %s"
 msgstr "特殊檔案有非零偏移值：%s"
 
-#: disk-utils/fsck.cramfs.c:573
+#: disk-utils/fsck.cramfs.c:579
 #, c-format
 msgid "fifo has non-zero size: %s"
 msgstr "fifo 有非零大小：%s"
 
-#: disk-utils/fsck.cramfs.c:579
+#: disk-utils/fsck.cramfs.c:585
 #, c-format
 msgid "socket has non-zero size: %s"
 msgstr "通訊端有非零大小：%s"
 
-#: disk-utils/fsck.cramfs.c:582
+#: disk-utils/fsck.cramfs.c:588
 #, c-format
 msgid "bogus mode: %s (%o)"
 msgstr "假造模式：%s (%o)"
 
-#: disk-utils/fsck.cramfs.c:591
+#: disk-utils/fsck.cramfs.c:597
 #, c-format
 msgid "mknod failed: %s"
 msgstr "mknod 失敗：%s"
 
-#: disk-utils/fsck.cramfs.c:623
+#: disk-utils/fsck.cramfs.c:629
 #, fuzzy, c-format
 msgid "directory data start (%lu) < sizeof(struct cramfs_super) + start (%zu)"
 msgstr "目錄資料起始 (%ld) < sizeof(struct cramfs_super) + 起始 (%ld)"
 
-#: disk-utils/fsck.cramfs.c:627
+#: disk-utils/fsck.cramfs.c:633
 #, fuzzy, c-format
 msgid "directory data end (%lu) != file data start (%lu)"
 msgstr "目錄資料結束 (%ld) != 檔案資料起始 (%ld)"
 
-#: disk-utils/fsck.cramfs.c:631
+#: disk-utils/fsck.cramfs.c:637
 msgid "invalid file data offset"
 msgstr "無效的檔案資料偏移值"
 
-#: disk-utils/fsck.cramfs.c:678 disk-utils/mkfs.cramfs.c:720
+#: disk-utils/fsck.cramfs.c:684 disk-utils/mkfs.cramfs.c:726
 #, fuzzy
 msgid "invalid blocksize argument"
 msgstr "無效的區塊大小引數"
 
-#: disk-utils/fsck.cramfs.c:699
+#: disk-utils/fsck.cramfs.c:705
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s：確定\n"
@@ -2969,18 +2969,18 @@ msgid " -h, --help         display this help text and exit\n"
 msgstr " -h, --help     顯示這份說明然後離開\n"
 
 #: disk-utils/mkfs.c:139 lib/exec_shell.c:49 login-utils/newgrp.c:233
-#: login-utils/su-common.c:654 login-utils/su-common.c:1006
-#: login-utils/sulogin.c:795 login-utils/sulogin.c:799 schedutils/chrt.c:555
+#: login-utils/su-common.c:651 login-utils/su-common.c:986
+#: login-utils/sulogin.c:795 login-utils/sulogin.c:799 schedutils/chrt.c:557
 #: schedutils/ionice.c:260 schedutils/taskset.c:239 sys-utils/flock.c:363
 #: sys-utils/nsenter.c:430 sys-utils/prlimit.c:644 sys-utils/rtcwake.c:577
-#: sys-utils/setarch.c:324 sys-utils/setarch.c:402 sys-utils/setsid.c:115
+#: sys-utils/setarch.c:324 sys-utils/setarch.c:403 sys-utils/setsid.c:115
 #: sys-utils/swapon.c:340 sys-utils/switch_root.c:242 sys-utils/unshare.c:461
 #: term-utils/script.c:581 text-utils/pg.c:1375
 #, c-format
 msgid "failed to execute %s"
 msgstr "執行 %s 時失敗"
 
-#: disk-utils/mkfs.cramfs.c:125
+#: disk-utils/mkfs.cramfs.c:131
 #, c-format
 msgid ""
 "usage: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n name] dirname outfile\n"
@@ -3013,120 +3013,120 @@ msgstr ""
 " dirname     壓縮的檔案系統根目錄\n"
 " outfile     輸出檔案\n"
 
-#: disk-utils/mkfs.cramfs.c:158
+#: disk-utils/mkfs.cramfs.c:164
 #, fuzzy, c-format
 msgid "readlink failed: %s"
 msgstr "讀取失敗：%s"
 
-#: disk-utils/mkfs.cramfs.c:302
+#: disk-utils/mkfs.cramfs.c:308
 #, fuzzy, c-format
 msgid "could not read directory %s"
 msgstr "無法讀取目錄 %s"
 
-#: disk-utils/mkfs.cramfs.c:437
+#: disk-utils/mkfs.cramfs.c:443
 #, fuzzy
 msgid "filesystem too big.  Exiting."
 msgstr "檔案系統太大。 離開。"
 
-#: disk-utils/mkfs.cramfs.c:596
+#: disk-utils/mkfs.cramfs.c:602
 #, c-format
 msgid "AIEEE: block \"compressed\" to > 2*blocklength (%ld)\n"
 msgstr "AIEEE：區塊「被壓縮」到 > 2*區塊長度 (%ld)\n"
 
-#: disk-utils/mkfs.cramfs.c:615
+#: disk-utils/mkfs.cramfs.c:621
 #, c-format
 msgid "%6.2f%% (%+ld bytes)\t%s\n"
 msgstr "%6.2f%% (%+ld 位元組)\t%s\n"
 
-#: disk-utils/mkfs.cramfs.c:660
+#: disk-utils/mkfs.cramfs.c:666
 #, fuzzy, c-format
 msgid "cannot close file %s"
 msgstr "無法關閉檔案 %s"
 
-#: disk-utils/mkfs.cramfs.c:726
+#: disk-utils/mkfs.cramfs.c:732
 #, fuzzy
 msgid "invalid edition number argument"
 msgstr "無效的分割區編號引數"
 
-#: disk-utils/mkfs.cramfs.c:736
+#: disk-utils/mkfs.cramfs.c:742
 #, fuzzy
 msgid "invalid endianness given; must be 'big', 'little', or 'host'"
 msgstr "無效的尾序給定的。必須是『大』，『小型』，或『主機』"
 
-#: disk-utils/mkfs.cramfs.c:800
+#: disk-utils/mkfs.cramfs.c:806
 #, fuzzy, c-format
 msgid "warning: guestimate of required size (upper bound) is %lldMB, but maximum image size is %uMB.  We might die prematurely."
 msgstr "警告：guestimate 的必要項大小 (上限) 是 %lldMB，但是最大值影像大小是 %uMB。 我們也許消滅過早。"
 
-#: disk-utils/mkfs.cramfs.c:824
+#: disk-utils/mkfs.cramfs.c:830
 msgid "ROM image map"
 msgstr "唯讀記憶體圖像映射"
 
-#: disk-utils/mkfs.cramfs.c:836
+#: disk-utils/mkfs.cramfs.c:842
 #, c-format
 msgid "Including: %s\n"
 msgstr "包含：%s\n"
 
-#: disk-utils/mkfs.cramfs.c:842
+#: disk-utils/mkfs.cramfs.c:848
 #, c-format
 msgid "Directory data: %zd bytes\n"
 msgstr "目錄資料：%zd 位元組\n"
 
-#: disk-utils/mkfs.cramfs.c:850
+#: disk-utils/mkfs.cramfs.c:856
 #, c-format
 msgid "Everything: %zd kilobytes\n"
 msgstr "所有東西：%zd 千位元組\n"
 
-#: disk-utils/mkfs.cramfs.c:855
+#: disk-utils/mkfs.cramfs.c:861
 #, c-format
 msgid "Super block: %zd bytes\n"
 msgstr "超區塊：%zd 位元組\n"
 
-#: disk-utils/mkfs.cramfs.c:862
+#: disk-utils/mkfs.cramfs.c:868
 #, c-format
 msgid "CRC: %x\n"
 msgstr "CRC：%x\n"
 
-#: disk-utils/mkfs.cramfs.c:867
+#: disk-utils/mkfs.cramfs.c:873
 #, fuzzy, c-format
 msgid "not enough space allocated for ROM image (%lld allocated, %zu used)"
 msgstr "不足空格配置的用於唯讀記憶體影像 (%lld 配置，%zu 使用)"
 
-#: disk-utils/mkfs.cramfs.c:873
+#: disk-utils/mkfs.cramfs.c:879
 #, fuzzy, c-format
 msgid "ROM image write failed (%zd %zd)"
 msgstr "唯讀記憶體影像寫入失敗 (%zd %zd)"
 
-#: disk-utils/mkfs.cramfs.c:876
+#: disk-utils/mkfs.cramfs.c:882
 msgid "ROM image"
 msgstr "唯讀記憶體映像"
 
-#: disk-utils/mkfs.cramfs.c:885
+#: disk-utils/mkfs.cramfs.c:891
 #, fuzzy, c-format
 msgid "warning: filenames truncated to %u bytes."
 msgstr "警告：檔名截短至 255 位元組。"
 
-#: disk-utils/mkfs.cramfs.c:887
+#: disk-utils/mkfs.cramfs.c:893
 #, fuzzy
 msgid "warning: files were skipped due to errors."
 msgstr "警告：檔案被略過由於錯誤。"
 
-#: disk-utils/mkfs.cramfs.c:889
+#: disk-utils/mkfs.cramfs.c:895
 #, fuzzy, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte)."
 msgstr "警告：檔案大小截短至 %luMB (minus 1 位元組)。"
 
-#: disk-utils/mkfs.cramfs.c:893
+#: disk-utils/mkfs.cramfs.c:899
 #, fuzzy, c-format
 msgid "warning: uids truncated to %u bits.  (This may be a security concern.)"
 msgstr "警告：uids 截短至 %u 位元。 (這也許會是安全上的考量.)"
 
-#: disk-utils/mkfs.cramfs.c:896
+#: disk-utils/mkfs.cramfs.c:902
 #, fuzzy, c-format
 msgid "warning: gids truncated to %u bits.  (This may be a security concern.)"
 msgstr "警告：gids 截短至 %u 位元。 (這也許會是安全上的考量.)"
 
-#: disk-utils/mkfs.cramfs.c:899
+#: disk-utils/mkfs.cramfs.c:905
 #, fuzzy, c-format
 msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
@@ -4034,101 +4034,101 @@ msgstr "配置迭代器時失敗"
 msgid "cannot seek %s"
 msgstr "無法開啟 %s"
 
-#: disk-utils/sfdisk.c:301 libfdisk/src/bsd.c:723 libfdisk/src/bsd.c:894
+#: disk-utils/sfdisk.c:302 libfdisk/src/bsd.c:723 libfdisk/src/bsd.c:894
 #: sys-utils/hwclock.c:163 sys-utils/hwclock.c:165
 #, fuzzy, c-format
 msgid "cannot write %s"
 msgstr "無法寫入 %s"
 
-#: disk-utils/sfdisk.c:307
+#: disk-utils/sfdisk.c:309
 #, c-format
 msgid "%12s (offset %5ju, size %5ju): %s"
 msgstr ""
 
-#: disk-utils/sfdisk.c:313
+#: disk-utils/sfdisk.c:315
 #, fuzzy, c-format
 msgid "%s: failed to create a backup"
 msgstr "%s：無法寫入標籤"
 
-#: disk-utils/sfdisk.c:326
+#: disk-utils/sfdisk.c:328
 #, fuzzy
 msgid "failed to create a backup file, $HOME undefined"
 msgstr "%s：無法寫入標籤"
 
-#: disk-utils/sfdisk.c:352
+#: disk-utils/sfdisk.c:354
 msgid "Backup files:"
 msgstr ""
 
-#: disk-utils/sfdisk.c:377
+#: disk-utils/sfdisk.c:379
 #, fuzzy
 msgid "failed to read new partition from device; ignoring --move-data"
 msgstr "%s：無法讀取分割表"
 
-#: disk-utils/sfdisk.c:379
+#: disk-utils/sfdisk.c:381
 #, fuzzy
 msgid "failed to get size of the new partition; ignoring --move-data"
 msgstr "%s：無法提取開始的分割區編號 %s"
 
-#: disk-utils/sfdisk.c:381
+#: disk-utils/sfdisk.c:383
 #, fuzzy
 msgid "failed to get start of the new partition; ignoring --move-data"
 msgstr "%s：無法提取開始的分割區編號 %s"
 
-#: disk-utils/sfdisk.c:383
+#: disk-utils/sfdisk.c:385
 #, fuzzy
 msgid "failed to get size of the old partition; ignoring --move-data"
 msgstr "%s：無法提取開始的分割區編號 %s"
 
-#: disk-utils/sfdisk.c:385
+#: disk-utils/sfdisk.c:387
 #, fuzzy
 msgid "failed to get start of the old partition; ignoring --move-data"
 msgstr "%s：無法提取開始的分割區編號 %s"
 
-#: disk-utils/sfdisk.c:387
+#: disk-utils/sfdisk.c:389
 #, fuzzy
 msgid "start of the partition has not been moved; ignoring --move-data"
 msgstr "%s：無法提取開始的分割區編號 %s"
 
-#: disk-utils/sfdisk.c:389
+#: disk-utils/sfdisk.c:391
 msgid "new partition is smaller than original; ignoring --move-data"
 msgstr ""
 
-#: disk-utils/sfdisk.c:439
+#: disk-utils/sfdisk.c:441
 msgid "Data move:"
 msgstr ""
 
-#: disk-utils/sfdisk.c:441
+#: disk-utils/sfdisk.c:443
 #, fuzzy, c-format
 msgid " typescript file: %s"
 msgstr "無法開啟 typescript 檔案 %s"
 
-#: disk-utils/sfdisk.c:442
+#: disk-utils/sfdisk.c:444
 #, c-format
 msgid " old start: %ju, new start: %ju (move %ju sectors)\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:449
+#: disk-utils/sfdisk.c:451
 #, fuzzy
 msgid "Do you want to move partition data?"
 msgstr "您要將這個寫入磁碟嗎？[ynq] "
 
-#: disk-utils/sfdisk.c:451 disk-utils/sfdisk.c:1765
+#: disk-utils/sfdisk.c:453 disk-utils/sfdisk.c:1774
 msgid "Leaving."
 msgstr ""
 
-#: disk-utils/sfdisk.c:522
+#: disk-utils/sfdisk.c:526
 #, fuzzy, c-format
 msgid "%s: failed to move data"
 msgstr "設定路徑時失敗"
 
-#: disk-utils/sfdisk.c:532
+#: disk-utils/sfdisk.c:541
 #, fuzzy
 msgid "The partition table is unchanged (--no-act)."
 msgstr ""
 "分割表已變更！\n"
 "\n"
 
-#: disk-utils/sfdisk.c:538
+#: disk-utils/sfdisk.c:547
 #, fuzzy
 msgid ""
 "\n"
@@ -4137,12 +4137,12 @@ msgstr ""
 "分割表已變更！\n"
 "\n"
 
-#: disk-utils/sfdisk.c:610
+#: disk-utils/sfdisk.c:619
 #, fuzzy, c-format
 msgid "unsupported label '%s'"
 msgstr "不受支援的引數：%s"
 
-#: disk-utils/sfdisk.c:613
+#: disk-utils/sfdisk.c:622
 msgid ""
 "Id  Name\n"
 "\n"
@@ -4150,266 +4150,266 @@ msgstr ""
 "識別號  名稱\n"
 "\n"
 
-#: disk-utils/sfdisk.c:643
+#: disk-utils/sfdisk.c:652
 #, fuzzy
 msgid "unrecognized partition table type"
 msgstr " %s: 無法辨識的分割表類型\n"
 
-#: disk-utils/sfdisk.c:696
+#: disk-utils/sfdisk.c:705
 #, fuzzy, c-format
 msgid "Cannot get size of %s"
 msgstr "無法提取大小的 %s"
 
-#: disk-utils/sfdisk.c:733
+#: disk-utils/sfdisk.c:742
 #, fuzzy, c-format
 msgid "total: %ju blocks\n"
 msgstr "總計：%llu 區塊\n"
 
-#: disk-utils/sfdisk.c:795 disk-utils/sfdisk.c:863 disk-utils/sfdisk.c:904
-#: disk-utils/sfdisk.c:934 disk-utils/sfdisk.c:998 disk-utils/sfdisk.c:1062
-#: disk-utils/sfdisk.c:1117 disk-utils/sfdisk.c:1173 disk-utils/sfdisk.c:1517
+#: disk-utils/sfdisk.c:804 disk-utils/sfdisk.c:872 disk-utils/sfdisk.c:913
+#: disk-utils/sfdisk.c:943 disk-utils/sfdisk.c:1007 disk-utils/sfdisk.c:1071
+#: disk-utils/sfdisk.c:1126 disk-utils/sfdisk.c:1182 disk-utils/sfdisk.c:1526
 #, fuzzy
 msgid "no disk device specified"
 msgstr "沒有迴圈裝置指定的"
 
-#: disk-utils/sfdisk.c:806
+#: disk-utils/sfdisk.c:815
 msgid "toggle boot flags is supported for MBR only"
 msgstr ""
 
-#: disk-utils/sfdisk.c:837 disk-utils/sfdisk.c:883 disk-utils/sfdisk.c:1003
-#: disk-utils/sfdisk.c:1067 disk-utils/sfdisk.c:1122 disk-utils/sfdisk.c:1178
-#: disk-utils/sfdisk.c:1515 disk-utils/sfdisk.c:1995
+#: disk-utils/sfdisk.c:846 disk-utils/sfdisk.c:892 disk-utils/sfdisk.c:1012
+#: disk-utils/sfdisk.c:1076 disk-utils/sfdisk.c:1131 disk-utils/sfdisk.c:1187
+#: disk-utils/sfdisk.c:1524 disk-utils/sfdisk.c:2004
 #, fuzzy
 msgid "failed to parse partition number"
 msgstr "%s：無法提取分割區編號"
 
-#: disk-utils/sfdisk.c:842
+#: disk-utils/sfdisk.c:851
 #, c-format
 msgid "%s: partition %d: failed to toggle bootable flag"
 msgstr ""
 
-#: disk-utils/sfdisk.c:878 disk-utils/sfdisk.c:886
+#: disk-utils/sfdisk.c:887 disk-utils/sfdisk.c:895
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to delete"
 msgstr "%s：無法提取分割區編號"
 
-#: disk-utils/sfdisk.c:942
+#: disk-utils/sfdisk.c:951
 #, fuzzy
 msgid "failed to allocate dump struct"
 msgstr "callocate cpu 集合時失敗"
 
-#: disk-utils/sfdisk.c:946
+#: disk-utils/sfdisk.c:955
 #, fuzzy
 msgid "failed to dump partition table"
 msgstr "%s：無法讀取分割表"
 
-#: disk-utils/sfdisk.c:976
+#: disk-utils/sfdisk.c:985
 #, fuzzy, c-format
 msgid "%s: no partition table found"
 msgstr "無分割表。\n"
 
-#: disk-utils/sfdisk.c:980
+#: disk-utils/sfdisk.c:989
 #, fuzzy, c-format
 msgid "%s: partition %zu: partition table contains only %zu partitions"
 msgstr "%s：分割表不具任何分割區"
 
-#: disk-utils/sfdisk.c:983
+#: disk-utils/sfdisk.c:992
 #, fuzzy, c-format
 msgid "%s: partition %zu: partition is unused"
 msgstr "%s：分割表不具任何分割區"
 
-#: disk-utils/sfdisk.c:1002 disk-utils/sfdisk.c:1066 disk-utils/sfdisk.c:1121
-#: disk-utils/sfdisk.c:1177
+#: disk-utils/sfdisk.c:1011 disk-utils/sfdisk.c:1075 disk-utils/sfdisk.c:1130
+#: disk-utils/sfdisk.c:1186
 #, fuzzy
 msgid "no partition number specified"
 msgstr "未指定任何動作"
 
-#: disk-utils/sfdisk.c:1008 disk-utils/sfdisk.c:1072 disk-utils/sfdisk.c:1127
-#: disk-utils/sfdisk.c:1183
+#: disk-utils/sfdisk.c:1017 disk-utils/sfdisk.c:1081 disk-utils/sfdisk.c:1136
+#: disk-utils/sfdisk.c:1192
 #, fuzzy
 msgid "unexpected arguments"
 msgstr "未預期的引數數量"
 
-#: disk-utils/sfdisk.c:1023
+#: disk-utils/sfdisk.c:1032
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to get partition type"
 msgstr "%s：無法提取分割區編號"
 
-#: disk-utils/sfdisk.c:1042
+#: disk-utils/sfdisk.c:1051
 #, fuzzy, c-format
 msgid "failed to parse %s partition type '%s'"
 msgstr "剖析機能『%s 時失敗』"
 
-#: disk-utils/sfdisk.c:1046
+#: disk-utils/sfdisk.c:1055
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to set partition type"
 msgstr "%s：分割表不具任何分割區"
 
-#: disk-utils/sfdisk.c:1084
+#: disk-utils/sfdisk.c:1093
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to get partition UUID"
 msgstr "%s：分割表不具任何分割區"
 
-#: disk-utils/sfdisk.c:1097 disk-utils/sfdisk.c:1152 disk-utils/sfdisk.c:1206
+#: disk-utils/sfdisk.c:1106 disk-utils/sfdisk.c:1161 disk-utils/sfdisk.c:1215
 #, fuzzy
 msgid "failed to allocate partition object"
 msgstr "配置迭代器時失敗"
 
-#: disk-utils/sfdisk.c:1101
+#: disk-utils/sfdisk.c:1110
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to set partition UUID"
 msgstr "%s：分割表不具任何分割區"
 
-#: disk-utils/sfdisk.c:1139
+#: disk-utils/sfdisk.c:1148
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to get partition name"
 msgstr "%s：無法提取分割區編號"
 
-#: disk-utils/sfdisk.c:1156
+#: disk-utils/sfdisk.c:1165
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to set partition name"
 msgstr "%s：無法提取分割區編號"
 
-#: disk-utils/sfdisk.c:1210
+#: disk-utils/sfdisk.c:1219
 #, fuzzy, c-format
 msgid "%s: partition %zu: failed to set partition attributes"
 msgstr "%s：分割表不具任何分割區"
 
-#: disk-utils/sfdisk.c:1253
+#: disk-utils/sfdisk.c:1262
 #, fuzzy
 msgid " Commands:\n"
 msgstr "沒有命令？"
 
-#: disk-utils/sfdisk.c:1255
+#: disk-utils/sfdisk.c:1264
 #, fuzzy
 msgid "   write    write table to disk and exit\n"
 msgstr "寫入表格到磁碟然後離開"
 
-#: disk-utils/sfdisk.c:1256
+#: disk-utils/sfdisk.c:1265
 msgid "   quit     show new situation and wait for user's feedback before write\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1257
+#: disk-utils/sfdisk.c:1266
 msgid "   abort    exit sfdisk shell\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1258
+#: disk-utils/sfdisk.c:1267
 #, fuzzy
 msgid "   print    display the partition table\n"
 msgstr "   p   印出 BSD 分割表"
 
-#: disk-utils/sfdisk.c:1259
+#: disk-utils/sfdisk.c:1268
 #, fuzzy
 msgid "   help     show this help text\n"
 msgstr " -h, --help     顯示這份說明然後離開\n"
 
-#: disk-utils/sfdisk.c:1261
+#: disk-utils/sfdisk.c:1270
 msgid "   Ctrl-D   the same as 'quit'\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1265
+#: disk-utils/sfdisk.c:1274
 #, fuzzy
 msgid " Input format:\n"
 msgstr "輸出格式：\n"
 
-#: disk-utils/sfdisk.c:1267
+#: disk-utils/sfdisk.c:1276
 msgid "   <start>, <size>, <type>, <bootable>\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1270
+#: disk-utils/sfdisk.c:1279
 msgid ""
 "   <start>  Beginning of the partition in sectors, or bytes if\n"
 "            specified in the format <number>{K,M,G,T,P,E,Z,Y}.\n"
 "            The default is the first free space.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1275
+#: disk-utils/sfdisk.c:1284
 msgid ""
 "   <size>   Size of the partition in sectors, or bytes if\n"
 "            specified in the format <number>{K,M,G,T,P,E,Z,Y}.\n"
 "            The default is all available space.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1280
+#: disk-utils/sfdisk.c:1289
 msgid "   <type>   The partition type.  Default is a Linux data partition.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1281
+#: disk-utils/sfdisk.c:1290
 msgid "            MBR: hex or L,S,E,X shortcuts.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1282
+#: disk-utils/sfdisk.c:1291
 msgid "            GPT: UUID or L,S,H shortcuts.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1285
+#: disk-utils/sfdisk.c:1294
 #, fuzzy
 msgid "   <bootable>  Use '*' to mark an MBR partition as bootable.\n"
 msgstr "您將不能寫入分割表。\n"
 
-#: disk-utils/sfdisk.c:1289
+#: disk-utils/sfdisk.c:1298
 msgid " Example:\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1291
+#: disk-utils/sfdisk.c:1300
 #, fuzzy
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr "  n          由剩餘空間中新增一塊分割區"
 
-#: disk-utils/sfdisk.c:1323 sys-utils/dmesg.c:1455
+#: disk-utils/sfdisk.c:1332 sys-utils/dmesg.c:1455
 #, fuzzy
 msgid "unsupported command"
 msgstr "不受支援的命令"
 
-#: disk-utils/sfdisk.c:1325
+#: disk-utils/sfdisk.c:1334
 #, fuzzy, c-format
 msgid "line %d: unsupported command"
 msgstr "不受支援的命令"
 
-#: disk-utils/sfdisk.c:1484
+#: disk-utils/sfdisk.c:1493
 #, fuzzy
 msgid "failed to allocate partition name"
 msgstr "加入分割時失敗"
 
-#: disk-utils/sfdisk.c:1525
+#: disk-utils/sfdisk.c:1534
 #, fuzzy
 msgid "failed to allocate script handler"
 msgstr "配置迭代器時失敗"
 
-#: disk-utils/sfdisk.c:1541
+#: disk-utils/sfdisk.c:1550
 #, fuzzy, c-format
 msgid "%s: cannot modify partition %d: no partition table was found"
 msgstr "%s：無法讀取分割表"
 
-#: disk-utils/sfdisk.c:1546
+#: disk-utils/sfdisk.c:1555
 #, fuzzy, c-format
 msgid "%s: cannot modify partition %d: partition table contains only %zu partitions"
 msgstr "%s：分割表不具任何分割區"
 
-#: disk-utils/sfdisk.c:1552
+#: disk-utils/sfdisk.c:1561
 #, fuzzy, c-format
 msgid "warning: %s: partition %d is not defined yet"
 msgstr "尚無分割區被定義！\n"
 
-#: disk-utils/sfdisk.c:1570
+#: disk-utils/sfdisk.c:1579
 #, c-format
 msgid ""
 "\n"
 "Welcome to sfdisk (%s)."
 msgstr ""
 
-#: disk-utils/sfdisk.c:1578
+#: disk-utils/sfdisk.c:1587
 #, fuzzy
 msgid "Checking that no-one is using this disk right now ..."
 msgstr "檢查是否沒有人現在正使用這個磁碟…\n"
 
-#: disk-utils/sfdisk.c:1581
+#: disk-utils/sfdisk.c:1590
 msgid ""
 " FAILED\n"
 "\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1584
+#: disk-utils/sfdisk.c:1593
 #, fuzzy
 msgid ""
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
@@ -4421,26 +4421,26 @@ msgstr ""
 "卸載所有檔案系統，並關閉這個磁碟上的所有交換分割區。\n"
 "使用 --no-reread 旗標以抑制這個檢查。\n"
 
-#: disk-utils/sfdisk.c:1589
+#: disk-utils/sfdisk.c:1598
 #, fuzzy
 msgid "Use the --force flag to overrule all checks."
 msgstr "使用 --force 旗標以駁回所有檢查。\n"
 
-#: disk-utils/sfdisk.c:1591
+#: disk-utils/sfdisk.c:1600
 #, fuzzy
 msgid ""
 " OK\n"
 "\n"
 msgstr "%s：確定\n"
 
-#: disk-utils/sfdisk.c:1620
+#: disk-utils/sfdisk.c:1629
 #, fuzzy
 msgid ""
 "\n"
 "Old situation:"
 msgstr "舊的情況：\n"
 
-#: disk-utils/sfdisk.c:1638
+#: disk-utils/sfdisk.c:1647
 #, c-format
 msgid ""
 "\n"
@@ -4449,58 +4449,58 @@ msgid ""
 "to override the default."
 msgstr ""
 
-#: disk-utils/sfdisk.c:1641
+#: disk-utils/sfdisk.c:1650
 #, fuzzy
 msgid ""
 "\n"
 "Type 'help' to get more information.\n"
 msgstr "嘗試『%s --help』以獲得更多資訊。\n"
 
-#: disk-utils/sfdisk.c:1659
+#: disk-utils/sfdisk.c:1668
 #, fuzzy
 msgid "All partitions used."
 msgstr "這個分割區已在使用中"
 
-#: disk-utils/sfdisk.c:1684
+#: disk-utils/sfdisk.c:1693
 #, fuzzy
 msgid "Done.\n"
 msgstr "完成。\n"
 
-#: disk-utils/sfdisk.c:1696
+#: disk-utils/sfdisk.c:1705
 #, fuzzy
 msgid "Ignoring partition."
 msgstr "已選分割區 %d\n"
 
-#: disk-utils/sfdisk.c:1705
+#: disk-utils/sfdisk.c:1714
 msgid "Failed to apply script headers, disk label not created."
 msgstr ""
 
-#: disk-utils/sfdisk.c:1721
+#: disk-utils/sfdisk.c:1730
 #, fuzzy
 msgid "Failed to add partition"
 msgstr "加入分割時失敗"
 
-#: disk-utils/sfdisk.c:1745
+#: disk-utils/sfdisk.c:1754
 msgid "Script header accepted."
 msgstr ""
 
-#: disk-utils/sfdisk.c:1754
+#: disk-utils/sfdisk.c:1763
 #, fuzzy
 msgid ""
 "\n"
 "New situation:"
 msgstr "新的情況：\n"
 
-#: disk-utils/sfdisk.c:1763
+#: disk-utils/sfdisk.c:1772
 #, fuzzy
 msgid "Do you want to write this to disk?"
 msgstr "您要將這個寫入磁碟嗎？[ynq] "
 
-#: disk-utils/sfdisk.c:1775
+#: disk-utils/sfdisk.c:1784
 msgid "Leaving.\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1788
+#: disk-utils/sfdisk.c:1797
 #, fuzzy, c-format
 msgid ""
 " %1$s [options] <dev> [[-N] <part>]\n"
@@ -4509,219 +4509,219 @@ msgstr ""
 " %1$s [選項] [<loopdev>]\n"
 " %1$s [選項] -f|<loopdev><檔案>\n"
 
-#: disk-utils/sfdisk.c:1794
+#: disk-utils/sfdisk.c:1803
 msgid ""
 "\n"
 "Commands:\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1795
+#: disk-utils/sfdisk.c:1804
 msgid " -A, --activate <dev> [<part> ...] list or set bootable MBR partitions\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1796
+#: disk-utils/sfdisk.c:1805
 #, fuzzy
 msgid " -d, --dump <dev>                  dump partition table (usable for later input)\n"
 msgstr " -u, --unquote                不引言輸出\n"
 
-#: disk-utils/sfdisk.c:1797
+#: disk-utils/sfdisk.c:1806
 #, fuzzy
 msgid " -J, --json <dev>                  dump partition table in JSON format\n"
 msgstr " -u, --unquote                不引言輸出\n"
 
-#: disk-utils/sfdisk.c:1798
+#: disk-utils/sfdisk.c:1807
 msgid " -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1799
+#: disk-utils/sfdisk.c:1808
 #, fuzzy
 msgid " -l, --list [<dev> ...]            list partitions of each device\n"
 msgstr " -n, --noparity          設定同位到無\n"
 
-#: disk-utils/sfdisk.c:1800
+#: disk-utils/sfdisk.c:1809
 #, fuzzy
 msgid " -F, --list-free [<dev> ...]       list unpartitioned free areas of each device\n"
 msgstr " -n, --noparity          設定同位到無\n"
 
-#: disk-utils/sfdisk.c:1801
+#: disk-utils/sfdisk.c:1810
 #, fuzzy
 msgid " -r, --reorder <dev>               fix partitions order (by start offset)\n"
 msgstr " -i, --irq <num>              指定並列埠 irq\n"
 
-#: disk-utils/sfdisk.c:1802
+#: disk-utils/sfdisk.c:1811
 #, fuzzy
 msgid " -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"
 msgstr " -T, --test                   測試用於 getopt (1) 版本\n"
 
-#: disk-utils/sfdisk.c:1803
+#: disk-utils/sfdisk.c:1812
 #, fuzzy
 msgid " -T, --list-types                  print the recognized types (see -X)\n"
 msgstr " -r, --reset                  重置通訊埠\n"
 
-#: disk-utils/sfdisk.c:1804
+#: disk-utils/sfdisk.c:1813
 #, fuzzy
 msgid " -V, --verify [<dev> ...]          test whether partitions seem correct\n"
 msgstr " -r, --reset                  重置通訊埠\n"
 
-#: disk-utils/sfdisk.c:1805
+#: disk-utils/sfdisk.c:1814
 msgid "     --delete <dev> [<part> ...]   delete all or specified partitions\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1808
+#: disk-utils/sfdisk.c:1817
 msgid " --part-label <dev> <part> [<str>] print or change partition label\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1809
+#: disk-utils/sfdisk.c:1818
 msgid " --part-type <dev> <part> [<type>] print or change partition type\n"
-msgstr ""
-
-#: disk-utils/sfdisk.c:1810
-#, fuzzy
-msgid " --part-uuid <dev> <part> [<uuid>] print or change partition uuid\n"
-msgstr "    -c [或 --id]：       印出或變更分割區識別號"
-
-#: disk-utils/sfdisk.c:1811
-msgid " --part-attrs <dev> <part> [<str>] print or change partition attributes\n"
-msgstr ""
-
-#: disk-utils/sfdisk.c:1814
-#, fuzzy
-msgid " <dev>                     device (usually disk) path\n"
-msgstr " -h           顯示這份說明然後離開\n"
-
-#: disk-utils/sfdisk.c:1815
-#, fuzzy
-msgid " <part>                    partition number\n"
-msgstr "    -N# ：               只變更編號為 # 的分割區"
-
-#: disk-utils/sfdisk.c:1816
-msgid " <type>                    partition type, GUID for GPT, hex for MBR\n"
 msgstr ""
 
 #: disk-utils/sfdisk.c:1819
 #, fuzzy
-msgid " -a, --append              append partitions to existing partition table\n"
-msgstr " -i, --irq <num>              指定並列埠 irq\n"
+msgid " --part-uuid <dev> <part> [<uuid>] print or change partition uuid\n"
+msgstr "    -c [或 --id]：       印出或變更分割區識別號"
 
 #: disk-utils/sfdisk.c:1820
-#, fuzzy
-msgid " -b, --backup              backup partition table sectors (see -O)\n"
-msgstr " -n, --noparity          設定同位到無\n"
-
-#: disk-utils/sfdisk.c:1821
-#, fuzzy
-msgid "     --bytes               print SIZE in bytes rather than in human readable format\n"
-msgstr " -d, --debug             列印詳細的訊息到標準勘誤\n"
-
-#: disk-utils/sfdisk.c:1822
-msgid "     --move-data[=<typescript>] move partition data after relocation (requires -N)\n"
+msgid " --part-attrs <dev> <part> [<str>] print or change partition attributes\n"
 msgstr ""
 
 #: disk-utils/sfdisk.c:1823
 #, fuzzy
-msgid " -f, --force               disable all consistency checking\n"
-msgstr "您可以停用所有的一致性檢查藉由："
+msgid " <dev>                     device (usually disk) path\n"
+msgstr " -h           顯示這份說明然後離開\n"
 
 #: disk-utils/sfdisk.c:1824
 #, fuzzy
-msgid "     --color[=<when>]      colorize output (auto, always or never)\n"
-msgstr " -Q, --queue              建立訊息佇列\n"
+msgid " <part>                    partition number\n"
+msgstr "    -N# ：               只變更編號為 # 的分割區"
 
-#: disk-utils/sfdisk.c:1827
-#, fuzzy
-msgid " -N, --partno <num>        specify partition number\n"
-msgstr " -i, --irq <num>              指定並列埠 irq\n"
+#: disk-utils/sfdisk.c:1825
+msgid " <type>                    partition type, GUID for GPT, hex for MBR\n"
+msgstr ""
 
 #: disk-utils/sfdisk.c:1828
 #, fuzzy
-msgid " -n, --no-act              do everything except write to device\n"
-msgstr " -n, --noparity          設定同位到無\n"
+msgid " -a, --append              append partitions to existing partition table\n"
+msgstr " -i, --irq <num>              指定並列埠 irq\n"
 
 #: disk-utils/sfdisk.c:1829
 #, fuzzy
-msgid "     --no-reread           do not check whether the device is in use\n"
-msgstr " -c           清空螢幕之前顯示\n"
+msgid " -b, --backup              backup partition table sectors (see -O)\n"
+msgstr " -n, --noparity          設定同位到無\n"
 
 #: disk-utils/sfdisk.c:1830
 #, fuzzy
-msgid "     --no-tell-kernel      do not tell kernel about changes\n"
-msgstr " -f           不分割長列\n"
+msgid "     --bytes               print SIZE in bytes rather than in human readable format\n"
+msgstr " -d, --debug             列印詳細的訊息到標準勘誤\n"
 
 #: disk-utils/sfdisk.c:1831
-msgid " -O, --backup-file <path>  override default backup file name\n"
+msgid "     --move-data[=<typescript>] move partition data after relocation (requires -N)\n"
 msgstr ""
 
 #: disk-utils/sfdisk.c:1832
 #, fuzzy
-msgid " -o, --output <list>       output columns\n"
-msgstr " -o, --options <optstring>    短選項為辨識的\n"
+msgid " -f, --force               disable all consistency checking\n"
+msgstr "您可以停用所有的一致性檢查藉由："
 
 #: disk-utils/sfdisk.c:1833
 #, fuzzy
-msgid " -q, --quiet               suppress extra info messages\n"
-msgstr "    -q  [或 --quiet]：     抑制警告訊息"
-
-#: disk-utils/sfdisk.c:1834
-#, fuzzy
-msgid " -w, --wipe <mode>         wipe signatures (auto, always or never)\n"
+msgid "     --color[=<when>]      colorize output (auto, always or never)\n"
 msgstr " -Q, --queue              建立訊息佇列\n"
 
 #: disk-utils/sfdisk.c:1836
 #, fuzzy
-msgid " -X, --label <name>        specify label type (dos, gpt, ...)\n"
+msgid " -N, --partno <num>        specify partition number\n"
 msgstr " -i, --irq <num>              指定並列埠 irq\n"
 
 #: disk-utils/sfdisk.c:1837
+#, fuzzy
+msgid " -n, --no-act              do everything except write to device\n"
+msgstr " -n, --noparity          設定同位到無\n"
+
+#: disk-utils/sfdisk.c:1838
+#, fuzzy
+msgid "     --no-reread           do not check whether the device is in use\n"
+msgstr " -c           清空螢幕之前顯示\n"
+
+#: disk-utils/sfdisk.c:1839
+#, fuzzy
+msgid "     --no-tell-kernel      do not tell kernel about changes\n"
+msgstr " -f           不分割長列\n"
+
+#: disk-utils/sfdisk.c:1840
+msgid " -O, --backup-file <path>  override default backup file name\n"
+msgstr ""
+
+#: disk-utils/sfdisk.c:1841
+#, fuzzy
+msgid " -o, --output <list>       output columns\n"
+msgstr " -o, --options <optstring>    短選項為辨識的\n"
+
+#: disk-utils/sfdisk.c:1842
+#, fuzzy
+msgid " -q, --quiet               suppress extra info messages\n"
+msgstr "    -q  [或 --quiet]：     抑制警告訊息"
+
+#: disk-utils/sfdisk.c:1843
+#, fuzzy
+msgid " -w, --wipe <mode>         wipe signatures (auto, always or never)\n"
+msgstr " -Q, --queue              建立訊息佇列\n"
+
+#: disk-utils/sfdisk.c:1845
+#, fuzzy
+msgid " -X, --label <name>        specify label type (dos, gpt, ...)\n"
+msgstr " -i, --irq <num>              指定並列埠 irq\n"
+
+#: disk-utils/sfdisk.c:1846
 msgid " -Y, --label-nested <name> specify nested label type (dos, bsd)\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1839
+#: disk-utils/sfdisk.c:1848
 msgid " -G, --show-pt-geometry    deprecated, alias to --show-geometry\n"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1840
+#: disk-utils/sfdisk.c:1849
 #, fuzzy
 msgid " -L, --Linux               deprecated, only for backward compatibility\n"
 msgstr " -i, --info                列印只有資訊關於取樣步驟\n"
 
-#: disk-utils/sfdisk.c:1841
+#: disk-utils/sfdisk.c:1850
 #, fuzzy
 msgid " -u, --unit S              deprecated, only sector unit is supported\n"
 msgstr " -i, --info                列印只有資訊關於取樣步驟\n"
 
-#: disk-utils/sfdisk.c:1845 login-utils/chfn.c:102 login-utils/chsh.c:79
+#: disk-utils/sfdisk.c:1854 login-utils/chfn.c:102 login-utils/chsh.c:79
 #, fuzzy
 msgid " -v, --version  output version information and exit\n"
 msgstr " -v, --version  輸出版本資訊然後離開\n"
 
-#: disk-utils/sfdisk.c:1950
+#: disk-utils/sfdisk.c:1959
 #, c-format
 msgid "%s is deprecated in favour of --part-type"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1955
+#: disk-utils/sfdisk.c:1964
 msgid "--id is deprecated in favour of --part-type"
 msgstr ""
 
-#: disk-utils/sfdisk.c:1971
+#: disk-utils/sfdisk.c:1980
 msgid "--show-pt-geometry is no more implemented. Using --show-geometry."
 msgstr ""
 
-#: disk-utils/sfdisk.c:1982
+#: disk-utils/sfdisk.c:1991
 msgid "--Linux option is unnecessary and deprecated"
 msgstr ""
 
-#: disk-utils/sfdisk.c:2011
+#: disk-utils/sfdisk.c:2020
 #, fuzzy, c-format
 msgid "unsupported unit '%c'"
 msgstr "不受支援的引數：%s"
 
-#: disk-utils/sfdisk.c:2014 include/c.h:306
+#: disk-utils/sfdisk.c:2023 include/c.h:306
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s 來自 %s\n"
 
-#: disk-utils/sfdisk.c:2091
+#: disk-utils/sfdisk.c:2100
 msgid "--movedata requires -N"
 msgstr ""
 
@@ -4826,7 +4826,7 @@ msgid "colors are disabled by default"
 msgstr "預設會拒絕從 %2$s 登入到 %1$s。\n"
 
 #: include/env.h:18 lib/pager.c:151 login-utils/login.c:1052
-#: login-utils/login.c:1056 login-utils/su-common.c:526
+#: login-utils/login.c:1056 login-utils/su-common.c:523
 #: term-utils/agetty.c:1160
 #, fuzzy, c-format
 msgid "failed to set the %s environment variable"
@@ -6526,7 +6526,7 @@ msgstr "剩餘空間"
 msgid "Failed to resize partition #%zu."
 msgstr "調整大小分割時失敗"
 
-#: libfdisk/src/parttype.c:259 misc-utils/findmnt.c:655 schedutils/chrt.c:204
+#: libfdisk/src/parttype.c:259 misc-utils/findmnt.c:655 schedutils/chrt.c:206
 #: schedutils/ionice.c:79 sys-utils/hwclock.c:334
 msgid "unknown"
 msgstr "不明的"
@@ -7054,7 +7054,7 @@ msgstr "無法開啟 %s"
 msgid "the plymouth request %c is not implemented"
 msgstr ""
 
-#: lib/randutils.c:142
+#: lib/randutils.c:136
 msgid "libc pseudo-random functions"
 msgstr ""
 
@@ -8125,37 +8125,37 @@ msgstr ""
 msgid "This account is currently not available.\n"
 msgstr "這個磁碟為目前在使用中。\n"
 
-#: login-utils/su-common.c:295
+#: login-utils/su-common.c:292
 #, fuzzy, c-format
 msgid "cannot open session: %s"
 msgstr "無法無法開啟作業階段：%s"
 
-#: login-utils/su-common.c:307
+#: login-utils/su-common.c:304
 #, fuzzy
 msgid "cannot create child process"
 msgstr "無法建立子行程"
 
-#: login-utils/su-common.c:319
+#: login-utils/su-common.c:316
 #, fuzzy, c-format
 msgid "cannot change directory to %s"
 msgstr "無法變更目錄到 %s"
 
-#: login-utils/su-common.c:324
+#: login-utils/su-common.c:321
 #, fuzzy
 msgid "cannot block signals"
 msgstr "無法區塊信號"
 
-#: login-utils/su-common.c:338 login-utils/su-common.c:346
-#: login-utils/su-common.c:352 misc-utils/uuidd.c:407 term-utils/script.c:771
+#: login-utils/su-common.c:335 login-utils/su-common.c:343
+#: login-utils/su-common.c:349 misc-utils/uuidd.c:407 term-utils/script.c:771
 #, fuzzy
 msgid "cannot set signal handler"
 msgstr "無法設定信號處理程式"
 
-#: login-utils/su-common.c:377
+#: login-utils/su-common.c:374
 msgid " (core dumped)"
 msgstr ""
 
-#: login-utils/su-common.c:393
+#: login-utils/su-common.c:390
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8164,59 +8164,44 @@ msgstr ""
 "\n"
 "作業階段終止，killing 命令殼…"
 
-#: login-utils/su-common.c:403
+#: login-utils/su-common.c:400
 #, fuzzy, c-format
 msgid " ...killed.\n"
 msgstr "...killed。\n"
 
-#: login-utils/su-common.c:483
+#: login-utils/su-common.c:480
 msgid "may not be used by non-root users"
 msgstr ""
 
-#: login-utils/su-common.c:511
+#: login-utils/su-common.c:508
 #, fuzzy
 msgid "incorrect password"
 msgstr "不正確密碼"
 
-#: login-utils/su-common.c:595
+#: login-utils/su-common.c:592
 #, fuzzy
 msgid "cannot set groups"
 msgstr "無法設定群組"
 
-#: login-utils/su-common.c:610 sys-utils/eject.c:665
+#: login-utils/su-common.c:607 sys-utils/eject.c:665
 msgid "cannot set group id"
 msgstr "無法設定群組識別號"
 
-#: login-utils/su-common.c:612 sys-utils/eject.c:668
+#: login-utils/su-common.c:609 sys-utils/eject.c:668
 msgid "cannot set user id"
 msgstr "無法設定使用者識別號"
 
-#: login-utils/su-common.c:685
-#, fuzzy
-msgid "failed to initialize seccomp context"
-msgstr "初始化 loopcxt 時失敗"
-
-#: login-utils/su-common.c:688
-#, fuzzy
-msgid "failed to add seccomp rule"
-msgstr "讀取速度時失敗"
-
-#: login-utils/su-common.c:690
-#, fuzzy
-msgid "failed to load seccomp rule"
-msgstr "讀取速度時失敗"
-
-#: login-utils/su-common.c:700
+#: login-utils/su-common.c:682
 #, fuzzy, c-format
 msgid " %s [options] -u <user> <command>\n"
 msgstr " %s [選項] <user> [<ttyname>]\n"
 
-#: login-utils/su-common.c:701 login-utils/su-common.c:713
+#: login-utils/su-common.c:683 login-utils/su-common.c:695
 #, fuzzy, c-format
 msgid " %s [options] [-] [<user> [<argument>...]]\n"
 msgstr " %s [選項] <program> [引數...]\n"
 
-#: login-utils/su-common.c:702
+#: login-utils/su-common.c:684
 msgid ""
 "\n"
 "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
@@ -8224,12 +8209,12 @@ msgid ""
 "The options -c, -f, -l, and -s are mutually exclusive with -u.\n"
 msgstr ""
 
-#: login-utils/su-common.c:709
+#: login-utils/su-common.c:691
 #, fuzzy
 msgid " -u, --user <user>             username\n"
 msgstr " -v, --verbose            是更多詳細的\n"
 
-#: login-utils/su-common.c:714
+#: login-utils/su-common.c:696
 #, fuzzy
 msgid ""
 "\n"
@@ -8240,87 +8225,87 @@ msgstr ""
 " 變更有效使用者識別號和群組識別號到該的使用者。\n"
 " mere - 意味著 -l.   如果使用者無法給定的，假設根。\n"
 
-#: login-utils/su-common.c:721
+#: login-utils/su-common.c:703
 msgid " -m, -p, --preserve-environment  do not reset environment variables\n"
 msgstr ""
 
-#: login-utils/su-common.c:722
+#: login-utils/su-common.c:704
 #, fuzzy
 msgid " -g, --group <group>             specify the primary group\n"
 msgstr " -i, --irq <num>              指定並列埠 irq\n"
 
-#: login-utils/su-common.c:723
+#: login-utils/su-common.c:705
 msgid ""
 " -G, --supp-group <group>        specify a supplemental group\n"
 "\n"
 msgstr ""
 
-#: login-utils/su-common.c:725
+#: login-utils/su-common.c:707
 #, fuzzy
 msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr " -h, --help                   這個小用法指導\n"
 
-#: login-utils/su-common.c:726
+#: login-utils/su-common.c:708
 #, fuzzy
 msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr " -c  --command <command>  運行單一命令字串透過命令殼\n"
 
-#: login-utils/su-common.c:727
+#: login-utils/su-common.c:709
 #, fuzzy
 msgid ""
 " --session-command <command>     pass a single command to the shell with -c\n"
 "                                   and do not create a new session\n"
 msgstr " -c  --command <command>  運行單一命令字串透過命令殼\n"
 
-#: login-utils/su-common.c:729
+#: login-utils/su-common.c:711
 #, fuzzy
 msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr " -r, --reset                  重置通訊埠\n"
 
-#: login-utils/su-common.c:730
+#: login-utils/su-common.c:712
 #, fuzzy
 msgid " -s, --shell <shell>             run <shell> if /etc/shells allows it\n"
 msgstr " -s, --shell <shell>          設定命令殼引言慣例\n"
 
-#: login-utils/su-common.c:774
+#: login-utils/su-common.c:756
 #, c-format
 msgid "specifying more than %d supplemental group is not possible"
 msgid_plural "specifying more than %d supplemental groups is not possible"
 msgstr[0] ""
 
-#: login-utils/su-common.c:780
+#: login-utils/su-common.c:762
 #, fuzzy, c-format
 msgid "group %s does not exist"
 msgstr "使用者 %s 不存在"
 
-#: login-utils/su-common.c:898
+#: login-utils/su-common.c:880
 msgid "ignoring --preserve-environment, it's mutually exclusive with --login"
 msgstr ""
 
-#: login-utils/su-common.c:909
+#: login-utils/su-common.c:891
 msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive"
 msgstr ""
 
-#: login-utils/su-common.c:913
+#: login-utils/su-common.c:895
 #, fuzzy
 msgid "no command was specified"
 msgstr "未指定任何動作"
 
-#: login-utils/su-common.c:927
+#: login-utils/su-common.c:909
 msgid "only root can specify alternative groups"
 msgstr ""
 
-#: login-utils/su-common.c:934
+#: login-utils/su-common.c:916
 #, fuzzy, c-format
 msgid "user %s does not exist"
 msgstr "使用者 %s 不存在"
 
-#: login-utils/su-common.c:974
+#: login-utils/su-common.c:956
 #, fuzzy, c-format
 msgid "using restricted shell %s"
 msgstr "使用限制的命令殼 %s"
 
-#: login-utils/su-common.c:1000
+#: login-utils/su-common.c:980
 #, fuzzy, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "警告：無法變更目錄到 %s"
@@ -8574,138 +8559,143 @@ msgstr "您正在這個系統中使用陰影密碼。\n"
 msgid "Would you like to edit %s now [y/n]? "
 msgstr "您現在想要編輯 %s 嗎[y/n]？"
 
-#: misc-utils/cal.c:370
+#: misc-utils/cal.c:372
 #, fuzzy
 msgid "invalid month argument"
 msgstr "無效的長度引數"
 
-#: misc-utils/cal.c:378
+#: misc-utils/cal.c:380
 #, fuzzy
 msgid "invalid week argument"
 msgstr "無效的速度引數"
 
-#: misc-utils/cal.c:380
+#: misc-utils/cal.c:382
 #, fuzzy
 msgid "illegal week value: use 1-54"
 msgstr "不合法的日號：使用 1-%d"
 
-#: misc-utils/cal.c:416
-#, fuzzy
-msgid "failed to parse timestamp"
+#: misc-utils/cal.c:422
+#, fuzzy, c-format
+msgid "failed to parse timestamp or unknown month name: %s"
 msgstr "剖析大小時失敗"
 
-#: misc-utils/cal.c:425
+#: misc-utils/cal.c:431
 #, fuzzy
 msgid "illegal day value"
 msgstr "不合法的天值"
 
-#: misc-utils/cal.c:427 misc-utils/cal.c:446
+#: misc-utils/cal.c:433 misc-utils/cal.c:456
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "不合法的日號：使用 1-%d"
 
-#: misc-utils/cal.c:431 misc-utils/cal.c:435
+#: misc-utils/cal.c:437 misc-utils/cal.c:445
 msgid "illegal month value: use 1-12"
 msgstr "不合法的月分：使用 1-12"
 
-#: misc-utils/cal.c:438 misc-utils/cal.c:442
-#, fuzzy
-msgid "illegal year value"
-msgstr "不合法的天值"
-
-#: misc-utils/cal.c:440
-#, fuzzy
-msgid "illegal year value: use positive integer"
-msgstr "不合法的年分：使用 1-9999"
-
-#: misc-utils/cal.c:471 misc-utils/cal.c:484
-#, c-format
-msgid "illegal week value: year %d doesn't have week %d"
-msgstr ""
-
-#: misc-utils/cal.c:552
+#: misc-utils/cal.c:441
 #, fuzzy, c-format
 msgid "unknown month name: %s"
 msgstr "不明優先權名稱：%s。"
 
-#: misc-utils/cal.c:653
+#: misc-utils/cal.c:448 misc-utils/cal.c:452
+#, fuzzy
+msgid "illegal year value"
+msgstr "不合法的天值"
+
+#: misc-utils/cal.c:450
+#, fuzzy
+msgid "illegal year value: use positive integer"
+msgstr "不合法的年分：使用 1-9999"
+
+#: misc-utils/cal.c:482 misc-utils/cal.c:495
+#, c-format
+msgid "illegal week value: year %d doesn't have week %d"
+msgstr ""
+
+#: misc-utils/cal.c:679
 #, fuzzy, c-format
 msgid "%s"
 msgstr "%s"
 
-#: misc-utils/cal.c:659
+#: misc-utils/cal.c:685
 #, c-format
 msgid "%04d"
 msgstr ""
 
-#: misc-utils/cal.c:665
+#: misc-utils/cal.c:691
 #, fuzzy, c-format
 msgid "%s %04d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:967
+#: misc-utils/cal.c:993
 #, fuzzy, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr " %s [選項] [[[天] 月] 年]\n"
 
-#: misc-utils/cal.c:970
+#: misc-utils/cal.c:994
+#, fuzzy, c-format
+msgid " %s [options] <timestamp|monthname>\n"
+msgstr " %s [選項] <filename>\n"
+
+#: misc-utils/cal.c:997
 msgid "Display a calendar, or some part of it.\n"
 msgstr ""
 
-#: misc-utils/cal.c:971
+#: misc-utils/cal.c:998
 msgid "Without any arguments, display the current month.\n"
 msgstr ""
 
-#: misc-utils/cal.c:974
+#: misc-utils/cal.c:1001
 #, fuzzy
 msgid " -1, --one             show only a single month (default)\n"
 msgstr " -i, --info                列印只有資訊關於取樣步驟\n"
 
-#: misc-utils/cal.c:975
+#: misc-utils/cal.c:1002
 #, fuzzy
 msgid " -3, --three           show three months spanning the date\n"
 msgstr " -c, --creator     顯示建立者和擁有者\n"
 
-#: misc-utils/cal.c:976
+#: misc-utils/cal.c:1003
 #, fuzzy
 msgid " -n, --months <num>    show num months starting with date's month\n"
 msgstr " -c, --creator     顯示建立者和擁有者\n"
 
-#: misc-utils/cal.c:977
+#: misc-utils/cal.c:1004
 #, fuzzy
 msgid " -S, --span            span the date when displaying multiple months\n"
 msgstr " -g, --get-threshold                顯示目前的臨界值\n"
 
-#: misc-utils/cal.c:978
+#: misc-utils/cal.c:1005
 #, fuzzy
 msgid " -s, --sunday          Sunday as first day of week\n"
 msgstr " -n, --noparity          設定同位到無\n"
 
-#: misc-utils/cal.c:979
+#: misc-utils/cal.c:1006
 #, fuzzy
 msgid " -m, --monday          Monday as first day of week\n"
 msgstr " -n, --noparity          設定同位到無\n"
 
-#: misc-utils/cal.c:980
+#: misc-utils/cal.c:1007
 #, fuzzy
 msgid " -j, --julian          output Julian dates\n"
 msgstr " -V           輸出版本資訊然後離開\n"
 
-#: misc-utils/cal.c:981
+#: misc-utils/cal.c:1008
 #, fuzzy
 msgid " -y, --year            show the whole year\n"
 msgstr " -v, --verbose            是更多詳細的\n"
 
-#: misc-utils/cal.c:982
+#: misc-utils/cal.c:1009
 #, fuzzy
 msgid " -Y, --twelve          show the next twelve months\n"
 msgstr " -v, --verbose            是更多詳細的\n"
 
-#: misc-utils/cal.c:983
+#: misc-utils/cal.c:1010
 msgid " -w, --week[=<num>]    show US or ISO-8601 week numbers\n"
 msgstr ""
 
-#: misc-utils/cal.c:984
+#: misc-utils/cal.c:1011
 msgid "     --color[=<when>]  colorize messages (auto, always or never)\n"
 msgstr ""
 
@@ -8879,9 +8869,9 @@ msgid "can't read %s"
 msgstr "無法讀取 %s"
 
 #: misc-utils/findmnt.c:1015 misc-utils/findmnt.c:1081
-#: misc-utils/findmnt-verify.c:94 misc-utils/findmnt-verify.c:481
+#: misc-utils/findmnt-verify.c:94 misc-utils/findmnt-verify.c:482
 #: sys-utils/fstrim.c:199 sys-utils/mount.c:134 sys-utils/mount.c:182
-#: sys-utils/swapoff.c:56 sys-utils/swapoff.c:152 sys-utils/swapon.c:244
+#: sys-utils/swapoff.c:56 sys-utils/swapoff.c:155 sys-utils/swapon.c:244
 #: sys-utils/swapon.c:274 sys-utils/swapon.c:733 sys-utils/umount.c:274
 msgid "failed to initialize libmount iterator"
 msgstr "初始化 libmount 迭代器時失敗"
@@ -9185,114 +9175,114 @@ msgstr ""
 msgid "unsupported source tag: %s"
 msgstr "不受支援的引數：%s"
 
-#: misc-utils/findmnt-verify.c:205
+#: misc-utils/findmnt-verify.c:206
 #, c-format
 msgid "do not check %s source (pseudo/net)"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:208
+#: misc-utils/findmnt-verify.c:209
 #, fuzzy, c-format
 msgid "unreachable source: %s: %m"
 msgstr "無法開啟「%s」：%s"
 
-#: misc-utils/findmnt-verify.c:211
+#: misc-utils/findmnt-verify.c:212
 #, c-format
 msgid "non-bind mount source %s is a directory or regular file"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:214
+#: misc-utils/findmnt-verify.c:215
 #, fuzzy, c-format
 msgid "source %s is not a block device"
 msgstr " %s 並非區塊裝置"
 
-#: misc-utils/findmnt-verify.c:216
+#: misc-utils/findmnt-verify.c:217
 #, fuzzy, c-format
 msgid "source %s exists"
 msgstr "來源裝置"
 
-#: misc-utils/findmnt-verify.c:229
+#: misc-utils/findmnt-verify.c:230
 #, fuzzy, c-format
 msgid "VFS options: %s"
 msgstr "%s：選項 "
 
-#: misc-utils/findmnt-verify.c:233
+#: misc-utils/findmnt-verify.c:234
 #, fuzzy, c-format
 msgid "FS options: %s"
 msgstr "%s：選項 "
 
-#: misc-utils/findmnt-verify.c:237
+#: misc-utils/findmnt-verify.c:238
 #, fuzzy, c-format
 msgid "userspace options: %s"
 msgstr "資源選項：\n"
 
-#: misc-utils/findmnt-verify.c:251
+#: misc-utils/findmnt-verify.c:252
 #, fuzzy, c-format
 msgid "unsupported swaparea discard policy: %s"
 msgstr "不受支援的引數：%s"
 
-#: misc-utils/findmnt-verify.c:259
+#: misc-utils/findmnt-verify.c:260
 #, fuzzy
 msgid "failed to parse swaparea priority option"
 msgstr "剖析 pid 時失敗"
 
-#: misc-utils/findmnt-verify.c:395
+#: misc-utils/findmnt-verify.c:396
 #, c-format
 msgid "do not check %s FS type (pseudo/net)"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:405
+#: misc-utils/findmnt-verify.c:406
 msgid "\"none\" FS type is recommended for bind or move oprations only"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:413
+#: misc-utils/findmnt-verify.c:414
 #, c-format
 msgid "%s seems unspported by the current kernel"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:419 misc-utils/findmnt-verify.c:420
+#: misc-utils/findmnt-verify.c:420 misc-utils/findmnt-verify.c:421
 #, fuzzy
 msgid "cannot detect on-disk filesystem type"
 msgstr "不明檔案系統型態『%s』"
 
-#: misc-utils/findmnt-verify.c:427
+#: misc-utils/findmnt-verify.c:428
 #, c-format
 msgid "%s does not match with on-disk %s"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:430
+#: misc-utils/findmnt-verify.c:431
 #, c-format
 msgid "on-disk %s seems unspported by the current kernel"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:432
+#: misc-utils/findmnt-verify.c:433
 #, fuzzy, c-format
 msgid "FS type is %s"
 msgstr "類型：%s\n"
 
-#: misc-utils/findmnt-verify.c:444
+#: misc-utils/findmnt-verify.c:445
 #, c-format
 msgid "recommended root FS passno is 1 (current is %d)"
 msgstr ""
 
-#: misc-utils/findmnt-verify.c:511
+#: misc-utils/findmnt-verify.c:512
 #, fuzzy, c-format
 msgid "%d parse error"
 msgid_plural "%d parse errors"
 msgstr[0] "剖析錯誤\n"
 
-#: misc-utils/findmnt-verify.c:512
+#: misc-utils/findmnt-verify.c:513
 #, fuzzy, c-format
 msgid ", %d error"
 msgid_plural ", %d errors"
 msgstr[0] "，錯誤"
 
-#: misc-utils/findmnt-verify.c:513
+#: misc-utils/findmnt-verify.c:514
 #, c-format
 msgid ", %d warning"
 msgid_plural ", %d warnings"
 msgstr[0] ""
 
-#: misc-utils/findmnt-verify.c:516
+#: misc-utils/findmnt-verify.c:517
 #, c-format
 msgid "Success, no errors or warnings detected\n"
 msgstr ""
@@ -10186,7 +10176,7 @@ msgstr ""
 msgid " -r, --raw              use the raw output format\n"
 msgstr " -V, --version                輸出版本資訊\n"
 
-#: misc-utils/lslocks.c:570 schedutils/chrt.c:475 schedutils/ionice.c:177
+#: misc-utils/lslocks.c:570 schedutils/chrt.c:477 schedutils/ionice.c:177
 #: schedutils/taskset.c:163 sys-utils/lsns.c:677 sys-utils/prlimit.c:586
 #, fuzzy
 msgid "invalid PID argument"
@@ -10759,11 +10749,11 @@ msgstr "無效的偏移引數"
 msgid "The --backup option is meaningless in this context"
 msgstr "選項 --offset 未被允許在中這個語境。"
 
-#: schedutils/chrt.c:133
+#: schedutils/chrt.c:135
 msgid "Show or change the real-time scheduling attributes of a process.\n"
 msgstr ""
 
-#: schedutils/chrt.c:135
+#: schedutils/chrt.c:137
 #, fuzzy
 msgid ""
 "Set policy:\n"
@@ -10779,53 +10769,53 @@ msgstr ""
 "取得策略：\n"
 "  chrt [選項] {<pid> | <command> [<arg>...]}\n"
 
-#: schedutils/chrt.c:139
+#: schedutils/chrt.c:141
 msgid ""
 "Get policy:\n"
 " chrt [options] -p <pid>\n"
 msgstr ""
 
-#: schedutils/chrt.c:143
+#: schedutils/chrt.c:145
 #, fuzzy
 msgid "Policy options:\n"
 msgstr "資源選項：\n"
 
-#: schedutils/chrt.c:144
+#: schedutils/chrt.c:146
 #, fuzzy
 msgid " -b, --batch          set policy to SCHED_BATCH\n"
 msgstr " -n, --noparity          設定同位到無\n"
 
-#: schedutils/chrt.c:145
+#: schedutils/chrt.c:147
 #, fuzzy
 msgid " -d, --deadline       set policy to SCHED_DEADLINE\n"
 msgstr " -n, --noparity          設定同位到無\n"
 
-#: schedutils/chrt.c:146
+#: schedutils/chrt.c:148
 #, fuzzy
 msgid " -f, --fifo           set policy to SCHED_FIFO\n"
 msgstr " -n, --noparity          設定同位到無\n"
 
-#: schedutils/chrt.c:147
+#: schedutils/chrt.c:149
 #, fuzzy
 msgid " -i, --idle           set policy to SCHED_IDLE\n"
 msgstr " -n, --noparity          設定同位到無\n"
 
-#: schedutils/chrt.c:148
+#: schedutils/chrt.c:150
 #, fuzzy
 msgid " -o, --other          set policy to SCHED_OTHER\n"
 msgstr " -o, --oddparity         設定同位到奇數\n"
 
-#: schedutils/chrt.c:149
+#: schedutils/chrt.c:151
 #, fuzzy
 msgid " -r, --rr             set policy to SCHED_RR (default)\n"
 msgstr " -i, --info                列印只有資訊關於取樣步驟\n"
 
-#: schedutils/chrt.c:152
+#: schedutils/chrt.c:154
 #, fuzzy
 msgid "Scheduling options:\n"
 msgstr "輸出格式：\n"
 
-#: schedutils/chrt.c:153
+#: schedutils/chrt.c:155
 #, fuzzy
 msgid " -R, --reset-on-fork       set SCHED_RESET_ON_FORK for FIFO or RR\n"
 msgstr ""
@@ -10833,142 +10823,142 @@ msgstr ""
 "排程旗標：\n"
 "  -R | --reset-on-fork 設定 SCHED_RESET_ON_FORK 用於 FIFO 或 RR\n"
 
-#: schedutils/chrt.c:154
+#: schedutils/chrt.c:156
 msgid " -T, --sched-runtime <ns>  runtime parameter for DEADLINE\n"
 msgstr ""
 
-#: schedutils/chrt.c:155
+#: schedutils/chrt.c:157
 msgid " -P, --sched-period <ns>   period parameter for DEADLINE\n"
 msgstr ""
 
-#: schedutils/chrt.c:156
+#: schedutils/chrt.c:158
 msgid " -D, --sched-deadline <ns> deadline parameter for DEADLINE\n"
-msgstr ""
-
-#: schedutils/chrt.c:159
-#, fuzzy
-msgid "Other options:\n"
-msgstr "輸出格式：\n"
-
-#: schedutils/chrt.c:160
-msgid " -a, --all-tasks      operate on all the tasks (threads) for a given pid\n"
 msgstr ""
 
 #: schedutils/chrt.c:161
 #, fuzzy
+msgid "Other options:\n"
+msgstr "輸出格式：\n"
+
+#: schedutils/chrt.c:162
+msgid " -a, --all-tasks      operate on all the tasks (threads) for a given pid\n"
+msgstr ""
+
+#: schedutils/chrt.c:163
+#, fuzzy
 msgid " -m, --max            show min and max valid priorities\n"
 msgstr " -u, --unquote                不引言輸出\n"
 
-#: schedutils/chrt.c:162
+#: schedutils/chrt.c:164
 #, fuzzy
 msgid " -p, --pid            operate on existing given pid\n"
 msgstr " -i, --irq <num>              指定並列埠 irq\n"
 
-#: schedutils/chrt.c:163
+#: schedutils/chrt.c:165
 #, fuzzy
 msgid " -v, --verbose        display status information\n"
 msgstr " -v, --verbose              解釋什麼正在是已完成\n"
 
-#: schedutils/chrt.c:230 schedutils/chrt.c:251
+#: schedutils/chrt.c:232 schedutils/chrt.c:253
 #, c-format
 msgid "failed to get pid %d's policy"
 msgstr "取得 pid %d 的策略時失敗"
 
-#: schedutils/chrt.c:254
+#: schedutils/chrt.c:256
 #, c-format
 msgid "failed to get pid %d's attributes"
 msgstr "取得 pid %d 的屬性時失敗"
 
-#: schedutils/chrt.c:264
+#: schedutils/chrt.c:266
 #, fuzzy, c-format
 msgid "pid %d's new scheduling policy: %s"
 msgstr "pid %d 新的排程策略："
 
-#: schedutils/chrt.c:266
+#: schedutils/chrt.c:268
 #, fuzzy, c-format
 msgid "pid %d's current scheduling policy: %s"
 msgstr "pid %d 目前的排程策略："
 
-#: schedutils/chrt.c:273
+#: schedutils/chrt.c:275
 #, c-format
 msgid "pid %d's new scheduling priority: %d\n"
 msgstr "pid %d 新的排程優先權：%d\n"
 
-#: schedutils/chrt.c:275
+#: schedutils/chrt.c:277
 #, c-format
 msgid "pid %d's current scheduling priority: %d\n"
 msgstr "pid %d 目前的排程優先權：%d\n"
 
-#: schedutils/chrt.c:280
+#: schedutils/chrt.c:282
 #, c-format
 msgid "pid %d's new runtime/deadline/period parameters: %ju/%ju/%ju\n"
 msgstr ""
 
-#: schedutils/chrt.c:283
+#: schedutils/chrt.c:285
 #, fuzzy, c-format
 msgid "pid %d's current runtime/deadline/period parameters: %ju/%ju/%ju\n"
 msgstr "pid %d 目前的排程優先權：%d\n"
 
-#: schedutils/chrt.c:297 schedutils/chrt.c:393
+#: schedutils/chrt.c:299 schedutils/chrt.c:395
 #, fuzzy
 msgid "cannot obtain the list of tasks"
 msgstr "無法得到事務清單的"
 
-#: schedutils/chrt.c:331
+#: schedutils/chrt.c:333
 #, fuzzy, c-format
 msgid "%s min/max priority\t: %d/%d\n"
 msgstr "SCHED_%s 最小/最大優先權\t：%d/%d\n"
 
-#: schedutils/chrt.c:334
+#: schedutils/chrt.c:336
 #, fuzzy, c-format
 msgid "%s not supported?\n"
 msgstr "SCHED_%s 不被支援？\n"
 
-#: schedutils/chrt.c:397
+#: schedutils/chrt.c:399
 #, fuzzy, c-format
 msgid "failed to set tid %d's policy"
 msgstr "設定 tid %d's 策略時失敗"
 
-#: schedutils/chrt.c:402
+#: schedutils/chrt.c:404
 #, c-format
 msgid "failed to set pid %d's policy"
 msgstr "設定 pid %d 的策略時失敗"
 
-#: schedutils/chrt.c:484
+#: schedutils/chrt.c:486
 #, fuzzy
 msgid "invalid runtime argument"
 msgstr "無效的時間引數"
 
-#: schedutils/chrt.c:487
+#: schedutils/chrt.c:489
 #, fuzzy
 msgid "invalid period argument"
 msgstr "無效的速度引數"
 
-#: schedutils/chrt.c:490
+#: schedutils/chrt.c:492
 #, fuzzy
 msgid "invalid deadline argument"
 msgstr "無效的前端引數"
 
-#: schedutils/chrt.c:514
+#: schedutils/chrt.c:516
 #, fuzzy
 msgid "invalid priority argument"
 msgstr "無效的優先權引數"
 
-#: schedutils/chrt.c:518
+#: schedutils/chrt.c:520
 #, fuzzy
 msgid "--reset-on-fork option is supported for SCHED_FIFO and SCHED_RR policies only"
 msgstr "SCHED_RESET_ON_FORK 旗標只被支援用於 SCHED_FIFO 和 SCHED_RR 策略"
 
-#: schedutils/chrt.c:523
+#: schedutils/chrt.c:525
 msgid "--sched-{runtime,deadline,period} options are supported for SCHED_DEADLINE only"
 msgstr ""
 
-#: schedutils/chrt.c:538
+#: schedutils/chrt.c:540
 #, fuzzy
 msgid "SCHED_DEADLINE is unsupported"
 msgstr "SCHED_%s 不被支援？\n"
 
-#: schedutils/chrt.c:545
+#: schedutils/chrt.c:547
 #, c-format
 msgid "unsupported priority value for the policy: %d: see --max for valid range"
 msgstr ""
@@ -16709,17 +16699,17 @@ msgstr "設定身分為 %s 時失敗"
 msgid "unrecognized option '--list'"
 msgstr "無法辨識的輸入：%s"
 
-#: sys-utils/setarch.c:386
+#: sys-utils/setarch.c:387
 #, fuzzy
 msgid "no architecture argument specified"
 msgstr "未指定任何長度引數"
 
-#: sys-utils/setarch.c:392
+#: sys-utils/setarch.c:393
 #, fuzzy, c-format
 msgid "failed to set personality to %s"
 msgstr "設定身分為 %s 時失敗"
 
-#: sys-utils/setarch.c:395
+#: sys-utils/setarch.c:396
 #, fuzzy, c-format
 msgid "Execute command `%s'.\n"
 msgstr "執行日期命令：%s\n"
@@ -17144,25 +17134,25 @@ msgstr "設定控制終端機時失敗"
 msgid "swapoff %s\n"
 msgstr "swapoff %s\n"
 
-#: sys-utils/swapoff.c:102
+#: sys-utils/swapoff.c:105
 msgid "Not superuser."
 msgstr "並非系統管理者。"
 
-#: sys-utils/swapoff.c:105
+#: sys-utils/swapoff.c:108
 #, c-format
 msgid "%s: swapoff failed"
 msgstr "%s：swapoff 失敗"
 
-#: sys-utils/swapoff.c:119 sys-utils/swapon.c:788
+#: sys-utils/swapoff.c:122 sys-utils/swapon.c:788
 #, fuzzy, c-format
 msgid " %s [options] [<spec>]\n"
 msgstr " %s [選項] [<spec>]\n"
 
-#: sys-utils/swapoff.c:122
+#: sys-utils/swapoff.c:125
 msgid "Disable devices and files for paging and swapping.\n"
 msgstr ""
 
-#: sys-utils/swapoff.c:125
+#: sys-utils/swapoff.c:128
 #, fuzzy
 msgid ""
 " -a, --all              disable all swaps from /proc/swaps\n"
@@ -17171,7 +17161,7 @@ msgstr ""
 " -a, --all              全部停用交換從/proc/交換\n"
 " -v, --verbose          詳細模式\n"
 
-#: sys-utils/swapoff.c:132
+#: sys-utils/swapoff.c:135
 #, fuzzy
 msgid ""
 "\n"
@@ -19882,12 +19872,12 @@ msgstr "%s %s 著作權©2000-2001 Gunnar Ritter。版權所有。\n"
 msgid "failed to parse number of lines per page"
 msgstr "剖析列號的時失敗"
 
-#: text-utils/rev.c:77
+#: text-utils/rev.c:76
 #, fuzzy, c-format
 msgid "Usage: %s [options] [file ...]\n"
 msgstr "用法：%s [選項] [檔案...]\n"
 
-#: text-utils/rev.c:81
+#: text-utils/rev.c:80
 msgid "Reverse lines characterwise.\n"
 msgstr ""
 
@@ -19973,6 +19963,18 @@ msgstr "不明的退出序列在中輸入：%o，%o"
 #, fuzzy
 msgid "Input line too long."
 msgstr "輸入列太長。"
+
+#, fuzzy
+#~ msgid "failed to initialize seccomp context"
+#~ msgstr "初始化 loopcxt 時失敗"
+
+#, fuzzy
+#~ msgid "failed to add seccomp rule"
+#~ msgstr "讀取速度時失敗"
+
+#, fuzzy
+#~ msgid "failed to load seccomp rule"
+#~ msgstr "讀取速度時失敗"
 
 #, fuzzy
 #~ msgid "Filesystem label:"
