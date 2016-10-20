@@ -428,3 +428,38 @@ AC_DEFUN([UL_DEFAULT_ENABLE], [
     enable_[]suffix=$2
   fi
 ])
+
+dnl UL_NCURSES_CHECK(NAME)
+dnl
+dnl Initializes $have_<name>, NCURSES_LIBS and NCURSES_CFLAGS variables according to
+dnl <name>{6,5}_config output.
+dnl
+dnl The expected <name> is ncurses or ncursesw.
+dnl
+AC_DEFUN([UL_NCURSES_CHECK], [
+  m4_define([suffix], $1)
+
+  # ncurses-config should be everywhere, pkg-config is not supported by default
+  # by ncurses upstream
+  #
+  AC_MSG_CHECKING([$1])
+  if AC_RUN_LOG([suffix[]6-config --version >/dev/null]); then
+    have_[]suffix=yes
+    NCURSES_LIBS=`suffix[]6-config --libs`
+    NCURSES_CFLAGS=`suffix[]6-config --cflags`
+    AC_MSG_RESULT([(v6) yes])
+  elif AC_RUN_LOG([suffix[]5-config --version 2>/dev/null]); then
+    have_[]suffix=yes
+    NCURSES_LIBS=`suffix[]5-config --libs`
+    NCURSES_CFLAGS=`suffix[]5-config --cflags`
+    AC_MSG_RESULT([(v5) yes])
+  else
+    AC_MSG_RESULT([no])
+
+    # fallback
+    AC_CHECK_LIB([$1], [initscr], [have_[]suffix=yes], [have_[]suffix=no])
+    AS_IF([test "x$have_[]suffix" = xyes], [
+      NCURSES_LIBS="-l[]suffix"
+    ])
+  fi
+])
