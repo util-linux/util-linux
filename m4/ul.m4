@@ -448,7 +448,7 @@ AC_DEFUN([UL_NCURSES_CHECK], [
     NCURSES_LIBS=`suffix[]6-config --libs`
     NCURSES_CFLAGS=`suffix[]6-config --cflags`
     AC_MSG_RESULT([(v6) yes])
-  elif AC_RUN_LOG([suffix[]5-config --version 2>/dev/null]); then
+  elif AC_RUN_LOG([suffix[]5-config --version >/dev/null]); then
     have_[]suffix=yes
     NCURSES_LIBS=`suffix[]5-config --libs`
     NCURSES_CFLAGS=`suffix[]5-config --cflags`
