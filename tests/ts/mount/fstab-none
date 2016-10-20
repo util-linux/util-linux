@@ -27,6 +27,9 @@ $TS_CMD_FINDMNT --source "none" --mountpoint "$TS_MOUNTPOINT" &> /dev/null
 
 $TS_CMD_UMOUNT $TS_MOUNTPOINT || ts_die "Cannot umount $TS_MOUNTPOINT"
 
+# for old systems with mtab and /sbin/mount.tmpfs
+/bin/umount --fake "$TS_MOUNTPOINT" &> /dev/null
+
 ts_fstab_clean
 
 ts_log "Success"

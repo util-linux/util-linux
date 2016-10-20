@@ -45,7 +45,12 @@ else
 	ts_log "OK"
 fi
 $TS_CMD_UMOUNT $MNT &> /dev/null
-[ "$?" = "0" ] || ts_log "error: umount $MNT"
+if [ "$?" = "0" ]; then
+	# for old systems with mtab and /sbin/mount.tmpfs
+	/bin/umount --fake "$MNT" &> /dev/null
+else
+	ts_log "error: umount $MNT"
+fi
 ts_finalize_subtest
 
 
@@ -59,7 +64,12 @@ else
 	ts_log "OK"
 fi
 $TS_CMD_UMOUNT $MNT &> /dev/null
-[ "$?" = "0" ] || ts_log "error: umount $MNT"
+if [ "$?" = "0" ]; then
+	# for old systems with mtab and /sbin/mount.tmpfs
+	/bin/umount --fake $MNT &> /dev/null
+else
+	ts_log "error: umount $MNT"
+fi
 ts_finalize_subtest
 
 ts_fstab_clean
