@@ -253,6 +253,7 @@ static void __attribute__ ((__noreturn__)) parse_error(const char *message)
 static void add_longopt(struct getopt_control *ctl, const char *name, int has_arg)
 {
 	static int flag;
+	int nr = ctl->long_options_nr;
 
 	if (ctl->long_options_nr == ctl->long_options_length) {
 		ctl->long_options_length += REALLOC_INCREMENT;
@@ -262,10 +263,16 @@ static void add_longopt(struct getopt_control *ctl, const char *name, int has_ar
 	}
 	if (name) {
 		/* Not for init! */
-		ctl->long_options[ctl->long_options_nr].has_arg = has_arg;
-		ctl->long_options[ctl->long_options_nr].flag = &flag;
-		ctl->long_options[ctl->long_options_nr].val = ctl->long_options_nr;
-		ctl->long_options[ctl->long_options_nr].name = xstrdup(name);
+		ctl->long_options[nr].has_arg = has_arg;
+		ctl->long_options[nr].flag = &flag;
+		ctl->long_options[nr].val = ctl->long_options_nr;
+		ctl->long_options[nr].name = xstrdup(name);
+	} else {
+		/* lets use add_longopt(ct, NULL, 0) to terminate the array */
+		ctl->long_options[nr].name = NULL;
+		ctl->long_options[nr].has_arg = 0;
+		ctl->long_options[nr].flag = NULL;
+		ctl->long_options[nr].val = 0;
 	}
 }
 
@@ -303,10 +310,6 @@ static void add_long_options(struct getopt_control *ctl, char *options)
 		tokptr = strtok(NULL, ", \t\n");
 	}
 	add_longopt(ctl, NULL, 0);	/* ensure long_options[] is not full */
-	ctl->long_options[ctl->long_options_nr].name = NULL;
-	ctl->long_options[ctl->long_options_nr].has_arg = 0;
-	ctl->long_options[ctl->long_options_nr].flag = NULL;
-	ctl->long_options[ctl->long_options_nr].val = 0;
 }
 
 static shell_t shell_type(const char *new_shell)
