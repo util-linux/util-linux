@@ -1807,7 +1807,7 @@ AC_ARG_ENABLE([pg],
   [], [UL_DEFAULT_ENABLE([pg], [no])]
 )
 UL_BUILD_INIT([pg])
-UL_REQUIRES_HAVE([pg], [ncursesw, ncurses], [ncurses or ncursesw library])
+UL_REQUIRES_HAVE([pg], [ncursesw, ncurses], [ncursesw or ncurses library])
 AM_CONDITIONAL([BUILD_PG], [test "x$build_pg" = xyes])
 
 
@@ -1817,7 +1817,7 @@ AC_ARG_ENABLE([setterm],
 )
 UL_BUILD_INIT([setterm])
 UL_REQUIRES_LINUX([setterm])
-UL_REQUIRES_HAVE([setterm], [ncursesw, ncurses], [ncurses or ncurses library])
+UL_REQUIRES_HAVE([setterm], [ncursesw, ncurses], [ncursesw or ncurses library])
 AM_CONDITIONAL([BUILD_SETTERM], [test "x$build_setterm" = xyes])
 
 # build_schedutils= is just configure-only variable to control

@@ -25,7 +25,7 @@ ts_check_test_command "$TS_CMD_CHRT"
 TS_KNOWN_FAIL="yes"
 
 function do_chrt {
-	$TS_CMD_CHRT $* $TS_CMD_CHRT --pid 0 | sed 's/.* policy: //; s/.* priority: //' &>> $TS_OUTPUT
+	$TS_CMD_CHRT $* $TS_CMD_CHRT --pid 0 | sed 's/.* policy: //; s/.* priority: //' >> $TS_OUTPUT 2>&1
 }
 
 function skip_policy {
@@ -45,7 +45,7 @@ function cleanup_output {
 ts_init_subtest "batch-vs-nice"
 skip_policy SCHED_BATCH
 if [ $? == 0 ]; then
-	renice -n 5 -p $$ &>> $TS_OUTPUT
+	renice -n 5 -p $$ >> $TS_OUTPUT 2>&1
 	do_chrt --batch 0
 	cleanup_output
 	ts_finalize_subtest
