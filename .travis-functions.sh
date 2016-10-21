@@ -82,6 +82,7 @@ function travis_install_script
 		btrfs-tools \
 		dnsutils \
 		libcap-ng-dev \
+		libncursesw5-dev \
 		libpam-dev \
 		libudev-dev \
 		gtk-doc-tools \
@@ -94,7 +95,6 @@ function travis_install_script
 	sudo apt-get install -qq >/dev/null \
 		libsystemd-daemon-dev \
 		libsystemd-journal-dev \
-		libncursesw5-dev \
 		|| true
 }
 
