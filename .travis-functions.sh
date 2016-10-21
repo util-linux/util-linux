@@ -94,6 +94,7 @@ function travis_install_script
 	sudo apt-get install -qq >/dev/null \
 		libsystemd-daemon-dev \
 		libsystemd-journal-dev \
+		libncursesw5-dev \
 		|| true
 }
 
