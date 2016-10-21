@@ -87,9 +87,6 @@ cat /sys/block/${MD_DEVNAME}/${MD_DEVNAME}p{1,2}/alignment_offset >> $TS_OUTPUT 
 
 mdadm -q -S ${MD_DEVICE} >> $TS_OUTPUT 2>&1
 
-udevadm settle
-rmmod scsi_debug
-
 ts_fdisk_clean $TS_DEVICE
 ts_fdisk_clean $MD_DEVICE
 

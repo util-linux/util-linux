@@ -47,7 +47,6 @@ udevadm settle
 
 grep -q $DEVNAME /proc/partitions
 if [ $? -ne 0 ]; then
-	rmmod scsi_debug
 	ts_skip "no partition!"
 fi
 
@@ -131,5 +130,4 @@ if type "mkfs.btrfs" &>/dev/null && mkfs.btrfs --version &>/dev/null; then
 fi
 
 ts_log "...done."
-rmmod scsi_debug
 ts_finalize

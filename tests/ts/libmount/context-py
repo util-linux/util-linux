@@ -60,7 +60,6 @@ udevadm settle
 
 grep -q $DEVNAME /proc/partitions
 if [ $? -ne 0 ]; then
-	rmmod scsi_debug
 	ts_skip "no partition!"
 fi
 
@@ -159,5 +158,4 @@ $TS_CMD_UMOUNT $TS_NOEXIST
 rmdir $TS_NOEXIST
 
 ts_log "...done."
-rmmod scsi_debug
 ts_finalize

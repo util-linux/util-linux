@@ -51,7 +51,5 @@ mkfs_and_mount_minix 'v2c14' '-2 -n 14'
 mkfs_and_mount_minix 'v2c30' '-2 -n 30'
 mkfs_and_mount_minix 'v3c60' '-3 -n 60'
 
-udevadm settle
-rmmod scsi_debug &>/dev/null
 ts_finalize
 

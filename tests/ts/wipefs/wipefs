@@ -30,5 +30,4 @@ $TS_CMD_WIPEFS -a ${TS_DEVICE} > $TS_OUTDIR/out 2>/dev/null
 # check for output
 [ -s $TS_OUTDIR/out ] && echo "OK" &> $TS_OUTPUT || exit 1
 
-rmmod scsi_debug &>/dev/null
 ts_finalize

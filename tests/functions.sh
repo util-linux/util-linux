@@ -463,6 +463,8 @@ function ts_cleanup_on_exit {
 		ts_device_deinit "$dev"
 	done
 	unset TS_LOOP_DEVS
+
+	ts_scsi_debug_rmmod
 }
 
 function ts_image_md5sum {
@@ -644,12 +646,9 @@ function ts_scsi_debug_init {
 		|| ts_skip "missing scsi_debug module (dry-run)"
 
 	# skip if still in use or removal of modules not supported at all
+	# We don't want a slow timeout here so we don't use ts_scsi_debug_rmmod!
 	modprobe -r scsi_debug &>/dev/null \
 		|| ts_skip "cannot remove scsi_debug module (rmmod)"
-
-	# TODO validate that all devices are gone, add function ts_scsi_debug_rmmod
-	# to be used by the tests too. Tests which produce non-removable scsi
-	# devices should fail!
 
 	modprobe -b scsi_debug "$@" &>/dev/null \
 		|| ts_skip "cannot load scsi_debug module (modprobe)"
@@ -671,7 +670,46 @@ function ts_scsi_debug_init {
 	TS_DEVICE="/dev/${devname}"
 
 	# TODO validate that device is really up, for now just a warning on stderr
-	test -b $TS_DEVICE || echo "warning: scsi_debug device is still down"
+	test -b $TS_DEVICE || echo "warning: scsi_debug device is still down" >&2
+}
+
+# automatically called once in ts_cleanup_on_exit()
+function ts_scsi_debug_rmmod {
+	local err=1
+	local t
+	local lastmsg
+
+	# Return early most importantly in case we are not root or the module does
+	# not exist at all.
+	[ $UID -eq 0 ] || return 0
+	[ -n "$TS_DEVICE" ] || return 0
+	lsmod | grep -q "^scsi_debug " || return 0
+
+	udevadm settle
+
+	# wait for successful rmmod if udevadm settle does not work
+	for t in 0 0.02 0.05 0.1 1; do
+		sleep $t
+		lastmsg="$(modprobe -r scsi_debug 2>&1)" && err=0 && break
+	done
+
+	if [ "$err" = "1" ]; then
+		ts_log "rmmod failed: '$lastmsg'"
+		ts_log "timeout removing scsi_debug module (rmmod)"
+		return 1
+	fi
+	if lsmod | grep -q "^scsi_debug "; then
+		ts_log "BUG! scsi_debug still loaded"
+		return 1
+	fi
+
+	# TODO Do we need to validate that all devices are gone?
+	udevadm settle
+	test -b "$TS_DEVICE" && echo "warning: scsi_debug device is still up" >&2
+
+	# TODO unset TS_DEVICE, check that nobody uses it later, e.g. ts_fdisk_clean
+
+	return 0
 }
 
 function ts_resolve_host {

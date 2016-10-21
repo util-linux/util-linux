@@ -118,9 +118,5 @@ $TS_CMD_UMOUNT --recursive --all-targets ${TS_DEVICE}1 >> $TS_OUTPUT 2>&1
 [ $? == 0 ] || ts_log "umount failed"
 ts_finalize_subtest
 
-udevadm settle
-rmmod scsi_debug >> $TS_OUTPUT 2>&1
-[ $? == 0 ] || ts_die "device busy (umount failed?)"
-
 ts_log "Success"
 ts_finalize

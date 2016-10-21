@@ -39,5 +39,4 @@ udevadm settle
 $TS_CMD_BLKID -p -o udev ${TS_DEVICE} >> $TS_OUTPUT
 ts_finalize_subtest
 
-rmmod scsi_debug
 ts_finalize
