@@ -326,7 +326,7 @@ Version 1.11a (16-Feb-93): changes since 1.9a:
 	can't just open the tty's again.
 
 Version 1.9a (18-Jan-93): changes since 1.8a:
-	Rick Faith sent me man-pages for most of the untilities in this
+	Rick Faith sent me man-pages for most of the utilities in this
 	package. They are now included.
 
 	Steven S. Dick <ssd@nevets.oau.org> sent me a patch for login.c

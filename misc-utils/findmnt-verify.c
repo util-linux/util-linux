@@ -411,7 +411,7 @@ static int verify_fstype(struct verify_context *vfy)
 			isswap = 1;
 
 		if (!isswap && !isauto && !none && !is_supported_filesystem(vfy, type))
-			verify_warn(vfy, _("%s seems unspported by the current kernel"), type);
+			verify_warn(vfy, _("%s seems unsupported by the current kernel"), type);
 	}
 	realtype = mnt_get_fstype(src, &ambi, cache);
 
@@ -428,7 +428,7 @@ static int verify_fstype(struct verify_context *vfy)
 			return verify_err(vfy, _("%s does not match with on-disk %s"), type, realtype);
 
 		if (!isswap && !is_supported_filesystem(vfy, realtype))
-			return verify_err(vfy, _("on-disk %s seems unspported by the current kernel"), realtype);
+			return verify_err(vfy, _("on-disk %s seems unsupported by the current kernel"), realtype);
 
 		verify_ok(vfy, _("FS type is %s"), realtype);
 	}
