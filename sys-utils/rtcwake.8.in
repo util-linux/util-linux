@@ -42,6 +42,9 @@ implement those without analogues of BIOS, APM, or ACPI.
 On some systems, this can also be used like \fBnvram-wakeup\fP, waking from states
 like ACPI S4 (suspend to disk).  Not all systems have persistent media that are
 appropriate for such suspend modes.
+.PP
+Note that alarm functionality depends on hardware; not every RTC is able to setup 
+an alarm up to 24 hours in the future.
 .SH OPTIONS
 .TP
 .BR \-A , " \-\-adjfile " \fIfile
