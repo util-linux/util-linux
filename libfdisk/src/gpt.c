@@ -1583,10 +1583,7 @@ static int gpt_entry_attrs_from_string(
 
 		DBG(LABEL, ul_debug(" parsing item '%s'", p));
 
-		if (strncmp(p, "GUID:", 5) == 0) {
-			p += 5;
-			continue;
-		} else if (strncmp(p, GPT_ATTRSTR_REQ,
+		if (strncmp(p, GPT_ATTRSTR_REQ,
 					sizeof(GPT_ATTRSTR_REQ) - 1) == 0) {
 			bit = GPT_ATTRBIT_REQ;
 			p += sizeof(GPT_ATTRSTR_REQ) - 1;
@@ -1602,8 +1599,15 @@ static int gpt_entry_attrs_from_string(
 					sizeof(GPT_ATTRSTR_NOBLOCK) - 1) == 0) {
 			bit = GPT_ATTRBIT_NOBLOCK;
 			p += sizeof(GPT_ATTRSTR_NOBLOCK) - 1;
-		} else if (isdigit((unsigned int) *p)) {
+
+		/* GUID:<bit> as well as <bit> */
+		} else if (isdigit((unsigned int) *p)
+			   || (strncmp(p, "GUID:", 5) == 0
+			       && isdigit((unsigned int) *(p + 5)))) {
 			char *end = NULL;
+
+			if (*p == 'G')
+				p += 5;
 
 			errno = 0;
 			bit = strtol(p, &end, 0);
@@ -1617,6 +1621,11 @@ static int gpt_entry_attrs_from_string(
 
 		if (bit < 0) {
 			fdisk_warnx(cxt, _("unsupported GPT attribute bit '%s'"), p);
+			return -EINVAL;
+		}
+
+		if (*p && *p != ',' && !isblank(*p)) {
+			fdisk_warnx(cxt, _("failed to parse GPT attribute string '%s'"), str);
 			return -EINVAL;
 		}
 
