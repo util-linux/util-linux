@@ -72,5 +72,4 @@ checksum ${TS_DEVICE}1
 ts_finalize_subtest
 
 
-rmmod scsi_debug
 ts_finalize

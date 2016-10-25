@@ -151,6 +151,4 @@ ts_fdisk_clean $TS_DEVICE
 udevadm settle
 ts_finalize_subtest
 
-
-rmmod scsi_debug
 ts_finalize

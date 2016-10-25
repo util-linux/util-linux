@@ -73,7 +73,6 @@ udevadm settle
 ts_log "Alignment offsets:"
 cat /sys/block/${DEVNAME}/${DEVNAME}{1,2,3,4,5,6,7}/alignment_offset >> $TS_OUTPUT 2>&1
 
-rmmod scsi_debug
 
 ts_fdisk_clean $TS_DEVICE
 

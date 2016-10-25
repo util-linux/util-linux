@@ -79,8 +79,6 @@ $TS_CMD_BLKID -p -o udev ${TS_DEVICE}2 2>&1 | sort >> $TS_OUTPUT
 
 mdadm -q -S ${MD_DEVICE} >> $TS_OUTPUT 2>&1
 
-udevadm settle
-rmmod scsi_debug
 
 ts_fdisk_clean $TS_DEVICE
 # substitue UUIDs and major/minor number before comparison

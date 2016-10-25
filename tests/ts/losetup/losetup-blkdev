@@ -78,8 +78,4 @@ udevadm settle
 $TS_CMD_LOSETUP -d $LODEV
 ts_finalize_subtest
 
-udevadm settle
-
-rmmod scsi_debug
-
 ts_finalize

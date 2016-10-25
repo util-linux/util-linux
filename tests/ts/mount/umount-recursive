@@ -90,10 +90,6 @@ $TS_CMD_MOUNT --bind $TS_MOUNTPOINT/mntB/mntC $TS_MOUNTPOINT/bindC
 $TS_CMD_UMOUNT --recursive $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 [ $? == 0 ] || ts_die "umount failed"
 
-udevadm settle
-rmmod scsi_debug >> $TS_OUTPUT 2>&1
-[ $? == 0 ] || ts_die "device busy (umount failed?)"
-
 ts_log "Success"
 ts_finalize
 
