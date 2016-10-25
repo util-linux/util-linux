@@ -904,11 +904,10 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 			rc = next_string(&p, &pa->name);
 
 		} else if (!strncasecmp(p, "type=", 5) ||
-
 			   !strncasecmp(p, "Id=", 3)) {		/* backward compatibility */
 			char *type;
 
-			p += (*p == 'I' ? 3 : 5);		/* "Id=" or "type=" */
+			p += ((*p == 'I' || *p == 'i') ? 3 : 5); /* "Id=", "type=" */
 
 			rc = next_string(&p, &type);
 			if (rc)
