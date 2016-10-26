@@ -65,6 +65,20 @@ udevadm settle
 ts_finalize_subtest
 
 
+ts_init_subtest "read-dump-case"
+$TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
+udevadm settle
+$TS_CMD_SFDISK --unit S ${TS_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+unit: sectors
+label-id: 0x1ddc8a79
+
+${TS_DEVICE}1 : stArt=     2048, sIZe=     6144, id=83, bootAble
+EOF
+ts_fdisk_clean $TS_DEVICE
+udevadm settle
+ts_finalize_subtest
+
+
 ts_init_subtest "read-dump"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
