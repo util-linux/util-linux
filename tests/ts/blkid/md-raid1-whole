@@ -80,6 +80,8 @@ udevadm settle
 ts_log "Deinitialize devices"
 
 ts_fdisk_clean
+# seems that raid1 minimum I/O size has been changed in kernels >4.4.x and >4.8
+sed -i 's@^\(I/O size (minimum/optimal): \)[1-9][0-9]*@\1<removed>@' $TS_OUTPUT
 # remove generated UUIDs
 sed -i -e 's/ID_FS_UUID.*//g' $TS_OUTPUT
 
