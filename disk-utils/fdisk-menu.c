@@ -692,7 +692,7 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 	struct fdisk_partition *pa = NULL;
 	size_t n;
 	int rc = 0;
-	unsigned long length;
+	uintmax_t length = 0;
 
 	assert(cxt);
 	assert(ent);
@@ -709,7 +709,7 @@ static int gpt_menu_cb(struct fdisk_context **cxt0,
 	                                ~(uint32_t)0, _("New maximum entries"), &length);
 			if (rc)
 				return rc;
-			return fdisk_gpt_set_npartitions(cxt, length);
+			return fdisk_gpt_set_npartitions(cxt, (uint32_t) length);
 		case 'M':
 			mbr = fdisk_new_nested_context(cxt, "dos");
 			if (!mbr)
