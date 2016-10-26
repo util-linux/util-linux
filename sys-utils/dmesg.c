@@ -641,8 +641,8 @@ static void safe_fwrite(const char *buf, size_t size, int indent, FILE *out)
 		i += len - 1;
 #else
 		len = 1;
-		if (!isprint((unsigned int) *p) &&
-			!isspace((unsigned int) *p))        /* non-printable */
+		if (!isprint((unsigned char) *p) &&
+		    !isspace((unsigned char) *p))        /* non-printable */
 			hex = 1;
 #endif
 		if (hex)

@@ -1601,9 +1601,9 @@ static int gpt_entry_attrs_from_string(
 			p += sizeof(GPT_ATTRSTR_NOBLOCK) - 1;
 
 		/* GUID:<bit> as well as <bit> */
-		} else if (isdigit((unsigned int) *p)
+		} else if (isdigit((unsigned char) *p)
 			   || (strncmp(p, "GUID:", 5) == 0
-			       && isdigit((unsigned int) *(p + 5)))) {
+			       && isdigit((unsigned char) *(p + 5)))) {
 			char *end = NULL;
 
 			if (*p == 'G')

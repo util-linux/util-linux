@@ -685,7 +685,7 @@ static int valid_structured_data_id(const char *str)
 	for (p = str; p < at; p++) {
 		if (*p == '[' || *p == '=' || *p == '"' || *p == '@')
 			return 0;
-		if (isblank((unsigned int) *p) || iscntrl((unsigned int) *p))
+		if (isblank((unsigned char) *p) || iscntrl((unsigned char) *p))
 			return 0;
 	}
 	return 1;

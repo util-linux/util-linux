@@ -571,7 +571,7 @@ static int valid_pwd(const char *str)
 	const char *p;
 
 	for (p = str; p && *p; p++)
-		if (!isalnum((unsigned int) *p))
+		if (!isalnum((unsigned char) *p))
 			return 0;
 	return p > str ? 1 : 0;
 }

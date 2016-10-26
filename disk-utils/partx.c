@@ -193,10 +193,10 @@ static int get_partno_from_device(char *partition, dev_t devno)
 	sz = strlen(partition);
 	p = partition + sz - 1;
 
-	if (!isdigit((unsigned int) *p))
+	if (!isdigit((unsigned char) *p))
 		goto err;
 
-	while (isdigit((unsigned int) *(p - 1))) p--;
+	while (isdigit((unsigned char) *(p - 1))) p--;
 
 	errno = 0;
 	partno = strtol(p, &end, 10);
