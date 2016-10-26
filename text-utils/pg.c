@@ -46,7 +46,7 @@
 #ifndef	TIOCGWINSZ
 # include <sys/ioctl.h>
 #endif
-#include <sys/termios.h>
+#include <termios.h>
 #include <fcntl.h>
 #include <regex.h>
 #include <stdio.h>
@@ -76,7 +76,7 @@
 
 #define	READBUF		LINE_MAX	/* size of input buffer */
 #define CMDBUF		255		/* size of command buffer */
-#define	TABSIZE		8		/* spaces consumed by tab character */
+#define	PG_TABSIZE	8		/* spaces consumed by tab character */
 
 #define	cuc(c)		((c) & 0377)
 
@@ -417,7 +417,7 @@ static char *endline_for_mb(unsigned col, char *s)
 			goto ended;
 			/* Cursor right. */
 		case L'\t':
-			pos += TABSIZE - (pos % TABSIZE);
+			pos += PG_TABSIZE - (pos % PG_TABSIZE);
 			break;
 		default:
 			if (iswprint(*p))
@@ -481,7 +481,7 @@ static char *endline(unsigned col, char *s)
 			goto cend;
 			/* Cursor right. */
 		case '\t':
-			pos += TABSIZE - (pos % TABSIZE);
+			pos += PG_TABSIZE - (pos % PG_TABSIZE);
 			break;
 		default:
 			pos++;

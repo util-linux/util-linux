@@ -38,7 +38,7 @@ static const struct column_flag flags[] = {
 	{ "none",	0 }
 };
 
-static long name_to_flag(const char *name, long unsigned int namesz)
+static long name_to_flag(const char *name, size_t namesz)
 {
 	size_t i;
 

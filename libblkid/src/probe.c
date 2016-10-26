@@ -740,6 +740,8 @@ int blkid_probe_is_cdrom(blkid_probe pr)
 	return (pr->flags & BLKID_FL_CDROM_DEV);
 }
 
+#ifdef CDROM_GET_CAPABILITY
+
 static int is_sector_readable(int fd, uint64_t sector)
 {
 	char buf[512];
@@ -784,6 +786,8 @@ failed:
 				(uintmax_t) n << 9));
 	pr->size = n << 9;
 }
+
+#endif
 
 /**
  * blkid_probe_set_device:
