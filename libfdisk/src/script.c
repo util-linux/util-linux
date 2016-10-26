@@ -911,8 +911,9 @@ static int parse_line_nameval(struct fdisk_script *dp, char *s)
 			}
 
 		} else if (!strncasecmp(p, "bootable", 8)) {
+			/* we use next_token() to skip possible extra space */
 			char *tk = next_token(&p);
-			if (strcmp(tk, "bootable") == 0)
+			if (tk && strcasecmp(tk, "bootable") == 0)
 				pa->boot = 1;
 			else
 				rc = -EINVAL;
