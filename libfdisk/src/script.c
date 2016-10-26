@@ -1546,6 +1546,24 @@ done:
 	return 0;
 }
 
+static int test_tokens(struct fdisk_test *ts, int argc, char *argv[])
+{
+	char *p, *str = argc == 2 ? strdup(argv[1]) : NULL;
+	int i;
+
+	for (i = 1, p = str; p && *p; i++) {
+		char *tk = next_token(&p);
+
+		if (!tk)
+			break;
+
+		printf("#%d: '%s'\n", i, tk);
+	}
+
+	free(str);
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 	struct fdisk_test tss[] = {
@@ -1553,6 +1571,7 @@ int main(int argc, char *argv[])
 	{ "--read",    test_read,    "<file>              read PT script from file" },
 	{ "--apply",   test_apply,   "<device> <file>     try apply script from file to device" },
 	{ "--stdin",   test_stdin,   "                    read input like sfdisk" },
+	{ "--tokens",  test_tokens,  "<string>            parse string" },
 	{ NULL }
 	};
 
