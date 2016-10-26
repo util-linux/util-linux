@@ -239,13 +239,14 @@ static void show_sched_pid_info(struct chrt_ctl *ctl, pid_t pid)
 		runtime = sa.sched_runtime;
 		period = sa.sched_period;
 	}
-#endif
 
 	/*
 	 * Old way
 	 */
 fallback:
-	if (errno == ENOSYS) {
+	if (errno == ENOSYS)
+#endif
+	{
 		struct sched_param sp;
 
 		policy = sched_getscheduler(pid);
