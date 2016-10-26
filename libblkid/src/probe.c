@@ -756,7 +756,7 @@ static int is_sector_readable(int fd, uint64_t sector)
 
 	return 1;
 failed:
-	DBG(LOWPROBE, ul_debug("CDROM: read sector %ju failed %m", sector));
+	DBG(LOWPROBE, ul_debug("CDROM: read sector %"PRIu64" failed %m", sector));
 	errno = 0;
 	return 0;
 }
