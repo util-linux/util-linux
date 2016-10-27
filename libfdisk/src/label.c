@@ -416,7 +416,7 @@ int fdisk_locate_disklabel(struct fdisk_context *cxt, int n, const char **name,
  */
 int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id)
 {
-	struct fdisk_labelitem item = {0};
+	struct fdisk_labelitem item = FDISK_LABELITEM_INIT;
 	int rc;
 
 	if (!cxt || !cxt->label || !id)

@@ -433,6 +433,10 @@ struct fdisk_labelitem {
 	} data;
 };
 
+/* Use only internally for non-allocated items, never use
+ * refcouting for such items!
+ */
+#define FDISK_LABELITEM_INIT	{ .type = 0, .refcount = 0 }
 
 /* ask.c */
 struct fdisk_ask *fdisk_new_ask(void);
