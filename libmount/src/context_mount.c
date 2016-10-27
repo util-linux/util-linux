@@ -369,7 +369,8 @@ static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 	if (!*optstr)
 		return -ENOMEM;
 
-	if (cxt->user_mountflags & MNT_MS_USER) {
+	if ((cxt->user_mountflags & MNT_MS_USER) ||
+	    (cxt->user_mountflags & MNT_MS_USERS)) {
 		/*
 		 * This is unnecessary for real user-mounts as mount.<type>
 		 * helpers always have to follow fstab rather than mount
