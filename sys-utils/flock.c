@@ -115,11 +115,8 @@ static int open_file(const char *filename, int *flags)
 	return fd;
 }
 
-static void __attribute__((__noreturn__)) run_program(int fd, char **cmd_argv, int do_close)
+static void __attribute__((__noreturn__)) run_program(char **cmd_argv)
 {
-	if (do_close)
-		close(fd);
-
 	execvp(cmd_argv[0], cmd_argv);
 
 	warn(_("failed to execute %s"), cmd_argv[0]);
@@ -348,11 +345,13 @@ int main(int argc, char *argv[])
 				err(EX_OSERR, _("fork failed"));
 
 			/* child */
-			else if (f == 0)
-				run_program(fd, cmd_argv, do_close);
+			else if (f == 0) {
+				if (do_close)
+					close(fd);
+				run_program(cmd_argv);
 
 			/* parent */
-			else {
+			} else {
 				do {
 					w = waitpid(f, &status, 0);
 					if (w == -1 && errno != EINTR)
@@ -373,7 +372,7 @@ int main(int argc, char *argv[])
 
 		} else
 			/* no-fork execution */
-			run_program(fd, cmd_argv, do_close);
+			run_program(cmd_argv);
 	}
 
 	return status;
