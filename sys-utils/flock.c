@@ -115,6 +115,17 @@ static int open_file(const char *filename, int *flags)
 	return fd;
 }
 
+static void __attribute__((__noreturn__)) run_program(int fd, char **cmd_argv, int do_close)
+{
+	if (do_close)
+		close(fd);
+
+	execvp(cmd_argv[0], cmd_argv);
+
+	warn(_("failed to execute %s"), cmd_argv[0]);
+	_exit((errno == ENOMEM) ? EX_OSERR : EX_UNAVAILABLE);
+}
+
 int main(int argc, char *argv[])
 {
 	static timer_t t_id;
@@ -333,16 +344,22 @@ int main(int argc, char *argv[])
 
 		if (!no_fork) {
 			f = fork();
-			if (f < 0) {
+			if (f < 0)
 				err(EX_OSERR, _("fork failed"));
-				if (f != 0) {
-					do {
-						w = waitpid(f, &status, 0);
-						if (w == -1 && errno != EINTR)
-						break;
-					} while (w != f);
 
-					if (w == -1) {
+			/* child */
+			else if (f == 0)
+				run_program(fd, cmd_argv, do_close);
+
+			/* parent */
+			else {
+				do {
+					w = waitpid(f, &status, 0);
+					if (w == -1 && errno != EINTR)
+						break;
+				} while (w != f);
+
+				if (w == -1) {
 					status = EXIT_FAILURE;
 					warn(_("waitpid failed"));
 				} else if (WIFEXITED(status))
@@ -352,18 +369,12 @@ int main(int argc, char *argv[])
 				else
 					/* WTF? */
 					status = EX_OSERR;
-				}
-				goto out;
 			}
-		}
-		if (do_close)
-			close(fd);
-		execvp(cmd_argv[0], cmd_argv);
-		/* execvp() failed */
-		warn(_("failed to execute %s"), cmd_argv[0]);
-		_exit((errno == ENOMEM) ? EX_OSERR : EX_UNAVAILABLE);
+
+		} else
+			/* no-fork execution */
+			run_program(fd, cmd_argv, do_close);
 	}
 
-out:
 	return status;
 }
