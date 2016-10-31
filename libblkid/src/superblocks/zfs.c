@@ -87,7 +87,7 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 	memcpy(buff, p, sizeof(buff));
 	nvl = (struct nvlist *) buff;
 
-	DBG(LOWPROBE, ul_debug("zfs_extract: nvlist offset %jd\n", offset));
+	DBG(LOWPROBE, ul_debug("zfs_extract: nvlist offset %jd\n", (intmax_t)offset));
 
 	nvp = &nvl->nvl_nvpair;
 	while (left > sizeof(*nvp) && nvp->nvp_size != 0 && found < 3) {
@@ -176,14 +176,14 @@ static int find_uberblocks(const void *label, loff_t *ub_offset, int *swap_endia
 			*ub_offset = offset;
 			*swap_endian = 0;
 			found++;
-			DBG(LOWPROBE, ul_debug("probe_zfs: found little-endian uberblock at %jd\n", offset >> 10));
+			DBG(LOWPROBE, ul_debug("probe_zfs: found little-endian uberblock at %jd\n", (intmax_t)offset >> 10));
 		}
 
 		if (ub->ub_magic == swab_magic) {
 			*ub_offset = offset;
 			*swap_endian = 1;
 			found++;
-			DBG(LOWPROBE, ul_debug("probe_zfs: found big-endian uberblock at %jd\n", offset >> 10));
+			DBG(LOWPROBE, ul_debug("probe_zfs: found big-endian uberblock at %jd\n", (intmax_t)offset >> 10));
 		}
 	}
 

@@ -75,8 +75,10 @@ void list_disk_geometry(struct fdisk_context *cxt)
 		fdisk_info(cxt, _("Disklabel type: %s"),
 				fdisk_label_get_name(lb));
 
-	if (!fdisk_is_details(cxt) && fdisk_get_disklabel_id(cxt, &id) == 0 && id)
+	if (!fdisk_is_details(cxt) && fdisk_get_disklabel_id(cxt, &id) == 0 && id) {
 		fdisk_info(cxt, _("Disk identifier: %s"), id);
+		free(id);
+	}
 }
 
 void list_disklabel(struct fdisk_context *cxt)
