@@ -69,13 +69,13 @@ static int open_un_socket_and_connect(void)
 
 	fd = socket(PF_UNIX, SOCK_STREAM|SOCK_CLOEXEC|SOCK_NONBLOCK, 0);
 	if (fd < 0) {
-		warnx(_("can not open UNIX socket"));
+		warnx(_("cannot open UNIX socket"));
 		goto err;
 	}
 
 	ret = setsockopt(fd, SOL_SOCKET, SO_PASSCRED, &one, (socklen_t)sizeof(one));
 	if (ret < 0) {
-		warnx(_("can not set option for UNIX socket"));
+		warnx(_("cannot set option for UNIX socket"));
 		close(fd);
 		fd = -1;
 		goto err;
@@ -88,7 +88,7 @@ static int open_un_socket_and_connect(void)
 	ret = connect(fd, &su, offsetof(struct sockaddr_un, sun_path) + 1 + strlen(su.sun_path+1));
 	if (ret < 0) {
 		if (errno != ECONNREFUSED)
-			warnx(_("can not connect on UNIX socket"));
+			warnx(_("cannot connect on UNIX socket"));
 		close(fd);
 		fd = -1;
 		goto err;

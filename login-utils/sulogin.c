@@ -1012,7 +1012,7 @@ int main(int argc, char **argv)
 				mask_signal(SIGINT,  SIG_IGN, &saved_sigint);
 
 				if (failed) {
-					fprintf(stderr, _("Can not execute su shell\n\n"));
+					fprintf(stderr, _("cannot execute su shell\n\n"));
 					break;
 				}
 				fprintf(stderr, _("Login incorrect\n\n"));
@@ -1051,7 +1051,7 @@ int main(int argc, char **argv)
 				continue;
 		}
 
-		errx(EXIT_FAILURE, _("Can not wait on su shell\n\n"));
+		errx(EXIT_FAILURE, _("cannot wait on su shell\n\n"));
 
 	} while (1);
 

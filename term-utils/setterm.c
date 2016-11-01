@@ -768,7 +768,7 @@ static void screendump(struct setterm_control *ctl)
 		ctl->opt_sn_name = "screen.dump";
 	out = fopen(ctl->opt_sn_name, ctl->opt_snap ? "w" : "a");
 	if (!out)
-		err(EXIT_DUMPFILE, _("can not open dump file %s for output"), ctl->opt_sn_name);
+		err(EXIT_DUMPFILE, _("cannot open dump file %s for output"), ctl->opt_sn_name);
 	/* determine snapshot size */
 	if (read(fd, header, 4) != 4)
 		err(EXIT_DUMPFILE, _("cannot read %s"), ctl->in_device);

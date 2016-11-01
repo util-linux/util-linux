@@ -113,7 +113,7 @@ void emergency_do_mounts(void)
 	}
 
 	if (stat("/", &rt) != 0) {
-		warn("can not get file status of root file system\n");
+		warn("cannot get file status of root file system\n");
 		return;
 	}
 

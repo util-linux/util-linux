@@ -886,12 +886,12 @@ is_vmware_platform(void)
 	act.sa_flags = SA_SIGINFO;
 
 	if (sigaction(SIGSEGV, &act, &oact))
-		err(EXIT_FAILURE, _("error: can not set signal handler"));
+		err(EXIT_FAILURE, _("cannot set signal handler"));
 
 	vmware_bdoor(&eax, &ebx, &ecx, &edx);
 
 	if (sigaction(SIGSEGV, &oact, NULL))
-		err(EXIT_FAILURE, _("error: can not restore signal handler"));
+		err(EXIT_FAILURE, _("cannot restore signal handler"));
 
 	return eax != (uint32_t)-1 && ebx == VMWARE_BDOOR_MAGIC;
 }

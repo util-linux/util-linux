@@ -305,7 +305,7 @@ which then get passed to the used login program.  Agetty does check
 for a leading "\-" and makes sure the logname gets passed as one parameter
 (so embedded spaces will not create yet another parameter), but depending
 on how the login binary parses the command line that might not be sufficient.
-Check that the used login program can not be abused this way.
+Check that the used login program cannot be abused this way.
 .PP
 Some  programs use "\-\-" to indicate that the rest of the commandline should
 not be interpreted as options.  Use this feature if available by passing "\-\-"
