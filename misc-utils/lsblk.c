@@ -1853,6 +1853,11 @@ int main(int argc, char *argv[])
 	if (nexcludes == 0 && nincludes == 0)
 		excludes[nexcludes++] = 1;	/* default: ignore RAM disks */
 
+	if (lsblk->sort_id < 0)
+		/* Since Linux 4.8 we have sort devices by default, because
+		 * /sys is no more sorted */
+		lsblk->sort_id = COL_MAJMIN;
+
 	if (lsblk->sort_id >= 0 && column_id_to_number(lsblk->sort_id) < 0) {
 		/* the sort column is not between output columns -- add as hidden */
 		add_column(columns, ncolumns++, lsblk->sort_id);
