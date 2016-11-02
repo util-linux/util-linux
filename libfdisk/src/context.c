@@ -350,7 +350,7 @@ int fdisk_enable_bootbits_protection(struct fdisk_context *cxt, int enable)
  * See also fdisk_wipe_partition().
  *
  * This is no-op if any collision has not been detected by
- * fdisk_assign_device(). See fdisk_has_collision(). The default is not wipe a
+ * fdisk_assign_device(). See fdisk_get_collision(). The default is not wipe a
  * device.
  *
  * Returns: 0 on success, < 0 on error.
