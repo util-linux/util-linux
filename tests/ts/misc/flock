@@ -20,6 +20,7 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_FLOCK"
 ts_check_prog "ps"
+ts_check_prog "timeout"
 
 
 function do_lock {
