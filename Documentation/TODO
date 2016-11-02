@@ -24,6 +24,9 @@ lscpu
 
 lsblk
 -----
+  - (!) add --tree to force tree output for operations like --sort where the
+    --list is enabled by default.
+
   - currently it does not show mountpoint for all devices in btrfs RAID. It's because
     /proc/#/mountinfo contains reference to the one device only. Maybe we can add some
     btrfs specific code to provide a better output for FS based stacks. Not sure.
