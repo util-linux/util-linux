@@ -1146,8 +1146,8 @@ const char *scols_table_get_line_separator(const struct libscols_table *tb)
 {
 	return tb->linesep;
 }
-
-static int cells_cmp_wrapper(struct list_head *a, struct list_head *b, void *data)
+/* for lines in the struct libscols_line->ln_lines list */
+static int cells_cmp_wrapper_lines(struct list_head *a, struct list_head *b, void *data)
 {
 	struct libscols_column *cl = (struct libscols_column *) data;
 	struct libscols_line *ra, *rb;
@@ -1165,6 +1165,43 @@ static int cells_cmp_wrapper(struct list_head *a, struct list_head *b, void *dat
 	return cl->cmpfunc(ca, cb, cl->cmpfunc_data);
 }
 
+/* for lines in the struct libscols_line->ln_children list */
+static int cells_cmp_wrapper_children(struct list_head *a, struct list_head *b, void *data)
+{
+	struct libscols_column *cl = (struct libscols_column *) data;
+	struct libscols_line *ra, *rb;
+	struct libscols_cell *ca, *cb;
+
+	assert(a);
+	assert(b);
+	assert(cl);
+
+	ra = list_entry(a, struct libscols_line, ln_children);
+	rb = list_entry(b, struct libscols_line, ln_children);
+	ca = scols_line_get_cell(ra, cl->seqnum);
+	cb = scols_line_get_cell(rb, cl->seqnum);
+
+	return cl->cmpfunc(ca, cb, cl->cmpfunc_data);
+}
+
+
+static int sort_line_children(struct libscols_line *ln, struct libscols_column *cl)
+{
+	struct list_head *p;
+
+	if (list_empty(&ln->ln_branch))
+		return 0;
+
+	list_for_each(p, &ln->ln_branch) {
+		struct libscols_line *chld =
+				list_entry(p, struct libscols_line, ln_children);
+		sort_line_children(chld, cl);
+	}
+
+	list_sort(&ln->ln_branch, cells_cmp_wrapper_children, cl);
+	return 0;
+}
+
 /**
  * scols_sort_table:
  * @tb: table
@@ -1180,7 +1217,17 @@ int scols_sort_table(struct libscols_table *tb, struct libscols_column *cl)
 		return -EINVAL;
 
 	DBG(TAB, ul_debugobj(tb, "sorting table"));
-	list_sort(&tb->tb_lines, cells_cmp_wrapper, cl);
+	list_sort(&tb->tb_lines, cells_cmp_wrapper_lines, cl);
+
+	if (scols_table_is_tree(tb)) {
+		struct libscols_line *ln;
+		struct libscols_iter itr;
+
+		scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+		while (scols_table_next_line(tb, &itr, &ln) == 0)
+			sort_line_children(ln, cl);
+	}
+
 	return 0;
 }
 
