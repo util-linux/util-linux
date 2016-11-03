@@ -71,7 +71,9 @@ struct lsmem {
 				bytes : 1,
 				want_node : 1,
 				want_state : 1,
-				want_removable : 1;
+				want_removable : 1,
+				want_summary : 1,
+				want_table : 1;
 };
 
 enum {
@@ -226,12 +228,18 @@ static void fill_scols_table(struct lsmem *lsmem)
 
 static void print_summary(struct lsmem *lsmem)
 {
-	fprintf(stdout, _("Memory block size   : %8s\n"),
-		size_to_human_string(SIZE_SUFFIX_1LETTER, lsmem->block_size));
-	fprintf(stdout, _("Total online memory : %8s\n"),
-		size_to_human_string(SIZE_SUFFIX_1LETTER, lsmem->mem_online));
-	fprintf(stdout, _("Total offline memory: %8s\n"),
-		size_to_human_string(SIZE_SUFFIX_1LETTER, lsmem->mem_offline));
+	if (lsmem->bytes) {
+		printf("%-23s %15"PRId64"\n",_("Memory block size:"), lsmem->block_size);
+		printf("%-23s %15"PRId64"\n",_("Total online memory:"), lsmem->mem_online);
+		printf("%-23s %15"PRId64"\n",_("Total offline memory:"), lsmem->mem_offline);
+	} else {
+		printf("%-23s %5s\n",_("Memory block size:"),
+			size_to_human_string(SIZE_SUFFIX_1LETTER, lsmem->block_size));
+		printf("%-23s %5s\n",_("Total online memory:"),
+			size_to_human_string(SIZE_SUFFIX_1LETTER, lsmem->mem_online));
+		printf("%-23s %5s\n",_("Total offline memory:"),
+			size_to_human_string(SIZE_SUFFIX_1LETTER, lsmem->mem_offline));
+	}
 }
 
 static int memory_block_get_node(char *name)
@@ -370,6 +378,7 @@ static void __attribute__((__noreturn__)) lsmem_usage(FILE *out)
 	fputs(_(" -o, --output <list>  output columns\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
 	fputs(_(" -s, --sysroot <dir>  use the specified directory as system root\n"), out);
+	fputs(_("     --summary[=when] print summary information (never,always or only)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -387,10 +396,18 @@ static void __attribute__((__noreturn__)) lsmem_usage(FILE *out)
 
 int main(int argc, char **argv)
 {
-	struct lsmem _lsmem = { }, *lsmem = &_lsmem;
+	struct lsmem _lsmem = {
+			.want_table = 1,
+			.want_summary = 1
+		}, *lsmem = &_lsmem;
+
 	const char *outarg = NULL;
 	int c;
 	size_t i;
+
+	enum {
+		LSMEM_OPT_SUMARRY = CHAR_MAX + 1
+	};
 
 	static const struct option longopts[] = {
 		{"all",		no_argument,		NULL, 'a'},
@@ -403,6 +420,7 @@ int main(int argc, char **argv)
 		{"raw",		no_argument,		NULL, 'r'},
 		{"sysroot",	required_argument,	NULL, 's'},
 		{"version",	no_argument,		NULL, 'V'},
+		{"summary",     optional_argument,	NULL, LSMEM_OPT_SUMARRY },
 		{NULL,		0,			NULL, 0}
 	};
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
@@ -451,6 +469,19 @@ int main(int argc, char **argv)
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return 0;
+		case LSMEM_OPT_SUMARRY:
+			if (optarg) {
+				if (strcmp(optarg, "never") == 0)
+					lsmem->want_summary = 0;
+				else if (strcmp(optarg, "only") == 0)
+					lsmem->want_table = 0;
+				else if (strcmp(optarg, "always") == 0)
+					lsmem->want_summary = 1;
+				else
+					errx(EXIT_FAILURE, _("unsupported --summary argument"));
+			} else
+				lsmem->want_table = 0;
+			break;
 		default:
 			lsmem_usage(stderr);
 		}
@@ -508,11 +539,16 @@ int main(int argc, char **argv)
 	read_basic_info(lsmem);
 	read_info(lsmem);
 
-	fill_scols_table(lsmem);
-	scols_print_table(lsmem->table);
+	if (lsmem->want_table) {
+		fill_scols_table(lsmem);
+		scols_print_table(lsmem->table);
 
-	fputc('\n', stdout);
-	print_summary(lsmem);
+		if (lsmem->want_summary)
+			fputc('\n', stdout);
+	}
+
+	if (lsmem->want_summary)
+		print_summary(lsmem);
 
 	scols_unref_table(lsmem->table);
 	return 0;
