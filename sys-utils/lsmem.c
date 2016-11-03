@@ -51,7 +51,7 @@ struct memory_block {
 	unsigned int	removable:1;
 };
 
-struct lsmem_desc {
+struct lsmem {
 	struct dirent		**dirs;
 	int			ndirs;
 	struct memory_block	*blocks;
@@ -160,12 +160,12 @@ static inline int has_column(int id)
 	return 0;
 }
 
-static void add_scols_line(struct lsmem_desc *desc, struct memory_block *blk)
+static void add_scols_line(struct lsmem *lsmem, struct memory_block *blk)
 {
 	size_t i;
 	struct libscols_line *line;
 
-	line = scols_table_new_line(desc->table, NULL);
+	line = scols_table_new_line(lsmem->table, NULL);
 	if (!line)
 		err_oom();
 
@@ -175,17 +175,17 @@ static void add_scols_line(struct lsmem_desc *desc, struct memory_block *blk)
 		switch (get_column_id(i)) {
 		case COL_RANGE:
 		{
-			uint64_t start = blk->index * desc->block_size;
-			uint64_t size = blk->count * desc->block_size;
+			uint64_t start = blk->index * lsmem->block_size;
+			uint64_t size = blk->count * lsmem->block_size;
 			xasprintf(&str, "0x%016"PRIx64"-0x%016"PRIx64, start, start + size - 1);
 			break;
 		}
 		case COL_SIZE:
-			if (desc->bytes)
-				xasprintf(&str, "%"PRId64, (uint64_t) blk->count * desc->block_size);
+			if (lsmem->bytes)
+				xasprintf(&str, "%"PRId64, (uint64_t) blk->count * lsmem->block_size);
 			else
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER,
-						(uint64_t) blk->count * desc->block_size);
+						(uint64_t) blk->count * lsmem->block_size);
 			break;
 		case COL_STATE:
 			str = xstrdup(
@@ -206,7 +206,7 @@ static void add_scols_line(struct lsmem_desc *desc, struct memory_block *blk)
 					 blk->index, blk->index + blk->count - 1);
 			break;
 		case COL_NODE:
-			if (desc->have_nodes)
+			if (lsmem->have_nodes)
 				xasprintf(&str, "%d", blk->node);
 			break;
 		}
@@ -216,22 +216,22 @@ static void add_scols_line(struct lsmem_desc *desc, struct memory_block *blk)
 	}
 }
 
-static void fill_scols_table(struct lsmem_desc *desc)
+static void fill_scols_table(struct lsmem *lsmem)
 {
 	int i;
 
-	for (i = 0; i < desc->nblocks; i++)
-		add_scols_line(desc, &desc->blocks[i]);
+	for (i = 0; i < lsmem->nblocks; i++)
+		add_scols_line(lsmem, &lsmem->blocks[i]);
 }
 
-static void print_summary(struct lsmem_desc *desc)
+static void print_summary(struct lsmem *lsmem)
 {
 	fprintf(stdout, _("Memory block size   : %8s\n"),
-		size_to_human_string(SIZE_SUFFIX_1LETTER, desc->block_size));
+		size_to_human_string(SIZE_SUFFIX_1LETTER, lsmem->block_size));
 	fprintf(stdout, _("Total online memory : %8s\n"),
-		size_to_human_string(SIZE_SUFFIX_1LETTER, desc->mem_online));
+		size_to_human_string(SIZE_SUFFIX_1LETTER, lsmem->mem_online));
 	fprintf(stdout, _("Total offline memory: %8s\n"),
-		size_to_human_string(SIZE_SUFFIX_1LETTER, desc->mem_offline));
+		size_to_human_string(SIZE_SUFFIX_1LETTER, lsmem->mem_offline));
 }
 
 static int memory_block_get_node(char *name)
@@ -258,7 +258,7 @@ static int memory_block_get_node(char *name)
 	return node;
 }
 
-static void memory_block_read_attrs(struct lsmem_desc *desc, char *name,
+static void memory_block_read_attrs(struct lsmem *lsmem, char *name,
 				    struct memory_block *blk)
 {
 	char line[BUFSIZ];
@@ -274,56 +274,56 @@ static void memory_block_read_attrs(struct lsmem_desc *desc, char *name,
 		blk->state = MEMORY_STATE_ONLINE;
 	else if (strcmp(line, "going-offline") == 0)
 		blk->state = MEMORY_STATE_GOING_OFFLINE;
-	if (desc->have_nodes)
+	if (lsmem->have_nodes)
 		blk->node = memory_block_get_node(name);
 }
 
-static int is_mergeable(struct lsmem_desc *desc, struct memory_block *blk)
+static int is_mergeable(struct lsmem *lsmem, struct memory_block *blk)
 {
 	struct memory_block *curr;
 
-	if (!desc->nblocks)
+	if (!lsmem->nblocks)
 		return 0;
-	curr = &desc->blocks[desc->nblocks - 1];
-	if (desc->list_all)
+	curr = &lsmem->blocks[lsmem->nblocks - 1];
+	if (lsmem->list_all)
 		return 0;
 	if (curr->index + curr->count != blk->index)
 		return 0;
-	if (desc->want_state && curr->state != blk->state)
+	if (lsmem->want_state && curr->state != blk->state)
 		return 0;
-	if (desc->want_removable && curr->removable != blk->removable)
+	if (lsmem->want_removable && curr->removable != blk->removable)
 		return 0;
-	if (desc->want_node && desc->have_nodes) {
+	if (lsmem->want_node && lsmem->have_nodes) {
 		if (curr->node != blk->node)
 			return 0;
 	}
 	return 1;
 }
 
-static void read_info(struct lsmem_desc *desc)
+static void read_info(struct lsmem *lsmem)
 {
 	struct memory_block blk;
 	char line[BUFSIZ];
 	int i;
 
 	path_read_str(line, sizeof(line), _PATH_SYS_MEMORY_BLOCK_SIZE);
-	desc->block_size = strtoumax(line, NULL, 16);
+	lsmem->block_size = strtoumax(line, NULL, 16);
 
-	for (i = 0; i < desc->ndirs; i++) {
-		memory_block_read_attrs(desc, desc->dirs[i]->d_name, &blk);
-		if (is_mergeable(desc, &blk)) {
-			desc->blocks[desc->nblocks - 1].count++;
+	for (i = 0; i < lsmem->ndirs; i++) {
+		memory_block_read_attrs(lsmem, lsmem->dirs[i]->d_name, &blk);
+		if (is_mergeable(lsmem, &blk)) {
+			lsmem->blocks[lsmem->nblocks - 1].count++;
 			continue;
 		}
-		desc->nblocks++;
-		desc->blocks = xrealloc(desc->blocks, desc->nblocks * sizeof(blk));
-		*&desc->blocks[desc->nblocks - 1] = blk;
+		lsmem->nblocks++;
+		lsmem->blocks = xrealloc(lsmem->blocks, lsmem->nblocks * sizeof(blk));
+		*&lsmem->blocks[lsmem->nblocks - 1] = blk;
 	}
-	for (i = 0; i < desc->nblocks; i++) {
-		if (desc->blocks[i].state == MEMORY_STATE_ONLINE)
-			desc->mem_online += desc->block_size * desc->blocks[i].count;
+	for (i = 0; i < lsmem->nblocks; i++) {
+		if (lsmem->blocks[i].state == MEMORY_STATE_ONLINE)
+			lsmem->mem_online += lsmem->block_size * lsmem->blocks[i].count;
 		else
-			desc->mem_offline += desc->block_size * desc->blocks[i].count;
+			lsmem->mem_offline += lsmem->block_size * lsmem->blocks[i].count;
 	}
 }
 
@@ -334,7 +334,7 @@ static int memory_block_filter(const struct dirent *de)
 	return isdigit_string(de->d_name + 6);
 }
 
-static void read_basic_info(struct lsmem_desc *desc)
+static void read_basic_info(struct lsmem *lsmem)
 {
 	char *dir;
 
@@ -342,13 +342,13 @@ static void read_basic_info(struct lsmem_desc *desc)
 		errx(EXIT_FAILURE, _("This system does not support memory blocks"));
 
 	dir = path_strdup(_PATH_SYS_MEMORY);
-	desc->ndirs = scandir(dir, &desc->dirs, memory_block_filter, versionsort);
+	lsmem->ndirs = scandir(dir, &lsmem->dirs, memory_block_filter, versionsort);
 	free(dir);
-	if (desc->ndirs <= 0)
+	if (lsmem->ndirs <= 0)
 		err(EXIT_FAILURE, _("Failed to read %s"), _PATH_SYS_MEMORY);
 
-	if (memory_block_get_node(desc->dirs[0]->d_name) != -1)
-		desc->have_nodes = 1;
+	if (memory_block_get_node(lsmem->dirs[0]->d_name) != -1)
+		lsmem->have_nodes = 1;
 }
 
 static void __attribute__((__noreturn__)) lsmem_usage(FILE *out)
@@ -387,7 +387,7 @@ static void __attribute__((__noreturn__)) lsmem_usage(FILE *out)
 
 int main(int argc, char **argv)
 {
-	struct lsmem_desc _desc = { }, *desc = &_desc;
+	struct lsmem _lsmem = { }, *lsmem = &_lsmem;
 	const char *outarg = NULL;
 	int c;
 	size_t i;
@@ -422,28 +422,28 @@ int main(int argc, char **argv)
 
 		switch (c) {
 		case 'a':
-			desc->list_all = 1;
+			lsmem->list_all = 1;
 			break;
 		case 'b':
-			desc->bytes = 1;
+			lsmem->bytes = 1;
 			break;
 		case 'h':
 			lsmem_usage(stdout);
 			break;
 		case 'J':
-			desc->json = 1;
+			lsmem->json = 1;
 			break;
 		case 'n':
-			desc->noheadings = 1;
+			lsmem->noheadings = 1;
 			break;
 		case 'o':
 			outarg = optarg;
 			break;
 		case 'P':
-			desc->export = 1;
+			lsmem->export = 1;
 			break;
 		case 'r':
-			desc->raw = 1;
+			lsmem->raw = 1;
 			break;
 		case 's':
 			path_set_prefix(optarg);
@@ -479,41 +479,41 @@ int main(int argc, char **argv)
 	 */
 	scols_init_debug(0);
 
-	if (!(desc->table = scols_new_table()))
+	if (!(lsmem->table = scols_new_table()))
 		errx(EXIT_FAILURE, _("failed to initialize output table"));
-	scols_table_enable_raw(desc->table, desc->raw);
-	scols_table_enable_export(desc->table, desc->export);
-	scols_table_enable_json(desc->table, desc->json);
-	scols_table_enable_noheadings(desc->table, desc->noheadings);
+	scols_table_enable_raw(lsmem->table, lsmem->raw);
+	scols_table_enable_export(lsmem->table, lsmem->export);
+	scols_table_enable_json(lsmem->table, lsmem->json);
+	scols_table_enable_noheadings(lsmem->table, lsmem->noheadings);
 
-	if (desc->json)
-		scols_table_set_name(desc->table, "memory");
+	if (lsmem->json)
+		scols_table_set_name(lsmem->table, "memory");
 
 	for (i = 0; i < ncolumns; i++) {
 		struct coldesc *ci = get_column_desc(i);
-		if (!scols_table_new_column(desc->table, ci->name, ci->whint, ci->flags))
+		if (!scols_table_new_column(lsmem->table, ci->name, ci->whint, ci->flags))
 			err(EXIT_FAILURE, _("Failed to initialize output column"));
 	}
 
 	if (has_column(COL_STATE))
-		desc->want_state = 1;
+		lsmem->want_state = 1;
 	if (has_column(COL_NODE))
-		desc->want_node = 1;
+		lsmem->want_node = 1;
 	if (has_column(COL_REMOVABLE))
-		desc->want_removable = 1;
+		lsmem->want_removable = 1;
 
 	/*
 	 * Read data and print output
 	 */
-	read_basic_info(desc);
-	read_info(desc);
+	read_basic_info(lsmem);
+	read_info(lsmem);
 
-	fill_scols_table(desc);
-	scols_print_table(desc->table);
+	fill_scols_table(lsmem);
+	scols_print_table(lsmem->table);
 
 	fputc('\n', stdout);
-	print_summary(desc);
+	print_summary(lsmem);
 
-	scols_unref_table(desc->table);
+	scols_unref_table(lsmem->table);
 	return 0;
 }
