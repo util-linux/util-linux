@@ -1475,22 +1475,27 @@ UL_BUILD_INIT([flock], [check])
 UL_REQUIRES_HAVE([flock], [timer], [timer_create function])
 AM_CONDITIONAL([BUILD_FLOCK], [test "x$build_flock" = xyes])
 
+
 AC_ARG_ENABLE([lsmem],
   AS_HELP_STRING([--disable-lsmem], [do not build lsmem]),
-  [], [UL_DEFAULT_ENABLE([lsmem], [yes])]
+  [], [UL_DEFAULT_ENABLE([lsmem], [check])]
 )
 UL_BUILD_INIT([lsmem])
+UL_REQUIRES_LINUX([lsmem])
 AM_CONDITIONAL([BUILD_LSMEM], [test "x$build_lsmem" = xyes])
+
 
 AC_ARG_ENABLE([chmem],
   AS_HELP_STRING([--disable-chmem], [do not build chmem]),
-  [], [UL_DEFAULT_ENABLE([chmem], [yes])]
+  [], [UL_DEFAULT_ENABLE([chmem], [check])]
 )
 UL_BUILD_INIT([chmem])
+UL_REQUIRES_LINUX([chmem])
 AM_CONDITIONAL([BUILD_CHMEM], [test "x$build_chmem" = xyes])
 
 UL_BUILD_INIT([ipcmk], [yes])
 AM_CONDITIONAL([BUILD_IPCMK], [test "x$build_ipcmk" = xyes])
+
 
 AC_ARG_ENABLE([ipcrm],
   AS_HELP_STRING([--disable-ipcrm], [do not build ipcrm]),
