@@ -862,6 +862,15 @@ is_vmware_platform(void)
 	struct sigaction act, oact;
 
 	/*
+	 * FIXME: Not reliable for non-root users. Note it works as expected if
+	 * vmware_bdoor() is not optimized for PIE, but then it fails to build
+	 * on 32bit x86 systems. See lscpu git log for more details (commit
+	 * 7845b91dbc7690064a2be6df690e4aaba728fb04).     kzak [3-Nov-2016]
+	 */
+	if (getuid() != 0)
+		return 0;
+
+	/*
 	 * The assembly routine for vmware detection works
 	 * fine under vmware, even if ran as regular user. But
 	 * on real HW or under other hypervisors, it segfaults (which is
