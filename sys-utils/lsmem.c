@@ -450,6 +450,7 @@ int main(int argc, char **argv)
 			break;
 		case 'J':
 			lsmem->json = 1;
+			lsmem->want_summary = 0;
 			break;
 		case 'n':
 			lsmem->noheadings = 1;
@@ -459,9 +460,11 @@ int main(int argc, char **argv)
 			break;
 		case 'P':
 			lsmem->export = 1;
+			lsmem->want_summary = 0;
 			break;
 		case 'r':
 			lsmem->raw = 1;
+			lsmem->want_summary = 0;
 			break;
 		case 's':
 			path_set_prefix(optarg);
