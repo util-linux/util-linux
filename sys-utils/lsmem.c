@@ -51,26 +51,27 @@ struct memory_block {
 	unsigned int	removable:1;
 };
 
-enum {
-	OUTPUT_READABLE = 0,	/* default */
-	OUTPUT_PARSABLE,	/* -p */
-};
-
 struct lsmem_desc {
 	struct dirent		**dirs;
 	int			ndirs;
 	struct memory_block	*blocks;
 	int			nblocks;
-	unsigned int		have_nodes : 1;
 	uint64_t		block_size;
 	uint64_t		mem_online;
 	uint64_t		mem_offline;
-};
 
-struct lsmem_modifier {
-	int		mode; /* OUTPUT_* */
-	unsigned int	compat : 1;
-	unsigned int	list_all_blocks : 1;
+	struct libscols_table	*table;
+	unsigned int		have_nodes : 1,
+				raw : 1,
+				export : 1,
+				json : 1,
+				noheadings : 1,
+				summary : 1,
+				list_all : 1,
+				bytes : 1,
+				want_node : 1,
+				want_state : 1,
+				want_removable : 1;
 };
 
 enum {
@@ -82,20 +83,44 @@ enum {
 	COL_NODE,
 };
 
-struct lsmem_coldesc {
-	const int flags;
-	const char *name;
-	const char *help;
+/* column names */
+struct coldesc {
+	const char	*name;		/* header */
+	double		whint;		/* width hint (N < 1 is in percent of termwidth) */
+	int		flags;		/* SCOLS_FL_* */
+	const char      *help;
+
+	int	sort_type;		/* SORT_* */
 };
 
-static struct lsmem_coldesc coldescs[] = {
-	[COL_RANGE]	= { 0,		    "RANGE",	 N_("adress range")},
-	[COL_SIZE]	= { SCOLS_FL_RIGHT, "SIZE",	 N_("size of memory")},
-	[COL_STATE]	= { 0,		    "STATE",	 N_("state of memory")},
-	[COL_REMOVABLE]	= { 0,		    "REMOVABLE", N_("memory is removable")},
-	[COL_BLOCK]	= { 0,		    "BLOCK",	 N_("memory block")},
-	[COL_NODE]	= { 0,		    "NODE",	 N_("node information")},
+/* columns descriptions */
+static struct coldesc coldescs[] = {
+	[COL_RANGE]	= { "RANGE", 0, 0, N_("adress range")},
+	[COL_SIZE]	= { "SIZE", 5, SCOLS_FL_RIGHT, N_("size of memory")},
+	[COL_STATE]	= { "STATE", 0, 0, N_("state of memory")},
+	[COL_REMOVABLE]	= { "REMOVABLE", 0, SCOLS_FL_RIGHT, N_("memory is removable")},
+	[COL_BLOCK]	= { "BLOCK", 0, SCOLS_FL_RIGHT, N_("memory block")},
+	[COL_NODE]	= { "NODE", 0, SCOLS_FL_RIGHT, N_("node information")},
 };
+
+/* columns[] array specifies all currently wanted output column. The columns
+ * are defined by coldescs[] array and you can specify (on command line) each
+ * column twice. That's enough, dynamically allocated array of the columns is
+ * unnecessary overkill and over-engineering in this case */
+static int columns[ARRAY_SIZE(coldescs) * 2];
+static size_t ncolumns;
+
+static inline size_t err_columns_index(size_t arysz, size_t idx)
+{
+	if (idx >= arysz)
+		errx(EXIT_FAILURE, _("too many columns specified, "
+				     "the limit is %zu columns"),
+				arysz - 1);
+	return idx;
+}
+
+#define add_column(ary, n, id)	\
+		((ary)[ err_columns_index(ARRAY_SIZE(ary), (n)) ] = (id))
 
 static int column_name_to_id(const char *name, size_t namesz)
 {
@@ -111,131 +136,96 @@ static int column_name_to_id(const char *name, size_t namesz)
 	return -1;
 }
 
-static char *get_cell_header(int col, char *buf, size_t bufsz)
+static inline int get_column_id(int num)
 {
-	snprintf(buf, bufsz, "%s", coldescs[col].name);
-	return buf;
+	assert(num >= 0);
+	assert((size_t) num < ncolumns);
+	assert(columns[num] < (int) ARRAY_SIZE(coldescs));
+
+	return columns[num];
 }
 
-static char *get_cell_data(struct lsmem_desc *desc, int idx, int col,
-			   struct lsmem_modifier *mod,
-			   char *buf, size_t bufsz)
+static inline struct coldesc *get_column_desc(int num)
 {
-	struct memory_block *blk;
-	uint64_t start, size;
-
-	blk = &desc->blocks[idx];
-	start = blk->index * desc->block_size;
-	size = blk->count * desc->block_size;
-
-	switch (col) {
-	case COL_RANGE:
-		snprintf(buf, bufsz, "0x%016"PRIx64"-0x%016"PRIx64, start, start + size - 1);
-		break;
-	case COL_SIZE:
-		if (mod->mode == OUTPUT_PARSABLE)
-			snprintf(buf, bufsz, "%"PRId64, size);
-		else
-			snprintf(buf, bufsz, "%s", size_to_human_string(SIZE_SUFFIX_1LETTER, size));
-		break;
-	case COL_STATE:
-		if (blk->state == MEMORY_STATE_ONLINE)
-			snprintf(buf, bufsz, _("online"));
-		else if (blk->state == MEMORY_STATE_OFFLINE)
-			snprintf(buf, bufsz, _("offline"));
-		else if (blk->state == MEMORY_STATE_GOING_OFFLINE)
-			snprintf(buf, bufsz, _("on->off"));
-		else /* unknown */
-			snprintf(buf, bufsz, "?");
-		break;
-	case COL_REMOVABLE:
-		if (blk->state == MEMORY_STATE_ONLINE)
-			snprintf(buf, bufsz, "%s", blk->removable ? _("yes") : _("no"));
-		else
-			snprintf(buf, bufsz, "-");
-		break;
-	case COL_BLOCK:
-		if (blk->count == 1)
-			snprintf(buf, bufsz, "%"PRId64, blk->index);
-		else
-			snprintf(buf, bufsz, "%"PRId64"-%"PRId64,
-				 blk->index, blk->index + blk->count - 1);
-		break;
-	case COL_NODE:
-		if (desc->have_nodes)
-			snprintf(buf, bufsz, "%d", blk->node);
-		else
-			snprintf(buf, bufsz, "-");
-		break;
-	}
-	return buf;
+	return &coldescs[ get_column_id(num) ];
 }
 
-static void print_parsable(struct lsmem_desc *desc, int *cols, int ncols,
-			   struct lsmem_modifier *mod)
+static inline int has_column(int id)
 {
-	char buf[BUFSIZ], *data;
-	int c, i;
+	size_t i;
 
-	fputs("# ", stdout);
-	for (i = 0; i < ncols; i++) {
-		data = get_cell_header(cols[i], buf, sizeof(buf));
-		if (i > 0)
-			fputc(',', stdout);
-		fputs(data && *data ? data : "", stdout);
-	}
-	fputc('\n', stdout);
+	for (i = 0; i < ncolumns; i++)
+		if (columns[i] == id)
+			return 1;
+	return 0;
+}
 
-	for (i = 0; i < desc->nblocks; i++) {
-		for (c = 0; c < ncols; c++) {
-			if (c > 0)
-				putchar(',');
-			data = get_cell_data(desc, i, cols[c], mod, buf, sizeof(buf));
-			fputs(data && *data ? data : "", stdout);
+static void add_scols_line(struct lsmem_desc *desc, struct memory_block *blk)
+{
+	size_t i;
+	struct libscols_line *line;
+
+	line = scols_table_new_line(desc->table, NULL);
+	if (!line)
+		err_oom();
+
+	for (i = 0; i < ncolumns; i++) {
+		char *str = NULL;
+
+		switch (get_column_id(i)) {
+		case COL_RANGE:
+		{
+			uint64_t start = blk->index * desc->block_size;
+			uint64_t size = blk->count * desc->block_size;
+			xasprintf(&str, "0x%016"PRIx64"-0x%016"PRIx64, start, start + size - 1);
+			break;
 		}
-		fputc('\n', stdout);
-	}
-}
-
-static void print_readable_table(struct lsmem_desc *desc, int *cols, int ncols,
-				 struct lsmem_modifier *mod)
-{
-	struct libscols_table *table;
-	char buf[BUFSIZ], *data;
-	int c, i;
-
-	scols_init_debug(0);
-	table = scols_new_table();
-	if (!table)
-		err(EXIT_FAILURE, _("Failed to initialize output table"));
-	for (i = 0; i < ncols; i++) {
-		data = get_cell_header(cols[i], buf, sizeof(buf));
-		if (!scols_table_new_column(table, xstrdup(data), 0, coldescs[i].flags))
-			err(EXIT_FAILURE, _("Failed to initialize output column"));
-	}
-	for (i = 0; i < desc->nblocks; i++) {
-		struct libscols_line *line;
-
-		line = scols_table_new_line(table, NULL);
-		if (!line)
-			err(EXIT_FAILURE, _("Failed to initialize output line"));
-
-		for (c = 0; c < ncols; c++) {
-			data = get_cell_data(desc, i, cols[c], mod, buf, sizeof(buf));
-			if (!data || !*data)
-				data = "-";
-			scols_line_set_data(line, c, data);
+		case COL_SIZE:
+			if (desc->bytes)
+				xasprintf(&str, "%"PRId64, (uint64_t) blk->count * desc->block_size);
+			else
+				str = size_to_human_string(SIZE_SUFFIX_1LETTER,
+						(uint64_t) blk->count * desc->block_size);
+			break;
+		case COL_STATE:
+			str = xstrdup(
+				blk->state == MEMORY_STATE_ONLINE ? _("online") :
+				blk->state == MEMORY_STATE_OFFLINE ? _("offline") :
+				blk->state == MEMORY_STATE_GOING_OFFLINE ? _("on->off") :
+				"?");
+			break;
+		case COL_REMOVABLE:
+			if (blk->state == MEMORY_STATE_ONLINE)
+				str = xstrdup(blk->removable ? _("yes") : _("no"));
+			break;
+		case COL_BLOCK:
+			if (blk->count == 1)
+				xasprintf(&str, "%"PRId64, blk->index);
+			else
+				xasprintf(&str, "%"PRId64"-%"PRId64,
+					 blk->index, blk->index + blk->count - 1);
+			break;
+		case COL_NODE:
+			if (desc->have_nodes)
+				xasprintf(&str, "%d", blk->node);
+			break;
 		}
+
+		if (str && scols_line_refer_data(line, i, str) != 0)
+			err_oom();
 	}
-	scols_print_table(table);
-	scols_unref_table(table);
 }
 
-static void print_readable(struct lsmem_desc *desc, int *cols, int ncols,
-			   struct lsmem_modifier *mod)
+static void fill_scols_table(struct lsmem_desc *desc)
 {
-	print_readable_table(desc, cols, ncols, mod);
-	fputc('\n', stdout);
+	int i;
+
+	for (i = 0; i < desc->nblocks; i++)
+		add_scols_line(desc, &desc->blocks[i]);
+}
+
+static void print_summary(struct lsmem_desc *desc)
+{
 	fprintf(stdout, _("Memory block size   : %8s\n"),
 		size_to_human_string(SIZE_SUFFIX_1LETTER, desc->block_size));
 	fprintf(stdout, _("Total online memory : %8s\n"),
@@ -288,34 +278,30 @@ static void memory_block_read_attrs(struct lsmem_desc *desc, char *name,
 		blk->node = memory_block_get_node(name);
 }
 
-static int is_mergeable(struct lsmem_desc *desc, char *enabled,
-			struct memory_block *blk,
-			struct lsmem_modifier *mod)
+static int is_mergeable(struct lsmem_desc *desc, struct memory_block *blk)
 {
 	struct memory_block *curr;
 
 	if (!desc->nblocks)
 		return 0;
 	curr = &desc->blocks[desc->nblocks - 1];
-	if (mod->list_all_blocks)
+	if (desc->list_all)
 		return 0;
 	if (curr->index + curr->count != blk->index)
 		return 0;
-	if (enabled[COL_STATE] && (curr->state != blk->state))
+	if (desc->want_state && curr->state != blk->state)
 		return 0;
-	if (enabled[COL_REMOVABLE] && (curr->removable != blk->removable))
+	if (desc->want_removable && curr->removable != blk->removable)
 		return 0;
-	if (enabled[COL_NODE] && desc->have_nodes) {
+	if (desc->want_node && desc->have_nodes) {
 		if (curr->node != blk->node)
 			return 0;
 	}
 	return 1;
 }
 
-static void read_info(struct lsmem_desc *desc, int *cols, int ncols,
-		      struct lsmem_modifier *mod)
+static void read_info(struct lsmem_desc *desc)
 {
-	char enabled[ARRAY_SIZE(coldescs)];
 	struct memory_block blk;
 	char line[BUFSIZ];
 	int i;
@@ -323,12 +309,9 @@ static void read_info(struct lsmem_desc *desc, int *cols, int ncols,
 	path_read_str(line, sizeof(line), _PATH_SYS_MEMORY_BLOCK_SIZE);
 	desc->block_size = strtoumax(line, NULL, 16);
 
-	memset(enabled, 0, sizeof(enabled));
-	for (i = 0; i < ncols; i++)
-		enabled[cols[i]] = 1;
 	for (i = 0; i < desc->ndirs; i++) {
 		memory_block_read_attrs(desc, desc->dirs[i]->d_name, &blk);
-		if (is_mergeable(desc, enabled, &blk, mod)) {
+		if (is_mergeable(desc, &blk)) {
 			desc->blocks[desc->nblocks - 1].count++;
 			continue;
 		}
@@ -379,10 +362,15 @@ static void __attribute__((__noreturn__)) lsmem_usage(FILE *out)
 	fputs(_("List the ranges of available memory with their online status.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all               list each individiual memory block\n"), out);
-	fputs(_(" -e, --extended[=<list>] print customized output in a readable format\n"), out);
-	fputs(_(" -p, --parse[=<list>]    print customized output in a parsable format\n"), out);
-	fputs(_(" -s, --sysroot <dir>     use the specified directory as system root\n"), out);
+	fputs(_(" -J, --json           use JSON output format\n"), out);
+	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
+	fputs(_(" -a, --all            list each individiual memory block\n"), out);
+	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);
+	fputs(_(" -n, --noheadings     don't print headings\n"), out);
+	fputs(_(" -o, --output <list>  output columns\n"), out);
+	fputs(_(" -r, --raw            use raw output format\n"), out);
+	fputs(_(" -s, --sysroot <dir>  use the specified directory as system root\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -399,22 +387,26 @@ static void __attribute__((__noreturn__)) lsmem_usage(FILE *out)
 
 int main(int argc, char **argv)
 {
-	struct lsmem_modifier _mod = { .mode = OUTPUT_READABLE, .compat = 1 }, *mod = &_mod;
 	struct lsmem_desc _desc = { }, *desc = &_desc;
-	int columns[ARRAY_SIZE(coldescs)], ncolumns = 0;
+	const char *outarg = NULL;
 	int c;
+	size_t i;
 
 	static const struct option longopts[] = {
 		{"all",		no_argument,		NULL, 'a'},
-		{"extended",	optional_argument,	NULL, 'e'},
+		{"bytes",	no_argument,		NULL, 'b'},
 		{"help",	no_argument,		NULL, 'h'},
-		{"parse",	optional_argument,	NULL, 'p'},
+		{"json",	no_argument,		NULL, 'J'},
+		{"noheadings",	no_argument,		NULL, 'n'},
+		{"output",	required_argument,	NULL, 'o'},
+		{"pairs",	no_argument,		NULL, 'P'},
+		{"raw",		no_argument,		NULL, 'r'},
 		{"sysroot",	required_argument,	NULL, 's'},
 		{"version",	no_argument,		NULL, 'V'},
 		{NULL,		0,			NULL, 0}
 	};
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
-		{ 'e','p' },
+		{ 'J', 'P', 'r' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -424,30 +416,34 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "ae::hp::s:V", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "abhJno:Prs:V", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch (c) {
 		case 'a':
-			mod->list_all_blocks = 1;
+			desc->list_all = 1;
+			break;
+		case 'b':
+			desc->bytes = 1;
 			break;
 		case 'h':
 			lsmem_usage(stdout);
 			break;
-		case 'p':
-		case 'e':
-			if (optarg) {
-				if (*optarg == '=')
-					optarg++;
-				ncolumns = string_to_idarray(optarg,
-							     columns, ARRAY_SIZE(columns),
-							     column_name_to_id);
-				if (ncolumns < 0)
-					return EXIT_FAILURE;
-			}
-			mod->mode = c == 'p' ? OUTPUT_PARSABLE : OUTPUT_READABLE;
-			mod->compat = 0;
+		case 'J':
+			desc->json = 1;
+			break;
+		case 'n':
+			desc->noheadings = 1;
+			break;
+		case 'o':
+			outarg = optarg;
+			break;
+		case 'P':
+			desc->export = 1;
+			break;
+		case 'r':
+			desc->raw = 1;
 			break;
 		case 's':
 			path_set_prefix(optarg);
@@ -463,32 +459,61 @@ int main(int argc, char **argv)
 	if (argc != optind)
 		lsmem_usage(stderr);
 
-	read_basic_info(desc);
-
+	/*
+	 * Default columns
+	 */
 	if (!ncolumns) {
-		/* No list was given. Print the following lines by default */
-		columns[ncolumns++] = COL_RANGE;
-		columns[ncolumns++] = COL_SIZE;
-		columns[ncolumns++] = COL_STATE;
-		columns[ncolumns++] = COL_REMOVABLE;
-		columns[ncolumns++] = COL_BLOCK;
-		if (!mod->compat) {
-			/* Print everything else what is there if the
-			 * extended or parsable mode has been specified */
-			if (desc->have_nodes)
-				columns[ncolumns++] = COL_NODE;
-		}
+		add_column(columns, ncolumns++, COL_RANGE);
+		add_column(columns, ncolumns++, COL_SIZE);
+		add_column(columns, ncolumns++, COL_STATE);
+		add_column(columns, ncolumns++, COL_REMOVABLE);
+		add_column(columns, ncolumns++, COL_BLOCK);
 	}
 
-	read_info(desc, columns, ncolumns, mod);
+	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
+					 &ncolumns, column_name_to_id) < 0)
+		return EXIT_FAILURE;
 
-	switch (mod->mode) {
-	case OUTPUT_READABLE:
-		print_readable(desc, columns, ncolumns, mod);
-		break;
-	case OUTPUT_PARSABLE:
-		print_parsable(desc, columns, ncolumns, mod);
-		break;
+	/*
+	 * Initialize output
+	 */
+	scols_init_debug(0);
+
+	if (!(desc->table = scols_new_table()))
+		errx(EXIT_FAILURE, _("failed to initialize output table"));
+	scols_table_enable_raw(desc->table, desc->raw);
+	scols_table_enable_export(desc->table, desc->export);
+	scols_table_enable_json(desc->table, desc->json);
+	scols_table_enable_noheadings(desc->table, desc->noheadings);
+
+	if (desc->json)
+		scols_table_set_name(desc->table, "memory");
+
+	for (i = 0; i < ncolumns; i++) {
+		struct coldesc *ci = get_column_desc(i);
+		if (!scols_table_new_column(desc->table, ci->name, ci->whint, ci->flags))
+			err(EXIT_FAILURE, _("Failed to initialize output column"));
 	}
+
+	if (has_column(COL_STATE))
+		desc->want_state = 1;
+	if (has_column(COL_NODE))
+		desc->want_node = 1;
+	if (has_column(COL_REMOVABLE))
+		desc->want_removable = 1;
+
+	/*
+	 * Read data and print output
+	 */
+	read_basic_info(desc);
+	read_info(desc);
+
+	fill_scols_table(desc);
+	scols_print_table(desc->table);
+
+	fputc('\n', stdout);
+	print_summary(desc);
+
+	scols_unref_table(desc->table);
 	return 0;
 }
