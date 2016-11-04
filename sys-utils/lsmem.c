@@ -493,6 +493,17 @@ int main(int argc, char **argv)
 	if (argc != optind)
 		lsmem_usage(stderr);
 
+	if (lsmem->want_table + lsmem->want_summary == 0)
+		errx(EXIT_FAILURE, _("options --{raw,json,pairs} and --summary=only are mutually exclusive"));
+
+	/* Shortcut to avoid scols machinery on --summary=only */
+	if (lsmem->want_table == 0 && lsmem->want_summary) {
+		read_basic_info(lsmem);
+		read_info(lsmem);
+		print_summary(lsmem);
+		return EXIT_SUCCESS;
+	}
+
 	/*
 	 * Default columns
 	 */
