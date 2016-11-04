@@ -199,6 +199,8 @@ static void add_scols_line(struct lsmem *lsmem, struct memory_block *blk)
 		case COL_REMOVABLE:
 			if (blk->state == MEMORY_STATE_ONLINE)
 				str = xstrdup(blk->removable ? _("yes") : _("no"));
+			else
+				str = xstrdup("-");
 			break;
 		case COL_BLOCK:
 			if (blk->count == 1)
@@ -210,6 +212,8 @@ static void add_scols_line(struct lsmem *lsmem, struct memory_block *blk)
 		case COL_NODE:
 			if (lsmem->have_nodes)
 				xasprintf(&str, "%d", blk->node);
+			else
+				str = xstrdup("-");
 			break;
 		}
 
