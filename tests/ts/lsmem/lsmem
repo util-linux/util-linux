@@ -22,6 +22,18 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_LSMEM"
 
+LSCOLUMNS="RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE"
+
+
+function do_lsmem {
+	local opts="$*"
+
+	echo -e "\n---\n" >>${TS_OUTPUT}
+	echo "\$ lsmem $opts" >>${TS_OUTPUT}
+	${TS_CMD_LSMEM} $opts --sysroot "${dumpdir}/${name}" >>${TS_OUTPUT} 2>&1
+	
+}
+
 for dump in $(ls $TS_SELF/dumps/*.tar.bz2 | sort); do
 	name=$(basename $dump .tar.bz2)
 	dumpdir="$TS_OUTDIR/dumps"
@@ -31,20 +43,12 @@ for dump in $(ls $TS_SELF/dumps/*.tar.bz2 | sort); do
 
 	tar -C $dumpdir -jxf $dump
 
-	echo ">lsmem" >>"${TS_OUTPUT}"
-	"${TS_CMD_LSMEM}" -s "${dumpdir}/${name}" >>"${TS_OUTPUT}" 2>&1
-
-	echo >>"${TS_OUTPUT}"
-	echo ">lsmem -a" >>"${TS_OUTPUT}"
-	"${TS_CMD_LSMEM}" -a -s "${dumpdir}/${name}" >>"${TS_OUTPUT}" 2>&1
-
-	echo >>"${TS_OUTPUT}"
-	echo ">lsmem -e" >>"${TS_OUTPUT}"
-	"${TS_CMD_LSMEM}" -e -s "${dumpdir}/${name}" >>"${TS_OUTPUT}" 2>&1
-
-	echo >>"${TS_OUTPUT}"
-	echo ">lsmem -p -a" >>"${TS_OUTPUT}"
-	"${TS_CMD_LSMEM}" -p -a -s "${dumpdir}/${name}" >>"${TS_OUTPUT}" 2>&1
+	do_lsmem
+	do_lsmem --output RANGE,SIZE
+	do_lsmem --output RANGE,SIZE,STATE
+	do_lsmem --all --output $LSCOLUMNS
+	do_lsmem --raw --output $LSCOLUMNS
+	do_lsmem --json --output $LSCOLUMNS
 
 	ts_finalize_subtest
 done
