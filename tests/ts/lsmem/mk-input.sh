@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # This script makes a copy of relevant files from /sys.
-# The files are useful for lscpu(1) regression tests.
+# The files are useful for lsmem(1) regression tests.
 #
 progname=$(basename $0)
 
