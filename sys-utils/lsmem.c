@@ -265,6 +265,7 @@ static int memory_block_get_node(char *name)
 		if (!isdigit_string(de->d_name + 4))
 			continue;
 		node = strtol(de->d_name + 4, NULL, 10);
+		break;
 	}
 	closedir(dir);
 	return node;
