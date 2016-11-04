@@ -3,81 +3,54 @@
 lsmem \- list the ranges of available memory with their online status
 .SH SYNOPSIS
 .B lsmem
-.RB [ \-h "] [" \-V "] [" \-a "] [" \-s " \fIdirectory\fP] [" \-e [=\fIlist\fP]| \-p [=\fIlist\fP]]
-.br
+[options]
 .SH DESCRIPTION
 The \fBlsmem\fP command lists the ranges of available memory with their online
 status. The listed memory blocks correspond to the memory block representation
 in sysfs. The command also shows the memory block size and the amount of memory
 in online and offline state.
-.sp
-By default \fBlsmem\fP prints a human readable output table with the RANGE,
-SIZE, STATE, REMOVABLE, and BLOCK columns.
-.sp
-Use the \fB--extended\fP or \fB--parse\fP option to customize the output
-table. You can change the table format and limit, extend, or rearrange the
-table columns.
-.sp
+
+The default output is subject to change.  So whenever possible, you should
+avoid using default outputs in your scripts.  Always explicitly define expected
+columns by using the \fB\-\-output\fR option together with a columns list in
+environments where a stable output is required.
+
 Not all columns are supported on all systems.  If an unsupported column is
 specified, \fBlsmem\fP prints the column but does not provide any data for it.
 
-.SS COLUMNS
-.TP
-.B RANGE
-Start and end address of the memory range.
-.TP
-.B SIZE
-Size of the memory range.
-.TP
-.B STATE
-Indication of the online status of the memory range. State "on->off" means
-that the address range is in transition from online to offline.
-.TP
-.B REMOVABLE
-"yes" if the memory range can be set offline, "no" if it cannot be set offline.
-A dash ("\-") means that the range is already offline.
-.TP
-.B BLOCK
-Memory block number or numbers that correspond to the memory range.
-.TP
-.B NODE
-Numa node of memory.
+Use the \fB\-\-help\fR option to see the columns desription.
+
 .SH OPTIONS
 .TP
 .BR \-a ", " \-\-all
 List each individual memory block, instead of combining memory blocks with
 similar attributes.
 .TP
-.BR \-e , " \-\-extended" [=\fIlist\fP]
-Display extended memory information in human-readable format.
-
-If the \fIlist\fP argument is omitted, all columns for which data is available
-are included in the command output.
-
-The \fIlist\fP argument is a comma-separated list of column labels that specifies
-the columns to be included in the output table and their sequence in the
-table. See \fBCOLUMNS\fP for valid column labels. Column labels are not case
-sensitive. The specification consisting of option, equal sign (=), and \fIlist\fP
-must not contain any white space.
-
-Examples: '\fB-e=range,size,state\fP' or '\fB--extended=NODE,state,size,RANGE\fP'.
+.BR \-b , " \-\-bytes"
+Print the SIZE column in bytes rather than in a human-readable format.
 .TP
 .BR \-h ", " \-\-help
 Display help text and exit.
 .TP
-.BR \-p , " \-\-parse" [=\fIlist\fP]
-Optimize the command output for easy parsing.
-
-If the \fIlist\fP argument is omitted, all columns for which data is available
-are included in the command output.
-
-The \fIlist\fP argument is a comma-separated list of column labels that specifies
-the columns to be included in the output table and their sequence in the
-table. See \fBCOLUMNS\fP for valid column labels. Column labels are not case
-sensitive. The specification consisting of option, equal sign (=), and \fIlist\fP
-must not contain any white space.
-
-Examples: '\fB-p=range,size,state\fP' or '\fB--parse=NODE,state,size,RANGE\fP'.
+.BR \-J , " \-\-json"
+Use JSON output format.
+.TP
+.BR \-n , " \-\-noheadings"
+Do not print a header line.
+.TP
+.BR \-o , " \-\-output " \fIlist\fP
+Specify which output columns to print.  Use \fB\-\-help\fR
+to get a list of all supported columns.
+.TP
+.BR \-P , " \-\-pairs"
+Produce output in the form of key="value" pairs.
+All potentially unsafe characters are hex-escaped (\\x<code>).
+The default list of columns may be extended if \fIlist\fP is
+specified in the format \fB+\fIlist\fP (e.g. \fBlsmem \-o +NODE\fP).
+.TP
+.BR \-r , " \-\-raw"
+Produce output in raw format.  All potentially unsafe characters are hex-escaped
+(\\x<code>).
 .TP
 .BR \-s , " \-\-sysroot " \fIdirectory\fP
 Gather memory data for a Linux instance other than the instance from which the
@@ -86,6 +59,16 @@ root of the Linux instance to be inspected.
 .TP
 .BR \-V ", " \-\-version
 Display version information and exit.
+.TP
+\fB\-\-summary\fR[=\fIwhen\fR]
+This option controls summary lines output.  The optional argument \fIwhen\fP can be
+\fBnever\fR, \fBalways\fR or \fBonly\fR.  If the \fIwhen\fR argument is
+omitted, it defaults to \fB"only"\fR. The summary output is suppresed for
+\fB\-\-raw\fR, \fB\-\-pairs\fR and \fB\-\-json\fR.
+.SH AUTHOR
+.B lsmem
+was originally written by Gerald Schaefer for s390-tools in Perl. The C version
+for util-linux was written by Clemens von Mann, Heiko Carstens and Karel Zak.
 .SH SEE ALSO
 .BR chmem (8)
 .SH AVAILABILITY
