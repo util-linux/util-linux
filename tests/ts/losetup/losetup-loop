@@ -43,12 +43,14 @@ BACKFILE="$TS_DEVICE"
 ts_init_subtest "find-race-condition"
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
 $TS_CMD_LOSETUP -d $LODEV
+# The loop device may or may not exist here because no "udevadm settle".
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
 sleep 3
 dd if=/dev/zero of=$LODEV count=1 bs=1 >/dev/null 2>&1
 sleep 3
 $TS_CMD_LOSETUP --list | grep -q $LODEV
 ts_log $?
+udevadm settle
 $TS_CMD_LOSETUP -d $LODEV >/dev/null 2>&1
 ts_log "Success"
 ts_finalize_subtest
@@ -64,6 +66,7 @@ LODEVR=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
 if [ -z "$LODEVR" ]; then
 	ts_log "Failed to create loop device"
 fi
+udevadm settle
 if test "$LODEV" = "$LODEVR" ; then
 	echo "equal" >>$TS_OUTPUT
 else
@@ -87,6 +90,7 @@ LODEVR=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=1MiB --sizelimit=1M
 if [ -z "$LODEVR" ]; then
 	ts_log "Failed to create loop device"
 fi
+udevadm settle
 if test "$LODEV" = "$LODEVR" ; then
 	echo "equal" >>$TS_OUTPUT
 else
@@ -110,6 +114,7 @@ LODEVR=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=2MiB --sizelimit=2M
 if [ -z "$LODEVR" ]; then
 	ts_log "Failed to create loop device"
 fi
+udevadm settle
 if test "$LODEV" = "$LODEVR" ; then
 	echo "equal" >>$TS_OUTPUT
 else
@@ -133,6 +138,7 @@ LODEVR=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=2MiB --sizelimit=2M
 if [ -z "$LODEVR" ]; then
 	ts_log "Failed to create loop device"
 fi
+udevadm settle
 if test "$LODEV" = "$LODEVR" ; then
 	echo "equal" >>$TS_OUTPUT
 else
@@ -156,6 +162,7 @@ LODEVR=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=2MiB --sizelimit=2M
 if [ -z "$LODEVR" ]; then
 	ts_log "Failed to create loop device"
 fi
+udevadm settle
 if test "$LODEV" = "$LODEVR" ; then
 	echo "equal" >>$TS_OUTPUT
 else
@@ -180,6 +187,7 @@ LODEVR=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=2MiB $BACKFILE )
 if [ -z "$LODEVR" ]; then
 	ts_log "Failed to create loop device"
 fi
+udevadm settle
 if test "$LODEV" = "$LODEVR" ; then
 	echo "equal" >>$TS_OUTPUT
 else
@@ -202,6 +210,7 @@ fi
 LODEVR=$( $TS_CMD_LOSETUP --find )
 $TS_CMD_LOSETUP --nooverlap $LODEVR $BACKFILE >/dev/null 2>&1
 ts_log $?
+udevadm settle
 $TS_CMD_LOSETUP -d $LODEV
 $TS_CMD_LOSETUP -d $LODEVR >/dev/null 2>&1
 ts_log "Success"
@@ -217,6 +226,7 @@ fi
 LODEVR=$( $TS_CMD_LOSETUP --find )
 $TS_CMD_LOSETUP --nooverlap $LODEVR $BACKFILE >/dev/null 2>&1
 ts_log $?
+udevadm settle
 $TS_CMD_LOSETUP -d $LODEV
 $TS_CMD_LOSETUP -d $LODEVR >/dev/null 2>&1
 ts_log "Success"
