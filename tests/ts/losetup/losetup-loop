@@ -45,9 +45,8 @@ LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
 $TS_CMD_LOSETUP -d $LODEV
 # The loop device may or may not exist here because no "udevadm settle".
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
-sleep 3
+udevadm settle
 dd if=/dev/zero of=$LODEV count=1 bs=1 >/dev/null 2>&1
-sleep 3
 $TS_CMD_LOSETUP --list | grep -q $LODEV
 ts_log $?
 udevadm settle
@@ -55,7 +54,7 @@ $TS_CMD_LOSETUP -d $LODEV >/dev/null 2>&1
 ts_log "Success"
 ts_finalize_subtest
 
-sleep 3
+udevadm settle
 
 ts_init_subtest "find-re-use"
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
@@ -79,7 +78,7 @@ $TS_CMD_LOSETUP -d $LODEV
 ts_log "Success"
 ts_finalize_subtest
 
-sleep 3
+udevadm settle
 
 ts_init_subtest "find-no-re-use"
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=0 --sizelimit=1MiB $BACKFILE )
@@ -103,7 +102,7 @@ $TS_CMD_LOSETUP -d $LODEV
 ts_log "Success"
 ts_finalize_subtest
 
-sleep 3
+udevadm settle
 
 ts_init_subtest "find-conflict"
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=1MiB --sizelimit=2MiB $BACKFILE )
@@ -127,7 +126,7 @@ $TS_CMD_LOSETUP -d $LODEV
 ts_log "Success"
 ts_finalize_subtest
 
-sleep 3
+udevadm settle
 
 ts_init_subtest "find-conflict-no-sizelimit"
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=1MiB $BACKFILE )
@@ -151,7 +150,7 @@ $TS_CMD_LOSETUP -d $LODEV
 ts_log "Success"
 ts_finalize_subtest
 
-sleep 3
+udevadm settle
 
 ts_init_subtest "find-conflict-readonly"
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --read-only $BACKFILE )
@@ -176,7 +175,7 @@ $TS_CMD_LOSETUP -d $LODEVR >/dev/null 2>&1
 ts_log "Success"
 ts_finalize_subtest
 
-sleep 3
+udevadm settle
 
 ts_init_subtest "find-ok-no-sizelimit"
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=1MiB --sizelimit=1MiB $BACKFILE )
@@ -200,7 +199,7 @@ $TS_CMD_LOSETUP -d $LODEV
 ts_log "Success"
 ts_finalize_subtest
 
-sleep 3
+udevadm settle
 
 ts_init_subtest "plain-conflict"
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
@@ -216,7 +215,7 @@ $TS_CMD_LOSETUP -d $LODEVR >/dev/null 2>&1
 ts_log "Success"
 ts_finalize_subtest
 
-sleep 3
+udevadm settle
 
 ts_init_subtest "plain-readonly"
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --read-only $BACKFILE )
@@ -232,7 +231,7 @@ $TS_CMD_LOSETUP -d $LODEVR >/dev/null 2>&1
 ts_log "Success"
 ts_finalize_subtest
 
-sleep 3
+udevadm settle
 
 ts_log "Success"
 ts_finalize
