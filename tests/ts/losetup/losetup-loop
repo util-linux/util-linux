@@ -42,15 +42,15 @@ BACKFILE="$TS_DEVICE"
 
 ts_init_subtest "find-race-condition"
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
-$TS_CMD_LOSETUP -d $LODEV
+$TS_CMD_LOSETUP -d "$LODEV"
 # The loop device may or may not exist here because no "udevadm settle".
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show $BACKFILE )
 udevadm settle
-dd if=/dev/zero of=$LODEV count=1 bs=1 >/dev/null 2>&1
-$TS_CMD_LOSETUP --list | grep -q $LODEV
+dd if=/dev/zero of="$LODEV" count=1 bs=1 >/dev/null 2>&1
+$TS_CMD_LOSETUP --list | grep -q "$LODEV"
 ts_log $?
 udevadm settle
-$TS_CMD_LOSETUP -d $LODEV >/dev/null 2>&1
+$TS_CMD_LOSETUP -d "$LODEV" >/dev/null 2>&1
 ts_log "Success"
 ts_finalize_subtest
 
@@ -71,10 +71,10 @@ if test "$LODEV" = "$LODEVR" ; then
 else
 	echo "different" >>$TS_OUTPUT
 	if test -n "$LODEVR" ; then
-		$TS_CMD_LOSETUP -d $LODEVR
+		$TS_CMD_LOSETUP -d "$LODEVR"
 	fi
 fi
-$TS_CMD_LOSETUP -d $LODEV
+$TS_CMD_LOSETUP -d "$LODEV"
 ts_log "Success"
 ts_finalize_subtest
 
@@ -95,10 +95,10 @@ if test "$LODEV" = "$LODEVR" ; then
 else
 	echo "different" >>$TS_OUTPUT
 	if test -n "$LODEVR" ; then
-		$TS_CMD_LOSETUP -d $LODEVR
+		$TS_CMD_LOSETUP -d "$LODEVR"
 	fi
 fi
-$TS_CMD_LOSETUP -d $LODEV
+$TS_CMD_LOSETUP -d "$LODEV"
 ts_log "Success"
 ts_finalize_subtest
 
@@ -119,10 +119,10 @@ if test "$LODEV" = "$LODEVR" ; then
 else
 	echo "different" >>$TS_OUTPUT
 	if test -n "$LODEVR" ; then
-		$TS_CMD_LOSETUP -d $LODEVR
+		$TS_CMD_LOSETUP -d "$LODEVR"
 	fi
 fi
-$TS_CMD_LOSETUP -d $LODEV
+$TS_CMD_LOSETUP -d "$LODEV"
 ts_log "Success"
 ts_finalize_subtest
 
@@ -143,10 +143,10 @@ if test "$LODEV" = "$LODEVR" ; then
 else
 	echo "different" >>$TS_OUTPUT
 	if test -n "$LODEVR" ; then
-		$TS_CMD_LOSETUP -d $LODEVR
+		$TS_CMD_LOSETUP -d "$LODEVR"
 	fi
 fi
-$TS_CMD_LOSETUP -d $LODEV
+$TS_CMD_LOSETUP -d "$LODEV"
 ts_log "Success"
 ts_finalize_subtest
 
@@ -167,11 +167,11 @@ if test "$LODEV" = "$LODEVR" ; then
 else
 	echo "different" >>$TS_OUTPUT
 	if test -n "$LODEVR" ; then
-		$TS_CMD_LOSETUP -d $LODEVR
+		$TS_CMD_LOSETUP -d "$LODEVR"
 	fi
 fi
-$TS_CMD_LOSETUP -d $LODEV
-$TS_CMD_LOSETUP -d $LODEVR >/dev/null 2>&1
+$TS_CMD_LOSETUP -d "$LODEV"
+$TS_CMD_LOSETUP -d "$LODEVR" >/dev/null 2>&1
 ts_log "Success"
 ts_finalize_subtest
 
@@ -192,10 +192,10 @@ if test "$LODEV" = "$LODEVR" ; then
 else
 	echo "different" >>$TS_OUTPUT
 	if test -n "$LODEVR" ; then
-		$TS_CMD_LOSETUP -d $LODEVR
+		$TS_CMD_LOSETUP -d "$LODEVR"
 	fi
 fi
-$TS_CMD_LOSETUP -d $LODEV
+$TS_CMD_LOSETUP -d "$LODEV"
 ts_log "Success"
 ts_finalize_subtest
 
@@ -207,11 +207,11 @@ if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
 LODEVR=$( $TS_CMD_LOSETUP --find )
-$TS_CMD_LOSETUP --nooverlap $LODEVR $BACKFILE >/dev/null 2>&1
+$TS_CMD_LOSETUP --nooverlap "$LODEVR" $BACKFILE >/dev/null 2>&1
 ts_log $?
 udevadm settle
-$TS_CMD_LOSETUP -d $LODEV
-$TS_CMD_LOSETUP -d $LODEVR >/dev/null 2>&1
+$TS_CMD_LOSETUP -d "$LODEV"
+$TS_CMD_LOSETUP -d "$LODEVR" >/dev/null 2>&1
 ts_log "Success"
 ts_finalize_subtest
 
@@ -223,11 +223,11 @@ if [ -z "$LODEV" ]; then
 	ts_log "Failed to create loop device"
 fi
 LODEVR=$( $TS_CMD_LOSETUP --find )
-$TS_CMD_LOSETUP --nooverlap $LODEVR $BACKFILE >/dev/null 2>&1
+$TS_CMD_LOSETUP --nooverlap "$LODEVR" $BACKFILE >/dev/null 2>&1
 ts_log $?
 udevadm settle
-$TS_CMD_LOSETUP -d $LODEV
-$TS_CMD_LOSETUP -d $LODEVR >/dev/null 2>&1
+$TS_CMD_LOSETUP -d "$LODEV"
+$TS_CMD_LOSETUP -d "$LODEVR" >/dev/null 2>&1
 ts_log "Success"
 ts_finalize_subtest
 
