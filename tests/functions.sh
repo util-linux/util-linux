@@ -654,7 +654,7 @@ function ts_scsi_debug_init {
 		|| ts_skip "cannot load scsi_debug module (modprobe)"
 
 	# it might be still not loaded, modprobe.conf or whatever
-	lsmod | grep -q "^scsi_debug " \
+	lsmod 2>/dev/null | grep -q "^scsi_debug " \
 		|| ts_skip "scsi_debug module not loaded (lsmod)"
 
 	udevadm settle
@@ -683,7 +683,7 @@ function ts_scsi_debug_rmmod {
 	# not exist at all.
 	[ $UID -eq 0 ] || return 0
 	[ -n "$TS_DEVICE" ] || return 0
-	lsmod | grep -q "^scsi_debug " || return 0
+	lsmod 2>/dev/null | grep -q "^scsi_debug " || return 0
 
 	udevadm settle
 
