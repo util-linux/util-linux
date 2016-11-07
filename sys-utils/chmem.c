@@ -17,7 +17,6 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -78,6 +77,7 @@ static int chmem_size(struct chmem_desc *desc, int enable)
 	size = desc->size;
 	onoff = enable ? "online" : "offline";
 	i = enable ? 0 : desc->ndirs - 1;
+
 	for (; i >= 0 && i < desc->ndirs && size; i += enable ? 1 : -1) {
 		name = desc->dirs[i]->d_name;
 		index = strtou64_or_err(name + 6, _("Failed to parse index"));
@@ -123,6 +123,7 @@ static int chmem_range(struct chmem_desc *desc, int enable)
 
 	todo = desc->end - desc->start + 1;
 	onoff = enable ? "online" : "offline";
+
 	for (i = 0; i < desc->ndirs; i++) {
 		name = desc->dirs[i]->d_name;
 		index = strtou64_or_err(name + 6, _("Failed to parse index"));
