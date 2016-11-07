@@ -1,13 +1,18 @@
 
  Note that items with (!) have high priority.
 
-su/runuser:
+- (!) remove usage(stderr) on command line errors (unsupported options, etc.)
+
+
+su/runuser
+----------
   - (!) implement pty container for all su/runuser session (something like
     script(1)) to separate user from the original terminal (see CVE-2016-2779)
 
 - add functions strtime_short(), strtime_iso(), strtime_ctime(), ...
 
-- cleanup lib/path.c:
+cleanup lib/path.c:
+------------------
    - always return rc from all functions
    - introduce control struct and use openat() from top-level path 
      (e.g. top-level is /proc, etc)
