@@ -1,3 +1,7 @@
+util-linux 2.29: Nov 8 2016
+* see Documentation/releases/v2.29-ReleaseNotes or the complete changelog at
+  ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.29/v2.29-ChangeLog
+
 util-linux 2.29-rc2: Oct 19 2016
 * see Documentation/releases/v2.29-ReleaseNotes or the complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.29/v2.29-rc2-ChangeLog
