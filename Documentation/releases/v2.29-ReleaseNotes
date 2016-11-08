@@ -11,7 +11,7 @@ TIOCSTI by setsid() only.  Unfortunately, setsid() has well-defined use cases
 in su(1) and runuser(1) and any changes would introduce regressions.  It seems
 we need a better way -- ideally another ioctl to disable TIOCSTI without
 setsid() or in userspace implemented pty container (planned as experimental
-feature).
+su(1) feature for v2.30).
 
 
 Stable maintenance releases between v2.28 and v2.29
@@ -51,14 +51,20 @@ build-sys:
    - clean up relation between ncurses[w] and wide-char support  [Karel Zak]
    - cleanup --with-ncurses  [Karel Zak]
    - fix comments in ul.m4  [Karel Zak]
+   - fix drone.io builds  [Karel Zak]
+   - fix missing ncursesw message  [Ruediger Meier]
+   - fix typo on ncurses-config command line  [Karel Zak]
    - fix uClibc-ng scanf check  [Waldemar Brodkorb]
+   - improve libncursesw5 install for travis  [Karel Zak]
    - release++ (v2.29-rc1)  [Karel Zak]
+   - release++ (v2.29-rc2)  [Karel Zak]
    - remove dead libsmartcols sample  [Karel Zak]
    - remove global dependence between widechar and ncursesw  [Karel Zak]
    - remove obsolete [cs]fdisk LDADDs  [Karel Zak]
    - remove obsolete comment  [Karel Zak]
    - test functions does not return void  [Sami Kerola]
    - use UL_DEFAULT_ENABLE() only for programs  [Karel Zak]
+   - use ncurses-config rather than pkg-config  [Karel Zak]
    - workaround for autoconf "present but cannot be compiled"  [Karel Zak]
 cal:
    - allow to specify month by name  [Karel Zak]
@@ -78,6 +84,7 @@ chfn:
    - chsh  use selinux_check_passwd_access()  [Karel Zak]
 chrt:
    - add fallback to be usable on kernels without sched_{get,set}attr  [Karel Zak]
+   - fix HAVE_SCHED_SETATTR fallback case  [Ruediger Meier]
    - follow nice setting, prefer sched_setscheduler()  [Karel Zak]
    - validate priority before trying to use it  [Sami Kerola]
 colcrt:
@@ -97,15 +104,19 @@ dmesg:
 docs:
    - Fix various typos  [Sebastian Rasmussen]
    - add file format note to utmpdump manual page  [Sami Kerola]
+   - add sfdisk scripts quotes issue to TODO file  [Karel Zak]
    - optinal option arguments should be long-only  [Sami Kerola]
    - some random fixes  [Karel Zak]
    - update AUTHORS file  [Karel Zak]
+   - update TODO file  [Karel Zak]
    - update infor about TIOCSTI  [Karel Zak]
    - update v2.29-ReleaseNotes  [Karel Zak]
 fdisk:
    - Add support for altering GPT size  [Sassan Panahinejad]
    - Fix typo RequiredPartiton -> RequiredPartition  [Sebastian Rasmussen]
    - add --wipe-partitions=auto|never|default  [Karel Zak]
+   - fix compiler warning  [Karel Zak]
+   - fix memleak in list_disk_geometry()  [Ruediger Meier]
    - make -l <dev ...> behaves like fdisk -l  [Thierry Vignaud]
    - use PAGER for 'l' command.  [Karel Zak]
 findmnt:
@@ -120,6 +131,8 @@ findmnt:
    - remove duplicate include  [Karel Zak]
 flock:
    - Introduce no-fork option.  [Terry Burton]
+   - fix no-flock patch  [Karel Zak]
+   - keep run_program() simple  [Karel Zak]
 fsck:
    - fix racing between unlock/unlink and open  [Yuriy M. Kaminskiy]
    - remove fs-specific options from man page  [Karel Zak]
@@ -133,6 +146,7 @@ fstrim:
 getops:
    - improve getopt-parse.bash example  [Sami Kerola]
 getopt:
+   - be sure that options array is terminated  [Karel Zak]
    - fix memory leaks and integer overflows [ASAN & valgrind]  [Sami Kerola]
    - keep pointer to 'name' in control struct  [Karel Zak]
 hwclock:
@@ -209,14 +223,22 @@ libcommon:
 libfdisk:
    - (docs) add missing version notes  [Karel Zak]
    - (gpt) be more careful with 64bit constants  [Karel Zak]
+   - (gpt) make attributes parser more robust  [Karel Zak]
+   - (script) make bootable flag parsing more robust  [Karel Zak]
    - Add support for altering GPT size  [Sassan Panahinejad]
    - Distinguish between first LBA sector and partition  [Tobias Stoeckmann]
    - Fix assert error in free space handling  [Tobias Stoeckmann]
    - add API for work with labelitems  [Karel Zak]
    - add fdisk_wipe_partition()  [Karel Zak]
+   - add trivial script test  [Karel Zak]
    - cleanup fdisk_gpt_set_npartitions()  [Karel Zak]
+   - cleanup labelitem initialization  [Karel Zak]
    - don't offer zero length freespace  [Karel Zak]
    - fix range checking for fdisk_set_last_lba  [Sassan Panahinejad]
+   - fix script Type= and Id= parsing  [Karel Zak]
+   - fix typo  [Karel Zak]
+   - fix uninitialized fdisk_labelitem  [Ruediger Meier]
+   - make script token parser more robust  [Karel Zak]
    - make table-length usage more robust  [Karel Zak]
    - move fdisk_field_...() functions to field.c  [Karel Zak]
    - use fdisk_add_partition() for unused partno  [Karel Zak]
@@ -286,6 +308,7 @@ libsmartcols:
    - improve JSON  [Karel Zak]
    - keep scols_table_get_termwidth() read-only  [Karel Zak]
    - make get_line/column_separator() return const  [Igor Gnatenko]
+   - make scols_sort_table() usable for trees  [Karel Zak]
    - remove debuging code from sample  [Karel Zak]
    - support LIBSMARTCOLS_DEBUG_PADDING=on  [Karel Zak]
    - support custom wrap and remove SCOLS_FL_WRAPNL  [Karel Zak]
@@ -308,13 +331,16 @@ losetup:
 losetup --nooverlap:
    - fix typo  [Stanislav Brabec]
 lsblk:
+   - add note about --sort and --list relation  [Karel Zak]
    - improve support for nvme  [Karel Zak]
+   - sort by MAJ MIN by default  [Karel Zak]
    - use ID_WWN_WITH_EXTENSION is possible  [Karel Zak]
 lscpu:
    - add --physical option  [Heiko Carstens]
    - add drawer support  [Heiko Carstens]
    - add parsable testcase with the --physical option  [Heiko Carstens]
    - add s390 drawer testcase  [Heiko Carstens]
+   - disable is_vmware_platform() for non-root users  [Karel Zak]
    - fix MMHZ column entry within man page  [Heiko Carstens]
    - fix typo in summary output  [Heiko Carstens]
    - make lookup_cache() more robust  [Karel Zak]
@@ -347,6 +373,9 @@ misc:
    - always check setenv(3) return value  [Sami Kerola]
    - cleanup non-widechar compilation  [Karel Zak]
    - fix declarations shadowing variables in the global scope [oclint]  [Sami Kerola]
+   - fix some compiler warnings  [Ruediger Meier]
+   - fix unsigned int usage for ctype.h functions  [Karel Zak]
+   - once again some printf format strings  [Ruediger Meier]
    - simplify if clauses [oclint]  [Sami Kerola]
 mkswap:
    - tolerate ENOTSUP when failing to relabel  [Lubomir Rintel]
@@ -358,6 +387,7 @@ mount:
    - add note about another flags for "remount,bind"  [Karel Zak]
    - add note about loopdev reuse to mount.8  [Karel Zak]
    - add note about paths verification to mount.8  [Karel Zak]
+   - append inverting options for mount.<type> on "users"  [Karel Zak]
    - mount.8 Update loop device documentation  [Stanislav Brabec]
    - small change to mount.8 loopdev section  [Karel Zak]
    - try to tell what mount was doing when it failed  [Sami Kerola]
@@ -376,6 +406,8 @@ po:
    - update nl.po (from translationproject.org)  [Benno Schulenberg]
    - update pl.po (from translationproject.org)  [Jakub Bogusz]
    - update sv.po (from translationproject.org)  [Sebastian Rasmussen]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
+   - update zh_CN.po (from translationproject.org)  [Wylmer Wang]
 pylibmount:
    - include c.h  [Karel Zak]
 ramctl:
@@ -384,6 +416,7 @@ rev:
    - Avoid calling free in a signal handler  [Tobias Stoeckmann]
    - Avoid out of boundary read  [Tobias Stoeckmann]
 rtcwake:
+   - add note about RTC limits  [Karel Zak]
    - make sure buffer is zero terminated [coverity scan]  [Karel Zak]
 script:
    - avoid trying fclose(NULL)  [Sami Kerola]
@@ -435,6 +468,7 @@ tailf:
 taskset:
    - clarify that masks are always hex in man page  [Chris Metcalf]
 tests:
+   - fix raid1 minimum I/O size  [Ruediger Meier]
    - (cramfs) check for test_sysinfo  [Karel Zak]
    - Add helper for TIOCSTI exploit  [Stanislav Brabec]
    - Add loop-overlay test  [Stanislav Brabec]
@@ -442,18 +476,28 @@ tests:
    - Allow running a single test case from tests/run.sh  [Filipe Brandenburger]
    - Fix fdisk/id and fdisk/mbr-nondos-mode on Sparc  [James Clarke]
    - Use proper word splitting when executing tests  [Filipe Brandenburger]
+   - add GPT attributes parser tests  [Karel Zak]
    - add another libsmartcols tests  [Karel Zak]
+   - add another sfdisk script tests  [Karel Zak]
    - add chrt test  [Karel Zak]
    - add chrt vs. nice test  [Karel Zak]
    - add columns separator to libsmartcols test  [Karel Zak]
    - add export and raw to libsmartcols test  [Karel Zak]
+   - add flock tests  [Karel Zak]
    - add libsmartcols JSON test  [Karel Zak]
    - add libsmartcols title test  [Karel Zak]
    - add libsmartcols wrap and wrapnl tree tests  [Karel Zak]
    - add missing expected/ dir stuff  [Karel Zak]
+   - add sfdisk Type= and Id= test  [Karel Zak]
+   - add sfdisk script case-insensitive test  [Karel Zak]
    - add tree libsmartcols test files  [Karel Zak]
+   - always quote $LODEV  [Ruediger Meier]
+   - avoid &>> for bash compatibility  [Ruediger Meier]
+   - call umount --fake for tmpfs tests  [Karel Zak]
    - challenge utmpdump localization go-around  [Sami Kerola]
    - check for mount(8) in minix test  [Karel Zak]
+   - check for timeout prog  [Karel Zak]
+   - consolidate rmmod scsi_debug  [Ruediger Meier]
    - don't depend on GNU md5sum  [Ruediger Meier]
    - fix for non-ncurses version  [Karel Zak]
    - fix libmount loop-overlay test  [Karel Zak]
@@ -464,6 +508,8 @@ tests:
    - implement ts_skip_subtest  [Karel Zak]
    - improve libsmartcols test  [Karel Zak]
    - keep 'hppa' in fdisk/bsd test too  [Karel Zak]
+   - let lsmod fail silently  [Ruediger Meier]
+   - let's follow ts_scsi_debug_rmmod  [Karel Zak]
    - make chrt test more debug-able  [Karel Zak]
    - make tests more portable due to mtab  [Karel Zak]
    - mark build-in paths test as optional  [Karel Zak]
@@ -474,11 +520,14 @@ tests:
    - refresh cal(1) test  [Karel Zak]
    - remove USE_LIBMOUNT_FORCE_MOUNTINFO  [Karel Zak]
    - remove unnecessary file  [Sami Kerola]
+   - replace sleep by udevadm  [Ruediger Meier]
    - test_md5 prints md5sum only  [Ruediger Meier]
+   - udevadm settle before losetup -d  [Ruediger Meier]
    - update build-sys expected output  [Karel Zak]
    - update build-sys tests  [Karel Zak]
    - update sfdisk output strings  [Karel Zak]
    - utmpdump add subsecond accuracy test  [Sami Kerola]
+   - wait for flock background process  [Ruediger Meier]
 tools:
    - add script to load .po from translationproject.org  [Karel Zak]
    - make ko-release-gen usable with gpg2  [Karel Zak]
