@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.18-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2016-10-19 14:24+0200\n"
+"POT-Creation-Date: 2016-11-08 11:08+0100\n"
 "PO-Revision-Date: 2010-07-02 10:44+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -31,8 +31,8 @@ msgstr ""
 #: disk-utils/addpart.c:56 disk-utils/blockdev.c:276 disk-utils/blockdev.c:420
 #: disk-utils/blockdev.c:446 disk-utils/cfdisk.c:2622 disk-utils/delpart.c:57
 #: disk-utils/fdformat.c:227 disk-utils/fdisk.c:718 disk-utils/fdisk.c:990
-#: disk-utils/fdisk-list.c:299 disk-utils/fdisk-list.c:339
-#: disk-utils/fdisk-list.c:358 disk-utils/fsck.c:1448
+#: disk-utils/fdisk-list.c:301 disk-utils/fdisk-list.c:341
+#: disk-utils/fdisk-list.c:360 disk-utils/fsck.c:1448
 #: disk-utils/fsck.cramfs.c:155 disk-utils/fsck.cramfs.c:510
 #: disk-utils/isosize.c:134 disk-utils/mkfs.bfs.c:189
 #: disk-utils/mkfs.cramfs.c:173 disk-utils/mkfs.cramfs.c:661
@@ -266,7 +266,7 @@ msgid "Quit program without writing changes"
 msgstr "Kilépés a partíciós tábla kiírása nélkül"
 
 #: disk-utils/cfdisk.c:183 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1020
-#: libfdisk/src/dos.c:2306 libfdisk/src/gpt.c:2893 libfdisk/src/sgi.c:1160
+#: libfdisk/src/dos.c:2306 libfdisk/src/gpt.c:2902 libfdisk/src/sgi.c:1160
 #: libfdisk/src/sun.c:1116
 msgid "Type"
 msgstr "Típus"
@@ -629,8 +629,8 @@ msgstr "Biztosan ki akarja írni a partíciós táblát a lemezre? (igen vagy ne
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr ""
 
-#: disk-utils/cfdisk.c:2358 login-utils/lslogins.c:209 sys-utils/lscpu.c:1517
-#: sys-utils/lscpu.c:1527
+#: disk-utils/cfdisk.c:2358 login-utils/lslogins.c:209 sys-utils/lscpu.c:1526
+#: sys-utils/lscpu.c:1536
 msgid "yes"
 msgstr "igen"
 
@@ -868,7 +868,7 @@ msgid "Using default response %c."
 msgstr "Az alapértelmezett %u érték kerül felhasználásra\n"
 
 #: disk-utils/fdisk.c:176 disk-utils/fdisk.c:250 disk-utils/fdisk.c:325
-#: libfdisk/src/dos.c:1189 libfdisk/src/gpt.c:2260
+#: libfdisk/src/dos.c:1189 libfdisk/src/gpt.c:2269
 #, fuzzy
 msgid "Value out of range."
 msgstr "Az érték kívül esik a tartományon.\n"
@@ -969,7 +969,7 @@ msgid "cannot read"
 msgstr "%s: nem olvasható a(z) %s.\n"
 
 #: disk-utils/fdisk.c:695 libfdisk/src/bsd.c:259 libfdisk/src/dos.c:933
-#: libfdisk/src/gpt.c:2193
+#: libfdisk/src/gpt.c:2202
 #, fuzzy
 msgid "First sector"
 msgstr "Első %s"
@@ -1150,12 +1150,12 @@ msgstr ""
 msgid "Geometry: %d heads, %llu sectors/track, %llu cylinders"
 msgstr "%d fej, %llu szektor, %d cilinder"
 
-#: disk-utils/fdisk-list.c:59 disk-utils/fdisk-list.c:271
+#: disk-utils/fdisk-list.c:59 disk-utils/fdisk-list.c:273
 #, fuzzy, c-format
 msgid "Units: %s of %d * %ld = %ld bytes"
 msgstr "Egység: %s %d * %d = %d bájt\n"
 
-#: disk-utils/fdisk-list.c:65 disk-utils/fdisk-list.c:277
+#: disk-utils/fdisk-list.c:65 disk-utils/fdisk-list.c:279
 #, c-format
 msgid "Sector size (logical/physical): %lu bytes / %lu bytes"
 msgstr ""
@@ -1180,70 +1180,70 @@ msgstr "Lemezmeghajtó: %s\n"
 msgid "Disk identifier: %s"
 msgstr "Lemezazonosító: 0x%08x\n"
 
-#: disk-utils/fdisk-list.c:107 disk-utils/fdisk-list.c:217
+#: disk-utils/fdisk-list.c:109 disk-utils/fdisk-list.c:219
 #: disk-utils/fsck.c:1244
 #, fuzzy
 msgid "failed to allocate iterator"
 msgstr "nem foglalható le kimeneti puffer"
 
-#: disk-utils/fdisk-list.c:113 disk-utils/fdisk-list.c:223
+#: disk-utils/fdisk-list.c:115 disk-utils/fdisk-list.c:225
 #, fuzzy
 msgid "failed to allocate output table"
 msgstr "%s: a következő megnyitása meghiúsult: %s\n"
 
-#: disk-utils/fdisk-list.c:154 disk-utils/fdisk-list.c:247
+#: disk-utils/fdisk-list.c:156 disk-utils/fdisk-list.c:249
 #, fuzzy
 msgid "failed to allocate output line"
 msgstr "Nem foglalható le puffert.\n"
 
-#: disk-utils/fdisk-list.c:181
+#: disk-utils/fdisk-list.c:183
 #, fuzzy, c-format
 msgid "Partition %zu does not start on physical sector boundary."
 msgstr "A(z) %i. partíció nem cillinderhatáron kezdődik:\n"
 
-#: disk-utils/fdisk-list.c:190
+#: disk-utils/fdisk-list.c:192
 #, fuzzy
 msgid "Partition table entries are not in disk order."
 msgstr ""
 "\n"
 "A partíciós tábla bejegyzései nem a lemezen található sorrendben vannak\n"
 
-#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1015 libfdisk/src/dos.c:2300
-#: libfdisk/src/gpt.c:2889 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1110
+#: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1015 libfdisk/src/dos.c:2300
+#: libfdisk/src/gpt.c:2898 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1110
 #, fuzzy
 msgid "Start"
 msgstr "kezdet"
 
-#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1016 libfdisk/src/dos.c:2301
-#: libfdisk/src/gpt.c:2890 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1111
+#: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1016 libfdisk/src/dos.c:2301
+#: libfdisk/src/gpt.c:2899 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1111
 msgid "End"
 msgstr "Vége"
 
-#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2302
-#: libfdisk/src/gpt.c:2891 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1112
+#: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2302
+#: libfdisk/src/gpt.c:2900 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1112
 msgid "Sectors"
 msgstr "Szektorok"
 
-#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2304
-#: libfdisk/src/gpt.c:2892 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1114
+#: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2304
+#: libfdisk/src/gpt.c:2901 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1114
 msgid "Size"
 msgstr ""
 
-#: disk-utils/fdisk-list.c:265
+#: disk-utils/fdisk-list.c:267
 #, fuzzy, c-format
 msgid "Unpartitioned space %s: %s, %ju bytes, %ju sectors"
 msgstr ""
 "\n"
 "%s lemez: %lu cilinder, %lu fej, %lu szektor sávonként\n"
 
-#: disk-utils/fdisk-list.c:410
+#: disk-utils/fdisk-list.c:412
 #, fuzzy, c-format
 msgid ""
 "\n"
 "Available columns (for -o):\n"
 msgstr "Elérhető parancsok:\n"
 
-#: disk-utils/fdisk-list.c:451
+#: disk-utils/fdisk-list.c:453
 #, fuzzy, c-format
 msgid "%s unknown column: %s"
 msgstr "%s: Ismeretlen parancs: %s\n"
@@ -1790,7 +1790,7 @@ msgid "%s: failed to parse fstab"
 msgstr "%s: a következő megnyitása meghiúsult: %s\n"
 
 #: disk-utils/fsck.c:679 login-utils/login.c:968 login-utils/sulogin.c:1029
-#: login-utils/vipw.c:204 sys-utils/flock.c:337 sys-utils/nsenter.c:153
+#: login-utils/vipw.c:204 sys-utils/flock.c:345 sys-utils/nsenter.c:153
 #: sys-utils/swapon.c:316 sys-utils/unshare.c:219 sys-utils/unshare.c:420
 #: term-utils/script.c:780
 #, fuzzy
@@ -1806,7 +1806,7 @@ msgstr "a pozicionálás meghiúsult"
 msgid "wait: no more child process?!?"
 msgstr ""
 
-#: disk-utils/fsck.c:777 sys-utils/flock.c:347 sys-utils/swapon.c:348
+#: disk-utils/fsck.c:777 sys-utils/flock.c:363 sys-utils/swapon.c:348
 #: sys-utils/unshare.c:404 sys-utils/unshare.c:425
 #, fuzzy
 msgid "waitpid failed"
@@ -2943,8 +2943,8 @@ msgstr "  -h, --help                       Ez a súgószöveg\n"
 
 #: disk-utils/mkfs.c:139 lib/exec_shell.c:49 login-utils/newgrp.c:233
 #: login-utils/su-common.c:651 login-utils/su-common.c:986
-#: login-utils/sulogin.c:795 login-utils/sulogin.c:799 schedutils/chrt.c:557
-#: schedutils/ionice.c:260 schedutils/taskset.c:239 sys-utils/flock.c:363
+#: login-utils/sulogin.c:795 login-utils/sulogin.c:799 schedutils/chrt.c:558
+#: schedutils/ionice.c:260 schedutils/taskset.c:239 sys-utils/flock.c:122
 #: sys-utils/nsenter.c:430 sys-utils/prlimit.c:644 sys-utils/rtcwake.c:577
 #: sys-utils/setarch.c:324 sys-utils/setarch.c:403 sys-utils/setsid.c:115
 #: sys-utils/swapon.c:340 sys-utils/switch_root.c:242 sys-utils/unshare.c:461
@@ -3743,16 +3743,16 @@ msgid "failed to add data to output table"
 msgstr "%s: a következő megnyitása meghiúsult: %s\n"
 
 #: disk-utils/partx.c:667 login-utils/lslogins.c:922 misc-utils/findmnt.c:1582
-#: misc-utils/lsblk.c:1869 misc-utils/lslocks.c:451 sys-utils/losetup.c:310
-#: sys-utils/lscpu.c:1690 sys-utils/lsipc.c:338 sys-utils/lsns.c:489
+#: misc-utils/lsblk.c:1874 misc-utils/lslocks.c:451 sys-utils/losetup.c:310
+#: sys-utils/lscpu.c:1699 sys-utils/lsipc.c:338 sys-utils/lsns.c:489
 #: sys-utils/prlimit.c:297 sys-utils/swapon.c:280 sys-utils/wdctl.c:259
 #: sys-utils/zramctl.c:484
 msgid "failed to initialize output table"
 msgstr ""
 
-#: disk-utils/partx.c:678 misc-utils/findmnt.c:1608 misc-utils/lsblk.c:1891
+#: disk-utils/partx.c:678 misc-utils/findmnt.c:1608 misc-utils/lsblk.c:1896
 #: misc-utils/lslocks.c:465 sys-utils/losetup.c:322 sys-utils/losetup.c:358
-#: sys-utils/lscpu.c:1695 sys-utils/lsns.c:510 sys-utils/prlimit.c:306
+#: sys-utils/lscpu.c:1704 sys-utils/lsns.c:510 sys-utils/prlimit.c:306
 #: sys-utils/swapon.c:289 sys-utils/wdctl.c:270 sys-utils/zramctl.c:493
 msgid "failed to initialize output column"
 msgstr ""
@@ -5249,7 +5249,7 @@ msgstr "cilinder"
 msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgstr "Utolsó %1$s, +%2$s vagy +size{K,M,G}"
 
-#: libfdisk/src/bsd.c:297 libfdisk/src/dos.c:1166 libfdisk/src/gpt.c:2238
+#: libfdisk/src/bsd.c:297 libfdisk/src/dos.c:1166 libfdisk/src/gpt.c:2247
 #, fuzzy
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr "Utolsó %1$s, +%2$s vagy +size{K,M,G}"
@@ -5564,7 +5564,7 @@ msgstr "Figyelmeztetés: a 0x%04x jelző érvénytelen a(z) %d. partíciós táb
 msgid "Start sector %ju out of range."
 msgstr "Az érték kívül esik a tartományon.\n"
 
-#: libfdisk/src/dos.c:1026 libfdisk/src/gpt.c:2119 libfdisk/src/sgi.c:839
+#: libfdisk/src/dos.c:1026 libfdisk/src/gpt.c:2128 libfdisk/src/sgi.c:839
 #: libfdisk/src/sun.c:517
 #, fuzzy, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
@@ -5575,7 +5575,7 @@ msgstr "A(z) %d. partíció már létezik. Törölje le az ismételt hozzáadás
 msgid "Sector %llu is already allocated."
 msgstr "A(z) %llu. szektor már le van foglalva\n"
 
-#: libfdisk/src/dos.c:1133 libfdisk/src/gpt.c:2129
+#: libfdisk/src/dos.c:1133 libfdisk/src/gpt.c:2138
 #, fuzzy
 msgid "No free sectors available."
 msgstr "Nem érhető el szabad szektor\n"
@@ -5749,7 +5749,7 @@ msgstr ""
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr ""
 
-#: libfdisk/src/dos.c:2143 libfdisk/src/gpt.c:2798
+#: libfdisk/src/dos.c:2143 libfdisk/src/gpt.c:2807
 #, fuzzy
 msgid "Nothing to do. Ordering is correct already."
 msgstr ""
@@ -5780,7 +5780,7 @@ msgstr "A(z) %d. partíció rendszertípusa változatlan: %x (%s)\n"
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "A(z) %d. partíció rendszertípusa változatlan: %x (%s)\n"
 
-#: libfdisk/src/dos.c:2298 libfdisk/src/gpt.c:2888 libfdisk/src/sgi.c:1153
+#: libfdisk/src/dos.c:2298 libfdisk/src/gpt.c:2897 libfdisk/src/sgi.c:1153
 #: libfdisk/src/sun.c:1109
 msgid "Device"
 msgstr "Eszköz"
@@ -5802,7 +5802,7 @@ msgstr "kezdet"
 msgid "End-C/H/S"
 msgstr ""
 
-#: libfdisk/src/dos.c:2311 libfdisk/src/gpt.c:2898 libfdisk/src/sgi.c:1161
+#: libfdisk/src/dos.c:2311 libfdisk/src/gpt.c:2907 libfdisk/src/sgi.c:1161
 msgid "Attrs"
 msgstr ""
 
@@ -6236,235 +6236,240 @@ msgstr ""
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1619
+#: libfdisk/src/gpt.c:1623
 #, fuzzy, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "%s: ismeretlen argumentum: %s\n"
 
-#: libfdisk/src/gpt.c:1714
+#: libfdisk/src/gpt.c:1628
+#, fuzzy, c-format
+msgid "failed to parse GPT attribute string '%s'"
+msgstr "a(z) „%s” nem nyitható meg: %s"
+
+#: libfdisk/src/gpt.c:1723
 #, fuzzy, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "A személyiség beállítása meghiúsult a következőre: %s"
 
-#: libfdisk/src/gpt.c:1722
+#: libfdisk/src/gpt.c:1731
 #, fuzzy, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "A személyiség beállítása meghiúsult a következőre: %s"
 
-#: libfdisk/src/gpt.c:1751
+#: libfdisk/src/gpt.c:1760
 #, fuzzy
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr ""
 "\n"
 "Az indítópartíció nem létezik.\n"
 
-#: libfdisk/src/gpt.c:1758
+#: libfdisk/src/gpt.c:1767
 #, fuzzy
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "Nem sikerült a partíció kiírása a(z) %s eszközön\n"
 
-#: libfdisk/src/gpt.c:1917
+#: libfdisk/src/gpt.c:1926
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1954
+#: libfdisk/src/gpt.c:1963
 #, fuzzy
 msgid "Disk does not contain a valid backup header."
 msgstr "A(z) %s lemez nem tartalmaz érvényes partíciós táblát\n"
 
-#: libfdisk/src/gpt.c:1959
+#: libfdisk/src/gpt.c:1968
 msgid "Invalid primary header CRC checksum."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1963
+#: libfdisk/src/gpt.c:1972
 msgid "Invalid backup header CRC checksum."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1968
+#: libfdisk/src/gpt.c:1977
 #, fuzzy
 msgid "Invalid partition entry checksum."
 msgstr "Érvénytelen partíciószám a(z) „%c” típushoz\n"
 
-#: libfdisk/src/gpt.c:1973
+#: libfdisk/src/gpt.c:1982
 msgid "Invalid primary header LBA sanity checks."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1977
+#: libfdisk/src/gpt.c:1986
 msgid "Invalid backup header LBA sanity checks."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1982
+#: libfdisk/src/gpt.c:1991
 msgid "MyLBA mismatch with real position at primary header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1986
+#: libfdisk/src/gpt.c:1995
 msgid "MyLBA mismatch with real position at backup header."
 msgstr ""
 
-#: libfdisk/src/gpt.c:1991
+#: libfdisk/src/gpt.c:2000
 msgid "Disk is too small to hold all data."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2001
+#: libfdisk/src/gpt.c:2010
 msgid "Primary and backup header mismatch."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2007
+#: libfdisk/src/gpt.c:2016
 #, fuzzy, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "Figyelmeztetés: a(z) %d. partíció átfedi a(z) %d partíciót.\n"
 
-#: libfdisk/src/gpt.c:2014
+#: libfdisk/src/gpt.c:2023
 #, fuzzy, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "Egymást átfedő partíciók találhatók a lemezen. Először javítsa ezt ki!\n"
 
-#: libfdisk/src/gpt.c:2021
+#: libfdisk/src/gpt.c:2030
 #, fuzzy, c-format
 msgid "Partition %u ends before it starts."
 msgstr "A partíció a 0. szektor után fejeződik be"
 
-#: libfdisk/src/gpt.c:2030
+#: libfdisk/src/gpt.c:2039
 msgid "No errors detected."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2031
+#: libfdisk/src/gpt.c:2040
 #, fuzzy, c-format
 msgid "Header version: %s"
 msgstr "%s: írási hiba: %s\n"
 
-#: libfdisk/src/gpt.c:2032
+#: libfdisk/src/gpt.c:2041
 #, fuzzy, c-format
 msgid "Using %u out of %d partitions."
 msgstr "furcsa, csak %d partíció van megadva.\n"
 
-#: libfdisk/src/gpt.c:2043
+#: libfdisk/src/gpt.c:2052
 #, fuzzy, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] "Nem érhető el szabad szektor\n"
 msgstr[1] "Nem érhető el szabad szektor\n"
 
-#: libfdisk/src/gpt.c:2051
+#: libfdisk/src/gpt.c:2060
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] ""
 msgstr[1] ""
 
-#: libfdisk/src/gpt.c:2125
+#: libfdisk/src/gpt.c:2134
 #, fuzzy
 msgid "All partitions are already in use."
 msgstr "Ez a partíció már használatban van"
 
-#: libfdisk/src/gpt.c:2180 libfdisk/src/gpt.c:2205
+#: libfdisk/src/gpt.c:2189 libfdisk/src/gpt.c:2214
 #, fuzzy, c-format
 msgid "Sector %ju already used."
 msgstr "A(z) %llu. szektor már le van foglalva\n"
 
-#: libfdisk/src/gpt.c:2266
+#: libfdisk/src/gpt.c:2275
 #, fuzzy, c-format
 msgid "Could not create partition %zu"
 msgstr "Ne hozzon létre partíciót"
 
-#: libfdisk/src/gpt.c:2273
+#: libfdisk/src/gpt.c:2282
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2280
+#: libfdisk/src/gpt.c:2289
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2412
+#: libfdisk/src/gpt.c:2421
 #, fuzzy, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "   s   új, üres Sun lemezcímke létrehozása"
 
-#: libfdisk/src/gpt.c:2430
+#: libfdisk/src/gpt.c:2439
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2437
+#: libfdisk/src/gpt.c:2446
 #, fuzzy
 msgid "Failed to parse your UUID."
 msgstr "%s: a következő megnyitása meghiúsult: %s\n"
 
-#: libfdisk/src/gpt.c:2451
+#: libfdisk/src/gpt.c:2460
 #, fuzzy, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "A személyiség beállítása meghiúsult a következőre: %s"
 
-#: libfdisk/src/gpt.c:2471
+#: libfdisk/src/gpt.c:2480
 #, fuzzy
 msgid "Not enough space for new partition table!"
 msgstr "Nem érhető el szabad szektor\n"
 
-#: libfdisk/src/gpt.c:2480
+#: libfdisk/src/gpt.c:2489
 #, c-format
 msgid "Partition #%u out of range (minimal start is %<PRIu64> sectors)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2485
+#: libfdisk/src/gpt.c:2494
 #, c-format
 msgid "Partition #%u out of range (maximal end is %<PRIu64> sectors)"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2540
+#: libfdisk/src/gpt.c:2549
 #, fuzzy
 msgid "Cannot allocate memory!"
 msgstr "a programindítás meghiúsult"
 
-#: libfdisk/src/gpt.c:2567
+#: libfdisk/src/gpt.c:2576
 #, fuzzy, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "A személyiség beállítása meghiúsult a következőre: %s"
 
-#: libfdisk/src/gpt.c:2671
+#: libfdisk/src/gpt.c:2680
 #, fuzzy, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "A(z) %d. partíció rendszertípusa változatlan: %x (%s)\n"
 
-#: libfdisk/src/gpt.c:2719
+#: libfdisk/src/gpt.c:2728
 msgid "Enter GUID specific bit"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2734
+#: libfdisk/src/gpt.c:2743
 #, fuzzy, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "a(z) „%s” nem nyitható meg: %s"
 
-#: libfdisk/src/gpt.c:2747
+#: libfdisk/src/gpt.c:2756
 #, fuzzy, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "A(z) %d. partíció rendszertípusa változatlan: %x (%s)\n"
 
-#: libfdisk/src/gpt.c:2748
+#: libfdisk/src/gpt.c:2757
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr ""
 
-#: libfdisk/src/gpt.c:2752
+#: libfdisk/src/gpt.c:2761
 #, fuzzy, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "A(z) %d. partíció rendszertípusa változatlan: %x (%s)\n"
 
-#: libfdisk/src/gpt.c:2753
+#: libfdisk/src/gpt.c:2762
 #, fuzzy, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "A(z) %d. partíció rendszertípusa változatlan: %x (%s)\n"
 
-#: libfdisk/src/gpt.c:2895
+#: libfdisk/src/gpt.c:2904
 #, fuzzy
 msgid "Type-UUID"
 msgstr "Típus"
 
-#: libfdisk/src/gpt.c:2896
+#: libfdisk/src/gpt.c:2905
 msgid "UUID"
 msgstr ""
 
-#: libfdisk/src/gpt.c:2897 login-utils/chfn.c:150 login-utils/chfn.c:152
+#: libfdisk/src/gpt.c:2906 login-utils/chfn.c:150 login-utils/chfn.c:152
 #: login-utils/chfn.c:307
 msgid "Name"
 msgstr "Név"
@@ -6975,7 +6980,7 @@ msgstr ""
 msgid "waitpid failed (%s)"
 msgstr "a setuid() hívása meghiúsult"
 
-#: lib/path.c:209 sys-utils/lscpu.c:1795
+#: lib/path.c:209 sys-utils/lscpu.c:1804
 #, fuzzy
 msgid "failed to callocate cpu set"
 msgstr "nem foglalható le pufferterület"
@@ -7620,7 +7625,7 @@ msgstr "Érvénytelen időkorlátérték: %s\n"
 msgid "hush login status: restore original IDs failed"
 msgstr ""
 
-#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1517 sys-utils/lscpu.c:1527
+#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1526 sys-utils/lscpu.c:1536
 msgid "no"
 msgstr "nem"
 
@@ -7895,7 +7900,7 @@ msgstr "Utolsó bejelentkezés: %.*s "
 #: login-utils/lslogins.c:1228 login-utils/nologin.c:26
 #: misc-utils/lslocks.c:501 misc-utils/mcookie.c:82 misc-utils/uuidd.c:70
 #: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:264 sys-utils/ipcmk.c:66
-#: sys-utils/lscpu.c:1937 sys-utils/lsipc.c:277 sys-utils/readprofile.c:104
+#: sys-utils/lscpu.c:1946 sys-utils/lsipc.c:277 sys-utils/readprofile.c:104
 #: sys-utils/rtcwake.c:95 term-utils/setterm.c:380 text-utils/line.c:30
 #, fuzzy, c-format
 msgid " %s [options]\n"
@@ -8004,7 +8009,7 @@ msgstr ""
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr ""
 
-#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1244 sys-utils/lscpu.c:1955
+#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1244 sys-utils/lscpu.c:1964
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -9152,7 +9157,7 @@ msgstr ""
 
 #: misc-utils/findmnt-verify.c:414
 #, c-format
-msgid "%s seems unspported by the current kernel"
+msgid "%s seems unsupported by the current kernel"
 msgstr ""
 
 #: misc-utils/findmnt-verify.c:420 misc-utils/findmnt-verify.c:421
@@ -9167,7 +9172,7 @@ msgstr ""
 
 #: misc-utils/findmnt-verify.c:431
 #, c-format
-msgid "on-disk %s seems unspported by the current kernel"
+msgid "on-disk %s seems unsupported by the current kernel"
 msgstr ""
 
 #: misc-utils/findmnt-verify.c:433
@@ -9213,15 +9218,15 @@ msgstr ""
 "%s: %s\n"
 "További információkért adja ki a „%s --help” parancsot.\n"
 
-#: misc-utils/getopt.c:297
+#: misc-utils/getopt.c:304
 msgid "empty long option after -l or --long argument"
 msgstr "üres hosszú kapcsoló a -l vagy --long paraméter után"
 
-#: misc-utils/getopt.c:322
+#: misc-utils/getopt.c:325
 msgid "unknown shell after -s or --shell argument"
 msgstr "ismeretlen parancsértelmező a -s vagy --shell paraméter után"
 
-#: misc-utils/getopt.c:329
+#: misc-utils/getopt.c:332
 #, fuzzy, c-format
 msgid ""
 " %1$s <optstring> <parameters>\n"
@@ -9229,65 +9234,65 @@ msgid ""
 " %1$s [options] -o|--options <optstring> [options] [--] <parameters>\n"
 msgstr "       getopt [kapcsolók] -o|--options kapcsoló-karakterlánc [kapcsolók] [--]\n"
 
-#: misc-utils/getopt.c:335
+#: misc-utils/getopt.c:338
 #, fuzzy
 msgid "Parse command options.\n"
 msgstr "%s: a következő megnyitása meghiúsult: %s\n"
 
-#: misc-utils/getopt.c:338
+#: misc-utils/getopt.c:341
 #, fuzzy
 msgid " -a, --alternative             allow long options starting with single -\n"
 msgstr ""
 "  -a, --alternative                Engedélyezi a kötőjellel kezdődő hosszú\n"
 "                                     kapcsolókat\n"
 
-#: misc-utils/getopt.c:339
+#: misc-utils/getopt.c:342
 #, fuzzy
 msgid " -l, --longoptions <longopts>  the long options to be recognized\n"
 msgstr "  -l, --longoptions=hosszú_kapcsolók    Felismerendő hosszú kapcsolók\n"
 
-#: misc-utils/getopt.c:340
+#: misc-utils/getopt.c:343
 #, fuzzy
 msgid " -n, --name <progname>         the name under which errors are reported\n"
 msgstr "  -n, --name=programnév            A hibák ezen név alatt kerülnek jelentésre\n"
 
-#: misc-utils/getopt.c:341
+#: misc-utils/getopt.c:344
 #, fuzzy
 msgid " -o, --options <optstring>     the short options to be recognized\n"
 msgstr "  -o, --options=kapcsoló-karakterlánc  Felismerendő rövid kapcsolók\n"
 
-#: misc-utils/getopt.c:342
+#: misc-utils/getopt.c:345
 #, fuzzy
 msgid " -q, --quiet                   disable error reporting by getopt(3)\n"
 msgstr "  -q, --quiet                      A hibajelentés letiltása a getopt(3)-nak\n"
 
-#: misc-utils/getopt.c:343
+#: misc-utils/getopt.c:346
 #, fuzzy
 msgid " -Q, --quiet-output            no normal output\n"
 msgstr "  -Q, --quiet-output               Nincs normál kimenet\n"
 
-#: misc-utils/getopt.c:344
+#: misc-utils/getopt.c:347
 #, fuzzy
 msgid " -s, --shell <shell>           set quoting conventions to those of <shell>\n"
 msgstr ""
 "  -s, --shell=parancsértelmező     A parancsértelmező idézési megállapodásainak\n"
 "                                     beállítása\n"
 
-#: misc-utils/getopt.c:345
+#: misc-utils/getopt.c:348
 #, fuzzy
 msgid " -T, --test                    test for getopt(1) version\n"
 msgstr "  -T, --test                       A getopt(1) verzió tesztelése\n"
 
-#: misc-utils/getopt.c:346
+#: misc-utils/getopt.c:349
 #, fuzzy
 msgid " -u, --unquoted                do not quote the output\n"
 msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
 
-#: misc-utils/getopt.c:396 misc-utils/getopt.c:456
+#: misc-utils/getopt.c:399 misc-utils/getopt.c:459
 msgid "missing optstring argument"
 msgstr "hiányzó kapcsoló-karakterlánc paraméter"
 
-#: misc-utils/getopt.c:451
+#: misc-utils/getopt.c:454
 msgid "internal error, contact the author."
 msgstr "belső hiba, vegye fel a kapcsolatot a szerzővel."
 
@@ -10071,7 +10076,7 @@ msgstr ""
 msgid " -r, --raw              use the raw output format\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: misc-utils/lslocks.c:570 schedutils/chrt.c:477 schedutils/ionice.c:177
+#: misc-utils/lslocks.c:570 schedutils/chrt.c:478 schedutils/ionice.c:177
 #: schedutils/taskset.c:163 sys-utils/lsns.c:677 sys-utils/prlimit.c:586
 #, fuzzy
 msgid "invalid PID argument"
@@ -10336,7 +10341,7 @@ msgstr "%s: a(z) %s átnevezése meghiúsult a következőre: %s: %s\n"
 msgid "timed out"
 msgstr "időtúllépés"
 
-#: misc-utils/uuidd.c:345 sys-utils/flock.c:263
+#: misc-utils/uuidd.c:345 sys-utils/flock.c:271
 #, fuzzy
 msgid "cannot set up timer"
 msgstr "a csoportazonosító nem állítható be"
@@ -10727,104 +10732,104 @@ msgstr "  -Q, --quiet-output               Nincs normál kimenet\n"
 msgid " -v, --verbose        display status information\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: schedutils/chrt.c:232 schedutils/chrt.c:253
+#: schedutils/chrt.c:232 schedutils/chrt.c:254
 #, fuzzy, c-format
 msgid "failed to get pid %d's policy"
 msgstr "A személyiség beállítása meghiúsult a következőre: %s"
 
-#: schedutils/chrt.c:256
+#: schedutils/chrt.c:257
 #, c-format
 msgid "failed to get pid %d's attributes"
 msgstr ""
 
-#: schedutils/chrt.c:266
+#: schedutils/chrt.c:267
 #, c-format
 msgid "pid %d's new scheduling policy: %s"
 msgstr ""
 
-#: schedutils/chrt.c:268
+#: schedutils/chrt.c:269
 #, c-format
 msgid "pid %d's current scheduling policy: %s"
 msgstr ""
 
-#: schedutils/chrt.c:275
+#: schedutils/chrt.c:276
 #, c-format
 msgid "pid %d's new scheduling priority: %d\n"
 msgstr ""
 
-#: schedutils/chrt.c:277
+#: schedutils/chrt.c:278
 #, c-format
 msgid "pid %d's current scheduling priority: %d\n"
 msgstr ""
 
-#: schedutils/chrt.c:282
+#: schedutils/chrt.c:283
 #, c-format
 msgid "pid %d's new runtime/deadline/period parameters: %ju/%ju/%ju\n"
 msgstr ""
 
-#: schedutils/chrt.c:285
+#: schedutils/chrt.c:286
 #, c-format
 msgid "pid %d's current runtime/deadline/period parameters: %ju/%ju/%ju\n"
 msgstr ""
 
-#: schedutils/chrt.c:299 schedutils/chrt.c:395
+#: schedutils/chrt.c:300 schedutils/chrt.c:396
 #, fuzzy
 msgid "cannot obtain the list of tasks"
 msgstr "%s: nem található a(z) %s eszköze\n"
 
-#: schedutils/chrt.c:333
+#: schedutils/chrt.c:334
 #, c-format
 msgid "%s min/max priority\t: %d/%d\n"
 msgstr ""
 
-#: schedutils/chrt.c:336
+#: schedutils/chrt.c:337
 #, fuzzy, c-format
 msgid "%s not supported?\n"
 msgstr "umount: %s nem található"
 
-#: schedutils/chrt.c:399
+#: schedutils/chrt.c:400
 #, fuzzy, c-format
 msgid "failed to set tid %d's policy"
 msgstr "A személyiség beállítása meghiúsult a következőre: %s"
 
-#: schedutils/chrt.c:404
+#: schedutils/chrt.c:405
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "A személyiség beállítása meghiúsult a következőre: %s"
 
-#: schedutils/chrt.c:486
+#: schedutils/chrt.c:487
 #, fuzzy
 msgid "invalid runtime argument"
 msgstr "érvénytelen kapcsoló"
 
-#: schedutils/chrt.c:489
+#: schedutils/chrt.c:490
 #, fuzzy
 msgid "invalid period argument"
 msgstr "érvénytelen kapcsoló"
 
-#: schedutils/chrt.c:492
+#: schedutils/chrt.c:493
 #, fuzzy
 msgid "invalid deadline argument"
 msgstr "érvénytelen kapcsoló"
 
-#: schedutils/chrt.c:516
+#: schedutils/chrt.c:517
 #, fuzzy
 msgid "invalid priority argument"
 msgstr "érvénytelen kapcsoló"
 
-#: schedutils/chrt.c:520
+#: schedutils/chrt.c:521
 msgid "--reset-on-fork option is supported for SCHED_FIFO and SCHED_RR policies only"
 msgstr ""
 
-#: schedutils/chrt.c:525
+#: schedutils/chrt.c:526
 msgid "--sched-{runtime,deadline,period} options are supported for SCHED_DEADLINE only"
 msgstr ""
 
-#: schedutils/chrt.c:540
+#: schedutils/chrt.c:541
 msgid "SCHED_DEADLINE is unsupported"
 msgstr ""
 
-#: schedutils/chrt.c:547
+#: schedutils/chrt.c:548
 #, c-format
 msgid "unsupported priority value for the policy: %d: see --max for valid range"
 msgstr ""
@@ -12054,51 +12059,51 @@ msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 msgid "cannot open lock file %s"
 msgstr "Nem nyitható meg a(z) „%s” fájl"
 
-#: sys-utils/flock.c:197
+#: sys-utils/flock.c:205
 #, fuzzy
 msgid "invalid timeout value"
 msgstr "érvénytelen kapcsoló"
 
-#: sys-utils/flock.c:201
+#: sys-utils/flock.c:209
 #, fuzzy
 msgid "invalid exit code"
 msgstr "érvénytelen azonosító"
 
-#: sys-utils/flock.c:220
+#: sys-utils/flock.c:228
 msgid "the --no-fork and --close options are incompatible"
 msgstr ""
 
-#: sys-utils/flock.c:228
+#: sys-utils/flock.c:236
 #, fuzzy, c-format
 msgid "%s requires exactly one command argument"
 msgstr "%s egy paramétert igényel\n"
 
 # ez a következő három %s%s-ben az első %s lesz, meg kell majd ott fordítani
-#: sys-utils/flock.c:246
+#: sys-utils/flock.c:254
 #, fuzzy
 msgid "bad file descriptor"
 msgstr "blokkeszköz"
 
-#: sys-utils/flock.c:249
+#: sys-utils/flock.c:257
 #, fuzzy
 msgid "requires file descriptor, file or directory"
 msgstr "a gyökér inode nem könyvtár"
 
-#: sys-utils/flock.c:273
+#: sys-utils/flock.c:281
 #, fuzzy
 msgid "failed to get lock"
 msgstr "%s nem érhető el"
 
-#: sys-utils/flock.c:280
+#: sys-utils/flock.c:288
 msgid "timeout while waiting to get lock"
 msgstr ""
 
-#: sys-utils/flock.c:321
+#: sys-utils/flock.c:329
 #, fuzzy, c-format
 msgid "%s: getting lock took %ld.%06ld seconds\n"
 msgstr "%s  %.6f másodperc\n"
 
-#: sys-utils/flock.c:332
+#: sys-utils/flock.c:340
 #, fuzzy, c-format
 msgid "%s: executing %s\n"
 msgstr "Hiba a következő futtatásakor:\t%s\n"
@@ -13888,7 +13893,7 @@ msgstr ", %s titkosítás (típus: %<PRIu32>)"
 msgid "%s: detach failed"
 msgstr "%s meghiúsult.\n"
 
-#: sys-utils/losetup.c:329 sys-utils/lscpu.c:1712 sys-utils/prlimit.c:229
+#: sys-utils/losetup.c:329 sys-utils/lscpu.c:1721 sys-utils/prlimit.c:229
 #: sys-utils/swapon.c:176 sys-utils/wdctl.c:215 sys-utils/zramctl.c:405
 #, fuzzy
 msgid "failed to initialize output line"
@@ -14177,36 +14182,36 @@ msgstr "hiba: az UUID feldolgozás meghiúsult"
 msgid "failed to determine number of CPUs: %s"
 msgstr "a(z) „%s” nem nyitható meg: %s"
 
-#: sys-utils/lscpu.c:880
+#: sys-utils/lscpu.c:889
 #, fuzzy
 msgid "error: can not set signal handler"
 msgstr "Nem állítható be a jelzéskezelő"
 
-#: sys-utils/lscpu.c:885
+#: sys-utils/lscpu.c:894
 #, fuzzy
 msgid "error: can not restore signal handler"
 msgstr "Nem állítható be a jelzéskezelő"
 
-#: sys-utils/lscpu.c:930
+#: sys-utils/lscpu.c:939
 #, fuzzy, c-format
 msgid "failed to read from: %s"
 msgstr "A(z) %s nem olvasható\n"
 
-#: sys-utils/lscpu.c:1387
+#: sys-utils/lscpu.c:1396
 #, fuzzy
 msgid "Failed to extract the node number"
 msgstr "a pozicionálás sikertelen a write_tables-ben"
 
-#: sys-utils/lscpu.c:1514 sys-utils/lscpu.c:1524
+#: sys-utils/lscpu.c:1523 sys-utils/lscpu.c:1533
 msgid "Y"
 msgstr ""
 
-#: sys-utils/lscpu.c:1514 sys-utils/lscpu.c:1524
+#: sys-utils/lscpu.c:1523 sys-utils/lscpu.c:1533
 #, fuzzy
 msgid "N"
 msgstr "NC"
 
-#: sys-utils/lscpu.c:1608
+#: sys-utils/lscpu.c:1617
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -14214,215 +14219,215 @@ msgid ""
 "# starting from zero.\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:1758
+#: sys-utils/lscpu.c:1767
 msgid "Architecture:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1772
+#: sys-utils/lscpu.c:1781
 msgid "CPU op-mode(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1775 sys-utils/lscpu.c:1777
+#: sys-utils/lscpu.c:1784 sys-utils/lscpu.c:1786
 msgid "Byte Order:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1779
+#: sys-utils/lscpu.c:1788
 msgid "CPU(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1782
+#: sys-utils/lscpu.c:1791
 msgid "On-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1783
+#: sys-utils/lscpu.c:1792
 msgid "On-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1802
+#: sys-utils/lscpu.c:1811
 msgid "Off-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1803
+#: sys-utils/lscpu.c:1812
 msgid "Off-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1839
+#: sys-utils/lscpu.c:1848
 msgid "Thread(s) per core:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1841
+#: sys-utils/lscpu.c:1850
 msgid "Core(s) per socket:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1844
+#: sys-utils/lscpu.c:1853
 msgid "Socket(s) per book:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1847
+#: sys-utils/lscpu.c:1856
 msgid "Book(s) per drawer:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1849
+#: sys-utils/lscpu.c:1858
 msgid "Drawer(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1851
+#: sys-utils/lscpu.c:1860
 msgid "Book(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1854
+#: sys-utils/lscpu.c:1863
 #, fuzzy
 msgid "Socket(s):"
 msgstr "foglalat"
 
-#: sys-utils/lscpu.c:1858
+#: sys-utils/lscpu.c:1867
 msgid "NUMA node(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1860
+#: sys-utils/lscpu.c:1869
 msgid "Vendor ID:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1862
+#: sys-utils/lscpu.c:1871
 #, fuzzy
 msgid "Machine type:"
 msgstr "Partíciószám"
 
-#: sys-utils/lscpu.c:1864
+#: sys-utils/lscpu.c:1873
 msgid "CPU family:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1866
+#: sys-utils/lscpu.c:1875
 #, fuzzy
 msgid "Model:"
 msgstr "Típus:"
 
-#: sys-utils/lscpu.c:1868
+#: sys-utils/lscpu.c:1877
 #, fuzzy
 msgid "Model name:"
 msgstr "Típus:"
 
-#: sys-utils/lscpu.c:1870
+#: sys-utils/lscpu.c:1879
 msgid "Stepping:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1872
+#: sys-utils/lscpu.c:1881
 msgid "CPU MHz:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1874
+#: sys-utils/lscpu.c:1883
 msgid "CPU dynamic MHz:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1876
+#: sys-utils/lscpu.c:1885
 msgid "CPU static MHz:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1878
+#: sys-utils/lscpu.c:1887
 msgid "CPU max MHz:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1880
+#: sys-utils/lscpu.c:1889
 msgid "CPU min MHz:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1882
+#: sys-utils/lscpu.c:1891
 msgid "BogoMIPS:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1885 sys-utils/lscpu.c:1887
+#: sys-utils/lscpu.c:1894 sys-utils/lscpu.c:1896
 #, fuzzy
 msgid "Virtualization:"
 msgstr "Régi helyzet:\n"
 
-#: sys-utils/lscpu.c:1890
+#: sys-utils/lscpu.c:1899
 msgid "Hypervisor:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1892
+#: sys-utils/lscpu.c:1901
 msgid "Hypervisor vendor:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1893
+#: sys-utils/lscpu.c:1902
 msgid "Virtualization type:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1896
+#: sys-utils/lscpu.c:1905
 msgid "Dispatching mode:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1902 sys-utils/lscpu.c:1912
+#: sys-utils/lscpu.c:1911 sys-utils/lscpu.c:1921
 #, c-format
 msgid "%s cache:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1918
+#: sys-utils/lscpu.c:1927
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1923
+#: sys-utils/lscpu.c:1932
 #, fuzzy
 msgid "Flags:"
 msgstr "Jelek"
 
-#: sys-utils/lscpu.c:1926
+#: sys-utils/lscpu.c:1935
 #, fuzzy
 msgid "Physical sockets:"
 msgstr "A fizikai cilinderek száma"
 
-#: sys-utils/lscpu.c:1927
+#: sys-utils/lscpu.c:1936
 #, fuzzy
 msgid "Physical chips:"
 msgstr "A fizikai cilinderek száma"
 
-#: sys-utils/lscpu.c:1928
+#: sys-utils/lscpu.c:1937
 #, fuzzy
 msgid "Physical cores/chip:"
 msgstr "fizikai blokk (szektor)méret lekérése"
 
-#: sys-utils/lscpu.c:1940
+#: sys-utils/lscpu.c:1949
 msgid "Display information about the CPU architecture.\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:1943
+#: sys-utils/lscpu.c:1952
 #, fuzzy
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr "  -h, --help                       Ez a súgószöveg\n"
 
-#: sys-utils/lscpu.c:1944
+#: sys-utils/lscpu.c:1953
 #, fuzzy
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr "  -u, --unqote                     Nem idézőjelezi a kimenetet\n"
 
-#: sys-utils/lscpu.c:1945
+#: sys-utils/lscpu.c:1954
 #, fuzzy
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr "  -V, --version                    Verzióinformációk kiírása\n"
 
-#: sys-utils/lscpu.c:1946
+#: sys-utils/lscpu.c:1955
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:1947
+#: sys-utils/lscpu.c:1956
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:1948
+#: sys-utils/lscpu.c:1957
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:1949
+#: sys-utils/lscpu.c:1958
 #, fuzzy
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr "  -h, --help                       Ez a súgószöveg\n"
 
-#: sys-utils/lscpu.c:1950
+#: sys-utils/lscpu.c:1959
 #, fuzzy
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr "  -h, --help                       Ez a súgószöveg\n"
 
-#: sys-utils/lscpu.c:2051
+#: sys-utils/lscpu.c:2060
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr ""

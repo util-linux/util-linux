@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2016-10-19 14:46+0200\n"
+"POT-Creation-Date: 2016-11-08 11:08+0100\n"
 "PO-Revision-Date: 2016-10-23 12:38+0800\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -38,8 +38,8 @@ msgstr "Säg till kärnan om att en angiven partition existerar.\n"
 #: disk-utils/addpart.c:56 disk-utils/blockdev.c:276 disk-utils/blockdev.c:420
 #: disk-utils/blockdev.c:446 disk-utils/cfdisk.c:2622 disk-utils/delpart.c:57
 #: disk-utils/fdformat.c:227 disk-utils/fdisk.c:718 disk-utils/fdisk.c:990
-#: disk-utils/fdisk-list.c:299 disk-utils/fdisk-list.c:339
-#: disk-utils/fdisk-list.c:358 disk-utils/fsck.c:1448
+#: disk-utils/fdisk-list.c:301 disk-utils/fdisk-list.c:341
+#: disk-utils/fdisk-list.c:360 disk-utils/fsck.c:1448
 #: disk-utils/fsck.cramfs.c:155 disk-utils/fsck.cramfs.c:510
 #: disk-utils/isosize.c:134 disk-utils/mkfs.bfs.c:189
 #: disk-utils/mkfs.cramfs.c:173 disk-utils/mkfs.cramfs.c:661
@@ -272,7 +272,7 @@ msgid "Quit program without writing changes"
 msgstr "Avsluta programmet utan att skriva förändringar"
 
 #: disk-utils/cfdisk.c:183 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1020
-#: libfdisk/src/dos.c:2306 libfdisk/src/gpt.c:2893 libfdisk/src/sgi.c:1160
+#: libfdisk/src/dos.c:2306 libfdisk/src/gpt.c:2902 libfdisk/src/sgi.c:1160
 #: libfdisk/src/sun.c:1116
 msgid "Type"
 msgstr "Typ"
@@ -595,8 +595,8 @@ msgstr "Är du säker på att du vill skriva partitionstabellen till disk? "
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Skriv in ”ja” eller ”nej” eller tryck ESC för att lämna denna dialog."
 
-#: disk-utils/cfdisk.c:2358 login-utils/lslogins.c:209 sys-utils/lscpu.c:1517
-#: sys-utils/lscpu.c:1527
+#: disk-utils/cfdisk.c:2358 login-utils/lslogins.c:209 sys-utils/lscpu.c:1526
+#: sys-utils/lscpu.c:1536
 msgid "yes"
 msgstr "ja"
 
@@ -702,8 +702,8 @@ msgstr ""
 "Fortsätter… "
 
 #: disk-utils/fdformat.c:144 disk-utils/fsck.minix.c:182
-#: disk-utils/swaplabel.c:117 misc-utils/wipefs.c:456
-#: sys-utils/blkdiscard.c:84 sys-utils/tunelp.c:91
+#: disk-utils/swaplabel.c:117 misc-utils/wipefs.c:456 sys-utils/blkdiscard.c:84
+#: sys-utils/tunelp.c:91
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [flaggor] <enhet>\n"
@@ -817,7 +817,7 @@ msgid "Using default response %c."
 msgstr "Använder standardsvaret %c."
 
 #: disk-utils/fdisk.c:176 disk-utils/fdisk.c:250 disk-utils/fdisk.c:325
-#: libfdisk/src/dos.c:1189 libfdisk/src/gpt.c:2260
+#: libfdisk/src/dos.c:1189 libfdisk/src/gpt.c:2269
 msgid "Value out of range."
 msgstr "Värde utanför intervall."
 
@@ -913,7 +913,7 @@ msgid "cannot read"
 msgstr "kan inte läsa"
 
 #: disk-utils/fdisk.c:695 libfdisk/src/bsd.c:259 libfdisk/src/dos.c:933
-#: libfdisk/src/gpt.c:2193
+#: libfdisk/src/gpt.c:2202
 msgid "First sector"
 msgstr "Första sektorn"
 
@@ -1048,8 +1048,8 @@ msgstr ""
 msgid "Device %s already contains a %s signature."
 msgstr "Enheten %s innehåller redan en %s-signatur."
 
-#: disk-utils/fdisk.c:1006 disk-utils/fdisk-menu.c:542
-#: disk-utils/sfdisk.c:1477 disk-utils/sfdisk.c:1615
+#: disk-utils/fdisk.c:1006 disk-utils/fdisk-menu.c:542 disk-utils/sfdisk.c:1477
+#: disk-utils/sfdisk.c:1615
 msgid "The signature will be removed by a write command."
 msgstr "Signaturen kommer att tas bort genom ett skrivkommando."
 
@@ -1071,12 +1071,12 @@ msgstr "Disk %s: %s, %ju byte, %ju sektorer"
 msgid "Geometry: %d heads, %llu sectors/track, %llu cylinders"
 msgstr "Geometri: %d huvuden, %llu sektorer/spår, %llu cylindrar"
 
-#: disk-utils/fdisk-list.c:59 disk-utils/fdisk-list.c:271
+#: disk-utils/fdisk-list.c:59 disk-utils/fdisk-list.c:273
 #, c-format
 msgid "Units: %s of %d * %ld = %ld bytes"
 msgstr "Enheter: %s av %d * %ld = %ld byte"
 
-#: disk-utils/fdisk-list.c:65 disk-utils/fdisk-list.c:277
+#: disk-utils/fdisk-list.c:65 disk-utils/fdisk-list.c:279
 #, c-format
 msgid "Sector size (logical/physical): %lu bytes / %lu bytes"
 msgstr "Sektorstorlek (logisk/fysisk): %lu byte / %lu byte"
@@ -1101,54 +1101,54 @@ msgstr "Disketikettstyp: %s"
 msgid "Disk identifier: %s"
 msgstr "Diskidentifierare: %s"
 
-#: disk-utils/fdisk-list.c:107 disk-utils/fdisk-list.c:217
+#: disk-utils/fdisk-list.c:109 disk-utils/fdisk-list.c:219
 #: disk-utils/fsck.c:1244
 msgid "failed to allocate iterator"
 msgstr "misslyckades med att allokera iterator"
 
-#: disk-utils/fdisk-list.c:113 disk-utils/fdisk-list.c:223
+#: disk-utils/fdisk-list.c:115 disk-utils/fdisk-list.c:225
 msgid "failed to allocate output table"
 msgstr "misslyckades med att allokera utmatningstabell"
 
-#: disk-utils/fdisk-list.c:154 disk-utils/fdisk-list.c:247
+#: disk-utils/fdisk-list.c:156 disk-utils/fdisk-list.c:249
 msgid "failed to allocate output line"
 msgstr "misslyckades med att allokera utmatningsrad"
 
-#: disk-utils/fdisk-list.c:181
+#: disk-utils/fdisk-list.c:183
 #, c-format
 msgid "Partition %zu does not start on physical sector boundary."
 msgstr "Partition %zu börjar inte på en fysisk sektorgräns."
 
-#: disk-utils/fdisk-list.c:190
+#: disk-utils/fdisk-list.c:192
 msgid "Partition table entries are not in disk order."
 msgstr "Poster i partitionstabell är inte i diskordning."
 
-#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1015 libfdisk/src/dos.c:2300
-#: libfdisk/src/gpt.c:2889 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1110
+#: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1015 libfdisk/src/dos.c:2300
+#: libfdisk/src/gpt.c:2898 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1110
 msgid "Start"
 msgstr "Början"
 
-#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1016 libfdisk/src/dos.c:2301
-#: libfdisk/src/gpt.c:2890 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1111
+#: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1016 libfdisk/src/dos.c:2301
+#: libfdisk/src/gpt.c:2899 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1111
 msgid "End"
 msgstr "Slutet"
 
-#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2302
-#: libfdisk/src/gpt.c:2891 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1112
+#: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2302
+#: libfdisk/src/gpt.c:2900 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1112
 msgid "Sectors"
 msgstr "Sektorer"
 
-#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2304
-#: libfdisk/src/gpt.c:2892 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1114
+#: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2304
+#: libfdisk/src/gpt.c:2901 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1114
 msgid "Size"
 msgstr "Storlek"
 
-#: disk-utils/fdisk-list.c:265
+#: disk-utils/fdisk-list.c:267
 #, c-format
 msgid "Unpartitioned space %s: %s, %ju bytes, %ju sectors"
 msgstr "Opartitionerat utrymme %s: %s, %ju byte, %ju sektorer"
 
-#: disk-utils/fdisk-list.c:410
+#: disk-utils/fdisk-list.c:412
 #, c-format
 msgid ""
 "\n"
@@ -1157,7 +1157,7 @@ msgstr ""
 "\n"
 "Tillgängliga kolumner (för -o):\n"
 
-#: disk-utils/fdisk-list.c:451
+#: disk-utils/fdisk-list.c:453
 #, c-format
 msgid "%s unknown column: %s"
 msgstr "%s: okänd kolumn: %s"
@@ -1636,7 +1636,7 @@ msgid "%s: failed to parse fstab"
 msgstr "%s: misslyckades med att tolka fstab"
 
 #: disk-utils/fsck.c:679 login-utils/login.c:968 login-utils/sulogin.c:1029
-#: login-utils/vipw.c:204 sys-utils/flock.c:337 sys-utils/nsenter.c:153
+#: login-utils/vipw.c:204 sys-utils/flock.c:345 sys-utils/nsenter.c:153
 #: sys-utils/swapon.c:316 sys-utils/unshare.c:219 sys-utils/unshare.c:420
 #: term-utils/script.c:780
 msgid "fork failed"
@@ -1651,7 +1651,7 @@ msgstr "%s: körning misslyckades"
 msgid "wait: no more child process?!?"
 msgstr "vänta: inga fler barnprocesser?!?"
 
-#: disk-utils/fsck.c:777 sys-utils/flock.c:347 sys-utils/swapon.c:348
+#: disk-utils/fsck.c:777 sys-utils/flock.c:363 sys-utils/swapon.c:348
 #: sys-utils/unshare.c:404 sys-utils/unshare.c:425
 msgid "waitpid failed"
 msgstr "waitpid misslyckades"
@@ -2778,8 +2778,8 @@ msgstr " -h, --help         visa denna hjälptext och avsluta\n"
 
 #: disk-utils/mkfs.c:139 lib/exec_shell.c:49 login-utils/newgrp.c:233
 #: login-utils/su-common.c:651 login-utils/su-common.c:986
-#: login-utils/sulogin.c:795 login-utils/sulogin.c:799 schedutils/chrt.c:557
-#: schedutils/ionice.c:260 schedutils/taskset.c:239 sys-utils/flock.c:363
+#: login-utils/sulogin.c:795 login-utils/sulogin.c:799 schedutils/chrt.c:558
+#: schedutils/ionice.c:260 schedutils/taskset.c:239 sys-utils/flock.c:122
 #: sys-utils/nsenter.c:430 sys-utils/prlimit.c:644 sys-utils/rtcwake.c:577
 #: sys-utils/setarch.c:324 sys-utils/setarch.c:403 sys-utils/setsid.c:115
 #: sys-utils/swapon.c:340 sys-utils/switch_root.c:242 sys-utils/unshare.c:461
@@ -3565,16 +3565,16 @@ msgid "failed to add data to output table"
 msgstr "misslyckades att lägga till data till utmatningstabell"
 
 #: disk-utils/partx.c:667 login-utils/lslogins.c:922 misc-utils/findmnt.c:1582
-#: misc-utils/lsblk.c:1869 misc-utils/lslocks.c:451 sys-utils/losetup.c:310
-#: sys-utils/lscpu.c:1690 sys-utils/lsipc.c:338 sys-utils/lsns.c:489
+#: misc-utils/lsblk.c:1874 misc-utils/lslocks.c:451 sys-utils/losetup.c:310
+#: sys-utils/lscpu.c:1699 sys-utils/lsipc.c:338 sys-utils/lsns.c:489
 #: sys-utils/prlimit.c:297 sys-utils/swapon.c:280 sys-utils/wdctl.c:259
 #: sys-utils/zramctl.c:484
 msgid "failed to initialize output table"
 msgstr "misslyckades att initiera utmatningstabell"
 
-#: disk-utils/partx.c:678 misc-utils/findmnt.c:1608 misc-utils/lsblk.c:1891
+#: disk-utils/partx.c:678 misc-utils/findmnt.c:1608 misc-utils/lsblk.c:1896
 #: misc-utils/lslocks.c:465 sys-utils/losetup.c:322 sys-utils/losetup.c:358
-#: sys-utils/lscpu.c:1695 sys-utils/lsns.c:510 sys-utils/prlimit.c:306
+#: sys-utils/lscpu.c:1704 sys-utils/lsns.c:510 sys-utils/prlimit.c:306
 #: sys-utils/swapon.c:289 sys-utils/wdctl.c:270 sys-utils/zramctl.c:493
 msgid "failed to initialize output column"
 msgstr "misslyckades att initiera utmatningskolumn"
@@ -4994,7 +4994,7 @@ msgstr "Första cylindern"
 msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgstr "Sista cylinder, +cylindrar eller +storlek{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:297 libfdisk/src/dos.c:1166 libfdisk/src/gpt.c:2238
+#: libfdisk/src/bsd.c:297 libfdisk/src/dos.c:1166 libfdisk/src/gpt.c:2247
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr "Sista sektorn, +sektorer eller +storlek{K,M,G,T,P}"
 
@@ -5282,7 +5282,7 @@ msgstr "Ogiltigt flagga 0x%02x%02x för EBR (för partition %zu) kommer ett korr
 msgid "Start sector %ju out of range."
 msgstr "Startsektor %ju är utanför intervall."
 
-#: libfdisk/src/dos.c:1026 libfdisk/src/gpt.c:2119 libfdisk/src/sgi.c:839
+#: libfdisk/src/dos.c:1026 libfdisk/src/gpt.c:2128 libfdisk/src/sgi.c:839
 #: libfdisk/src/sun.c:517
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
@@ -5293,7 +5293,7 @@ msgstr "Partition %zu är redan definierad. Ta bort den innan du lägger till de
 msgid "Sector %llu is already allocated."
 msgstr "Sektor %llu är redan allokerad."
 
-#: libfdisk/src/dos.c:1133 libfdisk/src/gpt.c:2129
+#: libfdisk/src/dos.c:1133 libfdisk/src/gpt.c:2138
 msgid "No free sectors available."
 msgstr "Inga lediga sektorer är tillgängliga."
 
@@ -5448,7 +5448,7 @@ msgstr "Typ 0 betyder ledigt utrymme för många system. Att ha partitioner av t
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "Kan inte ändra typ för utökad partitions som redan används av logiska partitioner. Ta bort logiska partitioner först."
 
-#: libfdisk/src/dos.c:2143 libfdisk/src/gpt.c:2798
+#: libfdisk/src/dos.c:2143 libfdisk/src/gpt.c:2807
 msgid "Nothing to do. Ordering is correct already."
 msgstr "Ingenting att göra. Ordningen är redan korrekt."
 
@@ -5476,7 +5476,7 @@ msgstr "Startbarhetsflaggan för partition %zu är nu aktiverad."
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Startbarhetsflaggan för partition %zu är nu inaktiverad."
 
-#: libfdisk/src/dos.c:2298 libfdisk/src/gpt.c:2888 libfdisk/src/sgi.c:1153
+#: libfdisk/src/dos.c:2298 libfdisk/src/gpt.c:2897 libfdisk/src/sgi.c:1153
 #: libfdisk/src/sun.c:1109
 msgid "Device"
 msgstr "Enhet"
@@ -5497,7 +5497,7 @@ msgstr "Start-C/H/S"
 msgid "End-C/H/S"
 msgstr "Slut-C/H/S"
 
-#: libfdisk/src/dos.c:2311 libfdisk/src/gpt.c:2898 libfdisk/src/sgi.c:1161
+#: libfdisk/src/dos.c:2311 libfdisk/src/gpt.c:2907 libfdisk/src/sgi.c:1161
 msgid "Attrs"
 msgstr "Attribut"
 
@@ -5885,224 +5885,229 @@ msgstr "Säkerhetskopian av GPT-tabellen är korrupt, men den primära verkar OK
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "Den primära GPT-tabellen är korrupt, men säkerhetskopian verkar OK så den kommer att användas."
 
-#: libfdisk/src/gpt.c:1619
+#: libfdisk/src/gpt.c:1623
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "GPT-attributsbit ”%s” stöds inte"
 
-#: libfdisk/src/gpt.c:1714
+#: libfdisk/src/gpt.c:1628
+#, fuzzy, c-format
+msgid "failed to parse GPT attribute string '%s'"
+msgstr "misslyckades med att tolka lista ”%s”"
+
+#: libfdisk/src/gpt.c:1723
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "Partitions-UUID ändrat från %s till %s."
 
-#: libfdisk/src/gpt.c:1722
+#: libfdisk/src/gpt.c:1731
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "Partitionsnamn ändrades från ”%s” till ”%.*s”."
 
-#: libfdisk/src/gpt.c:1751
+#: libfdisk/src/gpt.c:1760
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "Start för partitionen föregår FirstUsableLBA."
 
-#: libfdisk/src/gpt.c:1758
+#: libfdisk/src/gpt.c:1767
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "Slutet på partitionen stegar över LastUsableLBA."
 
-#: libfdisk/src/gpt.c:1917
+#: libfdisk/src/gpt.c:1926
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr "Enheten innehåller en hybrid-MBR -- skriver endast GPT. Du måste synkronisera MBR:en manuellt."
 
-#: libfdisk/src/gpt.c:1954
+#: libfdisk/src/gpt.c:1963
 msgid "Disk does not contain a valid backup header."
 msgstr "Disk innehåller inte ett giltigt säkerhetshuvud."
 
-#: libfdisk/src/gpt.c:1959
+#: libfdisk/src/gpt.c:1968
 msgid "Invalid primary header CRC checksum."
 msgstr "Ogiltigt primärhuvud vid kontroll av CRC."
 
-#: libfdisk/src/gpt.c:1963
+#: libfdisk/src/gpt.c:1972
 msgid "Invalid backup header CRC checksum."
 msgstr "Ogiltigt huvud för säkerhetskopia vid kontroll av CRC."
 
-#: libfdisk/src/gpt.c:1968
+#: libfdisk/src/gpt.c:1977
 msgid "Invalid partition entry checksum."
 msgstr "Ogiltig kontrollsumma för partitionspost."
 
-#: libfdisk/src/gpt.c:1973
+#: libfdisk/src/gpt.c:1982
 msgid "Invalid primary header LBA sanity checks."
 msgstr "Ogiltigt primärhuvud vid kontroll av LBA."
 
-#: libfdisk/src/gpt.c:1977
+#: libfdisk/src/gpt.c:1986
 msgid "Invalid backup header LBA sanity checks."
 msgstr "Ogiltigt huvud för säkerhetskopia vid kontroll av LBA."
 
-#: libfdisk/src/gpt.c:1982
+#: libfdisk/src/gpt.c:1991
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "MyLBA stämmer inte med riktig position vid primärt huvud."
 
-#: libfdisk/src/gpt.c:1986
+#: libfdisk/src/gpt.c:1995
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "MyLBA stämmer inte med riktig position i huvudet på säkerhetskopian."
 
-#: libfdisk/src/gpt.c:1991
+#: libfdisk/src/gpt.c:2000
 msgid "Disk is too small to hold all data."
 msgstr "Disken är för liten för att hålla all data."
 
-#: libfdisk/src/gpt.c:2001
+#: libfdisk/src/gpt.c:2010
 msgid "Primary and backup header mismatch."
 msgstr "Primärt huvud och huvud i säkerhetskopia stämmer inte."
 
-#: libfdisk/src/gpt.c:2007
+#: libfdisk/src/gpt.c:2016
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "Partition %u överlappar med partition %u."
 
-#: libfdisk/src/gpt.c:2014
+#: libfdisk/src/gpt.c:2023
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "Partition %u är för stor för disken."
 
-#: libfdisk/src/gpt.c:2021
+#: libfdisk/src/gpt.c:2030
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "Partition %u slutar före den börjar."
 
-#: libfdisk/src/gpt.c:2030
+#: libfdisk/src/gpt.c:2039
 msgid "No errors detected."
 msgstr "Inga fel hittades."
 
-#: libfdisk/src/gpt.c:2031
+#: libfdisk/src/gpt.c:2040
 #, c-format
 msgid "Header version: %s"
 msgstr "Huvudversion: %s"
 
-#: libfdisk/src/gpt.c:2032
+#: libfdisk/src/gpt.c:2041
 #, c-format
 msgid "Using %u out of %d partitions."
 msgstr "Använder %u av %d partitioner."
 
-#: libfdisk/src/gpt.c:2043
+#: libfdisk/src/gpt.c:2052
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] "Totalt %ju lediga sektorer är tillgängliga i %u segment."
 msgstr[1] "Totalt %ju lediga sektorer är tillgängliga i %u segment (det största är %s)."
 
-#: libfdisk/src/gpt.c:2051
+#: libfdisk/src/gpt.c:2060
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] "%d fel hittades."
 msgstr[1] "%d fel hittades."
 
-#: libfdisk/src/gpt.c:2125
+#: libfdisk/src/gpt.c:2134
 msgid "All partitions are already in use."
 msgstr "Alla partitioner används redan."
 
-#: libfdisk/src/gpt.c:2180 libfdisk/src/gpt.c:2205
+#: libfdisk/src/gpt.c:2189 libfdisk/src/gpt.c:2214
 #, c-format
 msgid "Sector %ju already used."
 msgstr "Sektor %ju används redan."
 
-#: libfdisk/src/gpt.c:2266
+#: libfdisk/src/gpt.c:2275
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "Kunde inte skapa inte partition %zu"
 
-#: libfdisk/src/gpt.c:2273
+#: libfdisk/src/gpt.c:2282
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr "Den sista användbara GPT-sektorn är %ju, men %ju begärdes."
 
-#: libfdisk/src/gpt.c:2280
+#: libfdisk/src/gpt.c:2289
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr "Den första användbara GPT-sektorn är %ju, men %ju begärdes."
 
-#: libfdisk/src/gpt.c:2412
+#: libfdisk/src/gpt.c:2421
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "Skapade en ny GPT-disketikett (GUID: %s)."
 
-#: libfdisk/src/gpt.c:2430
+#: libfdisk/src/gpt.c:2439
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "Mata in ett nytt disk-UUID (i 8-4-4-4-12-format)"
 
-#: libfdisk/src/gpt.c:2437
+#: libfdisk/src/gpt.c:2446
 msgid "Failed to parse your UUID."
 msgstr "Misslyckades med att tolka din UUID."
 
-#: libfdisk/src/gpt.c:2451
+#: libfdisk/src/gpt.c:2460
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "Diskidentifierare ändrad från %s till %s."
 
-#: libfdisk/src/gpt.c:2471
+#: libfdisk/src/gpt.c:2480
 msgid "Not enough space for new partition table!"
 msgstr "Inte tillräckligt ledigt utrymme för ny partitionstabell!"
 
-#: libfdisk/src/gpt.c:2480
+#: libfdisk/src/gpt.c:2489
 #, c-format
 msgid "Partition #%u out of range (minimal start is %<PRIu64> sectors)"
 msgstr "Partition #%u utanför intervall (minsta start är %<PRIu64> sektorer)"
 
-#: libfdisk/src/gpt.c:2485
+#: libfdisk/src/gpt.c:2494
 #, c-format
 msgid "Partition #%u out of range (maximal end is %<PRIu64> sectors)"
 msgstr "Partition #%u är utanför intervall (största slut är %<PRIu64> sektorer)"
 
-#: libfdisk/src/gpt.c:2540
+#: libfdisk/src/gpt.c:2549
 msgid "Cannot allocate memory!"
 msgstr "Kan inte allokera minne!"
 
-#: libfdisk/src/gpt.c:2567
+#: libfdisk/src/gpt.c:2576
 #, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "Partitionstabellslängd ändrad från %<PRIu32> till %<PRIu64>."
 
-#: libfdisk/src/gpt.c:2671
+#: libfdisk/src/gpt.c:2680
 #, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "Attributen för partition %zu ändrade till 0x%016<PRIx64>."
 
-#: libfdisk/src/gpt.c:2719
+#: libfdisk/src/gpt.c:2728
 msgid "Enter GUID specific bit"
 msgstr "Mata in GUID-specifik bit"
 
-#: libfdisk/src/gpt.c:2734
+#: libfdisk/src/gpt.c:2743
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "misslyckades med att växla bit %lu som inte stöds"
 
-#: libfdisk/src/gpt.c:2747
+#: libfdisk/src/gpt.c:2756
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "GUID-specifik bit %d för partition %zu är aktiverad nu."
 
-#: libfdisk/src/gpt.c:2748
+#: libfdisk/src/gpt.c:2757
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "GUID-specifik bit %d för partition %zu är inaktiverad nu."
 
-#: libfdisk/src/gpt.c:2752
+#: libfdisk/src/gpt.c:2761
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "Flaggan %s för partition %zu är nu aktiverad."
 
-#: libfdisk/src/gpt.c:2753
+#: libfdisk/src/gpt.c:2762
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "Flaggan %s för partition %zu är nu inaktiverad."
 
-#: libfdisk/src/gpt.c:2895
+#: libfdisk/src/gpt.c:2904
 msgid "Type-UUID"
 msgstr "Typ-UUID"
 
-#: libfdisk/src/gpt.c:2896
+#: libfdisk/src/gpt.c:2905
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:2897 login-utils/chfn.c:150 login-utils/chfn.c:152
+#: libfdisk/src/gpt.c:2906 login-utils/chfn.c:150 login-utils/chfn.c:152
 #: login-utils/chfn.c:307
 msgid "Name"
 msgstr "Namn"
@@ -6527,7 +6532,7 @@ msgstr ""
 msgid "waitpid failed (%s)"
 msgstr "waitpid(%s) misslyckades"
 
-#: lib/path.c:209 sys-utils/lscpu.c:1795
+#: lib/path.c:209 sys-utils/lscpu.c:1804
 msgid "failed to callocate cpu set"
 msgstr "misslyckades att köra callocate för cpu-uppsättning"
 
@@ -7134,7 +7139,7 @@ msgstr "%s: %s innehåller ett ogiltigt numeriskt värde: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "inloggningsstatus för hush: återställning av original-ID:n misslyckades"
 
-#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1517 sys-utils/lscpu.c:1527
+#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1526 sys-utils/lscpu.c:1536
 msgid "no"
 msgstr "nej"
 
@@ -7378,7 +7383,7 @@ msgstr ""
 #: login-utils/lslogins.c:1228 login-utils/nologin.c:26
 #: misc-utils/lslocks.c:501 misc-utils/mcookie.c:82 misc-utils/uuidd.c:70
 #: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:264 sys-utils/ipcmk.c:66
-#: sys-utils/lscpu.c:1937 sys-utils/lsipc.c:277 sys-utils/readprofile.c:104
+#: sys-utils/lscpu.c:1946 sys-utils/lsipc.c:277 sys-utils/readprofile.c:104
 #: sys-utils/rtcwake.c:95 term-utils/setterm.c:380 text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
@@ -7472,8 +7477,7 @@ msgstr "     --wtmp-file <sökväg> ställ in en alternativ sökväg för wtmp\n
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <sökväg> ställ in en alternativ sökväg för btmp\n"
 
-#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1244
-#: sys-utils/lscpu.c:1955
+#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1244 sys-utils/lscpu.c:1964
 #, c-format
 msgid ""
 "\n"
@@ -8553,8 +8557,8 @@ msgid "\"none\" FS type is recommended for bind or move oprations only"
 msgstr "FS-typen ”none” rekommenderas endast för eller bindnings- eller förflyttningsåtgärder"
 
 #: misc-utils/findmnt-verify.c:414
-#, c-format
-msgid "%s seems unspported by the current kernel"
+#, fuzzy, c-format
+msgid "%s seems unsupported by the current kernel"
 msgstr "%s verkar sakna stöd hos den aktuella kärnan"
 
 #: misc-utils/findmnt-verify.c:420 misc-utils/findmnt-verify.c:421
@@ -8567,8 +8571,8 @@ msgid "%s does not match with on-disk %s"
 msgstr "%s matchar inte den på disk: %s"
 
 #: misc-utils/findmnt-verify.c:431
-#, c-format
-msgid "on-disk %s seems unspported by the current kernel"
+#, fuzzy, c-format
+msgid "on-disk %s seems unsupported by the current kernel"
 msgstr "%s på disk verkar sakna stöd hos den aktuella kärnan"
 
 #: misc-utils/findmnt-verify.c:433
@@ -8612,15 +8616,15 @@ msgstr "Framgång, inga fel eller varningar detekterade\n"
 msgid "Try `%s --help' for more information.\n"
 msgstr "Försök med ”%s --help” för vidare information.\n"
 
-#: misc-utils/getopt.c:297
+#: misc-utils/getopt.c:304
 msgid "empty long option after -l or --long argument"
 msgstr "tom lång flagga efter argumenten -l eller --long"
 
-#: misc-utils/getopt.c:322
+#: misc-utils/getopt.c:325
 msgid "unknown shell after -s or --shell argument"
 msgstr "okänt skal efter argumenten -s eller --shell"
 
-#: misc-utils/getopt.c:329
+#: misc-utils/getopt.c:332
 #, c-format
 msgid ""
 " %1$s <optstring> <parameters>\n"
@@ -8631,51 +8635,51 @@ msgstr ""
 " %1$s [flaggor] [--] <flaggsträng> <parametrar>\n"
 " %1$s [flaggor] -o|--options <flaggsträng> [flaggor] [--] <parametrar>\n"
 
-#: misc-utils/getopt.c:335
+#: misc-utils/getopt.c:338
 msgid "Parse command options.\n"
 msgstr "Tolka kommandoradsflaggor.\n"
 
-#: misc-utils/getopt.c:338
+#: misc-utils/getopt.c:341
 msgid " -a, --alternative             allow long options starting with single -\n"
 msgstr " -a, --alternative             tillåt att långa flaggor börjar med ett enstaka -\n"
 
-#: misc-utils/getopt.c:339
+#: misc-utils/getopt.c:342
 msgid " -l, --longoptions <longopts>  the long options to be recognized\n"
 msgstr "  -l, --longoptions <långflag> de långa flaggor som ska identifieras\n"
 
-#: misc-utils/getopt.c:340
+#: misc-utils/getopt.c:343
 msgid " -n, --name <progname>         the name under which errors are reported\n"
 msgstr " -n, --name <programnamn>      namnet under vilket fel rapporteras\n"
 
-#: misc-utils/getopt.c:341
+#: misc-utils/getopt.c:344
 msgid " -o, --options <optstring>     the short options to be recognized\n"
 msgstr " -o, --options <flaggsträng>   de korta flaggor som ska identifieras\n"
 
-#: misc-utils/getopt.c:342
+#: misc-utils/getopt.c:345
 msgid " -q, --quiet                   disable error reporting by getopt(3)\n"
 msgstr " -q, --quiet                   inaktivera felrapportering från getopt(3)\n"
 
-#: misc-utils/getopt.c:343
+#: misc-utils/getopt.c:346
 msgid " -Q, --quiet-output            no normal output\n"
 msgstr " -Q, --quiet-output            ingen normal utmatning\n"
 
-#: misc-utils/getopt.c:344
+#: misc-utils/getopt.c:347
 msgid " -s, --shell <shell>           set quoting conventions to those of <shell>\n"
 msgstr " -s, --shell <skal>            ställ in citeringskonventioner till de för <skal>\n"
 
-#: misc-utils/getopt.c:345
+#: misc-utils/getopt.c:348
 msgid " -T, --test                    test for getopt(1) version\n"
 msgstr " -T, --test                    testa vilken getopt(1) version som finns\n"
 
-#: misc-utils/getopt.c:346
+#: misc-utils/getopt.c:349
 msgid " -u, --unquoted                do not quote the output\n"
 msgstr " -u, --unquoted                citera inte utmatning\n"
 
-#: misc-utils/getopt.c:396 misc-utils/getopt.c:456
+#: misc-utils/getopt.c:399 misc-utils/getopt.c:459
 msgid "missing optstring argument"
 msgstr "flaggsträngsargument saknas"
 
-#: misc-utils/getopt.c:451
+#: misc-utils/getopt.c:454
 msgid "internal error, contact the author."
 msgstr "internt fel, kontakta författaren."
 
@@ -9400,7 +9404,7 @@ msgstr " -p, --pid <pid>        visa bara lås som hålls av denna process\n"
 msgid " -r, --raw              use the raw output format\n"
 msgstr " -r, --raw              använd rått utmatningsformat\n"
 
-#: misc-utils/lslocks.c:570 schedutils/chrt.c:477 schedutils/ionice.c:177
+#: misc-utils/lslocks.c:570 schedutils/chrt.c:478 schedutils/ionice.c:177
 #: schedutils/taskset.c:163 sys-utils/lsns.c:677 sys-utils/prlimit.c:586
 msgid "invalid PID argument"
 msgstr "ogiltigt PID-argument"
@@ -9645,7 +9649,7 @@ msgstr "mottagning av signal misslyckades"
 msgid "timed out"
 msgstr "tidsgräns uppnåddes"
 
-#: misc-utils/uuidd.c:345 sys-utils/flock.c:263
+#: misc-utils/uuidd.c:345 sys-utils/flock.c:271
 msgid "cannot set up timer"
 msgstr "kan inte ställa in timer"
 
@@ -10027,99 +10031,99 @@ msgstr " -p, --pid            arbeta på existerande, angiven pid\n"
 msgid " -v, --verbose        display status information\n"
 msgstr " -v, --verbose        visa statusinformation\n"
 
-#: schedutils/chrt.c:232 schedutils/chrt.c:253
+#: schedutils/chrt.c:232 schedutils/chrt.c:254
 #, c-format
 msgid "failed to get pid %d's policy"
 msgstr "misslyckades med att hämta pid %d:s policy"
 
-#: schedutils/chrt.c:256
+#: schedutils/chrt.c:257
 #, c-format
 msgid "failed to get pid %d's attributes"
 msgstr "misslyckades med att hämta pid %d:s attribut"
 
-#: schedutils/chrt.c:266
+#: schedutils/chrt.c:267
 #, c-format
 msgid "pid %d's new scheduling policy: %s"
 msgstr "pid %d:s nya schemaläggningspolicy: %s"
 
-#: schedutils/chrt.c:268
+#: schedutils/chrt.c:269
 #, c-format
 msgid "pid %d's current scheduling policy: %s"
 msgstr "pid %d:s aktuella schemaläggningspolicy: %s"
 
-#: schedutils/chrt.c:275
+#: schedutils/chrt.c:276
 #, c-format
 msgid "pid %d's new scheduling priority: %d\n"
 msgstr "pid %d:s nya schemaläggningspolicy: %d\n"
 
-#: schedutils/chrt.c:277
+#: schedutils/chrt.c:278
 #, c-format
 msgid "pid %d's current scheduling priority: %d\n"
 msgstr "pid %d:s aktuella schemaläggningspolicy %d\n"
 
-#: schedutils/chrt.c:282
+#: schedutils/chrt.c:283
 #, c-format
 msgid "pid %d's new runtime/deadline/period parameters: %ju/%ju/%ju\n"
 msgstr "pid %d:s nya körtid/tidsgräns/period-parametrar: %ju/%ju/%ju\n"
 
-#: schedutils/chrt.c:285
+#: schedutils/chrt.c:286
 #, c-format
 msgid "pid %d's current runtime/deadline/period parameters: %ju/%ju/%ju\n"
 msgstr "pid %d:s aktuella körtid/tidsgräns/period-parametrar: %ju/%ju/%ju\n"
 
-#: schedutils/chrt.c:299 schedutils/chrt.c:395
+#: schedutils/chrt.c:300 schedutils/chrt.c:396
 msgid "cannot obtain the list of tasks"
 msgstr "kan inte hämta listan över uppgifter"
 
-#: schedutils/chrt.c:333
+#: schedutils/chrt.c:334
 #, c-format
 msgid "%s min/max priority\t: %d/%d\n"
 msgstr "%s min/max-prioritet\t: %d/%d\n"
 
-#: schedutils/chrt.c:336
+#: schedutils/chrt.c:337
 #, c-format
 msgid "%s not supported?\n"
 msgstr "%s stöds inte?\n"
 
-#: schedutils/chrt.c:399
+#: schedutils/chrt.c:400
 #, c-format
 msgid "failed to set tid %d's policy"
 msgstr "misslyckades med att ställa in tid %d:s policy"
 
-#: schedutils/chrt.c:404
+#: schedutils/chrt.c:405
 #, c-format
 msgid "failed to set pid %d's policy"
 msgstr "misslyckades med att ställa in pid %d:s policy"
 
-#: schedutils/chrt.c:486
+#: schedutils/chrt.c:487
 msgid "invalid runtime argument"
 msgstr "ogiltigt körtidsargument"
 
-#: schedutils/chrt.c:489
+#: schedutils/chrt.c:490
 msgid "invalid period argument"
 msgstr "ogiltigt periodargument"
 
-#: schedutils/chrt.c:492
+#: schedutils/chrt.c:493
 msgid "invalid deadline argument"
 msgstr "ogiltigt tidsgränsargument"
 
-#: schedutils/chrt.c:516
+#: schedutils/chrt.c:517
 msgid "invalid priority argument"
 msgstr "ogiltigt prioritetsargument"
 
-#: schedutils/chrt.c:520
+#: schedutils/chrt.c:521
 msgid "--reset-on-fork option is supported for SCHED_FIFO and SCHED_RR policies only"
 msgstr "--reset-on-fork-flaggan stöds endast för SCHED_FIFO- och SCHED_RR-policyer"
 
-#: schedutils/chrt.c:525
+#: schedutils/chrt.c:526
 msgid "--sched-{runtime,deadline,period} options are supported for SCHED_DEADLINE only"
 msgstr "--sched-{runtime,deadline,period}-flaggorna stöds endast för SCHED_DEADLINE"
 
-#: schedutils/chrt.c:540
+#: schedutils/chrt.c:541
 msgid "SCHED_DEADLINE is unsupported"
 msgstr "SCHED_DEADLINE stöds inte"
 
-#: schedutils/chrt.c:547
+#: schedutils/chrt.c:548
 #, c-format
 msgid "unsupported priority value for the policy: %d: see --max for valid range"
 msgstr "prioritetsvärde för policyn stöds ej: %d: se --max för ogiltigt intervall"
@@ -11340,45 +11344,45 @@ msgstr "     --verbose            öka utförlighet\n"
 msgid "cannot open lock file %s"
 msgstr "kan inte öppna låsfil %s"
 
-#: sys-utils/flock.c:197
+#: sys-utils/flock.c:205
 msgid "invalid timeout value"
 msgstr "ogiltigt tidsgränsvärde"
 
-#: sys-utils/flock.c:201
+#: sys-utils/flock.c:209
 msgid "invalid exit code"
 msgstr "ogiltig avslutningskod"
 
-#: sys-utils/flock.c:220
+#: sys-utils/flock.c:228
 msgid "the --no-fork and --close options are incompatible"
 msgstr "flaggorna --no-fork och --close är inkompatibla"
 
-#: sys-utils/flock.c:228
+#: sys-utils/flock.c:236
 #, c-format
 msgid "%s requires exactly one command argument"
 msgstr "%s kräver exakt ett kommandoargument"
 
-#: sys-utils/flock.c:246
+#: sys-utils/flock.c:254
 msgid "bad file descriptor"
 msgstr "ogiltig fildeskriptor"
 
-#: sys-utils/flock.c:249
+#: sys-utils/flock.c:257
 msgid "requires file descriptor, file or directory"
 msgstr "kräver fildeskriptor, fil eller katalog"
 
-#: sys-utils/flock.c:273
+#: sys-utils/flock.c:281
 msgid "failed to get lock"
 msgstr "misslyckades med att ta lås"
 
-#: sys-utils/flock.c:280
+#: sys-utils/flock.c:288
 msgid "timeout while waiting to get lock"
 msgstr "tidsgräns nådd medan lås väntades på"
 
-#: sys-utils/flock.c:321
+#: sys-utils/flock.c:329
 #, c-format
 msgid "%s: getting lock took %ld.%06ld seconds\n"
 msgstr "%s: att ta låset tog %ld.%06ld sekunder\n"
 
-#: sys-utils/flock.c:332
+#: sys-utils/flock.c:340
 #, c-format
 msgid "%s: executing %s\n"
 msgstr "%s: kör %s\n"
@@ -13118,7 +13122,7 @@ msgstr ", kryptering %s (typ %u)"
 msgid "%s: detach failed"
 msgstr "%s: lösgöring misslyckades"
 
-#: sys-utils/losetup.c:329 sys-utils/lscpu.c:1712 sys-utils/prlimit.c:229
+#: sys-utils/losetup.c:329 sys-utils/lscpu.c:1721 sys-utils/prlimit.c:229
 #: sys-utils/swapon.c:176 sys-utils/wdctl.c:215 sys-utils/zramctl.c:405
 msgid "failed to initialize output line"
 msgstr "misslyckades med att initiera utmatningsrad"
@@ -13386,32 +13390,32 @@ msgstr "fel: uname misslyckades"
 msgid "failed to determine number of CPUs: %s"
 msgstr "misslyckades med att avgöra antal CPU:er: %s"
 
-#: sys-utils/lscpu.c:880
+#: sys-utils/lscpu.c:889
 msgid "error: can not set signal handler"
 msgstr "fel: Kan inte ställa in signalhanterare"
 
-#: sys-utils/lscpu.c:885
+#: sys-utils/lscpu.c:894
 msgid "error: can not restore signal handler"
 msgstr "fel: kan inte återställa signalhanterare"
 
-#: sys-utils/lscpu.c:930
+#: sys-utils/lscpu.c:939
 #, c-format
 msgid "failed to read from: %s"
 msgstr "misslyckades med att läsa från: %s"
 
-#: sys-utils/lscpu.c:1387
+#: sys-utils/lscpu.c:1396
 msgid "Failed to extract the node number"
 msgstr "Misslyckades med att extrahera nodnummer"
 
-#: sys-utils/lscpu.c:1514 sys-utils/lscpu.c:1524
+#: sys-utils/lscpu.c:1523 sys-utils/lscpu.c:1533
 msgid "Y"
 msgstr "Y"
 
-#: sys-utils/lscpu.c:1514 sys-utils/lscpu.c:1524
+#: sys-utils/lscpu.c:1523 sys-utils/lscpu.c:1533
 msgid "N"
 msgstr "N"
 
-#: sys-utils/lscpu.c:1608
+#: sys-utils/lscpu.c:1617
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -13422,201 +13426,201 @@ msgstr ""
 "# andra program. Varje objekt har ett unikt ID som börjar på noll i\n"
 "#varje kolumn.\n"
 
-#: sys-utils/lscpu.c:1758
+#: sys-utils/lscpu.c:1767
 msgid "Architecture:"
 msgstr "Arkitektur:"
 
-#: sys-utils/lscpu.c:1772
+#: sys-utils/lscpu.c:1781
 msgid "CPU op-mode(s):"
 msgstr "CPU op-läge(n):"
 
-#: sys-utils/lscpu.c:1775 sys-utils/lscpu.c:1777
+#: sys-utils/lscpu.c:1784 sys-utils/lscpu.c:1786
 msgid "Byte Order:"
 msgstr "Byteordning:"
 
-#: sys-utils/lscpu.c:1779
+#: sys-utils/lscpu.c:1788
 msgid "CPU(s):"
 msgstr "CPU(er):"
 
-#: sys-utils/lscpu.c:1782
+#: sys-utils/lscpu.c:1791
 msgid "On-line CPU(s) mask:"
 msgstr "Mask för aktiva CPU(er):"
 
-#: sys-utils/lscpu.c:1783
+#: sys-utils/lscpu.c:1792
 msgid "On-line CPU(s) list:"
 msgstr "Lista över aktiva CPU(er):"
 
-#: sys-utils/lscpu.c:1802
+#: sys-utils/lscpu.c:1811
 msgid "Off-line CPU(s) mask:"
 msgstr "Mask för inaktiva CPU(er):"
 
-#: sys-utils/lscpu.c:1803
+#: sys-utils/lscpu.c:1812
 msgid "Off-line CPU(s) list:"
 msgstr "Lista över inaktiva CPU(er):"
 
-#: sys-utils/lscpu.c:1839
+#: sys-utils/lscpu.c:1848
 msgid "Thread(s) per core:"
 msgstr "Tråd(ar) per kärna:"
 
-#: sys-utils/lscpu.c:1841
+#: sys-utils/lscpu.c:1850
 msgid "Core(s) per socket:"
 msgstr "Kärn(or) per uttag:"
 
-#: sys-utils/lscpu.c:1844
+#: sys-utils/lscpu.c:1853
 msgid "Socket(s) per book:"
 msgstr "Uttag per bok:"
 
-#: sys-utils/lscpu.c:1847
+#: sys-utils/lscpu.c:1856
 msgid "Book(s) per drawer:"
 msgstr "Böcker per låda:"
 
-#: sys-utils/lscpu.c:1849
+#: sys-utils/lscpu.c:1858
 msgid "Drawer(s):"
 msgstr "Lådor:"
 
-#: sys-utils/lscpu.c:1851
+#: sys-utils/lscpu.c:1860
 msgid "Book(s):"
 msgstr "Böcker:"
 
-#: sys-utils/lscpu.c:1854
+#: sys-utils/lscpu.c:1863
 msgid "Socket(s):"
 msgstr "Uttag:"
 
-#: sys-utils/lscpu.c:1858
+#: sys-utils/lscpu.c:1867
 msgid "NUMA node(s):"
 msgstr "NUMA nod(er):"
 
-#: sys-utils/lscpu.c:1860
+#: sys-utils/lscpu.c:1869
 msgid "Vendor ID:"
 msgstr "Tillverkar-ID:"
 
-#: sys-utils/lscpu.c:1862
+#: sys-utils/lscpu.c:1871
 msgid "Machine type:"
 msgstr "Maskintyp:"
 
-#: sys-utils/lscpu.c:1864
+#: sys-utils/lscpu.c:1873
 msgid "CPU family:"
 msgstr "CPU-familj:"
 
-#: sys-utils/lscpu.c:1866
+#: sys-utils/lscpu.c:1875
 msgid "Model:"
 msgstr "Modell:"
 
-#: sys-utils/lscpu.c:1868
+#: sys-utils/lscpu.c:1877
 msgid "Model name:"
 msgstr "Modellnamn:"
 
-#: sys-utils/lscpu.c:1870
+#: sys-utils/lscpu.c:1879
 msgid "Stepping:"
 msgstr "Stegning:"
 
-#: sys-utils/lscpu.c:1872
+#: sys-utils/lscpu.c:1881
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:1874
+#: sys-utils/lscpu.c:1883
 msgid "CPU dynamic MHz:"
 msgstr "CPU dynamisk MHz:"
 
-#: sys-utils/lscpu.c:1876
+#: sys-utils/lscpu.c:1885
 msgid "CPU static MHz:"
 msgstr "CPU statisk MHz:"
 
-#: sys-utils/lscpu.c:1878
+#: sys-utils/lscpu.c:1887
 msgid "CPU max MHz:"
 msgstr "CPU max MHz:"
 
-#: sys-utils/lscpu.c:1880
+#: sys-utils/lscpu.c:1889
 msgid "CPU min MHz:"
 msgstr "CPU min MHz:"
 
-#: sys-utils/lscpu.c:1882
+#: sys-utils/lscpu.c:1891
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:1885 sys-utils/lscpu.c:1887
+#: sys-utils/lscpu.c:1894 sys-utils/lscpu.c:1896
 msgid "Virtualization:"
 msgstr "Virtualisering:"
 
-#: sys-utils/lscpu.c:1890
+#: sys-utils/lscpu.c:1899
 msgid "Hypervisor:"
 msgstr "Hypervisor:"
 
-#: sys-utils/lscpu.c:1892
+#: sys-utils/lscpu.c:1901
 msgid "Hypervisor vendor:"
 msgstr "Hypervisortillverkare:"
 
-#: sys-utils/lscpu.c:1893
+#: sys-utils/lscpu.c:1902
 msgid "Virtualization type:"
 msgstr "Virtualiseringstyp:"
 
-#: sys-utils/lscpu.c:1896
+#: sys-utils/lscpu.c:1905
 msgid "Dispatching mode:"
 msgstr "Avsändningsläge:"
 
-#: sys-utils/lscpu.c:1902 sys-utils/lscpu.c:1912
+#: sys-utils/lscpu.c:1911 sys-utils/lscpu.c:1921
 #, c-format
 msgid "%s cache:"
 msgstr "%s cache:"
 
-#: sys-utils/lscpu.c:1918
+#: sys-utils/lscpu.c:1927
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "NUMA-nod%d CPU(er):"
 
-#: sys-utils/lscpu.c:1923
+#: sys-utils/lscpu.c:1932
 msgid "Flags:"
 msgstr "Flaggor:"
 
-#: sys-utils/lscpu.c:1926
+#: sys-utils/lscpu.c:1935
 msgid "Physical sockets:"
 msgstr "Fysiska uttag:"
 
-#: sys-utils/lscpu.c:1927
+#: sys-utils/lscpu.c:1936
 msgid "Physical chips:"
 msgstr "Fysiska chip:"
 
-#: sys-utils/lscpu.c:1928
+#: sys-utils/lscpu.c:1937
 msgid "Physical cores/chip:"
 msgstr "Fysiska kärnor/chip:"
 
-#: sys-utils/lscpu.c:1940
+#: sys-utils/lscpu.c:1949
 msgid "Display information about the CPU architecture.\n"
 msgstr "Visa information om CPU-arkitekturen.\n"
 
-#: sys-utils/lscpu.c:1943
+#: sys-utils/lscpu.c:1952
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr " -a, --all               skriv ut både aktiva och inaktiva CPU:er (standard för -e)\n"
 
-#: sys-utils/lscpu.c:1944
+#: sys-utils/lscpu.c:1953
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr " -b, --online            skriv endast ut aktiva CPU:er (standard för -p)\n"
 
-#: sys-utils/lscpu.c:1945
+#: sys-utils/lscpu.c:1954
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline           skriv endast ut inaktiva CPU:er\n"
 
-#: sys-utils/lscpu.c:1946
+#: sys-utils/lscpu.c:1955
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr " -e, --extended[=<lista>] skriv ut i ett utökat, läsbart format\n"
 
-#: sys-utils/lscpu.c:1947
+#: sys-utils/lscpu.c:1956
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<lista>]   skriv ut en lista i tolkningsbart format\n"
 
-#: sys-utils/lscpu.c:1948
+#: sys-utils/lscpu.c:1957
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <kat>     använd angiven katalog som systemrot\n"
 
-#: sys-utils/lscpu.c:1949
+#: sys-utils/lscpu.c:1958
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr " -x, --hex               skriv ut hexadecimala masker snarare än listor över CPU:er\n"
 
-#: sys-utils/lscpu.c:1950
+#: sys-utils/lscpu.c:1959
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -y, --physical       skriv ut fysiska istället för logiska ID\n"
 
-#: sys-utils/lscpu.c:2051
+#: sys-utils/lscpu.c:2060
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: flaggorna --all, --online och --offline kan endast användas med flaggorna --extended eller --parse.\n"
