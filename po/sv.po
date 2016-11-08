@@ -12,10 +12,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.28-rc2\n"
+"Project-Id-Version: util-linux 2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2016-10-19 14:24+0200\n"
-"PO-Revision-Date: 2016-06-05 14:13+0200\n"
+"POT-Creation-Date: 2016-10-19 14:46+0200\n"
+"PO-Revision-Date: 2016-10-23 12:38+0800\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -24,7 +24,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 1.8.8\n"
 
 #: disk-utils/addpart.c:14
 #, c-format
@@ -268,9 +268,8 @@ msgid "Quit"
 msgstr "Avsluta"
 
 #: disk-utils/cfdisk.c:182
-#, fuzzy
 msgid "Quit program without writing changes"
-msgstr "Avsluta programmet utan att skriva partitionstabellen"
+msgstr "Avsluta programmet utan att skriva förändringar"
 
 #: disk-utils/cfdisk.c:183 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1020
 #: libfdisk/src/dos.c:2306 libfdisk/src/gpt.c:2893 libfdisk/src/sgi.c:1160
@@ -345,9 +344,8 @@ msgid "Filesystem UUID:"
 msgstr "Filsystems-UUID:"
 
 #: disk-utils/cfdisk.c:1331
-#, fuzzy
 msgid "Filesystem LABEL:"
-msgstr "filsystems ETIKETT"
+msgstr "Filsystems-ETIKETT:"
 
 #: disk-utils/cfdisk.c:1337
 msgid "Filesystem:"
@@ -704,8 +702,8 @@ msgstr ""
 "Fortsätter… "
 
 #: disk-utils/fdformat.c:144 disk-utils/fsck.minix.c:182
-#: disk-utils/swaplabel.c:117 misc-utils/wipefs.c:456 sys-utils/blkdiscard.c:84
-#: sys-utils/tunelp.c:91
+#: disk-utils/swaplabel.c:117 misc-utils/wipefs.c:456
+#: sys-utils/blkdiscard.c:84 sys-utils/tunelp.c:91
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [flaggor] <enhet>\n"
@@ -950,7 +948,6 @@ msgid " -L, --color[=<when>]          colorize output (auto, always or never)\n"
 msgstr " -L, --color[=<när>]           färglägg utmatning (auto, always eller never)\n"
 
 #: disk-utils/fdisk.c:745
-#, fuzzy
 msgid " -l, --list                    display partitions and exit\n"
 msgstr " -l, --list                    visa partitioner och avsluta\n"
 
@@ -979,9 +976,8 @@ msgid " -w, --wipe <mode>             wipe signatures (auto, always or never)\n"
 msgstr " -w, --wipe <läge>             radera signaturer (auto, always eller never)\n"
 
 #: disk-utils/fdisk.c:752 disk-utils/sfdisk.c:1844
-#, fuzzy
 msgid " -W, --wipe-partitions <mode>  wipe signatures from new partitions (auto, always or never)\n"
-msgstr " -w, --wipe <läge>         radera signaturer (auto, always eller never)\n"
+msgstr " -w, --wipe-partitions <läge>  radera signaturer från nya partitioner (auto, always eller never)\n"
 
 #: disk-utils/fdisk.c:755
 msgid " -C, --cylinders <number>      specify the number of cylinders\n"
@@ -1052,8 +1048,8 @@ msgstr ""
 msgid "Device %s already contains a %s signature."
 msgstr "Enheten %s innehåller redan en %s-signatur."
 
-#: disk-utils/fdisk.c:1006 disk-utils/fdisk-menu.c:542 disk-utils/sfdisk.c:1477
-#: disk-utils/sfdisk.c:1615
+#: disk-utils/fdisk.c:1006 disk-utils/fdisk-menu.c:542
+#: disk-utils/sfdisk.c:1477 disk-utils/sfdisk.c:1615
 msgid "The signature will be removed by a write command."
 msgstr "Signaturen kommer att tas bort genom ett skrivkommando."
 
@@ -1323,9 +1319,8 @@ msgid "change partition UUID"
 msgstr "ändra partitions-UUID"
 
 #: disk-utils/fdisk-menu.c:168
-#, fuzzy
 msgid "change table length"
-msgstr "misslyckades med att tolka längd"
+msgstr "ändra tabellängd"
 
 #: disk-utils/fdisk-menu.c:169
 msgid "enter protective/hybrid MBR"
@@ -1500,14 +1495,13 @@ msgid "Script successfully saved."
 msgstr "Skript sparades framgångsrikt."
 
 #: disk-utils/fdisk-menu.c:534 disk-utils/sfdisk.c:1469
-#, fuzzy, c-format
+#, c-format
 msgid "Partition #%zu contains a %s signature."
-msgstr "Partition %zu innehåller sektor 0"
+msgstr "Partition #%zu innehåller en %s-signatur."
 
 #: disk-utils/fdisk-menu.c:537 disk-utils/sfdisk.c:1472
-#, fuzzy
 msgid "Do you want to remove the signature?"
-msgstr "Vill du flytta partitionsdata?"
+msgstr "Vill du ta bort signaturen?"
 
 #: disk-utils/fdisk-menu.c:575
 msgid "failed to write disklabel"
@@ -1540,7 +1534,7 @@ msgstr "Lämnar kvar nästlad disketikett."
 
 #: disk-utils/fdisk-menu.c:709
 msgid "New maximum entries"
-msgstr ""
+msgstr "Nytt maximalt antal poster"
 
 #: disk-utils/fdisk-menu.c:719
 msgid "Entering protective/hybrid MBR disklabel."
@@ -2241,22 +2235,20 @@ msgid "Only 1k blocks/zones supported"
 msgstr "Endast 1 kB stora block/zoner stöds"
 
 #: disk-utils/fsck.minix.c:587
-#, fuzzy
 msgid "bad s_ninodes field in super-block"
-msgstr "felaktigt \"s_imap_blocks\"-fält i superblocket"
+msgstr "felaktigt s_ninodes-fält i superblocket"
 
 #: disk-utils/fsck.minix.c:589
 msgid "bad s_imap_blocks field in super-block"
-msgstr "felaktigt \"s_imap_blocks\"-fält i superblocket"
+msgstr "felaktigt s_imap_blocks-fält i superblocket"
 
 #: disk-utils/fsck.minix.c:591
-#, fuzzy
 msgid "bad s_firstdatazone field in super-block"
-msgstr "felaktigt \"s_imap_blocks\"-fält i superblocket"
+msgstr "felaktigt s_firstdatazone-fält i superblocket"
 
 #: disk-utils/fsck.minix.c:594
 msgid "bad s_zmap_blocks field in super-block"
-msgstr "felaktigt \"s_zmap_blocks\"-fält i superblocket"
+msgstr "felaktigt s_zmap_blocks-fält i superblocket"
 
 #: disk-utils/fsck.minix.c:610
 msgid "Unable to allocate buffer for inode map"
@@ -2406,9 +2398,9 @@ msgid "%s: bad directory: size < 32"
 msgstr "%s: felaktig katalog: storlek < 32"
 
 #: disk-utils/fsck.minix.c:1103
-#, fuzzy, c-format
+#, c-format
 msgid "%s: bad directory: invalid i_zone, use --repair to fix\n"
-msgstr "%s: felaktig katalog: ”.” kommer inte först\n"
+msgstr "%s: felaktig katalog: ogiltig i_zone, använd --repair för att fixa\n"
 
 #: disk-utils/fsck.minix.c:1132
 msgid "seek failed in bad_zone"
@@ -4223,11 +4215,8 @@ msgid "All partitions used."
 msgstr "Alla partitioner använda."
 
 #: disk-utils/sfdisk.c:1693
-#, fuzzy
 msgid "Done.\n"
-msgstr ""
-"Färdig\n"
-"\n"
+msgstr "Färdig.\n"
 
 #: disk-utils/sfdisk.c:1705
 msgid "Ignoring partition."
@@ -4299,7 +4288,6 @@ msgid " -l, --list [<dev> ...]            list partitions of each device\n"
 msgstr " -l, --list [<enh> …]              lista partitioner för varje enhet\n"
 
 #: disk-utils/sfdisk.c:1809
-#, fuzzy
 msgid " -F, --list-free [<dev> ...]       list unpartitioned free areas of each device\n"
 msgstr " -F, --list-free [<enh> …]         lista opartitionerade, lediga utrymmen för varje enhet\n"
 
@@ -4388,9 +4376,8 @@ msgid "     --no-reread           do not check whether the device is in use\n"
 msgstr "     --no-reread           kontrollera inte huruvida enheten används\n"
 
 #: disk-utils/sfdisk.c:1839
-#, fuzzy
 msgid "     --no-tell-kernel      do not tell kernel about changes\n"
-msgstr "     --notruncate         trunkera inte utmatning\n"
+msgstr "     --no-tell-kernel     berätta inte för kärna om ändringar\n"
 
 #: disk-utils/sfdisk.c:1840
 msgid " -O, --backup-file <path>  override default backup file name\n"
@@ -4418,7 +4405,7 @@ msgstr " -Y, --label-nested <namn> ange nästlad etikettyp (dos, bsd)\n"
 
 #: disk-utils/sfdisk.c:1848
 msgid " -G, --show-pt-geometry    deprecated, alias to --show-geometry\n"
-msgstr ""
+msgstr " -G, --show-pt-geometry    föråldrad, alias för --show-geometry\n"
 
 #: disk-utils/sfdisk.c:1849
 msgid " -L, --Linux               deprecated, only for backward compatibility\n"
@@ -4443,7 +4430,7 @@ msgstr "--id är föråldrad i jämförelse med --part-type"
 
 #: disk-utils/sfdisk.c:1980
 msgid "--show-pt-geometry is no more implemented. Using --show-geometry."
-msgstr ""
+msgstr "--show-pt-geometry är inte implementerade längre. Använder --show-geometry."
 
 #: disk-utils/sfdisk.c:1991
 msgid "--Linux option is unnecessary and deprecated"
@@ -4559,9 +4546,9 @@ msgstr "färger är inaktiverade som standard"
 #: include/env.h:18 lib/pager.c:151 login-utils/login.c:1052
 #: login-utils/login.c:1056 login-utils/su-common.c:523
 #: term-utils/agetty.c:1160
-#, fuzzy, c-format
+#, c-format
 msgid "failed to set the %s environment variable"
-msgstr "misslyckades med att ställa in resursbegränsning för %s"
+msgstr "misslyckades med att ställa in miljövariabeln %s"
 
 #: include/optutils.h:81
 #, c-format
@@ -5847,9 +5834,9 @@ msgid "Last LBA specified by script is out of range."
 msgstr "Sista LBA angiven av skript är utanför intervallet."
 
 #: libfdisk/src/gpt.c:774
-#, fuzzy, c-format
+#, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by w(rite)."
-msgstr "GPT PMBR storleksfel (%u != %u) kommer att korrigeras vid w(skriv)."
+msgstr "GPT PMBR storleksfel (%<PRIu64> != %<PRIu64>) kommer att korrigeras vid w(skriv)."
 
 #: libfdisk/src/gpt.c:791
 msgid "gpt: stat() failed"
@@ -6051,29 +6038,27 @@ msgid "Disk identifier changed from %s to %s."
 msgstr "Diskidentifierare ändrad från %s till %s."
 
 #: libfdisk/src/gpt.c:2471
-#, fuzzy
 msgid "Not enough space for new partition table!"
-msgstr "Ingen ledig partition tillgänglig!"
+msgstr "Inte tillräckligt ledigt utrymme för ny partitionstabell!"
 
 #: libfdisk/src/gpt.c:2480
 #, c-format
 msgid "Partition #%u out of range (minimal start is %<PRIu64> sectors)"
-msgstr ""
+msgstr "Partition #%u utanför intervall (minsta start är %<PRIu64> sektorer)"
 
 #: libfdisk/src/gpt.c:2485
 #, c-format
 msgid "Partition #%u out of range (maximal end is %<PRIu64> sectors)"
-msgstr ""
+msgstr "Partition #%u är utanför intervall (största slut är %<PRIu64> sektorer)"
 
 #: libfdisk/src/gpt.c:2540
-#, fuzzy
 msgid "Cannot allocate memory!"
-msgstr "misslyckades med att allokera minne: %m"
+msgstr "Kan inte allokera minne!"
 
 #: libfdisk/src/gpt.c:2567
-#, fuzzy, c-format
+#, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
-msgstr "Partitionsnamn ändrades från ”%s” till ”%.*s”."
+msgstr "Partitionstabellslängd ändrad från %<PRIu32> till %<PRIu64>."
 
 #: libfdisk/src/gpt.c:2671
 #, c-format
@@ -6557,24 +6542,21 @@ msgid "failed to parse CPU mask %s"
 msgstr "misslyckades med att tolka CPU-mask %s"
 
 #: lib/plymouth-ctrl.c:72
-#, fuzzy
 msgid "can not open UNIX socket"
-msgstr "kan inte öppna konsol"
+msgstr "kan inte öppna UNIX-uttag"
 
 #: lib/plymouth-ctrl.c:78
-#, fuzzy
 msgid "can not set option for UNIX socket"
-msgstr "kan inte ställa in tidsgräns för %s"
+msgstr "kan inte ställa in alternativ för UNIX-uttag"
 
 #: lib/plymouth-ctrl.c:91
-#, fuzzy
 msgid "can not connect on UNIX socket"
-msgstr "kan inte öppna konsol"
+msgstr "kan inte ansluta till UNIX-uttag"
 
 #: lib/plymouth-ctrl.c:131
 #, c-format
 msgid "the plymouth request %c is not implemented"
-msgstr ""
+msgstr "plymouth-begäran %c är inte implementerad"
 
 #: lib/randutils.c:136
 msgid "libc pseudo-random functions"
@@ -7368,9 +7350,8 @@ msgid "unsupported time type"
 msgstr "tidstyp stöds ej"
 
 #: login-utils/lslogins.c:347
-#, fuzzy
 msgid "failed to compose time string"
-msgstr "misslyckades med att tolka --timeout"
+msgstr "misslyckades med att komponera tidssträng"
 
 #: login-utils/lslogins.c:648
 msgid "failed to get supplementary groups"
@@ -7491,7 +7472,8 @@ msgstr "     --wtmp-file <sökväg> ställ in en alternativ sökväg för wtmp\n
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <sökväg> ställ in en alternativ sökväg för btmp\n"
 
-#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1244 sys-utils/lscpu.c:1955
+#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1244
+#: sys-utils/lscpu.c:1955
 #, c-format
 msgid ""
 "\n"
@@ -7991,9 +7973,9 @@ msgid "illegal week value: use 1-54"
 msgstr "ogiltigt veckovärde: använd 1-54"
 
 #: misc-utils/cal.c:422
-#, fuzzy, c-format
+#, c-format
 msgid "failed to parse timestamp or unknown month name: %s"
-msgstr "misslyckades med att tolka steg"
+msgstr "misslyckades med att tolka tidsstämpel eller okänt månadsnamn: %s"
 
 #: misc-utils/cal.c:431
 msgid "illegal day value"
@@ -8009,9 +7991,9 @@ msgid "illegal month value: use 1-12"
 msgstr "ogiltigt månadsvärde: använd 1-12"
 
 #: misc-utils/cal.c:441
-#, fuzzy, c-format
+#, c-format
 msgid "unknown month name: %s"
-msgstr "okänt prioritetsnamn: %s"
+msgstr "okänt månadsnamn: %s"
 
 #: misc-utils/cal.c:448 misc-utils/cal.c:452
 msgid "illegal year value"
@@ -8034,12 +8016,12 @@ msgstr "%s"
 #: misc-utils/cal.c:685
 #, c-format
 msgid "%04d"
-msgstr ""
+msgstr "%04d"
 
 #: misc-utils/cal.c:691
-#, fuzzy, c-format
+#, c-format
 msgid "%s %04d"
-msgstr "%s %d"
+msgstr "%s %04d"
 
 #: misc-utils/cal.c:993
 #, c-format
@@ -8047,9 +8029,9 @@ msgid " %s [options] [[[day] month] year]\n"
 msgstr " %s [flaggor] [[[dag] månad] år]\n"
 
 #: misc-utils/cal.c:994
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <timestamp|monthname>\n"
-msgstr " %s [flaggor] <filnamn>\n"
+msgstr " %s [flaggor] <tidsstämpel|månadsnamn>\n"
 
 #: misc-utils/cal.c:997
 msgid "Display a calendar, or some part of it.\n"
@@ -8418,14 +8400,12 @@ msgid " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 msgstr " -v, --nofsroot         skriv inte ut [/kat] för bind- eller btrfs-monteringar\n"
 
 #: misc-utils/findmnt.c:1236
-#, fuzzy
 msgid " -x, --verify           verify mount table content (default is fstab)\n"
-msgstr " -1, --one             visa bara en enstaka månad (standard)\n"
+msgstr " -x, --verify          verifiera innehållet i monteringstabell (standardvärdet är fstab)\n"
 
 #: misc-utils/findmnt.c:1237
-#, fuzzy
 msgid "     --verbose          print more details\n"
-msgstr " -v, --verbose             skriv ut utförlig data\n"
+msgstr "     --verbose             skriv ut utförlig information\n"
 
 #: misc-utils/findmnt.c:1365
 #, c-format
@@ -8454,181 +8434,178 @@ msgid "%s column is requested, but --poll is not enabled"
 msgstr "%s-kolumnen är begärd, men --poll är inte aktiverad"
 
 #: misc-utils/findmnt-verify.c:116
-#, fuzzy
 msgid "target specified more than once"
-msgstr "källa angiven mer än en gång"
+msgstr "mål angivet mer än en gång"
 
 #: misc-utils/findmnt-verify.c:118
 #, c-format
 msgid "wrong order: %s specified before %s"
-msgstr ""
+msgstr "felaktig ordning: %s angavs före %s"
 
 #: misc-utils/findmnt-verify.c:133
 msgid "undefined target (fs_file)"
-msgstr ""
+msgstr "odefinierat mål (fs_file)"
 
 #: misc-utils/findmnt-verify.c:140
 #, c-format
 msgid "non-canonical target path (real: %s)"
-msgstr ""
+msgstr "icke-kanonisk målsökväg (verklig: %s)"
 
 #: misc-utils/findmnt-verify.c:145
 #, c-format
 msgid "unreachable on boot required target: %m"
-msgstr ""
+msgstr "nåbart mål som krävs vid uppstart: %m"
 
 #: misc-utils/findmnt-verify.c:147
 #, c-format
 msgid "unreachable target: %m"
-msgstr ""
+msgstr "onåbart mål: %m"
 
 #: misc-utils/findmnt-verify.c:151
-#, fuzzy
 msgid "target is not a directory"
-msgstr "%s: är inte en katalog"
+msgstr "mål är inte en katalog"
 
 #: misc-utils/findmnt-verify.c:153
 msgid "target exists"
-msgstr ""
+msgstr "mål existerar"
 
 #: misc-utils/findmnt-verify.c:165
 #, c-format
 msgid "unreachable on boot required source: %s=%s"
-msgstr ""
+msgstr "onåbar källa som krävs vid uppstart: %s=%s"
 
 #: misc-utils/findmnt-verify.c:167
 #, c-format
 msgid "unreachable: %s=%s"
-msgstr ""
+msgstr "onåbar: %s=%s"
 
 #: misc-utils/findmnt-verify.c:169
-#, fuzzy, c-format
+#, c-format
 msgid "%s=%s translated to %s"
-msgstr "%s: %s monterad på %s.\n"
+msgstr "%s= %s översatt till %s"
 
 #: misc-utils/findmnt-verify.c:190
 msgid "undefined source (fs_spec)"
-msgstr ""
+msgstr "odefinerat mål (fs_spec)"
 
 #: misc-utils/findmnt-verify.c:199
-#, fuzzy, c-format
+#, c-format
 msgid "unsupported source tag: %s"
-msgstr "argument stöds inte: %s"
+msgstr "källtagg stöds inte: %s"
 
 #: misc-utils/findmnt-verify.c:206
 #, c-format
 msgid "do not check %s source (pseudo/net)"
-msgstr ""
+msgstr "kontrollera inte %s-källa (pseudo/net)"
 
 #: misc-utils/findmnt-verify.c:209
-#, fuzzy, c-format
+#, c-format
 msgid "unreachable source: %s: %m"
-msgstr "kan inte öppna \"%s\""
+msgstr "onåbar enhet: %s: %m"
 
 #: misc-utils/findmnt-verify.c:212
 #, c-format
 msgid "non-bind mount source %s is a directory or regular file"
-msgstr ""
+msgstr "källa %s för icke-bindningsmontering är en katalog eller en vanlig fil"
 
 #: misc-utils/findmnt-verify.c:215
-#, fuzzy, c-format
+#, c-format
 msgid "source %s is not a block device"
-msgstr " %s är inte en blockenhet"
+msgstr "källa %s är inte en blockenhet"
 
 #: misc-utils/findmnt-verify.c:217
-#, fuzzy, c-format
+#, c-format
 msgid "source %s exists"
-msgstr "källenhet"
+msgstr "källa %s existerar"
 
 #: misc-utils/findmnt-verify.c:230
-#, fuzzy, c-format
+#, c-format
 msgid "VFS options: %s"
-msgstr "VFS-propageringsflaggor"
+msgstr "VFS-flaggor: %s"
 
 #: misc-utils/findmnt-verify.c:234
-#, fuzzy, c-format
+#, c-format
 msgid "FS options: %s"
-msgstr "VFS-propageringsflaggor"
+msgstr "FS-flaggor: %s"
 
 #: misc-utils/findmnt-verify.c:238
-#, fuzzy, c-format
+#, c-format
 msgid "userspace options: %s"
-msgstr "Resursflaggor:\n"
+msgstr "Flaggor för användarrymd: %s"
 
 #: misc-utils/findmnt-verify.c:252
-#, fuzzy, c-format
+#, c-format
 msgid "unsupported swaparea discard policy: %s"
-msgstr "kasseringspolicy stöds ej: %s"
+msgstr "kasseringspolicy för växlingsområde stöds ej: %s"
 
 #: misc-utils/findmnt-verify.c:260
-#, fuzzy
 msgid "failed to parse swaparea priority option"
-msgstr "misslyckades med att tolka prioritet"
+msgstr "misslyckades med att tolka flagga för växlingsområdesprioritet"
 
 #: misc-utils/findmnt-verify.c:396
 #, c-format
 msgid "do not check %s FS type (pseudo/net)"
-msgstr ""
+msgstr "kontrollera inte %s-FS-typ (pseudo/net)"
 
+# sebras: typo in the english text
 #: misc-utils/findmnt-verify.c:406
 msgid "\"none\" FS type is recommended for bind or move oprations only"
-msgstr ""
+msgstr "FS-typen ”none” rekommenderas endast för eller bindnings- eller förflyttningsåtgärder"
 
 #: misc-utils/findmnt-verify.c:414
 #, c-format
 msgid "%s seems unspported by the current kernel"
-msgstr ""
+msgstr "%s verkar sakna stöd hos den aktuella kärnan"
 
 #: misc-utils/findmnt-verify.c:420 misc-utils/findmnt-verify.c:421
-#, fuzzy
 msgid "cannot detect on-disk filesystem type"
-msgstr "okänd filsystemstyp"
+msgstr "kan inte identifiera filsystemstyp på disk"
 
 #: misc-utils/findmnt-verify.c:428
 #, c-format
 msgid "%s does not match with on-disk %s"
-msgstr ""
+msgstr "%s matchar inte den på disk: %s"
 
 #: misc-utils/findmnt-verify.c:431
 #, c-format
 msgid "on-disk %s seems unspported by the current kernel"
-msgstr ""
+msgstr "%s på disk verkar sakna stöd hos den aktuella kärnan"
 
 #: misc-utils/findmnt-verify.c:433
-#, fuzzy, c-format
+#, c-format
 msgid "FS type is %s"
-msgstr " typescript-fil: %s"
+msgstr "FS-typ är %s"
 
 #: misc-utils/findmnt-verify.c:445
 #, c-format
 msgid "recommended root FS passno is 1 (current is %d)"
-msgstr ""
+msgstr "rekommenderat root-FS passno är 1 (är %d nu)"
 
 #: misc-utils/findmnt-verify.c:512
-#, fuzzy, c-format
+#, c-format
 msgid "%d parse error"
 msgid_plural "%d parse errors"
-msgstr[0] "%s: sökfel på %s\n"
-msgstr[1] "%s: sökfel på %s\n"
+msgstr[0] "%d tolkningsfel"
+msgstr[1] "%d tolkningsfel"
 
 #: misc-utils/findmnt-verify.c:513
-#, fuzzy, c-format
+#, c-format
 msgid ", %d error"
 msgid_plural ", %d errors"
-msgstr[0] ", fel"
-msgstr[1] ", fel"
+msgstr[0] ", %d fel"
+msgstr[1] ", %d fel"
 
 #: misc-utils/findmnt-verify.c:514
 #, c-format
 msgid ", %d warning"
 msgid_plural ", %d warnings"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] ", %d varning"
+msgstr[1] ", %d varningar"
 
 #: misc-utils/findmnt-verify.c:517
 #, c-format
 msgid "Success, no errors or warnings detected\n"
-msgstr ""
+msgstr "Framgång, inga fel eller varningar detekterade\n"
 
 #: misc-utils/getopt.c:246
 #, c-format
@@ -8938,9 +8915,8 @@ msgid " -n, --server <name>      write to this remote syslog server\n"
 msgstr " -n, --server <namn>      skriv till denna fjärrsyslog-server\n"
 
 #: misc-utils/logger.c:1001
-#, fuzzy
 msgid " -P, --port <port>        use this port for UDP or TCP connection\n"
-msgstr " -P, --port <nummer>      använd denna UDP-port\n"
+msgstr " -P, --port <port>        använd denna port för UDP- eller TCP-anslutningar\n"
 
 #: misc-utils/logger.c:1002
 msgid " -T, --tcp                use TCP only\n"
@@ -9406,7 +9382,7 @@ msgstr "Lista lokala systemlås.\n"
 
 #: misc-utils/lslocks.c:508
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
-msgstr ""
+msgstr " -i, --noinaccessible   ignorera lås utan läsrättigheter\n"
 
 #: misc-utils/lslocks.c:509 sys-utils/lsns.c:599
 msgid " -n, --noheadings       don't print headings\n"
@@ -10096,14 +10072,14 @@ msgid "cannot obtain the list of tasks"
 msgstr "kan inte hämta listan över uppgifter"
 
 #: schedutils/chrt.c:333
-#, fuzzy, c-format
+#, c-format
 msgid "%s min/max priority\t: %d/%d\n"
-msgstr "SCHED_%s min/max-prioritet\t: %d/%d\n"
+msgstr "%s min/max-prioritet\t: %d/%d\n"
 
 #: schedutils/chrt.c:336
-#, fuzzy, c-format
+#, c-format
 msgid "%s not supported?\n"
-msgstr "SCHED_%s stöds inte?\n"
+msgstr "%s stöds inte?\n"
 
 #: schedutils/chrt.c:399
 #, c-format
@@ -10146,7 +10122,7 @@ msgstr "SCHED_DEADLINE stöds inte"
 #: schedutils/chrt.c:547
 #, c-format
 msgid "unsupported priority value for the policy: %d: see --max for valid range"
-msgstr ""
+msgstr "prioritetsvärde för policyn stöds ej: %d: se --max för ogiltigt intervall"
 
 #: schedutils/ionice.c:76
 msgid "ioprio_get failed"
@@ -11352,9 +11328,8 @@ msgid " -c, --command <command>  run a single command string through the shell\n
 msgstr " -c, --command <kommando> kör en enstaka kommandosträng genom skalet\n"
 
 #: sys-utils/flock.c:70
-#, fuzzy
 msgid " -F, --no-fork            execute command without forking\n"
-msgstr " -F, --no-fork           demonisera inte via dubbelanrop av fork\n"
+msgstr " -F, --no-fork           exekvera kommando utan fork\n"
 
 #: sys-utils/flock.c:71
 msgid "     --verbose            increase verbosity\n"
@@ -11375,7 +11350,7 @@ msgstr "ogiltig avslutningskod"
 
 #: sys-utils/flock.c:220
 msgid "the --no-fork and --close options are incompatible"
-msgstr ""
+msgstr "flaggorna --no-fork och --close är inkompatibla"
 
 #: sys-utils/flock.c:228
 #, c-format
@@ -13159,7 +13134,7 @@ msgstr ""
 
 #: sys-utils/losetup.c:386
 msgid "Set up and control loop devices.\n"
-msgstr "Ställ in och kontrollera loop-enheter.\n"
+msgstr "Ställ in och kontrollera loopenheter.\n"
 
 #: sys-utils/losetup.c:389
 msgid " -a, --all                     list all used devices\n"
@@ -13186,9 +13161,8 @@ msgid " -j, --associated <file>       list all devices associated with <file>\n"
 msgstr " -j, --associated <fil>        lista alla enheter som är associerade med <fil>\n"
 
 #: sys-utils/losetup.c:395
-#, fuzzy
 msgid " -L, --nooverlap               avoid possible conflict between devices\n"
-msgstr " -f, --find                hitta en ledig enhet\n"
+msgstr " -L, --nooverlap           undvik möjliga konflikter mellan enheter\n"
 
 #: sys-utils/losetup.c:399
 msgid " -o, --offset <num>            start at offset <num> into file\n"
@@ -13257,34 +13231,33 @@ msgid "%s: Warning: file does not fit into a 512-byte sector; the end of the fil
 msgstr "%s: Varning: filen får inte plats i en 512-bytessektor; slutet på filen kommer att hoppas över."
 
 #: sys-utils/losetup.c:464 sys-utils/losetup.c:516 sys-utils/mount.c:459
-#, fuzzy, c-format
+#, c-format
 msgid "%s: overlapping loop device exists"
-msgstr "%s är ingen lp-enhet"
+msgstr "%s: överlappande loopenhet existerar"
 
 #: sys-utils/losetup.c:475
 #, c-format
 msgid "%s: overlapping read-only loop device exists"
-msgstr ""
+msgstr "%s: överlappande, skrivskyddade loopenheter existerar"
 
 #: sys-utils/losetup.c:482
 #, c-format
 msgid "%s: overlapping encrypted loop device exists"
-msgstr ""
+msgstr "%s: överlappande, krypterade loopenheter existerar"
 
 #: sys-utils/losetup.c:488
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to re-use loop device"
-msgstr "%s: misslyckades med att ställa in loopenhet"
+msgstr "%s: misslyckades med att återanvända loopenhet"
 
 #: sys-utils/losetup.c:494
-#, fuzzy
 msgid "failed to inspect loop devices"
-msgstr "%s: misslyckades med att ställa in loopenhet"
+msgstr "misslyckades med att inspektera loopenheter"
 
 #: sys-utils/losetup.c:517
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to check for conflicting loop devices"
-msgstr "%s: misslyckades med att ställa in loopenhet"
+msgstr "%s: misslyckades med leta efter motstridiga loopenheter"
 
 #: sys-utils/losetup.c:529 sys-utils/losetup.c:826
 msgid "cannot find an unused loop device"
@@ -13303,7 +13276,7 @@ msgstr "%s: misslyckades med att använda enhet"
 
 #: sys-utils/losetup.c:764
 msgid "no loop device specified"
-msgstr "ingen loop-enhet angiven"
+msgstr "ingen loopenhet angiven"
 
 #: sys-utils/losetup.c:772
 msgid "no file specified"
@@ -13373,9 +13346,8 @@ msgid "logical book number"
 msgstr "logiskt boknummer"
 
 #: sys-utils/lscpu.c:349
-#, fuzzy
 msgid "logical drawer number"
-msgstr "logiskt kärnnummer"
+msgstr "logiskt lådnummer"
 
 #: sys-utils/lscpu.c:350
 msgid "shows how caches are shared between CPUs"
@@ -13496,11 +13468,11 @@ msgstr "Uttag per bok:"
 
 #: sys-utils/lscpu.c:1847
 msgid "Book(s) per drawer:"
-msgstr ""
+msgstr "Böcker per låda:"
 
 #: sys-utils/lscpu.c:1849
 msgid "Drawer(s):"
-msgstr ""
+msgstr "Lådor:"
 
 #: sys-utils/lscpu.c:1851
 msgid "Book(s):"
@@ -13519,9 +13491,8 @@ msgid "Vendor ID:"
 msgstr "Tillverkar-ID:"
 
 #: sys-utils/lscpu.c:1862
-#, fuzzy
 msgid "Machine type:"
-msgstr "Partitionstyp:"
+msgstr "Maskintyp:"
 
 #: sys-utils/lscpu.c:1864
 msgid "CPU family:"
@@ -13544,14 +13515,12 @@ msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
 #: sys-utils/lscpu.c:1874
-#, fuzzy
 msgid "CPU dynamic MHz:"
-msgstr "CPU min MHz:"
+msgstr "CPU dynamisk MHz:"
 
 #: sys-utils/lscpu.c:1876
-#, fuzzy
 msgid "CPU static MHz:"
-msgstr "CPU max MHz:"
+msgstr "CPU statisk MHz:"
 
 #: sys-utils/lscpu.c:1878
 msgid "CPU max MHz:"
@@ -13644,9 +13613,8 @@ msgid " -x, --hex               print hexadecimal masks rather than lists of CPU
 msgstr " -x, --hex               skriv ut hexadecimala masker snarare än listor över CPU:er\n"
 
 #: sys-utils/lscpu.c:1950
-#, fuzzy
 msgid " -y, --physical          print physical instead of logical IDs\n"
-msgstr " -a, --all            skriv ut alla enheter\n"
+msgstr " -y, --physical       skriv ut fysiska istället för logiska ID\n"
 
 #: sys-utils/lscpu.c:2051
 #, c-format
@@ -14082,9 +14050,8 @@ msgid " -p, --task <pid>       print process namespaces\n"
 msgstr " -p, --task <pid>       skriv ut processnamnrymd\n"
 
 #: sys-utils/lsns.c:604
-#, fuzzy
 msgid " -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup)\n"
-msgstr " -t, --type <namn>      namnrymdstyp (mnt, net, ipc, user, pid, uts)\n"
+msgstr " -t, --type <namn>      namnrymdstyp (mnt, net, ipc, user, pid, uts, cgroup)\n"
 
 #: sys-utils/lsns.c:694
 #, c-format
@@ -14192,9 +14159,9 @@ msgid "%s is already mounted"
 msgstr "%s är redan monterad"
 
 #: sys-utils/mount.c:407
-#, fuzzy, c-format
+#, c-format
 msgid "%s is used as read only loop, mounting read-only"
-msgstr "%s är skrivskyddad, monterar som endast läsbar"
+msgstr "%s används som skrivskyddad loopenhet, monterar som endast läsbar"
 
 #: sys-utils/mount.c:416
 #, c-format
@@ -16047,7 +16014,7 @@ msgid "%s: already active -- ignored"
 msgstr "%s: redan aktiv -- hoppas över"
 
 #: sys-utils/swapon.c:771
-#, fuzzy, c-format
+#, c-format
 msgid "%s: inaccessible -- ignored"
 msgstr "%s: otillgänglig -- hoppas över"
 
@@ -16944,18 +16911,16 @@ msgid "failed to allocate memory: %m"
 msgstr "misslyckades med att allokera minne: %m"
 
 #: term-utils/agetty.c:680
-#, fuzzy
 msgid "invalid delay argument"
-msgstr "ogiltigt argument för huvuden"
+msgstr "ogiltigt fördröjningsargument"
 
 #: term-utils/agetty.c:719
 msgid "invalid argument of --local-line"
 msgstr "ogiltigt argument till --local-line"
 
 #: term-utils/agetty.c:738
-#, fuzzy
 msgid "invalid nice argument"
-msgstr "ogiltigt tidsargument"
+msgstr "ogiltigt nice-argument"
 
 #: term-utils/agetty.c:875
 #, c-format
@@ -17440,9 +17405,9 @@ msgid "failed to read timing file %s"
 msgstr "misslyckades med att läsa tidmätningsfil %s"
 
 #: term-utils/scriptreplay.c:217
-#, fuzzy, c-format
+#, c-format
 msgid "timing file %s: line %lu: unexpected format"
-msgstr "tidmätningsfil %s: %lu: oväntat format"
+msgstr "tidmätningsfil %s: rad %lu: oväntat format"
 
 #: term-utils/setterm.c:239
 #, c-format
@@ -17742,7 +17707,7 @@ msgstr "Skicka ett meddelande till en annan användare.\n"
 #: term-utils/write.c:117
 #, c-format
 msgid "effective gid does not match group of %s"
-msgstr ""
+msgstr "effektivt gid matchar inte det för gruppen %s"
 
 #: term-utils/write.c:202
 #, c-format
@@ -17768,14 +17733,14 @@ msgid "carefulputc failed"
 msgstr "carefulputc misslyckades"
 
 #: term-utils/write.c:280
-#, fuzzy, c-format
+#, c-format
 msgid "Message from %s@%s (as %s) on %s at %02d:%02d ..."
-msgstr "Meddelande från %s@%s (som %s) på %s vid %s …"
+msgstr "Meddelande från %s@%s (som %s) på %s vid %02d:%02d …"
 
 #: term-utils/write.c:284
-#, fuzzy, c-format
+#, c-format
 msgid "Message from %s@%s on %s at %02d:%02d ..."
-msgstr "Meddelande från %s@%s på %s vid %s …"
+msgstr "Meddelande från %s@%s på %s vid %02d:%02d …"
 
 #: term-utils/write.c:331
 msgid "you have write permission turned off"
@@ -18400,7 +18365,6 @@ msgid "Unknown error in %s file"
 msgstr "Okänt fel i %s-fil"
 
 #: text-utils/pg.c:941
-#, fuzzy
 msgid "Cannot create temporary file"
 msgstr "Kan inte skapa temporär fil"
 
@@ -18533,18 +18497,6 @@ msgstr "Okänd kontrollsekvens i indata: %o, %o"
 #: text-utils/ul.c:624
 msgid "Input line too long."
 msgstr "Indataraden är för lång."
-
-#, fuzzy
-#~ msgid "failed to initialize seccomp context"
-#~ msgstr "misslyckades med att initialisera loopcxt"
-
-#, fuzzy
-#~ msgid "failed to add seccomp rule"
-#~ msgstr "misslyckades med att läsa hastighet"
-
-#, fuzzy
-#~ msgid "failed to load seccomp rule"
-#~ msgstr "misslyckades med att läsa hastighet"
 
 #~ msgid "Filesystem label:"
 #~ msgstr "Filsystemsetikett:"
