@@ -10,10 +10,10 @@ status. The listed memory blocks correspond to the memory block representation
 in sysfs. The command also shows the memory block size and the amount of memory
 in online and offline state.
 
-The default output is subject to change.  So whenever possible, you should
-avoid using default outputs in your scripts.  Always explicitly define expected
-columns by using the \fB\-\-output\fR option together with a columns list in
-environments where a stable output is required.
+The default output compatible with original implementaion from s390-tools, but
+it's strongly recommended to avoid using default outputs in your scripts.
+Always explicitly define expected columns by using the \fB\-\-output\fR option
+together with a columns list in environments where a stable output is required.
 
 Not all columns are supported on all systems.  If an unsupported column is
 specified, \fBlsmem\fP prints the column but does not provide any data for it.
