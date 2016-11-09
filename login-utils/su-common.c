@@ -288,17 +288,21 @@ static void create_watching_parent(struct su_context *su)
 	struct sigaction oldact[3];
 	int status = 0;
 
-	memset(oldact, 0, sizeof(oldact));
-
-	child = fork();
-	if (child == (pid_t) - 1) {
+	switch ((int) (child = fork())) {
+	case -1: /* error */
 		supam_cleanup(su, PAM_ABORT);
 		err(EXIT_FAILURE, _("cannot create child process"));
+		break;
+
+	case 0: /* child */
+		return;
+
+	default: /* parent */
+		break;
 	}
 
-	/* the child proceeds to run the shell */
-	if (child == 0)
-		return;
+	memset(oldact, 0, sizeof(oldact));
+
 
 	/* In the parent watch the child.  */
 
