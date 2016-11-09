@@ -99,7 +99,7 @@ struct coldesc {
 static struct coldesc coldescs[] = {
 	[COL_RANGE]	= { "RANGE", 0, 0, N_("start and end address of the memory range")},
 	[COL_SIZE]	= { "SIZE", 5, SCOLS_FL_RIGHT, N_("size of the memory range")},
-	[COL_STATE]	= { "STATE", 0, 0, N_("online status of the memory range")},
+	[COL_STATE]	= { "STATE", 0, SCOLS_FL_RIGHT, N_("online status of the memory range")},
 	[COL_REMOVABLE]	= { "REMOVABLE", 0, SCOLS_FL_RIGHT, N_("memory is removable")},
 	[COL_BLOCK]	= { "BLOCK", 0, SCOLS_FL_RIGHT, N_("memory block number or blocks range")},
 	[COL_NODE]	= { "NODE", 0, SCOLS_FL_RIGHT, N_("numa node of memory")},
