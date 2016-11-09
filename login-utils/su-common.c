@@ -268,22 +268,25 @@ static void supam_authenticate(struct su_context *su)
 	}
 }
 
-static void
-create_watching_parent(struct su_context *su)
+static void supam_open_session(struct su_context *su)
 {
-	pid_t child;
-	sigset_t ourset;
-	struct sigaction oldact[3];
-	int status = 0;
-	int rc;
+	int rc = pam_open_session(su->pamh, 0);
 
-	rc = pam_open_session(su->pamh, 0);
 	if (is_pam_failure(rc)) {
 		supam_cleanup(su, rc);
 		errx(EXIT_FAILURE, _("cannot open session: %s"),
 		     pam_strerror(su->pamh, rc));
 	} else
 		su->pam_has_session = 1;
+}
+
+
+static void create_watching_parent(struct su_context *su)
+{
+	pid_t child;
+	sigset_t ourset;
+	struct sigaction oldact[3];
+	int status = 0;
 
 	memset(oldact, 0, sizeof(oldact));
 
@@ -852,6 +855,8 @@ int su_main(int argc, char **argv, int mode)
 
 	if (!su->simulate_login || command)
 		su->suppress_pam_info = 1;	/* don't print PAM info messages */
+
+	supam_open_session(su);
 
 	create_watching_parent(su);
 	/* Now we're in the child.  */
