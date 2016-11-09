@@ -54,6 +54,24 @@
 #include "logindefs.h"
 #include "su-common.h"
 
+#include "debug.h"
+
+UL_DEBUG_DEFINE_MASK(su);
+UL_DEBUG_DEFINE_MASKNAMES(su) = UL_DEBUG_EMPTY_MASKNAMES;
+
+#define SU_DEBUG_INIT		(1 << 1)
+#define SU_DEBUG_PAM		(1 << 2)
+#define SU_DEBUG_PARENT		(1 << 3)
+#define SU_DEBUG_TTY		(1 << 4)
+#define SU_DEBUG_LOG		(1 << 5)
+#define SU_DEBUG_MISC		(1 << 6)
+#define SU_DEBUG_SIG		(1 << 7)
+#define SU_DEBUG_ALL		0xFFFF
+
+#define DBG(m, x)       __UL_DBG(su, SU_DEBUG_, m, x)
+#define ON_DBG(m, x)    __UL_DBG_CALL(su, SU_DEBUG_, m, x)
+
+
 /* name of the pam configuration files. separate configs for su and su -  */
 #define PAM_SRVNAME_SU "su"
 #define PAM_SRVNAME_SU_L "su-l"
@@ -120,9 +138,15 @@ su_catch_sig(int sig)
 	caught_signal = sig;
 }
 
+static void su_init_debug(void)
+{
+	__UL_INIT_DEBUG(su, SU_DEBUG_, 0, SU_DEBUG);
+}
+
 static void init_tty(struct su_context *su)
 {
 	su->isterm = isatty(STDIN_FILENO) ? 1 : 0;
+	DBG(TTY, ul_debug("initilize [is-term=%s]", su->isterm ? "true" : "false"));
 	if (su->isterm)
 		get_terminal_name(NULL, &su->tty_name, &su->tty_number);
 }
@@ -132,6 +156,8 @@ static void init_tty(struct su_context *su)
 
 static void log_syslog(struct su_context *su, bool successful)
 {
+	DBG(LOG, ul_debug("syslog logging"));
+
 	openlog(program_invocation_short_name, 0, LOG_AUTH);
 	syslog(LOG_NOTICE, "%s(to %s) %s on %s",
 	       successful ? "" :
@@ -148,6 +174,8 @@ static void log_btmp(struct su_context *su)
 {
 	struct utmpx ut;
 	struct timeval tv;
+
+	DBG(LOG, ul_debug("btmp logging"));
 
 	memset(&ut, 0, sizeof(ut));
 	strncpy(ut.ut_user,
@@ -191,6 +219,8 @@ static void supam_cleanup(struct su_context *su, int retcode)
 {
 	const int errsv = errno;
 
+	DBG(PAM, ul_debug("cleanup"));
+
 	if (su->pam_has_session)
 		pam_close_session(su->pamh, 0);
 	if (su->pam_has_cred)
@@ -202,8 +232,12 @@ static void supam_cleanup(struct su_context *su, int retcode)
 
 static void supam_export_environment(struct su_context *su)
 {
+	char **env;
+
+	DBG(PAM, ul_debug("init environ[]"));
+
 	/* This is a copy but don't care to free as we exec later anyways.  */
-	char **env = pam_getenvlist(su->pamh);
+	env = pam_getenvlist(su->pamh);
 
 	while (env && *env) {
 		if (putenv(*env) != 0)
@@ -220,6 +254,8 @@ static void supam_authenticate(struct su_context *su)
 	srvname = su->runuser ?
 		   (su->simulate_login ? PAM_SRVNAME_RUNUSER_L : PAM_SRVNAME_RUNUSER) :
 		   (su->simulate_login ? PAM_SRVNAME_SU_L : PAM_SRVNAME_SU);
+
+	DBG(PAM, ul_debug("start [name: %s]", srvname));
 
 	rc = pam_start(srvname, su->pwd->pw_name, &su->conv, &su->pamh);
 	if (is_pam_failure(rc))
@@ -259,6 +295,7 @@ static void supam_authenticate(struct su_context *su)
 	if (is_pam_failure(rc)) {
 		const char *msg;
 
+		DBG(PAM, ul_debug("authentication failed"));
 		log_btmp(su);
 
 		msg = pam_strerror(su->pamh, rc);
@@ -270,8 +307,11 @@ static void supam_authenticate(struct su_context *su)
 
 static void supam_open_session(struct su_context *su)
 {
-	int rc = pam_open_session(su->pamh, 0);
+	int rc;
 
+	DBG(PAM, ul_debug("opening session"));
+
+	rc = pam_open_session(su->pamh, 0);
 	if (is_pam_failure(rc)) {
 		supam_cleanup(su, rc);
 		errx(EXIT_FAILURE, _("cannot open session: %s"),
@@ -288,6 +328,8 @@ static void create_watching_parent(struct su_context *su)
 	struct sigaction oldact[3];
 	int status = 0;
 
+	DBG(MISC, ul_debug("forking..."));
+
 	switch ((int) (child = fork())) {
 	case -1: /* error */
 		supam_cleanup(su, PAM_ABORT);
@@ -298,9 +340,12 @@ static void create_watching_parent(struct su_context *su)
 		return;
 
 	default: /* parent */
+		DBG(MISC, ul_debug("child [pid=%d]", (int) child));
 		break;
 	}
 
+
+	DBG(SIG, ul_debug("initialize signals"));
 	memset(oldact, 0, sizeof(oldact));
 
 
@@ -347,6 +392,8 @@ static void create_watching_parent(struct su_context *su)
 	}
 	if (!caught_signal) {
 		pid_t pid;
+
+		DBG(SIG, ul_debug("waiting for child"));
 		for (;;) {
 			pid = waitpid(child, &status, WUNTRACED);
 
@@ -370,6 +417,8 @@ static void create_watching_parent(struct su_context *su)
 			status = caught_signal + 128;
 		else
 			status = 1;
+
+		DBG(SIG, ul_debug("child is dead [status=%d]", status));
 	} else
 		status = 1;
 
@@ -381,6 +430,7 @@ static void create_watching_parent(struct su_context *su)
 	supam_cleanup(su, PAM_SUCCESS);
 
 	if (caught_signal) {
+		DBG(SIG, ul_debug("killing child"));
 		sleep(2);
 		kill(child, SIGKILL);
 		fprintf(stderr, _(" ...killed.\n"));
@@ -391,6 +441,7 @@ static void create_watching_parent(struct su_context *su)
 		 * value to detect situations when is necessary to cleanup (reset)
 		 * terminal settings (kzak -- Jun 2013).
 		 */
+		DBG(SIG, ul_debug("restore signals setting"));
 		switch (caught_signal) {
 		case SIGTERM:
 			sigaction(SIGTERM, &oldact[0], NULL);
@@ -407,14 +458,19 @@ static void create_watching_parent(struct su_context *su)
 			caught_signal = SIGKILL;
 			break;
 		}
+		DBG(SIG, ul_debug("self-send %d signal", caught_signal));
 		kill(getpid(), caught_signal);
 	}
+
+	DBG(MISC, ul_debug("exiting [rc=%d]", status));
 	exit(status);
 }
 
 static void setenv_path(const struct passwd *pw)
 {
 	int rc;
+
+	DBG(MISC, ul_debug("setting PATH"));
 
 	if (pw->pw_uid)
 		rc = logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH);
@@ -429,6 +485,9 @@ static void setenv_path(const struct passwd *pw)
 static void modify_environment(struct su_context *su, const char *shell)
 {
 	const struct passwd *pw = su->pwd;
+
+
+	DBG(MISC, ul_debug("modify environ[]"));
 
 	/* Leave TERM unchanged.  Set HOME, SHELL, USER, LOGNAME, PATH.
 	 * Unset all other environment variables.
@@ -475,6 +534,8 @@ static void init_groups(struct su_context *su, gid_t *groups, size_t ngroups)
 {
 	int rc;
 
+	DBG(MISC, ul_debug("initialize groups"));
+
 	errno = 0;
 	if (ngroups)
 		rc = setgroups(ngroups, groups);
@@ -496,6 +557,8 @@ static void init_groups(struct su_context *su, gid_t *groups, size_t ngroups)
 
 static void change_identity(const struct passwd *pw)
 {
+	DBG(MISC, ul_debug("changing identity [GID=%d, UID=%d]", pw->pw_gid, pw->pw_uid));
+
 	if (setgid(pw->pw_gid))
 		err(EXIT_FAILURE, _("cannot set group id"));
 	if (setuid(pw->pw_uid))
@@ -515,6 +578,8 @@ static void run_shell(
 	char const **args = xcalloc(n_args, sizeof *args);
 	size_t argno = 1;
 	int rc;
+
+	DBG(MISC, ul_debug("starting shell [shell=%s, command=%s]", shell, command));
 
 	if (su->simulate_login) {
 		char *arg0;
@@ -632,6 +697,7 @@ static void load_config(void *data)
 {
 	struct su_context *su = (struct su_context *) data;
 
+	DBG(MISC, ul_debug("loading logindefs"));
 	logindefs_load_file(su->runuser ? _PATH_LOGINDEFS_RUNUSER : _PATH_LOGINDEFS_SU);
 	logindefs_load_file(_PATH_LOGINDEFS);
 }
@@ -661,6 +727,8 @@ static gid_t add_supp_group(const char *name, gid_t **groups, size_t *ngroups)
 	gr = getgrnam(name);
 	if (!gr)
 		errx(EXIT_FAILURE, _("group %s does not exist"), name);
+
+	DBG(MISC, ul_debug("add %s group [name=%s, GID=%d]", name, gr->gr_name, (int) gr->gr_gid));
 
 	*groups = xrealloc(*groups, sizeof(gid_t) * (*ngroups + 1));
 	(*groups)[*ngroups] = gr->gr_gid;
@@ -709,6 +777,7 @@ int su_main(int argc, char **argv, int mode)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
+	su_init_debug();
 	su->conv.appdata_ptr = (void *) su;
 
 	while ((optc =
