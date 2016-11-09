@@ -632,8 +632,7 @@ static void load_config(void *data)
 /*
  * Returns 1 if the current user is not root
  */
-static int
-evaluate_uid(void)
+static int is_not_root(void)
 {
 	const uid_t ruid = getuid();
 	const uid_t euid = geteuid();
@@ -764,7 +763,7 @@ int su_main(int argc, char **argv, int mode)
 		}
 	}
 
-	su->restricted = evaluate_uid();
+	su->restricted = is_not_root();
 
 	if (optind < argc && !strcmp(argv[optind], "-")) {
 		su->simulate_login = true;
