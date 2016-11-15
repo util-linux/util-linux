@@ -40,7 +40,8 @@
 
 #if defined(HAVE_LINUX_FALLOC_H) && \
     (!defined(FALLOC_FL_KEEP_SIZE) || !defined(FALLOC_FL_PUNCH_HOLE) || \
-     !defined(FALLOC_FL_COLLAPSE_RANGE) || !defined(FALLOC_FL_ZERO_RANGE))
+     !defined(FALLOC_FL_COLLAPSE_RANGE) || !defined(FALLOC_FL_ZERO_RANGE) || \
+     !defined(FALLOC_FL_INSERT_RANGE))
 # include <linux/falloc.h>	/* non-libc fallback for FALLOC_FL_* flags */
 #endif
 
@@ -59,6 +60,10 @@
 
 #ifndef FALLOC_FL_ZERO_RANGE
 # define FALLOC_FL_ZERO_RANGE		0x10
+#endif
+
+#ifndef FALLOC_FL_INSERT_RANGE
+# define FALLOC_FL_INSERT_RANGE		0x20
 #endif
 
 #include "nls.h"
@@ -83,6 +88,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -c, --collapse-range remove a range from the file\n"), out);
 	fputs(_(" -d, --dig-holes      detect zeroes and replace with holes\n"), out);
+	fputs(_(" -i, --insert-range   insert a hole at range, shifting existing data\n"), out);
 	fputs(_(" -l, --length <num>   length for range operations, in bytes\n"), out);
 	fputs(_(" -n, --keep-size      maintain the apparent size of the file\n"), out);
 	fputs(_(" -o, --offset <num>   offset for range operations, in bytes\n"), out);
@@ -281,6 +287,7 @@ int main(int argc, char **argv)
 	    { "punch-hole",     0, 0, 'p' },
 	    { "collapse-range", 0, 0, 'c' },
 	    { "dig-holes",      0, 0, 'd' },
+	    { "insert-range",   0, 0, 'i' },
 	    { "zero-range",     0, 0, 'z' },
 	    { "offset",         1, 0, 'o' },
 	    { "length",         1, 0, 'l' },
@@ -300,7 +307,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "hvVncpdzl:o:", longopts, NULL))
+	while ((c = getopt_long(argc, argv, "hvVncpdizl:o:", longopts, NULL))
 			!= -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -314,6 +321,9 @@ int main(int argc, char **argv)
 			break;
 		case 'd':
 			dig = 1;
+			break;
+		case 'i':
+			mode |= FALLOC_FL_INSERT_RANGE;
 			break;
 		case 'l':
 			length = cvtnum(optarg);
