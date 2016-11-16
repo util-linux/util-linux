@@ -58,6 +58,9 @@
 #include <unistd.h>
 #include <utmp.h>
 #include <getopt.h>
+#include <sys/types.h>
+#include <grp.h>
+#include <linux/sysctl.h>
 
 #include "nls.h"
 #include "xalloc.h"
@@ -86,6 +89,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_("Write a message to all users.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -g, --group <group>     only send message to group\n"), out);
 	fputs(_(" -n, --nobanner          do not print banner, works only for root\n"), out);
 	fputs(_(" -t, --timeout <timeout> write timeout in seconds\n"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -96,6 +100,67 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+struct group_workspace {
+	gid_t	requested_group;
+	int	ngroups;
+	gid_t	*groups;
+};
+
+static gid_t get_group_gid(const char *optarg)
+{
+	struct group *gr;
+
+	if ((gr = getgrnam(optarg)))
+		return gr->gr_gid;
+	return strtou64_or_err(optarg, _("invalid group argument"));
+}
+
+static struct group_workspace *init_group_workspace(const char *optarg)
+{
+	struct group_workspace *buf = xmalloc(sizeof(struct group_workspace));
+
+	buf->requested_group = get_group_gid(optarg);
+	buf->ngroups = sysconf(_SC_NGROUPS_MAX) + 1;  /* room for the primary gid */
+	buf->groups = xcalloc(sizeof(gid_t), buf->ngroups);
+
+	return buf;
+}
+
+static void free_group_workspace(struct group_workspace *buf)
+{
+	if (!buf)
+		return;
+
+	free(buf->groups);
+	free(buf);
+}
+
+static int is_gr_member(const char *login, const struct group_workspace *buf)
+{
+	struct passwd *pw;
+	int ngroups = buf->ngroups;
+	int rc;
+
+	pw = getpwnam(login);
+	if (buf->requested_group == pw->pw_gid)
+		return 1;
+
+	rc = getgrouplist(login, pw->pw_gid, buf->groups, &ngroups);
+	if (rc < 0) {
+		/* buffer too small, not sure how this can happen, since
+		   we used sysconf to get the size... */
+		errx(EXIT_FAILURE,
+			_("getgrouplist found more groups than sysconf allows"));
+	}
+
+	for (; ngroups >= 0; --ngroups) {
+		if (buf->requested_group == buf->groups[ngroups])
+			return 1;
+	}
+
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
 	int ch;
@@ -104,6 +169,7 @@ int main(int argc, char **argv)
 	char *p;
 	char line[sizeof(utmpptr->ut_line) + 1];
 	int print_banner = TRUE;
+	struct group_workspace *group_buf = NULL;
 	char *mbuf, *fname = NULL;
 	size_t mbufsize;
 	unsigned timeout = WRITE_TIME_OUT;
@@ -113,6 +179,7 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{ "nobanner",	no_argument,		0, 'n' },
 		{ "timeout",	required_argument,	0, 't' },
+		{ "group",	required_argument,	0, 'g' },
 		{ "version",	no_argument,		0, 'V' },
 		{ "help",	no_argument,		0, 'h' },
 		{ NULL,	0, 0, 0 }
@@ -123,7 +190,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((ch = getopt_long(argc, argv, "nt:Vh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "nt:g:Vh", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'n':
 			if (geteuid() == 0)
@@ -135,6 +202,9 @@ int main(int argc, char **argv)
 			timeout = strtou32_or_err(optarg, _("invalid timeout argument"));
 			if (timeout < 1)
 				errx(EXIT_FAILURE, _("invalid timeout argument: %s"), optarg);
+			break;
+		case 'g':
+			group_buf = init_group_workspace(optarg);
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -172,12 +242,16 @@ int main(int argc, char **argv)
 		if (utmpptr->ut_line[0] == ':')
 			continue;
 
+		if (group_buf && !is_gr_member(utmpptr->ut_user, group_buf))
+			continue;
+
 		xstrncpy(line, utmpptr->ut_line, sizeof(utmpptr->ut_line));
 		if ((p = ttymsg(&iov, 1, line, timeout)) != NULL)
 			warnx("%s", p);
 	}
 	endutent();
 	free(mbuf);
+	free_group_workspace(group_buf);
 	exit(EXIT_SUCCESS);
 }
 
