@@ -112,16 +112,16 @@ elif test "`git log -1 --pretty=format:x . 2>&1`" = x \
        esac
 then
 
+    # Remove the "g" in git describe's output string, to save a byte.
+    v=${v/-g/-}
+
     case $v in
-        *-rc[0-9])
-	    # Remove the "g" in git describe's output string, to save a byte.
-            v=`echo "$v" | sed 's/\(.*\)-g/\1-/'`;     
-	    ;;
+        *-rc*)
+            ;;
         *)
-	    # Change the first '-' to a '.', so version-comparing tools work properly.
-	    # Remove the "g" in git describe's output string, to save a byte.
-	    v=`echo "$v" | sed 's/-/./;s/\(.*\)-g/\1-/'`;
-	    ;;
+            # Change the first '-' to a '.', so version-comparing tools work properly.
+            v=`echo "$v" | sed 's/-/./'`;
+            ;;
     esac
     v_from_git=1
 else
