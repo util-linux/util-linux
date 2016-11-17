@@ -422,6 +422,8 @@ static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 			mnt_optstr_append_option(optstr, "suid", NULL);
 		if (!(cxt->mountflags & MS_NODEV))
 			mnt_optstr_append_option(optstr, "dev", NULL);
+		if (!(cxt->mountflags & MS_NOSYMFOLLOW))
+			mnt_optstr_append_option(optstr, "symfollow", NULL);
 	}
 
 

@@ -132,6 +132,10 @@ static const struct libmnt_optmap linux_flags_map[] =
    { "shared",      MS_SHARED,              MNT_NOHLPS | MNT_NOMTAB }, /* Shared */
    { "rshared",     MS_SHARED | MS_REC,     MNT_NOHLPS | MNT_NOMTAB },
 #endif
+#ifdef MS_NOSYMFOLLOW
+   { "symfollow", MS_NOSYMFOLLOW, MNT_INVERT }, /* Don't follow symlinks */
+   { "nosymfollow", MS_NOSYMFOLLOW },
+#endif
    { NULL, 0, 0 }
 };
 
