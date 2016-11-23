@@ -217,6 +217,30 @@ static int get_ns_ino(int dir, const char *nsname, ino_t *ino)
 	return 0;
 }
 
+static int parse_proc_stat(FILE *fp, pid_t *pid, char *state, pid_t *ppid)
+{
+	char *line = NULL, *p;
+	size_t len = 0;
+	int rc;
+
+	if (getline(&line, &len, fp) < 0) {
+		rc = -errno;
+		goto error;
+	}
+
+	p = strrchr(line, ')');
+	if (p == NULL ||
+	    sscanf(line, "%d (", pid) != 1 ||
+	    sscanf(p, ") %c %d*[^\n]", state, ppid) != 2) {
+		rc = -EINVAL;
+		goto error;
+	}
+	rc = 0;
+
+error:
+	free(line);
+	return rc;
+}
 
 static int read_process(struct lsns *ls, pid_t pid)
 {
@@ -255,11 +279,9 @@ static int read_process(struct lsns *ls, pid_t pid)
 		rc = -errno;
 		goto done;
 	}
-	rc = fscanf(f, "%d %*s %c %d*[^\n]", &p->pid, &p->state, &p->ppid);
-	if (rc != 3) {
-		rc = rc < 0 ? -errno : -EINVAL;
+	rc = parse_proc_stat(f, &p->pid, &p->state, &p->ppid);
+	if (rc < 0)
 		goto done;
-	}
 	rc = 0;
 
 	for (i = 0; i < ARRAY_SIZE(p->ns_ids); i++) {
