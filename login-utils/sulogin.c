@@ -695,6 +695,7 @@ static char *getpasswd(struct console *con)
 				ptr--;
 			break;
 		case CEOF:
+			ret = NULL;
 			goto quit;
 		default:
 			if ((size_t)(ptr - &pass[0]) >= (sizeof(pass) -1 )) {
