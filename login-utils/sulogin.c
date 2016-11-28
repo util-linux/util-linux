@@ -645,6 +645,10 @@ static char *getpasswd(struct console *con)
 	while (cp->eol == '\0') {
 		if (read(fd, &c, 1) < 1) {
 			if (errno == EINTR || errno == EAGAIN) {
+				if (alarm_rised) {
+					ret = NULL;
+					goto quit;
+				}
 				xusleep(250000);
 				continue;
 			}
