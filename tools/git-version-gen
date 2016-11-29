@@ -113,7 +113,7 @@ elif test "`git log -1 --pretty=format:x . 2>&1`" = x \
 then
 
     # Remove the "g" in git describe's output string, to save a byte.
-    v=${v/-g/-}
+    v=`echo "$v" | sed 's/-g/-/'`;
 
     case $v in
         *-rc*)
