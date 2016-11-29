@@ -560,6 +560,7 @@ static int write_changes(struct sfdisk *sf)
  */
 static int command_list_partitions(struct sfdisk *sf, int argc, char **argv)
 {
+	int fail = 0;
 	fdisk_enable_listonly(sf->cxt, 1);
 
 	if (argc) {
@@ -568,13 +569,14 @@ static int command_list_partitions(struct sfdisk *sf, int argc, char **argv)
 		for (i = 0; i < argc; i++) {
 			if (ct)
 				fputs("\n\n", stdout);
-			if (print_device_pt(sf->cxt, argv[i], 0, sf->verify) == 0)
-				ct++;
+			if (print_device_pt(sf->cxt, argv[i], 1, sf->verify) != 0)
+				fail++;
+			ct++;
 		}
 	} else
 		print_all_devices_pt(sf->cxt, sf->verify);
 
-	return 0;
+	return fail;
 }
 
 /*
@@ -582,6 +584,7 @@ static int command_list_partitions(struct sfdisk *sf, int argc, char **argv)
  */
 static int command_list_freespace(struct sfdisk *sf, int argc, char **argv)
 {
+	int fail = 0;
 	fdisk_enable_listonly(sf->cxt, 1);
 
 	if (argc) {
@@ -590,13 +593,14 @@ static int command_list_freespace(struct sfdisk *sf, int argc, char **argv)
 		for (i = 0; i < argc; i++) {
 			if (ct)
 				fputs("\n\n", stdout);
-			if (print_device_freespace(sf->cxt, argv[i], 0) == 0)
-				ct++;
+			if (print_device_freespace(sf->cxt, argv[i], 1) != 0)
+				fail++;
+			ct++;
 		}
 	} else
 		print_all_devices_freespace(sf->cxt);
 
-	return 0;
+	return fail;
 }
 
 /*
