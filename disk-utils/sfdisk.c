@@ -950,13 +950,16 @@ static int command_dump(struct sfdisk *sf, int argc, char **argv)
 	if (rc)
 		err(EXIT_FAILURE, _("cannot open %s"), devname);
 
+	if (!fdisk_has_label(sf->cxt))
+		errx(EXIT_FAILURE, _("%s: does not contain a recognized partition table"), devname);
+
 	dp = fdisk_new_script(sf->cxt);
 	if (!dp)
 		err(EXIT_FAILURE, _("failed to allocate dump struct"));
 
 	rc = fdisk_script_read_context(dp, NULL);
 	if (rc)
-		err(EXIT_FAILURE, _("failed to dump partition table"));
+		errx(EXIT_FAILURE, _("%s: failed to dump partition table"), devname);
 
 	if (sf->json)
 		fdisk_script_enable_json(dp, 1);
