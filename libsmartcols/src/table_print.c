@@ -1471,7 +1471,7 @@ done:
 /**
  * scols_table_print_range_to_string:
  * @tb: table
- * @start: first printed line or NULL to print from the beggin of the table
+ * @start: first printed line or NULL to print from the beginning of the table
  * @end: last printed line or NULL to print all from start.
  * @data: pointer to the beginning of a memory area to print to
  *

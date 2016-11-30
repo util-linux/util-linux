@@ -737,7 +737,7 @@ int scols_table_set_default_symbols(struct libscols_table *tb)
  * draw tree output. If no symbols are used for the table then library creates
  * default temporary symbols to draw output by scols_table_set_default_symbols().
  *
- * If @sy is NULL then remove reference from the currenly uses symbols.
+ * If @sy is NULL then remove reference from the currently used symbols.
  *
  * Returns: 0, a negative value in case of an error.
  */
@@ -749,7 +749,7 @@ int scols_table_set_symbols(struct libscols_table *tb,
 
 	/* remove old */
 	if (tb->symbols) {
-		DBG(TAB, ul_debugobj(tb, "remove symbols %p refrence", tb->symbols));
+		DBG(TAB, ul_debugobj(tb, "remove symbols %p reference", tb->symbols));
 		scols_unref_symbols(tb->symbols);
 		tb->symbols = NULL;
 	}

@@ -206,7 +206,7 @@ struct cal_control {
 	const char *abbr_month[MONTHS_IN_YEAR];	/* abbreviated month names */
 
 	int colormode;			/* day and week number highlight */
-	int num_months;			/* number of requested monts */
+	int num_months;			/* number of requested months */
 	int span_months;		/* span the date */
 	int months_in_row;		/* number of months horizontally in print out */
 	int weekstart;			/* day the week starts, often Sun or Mon */
