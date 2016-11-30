@@ -2,7 +2,7 @@
 ---
 
 $ lsmem 
-RANGE                                  SIZE STATE  REMOVABLE   BLOCK
+RANGE                                  SIZE  STATE REMOVABLE   BLOCK
 0x0000000000000000-0x0000000007ffffff  128M online        no       0
 0x0000000008000000-0x0000000037ffffff  768M online       yes     1-6
 0x0000000038000000-0x000000003fffffff  128M online        no       7
@@ -52,7 +52,7 @@ Total offline memory:      0B
 ---
 
 $ lsmem --output RANGE,SIZE,STATE
-RANGE                                 SIZE STATE
+RANGE                                 SIZE  STATE
 0x0000000000000000-0x00000000bfffffff   3G online
 0x0000000100000000-0x000000043fffffff  13G online
 
@@ -63,7 +63,7 @@ Total offline memory:      0B
 ---
 
 $ lsmem --all --output RANGE,SIZE,STATE,REMOVABLE,BLOCK,NODE
-RANGE                                  SIZE STATE  REMOVABLE BLOCK NODE
+RANGE                                  SIZE  STATE REMOVABLE BLOCK NODE
 0x0000000000000000-0x0000000007ffffff  128M online        no     0    0
 0x0000000008000000-0x000000000fffffff  128M online       yes     1    0
 0x0000000010000000-0x0000000017ffffff  128M online       yes     2    0
