@@ -34,10 +34,23 @@ static int is_ide_cdrom_or_tape(char *device)
 	return ret;
 }
 
+void list_disk_identifier(struct fdisk_context *cxt)
+{
+	struct fdisk_label *lb = fdisk_get_label(cxt, NULL);
+	char *id = NULL;
+
+	if (fdisk_has_label(cxt))
+		fdisk_info(cxt, _("Disklabel type: %s"),
+				fdisk_label_get_name(lb));
+
+	if (!fdisk_is_details(cxt) && fdisk_get_disklabel_id(cxt, &id) == 0 && id) {
+		fdisk_info(cxt, _("Disk identifier: %s"), id);
+		free(id);
+	}
+}
 
 void list_disk_geometry(struct fdisk_context *cxt)
 {
-	char *id = NULL;
 	struct fdisk_label *lb = fdisk_get_label(cxt, NULL);
 	uint64_t bytes = fdisk_get_nsectors(cxt) * fdisk_get_sector_size(cxt);
 	char *strsz = size_to_human_string(SIZE_SUFFIX_SPACE
@@ -71,14 +84,8 @@ void list_disk_geometry(struct fdisk_context *cxt)
 	if (fdisk_get_alignment_offset(cxt))
 		fdisk_info(cxt, _("Alignment offset: %lu bytes"),
 				fdisk_get_alignment_offset(cxt));
-	if (fdisk_has_label(cxt))
-		fdisk_info(cxt, _("Disklabel type: %s"),
-				fdisk_label_get_name(lb));
 
-	if (!fdisk_is_details(cxt) && fdisk_get_disklabel_id(cxt, &id) == 0 && id) {
-		fdisk_info(cxt, _("Disk identifier: %s"), id);
-		free(id);
-	}
+	list_disk_identifier(cxt);
 }
 
 void list_disklabel(struct fdisk_context *cxt)

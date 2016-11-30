@@ -212,7 +212,10 @@ Deprecated option.  Only the sector unit is supported.
 .BR \-X , " \-\-label " \fItype
 Specify the disk label type (e.g. \fBdos\fR, \fBgpt\fR, ...).  If this option
 is not given, then \fBsfdisk\fR defaults to the existing label, but if there
-is no label on the device yet, then the type defaults to \fBdos\fR.
+is no label on the device yet, then the type defaults to \fBdos\fR. The default
+or the current label may be overwritten by the "label: <name>" script header
+line. The option \fB\-\-label\fR does not force \fBsfdisk\fR to create empty
+disk label (see the \fBEMPTY DISK LABEL\fR section below).
 .TP
 .BR \-Y , " \-\-label\-nested " \fItype
 Force editing of a nested disk label.  The primary disk label has to exist already.
@@ -403,6 +406,19 @@ A hexadecimal number (without 0x) for an MBR partition, or a GUID for a GPT part
 For backward compatibility the \fBId=\fR field has the same meaning.
 .RE
 .RE
+
+.SH "EMPTY DISK LABEL"
+.B sfdisk
+does not create partition table without partitions by default. The lines with
+partitions are expected in the script by default. The empty partition table has
+to be explicitly requested by "label: <name>" script header line without any
+partitions lines. For example:
+.RS
+.sp
+.B "echo 'label: gpt' | sfdisk /dev/sdb"
+.sp
+.RE
+creates empty GPT partition table. Note that the \fB\-\-append\fR disables this feature.
 
 .SH "BACKING UP THE PARTITION TABLE"
 It is recommended to save the layout of your devices.

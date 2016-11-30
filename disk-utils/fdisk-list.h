@@ -2,6 +2,7 @@
 #define UTIL_LINUX_FDISK_LIST_H
 
 extern void list_disklabel(struct fdisk_context *cxt);
+extern void list_disk_identifier(struct fdisk_context *cxt);
 extern void list_disk_geometry(struct fdisk_context *cxt);
 extern void list_freespace(struct fdisk_context *cxt);
 

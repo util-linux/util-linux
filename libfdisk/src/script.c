@@ -36,7 +36,8 @@ struct fdisk_script {
 	size_t			nlines;
 	struct fdisk_label	*label;
 
-	unsigned int		json : 1;		/* JSON output */
+	unsigned int		json : 1,		/* JSON output */
+				force_label : 1;	/* label: <name> specified */
 };
 
 
@@ -352,6 +353,22 @@ int fdisk_script_get_nlines(struct fdisk_script *dp)
 	assert(dp);
 	return dp->nlines;
 }
+
+/**
+ * fdisk_script_has_force_label:
+ * @dp: script
+ *
+ * Note that fdisk_script_set_header(dp, "label", name) does not modify
+ * force_label status. The label has to be specified by script.
+ *
+ * Returns: true if "label: <name>" has been parsed.
+ */
+int fdisk_script_has_force_label(struct fdisk_script *dp)
+{
+	assert(dp);
+	return dp->force_label;
+}
+
 
 /**
  * fdisk_script_read_context:
@@ -706,6 +723,7 @@ static int parse_line_header(struct fdisk_script *dp, char *s)
 	if (strcmp(name, "label") == 0) {
 		if (dp->cxt && !fdisk_get_label(dp->cxt, value))
 			goto done;			/* unknown label name */
+		dp->force_label = 1;
 	} else if (strcmp(name, "unit") == 0) {
 		if (strcmp(value, "sectors") != 0)
 			goto done;			/* only "sectors" supported */

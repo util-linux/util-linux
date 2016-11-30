@@ -1766,8 +1766,25 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		}
 	} while (1);
 
+	/* create empty disk label if label, but no partition specified */
+	if (rc == SFDISK_DONE_EOF && created == 0
+	    && fdisk_script_has_force_label(dp) == 1
+	    && fdisk_table_get_nents(tb) == 0
+	    && fdisk_script_get_header(dp, "label")) {
+
+		int xrc = fdisk_apply_script_headers(sf->cxt, dp);
+		created = !xrc;
+		if (xrc) {
+			fdisk_warnx(sf->cxt, _(
+				  "Failed to apply script headers, "
+				  "disk label not created."));
+			rc = SFDISK_DONE_ABORT;
+		}
+	}
+
 	if (!sf->quiet && rc != SFDISK_DONE_ABORT) {
 		fdisk_info(sf->cxt, _("\nNew situation:"));
+		list_disk_identifier(sf->cxt);
 		list_disklabel(sf->cxt);
 	}
 

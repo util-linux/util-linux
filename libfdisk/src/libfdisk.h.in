@@ -642,6 +642,7 @@ const char *fdisk_script_get_header(struct fdisk_script *dp, const char *name);
 int fdisk_script_set_header(struct fdisk_script *dp, const char *name, const char *data);
 struct fdisk_table *fdisk_script_get_table(struct fdisk_script *dp);
 int fdisk_script_get_nlines(struct fdisk_script *dp);
+int fdisk_script_has_force_label(struct fdisk_script *dp);
 
 int fdisk_script_set_userdata(struct fdisk_script *dp, void *data);
 void *fdisk_script_get_userdata(struct fdisk_script *dp);

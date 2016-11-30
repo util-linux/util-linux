@@ -274,3 +274,8 @@ FDISK_2.29 {
 	fdisk_labelitem_is_number;
 	fdisk_gpt_set_npartitions;
 } FDISK_2.28;
+
+
+FDISK_2.30 {
+	fdisk_script_has_force_label;
+} FDISK_2.29;
