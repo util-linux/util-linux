@@ -14,6 +14,8 @@ I/O size (minimum/optimal): 4096 bytes / <removed> bytes
 All partitions used.
 
 New situation:
+Disklabel type: dos
+Disk identifier: <removed>
 
 Device     Boot Start   End Sectors  Size Id Type
 <removed>1  *     2048 52046   49999 24.4M 83 Linux

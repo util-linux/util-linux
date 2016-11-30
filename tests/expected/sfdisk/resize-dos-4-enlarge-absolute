@@ -14,6 +14,8 @@ Device     Boot Start   End Sectors Size Id Type
 
 <removed>1: 
 New situation:
+Disklabel type: dos
+Disk identifier: <removed>
 
 Device     Boot Start   End Sectors Size Id Type
 <removed>1        2048 32767   30720  15M 83 Linux

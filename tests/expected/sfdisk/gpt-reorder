@@ -16,6 +16,8 @@ I/O size (minimum/optimal): 4096 bytes / <removed> bytes
 <removed>5: Done.
 
 New situation:
+Disklabel type: gpt
+Disk identifier: <removed>
 
 Device             Start    End Sectors Size Type
 <removed>1   8192  14335    6144   3M Linux filesystem

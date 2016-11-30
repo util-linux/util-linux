@@ -12,6 +12,8 @@ Device             Start   End Sectors Size Type
 
 <removed>1: 
 New situation:
+Disklabel type: gpt
+Disk identifier: <removed>
 
 Device             Start    End Sectors Size Type
 <removed>1   2048 102366  100319  49M Linux swap

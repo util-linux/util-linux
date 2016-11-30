@@ -12,6 +12,8 @@ Device     Boot Start   End Sectors Size Id Type
 
 <removed>1: 
 New situation:
+Disklabel type: dos
+Disk identifier: <removed>
 
 Device     Boot Start    End Sectors Size Id Type
 <removed>1  *     2048 102399  100352  49M 82 Linux swap / Solaris

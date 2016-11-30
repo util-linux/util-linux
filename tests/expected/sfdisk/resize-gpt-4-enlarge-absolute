@@ -14,6 +14,8 @@ Device             Start   End Sectors Size Type
 
 <removed>1: 
 New situation:
+Disklabel type: gpt
+Disk identifier: <removed>
 
 Device             Start   End Sectors Size Type
 <removed>1   2048 32767   30720  15M Linux filesystem
