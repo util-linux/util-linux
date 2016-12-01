@@ -426,9 +426,7 @@ static void init_tty(struct login_context *cxt)
 static void log_btmp(struct login_context *cxt)
 {
 	struct utmp ut;
-#if defined(_HAVE_UT_TV)        /* in <utmpbits.h> included by <utmp.h> */
 	struct timeval tv;
-#endif
 
 	memset(&ut, 0, sizeof(ut));
 
@@ -441,17 +439,9 @@ static void log_btmp(struct login_context *cxt)
 	if (cxt->tty_name)
 		xstrncpy(ut.ut_line, cxt->tty_name, sizeof(ut.ut_line));
 
-#if defined(_HAVE_UT_TV)	/* in <utmpbits.h> included by <utmp.h> */
 	gettimeofday(&tv, NULL);
 	ut.ut_tv.tv_sec = tv.tv_sec;
 	ut.ut_tv.tv_usec = tv.tv_usec;
-#else
-	{
-		time_t t;
-		time(&t);
-		ut.ut_time = t;	/* ut_time is not always a time_t */
-	}
-#endif
 
 	ut.ut_type = LOGIN_PROCESS;	/* XXX doesn't matter */
 	ut.ut_pid = cxt->pid;
@@ -614,18 +604,9 @@ static void log_utmp(struct login_context *cxt)
 	if (cxt->tty_name)
 		xstrncpy(ut.ut_line, cxt->tty_name, sizeof(ut.ut_line));
 
-#ifdef _HAVE_UT_TV		/* in <utmpbits.h> included by <utmp.h> */
 	gettimeofday(&tv, NULL);
 	ut.ut_tv.tv_sec = tv.tv_sec;
 	ut.ut_tv.tv_usec = tv.tv_usec;
-#else
-	{
-		time_t t;
-		time(&t);
-		ut.ut_time = t;	/* ut_time is not always a time_t */
-				/* glibc2 #defines it as ut_tv.tv_sec */
-	}
-#endif
 	ut.ut_type = USER_PROCESS;
 	ut.ut_pid = cxt->pid;
 	if (cxt->hostname) {

@@ -71,7 +71,6 @@ static time_t strtotime(const char *s_time)
 	return timegm(&tm);
 }
 
-#if defined(_HAVE_UT_TV)
 static suseconds_t strtousec(const char *s_time)
 {
 	const char *s = strchr(s_time, ',');
@@ -79,7 +78,6 @@ static suseconds_t strtousec(const char *s_time)
 		return (suseconds_t) atoi(s + 1);
 	return 0;
 }
-#endif
 
 #define cleanse(x) xcleanse(x, sizeof(x))
 static void xcleanse(char *s, int len)
@@ -287,12 +285,10 @@ static void undump(FILE *in, FILE *out)
 			inet_pton(AF_INET, s_addr, &(ut.ut_addr_v6));
 		else
 			inet_pton(AF_INET6, s_addr, &(ut.ut_addr_v6));
-#if defined(_HAVE_UT_TV)
+
 		ut.ut_tv.tv_sec = strtotime(s_time);
 		ut.ut_tv.tv_usec = strtousec(s_time);
-#else
-		ut.ut_time = strtotime(s_time);
-#endif
+
 		ignore_result( fwrite(&ut, sizeof(ut), 1, out) );
 
 		++count;

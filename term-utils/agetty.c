@@ -943,11 +943,7 @@ static void update_utmp(struct options *op)
 	if (fakehost)
 		strncpy(ut.ut_host, fakehost, sizeof(ut.ut_host));
 	time(&t);
-#if defined(_HAVE_UT_TV)
 	ut.ut_tv.tv_sec = t;
-#else
-	ut.ut_time = t;
-#endif
 	ut.ut_type = LOGIN_PROCESS;
 	ut.ut_pid = pid;
 	ut.ut_session = sid;

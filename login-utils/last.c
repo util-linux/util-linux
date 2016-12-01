@@ -53,12 +53,6 @@
 #include "timeutils.h"
 #include "monotonic.h"
 
-#if defined(_HAVE_UT_TV)
-# define UL_UT_TIME ut_tv.tv_sec
-#else
-# define UL_UT_TIME ut_time
-#endif
-
 #ifndef SHUTDOWN_TIME
 # define SHUTDOWN_TIME 254
 #endif
@@ -425,7 +419,7 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t logout_ti
 	 */
 	fmt = &timefmts[ctl->time_fmt];
 
-	utmp_time = p->UL_UT_TIME;
+	utmp_time = p->ut_tv.tv_sec;
 
 	if (ctl->present) {
 		if (ctl->present < utmp_time)
@@ -604,7 +598,7 @@ static int is_phantom(const struct last_control *ctl, struct utmp *ut)
 	char path[32];
 	int ret = 0;
 
-	if (ut->UL_UT_TIME < ctl->boot_time.tv_sec)
+	if (ut->ut_tv.tv_sec < ctl->boot_time.tv_sec)
 		return 1;
 	pw = getpwnam(ut->ut_user);
 	if (!pw)
@@ -681,7 +675,7 @@ static void process_wtmp_file(const struct last_control *ctl,
 	 * Read first structure to capture the time field
 	 */
 	if (uread(fp, &ut, NULL, filename) == 1)
-		begintime = ut.UL_UT_TIME;
+		begintime = ut.ut_tv.tv_sec;
 	else {
 		if (fstat(fileno(fp), &st) != 0)
 			err(EXIT_FAILURE, _("stat of %s failed"), filename);
@@ -703,16 +697,16 @@ static void process_wtmp_file(const struct last_control *ctl,
 		if (uread(fp, &ut, &quit, filename) != 1)
 			break;
 
-		if (ctl->since && ut.UL_UT_TIME < ctl->since)
+		if (ctl->since && ut.ut_tv.tv_sec < ctl->since)
 			continue;
 
-		if (ctl->until && ctl->until < ut.UL_UT_TIME)
+		if (ctl->until && ctl->until < ut.ut_tv.tv_sec)
 			continue;
 
-		lastdate = ut.UL_UT_TIME;
+		lastdate = ut.ut_tv.tv_sec;
 
 		if (ctl->lastb) {
-			quit = list(ctl, &ut, ut.UL_UT_TIME, R_NORMAL);
+			quit = list(ctl, &ut, ut.ut_tv.tv_sec, R_NORMAL);
 			continue;
 		}
 
@@ -762,7 +756,7 @@ static void process_wtmp_file(const struct last_control *ctl,
 				strcpy(ut.ut_line, "system down");
 				quit = list(ctl, &ut, lastboot, R_NORMAL);
 			}
-			lastdown = lastrch = ut.UL_UT_TIME;
+			lastdown = lastrch = ut.ut_tv.tv_sec;
 			down = 1;
 			break;
 		case OLD_TIME:
@@ -777,7 +771,7 @@ static void process_wtmp_file(const struct last_control *ctl,
 		case BOOT_TIME:
 			strcpy(ut.ut_line, "system boot");
 			quit = list(ctl, &ut, lastdown, R_REBOOT);
-			lastboot = ut.UL_UT_TIME;
+			lastboot = ut.ut_tv.tv_sec;
 			down = 1;
 			break;
 		case RUN_LVL:
@@ -787,11 +781,11 @@ static void process_wtmp_file(const struct last_control *ctl,
 				quit = list(ctl, &ut, lastrch, R_NORMAL);
 			}
 			if (x == '0' || x == '6') {
-				lastdown = ut.UL_UT_TIME;
+				lastdown = ut.ut_tv.tv_sec;
 				down = 1;
 				ut.ut_type = SHUTDOWN_TIME;
 			}
-			lastrch = ut.UL_UT_TIME;
+			lastrch = ut.ut_tv.tv_sec;
 			break;
 
 		case USER_PROCESS:
@@ -807,7 +801,7 @@ static void process_wtmp_file(const struct last_control *ctl,
 				    UT_LINESIZE) == 0) {
 					/* Show it */
 					if (c == 0) {
-						quit = list(ctl, &ut, p->ut.UL_UT_TIME, R_NORMAL);
+						quit = list(ctl, &ut, p->ut.ut_tv.tv_sec, R_NORMAL);
 						c = 1;
 					}
 					if (p->next)
@@ -867,7 +861,7 @@ static void process_wtmp_file(const struct last_control *ctl,
 		 * the entire current ulist.
 		 */
 		if (down) {
-			lastboot = ut.UL_UT_TIME;
+			lastboot = ut.ut_tv.tv_sec;
 			whydown = (ut.ut_type == SHUTDOWN_TIME) ? R_DOWN : R_CRASH;
 			for (p = ulist; p; p = next) {
 				next = p->next;
