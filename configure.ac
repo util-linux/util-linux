@@ -208,6 +208,7 @@ AC_CHECK_HEADERS([ \
 	getopt.h \
 	inttypes.h \
 	lastlog.h \
+	libutil.h \
 	linux/btrfs.h \
 	linux/cdrom.h \
 	linux/falloc.h \
@@ -257,6 +258,7 @@ AC_CHECK_HEADERS([ \
 	sys/un.h \
 	unistd.h \
 	shadow.h \
+	utmp.h \
 	utmpx.h \
 ])
 

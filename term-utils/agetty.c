@@ -55,7 +55,13 @@
 #endif
 
 #if defined(__FreeBSD_kernel__)
-#include <pty.h>
+# include <pty.h>
+# ifdef HAVE_UTMPX_H
+#  include <utmp.h>
+# endif
+# ifdef HAVE_LIBUTIL_H
+#  include <libutil.h>
+# endif
 #endif
 
 #ifdef __linux__
