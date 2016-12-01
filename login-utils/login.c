@@ -46,6 +46,9 @@
 #include <grp.h>
 #include <pwd.h>
 #include <utmp.h>
+#ifdef HAVE_LASTLOG_H
+# include <lastlog.h>
+#endif
 #include <stdlib.h>
 #include <sys/syslog.h>
 #ifdef HAVE_LINUX_MAJOR_H

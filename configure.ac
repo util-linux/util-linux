@@ -207,6 +207,7 @@ AC_CHECK_HEADERS([ \
 	fcntl.h \
 	getopt.h \
 	inttypes.h \
+	lastlog.h \
 	linux/btrfs.h \
 	linux/cdrom.h \
 	linux/falloc.h \
