@@ -112,10 +112,12 @@ static void print_utline(struct utmp *ut, FILE *out)
 	cleanse(ut->ut_line);
 	cleanse(ut->ut_host);
 
-	/*            pid    id       user     line     host     addr       time */
+	/*            type pid    id       user     line     host     addr    time */
 	fprintf(out, "[%d] [%05d] [%-4.4s] [%-*.*s] [%-*.*s] [%-*.*s] [%-15s] [%s]\n",
-	       ut->ut_type, ut->ut_pid, ut->ut_id, 8, UT_NAMESIZE, ut->ut_user,
-	       12, UT_LINESIZE, ut->ut_line, 20, UT_HOSTSIZE, ut->ut_host,
+	       ut->ut_type, ut->ut_pid, ut->ut_id,
+	       8, (int)sizeof(ut->ut_user), ut->ut_user,
+	       12, (int)sizeof(ut->ut_line), ut->ut_line,
+	       20, (int)sizeof(ut->ut_host), ut->ut_host,
 	       addr_string, time_string);
 }
 
