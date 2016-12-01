@@ -413,16 +413,14 @@ again:
 static struct utmp *get_last_wtmp(struct lslogins_control *ctl, const char *username)
 {
 	size_t n = 0;
-	size_t len;
 
 	if (!username)
 		return NULL;
 
-	len = strlen(username);
 	n = ctl->wtmp_size - 1;
 	do {
 		if (!strncmp(username, ctl->wtmp[n].ut_user,
-		    len < UT_NAMESIZE ? len : UT_NAMESIZE))
+		             sizeof(ctl->wtmp[0].ut_user)))
 			return ctl->wtmp + n;
 	} while (n--);
 	return NULL;
@@ -450,16 +448,14 @@ static int require_btmp(void)
 static struct utmp *get_last_btmp(struct lslogins_control *ctl, const char *username)
 {
 	size_t n = 0;
-	size_t len;
 
 	if (!username)
 		return NULL;
 
-	len = strlen(username);
 	n = ctl->btmp_size - 1;
 	do {
 		if (!strncmp(username, ctl->btmp[n].ut_user,
-		    len < UT_NAMESIZE ? len : UT_NAMESIZE))
+		             sizeof(ctl->wtmp[0].ut_user)))
 			return ctl->btmp + n;
 	}while (n--);
 	return NULL;
