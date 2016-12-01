@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <utmp.h>
+#include <utmpx.h>
 #include <time.h>
 #include <ctype.h>
 #include <getopt.h>
@@ -87,7 +87,7 @@ static void xcleanse(char *s, int len)
 			*s = '?';
 }
 
-static void print_utline(struct utmp *ut, FILE *out)
+static void print_utline(struct utmpx *ut, FILE *out)
 {
 	const char *addr_string;
 	char buffer[INET6_ADDRSTRLEN];
@@ -129,7 +129,7 @@ static void roll_file(const char *filename, off_t *size, FILE *out)
 {
 	FILE *in;
 	struct stat st;
-	struct utmp ut;
+	struct utmpx ut;
 	off_t pos;
 
 	if (!(in = fopen(filename, "r")))
@@ -207,7 +207,7 @@ static int follow_by_inotify(FILE *in, const char *filename, FILE *out)
 
 static FILE *dump(FILE *in, const char *filename, int follow, FILE *out)
 {
-	struct utmp ut;
+	struct utmpx ut;
 
 	if (follow)
 		ignore_result( fseek(in, -10 * sizeof(ut), SEEK_END) );
@@ -265,7 +265,7 @@ static int gettok(char *line, char *dest, int size, int eatspace)
 
 static void undump(FILE *in, FILE *out)
 {
-	struct utmp ut;
+	struct utmpx ut;
 	char s_addr[INET6_ADDRSTRLEN + 1], s_time[29], *linestart, *line;
 	int count = 0;
 

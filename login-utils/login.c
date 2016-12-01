@@ -45,7 +45,7 @@
 #include <errno.h>
 #include <grp.h>
 #include <pwd.h>
-#include <utmp.h>
+#include <utmpx.h>
 #ifdef HAVE_LASTLOG_H
 # include <lastlog.h>
 #endif
@@ -428,7 +428,7 @@ static void init_tty(struct login_context *cxt)
  */
 static void log_btmp(struct login_context *cxt)
 {
-	struct utmp ut;
+	struct utmpx ut;
 	struct timeval tv;
 
 	memset(&ut, 0, sizeof(ut));
@@ -456,7 +456,7 @@ static void log_btmp(struct login_context *cxt)
 			       sizeof(ut.ut_addr_v6));
 	}
 
-	updwtmp(_PATH_BTMP, &ut);
+	updwtmpx(_PATH_BTMP, &ut);
 }
 
 
@@ -555,12 +555,12 @@ done:
  */
 static void log_utmp(struct login_context *cxt)
 {
-	struct utmp ut;
-	struct utmp *utp;
+	struct utmpx ut;
+	struct utmpx *utp;
 	struct timeval tv;
 
-	utmpname(_PATH_UTMP);
-	setutent();
+	utmpxname(_PATH_UTMP);
+	setutxent();
 
 	/* Find pid in utmp.
 	 *
@@ -570,7 +570,7 @@ static void log_utmp(struct login_context *cxt)
 	 * but some number calculated from the previous and current runlevel.)
 	 * -- Michael Riepe <michael@stud.uni-hannover.de>
 	 */
-	while ((utp = getutent()))
+	while ((utp = getutxent()))
 		if (utp->ut_pid == cxt->pid
 		    && utp->ut_type >= INIT_PROCESS
 		    && utp->ut_type <= DEAD_PROCESS)
@@ -579,19 +579,19 @@ static void log_utmp(struct login_context *cxt)
 	/* If we can't find a pre-existing entry by pid, try by line.
 	 * BSD network daemons may rely on this. */
 	if (utp == NULL && cxt->tty_name) {
-		setutent();
+		setutxent();
 		ut.ut_type = LOGIN_PROCESS;
 		strncpy(ut.ut_line, cxt->tty_name, sizeof(ut.ut_line));
-		utp = getutline(&ut);
+		utp = getutxline(&ut);
 	}
 
 	/* If we can't find a pre-existing entry by pid and line, try it by id.
 	 * Very stupid telnetd daemons don't set up utmp at all. (kzak) */
 	if (utp == NULL && cxt->tty_number) {
-	     setutent();
+	     setutxent();
 	     ut.ut_type = DEAD_PROCESS;
 	     strncpy(ut.ut_id, cxt->tty_number, sizeof(ut.ut_id));
-	     utp = getutid(&ut);
+	     utp = getutxid(&ut);
 	}
 
 	if (utp)
@@ -619,10 +619,10 @@ static void log_utmp(struct login_context *cxt)
 			       sizeof(ut.ut_addr_v6));
 	}
 
-	pututline(&ut);
-	endutent();
+	pututxline(&ut);
+	endutxent();
 
-	updwtmp(_PATH_WTMP, &ut);
+	updwtmpx(_PATH_WTMP, &ut);
 }
 
 static void log_syslog(struct login_context *cxt)

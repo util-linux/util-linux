@@ -30,7 +30,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <utmp.h>
+#include <utmpx.h>
 #include <pwd.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -94,7 +94,7 @@ struct last_control {
 
 /* Double linked list of struct utmp's */
 struct utmplist {
-	struct utmp ut;
+	struct utmpx ut;
 	struct utmplist *next;
 	struct utmplist *prev;
 };
@@ -173,7 +173,7 @@ static int which_time_format(const char *s)
  *	Read one utmp entry, return in new format.
  *	Automatically reposition file pointer.
  */
-static int uread(FILE *fp, struct utmp *u,  int *quit, const char *filename)
+static int uread(FILE *fp, struct utmpx *u,  int *quit, const char *filename)
 {
 	static int utsize;
 	static char buf[UCHUNKSIZE];
@@ -186,14 +186,14 @@ static int uread(FILE *fp, struct utmp *u,  int *quit, const char *filename)
 		/*
 		 *	Normal read.
 		 */
-		return fread(u, sizeof(struct utmp), 1, fp);
+		return fread(u, sizeof(struct utmpx), 1, fp);
 	}
 
 	if (u == NULL) {
 		/*
 		 *	Initialize and position.
 		 */
-		utsize = sizeof(struct utmp);
+		utsize = sizeof(struct utmpx);
 		fseeko(fp, 0, SEEK_END);
 		fpos = ftello(fp);
 		if (fpos == 0)
@@ -217,7 +217,7 @@ static int uread(FILE *fp, struct utmp *u,  int *quit, const char *filename)
 	 */
 	bpos -= utsize;
 	if (bpos >= 0) {
-		memcpy(u, buf + bpos, sizeof(struct utmp));
+		memcpy(u, buf + bpos, sizeof(struct utmpx));
 		return 1;
 	}
 
@@ -253,7 +253,7 @@ static int uread(FILE *fp, struct utmp *u,  int *quit, const char *filename)
 	memcpy(tmp, buf + UCHUNKSIZE + bpos, -bpos);
 	bpos += UCHUNKSIZE;
 
-	memcpy(u, tmp, sizeof(struct utmp));
+	memcpy(u, tmp, sizeof(struct utmpx));
 
 	return 1;
 }
@@ -376,7 +376,7 @@ static void trim_trailing_spaces(char *s)
 /*
  *	Show one line of information on screen
  */
-static int list(const struct last_control *ctl, struct utmp *p, time_t logout_time, int what)
+static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_time, int what)
 {
 	time_t		secs, utmp_time;
 	char		logintime[LAST_TIMESTAMP_LEN];
@@ -592,7 +592,7 @@ static void __attribute__((__noreturn__)) usage(const struct last_control *ctl, 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static int is_phantom(const struct last_control *ctl, struct utmp *ut)
+static int is_phantom(const struct last_control *ctl, struct utmpx *ut)
 {
 	struct passwd *pw;
 	char path[32];
@@ -632,7 +632,7 @@ static void process_wtmp_file(const struct last_control *ctl,
 {
 	FILE *fp;		/* File pointer of wtmp file */
 
-	struct utmp ut;		/* Current utmp entry */
+	struct utmpx ut;	/* Current utmp entry */
 	struct utmplist *ulist = NULL;	/* All entries */
 	struct utmplist *p;	/* Pointer into utmplist */
 	struct utmplist *next;	/* Pointer into utmplist */
@@ -837,7 +837,7 @@ static void process_wtmp_file(const struct last_control *ctl,
 			if (ut.ut_line[0] == 0)
 				break;
 			p = xmalloc(sizeof(struct utmplist));
-			memcpy(&p->ut, &ut, sizeof(struct utmp));
+			memcpy(&p->ut, &ut, sizeof(struct utmpx));
 			p->next  = ulist;
 			p->prev  = NULL;
 			if (ulist)
@@ -848,7 +848,9 @@ static void process_wtmp_file(const struct last_control *ctl,
 		case EMPTY:
 		case INIT_PROCESS:
 		case LOGIN_PROCESS:
+#ifdef ACCOUNTING
 		case ACCOUNTING:
+#endif
 			/* ignored ut_types */
 			break;
 
@@ -987,10 +989,10 @@ int main(int argc, char **argv)
 			ctl.until = (time_t) (p / 1000000);
 			break;
 		case 'w':
-			if (ctl.name_len < sizeof(((struct utmp *) 0)->ut_user))
-				ctl.name_len = sizeof(((struct utmp *) 0)->ut_user);
-			if (ctl.domain_len < sizeof(((struct utmp *) 0)->ut_host))
-				ctl.domain_len = sizeof(((struct utmp *) 0)->ut_host);
+			if (ctl.name_len < sizeof(((struct utmpx *) 0)->ut_user))
+				ctl.name_len = sizeof(((struct utmpx *) 0)->ut_user);
+			if (ctl.domain_len < sizeof(((struct utmpx *) 0)->ut_host))
+				ctl.domain_len = sizeof(((struct utmpx *) 0)->ut_host);
 			break;
 		case '0': case '1': case '2': case '3': case '4':
 		case '5': case '6': case '7': case '8': case '9':

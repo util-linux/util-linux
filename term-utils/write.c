@@ -57,7 +57,7 @@
 #include <sys/stat.h>
 #include <time.h>
 #include <unistd.h>
-#include <utmp.h>
+#include <utmpx.h>
 
 #include "c.h"
 #include "carefulputc.h"
@@ -130,13 +130,13 @@ static int check_tty(const char *tty, int *tty_writeable, time_t *tty_atime, int
  */
 static int check_utmp(const struct write_control *ctl)
 {
-	struct utmp *u;
+	struct utmpx *u;
 	int res = 1;
 
-	utmpname(_PATH_UTMP);
-	setutent();
+	utmpxname(_PATH_UTMP);
+	setutxent();
 
-	while ((u = getutent())) {
+	while ((u = getutxent())) {
 		if (strncmp(ctl->dst_login, u->ut_user, sizeof(u->ut_user)) == 0 &&
 		    strncmp(ctl->dst_tty_name, u->ut_line, sizeof(u->ut_line)) == 0) {
 			res = 0;
@@ -144,7 +144,7 @@ static int check_utmp(const struct write_control *ctl)
 		}
 	}
 
-	endutent();
+	endutxent();
 	return res;
 }
 
@@ -161,15 +161,15 @@ static int check_utmp(const struct write_control *ctl)
  */
 static void search_utmp(struct write_control *ctl)
 {
-	struct utmp *u;
+	struct utmpx *u;
 	time_t best_atime = 0, tty_atime;
 	int num_ttys = 0, valid_ttys = 0, tty_writeable = 0, user_is_me = 0;
 	char path[sizeof(u->ut_line) + 6];
 
-	utmpname(_PATH_UTMP);
-	setutent();
+	utmpxname(_PATH_UTMP);
+	setutxent();
 
-	while ((u = getutent())) {
+	while ((u = getutxent())) {
 		if (strncmp(ctl->dst_login, u->ut_user, sizeof(u->ut_user)) != 0)
 			continue;
 		num_ttys++;
@@ -197,7 +197,7 @@ static void search_utmp(struct write_control *ctl)
 		}
 	}
 
-	endutent();
+	endutxent();
 	if (num_ttys == 0)
 		errx(EXIT_FAILURE, _("%s is not logged in"), ctl->dst_login);
 	if (valid_ttys == 0) {

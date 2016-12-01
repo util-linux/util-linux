@@ -31,7 +31,7 @@
 #include <shadow.h>
 #include <paths.h>
 #include <time.h>
-#include <utmp.h>
+#include <utmpx.h>
 #include <signal.h>
 #include <err.h>
 #include <limits.h>
@@ -243,10 +243,10 @@ static const struct lslogins_coldesc coldescs[] =
 };
 
 struct lslogins_control {
-	struct utmp *wtmp;
+	struct utmpx *wtmp;
 	size_t wtmp_size;
 
-	struct utmp *btmp;
+	struct utmpx *btmp;
 	size_t btmp_size;
 
 	void *usertree;
@@ -410,7 +410,7 @@ again:
 	return res;
 }
 
-static struct utmp *get_last_wtmp(struct lslogins_control *ctl, const char *username)
+static struct utmpx *get_last_wtmp(struct lslogins_control *ctl, const char *username)
 {
 	size_t n = 0;
 
@@ -445,7 +445,7 @@ static int require_btmp(void)
 	return 0;
 }
 
-static struct utmp *get_last_btmp(struct lslogins_control *ctl, const char *username)
+static struct utmpx *get_last_btmp(struct lslogins_control *ctl, const char *username)
 {
 	size_t n = 0;
 
@@ -462,21 +462,21 @@ static struct utmp *get_last_btmp(struct lslogins_control *ctl, const char *user
 
 }
 
-static int read_utmp(char const *file, size_t *nents, struct utmp **res)
+static int read_utmp(char const *file, size_t *nents, struct utmpx **res)
 {
 	size_t n_read = 0, n_alloc = 0;
-	struct utmp *utmp = NULL, *u;
+	struct utmpx *utmp = NULL, *u;
 
-	if (utmpname(file) < 0)
+	if (utmpxname(file) < 0)
 		return -errno;
 
-	setutent();
+	setutxent();
 	errno = 0;
 
-	while ((u = getutent()) != NULL) {
+	while ((u = getutxent()) != NULL) {
 		if (n_read == n_alloc) {
 			n_alloc += 32;
-			utmp = xrealloc(utmp, n_alloc * sizeof (struct utmp));
+			utmp = xrealloc(utmp, n_alloc * sizeof (struct utmpx));
 		}
 		utmp[n_read++] = *u;
 	}
@@ -485,7 +485,7 @@ static int read_utmp(char const *file, size_t *nents, struct utmp **res)
 		return -errno;
 	}
 
-	endutent();
+	endutxent();
 
 	*nents = n_read;
 	*res = utmp;
@@ -578,7 +578,7 @@ static struct lslogins_user *get_user_info(struct lslogins_control *ctl, const c
 	struct passwd *pwd;
 	struct group *grp;
 	struct spwd *shadow;
-	struct utmp *user_wtmp = NULL, *user_btmp = NULL;
+	struct utmpx *user_wtmp = NULL, *user_btmp = NULL;
 	int n = 0;
 	time_t time;
 	uid_t uid;

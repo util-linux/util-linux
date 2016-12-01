@@ -58,7 +58,7 @@ enum
 #include <signal.h>
 #include <sys/wait.h>
 #include <syslog.h>
-#include <utmp.h>
+#include <utmpx.h>
 
 #include "err.h"
 
@@ -182,7 +182,7 @@ log_syslog(struct passwd const *pw, bool successful)
  */
 static void log_btmp(struct passwd const *pw)
 {
-	struct utmp ut;
+	struct utmpx ut;
 	struct timeval tv;
 	const char *tty_name, *tty_num;
 
@@ -204,7 +204,7 @@ static void log_btmp(struct passwd const *pw)
 	ut.ut_type = LOGIN_PROCESS;	/* XXX doesn't matter */
 	ut.ut_pid = getpid();
 
-	updwtmp(_PATH_BTMP, &ut);
+	updwtmpx(_PATH_BTMP, &ut);
 }
 
 

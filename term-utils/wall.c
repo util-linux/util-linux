@@ -56,7 +56,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include <utmp.h>
+#include <utmpx.h>
 #include <getopt.h>
 #include <sys/types.h>
 #include <grp.h>
@@ -171,7 +171,7 @@ int main(int argc, char **argv)
 {
 	int ch;
 	struct iovec iov;
-	struct utmp *utmpptr;
+	struct utmpx *utmpptr;
 	char *p;
 	char line[sizeof(utmpptr->ut_line) + 1];
 	int print_banner = TRUE;
@@ -235,7 +235,7 @@ int main(int argc, char **argv)
 
 	iov.iov_base = mbuf;
 	iov.iov_len = mbufsize;
-	while((utmpptr = getutent())) {
+	while((utmpptr = getutxent())) {
 		if (!utmpptr->ut_user[0])
 			continue;
 #ifdef USER_PROCESS
@@ -255,7 +255,7 @@ int main(int argc, char **argv)
 		if ((p = ttymsg(&iov, 1, line, timeout)) != NULL)
 			warnx("%s", p);
 	}
-	endutent();
+	endutxent();
 	free(mbuf);
 	free_group_workspace(group_buf);
 	exit(EXIT_SUCCESS);

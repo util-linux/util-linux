@@ -25,7 +25,7 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <ctype.h>
-#include <utmp.h>
+#include <utmpx.h>
 #include <getopt.h>
 #include <time.h>
 #include <sys/socket.h>
@@ -884,13 +884,13 @@ static void parse_speeds(struct options *op, char *arg)
 /* Update our utmp entry. */
 static void update_utmp(struct options *op)
 {
-	struct utmp ut;
+	struct utmpx ut;
 	time_t t;
 	pid_t pid = getpid();
 	pid_t sid = getsid(0);
 	char *vcline = op->vcline;
 	char *line   = op->tty;
-	struct utmp *utp;
+	struct utmpx *utp;
 
 	/*
 	 * The utmp file holds miscellaneous information about things started by
@@ -900,8 +900,8 @@ static void update_utmp(struct options *op)
 	 * utmp file can be opened for update, and if we are able to find our
 	 * entry in the utmp file.
 	 */
-	utmpname(_PATH_UTMP);
-	setutent();
+	utmpxname(_PATH_UTMP);
+	setutxent();
 
 	/*
 	 * Find my pid in utmp.
@@ -912,7 +912,7 @@ static void update_utmp(struct options *op)
 	 * FIXME: The present code is taken from login.c, so if this is changed,
 	 * maybe login has to be changed as well (is this true?).
 	 */
-	while ((utp = getutent()))
+	while ((utp = getutxent()))
 		if (utp->ut_pid == pid
 				&& utp->ut_type >= INIT_PROCESS
 				&& utp->ut_type <= DEAD_PROCESS)
@@ -947,10 +947,10 @@ static void update_utmp(struct options *op)
 	ut.ut_pid = pid;
 	ut.ut_session = sid;
 
-	pututline(&ut);
-	endutent();
+	pututxline(&ut);
+	endutxent();
 
-	updwtmp(_PATH_WTMP, &ut);
+	updwtmpx(_PATH_WTMP, &ut);
 }
 
 #endif				/* SYSV_STYLE */
@@ -2448,12 +2448,12 @@ static void output_special_char(unsigned char c, struct options *op,
 	case 'U':
 	{
 		int users = 0;
-		struct utmp *ut;
-		setutent();
-		while ((ut = getutent()))
+		struct utmpx *ut;
+		setutxent();
+		while ((ut = getutxent()))
 			if (ut->ut_type == USER_PROCESS)
 				users++;
-		endutent();
+		endutxent();
 		if (c == 'U')
 			printf(P_("%d user", "%d users", users), users);
 		else
