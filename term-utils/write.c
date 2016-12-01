@@ -164,7 +164,7 @@ static void search_utmp(struct write_control *ctl)
 	struct utmp *u;
 	time_t best_atime = 0, tty_atime;
 	int num_ttys = 0, valid_ttys = 0, tty_writeable = 0, user_is_me = 0;
-	char path[UT_LINESIZE + 6];
+	char path[sizeof(u->ut_line) + 6];
 
 	utmpname(_PATH_UTMP);
 	setutent();
