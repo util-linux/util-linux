@@ -1,7 +1,6 @@
        _PATH_DEFPATH /usr/local/bin:/bin:/usr/bin
   _PATH_DEFPATH_ROOT /usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
       _PATH_DEV_LOOP /dev/loop
-      _PATH_WTMPLOCK /etc/wtmplock
      _PATH_HUSHLOGIN .hushlogin
        _PATH_MAILDIR /var/mail
       _PATH_MOTDFILE /etc/motd

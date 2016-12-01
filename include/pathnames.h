@@ -35,8 +35,6 @@
 # define _PATH_DEFPATH_ROOT	"/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
 #endif
 
-#define _PATH_WTMPLOCK		"/etc/wtmplock"
-
 #define	_PATH_HUSHLOGIN		".hushlogin"
 #define	_PATH_HUSHLOGINS	"/etc/hushlogins"
 

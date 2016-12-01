@@ -28,7 +28,6 @@
 #include <utmp.h>
 #include <getopt.h>
 #include <time.h>
-#include <sys/file.h>
 #include <sys/socket.h>
 #include <langinfo.h>
 #include <grp.h>
@@ -951,25 +950,7 @@ static void update_utmp(struct options *op)
 	pututline(&ut);
 	endutent();
 
-	{
-#ifdef HAVE_UPDWTMP
-		updwtmp(_PATH_WTMP, &ut);
-#else
-		int ut_fd;
-		int lf;
-
-		if ((lf = open(_PATH_WTMPLOCK, O_CREAT | O_WRONLY, 0660)) >= 0) {
-			flock(lf, LOCK_EX);
-			if ((ut_fd =
-			     open(_PATH_WTMP, O_APPEND | O_WRONLY)) >= 0) {
-				write_all(ut_fd, &ut, sizeof(ut));
-				close(ut_fd);
-			}
-			flock(lf, LOCK_UN);
-			close(lf);
-		}
-#endif				/* HAVE_UPDWTMP */
-	}
+	updwtmp(_PATH_WTMP, &ut);
 }
 
 #endif				/* SYSV_STYLE */

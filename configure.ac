@@ -412,7 +412,6 @@ AC_CHECK_FUNCS([ \
 	strnlen \
 	sysconf \
 	sysinfo \
-	updwtmp \
 	usleep \
 	warn \
 	warnx \
