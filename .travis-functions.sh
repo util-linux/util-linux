@@ -108,16 +108,8 @@ function osx_install_script
 	brew link --force ncurses
 
 	OSX_CONFOPTS="
-		--disable-runuser \
-		--disable-su \
-		--disable-login \
-		--disable-last \
-		--disable-utmpdump \
-		--disable-agetty \
-		--disable-wall \
 		--disable-ipcrm \
 		--disable-ipcs \
-		--disable-write \
 	"
 
 	# workaround: glibtoolize could not find sed
