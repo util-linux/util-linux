@@ -40,6 +40,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <libgen.h>
 
 #include "c.h"
 #include "nls.h"
@@ -877,7 +878,11 @@ static void process_wtmp_file(const struct last_control *ctl,
 		}
 	}
 
-	printf(_("\n%s begins %s"), basename(filename), ctime(&begintime));
+	{
+		char* tmp = xstrdup(filename);
+		printf(_("\n%s begins %s"), basename(tmp), ctime(&begintime));
+		free(tmp);
+	}
 	fclose(fp);
 
 	for (p = ulist; p; p = next) {
