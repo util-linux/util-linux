@@ -409,7 +409,7 @@ static void set_sched(struct chrt_ctl *ctl)
 
 int main(int argc, char **argv)
 {
-	struct chrt_ctl _ctl = { .pid = -1 }, *ctl = &_ctl;
+	struct chrt_ctl _ctl = { .pid = -1, .policy = SCHED_RR }, *ctl = &_ctl;
 	int c;
 
 	static const struct option longopts[] = {
