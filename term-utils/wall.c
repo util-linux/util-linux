@@ -109,10 +109,16 @@ struct group_workspace {
 static gid_t get_group_gid(const char *optarg)
 {
 	struct group *gr;
+	gid_t gid;
 
 	if ((gr = getgrnam(optarg)))
 		return gr->gr_gid;
-	return strtou64_or_err(optarg, _("invalid group argument"));
+
+	gid = strtou32_or_err(optarg, _("invalid group argument"));
+	if (!getgrgid(gid))
+		errx(EXIT_FAILURE, _("%s: unknown gid"), optarg);
+
+	return gid;
 }
 
 static struct group_workspace *init_group_workspace(const char *optarg)
