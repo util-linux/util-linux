@@ -57,7 +57,7 @@ mount \- mount a filesystem
 .SH DESCRIPTION
 All files accessible in a Unix system are arranged in one big
 tree, the file hierarchy, rooted at
-.BR / .
+.IR / .
 These files can be spread out over several devices.  The
 .B mount
 command serves to attach the filesystem found on some device
@@ -143,8 +143,10 @@ unique, especially if you move, share or copy the device.  Use
 to verify that the UUIDs are really unique in your system.
 
 The recommended setup is to use tags (e.g.\& \fBLABEL=\fIlabel\fR) rather than
-.B /dev/disk/by-{label,uuid,partuuid,partlabel}
-udev symlinks in the /etc/fstab file.  Tags are
+.I /dev/disk/by-{label,uuid,partuuid,partlabel}
+udev symlinks in the
+.I /etc/fstab
+file.  Tags are
 more readable, robust and portable.  The
 .BR mount (8)
 command internally uses udev
@@ -418,7 +420,7 @@ to the other mirror.  A slave mount receives propagation from its master, but
 not vice versa.  A private mount carries no propagation abilities.  An
 unbindable mount is a private mount which cannot be cloned through a bind
 operation.  The detailed semantics are documented in
-.B Documentation/filesystems/sharedsubtree.txt
+.I Documentation/filesystems/sharedsubtree.txt
 file in the kernel source tree.
 
 Supported operations are:
