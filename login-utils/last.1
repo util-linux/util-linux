@@ -28,7 +28,7 @@ last, lastb \- show a listing of last logged in users
 .SH DESCRIPTION
 .B last
 searches back through the
-.B /var/log/wtmp
+.I /var/log/wtmp
 file (or the file designated by the
 .B \-f
 option) and displays a list of all users logged in (and out) since that
@@ -61,7 +61,7 @@ will show a log of all the reboots since the log file was created.
 is the same as
 .BR last ,
 except that by default it shows a log of the
-.BR /var/log/btmp
+.IR /var/log/btmp
 file, which contains all the bad login attempts.
 .SH OPTIONS
 .TP
@@ -79,7 +79,7 @@ back into a hostname.
 Tell
 .B last
 to use a specific \fIfile\fR instead of
-.BR /var/log/wtmp .
+.IR /var/log/wtmp .
 The
 .B \-\-file
 option can be given multiple times, and all of the specified files will be

@@ -67,9 +67,9 @@ option is given), else it will be initialized to the terminal type on your tty.
 .PP
 Then the user's shell is started.  If no shell is specified for the
 user in
-.BR /etc\:/passwd ,
+.IR /etc\:/passwd ,
 then
-.B /bin\:/sh
+.I /bin\:/sh
 is used.  If there is no directory specified in
 .IR /etc\:/passwd ,
 then
@@ -136,7 +136,7 @@ Display version information and exit.
 .SH CONFIG FILE ITEMS
 .B login
 reads the
-.BR /etc\:/login.defs (5)
+.IR /etc\:/login.defs (5)
 configuration file.  Note that the configuration file could be
 distributed with another package (e.g. shadow-utils).  The following
 configuration items are relevant for
