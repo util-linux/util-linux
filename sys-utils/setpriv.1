@@ -13,7 +13,7 @@ Sets or queries various Linux privilege settings that are inherited across
 The difference between the commands setpriv and su (or runuser) is that setpriv does
 not use open PAM session and does not ask for password. It's simple non-suid wrapper around
 .B execve
-syscall.
+system call.
 .SH OPTION
 .TP
 .B \-\-clear\-groups

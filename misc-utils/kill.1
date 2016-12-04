@@ -112,7 +112,7 @@ then it can obtain this data via the si_sigval field of the siginfo_t structure.
 It is not possible to send a signal to an explicitly selected thread in a
 multithreaded process using the
 .BR kill (2)
-syscall.  If
+system call.  If
 .BR kill (2)
 is used to send a signal to a thread group, then the kernel selects an arbitrary
 member of the thread group that has not blocked the signal.  For more details
@@ -122,7 +122,7 @@ the CLONE_THREAD description.
 .PP
 The command
 .BR kill (1)
-as well as syscall
+as well as system call
 .BR kill (2)
 accept a TID (thread ID, see
 .BR gettid (2))
