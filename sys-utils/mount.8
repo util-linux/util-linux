@@ -571,7 +571,7 @@ Mount the partition that has the specified
 .TP
 .BR \-l , " \-\-show\-labels"
 Add the labels in the mount output.  \fBmount\fR must have
-permission to read the disk device (e.g.\& be suid root) for this to work.
+permission to read the disk device (e.g.\& be set-user-ID root) for this to work.
 One can set such a label for ext2, ext3 or ext4 using the
 .BR e2label (8)
 utility, or for XFS using
@@ -1058,11 +1058,11 @@ or
 Do not use the lazytime feature.
 .TP
 .B suid
-Allow set-user-identifier or set-group-identifier bits to take
+Allow set-user-ID or set-group-ID bits to take
 effect.
 .TP
 .B nosuid
-Do not allow set-user-identifier or set-group-identifier bits to take
+Do not allow set-user-ID or set-group-ID bits to take
 effect.
 .TP
 .B silent
@@ -1588,8 +1588,8 @@ When
 .B grpid
 is set, it takes the group id of the directory in which it is created;
 otherwise (the default) it takes the fsgid of the current process, unless
-the directory has the setgid bit set, in which case it takes the gid
-from the parent directory, and also gets the setgid bit set
+the directory has the set-group-ID bit set, in which case it takes the gid
+from the parent directory, and also gets the set-group-ID bit set
 if it is a directory itself.
 .TP
 .BR grpquota | noquota | quota | usrquota
