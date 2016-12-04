@@ -1198,7 +1198,7 @@ but with option
 .B uid
 or
 .B gid
-without specified value, the uid and gid of the current process are taken).
+without specified value, the UID and GID of the current process are taken).
 .TP
 \fBsetuid=\fP\,\fIvalue\fP and \fBsetgid=\fP\,\fIvalue\fP
 Set the owner and group of all files.
@@ -1214,7 +1214,7 @@ The value is given in octal.
 Do not allow any changes to the protection bits on the filesystem.
 .TP
 .B usemp
-Set uid and gid of the root of the filesystem to the uid and gid
+Set UID and GID of the root of the filesystem to the UID and GID
 of the mount point upon the first sync or umount, and then
 clear this option.  Strange...
 .TP
@@ -1599,7 +1599,7 @@ When
 .B grpid
 is set, it takes the group ID of the directory in which it is created;
 otherwise (the default) it takes the fsgid of the current process, unless
-the directory has the set-group-ID bit set, in which case it takes the gid
+the directory has the set-group-ID bit set, in which case it takes the GID
 from the parent directory, and also gets the set-group-ID bit set
 if it is a directory itself.
 .TP
@@ -1622,7 +1622,7 @@ space (by default 5%, see
 and
 .BR tune2fs (8)).
 These options determine who can use the reserved blocks.
-(Roughly: whoever has the specified uid, or belongs to the specified group.)
+(Roughly: whoever has the specified UID, or belongs to the specified group.)
 .TP
 .BI sb= n
 Instead of block 1, use block
@@ -1901,7 +1901,7 @@ Set blocksize (default 512).  This option is obsolete.
 .TP
 \fBuid=\fP\,\fIvalue\fP and \fBgid=\fP\,\fIvalue\fP
 Set the owner and group of all files.
-(Default: the uid and gid of the current process.)
+(Default: the UID and GID of the current process.)
 .TP
 .BI umask= value
 Set the umask (the bitmask of the permissions that are
@@ -1938,7 +1938,7 @@ is also allowed.  I.e.\& \s+3~\s0dmask & 022)
 Normally
 .BR utime (2)
 checks current process is owner of the file, or it has
-CAP_FOWNER capability.  But FAT filesystem doesn't have uid/gid on disk, so
+CAP_FOWNER capability.  But FAT filesystem doesn't have UID/GID on disk, so
 normal check is too inflexible.  With this option you can relax it.
 .RE
 .TP
@@ -2130,7 +2130,7 @@ used for creating new files.  Default values: '????'.
 .TP
 .BI uid= n ", gid=" n
 Set the owner and group of all files.
-(Default: the uid and gid of the current process.)
+(Default: the UID and GID of the current process.)
 .TP
 .BI dir_umask= n ", file_umask=" n ", umask=" n
 Set the umask used for all directories, all regular files, or all
@@ -2152,7 +2152,7 @@ Don't complain about invalid mount options.
 .SS "Mount options for hpfs"
 .TP
 \fBuid=\fP\,\fIvalue\fP and \fBgid=\fP\,\fIvalue\fP
-Set the owner and group of all files. (Default: the uid and gid
+Set the owner and group of all files. (Default: the UID and GID
 of the current process.)
 .TP
 .BI umask= value
