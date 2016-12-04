@@ -24,7 +24,7 @@ does not ask for a password (because it may be executed by the root user only) a
 it uses a different PAM configuration.
 The command
 .B runuser
-does not have to be installed with suid permissions.
+does not have to be installed with set-user-ID permissions.
 .PP
 If the PAM session is not required then recommended solution is to use
 .BR setpriv (1)
