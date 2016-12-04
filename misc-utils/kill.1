@@ -43,7 +43,7 @@ options, and the possibility to specify processes by command name, are local ext
 If \fIsignal\fR is 0, then no actual signal is sent, but error checking is still performed.
 
 .SH ARGUMENTS
-The list of processes to be signaled can be a mixture of names and pids.
+The list of processes to be signaled can be a mixture of names and PIDs.
 .TP
 .I pid
 Each
@@ -54,7 +54,7 @@ can be one of four things:
 .I n
 where
 .I n
-is larger than 0.  The process with pid
+is larger than 0.  The process with PID
 .I n
 is signaled.
 .TP
@@ -62,7 +62,7 @@ is signaled.
 All processes in the current process group are signaled.
 .TP
 .B -1
-All processes with a pid larger than 1 are signaled.
+All processes with a PID larger than 1 are signaled.
 .TP
 .BI - n
 where
@@ -93,15 +93,15 @@ Similar to \fB\-l\fR, but it will print signal names and their corresponding
 numbers.
 .TP
 \fB\-a\fR, \fB\-\-all\fR
-Do not restrict the command-name-to-pid conversion to processes with the same
+Do not restrict the command-name-to-PID conversion to processes with the same
 uid as the present process.
 .TP
 \fB\-p\fR, \fB\-\-pid\fR
-Only print the process ID (pid) of the named processes, do not send any
+Only print the process ID (PID) of the named processes, do not send any
 signals.
 .TP
 \fB\-\-verbose\fR
-Print pid(s) that will be signaled with kill along with the signal.
+Print PID(s) that will be signaled with kill along with the signal.
 .TP
 \fB\-q\fR, \fB\-\-queue\fR \fIvalue\fR
 Use
