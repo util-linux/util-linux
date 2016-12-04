@@ -358,7 +358,8 @@ For example:
 .RE
 
 This feature is not supported by the Linux kernel; it is implemented in userspace
-by an additional \fBmount\fR(2) remounting syscall.  This solution is not atomic.
+by an additional \fBmount\fR(2) remounting system call.
+This solution is not atomic.
 
 The alternative (classic) way to create a read-only bind mount is to use the remount
 operation, for example:
@@ -452,11 +453,11 @@ specified on the command line.
 Note that the Linux kernel does not allow to change multiple propagation flags
 with a single
 .BR mount (2)
-syscall, and the flags cannot be mixed with other mount options.
+system call, and the flags cannot be mixed with other mount options.
 
 Since util-linux 2.23 the \fBmount\fR command allows to use several propagation flags
 together and also together with other mount operations.  This feature is EXPERIMENTAL.
-The propagation flags are applied by additional \fBmount\fR(2) syscalls when the
+The propagation flags are applied by additional \fBmount\fR(2) system calls when the
 preceding mount operations were successful.  Note that this use case is not
 atomic.  It is possible to specify the propagation flags in
 .BR fstab (5)
