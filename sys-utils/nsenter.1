@@ -95,6 +95,13 @@ See \fBclone\fP(2) for the exact semantics of the flags.
 If \fIprogram\fP is not given, then ``${SHELL}'' is run (default: /bin\:/sh).
 
 .SH OPTIONS
+Various of the options below that relate to namespaces take an optional
+.I file
+argument.
+This should be one of the
+.IR /proc/[pid]/ns/*
+files described in
+.BR namespaces (7).
 .TP
 \fB\-t\fR, \fB\-\-target\fR \fIpid\fP
 Specify a target process to get contexts from.  The paths to the contexts
