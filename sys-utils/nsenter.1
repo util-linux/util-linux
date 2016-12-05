@@ -143,38 +143,60 @@ the working directory respectively
 .TP
 \fB\-m\fR, \fB\-\-mount\fR[=\fIfile\fR]
 Enter the mount namespace.  If no file is specified, enter the mount namespace
-of the target process.  If file is specified, enter the mount namespace
-specified by file.
+of the target process.
+If
+.I file
+is specified, enter the mount namespace
+specified by
+.IR file .
 .TP
 \fB\-u\fR, \fB\-\-uts\fR[=\fIfile\fR]
 Enter the UTS namespace.  If no file is specified, enter the UTS namespace of
-the target process.  If file is specified, enter the UTS namespace specified by
-file.
+the target process.
+If
+.I file
+is specified, enter the UTS namespace specified by
+.IR file .
 .TP
 \fB\-i\fR, \fB\-\-ipc\fR[=\fIfile\fR]
 Enter the IPC namespace.  If no file is specified, enter the IPC namespace of
-the target process.  If file is specified, enter the IPC namespace specified by
-file.
+the target process.
+If
+.I file
+is specified, enter the IPC namespace specified by
+.IR file .
 .TP
 \fB\-n\fR, \fB\-\-net\fR[=\fIfile\fR]
 Enter the network namespace.  If no file is specified, enter the network
-namespace of the target process.  If file is specified, enter the network
-namespace specified by file.
+namespace of the target process.
+If
+.I file
+is specified, enter the network namespace specified by
+.IR file .
 .TP
 \fB\-p\fR, \fB\-\-pid\fR[=\fIfile\fR]
 Enter the PID namespace.  If no file is specified, enter the PID namespace of
-the target process.  If file is specified, enter the PID namespace specified by
-file.
+the target process.
+If
+.I file
+is specified, enter the PID namespace specified by
+.IR file .
 .TP
 \fB\-U\fR, \fB\-\-user\fR[=\fIfile\fR]
 Enter the user namespace.  If no file is specified, enter the user namespace of
-the target process.  If file is specified, enter the user namespace specified by
-file.  See also the \fB\-\-setuid\fR and \fB\-\-setgid\fR options.
+the target process.
+If
+.I file
+is specified, enter the user namespace specified by
+.IR file .
 .TP
 \fB\-C\fR, \fB\-\-cgroup\fR[=\fIfile\fR]
 Enter the cgroup namespace.  If no file is specified, enter the cgroup namespace of
-the target process.  If file is specified, enter the cgroup namespace specified by
-file.
+the target process.
+If
+.I file
+is specified, enter the cgroup namespace specified by
+.IR file .
 .TP
 \fB\-G\fR, \fB\-\-setgid\fR \fIgid\fR
 Set the group ID which will be used in the entered namespace and drop
