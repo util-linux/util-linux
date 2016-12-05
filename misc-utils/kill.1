@@ -21,9 +21,17 @@ kill \- terminate a process
 The command
 .B kill
 sends the specified \fIsignal\fR to the specified processes or process groups.
-If no signal is specified, the TERM signal is sent.  This TERM signal will kill
-processes that do not catch it; for other processes it may be necessary to use
-the KILL signal (number 9), since this signal cannot be caught.
+.PP
+If no signal is specified, the TERM signal is sent.
+The default action for this signal is to terminate the process.
+This signal should be used in preference to the
+KILL signal (number 9), since a process may install a handler for the
+TERM signal in order to perform clean-up steps before terminating in
+an orderly fashion.
+If a process does not terminate after a TERM signal has been sent,
+then the KILL signal may be used; be aware that the latter signal
+cannot be caught, and so does not give the target process the opportunity
+to do perform any clean-up before terminating.
 .PP
 Most modern shells have a builtin kill function, with a usage rather similar to
 that of the command described here.  The
