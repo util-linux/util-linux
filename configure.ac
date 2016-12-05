@@ -1592,7 +1592,11 @@ AM_CONDITIONAL([BUILD_HEXDUMP], [test "x$build_hexdump" = xyes])
 UL_BUILD_INIT([rev], [yes])
 AM_CONDITIONAL([BUILD_REV], [test "x$build_rev" = xyes])
 
-UL_BUILD_INIT([tailf], [yes])
+AC_ARG_ENABLE([tailf],
+  AS_HELP_STRING([--enable-tailf], [build tailf (deprecated)]),
+  [], [UL_DEFAULT_ENABLE([tailf], [no])]
+)
+UL_BUILD_INIT([tailf])
 AM_CONDITIONAL([BUILD_TAILF], [test "x$build_tailf" = xyes])
 
 
