@@ -111,10 +111,15 @@ rather than
 The
 .I value
 argument is an integer that is sent along with the signal.  If the
-receiving process has installed a handler for this signal using the SA_SIGINFO
+receiving process has installed a handler for this signal using the
+.B SA_SIGINFO
 flag to
 .BR sigaction (2),
-then it can obtain this data via the si_sigval field of the siginfo_t structure.
+then it can obtain this data via the
+.I si_sigval
+field of the
+.I siginfo_t
+structure.
 
 .SH NOTES
 Although it is possible to specify the TID (thread ID, see
