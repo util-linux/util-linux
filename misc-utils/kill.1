@@ -117,25 +117,22 @@ flag to
 then it can obtain this data via the si_sigval field of the siginfo_t structure.
 
 .SH NOTES
-It is not possible to send a signal to an explicitly selected thread in a
-multithreaded process using the
-.BR kill (2)
-system call.  If
-.BR kill (2)
-is used to send a signal to a thread group, then the kernel selects an arbitrary
-member of the thread group that has not blocked the signal.  For more details
-see
-.BR clone (2),
-the CLONE_THREAD description.
-.PP
-The command
-.BR kill (1)
-as well as system call
-.BR kill (2)
-accept a TID (thread ID, see
+Although it is possible to specify the TID (thread ID, see
 .BR gettid (2))
-as an argument.  In this case the kill behavior is not changed and the signal is
-also delivered to the thread group rather than to the specified thread.
+of one of the threads in a multithreaded process as the argument of
+.BR kill ,
+the signal is nevertheless directed to the process
+(i.e., the entire thread group).
+In other words, it is not possible to send a signal to an
+explicitly selected thread in a multithreaded process.
+The signal will be delivered to an arbitrarily selected thread
+in the target process that is not blocking the signal.
+For more details, see
+.BR signal (7)
+and the description of
+.BR CLONE_THREAD
+in
+.BR clone (2).
 
 .SH RETURN CODES
 .B kill
