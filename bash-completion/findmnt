@@ -127,6 +127,7 @@ _findmnt_module()
 				--target
 				--mountpoint
 				--help
+				--tree
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0

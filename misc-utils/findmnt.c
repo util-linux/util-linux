@@ -1227,6 +1227,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -S, --source <string>  the device to mount (by name, maj:min, \n"
 	        "                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"), out);
 	fputs(_(" -T, --target <path>    the path to the filesystem to use\n"), out);
+	fputs(_("     --tree             enable tree format output is possible\n"), out);
 	fputs(_(" -M, --mountpoint <dir> the mountpoint directory\n"), out);
 	fputs(_(" -t, --types <list>     limit the set of filesystems by FS types\n"), out);
 	fputs(_(" -U, --uniq             ignore filesystems with duplicate target\n"), out);
@@ -1262,11 +1263,13 @@ int main(int argc, char *argv[])
 	int ntabfiles = 0, tabtype = 0;
 	char *outarg = NULL;
 	size_t i;
+	int force_tree = 0, istree = 0;
 
 	struct libscols_table *table = NULL;
 
 	enum {
-                FINDMNT_OPT_VERBOSE = CHAR_MAX + 1
+                FINDMNT_OPT_VERBOSE = CHAR_MAX + 1,
+		FINDMNT_OPT_TREE
 	};
 
 	static const struct option longopts[] = {
@@ -1306,6 +1309,7 @@ int main(int argc, char *argv[])
 	    { "verify",       0, 0, 'x' },
 	    { "version",      0, 0, 'V' },
 	    { "verbose",      0, 0, FINDMNT_OPT_VERBOSE },
+	    { "tree",         0, 0, FINDMNT_OPT_TREE },
 	    { NULL,           0, 0, 0 }
 	};
 
@@ -1469,6 +1473,9 @@ int main(int argc, char *argv[])
 		case FINDMNT_OPT_VERBOSE:
 			flags |= FL_VERBOSE;
 			break;
+		case FINDMNT_OPT_TREE:
+			force_tree = 1;
+			break;
 		default:
 			usage(stderr);
 			break;
@@ -1551,7 +1558,11 @@ int main(int argc, char *argv[])
 	if (tabtype == TABTYPE_MTAB && tab_is_kernel(tb))
 		tabtype = TABTYPE_KERNEL;
 
-	if ((flags & FL_TREE) && (ntabfiles > 1 || !tab_is_tree(tb)))
+	istree = tab_is_tree(tb);
+	if (istree && force_tree)
+		flags |= FL_TREE;
+
+	if ((flags & FL_TREE) && (ntabfiles > 1 || !istree))
 		flags &= ~FL_TREE;
 
 	if (!(flags & FL_NOCACHE)) {

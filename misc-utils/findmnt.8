@@ -110,7 +110,7 @@ Explicitly define the mountpoint file or directory.  See also \fB\-\-target\fP.
 .BR \-m , " \-\-mtab"
 Search in
 .IR /etc/mtab .
-The output is in the list format (see \fB\-\-list\fP).  The output may include user
+The output is in the list format by default (see \fB\-\-tree\fP).  The output may include user
 space mount options.
 .TP
 .BR \-N , " \-\-task \fItid\fP"
@@ -215,6 +215,10 @@ prefixed with
 to specify the filesystem types on which no action should be taken.  For
 more details see
 .BR mount (8).
+.TP
+.BR " \-\-tree"
+Enable tree-like output if possible.  The options is silently ignored for
+tables where is missing child-parent relation (e.g. fstab).
 .TP
 .BR \-U , " \-\-uniq"
 Ignore filesystems with duplicate mount targets, thus effectively skipping
