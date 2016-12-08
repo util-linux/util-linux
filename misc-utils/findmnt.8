@@ -95,7 +95,8 @@ Use JSON output format.
 .BR \-k , " \-\-kernel"
 Search in
 .IR /proc/self/mountinfo .
-The output is in the tree-like format.  This is the default.
+The output is in the tree-like format.  This is the default.  The output
+contains only mount options maintained by kernel (see also \fB\-\-mtab)\fP.
 .TP
 .BR \-l , " \-\-list"
 Use the list output format.  This output format is automatically enabled if the
@@ -109,7 +110,8 @@ Explicitly define the mountpoint file or directory.  See also \fB\-\-target\fP.
 .BR \-m , " \-\-mtab"
 Search in
 .IR /etc/mtab .
-The output is in the list format (see \fB\-\-list\fP).
+The output is in the list format (see \fB\-\-list\fP).  The output may include user
+space mount options.
 .TP
 .BR \-N , " \-\-task \fItid\fP"
 Use alternative namespace /proc/<tid>/mountinfo rather than the default

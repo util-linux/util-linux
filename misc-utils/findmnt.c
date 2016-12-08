@@ -1194,7 +1194,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -s, --fstab            search in static table of filesystems\n"), out);
-	fputs(_(" -m, --mtab             search in table of mounted filesystems\n"), out);
+	fputs(_(" -m, --mtab             search in table of mounted filesystems\n"
+		"                          (includes user space mount options)\n"), out);
 	fputs(_(" -k, --kernel           search in kernel table of mounted\n"
 		"                          filesystems (default)\n"), out);
 	fputc('\n', out);
