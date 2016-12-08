@@ -60,7 +60,6 @@
 #include <getopt.h>
 #include <sys/types.h>
 #include <grp.h>
-#include <linux/sysctl.h>
 
 #include "nls.h"
 #include "xalloc.h"
