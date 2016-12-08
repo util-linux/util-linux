@@ -1142,11 +1142,18 @@ This option implies the options
 .TP
 .B x-*
 All options prefixed with "x-" are interpreted as comments or as userspace
-application-specific options.  These options are not stored in the mtab file,
+application-specific options.  These options are not stored in the user space (e.g. mtab file),
 nor sent to the mount.\fItype\fR helpers nor to the
 .BR mount (2)
-system call.  The suggested format is \fBx-\fIappname\fR.\fIoption\fR
-(e.g.\& \fBx-systemd.automount\fR).
+system call.  The suggested format is \fBx-\fIappname\fR.\fIoption\fR.
+.TP
+.B X-*
+The same as \fBx-*\fR options, but stored permanently in the user space. It
+means the options are also available for umount or another operations.  Note
+that maintain mount options in user space is a bad idea, because it's necessary
+to link all tools that use the options with libmount and there is no guarantee that the
+options will be always available (for example after a move mount operation or in
+unshared namespace).
 .TP
 .BR x-mount.mkdir [ = \fImode\fR ]
 Allow to make a target directory (mountpoint).  The optional argument
