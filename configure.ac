@@ -1971,6 +1971,7 @@ AS_IF([test "x$with_systemd" != xno], [
       [AC_MSG_ERROR([systemd expected but libsystemd not found])],
     [*:yes],
        AC_DEFINE([HAVE_LIBSYSTEMD], [1], [Define if libsystemd is available])
+       AC_DEFINE([HAVE_SYSTEMD], [1], [Define if systemd should be supported])
   )
 ])
 AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$have_systemd" = xyes])

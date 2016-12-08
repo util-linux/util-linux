@@ -1154,6 +1154,10 @@ that maintain mount options in user space is a bad idea, because it's necessary
 to link all tools that use the options with libmount and there is no guarantee that the
 options will be always available (for example after a move mount operation or in
 unshared namespace).
+
+Note that x-systemd mount options are maintained as X-* options, the rename is
+unnecessary to keep existing fstab settings backwardly compatible.
+
 .TP
 .BR x-mount.mkdir [ = \fImode\fR ]
 Allow to make a target directory (mountpoint).  The optional argument
