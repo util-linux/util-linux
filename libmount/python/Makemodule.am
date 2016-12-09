@@ -32,6 +32,4 @@ dist_check_SCRIPTS += libmount/python/test_mount_context.py
 dist_check_SCRIPTS += libmount/python/test_mount_tab.py
 dist_check_SCRIPTS += libmount/python/test_mount_tab_update.py
 
-CLEANFILES += *.img
-
 endif # BUILD_PYLIBMOUNT
