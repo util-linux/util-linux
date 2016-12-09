@@ -23,9 +23,6 @@ LABEL=libmount-test
 UUID=$($TS_CMD_UUIDGEN)
 
 MOUNTPOINT="$TS_MOUNTPOINT"
-TS_NOEXIST="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-noex"
-[ -d $TS_NOEXIST ] && rmdir $TS_NOEXIST
-
 [ -x $TESTPROG ] || ts_skip "test not compiled"
 
 ts_log "Init device"
@@ -147,8 +144,24 @@ is_mounted $MOUNTPOINT && echo "$MOUNTPOINT still mounted" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
+# deprecated
 ts_init_subtest "x-mount.mkdir"
+TS_NOEXIST="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-noex"
+[ -d $TS_NOEXIST ] && rmdir $TS_NOEXIST
+
 $TS_CMD_MOUNT -o x-mount.mkdir --bind $MOUNTPOINT $TS_NOEXIST >> $TS_OUTPUT 2>&1 &&
+  echo "successfully mounted" >> $TS_OUTPUT
+ts_finalize_subtest
+
+$TS_CMD_UMOUNT $TS_NOEXIST
+rmdir $TS_NOEXIST
+
+
+ts_init_subtest "X-mount.mkdir"
+TS_NOEXIST="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-noex"
+[ -d $TS_NOEXIST ] && rmdir $TS_NOEXIST
+
+$TS_CMD_MOUNT -o X-mount.mkdir --bind $MOUNTPOINT $TS_NOEXIST >> $TS_OUTPUT 2>&1 &&
   echo "successfully mounted" >> $TS_OUTPUT
 ts_finalize_subtest
 

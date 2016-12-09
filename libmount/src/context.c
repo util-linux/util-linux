@@ -1531,7 +1531,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 	return 0;
 }
 
-/* create a mountpoint if x-mount.mkdir[=<mode>] specified */
+/* create a mountpoint if X-mount.mkdir[=<mode>] specified */
 static int mkdir_target(const char *tgt, struct libmnt_fs *fs)
 {
 	char *mstr = NULL;
@@ -1543,8 +1543,12 @@ static int mkdir_target(const char *tgt, struct libmnt_fs *fs)
 	assert(tgt);
 	assert(fs);
 
-	if (mnt_optstr_get_option(fs->user_optstr, "x-mount.mkdir", &mstr, &mstr_sz) != 0)
+	if (mnt_optstr_get_option(fs->user_optstr, "X-mount.mkdir", &mstr, &mstr_sz) != 0 &&
+	    mnt_optstr_get_option(fs->user_optstr, "x-mount.mkdir", &mstr, &mstr_sz) != 0)   	/* obsolete */
 		return 0;
+
+	DBG(CXT, ul_debug("mkdir %s (%s) wanted", tgt, mstr));
+
 	if (mnt_stat_mountpoint(tgt, &st) == 0)
 		return 0;
 
@@ -1591,7 +1595,8 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	/* mkdir target */
 	if (cxt->action == MNT_ACT_MOUNT
 	    && !mnt_context_is_restricted(cxt)
-	    && cxt->user_mountflags & MNT_MS_XCOMMENT) {
+	    && (cxt->user_mountflags & MNT_MS_XCOMMENT ||
+		cxt->user_mountflags & MNT_MS_XFSTABCOMM)) {
 
 		rc = mkdir_target(tgt, cxt->fs);
 		if (rc)

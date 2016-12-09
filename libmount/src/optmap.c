@@ -160,15 +160,8 @@ static const struct libmnt_optmap userspace_opts_map[] =
 
    { "comment=", MNT_MS_COMMENT, MNT_NOHLPS | MNT_NOMTAB },/* fstab comment only */
 
-   /*
-    * systemd assumes that x-systemd options namespace is available for umount,
-    * let's use the options as X-*
-    */
-#ifdef HAVE_SYSTEMD
-   { "x-systemd", MNT_MS_XPERSIST, MNT_NOHLPS | MNT_PREFIX },		 /* like X-* */
-#endif
-   { "X-",      MNT_MS_XPERSIST, MNT_NOHLPS | MNT_PREFIX },              /* X- persistent comments (utab) */
-   { "x-",      MNT_MS_XCOMMENT, MNT_NOHLPS | MNT_NOMTAB | MNT_PREFIX }, /* x- fstab only comments */
+   { "x-",      MNT_MS_XCOMMENT,   MNT_NOHLPS | MNT_PREFIX },              /* persistent comments (utab) */
+   { "X-",      MNT_MS_XFSTABCOMM, MNT_NOHLPS | MNT_NOMTAB | MNT_PREFIX }, /* fstab only comments */
 
    { "loop[=]", MNT_MS_LOOP, MNT_NOHLPS },                             /* use the loop device */
    { "offset=", MNT_MS_OFFSET, MNT_NOHLPS | MNT_NOMTAB },		   /* loop device offset */
