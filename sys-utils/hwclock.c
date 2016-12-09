@@ -1859,11 +1859,6 @@ int main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	if (getuid() != 0) {
-		warnx(_("Sorry, only the superuser can use the Hardware Clock."));
-		hwclock_exit(EX_NOPERM);
-	}
-
 #ifdef HAVE_LIBAUDIT
 	if (testing != TRUE) {
 		if (adjust == TRUE || hctosys == TRUE || systohc == TRUE ||
