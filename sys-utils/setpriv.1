@@ -11,7 +11,8 @@ Sets or queries various Linux privilege settings that are inherited across
 .BR execve (2).
 .PP
 The difference between the commands setpriv and su (or runuser) is that setpriv does
-not use open PAM session and does not ask for password. It's simple non-suid wrapper around
+not use open PAM session and does not ask for password.
+It's simple non-set-user-ID wrapper around
 .B execve
 system call.
 .SH OPTION
@@ -59,7 +60,8 @@ Set the
 .I no_new_privs
 bit.  With this bit set,
 .BR execve (2)
-will not grant new privileges.  For example, the setuid and setgid bits as well
+will not grant new privileges.
+For example, the set-user-ID and set-group-ID bits as well
 as file capabilities will be disabled.  (Executing binaries with these bits set
 will still work, but they will not gain privileges.  Certain LSMs, especially
 AppArmor, may result in failures to execute certain programs.)  This bit is
@@ -72,7 +74,7 @@ in the Linux kernel source.
 The no_new_privs bit is supported since Linux 3.5.
 .TP
 .BI \-\-rgid " gid\fR, " \-\-egid " gid\fR, " \-\-regid " gid"
-Set the real, effective, or both gids.  The \fIgid\fR argument can be
+Set the real, effective, or both GIDs.  The \fIgid\fR argument can be
 given as textual group name.
 .sp
 For safety, you must specify one of
@@ -83,7 +85,7 @@ if you set any primary
 .IR gid .
 .TP
 .BI \-\-ruid " uid\fR, " \-\-euid " uid\fR, " \-\-reuid " uid"
-Set the real, effective, or both uids.  The \fIuid\fR argument can be
+Set the real, effective, or both UIDs.  The \fIuid\fR argument can be
 given as textual login name.
 .sp
 Setting a

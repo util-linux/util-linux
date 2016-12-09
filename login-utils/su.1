@@ -42,7 +42,8 @@ configured via PAM.
 .PP
 .B su
 is mostly designed for unprivileged users, the recommended solution for
-privileged users (e.g. scripts executed by root) is to use non-suid command
+privileged users (e.g. scripts executed by root) is to use
+non-set-user-ID command
 .BR runuser (1)
 that does not require authentication and provide separate PAM configuration. If
 the PAM session is not required at all then the recommend solution is to use

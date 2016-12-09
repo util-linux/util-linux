@@ -57,7 +57,7 @@ mount \- mount a filesystem
 .SH DESCRIPTION
 All files accessible in a Unix system are arranged in one big
 tree, the file hierarchy, rooted at
-.BR / .
+.IR / .
 These files can be spread out over several devices.  The
 .B mount
 command serves to attach the filesystem found on some device
@@ -143,8 +143,10 @@ unique, especially if you move, share or copy the device.  Use
 to verify that the UUIDs are really unique in your system.
 
 The recommended setup is to use tags (e.g.\& \fBLABEL=\fIlabel\fR) rather than
-.B /dev/disk/by-{label,uuid,partuuid,partlabel}
-udev symlinks in the /etc/fstab file.  Tags are
+.I /dev/disk/by-{label,uuid,partuuid,partlabel}
+udev symlinks in the
+.I /etc/fstab
+file.  Tags are
 more readable, robust and portable.  The
 .BR mount (8)
 command internally uses udev
@@ -418,7 +420,7 @@ to the other mirror.  A slave mount receives propagation from its master, but
 not vice versa.  A private mount carries no propagation abilities.  An
 unbindable mount is a private mount which cannot be cloned through a bind
 operation.  The detailed semantics are documented in
-.B Documentation/filesystems/sharedsubtree.txt
+.I Documentation/filesystems/sharedsubtree.txt
 file in the kernel source tree.
 
 Supported operations are:
@@ -517,7 +519,7 @@ Mount all filesystems (of the given types) mentioned in
 keyword).  The filesystems are mounted following their order in
 .IR fstab .
 .sp
-Note that it is a bad manner to use \fBmount \-a\fR for
+Note that it is a bad practice to use \fBmount \-a\fR for
 .IR fstab
 checking. The recommended solution is \fBfindmnt \-\-verify\fR.
 .TP
@@ -569,7 +571,7 @@ Mount the partition that has the specified
 .TP
 .BR \-l , " \-\-show\-labels"
 Add the labels in the mount output.  \fBmount\fR must have
-permission to read the disk device (e.g.\& be suid root) for this to work.
+permission to read the disk device (e.g.\& be set-user-ID root) for this to work.
 One can set such a label for ext2, ext3 or ext4 using the
 .BR e2label (8)
 utility, or for XFS using
@@ -1056,11 +1058,11 @@ or
 Do not use the lazytime feature.
 .TP
 .B suid
-Allow set-user-identifier or set-group-identifier bits to take
+Allow set-user-ID or set-group-ID bits to take
 effect.
 .TP
 .B nosuid
-Do not allow set-user-identifier or set-group-identifier bits to take
+Do not allow set-user-ID or set-group-ID bits to take
 effect.
 .TP
 .B silent
@@ -1196,7 +1198,7 @@ but with option
 .B uid
 or
 .B gid
-without specified value, the uid and gid of the current process are taken).
+without specified value, the UID and GID of the current process are taken).
 .TP
 \fBsetuid=\fP\,\fIvalue\fP and \fBsetgid=\fP\,\fIvalue\fP
 Set the owner and group of all files.
@@ -1212,7 +1214,7 @@ The value is given in octal.
 Do not allow any changes to the protection bits on the filesystem.
 .TP
 .B usemp
-Set uid and gid of the root of the filesystem to the uid and gid
+Set UID and GID of the root of the filesystem to the UID and GID
 of the mount point upon the first sync or umount, and then
 clear this option.  Strange...
 .TP
@@ -1592,13 +1594,13 @@ changed using
 .BR tune2fs (8).
 .TP
 .BR grpid | bsdgroups " and " nogrpid | sysvgroups
-These options define what group id a newly created file gets.
+These options define what group ID a newly created file gets.
 When
 .B grpid
-is set, it takes the group id of the directory in which it is created;
+is set, it takes the group ID of the directory in which it is created;
 otherwise (the default) it takes the fsgid of the current process, unless
-the directory has the setgid bit set, in which case it takes the gid
-from the parent directory, and also gets the setgid bit set
+the directory has the set-group-ID bit set, in which case it takes the GID
+from the parent directory, and also gets the set-group-ID bit set
 if it is a directory itself.
 .TP
 .BR grpquota | noquota | quota | usrquota
@@ -1620,7 +1622,7 @@ space (by default 5%, see
 and
 .BR tune2fs (8)).
 These options determine who can use the reserved blocks.
-(Roughly: whoever has the specified uid, or belongs to the specified group.)
+(Roughly: whoever has the specified UID, or belongs to the specified group.)
 .TP
 .BI sb= n
 Instead of block 1, use block
@@ -1899,7 +1901,7 @@ Set blocksize (default 512).  This option is obsolete.
 .TP
 \fBuid=\fP\,\fIvalue\fP and \fBgid=\fP\,\fIvalue\fP
 Set the owner and group of all files.
-(Default: the uid and gid of the current process.)
+(Default: the UID and GID of the current process.)
 .TP
 .BI umask= value
 Set the umask (the bitmask of the permissions that are
@@ -1936,7 +1938,7 @@ is also allowed.  I.e.\& \s+3~\s0dmask & 022)
 Normally
 .BR utime (2)
 checks current process is owner of the file, or it has
-CAP_FOWNER capability.  But FAT filesystem doesn't have uid/gid on disk, so
+CAP_FOWNER capability.  But FAT filesystem doesn't have UID/GID on disk, so
 normal check is too inflexible.  With this option you can relax it.
 .RE
 .TP
@@ -2128,7 +2130,7 @@ used for creating new files.  Default values: '????'.
 .TP
 .BI uid= n ", gid=" n
 Set the owner and group of all files.
-(Default: the uid and gid of the current process.)
+(Default: the UID and GID of the current process.)
 .TP
 .BI dir_umask= n ", file_umask=" n ", umask=" n
 Set the umask used for all directories, all regular files, or all
@@ -2150,7 +2152,7 @@ Don't complain about invalid mount options.
 .SS "Mount options for hpfs"
 .TP
 \fBuid=\fP\,\fIvalue\fP and \fBgid=\fP\,\fIvalue\fP
-Set the owner and group of all files. (Default: the uid and gid
+Set the owner and group of all files. (Default: the UID and GID
 of the current process.)
 .TP
 .BI umask= value

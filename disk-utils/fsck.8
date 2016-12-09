@@ -36,7 +36,7 @@ If no filesystems are specified on the command line, and the
 option is not specified,
 .B fsck
 will default to checking filesystems in
-.B /etc/fstab
+.I /etc/fstab
 serially.  This is equivalent to the
 .B \-As
 options.
@@ -160,13 +160,13 @@ They must have the format
 If an options specifier is present, then only filesystems which contain
 .I fs-option
 in their mount options field of
-.B /etc/fstab
+.I /etc/fstab
 will be checked.  If the options specifier is prefixed by a negation
 operator, then only
 those filesystems that do not have
 .I fs-option
 in their mount options field of
-.B /etc/fstab
+.I /etc/fstab
 will be checked.
 .sp
 For example, if
@@ -174,7 +174,7 @@ For example, if
 appears in
 .IR fslist ,
 then only filesystems listed in
-.B /etc/fstab
+.I /etc/fstab
 with the
 .B ro
 option will be checked.
@@ -261,7 +261,7 @@ normally does not check whether the device actually exists before
 calling a filesystem specific checker.  Therefore non-existing
 devices may cause the system to enter filesystem repair mode during
 boot if the filesystem specific checker returns a fatal error.  The
-.B /etc/fstab
+.I /etc/fstab
 mount option
 .B nofail
 may be used to have
@@ -373,7 +373,7 @@ environment variable is used to find filesystem checkers.
 .B FSTAB_FILE
 This environment variable allows the system administrator
 to override the standard location of the
-.B /etc/fstab
+.I /etc/fstab
 file.  It is also useful for developers who are testing
 .BR fsck .
 .TP
