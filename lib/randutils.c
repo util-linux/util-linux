@@ -25,6 +25,25 @@
 #define THREAD_LOCAL static
 #endif
 
+#ifdef HAVE_GETRANDOM
+# include <linux/random.h>
+#elif defined (__linux__)
+# include <sys/syscall.h>
+# if !defined(SYS_getrandom) && defined(__NR_getrandom)
+   /* usable kernel-headers, but old glibc-headers */
+#  define SYS_getrandom __NR_getrandom
+# endif
+#endif
+
+#if !defined(HAVE_GETRANDOM) && defined(SYS_getrandom)
+/* libc without function, but we have syscal */
+static int getrandom(void *buf, size_t buflen, unsigned int flags)
+{
+	return (syscall(SYS_getrandom, buf, buflen, flags));
+}
+# define HAVE_GETRANDOM
+#endif
+
 #if defined(__linux__) && defined(__NR_gettid) && defined(HAVE_JRAND48)
 #define DO_JRAND_MIX
 THREAD_LOCAL unsigned short ul_jrand_seed[3];
@@ -35,19 +54,10 @@ int rand_get_number(int low_n, int high_n)
 	return rand() % (high_n - low_n + 1) + low_n;
 }
 
-int random_get_fd(void)
+static void crank_random(void)
 {
-	int i, fd;
+	int i;
 	struct timeval tv;
-
-	fd = open("/dev/urandom", O_RDONLY | O_CLOEXEC);
-	if (fd == -1)
-		fd = open("/dev/random", O_RDONLY | O_NONBLOCK | O_CLOEXEC);
-	if (fd >= 0) {
-		i = fcntl(fd, F_GETFD);
-		if (i >= 0)
-			fcntl(fd, F_SETFD, i | FD_CLOEXEC);
-	}
 
 	gettimeofday(&tv, 0);
 	srand((getpid() << 16) ^ getuid() ^ tv.tv_sec ^ tv.tv_usec);
@@ -61,9 +71,23 @@ int random_get_fd(void)
 	gettimeofday(&tv, 0);
 	for (i = (tv.tv_sec ^ tv.tv_usec) & 0x1F; i > 0; i--)
 		rand();
-	return fd;
 }
 
+int random_get_fd(void)
+{
+	int i, fd;
+
+	fd = open("/dev/urandom", O_RDONLY | O_CLOEXEC);
+	if (fd == -1)
+		fd = open("/dev/random", O_RDONLY | O_NONBLOCK | O_CLOEXEC);
+	if (fd >= 0) {
+		i = fcntl(fd, F_GETFD);
+		if (i >= 0)
+			fcntl(fd, F_SETFD, i | FD_CLOEXEC);
+	}
+	crank_random();
+	return fd;
+}
 
 /*
  * Generate a stream of random nbytes into buf.
@@ -72,10 +96,19 @@ int random_get_fd(void)
  */
 void random_get_bytes(void *buf, size_t nbytes)
 {
-	size_t i, n = nbytes;
+	size_t i;
+	unsigned char *cp = (unsigned char *)buf;
+
+#ifdef HAVE_GETRANDOM
+	while (getrandom(buf, nbytes, 0) < 0) {
+		if (errno == EINTR)
+			continue;
+		break;
+	}
+#else
+	size_t n = nbytes;
 	int fd = random_get_fd();
 	int lose_counter = 0;
-	unsigned char *cp = (unsigned char *) buf;
 
 	if (fd >= 0) {
 		while (n > 0) {
@@ -92,11 +125,12 @@ void random_get_bytes(void *buf, size_t nbytes)
 
 		close(fd);
 	}
-
+#endif
 	/*
 	 * We do this all the time, but this is the only source of
 	 * randomness if /dev/random/urandom is out to lunch.
 	 */
+	crank_random();
 	for (cp = buf, i = 0; i < nbytes; i++)
 		*cp++ ^= (rand() >> 7) & 0xFF;
 
@@ -122,6 +156,9 @@ void random_get_bytes(void *buf, size_t nbytes)
  */
 const char *random_tell_source(void)
 {
+#ifdef HAVE_GETRANDOM
+	return _("getrandom() function");
+#else
 	size_t i;
 	static const char *random_sources[] = {
 		"/dev/urandom",
@@ -132,7 +169,7 @@ const char *random_tell_source(void)
 		if (!access(random_sources[i], R_OK))
 			return random_sources[i];
 	}
-
+#endif
 	return _("libc pseudo-random functions");
 }
 

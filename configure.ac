@@ -385,6 +385,7 @@ AC_CHECK_FUNCS([ \
 	getdtablesize \
 	getexecname \
 	getmntinfo \
+	getrandom \
 	getrlimit \
 	getsgnam \
 	inotify_init \
