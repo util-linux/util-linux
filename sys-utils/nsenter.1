@@ -103,6 +103,18 @@ This should be one of the
 files described in
 .BR namespaces (7).
 .TP
+\fB\-a\fR, \fB\-\-all\fR
+Enter all namespaces of the target process by the default
+.IR /proc/[pid]/ns/*
+namespace paths. The default paths to the target process namespaces may be
+overwritten by namespace specific options (e.g. --all --mount=[path]).
+
+The user namespace will be ignored if the same as the caller's current user
+namespace. It prevents a caller that has dropped capabilities from regaining
+those capabilities via a call to setns().  See
+.BR setns (2)
+for more details.
+.TP
 \fB\-t\fR, \fB\-\-target\fR \fIpid\fP
 Specify a target process to get contexts from.  The paths to the contexts
 specified by
