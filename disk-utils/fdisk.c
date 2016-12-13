@@ -944,12 +944,16 @@ int main(int argc, char **argv)
 		if (argc > optind) {
 			int k;
 			int ct = 0;
-			for (k = optind; k < argc; k++) {
+
+			for (rc = 0, k = optind; k < argc; k++) {
 				if (ct)
 				    fputs("\n\n", stdout);
+
+				rc += print_device_pt(cxt, argv[k], 1, 0);
 				ct++;
-				print_device_pt(cxt, argv[k], 1, 0);
 			}
+			if (rc)
+				return EXIT_FAILURE;
 		} else
 			print_all_devices_pt(cxt, 0);
 		break;
