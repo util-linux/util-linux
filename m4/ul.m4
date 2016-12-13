@@ -438,36 +438,48 @@ dnl The expected <name> is ncurses or ncursesw.
 dnl
 AC_DEFUN([UL_NCURSES_CHECK], [
   m4_define([suffix], $1)
-  m4_define([suffixup], m4_toupper($1))
+  m4_define([SUFFIX], m4_toupper($1))
 
-  # pkg-config
-  PKG_CHECK_MODULES(suffixup, [$1], [
+  # pkg-config (not supported by ncurses upstream by default)
+  #
+  PKG_CHECK_MODULES(SUFFIX, [$1], [
     have_[]suffix=yes
-    NCURSES_LIBS=${suffixup[]_LIBS}
-    NCURSES_CFLAGS=${suffixup[]_CFLAGS}
+    NCURSES_LIBS=${SUFFIX[]_LIBS}
+    NCURSES_CFLAGS=${SUFFIX[]_CFLAGS}
   ],[have_[]suffix=no])
 
-  # ncurses-config should be everywhere, pkg-config is not supported by default
-  # by ncurses upstream
+  # ncurses6-config
   #
   AS_IF([test "x$have_[]suffix" = xno], [
-    AC_MSG_CHECKING([$1 config])
-    if AC_RUN_LOG([suffix[]6-config --version >/dev/null]); then
+    AC_CHECK_TOOL(SUFFIX[]6_CONFIG, suffix[]6-config)
+    if AC_RUN_LOG([$SUFFIX[]6_CONFIG --version >/dev/null]); then
       have_[]suffix=yes
-      NCURSES_LIBS=`suffix[]6-config --libs`
-      NCURSES_CFLAGS=`suffix[]6-config --cflags`
-      AC_MSG_RESULT([(v6) yes])
-    elif AC_RUN_LOG([suffix[]5-config --version >/dev/null]); then
-      have_[]suffix=yes
-      NCURSES_LIBS=`suffix[]5-config --libs`
-      NCURSES_CFLAGS=`suffix[]5-config --cflags`
-      AC_MSG_RESULT([(v5) yes])
+      NCURSES_LIBS=`$SUFFIX[]6_CONFIG --libs`
+      NCURSES_CFLAGS=`$SUFFIX[]6_CONFIG --cflags`
     else
-      AC_MSG_RESULT([no])
-      AS_IF([test "x$have_[]suffix" = xno], [
-        AC_CHECK_LIB([$1], [initscr], [have_[]suffix=yes], [have_[]suffix=no])
-        AS_IF([test "x$have_[]suffix" = xyes], [NCURSES_LIBS="-l[]suffix"])
-      ])
+      have_[]suffix=no
     fi
+  ])
+
+  # ncurses5-config
+  #
+  AS_IF([test "x$have_[]suffix" = xno], [
+    AC_CHECK_TOOL(SUFFIX[]5_CONFIG, suffix[]5-config)
+    if AC_RUN_LOG([$SUFFIX[]5_CONFIG --version >/dev/null]); then
+      have_[]suffix=yes
+      NCURSES_LIBS=`$SUFFIX[]5_CONFIG --libs`
+      NCURSES_CFLAGS=`$SUFFIX[]5_CONFIG --cflags`
+    else
+      have_[]suffix=no
+    fi
+  ])
+
+  # classic autoconf way
+  #
+  AS_IF([test "x$have_[]suffix" = xno], [
+    AS_IF([test "x$have_[]suffix" = xno], [
+      AC_CHECK_LIB([$1], [initscr], [have_[]suffix=yes], [have_[]suffix=no])
+      AS_IF([test "x$have_[]suffix" = xyes], [NCURSES_LIBS="-l[]suffix"])
+    ])
   ])
 ])
