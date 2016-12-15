@@ -673,6 +673,14 @@ void chgwinsz(int dummy __attribute__((__unused__)))
 /* Clean up terminal state and exit. Also come here if interrupt signal received */
 void __attribute__((__noreturn__)) end_it(int dummy __attribute__((__unused__)))
 {
+	/* May be executed as a signal handler as well as by main process.
+	 *
+	 * The _exit() may wait for pending I/O for really long time, be sure
+	 * that signal handler is not executed in this time to avoid double
+	 * de-initialization (free() calls, etc.).
+	 */
+	signal(SIGINT, SIG_IGN);
+
 	reset_tty();
 	if (clreol) {
 		putchar('\r');
