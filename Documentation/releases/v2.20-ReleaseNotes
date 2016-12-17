@@ -81,15 +81,15 @@ Stable maintenance releases between v2.19 and v2.20
 
 util-linux 2.19.1 [02-May-2011]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.19/v2.19.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.19/v2.19.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.19/v2.19.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.19/v2.19.1-ChangeLog
 
 
 Changes between v2.19 and v2.20
 -------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.20/
+ https://www.kernel.org/pub/linux/utils/util-linux/v2.20/
 
 addpart:
    - multiplication on 512 deleted  [Anton V. Boyarshinov]

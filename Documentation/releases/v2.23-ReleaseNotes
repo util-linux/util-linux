@@ -113,20 +113,20 @@ Stable maintenance releases between v2.22 and v2.23
 
 util-linux 2.22.1 [10-Oct-2012]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.22/v2.22.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.22/v2.22.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.22/v2.22.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.22/v2.22.1-ChangeLog
 
 util-linux 2.22.2 [13-Dec-2012]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.22/v2.22.2-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.22/v2.22.2-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.22/v2.22.2-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.22/v2.22.2-ChangeLog
 
 
 Changes between v2.22 and v2.23
 -------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.23/
+ https://www.kernel.org/pub/linux/utils/util-linux/v2.23/
 
 agetty:
    - add --chroot to usage() and man page  [Karel Zak]

@@ -67,8 +67,8 @@ Stable maintenance releases between v2.27 and v2.28
 
 util-linux 2.27.1 [Nov 11 2015]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.27/v2.27.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.27/v2.27.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.27/v2.27.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.27/v2.27.1-ChangeLog
 
 
 Changes between v2.27 and v2.28

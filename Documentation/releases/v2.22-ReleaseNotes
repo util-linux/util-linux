@@ -97,20 +97,20 @@ Stable maintenance releases between v2.21 and v2.22
 
 util-linux 2.21.1 [30-Mar-2012]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.21/v2.21.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.21/v2.21.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.21/v2.21.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.21/v2.21.1-ChangeLog
 
 util-linux 2.21.2 [25-May-2012]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.21/v2.21.2-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.21/v2.21.2-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.21/v2.21.2-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.21/v2.21.2-ChangeLog
 
 
 Changes between v2.21 and v2.22
 -------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.22/
+ https://www.kernel.org/pub/linux/utils/util-linux/v2.22/
 
 addpart:
    - align with util-linux coding standards  [Sami Kerola]

@@ -74,20 +74,20 @@ Stable maintenance releases between v2.23 and v2.24
 
 util-linux 2.22.1 [Jun 31 2013]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.23/v2.23.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.23/v2.23.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.23/v2.23.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.23/v2.23.1-ChangeLog
 
 util-linux 2.23.2 [May 28 2013]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.23/v2.23.2-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.23/v2.23.2-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.23/v2.23.2-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.23/v2.23.2-ChangeLog
 
 
 Changes between v2.23 and v2.24
 -------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.24/
+ https://www.kernel.org/pub/linux/utils/util-linux/v2.24/
 
 agetty:
    - -L accepts optional argument  [Karel Zak]

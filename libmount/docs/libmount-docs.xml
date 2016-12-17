@@ -23,7 +23,7 @@ The libmount library is used to parse /etc/fstab, /etc/mtab and
     </para>
     <para>
 The library is part of the util-linux package since version 2.18 and is
-available from ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
+available from https://www.kernel.org/pub/linux/utils/util-linux/.
     </para>
   </partintro>
  </part>

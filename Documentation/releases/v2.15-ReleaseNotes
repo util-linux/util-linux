@@ -111,20 +111,20 @@ Stable maintenance releases between v2.14 and v2.15
 
 util-linux-ng 2.14.1 [10-Aug-2008]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.14/v2.14.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.14/v2.14.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.14/v2.14.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.14/v2.14.1-ChangeLog
 
 util-linux-ng 2.14.2 [09-Feb-2009]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.14/v2.14.2-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.14/v2.14.2-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.14/v2.14.2-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.14/v2.14.2-ChangeLog
 
 
 ChangeLog between v2.14 and v2.15
 ---------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.15/
+ https://www.kernel.org/pub/linux/utils/util-linux/v2.15/
 
 addpart:
    - 512-byte sectors in code, bytes in man-page  [Karel Zak]

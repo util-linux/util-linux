@@ -91,20 +91,20 @@ Stable maintenance releases between v2.25 and v2.26
 
 util-linux 2.25.1 [Sep 3 2014]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.25/v2.25.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.25/v2.25.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.25/v2.25.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.25/v2.25.1-ChangeLog
 
 util-linux 2.25.2 [Oct 24 2014]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.25/v2.25.2-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.25/v2.25.2-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.25/v2.25.2-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.25/v2.25.2-ChangeLog
 
 
 Changes between v2.25 and v2.26
 -------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.26/
+ https://www.kernel.org/pub/linux/utils/util-linux/v2.26/
 
 agetty:
    - Reprompt and reprint /etc/issue when asked  [Stef Walter]

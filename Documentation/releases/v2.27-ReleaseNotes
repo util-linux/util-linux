@@ -70,20 +70,20 @@ Stable maintenance releases between v2.26 and v2.27
 
 util-linux 2.26.1 [Mar 3 2015]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.26/v2.26.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.26/v2.26.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.26/v2.26.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.26/v2.26.1-ChangeLog
 
 util-linux 2.26.2 [Apr 4 2015]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.26/v2.26.2-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.26/v2.26.2-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.26/v2.26.2-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.26/v2.26.2-ChangeLog
 
 
 Changes between v2.26 and v2.27
 -------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.27/
+ https://www.kernel.org/pub/linux/utils/util-linux/v2.27/
 
 agetty:
    - Reprompt once the network addresses change if address displayed  [Stef Walter]
