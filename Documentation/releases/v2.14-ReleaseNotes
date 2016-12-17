@@ -69,20 +69,20 @@ Stable maintenance releases between v2.13 and v2.14
 
 util-linux-ng 2.13.1.1 [22-Apr-2008]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.13/v2.13.1.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.13/v2.13.1.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.13/v2.13.1.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.13/v2.13.1.1-ChangeLog
 
 util-linux-ng 2.13.1 [16-Jan-2008]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.13/v2.13.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.13/v2.13.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.13/v2.13.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.13/v2.13.1-ChangeLog
 
 
 ChangeLog between v2.13 and v2.14
 ---------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.14/
+ https://www.kernel.org/pub/linux/utils/util-linux/v2.14/
 
 agetty:
    - cleanup MAXHOSTNAMELEN  [Karel Zak]

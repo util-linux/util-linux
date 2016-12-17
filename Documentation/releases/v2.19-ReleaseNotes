@@ -62,7 +62,7 @@ Changes between v2.18 and v2.19
 -------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.19/
+ https://www.kernel.org/pub/linux/utils/util-linux/v2.19/
 
 addpart:
    - code consolidation  [Karel Zak]

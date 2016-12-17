@@ -51,20 +51,20 @@ Stable maintenance releases between v2.16 and v2.17
 
 util-linux-ng 2.16.1 [07-Sep-2009]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.16/v2.16.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.16/v2.16.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.16/v2.16.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.16/v2.16.1-ChangeLog
 
 util-linux-ng 2.16.2 [30-Nov-2009]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.16/v2.16.2-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.16/v2.16.2-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.16/v2.16.2-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.16/v2.16.2-ChangeLog
 
 
 ChangeLog between v2.16 and v2.17
 ---------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.17/
+ https://www.kernel.org/pub/linux/utils/util-linux/v2.17/
 
 addpart:
    - addpart.8 formatting  [Peter Breitenlohner]

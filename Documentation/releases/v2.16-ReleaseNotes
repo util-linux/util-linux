@@ -24,15 +24,15 @@ Stable maintenance releases between v2.15 and v2.16
 
 util-linux-ng 2.15.1 [10-Jun-2009]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.15/v2.15.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.15/v2.15.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.15/v2.15.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.15/v2.15.1-ChangeLog
 
 
 ChangeLog between v2.15 and v2.16
 ---------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.16/
+ https://www.kernel.org/pub/linux/utils/util-linux/v2.16/
 
 
 build-sys:

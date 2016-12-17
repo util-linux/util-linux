@@ -80,20 +80,20 @@ Stable maintenance releases between v2.24 and v2.25
 
 util-linux 2.24.1 [Jan 20 2014]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.24/v2.24.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.24/v2.24.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.24/v2.24.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.24/v2.24.1-ChangeLog
 
 util-linux 2.24.2 [Apr 24 2014]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.24/v2.24.2-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.24/v2.24.2-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.24/v2.24.2-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.24/v2.24.2-ChangeLog
 
 
 Changes between v2.24 and v2.25
 -------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.25/
+ https://www.kernel.org/pub/linux/utils/util-linux/v2.25/
 
 
 addpart:

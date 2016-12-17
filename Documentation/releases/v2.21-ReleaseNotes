@@ -81,15 +81,15 @@ Stable maintenance releases between v2.20 and v2.21
 
 util-linux 2.20.1 [20-Oct-2011]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.20/v2.20.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.20/v2.20.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.20/v2.20.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.20/v2.20.1-ChangeLog
 
 
 Changes between v2.20 and v2.21
 -------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.21/
+ https://www.kernel.org/pub/linux/utils/util-linux/v2.21/
 
 agetty:
    - add --nohints  [Karel Zak]

@@ -73,20 +73,20 @@ Stable maintenance releases between v2.17 and v2.18
 
 util-linux-ng 2.17.1 [22-Feb-2010]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.17/v2.17.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.17/v2.17.1-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.17/v2.17.1-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.17/v2.17.1-ChangeLog
 
 util-linux-ng 2.17.2 [22-Mar-2010]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.17/v2.17.2-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.17/v2.17.2-ChangeLog
+ * https://www.kernel.org/pub/linux/utils/util-linux/v2.17/v2.17.2-ReleaseNotes
+   https://www.kernel.org/pub/linux/utils/util-linux/v2.17/v2.17.2-ChangeLog
 
 
 Changes between v2.17 and v2.18
 -------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.18/
+ https://www.kernel.org/pub/linux/utils/util-linux/v2.18/
 
 addpart:
    - use atoll() for parsing command line arguments  [Thomas Fehr]
