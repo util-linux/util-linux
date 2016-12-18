@@ -33,16 +33,6 @@ enum fs_operation {
 	UNFREEZE
 };
 
-static int freeze_f(int fd)
-{
-	return ioctl(fd, FIFREEZE, 0);
-}
-
-static int unfreeze_f(int fd)
-{
-	return ioctl(fd, FITHAW, 0);
-}
-
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fprintf(out, USAGE_HEADER);
@@ -138,13 +128,13 @@ int main(int argc, char **argv)
 
 	switch (action) {
 	case FREEZE:
-		if (freeze_f(fd)) {
+		if (ioctl(fd, FIFREEZE, 0)) {
 			warn(_("%s: freeze failed"), path);
 			goto done;
 		}
 		break;
 	case UNFREEZE:
-		if (unfreeze_f(fd)) {
+		if (ioctl(fd, FITHAW, 0)) {
 			warn(_("%s: unfreeze failed"), path);
 			goto done;
 		}
