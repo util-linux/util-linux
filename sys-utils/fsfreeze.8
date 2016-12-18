@@ -61,6 +61,20 @@ Display version information and exit.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
+.SH FILESYSTEM SUPPORT
+This command will work only if filesystem supports has support for freezing.
+List of these filesystems include (2016-12-18)
+.BR btrfs ,
+.BR ext2/3/4 ,
+.BR f2fs ,
+.BR jfs ,
+.BR nilfs2 ,
+.BR reiserfs ,
+and
+.BR xfs .
+Previous list may be incomplete, as more filesystems get support.  If in
+doubt easiest way to know if a filesystem has support is create a small
+loopback mount and test freezing it.
 .SH AUTHOR
 .PP
 Written by Hajime Taira.

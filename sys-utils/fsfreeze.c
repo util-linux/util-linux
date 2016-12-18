@@ -40,7 +40,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	      _(" %s [options] <mountpoint>\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Suspend access to a filesystem (ext3/4, ReiserFS, JFS, XFS).\n"), out);
+	fputs(_("Suspend access to a filesystem.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -f, --freeze      freeze the filesystem\n"), out);
