@@ -204,6 +204,15 @@ errmsg(char doexit, int excode, char adderr, const char *fmt, ...)
 #endif /* !HAVE_ERR_H */
 
 
+/* Don't use inline function to avoid '#include "nls.h"' in c.h
+ */
+#define errtryhelp(eval) __extension__ ({ \
+	fprintf(stderr, _("Try '%s --help' for more information.\n"), \
+			program_invocation_short_name); \
+	exit(eval); \
+})
+
+
 static inline __attribute__((const)) int is_power_of_2(unsigned long num)
 {
 	return (num != 0 && ((num & (num - 1)) == 0));
