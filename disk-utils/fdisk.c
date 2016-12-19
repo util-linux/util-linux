@@ -926,7 +926,7 @@ int main(int argc, char **argv)
 			fdisk_set_size_unit(cxt, FDISK_SIZEUNIT_BYTES);
 			break;
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

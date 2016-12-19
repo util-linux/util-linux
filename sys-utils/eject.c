@@ -268,8 +268,7 @@ static void parse_args(struct eject_control *ctl, int argc, char **argv)
 			exit(EXIT_SUCCESS);
 			break;
 		default:
-		case '?':
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 			break;
 		}
 	}

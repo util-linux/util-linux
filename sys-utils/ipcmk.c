@@ -127,8 +127,7 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		default:
-			ask_shm = ask_msg = ask_sem = 0;
-			break;
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

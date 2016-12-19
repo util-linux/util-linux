@@ -670,7 +670,7 @@ static void parse_option(struct setterm_control *ctl, int ac, char **av)
 		case OPT_HELP:
 			usage(stdout);
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 }

@@ -175,7 +175,7 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 		case 'u':
 			usage(stdout);
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 		ctl->changed = 1;
 		ctl->interactive = 0;

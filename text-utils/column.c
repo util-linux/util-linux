@@ -196,7 +196,7 @@ int main(int argc, char **argv)
 			xflag = 1;
 			break;
 		default:
-			usage(EXIT_FAILURE);
+			errtryhelp(EXIT_FAILURE);
 	}
 	argc -= optind;
 	argv += optind;

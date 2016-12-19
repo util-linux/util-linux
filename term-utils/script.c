@@ -731,7 +731,7 @@ int main(int argc, char **argv)
 			usage(stdout);
 			break;
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	argc -= optind;
 	argv += optind;

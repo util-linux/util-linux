@@ -960,9 +960,8 @@ int main(int argc, char *argv[])
 			return EXIT_SUCCESS;
 		case 0:
 			break;
-		case '?':
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 	argv += optind;

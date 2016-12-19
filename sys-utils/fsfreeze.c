@@ -107,8 +107,7 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
 		default:
-			usage(stderr);
-			break;
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

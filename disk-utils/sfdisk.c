@@ -2102,7 +2102,7 @@ int main(int argc, char *argv[])
 			sf->notell = 1;
 			break;
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

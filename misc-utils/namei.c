@@ -400,7 +400,7 @@ main(int argc, char **argv)
 			flags |= NAMEI_VERTICAL;
 			break;
 		default:
-			usage(EXIT_FAILURE);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

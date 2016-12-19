@@ -174,7 +174,7 @@ main(int argc, char *argv[])
 		case 'h':
 			usage(stdout);
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 			}
 	argc -= optind;
 	argv += optind;
@@ -182,7 +182,7 @@ main(int argc, char *argv[])
 
 	if ((argc < 1 && !tname) || argc > 3) {
 		warnx(_("wrong number of arguments"));
-		usage(stderr);
+		errtryhelp(EXIT_FAILURE);
 	}
 	if (!tname)
 		tname = argv[idx++];

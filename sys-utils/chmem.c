@@ -308,6 +308,8 @@ int main(int argc, char **argv)
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
+		default:
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

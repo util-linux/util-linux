@@ -718,9 +718,8 @@ int main(int argc, char *argv[])
 			ls.fltr_ntypes++;
 			break;
 		}
-		case '?':
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

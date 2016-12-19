@@ -750,10 +750,8 @@ int main(int argc, char **argv)
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
-		case '?':
-			usage(stderr);
 		default:
-			errx(EXIT_FAILURE, _("unrecognized option '%c'"), c);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

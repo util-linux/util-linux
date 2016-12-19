@@ -684,7 +684,7 @@ int main(int argc, char **argv)
 			blksize = strtou32_or_err(optarg, _("invalid blocksize argument"));
 			break;
 		default:
-			usage(FSCK_EX_USAGE);
+			errtryhelp(FSCK_EX_USAGE);
 		}
 
 	if ((argc - optind) != 1)

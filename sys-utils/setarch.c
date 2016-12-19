@@ -379,7 +379,7 @@ int main(int argc, char *argv[])
 				warnx(_("unrecognized option '--list'"));
 			/* fallthrough */
 		default:
-			show_usage(NULL);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

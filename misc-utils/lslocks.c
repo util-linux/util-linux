@@ -586,9 +586,8 @@ int main(int argc, char *argv[])
 		case 'u':
 			disable_columns_truncate();
 			break;
-		case '?':
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

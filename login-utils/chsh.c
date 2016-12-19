@@ -153,7 +153,7 @@ static void parse_argv(int argc, char **argv, struct sinfo *pinfo)
 			pinfo->shell = optarg;
 			break;
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 	/* done parsing arguments.  check for a username. */

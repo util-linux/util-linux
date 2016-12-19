@@ -1002,8 +1002,7 @@ int main(int argc, char **argv)
 			ctl.time_fmt = which_time_format(optarg);
 			break;
 		default:
-			usage(&ctl, stderr);
-			break;
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

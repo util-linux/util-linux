@@ -793,7 +793,7 @@ int main(int argc, char ** argv)
 		case 'h':
 			usage(stdout);
 		default:
-			usage(stderr);
+			errtryhelp(MKFS_EX_USAGE);
 		}
 	argc -= optind;
 	argv += optind;

@@ -856,7 +856,7 @@ su_main (int argc, char **argv, int mode)
 	  exit(EXIT_SUCCESS);
 
 	default:
-	  usage (EXIT_FAILURE);
+	  errtryhelp(EXIT_FAILURE);
 	}
     }
 

@@ -610,8 +610,7 @@ int main(int argc, char **argv)
 			print_version();
 			break;
 		default:
-			usage(stderr);
-			break;
+			errtryhelp(MOUNT_EX_USAGE);
 		}
 	}
 

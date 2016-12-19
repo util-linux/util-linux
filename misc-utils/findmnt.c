@@ -1477,8 +1477,7 @@ int main(int argc, char *argv[])
 			force_tree = 1;
 			break;
 		default:
-			usage(stderr);
-			break;
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

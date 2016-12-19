@@ -59,8 +59,7 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_FAILURE;
 		default:
-			usage(stderr);
-			break;
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

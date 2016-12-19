@@ -331,7 +331,7 @@ int main(int argc, char **argv)
 			verbose = 1;
 			break;
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 			break;
 		}
 	}

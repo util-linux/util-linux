@@ -221,9 +221,8 @@ int main(int argc, char *argv[])
 		case 'U':
 			add_uuid(optarg);
 			break;
-		case '?':
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 	argv += optind;

@@ -769,7 +769,7 @@ int main(int argc, char **argv)
 			opt_holes = 1;
 			break;
 		default:
-			usage(FSCK_EX_USAGE);
+			errtryhelp(MKFS_EX_USAGE);
 		}
 	}
 

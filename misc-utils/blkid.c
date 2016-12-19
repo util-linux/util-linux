@@ -765,10 +765,10 @@ int main(int argc, char **argv)
 			/* ignore - backward compatibility */
 			break;
 		case 'h':
-			err = 0;
-			/* fallthrough */
+			usage(0);
+			break;
 		default:
-			usage(err);
+			errtryh(EXIT_FAILURE);
 		}
 	}
 

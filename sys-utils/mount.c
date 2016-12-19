@@ -1017,8 +1017,7 @@ int main(int argc, char **argv)
 			mnt_context_set_source(cxt, optarg);
 			break;
 		default:
-			usage(stderr);
-			break;
+			errtryhelp(MOUNT_EX_USAGE);
 		}
 	}
 

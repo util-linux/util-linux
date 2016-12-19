@@ -168,8 +168,7 @@ int main(int argc, char *argv[])
 #endif
 			break;
 		default:
-			usage(stderr);
-			break;
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

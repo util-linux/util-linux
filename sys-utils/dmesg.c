@@ -1380,9 +1380,8 @@ int main(int argc, char *argv[])
 		case OPT_TIME_FORMAT:
 			ctl.time_fmt = which_time_format(optarg);
 			break;
-		case '?':
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 	argc -= optind;

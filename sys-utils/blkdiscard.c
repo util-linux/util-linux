@@ -163,8 +163,7 @@ int main(int argc, char **argv)
 			act = ACT_ZEROOUT;
 			break;
 		default:
-			usage(stderr);
-			break;
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

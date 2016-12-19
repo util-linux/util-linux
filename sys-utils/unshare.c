@@ -375,7 +375,7 @@ int main(int argc, char *argv[])
 			propagation = parse_propagation(optarg);
 			break;
 		default:
-			usage(EXIT_FAILURE);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

@@ -1443,7 +1443,7 @@ int main(int argc, char *argv[])
 			break;
 		}
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

@@ -214,12 +214,10 @@ int main(int argc, char *argv[])
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			exit(EX_OK);
+		case 'h':
+			usage(0);
 		default:
-			/* optopt will be set if this was an unrecognized
-			 * option, i.e.  *not* 'h' or '?
-			 */
-			usage(optopt ? EX_USAGE : 0);
-			break;
+			errtryhelp(EX_USAGE);
 		}
 	}
 

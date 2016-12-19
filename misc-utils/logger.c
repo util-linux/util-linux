@@ -1196,9 +1196,8 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE, _("invalid structured data parameter: '%s'"), optarg);
 			add_structured_data_param(get_user_structured_data(&ctl), optarg);
 			break;
-		case '?':
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 	argc -= optind;

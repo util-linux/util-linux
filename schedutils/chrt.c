@@ -439,8 +439,6 @@ int main(int argc, char **argv)
 
 	while((c = getopt_long(argc, argv, "+abdD:fiphmoP:T:rRvV", longopts, NULL)) != -1)
 	{
-		int ret = EXIT_FAILURE;
-
 		switch (c) {
 		case 'a':
 			ctl->all_tasks = 1;
@@ -496,10 +494,9 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'h':
-			ret = EXIT_SUCCESS;
-			/* fallthrough */
+			show_usage(EXIT_SUCCESS);
 		default:
-			show_usage(ret);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
 		case 'h':
 			usage(EXIT_SUCCESS);
 		default:
-			usage(EXIT_FAILURE);
+			errtryhelp(EXIT_FAILURE);
 		}
 
 	/*

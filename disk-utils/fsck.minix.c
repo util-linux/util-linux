@@ -1323,7 +1323,7 @@ main(int argc, char **argv) {
 		case 'h':
 			usage(stdout);
 		default:
-			usage(stderr);
+			errtryhelp(FSCK_EX_USAGE);
 		}
 	argc -= optind;
 	argv += optind;

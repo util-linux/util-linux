@@ -356,8 +356,7 @@ int main(int argc, char **argv)
 		case 'h':
 			usage(EXIT_SUCCESS);
 		default:
-			warnx(_("invalid option"));
-			usage(EXIT_FAILURE);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

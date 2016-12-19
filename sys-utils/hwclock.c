@@ -1850,9 +1850,9 @@ int main(int argc, char **argv)
 			out_version();
 			return 0;
 		case 'h':			/* --help */
-		case '?':
-		default:
 			usage(NULL);
+		default:
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

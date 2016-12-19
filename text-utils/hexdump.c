@@ -137,7 +137,7 @@ parse_args(int argc, char **argv, struct hexdump *hex)
 			exit(EXIT_SUCCESS);
 			break;
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

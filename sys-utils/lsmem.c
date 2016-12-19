@@ -491,7 +491,7 @@ int main(int argc, char **argv)
 				lsmem->want_table = 0;
 			break;
 		default:
-			lsmem_usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

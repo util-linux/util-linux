@@ -403,7 +403,7 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 
@@ -413,7 +413,7 @@ int main(int argc, char **argv)
 	/* print usage if we still have some arguments left over */
 	if (optind < argc) {
 		warnx(_("unknown argument: %s"), argv[optind]);
-		usage(stderr);
+		errtryhelp(EXIT_FAILURE);
 	}
 
 	return ret == 0 ? EXIT_SUCCESS : EXIT_FAILURE;

@@ -698,7 +698,7 @@ int main(int argc, char **argv)
 			flags |= LOOPDEV_FL_SIZELIMIT;
                         break;
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

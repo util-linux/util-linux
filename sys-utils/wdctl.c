@@ -553,10 +553,8 @@ int main(int argc, char *argv[])
 			noident = 1;
 			notimeouts = 1;
 			break;
-
-		case '?':
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

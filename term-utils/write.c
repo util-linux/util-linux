@@ -362,7 +362,7 @@ int main(int argc, char **argv)
 		do_write(&ctl);
 		break;
 	default:
-		usage(stderr);
+		errtryhelp(EXIT_FAILURE);
 	}
 	free(ctl.dst_tty_path);
 	return EXIT_SUCCESS;

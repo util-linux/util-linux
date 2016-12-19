@@ -607,9 +607,8 @@ int main(int argc, char **argv)
 		case RAW_OPTION:
 			raw = 1;
 			break;
-
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 	if (argc > optind && pid)

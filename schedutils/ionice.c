@@ -203,7 +203,7 @@ int main(int argc, char **argv)
 		case 'h':
 			usage(stdout);
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 
 	switch (ioclass) {

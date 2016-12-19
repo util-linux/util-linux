@@ -223,7 +223,7 @@ int main(int argc, char **argv)
 		case 'H':
 			usage(stdout);
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 
 	if (optind != argc)

@@ -2587,6 +2587,8 @@ int main(int argc, char *argv[])
 		case 'z':
 			cf->zero_start = 1;
 			break;
+		default:
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

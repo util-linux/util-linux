@@ -394,9 +394,8 @@ int main(int argc, char **argv)
 			return EXIT_SUCCESS;
 		case 'h':
 			usage(stdout);
-		case '?':
 		default:
-			usage(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 

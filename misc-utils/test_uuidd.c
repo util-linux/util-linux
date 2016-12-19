@@ -37,6 +37,7 @@
 #include "c.h"
 #include "xalloc.h"
 #include "strutils.h"
+#include "nls.h"
 
 #define LOG(level,args) if (loglev >= level) { fprintf args; }
 
@@ -279,8 +280,7 @@ int main(int argc, char *argv[])
 			usage(stdout);
 			break;
 		default:
-			usage(stderr);
-			break;
+			errtryh(EXIT_FAILURE);
 		}
 	}
 
