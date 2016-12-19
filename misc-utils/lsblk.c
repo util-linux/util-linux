@@ -1830,7 +1830,7 @@ int main(int argc, char *argv[])
 				break;
 			/* fallthrough */
 		default:
-			help(stderr);
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 
