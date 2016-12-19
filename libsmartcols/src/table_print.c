@@ -275,7 +275,7 @@ static const char *get_cell_color(struct libscols_table *tb,
 	const char *color = NULL;
 
 	if (tb && tb->colors_wanted) {
-		if (ce && !color)
+		if (ce)
 			color = ce->color;
 		if (ln && !color)
 			color = ln->color;
@@ -455,7 +455,7 @@ static int print_data(struct libscols_table *tb,
 	case SCOLS_FMT_JSON:
 		fputs_quoted_json_lower(scols_cell_get_data(&cl->header), tb->out);
 		fputs(": ", tb->out);
-		if (!data || !*data)
+		if (!*data)
 			fputs("null", tb->out);
 		else
 			fputs_quoted_json(data, tb->out);
