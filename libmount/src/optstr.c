@@ -20,6 +20,7 @@
 #include <selinux/context.h>
 #endif
 
+#include "strutils.h"
 #include "mountP.h"
 
 /*
@@ -1077,6 +1078,84 @@ int mnt_optstr_fix_user(char **optstr)
 
 	free(username);
 	return rc;
+}
+
+/**
+ * mnt_match_options:
+ * @optstr: options string
+ * @pattern: comma delimited list of options
+ *
+ * The "no" could be used for individual items in the @options list. The "no"
+ * prefix does not have a global meaning.
+ *
+ * Unlike fs type matching, nonetdev,user and nonetdev,nouser have
+ * DIFFERENT meanings; each option is matched explicitly as specified.
+ *
+ * The "no" prefix interpretation could be disabled by the "+" prefix, for example
+ * "+noauto" matches if @optstr literally contains the "noauto" string.
+ *
+ * "xxx,yyy,zzz" : "nozzz"	-> False
+ *
+ * "xxx,yyy,zzz" : "xxx,noeee"	-> True
+ *
+ * "bar,zzz"     : "nofoo"      -> True		(does not contain "foo")
+ *
+ * "nofoo,bar"   : "nofoo"      -> True		(does not contain "foo")
+ *
+ * "nofoo,bar"   : "+nofoo"     -> True		(contains "nofoo")
+ *
+ * "bar,zzz"     : "+nofoo"     -> False	(does not contain "nofoo")
+ *
+ *
+ * Returns: 1 if pattern is matching, else 0. This function also returns 0
+ *          if @pattern is NULL and @optstr is non-NULL.
+ */
+int mnt_match_options(const char *optstr, const char *pattern)
+{
+	char *name, *pat = (char *) pattern;
+	char *buf;
+	size_t namesz = 0, valsz = 0;
+	int match = 1;
+
+	if (!pattern && !optstr)
+		return 1;
+	if (!pattern)
+		return 0;
+
+	buf = malloc(strlen(pattern) + 1);
+	if (!buf)
+		return 0;
+
+	/* walk on pattern string
+	 */
+	while (match && !mnt_optstr_next_option(&pat, &name, &namesz, NULL, &valsz)) {
+		char *val;
+		size_t sz;
+		int no = 0;
+
+		if (*name == '+')
+			name++, namesz--;
+		else if ((no = (startswith(name, "no") != NULL)))
+			name += 2, namesz -= 2;
+
+		xstrncpy(buf, name, namesz + 1);
+
+		switch (mnt_optstr_get_option(optstr, buf, &val, &sz)) {
+		case 0:		/* found */
+			match = no == 0 ? 1 : 0;
+			break;
+		case 1:		/* not found */
+			match = no == 1 ? 1 : 0;
+			break;
+		default:	/* parse error */
+			match = 0;
+			break;
+		}
+
+	}
+
+	free(buf);
+	return match;
 }
 
 #ifdef TEST_PROGRAM

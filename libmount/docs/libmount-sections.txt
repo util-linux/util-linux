@@ -287,6 +287,7 @@ mnt_optstr_prepend_option
 mnt_optstr_remove_option
 mnt_optstr_set_option
 mnt_split_optstr
+mnt_match_options
 </SECTION>
 
 <SECTION>
@@ -377,7 +378,6 @@ mnt_get_swaps_path
 mnt_has_regular_mtab
 mnt_mangle
 mnt_match_fstype
-mnt_match_options
 mnt_tag_is_valid
 mnt_unmangle
 </SECTION>
