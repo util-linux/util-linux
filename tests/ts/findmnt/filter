@@ -20,27 +20,43 @@ ts_init "$*"
 
 ts_check_test_command "$TS_CMD_FINDMNT"
 
-
 ts_init_subtest "types"
 $TS_CMD_FINDMNT --types ext3 --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
-
 
 ts_init_subtest "types-multi"
 $TS_CMD_FINDMNT --types ext3,ext4, --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
-
 ts_init_subtest "types-neg"
 $TS_CMD_FINDMNT --types noext3,ext4, --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
-
 ts_init_subtest "options"
 $TS_CMD_FINDMNT --options relatime --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+echo rc=$? >> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "options-name"
+$TS_CMD_FINDMNT --options fd --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+echo rc=$? >> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "options-nameval"
+$TS_CMD_FINDMNT --options "fd=22" --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+echo rc=$? >> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "options-nameval-neg"
+$TS_CMD_FINDMNT --options "nofd=22" --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+echo rc=$? >> $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "options-nameval-multi"
+$TS_CMD_FINDMNT --options "gid=5,mode=620,ptmxmode=000" --kernel --tab-file "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
@@ -59,6 +75,5 @@ $TS_CMD_FINDMNT --options +nosuid,+nodev,blkio --kernel --tab-file "$TS_SELF/fil
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
-ts_finalize_subtest
 
 ts_finalize
