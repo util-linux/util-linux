@@ -1113,8 +1113,8 @@ int mnt_optstr_fix_user(char **optstr)
 int mnt_match_options(const char *optstr, const char *pattern)
 {
 	char *name, *pat = (char *) pattern;
-	char *buf;
-	size_t namesz = 0, valsz = 0;
+	char *buf, *patval;
+	size_t namesz = 0, patvalsz = 0;
 	int match = 1;
 
 	if (!pattern && !optstr)
@@ -1128,10 +1128,11 @@ int mnt_match_options(const char *optstr, const char *pattern)
 
 	/* walk on pattern string
 	 */
-	while (match && !mnt_optstr_next_option(&pat, &name, &namesz, NULL, &valsz)) {
+	while (match && !mnt_optstr_next_option(&pat, &name, &namesz,
+						&patval, &patvalsz)) {
 		char *val;
 		size_t sz;
-		int no = 0;
+		int no = 0, rc;
 
 		if (*name == '+')
 			name++, namesz--;
@@ -1140,7 +1141,14 @@ int mnt_match_options(const char *optstr, const char *pattern)
 
 		xstrncpy(buf, name, namesz + 1);
 
-		switch (mnt_optstr_get_option(optstr, buf, &val, &sz)) {
+		rc = mnt_optstr_get_option(optstr, buf, &val, &sz);
+
+		/* check also value (if the pattern is "foo=value") */
+		if (rc == 0 && patvalsz > 0 &&
+		    (patvalsz != sz || strncmp(patval, val, sz) != 0))
+			rc = 1;
+
+		switch (rc) {
 		case 0:		/* found */
 			match = no == 0 ? 1 : 0;
 			break;
