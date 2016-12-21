@@ -56,7 +56,7 @@
 
 #if defined(__FreeBSD_kernel__)
 # include <pty.h>
-# ifdef HAVE_UTMPX_H
+# ifdef HAVE_UTMP_H
 #  include <utmp.h>
 # endif
 # ifdef HAVE_LIBUTIL_H
