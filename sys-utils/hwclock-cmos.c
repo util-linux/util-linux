@@ -653,7 +653,7 @@ static int get_permissions_cmos(void)
 		} else if (rc != 0) {
 			rc = errno;
 			warn(_("unable to get I/O port access:  "
-                               "the iopl(3) call failed."));
+			       "the iopl(3) call failed"));
 			if (rc == EPERM && geteuid())
 				warnx(_("Probably you need root privileges.\n"));
 		}

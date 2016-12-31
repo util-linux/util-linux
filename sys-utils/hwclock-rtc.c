@@ -358,7 +358,7 @@ static int set_hardware_clock_rtc(const struct hwclock_control *ctl,
 #endif
 
 	if (rc == -1) {
-		warn(_("ioctl(%s) to %s to set the time failed."),
+		warn(_("ioctl(%s) to %s to set the time failed"),
 			ioctlname, rtc_dev_name);
 		hwclock_exit(ctl, EX_IOERR);
 	}
