@@ -20,5 +20,5 @@ int get_linux_version (void)
 	if (n < 1 || n > 3)
 		return kver = 0;
 
-	return kver = KERNEL_VERSION(x, y, y);
+	return kver = KERNEL_VERSION(x, y, z);
 }
