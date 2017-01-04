@@ -49,6 +49,7 @@ mkfs_and_mount_minix 'v1c14' '-1 -n 14'
 mkfs_and_mount_minix 'v1c30' '-1 -n 30'
 mkfs_and_mount_minix 'v2c14' '-2 -n 14'
 mkfs_and_mount_minix 'v2c30' '-2 -n 30'
+mkfs_and_mount_minix 'v2i65535' '-2 -i 65535'
 mkfs_and_mount_minix 'v3c60' '-3 -n 60'
 
 ts_finalize
