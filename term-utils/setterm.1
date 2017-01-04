@@ -228,6 +228,13 @@ Turns keyboard repeat on or off.
 Displays the terminal reset string, which typically resets the terminal to
 its power-on state.
 .TP
+\fB\-\-resize\fP
+Reset terminal size by assessing maximum row and column.  This is useful
+when actual geometry and kernel terminal driver are not in sync.  Most
+notable use case is with serial consoles, that do not use
+.BR ioctl (3)
+but just byte streams and breaks.
+.TP
 \fB\-\-reverse\fP [\fBon\fP|\fBoff\fP]
 Turns reverse video mode on or off.  Except on a virtual console,
 .B \-\-reverse off
