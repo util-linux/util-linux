@@ -94,6 +94,10 @@ static int probe_minix(blkid_probe pr,
 	if (version <= 2) {
 		struct minix_super_block *sb = (struct minix_super_block *) data;
 
+		uint16_t state = minix_swab16(swabme, sb->s_state);
+		if ((state & (MINIX_VALID_FS | MINIX_ERROR_FS)) != state)
+			return 1;
+
 		zones = version == 2 ? minix_swab32(swabme, sb->s_zones) :
 				       minix_swab16(swabme, sb->s_nzones);
 		ninodes = minix_swab16(swabme, sb->s_ninodes);
