@@ -61,7 +61,6 @@ check_PROGRAMS += \
 	test_colors \
 	test_fileutils \
 	test_ismounted \
-	test_linux_version \
 	test_mangle \
 	test_randutils \
 	test_strutils \
@@ -124,6 +123,7 @@ test_sysfs_LDADD = $(LDADD) libcommon.la
 test_pager_SOURCES = lib/pager.c
 test_pager_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_PAGER
 
+check_PROGRAMS += test_linux_version
 test_linux_version_SOURCES = lib/linux_version.c
 test_linux_version_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_LINUXVERSION
 endif
