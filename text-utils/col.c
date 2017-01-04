@@ -160,7 +160,7 @@ static void __attribute__((__noreturn__)) wrerr(void)
 int main(int argc, char **argv)
 {
 	register wint_t ch;
-	CHAR *c;
+	CHAR *c = NULL;
 	CSET cur_set;			/* current character set */
 	LINE *l;			/* current line */
 	int extra_lines;		/* # of lines above first line */
@@ -248,7 +248,10 @@ int main(int argc, char **argv)
 			case BS:		/* can't go back further */
 				if (cur_col == 0)
 					continue;
-				--cur_col;
+				if (c)
+					cur_col -= c->c_width;
+				else
+					cur_col--;
 				continue;
 			case CR:
 				cur_col = 0;
@@ -369,7 +372,10 @@ int main(int argc, char **argv)
 		c = &l->l_line[l->l_line_len++];
 		c->c_char = ch;
 		c->c_set = cur_set;
-		c->c_column = cur_col;
+		if (0 < cur_col)
+			c->c_column = cur_col;
+		else
+			c->c_column = 0;
 		c->c_width = wcwidth(ch);
 		/*
 		 * If things are put in out of order, they will need sorting
