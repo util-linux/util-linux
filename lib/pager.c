@@ -260,7 +260,7 @@ void pager_close(void)
 	memset(&pager_process, 0, sizeof(pager_process));
 }
 
-#ifdef TEST_PROGRAM
+#ifdef TEST_PROGRAM_PAGER
 
 #define MAX 255
 
@@ -274,4 +274,4 @@ int main(int argc __attribute__ ((__unused__)),
 		printf("%d\n", i);
 	return EXIT_SUCCESS;
 }
-#endif /* TEST_PROGRAM */
+#endif /* TEST_PROGRAM_PAGER */

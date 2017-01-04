@@ -127,7 +127,7 @@ char *unmangle(const char *s, char **end)
 	return buf;
 }
 
-#ifdef TEST_PROGRAM
+#ifdef TEST_PROGRAM_MANGLE
 #include <errno.h>
 int main(int argc, char *argv[])
 {
@@ -163,4 +163,4 @@ int main(int argc, char *argv[])
 
 	return EXIT_SUCCESS;
 }
-#endif /* TEST_PROGRAM */
+#endif /* TEST_PROGRAM_MANGLE */

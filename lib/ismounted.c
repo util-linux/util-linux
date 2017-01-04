@@ -369,7 +369,7 @@ int is_mounted(const char *file)
 	return mount_flags & MF_MOUNTED;
 }
 
-#ifdef TEST_PROGRAM
+#ifdef TEST_PROGRAM_ISMOUNTED
 int main(int argc, char **argv)
 {
 	int flags = 0;

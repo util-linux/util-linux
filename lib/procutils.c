@@ -241,7 +241,7 @@ int proc_next_pid(struct proc_processes *ps, pid_t *pid)
 	return 0;
 }
 
-#ifdef TEST_PROGRAM
+#ifdef TEST_PROGRAM_PROCUTILS
 
 static int test_tasks(int argc, char *argv[])
 {
@@ -305,4 +305,4 @@ int main(int argc, char *argv[])
 
 	return EXIT_FAILURE;
 }
-#endif /* TEST_PROGRAM */
+#endif /* TEST_PROGRAM_PROCUTILS */

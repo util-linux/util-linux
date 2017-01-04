@@ -23,7 +23,7 @@ int get_linux_version (void)
 	return kver = KERNEL_VERSION(x, y, z);
 }
 
-#ifdef TEST_PROGRAM
+#ifdef TEST_PROGRAM_LINUXVERSION
 # include <stdlib.h>
 	int main(int argc, char *argv[])
 	{

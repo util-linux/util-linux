@@ -321,7 +321,7 @@ int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail)
 	return 0;
 }
 
-#ifdef TEST_PROGRAM
+#ifdef TEST_PROGRAM_CPUSET
 
 #include <getopt.h>
 

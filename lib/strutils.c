@@ -959,7 +959,7 @@ int skip_fline(FILE *fp)
 	} while (1);
 }
 
-#ifdef TEST_PROGRAM
+#ifdef TEST_PROGRAM_STRUTILS
 
 static int test_strutils_sizes(int argc, char *argv[])
 {
@@ -1011,4 +1011,4 @@ int main(int argc, char *argv[])
 
 	return EXIT_FAILURE;
 }
-#endif /* TEST_PROGRAM */
+#endif /* TEST_PROGRAM_STRUTILS */

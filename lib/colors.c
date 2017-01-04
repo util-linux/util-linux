@@ -822,7 +822,7 @@ int colormode_or_err(const char *str, const char *errmsg)
 	return colormode;
 }
 
-#ifdef TEST_PROGRAM
+#ifdef TEST_PROGRAM_COLORS
 # include <getopt.h>
 int main(int argc, char *argv[])
 {
@@ -876,5 +876,5 @@ int main(int argc, char *argv[])
 
 	return EXIT_SUCCESS;
 }
-#endif
+#endif /* TEST_PROGRAM_COLORS */
 

@@ -406,4 +406,4 @@ main(int argc, char **argv)
 
 	return EXIT_SUCCESS;
 }
-#endif /* TEST_PROGRAM */
+#endif /* TEST_PROGRAM_BLKDEV */

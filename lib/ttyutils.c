@@ -88,7 +88,7 @@ int get_terminal_name(const char **path,
 }
 
 
-#ifdef TEST_PROGRAM
+#ifdef TEST_PROGRAM_TTYUTILS
 # include <stdlib.h>
 int main(void)
 {
@@ -103,4 +103,4 @@ int main(void)
 
 	return EXIT_SUCCESS;
 }
-#endif
+#endif /* TEST_PROGRAM_TTYUTILS */

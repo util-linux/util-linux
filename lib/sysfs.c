@@ -1097,4 +1097,4 @@ int main(int argc, char *argv[])
 	sysfs_deinit(&cxt);
 	return EXIT_SUCCESS;
 }
-#endif
+#endif /* TEST_PROGRAM_SYSFS */

@@ -173,7 +173,7 @@ const char *random_tell_source(void)
 	return _("libc pseudo-random functions");
 }
 
-#ifdef TEST_PROGRAM
+#ifdef TEST_PROGRAM_RANDUTILS
 int main(int argc __attribute__ ((__unused__)),
          char *argv[] __attribute__ ((__unused__)))
 {
@@ -187,4 +187,4 @@ int main(int argc __attribute__ ((__unused__)),
 
 	return EXIT_SUCCESS;
 }
-#endif /* TEST_PROGRAM */
+#endif /* TEST_PROGRAM_RANDUTILS */

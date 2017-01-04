@@ -124,7 +124,7 @@ int get_fd_tabsize(void)
 	return m;
 }
 
-#ifdef TEST_PROGRAM
+#ifdef TEST_PROGRAM_FILEUTILS
 int main(void)
 {
 	FILE *f;
