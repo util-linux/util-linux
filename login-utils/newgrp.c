@@ -60,6 +60,7 @@ static char *xgetpass(FILE *input, const char *prompt)
 	return pass;
 }
 
+#ifndef HAVE_EXPLICIT_BZERO
 /* Ensure memory is set to value c without compiler optimization getting
  * into way that could happen with memset(3). */
 static int xmemset_s(void *v, size_t sz, const int c)
@@ -72,6 +73,7 @@ static int xmemset_s(void *v, size_t sz, const int c)
 		*p++ = c;
 	return 0;
 }
+#endif
 
 /* try to read password from gshadow */
 static char *get_gshadow_pwd(const char *groupname)
@@ -148,7 +150,11 @@ static int allow_setgid(const struct passwd *pe, const struct group *ge)
 	if (pwd && *pwd && (xpwd = xgetpass(stdin, _("Password: ")))) {
 		char *cbuf = crypt(xpwd, pwd);
 
+#ifdef HAVE_EXPLICIT_BZERO
+		explicit_bzero(xpwd, strlen(xpwd));
+#else
 		xmemset_s(xpwd, strlen(xpwd), 0);
+#endif
 		free(xpwd);
 		if (!cbuf)
 			warn(_("crypt failed"));

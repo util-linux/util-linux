@@ -379,6 +379,7 @@ AC_CHECK_FUNCS([ \
 	__secure_getenv \
 	err \
 	errx \
+	explicit_bzero \
 	fsync \
 	utimensat \
 	getdomainname \
