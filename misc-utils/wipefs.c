@@ -348,9 +348,9 @@ err:
 	err(EXIT_FAILURE, _("%s: failed to create a signature backup"), fname);
 }
 
+#ifdef BLKRRPART
 static void rereadpt(int fd, const char *devname)
 {
-#ifdef BLKRRPART
 	struct stat st;
 
 	if (fstat(fd, &st) || !S_ISBLK(st.st_mode))
@@ -359,8 +359,8 @@ static void rereadpt(int fd, const char *devname)
 	errno = 0;
 	ioctl(fd, BLKRRPART);
 	printf(_("%s: calling ioctl to re-read partition table: %m\n"), devname);
-#endif
 }
+#endif
 
 static struct wipe_desc *
 do_wipe(struct wipe_desc *wp, const char *devname, int flags)
@@ -436,8 +436,10 @@ do_wipe(struct wipe_desc *wp, const char *devname, int flags)
 
 	fsync(blkid_probe_get_fd(pr));
 
+#ifdef BLKRRPART
 	if (reread && (mode & O_EXCL))
 		rereadpt(blkid_probe_get_fd(pr), devname);
+#endif
 
 	close(blkid_probe_get_fd(pr));
 	blkid_free_probe(pr);
