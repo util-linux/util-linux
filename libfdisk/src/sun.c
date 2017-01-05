@@ -120,7 +120,7 @@ static int sun_probe_label(struct fdisk_context *cxt)
 	assert(fdisk_is_label(cxt, SUN));
 
 	/* map first sector to header */
-	sun = (struct fdisk_sun_label *) cxt->label;
+	sun = self_label(cxt);
 	sun->header = (struct sun_disklabel *) cxt->firstsector;
 	sunlabel = sun->header;
 
@@ -213,7 +213,7 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	if (rc)
 		return rc;
 
-	sun = (struct fdisk_sun_label *) cxt->label;
+	sun = self_label(cxt);
 	sun->header = (struct sun_disklabel *) cxt->firstsector;
 
 	sunlabel = sun->header;
