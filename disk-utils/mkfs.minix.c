@@ -534,9 +534,9 @@ static void setup_tables(const struct fs_control *ctl) {
 	if (fs_version == 3)
 		Super3.s_ninodes = inodes;
 	else {
-		Super.s_ninodes = inodes;
 		if (inodes > MINIX_MAX_INODES)
 			inodes = MINIX_MAX_INODES;
+		Super.s_ninodes = inodes;
 	}
 	super_set_map_blocks(ctl, inodes);
 	if (MINIX_MAX_INODES < first_zone_data())
