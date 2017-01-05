@@ -1480,12 +1480,12 @@ done:
  *
  * Returns: 0, a negative value in case of an error.
  */
+#ifdef HAVE_OPEN_MEMSTREAM
 int scols_table_print_range_to_string(	struct libscols_table *tb,
 					struct libscols_line *start,
 					struct libscols_line *end,
 					char **data)
 {
-#ifdef HAVE_OPEN_MEMSTREAM
 	FILE *stream, *old_stream;
 	size_t sz;
 	int rc;
@@ -1507,10 +1507,17 @@ int scols_table_print_range_to_string(	struct libscols_table *tb,
 	scols_table_set_stream(tb, old_stream);
 
 	return rc;
-#else
-	return -ENOSYS;
-#endif
 }
+#else
+int scols_table_print_range_to_string(
+			struct libscols_table *tb __attribute__((__unused__)),
+			struct libscols_line *start __attribute__((__unused__)),
+			struct libscols_line *end __attribute__((__unused__)),
+			char **data __attribute__((__unused__)))
+{
+	return -ENOSYS;
+}
+#endif
 
 static int __scols_print_table(struct libscols_table *tb, int *is_empty)
 {
