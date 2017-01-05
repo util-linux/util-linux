@@ -827,8 +827,7 @@ static void usage(FILE *out)
 
 int main(int argc, char **argv)
 {
-	LIST_HEAD(consoles);
-	struct list_head *ptr;
+	struct list_head *ptr, consoles;
 	struct console *con;
 	char *tty = NULL;
 	struct passwd *pwd;
@@ -848,6 +847,8 @@ int main(int argc, char **argv)
 		{ "version",      0, 0, 'V' },
 		{ NULL,           0, 0, 0 }
 	};
+
+	INIT_LIST_HEAD(&consoles);
 
 	/*
 	 * If we are init we need to set up a own session.

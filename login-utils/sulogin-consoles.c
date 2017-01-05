@@ -802,8 +802,7 @@ int main(int argc, char *argv[])
 {
 	char *name = NULL;
 	int fd, re;
-	LIST_HEAD(consoles);
-	struct list_head *p;
+	struct list_head *p, consoles;
 
 	if (argc == 2) {
 		name = argv[1];
@@ -816,6 +815,7 @@ int main(int argc, char *argv[])
 	if (!name)
 		errx(EXIT_FAILURE, "usage: %s [<tty>]\n", program_invocation_short_name);
 
+	INIT_LIST_HEAD(&consoles);
 	re = detect_consoles(name, fd, &consoles);
 
 	list_for_each(p, &consoles) {
