@@ -1390,9 +1390,9 @@ static size_t last_pt_partno(struct sfdisk *sf)
 	return partno;
 }
 
+#ifdef BLKRRPART
 static int is_device_used(struct sfdisk *sf)
 {
-#ifdef BLKRRPART
 	struct stat st;
 	int fd;
 
@@ -1406,9 +1406,14 @@ static int is_device_used(struct sfdisk *sf)
 	if (fstat(fd, &st) == 0 && S_ISBLK(st.st_mode)
 	    && major(st.st_rdev) != LOOPDEV_MAJOR)
 		return ioctl(fd, BLKRRPART) != 0;
-#endif
 	return 0;
 }
+#else
+static int is_device_used(struct sfdisk *sf __attribute__((__unused__)))
+{
+	return 0;
+}
+#endif
 
 #ifdef HAVE_LIBREADLINE
 static char *sfdisk_fgets(struct fdisk_script *dp,
