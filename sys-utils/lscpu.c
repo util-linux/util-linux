@@ -562,11 +562,14 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		else if (lookup(buf, "cpu MHz static", &desc->static_mhz)) ;   /* s390 */
 		else if (lookup(buf, "flags", &desc->flags)) ;		/* x86 */
 		else if (lookup(buf, "features", &desc->flags)) ;	/* s390 */
+		else if (lookup(buf, "Features", &desc->flags)) ;	/* aarch64 */
 		else if (lookup(buf, "type", &desc->flags)) ;		/* sparc64 */
 		else if (lookup(buf, "bogomips", &desc->bogomips)) ;
+		else if (lookup(buf, "BogoMIPS", &desc->bogomips)) ;	/* aarch64 */
 		else if (lookup(buf, "bogomips per cpu", &desc->bogomips)) ; /* s390 */
 		else if (lookup(buf, "cpu", &desc->cpu)) ;
 		else if (lookup(buf, "revision", &desc->revision)) ;
+		else if (lookup(buf, "CPU revision", &desc->revision)) ; /* aarch64 */
 		else if (lookup(buf, "max thread id", &desc->mtid)) ; /* s390 */
 		else if (lookup_cache(buf, desc)) ;
 		else
