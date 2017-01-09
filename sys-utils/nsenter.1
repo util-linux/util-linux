@@ -8,7 +8,9 @@ nsenter \- run program with namespaces of other processes
 .RI [ arguments ]]
 .SH DESCRIPTION
 Enters the namespaces of one or more other processes and then executes the specified
-program.  Enterable namespaces are:
+\fIprogram\fP. If \fIprogram\fP is not given, then ``${SHELL}'' is run (default: /bin\:/sh).
+.PP
+Enterable namespaces are:
 .TP
 .B mount namespace
 Mounting and unmounting filesystems will not affect the rest of the system,
@@ -91,9 +93,6 @@ flag in
 .BR clone (2).
 .TP
 See \fBclone\fP(2) for the exact semantics of the flags.
-.TP
-If \fIprogram\fP is not given, then ``${SHELL}'' is run (default: /bin\:/sh).
-
 .SH OPTIONS
 Various of the options below that relate to namespaces take an optional
 .I file
