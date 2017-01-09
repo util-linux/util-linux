@@ -4,11 +4,12 @@ unshare \- run program with some namespaces unshared from parent
 .SH SYNOPSIS
 .B unshare
 [options]
-.I program
-.RI [ arguments ]
+.RI [ program
+.RI [ arguments ]]
 .SH DESCRIPTION
 Unshares the indicated namespaces from the parent process and then executes
-the specified \fIprogram\fR.
+the specified \fIprogram\fR. If \fIprogram\fR is not given, then ``${SHELL}'' is
+run (default: /bin/sh).
 .PP
 The namespaces can optionally be made persistent by bind mounting
 /proc/\fIpid\fR/ns/\fItype\fR files to a filesystem path and entered with
