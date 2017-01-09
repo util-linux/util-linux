@@ -91,9 +91,10 @@ enum {
  * Cell flags, see scols_cell_set_flags() before use
  */
 enum {
-	SCOLS_CELL_FL_LEFT = 0,
-	SCOLS_CELL_FL_CENTER,
-	SCOLS_CELL_FL_RIGHT
+	/* alignment evaluated in order: right,center,left */
+	SCOLS_CELL_FL_LEFT    = 0,
+	SCOLS_CELL_FL_CENTER  = (1 << 0),
+	SCOLS_CELL_FL_RIGHT   = (1 << 1)
 };
 
 extern struct libscols_iter *scols_new_iter(int direction);
@@ -131,6 +132,7 @@ extern const char *scols_cell_get_color(const struct libscols_cell *ce);
 
 extern int scols_cell_set_flags(struct libscols_cell *ce, int flags);
 extern int scols_cell_get_flags(const struct libscols_cell *ce);
+extern int scols_cell_get_alignment(const struct libscols_cell *ce);
 
 extern void *scols_cell_get_userdata(struct libscols_cell *ce);
 extern int scols_cell_set_userdata(struct libscols_cell *ce, void *data);

@@ -2,6 +2,7 @@
 <FILE>cell</FILE>
 libscols_cell
 scols_cell_copy_content
+scols_cell_get_alignment
 scols_cell_get_color
 scols_cell_get_data
 scols_cell_get_flags

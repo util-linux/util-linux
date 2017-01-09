@@ -157,3 +157,9 @@ global:
 	scols_wrapnl_chunksize;
 	scols_wrapnl_nextchunk;
 } SMARTCOLS_2.28;
+
+
+SMARTCOLS_2.30 {
+global:
+	scols_cell_get_alignment;
+} SMARTCOLS_2.29;
