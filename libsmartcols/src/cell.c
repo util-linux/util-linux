@@ -215,6 +215,22 @@ int scols_cell_get_flags(const struct libscols_cell *ce)
 }
 
 /**
+ * scols_cell_get_alignment:
+ * @ce: a pointer to a struct libscols_cell instance
+ *
+ * Returns: SCOLS_CELL_FL_{RIGHT,CELNTER,LEFT}
+ */
+int scols_cell_get_alignment(const struct libscols_cell *ce)
+{
+	if (ce->flags & SCOLS_CELL_FL_RIGHT)
+		return SCOLS_CELL_FL_RIGHT;
+	else if (ce->flags & SCOLS_CELL_FL_CENTER)
+		return SCOLS_CELL_FL_CENTER;
+
+	return SCOLS_CELL_FL_LEFT;	/* default */
+}
+
+/**
  * scols_cell_copy_content:
  * @dest: a pointer to a struct libscols_cell instance
  * @src: a pointer to an immutable struct libscols_cell instance

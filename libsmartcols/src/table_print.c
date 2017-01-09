@@ -782,14 +782,19 @@ static int print_title(struct libscols_table *tb)
 		goto done;
 	}
 
-	if (tb->title.flags & SCOLS_CELL_FL_LEFT)
-		align = MBS_ALIGN_LEFT;
-	else if (tb->title.flags & SCOLS_CELL_FL_RIGHT)
+	switch (scols_cell_get_alignment(&tb->title)) {
+	case SCOLS_CELL_FL_RIGHT:
 		align = MBS_ALIGN_RIGHT;
-	else if (tb->title.flags & SCOLS_CELL_FL_CENTER)
+		break;
+	case SCOLS_CELL_FL_CENTER:
 		align = MBS_ALIGN_CENTER;
-	else
-		align = MBS_ALIGN_LEFT;	/* default */
+		break;
+	case SCOLS_CELL_FL_LEFT:
+	default:
+		align = MBS_ALIGN_LEFT;
+		break;
+
+	}
 
 	/* copy from buf to title and align to width with title_padding */
 	rc = mbsalign_with_padding(buf, title, titlesz,

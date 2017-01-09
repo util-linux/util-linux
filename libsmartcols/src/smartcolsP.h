@@ -201,4 +201,7 @@ static inline int scols_iter_is_last(const struct libscols_iter *itr)
 	return itr->p == itr->head;
 }
 
+/* temporary for 2.29.1, public for v2.30 */
+extern int scols_cell_get_alignment(const struct libscols_cell *ce);
+
 #endif /* _LIBSMARTCOLS_PRIVATE_H */
