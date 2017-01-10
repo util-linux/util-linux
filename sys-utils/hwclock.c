@@ -1364,63 +1364,6 @@ manipulate_epoch(const struct hwclock_control *ctl)
 # endif		/* __alpha__ */
 #endif		/* __linux__ */
 
-/*
- * Compare the system and CMOS time and output the drift
- * in 10 second intervals.
- */
-static int compare_clock(const struct hwclock_control *ctl)
-{
-	struct tm tm;
-	struct timeval tv;
-	double time1_sys, time2_sys;
-	time_t time1_hw, time2_hw;
-	bool hclock_valid = FALSE, first_pass = TRUE;
-
-	if (ur->get_permissions())
-		return EX_NOPERM;
-
-	/* dummy call for increased precision */
-	gettimeofday(&tv, NULL);
-
-	synchronize_to_clock_tick(ctl);
-	ur->read_hardware_clock(ctl, &tm);
-
-	gettimeofday(&tv, NULL);
-	time1_sys = tv.tv_sec + tv.tv_usec / 1000000.0;
-
-	mktime_tz(ctl, tm, &hclock_valid, &time1_hw);
-
-	while (1) {
-		double res;
-
-		synchronize_to_clock_tick(ctl);
-		ur->read_hardware_clock(ctl, &tm);
-
-		gettimeofday(&tv, NULL);
-		time2_sys = tv.tv_sec + tv.tv_usec / 1000000.0;
-
-		mktime_tz(ctl, tm, &hclock_valid, &time2_hw);
-
-		if ((res = time2_hw - time1_hw))
-			res = (((double)time1_hw - time1_sys) -
-			       ((double)time2_hw - time2_sys))
-			    / res;
-
-		if (!first_pass)
-			printf("%10.0f   %10.6f   %15.0f   %4.0f\n",
-				(double) time2_hw, time2_sys, res * 1e6, res *1e4);
-		else {
-			first_pass = FALSE;
-			printf("hw-time      system-time         freq-offset-ppm   tick\n");
-			printf("%10.0f   %10.6f\n", (double) time1_hw, time1_sys);
-		}
-		fflush(stdout);
-		sleep(10);
-	}
-
-	return 0;
-}
-
 static void out_version(void)
 {
 	printf(UTIL_LINUX_VERSION);
@@ -1459,7 +1402,6 @@ static void usage(const struct hwclock_control *ctl, const char *fmt, ...)
 		"     --systz          set the system time based on the current timezone\n"
 		"     --adjust         adjust the RTC to account for systematic drift since\n"
 		"                        the clock was last set or adjusted\n"), usageto);
-	fputs(_(" -c, --compare        periodically compare the system clock with the CMOS clock\n"), usageto);
 #ifdef __linux__
 	fputs(_("     --getepoch       print out the kernel's hardware clock epoch value\n"
 		"     --setepoch       set the kernel's hardware clock epoch value to the \n"
@@ -1547,7 +1489,6 @@ int main(int argc, char **argv)
 
 	static const struct option longopts[] = {
 		{"adjust",	0, 0, 'a'},
-		{"compare",	0, 0, 'c'},
 		{"help",	0, 0, 'h'},
 		{"show",	0, 0, 'r'},
 		{"hctosys",	0, 0, 's'},
@@ -1627,7 +1568,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv,
-				"?hvVDacrsuwAJSFf:", longopts, NULL)) != -1) {
+				"?hvVDarsuwAJSFf:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1637,9 +1578,6 @@ int main(int argc, char **argv)
 			break;
 		case 'a':
 			ctl.adjust = 1;
-			break;
-		case 'c':
-			ctl.compare = 1;
 			break;
 		case 'r':
 			ctl.show = 1;
@@ -1773,7 +1711,7 @@ int main(int argc, char **argv)
 
 	if (!(ctl.show | ctl.set | ctl.systohc | ctl.hctosys |
 	     ctl.systz | ctl.adjust | ctl.getepoch | ctl.setepoch |
-	     ctl.predict | ctl.compare | ctl.get))
+	     ctl.predict | ctl.get))
 		ctl.show = 1;	/* default to show */
 
 #ifdef __linux__
@@ -1796,14 +1734,7 @@ int main(int argc, char **argv)
 		/* Avoid writing adjtime file if we don't have to. */
 		adjtime.dirty = FALSE;
 	ctl.universal = hw_clock_is_utc(&ctl, adjtime);
-	if (ctl.compare) {
-		if (compare_clock(&ctl))
-			hwclock_exit(&ctl, EX_NOPERM);
-
-		rc = EX_OK;
-	} else
-		rc = manipulate_clock(&ctl, set_time, startup_time, &adjtime);
-
+	rc = manipulate_clock(&ctl, set_time, startup_time, &adjtime);
 	hwclock_exit(&ctl, rc);
 	return rc;		/* Not reached */
 }

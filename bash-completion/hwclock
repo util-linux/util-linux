@@ -32,7 +32,6 @@ _hwclock_module()
 				--systohc
 				--systz
 				--adjust
-				--compare
 				--getepoch
 				--setepoch
 				--predict

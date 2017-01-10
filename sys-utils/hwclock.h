@@ -28,7 +28,6 @@ struct hwclock_control {
 		hwaudit_on:1,
 #endif
 		adjust:1,
-		compare:1,
 		show:1,
 		hctosys:1,
 		utc:1,
