@@ -259,7 +259,12 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 				goto done;
 			}
 			rc = 0;
-			goto success;
+			/* loop= used with argument. Conflict will occur. */
+			if (loopval) {
+				rc = -MNT_ERR_LOOPOVERLAP;
+				goto done;
+			} else
+				goto success;
 		}
 		default: /* error */
 			goto done;
