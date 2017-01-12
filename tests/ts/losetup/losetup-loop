@@ -36,7 +36,7 @@ ts_check_losetup
 ts_scsi_debug_init dev_size_mb=11
 BACKFILE="$TS_DEVICE"
 
-# All tests are separated by sleep 3, because loop device exists some time after
+# All tests are separated by "udevadm settle" because loop device exists some time after
 # "losetup -d". This device confuses some tests. And find-race-condition, tests,
 # whether re-use of this device works.
 
