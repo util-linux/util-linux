@@ -10,6 +10,7 @@
  */
 
 #include <blkid.h>
+#include <stdbool.h>
 
 #include "mountP.h"
 #include "loopdev.h"
@@ -142,6 +143,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	struct loopdev_cxt lc;
 	int rc = 0, lo_flags = 0;
 	uint64_t offset = 0, sizelimit = 0;
+	bool reuse = FALSE;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -263,8 +265,10 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 			if (loopval) {
 				rc = -MNT_ERR_LOOPOVERLAP;
 				goto done;
-			} else
+			} else {
+				reuse = TRUE;
 				goto success;
+			}
 		}
 		default: /* error */
 			goto done;
@@ -339,8 +343,8 @@ success:
 		/* success */
 		cxt->flags |= MNT_FL_LOOPDEV_READY;
 
-		if ((cxt->user_mountflags & MNT_MS_LOOP) &&
-		    loopcxt_is_autoclear(&lc)) {
+		if (reuse || ( (cxt->user_mountflags & MNT_MS_LOOP) &&
+		    loopcxt_is_autoclear(&lc))) {
 			/*
 			 * autoclear flag accepted by the kernel, don't store
 			 * the "loop=" option to mtab.
