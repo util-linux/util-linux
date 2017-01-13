@@ -278,4 +278,5 @@ FDISK_2.29 {
 
 FDISK_2.30 {
 	fdisk_script_has_force_label;
+	fdisk_is_regfile;
 } FDISK_2.29;

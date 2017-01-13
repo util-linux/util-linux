@@ -183,12 +183,14 @@ int fdisk_lba_is_phy_aligned(struct fdisk_context *cxt, fdisk_sector_t lba)
 	return lba_is_phy_aligned(cxt, lba);
 }
 
-static unsigned long get_sector_size(int fd)
+static unsigned long get_sector_size(struct fdisk_context *cxt)
 {
 	int sect_sz;
 
-	if (!blkdev_get_sector_size(fd, &sect_sz))
+	if (!fdisk_is_regfile(cxt) &&
+	    !blkdev_get_sector_size(cxt->dev_fd, &sect_sz))
 		return (unsigned long) sect_sz;
+
 	return DEFAULT_SECTOR_SIZE;
 }
 
@@ -423,22 +425,31 @@ int fdisk_reset_device_properties(struct fdisk_context *cxt)
 int fdisk_discover_geometry(struct fdisk_context *cxt)
 {
 	fdisk_sector_t nsects;
+	unsigned int h = 0, s = 0;
 
 	assert(cxt);
 	assert(cxt->geom.heads == 0);
 
 	DBG(CXT, ul_debugobj(cxt, "%s: discovering geometry...", cxt->dev_path));
 
-	/* get number of 512-byte sectors, and convert it the real sectors */
-	if (!blkdev_get_sectors(cxt->dev_fd, (unsigned long long *) &nsects))
-		cxt->total_sectors = (nsects / (cxt->sector_size >> 9));
+	if (fdisk_is_regfile(cxt))
+		cxt->total_sectors = cxt->dev_st.st_size / cxt->sector_size;
+	else {
+		/* get number of 512-byte sectors, and convert it the real sectors */
+		if (!blkdev_get_sectors(cxt->dev_fd, (unsigned long long *) &nsects))
+			cxt->total_sectors = (nsects / (cxt->sector_size >> 9));
+
+		/* what the kernel/bios thinks the geometry is */
+		blkdev_get_geometry(cxt->dev_fd, &h, &s);
+	}
 
 	DBG(CXT, ul_debugobj(cxt, "total sectors: %ju (ioctl=%ju)",
 				(uintmax_t) cxt->total_sectors,
 				(uintmax_t) nsects));
 
-	/* what the kernel/bios thinks the geometry is */
-	blkdev_get_geometry(cxt->dev_fd, &cxt->geom.heads, (unsigned int *) &cxt->geom.sectors);
+	cxt->geom.cylinders = 0;
+	cxt->geom.heads = h;
+	cxt->geom.sectors = s;
 
 	/* obtained heads and sectors */
 	recount_geometry(cxt);
@@ -491,7 +502,7 @@ int fdisk_discover_topology(struct fdisk_context *cxt)
 	blkid_free_probe(pr);
 #endif
 
-	cxt->sector_size = get_sector_size(cxt->dev_fd);
+	cxt->sector_size = get_sector_size(cxt);
 	if (!cxt->phy_sector_size) /* could not discover physical size */
 		cxt->phy_sector_size = cxt->sector_size;
 

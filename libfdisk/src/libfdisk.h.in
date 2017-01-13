@@ -182,6 +182,7 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 			const char *fname, int readonly);
 int fdisk_deassign_device(struct fdisk_context *cxt, int nosync);
 int fdisk_is_readonly(struct fdisk_context *cxt);
+int fdisk_is_regfile(struct fdisk_context *cxt);
 
 int fdisk_enable_details(struct fdisk_context *cxt, int enable);
 int fdisk_is_details(struct fdisk_context *cxt);

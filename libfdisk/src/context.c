@@ -488,6 +488,8 @@ static void reset_context(struct fdisk_context *cxt)
 	free(cxt->collision);
 	cxt->collision = NULL;
 
+	memset(&cxt->dev_st, 0, sizeof(cxt->dev_st));
+
 	cxt->dev_fd = -1;
 	cxt->firstsector = NULL;
 	cxt->firstsector_bufsz = 0;
@@ -581,7 +583,7 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 		int rc, org = fdisk_is_listonly(cxt->parent);
 
 		/* assign_device() is sensitive to "listonly" mode, so let's
-		 * follow the current context setting for the parent to avoid 
+		 * follow the current context setting for the parent to avoid
 		 * unwanted extra warnings. */
 		fdisk_enable_listonly(cxt->parent, fdisk_is_listonly(cxt));
 
@@ -600,6 +602,8 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 	fd = open(fname, (readonly ? O_RDONLY : O_RDWR ) | O_CLOEXEC);
 	if (fd < 0)
 		return -errno;
+
+	fstat(fd, &cxt->dev_st);
 
 	cxt->readonly = readonly;
 	cxt->dev_fd = fd;
@@ -690,6 +694,18 @@ int fdisk_is_readonly(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	return cxt->readonly;
+}
+
+/**
+ * fdisk_is_regfile:
+ * @cxt: context
+ *
+ * Returns: 1 if open file descriptor is regular file rather than a block device.
+ */
+int fdisk_is_regfile(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return S_ISREG(cxt->dev_st.st_mode);
 }
 
 /**

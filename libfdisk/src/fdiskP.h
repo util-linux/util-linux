@@ -346,10 +346,13 @@ struct fdisk_ask {
 struct fdisk_context {
 	int dev_fd;         /* device descriptor */
 	char *dev_path;     /* device path */
+	struct stat dev_st; /* stat(2) result */
+
 	int refcount;
 
 	unsigned char *firstsector; /* buffer with master boot record */
 	unsigned long firstsector_bufsz;
+
 
 	/* topology */
 	unsigned long io_size;		/* I/O size used by fdisk */
@@ -396,6 +399,7 @@ struct fdisk_context {
 	struct fdisk_context	*parent;	/* for nested PT */
 	struct fdisk_script	*script;	/* what we want to follow */
 };
+
 
 /* context.c */
 extern int __fdisk_switch_label(struct fdisk_context *cxt,

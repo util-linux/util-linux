@@ -315,6 +315,7 @@ fdisk_is_details
 fdisk_is_labeltype
 fdisk_is_listonly
 fdisk_is_readonly
+fdisk_is_regfile
 fdisk_new_context
 fdisk_new_nested_context
 FDISK_PLURAL
