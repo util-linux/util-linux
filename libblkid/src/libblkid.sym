@@ -164,3 +164,7 @@ global:
 BLKID_2.25 {
 	blkid_partlist_get_partition_by_partno;
 } BLKID_2.23;
+
+BLKID_2.30 {
+	blkid_probe_set_sectorsize;
+} BLKID_2.25;

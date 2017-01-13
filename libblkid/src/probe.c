@@ -1672,6 +1672,22 @@ unsigned int blkid_probe_get_sectorsize(blkid_probe pr)
 }
 
 /**
+ * blkid_probe_set_sectorsize:
+ * @pr: probe
+ * @sz: new size (to overwrite system default)
+ *
+ * Note that blkid_probe_set_device() resets this setting. Use it after
+ * blkid_probe_set_device() and before any probing call.
+ *
+ * Returns: 0 or <0 in case of error
+ */
+int blkid_probe_set_sectorsize(blkid_probe pr, unsigned int sz)
+{
+	pr->blkssz = sz;
+	return 0;
+}
+
+/**
  * blkid_probe_get_sectors:
  * @pr: probe
  *
