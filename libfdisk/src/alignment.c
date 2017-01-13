@@ -335,9 +335,18 @@ int fdisk_apply_user_device_properties(struct fdisk_context *cxt)
 
 	if (cxt->user_pyh_sector)
 		cxt->phy_sector_size = cxt->user_pyh_sector;
-	if (cxt->user_log_sector)
+	if (cxt->user_log_sector) {
+		uint64_t old_total = cxt->total_sectors;
+		uint64_t old_secsz = cxt->sector_size;
+
 		cxt->sector_size = cxt->min_io_size =
 			cxt->io_size = cxt->user_log_sector;
+
+		if (cxt->sector_size != old_secsz) {
+			cxt->total_sectors = (old_total * (old_secsz/512)) / (cxt->sector_size >> 9);
+			DBG(CXT, ul_debugobj(cxt, "new total sectors: %ju", cxt->total_sectors));
+		}
+	}
 
 	if (cxt->user_geom.heads)
 		cxt->geom.heads = cxt->user_geom.heads;
