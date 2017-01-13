@@ -859,6 +859,9 @@ static int bsd_readlabel(struct fdisk_context *cxt)
 	cxt->geom.heads = d->d_ntracks;
 	cxt->geom.cylinders = d->d_ncylinders;
 
+	if (fdisk_has_user_device_geometry(cxt))
+		fdisk_apply_user_device_properties(cxt);
+
 	cxt->label->nparts_cur = d->d_npartitions;
 	cxt->label->nparts_max = BSD_MAXPARTITIONS;
 	DBG(LABEL, ul_debug("read BSD label"));

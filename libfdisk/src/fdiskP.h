@@ -413,6 +413,7 @@ fdisk_sector_t fdisk_cround(struct fdisk_context *cxt, fdisk_sector_t num);
 extern int fdisk_discover_geometry(struct fdisk_context *cxt);
 extern int fdisk_discover_topology(struct fdisk_context *cxt);
 
+extern int fdisk_has_user_device_geometry(struct fdisk_context *cxt);
 extern int fdisk_apply_user_device_properties(struct fdisk_context *cxt);
 extern void fdisk_zeroize_device_properties(struct fdisk_context *cxt);
 

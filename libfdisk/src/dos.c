@@ -779,6 +779,9 @@ static int dos_probe_label(struct fdisk_context *cxt)
 	if (h && s) {
 		cxt->geom.heads = h;
 	        cxt->geom.sectors = s;
+
+		if (fdisk_has_user_device_geometry(cxt))
+			fdisk_apply_user_device_properties(cxt);
 	}
 
 	for (i = 0; i < 4; i++) {

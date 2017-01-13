@@ -146,6 +146,10 @@ static int sun_probe_label(struct fdisk_context *cxt)
 	cxt->geom.cylinders = be16_to_cpu(sunlabel->ncyl);
 	cxt->geom.sectors = be16_to_cpu(sunlabel->nsect);
 
+	/* we have on label geom, but user has to win */
+	if (fdisk_has_user_device_geometry(cxt))
+		fdisk_apply_user_device_properties(cxt);
+
 	if (be32_to_cpu(sunlabel->vtoc.version) != SUN_VTOC_VERSION) {
 		fdisk_warnx(cxt, _("Detected sun disklabel with wrong version [%d]."),
 			be32_to_cpu(sunlabel->vtoc.version));

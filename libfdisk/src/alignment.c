@@ -321,11 +321,13 @@ int fdisk_save_user_sector_size(struct fdisk_context *cxt,
  */
 int fdisk_has_user_device_properties(struct fdisk_context *cxt)
 {
-	return (cxt->user_pyh_sector
-		    || cxt->user_log_sector
-		    || cxt->user_geom.heads
-		    || cxt->user_geom.sectors
-		    || cxt->user_geom.cylinders);
+	return (cxt->user_pyh_sector || cxt->user_log_sector ||
+		fdisk_has_user_device_geometry(cxt));
+}
+
+int fdisk_has_user_device_geometry(struct fdisk_context *cxt)
+{
+	return (cxt->user_geom.heads || cxt->user_geom.sectors || cxt->user_geom.cylinders);
 }
 
 int fdisk_apply_user_device_properties(struct fdisk_context *cxt)

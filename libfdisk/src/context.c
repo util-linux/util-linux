@@ -614,16 +614,12 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 	fdisk_discover_topology(cxt);
 	fdisk_discover_geometry(cxt);
 
+	fdisk_apply_user_device_properties(cxt);
+
 	if (fdisk_read_firstsector(cxt) < 0)
 		goto fail;
 
-	/* detect labels and apply labels specific stuff (e.g geometry)
-	 * to the context */
 	fdisk_probe_labels(cxt);
-
-	/* let's apply user geometry *after* label prober
-	 * to make it possible to override in-label setting */
-	fdisk_apply_user_device_properties(cxt);
 
 	/* warn about obsolete stuff on the device if we aren't in
 	 * list-only mode and there is not PT yet */
