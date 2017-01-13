@@ -766,6 +766,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -o, --output <list>  define which output columns to use\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
+	fputs(_(" -S, --sector-size <num>  overwrite sector size\n"), out);
 	fputs(_(" -t, --type <type>    specify the partition type (dos, bsd, solaris, etc.)\n"), out);
 	fputs(_(" -v, --verbose        verbose mode\n"), out);
 
@@ -792,6 +793,7 @@ int main(int argc, char **argv)
 	char *wholedisk = NULL; /* allocated, ie: /dev/sda */
 	char *outarg = NULL;
 	dev_t disk_devno = 0, part_devno = 0;
+	unsigned int sector_size = 0;
 
 	static const struct option long_opts[] = {
 		{ "bytes",	no_argument,       NULL, 'b' },
@@ -806,6 +808,7 @@ int main(int argc, char **argv)
 		{ "nr",		required_argument, NULL, 'n' },
 		{ "output",	required_argument, NULL, 'o' },
 		{ "pairs",      no_argument,       NULL, 'P' },
+		{ "sector-size",required_argument, NULL, 'S' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "verbose",	no_argument,       NULL, 'v' },
@@ -824,7 +827,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv,
-				"abdglrsuvn:t:o:PhV", long_opts, NULL)) != -1) {
+				"abdglrsuvn:t:o:PS:hV", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
@@ -861,6 +864,9 @@ int main(int argc, char **argv)
 			break;
 		case 's':
 			what = ACT_SHOW;
+			break;
+		case 'S':
+			sector_size = strtou32_or_err(optarg, _("invalid sector size argument"));
 			break;
 		case 't':
 			type = optarg;
@@ -1001,8 +1007,12 @@ int main(int argc, char **argv)
 		if (!pr || blkid_probe_set_device(pr, fd, 0, 0))
 			warnx(_("%s: failed to initialize blkid prober"),
 					wholedisk);
-		else
+		else {
+			if (sector_size)
+				blkid_probe_set_sectorsize(pr, sector_size);
+
 			ls = get_partlist(pr, wholedisk, type);
+		}
 
 		if (ls) {
 			switch (what) {
