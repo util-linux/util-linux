@@ -74,7 +74,7 @@ static int input(FILE *fp, int *maxlength, wchar_t ***list, int *entries);
 static void c_columnate(int maxlength, long termwidth, wchar_t **list, int entries);
 static void r_columnate(int maxlength, long termwidth, wchar_t **list, int entries);
 static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, wchar_t **wcstok_state);
-static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy, wchar_t *colsep);
+static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy, wchar_t *colsep, ssize_t total_cols);
 static void print(wchar_t **list, int entries);
 
 typedef struct _tbl {
@@ -121,6 +121,7 @@ static void __attribute__((__noreturn__)) usage(int rc)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -c, --columns <width>    width of output in number of characters\n"), out);
+	fputs(_(" -m, --total-cols <number>    show only number of cols\n"), out);
 	fputs(_(" -t, --table              create a table\n"), out);
 	fputs(_(" -s, --separator <string> possible table delimiters\n"), out);
 	fputs(_(" -o, --output-separator <string>\n"
@@ -145,6 +146,7 @@ int main(int argc, char **argv)
 	wchar_t **list = NULL;		/* array of pointers to records */
 	int greedy = 1;
 	wchar_t *colsep;		/* table column output separator */
+    ssize_t total_cols = 0;
 
 	/* field separator for table option */
 	wchar_t default_separator[] = { '\t', ' ', 0 };
@@ -155,6 +157,7 @@ int main(int argc, char **argv)
 		{ "help",	0, 0, 'h' },
 		{ "version",    0, 0, 'V' },
 		{ "columns",	1, 0, 'c' },
+		{ "total-cols",	1, 0, 'm' },
 		{ "table",	0, 0, 't' },
 		{ "separator",	1, 0, 's' },
 		{ "output-separator", 1, 0, 'o' },
@@ -170,7 +173,7 @@ int main(int argc, char **argv)
 	termwidth = get_terminal_width(80);
 	colsep = mbs_to_wcs("  ");
 
-	while ((ch = getopt_long(argc, argv, "hVc:s:txo:", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "hVc:m:s:txo:", longopts, NULL)) != -1)
 		switch(ch) {
 		case 'h':
 			usage(EXIT_SUCCESS);
@@ -180,6 +183,9 @@ int main(int argc, char **argv)
 			return EXIT_SUCCESS;
 		case 'c':
 			termwidth = strtou32_or_err(optarg, _("invalid columns argument"));
+			break;
+		case 'm':
+			total_cols = strtou32_or_err(optarg, _("invalid columns argument"));
 			break;
 		case 's':
 			separator = mbs_to_wcs(optarg);
@@ -220,7 +226,7 @@ int main(int argc, char **argv)
 		exit(eval);
 
 	if (tflag)
-		maketbl(list, entries, separator, greedy, colsep);
+		maketbl(list, entries, separator, greedy, colsep, total_cols);
 	else if (maxlength >= termwidth)
 		print(list, entries);
 	else if (xflag)
@@ -331,7 +337,7 @@ wchar_t *local_wcstok(wchar_t * p, const wchar_t * separator, int greedy,
 	return result;
 }
 
-static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy, wchar_t *colsep)
+static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy, wchar_t *colsep, ssize_t total_cols)
 {
 	TBL *t;
 	int cnt;
@@ -362,7 +368,7 @@ static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy,
 		}
 		t->list = xcalloc(coloff, sizeof(wchar_t *));
 		t->len = xcalloc(coloff, sizeof(int));
-		for (t->cols = coloff; --coloff >= 0;) {
+		for (t->cols = total_cols ? total_cols : coloff; --coloff >= 0;) {
 			t->list[coloff] = cols[coloff];
 			t->len[coloff] = width(cols[coloff]);
 			if (t->len[coloff] > lens[coloff])
