@@ -491,7 +491,8 @@ static void gpt_mknew_header_common(struct fdisk_context *cxt,
 		header->alternative_lba = cpu_to_le64(cxt->total_sectors - 1ULL);
 		header->partition_entry_lba = cpu_to_le64(2ULL);
 	} else { /* backup */
-		uint64_t esz = le32_to_cpu(header->npartition_entries) * sizeof(struct gpt_entry);
+		uint64_t esz = (uint64_t) le32_to_cpu(header->npartition_entries) 
+							* sizeof(struct gpt_entry);
 		uint64_t esects = (esz + cxt->sector_size - 1) / cxt->sector_size;
 
 		header->alternative_lba = cpu_to_le64(GPT_PRIMARY_PARTITION_TABLE_LBA);
@@ -564,7 +565,7 @@ static struct gpt_header *gpt_copy_header(struct fdisk_context *cxt,
 	if (res->my_lba == GPT_PRIMARY_PARTITION_TABLE_LBA)
 		res->partition_entry_lba = cpu_to_le64(2ULL);
 	else {
-		uint64_t esz = le32_to_cpu(src->npartition_entries) * sizeof(struct gpt_entry);
+		uint64_t esz = (uint64_t) le32_to_cpu(src->npartition_entries) * sizeof(struct gpt_entry);
 		uint64_t esects = (esz + cxt->sector_size - 1) / cxt->sector_size;
 
 		res->partition_entry_lba = cpu_to_le64(cxt->total_sectors - 1ULL - esects);
@@ -826,13 +827,13 @@ static struct gpt_entry *gpt_read_entries(struct fdisk_context *cxt,
 	assert(cxt);
 	assert(header);
 
-	sz = le32_to_cpu(header->npartition_entries) *
+	sz = (ssize_t) le32_to_cpu(header->npartition_entries) *
 	     le32_to_cpu(header->sizeof_partition_entry);
 
 	ret = calloc(1, sz);
 	if (!ret)
 		return NULL;
-	offset = le64_to_cpu(header->partition_entry_lba) *
+	offset = (off_t) le64_to_cpu(header->partition_entry_lba) *
 		       cxt->sector_size;
 
 	if (offset != lseek(cxt->dev_fd, offset, SEEK_SET))
@@ -865,7 +866,7 @@ static inline uint32_t gpt_entryarr_count_crc32(struct gpt_header *header, struc
 {
 	size_t arysz = 0;
 
-	arysz = le32_to_cpu(header->npartition_entries) *
+	arysz = (size_t) le32_to_cpu(header->npartition_entries) *
 		le32_to_cpu(header->sizeof_partition_entry);
 
 	return count_crc32((unsigned char *) ents, arysz, 0, 0);
@@ -1061,9 +1062,10 @@ static int gpt_locate_disklabel(struct fdisk_context *cxt, int n,
 	case 2:
 		*name = _("GPT Entries");
 		gpt = self_label(cxt);
-		*offset = le64_to_cpu(gpt->pheader->partition_entry_lba) * cxt->sector_size;
-		*size = le32_to_cpu(gpt->pheader->npartition_entries) *
-			 le32_to_cpu(gpt->pheader->sizeof_partition_entry);
+		*offset = (uint64_t) le64_to_cpu(gpt->pheader->partition_entry_lba) *
+				     cxt->sector_size;
+		*size = (size_t) le32_to_cpu(gpt->pheader->npartition_entries) *
+				 le32_to_cpu(gpt->pheader->sizeof_partition_entry);
 		break;
 	default:
 		return 1;			/* no more chunks */
@@ -1785,7 +1787,7 @@ static int gpt_set_partition(struct fdisk_context *cxt, size_t n,
 static int gpt_write_partitions(struct fdisk_context *cxt,
 				struct gpt_header *header, struct gpt_entry *ents)
 {
-	off_t offset = le64_to_cpu(header->partition_entry_lba) * cxt->sector_size;
+	off_t offset = (off_t) le64_to_cpu(header->partition_entry_lba) * cxt->sector_size;
 	uint32_t nparts = le32_to_cpu(header->npartition_entries);
 	uint32_t totwrite = nparts * le32_to_cpu(header->sizeof_partition_entry);
 	ssize_t rc;
@@ -2357,7 +2359,7 @@ done:
 static int gpt_create_disklabel(struct fdisk_context *cxt)
 {
 	int rc = 0;
-	ssize_t esz = 0;
+	size_t esz = 0;
 	char str[37];
 	struct fdisk_gpt_label *gpt;
 
@@ -2403,7 +2405,7 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 	if (rc < 0)
 		goto done;
 
-	esz = le32_to_cpu(gpt->pheader->npartition_entries) *
+	esz = (size_t) le32_to_cpu(gpt->pheader->npartition_entries) *
 	      le32_to_cpu(gpt->pheader->sizeof_partition_entry);
 	gpt->ents = calloc(1, esz);
 	if (!gpt->ents) {
