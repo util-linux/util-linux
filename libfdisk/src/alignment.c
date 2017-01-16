@@ -614,6 +614,20 @@ static unsigned long topology_get_grain(struct fdisk_context *cxt)
 	return res;
 }
 
+/* apply label alignment setting to the context -- if not sure use
+ * fdisk_reset_alignment()
+ */
+int fdisk_apply_label_device_properties(struct fdisk_context *cxt)
+{
+	int rc = 0;
+
+	if (cxt->label && cxt->label->op->reset_alignment) {
+		DBG(CXT, ul_debugobj(cxt, "appling label device properties..."));
+		rc = cxt->label->op->reset_alignment(cxt);
+	}
+	return rc;
+}
+
 /**
  * fdisk_reset_alignment:
  * @cxt: fdisk context
@@ -638,8 +652,7 @@ int fdisk_reset_alignment(struct fdisk_context *cxt)
 	cxt->last_lba = cxt->total_sectors - 1;
 
 	/* overwrite default by label stuff */
-	if (cxt->label && cxt->label->op->reset_alignment)
-		rc = cxt->label->op->reset_alignment(cxt);
+	rc = fdisk_apply_label_device_properties(cxt);
 
 	DBG(CXT, ul_debugobj(cxt, "alignment reset to: "
 			    "first LBA=%ju, last LBA=%ju, grain=%lu [rc=%d]",

@@ -621,6 +621,8 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 
 	fdisk_probe_labels(cxt);
 
+	fdisk_apply_label_device_properties(cxt);
+
 	/* warn about obsolete stuff on the device if we aren't in
 	 * list-only mode and there is not PT yet */
 	if (!fdisk_is_listonly(cxt) && !fdisk_has_label(cxt) && check_collisions(cxt) < 0)
