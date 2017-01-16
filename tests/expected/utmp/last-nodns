@@ -91,8 +91,6 @@ init     foo          five                (01:00)
 login    foo          six                 (01:00)
 user_pro foo          seven               (01:00)
 accounti foo          nine                (01:00)
-
-wtmp-a begins Wed Aug 28 03:00:00 2013
 ~~~ iso-8601 time ~~~
 rick     long         never-gonna-logout 1970-01-01T00:00:00+0000 - 2038-01-19T03:14:07+0000 (24855+03:14)
 torvalds linux        hobby            1991-08-26T00:57:08+0000   gone - no logout
@@ -109,7 +107,7 @@ login    foo          six              2013-08-28T06:00:00+0000 - 2013-08-28T07:
 user_process foo          seven            2013-08-28T05:00:00+0000 - 2013-08-28T06:00:00+0000  (01:00)
 accounting foo          nine             2013-08-28T03:00:00+0000 - 2013-08-28T04:00:00+0000  (01:00)
 
-wtmp-a begins Wed Aug 28 03:00:00 2013
+wtmp-a begins 2013-08-28T03:00:00+0000
 ~~~ since and until ~~~
 oldtime  foo          four             Wed Aug 28 08:00    gone - no logout
 init     foo          five             Wed Aug 28 07:00 - 08:00  (01:00)

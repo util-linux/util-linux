@@ -345,7 +345,8 @@ static int time_formatter(int fmt, char *dst, size_t dlen, time_t *when)
 		break;
 	}
 	case LAST_TIMEFTM_CTIME:
-		ret = snprintf(dst, dlen, "%s", ctime(when));
+		snprintf(dst, dlen, "%s", ctime(when));
+		ret = rtrim_whitespace((unsigned char *) dst);
 		break;
 	case LAST_TIMEFTM_ISO8601:
 		ret = strtime_iso(when, ISO_8601_DATE|ISO_8601_TIME|ISO_8601_TIMEZONE, dst, dlen);
@@ -874,11 +875,19 @@ static void process_wtmp_file(const struct last_control *ctl,
 		}
 	}
 
-	{
-		char* tmp = xstrdup(filename);
-		printf(_("\n%s begins %s"), basename(tmp), ctime(&begintime));
+	if (ctl->time_fmt != LAST_TIMEFTM_NONE) {
+		struct last_timefmt *fmt;
+		char timestr[LAST_TIMESTAMP_LEN];
+		char *tmp = xstrdup(filename);
+
+		fmt = &timefmts[ctl->time_fmt];
+		if (time_formatter(fmt->in_fmt, timestr,
+				   sizeof(timestr), &begintime) < 0)
+			errx(EXIT_FAILURE, _("preallocation size exceeded"));
+		printf(_("\n%s begins %s\n"), basename(tmp), timestr);
 		free(tmp);
 	}
+
 	fclose(fp);
 
 	for (p = ulist; p; p = next) {
