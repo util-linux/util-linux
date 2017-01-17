@@ -31,7 +31,7 @@
 .\"
 .\"     @(#)column.1	8.1 (Berkeley) 6/6/93
 .\"
-.TH COLUMN 1 "July 2014" "util-linux" "User Commands"
+.TH COLUMN 1 "January 2017" "util-linux" "User Commands"
 .SH NAME
 column \- columnate lists
 .SH SYNOPSIS
@@ -45,8 +45,9 @@ are filled before columns.  Input is taken from \fIfile\fR, or
 otherwise from standard input.  Empty lines are ignored.
 .PP
 .SH OPTIONS
-.IP "\fB\-c, \-\-columns\fP \fIwidth\fP"
-Output is formatted to a width specified as number of characters.
+.IP "\fB\-c, \-\-output\-width\fP \fIwidth\fP"
+Output is formatted to a width specified as number of characters. The original
+name of this option is --columns; this name deprecated since v2.30.
 .IP "\fB\-o, \-\-output\-separator\fP \fIstring\fP"
 Specify the columns delimiter for table output (default is two spaces).
 .IP "\fB\-s, \-\-separator\fP \fIseparators\fP"

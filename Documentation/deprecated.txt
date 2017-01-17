@@ -2,6 +2,11 @@ The following is a list of commands or features that are deprecated.  All
 deprecated utils are in maintenance mode and we keep them in source tree for
 backward compatibility only.
 
+what:  column --columns
+why:   renamed to --output-width
+since: v2.30
+
+--------------------------
 
 what:  tailf
 why:   "tail -f" is better nowadays, tailf has unfixed bugs

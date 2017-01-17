@@ -120,12 +120,12 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(_("Columnate lists.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -c, --columns <width>    width of output in number of characters\n"), out);
-	fputs(_(" -t, --table              create a table\n"), out);
-	fputs(_(" -s, --separator <string> possible table delimiters\n"), out);
-	fputs(_(" -o, --output-separator <string>\n"
-	        "                          columns separator for table output; default is two spaces\n"), out);
-	fputs(_(" -x, --fillrows           fill rows before columns\n"), out);
+	fputs(_(" -t, --table                      create a table\n"), out);
+	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
+	fputs(_(" -o, --output-separator <string>  columns separator for table output\n"
+		"                                    (default is two spaces)\n"), out);
+	fputs(_(" -c, --output-width <width>       width of output in number of characters\n"), out);
+	fputs(_(" -x, --fillrows                   fill rows before columns\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -152,13 +152,14 @@ int main(int argc, char **argv)
 
 	static const struct option longopts[] =
 	{
-		{ "help",	0, 0, 'h' },
-		{ "version",    0, 0, 'V' },
-		{ "columns",	1, 0, 'c' },
-		{ "table",	0, 0, 't' },
-		{ "separator",	1, 0, 's' },
-		{ "output-separator", 1, 0, 'o' },
+		{ "columns",	1, 0, 'c' },	/* deprecated */
 		{ "fillrows",	0, 0, 'x' },
+		{ "help",	0, 0, 'h' },
+		{ "output-separator", 1, 0, 'o' },
+		{ "output-width", 1, 0, 'c' },
+		{ "separator",	1, 0, 's' },
+		{ "table",	0, 0, 't' },
+		{ "version",    0, 0, 'V' },
 		{ NULL,		0, 0, 0 },
 	};
 
