@@ -21,7 +21,7 @@ if BUILD_SCRIPTREPLAY
 usrbin_exec_PROGRAMS += scriptreplay
 dist_man_MANS += term-utils/scriptreplay.1
 scriptreplay_SOURCES = term-utils/scriptreplay.c
-scriptreplay_LDADD = $(LDADD) libcommon.la
+scriptreplay_LDADD = $(LDADD) libcommon.la $(MATH_LIBS)
 endif # BUILD_SCRIPTREPLAY
 
 
