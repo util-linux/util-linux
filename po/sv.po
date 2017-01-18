@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2016-11-08 11:08+0100\n"
+"POT-Creation-Date: 2017-01-18 13:57+0100\n"
 "PO-Revision-Date: 2016-10-23 12:38+0800\n"
 "Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -37,7 +37,7 @@ msgstr "Säg till kärnan om att en angiven partition existerar.\n"
 
 #: disk-utils/addpart.c:56 disk-utils/blockdev.c:276 disk-utils/blockdev.c:420
 #: disk-utils/blockdev.c:446 disk-utils/cfdisk.c:2622 disk-utils/delpart.c:57
-#: disk-utils/fdformat.c:227 disk-utils/fdisk.c:718 disk-utils/fdisk.c:990
+#: disk-utils/fdformat.c:227 disk-utils/fdisk.c:718 disk-utils/fdisk.c:994
 #: disk-utils/fdisk-list.c:301 disk-utils/fdisk-list.c:341
 #: disk-utils/fdisk-list.c:360 disk-utils/fsck.c:1448
 #: disk-utils/fsck.cramfs.c:155 disk-utils/fsck.cramfs.c:510
@@ -45,10 +45,10 @@ msgstr "Säg till kärnan om att en angiven partition existerar.\n"
 #: disk-utils/mkfs.cramfs.c:173 disk-utils/mkfs.cramfs.c:661
 #: disk-utils/mkfs.cramfs.c:788 disk-utils/mkfs.minix.c:819
 #: disk-utils/mkswap.c:215 disk-utils/mkswap.c:244 disk-utils/partx.c:994
-#: disk-utils/resizepart.c:101 disk-utils/sfdisk.c:643 disk-utils/sfdisk.c:699
-#: disk-utils/sfdisk.c:753 disk-utils/sfdisk.c:812 disk-utils/sfdisk.c:876
-#: disk-utils/sfdisk.c:917 disk-utils/sfdisk.c:947 disk-utils/sfdisk.c:981
-#: disk-utils/sfdisk.c:1530 disk-utils/swaplabel.c:60 libfdisk/src/bsd.c:641
+#: disk-utils/resizepart.c:101 disk-utils/sfdisk.c:647 disk-utils/sfdisk.c:703
+#: disk-utils/sfdisk.c:757 disk-utils/sfdisk.c:816 disk-utils/sfdisk.c:880
+#: disk-utils/sfdisk.c:921 disk-utils/sfdisk.c:951 disk-utils/sfdisk.c:988
+#: disk-utils/sfdisk.c:1537 disk-utils/swaplabel.c:60 libfdisk/src/bsd.c:641
 #: lib/path.c:70 lib/path.c:82 login-utils/islocal.c:87 login-utils/last.c:672
 #: login-utils/sulogin.c:446 login-utils/sulogin.c:483
 #: login-utils/utmpdump.c:136 login-utils/utmpdump.c:359
@@ -272,7 +272,7 @@ msgid "Quit program without writing changes"
 msgstr "Avsluta programmet utan att skriva förändringar"
 
 #: disk-utils/cfdisk.c:183 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1020
-#: libfdisk/src/dos.c:2306 libfdisk/src/gpt.c:2902 libfdisk/src/sgi.c:1160
+#: libfdisk/src/dos.c:2306 libfdisk/src/gpt.c:2904 libfdisk/src/sgi.c:1160
 #: libfdisk/src/sun.c:1116
 msgid "Type"
 msgstr "Typ"
@@ -450,7 +450,7 @@ msgstr "Misslyckades att skriva skript %s"
 msgid "Select label type"
 msgstr "Välj etikettstyp"
 
-#: disk-utils/cfdisk.c:2088 disk-utils/fdisk.c:1013
+#: disk-utils/cfdisk.c:2088 disk-utils/fdisk.c:1017
 msgid "Device does not contain a recognized partition table."
 msgstr "Enheten innehåller inte en igenkänd partitionstabell."
 
@@ -582,7 +582,7 @@ msgstr "Ändrade typen för partition %zu."
 msgid "The type of partition %zu is unchanged."
 msgstr "Typen för partition %zu är oförändrad."
 
-#: disk-utils/cfdisk.c:2346 disk-utils/cfdisk.c:2458 disk-utils/fdisk.c:987
+#: disk-utils/cfdisk.c:2346 disk-utils/cfdisk.c:2458 disk-utils/fdisk.c:991
 #: disk-utils/fdisk-menu.c:570
 msgid "Device is open in read-only mode."
 msgstr "Enheten är öppen i skrivskyddat läge."
@@ -595,8 +595,8 @@ msgstr "Är du säker på att du vill skriva partitionstabellen till disk? "
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Skriv in ”ja” eller ”nej” eller tryck ESC för att lämna denna dialog."
 
-#: disk-utils/cfdisk.c:2358 login-utils/lslogins.c:209 sys-utils/lscpu.c:1526
-#: sys-utils/lscpu.c:1536
+#: disk-utils/cfdisk.c:2358 login-utils/lslogins.c:209 sys-utils/lscpu.c:1529
+#: sys-utils/lscpu.c:1539
 msgid "yes"
 msgstr "ja"
 
@@ -634,7 +634,7 @@ msgstr "misslyckades med att läsa partitioner"
 msgid " %1$s [options] <disk>\n"
 msgstr " %1$s [flaggor] <disk>\n"
 
-#: disk-utils/cfdisk.c:2537 disk-utils/fdisk.c:736 disk-utils/sfdisk.c:1801
+#: disk-utils/cfdisk.c:2537 disk-utils/fdisk.c:736 disk-utils/sfdisk.c:1808
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "Visa eller manipulera en diskpartitionstabell.\n"
 
@@ -646,7 +646,7 @@ msgstr " -L, --color[=<när>]      färglägg utmatning (auto, always eller neve
 msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -z, --zero               börja med en nollställd partitionstabell\n"
 
-#: disk-utils/cfdisk.c:2582 disk-utils/fdisk.c:882 disk-utils/sfdisk.c:2068
+#: disk-utils/cfdisk.c:2582 disk-utils/fdisk.c:882 disk-utils/sfdisk.c:2075
 #: misc-utils/cal.c:390 sys-utils/dmesg.c:1333 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "färgläge stöds ej"
@@ -817,7 +817,7 @@ msgid "Using default response %c."
 msgstr "Använder standardsvaret %c."
 
 #: disk-utils/fdisk.c:176 disk-utils/fdisk.c:250 disk-utils/fdisk.c:325
-#: libfdisk/src/dos.c:1189 libfdisk/src/gpt.c:2269
+#: libfdisk/src/dos.c:1189 libfdisk/src/gpt.c:2271
 msgid "Value out of range."
 msgstr "Värde utanför intervall."
 
@@ -913,7 +913,7 @@ msgid "cannot read"
 msgstr "kan inte läsa"
 
 #: disk-utils/fdisk.c:695 libfdisk/src/bsd.c:259 libfdisk/src/dos.c:933
-#: libfdisk/src/gpt.c:2202
+#: libfdisk/src/gpt.c:2204
 msgid "First sector"
 msgstr "Första sektorn"
 
@@ -975,7 +975,7 @@ msgstr "     --bytes                   skriv ut STORLEK i byte snarare än i ett
 msgid " -w, --wipe <mode>             wipe signatures (auto, always or never)\n"
 msgstr " -w, --wipe <läge>             radera signaturer (auto, always eller never)\n"
 
-#: disk-utils/fdisk.c:752 disk-utils/sfdisk.c:1844
+#: disk-utils/fdisk.c:752 disk-utils/sfdisk.c:1851
 msgid " -W, --wipe-partitions <mode>  wipe signatures from new partitions (auto, always or never)\n"
 msgstr " -w, --wipe-partitions <läge>  radera signaturer från nya partitioner (auto, always eller never)\n"
 
@@ -1021,8 +1021,8 @@ msgstr "ogiltigt argument för sektorer"
 msgid "unsupported disklabel: %s"
 msgstr "disketikett stöds ej: %s"
 
-#: disk-utils/fdisk.c:916 disk-utils/fdisk.c:921 disk-utils/sfdisk.c:2032
-#: disk-utils/sfdisk.c:2037
+#: disk-utils/fdisk.c:916 disk-utils/fdisk.c:921 disk-utils/sfdisk.c:2039
+#: disk-utils/sfdisk.c:2044
 msgid "unsupported wipe mode"
 msgstr "raderingsläge stöds ej"
 
@@ -1030,12 +1030,12 @@ msgstr "raderingsläge stöds ej"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "Enhetsegenskaperna (sektorstorlek och geometri) bör endast användas med en enhet."
 
-#: disk-utils/fdisk.c:978
+#: disk-utils/fdisk.c:982
 #, c-format
 msgid "Welcome to fdisk (%s)."
 msgstr "Välkommen till fdisk (%s)."
 
-#: disk-utils/fdisk.c:980 disk-utils/sfdisk.c:1581
+#: disk-utils/fdisk.c:984 disk-utils/sfdisk.c:1588
 msgid ""
 "Changes will remain in memory only, until you decide to write them.\n"
 "Be careful before using the write command.\n"
@@ -1043,21 +1043,21 @@ msgstr ""
 "Ändringar kommer att förbli endast i minnet, till dess att du beslutar dig för att skriva dem.\n"
 "Var aktsam innan du använder skrivkommandot.\n"
 
-#: disk-utils/fdisk.c:997 disk-utils/sfdisk.c:1606
+#: disk-utils/fdisk.c:1001 disk-utils/sfdisk.c:1613
 #, c-format
 msgid "Device %s already contains a %s signature."
 msgstr "Enheten %s innehåller redan en %s-signatur."
 
-#: disk-utils/fdisk.c:1006 disk-utils/fdisk-menu.c:542 disk-utils/sfdisk.c:1477
-#: disk-utils/sfdisk.c:1615
+#: disk-utils/fdisk.c:1010 disk-utils/fdisk-menu.c:542 disk-utils/sfdisk.c:1484
+#: disk-utils/sfdisk.c:1622
 msgid "The signature will be removed by a write command."
 msgstr "Signaturen kommer att tas bort genom ett skrivkommando."
 
-#: disk-utils/fdisk.c:1009 disk-utils/sfdisk.c:1618
+#: disk-utils/fdisk.c:1013 disk-utils/sfdisk.c:1625
 msgid "It is strongly recommended to wipe the device with wipefs(8), in order to avoid possible collisions."
 msgstr "Det rekommenderas starkt att radera enheten med wipefs(8) för att undvika möjliga kollisioner."
 
-#: disk-utils/fdisk.c:1018
+#: disk-utils/fdisk.c:1022
 msgid "A hybrid GPT was detected. You have to sync the hybrid MBR manually (expert command 'M')."
 msgstr "En hybrid-GPT identifierades. Du måste synkronisera hybrid-MBR:en manuellt (expertkommandot ”M”)."
 
@@ -1124,22 +1124,22 @@ msgid "Partition table entries are not in disk order."
 msgstr "Poster i partitionstabell är inte i diskordning."
 
 #: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1015 libfdisk/src/dos.c:2300
-#: libfdisk/src/gpt.c:2898 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1110
+#: libfdisk/src/gpt.c:2900 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1110
 msgid "Start"
 msgstr "Början"
 
 #: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1016 libfdisk/src/dos.c:2301
-#: libfdisk/src/gpt.c:2899 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1111
+#: libfdisk/src/gpt.c:2901 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1111
 msgid "End"
 msgstr "Slutet"
 
 #: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2302
-#: libfdisk/src/gpt.c:2900 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1112
+#: libfdisk/src/gpt.c:2902 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1112
 msgid "Sectors"
 msgstr "Sektorer"
 
 #: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2304
-#: libfdisk/src/gpt.c:2901 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1114
+#: libfdisk/src/gpt.c:2903 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1114
 msgid "Size"
 msgstr "Storlek"
 
@@ -1451,7 +1451,7 @@ msgstr ""
 "\n"
 "Hjälp (expert-kommandon):\n"
 
-#: disk-utils/fdisk-menu.c:371 disk-utils/sfdisk.c:1258
+#: disk-utils/fdisk-menu.c:371 disk-utils/sfdisk.c:1265
 #, c-format
 msgid ""
 "\n"
@@ -1494,12 +1494,12 @@ msgstr "Misslyckades med att göra om disklayouten till ett skript"
 msgid "Script successfully saved."
 msgstr "Skript sparades framgångsrikt."
 
-#: disk-utils/fdisk-menu.c:534 disk-utils/sfdisk.c:1469
+#: disk-utils/fdisk-menu.c:534 disk-utils/sfdisk.c:1476
 #, c-format
 msgid "Partition #%zu contains a %s signature."
 msgstr "Partition #%zu innehåller en %s-signatur."
 
-#: disk-utils/fdisk-menu.c:537 disk-utils/sfdisk.c:1472
+#: disk-utils/fdisk-menu.c:537 disk-utils/sfdisk.c:1479
 msgid "Do you want to remove the signature?"
 msgstr "Vill du ta bort signaturen?"
 
@@ -1578,7 +1578,7 @@ msgstr "%s är inte monterad\n"
 #: disk-utils/fsck.cramfs.c:181 disk-utils/fsck.cramfs.c:235
 #: disk-utils/fsck.cramfs.c:253 disk-utils/sfdisk.c:297 libfdisk/src/bsd.c:646
 #: lib/path.c:110 lib/path.c:131 lib/path.c:152 lib/path.c:200
-#: login-utils/last.c:213 login-utils/last.c:250 login-utils/sulogin.c:660
+#: login-utils/last.c:213 login-utils/last.c:250 login-utils/sulogin.c:664
 #: sys-utils/setpriv.c:239 term-utils/setterm.c:717 term-utils/setterm.c:774
 #: term-utils/setterm.c:778 term-utils/setterm.c:785
 #, c-format
@@ -1635,7 +1635,7 @@ msgstr "%s: tolkningsfel på rad %d -- hoppas över"
 msgid "%s: failed to parse fstab"
 msgstr "%s: misslyckades med att tolka fstab"
 
-#: disk-utils/fsck.c:679 login-utils/login.c:968 login-utils/sulogin.c:1029
+#: disk-utils/fsck.c:679 login-utils/login.c:968 login-utils/sulogin.c:1034
 #: login-utils/vipw.c:204 sys-utils/flock.c:345 sys-utils/nsenter.c:153
 #: sys-utils/swapon.c:316 sys-utils/unshare.c:219 sys-utils/unshare.c:420
 #: term-utils/script.c:780
@@ -2778,7 +2778,7 @@ msgstr " -h, --help         visa denna hjälptext och avsluta\n"
 
 #: disk-utils/mkfs.c:139 lib/exec_shell.c:49 login-utils/newgrp.c:233
 #: login-utils/su-common.c:651 login-utils/su-common.c:986
-#: login-utils/sulogin.c:795 login-utils/sulogin.c:799 schedutils/chrt.c:558
+#: login-utils/sulogin.c:800 login-utils/sulogin.c:804 schedutils/chrt.c:558
 #: schedutils/ionice.c:260 schedutils/taskset.c:239 sys-utils/flock.c:122
 #: sys-utils/nsenter.c:430 sys-utils/prlimit.c:644 sys-utils/rtcwake.c:577
 #: sys-utils/setarch.c:324 sys-utils/setarch.c:403 sys-utils/setsid.c:115
@@ -3556,7 +3556,7 @@ msgstr[0] "#%2d: %9ju-%9ju (%9ju sektor, %6ju MB)\n"
 msgstr[1] "#%2d: %9ju-%9ju (%9ju sektorer, %6ju MB)\n"
 
 #: disk-utils/partx.c:581 misc-utils/findmnt.c:688 misc-utils/findmnt.c:705
-#: misc-utils/lslocks.c:391 sys-utils/lsns.c:434
+#: misc-utils/lslocks.c:391 sys-utils/lsns.c:456
 msgid "failed to add line to output"
 msgstr "misslyckades med att lägga till rad till utmatning"
 
@@ -3566,7 +3566,7 @@ msgstr "misslyckades att lägga till data till utmatningstabell"
 
 #: disk-utils/partx.c:667 login-utils/lslogins.c:922 misc-utils/findmnt.c:1582
 #: misc-utils/lsblk.c:1874 misc-utils/lslocks.c:451 sys-utils/losetup.c:310
-#: sys-utils/lscpu.c:1699 sys-utils/lsipc.c:338 sys-utils/lsns.c:489
+#: sys-utils/lscpu.c:1702 sys-utils/lsipc.c:338 sys-utils/lsns.c:511
 #: sys-utils/prlimit.c:297 sys-utils/swapon.c:280 sys-utils/wdctl.c:259
 #: sys-utils/zramctl.c:484
 msgid "failed to initialize output table"
@@ -3574,7 +3574,7 @@ msgstr "misslyckades att initiera utmatningstabell"
 
 #: disk-utils/partx.c:678 misc-utils/findmnt.c:1608 misc-utils/lsblk.c:1896
 #: misc-utils/lslocks.c:465 sys-utils/losetup.c:322 sys-utils/losetup.c:358
-#: sys-utils/lscpu.c:1704 sys-utils/lsns.c:510 sys-utils/prlimit.c:306
+#: sys-utils/lscpu.c:1707 sys-utils/lsns.c:532 sys-utils/prlimit.c:306
 #: sys-utils/swapon.c:289 sys-utils/wdctl.c:270 sys-utils/zramctl.c:493
 msgid "failed to initialize output column"
 msgstr "misslyckades att initiera utmatningskolumn"
@@ -3875,7 +3875,7 @@ msgstr " gammal start: %ju, ny start: %ju (flytta %ju sektorer)\n"
 msgid "Do you want to move partition data?"
 msgstr "Vill du flytta partitionsdata?"
 
-#: disk-utils/sfdisk.c:453 disk-utils/sfdisk.c:1774
+#: disk-utils/sfdisk.c:453 disk-utils/sfdisk.c:1781
 msgid "Leaving."
 msgstr "Lämnar."
 
@@ -3896,12 +3896,12 @@ msgstr ""
 "\n"
 "Partitionstabellen har ändrats."
 
-#: disk-utils/sfdisk.c:619
+#: disk-utils/sfdisk.c:623
 #, c-format
 msgid "unsupported label '%s'"
 msgstr "etikett ”%s” stöds inte"
 
-#: disk-utils/sfdisk.c:622
+#: disk-utils/sfdisk.c:626
 msgid ""
 "Id  Name\n"
 "\n"
@@ -3909,160 +3909,166 @@ msgstr ""
 "Id  Namn\n"
 "\n"
 
-#: disk-utils/sfdisk.c:652
+#: disk-utils/sfdisk.c:656
 msgid "unrecognized partition table type"
 msgstr "okänd typ av partitionstabell"
 
-#: disk-utils/sfdisk.c:705
+#: disk-utils/sfdisk.c:709
 #, c-format
 msgid "Cannot get size of %s"
 msgstr "Kan inte hämta storleken på %s"
 
-#: disk-utils/sfdisk.c:742
+#: disk-utils/sfdisk.c:746
 #, c-format
 msgid "total: %ju blocks\n"
 msgstr "totalt: %ju block\n"
 
-#: disk-utils/sfdisk.c:804 disk-utils/sfdisk.c:872 disk-utils/sfdisk.c:913
-#: disk-utils/sfdisk.c:943 disk-utils/sfdisk.c:1007 disk-utils/sfdisk.c:1071
-#: disk-utils/sfdisk.c:1126 disk-utils/sfdisk.c:1182 disk-utils/sfdisk.c:1526
+#: disk-utils/sfdisk.c:808 disk-utils/sfdisk.c:876 disk-utils/sfdisk.c:917
+#: disk-utils/sfdisk.c:947 disk-utils/sfdisk.c:1014 disk-utils/sfdisk.c:1078
+#: disk-utils/sfdisk.c:1133 disk-utils/sfdisk.c:1189 disk-utils/sfdisk.c:1533
 msgid "no disk device specified"
 msgstr "ingen diskenhet angavs"
 
-#: disk-utils/sfdisk.c:815
+#: disk-utils/sfdisk.c:819
 msgid "toggle boot flags is supported for MBR only"
 msgstr "att växla startflaggorna stöds bara för MBR"
 
-#: disk-utils/sfdisk.c:846 disk-utils/sfdisk.c:892 disk-utils/sfdisk.c:1012
-#: disk-utils/sfdisk.c:1076 disk-utils/sfdisk.c:1131 disk-utils/sfdisk.c:1187
-#: disk-utils/sfdisk.c:1524 disk-utils/sfdisk.c:2004
+#: disk-utils/sfdisk.c:850 disk-utils/sfdisk.c:896 disk-utils/sfdisk.c:1019
+#: disk-utils/sfdisk.c:1083 disk-utils/sfdisk.c:1138 disk-utils/sfdisk.c:1194
+#: disk-utils/sfdisk.c:1531 disk-utils/sfdisk.c:2011
 msgid "failed to parse partition number"
 msgstr "misslyckades med att tolka partitionsnummer"
 
-#: disk-utils/sfdisk.c:851
+#: disk-utils/sfdisk.c:855
 #, c-format
 msgid "%s: partition %d: failed to toggle bootable flag"
 msgstr "%s: partition %d: misslyckades med att växla startbarhetsflagga"
 
-#: disk-utils/sfdisk.c:887 disk-utils/sfdisk.c:895
+#: disk-utils/sfdisk.c:891 disk-utils/sfdisk.c:899
 #, c-format
 msgid "%s: partition %zu: failed to delete"
 msgstr "%s: partition %zu: misslyckades med att ta bort"
 
-#: disk-utils/sfdisk.c:951
+#: disk-utils/sfdisk.c:954
+#, fuzzy, c-format
+msgid "%s: does not contain a recognized partition table"
+msgstr "Enheten innehåller inte en igenkänd partitionstabell."
+
+#: disk-utils/sfdisk.c:958
 msgid "failed to allocate dump struct"
 msgstr "misslyckade att allokera dumpstruktur"
 
-#: disk-utils/sfdisk.c:955
-msgid "failed to dump partition table"
+#: disk-utils/sfdisk.c:962
+#, fuzzy, c-format
+msgid "%s: failed to dump partition table"
 msgstr "misslyckades med att dumpa partitionstabell"
 
-#: disk-utils/sfdisk.c:985
+#: disk-utils/sfdisk.c:992
 #, c-format
 msgid "%s: no partition table found"
 msgstr "%s: ingen partitionstabell hittades"
 
-#: disk-utils/sfdisk.c:989
+#: disk-utils/sfdisk.c:996
 #, c-format
 msgid "%s: partition %zu: partition table contains only %zu partitions"
 msgstr "%s: partition %zu: partitionstabell innehåller bara %zu partitioner"
 
-#: disk-utils/sfdisk.c:992
+#: disk-utils/sfdisk.c:999
 #, c-format
 msgid "%s: partition %zu: partition is unused"
 msgstr "%s: partition %zu: partitionen är oanvänd"
 
-#: disk-utils/sfdisk.c:1011 disk-utils/sfdisk.c:1075 disk-utils/sfdisk.c:1130
-#: disk-utils/sfdisk.c:1186
+#: disk-utils/sfdisk.c:1018 disk-utils/sfdisk.c:1082 disk-utils/sfdisk.c:1137
+#: disk-utils/sfdisk.c:1193
 msgid "no partition number specified"
 msgstr "inget partitionsnummer angivet"
 
-#: disk-utils/sfdisk.c:1017 disk-utils/sfdisk.c:1081 disk-utils/sfdisk.c:1136
-#: disk-utils/sfdisk.c:1192
+#: disk-utils/sfdisk.c:1024 disk-utils/sfdisk.c:1088 disk-utils/sfdisk.c:1143
+#: disk-utils/sfdisk.c:1199
 msgid "unexpected arguments"
 msgstr "oväntade argument"
 
-#: disk-utils/sfdisk.c:1032
+#: disk-utils/sfdisk.c:1039
 #, c-format
 msgid "%s: partition %zu: failed to get partition type"
 msgstr "%s: partition %zu: misslyckades med att hämta partitionstyp"
 
-#: disk-utils/sfdisk.c:1051
+#: disk-utils/sfdisk.c:1058
 #, c-format
 msgid "failed to parse %s partition type '%s'"
 msgstr "misslyckades med att tolka %s-partitionstyp ”%s”"
 
-#: disk-utils/sfdisk.c:1055
+#: disk-utils/sfdisk.c:1062
 #, c-format
 msgid "%s: partition %zu: failed to set partition type"
 msgstr "%s: partition %zu: misslyckades med att ställa in partitionstyp"
 
-#: disk-utils/sfdisk.c:1093
+#: disk-utils/sfdisk.c:1100
 #, c-format
 msgid "%s: partition %zu: failed to get partition UUID"
 msgstr "%s: partition %zu: misslyckades med att hämta partitions-UUID"
 
-#: disk-utils/sfdisk.c:1106 disk-utils/sfdisk.c:1161 disk-utils/sfdisk.c:1215
+#: disk-utils/sfdisk.c:1113 disk-utils/sfdisk.c:1168 disk-utils/sfdisk.c:1222
 msgid "failed to allocate partition object"
 msgstr "misslyckades med att allokera partitionsobjekt"
 
-#: disk-utils/sfdisk.c:1110
+#: disk-utils/sfdisk.c:1117
 #, c-format
 msgid "%s: partition %zu: failed to set partition UUID"
 msgstr "%s: partition %zu: misslyckades med att ställa in partitions-UUID"
 
-#: disk-utils/sfdisk.c:1148
+#: disk-utils/sfdisk.c:1155
 #, c-format
 msgid "%s: partition %zu: failed to get partition name"
 msgstr "%s: partition %zu: misslyckades med att hämta partitionsnamn"
 
-#: disk-utils/sfdisk.c:1165
+#: disk-utils/sfdisk.c:1172
 #, c-format
 msgid "%s: partition %zu: failed to set partition name"
 msgstr "%s: partition %zu: misslyckades med att ställa in partitionsnamn"
 
-#: disk-utils/sfdisk.c:1219
+#: disk-utils/sfdisk.c:1226
 #, c-format
 msgid "%s: partition %zu: failed to set partition attributes"
 msgstr "%s: partition %zu: misslyckades med att ställa in partitionsattribut"
 
-#: disk-utils/sfdisk.c:1262
+#: disk-utils/sfdisk.c:1269
 msgid " Commands:\n"
 msgstr " Kommandon:\n"
 
-#: disk-utils/sfdisk.c:1264
+#: disk-utils/sfdisk.c:1271
 msgid "   write    write table to disk and exit\n"
 msgstr "   write    skriv tabellen till disk och avsluta\n"
 
-#: disk-utils/sfdisk.c:1265
+#: disk-utils/sfdisk.c:1272
 msgid "   quit     show new situation and wait for user's feedback before write\n"
 msgstr "   quit     visa nytt tillstånd och invänta användarens återkoppling innan skrivning\n"
 
-#: disk-utils/sfdisk.c:1266
+#: disk-utils/sfdisk.c:1273
 msgid "   abort    exit sfdisk shell\n"
 msgstr "   abort    avsluta sfdisk-skal\n"
 
-#: disk-utils/sfdisk.c:1267
+#: disk-utils/sfdisk.c:1274
 msgid "   print    display the partition table\n"
 msgstr "   print    skriv ut partitionstabellen\n"
 
-#: disk-utils/sfdisk.c:1268
+#: disk-utils/sfdisk.c:1275
 msgid "   help     show this help text\n"
 msgstr "   help     visa denna hjälptext\n"
 
-#: disk-utils/sfdisk.c:1270
+#: disk-utils/sfdisk.c:1277
 msgid "   Ctrl-D   the same as 'quit'\n"
 msgstr "   Ctrl-D   samma som ”quit”\n"
 
-#: disk-utils/sfdisk.c:1274
+#: disk-utils/sfdisk.c:1281
 msgid " Input format:\n"
 msgstr " Inmatningsformat:\n"
 
-#: disk-utils/sfdisk.c:1276
+#: disk-utils/sfdisk.c:1283
 msgid "   <start>, <size>, <type>, <bootable>\n"
 msgstr "   <start>, <storlek>, <typ>, <startbar>\n"
 
-#: disk-utils/sfdisk.c:1279
+#: disk-utils/sfdisk.c:1286
 msgid ""
 "   <start>  Beginning of the partition in sectors, or bytes if\n"
 "            specified in the format <number>{K,M,G,T,P,E,Z,Y}.\n"
@@ -4072,7 +4078,7 @@ msgstr ""
 "            angiven i formatet <nummer>{K,M,G,T,P,E,Z,Y}.\n"
 "            Standardvärdet är det första lediga utrymmet.\n"
 
-#: disk-utils/sfdisk.c:1284
+#: disk-utils/sfdisk.c:1291
 msgid ""
 "   <size>   Size of the partition in sectors, or bytes if\n"
 "            specified in the format <number>{K,M,G,T,P,E,Z,Y}.\n"
@@ -4082,63 +4088,63 @@ msgstr ""
 "            angiven i formatet <nummer>{K,M,G,T,P,E,Z,Y}.\n"
 "            Standardvärdet är allt tillgängligt utrymme.\n"
 
-#: disk-utils/sfdisk.c:1289
+#: disk-utils/sfdisk.c:1296
 msgid "   <type>   The partition type.  Default is a Linux data partition.\n"
 msgstr "   <typ>    Partitionstypen. Standardvärdet är en Linux datapartition.\n"
 
-#: disk-utils/sfdisk.c:1290
+#: disk-utils/sfdisk.c:1297
 msgid "            MBR: hex or L,S,E,X shortcuts.\n"
 msgstr "            MBR: hex eller L,S,E,X-genvägar.\n"
 
-#: disk-utils/sfdisk.c:1291
+#: disk-utils/sfdisk.c:1298
 msgid "            GPT: UUID or L,S,H shortcuts.\n"
 msgstr "            GPT: UUID eller L,S,H-genvägar.\n"
 
-#: disk-utils/sfdisk.c:1294
+#: disk-utils/sfdisk.c:1301
 msgid "   <bootable>  Use '*' to mark an MBR partition as bootable.\n"
 msgstr "   <startbar>  Använd ”*” för att markera en MBR-partition som startbar.\n"
 
-#: disk-utils/sfdisk.c:1298
+#: disk-utils/sfdisk.c:1305
 msgid " Example:\n"
 msgstr " Exempel:\n"
 
-#: disk-utils/sfdisk.c:1300
+#: disk-utils/sfdisk.c:1307
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr "   , 4G     Skapar en 4GiB-partition vid standard startposition.\n"
 
-#: disk-utils/sfdisk.c:1332 sys-utils/dmesg.c:1455
+#: disk-utils/sfdisk.c:1339 sys-utils/dmesg.c:1455
 msgid "unsupported command"
 msgstr "kommando stöds in"
 
-#: disk-utils/sfdisk.c:1334
+#: disk-utils/sfdisk.c:1341
 #, c-format
 msgid "line %d: unsupported command"
 msgstr "rad %d: kommando stöds inte"
 
-#: disk-utils/sfdisk.c:1493
+#: disk-utils/sfdisk.c:1500
 msgid "failed to allocate partition name"
 msgstr "misslyckades med att allokera partitionsnamn"
 
-#: disk-utils/sfdisk.c:1534
+#: disk-utils/sfdisk.c:1541
 msgid "failed to allocate script handler"
 msgstr "misslyckades med att allokera skripthanterare"
 
-#: disk-utils/sfdisk.c:1550
+#: disk-utils/sfdisk.c:1557
 #, c-format
 msgid "%s: cannot modify partition %d: no partition table was found"
 msgstr "%s: kan inte modifiera partition %d: ingen partitionstabell hittades"
 
-#: disk-utils/sfdisk.c:1555
+#: disk-utils/sfdisk.c:1562
 #, c-format
 msgid "%s: cannot modify partition %d: partition table contains only %zu partitions"
 msgstr "%s: kan inte modifiera partition %d: partitionstabell innehåller bara %zu partitioner"
 
-#: disk-utils/sfdisk.c:1561
+#: disk-utils/sfdisk.c:1568
 #, c-format
 msgid "warning: %s: partition %d is not defined yet"
 msgstr "varning: %s: partition %d är inte definierad än"
 
-#: disk-utils/sfdisk.c:1579
+#: disk-utils/sfdisk.c:1586
 #, c-format
 msgid ""
 "\n"
@@ -4147,11 +4153,11 @@ msgstr ""
 "\n"
 "Välkommen till sfdisk (%s)."
 
-#: disk-utils/sfdisk.c:1587
+#: disk-utils/sfdisk.c:1594
 msgid "Checking that no-one is using this disk right now ..."
 msgstr "Kontrollerar att ingen använder denna disk just nu…"
 
-#: disk-utils/sfdisk.c:1590
+#: disk-utils/sfdisk.c:1597
 msgid ""
 " FAILED\n"
 "\n"
@@ -4159,7 +4165,7 @@ msgstr ""
 " MISSLYCKADES\n"
 "\n"
 
-#: disk-utils/sfdisk.c:1593
+#: disk-utils/sfdisk.c:1600
 msgid ""
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
 "Umount all file systems, and swapoff all swap partitions on this disk.\n"
@@ -4169,11 +4175,11 @@ msgstr ""
 "Avmontera alla filsystem och använd swapoff för alla växlingspartitioner på denna disk.\n"
 "Använd flaggan --no-reread för att undertrycka denna kontroll.\n"
 
-#: disk-utils/sfdisk.c:1598
+#: disk-utils/sfdisk.c:1605
 msgid "Use the --force flag to overrule all checks."
 msgstr "Använd flaggan --force för att åsidosätta alla kontroller."
 
-#: disk-utils/sfdisk.c:1600
+#: disk-utils/sfdisk.c:1607
 msgid ""
 " OK\n"
 "\n"
@@ -4181,7 +4187,7 @@ msgstr ""
 " OK\n"
 "\n"
 
-#: disk-utils/sfdisk.c:1629
+#: disk-utils/sfdisk.c:1636
 msgid ""
 "\n"
 "Old situation:"
@@ -4189,7 +4195,7 @@ msgstr ""
 "\n"
 "Tidigare situation:"
 
-#: disk-utils/sfdisk.c:1647
+#: disk-utils/sfdisk.c:1654
 #, c-format
 msgid ""
 "\n"
@@ -4202,7 +4208,7 @@ msgstr ""
 "Använd ”label: <namn>” innan du definierar en första partition\n"
 "för att åsidosätta standardvärdet."
 
-#: disk-utils/sfdisk.c:1650
+#: disk-utils/sfdisk.c:1657
 msgid ""
 "\n"
 "Type 'help' to get more information.\n"
@@ -4210,31 +4216,31 @@ msgstr ""
 "\n"
 "Skriv ”help” för mer information.\n"
 
-#: disk-utils/sfdisk.c:1668
+#: disk-utils/sfdisk.c:1675
 msgid "All partitions used."
 msgstr "Alla partitioner använda."
 
-#: disk-utils/sfdisk.c:1693
+#: disk-utils/sfdisk.c:1700
 msgid "Done.\n"
 msgstr "Färdig.\n"
 
-#: disk-utils/sfdisk.c:1705
+#: disk-utils/sfdisk.c:1712
 msgid "Ignoring partition."
 msgstr "Hoppar över partition."
 
-#: disk-utils/sfdisk.c:1714
+#: disk-utils/sfdisk.c:1721
 msgid "Failed to apply script headers, disk label not created."
 msgstr "Misslyckades med att tillämpa skripthuvuden, disketikett skapades inte."
 
-#: disk-utils/sfdisk.c:1730
+#: disk-utils/sfdisk.c:1737
 msgid "Failed to add partition"
 msgstr "Misslyckades med att lägga till partition"
 
-#: disk-utils/sfdisk.c:1754
+#: disk-utils/sfdisk.c:1761
 msgid "Script header accepted."
 msgstr "Skripthuvud accepterat."
 
-#: disk-utils/sfdisk.c:1763
+#: disk-utils/sfdisk.c:1770
 msgid ""
 "\n"
 "New situation:"
@@ -4242,15 +4248,15 @@ msgstr ""
 "\n"
 "Ny situation:"
 
-#: disk-utils/sfdisk.c:1772
+#: disk-utils/sfdisk.c:1779
 msgid "Do you want to write this to disk?"
 msgstr "Vill du skriva detta till disk?"
 
-#: disk-utils/sfdisk.c:1784
+#: disk-utils/sfdisk.c:1791
 msgid "Leaving.\n"
 msgstr "Lämnar.\n"
 
-#: disk-utils/sfdisk.c:1797
+#: disk-utils/sfdisk.c:1804
 #, c-format
 msgid ""
 " %1$s [options] <dev> [[-N] <part>]\n"
@@ -4259,7 +4265,7 @@ msgstr ""
 " %1$s [flaggor] <enh> [[-N] <part>]\n"
 " %1$s [flaggor] <kommando>\n"
 
-#: disk-utils/sfdisk.c:1803
+#: disk-utils/sfdisk.c:1810
 msgid ""
 "\n"
 "Commands:\n"
@@ -4267,186 +4273,186 @@ msgstr ""
 "\n"
 "Kommandon:\n"
 
-#: disk-utils/sfdisk.c:1804
+#: disk-utils/sfdisk.c:1811
 msgid " -A, --activate <dev> [<part> ...] list or set bootable MBR partitions\n"
 msgstr " -A, --activate <enh> [<part> …]   lista eller ställ in startbara MBR-partitioner\n"
 
-#: disk-utils/sfdisk.c:1805
+#: disk-utils/sfdisk.c:1812
 msgid " -d, --dump <dev>                  dump partition table (usable for later input)\n"
 msgstr " -d, --dump <enh>                  dumpa partitionstabell (användbar för senare inmatning)\n"
 
-#: disk-utils/sfdisk.c:1806
+#: disk-utils/sfdisk.c:1813
 msgid " -J, --json <dev>                  dump partition table in JSON format\n"
 msgstr " -J, --json <enh>                  dumpa partitionstabell i JSON-format\n"
 
-#: disk-utils/sfdisk.c:1807
+#: disk-utils/sfdisk.c:1814
 msgid " -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"
 msgstr " -g, --show-geometry [<enh> …]     lista geometri för att angivna enheter\n"
 
-#: disk-utils/sfdisk.c:1808
+#: disk-utils/sfdisk.c:1815
 msgid " -l, --list [<dev> ...]            list partitions of each device\n"
 msgstr " -l, --list [<enh> …]              lista partitioner för varje enhet\n"
 
-#: disk-utils/sfdisk.c:1809
+#: disk-utils/sfdisk.c:1816
 msgid " -F, --list-free [<dev> ...]       list unpartitioned free areas of each device\n"
 msgstr " -F, --list-free [<enh> …]         lista opartitionerade, lediga utrymmen för varje enhet\n"
 
-#: disk-utils/sfdisk.c:1810
+#: disk-utils/sfdisk.c:1817
 msgid " -r, --reorder <dev>               fix partitions order (by start offset)\n"
 msgstr " -r, --reorder <enh>               fixa partitionsordning (efter startposition)\n"
 
-#: disk-utils/sfdisk.c:1811
+#: disk-utils/sfdisk.c:1818
 msgid " -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"
 msgstr " -s, --show-size [<enh> …]         lista storlekar för alla angivna enheter\n"
 
-#: disk-utils/sfdisk.c:1812
+#: disk-utils/sfdisk.c:1819
 msgid " -T, --list-types                  print the recognized types (see -X)\n"
 msgstr " -T, --list-types                  skriv ut identifierade typer (se -X)\n"
 
-#: disk-utils/sfdisk.c:1813
+#: disk-utils/sfdisk.c:1820
 msgid " -V, --verify [<dev> ...]          test whether partitions seem correct\n"
 msgstr " -V, --verify [<enh> …]            testa huruvida partitioner verkar korrekta\n"
 
-#: disk-utils/sfdisk.c:1814
+#: disk-utils/sfdisk.c:1821
 msgid "     --delete <dev> [<part> ...]   delete all or specified partitions\n"
 msgstr "     --delete <enh> [<part> …]     ta bort alla eller angivna partitioner\n"
 
-#: disk-utils/sfdisk.c:1817
+#: disk-utils/sfdisk.c:1824
 msgid " --part-label <dev> <part> [<str>] print or change partition label\n"
 msgstr " --part-label <enh> <part> [<str>] skriv ut eller ändra partitionsetikett\n"
 
-#: disk-utils/sfdisk.c:1818
+#: disk-utils/sfdisk.c:1825
 msgid " --part-type <dev> <part> [<type>] print or change partition type\n"
 msgstr " --part-type <enh> <part> [<typ>]  skriv ut eller ändra partitionstyp\n"
 
-#: disk-utils/sfdisk.c:1819
+#: disk-utils/sfdisk.c:1826
 msgid " --part-uuid <dev> <part> [<uuid>] print or change partition uuid\n"
 msgstr " --part-uuid <eng> <part> [<uuid>] skriv ut eller ändra partitions-UUID\n"
 
-#: disk-utils/sfdisk.c:1820
+#: disk-utils/sfdisk.c:1827
 msgid " --part-attrs <dev> <part> [<str>] print or change partition attributes\n"
 msgstr " --part-attrs <enh> <part> [<str>] skriv ut eller ändra partitionsattribut\n"
 
-#: disk-utils/sfdisk.c:1823
+#: disk-utils/sfdisk.c:1830
 msgid " <dev>                     device (usually disk) path\n"
 msgstr " <enh>                     sökväg för enhet (vanligtvis disk)\n"
 
-#: disk-utils/sfdisk.c:1824
+#: disk-utils/sfdisk.c:1831
 msgid " <part>                    partition number\n"
 msgstr " <part>                    partitionsnummer\n"
 
-#: disk-utils/sfdisk.c:1825
+#: disk-utils/sfdisk.c:1832
 msgid " <type>                    partition type, GUID for GPT, hex for MBR\n"
 msgstr " <typ>                     partitionstyp, GUID för GPT, hex för MBR\n"
 
-#: disk-utils/sfdisk.c:1828
+#: disk-utils/sfdisk.c:1835
 msgid " -a, --append              append partitions to existing partition table\n"
 msgstr " -a, --append              lägg till partitioner till existerande partitionstabell\n"
 
-#: disk-utils/sfdisk.c:1829
+#: disk-utils/sfdisk.c:1836
 msgid " -b, --backup              backup partition table sectors (see -O)\n"
 msgstr " -b, --backup              säkerhetskopiera sektorer med partitionstabell (se -O)\n"
 
-#: disk-utils/sfdisk.c:1830
+#: disk-utils/sfdisk.c:1837
 msgid "     --bytes               print SIZE in bytes rather than in human readable format\n"
 msgstr "     --bytes               skriv ut STORLEK i byte snarare än i ett format läsbar av människor\n"
 
-#: disk-utils/sfdisk.c:1831
+#: disk-utils/sfdisk.c:1838
 msgid "     --move-data[=<typescript>] move partition data after relocation (requires -N)\n"
 msgstr "     --move-data[=<typskript>]  flytta partitionsdata efter omlokalisering (kräver -N)\n"
 
-#: disk-utils/sfdisk.c:1832
+#: disk-utils/sfdisk.c:1839
 msgid " -f, --force               disable all consistency checking\n"
 msgstr " -f, --force               inaktivera alla konsistenskontroller\n"
 
-#: disk-utils/sfdisk.c:1833
+#: disk-utils/sfdisk.c:1840
 msgid "     --color[=<when>]      colorize output (auto, always or never)\n"
 msgstr "     --color[=<när>]       färglägg utmatning (auto, always eller never)\n"
 
-#: disk-utils/sfdisk.c:1836
+#: disk-utils/sfdisk.c:1843
 msgid " -N, --partno <num>        specify partition number\n"
 msgstr " -N, --partno <num>        ange partitionsnummer\n"
 
-#: disk-utils/sfdisk.c:1837
+#: disk-utils/sfdisk.c:1844
 msgid " -n, --no-act              do everything except write to device\n"
 msgstr " -n, --no-act              gör allt förutom att skriva till enhet\n"
 
-#: disk-utils/sfdisk.c:1838
+#: disk-utils/sfdisk.c:1845
 msgid "     --no-reread           do not check whether the device is in use\n"
 msgstr "     --no-reread           kontrollera inte huruvida enheten används\n"
 
-#: disk-utils/sfdisk.c:1839
+#: disk-utils/sfdisk.c:1846
 msgid "     --no-tell-kernel      do not tell kernel about changes\n"
 msgstr "     --no-tell-kernel     berätta inte för kärna om ändringar\n"
 
-#: disk-utils/sfdisk.c:1840
+#: disk-utils/sfdisk.c:1847
 msgid " -O, --backup-file <path>  override default backup file name\n"
 msgstr " -O, --backup-file <sökväg> åsidosätt standardfilnamnet för säkerhetskopia\n"
 
-#: disk-utils/sfdisk.c:1841
+#: disk-utils/sfdisk.c:1848
 msgid " -o, --output <list>       output columns\n"
 msgstr " -o, --output <lista>      mata ut kolumner\n"
 
-#: disk-utils/sfdisk.c:1842
+#: disk-utils/sfdisk.c:1849
 msgid " -q, --quiet               suppress extra info messages\n"
 msgstr " -q, --quiet               undertryck extra informationsmeddelanden\n"
 
-#: disk-utils/sfdisk.c:1843
+#: disk-utils/sfdisk.c:1850
 msgid " -w, --wipe <mode>         wipe signatures (auto, always or never)\n"
 msgstr " -w, --wipe <läge>         radera signaturer (auto, always eller never)\n"
 
-#: disk-utils/sfdisk.c:1845
+#: disk-utils/sfdisk.c:1852
 msgid " -X, --label <name>        specify label type (dos, gpt, ...)\n"
 msgstr " -X, --label <namn>        ange etikettyp (dos, gpt, …)\n"
 
-#: disk-utils/sfdisk.c:1846
+#: disk-utils/sfdisk.c:1853
 msgid " -Y, --label-nested <name> specify nested label type (dos, bsd)\n"
 msgstr " -Y, --label-nested <namn> ange nästlad etikettyp (dos, bsd)\n"
 
-#: disk-utils/sfdisk.c:1848
+#: disk-utils/sfdisk.c:1855
 msgid " -G, --show-pt-geometry    deprecated, alias to --show-geometry\n"
 msgstr " -G, --show-pt-geometry    föråldrad, alias för --show-geometry\n"
 
-#: disk-utils/sfdisk.c:1849
+#: disk-utils/sfdisk.c:1856
 msgid " -L, --Linux               deprecated, only for backward compatibility\n"
 msgstr " -L, --Linux               föråldrad, endast för bakåtkompatibilitet\n"
 
-#: disk-utils/sfdisk.c:1850
+#: disk-utils/sfdisk.c:1857
 msgid " -u, --unit S              deprecated, only sector unit is supported\n"
 msgstr " -u, --unit S              föråldrad, endast enheten sektorer stöds\n"
 
-#: disk-utils/sfdisk.c:1854 login-utils/chfn.c:102 login-utils/chsh.c:79
+#: disk-utils/sfdisk.c:1861 login-utils/chfn.c:102 login-utils/chsh.c:79
 msgid " -v, --version  output version information and exit\n"
 msgstr " -v, --version  skriv ut versionsinformation och avsluta\n"
 
-#: disk-utils/sfdisk.c:1959
+#: disk-utils/sfdisk.c:1966
 #, c-format
 msgid "%s is deprecated in favour of --part-type"
 msgstr "%s är föråldrad i jämförelse med --part-type"
 
-#: disk-utils/sfdisk.c:1964
+#: disk-utils/sfdisk.c:1971
 msgid "--id is deprecated in favour of --part-type"
 msgstr "--id är föråldrad i jämförelse med --part-type"
 
-#: disk-utils/sfdisk.c:1980
+#: disk-utils/sfdisk.c:1987
 msgid "--show-pt-geometry is no more implemented. Using --show-geometry."
 msgstr "--show-pt-geometry är inte implementerade längre. Använder --show-geometry."
 
-#: disk-utils/sfdisk.c:1991
+#: disk-utils/sfdisk.c:1998
 msgid "--Linux option is unnecessary and deprecated"
 msgstr "--Linux-flaggan är onödig och föråldrad"
 
-#: disk-utils/sfdisk.c:2020
+#: disk-utils/sfdisk.c:2027
 #, c-format
 msgid "unsupported unit '%c'"
 msgstr "enhet ”%c” stöds inte"
 
-#: disk-utils/sfdisk.c:2023 include/c.h:306
+#: disk-utils/sfdisk.c:2030 include/c.h:306
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s från %s\n"
 
-#: disk-utils/sfdisk.c:2100
+#: disk-utils/sfdisk.c:2107
 msgid "--movedata requires -N"
 msgstr "--movedata kräver -N"
 
@@ -4942,15 +4948,15 @@ msgstr "BBT"
 msgid "warning: %s is misaligned"
 msgstr "varning: %s är feljusterad"
 
-#: libfdisk/src/alignment.c:662
+#: libfdisk/src/alignment.c:671
 msgid "Calling ioctl() to re-read partition table."
 msgstr "Anropar ioctl() för att läsa om partitionstabellen."
 
-#: libfdisk/src/alignment.c:671
+#: libfdisk/src/alignment.c:680
 msgid "Re-reading the partition table failed."
 msgstr "Omläsning av partitionstabellen misslyckades."
 
-#: libfdisk/src/alignment.c:673
+#: libfdisk/src/alignment.c:682
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or kpartx(8)."
 msgstr "Kärnan använder fortfarande den gamla tabellen. Den nya tabellen kommer att användas vid nästa omstart eller efter att du kört partprobe(8) eller kpartx(8)."
 
@@ -4994,7 +5000,7 @@ msgstr "Första cylindern"
 msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgstr "Sista cylinder, +cylindrar eller +storlek{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:297 libfdisk/src/dos.c:1166 libfdisk/src/gpt.c:2247
+#: libfdisk/src/bsd.c:297 libfdisk/src/dos.c:1166 libfdisk/src/gpt.c:2249
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr "Sista sektorn, +sektorer eller +storlek{K,M,G,T,P}"
 
@@ -5282,7 +5288,7 @@ msgstr "Ogiltigt flagga 0x%02x%02x för EBR (för partition %zu) kommer ett korr
 msgid "Start sector %ju out of range."
 msgstr "Startsektor %ju är utanför intervall."
 
-#: libfdisk/src/dos.c:1026 libfdisk/src/gpt.c:2128 libfdisk/src/sgi.c:839
+#: libfdisk/src/dos.c:1026 libfdisk/src/gpt.c:2130 libfdisk/src/sgi.c:839
 #: libfdisk/src/sun.c:517
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
@@ -5293,7 +5299,7 @@ msgstr "Partition %zu är redan definierad. Ta bort den innan du lägger till de
 msgid "Sector %llu is already allocated."
 msgstr "Sektor %llu är redan allokerad."
 
-#: libfdisk/src/dos.c:1133 libfdisk/src/gpt.c:2138
+#: libfdisk/src/dos.c:1133 libfdisk/src/gpt.c:2140
 msgid "No free sectors available."
 msgstr "Inga lediga sektorer är tillgängliga."
 
@@ -5436,7 +5442,7 @@ msgstr "Ogiltig partitionstyp ”%c”."
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Kan inte skriva sektor %jd: sökning misslyckades"
 
-#: libfdisk/src/dos.c:1852 libfdisk/src/gpt.c:1088
+#: libfdisk/src/dos.c:1852 libfdisk/src/gpt.c:1090
 msgid "Disk identifier"
 msgstr "Diskidentifierare"
 
@@ -5448,7 +5454,7 @@ msgstr "Typ 0 betyder ledigt utrymme för många system. Att ha partitioner av t
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "Kan inte ändra typ för utökad partitions som redan används av logiska partitioner. Ta bort logiska partitioner först."
 
-#: libfdisk/src/dos.c:2143 libfdisk/src/gpt.c:2807
+#: libfdisk/src/dos.c:2143 libfdisk/src/gpt.c:2809
 msgid "Nothing to do. Ordering is correct already."
 msgstr "Ingenting att göra. Ordningen är redan korrekt."
 
@@ -5476,7 +5482,7 @@ msgstr "Startbarhetsflaggan för partition %zu är nu aktiverad."
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "Startbarhetsflaggan för partition %zu är nu inaktiverad."
 
-#: libfdisk/src/dos.c:2298 libfdisk/src/gpt.c:2897 libfdisk/src/sgi.c:1153
+#: libfdisk/src/dos.c:2298 libfdisk/src/gpt.c:2899 libfdisk/src/sgi.c:1153
 #: libfdisk/src/sun.c:1109
 msgid "Device"
 msgstr "Enhet"
@@ -5497,7 +5503,7 @@ msgstr "Start-C/H/S"
 msgid "End-C/H/S"
 msgstr "Slut-C/H/S"
 
-#: libfdisk/src/dos.c:2311 libfdisk/src/gpt.c:2907 libfdisk/src/sgi.c:1161
+#: libfdisk/src/dos.c:2311 libfdisk/src/gpt.c:2909 libfdisk/src/sgi.c:1161
 msgid "Attrs"
 msgstr "Attribut"
 
@@ -5821,293 +5827,293 @@ msgstr "QNX6-filsystem"
 msgid "Plan 9 partition"
 msgstr "Plan 9-partition"
 
-#: libfdisk/src/gpt.c:546
+#: libfdisk/src/gpt.c:547
 msgid "failed to allocate GPT header"
 msgstr "misslyckades med att allokera GPT-huvud"
 
-#: libfdisk/src/gpt.c:629
+#: libfdisk/src/gpt.c:630
 msgid "First LBA specified by script is out of range."
 msgstr "Första LBA angiven av skript är utanför intervallet."
 
-#: libfdisk/src/gpt.c:641
+#: libfdisk/src/gpt.c:642
 msgid "Last LBA specified by script is out of range."
 msgstr "Sista LBA angiven av skript är utanför intervallet."
 
-#: libfdisk/src/gpt.c:774
+#: libfdisk/src/gpt.c:775
 #, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by w(rite)."
 msgstr "GPT PMBR storleksfel (%<PRIu64> != %<PRIu64>) kommer att korrigeras vid w(skriv)."
 
-#: libfdisk/src/gpt.c:791
+#: libfdisk/src/gpt.c:792
 msgid "gpt: stat() failed"
 msgstr "gpt: stat() misslyckades"
 
-#: libfdisk/src/gpt.c:801
+#: libfdisk/src/gpt.c:802
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "gpt: kan inte hantera filer med läge %o"
 
-#: libfdisk/src/gpt.c:1057
+#: libfdisk/src/gpt.c:1058
 msgid "GPT Header"
 msgstr "GPT-huvud"
 
-#: libfdisk/src/gpt.c:1062
+#: libfdisk/src/gpt.c:1063
 msgid "GPT Entries"
 msgstr "GPT-poster"
 
-#: libfdisk/src/gpt.c:1095
+#: libfdisk/src/gpt.c:1097
 msgid "First LBA"
 msgstr "Första LBA"
 
-#: libfdisk/src/gpt.c:1100
+#: libfdisk/src/gpt.c:1102
 msgid "Last LBA"
 msgstr "Sista LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1106
+#: libfdisk/src/gpt.c:1108
 msgid "Alternative LBA"
 msgstr "Alternativ LBA"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1112
+#: libfdisk/src/gpt.c:1114
 msgid "Partition entries LBA"
 msgstr "Partitionsposter LBA"
 
-#: libfdisk/src/gpt.c:1117
+#: libfdisk/src/gpt.c:1119
 msgid "Allocated partition entries"
 msgstr "Allokerade partitionsposter"
 
-#: libfdisk/src/gpt.c:1432
+#: libfdisk/src/gpt.c:1434
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "Säkerhetskopian av GPT-tabellen är korrupt, men den primära verkar OK så den kommer att användas."
 
-#: libfdisk/src/gpt.c:1441
+#: libfdisk/src/gpt.c:1443
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "Den primära GPT-tabellen är korrupt, men säkerhetskopian verkar OK så den kommer att användas."
 
-#: libfdisk/src/gpt.c:1623
+#: libfdisk/src/gpt.c:1625
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "GPT-attributsbit ”%s” stöds inte"
 
-#: libfdisk/src/gpt.c:1628
+#: libfdisk/src/gpt.c:1630
 #, fuzzy, c-format
 msgid "failed to parse GPT attribute string '%s'"
 msgstr "misslyckades med att tolka lista ”%s”"
 
-#: libfdisk/src/gpt.c:1723
+#: libfdisk/src/gpt.c:1725
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "Partitions-UUID ändrat från %s till %s."
 
-#: libfdisk/src/gpt.c:1731
+#: libfdisk/src/gpt.c:1733
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "Partitionsnamn ändrades från ”%s” till ”%.*s”."
 
-#: libfdisk/src/gpt.c:1760
+#: libfdisk/src/gpt.c:1762
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "Start för partitionen föregår FirstUsableLBA."
 
-#: libfdisk/src/gpt.c:1767
+#: libfdisk/src/gpt.c:1769
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "Slutet på partitionen stegar över LastUsableLBA."
 
-#: libfdisk/src/gpt.c:1926
+#: libfdisk/src/gpt.c:1928
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr "Enheten innehåller en hybrid-MBR -- skriver endast GPT. Du måste synkronisera MBR:en manuellt."
 
-#: libfdisk/src/gpt.c:1963
+#: libfdisk/src/gpt.c:1965
 msgid "Disk does not contain a valid backup header."
 msgstr "Disk innehåller inte ett giltigt säkerhetshuvud."
 
-#: libfdisk/src/gpt.c:1968
+#: libfdisk/src/gpt.c:1970
 msgid "Invalid primary header CRC checksum."
 msgstr "Ogiltigt primärhuvud vid kontroll av CRC."
 
-#: libfdisk/src/gpt.c:1972
+#: libfdisk/src/gpt.c:1974
 msgid "Invalid backup header CRC checksum."
 msgstr "Ogiltigt huvud för säkerhetskopia vid kontroll av CRC."
 
-#: libfdisk/src/gpt.c:1977
+#: libfdisk/src/gpt.c:1979
 msgid "Invalid partition entry checksum."
 msgstr "Ogiltig kontrollsumma för partitionspost."
 
-#: libfdisk/src/gpt.c:1982
+#: libfdisk/src/gpt.c:1984
 msgid "Invalid primary header LBA sanity checks."
 msgstr "Ogiltigt primärhuvud vid kontroll av LBA."
 
-#: libfdisk/src/gpt.c:1986
+#: libfdisk/src/gpt.c:1988
 msgid "Invalid backup header LBA sanity checks."
 msgstr "Ogiltigt huvud för säkerhetskopia vid kontroll av LBA."
 
-#: libfdisk/src/gpt.c:1991
+#: libfdisk/src/gpt.c:1993
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "MyLBA stämmer inte med riktig position vid primärt huvud."
 
-#: libfdisk/src/gpt.c:1995
+#: libfdisk/src/gpt.c:1997
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "MyLBA stämmer inte med riktig position i huvudet på säkerhetskopian."
 
-#: libfdisk/src/gpt.c:2000
+#: libfdisk/src/gpt.c:2002
 msgid "Disk is too small to hold all data."
 msgstr "Disken är för liten för att hålla all data."
 
-#: libfdisk/src/gpt.c:2010
+#: libfdisk/src/gpt.c:2012
 msgid "Primary and backup header mismatch."
 msgstr "Primärt huvud och huvud i säkerhetskopia stämmer inte."
 
-#: libfdisk/src/gpt.c:2016
+#: libfdisk/src/gpt.c:2018
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "Partition %u överlappar med partition %u."
 
-#: libfdisk/src/gpt.c:2023
+#: libfdisk/src/gpt.c:2025
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "Partition %u är för stor för disken."
 
-#: libfdisk/src/gpt.c:2030
+#: libfdisk/src/gpt.c:2032
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "Partition %u slutar före den börjar."
 
-#: libfdisk/src/gpt.c:2039
+#: libfdisk/src/gpt.c:2041
 msgid "No errors detected."
 msgstr "Inga fel hittades."
 
-#: libfdisk/src/gpt.c:2040
+#: libfdisk/src/gpt.c:2042
 #, c-format
 msgid "Header version: %s"
 msgstr "Huvudversion: %s"
 
-#: libfdisk/src/gpt.c:2041
+#: libfdisk/src/gpt.c:2043
 #, c-format
 msgid "Using %u out of %d partitions."
 msgstr "Använder %u av %d partitioner."
 
-#: libfdisk/src/gpt.c:2052
+#: libfdisk/src/gpt.c:2054
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] "Totalt %ju lediga sektorer är tillgängliga i %u segment."
 msgstr[1] "Totalt %ju lediga sektorer är tillgängliga i %u segment (det största är %s)."
 
-#: libfdisk/src/gpt.c:2060
+#: libfdisk/src/gpt.c:2062
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] "%d fel hittades."
 msgstr[1] "%d fel hittades."
 
-#: libfdisk/src/gpt.c:2134
+#: libfdisk/src/gpt.c:2136
 msgid "All partitions are already in use."
 msgstr "Alla partitioner används redan."
 
-#: libfdisk/src/gpt.c:2189 libfdisk/src/gpt.c:2214
+#: libfdisk/src/gpt.c:2191 libfdisk/src/gpt.c:2216
 #, c-format
 msgid "Sector %ju already used."
 msgstr "Sektor %ju används redan."
 
-#: libfdisk/src/gpt.c:2275
+#: libfdisk/src/gpt.c:2277
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "Kunde inte skapa inte partition %zu"
 
-#: libfdisk/src/gpt.c:2282
+#: libfdisk/src/gpt.c:2284
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr "Den sista användbara GPT-sektorn är %ju, men %ju begärdes."
 
-#: libfdisk/src/gpt.c:2289
+#: libfdisk/src/gpt.c:2291
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr "Den första användbara GPT-sektorn är %ju, men %ju begärdes."
 
-#: libfdisk/src/gpt.c:2421
+#: libfdisk/src/gpt.c:2423
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "Skapade en ny GPT-disketikett (GUID: %s)."
 
-#: libfdisk/src/gpt.c:2439
+#: libfdisk/src/gpt.c:2441
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "Mata in ett nytt disk-UUID (i 8-4-4-4-12-format)"
 
-#: libfdisk/src/gpt.c:2446
+#: libfdisk/src/gpt.c:2448
 msgid "Failed to parse your UUID."
 msgstr "Misslyckades med att tolka din UUID."
 
-#: libfdisk/src/gpt.c:2460
+#: libfdisk/src/gpt.c:2462
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "Diskidentifierare ändrad från %s till %s."
 
-#: libfdisk/src/gpt.c:2480
+#: libfdisk/src/gpt.c:2482
 msgid "Not enough space for new partition table!"
 msgstr "Inte tillräckligt ledigt utrymme för ny partitionstabell!"
 
-#: libfdisk/src/gpt.c:2489
+#: libfdisk/src/gpt.c:2491
 #, c-format
 msgid "Partition #%u out of range (minimal start is %<PRIu64> sectors)"
 msgstr "Partition #%u utanför intervall (minsta start är %<PRIu64> sektorer)"
 
-#: libfdisk/src/gpt.c:2494
+#: libfdisk/src/gpt.c:2496
 #, c-format
 msgid "Partition #%u out of range (maximal end is %<PRIu64> sectors)"
 msgstr "Partition #%u är utanför intervall (största slut är %<PRIu64> sektorer)"
 
-#: libfdisk/src/gpt.c:2549
+#: libfdisk/src/gpt.c:2551
 msgid "Cannot allocate memory!"
 msgstr "Kan inte allokera minne!"
 
-#: libfdisk/src/gpt.c:2576
+#: libfdisk/src/gpt.c:2578
 #, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "Partitionstabellslängd ändrad från %<PRIu32> till %<PRIu64>."
 
-#: libfdisk/src/gpt.c:2680
+#: libfdisk/src/gpt.c:2682
 #, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "Attributen för partition %zu ändrade till 0x%016<PRIx64>."
 
-#: libfdisk/src/gpt.c:2728
+#: libfdisk/src/gpt.c:2730
 msgid "Enter GUID specific bit"
 msgstr "Mata in GUID-specifik bit"
 
-#: libfdisk/src/gpt.c:2743
+#: libfdisk/src/gpt.c:2745
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "misslyckades med att växla bit %lu som inte stöds"
 
-#: libfdisk/src/gpt.c:2756
+#: libfdisk/src/gpt.c:2758
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "GUID-specifik bit %d för partition %zu är aktiverad nu."
 
-#: libfdisk/src/gpt.c:2757
+#: libfdisk/src/gpt.c:2759
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "GUID-specifik bit %d för partition %zu är inaktiverad nu."
 
-#: libfdisk/src/gpt.c:2761
+#: libfdisk/src/gpt.c:2763
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "Flaggan %s för partition %zu är nu aktiverad."
 
-#: libfdisk/src/gpt.c:2762
+#: libfdisk/src/gpt.c:2764
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "Flaggan %s för partition %zu är nu inaktiverad."
 
-#: libfdisk/src/gpt.c:2904
+#: libfdisk/src/gpt.c:2906
 msgid "Type-UUID"
 msgstr "Typ-UUID"
 
-#: libfdisk/src/gpt.c:2905
+#: libfdisk/src/gpt.c:2907
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:2906 login-utils/chfn.c:150 login-utils/chfn.c:152
+#: libfdisk/src/gpt.c:2908 login-utils/chfn.c:150 login-utils/chfn.c:152
 #: login-utils/chfn.c:307
 msgid "Name"
 msgstr "Namn"
@@ -6532,7 +6538,7 @@ msgstr ""
 msgid "waitpid failed (%s)"
 msgstr "waitpid(%s) misslyckades"
 
-#: lib/path.c:209 sys-utils/lscpu.c:1804
+#: lib/path.c:209 sys-utils/lscpu.c:1807
 msgid "failed to callocate cpu set"
 msgstr "misslyckades att köra callocate för cpu-uppsättning"
 
@@ -7024,7 +7030,7 @@ msgstr "Kunde inte initiera PAM: %s"
 msgid "FAILED LOGIN %u FROM %s FOR %s, %s"
 msgstr "MISSLYCKAD INLOGGNING %u FRÅN %s FÖR %s, %s"
 
-#: login-utils/login.c:825 login-utils/sulogin.c:1018
+#: login-utils/login.c:825 login-utils/sulogin.c:1023
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -7112,12 +7118,12 @@ msgstr "Du har post.\n"
 msgid "setuid() failed"
 msgstr "setuid() misslyckades"
 
-#: login-utils/login.c:1331 login-utils/sulogin.c:733
+#: login-utils/login.c:1331 login-utils/sulogin.c:738
 #, c-format
 msgid "%s: change directory failed"
 msgstr "%s: ändring av katalog misslyckades"
 
-#: login-utils/login.c:1338 login-utils/sulogin.c:734
+#: login-utils/login.c:1338 login-utils/sulogin.c:739
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Loggar in med hemkatalog = ”/”.\n"
@@ -7139,7 +7145,7 @@ msgstr "%s: %s innehåller ett ogiltigt numeriskt värde: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "inloggningsstatus för hush: återställning av original-ID:n misslyckades"
 
-#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1526 sys-utils/lscpu.c:1536
+#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1529 sys-utils/lscpu.c:1539
 msgid "no"
 msgstr "nej"
 
@@ -7383,7 +7389,7 @@ msgstr ""
 #: login-utils/lslogins.c:1228 login-utils/nologin.c:26
 #: misc-utils/lslocks.c:501 misc-utils/mcookie.c:82 misc-utils/uuidd.c:70
 #: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:264 sys-utils/ipcmk.c:66
-#: sys-utils/lscpu.c:1946 sys-utils/lsipc.c:277 sys-utils/readprofile.c:104
+#: sys-utils/lscpu.c:1949 sys-utils/lsipc.c:277 sys-utils/readprofile.c:104
 #: sys-utils/rtcwake.c:95 term-utils/setterm.c:380 text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
@@ -7477,7 +7483,7 @@ msgstr "     --wtmp-file <sökväg> ställ in en alternativ sökväg för wtmp\n
 msgid "     --btmp-file <path>   set an alternate path for btmp\n"
 msgstr "     --btmp-file <sökväg> ställ in en alternativ sökväg för btmp\n"
 
-#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1244 sys-utils/lscpu.c:1964
+#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1244 sys-utils/lscpu.c:1967
 #, c-format
 msgid ""
 "\n"
@@ -7506,7 +7512,7 @@ msgstr "getline() misslyckades"
 msgid "Password: "
 msgstr "Lösenord: "
 
-#: login-utils/newgrp.c:154 login-utils/sulogin.c:1000
+#: login-utils/newgrp.c:154 login-utils/sulogin.c:1005
 msgid "crypt failed"
 msgstr "crypt misslyckades"
 
@@ -7791,24 +7797,24 @@ msgstr "Tryck på Retur för underhåll\n"
 msgid "(or press Control-D to continue): "
 msgstr "(eller tryck Ctrl-D för att fortsätta): "
 
-#: login-utils/sulogin.c:737
+#: login-utils/sulogin.c:742
 msgid "change directory to system root failed"
 msgstr "misslyckades med att byta katalog till systemroten"
 
-#: login-utils/sulogin.c:786
+#: login-utils/sulogin.c:791
 msgid "setexeccon failed"
 msgstr "setexeccon misslyckades"
 
-#: login-utils/sulogin.c:806
+#: login-utils/sulogin.c:811
 #, c-format
 msgid " %s [options] [tty device]\n"
 msgstr " %s [flaggor] [tty-enhet]\n"
 
-#: login-utils/sulogin.c:809
+#: login-utils/sulogin.c:814
 msgid "Single-user login.\n"
 msgstr "En-användarinloggning.\n"
 
-#: login-utils/sulogin.c:812
+#: login-utils/sulogin.c:817
 msgid ""
 " -p, --login-shell        start a login shell\n"
 " -t, --timeout <seconds>  max time to wait for a password (default: no limit)\n"
@@ -7818,24 +7824,24 @@ msgstr ""
 " -t, --timeout <sekunder> maximal tid att vänta på ett lösenord (standardvärde: ingen begränsning)\n"
 " -e, --force              undersök lösenordsfiler direkt om getpwnam(3) misslyckas\n"
 
-#: login-utils/sulogin.c:866 misc-utils/findmnt.c:1460 sys-utils/wdctl.c:523
+#: login-utils/sulogin.c:871 misc-utils/findmnt.c:1460 sys-utils/wdctl.c:523
 #: term-utils/agetty.c:750 term-utils/wall.c:135
 msgid "invalid timeout argument"
 msgstr "ogiltigt tidsgränsargument"
 
-#: login-utils/sulogin.c:888
+#: login-utils/sulogin.c:893
 msgid "only superuser can run this program"
 msgstr "endast superanvändaren kan köra detta program"
 
-#: login-utils/sulogin.c:931
+#: login-utils/sulogin.c:936
 msgid "cannot open console"
 msgstr "kan inte öppna konsol"
 
-#: login-utils/sulogin.c:938
+#: login-utils/sulogin.c:943
 msgid "cannot open password database"
 msgstr "kan inte öppna lösenordsdatabas"
 
-#: login-utils/sulogin.c:1015
+#: login-utils/sulogin.c:1020
 #, c-format
 msgid ""
 "Can not execute su shell\n"
@@ -7844,7 +7850,7 @@ msgstr ""
 "Kan inte köra su-skal\n"
 "\n"
 
-#: login-utils/sulogin.c:1022
+#: login-utils/sulogin.c:1027
 msgid ""
 "Timed out\n"
 "\n"
@@ -7852,7 +7858,7 @@ msgstr ""
 "Tidsgräns uppnåddes\n"
 "\n"
 
-#: login-utils/sulogin.c:1054
+#: login-utils/sulogin.c:1059
 msgid ""
 "Can not wait on su shell\n"
 "\n"
@@ -8335,11 +8341,11 @@ msgstr " -f, --first-only       skriv bara ut det första filsystemet som hittas
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -i, --invert           invertera matchningen\n"
 
-#: misc-utils/findmnt.c:1217 misc-utils/lslocks.c:507 sys-utils/lsns.c:597
+#: misc-utils/findmnt.c:1217 misc-utils/lslocks.c:507 sys-utils/lsns.c:619
 msgid " -J, --json             use JSON output format\n"
 msgstr " -J, --json             använd JSON-utmatningsformat\n"
 
-#: misc-utils/findmnt.c:1218 sys-utils/lsns.c:598
+#: misc-utils/findmnt.c:1218 sys-utils/lsns.c:620
 msgid " -l, --list             use list format output\n"
 msgstr " -l, --list             använd listutmatningsformat\n"
 
@@ -8395,7 +8401,7 @@ msgstr " -t, --types <lista>    begränsa uppsättningen av filsystem till FS-ty
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -U, --uniq             hoppa över filsystem med ett dubblerat mål\n"
 
-#: misc-utils/findmnt.c:1232 misc-utils/lslocks.c:513 sys-utils/lsns.c:603
+#: misc-utils/findmnt.c:1232 misc-utils/lslocks.c:513 sys-utils/lsns.c:625
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -u, --notruncate       trunkera inte text i kolumner\n"
 
@@ -9305,7 +9311,7 @@ msgstr " -t, --topology       mata ut information om topologi\n"
 msgid " -x, --sort <column>  sort output by <column>\n"
 msgstr " -x, --sort <kolumn>  sortera utmatning efter <kolumn>\n"
 
-#: misc-utils/lsblk.c:1647 misc-utils/lslocks.c:519 sys-utils/lsns.c:610
+#: misc-utils/lsblk.c:1647 misc-utils/lslocks.c:519 sys-utils/lsns.c:632
 #: sys-utils/prlimit.c:196 sys-utils/zramctl.c:544
 #, c-format
 msgid ""
@@ -9388,11 +9394,11 @@ msgstr "Lista lokala systemlås.\n"
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
 msgstr " -i, --noinaccessible   ignorera lås utan läsrättigheter\n"
 
-#: misc-utils/lslocks.c:509 sys-utils/lsns.c:599
+#: misc-utils/lslocks.c:509 sys-utils/lsns.c:621
 msgid " -n, --noheadings       don't print headings\n"
 msgstr " -n, --noheadings       skriv inte ut rubriker\n"
 
-#: misc-utils/lslocks.c:510 sys-utils/lsns.c:600
+#: misc-utils/lslocks.c:510 sys-utils/lsns.c:622
 msgid " -o, --output <list>    define which output columns to use\n"
 msgstr " -o, --output <lista>   definiera vilka utmatningskolumner som ska användas\n"
 
@@ -9400,12 +9406,12 @@ msgstr " -o, --output <lista>   definiera vilka utmatningskolumner som ska anvä
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr " -p, --pid <pid>        visa bara lås som hålls av denna process\n"
 
-#: misc-utils/lslocks.c:512 sys-utils/lsns.c:602
+#: misc-utils/lslocks.c:512 sys-utils/lsns.c:624
 msgid " -r, --raw              use the raw output format\n"
 msgstr " -r, --raw              använd rått utmatningsformat\n"
 
 #: misc-utils/lslocks.c:570 schedutils/chrt.c:478 schedutils/ionice.c:177
-#: schedutils/taskset.c:163 sys-utils/lsns.c:677 sys-utils/prlimit.c:586
+#: schedutils/taskset.c:163 sys-utils/lsns.c:699 sys-utils/prlimit.c:586
 msgid "invalid PID argument"
 msgstr "ogiltigt PID-argument"
 
@@ -9496,7 +9502,7 @@ msgstr ""
 msgid "pathname argument is missing"
 msgstr "sökvägsargument saknas"
 
-#: misc-utils/namei.c:414 sys-utils/lsns.c:742
+#: misc-utils/namei.c:414 sys-utils/lsns.c:764
 msgid "failed to allocate UID cache"
 msgstr "misslyckades med att allokera UID-cache"
 
@@ -11990,28 +11996,24 @@ msgstr "Kan inte ansluta till granskningssystem"
 msgid "invalid epoch argument"
 msgstr "ogiltigt epokargument"
 
-#: sys-utils/hwclock.c:1863
-msgid "Sorry, only the superuser can use the Hardware Clock."
-msgstr "Endast superanvändaren kan använda hårdvaruklockan."
-
-#: sys-utils/hwclock.c:1876
+#: sys-utils/hwclock.c:1871
 #, c-format
 msgid "%s takes no non-option arguments.  You supplied %d.\n"
 msgstr "%s tar inga argument som inte är flaggor. Du angav %d.\n"
 
-#: sys-utils/hwclock.c:1885
+#: sys-utils/hwclock.c:1880
 msgid "With --noadjfile, you must specify either --utc or --localtime"
 msgstr "Med --noadjfile måste du ange antingen --utc eller --localtime"
 
-#: sys-utils/hwclock.c:1898
+#: sys-utils/hwclock.c:1893
 msgid "No usable set-to time.  Cannot set clock."
 msgstr "Ingen användbar tid att ställa in. Kan inte ställa klockan."
 
-#: sys-utils/hwclock.c:1922
+#: sys-utils/hwclock.c:1917
 msgid "Cannot access the Hardware Clock via any known method."
 msgstr "Kan inte komma åt hårdvaruklockan via någon känd metod."
 
-#: sys-utils/hwclock.c:1925
+#: sys-utils/hwclock.c:1920
 msgid "Use the --debug option to see the details of our search for an access method."
 msgstr "Använd flaggan --debug för att se detaljerna om vår sökning efter en åtkomstmetod."
 
@@ -13122,7 +13124,7 @@ msgstr ", kryptering %s (typ %u)"
 msgid "%s: detach failed"
 msgstr "%s: lösgöring misslyckades"
 
-#: sys-utils/losetup.c:329 sys-utils/lscpu.c:1721 sys-utils/prlimit.c:229
+#: sys-utils/losetup.c:329 sys-utils/lscpu.c:1724 sys-utils/prlimit.c:229
 #: sys-utils/swapon.c:176 sys-utils/wdctl.c:215 sys-utils/zramctl.c:405
 msgid "failed to initialize output line"
 msgstr "misslyckades med att initiera utmatningsrad"
@@ -13385,37 +13387,37 @@ msgstr "visar minsta MHz för CPU:n"
 msgid "error: uname failed"
 msgstr "fel: uname misslyckades"
 
-#: sys-utils/lscpu.c:629
+#: sys-utils/lscpu.c:632
 #, c-format
 msgid "failed to determine number of CPUs: %s"
 msgstr "misslyckades med att avgöra antal CPU:er: %s"
 
-#: sys-utils/lscpu.c:889
+#: sys-utils/lscpu.c:892
 msgid "error: can not set signal handler"
 msgstr "fel: Kan inte ställa in signalhanterare"
 
-#: sys-utils/lscpu.c:894
+#: sys-utils/lscpu.c:897
 msgid "error: can not restore signal handler"
 msgstr "fel: kan inte återställa signalhanterare"
 
-#: sys-utils/lscpu.c:939
+#: sys-utils/lscpu.c:942
 #, c-format
 msgid "failed to read from: %s"
 msgstr "misslyckades med att läsa från: %s"
 
-#: sys-utils/lscpu.c:1396
+#: sys-utils/lscpu.c:1399
 msgid "Failed to extract the node number"
 msgstr "Misslyckades med att extrahera nodnummer"
 
-#: sys-utils/lscpu.c:1523 sys-utils/lscpu.c:1533
+#: sys-utils/lscpu.c:1526 sys-utils/lscpu.c:1536
 msgid "Y"
 msgstr "Y"
 
-#: sys-utils/lscpu.c:1523 sys-utils/lscpu.c:1533
+#: sys-utils/lscpu.c:1526 sys-utils/lscpu.c:1536
 msgid "N"
 msgstr "N"
 
-#: sys-utils/lscpu.c:1617
+#: sys-utils/lscpu.c:1620
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -13426,201 +13428,201 @@ msgstr ""
 "# andra program. Varje objekt har ett unikt ID som börjar på noll i\n"
 "#varje kolumn.\n"
 
-#: sys-utils/lscpu.c:1767
+#: sys-utils/lscpu.c:1770
 msgid "Architecture:"
 msgstr "Arkitektur:"
 
-#: sys-utils/lscpu.c:1781
+#: sys-utils/lscpu.c:1784
 msgid "CPU op-mode(s):"
 msgstr "CPU op-läge(n):"
 
-#: sys-utils/lscpu.c:1784 sys-utils/lscpu.c:1786
+#: sys-utils/lscpu.c:1787 sys-utils/lscpu.c:1789
 msgid "Byte Order:"
 msgstr "Byteordning:"
 
-#: sys-utils/lscpu.c:1788
+#: sys-utils/lscpu.c:1791
 msgid "CPU(s):"
 msgstr "CPU(er):"
 
-#: sys-utils/lscpu.c:1791
+#: sys-utils/lscpu.c:1794
 msgid "On-line CPU(s) mask:"
 msgstr "Mask för aktiva CPU(er):"
 
-#: sys-utils/lscpu.c:1792
+#: sys-utils/lscpu.c:1795
 msgid "On-line CPU(s) list:"
 msgstr "Lista över aktiva CPU(er):"
 
-#: sys-utils/lscpu.c:1811
+#: sys-utils/lscpu.c:1814
 msgid "Off-line CPU(s) mask:"
 msgstr "Mask för inaktiva CPU(er):"
 
-#: sys-utils/lscpu.c:1812
+#: sys-utils/lscpu.c:1815
 msgid "Off-line CPU(s) list:"
 msgstr "Lista över inaktiva CPU(er):"
 
-#: sys-utils/lscpu.c:1848
+#: sys-utils/lscpu.c:1851
 msgid "Thread(s) per core:"
 msgstr "Tråd(ar) per kärna:"
 
-#: sys-utils/lscpu.c:1850
+#: sys-utils/lscpu.c:1853
 msgid "Core(s) per socket:"
 msgstr "Kärn(or) per uttag:"
 
-#: sys-utils/lscpu.c:1853
+#: sys-utils/lscpu.c:1856
 msgid "Socket(s) per book:"
 msgstr "Uttag per bok:"
 
-#: sys-utils/lscpu.c:1856
+#: sys-utils/lscpu.c:1859
 msgid "Book(s) per drawer:"
 msgstr "Böcker per låda:"
 
-#: sys-utils/lscpu.c:1858
+#: sys-utils/lscpu.c:1861
 msgid "Drawer(s):"
 msgstr "Lådor:"
 
-#: sys-utils/lscpu.c:1860
+#: sys-utils/lscpu.c:1863
 msgid "Book(s):"
 msgstr "Böcker:"
 
-#: sys-utils/lscpu.c:1863
+#: sys-utils/lscpu.c:1866
 msgid "Socket(s):"
 msgstr "Uttag:"
 
-#: sys-utils/lscpu.c:1867
+#: sys-utils/lscpu.c:1870
 msgid "NUMA node(s):"
 msgstr "NUMA nod(er):"
 
-#: sys-utils/lscpu.c:1869
+#: sys-utils/lscpu.c:1872
 msgid "Vendor ID:"
 msgstr "Tillverkar-ID:"
 
-#: sys-utils/lscpu.c:1871
+#: sys-utils/lscpu.c:1874
 msgid "Machine type:"
 msgstr "Maskintyp:"
 
-#: sys-utils/lscpu.c:1873
+#: sys-utils/lscpu.c:1876
 msgid "CPU family:"
 msgstr "CPU-familj:"
 
-#: sys-utils/lscpu.c:1875
+#: sys-utils/lscpu.c:1878
 msgid "Model:"
 msgstr "Modell:"
 
-#: sys-utils/lscpu.c:1877
+#: sys-utils/lscpu.c:1880
 msgid "Model name:"
 msgstr "Modellnamn:"
 
-#: sys-utils/lscpu.c:1879
+#: sys-utils/lscpu.c:1882
 msgid "Stepping:"
 msgstr "Stegning:"
 
-#: sys-utils/lscpu.c:1881
+#: sys-utils/lscpu.c:1884
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:1883
+#: sys-utils/lscpu.c:1886
 msgid "CPU dynamic MHz:"
 msgstr "CPU dynamisk MHz:"
 
-#: sys-utils/lscpu.c:1885
+#: sys-utils/lscpu.c:1888
 msgid "CPU static MHz:"
 msgstr "CPU statisk MHz:"
 
-#: sys-utils/lscpu.c:1887
+#: sys-utils/lscpu.c:1890
 msgid "CPU max MHz:"
 msgstr "CPU max MHz:"
 
-#: sys-utils/lscpu.c:1889
+#: sys-utils/lscpu.c:1892
 msgid "CPU min MHz:"
 msgstr "CPU min MHz:"
 
-#: sys-utils/lscpu.c:1891
+#: sys-utils/lscpu.c:1894
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:1894 sys-utils/lscpu.c:1896
+#: sys-utils/lscpu.c:1897 sys-utils/lscpu.c:1899
 msgid "Virtualization:"
 msgstr "Virtualisering:"
 
-#: sys-utils/lscpu.c:1899
+#: sys-utils/lscpu.c:1902
 msgid "Hypervisor:"
 msgstr "Hypervisor:"
 
-#: sys-utils/lscpu.c:1901
+#: sys-utils/lscpu.c:1904
 msgid "Hypervisor vendor:"
 msgstr "Hypervisortillverkare:"
 
-#: sys-utils/lscpu.c:1902
+#: sys-utils/lscpu.c:1905
 msgid "Virtualization type:"
 msgstr "Virtualiseringstyp:"
 
-#: sys-utils/lscpu.c:1905
+#: sys-utils/lscpu.c:1908
 msgid "Dispatching mode:"
 msgstr "Avsändningsläge:"
 
-#: sys-utils/lscpu.c:1911 sys-utils/lscpu.c:1921
+#: sys-utils/lscpu.c:1914 sys-utils/lscpu.c:1924
 #, c-format
 msgid "%s cache:"
 msgstr "%s cache:"
 
-#: sys-utils/lscpu.c:1927
+#: sys-utils/lscpu.c:1930
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "NUMA-nod%d CPU(er):"
 
-#: sys-utils/lscpu.c:1932
+#: sys-utils/lscpu.c:1935
 msgid "Flags:"
 msgstr "Flaggor:"
 
-#: sys-utils/lscpu.c:1935
+#: sys-utils/lscpu.c:1938
 msgid "Physical sockets:"
 msgstr "Fysiska uttag:"
 
-#: sys-utils/lscpu.c:1936
+#: sys-utils/lscpu.c:1939
 msgid "Physical chips:"
 msgstr "Fysiska chip:"
 
-#: sys-utils/lscpu.c:1937
+#: sys-utils/lscpu.c:1940
 msgid "Physical cores/chip:"
 msgstr "Fysiska kärnor/chip:"
 
-#: sys-utils/lscpu.c:1949
+#: sys-utils/lscpu.c:1952
 msgid "Display information about the CPU architecture.\n"
 msgstr "Visa information om CPU-arkitekturen.\n"
 
-#: sys-utils/lscpu.c:1952
+#: sys-utils/lscpu.c:1955
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr " -a, --all               skriv ut både aktiva och inaktiva CPU:er (standard för -e)\n"
 
-#: sys-utils/lscpu.c:1953
+#: sys-utils/lscpu.c:1956
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr " -b, --online            skriv endast ut aktiva CPU:er (standard för -p)\n"
 
-#: sys-utils/lscpu.c:1954
+#: sys-utils/lscpu.c:1957
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline           skriv endast ut inaktiva CPU:er\n"
 
-#: sys-utils/lscpu.c:1955
+#: sys-utils/lscpu.c:1958
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr " -e, --extended[=<lista>] skriv ut i ett utökat, läsbart format\n"
 
-#: sys-utils/lscpu.c:1956
+#: sys-utils/lscpu.c:1959
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<lista>]   skriv ut en lista i tolkningsbart format\n"
 
-#: sys-utils/lscpu.c:1957
+#: sys-utils/lscpu.c:1960
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <kat>     använd angiven katalog som systemrot\n"
 
-#: sys-utils/lscpu.c:1958
+#: sys-utils/lscpu.c:1961
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr " -x, --hex               skriv ut hexadecimala masker snarare än listor över CPU:er\n"
 
-#: sys-utils/lscpu.c:1959
+#: sys-utils/lscpu.c:1962
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -y, --physical       skriv ut fysiska istället för logiska ID\n"
 
-#: sys-utils/lscpu.c:2060
+#: sys-utils/lscpu.c:2063
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: flaggorna --all, --online och --offline kan endast användas med flaggorna --extended eller --parse.\n"
@@ -14040,37 +14042,37 @@ msgstr "UID för PID:en"
 msgid "username of the PID"
 msgstr "användarnamn för PID:en"
 
-#: sys-utils/lsns.c:591
+#: sys-utils/lsns.c:613
 #, c-format
 msgid " %s [options] [<namespace>]\n"
 msgstr " %s [flaggor] [<namnrymd>]\n"
 
-#: sys-utils/lsns.c:594
+#: sys-utils/lsns.c:616
 msgid "List system namespaces.\n"
 msgstr "Lista systemnamnrymden.\n"
 
-#: sys-utils/lsns.c:601
+#: sys-utils/lsns.c:623
 msgid " -p, --task <pid>       print process namespaces\n"
 msgstr " -p, --task <pid>       skriv ut processnamnrymd\n"
 
-#: sys-utils/lsns.c:604
+#: sys-utils/lsns.c:626
 msgid " -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup)\n"
 msgstr " -t, --type <namn>      namnrymdstyp (mnt, net, ipc, user, pid, uts, cgroup)\n"
 
-#: sys-utils/lsns.c:694
+#: sys-utils/lsns.c:716
 #, c-format
 msgid "unknown namespace type: %s"
 msgstr "okänd namnrymdstyp: %s"
 
-#: sys-utils/lsns.c:713
+#: sys-utils/lsns.c:735
 msgid "--task is mutually exclusive with <namespace>"
 msgstr "--task är ömsesidigt uteslutande med <namnrymd>"
 
-#: sys-utils/lsns.c:714
+#: sys-utils/lsns.c:736
 msgid "invalid namespace argument"
 msgstr "ogiltigt namnrymdsargument"
 
-#: sys-utils/lsns.c:752
+#: sys-utils/lsns.c:774
 #, c-format
 msgid "not found namespace: %ju"
 msgstr "hittade inte namnrymd: %ju"
@@ -18063,36 +18065,36 @@ msgstr ""
 msgid "[Use q or Q to quit]"
 msgstr "[Använd q eller Q för att avsluta]"
 
-#: text-utils/more.c:716
+#: text-utils/more.c:724
 #, c-format
 msgid "--More--"
 msgstr "--Mer--"
 
-#: text-utils/more.c:718
+#: text-utils/more.c:726
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Nästa fil: %s)"
 
-#: text-utils/more.c:726
+#: text-utils/more.c:734
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Tryck blanksteg för att fortsätta, ”q” för att avsluta.]"
 
-#: text-utils/more.c:1154
+#: text-utils/more.c:1162
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
 msgstr[0] "…tillbaka %d sida"
 msgstr[1] "…tillbaka %d sidor"
 
-#: text-utils/more.c:1202
+#: text-utils/more.c:1210
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
 msgstr[0] "…hoppar över %d rad"
 msgstr[1] "…hoppar över %d rader"
 
-#: text-utils/more.c:1240
+#: text-utils/more.c:1248
 msgid ""
 "\n"
 "***Back***\n"
@@ -18102,11 +18104,11 @@ msgstr ""
 "***Tillbaka***\n"
 "\n"
 
-#: text-utils/more.c:1255
+#: text-utils/more.c:1263
 msgid "No previous regular expression"
 msgstr "Inget föregående reguljärt uttryck"
 
-#: text-utils/more.c:1285
+#: text-utils/more.c:1293
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
@@ -18118,7 +18120,7 @@ msgstr ""
 "\n"
 "Stjärna (*) indikerar att argumentet blir nytt standardalternativ.\n"
 
-#: text-utils/more.c:1292
+#: text-utils/more.c:1300
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -18161,30 +18163,30 @@ msgstr ""
 ":f                      Visa aktuellt filnamn och radnummer\n"
 ".                       Upprepa föregående kommando\n"
 
-#: text-utils/more.c:1365 text-utils/more.c:1371
+#: text-utils/more.c:1373 text-utils/more.c:1379
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Tryck ”h” för instruktioner.]"
 
-#: text-utils/more.c:1402
+#: text-utils/more.c:1410
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "”%s” rad %d"
 
-#: text-utils/more.c:1404
+#: text-utils/more.c:1412
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Inte en fil] rad %d"
 
-#: text-utils/more.c:1486
+#: text-utils/more.c:1494
 msgid "  Overflow\n"
 msgstr "  Spill\n"
 
-#: text-utils/more.c:1535
+#: text-utils/more.c:1543
 msgid "...skipping\n"
 msgstr "…hoppar över\n"
 
-#: text-utils/more.c:1569
+#: text-utils/more.c:1577
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -18192,19 +18194,19 @@ msgstr ""
 "\n"
 "Mönstret hittades inte\n"
 
-#: text-utils/more.c:1575 text-utils/pg.c:1027 text-utils/pg.c:1173
+#: text-utils/more.c:1583 text-utils/pg.c:1027 text-utils/pg.c:1173
 msgid "Pattern not found"
 msgstr "Mönstret hittades inte"
 
-#: text-utils/more.c:1621
+#: text-utils/more.c:1629
 msgid "exec failed\n"
 msgstr "körning misslyckades\n"
 
-#: text-utils/more.c:1635
+#: text-utils/more.c:1643
 msgid "can't fork\n"
 msgstr "kan inte grena\n"
 
-#: text-utils/more.c:1669
+#: text-utils/more.c:1677
 msgid ""
 "\n"
 "...Skipping "
@@ -18212,19 +18214,19 @@ msgstr ""
 "\n"
 "…Hoppar över "
 
-#: text-utils/more.c:1673
+#: text-utils/more.c:1681
 msgid "...Skipping to file "
 msgstr "…Hoppar över till fil "
 
-#: text-utils/more.c:1675
+#: text-utils/more.c:1683
 msgid "...Skipping back to file "
 msgstr "…Hoppar tillbaka till fil "
 
-#: text-utils/more.c:1965
+#: text-utils/more.c:1973
 msgid "Line too long"
 msgstr "Raden är för lång"
 
-#: text-utils/more.c:2002
+#: text-utils/more.c:2010
 msgid "No previous command to substitute for"
 msgstr "Inget tidigare kommando att ersätta"
 
@@ -18501,6 +18503,9 @@ msgstr "Okänd kontrollsekvens i indata: %o, %o"
 #: text-utils/ul.c:624
 msgid "Input line too long."
 msgstr "Indataraden är för lång."
+
+#~ msgid "Sorry, only the superuser can use the Hardware Clock."
+#~ msgstr "Endast superanvändaren kan använda hårdvaruklockan."
 
 #~ msgid "Filesystem label:"
 #~ msgstr "Filsystemsetikett:"
