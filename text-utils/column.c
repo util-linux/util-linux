@@ -50,8 +50,8 @@
 #include <getopt.h>
 
 #include "nls.h"
-#include "widechar.h"
 #include "c.h"
+#include "widechar.h"
 #include "xalloc.h"
 #include "strutils.h"
 #include "closestream.h"
