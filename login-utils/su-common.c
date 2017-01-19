@@ -671,7 +671,7 @@ usage (int status)
 {
   if (su_mode == RUNUSER_MODE) {
     fputs(USAGE_HEADER, stdout);
-    printf (_(" %s [options] -u <user> <command>\n"), program_invocation_short_name);
+    printf (_(" %s [options] -u <user> [[--] <command>]\n"), program_invocation_short_name);
     printf (_(" %s [options] [-] [<user> [<argument>...]]\n"), program_invocation_short_name);
     fputs (_("\n"
     "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
