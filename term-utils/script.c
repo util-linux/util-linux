@@ -112,7 +112,7 @@ struct script_control {
 	struct termios attrs;	/* slave terminal runtime attributes */
 	struct winsize win;	/* terminal window size */
 #if !HAVE_LIBUTIL || !HAVE_PTY_H
-	char line *;		/* terminal line */
+	char *line;		/* terminal line */
 #endif
 	unsigned int
 	 append:1,		/* append output */
