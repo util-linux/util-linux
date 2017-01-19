@@ -46,8 +46,8 @@
 #include <getopt.h>
 
 #include "nls.h"
-#include "widechar.h"
 #include "c.h"
+#include "widechar.h"
 #include "closestream.h"
 
 /*
