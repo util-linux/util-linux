@@ -427,6 +427,12 @@ AC_CHECK_FUNCS([reboot], [have_reboot=yes],[have_reboot=no])
 
 AM_CONDITIONAL([HAVE_OPENAT], [test "x$have_openat" = xyes])
 
+AC_CHECK_FUNCS([isnan], [],
+       [AC_CHECK_LIB([m], [isnan], [MATH_LIBS="-lm"])]
+)
+AC_SUBST([MATH_LIBS])
+
+
 dnl lib/mononotic.c may require -lrt
 AC_CHECK_FUNCS([clock_gettime], [],
 	[AC_CHECK_LIB([rt], [clock_gettime], [REALTIME_LIBS="-lrt"])]

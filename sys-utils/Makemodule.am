@@ -408,7 +408,7 @@ hwclock_SOURCES = \
 if LINUX
 hwclock_SOURCES += sys-utils/hwclock-rtc.c
 endif
-hwclock_LDADD = $(LDADD) libcommon.la -lm
+hwclock_LDADD = $(LDADD) libcommon.la $(MATH_LIBS)
 if HAVE_AUDIT
 hwclock_LDADD += -laudit
 endif
