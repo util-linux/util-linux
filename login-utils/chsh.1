@@ -14,7 +14,7 @@ chsh \- change your login shell
 .RB [ \-s
 .IR shell ]
 .RB [ \-l ]
-.RB [ \-u ]
+.RB [ \-h ]
 .RB [ \-v ]
 .RI [ username ]
 .SH DESCRIPTION
@@ -38,7 +38,7 @@ Print the list of shells listed in
 .I /etc/shells
 and exit.
 .TP
-.BR \-u , " \-\-help"
+.BR \-h , " \-\-help"
 Display help text and exit.
 .TP
 .BR \-v , " \-\-version"
@@ -55,6 +55,7 @@ only accept shells listed in this file, unless you are root.
 Returns 0 if operation was successful, 1 if operation failed or command syntax was not valid.
 .SH "SEE ALSO"
 .BR login (1),
+.BR login.defs(5),
 .BR passwd (5),
 .BR shells (5)
 .SH AUTHOR
