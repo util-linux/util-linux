@@ -79,8 +79,8 @@ enum
 #define PAM_SRVNAME_RUNUSER "runuser"
 #define PAM_SRVNAME_RUNUSER_L "runuser-l"
 
-#define _PATH_LOGINDEFS_SU	"/etc/defaults/su"
-#define _PATH_LOGINDEFS_RUNUSER "/etc/defaults/runuser"
+#define _PATH_LOGINDEFS_SU	"/etc/default/su"
+#define _PATH_LOGINDEFS_RUNUSER "/etc/default/runuser"
 
 #define is_pam_failure(_rc)	((_rc) != PAM_SUCCESS)
 
