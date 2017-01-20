@@ -45,7 +45,7 @@ fsck.minix:
 fsfreeze:  
 getopt:  
 hexdump:  libtinfo 
-hwclock:  libm 
+hwclock:  
 ionice:  
 ipcmk:  
 ipcrm:  
