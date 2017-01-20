@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-01-18 13:57+0100\n"
+"POT-Creation-Date: 2017-01-20 13:58+0100\n"
 "PO-Revision-Date: 2013-04-18 16:36+0200\n"
 "Last-Translator: Tomislav Krznar <tomislav.krznar@gmail.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
@@ -6664,7 +6664,7 @@ msgstr ""
 msgid "field %s is too long"
 msgstr ""
 
-#: login-utils/chfn.c:121 login-utils/chsh.c:205
+#: login-utils/chfn.c:121 login-utils/chsh.c:206
 #, c-format
 msgid "%s: has illegal characters"
 msgstr ""
@@ -6711,17 +6711,17 @@ msgstr ""
 msgid "Finger information changed.\n"
 msgstr ""
 
-#: login-utils/chfn.c:408 login-utils/chsh.c:242
+#: login-utils/chfn.c:408 login-utils/chsh.c:243
 #, c-format
 msgid "you (user %d) don't exist."
 msgstr ""
 
-#: login-utils/chfn.c:414 login-utils/chsh.c:247 login-utils/libuser.c:59
+#: login-utils/chfn.c:414 login-utils/chsh.c:248 login-utils/libuser.c:59
 #, c-format
 msgid "user \"%s\" does not exist."
 msgstr ""
 
-#: login-utils/chfn.c:420 login-utils/chsh.c:253
+#: login-utils/chfn.c:420 login-utils/chsh.c:254
 msgid "can only change local entries"
 msgstr ""
 
@@ -6730,11 +6730,11 @@ msgstr ""
 msgid "%s is not authorized to change the finger info of %s"
 msgstr ""
 
-#: login-utils/chfn.c:435 login-utils/chsh.c:269
+#: login-utils/chfn.c:435 login-utils/chsh.c:270
 msgid "Unknown user context"
 msgstr ""
 
-#: login-utils/chfn.c:441 login-utils/chsh.c:275
+#: login-utils/chfn.c:441 login-utils/chsh.c:276
 #, c-format
 msgid "can't set default context for %s"
 msgstr ""
@@ -6769,70 +6769,70 @@ msgstr ""
 msgid "No known shells."
 msgstr ""
 
-#: login-utils/chsh.c:199
+#: login-utils/chsh.c:200
 msgid "shell must be a full path name"
 msgstr ""
 
-#: login-utils/chsh.c:201
+#: login-utils/chsh.c:202
 #, c-format
 msgid "\"%s\" does not exist"
 msgstr ""
 
-#: login-utils/chsh.c:203
+#: login-utils/chsh.c:204
 #, c-format
 msgid "\"%s\" is not executable"
 msgstr ""
 
-#: login-utils/chsh.c:209
+#: login-utils/chsh.c:210
 #, c-format
 msgid "Warning: \"%s\" is not listed in %s."
 msgstr ""
 
-#: login-utils/chsh.c:213 login-utils/chsh.c:217
+#: login-utils/chsh.c:214 login-utils/chsh.c:218
 #, c-format
 msgid ""
 "\"%s\" is not listed in %s.\n"
 "Use %s -l to see list."
 msgstr ""
 
-#: login-utils/chsh.c:268
+#: login-utils/chsh.c:269
 #, c-format
 msgid "%s is not authorized to change the shell of %s"
 msgstr ""
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:295
 msgid "running UID doesn't match UID of user we're altering, shell change denied"
 msgstr ""
 
-#: login-utils/chsh.c:299
+#: login-utils/chsh.c:300
 #, c-format
 msgid "your shell is not in %s, shell change denied"
 msgstr ""
 
-#: login-utils/chsh.c:303
+#: login-utils/chsh.c:304
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr ""
 
-#: login-utils/chsh.c:311
+#: login-utils/chsh.c:312
 msgid "New shell"
 msgstr ""
 
-#: login-utils/chsh.c:319
+#: login-utils/chsh.c:320
 msgid "Shell not changed."
 msgstr ""
 
-#: login-utils/chsh.c:324
+#: login-utils/chsh.c:325
 msgid "Shell *NOT* changed.  Try again later."
 msgstr ""
 
-#: login-utils/chsh.c:328
+#: login-utils/chsh.c:329
 msgid ""
 "setpwnam failed\n"
 "Shell *NOT* changed.  Try again later."
 msgstr ""
 
-#: login-utils/chsh.c:332
+#: login-utils/chsh.c:333
 #, c-format
 msgid "Shell changed.\n"
 msgstr ""
@@ -7652,7 +7652,7 @@ msgstr ""
 
 #: login-utils/su-common.c:682
 #, fuzzy, c-format
-msgid " %s [options] -u <user> <command>\n"
+msgid " %s [options] -u <user> [[--] <command>]\n"
 msgstr " %s [opcije] <uređaj>\n"
 
 #: login-utils/su-common.c:683 login-utils/su-common.c:695

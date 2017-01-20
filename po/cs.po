@@ -46,7 +46,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.28-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-01-18 13:57+0100\n"
+"POT-Creation-Date: 2017-01-20 13:58+0100\n"
 "PO-Revision-Date: 2016-04-02 14:23+02:00\n"
 "Last-Translator: Petr Písař <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -6767,7 +6767,7 @@ msgstr " -u, --help     zobrazí tuto nápovědu a skončí\n"
 msgid "field %s is too long"
 msgstr "položka %s je příliš dlouhá"
 
-#: login-utils/chfn.c:121 login-utils/chsh.c:205
+#: login-utils/chfn.c:121 login-utils/chsh.c:206
 #, c-format
 msgid "%s: has illegal characters"
 msgstr "%s: má zakázané znaky"
@@ -6814,17 +6814,17 @@ msgstr "Finger informace *NEBYLY* změněny. Zkuste to opět později.\n"
 msgid "Finger information changed.\n"
 msgstr "Finger informace byly změněny.\n"
 
-#: login-utils/chfn.c:408 login-utils/chsh.c:242
+#: login-utils/chfn.c:408 login-utils/chsh.c:243
 #, c-format
 msgid "you (user %d) don't exist."
 msgstr "vy (uživatel %d) neexistujete."
 
-#: login-utils/chfn.c:414 login-utils/chsh.c:247 login-utils/libuser.c:59
+#: login-utils/chfn.c:414 login-utils/chsh.c:248 login-utils/libuser.c:59
 #, c-format
 msgid "user \"%s\" does not exist."
 msgstr "uživatel „%s“ neexistuje."
 
-#: login-utils/chfn.c:420 login-utils/chsh.c:253
+#: login-utils/chfn.c:420 login-utils/chsh.c:254
 msgid "can only change local entries"
 msgstr "měnit lze pouze místní záznamy"
 
@@ -6833,11 +6833,11 @@ msgstr "měnit lze pouze místní záznamy"
 msgid "%s is not authorized to change the finger info of %s"
 msgstr "%s nemá dovoleno měnit finger informace o uživateli %s"
 
-#: login-utils/chfn.c:435 login-utils/chsh.c:269
+#: login-utils/chfn.c:435 login-utils/chsh.c:270
 msgid "Unknown user context"
 msgstr "Neznámý kontext uživatele"
 
-#: login-utils/chfn.c:441 login-utils/chsh.c:275
+#: login-utils/chfn.c:441 login-utils/chsh.c:276
 #, c-format
 msgid "can't set default context for %s"
 msgstr "výchozí kontext pro %s nelze nastavit"
@@ -6872,26 +6872,26 @@ msgstr " -l, --list-shells    vypíše seznam shellů a skončí\n"
 msgid "No known shells."
 msgstr "Není znám žádný shell."
 
-#: login-utils/chsh.c:199
+#: login-utils/chsh.c:200
 msgid "shell must be a full path name"
 msgstr "shell musí být zadán úplným jménem cesty"
 
-#: login-utils/chsh.c:201
+#: login-utils/chsh.c:202
 #, c-format
 msgid "\"%s\" does not exist"
 msgstr "„%s“ neexistuje"
 
-#: login-utils/chsh.c:203
+#: login-utils/chsh.c:204
 #, c-format
 msgid "\"%s\" is not executable"
 msgstr "„%s“ není spustitelným souborem"
 
-#: login-utils/chsh.c:209
+#: login-utils/chsh.c:210
 #, c-format
 msgid "Warning: \"%s\" is not listed in %s."
 msgstr "Pozor: „%s“ není uveden v %s."
 
-#: login-utils/chsh.c:213 login-utils/chsh.c:217
+#: login-utils/chsh.c:214 login-utils/chsh.c:218
 #, c-format
 msgid ""
 "\"%s\" is not listed in %s.\n"
@@ -6900,38 +6900,38 @@ msgstr ""
 "„%s“ není uveden v %s.\n"
 "Seznam lze zobrazit pomocí „%s -l“."
 
-#: login-utils/chsh.c:268
+#: login-utils/chsh.c:269
 #, c-format
 msgid "%s is not authorized to change the shell of %s"
 msgstr "%s není oprávněn měnit shell uživatele %s"
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:295
 msgid "running UID doesn't match UID of user we're altering, shell change denied"
 msgstr "aktuální UID se neshoduje s UID uživatele, kterého chceme změnit, změna shellu zamítnuta"
 
-#: login-utils/chsh.c:299
+#: login-utils/chsh.c:300
 #, c-format
 msgid "your shell is not in %s, shell change denied"
 msgstr "váš shell není v %s, změna shellu zamítnuta"
 
-#: login-utils/chsh.c:303
+#: login-utils/chsh.c:304
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "Měním shell pro %s.\n"
 
-#: login-utils/chsh.c:311
+#: login-utils/chsh.c:312
 msgid "New shell"
 msgstr "Nový shell"
 
-#: login-utils/chsh.c:319
+#: login-utils/chsh.c:320
 msgid "Shell not changed."
 msgstr "Shell nebyl změněn."
 
-#: login-utils/chsh.c:324
+#: login-utils/chsh.c:325
 msgid "Shell *NOT* changed.  Try again later."
 msgstr "Shell *NEBYL* změněn. Zkuste to později znovu."
 
-#: login-utils/chsh.c:328
+#: login-utils/chsh.c:329
 msgid ""
 "setpwnam failed\n"
 "Shell *NOT* changed.  Try again later."
@@ -6939,7 +6939,7 @@ msgstr ""
 "setpwnam selhal\n"
 "Shell *NEBYL* změněn. Zkuste to později znovu."
 
-#: login-utils/chsh.c:332
+#: login-utils/chsh.c:333
 #, c-format
 msgid "Shell changed.\n"
 msgstr "Shell byl změněn.\n"
@@ -7761,8 +7761,8 @@ msgid "cannot set user id"
 msgstr "číslo uživatele (UID) nelze nastavit"
 
 #: login-utils/su-common.c:682
-#, c-format
-msgid " %s [options] -u <user> <command>\n"
+#, fuzzy, c-format
+msgid " %s [options] -u <user> [[--] <command>]\n"
 msgstr " %s [přepínače] -u <uživatel> <příkaz>\n"
 
 #: login-utils/su-common.c:683 login-utils/su-common.c:695

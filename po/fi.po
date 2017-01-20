@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-01-18 13:57+0100\n"
+"POT-Creation-Date: 2017-01-20 13:58+0100\n"
 "PO-Revision-Date: 2015-08-02 17:53+0300\n"
 "Last-Translator: Lauri Nurmi <lanurmi@iki.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -6961,7 +6961,7 @@ msgstr "      --help     näytä tämä ohje ja poistu\n"
 msgid "field %s is too long"
 msgstr "kenttä %s on liian pitkä"
 
-#: login-utils/chfn.c:121 login-utils/chsh.c:205
+#: login-utils/chfn.c:121 login-utils/chsh.c:206
 #, c-format
 msgid "%s: has illegal characters"
 msgstr ""
@@ -7008,17 +7008,17 @@ msgstr "Finger-tietoja *EI* muutettu. Yritä myöhemmin uudelleen.\n"
 msgid "Finger information changed.\n"
 msgstr "Finger-tietoja muutettiin.\n"
 
-#: login-utils/chfn.c:408 login-utils/chsh.c:242
+#: login-utils/chfn.c:408 login-utils/chsh.c:243
 #, c-format
 msgid "you (user %d) don't exist."
 msgstr "sinua (käyttäjä %d) ei ole olemassa."
 
-#: login-utils/chfn.c:414 login-utils/chsh.c:247 login-utils/libuser.c:59
+#: login-utils/chfn.c:414 login-utils/chsh.c:248 login-utils/libuser.c:59
 #, c-format
 msgid "user \"%s\" does not exist."
 msgstr "käyttäjää ”%s” ei ole olemassa."
 
-#: login-utils/chfn.c:420 login-utils/chsh.c:253
+#: login-utils/chfn.c:420 login-utils/chsh.c:254
 #, fuzzy
 msgid "can only change local entries"
 msgstr "Valitettavasti vain pääkäyttäjä voi säätää laitteistokelloa."
@@ -7028,11 +7028,11 @@ msgstr "Valitettavasti vain pääkäyttäjä voi säätää laitteistokelloa."
 msgid "%s is not authorized to change the finger info of %s"
 msgstr "%s: käyttäjällä %s ei ole valtuutusta muuttaa käyttäjän %s finger-tietoja\n"
 
-#: login-utils/chfn.c:435 login-utils/chsh.c:269
+#: login-utils/chfn.c:435 login-utils/chsh.c:270
 msgid "Unknown user context"
 msgstr "Tuntematon käyttäjäympäristö"
 
-#: login-utils/chfn.c:441 login-utils/chsh.c:275
+#: login-utils/chfn.c:441 login-utils/chsh.c:276
 #, fuzzy, c-format
 msgid "can't set default context for %s"
 msgstr "%s: Tiedoston /etc/passwd oletusympäristöä ei voi asettaa"
@@ -7069,65 +7069,65 @@ msgstr ""
 msgid "No known shells."
 msgstr "Ei tunnettuja kuoria."
 
-#: login-utils/chsh.c:199
+#: login-utils/chsh.c:200
 msgid "shell must be a full path name"
 msgstr "kuori on annettava polkuineen"
 
-#: login-utils/chsh.c:201
+#: login-utils/chsh.c:202
 #, c-format
 msgid "\"%s\" does not exist"
 msgstr "”%s” ei ole olemassa"
 
-#: login-utils/chsh.c:203
+#: login-utils/chsh.c:204
 #, c-format
 msgid "\"%s\" is not executable"
 msgstr "”%s” ei ole käynnistettävä"
 
-#: login-utils/chsh.c:209
+#: login-utils/chsh.c:210
 #, fuzzy, c-format
 msgid "Warning: \"%s\" is not listed in %s."
 msgstr "%s: ei luetella jo lueteltua hakemistoa"
 
-#: login-utils/chsh.c:213 login-utils/chsh.c:217
+#: login-utils/chsh.c:214 login-utils/chsh.c:218
 #, fuzzy, c-format
 msgid ""
 "\"%s\" is not listed in %s.\n"
 "Use %s -l to see list."
 msgstr "%s: ”%s” ei ole listattuna tiedostossa /etc/shells.\n"
 
-#: login-utils/chsh.c:268
+#: login-utils/chsh.c:269
 #, fuzzy, c-format
 msgid "%s is not authorized to change the shell of %s"
 msgstr "  -s, --shell <kuori>            määrittele kirjautumiskuori\n"
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:295
 #, fuzzy
 msgid "running UID doesn't match UID of user we're altering, shell change denied"
 msgstr "%s: Vallitseva UID ei täsmää muutettavan käyttäjän UID:hen, kuoren vaihto estetty\n"
 
-#: login-utils/chsh.c:299
+#: login-utils/chsh.c:300
 #, c-format
 msgid "your shell is not in %s, shell change denied"
 msgstr "kuori ei ole tiedostossa %s, kuoren vaihto evätty"
 
-#: login-utils/chsh.c:303
+#: login-utils/chsh.c:304
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "Vaihdetaan käyttäjän %s kuori.\n"
 
-#: login-utils/chsh.c:311
+#: login-utils/chsh.c:312
 msgid "New shell"
 msgstr "Uusi kuori"
 
-#: login-utils/chsh.c:319
+#: login-utils/chsh.c:320
 msgid "Shell not changed."
 msgstr "Kuorta ei vaihdettu."
 
-#: login-utils/chsh.c:324
+#: login-utils/chsh.c:325
 msgid "Shell *NOT* changed.  Try again later."
 msgstr "Kuorta *EI* vaihdettu. Yritä myöhemmin uudelleen."
 
-#: login-utils/chsh.c:328
+#: login-utils/chsh.c:329
 msgid ""
 "setpwnam failed\n"
 "Shell *NOT* changed.  Try again later."
@@ -7135,7 +7135,7 @@ msgstr ""
 "setpwnam epäonnistui\n"
 "Kuorta *EI* vaihdettu. Yritä myöhemmin uudelleen."
 
-#: login-utils/chsh.c:332
+#: login-utils/chsh.c:333
 #, c-format
 msgid "Shell changed.\n"
 msgstr "Kuori vaihdettu.\n"
@@ -8017,7 +8017,7 @@ msgstr "käyttäjä-ID"
 
 #: login-utils/su-common.c:682
 #, fuzzy, c-format
-msgid " %s [options] -u <user> <command>\n"
+msgid " %s [options] -u <user> [[--] <command>]\n"
 msgstr ""
 "\n"
 "Käyttö: %s [valitsimet] polku [polku ...]\n"

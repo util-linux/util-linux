@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-01-18 13:57+0100\n"
+"POT-Creation-Date: 2017-01-20 13:58+0100\n"
 "PO-Revision-Date: 2006-03-06 15:45+0200\n"
 "Last-Translator: Nilgün Belma Bugüner <nilgun@buguner.name.tr>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
@@ -7118,7 +7118,7 @@ msgstr ""
 msgid "field %s is too long"
 msgstr "alan çok uzun.\n"
 
-#: login-utils/chfn.c:121 login-utils/chsh.c:205
+#: login-utils/chfn.c:121 login-utils/chsh.c:206
 #, c-format
 msgid "%s: has illegal characters"
 msgstr ""
@@ -7168,17 +7168,17 @@ msgstr "Kullanıcı bilgileri değiştirilemedi. Daha sonra tekrar deneyin.\n"
 msgid "Finger information changed.\n"
 msgstr "Kullanıcı bilgileri değiştirildi.\n"
 
-#: login-utils/chfn.c:408 login-utils/chsh.c:242
+#: login-utils/chfn.c:408 login-utils/chsh.c:243
 #, fuzzy, c-format
 msgid "you (user %d) don't exist."
 msgstr "%s: Siz (%d) yoksunuz.\n"
 
-#: login-utils/chfn.c:414 login-utils/chsh.c:247 login-utils/libuser.c:59
+#: login-utils/chfn.c:414 login-utils/chsh.c:248 login-utils/libuser.c:59
 #, fuzzy, c-format
 msgid "user \"%s\" does not exist."
 msgstr "%s: \"%s\" yok.\n"
 
-#: login-utils/chfn.c:420 login-utils/chsh.c:253
+#: login-utils/chfn.c:420 login-utils/chsh.c:254
 #, fuzzy
 msgid "can only change local entries"
 msgstr "%s: sadece yerel girdileri değiştirebilir; yerine yp%s kullanın.\n"
@@ -7188,11 +7188,11 @@ msgstr "%s: sadece yerel girdileri değiştirebilir; yerine yp%s kullanın.\n"
 msgid "%s is not authorized to change the finger info of %s"
 msgstr "%s: %s, %s kullanıcısının kişisel bilgilerini değiştirmeye yetkili değil\n"
 
-#: login-utils/chfn.c:435 login-utils/chsh.c:269
+#: login-utils/chfn.c:435 login-utils/chsh.c:270
 msgid "Unknown user context"
 msgstr "Kullanıcı bağlamı bilinmiyor"
 
-#: login-utils/chfn.c:441 login-utils/chsh.c:275
+#: login-utils/chfn.c:441 login-utils/chsh.c:276
 #, fuzzy, c-format
 msgid "can't set default context for %s"
 msgstr "%s: /etc/passwd için öntanımlı bağlam belirtilemiyor"
@@ -7233,77 +7233,77 @@ msgstr ""
 msgid "No known shells."
 msgstr "Kullanılabilecek kabuklar belirlenmemiş.\n"
 
-#: login-utils/chsh.c:199
+#: login-utils/chsh.c:200
 #, fuzzy
 msgid "shell must be a full path name"
 msgstr "%s: kabuk tam bir dosya yolu içermeli.\n"
 
-#: login-utils/chsh.c:201
+#: login-utils/chsh.c:202
 #, fuzzy, c-format
 msgid "\"%s\" does not exist"
 msgstr "%s: \"%s\" yok.\n"
 
-#: login-utils/chsh.c:203
+#: login-utils/chsh.c:204
 #, fuzzy, c-format
 msgid "\"%s\" is not executable"
 msgstr "%s: \"%s\" çalıştırılabilir değil.\n"
 
-#: login-utils/chsh.c:209
+#: login-utils/chsh.c:210
 #, fuzzy, c-format
 msgid "Warning: \"%s\" is not listed in %s."
 msgstr "Uyarı: \"%s\" /etc/shells dosyasında yok.\n"
 
-#: login-utils/chsh.c:213 login-utils/chsh.c:217
+#: login-utils/chsh.c:214 login-utils/chsh.c:218
 #, fuzzy, c-format
 msgid ""
 "\"%s\" is not listed in %s.\n"
 "Use %s -l to see list."
 msgstr "%s: \"%s\"  /etc/shells dosyasında yok.\n"
 
-#: login-utils/chsh.c:268
+#: login-utils/chsh.c:269
 #, fuzzy, c-format
 msgid "%s is not authorized to change the shell of %s"
 msgstr "%s: %s, %s kullanıcısının kabuğunu değiştirmeye yetkili değil\n"
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:295
 #, fuzzy
 msgid "running UID doesn't match UID of user we're altering, shell change denied"
 msgstr ""
 "%s: kabuğun kullanıcı kimliği değiştirdiğimiz kullanıcı kimlikle\n"
 "aynı değil, kabuk değişikliği kabul edilmedi\n"
 
-#: login-utils/chsh.c:299
+#: login-utils/chsh.c:300
 #, fuzzy, c-format
 msgid "your shell is not in %s, shell change denied"
 msgstr "%s: Bu kabuk /etc/shells dosyasında yok, kabuk değiştirilemedi\n"
 
-#: login-utils/chsh.c:303
+#: login-utils/chsh.c:304
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "%s için kabuk değiştiriliyor.\n"
 
-#: login-utils/chsh.c:311
+#: login-utils/chsh.c:312
 msgid "New shell"
 msgstr "Yeni kabuk"
 
-#: login-utils/chsh.c:319
+#: login-utils/chsh.c:320
 #, fuzzy
 msgid "Shell not changed."
 msgstr "Kabuk değiştirilmedi,\n"
 
-#: login-utils/chsh.c:324
+#: login-utils/chsh.c:325
 #, fuzzy
 msgid "Shell *NOT* changed.  Try again later."
 msgstr "Kabuk değiştirilemedi. Daha sonra tekrar deneyin.\n"
 
-#: login-utils/chsh.c:328
+#: login-utils/chsh.c:329
 #, fuzzy
 msgid ""
 "setpwnam failed\n"
 "Shell *NOT* changed.  Try again later."
 msgstr "Kabuk değiştirilemedi. Daha sonra tekrar deneyin.\n"
 
-#: login-utils/chsh.c:332
+#: login-utils/chsh.c:333
 #, c-format
 msgid "Shell changed.\n"
 msgstr "Kabuk değiştirildi.\n"
@@ -8196,7 +8196,7 @@ msgstr "mount: hız ayarlanamıyor: %s"
 
 #: login-utils/su-common.c:682
 #, fuzzy, c-format
-msgid " %s [options] -u <user> <command>\n"
+msgid " %s [options] -u <user> [[--] <command>]\n"
 msgstr "kullanımı: namei [-mx] dosyaYolu [dosyaYolu ...]\n"
 
 #: login-utils/su-common.c:683 login-utils/su-common.c:695

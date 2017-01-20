@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-01-18 13:57+0100\n"
+"POT-Creation-Date: 2017-01-20 13:58+0100\n"
 "PO-Revision-Date: 2016-11-07 05:25-0500\n"
 "Last-Translator: Wylmer Wang <wantinghard@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -6607,7 +6607,7 @@ msgstr " -u, --help     显示此帮助并退出\n"
 msgid "field %s is too long"
 msgstr "字段 %s 过长"
 
-#: login-utils/chfn.c:121 login-utils/chsh.c:205
+#: login-utils/chfn.c:121 login-utils/chsh.c:206
 #, c-format
 msgid "%s: has illegal characters"
 msgstr "%s：含有非法字符"
@@ -6654,17 +6654,17 @@ msgstr "Finger 信息*没有*更改。请稍后重试。\n"
 msgid "Finger information changed.\n"
 msgstr "Finger 信息已更改。\n"
 
-#: login-utils/chfn.c:408 login-utils/chsh.c:242
+#: login-utils/chfn.c:408 login-utils/chsh.c:243
 #, c-format
 msgid "you (user %d) don't exist."
 msgstr "您(用户 %d)不存在。"
 
-#: login-utils/chfn.c:414 login-utils/chsh.c:247 login-utils/libuser.c:59
+#: login-utils/chfn.c:414 login-utils/chsh.c:248 login-utils/libuser.c:59
 #, c-format
 msgid "user \"%s\" does not exist."
 msgstr "用户“%s”不存在。"
 
-#: login-utils/chfn.c:420 login-utils/chsh.c:253
+#: login-utils/chfn.c:420 login-utils/chsh.c:254
 msgid "can only change local entries"
 msgstr "只能更改本地记录"
 
@@ -6673,11 +6673,11 @@ msgstr "只能更改本地记录"
 msgid "%s is not authorized to change the finger info of %s"
 msgstr "%s 未得到授权更改 %s 的 finger 信息"
 
-#: login-utils/chfn.c:435 login-utils/chsh.c:269
+#: login-utils/chfn.c:435 login-utils/chsh.c:270
 msgid "Unknown user context"
 msgstr "未知用户环境(context)"
 
-#: login-utils/chfn.c:441 login-utils/chsh.c:275
+#: login-utils/chfn.c:441 login-utils/chsh.c:276
 #, c-format
 msgid "can't set default context for %s"
 msgstr "无法设置 %s 默认环境(context)"
@@ -6712,26 +6712,26 @@ msgstr " -l, --list-shells    打印 shell 列表并退出\n"
 msgid "No known shells."
 msgstr "无已知 shell。"
 
-#: login-utils/chsh.c:199
+#: login-utils/chsh.c:200
 msgid "shell must be a full path name"
 msgstr "shell 必须为完整路径名称"
 
-#: login-utils/chsh.c:201
+#: login-utils/chsh.c:202
 #, c-format
 msgid "\"%s\" does not exist"
 msgstr "“%s”不存在"
 
-#: login-utils/chsh.c:203
+#: login-utils/chsh.c:204
 #, c-format
 msgid "\"%s\" is not executable"
 msgstr "“%s”不可执行"
 
-#: login-utils/chsh.c:209
+#: login-utils/chsh.c:210
 #, c-format
 msgid "Warning: \"%s\" is not listed in %s."
 msgstr "警告：“%s”未在 %s 中列出。"
 
-#: login-utils/chsh.c:213 login-utils/chsh.c:217
+#: login-utils/chsh.c:214 login-utils/chsh.c:218
 #, c-format
 msgid ""
 "\"%s\" is not listed in %s.\n"
@@ -6740,38 +6740,38 @@ msgstr ""
 "“%s”未列在 %s 中。\n"
 "请使用 %s -l 查看列表。"
 
-#: login-utils/chsh.c:268
+#: login-utils/chsh.c:269
 #, c-format
 msgid "%s is not authorized to change the shell of %s"
 msgstr "%s 无权更改 %s 的 shell"
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:295
 msgid "running UID doesn't match UID of user we're altering, shell change denied"
 msgstr "运行 UID 与要更改的用户的 UID 不匹配，更改 shell 被拒绝"
 
-#: login-utils/chsh.c:299
+#: login-utils/chsh.c:300
 #, c-format
 msgid "your shell is not in %s, shell change denied"
 msgstr "您的 shell 不在 %s 中，更改 shell 被拒绝"
 
-#: login-utils/chsh.c:303
+#: login-utils/chsh.c:304
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "正在更改 %s 的 shell。\n"
 
-#: login-utils/chsh.c:311
+#: login-utils/chsh.c:312
 msgid "New shell"
 msgstr "新 shell"
 
-#: login-utils/chsh.c:319
+#: login-utils/chsh.c:320
 msgid "Shell not changed."
 msgstr "shell 未更改。"
 
-#: login-utils/chsh.c:324
+#: login-utils/chsh.c:325
 msgid "Shell *NOT* changed.  Try again later."
 msgstr "Shell *未* 更改。请稍后重试。"
 
-#: login-utils/chsh.c:328
+#: login-utils/chsh.c:329
 msgid ""
 "setpwnam failed\n"
 "Shell *NOT* changed.  Try again later."
@@ -6779,7 +6779,7 @@ msgstr ""
 "setpwnam 失败\n"
 "Shell *未* 更改。请稍后重试。"
 
-#: login-utils/chsh.c:332
+#: login-utils/chsh.c:333
 #, c-format
 msgid "Shell changed.\n"
 msgstr "shell 已更改。\n"
@@ -7595,8 +7595,8 @@ msgid "cannot set user id"
 msgstr "无法设置 用户 id"
 
 #: login-utils/su-common.c:682
-#, c-format
-msgid " %s [options] -u <user> <command>\n"
+#, fuzzy, c-format
+msgid " %s [options] -u <user> [[--] <command>]\n"
 msgstr " %s [选项] -u <用户> <命令>\n"
 
 #: login-utils/su-common.c:683 login-utils/su-common.c:695

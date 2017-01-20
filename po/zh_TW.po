@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23.1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-01-18 13:57+0100\n"
+"POT-Creation-Date: 2017-01-20 13:58+0100\n"
 "PO-Revision-Date: 2013-06-07 23:29+0800\n"
 "Last-Translator: Wei-Lun Chao <bluebat@member.fsf.org>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -7128,7 +7128,7 @@ msgstr " -u, --help     顯示這份說明然後離開\n"
 msgid "field %s is too long"
 msgstr "欄位 %s 太長"
 
-#: login-utils/chfn.c:121 login-utils/chsh.c:205
+#: login-utils/chfn.c:121 login-utils/chsh.c:206
 #, c-format
 msgid "%s: has illegal characters"
 msgstr ""
@@ -7176,17 +7176,17 @@ msgstr "Finger 資訊 *未被* 變更。請稍後再嘗試。\n"
 msgid "Finger information changed.\n"
 msgstr "Finger 資訊已變更。\n"
 
-#: login-utils/chfn.c:408 login-utils/chsh.c:242
+#: login-utils/chfn.c:408 login-utils/chsh.c:243
 #, fuzzy, c-format
 msgid "you (user %d) don't exist."
 msgstr "您 (使用者 %d) 不存在。"
 
-#: login-utils/chfn.c:414 login-utils/chsh.c:247 login-utils/libuser.c:59
+#: login-utils/chfn.c:414 login-utils/chsh.c:248 login-utils/libuser.c:59
 #, fuzzy, c-format
 msgid "user \"%s\" does not exist."
 msgstr "使用者「%s」不存在。"
 
-#: login-utils/chfn.c:420 login-utils/chsh.c:253
+#: login-utils/chfn.c:420 login-utils/chsh.c:254
 #, fuzzy
 msgid "can only change local entries"
 msgstr "只能變更本地條目"
@@ -7196,11 +7196,11 @@ msgstr "只能變更本地條目"
 msgid "%s is not authorized to change the finger info of %s"
 msgstr "%s 未被授權到變更手指資訊的 %s"
 
-#: login-utils/chfn.c:435 login-utils/chsh.c:269
+#: login-utils/chfn.c:435 login-utils/chsh.c:270
 msgid "Unknown user context"
 msgstr "不明的使用者相關環境"
 
-#: login-utils/chfn.c:441 login-utils/chsh.c:275
+#: login-utils/chfn.c:441 login-utils/chsh.c:276
 #, fuzzy, c-format
 msgid "can't set default context for %s"
 msgstr "無法設定預設語境用於 %s"
@@ -7240,27 +7240,27 @@ msgstr " -l, --list-shells    列印命令殼清單的然後離開\n"
 msgid "No known shells."
 msgstr "沒有已知命令殼。"
 
-#: login-utils/chsh.c:199
+#: login-utils/chsh.c:200
 #, fuzzy
 msgid "shell must be a full path name"
 msgstr "命令殼必須是完整路徑名稱"
 
-#: login-utils/chsh.c:201
+#: login-utils/chsh.c:202
 #, fuzzy, c-format
 msgid "\"%s\" does not exist"
 msgstr "「%s」不存在"
 
-#: login-utils/chsh.c:203
+#: login-utils/chsh.c:204
 #, fuzzy, c-format
 msgid "\"%s\" is not executable"
 msgstr "「%s」不是可執行檔案"
 
-#: login-utils/chsh.c:209
+#: login-utils/chsh.c:210
 #, fuzzy, c-format
 msgid "Warning: \"%s\" is not listed in %s."
 msgstr "警告：「%s」未被清單在中 %s。"
 
-#: login-utils/chsh.c:213 login-utils/chsh.c:217
+#: login-utils/chsh.c:214 login-utils/chsh.c:218
 #, fuzzy, c-format
 msgid ""
 "\"%s\" is not listed in %s.\n"
@@ -7269,43 +7269,43 @@ msgstr ""
 "「%s」未被清單在中 %s。\n"
 "使用 %s -l 到參看清單。"
 
-#: login-utils/chsh.c:268
+#: login-utils/chsh.c:269
 #, fuzzy, c-format
 msgid "%s is not authorized to change the shell of %s"
 msgstr "%s 未被授權到變更命令殼的 %s"
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:295
 #, fuzzy
 msgid "running UID doesn't match UID of user we're altering, shell change denied"
 msgstr "執行中 UID 不匹配 UID 的使用者我們正在改變，命令殼變更拒絕"
 
-#: login-utils/chsh.c:299
+#: login-utils/chsh.c:300
 #, fuzzy, c-format
 msgid "your shell is not in %s, shell change denied"
 msgstr "您的命令殼不是在中 %s，命令殼變更拒絕"
 
-#: login-utils/chsh.c:303
+#: login-utils/chsh.c:304
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "變更 %s 的 shell。\n"
 
-#: login-utils/chsh.c:311
+#: login-utils/chsh.c:312
 msgid "New shell"
 msgstr "新命令殼"
 
-#: login-utils/chsh.c:319
+#: login-utils/chsh.c:320
 #, fuzzy
 msgid "Shell not changed."
 msgstr "命令殼無法變更。"
 
-#: login-utils/chsh.c:324
+#: login-utils/chsh.c:325
 #, fuzzy
 msgid "Shell *NOT* changed.  Try again later."
 msgstr ""
 "setpwnam 失敗\n"
 "命令殼 * 無法 * 變更。 稍後再試一次。"
 
-#: login-utils/chsh.c:328
+#: login-utils/chsh.c:329
 #, fuzzy
 msgid ""
 "setpwnam failed\n"
@@ -7314,7 +7314,7 @@ msgstr ""
 "setpwnam 失敗\n"
 "命令殼 * 無法 * 變更。 稍後再試一次。"
 
-#: login-utils/chsh.c:332
+#: login-utils/chsh.c:333
 #, c-format
 msgid "Shell changed.\n"
 msgstr "shell 已變更。\n"
@@ -8203,7 +8203,7 @@ msgstr "無法設定使用者識別號"
 
 #: login-utils/su-common.c:682
 #, fuzzy, c-format
-msgid " %s [options] -u <user> <command>\n"
+msgid " %s [options] -u <user> [[--] <command>]\n"
 msgstr " %s [選項] <user> [<ttyname>]\n"
 
 #: login-utils/su-common.c:683 login-utils/su-common.c:695

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.17.1-rc1\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-01-18 13:57+0100\n"
+"POT-Creation-Date: 2017-01-20 13:58+0100\n"
 "PO-Revision-Date: 2010-02-16 19:58+0100\n"
 "Last-Translator: Mikel Olasagasti Uranga <hey_neken@mundurat.net>\n"
 "Language-Team: Basque <translation-team-eu@lists.sourceforge.net>\n"
@@ -6932,7 +6932,7 @@ msgstr ""
 msgid "field %s is too long"
 msgstr "eremua luzeegia da.\n"
 
-#: login-utils/chfn.c:121 login-utils/chsh.c:205
+#: login-utils/chfn.c:121 login-utils/chsh.c:206
 #, c-format
 msgid "%s: has illegal characters"
 msgstr ""
@@ -6982,21 +6982,21 @@ msgstr ""
 msgid "Finger information changed.\n"
 msgstr "Irteten - ez da ezer aldatu\n"
 
-#: login-utils/chfn.c:408 login-utils/chsh.c:242
+#: login-utils/chfn.c:408 login-utils/chsh.c:243
 #, fuzzy, c-format
 msgid "you (user %d) don't exist."
 msgstr ""
 "\n"
 "Ez da swap partiziorik existitzen.\n"
 
-#: login-utils/chfn.c:414 login-utils/chsh.c:247 login-utils/libuser.c:59
+#: login-utils/chfn.c:414 login-utils/chsh.c:248 login-utils/libuser.c:59
 #, fuzzy, c-format
 msgid "user \"%s\" does not exist."
 msgstr ""
 "\n"
 "Ez da swap partiziorik existitzen.\n"
 
-#: login-utils/chfn.c:420 login-utils/chsh.c:253
+#: login-utils/chfn.c:420 login-utils/chsh.c:254
 #, fuzzy
 msgid "can only change local entries"
 msgstr "Ez dago partizio taularik.\n"
@@ -7006,12 +7006,12 @@ msgstr "Ez dago partizio taularik.\n"
 msgid "%s is not authorized to change the finger info of %s"
 msgstr ""
 
-#: login-utils/chfn.c:435 login-utils/chsh.c:269
+#: login-utils/chfn.c:435 login-utils/chsh.c:270
 #, fuzzy
 msgid "Unknown user context"
 msgstr "renice: %s: erabiltzaile ezezaguna\n"
 
-#: login-utils/chfn.c:441 login-utils/chsh.c:275
+#: login-utils/chfn.c:441 login-utils/chsh.c:276
 #, fuzzy, c-format
 msgid "can't set default context for %s"
 msgstr "Ezin da diskoaren tamainua lortu"
@@ -7048,72 +7048,72 @@ msgstr ""
 msgid "No known shells."
 msgstr "Ez dago partizio taularik.\n"
 
-#: login-utils/chsh.c:199
+#: login-utils/chsh.c:200
 msgid "shell must be a full path name"
 msgstr ""
 
-#: login-utils/chsh.c:201
+#: login-utils/chsh.c:202
 #, fuzzy, c-format
 msgid "\"%s\" does not exist"
 msgstr "fsck: %s: ez da aurkitu\n"
 
-#: login-utils/chsh.c:203
+#: login-utils/chsh.c:204
 #, fuzzy, c-format
 msgid "\"%s\" is not executable"
 msgstr "'%c' ez dago onartuta.\n"
 
-#: login-utils/chsh.c:209
+#: login-utils/chsh.c:210
 #, fuzzy, c-format
 msgid "Warning: \"%s\" is not listed in %s."
 msgstr "Partizio hau dagoeneko erabilita dago"
 
-#: login-utils/chsh.c:213 login-utils/chsh.c:217
+#: login-utils/chsh.c:214 login-utils/chsh.c:218
 #, fuzzy, c-format
 msgid ""
 "\"%s\" is not listed in %s.\n"
 "Use %s -l to see list."
 msgstr "[Erabili q edo Q irteteko]"
 
-#: login-utils/chsh.c:268
+#: login-utils/chsh.c:269
 #, c-format
 msgid "%s is not authorized to change the shell of %s"
 msgstr ""
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:295
 msgid "running UID doesn't match UID of user we're altering, shell change denied"
 msgstr ""
 
-#: login-utils/chsh.c:299
+#: login-utils/chsh.c:300
 #, c-format
 msgid "your shell is not in %s, shell change denied"
 msgstr ""
 
-#: login-utils/chsh.c:303
+#: login-utils/chsh.c:304
 #, fuzzy, c-format
 msgid "Changing shell for %s.\n"
 msgstr "%s-(r)en partizio taula\n"
 
-#: login-utils/chsh.c:311
+#: login-utils/chsh.c:312
 #, fuzzy
 msgid "New shell"
 msgstr "Egoera berria:\n"
 
-#: login-utils/chsh.c:319
+#: login-utils/chsh.c:320
 #, fuzzy
 msgid "Shell not changed."
 msgstr "Irteten - ez da ezer aldatu\n"
 
-#: login-utils/chsh.c:324
+#: login-utils/chsh.c:325
 msgid "Shell *NOT* changed.  Try again later."
 msgstr ""
 
-#: login-utils/chsh.c:328
+#: login-utils/chsh.c:329
 msgid ""
 "setpwnam failed\n"
 "Shell *NOT* changed.  Try again later."
 msgstr ""
 
-#: login-utils/chsh.c:332
+#: login-utils/chsh.c:333
 #, fuzzy, c-format
 msgid "Shell changed.\n"
 msgstr "Irteten - ez da ezer aldatu\n"
@@ -7980,7 +7980,7 @@ msgstr "Ezin da diskoaren tamainua lortu"
 
 #: login-utils/su-common.c:682
 #, fuzzy, c-format
-msgid " %s [options] -u <user> <command>\n"
+msgid " %s [options] -u <user> [[--] <command>]\n"
 msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
 #: login-utils/su-common.c:683 login-utils/su-common.c:695

@@ -52,7 +52,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.28-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-01-18 13:57+0100\n"
+"POT-Creation-Date: 2017-01-20 13:58+0100\n"
 "PO-Revision-Date: 2016-10-21 10:36+0200\n"
 "Last-Translator: Philipp Thomas <pth@suse.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -6783,7 +6783,7 @@ msgstr " -u, --help                    diese Hilfe anzeigen und beenden\n"
 msgid "field %s is too long"
 msgstr "Feld %s ist zu lang."
 
-#: login-utils/chfn.c:121 login-utils/chsh.c:205
+#: login-utils/chfn.c:121 login-utils/chsh.c:206
 #, c-format
 msgid "%s: has illegal characters"
 msgstr "%s: enthält ungültige Zeichen"
@@ -6830,17 +6830,17 @@ msgstr "Finger-Information *NICHT* geändert. Versuchen Sie es später erneut.\n
 msgid "Finger information changed.\n"
 msgstr "Finger-Information geändert.\n"
 
-#: login-utils/chfn.c:408 login-utils/chsh.c:242
+#: login-utils/chfn.c:408 login-utils/chsh.c:243
 #, c-format
 msgid "you (user %d) don't exist."
 msgstr "Sie (Benutzer %d) sind nicht vorhanden."
 
-#: login-utils/chfn.c:414 login-utils/chsh.c:247 login-utils/libuser.c:59
+#: login-utils/chfn.c:414 login-utils/chsh.c:248 login-utils/libuser.c:59
 #, c-format
 msgid "user \"%s\" does not exist."
 msgstr "Benutzer „%s“ ist nicht vorhanden."
 
-#: login-utils/chfn.c:420 login-utils/chsh.c:253
+#: login-utils/chfn.c:420 login-utils/chsh.c:254
 msgid "can only change local entries"
 msgstr "nur lokale Einträge können geändert werden"
 
@@ -6849,11 +6849,11 @@ msgstr "nur lokale Einträge können geändert werden"
 msgid "%s is not authorized to change the finger info of %s"
 msgstr "%s ist nicht autorisiert, die Finger-Informationen von %s zu ändern"
 
-#: login-utils/chfn.c:435 login-utils/chsh.c:269
+#: login-utils/chfn.c:435 login-utils/chsh.c:270
 msgid "Unknown user context"
 msgstr "unbekannter Benutzerkontext"
 
-#: login-utils/chfn.c:441 login-utils/chsh.c:275
+#: login-utils/chfn.c:441 login-utils/chsh.c:276
 #, c-format
 msgid "can't set default context for %s"
 msgstr "ein Standardkontext für %s kann nicht festgelegt werden"
@@ -6888,26 +6888,26 @@ msgstr " -l, --list-shells    Liste von Shells ausgeben und beenden\n"
 msgid "No known shells."
 msgstr "Keine bekannten Shells."
 
-#: login-utils/chsh.c:199
+#: login-utils/chsh.c:200
 msgid "shell must be a full path name"
 msgstr "Shell muss ein voller Pfadname sein"
 
-#: login-utils/chsh.c:201
+#: login-utils/chsh.c:202
 #, c-format
 msgid "\"%s\" does not exist"
 msgstr "„%s“ ist nicht vorhanden"
 
-#: login-utils/chsh.c:203
+#: login-utils/chsh.c:204
 #, c-format
 msgid "\"%s\" is not executable"
 msgstr "„%s“ ist nicht ausführbar"
 
-#: login-utils/chsh.c:209
+#: login-utils/chsh.c:210
 #, c-format
 msgid "Warning: \"%s\" is not listed in %s."
 msgstr "Warnung: „%s“ ist nicht in %s aufgelistet."
 
-#: login-utils/chsh.c:213 login-utils/chsh.c:217
+#: login-utils/chsh.c:214 login-utils/chsh.c:218
 #, c-format
 msgid ""
 "\"%s\" is not listed in %s.\n"
@@ -6916,38 +6916,38 @@ msgstr ""
 "„%s“ ist nicht in %s aufgelistet.\n"
 "Verwenden Sie „%s -l“, um die Liste zu anzuzeigen."
 
-#: login-utils/chsh.c:268
+#: login-utils/chsh.c:269
 #, c-format
 msgid "%s is not authorized to change the shell of %s"
 msgstr "%s ist nicht autorisiert, die Shell von %s zu ändern"
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:295
 msgid "running UID doesn't match UID of user we're altering, shell change denied"
 msgstr "Laufende UID stimmt nicht mit der UID des zu ändernden Benutzers überein, Shell-Änderung verweigert"
 
-#: login-utils/chsh.c:299
+#: login-utils/chsh.c:300
 #, c-format
 msgid "your shell is not in %s, shell change denied"
 msgstr "Ihre Shell fehlt in %s, Shell-Änderung verweigert"
 
-#: login-utils/chsh.c:303
+#: login-utils/chsh.c:304
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "Shell für %s ändern.\n"
 
-#: login-utils/chsh.c:311
+#: login-utils/chsh.c:312
 msgid "New shell"
 msgstr "Neue Shell"
 
-#: login-utils/chsh.c:319
+#: login-utils/chsh.c:320
 msgid "Shell not changed."
 msgstr "Shell nicht geändert."
 
-#: login-utils/chsh.c:324
+#: login-utils/chsh.c:325
 msgid "Shell *NOT* changed.  Try again later."
 msgstr "Shell *NICHT* geändert. Versuchen Sie es später erneut."
 
-#: login-utils/chsh.c:328
+#: login-utils/chsh.c:329
 msgid ""
 "setpwnam failed\n"
 "Shell *NOT* changed.  Try again later."
@@ -6955,7 +6955,7 @@ msgstr ""
 "setpwnam fehlgeschlagen\n"
 "Shell *NICHT* geändert. Versuchen Sie es später erneut."
 
-#: login-utils/chsh.c:332
+#: login-utils/chsh.c:333
 #, c-format
 msgid "Shell changed.\n"
 msgstr "Shell geändert.\n"
@@ -7789,8 +7789,8 @@ msgid "cannot set user id"
 msgstr "Benutzerkennung konnte nicht festgelegt werden"
 
 #: login-utils/su-common.c:682
-#, c-format
-msgid " %s [options] -u <user> <command>\n"
+#, fuzzy, c-format
+msgid " %s [options] -u <user> [[--] <command>]\n"
 msgstr " %s [Optionen] -u <Benutzer> <Befehl>\n"
 
 #: login-utils/su-common.c:683 login-utils/su-common.c:695

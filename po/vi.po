@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.26-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-01-18 13:57+0100\n"
+"POT-Creation-Date: 2017-01-20 13:58+0100\n"
 "PO-Revision-Date: 2015-02-15 08:31+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -6743,7 +6743,7 @@ msgstr " -u, --help     hiển thị trợ giúp này rồi thoát\n"
 msgid "field %s is too long"
 msgstr "trường %s quá dài"
 
-#: login-utils/chfn.c:121 login-utils/chsh.c:205
+#: login-utils/chfn.c:121 login-utils/chsh.c:206
 #, c-format
 msgid "%s: has illegal characters"
 msgstr "%s: có chứa các ký tự không hợp lệ"
@@ -6790,17 +6790,17 @@ msgstr "Thông tin finger *CHƯA* thay đổi.  Hãy thử lại sau.\n"
 msgid "Finger information changed.\n"
 msgstr "Thông tin finger đã thay đổi.\n"
 
-#: login-utils/chfn.c:408 login-utils/chsh.c:242
+#: login-utils/chfn.c:408 login-utils/chsh.c:243
 #, c-format
 msgid "you (user %d) don't exist."
 msgstr "bạn (người dùng %d) không tồn tại."
 
-#: login-utils/chfn.c:414 login-utils/chsh.c:247 login-utils/libuser.c:59
+#: login-utils/chfn.c:414 login-utils/chsh.c:248 login-utils/libuser.c:59
 #, c-format
 msgid "user \"%s\" does not exist."
 msgstr "người dùng \"%s\" không tồn tại."
 
-#: login-utils/chfn.c:420 login-utils/chsh.c:253
+#: login-utils/chfn.c:420 login-utils/chsh.c:254
 msgid "can only change local entries"
 msgstr "chỉ có thể thay đổi các mục nội bộ"
 
@@ -6809,11 +6809,11 @@ msgstr "chỉ có thể thay đổi các mục nội bộ"
 msgid "%s is not authorized to change the finger info of %s"
 msgstr "%s chưa được xác thực để thay đổi thông tin finger của %s"
 
-#: login-utils/chfn.c:435 login-utils/chsh.c:269
+#: login-utils/chfn.c:435 login-utils/chsh.c:270
 msgid "Unknown user context"
 msgstr "Không hiểu ngữ cảnh người dùng"
 
-#: login-utils/chfn.c:441 login-utils/chsh.c:275
+#: login-utils/chfn.c:441 login-utils/chsh.c:276
 #, c-format
 msgid "can't set default context for %s"
 msgstr "không đặt được văn cảnh cho %s"
@@ -6848,26 +6848,26 @@ msgstr " -l, --list-shells    in ra danh sách các shell (hệ vỏ) rồi tho�
 msgid "No known shells."
 msgstr "Không hiểu shell (hệ vỏ)."
 
-#: login-utils/chsh.c:199
+#: login-utils/chsh.c:200
 msgid "shell must be a full path name"
 msgstr "shell (hệ vỏ) phải có dạng tên đường dẫn đầy đủ"
 
-#: login-utils/chsh.c:201
+#: login-utils/chsh.c:202
 #, c-format
 msgid "\"%s\" does not exist"
 msgstr "\"%s\" không tồn tại"
 
-#: login-utils/chsh.c:203
+#: login-utils/chsh.c:204
 #, c-format
 msgid "\"%s\" is not executable"
 msgstr "\"%s\" không có khả năng thực thi"
 
-#: login-utils/chsh.c:209
+#: login-utils/chsh.c:210
 #, c-format
 msgid "Warning: \"%s\" is not listed in %s."
 msgstr "Cảnh báo: \"%s\" không nằm trong \"%s\"."
 
-#: login-utils/chsh.c:213 login-utils/chsh.c:217
+#: login-utils/chsh.c:214 login-utils/chsh.c:218
 #, c-format
 msgid ""
 "\"%s\" is not listed in %s.\n"
@@ -6876,38 +6876,38 @@ msgstr ""
 "\"%s\" không nằm trong \"%s\".\n"
 "Sử dụng %s -l để xem danh sách."
 
-#: login-utils/chsh.c:268
+#: login-utils/chsh.c:269
 #, c-format
 msgid "%s is not authorized to change the shell of %s"
 msgstr "%s không được xác thực để thay đổi shell (hệ vỏ) của “%s”"
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:295
 msgid "running UID doesn't match UID of user we're altering, shell change denied"
 msgstr "UID đang hoạt động không tương ứng với UID của người dùng chúng ta đang nhập, shell (hệ vỏ) không cho phép thay đổi"
 
-#: login-utils/chsh.c:299
+#: login-utils/chsh.c:300
 #, c-format
 msgid "your shell is not in %s, shell change denied"
 msgstr "shell (hệ vỏ) của bạn không có trong %s, không cho phép thay đổi hệ vỏ (shell)"
 
-#: login-utils/chsh.c:303
+#: login-utils/chsh.c:304
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "Đang thay đổi shell (hệ vỏ) cho %s.\n"
 
-#: login-utils/chsh.c:311
+#: login-utils/chsh.c:312
 msgid "New shell"
 msgstr "shell (hệ vỏ) mới"
 
-#: login-utils/chsh.c:319
+#: login-utils/chsh.c:320
 msgid "Shell not changed."
 msgstr "Chưa thay đổi shell (hệ vỏ)."
 
-#: login-utils/chsh.c:324
+#: login-utils/chsh.c:325
 msgid "Shell *NOT* changed.  Try again later."
 msgstr "Shell *CHƯA* thay đổi.  Hãy thử lại sau."
 
-#: login-utils/chsh.c:328
+#: login-utils/chsh.c:329
 msgid ""
 "setpwnam failed\n"
 "Shell *NOT* changed.  Try again later."
@@ -6915,7 +6915,7 @@ msgstr ""
 "setpwnam gặp lỗi\n"
 "shell (hệ vỏ) *CHƯA* thay đổi.  Hãy thử lại sau."
 
-#: login-utils/chsh.c:332
+#: login-utils/chsh.c:333
 #, c-format
 msgid "Shell changed.\n"
 msgstr "shell (hệ vỏ) đã thay đổi.\n"
@@ -7732,8 +7732,8 @@ msgid "cannot set user id"
 msgstr "không đặt được mã số người dùng (UID)"
 
 #: login-utils/su-common.c:682
-#, c-format
-msgid " %s [options] -u <user> <command>\n"
+#, fuzzy, c-format
+msgid " %s [options] -u <user> [[--] <command>]\n"
 msgstr " %s [các tùy chọn ] -u <tài-khoản> <lệnh>\n"
 
 #: login-utils/su-common.c:683 login-utils/su-common.c:695

@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-01-18 13:57+0100\n"
+"POT-Creation-Date: 2017-01-20 13:58+0100\n"
 "PO-Revision-Date: 2016-10-23 11:30+0200\n"
 "Last-Translator: Antonio Ceballos Roa <aceballos@gmail.com>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
@@ -6657,7 +6657,7 @@ msgstr " -u, --help     muestra esta ayuda y sale\n"
 msgid "field %s is too long"
 msgstr "Campo %s demasiado largo."
 
-#: login-utils/chfn.c:121 login-utils/chsh.c:205
+#: login-utils/chfn.c:121 login-utils/chsh.c:206
 #, c-format
 msgid "%s: has illegal characters"
 msgstr "%s: tiene caracteres no válidos"
@@ -6704,17 +6704,17 @@ msgstr "*NO* se ha cambiado la información de finger. Inténtelo de nuevo más 
 msgid "Finger information changed.\n"
 msgstr "Se ha cambiado la información de finger.\n"
 
-#: login-utils/chfn.c:408 login-utils/chsh.c:242
+#: login-utils/chfn.c:408 login-utils/chsh.c:243
 #, c-format
 msgid "you (user %d) don't exist."
 msgstr "usted (el usuario %d) no existe."
 
-#: login-utils/chfn.c:414 login-utils/chsh.c:247 login-utils/libuser.c:59
+#: login-utils/chfn.c:414 login-utils/chsh.c:248 login-utils/libuser.c:59
 #, c-format
 msgid "user \"%s\" does not exist."
 msgstr "el usuario \"%s\" no existe."
 
-#: login-utils/chfn.c:420 login-utils/chsh.c:253
+#: login-utils/chfn.c:420 login-utils/chsh.c:254
 msgid "can only change local entries"
 msgstr "sólo se pueden modificar entradas locales"
 
@@ -6723,11 +6723,11 @@ msgstr "sólo se pueden modificar entradas locales"
 msgid "%s is not authorized to change the finger info of %s"
 msgstr "%s no está autorizado a cambiar la información de finger de %s"
 
-#: login-utils/chfn.c:435 login-utils/chsh.c:269
+#: login-utils/chfn.c:435 login-utils/chsh.c:270
 msgid "Unknown user context"
 msgstr "Contexto de usuario desconocido"
 
-#: login-utils/chfn.c:441 login-utils/chsh.c:275
+#: login-utils/chfn.c:441 login-utils/chsh.c:276
 #, c-format
 msgid "can't set default context for %s"
 msgstr "no se puede establecer el contexto predeterminado para %s"
@@ -6762,26 +6762,26 @@ msgstr " -l, --list-shells    imprime la lista de shells y sale\n"
 msgid "No known shells."
 msgstr "No hay ningún intérprete de órdenes conocido."
 
-#: login-utils/chsh.c:199
+#: login-utils/chsh.c:200
 msgid "shell must be a full path name"
 msgstr "el intérprete de órdenes debe ser un nombre de ruta completo."
 
-#: login-utils/chsh.c:201
+#: login-utils/chsh.c:202
 #, c-format
 msgid "\"%s\" does not exist"
 msgstr "\"%s\" no existe"
 
-#: login-utils/chsh.c:203
+#: login-utils/chsh.c:204
 #, c-format
 msgid "\"%s\" is not executable"
 msgstr "\"%s\" no es ejecutable"
 
-#: login-utils/chsh.c:209
+#: login-utils/chsh.c:210
 #, c-format
 msgid "Warning: \"%s\" is not listed in %s."
 msgstr "Atención: \"%s\" no figura en %s."
 
-#: login-utils/chsh.c:213 login-utils/chsh.c:217
+#: login-utils/chsh.c:214 login-utils/chsh.c:218
 #, c-format
 msgid ""
 "\"%s\" is not listed in %s.\n"
@@ -6790,38 +6790,38 @@ msgstr ""
 "\"%s\" no figura en %s.\n"
 "Utilice %s -l para ver la lista."
 
-#: login-utils/chsh.c:268
+#: login-utils/chsh.c:269
 #, c-format
 msgid "%s is not authorized to change the shell of %s"
 msgstr "%s no está autorizado a cambiar el intérprete de órdenes de %s"
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:295
 msgid "running UID doesn't match UID of user we're altering, shell change denied"
 msgstr "el UID en ejecución no coincide con el UID del usuario que se está alterando; cambio de el intérprete de órdenes denegado"
 
-#: login-utils/chsh.c:299
+#: login-utils/chsh.c:300
 #, c-format
 msgid "your shell is not in %s, shell change denied"
 msgstr "el intérprete de órdenes no está en %s; cambio de intérprete de órdenes denegado"
 
-#: login-utils/chsh.c:303
+#: login-utils/chsh.c:304
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "Cambiando intérprete de órdenes para %s.\n"
 
-#: login-utils/chsh.c:311
+#: login-utils/chsh.c:312
 msgid "New shell"
 msgstr "Nuevo intérprete de órdenes"
 
-#: login-utils/chsh.c:319
+#: login-utils/chsh.c:320
 msgid "Shell not changed."
 msgstr "No se ha cambiado el intérprete de órdenes."
 
-#: login-utils/chsh.c:324
+#: login-utils/chsh.c:325
 msgid "Shell *NOT* changed.  Try again later."
 msgstr "*NO* se ha cambiado el intérprete de órdenes. Inténtelo de nuevo más adelante."
 
-#: login-utils/chsh.c:328
+#: login-utils/chsh.c:329
 msgid ""
 "setpwnam failed\n"
 "Shell *NOT* changed.  Try again later."
@@ -6829,7 +6829,7 @@ msgstr ""
 "setpwnam ha fallado\n"
 "*NO* se ha cambiado el intérprete de órdenes. Inténtelo de nuevo más adelante."
 
-#: login-utils/chsh.c:332
+#: login-utils/chsh.c:333
 #, c-format
 msgid "Shell changed.\n"
 msgstr "Se ha cambiado el intérprete de órdenes.\n"
@@ -7645,8 +7645,8 @@ msgid "cannot set user id"
 msgstr "no se puede establecer el id del usuario"
 
 #: login-utils/su-common.c:682
-#, c-format
-msgid " %s [options] -u <user> <command>\n"
+#, fuzzy, c-format
+msgid " %s [options] -u <user> [[--] <command>]\n"
 msgstr " %s [opciones] -u <usuario> <orden>\n"
 
 #: login-utils/su-common.c:683 login-utils/su-common.c:695
