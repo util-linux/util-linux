@@ -1,11 +1,18 @@
+util-linux 2.29.1 Release Notes
+===============================
+
 build-sys:
    - cleanup UL_NCURSES_CHECK  [Karel Zak]
    - don't clean *.img files  [Ruediger Meier]
+   - fix compilation with ncurses and uClibc or musl libc  [Carlos Santos]
    - fix empty package release number  [Ruediger Meier]
    - prefer pkg-config for ncurses  [Karel Zak]
    - update package release number during development  [Ruediger Meier]
+   - use MATH_LIBS for hwclock  [Karel Zak]
 chrt:
    - default to SCHED_RR policy  [Andreas Henriksson]
+chsh:
+   - use -h as shorthand for --help instead of -u  [Andreas Henriksson]
 disk-utils/mkfs.minix:
    - Set ninodes after checking max  [Nate Clark]
 docs:
@@ -30,6 +37,7 @@ docs:
    - renice(1)  Rework discussion of unprivileged users,  [Michael Kerrisk]
    - taskset(1)  Wording fix  [Michael Kerrisk]
    - update AUTHORS file  [Karel Zak]
+   - update v2.29.1-ReleaseNotes  [Karel Zak]
    - various pages  Format pathnames as italic (.I)  [Michael Kerrisk]
    - various pages  Use "ID" not "id" in man pages  [Michael Kerrisk]
    - various pages  Use "PID" not "pid" in man-pages  [Michael Kerrisk]
@@ -57,6 +65,9 @@ lscpu:
    - add aarch64 specific names  [Karel Zak]
 lsns:
    - Fix parser for /proc/<pid>/stat which is including space in comm  [OGAWA Hirofumi]
+man:
+   - chfn(1)  add chsh and login.defs to SEE ALSO  [Andreas Henriksson]
+   - chsh(1)  add login.defs to SEE ALSO  [Andreas Henriksson]
 more:
    - avoid double free() on exit  [Karel Zak]
 po:
@@ -64,12 +75,20 @@ po:
    - update da.po (from translationproject.org)  [Joe Hansen]
    - update fr.po (from translationproject.org)  [Stéphane Aulery]
    - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
+runuser:
+   - add "--" to SYNOPSIS  [Karel Zak]
 sfdisk:
    - cleanup --dump error messages  [Karel Zak]
    - don't be silent when list non-existing device  [Karel Zak]
+su, runuser:
+   - fix typo in the /etc/default path  [Karel Zak]
 sulogin:
    - bail out from getpasswd(...) on timeout  [Andreas Henriksson]
    - make getpasswd(...) return NULL on ^D  [Andreas Henriksson]
+term-utils/script:
+   - fix typo leading to syntax error  [Bert van Hall]
+tests:
+   - (build-sys) don't link -lm by default  [Karel Zak]
 
 - Correctly format page cross references  [Michael Kerrisk (man-pages)]
 - Fix formatting errors in page cross references  [Michael Kerrisk (man-pages)]
