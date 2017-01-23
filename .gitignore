@@ -62,6 +62,8 @@ update.log
 /addpart
 /agetty
 /blkdiscard
+/blkreport
+/blkreset
 /blkid
 /blockdev
 /cal

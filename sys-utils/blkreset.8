@@ -1,0 +1,63 @@
+.TH BLKRESET 5 "October 2016" "util-linux" "System Administration"
+.SH NAME
+blkreset \- Reset a range of zones
+.SH SYNOPSIS
+.B blkreset
+[options]
+.RB [ \-z
+.IR zone ]
+.RB [ \-c
+.IR count ]
+.SH DESCRIPTION
+.B blkreset
+is used to reset one or more zones.  This is useful for
+zoned devices that support the ZAC or ZBC command set.
+Unlike
+.BR sg_reset_wp (8) ,
+this command operates from the block layer and can reset a range of zones.
+.PP
+By default,
+.B blkreset
+will operate on the zone at device logical sector 0. Options may be used to
+modify this behavior as well as specify the operation to be performed on
+the zone, as explained below.
+.PP
+The
+.I device
+argument is the pathname of the block device.
+.PP
+.SH OPTIONS
+The
+.I offset
+and
+.I length
+arguments may be followed by the multiplicative suffixes KiB (=1024),
+MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is
+optional, e.g., "K" has the same meaning as "KiB") or the suffixes
+KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
+Additionally the common 0x prefix can be used to specify zone and length in hex.
+.TP
+.BR \-z , " \-\-zone "\fIoffset\fP
+The starting zone to be operated upon specified as a sector offset.
+The provided offset in sector units (512 bytes) should match the start of a zone.
+The default value is zero.
+.TP
+.BR \-c , " \-\-count "\fIlength\fP
+The number of zones to be reset starting from offset. Default is 1 zone.
+.TP
+.BR \-V , " \-\-version"
+Display version information and exit.
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
+.SH AUTHOR
+.MT shaun@tancheff.com
+Shaun Tancheff
+.ME
+.SH SEE ALSO
+.BR sg_reset_wp (8)
+.SH AVAILABILITY
+The blkreset command is part of the util-linux package and is available from
+.UR https://\:www.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .
