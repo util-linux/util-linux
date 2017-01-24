@@ -65,12 +65,74 @@ struct nvlist {
 	struct nvpair	nvl_nvpair;
 };
 
+static int zfs_process_value(blkid_probe pr, char *name, size_t namelen,
+			     void *value, size_t max_value_size)
+{
+	if (strncmp(name, "name", namelen) == 0 &&
+	    sizeof(struct nvstring) <= max_value_size) {
+		struct nvstring *nvs = value;
+		uint32_t nvs_type = be32_to_cpu(nvs->nvs_type);
+		uint32_t nvs_strlen = be32_to_cpu(nvs->nvs_strlen);
+
+		if (nvs_type != DATA_TYPE_STRING ||
+		    (uint64_t)nvs_strlen + sizeof(*nvs) > max_value_size)
+			return 0;
+
+		DBG(LOWPROBE, ul_debug("nvstring: type %u string %*s\n",
+				       nvs_type, nvs_strlen, nvs->nvs_string));
+
+		blkid_probe_set_label(pr, nvs->nvs_string, nvs_strlen);
+
+		return 1;
+	} else if (strncmp(name, "guid", namelen) == 0 &&
+		   sizeof(struct nvuint64) <= max_value_size) {
+		struct nvuint64 *nvu = value;
+		uint32_t nvu_type = be32_to_cpu(nvu->nvu_type);
+		uint64_t nvu_value;
+
+		memcpy(&nvu_value, &nvu->nvu_value, sizeof(nvu_value));
+		nvu_value = be64_to_cpu(nvu_value);
+
+		if (nvu_type != DATA_TYPE_UINT64)
+			return 0;
+
+		DBG(LOWPROBE, ul_debug("nvuint64: type %u value %"PRIu64"\n",
+				       nvu_type, nvu_value));
+
+		blkid_probe_sprintf_value(pr, "UUID_SUB",
+					  "%"PRIu64, nvu_value);
+
+		return 1;
+	} else if (strncmp(name, "pool_guid", namelen) == 0 &&
+		   sizeof(struct nvuint64) <= max_value_size) {
+		struct nvuint64 *nvu = value;
+		uint32_t nvu_type = be32_to_cpu(nvu->nvu_type);
+		uint64_t nvu_value;
+
+		memcpy(&nvu_value, &nvu->nvu_value, sizeof(nvu_value));
+		nvu_value = be64_to_cpu(nvu_value);
+
+		if (nvu_type != DATA_TYPE_UINT64)
+			return 0;
+
+		DBG(LOWPROBE, ul_debug("nvuint64: type %u value %"PRIu64"\n",
+				       nvu_type, nvu_value));
+
+		blkid_probe_sprintf_uuid(pr, (unsigned char *) &nvu_value,
+					 sizeof(nvu_value),
+					 "%"PRIu64, nvu_value);
+		return 1;
+	}
+
+	return 0;
+}
+
 static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 {
-	unsigned char *p, buff[4096];
+	unsigned char *p;
 	struct nvlist *nvl;
 	struct nvpair *nvp;
-	size_t left = sizeof(buff);
+	size_t left = 4096;
 	int found = 0;
 
 	offset = (offset & ~(VDEV_LABEL_SIZE - 1)) + VDEV_LABEL_NVPAIR;
@@ -83,82 +145,41 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 	if (!p)
 		return;
 
-	/* libblkid buffers are strictly readonly, but the code below modifies nvpair etc. */
-	memcpy(buff, p, sizeof(buff));
-	nvl = (struct nvlist *) buff;
+	DBG(LOWPROBE, ul_debug("zfs_extract: nvlist offset %jd\n",
+			       (intmax_t)offset));
 
-	DBG(LOWPROBE, ul_debug("zfs_extract: nvlist offset %jd\n", (intmax_t)offset));
-
+	nvl = (struct nvlist *) p;
 	nvp = &nvl->nvl_nvpair;
+	left -= (unsigned char *)nvp - p; /* Already used up 12 bytes */
+
 	while (left > sizeof(*nvp) && nvp->nvp_size != 0 && found < 3) {
-		int avail;   /* tracks that name/value data fits in nvp_size */
-		int namesize;
+		uint32_t nvp_size = be32_to_cpu(nvp->nvp_size);
+		uint32_t nvp_namelen = be32_to_cpu(nvp->nvp_namelen);
+		uint64_t namesize = ((uint64_t)nvp_namelen + 3) & ~3;
+		size_t max_value_size;
+		void *value;
 
-		nvp->nvp_size = be32_to_cpu(nvp->nvp_size);
-		nvp->nvp_namelen = be32_to_cpu(nvp->nvp_namelen);
-		avail = nvp->nvp_size - nvp->nvp_namelen - sizeof(*nvp);
+		DBG(LOWPROBE, ul_debug("left %zd nvp_size %u\n",
+				       left, nvp_size));
 
-		DBG(LOWPROBE, ul_debug("left %zd nvp_size %u\n", left, nvp->nvp_size));
-		if (left < nvp->nvp_size || avail < 0)
+		/* nvpair fits in buffer and name fits in nvpair? */
+		if (nvp_size > left || namesize + sizeof(*nvp) > nvp_size)
 			break;
 
-		namesize = (nvp->nvp_namelen + 3) & ~3;
+		DBG(LOWPROBE,
+		    ul_debug("nvlist: size %u, namelen %u, name %*s\n",
+			     nvp_size, nvp_namelen, nvp_namelen,
+			     nvp->nvp_name));
 
-		DBG(LOWPROBE, ul_debug("nvlist: size %u, namelen %u, name %*s\n",
-			nvp->nvp_size, nvp->nvp_namelen, nvp->nvp_namelen,
-			nvp->nvp_name));
-		if (strncmp(nvp->nvp_name, "name", nvp->nvp_namelen) == 0) {
-			struct nvstring *nvs = (void *)(nvp->nvp_name+namesize);
+		max_value_size = nvp_size - (namesize + sizeof(*nvp));
+		value = nvp->nvp_name + namesize;
 
-			nvs->nvs_type = be32_to_cpu(nvs->nvs_type);
-			nvs->nvs_strlen = be32_to_cpu(nvs->nvs_strlen);
-			if (nvs->nvs_strlen > INT_MAX - sizeof(*nvs))
-				break;
-			avail -= nvs->nvs_strlen + sizeof(*nvs);
-			DBG(LOWPROBE, ul_debug("nvstring: type %u string %*s\n", nvs->nvs_type,
-				nvs->nvs_strlen, nvs->nvs_string));
-			if (nvs->nvs_type == DATA_TYPE_STRING && avail >= 0)
-				blkid_probe_set_label(pr, nvs->nvs_string,
-						      nvs->nvs_strlen);
-			found++;
-		} else if (strncmp(nvp->nvp_name, "guid",
-				   nvp->nvp_namelen) == 0) {
-			struct nvuint64 *nvu = (void *)(nvp->nvp_name+namesize);
-			uint64_t nvu_value;
+		found += zfs_process_value(pr, nvp->nvp_name, nvp_namelen,
+					   value, max_value_size);
 
-			memcpy(&nvu_value, &nvu->nvu_value, sizeof(nvu_value));
-			nvu->nvu_type = be32_to_cpu(nvu->nvu_type);
-			nvu_value = be64_to_cpu(nvu_value);
-			avail -= sizeof(*nvu);
-			DBG(LOWPROBE, ul_debug("nvuint64: type %u value %"PRIu64"\n",
-				nvu->nvu_type, nvu_value));
-			if (nvu->nvu_type == DATA_TYPE_UINT64 && avail >= 0)
-				blkid_probe_sprintf_value(pr, "UUID_SUB",
-							  "%"PRIu64, nvu_value);
-			found++;
-		} else if (strncmp(nvp->nvp_name, "pool_guid",
-				   nvp->nvp_namelen) == 0) {
-			struct nvuint64 *nvu = (void *)(nvp->nvp_name+namesize);
-			uint64_t nvu_value;
+		left -= nvp_size;
 
-			memcpy(&nvu_value, &nvu->nvu_value, sizeof(nvu_value));
-			nvu->nvu_type = be32_to_cpu(nvu->nvu_type);
-			nvu_value = be64_to_cpu(nvu_value);
-			avail -= sizeof(*nvu);
-			DBG(LOWPROBE, ul_debug("nvuint64: type %u value %"PRIu64"\n",
-				nvu->nvu_type, nvu_value));
-			if (nvu->nvu_type == DATA_TYPE_UINT64 && avail >= 0)
-				blkid_probe_sprintf_uuid(pr, (unsigned char *)
-							 &nvu_value,
-							 sizeof(nvu_value),
-							 "%"PRIu64, nvu_value);
-			found++;
-		}
-		if (left > nvp->nvp_size)
-			left -= nvp->nvp_size;
-		else
-			left = 0;
-		nvp = (struct nvpair *)((char *)nvp + nvp->nvp_size);
+		nvp = (struct nvpair *)((char *)nvp + nvp_size);
 	}
 }
 
