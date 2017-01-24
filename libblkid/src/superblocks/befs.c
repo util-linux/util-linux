@@ -197,7 +197,7 @@ static unsigned char *get_tree_node(blkid_probe pr, const struct befs_super_bloc
 		}
 	} else if (start < (int64_t) FS64_TO_CPU(ds->max_double_indirect_range, fs_le)) {
 		struct block_run *br;
-		int64_t di_br_size, br_per_di_br, di_index, i_index;
+		int64_t max_br, di_br_size, br_per_di_br, di_index, i_index;
 
 		start -= (int64_t) FS64_TO_CPU(ds->max_indirect_range, fs_le);
 
@@ -214,10 +214,20 @@ static unsigned char *get_tree_node(blkid_probe pr, const struct befs_super_bloc
 		i_index = (start % (br_per_di_br * di_br_size)) / di_br_size;
 		start = (start % (br_per_di_br * di_br_size)) % di_br_size;
 
+		if (di_index >= br_per_di_br)
+			return NULL; /* Corrupt? */
+
 		br = (struct block_run *) get_block_run(pr, bs,
 						&ds->double_indirect, fs_le);
 		if (!br)
 			return NULL;
+
+		max_br = ((int64_t)FS16_TO_CPU(br[di_index].len, fs_le)
+			  << FS32_TO_CPU(bs->block_shift, fs_le))
+			/ sizeof(struct block_run);
+
+		if (i_index >= max_br)
+			return NULL; /* Corrupt? */
 
 		br = (struct block_run *) get_block_run(pr, bs, &br[di_index],
 									fs_le);
@@ -230,23 +240,32 @@ static unsigned char *get_tree_node(blkid_probe pr, const struct befs_super_bloc
 	return NULL;
 }
 
-static int32_t compare_keys(const char keys1[], uint16_t keylengths1[], int32_t index,
-			const char *key2, uint16_t keylength2, int fs_le)
+#define BAD_KEYS -2
+
+static int32_t compare_keys(const char keys1[], uint16_t keylengths1[],
+			    int32_t index, const char *key2,
+			    uint16_t keylength2, uint16_t all_key_length,
+			    int fs_le)
 {
 	const char *key1;
-	uint16_t keylength1;
+	uint16_t keylength1, keystart1;
 	int32_t result;
 
-	key1 = &keys1[index == 0 ? 0 : FS16_TO_CPU(keylengths1[index - 1],
-									fs_le)];
-	keylength1 = FS16_TO_CPU(keylengths1[index], fs_le)
-			- (index == 0 ? 0 : FS16_TO_CPU(keylengths1[index - 1],
-									fs_le));
+	keystart1 = index == 0 ? 0 : FS16_TO_CPU(keylengths1[index - 1], fs_le);
+	keylength1 = FS16_TO_CPU(keylengths1[index], fs_le) - keystart1;
+
+	if (keystart1 + keylength1 > all_key_length)
+		return BAD_KEYS; /* Corrupt? */
+
+	key1 = &keys1[keystart1];
 
 	result = strncmp(key1, key2, min(keylength1, keylength2));
 
 	if (result == 0)
 		return keylength1 - keylength2;
+
+	if (result < 0) /* Don't clash with BAD_KEYS */
+		result = -1;
 
 	return result;
 }
@@ -259,7 +278,10 @@ static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 	uint16_t *keylengths;
 	int64_t *values;
 	int64_t node_pointer;
+	uint32_t bn_size, all_key_count, all_key_length;
+	uint32_t keylengths_offset, values_offset;
 	int32_t first, last, mid, cmp;
+	int loop_detect = 0;
 
 	errno = 0;
 	bh = (struct bplustree_header *) get_tree_node(pr, bs, &bi->data, 0,
@@ -271,28 +293,42 @@ static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 		return -ENOENT;
 
 	node_pointer = FS64_TO_CPU(bh->root_node_pointer, fs_le);
+	bn_size = FS32_TO_CPU(bh->node_size, fs_le);
+
+	if (bn_size < sizeof(struct bplustree_node))
+		return -ENOENT; /* Corrupt? */
 
 	do {
 		errno = 0;
+
 		bn = (struct bplustree_node *) get_tree_node(pr, bs, &bi->data,
-			node_pointer, FS32_TO_CPU(bh->node_size, fs_le), fs_le);
+			node_pointer, bn_size, fs_le);
 		if (!bn)
 			return errno ? -errno : -ENOENT;
 
-		keylengths = (uint16_t *) ((uint8_t *) bn
-				+ ((sizeof(struct bplustree_node)
-					+ FS16_TO_CPU(bn->all_key_length, fs_le)
-					+ sizeof(int64_t) - 1)
-						& ~(sizeof(int64_t) - 1)));
-		values = (int64_t *) ((uint8_t *) keylengths
-					+ FS16_TO_CPU(bn->all_key_count, fs_le)
-						* sizeof(uint16_t));
+		all_key_count = FS16_TO_CPU(bn->all_key_count, fs_le);
+		all_key_length = FS16_TO_CPU(bn->all_key_length, fs_le);
+		keylengths_offset =
+			(sizeof(struct bplustree_node) + all_key_length
+			 + sizeof(int64_t) - 1) & ~(sizeof(int64_t) - 1);
+		values_offset = keylengths_offset +
+			all_key_count * sizeof(uint16_t);
+
+		if (values_offset + all_key_count * sizeof(uint64_t) > bn_size)
+			return -ENOENT; /* Corrupt? */
+
+		keylengths = (uint16_t *) ((uint8_t *) bn + keylengths_offset);
+		values = (int64_t *) ((uint8_t *) bn + values_offset);
+
 		first = 0;
 		mid = 0;
-		last = FS16_TO_CPU(bn->all_key_count, fs_le) - 1;
+		last = all_key_count - 1;
 
-		cmp = compare_keys(bn->name, keylengths, last, key, strlen(key),
-									fs_le);
+		cmp = compare_keys(bn->name, keylengths, last, key,
+				   strlen(key), all_key_length, fs_le);
+		if (cmp == BAD_KEYS)
+			return -ENOENT;
+
 		if (cmp == 0) {
 			if ((int64_t) FS64_TO_CPU(bn->overflow_link, fs_le)
 							== BPLUSTREE_NULL)
@@ -306,7 +342,11 @@ static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 				mid = (first + last) / 2;
 
 				cmp = compare_keys(bn->name, keylengths, mid,
-						key, strlen(key), fs_le);
+						   key, strlen(key),
+						   all_key_length, fs_le);
+				if (cmp == BAD_KEYS)
+					return -ENOENT;
+
 				if (cmp == 0) {
 					if ((int64_t) FS64_TO_CPU(bn->overflow_link,
 						fs_le) == BPLUSTREE_NULL)
@@ -325,7 +365,8 @@ static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 			else
 				node_pointer = FS64_TO_CPU(values[mid], fs_le);
 		}
-	} while ((int64_t) FS64_TO_CPU(bn->overflow_link, fs_le)
+	} while (++loop_detect < 100 &&
+		(int64_t) FS64_TO_CPU(bn->overflow_link, fs_le)
 						!= BPLUSTREE_NULL);
 	return 0;
 }
@@ -335,6 +376,7 @@ static int get_uuid(blkid_probe pr, const struct befs_super_block *bs,
 {
 	struct befs_inode *bi;
 	struct small_data *sd;
+	uint64_t bi_size, offset, sd_size, sd_total_size;
 
 	bi = (struct befs_inode *) get_block_run(pr, bs, &bs->root_dir, fs_le);
 	if (!bi)
@@ -343,9 +385,22 @@ static int get_uuid(blkid_probe pr, const struct befs_super_block *bs,
 	if (FS32_TO_CPU(bi->magic1, fs_le) != INODE_MAGIC1)
 		return BLKID_PROBE_NONE;
 
-	sd = (struct small_data *) bi->small_data;
+	bi_size = (uint64_t)FS16_TO_CPU(bs->root_dir.len, fs_le) <<
+		FS32_TO_CPU(bs->block_shift, fs_le);
+	sd_total_size = min(bi_size - sizeof(struct befs_inode),
+			    (uint64_t)FS32_TO_CPU(bi->inode_size, fs_le));
 
-	do {
+	offset = 0;
+
+	while (offset + sizeof(struct small_data) <= sd_total_size) {
+		sd = (struct small_data *) ((uint8_t *)bi->small_data + offset);
+		sd_size = sizeof(struct small_data)
+			+ FS16_TO_CPU(sd->name_size, fs_le) + 3
+			+ FS16_TO_CPU(sd->data_size, fs_le) + 1;
+
+		if (offset + sd_size > sd_total_size)
+			break;
+
 		if (FS32_TO_CPU(sd->type, fs_le) == B_UINT64_TYPE
 			&& FS16_TO_CPU(sd->name_size, fs_le) == strlen(KEY_NAME)
 			&& FS16_TO_CPU(sd->data_size, fs_le) == KEY_SIZE
@@ -361,14 +416,9 @@ static int get_uuid(blkid_probe pr, const struct befs_super_block *bs,
 				&& FS16_TO_CPU(sd->data_size, fs_le) == 0)
 			break;
 
-		sd = (struct small_data *) ((uint8_t *) sd
-				+ sizeof(struct small_data)
-				+ FS16_TO_CPU(sd->name_size, fs_le) + 3
-				+ FS16_TO_CPU(sd->data_size, fs_le) + 1);
+		offset += sd_size;
+	}
 
-	} while ((intptr_t) sd < (intptr_t) bi
-				+ (int32_t) FS32_TO_CPU(bi->inode_size, fs_le)
-				- (int32_t) sizeof(struct small_data));
 	if (*uuid == 0
 		&& (FS32_TO_CPU(bi->attributes.allocation_group, fs_le) != 0
 			|| FS16_TO_CPU(bi->attributes.start, fs_le) != 0
@@ -420,6 +470,7 @@ static int probe_befs(blkid_probe pr, const struct blkid_idmag *mag)
 	struct befs_super_block *bs;
 	const char *version = NULL;
 	uint64_t volume_id = 0;
+	uint32_t block_size, block_shift;
 	int fs_le, ret;
 
 	bs = (struct befs_super_block *) blkid_probe_get_buffer(pr,
@@ -441,6 +492,13 @@ static int probe_befs(blkid_probe pr, const struct blkid_idmag *mag)
 		fs_le = 0;
 		version = "big-endian";
 	} else
+		return BLKID_PROBE_NONE;
+
+	block_size = FS32_TO_CPU(bs->block_size, fs_le);
+	block_shift = FS32_TO_CPU(bs->block_shift, fs_le);
+
+	if (block_shift < 10 || block_shift > 13 ||
+	    block_size != 1U << block_shift)
 		return BLKID_PROBE_NONE;
 
 	ret = get_uuid(pr, bs, &volume_id, fs_le);
