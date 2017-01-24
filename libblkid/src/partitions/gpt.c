@@ -210,7 +210,7 @@ static struct gpt_header *get_gpt_header(
 	struct gpt_header *h;
 	uint32_t crc;
 	uint64_t lu, fu;
-	size_t esz;
+	uint64_t esz;
 	uint32_t hsz, ssz;
 
 	ssz = blkid_probe_get_sectorsize(pr);
@@ -264,16 +264,15 @@ static struct gpt_header *get_gpt_header(
 		return NULL;
 	}
 
-	if (le32_to_cpu(h->num_partition_entries) == 0 ||
-	    le32_to_cpu(h->sizeof_partition_entry) == 0 ||
-	    ULONG_MAX / le32_to_cpu(h->num_partition_entries) < le32_to_cpu(h->sizeof_partition_entry)) {
+	/* Size of blocks with GPT entries */
+	esz = (uint64_t)le32_to_cpu(h->num_partition_entries) *
+		le32_to_cpu(h->sizeof_partition_entry);
+
+	if (esz == 0 || esz >= UINT32_MAX ||
+	    le32_to_cpu(h->sizeof_partition_entry) != sizeof(struct gpt_entry)) {
 		DBG(LOWPROBE, ul_debug("GPT entries undefined"));
 		return NULL;
 	}
-
-	/* Size of blocks with GPT entries */
-	esz = le32_to_cpu(h->num_partition_entries) *
-			le32_to_cpu(h->sizeof_partition_entry);
 
 	/* The header seems valid, save it
 	 * (we don't care about zeros in hdr->reserved2 area) */
