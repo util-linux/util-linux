@@ -84,9 +84,9 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 	struct ntfs_super_block *ns;
 	struct master_file_table_record *mft;
 
-	uint32_t sectors_per_cluster, mft_record_size, attr_off;
+	uint32_t sectors_per_cluster, mft_record_size;
 	uint16_t sector_size;
-	uint64_t nr_clusters, off;
+	uint64_t nr_clusters, off, attr_off;
 	unsigned char *buf_mft;
 
 	ns = blkid_probe_get_sb(pr, mag, struct ntfs_super_block);
@@ -175,7 +175,7 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 	mft = (struct master_file_table_record *) buf_mft;
 	attr_off = le16_to_cpu(mft->attrs_offset);
 
-	while (attr_off < mft_record_size &&
+	while (attr_off + sizeof(struct file_attribute) <= mft_record_size &&
 	       attr_off <= le32_to_cpu(mft->bytes_allocated)) {
 
 		uint32_t attr_len;
@@ -193,12 +193,12 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 			unsigned int val_len = le32_to_cpu(attr->value_len);
 			unsigned char *val = ((uint8_t *) attr) + val_off;
 
-			blkid_probe_set_utf8label(pr, val, val_len, BLKID_ENC_UTF16LE);
+			if (attr_off + val_off + val_len <= mft_record_size)
+				blkid_probe_set_utf8label(pr, val, val_len,
+							  BLKID_ENC_UTF16LE);
 			break;
 		}
 
-		if (UINT_MAX - attr_len < attr_off)
-			break;
 		attr_off += attr_len;
 	}
 
