@@ -158,23 +158,11 @@ static int uniq_fs_source_cmp(
 		struct libmnt_fs *a,
 		struct libmnt_fs *b)
 {
-	int eq;
-
 	if (mnt_fs_is_pseudofs(a) || mnt_fs_is_netfs(a) ||
 	    mnt_fs_is_pseudofs(b) || mnt_fs_is_netfs(b))
 		return 1;
 
-	eq = mnt_fs_streq_srcpath(a, mnt_fs_get_srcpath(b));
-	if (eq) {
-		const char *aroot = mnt_fs_get_root(a),
-			   *broot = mnt_fs_get_root(b);
-		if (!aroot || !broot)
-			eq = 0;
-		else if (strcmp(aroot, broot) != 0)
-			eq = 0;
-	}
-
-	return !eq;
+	return !mnt_fs_streq_srcpath(a, mnt_fs_get_srcpath(b));
 }
 
 /*
