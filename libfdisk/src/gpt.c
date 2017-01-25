@@ -830,6 +830,12 @@ static struct gpt_entry *gpt_read_entries(struct fdisk_context *cxt,
 	sz = (ssize_t) le32_to_cpu(header->npartition_entries) *
 	     le32_to_cpu(header->sizeof_partition_entry);
 
+	if (sz == 0 || sz >= UINT32_MAX ||
+	    le32_to_cpu(header->sizeof_partition_entry) != sizeof(struct gpt_entry)) {
+		DBG(LABEL, ul_debug("GPT entreis array size check failed"));
+		return NULL;
+	}
+
 	ret = calloc(1, sz);
 	if (!ret)
 		return NULL;
@@ -2534,6 +2540,12 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries)
 
 	/* calculate the size (bytes) of the entries array */
 	new_size = entries * le32_to_cpu(gpt->pheader->sizeof_partition_entry);
+	if (new_size >= UINT32_MAX) {
+		fdisk_warnx(cxt, _("The number of the partition has be smaller than %zu."),
+				UINT32_MAX / le32_to_cpu(gpt->pheader->sizeof_partition_entry));
+		return -EINVAL;
+	}
+
 	old_size = old * le32_to_cpu(gpt->pheader->sizeof_partition_entry);
 
 	/* calculate new range of usable LBAs */
