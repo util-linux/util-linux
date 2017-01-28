@@ -678,8 +678,19 @@ static int valid_structured_data_id(const char *str)
 
 	if (!at || at == str || !*(at + 1))
 		return 0;
-	if (!isdigit_string(at + 1))
-		return 0;
+
+	/* <digits> or <digits>.<digits>[...] */
+	for (p = at + 1; p && *p; p++) {
+		const char *end;
+
+		if (isdigit_strend(p, &end))
+			break;	/* only digits in the string */
+
+		if (end == NULL || end == p ||
+		    *end != '.' || *(end + 1) == '\0')
+			return 0;
+		p = end;
+	}
 
 	/* check for forbidden chars in the <name> */
 	for (p = str; p < at; p++) {
