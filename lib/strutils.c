@@ -174,20 +174,25 @@ int strtosize(const char *str, uintmax_t *res)
 	return parse_size(str, res, NULL);
 }
 
-int isdigit_string(const char *str)
+int isdigit_strend(const char *str, const char **end)
 {
 	const char *p;
 
 	for (p = str; p && *p && isdigit((unsigned char) *p); p++);
 
+	if (end)
+		*end = p;
 	return p && p > str && !*p;
 }
 
-int isxdigit_string(const char *str)
+int isxdigit_strend(const char *str, const char **end)
 {
 	const char *p;
 
 	for (p = str; p && *p && isxdigit((unsigned char) *p); p++);
+
+	if (end)
+		*end = p;
 
 	return p && p > str && !*p;
 }
