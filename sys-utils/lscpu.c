@@ -86,6 +86,7 @@
 #define _PATH_PROC_BC	"/proc/bc"
 #define _PATH_PROC_DEVICETREE	"/proc/device-tree"
 #define _PATH_DEV_MEM 		"/dev/mem"
+#define _PATH_PROC_OSRELEASE	"/proc/sys/kernel/osrelease"
 
 /* Xen Domain feature flag used for /sys/hypervisor/properties/features */
 #define XENFEAT_supervisor_mode_kernel		3
@@ -125,7 +126,8 @@ const char *hv_vendors[] = {
 	[HYPER_VBOX]	= "Oracle",
 	[HYPER_OS400]	= "OS/400",
 	[HYPER_PHYP]	= "pHyp",
-	[HYPER_SPAR]	= "Unisys s-Par"
+	[HYPER_SPAR]	= "Unisys s-Par",
+	[HYPER_WSL]	= "Windows Subsystem for Linux"
 };
 
 const int hv_vendor_pci[] = {
@@ -913,6 +915,22 @@ static void
 read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 {
 	FILE *fd;
+
+	/* We have to detect WSL first. is_vmware_platform() crashes on Windows 10. */
+
+	if ((fd = path_fopen("r", 1, _PATH_PROC_OSRELEASE))) {
+		char buf[256];
+
+		if (fgets(buf, sizeof(buf), fd) != NULL) {
+			if (strstr(buf, "Microsoft")) {
+				desc->hyper = HYPER_WSL;
+				desc->virtype = VIRT_CONT;
+			}
+		}
+		fclose(fd);
+		if (desc->virtype)
+			return;
+	}
 
 	if (mod->system != SYSTEM_SNAPSHOT) {
 		read_hypervisor_cpuid(desc);
