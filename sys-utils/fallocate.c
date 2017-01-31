@@ -94,6 +94,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -o, --offset <num>   offset for range operations, in bytes\n"), out);
 	fputs(_(" -p, --punch-hole     replace a range with a hole (implies -n)\n"), out);
 	fputs(_(" -z, --zero-range     zero and ensure allocation of a range\n"), out);
+#ifdef HAVE_POSIX_FALLOCATE
+	fputs(_(" -x, --posix          use posix_fallocate(3) instead of fallocate(2)\n"), out);
+#endif
 	fputs(_(" -v, --verbose        verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -134,6 +137,15 @@ static void xfallocate(int fd, int mode, off_t offset, off_t length)
 	}
 }
 
+#ifdef HAVE_POSIX_FALLOCATE
+static void xposix_fallocate(int fd, off_t offset, off_t length)
+{
+	int error = posix_fallocate(fd, offset, length);
+	if (error < 0) {
+		err(EXIT_FAILURE, _("fallocate failed"));
+	}
+}
+#endif
 
 static int skip_hole(int fd, off_t *off)
 {
@@ -277,6 +289,7 @@ int main(int argc, char **argv)
 	int	fd;
 	int	mode = 0;
 	int	dig = 0;
+	int posix = 0;
 	loff_t	length = -2LL;
 	loff_t	offset = 0;
 
@@ -291,6 +304,7 @@ int main(int argc, char **argv)
 	    { "zero-range",     0, 0, 'z' },
 	    { "offset",         1, 0, 'o' },
 	    { "length",         1, 0, 'l' },
+	    { "posix",          0, 0, 'x' },
 	    { "verbose",        0, 0, 'v' },
 	    { NULL,             0, 0, 0 }
 	};
@@ -298,6 +312,7 @@ int main(int argc, char **argv)
 	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
 		{ 'c', 'd', 'p', 'z' },
 		{ 'c', 'n' },
+		{ 'x', 'c', 'd', 'i', 'n', 'p', 'z'},
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -307,7 +322,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "hvVncpdizl:o:", longopts, NULL))
+	while ((c = getopt_long(argc, argv, "hvVncpdizxl:o:", longopts, NULL))
 			!= -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -340,6 +355,13 @@ int main(int argc, char **argv)
 		case 'z':
 			mode |= FALLOC_FL_ZERO_RANGE;
 			break;
+		case 'x':
+#ifdef HAVE_POSIX_FALLOCATE
+			posix = 1;
+			break;
+#else
+			errx(EXIT_FAILURE, _("posix_fallocate support is not compiled"))
+#endif
 		case 'v':
 			verbose++;
 			break;
@@ -384,6 +406,10 @@ int main(int argc, char **argv)
 
 	if (dig)
 		dig_holes(fd, offset, length);
+#ifdef HAVE_POSIX_FALLOCATE
+	else if (posix)
+		xposix_fallocate(fd, offset, length);
+#endif
 	else
 		xfallocate(fd, mode, offset, length);
 

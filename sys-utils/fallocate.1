@@ -17,6 +17,13 @@ fallocate \- preallocate or deallocate space to a file
 .RB [ \-l
 .IR length ]
 .I filename
+.PP
+.B fallocate \-x
+.RB [ \-o
+.IR offset ]
+.RB \-l
+.IR length
+.I filename
 .SH DESCRIPTION
 .B fallocate
 is used to manipulate the allocated disk space for a file, either to deallocate
@@ -87,6 +94,10 @@ Btrfs (since Linux 3.7) and tmpfs (since Linux 3.5).
 .TP
 .BR \-v , " \-\-verbose"
 Enable verbose mode.
+.TP
+.BR \-x , " \-\-posix"
+Enable POSIX operation mode. In that mode allocation operation always completes,
+but it may take longer time when fast allocation is not supported by the underlying filesystem.
 .TP
 .BR \-z , " \-\-zero\-range"
 Zeroes space in the byte range starting at \fIoffset\fP and
