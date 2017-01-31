@@ -918,7 +918,8 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	/* We have to detect WSL first. is_vmware_platform() crashes on Windows 10. */
 
-	if ((fd = path_fopen("r", 1, _PATH_PROC_OSRELEASE))) {
+	if (path_exist(_PATH_PROC_OSRELEASE)
+	    && (fd = path_fopen("r", 1, _PATH_PROC_OSRELEASE))) {
 		char buf[256];
 
 		if (fgets(buf, sizeof(buf), fd) != NULL) {
