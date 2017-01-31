@@ -16,7 +16,19 @@ DOWNLOAD:
       ftp://ftp.kernel.org/pub/linux/utils/util-linux/
 
 
+BUG REPORTING:
+
+      E-MAIL: util-linux@vger.kernel.org
+      Web:    https://github.com/karelzak/util-linux/issues
+
+      Note that upstream community has no resources to provide support for end
+      users with distribution specific issues. It's strongly recommended to 
+      report bugs to the distribution (downstream) maintainers by distribution
+      bug tracking systems. 
+
 SOURCE CODE:
+
+      See also Documentation/howto-contribute.txt.
 
       Web interface:
           http://git.kernel.org/cgit/utils/util-linux/util-linux.git
