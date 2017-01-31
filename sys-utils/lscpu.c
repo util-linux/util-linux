@@ -656,13 +656,10 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	if (mod->system == SYSTEM_LIVE)
 		read_physical_info_powerpc(desc);
 
-	if (path_exist(_PATH_PROC_SYSINFO)) {
-		FILE *fd = path_fopen("r", 0, _PATH_PROC_SYSINFO);
-
-		while (fd && fgets(buf, sizeof(buf), fd) != NULL && !desc->machinetype)
+	if ((fp = path_fopen("r", 0, _PATH_PROC_SYSINFO))) {
+		while (fgets(buf, sizeof(buf), fp) != NULL && !desc->machinetype)
 			lookup(buf, "Type", &desc->machinetype);
-		if (fd)
-			fclose(fd);
+		fclose(fp);
 	}
 }
 
@@ -918,8 +915,7 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	/* We have to detect WSL first. is_vmware_platform() crashes on Windows 10. */
 
-	if (path_exist(_PATH_PROC_OSRELEASE)
-	    && (fd = path_fopen("r", 1, _PATH_PROC_OSRELEASE))) {
+	if ((fd = path_fopen("r", 0, _PATH_PROC_OSRELEASE))) {
 		char buf[256];
 
 		if (fgets(buf, sizeof(buf), fd) != NULL) {
@@ -992,16 +988,13 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		desc->virtype = VIRT_FULL;
 
 	/* IBM PR/SM */
-	} else if (path_exist(_PATH_PROC_SYSINFO)) {
-		FILE *sysinfo_fd = path_fopen("r", 0, _PATH_PROC_SYSINFO);
+	} else if ((fd = path_fopen("r", 0, _PATH_PROC_SYSINFO))) {
 		char buf[BUFSIZ];
 
-		if (!sysinfo_fd)
-			return;
 		desc->hyper = HYPER_IBM;
 		desc->hypervisor = "PR/SM";
 		desc->virtype = VIRT_FULL;
-		while (fgets(buf, sizeof(buf), sysinfo_fd) != NULL) {
+		while (fgets(buf, sizeof(buf), fd) != NULL) {
 			char *str;
 
 			if (!strstr(buf, "Control Program:"))
@@ -1025,7 +1018,7 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 			while ((str = strstr(desc->hypervisor, "  ")))
 				memmove(str, str + 1, strlen(str));
 		}
-		fclose(sysinfo_fd);
+		fclose(fd);
 	}
 
 	/* OpenVZ/Virtuozzo - /proc/vz dir should exist
@@ -1047,11 +1040,10 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		desc->virtype = VIRT_PARA;
 
 	/* Linux-VServer */
-	} else if (path_exist(_PATH_PROC_STATUS)) {
+	} else if ((fd = path_fopen("r", 0, _PATH_PROC_STATUS))) {
 		char buf[BUFSIZ];
 		char *val = NULL;
 
-		fd = path_fopen("r", 1, _PATH_PROC_STATUS);
 		while (fgets(buf, sizeof(buf), fd) != NULL) {
 			if (lookup(buf, "VxID", &val))
 				break;
@@ -1839,6 +1831,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	if (desc->nsockets) {
 		int threads_per_core, cores_per_socket, sockets_per_book;
 		int books_per_drawer, drawers;
+		FILE *fd;
 
 		threads_per_core = cores_per_socket = sockets_per_book = 0;
 		books_per_drawer = drawers = 0;
@@ -1850,8 +1843,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		 * If the cpu topology is not exported (e.g. 2nd level guest)
 		 * fall back to old calculation scheme.
 		 */
-		if (path_exist(_PATH_PROC_SYSINFO)) {
-			FILE *fd = path_fopen("r", 0, _PATH_PROC_SYSINFO);
+		if ((fd = path_fopen("r", 0, _PATH_PROC_SYSINFO))) {
 			char pbuf[BUFSIZ];
 			int t0, t1;
 
