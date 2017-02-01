@@ -1517,12 +1517,19 @@ static int ui_menu_move(struct cfdisk *cf, int key)
 		}
 	}
 
-	return 1;	/* key irrelevant for menu move */
+	if (key == '\014') {		/* ^L refresh */
+		ui_menu_resize(cf);
+		return 0;
+	}
+
+	DBG(MENU, ul_debug(" no memu move key"));
+	return 1;
 }
 
 /* but don't call me from ui_run(), this is for pop-up menus only */
 static void ui_menu_resize(struct cfdisk *cf)
 {
+	DBG(MENU, ul_debug("memu resize/refresh"));
 	resize();
 	ui_clean_menu(cf);
 	menu_refresh_size(cf);
@@ -2394,6 +2401,7 @@ static int main_menu_action(struct cfdisk *cf, int key)
 
 static void ui_resize_refresh(struct cfdisk *cf)
 {
+	DBG(UI, ul_debug("ui resize/refresh"));
 	resize();
 	menu_refresh_size(cf);
 	lines_refresh(cf);
@@ -2469,10 +2477,14 @@ static int ui_run(struct cfdisk *cf)
 			ui_resize_refresh(cf);
 		if (key == ERR)
 			continue;
+		if (key == '\014') {		/* ^L refresh */
+			ui_resize_refresh(cf);
+			continue;
+		}
 		if (ui_menu_move(cf, key) == 0)
 			continue;
 
-		DBG(UI, ul_debug("main action key >%c<.", key));
+		DBG(UI, ul_debug("main action key >%1$c< [\\0%1$o].", key));
 
 		switch (key) {
 		case KEY_DOWN:
