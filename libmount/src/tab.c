@@ -438,15 +438,31 @@ int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 	return 0;
 }
 
+static inline struct libmnt_fs *get_parent_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
+{
+	struct libmnt_iter itr;
+	struct libmnt_fs *x;
+	int parent_id = mnt_fs_get_parent_id(fs);
+
+	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+	while (mnt_table_next_fs(tb, &itr, &x) == 0) {
+		if (mnt_fs_get_id(x) == parent_id)
+			return x;
+	}
+
+	return NULL;
+}
+
 /**
  * mnt_table_get_root_fs:
  * @tb: mountinfo file (/proc/self/mountinfo)
  * @root: returns pointer to the root filesystem (/)
  *
- * The function uses the parent ID from the mountinfo file to determine the root filesystem
- * (the filesystem with the smallest ID). The function is designed mostly for
- * applications where it is necessary to sort mountpoints by IDs to get the tree
- * of the mountpoints (e.g. findmnt default output).
+ * The function uses the parent ID from the mountinfo file to determine the
+ * root filesystem (the filesystem with the smallest ID with parent ID missing
+ * in the table). The function is designed mostly for applications where it is
+ * necessary to sort mountpoints by IDs to get the tree of the mountpoints
+ * (e.g. findmnt default output).
  *
  * If you're not sure, then use
  *
@@ -469,6 +485,7 @@ int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
 
 	*root = NULL;
 
+	/* get smallest possible ID from the table */
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 		int id = mnt_fs_get_parent_id(fs);
@@ -477,6 +494,15 @@ int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
 			*root = fs;
 			root_id = id;
 		}
+	}
+
+	/* go to the root node by "parent_id -> id" relation */
+	while (*root) {
+		struct libmnt_fs *x = get_parent_fs(tb, *root);
+		if (!x || x == *root)
+			break;
+		DBG(TAB, ul_debugobj(tb, " messy mountinfo, walk to %s", mnt_fs_get_target(x)));
+		*root = x;
 	}
 
 	return *root ? 0 : -EINVAL;

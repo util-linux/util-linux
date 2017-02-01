@@ -41,4 +41,9 @@ $TS_CMD_FINDMNT /sys --submounts --kernel --tab-file "$TS_SELF/files/mountinfo" 
 echo rc=$? >> $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "messy-mountinfo"
+$TS_CMD_FINDMNT --tab-file "$TS_SELF/files/mountinfo-messy" &> $TS_OUTPUT
+echo rc=$? >> $TS_OUTPUT
+ts_finalize_subtest
+
 ts_finalize
