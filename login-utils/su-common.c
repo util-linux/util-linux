@@ -418,11 +418,12 @@ static void create_watching_parent(struct su_context *su)
 		else
 			status = 1;
 
-		DBG(SIG, ul_debug("child is dead [status=%d]", status));
+		DBG(SIG, ul_debug("child %d is dead [status=%d]", child, status));
+		child = (pid_t) -1;	/* Don't use the PID anymore! */
 	} else
 		status = 1;
 
-	if (caught_signal) {
+	if (caught_signal && child != (pid_t)-1) {
 		fprintf(stderr, _("\nSession terminated, killing shell..."));
 		kill(child, SIGTERM);
 	}
@@ -430,10 +431,12 @@ static void create_watching_parent(struct su_context *su)
 	supam_cleanup(su, PAM_SUCCESS);
 
 	if (caught_signal) {
-		DBG(SIG, ul_debug("killing child"));
-		sleep(2);
-		kill(child, SIGKILL);
-		fprintf(stderr, _(" ...killed.\n"));
+		if (child != (pid_t)-1) {
+			DBG(SIG, ul_debug("killing child"));
+			sleep(2);
+			kill(child, SIGKILL);
+			fprintf(stderr, _(" ...killed.\n"));
+		}
 
 		/* Let's terminate itself with the received signal.
 		 *
