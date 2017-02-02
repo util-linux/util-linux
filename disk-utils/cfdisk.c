@@ -2168,7 +2168,10 @@ static int ui_help(void)
 		N_("Note: All of the commands can be entered with either upper or lower"),
 		N_("case letters (except for Write)."),
 		"  ",
-		N_("Use lsblk(8) or partx(8) to see more details about the device.")
+		N_("Use lsblk(8) or partx(8) to see more details about the device."),
+		"  ",
+		"  ",
+		"Copyright (C) 2014-2017 Karel Zak <kzak@redhat.com>"
 	};
 
 	erase();
