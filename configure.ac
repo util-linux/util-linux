@@ -435,6 +435,7 @@ AM_CONDITIONAL([HAVE_OPENAT], [test "x$have_openat" = xyes])
 
 AC_CHECK_FUNCS([isnan], [],
 	[AC_CHECK_LIB([m], [isnan], [MATH_LIBS="-lm"])]
+	[AC_CHECK_LIB([m], [__isnan], [MATH_LIBS="-lm"])]
 )
 AC_SUBST([MATH_LIBS])
 
