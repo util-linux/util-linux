@@ -1,4 +1,4 @@
-.TH BLKREPORT 5 "March 2016" "util-linux" "System Administration"
+.TH BLKREPORT 8 "February 2017" "util-linux" "System Administration"
 .SH NAME
 blkreport \- report zones on a device
 .SH SYNOPSIS
@@ -17,23 +17,23 @@ zoned devices that support the ZAC or ZBC command set.
 By default,
 .B blkreport
 will report on up to 4k zones from the start of the block device.
-Options may be used to modify this behavior based on the starting zone or
-size of the report, as explained below.
+Options may be used to modify this behavior, changing the starting zone or
+the size of the report, as explained below.
 .PP
 The
 .I device
 argument is the pathname of the block device.
-.PP
 .SH OPTIONS
 The
 .I offset
 and
 .I length
-arguments may be followed by the multiplicative suffixes KiB (=1024),
+option arguments may be followed by the multiplicative suffixes KiB (=1024),
 MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is
 optional, e.g., "K" has the same meaning as "KiB") or the suffixes
 KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
-Additionally the common 0x prefix can be used to specify zone and length in hex.
+Additionally, the 0x prefix can be used to specify \fIoffset\fR and
+\fIlength\fR in hex.
 .TP
 .BR \-z , " \-\-zone "\fIoffset\fP
 The starting zone of the report specified as a sector offset.
@@ -41,14 +41,11 @@ The provided offset in sector units (512 bytes) should match the start of a zone
 The default value is zero.
 .TP
 .BR \-c , " \-\-count "\fIlength\fP
-The maximum number of zones to be returned by the report from the block device.
-Default is 4006, max is 65536
+The maximum number of zones to be returned by the report.
+The default is 4096, the maximum 65536.
 .TP
 .BR \-v , " \-\-verbose"
 Display the number of zones returned in the report.
-.I offset
-and
-.IR length .
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.

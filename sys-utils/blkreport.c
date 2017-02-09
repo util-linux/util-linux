@@ -123,20 +123,19 @@ static int do_report(int fd, uint64_t lba, uint32_t len, int verbose)
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out,
-	      _(" %s [options] <device>\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] <device>\n"), program_invocation_short_name);
 
 	fputs(USAGE_SEPARATOR, out);
-	fputs(_("Discard the content of sectors on a device.\n"), out);
+	fputs(_("Report zone information about the given device.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -z, --zone <offset>    zone LBA in 512 byte sectors\n"
-		" -c, --count <length>   maximum number of zones in report\n"
-		" -v, --verbose          print aligned length and offset"),
-		out);
+	fputs(_(" -z, --zone <offset>    LBA of first zone (in 512-byte sectors)\n"), out);
+	fputs(_(" -c, --count <number>   maximum number of zones in the report\n"), out);
+	fputs(_(" -v, --verbose          display the number of reported zones"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
+
 	fprintf(out, USAGE_MAN_TAIL("blkreport(8)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
