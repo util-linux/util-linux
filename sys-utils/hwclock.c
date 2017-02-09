@@ -82,24 +82,20 @@
 #include "hwclock.h"
 #include "timeutils.h"
 #include "env.h"
+#include "xalloc.h"
 
 #ifdef HAVE_LIBAUDIT
 #include <libaudit.h>
 static int hwaudit_fd = -1;
-static int hwaudit_on;
 #endif
 
 /* The struct that holds our hardware access routines */
 struct clock_ops *ur;
 
-#define FLOOR(arg) ((arg >= 0 ? (int) arg : ((int) arg) - 1));
-
 /* Maximal clock adjustment in seconds per day.
    (adjtime() glibc call has 2145 seconds limit on i386, so it is good enough for us as well,
    43219 is a maximal safe value preventing exact_adjustment overflow.) */
 #define MAX_DRIFT 2145.0
-
-const char *adj_file_name = NULL;
 
 struct adjtime {
 	/*
@@ -122,24 +118,12 @@ struct adjtime {
 	 * authority (as opposed to just doing a drift adjustment)
 	 */
 	/* line 3 */
-	enum a_local_utc { LOCAL, UTC, UNKNOWN } local_utc;
+	enum a_local_utc { UTC = 0, LOCAL, UNKNOWN } local_utc;
 	/*
 	 * To which time zone, local or UTC, we most recently set the
 	 * hardware clock.
 	 */
 };
-
-/*
- * We are running in debug mode, wherein we put a lot of information about
- * what we're doing to standard output.
- */
-int debug;
-
-/* Workaround for Award 4.50g BIOS bug: keep the year in a file. */
-bool badyear;
-
-/* User-specified epoch, used when rtc fails to return epoch. */
-unsigned long epoch_option = ULONG_MAX;
 
 /*
  * Almost all Award BIOS's made between 04/26/94 and 05/31/95 have a nasty
@@ -230,19 +214,19 @@ static struct timeval time_inc(struct timeval addend, double increment)
 }
 
 static bool
-hw_clock_is_utc(const bool utc, const bool local_opt,
+hw_clock_is_utc(const struct hwclock_control *ctl,
 		const struct adjtime adjtime)
 {
 	bool ret;
 
-	if (utc)
+	if (ctl->utc)
 		ret = TRUE;	/* --utc explicitly given on command line */
-	else if (local_opt)
+	else if (ctl->local_opt)
 		ret = FALSE;	/* --localtime explicitly given */
 	else
 		/* get info from adjtime file - default is UTC */
 		ret = (adjtime.local_utc != LOCAL);
-	if (debug)
+	if (ctl->debug)
 		printf(_("Assuming hardware clock is kept in %s time.\n"),
 		       ret ? _("UTC") : _("local"));
 	return ret;
@@ -257,32 +241,22 @@ hw_clock_is_utc(const bool utc, const bool local_opt,
  *
  * return value 0 if all OK, !=0 otherwise.
  */
-static int read_adjtime(struct adjtime *adjtime_p)
+static int read_adjtime(const struct hwclock_control *ctl,
+			struct adjtime *adjtime_p)
 {
 	FILE *adjfile;
 	char line1[81];		/* String: first line of adjtime file */
 	char line2[81];		/* String: second line of adjtime file */
 	char line3[81];		/* String: third line of adjtime file */
-	long timeval;
 
-	if (access(adj_file_name, R_OK) != 0) {
-		/* He doesn't have a adjtime file, so we'll use defaults. */
-		adjtime_p->drift_factor = 0;
-		adjtime_p->last_adj_time = 0;
-		adjtime_p->not_adjusted = 0;
-		adjtime_p->last_calib_time = 0;
-		adjtime_p->local_utc = UTC;
-		adjtime_p->dirty = FALSE;	/* don't create a zero adjfile */
-
+	if (access(ctl->adj_file_name, R_OK) != 0)
 		return 0;
-	}
 
-	adjfile = fopen(adj_file_name, "r");	/* open file for reading */
+	adjfile = fopen(ctl->adj_file_name, "r");	/* open file for reading */
 	if (adjfile == NULL) {
-		warn(_("cannot open %s"), adj_file_name);
+		warn(_("cannot open %s"), ctl->adj_file_name);
 		return EX_OSFILE;
 	}
-
 
 	if (!fgets(line1, sizeof(line1), adjfile))
 		line1[0] = '\0';	/* In case fgets fails */
@@ -293,20 +267,12 @@ static int read_adjtime(struct adjtime *adjtime_p)
 
 	fclose(adjfile);
 
-	/* Set defaults in case values are missing from file */
-	adjtime_p->drift_factor = 0;
-	adjtime_p->last_adj_time = 0;
-	adjtime_p->not_adjusted = 0;
-	adjtime_p->last_calib_time = 0;
-	timeval = 0;
-
 	sscanf(line1, "%lf %ld %lf",
 	       &adjtime_p->drift_factor,
-	       &timeval, &adjtime_p->not_adjusted);
-	adjtime_p->last_adj_time = timeval;
+	       &adjtime_p->last_adj_time,
+	       &adjtime_p->not_adjusted);
 
-	sscanf(line2, "%ld", &timeval);
-	adjtime_p->last_calib_time = timeval;
+	sscanf(line2, "%ld", &adjtime_p->last_calib_time);
 
 	if (!strcmp(line3, "UTC\n")) {
 		adjtime_p->local_utc = UTC;
@@ -320,9 +286,7 @@ static int read_adjtime(struct adjtime *adjtime_p)
 		}
 	}
 
-	adjtime_p->dirty = FALSE;
-
-	if (debug) {
+	if (ctl->debug) {
 		printf(_
 		       ("Last drift adjustment done at %ld seconds after 1969\n"),
 		       (long)adjtime_p->last_adj_time);
@@ -350,16 +314,16 @@ static int read_adjtime(struct adjtime *adjtime_p)
  *
  * Return 0 if it worked, nonzero if it didn't.
  */
-static int synchronize_to_clock_tick(void)
+static int synchronize_to_clock_tick(const struct hwclock_control *ctl)
 {
 	int rc;
 
-	if (debug)
+	if (ctl->debug)
 		printf(_("Waiting for clock tick...\n"));
 
-	rc = ur->synchronize_to_clock_tick();
+	rc = ur->synchronize_to_clock_tick(ctl);
 
-	if (debug) {
+	if (ctl->debug) {
 		if (rc)
 			printf(_("...synchronization failed\n"));
 		else
@@ -386,30 +350,14 @@ static int synchronize_to_clock_tick(void)
  * return *valid_p == true.
  */
 static void
-mktime_tz(struct tm tm, const bool universal,
-	  bool * valid_p, time_t * systime_p)
+mktime_tz(const struct hwclock_control *ctl, struct tm tm,
+	  bool *valid_p, time_t *systime_p)
 {
-	time_t mktime_result;	/* The value returned by our mktime() call */
-	char *zone;		/* Local time zone name */
-
-	/*
-	 * We use the C library function mktime(), but since it only works
-	 * on local time zone input, we may have to fake it out by
-	 * temporarily changing the local time zone to UTC.
-	 */
-	zone = getenv("TZ");	/* remember original time zone */
-	if (universal) {
-		/* Set timezone to UTC */
-		xsetenv("TZ", "", TRUE);
-		/*
-		 * Note: tzset() gets called implicitly by the time code,
-		 * but only the first time. When changing the environment
-		 * variable, better call tzset() explicitly.
-		 */
-		tzset();
-	}
-	mktime_result = mktime(&tm);
-	if (mktime_result == -1) {
+	if (ctl->universal)
+		*systime_p = timegm(&tm);
+	else
+		*systime_p = mktime(&tm);
+	if (*systime_p == -1) {
 		/*
 		 * This apparently (not specified in mktime() documentation)
 		 * means the 'tm' structure does not contain valid values
@@ -417,28 +365,20 @@ mktime_tz(struct tm tm, const bool universal,
 		 * mktime() returns -1).
 		 */
 		*valid_p = FALSE;
-		*systime_p = 0;
-		if (debug)
+		if (ctl->debug)
 			printf(_("Invalid values in hardware clock: "
 				 "%4d/%.2d/%.2d %.2d:%.2d:%.2d\n"),
 			       tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
 			       tm.tm_hour, tm.tm_min, tm.tm_sec);
 	} else {
 		*valid_p = TRUE;
-		*systime_p = mktime_result;
-		if (debug)
+		if (ctl->debug)
 			printf(_
 			       ("Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = "
 				"%ld seconds since 1969\n"), tm.tm_year + 1900,
 			       tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min,
 			       tm.tm_sec, (long)*systime_p);
 	}
-	/* now put back the original zone. */
-	if (zone)
-		xsetenv("TZ", zone, TRUE);
-	else
-		unsetenv("TZ");
-	tzset();
 }
 
 /*
@@ -448,24 +388,25 @@ mktime_tz(struct tm tm, const bool universal,
  * clock.
  */
 static int
-read_hardware_clock(const bool universal, bool * valid_p, time_t * systime_p)
+read_hardware_clock(const struct hwclock_control *ctl,
+		    bool * valid_p, time_t *systime_p)
 {
 	struct tm tm;
 	int err;
 
-	err = ur->read_hardware_clock(&tm);
+	err = ur->read_hardware_clock(ctl, &tm);
 	if (err)
 		return err;
 
-	if (badyear)
+	if (ctl->badyear)
 		read_date_from_file(&tm);
 
-	if (debug)
+	if (ctl->debug)
 		printf(_
 		       ("Time read from Hardware Clock: %4d/%.2d/%.2d %02d:%02d:%02d\n"),
 		       tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour,
 		       tm.tm_min, tm.tm_sec);
-	mktime_tz(tm, universal, valid_p, systime_p);
+	mktime_tz(ctl, tm, valid_p, systime_p);
 
 	return 0;
 }
@@ -475,8 +416,7 @@ read_hardware_clock(const bool universal, bool * valid_p, time_t * systime_p)
  * according to <universal>.
  */
 static void
-set_hardware_clock(const time_t newtime,
-		   const bool universal, const bool testing)
+set_hardware_clock(const struct hwclock_control *ctl, const time_t newtime)
 {
 	struct tm new_broken_time;
 	/*
@@ -484,21 +424,21 @@ set_hardware_clock(const time_t newtime,
 	 * in the time zone of caller's choice
 	 */
 
-	if (universal)
+	if (ctl->universal)
 		new_broken_time = *gmtime(&newtime);
 	else
 		new_broken_time = *localtime(&newtime);
 
-	if (debug)
+	if (ctl->debug)
 		printf(_("Setting Hardware Clock to %.2d:%.2d:%.2d "
 			 "= %ld seconds since 1969\n"),
 		       new_broken_time.tm_hour, new_broken_time.tm_min,
 		       new_broken_time.tm_sec, (long)newtime);
 
-	if (testing)
+	if (ctl->testing)
 		printf(_("Clock not changed - testing only.\n"));
 	else {
-		if (badyear) {
+		if (ctl->badyear) {
 			/*
 			 * Write the real year to a file, then write a fake
 			 * year between 1995 and 1998 to the RTC. This way,
@@ -509,7 +449,7 @@ set_hardware_clock(const time_t newtime,
 			new_broken_time.tm_year =
 			    95 + ((new_broken_time.tm_year + 1) & 3);
 		}
-		ur->set_hardware_clock(&new_broken_time);
+		ur->set_hardware_clock(ctl, &new_broken_time);
 	}
 }
 
@@ -532,9 +472,9 @@ set_hardware_clock(const time_t newtime,
  * Idea for future enhancement.
  */
 static void
-set_hardware_clock_exact(const time_t sethwtime,
-			 const struct timeval refsystime,
-			 const bool universal, const bool testing)
+set_hardware_clock_exact(const struct hwclock_control *ctl,
+			 const time_t sethwtime,
+			 const struct timeval refsystime)
 {
 	/*
 	 * The Hardware Clock can only be set to any integer time plus one
@@ -598,7 +538,7 @@ set_hardware_clock_exact(const time_t sethwtime,
 		double ticksize;
 
 		/* FOR TESTING ONLY: inject random delays of up to 1000ms */
-		if (debug >= 10) {
+		if (ctl->debug >= 10) {
 			int usec = random() % 1000000;
 			printf(_("sleeping ~%d usec\n"), usec);
 			xusleep(usec);
@@ -610,20 +550,20 @@ set_hardware_clock_exact(const time_t sethwtime,
 		prevsystime = nowsystime;
 
 		if (ticksize < 0) {
-			if (debug)
+			if (ctl->debug)
 				printf(_("time jumped backward %.6f seconds "
 					 "to %ld.%06ld - retargeting\n"),
-				       ticksize, (long)nowsystime.tv_sec,
-				       (long)nowsystime.tv_usec);
+				       ticksize, nowsystime.tv_sec,
+				       nowsystime.tv_usec);
 			/* The retarget is handled at the end of the loop. */
 		} else if (deltavstarget < 0) {
 			/* deltavstarget < 0 if current time < target time */
-			if (debug >= 2)
+			if (ctl->debug >= 2)
 				printf(_("%ld.%06ld < %ld.%06ld (%.6f)\n"),
-				       (long)nowsystime.tv_sec,
-				       (long)nowsystime.tv_usec,
-				       (long)targetsystime.tv_sec,
-				       (long)targetsystime.tv_usec,
+				       nowsystime.tv_sec,
+				       nowsystime.tv_usec,
+				       targetsystime.tv_sec,
+				       targetsystime.tv_usec,
 				       deltavstarget);
 			continue;  /* not there yet - keep spinning */
 		} else if (deltavstarget <= target_time_tolerance_secs) {
@@ -634,13 +574,13 @@ set_hardware_clock_exact(const time_t sethwtime,
 			 * We missed our window.  Increase the tolerance and
 			 * aim for the next opportunity.
 			 */
-			if (debug)
+			if (ctl->debug)
 				printf(_("missed it - %ld.%06ld is too far "
 					 "past %ld.%06ld (%.6f > %.6f)\n"),
-				       (long)nowsystime.tv_sec,
-				       (long)nowsystime.tv_usec,
-				       (long)targetsystime.tv_sec,
-				       (long)targetsystime.tv_usec,
+				       nowsystime.tv_sec,
+				       nowsystime.tv_usec,
+				       targetsystime.tv_sec,
+				       targetsystime.tv_usec,
 				       deltavstarget,
 				       target_time_tolerance_secs);
 			target_time_tolerance_secs += tolerance_incr_secs;
@@ -662,17 +602,17 @@ set_hardware_clock_exact(const time_t sethwtime,
 		    + (int)(time_diff(nowsystime, refsystime)
 			    - RTC_SET_DELAY_SECS /* don't count this */
 			    + 0.5 /* for rounding */);
-	if (debug)
+	if (ctl->debug)
 		printf(_("%ld.%06ld is close enough to %ld.%06ld (%.6f < %.6f)\n"
 			 "Set RTC to %ld (%ld + %d; refsystime = %ld.%06ld)\n"),
-		       (long)nowsystime.tv_sec, (long)nowsystime.tv_usec,
-		       (long)targetsystime.tv_sec, (long)targetsystime.tv_usec,
+		       nowsystime.tv_sec, nowsystime.tv_usec,
+		       targetsystime.tv_sec, targetsystime.tv_usec,
 		       deltavstarget, target_time_tolerance_secs,
-		       (long)newhwtime, (long)sethwtime,
+		       newhwtime, sethwtime,
 		       (int)(newhwtime - sethwtime),
-		       (long)refsystime.tv_sec, (long)refsystime.tv_usec);
+		       refsystime.tv_sec, refsystime.tv_usec);
 
-	set_hardware_clock(newhwtime, universal, testing);
+	set_hardware_clock(ctl, newhwtime);
 }
 
 /*
@@ -715,49 +655,49 @@ display_time(const bool hclock_valid, struct timeval hwctime)
  * If anything goes wrong (and many things can), we return return code 10
  * and arbitrary *time_p. Otherwise, return code is 0 and *time_p is valid.
  */
-static int interpret_date_string(const char *date_opt, time_t * const time_p)
+static int interpret_date_string(const struct hwclock_control *ctl,
+				 time_t *const time_p)
 {
-	FILE *date_child_fp;
-	char date_resp[100];
+	FILE *date_child_fp = NULL;
+	char *date_command = NULL;
+	char *date_resp = NULL;
+	size_t len = 0;
 	const char magic[] = "seconds-into-epoch=";
-	char date_command[100];
-	int retcode;		/* our eventual return code */
-	int rc;			/* local return code */
+	int retcode = 1;
+	long seconds_since_epoch;
 
-	if (date_opt == NULL) {
+	if (!ctl->date_opt) {
 		warnx(_("No --date option specified."));
-		return 14;
-	}
-
-	/* prevent overflow - a security risk */
-	if (strlen(date_opt) > sizeof(date_command) - 50) {
-		warnx(_("--date argument too long"));
-		return 13;
+		return retcode;
 	}
 
 	/* Quotes in date_opt would ruin the date command we construct. */
-	if (strchr(date_opt, '"') != NULL) {
+	if (strchr(ctl->date_opt, '"') != NULL ||
+	    strchr(ctl->date_opt, '`') != NULL ||
+	    strchr(ctl->date_opt, '$') != NULL) {
 		warnx(_
 		      ("The value of the --date option is not a valid date.\n"
-		       "In particular, it contains quotation marks."));
-		return 12;
+		       "In particular, it contains illegal character(s)."));
+		return retcode;
 	}
 
-	sprintf(date_command, "date --date=\"%s\" +seconds-into-epoch=%%s",
-		date_opt);
-	if (debug)
+	xasprintf(&date_command, "date --date=\"%s\" +%s%%s",
+		ctl->date_opt, magic);
+	if (ctl->debug)
 		printf(_("Issuing date command: %s\n"), date_command);
 
 	date_child_fp = popen(date_command, "r");
 	if (date_child_fp == NULL) {
 		warn(_("Unable to run 'date' program in /bin/sh shell. "
 			    "popen() failed"));
-		return 10;
+		goto out;
 	}
 
-	if (!fgets(date_resp, sizeof(date_resp), date_child_fp))
-		date_resp[0] = '\0';	/* in case fgets fails */
-	if (debug)
+	if (getline(&date_resp, &len, date_child_fp) < 0) {
+		warn(_("getline() failed"));
+		goto out;
+	}
+	if (ctl->debug)
 		printf(_("response from date command = %s\n"), date_resp);
 	if (strncmp(date_resp, magic, sizeof(magic) - 1) != 0) {
 		warnx(_("The date command issued by %s returned "
@@ -765,30 +705,29 @@ static int interpret_date_string(const char *date_opt, time_t * const time_p)
 				  "The command was:\n  %s\n"
 				  "The response was:\n  %s"),
 			program_invocation_short_name, date_command, date_resp);
-		retcode = 8;
-	} else {
-		long seconds_since_epoch;
-		rc = sscanf(date_resp + sizeof(magic) - 1, "%ld",
-			    &seconds_since_epoch);
-		if (rc < 1) {
-			warnx(_("The date command issued by %s returned "
-				"something other than an integer where the "
-				"converted time value was expected.\n"
-				"The command was:\n  %s\n"
-				"The response was:\n %s\n"),
-			      program_invocation_short_name, date_command,
-			      date_resp);
-			retcode = 6;
-		} else {
-			retcode = 0;
-			*time_p = seconds_since_epoch;
-			if (debug)
-				printf(_("date string %s equates to "
-					 "%ld seconds since 1969.\n"),
-				       date_opt, (long)*time_p);
-		}
+		goto out;
 	}
-	pclose(date_child_fp);
+
+	if (sscanf(date_resp + sizeof(magic) - 1, "%ld", &seconds_since_epoch) < 1) {
+		warnx(_("The date command issued by %s returned "
+			"something other than an integer where the "
+			"converted time value was expected.\n"
+			"The command was:\n  %s\n"
+			"The response was:\n %s\n"),
+		      program_invocation_short_name, date_command, date_resp);
+	} else {
+		retcode = 0;
+		*time_p = seconds_since_epoch;
+		if (ctl->debug)
+			printf(_("date string %s equates to "
+				 "%ld seconds since 1969.\n"),
+			       ctl->date_opt, *time_p);
+	}
+ out:
+	free(date_command);
+	free(date_resp);
+	if (date_child_fp)
+		pclose(date_child_fp);
 
 	return retcode;
 }
@@ -814,8 +753,8 @@ static int interpret_date_string(const char *date_opt, time_t * const time_p)
  * have.
  */
 static int
-set_system_clock(const bool hclock_valid, const struct timeval newtime,
-		 const bool testing, const bool universal)
+set_system_clock(const struct hwclock_control *ctl, const bool hclock_valid,
+		 const struct timeval newtime)
 {
 	int retcode;
 
@@ -839,13 +778,13 @@ set_system_clock(const bool hclock_valid, const struct timeval newtime,
 			minuteswest -= 60;
 #endif
 
-		if (debug) {
+		if (ctl->debug) {
 			printf(_("Calling settimeofday:\n"));
 			printf(_("\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"),
-			       (long)newtime.tv_sec, (long)newtime.tv_usec);
+			       newtime.tv_sec, newtime.tv_usec);
 			printf(_("\ttz.tz_minuteswest = %d\n"), minuteswest);
 		}
-		if (testing) {
+		if (ctl->testing) {
 			printf(_
 			       ("Not setting system clock because running in test mode.\n"));
 			retcode = 0;
@@ -856,7 +795,7 @@ set_system_clock(const bool hclock_valid, const struct timeval newtime,
 			 * mode does not clobber the Hardware Clock with UTC. This
 			 * is only available on first call of settimeofday after boot.
 			 */
-			if (!universal)
+			if (!ctl->universal)
 				rc = settimeofday(tv_null, &tz);
 			if (!rc)
 				rc = settimeofday(&newtime, &tz);
@@ -887,7 +826,7 @@ set_system_clock(const bool hclock_valid, const struct timeval newtime,
  * If 'testing' is true, don't actually update anything -- just say we would
  * have.
  */
-static int set_system_clock_timezone(const bool universal, const bool testing)
+static int set_system_clock_timezone(const struct hwclock_control *ctl)
 {
 	int retcode;
 	struct timeval tv;
@@ -895,14 +834,14 @@ static int set_system_clock_timezone(const bool universal, const bool testing)
 	int minuteswest;
 
 	gettimeofday(&tv, NULL);
-	if (debug) {
+	if (ctl->debug) {
 		struct tm broken_time;
 		char ctime_now[200];
 
 		broken_time = *gmtime(&tv.tv_sec);
 		strftime(ctime_now, sizeof(ctime_now), "%Y/%m/%d %H:%M:%S",
 			 &broken_time);
-		printf(_("Current system time: %ld = %s\n"), (long)tv.tv_sec,
+		printf(_("Current system time: %ld = %s\n"), tv.tv_sec,
 		       ctime_now);
 	}
 
@@ -915,12 +854,12 @@ static int set_system_clock_timezone(const bool universal, const bool testing)
 		minuteswest -= 60;
 #endif
 
-	if (debug) {
+	if (ctl->debug) {
 		struct tm broken_time;
 		char ctime_now[200];
 
 		gettimeofday(&tv, NULL);
-		if (!universal)
+		if (!ctl->universal)
 			tv.tv_sec += minuteswest * 60;
 
 		broken_time = *gmtime(&tv.tv_sec);
@@ -930,10 +869,10 @@ static int set_system_clock_timezone(const bool universal, const bool testing)
 		printf(_("Calling settimeofday:\n"));
 		printf(_("\tUTC: %s\n"), ctime_now);
 		printf(_("\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"),
-		       (long)tv.tv_sec, (long)tv.tv_usec);
+		       tv.tv_sec, tv.tv_usec);
 		printf(_("\ttz.tz_minuteswest = %d\n"), minuteswest);
 	}
-	if (testing) {
+	if (ctl->testing) {
 		printf(_
 		       ("Not setting system clock because running in test mode.\n"));
 		retcode = 0;
@@ -948,7 +887,7 @@ static int set_system_clock_timezone(const bool universal, const bool testing)
 		 * compensate. If the systemtime is in fact in UTC, then this is wrong
 		 * so we first do a dummy call to make sure the time is not shifted.
 		 */
-		if (universal)
+		if (ctl->universal)
 			rc = settimeofday(tv_null, &tz_utc);
 
 		/* Now we set the real timezone. Due to the above dummy call, this will
@@ -985,33 +924,33 @@ static int set_system_clock_timezone(const bool universal, const bool testing)
  * so don't adjust the drift factor.
  */
 static void
-adjust_drift_factor(struct adjtime *adjtime_p,
+adjust_drift_factor(const struct hwclock_control *ctl,
+		    struct adjtime *adjtime_p,
 		    const struct timeval nowtime,
 		    const bool hclock_valid,
-		    const struct timeval hclocktime,
-		    const bool update)
+		    const struct timeval hclocktime)
 {
-	if (!update) {
-		if (debug)
+	if (!ctl->update) {
+		if (ctl->debug)
 			printf(_("Not adjusting drift factor because the "
 				 "--update-drift option was not used.\n"));
 	} else if (!hclock_valid) {
-		if (debug)
+		if (ctl->debug)
 			printf(_("Not adjusting drift factor because the "
 				 "Hardware Clock previously contained "
 				 "garbage.\n"));
 	} else if (adjtime_p->last_calib_time == 0) {
-		if (debug)
+		if (ctl->debug)
 			printf(_("Not adjusting drift factor because last "
 				 "calibration time is zero,\n"
 				 "so history is bad and calibration startover "
 				 "is necessary.\n"));
 	} else if ((hclocktime.tv_sec - adjtime_p->last_calib_time) < 4 * 60 * 60) {
-		if (debug)
+		if (ctl->debug)
 			printf(_("Not adjusting drift factor because it has "
 				 "been less than four hours since the last "
 				 "calibration.\n"));
-	} else if (adjtime_p->last_calib_time != 0) {
+	} else {
 		/*
 		 * At adjustment time we drift correct the hardware clock
 		 * according to the contents of the adjtime file and refresh
@@ -1045,14 +984,14 @@ adjust_drift_factor(struct adjtime *adjtime_p,
 
 		drift_factor = adjtime_p->drift_factor + factor_adjust;
 		if (fabs(drift_factor) > MAX_DRIFT) {
-			if (debug)
+			if (ctl->debug)
 				printf(_("Clock drift factor was calculated as "
 					 "%f seconds/day.\n"
 					 "It is far too much. Resetting to zero.\n"),
 				       drift_factor);
 			drift_factor = 0;
 		} else {
-			if (debug)
+			if (ctl->debug)
 				printf(_("Clock drifted %f seconds in the past "
 					 "%f seconds\nin spite of a drift factor of "
 					 "%f seconds/day.\n"
@@ -1082,7 +1021,8 @@ adjust_drift_factor(struct adjtime *adjtime_p,
  *
  */
 static void
-calculate_adjustment(const double factor,
+calculate_adjustment(const struct hwclock_control *ctl,
+		     const double factor,
 		     const time_t last_time,
 		     const double not_adjusted,
 		     const time_t systime, struct timeval *tdrift_p)
@@ -1092,16 +1032,16 @@ calculate_adjustment(const double factor,
 	exact_adjustment =
 	    ((double)(systime - last_time)) * factor / (24 * 60 * 60)
 	    + not_adjusted;
-	tdrift_p->tv_sec = FLOOR(exact_adjustment);
+	tdrift_p->tv_sec = (time_t) floor(exact_adjustment);
 	tdrift_p->tv_usec = (exact_adjustment -
 				 (double)tdrift_p->tv_sec) * 1E6;
-	if (debug) {
-		printf(P_("Time since last adjustment is %d second\n",
-			"Time since last adjustment is %d seconds\n",
-		       (int)(systime - last_time)),
-		       (int)(systime - last_time));
+	if (ctl->debug) {
+		printf(P_("Time since last adjustment is %ld second\n",
+			"Time since last adjustment is %ld seconds\n",
+		       (systime - last_time)),
+		       (systime - last_time));
 		printf(_("Calculated Hardware Clock drift is %ld.%06ld seconds\n"),
-		       (long)tdrift_p->tv_sec, (long)tdrift_p->tv_usec);
+		       tdrift_p->tv_sec, tdrift_p->tv_usec);
 	}
 }
 
@@ -1111,59 +1051,45 @@ calculate_adjustment(const double factor,
  * But if the contents are clean (unchanged since read from disk), don't
  * bother.
  */
-static void save_adjtime(const struct adjtime adjtime, const bool testing)
+static void save_adjtime(const struct hwclock_control *ctl,
+			 const struct adjtime *adjtime)
 {
-	char newfile[412];	/* Stuff to write to disk file */
+	char *content;		/* Stuff to write to disk file */
+	FILE *fp;
+	int err = 0;
 
-	if (adjtime.dirty) {
-		/*
-		 * snprintf is not always available, but this is safe as
-		 * long as libc does not use more than 100 positions for %ld
-		 * or %f
-		 */
-		sprintf(newfile, "%f %ld %f\n%ld\n%s\n",
-			adjtime.drift_factor,
-			(long)adjtime.last_adj_time,
-			adjtime.not_adjusted,
-			(long)adjtime.last_calib_time,
-			(adjtime.local_utc == LOCAL) ? "LOCAL" : "UTC");
+	if (!adjtime->dirty)
+		return;
 
-		if (testing) {
-			printf(_
-			       ("Not updating adjtime file because of testing mode.\n"));
-			printf(_("Would have written the following to %s:\n%s"),
-			       adj_file_name, newfile);
-		} else {
-			FILE *adjfile;
-			int err = 0;
+	xasprintf(&content, "%f %ld %f\n%ld\n%s\n",
+		  adjtime->drift_factor,
+		  adjtime->last_adj_time,
+		  adjtime->not_adjusted,
+		  adjtime->last_calib_time,
+		  (adjtime->local_utc == LOCAL) ? "LOCAL" : "UTC");
 
-			adjfile = fopen(adj_file_name, "w");
-			if (adjfile == NULL) {
-				warn(_
-				     ("Could not open file with the clock adjustment parameters "
-				      "in it (%s) for writing"), adj_file_name);
-				err = 1;
-			} else {
-				if (fputs(newfile, adjfile) < 0) {
-					warn(_
-					     ("Could not update file with the clock adjustment "
-					      "parameters (%s) in it"),
-					     adj_file_name);
-					err = 1;
-				}
-				if (close_stream(adjfile) != 0) {
-					warn(_
-					     ("Could not update file with the clock adjustment "
-					      "parameters (%s) in it"),
-					     adj_file_name);
-					err = 1;
-				}
-			}
-			if (err)
-				warnx(_
-				      ("Drift adjustment parameters not updated."));
-		}
+	if (ctl->testing) {
+		printf(_
+		       ("Not updating adjtime file because of testing mode.\n"));
+		printf(_("Would have written the following to %s:\n%s"),
+		       ctl->adj_file_name, content);
+		free(content);
+		return;
 	}
+
+	fp = fopen(ctl->adj_file_name, "w");
+	if (fp == NULL) {
+		warn(_("Could not open file with the clock adjustment parameters "
+		       "in it (%s) for writing"), ctl->adj_file_name);
+		err = 1;
+	} else if (fputs(content, fp) < 0 || close_stream(fp) != 0) {
+		warn(_("Could not update file with the clock adjustment "
+		       "parameters (%s) in it"), ctl->adj_file_name);
+		err = 1;
+	}
+	free(content);
+	if (err)
+		warnx(_("Drift adjustment parameters not updated."));
 }
 
 /*
@@ -1191,10 +1117,9 @@ static void save_adjtime(const struct adjtime adjtime, const bool testing)
  *
  */
 static void
-do_adjustment(struct adjtime *adjtime_p,
+do_adjustment(const struct hwclock_control *ctl, struct adjtime *adjtime_p,
 	      const bool hclock_valid, const struct timeval hclocktime,
-	      const struct timeval read_time,
-	      const bool universal, const bool testing)
+	      const struct timeval read_time)
 {
 	if (!hclock_valid) {
 		warnx(_("The Hardware Clock does not contain a valid time, "
@@ -1204,41 +1129,47 @@ do_adjustment(struct adjtime *adjtime_p,
 		adjtime_p->not_adjusted = 0;
 		adjtime_p->dirty = TRUE;
 	} else if (adjtime_p->last_adj_time == 0) {
-		if (debug)
+		if (ctl->debug)
 			printf(_("Not setting clock because last adjustment time is zero, "
 				 "so history is bad.\n"));
 	} else if (fabs(adjtime_p->drift_factor) > MAX_DRIFT) {
-		if (debug)
+		if (ctl->debug)
 			printf(_("Not setting clock because drift factor %f is far too high.\n"),
 				adjtime_p->drift_factor);
 	} else {
-		set_hardware_clock_exact(hclocktime.tv_sec,
+		set_hardware_clock_exact(ctl, hclocktime.tv_sec,
 					 time_inc(read_time,
-						  -(hclocktime.tv_usec / 1E6)),
-					 universal, testing);
+						  -(hclocktime.tv_usec / 1E6)));
 		adjtime_p->last_adj_time = hclocktime.tv_sec;
 		adjtime_p->not_adjusted = 0;
 		adjtime_p->dirty = TRUE;
 	}
 }
 
-static void determine_clock_access_method(const bool user_requests_ISA)
+static void determine_clock_access_method(const struct hwclock_control *ctl)
 {
 	ur = NULL;
 
-	if (user_requests_ISA)
+	if (ctl->directisa)
 		ur = probe_for_cmos_clock();
-
 #ifdef __linux__
 	if (!ur)
-		ur = probe_for_rtc_clock();
+		ur = probe_for_rtc_clock(ctl);
 #endif
+	if (ur) {
+		if (ctl->debug)
+			puts(ur->interface_name);
 
-	if (debug) {
-		if (ur)
-			puts(_(ur->interface_name));
-		else
+	} else {
+		if (ctl->debug)
 			printf(_("No usable clock interface found.\n"));
+		warnx(_("Cannot access the Hardware Clock via "
+			"any known method."));
+		if (!ctl->debug)
+			warnx(_("Use the --debug option to see the "
+				"details of our search for an access "
+				"method."));
+		hwclock_exit(ctl, EX_SOFTWARE);
 	}
 }
 
@@ -1250,18 +1181,9 @@ static void determine_clock_access_method(const bool user_requests_ISA)
  * Return rc == 0 if everything went OK, rc != 0 if not.
  */
 static int
-manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
-		 const bool set, const time_t set_time,
-		 const bool hctosys, const bool systohc, const bool systz,
-		 const struct timeval startup_time,
-		 const bool utc, const bool local_opt, const bool update,
-		 const bool testing, const bool predict, const bool get)
+manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
+		 const struct timeval startup_time, struct adjtime *adjtime)
 {
-	/* Contents of the adjtime file, or what they should be. */
-	struct adjtime adjtime = { 0 };
-	bool universal;
-	/* Set if user lacks necessary authorization to access the clock */
-	bool no_auth;
 	/* The time at which we read the Hardware Clock */
 	struct timeval read_time;
 	/*
@@ -1279,42 +1201,28 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 	/* local return code */
 	int rc = 0;
 
-	if (!systz && !predict) {
-		no_auth = ur->get_permissions();
-		if (no_auth)
+	if (!ctl->systz && !ctl->predict)
+		if (ur->get_permissions())
 			return EX_NOPERM;
+
+	if ((ctl->set || ctl->systohc || ctl->adjust) &&
+	    (adjtime->local_utc == UTC) != ctl->universal) {
+		adjtime->local_utc = ctl->universal ? UTC : LOCAL;
+		adjtime->dirty = TRUE;
 	}
 
-	if (!noadjfile && !(systz && (utc || local_opt))) {
-		rc = read_adjtime(&adjtime);
-		if (rc)
-			return rc;
-	} else {
-		/* A little trick to avoid writing the file if we don't have to */
-		adjtime.dirty = FALSE;
-	}
-
-	universal = hw_clock_is_utc(utc, local_opt, adjtime);
-
-	if ((set || systohc || adjust) &&
-	    (adjtime.local_utc == UTC) != universal) {
-		adjtime.local_utc = universal ? UTC : LOCAL;
-		adjtime.dirty = TRUE;
-	}
-
-	if (show || get || adjust || hctosys || (!noadjfile && !systz && !predict)) {
+	if (ctl->show || ctl->get || ctl->adjust || ctl->hctosys
+	    || (!ctl->noadjfile && !ctl->systz && !ctl->predict)) {
 		/* data from HW-clock are required */
-		rc = synchronize_to_clock_tick();
+		rc = synchronize_to_clock_tick(ctl);
 
 		/*
-		 * 2 = synchronization timeout. We don't
-		 * error out if the user is attempting to
-		 * set the RTC - the RTC could be
-		 * functioning but contain invalid time data
-		 * so we still want to allow a user to set
-		 * the RTC time.
+		 * We don't error out if the user is attempting to set the
+		 * RTC and synchronization timeout happens - the RTC could
+		 * be functioning but contain invalid time data so we still
+		 * want to allow a user to set the RTC time.
 		 */
-		if (rc && rc != 2 && !set && !systohc)
+		if (rc == RTC_BUSYWAIT_FAILED && !ctl->set && !ctl->systohc)
 			return EX_IOERR;
 		gettimeofday(&read_time, NULL);
 
@@ -1324,9 +1232,9 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 		 * don't bother reading it again.
 		 */
 		if (!rc) {
-			rc = read_hardware_clock(universal,
-						 &hclock_valid, &hclocktime.tv_sec);
-			if (rc && !set && !systohc)
+			rc = read_hardware_clock(ctl, &hclock_valid,
+						 &hclocktime.tv_sec);
+			if (rc && !ctl->set && !ctl->systohc)
 				return EX_IOERR;
 		}
 	}
@@ -1338,33 +1246,32 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 	 * --predict.  For --predict negate the drift correction, because we
 	 * want to 'predict' a future Hardware Clock time that includes drift.
 	 */
-	hclocktime = predict ? t2tv(set_time) : hclocktime;
-	calculate_adjustment(adjtime.drift_factor,
-			     adjtime.last_adj_time,
-			     adjtime.not_adjusted,
+	hclocktime = ctl->predict ? t2tv(set_time) : hclocktime;
+	calculate_adjustment(ctl, adjtime->drift_factor,
+			     adjtime->last_adj_time,
+			     adjtime->not_adjusted,
 			     hclocktime.tv_sec, &tdrift);
-	if (!show && !predict)
+	if (!ctl->show && !ctl->predict)
 		hclocktime = time_inc(tdrift, hclocktime.tv_sec);
-	if (show || get) {
+	if (ctl->show || ctl->get) {
 		display_time(hclock_valid,
 			     time_inc(hclocktime, -time_diff
 				      (read_time, startup_time)));
-	} else if (set) {
-		set_hardware_clock_exact(set_time, startup_time,
-					 universal, testing);
-		if (!noadjfile)
-			adjust_drift_factor(&adjtime,
+	} else if (ctl->set) {
+		set_hardware_clock_exact(ctl, set_time, startup_time);
+		if (!ctl->noadjfile)
+			adjust_drift_factor(ctl, adjtime,
 					    time_inc(t2tv(set_time), time_diff
 						     (read_time, startup_time)),
-					    hclock_valid, hclocktime, update);
-	} else if (adjust) {
+					    hclock_valid, hclocktime);
+	} else if (ctl->adjust) {
 		if (tdrift.tv_sec > 0 || tdrift.tv_sec < -1)
-			do_adjustment(&adjtime, hclock_valid,
-				      hclocktime, read_time, universal, testing);
+			do_adjustment(ctl, adjtime, hclock_valid,
+				      hclocktime, read_time);
 		else
 			printf(_("Needed adjustment is less than one second, "
 				 "so not setting clock.\n"));
-	} else if (systohc) {
+	} else if (ctl->systohc) {
 		struct timeval nowtime, reftime;
 		/*
 		 * We can only set_hardware_clock_exact to a
@@ -1375,37 +1282,34 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 		gettimeofday(&nowtime, NULL);
 		reftime.tv_sec = nowtime.tv_sec;
 		reftime.tv_usec = 0;
-		set_hardware_clock_exact((time_t)
-					 reftime.tv_sec,
-					 reftime, universal, testing);
-		if (!noadjfile)
-			adjust_drift_factor(&adjtime, nowtime,
-					    hclock_valid, hclocktime, update);
-	} else if (hctosys) {
-		rc = set_system_clock(hclock_valid, hclocktime,
-				      testing, universal);
+		set_hardware_clock_exact(ctl, (time_t) reftime.tv_sec, reftime);
+		if (!ctl->noadjfile)
+			adjust_drift_factor(ctl, adjtime, nowtime,
+					    hclock_valid, hclocktime);
+	} else if (ctl->hctosys) {
+		rc = set_system_clock(ctl, hclock_valid, hclocktime);
 		if (rc) {
 			printf(_("Unable to set system clock.\n"));
 			return rc;
 		}
-	} else if (systz) {
-		rc = set_system_clock_timezone(universal, testing);
+	} else if (ctl->systz) {
+		rc = set_system_clock_timezone(ctl);
 		if (rc) {
 			printf(_("Unable to set system clock.\n"));
 			return rc;
 		}
-	} else if (predict) {
+	} else if (ctl->predict) {
 		hclocktime = time_inc(hclocktime, (double)
 				      -(tdrift.tv_sec + tdrift.tv_usec / 1E6));
-		if (debug) {
+		if (ctl->debug) {
 			printf(_
 			       ("At %ld seconds after 1969, RTC is predicted to read %ld seconds after 1969.\n"),
-			       set_time, (long)hclocktime.tv_sec);
+			       set_time, hclocktime.tv_sec);
 		}
 		display_time(TRUE, hclocktime);
 	}
-	if (!noadjfile)
-		save_adjtime(adjtime, testing);
+	if (!ctl->noadjfile)
+		save_adjtime(ctl, adjtime);
 	return 0;
 }
 
@@ -1423,10 +1327,7 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
  */
 # ifndef __alpha__
 static void
-manipulate_epoch(const bool getepoch __attribute__ ((__unused__)),
-		 const bool setepoch __attribute__ ((__unused__)),
-		 const unsigned long epoch_opt __attribute__ ((__unused__)),
-		 const bool testing __attribute__ ((__unused__)))
+manipulate_epoch(const struct hwclock_control *ctl __attribute__((__unused__)))
 {
 	warnx(_("The kernel keeps an epoch value for the Hardware Clock "
 		"only on an Alpha machine.\nThis copy of hwclock was built for "
@@ -1435,100 +1336,33 @@ manipulate_epoch(const bool getepoch __attribute__ ((__unused__)),
 }
 # else
 static void
-manipulate_epoch(const bool getepoch,
-		 const bool setepoch,
-		 const unsigned long epoch_opt,
-		 const bool testing)
+manipulate_epoch(const struct hwclock_control *ctl)
 {
-	if (getepoch) {
+	if (ctl->getepoch) {
 		unsigned long epoch;
 
-		if (get_epoch_rtc(&epoch, 0))
+		if (get_epoch_rtc(ctl, &epoch, 0))
 			warnx(_
 			      ("Unable to get the epoch value from the kernel."));
 		else
 			printf(_("Kernel is assuming an epoch value of %lu\n"),
 			       epoch);
-	} else if (setepoch) {
-		if (epoch_opt == ULONG_MAX)
+	} else if (ctl->setepoch) {
+		if (ctl->epoch_option == 0)
 			warnx(_
 			      ("To set the epoch value, you must use the 'epoch' "
 			       "option to tell to what value to set it."));
-		else if (testing)
+		else if (ctl->testing)
 			printf(_
 			       ("Not setting the epoch to %lu - testing only.\n"),
-			       epoch_opt);
-		else if (set_epoch_rtc(epoch_opt))
+			       ctl->epoch_option);
+		else if (set_epoch_rtc(ctl))
 			printf(_
 			       ("Unable to set the epoch value in the kernel.\n"));
 	}
 }
 # endif		/* __alpha__ */
 #endif		/* __linux__ */
-
-/*
- * Compare the system and CMOS time and output the drift
- * in 10 second intervals.
- */
-static int compare_clock (const bool utc, const bool local_opt)
-{
-	struct tm tm;
-	struct timeval tv;
-	struct adjtime adjtime;
-	double time1_sys, time2_sys;
-	time_t time1_hw, time2_hw;
-	bool hclock_valid = FALSE, universal, first_pass = TRUE;
-	int rc;
-
-	if (ur->get_permissions())
-		return EX_NOPERM;
-
-	/* dummy call for increased precision */
-	gettimeofday(&tv, NULL);
-
-	rc = read_adjtime(&adjtime);
-	if (rc)
-		return rc;
-
-	universal = hw_clock_is_utc(utc, local_opt, adjtime);
-
-	synchronize_to_clock_tick();
-	ur->read_hardware_clock(&tm);
-
-	gettimeofday(&tv, NULL);
-	time1_sys = tv.tv_sec + tv.tv_usec / 1000000.0;
-
-	mktime_tz(tm, universal, &hclock_valid, &time1_hw);
-
-	while (1) {
-		double res;
-
-		synchronize_to_clock_tick();
-		ur->read_hardware_clock(&tm);
-
-		gettimeofday(&tv, NULL);
-		time2_sys = tv.tv_sec + tv.tv_usec / 1000000.0;
-
-		mktime_tz(tm, universal, &hclock_valid, &time2_hw);
-
-		res = (((double) time1_hw - time1_sys) -
-		       ((double) time2_hw - time2_sys))
-		      / (double) (time2_hw - time1_hw);
-
-		if (!first_pass)
-			printf("%10.0f   %10.6f   %15.0f   %4.0f\n",
-				(double) time2_hw, time2_sys, res * 1e6, res *1e4);
-		else {
-			first_pass = FALSE;
-			printf("hw-time      system-time         freq-offset-ppm   tick\n");
-			printf("%10.0f   %10.6f\n", (double) time1_hw, time1_sys);
-		}
-		fflush(stdout);
-		sleep(10);
-	}
-
-	return 0;
-}
 
 static void out_version(void)
 {
@@ -1545,7 +1379,7 @@ static void out_version(void)
  * fmt, ... ), show a usage information and terminate the program
  * afterwards.
  */
-static void usage(const char *fmt, ...)
+static void usage(const struct hwclock_control *ctl, const char *fmt, ...)
 {
 	FILE *usageto;
 	va_list ap;
@@ -1568,7 +1402,6 @@ static void usage(const char *fmt, ...)
 		"     --systz          set the system time based on the current timezone\n"
 		"     --adjust         adjust the RTC to account for systematic drift since\n"
 		"                        the clock was last set or adjusted\n"), usageto);
-	fputs(_(" -c, --compare        periodically compare the system clock with the CMOS clock\n"), usageto);
 #ifdef __linux__
 	fputs(_("     --getepoch       print out the kernel's hardware clock epoch value\n"
 		"     --setepoch       set the kernel's hardware clock epoch value to the \n"
@@ -1611,7 +1444,7 @@ static void usage(const char *fmt, ...)
 	}
 
 	fflush(usageto);
-	hwclock_exit(fmt ? EX_USAGE : EX_OK);
+	hwclock_exit(ctl, fmt ? EX_USAGE : EX_OK);
 }
 
 /*
@@ -1625,7 +1458,9 @@ static void usage(const char *fmt, ...)
  */
 int main(int argc, char **argv)
 {
+	struct hwclock_control ctl = { 0 };
 	struct timeval startup_time;
+	struct adjtime adjtime = { 0 };
 	/*
 	 * The time we started up, in seconds into the epoch, including
 	 * fractions.
@@ -1633,15 +1468,6 @@ int main(int argc, char **argv)
 	time_t set_time = 0;	/* Time to which user said to set Hardware Clock */
 	int rc, c;
 
-	/* Variables set by various options; show may also be set later */
-	/* The options debug, badyear and epoch_option are global */
-	bool show, set, systohc, hctosys, systz, adjust, getepoch, setepoch,
-	    predict, compare, get;
-	bool utc, testing, local_opt, update, noadjfile, directisa;
-	char *date_opt;
-#ifdef __alpha__
-	bool ARCconsole, Jensen, SRM, funky_toy;
-#endif
 	/* Long only options. */
 	enum {
 		OPT_ADJFILE = CHAR_MAX + 1,
@@ -1663,7 +1489,6 @@ int main(int argc, char **argv)
 
 	static const struct option longopts[] = {
 		{"adjust",	0, 0, 'a'},
-		{"compare",	0, 0, 'c'},
 		{"help",	0, 0, 'h'},
 		{"show",	0, 0, 'r'},
 		{"hctosys",	0, 0, 's'},
@@ -1742,107 +1567,95 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	/* Set option defaults */
-	show = set = systohc = hctosys = systz = adjust = noadjfile = predict =
-	    compare = get = update = FALSE;
-	getepoch = setepoch = utc = local_opt = directisa = testing = debug = FALSE;
-#ifdef __alpha__
-	ARCconsole = Jensen = SRM = funky_toy = badyear = FALSE;
-#endif
-	date_opt = NULL;
-
 	while ((c = getopt_long(argc, argv,
-				"?hvVDacrsuwAJSFf:", longopts, NULL)) != -1) {
+				"?hvVDarsuwAJSFf:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch (c) {
 		case 'D':
-			++debug;
+			ctl.debug++;
 			break;
 		case 'a':
-			adjust = TRUE;
-			break;
-		case 'c':
-			compare = TRUE;
+			ctl.adjust = 1;
 			break;
 		case 'r':
-			show = TRUE;
+			ctl.show = 1;
 			break;
 		case 's':
-			hctosys = TRUE;
+			ctl.hctosys = 1;
 			break;
 		case 'u':
-			utc = TRUE;
+			ctl.utc = 1;
 			break;
 		case 'w':
-			systohc = TRUE;
+			ctl.systohc = 1;
 			break;
 #ifdef __alpha__
 		case 'A':
-			ARCconsole = TRUE;
+			ctl.ARCconsole = 1;
 			break;
 		case 'J':
-			Jensen = TRUE;
+			ctl.Jensen = 1;
 			break;
 		case 'S':
-			SRM = TRUE;
+			ctl.SRM = 1;
 			break;
 		case 'F':
-			funky_toy = TRUE;
+			ctl.funky_toy = 1;
 			break;
 #endif
 		case OPT_SET:
-			set = TRUE;
+			ctl.set = 1;
 			break;
 #ifdef __linux__
 		case OPT_GETEPOCH:
-			getepoch = TRUE;
+			ctl.getepoch = 1;
 			break;
 		case OPT_SETEPOCH:
-			setepoch = TRUE;
+			ctl.setepoch = 1;
 			break;
 #endif
 		case OPT_NOADJFILE:
-			noadjfile = TRUE;
+			ctl.noadjfile = 1;
 			break;
 		case OPT_LOCALTIME:
-			local_opt = TRUE;	/* --localtime */
+			ctl.local_opt = 1;	/* --localtime */
 			break;
 		case OPT_BADYEAR:
-			badyear = TRUE;
+			ctl.badyear = 1;
 			break;
 		case OPT_DIRECTISA:
-			directisa = TRUE;
+			ctl.directisa = 1;
 			break;
 		case OPT_TEST:
-			testing = TRUE;		/* --test */
+			ctl.testing = 1;	/* --test */
 			break;
 		case OPT_DATE:
-			date_opt = optarg;	/* --date */
+			ctl.date_opt = optarg;	/* --date */
 			break;
 		case OPT_EPOCH:
-			epoch_option =		/* --epoch */
+			ctl.epoch_option =	/* --epoch */
 			    strtoul_or_err(optarg, _("invalid epoch argument"));
 			break;
 		case OPT_ADJFILE:
-			adj_file_name = optarg;	/* --adjfile */
+			ctl.adj_file_name = optarg;	/* --adjfile */
 			break;
 		case OPT_SYSTZ:
-			systz = TRUE;		/* --systz */
+			ctl.systz = 1;		/* --systz */
 			break;
 		case OPT_PREDICT_HC:
-			predict = TRUE;		/* --predict-hc */
+			ctl.predict = 1;	/* --predict-hc */
 			break;
 		case OPT_GET:
-			get = TRUE;		/* --get */
+			ctl.get = 1;		/* --get */
 			break;
 		case OPT_UPDATE:
-			update = TRUE;		/* --update-drift */
+			ctl.update = 1;		/* --update-drift */
 			break;
 #ifdef __linux__
 		case 'f':
-			rtc_dev_name = optarg;	/* --rtc */
+			ctl.rtc_dev_name = optarg;	/* --rtc */
 			break;
 #endif
 		case 'v':			/* --version */
@@ -1850,9 +1663,9 @@ int main(int argc, char **argv)
 			out_version();
 			return 0;
 		case 'h':			/* --help */
-			usage(NULL);
+		case '?':
 		default:
-			errtryhelp(EXIT_FAILURE);
+			usage(&ctl, NULL);
 		}
 	}
 
@@ -1860,100 +1673,89 @@ int main(int argc, char **argv)
 	argv += optind;
 
 #ifdef HAVE_LIBAUDIT
-	if (testing != TRUE) {
-		if (adjust == TRUE || hctosys == TRUE || systohc == TRUE ||
-		    set == TRUE || setepoch == TRUE) {
-			hwaudit_on = TRUE;
+	if (!ctl.testing) {
+		if (ctl.adjust || ctl.hctosys || ctl.systohc ||
+		    ctl.set || ctl.setepoch) {
+			ctl.hwaudit_on = 1;
 		}
 	}
 #endif
 	if (argc > 0) {
-		usage(_("%s takes no non-option arguments.  "
+		usage(&ctl, _("%s takes no non-option arguments.  "
 			"You supplied %d.\n"), program_invocation_short_name,
 		      argc);
 	}
 
-	if (!adj_file_name)
-		adj_file_name = _PATH_ADJTIME;
+	if (!ctl.adj_file_name)
+		ctl.adj_file_name = _PATH_ADJTIME;
 
-	if (noadjfile && !utc && !local_opt) {
+	if (ctl.noadjfile && !ctl.utc && !ctl.local_opt) {
 		warnx(_("With --noadjfile, you must specify "
 			"either --utc or --localtime"));
-		hwclock_exit(EX_USAGE);
+		hwclock_exit(&ctl, EX_USAGE);
 	}
 #ifdef __alpha__
-	set_cmos_epoch(ARCconsole, SRM);
-	set_cmos_access(Jensen, funky_toy);
+	set_cmos_epoch(&ctl);
+	set_cmos_access(&ctl);
 #endif
 
-	if (set || predict) {
-		rc = interpret_date_string(date_opt, &set_time);
+	if (ctl.set || ctl.predict) {
+		rc = interpret_date_string(&ctl, &set_time);
 		/* (time-consuming) */
 		if (rc != 0) {
 			warnx(_("No usable set-to time.  "
 				"Cannot set clock."));
-			hwclock_exit(EX_USAGE);
+			hwclock_exit(&ctl, EX_USAGE);
 		}
 	}
 
-	if (!(show | set | systohc | hctosys | systz | adjust | getepoch
-	      | setepoch | predict | compare | get))
-		show = 1;	/* default to show */
-
+	if (!(ctl.show | ctl.set | ctl.systohc | ctl.hctosys |
+	     ctl.systz | ctl.adjust | ctl.getepoch | ctl.setepoch |
+	     ctl.predict | ctl.get))
+		ctl.show = 1;	/* default to show */
 
 #ifdef __linux__
-	if (getepoch || setepoch) {
-		manipulate_epoch(getepoch, setepoch, epoch_option, testing);
-		hwclock_exit(EX_OK);
+	if (ctl.getepoch || ctl.setepoch) {
+		manipulate_epoch(&ctl);
+		hwclock_exit(&ctl, EX_OK);
 	}
 #endif
 
-	if (debug)
+	if (ctl.debug)
 		out_version();
 
-	if (!systz && !predict) {
-		determine_clock_access_method(directisa);
-		if (!ur) {
-			warnx(_("Cannot access the Hardware Clock via "
-				"any known method."));
-			if (!debug)
-				warnx(_("Use the --debug option to see the "
-					"details of our search for an access "
-					"method."));
-			hwclock_exit(EX_SOFTWARE);
-		}
-	}
+	if (!ctl.systz && !ctl.predict)
+		determine_clock_access_method(&ctl);
 
-	if (compare) {
-		if (compare_clock(utc, local_opt))
-			hwclock_exit(EX_NOPERM);
-
-		rc = EX_OK;
+	if (!ctl.noadjfile && !(ctl.systz && (ctl.utc || ctl.local_opt))) {
+		if ((rc = read_adjtime(&ctl, &adjtime)) != 0)
+			hwclock_exit(&ctl, rc);
 	} else
-		rc = manipulate_clock(show, adjust, noadjfile, set, set_time,
-			      hctosys, systohc, systz, startup_time, utc,
-			      local_opt, update, testing, predict, get);
-
-	hwclock_exit(rc);
+		/* Avoid writing adjtime file if we don't have to. */
+		adjtime.dirty = FALSE;
+	ctl.universal = hw_clock_is_utc(&ctl, adjtime);
+	rc = manipulate_clock(&ctl, set_time, startup_time, &adjtime);
+	hwclock_exit(&ctl, rc);
 	return rc;		/* Not reached */
 }
 
-#ifdef HAVE_LIBAUDIT
-/*
- * hwclock_exit calls either this function or plain exit depending
- * HAVE_LIBAUDIT see also clock.h
- */
-void __attribute__((__noreturn__)) hwaudit_exit(int status)
+void __attribute__((__noreturn__))
+hwclock_exit(const struct hwclock_control *ctl
+#ifndef HAVE_LIBAUDIT
+	     __attribute__((__unused__))
+#endif
+	     , int status)
 {
-	if (hwaudit_on) {
+#ifdef HAVE_LIBAUDIT
+	if (ctl->hwaudit_on) {
 		audit_log_user_message(hwaudit_fd, AUDIT_USYS_CONFIG,
 				       "op=change-system-time", NULL, NULL, NULL,
 				       status ? 0 : 1);
 		close(hwaudit_fd);
 	}
+#endif
 	exit(status);
 }
-#endif
 
 /*
  * History of this program:

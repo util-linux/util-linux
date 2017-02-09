@@ -45,6 +45,7 @@
 #include "timeutils.h"
 #include "xalloc.h"
 #include "closestream.h"
+#include "timeutils.h"
 
 static time_t strtotime(const char *s_time)
 {

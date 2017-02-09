@@ -8,6 +8,11 @@ since: v2.30
 
 --------------------------
 
+what:  hwclock --compare
+why:   Output printed by --compare option was nonesense.
+
+--------------------------
+
 what:  tailf
 why:   "tail -f" is better nowadays, tailf has unfixed bugs
 

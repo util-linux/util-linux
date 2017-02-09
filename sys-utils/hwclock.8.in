@@ -41,12 +41,6 @@ discussion below, under
 .BR "The Adjust Function" .
 .
 .TP
-.BR \-c , \ \-\-compare
-Periodically compare the Hardware Clock to the System Time and output
-the difference every 10 seconds.  This will also print the frequency
-offset and tick.
-.
-.TP
 .B \-\-getepoch
 .TQ
 .B \-\-setepoch

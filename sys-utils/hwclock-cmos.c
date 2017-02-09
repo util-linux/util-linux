@@ -54,30 +54,28 @@
 
 #include "c.h"
 #include "nls.h"
+#include "pathnames.h"
 
+/* for inb, outb */
 #if defined(__i386__) || defined(__x86_64__)
 # ifdef HAVE_SYS_IO_H
 #  include <sys/io.h>
 # elif defined(HAVE_ASM_IO_H)
-#  include <asm/io.h>		/* for inb, outb */
+#  include <asm/io.h>
 # else
-/*
- * Disable cmos access; we can no longer use asm/io.h, since the kernel does
- * not export that header.
- */
-#undef __i386__
-#undef __x86_64__
-void outb(int a __attribute__ ((__unused__)),
-	  int b __attribute__ ((__unused__)))
+#  undef __i386__
+#  undef __x86_64__
+#  warning "disable cmos access - no sys/io.h or asm/io.h"
+void outb(int a __attribute__((__unused__)),
+	  int b __attribute__((__unused__)))
 {
 }
 
-int inb(int c __attribute__ ((__unused__)))
+int inb(int c __attribute__((__unused__)))
 {
 	return 0;
 }
-#endif				/* __i386__ __x86_64__ */
-
+# endif				/* __i386__ __x86_64__ */
 #elif defined(__alpha__)
 # ifdef HAVE_SYS_IO_H
 #  include <sys/io.h>
@@ -87,22 +85,25 @@ extern unsigned int inb(unsigned long port);
 extern void outb(unsigned char b, unsigned long port);
 extern int iopl(int level);
 # endif
-#else
-static void outb(int a __attribute__ ((__unused__)),
-	  int b __attribute__ ((__unused__)))
+#else				/* __alpha__ */
+# warning "disable cmos access - not i386, x86_64, or alpha"
+static void outb(int a __attribute__((__unused__)),
+		 int b __attribute__((__unused__)))
 {
 }
 
-static int inb(int c __attribute__ ((__unused__)))
+static int inb(int c __attribute__((__unused__)))
 {
 	return 0;
 }
-#endif				/* __alpha__ */
+#endif				/* for inb, outb */
 
 #include "hwclock.h"
 
 #define BCD_TO_BIN(val) ((val)=((val)&15) + ((val)>>4)*10)
 #define BIN_TO_BCD(val) ((val)=(((val)/10)<<4) + (val)%10)
+
+#define IOPL_NOT_IMPLEMENTED -2
 
 /*
  * The epoch.
@@ -152,12 +153,12 @@ static int is_in_cpuinfo(char *fmt, char *str)
 {
 	FILE *cpuinfo;
 	char field[256];
-	char format[256];
+	char format[sizeof(field)];
 	int found = 0;
 
 	sprintf(format, "%s : %s", fmt, "%255s");
 
-	cpuinfo = fopen("/proc/cpuinfo", "r");
+	cpuinfo = fopen(_PATH_PROC_CPUINFO, "r");
 	if (cpuinfo) {
 		do {
 			if (fscanf(cpuinfo, format, field) == 1) {
@@ -175,20 +176,20 @@ static int is_in_cpuinfo(char *fmt, char *str)
  * Set cmos_epoch, either from user options, or by asking the kernel, or by
  * looking at /proc/cpu_info
  */
-void set_cmos_epoch(int ARCconsole, int SRM)
+void set_cmos_epoch(const struct hwclock_control *ctl)
 {
 	unsigned long epoch;
 
 	/* Believe the user */
-	if (epoch_option != -1) {
-		cmos_epoch = epoch_option;
+	if (ctl->epoch_option) {
+		cmos_epoch = ctl->epoch_option;
 		return;
 	}
 
-	if (ARCconsole)
+	if (ctl->ARCconsole)
 		cmos_epoch = 1980;
 
-	if (ARCconsole || SRM)
+	if (ctl->ARCconsole || ctl->SRM)
 		return;
 
 #ifdef __linux__
@@ -196,7 +197,7 @@ void set_cmos_epoch(int ARCconsole, int SRM)
 	 * If we can ask the kernel, we don't need guessing from
 	 * /proc/cpuinfo
 	 */
-	if (get_epoch_rtc(&epoch, 1) == 0) {
+	if (get_epoch_rtc(ctl, &epoch, 1) == 0) {
 		cmos_epoch = epoch;
 		return;
 	}
@@ -218,39 +219,36 @@ void set_cmos_epoch(int ARCconsole, int SRM)
 	 * different "epoch" ideas.
 	 */
 	if (is_in_cpuinfo("system serial number", "MILO")) {
-		ARCconsole = 1;
-		if (debug)
+		if (ctl->debug)
 			printf(_("booted from MILO\n"));
+		/*
+		 * See whether we are dealing with a RUFFIAN aka Alpha PC-164
+		 * UX (or BX), as they have REALLY different TOY (TimeOfYear)
+		 * format: BCD, and not an ARC-style epoch.  BCD is detected
+		 * dynamically, but we must NOT adjust like ARC.
+		 */
+		if (is_in_cpuinfo("system type", "Ruffian")) {
+			if (debug)
+				printf(_("Ruffian BCD clock\n"));
+			return;
+		}
 	}
 
-	/*
-	 * See whether we are dealing with a RUFFIAN aka Alpha PC-164 UX (or
-	 * BX), as they have REALLY different TOY (TimeOfYear) format: BCD,
-	 * and not an ARC-style epoch. BCD is detected dynamically, but we
-	 * must NOT adjust like ARC.
-	 */
-	if (ARCconsole && is_in_cpuinfo("system type", "Ruffian")) {
-		ARCconsole = 0;
-		if (debug)
-			printf(_("Ruffian BCD clock\n"));
-	}
-
-	if (ARCconsole)
-		cmos_epoch = 1980;
+	cmos_epoch = 1980;
 }
 
-void set_cmos_access(int Jensen, int funky_toy)
+void set_cmos_access(const struct hwclock_control *ctl)
 {
 
 	/*
 	 * See whether we're dealing with a Jensen---it has a weird I/O
 	 * system. DEC was just learning how to build Alpha PCs.
 	 */
-	if (Jensen || is_in_cpuinfo("system type", "Jensen")) {
+	if (ctl->Jensen || is_in_cpuinfo("system type", "Jensen")) {
 		use_dev_port = 1;
 		clock_ctl_addr = 0x170;
 		clock_data_addr = 0x171;
-		if (debug)
+		if (ctl->debug)
 			printf(_("clockport adjusted to 0x%x\n"),
 			       clock_ctl_addr);
 	}
@@ -260,19 +258,19 @@ void set_cmos_access(int Jensen, int funky_toy)
 	 * TOY that must be accessed differently to work correctly.
 	 */
 	/* Nautilus stuff reported by Neoklis Kyriazis */
-	if (funky_toy ||
+	if (ctl->funky_toy ||
 	    is_in_cpuinfo("system variation", "PC164") ||
 	    is_in_cpuinfo("system variation", "LX164") ||
 	    is_in_cpuinfo("system variation", "SX164") ||
 	    is_in_cpuinfo("system type", "Nautilus")) {
 		funkyTOY = 1;
-		if (debug)
+		if (ctl->debug)
 			printf(_("funky TOY!\n"));
 	}
 }
 #endif				/* __alpha */
 
-#if __alpha__
+#ifdef __alpha__
 /*
  * The Alpha doesn't allow user-level code to disable interrupts (for good
  * reasons). Instead, we ensure atomic operation by performing the operation
@@ -282,13 +280,16 @@ void set_cmos_access(int Jensen, int funky_toy)
  * atomically, eventually.
  */
 static unsigned long
-atomic(const char *name, unsigned long (*op) (unsigned long), unsigned long arg)
+atomic(const char *name,
+       unsigned long (*op) (const struct hwclock_control *ctl, unsigned long),
+       const struct hwclock_control *ctl,
+       unsigned long arg)
 {
 	unsigned long ts1, ts2, n, v;
 
 	for (n = 0; n < 1000; ++n) {
 		asm volatile ("rpcc %0":"r=" (ts1));
-		v = (*op) (arg);
+		v = (*op) (ctl, arg);
 		asm volatile ("rpcc %0":"r=" (ts2));
 
 		if ((ts1 ^ ts2) >> 32 == 0) {
@@ -307,24 +308,26 @@ atomic(const char *name, unsigned long (*op) (unsigned long), unsigned long arg)
  */
 static unsigned long
 atomic(const char *name __attribute__ ((__unused__)),
-       unsigned long (*op) (unsigned long),
+       unsigned long (*op) (const struct hwclock_control *ctl, unsigned long),
+       const struct hwclock_control *ctl,
        unsigned long arg)
 {
-	return (*op) (arg);
+	return (*op) (ctl, arg);
 }
 
 #endif
 
-static inline unsigned long cmos_read(unsigned long reg)
+static inline unsigned long cmos_read(const struct hwclock_control *ctl,
+				      unsigned long reg)
 {
 	if (use_dev_port) {
 		unsigned char v = reg | 0x80;
 		lseek(dev_port_fd, clock_ctl_addr, 0);
-		if (write(dev_port_fd, &v, 1) == -1 && debug)
+		if (write(dev_port_fd, &v, 1) == -1 && ctl->debug)
 			warn(_("cmos_read(): write to control address %X failed"),
 			       clock_ctl_addr);
 		lseek(dev_port_fd, clock_data_addr, 0);
-		if (read(dev_port_fd, &v, 1) == -1 && debug)
+		if (read(dev_port_fd, &v, 1) == -1 && ctl->debug)
 			warn(_("cmos_read(): read from data address %X failed"),
 			       clock_data_addr);
 		return v;
@@ -356,17 +359,18 @@ static inline unsigned long cmos_read(unsigned long reg)
 	}
 }
 
-static inline unsigned long cmos_write(unsigned long reg, unsigned long val)
+static inline unsigned long cmos_write(const struct hwclock_control *ctl,
+				       unsigned long reg, unsigned long val)
 {
 	if (use_dev_port) {
 		unsigned char v = reg | 0x80;
 		lseek(dev_port_fd, clock_ctl_addr, 0);
-		if (write(dev_port_fd, &v, 1) == -1 && debug)
+		if (write(dev_port_fd, &v, 1) == -1 && ctl->debug)
 			warn(_("cmos_write(): write to control address %X failed"),
 			       clock_ctl_addr);
 		v = (val & 0xff);
 		lseek(dev_port_fd, clock_data_addr, 0);
-		if (write(dev_port_fd, &v, 1) == -1 && debug)
+		if (write(dev_port_fd, &v, 1) == -1 && ctl->debug)
 			warn(_("cmos_write(): write to data address %X failed"),
 			       clock_data_addr);
 	} else {
@@ -376,7 +380,8 @@ static inline unsigned long cmos_write(unsigned long reg, unsigned long val)
 	return 0;
 }
 
-static unsigned long cmos_set_time(unsigned long arg)
+static unsigned long cmos_set_time(const struct hwclock_control *ctl,
+				   unsigned long arg)
 {
 	unsigned char save_control, save_freq_select, pmbit = 0;
 	struct tm tm = *(struct tm *)arg;
@@ -399,10 +404,10 @@ static unsigned long cmos_set_time(unsigned long arg)
  *         1111 500 milliseconds (maximum, 2 Hz)
  *         0110 976.562 microseconds (default 1024 Hz)
  */
-	save_control = cmos_read(11);	/* tell the clock it's being set */
-	cmos_write(11, (save_control | 0x80));
-	save_freq_select = cmos_read(10);	/* stop and reset prescaler */
-	cmos_write(10, (save_freq_select | 0x70));
+	save_control = cmos_read(ctl, 11);	/* tell the clock it's being set */
+	cmos_write(ctl, 11, (save_control | 0x80));
+	save_freq_select = cmos_read(ctl, 10);	/* stop and reset prescaler */
+	cmos_write(ctl, 10, (save_freq_select | 0x70));
 
 	tm.tm_year += TM_EPOCH;
 	century = tm.tm_year / 100;
@@ -431,15 +436,15 @@ static unsigned long cmos_set_time(unsigned long arg)
 		BIN_TO_BCD(century);
 	}
 
-	cmos_write(0, tm.tm_sec);
-	cmos_write(2, tm.tm_min);
-	cmos_write(4, tm.tm_hour | pmbit);
-	cmos_write(6, tm.tm_wday);
-	cmos_write(7, tm.tm_mday);
-	cmos_write(8, tm.tm_mon);
-	cmos_write(9, tm.tm_year);
+	cmos_write(ctl, 0, tm.tm_sec);
+	cmos_write(ctl, 2, tm.tm_min);
+	cmos_write(ctl, 4, tm.tm_hour | pmbit);
+	cmos_write(ctl, 6, tm.tm_wday);
+	cmos_write(ctl, 7, tm.tm_mday);
+	cmos_write(ctl, 8, tm.tm_mon);
+	cmos_write(ctl, 9, tm.tm_year);
 	if (century_byte)
-		cmos_write(century_byte, century);
+		cmos_write(ctl, century_byte, century);
 
 	/*
 	 * The kernel sources, linux/arch/i386/kernel/time.c, have the
@@ -452,33 +457,34 @@ static unsigned long cmos_set_time(unsigned long arg)
 	 * the Dallas Semiconductor data sheets, but who believes data
 	 * sheets anyway ... -- Markus Kuhn
 	 */
-	cmos_write(11, save_control);
-	cmos_write(10, save_freq_select);
+	cmos_write(ctl, 11, save_control);
+	cmos_write(ctl, 10, save_freq_select);
 	return 0;
 }
 
-static int hclock_read(unsigned long reg)
+static int hclock_read(const struct hwclock_control *ctl, unsigned long reg)
 {
-	return atomic("clock read", cmos_read, (reg));
+	return atomic("clock read", cmos_read, ctl, reg);
 }
 
-static void hclock_set_time(const struct tm *tm)
+static void hclock_set_time(const struct hwclock_control *ctl, const struct tm *tm)
 {
-	atomic("set time", cmos_set_time, (unsigned long)(tm));
+	atomic("set time", cmos_set_time, ctl, (unsigned long)(tm));
 }
 
-static inline int cmos_clock_busy(void)
+static inline int cmos_clock_busy(const struct hwclock_control *ctl)
 {
 	return
 #ifdef __alpha__
 	    /* poll bit 4 (UF) of Control Register C */
-	    funkyTOY ? (hclock_read(12) & 0x10) :
+	    funkyTOY ? (hclock_read(ctl, 12) & 0x10) :
 #endif
 	    /* poll bit 7 (UIP) of Control Register A */
-	    (hclock_read(10) & 0x80);
+	    (hclock_read(ctl, 10) & 0x80);
 }
 
-static int synchronize_to_clock_tick_cmos(void)
+static int synchronize_to_clock_tick_cmos(const struct hwclock_control *ctl
+					  __attribute__((__unused__)))
 {
 	int i;
 
@@ -487,12 +493,12 @@ static int synchronize_to_clock_tick_cmos(void)
 	 * weird happens, we have a limit on this loop to reduce the impact
 	 * of this failure.
 	 */
-	for (i = 0; !cmos_clock_busy(); i++)
+	for (i = 0; !cmos_clock_busy(ctl); i++)
 		if (i >= 10000000)
 			return 1;
 
 	/* Wait for fall.  Should be within 2.228 ms. */
-	for (i = 0; cmos_clock_busy(); i++)
+	for (i = 0; cmos_clock_busy(ctl); i++)
 		if (i >= 1000000)
 			return 1;
 	return 0;
@@ -514,12 +520,11 @@ static int synchronize_to_clock_tick_cmos(void)
  * In practice, the chance of this function returning the wrong time is
  * extremely remote.
  */
-static int read_hardware_clock_cmos(struct tm *tm)
+static int read_hardware_clock_cmos(const struct hwclock_control *ctl
+				    __attribute__((__unused__)), struct tm *tm)
 {
 	bool got_time = FALSE;
-	unsigned char status, pmbit;
-
-	status = pmbit = 0;	/* just for gcc */
+	unsigned char status = 0, pmbit = 0;
 
 	while (!got_time) {
 		/*
@@ -536,25 +541,25 @@ static int read_hardware_clock_cmos(struct tm *tm)
 		 * at first, the clock has changed while we were running. We
 		 * check for that too, and if it happens, we start over.
 		 */
-		if (!cmos_clock_busy()) {
+		if (!cmos_clock_busy(ctl)) {
 			/* No clock update in progress, go ahead and read */
-			tm->tm_sec = hclock_read(0);
-			tm->tm_min = hclock_read(2);
-			tm->tm_hour = hclock_read(4);
-			tm->tm_wday = hclock_read(6);
-			tm->tm_mday = hclock_read(7);
-			tm->tm_mon = hclock_read(8);
-			tm->tm_year = hclock_read(9);
-			status = hclock_read(11);
+			tm->tm_sec = hclock_read(ctl, 0);
+			tm->tm_min = hclock_read(ctl, 2);
+			tm->tm_hour = hclock_read(ctl, 4);
+			tm->tm_wday = hclock_read(ctl, 6);
+			tm->tm_mday = hclock_read(ctl, 7);
+			tm->tm_mon = hclock_read(ctl, 8);
+			tm->tm_year = hclock_read(ctl, 9);
+			status = hclock_read(ctl, 11);
 #if 0
 			if (century_byte)
-				century = hclock_read(century_byte);
+				century = hclock_read(ctl, century_byte);
 #endif
 			/*
 			 * Unless the clock changed while we were reading,
 			 * consider this a good clock read .
 			 */
-			if (tm->tm_sec == hclock_read(0))
+			if (tm->tm_sec == hclock_read(ctl, 0))
 				got_time = TRUE;
 		}
 		/*
@@ -602,10 +607,12 @@ static int read_hardware_clock_cmos(struct tm *tm)
 	return 0;
 }
 
-static int set_hardware_clock_cmos(const struct tm *new_broken_time)
+static int set_hardware_clock_cmos(const struct hwclock_control *ctl
+				   __attribute__((__unused__)),
+				   const struct tm *new_broken_time)
 {
 
-	hclock_set_time(new_broken_time);
+	hclock_set_time(ctl, new_broken_time);
 	return 0;
 }
 
@@ -625,7 +632,7 @@ static int i386_iopl(const int level __attribute__ ((__unused__)))
 #else
 static int i386_iopl(const int level __attribute__ ((__unused__)))
 {
-	return -2;
+	return IOPL_NOT_IMPLEMENTED;
 }
 #endif
 
@@ -634,19 +641,19 @@ static int get_permissions_cmos(void)
 	int rc;
 
 	if (use_dev_port) {
-		if ((dev_port_fd = open("/dev/port", O_RDWR)) < 0) {
-			warn(_("cannot open %s"), "/dev/port");
+		if ((dev_port_fd = open(_PATH_DEV_PORT, O_RDWR)) < 0) {
+			warn(_("cannot open %s"), _PATH_DEV_PORT);
 			rc = 1;
 		} else
 			rc = 0;
 	} else {
 		rc = i386_iopl(3);
-		if (rc == -2) {
+		if (rc == IOPL_NOT_IMPLEMENTED) {
 			warnx(_("I failed to get permission because I didn't try."));
 		} else if (rc != 0) {
 			rc = errno;
 			warn(_("unable to get I/O port access:  "
-                               "the iopl(3) call failed."));
+			       "the iopl(3) call failed"));
 			if (rc == EPERM && geteuid())
 				warnx(_("Probably you need root privileges.\n"));
 		}
@@ -654,7 +661,7 @@ static int get_permissions_cmos(void)
 	return rc ? 1 : 0;
 }
 
-static struct clock_ops cmos = {
+static struct clock_ops cmos_interface = {
 	N_("Using direct I/O instructions to ISA clock."),
 	get_permissions_cmos,
 	read_hardware_clock_cmos,
@@ -668,11 +675,11 @@ static struct clock_ops cmos = {
  */
 struct clock_ops *probe_for_cmos_clock(void)
 {
-	int have_cmos =
+	static const int have_cmos =
 #if defined(__i386__) || defined(__alpha__) || defined(__x86_64__)
 	    TRUE;
 #else
 	    FALSE;
 #endif
-	return have_cmos ? &cmos : NULL;
+	return have_cmos ? &cmos_interface : NULL;
 }
