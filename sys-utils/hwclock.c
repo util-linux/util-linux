@@ -1201,9 +1201,8 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 	/* local return code */
 	int rc = 0;
 
-	if (!ctl->systz && !ctl->predict)
-		if (ur->get_permissions())
-			return EX_NOPERM;
+	if (!ctl->systz && !ctl->predict && ur->get_permissions())
+		return EX_NOPERM;
 
 	if ((ctl->set || ctl->systohc || ctl->adjust) &&
 	    (adjtime->local_utc == UTC) != ctl->universal) {
