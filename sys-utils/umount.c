@@ -620,7 +620,7 @@ int main(int argc, char **argv)
 
 	if (all) {
 		if (!types)
-			types = "noproc,nodevfs,nodevpts,nosysfs,norpc_pipefs,nonfsd";
+			types = "noproc,nodevfs,nodevpts,nosysfs,norpc_pipefs,nonfsd,noselinuxfs";
 
 		mnt_context_set_fstype_pattern(cxt, types);
 		rc = umount_all(cxt);
