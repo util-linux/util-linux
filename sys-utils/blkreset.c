@@ -83,8 +83,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_("Discard the content of sectors on a device.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -z, --zone <offset>      LBA of start of zone to act upon (default = 0)\n"
-		" -c, --count <length>     number of zones to reset (default = 1)"),
+	fputs(_(" -z, --zone <offset>    start sector of zone to act upon\n"
+		"                          (in 512-byte sectors, default is 0))\n"
+		" -c, --count <length>   number of zones to reset (default is 1)"),
 		out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
