@@ -666,6 +666,7 @@ int fdisk_reread_partition_table(struct fdisk_context *cxt)
 
 	i = fstat(cxt->dev_fd, &statbuf);
 	if (i == 0 && S_ISBLK(statbuf.st_mode)) {
+		DBG(CXT, ul_debugobj(cxt, "calling re-read ioctl"));
 		sync();
 #ifdef BLKRRPART
 		fdisk_info(cxt, _("Calling ioctl() to re-read partition table."));
