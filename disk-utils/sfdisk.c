@@ -1683,6 +1683,8 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 		}
 
 		refresh_prompt_buffer(sf, devname, next_partno, created);
+
+
 		if (sf->prompt && (sf->interactive || !sf->quiet)) {
 #ifndef HAVE_LIBREADLINE
 			fputs(sf->prompt, stdout);
@@ -1702,7 +1704,8 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			continue;
 		} else if (rc == 1) {
 			rc = SFDISK_DONE_EOF;
-			fputs(_("Done.\n"), stdout);
+			if (!sf->quiet)
+				fputs(_("Done.\n"), stdout);
 			break;
 		}
 
@@ -1731,7 +1734,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				rc = rc == 0 ? SFDISK_DONE_ASK : SFDISK_DONE_ABORT;
 				break;
 			} else if (!rc) {		/* add partition */
-				if (!sf->interactive &&
+				if (!sf->interactive && !sf->quiet &&
 				    (!sf->prompt || startswith(sf->prompt, SFDISK_PROMPT))) {
 					refresh_prompt_buffer(sf, devname, next_partno, created);
 					fputs(sf->prompt, stdout);
@@ -1739,8 +1742,7 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 				rc = fdisk_add_partition(sf->cxt, pa, &cur_partno);
 				if (rc) {
 					errno = -rc;
-					fdisk_warn(sf->cxt, _("Failed to add partition"));
-
+					fdisk_warn(sf->cxt, _("Failed to add #%d partition"), next_partno + 1);
 				}
 			}
 
