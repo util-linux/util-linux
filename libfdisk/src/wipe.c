@@ -123,8 +123,10 @@ int fdisk_do_wipe(struct fdisk_context *cxt)
                                             (uintmax_t) start, (uintmax_t) size));
 
 		rc = blkid_probe_set_device(pr, cxt->dev_fd, start, size);
-		if (rc)
+		if (rc) {
+			DBG(WIPE, ul_debugobj(wp, "blkid_probe_set_device() failed [rc=%d]", rc));
 			return rc;
+		}
 
 		blkid_probe_enable_superblocks(pr, 1);
 		blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_MAGIC);
