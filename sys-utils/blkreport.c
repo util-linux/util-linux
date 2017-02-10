@@ -129,7 +129,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_("Report zone information about the given device.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -z, --zone <offset>    LBA of first zone (in 512-byte sectors)\n"), out);
+	fputs(_(" -z, --zone <offset>    start sector of first zone (in 512-byte sectors)\n"), out);
 	fputs(_(" -c, --count <number>   maximum number of zones in the report\n"), out);
 	fputs(_(" -v, --verbose          display the number of reported zones"), out);
 	fputs(USAGE_SEPARATOR, out);
@@ -217,13 +217,8 @@ int main(int argc, char **argv)
 	if (blkdev_get_sector_size(fd, &secsize))
 		err(EXIT_FAILURE, _("%s: BLKSSZGET ioctl failed"), path);
 
-	/* check offset alignment to the sector size */
-	if (offset % secsize)
-		errx(EXIT_FAILURE, _("%s: offset %" PRIu64 " is not aligned "
-			 "to sector size %i"), path, offset, secsize);
 	if (offset > blksectors)
 		errx(EXIT_FAILURE, _("%s: offset is greater than device size"), path);
-
 	if (length < 1)
 		length = 1;
 	if (length > MAX_REPORT_LEN) {
