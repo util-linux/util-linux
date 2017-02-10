@@ -98,7 +98,17 @@ static void print_affinity(struct taskset *ts, int isnew)
 	if (!str)
 		errx(EXIT_FAILURE, _("internal error: conversion from cpuset to string failed"));
 
-	printf(msg, ts->pid, str);
+	printf(msg, ts->pid ? ts->pid : getpid(), str);
+}
+
+static void __attribute__((__noreturn__)) err_affinity(pid_t pid, int set)
+{
+	char *msg;
+
+	msg = set ? _("failed to set pid %d's affinity") :
+		    _("failed to get pid %d's affinity");
+
+	err(EXIT_FAILURE, msg, pid ? pid : getpid());
 }
 
 static void do_taskset(struct taskset *ts, size_t setsize, cpu_set_t *set)
@@ -106,8 +116,7 @@ static void do_taskset(struct taskset *ts, size_t setsize, cpu_set_t *set)
 	/* read the current mask */
 	if (ts->pid) {
 		if (sched_getaffinity(ts->pid, ts->setsize, ts->set) < 0)
-			err(EXIT_FAILURE, _("failed to get pid %d's affinity"),
-			    ts->pid);
+			err_affinity(ts->pid, 1);
 		print_affinity(ts, FALSE);
 	}
 
@@ -116,14 +125,12 @@ static void do_taskset(struct taskset *ts, size_t setsize, cpu_set_t *set)
 
 	/* set new mask */
 	if (sched_setaffinity(ts->pid, setsize, set) < 0)
-		err(EXIT_FAILURE, _("failed to set pid %d's affinity"),
-		    ts->pid);
+		err_affinity(ts->pid, 1);
 
 	/* re-read the current mask */
 	if (ts->pid) {
 		if (sched_getaffinity(ts->pid, ts->setsize, ts->set) < 0)
-			err(EXIT_FAILURE, _("failed to get pid %d's affinity"),
-			    ts->pid);
+			err_affinity(ts->pid, 0);
 		print_affinity(ts, TRUE);
 	}
 }
