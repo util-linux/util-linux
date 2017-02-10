@@ -343,15 +343,11 @@ int fdisk_enable_bootbits_protection(struct fdisk_context *cxt, int enable)
  * @cxt: fdisk context
  * @enable: 1 or 0
  *
- * The library removes all filesystem/RAID signatures before it writes
- * partition table. The probing area where it looks for filesystem/RAID is from
+ * The library removes all PT/filesystem/RAID signatures before it writes
+ * partition table. The probing area where it looks for signatures is from
  * the begin of the disk. The device is wiped by libblkid.
  *
  * See also fdisk_wipe_partition().
- *
- * This is no-op if any collision has not been detected by
- * fdisk_assign_device(). See fdisk_get_collision(). The default is not wipe a
- * device.
  *
  * Returns: 0 on success, < 0 on error.
  */
@@ -360,7 +356,7 @@ int fdisk_enable_wipe(struct fdisk_context *cxt, int enable)
 	if (!cxt)
 		return -EINVAL;
 
-	fdisk_set_wipe_area(cxt, 0, cxt->total_sectors * cxt->sector_size, enable);
+	fdisk_set_wipe_area(cxt, 0, cxt->total_sectors, enable);
 	return 0;
 }
 
@@ -377,7 +373,7 @@ int fdisk_has_wipe(struct fdisk_context *cxt)
 	if (!cxt)
 		return 0;
 
-	return fdisk_has_wipe_area(cxt, 0, cxt->total_sectors * cxt->sector_size);
+	return fdisk_has_wipe_area(cxt, 0, cxt->total_sectors);
 }
 
 
