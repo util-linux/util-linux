@@ -29,7 +29,7 @@ Branches
 --------
 
 1. Use the name of the subsystem, such as blkid, libmount, misc-utils,
-that is the common thing for changes in in the change set.
+that is the common thing for changes in the change set.
 
 2. If the changes do not have anything in common use some random name,
 such as YYYY-MM-DD of the first patch in the branch.  Name of the branch

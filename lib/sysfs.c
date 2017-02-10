@@ -623,7 +623,7 @@ static char *get_subsystem(char *chain, char *buf, size_t bufsz)
 }
 
 /*
- * Returns complete path to the device, the patch contains all all subsystems
+ * Returns complete path to the device, the patch contains all subsystems
  * used for the device.
  */
 char *sysfs_get_devchain(struct sysfs_cxt *cxt, char *buf, size_t bufsz)

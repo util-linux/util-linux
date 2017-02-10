@@ -85,7 +85,7 @@ struct libmnt_cache *mnt_new_cache(void)
  * @cache: pointer to struct libmnt_cache instance
  *
  * Deallocates the cache. This function does not care about reference count. Don't
- * use this function directly -- it's better to use use mnt_unref_cache().
+ * use this function directly -- it's better to use mnt_unref_cache().
  */
 void mnt_free_cache(struct libmnt_cache *cache)
 {

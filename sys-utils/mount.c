@@ -868,7 +868,7 @@ int main(int argc, char **argv)
 		{ NULL, 0, 0, 0 }
 	};
 
-	static const ul_excl_t excl[] = {       /* rows and cols in in ASCII order */
+	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
 		{ 'B','M','R' },			/* bind,move,rbind */
 		{ 'L','U', MOUNT_OPT_SOURCE },	/* label,uuid,source */
 		{ 0 }

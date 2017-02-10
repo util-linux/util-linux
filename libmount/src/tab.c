@@ -150,7 +150,7 @@ void mnt_unref_table(struct libmnt_table *tb)
  * @tb: tab pointer
  *
  * Deallocates the table. This function does not care about reference count. Don't
- * use this function directly -- it's better to use use mnt_unref_table().
+ * use this function directly -- it's better to use mnt_unref_table().
  *
  * The table entries (filesystems) are unreferenced by mnt_reset_table() and
  * cache by mnt_unref_cache().

@@ -652,7 +652,7 @@ display_time(const bool hclock_valid, struct timeval hwctime)
  * runnable by issuing the command "date" to the /bin/sh shell. That means
  * in must be in the current PATH.
  *
- * If anything goes wrong (and many things can), we return return code 10
+ * If anything goes wrong (and many things can), we return code 10
  * and arbitrary *time_p. Otherwise, return code is 0 and *time_p is valid.
  */
 static int interpret_date_string(const struct hwclock_control *ctl,
@@ -1527,7 +1527,7 @@ int main(int argc, char **argv)
 		{NULL,		0, NULL, 0}
 	};
 
-	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
+	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'a','r','s','w',
 		  OPT_GET, OPT_GETEPOCH, OPT_PREDICT_HC,
 		  OPT_SET, OPT_SETEPOCH, OPT_SYSTZ },

@@ -2537,7 +2537,7 @@ static void init_special_char(char* arg, struct options *op)
 }
 
 /*
- * Appends @str to @dest and if @dest is not empty then use use @sep as a
+ * Appends @str to @dest and if @dest is not empty then use @sep as a
  * separator. The maximal final length of the @dest is @len.
  *
  * Returns the final @dest length or -1 in case of error.

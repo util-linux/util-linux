@@ -309,7 +309,7 @@ int main(int argc, char **argv)
 	    { NULL,             0, 0, 0 }
 	};
 
-	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
+	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'c', 'd', 'p', 'z' },
 		{ 'c', 'n' },
 		{ 'x', 'c', 'd', 'i', 'n', 'p', 'z'},

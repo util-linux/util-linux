@@ -930,7 +930,7 @@ int main(int argc, char **argv)
 	      { "time-format", required_argument, NULL, OPT_TIME_FORMAT },
 	      { NULL, 0, NULL, 0 }
 	};
-	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
+	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'F', OPT_TIME_FORMAT },	/* fulltime, time-format */
 		{ 0 }
 	};

@@ -78,7 +78,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fprintf(out, "\n %s [options]\n", program_invocation_short_name);
 
-	fprintf(out, "  -p <num>     number of of nprocesses (default:%zu)\n", nprocesses);
+	fprintf(out, "  -p <num>     number of nprocesses (default:%zu)\n", nprocesses);
 	fprintf(out, "  -t <num>     number of nthreads (default:%zu)\n", nthreads);
 	fprintf(out, "  -o <num>     number of nobjects (default:%zu)\n", nobjects);
 	fprintf(out, "  -l <level>   log level (default:%zu)\n", loglev);

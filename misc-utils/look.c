@@ -170,7 +170,7 @@ look(char *front, char *back)
 	int ch;
 	char *readp, *writep;
 
-	/* Reformat string string to avoid doing it multiple times later. */
+	/* Reformat string to avoid doing it multiple times later. */
 	if (dflag) {
 		for (readp = writep = string; (ch = *readp++) != 0;) {
 			if (isalnum(ch) || isblank(ch))
