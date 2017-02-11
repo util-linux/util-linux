@@ -1049,9 +1049,10 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 			     struct cfdisk_menuitem *d,
 			     size_t idx)
 {
-	char buf[80 * MB_CUR_MAX], *ptr = buf;
+	char *buf, *ptr;
 	const char *name;
 	size_t width;
+	const size_t buf_sz = 80 * MB_CUR_MAX;
 	int ln, cl, vert = cf->menu->vertical;
 
 	if (!menuitem_on_page(cf, idx))
@@ -1059,6 +1060,7 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 	ln = menuitem_get_line(cf, idx);
 	cl = menuitem_get_column(cf, idx);
 
+	ptr = buf = xmalloc(buf_sz);
 	/* string width */
 	if (vert) {
 		width = cf->menu->width + MENU_V_SPADDING;
@@ -1068,7 +1070,7 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 		width = MENU_H_SPADDING + cf->menu->width + MENU_H_SPADDING;
 
 	name = _(d->name);
-	mbsalign(name, ptr, sizeof(buf), &width,
+	mbsalign(name, ptr, buf_sz, &width,
 			vert ? MBS_ALIGN_LEFT : MBS_ALIGN_CENTER,
 			0);
 
@@ -1087,6 +1089,7 @@ static void ui_draw_menuitem(struct cfdisk *cf,
 		mvprintw(ln, cl, "%s", buf);
 	else
 		mvprintw(ln, cl, "%s%s%s", MENU_H_PRESTR, buf, MENU_H_POSTSTR);
+	free(buf);
 
 	if (cf->menu->idx == idx) {
 		standend();
