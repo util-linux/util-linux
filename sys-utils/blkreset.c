@@ -94,7 +94,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-
 int main(int argc, char **argv)
 {
 	char *path;
@@ -103,17 +102,17 @@ int main(int argc, char **argv)
 	struct stat sb;
 	struct blk_zone_range za;
 	uint64_t zsector = 0;
-	uint64_t zlen = 0;
+	uint64_t zlen;
 	uint64_t zcount = 1;
 	unsigned long zsize;
-	int rc = 0;
+	int rc;
 
 	static const struct option longopts[] = {
-	    { "help",      0, 0, 'h' },
-	    { "version",   0, 0, 'V' },
-	    { "zone",      1, 0, 'z' },
-	    { "count",     1, 0, 'c' },
-	    { NULL,        0, 0, 0 }
+	    { "help",    no_argument,       NULL, 'h' },
+	    { "version", no_argument,       NULL, 'V' },
+	    { "zone",    required_argument, NULL, 'z' },
+	    { "count",   required_argument, NULL, 'c' },
+	    { NULL, 0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");
@@ -122,7 +121,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "hVz:c:", longopts, NULL)) != -1) {
-		switch(c) {
+		switch (c) {
 		case 'h':
 			usage(stdout);
 			break;
