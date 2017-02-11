@@ -1,0 +1,34 @@
+_blkreset_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-z'|'--zone')
+			COMPREPLY=( $(compgen -W "offset" -- $cur) )
+			return 0
+			;;
+		'-c'|'--count')
+			COMPREPLY=( $(compgen -W "length" -- $cur) )
+			return 0
+			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="--zone --count --version --help"
+			if [ "$1" = 'blkreport' ]; then
+				OPTS+=' --verbose'
+			fi
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
+	return 0
+}
+complete -F _blkreset_module blkreset
+complete -F _blkreset_module blkreport
