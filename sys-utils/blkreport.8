@@ -12,7 +12,8 @@ blkreport \- report zones on a device
 .SH DESCRIPTION
 .B blkreport
 is used to report device zone information.  This is useful for
-zoned devices that support the ZAC or ZBC command set.
+devices that support the Zoned Block Commands (ZBC) or Zoned-device ATA
+Commands (ZAC).
 .PP
 By default,
 .B blkreport
@@ -52,6 +53,32 @@ Display version information and exit.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
+.SH REPORT OUTPUT
+.TS
+tab(:);
+left l l.
+start:Zone start sector
+len:Zone length in number of sectors
+wptr:Zone write pointer position
+reset:Reset write pointer recommended
+non-seq:Non-sequential write resources active
+cond:Zone condition
+type:Zone type
+.TE
+.SS Zone conditions
+.TS
+tab(:);
+left l l.
+Cl:closed
+cv:conventional zone
+e0:empty
+fu:full
+Oe:open explicit
+Oi:open implicit
+OL:offline
+ro:read only
+x?:reserved conditions (should not be reported)
+.TE
 .SH AUTHOR
 .MT shaun@tancheff.com
 Shaun Tancheff

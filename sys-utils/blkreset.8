@@ -10,15 +10,14 @@ blkreset \- Reset a range of zones
 .IR count ]
 .SH DESCRIPTION
 .B blkreset
-is used to reset one or more zones.  This is useful for
-zoned devices that support the ZAC or ZBC command set.
-Unlike
+is used to reset one or more zones.  This is useful for devices that support
+Zoned Block Commands (ZBC) or Zoned-device ATA Commands (ZAC).  Unlike
 .BR sg_reset_wp (8) ,
 this command operates from the block layer and can reset a range of zones.
 .PP
 By default,
 .B blkreset
-will operate on the zone at device logical sector 0. Options may be used to
+will operate on the zone at device logical sector 0.  Options may be used to
 modify this behavior as well as specify the operation to be performed on
 the zone, as explained below.
 .PP
@@ -43,7 +42,7 @@ The provided offset in sector units (512 bytes) should match the start of a zone
 The default value is zero.
 .TP
 .BR \-c , " \-\-count "\fIlength\fP
-The number of zones to be reset starting from offset. Default is 1 zone.
+The number of zones to be reset starting from offset.  Default is 1 zone.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
