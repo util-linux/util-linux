@@ -26,7 +26,7 @@
 #endif
 
 #ifdef HAVE_GETRANDOM
-# include <linux/random.h>
+# include <sys/random.h>
 #elif defined (__linux__)
 # include <sys/syscall.h>
 # if !defined(SYS_getrandom) && defined(__NR_getrandom)
