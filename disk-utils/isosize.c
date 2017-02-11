@@ -190,11 +190,11 @@ int main(int argc, char **argv)
 	long divisor = 0;
 
 	static const struct option longopts[] = {
-		{"divisor", required_argument, 0, 'd'},
-		{"sectors", no_argument, 0, 'x'},
-		{"version", no_argument, 0, 'V'},
-		{"help", no_argument, 0, 'h'},
-		{NULL, 0, 0, 0}
+		{"divisor", required_argument, NULL, 'd'},
+		{"sectors", no_argument,       NULL, 'x'},
+		{"version", no_argument,       NULL, 'V'},
+		{"help",    no_argument,       NULL, 'h'},
+		{NULL, 0, NULL, 0}
 	};
 
 	setlocale(LC_ALL, "");

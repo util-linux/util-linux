@@ -1988,23 +1988,23 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 int main(int argc, char *argv[])
 {
 	struct lscpu_modifier _mod = { .mode = OUTPUT_SUMMARY }, *mod = &_mod;
-	struct lscpu_desc _desc = { .flags = 0 }, *desc = &_desc;
+	struct lscpu_desc _desc = { .flags = NULL }, *desc = &_desc;
 	int c, i;
 	int columns[ARRAY_SIZE(coldescs)], ncolumns = 0;
 	int cpu_modifier_specified = 0;
 
 	static const struct option longopts[] = {
-		{ "all",        no_argument,       0, 'a' },
-		{ "online",     no_argument,       0, 'b' },
-		{ "offline",    no_argument,       0, 'c' },
-		{ "help",	no_argument,       0, 'h' },
-		{ "extended",	optional_argument, 0, 'e' },
-		{ "parse",	optional_argument, 0, 'p' },
-		{ "sysroot",	required_argument, 0, 's' },
-		{ "physical",	no_argument,	   0, 'y' },
-		{ "hex",	no_argument,	   0, 'x' },
-		{ "version",	no_argument,	   0, 'V' },
-		{ NULL,		0, 0, 0 }
+		{ "all",        no_argument,       NULL, 'a' },
+		{ "online",     no_argument,       NULL, 'b' },
+		{ "offline",    no_argument,       NULL, 'c' },
+		{ "help",	no_argument,       NULL, 'h' },
+		{ "extended",	optional_argument, NULL, 'e' },
+		{ "parse",	optional_argument, NULL, 'p' },
+		{ "sysroot",	required_argument, NULL, 's' },
+		{ "physical",	no_argument,	   NULL, 'y' },
+		{ "hex",	no_argument,	   NULL, 'x' },
+		{ "version",	no_argument,	   NULL, 'V' },
+		{ NULL,		0, NULL, 0 }
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */

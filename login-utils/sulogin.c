@@ -840,12 +840,12 @@ int main(int argc, char **argv)
 	pid_t pid;
 
 	static const struct option longopts[] = {
-		{ "login-shell",  0, 0, 'p' },
-		{ "timeout",      1, 0, 't' },
-		{ "force",        0, 0, 'e' },
-		{ "help",         0, 0, 'h' },
-		{ "version",      0, 0, 'V' },
-		{ NULL,           0, 0, 0 }
+		{ "login-shell",  no_argument,       NULL, 'p' },
+		{ "timeout",      required_argument, NULL, 't' },
+		{ "force",        no_argument,       NULL, 'e' },
+		{ "help",         no_argument,       NULL, 'h' },
+		{ "version",      no_argument,       NULL, 'V' },
+		{ NULL, 0, NULL, 0 }
 	};
 
 	INIT_LIST_HEAD(&consoles);

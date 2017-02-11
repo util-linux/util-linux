@@ -133,13 +133,13 @@ static void parse_argv(struct chfn_control *ctl, int argc, char **argv)
 {
 	int index, c, status = 0;
 	static const struct option long_options[] = {
-		{"full-name", required_argument, 0, 'f'},
-		{"office", required_argument, 0, 'o'},
-		{"office-phone", required_argument, 0, 'p'},
-		{"home-phone", required_argument, 0, 'h'},
-		{"help", no_argument, 0, 'u'},
-		{"version", no_argument, 0, 'v'},
-		{NULL, no_argument, 0, '0'},
+		{ "full-name",    required_argument, NULL, 'f' },
+		{ "office",       required_argument, NULL, 'o' },
+		{ "office-phone", required_argument, NULL, 'p' },
+		{ "home-phone",   required_argument, NULL, 'h' },
+		{ "help",         no_argument,       NULL, 'u' },
+		{ "version",      no_argument,       NULL, 'v' },
+		{ NULL, 0, NULL, 0 },
 	};
 
 	while ((c = getopt_long(argc, argv, "f:r:p:h:o:uv", long_options,

@@ -43,7 +43,7 @@ static const char *bsd_dktypenames[] = {
 	"HP-FL",
 	"type 9",
 	"floppy",
-	0
+	NULL
 };
 #define BSD_DKMAXTYPES	(ARRAY_SIZE(bsd_dktypenames) - 1)
 

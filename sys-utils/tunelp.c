@@ -148,7 +148,7 @@ int main(int argc, char **argv)
 		print_usage(stderr);
 
 	cmdst = cmds = xmalloc(sizeof(struct command));
-	cmds->next = 0;
+	cmds->next = NULL;
 
 	show_irq = 1;
 	while ((c = getopt_long(argc, argv, "t:c:w:a:i:ho:C:sq:rT:vV", longopts, NULL)) != -1) {
@@ -161,35 +161,35 @@ int main(int argc, char **argv)
 			cmds->val = strtol_or_err(optarg, _("argument error"));
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
-			cmds->next = 0;
+			cmds->next = NULL;
 			break;
 		case 't':
 			cmds->op = LPTIME;
 			cmds->val = strtol_or_err(optarg, _("argument error"));
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
-			cmds->next = 0;
+			cmds->next = NULL;
 			break;
 		case 'c':
 			cmds->op = LPCHAR;
 			cmds->val = strtol_or_err(optarg, _("argument error"));
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
-			cmds->next = 0;
+			cmds->next = NULL;
 			break;
 		case 'w':
 			cmds->op = LPWAIT;
 			cmds->val = strtol_or_err(optarg, _("argument error"));
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
-			cmds->next = 0;
+			cmds->next = NULL;
 			break;
 		case 'a':
 			cmds->op = LPABORT;
 			cmds->val = parse_switch(optarg, _("argument error"), "on", "off", NULL);
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
-			cmds->next = 0;
+			cmds->next = NULL;
 			break;
 		case 'q':
 			show_irq = parse_switch(optarg, _("argument error"), "on", "off", NULL);
@@ -199,14 +199,14 @@ int main(int argc, char **argv)
 			cmds->val = parse_switch(optarg, _("argument error"), "on", "off", NULL);
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
-			cmds->next = 0;
+			cmds->next = NULL;
 			break;
 		case 'C':
 			cmds->op = LPCAREFUL;
 			cmds->val = parse_switch(optarg, _("argument error"), "on", "off", NULL);
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
-			cmds->next = 0;
+			cmds->next = NULL;
 			break;
 		case 's':
 			show_irq = 0;
@@ -214,14 +214,14 @@ int main(int argc, char **argv)
 			cmds->val = 0;
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
-			cmds->next = 0;
+			cmds->next = NULL;
 			break;
 		case 'r':
 			cmds->op = LPRESET;
 			cmds->val = 0;
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
-			cmds->next = 0;
+			cmds->next = NULL;
 			break;
 		case 'T':
 			/* Note: this will do the wrong thing on
@@ -231,7 +231,7 @@ int main(int argc, char **argv)
 			cmds->val = parse_switch(optarg, _("argument error"), "on", "off", NULL);
 			cmds->next = xmalloc(sizeof(struct command));
 			cmds = cmds->next;
-			cmds->next = 0;
+			cmds->next = NULL;
 			break;
 		case 'v':
 		case 'V':

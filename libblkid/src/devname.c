@@ -201,7 +201,7 @@ static void probe_one(blkid_cache cache, const char *ptname,
 			dev = blkid_verify(cache, tmp);
 			if (dev && (dev->bid_flags & BLKID_BID_FL_VERIFIED))
 				break;
-			dev = 0;
+			dev = NULL;
 		}
 	}
 	if (dev && dev->bid_devno == devno)
@@ -213,7 +213,7 @@ static void probe_one(blkid_cache cache, const char *ptname,
 	if (!strncmp(ptname, "dm-", 3) && isdigit(ptname[3])) {
 		devname = canonicalize_dm_name(ptname);
 		if (!devname)
-			blkid__scan_dir("/dev/mapper", devno, 0, &devname);
+			blkid__scan_dir("/dev/mapper", devno, NULL, &devname);
 		if (devname)
 			goto get_dev;
 	}
@@ -243,7 +243,7 @@ static void probe_one(blkid_cache cache, const char *ptname,
 	}
 	/* Do a short-cut scan of /dev/mapper first */
 	if (!devname)
-		blkid__scan_dir("/dev/mapper", devno, 0, &devname);
+		blkid__scan_dir("/dev/mapper", devno, NULL, &devname);
 	if (!devname) {
 		devname = blkid_devno_to_devname(devno);
 		if (!devname)
@@ -449,7 +449,7 @@ static int probe_all(blkid_cache cache, int only_if_new)
 {
 	FILE *proc;
 	char line[1024];
-	char ptname0[128 + 1], ptname1[128 + 1], *ptname = 0;
+	char ptname0[128 + 1], ptname1[128 + 1], *ptname = NULL;
 	char *ptnames[2];
 	dev_t devs[2];
 	int ma, mi;
@@ -465,7 +465,7 @@ static int probe_all(blkid_cache cache, int only_if_new)
 		return -BLKID_ERR_PARAM;
 
 	if (cache->bic_flags & BLKID_BIC_FL_PROBED &&
-	    time(0) - cache->bic_time < BLKID_PROBE_INTERVAL)
+	    time(NULL) - cache->bic_time < BLKID_PROBE_INTERVAL)
 		return 0;
 
 	blkid_read_cache(cache);
@@ -623,7 +623,7 @@ int blkid_probe_all(blkid_cache cache)
 	DBG(PROBE, ul_debug("Begin blkid_probe_all()"));
 	ret = probe_all(cache, 0);
 	if (ret == 0) {
-		cache->bic_time = time(0);
+		cache->bic_time = time(NULL);
 		cache->bic_flags |= BLKID_BIC_FL_PROBED;
 	}
 	DBG(PROBE, ul_debug("End blkid_probe_all() [rc=%d]", ret));

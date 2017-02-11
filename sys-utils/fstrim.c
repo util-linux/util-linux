@@ -274,14 +274,14 @@ int main(int argc, char **argv)
 	struct fstrim_range range;
 
 	static const struct option longopts[] = {
-	    { "all",       0, 0, 'a' },
-	    { "help",      0, 0, 'h' },
-	    { "version",   0, 0, 'V' },
-	    { "offset",    1, 0, 'o' },
-	    { "length",    1, 0, 'l' },
-	    { "minimum",   1, 0, 'm' },
-	    { "verbose",   0, 0, 'v' },
-	    { NULL,        0, 0, 0 }
+	    { "all",       no_argument,       NULL, 'a' },
+	    { "help",      no_argument,       NULL, 'h' },
+	    { "version",   no_argument,       NULL, 'V' },
+	    { "offset",    required_argument, NULL, 'o' },
+	    { "length",    required_argument, NULL, 'l' },
+	    { "minimum",   required_argument, NULL, 'm' },
+	    { "verbose",   no_argument,       NULL, 'v' },
+	    { NULL, 0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");

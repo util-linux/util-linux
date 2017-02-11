@@ -275,12 +275,12 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 	if ((last.tv_sec == 0) && (last.tv_usec == 0)) {
 		random_get_bytes(&clock_seq, sizeof(clock_seq));
 		clock_seq &= 0x3FFF;
-		gettimeofday(&last, 0);
+		gettimeofday(&last, NULL);
 		last.tv_sec--;
 	}
 
 try_again:
-	gettimeofday(&tv, 0);
+	gettimeofday(&tv, NULL);
 	if ((tv.tv_sec < last.tv_sec) ||
 	    ((tv.tv_sec == last.tv_sec) &&
 	     (tv.tv_usec < last.tv_usec))) {
@@ -446,7 +446,7 @@ static int uuid_generate_time_generic(uuid_t out) {
 	time_t				now;
 
 	if (num > 0) {
-		now = time(0);
+		now = time(NULL);
 		if (now > last_time+1)
 			num = 0;
 	}
@@ -454,7 +454,7 @@ static int uuid_generate_time_generic(uuid_t out) {
 		num = 1000;
 		if (get_uuid_via_daemon(UUIDD_OP_BULK_TIME_UUID,
 					out, &num) == 0) {
-			last_time = time(0);
+			last_time = time(NULL);
 			uuid_unpack(out, &uu);
 			num--;
 			return 0;
@@ -477,7 +477,7 @@ static int uuid_generate_time_generic(uuid_t out) {
 		return 0;
 #endif
 
-	return __uuid_generate_time(out, 0);
+	return __uuid_generate_time(out, NULL);
 }
 
 /*

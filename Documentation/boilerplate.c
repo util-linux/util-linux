@@ -61,15 +61,15 @@ int main(int argc, char **argv)
 		OPT_OPTIONAL	/* see howto-man-page.txt about short option */
 	};
 	static const struct option longopts[] = {
-		{"no-argument", no_argument, NULL, 'n'},
-		{"required", required_argument, NULL, 'r'},
-		{"xyzzy", no_argument, NULL, OPT_XYZZY},
-		{"extremely-long-long-option", no_argument, NULL, 'e'},
-		{"long-explanation", no_argument, NULL, 'l'},
-		{"foobar", no_argument, NULL, 'f'},
-		{"version", no_argument, NULL, 'V'},
-		{"help", no_argument, NULL, 'h'},
-		{NULL, 0, NULL, 0}
+		{ "no-argument",                no_argument,       NULL, 'n'       },
+		{ "required",                   required_argument, NULL, 'r'       },
+		{ "extremely-long-long-option", no_argument,       NULL, 'e'       },
+		{ "xyzzy",                      no_argument,       NULL, OPT_XYZZY },
+		{ "long-explanation",           no_argument,       NULL, 'l'       },
+		{ "foobar",                     no_argument,       NULL, 'f'       },
+		{ "version",                    no_argument,       NULL, 'V'       },
+		{ "help",                       no_argument,       NULL, 'h'       },
+		{ NULL, 0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");

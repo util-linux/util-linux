@@ -182,12 +182,12 @@ int main(int argc, char **argv)
 	int mvecsz = 0;
 
 	static const struct option longopts[] = {
-		{ "nobanner",	no_argument,		0, 'n' },
-		{ "timeout",	required_argument,	0, 't' },
-		{ "group",	required_argument,	0, 'g' },
-		{ "version",	no_argument,		0, 'V' },
-		{ "help",	no_argument,		0, 'h' },
-		{ NULL,	0, 0, 0 }
+		{ "nobanner",	no_argument,		NULL, 'n' },
+		{ "timeout",	required_argument,	NULL, 't' },
+		{ "group",	required_argument,	NULL, 'g' },
+		{ "version",	no_argument,		NULL, 'V' },
+		{ "help",	no_argument,		NULL, 'h' },
+		{ NULL,	0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");

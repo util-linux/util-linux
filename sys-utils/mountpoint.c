@@ -136,15 +136,15 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 int main(int argc, char **argv)
 {
 	int c;
-	struct mountpoint_control ctl = { 0 };
+	struct mountpoint_control ctl = { NULL };
 
 	static const struct option longopts[] = {
-		{ "quiet", 0, 0, 'q' },
-		{ "fs-devno", 0, 0, 'd' },
-		{ "devno", 0, 0, 'x' },
-		{ "help", 0, 0, 'h' },
-		{ "version", 0, 0, 'V' },
-		{ NULL, 0, 0, 0 }
+		{ "quiet",    no_argument, NULL, 'q' },
+		{ "fs-devno", no_argument, NULL, 'd' },
+		{ "devno",    no_argument, NULL, 'x' },
+		{ "help",     no_argument, NULL, 'h' },
+		{ "version",  no_argument, NULL, 'V' },
+		{ NULL, 0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");

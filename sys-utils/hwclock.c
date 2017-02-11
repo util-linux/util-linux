@@ -1457,7 +1457,7 @@ static void usage(const struct hwclock_control *ctl, const char *fmt, ...)
  */
 int main(int argc, char **argv)
 {
-	struct hwclock_control ctl = { 0 };
+	struct hwclock_control ctl = { NULL };
 	struct timeval startup_time;
 	struct adjtime adjtime = { 0 };
 	/*
@@ -1487,44 +1487,44 @@ int main(int argc, char **argv)
 	};
 
 	static const struct option longopts[] = {
-		{"adjust",	0, 0, 'a'},
-		{"help",	0, 0, 'h'},
-		{"show",	0, 0, 'r'},
-		{"hctosys",	0, 0, 's'},
-		{"utc",		0, 0, 'u'},
-		{"version",	0, 0, 'v'},
-		{"systohc",	0, 0, 'w'},
-		{"debug",	0, 0, 'D'},
+		{ "adjust",       no_argument,       NULL, 'a'            },
+		{ "help",         no_argument,       NULL, 'h'            },
+		{ "show",         no_argument,       NULL, 'r'            },
+		{ "hctosys",      no_argument,       NULL, 's'            },
+		{ "utc",          no_argument,       NULL, 'u'            },
+		{ "version",      no_argument,       NULL, 'v'            },
+		{ "systohc",      no_argument,       NULL, 'w'            },
+		{ "debug",        no_argument,       NULL, 'D'            },
 #ifdef __alpha__
-		{"ARC",		0, 0, 'A'},
-		{"arc",		0, 0, 'A'},
-		{"Jensen",	0, 0, 'J'},
-		{"jensen",	0, 0, 'J'},
-		{"SRM",		0, 0, 'S'},
-		{"srm",		0, 0, 'S'},
-		{"funky-toy",	0, 0, 'F'},
+		{ "ARC",          no_argument,       NULL, 'A'            },
+		{ "arc",          no_argument,       NULL, 'A'            },
+		{ "Jensen",       no_argument,       NULL, 'J'            },
+		{ "jensen",       no_argument,       NULL, 'J'            },
+		{ "SRM",          no_argument,       NULL, 'S'            },
+		{ "srm",          no_argument,       NULL, 'S'            },
+		{ "funky-toy",    no_argument,       NULL, 'F'            },
 #endif
-		{"set",		0, 0, OPT_SET},
+		{ "set",          no_argument,       NULL, OPT_SET        },
 #ifdef __linux__
-		{"getepoch",	0, 0, OPT_GETEPOCH},
-		{"setepoch",	0, 0, OPT_SETEPOCH},
+		{ "getepoch",     no_argument,       NULL, OPT_GETEPOCH   },
+		{ "setepoch",     no_argument,       NULL, OPT_SETEPOCH   },
 #endif
-		{"noadjfile",	0, 0, OPT_NOADJFILE},
-		{"localtime",	0, 0, OPT_LOCALTIME},
-		{"badyear",	0, 0, OPT_BADYEAR},
-		{"directisa",	0, 0, OPT_DIRECTISA},
-		{"test",	0, 0, OPT_TEST},
-		{"date",	1, 0, OPT_DATE},
-		{"epoch",	1, 0, OPT_EPOCH},
+		{ "noadjfile",    no_argument,       NULL, OPT_NOADJFILE  },
+		{ "localtime",    no_argument,       NULL, OPT_LOCALTIME  },
+		{ "badyear",      no_argument,       NULL, OPT_BADYEAR    },
+		{ "directisa",    no_argument,       NULL, OPT_DIRECTISA  },
+		{ "test",         no_argument,       NULL, OPT_TEST       },
+		{ "date",         required_argument, NULL, OPT_DATE       },
+		{ "epoch",        required_argument, NULL, OPT_EPOCH      },
 #ifdef __linux__
-		{"rtc",		1, 0, 'f'},
+		{ "rtc",          required_argument, NULL, 'f'            },
 #endif
-		{"adjfile",	1, 0, OPT_ADJFILE},
-		{"systz",	0, 0, OPT_SYSTZ},
-		{"predict-hc",	0, 0, OPT_PREDICT_HC},
-		{"get",		0, 0, OPT_GET},
-		{"update-drift",0, 0, OPT_UPDATE},
-		{NULL,		0, NULL, 0}
+		{ "adjfile",      required_argument, NULL, OPT_ADJFILE    },
+		{ "systz",        no_argument,       NULL, OPT_SYSTZ      },
+		{ "predict-hc",   no_argument,       NULL, OPT_PREDICT_HC },
+		{ "get",          no_argument,       NULL, OPT_GET        },
+		{ "update-drift", no_argument,       NULL, OPT_UPDATE     },
+		{ NULL, 0, NULL, 0 }
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */

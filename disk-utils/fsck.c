@@ -652,7 +652,7 @@ static int execute(const char *progname, const char *progpath,
 	}
 
 	argv[argc++] = xstrdup(fs_get_device(fs));
-	argv[argc] = 0;
+	argv[argc] = NULL;
 
 	if (verbose || noexecute) {
 		const char *tgt = mnt_fs_get_target(fs);
@@ -742,7 +742,7 @@ static struct fsck_instance *wait_one(int flags)
 
 	if (noexecute) {
 		inst = instance_list;
-		prev = 0;
+		prev = NULL;
 #ifdef RANDOM_DEBUG
 		while (inst->next && (random() & 1)) {
 			prev = inst;
@@ -777,7 +777,7 @@ static struct fsck_instance *wait_one(int flags)
 			warn(_("waitpid failed"));
 			continue;
 		}
-		for (prev = 0, inst = instance_list;
+		for (prev = NULL, inst = instance_list;
 		     inst;
 		     prev = inst, inst = inst->next) {
 			if (inst->pid == pid)
@@ -823,7 +823,7 @@ static struct fsck_instance *wait_one(int flags)
 			 * bit before sending the kill, to give it
 			 * time to set up the signal handler
 			 */
-			if (inst2->start_time.tv_sec < time(0) + 2) {
+			if (inst2->start_time.tv_sec < time(NULL) + 2) {
 				if (fork() == 0) {
 					sleep(1);
 					kill(inst2->pid, SIGUSR1);
@@ -1029,7 +1029,7 @@ static int fs_match(struct libmnt_fs *fs, struct fs_type_compile *cmp)
 	int n, ret = 0, checked_type = 0;
 	char *cp;
 
-	if (cmp->list == 0 || cmp->list[0] == 0)
+	if (cmp->list == NULL || cmp->list[0] == NULL)
 		return 1;
 
 	for (n=0; (cp = cmp->list[n]); n++) {
@@ -1175,7 +1175,7 @@ static int count_slaves(dev_t disk)
 	if (!(dir = opendir(dirname)))
 		return -1;
 
-	while ((dp = readdir(dir)) != 0) {
+	while ((dp = readdir(dir)) != NULL) {
 #ifdef _DIRENT_HAVE_D_TYPE
 		if (dp->d_type != DT_UNKNOWN && dp->d_type != DT_LNK)
 			continue;
@@ -1217,7 +1217,7 @@ static int disk_already_active(struct libmnt_fs *fs)
 	 * Don't check a stacked device with any other disk too.
 	 */
 	if (!disk || fs_is_stacked(fs))
-		return (instance_list != 0);
+		return (instance_list != NULL);
 
 	for (inst = instance_list; inst; inst = inst->next) {
 		dev_t idisk = fs_get_disk(inst->fs, 0);
@@ -1410,7 +1410,7 @@ static void signal_cancel(int sig __attribute__((__unused__)))
 static void parse_argv(int argc, char *argv[])
 {
 	int	i, j;
-	char	*arg, *dev, *tmp = 0;
+	char	*arg, *dev, *tmp = NULL;
 	char	options[128];
 	int	opt = 0;
 	int     opts_for_fsck = 0;
@@ -1422,12 +1422,12 @@ static void parse_argv(int argc, char *argv[])
 	 */
 	memset(&sa, 0, sizeof(struct sigaction));
 	sa.sa_handler = signal_cancel;
-	sigaction(SIGINT, &sa, 0);
-	sigaction(SIGTERM, &sa, 0);
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGTERM, &sa, NULL);
 
 	num_devices = 0;
 	num_args = 0;
-	instance_list = 0;
+	instance_list = NULL;
 
 	for (i=1; i < argc; i++) {
 		arg = argv[i];
@@ -1534,7 +1534,7 @@ static void parse_argv(int argc, char *argv[])
 				serialize = 1;
 				break;
 			case 't':
-				tmp = 0;
+				tmp = NULL;
 				if (fstype)
 					usage(stderr);
 				if (arg[j+1])

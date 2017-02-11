@@ -152,15 +152,15 @@ int main(int argc, char **argv)
 
 	static const struct option longopts[] =
 	{
-		{ "columns",	1, 0, 'c' },	/* deprecated */
-		{ "fillrows",	0, 0, 'x' },
-		{ "help",	0, 0, 'h' },
-		{ "output-separator", 1, 0, 'o' },
-		{ "output-width", 1, 0, 'c' },
-		{ "separator",	1, 0, 's' },
-		{ "table",	0, 0, 't' },
-		{ "version",    0, 0, 'V' },
-		{ NULL,		0, 0, 0 },
+		{ "columns",          required_argument, NULL, 'c' }, /* deprecated */
+		{ "fillrows",         no_argument,       NULL, 'x' },
+		{ "help",             no_argument,       NULL, 'h' },
+		{ "output-separator", required_argument, NULL, 'o' },
+		{ "output-width",     required_argument, NULL, 'c' },
+		{ "separator",        required_argument, NULL, 's' },
+		{ "table",            no_argument,       NULL, 't' },
+		{ "version",          no_argument,       NULL, 'V' },
+		{ NULL,	0, NULL, 0 },
 	};
 
 	setlocale(LC_ALL, "");

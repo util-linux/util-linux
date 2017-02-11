@@ -486,17 +486,17 @@ main(int argc, char **argv)
 	int mode = WP_MODE_PRETTY;
 
 	static const struct option longopts[] = {
-	    { "all",       0, 0, 'a' },
-	    { "backup",    0, 0, 'b' },
-	    { "force",     0, 0, 'f' },
-	    { "help",      0, 0, 'h' },
-	    { "no-act",    0, 0, 'n' },
-	    { "offset",    1, 0, 'o' },
-	    { "parsable",  0, 0, 'p' },
-	    { "quiet",     0, 0, 'q' },
-	    { "types",     1, 0, 't' },
-	    { "version",   0, 0, 'V' },
-	    { NULL,        0, 0, 0 }
+	    { "all",       no_argument,       NULL, 'a' },
+	    { "backup",    no_argument,       NULL, 'b' },
+	    { "force",     no_argument,       NULL, 'f' },
+	    { "help",      no_argument,       NULL, 'h' },
+	    { "no-act",    no_argument,       NULL, 'n' },
+	    { "offset",    required_argument, NULL, 'o' },
+	    { "parsable",  no_argument,       NULL, 'p' },
+	    { "quiet",     no_argument,       NULL, 'q' },
+	    { "types",     required_argument, NULL, 't' },
+	    { "version",   no_argument,       NULL, 'V' },
+	    { NULL,        0, NULL, 0 }
 	};
 
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */

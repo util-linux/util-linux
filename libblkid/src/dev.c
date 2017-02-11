@@ -141,8 +141,8 @@ blkid_dev_iterate blkid_dev_iterate_begin(blkid_cache cache)
 		iter->magic = DEV_ITERATE_MAGIC;
 		iter->cache = cache;
 		iter->p	= cache->bic_devs.next;
-		iter->search_type = 0;
-		iter->search_value = 0;
+		iter->search_type = NULL;
+		iter->search_value = NULL;
 	}
 	return iter;
 }
@@ -181,7 +181,7 @@ int blkid_dev_next(blkid_dev_iterate iter,
 
 	if  (!ret_dev || !iter || iter->magic != DEV_ITERATE_MAGIC)
 		return -1;
-	*ret_dev = 0;
+	*ret_dev = NULL;
 	while (iter->p != &iter->cache->bic_devs) {
 		dev = list_entry(iter->p, struct blkid_struct_dev, bid_devs);
 		iter->p = iter->p->next;

@@ -31,7 +31,7 @@ int setup_timer(timer_t * t_id, struct itimerval *timeout,
 	sig_a.sa_flags = SA_SIGINFO;
 	sig_a.sa_sigaction = timeout_handler;
 
-	if (sigaction(SIGALRM, &sig_a, 0))
+	if (sigaction(SIGALRM, &sig_a, NULL))
 		return 1;
 	if (timer_create(CLOCK_MONOTONIC, &sig_e, t_id))
 		return 1;

@@ -41,9 +41,9 @@ int main(int argc, char *argv[])
 	int c, fd;
 	struct stat st;
 	static const struct option longopts[] = {
-		{ "help",    0, 0, 'h' },
-		{ "version", 0, 0, 'V' },
-		{ NULL, 0, 0, 0 }
+		{ "help",    0, NULL, 'h' },
+		{ "version", 0, NULL, 'V' },
+		{ NULL, 0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");

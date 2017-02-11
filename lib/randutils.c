@@ -59,7 +59,7 @@ static void crank_random(void)
 	int i;
 	struct timeval tv;
 
-	gettimeofday(&tv, 0);
+	gettimeofday(&tv, NULL);
 	srand((getpid() << 16) ^ getuid() ^ tv.tv_sec ^ tv.tv_usec);
 
 #ifdef DO_JRAND_MIX
@@ -68,7 +68,7 @@ static void crank_random(void)
 	ul_jrand_seed[2] = (tv.tv_sec ^ tv.tv_usec) >> 16;
 #endif
 	/* Crank the random number generator a few times */
-	gettimeofday(&tv, 0);
+	gettimeofday(&tv, NULL);
 	for (i = (tv.tv_sec ^ tv.tv_usec) & 0x1F; i > 0; i--)
 		rand();
 }

@@ -113,15 +113,15 @@ int main(int argc, char **argv)
 	int act = ACT_DISCARD;
 
 	static const struct option longopts[] = {
-	    { "help",      0, 0, 'h' },
-	    { "version",   0, 0, 'V' },
-	    { "offset",    1, 0, 'o' },
-	    { "length",    1, 0, 'l' },
-	    { "step",      1, 0, 'p' },
-	    { "secure",    0, 0, 's' },
-	    { "verbose",   0, 0, 'v' },
-	    { "zeroout",   0, 0, 'z' },
-	    { NULL,        0, 0, 0 }
+	    { "help",      no_argument,       NULL, 'h' },
+	    { "version",   no_argument,       NULL, 'V' },
+	    { "offset",    required_argument, NULL, 'o' },
+	    { "length",    required_argument, NULL, 'l' },
+	    { "step",      required_argument, NULL, 'p' },
+	    { "secure",    no_argument,       NULL, 's' },
+	    { "verbose",   no_argument,       NULL, 'v' },
+	    { "zeroout",   no_argument,       NULL, 'z' },
+	    { NULL, 0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");

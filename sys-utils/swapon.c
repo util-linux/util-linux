@@ -693,7 +693,7 @@ static int parse_options(struct swap_prop *props, const char *options)
 	assert(props);
 	assert(options);
 
-	if (mnt_optstr_get_option(options, "nofail", NULL, 0) == 0)
+	if (mnt_optstr_get_option(options, "nofail", NULL, NULL) == 0)
 		props->no_fail = 1;
 
 	if (mnt_optstr_get_option(options, "discard", &arg, &argsz) == 0) {
@@ -845,21 +845,21 @@ int main(int argc, char *argv[])
 	};
 
 	static const struct option long_opts[] = {
-		{ "priority", 1, 0, 'p' },
-		{ "discard",  2, 0, 'd' },
-		{ "ifexists", 0, 0, 'e' },
-		{ "options",  2, 0, 'o' },
-		{ "summary",  0, 0, 's' },
-		{ "fixpgsz",  0, 0, 'f' },
-		{ "all",      0, 0, 'a' },
-		{ "help",     0, 0, 'h' },
-		{ "verbose",  0, 0, 'v' },
-		{ "version",  0, 0, 'V' },
-		{ "show",     2, 0, SHOW_OPTION },
-		{ "noheadings", 0, 0, NOHEADINGS_OPTION },
-		{ "raw",      0, 0, RAW_OPTION },
-		{ "bytes",    0, 0, BYTES_OPTION },
-		{ NULL, 0, 0, 0 }
+		{ "priority",   required_argument, NULL, 'p'               },
+		{ "discard",    optional_argument, NULL, 'd'               },
+		{ "ifexists",   no_argument,       NULL, 'e'               },
+		{ "options",    optional_argument, NULL, 'o'               },
+		{ "summary",    no_argument,       NULL, 's'               },
+		{ "fixpgsz",    no_argument,       NULL, 'f'               },
+		{ "all",        no_argument,       NULL, 'a'               },
+		{ "help",       no_argument,       NULL, 'h'               },
+		{ "verbose",    no_argument,       NULL, 'v'               },
+		{ "version",    no_argument,       NULL, 'V'               },
+		{ "show",       optional_argument, NULL, SHOW_OPTION       },
+		{ "noheadings", no_argument,       NULL, NOHEADINGS_OPTION },
+		{ "raw",        no_argument,       NULL, RAW_OPTION        },
+		{ "bytes",      no_argument,       NULL, BYTES_OPTION      },
+		{ NULL, 0, NULL, 0 }
 	};
 
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */

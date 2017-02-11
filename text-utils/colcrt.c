@@ -224,7 +224,7 @@ static void colcrt(struct colcrt_control *ctl)
 
 int main(int argc, char **argv)
 {
-	struct colcrt_control ctl = { 0 };
+	struct colcrt_control ctl = { NULL };
 	int opt;
 	enum { NO_UL_OPTION = CHAR_MAX + 1 };
 

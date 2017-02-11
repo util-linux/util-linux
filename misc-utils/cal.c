@@ -542,7 +542,7 @@ static void init_monthnames(struct cal_control *ctl)
 {
 	size_t i;
 
-	if (ctl->full_month[0] != '\0')
+	if (ctl->full_month[0] != NULL)
 		return;		/* already initialized */
 
 	for (i = 0; i < MONTHS_IN_YEAR; i++)
@@ -553,7 +553,7 @@ static void init_abbr_monthnames(struct cal_control *ctl)
 {
 	size_t i;
 
-	if (ctl->abbr_month[0] != '\0')
+	if (ctl->abbr_month[0] != NULL)
 		return;		/* already initialized */
 
 	for (i = 0; i < MONTHS_IN_YEAR; i++)

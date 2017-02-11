@@ -66,7 +66,7 @@ static void tailf(const char *filename, size_t lines, struct stat *st)
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), filename);
-	data = mmap(0, st->st_size, PROT_READ, MAP_SHARED, fd, 0);
+	data = mmap(NULL, st->st_size, PROT_READ, MAP_SHARED, fd, 0);
 	i = (size_t) st->st_size - 1;
 
 	/* humans do not think last new line in a file should be counted,
@@ -241,10 +241,10 @@ int main(int argc, char **argv)
 	struct stat st;
 
 	static const struct option longopts[] = {
-		{ "lines",   required_argument, 0, 'n' },
-		{ "version", no_argument,	0, 'V' },
-		{ "help",    no_argument,	0, 'h' },
-		{ NULL,      0, 0, 0 }
+		{ "lines",   required_argument, NULL, 'n' },
+		{ "version", no_argument,	NULL, 'V' },
+		{ "help",    no_argument,	NULL, 'h' },
+		{ NULL,      0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");

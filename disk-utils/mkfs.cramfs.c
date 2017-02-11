@@ -302,7 +302,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 	endpath++;
 
 	/* read in the directory and sort */
-	dircount = scandir(name, &dirlist, 0, cramsort);
+	dircount = scandir(name, &dirlist, NULL, cramsort);
 
 	if (dircount < 0)
 		err(MKFS_EX_ERROR, _("could not read directory %s"), name);
@@ -412,7 +412,7 @@ static unsigned int write_superblock(struct entry *root, char *base, int size)
 	super->size = size;
 	memcpy(super->signature, CRAMFS_SIGNATURE, sizeof(super->signature));
 
-	super->fsid.crc = crc32(0L, Z_NULL, 0);
+	super->fsid.crc = crc32(0L, NULL, 0);
 	super->fsid.edition = opt_edition;
 	super->fsid.blocks = total_blocks;
 	super->fsid.files = total_nodes;
@@ -706,7 +706,7 @@ int main(int argc, char **argv)
 	loff_t fslen_ub = sizeof(struct cramfs_super);
 	unsigned int fslen_max;
 	char const *dirname, *outfile;
-	uint32_t crc = crc32(0L, Z_NULL, 0);
+	uint32_t crc = crc32(0L, NULL, 0);
 	int c;
 	cramfs_is_big_endian = HOST_IS_BIG_ENDIAN; /* default is to use host order */
 

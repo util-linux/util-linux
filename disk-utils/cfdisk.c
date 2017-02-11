@@ -2573,7 +2573,7 @@ int main(int argc, char *argv[])
 		{ "help",    no_argument,       NULL, 'h' },
 		{ "version", no_argument,       NULL, 'V' },
 		{ "zero",    no_argument,	NULL, 'z' },
-		{ NULL, 0, 0, 0 },
+		{ NULL, 0, NULL, 0 },
 	};
 
 	setlocale(LC_ALL, "");

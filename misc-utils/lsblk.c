@@ -448,7 +448,7 @@ static int is_active_swap(const char *filename)
 		mnt_table_parse_swaps(swaps, NULL);
 	}
 
-	return mnt_table_find_srcpath(swaps, filename, MNT_ITER_BACKWARD) != 0;
+	return mnt_table_find_srcpath(swaps, filename, MNT_ITER_BACKWARD) != NULL;
 }
 
 static char *get_device_mountpoint(struct blkdev_cxt *cxt)
@@ -1257,7 +1257,7 @@ static int list_partitions(struct blkdev_cxt *wholedisk_cxt, struct blkdev_cxt *
 {
 	DIR *dir;
 	struct dirent *d;
-	struct blkdev_cxt part_cxt = { 0 };
+	struct blkdev_cxt part_cxt = { NULL };
 	int r = -1;
 
 	assert(wholedisk_cxt);
@@ -1360,7 +1360,7 @@ static int list_deps(struct blkdev_cxt *cxt)
 {
 	DIR *dir;
 	struct dirent *d;
-	struct blkdev_cxt dep = { 0 };
+	struct blkdev_cxt dep = { NULL };
 	const char *depname;
 
 	assert(cxt);
@@ -1421,7 +1421,7 @@ static int iterate_block_devices(void)
 {
 	DIR *dir;
 	struct dirent *d;
-	struct blkdev_cxt cxt = { 0 };
+	struct blkdev_cxt cxt = { NULL };
 
 	if (!(dir = opendir(_PATH_SYS_BLOCK)))
 		return -errno;
@@ -1475,7 +1475,7 @@ static char *devno_to_sysfs_name(dev_t devno, char *devname, char *buf, size_t b
 
 static int process_one_device(char *devname)
 {
-	struct blkdev_cxt parent = { 0 }, cxt = { 0 };
+	struct blkdev_cxt parent = { NULL }, cxt = { NULL };
 	struct stat st;
 	char buf[PATH_MAX + 1], *name = NULL, *diskname = NULL;
 	dev_t disk = 0;
@@ -1670,30 +1670,30 @@ int main(int argc, char *argv[])
 	size_t i;
 
 	static const struct option longopts[] = {
-		{ "all",	0, 0, 'a' },
-		{ "bytes",      0, 0, 'b' },
-		{ "nodeps",     0, 0, 'd' },
-		{ "discard",    0, 0, 'D' },
-		{ "help",	0, 0, 'h' },
-		{ "json",       0, 0, 'J' },
-		{ "output",     1, 0, 'o' },
-		{ "output-all", 0, 0, 'O' },
-		{ "perms",      0, 0, 'm' },
-		{ "noheadings",	0, 0, 'n' },
-		{ "list",       0, 0, 'l' },
-		{ "ascii",	0, 0, 'i' },
-		{ "raw",        0, 0, 'r' },
-		{ "inverse",	0, 0, 's' },
-		{ "fs",         0, 0, 'f' },
-		{ "exclude",    1, 0, 'e' },
-		{ "include",    1, 0, 'I' },
-		{ "topology",   0, 0, 't' },
-		{ "paths",      0, 0, 'p' },
-		{ "pairs",      0, 0, 'P' },
-		{ "scsi",       0, 0, 'S' },
-		{ "sort",	1, 0, 'x' },
-		{ "version",    0, 0, 'V' },
-		{ NULL, 0, 0, 0 },
+		{ "all",	no_argument,       NULL, 'a' },
+		{ "bytes",      no_argument,       NULL, 'b' },
+		{ "nodeps",     no_argument,       NULL, 'd' },
+		{ "discard",    no_argument,       NULL, 'D' },
+		{ "help",	no_argument,       NULL, 'h' },
+		{ "json",       no_argument,       NULL, 'J' },
+		{ "output",     required_argument, NULL, 'o' },
+		{ "output-all", no_argument,       NULL, 'O' },
+		{ "perms",      no_argument,       NULL, 'm' },
+		{ "noheadings",	no_argument,       NULL, 'n' },
+		{ "list",       no_argument,       NULL, 'l' },
+		{ "ascii",	no_argument,       NULL, 'i' },
+		{ "raw",        no_argument,       NULL, 'r' },
+		{ "inverse",	no_argument,       NULL, 's' },
+		{ "fs",         no_argument,       NULL, 'f' },
+		{ "exclude",    required_argument, NULL, 'e' },
+		{ "include",    required_argument, NULL, 'I' },
+		{ "topology",   no_argument,       NULL, 't' },
+		{ "paths",      no_argument,       NULL, 'p' },
+		{ "pairs",      no_argument,       NULL, 'P' },
+		{ "scsi",       no_argument,       NULL, 'S' },
+		{ "sort",	required_argument, NULL, 'x' },
+		{ "version",    no_argument,       NULL, 'V' },
+		{ NULL, 0, NULL, 0 },
 	};
 
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */

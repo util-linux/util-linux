@@ -220,7 +220,7 @@ static void test_crc(int start)
 		return;
 	}
 
-	crc = crc32(0L, Z_NULL, 0);
+	crc = crc32(0L, NULL, 0);
 
 	buf =
 	    mmap(NULL, super.size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
@@ -237,7 +237,7 @@ static void test_crc(int start)
 	}
 	if (buf != MAP_FAILED) {
 		((struct cramfs_super *)((unsigned char *) buf + start))->fsid.crc =
-		    crc32(0L, Z_NULL, 0);
+		    crc32(0L, NULL, 0);
 		crc = crc32(crc, (unsigned char *) buf + start, super.size - start);
 		munmap(buf, super.size);
 	} else {
@@ -255,7 +255,7 @@ static void test_crc(int start)
 				break;
 			if (length == 0)
 				((struct cramfs_super *)buf)->fsid.crc =
-				    crc32(0L, Z_NULL, 0);
+				    crc32(0L, NULL, 0);
 			length += retval;
 			if (length > (super.size - start)) {
 				crc = crc32(crc, buf,
@@ -646,12 +646,12 @@ int main(int argc, char **argv)
 	size_t length = 0;
 
 	static const struct option longopts[] = {
-		{"verbose", no_argument, 0, 'v'},
-		{"version", no_argument, 0, 'V'},
-		{"help", no_argument, 0, 'h'},
-		{"blocksize", required_argument, 0, 'b'},
-		{"extract", optional_argument, 0, 'x'},
-		{NULL, no_argument, 0, '0'},
+		{"verbose",   no_argument,       NULL, 'v'},
+		{"version",   no_argument,       NULL, 'V'},
+		{"help",      no_argument,       NULL, 'h'},
+		{"blocksize", required_argument, NULL, 'b'},
+		{"extract",   optional_argument, NULL, 'x'},
+		{NULL, 0, NULL, 0},
 	};
 
 	setlocale(LC_MESSAGES, "");

@@ -793,8 +793,8 @@ su_main (int argc, char **argv, int mode)
     {"group", required_argument, NULL, 'g'},
     {"supp-group", required_argument, NULL, 'G'},
     {"user", required_argument, NULL, 'u'},		/* runuser only */
-    {"help", no_argument, 0, 'h'},
-    {"version", no_argument, 0, 'V'},
+    {"help", no_argument, NULL, 'h'},
+    {"version", no_argument, NULL, 'V'},
     {NULL, 0, NULL, 0}
   };
 

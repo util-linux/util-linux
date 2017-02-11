@@ -69,7 +69,7 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 	if (!dev || !cache)
 		return NULL;
 
-	now = time(0);
+	now = time(NULL);
 	diff = now - dev->bid_time;
 
 	if (stat(dev->bid_name, &st) < 0) {
@@ -172,7 +172,7 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 			dev->bid_utime = tv.tv_usec;
 		} else
 #endif
-			dev->bid_time = time(0);
+			dev->bid_time = time(NULL);
 
 		dev->bid_devno = st.st_rdev;
 		dev->bid_flags |= BLKID_BID_FL_VERIFIED;

@@ -137,11 +137,11 @@ int main(int argc, char *argv[])
 	int c, rc = -1;
 
 	static const struct option longopts[] = {
-	    { "help",      0, 0, 'h' },
-	    { "version",   0, 0, 'V' },
-	    { "label",     1, 0, 'L' },
-	    { "uuid",      1, 0, 'U' },
-	    { NULL,        0, 0, 0 }
+	    { "help",      no_argument,       NULL, 'h' },
+	    { "version",   no_argument,       NULL, 'V' },
+	    { "label",     required_argument, NULL, 'L' },
+	    { "uuid",      required_argument, NULL, 'U' },
+	    { NULL,        0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");

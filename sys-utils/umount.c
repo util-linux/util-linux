@@ -508,23 +508,23 @@ int main(int argc, char **argv)
 	};
 
 	static const struct option longopts[] = {
-		{ "all", 0, 0, 'a' },
-		{ "all-targets", 0, 0, 'A' },
-		{ "detach-loop", 0, 0, 'd' },
-		{ "fake", 0, 0, UMOUNT_OPT_FAKE },
-		{ "force", 0, 0, 'f' },
-		{ "help", 0, 0, 'h' },
-		{ "internal-only", 0, 0, 'i' },
-		{ "lazy", 0, 0, 'l' },
-		{ "no-canonicalize", 0, 0, 'c' },
-		{ "no-mtab", 0, 0, 'n' },
-		{ "read-only", 0, 0, 'r' },
-		{ "recursive", 0, 0, 'R' },
-		{ "test-opts", 1, 0, 'O' },
-		{ "types", 1, 0, 't' },
-		{ "verbose", 0, 0, 'v' },
-		{ "version", 0, 0, 'V' },
-		{ NULL, 0, 0, 0 }
+		{ "all",             no_argument,       NULL, 'a'             },
+		{ "all-targets",     no_argument,       NULL, 'A'             },
+		{ "detach-loop",     no_argument,       NULL, 'd'             },
+		{ "fake",            no_argument,       NULL, UMOUNT_OPT_FAKE },
+		{ "force",           no_argument,       NULL, 'f'             },
+		{ "help",            no_argument,       NULL, 'h'             },
+		{ "internal-only",   no_argument,       NULL, 'i'             },
+		{ "lazy",            no_argument,       NULL, 'l'             },
+		{ "no-canonicalize", no_argument,       NULL, 'c'             },
+		{ "no-mtab",         no_argument,       NULL, 'n'             },
+		{ "read-only",       no_argument,       NULL, 'r'             },
+		{ "recursive",       no_argument,       NULL, 'R'             },
+		{ "test-opts",       required_argument, NULL, 'O'             },
+		{ "types",           required_argument, NULL, 't'             },
+		{ "verbose",         no_argument,       NULL, 'v'             },
+		{ "version",         no_argument,       NULL, 'V'             },
+		{ NULL, 0, NULL, 0 }
 	};
 
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */

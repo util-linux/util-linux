@@ -173,15 +173,15 @@ int main(int argc, char **argv)
 	int ret = EXIT_SUCCESS;
 
 	static const struct option longopts[] = {
-		{ "no-backspaces", no_argument,		0, 'b' },
-		{ "fine",	   no_argument,		0, 'f' },
-		{ "pass",	   no_argument,		0, 'p' },
-		{ "tabs",	   no_argument,		0, 'h' },
-		{ "spaces",	   no_argument,		0, 'x' },
-		{ "lines",	   required_argument,	0, 'l' },
-		{ "version",	   no_argument,		0, 'V' },
-		{ "help",	   no_argument,		0, 'H' },
-		{ NULL, 0, 0, 0 }
+		{ "no-backspaces", no_argument,		NULL, 'b' },
+		{ "fine",	   no_argument,		NULL, 'f' },
+		{ "pass",	   no_argument,		NULL, 'p' },
+		{ "tabs",	   no_argument,		NULL, 'h' },
+		{ "spaces",	   no_argument,		NULL, 'x' },
+		{ "lines",	   required_argument,	NULL, 'l' },
+		{ "version",	   no_argument,		NULL, 'V' },
+		{ "help",	   no_argument,		NULL, 'H' },
+		{ NULL, 0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");

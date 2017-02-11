@@ -100,11 +100,11 @@ int main(int argc, char *argv[])
 	struct stat statbuf;
 
 	static const struct option longopts[] = {
-		{"query", no_argument, 0, 'q'},
-		{"all", no_argument, 0, 'a'},
-		{"version", no_argument, 0, 'V'},
-		{"help", no_argument, 0, 'h'},
-		{NULL, no_argument, 0, '0'},
+		{"query",   no_argument, NULL, 'q'},
+		{"all",     no_argument, NULL, 'a'},
+		{"version", no_argument, NULL, 'V'},
+		{"help",    no_argument, NULL, 'h'},
+		{NULL, 0, NULL, '0'},
 	};
 
 	setlocale(LC_ALL, "");

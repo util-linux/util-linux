@@ -132,7 +132,7 @@ int main(int argc, char **argv)
 {
 	FILE *map;
 	int proFd;
-	char *mapFile, *proFile, *mult = 0;
+	char *mapFile, *proFile, *mult = NULL;
 	size_t len = 0, indx = 1;
 	unsigned long long add0 = 0;
 	unsigned int step;
@@ -162,7 +162,7 @@ int main(int argc, char **argv)
 		{"no-auto", no_argument, NULL, 'n'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
-		{NULL, 0, 0, 0}
+		{NULL, 0, NULL, 0}
 	};
 
 #define next (current^1)
@@ -224,7 +224,7 @@ int main(int argc, char **argv)
 		 * write is not sizeof(int), the multiplier is not
 		 * changed. */
 		if (mult) {
-			multiplier = strtoul(mult, 0, 10);
+			multiplier = strtoul(mult, NULL, 10);
 			to_write = sizeof(int);
 		} else {
 			multiplier = 0;

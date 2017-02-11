@@ -109,9 +109,9 @@ static blkid_tag blkid_find_head_cache(blkid_cache cache, const char *type)
 int blkid_set_tag(blkid_dev dev, const char *name,
 		  const char *value, const int vlength)
 {
-	blkid_tag	t = 0, head = 0;
-	char		*val = 0;
-	char		**dev_var = 0;
+	blkid_tag	t = NULL, head = NULL;
+	char		*val = NULL;
+	char		**dev_var = NULL;
 
 	if (value && !(val = strndup(value, vlength)))
 		return -BLKID_ERR_MEM;
@@ -295,8 +295,8 @@ int blkid_tag_next(blkid_tag_iterate iter,
 	    iter->p == &iter->dev->bid_tags)
 		return -1;
 
-	*type = 0;
-	*value = 0;
+	*type = NULL;
+	*value = NULL;
 	tag = list_entry(iter->p, struct blkid_struct_tag, bit_tags);
 	*type = tag->bit_name;
 	*value = tag->bit_val;
@@ -337,7 +337,7 @@ blkid_dev blkid_find_dev_with_tag(blkid_cache cache,
 
 try_again:
 	pri = -1;
-	dev = 0;
+	dev = NULL;
 	head = blkid_find_head_cache(cache, type);
 
 	if (head) {

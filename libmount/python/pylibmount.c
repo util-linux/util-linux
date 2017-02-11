@@ -210,7 +210,7 @@ PyMODINIT_FUNC initpylibmount(void)
 
 		pylibmount_debug_mask = 0;
 		if (str)
-			pylibmount_debug_mask = strtoul(str, 0, 0);
+			pylibmount_debug_mask = strtoul(str, NULL, 0);
 
 		pylibmount_debug_mask |= PYMNT_DEBUG_INIT;
 	}

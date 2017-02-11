@@ -106,4 +106,4 @@
 	{0xfe, N_("LANstep")},		/* SpeedStor >1024 cyl. or LANstep */
 	{0xff, N_("BBT")},		/* Xenix Bad Block Table */
 
-	{ 0, 0 }
+	{ 0, NULL }

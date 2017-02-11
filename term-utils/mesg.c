@@ -93,10 +93,10 @@ int main(int argc, char *argv[])
 	int ch, fd, verbose = FALSE, ret;
 
 	static const struct option longopts[] = {
-		{ "verbose",    no_argument,       0, 'v' },
-		{ "version",    no_argument,       0, 'V' },
-		{ "help",       no_argument,       0, 'h' },
-		{ NULL,         0, 0, 0 }
+		{ "verbose",    no_argument,       NULL, 'v' },
+		{ "version",    no_argument,       NULL, 'V' },
+		{ "help",       no_argument,       NULL, 'h' },
+		{ NULL,         0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");

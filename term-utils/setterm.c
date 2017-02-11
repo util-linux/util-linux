@@ -1166,7 +1166,7 @@ static void init_terminal(struct setterm_control *ctl)
 
 int main(int argc, char **argv)
 {
-	struct setterm_control ctl = { 0 };
+	struct setterm_control ctl = { NULL };
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);

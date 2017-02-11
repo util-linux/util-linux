@@ -168,7 +168,7 @@ static int get_basetimes(struct rtcwake_control *ctl, int fd)
 		return -1;
 	}
 
-	ctl->sys_time = time(0);
+	ctl->sys_time = time(NULL);
 	if (ctl->sys_time == (time_t)-1) {
 		warn(_("read system time failed"));
 		return -1;
@@ -413,21 +413,21 @@ int main(int argc, char **argv)
 		OPT_LIST
 	};
 	static const struct option long_options[] = {
-		{"adjfile",     required_argument,      0, 'A'},
-		{"auto",	no_argument,		0, 'a'},
-		{"dry-run",	no_argument,		0, 'n'},
-		{"local",	no_argument,		0, 'l'},
-		{"utc",		no_argument,		0, 'u'},
-		{"verbose",	no_argument,		0, 'v'},
-		{"version",	no_argument,		0, 'V'},
-		{"help",	no_argument,		0, 'h'},
-		{"mode",	required_argument,	0, 'm'},
-		{"device",	required_argument,	0, 'd'},
-		{"seconds",	required_argument,	0, 's'},
-		{"time",	required_argument,	0, 't'},
-		{"date",	required_argument,	0, OPT_DATE},
-		{"list-modes",	no_argument,		0, OPT_LIST},
-		{0,		0,			0, 0  }
+		{ "adjfile",	required_argument,	NULL, 'A'      },
+		{ "auto",	no_argument,		NULL, 'a'      },
+		{ "dry-run",	no_argument,		NULL, 'n'      },
+		{ "local",	no_argument,		NULL, 'l'      },
+		{ "utc",	no_argument,		NULL, 'u'      },
+		{ "verbose",	no_argument,		NULL, 'v'      },
+		{ "version",	no_argument,		NULL, 'V'      },
+		{ "help",	no_argument,		NULL, 'h'      },
+		{ "mode",	required_argument,	NULL, 'm'      },
+		{ "device",	required_argument,	NULL, 'd'      },
+		{ "seconds",	required_argument,	NULL, 's'      },
+		{ "time",	required_argument,	NULL, 't'      },
+		{ "date",	required_argument,	NULL, OPT_DATE },
+		{ "list-modes",	no_argument,		NULL, OPT_LIST },
+		{ NULL, 0, NULL, 0 }
 	};
 	static const ul_excl_t excl[] = {
 		{ 'a', 'l', 'u' },

@@ -1980,7 +1980,7 @@ int main(int argc, char *argv[])
 		{ "id",      no_argument,       NULL, 'c' },		/* deprecated */
 		{ "print-id",no_argument,       NULL, OPT_PRINT_ID },	/* deprecated */
 
-		{ NULL, 0, 0, 0 },
+		{ NULL, 0, NULL, 0 },
 	};
 
 	setlocale(LC_ALL, "");

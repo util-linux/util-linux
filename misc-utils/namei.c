@@ -351,15 +351,15 @@ static void usage(int rc)
 
 static const struct option longopts[] =
 {
-	{ "help",	0, 0, 'h' },
-	{ "version",    0, 0, 'V' },
-	{ "mountpoints",0, 0, 'x' },
-	{ "modes",	0, 0, 'm' },
-	{ "owners",	0, 0, 'o' },
-	{ "long",       0, 0, 'l' },
-	{ "nolinks",	0, 0, 'n' },
-	{ "vertical",   0, 0, 'v' },
-	{ NULL,		0, 0, 0 },
+	{ "help",	 no_argument, NULL, 'h' },
+	{ "version",     no_argument, NULL, 'V' },
+	{ "mountpoints", no_argument, NULL, 'x' },
+	{ "modes",	 no_argument, NULL, 'm' },
+	{ "owners",	 no_argument, NULL, 'o' },
+	{ "long",        no_argument, NULL, 'l' },
+	{ "nolinks",	 no_argument, NULL, 'n' },
+	{ "vertical",    no_argument, NULL, 'v' },
+	{ NULL, 0, NULL, 0 },
 };
 
 int

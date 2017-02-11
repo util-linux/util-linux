@@ -61,11 +61,11 @@ int main(int argc, char **argv)
 	struct stat sb;
 
 	static const struct option longopts[] = {
-	    { "help",      0, 0, 'h' },
-	    { "freeze",    0, 0, 'f' },
-	    { "unfreeze",  0, 0, 'u' },
-	    { "version",   0, 0, 'V' },
-	    { NULL,        0, 0, 0 }
+	    { "help",      no_argument, NULL, 'h' },
+	    { "freeze",    no_argument, NULL, 'f' },
+	    { "unfreeze",  no_argument, NULL, 'u' },
+	    { "version",   no_argument, NULL, 'V' },
+	    { NULL, 0, NULL, 0 }
 	};
 
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */

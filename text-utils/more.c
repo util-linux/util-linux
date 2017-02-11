@@ -1481,7 +1481,7 @@ void do_shell(char *filename)
 		putsout(shell_line);
 	else {
 		ttyin(cmdbuf, sizeof(cmdbuf) - 2, '!');
-		expanded = 0;
+		expanded = NULL;
 		rc = expand(&expanded, cmdbuf);
 		if (expanded) {
 			if (strlen(expanded) < sizeof(shell_line))
@@ -1634,7 +1634,7 @@ void execute(char *filename, char *cmd, ...)
 		signal(SIGQUIT, SIG_IGN);
 		if (catch_susp)
 			signal(SIGTSTP, SIG_DFL);
-		while (wait(0) > 0) ;
+		while (wait(NULL) > 0) ;
 		signal(SIGINT, end_it);
 		signal(SIGQUIT, onquit);
 		if (catch_susp)

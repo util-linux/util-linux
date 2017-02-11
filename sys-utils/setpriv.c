@@ -252,7 +252,7 @@ static void dump_label(const char *name)
 
 static void dump_groups(void)
 {
-	int n = getgroups(0, 0);
+	int n = getgroups(0, NULL);
 	gid_t *groups;
 
 	if (n < 0) {
@@ -602,27 +602,27 @@ int main(int argc, char **argv)
 	};
 
 	static const struct option longopts[] = {
-		{"dump", no_argument, 0, 'd'},
-		{"nnp", no_argument, 0, NNP},
-		{"no-new-privs", no_argument, 0, NNP},
-		{"inh-caps", required_argument, 0, INHCAPS},
-		{"list-caps", no_argument, 0, LISTCAPS},
-		{"ruid", required_argument, 0, RUID},
-		{"euid", required_argument, 0, EUID},
-		{"rgid", required_argument, 0, RGID},
-		{"egid", required_argument, 0, EGID},
-		{"reuid", required_argument, 0, REUID},
-		{"regid", required_argument, 0, REGID},
-		{"clear-groups", no_argument, 0, CLEAR_GROUPS},
-		{"keep-groups", no_argument, 0, KEEP_GROUPS},
-		{"groups", required_argument, 0, GROUPS},
-		{"bounding-set", required_argument, 0, CAPBSET},
-		{"securebits", required_argument, 0, SECUREBITS},
-		{"selinux-label", required_argument, 0, SELINUX_LABEL},
-		{"apparmor-profile", required_argument, 0, APPARMOR_PROFILE},
-		{"help", no_argument, 0, 'h'},
-		{"version", no_argument, 0, 'V'},
-		{NULL, 0, 0, 0}
+		{ "dump",             no_argument,       NULL, 'd'              },
+		{ "nnp",              no_argument,       NULL, NNP              },
+		{ "no-new-privs",     no_argument,       NULL, NNP              },
+		{ "inh-caps",         required_argument, NULL, INHCAPS          },
+		{ "list-caps",        no_argument,       NULL, LISTCAPS         },
+		{ "ruid",             required_argument, NULL, RUID             },
+		{ "euid",             required_argument, NULL, EUID             },
+		{ "rgid",             required_argument, NULL, RGID             },
+		{ "egid",             required_argument, NULL, EGID             },
+		{ "reuid",            required_argument, NULL, REUID            },
+		{ "regid",            required_argument, NULL, REGID            },
+		{ "clear-groups",     no_argument,       NULL, CLEAR_GROUPS     },
+		{ "keep-groups",      no_argument,       NULL, KEEP_GROUPS      },
+		{ "groups",           required_argument, NULL, GROUPS           },
+		{ "bounding-set",     required_argument, NULL, CAPBSET          },
+		{ "securebits",       required_argument, NULL, SECUREBITS       },
+		{ "selinux-label",    required_argument, NULL, SELINUX_LABEL    },
+		{ "apparmor-profile", required_argument, NULL, APPARMOR_PROFILE },
+		{ "help",             no_argument,       NULL, 'h'              },
+		{ "version",          no_argument,       NULL, 'V'              },
+		{ NULL, 0, NULL, 0 }
 	};
 
 	static const ul_excl_t excl[] = {

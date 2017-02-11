@@ -193,7 +193,7 @@ static void parse_args(struct eject_control *ctl, int argc, char **argv)
 		{"traytoggle",	no_argument,	   NULL, 'T'},
 		{"verbose",	no_argument,	   NULL, 'v'},
 		{"version",	no_argument,	   NULL, 'V'},
-		{0, 0, 0, 0}
+		{NULL, 0, NULL, 0}
 	};
 	int c;
 
@@ -845,7 +845,7 @@ int main(int argc, char **argv)
 	char *disk = NULL;
 	char *mountpoint = NULL;
 	int worked = 0;    /* set to 1 when successfully ejected */
-	struct eject_control ctl = { 0 };
+	struct eject_control ctl = { NULL };
 
 	setlocale(LC_ALL,"");
 	bindtextdomain(PACKAGE, LOCALEDIR);

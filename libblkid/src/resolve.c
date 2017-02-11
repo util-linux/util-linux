@@ -60,7 +60,7 @@ char *blkid_get_devname(blkid_cache cache, const char *token,
 {
 	blkid_dev dev;
 	blkid_cache c = cache;
-	char *t = 0, *v = 0;
+	char *t = NULL, *v = NULL;
 	char *ret = NULL;
 
 	if (!token)

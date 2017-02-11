@@ -239,7 +239,7 @@ int main(int argc, char *argv[])
 				cmd_argv[0] = _PATH_BSHELL;
 			cmd_argv[1] = "-c";
 			cmd_argv[2] = argv[optind + 2];
-			cmd_argv[3] = 0;
+			cmd_argv[3] = NULL;
 		} else {
 			cmd_argv = &argv[optind + 1];
 		}

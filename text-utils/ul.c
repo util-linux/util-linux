@@ -157,11 +157,11 @@ int main(int argc, char **argv)
 	FILE *f;
 
 	static const struct option longopts[] = {
-		{ "terminal",	required_argument,	0, 't' },
-		{ "indicated",	no_argument,		0, 'i' },
-		{ "version",	no_argument,		0, 'V' },
-		{ "help",	no_argument,		0, 'h' },
-		{ NULL, 0, 0, 0 }
+		{ "terminal",	required_argument,	NULL, 't' },
+		{ "indicated",	no_argument,		NULL, 'i' },
+		{ "version",	no_argument,		NULL, 'V' },
+		{ "help",	no_argument,		NULL, 'h' },
+		{ NULL, 0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");

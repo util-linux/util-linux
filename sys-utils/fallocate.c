@@ -294,19 +294,19 @@ int main(int argc, char **argv)
 	loff_t	offset = 0;
 
 	static const struct option longopts[] = {
-	    { "help",           0, 0, 'h' },
-	    { "version",        0, 0, 'V' },
-	    { "keep-size",      0, 0, 'n' },
-	    { "punch-hole",     0, 0, 'p' },
-	    { "collapse-range", 0, 0, 'c' },
-	    { "dig-holes",      0, 0, 'd' },
-	    { "insert-range",   0, 0, 'i' },
-	    { "zero-range",     0, 0, 'z' },
-	    { "offset",         1, 0, 'o' },
-	    { "length",         1, 0, 'l' },
-	    { "posix",          0, 0, 'x' },
-	    { "verbose",        0, 0, 'v' },
-	    { NULL,             0, 0, 0 }
+	    { "help",           no_argument,       NULL, 'h' },
+	    { "version",        no_argument,       NULL, 'V' },
+	    { "keep-size",      no_argument,       NULL, 'n' },
+	    { "punch-hole",     no_argument,       NULL, 'p' },
+	    { "collapse-range", no_argument,       NULL, 'c' },
+	    { "dig-holes",      no_argument,       NULL, 'd' },
+	    { "insert-range",   no_argument,       NULL, 'i' },
+	    { "zero-range",     no_argument,       NULL, 'z' },
+	    { "offset",         required_argument, NULL, 'o' },
+	    { "length",         required_argument, NULL, 'l' },
+	    { "posix",          no_argument,       NULL, 'x' },
+	    { "verbose",        no_argument,       NULL, 'v' },
+	    { NULL, 0, NULL, 0 }
 	};
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */

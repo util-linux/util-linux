@@ -329,12 +329,12 @@ int main(int argc, char **argv)
 	const char *filename = NULL;
 
 	static const struct option longopts[] = {
-		{ "follow",  0, 0, 'f' },
-		{ "reverse", 0, 0, 'r' },
-		{ "output",  required_argument, 0, 'o' },
-		{ "help",    0, 0, 'h' },
-		{ "version", 0, 0, 'V' },
-		{ NULL, 0, 0, 0 }
+		{ "follow",  no_argument,       NULL, 'f' },
+		{ "reverse", no_argument,       NULL, 'r' },
+		{ "output",  required_argument, NULL, 'o' },
+		{ "help",    no_argument,       NULL, 'h' },
+		{ "version", no_argument,       NULL, 'V' },
+		{ NULL, 0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");

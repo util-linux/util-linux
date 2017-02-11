@@ -129,11 +129,11 @@ static int get_shell_list(const char *shell_name)
 static void parse_argv(int argc, char **argv, struct sinfo *pinfo)
 {
 	static const struct option long_options[] = {
-		{"shell", required_argument, 0, 's'},
-		{"list-shells", no_argument, 0, 'l'},
-		{"help", no_argument, 0, 'h'},
-		{"version", no_argument, 0, 'v'},
-		{NULL, no_argument, 0, '0'},
+		{"shell",       required_argument, NULL, 's'},
+		{"list-shells", no_argument,       NULL, 'l'},
+		{"help",        no_argument,       NULL, 'h'},
+		{"version",     no_argument,       NULL, 'v'},
+		{NULL, 0, NULL, 0},
 	};
 	int c;
 
@@ -227,7 +227,7 @@ int main(int argc, char **argv)
 	char *oldshell;
 	int nullshell = 0;
 	const uid_t uid = getuid();
-	struct sinfo info = { 0 };
+	struct sinfo info = { NULL };
 	struct passwd *pw;
 
 	sanitize_env();

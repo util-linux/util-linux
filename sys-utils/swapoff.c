@@ -188,11 +188,11 @@ int main(int argc, char *argv[])
 	size_t i;
 
 	static const struct option long_opts[] = {
-		{ "all", 0, 0, 'a' },
-		{ "help", 0, 0, 'h' },
-		{ "verbose", 0, 0, 'v' },
-		{ "version", 0, 0, 'V' },
-		{ NULL, 0, 0, 0 }
+		{ "all",     no_argument, NULL, 'a' },
+		{ "help",    no_argument, NULL, 'h' },
+		{ "verbose", no_argument, NULL, 'v' },
+		{ "version", no_argument, NULL, 'V' },
+		{ NULL, 0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");
