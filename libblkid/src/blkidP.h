@@ -116,6 +116,11 @@ struct blkid_chaindrv {
 	void		(*free_data)(blkid_probe, void *);
 };
 
+/* chains */
+extern const struct blkid_chaindrv superblocks_drv;
+extern const struct blkid_chaindrv topology_drv;
+extern const struct blkid_chaindrv partitions_drv;
+
 /*
  * Low-level probe result
  */
