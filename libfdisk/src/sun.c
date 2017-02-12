@@ -1121,7 +1121,7 @@ static const struct fdisk_field sun_fields[] =
 	{ FDISK_FIELD_ATTR,	N_("Flags"),	  0,	FDISK_FIELDFL_NUMBER }
 };
 
-const struct fdisk_label_operations sun_operations =
+static const struct fdisk_label_operations sun_operations =
 {
 	.probe		= sun_probe_label,
 	.write		= sun_write_disklabel,

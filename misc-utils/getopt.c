@@ -97,8 +97,8 @@ struct getopt_control {
 enum { REALLOC_INCREMENT = 8 };
 
 /* Allow changing which getopt is in use with function pointer. */
-int (*getopt_long_fp) (int argc, char *const *argv, const char *optstr,
-		       const struct option * longopts, int *longindex);
+static int (*getopt_long_fp) (int argc, char *const *argv, const char *optstr,
+			      const struct option * longopts, int *longindex);
 
 /*
  * This function 'normalizes' a single argument: it puts single quotes

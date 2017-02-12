@@ -34,7 +34,7 @@
 /*
  * terminal-colors.d debug stuff
  */
-UL_DEBUG_DEFINE_MASK(termcolors);
+static UL_DEBUG_DEFINE_MASK(termcolors);
 UL_DEBUG_DEFINE_MASKNAMES(termcolors) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define TERMCOLORS_DEBUG_INIT	(1 << 1)

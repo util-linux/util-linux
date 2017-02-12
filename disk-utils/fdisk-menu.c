@@ -89,7 +89,7 @@ DECLARE_MENU_CB(generic_menu_cb);
 #define MENU_XENT_NEST(k, t, l, p)	{ .title = t, .key = k, .expert = 1, .label = l, .parent = p }
 
 /* Generic menu */
-struct menu menu_generic = {
+static const struct menu menu_generic = {
 	.callback	= generic_menu_cb,
 	.entries	= {
 		MENU_BSEP(N_("Generic")),
@@ -127,7 +127,7 @@ struct menu menu_generic = {
 	}
 };
 
-struct menu menu_createlabel = {
+static const struct menu menu_createlabel = {
 	.callback = createlabel_menu_cb,
 	.exclude = FDISK_DISKLABEL_BSD,
 	.nonested = 1,
@@ -145,7 +145,7 @@ struct menu menu_createlabel = {
 	}
 };
 
-struct menu menu_geo = {
+static const struct menu menu_geo = {
 	.callback = geo_menu_cb,
 	.exclude = FDISK_DISKLABEL_GPT | FDISK_DISKLABEL_BSD,
 	.entries = {
@@ -157,7 +157,7 @@ struct menu menu_geo = {
 	}
 };
 
-struct menu menu_gpt = {
+static const struct menu menu_gpt = {
 	.callback = gpt_menu_cb,
 	.label = FDISK_DISKLABEL_GPT,
 	.entries = {
@@ -178,7 +178,7 @@ struct menu menu_gpt = {
 	}
 };
 
-struct menu menu_sun = {
+static const struct menu menu_sun = {
 	.callback = sun_menu_cb,
 	.label = FDISK_DISKLABEL_SUN,
 	.entries = {
@@ -195,7 +195,7 @@ struct menu menu_sun = {
 	}
 };
 
-struct menu menu_sgi = {
+static const struct menu menu_sgi = {
 	.callback = sgi_menu_cb,
 	.label = FDISK_DISKLABEL_SGI,
 	.entries = {
@@ -208,7 +208,7 @@ struct menu menu_sgi = {
 	}
 };
 
-struct menu menu_dos = {
+static const struct menu menu_dos = {
 	.callback = dos_menu_cb,
 	.label = FDISK_DISKLABEL_DOS,
 	.entries = {
@@ -226,7 +226,7 @@ struct menu menu_dos = {
 	}
 };
 
-struct menu menu_bsd = {
+static const struct menu menu_bsd = {
 	.callback = bsd_menu_cb,
 	.label = FDISK_DISKLABEL_BSD,
 	.entries = {

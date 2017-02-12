@@ -55,7 +55,7 @@
 /*
  * sfdisk debug stuff (see fdisk.h and include/debug.h)
  */
-UL_DEBUG_DEFINE_MASK(sfdisk);
+static UL_DEBUG_DEFINE_MASK(sfdisk);
 UL_DEBUG_DEFINE_MASKNAMES(sfdisk) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define SFDISKPROG_DEBUG_INIT	(1 << 1)

@@ -35,7 +35,7 @@ struct drbdmanage_pers {
 } __attribute__ ((packed));
 
 
-const char persistence_magic[4] = "\x1a\xdb\x98\xa2";
+static const char persistence_magic[4] = "\x1a\xdb\x98\xa2";
 
 
 static int probe_drbdmanage(blkid_probe pr,

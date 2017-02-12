@@ -119,7 +119,7 @@ struct colinfo {
 };
 
 /* columns descriptions */
-struct colinfo infos[] = {
+static struct colinfo infos[] = {
 	[COL_RES]     = { "RESOURCE",    0.25, SCOLS_FL_TRUNC, N_("resource name") },
 	[COL_HELP]    = { "DESCRIPTION", 0.1,  SCOLS_FL_TRUNC, N_("resource description")},
 	[COL_SOFT]    = { "SOFT",        0.1,  SCOLS_FL_RIGHT, N_("soft limit")},

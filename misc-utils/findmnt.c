@@ -154,7 +154,7 @@ struct libmnt_cache *cache;
 
 
 #ifdef HAVE_LIBUDEV
-struct udev *udev;
+static struct udev *udev;
 #endif
 
 static int match_func(struct libmnt_fs *fs, void *data __attribute__ ((__unused__)));

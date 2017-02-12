@@ -46,7 +46,7 @@
 /*
  * Debug stuff (based on include/debug.h)
  */
-UL_DEBUG_DEFINE_MASK(loopdev);
+static UL_DEBUG_DEFINE_MASK(loopdev);
 UL_DEBUG_DEFINE_MASKNAMES(loopdev) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define LOOPDEV_DEBUG_INIT	(1 << 1)

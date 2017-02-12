@@ -136,56 +136,56 @@ void prepare_line_buffer(void);
 #define COMMAND_BUF	200
 #define REGERR_BUF	NUM_COLUMNS
 
-struct termios otty, savetty0;
-long file_pos, file_size;
-int fnum, no_intty, no_tty, slow_tty;
-int dum_opt, dlines;
-void onquit(int), onsusp(int), chgwinsz(int), end_it(int);
-int nscroll = SCROLL_LEN;	/* Number of lines scrolled by 'd' */
-int fold_opt = 1;		/* Fold long lines */
-int stop_opt = 1;		/* Stop after form feeds */
-int ssp_opt = 0;		/* Suppress white space */
-int ul_opt = 1;			/* Underline as best we can */
-int promptlen;
-int Currline;			/* Line we are currently at */
-int startup = 1;
-int firstf = 1;
-int notell = 1;
-int docrterase = 0;
-int docrtkill = 0;
-int bad_so;			/* True if overwriting does not turn
-				   off standout */
-int inwait, Pause, errors;
-int within;			/* true if we are within a file,
-				   false if we are between files */
-int hard, dumb, noscroll, hardtabs, clreol, eatnl;
-int catch_susp;			/* We should catch the SIGTSTP signal */
-char **fnames;			/* The list of file names */
-int nfiles;			/* Number of files left to process */
-char *shell;			/* The name of the shell to use */
-int shellp;			/* A previous shell command exists */
-sigjmp_buf restore;
-char *Line;			/* Line buffer */
-size_t LineLen;			/* size of Line buffer */
-int Lpp = LINES_PER_PAGE;	/* lines per page */
-char *Clear;			/* clear screen */
-char *eraseln;			/* erase line */
-char *Senter, *Sexit;		/* enter and exit standout mode */
-char *ULenter, *ULexit;		/* enter and exit underline mode */
-char *chUL;			/* underline character */
-char *chBS;			/* backspace character */
-char *Home;			/* go to home */
-char *cursorm;			/* cursor movement */
-char cursorhome[40];		/* contains cursor movement to home */
-char *EodClr;			/* clear rest of screen */
-int Mcol = NUM_COLUMNS;		/* number of columns */
-int Wrap = 1;			/* set if automargins */
-int soglitch;			/* terminal has standout mode glitch */
-int ulglitch;			/* terminal has underline mode glitch */
-int pstate = 0;			/* current UL state */
+static struct termios otty, savetty0;
+static long file_pos, file_size;
+static int fnum, no_intty, no_tty, slow_tty;
+static int dum_opt, dlines;
+static void onquit(int), onsusp(int), chgwinsz(int), end_it(int);
+static int nscroll = SCROLL_LEN;	/* Number of lines scrolled by 'd' */
+static int fold_opt = 1;		/* Fold long lines */
+static int stop_opt = 1;		/* Stop after form feeds */
+static int ssp_opt = 0;			/* Suppress white space */
+static int ul_opt = 1;			/* Underline as best we can */
+static int promptlen;
+static int Currline;			/* Line we are currently at */
+static int startup = 1;
+static int firstf = 1;
+static int notell = 1;
+static int docrterase = 0;
+static int docrtkill = 0;
+static int bad_so;			/* True if overwriting does not turn
+					   off standout */
+static int inwait, Pause, errors;
+static int within;			/* true if we are within a file,
+					   false if we are between files */
+static int hard, dumb, noscroll, hardtabs, clreol, eatnl;
+static int catch_susp;			/* We should catch the SIGTSTP signal */
+static char **fnames;			/* The list of file names */
+static int nfiles;			/* Number of files left to process */
+static char *shell;			/* The name of the shell to use */
+static int shellp;			/* A previous shell command exists */
+static sigjmp_buf restore;
+static char *Line;			/* Line buffer */
+static size_t LineLen;			/* size of Line buffer */
+static int Lpp = LINES_PER_PAGE;	/* lines per page */
+static char *Clear;			/* clear screen */
+static char *eraseln;			/* erase line */
+static char *Senter, *Sexit;		/* enter and exit standout mode */
+static char *ULenter, *ULexit;		/* enter and exit underline mode */
+static char *chUL;			/* underline character */
+static char *chBS;			/* backspace character */
+static char *Home;			/* go to home */
+static char *cursorm;			/* cursor movement */
+static char cursorhome[40];		/* contains cursor movement to home */
+static char *EodClr;			/* clear rest of screen */
+static int Mcol = NUM_COLUMNS;		/* number of columns */
+static int Wrap = 1;			/* set if automargins */
+static int soglitch;			/* terminal has standout mode glitch */
+static int ulglitch;			/* terminal has underline mode glitch */
+static int pstate = 0;			/* current UL state */
 static int magic(FILE *, char *);
-char *previousre;		/* previous search() buf[] item */
-struct {
+static char *previousre;		/* previous search() buf[] item */
+static struct {
 	long chrctr, line;
 } context, screen_start;
 extern char PC;			/* pad character */
@@ -631,7 +631,7 @@ void screen(register FILE *f, register int num_lines)
 }
 
 /* Come here if a quit signal is received */
-void onquit(int dummy __attribute__((__unused__)))
+static void onquit(int dummy __attribute__((__unused__)))
 {
 	signal(SIGQUIT, SIG_IGN);
 	if (!inwait) {
@@ -650,7 +650,7 @@ void onquit(int dummy __attribute__((__unused__)))
 
 /* Come here if a signal for a window size change is received */
 #ifdef SIGWINCH
-void chgwinsz(int dummy __attribute__((__unused__)))
+static void chgwinsz(int dummy __attribute__((__unused__)))
 {
 	struct winsize win;
 
@@ -671,7 +671,7 @@ void chgwinsz(int dummy __attribute__((__unused__)))
 #endif				/* SIGWINCH */
 
 /* Clean up terminal state and exit. Also come here if interrupt signal received */
-void __attribute__((__noreturn__)) end_it(int dummy __attribute__((__unused__)))
+static void __attribute__((__noreturn__)) end_it(int dummy __attribute__((__unused__)))
 {
 	/* May be executed as a signal handler as well as by main process.
 	 *
@@ -1096,7 +1096,7 @@ void home(void)
 
 static int lastcmd, lastarg, lastp;
 static int lastcolon;
-char shell_line[SHELL_LINE];
+static char shell_line[SHELL_LINE];
 
 /* Read a command and do it.  A command consists of an optional integer
  * argument followed by the command character.  Return the number of

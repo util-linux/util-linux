@@ -82,7 +82,7 @@ struct kill_control {
 		verbose:1;
 };
 
-struct signv {
+static const struct signv {
 	const char *name;
 	int val;
 } sys_signame[] = {

@@ -82,7 +82,7 @@ struct colinfo {
 };
 
 /* columns descriptions */
-struct colinfo infos[] = {
+static struct colinfo infos[] = {
 	[COL_PARTNO]   = { "NR",    0.25, SCOLS_FL_RIGHT, N_("partition number") },
 	[COL_START]    = { "START",   0.30, SCOLS_FL_RIGHT, N_("start of the partition in sectors") },
 	[COL_END]      = { "END",     0.30, SCOLS_FL_RIGHT, N_("end of the partition in sectors") },
@@ -99,7 +99,7 @@ struct colinfo infos[] = {
 
 /* array with IDs of enabled columns */
 static int columns[NCOLS];
-size_t ncolumns;
+static size_t ncolumns;
 
 static int verbose;
 static int partx_flags;

@@ -32,11 +32,11 @@
 
 #define RAW_NR_MINORS 8192
 
-int do_query;
-int do_query_all;
+static int do_query;
+static int do_query_all;
 
-int master_fd;
-int raw_minor;
+static int master_fd;
+static int raw_minor;
 
 void open_raw_ctl(void);
 static int query(int minor_raw, const char *raw_name, int quiet);

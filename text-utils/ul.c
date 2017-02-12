@@ -70,7 +70,6 @@ static int put1wc(int c)
 #define putwp(s) putp(s)
 #endif
 
-static void usage(FILE *out);
 static int handle_escape(FILE * f);
 static void filter(FILE *f);
 static void flushln(void);
@@ -101,33 +100,33 @@ static void print_out(char *line);
 #define	UNDERL	010	/* Ul */
 #define	BOLD	020	/* Bold */
 
-int	must_use_uc, must_overstrike;
-char	*CURS_UP,
-	*CURS_RIGHT,
-	*CURS_LEFT,
-	*ENTER_STANDOUT,
-	*EXIT_STANDOUT,
-	*ENTER_UNDERLINE,
-	*EXIT_UNDERLINE,
-	*ENTER_DIM,
-	*ENTER_BOLD,
-	*ENTER_REVERSE,
-	*UNDER_CHAR,
-	*EXIT_ATTRIBUTES;
+static int	must_use_uc, must_overstrike;
+static char	*CURS_UP,
+		*CURS_RIGHT,
+		*CURS_LEFT,
+		*ENTER_STANDOUT,
+		*EXIT_STANDOUT,
+		*ENTER_UNDERLINE,
+		*EXIT_UNDERLINE,
+		*ENTER_DIM,
+		*ENTER_BOLD,
+		*ENTER_REVERSE,
+		*UNDER_CHAR,
+		*EXIT_ATTRIBUTES;
 
-struct	CHAR	{
+struct CHAR {
 	char	c_mode;
 	wchar_t	c_char;
 	int	c_width;
 };
 
-struct	CHAR	*obuf;
-int	obuflen;
-int	col, maxcol;
-int	mode;
-int	halfpos;
-int	upln;
-int	iflag;
+static struct	CHAR	*obuf;
+static int	obuflen;
+static int	col, maxcol;
+static int	mode;
+static int	halfpos;
+static int	upln;
+static int	iflag;
 
 static void __attribute__((__noreturn__))
 usage(FILE *out)

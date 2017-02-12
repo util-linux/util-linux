@@ -90,7 +90,7 @@ static int hwaudit_fd = -1;
 #endif
 
 /* The struct that holds our hardware access routines */
-struct clock_ops *ur;
+static struct clock_ops *ur;
 
 /* Maximal clock adjustment in seconds per day.
    (adjtime() glibc call has 2145 seconds limit on i386, so it is good enough for us as well,

@@ -111,14 +111,14 @@ void flush_lines(int);
 void flush_blanks(void);
 LINE *alloc_line(void);
 
-CSET last_set;			/* char_set of last char printed */
-LINE *lines;
-int compress_spaces;		/* if doing space -> tab conversion */
-int fine;			/* if `fine' resolution (half lines) */
-unsigned max_bufd_lines;	/* max # lines to keep in memory */
-int nblank_lines;		/* # blanks after last flushed line */
-int no_backspaces;		/* if not to output any backspaces */
-int pass_unknown_seqs;		/* whether to pass unknown control sequences */
+static CSET last_set;			/* char_set of last char printed */
+static LINE *lines;
+static int compress_spaces;		/* if doing space -> tab conversion */
+static int fine;			/* if `fine' resolution (half lines) */
+static unsigned max_bufd_lines;		/* max # lines to keep in memory */
+static int nblank_lines;		/* # blanks after last flushed line */
+static int no_backspaces;		/* if not to output any backspaces */
+static int pass_unknown_seqs;		/* whether to pass unknown control sequences */
 
 #define	PUTC(ch) \
 	if (putwchar(ch) == WEOF) \

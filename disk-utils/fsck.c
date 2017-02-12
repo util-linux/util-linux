@@ -931,7 +931,7 @@ err:
 /*
  * Deal with the fsck -t argument.
  */
-struct fs_type_compile {
+static struct fs_type_compile {
 	char **list;
 	int *type;
 	int  negate;

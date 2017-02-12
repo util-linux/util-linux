@@ -73,7 +73,7 @@
 
 #include "debug.h"
 
-UL_DEBUG_DEFINE_MASK(script);
+static UL_DEBUG_DEFINE_MASK(script);
 UL_DEBUG_DEFINE_MASKNAMES(script) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define SCRIPT_DEBUG_INIT	(1 << 1)

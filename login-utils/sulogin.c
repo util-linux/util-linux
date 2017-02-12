@@ -71,11 +71,11 @@ static unsigned int timeout;
 static int profile;
 static volatile uint32_t openfd;		/* Remember higher file descriptors */
 
-struct sigaction saved_sigint;
-struct sigaction saved_sigtstp;
-struct sigaction saved_sigquit;
-struct sigaction saved_sighup;
-struct sigaction saved_sigchld;
+static struct sigaction saved_sigint;
+static struct sigaction saved_sigtstp;
+static struct sigaction saved_sigquit;
+static struct sigaction saved_sighup;
+static struct sigaction saved_sigchld;
 
 static volatile sig_atomic_t alarm_rised;
 static volatile sig_atomic_t sigchild;

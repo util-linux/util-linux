@@ -596,7 +596,7 @@ static void print_shm(int shmid, int unit)
 	ipc_shm_free_info(shmdata);
 }
 
-void print_msg(int msgid, int unit)
+static void print_msg(int msgid, int unit)
 {
 	struct msg_data *msgdata;
 

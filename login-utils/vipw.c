@@ -81,9 +81,9 @@ enum {
 	VIPW,
 	VIGR
 };
-int program;
-char orig_file[FILENAMELEN];	/* original file /etc/passwd or /etc/group */
-char *tmp_file;			/* tmp file */
+static int program;
+static char orig_file[FILENAMELEN];	/* original file /etc/passwd or /etc/group */
+static char *tmp_file;			/* tmp file */
 
 void pw_error (char *, int, int);
 

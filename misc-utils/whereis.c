@@ -57,7 +57,7 @@
 
 #include "debug.h"
 
-UL_DEBUG_DEFINE_MASK(whereis);
+static UL_DEBUG_DEFINE_MASK(whereis);
 UL_DEBUG_DEFINE_MASKNAMES(whereis) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define WHEREIS_DEBUG_INIT	(1 << 1)

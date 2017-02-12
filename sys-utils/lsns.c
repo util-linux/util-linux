@@ -44,7 +44,7 @@
 
 #include "debug.h"
 
-UL_DEBUG_DEFINE_MASK(lsns);
+static UL_DEBUG_DEFINE_MASK(lsns);
 UL_DEBUG_DEFINE_MASKNAMES(lsns) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define LSNS_DEBUG_INIT		(1 << 1)
@@ -55,7 +55,7 @@ UL_DEBUG_DEFINE_MASKNAMES(lsns) = UL_DEBUG_EMPTY_MASKNAMES;
 #define DBG(m, x)       __UL_DBG(lsns, LSNS_DEBUG_, m, x)
 #define ON_DBG(m, x)    __UL_DBG_CALL(lsns, LSNS_DEBUG_, m, x)
 
-struct idcache *uid_cache = NULL;
+static struct idcache *uid_cache = NULL;
 
 /* column IDs */
 enum {

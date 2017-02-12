@@ -66,12 +66,12 @@
 #  undef __i386__
 #  undef __x86_64__
 #  warning "disable cmos access - no sys/io.h or asm/io.h"
-void outb(int a __attribute__((__unused__)),
-	  int b __attribute__((__unused__)))
+static void outb(int a __attribute__((__unused__)),
+		 int b __attribute__((__unused__)))
 {
 }
 
-int inb(int c __attribute__((__unused__)))
+static int inb(int c __attribute__((__unused__)))
 {
 	return 0;
 }
@@ -117,7 +117,7 @@ static int inb(int c __attribute__((__unused__)))
  * like SRM.) It is reported that ALPHA_PRE_V1_2_SRM_CONSOLE uses 1958.
  */
 #define TM_EPOCH 1900
-int cmos_epoch = 1900;
+static int cmos_epoch = 1900;
 
 /*
  * Martin Ostermann writes:
@@ -133,18 +133,18 @@ int cmos_epoch = 1900;
  * Jensen when USE_DEV_PORT was defined, but not with the normal inb/outb
  * functions.
  */
-int use_dev_port = 0;		/* 1 for Jensen */
-int dev_port_fd;
-unsigned short clock_ctl_addr = 0x70;	/* 0x170 for Jensen */
-unsigned short clock_data_addr = 0x71;	/* 0x171 for Jensen */
+static int use_dev_port = 0;		/* 1 for Jensen */
+static int dev_port_fd;
+static unsigned short clock_ctl_addr = 0x70;	/* 0x170 for Jensen */
+static unsigned short clock_data_addr = 0x71;	/* 0x171 for Jensen */
 
-int century_byte = 0;		/* 0: don't access a century byte
-				 * 50 (0x32): usual PC value
-				 * 55 (0x37): PS/2
-				 */
+static int century_byte = 0;		/* 0: don't access a century byte
+					 * 50 (0x32): usual PC value
+					 * 55 (0x37): PS/2
+					 */
 
 #ifdef __alpha__
-int funkyTOY = 0;		/* 1 for PC164/LX164/SX164 type alpha */
+static int funkyTOY = 0;		/* 1 for PC164/LX164/SX164 type alpha */
 #endif
 
 #ifdef __alpha

@@ -96,7 +96,7 @@ enum {
 };
 
 /* Current command */
-struct {
+static struct {
 	char cmdline[CMDBUF];
 	size_t cmdlen;
 	int count;
@@ -106,42 +106,42 @@ struct {
 } cmd;
 
 /* Position of file arguments on argv[] to main() */
-struct {
+static struct {
 	int first;
 	int current;
 	int last;
 } files;
 
-void (*oldint) (int);		/* old SIGINT handler */
-void (*oldquit) (int);		/* old SIGQUIT handler */
-void (*oldterm) (int);		/* old SIGTERM handler */
-char *tty;			/* result of ttyname(1) */
-unsigned ontty;			/* whether running on tty device */
-unsigned exitstatus;		/* exit status */
-int pagelen = 23;		/* lines on a single screen page */
-int ttycols = 79;		/* screen columns (starting at 0) */
-struct termios otio;		/* old termios settings */
-int tinfostat = -1;		/* terminfo routines initialized */
-int searchdisplay = TOP;	/* matching line position */
-regex_t re;			/* regular expression to search for */
-int remembered;			/* have a remembered search string */
-int cflag;			/* clear screen before each page */
-int eflag;			/* suppress (EOF) */
-int fflag;			/* do not split lines */
-int nflag;			/* no newline for commands required */
-int rflag;			/* "restricted" pg */
-int sflag;			/* use standout mode */
-const char *pstring = ":";	/* prompt string */
-char *searchfor;		/* search pattern from argv[] */
-int havepagelen;		/* page length is manually defined */
-long startline;			/* start line from argv[] */
-int nextfile = 1;		/* files to advance */
-jmp_buf jmpenv;			/* jump from signal handlers */
-int canjump;			/* jmpenv is valid */
-wchar_t wbuf[READBUF];		/* used in several widechar routines */
+static void (*oldint) (int);		/* old SIGINT handler */
+static void (*oldquit) (int);		/* old SIGQUIT handler */
+static void (*oldterm) (int);		/* old SIGTERM handler */
+static char *tty;			/* result of ttyname(1) */
+static unsigned ontty;			/* whether running on tty device */
+static unsigned exitstatus;		/* exit status */
+static int pagelen = 23;		/* lines on a single screen page */
+static int ttycols = 79;		/* screen columns (starting at 0) */
+static struct termios otio;		/* old termios settings */
+static int tinfostat = -1;		/* terminfo routines initialized */
+static int searchdisplay = TOP;	/* matching line position */
+static regex_t re;			/* regular expression to search for */
+static int remembered;			/* have a remembered search string */
+static int cflag;			/* clear screen before each page */
+static int eflag;			/* suppress (EOF) */
+static int fflag;			/* do not split lines */
+static int nflag;			/* no newline for commands required */
+static int rflag;			/* "restricted" pg */
+static int sflag;			/* use standout mode */
+static const char *pstring = ":";	/* prompt string */
+static char *searchfor;		/* search pattern from argv[] */
+static int havepagelen;		/* page length is manually defined */
+static long startline;			/* start line from argv[] */
+static int nextfile = 1;		/* files to advance */
+static jmp_buf jmpenv;			/* jump from signal handlers */
+static int canjump;			/* jmpenv is valid */
+static wchar_t wbuf[READBUF];		/* used in several widechar routines */
 
-char *copyright;
-const char *helpscreen = N_("\
+static char *copyright;
+static const char *helpscreen = N_("\
 -------------------------------------------------------\n\
   h                       this screen\n\
   q or Q                  quit program\n\

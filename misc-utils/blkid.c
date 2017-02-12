@@ -46,7 +46,7 @@
 #include "ttyutils.h"
 #include "xalloc.h"
 
-int raw_chars;
+static int raw_chars;
 
 static void print_version(FILE *out)
 {

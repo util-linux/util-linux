@@ -104,14 +104,14 @@ enum {
 	VIRT_FULL,
 	VIRT_CONT
 };
-const char *virt_types[] = {
+static const char *virt_types[] = {
 	[VIRT_NONE]	= N_("none"),
 	[VIRT_PARA]	= N_("para"),
 	[VIRT_FULL]	= N_("full"),
 	[VIRT_CONT]	= N_("container"),
 };
 
-const char *hv_vendors[] = {
+static const char *hv_vendors[] = {
 	[HYPER_NONE]	= NULL,
 	[HYPER_XEN]	= "Xen",
 	[HYPER_KVM]	= "KVM",
@@ -130,7 +130,7 @@ const char *hv_vendors[] = {
 	[HYPER_WSL]	= "Windows Subsystem for Linux"
 };
 
-const int hv_vendor_pci[] = {
+static const int hv_vendor_pci[] = {
 	[HYPER_NONE]	= 0x0000,
 	[HYPER_XEN]	= 0x5853,
 	[HYPER_KVM]	= 0x0000,
@@ -139,7 +139,7 @@ const int hv_vendor_pci[] = {
 	[HYPER_VBOX]	= 0x80ee,
 };
 
-const int hv_graphics_pci[] = {
+static const int hv_graphics_pci[] = {
 	[HYPER_NONE]	= 0x0000,
 	[HYPER_XEN]	= 0x0001,
 	[HYPER_KVM]	= 0x0000,
@@ -169,7 +169,7 @@ enum {
 	DISP_VERTICAL	= 1
 };
 
-const char *disp_modes[] = {
+static const char *disp_modes[] = {
 	[DISP_HORIZONTAL]	= N_("horizontal"),
 	[DISP_VERTICAL]		= N_("vertical")
 };
@@ -188,7 +188,7 @@ struct polarization_modes {
 	char *readable;
 };
 
-struct polarization_modes polar_modes[] = {
+static struct polarization_modes polar_modes[] = {
 	[POLAR_UNKNOWN]	   = {"U",  "-"},
 	[POLAR_VLOW]	   = {"VL", "vert-low"},
 	[POLAR_VMEDIUM]	   = {"VM", "vert-medium"},

@@ -63,7 +63,7 @@
 
 #include "debug.h"
 
-UL_DEBUG_DEFINE_MASK(lsblk);
+static UL_DEBUG_DEFINE_MASK(lsblk);
 UL_DEBUG_DEFINE_MASKNAMES(lsblk) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define LSBLK_DEBUG_INIT	(1 << 1)
@@ -216,7 +216,7 @@ struct lsblk {
 	unsigned int sort_hidden:1;	/* sort column not between output columns */
 };
 
-struct lsblk *lsblk;	/* global handler */
+static struct lsblk *lsblk;	/* global handler */
 
 /* columns[] array specifies all currently wanted output column. The columns
  * are defined by infos[] array and you can specify (on command line) each
@@ -247,7 +247,7 @@ static struct libmnt_table *mtab, *swaps;
 static struct libmnt_cache *mntcache;
 
 #ifdef HAVE_LIBUDEV
-struct udev *udev;
+static struct udev *udev;
 #endif
 
 struct blkdev_cxt {

@@ -308,8 +308,8 @@ static void print(wchar_t **list, int entries)
 	}
 }
 
-wchar_t *local_wcstok(wchar_t * p, const wchar_t * separator, int greedy,
-		      wchar_t ** wcstok_state)
+static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy,
+			     wchar_t **wcstok_state)
 {
 	wchar_t *result;
 	if (greedy)

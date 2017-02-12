@@ -69,11 +69,11 @@
 
 static int fd;			/* ROM image file descriptor */
 static char *filename;		/* ROM image filename */
-struct cramfs_super super;	/* just find the cramfs superblock once */
+static struct cramfs_super super;	/* just find the cramfs superblock once */
 static int cramfs_is_big_endian = 0;	/* source is big endian */
 static int opt_verbose = 0;	/* 1 = verbose (-v), 2+ = very verbose (-vv) */
 static int opt_extract = 0;	/* extract cramfs (-x) */
-char *extract_dir = "";		/* optional extraction directory (-x) */
+static char *extract_dir = "";		/* optional extraction directory (-x) */
 
 #define PAD_SIZE 512
 

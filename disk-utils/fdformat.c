@@ -20,7 +20,7 @@
 
 #define SECTOR_SIZE 512
 
-struct floppy_struct param;
+static struct floppy_struct param;
 
 
 static void format_begin(int ctrl)

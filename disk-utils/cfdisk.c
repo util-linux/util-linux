@@ -150,8 +150,8 @@ static int ui_resize;
 
 /* ncurses LINES and COLS may be actual variables or *macros*, but we need
  * something portable and writable */
-size_t ui_lines;
-size_t ui_cols;
+static size_t ui_lines;
+static size_t ui_cols;
 
 /* menu item */
 struct cfdisk_menuitem {
@@ -245,7 +245,7 @@ struct cfdisk {
 /*
  * let's use include/debug.h stuff for cfdisk too
  */
-UL_DEBUG_DEFINE_MASK(cfdisk);
+static UL_DEBUG_DEFINE_MASK(cfdisk);
 UL_DEBUG_DEFINE_MASKNAMES(cfdisk) = UL_DEBUG_EMPTY_MASKNAMES;
 
 #define CFDISK_DEBUG_INIT	(1 << 1)

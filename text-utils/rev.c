@@ -64,7 +64,7 @@
 #include "c.h"
 #include "closestream.h"
 
-wchar_t *buf;
+static wchar_t *buf;
 
 static void sig_handler(int signo __attribute__ ((__unused__)))
 {
