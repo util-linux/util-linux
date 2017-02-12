@@ -26,7 +26,7 @@ struct identry *get_id(struct idcache *ic, unsigned long int id)
 	return NULL;
 }
 
-struct idcache *new_idcache()
+struct idcache *new_idcache(void)
 {
 	return calloc(1, sizeof(struct idcache));
 }
