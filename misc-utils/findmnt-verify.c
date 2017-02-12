@@ -328,14 +328,15 @@ static int read_proc_filesystems(struct verify_context *vfy)
 
 		rc = add_filesystem(vfy, cp);
 		if (rc)
-			return rc;
+			break;
 	}
 	fclose(f);
-	return 0;
+	return rc;
 }
 
 static int read_kernel_filesystems(struct verify_context *vfy)
 {
+	int rc = 0;
 #ifdef __linux__
 	struct utsname uts;
 	FILE *f;
@@ -351,7 +352,6 @@ static int read_kernel_filesystems(struct verify_context *vfy)
 
 	while (!feof(f)) {
 		char *p, *name;
-		int rc;
 
 		if (!fgets(buf, sizeof(buf), f))
 			break;
@@ -377,11 +377,11 @@ static int read_kernel_filesystems(struct verify_context *vfy)
 
 		rc = add_filesystem(vfy, name);
 		if (rc)
-			return rc;
+			break;
 	}
 	fclose(f);
 #endif /* __linux__ */
-	return 0;
+	return rc;
 }
 
 static int verify_fstype(struct verify_context *vfy)
