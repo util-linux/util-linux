@@ -53,7 +53,7 @@ static int string_replace(char *from, char *to, char *s, char *orig, char **newn
 	return 0;
 }
 
-static int do_symlink(char *from, char *to, char *s, int verbose)
+static int do_symlink(char *from, char *to, char *s, int verbose, int noact)
 {
 	char *newname = NULL, *target = NULL;
 	int ret = 1;
@@ -76,21 +76,21 @@ static int do_symlink(char *from, char *to, char *s, int verbose)
 	target[sb.st_size] = '\0';
 	if (string_replace(from, to, target, target, &newname))
 		ret = 0;
-	else if (0 > unlink(s)) {
+	else if (!noact && 0 > unlink(s)) {
 		warn(_("%s: unlink failed"), s);
 		ret = 2;
-	} else if (symlink(newname, s) != 0) {
+	} else if (!noact && symlink(newname, s) != 0) {
 		warn(_("%s: symlinking to %s failed"), s, newname);
 		ret = 2;
 	}
-	if (verbose && ret == 1)
+	if (verbose && (noact || ret == 1))
 		printf("%s: `%s' -> `%s'\n", s, target, newname);
 	free(newname);
 	free(target);
 	return ret;
 }
 
-static int do_file(char *from, char *to, char *s, int verbose)
+static int do_file(char *from, char *to, char *s, int verbose, int noact)
 {
 	char *newname = NULL, *file=NULL;
 	int ret = 1;
@@ -101,11 +101,11 @@ static int do_file(char *from, char *to, char *s, int verbose)
 		file = s;
 	if (string_replace(from, to, file, s, &newname))
 		return 0;
-	else if (rename(s, newname) != 0) {
+	else if (!noact && rename(s, newname) != 0) {
 		warn(_("%s: rename to %s failed"), s, newname);
 		ret = 2;
 	}
-	if (verbose && ret == 1)
+	if (verbose && (noact || ret == 1))
 		printf("`%s' -> `%s'\n", s, newname);
 	free(newname);
 	return ret;
@@ -124,6 +124,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -v, --verbose    explain what is being done\n"), out);
 	fputs(_(" -s, --symlink    act on the target of symlinks\n"), out);
+	fputs(_(" -n, --no-act     do not make any changes\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -134,13 +135,14 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 int main(int argc, char **argv)
 {
 	char *from, *to;
-	int i, c, ret = 0, verbose = 0;
-	int (*do_rename)(char *from, char *to, char *s, int verbose) = do_file;
+	int i, c, ret = 0, verbose = 0, noact = 0;
+	int (*do_rename)(char *from, char *to, char *s, int verbose, int noact) = do_file;
 
 	static const struct option longopts[] = {
 		{"verbose", no_argument, NULL, 'v'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
+		{"no-act", no_argument, NULL, 'n'},
 		{"symlink", no_argument, NULL, 's'},
 		{NULL, 0, NULL, 0}
 	};
@@ -150,10 +152,13 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "vsVh", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "vsVhn", longopts, NULL)) != -1)
 		switch (c) {
 		case 'v':
 			verbose = 1;
+			break;
+		case 'n':
+			noact = 1;
 			break;
 		case 's':
 			do_rename = do_symlink;
@@ -163,6 +168,7 @@ int main(int argc, char **argv)
 			return EXIT_SUCCESS;
 		case 'h':
 			usage(stdout);
+			/* fallthrough */
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
@@ -179,7 +185,7 @@ int main(int argc, char **argv)
 	to = argv[1];
 
 	for (i = 2; i < argc; i++)
-		ret |= do_rename(from, to, argv[i], verbose);
+		ret |= do_rename(from, to, argv[i], verbose, noact);
 
 	switch (ret) {
 	case 0:
