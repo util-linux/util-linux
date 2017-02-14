@@ -317,6 +317,12 @@ static void dos_init(struct fdisk_context *cxt)
 		pe->sectorbuffer = cxt->firstsector;
 		pe->private_sectorbuffer = 0;
 		pe->changed = 0;
+
+		DBG(LABEL, ul_debug("DOS: initialize: #%zu start=%u size=%u sysid=%02x",
+					i + 1,
+					dos_partition_get_start(pe->pt_entry),
+					dos_partition_get_size(pe->pt_entry),
+					pe->pt_entry->sys_ind));
 	}
 
 	if (fdisk_is_listonly(cxt))
