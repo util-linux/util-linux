@@ -367,6 +367,10 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 	lb = fdisk_get_label(cxt, name);
 	if (!lb || lb->disabled)
 		return -EINVAL;
+
+	if (!haslabel || (lb && cxt->label != lb))
+		fdisk_check_collisions(cxt);
+
 	if (!lb->op->create)
 		return -ENOSYS;
 

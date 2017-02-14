@@ -477,5 +477,6 @@ void fdisk_free_wipe_areas(struct fdisk_context *cxt);
 int fdisk_set_wipe_area(struct fdisk_context *cxt, uint64_t start, uint64_t size, int enable);
 int fdisk_do_wipe(struct fdisk_context *cxt);
 int fdisk_has_wipe_area(struct fdisk_context *cxt, uint64_t start, uint64_t size);
+int fdisk_check_collisions(struct fdisk_context *cxt);
 
 #endif /* _LIBFDISK_PRIVATE_H */

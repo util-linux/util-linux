@@ -500,55 +500,6 @@ static void reset_context(struct fdisk_context *cxt)
 	fdisk_free_wipe_areas(cxt);
 }
 
-/*
- * This function prints a warning if the device is not wiped (e.g. wipefs(8).
- * Please don't call this function if there is already a PT.
- *
- * Returns: 0 if nothing found, < 0 on error, 1 if found a signature
- */
-static int check_collisions(struct fdisk_context *cxt)
-{
-#ifdef HAVE_LIBBLKID
-	int rc = 0;
-	blkid_probe pr;
-
-	assert(cxt);
-	assert(cxt->dev_fd >= 0);
-
-	DBG(CXT, ul_debugobj(cxt, "wipe check: initialize libblkid prober"));
-
-	pr = blkid_new_probe();
-	if (!pr)
-		return -ENOMEM;
-	rc = blkid_probe_set_device(pr, cxt->dev_fd, 0, 0);
-	if (rc)
-		return rc;
-
-	blkid_probe_enable_superblocks(pr, 1);
-	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_TYPE);
-	blkid_probe_enable_partitions(pr, 1);
-
-	/* we care about the first found FS/raid, so don't call blkid_do_probe()
-	 * in loop or don't use blkid_do_fullprobe() ... */
-	rc = blkid_do_probe(pr);
-	if (rc == 0) {
-		const char *name = NULL;
-
-		if (blkid_probe_lookup_value(pr, "TYPE", &name, 0) == 0 ||
-		    blkid_probe_lookup_value(pr, "PTTYPE", &name, 0) == 0) {
-			cxt->collision = strdup(name);
-			if (!cxt->collision)
-				rc = -ENOMEM;
-		}
-	}
-
-	blkid_free_probe(pr);
-	return rc;
-#else
-	return 0;
-#endif
-}
-
 /**
  * fdisk_assign_device:
  * @cxt: context
@@ -621,7 +572,8 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 
 	/* warn about obsolete stuff on the device if we aren't in
 	 * list-only mode and there is not PT yet */
-	if (!fdisk_is_listonly(cxt) && !fdisk_has_label(cxt) && check_collisions(cxt) < 0)
+	if (!fdisk_is_listonly(cxt) && !fdisk_has_label(cxt)
+	    && fdisk_check_collisions(cxt) < 0)
 		goto fail;
 
 	DBG(CXT, ul_debugobj(cxt, "initialized for %s [%s]",
