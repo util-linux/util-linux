@@ -226,9 +226,11 @@ This option allows to edit for example a hybrid/protective MBR on devices with G
 Wipe filesystem, RAID and partition-table signatures from the device, in order
 to avoid possible collisions.  The argument \fIwhen\fR can be \fBauto\fR,
 \fBnever\fR or \fBalways\fR.  When this option is not given, the default is
-\fBauto\fR, in which case signatures are wiped only when in interactive mode.
-In all cases detected signatures are reported by warning messages
-before a new partition table is created.  See also
+\fBauto\fR, in which case signatures are wiped only when in interactive mode;
+except the old partition-table signatures which are always wiped before create
+a new partition-table if the argument \fIwhen\fR is not \fBnever\fR. In all
+cases detected signatures are reported by warning messages before a new
+partition table is created.  See also
 .BR wipefs (8)
 command.
 

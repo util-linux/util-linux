@@ -1462,6 +1462,36 @@ static int ignore_partition(struct fdisk_partition *pa)
 	return 0;
 }
 
+static void follow_wipe_mode(struct sfdisk *sf)
+{
+	int dowipe = sf->wipemode == WIPEMODE_ALWAYS ? 1 : 0;
+
+	if (sf->interactive && sf->wipemode == WIPEMODE_AUTO)
+		dowipe = 1;	/* do it in interactive mode */
+
+	if (fdisk_is_ptcollision(sf->cxt) && sf->wipemode != WIPEMODE_NEVER)
+		dowipe = 1;	/* always wipe old PT */
+
+	fdisk_enable_wipe(sf->cxt, dowipe);
+	if (sf->quiet)
+		return;
+
+	if (dowipe) {
+		if (!fdisk_is_ptcollision(sf->cxt)) {
+			fdisk_info(sf->cxt, _("The old %s signature will be removed by a write command."),
+					fdisk_get_collision(sf->cxt));
+			fputc('\n', stderr);
+		}
+	} else {
+		fdisk_warnx(sf->cxt, _(
+			"The old %s signature may remain on the device. "
+			"It is recommended to wipe the device with wipefs(8) or "
+			"sfdisk --wipe, in order to avoid possible collisions."),
+			fdisk_get_collision(sf->cxt));
+		fputc('\n', stderr);
+	}
+}
+
 static int wipe_partition(struct sfdisk *sf, size_t partno)
 {
 	int rc, yes = 0;
@@ -1612,25 +1642,8 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 			fputs(_(" OK\n\n"), stdout);
 	}
 
-	if (fdisk_get_collision(sf->cxt)) {
-		int dowipe = sf->wipemode == WIPEMODE_ALWAYS ? 1 : 0;
-
-		fdisk_warnx(sf->cxt, _("Device %s already contains a %s signature."),
-			devname, fdisk_get_collision(sf->cxt));
-
-		if (sf->interactive && sf->wipemode == WIPEMODE_AUTO)
-			dowipe = 1;	/* do it in interactive mode */
-
-		fdisk_enable_wipe(sf->cxt, dowipe);
-		if (dowipe)
-			fdisk_warnx(sf->cxt, _(
-				"The signature will be removed by a write command."));
-		else
-			fdisk_warnx(sf->cxt, _(
-				"It is strongly recommended to wipe the device with "
-				"wipefs(8), in order to avoid possible collisions."));
-		fputc('\n', stderr);
-	}
+	if (fdisk_get_collision(sf->cxt))
+		follow_wipe_mode(sf);
 
 	if (sf->backup)
 		backup_partition_table(sf, devname);
@@ -1728,6 +1741,9 @@ static int command_fdisk(struct sfdisk *sf, int argc, char **argv)
 					fdisk_warnx(sf->cxt, _(
 					  "Failed to apply script headers, "
 					  "disk label not created."));
+
+				if (rc == 0 && fdisk_get_collision(sf->cxt))
+					follow_wipe_mode(sf);
 			}
 			if (!rc && partno >= 0) {	/* -N <partno>, modify partition */
 				rc = fdisk_set_partition(sf->cxt, partno, pa);
