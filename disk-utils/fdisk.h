@@ -49,4 +49,6 @@ extern void change_partition_type(struct fdisk_context *cxt);
 
 extern void toggle_dos_compatibility_flag(struct fdisk_context *cxt);
 
+extern void follow_wipe_mode(struct fdisk_context *cxt);
+
 #endif /* UTIL_LINUX_FDISK_H */

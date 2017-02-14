@@ -1032,22 +1032,25 @@ static int createlabel_menu_cb(struct fdisk_context **cxt0,
 			rc = fdisk_create_disklabel(cxt, "sgi");
 			break;
 		}
-		return rc;
+	} else {
+		switch (ent->key) {
+			case 'g':
+				rc = fdisk_create_disklabel(cxt, "gpt");
+				break;
+			case 'G':
+				rc = fdisk_create_disklabel(cxt, "sgi");
+				break;
+			case 'o':
+				rc = fdisk_create_disklabel(cxt, "dos");
+				break;
+			case 's':
+				rc = fdisk_create_disklabel(cxt, "sun");
+				break;
+		}
 	}
 
-	switch (ent->key) {
-		case 'g':
-			fdisk_create_disklabel(cxt, "gpt");
-			break;
-		case 'G':
-			fdisk_create_disklabel(cxt, "sgi");
-			break;
-		case 'o':
-			fdisk_create_disklabel(cxt, "dos");
-			break;
-		case 's':
-			fdisk_create_disklabel(cxt, "sun");
-			break;
-	}
+	if (rc == 0 && fdisk_get_collision(cxt))
+		follow_wipe_mode(cxt);
+
 	return rc;
 }
