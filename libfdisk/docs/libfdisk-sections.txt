@@ -314,6 +314,7 @@ fdisk_has_wipe
 fdisk_is_details
 fdisk_is_labeltype
 fdisk_is_listonly
+fdisk_is_ptcollision
 fdisk_is_readonly
 fdisk_is_regfile
 fdisk_new_context

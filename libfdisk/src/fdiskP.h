@@ -366,6 +366,7 @@ struct fdisk_context {
 		     display_in_cyl_units : 1,	/* for obscure labels */
 		     display_details : 1,	/* expert display mode */
 		     protect_bootbits : 1,	/* don't zeroize first sector */
+		     pt_collision : 1,		/* another PT detected by libblkid */
 		     listonly : 1;		/* list partition, nothing else */
 
 	char *collision;			/* name of already existing FS/PT */

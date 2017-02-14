@@ -168,6 +168,10 @@ int fdisk_check_collisions(struct fdisk_context *cxt)
 	if (rc)
 		return rc;
 
+	cxt->pt_collision = 0;
+	free(cxt->collision);
+	cxt->collision = NULL;
+
 	blkid_probe_enable_superblocks(pr, 1);
 	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_TYPE);
 	blkid_probe_enable_partitions(pr, 1);
@@ -178,12 +182,15 @@ int fdisk_check_collisions(struct fdisk_context *cxt)
 	if (rc == 0) {
 		const char *name = NULL;
 
-		if (blkid_probe_lookup_value(pr, "TYPE", &name, 0) == 0 ||
-		    blkid_probe_lookup_value(pr, "PTTYPE", &name, 0) == 0) {
+		if (blkid_probe_lookup_value(pr, "TYPE", &name, 0) == 0)
 			cxt->collision = strdup(name);
-			if (!cxt->collision)
-				rc = -ENOMEM;
+		else if (blkid_probe_lookup_value(pr, "PTTYPE", &name, 0) == 0) {
+			cxt->collision = strdup(name);
+			cxt->pt_collision = 1;
 		}
+
+		if (name && !cxt->collision)
+			rc = -ENOMEM;
 	}
 
 	blkid_free_probe(pr);

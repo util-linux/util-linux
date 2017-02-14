@@ -389,6 +389,21 @@ const char *fdisk_get_collision(struct fdisk_context *cxt)
 }
 
 /**
+ * fdisk_is_ptcollision:
+ * @cxt: fdisk context
+ *
+ * The collision detected by library is another partition table. Note that libfdisk
+ * does not support all partitions tables, so fdisk_has_label() may return false and
+ * fdisk_is_ptcollision() may return true.
+ *
+ * Returns: 0 or 1
+ */
+int fdisk_is_ptcollision(struct fdisk_context *cxt)
+{
+	return cxt->pt_collision;
+}
+
+/**
  * fdisk_get_npartitions:
  * @cxt: context
  *
