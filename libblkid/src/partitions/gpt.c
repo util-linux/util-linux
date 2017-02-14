@@ -167,7 +167,7 @@ static int is_pmbr_valid(blkid_probe pr, int *has)
 	if (has)
 		*has = 0;
 	if (flags & BLKID_PARTS_FORCE_GPT)
-		goto ok;			/* skip PMBR check */
+		return 1;			/* skip PMBR check */
 
 	data = blkid_probe_get_sector(pr, 0);
 	if (!data) {
@@ -180,8 +180,10 @@ static int is_pmbr_valid(blkid_probe pr, int *has)
 		goto failed;
 
 	for (i = 0, p = mbr_get_partition(data, 0); i < 4; i++, p++) {
-		if (p->sys_ind == MBR_GPT_PARTITION)
+		if (p->sys_ind == MBR_GPT_PARTITION) {
+			DBG(LOWPROBE, ul_debug(" #%d valid PMBR partition", i + 1));
 			goto ok;
+		}
 	}
 failed:
 	return 0;
@@ -214,6 +216,8 @@ static struct gpt_header *get_gpt_header(
 	uint32_t hsz, ssz;
 
 	ssz = blkid_probe_get_sectorsize(pr);
+
+	DBG(LOWPROBE, ul_debug(" checking for GPT header at %ju", lba));
 
 	/* whole sector is allocated for GPT header */
 	h = (struct gpt_header *) get_lba_buffer(pr, lba, ssz);
