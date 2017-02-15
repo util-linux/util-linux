@@ -45,6 +45,16 @@ function ts_cd {
 	fi
 }
 
+function ts_separator {
+	local header="$1"
+	echo >> $TS_OUTPUT
+	if [ -z "$header" ]; then
+		echo "============================================" >> $TS_OUTPUT
+	else
+		echo "=====$header================================" >> $TS_OUTPUT
+	fi
+}
+
 function ts_report {
 	local desc=
 

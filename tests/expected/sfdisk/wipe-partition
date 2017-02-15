@@ -1,0 +1,52 @@
+
+=====Create GPT================================
+Disk <removed>: 50 MiB, 52428800 bytes, 102400 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / <removed> bytes
+
+>>> Created a new <removed>.
+<removed>1: Created a new <removed>.
+<removed>2: Done.
+
+New situation:
+Disklabel type: gpt
+Disk identifier: <removed>
+
+Device             Start    End Sectors Size Type
+<removed>1   2048 102366  100319  49M Linux filesystem
+
+The partition table has been altered.
+
+=====Create FS in partition================================
+
+=====Wipe whole-disk device================================
+
+=====Create GPT (again)================================
+Disk <removed>: 50 MiB, 52428800 bytes, 102400 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / <removed> bytes
+
+>>> Created a new <removed>.
+<removed>1: Created a new <removed>.
+Partition #1 contains a ext4 signature.
+The signature will be removed by a write command.
+<removed>2: Done.
+
+New situation:
+Disklabel type: gpt
+Disk identifier: <removed>
+
+Device             Start    End Sectors Size Type
+<removed>1   2048 102366  100319  49M Linux filesystem
+
+The partition table has been altered.
+
+=====Check content (disk)================================
+offset               type
+----------------------------------------------------------------
+0x200                gpt   [partition table]
+
+
+=====Check content (partition)================================
