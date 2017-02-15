@@ -166,7 +166,7 @@ static int is_pmbr_valid(blkid_probe pr, int *has)
 
 	if (has)
 		*has = 0;
-	if (flags & BLKID_PARTS_FORCE_GPT)
+	else if (flags & BLKID_PARTS_FORCE_GPT)
 		return 1;			/* skip PMBR check */
 
 	data = blkid_probe_get_sector(pr, 0);
