@@ -13,6 +13,7 @@ libcommon_la_SOURCES = \
 	lib/mangle.c \
 	lib/match.c \
 	lib/mbsalign.c \
+	lib/mbsedit.c\
 	lib/md5.c \
 	lib/pager.c \
 	lib/path.c \
