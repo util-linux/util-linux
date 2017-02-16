@@ -30,7 +30,7 @@ I/O size (minimum/optimal): 4096 bytes / <removed> bytes
 
 >>> Created a new <removed>.
 <removed>1: Created a new <removed>.
-Partition #1 contains a ext4 signature.
+Partition #1 contains a swap signature.
 The signature will be removed by a write command.
 <removed>2: Done.
 
