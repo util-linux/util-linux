@@ -24,6 +24,7 @@ dist_noinst_HEADERS += \
 	include/mangle.h \
 	include/match.h \
 	include/mbsalign.h \
+	include/mbsedit.h \
 	include/md5.h \
 	include/minix.h \
 	include/monotonic.h \
