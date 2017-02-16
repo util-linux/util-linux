@@ -56,6 +56,7 @@
 #include "strutils.h"
 #include "xalloc.h"
 #include "mbsalign.h"
+#include "mbsedit.h"
 #include "colors.h"
 #include "debug.h"
 #include "list.h"
@@ -106,6 +107,10 @@ static const char *default_disks[] = {
 #ifndef KEY_DELETE
 # define KEY_DELETE	'\177'
 #endif
+#ifndef KEY_DC
+# define KEY_DC		0423
+#endif
+
 
 /* colors */
 enum {
@@ -1702,9 +1707,11 @@ static int ui_refresh(struct cfdisk *cf)
 static ssize_t ui_get_string(const char *prompt,
 			     const char *hint, char *buf, size_t len)
 {
-	size_t cells = 0;
-	ssize_t i = 0, rc = -1;
 	int ln = MENU_START_LINE, cl = 1;
+	ssize_t rc = -1;
+	struct mbs_editor *edit;
+
+	DBG(UI, ul_debug("ui get string"));
 
 	assert(buf);
 	assert(len);
@@ -1720,29 +1727,32 @@ static ssize_t ui_get_string(const char *prompt,
 		cl += mbs_safe_width(prompt);
 	}
 
-	/* default value */
-	if (*buf) {
-		i = strlen(buf);
-		cells = mbs_safe_width(buf);
-		mvaddstr(ln, cl, buf);
-	}
+	edit = mbs_new_edit(buf, len, ui_cols - cl);
+	if (!edit)
+		goto done;
+
+	mbs_edit_goto(edit, MBS_EDIT_END);
 
 	if (hint)
 		ui_hint(hint);
 	else
 		ui_clean_hint();
 
-	move(ln, cl + cells);
 	curs_set(1);
-	refresh();
 
 	while (1) {
+		wint_t c;	/* we have fallback in widechar.h */
+
+		move(ln, cl);
+		clrtoeol();
+		mvaddstr(ln, cl, edit->buf);
+		move(ln, cl + edit->cursor_cells);
+		refresh();
+
 #if !defined(HAVE_SLCURSES_H) && !defined(HAVE_SLANG_SLCURSES_H) && \
     defined(HAVE_LIBNCURSESW) && defined(HAVE_WIDECHAR)
-		wint_t c;
 		if (get_wch(&c) == ERR) {
 #else
-		int c;
 		if ((c = getch()) == ERR) {
 #endif
 			if (ui_resize) {
@@ -1754,72 +1764,55 @@ static ssize_t ui_get_string(const char *prompt,
 			else
 				goto done;
 		}
+
+		DBG(UI, ul_debug("ui get string: key=%lc", c));
+
 		if (c == '\r' || c == '\n' || c == KEY_ENTER)
 			break;
+
+		rc = 1;
 
 		switch (c) {
 		case KEY_ESC:
 			rc = -CFDISK_ERR_ESC;
 			goto done;
-		case KEY_LEFT:		/* TODO: implement full buffer editor */
+		case KEY_LEFT:
+			rc = mbs_edit_goto(edit, MBS_EDIT_LEFT);
+			break;
 		case KEY_RIGHT:
+			rc = mbs_edit_goto(edit, MBS_EDIT_RIGHT);
+			break;
 		case KEY_END:
+			rc = mbs_edit_goto(edit, MBS_EDIT_END);
+			break;
 		case KEY_HOME:
+			rc = mbs_edit_goto(edit, MBS_EDIT_HOME);
+			break;
 		case KEY_UP:
 		case KEY_DOWN:
-			beep();
 			break;
-		case KEY_DELETE:
+		case KEY_DC:
+			rc = mbs_edit_delete(edit);
+			break;
 		case '\b':
 		case KEY_BACKSPACE:
-			if (i > 0) {
-				cells--;
-				i = mbs_truncate(buf, &cells);
-				if (i < 0)
-					goto done;
-				mvaddch(ln, cl + cells, ' ');
-				move(ln, cl + cells);
-			} else
-				beep();
+			rc = mbs_edit_backspace(edit);
 			break;
-
 		default:
-#if defined(HAVE_LIBNCURSESW) && defined(HAVE_WIDECHAR)
-			if (i + 1 < (ssize_t) len && iswprint(c)) {
-				wchar_t wc = (wchar_t) c;
-				char s[MB_CUR_MAX + 1];
-				int sz = wctomb(s, wc);
-
-				if (sz > 0 && sz + i < (ssize_t) len) {
-					s[sz] = '\0';
-					mvaddnstr(ln, cl + cells, s, sz);
-					memcpy(buf + i, s, sz);
-					i += sz;
-					buf[i] = '\0';
-					cells += wcwidth(wc);
-				} else
-					beep();
-			}
-#else
-			if (i + 1 < (ssize_t) len && isprint(c)) {
-				mvaddch(ln, cl + cells, c);
-				buf[i++] = c;
-				buf[i] = '\0';
-				cells++;
-			}
-#endif
-			else
-				beep();
+			rc = mbs_edit_insert(edit, c);
+			break;
 		}
-		refresh();
+		if (rc == 1)
+			beep();
 	}
 
-	rc = i;		/* success */
+	rc = strlen(edit->buf);		/* success */
 done:
 	move(ln, 0);
 	clrtoeol();
 	curs_set(0);
 	refresh();
+	mbs_free_edit(edit);
 
 	return rc;
 }
