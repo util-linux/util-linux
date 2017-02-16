@@ -67,12 +67,12 @@ typedef struct _f {
   char name[0];
 } f;
 
-inline unsigned int hash(off_t size, time_t mtime)
+__attribute__((always_inline)) inline unsigned int hash(off_t size, time_t mtime)
 {
   return (size ^ mtime) & (NHASH - 1);
 }
 
-inline int stcmp(struct stat *st1, struct stat *st2, int content_only)
+__attribute__((always_inline)) inline int stcmp(struct stat *st1, struct stat *st2, int content_only)
 {
   if (content_only)
     return st1->st_size != st2->st_size;
@@ -112,7 +112,7 @@ void usage(char *prog)
 unsigned int buf[NBUF];
 char iobuf1[NIOBUF], iobuf2[NIOBUF];
 
-inline size_t add2(size_t a, size_t b)
+__attribute__((always_inline)) inline size_t add2(size_t a, size_t b)
 {
   size_t sum = a + b;
   if (sum < a) {
@@ -122,7 +122,7 @@ inline size_t add2(size_t a, size_t b)
   return sum;
 }
 
-inline size_t add3(size_t a, size_t b, size_t c)
+__attribute__((always_inline)) inline size_t add3(size_t a, size_t b, size_t c) 
 {
   return add2(add2(a, b), c);
 }
