@@ -93,6 +93,7 @@ echo ',,L' | $TS_CMD_SFDISK $SFDISK_OPTS --wipe-partition=always --label=gpt ${T
 udevadm settle
 ts_separator "Check content (disk)"
 $TS_CMD_WIPEFS ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+udevadm settle
 ts_separator "Check content (partition)"
 $TS_CMD_WIPEFS ${TS_DEVICE}1 >> $TS_OUTPUT 2>&1
 ts_fdisk_clean $TS_DEVICE
