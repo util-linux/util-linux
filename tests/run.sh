@@ -46,6 +46,7 @@ while [ -n "$1" ]; do
 	--force |\
 	--fake |\
 	--memcheck |\
+	--show-diff |\
 	--verbose  |\
 	--skip-loopdevs |\
 	--parsable)
@@ -82,6 +83,7 @@ while [ -n "$1" ]; do
 		echo "  --fake            do not run, setup tests only"
 		echo "  --memcheck        run with valgrind"
 		echo "  --verbose         verbose mode"
+		echo "  --show-diff       show diff from failed tests"
 		echo "  --nonroot         ignore test suite if user is root"
 		echo "  --srcdir=<path>   autotools top source directory"
 		echo "  --builddir=<path> autotools top build directory"

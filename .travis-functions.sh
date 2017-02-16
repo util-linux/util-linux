@@ -31,7 +31,7 @@ function xconfigure
 
 function check_nonroot
 {
-	local opts="$MAKE_CHECK_OPTS"
+	local opts="$MAKE_CHECK_OPTS --show-diff"
 
 	xconfigure \
 		--disable-use-tty-group \
@@ -47,7 +47,7 @@ function check_nonroot
 
 function check_root
 {
-	local opts="$MAKE_CHECK_OPTS --parallel=1"
+	local opts="$MAKE_CHECK_OPTS --parallel=1 --show-diff"
 
 	xconfigure \
 		--enable-all-programs \
