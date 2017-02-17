@@ -89,7 +89,7 @@ ts_separator "Wipe whole-disk device"
 $TS_CMD_WIPEFS -a ${TS_DEVICE} &> /dev/null
 udevadm settle
 ts_separator "Create GPT (again)"
-echo ',,L' | $TS_CMD_SFDISK $SFDISK_OPTS --wipe-partition=always --label=gpt ${TS_DEVICE} >> $TS_OUTPUT 2>&1
+echo ',,L' | $TS_CMD_SFDISK --no-reread --wipe-partition=always --label=gpt ${TS_DEVICE} >> $TS_OUTPUT 2>&1
 udevadm settle
 ts_separator "Check content (disk)"
 $TS_CMD_WIPEFS ${TS_DEVICE} >> $TS_OUTPUT 2>&1
