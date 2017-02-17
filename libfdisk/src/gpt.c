@@ -2530,7 +2530,9 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries)
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_label(cxt, GPT));
+
+	if (!fdisk_is_label(cxt, GPT))
+		return -EINVAL;
 
 	gpt = self_label(cxt);
 
@@ -2652,7 +2654,9 @@ int fdisk_gpt_get_partition_attrs(
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_label(cxt, GPT));
+
+	if (!fdisk_is_label(cxt, GPT))
+		return -EINVAL;
 
 	gpt = self_label(cxt);
 
@@ -2682,7 +2686,9 @@ int fdisk_gpt_set_partition_attrs(
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_label(cxt, GPT));
+
+	if (!fdisk_is_label(cxt, GPT))
+		return -EINVAL;
 
 	DBG(LABEL, ul_debug("GPT entry attributes change requested partno=%zu", partnum));
 	gpt = self_label(cxt);
