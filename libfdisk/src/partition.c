@@ -733,7 +733,8 @@ int fdisk_partition_next_partno(
 
 		DBG(PART, ul_debugobj(pa, "next partno (specified=%zu)", pa->partno));
 
-		if (pa->partno >= cxt->label->nparts_max)
+		if (pa->partno >= cxt->label->nparts_max ||
+		    fdisk_is_partition_used(cxt, pa->partno))
 			return -ERANGE;
 		*n = pa->partno;
 	} else

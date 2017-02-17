@@ -1548,7 +1548,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 		}
 
 	/* pa specifies start, but outside extended partition */
-	} else if (pa && fdisk_partition_has_start(pa) && l->ext_offset) {
+	} else if (pa && fdisk_partition_has_start(pa)) {
 		DBG(LABEL, ul_debug("DOS: pa template %p: add primary", pa));
 		rc = get_partition_unused_primary(cxt, pa, &res);
 		if (rc == 0) {
