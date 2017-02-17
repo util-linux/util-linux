@@ -1551,10 +1551,28 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	} else if (pa && fdisk_partition_has_start(pa)) {
 		DBG(LABEL, ul_debug("DOS: pa template %p: add primary", pa));
 		rc = get_partition_unused_primary(cxt, pa, &res);
-		if (rc == 0) {
+		if (rc == 0)
 			rc = add_partition(cxt, res, pa);
-			goto done;
-		}
+		goto done;
+
+	/* pa follows default, but partno < 4, it means primary partition */
+	} else if (pa && fdisk_partition_start_is_default(pa)
+		   && fdisk_partition_has_partno(pa)
+		    && pa->partno < 4) {
+		DBG(LABEL, ul_debug("DOS: pa template %p: add primary (partno < 4)", pa));
+		rc = get_partition_unused_primary(cxt, pa, &res);
+		if (rc == 0)
+			rc = add_partition(cxt, res, pa);
+		goto done;
+
+	/* pa follows default, but partno >= 4, it means logical partition */
+	} else if (pa && fdisk_partition_start_is_default(pa)
+		   && ext_pe
+		   && fdisk_partition_has_partno(pa)
+		   && pa->partno >= 4) {
+		DBG(LABEL, ul_debug("DOS: pa template %p: add logical (partno >= 4)", pa));
+		rc = add_logical(cxt, pa, &res);
+		goto done;
 	}
 
 	/*
