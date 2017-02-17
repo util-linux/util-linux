@@ -1,0 +1,11 @@
+
+check_PROGRAMS += \
+	sample-fdisk-mkpart
+
+sample_fdisk_cflags = $(AM_CFLAGS) $(NO_UNUSED_WARN_CFLAGS) \
+                      -I$(ul_libfdisk_incdir)
+sample_fdisk_ldadd = $(LDADD) libfdisk.la
+
+sample_fdisk_mkpart_SOURCES = libfdisk/samples/mkpart.c
+sample_fdisk_mkpart_LDADD = $(sample_fdisk_ldadd) libcommon.la
+sample_fdisk_mkpart_CFLAGS = $(sample_fdisk_cflags)
