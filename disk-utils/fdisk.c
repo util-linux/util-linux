@@ -23,6 +23,7 @@
 #include <limits.h>
 #include <libsmartcols.h>
 #ifdef HAVE_LIBREADLINE
+# define _FUNCTION_DEF
 # include <readline/readline.h>
 #endif
 
