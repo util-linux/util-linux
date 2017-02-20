@@ -429,6 +429,21 @@ AC_DEFUN([UL_DEFAULT_ENABLE], [
   fi
 ])
 
+
+dnl UL_ENABLE_ALIAS(NAME, MASTERNAME)
+dnl
+dnl Initializes $enable_<name> variable according to $build_<mastername>.  This
+dnl is usefull for example if you want to use one --enable-mastername option
+dnl for group of programs.
+dnl
+AC_DEFUN([UL_ENABLE_ALIAS], [
+  m4_define([suffix], $1)
+  m4_define([mastersuffix], $2)
+
+  enable_[]suffix=$build_[]mastersuffix
+])
+
+
 dnl UL_NCURSES_CHECK(NAME)
 dnl
 dnl Initializes $have_<name>, NCURSES_LIBS and NCURSES_CFLAGS variables according to

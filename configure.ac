@@ -1909,8 +1909,9 @@ AC_ARG_ENABLE([schedutils],
 )
 UL_BUILD_INIT([schedutils])
 
-UL_BUILD_INIT([ionice], [check])
-UL_REQUIRES_BUILD([ionice], [schedutils])
+
+UL_ENABLE_ALIAS([ionice], [schedutils])
+UL_BUILD_INIT([ionice])
 UL_REQUIRES_SYSCALL_CHECK([ionice],
 	[UL_CHECK_SYSCALL([ioprio_set],
 	  [alpha],	[442],
@@ -1937,8 +1938,9 @@ UL_REQUIRES_SYSCALL_CHECK([ionice],
 
 AM_CONDITIONAL([BUILD_IONICE], [test "x$build_ionice" = xyes])
 
-UL_BUILD_INIT([taskset], [check])
-UL_REQUIRES_BUILD([taskset], [schedutils])
+
+UL_ENABLE_ALIAS([taskset], [schedutils])
+UL_BUILD_INIT([taskset])
 UL_REQUIRES_HAVE([taskset], [cpu_set_t], [cpu_set_t type])
 UL_REQUIRES_SYSCALL_CHECK([taskset],
 	[UL_CHECK_SYSCALL([sched_getaffinity])],
@@ -1950,8 +1952,8 @@ have_schedsetter=no
 AS_IF([test "x$ac_cv_func_sched_setscheduler" = xyes], [have_schedsetter=yes],
       [test "x$ac_cv_func_sched_setattr" = xyes], [have_schedsetter=yes])
 
-UL_BUILD_INIT([chrt], [check])
-UL_REQUIRES_BUILD([chrt], [schedutils])
+UL_ENABLE_ALIAS([chrt], [schedutils])
+UL_BUILD_INIT([chrt])
 UL_REQUIRES_HAVE([chrt], [schedsetter], [sched_set functions])
 AM_CONDITIONAL([BUILD_CHRT], [test "x$build_chrt" = xyes])
 
