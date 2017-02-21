@@ -1829,9 +1829,8 @@ AM_CONDITIONAL([BUILD_SETTERM], [test "x$build_setterm" = xyes])
 # ionice, taskset and chrt
 AC_ARG_ENABLE([schedutils],
   AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, taskset]),
-  [], [UL_DEFAULT_ENABLE([schedutils], [yes])]
+  [], [UL_DEFAULT_ENABLE([schedutils], [check])]
 )
-UL_BUILD_INIT([schedutils])
 
 
 UL_ENABLE_ALIAS([ionice], [schedutils])
