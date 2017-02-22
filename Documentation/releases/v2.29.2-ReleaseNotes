@@ -1,0 +1,55 @@
+util-linux 2.29.2 Release Notes
+===============================
+
+This release fixes su(1) security issue CVE-2017-2616:
+
+  It is possible for any local user to send SIGKILL to other processes with root
+  privileges.  To exploit this, the user must be able to perform su with a
+  successful login.  SIGKILL can only be sent to processes which were executed
+  after the su process.  It is not possible to send SIGKILL to processes which
+  were already running.
+
+
+
+build-sys:
+   - fix --disable-all-programs --enable-schedutils  [Karel Zak]
+   - improve detection of the "isnan" function in uClibc  [Carlos Santos]
+   - simplify UL_ENABLE_ALIAS() semantic  [Karel Zak]
+cfdisk:
+   - support UI refresh on ^L  [Karel Zak]
+docs:
+   - add BUG REPORTING section to README  [Karel Zak]
+   - update AUTHORS file  [Karel Zak]
+findmnt:
+   - flush stdout after each (un)(re)mount event, when polling.  [Pedro Miguel Carvalho]
+   - use line separator for --poll output  [Karel Zak]
+fstrim:
+   - de-duplicate btrfs sub-volumes  [Stanislav Brabec]
+lib/strutils:
+   - return end pointer by isdigit_string()  [Karel Zak]
+libblkid:
+   - (gpt) fix force flag  [Karel Zak]
+   - Fix out of bounds reads on bad GPT header  [Alden Tondettar]
+   - fix BLKID_PARTS_FORCE_GPT usage  [Karel Zak]
+libfdisk:
+   - (gpt) add check for entries array size  [Karel Zak]
+   - fix fdisk_set_wipe_area() calls  [Karel Zak]
+libmount:
+   - make rootfs lookup by parent-id more robust  [Karel Zak]
+logger:
+   - support sub-trees in the ID for RFC5424  [Karel Zak]
+lscpu:
+   - Detect Windows Subsystem for Linux  [Stanislav Brabec]
+   - don't use path_exist() before path_fopen()  [Karel Zak]
+   - make osrelease file optional  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update pt_BR.po (from translationproject.org)  [Rafael Fontenelle]
+sfdisk:
+   - --quiet fixes  [Karel Zak]
+su:
+   - properly clear child PID  [Karel Zak]
+tests:
+   - add build-sys enable-schedutils result  [Karel Zak]
+umount:
+   - exclude selinuxfs from --all  [Karel Zak]
