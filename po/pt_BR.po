@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.29-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2017-01-20 13:58+0100\n"
+"POT-Creation-Date: 2016-10-19 14:46+0200\n"
 "PO-Revision-Date: 2017-01-01 16:16-0200\n"
 "Last-Translator: Rafael Fontenelle <rffontenelle@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <ldpbr-translation@lists.sourceforge.net>\n"
@@ -40,18 +40,18 @@ msgstr "Avisa o kernel sobre a existência de uma partição especificada.\n"
 
 #: disk-utils/addpart.c:56 disk-utils/blockdev.c:276 disk-utils/blockdev.c:420
 #: disk-utils/blockdev.c:446 disk-utils/cfdisk.c:2622 disk-utils/delpart.c:57
-#: disk-utils/fdformat.c:227 disk-utils/fdisk.c:718 disk-utils/fdisk.c:994
-#: disk-utils/fdisk-list.c:301 disk-utils/fdisk-list.c:341
-#: disk-utils/fdisk-list.c:360 disk-utils/fsck.c:1448
+#: disk-utils/fdformat.c:227 disk-utils/fdisk.c:718 disk-utils/fdisk.c:990
+#: disk-utils/fdisk-list.c:299 disk-utils/fdisk-list.c:339
+#: disk-utils/fdisk-list.c:358 disk-utils/fsck.c:1448
 #: disk-utils/fsck.cramfs.c:155 disk-utils/fsck.cramfs.c:510
 #: disk-utils/isosize.c:134 disk-utils/mkfs.bfs.c:189
 #: disk-utils/mkfs.cramfs.c:173 disk-utils/mkfs.cramfs.c:661
 #: disk-utils/mkfs.cramfs.c:788 disk-utils/mkfs.minix.c:819
 #: disk-utils/mkswap.c:215 disk-utils/mkswap.c:244 disk-utils/partx.c:994
-#: disk-utils/resizepart.c:101 disk-utils/sfdisk.c:647 disk-utils/sfdisk.c:703
-#: disk-utils/sfdisk.c:757 disk-utils/sfdisk.c:816 disk-utils/sfdisk.c:880
-#: disk-utils/sfdisk.c:921 disk-utils/sfdisk.c:951 disk-utils/sfdisk.c:988
-#: disk-utils/sfdisk.c:1537 disk-utils/swaplabel.c:60 libfdisk/src/bsd.c:641
+#: disk-utils/resizepart.c:101 disk-utils/sfdisk.c:643 disk-utils/sfdisk.c:699
+#: disk-utils/sfdisk.c:753 disk-utils/sfdisk.c:812 disk-utils/sfdisk.c:876
+#: disk-utils/sfdisk.c:917 disk-utils/sfdisk.c:947 disk-utils/sfdisk.c:981
+#: disk-utils/sfdisk.c:1530 disk-utils/swaplabel.c:60 libfdisk/src/bsd.c:641
 #: lib/path.c:70 lib/path.c:82 login-utils/islocal.c:87 login-utils/last.c:672
 #: login-utils/sulogin.c:446 login-utils/sulogin.c:483
 #: login-utils/utmpdump.c:136 login-utils/utmpdump.c:359
@@ -275,7 +275,7 @@ msgid "Quit program without writing changes"
 msgstr "Sai do programa sem gravar as alterações"
 
 #: disk-utils/cfdisk.c:183 libfdisk/src/bsd.c:439 libfdisk/src/bsd.c:1020
-#: libfdisk/src/dos.c:2306 libfdisk/src/gpt.c:2904 libfdisk/src/sgi.c:1160
+#: libfdisk/src/dos.c:2306 libfdisk/src/gpt.c:2893 libfdisk/src/sgi.c:1160
 #: libfdisk/src/sun.c:1116
 msgid "Type"
 msgstr "Tipo"
@@ -453,7 +453,7 @@ msgstr "Falha ao escrever o script %s"
 msgid "Select label type"
 msgstr "Selecione um tipo de rótulo"
 
-#: disk-utils/cfdisk.c:2088 disk-utils/fdisk.c:1017
+#: disk-utils/cfdisk.c:2088 disk-utils/fdisk.c:1013
 msgid "Device does not contain a recognized partition table."
 msgstr "A unidade não contém uma tabela de partição conhecida."
 
@@ -594,7 +594,7 @@ msgstr "Alterado o tipo da partição %zu."
 msgid "The type of partition %zu is unchanged."
 msgstr "O tipo da partição %zu foi alterado."
 
-#: disk-utils/cfdisk.c:2346 disk-utils/cfdisk.c:2458 disk-utils/fdisk.c:991
+#: disk-utils/cfdisk.c:2346 disk-utils/cfdisk.c:2458 disk-utils/fdisk.c:987
 #: disk-utils/fdisk-menu.c:570
 msgid "Device is open in read-only mode."
 msgstr "O dispositivo está aberto no modo somente leitura."
@@ -607,8 +607,8 @@ msgstr "Você tem certeza de que deseja gravar a tabela de partição no disco? 
 msgid "Type \"yes\" or \"no\", or press ESC to leave this dialog."
 msgstr "Digite \"sim\" ou \"não\" ou pressione ESC para sair do diálogo."
 
-#: disk-utils/cfdisk.c:2358 login-utils/lslogins.c:209 sys-utils/lscpu.c:1529
-#: sys-utils/lscpu.c:1539
+#: disk-utils/cfdisk.c:2358 login-utils/lslogins.c:209 sys-utils/lscpu.c:1517
+#: sys-utils/lscpu.c:1527
 msgid "yes"
 msgstr "sim"
 
@@ -646,7 +646,7 @@ msgstr "falha ao ler partições"
 msgid " %1$s [options] <disk>\n"
 msgstr " %1$s [opções] <unidade>\n"
 
-#: disk-utils/cfdisk.c:2537 disk-utils/fdisk.c:736 disk-utils/sfdisk.c:1808
+#: disk-utils/cfdisk.c:2537 disk-utils/fdisk.c:736 disk-utils/sfdisk.c:1801
 msgid "Display or manipulate a disk partition table.\n"
 msgstr "Exibe ou manipula a tabela de partição de uma unidade.\n"
 
@@ -658,7 +658,7 @@ msgstr " -L, --color[=<quando>]   colore a saída (auto, always ou never)\n"
 msgid " -z, --zero               start with zeroed partition table\n"
 msgstr " -z, --zero              inicia com uma tabela de partição zerada\n"
 
-#: disk-utils/cfdisk.c:2582 disk-utils/fdisk.c:882 disk-utils/sfdisk.c:2075
+#: disk-utils/cfdisk.c:2582 disk-utils/fdisk.c:882 disk-utils/sfdisk.c:2068
 #: misc-utils/cal.c:390 sys-utils/dmesg.c:1333 text-utils/hexdump.c:114
 msgid "unsupported color mode"
 msgstr "sem suporte a modo de cores"
@@ -714,8 +714,8 @@ msgstr ""
 "Continuando ... "
 
 #: disk-utils/fdformat.c:144 disk-utils/fsck.minix.c:182
-#: disk-utils/swaplabel.c:117 misc-utils/wipefs.c:456 sys-utils/blkdiscard.c:84
-#: sys-utils/tunelp.c:91
+#: disk-utils/swaplabel.c:117 misc-utils/wipefs.c:456
+#: sys-utils/blkdiscard.c:84 sys-utils/tunelp.c:91
 #, c-format
 msgid " %s [options] <device>\n"
 msgstr " %s [opções] <dispositivo>\n"
@@ -832,7 +832,7 @@ msgid "Using default response %c."
 msgstr "Usando resposta padrão %c."
 
 #: disk-utils/fdisk.c:176 disk-utils/fdisk.c:250 disk-utils/fdisk.c:325
-#: libfdisk/src/dos.c:1189 libfdisk/src/gpt.c:2271
+#: libfdisk/src/dos.c:1189 libfdisk/src/gpt.c:2260
 msgid "Value out of range."
 msgstr "Valor fora do intervalo."
 
@@ -928,7 +928,7 @@ msgid "cannot read"
 msgstr "não foi possível ler"
 
 #: disk-utils/fdisk.c:695 libfdisk/src/bsd.c:259 libfdisk/src/dos.c:933
-#: libfdisk/src/gpt.c:2204
+#: libfdisk/src/gpt.c:2193
 msgid "First sector"
 msgstr "Primeiro setor"
 
@@ -998,7 +998,7 @@ msgstr "     --bytes                   exibe SIZE em bytes, não em um formato l
 msgid " -w, --wipe <mode>             wipe signatures (auto, always or never)\n"
 msgstr " -w, --wipe <modo>             apaga assinaturas (auto, always ou never)\n"
 
-#: disk-utils/fdisk.c:752 disk-utils/sfdisk.c:1851
+#: disk-utils/fdisk.c:752 disk-utils/sfdisk.c:1844
 msgid " -W, --wipe-partitions <mode>  wipe signatures from new partitions (auto, always or never)\n"
 msgstr ""
 " -w, --wipe-partitions <modo>  apaga assinaturas de novas partições\n"
@@ -1046,8 +1046,8 @@ msgstr "argumento inválido de setores"
 msgid "unsupported disklabel: %s"
 msgstr "rótulo de disco sem suporte: %s"
 
-#: disk-utils/fdisk.c:916 disk-utils/fdisk.c:921 disk-utils/sfdisk.c:2039
-#: disk-utils/sfdisk.c:2044
+#: disk-utils/fdisk.c:916 disk-utils/fdisk.c:921 disk-utils/sfdisk.c:2032
+#: disk-utils/sfdisk.c:2037
 msgid "unsupported wipe mode"
 msgstr "sem suporte a modo de apagar"
 
@@ -1055,12 +1055,12 @@ msgstr "sem suporte a modo de apagar"
 msgid "The device properties (sector size and geometry) should be used with one specified device only."
 msgstr "As propriedades de dispositivo (tamanho e geometria do setor) devem ser usadas com apenas um dispositivo especificado."
 
-#: disk-utils/fdisk.c:982
+#: disk-utils/fdisk.c:978
 #, c-format
 msgid "Welcome to fdisk (%s)."
 msgstr "Bem-vindo ao fdisk (%s)."
 
-#: disk-utils/fdisk.c:984 disk-utils/sfdisk.c:1588
+#: disk-utils/fdisk.c:980 disk-utils/sfdisk.c:1581
 msgid ""
 "Changes will remain in memory only, until you decide to write them.\n"
 "Be careful before using the write command.\n"
@@ -1068,21 +1068,21 @@ msgstr ""
 "As alterações permanecerão apenas na memória, até que você decida gravá-las.\n"
 "Tenha cuidado antes de usar o comando de gravação.\n"
 
-#: disk-utils/fdisk.c:1001 disk-utils/sfdisk.c:1613
+#: disk-utils/fdisk.c:997 disk-utils/sfdisk.c:1606
 #, c-format
 msgid "Device %s already contains a %s signature."
 msgstr "O dispositivo %s já contém uma assinatura %s."
 
-#: disk-utils/fdisk.c:1010 disk-utils/fdisk-menu.c:542 disk-utils/sfdisk.c:1484
-#: disk-utils/sfdisk.c:1622
+#: disk-utils/fdisk.c:1006 disk-utils/fdisk-menu.c:542
+#: disk-utils/sfdisk.c:1477 disk-utils/sfdisk.c:1615
 msgid "The signature will be removed by a write command."
 msgstr "A assinatura será removida por um comando de escrita."
 
-#: disk-utils/fdisk.c:1013 disk-utils/sfdisk.c:1625
+#: disk-utils/fdisk.c:1009 disk-utils/sfdisk.c:1618
 msgid "It is strongly recommended to wipe the device with wipefs(8), in order to avoid possible collisions."
 msgstr "É altamente recomendado apagar o dispositivo com wipefs(8), para evitar possíveis colisões."
 
-#: disk-utils/fdisk.c:1022
+#: disk-utils/fdisk.c:1018
 msgid "A hybrid GPT was detected. You have to sync the hybrid MBR manually (expert command 'M')."
 msgstr "O GPT híbrido foi detectado. Você tem que sincronizar a MBR híbrida manualmente (comando \"M\" avançado)."
 
@@ -1096,12 +1096,12 @@ msgstr "Disco %s: %s, %ju bytes, %ju setores"
 msgid "Geometry: %d heads, %llu sectors/track, %llu cylinders"
 msgstr "Geometria: %d cabeças, %llu setores/trilha, %llu cilindros"
 
-#: disk-utils/fdisk-list.c:59 disk-utils/fdisk-list.c:273
+#: disk-utils/fdisk-list.c:59 disk-utils/fdisk-list.c:271
 #, c-format
 msgid "Units: %s of %d * %ld = %ld bytes"
 msgstr "Unidades: %s de %d * %ld = %ld bytes"
 
-#: disk-utils/fdisk-list.c:65 disk-utils/fdisk-list.c:279
+#: disk-utils/fdisk-list.c:65 disk-utils/fdisk-list.c:277
 #, c-format
 msgid "Sector size (logical/physical): %lu bytes / %lu bytes"
 msgstr "Tamanho de setor (lógico/físico): %lu bytes / %lu bytes"
@@ -1126,54 +1126,54 @@ msgstr "Tipo de rótulo do disco: %s"
 msgid "Disk identifier: %s"
 msgstr "Identificador do disco: %s"
 
-#: disk-utils/fdisk-list.c:109 disk-utils/fdisk-list.c:219
+#: disk-utils/fdisk-list.c:107 disk-utils/fdisk-list.c:217
 #: disk-utils/fsck.c:1244
 msgid "failed to allocate iterator"
 msgstr "falha ao alocar iterador"
 
-#: disk-utils/fdisk-list.c:115 disk-utils/fdisk-list.c:225
+#: disk-utils/fdisk-list.c:113 disk-utils/fdisk-list.c:223
 msgid "failed to allocate output table"
 msgstr "falha ao alocar tabela da saída"
 
-#: disk-utils/fdisk-list.c:156 disk-utils/fdisk-list.c:249
+#: disk-utils/fdisk-list.c:154 disk-utils/fdisk-list.c:247
 msgid "failed to allocate output line"
 msgstr "falha ao alocar linha de saída"
 
-#: disk-utils/fdisk-list.c:183
+#: disk-utils/fdisk-list.c:181
 #, c-format
 msgid "Partition %zu does not start on physical sector boundary."
 msgstr "A partição %zu não inicia em um limite de setor físico."
 
-#: disk-utils/fdisk-list.c:192
+#: disk-utils/fdisk-list.c:190
 msgid "Partition table entries are not in disk order."
 msgstr "Partições lógicas fora da ordem do disco."
 
-#: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1015 libfdisk/src/dos.c:2300
-#: libfdisk/src/gpt.c:2900 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1110
+#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1015 libfdisk/src/dos.c:2300
+#: libfdisk/src/gpt.c:2889 libfdisk/src/sgi.c:1154 libfdisk/src/sun.c:1110
 msgid "Start"
 msgstr "Início"
 
-#: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1016 libfdisk/src/dos.c:2301
-#: libfdisk/src/gpt.c:2901 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1111
+#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1016 libfdisk/src/dos.c:2301
+#: libfdisk/src/gpt.c:2890 libfdisk/src/sgi.c:1155 libfdisk/src/sun.c:1111
 msgid "End"
 msgstr "Fim"
 
-#: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2302
-#: libfdisk/src/gpt.c:2902 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1112
+#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1017 libfdisk/src/dos.c:2302
+#: libfdisk/src/gpt.c:2891 libfdisk/src/sgi.c:1156 libfdisk/src/sun.c:1112
 msgid "Sectors"
 msgstr "Setores"
 
-#: disk-utils/fdisk-list.c:211 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2304
-#: libfdisk/src/gpt.c:2903 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1114
+#: disk-utils/fdisk-list.c:209 libfdisk/src/bsd.c:1019 libfdisk/src/dos.c:2304
+#: libfdisk/src/gpt.c:2892 libfdisk/src/sgi.c:1158 libfdisk/src/sun.c:1114
 msgid "Size"
 msgstr "Tamanho"
 
-#: disk-utils/fdisk-list.c:267
+#: disk-utils/fdisk-list.c:265
 #, c-format
 msgid "Unpartitioned space %s: %s, %ju bytes, %ju sectors"
 msgstr "Espaço não particionado %s: %s, %ju bytes, %ju setores"
 
-#: disk-utils/fdisk-list.c:412
+#: disk-utils/fdisk-list.c:410
 #, c-format
 msgid ""
 "\n"
@@ -1183,7 +1183,7 @@ msgstr ""
 "Colunas disponíveis (para -o):\n"
 
 # primeiro %s é nome de um campo
-#: disk-utils/fdisk-list.c:453
+#: disk-utils/fdisk-list.c:451
 #, c-format
 msgid "%s unknown column: %s"
 msgstr "Coluna desconhecida de %s: %s"
@@ -1477,7 +1477,7 @@ msgstr ""
 "\n"
 "Ajuda (comandos avançados):\n"
 
-#: disk-utils/fdisk-menu.c:371 disk-utils/sfdisk.c:1265
+#: disk-utils/fdisk-menu.c:371 disk-utils/sfdisk.c:1258
 #, c-format
 msgid ""
 "\n"
@@ -1520,12 +1520,12 @@ msgstr "Falha ao transformar layout de disco em um script"
 msgid "Script successfully saved."
 msgstr "Script salvo com sucesso."
 
-#: disk-utils/fdisk-menu.c:534 disk-utils/sfdisk.c:1476
+#: disk-utils/fdisk-menu.c:534 disk-utils/sfdisk.c:1469
 #, c-format
 msgid "Partition #%zu contains a %s signature."
 msgstr "Partição nº %zu: contém uma assinatura de %s."
 
-#: disk-utils/fdisk-menu.c:537 disk-utils/sfdisk.c:1479
+#: disk-utils/fdisk-menu.c:537 disk-utils/sfdisk.c:1472
 msgid "Do you want to remove the signature?"
 msgstr "Deseja remover a assinatura?"
 
@@ -1604,7 +1604,7 @@ msgstr "%s não está montado\n"
 #: disk-utils/fsck.cramfs.c:181 disk-utils/fsck.cramfs.c:235
 #: disk-utils/fsck.cramfs.c:253 disk-utils/sfdisk.c:297 libfdisk/src/bsd.c:646
 #: lib/path.c:110 lib/path.c:131 lib/path.c:152 lib/path.c:200
-#: login-utils/last.c:213 login-utils/last.c:250 login-utils/sulogin.c:664
+#: login-utils/last.c:213 login-utils/last.c:250 login-utils/sulogin.c:660
 #: sys-utils/setpriv.c:239 term-utils/setterm.c:717 term-utils/setterm.c:774
 #: term-utils/setterm.c:778 term-utils/setterm.c:785
 #, c-format
@@ -1661,8 +1661,8 @@ msgstr "%s: erro de análise na linha %d -- ignorado"
 msgid "%s: failed to parse fstab"
 msgstr "%s: falha ao analisar fstab"
 
-#: disk-utils/fsck.c:679 login-utils/login.c:968 login-utils/sulogin.c:1034
-#: login-utils/vipw.c:204 sys-utils/flock.c:345 sys-utils/nsenter.c:153
+#: disk-utils/fsck.c:679 login-utils/login.c:968 login-utils/sulogin.c:1029
+#: login-utils/vipw.c:204 sys-utils/flock.c:337 sys-utils/nsenter.c:153
 #: sys-utils/swapon.c:316 sys-utils/unshare.c:219 sys-utils/unshare.c:420
 #: term-utils/script.c:780
 msgid "fork failed"
@@ -1677,7 +1677,7 @@ msgstr "%s: execução falhou"
 msgid "wait: no more child process?!?"
 msgstr "espera: nenhum processo filho?!?"
 
-#: disk-utils/fsck.c:777 sys-utils/flock.c:363 sys-utils/swapon.c:348
+#: disk-utils/fsck.c:777 sys-utils/flock.c:347 sys-utils/swapon.c:348
 #: sys-utils/unshare.c:404 sys-utils/unshare.c:425
 msgid "waitpid failed"
 msgstr "waitpid falhou"
@@ -2085,7 +2085,7 @@ msgstr "fifo possui tamanho não zero: %s"
 #: disk-utils/fsck.cramfs.c:585
 #, c-format
 msgid "socket has non-zero size: %s"
-msgstr "socket possui tamanho não zero: %s"
+msgstr "o soquete possui tamanho não zero: %s"
 
 #: disk-utils/fsck.cramfs.c:588
 #, c-format
@@ -2228,7 +2228,7 @@ msgstr "busca falhou em write_block"
 #: disk-utils/fsck.minix.c:390
 #, c-format
 msgid "Write error: bad block in file '%s'\n"
-msgstr "Erro de gravação: bloco defeituoso no arquivo \"%s\"\n"
+msgstr "Erro de escrita: bloco defeituoso no arquivo \"%s\"\n"
 
 #: disk-utils/fsck.minix.c:505
 msgid "seek failed in write_super_block"
@@ -2814,8 +2814,8 @@ msgstr " -h, --help         exibe esta ajuda e sai\n"
 
 #: disk-utils/mkfs.c:139 lib/exec_shell.c:49 login-utils/newgrp.c:233
 #: login-utils/su-common.c:651 login-utils/su-common.c:986
-#: login-utils/sulogin.c:800 login-utils/sulogin.c:804 schedutils/chrt.c:558
-#: schedutils/ionice.c:260 schedutils/taskset.c:239 sys-utils/flock.c:122
+#: login-utils/sulogin.c:795 login-utils/sulogin.c:799 schedutils/chrt.c:557
+#: schedutils/ionice.c:260 schedutils/taskset.c:239 sys-utils/flock.c:363
 #: sys-utils/nsenter.c:430 sys-utils/prlimit.c:644 sys-utils/rtcwake.c:577
 #: sys-utils/setarch.c:324 sys-utils/setarch.c:403 sys-utils/setsid.c:115
 #: sys-utils/swapon.c:340 sys-utils/switch_root.c:242 sys-utils/unshare.c:461
@@ -3592,7 +3592,7 @@ msgstr[0] "#%2d: %9ju-%9ju (%9ju setor, %6ju MB)\n"
 msgstr[1] "#%2d: %9ju-%9ju (%9ju setores, %6ju MB)\n"
 
 #: disk-utils/partx.c:581 misc-utils/findmnt.c:688 misc-utils/findmnt.c:705
-#: misc-utils/lslocks.c:391 sys-utils/lsns.c:456
+#: misc-utils/lslocks.c:391 sys-utils/lsns.c:434
 msgid "failed to add line to output"
 msgstr "falha ao adicionar linha à saída"
 
@@ -3601,16 +3601,16 @@ msgid "failed to add data to output table"
 msgstr "falha ao adicionar dados à tabela de saída"
 
 #: disk-utils/partx.c:667 login-utils/lslogins.c:922 misc-utils/findmnt.c:1582
-#: misc-utils/lsblk.c:1874 misc-utils/lslocks.c:451 sys-utils/losetup.c:310
-#: sys-utils/lscpu.c:1702 sys-utils/lsipc.c:338 sys-utils/lsns.c:511
+#: misc-utils/lsblk.c:1869 misc-utils/lslocks.c:451 sys-utils/losetup.c:310
+#: sys-utils/lscpu.c:1690 sys-utils/lsipc.c:338 sys-utils/lsns.c:489
 #: sys-utils/prlimit.c:297 sys-utils/swapon.c:280 sys-utils/wdctl.c:259
 #: sys-utils/zramctl.c:484
 msgid "failed to initialize output table"
 msgstr "falha ao inicializar tabela da saída"
 
-#: disk-utils/partx.c:678 misc-utils/findmnt.c:1608 misc-utils/lsblk.c:1896
+#: disk-utils/partx.c:678 misc-utils/findmnt.c:1608 misc-utils/lsblk.c:1891
 #: misc-utils/lslocks.c:465 sys-utils/losetup.c:322 sys-utils/losetup.c:358
-#: sys-utils/lscpu.c:1707 sys-utils/lsns.c:532 sys-utils/prlimit.c:306
+#: sys-utils/lscpu.c:1695 sys-utils/lsns.c:510 sys-utils/prlimit.c:306
 #: sys-utils/swapon.c:289 sys-utils/wdctl.c:270 sys-utils/zramctl.c:493
 msgid "failed to initialize output column"
 msgstr "falha ao inicializar coluna da saída"
@@ -3911,7 +3911,7 @@ msgstr " início antigo: %ju, novo início: %ju (mover %ju setores)\n"
 msgid "Do you want to move partition data?"
 msgstr "Deseja mover dados da partição?"
 
-#: disk-utils/sfdisk.c:453 disk-utils/sfdisk.c:1781
+#: disk-utils/sfdisk.c:453 disk-utils/sfdisk.c:1774
 msgid "Leaving."
 msgstr "Deixando."
 
@@ -3932,12 +3932,12 @@ msgstr ""
 "\n"
 "A tabela de partição foi alterada."
 
-#: disk-utils/sfdisk.c:623
+#: disk-utils/sfdisk.c:619
 #, c-format
 msgid "unsupported label '%s'"
 msgstr "rótulo sem suporte \"%s\""
 
-#: disk-utils/sfdisk.c:626
+#: disk-utils/sfdisk.c:622
 msgid ""
 "Id  Name\n"
 "\n"
@@ -3945,167 +3945,161 @@ msgstr ""
 "Nome Id\n"
 "\n"
 
-#: disk-utils/sfdisk.c:656
+#: disk-utils/sfdisk.c:652
 msgid "unrecognized partition table type"
 msgstr "tipo de tabela de partição não reconhecida"
 
-#: disk-utils/sfdisk.c:709
+#: disk-utils/sfdisk.c:705
 #, c-format
 msgid "Cannot get size of %s"
 msgstr "Não foi possível obter o tamanho de %s"
 
-#: disk-utils/sfdisk.c:746
+#: disk-utils/sfdisk.c:742
 #, c-format
 msgid "total: %ju blocks\n"
 msgstr "total: %ju blocos\n"
 
-#: disk-utils/sfdisk.c:808 disk-utils/sfdisk.c:876 disk-utils/sfdisk.c:917
-#: disk-utils/sfdisk.c:947 disk-utils/sfdisk.c:1014 disk-utils/sfdisk.c:1078
-#: disk-utils/sfdisk.c:1133 disk-utils/sfdisk.c:1189 disk-utils/sfdisk.c:1533
+#: disk-utils/sfdisk.c:804 disk-utils/sfdisk.c:872 disk-utils/sfdisk.c:913
+#: disk-utils/sfdisk.c:943 disk-utils/sfdisk.c:1007 disk-utils/sfdisk.c:1071
+#: disk-utils/sfdisk.c:1126 disk-utils/sfdisk.c:1182 disk-utils/sfdisk.c:1526
 msgid "no disk device specified"
 msgstr "nenhum dispositivo de disco especificado"
 
-#: disk-utils/sfdisk.c:819
+#: disk-utils/sfdisk.c:815
 msgid "toggle boot flags is supported for MBR only"
 msgstr "Há suporte à alteração da opção de inicializável apenas para MBR"
 
-#: disk-utils/sfdisk.c:850 disk-utils/sfdisk.c:896 disk-utils/sfdisk.c:1019
-#: disk-utils/sfdisk.c:1083 disk-utils/sfdisk.c:1138 disk-utils/sfdisk.c:1194
-#: disk-utils/sfdisk.c:1531 disk-utils/sfdisk.c:2011
+#: disk-utils/sfdisk.c:846 disk-utils/sfdisk.c:892 disk-utils/sfdisk.c:1012
+#: disk-utils/sfdisk.c:1076 disk-utils/sfdisk.c:1131 disk-utils/sfdisk.c:1187
+#: disk-utils/sfdisk.c:1524 disk-utils/sfdisk.c:2004
 msgid "failed to parse partition number"
 msgstr "falha em analisar número da partição"
 
-#: disk-utils/sfdisk.c:855
+#: disk-utils/sfdisk.c:851
 #, c-format
 msgid "%s: partition %d: failed to toggle bootable flag"
 msgstr "%s: partição %d: falha ao alterar a opção inicializável"
 
-#: disk-utils/sfdisk.c:891 disk-utils/sfdisk.c:899
+#: disk-utils/sfdisk.c:887 disk-utils/sfdisk.c:895
 #, c-format
 msgid "%s: partition %zu: failed to delete"
 msgstr "%s: partição %zu: falha ao excluir"
 
-#: disk-utils/sfdisk.c:954
-#, fuzzy, c-format
-msgid "%s: does not contain a recognized partition table"
-msgstr "A unidade não contém uma tabela de partição conhecida."
-
-#: disk-utils/sfdisk.c:958
+#: disk-utils/sfdisk.c:951
 msgid "failed to allocate dump struct"
 msgstr "falha ao alocar struct de despejo"
 
-#: disk-utils/sfdisk.c:962
-#, fuzzy, c-format
-msgid "%s: failed to dump partition table"
+#: disk-utils/sfdisk.c:955
+msgid "failed to dump partition table"
 msgstr "falha ao despejar a tabela de partição"
 
-#: disk-utils/sfdisk.c:992
+#: disk-utils/sfdisk.c:985
 #, c-format
 msgid "%s: no partition table found"
 msgstr "%s: nenhuma tabela de partição encontrada"
 
-#: disk-utils/sfdisk.c:996
+#: disk-utils/sfdisk.c:989
 #, c-format
 msgid "%s: partition %zu: partition table contains only %zu partitions"
 msgstr "%s: partição %zu: tabela de partição contém apenas %zu partições"
 
-#: disk-utils/sfdisk.c:999
+#: disk-utils/sfdisk.c:992
 #, c-format
 msgid "%s: partition %zu: partition is unused"
 msgstr "%s: partição %zu: partição não está sendo usada"
 
-#: disk-utils/sfdisk.c:1018 disk-utils/sfdisk.c:1082 disk-utils/sfdisk.c:1137
-#: disk-utils/sfdisk.c:1193
+#: disk-utils/sfdisk.c:1011 disk-utils/sfdisk.c:1075 disk-utils/sfdisk.c:1130
+#: disk-utils/sfdisk.c:1186
 msgid "no partition number specified"
 msgstr "nenhum número de partição especificado"
 
-#: disk-utils/sfdisk.c:1024 disk-utils/sfdisk.c:1088 disk-utils/sfdisk.c:1143
-#: disk-utils/sfdisk.c:1199
+#: disk-utils/sfdisk.c:1017 disk-utils/sfdisk.c:1081 disk-utils/sfdisk.c:1136
+#: disk-utils/sfdisk.c:1192
 msgid "unexpected arguments"
 msgstr "argumentos inesperados"
 
-#: disk-utils/sfdisk.c:1039
+#: disk-utils/sfdisk.c:1032
 #, c-format
 msgid "%s: partition %zu: failed to get partition type"
 msgstr "%s: partição %zu: falha em obter o tipo da partição"
 
 # primeiro %s é rótulo, segundo %s é o tipo
-#: disk-utils/sfdisk.c:1058
+#: disk-utils/sfdisk.c:1051
 #, c-format
 msgid "failed to parse %s partition type '%s'"
 msgstr "falha ao analisar partição %s do tipo \"%s\""
 
-#: disk-utils/sfdisk.c:1062
+#: disk-utils/sfdisk.c:1055
 #, c-format
 msgid "%s: partition %zu: failed to set partition type"
 msgstr "%s: partição %zu: falha ao definir o tipo da partição"
 
-#: disk-utils/sfdisk.c:1100
+#: disk-utils/sfdisk.c:1093
 #, c-format
 msgid "%s: partition %zu: failed to get partition UUID"
 msgstr "%s: partição %zu: falha ao obter UUID da partição"
 
-#: disk-utils/sfdisk.c:1113 disk-utils/sfdisk.c:1168 disk-utils/sfdisk.c:1222
+#: disk-utils/sfdisk.c:1106 disk-utils/sfdisk.c:1161 disk-utils/sfdisk.c:1215
 msgid "failed to allocate partition object"
 msgstr "falha ao alocar objeto de partição"
 
-#: disk-utils/sfdisk.c:1117
+#: disk-utils/sfdisk.c:1110
 #, c-format
 msgid "%s: partition %zu: failed to set partition UUID"
 msgstr "%s: partição %zu: falha ao definir UUID da partição"
 
-#: disk-utils/sfdisk.c:1155
+#: disk-utils/sfdisk.c:1148
 #, c-format
 msgid "%s: partition %zu: failed to get partition name"
 msgstr "%s: partição %zu: falha em obter o número da partição"
 
-#: disk-utils/sfdisk.c:1172
+#: disk-utils/sfdisk.c:1165
 #, c-format
 msgid "%s: partition %zu: failed to set partition name"
 msgstr "%s: partição %zu: falha em definir o nome da partição"
 
-#: disk-utils/sfdisk.c:1226
+#: disk-utils/sfdisk.c:1219
 #, c-format
 msgid "%s: partition %zu: failed to set partition attributes"
 msgstr "%s: partição %zu: falha ao definir atributos da partição"
 
-#: disk-utils/sfdisk.c:1269
+#: disk-utils/sfdisk.c:1262
 msgid " Commands:\n"
 msgstr " Comandos:\n"
 
-#: disk-utils/sfdisk.c:1271
+#: disk-utils/sfdisk.c:1264
 msgid "   write    write table to disk and exit\n"
 msgstr "   write    grava a tabela no disco e sai\n"
 
-#: disk-utils/sfdisk.c:1272
+#: disk-utils/sfdisk.c:1265
 msgid "   quit     show new situation and wait for user's feedback before write\n"
 msgstr "   quit     mostra nova situação e espera pelo feedback do usuário antes de gravar\n"
 
-#: disk-utils/sfdisk.c:1273
+#: disk-utils/sfdisk.c:1266
 msgid "   abort    exit sfdisk shell\n"
 msgstr "   abort    sai do shell do sfdisk\n"
 
-#: disk-utils/sfdisk.c:1274
+#: disk-utils/sfdisk.c:1267
 msgid "   print    display the partition table\n"
 msgstr "   print    exibe a tabela de partição\n"
 
-#: disk-utils/sfdisk.c:1275
+#: disk-utils/sfdisk.c:1268
 msgid "   help     show this help text\n"
 msgstr "   help     mostra esta ajuda e sai\n"
 
-#: disk-utils/sfdisk.c:1277
+#: disk-utils/sfdisk.c:1270
 msgid "   Ctrl-D   the same as 'quit'\n"
 msgstr "   Ctrl-D   o mesmo que \"quit\"\n"
 
-#: disk-utils/sfdisk.c:1281
+#: disk-utils/sfdisk.c:1274
 msgid " Input format:\n"
 msgstr " Formato da entrada:\n"
 
-#: disk-utils/sfdisk.c:1283
+#: disk-utils/sfdisk.c:1276
 msgid "   <start>, <size>, <type>, <bootable>\n"
 msgstr "   <início>, <tamanho>, <tipo>, <inicia.>\n"
 
-#: disk-utils/sfdisk.c:1286
+#: disk-utils/sfdisk.c:1279
 msgid ""
 "   <start>  Beginning of the partition in sectors, or bytes if\n"
 "            specified in the format <number>{K,M,G,T,P,E,Z,Y}.\n"
@@ -4115,7 +4109,7 @@ msgstr ""
 "              especificado no formato <número>{K,M,G,T,P,E,Z,Y}.\n"
 "              O padrão é o primeiro espaço livre.\n"
 
-#: disk-utils/sfdisk.c:1291
+#: disk-utils/sfdisk.c:1284
 msgid ""
 "   <size>   Size of the partition in sectors, or bytes if\n"
 "            specified in the format <number>{K,M,G,T,P,E,Z,Y}.\n"
@@ -4125,63 +4119,63 @@ msgstr ""
 "              especificado no formato <número>{K,M,G,T,P,E,Z,Y}.\n"
 "              O padrão é todo o espaço disponível.\n"
 
-#: disk-utils/sfdisk.c:1296
+#: disk-utils/sfdisk.c:1289
 msgid "   <type>   The partition type.  Default is a Linux data partition.\n"
 msgstr "   <tipo>     O tipo da partição. Padrão é uma partição de dados Linux.\n"
 
-#: disk-utils/sfdisk.c:1297
+#: disk-utils/sfdisk.c:1290
 msgid "            MBR: hex or L,S,E,X shortcuts.\n"
 msgstr "            MBR: hexa ou atalhos L,S,E,X.\n"
 
-#: disk-utils/sfdisk.c:1298
+#: disk-utils/sfdisk.c:1291
 msgid "            GPT: UUID or L,S,H shortcuts.\n"
 msgstr "            GPT: UUID ou atalhos L,S,H.\n"
 
-#: disk-utils/sfdisk.c:1301
+#: disk-utils/sfdisk.c:1294
 msgid "   <bootable>  Use '*' to mark an MBR partition as bootable.\n"
 msgstr "   <inicia.>  Use \"*\" para marcar uma partição como inicializável.\n"
 
-#: disk-utils/sfdisk.c:1305
+#: disk-utils/sfdisk.c:1298
 msgid " Example:\n"
 msgstr " Exemplo:\n"
 
-#: disk-utils/sfdisk.c:1307
+#: disk-utils/sfdisk.c:1300
 msgid "   , 4G     Creates a 4GiB partition at default start offset.\n"
 msgstr "   , 4G     Cria uma partição de 4GB na posição inicial padrão.\n"
 
-#: disk-utils/sfdisk.c:1339 sys-utils/dmesg.c:1455
+#: disk-utils/sfdisk.c:1332 sys-utils/dmesg.c:1455
 msgid "unsupported command"
 msgstr "comando sem suporte"
 
-#: disk-utils/sfdisk.c:1341
+#: disk-utils/sfdisk.c:1334
 #, c-format
 msgid "line %d: unsupported command"
 msgstr "linha %d: comando sem suporte"
 
-#: disk-utils/sfdisk.c:1500
+#: disk-utils/sfdisk.c:1493
 msgid "failed to allocate partition name"
 msgstr "falha ao alocar nome da partição"
 
-#: disk-utils/sfdisk.c:1541
+#: disk-utils/sfdisk.c:1534
 msgid "failed to allocate script handler"
 msgstr "falha ao alocar manipulador de script"
 
-#: disk-utils/sfdisk.c:1557
+#: disk-utils/sfdisk.c:1550
 #, c-format
 msgid "%s: cannot modify partition %d: no partition table was found"
 msgstr "%s: não foi possível modificar a partição %d: nenhuma tabela de partição foi encontrada"
 
-#: disk-utils/sfdisk.c:1562
+#: disk-utils/sfdisk.c:1555
 #, c-format
 msgid "%s: cannot modify partition %d: partition table contains only %zu partitions"
 msgstr "%s: não foi possível modificar a partição %d: tabela de partição contém apenas %zu partições"
 
-#: disk-utils/sfdisk.c:1568
+#: disk-utils/sfdisk.c:1561
 #, c-format
 msgid "warning: %s: partition %d is not defined yet"
 msgstr "aviso: %s: partição %d não está definida ainda"
 
-#: disk-utils/sfdisk.c:1586
+#: disk-utils/sfdisk.c:1579
 #, c-format
 msgid ""
 "\n"
@@ -4190,11 +4184,11 @@ msgstr ""
 "\n"
 "Bem-vindo ao sfdisk (%s)."
 
-#: disk-utils/sfdisk.c:1594
+#: disk-utils/sfdisk.c:1587
 msgid "Checking that no-one is using this disk right now ..."
 msgstr "Verificando se ninguém está usando este disco no momento ..."
 
-#: disk-utils/sfdisk.c:1597
+#: disk-utils/sfdisk.c:1590
 msgid ""
 " FAILED\n"
 "\n"
@@ -4202,7 +4196,7 @@ msgstr ""
 " FALHOU\n"
 "\n"
 
-#: disk-utils/sfdisk.c:1600
+#: disk-utils/sfdisk.c:1593
 msgid ""
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
 "Umount all file systems, and swapoff all swap partitions on this disk.\n"
@@ -4212,11 +4206,11 @@ msgstr ""
 "Desmonte todos sistemas de arquivos e swapoff todas partições swap do disco.\n"
 "Use a opção --no-reread para suprimir esta verificação.\n"
 
-#: disk-utils/sfdisk.c:1605
+#: disk-utils/sfdisk.c:1598
 msgid "Use the --force flag to overrule all checks."
 msgstr "Use a opção --force para cancelar todas as verificações."
 
-#: disk-utils/sfdisk.c:1607
+#: disk-utils/sfdisk.c:1600
 msgid ""
 " OK\n"
 "\n"
@@ -4224,7 +4218,7 @@ msgstr ""
 " OK\n"
 "\n"
 
-#: disk-utils/sfdisk.c:1636
+#: disk-utils/sfdisk.c:1629
 msgid ""
 "\n"
 "Old situation:"
@@ -4232,7 +4226,7 @@ msgstr ""
 "\n"
 "Situação antiga:"
 
-#: disk-utils/sfdisk.c:1654
+#: disk-utils/sfdisk.c:1647
 #, c-format
 msgid ""
 "\n"
@@ -4245,7 +4239,7 @@ msgstr ""
 "Use \"label: <nome>\" antes de definir uma primeira\n"
 "partição para sobrescrever o padrão."
 
-#: disk-utils/sfdisk.c:1657
+#: disk-utils/sfdisk.c:1650
 msgid ""
 "\n"
 "Type 'help' to get more information.\n"
@@ -4253,31 +4247,31 @@ msgstr ""
 "\n"
 "Tente \"%s --help\" para maiores informações.\n"
 
-#: disk-utils/sfdisk.c:1675
+#: disk-utils/sfdisk.c:1668
 msgid "All partitions used."
 msgstr "Todas partições usadas."
 
-#: disk-utils/sfdisk.c:1700
+#: disk-utils/sfdisk.c:1693
 msgid "Done.\n"
 msgstr "Concluído.\n"
 
-#: disk-utils/sfdisk.c:1712
+#: disk-utils/sfdisk.c:1705
 msgid "Ignoring partition."
 msgstr "Ignorando partição."
 
-#: disk-utils/sfdisk.c:1721
+#: disk-utils/sfdisk.c:1714
 msgid "Failed to apply script headers, disk label not created."
 msgstr "Falha ao aplicar cabeçalhos de script, rótulo do disco não criado."
 
-#: disk-utils/sfdisk.c:1737
+#: disk-utils/sfdisk.c:1730
 msgid "Failed to add partition"
 msgstr "Falha ao adicionar partição"
 
-#: disk-utils/sfdisk.c:1761
+#: disk-utils/sfdisk.c:1754
 msgid "Script header accepted."
 msgstr "Cabeçalho de script aceito."
 
-#: disk-utils/sfdisk.c:1770
+#: disk-utils/sfdisk.c:1763
 msgid ""
 "\n"
 "New situation:"
@@ -4285,15 +4279,15 @@ msgstr ""
 "\n"
 "Situação nova:"
 
-#: disk-utils/sfdisk.c:1779
+#: disk-utils/sfdisk.c:1772
 msgid "Do you want to write this to disk?"
 msgstr "Deseja gravar isto no disco?"
 
-#: disk-utils/sfdisk.c:1791
+#: disk-utils/sfdisk.c:1784
 msgid "Leaving.\n"
 msgstr "Deixando.\n"
 
-#: disk-utils/sfdisk.c:1804
+#: disk-utils/sfdisk.c:1797
 #, c-format
 msgid ""
 " %1$s [options] <dev> [[-N] <part>]\n"
@@ -4302,7 +4296,7 @@ msgstr ""
 " %1$s [opções] [<disp> [[-N] <partição>]\n"
 " %1$s [opções] <comando>\n"
 
-#: disk-utils/sfdisk.c:1810
+#: disk-utils/sfdisk.c:1803
 msgid ""
 "\n"
 "Commands:\n"
@@ -4310,198 +4304,198 @@ msgstr ""
 "\n"
 "Comandos:\n"
 
-#: disk-utils/sfdisk.c:1811
+#: disk-utils/sfdisk.c:1804
 msgid " -A, --activate <dev> [<part> ...] list or set bootable MBR partitions\n"
 msgstr " -A, --activate <disp> [<part> ...] lista/define partições MBR inicializáveis\n"
 
-#: disk-utils/sfdisk.c:1812
+#: disk-utils/sfdisk.c:1805
 msgid " -d, --dump <dev>                  dump partition table (usable for later input)\n"
 msgstr ""
 " -d, --dump <disp>                 despeja a tabela de partição (usável para\n"
 "                                     posterior entrada\n"
 
-#: disk-utils/sfdisk.c:1813
+#: disk-utils/sfdisk.c:1806
 msgid " -J, --json <dev>                  dump partition table in JSON format\n"
 msgstr " -J, --json <disp>                 despeja tabela de partição no formato JSON\n"
 
-#: disk-utils/sfdisk.c:1814
+#: disk-utils/sfdisk.c:1807
 msgid " -g, --show-geometry [<dev> ...]   list geometry of all or specified devices\n"
 msgstr ""
 " -g, --show-geometry [<disp> ...]  lista geometria de todos dispositivos ou\n"
 "                                     somente daqueles especificados\n"
 
-#: disk-utils/sfdisk.c:1815
+#: disk-utils/sfdisk.c:1808
 msgid " -l, --list [<dev> ...]            list partitions of each device\n"
 msgstr " -l, --list [<disp> ...]           lista partições de cada dispositivo\n"
 
-#: disk-utils/sfdisk.c:1816
+#: disk-utils/sfdisk.c:1809
 msgid " -F, --list-free [<dev> ...]       list unpartitioned free areas of each device\n"
 msgstr ""
 " -F, --list-free [<disp> ...]      lista áreas livres não particionadas\n"
 "                                     de cada dispositivo\n"
 
-#: disk-utils/sfdisk.c:1817
+#: disk-utils/sfdisk.c:1810
 msgid " -r, --reorder <dev>               fix partitions order (by start offset)\n"
 msgstr ""
 " -r, --reorder <disp>              corrige ordem de partições (a partir da\n"
 "                                     posição inicial\n"
 
-#: disk-utils/sfdisk.c:1818
+#: disk-utils/sfdisk.c:1811
 msgid " -s, --show-size [<dev> ...]       list sizes of all or specified devices\n"
 msgstr ""
 " -s, --show-size [<disp> ...]      lista tamanhos de todos dispositivos ou\n"
 "                                     somente aqueles especificados\n"
 
-#: disk-utils/sfdisk.c:1819
+#: disk-utils/sfdisk.c:1812
 msgid " -T, --list-types                  print the recognized types (see -X)\n"
 msgstr " -T, --list-types                  mostra os tipos reconhecidos (veja -X)\n"
 
-#: disk-utils/sfdisk.c:1820
+#: disk-utils/sfdisk.c:1813
 msgid " -V, --verify [<dev> ...]          test whether partitions seem correct\n"
 msgstr " -V, --verify [<disp> ...]         verifica se a partição está correta\n"
 
-#: disk-utils/sfdisk.c:1821
+#: disk-utils/sfdisk.c:1814
 msgid "     --delete <dev> [<part> ...]   delete all or specified partitions\n"
 msgstr "     --delete <disp> [<part> ...]  exclui todas partições ou as especificadas\n"
 
-#: disk-utils/sfdisk.c:1824
+#: disk-utils/sfdisk.c:1817
 msgid " --part-label <dev> <part> [<str>] print or change partition label\n"
 msgstr " --part-label <disp> <part> [<str>] mostra ou altera a tabela de partição\n"
 
-#: disk-utils/sfdisk.c:1825
+#: disk-utils/sfdisk.c:1818
 msgid " --part-type <dev> <part> [<type>] print or change partition type\n"
 msgstr " --part-type <disp> <part> [<tipo>] mostra ou altera o tipo da partição\n"
 
-#: disk-utils/sfdisk.c:1826
+#: disk-utils/sfdisk.c:1819
 msgid " --part-uuid <dev> <part> [<uuid>] print or change partition uuid\n"
 msgstr " --part-uuid <disp> <part> [<uuid>] mostra ou altera o UUID da partição\n"
 
-#: disk-utils/sfdisk.c:1827
+#: disk-utils/sfdisk.c:1820
 msgid " --part-attrs <dev> <part> [<str>] print or change partition attributes\n"
 msgstr " --part-attrs <disp> <part> [<str>] mostra ou altera atributos da partição\n"
 
-#: disk-utils/sfdisk.c:1830
+#: disk-utils/sfdisk.c:1823
 msgid " <dev>                     device (usually disk) path\n"
 msgstr " <disp>                    caminho do dispositivo (geralmente disco)\n"
 
-#: disk-utils/sfdisk.c:1831
+#: disk-utils/sfdisk.c:1824
 msgid " <part>                    partition number\n"
 msgstr " <part>                    número da partição\n"
 
-#: disk-utils/sfdisk.c:1832
+#: disk-utils/sfdisk.c:1825
 msgid " <type>                    partition type, GUID for GPT, hex for MBR\n"
 msgstr " <tipo>                    tipo da partição, GUID para GPT, hex para MBR\n"
 
-#: disk-utils/sfdisk.c:1835
+#: disk-utils/sfdisk.c:1828
 msgid " -a, --append              append partitions to existing partition table\n"
 msgstr " -a, --append              anexa partições para tabela de partição existente\n"
 
-#: disk-utils/sfdisk.c:1836
+#: disk-utils/sfdisk.c:1829
 msgid " -b, --backup              backup partition table sectors (see -O)\n"
 msgstr " -b, --backup              faz backup de setores da tabela de partição (veja -O)\n"
 
-#: disk-utils/sfdisk.c:1837
+#: disk-utils/sfdisk.c:1830
 msgid "     --bytes               print SIZE in bytes rather than in human readable format\n"
 msgstr "     --bytes               mostra TAMANHO em bytes em vez de um formato legível\n"
 
-#: disk-utils/sfdisk.c:1838
+#: disk-utils/sfdisk.c:1831
 msgid "     --move-data[=<typescript>] move partition data after relocation (requires -N)\n"
 msgstr ""
 "     --move-data[=<script-gravado>] move dados de partição após realocação\n"
 "                                      (requer -N)\n"
 
-#: disk-utils/sfdisk.c:1839
+#: disk-utils/sfdisk.c:1832
 msgid " -f, --force               disable all consistency checking\n"
 msgstr " -f, --force               desabilita toda verificação de consistência\n"
 
-#: disk-utils/sfdisk.c:1840
+#: disk-utils/sfdisk.c:1833
 msgid "     --color[=<when>]      colorize output (auto, always or never)\n"
 msgstr "     --color[=<quando>]    colore a saída (auto, always ou never)\n"
 
-#: disk-utils/sfdisk.c:1843
+#: disk-utils/sfdisk.c:1836
 msgid " -N, --partno <num>        specify partition number\n"
 msgstr " -N, --partno <núm>        especifica o número da partição\n"
 
-#: disk-utils/sfdisk.c:1844
+#: disk-utils/sfdisk.c:1837
 msgid " -n, --no-act              do everything except write to device\n"
 msgstr " -n, --no-act              faz tudo, exceto gravar no dispositivo\n"
 
-#: disk-utils/sfdisk.c:1845
+#: disk-utils/sfdisk.c:1838
 msgid "     --no-reread           do not check whether the device is in use\n"
 msgstr "     --no-reread           não verifica se o dispositivo está em uso\n"
 
-#: disk-utils/sfdisk.c:1846
+#: disk-utils/sfdisk.c:1839
 msgid "     --no-tell-kernel      do not tell kernel about changes\n"
 msgstr "     --no-tell-kernel      não avisa ao kernel sobre as alterações\n"
 
-#: disk-utils/sfdisk.c:1847
+#: disk-utils/sfdisk.c:1840
 msgid " -O, --backup-file <path>  override default backup file name\n"
 msgstr " -O, --backup-file <caminho>  sobrescreve o nome do arquivo backup padrão\n"
 
-#: disk-utils/sfdisk.c:1848
+#: disk-utils/sfdisk.c:1841
 msgid " -o, --output <list>       output columns\n"
 msgstr " -o, --output <lista>      mostra colunas\n"
 
-#: disk-utils/sfdisk.c:1849
+#: disk-utils/sfdisk.c:1842
 msgid " -q, --quiet               suppress extra info messages\n"
 msgstr " -q, --quiet               suprime mensagens de informação extra\n"
 
-#: disk-utils/sfdisk.c:1850
+#: disk-utils/sfdisk.c:1843
 msgid " -w, --wipe <mode>         wipe signatures (auto, always or never)\n"
 msgstr " -w, --wipe <modo>         apaga assinaturas (auto, always ou never)\n"
 
-#: disk-utils/sfdisk.c:1852
+#: disk-utils/sfdisk.c:1845
 msgid " -X, --label <name>        specify label type (dos, gpt, ...)\n"
 msgstr " -X, --label <nome>        especifica tipo de rótulo (dos, gpt, ...)\n"
 
-#: disk-utils/sfdisk.c:1853
+#: disk-utils/sfdisk.c:1846
 msgid " -Y, --label-nested <name> specify nested label type (dos, bsd)\n"
 msgstr " -Y, --label-nested <nome> especifica o tipo de rótulo aninhado (dos, bsd)\n"
 
-#: disk-utils/sfdisk.c:1855
+#: disk-utils/sfdisk.c:1848
 msgid " -G, --show-pt-geometry    deprecated, alias to --show-geometry\n"
 msgstr " -G, --show-pt-geometry    obsoleto, apelido para --show-geometry\n"
 
-#: disk-utils/sfdisk.c:1856
+#: disk-utils/sfdisk.c:1849
 msgid " -L, --Linux               deprecated, only for backward compatibility\n"
 msgstr " -L, --Linux               obsoleto, apenas para compatibilidade reversa\n"
 
-#: disk-utils/sfdisk.c:1857
+#: disk-utils/sfdisk.c:1850
 msgid " -u, --unit S              deprecated, only sector unit is supported\n"
 msgstr " -u, --unit S              obsoleto, há suporte apenas à unidade setor\n"
 
-#: disk-utils/sfdisk.c:1861 login-utils/chfn.c:102 login-utils/chsh.c:79
+#: disk-utils/sfdisk.c:1854 login-utils/chfn.c:102 login-utils/chsh.c:79
 msgid " -v, --version  output version information and exit\n"
 msgstr " -v, --version  mostra informações da versão e sai\n"
 
-#: disk-utils/sfdisk.c:1966
+#: disk-utils/sfdisk.c:1959
 #, c-format
 msgid "%s is deprecated in favour of --part-type"
 msgstr "%s está obsoleto em favor de --part-type"
 
-#: disk-utils/sfdisk.c:1971
+#: disk-utils/sfdisk.c:1964
 msgid "--id is deprecated in favour of --part-type"
 msgstr "--id está obsoleto em favor de --part-type"
 
-#: disk-utils/sfdisk.c:1987
+#: disk-utils/sfdisk.c:1980
 msgid "--show-pt-geometry is no more implemented. Using --show-geometry."
 msgstr "--show-pt-geometry não mais está implementado. Usando --show-geometry."
 
-#: disk-utils/sfdisk.c:1998
+#: disk-utils/sfdisk.c:1991
 msgid "--Linux option is unnecessary and deprecated"
 msgstr "a opção --Linux é desnecessária e obsoleta"
 
-#: disk-utils/sfdisk.c:2027
+#: disk-utils/sfdisk.c:2020
 #, c-format
 msgid "unsupported unit '%c'"
 msgstr "sem suporte à unidade \"%c\""
 
-#: disk-utils/sfdisk.c:2030 include/c.h:306
+#: disk-utils/sfdisk.c:2023 include/c.h:306
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s de %s\n"
 
-#: disk-utils/sfdisk.c:2107
+#: disk-utils/sfdisk.c:2100
 msgid "--movedata requires -N"
 msgstr "--movedata requer -N"
 
@@ -4588,7 +4582,7 @@ msgstr ""
 #: login-utils/vipw.c:292 sys-utils/rtcwake.c:280 term-utils/setterm.c:805
 #: text-utils/col.c:157
 msgid "write error"
-msgstr "erro de gravação"
+msgstr "erro de escrita"
 
 #: include/colors.h:27
 msgid "colors are enabled by default"
@@ -4998,15 +4992,15 @@ msgstr "BBT"
 msgid "warning: %s is misaligned"
 msgstr "aviso: %s está desalinhado"
 
-#: libfdisk/src/alignment.c:671
+#: libfdisk/src/alignment.c:662
 msgid "Calling ioctl() to re-read partition table."
 msgstr "Chamando ioctl() para reler tabela de partição."
 
-#: libfdisk/src/alignment.c:680
+#: libfdisk/src/alignment.c:671
 msgid "Re-reading the partition table failed."
 msgstr "Releitura da tabela de partição falhou."
 
-#: libfdisk/src/alignment.c:682
+#: libfdisk/src/alignment.c:673
 msgid "The kernel still uses the old table. The new table will be used at the next reboot or after you run partprobe(8) or kpartx(8)."
 msgstr "O kernel ainda usa a tabela antiga. A nova tabela será usada na próxima reinicialização ou após você executar partprobe(8) ou kpartx(8)."
 
@@ -5050,7 +5044,7 @@ msgstr "Primeiro cilindro"
 msgid "Last cylinder, +cylinders or +size{K,M,G,T,P}"
 msgstr "Último cilindro, +cilindros ou +tamanho{K,M,G,T,P}"
 
-#: libfdisk/src/bsd.c:297 libfdisk/src/dos.c:1166 libfdisk/src/gpt.c:2249
+#: libfdisk/src/bsd.c:297 libfdisk/src/dos.c:1166 libfdisk/src/gpt.c:2238
 msgid "Last sector, +sectors or +size{K,M,G,T,P}"
 msgstr "Último setor, +setores ou +tamanho{K,M,G,T,P}"
 
@@ -5338,7 +5332,7 @@ msgstr "A opção inválida 0x%02x%02x da EBR (para a partição %zu) será corr
 msgid "Start sector %ju out of range."
 msgstr "Setor inicial %ju fora do intervalo."
 
-#: libfdisk/src/dos.c:1026 libfdisk/src/gpt.c:2130 libfdisk/src/sgi.c:839
+#: libfdisk/src/dos.c:1026 libfdisk/src/gpt.c:2119 libfdisk/src/sgi.c:839
 #: libfdisk/src/sun.c:517
 #, c-format
 msgid "Partition %zu is already defined.  Delete it before re-adding it."
@@ -5349,7 +5343,7 @@ msgstr "A partição %zu já está definida. Exclua-a antes de adicioná-la nova
 msgid "Sector %llu is already allocated."
 msgstr "O setor %llu já está alocado."
 
-#: libfdisk/src/dos.c:1133 libfdisk/src/gpt.c:2140
+#: libfdisk/src/dos.c:1133 libfdisk/src/gpt.c:2129
 msgid "No free sectors available."
 msgstr "Não há setores livres disponíveis."
 
@@ -5492,7 +5486,7 @@ msgstr "Tipo de partição inválida \"%c\"."
 msgid "Cannot write sector %jd: seek failed"
 msgstr "Não foi possível gravar o setor %jd: busca falhou"
 
-#: libfdisk/src/dos.c:1852 libfdisk/src/gpt.c:1090
+#: libfdisk/src/dos.c:1852 libfdisk/src/gpt.c:1088
 msgid "Disk identifier"
 msgstr "Identificador do disco"
 
@@ -5504,7 +5498,7 @@ msgstr "Tipo 0 significa espaço livre para muitos sistemas. Manter partições 
 msgid "Cannot change type of the extended partition which is already used by logical partitions. Delete logical partitions first."
 msgstr "Não foi possível alterar o tipo da partição estendida, a qual já está sendo usada por partições lógicas. Exclua as partições lógicas primeiro."
 
-#: libfdisk/src/dos.c:2143 libfdisk/src/gpt.c:2809
+#: libfdisk/src/dos.c:2143 libfdisk/src/gpt.c:2798
 msgid "Nothing to do. Ordering is correct already."
 msgstr "Nada a fazer. Ordem já está correta."
 
@@ -5532,7 +5526,7 @@ msgstr "A opção de inicialização na partição %zu está agora habilitada."
 msgid "The bootable flag on partition %zu is disabled now."
 msgstr "A opção de inicialização da partição %zu está agora desabilitada."
 
-#: libfdisk/src/dos.c:2298 libfdisk/src/gpt.c:2899 libfdisk/src/sgi.c:1153
+#: libfdisk/src/dos.c:2298 libfdisk/src/gpt.c:2888 libfdisk/src/sgi.c:1153
 #: libfdisk/src/sun.c:1109
 msgid "Device"
 msgstr "Dispositivo"
@@ -5553,7 +5547,7 @@ msgstr "Início-C/H/S"
 msgid "End-C/H/S"
 msgstr "Fim-C/H/S"
 
-#: libfdisk/src/dos.c:2311 libfdisk/src/gpt.c:2909 libfdisk/src/sgi.c:1161
+#: libfdisk/src/dos.c:2311 libfdisk/src/gpt.c:2898 libfdisk/src/sgi.c:1161
 msgid "Attrs"
 msgstr "Attrs"
 
@@ -5877,294 +5871,289 @@ msgstr "Sistema de arquivos QNX6"
 msgid "Plan 9 partition"
 msgstr "Plan 9 partição"
 
-#: libfdisk/src/gpt.c:547
+#: libfdisk/src/gpt.c:546
 msgid "failed to allocate GPT header"
 msgstr "falha ao alocar cabeçalho GPT"
 
-#: libfdisk/src/gpt.c:630
+#: libfdisk/src/gpt.c:629
 msgid "First LBA specified by script is out of range."
 msgstr "Primeiro LBA especificado pelo script está fora do intervalo."
 
-#: libfdisk/src/gpt.c:642
+#: libfdisk/src/gpt.c:641
 msgid "Last LBA specified by script is out of range."
 msgstr "Último LBA especificado pelo script está fora do intervalo."
 
-#: libfdisk/src/gpt.c:775
+#: libfdisk/src/gpt.c:774
 #, c-format
 msgid "GPT PMBR size mismatch (%<PRIu64> != %<PRIu64>) will be corrected by w(rite)."
 msgstr "Descompasso no tamanho da PMBR GPT (%<PRIu64> != %<PRIu64>) será corrigido por gravação (w)."
 
-#: libfdisk/src/gpt.c:792
+#: libfdisk/src/gpt.c:791
 msgid "gpt: stat() failed"
 msgstr "gpt: stat() falhou"
 
-#: libfdisk/src/gpt.c:802
+#: libfdisk/src/gpt.c:801
 #, c-format
 msgid "gpt: cannot handle files with mode %o"
 msgstr "gpt: não foi possível manipular arquivos com modo %o"
 
-#: libfdisk/src/gpt.c:1058
+#: libfdisk/src/gpt.c:1057
 msgid "GPT Header"
 msgstr "Cabeçalho GPT"
 
-#: libfdisk/src/gpt.c:1063
+#: libfdisk/src/gpt.c:1062
 msgid "GPT Entries"
 msgstr "Entradas GPT"
 
-#: libfdisk/src/gpt.c:1097
+#: libfdisk/src/gpt.c:1095
 msgid "First LBA"
 msgstr "Primeiro LBA"
 
-#: libfdisk/src/gpt.c:1102
+#: libfdisk/src/gpt.c:1100
 msgid "Last LBA"
 msgstr "Último LBA"
 
 #. TRANSLATORS: The LBA (Logical Block Address) of the backup GPT header.
-#: libfdisk/src/gpt.c:1108
+#: libfdisk/src/gpt.c:1106
 msgid "Alternative LBA"
 msgstr "LBA alternativo"
 
 #. TRANSLATORS: The start of the array of partition entries.
-#: libfdisk/src/gpt.c:1114
+#: libfdisk/src/gpt.c:1112
 msgid "Partition entries LBA"
 msgstr "LBA de entradas de partição"
 
-#: libfdisk/src/gpt.c:1119
+#: libfdisk/src/gpt.c:1117
 msgid "Allocated partition entries"
 msgstr "Entradas de partição alocada"
 
-#: libfdisk/src/gpt.c:1434
+#: libfdisk/src/gpt.c:1432
 msgid "The backup GPT table is corrupt, but the primary appears OK, so that will be used."
 msgstr "A tabela GPT reserva está backup, mas a primária parece estar OK e, por isso, esta será usada."
 
-#: libfdisk/src/gpt.c:1443
+#: libfdisk/src/gpt.c:1441
 msgid "The primary GPT table is corrupt, but the backup appears OK, so that will be used."
 msgstr "A tabela GPT primária está corrompida, mas a backup parece estar OK e, por isso, esta será usada."
 
-#: libfdisk/src/gpt.c:1625
+#: libfdisk/src/gpt.c:1619
 #, c-format
 msgid "unsupported GPT attribute bit '%s'"
 msgstr "sem suporte ao bit \"%s\" atributo de GPT"
 
-#: libfdisk/src/gpt.c:1630
-#, fuzzy, c-format
-msgid "failed to parse GPT attribute string '%s'"
-msgstr "falha ao analisar a lista \"%s\""
-
-#: libfdisk/src/gpt.c:1725
+#: libfdisk/src/gpt.c:1714
 #, c-format
 msgid "Partition UUID changed from %s to %s."
 msgstr "UUID da partição alterada de %s para %s."
 
-#: libfdisk/src/gpt.c:1733
+#: libfdisk/src/gpt.c:1722
 #, c-format
 msgid "Partition name changed from '%s' to '%.*s'."
 msgstr "Nome da partição alterado de \"%s\" to \"%.*s\"."
 
-#: libfdisk/src/gpt.c:1762
+#: libfdisk/src/gpt.c:1751
 msgid "The start of the partition understeps FirstUsableLBA."
 msgstr "O início da partição é menor que FirstUsableLBA."
 
-#: libfdisk/src/gpt.c:1769
+#: libfdisk/src/gpt.c:1758
 msgid "The end of the partition oversteps LastUsableLBA."
 msgstr "O fim de partição excede LastUsableLBA."
 
-#: libfdisk/src/gpt.c:1928
+#: libfdisk/src/gpt.c:1917
 msgid "The device contains hybrid MBR -- writing GPT only. You have to sync the MBR manually."
 msgstr "O dispositivo contém MBR híbrida -- escrevendo apenas GPT. Você tem que sincronizar a MBR manualmente."
 
-#: libfdisk/src/gpt.c:1965
+#: libfdisk/src/gpt.c:1954
 msgid "Disk does not contain a valid backup header."
 msgstr "O disco não contém uma tabela de partição válida."
 
 # cabeçalho primário ou cabeçalho de uma partição primária, ou da primeira?
-#: libfdisk/src/gpt.c:1970
+#: libfdisk/src/gpt.c:1959
 msgid "Invalid primary header CRC checksum."
 msgstr "Verificação de soma CRC do cabeçalho primário inválida."
 
-#: libfdisk/src/gpt.c:1974
+#: libfdisk/src/gpt.c:1963
 msgid "Invalid backup header CRC checksum."
 msgstr "Verificação de soma CRC do cabeçalho backup inválida."
 
-#: libfdisk/src/gpt.c:1979
+#: libfdisk/src/gpt.c:1968
 msgid "Invalid partition entry checksum."
 msgstr "Verificação de soma de entrada de partição inválida."
 
-#: libfdisk/src/gpt.c:1984
+#: libfdisk/src/gpt.c:1973
 msgid "Invalid primary header LBA sanity checks."
 msgstr "Verificação de sanidade do LBA do cabeçalho primário inválida."
 
-#: libfdisk/src/gpt.c:1988
+#: libfdisk/src/gpt.c:1977
 msgid "Invalid backup header LBA sanity checks."
 msgstr "Verificação de sanidade do LBA do cabeçalho backup inválida."
 
-#: libfdisk/src/gpt.c:1993
+#: libfdisk/src/gpt.c:1982
 msgid "MyLBA mismatch with real position at primary header."
 msgstr "MyLBA não confere com a posição real no cabeçalho primário."
 
-#: libfdisk/src/gpt.c:1997
+#: libfdisk/src/gpt.c:1986
 msgid "MyLBA mismatch with real position at backup header."
 msgstr "MyLBA não confere com a posição real no cabeçalho backup."
 
-#: libfdisk/src/gpt.c:2002
+#: libfdisk/src/gpt.c:1991
 msgid "Disk is too small to hold all data."
 msgstr "O disco é pequeno demais para manter todos os dados."
 
-#: libfdisk/src/gpt.c:2012
+#: libfdisk/src/gpt.c:2001
 msgid "Primary and backup header mismatch."
 msgstr "Cabeçalhos primário e backup não conferem."
 
-#: libfdisk/src/gpt.c:2018
+#: libfdisk/src/gpt.c:2007
 #, c-format
 msgid "Partition %u overlaps with partition %u."
 msgstr "A partição %u sobrepõe-se à partição %u."
 
-#: libfdisk/src/gpt.c:2025
+#: libfdisk/src/gpt.c:2014
 #, c-format
 msgid "Partition %u is too big for the disk."
 msgstr "A partição %u é grande demais para o disco."
 
-#: libfdisk/src/gpt.c:2032
+#: libfdisk/src/gpt.c:2021
 #, c-format
 msgid "Partition %u ends before it starts."
 msgstr "A partição %u termina antes dela começar."
 
-#: libfdisk/src/gpt.c:2041
+#: libfdisk/src/gpt.c:2030
 msgid "No errors detected."
 msgstr "Nenhum erro detectado."
 
-#: libfdisk/src/gpt.c:2042
+#: libfdisk/src/gpt.c:2031
 #, c-format
 msgid "Header version: %s"
 msgstr "Versão do cabeçalho: %s"
 
-#: libfdisk/src/gpt.c:2043
+#: libfdisk/src/gpt.c:2032
 #, c-format
 msgid "Using %u out of %d partitions."
 msgstr "Usado %u de %d partições."
 
-#: libfdisk/src/gpt.c:2054
+#: libfdisk/src/gpt.c:2043
 #, c-format
 msgid "A total of %ju free sectors is available in %u segment."
 msgid_plural "A total of %ju free sectors is available in %u segments (the largest is %s)."
 msgstr[0] "Um total de %ju setores livres disponíveis em %u segmento."
 msgstr[1] "Um total de %ju setores livres disponíveis em %u segmento(s) (maior %s)."
 
-#: libfdisk/src/gpt.c:2062
+#: libfdisk/src/gpt.c:2051
 #, c-format
 msgid "%d error detected."
 msgid_plural "%d errors detected."
 msgstr[0] "%d erro detectado."
 msgstr[1] "%d erros detectados."
 
-#: libfdisk/src/gpt.c:2136
+#: libfdisk/src/gpt.c:2125
 msgid "All partitions are already in use."
 msgstr "Esta partição já está sendo usada."
 
-#: libfdisk/src/gpt.c:2191 libfdisk/src/gpt.c:2216
+#: libfdisk/src/gpt.c:2180 libfdisk/src/gpt.c:2205
 #, c-format
 msgid "Sector %ju already used."
 msgstr "O setor %ju já está em uso."
 
-#: libfdisk/src/gpt.c:2277
+#: libfdisk/src/gpt.c:2266
 #, c-format
 msgid "Could not create partition %zu"
 msgstr "Não foi possível criar a partição %zu"
 
-#: libfdisk/src/gpt.c:2284
+#: libfdisk/src/gpt.c:2273
 #, c-format
 msgid "The last usable GPT sector is %ju, but %ju is requested."
 msgstr "O último setor GPT usável é %ju, mas %ju é requisitado."
 
-#: libfdisk/src/gpt.c:2291
+#: libfdisk/src/gpt.c:2280
 #, c-format
 msgid "The first usable GPT sector is %ju, but %ju is requested."
 msgstr "O primeiro setor GPT usável é %ju, mas %ju é requisitado."
 
-#: libfdisk/src/gpt.c:2423
+#: libfdisk/src/gpt.c:2412
 #, c-format
 msgid "Created a new GPT disklabel (GUID: %s)."
 msgstr "Criado um novo rótulo de disco GPT (GUID: %s)."
 
-#: libfdisk/src/gpt.c:2441
+#: libfdisk/src/gpt.c:2430
 msgid "Enter new disk UUID (in 8-4-4-4-12 format)"
 msgstr "Digite um novo UUID de disco (no formato 8-4-4-4-12)"
 
-#: libfdisk/src/gpt.c:2448
+#: libfdisk/src/gpt.c:2437
 msgid "Failed to parse your UUID."
 msgstr "Falha ao analisar seu UUID."
 
-#: libfdisk/src/gpt.c:2462
+#: libfdisk/src/gpt.c:2451
 #, c-format
 msgid "Disk identifier changed from %s to %s."
 msgstr "Identificador de disco alterado de %s para %s."
 
-#: libfdisk/src/gpt.c:2482
+#: libfdisk/src/gpt.c:2471
 msgid "Not enough space for new partition table!"
 msgstr "Não há espaço suficiente para nova tabela de partição!"
 
-#: libfdisk/src/gpt.c:2491
+#: libfdisk/src/gpt.c:2480
 #, c-format
 msgid "Partition #%u out of range (minimal start is %<PRIu64> sectors)"
 msgstr "Partição nº %u está fora do intervalo (início mínimo é %<PRIu64> setores)"
 
-#: libfdisk/src/gpt.c:2496
+#: libfdisk/src/gpt.c:2485
 #, c-format
 msgid "Partition #%u out of range (maximal end is %<PRIu64> sectors)"
 msgstr "Partição nº %u está fora do intervalo (final máximo é %<PRIu64> setores)"
 
-#: libfdisk/src/gpt.c:2551
+#: libfdisk/src/gpt.c:2540
 msgid "Cannot allocate memory!"
 msgstr "Não foi possível alocar memória!"
 
-#: libfdisk/src/gpt.c:2578
+#: libfdisk/src/gpt.c:2567
 #, c-format
 msgid "Partition table length changed from %<PRIu32> to %<PRIu64>."
 msgstr "Comprimento da tabela de partição alterado de %<PRIu32> para %<PRIu64>."
 
-#: libfdisk/src/gpt.c:2682
+#: libfdisk/src/gpt.c:2671
 #, c-format
 msgid "The attributes on partition %zu changed to 0x%016<PRIx64>."
 msgstr "Os atributos na partição %zu foram alterados para 0x%016<PRIx64>."
 
-#: libfdisk/src/gpt.c:2730
+#: libfdisk/src/gpt.c:2719
 msgid "Enter GUID specific bit"
 msgstr "Insira o bit específico de GUID"
 
-#: libfdisk/src/gpt.c:2745
+#: libfdisk/src/gpt.c:2734
 #, c-format
 msgid "failed to toggle unsupported bit %lu"
 msgstr "falha ao ativar bit sem suporte %lu"
 
-#: libfdisk/src/gpt.c:2758
+#: libfdisk/src/gpt.c:2747
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is enabled now."
 msgstr "O bit específico de GUID %d na partição %zu está habilitado agora."
 
-#: libfdisk/src/gpt.c:2759
+#: libfdisk/src/gpt.c:2748
 #, c-format
 msgid "The GUID specific bit %d on partition %zu is disabled now."
 msgstr "O bit específico de GUID %d na partição %zu está desabilitado agora."
 
-#: libfdisk/src/gpt.c:2763
+#: libfdisk/src/gpt.c:2752
 #, c-format
 msgid "The %s flag on partition %zu is enabled now."
 msgstr "A opção %s na partição %zu está habilitada agora."
 
-#: libfdisk/src/gpt.c:2764
+#: libfdisk/src/gpt.c:2753
 #, c-format
 msgid "The %s flag on partition %zu is disabled now."
 msgstr "A opção %s na partição %zu está desabilitada agora."
 
-#: libfdisk/src/gpt.c:2906
+#: libfdisk/src/gpt.c:2895
 msgid "Type-UUID"
 msgstr "Tipo-UUID"
 
-#: libfdisk/src/gpt.c:2907
+#: libfdisk/src/gpt.c:2896
 msgid "UUID"
 msgstr "UUID"
 
-#: libfdisk/src/gpt.c:2908 login-utils/chfn.c:150 login-utils/chfn.c:152
+#: libfdisk/src/gpt.c:2897 login-utils/chfn.c:150 login-utils/chfn.c:152
 #: login-utils/chfn.c:307
 msgid "Name"
 msgstr "Nome"
@@ -6594,7 +6583,7 @@ msgid "waitpid failed (%s)"
 msgstr "waitpid falhou (%s)"
 
 # set = conjunto de instruções? ou outra característica do cpu?
-#: lib/path.c:209 sys-utils/lscpu.c:1807
+#: lib/path.c:209 sys-utils/lscpu.c:1795
 msgid "failed to callocate cpu set"
 msgstr "falha ao callocate o conjunto da cpu"
 
@@ -6610,15 +6599,15 @@ msgstr "falha ao analisar a máscara da CPU %s"
 
 #: lib/plymouth-ctrl.c:72
 msgid "can not open UNIX socket"
-msgstr "não foi possível abrir o socket UNIX"
+msgstr "não foi possível abrir o soquete UNIX"
 
 #: lib/plymouth-ctrl.c:78
 msgid "can not set option for UNIX socket"
-msgstr "não foi possível definir o tempo limite para socket UNIX"
+msgstr "não foi possível definir o tempo limite para soquete UNIX"
 
 #: lib/plymouth-ctrl.c:91
 msgid "can not connect on UNIX socket"
-msgstr "não foi possível conectar ao socket UNIX"
+msgstr "não foi possível conectar ao soquete UNIX"
 
 #: lib/plymouth-ctrl.c:131
 #, c-format
@@ -6683,7 +6672,7 @@ msgstr " -u, --help     exibe esta mensagem de ajuda e sai\n"
 msgid "field %s is too long"
 msgstr "campo %s é longo demais"
 
-#: login-utils/chfn.c:121 login-utils/chsh.c:206
+#: login-utils/chfn.c:121 login-utils/chsh.c:205
 #, c-format
 msgid "%s: has illegal characters"
 msgstr "%s: possui caracteres ilegais"
@@ -6730,17 +6719,17 @@ msgstr "As informações de finger *NÃO* foram alteradas. Tente novamente mais 
 msgid "Finger information changed.\n"
 msgstr "As informações de finger foram alteradas.\n"
 
-#: login-utils/chfn.c:408 login-utils/chsh.c:243
+#: login-utils/chfn.c:408 login-utils/chsh.c:242
 #, c-format
 msgid "you (user %d) don't exist."
 msgstr "você (usuário %d) não existe."
 
-#: login-utils/chfn.c:414 login-utils/chsh.c:248 login-utils/libuser.c:59
+#: login-utils/chfn.c:414 login-utils/chsh.c:247 login-utils/libuser.c:59
 #, c-format
 msgid "user \"%s\" does not exist."
 msgstr "usuário \"%s\" não existe."
 
-#: login-utils/chfn.c:420 login-utils/chsh.c:254
+#: login-utils/chfn.c:420 login-utils/chsh.c:253
 msgid "can only change local entries"
 msgstr "só pode alterar entradas locais"
 
@@ -6749,11 +6738,11 @@ msgstr "só pode alterar entradas locais"
 msgid "%s is not authorized to change the finger info of %s"
 msgstr "%s não está autorizado a mostrar as informações de finger de %s"
 
-#: login-utils/chfn.c:435 login-utils/chsh.c:270
+#: login-utils/chfn.c:435 login-utils/chsh.c:269
 msgid "Unknown user context"
 msgstr "Contexto de usuário desconhecido"
 
-#: login-utils/chfn.c:441 login-utils/chsh.c:276
+#: login-utils/chfn.c:441 login-utils/chsh.c:275
 #, c-format
 msgid "can't set default context for %s"
 msgstr "não foi possível configurar o contexto padrão para %s"
@@ -6788,26 +6777,26 @@ msgstr " -l, --list-shells    exibe uma lista de shells e sai\n"
 msgid "No known shells."
 msgstr "Nenhum shell conhecido."
 
-#: login-utils/chsh.c:200
+#: login-utils/chsh.c:199
 msgid "shell must be a full path name"
 msgstr "o shell precisa ser um nome de caminho completo"
 
-#: login-utils/chsh.c:202
+#: login-utils/chsh.c:201
 #, c-format
 msgid "\"%s\" does not exist"
 msgstr "\"%s\" não existe"
 
-#: login-utils/chsh.c:204
+#: login-utils/chsh.c:203
 #, c-format
 msgid "\"%s\" is not executable"
 msgstr "\"%s\" não é executável"
 
-#: login-utils/chsh.c:210
+#: login-utils/chsh.c:209
 #, c-format
 msgid "Warning: \"%s\" is not listed in %s."
 msgstr "Aviso: \"%s\" não está listado em %s."
 
-#: login-utils/chsh.c:214 login-utils/chsh.c:218
+#: login-utils/chsh.c:213 login-utils/chsh.c:217
 #, c-format
 msgid ""
 "\"%s\" is not listed in %s.\n"
@@ -6816,38 +6805,38 @@ msgstr ""
 "\"%s\" não está listado em %s.\n"
 "Use %s -l para ver a lista."
 
-#: login-utils/chsh.c:269
+#: login-utils/chsh.c:268
 #, c-format
 msgid "%s is not authorized to change the shell of %s"
 msgstr "%s não está autorizado a alterar o shell de %s"
 
-#: login-utils/chsh.c:295
+#: login-utils/chsh.c:294
 msgid "running UID doesn't match UID of user we're altering, shell change denied"
 msgstr "UID usado não confere com o UID do usuário para o qual estamos alterando, alteração de shell negada"
 
-#: login-utils/chsh.c:300
+#: login-utils/chsh.c:299
 #, c-format
 msgid "your shell is not in %s, shell change denied"
 msgstr "seu shell não está em %s, alteração de shell negada"
 
-#: login-utils/chsh.c:304
+#: login-utils/chsh.c:303
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "Alterando o shell para o usuário %s.\n"
 
-#: login-utils/chsh.c:312
+#: login-utils/chsh.c:311
 msgid "New shell"
 msgstr "Novo shell"
 
-#: login-utils/chsh.c:320
+#: login-utils/chsh.c:319
 msgid "Shell not changed."
 msgstr "Shell não alterado."
 
-#: login-utils/chsh.c:325
+#: login-utils/chsh.c:324
 msgid "Shell *NOT* changed.  Try again later."
 msgstr "Shell *NÃO* alterado. Tente novamente mais tarde."
 
-#: login-utils/chsh.c:329
+#: login-utils/chsh.c:328
 msgid ""
 "setpwnam failed\n"
 "Shell *NOT* changed.  Try again later."
@@ -6855,7 +6844,7 @@ msgstr ""
 "setpawnam falhou\n"
 "Shell *NÃO* alterado. Tente novamente mais tarde."
 
-#: login-utils/chsh.c:333
+#: login-utils/chsh.c:332
 #, c-format
 msgid "Shell changed.\n"
 msgstr "Shell alterado.\n"
@@ -7089,7 +7078,7 @@ msgstr "Não foi possível inicializar o PAM: %s"
 msgid "FAILED LOGIN %u FROM %s FOR %s, %s"
 msgstr "LOGIN FALHOU: %u A PARTIR DE %s PARA %s, %s"
 
-#: login-utils/login.c:825 login-utils/sulogin.c:1023
+#: login-utils/login.c:825 login-utils/sulogin.c:1018
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -7177,12 +7166,12 @@ msgstr "Você tem uma mensagem.\n"
 msgid "setuid() failed"
 msgstr "setuid() falhou"
 
-#: login-utils/login.c:1331 login-utils/sulogin.c:738
+#: login-utils/login.c:1331 login-utils/sulogin.c:733
 #, c-format
 msgid "%s: change directory failed"
 msgstr "%s: alteração de diretório falhou"
 
-#: login-utils/login.c:1338 login-utils/sulogin.c:739
+#: login-utils/login.c:1338 login-utils/sulogin.c:734
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Fazendo login com home = \"/\".\n"
@@ -7204,7 +7193,7 @@ msgstr "%s: %s contém um valor numérico inválido: %s"
 msgid "hush login status: restore original IDs failed"
 msgstr "status de login da hush: restauração de IDs originais falhou"
 
-#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1529 sys-utils/lscpu.c:1539
+#: login-utils/lslogins.c:208 sys-utils/lscpu.c:1517 sys-utils/lscpu.c:1527
 msgid "no"
 msgstr "não"
 
@@ -7447,7 +7436,7 @@ msgstr ""
 #: login-utils/lslogins.c:1228 login-utils/nologin.c:26
 #: misc-utils/lslocks.c:501 misc-utils/mcookie.c:82 misc-utils/uuidd.c:70
 #: misc-utils/uuidgen.c:25 sys-utils/dmesg.c:264 sys-utils/ipcmk.c:66
-#: sys-utils/lscpu.c:1949 sys-utils/lsipc.c:277 sys-utils/readprofile.c:104
+#: sys-utils/lscpu.c:1937 sys-utils/lsipc.c:277 sys-utils/readprofile.c:104
 #: sys-utils/rtcwake.c:95 term-utils/setterm.c:380 text-utils/line.c:30
 #, c-format
 msgid " %s [options]\n"
@@ -7547,7 +7536,8 @@ msgstr ""
 "     --btmp-file <caminho>\n"
 "                          define um caminho alternativo para btmp\n"
 
-#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1244 sys-utils/lscpu.c:1967
+#: login-utils/lslogins.c:1259 misc-utils/findmnt.c:1244
+#: sys-utils/lscpu.c:1955
 #, c-format
 msgid ""
 "\n"
@@ -7576,7 +7566,7 @@ msgstr "getline() falhou"
 msgid "Password: "
 msgstr "Senha: "
 
-#: login-utils/newgrp.c:154 login-utils/sulogin.c:1005
+#: login-utils/newgrp.c:154 login-utils/sulogin.c:1000
 msgid "crypt failed"
 msgstr "criptografia falhou"
 
@@ -7680,8 +7670,8 @@ msgid "cannot set user id"
 msgstr "Não foi possível definir o id de usuário"
 
 #: login-utils/su-common.c:682
-#, fuzzy, c-format
-msgid " %s [options] -u <user> [[--] <command>]\n"
+#, c-format
+msgid " %s [options] -u <user> <command>\n"
 msgstr " %s [opções] -u <usuário> <comando>\n"
 
 #: login-utils/su-common.c:683 login-utils/su-common.c:695
@@ -7861,24 +7851,24 @@ msgstr "Pressione ENTER para manutenção\n"
 msgid "(or press Control-D to continue): "
 msgstr "(ou pressione Contrl-D para continuar): "
 
-#: login-utils/sulogin.c:742
+#: login-utils/sulogin.c:737
 msgid "change directory to system root failed"
 msgstr "alteração de diretório para raiz do sistema falhou"
 
-#: login-utils/sulogin.c:791
+#: login-utils/sulogin.c:786
 msgid "setexeccon failed"
 msgstr "setexeccon falhou"
 
-#: login-utils/sulogin.c:811
+#: login-utils/sulogin.c:806
 #, c-format
 msgid " %s [options] [tty device]\n"
 msgstr " %s [opções] [dispositivo tty]\n"
 
-#: login-utils/sulogin.c:814
+#: login-utils/sulogin.c:809
 msgid "Single-user login.\n"
 msgstr "Login como um usuário único.\n"
 
-#: login-utils/sulogin.c:817
+#: login-utils/sulogin.c:812
 msgid ""
 " -p, --login-shell        start a login shell\n"
 " -t, --timeout <seconds>  max time to wait for a password (default: no limit)\n"
@@ -7890,24 +7880,24 @@ msgstr ""
 " -e, --force              examina arquivos de senha diretamente, se\n"
 "                          getpwnam(3) falhar\n"
 
-#: login-utils/sulogin.c:871 misc-utils/findmnt.c:1460 sys-utils/wdctl.c:523
+#: login-utils/sulogin.c:866 misc-utils/findmnt.c:1460 sys-utils/wdctl.c:523
 #: term-utils/agetty.c:750 term-utils/wall.c:135
 msgid "invalid timeout argument"
 msgstr "argumento inválido de tempo limite"
 
-#: login-utils/sulogin.c:893
+#: login-utils/sulogin.c:888
 msgid "only superuser can run this program"
 msgstr "apenas o superusuário pode executar este programa"
 
-#: login-utils/sulogin.c:936
+#: login-utils/sulogin.c:931
 msgid "cannot open console"
 msgstr "não foi possível abrir o console"
 
-#: login-utils/sulogin.c:943
+#: login-utils/sulogin.c:938
 msgid "cannot open password database"
 msgstr "não foi possível abrir o banco de dados de senhas"
 
-#: login-utils/sulogin.c:1020
+#: login-utils/sulogin.c:1015
 #, c-format
 msgid ""
 "Can not execute su shell\n"
@@ -7916,7 +7906,7 @@ msgstr ""
 "Não foi possível executar shell de su\n"
 "\n"
 
-#: login-utils/sulogin.c:1027
+#: login-utils/sulogin.c:1022
 msgid ""
 "Timed out\n"
 "\n"
@@ -7924,7 +7914,7 @@ msgstr ""
 "Tempo esgotado\n"
 "\n"
 
-#: login-utils/sulogin.c:1059
+#: login-utils/sulogin.c:1054
 msgid ""
 "Can not wait on su shell\n"
 "\n"
@@ -8419,11 +8409,11 @@ msgstr " -f, --first-only       exibe apenas o primeiro sistema de arquivos enco
 msgid " -i, --invert           invert the sense of matching\n"
 msgstr " -i, --invert           inverte o sentido das ocorrências\n"
 
-#: misc-utils/findmnt.c:1217 misc-utils/lslocks.c:507 sys-utils/lsns.c:619
+#: misc-utils/findmnt.c:1217 misc-utils/lslocks.c:507 sys-utils/lsns.c:597
 msgid " -J, --json             use JSON output format\n"
 msgstr " -J, --json             usa formato de saída JSON\n"
 
-#: misc-utils/findmnt.c:1218 sys-utils/lsns.c:620
+#: misc-utils/findmnt.c:1218 sys-utils/lsns.c:598
 msgid " -l, --list             use list format output\n"
 msgstr " -l, --list             usa saída no formato de lista\n"
 
@@ -8485,7 +8475,7 @@ msgstr " -t, --types <lista>    limita o conjunto de sistemas de arquivos por ti
 msgid " -U, --uniq             ignore filesystems with duplicate target\n"
 msgstr " -U, --uniq             ignora sistemas de arquivos com alvos duplicados\n"
 
-#: misc-utils/findmnt.c:1232 misc-utils/lslocks.c:513 sys-utils/lsns.c:625
+#: misc-utils/findmnt.c:1232 misc-utils/lslocks.c:513 sys-utils/lsns.c:603
 msgid " -u, --notruncate       don't truncate text in columns\n"
 msgstr " -u, --notruncate       não trunca texto em colunas\n"
 
@@ -8648,8 +8638,8 @@ msgid "\"none\" FS type is recommended for bind or move oprations only"
 msgstr "Tipo de FS \"none\" é recomendado para apenas operações de move ou \"bind\""
 
 #: misc-utils/findmnt-verify.c:414
-#, fuzzy, c-format
-msgid "%s seems unsupported by the current kernel"
+#, c-format
+msgid "%s seems unspported by the current kernel"
 msgstr "%s parece não possuir suporte no kernel atual"
 
 #: misc-utils/findmnt-verify.c:420 misc-utils/findmnt-verify.c:421
@@ -8662,8 +8652,8 @@ msgid "%s does not match with on-disk %s"
 msgstr "%s não corresponde com %s em disco"
 
 #: misc-utils/findmnt-verify.c:431
-#, fuzzy, c-format
-msgid "on-disk %s seems unsupported by the current kernel"
+#, c-format
+msgid "on-disk %s seems unspported by the current kernel"
 msgstr "%s em disco parece não possuir suporte no kernel atual"
 
 #: misc-utils/findmnt-verify.c:433
@@ -8707,15 +8697,15 @@ msgstr "Sucesso, nenhum erro ou aviso detectado\n"
 msgid "Try `%s --help' for more information.\n"
 msgstr "Tente \"%s --help\" para maiores informações.\n"
 
-#: misc-utils/getopt.c:304
+#: misc-utils/getopt.c:297
 msgid "empty long option after -l or --long argument"
 msgstr "opção longa vazia após argumento -l ou --long"
 
-#: misc-utils/getopt.c:325
+#: misc-utils/getopt.c:322
 msgid "unknown shell after -s or --shell argument"
 msgstr "shell desconhecido após argumento -s ou --shell"
 
-#: misc-utils/getopt.c:332
+#: misc-utils/getopt.c:329
 #, c-format
 msgid ""
 " %1$s <optstring> <parameters>\n"
@@ -8726,53 +8716,53 @@ msgstr ""
 " %1$s [opções] [--] <optstring> <parâmetros>\n"
 " %1$s [opções] -o|--options <optstring> [opções] [--] parâmetros\n"
 
-#: misc-utils/getopt.c:338
+#: misc-utils/getopt.c:335
 msgid "Parse command options.\n"
 msgstr "Analisa opções de comando.\n"
 
-#: misc-utils/getopt.c:341
+#: misc-utils/getopt.c:338
 msgid " -a, --alternative             allow long options starting with single -\n"
 msgstr " -a, --alternative             permite opções longas iniciando com um único -\n"
 
-#: misc-utils/getopt.c:342
+#: misc-utils/getopt.c:339
 msgid " -l, --longoptions <longopts>  the long options to be recognized\n"
 msgstr ""
 " -l, --longoptions <opções-longas>\n"
 "                               opções longas a serem reconhecidas\n"
 
-#: misc-utils/getopt.c:343
+#: misc-utils/getopt.c:340
 msgid " -n, --name <progname>         the name under which errors are reported\n"
 msgstr " -n, --name <nome-programa>    o nome sob o qual erros são relatados\n"
 
-#: misc-utils/getopt.c:344
+#: misc-utils/getopt.c:341
 msgid " -o, --options <optstring>     the short options to be recognized\n"
 msgstr " -o, --options <optstring>     as opções curtas a serem reconhecidas\n"
 
-#: misc-utils/getopt.c:345
+#: misc-utils/getopt.c:342
 msgid " -q, --quiet                   disable error reporting by getopt(3)\n"
 msgstr " -q, --quiet                   desabilita relatos de erros por getopt(3)\n"
 
-#: misc-utils/getopt.c:346
+#: misc-utils/getopt.c:343
 msgid " -Q, --quiet-output            no normal output\n"
 msgstr " -Q, --quiet-output            sem saída normal\n"
 
-#: misc-utils/getopt.c:347
+#: misc-utils/getopt.c:344
 msgid " -s, --shell <shell>           set quoting conventions to those of <shell>\n"
 msgstr " -s, --shell <shell>           configura as convenções para as do <shell>\n"
 
-#: misc-utils/getopt.c:348
+#: misc-utils/getopt.c:345
 msgid " -T, --test                    test for getopt(1) version\n"
 msgstr " -T, --test                    teste a versão do getopt(1)\n"
 
-#: misc-utils/getopt.c:349
+#: misc-utils/getopt.c:346
 msgid " -u, --unquoted                do not quote the output\n"
 msgstr " -u, --unquoted                não põe a saída entre aspas\n"
 
-#: misc-utils/getopt.c:399 misc-utils/getopt.c:459
+#: misc-utils/getopt.c:396 misc-utils/getopt.c:456
 msgid "missing optstring argument"
 msgstr "faltando o argumento optstring"
 
-#: misc-utils/getopt.c:454
+#: misc-utils/getopt.c:451
 msgid "internal error, contact the author."
 msgstr "erro interno, entre em contato com o autor."
 
@@ -8902,7 +8892,7 @@ msgstr "openlog %s: nome do caminho longo demais"
 #: misc-utils/logger.c:267
 #, c-format
 msgid "socket %s"
-msgstr "socket %s"
+msgstr "soquete %s"
 
 #: misc-utils/logger.c:306
 #, c-format
@@ -9052,7 +9042,7 @@ msgstr "     --msgid <msgid>      define campo id da mensagem de rfc5424\n"
 
 #: misc-utils/logger.c:1010
 msgid " -u, --socket <socket>    write to this Unix socket\n"
-msgstr " -u, --socket <socket>    grava neste socket Unix\n"
+msgstr " -u, --socket <soquete>   grava neste soquete Unix\n"
 
 #: misc-utils/logger.c:1011
 msgid ""
@@ -9060,7 +9050,7 @@ msgid ""
 "                          print connection errors when using Unix sockets\n"
 msgstr ""
 "     --socket-errors[=<on|off|auto>]\n"
-"                          mostra erros de conexão ao usar sockets Unix\n"
+"                          mostra erros de conexão ao usar soquete Unix\n"
 
 #: misc-utils/logger.c:1014
 msgid "     --journald[=<file>]  write journald entry\n"
@@ -9411,7 +9401,7 @@ msgstr " -t, --topology       exibe informação sobre a topologia\n"
 msgid " -x, --sort <column>  sort output by <column>\n"
 msgstr " -x, --sort <coluna>  ordena a saída por <coluna>\n"
 
-#: misc-utils/lsblk.c:1647 misc-utils/lslocks.c:519 sys-utils/lsns.c:632
+#: misc-utils/lsblk.c:1647 misc-utils/lslocks.c:519 sys-utils/lsns.c:610
 #: sys-utils/prlimit.c:196 sys-utils/zramctl.c:544
 #, c-format
 msgid ""
@@ -9494,11 +9484,11 @@ msgstr "Lista travas do sistema local.\n"
 msgid " -i, --noinaccessible   ignore locks without read permissions\n"
 msgstr " -i, --noinaccessible   ignora travas sem permissão de leitura\n"
 
-#: misc-utils/lslocks.c:509 sys-utils/lsns.c:621
+#: misc-utils/lslocks.c:509 sys-utils/lsns.c:599
 msgid " -n, --noheadings       don't print headings\n"
 msgstr " -n, --noheadings       não exibe os cabeçalhos\n"
 
-#: misc-utils/lslocks.c:510 sys-utils/lsns.c:622
+#: misc-utils/lslocks.c:510 sys-utils/lsns.c:600
 msgid " -o, --output <list>    define which output columns to use\n"
 msgstr " -o, --output <lista>   define quais colunas de saída se deve usar\n"
 
@@ -9506,12 +9496,12 @@ msgstr " -o, --output <lista>   define quais colunas de saída se deve usar\n"
 msgid " -p, --pid <pid>        display only locks held by this process\n"
 msgstr " -p, --pid <pid>        exibe apenas travas mantidas por este  processo\n"
 
-#: misc-utils/lslocks.c:512 sys-utils/lsns.c:624
+#: misc-utils/lslocks.c:512 sys-utils/lsns.c:602
 msgid " -r, --raw              use the raw output format\n"
 msgstr " -r, --raw              usa formato de saída não tratado (raw)\n"
 
-#: misc-utils/lslocks.c:570 schedutils/chrt.c:478 schedutils/ionice.c:177
-#: schedutils/taskset.c:163 sys-utils/lsns.c:699 sys-utils/prlimit.c:586
+#: misc-utils/lslocks.c:570 schedutils/chrt.c:477 schedutils/ionice.c:177
+#: schedutils/taskset.c:163 sys-utils/lsns.c:677 sys-utils/prlimit.c:586
 msgid "invalid PID argument"
 msgstr "argumento inválido de PID"
 
@@ -9602,7 +9592,7 @@ msgstr ""
 msgid "pathname argument is missing"
 msgstr "argumento de nome de caminho está faltando"
 
-#: misc-utils/namei.c:414 sys-utils/lsns.c:764
+#: misc-utils/namei.c:414 sys-utils/lsns.c:742
 msgid "failed to allocate UID cache"
 msgstr "falha ao alocar cache de UID"
 
@@ -9667,7 +9657,7 @@ msgstr " -p, --pid <path>        caminho para o arquivo pid\n"
 
 #: misc-utils/uuidd.c:75
 msgid " -s, --socket <path>     path to socket\n"
-msgstr " -s, --socket <caminho>  caminho do socket\n"
+msgstr " -s, --socket <caminho>  caminho do soquete\n"
 
 #: misc-utils/uuidd.c:76
 msgid " -T, --timeout <sec>     specify inactivity timeout\n"
@@ -9699,7 +9689,7 @@ msgstr " -F, --no-fork           não faz daemon usando fork duplo\n"
 
 #: misc-utils/uuidd.c:83
 msgid " -S, --socket-activation do not create listening socket\n"
-msgstr " -S, --socket-activation não cria socket de escuta\n"
+msgstr " -S, --socket-activation não cria soquete de escuta\n"
 
 #: misc-utils/uuidd.c:84
 msgid " -d, --debug             run in debugging mode\n"
@@ -9715,7 +9705,7 @@ msgstr "argumentos inválidos"
 
 #: misc-utils/uuidd.c:125
 msgid "socket"
-msgstr "socket"
+msgstr "soquete"
 
 #: misc-utils/uuidd.c:136
 msgid "connect"
@@ -9740,12 +9730,12 @@ msgstr "não foi possível travar %s"
 
 #: misc-utils/uuidd.c:246
 msgid "couldn't create unix stream socket"
-msgstr "não foi possível criar um socket para fluxo unix"
+msgstr "não foi possível criar um soquete para fluxo unix"
 
 #: misc-utils/uuidd.c:271
 #, c-format
 msgid "couldn't bind unix socket %s"
-msgstr "não foi possível vincular socket unix %s"
+msgstr "não foi possível vincular soquete unix %s"
 
 #: misc-utils/uuidd.c:298
 msgid "receiving signal failed"
@@ -9755,7 +9745,7 @@ msgstr "recepção de sinal falhou"
 msgid "timed out"
 msgstr "tempo esgotado"
 
-#: misc-utils/uuidd.c:345 sys-utils/flock.c:271
+#: misc-utils/uuidd.c:345 sys-utils/flock.c:263
 msgid "cannot set up timer"
 msgstr "não foi possível configurar o temporizador"
 
@@ -9767,7 +9757,7 @@ msgstr "um daemon de uuidd já em execução com pid %s"
 #: misc-utils/uuidd.c:362
 #, c-format
 msgid "couldn't listen on unix socket %s"
-msgstr "não foi possível ouvir no socket unix %s"
+msgstr "não foi possível ouvir no soquete unix %s"
 
 #: misc-utils/uuidd.c:372
 #, c-format
@@ -9784,7 +9774,7 @@ msgstr "nenhum descritor de arquivo recebido, verifique systemctl status uuidd.s
 
 #: misc-utils/uuidd.c:392
 msgid "too many file descriptors received, check uuidd.socket"
-msgstr "número excessivo de descritores de arquivo recebidos, verifica uuidd.socket"
+msgstr "número excessivo de descritores de arquivo recebidos, verifica uuidd.soquete"
 
 #: misc-utils/uuidd.c:420 term-utils/script.c:455
 msgid "poll failed"
@@ -9802,7 +9792,7 @@ msgstr "leitura falhou"
 #: misc-utils/uuidd.c:445
 #, c-format
 msgid "error reading from client, len = %d"
-msgstr "erro na leitura do cliente, comprimento = %d"
+msgstr "erro de leitura do cliente, comprimento = %d"
 
 #: misc-utils/uuidd.c:454
 #, c-format
@@ -9854,7 +9844,7 @@ msgstr "falha ao analisar --uuids"
 
 #: misc-utils/uuidd.c:617
 msgid "uuidd has been built without support for socket activation"
-msgstr "uuidd foi construído sem suporte a ativação de socket"
+msgstr "uuidd foi construído sem suporte a ativação de soquete"
 
 #: misc-utils/uuidd.c:636
 msgid "failed to parse --timeout"
@@ -10138,99 +10128,99 @@ msgstr " -p, --pid            opera nos pid existentes fornecidos\n"
 msgid " -v, --verbose        display status information\n"
 msgstr " -v, --verbose        exibe informação do status\n"
 
-#: schedutils/chrt.c:232 schedutils/chrt.c:254
+#: schedutils/chrt.c:232 schedutils/chrt.c:253
 #, c-format
 msgid "failed to get pid %d's policy"
 msgstr "falha ao obter a política do pid %d"
 
-#: schedutils/chrt.c:257
+#: schedutils/chrt.c:256
 #, c-format
 msgid "failed to get pid %d's attributes"
 msgstr "falha ao obter atributos do pid %d"
 
-#: schedutils/chrt.c:267
+#: schedutils/chrt.c:266
 #, c-format
 msgid "pid %d's new scheduling policy: %s"
 msgstr "nova política de agendamento do pid %d: %s"
 
-#: schedutils/chrt.c:269
+#: schedutils/chrt.c:268
 #, c-format
 msgid "pid %d's current scheduling policy: %s"
 msgstr "atual política de agendamento do pid %d: %s"
 
-#: schedutils/chrt.c:276
+#: schedutils/chrt.c:275
 #, c-format
 msgid "pid %d's new scheduling priority: %d\n"
 msgstr "nova prioridade de agendamento do pid %d: %d\n"
 
-#: schedutils/chrt.c:278
+#: schedutils/chrt.c:277
 #, c-format
 msgid "pid %d's current scheduling priority: %d\n"
 msgstr "atual prioridade de agendamento do pid %d: %d\n"
 
-#: schedutils/chrt.c:283
+#: schedutils/chrt.c:282
 #, c-format
 msgid "pid %d's new runtime/deadline/period parameters: %ju/%ju/%ju\n"
 msgstr "novos parâmetros de tempo real/prazo/período do pid %d: %ju/%ju/%ju\n"
 
-#: schedutils/chrt.c:286
+#: schedutils/chrt.c:285
 #, c-format
 msgid "pid %d's current runtime/deadline/period parameters: %ju/%ju/%ju\n"
 msgstr "atuais parâmetros de tempo real/prazo/período do pid %d: %ju/%ju/%ju\n"
 
-#: schedutils/chrt.c:300 schedutils/chrt.c:396
+#: schedutils/chrt.c:299 schedutils/chrt.c:395
 msgid "cannot obtain the list of tasks"
 msgstr "não foi possível obter a lista de tarefas"
 
-#: schedutils/chrt.c:334
+#: schedutils/chrt.c:333
 #, c-format
 msgid "%s min/max priority\t: %d/%d\n"
 msgstr "prioridade mín/máx de %s\t: %d/%d\n"
 
-#: schedutils/chrt.c:337
+#: schedutils/chrt.c:336
 #, c-format
 msgid "%s not supported?\n"
 msgstr "sem suporte a %s?\n"
 
-#: schedutils/chrt.c:400
+#: schedutils/chrt.c:399
 #, c-format
 msgid "failed to set tid %d's policy"
 msgstr "falha ao configurar política do tid %d"
 
-#: schedutils/chrt.c:405
+#: schedutils/chrt.c:404
 #, c-format
 msgid "failed to set pid %d's policy"
 msgstr "falha ao configurar a política do pid %d"
 
-#: schedutils/chrt.c:487
+#: schedutils/chrt.c:486
 msgid "invalid runtime argument"
 msgstr "argumento inválido de tempo real"
 
-#: schedutils/chrt.c:490
+#: schedutils/chrt.c:489
 msgid "invalid period argument"
 msgstr "argumento inválido de período"
 
-#: schedutils/chrt.c:493
+#: schedutils/chrt.c:492
 msgid "invalid deadline argument"
 msgstr "argumento inválido de prazo"
 
-#: schedutils/chrt.c:517
+#: schedutils/chrt.c:516
 msgid "invalid priority argument"
 msgstr "argumento inválido de prioridade"
 
-#: schedutils/chrt.c:521
+#: schedutils/chrt.c:520
 msgid "--reset-on-fork option is supported for SCHED_FIFO and SCHED_RR policies only"
 msgstr "há suporte à opção --reset-on-fork para apenas as políticas SCHED_FIFO e SCHED_RR"
 
-#: schedutils/chrt.c:526
+#: schedutils/chrt.c:525
 msgid "--sched-{runtime,deadline,period} options are supported for SCHED_DEADLINE only"
 msgstr "há suporte às opções --sched-{runtime,deadline,period} para apenas SCHED_DEADLINE"
 
-#: schedutils/chrt.c:541
+#: schedutils/chrt.c:540
 msgid "SCHED_DEADLINE is unsupported"
 msgstr "Sem suporte a SCHED_DEADLINE"
 
-#: schedutils/chrt.c:548
+#: schedutils/chrt.c:547
 #, c-format
 msgid "unsupported priority value for the policy: %d: see --max for valid range"
 msgstr "valor de prioridade sem suporte para a política: %d: veja --max para intervalo válido"
@@ -11464,45 +11454,45 @@ msgstr "     --verbose            aumenta detalhamento\n"
 msgid "cannot open lock file %s"
 msgstr "não foi possível abrir o arquivo de trava %s"
 
-#: sys-utils/flock.c:205
+#: sys-utils/flock.c:197
 msgid "invalid timeout value"
 msgstr "valor de tempo limite inválido"
 
-#: sys-utils/flock.c:209
+#: sys-utils/flock.c:201
 msgid "invalid exit code"
 msgstr "código de saída inválido"
 
-#: sys-utils/flock.c:228
+#: sys-utils/flock.c:220
 msgid "the --no-fork and --close options are incompatible"
 msgstr "as opções --no-fork e --close são incompatíveis"
 
-#: sys-utils/flock.c:236
+#: sys-utils/flock.c:228
 #, c-format
 msgid "%s requires exactly one command argument"
 msgstr "%s requer exatamente um argumento"
 
-#: sys-utils/flock.c:254
+#: sys-utils/flock.c:246
 msgid "bad file descriptor"
 msgstr "descritor de arquivo inválido"
 
-#: sys-utils/flock.c:257
+#: sys-utils/flock.c:249
 msgid "requires file descriptor, file or directory"
 msgstr "requer um descritor de arquivo, arquivo ou diretório"
 
-#: sys-utils/flock.c:281
+#: sys-utils/flock.c:273
 msgid "failed to get lock"
 msgstr "falha ao obter trava"
 
-#: sys-utils/flock.c:288
+#: sys-utils/flock.c:280
 msgid "timeout while waiting to get lock"
 msgstr "tempo esgotado enquanto esperava para obter trava"
 
-#: sys-utils/flock.c:329
+#: sys-utils/flock.c:321
 #, c-format
 msgid "%s: getting lock took %ld.%06ld seconds\n"
 msgstr "%s: obtenção da trava levou %ld.%06ld segundos\n"
 
-#: sys-utils/flock.c:340
+#: sys-utils/flock.c:332
 #, c-format
 msgid "%s: executing %s\n"
 msgstr "%s: executando %s\n"
@@ -12117,24 +12107,28 @@ msgstr "Não foi possível conectar ao sistema de auditoria"
 msgid "invalid epoch argument"
 msgstr "argumento inválido de epoch"
 
-#: sys-utils/hwclock.c:1871
+#: sys-utils/hwclock.c:1863
+msgid "Sorry, only the superuser can use the Hardware Clock."
+msgstr "Desculpe, apenas o superusuário pode usar o relógio de hardware."
+
+#: sys-utils/hwclock.c:1876
 #, c-format
 msgid "%s takes no non-option arguments.  You supplied %d.\n"
 msgstr "%s não aceita argumentos que não sejam de opção. Você forneceu %d.\n"
 
-#: sys-utils/hwclock.c:1880
+#: sys-utils/hwclock.c:1885
 msgid "With --noadjfile, you must specify either --utc or --localtime"
 msgstr "Com --noadjfile, você deve especificar --utc ou --localtime"
 
-#: sys-utils/hwclock.c:1893
+#: sys-utils/hwclock.c:1898
 msgid "No usable set-to time.  Cannot set clock."
 msgstr "Nenhuma horário utilizável. Não foi possível configurar o relógio."
 
-#: sys-utils/hwclock.c:1917
+#: sys-utils/hwclock.c:1922
 msgid "Cannot access the Hardware Clock via any known method."
 msgstr "Não foi possível acessar o relógio de hardware por nenhum método conhecido."
 
-#: sys-utils/hwclock.c:1920
+#: sys-utils/hwclock.c:1925
 msgid "Use the --debug option to see the details of our search for an access method."
 msgstr "Use a opção --debug para consultar os detalhes de nossa pesquisa por um método de acesso."
 
@@ -13252,7 +13246,7 @@ msgstr ", criptografia %s (tipo %u)"
 msgid "%s: detach failed"
 msgstr "%s: destacamento falhou"
 
-#: sys-utils/losetup.c:329 sys-utils/lscpu.c:1724 sys-utils/prlimit.c:229
+#: sys-utils/losetup.c:329 sys-utils/lscpu.c:1712 sys-utils/prlimit.c:229
 #: sys-utils/swapon.c:176 sys-utils/wdctl.c:215 sys-utils/zramctl.c:405
 msgid "failed to initialize output line"
 msgstr "falha ao inicializar linha da saída"
@@ -13483,7 +13477,7 @@ msgstr "número do núcleo lógico"
 
 #: sys-utils/lscpu.c:346
 msgid "logical socket number"
-msgstr "número do socket lógico"
+msgstr "número do soquete lógico"
 
 #: sys-utils/lscpu.c:347
 msgid "logical NUMA node number"
@@ -13531,37 +13525,37 @@ msgstr "mostra o MHz mínimo da CPU"
 msgid "error: uname failed"
 msgstr "erro: uname falhou"
 
-#: sys-utils/lscpu.c:632
+#: sys-utils/lscpu.c:629
 #, c-format
 msgid "failed to determine number of CPUs: %s"
 msgstr "falha ao determinar número de CPUs: %s"
 
-#: sys-utils/lscpu.c:892
+#: sys-utils/lscpu.c:880
 msgid "error: can not set signal handler"
 msgstr "erro: não foi possível definir manipulador de sinal"
 
-#: sys-utils/lscpu.c:897
+#: sys-utils/lscpu.c:885
 msgid "error: can not restore signal handler"
 msgstr "não foi possível restaurar manipulador de sinal"
 
-#: sys-utils/lscpu.c:942
+#: sys-utils/lscpu.c:930
 #, c-format
 msgid "failed to read from: %s"
 msgstr "falha ao ler de: %s"
 
-#: sys-utils/lscpu.c:1399
+#: sys-utils/lscpu.c:1387
 msgid "Failed to extract the node number"
 msgstr "Falha ao extrair o número do nó"
 
-#: sys-utils/lscpu.c:1526 sys-utils/lscpu.c:1536
+#: sys-utils/lscpu.c:1514 sys-utils/lscpu.c:1524
 msgid "Y"
 msgstr "S"
 
-#: sys-utils/lscpu.c:1526 sys-utils/lscpu.c:1536
+#: sys-utils/lscpu.c:1514 sys-utils/lscpu.c:1524
 msgid "N"
 msgstr "N"
 
-#: sys-utils/lscpu.c:1620
+#: sys-utils/lscpu.c:1608
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -13572,205 +13566,205 @@ msgstr ""
 "# cada item diferente em cada coluna tem um ID único começando com\n"
 "# zero.\n"
 
-#: sys-utils/lscpu.c:1770
+#: sys-utils/lscpu.c:1758
 msgid "Architecture:"
 msgstr "Arquitetura:"
 
-#: sys-utils/lscpu.c:1784
+#: sys-utils/lscpu.c:1772
 msgid "CPU op-mode(s):"
 msgstr "Modo(s) operacional da CPU:"
 
-#: sys-utils/lscpu.c:1787 sys-utils/lscpu.c:1789
+#: sys-utils/lscpu.c:1775 sys-utils/lscpu.c:1777
 msgid "Byte Order:"
 msgstr "Ordem dos bytes:"
 
-#: sys-utils/lscpu.c:1791
+#: sys-utils/lscpu.c:1779
 msgid "CPU(s):"
 msgstr "CPU(s):"
 
-#: sys-utils/lscpu.c:1794
+#: sys-utils/lscpu.c:1782
 msgid "On-line CPU(s) mask:"
 msgstr "Máscara de CPU(s) on-line:"
 
-#: sys-utils/lscpu.c:1795
+#: sys-utils/lscpu.c:1783
 msgid "On-line CPU(s) list:"
 msgstr "Lista de CPU(s) on-line:"
 
-#: sys-utils/lscpu.c:1814
+#: sys-utils/lscpu.c:1802
 msgid "Off-line CPU(s) mask:"
 msgstr "Máscara de CPU(s) off-line:"
 
-#: sys-utils/lscpu.c:1815
+#: sys-utils/lscpu.c:1803
 msgid "Off-line CPU(s) list:"
 msgstr "Lista de CPU(s) off-line:"
 
-#: sys-utils/lscpu.c:1851
+#: sys-utils/lscpu.c:1839
 msgid "Thread(s) per core:"
 msgstr "Thread(s) per núcleo:"
 
-#: sys-utils/lscpu.c:1853
+#: sys-utils/lscpu.c:1841
 msgid "Core(s) per socket:"
-msgstr "Núcleo(s) por socket:"
+msgstr "Núcleo(s) por soquete:"
 
 # Não é livro, é um grupo de processadores, arquitetura da IBM. Desconheço tradução mais apropriada --Rafael
 # https://en.wikipedia.org/wiki/Processor_book
-#: sys-utils/lscpu.c:1856
+#: sys-utils/lscpu.c:1844
 msgid "Socket(s) per book:"
-msgstr "Socket(s) por book:"
+msgstr "Soquete(s) por book:"
 
-#: sys-utils/lscpu.c:1859
+#: sys-utils/lscpu.c:1847
 msgid "Book(s) per drawer:"
 msgstr "Book(s) por drawer:"
 
-#: sys-utils/lscpu.c:1861
+#: sys-utils/lscpu.c:1849
 msgid "Drawer(s):"
 msgstr "Drawer(s):"
 
 # Não é livro, é um grupo de processadores, arquitetura da IBM. Desconheço tradução mais apropriada --Rafael
 # https://en.wikipedia.org/wiki/Processor_book
-#: sys-utils/lscpu.c:1863
+#: sys-utils/lscpu.c:1851
 msgid "Book(s):"
 msgstr "Book(s):"
 
-#: sys-utils/lscpu.c:1866
+#: sys-utils/lscpu.c:1854
 msgid "Socket(s):"
-msgstr "Socket(s):"
+msgstr "Soquete(s):"
 
-#: sys-utils/lscpu.c:1870
+#: sys-utils/lscpu.c:1858
 msgid "NUMA node(s):"
 msgstr "Nó(s) de NUMA:"
 
-#: sys-utils/lscpu.c:1872
+#: sys-utils/lscpu.c:1860
 msgid "Vendor ID:"
 msgstr "ID de fornecedor:"
 
-#: sys-utils/lscpu.c:1874
+#: sys-utils/lscpu.c:1862
 msgid "Machine type:"
 msgstr "Tipo da máquina:"
 
-#: sys-utils/lscpu.c:1876
+#: sys-utils/lscpu.c:1864
 msgid "CPU family:"
 msgstr "Família da CPU:"
 
-#: sys-utils/lscpu.c:1878
+#: sys-utils/lscpu.c:1866
 msgid "Model:"
 msgstr "Modelo:"
 
-#: sys-utils/lscpu.c:1880
+#: sys-utils/lscpu.c:1868
 msgid "Model name:"
 msgstr "Nome do modelo:"
 
-#: sys-utils/lscpu.c:1882
+#: sys-utils/lscpu.c:1870
 msgid "Stepping:"
 msgstr "Step:"
 
-#: sys-utils/lscpu.c:1884
+#: sys-utils/lscpu.c:1872
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:1886
+#: sys-utils/lscpu.c:1874
 msgid "CPU dynamic MHz:"
 msgstr "CPU com MHz dinâmico:"
 
-#: sys-utils/lscpu.c:1888
+#: sys-utils/lscpu.c:1876
 msgid "CPU static MHz:"
 msgstr "CPU com MHz estático:"
 
-#: sys-utils/lscpu.c:1890
+#: sys-utils/lscpu.c:1878
 msgid "CPU max MHz:"
 msgstr "CPU MHz máx.:"
 
-#: sys-utils/lscpu.c:1892
+#: sys-utils/lscpu.c:1880
 msgid "CPU min MHz:"
 msgstr "CPU MHz mín.:"
 
-#: sys-utils/lscpu.c:1894
+#: sys-utils/lscpu.c:1882
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:1897 sys-utils/lscpu.c:1899
+#: sys-utils/lscpu.c:1885 sys-utils/lscpu.c:1887
 msgid "Virtualization:"
 msgstr "Virtualização:"
 
-#: sys-utils/lscpu.c:1902
+#: sys-utils/lscpu.c:1890
 msgid "Hypervisor:"
 msgstr "Hipervisor:"
 
-#: sys-utils/lscpu.c:1904
+#: sys-utils/lscpu.c:1892
 msgid "Hypervisor vendor:"
 msgstr "Fabricante do hipervisor:"
 
-#: sys-utils/lscpu.c:1905
+#: sys-utils/lscpu.c:1893
 msgid "Virtualization type:"
 msgstr "Tipo de virtualização:"
 
-#: sys-utils/lscpu.c:1908
+#: sys-utils/lscpu.c:1896
 msgid "Dispatching mode:"
 msgstr "Modo de despacho:"
 
-#: sys-utils/lscpu.c:1914 sys-utils/lscpu.c:1924
+#: sys-utils/lscpu.c:1902 sys-utils/lscpu.c:1912
 #, c-format
 msgid "%s cache:"
 msgstr "cache de %s:"
 
-#: sys-utils/lscpu.c:1930
+#: sys-utils/lscpu.c:1918
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "CPU(s) de nó%d NUMA:"
 
-#: sys-utils/lscpu.c:1935
+#: sys-utils/lscpu.c:1923
 msgid "Flags:"
 msgstr "Opções:"
 
-#: sys-utils/lscpu.c:1938
+#: sys-utils/lscpu.c:1926
 msgid "Physical sockets:"
-msgstr "Sockets físicos:"
+msgstr "Soquetes físicos:"
 
-#: sys-utils/lscpu.c:1939
+#: sys-utils/lscpu.c:1927
 msgid "Physical chips:"
 msgstr "Chips físicos:"
 
-#: sys-utils/lscpu.c:1940
+#: sys-utils/lscpu.c:1928
 msgid "Physical cores/chip:"
 msgstr "núcleos/chips físicos:"
 
-#: sys-utils/lscpu.c:1952
+#: sys-utils/lscpu.c:1940
 msgid "Display information about the CPU architecture.\n"
 msgstr "Exibe informações sobre a arquitetura da CPU.\n"
 
-#: sys-utils/lscpu.c:1955
+#: sys-utils/lscpu.c:1943
 msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr " -a, --all               exibe CPUs on-lines e off-lines (padrão para -e)\n"
 
-#: sys-utils/lscpu.c:1956
+#: sys-utils/lscpu.c:1944
 msgid " -b, --online            print online CPUs only (default for -p)\n"
 msgstr " -b, --online            exibe apenas CPUs on-line (padrão para -p)\n"
 
-#: sys-utils/lscpu.c:1957
+#: sys-utils/lscpu.c:1945
 msgid " -c, --offline           print offline CPUs only\n"
 msgstr " -c, --offline           exibe apenas CPUs off-line\n"
 
-#: sys-utils/lscpu.c:1958
+#: sys-utils/lscpu.c:1946
 msgid " -e, --extended[=<list>] print out an extended readable format\n"
 msgstr " -e, --extended[=<lista>] exibe um formato legível estendido\n"
 
-#: sys-utils/lscpu.c:1959
+#: sys-utils/lscpu.c:1947
 msgid " -p, --parse[=<list>]    print out a parsable format\n"
 msgstr " -p, --parse[=<lista>]   exibe um formato analisável\n"
 
-#: sys-utils/lscpu.c:1960
+#: sys-utils/lscpu.c:1948
 msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr " -s, --sysroot <dir>     usa o diretório especificado como raiz do sistema\n"
 
-#: sys-utils/lscpu.c:1961
+#: sys-utils/lscpu.c:1949
 msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr " -x, --hex               exibe máscaras hexadecimais em vez de listas de CPUs\n"
 
-#: sys-utils/lscpu.c:1962
+#: sys-utils/lscpu.c:1950
 msgid " -y, --physical          print physical instead of logical IDs\n"
 msgstr " -y, --physical          exibe IDs físicos em vez de lógicos\n"
 
-#: sys-utils/lscpu.c:2063
+#: sys-utils/lscpu.c:2051
 #, c-format
 msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr "%s: as opções --all, --online e --offline podem só podem ser usadas com as opções --extended ou --parse.\n"
@@ -14194,39 +14188,39 @@ msgstr "UID do PID"
 msgid "username of the PID"
 msgstr "nome de usuário do PID"
 
-#: sys-utils/lsns.c:613
+#: sys-utils/lsns.c:591
 #, c-format
 msgid " %s [options] [<namespace>]\n"
 msgstr " %s [opções] [<espaço de nome>]\n"
 
-#: sys-utils/lsns.c:616
+#: sys-utils/lsns.c:594
 msgid "List system namespaces.\n"
 msgstr "Lista espaços de nomes de sistema.\n"
 
-#: sys-utils/lsns.c:623
+#: sys-utils/lsns.c:601
 msgid " -p, --task <pid>       print process namespaces\n"
 msgstr " -p, --task <pid>       exibe espaços de nomes do processo\n"
 
-#: sys-utils/lsns.c:626
+#: sys-utils/lsns.c:604
 msgid " -t, --type <name>      namespace type (mnt, net, ipc, user, pid, uts, cgroup)\n"
 msgstr ""
 " -t, --type <nome>      tipo de espaço de nome (mnt, net, ipc, user, pid, uts,\n"
 "                          cgroup)\n"
 
-#: sys-utils/lsns.c:716
+#: sys-utils/lsns.c:694
 #, c-format
 msgid "unknown namespace type: %s"
 msgstr "tipo de espaço de nome desconhecido: %s"
 
-#: sys-utils/lsns.c:735
+#: sys-utils/lsns.c:713
 msgid "--task is mutually exclusive with <namespace>"
 msgstr "--task é mutuamente exclusiva com <espaço de nome>"
 
-#: sys-utils/lsns.c:736
+#: sys-utils/lsns.c:714
 msgid "invalid namespace argument"
 msgstr "argumento inválido de espaço de nome"
 
-#: sys-utils/lsns.c:774
+#: sys-utils/lsns.c:752
 #, c-format
 msgid "not found namespace: %ju"
 msgstr "espaço de nome não encontrado: %ju"
@@ -18283,36 +18277,36 @@ msgstr ""
 msgid "[Use q or Q to quit]"
 msgstr "[Use q ou Q para sair]"
 
-#: text-utils/more.c:724
+#: text-utils/more.c:716
 #, c-format
 msgid "--More--"
 msgstr "--Mais--"
 
-#: text-utils/more.c:726
+#: text-utils/more.c:718
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Próximo arquivo: %s)"
 
-#: text-utils/more.c:734
+#: text-utils/more.c:726
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Pressione espaço para continuar, \"q\" para sair.]"
 
-#: text-utils/more.c:1162
+#: text-utils/more.c:1154
 #, c-format
 msgid "...back %d page"
 msgid_plural "...back %d pages"
 msgstr[0] "...volta %d página"
 msgstr[1] "...volta %d páginas"
 
-#: text-utils/more.c:1210
+#: text-utils/more.c:1202
 #, c-format
 msgid "...skipping %d line"
 msgid_plural "...skipping %d lines"
 msgstr[0] "...pulando %d linha"
 msgstr[1] "...pulando %d linhas"
 
-#: text-utils/more.c:1248
+#: text-utils/more.c:1240
 msgid ""
 "\n"
 "***Back***\n"
@@ -18322,11 +18316,11 @@ msgstr ""
 "***Voltar***\n"
 "\n"
 
-#: text-utils/more.c:1263
+#: text-utils/more.c:1255
 msgid "No previous regular expression"
 msgstr "Nenhuma expressão regular anterior"
 
-#: text-utils/more.c:1293
+#: text-utils/more.c:1285
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
@@ -18336,7 +18330,7 @@ msgstr ""
 "A maioria dos comandos opcionalmente são precedidos por um argumento inteiro k.\n"
 "O padrão é colchetes. Asterisco (*) indica o argumento novo padrão.\n"
 
-#: text-utils/more.c:1300
+#: text-utils/more.c:1292
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -18378,30 +18372,30 @@ msgstr ""
 ":f                      Exibe o número da linha e o nome do arquivo atual\n"
 ".                       Repete o comando anterior\n"
 
-#: text-utils/more.c:1373 text-utils/more.c:1379
+#: text-utils/more.c:1365 text-utils/more.c:1371
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Pressione \"h\" para obter instruções.]"
 
-#: text-utils/more.c:1410
+#: text-utils/more.c:1402
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" linha %d"
 
-#: text-utils/more.c:1412
+#: text-utils/more.c:1404
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Não é um arquivo] linha %d"
 
-#: text-utils/more.c:1494
+#: text-utils/more.c:1486
 msgid "  Overflow\n"
 msgstr "  Estouro\n"
 
-#: text-utils/more.c:1543
+#: text-utils/more.c:1535
 msgid "...skipping\n"
 msgstr "...pulando\n"
 
-#: text-utils/more.c:1577
+#: text-utils/more.c:1569
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -18409,19 +18403,19 @@ msgstr ""
 "\n"
 "Padrão não encontrado\n"
 
-#: text-utils/more.c:1583 text-utils/pg.c:1027 text-utils/pg.c:1173
+#: text-utils/more.c:1575 text-utils/pg.c:1027 text-utils/pg.c:1173
 msgid "Pattern not found"
 msgstr "Padrão não encontrado"
 
-#: text-utils/more.c:1629
+#: text-utils/more.c:1621
 msgid "exec failed\n"
 msgstr "exec falhou\n"
 
-#: text-utils/more.c:1643
+#: text-utils/more.c:1635
 msgid "can't fork\n"
 msgstr "não foi possível realizar fork\n"
 
-#: text-utils/more.c:1677
+#: text-utils/more.c:1669
 msgid ""
 "\n"
 "...Skipping "
@@ -18429,19 +18423,19 @@ msgstr ""
 "\n"
 "...Pulando "
 
-#: text-utils/more.c:1681
+#: text-utils/more.c:1673
 msgid "...Skipping to file "
 msgstr "...Pulando para arquivo "
 
-#: text-utils/more.c:1683
+#: text-utils/more.c:1675
 msgid "...Skipping back to file "
 msgstr "...Pulando de volta para arquivo "
 
-#: text-utils/more.c:1973
+#: text-utils/more.c:1965
 msgid "Line too long"
 msgstr "Linha longa demais"
 
-#: text-utils/more.c:2010
+#: text-utils/more.c:2002
 msgid "No previous command to substitute for"
 msgstr "Não há comando anterior para ser substituído"
 
@@ -18716,9 +18710,6 @@ msgstr "sequência de escape desconhecido na entrada: %o, %o"
 msgid "Input line too long."
 msgstr "Linha de entrada muito longa."
 
-#~ msgid "Sorry, only the superuser can use the Hardware Clock."
-#~ msgstr "Desculpe, apenas o superusuário pode usar o relógio de hardware."
-
 #~ msgid "Filesystem label:"
 #~ msgstr "Rótulo do sistema de arquivos:"
 
@@ -18794,7 +18785,7 @@ msgstr "Linha de entrada muito longa."
 #~ "\n"
 #~ msgstr ""
 #~ " -p, --pid <caminho>     caminho para o arquivo de pid\n"
-#~ " -s, --socket <caminho>  caminho para o socket\n"
+#~ " -s, --socket <caminho>  caminho para o soquete\n"
 #~ " -T, --timeout <seg>     especifica o tempo limite de inatividade\n"
 #~ " -k, --kill              mata um daemon em execução\n"
 #~ " -r, --random            testa a geração baseada em aleatoriedade\n"
@@ -18802,7 +18793,7 @@ msgstr "Linha de entrada muito longa."
 #~ " -n, --uuids <número>    requisita o número de uuids\n"
 #~ " -P, --no-pid            não cria um arquivo de pid\n"
 #~ " -F, --no-fork           não daemoniza usando fork duplo\n"
-#~ " -S, --socket-activation não cria um socket dedicado para ouvir\n"
+#~ " -S, --socket-activation não cria um soquete dedicado para ouvir\n"
 #~ " -d, --debug             executa no modo de depuração\n"
 #~ " -q, --quiet             ativa o modo quieto, silencioso\n"
 #~ " -V, --version           exibe informação de versão e sai\n"
@@ -22140,7 +22131,7 @@ msgstr "Linha de entrada muito longa."
 #~ "\n"
 #~ msgstr ""
 #~ " -t, --tag <tag>       marca cada linha com esta tag\n"
-#~ " -u, --socket <socket> grava neste socket Unix\n"
+#~ " -u, --socket <soquete> grava neste soquete Unix\n"
 #~ " -V, --version         exibe informação da versão e sai\n"
 #~ "\n"
 
