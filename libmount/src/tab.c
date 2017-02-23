@@ -936,6 +936,8 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
  * The 2nd, 3rd and 4th iterations are not performed when the @tb cache is not
  * set (see mnt_table_set_cache()).
  *
+ * For btrfs returns tab entry for default id.
+ *
  * Note that NULL is a valid source path; it will be replaced with "none". The
  * "none" is used in /proc/{mounts,self/mountinfo} for pseudo filesystems.
  *
@@ -958,9 +960,34 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 
 	/* native paths */
 	mnt_reset_iter(&itr, direction);
+
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
-		if (mnt_fs_streq_srcpath(fs, path))
+
+		if (mnt_fs_streq_srcpath(fs, path)) {
+#ifdef HAVE_BTRFS_SUPPORT
+			if (!strcmp(fs->fstype, "btrfs")) {
+				uint64_t default_id = btrfs_get_default_subvol_id(mnt_fs_get_target(fs));
+				uint64_t subvol_id;
+				char *val;
+				size_t len;
+
+				if (default_id == UINT64_MAX) {
+					DBG(TAB, ul_debug("not found btrfs volume setting"));
+					return fs;
+				}
+
+				if (mnt_fs_get_option(fs, "subvolid", &val, &len) == 0) {
+					if (mnt_parse_offset(val, len, &subvol_id)) {
+						DBG(TAB, ul_debugobj(tb, "failed to parse subvolid="));
+						continue;
+					}
+					if (subvol_id != default_id)
+						continue;
+				}
+			}
+#endif /* HAVE_BTRFS_SUPPORT */
 			return fs;
+		}
 		if (mnt_fs_get_tag(fs, NULL, NULL) == 0)
 			ntags++;
 	}
