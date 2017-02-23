@@ -1602,14 +1602,6 @@ UL_REQUIRES_LINUX([blkzone])
 UL_REQUIRES_HAVE([blkzone], [linux_blkzoned_h], [linux/blkzoned.h header])
 AM_CONDITIONAL([BUILD_BLKZONE], [test "x$build_blkzone" = xyes])
 
-UL_BUILD_INIT([blkreport], [check])
-UL_REQUIRES_HAVE([blkreport], [linux_blkzoned_h], [linux/blkzoned.h header])
-AM_CONDITIONAL([BUILD_BLKREPORT], [test "x$build_blkreport" = xyes])
-
-UL_BUILD_INIT([blkreset], [check])
-UL_REQUIRES_HAVE([blkreset], [linux_blkzoned_h], [linux/blkzoned.h header])
-AM_CONDITIONAL([BUILD_BLKRESET], [test "x$build_blkreset" = xyes])
-
 UL_BUILD_INIT([ldattach], [check])
 UL_REQUIRES_LINUX([ldattach])
 AM_CONDITIONAL([BUILD_LDATTACH], [test "x$build_ldattach" = xyes])

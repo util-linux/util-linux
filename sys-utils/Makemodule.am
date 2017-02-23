@@ -133,20 +133,6 @@ blkzone_SOURCES = sys-utils/blkzone.c
 blkzone_LDADD = $(LDADD) libcommon.la
 endif
 
-if BUILD_BLKREPORT
-sbin_PROGRAMS += blkreport
-dist_man_MANS += sys-utils/blkreport.8
-blkreport_SOURCES = sys-utils/blkreport.c
-blkreport_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS)
-endif
-
-if BUILD_BLKRESET
-sbin_PROGRAMS += blkreset
-dist_man_MANS += sys-utils/blkreset.8
-blkreset_SOURCES = sys-utils/blkreset.c
-blkreset_LDADD = $(LDADD) libcommon.la $(REALTIME_LIBS)
-endif
-
 if BUILD_LDATTACH
 usrsbin_exec_PROGRAMS += ldattach
 dist_man_MANS += sys-utils/ldattach.8
