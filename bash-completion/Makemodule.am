@@ -252,6 +252,9 @@ endif
 if BUILD_BLKDISCARD
 dist_bashcompletion_DATA += bash-completion/blkdiscard
 endif
+if BUILD_BLKZONE
+dist_bashcompletion_DATA += bash-completion/blkzone
+endif
 if BUILD_CTRLALTDEL
 dist_bashcompletion_DATA += bash-completion/ctrlaltdel
 endif
