@@ -62,6 +62,7 @@ update.log
 /addpart
 /agetty
 /blkdiscard
+/blkzone
 /blkreport
 /blkreset
 /blkid
