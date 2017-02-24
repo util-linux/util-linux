@@ -9,8 +9,8 @@ blkzone \- run zone command on a device
 .SH DESCRIPTION
 .B blkzone
 is used to run zone command on device that support the Zoned Block Commands
-(ZBC) or Zoned-device ATA Commands (ZAC). The zones are addresses by the offset
-and length options.
+(ZBC) or Zoned-device ATA Commands (ZAC). The zones to operate on can be
+specified using the offset and length options.
 .PP
 The
 .I device
@@ -40,15 +40,15 @@ type:Zone type
 .TS
 tab(:);
 left l l.
-Cl:closed
-cv:conventional zone
-e0:empty
-fu:full
-Oe:open explicit
-Oi:open implicit
-OL:offline
-ro:read only
-x?:reserved conditions (should not be reported)
+cl:Closed
+nw:Not write pointer
+em:Empty
+fu:Full
+oe:Explicitly opened
+oi:Implicitly opened
+ol:Offline
+ro:Read only
+x?:Reserved conditions (should not be reported)
 .TE
 
 .SS reset
@@ -56,23 +56,20 @@ The command \fBblkzone reset\fP is used to reset one or more zones.  Unlike
 .BR sg_reset_wp (8) ,
 this command operates from the block layer and can reset a range of zones.
 .PP
-By default, the command will operate on the zone at device logical
-sector 0.  Options may be used to modify this behavior as well as specify the
-operation to be performed on the zone, as explained below.
+By default, the command will operate from the zone at device logical
+sector 0 and reset all zones. Options may be used to modify this behavior
+as well as specify the operation to be performed on the zone, as explained below.
 .PP
-The default number of zones (options \fB\-\-length\fP) is 4096, the maximum 65536.
+The default number of zones (option \fB\-\-length\fP) is all zones.
 
 .SH OPTIONS
 The
-.I sector
-and
-.I count
-option arguments may be followed by the multiplicative suffixes KiB (=1024),
+.I offset
+option argument may be followed by the multiplicative suffixes KiB (=1024),
 MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is
 optional, e.g., "K" has the same meaning as "KiB") or the suffixes
 KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
-Additionally, the 0x prefix can be used to specify \fIsector\fR and
-\fIcount\fR in hex.
+Additionally, the 0x prefix can be used to specify \fIoffset\fR in hex.
 .TP
 .BR \-o , " \-\-offset "\fIsector\fP
 The starting zone specified as a sector offset.  The provided offset in sector

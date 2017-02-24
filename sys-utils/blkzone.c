@@ -147,15 +147,15 @@ static const char *type_text[] = {
 };
 
 static const char *condition_str[] = {
-	"cv", /* conventional zone */
-	"e0", /* empty */
-	"Oi", /* open implicit */
-	"Oe", /* open explicit */
-	"Cl", /* closed */
+	"nw", /* Not write pointer */
+	"em", /* Empty */
+	"io", /* Implicitly opened */
+	"eo", /* Explicitly opened */
+	"cl", /* Closed */
 	"x5", "x6", "x7", "x8", "x9", "xA", "xB", /* xN: reserved */
-	"ro", /* read only */
-	"fu", /* full */
-	"OL"  /* offline */
+	"ro", /* Read only */
+	"fu", /* Full */
+	"of"  /* Offline */
 };
 
 static int blkzone_report(struct blkzone_control *ctl)
@@ -188,7 +188,7 @@ static int blkzone_report(struct blkzone_control *ctl)
 			err(EXIT_FAILURE, _("%s: BLKREPORTZONE ioctl failed"), ctl->devname);
 
 		if (ctl->verbose)
-			printf(_("Found %d zones from %lx\n"),
+			printf(_("Found %d zones from 0x%lx\n"),
 				zi->nr_zones, ctl->offset);
 
 		if (!zi->nr_zones) {
@@ -209,9 +209,9 @@ static int blkzone_report(struct blkzone_control *ctl)
 				break;
 			}
 
-			printf(_("  start: %9lx, len %6lx, wptr %6lx"
+			printf(_("  start: 0x%09lx, len 0x%06lx, wptr 0x%06lx"
 			 	" reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"),
-				start, len, wp - start,
+				start, len, (type == 0x1) ? 0 : wp - start,
 				entry->reset, entry->non_seq,
 				cond, condition_str[cond & ARRAY_SIZE(condition_str)],
 				type, type_text[type]);
