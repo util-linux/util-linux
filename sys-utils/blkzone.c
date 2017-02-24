@@ -42,6 +42,7 @@
 #include "closestream.h"
 #include "blkdev.h"
 #include "sysfs.h"
+#include "optutils.h"
 
 struct blkzone_control;
 
@@ -305,8 +306,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"), out);
-	fputs(_(" -l, --length <sectors>  maximum sectors to act (in 512-byte sectors)\n"), out);
-	fputs(_(" -c, --count <number>  maximum number of zones\n"), out);
+	fputs(_(" -l, --length <sectors> maximum sectors to act (in 512-byte sectors)\n"), out);
+	fputs(_(" -c, --count <number>   maximum number of zones\n"), out);
 	fputs(_(" -v, --verbose          display more details\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -328,13 +329,19 @@ int main(int argc, char **argv)
 
 	static const struct option longopts[] = {
 	    { "help",    no_argument,       NULL, 'h' },
-	    { "count",  required_argument, NULL, 'c' }, /* max #of zones to operate on */
+	    { "count",   required_argument, NULL, 'c' }, /* max #of zones to operate on */
 	    { "length",  required_argument, NULL, 'l' }, /* max of sectors to operate on */
 	    { "offset",  required_argument, NULL, 'o' }, /* starting LBA */
 	    { "verbose", no_argument,       NULL, 'v' },
 	    { "version", no_argument,       NULL, 'V' },
 	    { NULL, 0, NULL, 0 }
 	};
+	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
+		{ 'c', 'l' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -350,6 +357,9 @@ int main(int argc, char **argv)
 	}
 
 	while ((c = getopt_long(argc, argv, "hc:l:o:vV", longopts, NULL)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch (c) {
 		case 'h':
 			usage(stdout);
@@ -379,9 +389,6 @@ int main(int argc, char **argv)
 
 	if (!ctl.command)
 		errx(EXIT_FAILURE, _("no command specified"));
-
-	if (ctl.count && ctl.length)
-		errx(EXIT_FAILURE, _("zone count and number of sectors cannot be specified together"));
 
 	if (optind == argc)
 		errx(EXIT_FAILURE, _("no device specified"));
