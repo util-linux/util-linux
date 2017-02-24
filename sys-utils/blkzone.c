@@ -235,10 +235,12 @@ static int blkzone_reset(struct blkzone_control *ctl)
 	if (ctl->offset > ctl->total_sectors)
 		errx(EXIT_FAILURE, _("%s: offset is greater than device size"), ctl->devname);
 
-	zlen = ctl->length * zonesize;
-
+	if (!ctl->length)
+		zlen = ctl->total_sectors;
+	else
+		zlen = ctl->length * zonesize;
 	if (ctl->offset + zlen > ctl->total_sectors)
-		zlen = ctl->total_sectors - ctl->length;
+		zlen = ctl->total_sectors - ctl->offset;
 
 	za.sector = ctl->offset;
 	za.nr_sectors = zlen;
