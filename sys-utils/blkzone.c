@@ -108,87 +108,7 @@ static int init_device(struct blkzone_control *ctl, int mode)
 }
 
 /*
- * blkzone report
- */
-#define DEF_REPORT_LEN		(1 << 12) /* 4k zones (256k kzalloc) */
-#define MAX_REPORT_LEN		(1 << 16) /* 64k zones */
-
-static const char *type_text[] = {
-	"RESERVED",
-	"CONVENTIONAL",
-	"SEQ_WRITE_REQUIRED",
-	"SEQ_WRITE_PREFERRED",
-};
-
-static const char *condition_str[] = {
-	"cv", /* conventional zone */
-	"e0", /* empty */
-	"Oi", /* open implicit */
-	"Oe", /* open explicit */
-	"Cl", /* closed */
-	"x5", "x6", "x7", "x8", "x9", "xA", "xB", /* xN: reserved */
-	"ro", /* read only */
-	"fu", /* full */
-	"OL"  /* offline */
-};
-
-static int blkzone_report(struct blkzone_control *ctl)
-{
-	struct blk_zone_report *zi;
-	uint32_t i;
-	int fd;
-
-	fd = init_device(ctl, O_RDONLY);
-
-	if (ctl->offset > ctl->total_sectors)
-		errx(EXIT_FAILURE, _("%s: offset is greater than device size"), ctl->devname);
-	if (ctl->length < 1)
-		ctl->length = 1;
-	if (ctl->length > MAX_REPORT_LEN) {
-		ctl->length = MAX_REPORT_LEN;
-		warnx(_("limiting report to %" PRIu64 " entries"), ctl->length);
-	}
-
-	zi = xmalloc(sizeof(struct blk_zone_report)
-		     + (ctl->length * sizeof(struct blk_zone)));
-	zi->nr_zones = ctl->length;
-	zi->sector = ctl->offset;		/* maybe shift 4Kn -> 512e */
-
-	if (ioctl(fd, BLKREPORTZONE, zi) == -1)
-		err(EXIT_FAILURE, _("%s: BLKREPORTZONE ioctl failed"), ctl->devname);
-
-	if (ctl->verbose)
-		printf(_("Found %d zones\n"), zi->nr_zones);
-
-	printf(_("Zones returned: %u\n"), zi->nr_zones);
-
-	for (i = 0; i < zi->nr_zones; i++) {
-		const struct blk_zone *entry = &zi->zones[i];
-		unsigned int type = entry->type;
-		uint64_t start = entry->start;
-		uint64_t wp = entry->wp;
-		uint8_t cond = entry->cond;
-		uint64_t len = entry->len;
-
-		if (!len)
-			break;
-
-		printf(_("  start: %9lx, len %6lx, wptr %6lx"
-			 " reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"),
-			start, len, wp - start,
-			entry->reset, entry->non_seq,
-			cond, condition_str[cond & ARRAY_SIZE(condition_str)],
-			type, type_text[type]);
-	}
-
-	free(zi);
-	close(fd);
-
-	return 0;
-}
-
-/*
- * blkzone reset
+ * Get the device zone size indicated by chunk sectors).
  */
 static unsigned long blkdev_chunk_sectors(const char *dname)
 {
@@ -214,6 +134,104 @@ static unsigned long blkdev_chunk_sectors(const char *dname)
 	return rc == 0 ? sz : 0;
 }
 
+/*
+ * blkzone report
+ */
+#define DEF_REPORT_LEN		(1 << 12) /* 4k zones per report (256k kzalloc) */
+
+static const char *type_text[] = {
+	"RESERVED",
+	"CONVENTIONAL",
+	"SEQ_WRITE_REQUIRED",
+	"SEQ_WRITE_PREFERRED",
+};
+
+static const char *condition_str[] = {
+	"cv", /* conventional zone */
+	"e0", /* empty */
+	"Oi", /* open implicit */
+	"Oe", /* open explicit */
+	"Cl", /* closed */
+	"x5", "x6", "x7", "x8", "x9", "xA", "xB", /* xN: reserved */
+	"ro", /* read only */
+	"fu", /* full */
+	"OL"  /* offline */
+};
+
+static int blkzone_report(struct blkzone_control *ctl)
+{
+	struct blk_zone_report *zi;
+	unsigned long zonesize;
+	uint32_t i;
+	int fd;
+
+	fd = init_device(ctl, O_RDONLY);
+
+	if (ctl->offset > ctl->total_sectors)
+		errx(EXIT_FAILURE, _("%s: offset is greater than device size"), ctl->devname);
+	if (ctl->length < 1) {
+		zonesize = blkdev_chunk_sectors(ctl->devname);
+		if (!zonesize)
+			errx(EXIT_FAILURE, _("%s: unable to determine zone size"), ctl->devname);
+		ctl->length = 1 + (ctl->total_sectors - ctl->offset) / zonesize;
+	}
+
+	zi = xmalloc(sizeof(struct blk_zone_report) +
+		     (DEF_REPORT_LEN * sizeof(struct blk_zone)));
+
+	while (ctl->length && ctl->offset < ctl->total_sectors) {
+
+		zi->nr_zones = min(ctl->length, (uint64_t)DEF_REPORT_LEN);
+		zi->sector = ctl->offset;
+
+		if (ioctl(fd, BLKREPORTZONE, zi) == -1)
+			err(EXIT_FAILURE, _("%s: BLKREPORTZONE ioctl failed"), ctl->devname);
+
+		if (ctl->verbose)
+			printf(_("Found %d zones from %lx\n"),
+				zi->nr_zones, ctl->offset);
+
+		if (!zi->nr_zones) {
+			ctl->length = 0;
+			break;
+		}
+
+		for (i = 0; i < zi->nr_zones; i++) {
+			const struct blk_zone *entry = &zi->zones[i];
+			unsigned int type = entry->type;
+			uint64_t start = entry->start;
+			uint64_t wp = entry->wp;
+			uint8_t cond = entry->cond;
+			uint64_t len = entry->len;
+
+			if (!len) {
+				ctl->length = 0;
+				break;
+			}
+
+			printf(_("  start: %9lx, len %6lx, wptr %6lx"
+			 	" reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"),
+				start, len, wp - start,
+				entry->reset, entry->non_seq,
+				cond, condition_str[cond & ARRAY_SIZE(condition_str)],
+				type, type_text[type]);
+
+			ctl->length--;
+			ctl->offset = start + len;
+
+		}
+
+	}
+
+	free(zi);
+	close(fd);
+
+	return 0;
+}
+
+/*
+ * blkzone reset
+ */
 static int blkzone_reset(struct blkzone_control *ctl)
 {
 	struct blk_zone_range za = { .sector = 0 };
