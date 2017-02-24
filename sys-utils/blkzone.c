@@ -63,6 +63,7 @@ struct blkzone_control {
 
 	uint64_t offset;
 	uint64_t length;
+	uint32_t count;
 
 	unsigned int verbose : 1;
 };
@@ -137,7 +138,7 @@ static unsigned long blkdev_chunk_sectors(const char *dname)
 /*
  * blkzone report
  */
-#define DEF_REPORT_LEN		(1 << 12) /* 4k zones per report (256k kzalloc) */
+#define DEF_REPORT_LEN		(1U << 12) /* 4k zones per report (256k kzalloc) */
 
 static const char *type_text[] = {
 	"RESERVED",
@@ -162,26 +163,31 @@ static int blkzone_report(struct blkzone_control *ctl)
 {
 	struct blk_zone_report *zi;
 	unsigned long zonesize;
-	uint32_t i;
+	uint32_t i, nr_zones;
 	int fd;
 
 	fd = init_device(ctl, O_RDONLY);
 
 	if (ctl->offset > ctl->total_sectors)
 		errx(EXIT_FAILURE, _("%s: offset is greater than device size"), ctl->devname);
-	if (ctl->length < 1) {
-		zonesize = blkdev_chunk_sectors(ctl->devname);
-		if (!zonesize)
-			errx(EXIT_FAILURE, _("%s: unable to determine zone size"), ctl->devname);
-		ctl->length = 1 + (ctl->total_sectors - ctl->offset) / zonesize;
-	}
+
+	zonesize = blkdev_chunk_sectors(ctl->devname);
+	if (!zonesize)
+		errx(EXIT_FAILURE, _("%s: unable to determine zone size"), ctl->devname);
+
+	if (ctl->count)
+		nr_zones = ctl->count;
+	else if (ctl->length)
+		nr_zones = (ctl->length + zonesize - 1) / zonesize;
+	else
+		nr_zones = 1 + (ctl->total_sectors - ctl->offset) / zonesize;
 
 	zi = xmalloc(sizeof(struct blk_zone_report) +
 		     (DEF_REPORT_LEN * sizeof(struct blk_zone)));
 
-	while (ctl->length && ctl->offset < ctl->total_sectors) {
+	while (nr_zones && ctl->offset < ctl->total_sectors) {
 
-		zi->nr_zones = min(ctl->length, (uint64_t)DEF_REPORT_LEN);
+		zi->nr_zones = min(nr_zones, DEF_REPORT_LEN);
 		zi->sector = ctl->offset;
 
 		if (ioctl(fd, BLKREPORTZONE, zi) == -1)
@@ -192,7 +198,7 @@ static int blkzone_report(struct blkzone_control *ctl)
 				zi->nr_zones, ctl->offset);
 
 		if (!zi->nr_zones) {
-			ctl->length = 0;
+			nr_zones = 0;
 			break;
 		}
 
@@ -205,7 +211,7 @@ static int blkzone_report(struct blkzone_control *ctl)
 			uint64_t len = entry->len;
 
 			if (!len) {
-				ctl->length = 0;
+				nr_zones = 0;
 				break;
 			}
 
@@ -216,7 +222,7 @@ static int blkzone_report(struct blkzone_control *ctl)
 				cond, condition_str[cond & ARRAY_SIZE(condition_str)],
 				type, type_text[type]);
 
-			ctl->length--;
+			nr_zones--;
 			ctl->offset = start + len;
 
 		}
@@ -246,31 +252,39 @@ static int blkzone_reset(struct blkzone_control *ctl)
 	fd = init_device(ctl, O_WRONLY);
 
 	if (ctl->offset & (zonesize - 1))
-		errx(EXIT_FAILURE, _("%s: zone %" PRIu64 " is not aligned "
+		errx(EXIT_FAILURE, _("%s: offset %" PRIu64 " is not aligned "
 			"to zone size %" PRIu64),
 			ctl->devname, ctl->offset, zonesize);
 
 	if (ctl->offset > ctl->total_sectors)
 		errx(EXIT_FAILURE, _("%s: offset is greater than device size"), ctl->devname);
 
-	if (!ctl->length)
-		zlen = ctl->total_sectors;
+	if (ctl->count)
+		zlen = ctl->count * zonesize;
+	else if (ctl->length)
+		zlen = ctl->length;
 	else
-		zlen = ctl->length * zonesize;
+		zlen = ctl->total_sectors;
 	if (ctl->offset + zlen > ctl->total_sectors)
 		zlen = ctl->total_sectors - ctl->offset;
+
+	if (ctl->length &&
+	    (zlen & (zonesize - 1)) &&
+	    ctl->offset + zlen != ctl->total_sectors)
+		errx(EXIT_FAILURE, _("%s: number of sectors %" PRIu64 " is not aligned "
+			"to zone size %" PRIu64),
+			ctl->devname, ctl->length, zonesize);
 
 	za.sector = ctl->offset;
 	za.nr_sectors = zlen;
 
 	if (ioctl(fd, BLKRESETZONE, &za) == -1)
 		err(EXIT_FAILURE, _("%s: BLKRESETZONE ioctl failed"), ctl->devname);
-
 	else if (ctl->verbose)
 		printf(_("%s: successfully reset in range from %" PRIu64 ", to %" PRIu64),
 			ctl->devname,
 			ctl->offset,
-			zlen);
+			ctl->offset + zlen);
 	close(fd);
 	return 0;
 }
@@ -291,7 +305,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -o, --offset <sector>  start sector of zone to act (in 512-byte sectors)\n"), out);
-	fputs(_(" -l, --length <number>  maximum number of zones\n"), out);
+	fputs(_(" -l, --length <sectors>  maximum sectors to act (in 512-byte sectors)\n"), out);
+	fputs(_(" -c, --count <number>  maximum number of zones\n"), out);
 	fputs(_(" -v, --verbose          display more details\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -304,11 +319,17 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 int main(int argc, char **argv)
 {
 	int c;
-	struct blkzone_control ctl = { .devname = NULL };
+	struct blkzone_control ctl = {
+		.devname = NULL,
+		.offset = 0,
+		.count = 0,
+		.length = 0
+	};
 
 	static const struct option longopts[] = {
 	    { "help",    no_argument,       NULL, 'h' },
-	    { "length",  required_argument, NULL, 'l' }, /* max #of zones (entries) for result */
+	    { "count",  required_argument, NULL, 'c' }, /* max #of zones to operate on */
+	    { "length",  required_argument, NULL, 'l' }, /* max of sectors to operate on */
 	    { "offset",  required_argument, NULL, 'o' }, /* starting LBA */
 	    { "verbose", no_argument,       NULL, 'v' },
 	    { "version", no_argument,       NULL, 'V' },
@@ -328,14 +349,18 @@ int main(int argc, char **argv)
 		argc--;
 	}
 
-	while ((c = getopt_long(argc, argv, "hl:o:vV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hc:l:o:vV", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage(stdout);
 			break;
+		case 'c':
+			ctl.count = strtou32_or_err(optarg,
+					_("failed to parse number of zones"));
+			break;
 		case 'l':
 			ctl.length = strtosize_or_err(optarg,
-					_("failed to parse number of zones"));
+					_("failed to parse number of sectors"));
 			break;
 		case 'o':
 			ctl.offset = strtosize_or_err(optarg,
@@ -354,6 +379,9 @@ int main(int argc, char **argv)
 
 	if (!ctl.command)
 		errx(EXIT_FAILURE, _("no command specified"));
+
+	if (ctl.count && ctl.length)
+		errx(EXIT_FAILURE, _("zone count and number of sectors cannot be specified together"));
 
 	if (optind == argc)
 		errx(EXIT_FAILURE, _("no device specified"));

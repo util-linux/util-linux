@@ -10,7 +10,7 @@ blkzone \- run zone command on a device
 .B blkzone
 is used to run zone command on device that support the Zoned Block Commands
 (ZBC) or Zoned-device ATA Commands (ZAC). The zones to operate on can be
-specified using the offset and length options.
+specified using the offset, count and length options.
 .PP
 The
 .I device
@@ -19,8 +19,8 @@ argument is the pathname of the block device.
 .SS report
 The command \fBblkzone report\fP is used to report device zone information.
 .PP
-By default, the command will report on up to 4k zones from the start of the
-block device.  Options may be used to modify this behavior, changing the
+By default, the command will report all zones from the start of the
+block device. Options may be used to modify this behavior, changing the
 starting zone or the size of the report, as explained below.
 
 .B Report output
@@ -52,34 +52,43 @@ x?:Reserved conditions (should not be reported)
 .TE
 
 .SS reset
-The command \fBblkzone reset\fP is used to reset one or more zones.  Unlike
-.BR sg_reset_wp (8) ,
+The command \fBblkzone reset\fP is used to reset one or more zones. Unlike
+.BR sg_reset_wp (8),
 this command operates from the block layer and can reset a range of zones.
 .PP
-By default, the command will operate from the zone at device logical
+By default, the command will operate from the zone at device 
 sector 0 and reset all zones. Options may be used to modify this behavior
 as well as specify the operation to be performed on the zone, as explained below.
-.PP
-The default number of zones (option \fB\-\-length\fP) is all zones.
 
 .SH OPTIONS
 The
 .I offset
-option argument may be followed by the multiplicative suffixes KiB (=1024),
+and
+.I length
+option arguments may be followed by the multiplicative suffixes KiB (=1024),
 MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB (the "iB" is
 optional, e.g., "K" has the same meaning as "KiB") or the suffixes
 KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
-Additionally, the 0x prefix can be used to specify \fIoffset\fR in hex.
+Additionally, the 0x prefix can be used to specify \fIoffset\fR and
+\fIlength\fR in hex.
 .TP
 .BR \-o , " \-\-offset "\fIsector\fP
-The starting zone specified as a sector offset.  The provided offset in sector
-units (512 bytes) should match the start of a zone.  The default value is zero.
+The starting zone specified as a sector offset. The provided offset in sector
+units (512 bytes) should match the start of a zone. The default value is zero.
 .TP
-.BR \-l , " \-\-length "\fIcount\fP
-The maximum number of zones to be used for the command.
+.BR \-l , " \-\-length "\fIsectors\fP
+The maximum number of sectors the command should operate on. The default value
+is the number of sectors remaining after \fIoffset\fR. This option cannot be
+used together with the option \fB\-\-count\fP.
+.TP
+.BR \-l , " \-\-count "\fIcount\fP
+The maximum number of zones the command should operate on. The default value
+is the nuber of zones starting from \fIoffset\fR. This option cannot be
+used together with the option \fB\-\-length\fP.
 .TP
 .BR \-v , " \-\-verbose"
-Display the number of zones returned in the report.
+Display the number of zones returned in the report or the range of sectors
+reset..
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
