@@ -1635,7 +1635,8 @@ AM_CONDITIONAL([BUILD_COLCRT], [test "x$build_colcrt" = xyes])
 UL_BUILD_INIT([colrm], [yes])
 AM_CONDITIONAL([BUILD_COLRM], [test "x$build_colrm" = xyes])
 
-UL_BUILD_INIT([column], [yes])
+UL_BUILD_INIT([column], [check])
+UL_REQUIRES_BUILD([column], [libsmartcols])
 AM_CONDITIONAL([BUILD_COLUMN], [test "x$build_column" = xyes])
 
 UL_BUILD_INIT([hexdump], [yes])
