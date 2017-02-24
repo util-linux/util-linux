@@ -28,13 +28,21 @@ BUG REPORTING:
 
 SOURCE CODE:
 
-      See also Documentation/howto-contribute.txt.
+      See also Documentation/howto-contribute.txt
+               Documentation/source-code-management.txt
 
       Web interface:
           http://git.kernel.org/cgit/utils/util-linux/util-linux.git
           https://github.com/karelzak/util-linux
+
       Checkout:
           git clone git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git util-linux
+
+      Note that GitHub repository may contain temporary development branches too.
+
+      The kernel.org repository contains master (current development) and stable/*
+      (maintenance) branches only. All master or stable/* changes are always pushed
+      to the both repositories in the same time.
 
 
 NLS (PO TRANSLATIONS):
