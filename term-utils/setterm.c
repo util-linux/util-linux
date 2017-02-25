@@ -176,7 +176,7 @@ struct setterm_control {
 	int opt_rt_len;		/* regular tab length */
 	int opt_tb_array[TABS_MAX + 1];	/* array for tab list */
 	/* colors */
-	int opt_fo_color:4, opt_ba_color:4, opt_ul_color:4, opt_hb_color:4;
+	unsigned int opt_fo_color:4, opt_ba_color:4, opt_ul_color:4, opt_hb_color:4;
 	/* boolean options */
 	unsigned int opt_cu_on:1, opt_li_on:1, opt_bo_on:1, opt_hb_on:1,
 	    opt_bl_on:1, opt_re_on:1, opt_un_on:1, opt_rep_on:1,
