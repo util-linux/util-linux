@@ -183,6 +183,11 @@ Display version information and exit.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
+.SH NOTES
+The proc and sysfs filesystems mounting as root in a user namespace have to be
+restricted so that a less privileged user can not get more access to sensitive
+files that a more privileged user made unavailable. In short the rule for proc
+and sysfs is as close to a bind mount as possible.
 .SH EXAMPLES
 .TP
 .B # unshare --fork --pid --mount-proc readlink /proc/self
