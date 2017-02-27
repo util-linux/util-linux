@@ -640,14 +640,19 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 		if (s) {
 			errno = 0;
 			id = strtol(s, &end, 16);
-			if (!errno && end && s < end)
+			if (!errno && end && s < end) {
 				has_id = 1;
+				DBG(LABEL, ul_debug("DOS: re-use ID from script (0x%08x)", id));
+			} else
+				DBG(LABEL, ul_debug("DOS: failed to parse label=id '%s'", s));
 		}
 	}
 
 	/* random disk signature */
-	if (!has_id)
+	if (!has_id) {
+		DBG(LABEL, ul_debug("DOS: generate new ID"));
 		random_get_bytes(&id, sizeof(id));
+	}
 
 	if (fdisk_has_protected_bootbits(cxt))
 		rc = fdisk_init_firstsector_buffer(cxt, 0, MBR_PT_BOOTBITS_SIZE);
