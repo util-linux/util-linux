@@ -2448,6 +2448,9 @@ static void output_special_char(unsigned char c, struct options *op,
 			uname(&uts);
 			fputs(uts.sysname, stdout);
 		}
+
+		free(var);
+
 		break;
 	}
 	case 'u':
