@@ -965,18 +965,17 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 
 		if (mnt_fs_streq_srcpath(fs, path)) {
 #ifdef HAVE_BTRFS_SUPPORT
-			if (!strcmp(fs->fstype, "btrfs")) {
+			if (fs->fstype && !strcmp(fs->fstype, "btrfs")) {
 				uint64_t default_id = btrfs_get_default_subvol_id(mnt_fs_get_target(fs));
-				uint64_t subvol_id;
 				char *val;
 				size_t len;
 
-				if (default_id == UINT64_MAX) {
+				if (default_id == UINT64_MAX)
 					DBG(TAB, ul_debug("not found btrfs volume setting"));
-					return fs;
-				}
 
-				if (mnt_fs_get_option(fs, "subvolid", &val, &len) == 0) {
+				else if (mnt_fs_get_option(fs, "subvolid", &val, &len) == 0) {
+					uint64_t subvol_id;
+
 					if (mnt_parse_offset(val, len, &subvol_id)) {
 						DBG(TAB, ul_debugobj(tb, "failed to parse subvolid="));
 						continue;
