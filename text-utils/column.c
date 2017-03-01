@@ -64,13 +64,6 @@ static char *mtsafe_strtok(char *, const char *, char **);
 #define DEFNUM      1000
 #define MAXLINELEN  (LINE_MAX + 1)
 
-static int input(FILE *fp, int *maxlength, wchar_t ***list, int *entries);
-static void columnate_fillrows(int maxlength, long termwidth, wchar_t **list, int entries);
-static void columnate_fillcols(int maxlength, long termwidth, wchar_t **list, int entries);
-static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, wchar_t **wcstok_state);
-static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy, wchar_t *colsep);
-static void print(wchar_t **list, int entries);
-
 typedef struct _tbl {
 	wchar_t **list;
 	int cols, *len;
@@ -85,9 +78,20 @@ enum {
 };
 
 struct column_control {
-	int mode;	/* COLUMN_MODE_* */
+	int	mode;		/* COLUMN_MODE_* */
+	int	termwidth;
+
+	int	entries;	/* number of records */
+	int	maxlength;	/* longest input record (line) */
+	wchar_t **list;		/* array of pointers to records */
 };
 
+static int input(struct column_control *ctl, FILE *fp);
+static void columnate_fillrows(struct column_control *ctl);
+static void columnate_fillcols(struct column_control *ctl);
+static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, wchar_t **wcstok_state);
+static void maketbl(struct column_control *ctl, wchar_t *separator, int greedy, wchar_t *colsep);
+static void print(struct column_control *ctl);
 
 #ifdef HAVE_WIDECHAR
 /* Don't use wcswidth(), we need to ignore non-printable chars. */
@@ -142,15 +146,14 @@ static void __attribute__((__noreturn__)) usage(int rc)
 
 int main(int argc, char **argv)
 {
-	struct column_control ctl = { .mode = COLUMN_MODE_FILLCOLS };
+	struct column_control ctl = {
+		.mode = COLUMN_MODE_FILLCOLS,
+		.termwidth = 80
+	};
 
 	int ch;
 	int i;
-	int termwidth = 80;
-	int entries = 0;		/* number of records */
 	unsigned int eval = 0;		/* exit value */
-	int maxlength = 0;		/* longest record */
-	wchar_t **list = NULL;		/* array of pointers to records */
 	int greedy = 1;
 	wchar_t *colsep;		/* table column output separator */
 
@@ -176,7 +179,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	termwidth = get_terminal_width(80);
+	ctl.termwidth = get_terminal_width(80);
 	colsep = mbs_to_wcs("  ");
 
 	while ((ch = getopt_long(argc, argv, "hVc:s:txo:", longopts, NULL)) != -1)
@@ -188,7 +191,7 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'c':
-			termwidth = strtou32_or_err(optarg, _("invalid columns argument"));
+			ctl.termwidth = strtou32_or_err(optarg, _("invalid columns argument"));
 			break;
 		case 's':
 			separator = mbs_to_wcs(optarg);
@@ -211,13 +214,13 @@ int main(int argc, char **argv)
 	argv += optind;
 
 	if (!*argv)
-		eval += input(stdin, &maxlength, &list, &entries);
+		eval += input(&ctl, stdin);
 	else
 		for (; *argv; ++argv) {
 			FILE *fp;
 
 			if ((fp = fopen(*argv, "r")) != NULL) {
-				eval += input(fp, &maxlength, &list, &entries);
+				eval += input(&ctl, fp);
 				fclose(fp);
 			} else {
 				warn("%s", *argv);
@@ -225,98 +228,98 @@ int main(int argc, char **argv)
 			}
 		}
 
-	if (!entries)
+	if (!ctl.entries)
 		exit(eval);
 
-	if (ctl.mode != COLUMN_MODE_TABLE && maxlength >= termwidth)
+	if (ctl.mode != COLUMN_MODE_TABLE && ctl.maxlength >= ctl.termwidth)
 		ctl.mode = COLUMN_MODE_SIMPLE;
 
 	switch (ctl.mode) {
 	case COLUMN_MODE_TABLE:
-		maketbl(list, entries, separator, greedy, colsep);
+		maketbl(&ctl, separator, greedy, colsep);
 		break;
 	case COLUMN_MODE_FILLCOLS:
-		columnate_fillcols(maxlength, termwidth, list, entries);
+		columnate_fillcols(&ctl);
 		break;
 	case COLUMN_MODE_FILLROWS:
-		columnate_fillrows(maxlength, termwidth, list, entries);
+		columnate_fillrows(&ctl);
 		break;
 	case COLUMN_MODE_SIMPLE:
-		print(list, entries);
+		print(&ctl);
 		break;
 	}
 
-	for (i = 0; i < entries; i++)
-		free(list[i]);
-	free(list);
+	for (i = 0; i < ctl.entries; i++)
+		free(ctl.list[i]);
+	free(ctl.list);
 
 	return eval == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-static void columnate_fillrows(int maxlength, long termwidth, wchar_t **list, int entries)
+static void columnate_fillrows(struct column_control *ctl)
 {
 	int chcnt, col, cnt, endcol, numcols;
 	wchar_t **lp;
 
-	maxlength = (maxlength + TAB) & ~(TAB - 1);
-	numcols = termwidth / maxlength;
-	endcol = maxlength;
-	for (chcnt = col = 0, lp = list;; ++lp) {
+	ctl->maxlength = (ctl->maxlength + TAB) & ~(TAB - 1);
+	numcols = ctl->termwidth / ctl->maxlength;
+	endcol = ctl->maxlength;
+	for (chcnt = col = 0, lp = ctl->list;; ++lp) {
 		fputws(*lp, stdout);
 		chcnt += width(*lp);
-		if (!--entries)
+		if (!--ctl->entries)
 			break;
 		if (++col == numcols) {
 			chcnt = col = 0;
-			endcol = maxlength;
+			endcol = ctl->maxlength;
 			putwchar('\n');
 		} else {
 			while ((cnt = ((chcnt + TAB) & ~(TAB - 1))) <= endcol) {
 				putwchar('\t');
 				chcnt = cnt;
 			}
-			endcol += maxlength;
+			endcol += ctl->maxlength;
 		}
 	}
 	if (chcnt)
 		putwchar('\n');
 }
 
-static void columnate_fillcols(int maxlength, long termwidth, wchar_t **list, int entries)
+static void columnate_fillcols(struct column_control *ctl)
 {
 	int base, chcnt, cnt, col, endcol, numcols, numrows, row;
 
-	maxlength = (maxlength + TAB) & ~(TAB - 1);
-	numcols = termwidth / maxlength;
+	ctl->maxlength = (ctl->maxlength + TAB) & ~(TAB - 1);
+	numcols = ctl->termwidth / ctl->maxlength;
 	if (!numcols)
 		numcols = 1;
-	numrows = entries / numcols;
-	if (entries % numcols)
+	numrows = ctl->entries / numcols;
+	if (ctl->entries % numcols)
 		++numrows;
 
 	for (row = 0; row < numrows; ++row) {
-		endcol = maxlength;
+		endcol = ctl->maxlength;
 		for (base = row, chcnt = col = 0; col < numcols; ++col) {
-			fputws(list[base], stdout);
-			chcnt += width(list[base]);
-			if ((base += numrows) >= entries)
+			fputws(ctl->list[base], stdout);
+			chcnt += width(ctl->list[base]);
+			if ((base += numrows) >= ctl->entries)
 				break;
 			while ((cnt = ((chcnt + TAB) & ~(TAB - 1))) <= endcol) {
 				putwchar('\t');
 				chcnt = cnt;
 			}
-			endcol += maxlength;
+			endcol += ctl->maxlength;
 		}
 		putwchar('\n');
 	}
 }
 
-static void print(wchar_t **list, int entries)
+static void print(struct column_control *ctl)
 {
 	int cnt;
 	wchar_t **lp;
 
-	for (cnt = entries, lp = list; cnt--; ++lp) {
+	for (cnt = ctl->entries, lp = ctl->list; cnt--; ++lp) {
 		fputws(*lp, stdout);
 		putwchar('\n');
 	}
@@ -346,7 +349,7 @@ static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy,
 	return result;
 }
 
-static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy, wchar_t *colsep)
+static void maketbl(struct column_control *ctl, wchar_t *separator, int greedy, wchar_t *colsep)
 {
 	TBL *t;
 	int cnt;
@@ -357,11 +360,11 @@ static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy,
 	wchar_t **cols;
 	wchar_t *wcstok_state = NULL;
 
-	t = tbl = xcalloc(entries, sizeof(TBL));
+	t = tbl = xcalloc(ctl->entries, sizeof(TBL));
 	cols = xcalloc(maxcols, sizeof(wchar_t *));
 	lens = xcalloc(maxcols, sizeof(ssize_t));
 
-	for (lp = list, cnt = 0; cnt < entries; ++cnt, ++lp, ++t) {
+	for (lp = ctl->list, cnt = 0; cnt < ctl->entries; ++cnt, ++lp, ++t) {
 		coloff = 0;
 		p = *lp;
 		while ((cols[coloff] = local_wcstok(p, separator, greedy, &wcstok_state)) != NULL) {
@@ -385,7 +388,7 @@ static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy,
 		}
 	}
 
-	for (t = tbl, cnt = 0; cnt < entries; ++cnt, ++t) {
+	for (t = tbl, cnt = 0; cnt < ctl->entries; ++cnt, ++t) {
 		for (coloff = 0; coloff < t->cols - 1; ++coloff) {
 			fputws(t->list[coloff], stdout);
 #ifdef HAVE_WIDECHAR
@@ -401,7 +404,7 @@ static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy,
 		}
 	}
 
-	for (cnt = 0; cnt < entries; ++cnt) {
+	for (cnt = 0; cnt < ctl->entries; ++cnt) {
 		free((tbl+cnt)->list);
 		free((tbl+cnt)->len);
 	}
@@ -410,13 +413,13 @@ static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy,
 	free(tbl);
 }
 
-static int input(FILE *fp, int *maxlength, wchar_t ***list, int *entries)
+static int input(struct column_control *ctl, FILE *fp)
 {
 	static int maxentry = DEFNUM;
 	int len, lineno = 1, reportedline = 0, eval = 0;
 	wchar_t *p, buf[MAXLINELEN];
-	wchar_t **local_list = *list;
-	int local_entries = *entries;
+	wchar_t **local_list = ctl->list;
+	int local_entries = ctl->entries;
 
 	if (!local_list)
 		local_list = xcalloc(maxentry, sizeof(wchar_t *));
@@ -445,8 +448,8 @@ static int input(FILE *fp, int *maxlength, wchar_t ***list, int *entries)
 		if (!feof(fp) && p)
 			*p = '\0';
 		len = width(buf);	/* len = p - buf; */
-		if (*maxlength < len)
-			*maxlength = len;
+		if (ctl->maxlength < len)
+			ctl->maxlength = len;
 		if (local_entries == maxentry) {
 			maxentry += DEFNUM;
 			local_list = xrealloc(local_list,
@@ -455,8 +458,8 @@ static int input(FILE *fp, int *maxlength, wchar_t ***list, int *entries)
 		local_list[local_entries++] = wcsdup(buf);
 	}
 
-	*list = local_list;
-	*entries = local_entries;
+	ctl->list = local_list;
+	ctl->entries = local_entries;
 
 	return eval;
 }
