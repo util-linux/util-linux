@@ -61,7 +61,6 @@ static char *mtsafe_strtok(char *, const char *, char **);
 
 #define DEFCOLS     25
 #define TAB         8
-#define DEFNUM      1000
 #define MAXLINELEN  (LINE_MAX + 1)
 
 typedef struct _tbl {
@@ -79,11 +78,11 @@ enum {
 
 struct column_control {
 	int	mode;		/* COLUMN_MODE_* */
-	int	termwidth;
+	size_t	termwidth;
 
-	int	entries;	/* number of records */
-	int	maxlength;	/* longest input record (line) */
-	wchar_t **list;		/* array of pointers to records */
+	wchar_t	**ents;		/* input entries */
+	size_t	nents;		/* number of entries */
+	size_t	maxlength;	/* longest input record (line) */
 };
 
 static int input(struct column_control *ctl, FILE *fp);
@@ -152,7 +151,6 @@ int main(int argc, char **argv)
 	};
 
 	int ch;
-	int i;
 	unsigned int eval = 0;		/* exit value */
 	int greedy = 1;
 	wchar_t *colsep;		/* table column output separator */
@@ -228,7 +226,7 @@ int main(int argc, char **argv)
 			}
 		}
 
-	if (!ctl.entries)
+	if (!ctl.nents)
 		exit(eval);
 
 	if (ctl.mode != COLUMN_MODE_TABLE && ctl.maxlength >= ctl.termwidth)
@@ -249,25 +247,21 @@ int main(int argc, char **argv)
 		break;
 	}
 
-	for (i = 0; i < ctl.entries; i++)
-		free(ctl.list[i]);
-	free(ctl.list);
-
 	return eval == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 static void columnate_fillrows(struct column_control *ctl)
 {
-	int chcnt, col, cnt, endcol, numcols;
+	size_t chcnt, col, cnt, endcol, numcols;
 	wchar_t **lp;
 
 	ctl->maxlength = (ctl->maxlength + TAB) & ~(TAB - 1);
 	numcols = ctl->termwidth / ctl->maxlength;
 	endcol = ctl->maxlength;
-	for (chcnt = col = 0, lp = ctl->list;; ++lp) {
+	for (chcnt = col = 0, lp = ctl->ents;; ++lp) {
 		fputws(*lp, stdout);
 		chcnt += width(*lp);
-		if (!--ctl->entries)
+		if (!--ctl->nents)
 			break;
 		if (++col == numcols) {
 			chcnt = col = 0;
@@ -287,22 +281,22 @@ static void columnate_fillrows(struct column_control *ctl)
 
 static void columnate_fillcols(struct column_control *ctl)
 {
-	int base, chcnt, cnt, col, endcol, numcols, numrows, row;
+	size_t base, chcnt, cnt, col, endcol, numcols, numrows, row;
 
 	ctl->maxlength = (ctl->maxlength + TAB) & ~(TAB - 1);
 	numcols = ctl->termwidth / ctl->maxlength;
 	if (!numcols)
 		numcols = 1;
-	numrows = ctl->entries / numcols;
-	if (ctl->entries % numcols)
+	numrows = ctl->nents / numcols;
+	if (ctl->nents % numcols)
 		++numrows;
 
 	for (row = 0; row < numrows; ++row) {
 		endcol = ctl->maxlength;
 		for (base = row, chcnt = col = 0; col < numcols; ++col) {
-			fputws(ctl->list[base], stdout);
-			chcnt += width(ctl->list[base]);
-			if ((base += numrows) >= ctl->entries)
+			fputws(ctl->ents[base], stdout);
+			chcnt += width(ctl->ents[base]);
+			if ((base += numrows) >= ctl->nents)
 				break;
 			while ((cnt = ((chcnt + TAB) & ~(TAB - 1))) <= endcol) {
 				putwchar('\t');
@@ -319,7 +313,7 @@ static void print(struct column_control *ctl)
 	int cnt;
 	wchar_t **lp;
 
-	for (cnt = ctl->entries, lp = ctl->list; cnt--; ++lp) {
+	for (cnt = ctl->nents, lp = ctl->ents; cnt--; ++lp) {
 		fputws(*lp, stdout);
 		putwchar('\n');
 	}
@@ -352,7 +346,7 @@ static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy,
 static void maketbl(struct column_control *ctl, wchar_t *separator, int greedy, wchar_t *colsep)
 {
 	TBL *t;
-	int cnt;
+	size_t cnt;
 	wchar_t *p, **lp;
 	ssize_t *lens;
 	ssize_t maxcols = DEFCOLS, coloff;
@@ -360,11 +354,11 @@ static void maketbl(struct column_control *ctl, wchar_t *separator, int greedy, 
 	wchar_t **cols;
 	wchar_t *wcstok_state = NULL;
 
-	t = tbl = xcalloc(ctl->entries, sizeof(TBL));
+	t = tbl = xcalloc(ctl->nents, sizeof(TBL));
 	cols = xcalloc(maxcols, sizeof(wchar_t *));
 	lens = xcalloc(maxcols, sizeof(ssize_t));
 
-	for (lp = ctl->list, cnt = 0; cnt < ctl->entries; ++cnt, ++lp, ++t) {
+	for (lp = ctl->ents, cnt = 0; cnt < ctl->nents; ++cnt, ++lp, ++t) {
 		coloff = 0;
 		p = *lp;
 		while ((cols[coloff] = local_wcstok(p, separator, greedy, &wcstok_state)) != NULL) {
@@ -388,7 +382,7 @@ static void maketbl(struct column_control *ctl, wchar_t *separator, int greedy, 
 		}
 	}
 
-	for (t = tbl, cnt = 0; cnt < ctl->entries; ++cnt, ++t) {
+	for (t = tbl, cnt = 0; cnt < ctl->nents; ++cnt, ++t) {
 		for (coloff = 0; coloff < t->cols - 1; ++coloff) {
 			fputws(t->list[coloff], stdout);
 #ifdef HAVE_WIDECHAR
@@ -404,7 +398,7 @@ static void maketbl(struct column_control *ctl, wchar_t *separator, int greedy, 
 		}
 	}
 
-	for (cnt = 0; cnt < ctl->entries; ++cnt) {
+	for (cnt = 0; cnt < ctl->nents; ++cnt) {
 		free((tbl+cnt)->list);
 		free((tbl+cnt)->len);
 	}
@@ -415,53 +409,50 @@ static void maketbl(struct column_control *ctl, wchar_t *separator, int greedy, 
 
 static int input(struct column_control *ctl, FILE *fp)
 {
-	static int maxentry = DEFNUM;
-	int len, lineno = 1, reportedline = 0, eval = 0;
-	wchar_t *p, buf[MAXLINELEN];
-	wchar_t **local_list = ctl->list;
-	int local_entries = ctl->entries;
+	char *buf = NULL;
+	size_t bufsz = 0;
+	size_t maxents = 0;
 
-	if (!local_list)
-		local_list = xcalloc(maxentry, sizeof(wchar_t *));
+	do {
+		char *str, *p;
+		size_t len;
 
-	while (1) {
-		if (fgetws(buf, MAXLINELEN, fp) == NULL) {
+		if (getline(&buf, &bufsz, fp) < 0) {
 			if (feof(fp))
 				break;
 			else
 				err(EXIT_FAILURE, _("read failed"));
 		}
-		for (p = buf; *p && iswspace(*p); ++p)
-			;
-		if (!*p)
+		str = (char *) skip_space(buf);
+		if (str) {
+			p = strchr(str, '\n');
+			if (p)
+				*p = '\0';
+		}
+		if (!str || !*str)
 			continue;
-		if (!(p = wcschr(p, '\n')) && !feof(fp)) {
-			if (reportedline < lineno) {
-				warnx(_("line %d is too long, output will be truncated"),
-					lineno);
-				reportedline = lineno;
+
+		switch (ctl->mode) {
+		case COLUMN_MODE_TABLE:
+			/* TODO: fill libsmartcols */
+
+		case COLUMN_MODE_FILLCOLS:
+		case COLUMN_MODE_FILLROWS:
+			if (ctl->nents <= maxents) {
+				maxents += 1000;
+				ctl->ents = xrealloc(ctl->ents,
+						maxents * sizeof(wchar_t *));
 			}
-			eval = 1;
-			continue;
+			ctl->ents[ctl->nents] = mbs_to_wcs(str);
+			len = width(ctl->ents[ctl->nents]);
+			if (ctl->maxlength < len)
+				ctl->maxlength = len;
+			ctl->nents++;
+			break;
 		}
-		lineno++;
-		if (!feof(fp) && p)
-			*p = '\0';
-		len = width(buf);	/* len = p - buf; */
-		if (ctl->maxlength < len)
-			ctl->maxlength = len;
-		if (local_entries == maxentry) {
-			maxentry += DEFNUM;
-			local_list = xrealloc(local_list,
-				(u_int)maxentry * sizeof(wchar_t *));
-		}
-		local_list[local_entries++] = wcsdup(buf);
-	}
+	} while (1);
 
-	ctl->list = local_list;
-	ctl->entries = local_entries;
-
-	return eval;
+	return 0;
 }
 
 #ifdef HAVE_WIDECHAR
