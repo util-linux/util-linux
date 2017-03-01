@@ -2,6 +2,8 @@
  * Copyright (c) 1989, 1993, 1994
  *	The Regents of the University of California.  All rights reserved.
  *
+ * Copyright (C) 2017 Karel Zak <kzak@redhat.com>
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -30,14 +32,6 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
- 
-/*
- * 1999-02-22 Arkadiusz Miśkiewicz <misiek@pld.ORG.PL>
- * 	added Native Language Support
- * 1999-09-19 Bruno Haible <haible@clisp.cons.org>
- * 	modified to work correctly in multi-byte locales
- */
-
 #include <sys/types.h>
 #include <sys/ioctl.h>
 
@@ -81,6 +75,18 @@ typedef struct _tbl {
 	wchar_t **list;
 	int cols, *len;
 } TBL;
+
+
+enum {
+	COLUMN_MODE_FILLCOLS = 0,
+	COLUMN_MODE_FILLROWS,
+	COLUMN_MODE_TABLE,
+	COLUMN_MODE_SIMPLE
+};
+
+struct column_control {
+	int mode;	/* COLUMN_MODE_* */
+};
 
 
 #ifdef HAVE_WIDECHAR
@@ -136,7 +142,9 @@ static void __attribute__((__noreturn__)) usage(int rc)
 
 int main(int argc, char **argv)
 {
-	int ch, tflag = 0, xflag = 0;
+	struct column_control ctl = { .mode = COLUMN_MODE_FILLCOLS };
+
+	int ch;
 	int i;
 	int termwidth = 80;
 	int entries = 0;		/* number of records */
@@ -191,10 +199,10 @@ int main(int argc, char **argv)
 			colsep = mbs_to_wcs(optarg);
 			break;
 		case 't':
-			tflag = 1;
+			ctl.mode = COLUMN_MODE_TABLE;
 			break;
 		case 'x':
-			xflag = 1;
+			ctl.mode = COLUMN_MODE_FILLROWS;
 			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
@@ -220,23 +228,29 @@ int main(int argc, char **argv)
 	if (!entries)
 		exit(eval);
 
-	if (tflag)
+	if (ctl.mode != COLUMN_MODE_TABLE && maxlength >= termwidth)
+		ctl.mode = COLUMN_MODE_SIMPLE;
+
+	switch (ctl.mode) {
+	case COLUMN_MODE_TABLE:
 		maketbl(list, entries, separator, greedy, colsep);
-	else if (maxlength >= termwidth)
-		print(list, entries);
-	else if (xflag)
-		columnate_fillrows(maxlength, termwidth, list, entries);
-	else
+		break;
+	case COLUMN_MODE_FILLCOLS:
 		columnate_fillcols(maxlength, termwidth, list, entries);
+		break;
+	case COLUMN_MODE_FILLROWS:
+		columnate_fillrows(maxlength, termwidth, list, entries);
+		break;
+	case COLUMN_MODE_SIMPLE:
+		print(list, entries);
+		break;
+	}
 
 	for (i = 0; i < entries; i++)
 		free(list[i]);
 	free(list);
 
-	if (eval == 0)
-		return EXIT_SUCCESS;
-	else
-		return EXIT_FAILURE;
+	return eval == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 static void columnate_fillrows(int maxlength, long termwidth, wchar_t **list, int entries)
