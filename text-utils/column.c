@@ -71,8 +71,8 @@ static char *mtsafe_strtok(char *, const char *, char **);
 #define MAXLINELEN  (LINE_MAX + 1)
 
 static int input(FILE *fp, int *maxlength, wchar_t ***list, int *entries);
-static void c_columnate(int maxlength, long termwidth, wchar_t **list, int entries);
-static void r_columnate(int maxlength, long termwidth, wchar_t **list, int entries);
+static void columnate_fillrows(int maxlength, long termwidth, wchar_t **list, int entries);
+static void columnate_fillcols(int maxlength, long termwidth, wchar_t **list, int entries);
 static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, wchar_t **wcstok_state);
 static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy, wchar_t *colsep);
 static void print(wchar_t **list, int entries);
@@ -225,9 +225,9 @@ int main(int argc, char **argv)
 	else if (maxlength >= termwidth)
 		print(list, entries);
 	else if (xflag)
-		c_columnate(maxlength, termwidth, list, entries);
+		columnate_fillrows(maxlength, termwidth, list, entries);
 	else
-		r_columnate(maxlength, termwidth, list, entries);
+		columnate_fillcols(maxlength, termwidth, list, entries);
 
 	for (i = 0; i < entries; i++)
 		free(list[i]);
@@ -239,7 +239,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 }
 
-static void c_columnate(int maxlength, long termwidth, wchar_t **list, int entries)
+static void columnate_fillrows(int maxlength, long termwidth, wchar_t **list, int entries)
 {
 	int chcnt, col, cnt, endcol, numcols;
 	wchar_t **lp;
@@ -268,7 +268,7 @@ static void c_columnate(int maxlength, long termwidth, wchar_t **list, int entri
 		putwchar('\n');
 }
 
-static void r_columnate(int maxlength, long termwidth, wchar_t **list, int entries)
+static void columnate_fillcols(int maxlength, long termwidth, wchar_t **list, int entries)
 {
 	int base, chcnt, cnt, col, endcol, numcols, numrows, row;
 
