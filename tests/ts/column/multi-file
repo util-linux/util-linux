@@ -26,9 +26,9 @@ ts_check_test_command "$TS_CMD_COLUMN"
 
 ts_cd "$TS_OUTDIR"
 
-$TS_CMD_COLUMN -x -c 50 $TS_SELF/input \
-			$TS_SELF/input \
-			$TS_SELF/input >> $TS_OUTPUT 2>&1
+$TS_CMD_COLUMN -x -c 50 $TS_SELF/files/fivecols \
+			$TS_SELF/files/fivecols \
+			$TS_SELF/files/fivecols >> $TS_OUTPUT 2>&1
 
 ts_finalize
 
