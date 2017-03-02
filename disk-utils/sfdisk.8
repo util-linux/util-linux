@@ -47,8 +47,9 @@ The recommended way is not to specify start offsets at all and specify
 partition size in MiB, GiB (or so).  In this case sfdisk align all partitions
 to block-device I/O limits (or when I/O limits are too small then to megabyte
 boundary to keep disk layout portable).  If this default behaviour is unwanted
-then specify offsets and sizes in sectors.  In this case sfdisk entirely
-follows specified numbers without any optimization.
+(usually for very small partitions) then specify offsets and sizes in
+sectors.  In this case sfdisk entirely follows specified numbers without any
+optimization.
 .sp
 .B sfdisk
 does not create the standard system partitions for SGI and SUN disk labels like
