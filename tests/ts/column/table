@@ -16,16 +16,24 @@
 # GNU General Public License for more details.
 #
 TS_TOPDIR="${0%/*}/../.."
-TS_DESC="separator & table"
+TS_DESC="table"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_COLUMN"
-
 ts_cd "$TS_OUTDIR"
 
-$TS_CMD_COLUMN -s 2 -t $TS_SELF/files/fivecols >> $TS_OUTPUT 2>&1
+ts_init_subtest "default"
+$TS_CMD_COLUMN --table $TS_SELF/files/table >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "output-separator"
+$TS_CMD_COLUMN --output-separator '|' --table $TS_SELF/files/table >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "input-separator"
+$TS_CMD_COLUMN --separator ',' --table $TS_SELF/files/table-sep >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
 
 ts_finalize
-
