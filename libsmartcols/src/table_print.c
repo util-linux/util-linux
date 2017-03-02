@@ -1092,9 +1092,12 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 	size_t width = 0, width_min = 0;	/* output width */
 	int trunc_only, rc = 0;
 	int extremes = 0;
+	size_t colsepsz;
 
 
 	DBG(TAB, ul_debugobj(tb, "recounting widths (termwidth=%zu)", tb->termwidth));
+
+	colsepsz = mbs_safe_width(colsep(tb));
 
 	/* set basic columns width
 	 */
@@ -1110,8 +1113,8 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 
 		is_last = is_last_column(cl);
 
-		width += cl->width + (is_last ? 0 : 1);		/* separator for non-last column */
-		width_min += cl->width_min + (is_last ? 0 : 1);
+		width += cl->width + (is_last ? 0 : colsepsz);		/* separator for non-last column */
+		width_min += cl->width_min + (is_last ? 0 : colsepsz);
 		extremes += cl->is_extreme;
 	}
 
@@ -1291,7 +1294,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 				width -= r;
 			} else {
 				cl->flags |= SCOLS_FL_HIDDEN;
-				width -= cl->width + 1;		/* +1 means separator between columns */
+				width -= cl->width + colsepsz;
 			}
 		}
 	}

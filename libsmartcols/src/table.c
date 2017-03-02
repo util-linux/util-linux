@@ -1102,7 +1102,6 @@ int scols_table_is_tree(const struct libscols_table *tb)
  * @sep: separator
  *
  * Sets the column separator of @tb to @sep.
- * Please note that @sep should always take up a single cell in the output.
  *
  * Returns: 0, a negative value in case of an error.
  */
