@@ -51,10 +51,7 @@
 #include "closestream.h"
 #include "ttyutils.h"
 
-#ifdef HAVE_WIDECHAR
-static wchar_t *mbs_to_wcs(const char *);
-#else
-#define mbs_to_wcs(s) xstrdup(s)
+#ifndef HAVE_WIDECHAR
 static char *mtsafe_strtok(char *, const char *, char **);
 #define wcstok mtsafe_strtok
 #endif
@@ -85,43 +82,29 @@ struct column_control {
 	size_t	maxlength;	/* longest input record (line) */
 };
 
-static int read_input(struct column_control *ctl, FILE *fp);
-static void columnate_fillrows(struct column_control *ctl);
-static void columnate_fillcols(struct column_control *ctl);
-static void simple_print(struct column_control *ctl);
-
 static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, wchar_t **wcstok_state);
 static void maketbl(struct column_control *ctl, wchar_t *separator, int greedy, wchar_t *colsep);
 
-#ifdef HAVE_WIDECHAR
-/* Don't use wcswidth(), we need to ignore non-printable chars. */
-static int width(const wchar_t *str)
+static size_t width(const wchar_t *str)
 {
-	int x, width = 0;
+	size_t width = 0;
 
 	for (; *str != '\0'; str++) {
-		x = wcwidth(*str);
+#ifdef HAVE_WIDECHAR
+		int x = wcwidth(*str);	/* don't use wcswidth(), need to ignore non-printable */
 		if (x > 0)
 			width += x;
-	}
-	return width;
-}
 #else
-static int width(const char *str)
-{
-	int width = 0;
-
-	for (; *str != '\0'; str++) {
 		if (isprint(*str))
 			width++;
+#endif
 	}
 	return width;
 }
-#endif
 
-#ifdef HAVE_WIDECHAR
 static wchar_t *mbs_to_wcs(const char *s)
 {
+#ifdef HAVE_WIDECHAR
 	ssize_t n;
 	wchar_t *wcs;
 
@@ -135,8 +118,10 @@ static wchar_t *mbs_to_wcs(const char *s)
 		return NULL;
 	}
 	return wcs;
-}
+#else
+	return xstrdup(s)
 #endif
+}
 
 static int read_input(struct column_control *ctl, FILE *fp)
 {
