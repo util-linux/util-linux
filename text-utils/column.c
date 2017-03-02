@@ -119,6 +119,145 @@ static int width(const char *str)
 }
 #endif
 
+#ifdef HAVE_WIDECHAR
+static wchar_t *mbs_to_wcs(const char *s)
+{
+	ssize_t n;
+	wchar_t *wcs;
+
+	n = mbstowcs((wchar_t *)0, s, 0);
+	if (n < 0)
+		return NULL;
+	wcs = xmalloc((n + 1) * sizeof(wchar_t));
+	n = mbstowcs(wcs, s, n + 1);
+	if (n < 0) {
+		free(wcs);
+		return NULL;
+	}
+	return wcs;
+}
+#endif
+
+static int read_input(struct column_control *ctl, FILE *fp)
+{
+	char *buf = NULL;
+	size_t bufsz = 0;
+	size_t maxents = 0;
+
+	do {
+		char *str, *p;
+		size_t len;
+
+		if (getline(&buf, &bufsz, fp) < 0) {
+			if (feof(fp))
+				break;
+			else
+				err(EXIT_FAILURE, _("read failed"));
+		}
+		str = (char *) skip_space(buf);
+		if (str) {
+			p = strchr(str, '\n');
+			if (p)
+				*p = '\0';
+		}
+		if (!str || !*str)
+			continue;
+
+		switch (ctl->mode) {
+		case COLUMN_MODE_TABLE:
+			/* TODO: fill libsmartcols */
+
+		case COLUMN_MODE_FILLCOLS:
+		case COLUMN_MODE_FILLROWS:
+			if (ctl->nents <= maxents) {
+				maxents += 1000;
+				ctl->ents = xrealloc(ctl->ents,
+						maxents * sizeof(wchar_t *));
+			}
+			ctl->ents[ctl->nents] = mbs_to_wcs(str);
+			if (!ctl->ents[ctl->nents])
+				err(EXIT_FAILURE, _("read failed"));
+			len = width(ctl->ents[ctl->nents]);
+			if (ctl->maxlength < len)
+				ctl->maxlength = len;
+			ctl->nents++;
+			break;
+		}
+	} while (1);
+
+	return 0;
+}
+
+
+static void columnate_fillrows(struct column_control *ctl)
+{
+	size_t chcnt, col, cnt, endcol, numcols;
+	wchar_t **lp;
+
+	ctl->maxlength = (ctl->maxlength + TAB) & ~(TAB - 1);
+	numcols = ctl->termwidth / ctl->maxlength;
+	endcol = ctl->maxlength;
+	for (chcnt = col = 0, lp = ctl->ents;; ++lp) {
+		fputws(*lp, stdout);
+		chcnt += width(*lp);
+		if (!--ctl->nents)
+			break;
+		if (++col == numcols) {
+			chcnt = col = 0;
+			endcol = ctl->maxlength;
+			putwchar('\n');
+		} else {
+			while ((cnt = ((chcnt + TAB) & ~(TAB - 1))) <= endcol) {
+				putwchar('\t');
+				chcnt = cnt;
+			}
+			endcol += ctl->maxlength;
+		}
+	}
+	if (chcnt)
+		putwchar('\n');
+}
+
+static void columnate_fillcols(struct column_control *ctl)
+{
+	size_t base, chcnt, cnt, col, endcol, numcols, numrows, row;
+
+	ctl->maxlength = (ctl->maxlength + TAB) & ~(TAB - 1);
+	numcols = ctl->termwidth / ctl->maxlength;
+	if (!numcols)
+		numcols = 1;
+	numrows = ctl->nents / numcols;
+	if (ctl->nents % numcols)
+		++numrows;
+
+	for (row = 0; row < numrows; ++row) {
+		endcol = ctl->maxlength;
+		for (base = row, chcnt = col = 0; col < numcols; ++col) {
+			fputws(ctl->ents[base], stdout);
+			chcnt += width(ctl->ents[base]);
+			if ((base += numrows) >= ctl->nents)
+				break;
+			while ((cnt = ((chcnt + TAB) & ~(TAB - 1))) <= endcol) {
+				putwchar('\t');
+				chcnt = cnt;
+			}
+			endcol += ctl->maxlength;
+		}
+		putwchar('\n');
+	}
+}
+
+static void simple_print(struct column_control *ctl)
+{
+	int cnt;
+	wchar_t **lp;
+
+	for (cnt = ctl->nents, lp = ctl->ents; cnt--; ++lp) {
+		fputws(*lp, stdout);
+		putwchar('\n');
+	}
+}
+
 static void __attribute__((__noreturn__)) usage(int rc)
 {
 	FILE *out = rc == EXIT_FAILURE ? stderr : stdout;
@@ -251,74 +390,6 @@ int main(int argc, char **argv)
 	return eval == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
-static void columnate_fillrows(struct column_control *ctl)
-{
-	size_t chcnt, col, cnt, endcol, numcols;
-	wchar_t **lp;
-
-	ctl->maxlength = (ctl->maxlength + TAB) & ~(TAB - 1);
-	numcols = ctl->termwidth / ctl->maxlength;
-	endcol = ctl->maxlength;
-	for (chcnt = col = 0, lp = ctl->ents;; ++lp) {
-		fputws(*lp, stdout);
-		chcnt += width(*lp);
-		if (!--ctl->nents)
-			break;
-		if (++col == numcols) {
-			chcnt = col = 0;
-			endcol = ctl->maxlength;
-			putwchar('\n');
-		} else {
-			while ((cnt = ((chcnt + TAB) & ~(TAB - 1))) <= endcol) {
-				putwchar('\t');
-				chcnt = cnt;
-			}
-			endcol += ctl->maxlength;
-		}
-	}
-	if (chcnt)
-		putwchar('\n');
-}
-
-static void columnate_fillcols(struct column_control *ctl)
-{
-	size_t base, chcnt, cnt, col, endcol, numcols, numrows, row;
-
-	ctl->maxlength = (ctl->maxlength + TAB) & ~(TAB - 1);
-	numcols = ctl->termwidth / ctl->maxlength;
-	if (!numcols)
-		numcols = 1;
-	numrows = ctl->nents / numcols;
-	if (ctl->nents % numcols)
-		++numrows;
-
-	for (row = 0; row < numrows; ++row) {
-		endcol = ctl->maxlength;
-		for (base = row, chcnt = col = 0; col < numcols; ++col) {
-			fputws(ctl->ents[base], stdout);
-			chcnt += width(ctl->ents[base]);
-			if ((base += numrows) >= ctl->nents)
-				break;
-			while ((cnt = ((chcnt + TAB) & ~(TAB - 1))) <= endcol) {
-				putwchar('\t');
-				chcnt = cnt;
-			}
-			endcol += ctl->maxlength;
-		}
-		putwchar('\n');
-	}
-}
-
-static void simple_print(struct column_control *ctl)
-{
-	int cnt;
-	wchar_t **lp;
-
-	for (cnt = ctl->nents, lp = ctl->ents; cnt--; ++lp) {
-		fputws(*lp, stdout);
-		putwchar('\n');
-	}
-}
 
 static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy,
 			     wchar_t **wcstok_state)
@@ -408,74 +479,6 @@ static void maketbl(struct column_control *ctl, wchar_t *separator, int greedy, 
 	free(tbl);
 }
 
-static int read_input(struct column_control *ctl, FILE *fp)
-{
-	char *buf = NULL;
-	size_t bufsz = 0;
-	size_t maxents = 0;
-
-	do {
-		char *str, *p;
-		size_t len;
-
-		if (getline(&buf, &bufsz, fp) < 0) {
-			if (feof(fp))
-				break;
-			else
-				err(EXIT_FAILURE, _("read failed"));
-		}
-		str = (char *) skip_space(buf);
-		if (str) {
-			p = strchr(str, '\n');
-			if (p)
-				*p = '\0';
-		}
-		if (!str || !*str)
-			continue;
-
-		switch (ctl->mode) {
-		case COLUMN_MODE_TABLE:
-			/* TODO: fill libsmartcols */
-
-		case COLUMN_MODE_FILLCOLS:
-		case COLUMN_MODE_FILLROWS:
-			if (ctl->nents <= maxents) {
-				maxents += 1000;
-				ctl->ents = xrealloc(ctl->ents,
-						maxents * sizeof(wchar_t *));
-			}
-			ctl->ents[ctl->nents] = mbs_to_wcs(str);
-			if (!ctl->ents[ctl->nents])
-				err(EXIT_FAILURE, _("read failed"));
-			len = width(ctl->ents[ctl->nents]);
-			if (ctl->maxlength < len)
-				ctl->maxlength = len;
-			ctl->nents++;
-			break;
-		}
-	} while (1);
-
-	return 0;
-}
-
-#ifdef HAVE_WIDECHAR
-static wchar_t *mbs_to_wcs(const char *s)
-{
-	ssize_t n;
-	wchar_t *wcs;
-
-	n = mbstowcs((wchar_t *)0, s, 0);
-	if (n < 0)
-		return NULL;
-	wcs = xmalloc((n + 1) * sizeof(wchar_t));
-	n = mbstowcs(wcs, s, n + 1);
-	if (n < 0) {
-		free(wcs);
-		return NULL;
-	}
-	return wcs;
-}
-#endif
 
 #ifndef HAVE_WIDECHAR
 static char *mtsafe_strtok(char *str, const char *delim, char **ptr)
