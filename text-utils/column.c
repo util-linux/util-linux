@@ -85,12 +85,13 @@ struct column_control {
 	size_t	maxlength;	/* longest input record (line) */
 };
 
-static int input(struct column_control *ctl, FILE *fp);
+static int read_input(struct column_control *ctl, FILE *fp);
 static void columnate_fillrows(struct column_control *ctl);
 static void columnate_fillcols(struct column_control *ctl);
+static void simple_print(struct column_control *ctl);
+
 static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, wchar_t **wcstok_state);
 static void maketbl(struct column_control *ctl, wchar_t *separator, int greedy, wchar_t *colsep);
-static void print(struct column_control *ctl);
 
 #ifdef HAVE_WIDECHAR
 /* Don't use wcswidth(), we need to ignore non-printable chars. */
@@ -212,13 +213,13 @@ int main(int argc, char **argv)
 	argv += optind;
 
 	if (!*argv)
-		eval += input(&ctl, stdin);
+		eval += read_input(&ctl, stdin);
 	else
 		for (; *argv; ++argv) {
 			FILE *fp;
 
 			if ((fp = fopen(*argv, "r")) != NULL) {
-				eval += input(&ctl, fp);
+				eval += read_input(&ctl, fp);
 				fclose(fp);
 			} else {
 				warn("%s", *argv);
@@ -243,7 +244,7 @@ int main(int argc, char **argv)
 		columnate_fillrows(&ctl);
 		break;
 	case COLUMN_MODE_SIMPLE:
-		print(&ctl);
+		simple_print(&ctl);
 		break;
 	}
 
@@ -308,7 +309,7 @@ static void columnate_fillcols(struct column_control *ctl)
 	}
 }
 
-static void print(struct column_control *ctl)
+static void simple_print(struct column_control *ctl)
 {
 	int cnt;
 	wchar_t **lp;
@@ -407,7 +408,7 @@ static void maketbl(struct column_control *ctl, wchar_t *separator, int greedy, 
 	free(tbl);
 }
 
-static int input(struct column_control *ctl, FILE *fp)
+static int read_input(struct column_control *ctl, FILE *fp)
 {
 	char *buf = NULL;
 	size_t bufsz = 0;
