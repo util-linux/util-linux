@@ -444,6 +444,8 @@ static int input(struct column_control *ctl, FILE *fp)
 						maxents * sizeof(wchar_t *));
 			}
 			ctl->ents[ctl->nents] = mbs_to_wcs(str);
+			if (!ctl->ents[ctl->nents])
+				err(EXIT_FAILURE, _("read failed"));
 			len = width(ctl->ents[ctl->nents]);
 			if (ctl->maxlength < len)
 				ctl->maxlength = len;
