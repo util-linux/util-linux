@@ -171,7 +171,11 @@ struct libscols_cell *scols_table_get_title(struct libscols_table *tb)
  */
 int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl)
 {
-	if (!tb || !cl || !list_empty(&tb->tb_lines) || cl->table)
+	struct libscols_iter itr;
+	struct libscols_line *ln;
+	int rc = 0;
+
+	if (!tb || !cl || cl->table)
 		return -EINVAL;
 
 	if (cl->flags & SCOLS_FL_TREE)
@@ -183,13 +187,20 @@ int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl
 	cl->table = tb;
 	scols_ref_column(cl);
 
-	/* TODO:
-	 *
-	 * Currently it's possible to add/remove columns only if the table is
-	 * empty (see list_empty(tb->tb_lines) above). It would be nice to
-	 * enlarge/reduce lines cells[] always when we add/remove a new column.
+	if (list_empty(&tb->tb_lines))
+		return 0;
+
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+
+	/* Realloc line cell arrays
 	 */
-	return 0;
+	while (scols_table_next_line(tb, &itr, &ln) == 0) {
+		rc = scols_line_alloc_cells(ln, tb->ncols);
+		if (rc)
+			break;
+	}
+
+	return rc;
 }
 
 /**
