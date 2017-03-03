@@ -53,7 +53,7 @@
 
 #include "libsmartcols.h"
 
-#define TAB         8
+#define TABCHAR_CELLS         8
 
 enum {
 	COLUMN_MODE_FILLCOLS = 0,
@@ -219,7 +219,6 @@ static int read_input(struct column_control *ctl, FILE *fp)
 				break;
 			err(EXIT_FAILURE, _("read failed"));
 		}
-
 		str = (char *) skip_space(buf);
 		if (str) {
 			p = strchr(str, '\n');
@@ -264,7 +263,7 @@ static void columnate_fillrows(struct column_control *ctl)
 	size_t chcnt, col, cnt, endcol, numcols;
 	wchar_t **lp;
 
-	ctl->maxlength = (ctl->maxlength + TAB) & ~(TAB - 1);
+	ctl->maxlength = (ctl->maxlength + TABCHAR_CELLS) & ~(TABCHAR_CELLS - 1);
 	numcols = ctl->termwidth / ctl->maxlength;
 	endcol = ctl->maxlength;
 	for (chcnt = col = 0, lp = ctl->ents;; ++lp) {
@@ -277,7 +276,7 @@ static void columnate_fillrows(struct column_control *ctl)
 			endcol = ctl->maxlength;
 			putwchar('\n');
 		} else {
-			while ((cnt = ((chcnt + TAB) & ~(TAB - 1))) <= endcol) {
+			while ((cnt = ((chcnt + TABCHAR_CELLS) & ~(TABCHAR_CELLS - 1))) <= endcol) {
 				putwchar('\t');
 				chcnt = cnt;
 			}
@@ -292,7 +291,7 @@ static void columnate_fillcols(struct column_control *ctl)
 {
 	size_t base, chcnt, cnt, col, endcol, numcols, numrows, row;
 
-	ctl->maxlength = (ctl->maxlength + TAB) & ~(TAB - 1);
+	ctl->maxlength = (ctl->maxlength + TABCHAR_CELLS) & ~(TABCHAR_CELLS - 1);
 	numcols = ctl->termwidth / ctl->maxlength;
 	if (!numcols)
 		numcols = 1;
@@ -307,7 +306,7 @@ static void columnate_fillcols(struct column_control *ctl)
 			chcnt += width(ctl->ents[base]);
 			if ((base += numrows) >= ctl->nents)
 				break;
-			while ((cnt = ((chcnt + TAB) & ~(TAB - 1))) <= endcol) {
+			while ((cnt = ((chcnt + TABCHAR_CELLS) & ~(TABCHAR_CELLS - 1))) <= endcol) {
 				putwchar('\t');
 				chcnt = cnt;
 			}
