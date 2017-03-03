@@ -51,20 +51,9 @@
 #include "closestream.h"
 #include "ttyutils.h"
 
-#ifndef HAVE_WIDECHAR
-static char *mtsafe_strtok(char *, const char *, char **);
-#define wcstok mtsafe_strtok
-#endif
+#include "libsmartcols.h"
 
-#define DEFCOLS     25
 #define TAB         8
-#define MAXLINELEN  (LINE_MAX + 1)
-
-typedef struct _tbl {
-	wchar_t **list;
-	int cols, *len;
-} TBL;
-
 
 enum {
 	COLUMN_MODE_FILLCOLS = 0,
@@ -77,13 +66,17 @@ struct column_control {
 	int	mode;		/* COLUMN_MODE_* */
 	size_t	termwidth;
 
+	struct libscols_table *tab;
+
+	wchar_t *input_separator;
+	const char *output_separator;
+
 	wchar_t	**ents;		/* input entries */
 	size_t	nents;		/* number of entries */
 	size_t	maxlength;	/* longest input record (line) */
-};
 
-static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, wchar_t **wcstok_state);
-static void maketbl(struct column_control *ctl, wchar_t *separator, int greedy, wchar_t *colsep);
+	unsigned int greedy :1;
+};
 
 static size_t width(const wchar_t *str)
 {
@@ -123,22 +116,110 @@ static wchar_t *mbs_to_wcs(const char *s)
 #endif
 }
 
+static char *wcs_to_mbs(const wchar_t *s)
+{
+#ifdef HAVE_WIDECHAR
+	size_t n;
+	char *str;
+
+	n = wcstombs(NULL, s, 0);
+	if (n == (size_t) -1)
+		return NULL;
+
+	str = xmalloc((n + 1));
+	if (wcstombs(str, s, n) == (size_t) -1) {
+		free(str);
+		return NULL;
+	}
+	return str;
+#else
+	return xstrdup(s)
+#endif
+}
+
+static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, wchar_t **state)
+{
+	wchar_t *result = NULL;
+
+	if (greedy)
+		return wcstok(p, separator, state);
+	if (!p) {
+		if (!*state || !**state)
+			return NULL;
+		p = *state;
+	}
+	result = p;
+	p = wcspbrk(result, separator);
+	if (!p)
+		*state = NULL;
+	else {
+		*p = '\0';
+		*state = p + 1;
+	}
+	return result;
+}
+
+static void init_table(struct column_control *ctl)
+{
+	scols_init_debug(0);
+
+	ctl->tab = scols_new_table();
+	if (!ctl->tab)
+		err(EXIT_FAILURE, _("failed to allocate output table"));
+
+	scols_table_set_column_separator(ctl->tab, ctl->output_separator);
+	scols_table_enable_noheadings(ctl->tab, 1);
+}
+
+static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
+{
+	wchar_t *wcdata, *sv = NULL;
+	size_t n = 0;
+	struct libscols_line *ln = NULL;
+
+	if (!ctl->tab)
+		init_table(ctl);
+
+	while ((wcdata = local_wcstok(wcs, ctl->input_separator, ctl->greedy, &sv))) {
+		char *data;
+
+		if (scols_table_get_ncols(ctl->tab) < n + 1)
+			scols_table_new_column(ctl->tab, NULL, 0, 0);
+		if (!ln) {
+			ln = scols_table_new_line(ctl->tab, NULL);
+			if (!ln)
+				err(EXIT_FAILURE, _("failed to allocate output line"));
+		}
+		data = wcs_to_mbs(wcdata);
+		if (!data)
+			err(EXIT_FAILURE, _("failed to allocate output data"));
+		if (scols_line_refer_data(ln, n, data))
+			err(EXIT_FAILURE, _("failed to add output data"));
+		n++;
+		wcs = NULL;
+	}
+
+	return 0;
+}
+
 static int read_input(struct column_control *ctl, FILE *fp)
 {
 	char *buf = NULL;
 	size_t bufsz = 0;
 	size_t maxents = 0;
+	int rc = 0;
 
 	do {
 		char *str, *p;
+		wchar_t *wcs = NULL;
 		size_t len;
 
 		if (getline(&buf, &bufsz, fp) < 0) {
 			if (feof(fp))
 				break;
-			else
-				err(EXIT_FAILURE, _("read failed"));
+			err(EXIT_FAILURE, _("read failed"));
 		}
+
 		str = (char *) skip_space(buf);
 		if (str) {
 			p = strchr(str, '\n');
@@ -148,9 +229,15 @@ static int read_input(struct column_control *ctl, FILE *fp)
 		if (!str || !*str)
 			continue;
 
+		wcs = mbs_to_wcs(str);
+		if (!wcs)
+			err(EXIT_FAILURE, _("read failed"));
+
 		switch (ctl->mode) {
 		case COLUMN_MODE_TABLE:
-			/* TODO: fill libsmartcols */
+			rc = add_line_to_table(ctl, wcs);
+			free(wcs);
+			break;
 
 		case COLUMN_MODE_FILLCOLS:
 		case COLUMN_MODE_FILLROWS:
@@ -159,18 +246,16 @@ static int read_input(struct column_control *ctl, FILE *fp)
 				ctl->ents = xrealloc(ctl->ents,
 						maxents * sizeof(wchar_t *));
 			}
-			ctl->ents[ctl->nents] = mbs_to_wcs(str);
-			if (!ctl->ents[ctl->nents])
-				err(EXIT_FAILURE, _("read failed"));
+			ctl->ents[ctl->nents] = wcs;
 			len = width(ctl->ents[ctl->nents]);
 			if (ctl->maxlength < len)
 				ctl->maxlength = len;
 			ctl->nents++;
 			break;
 		}
-	} while (1);
+	} while (rc == 0);
 
-	return 0;
+	return rc;
 }
 
 
@@ -277,12 +362,6 @@ int main(int argc, char **argv)
 
 	int ch;
 	unsigned int eval = 0;		/* exit value */
-	int greedy = 1;
-	wchar_t *colsep;		/* table column output separator */
-
-	/* field separator for table option */
-	wchar_t default_separator[] = { '\t', ' ', 0 };
-	wchar_t *separator = default_separator;
 
 	static const struct option longopts[] =
 	{
@@ -303,7 +382,8 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	ctl.termwidth = get_terminal_width(80);
-	colsep = mbs_to_wcs("  ");
+	ctl.output_separator = "  ";
+	ctl.input_separator = mbs_to_wcs("\t ");
 
 	while ((ch = getopt_long(argc, argv, "hVc:s:txo:", longopts, NULL)) != -1)
 		switch(ch) {
@@ -317,12 +397,12 @@ int main(int argc, char **argv)
 			ctl.termwidth = strtou32_or_err(optarg, _("invalid columns argument"));
 			break;
 		case 's':
-			separator = mbs_to_wcs(optarg);
-			greedy = 0;
+			free(ctl.input_separator);
+			ctl.input_separator = mbs_to_wcs(optarg);
+			ctl.greedy = 0;
 			break;
 		case 'o':
-			free(colsep);
-			colsep = mbs_to_wcs(optarg);
+			ctl.output_separator = optarg;
 			break;
 		case 't':
 			ctl.mode = COLUMN_MODE_TABLE;
@@ -351,15 +431,16 @@ int main(int argc, char **argv)
 			}
 		}
 
-	if (!ctl.nents)
-		exit(eval);
-
-	if (ctl.mode != COLUMN_MODE_TABLE && ctl.maxlength >= ctl.termwidth)
-		ctl.mode = COLUMN_MODE_SIMPLE;
+	if (ctl.mode != COLUMN_MODE_TABLE) {
+		if (!ctl.nents)
+			exit(eval);
+		if (ctl.maxlength >= ctl.termwidth)
+			ctl.mode = COLUMN_MODE_SIMPLE;
+	}
 
 	switch (ctl.mode) {
 	case COLUMN_MODE_TABLE:
-		maketbl(&ctl, separator, greedy, colsep);
+		eval = scols_print_table(ctl.tab);
 		break;
 	case COLUMN_MODE_FILLCOLS:
 		columnate_fillcols(&ctl);
@@ -374,117 +455,3 @@ int main(int argc, char **argv)
 
 	return eval == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
-
-
-static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy,
-			     wchar_t **wcstok_state)
-{
-	wchar_t *result;
-	if (greedy)
-		return wcstok(p, separator, wcstok_state);
-
-	if (p == NULL) {
-		if (*wcstok_state == NULL)
-			return NULL;
-		else
-			p = *wcstok_state;
-	}
-	result = p;
-	p = wcspbrk(result, separator);
-	if (p == NULL)
-		*wcstok_state = NULL;
-	else {
-		*p = '\0';
-		*wcstok_state = p + 1;
-	}
-	return result;
-}
-
-static void maketbl(struct column_control *ctl, wchar_t *separator, int greedy, wchar_t *colsep)
-{
-	TBL *t;
-	size_t cnt;
-	wchar_t *p, **lp;
-	ssize_t *lens;
-	ssize_t maxcols = DEFCOLS, coloff;
-	TBL *tbl;
-	wchar_t **cols;
-	wchar_t *wcstok_state = NULL;
-
-	t = tbl = xcalloc(ctl->nents, sizeof(TBL));
-	cols = xcalloc(maxcols, sizeof(wchar_t *));
-	lens = xcalloc(maxcols, sizeof(ssize_t));
-
-	for (lp = ctl->ents, cnt = 0; cnt < ctl->nents; ++cnt, ++lp, ++t) {
-		coloff = 0;
-		p = *lp;
-		while ((cols[coloff] = local_wcstok(p, separator, greedy, &wcstok_state)) != NULL) {
-			if (++coloff == maxcols) {
-				maxcols += DEFCOLS;
-				cols = xrealloc(cols, maxcols * sizeof(wchar_t *));
-				lens = xrealloc(lens, maxcols * sizeof(ssize_t));
-				/* zero fill only new memory */
-				memset(lens + (maxcols - DEFCOLS), 0,
-				       DEFCOLS * sizeof(*lens));
-			}
-			p = NULL;
-		}
-		t->list = xcalloc(coloff, sizeof(wchar_t *));
-		t->len = xcalloc(coloff, sizeof(int));
-		for (t->cols = coloff; --coloff >= 0;) {
-			t->list[coloff] = cols[coloff];
-			t->len[coloff] = width(cols[coloff]);
-			if (t->len[coloff] > lens[coloff])
-				lens[coloff] = t->len[coloff];
-		}
-	}
-
-	for (t = tbl, cnt = 0; cnt < ctl->nents; ++cnt, ++t) {
-		for (coloff = 0; coloff < t->cols - 1; ++coloff) {
-			fputws(t->list[coloff], stdout);
-#ifdef HAVE_WIDECHAR
-			wprintf(L"%*s", lens[coloff] - t->len[coloff], "");
-#else
-			printf("%*s", (int) lens[coloff] - t->len[coloff], "");
-#endif
-			fputws(colsep, stdout);
-		}
-		if (coloff < t->cols) {
-			fputws(t->list[coloff], stdout);
-			putwchar('\n');
-		}
-	}
-
-	for (cnt = 0; cnt < ctl->nents; ++cnt) {
-		free((tbl+cnt)->list);
-		free((tbl+cnt)->len);
-	}
-	free(cols);
-	free(lens);
-	free(tbl);
-}
-
-
-#ifndef HAVE_WIDECHAR
-static char *mtsafe_strtok(char *str, const char *delim, char **ptr)
-{
-	if (str == NULL) {
-		str = *ptr;
-		if (str == NULL)
-			return NULL;
-	}
-	str += strspn(str, delim);
-	if (*str == '\0') {
-		*ptr = NULL;
-		return NULL;
-	} else {
-		char *token_end = strpbrk(str, delim);
-		if (token_end) {
-			*token_end = '\0';
-			*ptr = token_end + 1;
-		} else
-			*ptr = NULL;
-		return str;
-	}
-}
-#endif
