@@ -282,27 +282,27 @@ end up losing a day.
 .
 .TP
 .BI \%\-\-date= date_string
-You need this option if you specify the
+This option must be used with the
 .B \-\-set
 or
 .B \%\-\-predict
 functions, otherwise it is ignored.
-It specifies the time to which to set the Hardware Clock, or the
-time for which to predict the Hardware Clock reading.
-The value of this option is used as an argument to the
-.BR date "(1) program's " \-\-date
-option.  For example:
 .RS
 .IP "" 4
-.B "hwclock\ \-\-set\ \-\-date='2011-08-14\ 16:45:05'"
+.B "hwclock\ \-\-set\ \-\-date='16:45'"
+.IP "" 4
+.B "hwclock\ \-\-predict\ \-\-date='2525-08-14\ 07:11:05'"
 .PP
 The argument must be in local time, even if you keep your Hardware Clock in
-UTC.  See the
+UTC. See the
 .B \%\-\-localtime
-option.  The argument must not be a relative time like "+5 minutes", because
+option.  Therefore, the argument should not include any timezone information.
+It also should not be a relative time like "+5 minutes", because
 .BR \%hwclock 's
-precision depends upon correlation between the argument's value and when
-the enter key is pressed.
+precision depends upon correlation between the argument's value and when the
+enter key is pressed.  Fractional seconds are silently dropped.  This option is
+capable of understanding many time and date formats, but the previous
+parameters should be observed.
 .RE
 .
 .TP
