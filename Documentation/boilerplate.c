@@ -39,11 +39,11 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -r, --required <arg>    option requires an argument\n"), out);
 	fputs(_(" -z                      no long option\n"), out);
 	fputs(_("     --xyzzy             a long option only\n"), out);
-	fputs(_(" -e, --extremely-long-long-option\n"), out);
-	fputs(_("                         use next line for description when needed\n"), out);
-	fputs(_(" -l, --long-explanation  an example of very verbose, and chatty option\n"), out);
-	fputs(_("                           description on two, or multiple lines, where the\n"), out);
-	fputs(_("                           consecutive lines are intended by two spaces\n"), out);
+	fputs(_(" -e, --extremely-long-long-option\n"
+		"                         use next line for description when needed\n"), out);
+	fputs(_(" -l, --long-explanation  an example of very verbose, and chatty option\n"
+		"                           description on two, or multiple lines, where the\n"
+		"                           consecutive lines are intended by two spaces\n"), out);
 	fputs(_(" -f, --foobar            next option description resets indent\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -77,11 +77,12 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "nr:elfVh", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "nr:zelfVh", longopts, NULL)) != -1)
 		switch (c) {
 		case 'n':
 		case OPT_OPTIONAL:
 		case 'r':
+		case 'z':
 		case OPT_XYZZY:
 		case 'e':
 		case 'l':
