@@ -987,7 +987,7 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 	} else
 		res = do_mount_by_pattern(cxt, cxt->fstype_pattern);
 
-#if USE_LIBMOUNT_SUPPORT_MTAB
+#ifdef USE_LIBMOUNT_SUPPORT_MTAB
 	if (mnt_context_get_status(cxt)
 	    && !mnt_context_is_fake(cxt)
 	    && !cxt->helper) {
