@@ -1,6 +1,8 @@
 #ifndef UTIL_LINUX_OPTUTILS_H
 #define UTIL_LINUX_OPTUTILS_H
 
+#include <assert.h>
+
 #include "c.h"
 #include "nls.h"
 
@@ -8,6 +10,7 @@ static inline const char *option_to_longopt(int c, const struct option *opts)
 {
 	const struct option *o;
 
+	assert(!(opts == NULL));
 	for (o = opts; o->name; o++)
 		if (o->val == c)
 			return o->name;

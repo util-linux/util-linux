@@ -1,6 +1,8 @@
 #ifndef UTIL_LINUX_PT_MBR_H
 #define UTIL_LINUX_PT_MBR_H
 
+#include <assert.h>
+
 struct dos_partition {
 	unsigned char boot_ind;		/* 0x80 - active */
 	unsigned char bh, bs, bc;	/* begin CHS */
@@ -27,6 +29,7 @@ static inline unsigned int __dos_assemble_4le(const unsigned char *p)
 
 static inline void __dos_store_4le(unsigned char *p, unsigned int val)
 {
+	assert(!(p == NULL));
 	p[0] = (val & 0xff);
 	p[1] = ((val >> 8) & 0xff);
 	p[2] = ((val >> 16) & 0xff);
