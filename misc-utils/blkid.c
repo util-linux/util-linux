@@ -139,9 +139,9 @@ static int pretty_print_word(const char *str, int max_len,
 		len = 0;
 	} else if (len > max_len)
 		ret = len - max_len;
-	do
+	do {
 		fputc(' ', stdout);
-	while (len++ < max_len);
+	} while (len++ < max_len);
 	return ret;
 }
 
