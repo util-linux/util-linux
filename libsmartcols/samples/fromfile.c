@@ -54,12 +54,12 @@ static long name_to_flag(const char *name, size_t namesz)
 
 static int parse_column_flags(char *str)
 {
-	unsigned long flags = 0;
+	unsigned long num_flags = 0;
 
-	if (string_to_bitmask(str, &flags, name_to_flag))
+	if (string_to_bitmask(str, &num_flags, name_to_flag))
 		err(EXIT_FAILURE, "failed to parse column flags");
 
-	return flags;
+	return num_flags;
 }
 
 static struct libscols_column *parse_column(FILE *f)
@@ -98,8 +98,8 @@ static struct libscols_column *parse_column(FILE *f)
 		}
 		case 2: /* FLAGS */
 		{
-			int flags = parse_column_flags(line);
-			if (scols_column_set_flags(cl, flags))
+			int num_flags = parse_column_flags(line);
+			if (scols_column_set_flags(cl, num_flags))
 				goto fail;
 			if (strcmp(line, "wrapnl") == 0) {
 				scols_column_set_wrapfunc(cl,
