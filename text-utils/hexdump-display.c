@@ -299,9 +299,9 @@ void display(struct hexdump *hex)
 			eaddress = address;
 		}
 		list_for_each (p, &endfu->prlist) {
-			pr = list_entry(p, struct hexdump_pr, prlist);
-
 			const char *color = NULL;
+
+			pr = list_entry(p, struct hexdump_pr, prlist);
 			if (colors_wanted() && pr->colorlist
 			    && (color = color_cond(pr, bp, pr->bcnt))) {
 				color_enable(color);

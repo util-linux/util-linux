@@ -77,6 +77,9 @@ static int probe_minix(blkid_probe pr,
 	unsigned char *ext;
 	const unsigned char *data;
 	int version = 0, swabme = 0;
+	unsigned long zones, ninodes, imaps, zmaps;
+	off_t firstz;
+	size_t zone_size;
 
 	data = blkid_probe_get_buffer(pr, 1024,
 			max(sizeof(struct minix_super_block),
@@ -86,10 +89,6 @@ static int probe_minix(blkid_probe pr,
 	version = get_minix_version(data, &swabme);
 	if (version < 1)
 		return 1;
-
-	unsigned long zones, ninodes, imaps, zmaps;
-	off_t firstz;
-	size_t zone_size;
 
 	if (version <= 2) {
 		struct minix_super_block *sb = (struct minix_super_block *) data;

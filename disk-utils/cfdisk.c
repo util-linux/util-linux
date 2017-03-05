@@ -2092,6 +2092,8 @@ static int ui_create_label(struct cfdisk *cf)
 
 
 	do {
+		int key;
+
 		if (refresh_menu) {
 			ui_draw_menu(cf);
 			ui_hint(_("Select a type to create a new label or press 'L' to load script file."));
@@ -2099,7 +2101,7 @@ static int ui_create_label(struct cfdisk *cf)
 			refresh_menu = 0;
 		}
 
-		int key = getch();
+		key = getch();
 
 		if (ui_resize)
 			ui_menu_resize(cf);

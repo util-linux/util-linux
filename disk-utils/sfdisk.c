@@ -1495,7 +1495,7 @@ static void follow_wipe_mode(struct sfdisk *sf)
 static int wipe_partition(struct sfdisk *sf, size_t partno)
 {
 	int rc, yes = 0;
-	char *fstype = NULL;;
+	char *fstype = NULL;
 	struct fdisk_partition *tmp = NULL;
 
 	DBG(MISC, ul_debug("checking for signature"));
