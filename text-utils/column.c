@@ -432,7 +432,8 @@ int main(int argc, char **argv)
 {
 	struct column_control ctl = {
 		.mode = COLUMN_MODE_FILLCOLS,
-		.termwidth = 80
+		.termwidth = 80,
+		.greedy = 1
 	};
 
 	int c;
