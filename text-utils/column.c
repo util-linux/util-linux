@@ -70,6 +70,7 @@ struct column_control {
 	struct libscols_table *tab;
 
 	char **tab_colnames;	/* parsed -H option */
+	const char *tab_name;
 
 	wchar_t *input_separator;
 	const char *output_separator;
@@ -78,7 +79,8 @@ struct column_control {
 	size_t	nents;		/* number of entries */
 	size_t	maxlength;	/* longest input record (line) */
 
-	unsigned int greedy :1;
+	unsigned int greedy :1,
+		     json :1;
 };
 
 static size_t width(const wchar_t *str)
@@ -182,7 +184,10 @@ static void init_table(struct column_control *ctl)
 		err(EXIT_FAILURE, _("failed to allocate output table"));
 
 	scols_table_set_column_separator(ctl->tab, ctl->output_separator);
-
+	if (ctl->json) {
+		scols_table_enable_json(ctl->tab, 1);
+		scols_table_set_name(ctl->tab, ctl->tab_name ? : "table");
+	}
 	if (ctl->tab_colnames) {
 		char **name;
 
@@ -359,8 +364,10 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(_("Columnate lists.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -J, --json                       use JSON output format for table\n"), out);
 	fputs(_(" -t, --table                      create a table\n"), out);
 	fputs(_(" -N, --table-colnames <names>     comma separated columns names\n"), out);
+	fputs(_(" -n, --table-name <name>          table name for JSON output\n"), out);
 	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
 	fputs(_(" -o, --output-separator <string>  columns separator for table output\n"
 		"                                    (default is two spaces)\n"), out);
@@ -387,6 +394,7 @@ int main(int argc, char **argv)
 	static const struct option longopts[] =
 	{
 		{ "columns",             required_argument, NULL, 'c' }, /* deprecated */
+		{ "json",                no_argument,       NULL, 'J' },
 		{ "fillrows",            no_argument,       NULL, 'x' },
 		{ "help",                no_argument,       NULL, 'h' },
 		{ "output-separator",    required_argument, NULL, 'o' },
@@ -394,6 +402,7 @@ int main(int argc, char **argv)
 		{ "separator",           required_argument, NULL, 's' },
 		{ "table",               no_argument,       NULL, 't' },
 		{ "table-colnames",      required_argument, NULL, 'N' },
+		{ "table-name",          required_argument, NULL, 'n' },
 		{ "version",             no_argument,       NULL, 'V' },
 		{ NULL,	0, NULL, 0 },
 	};
@@ -407,8 +416,15 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((ch = getopt_long(argc, argv, "hVc:N:s:txo:", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "hVc:Jn:N:s:txo:", longopts, NULL)) != -1)
 		switch(ch) {
+		case 'J':
+			ctl.json = 1;
+			ctl.mode = COLUMN_MODE_TABLE;
+			break;
+		case 'n':
+			ctl.tab_name = optarg;
+			break;
 		case 'N':
 			parse_table_colnames(&ctl, optarg);
 			break;
@@ -440,6 +456,9 @@ int main(int argc, char **argv)
 	}
 	argc -= optind;
 	argv += optind;
+
+	if (ctl.tab_colnames == NULL && ctl.json)
+		errx(EXIT_FAILURE, _("option --table-colnames required for --json"));
 
 	if (!*argv)
 		eval += read_input(&ctl, stdin);

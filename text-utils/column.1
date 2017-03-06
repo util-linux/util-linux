@@ -45,6 +45,9 @@ are filled before rows.  Input is taken from \fIfile\fR, or
 otherwise from standard input.  Empty lines are ignored.
 .PP
 .SH OPTIONS
+.IP "\fB\-J, \-\-json\fP"
+Use JSON output format to print the table, the option
+\fB\-\-table\-colnames\fP is required and the option \fB\-\-table\-name\fP is recommended.
 .IP "\fB\-c, \-\-output\-width\fP \fIwidth\fP"
 Output is formatted to a width specified as number of characters. The original
 name of this option is --columns; this name deprecated since v2.30.
@@ -60,6 +63,8 @@ Table output is useful for pretty-printing.
 .IP "\fB\-N, \-\-table-colnames\fP \fInames\fP"
 Specify the columns names by comma separated list of names. The names are used
 for the table header.
+.IP "\fB\-n, \-\-table-name\fP \fIname\fP"
+Specify the table name used for JSON output. The defaout is "table".
 .IP "\fB\-x, \-\-fillrows\fP"
 Fill rows before filling columns.
 .IP "\fB\-V\fR, \fB\-\-version\fR"
