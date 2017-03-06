@@ -51,6 +51,7 @@
 #include "closestream.h"
 #include "ttyutils.h"
 #include "strv.h"
+#include "optutils.h"
 
 #include "libsmartcols.h"
 
@@ -388,7 +389,7 @@ int main(int argc, char **argv)
 		.termwidth = 80
 	};
 
-	int ch;
+	int c;
 	unsigned int eval = 0;		/* exit value */
 
 	static const struct option longopts[] =
@@ -406,6 +407,12 @@ int main(int argc, char **argv)
 		{ "version",             no_argument,       NULL, 'V' },
 		{ NULL,	0, NULL, 0 },
 	};
+	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
+		{ 'J','x' },
+		{ 't','x' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -416,8 +423,11 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((ch = getopt_long(argc, argv, "hVc:Jn:N:s:txo:", longopts, NULL)) != -1)
-		switch(ch) {
+	while ((c = getopt_long(argc, argv, "hVc:Jn:N:s:txo:", longopts, NULL)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
+		switch(c) {
 		case 'J':
 			ctl.json = 1;
 			ctl.mode = COLUMN_MODE_TABLE;
@@ -453,6 +463,7 @@ int main(int argc, char **argv)
 			break;
 		default:
 			errtryhelp(EXIT_FAILURE);
+		}
 	}
 	argc -= optind;
 	argv += optind;
