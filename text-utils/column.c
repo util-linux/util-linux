@@ -50,6 +50,7 @@
 #include "strutils.h"
 #include "closestream.h"
 #include "ttyutils.h"
+#include "strv.h"
 
 #include "libsmartcols.h"
 
@@ -67,6 +68,8 @@ struct column_control {
 	size_t	termwidth;
 
 	struct libscols_table *tab;
+
+	char **tab_colnames;	/* parsed -H option */
 
 	wchar_t *input_separator;
 	const char *output_separator;
@@ -159,6 +162,17 @@ static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, w
 	return result;
 }
 
+static int parse_table_colnames(struct column_control *ctl, const char *names)
+{
+	ctl->tab_colnames = strv_split(names, ",");
+	if (!ctl->tab_colnames) {
+		if (errno == ENOMEM)
+			err_oom();
+		errx(EXIT_FAILURE, _("failed to parse column names"));
+	}
+	return 0;
+}
+
 static void init_table(struct column_control *ctl)
 {
 	scols_init_debug(0);
@@ -168,7 +182,14 @@ static void init_table(struct column_control *ctl)
 		err(EXIT_FAILURE, _("failed to allocate output table"));
 
 	scols_table_set_column_separator(ctl->tab, ctl->output_separator);
-	scols_table_enable_noheadings(ctl->tab, 1);
+
+	if (ctl->tab_colnames) {
+		char **name;
+
+		STRV_FOREACH(name, ctl->tab_colnames)
+			scols_table_new_column(ctl->tab, *name, 0, 0);
+	} else
+		scols_table_enable_noheadings(ctl->tab, 1);
 }
 
 static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
@@ -339,6 +360,7 @@ static void __attribute__((__noreturn__)) usage(int rc)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -t, --table                      create a table\n"), out);
+	fputs(_(" -N, --table-colnames <names>     comma separated columns names\n"), out);
 	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
 	fputs(_(" -o, --output-separator <string>  columns separator for table output\n"
 		"                                    (default is two spaces)\n"), out);
@@ -364,14 +386,15 @@ int main(int argc, char **argv)
 
 	static const struct option longopts[] =
 	{
-		{ "columns",          required_argument, NULL, 'c' }, /* deprecated */
-		{ "fillrows",         no_argument,       NULL, 'x' },
-		{ "help",             no_argument,       NULL, 'h' },
-		{ "output-separator", required_argument, NULL, 'o' },
-		{ "output-width",     required_argument, NULL, 'c' },
-		{ "separator",        required_argument, NULL, 's' },
-		{ "table",            no_argument,       NULL, 't' },
-		{ "version",          no_argument,       NULL, 'V' },
+		{ "columns",             required_argument, NULL, 'c' }, /* deprecated */
+		{ "fillrows",            no_argument,       NULL, 'x' },
+		{ "help",                no_argument,       NULL, 'h' },
+		{ "output-separator",    required_argument, NULL, 'o' },
+		{ "output-width",        required_argument, NULL, 'c' },
+		{ "separator",           required_argument, NULL, 's' },
+		{ "table",               no_argument,       NULL, 't' },
+		{ "table-colnames",      required_argument, NULL, 'N' },
+		{ "version",             no_argument,       NULL, 'V' },
 		{ NULL,	0, NULL, 0 },
 	};
 
@@ -384,8 +407,11 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((ch = getopt_long(argc, argv, "hVc:s:txo:", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "hVc:N:s:txo:", longopts, NULL)) != -1)
 		switch(ch) {
+		case 'N':
+			parse_table_colnames(&ctl, optarg);
+			break;
 		case 'h':
 			usage(EXIT_SUCCESS);
 			break;
