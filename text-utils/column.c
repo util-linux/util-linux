@@ -70,8 +70,9 @@ struct column_control {
 
 	struct libscols_table *tab;
 
-	char **tab_colnames;	/* parsed -H option */
-	const char *tab_name;
+	char **tab_colnames;		/* array with column names */
+	const char *tab_name;		/* table name */
+	const char *tab_colright;	/* non-parsed --table-right */
 
 	wchar_t *input_separator;
 	const char *output_separator;
@@ -165,15 +166,15 @@ static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, w
 	return result;
 }
 
-static int parse_table_colnames(struct column_control *ctl, const char *names)
+static char **split_or_error(const char *str, const char *errmsg)
 {
-	ctl->tab_colnames = strv_split(names, ",");
-	if (!ctl->tab_colnames) {
+	char **res = strv_split(str, ",");
+	if (!res) {
 		if (errno == ENOMEM)
 			err_oom();
-		errx(EXIT_FAILURE, _("failed to parse column names"));
+		errx(EXIT_FAILURE, "%s: '%s'", errmsg, str);
 	}
-	return 0;
+	return res;
 }
 
 static void init_table(struct column_control *ctl)
@@ -196,6 +197,50 @@ static void init_table(struct column_control *ctl)
 			scols_table_new_column(ctl->tab, *name, 0, 0);
 	} else
 		scols_table_enable_noheadings(ctl->tab, 1);
+}
+
+static struct libscols_column *string_to_column(struct column_control *ctl, const char *str)
+{
+	uint32_t colnum = 0;
+
+	if (isdigit_string(str))
+		colnum = strtou32_or_err(str, _("failed to parse column")) - 1;
+	else {
+		char **name;
+
+		STRV_FOREACH(name, ctl->tab_colnames) {
+			if (strcasecmp(*name, str) == 0)
+				break;
+			colnum++;
+		}
+		if (!name || !*name)
+			errx(EXIT_FAILURE, _("undefined column name '%s'"), str);
+	}
+
+	return scols_table_get_column(ctl->tab, colnum);
+}
+
+static int column_set_flag(struct libscols_column *cl, int fl)
+{
+	int cur = scols_column_get_flags(cl);
+
+	return scols_column_set_flags(cl, cur | fl);
+}
+
+static void modify_table(struct column_control *ctl)
+{
+	/* align text in columns to right */
+	if (ctl->tab_colright) {
+		char **allright = split_or_error(ctl->tab_colright, _("failed to parse --table-colright list"));
+		char **right;
+
+		STRV_FOREACH(right, allright) {
+			struct libscols_column *cl = string_to_column(ctl, *right);
+			if (cl)
+				column_set_flag(cl, SCOLS_FL_RIGHT);
+		}
+		strv_free(allright);
+	}
 }
 
 static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
@@ -368,6 +413,7 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(_(" -J, --json                       use JSON output format for table\n"), out);
 	fputs(_(" -t, --table                      create a table\n"), out);
 	fputs(_(" -N, --table-colnames <names>     comma separated columns names\n"), out);
+	fputs(_(" -R, --table-colright <columns>   right align text in these columns\n"), out);
 	fputs(_(" -n, --table-name <name>          table name for JSON output\n"), out);
 	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
 	fputs(_(" -o, --output-separator <string>  columns separator for table output\n"
@@ -403,6 +449,7 @@ int main(int argc, char **argv)
 		{ "separator",           required_argument, NULL, 's' },
 		{ "table",               no_argument,       NULL, 't' },
 		{ "table-colnames",      required_argument, NULL, 'N' },
+		{ "table-colright",      required_argument, NULL, 'R' },
 		{ "table-name",          required_argument, NULL, 'n' },
 		{ "version",             no_argument,       NULL, 'V' },
 		{ NULL,	0, NULL, 0 },
@@ -423,7 +470,7 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "hVc:Jn:N:s:txo:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hVc:Jn:N:R:s:txo:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -436,7 +483,7 @@ int main(int argc, char **argv)
 			ctl.tab_name = optarg;
 			break;
 		case 'N':
-			parse_table_colnames(&ctl, optarg);
+			ctl.tab_colnames = split_or_error(optarg, _("failed to parse column names"));
 			break;
 		case 'h':
 			usage(EXIT_SUCCESS);
@@ -446,6 +493,9 @@ int main(int argc, char **argv)
 			return EXIT_SUCCESS;
 		case 'c':
 			ctl.termwidth = strtou32_or_err(optarg, _("invalid columns argument"));
+			break;
+		case 'R':
+			ctl.tab_colright = optarg;
 			break;
 		case 's':
 			free(ctl.input_separator);
@@ -495,6 +545,7 @@ int main(int argc, char **argv)
 
 	switch (ctl.mode) {
 	case COLUMN_MODE_TABLE:
+		modify_table(&ctl);
 		eval = scols_print_table(ctl.tab);
 		break;
 	case COLUMN_MODE_FILLCOLS:
