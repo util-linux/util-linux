@@ -1,0 +1,76 @@
+.\" Copyright 2017 Red Hat, Inc.
+.\"
+.\" This file may be copied under the terms of the GNU Public License.
+.TH FINCORE 1 "March 2017" "util-linux" "User Commands"
+.SH NAME
+fincore \- count pages of file contents in core
+.SH SYNOPSIS
+.B fincore
+[options]
+.I file ...
+.SH DESCRIPTION
+.B fincore
+counts pages of file contents being resident in memory(in core), and
+reports the numbers.  An output line has 3 columns: the number of
+pages in core, a file size in bytes, and a file name.  If an error
+occurs during counting, failing to open a file for example,
+.B failed
+is printed at the column of the number of pages in core.  Even if
+errors occur,
+.B fincore
+continues processing the rest of files listed in a command line.
+.SH OPTIONS
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Display version information and exit.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display help text and exit.
+.SH EXAMPLES
+.PP
+An example of successfully executed case:
+.PP
+.RS
+.PD 0
+.TP
+.B fincore /etc/fstab /bin/emacs
+.TP
+1          1544       /etc/fstab
+.TP
+4156       17163144   /bin/emacs
+.TP
+.B echo $?
+.TP
+0
+.PD
+.RE
+.PP
+An example of failure case:
+.PP
+.RS
+.PD 0
+.TP
+.B fincore /etc/passwd
+.TP
+.I fincore: failed to open: /var/log/messages: Permission denied
+.TP
+failed     -1         /var/log/messages
+.TP
+.B echo $?
+.TP
+1
+.PD
+.RE
+.SH AUTHORS
+.MT yamato@\:redhat.com
+Masatake YAMATO
+.ME
+.SH "SEE ALSO"
+.BR mincore (2),
+.BR getpagesize (2),
+.BR getconf (1)
+.SH AVAILABILITY
+The example command is part of the util-linux package and is available from
+.UR https://\:www.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .

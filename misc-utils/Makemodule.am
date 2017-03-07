@@ -183,5 +183,6 @@ endif
 
 if BUILD_FINCORE
 usrbin_exec_PROGRAMS += fincore
+dist_man_MANS += misc-utils/fincore.1
 fincore_SOURCES = misc-utils/fincore.c
 endif
