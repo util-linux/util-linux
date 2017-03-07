@@ -18,6 +18,9 @@ endif
 if BUILD_COLUMN
 dist_bashcompletion_DATA += bash-completion/column
 endif
+if BUILD_FINCORE
+dist_bashcompletion_DATA += bash-completion/fincore
+endif
 if BUILD_FINDMNT
 dist_bashcompletion_DATA += bash-completion/findmnt
 endif
