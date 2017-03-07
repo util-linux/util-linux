@@ -1589,6 +1589,10 @@ dnl earlier than 2.x.
 UL_REQUIRES_HAVE([ctrlaltdel], [reboot], [reboot function])
 AM_CONDITIONAL([BUILD_CTRLALTDEL], [test "x$build_ctrlaltdel" = xyes])
 
+UL_BUILD_INIT([fincore], [check])
+UL_REQUIRES_LINUX([fincore])
+AM_CONDITIONAL([BUILD_FINCORE], [test "x$build_fincore" = xyes])
+
 UL_BUILD_INIT([fsfreeze], [check])
 UL_REQUIRES_LINUX([fsfreeze])
 AM_CONDITIONAL([BUILD_FSFREEZE], [test "x$build_fsfreeze" = xyes])

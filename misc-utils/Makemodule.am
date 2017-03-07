@@ -180,3 +180,8 @@ dist_getoptexample_SCRIPTS = \
 	misc-utils/getopt-parse.bash \
 	misc-utils/getopt-parse.tcsh
 endif
+
+if BUILD_FINCORE
+usrbin_exec_PROGRAMS += fincore
+fincore_SOURCES = misc-utils/fincore.c
+endif
