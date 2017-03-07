@@ -50,6 +50,7 @@ TS_CMD_FALLOCATE=${TS_CMD_FALLOCATE-"$top_builddir/fallocate"}
 TS_CMD_FDISK=${TS_CMD_FDISK-"$top_builddir/fdisk"}
 TS_CMD_FLOCK=${TS_CMD_FLOCK-"$top_builddir/flock"}
 TS_CMD_SFDISK=${TS_CMD_SFDISK-"$top_builddir/sfdisk"}
+TS_CMD_FINCORE=${TS_CMD_FINCORE-"$top_builddir/fincore"}
 TS_CMD_FINDMNT=${TS_CMD_FINDMNT-"$top_builddir/findmnt"}
 TS_CMD_FSCKCRAMFS=${TS_CMD_FSCKCRAMFS:-"$top_builddir/fsck.cramfs"}
 TS_CMD_FSCKMINIX=${TS_CMD_FSCKMINIX:-"$top_builddir/fsck.minix"}
