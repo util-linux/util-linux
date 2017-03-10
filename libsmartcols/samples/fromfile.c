@@ -222,18 +222,18 @@ int main(int argc, char *argv[])
 	int parent_col = -1, id_col = -1;
 
 	static const struct option longopts[] = {
-		{ "maxout", 0, 0, 'm' },
-		{ "column", 1, 0, 'c' },
-		{ "nlines", 1, 0, 'n' },
-		{ "width",  1, 0, 'w' },
-		{ "tree-parent-column", 1, 0, 'p' },
-		{ "tree-id-column",	1, 0, 'i' },
-		{ "json",   0, 0, 'J' },
-		{ "raw",    0, 0, 'r' },
-		{ "export", 0, 0, 'E' },
-		{ "colsep",  1, 0, 'C' },
-		{ "help",   0, 0, 'h' },
-		{ NULL, 0, 0, 0 },
+		{ "maxout", 0, NULL, 'm' },
+		{ "column", 1, NULL, 'c' },
+		{ "nlines", 1, NULL, 'n' },
+		{ "width",  1, NULL, 'w' },
+		{ "tree-parent-column", 1, NULL, 'p' },
+		{ "tree-id-column",	1, NULL, 'i' },
+		{ "json",   0, NULL, 'J' },
+		{ "raw",    0, NULL, 'r' },
+		{ "export", 0, NULL, 'E' },
+		{ "colsep",  1, NULL, 'C' },
+		{ "help",   0, NULL, 'h' },
+		{ NULL, 0, NULL, 0 },
 	};
 
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */

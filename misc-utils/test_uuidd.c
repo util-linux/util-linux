@@ -146,7 +146,7 @@ static void *create_uuids(thread_t *th)
 		obj->pid = th->proc->pid;
 		obj->idx = th->index + i;;
 	}
-	return 0;
+	return NULL;
 }
 
 static void *thread_body(void *arg)

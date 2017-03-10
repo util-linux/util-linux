@@ -55,10 +55,10 @@ int main(int argc, char *argv[])
 	unsigned int sectorsize;
 
 	static const struct option longopts[] = {
-		{ "label",  required_argument, 0, 'x' },
-		{ "device", required_argument, 0, 'd' },
-		{ "help",   no_argument, 0, 'h' },
-		{ NULL, 0, 0, 0 },
+		{ "label",  required_argument, NULL, 'x' },
+		{ "device", required_argument, NULL, 'd' },
+		{ "help",   no_argument, NULL, 'h' },
+		{ NULL, 0, NULL, 0 },
 	};
 
 	setlocale(LC_ALL, "");	/* just to have enable UTF8 chars */

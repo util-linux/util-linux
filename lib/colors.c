@@ -830,11 +830,11 @@ int colormode_or_err(const char *str, const char *errmsg)
 int main(int argc, char *argv[])
 {
 	static const struct option longopts[] = {
-		{ "mode",	required_argument, 0, 'm' },
-		{ "color",	required_argument, 0, 'c' },
-		{ "color-scheme", required_argument, 0, 'C' },
-		{ "name",	required_argument, 0, 'n' },
-		{ NULL, 0, 0, 0 }
+		{ "mode",	required_argument, NULL, 'm' },
+		{ "color",	required_argument, NULL, 'c' },
+		{ "color-scheme", required_argument, NULL, 'C' },
+		{ "name",	required_argument, NULL, 'n' },
+		{ NULL, 0, NULL, 0 }
 	};
 	int c, mode = UL_COLORMODE_UNDEF;	/* default */
 	const char *color = "red", *name = NULL, *color_scheme = NULL;

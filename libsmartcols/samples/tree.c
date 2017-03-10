@@ -162,16 +162,16 @@ int main(int argc, char *argv[])
 
 
 	static const struct option longopts[] = {
-		{ "ascii",	0, 0, 'i' },
-		{ "csv",        0, 0, 'c' },
-		{ "list",       0, 0, 'l' },
-		{ "noheadings",	0, 0, 'n' },
-		{ "pairs",      0, 0, 'p' },
-		{ "json",       0, 0, 'J' },
-		{ "raw",        0, 0, 'r' },
-		{ "range-start",1, 0, 'S' },
-		{ "range-end",  1, 0, 'E' },
-		{ NULL, 0, 0, 0 },
+		{ "ascii",	0, NULL, 'i' },
+		{ "csv",        0, NULL, 'c' },
+		{ "list",       0, NULL, 'l' },
+		{ "noheadings",	0, NULL, 'n' },
+		{ "pairs",      0, NULL, 'p' },
+		{ "json",       0, NULL, 'J' },
+		{ "raw",        0, NULL, 'r' },
+		{ "range-start",1, NULL, 'S' },
+		{ "range-end",  1, NULL, 'E' },
+		{ NULL, 0, NULL, 0 },
 	};
 
 	setlocale(LC_ALL, "");	/* just to have enable UTF8 chars */
