@@ -640,7 +640,6 @@ int main(int argc, char **argv)
 	char **fltr_type = NULL;
 	int fltr_flag = BLKID_FLTR_ONLYIN;
 	unsigned int numdev = 0, numtag = 0;
-	int version = 0;
 	int err = BLKID_EXIT_OTHER;
 	unsigned int i;
 	int output_format = 0;
@@ -757,8 +756,8 @@ int main(int argc, char **argv)
 			break;
 		case 'V':
 		case 'v':
-			version = 1;
-			break;
+			print_version(stdout);
+			goto exit;
 		case 'w':
 			/* ignore - backward compatibility */
 			break;
@@ -776,11 +775,6 @@ int main(int argc, char **argv)
 		devices = xcalloc(argc - optind, sizeof(char *));
 		while (optind < argc)
 			devices[numdev++] = argv[optind++];
-	}
-
-	if (version) {
-		print_version(stdout);
-		goto exit;
 	}
 
 	/* convert LABEL/UUID lookup to evaluate request */
