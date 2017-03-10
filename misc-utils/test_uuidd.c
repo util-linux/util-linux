@@ -41,10 +41,10 @@
 
 #define LOG(level,args) if (loglev >= level) { fprintf args; }
 
-size_t nprocesses = 4;
-size_t nthreads = 4;
-size_t nobjects = 4096;
-size_t loglev = 1;
+static size_t nprocesses = 4;
+static size_t nthreads = 4;
+static size_t nobjects = 4096;
+static size_t loglev = 1;
 
 struct processentry {
 	pid_t		pid;

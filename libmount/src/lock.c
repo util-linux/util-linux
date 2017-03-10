@@ -560,7 +560,7 @@ void mnt_unlock_file(struct libmnt_lock *ml)
 
 #ifdef TEST_PROGRAM
 
-struct libmnt_lock *lock;
+static struct libmnt_lock *lock;
 
 /*
  * read number from @filename, increment the number and
