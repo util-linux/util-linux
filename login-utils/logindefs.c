@@ -344,7 +344,8 @@ int get_hushlogin_status(struct passwd *pwd, int force_check)
 				continue;	/* ignore errors... */
 
 			while (ok == 0 && fgets(buf, sizeof(buf), f)) {
-				buf[strlen(buf) - 1] = '\0';
+				if (buf[0] != '\0')
+					buf[strlen(buf) - 1] = '\0';
 				ok = !strcmp(buf, *buf == '/' ? pwd->pw_shell :
 								pwd->pw_name);
 			}
