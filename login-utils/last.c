@@ -505,10 +505,12 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 	if (ctl->usedns || ctl->useip)
 		r = dns_lookup(domain, sizeof(domain), ctl->useip, p->ut_addr_v6);
 	if (r < 0) {
-		len = sizeof(p->ut_host);
-		if (len >= (int)sizeof(domain)) len = sizeof(domain) - 1;
-		domain[0] = 0;
-		strncat(domain, p->ut_host, len);
+		size_t sz = sizeof(p->ut_host);
+
+		if (sz > sizeof(domain))
+			sz = sizeof(domain);
+
+		xstrncpy(domain, p->ut_host, sz);
 	}
 
 
