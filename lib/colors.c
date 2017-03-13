@@ -342,6 +342,7 @@ static char *colors_get_homedir(char *buf, size_t bufsz)
 static int cn_sequence(const char *str, char **seq)
 {
 	char *in, *out;
+	int len;
 
 	if (!str)
 		return -EINVAL;
@@ -357,7 +358,7 @@ static int cn_sequence(const char *str, char **seq)
 	}
 
 	/* convert xx;yy sequences to "\033[xx;yy" */
-	if (asprintf(seq, "\033[%sm", str) < 1)
+	if ((len = asprintf(seq, "\033[%sm", str)) < 1)
 		return -ENOMEM;
 
 	for (in = *seq, out = *seq; in && *in; in++) {
@@ -409,6 +410,8 @@ static int cn_sequence(const char *str, char **seq)
 		}
 		in++;
 	}
+
+	assert ((out - *seq) <= len);
 	*out = '\0';
 
 	return 0;
