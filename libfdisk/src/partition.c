@@ -1243,6 +1243,10 @@ int fdisk_set_partition(struct fdisk_context *cxt, size_t partno,
 
 	if (pa->resize || fdisk_partition_has_start(pa) || fdisk_partition_has_size(pa)) {
 		xpa = __copy_partition(pa);
+		if (!xpa) {
+			rc = -ENOMEM;
+			goto done;
+		}
 		xpa->movestart = 0;
 		xpa->resize = 0;
 		FDISK_INIT_UNDEF(xpa->size);
