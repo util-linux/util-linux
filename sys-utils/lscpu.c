@@ -1747,12 +1747,38 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 	scols_unref_table(table);
 }
 
-/* output formats "<key>  <value>"*/
-#define print_s(_key, _val)	printf("%-23s%s\n", _key, _val)
-#define print_n(_key, _val)	printf("%-23s%d\n", _key, _val)
+
+static void __attribute__ ((__format__(printf, 3, 4)))
+	add_summary_sprint(struct libscols_table *tb,
+			const char *txt,
+			const char *fmt,
+			...)
+{
+	struct libscols_line *ln = scols_table_new_line(tb, NULL);
+	char *data;
+	va_list args;
+
+	if (!ln)
+		err(EXIT_FAILURE, _("failed to initialize output line"));
+
+	/* description column */
+	scols_line_set_data(ln, 0, txt);
+
+	/* data column */
+	va_start(args, fmt);
+	xvasprintf(&data, fmt, args);
+	va_end(args);
+
+	if (data)
+		scols_line_refer_data(ln, 1, data);
+}
+
+#define add_summary_n(tb, txt, num)	add_summary_sprint(tb, txt, "%d", num)
+#define add_summary_s(tb, txt, str)	add_summary_sprint(tb, txt, "%s", str)
 
 static void
-print_cpuset(const char *key, cpu_set_t *set, int hex)
+print_cpuset(struct libscols_table *tb,
+	     const char *key, cpu_set_t *set, int hex)
 {
 	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
 	size_t setbuflen = 7 * maxcpus;
@@ -1760,12 +1786,11 @@ print_cpuset(const char *key, cpu_set_t *set, int hex)
 
 	if (hex) {
 		p = cpumask_create(setbuf, setbuflen, set, setsize);
-		printf("%-23s0x%s\n", key, p);
+		add_summary_s(tb, key, p);
 	} else {
 		p = cpulist_create(setbuf, setbuflen, set, setsize);
-		print_s(key, p);
+		add_summary_s(tb, key, p);
 	}
-
 }
 
 /*
@@ -1777,9 +1802,21 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	char buf[512];
 	int i;
 	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
+	struct libscols_table *tb;
 
-	print_s(_("Architecture:"), desc->arch);
+	scols_init_debug(0);
 
+	tb = scols_new_table();
+	if (!tb)
+		 err(EXIT_FAILURE, _("failed to initialize output table"));
+
+	scols_table_enable_noheadings(tb, 1);
+
+	if (scols_table_new_column(tb, "name", 0, 0) == NULL ||
+	    scols_table_new_column(tb, "data", 0, SCOLS_FL_NOEXTREMES) == NULL)
+		err(EXIT_FAILURE, _("failed to initialize output column"));
+
+	add_summary_s(tb, _("Architecture:"), desc->arch);
 	if (desc->mode) {
 		char mbuf[64], *p = mbuf;
 
@@ -1792,18 +1829,18 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 			p += 8;
 		}
 		*(p - 2) = '\0';
-		print_s(_("CPU op-mode(s):"), mbuf);
+		add_summary_s(tb, _("CPU op-mode(s):"), mbuf);
 	}
 #if !defined(WORDS_BIGENDIAN)
-	print_s(_("Byte Order:"), "Little Endian");
+	add_summary_s(tb, _("Byte Order:"), "Little Endian");
 #else
-	print_s(_("Byte Order:"), "Big Endian");
+	add_summary_s(tb, _("Byte Order:"), "Big Endian");
 #endif
-	print_n(_("CPU(s):"), desc->ncpus);
+	add_summary_n(tb, _("CPU(s):"), desc->ncpus);
 
 	if (desc->online)
-		print_cpuset(mod->hex ? _("On-line CPU(s) mask:") :
-					_("On-line CPU(s) list:"),
+		print_cpuset(tb, mod->hex ? _("On-line CPU(s) mask:") :
+					    _("On-line CPU(s) list:"),
 				desc->online, mod->hex);
 
 	if (desc->online && CPU_COUNT_S(setsize, desc->online) != desc->ncpus) {
@@ -1822,8 +1859,8 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 			if (!is_cpu_online(desc, cpu) && is_cpu_present(desc, cpu))
 				CPU_SET_S(cpu, setsize, set);
 		}
-		print_cpuset(mod->hex ? _("Off-line CPU(s) mask:") :
-					_("Off-line CPU(s) list:"),
+		print_cpuset(tb, mod->hex ? _("Off-line CPU(s) mask:") :
+					    _("Off-line CPU(s) list:"),
 			     set, mod->hex);
 		cpuset_free(set);
 	}
@@ -1859,97 +1896,99 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		}
 		if (desc->mtid)
 			threads_per_core = atoi(desc->mtid) + 1;
-		print_n(_("Thread(s) per core:"),
+		add_summary_n(tb, _("Thread(s) per core:"),
 			threads_per_core ?: desc->nthreads / desc->ncores);
-		print_n(_("Core(s) per socket:"),
+		add_summary_n(tb, _("Core(s) per socket:"),
 			cores_per_socket ?: desc->ncores / desc->nsockets);
 		if (desc->nbooks) {
-			print_n(_("Socket(s) per book:"),
+			add_summary_n(tb, _("Socket(s) per book:"),
 				sockets_per_book ?: desc->nsockets / desc->nbooks);
 			if (desc->ndrawers) {
-				print_n(_("Book(s) per drawer:"),
+				add_summary_n(tb, _("Book(s) per drawer:"),
 					books_per_drawer ?: desc->nbooks / desc->ndrawers);
-				print_n(_("Drawer(s):"), drawers ?: desc->ndrawers);
+				add_summary_n(tb, _("Drawer(s):"), drawers ?: desc->ndrawers);
 			} else {
-				print_n(_("Book(s):"), books_per_drawer ?: desc->nbooks);
+				add_summary_n(tb, _("Book(s):"), books_per_drawer ?: desc->nbooks);
 			}
 		} else {
-			print_n(_("Socket(s):"), sockets_per_book ?: desc->nsockets);
+			add_summary_n(tb, _("Socket(s):"), sockets_per_book ?: desc->nsockets);
 		}
 	}
 	if (desc->nnodes)
-		print_n(_("NUMA node(s):"), desc->nnodes);
+		add_summary_n(tb, _("NUMA node(s):"), desc->nnodes);
 	if (desc->vendor)
-		print_s(_("Vendor ID:"), desc->vendor);
+		add_summary_s(tb, _("Vendor ID:"), desc->vendor);
 	if (desc->machinetype)
-		print_s(_("Machine type:"), desc->machinetype);
+		add_summary_s(tb, _("Machine type:"), desc->machinetype);
 	if (desc->family)
-		print_s(_("CPU family:"), desc->family);
+		add_summary_s(tb, _("CPU family:"), desc->family);
 	if (desc->model || desc->revision)
-		print_s(_("Model:"), desc->revision ? desc->revision : desc->model);
+		add_summary_s(tb, _("Model:"), desc->revision ? desc->revision : desc->model);
 	if (desc->modelname || desc->cpu)
-		print_s(_("Model name:"), desc->cpu ? desc->cpu : desc->modelname);
+		add_summary_s(tb, _("Model name:"), desc->cpu ? desc->cpu : desc->modelname);
 	if (desc->stepping)
-		print_s(_("Stepping:"), desc->stepping);
+		add_summary_s(tb, _("Stepping:"), desc->stepping);
 	if (desc->mhz)
-		print_s(_("CPU MHz:"), desc->mhz);
+		add_summary_s(tb, _("CPU MHz:"), desc->mhz);
 	if (desc->dynamic_mhz)
-		print_s(_("CPU dynamic MHz:"), desc->dynamic_mhz);
+		add_summary_s(tb, _("CPU dynamic MHz:"), desc->dynamic_mhz);
 	if (desc->static_mhz)
-		print_s(_("CPU static MHz:"), desc->static_mhz);
+		add_summary_s(tb, _("CPU static MHz:"), desc->static_mhz);
 	if (desc->maxmhz)
-		print_s(_("CPU max MHz:"), desc->maxmhz[0]);
+		add_summary_s(tb, _("CPU max MHz:"), desc->maxmhz[0]);
 	if (desc->minmhz)
-		print_s(_("CPU min MHz:"), desc->minmhz[0]);
+		add_summary_s(tb, _("CPU min MHz:"), desc->minmhz[0]);
 	if (desc->bogomips)
-		print_s(_("BogoMIPS:"), desc->bogomips);
+		add_summary_s(tb, _("BogoMIPS:"), desc->bogomips);
 	if (desc->virtflag) {
 		if (!strcmp(desc->virtflag, "svm"))
-			print_s(_("Virtualization:"), "AMD-V");
+			add_summary_s(tb, _("Virtualization:"), "AMD-V");
 		else if (!strcmp(desc->virtflag, "vmx"))
-			print_s(_("Virtualization:"), "VT-x");
+			add_summary_s(tb, _("Virtualization:"), "VT-x");
 	}
 	if (desc->hypervisor)
-		print_s(_("Hypervisor:"), desc->hypervisor);
+		add_summary_s(tb, _("Hypervisor:"), desc->hypervisor);
 	if (desc->hyper) {
-		print_s(_("Hypervisor vendor:"), hv_vendors[desc->hyper]);
-		print_s(_("Virtualization type:"), _(virt_types[desc->virtype]));
+		add_summary_s(tb, _("Hypervisor vendor:"), hv_vendors[desc->hyper]);
+		add_summary_s(tb, _("Virtualization type:"), _(virt_types[desc->virtype]));
 	}
 	if (desc->dispatching >= 0)
-		print_s(_("Dispatching mode:"), _(disp_modes[desc->dispatching]));
+		add_summary_s(tb, _("Dispatching mode:"), _(disp_modes[desc->dispatching]));
 	if (desc->ncaches) {
 		char cbuf[512];
 
 		for (i = desc->ncaches - 1; i >= 0; i--) {
 			snprintf(cbuf, sizeof(cbuf),
 					_("%s cache:"), desc->caches[i].name);
-			print_s(cbuf, desc->caches[i].size);
+			add_summary_s(tb, cbuf, desc->caches[i].size);
 		}
 	}
-
 	if (desc->necaches) {
 		char cbuf[512];
 
 		for (i = desc->necaches - 1; i >= 0; i--) {
 			snprintf(cbuf, sizeof(cbuf),
 					_("%s cache:"), desc->ecaches[i].name);
-			print_s(cbuf, desc->ecaches[i].size);
+			add_summary_s(tb, cbuf, desc->ecaches[i].size);
 		}
 	}
 
 	for (i = 0; i < desc->nnodes; i++) {
 		snprintf(buf, sizeof(buf), _("NUMA node%d CPU(s):"), desc->idx2nodenum[i]);
-		print_cpuset(buf, desc->nodemaps[i], mod->hex);
+		print_cpuset(tb, buf, desc->nodemaps[i], mod->hex);
+	}
+
+	if (desc->physsockets) {
+		add_summary_n(tb, _("Physical sockets:"), desc->physsockets);
+		add_summary_n(tb, _("Physical chips:"), desc->physchips);
+		add_summary_n(tb, _("Physical cores/chip:"), desc->physcoresperchip);
 	}
 
 	if (desc->flags)
-		print_s(_("Flags:"), desc->flags);
+		add_summary_s(tb, _("Flags:"), desc->flags);
 
-	if (desc->physsockets) {
-		print_n(_("Physical sockets:"), desc->physsockets);
-		print_n(_("Physical chips:"), desc->physchips);
-		print_n(_("Physical cores/chip:"), desc->physcoresperchip);
-	}
+	scols_print_table(tb);
+	scols_unref_table(tb);
 }
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
