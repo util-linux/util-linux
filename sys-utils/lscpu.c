@@ -299,6 +299,7 @@ struct lscpu_modifier {
 			compat:1,	/* use backwardly compatible format */
 			online:1,	/* print online CPUs */
 			offline:1,	/* print offline CPUs */
+			json:1,		/* JSON output format */
 			physical:1;	/* use physical numbers */
 };
 
@@ -1711,6 +1712,10 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 	table = scols_new_table();
 	if (!table)
 		 err(EXIT_FAILURE, _("failed to initialize output table"));
+	if (mod->json) {
+		scols_table_enable_json(table, 1);
+		scols_table_set_name(table, "cpus");
+	}
 
 	for (i = 0; i < ncols; i++) {
 		data = get_cell_header(desc, cols[i], mod, buf, sizeof(buf));
@@ -1811,8 +1816,12 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		 err(EXIT_FAILURE, _("failed to initialize output table"));
 
 	scols_table_enable_noheadings(tb, 1);
+	if (mod->json) {
+		scols_table_enable_json(tb, 1);
+		scols_table_set_name(tb, "lscpu");
+	}
 
-	if (scols_table_new_column(tb, "name", 0, 0) == NULL ||
+	if (scols_table_new_column(tb, "field", 0, 0) == NULL ||
 	    scols_table_new_column(tb, "data", 0, SCOLS_FL_NOEXTREMES) == NULL)
 		err(EXIT_FAILURE, _("failed to initialize output column"));
 
@@ -2005,6 +2014,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -a, --all               print both online and offline CPUs (default for -e)\n"), out);
 	fputs(_(" -b, --online            print online CPUs only (default for -p)\n"), out);
 	fputs(_(" -c, --offline           print offline CPUs only\n"), out);
+	fputs(_(" -J, --json              use JSON for default or extended format\n"), out);
 	fputs(_(" -e, --extended[=<list>] print out an extended readable format\n"), out);
 	fputs(_(" -p, --parse[=<list>]    print out a parsable format\n"), out);
 	fputs(_(" -s, --sysroot <dir>     use specified directory as system root\n"), out);
@@ -2038,6 +2048,7 @@ int main(int argc, char *argv[])
 		{ "offline",    no_argument,       NULL, 'c' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ "extended",	optional_argument, NULL, 'e' },
+		{ "json",       no_argument,       NULL, 'J' },
 		{ "parse",	optional_argument, NULL, 'p' },
 		{ "sysroot",	required_argument, NULL, 's' },
 		{ "physical",	no_argument,	   NULL, 'y' },
@@ -2058,7 +2069,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "abce::hp::s:xyV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "abce::hJp::s:xyV", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -2077,6 +2088,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'h':
 			usage(stdout);
+		case 'J':
+			mod->json = 1;
+			break;
 		case 'p':
 		case 'e':
 			if (optarg) {

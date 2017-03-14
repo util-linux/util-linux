@@ -3,7 +3,7 @@
 lscpu \- display information about the CPU architecture
 .SH SYNOPSIS
 .B lscpu
-.RB [ \-a | \-b | \-c "] [" \-x "] [" \-y "] [" \-s " \fIdirectory\fP] [" \-e [=\fIlist\fP]| \-p [=\fIlist\fP]]
+.RB [ \-a | \-b | \-c | \-J "] [" \-x "] [" \-y "] [" \-s " \fIdirectory\fP] [" \-e [=\fIlist\fP]| \-p [=\fIlist\fP]]
 .br
 .B lscpu
 .BR \-h | \-V
@@ -122,6 +122,10 @@ Examples: '\fB-e=cpu,node\fP' or '\fB--extended=cpu,node\fP'.
 .TP
 .BR \-h , " \-\-help"
 Display help text and exit.
+.TP
+.BR \-J , " \-\-json"
+Use JSON output format for the default summary or extended output (see \fB\-\-extended\fP).
+.BR
 .TP
 .BR \-p , " \-\-parse" [=\fIlist\fP]
 Optimize the command output for easy parsing.
