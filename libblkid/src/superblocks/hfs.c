@@ -244,7 +244,8 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	leaf_node_head = be32_to_cpu(bnode->leaf_head);
 	leaf_node_size = be16_to_cpu(bnode->node_size);
 	leaf_node_count = be32_to_cpu(bnode->leaf_count);
-	if (leaf_node_count == 0)
+	if (leaf_node_size < sizeof(struct hfsplus_bnode_descriptor) +
+	    sizeof(struct hfsplus_catalog_key) || leaf_node_count == 0)
 		return 0;
 
 	leaf_block = (leaf_node_head * leaf_node_size) / blocksize;
@@ -284,7 +285,8 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	key = (struct hfsplus_catalog_key *)
 		&buf[sizeof(struct hfsplus_bnode_descriptor)];
 
-	if (be32_to_cpu(key->parent_id) != HFSPLUS_POR_CNID)
+	if (be32_to_cpu(key->parent_id) != HFSPLUS_POR_CNID ||
+	    be16_to_cpu(key->unicode_len > 255))
 		return 0;
 
 	blkid_probe_set_utf8label(pr, key->unicode,
