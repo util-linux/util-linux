@@ -1,17 +1,17 @@
-CPU(s):                64
-On-line CPU(s) list:   0-63
-Thread(s) per core:    4
-Core(s) per socket:    1
-Socket(s):             16
-NUMA node(s):          2
-Model:                 2.1 (pvr 003f 0201)
-Model name:            POWER7 (architected), altivec supported
-Hypervisor vendor:     pHyp
-Virtualization type:   para
-L1d cache:             32K
-L1i cache:             32K
-NUMA node0 CPU(s):     0-63
-NUMA node1 CPU(s):     
+CPU(s):              64
+On-line CPU(s) list: 0-63
+Thread(s) per core:  4
+Core(s) per socket:  1
+Socket(s):           16
+NUMA node(s):        2
+Model:               2.1 (pvr 003f 0201)
+Model name:          POWER7 (architected), altivec supported
+Hypervisor vendor:   pHyp
+Virtualization type: para
+L1d cache:           32K
+L1i cache:           32K
+NUMA node0 CPU(s):   0-63
+NUMA node1 CPU(s):   
 
 # The following is the parsable format, which can be fed to other
 # programs. Each different item in every column has an unique ID

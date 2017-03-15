@@ -1,13 +1,13 @@
-CPU(s):                1
-On-line CPU(s) list:   0
-Thread(s) per core:    1
-Core(s) per socket:    1
-Socket(s):             1
-Model:                 3.1 (pvr 0008 0301)
-Model name:            740/750
-BogoMIPS:              33.25
-L1d cache:             unknown size
-L1i cache:             unknown size
+CPU(s):              1
+On-line CPU(s) list: 0
+Thread(s) per core:  1
+Core(s) per socket:  1
+Socket(s):           1
+Model:               3.1 (pvr 0008 0301)
+Model name:          740/750
+BogoMIPS:            33.25
+L1d cache:           unknown size
+L1i cache:           unknown size
 
 # The following is the parsable format, which can be fed to other
 # programs. Each different item in every column has an unique ID

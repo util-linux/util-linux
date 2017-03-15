@@ -1,28 +1,28 @@
-CPU op-mode(s):        32-bit, 64-bit
-CPU(s):                64
-On-line CPU(s) list:   0-63
-Thread(s) per core:    2
-Core(s) per socket:    8
-Socket(s):             4
-NUMA node(s):          3
-Vendor ID:             GenuineIntel
-CPU family:            6
-Model:                 46
-Model name:            Intel(R) Xeon(R) CPU           X7550  @ 2.00GHz
-Stepping:              6
-CPU MHz:               1064.000
-CPU max MHz:           1996.0000
-CPU min MHz:           1064.0000
-BogoMIPS:              3990.31
-Virtualization:        VT-x
-L1d cache:             32K
-L1i cache:             32K
-L2 cache:              256K
-L3 cache:              18432K
-NUMA node0 CPU(s):     0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62
-NUMA node2 CPU(s):     1,5,9,13,17,21,25,29,33,37,41,45,49,53,57,61
-NUMA node3 CPU(s):     3,7,11,15,19,23,27,31,35,39,43,47,51,55,59,63
-Flags:                 fpu vme de pse tsc msr pae mce cx8 apic mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good xtopology nonstop_tsc aperfmperf pni dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm dca sse4_1 sse4_2 x2apic popcnt lahf_lm ida epb dts tpr_shadow vnmi flexpriority ept vpid
+CPU op-mode(s):      32-bit, 64-bit
+CPU(s):              64
+On-line CPU(s) list: 0-63
+Thread(s) per core:  2
+Core(s) per socket:  8
+Socket(s):           4
+NUMA node(s):        3
+Vendor ID:           GenuineIntel
+CPU family:          6
+Model:               46
+Model name:          Intel(R) Xeon(R) CPU           X7550  @ 2.00GHz
+Stepping:            6
+CPU MHz:             1064.000
+CPU max MHz:         1996.0000
+CPU min MHz:         1064.0000
+BogoMIPS:            3990.31
+Virtualization:      VT-x
+L1d cache:           32K
+L1i cache:           32K
+L2 cache:            256K
+L3 cache:            18432K
+NUMA node0 CPU(s):   0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62
+NUMA node2 CPU(s):   1,5,9,13,17,21,25,29,33,37,41,45,49,53,57,61
+NUMA node3 CPU(s):   3,7,11,15,19,23,27,31,35,39,43,47,51,55,59,63
+Flags:               fpu vme de pse tsc msr pae mce cx8 apic mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx rdtscp lm constant_tsc arch_perfmon pebs bts rep_good xtopology nonstop_tsc aperfmperf pni dtes64 monitor ds_cpl vmx est tm2 ssse3 cx16 xtpr pdcm dca sse4_1 sse4_2 x2apic popcnt lahf_lm ida epb dts tpr_shadow vnmi flexpriority ept vpid
 
 # The following is the parsable format, which can be fed to other
 # programs. Each different item in every column has an unique ID

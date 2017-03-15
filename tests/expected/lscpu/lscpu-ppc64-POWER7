@@ -1,14 +1,14 @@
-CPU(s):                16
-On-line CPU(s) list:   0-15
-Thread(s) per core:    4
-Core(s) per socket:    1
-Socket(s):             4
-NUMA node(s):          1
-Model:                 2.1 (pvr 003f 0201)
-Model name:            POWER7 (architected), altivec supported
-L1d cache:             32K
-L1i cache:             32K
-NUMA node0 CPU(s):     0-15
+CPU(s):              16
+On-line CPU(s) list: 0-15
+Thread(s) per core:  4
+Core(s) per socket:  1
+Socket(s):           4
+NUMA node(s):        1
+Model:               2.1 (pvr 003f 0201)
+Model name:          POWER7 (architected), altivec supported
+L1d cache:           32K
+L1i cache:           32K
+NUMA node0 CPU(s):   0-15
 
 # The following is the parsable format, which can be fed to other
 # programs. Each different item in every column has an unique ID
