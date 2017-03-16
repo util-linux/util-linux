@@ -830,7 +830,7 @@ static struct gpt_entry *gpt_read_entries(struct fdisk_context *cxt,
 	sz = (ssize_t) le32_to_cpu(header->npartition_entries) *
 	     le32_to_cpu(header->sizeof_partition_entry);
 
-	if (sz == 0 || sz >= UINT32_MAX ||
+	if (sz == 0 || sz >= (ssize_t) UINT32_MAX ||
 	    le32_to_cpu(header->sizeof_partition_entry) != sizeof(struct gpt_entry)) {
 		DBG(LABEL, ul_debug("GPT entreis array size check failed"));
 		return NULL;
