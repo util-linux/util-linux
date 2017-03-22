@@ -1530,14 +1530,14 @@ static int ui_menu_move(struct cfdisk *cf, int key)
 		return 0;
 	}
 
-	DBG(MENU, ul_debug(" no memu move key"));
+	DBG(MENU, ul_debug(" no menu move key"));
 	return 1;
 }
 
 /* but don't call me from ui_run(), this is for pop-up menus only */
 static void ui_menu_resize(struct cfdisk *cf)
 {
-	DBG(MENU, ul_debug("memu resize/refresh"));
+	DBG(MENU, ul_debug("menu resize/refresh"));
 	resize();
 	ui_clean_menu(cf);
 	menu_refresh_size(cf);
