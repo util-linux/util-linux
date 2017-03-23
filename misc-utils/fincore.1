@@ -18,46 +18,17 @@ occurs during counting, then an error message is printed to the stderr and
 continues processing the rest of files listed in a command line.
 .SH OPTIONS
 .TP
+.BR \-n , " \-\-noheadings"
+Do not print a header line in status output.
+.TP
+.BR \-b , " \-\-bytes"
+Print the SIZE column in bytes rather than in a human-readable format.
+.TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
-.SH EXAMPLES
-.PP
-An example of successfully executed case:
-.PP
-.RS
-.PD 0
-.TP
-.B fincore /etc/fstab /bin/emacs
-.TP
-1          1544       /etc/fstab
-.TP
-4156       17163144   /bin/emacs
-.TP
-.B echo $?
-.TP
-0
-.PD
-.RE
-.PP
-An example of failure case:
-.PP
-.RS
-.PD 0
-.TP
-.B fincore /etc/passwd
-.TP
-.I fincore: failed to open: /var/log/messages: Permission denied
-.TP
-failed     -1         /var/log/messages
-.TP
-.B echo $?
-.TP
-1
-.PD
-.RE
 .SH AUTHORS
 .MT yamato@\:redhat.com
 Masatake YAMATO

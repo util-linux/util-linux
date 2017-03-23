@@ -70,26 +70,10 @@ struct fincore_control {
 
 	struct libscols_table *tb;		/* output */
 
-	unsigned int bytes : 1;
+	unsigned int bytes : 1,
+		     noheadings : 1;
 };
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
-{
-	const char *p = program_invocation_short_name;
-
-	if (!*p)
-		p = "fincore";
-
-	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] file...\n"), program_invocation_short_name);
-	fputs(USAGE_OPTIONS, out);
-	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
-	fprintf(out, USAGE_MAN_TAIL("fincore(1)"));
-
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
-}
 
 static int column_name_to_id(const char *name, size_t namesz)
 {
@@ -253,6 +237,24 @@ static int fincore_name(struct fincore_control *ctl,
 	return rc;
 }
 
+static void __attribute__((__noreturn__)) usage(FILE *out)
+{
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] file...\n"), program_invocation_short_name);
+
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -b, --bytes               print sizes in bytes rather than in human readable format\n"), out);
+	fputs(_(" -n, --noheadings          don't print headings\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+
+	fprintf(out, USAGE_MAN_TAIL("fincore(1)"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 int main(int argc, char ** argv)
 {
 	int c;
@@ -264,6 +266,8 @@ int main(int argc, char ** argv)
 	};
 
 	static const struct option longopts[] = {
+		{ "bytes",      no_argument, NULL, 'b' },
+		{ "noheadings", no_argument, NULL, 'n' },
 		{ "version",    no_argument, NULL, 'V' },
 		{ "help",	no_argument, NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
@@ -274,8 +278,14 @@ int main(int argc, char ** argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long (argc, argv, "Vh", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "bnVh", longopts, NULL)) != -1) {
 		switch (c) {
+		case 'b':
+			ctl.bytes = 1;
+			break;
+		case 'n':
+			ctl.noheadings = 1;
+			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
@@ -301,6 +311,8 @@ int main(int argc, char ** argv)
 	ctl.tb = scols_new_table();
 	if (!ctl.tb)
 		err(EXIT_FAILURE, _("failed to create output table"));
+
+	scols_table_enable_noheadings(ctl.tb, ctl.noheadings);
 
 	for (i = 0; i < ncolumns; i++) {
 		const struct colinfo *col = get_column_info(i);
