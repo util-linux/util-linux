@@ -16,6 +16,7 @@ libcommon_la_SOURCES = \
 	lib/mbsedit.c\
 	lib/md5.c \
 	lib/pager.c \
+	lib/parse-date.y \
 	lib/path.c \
 	lib/randutils.c \
 	lib/setproctitle.c \

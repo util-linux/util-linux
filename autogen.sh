@@ -67,6 +67,25 @@ test -f sys-utils/mount.c || {
 	DIE=1
 }
 
+if ! (bison --version) < /dev/null > /dev/null 2>&1; then
+	echo
+	echo "You must have bison installed to build the util-linux."
+	echo
+	DIE=1
+else
+	lexver=$(bison --version | awk '/bison \(GNU Bison\)/ { print $4 }')
+	case "$lexver" in
+		[2-9].*)
+			;;
+		*)
+			echo
+			echo "You must have bison version >= 2.x, but you have $lexver."
+			echo
+			DIE=1
+			;;
+	esac
+fi
+
 LIBTOOLIZE=libtoolize
 case `uname` in Darwin*) LIBTOOLIZE=glibtoolize ;; esac
 if ! ($LIBTOOLIZE --version) < /dev/null > /dev/null 2>&1; then
@@ -104,6 +123,7 @@ echo "   autoconf:   $(autoconf --version | head -1)"
 echo "   autoheader: $(autoheader --version | head -1)"
 echo "   automake:   $(automake --version | head -1)"
 echo "   libtoolize: $($LIBTOOLIZE --version | head -1)"
+echo "   bison:      $(bison --version | head -1)"
 
 rm -rf autom4te.cache
 

@@ -55,6 +55,7 @@ test-suite.log
 tests/run.sh.log
 tests/run.sh.trs
 update.log
+ylwrap
 
 #
 # binaries
