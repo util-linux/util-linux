@@ -52,6 +52,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("fincore(1)"));
+
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
@@ -74,7 +75,7 @@ static int do_mincore (void *window, const size_t len,
 
 	if (mincore (window, len, vec) < 0) {
 		warn(_("failed to do mincore: %s"), name);
-		return EXIT_FAILURE;
+		return -errno;
 	}
 
 	while (n > 0)
@@ -86,7 +87,7 @@ static int do_mincore (void *window, const size_t len,
 		}
 	}
 
-	return EXIT_SUCCESS;
+	return 0;
 }
 
 static int fincore_fd (int fd,
@@ -97,7 +98,7 @@ static int fincore_fd (int fd,
 	size_t window_size = N_PAGES_IN_WINDOW * pagesize;
 	off_t  file_offset;
 	void  *window = NULL;
-	int r = EXIT_SUCCESS;
+	int rc = 0;
 	int warned_once = 0;
 
 	for (file_offset = 0; file_offset < file_size; file_offset += window_size) {
@@ -110,20 +111,21 @@ static int fincore_fd (int fd,
 		window = mmap(window, len, PROT_NONE, MAP_PRIVATE, fd, file_offset);
 		if (window == MAP_FAILED) {
 			if (!warned_once) {
-				r = EXIT_FAILURE;
+				rc = -EINVAL;
 				warn(_("failed to do mmap: %s"), name);
 				warned_once = 1;
 			}
 			break;
 		}
 
-		if (do_mincore (window, len, name, pagesize, count_incore) != EXIT_SUCCESS)
-			r = EXIT_FAILURE;
+		rc = do_mincore (window, len, name, pagesize, count_incore);
+		if (rc)
+			break;
 
 		munmap (window, len);
 	}
 
-	return r;
+	return rc;
 }
 
 static int fincore_name (const char *name,
@@ -131,35 +133,31 @@ static int fincore_name (const char *name,
 			 off_t *count_incore)
 {
 	int fd;
-	int r;
+	int rc = 0;
 
 	if ((fd = open (name, O_RDONLY)) < 0) {
 		warn(_("failed to open: %s"), name);
-		return EXIT_FAILURE;
+		return 0;
 	}
 
 	if (fstat (fd, sb) < 0) {
 		warn(_("failed to do fstat: %s"), name);
-		return EXIT_FAILURE;
+		return -errno;
 	}
 
+	/* Empty file is no error */
 	if (sb->st_size)
-		r = fincore_fd (fd, name, pagesize, sb->st_size, count_incore);
-	else
-		/* If the file is empty,
-		   we just report this file as "successful". */
-		r = EXIT_SUCCESS;
+		rc = fincore_fd (fd, name, pagesize, sb->st_size, count_incore);
 
 	close (fd);
-
-	return r;
+	return rc;
 }
 
 int main(int argc, char ** argv)
 {
 	int c;
 	int pagesize;
-	int r;
+	int rc = EXIT_SUCCESS;
 
 	static const struct option longopts[] = {
 		{ "version",    no_argument, NULL, 'V' },
@@ -185,25 +183,25 @@ int main(int argc, char ** argv)
 	}
 
 	if (optind == argc) {
-		warnx(_("file argument is missing"));
-		usage(stderr);
+		warnx(_("no file specified"));
+		errtryhelp(EXIT_FAILURE);
 	}
 
 
 	pagesize = getpagesize();
-	r = EXIT_SUCCESS;
+
 	for(; optind < argc; optind++) {
 		char *name = argv[optind];
 		struct stat sb;
 		off_t count_incore = 0;
 
-		if (fincore_name (name, pagesize, &sb, &count_incore) == EXIT_SUCCESS)
+		if (fincore_name (name, pagesize, &sb, &count_incore) == 0)
 			report_count (name, sb.st_size, count_incore);
 		else {
 			report_failure (name);
-			r = EXIT_FAILURE;
+			rc = EXIT_FAILURE;
 		}
 	}
 
-	return r;
+	return rc;
 }

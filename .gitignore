@@ -84,6 +84,7 @@ ylwrap
 /fallocate
 /fdformat
 /fdisk
+/fincore
 /findfs
 /findmnt
 /flock
