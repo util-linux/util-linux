@@ -36,6 +36,13 @@ Define output columns.  See the \fB\-\-help\fP output to get a list of the
 currently supported columns. The default list of columns may be extended if \fIlist\fP is
 specified in the format \fI+list\fP.
 .TP
+.BR \-r , " \-\-raw"
+Produce output in raw format.  All potentially unsafe characters are hex-escaped
+(\\x<code>).
+.TP
+.BR \-J , " \-\-json"
+Use JSON output format.
+.TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
 .TP

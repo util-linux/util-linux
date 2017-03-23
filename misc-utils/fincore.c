@@ -71,7 +71,9 @@ struct fincore_control {
 	struct libscols_table *tb;		/* output */
 
 	unsigned int bytes : 1,
-		     noheadings : 1;
+		     noheadings : 1,
+		     raw : 1,
+		     json : 1;
 };
 
 
@@ -245,9 +247,11 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(" %s [options] file...\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -J, --json            use JSON output format\n"), out);
 	fputs(_(" -b, --bytes           print sizes in bytes rather than in human readable format\n"), out);
 	fputs(_(" -n, --noheadings      don't print headings\n"), out);
 	fputs(_(" -o, --output <list>   output columns\n"), out);
+	fputs(_(" -r, --raw             use raw output format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -280,6 +284,8 @@ int main(int argc, char ** argv)
 		{ "output",     required_argument, NULL, 'o' },
 		{ "version",    no_argument, NULL, 'V' },
 		{ "help",	no_argument, NULL, 'h' },
+		{ "json",       no_argument, NULL, 'J' },
+		{ "raw",        no_argument, NULL, 'r' },
 		{ NULL, 0, NULL, 0 },
 	};
 
@@ -288,7 +294,7 @@ int main(int argc, char ** argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long (argc, argv, "bno:Vh", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "bno:JrVh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'b':
 			ctl.bytes = 1;
@@ -298,6 +304,12 @@ int main(int argc, char ** argv)
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case 'J':
+			ctl.json = 1;
+			break;
+		case 'r':
+			ctl.raw = 1;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -330,6 +342,10 @@ int main(int argc, char ** argv)
 		err(EXIT_FAILURE, _("failed to create output table"));
 
 	scols_table_enable_noheadings(ctl.tb, ctl.noheadings);
+	scols_table_enable_raw(ctl.tb, ctl.raw);
+	scols_table_enable_json(ctl.tb, ctl.json);
+	if (ctl.json)
+		scols_table_set_name(ctl.tb, "fincore");
 
 	for (i = 0; i < ncolumns; i++) {
 		const struct colinfo *col = get_column_info(i);
