@@ -32,7 +32,7 @@ function run_dd_test
 	$DD if=/dev/zero of=$input count=1 bs=$bs $flags
     fi
 
-    $TS_CMD_FINCORE $input
+    $TS_CMD_FINCORE  --bytes --noheadings $input
 
     footer "$?"
 }
@@ -51,7 +51,7 @@ function run_dd_dd_test
     $DD if=/dev/zero of=$input count=1 bs=$bs $flags0
     $DD if=/dev/zero of=$input count=1 bs=$bs $flags1
 
-    $TS_CMD_FINCORE $input
+    $TS_CMD_FINCORE --bytes --noheadings $input
 
     footer "$?"
 }
@@ -80,7 +80,7 @@ input=
     INPUT="${INPUT} ${input}"
 
     header "NO EXCITING FILE"
-    $TS_CMD_FINCORE $input
+    $TS_CMD_FINCORE --bytes --noheadings $input
     footer "$?"
 } >> $TS_OUTPUT 2>&1
 
@@ -186,7 +186,7 @@ input=
 
 {
     header "MULTIPLE FILES"
-    $TS_CMD_FINCORE $INPUT
+    $TS_CMD_FINCORE --bytes $INPUT
     footer "$?"
 } >> $TS_OUTPUT 2>&1
 
