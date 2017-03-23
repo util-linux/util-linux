@@ -5,6 +5,7 @@ dist_noinst_HEADERS += \
 	include/blkdev.h \
 	include/canonicalize.h \
 	include/carefulputc.h \
+	include/cctype.h \
 	include/c.h \
 	include/closestream.h \
 	include/colors.h \
