@@ -12,11 +12,8 @@ fincore \- count pages of file contents in core
 .B fincore
 counts pages of file contents being resident in memory(in core), and
 reports the numbers.  An output line has 3 columns: the number of
-pages in core, a file size in bytes, and a file name.  If an error
-occurs during counting, failing to open a file for example,
-.B failed
-is printed at the column of the number of pages in core.  Even if
-errors occur,
+pages in core, a file size, and a file name.  If an error
+occurs during counting, then an error message is printed to the stderr and
 .B fincore
 continues processing the rest of files listed in a command line.
 .SH OPTIONS

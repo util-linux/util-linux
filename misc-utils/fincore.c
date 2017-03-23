@@ -29,6 +29,10 @@
 #include "c.h"
 #include "nls.h"
 #include "closestream.h"
+#include "xalloc.h"
+#include "strutils.h"
+
+#include "libsmartcols.h"
 
 /* For large files, mmap is called in iterative way.
    Window is the unit of vma prepared in each mmap
@@ -37,6 +41,37 @@
    Window size depends on page size.
    e.g. 128MB on x86_64. ( = N_PAGES_IN_WINDOW * 4096 ). */
 #define N_PAGES_IN_WINDOW (32 * 1024)
+
+
+struct colinfo {
+	const char *name;
+	double whint;
+	int flags;
+	const char *help;
+};
+
+enum {
+	COL_PAGES,
+	COL_SIZE,
+	COL_FILE
+};
+
+static struct colinfo infos[] = {
+	[COL_PAGES]  = { "PAGES",    1, SCOLS_FL_RIGHT, N_("number of memory page")},
+	[COL_SIZE]   = { "SIZE",     5, SCOLS_FL_RIGHT, N_("size of the file")},
+	[COL_FILE]   = { "FILE",     4, 0, N_("file name")},
+};
+
+static int columns[ARRAY_SIZE(infos) * 2] = {-1};
+static size_t ncolumns;
+
+struct fincore_control {
+	const int pagesize;
+
+	struct libscols_table *tb;		/* output */
+
+	unsigned int bytes : 1;
+};
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -56,22 +91,80 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static void report_count (const char *name, off_t file_size, off_t count_incore)
+static int column_name_to_id(const char *name, size_t namesz)
 {
-	printf ("%-10lu %-10lu %s\n", count_incore, file_size, name);
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(infos); i++) {
+		const char *cn = infos[i].name;
+
+		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+			return i;
+	}
+	warnx(_("unknown column: %s"), name);
+	return -1;
 }
 
-static void report_failure (const char *name)
+static int get_column_id(int num)
 {
-	printf ("%-10s %-10ld %s\n", "failed", -1L, name);
+	assert(num >= 0);
+	assert((size_t) num < ncolumns);
+	assert(columns[num] < (int) ARRAY_SIZE(infos));
+	return columns[num];
 }
 
-static int do_mincore (void *window, const size_t len,
-		       const char *name, const int pagesize,
-		       off_t *count_incore)
+static const struct colinfo *get_column_info(int num)
+{
+	return &infos[ get_column_id(num) ];
+}
+
+static int add_output_data(struct fincore_control *ctl,
+			   const char *name,
+			   off_t file_size,
+			   off_t count_incore)
+{
+	size_t i;
+	char *tmp;
+	struct libscols_line *ln;
+
+	assert(ctl);
+	assert(ctl->tb);
+
+	ln = scols_table_new_line(ctl->tb, NULL);
+	if (!ln)
+		err(EXIT_FAILURE, _("failed to initialize output line"));
+
+	for (i = 0; i < ncolumns; i++) {
+		switch(get_column_id(i)) {
+		case COL_FILE:
+			scols_line_set_data(ln, i, name);
+			break;
+		case COL_PAGES:
+			xasprintf(&tmp, "%jd",  (intmax_t) count_incore);
+			scols_line_refer_data(ln, i, tmp);
+			break;
+		case COL_SIZE:
+			if (ctl->bytes)
+				xasprintf(&tmp, "%jd", (intmax_t) file_size);
+			else
+				tmp = size_to_human_string(SIZE_SUFFIX_1LETTER, file_size);
+			scols_line_refer_data(ln, i, tmp);
+			break;
+		default:
+			return -EINVAL;
+		}
+	}
+
+	return 0;
+}
+
+static int do_mincore(struct fincore_control *ctl,
+		      void *window, const size_t len,
+		      const char *name,
+		      off_t *count_incore)
 {
 	static unsigned char vec[N_PAGES_IN_WINDOW];
-	int n = (len / pagesize) + ((len % pagesize)? 1: 0);
+	int n = (len / ctl->pagesize) + ((len % ctl->pagesize)? 1: 0);
 
 	if (mincore (window, len, vec) < 0) {
 		warn(_("failed to do mincore: %s"), name);
@@ -90,12 +183,13 @@ static int do_mincore (void *window, const size_t len,
 	return 0;
 }
 
-static int fincore_fd (int fd,
-		       const char *name, const int pagesize,
+static int fincore_fd (struct fincore_control *ctl,
+		       int fd,
+		       const char *name,
 		       off_t file_size,
 		       off_t *count_incore)
 {
-	size_t window_size = N_PAGES_IN_WINDOW * pagesize;
+	size_t window_size = N_PAGES_IN_WINDOW * ctl->pagesize;
 	off_t  file_offset;
 	void  *window = NULL;
 	int rc = 0;
@@ -118,7 +212,7 @@ static int fincore_fd (int fd,
 			break;
 		}
 
-		rc = do_mincore (window, len, name, pagesize, count_incore);
+		rc = do_mincore(ctl, window, len, name, count_incore);
 		if (rc)
 			break;
 
@@ -128,9 +222,13 @@ static int fincore_fd (int fd,
 	return rc;
 }
 
-static int fincore_name (const char *name,
-			 const int pagesize, struct stat *sb,
-			 off_t *count_incore)
+/*
+ * Returns: <0 on error, 0 success, 1 ignore.
+ */
+static int fincore_name(struct fincore_control *ctl,
+			const char *name,
+			struct stat *sb,
+			off_t *count_incore)
 {
 	int fd;
 	int rc = 0;
@@ -145,9 +243,11 @@ static int fincore_name (const char *name,
 		return -errno;
 	}
 
-	/* Empty file is no error */
-	if (sb->st_size)
-		rc = fincore_fd (fd, name, pagesize, sb->st_size, count_incore);
+	if (S_ISDIR(sb->st_mode))
+		rc = 1;			/* ignore */
+
+	else if (sb->st_size)
+		rc = fincore_fd(ctl, fd, name, sb->st_size, count_incore);
 
 	close (fd);
 	return rc;
@@ -156,8 +256,12 @@ static int fincore_name (const char *name,
 int main(int argc, char ** argv)
 {
 	int c;
-	int pagesize;
+	size_t i;
 	int rc = EXIT_SUCCESS;
+
+	struct fincore_control ctl = {
+			.pagesize = getpagesize()
+	};
 
 	static const struct option longopts[] = {
 		{ "version",    no_argument, NULL, 'V' },
@@ -187,21 +291,43 @@ int main(int argc, char ** argv)
 		errtryhelp(EXIT_FAILURE);
 	}
 
+	if (!ncolumns) {
+		columns[ncolumns++] = COL_PAGES;
+		columns[ncolumns++] = COL_SIZE;
+		columns[ncolumns++] = COL_FILE;
+	}
 
-	pagesize = getpagesize();
+	scols_init_debug(0);
+	ctl.tb = scols_new_table();
+	if (!ctl.tb)
+		err(EXIT_FAILURE, _("failed to create output table"));
+
+	for (i = 0; i < ncolumns; i++) {
+		const struct colinfo *col = get_column_info(i);
+
+		if (!scols_table_new_column(ctl.tb, col->name, col->whint, col->flags))
+			err(EXIT_FAILURE, _("failed to initialize output column"));
+	}
 
 	for(; optind < argc; optind++) {
 		char *name = argv[optind];
 		struct stat sb;
 		off_t count_incore = 0;
 
-		if (fincore_name (name, pagesize, &sb, &count_incore) == 0)
-			report_count (name, sb.st_size, count_incore);
-		else {
-			report_failure (name);
+		switch (fincore_name(&ctl, name, &sb, &count_incore)) {
+		case 0:
+			add_output_data(&ctl, name, sb.st_size, count_incore);
+			break;
+		case 1:
+			break; /* ignore */
+		default:
 			rc = EXIT_FAILURE;
+			break;
 		}
 	}
+
+	scols_print_table(ctl.tb);
+	scols_unref_table(ctl.tb);
 
 	return rc;
 }

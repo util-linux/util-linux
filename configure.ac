@@ -1591,6 +1591,7 @@ AM_CONDITIONAL([BUILD_CTRLALTDEL], [test "x$build_ctrlaltdel" = xyes])
 
 UL_BUILD_INIT([fincore], [check])
 UL_REQUIRES_LINUX([fincore])
+UL_REQUIRES_BUILD([fincore], [libsmartcols])
 AM_CONDITIONAL([BUILD_FINCORE], [test "x$build_fincore" = xyes])
 
 UL_BUILD_INIT([fsfreeze], [check])
