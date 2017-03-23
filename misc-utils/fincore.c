@@ -221,7 +221,7 @@ static int fincore_name(struct fincore_control *ctl,
 
 	if ((fd = open (name, O_RDONLY)) < 0) {
 		warn(_("failed to open: %s"), name);
-		return 0;
+		return -errno;
 	}
 
 	if (fstat (fd, sb) < 0) {
