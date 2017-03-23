@@ -16,6 +16,13 @@ pages in core, a file size, and a file name.  If an error
 occurs during counting, then an error message is printed to the stderr and
 .B fincore
 continues processing the rest of files listed in a command line.
+
+The default output is subject to change.  So whenever possible, you should
+avoid using default outputs in your scripts.  Always explicitly define expected
+columns by using
+.B \-\-output
+.I columns-list
+in environments where a stable output is required.
 .SH OPTIONS
 .TP
 .BR \-n , " \-\-noheadings"
@@ -23,6 +30,11 @@ Do not print a header line in status output.
 .TP
 .BR \-b , " \-\-bytes"
 Print the SIZE column in bytes rather than in a human-readable format.
+.TP
+.BR \-o , " \-\-output \fIlist\fP"
+Define output columns.  See the \fB\-\-help\fP output to get a list of the
+currently supported columns. The default list of columns may be extended if \fIlist\fP is
+specified in the format \fI+list\fP.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.

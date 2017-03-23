@@ -239,16 +239,24 @@ static int fincore_name(struct fincore_control *ctl,
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	size_t i;
+
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] file...\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -b, --bytes               print sizes in bytes rather than in human readable format\n"), out);
-	fputs(_(" -n, --noheadings          don't print headings\n"), out);
+	fputs(_(" -b, --bytes           print sizes in bytes rather than in human readable format\n"), out);
+	fputs(_(" -n, --noheadings      don't print headings\n"), out);
+	fputs(_(" -o, --output <list>   output columns\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
+
+	fprintf(out, _("\nAvailable columns (for --output):\n"));
+
+	for (i = 0; i < ARRAY_SIZE(infos); i++)
+		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("fincore(1)"));
 
@@ -260,14 +268,16 @@ int main(int argc, char ** argv)
 	int c;
 	size_t i;
 	int rc = EXIT_SUCCESS;
+	char *outarg = NULL;
 
 	struct fincore_control ctl = {
-			.pagesize = getpagesize()
+		.pagesize = getpagesize()
 	};
 
 	static const struct option longopts[] = {
 		{ "bytes",      no_argument, NULL, 'b' },
 		{ "noheadings", no_argument, NULL, 'n' },
+		{ "output",     required_argument, NULL, 'o' },
 		{ "version",    no_argument, NULL, 'V' },
 		{ "help",	no_argument, NULL, 'h' },
 		{ NULL, 0, NULL, 0 },
@@ -278,13 +288,16 @@ int main(int argc, char ** argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long (argc, argv, "bnVh", longopts, NULL)) != -1) {
+	while ((c = getopt_long (argc, argv, "bno:Vh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'b':
 			ctl.bytes = 1;
 			break;
 		case 'n':
 			ctl.noheadings = 1;
+			break;
+		case 'o':
+			outarg = optarg;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -306,6 +319,10 @@ int main(int argc, char ** argv)
 		columns[ncolumns++] = COL_SIZE;
 		columns[ncolumns++] = COL_FILE;
 	}
+
+	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
+					 &ncolumns, column_name_to_id) < 0)
+		return EXIT_FAILURE;
 
 	scols_init_debug(0);
 	ctl.tb = scols_new_table();
