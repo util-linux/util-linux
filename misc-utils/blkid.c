@@ -286,11 +286,11 @@ static void print_udev_format(const char *name, const char *value)
 		printf("ID_FS_%s=%s\n", name, value);
 }
 
-static int has_item(char *ary[], const char *item)
+static int has_item(const struct blkid_control *ctl, const char *item)
 {
-	char **p;
+	char * const *p;
 
-	for (p = ary; *p != NULL; p++)
+	for (p = ctl->show; *p != NULL; p++)
 		if (!strcmp(item, *p))
 			return 1;
 	return 0;
@@ -350,7 +350,7 @@ static void print_tags(const struct blkid_control *ctl, blkid_dev dev)
 
 	iter = blkid_tag_iterate_begin(dev);
 	while (blkid_tag_next(iter, &type, &value) == 0) {
-		if (ctl->show[0] && !has_item(ctl->show, type))
+		if (ctl->show[0] && !has_item(ctl, type))
 			continue;
 
 		if (num == 1 && !first &&
@@ -527,7 +527,7 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 	for (n = 0; n < nvals; n++) {
 		if (blkid_probe_get_value(pr, n, &name, &data, &len))
 			continue;
-		if (ctl->show[0] && !has_item(ctl->show, name))
+		if (ctl->show[0] && !has_item(ctl, name))
 			continue;
 		len = strnlen((char *) data, len);
 		print_value(ctl, num++, devname, (char *) data, name, len);
