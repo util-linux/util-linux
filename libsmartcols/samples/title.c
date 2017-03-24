@@ -60,9 +60,9 @@ int main(int argc, char *argv[])
 	int c;
 
 	static const struct option longopts[] = {
-		{ "maxout", 0, 0, 'm' },
-		{ "width",  1, 0, 'w' },
-		{ NULL, 0, 0, 0 },
+		{ "maxout", 0, NULL, 'm' },
+		{ "width",  1, NULL, 'w' },
+		{ NULL, 0, NULL, 0 },
 	};
 
 	setlocale(LC_ALL, "");	/* just to have enable UTF8 chars */

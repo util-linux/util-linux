@@ -54,12 +54,12 @@ static long name_to_flag(const char *name, size_t namesz)
 
 static int parse_column_flags(char *str)
 {
-	unsigned long flags = 0;
+	unsigned long num_flags = 0;
 
-	if (string_to_bitmask(str, &flags, name_to_flag))
+	if (string_to_bitmask(str, &num_flags, name_to_flag))
 		err(EXIT_FAILURE, "failed to parse column flags");
 
-	return flags;
+	return num_flags;
 }
 
 static struct libscols_column *parse_column(FILE *f)
@@ -98,8 +98,8 @@ static struct libscols_column *parse_column(FILE *f)
 		}
 		case 2: /* FLAGS */
 		{
-			int flags = parse_column_flags(line);
-			if (scols_column_set_flags(cl, flags))
+			int num_flags = parse_column_flags(line);
+			if (scols_column_set_flags(cl, num_flags))
 				goto fail;
 			if (strcmp(line, "wrapnl") == 0) {
 				scols_column_set_wrapfunc(cl,
@@ -222,18 +222,18 @@ int main(int argc, char *argv[])
 	int parent_col = -1, id_col = -1;
 
 	static const struct option longopts[] = {
-		{ "maxout", 0, 0, 'm' },
-		{ "column", 1, 0, 'c' },
-		{ "nlines", 1, 0, 'n' },
-		{ "width",  1, 0, 'w' },
-		{ "tree-parent-column", 1, 0, 'p' },
-		{ "tree-id-column",	1, 0, 'i' },
-		{ "json",   0, 0, 'J' },
-		{ "raw",    0, 0, 'r' },
-		{ "export", 0, 0, 'E' },
-		{ "colsep",  1, 0, 'C' },
-		{ "help",   0, 0, 'h' },
-		{ NULL, 0, 0, 0 },
+		{ "maxout", 0, NULL, 'm' },
+		{ "column", 1, NULL, 'c' },
+		{ "nlines", 1, NULL, 'n' },
+		{ "width",  1, NULL, 'w' },
+		{ "tree-parent-column", 1, NULL, 'p' },
+		{ "tree-id-column",	1, NULL, 'i' },
+		{ "json",   0, NULL, 'J' },
+		{ "raw",    0, NULL, 'r' },
+		{ "export", 0, NULL, 'E' },
+		{ "colsep",  1, NULL, 'C' },
+		{ "help",   0, NULL, 'h' },
+		{ NULL, 0, NULL, 0 },
 	};
 
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */

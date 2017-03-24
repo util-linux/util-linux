@@ -29,7 +29,7 @@ struct hlpPath
 
 #define DEF_HLPPATH(_p)		{ #_p, _p }
 
-struct hlpPath paths[] =
+static struct hlpPath paths[] =
 {
 	DEF_HLPPATH(_PATH_DEFPATH),
 	DEF_HLPPATH(_PATH_DEFPATH_ROOT),

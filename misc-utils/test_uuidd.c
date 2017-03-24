@@ -41,10 +41,10 @@
 
 #define LOG(level,args) if (loglev >= level) { fprintf args; }
 
-size_t nprocesses = 4;
-size_t nthreads = 4;
-size_t nobjects = 4096;
-size_t loglev = 1;
+static size_t nprocesses = 4;
+static size_t nthreads = 4;
+static size_t nobjects = 4096;
+static size_t loglev = 1;
 
 struct processentry {
 	pid_t		pid;
@@ -146,7 +146,7 @@ static void *create_uuids(thread_t *th)
 		obj->pid = th->proc->pid;
 		obj->idx = th->index + i;;
 	}
-	return 0;
+	return NULL;
 }
 
 static void *thread_body(void *arg)

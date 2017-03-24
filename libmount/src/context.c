@@ -2414,7 +2414,7 @@ int mnt_context_wait_for_children(struct libmnt_context *cxt,
 
 #ifdef TEST_PROGRAM
 
-struct libmnt_lock *lock;
+static struct libmnt_lock *lock;
 
 static void lock_fallback(void)
 {
