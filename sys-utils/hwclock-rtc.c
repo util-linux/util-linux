@@ -110,8 +110,8 @@ static int open_rtc(const struct hwclock_control *ctl)
 		"/dev/efirtc",
 		"/dev/misc/efirtc",
 #endif
-		"/dev/rtc",
 		"/dev/rtc0",
+		"/dev/rtc",
 		"/dev/misc/rtc"
 	};
 	size_t i;
