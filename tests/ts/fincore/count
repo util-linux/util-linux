@@ -65,7 +65,10 @@ ts_init "$*"
 PAGE_SIZE=$($TS_HELPER_SYSINFO pagesize)
 WINDOW_SIZE=$(( 32 * 1024 * PAGE_SIZE ))
 
-DD_FLAGS="status=none"
+# seems unsupported by some dd(1) version
+#DD_FLAGS="status=none"
+
+DD_FLAGS=
 DD="dd $DD_FLAGS"
 
 
