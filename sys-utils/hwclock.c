@@ -126,48 +126,6 @@ struct adjtime {
 };
 
 /*
- * Almost all Award BIOS's made between 04/26/94 and 05/31/95 have a nasty
- * bug limiting the RTC year byte to the range 94-99. Any year between 2000
- * and 2093 gets changed to 2094, every time you start the system.
- *
- * With the --badyear option, we write the date to file and hope that the
- * file is updated at least once a year. I recommend putting this command
- * "hwclock --badyear" in the monthly crontab, just to be safe.
- *
- * -- Dave Coffin 11/12/98
- */
-static void write_date_to_file(struct tm *tm)
-{
-	FILE *fp;
-
-	if ((fp = fopen(_PATH_LASTDATE, "w"))) {
-		fprintf(fp, "%02d.%02d.%04d\n", tm->tm_mday, tm->tm_mon + 1,
-			tm->tm_year + 1900);
-		if (close_stream(fp) != 0)
-			warn(_("cannot write %s"), _PATH_LASTDATE);
-	} else
-		warn(_("cannot write %s"), _PATH_LASTDATE);
-}
-
-static void read_date_from_file(struct tm *tm)
-{
-	int last_mday, last_mon, last_year;
-	FILE *fp;
-
-	if ((fp = fopen(_PATH_LASTDATE, "r"))) {
-		if (fscanf(fp, "%d.%d.%d\n", &last_mday, &last_mon, &last_year)
-		    == 3) {
-			tm->tm_year = last_year - 1900;
-			if ((tm->tm_mon << 5) + tm->tm_mday <
-			    ((last_mon - 1) << 5) + last_mday)
-				tm->tm_year++;
-		}
-		fclose(fp);
-	}
-	write_date_to_file(tm);
-}
-
-/*
  * time_t to timeval conversion.
  */
 static struct timeval t2tv(time_t timet)
@@ -398,9 +356,6 @@ read_hardware_clock(const struct hwclock_control *ctl,
 	if (err)
 		return err;
 
-	if (ctl->badyear)
-		read_date_from_file(&tm);
-
 	if (ctl->debug)
 		printf(_
 		       ("Time read from Hardware Clock: %4d/%.2d/%.2d %02d:%02d:%02d\n"),
@@ -438,17 +393,6 @@ set_hardware_clock(const struct hwclock_control *ctl, const time_t newtime)
 	if (ctl->testing)
 		printf(_("Clock not changed - testing only.\n"));
 	else {
-		if (ctl->badyear) {
-			/*
-			 * Write the real year to a file, then write a fake
-			 * year between 1995 and 1998 to the RTC. This way,
-			 * Award BIOS boots on 29 Feb 2000 thinking that
-			 * it's 29 Feb 1996.
-			 */
-			write_date_to_file(&new_broken_time);
-			new_broken_time.tm_year =
-			    95 + ((new_broken_time.tm_year + 1) & 3);
-		}
 		ur->set_hardware_clock(ctl, &new_broken_time);
 	}
 }
@@ -1323,7 +1267,6 @@ static void usage(const struct hwclock_control *ctl, const char *fmt, ...)
 #endif
 	fprintf(usageto, _(
 		"     --directisa      access the ISA bus directly instead of %s\n"
-		"     --badyear        ignore RTC's year because the BIOS is broken\n"
 		"     --date <time>    specifies the time to which to set the hardware clock\n"
 		"     --epoch <year>   specifies the year which is the beginning of the\n"
 		"                        hardware clock's epoch value\n"), _PATH_RTC_DEV);
@@ -1377,7 +1320,6 @@ int main(int argc, char **argv)
 	/* Long only options. */
 	enum {
 		OPT_ADJFILE = CHAR_MAX + 1,
-		OPT_BADYEAR,
 		OPT_DATE,
 		OPT_DIRECTISA,
 		OPT_EPOCH,
@@ -1418,7 +1360,6 @@ int main(int argc, char **argv)
 #endif
 		{ "noadjfile",    no_argument,       NULL, OPT_NOADJFILE  },
 		{ "localtime",    no_argument,       NULL, OPT_LOCALTIME  },
-		{ "badyear",      no_argument,       NULL, OPT_BADYEAR    },
 		{ "directisa",    no_argument,       NULL, OPT_DIRECTISA  },
 		{ "test",         no_argument,       NULL, OPT_TEST       },
 		{ "date",         required_argument, NULL, OPT_DATE       },
@@ -1527,9 +1468,6 @@ int main(int argc, char **argv)
 			break;
 		case OPT_LOCALTIME:
 			ctl.local_opt = 1;	/* --localtime */
-			break;
-		case OPT_BADYEAR:
-			ctl.badyear = 1;
 			break;
 		case OPT_DIRECTISA:
 			ctl.directisa = 1;

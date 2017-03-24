@@ -245,42 +245,6 @@ Display help text and exit.
 .RI "Override the default " @ADJTIME_PATH@ " file path."
 .
 .TP
-.B \-\-badyear
-Indicate that the Hardware Clock is incapable of storing years outside
-the range 1994-1999.  There is a problem in some BIOSes (almost all
-Award BIOSes made between 4/26/94 and 5/31/95) wherein they are unable
-to deal with years after 1999.  If one attempts to set the year-of-century
-value to something less than 94 (or 95 in some cases), the value that
-actually gets set is 94 (or 95).  Thus, if you have one of these machines,
-.B \%hwclock
-cannot set the year after 1999 and cannot use the value of the clock as
-the true time in the normal way.
-.sp
-To compensate for this (without your getting a BIOS update, which would
-definitely be preferable), always use
-.B \%\-\-badyear
-if you have one of these machines.  When
-.B \%hwclock
-knows it's working with a brain-damaged clock, it ignores the year part of
-the Hardware Clock value and instead tries to guess the year based on the
-last calibrated date in the adjtime file, by assuming that date is
-within the past year.  For this to work, you had better do a
-.B \%hwclock\ \-\-set
-or
-.B \%hwclock\ \-\-systohc
-at least once a year!
-.sp
-Though
-.B \%hwclock
-ignores the year value when it reads the Hardware Clock, it sets the
-year value when it sets the clock.  It sets it to 1995, 1996, 1997, or
-1998, whichever one has the same position in the leap year cycle as
-the true year.  That way, the Hardware Clock inserts leap days where
-they belong.  Again, if you let the Hardware Clock run for more than a
-year without setting it, this scheme could be defeated and you could
-end up losing a day.
-.
-.TP
 .BI \%\-\-date= date_string
 This option must be used with the
 .B \-\-set
@@ -294,7 +258,7 @@ functions, otherwise it is ignored.
 .B "hwclock\ \-\-predict\ \-\-date='2525-08-14\ 07:11:05'"
 .PP
 The argument must be in local time, even if you keep your Hardware Clock in
-UTC. See the
+UTC.  See the
 .B \%\-\-localtime
 option.  Therefore, the argument should not include any timezone information.
 It also should not be a relative time like "+5 minutes", because

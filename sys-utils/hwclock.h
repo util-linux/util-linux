@@ -44,7 +44,6 @@ struct hwclock_control {
 #endif
 		noadjfile:1,
 		local_opt:1,
-		badyear:1,
 		directisa:1,
 		testing:1,
 		systz:1,
