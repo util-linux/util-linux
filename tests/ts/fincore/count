@@ -29,7 +29,7 @@ function run_dd_test
     if [ "$bs" = 0 ]; then
 	touch $input
     else
-	$DD if=/dev/zero of=$input count=1 bs=$bs $flags
+	$DD if=/dev/zero of=$input count=1 bs=$bs $flags &> /dev/null
     fi
 
     $TS_CMD_FINCORE  --bytes --noheadings $input
@@ -48,8 +48,8 @@ function run_dd_dd_test
     input=$(make_input_name "$header")
     INPUT="${INPUT} ${input}"
 
-    $DD if=/dev/zero of=$input count=1 bs=$bs $flags0
-    $DD if=/dev/zero of=$input count=1 bs=$bs $flags1
+    $DD if=/dev/zero of=$input count=1 bs=$bs $flags0 &> /dev/null
+    $DD if=/dev/zero of=$input count=1 bs=$bs $flags1 &> /dev/null
 
     $TS_CMD_FINCORE --bytes --noheadings $input
 
