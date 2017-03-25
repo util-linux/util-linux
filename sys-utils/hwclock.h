@@ -32,12 +32,6 @@ struct hwclock_control {
 		hctosys:1,
 		utc:1,
 		systohc:1,
-#ifdef __alpha__
-		ARCconsole:1,
-		Jensen:1,
-		SRM:1,
-		funky_toy:1,
-#endif
 #ifdef __linux__
 		getepoch:1,
 		setepoch:1,
@@ -71,9 +65,6 @@ typedef int bool;
 extern int debug;
 extern unsigned long epoch_option;
 extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
-/* cmos.c */
-extern void set_cmos_epoch(const struct hwclock_control *ctl);
-extern void set_cmos_access(const struct hwclock_control *ctl);
 
 /* rtc.c */
 extern int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch, int silent);
