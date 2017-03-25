@@ -114,10 +114,8 @@ static int century_byte = 0;		/* 0: don't access a century byte
  *
  * TODO: optimize the access to CMOS by mlockall(MCL_CURRENT) and SCHED_FIFO
  */
-static unsigned long
-atomic(const char *name __attribute__ ((__unused__)),
-       unsigned long (*op) (unsigned long),
-       unsigned long arg)
+static unsigned long atomic(unsigned long (*op) (unsigned long),
+			    unsigned long arg)
 {
 	return (*op) (arg);
 }
@@ -235,12 +233,12 @@ static unsigned long cmos_set_time(unsigned long arg)
 
 static int hclock_read(unsigned long reg)
 {
-	return atomic("clock read", cmos_read, reg);
+	return atomic(cmos_read, reg);
 }
 
 static void hclock_set_time(const struct tm *tm)
 {
-	atomic("set time", cmos_set_time, (unsigned long)(tm));
+	atomic(cmos_set_time, (unsigned long)(tm));
 }
 
 static inline int cmos_clock_busy(void)
