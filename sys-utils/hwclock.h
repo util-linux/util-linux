@@ -67,7 +67,7 @@ extern unsigned long epoch_option;
 extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
 
 /* rtc.c */
-extern int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch, int silent);
+extern int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch);
 extern int set_epoch_rtc(const struct hwclock_control *ctl);
 
 extern void hwclock_exit(const struct hwclock_control *ctl, int status);

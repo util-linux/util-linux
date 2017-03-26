@@ -396,27 +396,23 @@ struct clock_ops *probe_for_rtc_clock(const struct hwclock_control *ctl)
 /*
  * Get the Hardware Clock epoch setting from the kernel.
  */
-int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch_p,
-		  int silent)
+int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch_p)
 {
 	int rtc_fd;
 
 	rtc_fd = open_rtc(ctl);
 	if (rtc_fd < 0) {
-		if (!silent) {
-			if (errno == ENOENT)
-				warnx(_
-				      ("To manipulate the epoch value in the kernel, we must "
-				       "access the Linux 'rtc' device driver via the device special "
-				       "file.  This file does not exist on this system."));
-			else
-				warn(_("cannot open rtc device"));
-		}
+		if (errno == ENOENT)
+			warnx(_
+			      ("To manipulate the epoch value in the kernel, we must "
+			       "access the Linux 'rtc' device driver via the device special "
+			       "file.  This file does not exist on this system."));
+		else
+			warn(_("cannot open rtc device"));
 		return 1;
 	}
 
 	if (ioctl(rtc_fd, RTC_EPOCH_READ, epoch_p) == -1) {
-		if (!silent)
 			warn(_("ioctl(RTC_EPOCH_READ) to %s failed"),
 				  rtc_dev_name);
 		return 1;

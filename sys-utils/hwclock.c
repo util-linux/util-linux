@@ -1190,7 +1190,7 @@ manipulate_epoch(const struct hwclock_control *ctl)
 	if (ctl->getepoch) {
 		unsigned long epoch;
 
-		if (get_epoch_rtc(ctl, &epoch, 0))
+		if (get_epoch_rtc(ctl, &epoch))
 			warnx(_
 			      ("Unable to get the epoch value from the kernel."));
 		else
