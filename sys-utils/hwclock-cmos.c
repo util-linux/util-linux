@@ -405,19 +405,18 @@ static int get_permissions_cmos(void)
 
 	rc = i386_iopl(3);
 	if (rc == IOPL_NOT_IMPLEMENTED) {
-		warnx(_("I failed to get permission because I didn't try."));
+		warnx(_("ISA port access is not implemented"));
 	} else if (rc != 0) {
 		rc = errno;
-		warn(_("unable to get I/O port access:  "
-		       "the iopl(3) call failed"));
+		warn(_("iopl() port access failed"));
 		if (rc == EPERM && geteuid())
-			warnx(_("Probably you need root privileges.\n"));
+			warnx(_("root privileges may be required"));
 	}
 	return rc ? 1 : 0;
 }
 
 static struct clock_ops cmos_interface = {
-	N_("Using direct I/O instructions to ISA clock."),
+	N_("Using direct ISA access to the clock"),
 	get_permissions_cmos,
 	read_hardware_clock_cmos,
 	set_hardware_clock_cmos,
