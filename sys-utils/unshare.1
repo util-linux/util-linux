@@ -14,7 +14,8 @@ run (default: /bin/sh).
 The namespaces can optionally be made persistent by bind mounting
 /proc/\fIpid\fR/ns/\fItype\fR files to a filesystem path and entered with
 .BR \%nsenter (1)
-even after the \fIprogram\fR terminates.
+even after the \fIprogram\fR terminates (except PID namespaces where
+permanently running init process is required).
 Once a persistent \%namespace is no longer needed, it can be unpersisted with
 .BR umount (8).
 See the \fBEXAMPLES\fR section for more details.
