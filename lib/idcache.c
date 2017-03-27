@@ -7,10 +7,6 @@
 #include "c.h"
 #include "idcache.h"
 
-#ifndef LOGIN_NAME_MAX
-#define LOGIN_NAME_MAX 256
-#endif
-
 struct identry *get_id(struct idcache *ic, unsigned long int id)
 {
 	struct identry *ent;

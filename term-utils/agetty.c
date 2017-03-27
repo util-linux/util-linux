@@ -1581,12 +1581,12 @@ static int process_netlink(void)
 	return changed;
 }
 
-static int wait_for_term_input(int fd)
+static int wait_for_term_input(int fd, char *prebuf, size_t prebufsz, size_t *readsz)
 {
 	char buffer[sizeof(struct inotify_event) + NAME_MAX + 1];
 	struct termios orig, nonc;
 	fd_set rfds;
-	int count, i;
+	int count;
 
 	/* Our aim here is to fall through if something fails
          * and not be stuck waiting. On failure assume we have input */
@@ -1645,11 +1645,11 @@ static int wait_for_term_input(int fd)
 
 			tcsetattr(fd, TCSANOW, &orig);
 
-			/* Reinject the bytes we read back into the buffer, usually just one byte */
-			for (i = 0; i < count; i++)
-				ioctl(fd, TIOCSTI, buffer + i);
+			if (count > 0 && prebuf && prebufsz) {
+				memcpy(prebuf, buffer, min(sizeof(buffer), prebufsz));
+				*readsz = count;
+			}
 
-			/* Have terminal input */
 			return 1;
 
 		} else if (netlink_fd >= 0 && FD_ISSET(netlink_fd, &rfds)) {
@@ -1718,14 +1718,15 @@ again:
 	if (op->flags & F_LOGINPAUSE) {
 		puts(_("[press ENTER to login]"));
 #ifdef AGETTY_RELOAD
-		if (!wait_for_term_input(STDIN_FILENO)) {
+		if (!wait_for_term_input(STDIN_FILENO, NULL, 0, NULL)) {
 			/* reload issue */
 			if (op->flags & F_VCONSOLE)
 				termio_clear(STDOUT_FILENO);
 			goto again;
 		}
-#endif
+#else
 		getc(stdin);
+#endif
 	}
 #ifdef KDGKBLED
 	if (!(op->flags & F_NOHINTS) && !op->autolog &&
@@ -1844,13 +1845,26 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 	*bp = '\0';
 
 	while (*logname == '\0') {
+		char prebuf[LOGIN_NAME_MAX] = { 0 };
+		size_t presz = 0, precur = 0;
 
 		/* Write issue file and prompt */
 		do_prompt(op, tp);
 
 #ifdef AGETTY_RELOAD
-		/* If asked to reprompt *before* terminal input arrives, then do so */
-		if (!wait_for_term_input(STDIN_FILENO)) {
+		/* If asked to reprompt *before* terminal input arrives, then do so.
+		 *
+		 * Note that wait_for_term_input() calls read() and the result
+		 * is stored to the 'prebuf'. We need this to avoid data lost
+		 * by terminal attributes reset (and return chars back to the
+		 * terminal by TIOCSTI is fragile (chars reorder)).
+		 *
+		 * The data from 'prebuf' are not printed to the terminal yet
+		 * (disabled ECHO in wait_for_term_input()).
+		 */
+		if (!wait_for_term_input(STDIN_FILENO,
+					 prebuf, sizeof(prebuf), &readsz)) {
+
 			if (op->flags & F_VCONSOLE)
 				termio_clear(STDOUT_FILENO);
 			continue;
@@ -1862,8 +1876,15 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 		while (cp->eol == '\0') {
 
 			char key;
+			int force_echo = 0;
 
-			if (read(STDIN_FILENO, &c, 1) < 1) {
+			/* use already read data from buffer */
+			if (presz && precur < presz) {
+				c = prebuf[precur++];
+				force_echo = 1;
+
+			/* read from terminal */
+			} else if (read(STDIN_FILENO, &c, 1) < 1) {
 
 				/* The terminal could be open with O_NONBLOCK when
 				 * -L (force CLOCAL) is specified...  */
@@ -1939,13 +1960,14 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 					break;
 				if ((size_t)(bp - logname) >= sizeof(logname) - 1)
 					log_err(_("%s: input overrun"), op->tty);
-				if ((tp->c_lflag & ECHO) == 0)
+				if ((tp->c_lflag & ECHO) == 0 || force_echo)
 					write_all(1, &c, 1);	/* echo the character */
 				*bp++ = ascval;			/* and store it */
 				break;
 			}
 		}
 	}
+
 #ifdef HAVE_WIDECHAR
 	if ((op->flags & (F_EIGHTBITS|F_UTF8)) == (F_EIGHTBITS|F_UTF8)) {
 		/* Check out UTF-8 multibyte characters */

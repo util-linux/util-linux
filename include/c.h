@@ -25,6 +25,10 @@
 # include <sys/sysmacros.h>     /* for major, minor */
 #endif
 
+#ifndef LOGIN_NAME_MAX
+# define LOGIN_NAME_MAX 256
+#endif
+
 /*
  * Compiler-specific stuff
  */
