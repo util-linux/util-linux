@@ -1863,7 +1863,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 		 * (disabled ECHO in wait_for_term_input()).
 		 */
 		if (!wait_for_term_input(STDIN_FILENO,
-					 prebuf, sizeof(prebuf), &readsz)) {
+					 prebuf, sizeof(prebuf), &presz)) {
 
 			if (op->flags & F_VCONSOLE)
 				termio_clear(STDOUT_FILENO);
