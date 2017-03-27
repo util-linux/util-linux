@@ -53,11 +53,13 @@ struct colinfo {
 enum {
 	COL_PAGES,
 	COL_SIZE,
-	COL_FILE
+	COL_FILE,
+	COL_RES
 };
 
 static struct colinfo infos[] = {
-	[COL_PAGES]  = { "PAGES",    1, SCOLS_FL_RIGHT, N_("number of memory page")},
+	[COL_PAGES]  = { "PAGES",    1, SCOLS_FL_RIGHT, N_("file data residend in memory in pages")},
+	[COL_RES]    = { "RES",      5, SCOLS_FL_RIGHT, N_("file data residend in memory in bytes")}, 
 	[COL_SIZE]   = { "SIZE",     5, SCOLS_FL_RIGHT, N_("size of the file")},
 	[COL_FILE]   = { "FILE",     4, 0, N_("file name")},
 };
@@ -129,6 +131,17 @@ static int add_output_data(struct fincore_control *ctl,
 			xasprintf(&tmp, "%jd",  (intmax_t) count_incore);
 			scols_line_refer_data(ln, i, tmp);
 			break;
+		case COL_RES:
+		{
+			uintmax_t res = (uintmax_t) count_incore * ctl->pagesize;
+
+			if (ctl->bytes)
+				xasprintf(&tmp, "%ju", res);
+			else
+				tmp = size_to_human_string(SIZE_SUFFIX_1LETTER, res);
+			scols_line_refer_data(ln, i, tmp);
+			break;
+		}
 		case COL_SIZE:
 			if (ctl->bytes)
 				xasprintf(&tmp, "%jd", (intmax_t) file_size);
@@ -327,6 +340,7 @@ int main(int argc, char ** argv)
 	}
 
 	if (!ncolumns) {
+		columns[ncolumns++] = COL_RES;
 		columns[ncolumns++] = COL_PAGES;
 		columns[ncolumns++] = COL_SIZE;
 		columns[ncolumns++] = COL_FILE;
