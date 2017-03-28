@@ -21,6 +21,7 @@
 /*  Changes by Travers Carter to make atomic hardlinking */
 
 #define _GNU_SOURCE
+#define PCRE2_CODE_UNIT_WIDTH 8
 #include <sys/types.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -31,11 +32,16 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <pcre2.h>
 
 #define NHASH	(1<<17)	/* Must be a power of 2! */
 #define NIOBUF	(1<<12)
 #define NAMELEN	4096
 #define NBUF	64
+
+pcre2_code *re;
+PCRE2_SPTR exclude_pattern;
+pcre2_match_data *match_data;
 
 struct _f;
 typedef struct _h {
@@ -99,12 +105,13 @@ void doexit(int i)
 
 void usage(char *prog)
 {
-  fprintf (stderr, "Usage: %s [-cnvhf] directories...\n", prog);
+  fprintf (stderr, "Usage: %s [-cnvhf] [-x pat] directories...\n", prog);
   fprintf (stderr, "  -c    When finding candidates for linking, compare only file contents.\n");
   fprintf (stderr, "  -n    Don't actually link anything, just report what would be done.\n");
   fprintf (stderr, "  -v    Print summary after hardlinking.\n");
   fprintf (stderr, "  -vv   Print every hardlinked file and bytes saved + summary.\n");
   fprintf (stderr, "  -f    Force hardlinking across filesystems.\n");
+  fprintf (stderr, "  -x pat Exclude files matching pattern.\n");
   fprintf (stderr, "  -h    Show help.\n");
   exit(255);
 }
@@ -328,8 +335,10 @@ int main(int argc, char **argv)
 {
   int ch;
   int i;
+  int errornumber;
+  PCRE2_SIZE erroroffset;
   dynstr nam1 = {NULL, 0};
-  while ((ch = getopt (argc, argv, "cnvhf")) != -1) {
+  while ((ch = getopt (argc, argv, "cnvhfx:")) != -1) {
     switch (ch) {
     case 'n':
       no_link++;
@@ -343,6 +352,9 @@ int main(int argc, char **argv)
     case 'f':
       force=1;
       break;
+    case 'x':
+    	exclude_pattern = (PCRE2_SPTR)optarg;
+    	break;
     case 'h':
     default:
       usage(argv[0]);
@@ -350,6 +362,22 @@ int main(int argc, char **argv)
   }
   if (optind >= argc)
     usage(argv[0]);
+  if (exclude_pattern) {
+    re = pcre2_compile(
+          exclude_pattern,       /* the pattern */
+          PCRE2_ZERO_TERMINATED, /* indicates pattern is zero-terminate */
+          0,                     /* default options */
+          &errornumber,
+          &erroroffset,
+          NULL);                 /* use default compile context */
+    if (!re) {
+      PCRE2_UCHAR buffer[256];
+      pcre2_get_error_message(errornumber, buffer, sizeof(buffer));
+      fprintf(stderr, "pattern error at offset %d: %s\n", (int)erroroffset, buffer);
+      usage(argv[0]);
+    }
+    match_data = pcre2_match_data_create_from_pattern(re, NULL);
+  }
   for (i = optind; i < argc; i++)
     rf(argv[i]);
   while (dirs) {
@@ -371,16 +399,23 @@ int main(int argc, char **argv)
       if (!di->d_name[0])
         continue;
       if (di->d_name[0] == '.') {
-        char *q;
-        if (!di->d_name[1] || !strcmp (di->d_name, "..") || !strncmp (di->d_name, ".in.", 4))
+        if (!di->d_name[1] || !strcmp(di->d_name, ".."))
           continue;
-        q = strrchr (di->d_name, '.');
-        if (q && strlen (q) == 7 && q != di->d_name) {
+      }
+      if (re && pcre2_match(
+                  re,                 /* compiled regex */
+                  (PCRE2_SPTR)di->d_name,
+                  strlen(di->d_name),
+                  0,                  /* start at offset 0 */
+                  0,                  /* default options */
+                  match_data,         /* block for storing the result */
+                  NULL)              /* use default match context */
+                        >= 0) {
+        if (verbose) {
           nam1.buf[nam1baselen] = 0;
-          if (verbose)
-            fprintf(stderr, "Skipping %s%s\n", nam1.buf, di->d_name);
-          continue;
+          fprintf(stderr,"Skipping %s%s\n", nam1.buf, di->d_name);
         }
+        continue; 
       }
       {
         size_t subdirlen;
