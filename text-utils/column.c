@@ -76,6 +76,7 @@ struct column_control {
 	const char *tab_coltrunc;	/* --table-trunc */
 	const char *tab_colnoextrem;	/* --table-noextreme */
 	const char *tab_colwrap;	/* --table-wrap */
+	const char *tab_colhide;	/* --table-hide */
 
 	wchar_t *input_separator;
 	const char *output_separator;
@@ -265,6 +266,9 @@ static void modify_table(struct column_control *ctl)
 		apply_columnflag_from_list(ctl, ctl->tab_colwrap,
 				SCOLS_FL_WRAP , _("failed to parse --table-wrap list"));
 
+	if (ctl->tab_colhide)
+		apply_columnflag_from_list(ctl, ctl->tab_colhide,
+				SCOLS_FL_HIDDEN , _("failed to parse --table-hide list"));
 }
 
 static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
@@ -441,6 +445,7 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(_(" -T, --table-truncate <columns>   truncate text in the columns when necessary\n"), out);
 	fputs(_(" -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"), out);
 	fputs(_(" -W, --table-wrap <columns>       wrap text in the columns when necessary\n"), out);
+	fputs(_(" -H, --table-hide <columns>       don't print the columns\n"), out);
 	fputs(_(" -n, --table-name <name>          table name for JSON output\n"), out);
 	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
 	fputs(_(" -o, --output-separator <string>  columns separator for table output\n"
@@ -480,6 +485,7 @@ int main(int argc, char **argv)
 		{ "table-truncate",      required_argument, NULL, 'T' },
 		{ "table-noextreme",     required_argument, NULL, 'E' },
 		{ "table-wrap",          required_argument, NULL, 'W' },
+		{ "table-hide",          required_argument, NULL, 'H' },
 		{ "table-name",          required_argument, NULL, 'n' },
 		{ "version",             no_argument,       NULL, 'V' },
 		{ NULL,	0, NULL, 0 },
@@ -500,7 +506,7 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "hVc:Jn:N:R:s:txo:T:E:W:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hVc:Jn:N:R:s:txo:T:E:W:H:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -517,6 +523,9 @@ int main(int argc, char **argv)
 			break;
 		case 'N':
 			ctl.tab_colnames = split_or_error(optarg, _("failed to parse column names"));
+			break;
+		case 'H':
+			ctl.tab_colhide = optarg;
 			break;
 		case 'h':
 			usage(EXIT_SUCCESS);
