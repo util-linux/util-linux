@@ -77,6 +77,7 @@ struct column_control {
 	const char *tab_colnoextrem;	/* --table-noextreme */
 	const char *tab_colwrap;	/* --table-wrap */
 	const char *tab_colhide;	/* --table-hide */
+	const char *tab_order;	/* --table-order */
 
 	wchar_t *input_separator;
 	const char *output_separator;
@@ -246,6 +247,28 @@ static void apply_columnflag_from_list(struct column_control *ctl, const char *l
 	strv_free(all);
 }
 
+static void reorder_table(struct column_control *ctl)
+{
+	struct libscols_column **wanted, *last = NULL;
+	size_t i, count = 0;
+	size_t ncols = scols_table_get_ncols(ctl->tab);
+	char **order = split_or_error(ctl->tab_order, _("failed to parse --table-order list"));
+	char **one;
+
+	wanted = xcalloc(ncols, sizeof(struct libscols_column *));
+
+	STRV_FOREACH(one, order) {
+		struct libscols_column *cl = string_to_column(ctl, *one);
+		if (cl)
+			wanted[count++] = cl;
+	}
+
+	for (i = 0; i < count; i++) {
+		scols_table_move_column(ctl->tab, last, wanted[i]);
+		last = wanted[i];
+	}
+}
+
 static void modify_table(struct column_control *ctl)
 {
 	scols_table_set_termwidth(ctl->tab, ctl->termwidth);
@@ -269,7 +292,13 @@ static void modify_table(struct column_control *ctl)
 	if (ctl->tab_colhide)
 		apply_columnflag_from_list(ctl, ctl->tab_colhide,
 				SCOLS_FL_HIDDEN , _("failed to parse --table-hide list"));
+
+
+	/* This must be the last step! */
+	if (ctl->tab_order)
+		reorder_table(ctl);
 }
+
 
 static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
 {
@@ -446,6 +475,7 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(_(" -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"), out);
 	fputs(_(" -W, --table-wrap <columns>       wrap text in the columns when necessary\n"), out);
 	fputs(_(" -H, --table-hide <columns>       don't print the columns\n"), out);
+	fputs(_(" -O, --table-order <columns>      specify order of output columns\n"), out);
 	fputs(_(" -n, --table-name <name>          table name for JSON output\n"), out);
 	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
 	fputs(_(" -o, --output-separator <string>  columns separator for table output\n"
@@ -486,6 +516,7 @@ int main(int argc, char **argv)
 		{ "table-noextreme",     required_argument, NULL, 'E' },
 		{ "table-wrap",          required_argument, NULL, 'W' },
 		{ "table-hide",          required_argument, NULL, 'H' },
+		{ "table-order",         required_argument, NULL, 'O' },
 		{ "table-name",          required_argument, NULL, 'n' },
 		{ "version",             no_argument,       NULL, 'V' },
 		{ NULL,	0, NULL, 0 },
@@ -506,7 +537,7 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "hVc:Jn:N:R:s:txo:T:E:W:H:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hVc:Jn:N:R:s:txo:T:E:W:H:O:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -546,6 +577,9 @@ int main(int argc, char **argv)
 			free(ctl.input_separator);
 			ctl.input_separator = mbs_to_wcs(optarg);
 			ctl.greedy = 0;
+			break;
+		case 'O':
+			ctl.tab_order = optarg;
 			break;
 		case 'o':
 			ctl.output_separator = optarg;
