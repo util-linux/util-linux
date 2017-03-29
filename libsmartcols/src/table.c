@@ -252,6 +252,38 @@ int scols_table_remove_columns(struct libscols_table *tb)
 }
 
 /**
+ * scols_table_move_column:
+ * @tb: table
+ * @pre: column before the column
+ * @cl: colum to move
+ *
+ * Move the @cl behind @pre. The the @pre is NULL then the @col is the fist
+ * column in the table.
+ *
+ * Returns: 0, a negative number in case of an error.
+ */
+int scols_table_move_column(struct libscols_table *tb,
+			    struct libscols_column *pre,
+			    struct libscols_column *cl)
+{
+	struct list_head *head;
+	struct libscols_iter itr;
+	size_t n = 0;
+
+	list_del_init(&cl->cl_columns);		/* remove from old position */
+
+	head = pre ? &pre->cl_columns : &tb->tb_columns;
+	list_add(&cl->cl_columns, head);	/* add to the new place */
+
+	/* fix seq. numbers */
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+	while (scols_table_next_column(tb, &itr, &cl) == 0)
+		cl->seqnum = n++;
+
+	return 0;
+}
+
+/**
  * scols_table_new_column:
  * @tb: table
  * @name: column header

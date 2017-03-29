@@ -244,6 +244,7 @@ extern void scols_unref_table(struct libscols_table *tb);
 extern int scols_table_add_column(struct libscols_table *tb, struct libscols_column *cl);
 extern int scols_table_remove_column(struct libscols_table *tb, struct libscols_column *cl);
 extern int scols_table_remove_columns(struct libscols_table *tb);
+extern int scols_table_move_column(struct libscols_table *tb, struct libscols_column *pre, struct libscols_column *cl);
 extern struct libscols_column *scols_table_new_column(struct libscols_table *tb, const char *name, double whint, int flags);
 extern int scols_table_next_column(struct libscols_table *tb, struct libscols_iter *itr, struct libscols_column **cl);
 extern const char *scols_table_get_column_separator(const struct libscols_table *tb);

@@ -139,6 +139,7 @@ scols_table_is_nolinesep
 scols_table_is_nowrap
 scols_table_is_raw
 scols_table_is_tree
+scols_table_move_column
 scols_table_new_column
 scols_table_new_line
 scols_table_next_column
