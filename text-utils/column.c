@@ -75,6 +75,7 @@ struct column_control {
 	const char *tab_colright;	/* --table-right */
 	const char *tab_coltrunc;	/* --table-trunc */
 	const char *tab_colnoextrem;	/* --table-noextreme */
+	const char *tab_colwrap;	/* --table-wrap */
 
 	wchar_t *input_separator;
 	const char *output_separator;
@@ -259,6 +260,11 @@ static void modify_table(struct column_control *ctl)
 	if (ctl->tab_colnoextrem)
 		apply_columnflag_from_list(ctl, ctl->tab_colnoextrem,
 				SCOLS_FL_NOEXTREMES , _("failed to parse --table-noextreme list"));
+
+	if (ctl->tab_colwrap)
+		apply_columnflag_from_list(ctl, ctl->tab_colwrap,
+				SCOLS_FL_WRAP , _("failed to parse --table-wrap list"));
+
 }
 
 static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
@@ -433,7 +439,8 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(_(" -N, --table-columns <names>      comma separated columns names\n"), out);
 	fputs(_(" -R, --table-right <columns>      right align text in these columns\n"), out);
 	fputs(_(" -T, --table-truncate <columns>   truncate text in the columns when necessary\n"), out);
-	fputs(_(" -E, --table-noextreme <column>   don't count long text from the columns to column width\n"), out);
+	fputs(_(" -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"), out);
+	fputs(_(" -W, --table-wrap <columns>       wrap text in the columns when necessary\n"), out);
 	fputs(_(" -n, --table-name <name>          table name for JSON output\n"), out);
 	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
 	fputs(_(" -o, --output-separator <string>  columns separator for table output\n"
@@ -472,6 +479,7 @@ int main(int argc, char **argv)
 		{ "table-right",         required_argument, NULL, 'R' },
 		{ "table-truncate",      required_argument, NULL, 'T' },
 		{ "table-noextreme",     required_argument, NULL, 'E' },
+		{ "table-wrap",          required_argument, NULL, 'W' },
 		{ "table-name",          required_argument, NULL, 'n' },
 		{ "version",             no_argument,       NULL, 'V' },
 		{ NULL,	0, NULL, 0 },
@@ -492,7 +500,7 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "hVc:Jn:N:R:s:txo:T:E:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hVc:Jn:N:R:s:txo:T:E:W:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -535,6 +543,9 @@ int main(int argc, char **argv)
 			break;
 		case 't':
 			ctl.mode = COLUMN_MODE_TABLE;
+			break;
+		case 'W':
+			ctl.tab_colwrap = optarg;
 			break;
 		case 'x':
 			ctl.mode = COLUMN_MODE_FILLROWS;
