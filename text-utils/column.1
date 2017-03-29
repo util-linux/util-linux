@@ -71,6 +71,12 @@ Specify columns where is allowed to truncate text when necessary, otherwise
 very long table entries may be printed on multiple lines. The \fIcolumns\fP is
 comma separated list of the column names (see \fB\-\-table-columns\fP) or
 column number.
+.IP "\fB\-E, \-\-table-noextreme\fP \fIcolumns\fP"
+Specify columns where is possible to ignore unusually long (longer than
+average) cells when calculate column width.  The option has impact to the width
+calculation, but the printed text is not affected.  The \fIcolumns\fP is
+comma separated list of the column names (see \fB\-\-table-columns\fP) or
+column number.
 .IP "\fB\-n, \-\-table-name\fP \fIname\fP"
 Specify the table name used for JSON output. The defaout is "table".
 .IP "\fB\-x, \-\-fillrows\fP"

@@ -72,8 +72,9 @@ struct column_control {
 
 	char **tab_colnames;		/* array with column names */
 	const char *tab_name;		/* table name */
-	const char *tab_colright;	/* non-parsed --table-right */
-	const char *tab_coltrunc;	/* non-parsed --table-trunc */
+	const char *tab_colright;	/* --table-right */
+	const char *tab_coltrunc;	/* --table-trunc */
+	const char *tab_colnoextrem;	/* --table-noextreme */
 
 	wchar_t *input_separator;
 	const char *output_separator;
@@ -247,15 +248,17 @@ static void modify_table(struct column_control *ctl)
 {
 	scols_table_set_termwidth(ctl->tab, ctl->termwidth);
 
-	/* align text in columns to right */
 	if (ctl->tab_colright)
 		apply_columnflag_from_list(ctl, ctl->tab_colright,
 				SCOLS_FL_RIGHT, _("failed to parse --table-right list"));
 
-	/* truncate text in columns */
 	if (ctl->tab_coltrunc)
 		apply_columnflag_from_list(ctl, ctl->tab_coltrunc,
 				SCOLS_FL_TRUNC , _("failed to parse --table-trunc list"));
+
+	if (ctl->tab_colnoextrem)
+		apply_columnflag_from_list(ctl, ctl->tab_colnoextrem,
+				SCOLS_FL_NOEXTREMES , _("failed to parse --table-noextreme list"));
 }
 
 static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
@@ -429,7 +432,8 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(_(" -t, --table                      create a table\n"), out);
 	fputs(_(" -N, --table-columns <names>      comma separated columns names\n"), out);
 	fputs(_(" -R, --table-right <columns>      right align text in these columns\n"), out);
-	fputs(_(" -T, --table-truncate <columns>   truncate text in these columns when necessary\n"), out);
+	fputs(_(" -T, --table-truncate <columns>   truncate text in the columns when necessary\n"), out);
+	fputs(_(" -E, --table-noextreme <column>   don't count long text from the columns to column width\n"), out);
 	fputs(_(" -n, --table-name <name>          table name for JSON output\n"), out);
 	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
 	fputs(_(" -o, --output-separator <string>  columns separator for table output\n"
@@ -467,6 +471,7 @@ int main(int argc, char **argv)
 		{ "table-columns",       required_argument, NULL, 'N' },
 		{ "table-right",         required_argument, NULL, 'R' },
 		{ "table-truncate",      required_argument, NULL, 'T' },
+		{ "table-noextreme",     required_argument, NULL, 'E' },
 		{ "table-name",          required_argument, NULL, 'n' },
 		{ "version",             no_argument,       NULL, 'V' },
 		{ NULL,	0, NULL, 0 },
@@ -487,11 +492,14 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "hVc:Jn:N:R:s:txo:T:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hVc:Jn:N:R:s:txo:T:E:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch(c) {
+		case 'E':
+			ctl.tab_colnoextrem = optarg;
+			break;
 		case 'J':
 			ctl.json = 1;
 			ctl.mode = COLUMN_MODE_TABLE;
