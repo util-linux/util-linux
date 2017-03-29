@@ -268,7 +268,6 @@ static void undump(FILE *in, FILE *out)
 {
 	struct utmpx ut;
 	char s_addr[INET6_ADDRSTRLEN + 1], s_time[29], *linestart, *line;
-	int count = 0;
 
 	linestart = xmalloc(1024 * sizeof(*linestart));
 	s_time[28] = 0;
@@ -293,8 +292,6 @@ static void undump(FILE *in, FILE *out)
 		ut.ut_tv.tv_usec = strtousec(s_time);
 
 		ignore_result( fwrite(&ut, sizeof(ut), 1, out) );
-
-		++count;
 	}
 
 	free(linestart);
