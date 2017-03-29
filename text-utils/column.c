@@ -412,8 +412,8 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -J, --json                       use JSON output format for table\n"), out);
 	fputs(_(" -t, --table                      create a table\n"), out);
-	fputs(_(" -N, --table-colnames <names>     comma separated columns names\n"), out);
-	fputs(_(" -R, --table-colright <columns>   right align text in these columns\n"), out);
+	fputs(_(" -N, --table-columns <names>      comma separated columns names\n"), out);
+	fputs(_(" -R, --table-right <columns>      right align text in these columns\n"), out);
 	fputs(_(" -n, --table-name <name>          table name for JSON output\n"), out);
 	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
 	fputs(_(" -o, --output-separator <string>  columns separator for table output\n"
@@ -449,8 +449,8 @@ int main(int argc, char **argv)
 		{ "output-width",        required_argument, NULL, 'c' },
 		{ "separator",           required_argument, NULL, 's' },
 		{ "table",               no_argument,       NULL, 't' },
-		{ "table-colnames",      required_argument, NULL, 'N' },
-		{ "table-colright",      required_argument, NULL, 'R' },
+		{ "table-columns",       required_argument, NULL, 'N' },
+		{ "table-right",         required_argument, NULL, 'R' },
 		{ "table-name",          required_argument, NULL, 'n' },
 		{ "version",             no_argument,       NULL, 'V' },
 		{ NULL,	0, NULL, 0 },
