@@ -567,7 +567,7 @@ int main(int argc, char **argv)
 	argv += optind;
 
 	if (ctl.tab_colnames == NULL && ctl.json)
-		errx(EXIT_FAILURE, _("option --table-colnames required for --json"));
+		errx(EXIT_FAILURE, _("option --table-columns required for --json"));
 
 	if (!*argv)
 		eval += read_input(&ctl, stdin);
