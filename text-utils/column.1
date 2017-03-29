@@ -40,17 +40,33 @@ column \- columnate lists
 .SH DESCRIPTION
 The
 .B column
-utility formats its input into multiple columns.  By default, columns
-are filled before rows.  Input is taken from \fIfile\fR, or
-otherwise from standard input.  Empty lines are ignored.
+utility formats its input into multiple columns.  The util support three modes:
+.TP
+.BR "columns are filled before rows"
+This is the default mode (required by backward compatibility).
+.TP
+.BR "rows are filed before columns"
+This mode is enabled by option \fB-x, \-\-fillrows\fP
+.TP
+.BR "table"
+Determine the number of columns the input contains and create a table.  This
+mode is enabled by option \fB-t, \-\-table\fP and columns formatting is
+possible to modify by \fB\-\-table-*\fP options.  Use this mode if not sure.
+.PP
+Input is taken from \fIfile\fR, or otherwise from standard input.  Empty lines
+are ignored.
 .PP
 .SH OPTIONS
+The argument \fIcolumns\fP for \fB\-\-table-*\fP options is comma separated
+list of the column names as defined by \fB\-\-table-columns\fP or it's column
+number in order as specified by input. It's possible to mix names and numbers.
+.PP
 .IP "\fB\-J, \-\-json\fP"
 Use JSON output format to print the table, the option
-\fB\-\-table\-colnames\fP is required and the option \fB\-\-table\-name\fP is recommended.
+\fB\-\-table\-columns\fP is required and the option \fB\-\-table\-name\fP is recommended.
 .IP "\fB\-c, \-\-output\-width\fP \fIwidth\fP"
 Output is formatted to a width specified as number of characters. The original
-name of this option is --columns; this name deprecated since v2.30.
+name of this option is --columns; this name is deprecated since v2.30.
 .IP "\fB\-o, \-\-output\-separator\fP \fIstring\fP"
 Specify the columns delimiter for table output (default is two spaces).
 .IP "\fB\-s, \-\-separator\fP \fIseparators\fP"
@@ -64,31 +80,24 @@ Table output is useful for pretty-printing.
 Specify the columns names by comma separated list of names. The names are used
 for the table header or to addres column in option arguments.
 .IP "\fB\-R, \-\-table-right\fP \fIcolumns\fP"
-Right align text in the specified columns.  The \fIcolumns\fP is comma separated
-list of the column names (see \fB\-\-table-columns\fP) or column number.
+Right align text in the specified columns.
 .IP "\fB\-T, \-\-table-truncate\fP \fIcolumns\fP"
 Specify columns where is allowed to truncate text when necessary, otherwise
-very long table entries may be printed on multiple lines. The \fIcolumns\fP is
-comma separated list of the column names (see \fB\-\-table-columns\fP) or
-column number.
+very long table entries may be printed on multiple lines.
 .IP "\fB\-E, \-\-table-noextreme\fP \fIcolumns\fP"
 Specify columns where is possible to ignore unusually long (longer than
 average) cells when calculate column width.  The option has impact to the width
-calculation, but the printed text is not affected.  The \fIcolumns\fP is
-comma separated list of the column names (see \fB\-\-table-columns\fP) or
-column number.
+calculation, but the printed text is not affected.
 .IP "\fB\-W, \-\-table-wrap\fP \fIcolumns\fP"
 Specify columns where is possible to use multi-line cell for long text when
-necessary.  The \fIcolumns\fP is comma separated list of the column names (see
-\fB\-\-table-columns\fP) or column number.
+necessary.
 .IP "\fB\-H, \-\-table-hide\fP \fIcolumns\fP"
-Don't print specified columns.  The \fIcolumns\fP is comma separated list of
-the column names (see \fB\-\-table-columns\fP) or column number.
+Don't print specified columns.
 .IP "\fB\-O, \-\-table-order\fP \fIcolumns\fP"
-Specify columns order on output.  The \fIcolumns\fP is comma separated list of
-the column names (see \fB\-\-table-columns\fP) or column number.
+Specify columns order on output.
 .IP "\fB\-n, \-\-table-name\fP \fIname\fP"
 Specify the table name used for JSON output. The defaout is "table".
+.PP
 .IP "\fB\-x, \-\-fillrows\fP"
 Fill rows before filling columns.
 .IP "\fB\-V\fR, \fB\-\-version\fR"
@@ -100,7 +109,7 @@ The environment variable \fBCOLUMNS\fR is used to determine the size of
 the screen if no other information is available.
 .SH EXAMPLES
 .nf
-.B sed 's/#.*//' /etc/fstab | column -t
+.B sed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ --table-right PASS,FREQ
 .nf
 .SH BUGS
 Version 2.23 changed the
