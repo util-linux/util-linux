@@ -73,6 +73,7 @@ struct column_control {
 	char **tab_colnames;		/* array with column names */
 	const char *tab_name;		/* table name */
 	const char *tab_colright;	/* non-parsed --table-right */
+	const char *tab_coltrunc;	/* non-parsed --table-trunc */
 
 	wchar_t *input_separator;
 	const char *output_separator;
@@ -220,6 +221,7 @@ static struct libscols_column *string_to_column(struct column_control *ctl, cons
 	return scols_table_get_column(ctl->tab, colnum);
 }
 
+
 static int column_set_flag(struct libscols_column *cl, int fl)
 {
 	int cur = scols_column_get_flags(cl);
@@ -227,20 +229,33 @@ static int column_set_flag(struct libscols_column *cl, int fl)
 	return scols_column_set_flags(cl, cur | fl);
 }
 
+static void apply_columnflag_from_list(struct column_control *ctl, const char *list,
+					 int flag, const char *errmsg)
+{
+	char **all = split_or_error(list, errmsg);
+	char **one;
+
+	STRV_FOREACH(one, all) {
+		struct libscols_column *cl = string_to_column(ctl, *one);
+		if (cl)
+			column_set_flag(cl, flag);
+	}
+	strv_free(all);
+}
+
 static void modify_table(struct column_control *ctl)
 {
-	/* align text in columns to right */
-	if (ctl->tab_colright) {
-		char **allright = split_or_error(ctl->tab_colright, _("failed to parse --table-colright list"));
-		char **right;
+	scols_table_set_termwidth(ctl->tab, ctl->termwidth);
 
-		STRV_FOREACH(right, allright) {
-			struct libscols_column *cl = string_to_column(ctl, *right);
-			if (cl)
-				column_set_flag(cl, SCOLS_FL_RIGHT);
-		}
-		strv_free(allright);
-	}
+	/* align text in columns to right */
+	if (ctl->tab_colright)
+		apply_columnflag_from_list(ctl, ctl->tab_colright,
+				SCOLS_FL_RIGHT, _("failed to parse --table-right list"));
+
+	/* truncate text in columns */
+	if (ctl->tab_coltrunc)
+		apply_columnflag_from_list(ctl, ctl->tab_coltrunc,
+				SCOLS_FL_TRUNC , _("failed to parse --table-trunc list"));
 }
 
 static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
@@ -414,6 +429,7 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(_(" -t, --table                      create a table\n"), out);
 	fputs(_(" -N, --table-columns <names>      comma separated columns names\n"), out);
 	fputs(_(" -R, --table-right <columns>      right align text in these columns\n"), out);
+	fputs(_(" -T, --table-truncate <columns>   truncate text in these columns when necessary\n"), out);
 	fputs(_(" -n, --table-name <name>          table name for JSON output\n"), out);
 	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
 	fputs(_(" -o, --output-separator <string>  columns separator for table output\n"
@@ -432,7 +448,6 @@ int main(int argc, char **argv)
 {
 	struct column_control ctl = {
 		.mode = COLUMN_MODE_FILLCOLS,
-		.termwidth = 80,
 		.greedy = 1
 	};
 
@@ -451,6 +466,7 @@ int main(int argc, char **argv)
 		{ "table",               no_argument,       NULL, 't' },
 		{ "table-columns",       required_argument, NULL, 'N' },
 		{ "table-right",         required_argument, NULL, 'R' },
+		{ "table-truncate",      required_argument, NULL, 'T' },
 		{ "table-name",          required_argument, NULL, 'n' },
 		{ "version",             no_argument,       NULL, 'V' },
 		{ NULL,	0, NULL, 0 },
@@ -471,7 +487,7 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "hVc:Jn:N:R:s:txo:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hVc:Jn:N:R:s:txo:T:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -497,6 +513,9 @@ int main(int argc, char **argv)
 			break;
 		case 'R':
 			ctl.tab_colright = optarg;
+			break;
+		case 'T':
+			ctl.tab_coltrunc = optarg;
 			break;
 		case 's':
 			free(ctl.input_separator);
