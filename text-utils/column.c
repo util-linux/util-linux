@@ -70,14 +70,15 @@ struct column_control {
 
 	struct libscols_table *tab;
 
-	char **tab_colnames;		/* array with column names */
-	const char *tab_name;		/* table name */
+	char **tab_colnames;	/* array with column names */
+	const char *tab_name;	/* table name */
+	const char *tab_order;	/* --table-order */
+
 	const char *tab_colright;	/* --table-right */
 	const char *tab_coltrunc;	/* --table-trunc */
 	const char *tab_colnoextrem;	/* --table-noextreme */
 	const char *tab_colwrap;	/* --table-wrap */
 	const char *tab_colhide;	/* --table-hide */
-	const char *tab_order;	/* --table-order */
 
 	wchar_t *input_separator;
 	const char *output_separator;
@@ -467,21 +468,23 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(_("Columnate lists.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -J, --json                       use JSON output format for table\n"), out);
 	fputs(_(" -t, --table                      create a table\n"), out);
+	fputs(_(" -n, --table-name <name>          table name for JSON output\n"), out);
+	fputs(_(" -O, --table-order <columns>      specify order of output columns\n"), out);
 	fputs(_(" -N, --table-columns <names>      comma separated columns names\n"), out);
+	fputs(_(" -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"), out);
+	fputs(_(" -H, --table-hide <columns>       don't print the columns\n"), out);
 	fputs(_(" -R, --table-right <columns>      right align text in these columns\n"), out);
 	fputs(_(" -T, --table-truncate <columns>   truncate text in the columns when necessary\n"), out);
-	fputs(_(" -E, --table-noextreme <columns>  don't count long text from the columns to column width\n"), out);
 	fputs(_(" -W, --table-wrap <columns>       wrap text in the columns when necessary\n"), out);
-	fputs(_(" -H, --table-hide <columns>       don't print the columns\n"), out);
-	fputs(_(" -O, --table-order <columns>      specify order of output columns\n"), out);
-	fputs(_(" -n, --table-name <name>          table name for JSON output\n"), out);
-	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
-	fputs(_(" -o, --output-separator <string>  columns separator for table output\n"
-		"                                    (default is two spaces)\n"), out);
+	fputs(_(" -J, --json                       use JSON output format for table\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -c, --output-width <width>       width of output in number of characters\n"), out);
+	fputs(_(" -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"), out);
+	fputs(_(" -s, --separator <string>         possible table delimiters\n"), out);
 	fputs(_(" -x, --fillrows                   fill rows before columns\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -503,21 +506,21 @@ int main(int argc, char **argv)
 	static const struct option longopts[] =
 	{
 		{ "columns",             required_argument, NULL, 'c' }, /* deprecated */
-		{ "json",                no_argument,       NULL, 'J' },
 		{ "fillrows",            no_argument,       NULL, 'x' },
 		{ "help",                no_argument,       NULL, 'h' },
+		{ "json",                no_argument,       NULL, 'J' },
 		{ "output-separator",    required_argument, NULL, 'o' },
 		{ "output-width",        required_argument, NULL, 'c' },
 		{ "separator",           required_argument, NULL, 's' },
 		{ "table",               no_argument,       NULL, 't' },
 		{ "table-columns",       required_argument, NULL, 'N' },
+		{ "table-hide",          required_argument, NULL, 'H' },
+		{ "table-name",          required_argument, NULL, 'n' },
+		{ "table-noextreme",     required_argument, NULL, 'E' },
+		{ "table-order",         required_argument, NULL, 'O' },
 		{ "table-right",         required_argument, NULL, 'R' },
 		{ "table-truncate",      required_argument, NULL, 'T' },
-		{ "table-noextreme",     required_argument, NULL, 'E' },
 		{ "table-wrap",          required_argument, NULL, 'W' },
-		{ "table-hide",          required_argument, NULL, 'H' },
-		{ "table-order",         required_argument, NULL, 'O' },
-		{ "table-name",          required_argument, NULL, 'n' },
 		{ "version",             no_argument,       NULL, 'V' },
 		{ NULL,	0, NULL, 0 },
 	};
@@ -537,23 +540,16 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "hVc:Jn:N:R:s:txo:T:E:W:H:O:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "c:E:H:hJN:n:O:o:R:s:T:tVW:x", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch(c) {
+		case 'c':
+			ctl.termwidth = strtou32_or_err(optarg, _("invalid columns argument"));
+			break;
 		case 'E':
 			ctl.tab_colnoextrem = optarg;
-			break;
-		case 'J':
-			ctl.json = 1;
-			ctl.mode = COLUMN_MODE_TABLE;
-			break;
-		case 'n':
-			ctl.tab_name = optarg;
-			break;
-		case 'N':
-			ctl.tab_colnames = split_or_error(optarg, _("failed to parse column names"));
 			break;
 		case 'H':
 			ctl.tab_colhide = optarg;
@@ -561,22 +557,15 @@ int main(int argc, char **argv)
 		case 'h':
 			usage(EXIT_SUCCESS);
 			break;
-		case 'V':
-			printf(UTIL_LINUX_VERSION);
-			return EXIT_SUCCESS;
-		case 'c':
-			ctl.termwidth = strtou32_or_err(optarg, _("invalid columns argument"));
+		case 'J':
+			ctl.json = 1;
+			ctl.mode = COLUMN_MODE_TABLE;
 			break;
-		case 'R':
-			ctl.tab_colright = optarg;
+		case 'N':
+			ctl.tab_colnames = split_or_error(optarg, _("failed to parse column names"));
 			break;
-		case 'T':
-			ctl.tab_coltrunc = optarg;
-			break;
-		case 's':
-			free(ctl.input_separator);
-			ctl.input_separator = mbs_to_wcs(optarg);
-			ctl.greedy = 0;
+		case 'n':
+			ctl.tab_name = optarg;
 			break;
 		case 'O':
 			ctl.tab_order = optarg;
@@ -584,9 +573,23 @@ int main(int argc, char **argv)
 		case 'o':
 			ctl.output_separator = optarg;
 			break;
+		case 'R':
+			ctl.tab_colright = optarg;
+			break;
+		case 's':
+			free(ctl.input_separator);
+			ctl.input_separator = mbs_to_wcs(optarg);
+			ctl.greedy = 0;
+			break;
+		case 'T':
+			ctl.tab_coltrunc = optarg;
+			break;
 		case 't':
 			ctl.mode = COLUMN_MODE_TABLE;
 			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		case 'W':
 			ctl.tab_colwrap = optarg;
 			break;
@@ -599,6 +602,12 @@ int main(int argc, char **argv)
 	}
 	argc -= optind;
 	argv += optind;
+
+	if (ctl.mode != COLUMN_MODE_TABLE
+	    && (ctl.tab_order || ctl.tab_name || ctl.tab_colwrap ||
+		ctl.tab_colhide || ctl.tab_coltrunc || ctl.tab_colnoextrem ||
+		ctl.tab_colright || ctl.tab_colnames))
+		errx(EXIT_FAILURE, _("option --table required for all --table-*"));
 
 	if (ctl.tab_colnames == NULL && ctl.json)
 		errx(EXIT_FAILURE, _("option --table-columns required for --json"));
