@@ -359,8 +359,12 @@ static char *get_mm_stat(struct zram *z, size_t idx, int bytes)
 		str = sysfs_strdup(sysfs, "mm_stat");
 		if (str) {
 			z->mm_stat = strv_split(str, " ");
-			if (strv_length(z->mm_stat) < ARRAY_SIZE(mm_stat_names))
-				errx(EXIT_FAILURE, _("Failed to parse mm_stat"));
+
+			/* make sure kernel provides mm_stat as expected */
+			if (strv_length(z->mm_stat) < ARRAY_SIZE(mm_stat_names)) {
+				strv_free(z->mm_stat);
+				z->mm_stat = NULL;
+			}
 		}
 		z->mm_stat_probed = 1;
 		free(str);
