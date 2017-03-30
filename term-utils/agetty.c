@@ -1279,15 +1279,10 @@ static void termio_init(struct options *op, struct termios *tp)
 
 	/* Check for terminal size and if not found set default */
 	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &ws) == 0) {
-		int set = 0;
-		if (ws.ws_row == 0) {
+		if (ws.ws_row == 0)
 			ws.ws_row = 24;
-			set++;
-		}
-		if (ws.ws_col == 0) {
+		if (ws.ws_col == 0)
 			ws.ws_col = 80;
-			set++;
-		}
 		if (ioctl(STDIN_FILENO, TIOCSWINSZ, &ws))
 			debug("TIOCSWINSZ ioctl failed\n");
 	}
