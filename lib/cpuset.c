@@ -255,7 +255,6 @@ int cpumask_parse(const char *str, cpu_set_t *set, size_t setsize)
 			CPU_SET_S(cpu + 2, setsize, set);
 		if (val & 8)
 			CPU_SET_S(cpu + 3, setsize, set);
-		len--;
 		ptr--;
 		cpu += 4;
 	}
