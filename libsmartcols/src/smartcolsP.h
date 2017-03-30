@@ -67,6 +67,7 @@ struct libscols_cell {
 	int	flags;
 };
 
+extern int scols_line_move_cells(struct libscols_line *ln, size_t newn, size_t oldn);
 
 /*
  * Table column

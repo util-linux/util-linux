@@ -146,6 +146,33 @@ int scols_line_alloc_cells(struct libscols_line *ln, size_t n)
 	return 0;
 }
 
+int scols_line_move_cells(struct libscols_line *ln, size_t newn, size_t oldn)
+{
+	struct libscols_cell ce;
+
+	if (!ln || newn >= ln->ncells || oldn >= ln->ncells)
+		return -EINVAL;
+	if (oldn == newn)
+		return 0;
+
+	DBG(LINE, ul_debugobj(ln, "move cells[%zu] -> cells[%zu]", oldn, newn));
+
+	/* remember data from old position */
+	memcpy(&ce, &ln->cells[oldn], sizeof(struct libscols_cell));
+
+	/* remove from old position */
+	memmove(ln->cells + oldn, ln->cells + oldn + 1,
+			(ln->ncells - oldn) * sizeof(struct libscols_cell));
+
+	/* create a space for new position */
+	memmove(ln->cells + newn + 1, ln->cells + newn,
+		(ln->ncells - newn) * sizeof(struct libscols_cell));
+
+	/* copy original data to new position */
+	memcpy(&ln->cells[newn], &ce, sizeof(struct libscols_cell));
+	return 0;
+}
+
 /**
  * scols_line_set_userdata:
  * @ln: a pointer to a struct libscols_line instance

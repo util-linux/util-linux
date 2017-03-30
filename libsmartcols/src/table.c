@@ -268,18 +268,37 @@ int scols_table_move_column(struct libscols_table *tb,
 {
 	struct list_head *head;
 	struct libscols_iter itr;
-	size_t n = 0;
+	struct libscols_column *p;
+	struct libscols_line *ln;
+	size_t n = 0, oldseq;
+
+	if (!tb || !cl)
+		return -EINVAL;
+
+	if (pre && pre->seqnum + 1 == cl->seqnum)
+		return 0;
+	if (pre == NULL && cl->seqnum == 0)
+		return 0;
+
+	DBG(TAB, ul_debugobj(tb, "move column %zu behind %zu",
+				cl->seqnum, pre? pre->seqnum : 0));
 
 	list_del_init(&cl->cl_columns);		/* remove from old position */
 
 	head = pre ? &pre->cl_columns : &tb->tb_columns;
 	list_add(&cl->cl_columns, head);	/* add to the new place */
 
+	oldseq = cl->seqnum;
+
 	/* fix seq. numbers */
 	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
-	while (scols_table_next_column(tb, &itr, &cl) == 0)
-		cl->seqnum = n++;
+	while (scols_table_next_column(tb, &itr, &p) == 0)
+		p->seqnum = n++;
 
+	/* move data in lines */
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+	while (scols_table_next_line(tb, &itr, &ln) == 0)
+		scols_line_move_cells(ln, cl->seqnum, oldseq);
 	return 0;
 }
 
