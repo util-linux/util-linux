@@ -1052,12 +1052,15 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		fclose(fd);
 
 		if (val) {
+			char *org = val;
+
 			while (isdigit(*val))
 				++val;
 			if (!*val) {
 				desc->hyper = HYPER_VSERVER;
 				desc->virtype = VIRT_CONT;
 			}
+			free(org);
 		}
 	}
 }
@@ -1719,7 +1722,7 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 
 	for (i = 0; i < ncols; i++) {
 		data = get_cell_header(desc, cols[i], mod, buf, sizeof(buf));
-		if (!scols_table_new_column(table, xstrdup(data), 0, 0))
+		if (!scols_table_new_column(table, data, 0, 0))
 			err(EXIT_FAILURE, _("failed to initialize output column"));
 	}
 
