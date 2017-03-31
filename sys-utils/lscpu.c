@@ -1744,7 +1744,8 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 					     buf, sizeof(buf));
 			if (!data || !*data)
 				data = "-";
-			scols_line_set_data(line, c, data);
+			if (scols_line_set_data(line, c, data))
+				err_oom();
 		}
 	}
 
