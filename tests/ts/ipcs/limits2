@@ -27,12 +27,6 @@ ts_check_prog "bc"
 
 . $TS_SELF/functions.sh
 
-# TODO https://github.com/karelzak/util-linux/issues/51
-SHMALL=$(</proc/sys/kernel/shmall)
-if [ $(bc <<<"(2^64 / $PAGE_SIZE) <= $SHMALL") -eq 1 ]; then
-	TS_KNOWN_FAIL="yes"
-fi
-
 ts_log "check for difference between kernel and IPC"
 ipcs_limits_check >> $TS_OUTPUT
 
