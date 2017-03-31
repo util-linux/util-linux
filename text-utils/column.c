@@ -80,6 +80,10 @@ struct column_control {
 	const char *tab_colwrap;	/* --table-wrap */
 	const char *tab_colhide;	/* --table-hide */
 
+	const char *tree;
+	const char *tree_id;
+	const char *tree_parent;
+
 	wchar_t *input_separator;
 	const char *output_separator;
 
@@ -270,6 +274,52 @@ static void reorder_table(struct column_control *ctl)
 	}
 }
 
+static void create_tree(struct column_control *ctl)
+{
+	struct libscols_column *cl_tree = string_to_column(ctl, ctl->tree);
+	struct libscols_column *cl_p = string_to_column(ctl, ctl->tree_parent);
+	struct libscols_column *cl_i = string_to_column(ctl, ctl->tree_id);
+	struct libscols_iter *itr_p, *itr_i;
+	struct libscols_line *ln_i;
+
+	if (!cl_p || !cl_i || !cl_tree)
+		return;			/* silently ignore the tree request */
+
+	column_set_flag(cl_tree, SCOLS_FL_TREE);
+
+	itr_p = scols_new_iter(SCOLS_ITER_FORWARD);
+	itr_i = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr_p || !itr_i)
+		err_oom();
+
+	/* scan all lines for ID */
+	while (scols_table_next_line(ctl->tab, itr_i, &ln_i) == 0) {
+		struct libscols_line *ln;
+		struct libscols_cell *ce = scols_line_get_column_cell(ln_i, cl_i);
+		const char *id = ce ? scols_cell_get_data(ce) : NULL;
+
+		if (!id)
+			continue;
+
+		/* see if the ID is somewhere used in parent column */
+		scols_reset_iter(itr_p, SCOLS_ITER_FORWARD);
+		while (scols_table_next_line(ctl->tab, itr_p, &ln) == 0) {
+			const char *parent;
+
+			ce = scols_line_get_column_cell(ln, cl_p);
+			parent = ce ? scols_cell_get_data(ce) : NULL;
+
+			if (!parent)
+				continue;
+			if (strcmp(id, parent) == 0)
+				scols_line_add_child(ln_i, ln);
+		}
+	}
+
+	scols_free_iter(itr_p);
+	scols_free_iter(itr_i);
+}
+
 static void modify_table(struct column_control *ctl)
 {
 	scols_table_set_termwidth(ctl->tab, ctl->termwidth);
@@ -294,6 +344,8 @@ static void modify_table(struct column_control *ctl)
 		apply_columnflag_from_list(ctl, ctl->tab_colhide,
 				SCOLS_FL_HIDDEN , _("failed to parse --table-hide list"));
 
+	if (ctl->tree)
+		create_tree(ctl);
 
 	/* This must be the last step! */
 	if (ctl->tab_order)
@@ -479,6 +531,11 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(_(" -W, --table-wrap <columns>       wrap text in the columns when necessary\n"), out);
 	fputs(_(" -J, --json                       use JSON output format for table\n"), out);
 
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -r, --tree <column>              column to use tree-like output for the table\n"), out);
+	fputs(_(" -i, --tree-id <column>           line ID to specify child-parent relation\n"), out);
+	fputs(_(" -p, --tree-parent <column>       parent to specify child-parent relation\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -c, --output-width <width>       width of output in number of characters\n"), out);
 	fputs(_(" -o, --output-separator <string>  columns separator for table output (default is two spaces)\n"), out);
@@ -521,6 +578,9 @@ int main(int argc, char **argv)
 		{ "table-right",         required_argument, NULL, 'R' },
 		{ "table-truncate",      required_argument, NULL, 'T' },
 		{ "table-wrap",          required_argument, NULL, 'W' },
+		{ "tree",                required_argument, NULL, 'r' },
+		{ "tree-id",             required_argument, NULL, 'i' },
+		{ "tree-parent",         required_argument, NULL, 'p' },
 		{ "version",             no_argument,       NULL, 'V' },
 		{ NULL,	0, NULL, 0 },
 	};
@@ -540,7 +600,7 @@ int main(int argc, char **argv)
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
-	while ((c = getopt_long(argc, argv, "c:E:H:hJN:n:O:o:R:s:T:tVW:x", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "c:E:H:hi:JN:n:O:o:p:R:r:s:T:tVW:x", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -556,6 +616,9 @@ int main(int argc, char **argv)
 			break;
 		case 'h':
 			usage(EXIT_SUCCESS);
+			break;
+		case 'i':
+			ctl.tree_id = optarg;
 			break;
 		case 'J':
 			ctl.json = 1;
@@ -573,8 +636,14 @@ int main(int argc, char **argv)
 		case 'o':
 			ctl.output_separator = optarg;
 			break;
+		case 'p':
+			ctl.tree_parent = optarg;
+			break;
 		case 'R':
 			ctl.tab_colright = optarg;
+			break;
+		case 'r':
+			ctl.tree = optarg;
 			break;
 		case 's':
 			free(ctl.input_separator);
@@ -602,6 +671,13 @@ int main(int argc, char **argv)
 	}
 	argc -= optind;
 	argv += optind;
+
+	if (ctl.tree) {
+		ctl.mode = COLUMN_MODE_TABLE;
+		if (!ctl.tree_parent || !ctl.tree_id)
+			errx(EXIT_FAILURE, _("options --tree-id and --tree-parent are "
+					     "required for tree formatting"));
+	}
 
 	if (ctl.mode != COLUMN_MODE_TABLE
 	    && (ctl.tab_order || ctl.tab_name || ctl.tab_colwrap ||
