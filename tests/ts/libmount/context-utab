@@ -9,7 +9,7 @@ TS_DESC="context (utab)"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_FDISK"
-ts_check_test_command "$TS_CMD_FINDMNT"
+#ts_check_test_command "$TS_CMD_FINDMNT"
 ts_check_test_command "$TS_CMD_MOUNT"
 ts_check_test_command "$TS_CMD_UMOUNT"
 ts_check_test_command "$TS_CMD_WIPEFS"
@@ -118,7 +118,7 @@ if type "mkfs.btrfs" &>/dev/null && mkfs.btrfs --version &>/dev/null; then
 	# subvol= and subvolid=).
 	#
 	#ts_log "All mount options (btrfs subvolume + utab) ---"
-	#$TS_CMD_FINDMNT --mtab $MOUNTPOINT -o OPTIONS -n >> $TS_OUTPUT 2>&1
+	#$TS_CMD_FINDMNT --mtab --mountpoint $MOUNTPOINT -o OPTIONS -n >> $TS_OUTPUT 2>&1
 	#ts_log "---"
 
 	ts_init_subtest "umount-subvol"

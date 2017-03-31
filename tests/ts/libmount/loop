@@ -33,7 +33,7 @@ ts_check_prog "mkfs.ext3"
 function verify_mount_dev {
 	local dev=$1
 	local mp=$2
-	local dev_mounted=$($TS_CMD_FINDMNT -no SOURCE "$mp")
+	local dev_mounted=$($TS_CMD_FINDMNT -no SOURCE --mountpoint "$mp")
 
 	if test "$dev" != "$dev_mounted" ; then
 		echo "Mounted incorrect device: have '$dev_mounted', want '$dev'" >&2

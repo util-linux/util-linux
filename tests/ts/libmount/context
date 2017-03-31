@@ -119,11 +119,11 @@ ts_finalize_subtest
 ts_init_subtest "mount-flags"
 mkdir -p $MOUNTPOINT &> /dev/null
 ts_valgrind $TESTPROG --mount -o ro,noexec,nosuid,strictatime $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
-$TS_CMD_FINDMNT --kernel $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>&1
+$TS_CMD_FINDMNT --kernel --mountpoint $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>&1
 is_mounted $DEVICE || echo "$DEVICE not mounted" >> $TS_OUTPUT 2>&1
 
 ts_valgrind $TESTPROG --mount -o remount,rw $MOUNTPOINT >> $TS_OUTPUT 2>&1
-$TS_CMD_FINDMNT --kernel $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>&1
+$TS_CMD_FINDMNT --kernel --mountpoint $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>&1
 
 ts_valgrind $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
 is_mounted $DEVICE && echo "$DEVICE still mounted" >> $TS_OUTPUT 2>&1
