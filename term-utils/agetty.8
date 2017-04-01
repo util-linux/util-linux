@@ -100,8 +100,12 @@ Don't reset terminal cflags (control modes).  See \fBtermios\fP(3) for more
 details.
 .TP
 \-E, \-\-remote
-If an \fB\-H\fP \fIfakehost\fP option is given, then an \fB\-r\fP
-\fIfakehost\fP option is added to the \fB/bin/login\fP command line.
+If an \fB\-\-host\fP \fIfakehost\fP option is given, then an \fB\-h\fP
+\fIfakehost\fP option and argument are added to the \fB/bin/login\fP
+command line.
+.IP
+If an \fB\-\-nohostname\fR option is given, then an \fB\-H\fP option
+is added to the \fB/bin/login\fP command line.
 .TP
 \-f, \-\-issue\-file \fIissue_file\fP
 Display the contents of \fIissue_file\fP instead of \fI/etc/issue\fP.
