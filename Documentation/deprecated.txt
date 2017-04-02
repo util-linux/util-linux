@@ -13,11 +13,6 @@ why:   Output printed by --compare option was nonesense.
 
 --------------------------
 
-what:  tailf
-why:   "tail -f" is better nowadays, tailf has unfixed bugs
-
---------------------------
-
 what:  sfdisk --show-size
 why:   this does not belong to fdisk, use "blockdev --getsz"
 

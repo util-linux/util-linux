@@ -90,9 +90,6 @@ endif
 if BUILD_SETSID
 dist_bashcompletion_DATA += bash-completion/setsid
 endif
-if BUILD_TAILF
-dist_bashcompletion_DATA += bash-completion/tailf
-endif
 if BUILD_WHEREIS
 dist_bashcompletion_DATA += bash-completion/whereis
 endif
