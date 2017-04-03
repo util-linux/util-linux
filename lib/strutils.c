@@ -60,8 +60,8 @@ int parse_size(const char *str, uintmax_t *res, int *power)
 	uintmax_t x, frac = 0;
 	int base = 1024, rc = 0, pwr = 0, frac_zeros = 0;
 
-	static const char *suf  = "KMGTPEYZ";
-	static const char *suf2 = "kmgtpeyz";
+	static const char *suf  = "KMGTPEZY";
+	static const char *suf2 = "kmgtpezy";
 	const char *sp;
 
 	*res = 0;
@@ -516,7 +516,7 @@ void xstrmode(mode_t mode, char *str)
 }
 
 /*
- * returns exponent (2^x=n) in range KiB..PiB
+ * returns exponent (2^x=n) in range KiB..EiB (2^10..2^60)
  */
 static int get_exp(uint64_t n)
 {
