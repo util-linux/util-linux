@@ -230,6 +230,24 @@ static struct libscols_column *string_to_column(struct column_control *ctl, cons
 	return scols_table_get_column(ctl->tab, colnum);
 }
 
+static struct libscols_column *get_last_visible_column(struct column_control *ctl)
+{
+	struct libscols_iter *itr;
+	struct libscols_column *cl, *last = NULL;
+
+	itr = scols_new_iter(SCOLS_ITER_FORWARD);
+	if (!itr)
+		err_oom();
+
+	while (scols_table_next_column(ctl->tab, itr, &cl) == 0) {
+		if (scols_column_get_flags(cl) & SCOLS_FL_HIDDEN)
+			continue;
+		last = cl;
+	}
+
+	scols_free_iter(itr);
+	return last;
+}
 
 static int column_set_flag(struct libscols_column *cl, int fl)
 {
@@ -343,6 +361,12 @@ static void modify_table(struct column_control *ctl)
 	if (ctl->tab_colhide)
 		apply_columnflag_from_list(ctl, ctl->tab_colhide,
 				SCOLS_FL_HIDDEN , _("failed to parse --table-hide list"));
+
+	if (!ctl->tab_colnoextrem) {
+		struct libscols_column *cl = get_last_visible_column(ctl);
+		if (cl)
+			column_set_flag(cl, SCOLS_FL_NOEXTREMES);
+	}
 
 	if (ctl->tree)
 		create_tree(ctl);
