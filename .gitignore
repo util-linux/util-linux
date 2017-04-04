@@ -156,7 +156,6 @@ ylwrap
 /swapoff
 /swapon
 /switch_root
-/tailf
 /taskset
 /test_*
 /tunelp

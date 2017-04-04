@@ -91,7 +91,6 @@ setterm:  libtinfo
 su:  libpam libpam_misc 
 sulogin:  rypt 
 switch_root:  
-tailf:  
 taskset:  
 ul:  libtinfo 
 unshare:  

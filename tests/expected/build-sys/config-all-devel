@@ -112,5 +112,4 @@ line:
 more:  libtinfo 
 pg:  libncursesw libtinfo 
 rev:  
-tailf:  
 ul:  libtinfo 
