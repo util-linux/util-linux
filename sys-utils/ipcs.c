@@ -198,6 +198,7 @@ static void do_shm (char format, int unit)
 	case LIMITS:
 	{
 		struct ipc_limits lim;
+		uint64_t tmp, pgsz = getpagesize();
 
 		if (ipc_shm_get_limits(&lim)) {
 			printf (_("unable to fetch shared memory limits\n"));
@@ -207,9 +208,14 @@ static void do_shm (char format, int unit)
 		printf (_("max number of segments = %ju\n"), lim.shmmni);
 		ipc_print_size(unit == IPC_UNIT_DEFAULT ? IPC_UNIT_KB : unit,
 			       _("max seg size"), lim.shmmax, "\n", 0);
+
+		tmp = (uint64_t) lim.shmall * pgsz;
+		/* overflow handling, at least we don't print ridiculous small values */
+		if (lim.shmall != 0 && tmp / lim.shmall != pgsz) {
+			tmp = UINT64_MAX - (UINT64_MAX % pgsz);
+		}
 		ipc_print_size(unit == IPC_UNIT_DEFAULT ? IPC_UNIT_KB : unit,
-			       _("max total shared memory"),
-			       (uint64_t) lim.shmall * getpagesize(), "\n", 0);
+			       _("max total shared memory"), tmp, "\n", 0);
 		ipc_print_size(unit == IPC_UNIT_DEFAULT ? IPC_UNIT_BYTES : unit,
 			       _("min seg size"), lim.shmmin, "\n", 0);
 		return;

@@ -78,6 +78,12 @@ function ipcs_limits_check {
 		#echo "IPCS-CMD:   ${IPCS_CMD[$i]}"
 		#echo
 
+		# overflow is handled differently because we don't have large
+		# int math, see https://github.com/karelzak/util-linux/issues/51
+		if [ $(bc <<<"$a >= 2^64/1024") -eq 1 ]; then
+			a=$(bc <<<"(2^64 - $PAGE_SIZE)/1024")
+		fi
+
 		if [ x"$a" == x"$b" ]; then
 			echo " OK"
 		else
