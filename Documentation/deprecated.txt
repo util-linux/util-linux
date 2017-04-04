@@ -8,11 +8,6 @@ since: v2.30
 
 --------------------------
 
-what:  hwclock --compare
-why:   Output printed by --compare option was nonesense.
-
---------------------------
-
 what:  sfdisk --show-size
 why:   this does not belong to fdisk, use "blockdev --getsz"
 
