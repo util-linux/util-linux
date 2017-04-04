@@ -89,24 +89,27 @@ or 'hurd' for GNU Hurd on a virtual terminal.
 Assume that the tty is 8-bit clean, hence disable parity detection.
 .TP
 \-a, \-\-autologin \fIusername\fP
-Log the specified user automatically in without asking for a login name and
-password.  The \-f \fIusername\fP option is added to the \fB/bin/login\fP
-command line by default.  The \-\-login\-options option changes this default
-behavior and then only \\u is replaced by the \fIusername\fP and no other
-option is added to the login command line.
+Automatically log in the specified user without asking username or password.
+Use of this option causes \fB\-f \fIusername\fR option and argument to be
+added to the \fB/bin/login\fP command line.  This option can combined with
+\fB\-\-login\-options\fR, and then \\u is replaced by the \fIusername\fR.
 .TP
 \-c, \-\-noreset
-Don't reset terminal cflags (control modes).  See \fBtermios\fP(3) for more
+Do not reset terminal cflags (control modes).  See \fBtermios\fP(3) for more
 details.
 .TP
 \-E, \-\-remote
-If an \fB\-H\fP \fIfakehost\fP option is given, then an \fB\-r\fP
-\fIfakehost\fP option is added to the \fB/bin/login\fP command line.
+If the \fB\-\-host\fP \fIfakehost\fP option is given, then an \fB\-h\fP
+\fIfakehost\fP option and argument are added to the \fB/bin/login\fP
+command line.
+.IP
+If an \fB\-\-nohostname\fR option is given, then an \fB\-H\fP option
+is added to the \fB/bin/login\fP command line.
 .TP
 \-f, \-\-issue\-file \fIissue_file\fP
 Display the contents of \fIissue_file\fP instead of \fI/etc/issue\fP.
 This allows custom messages to be displayed on different terminals.
-The \-i option will override this option.
+The \-\-noissue option will override this option.
 .TP
 \-h, \-\-flow\-control
 Enable hardware (RTS/CTS) flow control.  It is left up to the
@@ -114,10 +117,10 @@ application to disable software (XON/XOFF) flow protocol where
 appropriate.
 .TP
 \-H, \-\-host \fIlogin_host\fP
-Write the specified \fIlogin_host\fP into the utmp file.  (Normally,
+Write the specified \fIlogin_host\fP into the utmp file.  Normally,
 no login host is given, since \fBagetty\fP is used for local hardwired
 connections and consoles.  However, this option can be useful for
-identifying terminal concentrators and the like.)
+identifying terminal concentrators and the like.
 .TP
 \-i, \-\-noissue
 Do not display the contents of \fI/etc/issue\fP (or other) before writing the
@@ -133,29 +136,36 @@ backslash (\\).  For example, to send a linefeed character (ASCII 10,
 octal 012), write \\012.
 .TP
 \-J, \-\-noclear
-Do not clear the screen before prompting for the login name
-(the screen is normally cleared).
+Do not clear the screen before prompting for the login name.
+By default screen is cleared.
 .TP
 \-l, \-\-login\-program \fIlogin_program\fP
-Invoke the specified \fIlogin_program\fP instead of /bin/login.
-This allows the use of a non-standard login program (for example,
-one that asks for a dial-up password or that uses a different
-password file).
+Invoke the specified \fIlogin_program\fP instead of /bin/login.  This allows
+the use of a non-standard login program.  Such program could for example
+ask for a dial-up password or use a different password file.
 .TP
 \-L, \-\-local\-line[=\fImode\fP]
 Control the CLOCAL line flag.  The optional \fImode\fP argument is 'auto', 'always' or 'never'.
 If the \fImode\fP argument is omitted, then the default is 'always'.  If the
 \-\-local\-line option is not given at all, then the default is 'auto'.
-
-The \fImode\fP 'always' forces the line to be a local line with no need for carrier detect.
-This can be useful when you have a locally attached terminal where the serial line
-does not set the carrier-detect signal.
-
-The \fImode\fP 'never' explicitly clears the CLOCAL flag from the line setting and
-the carrier-detect signal is expected on the line.
-
-The \fImode\fP 'auto' (agetty default) does not modify the CLOCAL setting
-and follows the setting enabled by the kernel.
+.PP
+.RS
+.PD 1
+.TP
+\fIalways\fR
+Forces the line to be a local line with no need for carrier detect.  This
+can be useful when you have a locally attached terminal where the serial
+line does not set the carrier-detect signal.
+.TP
+\fInever\fR
+Explicitly clears the CLOCAL flag from the line setting and the
+carrier-detect signal is expected on the line.
+.TP
+\fIauto\fR
+The \fBagetty\fR default.  Does not modify the CLOCAL setting and follows
+the setting enabled by the kernel.
+.PD
+.RE
 .TP
 \-m, \-\-extract\-baud
 Try to extract the baud rate from the CONNECT status message
@@ -165,29 +175,30 @@ messages are of the form: "<junk><speed><junk>".
 the same speed as specified with (the first) \fIbaud_rate\fP value
 on the command line.
 .sp
-Since the \fB\-m\fP feature may fail on heavily-loaded systems,
-you still should enable BREAK processing by enumerating all
+Since the \fB\-\-extract\-baud\fP feature may fail on heavily-loaded
+systems, you still should enable BREAK processing by enumerating all
 expected baud rates on the command line.
 .TP
 \-n, \-\-skip\-login
-Do not prompt the user for a login name.  This can be used in
-connection with the \fB\-l\fP option to invoke a non-standard login process such
-as a BBS system.  Note that with the \-n option, \fBagetty\fR gets no input from
-the user who logs in and therefore won't be able to figure out parity,
-character size, and newline processing of the connection.  It defaults to
-space parity, 7 bit characters, and ASCII CR (13) end-of-line character.
-Beware that the program that \fBagetty\fR starts (usually /bin/login)
-is run as root.
+Do not prompt the user for a login name.  This can be used in connection
+with the \fB\-\-login\-program\fP option to invoke a non-standard login
+process such as a BBS system.  Note that with the \fB\-\-skip\-login\fR
+option, \fBagetty\fR gets no input from the user who logs in and therefore
+will not be able to figure out parity, character size, and newline
+processing of the connection.  It defaults to space parity, 7 bit
+characters, and ASCII CR (13) end-of-line character.  Beware that the
+program that \fBagetty\fR starts (usually /bin/login) is run as root.
 .TP
 \-N, \-\-nonewline
 Do not print a newline before writing out /etc/issue.
 .TP
-\-o, \-\-login\-options "\fIlogin_options\fP"
+\-o, \-\-login\-options "\fI/path/command --option argument -- \\u\fP"
 Options  that  are passed to the login program.  \\u is replaced
-by the login name.  The default \fB/bin/login\fP command line
-is "/bin/login -- <username>".
-
-Please read the SECURITY NOTICE below if you want to use this.
+by the login name.  The default is "/bin/login -- \\u".
+.IP
+Also see the \fB\-\-autologin\fR and \fB\-\-remote\fR options.
+.IP
+Please read the SECURITY NOTICE below before using this option.
 .TP
 \-p, \-\-login\-pause
 Wait for any key before dropping to the login prompt.  Can be combined
@@ -204,9 +215,8 @@ Try to keep the existing baud rate.  The baud rates from
 the command line are used when agetty receives a BREAK character.
 .TP
 \-t, \-\-timeout \fItimeout\fP
-Terminate if no user name could be read within \fItimeout\fP
-seconds.  This option should probably not be used with hardwired
-lines.
+Terminate if no user name could be read within \fItimeout\fP seconds.
+Use of this option with hardwired terminal lines is not recommended.
 .TP
 \-U, \-\-detect\-case
 Turn on support for detecting an uppercase-only terminal.  This setting
@@ -217,7 +227,8 @@ Note that this has no support for any Unicode characters.
 \-w, \-\-wait\-cr
 Wait for the user or the modem to send a carriage-return or a
 linefeed character before sending the \fI/etc/issue\fP (or other) file
-and the login prompt.  Very useful in connection with the \-I option.
+and the login prompt.  This is useful with the \-\-init\-string
+option.
 .TP
 \-\-nohints
 Do not print hints about Num, Caps and Scroll Locks.
@@ -228,8 +239,8 @@ no hostname at all will be shown.
 .TP
 \-\-long\-hostname
 By default the hostname is only printed until the first dot.  With
-this option enabled, the fully qualified hostname by gethostname()
-or (if not found) by getaddrinfo() is shown.
+this option enabled, the fully qualified hostname by \fBgethostname\fR(3P)
+or (if not found) by \fBgetaddrinfo\fR(3) is shown.
 .TP
 \-\-erase\-chars \fIstring\fP
 This option specifies additional characters that should be interpreted as a
@@ -280,13 +291,13 @@ For a directly connected terminal without proper carrier-detect wiring
 prompt):
 
 .RS
-/sbin/agetty \-L 9600 ttyS1 vt100
+/sbin/agetty \-\-local\-line 9600 ttyS1 vt100
 .RE
 
 For an old-style dial-in line with a 9600/2400/1200 baud modem:
 
 .RS
-/sbin/agetty \-mt60 ttyS1 9600,2400,1200
+/sbin/agetty \-\-extract\-baud \-\-timeout 60 ttyS1 9600,2400,1200
 .RE
 
 For a Hayes modem with a fixed 115200 bps interface to the machine
@@ -295,7 +306,7 @@ modem/computer DCD track modem/modem DCD, makes a DTR drop cause a
 disconnection, and turns on auto-answer after 1 ring):
 
 .RS
-/sbin/agetty \-w \-I 'ATE0Q1&D2&C1S0=1\\015' 115200 ttyS1
+/sbin/agetty \-\-wait\-cr \-\-init\-string 'ATE0Q1&D2&C1S0=1\\015' 115200 ttyS1
 .RE
 
 .SH SECURITY NOTICE
@@ -312,7 +323,7 @@ not be interpreted as options.  Use this feature if available by passing "\-\-"
 before the username gets passed by \\u.
 
 .SH ISSUE ESCAPES
-The issue-file (\fI/etc/issue\fP, or the file set with the \fB\-f\fP option)
+The issue-file (\fI/etc/issue\fP, or the file set with the \fB\-\-issue\-file\fP option)
 may contain certain escape codes to display the system name, date, time
 etcetera.  All escape codes consist of a backslash (\\) immediately
 followed by one of the characters listed below.
@@ -343,7 +354,7 @@ lightmagenta, lightred, magenta, red, reset, reverse, and yellow.  All unknown
 names are silently ignored.
 .TP
 s
-Insert the system name (the name of the operating system).  Same as `uname \-s'.
+Insert the system name (the name of the operating system).  Same as 'uname \-s'.
 See also the \\S escape code.
 .TP
 S or S{VARIABLE}
@@ -358,19 +369,19 @@ l
 Insert the name of the current tty line.
 .TP
 m
-Insert the architecture identifier of the machine.  Same as `uname \-m'.
+Insert the architecture identifier of the machine.  Same as 'uname \-m'.
 .TP
 n
-Insert the nodename of the machine, also known as the hostname.  Same as `uname \-n'.
+Insert the nodename of the machine, also known as the hostname.  Same as 'uname \-n'.
 .TP
 o
-Insert the NIS domainname of the machine.  Same as `hostname \-d'.
+Insert the NIS domainname of the machine.  Same as 'hostname \-d'.
 .TP
 O
 Insert the DNS domainname of the machine.
 .TP
 r
-Insert the release number of the OS.  Same as `uname \-r'.
+Insert the release number of the OS.  Same as 'uname \-r'.
 .TP
 t
 Insert the current time.
@@ -383,7 +394,7 @@ Insert the string "1 user" or "<n> users" where <n> is the number of current
 users logged in.
 .TP
 v
-Insert the version of the OS, e.g. the build-date etc.
+Insert the version of the OS, that is the build-date and such.
 .PP
 An example.  On my system, the following \fI/etc/issue\fP file:
 .sp
@@ -422,22 +433,22 @@ problem reports (if syslog(3) is not used).
 .SH BUGS
 .ad
 .fi
-The baud-rate detection feature (the \fB\-m\fP option) requires that
+The baud-rate detection feature (the \fB\-\-extract\-baud\fP option) requires that
 \fBagetty\fP be scheduled soon enough after completion of a dial-in
 call (within 30 ms with modems that talk at 2400 baud).  For robustness,
-always use the \fB\-m\fP option in combination with a multiple baud
+always use the \fB\-\-extract\-baud\fP option in combination with a multiple baud
 rate command-line argument, so that BREAK processing is enabled.
 
 The text in the \fI/etc/issue\fP file (or other) and the login prompt
 are always output with 7-bit characters and space parity.
 
-The baud-rate detection feature (the \fB\-m\fP option) requires that
+The baud-rate detection feature (the \fB\-\-extract\-baud\fP option) requires that
 the modem emits its status message \fIafter\fP raising the DCD line.
 .SH DIAGNOSTICS
 .ad
 .fi
 Depending on how the program was configured, all diagnostics are
-written to the console device or reported via the syslog(3) facility.
+written to the console device or reported via the \fBsyslog\fR(3) facility.
 Error messages are produced if the \fIport\fP argument does not
 specify a terminal device; if there is no utmp entry for the
 current process (System V only); and so on.

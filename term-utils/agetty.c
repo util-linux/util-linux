@@ -493,9 +493,12 @@ int main(int argc, char **argv)
 		login_options_to_argv(login_argv, &login_argc,
 				      options.logopt, username);
 	} else {
-		if (fakehost && (options.flags & F_REMOTE)) {
-			login_argv[login_argc++] = "-h";
-			login_argv[login_argc++] = fakehost;
+		if (options.flags & F_REMOTE) {
+			if (fakehost) {
+				login_argv[login_argc++] = "-h";
+				login_argv[login_argc++] = fakehost;
+			} else if (options.flags & F_NOHOSTNAME)
+				login_argv[login_argc++] = "-H";
 		}
 		if (username) {
 			if (options.autolog)
@@ -1279,15 +1282,10 @@ static void termio_init(struct options *op, struct termios *tp)
 
 	/* Check for terminal size and if not found set default */
 	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &ws) == 0) {
-		int set = 0;
-		if (ws.ws_row == 0) {
+		if (ws.ws_row == 0)
 			ws.ws_row = 24;
-			set++;
-		}
-		if (ws.ws_col == 0) {
+		if (ws.ws_col == 0)
 			ws.ws_col = 80;
-			set++;
-		}
 		if (ioctl(STDIN_FILENO, TIOCSWINSZ, &ws))
 			debug("TIOCSWINSZ ioctl failed\n");
 	}
