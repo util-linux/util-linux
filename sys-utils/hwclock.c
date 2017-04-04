@@ -1190,7 +1190,7 @@ manipulate_epoch(const struct hwclock_control *ctl)
 	if (ctl->getepoch) {
 		unsigned long epoch;
 
-		if (get_epoch_rtc(ctl, &epoch, 0))
+		if (get_epoch_rtc(ctl, &epoch))
 			warnx(_
 			      ("Unable to get the epoch value from the kernel."));
 		else
@@ -1279,11 +1279,6 @@ static void usage(const struct hwclock_control *ctl, const char *fmt, ...)
 		"                        the default is %1$s\n"), _PATH_ADJTIME);
 	fputs(_("     --test           do not update anything, just show what would happen\n"
 		" -D, --debug          debugging mode\n" "\n"), usageto);
-#ifdef __alpha__
-	fputs(_(" -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
-		"      tell hwclock the type of Alpha you have (see hwclock(8))\n"
-		 "\n"), usageto);
-#endif
 
 	if (fmt) {
 		va_start(ap, fmt);
@@ -1344,15 +1339,6 @@ int main(int argc, char **argv)
 		{ "version",      no_argument,       NULL, 'v'            },
 		{ "systohc",      no_argument,       NULL, 'w'            },
 		{ "debug",        no_argument,       NULL, 'D'            },
-#ifdef __alpha__
-		{ "ARC",          no_argument,       NULL, 'A'            },
-		{ "arc",          no_argument,       NULL, 'A'            },
-		{ "Jensen",       no_argument,       NULL, 'J'            },
-		{ "jensen",       no_argument,       NULL, 'J'            },
-		{ "SRM",          no_argument,       NULL, 'S'            },
-		{ "srm",          no_argument,       NULL, 'S'            },
-		{ "funky-toy",    no_argument,       NULL, 'F'            },
-#endif
 		{ "set",          no_argument,       NULL, OPT_SET        },
 #ifdef __linux__
 		{ "getepoch",     no_argument,       NULL, OPT_GETEPOCH   },
@@ -1438,20 +1424,6 @@ int main(int argc, char **argv)
 		case 'w':
 			ctl.systohc = 1;
 			break;
-#ifdef __alpha__
-		case 'A':
-			ctl.ARCconsole = 1;
-			break;
-		case 'J':
-			ctl.Jensen = 1;
-			break;
-		case 'S':
-			ctl.SRM = 1;
-			break;
-		case 'F':
-			ctl.funky_toy = 1;
-			break;
-#endif
 		case OPT_SET:
 			ctl.set = 1;
 			break;
@@ -1538,10 +1510,6 @@ int main(int argc, char **argv)
 			"either --utc or --localtime"));
 		hwclock_exit(&ctl, EX_USAGE);
 	}
-#ifdef __alpha__
-	set_cmos_epoch(&ctl);
-	set_cmos_access(&ctl);
-#endif
 
 	if (ctl.set || ctl.predict) {
 		if (parse_date(&when, ctl.date_opt, NULL))
