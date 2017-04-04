@@ -385,6 +385,7 @@ static void usage(FILE *out)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("Set up and control loop devices.\n"), out);
 
+	/* commands */
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all                     list all used devices\n"), out);
 	fputs(_(" -d, --detach <loopdev>...     detach one or more devices\n"), out);
@@ -394,8 +395,8 @@ static void usage(FILE *out)
 	fputs(_(" -j, --associated <file>       list all devices associated with <file>\n"), out);
 	fputs(_(" -L, --nooverlap               avoid possible conflict between devices\n"), out);
 
+	/* commands options */
 	fputs(USAGE_SEPARATOR, out);
-
 	fputs(_(" -o, --offset <num>            start at offset <num> into file\n"), out);
 	fputs(_("     --sizelimit <num>         device is limited to <num> bytes of the file\n"), out);
 	fputs(_(" -P, --partscan                create a partitioned loop device\n"), out);
@@ -404,19 +405,19 @@ static void usage(FILE *out)
 	fputs(_("     --show                    print device name after setup (with -f)\n"), out);
 	fputs(_(" -v, --verbose                 verbose mode\n"), out);
 
+	/* output options */
 	fputs(USAGE_SEPARATOR, out);
-
-	fputs(_(" -l, --list                    list info about all or specified (default)\n"), out);
-	fputs(_(" -O, --output <cols>           specify columns to output for --list\n"), out);
-	fputs(_(" -n, --noheadings              don't print headings for --list output\n"), out);
-	fputs(_("     --raw                     use raw --list output format\n"), out);
 	fputs(_(" -J, --json                    use JSON --list output format\n"), out);
+	fputs(_(" -l, --list                    list info about all or specified (default)\n"), out);
+	fputs(_(" -n, --noheadings              don't print headings for --list output\n"), out);
+	fputs(_(" -O, --output <cols>           specify columns to output for --list\n"), out);
+	fputs(_("     --raw                     use raw --list output format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 
-	fputs(_("\nAvailable --list columns:\n"), out);
+	fputs(_("\nAvailable --output columns:\n"), out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %12s  %s\n", infos[i].name, _(infos[i].help));
 

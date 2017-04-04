@@ -65,13 +65,13 @@ to detach loop devices, and to query the status of a loop device.  If only the
 \fIloopdev\fP argument is given, the status of the corresponding loop
 device is shown.  If no option is given, all loop devices are shown.
 .sp
-Note that the old output format (i.e. \fBlosetup -a\fR) with comma-delimited
+Note that the old output format (i.e., \fBlosetup -a\fR) with comma-delimited
 strings is deprecated in favour of the \fB--list\fR output format.
 .sp
 It's possible to create more independent loop devices for the same backing
 file.
 .B This setup may be dangerous, can cause data loss, corruption and overwrites.
-Use \fB\-\-nooverlap\fR to avoid this problem.
+Use \fB\-\-nooverlap\fR with \fB\-\-find\fR during setup to avoid this problem.
 
 .SH OPTIONS
 The \fIsize\fR and \fIoffset\fR
@@ -86,26 +86,18 @@ Show the status of all loop devices.  Note that not all information is accessibl
 for non-root users.  See also \fB\-\-list\fR.  The old output format (as printed
 without \fB--list)\fR is deprecated.
 .TP
-.BR \-c , " \-\-set\-capacity " \fIloopdev
-Force the loop driver to reread the size of the file associated with the
-specified loop device.
-.TP
 .BR \-d , " \-\-detach " \fIloopdev\fR...
 Detach the file or device associated with the specified loop device(s).
 .TP
 .BR \-D , " \-\-detach\-all"
 Detach all associated loop devices.
 .TP
-.BR \-\-direct\-io [ =on | off ]
-Enable or disable direct I/O for the backing file.  The optional argument
-can be either \fBon\fR or \fBoff\fR.  If the argument is omitted, it defaults
-to \fBon\fR.
-.TP
-.BR \-f , " \-\-find"
-Find the first unused loop device.  If a
-.I file
-argument is present, use the found device as loop device.
-Otherwise, just print its name.
+.BR \-f , " \-\-find " "\fR[\fIfile\fR]"
+Find the first unused loop device.  If a \fIfile\fR argument is present, use
+the found device as loop device.  Otherwise, just print its name.
+.IP "\fB\-\-show\fP"
+Display the name of the assigned loop device if the \fB\-f\fP option and a
+\fIfile\fP argument are present.
 .TP
 .BR \-L , " \-\-nooverlap"
 Check for conflicts between loop devices to avoid situation when the same
@@ -113,46 +105,49 @@ backing file is shared between more loop devices. If the file is already used
 by another device then re-use the device rather than a new one. The option
 makes sense only with \fB\-\-find\fP.
 .TP
-.BR \-j , " \-\-associated " \fIfile
-Show the status of all loop devices associated with the given
-.IR file .
+.BR \-j , " \-\-associated " \fIfile\fR " \fR[\fB\-o \fIoffset\fR]"
+Show the status of all loop devices associated with the given \fIfile\fR.
 .TP
-.BR \-J , " \-\-json"
-Use JSON format for \fB\-\-list\fP output.
+.BR \-o , " \-\-offset " \fIoffset
+The data start is moved \fIoffset\fP bytes into the specified file or device.
+.IP "\fB\-\-sizelimit \fIsize\fP"
+The data end is set to no more than \fIsize\fP bytes after the data start.
+.TP
+.BR \-c , " \-\-set\-capacity " \fIloopdev
+Force the loop driver to reread the size of the file associated with the
+specified loop device.
+.TP
+.BR \-P , " \-\-partscan"
+Force the kernel to scan the partition table on a newly created loop device.
+.TP
+.BR \-r , " \-\-read\-only"
+Set up a read-only loop device.
+.TP
+.BR \-\-direct\-io [ =on | off ]
+Enable or disable direct I/O for the backing file.  The optional argument
+can be either \fBon\fR or \fBoff\fR.  If the argument is omitted, it defaults
+to \fBon\fR.
+.TP
+.BR \-v , " \-\-verbose"
+Verbose mode.
 .TP
 .BR \-l , " \-\-list"
 If a loop device or the \fB-a\fR option is specified, print the default columns
 for either the specified loop device or all loop devices; the default is to
-print info about all devices.  See also \fB\-\-output\fP, \fB\-\-noheadings\fP
-\fB\-\-json\fP and \fB\-\-raw\fP.
+print info about all devices.  See also \fB\-\-output\fP, \fB\-\-noheadings\fP,
+\fB\-\-raw\fP, and \fB\-\-json\fP.
+.TP
+.BR \-O , " \-\-output " \fIcolumn\fR[,\fIcolumn\fR]...
+Specify the columns that are to be printed for the \fB\-\-list\fP output.
+Use \fB\-\-help\fR to get a list of all supported columns.
 .TP
 .BR \-n , " \-\-noheadings"
 Don't print headings for \fB\-\-list\fP output format.
-.TP
-.BR \-o , " \-\-offset " \fIoffset
-The data start is moved \fIoffset\fP bytes into the specified file or device.
-.TP
-.BR \-O , " \-\-output " \fIcolumns
-Specify the columns that are to be printed for the \fB\-\-list\fP output.
-.TP
-.BR \-P , " \-\-partscan"
-Force the kernel to scan the partition table on a newly created loop device.
 .IP "\fB\-\-raw\fP"
 Use the raw \fB\-\-list\fP output format.
 .TP
-.BR \-r , " \-\-read\-only"
-Set up a read-only loop device.
-.IP "\fB\-\-sizelimit \fIsize\fP"
-The data end is set to no more than \fIsize\fP bytes after the data start.
-.IP "\fB\-\-show\fP"
-Display the name of the assigned loop device if the
-.B \-f
-option and a
-.I file
-argument are present.
-.TP
-.BR \-v , " \-\-verbose"
-Verbose mode.
+.BR \-J , " \-\-json"
+Use JSON format for \fB\-\-list\fP output.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
