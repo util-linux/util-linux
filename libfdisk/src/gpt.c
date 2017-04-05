@@ -453,6 +453,24 @@ static inline size_t gpt_get_nentries(struct fdisk_gpt_label *gpt)
 	return (size_t) le32_to_cpu(gpt->pheader->npartition_entries);
 }
 
+static inline int gpt_calculate_sizeof_ents(struct gpt_header *hdr, uint32_t nents, size_t *sz)
+{
+	uint32_t esz = le32_to_cpu(hdr->sizeof_partition_entry);
+
+	if (nents == 0 || esz == 0 || SIZE_MAX/esz < nents) {
+		DBG(LABEL, ul_debug("GPT entreis array size check failed"));
+		return -ERANGE;
+	}
+
+	*sz = nents * esz;
+	return 0;
+}
+
+static inline int gpt_sizeof_ents(struct gpt_header *hdr, size_t *sz)
+{
+	return gpt_calculate_sizeof_ents(hdr, le32_to_cpu(hdr->npartition_entries), sz);
+}
+
 static inline int partition_unused(const struct gpt_entry *e)
 {
 	return !memcmp(&e->type, &GPT_UNUSED_ENTRY_GUID,
@@ -467,7 +485,6 @@ static char *gpt_get_header_id(struct gpt_header *header)
 
 	return strdup(str);
 }
-
 
 /*
  * Builds a clean new valid protective MBR - will wipe out any existing data.
@@ -845,31 +862,30 @@ static ssize_t read_lba(struct fdisk_context *cxt, uint64_t lba,
 static unsigned char *gpt_read_entries(struct fdisk_context *cxt,
 					 struct gpt_header *header)
 {
-	ssize_t sz;
+	size_t sz;
+	ssize_t ssz;
+
 	unsigned char *ret = NULL;
 	off_t offset;
 
 	assert(cxt);
 	assert(header);
 
-	sz = (ssize_t) le32_to_cpu(header->npartition_entries) *
-	     le32_to_cpu(header->sizeof_partition_entry);
-
-	if (sz == 0 || sz >= (ssize_t) UINT32_MAX ||
-	    le32_to_cpu(header->sizeof_partition_entry) != sizeof(struct gpt_entry)) {
-		DBG(LABEL, ul_debug("GPT entreis array size check failed"));
+	if (gpt_sizeof_ents(header, &sz))
 		return NULL;
-	}
 
 	ret = calloc(1, sz);
 	if (!ret)
 		return NULL;
+
 	offset = (off_t) le64_to_cpu(header->partition_entry_lba) *
 		       cxt->sector_size;
 
 	if (offset != lseek(cxt->dev_fd, offset, SEEK_SET))
 		goto fail;
-	if (sz != read(cxt->dev_fd, ret, sz))
+
+	ssz = read(cxt->dev_fd, ret, sz);
+	if (ssz < 0 || (size_t) ssz != sz)
 		goto fail;
 
 	return ret;
@@ -897,8 +913,8 @@ static inline uint32_t gpt_entryarr_count_crc32(struct gpt_header *header, unsig
 {
 	size_t arysz = 0;
 
-	arysz = (size_t) le32_to_cpu(header->npartition_entries) *
-		le32_to_cpu(header->sizeof_partition_entry);
+	if (gpt_sizeof_ents(header, &arysz))
+		return 0;
 
 	return count_crc32(ents, arysz, 0, 0);
 }
@@ -1093,9 +1109,7 @@ static int gpt_locate_disklabel(struct fdisk_context *cxt, int n,
 		gpt = self_label(cxt);
 		*offset = (uint64_t) le64_to_cpu(gpt->pheader->partition_entry_lba) *
 				     cxt->sector_size;
-		*size = gpt_get_nentries(gpt) *
-				le32_to_cpu(gpt->pheader->sizeof_partition_entry);
-		break;
+		return gpt_sizeof_ents(gpt->pheader, size);
 	default:
 		return 1;			/* no more chunks */
 	}
@@ -1847,18 +1861,22 @@ static int gpt_write_partitions(struct fdisk_context *cxt,
 				struct gpt_header *header, unsigned char *ents)
 {
 	off_t offset = (off_t) le64_to_cpu(header->partition_entry_lba) * cxt->sector_size;
-	uint32_t nparts = le32_to_cpu(header->npartition_entries);
-	uint32_t totwrite = nparts * le32_to_cpu(header->sizeof_partition_entry);
-	ssize_t rc;
+	size_t towrite;
+	ssize_t ssz;
+	int rc;
+
+	rc = gpt_sizeof_ents(header, &towrite);
+	if (rc)
+		return rc;
 
 	if (offset != lseek(cxt->dev_fd, offset, SEEK_SET))
-		goto fail;
+		return -errno;
 
-	rc = write(cxt->dev_fd, ents, totwrite);
-	if (rc > 0 && totwrite == (uint32_t) rc)
-		return 0;
-fail:
-	return -errno;
+	ssz = write(cxt->dev_fd, ents, towrite);
+	if (ssz < 0 || (ssize_t) towrite != ssz)
+		return -errno;
+
+	return 0;
 }
 
 /*
@@ -2471,8 +2489,9 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 	if (rc < 0)
 		goto done;
 
-	esz = (size_t) le32_to_cpu(gpt->pheader->npartition_entries) *
-	      le32_to_cpu(gpt->pheader->sizeof_partition_entry);
+	rc = gpt_sizeof_ents(gpt->pheader, &esz);
+	if (rc)
+		goto done;
 	gpt->ents = calloc(1, esz);
 	if (!gpt->ents) {
 		rc = -ENOMEM;
@@ -2602,14 +2621,16 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries)
 		return 0;	/* do nothing, say nothing */
 
 	/* calculate the size (bytes) of the entries array */
-	new_size = entries * le32_to_cpu(gpt->pheader->sizeof_partition_entry);
-	if (new_size >= UINT32_MAX) {
+	rc = gpt_calculate_sizeof_ents(gpt->pheader, entries, &new_size);
+	if (rc) {
 		fdisk_warnx(cxt, _("The number of the partition has be smaller than %zu."),
 				UINT32_MAX / le32_to_cpu(gpt->pheader->sizeof_partition_entry));
-		return -EINVAL;
+		return rc;
 	}
 
-	old_size = old * le32_to_cpu(gpt->pheader->sizeof_partition_entry);
+	rc = gpt_calculate_sizeof_ents(gpt->pheader, old, &old_size);
+	if (rc)
+		return rc;
 
 	/* calculate new range of usable LBAs */
 	first_usable = (uint64_t) (new_size / cxt->sector_size) + 2ULL;
