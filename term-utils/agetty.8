@@ -192,13 +192,13 @@ program that \fBagetty\fR starts (usually /bin/login) is run as root.
 \-N, \-\-nonewline
 Do not print a newline before writing out /etc/issue.
 .TP
-\-o, \-\-login\-options "\fI/path/command --option argument -- \\u\fP"
+\-o, \-\-login\-options \fIoptions\fP
 Options  that  are passed to the login program.  \\u is replaced
-by the login name.  The default is "/bin/login -- \\u".
+by the user name.  The default is "-- \\u".
 .IP
-Also see the \fB\-\-autologin\fR and \fB\-\-remote\fR options.
+Also see the \fB\-\-login\-program\fR, \fB\-\-autologin\fR and \fB\-\-remote\fR options.
 .IP
-Please read the SECURITY NOTICE below before using this option.
+Please, read the SECURITY NOTICE below before using this option.
 .TP
 \-p, \-\-login\-pause
 Wait for any key before dropping to the login prompt.  Can be combined
