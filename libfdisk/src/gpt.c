@@ -2678,6 +2678,9 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries)
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
 
+	/* update library info */
+	cxt->label->nparts_max = gpt_get_nentries(gpt);
+
 	fdisk_info(cxt, _("Partition table length changed from %"PRIu32" to %"PRIu64"."), old, entries);
 
 	fdisk_label_set_changed(cxt->label, 1);
