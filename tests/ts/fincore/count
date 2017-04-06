@@ -17,6 +17,20 @@ function make_input_name
     echo ${prefix}$(sed -e "s/[^-+a-zA-Z0-9_]/_/g"<<<"$header")
 }
 
+function _dd
+{
+	local msg
+	local ret=0
+
+	msg=$(dd "$@" 2>&1)
+	ret=$?
+	if [ $ret != 0 ]; then
+		echo "failed: dd $@" >&2
+		echo "$msg" >&2
+	fi
+	return $ret
+}
+
 function run_dd_test
 {
     header=$1
@@ -25,11 +39,12 @@ function run_dd_test
 
     input=$(make_input_name "$header")
     INPUT="${INPUT} ${input}"
+	rm -f "$input"
 
     if [ "$bs" = 0 ]; then
-	touch $input
+		touch $input
     else
-	$DD if=/dev/zero of=$input count=1 bs=$bs $flags &> /dev/null
+		_dd if=/dev/zero of=$input count=1 bs=$bs $flags || return
     fi
 
     $TS_CMD_FINCORE --output $COLUMNS  --bytes --noheadings $input
@@ -47,9 +62,10 @@ function run_dd_dd_test
 
     input=$(make_input_name "$header")
     INPUT="${INPUT} ${input}"
+	rm -f "$input"
 
-    $DD if=/dev/zero of=$input count=1 bs=$bs $flags0 &> /dev/null
-    $DD if=/dev/zero of=$input count=1 bs=$bs $flags1 &> /dev/null
+    _dd if=/dev/zero of=$input count=1 bs=$bs $flags0 || return
+    _dd if=/dev/zero of=$input count=1 bs=$bs $flags1 || return
 
     $TS_CMD_FINCORE --output $COLUMNS --bytes --noheadings $input
 
@@ -73,13 +89,6 @@ else
 	TS_EXPECTED+=".nosize"
 	COLUMNS="PAGES,FILE"
 fi
-
-
-# seems unsupported by some dd(1) version
-#DD_FLAGS="status=none"
-
-DD_FLAGS=
-DD="dd $DD_FLAGS"
 
 
 ts_check_test_command "$TS_CMD_FINCORE"
