@@ -40,7 +40,7 @@
 
    Window size depends on page size.
    e.g. 128MB on x86_64. ( = N_PAGES_IN_WINDOW * 4096 ). */
-#define N_PAGES_IN_WINDOW (32 * 1024)
+#define N_PAGES_IN_WINDOW ((size_t)(32 * 1024))
 
 
 struct colinfo {
@@ -68,7 +68,7 @@ static int columns[ARRAY_SIZE(infos) * 2] = {-1};
 static size_t ncolumns;
 
 struct fincore_control {
-	const int pagesize;
+	const size_t pagesize;
 
 	struct libscols_table *tb;		/* output */
 
@@ -188,7 +188,7 @@ static int fincore_fd (struct fincore_control *ctl,
 		       off_t file_size,
 		       off_t *count_incore)
 {
-	size_t window_size = (size_t)N_PAGES_IN_WINDOW * ctl->pagesize;
+	size_t window_size = N_PAGES_IN_WINDOW * ctl->pagesize;
 	off_t  file_offset;
 	void  *window = NULL;
 	int rc = 0;
