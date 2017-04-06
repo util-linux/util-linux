@@ -2654,7 +2654,7 @@ int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries)
 			fdisk_warnx(cxt, _("Cannot allocate memory!"));
 			return -ENOMEM;
 		}
-		memset(ents + old, 0, new_size - old_size);
+		memset(ents + old_size, 0, new_size - old_size);
 		gpt->ents = ents;
 	}
 
