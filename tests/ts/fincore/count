@@ -92,10 +92,6 @@ input=
 } >> $TS_OUTPUT 2>&1
 
 {
-    run_dd_test "SMALLER THAN PAGESIZE (incore)" $(( PAGE_SIZE / 2 ))
-} >> $TS_OUTPUT 2>&1
-
-{
     run_dd_test "PAGESIZE -1 (incore)" $(( PAGE_SIZE - 1 ))
 } >> $TS_OUTPUT 2>&1
 
@@ -105,10 +101,6 @@ input=
 
 {
     run_dd_test "JUST PAGESIZE(directio)" $(( PAGE_SIZE )) "oflag=direct"
-} >> $TS_OUTPUT 2>&1
-
-{
-    run_dd_test "PAGESIZE + 1 (incore)" $(( PAGE_SIZE + 1 ))
 } >> $TS_OUTPUT 2>&1
 
 {
