@@ -239,6 +239,7 @@ static int fincore_name(struct fincore_control *ctl,
 
 	if (fstat (fd, sb) < 0) {
 		warn(_("failed to do fstat: %s"), name);
+		close (fd);
 		return -errno;
 	}
 
