@@ -874,6 +874,11 @@ static unsigned char *gpt_read_entries(struct fdisk_context *cxt,
 	if (gpt_sizeof_ents(header, &sz))
 		return NULL;
 
+	if (sz > (size_t) SSIZE_MAX) {
+		DBG(LABEL, ul_debug("GPT entries array too large to read()"));
+		return NULL;
+	}
+
 	ret = calloc(1, sz);
 	if (!ret)
 		return NULL;
