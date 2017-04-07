@@ -64,7 +64,7 @@ static void idxtostr(struct chmem_desc *desc, uint64_t idx, char *buf, size_t bu
 	start = idx * desc->block_size;
 	end = start + desc->block_size - 1;
 	snprintf(buf, bufsz,
-		 _("Memory Block %"SCNu64" (0x%016"PRIx64"-0x%016"PRIx64")"),
+		 _("Memory Block %"PRIu64" (0x%016"PRIx64"-0x%016"PRIx64")"),
 		 idx, start, end);
 }
 
