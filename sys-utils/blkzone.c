@@ -195,7 +195,7 @@ static int blkzone_report(struct blkzone_control *ctl)
 			err(EXIT_FAILURE, _("%s: BLKREPORTZONE ioctl failed"), ctl->devname);
 
 		if (ctl->verbose)
-			printf(_("Found %d zones from 0x%lx\n"),
+			printf(_("Found %d zones from 0x%"PRIx64"\n"),
 				zi->nr_zones, ctl->offset);
 
 		if (!zi->nr_zones) {
@@ -216,7 +216,7 @@ static int blkzone_report(struct blkzone_control *ctl)
 				break;
 			}
 
-			printf(_("  start: 0x%09lx, len 0x%06lx, wptr 0x%06lx"
+			printf(_("  start: 0x%09"PRIx64", len 0x%06"PRIx64", wptr 0x%06"PRIx64
 			 	" reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"),
 				start, len, (type == 0x1) ? 0 : wp - start,
 				entry->reset, entry->non_seq,
@@ -254,7 +254,7 @@ static int blkzone_reset(struct blkzone_control *ctl)
 
 	if (ctl->offset & (zonesize - 1))
 		errx(EXIT_FAILURE, _("%s: offset %" PRIu64 " is not aligned "
-			"to zone size %" PRIu64),
+			"to zone size %lu"),
 			ctl->devname, ctl->offset, zonesize);
 
 	if (ctl->offset > ctl->total_sectors)
@@ -273,7 +273,7 @@ static int blkzone_reset(struct blkzone_control *ctl)
 	    (zlen & (zonesize - 1)) &&
 	    ctl->offset + zlen != ctl->total_sectors)
 		errx(EXIT_FAILURE, _("%s: number of sectors %" PRIu64 " is not aligned "
-			"to zone size %" PRIu64),
+			"to zone size %lu"),
 			ctl->devname, ctl->length, zonesize);
 
 	za.sector = ctl->offset;

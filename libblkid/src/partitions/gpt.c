@@ -18,6 +18,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <limits.h>
+#include <inttypes.h>
 
 #include "partitions.h"
 #include "crc32.h"
@@ -217,7 +218,7 @@ static struct gpt_header *get_gpt_header(
 
 	ssz = blkid_probe_get_sectorsize(pr);
 
-	DBG(LOWPROBE, ul_debug(" checking for GPT header at %ju", lba));
+	DBG(LOWPROBE, ul_debug(" checking for GPT header at %"PRIu64, lba));
 
 	/* whole sector is allocated for GPT header */
 	h = (struct gpt_header *) get_lba_buffer(pr, lba, ssz);

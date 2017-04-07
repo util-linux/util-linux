@@ -348,7 +348,7 @@ int fdisk_apply_user_device_properties(struct fdisk_context *cxt)
 
 		if (cxt->sector_size != old_secsz) {
 			cxt->total_sectors = (old_total * (old_secsz/512)) / (cxt->sector_size >> 9);
-			DBG(CXT, ul_debugobj(cxt, "new total sectors: %ju", cxt->total_sectors));
+			DBG(CXT, ul_debugobj(cxt, "new total sectors: %ju", (uintmax_t)cxt->total_sectors));
 		}
 	}
 
