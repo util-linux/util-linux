@@ -1270,7 +1270,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 			case 1:
 				if (!trunc_flag)		/* ignore: missing flag */
 					break;
-				if (cl->width_hint >= 1)	/* ignore: no relative */
+				if (cl->width_hint <= 0 || cl->width_hint >= 1)	/* ignore: no relative */
 					break;
 				if (cl->width < (size_t) (cl->width_hint * tb->termwidth)) /* ignore: smaller than expected width */
 					break;
@@ -1292,7 +1292,7 @@ static int recount_widths(struct libscols_table *tb, struct libscols_buffer *buf
 
 			/* #3 stage - trunc relative without flag */
 			case 3:
-				if (cl->width_hint >= 1)	/* ignore: no relative */
+				if (cl->width_hint <= 0 || cl->width_hint >= 1)	/* ignore: no relative */
 					break;
 
 				DBG(TAB, ul_debugobj(tb, "     reducing (relative without flag)"));

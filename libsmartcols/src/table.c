@@ -306,7 +306,7 @@ int scols_table_move_column(struct libscols_table *tb,
  * scols_table_new_column:
  * @tb: table
  * @name: column header
- * @whint: column width hint (absolute width: N > 1; relative width: N < 1)
+ * @whint: column width hint (absolute width: N > 1; relative width: 0 < N < 1)
  * @flags: flags integer
  *
  * This is shortcut for
@@ -317,9 +317,9 @@ int scols_table_move_column(struct libscols_table *tb,
  *
  * The column width is possible to define by:
  *
- *  @whint = 0..1    : relative width, percent of terminal width
+ *  @whint: 0 < N < 1  : relative width, percent of terminal width
  *
- *  @whint = 1..N    : absolute width, empty column will be truncated to
+ *  @whint: N >= 1     : absolute width, empty column will be truncated to
  *                     the column header width if no specified STRICTWIDTH flag
  *
  * Note that if table has disabled "maxout" flag (disabled by default) than
