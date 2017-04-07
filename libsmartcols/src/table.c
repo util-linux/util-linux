@@ -326,6 +326,23 @@ int scols_table_move_column(struct libscols_table *tb,
  * relative width is used as a hint only. It's possible that column will be
  * narrow if the specified size is too large for column data.
  *
+ *
+ * If the width of all columns is greater than terminal width then library
+ * tries to reduce width of the individual columns. It's done in three stages:
+ *
+ * #1 reduce columns with SCOLS_FL_TRUNC flag and with relative width if the
+ *    width is greater than width defined by @whint (@whint * terminal_width)
+ *
+ * #2 reduce all columns with SCOLS_FL_TRUNC flag
+ *
+ * #3 reduce all columns with relative width
+ *
+ * The next stage is always used if the previous stage is unsuccessful. Note
+ * that SCOLS_FL_WRAP is interpreted as SCOLS_FL_TRUNC when calculate column
+ * width (if custom wrap function is not specified), but the final text is not
+ * truncated, but wrapped to multi-line cell.
+ *
+ *
  * The column is necessary to address by sequential number. The first defined
  * column has the colnum = 0. For example:
  *
