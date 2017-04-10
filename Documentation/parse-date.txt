@@ -4,7 +4,7 @@ NAME
 
 SYNOPSIS
 	#include "timeutils.h"
-	
+
 	int parse_date(struct timespec *result, char const *p,
 			struct timespec const *now)
 
@@ -15,7 +15,7 @@ DESCRIPTION
 	The string itself is pointed to by *p.  Return 1 if successful.
 	*p can be an incomplete or relative time specification; if so, use
 	*now as the basis for the returned time.
-	
+
 
 This function is based upon gnulib's parse-datetime.y-dd7a871.
 
