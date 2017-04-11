@@ -12,7 +12,7 @@ _hwclock_module()
 			return 0
 			;;
 		'--date')
-			COMPREPLY=( $(compgen -W "date" -- $cur) )
+			COMPREPLY=( $(compgen -W "time" -- $cur) )
 			return 0
 			;;
 		'--epoch')
@@ -40,9 +40,9 @@ _hwclock_module()
 				--localtime
 				--rtc
 				--directisa
-				--badyear
 				--date
 				--epoch
+				--update-drift
 				--noadjfile
 				--adjfile
 				--test
