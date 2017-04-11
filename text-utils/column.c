@@ -341,6 +341,7 @@ static void create_tree(struct column_control *ctl)
 static void modify_table(struct column_control *ctl)
 {
 	scols_table_set_termwidth(ctl->tab, ctl->termwidth);
+	scols_table_set_termforce(ctl->tab, SCOLS_TERMFORCE_ALWAYS);
 
 	if (ctl->tab_colright)
 		apply_columnflag_from_list(ctl, ctl->tab_colright,
@@ -578,7 +579,8 @@ int main(int argc, char **argv)
 {
 	struct column_control ctl = {
 		.mode = COLUMN_MODE_FILLCOLS,
-		.greedy = 1
+		.greedy = 1,
+		.termwidth = (size_t) -1
 	};
 
 	int c;
@@ -620,7 +622,6 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	ctl.termwidth = get_terminal_width(80);
 	ctl.output_separator = "  ";
 	ctl.input_separator = mbs_to_wcs("\t ");
 
@@ -695,6 +696,9 @@ int main(int argc, char **argv)
 	}
 	argc -= optind;
 	argv += optind;
+
+	if (ctl.termwidth == (size_t) -1)
+		ctl.termwidth = get_terminal_width(80);
 
 	if (ctl.tree) {
 		ctl.mode = COLUMN_MODE_TABLE;
