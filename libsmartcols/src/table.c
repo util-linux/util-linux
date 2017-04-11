@@ -1409,6 +1409,7 @@ int scols_table_get_termforce(const struct libscols_table *tb)
  */
 int scols_table_set_termwidth(struct libscols_table *tb, size_t width)
 {
+	DBG(TAB, ul_debugobj(tb, "set terminatl width: %zu", width));
 	tb->termwidth = width;
 	return 0;
 }
