@@ -66,7 +66,8 @@ Use JSON output format to print the table, the option
 \fB\-\-table\-columns\fP is required and the option \fB\-\-table\-name\fP is recommended.
 .IP "\fB\-c, \-\-output\-width\fP \fIwidth\fP"
 Output is formatted to a width specified as number of characters. The original
-name of this option is --columns; this name is deprecated since v2.30.
+name of this option is --columns; this name is deprecated since v2.30. Note that input
+longer than \fIwidth\fP is not truncated by default.
 .IP "\fB\-o, \-\-output\-separator\fP \fIstring\fP"
 Specify the columns delimiter for table output (default is two spaces).
 .IP "\fB\-s, \-\-separator\fP \fIseparators\fP"
