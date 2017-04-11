@@ -220,6 +220,11 @@ static int lock_simplelock(struct libmnt_lock *ml)
 		rc = -errno;
 		goto err;
 	}
+	rc = fchmod(ml->lockfile_fd, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
+	if (rc < 0) {
+		rc = -errno;
+		goto err;
+	}
 
 	while (flock(ml->lockfile_fd, LOCK_EX) < 0) {
 		int errsv;
