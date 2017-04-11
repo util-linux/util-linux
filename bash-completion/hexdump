@@ -5,6 +5,10 @@ _hexdump_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
+		'-L'|'--color')
+			COMPREPLY=( $(compgen -W "auto never always" -- $cur) )
+			return 0
+			;;
 		'-e'|'--format')
 			COMPREPLY=( $(compgen -W "format" -- $cur) )
 			return 0
@@ -29,6 +33,7 @@ _hexdump_module()
 				--two-bytes-decimal
 				--two-bytes-octal
 				--two-bytes-hex
+				--color=
 				--format
 				--format-file
 				--length
