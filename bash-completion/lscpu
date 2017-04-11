@@ -11,7 +11,7 @@ _lscpu_module()
 			realcur="${cur##*,}"
 			prefix="${cur%$realcur}"
 			OPTS_ALL="CPU CORE SOCKET NODE
-				BOOK CACHE POLARIZATION ADDRESS
+				BOOK DRAWER CACHE POLARIZATION ADDRESS
 				CONFIGURED ONLINE MAXMHZ MINMHZ"
 			for WORD in $OPTS_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
@@ -31,10 +31,12 @@ _lscpu_module()
 			OPTS_ALL="--all
 				--online
 				--offline
+				--json
 				--extended=
 				--parse=
 				--sysroot
 				--hex
+				--physical
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS_ALL[*]}" -- $cur) )

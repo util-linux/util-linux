@@ -6,25 +6,20 @@ _mount_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-t'|'--types')
-			local TYPES
+			local prefix realcur TYPES
 			TYPES="
-adfs	  noadfs	hfsplus	  nohfsplus	smbfs	  nosmbfs
-affs	  noaffs	hpfs	  nohpfs	squashfs  nosquashfs
-autofs	  noautofs	iso9660	  noiso9660	sysv	  nosysv
-cifs	  nocifs	jfs	  nojfs		tmpfs	  notmpfs
-coda	  nocoda	minix	  nominix	ubifs	  noubifs
-coherent  nocoherent	msdos	  nomsdos	udf	  noudf
-cramfs	  nocramfs	ncpfs	  noncpfs	ufs	  noufs
-debugfs	  nodebugfs	nfs	  nonfs		umsdos	  noumsdos
-devpts	  nodevpts	nfs4	  nonfs4	usbfs	  nousbfs
-efs	  noefs		ntfs	  nontfs	vfat	  novfat
-			proc	  noproc	xenix	  noxenix
-ext2	  noext2	qnx4	  noqnx4	xfs	  noxfs
-ext3	  noext3	ramfs	  noramfs
-ext4	  noext4	reiserfs  noreiserfs
-hfs	  nohfs		romfs	  noromfs
-"
-			COMPREPLY=( $(compgen -W "$TYPES" -- $cur) )
+				$(\ls /lib/modules/$(uname -r)/kernel/fs | awk '{print $1, "no" $1}')
+				$(awk '{print $NF, "no" $NF}' /proc/filesystems)
+			"
+			realcur="${cur##*,}"
+			prefix="${cur%$realcur}"
+			for WORD in $TYPES; do
+				if ! [[ $prefix == *"$WORD"* ]]; then
+					TYPE_COLS="$WORD $TYPE_COLS"
+				fi
+			done
+			compopt -o nospace
+			COMPREPLY=( $(compgen -P "$prefix" -W "$TYPE_COLS" -S ',' -- $realcur) )
 			return 0
 			;;
 		'-L'|'--label')

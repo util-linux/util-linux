@@ -9,6 +9,14 @@ _ldattach_module()
 			COMPREPLY=( $(compgen -W "speed" -- $cur) )
 			return 0
 			;;
+		'-c'|'--intro-command')
+			COMPREPLY=( $(compgen -W "string" -- $cur) )
+			return 0
+			;;
+		'-p'|'--pause')
+			COMPREPLY=( $(compgen -W "seconds" -- $cur) )
+			return 0
+			;;
 		'-i'|'--iflag')
 			local IFLAGS
 			IFLAGS="BRKINT ICRNL IGNBRK IGNCR IGNPAR IMAXBEL
@@ -28,6 +36,8 @@ _ldattach_module()
 		-*)
 			OPTS="--debug
 				--speed
+				--intro-command
+				--pause
 				--sevenbits
 				--eightbits
 				--noparity

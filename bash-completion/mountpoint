@@ -5,10 +5,6 @@ _mountpoint_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-f'|'--fixme')
-			COMPREPLY=( $(compgen -W "fixme" -- $cur) )
-			return 0
-			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;

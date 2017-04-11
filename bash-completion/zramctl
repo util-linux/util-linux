@@ -13,7 +13,9 @@ _zramctl_module()
 			local prefix realcur OUTPUT_ALL OUTPUT
 			realcur="${cur##*,}"
 			prefix="${cur%$realcur}"
-			OUTPUT_ALL="NAME DISKSIZE DATA COMPR ALGORITHM STREAMS ZERO-PAGES TOTAL MOUNTPOINT"
+			OUTPUT_ALL="NAME DISKSIZE DATA COMPR ALGORITHM
+				STREAMS ZERO-PAGES TOTAL MEM-LIMIT MEM-USED
+				MIGRATED MOUNTPOINT"
 			for WORD in $OUTPUT_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
 					OUTPUT="$WORD $OUTPUT"

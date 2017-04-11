@@ -26,7 +26,7 @@ _lsns_module()
 			return 0
 			;;
 		'-t'|'--type')
-			COMPREPLY=( $(compgen -W "mnt net ipc user pid uts" -- $cur) )
+			COMPREPLY=( $(compgen -W "mnt net ipc user pid uts cgroup" -- $cur) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')

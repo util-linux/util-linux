@@ -1,3 +1,4 @@
+
 _dmesg_module()
 {
 	local cur prev OPTS
@@ -23,6 +24,10 @@ _dmesg_module()
 			COMPREPLY=( $(compgen -W "size" -- $cur) )
 			return 0
 			;;
+		'--time-format')
+			COMPREPLY=( $(compgen -W "delta reltime ctime notime iso" -- $cur) )
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -46,6 +51,7 @@ _dmesg_module()
 		--buffer-size
 		--ctime
 		--notime
+		--time-format
 		--userspace
 		--follow
 		--decode

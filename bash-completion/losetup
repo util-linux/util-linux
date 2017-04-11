@@ -30,7 +30,7 @@ _losetup_module()
 			prefix="${cur%$realcur}"
 			OUTPUT_ALL="NAME AUTOCLEAR BACK-FILE BACK-INO
 				BACK-MAJ:MIN MAJ:MIN OFFSET PARTSCAN RO
-				SIZELIMIT"
+				SIZELIMIT DIO"
 			for WORD in $OUTPUT_ALL; do
 				if ! [[ $prefix == *"$WORD"* ]]; then
 					OUTPUT="$WORD $OUTPUT"
@@ -52,14 +52,18 @@ _losetup_module()
 				--find
 				--set-capacity
 				--associated
-				--list
+				--nooverlap
 				--offset
-				--output
 				--sizelimit
 				--partscan
 				--read-only
 				--show
 				--verbose
+				--json
+				--list
+				--noheadings
+				--output
+				--raw
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

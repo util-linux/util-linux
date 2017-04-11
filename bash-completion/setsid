@@ -11,7 +11,7 @@ _setsid_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="--ctty --help --version"
+			OPTS="--ctty --wait --help --version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
