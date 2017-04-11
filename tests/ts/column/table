@@ -36,4 +36,69 @@ ts_init_subtest "input-separator"
 $TS_CMD_COLUMN --separator ',' --table $TS_SELF/files/table-sep >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
+
+ts_init_subtest "long"
+$TS_CMD_COLUMN --table $TS_SELF/files/mountinfo >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "hide"
+$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+		--table-hide 1,2,3,4,7,8  >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "headers"
+$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
+		--table-hide SEP,ID,PARENT,ROOT \
+		>> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "truncate"
+$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
+		--table-hide SEP,ID,PARENT,ROOT \
+		--table-truncate VFS-OPTS,FS-OPTS \
+		--output-width 80 \
+		>> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "right"
+$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
+		--table-hide SEP,ID,PARENT,ROOT,VFS-OPTS,FS-OPTS,PROP \
+		--table-right SOURCE,TYPE \
+		--output-width 80 \
+		>> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "wrap"
+$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
+		--table-hide=SEP,ID,PARENT,ROOT,VFS-OPTS,PROP \
+		--table-wrap FS-OPTS \
+		--output-width 110 \
+		>> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "order"
+$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
+		--table-hide=SEP,ID,PARENT,ROOT,PROP,FS-OPTS,MAJMIN \
+		--table-order TARGET,SOURCE,TYPE,VFS-OPTS \
+		--output-width 110 \
+		>> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "tree"
+$TS_CMD_COLUMN  --table $TS_SELF/files/mountinfo \
+		--table-columns ID,PARENT,MAJMIN,ROOT,TARGET,VFS-OPTS,PROP,SEP,TYPE,SOURCE,FS-OPTS \
+		--table-hide=SEP,ID,PARENT,ROOT,PROP,FS-OPTS,MAJMIN \
+		--table-order TARGET,SOURCE,TYPE,VFS-OPTS \
+		--tree TARGET \
+		--tree-id ID \
+		--tree-parent PARENT \
+		--output-width 110 \
+		>> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
 ts_finalize
