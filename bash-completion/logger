@@ -31,6 +31,10 @@ _logger_module()
 			COMPREPLY=( $(compgen -W "$(awk '$NF ~ /^\// {print $NF}' /proc/net/unix)" -- $cur) )
 			return 0
 			;;
+		'--socket-errors')
+			COMPREPLY=( $(compgen -W "on off auto" -- $cur) )
+			return 0
+			;;
 		'--msgid')
 			COMPREPLY=( $(compgen -W "msgid" -- $cur) )
 			return 0
@@ -58,8 +62,10 @@ _logger_module()
 				--size
 				--skip-empty
 				--socket
+				--socket-errors
 				--stderr
 				--tag
+				--tcp
 				--udp
 				--version
 			"

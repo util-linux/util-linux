@@ -21,6 +21,9 @@ endif
 if BUILD_FINCORE
 dist_bashcompletion_DATA += bash-completion/fincore
 endif
+if BUILD_FINDFS
+dist_bashcompletion_DATA += bash-completion/findfs
+endif
 if BUILD_FINDMNT
 dist_bashcompletion_DATA += bash-completion/findmnt
 endif

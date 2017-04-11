@@ -31,23 +31,19 @@ _lslocks_module()
 			return 0
 			;;
 	esac
-	case $cur in
-		-*)
-			OPTS="--pid
-				--json
-				--output
-				--noheadings
-				--raw
-				--notruncate
-				--help
-				--version"
-			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
-			return 0
-			;;
-	esac
-	local IFS=$'\n'
-	compopt -o filenames
-	COMPREPLY=( $(compgen -f -- $cur) )
+	OPTS="
+		--json
+		--noinaccessible
+		--noheadings
+		--output
+		--pid
+		--raw
+		--notruncate
+		--help
+		--version
+	"
+	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	return 0
+
 }
 complete -F _lslocks_module lslocks
