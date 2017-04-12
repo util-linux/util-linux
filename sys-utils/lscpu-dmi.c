@@ -192,6 +192,18 @@ static int hypervisor_decode_smbios(uint8_t *buf, const char *devmem)
 		devmem);
 }
 
+static int hypervisor_decode_sysfw(void)
+{
+	static char const sys_fw_dmi_tables[] = "/sys/firmware/dmi/tables/DMI";
+	struct stat st;
+
+	if (stat(sys_fw_dmi_tables, &st))
+		return -1;
+
+	return hypervisor_from_dmi_table(0, st.st_size, st.st_size / 4,
+					 sys_fw_dmi_tables);
+}
+
 /*
  * Probe for EFI interface
  */
@@ -240,6 +252,10 @@ int read_hypervisor_dmi(void)
 	    || sizeof(uint16_t) != 2
 	    || sizeof(uint32_t) != 4
 	    || '\0' != 0)
+		return rc;
+
+	rc = hypervisor_decode_sysfw();
+	if (rc >= 0)
 		return rc;
 
 	/* First try EFI (ia64, Intel-based Mac) */
