@@ -435,7 +435,8 @@ static void do_io(struct script_control *ctl)
 
 
 	strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
-	fprintf(ctl->typescriptfp, _("Script started on %s"), buf);
+	if (!ctl->quiet && ctl->typescriptfp)
+		fprintf(ctl->typescriptfp, _("Script started on %s"), buf);
 	gettime_monotonic(&ctl->oldtime);
 
 	while (!ctl->die) {
