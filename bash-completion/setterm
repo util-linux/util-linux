@@ -85,6 +85,7 @@ _setterm_module()
 	esac
 	OPTS="	--term
 		--reset
+		--resize
 		--initialize
 		--cursor
 		--repeat
