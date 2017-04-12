@@ -151,10 +151,10 @@ static const char *type_text[] = {
 static const char *condition_str[] = {
 	"nw", /* Not write pointer */
 	"em", /* Empty */
-	"io", /* Implicitly opened */
-	"eo", /* Explicitly opened */
+	"oi", /* Implicitly opened */
+	"oe", /* Explicitly opened */
 	"cl", /* Closed */
-	"x5", "x6", "x7", "x8", "x9", "xA", "xB", /* xN: reserved */
+	"x5", "x6", "x7", "x8", "x9", "xA", "xB", "xC", /* xN: reserved */
 	"ro", /* Read only */
 	"fu", /* Full */
 	"of"  /* Offline */
@@ -220,7 +220,7 @@ static int blkzone_report(struct blkzone_control *ctl)
 			 	" reset:%u non-seq:%u, zcond:%2u(%s) [type: %u(%s)]\n"),
 				start, len, (type == 0x1) ? 0 : wp - start,
 				entry->reset, entry->non_seq,
-				cond, condition_str[cond & ARRAY_SIZE(condition_str)],
+				cond, condition_str[cond & (ARRAY_SIZE(condition_str) - 1)],
 				type, type_text[type]);
 
 			nr_zones--;
