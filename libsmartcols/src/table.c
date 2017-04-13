@@ -1335,8 +1335,8 @@ static struct libscols_line *move_line_and_children(struct libscols_line *ln, st
  * scols_sort_table_by_tree:
  * @tb: table
  *
- * Reorders lines in the tree according to parent->child relation. Note that
- * order of lines in the table is independent on the tree hierarchy.
+ * Reorders lines in the table by parent->child relation. Note that order of
+ * the lines in the table is independent on the tree hierarchy.
  *
  * Returns: 0, a negative value in case of an error.
  */
