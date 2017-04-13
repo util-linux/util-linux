@@ -207,6 +207,8 @@ struct lsblk {
 	struct libscols_column *sort_col;/* sort output by this column */
 	int sort_id;
 
+	int flags;			/* LSBLK_* */
+
 	unsigned int all_devices:1;	/* print all devices, including empty */
 	unsigned int bytes:1;		/* print SIZE in bytes */
 	unsigned int inverse:1;		/* print inverse dependencies */
@@ -1663,8 +1665,7 @@ static void check_sysdevblock(void)
 
 int main(int argc, char *argv[])
 {
-	struct lsblk _ls = { .sort_id = -1 };
-	int scols_flags = LSBLK_TREE;
+	struct lsblk _ls = { .sort_id = -1, .flags = LSBLK_TREE };
 	int c, status = EXIT_FAILURE;
 	char *outarg = NULL;
 	size_t i;
@@ -1747,13 +1748,13 @@ int main(int argc, char *argv[])
 			help(stdout);
 			break;
 		case 'J':
-			scols_flags |= LSBLK_JSON;
+			lsblk->flags |= LSBLK_JSON;
 			break;
 		case 'l':
-			scols_flags &= ~LSBLK_TREE; /* disable the default */
+			lsblk->flags &= ~LSBLK_TREE; /* disable the default */
 			break;
 		case 'n':
-			scols_flags |= LSBLK_NOHEADINGS;
+			lsblk->flags |= LSBLK_NOHEADINGS;
 			break;
 		case 'o':
 			outarg = optarg;
@@ -1766,18 +1767,18 @@ int main(int argc, char *argv[])
 			lsblk->paths = 1;
 			break;
 		case 'P':
-			scols_flags |= LSBLK_EXPORT;
-			scols_flags &= ~LSBLK_TREE;	/* disable the default */
+			lsblk->flags |= LSBLK_EXPORT;
+			lsblk->flags &= ~LSBLK_TREE;	/* disable the default */
 			break;
 		case 'i':
-			scols_flags |= LSBLK_ASCII;
+			lsblk->flags |= LSBLK_ASCII;
 			break;
 		case 'I':
 			parse_includes(optarg);
 			break;
 		case 'r':
-			scols_flags &= ~LSBLK_TREE;	/* disable the default */
-			scols_flags |= LSBLK_RAW;		/* enable raw */
+			lsblk->flags &= ~LSBLK_TREE;	/* disable the default */
+			lsblk->flags |= LSBLK_RAW;		/* enable raw */
 			break;
 		case 's':
 			lsblk->inverse = 1;
@@ -1824,7 +1825,7 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'x':
-			scols_flags &= ~LSBLK_TREE; /* disable the default */
+			lsblk->flags &= ~LSBLK_TREE; /* disable the default */
 			lsblk->sort_id = column_name_to_id(optarg, strlen(optarg));
 			if (lsblk->sort_id >= 0)
 				break;
@@ -1872,13 +1873,13 @@ int main(int argc, char *argv[])
 	 */
 	if (!(lsblk->table = scols_new_table()))
 		errx(EXIT_FAILURE, _("failed to initialize output table"));
-	scols_table_enable_raw(lsblk->table, !!(scols_flags & LSBLK_RAW));
-	scols_table_enable_export(lsblk->table, !!(scols_flags & LSBLK_EXPORT));
-	scols_table_enable_ascii(lsblk->table, !!(scols_flags & LSBLK_ASCII));
-	scols_table_enable_json(lsblk->table, !!(scols_flags & LSBLK_JSON));
-	scols_table_enable_noheadings(lsblk->table, !!(scols_flags & LSBLK_NOHEADINGS));
+	scols_table_enable_raw(lsblk->table, !!(lsblk->flags & LSBLK_RAW));
+	scols_table_enable_export(lsblk->table, !!(lsblk->flags & LSBLK_EXPORT));
+	scols_table_enable_ascii(lsblk->table, !!(lsblk->flags & LSBLK_ASCII));
+	scols_table_enable_json(lsblk->table, !!(lsblk->flags & LSBLK_JSON));
+	scols_table_enable_noheadings(lsblk->table, !!(lsblk->flags & LSBLK_NOHEADINGS));
 
-	if (scols_flags & LSBLK_JSON)
+	if (lsblk->flags & LSBLK_JSON)
 		scols_table_set_name(lsblk->table, "blockdevices");
 
 	for (i = 0; i < ncolumns; i++) {
@@ -1886,7 +1887,7 @@ int main(int argc, char *argv[])
 		struct libscols_column *cl;
 		int id = get_column_id(i), fl = ci->flags;
 
-		if (!(scols_flags & LSBLK_TREE) && id == COL_NAME)
+		if (!(lsblk->flags & LSBLK_TREE) && id == COL_NAME)
 			fl &= ~SCOLS_FL_TREE;
 		if (lsblk->sort_hidden && lsblk->sort_id == id)
 			fl |= SCOLS_FL_HIDDEN;
