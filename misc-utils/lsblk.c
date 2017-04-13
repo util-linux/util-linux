@@ -216,6 +216,7 @@ struct lsblk {
 	unsigned int scsi:1;		/* print only device with HCTL (SCSI) */
 	unsigned int paths:1;		/* print devnames with "/dev" prefix */
 	unsigned int sort_hidden:1;	/* sort column not between output columns */
+	unsigned int force_tree_order:1;/* sort lines by parent->tree relation */
 };
 
 static struct lsblk *lsblk;	/* global handler */
@@ -1859,6 +1860,10 @@ int main(int argc, char *argv[])
 		 * /sys is no more sorted */
 		lsblk->sort_id = COL_MAJMIN;
 
+	/* For --inverse --list we still follow parent->child relation */
+	if (lsblk->inverse && !(lsblk->flags & LSBLK_TREE))
+		lsblk->force_tree_order = 1;
+
 	if (lsblk->sort_id >= 0 && column_id_to_number(lsblk->sort_id) < 0) {
 		/* the sort column is not between output columns -- add as hidden */
 		add_column(columns, ncolumns++, lsblk->sort_id);
@@ -1923,6 +1928,8 @@ int main(int argc, char *argv[])
 
 	if (lsblk->sort_col)
 		scols_sort_table(lsblk->table, lsblk->sort_col);
+	if (lsblk->force_tree_order)
+		scols_sort_table_by_tree(lsblk->table);
 
 	scols_print_table(lsblk->table);
 

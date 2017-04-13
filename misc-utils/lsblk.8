@@ -114,7 +114,8 @@ Produce output in raw format.  All potentially unsafe characters are hex-escaped
 Output info about SCSI devices only.  All partitions, slaves and holder devices are ignored.
 .TP
 .BR \-s , " \-\-inverse"
-Print dependencies in inverse order.
+Print dependencies in inverse order. If the \fB\-\-list\fR output is requested then
+the lines are still ordered by dependencies.
 .TP
 .BR \-t , " \-\-topology"
 Output info about block-device topology.
