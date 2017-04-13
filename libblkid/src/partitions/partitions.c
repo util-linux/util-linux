@@ -887,6 +887,22 @@ int blkid_known_pttype(const char *pttype)
 }
 
 /**
+ * blkid_partitions_get_name:
+ * @idx: number >= 0
+ * @name: returns name of a supported partition
+ *
+ * Returns: -1 if @idx is out of range, or 0 on success.
+ */
+int blkid_partitions_get_name(const size_t idx, const char **name)
+{
+	if (idx < ARRAY_SIZE(idinfos)) {
+		*name = idinfos[idx]->name;
+		return 0;
+	}
+	return -1;
+}
+
+/**
  * blkid_partlist_numof_partitions:
  * @ls: partitions list
  *

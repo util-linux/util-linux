@@ -86,6 +86,7 @@ blkid_probe_invert_partitions_filter
 blkid_probe_reset_partitions_filter
 <SUBSECTION>
 blkid_known_pttype
+blkid_partitions_get_name
 <SUBSECTION>
 blkid_partition_get_name
 blkid_partition_get_flags
