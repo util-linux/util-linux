@@ -1285,7 +1285,8 @@ static int sort_line_children(struct libscols_line *ln, struct libscols_column *
  * @tb: table
  * @cl: order by this column
  *
- * Orders the table by the column. See also scols_column_set_cmpfunc().
+ * Orders the table by the column. See also scols_column_set_cmpfunc(). If the
+ * tree output is enabled then children in the tree are recursively sorted too.
  *
  * Returns: 0, a negative value in case of an error.
  */
@@ -1308,6 +1309,58 @@ int scols_sort_table(struct libscols_table *tb, struct libscols_column *cl)
 
 	return 0;
 }
+
+static struct libscols_line *move_line_and_children(struct libscols_line *ln, struct libscols_line *pre)
+{
+	if (pre) {
+		list_del_init(&ln->ln_lines);			/* remove from old position */
+	        list_add(&ln->ln_lines, &pre->ln_lines);        /* add to the new place (behind @pre) */
+	}
+	pre = ln;
+
+	if (!list_empty(&ln->ln_branch)) {
+		struct list_head *p;
+
+		list_for_each(p, &ln->ln_branch) {
+			struct libscols_line *chld =
+					list_entry(p, struct libscols_line, ln_children);
+			pre = move_line_and_children(chld, pre);
+		}
+	}
+
+	return pre;
+}
+
+/**
+ * scols_sort_table_by_tree:
+ * @tb: table
+ *
+ * Reorders lines in the tree according to parent->child relation. Note that
+ * order of lines in the table is independent on the tree hierarchy.
+ *
+ * Returns: 0, a negative value in case of an error.
+ */
+int scols_sort_table_by_tree(struct libscols_table *tb)
+{
+	struct libscols_line *ln;
+	struct libscols_iter itr;
+
+	if (!tb)
+		return -EINVAL;
+
+	DBG(TAB, ul_debugobj(tb, "sorting table by tree"));
+
+	scols_reset_iter(&itr, SCOLS_ITER_FORWARD);
+	while (scols_table_next_line(tb, &itr, &ln) == 0) {
+		if (ln->parent)
+			continue;
+
+		move_line_and_children(ln, NULL);
+	}
+
+	return 0;
+}
+
 
 /**
  * scols_table_set_termforce:

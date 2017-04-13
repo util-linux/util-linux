@@ -163,4 +163,5 @@ SMARTCOLS_2.30 {
 global:
 	scols_cell_get_alignment;
 	scols_table_move_column;
+	scols_sort_table_by_tree;
 } SMARTCOLS_2.29;

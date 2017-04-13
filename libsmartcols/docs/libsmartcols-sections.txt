@@ -105,6 +105,7 @@ scols_copy_table
 scols_new_table
 scols_ref_table
 scols_sort_table
+scols_sort_table_by_tree
 scols_table_add_column
 scols_table_add_line
 scols_table_colors_wanted
