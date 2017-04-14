@@ -70,6 +70,7 @@
 #include "ttyutils.h"
 #include "all-io.h"
 #include "monotonic.h"
+#include "timeutils.h"
 
 #include "debug.h"
 
@@ -435,8 +436,10 @@ static void do_io(struct script_control *ctl)
 
 
 	if (!ctl->quiet && ctl->typescriptfp) {
-		strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
-		fprintf(ctl->typescriptfp, _("Script started on %s"), buf);
+		strtime_iso(&tvec, ISO_8601_DATE | ISO_8601_TIME | ISO_8601_DOTUSEC |
+				ISO_8601_TIMEZONE | ISO_8601_SPACE,
+				buf, sizeof(buf));
+		fprintf(ctl->typescriptfp, _("Script started on %s\n"), buf);
 	}
 	gettime_monotonic(&ctl->oldtime);
 
@@ -509,8 +512,10 @@ static void do_io(struct script_control *ctl)
 		wait_for_child(ctl, 1);
 	if (!ctl->quiet && ctl->typescriptfp) {
 		tvec = script_time((time_t *)NULL);
-		strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
-		fprintf(ctl->typescriptfp, _("\nScript done on %s"), buf);
+		strtime_iso(&tvec, ISO_8601_DATE | ISO_8601_TIME | ISO_8601_DOTUSEC |
+				ISO_8601_TIMEZONE | ISO_8601_SPACE,
+				buf, sizeof(buf));
+		fprintf(ctl->typescriptfp, _("\nScript done on %s\n"), buf);
 	}
 	done(ctl);
 }
