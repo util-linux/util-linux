@@ -115,7 +115,7 @@ struct logger_ctl {
 	int pri;
 	pid_t pid;			/* zero when unwanted */
 	char *hdr;			/* the syslog header (based on protocol) */
-	char *tag;
+	char const *tag;
 	char *msgid;
 	char *unix_socket;		/* -u <path> or default to _PATH_DEVLOG */
 	char *server;
@@ -369,9 +369,9 @@ static int journald_entry(struct logger_ctl *ctl, FILE *fp)
 }
 #endif
 
-static char *xgetlogin(void)
+static char const *xgetlogin(void)
 {
-	char *cp;
+	char const *cp;
 	struct passwd *pw;
 
 	if (!(cp = getlogin()) || !*cp)
@@ -385,12 +385,12 @@ static char *xgetlogin(void)
  * of a leading 0). The function uses a static buffer which is
  * overwritten on the next call (just like ctime() does).
  */
-static const char *rfc3164_current_time(void)
+static char const *rfc3164_current_time(void)
 {
 	static char time[32];
 	struct timeval tv;
 	struct tm *tm;
-	static char *monthnames[] = {
+	static char const * const monthnames[] = {
 		"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
 		"Sep", "Oct", "Nov", "Dec"
 	};
@@ -727,7 +727,7 @@ static void syslog_rfc5424_header(struct logger_ctl *const ctl)
 {
 	char *time;
 	char *hostname;
-	char *const app_name = ctl->tag;
+	char const *app_name = ctl->tag;
 	char *procid;
 	char *const msgid = xstrdup(ctl->msgid ? ctl->msgid : NILVALUE);
 	char *structured = NULL;
