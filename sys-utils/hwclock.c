@@ -1301,7 +1301,7 @@ static void usage(const struct hwclock_control *ctl, const char *fmt, ...)
  */
 int main(int argc, char **argv)
 {
-	struct hwclock_control ctl = { NULL };
+	struct hwclock_control ctl = { .show = 1 }; /* default op is show */
 	struct timeval startup_time;
 	struct adjtime adjtime = { 0 };
 	struct timespec when = { 0 };
@@ -1411,28 +1411,34 @@ int main(int argc, char **argv)
 			break;
 		case 'a':
 			ctl.adjust = 1;
+			ctl.show = 0;
 			break;
 		case 'r':
 			ctl.show = 1;
 			break;
 		case 's':
 			ctl.hctosys = 1;
+			ctl.show = 0;
 			break;
 		case 'u':
 			ctl.utc = 1;
 			break;
 		case 'w':
 			ctl.systohc = 1;
+			ctl.show = 0;
 			break;
 		case OPT_SET:
 			ctl.set = 1;
+			ctl.show = 0;
 			break;
 #ifdef __linux__
 		case OPT_GETEPOCH:
 			ctl.getepoch = 1;
+			ctl.show = 0;
 			break;
 		case OPT_SETEPOCH:
 			ctl.setepoch = 1;
+			ctl.show = 0;
 			break;
 #endif
 		case OPT_NOADJFILE:
@@ -1459,12 +1465,15 @@ int main(int argc, char **argv)
 			break;
 		case OPT_SYSTZ:
 			ctl.systz = 1;		/* --systz */
+			ctl.show = 0;
 			break;
 		case OPT_PREDICT_HC:
 			ctl.predict = 1;	/* --predict-hc */
+			ctl.show = 0;
 			break;
 		case OPT_GET:
 			ctl.get = 1;		/* --get */
+			ctl.show = 0;
 			break;
 		case OPT_UPDATE:
 			ctl.update = 1;		/* --update-drift */
@@ -1518,11 +1527,6 @@ int main(int argc, char **argv)
 			hwclock_exit(&ctl, EX_USAGE);
 		}
 	}
-
-	if (!(ctl.show | ctl.set | ctl.systohc | ctl.hctosys |
-	     ctl.systz | ctl.adjust | ctl.getepoch | ctl.setepoch |
-	     ctl.predict | ctl.get))
-		ctl.show = 1;	/* default to show */
 
 #ifdef __linux__
 	if (ctl.getepoch || ctl.setepoch) {
