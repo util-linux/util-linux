@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <getopt.h>
 
 #include <blkid.h>
 
@@ -41,6 +42,12 @@ static void __attribute__((__noreturn__)) usage(int rc)
 int main(int argc, char **argv)
 {
 	char	*dev;
+	int	c;
+	static const struct option longopts[] = {
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -52,15 +59,16 @@ int main(int argc, char **argv)
 		 * with version from e2fsprogs */
 		usage(FINDFS_USAGE_ERROR);
 
-	if (strcmp(argv[1], "-V") == 0 ||
-		   strcmp(argv[1], "--version") == 0) {
-		printf(UTIL_LINUX_VERSION);
-		return FINDFS_SUCCESS;
-	} else if (strcmp(argv[1], "-h") == 0 ||
-		   strcmp(argv[1], "--help") == 0) {
-		usage(FINDFS_SUCCESS);
-	} else if (argv[1][0] == '-')
-		usage(FINDFS_USAGE_ERROR);
+	while ((c = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
+		switch (c) {
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
+		case 'h':
+			usage(FINDFS_SUCCESS);
+		default:
+			errtryhelp(EXIT_FAILURE);
+		}
 
 	dev = blkid_evaluate_tag(argv[1], NULL, NULL);
 	if (!dev)
