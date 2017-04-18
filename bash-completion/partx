@@ -22,9 +22,13 @@ _partx_module()
 			COMPREPLY=( $(compgen -P "$prefix" -W "$OUTPUT" -S ',' -- $realcur) )
 			return 0
 			;;
+		'-S'|'--sector-size')
+			COMPREPLY=( $(compgen -W "size" -- $cur) )
+			return 0
+			;;
 		'-t'|'--type')
 			# FIXME: some command should list type libblkid knows.
-			COMPREPLY=( $(compgen -W "aix bsd dos gpt mac minix sgi solaris_x86 sun ultrix unixware" -- $cur) )
+			COMPREPLY=( $(compgen -W "aix bsd dos gpt mac minix PMBR sgi solaris sun ultrix unixware" -- $cur) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
@@ -33,7 +37,23 @@ _partx_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="--add --delete --show --update --bytes --noheadings --nr --output --pairs --raw --type --verbose --help --version"
+			OPTS="
+				--add
+				--delete
+				--update
+				--show
+				--bytes
+				--noheadings
+				--nr
+				--output
+				--pairs
+				--raw
+				--sector-size
+				--type
+				--verbose
+				--help
+				--version
+			"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

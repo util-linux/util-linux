@@ -32,6 +32,7 @@ _flock_module()
 				--conflict-exit-code
 				--close
 				--command
+				--no-fork
 				--help
 				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )

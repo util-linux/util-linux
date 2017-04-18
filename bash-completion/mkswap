@@ -17,7 +17,11 @@ _mkswap_module()
 			COMPREPLY=( $(compgen -W "1" -- $cur) )
 			return 0
 			;;
-		'-U'|'--uuid'|'-h'|'--help'|'-V'|'--version')
+		'-U'|'--uuid')
+			COMPREPLY=( $(compgen -W "$(uuidgen -r)" -- $cur) )
+			return 0
+			;;
+		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
 	esac

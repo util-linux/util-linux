@@ -11,15 +11,11 @@ _write_module()
 	esac
 	case $COMP_CWORD in
 		1)
-			COMPREPLY=( $(compgen -u -- $cur) )
+			COMPREPLY=( $(compgen -W '$(users)' -- $cur) )
 			return 0
 			;;
 		2)
-			local I TERMS=''
-			for I in /sys/class/tty/*; do
-				TERMS+="/dev${I##/sys/class/tty} "
-			done
-			COMPREPLY=( $(compgen -W "$TERMS" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(w -h $prev | awk '{print $2}')" -- $cur) )
 			return 0
 			;;
 	esac

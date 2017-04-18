@@ -13,10 +13,22 @@ _ionice_module()
 			COMPREPLY=( $(compgen -W "{0..7}" -- $cur) )
 			return 0
 			;;
+		'-P'|'--pgid')
+			local PGID
+			PGID="$(awk '{print $5}' /proc/*/stat 2>/dev/null | sort -u)"
+			COMPREPLY=( $(compgen -W "$PGID" -- $cur) )
+			return 0
+			;;
 		'-p'|'--pid')
 			local PIDS
 			PIDS=$(for I in /proc/[0-9]*; do echo ${I##"/proc/"}; done)
 			COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
+			return 0
+			;;
+		'-u'|'--uid')
+			local UIDS
+			UIDS="$(stat --format='%u' /proc/[0-9]* | sort -u)"
+			COMPREPLY=( $(compgen -W "$UIDS" -- $cur) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
@@ -25,7 +37,7 @@ _ionice_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="--class --classdata --pid --ignore --version --help"
+			OPTS="--class --classdata --pid --pgid --ignore --uid --version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

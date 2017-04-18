@@ -5,7 +5,11 @@ _fsck.cramfs_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-x'|'--destination')
+		'-b'|'--blocksize')
+			COMPREPLY=( $(compgen -W "size" -- $cur) )
+			return 0
+			;;
+		'--extract')
 			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -o dirnames -- ${cur:-"/"}) )

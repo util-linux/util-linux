@@ -1,14 +1,10 @@
-_blkdiscard_module()
+_chmem_module()
 {
 	local cur prev OPTS
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-o'|'--offset'|'-l'|'--length'|'-p'|'--step')
-			COMPREPLY=( $(compgen -W "num" -- $cur) )
-			return 0
-			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -16,11 +12,9 @@ _blkdiscard_module()
 	case $cur in
 		-*)
 			OPTS="
-				--offset
-				--length
-				--step
-				--secure
-				--zeroout
+				--enable
+				--disable
+				--blocks
 				--verbose
 				--help
 				--version
@@ -29,7 +23,7 @@ _blkdiscard_module()
 			return 0
 			;;
 	esac
-	COMPREPLY=( $(compgen -W "$(lsblk -pnro name)" -- $cur) )
+	COMPREPLY=( $(compgen -W "size range blockrange" -- $cur) )
 	return 0
 }
-complete -F _blkdiscard_module blkdiscard
+complete -F _chmem_module chmem

@@ -21,6 +21,9 @@ endif
 if BUILD_FINCORE
 dist_bashcompletion_DATA += bash-completion/fincore
 endif
+if BUILD_FINDFS
+dist_bashcompletion_DATA += bash-completion/findfs
+endif
 if BUILD_FINDMNT
 dist_bashcompletion_DATA += bash-completion/findmnt
 endif
@@ -205,6 +208,9 @@ endif
 if BUILD_CHCPU
 dist_bashcompletion_DATA += bash-completion/chcpu
 endif
+if BUILD_CHMEM
+dist_bashcompletion_DATA += bash-completion/chmem
+endif
 if BUILD_EJECT
 dist_bashcompletion_DATA += bash-completion/eject
 endif
@@ -219,6 +225,9 @@ dist_bashcompletion_DATA += bash-completion/tunelp
 endif
 if BUILD_LSCPU
 dist_bashcompletion_DATA += bash-completion/lscpu
+endif
+if BUILD_LSMEM
+dist_bashcompletion_DATA += bash-completion/lsmem
 endif
 if BUILD_LOSETUP
 dist_bashcompletion_DATA += bash-completion/losetup

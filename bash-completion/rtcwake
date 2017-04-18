@@ -5,6 +5,12 @@ _rtcwake_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
+		'-A'|'--adjfile')
+			local IFS=$'\n'
+			compopt -o filenames
+			COMPREPLY=( $(compgen -f -- $cur) )
+			return 0
+			;;
 		'-d'|'--device')
 			local RTC_DEVS
 			RTC_DEVS=$(cd /sys/class/rtc/ && echo *)
@@ -31,17 +37,22 @@ _rtcwake_module()
 			return 0
 			;;
 	esac
-	OPTS="	--date
+	OPTS="
+		--auto
+		--adjfile
+		--date
 		--device
 		--dry-run
 		--local
+		--list-modes
 		--mode
 		--seconds
 		--time
 		--utc
 		--verbose
 		--help
-		--version"
+		--version
+	"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	return 0
 }

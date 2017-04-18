@@ -15,21 +15,24 @@ _setarch_module()
 	fi
 	case $cur in
 		-*)
-			OPTS="--verbose
-				--addr-no-randomize
-				--fdpic-funcptrs
-				--mmap-page-zero
-				--addr-compat-layout
-				--read-implies-exec
+			OPTS="
 				--32bit
+				--fdpic-funcptrs
 				--short-inode
+				--addr-compat-layout
+				--addr-no-randomize
 				--whole-seconds
 				--sticky-timeouts
+				--read-implies-exec
+				--mmap-page-zero
 				--3gb
 				--4gb
 				--uname-2.6
+				--verbose
+				--list
 				--help
-				--version"
+				--version
+			"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

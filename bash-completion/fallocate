@@ -15,14 +15,20 @@ _fallocate_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="--keep-size
-				--punch-hole
+			OPTS="
+				--collapse-range
 				--dig-holes
-				--offset
+				--insert-range
 				--length
-				--help
+				--keep-size
+				--offset
+				--punch-hole
+				--zero-range
+				--posix
 				--verbose
-				--version"
+				--help
+				--version
+			"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
