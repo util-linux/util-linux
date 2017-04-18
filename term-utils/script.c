@@ -435,8 +435,8 @@ static void do_io(struct script_control *ctl)
 	}
 
 
-	if (!ctl->quiet && ctl->typescriptfp) {
-		strtime_iso(&tvec, ISO_8601_DATE | ISO_8601_TIME | ISO_8601_DOTUSEC |
+	if (ctl->typescriptfp) {
+		strtime_iso(&tvec, ISO_8601_DATE | ISO_8601_TIME |
 				ISO_8601_TIMEZONE | ISO_8601_SPACE,
 				buf, sizeof(buf));
 		fprintf(ctl->typescriptfp, _("Script started on %s\n"), buf);
@@ -510,9 +510,10 @@ static void do_io(struct script_control *ctl)
 
 	if (!ctl->die)
 		wait_for_child(ctl, 1);
-	if (!ctl->quiet && ctl->typescriptfp) {
+
+	if (ctl->typescriptfp) {
 		tvec = script_time((time_t *)NULL);
-		strtime_iso(&tvec, ISO_8601_DATE | ISO_8601_TIME | ISO_8601_DOTUSEC |
+		strtime_iso(&tvec, ISO_8601_DATE | ISO_8601_TIME |
 				ISO_8601_TIMEZONE | ISO_8601_SPACE,
 				buf, sizeof(buf));
 		fprintf(ctl->typescriptfp, _("\nScript done on %s\n"), buf);
