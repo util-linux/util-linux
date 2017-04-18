@@ -32,6 +32,8 @@
 #include "all-io.h"
 #include "lscpu.h"
 
+#define _PATH_SYS_DMI	 "/sys/firmware/dmi/tables/DMI"
+
 #define WORD(x) (uint16_t)(*(const uint16_t *)(x))
 #define DWORD(x) (uint32_t)(*(const uint32_t *)(x))
 
@@ -194,7 +196,7 @@ static int hypervisor_decode_smbios(uint8_t *buf, const char *devmem)
 
 static int hypervisor_decode_sysfw(void)
 {
-	static char const sys_fw_dmi_tables[] = "/sys/firmware/dmi/tables/DMI";
+	static char const sys_fw_dmi_tables[] = _PATH_SYS_DMI;
 	struct stat st;
 
 	if (stat(sys_fw_dmi_tables, &st))
