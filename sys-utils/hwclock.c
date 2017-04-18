@@ -1505,6 +1505,10 @@ int main(int argc, char **argv)
 	}
 
 	if (ctl.set || ctl.predict) {
+		if (!ctl.date_opt){
+		warnx(_("--date is required for --set or --predict"));
+		hwclock_exit(&ctl, EX_USAGE);
+		}
 		if (parse_date(&when, ctl.date_opt, NULL))
 			set_time = when.tv_sec;
 		else {
