@@ -1479,9 +1479,9 @@ int main(int argc, char **argv)
 			out_version();
 			return 0;
 		case 'h':			/* --help */
-		case '?':
-		default:
 			usage(&ctl, NULL);
+		default:
+			errtryhelp(EXIT_FAILURE);
 		}
 	}
 
@@ -1497,9 +1497,8 @@ int main(int argc, char **argv)
 	}
 #endif
 	if (argc > 0) {
-		usage(&ctl, _("%s takes no non-option arguments.  "
-			"You supplied %d.\n"), program_invocation_short_name,
-		      argc);
+		warnx(_("%d too many arguments given"), argc);
+		errtryhelp(EXIT_FAILURE);
 	}
 
 	if (!ctl.adj_file_name)

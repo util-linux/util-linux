@@ -874,8 +874,6 @@ static table const military_table[] = {
 	{ NULL, 0, 0 }
 };
 
-
-
 /**
  * Convert a time zone expressed as HH:MM into an integer count of
  * minutes.  If MM is negative, then S is of the form HHMM and needs

@@ -19,7 +19,7 @@ Hardware Clock time; set the Hardware Clock to a specified time; set the
 Hardware Clock from the System Clock; set the System Clock from the
 Hardware Clock; compensate for Hardware Clock drift; correct the System
 Clock timescale; set the kernel's timezone, NTP timescale, and epoch
-(Alpha only); compare the System and Hardware Clocks; and predict future
+(Alpha only); and predict future
 Hardware Clock values based on its drift rate.
 .PP
 Since v2.26 important changes were made to the

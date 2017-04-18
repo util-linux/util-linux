@@ -413,8 +413,7 @@ int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch_p)
 	}
 
 	if (ioctl(rtc_fd, RTC_EPOCH_READ, epoch_p) == -1) {
-			warn(_("ioctl(RTC_EPOCH_READ) to %s failed"),
-				  rtc_dev_name);
+		warn(_("ioctl(RTC_EPOCH_READ) to %s failed"), rtc_dev_name);
 		return 1;
 	}
 
