@@ -1395,6 +1395,7 @@ int main(int argc, char **argv)
 		case 'a':
 			ctl.adjust = 1;
 			ctl.show = 0;
+			ctl.hwaudit_on = 1;
 			break;
 		case 'r':
 			ctl.show = 1;
@@ -1402,6 +1403,7 @@ int main(int argc, char **argv)
 		case 's':
 			ctl.hctosys = 1;
 			ctl.show = 0;
+			ctl.hwaudit_on = 1;
 			break;
 		case 'u':
 			ctl.utc = 1;
@@ -1409,10 +1411,12 @@ int main(int argc, char **argv)
 		case 'w':
 			ctl.systohc = 1;
 			ctl.show = 0;
+			ctl.hwaudit_on = 1;
 			break;
 		case OPT_SET:
 			ctl.set = 1;
 			ctl.show = 0;
+			ctl.hwaudit_on = 1;
 			break;
 #if defined(__linux__) && defined(__alpha__)
 		case OPT_GETEPOCH:
@@ -1422,6 +1426,7 @@ int main(int argc, char **argv)
 		case OPT_SETEPOCH:
 			ctl.setepoch = 1;
 			ctl.show = 0;
+			ctl.hwaudit_on = 1;
 			break;
 		case OPT_EPOCH:
 			ctl.epoch_option =	/* --epoch */
@@ -1480,16 +1485,6 @@ int main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-#ifdef HAVE_LIBAUDIT
-	if (!ctl.testing) {
-		if (ctl.adjust || ctl.hctosys || ctl.systohc || ctl.set
-# if defined(__linux__) && defined(__alpha__)
-		    || ctl.setepoch
-# endif
-		    )
-			ctl.hwaudit_on = 1;
-	}
-#endif
 	if (argc > 0) {
 		warnx(_("%d too many arguments given"), argc);
 		errtryhelp(EXIT_FAILURE);
@@ -1550,7 +1545,7 @@ hwclock_exit(const struct hwclock_control *ctl
 	     , int status)
 {
 #ifdef HAVE_LIBAUDIT
-	if (ctl->hwaudit_on) {
+	if (ctl->hwaudit_on && !ctl->testing) {
 		audit_log_user_message(hwaudit_fd, AUDIT_USYS_CONFIG,
 				       "op=change-system-time", NULL, NULL, NULL,
 				       status ? 0 : 1);

@@ -26,9 +26,7 @@ struct hwclock_control {
 #endif
 	unsigned int debug;
 	unsigned int
-#ifdef HAVE_LIBAUDIT
 		hwaudit_on:1,
-#endif
 		adjust:1,
 		show:1,
 		hctosys:1,
