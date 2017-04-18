@@ -2025,7 +2025,7 @@ static int dos_set_partition(struct fdisk_context *cxt, size_t n,
 	orgtype = p->sys_ind;
 
 	if (pa->type) {
-		if (IS_EXTENDED(pa->type->code) && l->ext_offset) {
+		if (IS_EXTENDED(pa->type->code) && l->ext_offset && l->ext_index != n) {
 			fdisk_warnx(cxt, _("Extended partition already exists."));
 			return -EINVAL;
 		}
