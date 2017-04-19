@@ -79,6 +79,8 @@ UL_DEBUG_DEFINE_MASKNAMES(lsblk) = UL_DEBUG_EMPTY_MASKNAMES;
 #define LSBLK_EXIT_SOMEOK 64
 #define LSBLK_EXIT_ALLFAILED 32
 
+static int column_id_to_number(int id);
+
 /* column IDs */
 enum {
 	COL_NAME = 0,
@@ -230,17 +232,21 @@ static struct lsblk *lsblk;	/* global handler */
 static int columns[ARRAY_SIZE(infos) * 2];
 static size_t ncolumns;
 
-static inline size_t err_columns_index(size_t arysz, size_t idx)
+
+static inline void add_column(int id)
 {
-	if (idx >= arysz)
+	if (ncolumns >= ARRAY_SIZE(columns))
 		errx(EXIT_FAILURE, _("too many columns specified, "
 				     "the limit is %zu columns"),
-				arysz - 1);
-	return idx;
+				ARRAY_SIZE(columns) - 1);
+	columns[ ncolumns++ ] =  id;
 }
 
-#define add_column(ary, n, id)	\
-		((ary)[ err_columns_index(ARRAY_SIZE(ary), (n)) ] = (id))
+static inline void add_uniq_column(int id)
+{
+	if (column_id_to_number(id) < 0)
+		add_column(id);
+}
 
 static int excludes[256];
 static size_t nexcludes;
@@ -1743,15 +1749,15 @@ int main(int argc, char *argv[])
 			lsblk->nodeps = 1;
 			break;
 		case 'D':
-			add_column(columns, ncolumns++, COL_NAME);
-			add_column(columns, ncolumns++, COL_DALIGN);
-			add_column(columns, ncolumns++, COL_DGRAN);
-			add_column(columns, ncolumns++, COL_DMAX);
-			add_column(columns, ncolumns++, COL_DZERO);
+			add_uniq_column(COL_NAME);
+			add_uniq_column(COL_DALIGN);
+			add_uniq_column(COL_DGRAN);
+			add_uniq_column(COL_DMAX);
+			add_uniq_column(COL_DZERO);
 			break;
 		case 'z':
-			add_column(columns, ncolumns++, COL_NAME);
-			add_column(columns, ncolumns++, COL_ZONED);
+			add_uniq_column(COL_NAME);
+			add_uniq_column(COL_ZONED);
 			break;
 		case 'e':
 			parse_excludes(optarg);
@@ -1796,42 +1802,42 @@ int main(int argc, char *argv[])
 			lsblk->inverse = 1;
 			break;
 		case 'f':
-			add_column(columns, ncolumns++, COL_NAME);
-			add_column(columns, ncolumns++, COL_FSTYPE);
-			add_column(columns, ncolumns++, COL_LABEL);
-			add_column(columns, ncolumns++, COL_UUID);
-			add_column(columns, ncolumns++, COL_TARGET);
+			add_uniq_column(COL_NAME);
+			add_uniq_column(COL_FSTYPE);
+			add_uniq_column(COL_LABEL);
+			add_uniq_column(COL_UUID);
+			add_uniq_column(COL_TARGET);
 			break;
 		case 'm':
-			add_column(columns, ncolumns++, COL_NAME);
-			add_column(columns, ncolumns++, COL_SIZE);
-			add_column(columns, ncolumns++, COL_OWNER);
-			add_column(columns, ncolumns++, COL_GROUP);
-			add_column(columns, ncolumns++, COL_MODE);
+			add_uniq_column(COL_NAME);
+			add_uniq_column(COL_SIZE);
+			add_uniq_column(COL_OWNER);
+			add_uniq_column(COL_GROUP);
+			add_uniq_column(COL_MODE);
 			break;
 		case 't':
-			add_column(columns, ncolumns++, COL_NAME);
-			add_column(columns, ncolumns++, COL_ALIOFF);
-			add_column(columns, ncolumns++, COL_MINIO);
-			add_column(columns, ncolumns++, COL_OPTIO);
-			add_column(columns, ncolumns++, COL_PHYSEC);
-			add_column(columns, ncolumns++, COL_LOGSEC);
-			add_column(columns, ncolumns++, COL_ROTA);
-			add_column(columns, ncolumns++, COL_SCHED);
-			add_column(columns, ncolumns++, COL_RQ_SIZE);
-			add_column(columns, ncolumns++, COL_RA);
-			add_column(columns, ncolumns++, COL_WSAME);
+			add_uniq_column(COL_NAME);
+			add_uniq_column(COL_ALIOFF);
+			add_uniq_column(COL_MINIO);
+			add_uniq_column(COL_OPTIO);
+			add_uniq_column(COL_PHYSEC);
+			add_uniq_column(COL_LOGSEC);
+			add_uniq_column(COL_ROTA);
+			add_uniq_column(COL_SCHED);
+			add_uniq_column(COL_RQ_SIZE);
+			add_uniq_column(COL_RA);
+			add_uniq_column(COL_WSAME);
 			break;
 		case 'S':
 			lsblk->nodeps = 1;
 			lsblk->scsi = 1;
-			add_column(columns, ncolumns++, COL_NAME);
-			add_column(columns, ncolumns++, COL_HCTL);
-			add_column(columns, ncolumns++, COL_TYPE);
-			add_column(columns, ncolumns++, COL_VENDOR);
-			add_column(columns, ncolumns++, COL_MODEL);
-			add_column(columns, ncolumns++, COL_REV);
-			add_column(columns, ncolumns++, COL_TRANSPORT);
+			add_uniq_column(COL_NAME);
+			add_uniq_column(COL_HCTL);
+			add_uniq_column(COL_TYPE);
+			add_uniq_column(COL_VENDOR);
+			add_uniq_column(COL_MODEL);
+			add_uniq_column(COL_REV);
+			add_uniq_column(COL_TRANSPORT);
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -1850,13 +1856,13 @@ int main(int argc, char *argv[])
 	check_sysdevblock();
 
 	if (!ncolumns) {
-		add_column(columns, ncolumns++, COL_NAME);
-		add_column(columns, ncolumns++, COL_MAJMIN);
-		add_column(columns, ncolumns++, COL_RM);
-		add_column(columns, ncolumns++, COL_SIZE);
-		add_column(columns, ncolumns++, COL_RO);
-		add_column(columns, ncolumns++, COL_TYPE);
-		add_column(columns, ncolumns++, COL_TARGET);
+		add_column(COL_NAME);
+		add_column(COL_MAJMIN);
+		add_column(COL_RM);
+		add_column(COL_SIZE);
+		add_column(COL_RO);
+		add_column(COL_TYPE);
+		add_column(COL_TARGET);
 	}
 
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
@@ -1877,7 +1883,7 @@ int main(int argc, char *argv[])
 
 	if (lsblk->sort_id >= 0 && column_id_to_number(lsblk->sort_id) < 0) {
 		/* the sort column is not between output columns -- add as hidden */
-		add_column(columns, ncolumns++, lsblk->sort_id);
+		add_column(lsblk->sort_id);
 		lsblk->sort_hidden = 1;
 	}
 
