@@ -391,7 +391,7 @@ set_hardware_clock(const struct hwclock_control *ctl, const time_t newtime)
 		       new_broken_time.tm_sec, (long)newtime);
 
 	if (ctl->testing)
-		printf(_("Clock not changed - testing only.\n"));
+		printf(_("Test mode: clock was not changed\n"));
 	else {
 		ur->set_hardware_clock(ctl, &new_broken_time);
 	}
@@ -636,7 +636,7 @@ set_system_clock(const struct hwclock_control *ctl, const bool hclock_valid,
 		}
 		if (ctl->testing) {
 			printf(_
-			       ("Not setting system clock because running in test mode.\n"));
+			       ("Test mode: clock was not changed\n"));
 			retcode = 0;
 		} else {
 			const struct timezone tz = { minuteswest, 0 };
@@ -724,7 +724,7 @@ static int set_system_clock_timezone(const struct hwclock_control *ctl)
 	}
 	if (ctl->testing) {
 		printf(_
-		       ("Not setting system clock because running in test mode.\n"));
+		       ("Test mode: clock was not changed\n"));
 		retcode = 0;
 	} else {
 		const struct timezone tz_utc = { 0, 0 };
