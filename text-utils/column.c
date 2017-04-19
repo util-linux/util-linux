@@ -329,7 +329,7 @@ static void create_tree(struct column_control *ctl)
 
 			if (!parent)
 				continue;
-			if (strcmp(id, parent) == 0)
+			if (strcmp(id, parent) == 0 && ln_i != ln)
 				scols_line_add_child(ln_i, ln);
 		}
 	}
@@ -556,7 +556,7 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fputs(_(" -W, --table-wrap <columns>       wrap text in the columns when necessary\n"), out);
 	fputs(_(" -J, --json                       use JSON output format for table\n"), out);
 
-	fputs(USAGE_OPTIONS, out);
+	fputs(USAGE_SEPARATOR, out);
 	fputs(_(" -r, --tree <column>              column to use tree-like output for the table\n"), out);
 	fputs(_(" -i, --tree-id <column>           line ID to specify child-parent relation\n"), out);
 	fputs(_(" -p, --tree-parent <column>       parent to specify child-parent relation\n"), out);
