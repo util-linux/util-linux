@@ -408,6 +408,12 @@ static int gpt_entry_set_uuid(struct gpt_entry *e, char *str)
 	return 0;
 }
 
+static inline int gpt_entry_is_used(const struct gpt_entry *e)
+{
+	return memcmp(&e->type, &GPT_UNUSED_ENTRY_GUID,
+			sizeof(struct gpt_guid)) != 0;
+}
+
 
 static const char *gpt_get_header_revstr(struct gpt_header *header)
 {
@@ -471,11 +477,6 @@ static inline int gpt_sizeof_ents(struct gpt_header *hdr, size_t *sz)
 	return gpt_calculate_sizeof_ents(hdr, le32_to_cpu(hdr->npartition_entries), sz);
 }
 
-static inline int partition_unused(const struct gpt_entry *e)
-{
-	return !memcmp(&e->type, &GPT_UNUSED_ENTRY_GUID,
-			sizeof(struct gpt_guid));
-}
 
 static char *gpt_get_header_id(struct gpt_header *header)
 {
@@ -1193,7 +1194,7 @@ static size_t partitions_in_use(struct fdisk_gpt_label *gpt)
 	for (i = 0; i < gpt_get_nentries(gpt); i++) {
 		struct gpt_entry *e = gpt_get_entry(gpt, i);
 
-		if (!partition_unused(e))
+		if (gpt_entry_is_used(e))
 			used++;
 	}
 	return used;
@@ -1215,7 +1216,7 @@ static uint32_t check_too_big_partitions(struct fdisk_gpt_label *gpt, uint64_t s
 	for (i = 0; i < gpt_get_nentries(gpt); i++) {
 		struct gpt_entry *e = gpt_get_entry(gpt, i);
 
-		if (partition_unused(e))
+		if (!gpt_entry_is_used(e))
 			continue;
 		if (gpt_partition_end(e) >= sectors)
 			return i + 1;
@@ -1239,7 +1240,7 @@ static uint32_t check_start_after_end_partitions(struct fdisk_gpt_label *gpt)
 	for (i = 0; i < gpt_get_nentries(gpt); i++) {
 		struct gpt_entry *e = gpt_get_entry(gpt, i);
 
-		if (partition_unused(e))
+		if (!gpt_entry_is_used(e))
 			continue;
 		if (gpt_partition_start(e) > gpt_partition_end(e))
 			return i + 1;
@@ -1277,7 +1278,7 @@ static uint32_t check_overlap_partitions(struct fdisk_gpt_label *gpt)
 			struct gpt_entry *ei = gpt_get_entry(gpt, i);
 			struct gpt_entry *ej = gpt_get_entry(gpt, j);
 
-			if (partition_unused(ei) || partition_unused(ej))
+			if (!gpt_entry_is_used(ei) || !gpt_entry_is_used(ej))
 				continue;
 			if (partition_overlap(ei, ej)) {
 				DBG(LABEL, ul_debug("GPT partitions overlap detected [%zu vs. %zu]", i, j));
@@ -1325,7 +1326,7 @@ static uint64_t find_first_available(struct fdisk_gpt_label *gpt, uint64_t start
 		for (i = 0; i < gpt_get_nentries(gpt); i++) {
 			struct gpt_entry *e = gpt_get_entry(gpt, i);
 
-			if (partition_unused(e))
+			if (!gpt_entry_is_used(e))
 				continue;
 			if (first < gpt_partition_start(e))
 				continue;
@@ -1740,7 +1741,7 @@ static int gpt_get_partition(struct fdisk_context *cxt, size_t n,
 	gpt = self_label(cxt);
 	e = gpt_get_entry(gpt, n);
 
-	pa->used = !partition_unused(e) || gpt_partition_start(e);
+	pa->used = gpt_entry_is_used(e) || gpt_partition_start(e);
 	if (!pa->used)
 		return 0;
 
@@ -2161,7 +2162,7 @@ static int gpt_delete_partition(struct fdisk_context *cxt,
 	if (partnum >= cxt->label->nparts_max)
 		return -EINVAL;
 
-	if (partition_unused(gpt_get_entry(gpt, partnum)))
+	if (!gpt_entry_is_used(gpt_get_entry(gpt, partnum)))
 		return -EINVAL;
 
 	/* hasta la vista, baby! */
@@ -2213,7 +2214,7 @@ static int gpt_add_partition(
 
 	assert(partnum < gpt_get_nentries(gpt));
 
-	if (!partition_unused(gpt_get_entry(gpt, partnum))) {
+	if (gpt_entry_is_used(gpt_get_entry(gpt, partnum))) {
 		fdisk_warnx(cxt, _("Partition %zu is already defined.  "
 			           "Delete it before re-adding it."), partnum +1);
 		return -ERANGE;
@@ -2239,7 +2240,7 @@ static int gpt_add_partition(
 	/* if first sector no explicitly defined then ignore small gaps before
 	 * the first partition */
 	if ((!pa || !fdisk_partition_has_start(pa))
-	    && !partition_unused(e)
+	    && gpt_entry_is_used(e)
 	    && disk_f < gpt_partition_start(e)) {
 
 		do {
@@ -2577,7 +2578,7 @@ static int gpt_check_table_overlap(struct fdisk_context *cxt,
 	for (i = 0; i < gpt_get_nentries(gpt); i++) {
 		struct gpt_entry *e = gpt_get_entry(gpt, i);
 
-		if (partition_unused(e))
+		if (!gpt_entry_is_used(e))
 		        continue;
 		if (gpt_partition_start(e) < first_usable) {
 			fdisk_warnx(cxt, _("Partition #%zu out of range (minimal start is %"PRIu64" sectors)"),
@@ -2703,7 +2704,7 @@ static int gpt_part_is_used(struct fdisk_context *cxt, size_t i)
 
 	e = gpt_get_entry(gpt, i);
 
-	return !partition_unused(e) || gpt_partition_start(e);
+	return gpt_entry_is_used(e) || gpt_partition_start(e);
 }
 
 /**
@@ -2887,14 +2888,14 @@ static int gpt_entry_cmp_start(const void *a, const void *b)
 {
 	struct gpt_entry *ae = (struct gpt_entry *) a,
 			 *be = (struct gpt_entry *) b;
-	int au = partition_unused(ae),
-	    bu = partition_unused(be);
+	int au = gpt_entry_is_used(ae),
+	    bu = gpt_entry_is_used(be);
 
-	if (au && bu)
+	if (!au && !bu)
 		return 0;
-	if (au)
+	if (!au)
 		return 1;
-	if (bu)
+	if (!bu)
 		return -1;
 
 	return cmp_numbers(gpt_partition_start(ae), gpt_partition_start(be));
