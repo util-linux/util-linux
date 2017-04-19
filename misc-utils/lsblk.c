@@ -124,7 +124,8 @@ enum {
 	COL_TRANSPORT,
 	COL_SUBSYS,
 	COL_REV,
-	COL_VENDOR
+	COL_VENDOR,
+	COL_ZONED,
 };
 
 /* basic table settings */
@@ -200,6 +201,7 @@ static struct colinfo infos[] = {
 	[COL_SUBSYS] = { "SUBSYSTEMS", 0.1, SCOLS_FL_NOEXTREMES, N_("de-duplicated chain of subsystems") },
 	[COL_REV]    = { "REV",   4, SCOLS_FL_RIGHT, N_("device revision") },
 	[COL_VENDOR] = { "VENDOR", 0.1, SCOLS_FL_TRUNC, N_("device vendor") },
+	[COL_ZONED]  = { "ZONED", 0.3, 0, N_("zone model") },
 };
 
 struct lsblk {
@@ -1148,6 +1150,9 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		if (!str)
 			str = xstrdup("0");
 		break;
+	case COL_ZONED:
+		str = sysfs_strdup(&cxt->sysfs, "queue/zoned");
+		break;
 	};
 
 	if (str)
@@ -1626,6 +1631,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);
 	fputs(_(" -d, --nodeps         don't print slaves or holders\n"), out);
 	fputs(_(" -D, --discard        print discard capabilities\n"), out);
+	fputs(_(" -z, --zoned          print zone model\n"), out);
 	fputs(_(" -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"), out);
 	fputs(_(" -f, --fs             output info about filesystems\n"), out);
 	fputs(_(" -i, --ascii          use ascii characters only\n"), out);
@@ -1676,6 +1682,7 @@ int main(int argc, char *argv[])
 		{ "bytes",      no_argument,       NULL, 'b' },
 		{ "nodeps",     no_argument,       NULL, 'd' },
 		{ "discard",    no_argument,       NULL, 'D' },
+		{ "zoned",      no_argument,       NULL, 'z' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ "json",       no_argument,       NULL, 'J' },
 		{ "output",     required_argument, NULL, 'o' },
@@ -1721,7 +1728,7 @@ int main(int argc, char *argv[])
 	lsblk_init_debug();
 
 	while((c = getopt_long(argc, argv,
-			       "abdDe:fhJlnmo:OpPiI:rstVSx:", longopts, NULL)) != -1) {
+			       "abdDze:fhJlnmo:OpPiI:rstVSx:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1741,6 +1748,10 @@ int main(int argc, char *argv[])
 			add_column(columns, ncolumns++, COL_DGRAN);
 			add_column(columns, ncolumns++, COL_DMAX);
 			add_column(columns, ncolumns++, COL_DZERO);
+			break;
+		case 'z':
+			add_column(columns, ncolumns++, COL_NAME);
+			add_column(columns, ncolumns++, COL_ZONED);
 			break;
 		case 'e':
 			parse_excludes(optarg);
