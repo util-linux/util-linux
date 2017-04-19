@@ -919,10 +919,10 @@ static void save_adjtime(const struct hwclock_control *ctl,
 		  (adjtime->local_utc == LOCAL) ? "LOCAL" : "UTC");
 
 	if (ctl->testing) {
-		printf(_
-		       ("Not updating adjtime file because of testing mode.\n"));
-		printf(_("Would have written the following to %s:\n%s"),
-		       ctl->adj_file_name, content);
+		if (ctl->debug){
+			printf(_("Test mode: %s was not updated with:\n%s"),
+			       ctl->adj_file_name, content);
+		}
 		free(content);
 		return;
 	}
