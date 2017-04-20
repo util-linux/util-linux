@@ -392,9 +392,8 @@ set_hardware_clock(const struct hwclock_control *ctl, const time_t newtime)
 
 	if (ctl->testing)
 		printf(_("Test mode: clock was not changed\n"));
-	else {
+	else
 		ur->set_hardware_clock(ctl, &new_broken_time);
-	}
 }
 
 /*
