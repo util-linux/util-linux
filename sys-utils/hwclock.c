@@ -1304,7 +1304,7 @@ int main(int argc, char **argv)
 		OPT_GETEPOCH,
 		OPT_LOCALTIME,
 		OPT_NOADJFILE,
-		OPT_PREDICT_HC,
+		OPT_PREDICT,
 		OPT_SET,
 		OPT_SETEPOCH,
 		OPT_SYSTZ,
@@ -1337,7 +1337,7 @@ int main(int argc, char **argv)
 #endif
 		{ "adjfile",      required_argument, NULL, OPT_ADJFILE    },
 		{ "systz",        no_argument,       NULL, OPT_SYSTZ      },
-		{ "predict-hc",   no_argument,       NULL, OPT_PREDICT_HC },
+		{ "predict",      no_argument,       NULL, OPT_PREDICT    },
 		{ "get",          no_argument,       NULL, OPT_GET        },
 		{ "update-drift", no_argument,       NULL, OPT_UPDATE     },
 		{ NULL, 0, NULL, 0 }
@@ -1345,7 +1345,7 @@ int main(int argc, char **argv)
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'a','r','s','w',
-		  OPT_GET, OPT_GETEPOCH, OPT_PREDICT_HC,
+		  OPT_GET, OPT_GETEPOCH, OPT_PREDICT,
 		  OPT_SET, OPT_SETEPOCH, OPT_SYSTZ },
 		{ 'u', OPT_LOCALTIME},
 		{ OPT_ADJFILE, OPT_NOADJFILE },
@@ -1454,8 +1454,8 @@ int main(int argc, char **argv)
 			ctl.systz = 1;		/* --systz */
 			ctl.show = 0;
 			break;
-		case OPT_PREDICT_HC:
-			ctl.predict = 1;	/* --predict-hc */
+		case OPT_PREDICT:
+			ctl.predict = 1;	/* --predict */
 			ctl.show = 0;
 			break;
 		case OPT_GET:
