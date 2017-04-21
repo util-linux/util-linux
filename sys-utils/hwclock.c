@@ -1199,24 +1199,9 @@ static void out_version(void)
 	printf(UTIL_LINUX_VERSION);
 }
 
-/*
- * usage - Output (error and) usage information
- *
- * This function is called both directly from main to show usage information
- * and as fatal function from shhopt if some argument is not understood. In
- * case of normal usage info FMT should be NULL. In that case the info is
- * printed to stdout. If FMT is given usage will act like fprintf( stderr,
- * fmt, ... ), show a usage information and terminate the program
- * afterwards.
- */
 static void __attribute__((__noreturn__))
-usage(const struct hwclock_control *ctl, const char *fmt, ...)
+usage(const struct hwclock_control *ctl, FILE *usageto)
 {
-	FILE *usageto;
-	va_list ap;
-
-	usageto = fmt ? stderr : stdout;
-
 	fputs(USAGE_HEADER, usageto);
 	fputs(_(" hwclock [function] [option...]\n"), usageto);
 
@@ -1263,14 +1248,7 @@ usage(const struct hwclock_control *ctl, const char *fmt, ...)
 	fputs(_("     --test           do not update anything, just show what would happen\n"
 		" -D, --debug          debugging mode\n" "\n"), usageto);
 
-	if (fmt) {
-		va_start(ap, fmt);
-		vfprintf(usageto, fmt, ap);
-		va_end(ap);
-	}
-
-	fflush(usageto);
-	hwclock_exit(ctl, fmt ? EX_USAGE : EX_OK);
+	hwclock_exit(ctl, EXIT_SUCCESS);
 }
 
 /*
@@ -1475,7 +1453,7 @@ int main(int argc, char **argv)
 			out_version();
 			return 0;
 		case 'h':			/* --help */
-			usage(&ctl, NULL);
+			usage(&ctl, stdout);
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
