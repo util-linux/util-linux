@@ -94,8 +94,12 @@ static int recursiveRemove(int fd)
 				continue;
 			}
 
-			/* remove subdirectories if device is same as dir */
-			if (S_ISDIR(sb.st_mode) && sb.st_dev == rb.st_dev) {
+			/* skip if device is not the same */
+			if (sb.st_dev != rb.st_dev)
+				continue;
+
+			/* remove subdirectories */
+			if (S_ISDIR(sb.st_mode)) {
 				int cfd;
 
 				cfd = openat(dfd, d->d_name, O_RDONLY);
@@ -104,8 +108,7 @@ static int recursiveRemove(int fd)
 					close(cfd);
 				}
 				isdir = 1;
-			} else
-				continue;
+			}
 		}
 
 		if (unlinkat(dfd, d->d_name, isdir ? AT_REMOVEDIR : 0))
