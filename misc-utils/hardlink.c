@@ -19,6 +19,7 @@
 /*  Changes by Rémy Card to use constants and add option -n.  */
 /*  Changes by Jindrich Novy to add option -h, -f, replace mmap(2), fix overflows */
 /*  Changes by Travers Carter to make atomic hardlinking */
+/*  Changes by Todd Lewis that adds option -x to exclude files with pcre lib */
 
 #define _GNU_SOURCE
 #define PCRE2_CODE_UNIT_WIDTH 8
