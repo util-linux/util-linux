@@ -1076,7 +1076,7 @@ static int init_kmsg(struct dmesg_control *ctl)
  * - last field is terminated by ';'
  *
  */
-#define LAST_KMSG_FIELD(s)	(!s || !*s || *(s - 1) == ';')
+#define LAST_KMSG_FIELD(s)	(!*s || *(s - 1) == ';')
 
 static int parse_kmsg_record(struct dmesg_control *ctl,
 			     struct dmesg_record *rec,
@@ -1123,10 +1123,6 @@ mesg:
 	/* E) message text */
 	rec->mesg = p;
 	p = skip_item(p, end, "\n");
-
-	if (!p)
-		return -1;
-
 	rec->mesg_size = p - rec->mesg;
 
 	/*
