@@ -12,7 +12,6 @@
  */
 
 #include "c.h"
-#include "nls.h"
 #include "all-io.h"
 
 #include "blkdev.h"

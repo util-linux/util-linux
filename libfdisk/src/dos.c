@@ -7,7 +7,6 @@
  * from util-linux fdisk.
  */
 #include "c.h"
-#include "nls.h"
 #include "randutils.h"
 #include "pt-mbr.h"
 #include "strutils.h"

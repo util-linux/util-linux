@@ -1,7 +1,6 @@
 
 #include <ctype.h>
 
-#include "nls.h"
 #include "fdiskP.h"
 
 /**

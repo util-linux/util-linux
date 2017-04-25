@@ -61,6 +61,8 @@ struct fdisk_context *fdisk_new_context(void)
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_sgi_label(cxt);
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_sun_label(cxt);
 
+	bindtextdomain(LIBFDISK_TEXTDOMAIN, LOCALEDIR);
+
 	return cxt;
 }
 

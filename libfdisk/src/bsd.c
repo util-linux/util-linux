@@ -16,7 +16,6 @@
 #include <errno.h>
 #include <sys/param.h>
 
-#include "nls.h"
 #include "blkdev.h"
 #include "fdiskP.h"
 #include "pt-mbr.h"

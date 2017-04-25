@@ -12,7 +12,6 @@
 #include <unistd.h>		/* write */
 #include <sys/ioctl.h>		/* ioctl */
 
-#include "nls.h"
 #include "blkdev.h"
 #include "bitops.h"
 

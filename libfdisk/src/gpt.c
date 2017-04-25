@@ -21,7 +21,6 @@
 
 #include "fdiskP.h"
 
-#include "nls.h"
 #include "crc32.h"
 #include "blkdev.h"
 #include "bitops.h"

@@ -20,7 +20,6 @@
 #include "c.h"
 #include "libfdisk.h"
 
-#include "nls.h"		/* temporary before dialog API will be implemented */
 #include "list.h"
 #include "debug.h"
 #include <stdio.h>
@@ -46,6 +45,18 @@ UL_DEBUG_DECLARE_MASK(libfdisk);
 #define DBG(m, x)	__UL_DBG(libfdisk, LIBFDISK_DEBUG_, m, x)
 #define ON_DBG(m, x)	__UL_DBG_CALL(libfdisk, LIBFDISK_DEBUG_, m, x)
 #define DBG_FLUSH	__UL_DBG_FLUSH(libfdisk, LIBFDISK_DEBUG_)
+
+/*
+ * NLS -- the library has to be independent on main program, so define
+ * UL_TEXTDOMAIN_EXPLICIT before you include nls.h.
+ *
+ * Now we use util-linux.po (=PACKAGE), rather than maintain the texts
+ * in the separate libfdisk.po file.
+ */
+#define LIBFDISK_TEXTDOMAIN	PACKAGE
+#define UL_TEXTDOMAIN_EXPLICIT	LIBFDISK_TEXTDOMAIN
+#include "nls.h"
+
 
 #ifdef TEST_PROGRAM
 struct fdisk_test {
