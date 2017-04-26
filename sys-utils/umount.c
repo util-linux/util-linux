@@ -215,7 +215,7 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 		 */
 		if (rc < 0)
 			return handle_generic_errors(rc,
-				_("%s: filesystem was unmounted, but mount(8) failed"),
+				_("%s: filesystem was unmounted, but umount(8) failed"),
 				tgt);
 
 		return MOUNT_EX_SOFTWARE;	/* internal error */
