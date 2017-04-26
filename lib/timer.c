@@ -35,7 +35,7 @@ int setup_timer(timer_t * t_id, struct itimerval *timeout,
 		return 1;
 	if (timer_create(CLOCK_MONOTONIC, &sig_e, t_id))
 		return 1;
-	if (timer_settime(*t_id, SA_SIGINFO, &val, NULL))
+	if (timer_settime(*t_id, 0, &val, NULL))
 		return 1;
 	return 0;
 }
