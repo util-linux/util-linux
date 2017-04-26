@@ -17,22 +17,22 @@ enum {
 
 struct hwclock_control {
 	char *date_opt;
-	unsigned long epoch_option;
 	char *adj_file_name;
+#if defined(__linux__) && defined(__alpha__)
+	unsigned long epoch_option;
+#endif
 #ifdef __linux__
 	char *rtc_dev_name;
 #endif
 	unsigned int debug;
 	unsigned int
-#ifdef HAVE_LIBAUDIT
 		hwaudit_on:1,
-#endif
 		adjust:1,
 		show:1,
 		hctosys:1,
 		utc:1,
 		systohc:1,
-#ifdef __linux__
+#if defined(__linux__) && defined(__alpha__)
 		getepoch:1,
 		setepoch:1,
 #endif
@@ -67,8 +67,10 @@ extern unsigned long epoch_option;
 extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
 
 /* rtc.c */
+#if defined(__linux__) && defined(__alpha__)
 extern int get_epoch_rtc(const struct hwclock_control *ctl, unsigned long *epoch);
 extern int set_epoch_rtc(const struct hwclock_control *ctl);
+#endif
 
 extern void hwclock_exit(const struct hwclock_control *ctl, int status);
 

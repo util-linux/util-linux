@@ -1162,28 +1162,11 @@ manipulate_clock(const struct hwclock_control *ctl, const time_t set_time,
 	return 0;
 }
 
-/*
- * Get or set the Hardware Clock epoch value in the kernel, as appropriate.
- * <getepoch>, <setepoch>, and <epoch> are hwclock invocation options.
- *
- * <epoch> == -1 if the user did not specify an "epoch" option.
+/**
+ * Get or set the kernel RTC driver's epoch on Alpha machines.
+ * ISA machines are hard coded for 1900.
  */
-#ifdef __linux__
-/*
- * Maintenance note: This should work on non-Alpha machines, but the
- * evidence today (98.03.04) indicates that the kernel only keeps the epoch
- * value on Alphas. If that is ever fixed, this function should be changed.
- */
-# ifndef __alpha__
-static void
-manipulate_epoch(const struct hwclock_control *ctl __attribute__((__unused__)))
-{
-	warnx(_("The kernel keeps an epoch value for the Hardware Clock "
-		"only on an Alpha machine.\nThis copy of hwclock was built for "
-		"a machine other than Alpha\n(and thus is presumably not running "
-		"on an Alpha now).  No action taken."));
-}
-# else
+#if defined(__linux__) && defined(__alpha__)
 static void
 manipulate_epoch(const struct hwclock_control *ctl)
 {
@@ -1210,8 +1193,7 @@ manipulate_epoch(const struct hwclock_control *ctl)
 			       ("Unable to set the epoch value in the kernel.\n"));
 	}
 }
-# endif		/* __alpha__ */
-#endif		/* __linux__ */
+#endif		/* __linux__ __alpha__ */
 
 static void out_version(void)
 {
@@ -1251,7 +1233,7 @@ static void usage(const struct hwclock_control *ctl, const char *fmt, ...)
 		"     --systz          set the system time based on the current timezone\n"
 		"     --adjust         adjust the RTC to account for systematic drift since\n"
 		"                        the clock was last set or adjusted\n"), usageto);
-#ifdef __linux__
+#if defined(__linux__) && defined(__alpha__)
 	fputs(_("     --getepoch       print out the kernel's hardware clock epoch value\n"
 		"     --setepoch       set the kernel's hardware clock epoch value to the \n"
 		"                        value given with --epoch\n"), usageto);
@@ -1267,9 +1249,10 @@ static void usage(const struct hwclock_control *ctl, const char *fmt, ...)
 #endif
 	fprintf(usageto, _(
 		"     --directisa      access the ISA bus directly instead of %s\n"
-		"     --date <time>    specifies the time to which to set the hardware clock\n"
-		"     --epoch <year>   specifies the year which is the beginning of the\n"
-		"                        hardware clock's epoch value\n"), _PATH_RTC_DEV);
+		"     --date <time>    specifies the time to which to set the hardware clock\n"), _PATH_RTC_DEV);
+#if defined(__linux__) && defined(__alpha__)
+	fputs(_("     --epoch <year>   specifies the hardware clock's epoch value\n"), usageto);
+#endif
 	fprintf(usageto, _(
 		"     --update-drift   update drift factor in %1$s (requires\n"
 		"                        --set or --systohc)\n"
@@ -1301,7 +1284,7 @@ static void usage(const struct hwclock_control *ctl, const char *fmt, ...)
  */
 int main(int argc, char **argv)
 {
-	struct hwclock_control ctl = { NULL };
+	struct hwclock_control ctl = { .show = 1 }; /* default op is show */
 	struct timeval startup_time;
 	struct adjtime adjtime = { 0 };
 	struct timespec when = { 0 };
@@ -1340,16 +1323,16 @@ int main(int argc, char **argv)
 		{ "systohc",      no_argument,       NULL, 'w'            },
 		{ "debug",        no_argument,       NULL, 'D'            },
 		{ "set",          no_argument,       NULL, OPT_SET        },
-#ifdef __linux__
+#if defined(__linux__) && defined(__alpha__)
 		{ "getepoch",     no_argument,       NULL, OPT_GETEPOCH   },
 		{ "setepoch",     no_argument,       NULL, OPT_SETEPOCH   },
+		{ "epoch",        required_argument, NULL, OPT_EPOCH      },
 #endif
 		{ "noadjfile",    no_argument,       NULL, OPT_NOADJFILE  },
 		{ "localtime",    no_argument,       NULL, OPT_LOCALTIME  },
 		{ "directisa",    no_argument,       NULL, OPT_DIRECTISA  },
 		{ "test",         no_argument,       NULL, OPT_TEST       },
 		{ "date",         required_argument, NULL, OPT_DATE       },
-		{ "epoch",        required_argument, NULL, OPT_EPOCH      },
 #ifdef __linux__
 		{ "rtc",          required_argument, NULL, 'f'            },
 #endif
@@ -1411,28 +1394,43 @@ int main(int argc, char **argv)
 			break;
 		case 'a':
 			ctl.adjust = 1;
+			ctl.show = 0;
+			ctl.hwaudit_on = 1;
 			break;
 		case 'r':
 			ctl.show = 1;
 			break;
 		case 's':
 			ctl.hctosys = 1;
+			ctl.show = 0;
+			ctl.hwaudit_on = 1;
 			break;
 		case 'u':
 			ctl.utc = 1;
 			break;
 		case 'w':
 			ctl.systohc = 1;
+			ctl.show = 0;
+			ctl.hwaudit_on = 1;
 			break;
 		case OPT_SET:
 			ctl.set = 1;
+			ctl.show = 0;
+			ctl.hwaudit_on = 1;
 			break;
-#ifdef __linux__
+#if defined(__linux__) && defined(__alpha__)
 		case OPT_GETEPOCH:
 			ctl.getepoch = 1;
+			ctl.show = 0;
 			break;
 		case OPT_SETEPOCH:
 			ctl.setepoch = 1;
+			ctl.show = 0;
+			ctl.hwaudit_on = 1;
+			break;
+		case OPT_EPOCH:
+			ctl.epoch_option =	/* --epoch */
+			    strtoul_or_err(optarg, _("invalid epoch argument"));
 			break;
 #endif
 		case OPT_NOADJFILE:
@@ -1450,21 +1448,20 @@ int main(int argc, char **argv)
 		case OPT_DATE:
 			ctl.date_opt = optarg;	/* --date */
 			break;
-		case OPT_EPOCH:
-			ctl.epoch_option =	/* --epoch */
-			    strtoul_or_err(optarg, _("invalid epoch argument"));
-			break;
 		case OPT_ADJFILE:
 			ctl.adj_file_name = optarg;	/* --adjfile */
 			break;
 		case OPT_SYSTZ:
 			ctl.systz = 1;		/* --systz */
+			ctl.show = 0;
 			break;
 		case OPT_PREDICT_HC:
 			ctl.predict = 1;	/* --predict-hc */
+			ctl.show = 0;
 			break;
 		case OPT_GET:
 			ctl.get = 1;		/* --get */
+			ctl.show = 0;
 			break;
 		case OPT_UPDATE:
 			ctl.update = 1;		/* --update-drift */
@@ -1488,14 +1485,6 @@ int main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-#ifdef HAVE_LIBAUDIT
-	if (!ctl.testing) {
-		if (ctl.adjust || ctl.hctosys || ctl.systohc ||
-		    ctl.set || ctl.setepoch) {
-			ctl.hwaudit_on = 1;
-		}
-	}
-#endif
 	if (argc > 0) {
 		warnx(_("%d too many arguments given"), argc);
 		errtryhelp(EXIT_FAILURE);
@@ -1511,6 +1500,10 @@ int main(int argc, char **argv)
 	}
 
 	if (ctl.set || ctl.predict) {
+		if (!ctl.date_opt){
+		warnx(_("--date is required for --set or --predict"));
+		hwclock_exit(&ctl, EX_USAGE);
+		}
 		if (parse_date(&when, ctl.date_opt, NULL))
 			set_time = when.tv_sec;
 		else {
@@ -1519,12 +1512,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (!(ctl.show | ctl.set | ctl.systohc | ctl.hctosys |
-	     ctl.systz | ctl.adjust | ctl.getepoch | ctl.setepoch |
-	     ctl.predict | ctl.get))
-		ctl.show = 1;	/* default to show */
-
-#ifdef __linux__
+#if defined(__linux__) && defined(__alpha__)
 	if (ctl.getepoch || ctl.setepoch) {
 		manipulate_epoch(&ctl);
 		hwclock_exit(&ctl, EX_OK);
@@ -1557,7 +1545,7 @@ hwclock_exit(const struct hwclock_control *ctl
 	     , int status)
 {
 #ifdef HAVE_LIBAUDIT
-	if (ctl->hwaudit_on) {
+	if (ctl->hwaudit_on && !ctl->testing) {
 		audit_log_user_message(hwaudit_fd, AUDIT_USYS_CONFIG,
 				       "op=change-system-time", NULL, NULL, NULL,
 				       status ? 0 : 1);
