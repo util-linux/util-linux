@@ -51,8 +51,6 @@
  *  --options-source-force				MNT_OMODE_FORCE
  */
 
-static int readwrite;
-
 static int mk_exit_code(struct libmnt_context *cxt, int rc);
 
 static void __attribute__((__noreturn__)) exit_non_root(const char *option)
@@ -369,7 +367,6 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 	const char *tgt = mnt_context_get_target(cxt);
 	const char *src = mnt_context_get_source(cxt);
 
-try_readonly:
 	if (mnt_context_helper_executed(cxt)) {
 		/*
 		 * /sbin/mount.<type> called, return status
@@ -384,6 +381,9 @@ try_readonly:
 		 * Libmount success && syscall success.
 		 */
 		selinux_warning(cxt, tgt);
+
+		if (mnt_context_forced_rdonly(cxt))
+			warnx(_("WARNING: device write-protected, mounted read-only"));
 
 		return MOUNT_EX_SUCCESS;	/* mount(2) success */
 	}
@@ -404,13 +404,14 @@ try_readonly:
 			return MOUNT_EX_USAGE;
 		/* -EROFS before syscall can happen only for loop mount */
 		case -EROFS:
-			warnx(_("%s is used as read only loop, mounting read-only"), src);
-			mnt_context_reset_status(cxt);
-			mnt_context_set_mflags(cxt, mflags | MS_RDONLY);
-			rc = mnt_context_mount(cxt);
-			if (!rc)
-				rc = mnt_context_finalize_mount(cxt);
-			goto try_readonly;
+			if (mflags & MS_RDONLY)
+				warnx(_("cannot mount %s read-only"), src);
+			else if (mnt_context_is_rwonly_mount(cxt))
+				warnx(_("%s is write-protected but explicit `-w' flag given"), src);
+			else if (mflags & MS_REMOUNT)
+				warnx(_("cannot remount %s read-write, is write-protected"), src);
+			warnx(_("mount %s on %s failed"), src, tgt);
+			return MOUNT_EX_USAGE;
 		case -MNT_ERR_NOFSTAB:
 			if (mnt_context_is_swapmatch(cxt)) {
 				warnx(_("can't find %s in %s"),
@@ -480,7 +481,6 @@ try_readonly:
 	 * mount(2) errors
 	 */
 	syserr = mnt_context_get_syscall_errno(cxt);
-
 
 	switch(syserr) {
 	case EPERM:
@@ -620,27 +620,11 @@ try_readonly:
 	case EROFS:
 		if (mflags & MS_RDONLY)
 			warnx(_("cannot mount %s read-only"), src);
-
-		else if (readwrite)
+		else if (mnt_context_is_rwonly_mount(cxt))
 			warnx(_("%s is write-protected but explicit `-w' flag given"), src);
-
 		else if (mflags & MS_REMOUNT)
 			warnx(_("cannot remount %s read-write, is write-protected"), src);
-
-		else if (mflags & MS_BIND)
-			warn(_("mount %s on %s failed"), src, tgt);
-
-		else {
-			warnx(_("%s is write-protected, mounting read-only"), src);
-
-			mnt_context_reset_status(cxt);
-			mnt_context_set_mflags(cxt, mflags | MS_RDONLY);
-			rc = mnt_context_do_mount(cxt);
-			if (!rc)
-				rc = mnt_context_finalize_mount(cxt);
-
-			goto try_readonly;
-		}
+		warnx(_("mount %s on %s failed"), src, tgt);
 		break;
 
 	case ENOMEDIUM:
@@ -924,7 +908,7 @@ int main(int argc, char **argv)
 			break;
 		case 'r':
 			append_option(cxt, "ro");
-			readwrite = 0;
+			mnt_context_enable_rwonly_mount(cxt, FALSE);
 			break;
 		case 'v':
 			mnt_context_enable_verbose(cxt, TRUE);
@@ -934,7 +918,7 @@ int main(int argc, char **argv)
 			break;
 		case 'w':
 			append_option(cxt, "rw");
-			readwrite = 1;
+			mnt_context_enable_rwonly_mount(cxt, TRUE);
 			break;
 		case 'o':
 			append_option(cxt, optarg);

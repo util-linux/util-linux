@@ -1083,6 +1083,7 @@ int mnt_context_mount(struct libmnt_context *cxt)
 	assert(cxt->helper_exec_status == 1);
 	assert(cxt->syscall_status == 1);
 
+again:
 	rc = mnt_context_prepare_mount(cxt);
 	if (!rc)
 		rc = mnt_context_prepare_update(cxt);
@@ -1090,6 +1091,32 @@ int mnt_context_mount(struct libmnt_context *cxt)
 		rc = mnt_context_do_mount(cxt);
 	if (!rc)
 		rc = mnt_context_update_tabs(cxt);
+
+	/*
+	 * Read-only device; try mount filesystem read-only
+	 */
+	if ((rc == -EROFS && !mnt_context_syscall_called(cxt))	/* before syscall; rdonly loopdev */
+	     || mnt_context_get_syscall_errno(cxt) == EROFS	/* syscall failed with EROFS */
+	     || mnt_context_get_syscall_errno(cxt) == EACCES)	/* syscall failed with EACCES */
+	{
+		unsigned long mflags = 0;
+
+		mnt_context_get_mflags(cxt, &mflags);
+
+		if (!(mflags & MS_RDONLY)			/* not yet RDONLY */
+		    && !(mflags & MS_REMOUNT)			/* not remount */
+		    && !(mflags & MS_BIND)			/* not bin mount */
+		    && !mnt_context_is_rwonly_mount(cxt)) {	/* no explicit read-write */
+
+			assert(!(cxt->flags & MNT_FL_FORCED_RDONLY));
+			DBG(CXT, ul_debugobj(cxt, "write-protected source, trying RDONLY."));
+
+			mnt_context_reset_status(cxt);
+			mnt_context_set_mflags(cxt, mflags | MS_RDONLY);
+			cxt->flags |= MNT_FL_FORCED_RDONLY;
+			goto again;
+		}
+	}
 	return rc;
 }
 

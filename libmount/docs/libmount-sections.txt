@@ -35,8 +35,10 @@ mnt_context_enable_fork
 mnt_context_enable_lazy
 mnt_context_enable_loopdel
 mnt_context_enable_rdonly_umount
+mnt_context_enable_rwonly_mount;
 mnt_context_enable_sloppy
 mnt_context_enable_verbose
+mnt_context_forced_rdonly;
 mnt_context_get_cache
 mnt_context_get_fs
 mnt_context_get_fstab
@@ -72,6 +74,7 @@ mnt_context_is_nomtab
 mnt_context_is_parent
 mnt_context_is_rdonly_umount
 mnt_context_is_restricted
+mnt_context_is_rwonly_mount;
 mnt_context_is_sloppy
 mnt_context_is_swapmatch
 mnt_context_is_verbose

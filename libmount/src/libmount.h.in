@@ -610,6 +610,7 @@ extern int mnt_context_set_optsmode(struct libmnt_context *cxt, int mode);
 extern int mnt_context_disable_canonicalize(struct libmnt_context *cxt, int disable);
 extern int mnt_context_enable_lazy(struct libmnt_context *cxt, int enable);
 extern int mnt_context_enable_rdonly_umount(struct libmnt_context *cxt, int enable);
+extern int mnt_context_enable_rwonly_mount(struct libmnt_context *cxt, int enable);
 extern int mnt_context_disable_helpers(struct libmnt_context *cxt, int disable);
 extern int mnt_context_enable_sloppy(struct libmnt_context *cxt, int enable);
 extern int mnt_context_enable_fake(struct libmnt_context *cxt, int enable);
@@ -625,6 +626,8 @@ extern int mnt_context_get_optsmode(struct libmnt_context *cxt);
 extern int mnt_context_is_lazy(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull));
 extern int mnt_context_is_rdonly_umount(struct libmnt_context *cxt)
+			__ul_attribute__((nonnull));
+extern int mnt_context_is_rwonly_mount(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull));
 extern int mnt_context_is_sloppy(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull));
@@ -643,6 +646,8 @@ extern int mnt_context_is_nohelpers(struct libmnt_context *cxt)
 extern int mnt_context_is_nocanonicalize(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull));
 extern int mnt_context_is_swapmatch(struct libmnt_context *cxt)
+			__ul_attribute__((nonnull));
+extern int mnt_context_forced_rdonly(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull));
 
 extern int mnt_context_is_fork(struct libmnt_context *cxt)

@@ -172,6 +172,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->flags |= (fl & MNT_FL_FORCE);
 	cxt->flags |= (fl & MNT_FL_NOCANONICALIZE);
 	cxt->flags |= (fl & MNT_FL_RDONLY_UMOUNT);
+	cxt->flags |= (fl & MNT_FL_RWONLY_MOUNT);
 	cxt->flags |= (fl & MNT_FL_NOSWAPMATCH);
 	cxt->flags |= (fl & MNT_FL_TABPATHS_CHECKED);
 	return 0;
@@ -475,6 +476,48 @@ int mnt_context_enable_rdonly_umount(struct libmnt_context *cxt, int enable)
 int mnt_context_is_rdonly_umount(struct libmnt_context *cxt)
 {
 	return cxt->flags & MNT_FL_RDONLY_UMOUNT ? 1 : 0;
+}
+
+/**
+ * mnt_context_enable_rwonly_mount:
+ * @cxt: mount context
+ * @enable: TRUE or FALSE
+ *
+ * Force read-write mount; if enabled libmount will never try MS_RDONLY
+ * after failed mount(2) EROFS. (See mount(8) man page, option -w).
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_enable_rwonly_mount(struct libmnt_context *cxt, int enable)
+{
+	return set_flag(cxt, MNT_FL_RWONLY_MOUNT, enable);
+}
+
+/**
+ * mnt_context_is_rwonly_mount
+ * @cxt: mount context
+ *
+ * See also mnt_context_enable_rwonly_mount() and mount(8) man page,
+ * option -w.
+ *
+ * Returns: 1 if only read-write mount is allowed.
+ */
+int mnt_context_is_rwonly_mount(struct libmnt_context *cxt)
+{
+	return cxt->flags & MNT_FL_RWONLY_MOUNT ? 1 : 0;
+}
+
+/**
+ * mnt_context_forced_rdonly:
+ * @cxt: mount context
+ *
+ * See also mnt_context_enable_rwonly_mount().
+ *
+ * Returns: 1 if mounted read-only on write-protected device.
+ */
+int mnt_context_forced_rdonly(struct libmnt_context *cxt)
+{
+	return cxt->flags & MNT_FL_FORCED_RDONLY ? 1 : 0;
 }
 
 /**
@@ -2002,8 +2045,10 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	if (!cxt || !cxt->fs)
 		return -EINVAL;
 
-	if (mnt_context_tab_applied(cxt))	/* already applied */
+	if (mnt_context_tab_applied(cxt)) {	/* already applied */
+		DBG(CXT, ul_debugobj(cxt, "fstab already applied -- skip"));
 		return 0;
+	}
 
 	if (mnt_context_is_restricted(cxt)) {
 		DBG(CXT, ul_debugobj(cxt, "force fstab usage for non-root users!"));

@@ -315,3 +315,9 @@ MOUNT_2.28 {
 	mnt_table_find_target_with_option;
 	mnt_fs_set_priority;
 } MOUNT_2.26;
+
+MOUNT_2.30 {
+	mnt_context_is_rwonly_mount;
+	mnt_context_forced_rdonly;
+	mnt_context_enable_rwonly_mount;
+} MOUNT_2.28;

@@ -328,6 +328,7 @@ struct libmnt_context
 #define MNT_FL_RDONLY_UMOUNT	(1 << 11)	/* remount,ro after EBUSY umount(2) */
 #define MNT_FL_FORK		(1 << 12)
 #define MNT_FL_NOSWAPMATCH	(1 << 13)
+#define MNT_FL_RWONLY_MOUNT	(1 << 14)	/* explicit mount -w; never try read-only  */
 
 #define MNT_FL_MOUNTDATA	(1 << 20)
 #define MNT_FL_TAB_APPLIED	(1 << 21)	/* mtab/fstab merged to cxt->fs */
@@ -338,6 +339,7 @@ struct libmnt_context
 #define MNT_FL_LOOPDEV_READY	(1 << 26)	/* /dev/loop<N> initialized by the library */
 #define MNT_FL_MOUNTOPTS_FIXED  (1 << 27)
 #define MNT_FL_TABPATHS_CHECKED	(1 << 28)
+#define MNT_FL_FORCED_RDONLY	(1 << 29)	/* mounted read-only on write-protected device */
 
 /* default flags */
 #define MNT_FL_DEFAULT		0

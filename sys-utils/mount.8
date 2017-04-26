@@ -807,8 +807,12 @@ Mount the partition that has the specified
 Verbose mode.
 .TP
 .BR \-w , " \-\-rw" , " \-\-read\-write"
-Mount the filesystem read/write.  This is the default.  A synonym is
+Mount the filesystem read/write. The read-write is kernel default.  A synonym is
 .BR "\-o rw" .
+
+Note that specify \fB\-w\fR on command line forces \fBmount\fR command
+to never try read-only mount on write-protected devices. The default is
+try read-only if the previous mount syscall with read-write flags failed.
 .TP
 .BR \-V , " \-\-version"
 Display version information and exit.
