@@ -50,6 +50,18 @@ UL_DEBUG_DECLARE_MASK(libmount);
 #define ON_DBG(m, x)	__UL_DBG_CALL(libmount, MNT_DEBUG_, m, x)
 #define DBG_FLUSH	__UL_DBG_FLUSH(libmount, MNT_DEBUG_)
 
+/*
+ * NLS -- the library has to be independent on main program, so define
+ * UL_TEXTDOMAIN_EXPLICIT before you include nls.h.
+ *
+ * Now we use util-linux.po (=PACKAGE), rather than maintain the texts
+ * in the separate libmount.po file.
+ */
+#define LIBMOUNT_TEXTDOMAIN	PACKAGE
+#define UL_TEXTDOMAIN_EXPLICIT	LIBMOUNT_TEXTDOMAIN
+#include "nls.h"
+
+
 /* extension for files in the directory */
 #define MNT_MNTTABDIR_EXT	".fstab"
 
@@ -313,6 +325,8 @@ struct libmnt_context
 
 
 	int	syscall_status;	/* 1: not called yet, 0: success, <0: -errno */
+
+	unsigned int	enabled_textdomain : 1;		/* bindtextdomain() called */
 };
 
 /* flags */
@@ -409,6 +423,10 @@ extern int mnt_fork_context(struct libmnt_context *cxt);
 extern int mnt_context_set_tabfilter(struct libmnt_context *cxt,
 				     int (*fltr)(struct libmnt_fs *, void *),
 				     void *data);
+
+extern int mnt_context_get_generic_excode(int rc, char *buf, size_t bufsz, char *fmt, ...);
+extern int mnt_context_get_mount_excode(struct libmnt_context *cxt, int mntrc, char *buf, size_t bufsz);
+extern int mnt_context_get_umount_excode(struct libmnt_context *cxt, int mntrc, char *buf, size_t bufsz);
 
 /* tab_update.c */
 extern int mnt_update_set_filename(struct libmnt_update *upd,

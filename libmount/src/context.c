@@ -175,6 +175,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->flags |= (fl & MNT_FL_RWONLY_MOUNT);
 	cxt->flags |= (fl & MNT_FL_NOSWAPMATCH);
 	cxt->flags |= (fl & MNT_FL_TABPATHS_CHECKED);
+
 	return 0;
 }
 
@@ -2261,7 +2262,7 @@ int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status)
  * @buf: buffer
  * @bufsiz: size of the buffer
  *
- * Not implemented yet.
+ * Not implemented, deprecated in favor or mnt_context_get_excode().
  *
  * Returns: 0 or negative number in case of error.
  */
@@ -2272,6 +2273,100 @@ int mnt_context_strerror(struct libmnt_context *cxt __attribute__((__unused__)),
 	/* TODO: based on cxt->syscall_errno or cxt->helper_status */
 	return 0;
 }
+
+
+int mnt_context_get_generic_excode(int rc, char *buf, size_t bufsz, char *fmt, ...)
+{
+	va_list va;
+
+	if (rc == 0)
+		return MNT_EX_SUCCESS;
+
+	va_start(va, fmt);
+
+	/* we need to support "%m" */
+	errno = rc < 0 ? -rc : rc;
+
+	if (buf)
+		vsnprintf(buf, bufsz, fmt, va);
+
+	switch (errno) {
+	case EINVAL:
+	case EPERM:
+		rc = MNT_EX_USAGE;
+		break;
+	case ENOMEM:
+		rc = MNT_EX_SYSERR;
+		break;
+	default:
+		rc = MNT_EX_FAIL;
+		break;
+	}
+	va_end(va);
+	return rc;
+}
+
+/**
+ * mnt_context_get_excode:
+ * @cxt: context
+ * @rc: return code of the previous operation
+ * @buf: buffer to print error message (optional)
+ * @bufsz: size of the buffer
+ *
+ * This function analyzes context, [u]mount syscall and external helper status
+ * and @mntrc and generates unified return code (see MNT_EX_*) as expected
+ * from mount(8) or umount(8).
+ *
+ * If the external helper (e.g. /sbin/mount.<type>) has been executed than it
+ * returns status from wait() of the helper. It's not libmount fail if helper
+ * returns some crazy undocumented codes...  See mnt_context_helper_executed()
+ * and mnt_context_get_helper_status(). Note that mount(8) and umount(8) utils
+ * always return code from helper without extra care about it.
+ *
+ * If the argument @buf is not NULL then error message is generated (if
+ * anything failed).
+ *
+ * The @mntrc is usually return code from mnt_context_mount(),
+ * mnt_context_umount(), or 'mntrc' as returned by mnt_context_next_mount().
+ *
+ * Returns: MNT_EX_* codes.
+ */
+int mnt_context_get_excode(
+			struct libmnt_context *cxt,
+			int rc,
+			char *buf,
+			size_t bufsz)
+{
+	if (buf) {
+		*buf = '\0'; /* for sure */
+
+		if (!cxt->enabled_textdomain) {
+			bindtextdomain(LIBMOUNT_TEXTDOMAIN, LOCALEDIR);
+			cxt->enabled_textdomain = 1;
+		}
+	}
+
+	switch (cxt->action) {
+	case MNT_ACT_MOUNT:
+		rc = mnt_context_get_mount_excode(cxt, rc, buf, bufsz);
+		break;
+	case MNT_ACT_UMOUNT:
+		rc = mnt_context_get_umount_excode(cxt, rc, buf, bufsz);
+		break;
+	default:
+		if (rc)
+			rc = mnt_context_get_generic_excode(rc, buf, bufsz,
+				_("operation failed: %m"));
+		else
+			rc = MNT_EX_SUCCESS;
+		break;
+	}
+
+	DBG(CXT, ul_debugobj(cxt, "return code: %d [%s]", rc,
+				buf ? buf : "<no-message>"));
+	return rc;
+}
+
 
 /**
  * mnt_context_init_helper

@@ -35,11 +35,12 @@ mnt_context_enable_fork
 mnt_context_enable_lazy
 mnt_context_enable_loopdel
 mnt_context_enable_rdonly_umount
-mnt_context_enable_rwonly_mount;
+mnt_context_enable_rwonly_mount
 mnt_context_enable_sloppy
 mnt_context_enable_verbose
-mnt_context_forced_rdonly;
+mnt_context_forced_rdonly
 mnt_context_get_cache
+mnt_context_get_excode
 mnt_context_get_fs
 mnt_context_get_fstab
 mnt_context_get_fstab_userdata
@@ -74,7 +75,7 @@ mnt_context_is_nomtab
 mnt_context_is_parent
 mnt_context_is_rdonly_umount
 mnt_context_is_restricted
-mnt_context_is_rwonly_mount;
+mnt_context_is_rwonly_mount
 mnt_context_is_sloppy
 mnt_context_is_swapmatch
 mnt_context_is_verbose
@@ -108,6 +109,15 @@ MNT_ERR_NOFSTAB
 MNT_ERR_NOFSTYPE
 MNT_ERR_NOSOURCE
 MNT_ERR_LOOPOVERLAP
+<SUBSECTION>
+MNT_EX_SUCCESS
+MNT_EX_USAGE
+MNT_EX_SYSERR
+MNT_EX_SOFTWARE
+MNT_EX_USER
+MNT_EX_FILEIO
+MNT_EX_FAIL
+MNT_EX_SOMEOK
 </SECTION>
 
 <SECTION>

@@ -320,4 +320,5 @@ MOUNT_2.30 {
 	mnt_context_is_rwonly_mount;
 	mnt_context_forced_rdonly;
 	mnt_context_enable_rwonly_mount;
+	mnt_context_get_excode;
 } MOUNT_2.28;
