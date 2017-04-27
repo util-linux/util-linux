@@ -144,123 +144,20 @@ static void success_message(struct libmnt_context *cxt)
 		warnx(_("%s unmounted"), tgt);
 }
 
-/*
- * Handles generic errors like ENOMEM, ...
- *
- * rc = 0 success
- *     <0 error (usually -errno)
- *
- * Returns exit status (MOUNT_EX_*) and prints error message.
- */
-static int handle_generic_errors(int rc, const char *msg, ...)
-{
-	va_list va;
-
-	va_start(va, msg);
-	errno = -rc;
-
-	switch(errno) {
-	case EINVAL:
-	case EPERM:
-		vwarn(msg, va);
-		rc = MOUNT_EX_USAGE;
-		break;
-	case ENOMEM:
-		vwarn(msg, va);
-		rc = MOUNT_EX_SYSERR;
-		break;
-	default:
-		vwarn(msg, va);
-		rc = MOUNT_EX_FAIL;
-		break;
-	}
-	va_end(va);
-	return rc;
-}
-
 static int mk_exit_code(struct libmnt_context *cxt, int rc)
 {
-	int syserr;
-	const char *tgt = mnt_context_get_target(cxt);
+	char buf[BUFSIZ] = { 0 };
 
-	if (mnt_context_helper_executed(cxt))
-		/*
-		 * /sbin/umount.<type> called, return status
-		 */
-		return mnt_context_get_helper_status(cxt);
-
-	if (rc == 0 && mnt_context_get_status(cxt) == 1)
-		/*
-		 * Libmount success && syscall success.
-		 */
-		return MOUNT_EX_SUCCESS;
-
-
-	if (!mnt_context_syscall_called(cxt)) {
-		/*
-		 * libmount errors (extra library checks)
-		 */
-		if (rc == -EPERM && !mnt_context_tab_applied(cxt)) {
-			/* failed to evaluate permissions because not found
-			 * relevant entry in mtab */
-			warnx(_("%s: not mounted"), tgt);
-			return MOUNT_EX_USAGE;
-		}
-		return handle_generic_errors(rc, _("%s: umount failed"), tgt);
-
-	} else if (mnt_context_get_syscall_errno(cxt) == 0) {
-		/*
-		 * umount(2) syscall success, but something else failed
-		 * (probably error in mtab processing).
-		 */
-		if (rc < 0)
-			return handle_generic_errors(rc,
-				_("%s: filesystem was unmounted, but umount(8) failed"),
-				tgt);
-
-		return MOUNT_EX_SOFTWARE;	/* internal error */
-
+	rc = mnt_context_get_excode(cxt, rc, buf, sizeof(buf));
+	if (*buf) {
+		const char *spec = mnt_context_get_target(cxt);
+		if (!spec)
+			spec = mnt_context_get_source(cxt);
+		if (!spec)
+			spec = "???";
+		warnx(_("%s: %s."), spec, buf);
 	}
-
-	/*
-	 * umount(2) errors
-	 */
-	syserr = mnt_context_get_syscall_errno(cxt);
-
-	switch(syserr) {
-	case ENXIO:
-		warnx(_("%s: invalid block device"), tgt);	/* ??? */
-		break;
-	case EINVAL:
-		warnx(_("%s: not mounted"), tgt);
-		break;
-	case EIO:
-		warnx(_("%s: can't write superblock"), tgt);
-		break;
-	case EBUSY:
-		warnx(_("%s: target is busy\n"
-		       "        (In some cases useful info about processes that\n"
-		       "         use the device is found by lsof(8) or fuser(1).)"),
-			tgt);
-		break;
-	case ENOENT:
-		if (tgt && *tgt)
-			warnx(_("%s: mountpoint not found"), tgt);
-		else
-			warnx(_("undefined mountpoint"));
-		break;
-	case EPERM:
-		warnx(_("%s: must be superuser to unmount"), tgt);
-		break;
-	case EACCES:
-		warnx(_("%s: block devices are not permitted on filesystem"), tgt);
-		break;
-	default:
-		errno = syserr;
-		warn("%s", tgt);
-		break;
-	}
-	return MOUNT_EX_FAIL;
+	return rc;
 }
 
 static int umount_all(struct libmnt_context *cxt)

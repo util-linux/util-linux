@@ -256,40 +256,6 @@ static void success_message(struct libmnt_context *cxt)
 		printf(_("%s: %s mounted on %s.\n"), pr, src, tgt);
 }
 
-/*
- * Handles generic errors like ENOMEM, ...
- *
- * rc = 0 success
- *     <0 error (usually -errno)
- *
- * Returns exit status (MOUNT_EX_*) and prints error message.
- */
-static int handle_generic_errors(int rc, const char *msg, ...)
-{
-	va_list va;
-
-	va_start(va, msg);
-	errno = -rc;
-
-	switch(errno) {
-	case EINVAL:
-	case EPERM:
-		vwarn(msg, va);
-		rc = MOUNT_EX_USAGE;
-		break;
-	case ENOMEM:
-		vwarn(msg, va);
-		rc = MOUNT_EX_SYSERR;
-		break;
-	default:
-		vwarn(msg, va);
-		rc = MOUNT_EX_FAIL;
-		break;
-	}
-	va_end(va);
-	return rc;
-}
-
 #if defined(HAVE_LIBSELINUX) && defined(HAVE_SECURITY_GET_INITIAL_CONTEXT)
 #include <selinux/selinux.h>
 #include <selinux/context.h>
@@ -321,325 +287,33 @@ static void selinux_warning(struct libmnt_context *cxt, const char *tgt)
 #endif
 
 /*
- * Returns 1 if @dir parent is shared
- */
-static int is_shared_tree(struct libmnt_context *cxt, const char *dir)
-{
-	struct libmnt_table *tb = NULL;
-	struct libmnt_fs *fs;
-	unsigned long mflags = 0;
-	char *mnt = NULL, *p;
-	int rc = 0;
-
-	if (!dir)
-		return 0;
-	if (mnt_context_get_mtab(cxt, &tb) || !tb)
-		goto done;
-	mnt = xstrdup(dir);
-	p = strrchr(mnt, '/');
-	if (!p)
-		goto done;
-	if (p > mnt)
-		*p = '\0';
-	fs = mnt_table_find_mountpoint(tb, mnt, MNT_ITER_BACKWARD);
-
-	rc = fs && mnt_fs_is_kernel(fs)
-		&& mnt_fs_get_propagation(fs, &mflags) == 0
-		&& (mflags & MS_SHARED);
-done:
-	free(mnt);
-	return rc;
-}
-
-/*
- * rc = 0 success
- *     <0 error (usually -errno or -1)
- *
- * Returns exit status (MOUNT_EX_*) and/or prints error message.
+ * Returns exit status (MNT_EX_*) and/or prints error message.
  */
 static int mk_exit_code(struct libmnt_context *cxt, int rc)
 {
-	int syserr;
-	struct stat st;
-	unsigned long uflags = 0, mflags = 0;
+	const char *tgt;
+	char buf[BUFSIZ] = { 0 };
 
-	int restricted = mnt_context_is_restricted(cxt);
-	const char *tgt = mnt_context_get_target(cxt);
-	const char *src = mnt_context_get_source(cxt);
+	rc = mnt_context_get_excode(cxt, rc, buf, sizeof(buf));
+	tgt = mnt_context_get_target(cxt);
 
-	if (mnt_context_helper_executed(cxt)) {
-		/*
-		 * /sbin/mount.<type> called, return status
-		 */
-		if (rc == -MNT_ERR_APPLYFLAGS)
-			warnx(_("WARNING: failed to apply propagation flags"));
-		return mnt_context_get_helper_status(cxt);
+	if (*buf) {
+		const char *spec = tgt;
+		if (!spec)
+			spec = mnt_context_get_source(cxt);
+		if (!spec)
+			spec = "???";
+		warnx(_("%s: %s."), spec, buf);
 	}
 
-	if (rc == 0 && mnt_context_get_status(cxt) == 1) {
-		/*
-		 * Libmount success && syscall success.
-		 */
-		selinux_warning(cxt, tgt);
+	if (rc == MNT_EX_SUCCESS) {
+		if (mnt_context_get_status(cxt) == 1)
+			selinux_warning(cxt, tgt);
 
 		if (mnt_context_forced_rdonly(cxt))
-			warnx(_("WARNING: device write-protected, mounted read-only"));
-
-		return MOUNT_EX_SUCCESS;	/* mount(2) success */
+			warnx(_("%s: WARNING: device write-protected, mounted read-only."), tgt);
 	}
-
-	mnt_context_get_mflags(cxt, &mflags);		/* mount(2) flags */
-	mnt_context_get_user_mflags(cxt, &uflags);	/* userspace flags */
-
-	if (!mnt_context_syscall_called(cxt)) {
-		/*
-		 * libmount errors (extra library checks)
-		 */
-		switch (rc) {
-		case -EPERM:
-			warnx(_("only root can mount %s on %s"), src, tgt);
-			return MOUNT_EX_USAGE;
-		case -EBUSY:
-			warnx(_("%s is already mounted"), src);
-			return MOUNT_EX_USAGE;
-		/* -EROFS before syscall can happen only for loop mount */
-		case -EROFS:
-			if (mflags & MS_RDONLY)
-				warnx(_("cannot mount %s read-only"), src);
-			else if (mnt_context_is_rwonly_mount(cxt))
-				warnx(_("%s is write-protected but explicit `-w' flag given"), src);
-			else if (mflags & MS_REMOUNT)
-				warnx(_("cannot remount %s read-write, is write-protected"), src);
-			warnx(_("mount %s on %s failed"), src, tgt);
-			return MOUNT_EX_USAGE;
-		case -MNT_ERR_NOFSTAB:
-			if (mnt_context_is_swapmatch(cxt)) {
-				warnx(_("can't find %s in %s"),
-						src ? src : tgt,
-						mnt_get_fstab_path());
-				return MOUNT_EX_USAGE;
-			}
-			/* source/target explicitly defined */
-			if (tgt)
-				warnx(_("can't find mountpoint %s in %s"),
-						tgt, mnt_get_fstab_path());
-			else
-				warnx(_("can't find mount source %s in %s"),
-						src, mnt_get_fstab_path());
-			return MOUNT_EX_USAGE;
-		case -MNT_ERR_AMBIFS:
-			warnx(_("%s: more filesystems detected. This should not happen,\n"
-			  "       use -t <type> to explicitly specify the filesystem type or\n"
-			  "       use wipefs(8) to clean up the device."), src);
-			return MOUNT_EX_USAGE;
-		case -MNT_ERR_NOFSTYPE:
-			if (restricted)
-				warnx(_("I could not determine the filesystem type, "
-					"and none was specified"));
-			else
-				warnx(_("you must specify the filesystem type"));
-			return MOUNT_EX_USAGE;
-		case -MNT_ERR_NOSOURCE:
-			if (uflags & MNT_MS_NOFAIL)
-				return MOUNT_EX_SUCCESS;
-			if (src)
-				warnx(_("can't find %s"), src);
-			else
-				warnx(_("mount source not defined"));
-			return MOUNT_EX_USAGE;
-		case -MNT_ERR_MOUNTOPT:
-			if (errno)
-				warn(_("failed to parse mount options"));
-			else
-				warnx(_("failed to parse mount options"));
-			return MOUNT_EX_USAGE;
-		case -MNT_ERR_LOOPDEV:
-			warn(_("%s: failed to setup loop device"), src);
-			return MOUNT_EX_FAIL;
-		case -MNT_ERR_LOOPOVERLAP:
-			warnx(_("%s: overlapping loop device exists"), src);
-			return MOUNT_EX_FAIL;
-		default:
-			return handle_generic_errors(rc, _("%s: mount failed"),
-					     tgt ? tgt : src);
-		}
-	} else if (mnt_context_get_syscall_errno(cxt) == 0) {
-		/*
-		 * mount(2) syscall success, but something else failed
-		 * (probably error in mtab processing).
-		 */
-		if (rc < 0)
-			return handle_generic_errors(rc,
-				_("%s: filesystem mounted, but mount(8) failed"),
-				tgt ? tgt : src);
-
-		return MOUNT_EX_SOFTWARE;	/* internal error */
-
-	}
-
-	/*
-	 * mount(2) errors
-	 */
-	syserr = mnt_context_get_syscall_errno(cxt);
-
-	switch(syserr) {
-	case EPERM:
-		if (geteuid() == 0) {
-			if (stat(tgt, &st) || !S_ISDIR(st.st_mode))
-				warnx(_("mount point %s is not a directory"), tgt);
-			else
-				warnx(_("permission denied"));
-		} else
-			warnx(_("must be superuser to use mount"));
-	      break;
-
-	case EBUSY:
-	{
-		struct libmnt_table *tb;
-
-		if (mflags & MS_REMOUNT) {
-			warnx(_("%s is busy"), tgt);
-			break;
-		}
-
-		warnx(_("%s is already mounted or %s busy"), src, tgt);
-
-		if (src && mnt_context_get_mtab(cxt, &tb) == 0) {
-			struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_FORWARD);
-			struct libmnt_fs *fs;
-
-			while(mnt_table_next_fs(tb, itr, &fs) == 0) {
-				const char *s = mnt_fs_get_srcpath(fs),
-					   *t = mnt_fs_get_target(fs);
-
-				if (t && s && mnt_fs_streq_srcpath(fs, src))
-					fprintf(stderr, _(
-						"       %s is already mounted on %s\n"), s, t);
-			}
-			mnt_free_iter(itr);
-		}
-		break;
-	}
-	case ENOENT:
-		if (tgt && lstat(tgt, &st))
-			warnx(_("mount point %s does not exist"), tgt);
-		else if (tgt && stat(tgt, &st))
-			warnx(_("mount point %s is a symbolic link to nowhere"), tgt);
-		else if (src && stat(src, &st)) {
-			if (uflags & MNT_MS_NOFAIL)
-				return MOUNT_EX_SUCCESS;
-
-			warnx(_("special device %s does not exist"), src);
-		} else {
-			errno = syserr;
-			if (tgt)
-				warn("%s: %s", _("mount(2) failed"), tgt);
-			else if (src)
-				warn("%s: %s", _("mount(2) failed"), src);
-			else
-				warn(_("mount(2) failed"));
-		}
-		break;
-
-	case ENOTDIR:
-		if (stat(tgt, &st) || ! S_ISDIR(st.st_mode))
-			warnx(_("mount point %s is not a directory"), tgt);
-		else if (src && stat(src, &st) && errno == ENOTDIR) {
-			if (uflags & MNT_MS_NOFAIL)
-				return MOUNT_EX_SUCCESS;
-
-			warnx(_("special device %s does not exist "
-				 "(a path prefix is not a directory)"), src);
-		} else {
-			errno = syserr;
-			warn("%s: %s", _("mount(2) failed"), tgt);
-		}
-		break;
-
-	case EINVAL:
-		if (mflags & MS_REMOUNT)
-			warnx(_("%s not mounted or bad option"), tgt);
-		else if (rc == -MNT_ERR_APPLYFLAGS)
-			warnx(_("%s is not mountpoint or bad option"), tgt);
-		else if ((mflags & MS_MOVE) && is_shared_tree(cxt, src))
-			warnx(_("bad option. Note that moving a mount residing under a shared\n"
-				"       mount is unsupported."));
-		else
-			warnx(_("wrong fs type, bad option, bad superblock on %s,\n"
-				"       missing codepage or helper program, or other error"),
-				src);
-
-		if (mnt_fs_is_netfs(mnt_context_get_fs(cxt)))
-			fprintf(stderr, _(
-				"       (for several filesystems (e.g. nfs, cifs) you might\n"
-				"       need a /sbin/mount.<type> helper program)\n"));
-
-		fprintf(stderr, _("\n"
-				"       In some cases useful info is found in syslog - try\n"
-				"       dmesg | tail or so.\n"));
-		break;
-
-	case EMFILE:
-		warnx(_("mount table full"));
-		break;
-
-	case EIO:
-		warnx(_("%s: can't read superblock"), src);
-		break;
-
-	case ENODEV:
-		if (mnt_context_get_fstype(cxt))
-			warnx(_("unknown filesystem type '%s'"), mnt_context_get_fstype(cxt));
-		else
-			warnx(_("unknown filesystem type"));
-		break;
-
-	case ENOTBLK:
-		if (uflags & MNT_MS_NOFAIL)
-			return MOUNT_EX_SUCCESS;
-
-		if (stat(src, &st))
-			warnx(_("%s is not a block device, and stat(2) fails?"), src);
-		else if (S_ISBLK(st.st_mode))
-			warnx(_("the kernel does not recognize %s as a block device\n"
-				"       (maybe `modprobe driver'?)"), src);
-		else if (S_ISREG(st.st_mode))
-			warnx(_("%s is not a block device (maybe try `-o loop'?)"), src);
-		else
-			warnx(_(" %s is not a block device"), src);
-		break;
-
-	case ENXIO:
-		if (uflags & MNT_MS_NOFAIL)
-			return MOUNT_EX_SUCCESS;
-
-		warnx(_("%s is not a valid block device"), src);
-		break;
-
-	case EACCES:
-	case EROFS:
-		if (mflags & MS_RDONLY)
-			warnx(_("cannot mount %s read-only"), src);
-		else if (mnt_context_is_rwonly_mount(cxt))
-			warnx(_("%s is write-protected but explicit `-w' flag given"), src);
-		else if (mflags & MS_REMOUNT)
-			warnx(_("cannot remount %s read-write, is write-protected"), src);
-		warnx(_("mount %s on %s failed"), src, tgt);
-		break;
-
-	case ENOMEDIUM:
-		if (uflags & MNT_MS_NOFAIL)
-			return MOUNT_EX_SUCCESS;
-
-		warnx(_("no medium found on %s"), src);
-		break;
-
-	default:
-		warn(_("mount %s on %s failed"), src, tgt);
-		break;
-	}
-
-	return MOUNT_EX_FAIL;
+	return rc;
 }
 
 static struct libmnt_table *append_fstab(struct libmnt_context *cxt,
