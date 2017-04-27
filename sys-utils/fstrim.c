@@ -184,11 +184,11 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 
 	itr = mnt_new_iter(MNT_ITER_BACKWARD);
 	if (!itr)
-		err(MOUNT_EX_FAIL, _("failed to initialize libmount iterator"));
+		err(MNT_EX_FAIL, _("failed to initialize libmount iterator"));
 
 	tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
 	if (!tab)
-		err(MOUNT_EX_FAIL, _("failed to parse %s"), _PATH_PROC_MOUNTINFO);
+		err(MNT_EX_FAIL, _("failed to parse %s"), _PATH_PROC_MOUNTINFO);
 
 	/* de-duplicate by mountpoints */
 	mnt_table_uniq_fs(tab, 0, uniq_fs_target_cmp);
@@ -237,9 +237,9 @@ static int fstrim_all(struct fstrim_range *rangetpl, int verbose)
 	mnt_free_iter(itr);
 
 	if (cnt && cnt == cnt_err)
-		return MOUNT_EX_FAIL;		/* all failed */
+		return MNT_EX_FAIL;		/* all failed */
 	if (cnt && cnt_err)
-		return MOUNT_EX_SOMEOK;		/* some ok */
+		return MNT_EX_SOMEOK;		/* some ok */
 
 	return EXIT_SUCCESS;
 }
