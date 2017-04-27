@@ -1255,6 +1255,47 @@ read_configured(struct lscpu_desc *desc, int idx)
 	desc->configured[idx] = path_read_s32(_PATH_SYS_CPU "/cpu%d/configure", num);
 }
 
+/* Read overall maximum frequency of cpu */
+static void
+cpu_max_mhz(struct lscpu_desc *desc, char *max_freq)
+{
+	int i;
+	float cpu_freq = atof(desc->maxmhz[0]);
+
+	if (desc->present) {
+		for (i = 1; i < desc->ncpuspos; i++) {
+			if (CPU_ISSET(real_cpu_num(desc, i), desc->present)) {
+				float freq = atof(desc->maxmhz[i]);
+
+				if (freq > cpu_freq)
+					cpu_freq = freq;
+			}
+		}
+	}
+	sprintf(max_freq, "%.4f", cpu_freq);
+}
+
+/* Read overall minimum frequency of cpu */
+static void
+cpu_min_mhz(struct lscpu_desc *desc, char *min_freq)
+{
+        int i;
+        float cpu_freq = atof(desc->minmhz[0]);
+
+	if (desc->present) {
+		for (i = 1; i < desc->ncpuspos; i++) {
+			if (CPU_ISSET(real_cpu_num(desc, i), desc->present)) {
+				float freq = atof(desc->minmhz[i]);
+
+				if (freq < cpu_freq)
+					cpu_freq = freq;
+			}
+		}
+	}
+        sprintf(min_freq, "%.4f", cpu_freq);
+}
+
+
 static void
 read_max_mhz(struct lscpu_desc *desc, int idx)
 {
@@ -1809,7 +1850,9 @@ static void
 print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 {
 	char buf[512];
-	int i;
+	int i = 0;
+	char max_freq[32];
+	char min_freq[32];
 	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
 	struct libscols_table *tb;
 
@@ -1947,10 +1990,14 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		add_summary_s(tb, _("CPU dynamic MHz:"), desc->dynamic_mhz);
 	if (desc->static_mhz)
 		add_summary_s(tb, _("CPU static MHz:"), desc->static_mhz);
-	if (desc->maxmhz)
-		add_summary_s(tb, _("CPU max MHz:"), desc->maxmhz[0]);
-	if (desc->minmhz)
-		add_summary_s(tb, _("CPU min MHz:"), desc->minmhz[0]);
+	if (desc->maxmhz){
+		cpu_max_mhz(desc, max_freq);
+		add_summary_s(tb, _("CPU max MHz:"), max_freq);
+	}
+	if (desc->minmhz){
+		cpu_min_mhz(desc, min_freq);
+		add_summary_s(tb, _("CPU min MHz:"), min_freq);
+	}
 	if (desc->bogomips)
 		add_summary_s(tb, _("BogoMIPS:"), desc->bogomips);
 	if (desc->virtflag) {
