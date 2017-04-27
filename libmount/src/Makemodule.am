@@ -89,7 +89,7 @@ endif
 
 libmount_tests_cflags  = -DTEST_PROGRAM $(libmount_la_CFLAGS) $(NO_UNUSED_WARN_CFLAGS)
 libmount_tests_ldflags = libblkid.la -static
-libmount_tests_ldadd   = libmount.la $(LDADD) $(UUID_LIBS) $(REALTIME_LIBS)
+libmount_tests_ldadd   = libmount.la $(LDADD) $(REALTIME_LIBS)
 
 if HAVE_SELINUX
 libmount_tests_ldadd += $(SELINUX_LIBS)
