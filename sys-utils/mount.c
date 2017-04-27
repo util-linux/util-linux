@@ -36,12 +36,11 @@
 #include "c.h"
 #include "env.h"
 #include "strutils.h"
-#include "exitcodes.h"
 #include "xalloc.h"
 #include "closestream.h"
 #include "canonicalize.h"
 
-#define OPTUTILS_EXIT_CODE MOUNT_EX_USAGE
+#define OPTUTILS_EXIT_CODE MNT_EX_USAGE
 #include "optutils.h"
 
 /*** TODO: DOCS:
@@ -61,15 +60,15 @@ static void __attribute__((__noreturn__)) exit_non_root(const char *option)
 	if (ruid == 0 && euid != 0) {
 		/* user is root, but setuid to non-root */
 		if (option)
-			errx(MOUNT_EX_USAGE, _("only root can use \"--%s\" option "
+			errx(MNT_EX_USAGE, _("only root can use \"--%s\" option "
 					 "(effective UID is %u)"),
 					option, euid);
-		errx(MOUNT_EX_USAGE, _("only root can do that "
+		errx(MNT_EX_USAGE, _("only root can do that "
 				 "(effective UID is %u)"), euid);
 	}
 	if (option)
-		errx(MOUNT_EX_USAGE, _("only root can use \"--%s\" option"), option);
-	errx(MOUNT_EX_USAGE, _("only root can do that"));
+		errx(MNT_EX_USAGE, _("only root can use \"--%s\" option"), option);
+	errx(MNT_EX_USAGE, _("only root can do that"));
 }
 
 static void __attribute__((__noreturn__)) print_version(void)
@@ -90,7 +89,7 @@ static void __attribute__((__noreturn__)) print_version(void)
 		fputs(*p++, stdout);
 	}
 	fputs(")\n", stdout);
-	exit(MOUNT_EX_SUCCESS);
+	exit(MNT_EX_SUCCESS);
 }
 
 static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)),
@@ -125,11 +124,11 @@ static void print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 	struct libmnt_cache *cache = NULL;
 
 	if (mnt_context_get_mtab(cxt, &tb))
-		err(MOUNT_EX_SYSERR, _("failed to read mtab"));
+		err(MNT_EX_SYSERR, _("failed to read mtab"));
 
 	itr = mnt_new_iter(MNT_ITER_FORWARD);
 	if (!itr)
-		err(MOUNT_EX_SYSERR, _("failed to initialize libmount iterator"));
+		err(MNT_EX_SYSERR, _("failed to initialize libmount iterator"));
 	if (show_label)
 		cache = mnt_new_cache();
 
@@ -171,14 +170,14 @@ static int mount_all(struct libmnt_context *cxt)
 {
 	struct libmnt_iter *itr;
 	struct libmnt_fs *fs;
-	int mntrc, ignored, rc = MOUNT_EX_SUCCESS;
+	int mntrc, ignored, rc = MNT_EX_SUCCESS;
 
 	int nsucc = 0, nerrs = 0;
 
 	itr = mnt_new_iter(MNT_ITER_FORWARD);
 	if (!itr) {
 		warn(_("failed to initialize libmount iterator"));
-		return MOUNT_EX_SYSERR;
+		return MNT_EX_SYSERR;
 	}
 
 	while (mnt_context_next_mount(cxt, itr, &fs, &mntrc, &ignored) == 0) {
@@ -194,10 +193,10 @@ static int mount_all(struct libmnt_context *cxt)
 			if (mnt_context_is_verbose(cxt))
 				printf("%-25s: mount successfully forked\n", tgt);
 		} else {
-			if (mk_exit_code(cxt, mntrc) == MOUNT_EX_SUCCESS) {
+			if (mk_exit_code(cxt, mntrc) == MNT_EX_SUCCESS) {
 				nsucc++;
 
-				/* Note that MOUNT_EX_SUCCESS return code does
+				/* Note that MNT_EX_SUCCESS return code does
 				 * not mean that FS has been really mounted
 				 * (e.g. nofail option) */
 				if (mnt_context_get_status(cxt) 
@@ -220,11 +219,11 @@ static int mount_all(struct libmnt_context *cxt)
 	}
 
 	if (nerrs == 0)
-		rc = MOUNT_EX_SUCCESS;		/* all success */
+		rc = MNT_EX_SUCCESS;		/* all success */
 	else if (nsucc == 0)
-		rc = MOUNT_EX_FAIL;		/* all failed */
+		rc = MNT_EX_FAIL;		/* all failed */
 	else
-		rc = MOUNT_EX_SOMEOK;		/* some success, some failed */
+		rc = MNT_EX_SOMEOK;		/* some success, some failed */
 
 	mnt_free_iter(itr);
 	return rc;
@@ -324,7 +323,7 @@ static struct libmnt_table *append_fstab(struct libmnt_context *cxt,
 	if (!fstab) {
 		fstab = mnt_new_table();
 		if (!fstab)
-			err(MOUNT_EX_SYSERR, _("failed to initialize libmount table"));
+			err(MNT_EX_SYSERR, _("failed to initialize libmount table"));
 
 		mnt_table_set_parser_errcb(fstab, table_parser_errcb);
 		mnt_context_set_fstab(cxt, fstab);
@@ -333,7 +332,7 @@ static struct libmnt_table *append_fstab(struct libmnt_context *cxt,
 	}
 
 	if (mnt_table_parse_fstab(fstab, path))
-		errx(MOUNT_EX_USAGE,_("%s: failed to parse"), path);
+		errx(MNT_EX_USAGE,_("%s: failed to parse"), path);
 
 	return fstab;
 }
@@ -354,7 +353,7 @@ static void sanitize_paths(struct libmnt_context *cxt)
 	if (p) {
 		char *np = canonicalize_path_restricted(p);
 		if (!np)
-			err(MOUNT_EX_USAGE, "%s", p);
+			err(MNT_EX_USAGE, "%s", p);
 		mnt_fs_set_target(fs, np);
 		free(np);
 	}
@@ -363,7 +362,7 @@ static void sanitize_paths(struct libmnt_context *cxt)
 	if (p) {
 		char *np = canonicalize_path_restricted(p);
 		if (!np)
-			err(MOUNT_EX_USAGE, "%s", p);
+			err(MNT_EX_USAGE, "%s", p);
 		mnt_fs_set_source(fs, np);
 		free(np);
 	}
@@ -372,9 +371,9 @@ static void sanitize_paths(struct libmnt_context *cxt)
 static void append_option(struct libmnt_context *cxt, const char *opt)
 {
 	if (opt && (*opt == '=' || *opt == '\'' || *opt == '\"' || isblank(*opt)))
-		errx(MOUNT_EX_USAGE, _("unsupported option format: %s"), opt);
+		errx(MNT_EX_USAGE, _("unsupported option format: %s"), opt);
 	if (mnt_context_append_options(cxt, opt))
-		err(MOUNT_EX_SYSERR, _("failed to append option '%s'"), opt);
+		err(MNT_EX_SYSERR, _("failed to append option '%s'"), opt);
 }
 
 static int has_remount_flag(struct libmnt_context *cxt)
@@ -463,12 +462,12 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, USAGE_MAN_TAIL("mount(8)"));
 
-	exit(out == stderr ? MOUNT_EX_USAGE : MOUNT_EX_SUCCESS);
+	exit(out == stderr ? MNT_EX_USAGE : MNT_EX_SUCCESS);
 }
 
 int main(int argc, char **argv)
 {
-	int c, rc = MOUNT_EX_SUCCESS, all = 0, show_labels = 0;
+	int c, rc = MNT_EX_SUCCESS, all = 0, show_labels = 0;
 	struct libmnt_context *cxt;
 	struct libmnt_table *fstab = NULL;
 	char *srcbuf = NULL;
@@ -542,7 +541,7 @@ int main(int argc, char **argv)
 	mnt_init_debug(0);
 	cxt = mnt_new_context();
 	if (!cxt)
-		err(MOUNT_EX_SYSERR, _("libmount context allocation failed"));
+		err(MNT_EX_SYSERR, _("libmount context allocation failed"));
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
@@ -599,7 +598,7 @@ int main(int argc, char **argv)
 			break;
 		case 'O':
 			if (mnt_context_set_options_pattern(cxt, optarg))
-				err(MOUNT_EX_SYSERR, _("failed to set options pattern"));
+				err(MNT_EX_SYSERR, _("failed to set options pattern"));
 			break;
 		case 'L':
 			xasprintf(&srcbuf, "LABEL=\"%s\"", optarg);
@@ -675,7 +674,7 @@ int main(int argc, char **argv)
 			mnt_context_set_source(cxt, optarg);
 			break;
 		default:
-			errtryhelp(MOUNT_EX_USAGE);
+			errtryhelp(MNT_EX_USAGE);
 		}
 	}
 
@@ -751,7 +750,7 @@ int main(int argc, char **argv)
 
 		if (istag && mnt_context_get_source(cxt))
 			/* -L, -U or --source together with LABEL= or UUID= */
-			errx(MOUNT_EX_USAGE, _("source specified more than once"));
+			errx(MNT_EX_USAGE, _("source specified more than once"));
 		else if (istag || mnt_context_get_target(cxt))
 			mnt_context_set_source(cxt, argv[0]);
 		else
@@ -790,7 +789,7 @@ int main(int argc, char **argv)
 	rc = mnt_context_mount(cxt);
 	rc = mk_exit_code(cxt, rc);
 
-	if (rc == MOUNT_EX_SUCCESS && mnt_context_is_verbose(cxt))
+	if (rc == MNT_EX_SUCCESS && mnt_context_is_verbose(cxt))
 		success_message(cxt);
 done:
 	mnt_free_context(cxt);
