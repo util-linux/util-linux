@@ -104,7 +104,8 @@ ts_finalize_subtest
 ts_init_subtest "conflict"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 LODEV=$( $TS_CMD_LOSETUP --find --nooverlap --show --offset=1000 "$BACKFILE" 2>> $TS_OUTPUT )
-$TS_CMD_MOUNT "$BACKFILE" "$TS_MOUNTPOINT" 2>&1 | sed 's/^.*\.img//' > $TS_OUTPUT
+$TS_CMD_MOUNT "$BACKFILE" "$TS_MOUNTPOINT" 2>&1 \
+	| sed 's/:.*:/: <target>/; s/for .*/for <source>/' > $TS_OUTPUT
 $TS_CMD_LOSETUP --detach $LODEV >> $TS_OUTPUT 2>&1
 udevadm settle
 ts_log "Success"
@@ -114,7 +115,8 @@ ts_init_subtest "o-loop-val-initialized"
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 LODEV=$( $TS_CMD_LOSETUP --find 2>> $TS_OUTPUT )
 $TS_CMD_LOSETUP $LODEV "$BACKFILE" >> $TS_OUTPUT 2>&1
-$TS_CMD_MOUNT -oloop=$LODEV "$BACKFILE" "$TS_MOUNTPOINT" 2>&1 | sed 's/^.*\.img//' > $TS_OUTPUT
+$TS_CMD_MOUNT -oloop=$LODEV "$BACKFILE" "$TS_MOUNTPOINT" 2>&1 \
+       | sed 's/:.*:/: <target>/; s/for .*/for <source>/' > $TS_OUTPUT
 $TS_CMD_LOSETUP --detach $LODEV >> $TS_OUTPUT 2>&1
 udevadm settle
 ts_log "Success"
@@ -125,7 +127,8 @@ ts_init_subtest "o-loop-val-conflict"
 cp "$BACKFILE" "$BACKFILE"-2
 LODEV=$( $TS_CMD_LOSETUP --find 2>> $TS_OUTPUT )
 $TS_CMD_LOSETUP $LODEV "$BACKFILE"-2 >> $TS_OUTPUT 2>&1
-$TS_CMD_MOUNT -oloop=$LODEV "$BACKFILE" "$TS_MOUNTPOINT" 2>&1 | sed 's/^.*\.img//' > $TS_OUTPUT
+$TS_CMD_MOUNT -oloop=$LODEV "$BACKFILE" "$TS_MOUNTPOINT" 2>&1 \
+	| sed 's/:.*:/: <target>/; s/for .*/for <source>/' > $TS_OUTPUT
 $TS_CMD_LOSETUP --detach $LODEV >> $TS_OUTPUT 2>&1
 rm "$BACKFILE"-2
 udevadm settle

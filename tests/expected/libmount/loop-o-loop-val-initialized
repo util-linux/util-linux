@@ -1,2 +1,2 @@
-: overlapping loop device exists
+mount: <target> overlapping loop device exists for <source>
 Success

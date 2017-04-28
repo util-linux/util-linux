@@ -1,2 +1,2 @@
-: failed to setup loop device: Device or resource busy
+mount: <target> failed to setup loop device for <source>
 Success
