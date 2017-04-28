@@ -1311,6 +1311,8 @@ int mnt_context_get_mount_excode(
 		/*
 		 * Libmount success && syscall success.
 		 */
+		if (buf && mnt_context_forced_rdonly(cxt))
+			snprintf(buf, bufsz, _("WARNING: device write-protected, mounted read-only"));
 		return MNT_EX_SUCCESS;
 	}
 

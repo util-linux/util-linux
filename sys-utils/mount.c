@@ -305,12 +305,8 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 		warnx(_("%s: %s."), spec, buf);
 	}
 
-	if (rc == MNT_EX_SUCCESS) {
-		if (mnt_context_get_status(cxt) == 1)
-			selinux_warning(cxt, tgt);
-
-		if (mnt_context_forced_rdonly(cxt))
-			warnx(_("%s: WARNING: device write-protected, mounted read-only."), tgt);
+	if (rc == MNT_EX_SUCCESS && mnt_context_get_status(cxt) == 1) {
+		selinux_warning(cxt, tgt);
 	}
 	return rc;
 }

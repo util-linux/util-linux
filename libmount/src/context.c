@@ -2362,7 +2362,7 @@ int mnt_context_get_excode(
 		break;
 	}
 
-	DBG(CXT, ul_debugobj(cxt, "return code: %d [%s]", rc,
+	DBG(CXT, ul_debugobj(cxt, "excode: rc=%d message=\"%s\"", rc,
 				buf ? buf : "<no-message>"));
 	return rc;
 }
