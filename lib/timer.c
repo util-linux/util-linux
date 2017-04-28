@@ -10,6 +10,23 @@
 #include "c.h"
 #include "timer.h"
 
+/*
+ * Note the timeout is used for the first signal, then the signal is send
+ * repeatedly in interval ~1% of the original timeout to avoid race in signal
+ * handling -- for example you want to use timer to define timeout for a
+ * syscall:
+ *
+ *	 setup_timer()
+ *	 syscall()
+ *	 cancel_timer()
+ *
+ * if the timeout is too short than it's possible that the signal is delivered
+ * before application enter the syscall function. For this reason timer send
+ * the signal repeatedly.
+ *
+ * The applications need to ensure that they can tolerate multiple signal
+ * deliveries.
+ */
 int setup_timer(timer_t * t_id, struct itimerval *timeout,
 		void (*timeout_handler)(int, siginfo_t *, void *))
 {
