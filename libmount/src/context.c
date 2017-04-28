@@ -2317,7 +2317,7 @@ int mnt_context_get_generic_excode(int rc, char *buf, size_t bufsz, char *fmt, .
  * and @mntrc and generates unified return code (see MNT_EX_*) as expected
  * from mount(8) or umount(8).
  *
- * If the external helper (e.g. /sbin/mount.<type>) has been executed than it
+ * If the external helper (e.g. /sbin/mount.type) has been executed than it
  * returns status from wait() of the helper. It's not libmount fail if helper
  * returns some crazy undocumented codes...  See mnt_context_helper_executed()
  * and mnt_context_get_helper_status(). Note that mount(8) and umount(8) utils
