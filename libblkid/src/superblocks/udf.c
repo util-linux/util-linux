@@ -17,7 +17,6 @@
 #include <stdint.h>
 
 #include "superblocks.h"
-#include "iso9660.h"
 
 struct dstring128 {
 	uint8_t	clen;
@@ -202,27 +201,7 @@ real_blksz:
 	count = le32_to_cpu(vd->type.anchor.length) / bs;
 	loc = le32_to_cpu(vd->type.anchor.location);
 
-	/* check if the list is usable */
-	for (b = 0; b < count; b++) {
-		vd = (struct volume_descriptor *)
-			blkid_probe_get_buffer(pr,
-					(uint64_t) (loc + b) * bs,
-					sizeof(*vd));
-		if (!vd)
-			return errno ? -errno : 1;
-	}
-
-	/* Try extract all possible ISO9660 information -- if there is
-	 * usable LABEL and UUID in ISO header then use it, otherwise
-	 * read UDF specific LABEL and UUID */
-	if (probe_iso9660(pr, mag) == 0) {
-		if (__blkid_probe_lookup_value(pr, "LABEL") != NULL)
-			have_label = 1;
-		if (__blkid_probe_lookup_value(pr, "UUID") != NULL)
-			have_uuid = 1;
-	}
-
-	/* Read UDF identifiers */
+	/* pick the primary descriptor from the list and read UDF identifiers */
 	for (b = 0; b < count; b++) {
 		vd = (struct volume_descriptor *)
 			blkid_probe_get_buffer(pr,
