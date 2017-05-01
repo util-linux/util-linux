@@ -109,12 +109,13 @@ static inline int gen_uuid_from_volset_id(unsigned char uuid[17], struct dstring
 	}
 
 	if (binpos < 8) {
-		for (i = 0; i < 8; ++i)
-			snprintf((char *) uuid + 2 * i, 3, "%02x", buf[i]);
+		snprintf((char *) uuid, 17, "%02x%02x%02x%02x%02x%02x%02x%02x",
+			buf[0], buf[1], buf[2], buf[3],
+			buf[4], buf[5], buf[6], buf[7]);
 	} else if (binpos < 16) {
 		memcpy(uuid, buf, 8);
-		for (i = 0; i < 4; ++i)
-			snprintf((char *) uuid + 8 + 2 * i, 3, "%02x", buf[8+i]);
+		snprintf((char *) uuid + 8, 9, "%02x%02x%02x%02x",
+			buf[8], buf[9], buf[10], buf[11]);
 	} else {
 		memcpy(uuid, buf, 16);
 		uuid[16] = 0;
