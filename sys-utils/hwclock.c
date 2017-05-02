@@ -391,10 +391,9 @@ set_hardware_clock(const struct hwclock_control *ctl, const time_t newtime)
 		       new_broken_time.tm_sec, (long)newtime);
 
 	if (ctl->testing)
-		printf(_("Clock not changed - testing only.\n"));
-	else {
+		printf(_("Test mode: clock was not changed\n"));
+	else
 		ur->set_hardware_clock(ctl, &new_broken_time);
-	}
 }
 
 /*
@@ -636,7 +635,7 @@ set_system_clock(const struct hwclock_control *ctl, const bool hclock_valid,
 		}
 		if (ctl->testing) {
 			printf(_
-			       ("Not setting system clock because running in test mode.\n"));
+			       ("Test mode: clock was not changed\n"));
 			retcode = 0;
 		} else {
 			const struct timezone tz = { minuteswest, 0 };
@@ -724,7 +723,7 @@ static int set_system_clock_timezone(const struct hwclock_control *ctl)
 	}
 	if (ctl->testing) {
 		printf(_
-		       ("Not setting system clock because running in test mode.\n"));
+		       ("Test mode: clock was not changed\n"));
 		retcode = 0;
 	} else {
 		const struct timezone tz_utc = { 0, 0 };
@@ -919,10 +918,10 @@ static void save_adjtime(const struct hwclock_control *ctl,
 		  (adjtime->local_utc == LOCAL) ? "LOCAL" : "UTC");
 
 	if (ctl->testing) {
-		printf(_
-		       ("Not updating adjtime file because of testing mode.\n"));
-		printf(_("Would have written the following to %s:\n%s"),
-		       ctl->adj_file_name, content);
+		if (ctl->debug){
+			printf(_("Test mode: %s was not updated with:\n%s"),
+			       ctl->adj_file_name, content);
+		}
 		free(content);
 		return;
 	}
@@ -1305,7 +1304,7 @@ int main(int argc, char **argv)
 		OPT_GETEPOCH,
 		OPT_LOCALTIME,
 		OPT_NOADJFILE,
-		OPT_PREDICT_HC,
+		OPT_PREDICT,
 		OPT_SET,
 		OPT_SETEPOCH,
 		OPT_SYSTZ,
@@ -1338,7 +1337,7 @@ int main(int argc, char **argv)
 #endif
 		{ "adjfile",      required_argument, NULL, OPT_ADJFILE    },
 		{ "systz",        no_argument,       NULL, OPT_SYSTZ      },
-		{ "predict-hc",   no_argument,       NULL, OPT_PREDICT_HC },
+		{ "predict",      no_argument,       NULL, OPT_PREDICT    },
 		{ "get",          no_argument,       NULL, OPT_GET        },
 		{ "update-drift", no_argument,       NULL, OPT_UPDATE     },
 		{ NULL, 0, NULL, 0 }
@@ -1346,7 +1345,7 @@ int main(int argc, char **argv)
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'a','r','s','w',
-		  OPT_GET, OPT_GETEPOCH, OPT_PREDICT_HC,
+		  OPT_GET, OPT_GETEPOCH, OPT_PREDICT,
 		  OPT_SET, OPT_SETEPOCH, OPT_SYSTZ },
 		{ 'u', OPT_LOCALTIME},
 		{ OPT_ADJFILE, OPT_NOADJFILE },
@@ -1455,8 +1454,8 @@ int main(int argc, char **argv)
 			ctl.systz = 1;		/* --systz */
 			ctl.show = 0;
 			break;
-		case OPT_PREDICT_HC:
-			ctl.predict = 1;	/* --predict-hc */
+		case OPT_PREDICT:
+			ctl.predict = 1;	/* --predict */
 			ctl.show = 0;
 			break;
 		case OPT_GET:
