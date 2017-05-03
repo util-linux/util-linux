@@ -1,6 +1,8 @@
 blkid:  libblkid libuuid 
 cfdisk:  libblkid libfdisk libncursesw libsmartcols libtinfo libuuid 
+column:  libsmartcols 
 fdisk:  libblkid libfdisk libreadline libsmartcols libtinfo libuuid 
+fincore:  libsmartcols 
 findfs:  libblkid libuuid 
 libblkid.so.1.1.0:  libuuid 
 libfdisk.so.1.1.0:  libblkid libuuid 
@@ -10,6 +12,7 @@ losetup:  libsmartcols
 lscpu:  libsmartcols 
 lsipc:  libsmartcols 
 lslogins:  libsmartcols libsystemd 
+lsmem:  libsmartcols 
 lsns:  libsmartcols 
 mkswap:  libblkid libuuid 
 partx:  libblkid libsmartcols libuuid 
@@ -24,16 +27,17 @@ zramctl:  libsmartcols
 addpart:  
 agetty:  
 blkdiscard:  librt 
+blkzone:  
 blockdev:  
 cal:  libncursesw libtinfo 
 chcpu:  
 chfn:  libpam libpam_misc libpthread libuser 
+chmem:  
 chrt:  
 chsh:  libpam libpam_misc libpthread libuser 
 col:  
 colcrt:  
 colrm:  
-column:  
 ctrlaltdel:  
 delpart:  
 dmesg:  librt libtinfo 

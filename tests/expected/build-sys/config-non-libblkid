@@ -1,5 +1,7 @@
 cfdisk:  libfdisk libncursesw libsmartcols libtinfo libuuid 
+column:  libsmartcols 
 fdisk:  libfdisk libreadline libsmartcols libtinfo libuuid 
+fincore:  libsmartcols 
 libfdisk.so.1.1.0:  libuuid 
 libsmartcols.so.1.1.0:  
 libuuid.so.1.3.0:  
@@ -7,6 +9,7 @@ losetup:  libsmartcols
 lscpu:  libsmartcols 
 lsipc:  libsmartcols 
 lslogins:  libsmartcols libsystemd 
+lsmem:  libsmartcols 
 lsns:  libsmartcols 
 mkswap:  libuuid 
 prlimit:  libsmartcols 
@@ -17,16 +20,17 @@ wdctl:  libsmartcols
 zramctl:  libsmartcols 
 agetty:  
 blkdiscard:  librt 
+blkzone:  
 blockdev:  
 cal:  libncursesw libtinfo 
 chcpu:  
 chfn:  libpam libpam_misc libpthread libuser 
+chmem:  
 chrt:  
 chsh:  libpam libpam_misc libpthread libuser 
 col:  
 colcrt:  
 colrm:  
-column:  
 ctrlaltdel:  
 dmesg:  librt libtinfo 
 fallocate:  

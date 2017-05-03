@@ -1,15 +1,16 @@
 agetty:  
 blkdiscard:  librt 
+blkzone:  
 blockdev:  
 cal:  libncursesw libtinfo 
 chcpu:  
 chfn:  libpam libpam_misc libpthread libuser 
+chmem:  
 chrt:  
 chsh:  libpam libpam_misc libpthread libuser 
 col:  
 colcrt:  
 colrm:  
-column:  
 ctrlaltdel:  
 dmesg:  librt libtinfo 
 fallocate:  
