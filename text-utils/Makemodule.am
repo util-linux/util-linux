@@ -24,13 +24,6 @@ dist_man_MANS += text-utils/column.1
 column_SOURCES = text-utils/column.c
 column_LDADD = $(LDADD) libcommon.la libsmartcols.la
 column_CFLAGS = $(AM_CFLAGS) -I$(ul_libsmartcols_incdir)
-
-### temporary during work on new version
-usrbin_exec_PROGRAMS += column-old
-column_old_SOURCES = text-utils/column-old.c
-column_old_LDADD = $(LDADD) libcommon.la
-###
-
 endif
 
 if BUILD_HEXDUMP
