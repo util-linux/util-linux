@@ -1527,6 +1527,7 @@ AC_ARG_ENABLE([lsmem],
 )
 UL_BUILD_INIT([lsmem])
 UL_REQUIRES_LINUX([lsmem])
+UL_REQUIRES_BUILD([lsmem], [libsmartcols])
 AM_CONDITIONAL([BUILD_LSMEM], [test "x$build_lsmem" = xyes])
 
 
