@@ -762,6 +762,7 @@ int main(int argc, char **argv)
 		case 'V':
 		case 'v':
 			print_version(stdout);
+			err = 0;
 			goto exit;
 		case 'w':
 			/* ignore - backward compatibility */
