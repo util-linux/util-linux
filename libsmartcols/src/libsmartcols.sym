@@ -164,4 +164,5 @@ global:
 	scols_cell_get_alignment;
 	scols_table_move_column;
 	scols_sort_table_by_tree;
+	scols_line_is_ancestor;
 } SMARTCOLS_2.29;

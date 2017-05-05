@@ -193,6 +193,7 @@ extern void *scols_line_get_userdata(struct libscols_line *ln);
 extern int scols_line_remove_child(struct libscols_line *ln, struct libscols_line *child);
 extern int scols_line_add_child(struct libscols_line *ln, struct libscols_line *child);
 extern int scols_line_has_children(struct libscols_line *ln);
+extern int scols_line_is_ancestor(struct libscols_line *ln, struct libscols_line *parent);
 extern int scols_line_next_child(struct libscols_line *ln,
 			  struct libscols_iter *itr, struct libscols_line **chld);
 extern struct libscols_line *scols_line_get_parent(const struct libscols_line *ln);
