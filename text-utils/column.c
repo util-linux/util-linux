@@ -749,8 +749,10 @@ int main(int argc, char **argv)
 
 	switch (ctl.mode) {
 	case COLUMN_MODE_TABLE:
-		modify_table(&ctl);
-		eval = scols_print_table(ctl.tab);
+		if (ctl.tab && scols_table_get_nlines(ctl.tab)) {
+			modify_table(&ctl);
+			eval = scols_print_table(ctl.tab);
+		}
 		break;
 	case COLUMN_MODE_FILLCOLS:
 		columnate_fillcols(&ctl);
