@@ -329,12 +329,11 @@ static void create_tree(struct column_control *ctl)
 
 			if (!parent)
 				continue;
-			if (scols_line_get_parent(ln_i) == ln)
+			if (strcmp(id, parent) != 0)
 				continue;
-			if ( ln_i == ln)
+			if (scols_line_is_ancestor(ln, ln_i))
 				continue;
-			if (strcmp(id, parent) == 0)
-				scols_line_add_child(ln_i, ln);
+			scols_line_add_child(ln_i, ln);
 		}
 	}
 
