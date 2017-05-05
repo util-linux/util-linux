@@ -100,6 +100,12 @@ Don't print specified columns.
 Specify columns order on output.
 .IP "\fB\-n, \-\-table-name\fP \fIname\fP"
 Specify the table name used for JSON output. The defaout is "table".
+.IP "\fB\-r, \-\-tree\fP \fIcolumn\fP"
+Specify column to use tree-like output.
+.IP "\fB\-i, \-\-tree\-id\fP \fIcolumn\fP"
+Specify column with line ID to create child-parent relation.
+.IP "\fB\-p, \-\-tree\-parent\fP \fIcolumn\fP"
+Specify column with parent ID to create child-parent relation.
 .PP
 .IP "\fB\-x, \-\-fillrows\fP"
 Fill rows before filling columns.
@@ -111,9 +117,20 @@ Display help text and exit.
 The environment variable \fBCOLUMNS\fR is used to determine the size of
 the screen if no other information is available.
 .SH EXAMPLES
-.nf
-.B sed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ --table-right PASS,FREQ
-.nf
+Print fstab with header line and align number to the right:
+.EX
+\fBsed 's/#.*//' /etc/fstab | column --table --table-columns SOURCE,TARGET,TYPE,OPTIONS,PASS,FREQ --table-right PASS,FREQ\fR
+.EE
+.PP
+Print a tree:
+.EX
+\fBecho -e '1 0 A\\n2 1 AA\\n3 1 AB\\n4 2 AAA\\n5 2 AAB' | column --tree 3 --tree-id 1 --tree-parent 2\fR
+1  0  A
+2  1  ├─AA
+4  2  │ ├─AAA
+5  2  │ └─AAB
+3  1  └─AB
+.EE
 .SH BUGS
 Version 2.23 changed the
 .B \-s
