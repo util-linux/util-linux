@@ -393,8 +393,14 @@ static int add_line_to_table(struct column_control *ctl, wchar_t *wcs)
 	while ((wcdata = local_wcstok(wcs, ctl->input_separator, ctl->greedy, &sv))) {
 		char *data;
 
-		if (scols_table_get_ncols(ctl->tab) < n + 1)
+		if (scols_table_get_ncols(ctl->tab) < n + 1) {
+			if (scols_table_is_json(ctl->tab))
+				errx(EXIT_FAILURE, _("line %zu: for JSON the name of the "
+					"column %zu is required"),
+					scols_table_get_nlines(ctl->tab) + 1,
+					n + 1);
 			scols_table_new_column(ctl->tab, NULL, 0, 0);
+		}
 		if (!ln) {
 			ln = scols_table_new_line(ctl->tab, NULL);
 			if (!ln)
