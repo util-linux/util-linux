@@ -109,7 +109,6 @@
 	 ? (a) >> (b) \
 	 : (a) / (1 << (b)) - ((a) % (1 << (b)) < 0))
 
-#define EPOCH_YEAR 1970
 #define TM_YEAR_BASE 1900
 
 #define HOUR(x) ((x) * 60)
