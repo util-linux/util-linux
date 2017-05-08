@@ -157,7 +157,7 @@ typedef struct {
 	intmax_t hour;
 	intmax_t minutes;
 	time_t seconds;
-	long int ns;
+	int ns;
 } relative_time;
 
 #if HAVE_COMPOUND_LITERALS
@@ -181,7 +181,7 @@ typedef struct {
 	int local_isdst;
 
 	/* Time zone, in minutes east of UTC. */
-	long int time_zone;
+	int time_zone;
 
 	/* Style used for time. */
 	int meridian;
@@ -272,7 +272,7 @@ static void apply_relative_time(parser_control *pc, relative_time rel,
 /* Set PC-> hour, minutes, seconds and nanoseconds members from arguments. */
 static void
 set_hhmmss(parser_control *pc, intmax_t hour, intmax_t minutes,
-	   time_t sec, long int nsec)
+	   time_t sec, int nsec)
 {
 	pc->hour = hour;
 	pc->minutes = minutes;
@@ -970,9 +970,9 @@ static long int tm_diff(struct tm const *a, struct tm const *b)
 	int a400 = SHR (a100, 2);
 	int b400 = SHR (b100, 2);
 	int intervening_leap_days = (a4 - b4) - (a100 - b100) + (a400 - b400);
-	long int ayear = a->tm_year;
-	long int years = ayear - b->tm_year;
-	long int days = (365 * years + intervening_leap_days
+	int ayear = a->tm_year;
+	int years = ayear - b->tm_year;
+	int days = (365 * years + intervening_leap_days
 			 + (a->tm_yday - b->tm_yday));
 	return (60 * (60 * (24 * days + (a->tm_hour - b->tm_hour))
 		+ (a->tm_min - b->tm_min))
