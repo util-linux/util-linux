@@ -125,12 +125,12 @@ Print fstab with header line and align number to the right:
 .PP
 Print a tree:
 .EX
-\fBecho -e '1 0 A\\n2 1 AA\\n3 1 AB\\n4 2 AAA\\n5 2 AAB' | column --tree 3 --tree-id 1 --tree-parent 2\fR
+\fBecho -e '1 0 A\\n2 1 AA\\n3 1 AB\\n4 2 AAA\\n5 2 AAB' | column --tree-id 1 --tree-parent 2 --tree 3\fR
 1  0  A
-2  1  ├─AA
-4  2  │ ├─AAA
-5  2  │ └─AAB
-3  1  └─AB
+2  1  |-AA
+4  2  | |-AAA
+5  2  | `-AAB
+3  1  `-AB
 .EE
 .SH BUGS
 Version 2.23 changed the
