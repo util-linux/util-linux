@@ -440,6 +440,9 @@ extern int fdisk_partition_end_is_default(struct fdisk_partition *pa);
 
 extern int fdisk_reorder_partitions(struct fdisk_context *cxt);
 
+extern int fdisk_partition_has_wipe(struct fdisk_context *cxt, struct fdisk_partition *pa);
+
+
 /* table.c */
 extern struct fdisk_table *fdisk_new_table(void);
 extern int fdisk_reset_table(struct fdisk_table *tb);

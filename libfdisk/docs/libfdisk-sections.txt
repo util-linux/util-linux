@@ -176,6 +176,7 @@ fdisk_partition_has_end
 fdisk_partition_has_partno
 fdisk_partition_has_size
 fdisk_partition_has_start
+fdisk_partition_has_wipe
 fdisk_partition_is_bootable
 fdisk_partition_is_container
 fdisk_partition_is_freespace

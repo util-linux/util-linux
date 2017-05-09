@@ -280,4 +280,5 @@ FDISK_2.30 {
 	fdisk_script_has_force_label;
 	fdisk_is_regfile;
 	fdisk_is_ptcollision;
+	fdisk_partition_has_wipe;
 } FDISK_2.29;
