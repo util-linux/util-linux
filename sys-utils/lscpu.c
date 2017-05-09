@@ -1851,7 +1851,7 @@ print_cpuset(struct libscols_table *tb,
 static void
 print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 {
-	char buf[512];
+	char buf[BUFSIZ];
 	int i = 0;
 	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
 	struct libscols_table *tb;
@@ -1874,7 +1874,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	add_summary_s(tb, _("Architecture:"), desc->arch);
 	if (desc->mode) {
-		char mbuf[64], *p = mbuf;
+		char *p = buf;
 
 		if (desc->mode & MODE_32BIT) {
 			strcpy(p, "32-bit, ");
@@ -1885,7 +1885,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 			p += 8;
 		}
 		*(p - 2) = '\0';
-		add_summary_s(tb, _("CPU op-mode(s):"), mbuf);
+		add_summary_s(tb, _("CPU op-mode(s):"), buf);
 	}
 #if !defined(WORDS_BIGENDIAN)
 	add_summary_s(tb, _("Byte Order:"), "Little Endian");
@@ -1937,11 +1937,10 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		 * fall back to old calculation scheme.
 		 */
 		if ((fd = path_fopen("r", 0, _PATH_PROC_SYSINFO))) {
-			char pbuf[BUFSIZ];
 			int t0, t1;
 
-			while (fd && fgets(pbuf, sizeof(pbuf), fd) != NULL) {
-				if (sscanf(pbuf, "CPU Topology SW:%d%d%d%d%d%d",
+			while (fd && fgets(buf, sizeof(buf), fd) != NULL) {
+				if (sscanf(buf, "CPU Topology SW:%d%d%d%d%d%d",
 					   &t0, &t1, &drawers, &books_per_drawer,
 					   &sockets_per_book,
 					   &cores_per_socket) == 6)
@@ -2011,21 +2010,17 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	if (desc->dispatching >= 0)
 		add_summary_s(tb, _("Dispatching mode:"), _(disp_modes[desc->dispatching]));
 	if (desc->ncaches) {
-		char cbuf[512];
-
 		for (i = desc->ncaches - 1; i >= 0; i--) {
-			snprintf(cbuf, sizeof(cbuf),
+			snprintf(buf, sizeof(buf),
 					_("%s cache:"), desc->caches[i].name);
-			add_summary_s(tb, cbuf, desc->caches[i].size);
+			add_summary_s(tb, buf, desc->caches[i].size);
 		}
 	}
 	if (desc->necaches) {
-		char cbuf[512];
-
 		for (i = desc->necaches - 1; i >= 0; i--) {
-			snprintf(cbuf, sizeof(cbuf),
+			snprintf(buf, sizeof(buf),
 					_("%s cache:"), desc->ecaches[i].name);
-			add_summary_s(tb, cbuf, desc->ecaches[i].size);
+			add_summary_s(tb, buf, desc->ecaches[i].size);
 		}
 	}
 
