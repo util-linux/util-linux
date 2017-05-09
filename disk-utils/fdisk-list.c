@@ -191,6 +191,13 @@ void list_disklabel(struct fdisk_context *cxt)
 					  fdisk_partition_get_partno(pa) + 1);
 			post++;
 		}
+		if (fdisk_partition_has_wipe(cxt, pa)) {
+			if (!post)
+				fdisk_info(cxt, ""); /* line break */
+			 fdisk_info(cxt, _("Filesystem/RAID signature on partition %zu will be wiped."),
+					 fdisk_partition_get_partno(pa) + 1);
+			 post++;
+		}
 	}
 
 	if (fdisk_table_wrong_order(tb)) {
