@@ -1256,8 +1256,8 @@ read_configured(struct lscpu_desc *desc, int idx)
 }
 
 /* Read overall maximum frequency of cpu */
-static void
-cpu_max_mhz(struct lscpu_desc *desc, char *max_freq)
+static char *
+cpu_max_mhz(struct lscpu_desc *desc, char *buf, size_t bufsz)
 {
 	int i;
 	float cpu_freq = atof(desc->maxmhz[0]);
@@ -1272,12 +1272,13 @@ cpu_max_mhz(struct lscpu_desc *desc, char *max_freq)
 			}
 		}
 	}
-	sprintf(max_freq, "%.4f", cpu_freq);
+	snprintf(buf, bufsz, "%.4f", cpu_freq);
+	return buf;
 }
 
 /* Read overall minimum frequency of cpu */
-static void
-cpu_min_mhz(struct lscpu_desc *desc, char *min_freq)
+static char *
+cpu_min_mhz(struct lscpu_desc *desc, char *buf, size_t bufsz)
 {
         int i;
         float cpu_freq = atof(desc->minmhz[0]);
@@ -1292,7 +1293,8 @@ cpu_min_mhz(struct lscpu_desc *desc, char *min_freq)
 			}
 		}
 	}
-        sprintf(min_freq, "%.4f", cpu_freq);
+        snprintf(buf, bufsz, "%.4f", cpu_freq);
+	return buf;
 }
 
 
@@ -1851,8 +1853,6 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 {
 	char buf[512];
 	int i = 0;
-	char max_freq[32];
-	char min_freq[32];
 	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
 	struct libscols_table *tb;
 
@@ -1990,14 +1990,10 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		add_summary_s(tb, _("CPU dynamic MHz:"), desc->dynamic_mhz);
 	if (desc->static_mhz)
 		add_summary_s(tb, _("CPU static MHz:"), desc->static_mhz);
-	if (desc->maxmhz){
-		cpu_max_mhz(desc, max_freq);
-		add_summary_s(tb, _("CPU max MHz:"), max_freq);
-	}
-	if (desc->minmhz){
-		cpu_min_mhz(desc, min_freq);
-		add_summary_s(tb, _("CPU min MHz:"), min_freq);
-	}
+	if (desc->maxmhz)
+		add_summary_s(tb, _("CPU max MHz:"), cpu_max_mhz(desc, buf, sizeof(buf)));
+	if (desc->minmhz)
+		add_summary_s(tb, _("CPU min MHz:"), cpu_min_mhz(desc, buf, sizeof(buf)));
 	if (desc->bogomips)
 		add_summary_s(tb, _("BogoMIPS:"), desc->bogomips);
 	if (desc->virtflag) {
