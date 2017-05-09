@@ -767,7 +767,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
 	fputs(_(" -S, --sector-size <num>  overwrite sector size\n"), out);
-	fputs(_(" -t, --type <type>    specify the partition type (dos, bsd, solaris, etc.)\n"), out);
+	fputs(_(" -t, --type <type>    specify the partition type\n"), out);
+	fputs(_("     --list-types     list supported partition types and exit\n"), out);
 	fputs(_(" -v, --verbose        verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -795,6 +796,9 @@ int main(int argc, char **argv)
 	dev_t disk_devno = 0, part_devno = 0;
 	unsigned int sector_size = 0;
 
+	enum {
+		OPT_LIST_TYPES = CHAR_MAX + 1
+	};
 	static const struct option long_opts[] = {
 		{ "bytes",	no_argument,       NULL, 'b' },
 		{ "noheadings",	no_argument,       NULL, 'g' },
@@ -805,6 +809,7 @@ int main(int argc, char **argv)
 		{ "delete",	no_argument,	   NULL, 'd' },
 		{ "update",     no_argument,       NULL, 'u' },
 		{ "type",	required_argument, NULL, 't' },
+		{ "list-types", no_argument,       NULL, OPT_LIST_TYPES },
 		{ "nr",		required_argument, NULL, 'n' },
 		{ "output",	required_argument, NULL, 'o' },
 		{ "pairs",      no_argument,       NULL, 'P' },
@@ -877,6 +882,15 @@ int main(int argc, char **argv)
 		case 'v':
 			verbose = 1;
 			break;
+		case OPT_LIST_TYPES:
+		{
+			size_t idx = 0;
+			const char *name = NULL;
+
+			while (blkid_partitions_get_name(idx++, &name) == 0)
+				puts(name);
+			return EXIT_SUCCESS;
+		}
 		case 'h':
 			usage(stdout);
 		case 'V':

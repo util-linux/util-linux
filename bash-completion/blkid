@@ -1,59 +1,93 @@
 _blkid_module()
 {
-	local cur prev OPTS
+	local cur prev OPTS OUTPUT_ALL
+	OUTPUT_ALL=''
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-c')
+		'-c'|'--cache-file')
 			local IFS=$'\n'
 			compopt -o filenames
 			COMPREPLY=( $(compgen -f -- $cur) )
 			return 0
 			;;
-		'-o')
+		'-o'|'--output')
 			COMPREPLY=( $(compgen -W "value device export full" -- $cur) )
 			return 0
 			;;
-		'-s')
+		'-s'|'--match-tag')
 			COMPREPLY=( $(compgen -W "tag" -- $cur) )
 			return 0
 			;;
-		'-t')
-			COMPREPLY=( $(compgen -W "token" -- $cur) )
+		'-t'|'--match-token')
+			COMPREPLY=( $(compgen -W "TYPE= LABEL= UUID=" -- $cur) )
 			return 0
 			;;
-		'-L')
+		'-L'|'--label')
 			COMPREPLY=( $(compgen -W "$(cd /dev/disk/by-label/ 2>/dev/null && echo *)" -- $cur) )
 			return 0
 			;;
-		'-U')
+		'-U'|'--uuid')
 			COMPREPLY=( $(compgen -W "$(cd /dev/disk/by-uuid/ 2>/dev/null && echo *)" -- $cur) )
 			return 0
 			;;
-		'-s')
+		'-S'|'--size')
 			COMPREPLY=( $(compgen -W "size" -- $cur) )
 			return 0
 			;;
-		'-O')
+		'-O'|'--offset')
 			COMPREPLY=( $(compgen -W "offset" -- $cur) )
 			return 0
 			;;
-		'-u')
-			COMPREPLY=( $(compgen -W "filesystem raid crypto other nofilesystem noraid nocrypto noother" -- $cur) )
-			return 0
+		'-u'|'--usages')
+			OUTPUT_ALL={,no}{filesystem,raid,crypto,other}
 			;;
-		'-n')
-			COMPREPLY=( $(compgen -W "$(awk '{print $NF}' /proc/filesystems)" -- $cur) )
-			return 0
+		'-n'|'--match-types')
+			OUTPUT_ALL="
+				$(awk '{print $NF}' /proc/filesystems)
+				$(\ls /lib/modules/$(uname -r)/kernel/fs)
+			"
 			;;
-		'-h'|'-V')
+		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
 	esac
+	if [ -n "$OUTPUT_ALL" ]; then
+		local prefix realcur OUTPUT_ALL OUTPUT
+		realcur="${cur##*,}"
+		prefix="${cur%$realcur}"
+		for WORD in $OUTPUT_ALL; do
+			if ! [[ $prefix == *"$WORD"* ]]; then
+				OUTPUT="$WORD $OUTPUT"
+			fi
+		done
+		compopt -o nospace
+		COMPREPLY=( $(compgen -P "$prefix" -W "$OUTPUT" -S ',' -- "$realcur") )
+		return 0
+	fi
 	case $cur in
 		-*)
-			OPTS="-c -d -h -g -o -k -s -t -l -L -U -V -p -i -S -O -u -n"
+			OPTS="
+				--cache-file
+				--no-encoding
+				--garbage-collect
+				--output
+				--list-filesystems
+				--match-tag
+				--match-token
+				--list-one
+				--label
+				--uuid
+				--probe
+				--info
+				--size
+				--offset
+				--usages
+				--match-types
+				--help
+				--version
+			"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

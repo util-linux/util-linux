@@ -56,6 +56,11 @@
 # include "auth.h"
 #endif
 
+#ifdef HAVE_LIBREADLINE
+# define _FUNCTION_DEF
+# include <readline/readline.h>
+#endif
+
 struct finfo {
 	char *full_name;
 	char *office;
@@ -221,31 +226,39 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
 			   char *def_val)
 {
 	int len;
-	char *ans;
-	char buf[MAX_FIELD_SIZE + 2];
+	char *buf;
+#ifndef HAVE_LIBREADLINE
+	size_t dummy = 0;
+#endif
 
 	if (!def_val)
 		def_val = "";
 	while (true) {
 		printf("%s [%s]: ", question, def_val);
 		__fpurge(stdin);
-		if (fgets(buf, sizeof(buf), stdin) == NULL)
+#ifdef HAVE_LIBREADLINE
+		if ((buf = readline(NULL)) == NULL)
+#else
+		if (getline(&buf, &dummy, stdin) < 0)
+#endif
 			errx(EXIT_FAILURE, _("Aborted."));
-		ans = buf;
 		/* remove white spaces from string end */
-		ltrim_whitespace((unsigned char *) ans);
-		len = rtrim_whitespace((unsigned char *) ans);
-		if (len == 0)
+		ltrim_whitespace((unsigned char *) buf);
+		len = rtrim_whitespace((unsigned char *) buf);
+		if (len == 0) {
+			free(buf);
 			return xstrdup(def_val);
-		if (!strcasecmp(ans, "none")) {
+		}
+		if (!strcasecmp(buf, "none")) {
+			free(buf);
 			ctl->changed = 1;
 			return xstrdup("");
 		}
-		if (check_gecos_string(question, ans) >= 0)
+		if (check_gecos_string(question, buf) >= 0)
 			break;
 	}
 	ctl->changed = 1;
-	return xstrdup(ans);
+	return buf;
 }
 
 /*

@@ -126,7 +126,7 @@ static pam_handle_t *pamh = NULL;
 static int restricted = 1;	/* zero for root user */
 
 
-static struct passwd *
+static const struct passwd *
 current_getpwuid(void)
 {
   uid_t ruid;
@@ -149,7 +149,7 @@ current_getpwuid(void)
    if SUCCESSFUL is true, they gave the correct password, etc.  */
 
 static void
-log_syslog(struct passwd const *pw, bool successful)
+log_syslog(struct passwd const * const pw, const bool successful)
 {
   const char *new_user, *old_user, *tty;
 
@@ -161,7 +161,7 @@ log_syslog(struct passwd const *pw, bool successful)
     {
       /* getlogin can fail -- usually due to lack of utmp entry.
 	 Resort to getpwuid.  */
-      struct passwd *pwd = current_getpwuid();
+      const struct passwd *pwd = current_getpwuid();
       old_user = pwd ? pwd->pw_name : "";
     }
 
@@ -180,7 +180,7 @@ log_syslog(struct passwd const *pw, bool successful)
 /*
  * Log failed login attempts in _PATH_BTMP if that exists.
  */
-static void log_btmp(struct passwd const *pw)
+static void log_btmp(struct passwd const * const pw)
 {
 	struct utmpx ut;
 	struct timeval tv;
@@ -230,9 +230,9 @@ static struct pam_conv conv =
 };
 
 static void
-cleanup_pam (int retcode)
+cleanup_pam (const int retcode)
 {
-  int saved_errno = errno;
+  const int saved_errno = errno;
 
   if (_pam_session_opened)
     pam_close_session (pamh, 0);
@@ -275,9 +275,8 @@ create_watching_parent (void)
   sigset_t ourset;
   struct sigaction oldact[3];
   int status = 0;
-  int retval;
+  const int retval = pam_open_session (pamh, 0);
 
-  retval = pam_open_session (pamh, 0);
   if (is_pam_failure(retval))
     {
       cleanup_pam (retval);
@@ -425,7 +424,7 @@ create_watching_parent (void)
 }
 
 static void
-authenticate (const struct passwd *pw)
+authenticate (const struct passwd * const pw)
 {
   const struct passwd *lpw = NULL;
   const char *cp, *srvname = NULL;
@@ -508,7 +507,7 @@ done:
 }
 
 static void
-set_path(const struct passwd* pw)
+set_path(const struct passwd * const pw)
 {
   int r;
   if (pw->pw_uid)
@@ -525,7 +524,7 @@ set_path(const struct passwd* pw)
    the value for the SHELL environment variable.  */
 
 static void
-modify_environment (const struct passwd *pw, const char *shell)
+modify_environment (const struct passwd * const pw, const char * const shell)
 {
   if (simulate_login)
     {
@@ -573,7 +572,7 @@ modify_environment (const struct passwd *pw, const char *shell)
 /* Become the user and group(s) specified by PW.  */
 
 static void
-init_groups (const struct passwd *pw, gid_t *groups, size_t num_groups)
+init_groups (const struct passwd * const pw, const gid_t * const groups, const size_t num_groups)
 {
   int retval;
 
@@ -599,7 +598,7 @@ init_groups (const struct passwd *pw, gid_t *groups, size_t num_groups)
 }
 
 static void
-change_identity (const struct passwd *pw)
+change_identity (const struct passwd * const pw)
 {
   if (setgid (pw->pw_gid))
     err (EXIT_FAILURE,  _("cannot set group id"));
@@ -613,17 +612,17 @@ change_identity (const struct passwd *pw)
    are N_ADDITIONAL_ARGS extra arguments.  */
 
 static void
-run_shell (char const *shell, char const *command, char **additional_args,
-	   size_t n_additional_args)
+run_shell (char const * const shell, char const * const command, char ** const additional_args,
+	   const size_t n_additional_args)
 {
-  size_t n_args = 1 + fast_startup + 2 * !!command + n_additional_args + 1;
-  char const **args = xcalloc (n_args, sizeof *args);
+  const size_t n_args = 1 + fast_startup + 2 * !!command + n_additional_args + 1;
+  const char const **args = xcalloc (n_args, sizeof *args);
   size_t argno = 1;
 
   if (simulate_login)
     {
       char *arg0;
-      char *shell_basename;
+      const char *shell_basename;
 
       shell_basename = basename (shell);
       arg0 = xmalloc (strlen (shell_basename) + 2);
@@ -655,7 +654,7 @@ run_shell (char const *shell, char const *command, char **additional_args,
    getusershell), else false, meaning it is a standard shell.  */
 
 static bool
-restricted_shell (const char *shell)
+restricted_shell (const char * const shell)
 {
   char *line;
 
@@ -673,7 +672,7 @@ restricted_shell (const char *shell)
 }
 
 static void __attribute__((__noreturn__))
-usage (int status)
+usage (const int status)
 {
   if (su_mode == RUNUSER_MODE) {
     fputs(USAGE_HEADER, stdout);
@@ -726,6 +725,9 @@ void load_config(void)
   case RUNUSER_MODE:
     logindefs_load_file(_PATH_LOGINDEFS_RUNUSER);
     break;
+  default:
+    abort();
+    break;
   }
 
   logindefs_load_file(_PATH_LOGINDEFS);
@@ -737,8 +739,8 @@ void load_config(void)
 static int
 evaluate_uid(void)
 {
-  uid_t ruid = getuid();
-  uid_t euid = geteuid();
+  const uid_t ruid = getuid();
+  const uid_t euid = geteuid();
 
   /* if we're really root and aren't running setuid */
   return (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
@@ -771,9 +773,9 @@ su_main (int argc, char **argv, int mode)
 {
   int optc;
   const char *new_user = DEFAULT_USER, *runuser_user = NULL;
-  char *command = NULL;
+  const char *command = NULL;
   int request_same_session = 0;
-  char *shell = NULL;
+  const char *shell = NULL;
   struct passwd *pw;
   struct passwd pw_copy;
 
@@ -900,6 +902,9 @@ su_main (int argc, char **argv, int mode)
   case SU_MODE:
     if (optind < argc)
       new_user = argv[optind++];
+    break;
+  default:
+    abort();
     break;
   }
 

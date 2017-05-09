@@ -57,6 +57,11 @@
 # include "auth.h"
 #endif
 
+#ifdef HAVE_LIBREADLINE
+# define _FUNCTION_DEF
+# include <readline/readline.h>
+#endif
+
 struct sinfo {
 	char *username;
 	char *shell;
@@ -173,14 +178,18 @@ static char *ask_new_shell(char *question, char *oldshell)
 {
 	int len;
 	char *ans = NULL;
+#ifndef HAVE_LIBREADLINE
 	size_t dummy = 0;
-	ssize_t sz;
+#endif
 
 	if (!oldshell)
 		oldshell = "";
 	printf("%s [%s]: ", question, oldshell);
-	sz = getline(&ans, &dummy, stdin);
-	if (sz == -1)
+#ifdef HAVE_LIBREADLINE
+	if ((ans = readline(NULL)) == NULL)
+#else
+	if (getline(&ans, &dummy, stdin) < 0)
+#endif
 		return NULL;
 	/* remove the newline at the end of ans. */
 	ltrim_whitespace((unsigned char *) ans);

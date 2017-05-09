@@ -5,46 +5,42 @@
 .SH NAME
 blkid \- locate/print block device attributes
 .SH SYNOPSIS
-.B blkid
-.BI \-L " label"
+.IP \fBblkid\fR
+.BI \-\-label " label"
 |
-.BI \-U " uuid"
+.BI \-\-uuid " uuid"
 
-.B blkid
-.RB [ \-dghlv ]
-.RB [ \-c
+.IP \fBblkid\fR
+.RB [ \-\-no\-encoding
+.B \-\-garbage\-collect \-\-list\-one \-\-cache\-file
 .IR file ]
-.RB [ \-o
+.RB [ \-\-output
 .IR format ]
-.RB [ \-s
+.RB [ \-\-match\-tag
 .IR tag ]
-.in +6
-.RB [ \-t
+.RB [ \-\-match\-token
 .IR NAME=value ]
 .RI [ device " ...]"
-.in -6
 
-.B blkid
-.BR -p " [" \-O
+.IP \fBblkid\fR
+.BR \-\-probe " [" \-\-offset
 .IR offset ]
-.RB [ \-o
+.RB [ \-\-output
 .IR format ]
-.RB [ \-S
+.RB [ \-\-size
 .IR size ]
-.RB [ \-s
+.RB [ \-\-match\-tag
 .IR tag ]
-.in +9
-.RB [ \-n
+.RB [ \-\-match\-types
 .IR list ]
-.RB [ \-u
+.RB [ \-\-usages
 .IR list ]
 .IR device " ..."
-.in -9
 
-.B blkid
-.BR -i " [" \-o
+.IP \fBblkid\fR
+.BR \-\-info " [" \-\-output
 .IR format ]
-.RB [ \-s
+.RB [ \-\-match\-tag
 .IR tag ]
 .IR device " ..."
 
@@ -95,7 +91,7 @@ suffixes like KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, Z
 (the "iB" is optional, e.g. "K" has the same meaning as "KiB"), or the suffixes
 KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
 .TP
-.BI \-c " cachefile"
+\fB\-c\fR, \fB\-\-cache\-file\fR \fIcachefile\fR
 Read from
 .I cachefile
 instead of reading from the default cache file (see the CONFIGURATION FILE section
@@ -103,27 +99,27 @@ for more details).  If you want to start with a clean cache (i.e. don't report
 devices previously scanned but not necessarily available at this time), specify
 .IR /dev/null .
 .TP
-.B \-d
+\fB\-d\fR, \fB\-\-no\-encoding\fR
 Don't encode non-printing characters.  The non-printing characters are encoded
-by ^ and M- notation by default.  Note that the \fB-o udev\fR output format uses
+by ^ and M- notation by default.  Note that the \fB\-\-output udev\fR output format uses
 a different encoding which cannot be disabled.
 .TP
-.B \-g
+\fB\-g\fR, \fB\-\-garbage\-collect\fR
 Perform a garbage collection pass on the blkid cache to remove
 devices which no longer exist.
 .TP
-.B \-h
+\fB\-h\fR, \fB\-\-help\fR
 Display a usage message and exit.
 .TP
-.B \-i
+\fB\-i\fR, \fB\-\-info\fR
 Display information about I/O Limits (aka I/O topology).  The 'export' output format is
-automatically enabled.  This option can be used together with the \fB-p\fR option.
+automatically enabled.  This option can be used together with the \fB\-\-probe\fR option.
 .TP
-.B \-k
+\fB\-k\fR, \fB\-\-list\-filesystems\fR
 List all known filesystems and RAIDs and exit.
 .TP
-.B \-l
-Look up only one device that matches the search parameter specified with the \fB-t\fR
+\fB\-l\fR, \fB\-\-list\-one\fR
+Look up only one device that matches the search parameter specified with the \fB\-\-match\-token\fR
 option.  If there are multiple devices that match the specified search
 parameter, then the device with the highest priority is returned, and/or
 the first device found at a given priority.  Device types in order of
@@ -132,13 +128,13 @@ block devices.  If this option is not specified,
 .B blkid
 will print all of the devices that match the search parameter.
 .TP
-.BI \-L " label"
+\fB\-L\fR, \fB\-\-label\fR \fIlabel\fR
 Look up the device that uses this filesystem \fIlabel\fR; this is equal to
-.BR "-l -o device -t LABEL=\fIlabel\fR" .
+.BR "--list-one --output device --match-token LABEL=\fIlabel\fR" .
 This lookup method is able to reliably use /dev/disk/by-label
 udev symlinks (dependent on a setting in /etc/blkid.conf).  Avoid using the
 symlinks directly; it is not reliable to use the symlinks without verification.
-The \fB-L\fR option works on systems with and without udev.
+The \fB-\-label\fR option works on systems with and without udev.
 
 Unfortunately, the original
 .BR blkid (8)
@@ -146,22 +142,22 @@ from e2fsprogs uses the \fB-L\fR option as a
 synonym for \fB-o list\fR.  For better portability, use \fB-l -o device
 -t LABEL=\fIlabel\fR and \fB-o list\fR in your scripts rather than the \fB-L\fR option.
 .TP
-.BI \-n " list"
+\fB\-n\fR, \fB\-\-match\-types\fR \fIlist\fR
 Restrict the probing functions to the specified (comma-separated) \fIlist\fR of
 superblock types (names).
 The list items may be prefixed with "no" to specify the types which should be ignored.
 For example:
 .sp
-  blkid -p -n vfat,ext3,ext4 /dev/sda1
+  blkid --probe --match-types vfat,ext3,ext4 /dev/sda1
 .sp
 probes for vfat, ext3 and ext4 filesystems, and
 .sp
-  blkid -p -n nominix /dev/sda1
+  blkid --probe --match-types nominix /dev/sda1
 .sp
 probes for all supported formats except minix filesystems.
-This option is only useful together with \fB-p\fR.
+This option is only useful together with \fB\-\-probe\fR.
 .TP
-.BI \-o " format"
+\fB\-o\fR, \fB\-\-output\fR \fIformat\fR
 Use the specified output format.  Note that the order of variables and
 devices is not fixed.  See also option \fB-s\fR.  The
 .I format
@@ -176,15 +172,15 @@ print the value of the tags
 .TP
 .B list
 print the devices in a user-friendly format; this output format is unsupported
-for low-level probing (\fB-p\fR or \fB-i\fR).
+for low-level probing (\fB\-\-probe\fR or \fB\-\-info\fR).
 
 This output format is \fBDEPRECATED\fR in favour of the
 .BR lsblk (8)
 command.
 .TP
 .B device
-print the device name only; this output format is always enabled for the \fB-L\fR
-and \fB-U\fR options
+print the device name only; this output format is always enabled for the \fB\-\-label\fR
+and \fB\-\-uuid\fR options
 .TP
 .B udev
 print key="value" pairs for easy import into the udev environment; the keys are
@@ -196,40 +192,40 @@ partitions.  This output format is \fBDEPRECATED\fR.
 .TP
 .B export
 print key=value pairs for easy import into the environment; this output format
-is automatically enabled when I/O Limits (\fB-i\fR option) are requested.
+is automatically enabled when I/O Limits (\fB\-\-info\fR option) are requested.
 
 The non-printing characters are encoded by ^ and M- notation and all
 potentially unsafe characters are escaped.
 .RE
 .TP
-.BI \-O " offset"
-Probe at the given \fIoffset\fR (only useful with \fB-p\fR).  This option can be
-used together with the \fB-i\fR option.
+\fB\-O\fR, \fB\-\-offset\fR \fIoffset\fR
+Probe at the given \fIoffset\fR (only useful with \fB\-\-probe\fR).  This option can be
+used together with the \fB\-\-info\fR option.
 .TP
-.BI \-p
+\fB\-p\fR, \fB\-\-probe\fR
 Switch to low-level superblock probing mode (bypassing the cache).
 
 Note that low-level probing also returns information about partition table type
 (PTTYPE tag) and partitions (PART_ENTRY_* tags). The tag names produced by
 low-level probing are based on names used internally by libblkid and it may be
-different than when executed without \fB-p\fR (for example PART_ENTRY_UUID= vs
+different than when executed without \fB\-\-probe\fR (for example PART_ENTRY_UUID= vs
 PARTUUID=).
 .TP
-.BI \-s " tag"
+\fB\-s\fR, \fB\-\-match\-tag\fR \fItag\fR
 For each (specified) device, show only the tags that match
 .IR tag .
 It is possible to specify multiple
-.B \-s
+.B \-\-match\-tag
 options.  If no tag is specified, then all tokens are shown for all
 (specified) devices.
 In order to just refresh the cache without showing any tokens, use
-.B "-s none"
+.B "\-\-match\-tag none"
 with no other options.
 .TP
-.BI \-S " size"
-Override the size of device/file (only useful with \fB-p\fR).
+\fB\-S\fR, \fB\-\-size\fR \fIsize\fR
+Override the size of device/file (only useful with \fB\-\-probe\fR).
 .TP
-.BI \-t " NAME" = value
+\fB\-t\fR, \fB\-\-match\-token\fR \fINAME=value\fR
 Search for block devices with tokens named
 .I NAME
 that have the value
@@ -245,29 +241,30 @@ and
 If there are no devices specified on the command line, all block devices
 will be searched; otherwise only the specified devices are searched.
 .TP
-.BI \-u " list"
+\fB\-u\fR, \fB\-\-usages\fR \fIlist\fR
 Restrict the probing functions to the specified (comma-separated) \fIlist\fR of "usage" types.
 Supported usage types are: filesystem, raid, crypto and other.  The list items may be
 prefixed with "no" to specify the usage types which should be ignored.  For example:
 .sp
-  blkid -p -u filesystem,other /dev/sda1
+  blkid --probe --usages filesystem,other /dev/sda1
 .sp
 probes for all filesystem and other (e.g. swap) formats, and
 .sp
-  blkid -p -u noraid /dev/sda1
+  blkid --probe --usages noraid /dev/sda1
 .sp
 probes for all supported formats except RAIDs.
-This option is only useful together with \fB-p\fR.
+This option is only useful together with \fB\-\-probe\fR.
 .TP
-.BI \-U " uuid"
-Look up the device that uses this filesystem \fIuuid\fR.  For more details see the \fB-L\fR option.
+\fB\-U\fR, \fB\-\-uuid\fR \fIuuid\fR
+Look up the device that uses this filesystem \fIuuid\fR.  For more details see the
+\fB\-\-label\fR option.
 .TP
-.B \-V
+\fB\-V\fR, \fB\-\-version\fR
 Display version number and exit.
 .SH "RETURN CODE"
 If the specified device or device addressed by specified token (option
-\fB-t\fR) was found and it's possible to gather any information about the
-device, an exit code 0 is returned.  Note the option \fB-s\fR filters output
+\fB\-\-match\-token\fR) was found and it's possible to gather any information about the
+device, an exit code 0 is returned.  Note the option \fB\-\-match\-tag\fR filters output
 tags, but it does not affect return code.
 
 If the specified token was not found, or no (specified) devices could be

@@ -82,7 +82,7 @@ chfn_chsh_sources = \
 	login-utils/ch-common.c
 chfn_chsh_cflags = $(SUID_CFLAGS) $(AM_CFLAGS)
 chfn_chsh_ldflags = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-chfn_chsh_ldadd = libcommon.la
+chfn_chsh_ldadd = libcommon.la $(READLINE_LIBS)
 
 if CHFN_CHSH_PASSWORD
 chfn_chsh_ldadd += -lpam

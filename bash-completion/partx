@@ -27,8 +27,7 @@ _partx_module()
 			return 0
 			;;
 		'-t'|'--type')
-			# FIXME: some command should list type libblkid knows.
-			COMPREPLY=( $(compgen -W "aix bsd dos gpt mac minix PMBR sgi solaris sun ultrix unixware" -- $cur) )
+			COMPREPLY=( $(compgen -W "$(partx --list-types)" -- $cur) )
 			return 0
 			;;
 		'-h'|'--help'|'-V'|'--version')
@@ -50,6 +49,7 @@ _partx_module()
 				--raw
 				--sector-size
 				--type
+				--list-types
 				--verbose
 				--help
 				--version

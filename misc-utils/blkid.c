@@ -72,37 +72,38 @@ static void usage(int error)
 	FILE *out = error ? stderr : stdout;
 
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(	" %s -L <label> | -U <uuid>\n\n"), program_invocation_short_name);
-	fprintf(out, _(	" %s [-c <file>] [-ghlLv] [-o <format>] [-s <tag>] \n"
-			"       [-t <token>] [<dev> ...]\n\n"), program_invocation_short_name);
-	fprintf(out, _(	" %s -p [-s <tag>] [-O <offset>] [-S <size>] \n"
-			"       [-o <format>] <dev> ...\n\n"), program_invocation_short_name);
-	fprintf(out, _(	" %s -i [-s <tag>] [-o <format>] <dev> ...\n"), program_invocation_short_name);
+	fprintf(out, _(	" %s --label <label> | --uuid <uuid>\n\n"), program_invocation_short_name);
+	fprintf(out, _(	" %s [--cache-file <file>] [-ghlLv] [--output <format>] [--match-tag <tag>] \n"
+			"       [--match-token <token>] [<dev> ...]\n\n"), program_invocation_short_name);
+	fprintf(out, _(	" %s -p [--match-tag <tag>] [--offset <offset>] [--size <size>] \n"
+			"       [--output <format>] <dev> ...\n\n"), program_invocation_short_name);
+	fprintf(out, _(	" %s -i [--match-tag <tag>] [--output <format>] <dev> ...\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(	" -c <file>   read from <file> instead of reading from the default\n"
-			"               cache file (-c /dev/null means no cache)\n"), out);
-	fputs(_(	" -d          don't encode non-printing characters\n"), out);
-	fputs(_(	" -h          print this usage message and exit\n"), out);
-	fputs(_(	" -g          garbage collect the blkid cache\n"), out);
-	fputs(_(	" -o <format> output format; can be one of:\n"
-			"               value, device, export or full; (default: full)\n"), out);
-	fputs(_(	" -k          list all known filesystems/RAIDs and exit\n"), out);
-	fputs(_(	" -s <tag>    show specified tag(s) (default show all tags)\n"), out);
-	fputs(_(	" -t <token>  find device with a specific token (NAME=value pair)\n"), out);
-	fputs(_(	" -l          look up only first device with token specified by -t\n"), out);
-	fputs(_(	" -L <label>  convert LABEL to device name\n"), out);
-	fputs(_(	" -U <uuid>   convert UUID to device name\n"), out);
-	fputs(_(	" -V          print version and exit\n"), out);
-	fputs(_(	" <dev>       specify device(s) to probe (default: all devices)\n"), out);
+	fputs(_(	" -c, --cache-file <file>    read from <file> instead of reading from the default\n"
+			"                              cache file (-c /dev/null means no cache)\n"), out);
+	fputs(_(	" -d, --no-encoding          don't encode non-printing characters\n"), out);
+	fputs(_(	" -g, --garbage-collect      garbage collect the blkid cache\n"), out);
+	fputs(_(	" -o, --output <format>      output format; can be one of:\n"
+			"                              value, device, export or full; (default: full)\n"), out);
+	fputs(_(	" -k, --list-filesystems     list all known filesystems/RAIDs and exit\n"), out);
+	fputs(_(	" -s, --match-tag <tag>      show specified tag(s) (default show all tags)\n"), out);
+	fputs(_(	" -t, --match-token <token>  find device with a specific token (NAME=value pair)\n"), out);
+	fputs(_(	" -l, --list-one             look up only first device with token specified by -t\n"), out);
+	fputs(_(	" -L, --label <label>        convert LABEL to device name\n"), out);
+	fputs(_(	" -U, --uuid <uuid>          convert UUID to device name\n"), out);
+	fputs(_(	" <dev>                      specify device(s) to probe (default: all devices)\n"), out);
 	fputs(          "\n", out);
 	fputs(_(	"Low-level probing options:\n"), out);
-	fputs(_(	" -p          low-level superblocks probing (bypass cache)\n"), out);
-	fputs(_(	" -i          gather information about I/O limits\n"), out);
-	fputs(_(	" -S <size>   overwrite device size\n"), out);
-	fputs(_(	" -O <offset> probe at the given offset\n"), out);
-	fputs(_(	" -u <list>   filter by \"usage\" (e.g. -u filesystem,raid)\n"), out);
-	fputs(_(	" -n <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"), out);
+	fputs(_(	" -p, --probe                low-level superblocks probing (bypass cache)\n"), out);
+	fputs(_(	" -i, --info                 gather information about I/O limits\n"), out);
+	fputs(_(	" -S, --size <size>          overwrite device size\n"), out);
+	fputs(_(	" -O, --offset <offset>      probe at the given offset\n"), out);
+	fputs(_(	" -u, --usages <list>        filter by \"usage\" (e.g. -u filesystem,raid)\n"), out);
+	fputs(_(	" -n, --match-types <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"), out);
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("blkid(8)"));
 	exit(error);
 }
@@ -657,6 +658,28 @@ int main(int argc, char **argv)
 	unsigned int i;
 	int c;
 
+	static const struct option longopts[] = {
+		{ "cache-file",	      required_argument, NULL, 'c' },
+		{ "no-encoding",      no_argument,	 NULL, 'd' },
+		{ "garbage-collect",  no_argument,	 NULL, 'g' },
+		{ "output",	      required_argument, NULL, 'o' },
+		{ "list-filesystems", no_argument,	 NULL, 'k' },
+		{ "match-tag",	      required_argument, NULL, 's' },
+		{ "match-token",      required_argument, NULL, 't' },
+		{ "list-one",	      no_argument,	 NULL, 'l' },
+		{ "label",	      required_argument, NULL, 'L' },
+		{ "uuid",	      required_argument, NULL, 'U' },
+		{ "probe",	      no_argument,	 NULL, 'p' },
+		{ "info",	      no_argument,	 NULL, 'i' },
+		{ "size",	      required_argument, NULL, 'S' },
+		{ "offset",	      required_argument, NULL, 'O' },
+		{ "usages",	      required_argument, NULL, 'u' },
+		{ "match-types",      required_argument, NULL, 'n' },
+		{ "version",	      no_argument,	 NULL, 'V' },
+		{ "help",	      no_argument,       NULL, 'h' },
+		{ NULL, 0, NULL, 0 }
+	};
+
 	static const ul_excl_t excl[] = {       /* rows and cols in ASCII order */
 		{ 'n','u' },
 		{ 0 }
@@ -668,8 +691,8 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt (argc, argv,
-			    "c:df:ghilL:n:ko:O:ps:S:t:u:U:w:Vv")) != EOF) {
+	while ((c = getopt_long (argc, argv,
+			    "c:dghilL:n:ko:O:ps:S:t:u:U:w:Vv", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, NULL, excl, excl_st);
 

@@ -88,6 +88,10 @@ device buffer cache.  If you use raw I/O to overwrite data already in
 the buffer cache, the buffer cache will no longer correspond to the
 contents of the actual storage device underneath.  This is deliberate,
 but is regarded either a bug or a feature depending on who you ask!
+.SH NOTES
+Rather than using raw devices applications should prefer
+.BR open (2)
+devices, such as /dev/sda1, with the O_DIRECT flag.
 .SH AUTHOR
 Stephen Tweedie (sct@redhat.com)
 .SH AVAILABILITY

@@ -75,7 +75,7 @@ static int consoles_debug;
 		} while (0)
 
 static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
-dbgprint(const char *mesg, ...)
+dbgprint(const char * const mesg, ...)
 {
 	va_list ap;
 	va_start(ap, mesg);
@@ -151,7 +151,7 @@ void emergency_do_mounts(void) { }
  * the caller has to free the result
  */
 static __attribute__((__nonnull__))
-char *oneline(const char *file)
+char *oneline(const char * const file)
 {
 	FILE *fp;
 	char *ret = NULL;
@@ -182,7 +182,7 @@ char *oneline(const char *file)
  *  /sys/class/tty, the caller has to free the result.
  */
 static __attribute__((__malloc__))
-char *actattr(const char *tty)
+char *actattr(const char * const tty)
 {
 	char *ret, *path;
 
@@ -201,7 +201,7 @@ char *actattr(const char *tty)
  * /sys/class/tty.
  */
 static
-dev_t devattr(const char *tty)
+dev_t devattr(const char * const tty)
 {
 	dev_t dev = 0;
 	char *path, *value;
@@ -234,11 +234,11 @@ static
 #ifdef __GNUC__
 __attribute__((__nonnull__,__malloc__,__hot__))
 #endif
-char* scandev(DIR *dir, dev_t comparedev)
+char* scandev(DIR *dir, const dev_t comparedev)
 {
 	char path[PATH_MAX];
 	char *name = NULL;
-	struct dirent *dent;
+	const struct dirent *dent;
 	int len, fd;
 
 	DBG(dbgprint("scanning /dev for %u:%u", major(comparedev), minor(comparedev)));
@@ -313,10 +313,10 @@ static
 #ifdef __GNUC__
 __attribute__((__hot__))
 #endif
-int append_console(struct list_head *consoles, const char *name)
+int append_console(struct list_head *consoles, const char * const name)
 {
 	struct console *restrict tail;
-	struct console *last = NULL;
+	const struct console *last = NULL;
 
 	DBG(dbgprint("appenging %s", name));
 
@@ -549,7 +549,7 @@ done:
 
 #ifdef TIOCGDEV
 static int detect_consoles_from_tiocgdev(struct list_head *consoles,
-					int fallback,
+					const int fallback,
 					const char *device)
 {
 	unsigned int devnum;
@@ -619,7 +619,7 @@ done:
  * Returns 1 if stdout and stderr should be reconnected and 0
  * otherwise or less than zero on error.
  */
-int detect_consoles(const char *device, int fallback, struct list_head *consoles)
+int detect_consoles(const char *device, const int fallback, struct list_head *consoles)
 {
 	int fd, reconnect = 0, rc;
 	dev_t comparedev = 0;

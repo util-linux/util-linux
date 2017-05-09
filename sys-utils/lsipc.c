@@ -1094,7 +1094,6 @@ int main(int argc, char *argv[])
 		{ "notruncate",     no_argument,	NULL, OPT_NOTRUNC },
 		{ "numeric-perms",  no_argument,	NULL, 'P' },
 		{ "output",         required_argument,	NULL, 'o' },
-		{ "pid",            no_argument,	NULL, 'p' },
 		{ "queues",         no_argument,	NULL, 'q' },
 		{ "raw",            no_argument,	NULL, 'r' },
 		{ "semaphores",     no_argument,	NULL, 's' },
@@ -1123,7 +1122,7 @@ int main(int argc, char *argv[])
 
 	scols_init_debug(0);
 
-	while ((opt = getopt_long(argc, argv, "bceghi:Jlmno:PqrstuV", longopts, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "bceghi:Jlmno:PqrstV", longopts, NULL)) != -1) {
 
 		err_exclusive_options(opt, longopts, excl, excl_st);
 
