@@ -103,7 +103,7 @@ static void tcinit(struct console *con)
 {
 	int flags = 0, mode = 0;
 	struct termios *tio = &con->tio;
-	const fd = con->fd;
+	const int fd = con->fd;
 #ifdef USE_PLYMOUTH_SUPPORT
 	struct termios lock;
 	int i = (plymouth_command(MAGIC_PING)) ? PLYMOUTH_TERMIOS_FLAGS_DELAY : 0;
