@@ -391,6 +391,8 @@ int main(int argc, char **argv)
 	/* goto the last line that had a character on it */
 	for (; l->l_next; l = l->l_next)
 		this_line++;
+	if (max_line == 0)
+		return EXIT_SUCCESS;	/* no lines, so just exit */
 	flush_lines(this_line - nflushd_lines + extra_lines + 1);
 
 	/* make sure we leave things in a sane state */
