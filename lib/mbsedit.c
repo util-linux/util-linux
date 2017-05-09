@@ -1,6 +1,6 @@
 /*
  * Very simple multibyte buffer editor. Allows to maintaine the current
- * possition in the string, add and remove chars on the current possition.
+ * position in the string, add and remove chars on the current position.
  *
  * This file may be distributed under the terms of the
  * GNU Lesser General Public License.
