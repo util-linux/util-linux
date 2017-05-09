@@ -61,6 +61,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <getopt.h>
 
 #include "c.h"
 #include "fileutils.h"
@@ -312,6 +313,13 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char *argv[])
 {
+	int c;
+	static const struct option longopts[] = {
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -325,15 +333,16 @@ int main(int argc, char *argv[])
 		xstrncpy(orig_file, PASSWD_FILE, sizeof(orig_file));
 	}
 
-	if (1 < argc) {
-		if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
+	while ((c = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
+		switch (c) {
+		case 'V':
 			printf(UTIL_LINUX_VERSION);
-			exit(EXIT_SUCCESS);
-		}
-		if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))
+			return EXIT_SUCCESS;
+		case 'h':
 			usage(stdout);
-		usage(stderr);
-	}
+		default:
+			errtryhelp(EXIT_FAILURE);
+		}
 
 	edit_file(0);
 
