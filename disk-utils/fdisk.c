@@ -432,8 +432,8 @@ static struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
 		return NULL;
 
         q = fdisk_label_has_code_parttypes(lb) ?
-		_("Partition type (type L to list all types): ") :
-		_("Hex code (type L to list all codes): ");
+		_("Hex code (type L to list all codes): ") :
+		_("Partition type (type L to list all types): ");
 	do {
 		char buf[256];
 		int rc = get_user_reply(cxt, q, buf, sizeof(buf));
