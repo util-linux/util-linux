@@ -58,7 +58,7 @@ EXTRA_HFILES=
 # Header files to ignore when scanning. Use base file name, no paths
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h
 IGNORE_HFILES=blkidP.h partitions.h superblocks.h \
-	      topology.h aix.h dos.h iso9660.h
+	      topology.h aix.h dos.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png

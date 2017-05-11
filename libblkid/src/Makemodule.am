@@ -61,7 +61,6 @@ libblkid_la_SOURCES = \
 	libblkid/src/superblocks/highpoint_raid.c \
 	libblkid/src/superblocks/hpfs.c \
 	libblkid/src/superblocks/iso9660.c \
-	libblkid/src/superblocks/iso9660.h \
 	libblkid/src/superblocks/isw_raid.c \
 	libblkid/src/superblocks/jfs.c \
 	libblkid/src/superblocks/jmicron_raid.c \

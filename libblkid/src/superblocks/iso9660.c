@@ -19,7 +19,6 @@
 #include <ctype.h>
 
 #include "superblocks.h"
-#include "iso9660.h"
 
 struct iso9660_date {
 	unsigned char year[4];
@@ -167,7 +166,7 @@ static int is_str_empty(const unsigned char *str, size_t len)
 }
 
 /* iso9660 [+ Microsoft Joliet Extension] */
-int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct iso_volume_descriptor *iso;
 	unsigned char label[32];
