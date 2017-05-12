@@ -184,6 +184,7 @@ UL_SET_ARCH([HPPA], [hppa*|parisc*])
 
 AC_SYS_LARGEFILE
 AC_HEADER_ASSERT
+AC_STRUCT_TIMEZONE
 
 dnl Don't forget to maintain alternatively allowed versions in autogen.sh!
 AM_GNU_GETTEXT_VERSION([0.18.3])
