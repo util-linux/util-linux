@@ -80,7 +80,6 @@
 #include <stdarg.h>
 #include "cctype.h"
 #include "nls.h"
-#include "xalloc.h"
 
 /**
  * Bison's skeleton tests _STDLIB_H, while some stdlib.h headers
@@ -1263,7 +1262,7 @@ static char * get_tz(char tzbuf[TZBUFSIZE])
 		size_t tzsize = strlen (tz) + 1;
 		tz = (tzsize <= TZBUFSIZE
 		      ? memcpy (tzbuf, tz, tzsize)
-		      : xstrdup (tz));
+		      : strdup (tz));
 	}
 	return tz;
 }
@@ -1324,8 +1323,18 @@ int parse_date(struct timespec *result, char const *p,
 				char tz1buf[TZBUFSIZE];
 				int large_tz = TZBUFSIZE < tzsize;
 				int setenv_ok;
+
 				tz0 = get_tz (tz0buf);
-				z = tz1 = large_tz ? malloc (tzsize) : tz1buf;
+				if (!tz0)
+					goto fail;
+
+				if (large_tz) {
+					z = tz1 = malloc (tzsize);
+					if (!tz1)
+						goto fail;
+				} else
+					z = tz1 = tz1buf;
+
 				for (s = tzbase; *s != '"'; s++)
 					*z++ = *(s += *s == '\\');
 				*z = '\0';
