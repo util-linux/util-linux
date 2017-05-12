@@ -28,7 +28,6 @@
 #ifdef HAVE_GETRANDOM
 # include <sys/random.h>
 #elif defined (__linux__)
-# include <sys/syscall.h>
 # if !defined(SYS_getrandom) && defined(__NR_getrandom)
    /* usable kernel-headers, but old glibc-headers */
 #  define SYS_getrandom __NR_getrandom

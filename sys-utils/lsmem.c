@@ -28,7 +28,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
-#include <strutils.h>
 #include <fcntl.h>
 #include <inttypes.h>
 #include <assert.h>
