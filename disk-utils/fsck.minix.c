@@ -401,6 +401,7 @@ map_block(struct minix_inode *inode, unsigned int blknr) {
 	unsigned short ind[MINIX_BLOCK_SIZE >> 1];
 	unsigned short dind[MINIX_BLOCK_SIZE >> 1];
 	int blk_chg, block, result;
+	size_t range;
 
 	if (blknr < 7)
 		return check_zone_nr(inode->i_zone + blknr, &changed);
@@ -418,7 +419,12 @@ map_block(struct minix_inode *inode, unsigned int blknr) {
 	block = check_zone_nr(inode->i_zone + 8, &changed);
 	read_block(block, (char *)dind);
 	blk_chg = 0;
-	result = check_zone_nr(dind + (blknr / 512), &blk_chg);
+	range = blknr / 512;
+	if (ARRAY_SIZE(dind) <= range) {
+		printf(_("Warning: block out of range\n"));
+		return 1;
+	}
+	result = check_zone_nr(dind + range, &blk_chg);
 	if (blk_chg)
 		write_block(block, (char *)dind);
 	block = result;
