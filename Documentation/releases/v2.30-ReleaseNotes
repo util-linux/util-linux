@@ -9,7 +9,6 @@ hybrid CDROM/DVDs where ISO and UDF use a different LABEL=.
 
 The deprecated command tailf has been removed. Use "tail -f" from coreutils.
 
-
 blkzone -- NEW COMMAND to run zone commands on block device that support Zoned
 Block Commands (ZBC) or Zoned-device ATA Commands (ZAC). The currently
 supported functionality is 'report' and 'reset'.
@@ -19,12 +18,11 @@ fincore -- NEW COMMAND to count pages of file contents in core (memory).
 [thanks to Masatake YAMATO (Red Hat)]
 
 lsmem -- NEW COMMAND to list the ranges of available memory with their online
-status (originally implementd in Perl for s390-tools). [thanks to Clemens von Mann 
+status (originally implemented in Perl for s390-tools). [thanks to Clemens von Mann 
 and Heiko Carstens (IBM)]
 
-chmem -- NEW COMMAND to set memeory online/offline status [thanks to Heiko
+chmem -- NEW COMMAND to set memory online/offline status [thanks to Heiko
 Carstens (IBM)]
-
 
 The old and dead Alpha and Cmos code has been removed from hwclock command.
 
@@ -39,21 +37,36 @@ The libmount library provides API to generate exit codes and error/warning
 messages compatible with mount(8).
 
 
+Security issues
+---------------
+
+hwclock - no longer makes any internal permission checks. The System
+  Administrator must set proper permissions to control user access to
+  the RTC. It is NOT recommended to use set-user-ID.
+
+CVE-2016-2779 - This security issue is NOT FIXED yet.  It is possible to
+  disable the ioctl TIOCSTI by setsid() only.  Unfortunately, setsid()
+  has well-defined use cases in su(1) and runuser(1) and any changes
+  would introduce regressions.  It seems we need a better way -- ideally
+  another ioctl to disable TIOCSTI without setsid() or in userspace
+  implemented pty container (planned as experimental su(1) feature).
+
+
 Stable maintenance releases between v2.29 and v2.30
 ---------------------------------------------------
-                              
-util-linux 2.29.2 [Fed 02 2017]           
-                              
+
+util-linux 2.29.2 [Feb 02 2017]
+
  * https://www.kernel.org/pub/linux/utils/util-linux/v2.29/v2.29.2-ReleaseNotes
    https://www.kernel.org/pub/linux/utils/util-linux/v2.29/v2.29.2-ChangeLog
-                              
-util-linux 2.29.1 [Jan 01 2017]          
-                              
+
+util-linux 2.29.1 [Jan 01 2017]
+
  * https://www.kernel.org/pub/linux/utils/util-linux/v2.29/v2.29.1-ReleaseNotes
    https://www.kernel.org/pub/linux/utils/util-linux/v2.29/v2.29.1-ChangeLog
-                              
+
 Changes between v2.29 and v2.30
--------------------------------          
+-------------------------------
 
 agetty:
    - fix a memory leak when parsing \S in issue files  [Matthias Gerstner]
@@ -274,7 +287,7 @@ hwclock:
    - clarify cmos inb and outb preprocessor directives  [Sami Kerola]
    - clarify set_cmos_epoch() code  [Sami Kerola]
    - do not hardcode date command magic string twice  [Sami Kerola]
-   - don't check for permissions  [Karel Zak]
+   - *SECURITY* don't check for permissions  [Karel Zak] See 'Security issues'
    - extra messages for debug only  [J William Piggott]
    - fix rtc atexit registration  [Sami Kerola]
    - fix whitespace in hwclock-rtc.c  [J William Piggott]
