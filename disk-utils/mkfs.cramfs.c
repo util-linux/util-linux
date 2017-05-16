@@ -123,7 +123,7 @@ struct entry {
 #define CRAMFS_OFFSET_WIDTH 26
 
 /* Input status of 0 to print help and exit without an error. */
-static void
+static void __attribute__((__noreturn__))
 usage(int status) {
 	FILE *stream = status ? stderr : stdout;
 

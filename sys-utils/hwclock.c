@@ -1209,7 +1209,8 @@ static void out_version(void)
  * fmt, ... ), show a usage information and terminate the program
  * afterwards.
  */
-static void usage(const struct hwclock_control *ctl, const char *fmt, ...)
+static void __attribute__((__noreturn__))
+usage(const struct hwclock_control *ctl, const char *fmt, ...)
 {
 	FILE *usageto;
 	va_list ap;

@@ -1270,7 +1270,7 @@ int command(char *filename, register FILE *f)
 				break;
 			}
 			lastp++;
-			/* fall through */
+			/* fallthrough */
 		case '/':
 			if (nlines == 0)
 				nlines++;
@@ -1368,7 +1368,7 @@ int command(char *filename, register FILE *f)
 						(char *)0);
 				break;
 			}
-			/* fall through */
+			/* fallthrough */
 		default:
 			if (dum_opt) {
 				kill_line();
@@ -2023,6 +2023,7 @@ int expand(char **outbuf, char *inbuf)
 				*outstr++ = *inpstr++;
 				break;
 			}
+			/* fallthrough */
 		default:
 			*outstr++ = c;
 		}

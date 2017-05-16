@@ -208,7 +208,7 @@ int main(int argc, char **argv)
 
 	default:
 		warnx(_("trouble reading terminfo"));
-		/* fall through to ... */
+		/* fallthrough */
 
 	case 0:
 		if (tflag)
@@ -317,7 +317,7 @@ static void filter(FILE *f)
 			}
 			obuf[col].c_char = '_';
 			obuf[col].c_width = 1;
-			/* fall through */
+			/* fallthrough */
 		case ' ':
 			setcol(col + 1);
 			continue;

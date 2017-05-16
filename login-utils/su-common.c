@@ -899,6 +899,7 @@ su_main (int argc, char **argv, int mode)
     /* fallthrough if -u <user> is not specified, then follow
      * traditional su(1) behavior
      */
+     /* fallthrough */
   case SU_MODE:
     if (optind < argc)
       new_user = argv[optind++];

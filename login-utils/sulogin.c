@@ -267,11 +267,11 @@ static void tcfinal(struct console *con)
 		break;
 	case 1:				/* odd parity */
 		tio->c_cflag |= PARODD;
-		/* fall through */
+		/* fallthrough */
 	case 2:				/* even parity */
 		tio->c_cflag |= PARENB;
 		tio->c_iflag |= (INPCK | ISTRIP);
-		/* fall through */
+		/* fallthrough */
 	case (1 | 2):			/* no parity bit */
 		tio->c_cflag &= ~CSIZE;
 		tio->c_cflag |= CS7;
@@ -971,7 +971,6 @@ int main(int argc, char **argv)
 		switch ((con->pid = fork())) {
 		case 0:
 			mask_signal(SIGCHLD, SIG_DFL, NULL);
-			/* fall through */
 		nofork:
 			setup(con);
 			while (1) {
@@ -1024,7 +1023,7 @@ int main(int argc, char **argv)
 			exit(0);
 		case -1:
 			warn(_("fork failed"));
-			/* fall through */
+			/* fallthrough */
 		default:
 			break;
 		}

@@ -238,7 +238,7 @@ static void bind_ns_files_from_child(pid_t *child, int fds[2])
 	}
 }
 
-static void usage(int status)
+static void __attribute__((__noreturn__)) usage(int status)
 {
 	FILE *out = status == EXIT_SUCCESS ? stdout : stderr;
 

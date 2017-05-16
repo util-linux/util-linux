@@ -189,7 +189,6 @@ int main(int argc, char **argv)
 			return EXIT_SUCCESS;
 		case 'h':
 			usage(stdout);
-			/* fallthrough */
 		default:
 			errtryhelp(EXIT_FAILURE);
 		}
