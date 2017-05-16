@@ -1061,7 +1061,7 @@ static int yylex (union YYSTYPE *lvalp, parser_control *pc)
 		if (c_isdigit (c) || c == '-' || c == '+') {
 			char const *p;
 			int sign;
-			unsigned long int value;
+			uintmax_t value;
 			if (c == '-' || c == '+') {
 				sign = c == '-' ? -1 : 1;
 				while (c = *++pc->input, c_isspace (c))
@@ -1073,21 +1073,21 @@ static int yylex (union YYSTYPE *lvalp, parser_control *pc)
 				sign = 0;
 			p = pc->input;
 			for (value = 0; ; value *= 10) {
-				unsigned long int value1 = value + (c - '0');
+				uintmax_t value1 = value + (c - '0');
 				if (value1 < value)
 					return '?';
 				value = value1;
 				c = *++p;
 				if (! c_isdigit (c))
 					break;
-				if (ULONG_MAX / 10 < value)
+				if (UINTMAX_MAX / 10 < value)
 					return '?';
 			}
 			if ((c == '.' || c == ',') && c_isdigit (p[1])) {
 				time_t s;
 				int ns;
 				int digits;
-				unsigned long int value1;
+				uintmax_t value1;
 
 				/* Check for overflow when converting value to
 				 * time_t.
