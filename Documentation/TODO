@@ -1,9 +1,6 @@
 
  Note that items with (!) have high priority.
 
-- (!) remove usage(stderr) on command line errors (unsupported options, etc.)
-
-
 su/runuser
 ----------
   - (!) implement pty container for all su/runuser session (something like
@@ -80,6 +77,11 @@ bash completion
 
 libmount (mount/umount)
 -----------------------
+
+ - (!) support "noauto,auto"; now mnt_context_next_mount() follows old mount(8)
+   behavior and search for "noauto" string. It seems the more correct behavior
+   would be to use the options as flags (mnt_context_set_user_mflags()) and check
+   for MNT_MS_NOAUT rather than for a string.
 
  - allow to execute mount(2) in another namespace, something like:
 	mount --namespace=/proc/$n/ns/mnt  /dev/sda2 /bar
