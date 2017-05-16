@@ -239,11 +239,22 @@ size_t blkid_encode_to_utf8(int enc, unsigned char *dest, size_t len,
 	size_t i, j;
 	uint16_t c;
 
-	for (j = i = 0; i + 2 <= count; i += 2) {
-		if (enc == BLKID_ENC_UTF16LE)
+	for (j = i = 0; i < count; i++) {
+		if (enc == BLKID_ENC_UTF16LE) {
+			if (i+2 > count)
+				break;
 			c = (src[i+1] << 8) | src[i];
-		else /* BLKID_ENC_UTF16BE */
+			i++;
+		} else if (enc == BLKID_ENC_UTF16BE) {
+			if (i+2 > count)
+				break;
 			c = (src[i] << 8) | src[i+1];
+			i++;
+		} else if (enc == BLKID_ENC_LATIN1) {
+			c = src[i];
+		} else {
+			return 0;
+		}
 		if (c == 0) {
 			dest[j] = '\0';
 			break;

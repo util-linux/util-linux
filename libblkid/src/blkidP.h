@@ -543,5 +543,6 @@ extern size_t blkid_encode_to_utf8(int enc, unsigned char *dest, size_t len,
 
 #define BLKID_ENC_UTF16BE	0
 #define BLKID_ENC_UTF16LE	1
+#define BLKID_ENC_LATIN1	2
 
 #endif /* _BLKID_BLKIDP_H */
