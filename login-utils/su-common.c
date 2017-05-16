@@ -616,7 +616,7 @@ run_shell (char const * const shell, char const * const command, char ** const a
 	   const size_t n_additional_args)
 {
   const size_t n_args = 1 + fast_startup + 2 * !!command + n_additional_args + 1;
-  const char const **args = xcalloc (n_args, sizeof *args);
+  const char **args = xcalloc (n_args, sizeof *args);
   size_t argno = 1;
 
   if (simulate_login)
