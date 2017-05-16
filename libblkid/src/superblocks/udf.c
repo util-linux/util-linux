@@ -218,8 +218,9 @@ real_blksz:
 			if (!have_volid) {
 				uint8_t clen = vd->type.primary.ident.clen;
 				if (clen == 8)
-					have_volid = !blkid_probe_set_id_label(pr, "VOLUME_ID",
-							vd->type.primary.ident.c, 31);
+					have_volid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_ID",
+							vd->type.primary.ident.c, 31,
+							BLKID_ENC_LATIN1);
 				else if (clen == 16)
 					have_volid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_ID",
 							vd->type.primary.ident.c, 31,
@@ -261,8 +262,9 @@ real_blksz:
 			if (!have_volsetid) {
 				uint8_t clen = vd->type.primary.volset_id.clen;
 				if (clen == 8)
-					have_volsetid = !blkid_probe_set_id_label(pr, "VOLUME_SET_ID",
-							vd->type.primary.volset_id.c, 127);
+					have_volsetid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_SET_ID",
+							vd->type.primary.volset_id.c, 127,
+							BLKID_ENC_LATIN1);
 				else if (clen == 16)
 					have_volsetid = !blkid_probe_set_utf8_id_label(pr, "VOLUME_SET_ID",
 							vd->type.primary.volset_id.c, 127,
@@ -299,11 +301,13 @@ real_blksz:
 				uint8_t clen = vd->type.logical.logvol_id.clen;
 				if (clen == 8) {
 					if (!have_label)
-						have_label = !blkid_probe_set_label(pr,
-								vd->type.logical.logvol_id.c, 127);
+						have_label = !blkid_probe_set_utf8label(pr,
+								vd->type.logical.logvol_id.c, 127,
+								BLKID_ENC_LATIN1);
 					if (!have_logvolid)
-						have_logvolid = !blkid_probe_set_id_label(pr, "LOGICAL_VOLUME_ID",
-								vd->type.logical.logvol_id.c, 127);
+						have_logvolid = !blkid_probe_set_utf8_id_label(pr, "LOGICAL_VOLUME_ID",
+								vd->type.logical.logvol_id.c, 127,
+								BLKID_ENC_LATIN1);
 				} else if (clen == 16) {
 					if (!have_label)
 						have_label = !blkid_probe_set_utf8label(pr,
