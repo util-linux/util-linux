@@ -659,7 +659,7 @@ static void prompt(long long pageno)
 					break;
 				case SEARCH_FIN:
 					state = SEARCH;
-					/* FALLTHRU */
+					/* fallthrough */
 				case SEARCH:
 					if (cmd.cmdline[cmd.cmdlen - 1] == '\\') {
 						escape = 1;
@@ -738,7 +738,7 @@ static void prompt(long long pageno)
 					continue;
 				}
 				state = COUNT;
-				/* FALLTHRU */
+				/* fallthrough */
 			case COUNT:
 				break;
 			case ADDON_FIN:

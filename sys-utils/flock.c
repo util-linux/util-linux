@@ -305,7 +305,7 @@ int main(int argc, char *argv[])
 				if (open_flags & O_RDWR)
 					break;
 			}
-			/* go through */
+			/* fallthrough */
 		default:
 			/* Other errors */
 			if (filename)
