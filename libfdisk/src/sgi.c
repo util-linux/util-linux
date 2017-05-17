@@ -153,7 +153,7 @@ int fdisk_sgi_create_info(struct fdisk_context *cxt)
 	/* I keep SGI's habit to write the sgilabel to the second block */
 	sgilabel->volume[0].block_num = cpu_to_be32(2);
 	sgilabel->volume[0].num_bytes = cpu_to_be32(sizeof(struct sgi_info));
-	strncpy((char *) sgilabel->volume[0].name, "sgilabel", 8);
+	memcpy((char *) sgilabel->volume[0].name, "sgilabel", 8);
 
 	fdisk_info(cxt, _("SGI info created on second sector."));
 	return 0;
