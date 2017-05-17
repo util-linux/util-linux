@@ -1375,7 +1375,9 @@ static int initialize_printing(struct libscols_table *tb, struct libscols_buffer
 	DBG(TAB, ul_debugobj(tb, "initialize printing"));
 
 	if (!tb->symbols) {
-		scols_table_set_default_symbols(tb);
+		rc = scols_table_set_default_symbols(tb);
+		if (rc)
+			goto err;
 		tb->priv_symbols = 1;
 	} else
 		tb->priv_symbols = 0;
