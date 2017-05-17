@@ -176,7 +176,7 @@ leave(int status) {
 	exit(status);
 }
 
-static void
+static void __attribute__((__noreturn__))
 usage(FILE *out) {
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <device>\n"), program_invocation_short_name);
