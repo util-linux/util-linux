@@ -1543,7 +1543,7 @@ static int dos_add_partition(struct fdisk_context *cxt,
 	int rc = 0;
 	struct fdisk_dos_label *l;
 	struct pte *ext_pe;
-	size_t res;		/* partno */
+	size_t res = 0;		/* partno */
 
 	assert(cxt);
 	assert(cxt->label);
