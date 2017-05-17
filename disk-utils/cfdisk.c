@@ -2503,6 +2503,7 @@ static int ui_run(struct cfdisk *cf)
 				ui_table_goto(cf, (int) cf->lines_idx - cf->page_sz);
 				break;
 			}
+			/* fallthrough */
 		case KEY_HOME:
 			ui_table_goto(cf, 0);
 			break;
@@ -2511,6 +2512,7 @@ static int ui_run(struct cfdisk *cf)
 				ui_table_goto(cf, cf->lines_idx + cf->page_sz);
 				break;
 			}
+			/* fallthrough */
 		case KEY_END:
 			ui_table_goto(cf, (int) cf->nlines - 1);
 			break;
