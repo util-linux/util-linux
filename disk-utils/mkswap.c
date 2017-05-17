@@ -104,7 +104,7 @@ static void set_signature(const struct mkswap_control *ctl)
 	char *sp = (char *) ctl->signature_page;
 
 	assert(sp);
-	strncpy(sp + ctl->pagesize - SWAP_SIGNATURE_SZ, SWAP_SIGNATURE, SWAP_SIGNATURE_SZ);
+	memcpy(sp + ctl->pagesize - SWAP_SIGNATURE_SZ, SWAP_SIGNATURE, SWAP_SIGNATURE_SZ);
 }
 
 static void set_uuid_and_label(const struct mkswap_control *ctl)
