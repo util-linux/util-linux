@@ -565,9 +565,10 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 
 	fd = open(fname, (readonly ? O_RDONLY : O_RDWR ) | O_CLOEXEC);
 	if (fd < 0)
-		return -errno;
+		goto fail;
 
-	fstat(fd, &cxt->dev_st);
+	if (fstat(fd, &cxt->dev_st) != 0)
+		goto fail;
 
 	cxt->readonly = readonly;
 	cxt->dev_fd = fd;
@@ -597,6 +598,8 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 			      fname, readonly ? "READ-ONLY" : "READ-WRITE"));
 	return 0;
 fail:
+	if (fd >= 0)
+		close(fd);
 	DBG(CXT, ul_debugobj(cxt, "failed to assign device"));
 	return -errno;
 }
