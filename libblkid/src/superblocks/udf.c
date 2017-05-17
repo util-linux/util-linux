@@ -80,43 +80,41 @@ static inline int gen_uuid_from_volset_id(unsigned char uuid[17], struct dstring
 {
 	size_t i;
 	size_t len;
-	size_t binpos;
-	unsigned char buf[128];
+	size_t nonhexpos;
+	unsigned char buf[17];
+
+	memset(buf, 0, sizeof(buf));
 
 	if (volset_id->clen == 8)
-		memcpy(buf, volset_id->c, 16);
+		len = blkid_encode_to_utf8(BLKID_ENC_LATIN1, buf, sizeof(buf), volset_id->c, 127);
 	else if (volset_id->clen == 16)
-		blkid_encode_to_utf8(BLKID_ENC_UTF16BE, buf, sizeof(buf), volset_id->c, 127);
+		len = blkid_encode_to_utf8(BLKID_ENC_UTF16BE, buf, sizeof(buf), volset_id->c, 127);
 	else
 		return -1;
-
-	buf[16] = 0;
-	len = strlen((char *) buf);
 
 	if (len < 8)
 		return -1;
 
-	for (i = len; i < 16; ++i)
-		buf[i] = 0;
-
-	binpos = 16;
-	for (i = 0; i < len; ++i) {
-		if (!isalnum(buf[i])) {
-			binpos = i;
+	nonhexpos = 16;
+	for (i = 0; i < 16; ++i) {
+		if (!isxdigit(buf[i])) {
+			nonhexpos = i;
 			break;
 		}
 	}
 
-	if (binpos < 8) {
+	if (nonhexpos < 8) {
 		snprintf((char *) uuid, 17, "%02x%02x%02x%02x%02x%02x%02x%02x",
 			buf[0], buf[1], buf[2], buf[3],
 			buf[4], buf[5], buf[6], buf[7]);
-	} else if (binpos < 16) {
-		memcpy(uuid, buf, 8);
+	} else if (nonhexpos < 16) {
+		for (i = 0; i < 8; ++i)
+			uuid[i] = tolower(buf[i]);
 		snprintf((char *) uuid + 8, 9, "%02x%02x%02x%02x",
 			buf[8], buf[9], buf[10], buf[11]);
 	} else {
-		memcpy(uuid, buf, 16);
+		for (i = 0; i < 16; ++i)
+			uuid[i] = tolower(buf[i]);
 		uuid[16] = 0;
 	}
 
@@ -246,14 +244,15 @@ real_blksz:
 				 * =================================================================================
 				 *
 				 * Implementation in libblkid:
-				 * The first 16 characters of VolumeSetIdentifier are used to generate UUID.
-				 * If all 16 characters are alphanumeric then they are used unchanged as UUID.
-				 * If one of first 8 characters (time value) is not alphanumeric then first
-				 * 8 characters are encoded to their hexadecimal values in 16 characters and
-				 * set as UUID. If all first 8 characters (time value) are alphanumeric but
-				 * some other remaining character is not then first 8 characters are unchanged
-				 * (set as first part of UUID string), next 4 characters are encoded to their
-				 * hexadecimal values (in 8 characters) and set as second part of UUID string.
+				 * The first 16 (Unicode) characters of VolumeSetIdentifier are encoded to UTF-8
+				 * and then first 16 UTF-8 bytes are used to generate UUID. If all 16 bytes are
+				 * hexadecimal digits then their lowercase variants are used as UUID. If one of
+				 * the first 8 bytes (time value) is not hexadecimal digit then first 8 bytes are
+				 * encoded to their hexadecimal representations, resulting in 16 characters and
+				 * set as UUID. If all first 8 bytes (time value) are hexadecimal digits but some
+				 * remaining not then lowercase variant of the first 8 bytes are used as first
+				 * part of UUID and next 4 bytes encoded in hexadecimal representations (resulting
+				 * in 8 characters) are used as second part of UUID string.
 				 */
 				unsigned char uuid[17];
 				if (gen_uuid_from_volset_id(uuid, &vd->type.primary.volset_id) == 0)
