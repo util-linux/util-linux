@@ -337,6 +337,7 @@ static int prepare_helper_from_options(struct libmnt_context *cxt,
 	char *suffix = NULL;
 	const char *opts;
 	size_t valsz;
+	int rc;
 
 	if (mnt_context_is_nohelpers(cxt))
 		return 0;
@@ -354,7 +355,10 @@ static int prepare_helper_from_options(struct libmnt_context *cxt,
 
 	DBG(CXT, ul_debugobj(cxt, "umount: umount.%s %s requested", suffix, name));
 
-	return mnt_context_prepare_helper(cxt, "umount", suffix);
+	rc = mnt_context_prepare_helper(cxt, "umount", suffix);
+	free(suffix);
+
+	return rc;
 }
 
 /*
