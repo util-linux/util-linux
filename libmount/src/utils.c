@@ -647,7 +647,7 @@ done:
 
 static int try_write(const char *filename)
 {
-	int fd, ret = 0;
+	int fd, rc = 0;
 
 	if (!filename)
 		return -EINVAL;
@@ -655,9 +655,10 @@ static int try_write(const char *filename)
 	fd = open(filename, O_RDWR|O_CREAT|O_CLOEXEC,
 			    S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);
 	if (fd < 0)
-		ret = -errno;
-	close(fd);
-	return ret;
+		rc = -errno;
+	else
+		close(fd);
+	return rc;
 }
 
 /**
