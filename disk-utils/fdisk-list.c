@@ -169,7 +169,8 @@ void list_disklabel(struct fdisk_context *cxt)
 
 			if (fdisk_partition_to_string(pa, cxt, ids[i], &data))
 				continue;
-			scols_line_refer_data(ln, i, data);
+			if (scols_line_refer_data(ln, i, data))
+				fdisk_warn(cxt, _("failed to refer output data"));
 		}
 	}
 
