@@ -110,6 +110,10 @@ static int test_version(struct libmnt_test *ts, int argc, char *argv[])
 	const char *ver;
 	const char **features;
 
+	if (argc == 2)
+		printf("Your version: %d\n",
+				mnt_parse_version_string(argv[1]));
+
 	mnt_get_library_version(&ver);
 
 	printf("Library version: %s\n", ver);
@@ -119,6 +123,8 @@ static int test_version(struct libmnt_test *ts, int argc, char *argv[])
 	mnt_get_library_features(&features);
 	while (features && *features)
 		printf(" %s", *features++);
+
+	printf("\n");
 
 	if (mnt_get_library_version(NULL) ==
 			mnt_parse_version_string(LIBMOUNT_VERSION))
