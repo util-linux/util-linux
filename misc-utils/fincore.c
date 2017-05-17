@@ -123,13 +123,15 @@ static int add_output_data(struct fincore_control *ctl,
 		err(EXIT_FAILURE, _("failed to initialize output line"));
 
 	for (i = 0; i < ncolumns; i++) {
+		int rc = 0;
+
 		switch(get_column_id(i)) {
 		case COL_FILE:
-			scols_line_set_data(ln, i, name);
+			rc = scols_line_set_data(ln, i, name);
 			break;
 		case COL_PAGES:
 			xasprintf(&tmp, "%jd",  (intmax_t) count_incore);
-			scols_line_refer_data(ln, i, tmp);
+			rc = scols_line_refer_data(ln, i, tmp);
 			break;
 		case COL_RES:
 		{
@@ -139,7 +141,7 @@ static int add_output_data(struct fincore_control *ctl,
 				xasprintf(&tmp, "%ju", res);
 			else
 				tmp = size_to_human_string(SIZE_SUFFIX_1LETTER, res);
-			scols_line_refer_data(ln, i, tmp);
+			rc = scols_line_refer_data(ln, i, tmp);
 			break;
 		}
 		case COL_SIZE:
@@ -147,11 +149,14 @@ static int add_output_data(struct fincore_control *ctl,
 				xasprintf(&tmp, "%jd", (intmax_t) file_size);
 			else
 				tmp = size_to_human_string(SIZE_SUFFIX_1LETTER, file_size);
-			scols_line_refer_data(ln, i, tmp);
+			rc = scols_line_refer_data(ln, i, tmp);
 			break;
 		default:
 			return -EINVAL;
 		}
+
+		if (rc)
+			err(EXIT_FAILURE, _("failed to add output data"));
 	}
 
 	return 0;
