@@ -435,7 +435,7 @@ int fdisk_reset_device_properties(struct fdisk_context *cxt)
  */
 int fdisk_discover_geometry(struct fdisk_context *cxt)
 {
-	fdisk_sector_t nsects;
+	fdisk_sector_t nsects = 0;
 	unsigned int h = 0, s = 0;
 
 	assert(cxt);
