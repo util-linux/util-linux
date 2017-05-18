@@ -133,12 +133,11 @@ static void __attribute__((__noreturn__)) usage(void)
 		  " -b blksize use this blocksize, must equal page size\n"
 		  " -e edition set edition number (part of fsid)\n"
 		  " -N endian  set cramfs endianness (big|little|host), default host\n"
-		  " -i file    insert a file image into the filesystem "
-		    "(requires >= 2.4.0)\n"
+		  " -i file    insert a file image into the filesystem\n"
 		  " -n name    set name of cramfs filesystem\n"
 		  " -p         pad by %d bytes for boot code\n"
 		  " -s         sort directory entries (old option, ignored)\n"
-		  " -z         make explicit holes (requires >= 2.3.39)\n"
+		  " -z         make explicit holes\n"
 		  " dirname    root of the filesystem to be compressed\n"
 		  " outfile    output file\n"),
 		program_invocation_short_name, PAD_SIZE);

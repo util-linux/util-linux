@@ -52,9 +52,9 @@ fly.
 On some architectures it is possible to alter the frequency at which
 the kernel delivers profiling interrupts to each CPU.  This option
 allows you to set the frequency, as a multiplier of the system clock
-frequency, HZ.  This is supported on i386-SMP (2.2 and 2.4 kernel)
-and also on sparc-SMP and sparc64-SMP (2.4 kernel).  This option also
-resets the profiling buffer, and requires superuser privileges.
+frequency, HZ. Linux 2.6.16 dropped multiplier support for most systems.
+This option also resets the profiling buffer, and requires superuser
+privileges.
 .TP
 \fB\-p\fR, \fB\-\-profile\fR \fIpro-file\fR
 Specify a different profiling buffer, which by default is

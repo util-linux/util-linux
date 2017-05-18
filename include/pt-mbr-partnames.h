@@ -100,7 +100,7 @@
 	{0xf2, N_("DOS secondary")},	/* DOS 3.3+ secondary */
 	{0xfb, N_("VMware VMFS")},
 	{0xfc, N_("VMware VMKCORE")},	/* VMware kernel dump partition */
-	{0xfd, N_("Linux raid autodetect")},/* New (2.2.x) raid partition with
+	{0xfd, N_("Linux raid autodetect")},/* Linux raid partition with
 					       autodetect using persistent
 					       superblock */
 	{0xfe, N_("LANstep")},		/* SpeedStor >1024 cyl. or LANstep */

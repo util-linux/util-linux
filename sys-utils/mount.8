@@ -307,8 +307,7 @@ option is similar, with the restriction that the user must be
 member of the group of the special file.
 
 .SS Bind mounts
-Since Linux 2.4.0 it is possible to remount part of the
-file hierarchy somewhere else.  The call is:
+Remount part of the file hierarchy somewhere else.  The call is:
 
 .RS
 .br
@@ -402,9 +401,9 @@ file.
 .RE
 
 .SS The move operation
-Since Linux 2.5.1 it is possible to atomically move a
+Move a
 .B mounted tree
-to another place.  The call is:
+to another place (atomically).  The call is:
 
 .RS
 .br
@@ -982,8 +981,6 @@ Permit execution of binaries.
 .TP
 .B noexec
 Do not permit direct execution of any binaries on the mounted filesystem.
-(Until recently it was possible to run binaries anyway using a command like
-/lib/ld*.so /mnt/binary.  This trick fails since Linux 2.4.25 / 2.6.0.)
 .TP
 .B group
 Allow an ordinary user to mount the filesystem if one
@@ -1555,7 +1552,7 @@ configuration.
 
 .SS "Mount options for ext2"
 The `ext2' filesystem is the standard Linux filesystem.
-Since Linux 2.5.46, for most mount options the default
+For most mount options the default
 is determined by the filesystem superblock.  Set them with
 .BR tune2fs (8).
 .TP
@@ -1652,17 +1649,9 @@ These options determine who can use the reserved blocks.
 Instead of block 1, use block
 .I n
 as superblock.  This could be useful when the filesystem has been damaged.
-(Earlier, copies of the superblock would be made every 8192 blocks: in
-block 1, 8193, 16385, \&...\& (and one got thousands of copies on
-a big filesystem).  Since version 1.08,
-.B mke2fs
-has a \-s (sparse superblock) option to reduce the number of backup
-superblocks, and since version 1.15 this is the default.  Note
-that this may mean that ext2 filesystems created by a recent
-.B mke2fs
-cannot be mounted r/w under Linux 2.0.*.)
-The block number here uses 1\ k units.  Thus, if you want to use logical
-block 32768 on a filesystem with 4\ k blocks, use "sb=131072".
+See
+.B dumpe2fs /dev/foo | grep superblock
+to list alternatively usable superblocks.
 .TP
 .BR user_xattr | nouser_xattr
 Support "user." extended attributes (or not).
@@ -1937,13 +1926,11 @@ The value is given in octal.
 Set the umask applied to directories only.
 The default is the umask of the current process.
 The value is given in octal.
-.\" Present since Linux 2.5.43.
 .TP
 .BI fmask= value
 Set the umask applied to regular files only.
 The default is the umask of the current process.
 The value is given in octal.
-.\" Present since Linux 2.5.43.
 .TP
 .BI allow_utime= value
 This option controls the permission check of mtime/atime.
@@ -1993,33 +1980,7 @@ Sets the codepage for converting to shortname characters on FAT
 and VFAT filesystems.  By default, codepage 437 is used.
 .TP
 .BI conv= mode
-The
-.I fat
-filesystem can perform CRLF<-->NL conversion (MS-DOS text format to UNIX text
-format) in the kernel.  The following conversion \fImode\fRs are available:
-.RS
-.TP
-.BR b [ inary ]
-No translation is performed.  This is the default.
-.TP
-.BR t [ ext ]
-CRLF<-->NL translation is performed on all files.
-.TP
-.BR a [ uto ]
-CRLF<-->NL translation is performed on all files that don't have a
-"well-known binary" extension.  The list of known extensions can be found at
-the beginning of
-.I fs/fat/misc.c
-(as of 2.0, the list is: exe, com, bin, app, sys, drv, ovl, ovr, obj,
-lib, dll, pif, arc, zip, lha, lzh, zoo, tar, z, arj, tz, taz, tzp, tpz,
-gz, tgz, deb, gif, bmp, tif, gl, jpg, pcx, tfm, vf, gf, pk, pxl, dvi).
-.PP
-Programs that do computed lseeks won't like in-kernel text conversion.
-Several people have had their data ruined by this translation.  Beware!
-
-For filesystems mounted in binary mode, a conversion tool
-(fromdos/todos) is available.  This option is obsolete.
-.RE
+This option is obsolete and may fail or being ignored.
 .TP
 .BI cvf_format= module
 Forces the driver to use the CVF (Compressed Volume File) module
@@ -2190,18 +2151,8 @@ Convert all files names to lower case, or leave them.
 (Default:
 .BR case=lower .)
 .TP
-.BR conv= { binary | text | auto }
-For
-.BR conv=text ,
-delete some random CRs (in particular, all followed by NL)
-when reading a file.
-For
-.BR conv=auto ,
-choose more or less at random between
-.BR conv=binary " and " conv=text .
-For
-.BR conv=binary ,
-just read what is in the file.  This is the default.
+.BI conv= mode
+This option is obsolete and may fail or being ignored.
 .TP
 .B nocheck
 Do not abort mounting when certain consistency checks fail.
@@ -2267,8 +2218,7 @@ but also apply Acorn extensions if present.
 .BI mode= value
 For non-Rock Ridge volumes, give all files the indicated mode.
 (Default: read and execute permission for everybody.)
-Since Linux 2.1.37 one no longer needs to specify the mode in
-decimal. (Octal is indicated by a leading 0.)
+Octal mode values require a leading 0.
 .TP
 .B unhide
 Also show hidden and associated files.
@@ -2280,12 +2230,8 @@ Set the block size to the indicated value.
 (Default:
 .BR block=1024 .)
 .TP
-.BR conv= { a [ uto ]| b [ inary ]| m [ text ]| t [ ext ]}
-(Default:
-.BR conv=binary .)
-Since Linux 1.3.54 this option has no effect anymore.
-(And non-binary settings used to be very dangerous,
-possibly leading to silent data corruption.)
+.BI conv= mode
+This option is obsolete and may fail or being ignored.
 .TP
 .B cruft
 If the high byte of the file length contains other garbage,
@@ -2293,10 +2239,10 @@ set this mount option to ignore the high order bits of the file length.
 This implies that a file cannot be larger than 16\ MB.
 .TP
 .BI session= x
-Select number of session on multisession CD. (Since 2.3.4.)
+Select number of session on multisession CD.
 .TP
 .BI sbsector= xxx
-Session begins from sector xxx. (Since 2.3.4.)
+Session begins from sector xxx.
 .LP
 The following options are the same as for vfat and specifying them only makes
 sense when using discs encoded using Microsoft's Joliet extensions.
@@ -2389,12 +2335,10 @@ and the current version of
 Character set to use when returning file names.
 Unlike VFAT, NTFS suppresses names that contain
 nonconvertible characters.  Deprecated.
-.\" since 2.5.11
 .TP
 .BI nls= name
 New name for the option earlier called
 .IR iocharset .
-.\" since 2.5.11
 .TP
 .B utf8
 Use UTF-8 for converting file names.
@@ -2461,7 +2405,7 @@ These options are recognized, but have no effect as far as I can see.
 
 .SS "Mount options for ramfs"
 Ramfs is a memory based filesystem.  Mount it and you have it.  Unmount it
-and it is gone.  Present since Linux 2.3.99pre4.
+and it is gone.
 There are no mount options.
 
 .SS "Mount options for reiserfs"
