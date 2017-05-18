@@ -479,7 +479,6 @@ static int show_locks(struct list_head *locks)
 	}
 
 	scols_print_table(table);
-done:
 	scols_unref_table(table);
 	return rc;
 }
