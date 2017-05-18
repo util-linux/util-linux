@@ -1161,8 +1161,8 @@ static void set_scols_data(struct blkdev_cxt *cxt, int col, int id, struct libsc
 		break;
 	};
 
-	if (str)
-		scols_line_refer_data(ln, col, str);
+	if (str && scols_line_refer_data(ln, col, str))
+		err(EXIT_FAILURE, _("failed to add output data"));
 }
 
 static void fill_table_line(struct blkdev_cxt *cxt, struct libscols_line *scols_parent)
@@ -1171,7 +1171,7 @@ static void fill_table_line(struct blkdev_cxt *cxt, struct libscols_line *scols_
 
 	cxt->scols_line = scols_table_new_line(lsblk->table, scols_parent);
 	if (!cxt->scols_line)
-		return;
+		err(EXIT_FAILURE, _("failed to allocate output line"));
 
 	for (i = 0; i < ncolumns; i++)
 		set_scols_data(cxt, i, get_column_id(i), cxt->scols_line);
@@ -1894,7 +1894,7 @@ int main(int argc, char *argv[])
 	 * initialize output columns
 	 */
 	if (!(lsblk->table = scols_new_table()))
-		errx(EXIT_FAILURE, _("failed to initialize output table"));
+		errx(EXIT_FAILURE, _("failed to allocate output table"));
 	scols_table_enable_raw(lsblk->table, !!(lsblk->flags & LSBLK_RAW));
 	scols_table_enable_export(lsblk->table, !!(lsblk->flags & LSBLK_EXPORT));
 	scols_table_enable_ascii(lsblk->table, !!(lsblk->flags & LSBLK_ASCII));
@@ -1916,7 +1916,7 @@ int main(int argc, char *argv[])
 
 		cl = scols_table_new_column(lsblk->table, ci->name, ci->whint, fl);
 		if (!cl) {
-			warn(_("failed to initialize output column"));
+			warn(_("failed to allocate output column"));
 			goto leave;
 		}
 		if (!lsblk->sort_col && lsblk->sort_id == id) {

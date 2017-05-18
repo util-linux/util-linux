@@ -406,7 +406,7 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 
 	ln = scols_table_new_line(tb, NULL);
 	if (!ln)
-		err(EXIT_FAILURE, _("failed to initialize output line"));
+		err(EXIT_FAILURE, _("failed to allocate output line"));
 
 	for (i = 0; i < (size_t) ncolumns; i++) {
 		char *str = NULL;
@@ -471,8 +471,8 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 			str = get_mm_stat(z, MM_NUM_MIGRATED, inbytes);
 			break;
 		}
-		if (str)
-			scols_line_refer_data(ln, i, str);
+		if (str && scols_line_refer_data(ln, i, str))
+			err(EXIT_FAILURE, _("failed to add output data"))
 	}
 }
 
@@ -485,7 +485,7 @@ static void status(struct zram *z)
 
 	tb = scols_new_table();
 	if (!tb)
-		err(EXIT_FAILURE, _("failed to initialize output table"));
+		err(EXIT_FAILURE, _("failed to allocate output table"));
 
 	scols_table_enable_raw(tb, raw);
 	scols_table_enable_noheadings(tb, no_headings);

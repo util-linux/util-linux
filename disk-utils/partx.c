@@ -578,7 +578,7 @@ static int add_scols_line(struct libscols_table *table, blkid_partition par)
 
 	line = scols_table_new_line(table, NULL);
 	if (!line) {
-		warn(_("failed to add line to output"));
+		warn(_("failed to allocate output line"));
 		return -ENOMEM;
 	}
 
@@ -641,7 +641,7 @@ static int add_scols_line(struct libscols_table *table, blkid_partition par)
 		else if (str)
 			rc = scols_line_refer_data(line, i, str);
 		if (rc) {
-			warn(_("failed to add data to output table"));
+			warn(_("failed to add output data"));
 			break;
 		}
 	}
@@ -664,7 +664,7 @@ static int show_parts(blkid_partlist ls, int scols_flags, int lower, int upper)
 	scols_init_debug(0);
 	table = scols_new_table();
 	if (!table) {
-		warn(_("failed to initialize output table"));
+		warn(_("failed to allocate output table"));
 		return -1;
 	}
 	scols_table_enable_raw(table, !!(scols_flags & PARTX_RAW));
@@ -675,7 +675,7 @@ static int show_parts(blkid_partlist ls, int scols_flags, int lower, int upper)
 		struct colinfo *col = get_column_info(i);
 
 		if (!scols_table_new_column(table, col->name, col->whint, col->flags)) {
-			warnx(_("failed to initialize output column"));
+			warnx(_("failed to allocate output column"));
 			goto done;
 		}
 	}

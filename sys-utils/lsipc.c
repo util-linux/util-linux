@@ -335,7 +335,8 @@ static struct libscols_table *new_table(struct lsipc_control *ctl)
 	struct libscols_table *table = scols_new_table();
 
 	if (!table)
-		errx(EXIT_FAILURE, _("failed to initialize output table"));
+		err(EXIT_FAILURE, _("failed to allocate output table"));
+
 	if (ctl->noheadings)
 		scols_table_enable_noheadings(table, 1);
 
@@ -466,7 +467,7 @@ static void global_set_data(struct libscols_table *tb, const char *resource,
 
 	ln = scols_table_new_line(tb, NULL);
 	if (!ln)
-		err_oom();
+		err(EXIT_FAILURE, _("failed to allocate output line"));
 
 	for (n = 0; n < ncolumns; n++) {
 		int rc = 0;
@@ -500,7 +501,7 @@ static void global_set_data(struct libscols_table *tb, const char *resource,
 		}
 
 		if (rc != 0)
-			err(EXIT_FAILURE, _("failed to set data"));
+			err(EXIT_FAILURE, _("failed to add output data"));
 	}
 }
 
@@ -538,7 +539,10 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 	}
 	for (semdsp = semds;  semdsp->next != NULL || id > -1; semdsp = semdsp->next) {
 		size_t n;
+
 		ln = scols_table_new_line(tb, NULL);
+		if (!ln)
+			err(EXIT_FAILURE, _("failed to allocate output line"));
 
 		for (n = 0; n < ncolumns; n++) {
 			int rc = 0;
@@ -622,7 +626,7 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 				break;
 			}
 			if (rc != 0)
-				err(EXIT_FAILURE, _("failed to set data"));
+				err(EXIT_FAILURE, _("failed to add output data"));
 			arg = NULL;
 		}
 
@@ -638,6 +642,9 @@ static void do_sem(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 			for (i = 0; i < semds->sem_nsems; i++) {
 				struct sem_elem *e = &semds->elements[i];
 				struct libscols_line *sln = scols_table_new_line(sub, NULL);
+
+				if (!sln)
+					err(EXIT_FAILURE, _("failed to allocate output line"));
 
 				/* SEMNUM */
 				xasprintf(&arg, "%zu", i);
@@ -727,6 +734,9 @@ static void do_msg(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 	for (msgdsp = msgds; msgdsp->next != NULL || id > -1 ; msgdsp = msgdsp->next) {
 		size_t n;
 		ln = scols_table_new_line(tb, NULL);
+
+		if (!ln)
+			err(EXIT_FAILURE, _("failed to allocate output line"));
 
 		/* no need to call getpwuid() for the same user */
 		if (!(pw && pw->pw_uid == msgdsp->msg_perm.uid))
@@ -885,8 +895,9 @@ static void do_shm(int id, struct lsipc_control *ctl, struct libscols_table *tb)
 	for (shmdsp = shmds; shmdsp->next != NULL || id > -1 ; shmdsp = shmdsp->next) {
 		size_t n;
 		ln = scols_table_new_line(tb, NULL);
+
 		if (!ln)
-			err_oom();
+			err(EXIT_FAILURE, _("failed to allocate output line"));
 
 		for (n = 0; n < ncolumns; n++) {
 			int rc = 0;

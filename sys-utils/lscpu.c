@@ -1757,7 +1757,7 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 
 	table = scols_new_table();
 	if (!table)
-		 err(EXIT_FAILURE, _("failed to initialize output table"));
+		 err(EXIT_FAILURE, _("failed to allocate output table"));
 	if (mod->json) {
 		scols_table_enable_json(table, 1);
 		scols_table_set_name(table, "cpus");
@@ -1766,7 +1766,7 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 	for (i = 0; i < ncols; i++) {
 		data = get_cell_header(desc, cols[i], mod, buf, sizeof(buf));
 		if (!scols_table_new_column(table, data, 0, 0))
-			err(EXIT_FAILURE, _("failed to initialize output column"));
+			err(EXIT_FAILURE, _("failed to allocate output column"));
 	}
 
 	for (i = 0; i < desc->ncpuspos; i++) {
@@ -1783,7 +1783,7 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 
 		line = scols_table_new_line(table, NULL);
 		if (!line)
-			err(EXIT_FAILURE, _("failed to initialize output line"));
+			err(EXIT_FAILURE, _("failed to allocate output line"));
 
 		for (c = 0; c < ncols; c++) {
 			data = get_cell_data(desc, i, cols[c], mod,
@@ -1791,7 +1791,7 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 			if (!data || !*data)
 				data = "-";
 			if (scols_line_set_data(line, c, data))
-				err_oom();
+				err(EXIT_FAILURE, _("failed to add output data"));
 		}
 	}
 
@@ -1811,7 +1811,7 @@ static void __attribute__ ((__format__(printf, 3, 4)))
 	va_list args;
 
 	if (!ln)
-		err(EXIT_FAILURE, _("failed to initialize output line"));
+		err(EXIT_FAILURE, _("failed to allocate output line"));
 
 	/* description column */
 	scols_line_set_data(ln, 0, txt);
@@ -1821,8 +1821,8 @@ static void __attribute__ ((__format__(printf, 3, 4)))
 	xvasprintf(&data, fmt, args);
 	va_end(args);
 
-	if (data)
-		scols_line_refer_data(ln, 1, data);
+	if (data && scols_line_refer_data(ln, 1, data))
+		 err(EXIT_FAILURE, _("failed to add output data"));
 }
 
 #define add_summary_n(tb, txt, num)	add_summary_sprint(tb, txt, "%d", num)
@@ -1860,7 +1860,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	tb = scols_new_table();
 	if (!tb)
-		 err(EXIT_FAILURE, _("failed to initialize output table"));
+		err(EXIT_FAILURE, _("failed to allocate output table"));
 
 	scols_table_enable_noheadings(tb, 1);
 	if (mod->json) {

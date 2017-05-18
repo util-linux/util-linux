@@ -120,7 +120,7 @@ static int add_output_data(struct fincore_control *ctl,
 
 	ln = scols_table_new_line(ctl->tb, NULL);
 	if (!ln)
-		err(EXIT_FAILURE, _("failed to initialize output line"));
+		err(EXIT_FAILURE, _("failed to allocate output line"));
 
 	for (i = 0; i < ncolumns; i++) {
 		int rc = 0;
@@ -359,7 +359,7 @@ int main(int argc, char ** argv)
 	scols_init_debug(0);
 	ctl.tb = scols_new_table();
 	if (!ctl.tb)
-		err(EXIT_FAILURE, _("failed to create output table"));
+		err(EXIT_FAILURE, _("failed to allocate output table"));
 
 	scols_table_enable_noheadings(ctl.tb, ctl.noheadings);
 	scols_table_enable_raw(ctl.tb, ctl.raw);
@@ -371,7 +371,7 @@ int main(int argc, char ** argv)
 		const struct colinfo *col = get_column_info(i);
 
 		if (!scols_table_new_column(ctl.tb, col->name, col->whint, col->flags))
-			err(EXIT_FAILURE, _("failed to initialize output column"));
+			err(EXIT_FAILURE, _("failed to allocate output column"));
 	}
 
 	for(; optind < argc; optind++) {

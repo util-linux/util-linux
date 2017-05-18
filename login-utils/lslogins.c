@@ -915,7 +915,7 @@ static struct libscols_table *setup_table(struct lslogins_control *ctl)
 	int n = 0;
 
 	if (!table)
-		errx(EXIT_FAILURE, _("failed to initialize output table"));
+		err(EXIT_FAILURE, _("failed to allocate output table"));
 	if (ctl->noheadings)
 		scols_table_enable_noheadings(table, 1);
 
@@ -972,6 +972,9 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 		return;
 
 	ln = scols_table_new_line(tb, NULL);
+	if (!ln)
+		err(EXIT_FAILURE, _("failed to allocate output line"));
+
 	while (n < ncolumns) {
 		int rc = 0;
 
@@ -1067,8 +1070,8 @@ static void fill_table(const void *u, const VISIT which, const int depth __attri
 			err(EXIT_FAILURE, _("internal error: unknown column"));
 		}
 
-		if (rc != 0)
-			err(EXIT_FAILURE, _("failed to set data"));
+		if (rc)
+			err(EXIT_FAILURE, _("failed to add output data"));
 		++n;
 	}
 	return;

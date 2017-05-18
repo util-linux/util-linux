@@ -226,7 +226,7 @@ static void add_scols_line(struct libscols_table *table, struct prlimit *l)
 
 	line = scols_table_new_line(table, NULL);
 	if (!line)
-		err(EXIT_FAILURE, _("failed to initialize output line"));
+		err(EXIT_FAILURE, _("failed to allocate output line"));
 
 	for (i = 0; i < ncolumns; i++) {
 		char *str = NULL;
@@ -257,8 +257,8 @@ static void add_scols_line(struct libscols_table *table, struct prlimit *l)
 			break;
 		}
 
-		if (str)
-			scols_line_refer_data(line, i, str);
+		if (str && scols_line_refer_data(line, i, str))
+			err(EXIT_FAILURE, _("failed to add output data"));
 	}
 }
 
@@ -294,7 +294,7 @@ static int show_limits(struct list_head *lims)
 
 	table = scols_new_table();
 	if (!table)
-		err(EXIT_FAILURE, _("failed to initialize output table"));
+		err(EXIT_FAILURE, _("failed to allocate output table"));
 
 	scols_table_enable_raw(table, raw);
 	scols_table_enable_noheadings(table, no_headings);
@@ -303,9 +303,8 @@ static int show_limits(struct list_head *lims)
 		struct colinfo *col = get_column_info(i);
 
 		if (!scols_table_new_column(table, col->name, col->whint, col->flags))
-			err(EXIT_FAILURE, _("failed to initialize output column"));
+			err(EXIT_FAILURE, _("failed to allocate output column"));
 	}
-
 
 	list_for_each_safe(p, pnext, lims) {
 		struct prlimit *lim = list_entry(p, struct prlimit, lims);

@@ -684,12 +684,13 @@ static struct libscols_line *add_line(struct libscols_table *table, struct libmn
 	size_t i;
 	struct libscols_line *line = scols_table_new_line(table, parent);
 
-	if (!line) {
-		warn(_("failed to add line to output"));
-		return NULL;
+	if (!line)
+		err(EXIT_FAILURE, _("failed to allocate output line"));
+
+	for (i = 0; i < ncolumns; i++) {
+		if (scols_line_refer_data(line, i, get_data(fs, i)))
+			err(EXIT_FAILURE, _("failed to add output data"));
 	}
-	for (i = 0; i < ncolumns; i++)
-		scols_line_refer_data(line, i, get_data(fs, i));
 
 	scols_line_set_userdata(line, fs);
 	return line;
@@ -701,13 +702,14 @@ static struct libscols_line *add_tabdiff_line(struct libscols_table *table, stru
 	size_t i;
 	struct libscols_line *line = scols_table_new_line(table, NULL);
 
-	if (!line) {
-		warn(_("failed to add line to output"));
-		return NULL;
+	if (!line)
+		err(EXIT_FAILURE, _("failed to allocate output line"));
+
+	for (i = 0; i < ncolumns; i++) {
+		if (scols_line_refer_data(line, i,
+				get_tabdiff_data(old_fs, new_fs, change, i)))
+			err(EXIT_FAILURE, _("failed to add output data"));
 	}
-	for (i = 0; i < ncolumns; i++)
-		scols_line_refer_data(line, i,
-				get_tabdiff_data(old_fs, new_fs, change, i));
 
 	return line;
 }
@@ -1593,7 +1595,7 @@ int main(int argc, char *argv[])
 	scols_init_debug(0);
 	table = scols_new_table();
 	if (!table) {
-		warn(_("failed to initialize output table"));
+		warn(_("failed to allocate output table"));
 		goto leave;
 	}
 	scols_table_enable_raw(table,        !!(flags & FL_RAW));
@@ -1619,7 +1621,7 @@ int main(int argc, char *argv[])
 		}
 		if (!scols_table_new_column(table, get_column_name(i),
 					get_column_whint(i), fl)) {
-			warn(_("failed to initialize output column"));
+			warn(_("failed to allocate output column"));
 			goto leave;
 		}
 	}

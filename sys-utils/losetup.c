@@ -225,6 +225,7 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 		const char *p = NULL;			/* external data */
 		char *np = NULL;			/* allocated here */
 		uint64_t x = 0;
+		int rc;
 
 		switch(get_column_id(i)) {
 		case COL_NAME:
@@ -285,9 +286,12 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 
 
 		if (p)
-			scols_line_set_data(ln, i, p);		/* calls strdup() */
+			rc = scols_line_set_data(ln, i, p);	/* calls strdup() */
 		else if (np)
-			scols_line_refer_data(ln, i, np);	/* only refers */
+			rc = scols_line_refer_data(ln, i, np);	/* only refers */
+
+		if (rc)
+			err(EXIT_FAILURE, _("failed to add output data"));
 	}
 
 	return 0;
@@ -307,7 +311,7 @@ static int show_table(struct loopdev_cxt *lc,
 	scols_init_debug(0);
 
 	if (!(tb = scols_new_table()))
-		err(EXIT_FAILURE, _("failed to initialize output table"));
+		err(EXIT_FAILURE, _("failed to allocate output table"));
 	scols_table_enable_raw(tb, raw);
 	scols_table_enable_json(tb, json);
 	scols_table_enable_noheadings(tb, no_headings);
@@ -319,14 +323,14 @@ static int show_table(struct loopdev_cxt *lc,
 		struct colinfo *ci = get_column_info(i);
 
 		if (!scols_table_new_column(tb, ci->name, ci->whint, ci->flags))
-			err(EXIT_FAILURE, _("failed to initialize output column"));
+			err(EXIT_FAILURE, _("failed to allocate output column"));
 	}
 
 	/* only one loopdev requested (already assigned to loopdev_cxt) */
 	if (loopcxt_get_device(lc)) {
 		ln = scols_table_new_line(tb, NULL);
 		if (!ln)
-			err(EXIT_FAILURE, _("failed to initialize output line"));
+			err(EXIT_FAILURE, _("failed to allocate output line"));
 		rc = set_scols_data(lc, ln);
 
 	/* list all loopdevs */
@@ -355,7 +359,7 @@ static int show_table(struct loopdev_cxt *lc,
 
 			ln = scols_table_new_line(tb, NULL);
 			if (!ln)
-				err(EXIT_FAILURE, _("failed to initialize output column"));
+				err(EXIT_FAILURE, _("failed to allocate output line"));
 			rc = set_scols_data(lc, ln);
 			if (rc)
 				break;

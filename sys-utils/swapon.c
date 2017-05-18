@@ -173,7 +173,8 @@ static void add_scols_line(const struct swapon_ctl *ctl, struct libscols_table *
 
 	line = scols_table_new_line(table, NULL);
 	if (!line)
-		err(EXIT_FAILURE, _("failed to initialize output line"));
+		err(EXIT_FAILURE, _("failed to allocate output line"));
+
 	data = mnt_fs_get_source(fs);
 	if (access(data, R_OK) == 0)
 		pr = get_swap_prober(data);
@@ -219,8 +220,8 @@ static void add_scols_line(const struct swapon_ctl *ctl, struct libscols_table *
 			break;
 		}
 
-		if (str)
-			scols_line_refer_data(line, i, str);
+		if (str && scols_line_refer_data(line, i, str))
+			err(EXIT_FAILURE, _("failed to add output data"));
 	}
 	if (pr)
 		blkid_free_probe(pr);
@@ -277,7 +278,7 @@ static int show_table(struct swapon_ctl *ctl)
 
 	table = scols_new_table();
 	if (!table)
-		err(EXIT_FAILURE, _("failed to initialize output table"));
+		err(EXIT_FAILURE, _("failed to allocate output table"));
 
 	scols_table_enable_raw(table, ctl->raw);
 	scols_table_enable_noheadings(table, ctl->no_heading);
@@ -286,7 +287,7 @@ static int show_table(struct swapon_ctl *ctl)
 		struct colinfo *col = get_column_info(ctl, i);
 
 		if (!scols_table_new_column(table, col->name, col->whint, col->flags))
-			err(EXIT_FAILURE, _("failed to initialize output column"));
+			err(EXIT_FAILURE, _("failed to allocate output column"));
 	}
 
 	while (mnt_table_next_fs(st, itr, &fs) == 0)
