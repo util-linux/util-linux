@@ -154,11 +154,11 @@ int main(int argc, char **argv)
 
 	while ((c = getopt_long(argc, argv, "vsVhn", longopts, NULL)) != -1)
 		switch (c) {
-		case 'v':
-			verbose = 1;
-			break;
 		case 'n':
 			noact = 1;
+			/* fallthrough */
+		case 'v':
+			verbose = 1;
 			break;
 		case 's':
 			do_rename = do_symlink;
