@@ -237,6 +237,7 @@ static char *ask_new_field(struct chfn_control *ctl, const char *question,
 		printf("%s [%s]: ", question, def_val);
 		__fpurge(stdin);
 #ifdef HAVE_LIBREADLINE
+		rl_bind_key('\t', rl_insert);
 		if ((buf = readline(NULL)) == NULL)
 #else
 		if (getline(&buf, &dummy, stdin) < 0)
