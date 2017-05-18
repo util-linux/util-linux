@@ -472,7 +472,7 @@ static void fill_table_row(struct libscols_table *tb, struct zram *z)
 			break;
 		}
 		if (str && scols_line_refer_data(ln, i, str))
-			err(EXIT_FAILURE, _("failed to add output data"))
+			err(EXIT_FAILURE, _("failed to add output data"));
 	}
 }
 
