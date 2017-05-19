@@ -132,7 +132,9 @@ then print the current partition UUID.
 Renumber the partitions, ordering them by their start offset.
 .TP
 .BR \-s , " \-\-show\-size " [ \fIdevice ...]
-List the sizes of all or the specified devices.
+List the sizes of all or the specified devices in units of 1024 byte size.
+This command is DEPRECATED in favour of
+.BR blockdev (1).
 .TP
 .BR \-T , " \-\-list\-types"
 Print all supported types for the current disk label or the label specified by
@@ -219,7 +221,8 @@ specified in the format \fI+list\fP (e.g. \fB-o +UUID\fP).
 Suppress extra info messages.
 .TP
 .BR \-u , " \-\-unit S"
-Deprecated option.  Only the sector unit is supported.
+Deprecated option.  Only the sector unit is supported. This option is not
+supported when using the --show-size command.
 .TP
 .BR \-X , " \-\-label " \fItype
 Specify the disk label type (e.g. \fBdos\fR, \fBgpt\fR, ...).  If this option
