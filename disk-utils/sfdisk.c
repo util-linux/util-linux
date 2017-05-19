@@ -49,6 +49,7 @@
 #include "all-io.h"
 #include "rpmatch.h"
 #include "loopdev.h"
+#include "optutils.h"
 
 #include "libfdisk.h"
 #include "fdisk-list.h"
@@ -1961,7 +1962,6 @@ int main(int argc, char *argv[])
 		{ "output",  required_argument, NULL, 'o' },
 		{ "partno",  required_argument, NULL, 'N' },
 		{ "reorder", no_argument,       NULL, 'r' },
-		{ "show-size", no_argument,	NULL, 's' },
 		{ "show-geometry", no_argument, NULL, 'g' },
 		{ "quiet",   no_argument,       NULL, 'q' },
 		{ "verify",  no_argument,       NULL, 'V' },
@@ -1975,8 +1975,9 @@ int main(int argc, char *argv[])
 		{ "part-attrs", no_argument,    NULL, OPT_PARTATTRS },
 
 		{ "show-pt-geometry", no_argument, NULL, 'G' },		/* deprecated */
-		{ "unit",    required_argument, NULL, 'u' },
+		{ "unit",    required_argument, NULL, 'u' },		/* deprecated */
 		{ "Linux",   no_argument,       NULL, 'L' },		/* deprecated */
+		{ "show-size", no_argument,	NULL, 's' },		/* deprecated */
 
 		{ "change-id",no_argument,      NULL, OPT_CHANGE_ID },	/* deprecated */
 		{ "id",      no_argument,       NULL, 'c' },		/* deprecated */
@@ -1984,6 +1985,12 @@ int main(int argc, char *argv[])
 
 		{ NULL, 0, NULL, 0 },
 	};
+	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
+		{ 's','u'},			/* --show-size --unit */
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -1992,6 +1999,9 @@ int main(int argc, char *argv[])
 
 	while ((c = getopt_long(argc, argv, "aAbcdfFgGhJlLo:O:nN:qrsTu:vVX:Y:w:W:",
 					longopts, &longidx)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch(c) {
 		case 'A':
 			sf->act = ACT_ACTIVATE;
