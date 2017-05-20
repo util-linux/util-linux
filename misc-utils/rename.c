@@ -204,6 +204,9 @@ int main(int argc, char **argv)
 	from = argv[0];
 	to = argv[1];
 
+	if (!strcmp(from, to))
+		return RENAME_EXIT_NOTHING;
+
 	for (i = 2; i < argc; i++)
 		ret |= do_rename(from, to, argv[i], verbose, noact, nooverwrite);
 
