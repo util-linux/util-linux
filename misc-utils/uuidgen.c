@@ -28,11 +28,11 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_("Create a new UUID value.\n"), out);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -r, --random     generate random-based uuid\n"
-		" -t, --time       generate time-based uuid\n"
-		" -V, --version    output version information and exit\n"
-		" -h, --help       display this help and exit\n\n"), out);
-
+	fputs(_(" -r, --random     generate random-based uuid\n"), out);
+	fputs(_(" -t, --time       generate time-based uuid\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("uuidgen(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
