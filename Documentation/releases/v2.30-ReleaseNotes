@@ -137,6 +137,7 @@ build-sys:
    - improve detection of the "isnan" function in uClibc  [Carlos Santos]
    - mark lsmem and chmem as Linux only  [Karel Zak]
    - prefer pkg-config for ncurses  [Karel Zak]
+   - release++ (v2.30-rc1)  [Karel Zak]
    - remove column-old.c  [Karel Zak]
    - remove duplicate includes  [Karel Zak]
    - remove old git fallback from git-version-gen  [Ruediger Meier]
@@ -148,9 +149,12 @@ build-sys:
    - use sed to substitute  [Karel Zak]
 cfdisk:
    - add copyright to help  [Karel Zak]
+   - add hints for scanners [coverity scan]  [Karel Zak]
    - avoid use of VLA in combination with sizeof() [smatch scan]  [Sami Kerola]
    - support UI refresh on ^L  [Karel Zak]
    - use buffer editor for ui_get_string()  [Karel Zak]
+chfn:
+   - disable tab completion  [Sami Kerola]
 chfn, chsh:
    - use readline(3) to receive user input  [Sami Kerola]
 chmem:
@@ -208,6 +212,7 @@ disk-utils/mkfs.minix:
 docs:
    - Fix word repetitions  [Yuri Chornoivan]
    - add BUG REPORTING section to README  [Karel Zak]
+   - add chmem and tailf to ReleaseNotes  [Karel Zak]
    - add note about branches to README  [Karel Zak]
    - improve agetty.8 manual page  [Sami Kerola]
    - improve boilerplate.c options example  [Sami Kerola]
@@ -236,6 +241,10 @@ docs:
    - try to convince open(2) O_DIRECT rather than using raw device  [Sami Kerola]
    - update AUTHORS file  [Karel Zak]
    - update Documentation/deprecated.txt  [Karel Zak]
+   - update TODO, add mount(8) noauto,auto  [Karel Zak]
+   - update source-code-management.txt  [Karel Zak]
+   - update v2.30-ReleaseNotes  [J William Piggott]
+   - update v2.30-ReleaseNotes  [Karel Zak]
    - various pages  Format pathnames as italic (.I)  [Michael Kerrisk]
    - various pages  Use "ID" not "id" in man pages  [Michael Kerrisk]
    - various pages  Use "PID" not "pid" in man-pages  [Michael Kerrisk]
@@ -247,6 +256,7 @@ fallocate:
    - add insert range support  [Fabian Frederick]
 fdisk:
    - add to the man page missing option  [Karel Zak]
+   - check scols_line_refer_data() return code [coverity scan]  [Karel Zak]
    - don't be silent when list non-existing device  [Karel Zak]
    - fix type dialog  [Karel Zak]
    - improve --wipe functionality  [Karel Zak]
@@ -258,6 +268,7 @@ fincore:
    - add --output  [Karel Zak]
    - add --raw and --json  [Karel Zak]
    - add column RES  [Karel Zak]
+   - check rc from smartcols stuff [coverity scan]  [Karel Zak]
    - cleanup return codes  [Karel Zak]
    - fix error on open()  [Karel Zak]
    - fix file descriptor leak  [Sami Kerola]
@@ -274,12 +285,17 @@ findmnt:
    - fix couple memory leaks [cppcheck]  [Sami Kerola]
    - flush stdout after each (un)(re)mount event, when polling.  [Pedro Miguel Carvalho]
    - use line separator for --poll output  [Karel Zak]
+fsck.minix:
+   - add hint for scanners [coverity scan]  [Karel Zak]
+   - fix crash  [Sami Kerola]
 fsfreeze:
    - move filesystem support info to manual page  [Sami Kerola]
    - remove unnecessary functions  [Sami Kerola]
 fstrim:
    - de-duplicate btrfs sub-volumes  [Stanislav Brabec]
    - use MNT_EX_* from libmount  [Karel Zak]
+getops:
+   - make --a-long option work again  [Sami Kerola]
 hwclock:
    - --set and --predict segmentation fault  [J William Piggott]
    - add debugging to open_rtc()  [Sami Kerola]
@@ -377,6 +393,7 @@ lib/timer.c:
    - remove bogus SA_SIGINFO from timer_settime call  [Rasmus Villemoes]
 libblkid:
    - (gpt) fix force flag  [Karel Zak]
+   - Add support for Latin1 encoding in blkid_encode_to_utf8()  [Pali Rohár]
    - Fix blkid.conf parsing  [Tobias Stoeckmann]
    - Fix out of bounds byte swaps in ZFS handling  [Alden Tondettar]
    - Fix out of bounds reads in BEFS handling  [Alden Tondettar]
@@ -391,6 +408,8 @@ libblkid:
    - fix typo  [Karel Zak]
    - prevent OOB access while probing HFS+  [Tobias Stoeckmann]
    - remove unnecessary 'static' keyword  [Karel Zak]
+   - udf  Change algorithm for reporting UUID  [Pali Rohár]
+   - udf  Correctly handle UDF strings encoded in 8bit OSTA Compressed Unicode  [Pali Rohár]
    - udf  For better readibility use one snprintf call instead multiple in loop  [Pali Rohár]
 libblkid/minix:
    - Match minix superblock types  [Nate Clark]
@@ -419,12 +438,16 @@ libfdisk:
    - change the way how apply user device properties  [Karel Zak]
    - check for collisions when create new label  [Karel Zak]
    - classify collision type  [Karel Zak]
+   - don't print uninitialized variable [coverity scan]  [Karel Zak]
    - don't use blkdev ioctls for regular files  [Karel Zak]
+   - don't use errno after close()  [Karel Zak]
    - fix NLS support  [Karel Zak]
    - fix compiler warning [-Wsign-compare]  [Karel Zak]
    - fix fdisk_set_wipe_area() calls  [Karel Zak]
    - fix potentially NULL pointer usage  [Karel Zak]
+   - initialize partno variable [coverity scan]  [Karel Zak]
    - recount size when apply user device properties  [Karel Zak]
+   - use memcpy() for non-terminated string [coverity scan]  [Karel Zak]
    - verify partno from template  [Karel Zak]
 libmount:
    - (docs) add unused declarations  [Karel Zak]
@@ -433,8 +456,11 @@ libmount:
    - Fix incorrect detach of reused loop device  [Stanislav Brabec]
    - add mnt_context_get_excode()  [Karel Zak]
    - add read-only warning  [Karel Zak]
+   - check fstat() return code [coverity scan]  [Karel Zak]
    - cosmetic change to mnt_table_find_srcpath()  [Karel Zak]
+   - don't pass -1 to close() [coverity scan]  [Karel Zak]
    - fix file descriptor leak  [Sami Kerola]
+   - fix memory leak [coverity scan]  [Karel Zak]
    - fix mount -oloop=/dev/loopX regression  [Stanislav Brabec]
    - fix use of preprocessor identifier  [Sami Kerola]
    - introduce X-* comments  [Karel Zak]
@@ -453,6 +479,7 @@ libsmartcols:
    - add scols_sort_table_by_tree()  [Karel Zak]
    - add scols_table_move_column()  [Karel Zak]
    - allow to add column to already used table  [Karel Zak]
+   - check scols_table_set_default_symbols() return code [coverity scan]  [Karel Zak]
    - column width reduction refactoring  [Karel Zak]
    - fix relative width interpretation  [Karel Zak]
    - fix test variable shadowing  [Sami Kerola]
@@ -496,6 +523,8 @@ lscpu:
    - use sysfs for table access if available  [Ard Biesheuvel]
 lsipc:
    - fix options parsing and sync with man page  [Sami Kerola]
+lslocks:
+   - remove dead code  [Karel Zak]
 lslogins:
    - remove useless strlen()  [Ruediger Meier]
 lsmem:
@@ -522,11 +551,14 @@ man:
    - improve blkreport(8) and blkreset(8) manual pages  [Sami Kerola]
 misc:
    - add static keyword to where needed [smatch scan]  [Sami Kerola]
+   - consolidate smartcols error messages  [Karel Zak]
    - do not use plain 0 as NULL [smatch scan]  [Sami Kerola]
    - fix some printf format strings  [Ruediger Meier]
    - fix typos using codespell  [Ruediger Meier]
    - spelling, always use "cannot" instead of "can not"  [Ruediger Meier]
    - stop mixing declarations and code  [Sami Kerola]
+mkswap:
+   - use memcpy() for non-terminated string [coverity scan]  [Karel Zak]
 more:
    - avoid double free() on exit  [Karel Zak]
 mount:
@@ -535,6 +567,8 @@ mount, umount:
    - use mnt_context_get_excode()  [Karel Zak]
 newgrp:
    - use libc explicit_bzero() when it is available  [Sami Kerola]
+nologin:
+   - don't call fstat() after failed open() [coverity scan]  [Karel Zak]
 nsenter:
    - add --all option  [Karel Zak]
    - fix usage() and improve man page  [Karel Zak]
@@ -554,6 +588,7 @@ po:
 rename:
    - add --no-act option  [Alexander F Rødseth]
    - add --no-act to bash-completion  [Karel Zak]
+   - make --no-act to imply --verbose  [Sami Kerola]
 runuser:
    - add "--" to SYNOPSIS  [Karel Zak]
 script:
@@ -565,8 +600,10 @@ setterm:
    - fix bitfield warning [smatch]  [Sami Kerola]
 sfdisk:
    - --quiet fixes  [Karel Zak]
+   - add hints for scanners [coverity scan]  [Karel Zak]
    - add note about alignment to man page  [Karel Zak]
    - cleanup --dump error messages  [Karel Zak]
+   - disambiguate units of --show-size  [Chris Morin]
    - don't be silent when list non-existing device  [Karel Zak]
    - improve --wipe functionality  [Karel Zak]
    - note about small partition in man page  [Karel Zak]
@@ -574,6 +611,7 @@ sfdisk:
    - unused parameter 'sf' [-Wunused-parameter]  [Karel Zak]
 su:
    - properly clear child PID  [Karel Zak]
+   - remove duplicate const declaration  [Sami Kerola]
 su, runuser:
    - fix typo in the /etc/default path  [Karel Zak]
 sulogin:
@@ -593,9 +631,13 @@ term-utils/script:
 test:
    - fix mountpoint device check in libmount/loop  [Ruediger Meier]
 tests:
+   - (libmount) parse version from command line  [Karel Zak]
    - (sfdisk) tell kernel about new partition  [Karel Zak]
    - Add UDF CD-ROM hybrid image (ISO+Joliet+UDF) created by Nero 6  [Pali Rohár]
+   - Add UDF hdd image with non ASCII 8bit label created by Linux mkudffs 1.3  [Pali Rohár]
    - Add UDF hdd images created by Linux mkudffs 1.3  [Pali Rohár]
+   - Fix UDF test output after changing UUID algorithm  [Pali Rohár]
+   - Fix UDF test output for 8bit OSTA Compressed Unicode  [Pali Rohár]
    - Fix test output for low-probe-udf to contain UDF data  [Pali Rohár]
    - Introduce libmount/loop  [Stanislav Brabec]
    - Rename udf-hdd-mkudffs* images to indicate used mkudffs version  [Pali Rohár]
@@ -616,6 +658,7 @@ tests:
    - add udevadm settle to sfdisk wipe  [Karel Zak]
    - add x86_64-16g lsmem test  [Karel Zak]
    - another improvement to the sfdisk wipe test  [Karel Zak]
+   - check for TS_HELPER_SYSINFO in fincore test  [Karel Zak]
    - cleanup and update lsmem  [Karel Zak]
    - define columns for fincore test  [Karel Zak]
    - do not use plain 0 as NULL [smatch scan]  [Sami Kerola]
@@ -628,6 +671,7 @@ tests:
    - refresh lscpu tests  [Karel Zak]
    - remove fincore SMALLER_THAN_PAGESIZE tests  [Ruediger Meier]
    - remove status=none dd(1) from fincore  [Karel Zak]
+   - update build-sys due to readline  [Karel Zak]
    - update libmount outputs  [Karel Zak]
    - update lsmem tests  [Karel Zak]
    - update script(1) tests  [Karel Zak]
@@ -658,5 +702,6 @@ wipefs:
    - add note about no-act to the man page  [Karel Zak]
    - unused parameter [-Wunused-parameter]  [Karel Zak]
 zramctl:
+   - add mising line terminator  [Karel Zak]
    - be more specific about default output  [Karel Zak]
    - make mm_stat parser more robust  [Karel Zak]
