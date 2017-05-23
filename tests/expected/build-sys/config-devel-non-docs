@@ -44,10 +44,10 @@ blkzone:
 blockdev:  
 cal:  libncursesw libtinfo 
 chcpu:  
-chfn:  libpam libpam_misc libpthread libselinux libuser 
+chfn:  libpam libpam_misc libpthread libreadline libselinux libuser 
 chmem:  
 chrt:  
-chsh:  libpam libpam_misc libpthread libselinux libuser 
+chsh:  libpam libpam_misc libpthread libreadline libselinux libuser 
 col:  
 colcrt:  
 colrm:  
