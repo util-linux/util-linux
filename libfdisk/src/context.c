@@ -394,9 +394,11 @@ const char *fdisk_get_collision(struct fdisk_context *cxt)
  * fdisk_is_ptcollision:
  * @cxt: fdisk context
  *
- * The collision detected by library is another partition table. Note that libfdisk
- * does not support all partitions tables, so fdisk_has_label() may return false and
- * fdisk_is_ptcollision() may return true.
+ * The collision detected by libblkid (usally another partition table). Note
+ * that libfdisk does not support all partitions tables, so fdisk_has_label()
+ * may return false, but fdisk_is_ptcollision() may return true.
+ *
+ * Since: 2.30
  *
  * Returns: 0 or 1
  */
@@ -666,6 +668,8 @@ int fdisk_is_readonly(struct fdisk_context *cxt)
 /**
  * fdisk_is_regfile:
  * @cxt: context
+ *
+ * Since: 2.30
  *
  * Returns: 1 if open file descriptor is regular file rather than a block device.
  */

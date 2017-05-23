@@ -1314,6 +1314,8 @@ int fdisk_wipe_partition(struct fdisk_context *cxt, size_t partno, int enable)
  * @cxt: fdisk context
  * @pa: partition
  *
+ * Since: 2.30
+ *
  * Returns: 1 if the area specified by @pa will be wiped by write command, or 0.
  */
 int fdisk_partition_has_wipe(struct fdisk_context *cxt, struct fdisk_partition *pa)
