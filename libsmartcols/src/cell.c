@@ -218,6 +218,8 @@ int scols_cell_get_flags(const struct libscols_cell *ce)
  * scols_cell_get_alignment:
  * @ce: a pointer to a struct libscols_cell instance
  *
+ * Since: 2.30
+ *
  * Returns: SCOLS_CELL_FL_{RIGHT,CELNTER,LEFT}
  */
 int scols_cell_get_alignment(const struct libscols_cell *ce)

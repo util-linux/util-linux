@@ -257,8 +257,10 @@ int scols_table_remove_columns(struct libscols_table *tb)
  * @pre: column before the column
  * @cl: colum to move
  *
- * Move the @cl behind @pre. The the @pre is NULL then the @col is the fist
+ * Move the @cl behind @pre. If the @pre is NULL then the @col is the first
  * column in the table.
+ *
+ * Since: 2.30
  *
  * Returns: 0, a negative number in case of an error.
  */
@@ -1337,6 +1339,8 @@ static struct libscols_line *move_line_and_children(struct libscols_line *ln, st
  *
  * Reorders lines in the table by parent->child relation. Note that order of
  * the lines in the table is independent on the tree hierarchy.
+ *
+ * Since: 2.30
  *
  * Returns: 0, a negative value in case of an error.
  */

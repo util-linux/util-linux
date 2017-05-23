@@ -315,6 +315,10 @@ int scols_line_next_child(struct libscols_line *ln,
  *
  * The function is designed to detect circular dependencies between @ln and
  * @parent. It checks if @ln is not any (grand) parent in the @parent's tree.
+ *
+ * Since: 2.30
+ *
+ * Returns: 0 or 1
  */
 int scols_line_is_ancestor(struct libscols_line *ln, struct libscols_line *parent)
 {
