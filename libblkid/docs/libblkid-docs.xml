@@ -9,7 +9,7 @@
     <title>libblkid Reference Manual</title>
     <releaseinfo>for libblkid version &version;</releaseinfo>
     <copyright>
-      <year>2009-2013</year>
+      <year>2009-2017</year>
       <holder>Karel Zak &lt;kzak@redhat.com&gt;</holder>
     </copyright>
   </bookinfo>
@@ -66,5 +66,9 @@ available from https://www.kernel.org/pub/linux/utils/util-linux/.
   <index id="api-index">
     <title>API Index</title>
     <xi:include href="xml/api-index-full.xml"><xi:fallback /></xi:include>
+  </index>
+  <index role="2.30">
+    <title>Index of new symbols in 2.30</title>
+    <xi:include href="xml/api-index-2.30.xml"><xi:fallback /></xi:include>
   </index>
 </book>

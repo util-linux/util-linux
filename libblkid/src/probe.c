@@ -1674,6 +1674,8 @@ unsigned int blkid_probe_get_sectorsize(blkid_probe pr)
  * Note that blkid_probe_set_device() resets this setting. Use it after
  * blkid_probe_set_device() and before any probing call.
  *
+ * Since: 2.30
+ *
  * Returns: 0 or <0 in case of error
  */
 int blkid_probe_set_sectorsize(blkid_probe pr, unsigned int sz)

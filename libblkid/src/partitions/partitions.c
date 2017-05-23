@@ -891,6 +891,8 @@ int blkid_known_pttype(const char *pttype)
  * @idx: number >= 0
  * @name: returns name of a supported partition
  *
+ * Since: 2.30
+ *
  * Returns: -1 if @idx is out of range, or 0 on success.
  */
 int blkid_partitions_get_name(const size_t idx, const char **name)
