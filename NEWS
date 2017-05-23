@@ -1,6 +1,10 @@
-util-linux 2.30: May 12 2017
+util-linux 2.30-rc2: May 12 2017
 * see Documentation/releases/v2.30-ReleaseNotes or the complete changelog at
-  https://www.kernel.org/pub/linux/utils/util-linux/v2.30/v2.30-ChangeLog
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.30/v2.30-rc2-ChangeLog
+
+util-linux 2.30-rc1: May 12 2017
+* see Documentation/releases/v2.30-ReleaseNotes or the complete changelog at
+  https://www.kernel.org/pub/linux/utils/util-linux/v2.30/v2.30-rc1-ChangeLog
 
 util-linux 2.29: Nov 8 2016
 * see Documentation/releases/v2.29-ReleaseNotes or the complete changelog at
