@@ -1,5 +1,13 @@
 #!/bin/bash
 
+TS_TOPDIR="${0%/*}/../.."
+TS_DESC="count file contents in core"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+
+ts_check_test_command "$TS_HELPER_SYSINFO"
+
 function header
 {
     echo "[" "$1" "]"
@@ -87,11 +95,6 @@ function run_dd_dd_test
     footer "$?"
 }
 
-TS_TOPDIR="${0%/*}/../.."
-TS_DESC="count file contents in core"
-
-. $TS_TOPDIR/functions.sh
-ts_init "$*"
 
 PAGE_SIZE=$($TS_HELPER_SYSINFO pagesize)
 WINDOW_SIZE=$(( 32 * 1024 * PAGE_SIZE ))
