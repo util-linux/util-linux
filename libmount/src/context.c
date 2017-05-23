@@ -487,6 +487,8 @@ int mnt_context_is_rdonly_umount(struct libmnt_context *cxt)
  * Force read-write mount; if enabled libmount will never try MS_RDONLY
  * after failed mount(2) EROFS. (See mount(8) man page, option -w).
  *
+ * Since: 2.30
+ *
  * Returns: 0 on success, negative number in case of error.
  */
 int mnt_context_enable_rwonly_mount(struct libmnt_context *cxt, int enable)
@@ -501,6 +503,8 @@ int mnt_context_enable_rwonly_mount(struct libmnt_context *cxt, int enable)
  * See also mnt_context_enable_rwonly_mount() and mount(8) man page,
  * option -w.
  *
+ * Since: 2.30
+ *
  * Returns: 1 if only read-write mount is allowed.
  */
 int mnt_context_is_rwonly_mount(struct libmnt_context *cxt)
@@ -513,6 +517,8 @@ int mnt_context_is_rwonly_mount(struct libmnt_context *cxt)
  * @cxt: mount context
  *
  * See also mnt_context_enable_rwonly_mount().
+ *
+ * Since: 2.30
  *
  * Returns: 1 if mounted read-only on write-protected device.
  */
@@ -2328,6 +2334,8 @@ int mnt_context_get_generic_excode(int rc, char *buf, size_t bufsz, char *fmt, .
  *
  * The @mntrc is usually return code from mnt_context_mount(),
  * mnt_context_umount(), or 'mntrc' as returned by mnt_context_next_mount().
+ *
+ * Since: 2.30
  *
  * Returns: MNT_EX_* codes.
  */

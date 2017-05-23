@@ -1133,6 +1133,8 @@ int mnt_fs_get_priority(struct libmnt_fs *fs)
  * @fs: /proc/swaps entry
  * @prio: priority
  *
+ * Since: 2.28
+ *
  * Returns: 0 or -1 in case of error
  */
 int mnt_fs_set_priority(struct libmnt_fs *fs, int prio)
