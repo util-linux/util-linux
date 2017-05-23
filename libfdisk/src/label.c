@@ -442,14 +442,14 @@ int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id)
 /**
  * fdisk_get_disklabel_item:
  * @cxt: fdisk context
- * @id: item ID (FDISK_LABELITEM_* or {GPT,MBR,...}_LABELITEM_*)
+ * @id: item ID (FDISK_LABELITEM_* or *_LABELITEM_*)
  * @item: specifies and returns the item
  *
  * Note that @id is always in range 0..N. It's fine to use the function in loop
  * until it returns error or 2, the result in @item should be ignored when
  * function returns 1. Don't forget to use fdisk_reset_labelitem() or fdisk_unref_labelitem().
  *
- * Returns: 0 on success, < 0 on error, 1 on unsupported item, 2 @id out of range
+ * Returns: 0 on success, < 0 on error, 1 on unsupported item, 2 id out of range
  */
 int fdisk_get_disklabel_item(struct fdisk_context *cxt, int id, struct fdisk_labelitem *item)
 {

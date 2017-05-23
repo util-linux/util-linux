@@ -129,6 +129,7 @@ fdisk_script_enable_json
 fdisk_script_get_header
 fdisk_script_get_nlines
 fdisk_script_get_table
+fdisk_script_has_force_label
 fdisk_script_read_context
 fdisk_script_read_file
 fdisk_script_read_line
@@ -294,6 +295,7 @@ fdisk_get_alignment_offset
 fdisk_get_collision
 fdisk_get_devfd
 fdisk_get_devname
+fdisk_get_disklabel_item
 fdisk_get_first_lba
 fdisk_get_geom_cylinders
 fdisk_get_geom_heads
@@ -357,6 +359,12 @@ fdisk_labelitem_get_data_u64
 fdisk_labelitem_get_data_string
 fdisk_labelitem_is_string
 fdisk_labelitem_is_number
+fdisk_labelitem
+fdisk_labelitem_bsd
+fdisk_labelitem_gen
+fdisk_labelitem_gpt
+fdisk_labelitem_sgi
+fdisk_labelitem_sun
 </SECTION>
 
 <SECTION>

@@ -266,7 +266,7 @@ extern int fdisk_field_is_number(const struct fdisk_field *field);
 /* label.c */
 
 /**
- * fdisk_fieldtype
+ * fdisk_fieldtype:
  *
  * Types of fdisk_field. The fields describe a partition.
  */
@@ -316,7 +316,7 @@ extern int fdisk_locate_disklabel(struct fdisk_context *cxt, int n,
 				  size_t *size);
 
 /**
- * fdisk_labelitem_gen
+ * fdisk_labelitem_gen:
  *
  * Generic disklabel items
  */
@@ -527,6 +527,11 @@ extern int fdisk_sun_set_ilfact(struct fdisk_context *cxt);
 extern int fdisk_sun_set_rspeed(struct fdisk_context *cxt);
 extern int fdisk_sun_set_pcylcount(struct fdisk_context *cxt);
 
+/**
+ * fdisk_labelitem_sun:
+ *
+ * SUN specific label items.
+ */
 enum fdisk_labelitem_sun {
 	SUN_LABELITEM_LABELID = __FDISK_NLABELITEMS,
 	SUN_LABELITEM_VTOCID,
@@ -542,6 +547,11 @@ extern int fdisk_bsd_edit_disklabel(struct fdisk_context *cxt);
 extern int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt);
 extern int fdisk_bsd_link_partition(struct fdisk_context *cxt);
 
+/**
+ * fdisk_labelitem_bsd:
+ *
+ * BSD specific label items.
+ */
 enum fdisk_labelitem_bsd {
 	/* specific */
 	BSD_LABELITEM_TYPE = __FDISK_NLABELITEMS,
@@ -566,6 +576,11 @@ enum fdisk_labelitem_bsd {
 extern int fdisk_sgi_set_bootfile(struct fdisk_context *cxt);
 extern int fdisk_sgi_create_info(struct fdisk_context *cxt);
 
+/**
+ * fdisk_labelitem_sgi:
+ *
+ * SGI specific label items.
+ */
 enum fdisk_labelitem_sgi {
 	SGI_LABELITEM_PCYLCOUNT = __FDISK_NLABELITEMS,
 	SGI_LABELITEM_SPARECYL,
@@ -625,6 +640,11 @@ extern int fdisk_gpt_set_npartitions(struct fdisk_context *cxt, uint32_t entries
 extern int fdisk_gpt_get_partition_attrs(struct fdisk_context *cxt, size_t partnum, uint64_t *attrs);
 extern int fdisk_gpt_set_partition_attrs(struct fdisk_context *cxt, size_t partnum, uint64_t attrs);
 
+/**
+ * fdisk_labelitem_gpt:
+ *
+ * GPT specific label items.
+ */
 enum fdisk_labelitem_gpt {
 	/* generic */
 	GPT_LABELITEM_ID = FDISK_LABELITEM_ID,		/* GPT disklabel UUID (!= partition UUID) */

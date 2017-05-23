@@ -358,12 +358,11 @@ int fdisk_script_get_nlines(struct fdisk_script *dp)
  * fdisk_script_has_force_label:
  * @dp: script
  *
- * Note that fdisk_script_set_header(dp, "label", name) does not modify
- * force_label status. The label has to be specified by script.
+ * Label has been explicitly specified in the script.
  *
  * Since: 2.30
  *
- * Returns: true if "label: <name>" has been parsed.
+ * Returns: true if "label: name" has been parsed.
  */
 int fdisk_script_has_force_label(struct fdisk_script *dp)
 {
