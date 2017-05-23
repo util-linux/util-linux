@@ -58,8 +58,8 @@ enum {
 };
 
 static struct colinfo infos[] = {
-	[COL_PAGES]  = { "PAGES",    1, SCOLS_FL_RIGHT, N_("file data residend in memory in pages")},
-	[COL_RES]    = { "RES",      5, SCOLS_FL_RIGHT, N_("file data residend in memory in bytes")}, 
+	[COL_PAGES]  = { "PAGES",    1, SCOLS_FL_RIGHT, N_("file data resident in memory in pages")},
+	[COL_RES]    = { "RES",      5, SCOLS_FL_RIGHT, N_("file data resident in memory in bytes")}, 
 	[COL_SIZE]   = { "SIZE",     5, SCOLS_FL_RIGHT, N_("size of the file")},
 	[COL_FILE]   = { "FILE",     4, 0, N_("file name")},
 };
