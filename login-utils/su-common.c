@@ -389,13 +389,6 @@ create_watching_parent (void)
 
   if (caught_signal)
     {
-      if (child != (pid_t)-1)
-	{
-	  sleep (2);
-	  kill (child, SIGKILL);
-	  fprintf (stderr, _(" ...killed.\n"));
-	}
-
       /* Let's terminate itself with the received signal.
        *
        * It seems that shells use WIFSIGNALED() rather than our exit status
