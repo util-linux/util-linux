@@ -16,9 +16,9 @@ can erase filesystem, raid or partition-table signatures (magic strings) from
 the specified
 .I device
 to make the signatures invisible for libblkid.
-
 .B wipefs
 does not erase the filesystem itself nor any other data from the device.
+
 When used without any options, \fBwipefs\fR lists all visible filesystems
 and the offsets of their basic signatures.
 
@@ -27,14 +27,10 @@ calls the BLKRRPART ioctl when it has erased a partition-table signature
 to inform the kernel about the change.
 
 Note that some filesystems and some partition tables store more magic strings on
-the device.  The
+the device (e.g. FAT, ZFS, GPT).  The
 .B wipefs
-command lists only the first offset where a magic string has been detected.  The device
-is not scanned for additional magic strings for the same filesystem.  It is possible
-that after a \fBwipefs -o \fIoffset\fR the same filesystem or partition
-table will still be visible because of another magic string on another offset. The
-option \fB\-\-no\-act\fR is also affected by this behavior and only the first
-magic string for the filesystem is reported.
+command (since v2.31) lists all the offset where a magic strings have been
+detected.
 
 When option \fB-a\fR is used, all magic strings that are visible for libblkid are
 erased. In this case the

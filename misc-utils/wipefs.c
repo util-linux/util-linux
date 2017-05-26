@@ -281,6 +281,10 @@ read_offsets(struct wipe_desc *wp, const char *devname)
 		wp = get_desc_for_probe(wp, pr);
 		if (!wp)
 			break;
+
+		/* hide last detected signature and scan again */
+		blkid_probe_hide_range(pr, wp->offset, wp->len);
+		blkid_probe_step_back(pr);
 	}
 
 	blkid_free_probe(pr);
