@@ -54,7 +54,9 @@ blkid_probe_get_sectors
 blkid_probe_get_sectorsize
 blkid_probe_get_size
 blkid_probe_get_wholedisk_devno
+blkid_probe_hide_range
 blkid_probe_is_wholedisk
+blkid_probe_reset_buffers
 blkid_probe_set_device
 blkid_probe_set_sectorsize
 blkid_probe_step_back

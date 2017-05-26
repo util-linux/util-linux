@@ -169,3 +169,8 @@ BLKID_2.30 {
 	blkid_probe_set_sectorsize;
 	blkid_partitions_get_name;
 } BLKID_2.25;
+
+BLKID_2_31 {
+	blkid_probe_reset_buffers;
+	blkid_probe_hide_range;
+} BLKID_2.30;

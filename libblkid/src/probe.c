@@ -125,7 +125,6 @@ static const struct blkid_chaindrv *chains_drvs[] = {
 };
 
 static void blkid_probe_reset_values(blkid_probe pr);
-static void blkid_probe_reset_buffer(blkid_probe pr);
 
 /**
  * blkid_new_probe:
@@ -252,7 +251,7 @@ void blkid_free_probe(blkid_probe pr)
 
 	if ((pr->flags & BLKID_FL_PRIVATE_FD) && pr->fd >= 0)
 		close(pr->fd);
-	blkid_probe_reset_buffer(pr);
+	blkid_probe_reset_buffers(pr);
 	blkid_probe_reset_values(pr);
 	blkid_free_probe(pr->disk_probe);
 
@@ -585,12 +584,67 @@ static struct blkid_bufinfo *read_buffer(blkid_probe pr, uint64_t real_off, uint
 }
 
 /*
+ * Search in buffers we already in memory
+ */
+static struct blkid_bufinfo *get_cached_buffer(blkid_probe pr, uint64_t off, uint64_t len)
+{
+	uint64_t real_off = pr->off + off;
+	struct list_head *p;
+
+	list_for_each(p, &pr->buffers) {
+		struct blkid_bufinfo *x =
+				list_entry(p, struct blkid_bufinfo, bufs);
+
+		if (real_off >= x->off && real_off + len <= x->off + x->len) {
+			DBG(BUFFER, ul_debug("\treuse %p: off=%"PRIu64" len=%"PRIu64" (for off=%"PRIu64" len=%"PRIu64")",
+						x->data, x->off, x->len, real_off, len));
+			return x;
+		}
+	}
+	return NULL;
+}
+
+/*
+ * Zeroize in-memory data in already read buffer. The next blkid_probe_get_buffer()
+ * will return modified buffer. This is usable when you want to call the same probing
+ * function more than once and hide previously detected magic strings.
+ *
+ * See blkid_probe_hide_range().
+ */
+static int hide_buffer(blkid_probe pr, uint64_t off, uint64_t len)
+{
+	uint64_t real_off = pr->off + off;
+	struct list_head *p;
+	int ct = 0;
+
+	list_for_each(p, &pr->buffers) {
+		struct blkid_bufinfo *x =
+			list_entry(p, struct blkid_bufinfo, bufs);
+		unsigned char *data;
+
+		if (real_off >= x->off && real_off + len <= x->off + x->len) {
+
+			assert(x->off <= real_off);
+			assert(x->off + x->len >= real_off + len);
+
+			data = real_off ? x->data + (real_off - x->off) : x->data;
+
+			DBG(BUFFER, ul_debug("\thidding %p: off=%"PRIu64" len=%"PRIu64,
+						x->data, off, len));
+			memset(data, 0, len);
+			ct++;
+		}
+	}
+	return ct == 0 ? -EINVAL : 0;
+}
+
+
+/*
  * Note that @off is offset within probing area, the probing area is defined by
  * pr->off and pr->size.
  */
 unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len)
 {
-	struct list_head *p;
 	struct blkid_bufinfo *bf = NULL;
 	uint64_t real_off = pr->off + off;
 
@@ -625,20 +679,8 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len
 				pr->off + off - pr->parent->off, len);
 	}
 
-	/* try buffers we already have in memory */
-	list_for_each(p, &pr->buffers) {
-		struct blkid_bufinfo *x =
-				list_entry(p, struct blkid_bufinfo, bufs);
-
-		if (real_off >= x->off && real_off + len <= x->off + x->len) {
-			DBG(BUFFER, ul_debug("\treuse %p: off=%"PRIu64" len=%"PRIu64" (for off=%"PRIu64" len=%"PRIu64")",
-						x->data, x->off, x->len, real_off, len));
-			bf = x;
-			break;
-		}
-	}
-
-	/* not found; read from disk */
+	/* try buffers we already have in memory or read from device */
+	bf = get_cached_buffer(pr, off, len);
 	if (!bf) {
 		bf = read_buffer(pr, real_off, len);
 		if (!bf)
@@ -654,12 +696,25 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr, uint64_t off, uint64_t len
 	return real_off ? bf->data + (real_off - bf->off) : bf->data;
 }
 
-static void blkid_probe_reset_buffer(blkid_probe pr)
+/**
+ * blkid_probe_reset_buffers:
+ * @pr: prober
+ *
+ * libblkid reuse all already read buffers from the device. The bufferes may be
+ * modified by blkid_probe_hide_range(). This function reset and free all
+ * cached bufferes. The next blkid_do_probe() will read all data from the
+ * device.
+ *
+ * Returns: <0 in case of failure, or 0 on success.
+ */
+int blkid_probe_reset_buffers(blkid_probe pr)
 {
 	uint64_t ct = 0, len = 0;
 
+	pr->flags &= ~BLKID_FL_MODIF_BUFF;
+
 	if (list_empty(&pr->buffers))
-		return;
+		return 0;
 
 	DBG(BUFFER, ul_debug("Resetting probing buffers pr=%p", pr));
 
@@ -679,6 +734,34 @@ static void blkid_probe_reset_buffer(blkid_probe pr)
 			len, ct));
 
 	INIT_LIST_HEAD(&pr->buffers);
+
+	return 0;
+}
+
+/**
+ * blkid_probe_hide_range:
+ * @pr: prober
+ * @off: start of the range
+ * @len: size of the range
+ *
+ * This function modifies in-memory cached data from the device. The specified
+ * range is zeroized. This is usable together with blkid_probe_step_back().
+ * The next blkid_do_probe() will not see specified area.
+ *
+ * Note that this is usable for already (by library) read data, and this
+ * function is not a way how to hide any large areas on your device.
+ *
+ * The function blkid_probe_reset_buffers() reverts all.
+ *
+ * Returns: <0 in case of failure, or 0 on success.
+ */
+int blkid_probe_hide_range(blkid_probe pr, uint64_t off, uint64_t len)
+{
+	int rc = hide_buffer(pr, off, len);
+
+	if (rc == 0)
+		pr->flags |= BLKID_FL_MODIF_BUFF;
+	return rc;
 }
 
 static void blkid_probe_reset_values(blkid_probe pr)
@@ -781,7 +864,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	uint64_t devsiz = 0;
 
 	blkid_reset_probe(pr);
-	blkid_probe_reset_buffer(pr);
+	blkid_probe_reset_buffers(pr);
 
 	if ((pr->flags & BLKID_FL_PRIVATE_FD) && pr->fd >= 0)
 		close(pr->fd);
@@ -892,7 +975,7 @@ int blkid_probe_set_dimension(blkid_probe pr, uint64_t off, uint64_t size)
 	if (pr->size <= 1440ULL * 1024ULL && !S_ISCHR(pr->mode))
 		pr->flags |= BLKID_FL_TINY_DEV;
 
-	blkid_probe_reset_buffer(pr);
+	blkid_probe_reset_buffers(pr);
 
 	return 0;
 }
@@ -1063,7 +1146,8 @@ int blkid_do_probe(blkid_probe pr)
  *
  * After successful signature removing the @pr prober will be moved one step
  * back and the next blkid_do_probe() call will again call previously called
- * probing function.
+ * probing function. All in-memory cached data from the device are always
+ * reseted.
  *
  *  <example>
  *  <title>wipe all filesystems or raids from the device</title>
@@ -1088,7 +1172,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 {
 	const char *off = NULL;
 	size_t len = 0;
-	uint64_t offset, l;
+	uint64_t offset, magoff, l;
 	char buf[BUFSIZ];
 	int fd, rc = 0;
 	struct blkid_chain *chn;
@@ -1115,7 +1199,8 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	if (rc || len == 0 || off == NULL)
 		return 0;
 
-	offset = strtoumax(off, NULL, 10) + pr->off;
+	magoff = strtoumax(off, NULL, 10);
+	offset = magoff + pr->off;
 	fd = blkid_probe_get_fd(pr);
 	if (fd < 0)
 		return -1;
@@ -1134,9 +1219,17 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	memset(buf, 0, len);
 
 	if (!dryrun && len) {
+		/* wipen on device */
 		if (write_all(fd, buf, len))
 			return -1;
 		fsync(fd);
+		pr->flags &= ~BLKID_FL_MODIF_BUFF;	/* be paranoid */
+
+		return blkid_probe_step_back(pr);
+
+	} else if (dryrun) {
+		/* wipe in memory only */
+		blkid_probe_hide_range(pr, magoff, len);
 		return blkid_probe_step_back(pr);
 	}
 
@@ -1153,6 +1246,10 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
  *
  * This is necessary for example if you erase or modify on-disk superblock
  * according to the current libblkid probing result.
+ *
+ * Note that blkid_probe_hide_range() changes semantic of this function and
+ * cached bufferes are not reseted, but library uses in-memory modified
+ * buffers to call the next probing function.
  *
  * <example>
  *  <title>wipe all superblock, but use libblkid only for probing</title>
@@ -1200,7 +1297,8 @@ int blkid_probe_step_back(blkid_probe pr)
 	if (!chn)
 		return -1;
 
-	blkid_probe_reset_buffer(pr);
+	if (!(pr->flags & BLKID_FL_MODIF_BUFF))
+		blkid_probe_reset_buffers(pr);
 
 	if (chn->idx >= 0) {
 		chn->idx--;
