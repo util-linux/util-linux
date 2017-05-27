@@ -539,7 +539,7 @@ static void reset_context(struct fdisk_context *cxt)
 int fdisk_assign_device(struct fdisk_context *cxt,
 			const char *fname, int readonly)
 {
-	int fd, rc = 0;
+	int fd;
 
 	DBG(CXT, ul_debugobj(cxt, "assigning device %s", fname));
 	assert(cxt);
@@ -600,11 +600,13 @@ int fdisk_assign_device(struct fdisk_context *cxt,
 			      fname, readonly ? "READ-ONLY" : "READ-WRITE"));
 	return 0;
 fail:
-	rc = -errno;
-	if (fd >= 0)
-		close(fd);
-	DBG(CXT, ul_debugobj(cxt, "failed to assign device"));
-	return rc;
+	{
+		int rc = -errno;
+		if (fd >= 0)
+			close(fd);
+		DBG(CXT, ul_debugobj(cxt, "failed to assign device [rc=%d]", rc));
+		return rc;
+	}
 }
 
 /**
