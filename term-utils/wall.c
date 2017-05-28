@@ -309,7 +309,7 @@ static void buf_printf(struct buffer *bs, const char *fmt, ...)
 		buf_enlarge(bs, (size_t)rc + 1);
 		limit = bs->sz - bs->used;
 		va_start(ap, fmt);
-		rc = vsnprintf(bs->data  + bs->used, limit, fmt, ap);;
+		rc = vsnprintf(bs->data  + bs->used, limit, fmt, ap);
 		va_end(ap);
 	}
 

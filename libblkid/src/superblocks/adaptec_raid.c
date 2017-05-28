@@ -91,7 +91,7 @@ static int probe_adraid(blkid_probe pr,
 					off,
 					sizeof(struct adaptec_metadata));
 	if (!ad)
-		return errno ? -errno : BLKID_PROBE_NONE;;
+		return errno ? -errno : BLKID_PROBE_NONE;
 
 	if (ad->smagic != be32_to_cpu(AD_SIGNATURE))
 		return BLKID_PROBE_NONE;

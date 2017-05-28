@@ -304,7 +304,7 @@ size_t scols_wrapnl_chunksize(const struct libscols_column *cl __attribute__((un
 			sz = mbs_safe_width(data);
 
 		sum = max(sum, sz);
-		data = p;;
+		data = p;
 	}
 
 	return sum;

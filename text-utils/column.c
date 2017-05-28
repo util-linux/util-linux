@@ -485,7 +485,7 @@ static void columnate_fillrows(struct column_control *ctl)
 	ctl->maxlength = (ctl->maxlength + TABCHAR_CELLS) & ~(TABCHAR_CELLS - 1);
 	numcols = ctl->termwidth / ctl->maxlength;
 	endcol = ctl->maxlength;
-	for (chcnt = col = 0, lp = ctl->ents;; ++lp) {
+	for (chcnt = col = 0, lp = ctl->ents; /* nothing */; ++lp) {
 		fputws(*lp, stdout);
 		chcnt += width(*lp);
 		if (!--ctl->nents)

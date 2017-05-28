@@ -308,7 +308,7 @@ int main(int argc, char *argv[])
 	int status;
 	unsigned long propagation = UNSHARE_PROPAGATION_DEFAULT;
 	uid_t real_euid = geteuid();
-	gid_t real_egid = getegid();;
+	gid_t real_egid = getegid();
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);

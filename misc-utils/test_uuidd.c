@@ -143,7 +143,7 @@ static void *create_uuids(thread_t *th)
 		object_uuid_create(obj);
 		obj->tid = th->tid;
 		obj->pid = th->proc->pid;
-		obj->idx = th->index + i;;
+		obj->idx = th->index + i;
 	}
 	return NULL;
 }
