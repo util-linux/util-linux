@@ -489,9 +489,9 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 static char *canonicalize_path_and_cache(const char *path,
 						struct libmnt_cache *cache)
 {
-	char *p = NULL;
-	char *key = NULL;
-	char *value = NULL;
+	char *p;
+	char *key;
+	char *value;
 
 	DBG(CACHE, ul_debugobj(cache, "canonicalize path %s", path));
 	p = canonicalize_path(path);

@@ -225,7 +225,7 @@ static char *scandev_devno_to_devpath(dev_t devno)
  */
 char *blkid_devno_to_devname(dev_t devno)
 {
-	char *path = NULL;
+	char *path;
 	char buf[PATH_MAX];
 
 	path = sysfs_devno_to_devpath(devno, buf, sizeof(buf));

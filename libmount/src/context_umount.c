@@ -485,7 +485,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	 */
 	if (u_flags & (MNT_MS_USER | MNT_MS_OWNER | MNT_MS_GROUP)) {
 
-		char *curr_user = NULL;
+		char *curr_user;
 		char *mtab_user = NULL;
 		size_t sz;
 

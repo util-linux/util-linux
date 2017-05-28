@@ -293,7 +293,7 @@ size_t scols_wrapnl_chunksize(const struct libscols_column *cl __attribute__((un
 	size_t sum = 0;
 
 	while (data && *data) {
-		const char *p = data;
+		const char *p;
 		size_t sz;
 
 		p = strchr(data, '\n');

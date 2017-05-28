@@ -472,7 +472,7 @@ static int verify_filesystem(struct verify_context *vfy)
 int verify_table(struct libmnt_table *tb)
 {
 	struct verify_context vfy = { .nerrors = 0 };
-	struct libmnt_iter *itr = NULL;
+	struct libmnt_iter *itr;
 	int rc = 0;		/* overall return code (alloc errors, etc.) */
 	int check_order = is_listall_mode();
 	static int has_read_fs = 0;

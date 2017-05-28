@@ -382,7 +382,7 @@ insert_value(char **str, char *pos, const char *substr, char **next)
 	size_t strsz = strlen(*str);
 	size_t possz = strlen(pos);
 	size_t posoff;
-	char *p = NULL;
+	char *p;
 	int sep;
 
 	/* is it necessary to prepend '=' before the substring ? */

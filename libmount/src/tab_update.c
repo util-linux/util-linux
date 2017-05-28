@@ -291,7 +291,7 @@ static int utab_new_entry(struct libmnt_update *upd, struct libmnt_fs *fs,
 			  unsigned long mountflags)
 {
 	int rc = 0;
-	const char *o = NULL, *a = NULL;
+	const char *o, *a;
 	char *u = NULL;
 
 	assert(fs);

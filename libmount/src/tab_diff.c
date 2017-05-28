@@ -305,8 +305,8 @@ done:
 
 static int test_diff(struct libmnt_test *ts, int argc, char *argv[])
 {
-	struct libmnt_table *tb_old = NULL, *tb_new = NULL;
-	struct libmnt_tabdiff *diff = NULL;
+	struct libmnt_table *tb_old, *tb_new;
+	struct libmnt_tabdiff *diff;
 	struct libmnt_iter *itr;
 	struct libmnt_fs *old, *new;
 	int rc = -1, change;

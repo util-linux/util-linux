@@ -1965,7 +1965,7 @@ static int apply_table(struct libmnt_context *cxt, struct libmnt_table *tb,
 		     int direction)
 {
 	struct libmnt_fs *fs = NULL;
-	const char *src = NULL, *tgt = NULL;
+	const char *src, *tgt;
 	int rc;
 
 	assert(cxt);

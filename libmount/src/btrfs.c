@@ -101,7 +101,7 @@ uint64_t btrfs_get_default_subvol_id(const char *path)
 {
 	int iocret;
 	int fd;
-	DIR *dirstream = NULL;
+	DIR *dirstream;
 	struct btrfs_ioctl_search_args args;
 	struct btrfs_ioctl_search_key *sk = &args.key;
 	struct btrfs_ioctl_search_header *sh;

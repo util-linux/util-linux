@@ -113,7 +113,7 @@ static int printf_loopdev(struct loopdev_cxt *lc)
 	uint64_t x;
 	dev_t dev = 0;
 	ino_t ino = 0;
-	char *fname = NULL;
+	char *fname;
 	uint32_t type;
 
 	fname = loopcxt_get_backing_file(lc);

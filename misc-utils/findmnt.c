@@ -873,7 +873,7 @@ static void cache_set_targets(struct libmnt_cache *tmp)
 static int tab_is_tree(struct libmnt_table *tb)
 {
 	struct libmnt_fs *fs = NULL;
-	struct libmnt_iter *itr = NULL;
+	struct libmnt_iter *itr;
 	int rc = 0;
 
 	itr = mnt_new_iter(MNT_ITER_BACKWARD);
@@ -892,7 +892,7 @@ static int tab_is_tree(struct libmnt_table *tb)
 static int tab_is_kernel(struct libmnt_table *tb)
 {
 	struct libmnt_fs *fs = NULL;
-	struct libmnt_iter *itr = NULL;
+	struct libmnt_iter *itr;
 
 	itr = mnt_new_iter(MNT_ITER_BACKWARD);
 	if (!itr)
@@ -1008,7 +1008,7 @@ again:
 static int add_matching_lines(struct libmnt_table *tb,
 			      struct libscols_table *table, int direction)
 {
-	struct libmnt_iter *itr = NULL;
+	struct libmnt_iter *itr;
 	struct libmnt_fs *fs;
 	int nlines = 0, rc = -1;
 
@@ -1068,7 +1068,7 @@ static int poll_table(struct libmnt_table *tb, const char *tabfile,
 	FILE *f = NULL;
 	int rc = -1;
 	struct libmnt_iter *itr = NULL;
-	struct libmnt_table *tb_new = NULL;
+	struct libmnt_table *tb_new;
 	struct libmnt_tabdiff *diff = NULL;
 	struct pollfd fds[1];
 

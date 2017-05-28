@@ -501,7 +501,7 @@ static void swap_get_info(struct swap_device *dev, const char *hdr)
 static int swapon_checks(const struct swapon_ctl *ctl, struct swap_device *dev)
 {
 	struct stat st;
-	int fd = -1, sig;
+	int fd, sig;
 	char *hdr = NULL;
 	unsigned long long devsize = 0;
 	int permMask;

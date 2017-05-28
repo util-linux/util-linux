@@ -206,7 +206,7 @@ blkid_probe blkid_clone_probe(blkid_probe parent)
  */
 blkid_probe blkid_new_probe_from_filename(const char *filename)
 {
-	int fd = -1;
+	int fd;
 	blkid_probe pr = NULL;
 
 	fd = open(filename, O_RDONLY|O_CLOEXEC);

@@ -323,7 +323,7 @@ static char *table_to_string(struct cfdisk *cf, struct fdisk_table *tb)
 {
 	struct fdisk_partition *pa;
 	struct fdisk_label *lb;
-	struct fdisk_iter *itr = NULL;
+	struct fdisk_iter *itr;
 	struct libscols_table *table = NULL;
 	struct libscols_iter *s_itr = NULL;
 	char *res = NULL;

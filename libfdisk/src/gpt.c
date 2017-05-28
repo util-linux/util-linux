@@ -1925,7 +1925,7 @@ fail:
 static int gpt_write_pmbr(struct fdisk_context *cxt)
 {
 	off_t offset;
-	struct gpt_legacy_mbr *pmbr = NULL;
+	struct gpt_legacy_mbr *pmbr;
 
 	assert(cxt);
 	assert(cxt->firstsector);

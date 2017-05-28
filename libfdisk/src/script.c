@@ -1528,7 +1528,7 @@ static int test_apply(struct fdisk_test *ts, int argc, char *argv[])
 {
 	char *devname = argv[1], *scriptname = argv[2];
 	struct fdisk_context *cxt;
-	struct fdisk_script *dp = NULL;
+	struct fdisk_script *dp;
 	struct fdisk_table *tb = NULL;
 	struct fdisk_iter *itr = NULL;
 	struct fdisk_partition *pa = NULL;
