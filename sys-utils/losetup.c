@@ -225,7 +225,7 @@ static int set_scols_data(struct loopdev_cxt *lc, struct libscols_line *ln)
 		const char *p = NULL;			/* external data */
 		char *np = NULL;			/* allocated here */
 		uint64_t x = 0;
-		int rc;
+		int rc = 0;
 
 		switch(get_column_id(i)) {
 		case COL_NAME:
