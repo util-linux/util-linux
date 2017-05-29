@@ -129,7 +129,7 @@ static wchar_t *mbs_to_wcs(const char *s)
 	}
 	return wcs;
 #else
-	return xstrdup(s)
+	return xstrdup(s);
 #endif
 }
 
@@ -150,7 +150,7 @@ static char *wcs_to_mbs(const wchar_t *s)
 	}
 	return str;
 #else
-	return xstrdup(s)
+	return xstrdup(s);
 #endif
 }
 
