@@ -26,7 +26,6 @@ extern char **environ;
 #endif
 
 static char * const forbid[] = {
-        "_RLD_=",
         "BASH_ENV=",    /* GNU creeping featurism strikes again... */
         "ENV=",
         "HOME=",
