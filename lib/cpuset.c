@@ -29,23 +29,21 @@ static inline int val_to_char(int v)
 {
 	if (v >= 0 && v < 10)
 		return '0' + v;
-	else if (v >= 10 && v < 16)
+	if (v >= 10 && v < 16)
 		return ('a' - 10) + v;
-	else
-		return -1;
+	return -1;
 }
 
 static inline int char_to_val(int c)
 {
 	int cl;
 
-	cl = tolower(c);
 	if (c >= '0' && c <= '9')
 		return c - '0';
-	else if (cl >= 'a' && cl <= 'f')
+	cl = tolower(c);
+	if (cl >= 'a' && cl <= 'f')
 		return cl + (10 - 'a');
-	else
-		return -1;
+	return -1;
 }
 
 static const char *nexttoken(const char *q,  int sep)
