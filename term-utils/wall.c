@@ -147,6 +147,9 @@ static int is_gr_member(const char *login, const struct group_workspace *buf)
 	int rc;
 
 	pw = getpwnam(login);
+	if (!pw)
+		return 0;
+
 	if (buf->requested_group == pw->pw_gid)
 		return 1;
 
