@@ -22,6 +22,9 @@ ts_check_test_command "$TS_CMD_FLOCK"
 ts_check_prog "ps"
 ts_check_prog "timeout"
 
+if ! ps --ppid $$ &>/dev/null; then
+	ts_skip "no ps --ppid"
+fi
 
 function do_lock {
 	local opts="$1"
