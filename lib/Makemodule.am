@@ -50,9 +50,19 @@ libcommon_la_SOURCES += lib/sysfs.c
 endif
 
 noinst_LTLIBRARIES += libtcolors.la
-libtcolors_la_CFLAGS = $(AM_CFLAGS) $(TINFO_CFLAGS)
-libtcolors_la_LIBADD = $(TINFO_LIBS)
+libtcolors_la_CFLAGS = $(AM_CFLAGS)
 libtcolors_la_SOURCES = lib/colors.c lib/color-names.c include/colors.h include/color-names.h
+libtcolors_la_LIBADD =
+# tinfo or ncurses are optional
+if HAVE_TINFO
+libtcolors_la_LIBADD += $(TINFO_LIBS)
+libtcolors_la_CFLAGS += $(TINFO_CFLAGS)
+else
+if HAVE_NCURSES
+libtcolors_la_LIBADD += $(NCURSES_LIBS)
+libtcolors_la_CFLAGS += $(NCURSES_CFLAGS)
+endif
+endif # !HAVE_TINFO
 
 dist_man_MANS += lib/terminal-colors.d.5
 
