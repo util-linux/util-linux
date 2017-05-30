@@ -32,7 +32,6 @@
 #include <sys/mman.h>
 #include <inttypes.h>
 #include <dirent.h>
-#include <linux/posix_types.h>
 
 #include "linux_version.h"
 #include "c.h"
