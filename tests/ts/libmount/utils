@@ -53,12 +53,20 @@ ts_valgrind $TESTPROG --ends-with "AAAbbbCCC" "CCC" &> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "mountpoint"
-ts_valgrind $TESTPROG --mountpoint /proc &> $TS_OUTPUT
-ts_finalize_subtest
+if [ -d /proc ]; then
+	ts_valgrind $TESTPROG --mountpoint /proc &> $TS_OUTPUT
+	ts_finalize_subtest
+else
+	ts_skip_subtest "no /proc"
+fi
 
 ts_init_subtest "mountpoint-subdir"
-ts_valgrind $TESTPROG --mountpoint /proc/sys/kernel &> $TS_OUTPUT
-ts_finalize_subtest
+if [ -d /proc/sys/kernel ]; then
+	ts_valgrind $TESTPROG --mountpoint /proc/sys/kernel &> $TS_OUTPUT
+	ts_finalize_subtest
+else
+	ts_skip_subtest "no /proc"
+fi
 
 ts_init_subtest "mountpoint-root"
 ts_valgrind $TESTPROG --mountpoint / &> $TS_OUTPUT
