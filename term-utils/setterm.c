@@ -60,16 +60,13 @@
 #include <termios.h>
 #include <unistd.h>
 
-#ifndef NCURSES_CONST
-# define NCURSES_CONST const	/* define before including term.h */
+#ifdef HAVE_TERM_H
+# include <term.h>
+#elif defined(HAVE_NCURSES_TERM_H)
+# include <ncurses/term.h>
+#elif defined(HAVE_NCURSESW_TERM_H)
+# include <ncursesw/term.h>
 #endif
-#ifdef HAVE_NCURSES_H
-# include <ncurses.h>
-#elif defined(HAVE_NCURSES_NCURSES_H)
-# include <ncurses/ncurses.h>
-#endif
-/* must include after ncurses.h */
-#include <term.h>
 
 #ifdef HAVE_LINUX_TIOCL_H
 # include <linux/tiocl.h>

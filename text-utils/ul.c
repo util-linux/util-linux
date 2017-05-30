@@ -43,12 +43,19 @@
 #include <stdio.h>
 #include <unistd.h>		/* for getopt(), isatty() */
 #include <string.h>		/* for memset(), strcpy() */
-#include <term.h>		/* for setupterm() */
 #include <stdlib.h>		/* for getenv() */
 #include <limits.h>		/* for INT_MAX */
 #include <signal.h>		/* for signal() */
 #include <errno.h>
 #include <getopt.h>
+
+#ifdef HAVE_TERM_H
+# include <term.h>
+#elif defined(HAVE_NCURSES_TERM_H)
+# include <ncurses/term.h>
+#elif defined(HAVE_NCURSESW_TERM_H)
+# include <ncursesw/term.h>
+#endif
 
 #include "nls.h"
 #include "xalloc.h"
