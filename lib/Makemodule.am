@@ -113,8 +113,8 @@ test_strutils_SOURCES = lib/strutils.c
 test_strutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_STRUTILS
 
 test_colors_SOURCES = lib/colors.c lib/color-names.c
-test_colors_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_COLORS $(TINFO_CFLAGS)
-test_colors_LDADD = $(LDADD) $(TINFO_LIBS)
+test_colors_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_COLORS
+test_colors_LDADD = $(LDADD) libtcolors.la
 
 test_randutils_SOURCES = lib/randutils.c
 test_randutils_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_RANDUTILS
