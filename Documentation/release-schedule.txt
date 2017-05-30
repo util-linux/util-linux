@@ -39,4 +39,4 @@ For all releases it is required that:
 See also
 --------
 
-Documentation/source-code-management.txt
+../README

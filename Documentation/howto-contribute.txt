@@ -5,17 +5,16 @@ CONTENTS
  Coding Style
  Various Notes
  Standards Compliance
- IRC Channel
 
 Sending Patches
 
-	* send your patches to the mailing list or to the project maintainer.
+	* send your patches to the mailing list.
 	  See ../README.
 
 	* email is accepted as an inline patch with, or without, a git pull
 	  request. Pull request emails need to include the patch set for review
-	  purposes. See howto-pull-request.txt and source-code-management.txt
-	  for git repository instructions.
+	  purposes. See howto-pull-request.txt and ../README for git repository
+	  instructions.
 
 	* email attachments are difficult to review and not recommended.
 	  Hint: use git send-email.
@@ -64,7 +63,7 @@ Patching Process
 	  Hint: use the --subject-prefix='PATCH v2' option with 'git format-patch'
 
 	* using a git repository for (re)submissions can make life easier.
-	  See howto-pull-request.txt and source-code-management.txt.
+	  See howto-pull-request.txt and ../README.
 
 	* all patch submissions are either commented, rejected, or accepted.
 	  If the maintainer rejects a patch set it is pointless to resubmit it.
@@ -190,12 +189,3 @@ Standards Compliance
 
 		http://pubs.opengroup.org/onlinepubs/7908799/xcuix.html
 
-IRC Channel
-
-	* #util-linux at freenode.net:
-
-	  irc://chat.freenode.net/util-linux
-
-	  This channel is for developers and project maintainers. For end users
-	  it is recommended to utilize the distribution's IRC channel or support
-	  forum.
