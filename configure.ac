@@ -793,12 +793,18 @@ AC_ARG_WITH([ncursesw],
   [], [with_ncursesw=auto]
 )
 have_ncursesw=no
+have_ncursesw_header=no
 AS_IF([test "x$with_ncursesw" != xno], [
   UL_NCURSES_CHECK([ncursesw])
   AS_IF([test "x$have_ncursesw" = xyes], [
-    AC_DEFINE([HAVE_LIBNCURSESW], [1], [Define if ncursesw library available])
+    AC_CHECK_HEADERS([ncursesw/ncurses.h ncurses.h],
+		     [have_ncursesw_header=yes])
+    AC_CHECK_HEADERS([ncursesw/term.h term.h])
+    AS_IF([test "x$have_ncursesw_header" = xno], [have_ncursesw=no])
+  ])
+  AS_IF([test "x$have_ncursesw" = xyes], [
     CURSES_LIB_NAME="ncursesw"
-    AC_CHECK_HEADERS([ncursesw/ncurses.h ncurses.h])
+    AC_DEFINE([HAVE_LIBNCURSESW], [1], [Define if ncursesw library available])
   ])
 ])
 AS_CASE([$with_ncursesw:$have_ncursesw],
@@ -811,16 +817,21 @@ AC_ARG_WITH([ncurses],
   [], [with_ncurses=auto]
 )
 have_ncurses=no
-
+have_ncurses_header=no
 AS_CASE([$with_ncurses:$build_widechar],
   [yes:yes], [AC_MSG_ERROR([wide-char support enabled, but non-wide ncurses selects])])
 
 AS_IF([test "x$have_ncursesw" = xno -a "x$with_ncurses" != xno ], [
   UL_NCURSES_CHECK([ncurses])
   AS_IF([test "x$have_ncurses" = xyes], [
-    AC_DEFINE([HAVE_LIBNCURSES], [1], [Define if ncurses library available])
+    AC_CHECK_HEADERS([ncurses/ncurses.h ncurses.h],
+		     [have_ncurses_header=yes])
+    AC_CHECK_HEADERS([ncurses/term.h term.h])
+    AS_IF([test "x$have_ncurses_header" = xno], [have_ncurses=no])
+  ])
+  AS_IF([test "x$have_ncurses" = xyes], [
     CURSES_LIB_NAME="ncurses"
-    AC_CHECK_HEADERS([ncurses/ncurses.h ncurses.h])
+    AC_DEFINE([HAVE_LIBNCURSES], [1], [Define if ncurses library available])
   ])
 ])
 AS_CASE([$with_ncurses:$have_ncurses],
@@ -1868,7 +1879,7 @@ AC_ARG_ENABLE([ul],
   [], [UL_DEFAULT_ENABLE([ul], [check])]
 )
 UL_BUILD_INIT([ul])
-UL_REQUIRES_HAVE([ul], [ncursesw, tinfo, ncurses], [ncursesw, ncurses or tinfo libraries])
+UL_REQUIRES_HAVE([ul], [ncursesw, ncurses], [ncursesw or ncurses libraries])
 AM_CONDITIONAL([BUILD_UL], [test "x$build_ul" = xyes])
 
 
@@ -1877,7 +1888,7 @@ AC_ARG_ENABLE([more],
   [], [UL_DEFAULT_ENABLE([more], [check])]
 )
 UL_BUILD_INIT([more])
-UL_REQUIRES_HAVE([more], [ncursesw, tinfo, ncurses, termcap], [ncursesw, ncurses, tinfo or termcap libraries])
+UL_REQUIRES_HAVE([more], [ncursesw, ncurses], [ncursesw or ncurses libraries])
 AM_CONDITIONAL([BUILD_MORE], [test "x$build_more" = xyes])
 
 
