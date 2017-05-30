@@ -2,8 +2,18 @@ if BUILD_CAL
 usrbin_exec_PROGRAMS += cal
 dist_man_MANS += misc-utils/cal.1
 cal_SOURCES = misc-utils/cal.c
-cal_CFLAGS = $(AM_CFLAGS) $(NCURSES_CFLAGS)
-cal_LDADD = $(LDADD) libcommon.la libtcolors.la $(NCURSES_LIBS)
+cal_CFLAGS = $(AM_CFLAGS)
+cal_LDADD = $(LDADD) libcommon.la libtcolors.la
+# tinfo or ncurses are optional
+if HAVE_TINFO
+cal_LDADD += $(TINFO_LIBS)
+cal_CFLAGS += $(TINFO_CFLAGS)
+else
+if HAVE_NCURSES
+cal_LDADD += $(NCURSES_LIBS)
+cal_CFLAGS += $(NCURSES_CFLAGS)
+endif
+endif # !HAVE_TINFO
 endif # BUILD_CAL
 
 

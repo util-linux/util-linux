@@ -80,12 +80,13 @@ static int has_term = 0;
 static const char *Senter = "", *Sexit = "";	/* enter and exit standout mode */
 
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
-# ifdef HAVE_NCURSES_H
-#  include <ncurses.h>
-# elif defined(HAVE_NCURSES_NCURSES_H)
-#  include <ncurses/ncurses.h>
+# ifdef HAVE_TERM_H
+#  include <term.h>
+# elif defined(HAVE_NCURSES_TERM_H)
+#  include <ncurses/term.h>
+# elif defined(HAVE_NCURSESW_TERM_H)
+#  include <ncursesw/term.h>
 # endif
-# include <term.h>
 #endif
 
 static int setup_terminal(char *term
@@ -97,7 +98,7 @@ static int setup_terminal(char *term
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
 	int ret;
 
-	if (setupterm(term, STDOUT_FILENO, &ret) != OK || ret != 1)
+	if (setupterm(term, STDOUT_FILENO, &ret) != 0 || ret != 1)
 		return -1;
 #endif
 	return 0;
@@ -114,7 +115,7 @@ static void my_putstring(char *s)
 }
 
 static const char *my_tgetstr(char *ss
-	#if !defined(HAVE_LIBNCURSES) && !defined(HAVE_LIBNCURSESW)
+#if !defined(HAVE_LIBNCURSES) && !defined(HAVE_LIBNCURSESW)
 			__attribute__((__unused__))
 #endif
 		)
