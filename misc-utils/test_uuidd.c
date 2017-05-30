@@ -23,7 +23,6 @@
  *
  *	make uuidd uuidgen localstatedir=/var
  */
-#include <error.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -169,7 +168,8 @@ static void create_nthreads(process_t *proc, size_t index)
 
 		rc = pthread_attr_init(&th->thread_attr);
 		if (rc) {
-			error(0, rc, "%d: pthread_attr_init failed", proc->pid);
+			errno = rc;
+			warn("%d: pthread_attr_init failed", proc->pid);
 			break;
 		}
 
@@ -178,7 +178,8 @@ static void create_nthreads(process_t *proc, size_t index)
 		rc = pthread_create(&th->tid, &th->thread_attr, &thread_body, th);
 
 		if (rc) {
-			error(0, rc, "%d: pthread_create failed", proc->pid);
+			errno = rc;
+			warn("%d: pthread_create failed", proc->pid);
 			break;
 		}
 
@@ -197,8 +198,10 @@ static void create_nthreads(process_t *proc, size_t index)
 		thread_t *th = &threads[i];
 
 		rc = pthread_join(th->tid, (void *) &th->retval);
-		if (rc)
-			error(EXIT_FAILURE, rc, "pthread_join failed");
+		if (rc) {
+			errno = rc;
+			err(EXIT_FAILURE, "pthread_join failed");
+		}
 
 		LOG(2, (stderr, "%d: thread exited [tid=%d,return=%d]\n",
 		     proc->pid, (int) th->tid, th->retval));
