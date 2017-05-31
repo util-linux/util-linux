@@ -190,12 +190,12 @@ static struct {
 } context, screen_start;
 extern char PC;			/* pad character */
 
-#ifdef HAVE_TERM_H
-# include <term.h>
+#if defined(HAVE_NCURSESW_TERM_H)
+# include <ncursesw/term.h>
 #elif defined(HAVE_NCURSES_TERM_H)
 # include <ncurses/term.h>
-#elif defined(HAVE_NCURSESW_TERM_H)
-#  include <ncursesw/term.h>
+#elif defined(HAVE_TERM_H)
+# include <term.h>
 #endif
 
 #define TERM_AUTO_RIGHT_MARGIN    "am"

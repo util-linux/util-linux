@@ -49,12 +49,12 @@
 #include <errno.h>
 #include <getopt.h>
 
-#ifdef HAVE_TERM_H
-# include <term.h>
+#if defined(HAVE_NCURSESW_TERM_H)
+# include <ncursesw/term.h>
 #elif defined(HAVE_NCURSES_TERM_H)
 # include <ncurses/term.h>
-#elif defined(HAVE_NCURSESW_TERM_H)
-# include <ncursesw/term.h>
+#elif defined(HAVE_TERM_H)
+# include <term.h>
 #endif
 
 #include "nls.h"

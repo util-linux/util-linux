@@ -12,12 +12,19 @@
 #include <ctype.h>
 
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
-# ifdef HAVE_TERM_H
-#  include <term.h>
+# if defined(HAVE_NCURSESW_NCURSES_H)
+#  include <ncursesw/ncurses.h>
+# elif defined(HAVE_NCURSES_NCURSES_H)
+#  include <ncurses/ncurses.h>
+# elif defined(HAVE_NCURSES_H)
+#  include <ncurses.h>
+# endif
+# if defined(HAVE_NCURSESW_TERM_H)
+#  include <ncursesw/term.h>
 # elif defined(HAVE_NCURSES_TERM_H)
 #  include <ncurses/term.h>
-# elif defined(HAVE_NCURSESW_TERM_H)
-#  include <ncursesw/term.h>
+# elif defined(HAVE_TERM_H)
+#  include <term.h>
 # endif
 #endif
 

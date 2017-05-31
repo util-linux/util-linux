@@ -59,22 +59,20 @@
 #include <signal.h>
 #include <setjmp.h>
 
-#ifdef HAVE_NCURSESW_H
-# include <ncursesw.h>
-#elif defined(HAVE_NCURSES_H)
-# include <ncurses.h>
-#elif defined(HAVE_NCURSESW_NCURSES_H)
+#if defined(HAVE_NCURSESW_NCURSES_H)
 # include <ncursesw/ncurses.h>
 #elif defined(HAVE_NCURSES_NCURSES_H)
 # include <ncurses/ncurses.h>
+#elif defined(HAVE_NCURSES_H)
+# include <ncurses.h>
 #endif
 
-#ifdef HAVE_TERM_H
-# include <term.h>
+#if defined(HAVE_NCURSESW_TERM_H)
+# include <ncursesw/term.h>
 #elif defined(HAVE_NCURSES_TERM_H)
 # include <ncurses/term.h>
-#elif defined(HAVE_NCURSESW_TERM_H)
-# include <ncursesw/term.h>
+#elif defined(HAVE_TERM_H)
+# include <term.h>
 #endif
 
 #include "nls.h"
