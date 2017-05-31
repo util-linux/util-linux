@@ -6,7 +6,6 @@
  *
  * This program comes with ABSOLUTELY NO WARRANTY.
  */
-#include <linux/unistd.h>
 #include <stdio.h>
 #include <getopt.h>
 #include <stdlib.h>
