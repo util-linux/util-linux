@@ -183,8 +183,8 @@ static void create_nthreads(process_t *proc, size_t index)
 			break;
 		}
 
-		LOG(2, (stderr, "%d: started thread [tid=%d,index=%zu]\n",
-		     proc->pid, (int) th->tid, th->index));
+		LOG(2, (stderr, "%d: started thread [tid=%jd,index=%zu]\n",
+		     proc->pid, (intmax_t) th->tid, th->index));
 		index += nobjects;
 		ncreated++;
 	}
@@ -203,8 +203,8 @@ static void create_nthreads(process_t *proc, size_t index)
 			err(EXIT_FAILURE, "pthread_join failed");
 		}
 
-		LOG(2, (stderr, "%d: thread exited [tid=%d,return=%d]\n",
-		     proc->pid, (int) th->tid, th->retval));
+		LOG(2, (stderr, "%d: thread exited [tid=%jd,return=%d]\n",
+		     proc->pid, (intmax_t) th->tid, th->retval));
 	}
 }
 
@@ -256,7 +256,7 @@ static void object_dump(size_t idx, object_t *obj)
 	fprintf(stderr, "  uuid:    <%s>\n", p);
 	fprintf(stderr, "  idx:     %zu\n", obj->idx);
 	fprintf(stderr, "  process: %d\n", (int) obj->pid);
-	fprintf(stderr, "  thread:  %d\n", (int) obj->tid);
+	fprintf(stderr, "  thread:  %jd\n", (intmax_t) obj->tid);
 	fprintf(stderr, "}\n");
 }
 

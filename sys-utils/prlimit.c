@@ -364,12 +364,12 @@ static void do_prlimit(struct list_head *lims)
 			if (new->rlim_cur == RLIM_INFINITY)
 				printf("<%s", _("unlimited"));
 			else
-				printf("<%ju", new->rlim_cur);
+				printf("<%ju", (uintmax_t)new->rlim_cur);
 
 			if (new->rlim_max == RLIM_INFINITY)
 				printf(":%s>\n", _("unlimited"));
 			else
-				printf(":%ju>\n", new->rlim_max);
+				printf(":%ju>\n", (uintmax_t)new->rlim_max);
 		}
 
 		if (prlimit(pid, lim->desc->resource, new, old) == -1)

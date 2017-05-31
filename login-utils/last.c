@@ -503,7 +503,7 @@ static int list(const struct last_control *ctl, struct utmpx *p, time_t logout_t
 	 */
 	r = -1;
 	if (ctl->usedns || ctl->useip)
-		r = dns_lookup(domain, sizeof(domain), ctl->useip, p->ut_addr_v6);
+		r = dns_lookup(domain, sizeof(domain), ctl->useip, (int32_t*)p->ut_addr_v6);
 	if (r < 0) {
 		size_t sz = sizeof(p->ut_host);
 
