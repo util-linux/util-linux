@@ -1471,7 +1471,7 @@ static int ui_menu_move(struct cfdisk *cf, int key)
 	assert(cf);
 	assert(cf->menu);
 
-	if (key == ERR)
+	if (key == (int) ERR)
 		return 0;	/* ignore errors */
 
 	m = cf->menu;
@@ -1756,7 +1756,7 @@ static ssize_t ui_get_string(const char *prompt,
     defined(HAVE_LIBNCURSESW) && defined(HAVE_WIDECHAR)
 		if (get_wch(&c) == ERR) {
 #else
-		if ((c = getch()) == ERR) {
+		if ((c = getch()) == (wint_t) ERR) {
 #endif
 			if (ui_resize) {
 				resize();
