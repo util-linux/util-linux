@@ -8,7 +8,7 @@ check_PROGRAMS += \
 
 sample_scols_cflags = $(AM_CFLAGS) $(NO_UNUSED_WARN_CFLAGS) \
                       -I$(ul_libsmartcols_incdir)
-sample_scols_ldadd = $(LDADD) libsmartcols.la
+sample_scols_ldadd = libsmartcols.la $(LDADD)
 
 if HAVE_OPENAT
 check_PROGRAMS += sample-scols-tree

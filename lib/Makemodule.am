@@ -104,7 +104,7 @@ test_blkdev_LDADD = $(LDADD) libcommon.la
 
 test_ismounted_SOURCES = lib/ismounted.c
 test_ismounted_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_ISMOUNTED
-test_ismounted_LDADD = $(LDADD) libcommon.la
+test_ismounted_LDADD = libcommon.la $(LDADD)
 
 test_mangle_SOURCES = lib/mangle.c
 test_mangle_CFLAGS = $(AM_CFLAGS) -DTEST_PROGRAM_MANGLE
