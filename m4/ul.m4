@@ -455,14 +455,6 @@ AC_DEFUN([UL_NCURSES_CHECK], [
   m4_define([suffix], $1)
   m4_define([SUFFIX], m4_toupper($1))
 
-  # pkg-config (not supported by ncurses upstream by default)
-  #
-  PKG_CHECK_MODULES(SUFFIX, [$1], [
-    have_[]suffix=yes
-    NCURSES_LIBS=${SUFFIX[]_LIBS}
-    NCURSES_CFLAGS=${SUFFIX[]_CFLAGS}
-  ],[have_[]suffix=no])
-
   # ncurses6-config
   #
   AS_IF([test "x$have_[]suffix" = xno], [
@@ -489,12 +481,20 @@ AC_DEFUN([UL_NCURSES_CHECK], [
     fi
   ])
 
+  # pkg-config (not supported by ncurses upstream by default)
+  #
+  AS_IF([test "x$have_[]suffix" = xno], [
+    PKG_CHECK_MODULES(SUFFIX, [$1], [
+      have_[]suffix=yes
+      NCURSES_LIBS=${SUFFIX[]_LIBS}
+      NCURSES_CFLAGS=${SUFFIX[]_CFLAGS}
+    ],[have_[]suffix=no])
+  ])
+
   # classic autoconf way
   #
   AS_IF([test "x$have_[]suffix" = xno], [
-    AS_IF([test "x$have_[]suffix" = xno], [
-      AC_CHECK_LIB([$1], [initscr], [have_[]suffix=yes], [have_[]suffix=no])
-      AS_IF([test "x$have_[]suffix" = xyes], [NCURSES_LIBS="-l[]suffix"])
-    ])
+    AC_CHECK_LIB([$1], [initscr], [have_[]suffix=yes], [have_[]suffix=no])
+    AS_IF([test "x$have_[]suffix" = xyes], [NCURSES_LIBS="-l[]suffix"])
   ])
 ])
