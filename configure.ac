@@ -291,6 +291,7 @@ AC_CHECK_HEADERS([langinfo.h],
 
 dnl Convert some ac_cv_header_* variables to have_*
 dnl
+have_linux_version_h=$ac_cv_header_linux_version_h
 have_linux_blkzoned_h=$ac_cv_header_linux_blkzoned_h
 have_linux_btrfs_h=$ac_cv_header_linux_btrfs_h
 have_linux_raw_h=$ac_cv_header_linux_raw_h
@@ -302,6 +303,11 @@ have_security_openpam_h=$ac_cv_header_security_openpam_h
 have_shadow_h=$ac_cv_header_shadow_h
 have_sys_signalfd_h=$ac_cv_header_sys_signalfd_h
 have_utmpx_h=$ac_cv_header_utmpx_h
+
+AS_CASE([$linux_os:$have_linux_version_h],
+  [yes:no],
+    [AC_MSG_ERROR([kernel headers required on Linux])]
+)
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <time.h>
