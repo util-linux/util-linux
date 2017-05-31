@@ -30,9 +30,8 @@ else
 	# fs type of $TS_OUTDIR, could be used to skip this test early
 	fs_type=$(${TS_CMD_FINDMNT} -n -o FSTYPE -T ${TS_OUTDIR})
 
-	test "$(<$TS_OUTPUT)" \
-	     = "fallocate: fallocate failed: Operation not supported" \
-	&& ts_skip "'${fs_type}' not supported"
+	grep -qi "fallocate: fallocate failed:.*not supported" $TS_OUTPUT \
+		&& ts_skip "'${fs_type}' not supported"
 fi
 
 rm -f $IMAGE
