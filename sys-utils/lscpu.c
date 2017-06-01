@@ -1264,7 +1264,8 @@ cpu_max_mhz(struct lscpu_desc *desc, char *buf, size_t bufsz)
 
 	if (desc->present) {
 		for (i = 1; i < desc->ncpuspos; i++) {
-			if (CPU_ISSET(real_cpu_num(desc, i), desc->present)) {
+			if (CPU_ISSET(real_cpu_num(desc, i), desc->present)
+			    && desc->maxmhz[i]) {
 				float freq = atof(desc->maxmhz[i]);
 
 				if (freq > cpu_freq)
@@ -1285,7 +1286,8 @@ cpu_min_mhz(struct lscpu_desc *desc, char *buf, size_t bufsz)
 
 	if (desc->present) {
 		for (i = 1; i < desc->ncpuspos; i++) {
-			if (CPU_ISSET(real_cpu_num(desc, i), desc->present)) {
+			if (CPU_ISSET(real_cpu_num(desc, i), desc->present)
+			    && desc->minmhz[i]) {
 				float freq = atof(desc->minmhz[i]);
 
 				if (freq < cpu_freq)
@@ -1597,11 +1599,11 @@ get_cell_data(struct lscpu_desc *desc, int idx, int col,
 				 is_cpu_online(desc, cpu) ? _("yes") : _("no"));
 		break;
 	case COL_MAXMHZ:
-		if (desc->maxmhz)
+		if (desc->maxmhz && desc->maxmhz[idx])
 			xstrncpy(buf, desc->maxmhz[idx], bufsz);
 		break;
 	case COL_MINMHZ:
-		if (desc->minmhz)
+		if (desc->minmhz && desc->minmhz[idx])
 			xstrncpy(buf, desc->minmhz[idx], bufsz);
 		break;
 	}
