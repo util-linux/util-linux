@@ -20,6 +20,7 @@ TS_DESC="regressions"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_COLCRT"
+ts_check_prog "timeout"
 
 check_input_file() {
 	ts_init_subtest ${1##*/}

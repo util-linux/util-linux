@@ -125,7 +125,7 @@ function osx_prepare_check
 
 	# symlink minimally needed gnu commands into PATH
 	mkdir ~/bin
-	for cmd in readlink seq stdbuf truncate find xargs tar sed; do
+	for cmd in readlink seq timeout truncate find xargs tar sed; do
 		ln -s /usr/local/bin/g$cmd $HOME/bin/$cmd
 	done
 	hash -r
