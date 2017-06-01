@@ -170,6 +170,39 @@ static void wait_for_pager_signal(int signo)
 	raise(signo);
 }
 
+static int has_command(const char *cmd)
+{
+	const char *path;
+	char *p, *s;
+	int rc = 0;
+
+	if (!cmd)
+		goto done;
+	if (*cmd == '/') {
+		rc = access(cmd, X_OK) == 0;
+		goto done;
+	}
+
+	path = getenv("PATH");
+	if (!path)
+		goto done;
+	p = strdup(path);
+	if (!p)
+		goto done;
+
+	for(s = strtok(p, ":"); s; s = strtok(NULL, ":")) {
+		int fd = open(s, O_RDONLY|O_CLOEXEC);
+		rc = faccessat(fd, cmd, X_OK, 0) == 0;
+		close(fd);
+		if (rc)
+			break;
+	}
+	free(p);
+done:
+	/*fprintf(stderr, "has PAGER %s rc=%d\n", cmd, rc);*/
+	return rc;
+}
+
 static void __setup_pager(void)
 {
 	const char *pager = getenv("PAGER");
@@ -181,6 +214,9 @@ static void __setup_pager(void)
 	if (!pager)
 		pager = "less";
 	else if (!*pager || !strcmp(pager, "cat"))
+		return;
+
+	if (!has_command(pager))
 		return;
 
 	/* spawn the pager */
