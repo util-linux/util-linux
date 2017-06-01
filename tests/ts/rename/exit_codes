@@ -22,7 +22,6 @@ TS_DESC="exit codes"
 ts_init "$*"
 
 ts_check_test_command "$TS_CMD_RENAME"
-ts_check_prog "stdbuf"
 ts_cd "$TS_OUTDIR"
 
 touch rename_exit_codes.{1..2}
@@ -33,7 +32,7 @@ $TS_CMD_RENAME -v codes values rename_exit_codes.? >> $TS_OUTPUT 2>&1
 echo "EXIT_SUCCESS: $?" >> $TS_OUTPUT
 
 mkdir rename_exit_codes.2
-stdbuf -oL -eL $TS_CMD_RENAME -v values codes rename_exit_values.? >> $TS_OUTPUT 2>&1
+$TS_CMD_RENAME -v values codes rename_exit_values.? >> $TS_OUTPUT 2>&1
 echo "RENAME_EXIT_SOMEOK: $?" >> $TS_OUTPUT
 
 rmdir rename_exit_codes.2
