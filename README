@@ -10,6 +10,12 @@ MAILING LIST:
       E-MAIL: util-linux@vger.kernel.org
       URL:    http://vger.kernel.org/vger-lists.html#util-linux
 
+      The mailing list will reject email messages that contain:
+       - more than 100K characters
+       - html
+       - spam phrases/keywords
+      See: http://vger.kernel.org/majordomo-info.html#taboo
+
 IRC CHANNEL:
 
       #util-linux at freenode.net:
