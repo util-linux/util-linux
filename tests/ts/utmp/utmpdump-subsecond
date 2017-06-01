@@ -22,13 +22,11 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_UTMPDUMP"
 
 OUT_BIN=${TS_OUTDIR}/${TS_TESTNAME}.bin
-OUT_TXT=${TS_OUTDIR}/${TS_TESTNAME}.txt
 
 echo "last 9 is expected to disappear in conversion" > $TS_OUTPUT
 $TS_CMD_UTMPDUMP -r $TS_SELF/subsec > $OUT_BIN 2>/dev/null
-$TS_CMD_UTMPDUMP $OUT_BIN > $OUT_TXT 2>/dev/null
-diff $TS_SELF/subsec $OUT_TXT >> $TS_OUTPUT 2>&1
+$TS_CMD_UTMPDUMP $OUT_BIN >> $TS_OUTPUT 2>/dev/null
 
-rm -f "$OUT_BIN" "$OUT_TXT"
+rm -f "$OUT_BIN"
 
 ts_finalize

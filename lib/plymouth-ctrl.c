@@ -85,7 +85,8 @@ static int open_un_socket_and_connect(void)
 	 * Please note that the PLYMOUTH_SOCKET_PATH has a
 	 * leading NULL byte to mark it as an abstract socket
 	 */
-	ret = connect(fd, &su, offsetof(struct sockaddr_un, sun_path) + 1 + strlen(su.sun_path+1));
+	ret = connect(fd, (const struct sockaddr *) &su,
+	              offsetof(struct sockaddr_un, sun_path) + 1 + strlen(su.sun_path+1));
 	if (ret < 0) {
 		if (errno != ECONNREFUSED)
 			warnx(_("cannot connect on UNIX socket"));

@@ -78,7 +78,7 @@ check_PROGRAMS += \
 
 libfdisk_tests_cflags  = -DTEST_PROGRAM $(libfdisk_la_CFLAGS) $(NO_UNUSED_WARN_CFLAGS)
 libfdisk_tests_ldflags = libuuid.la -static
-libfdisk_tests_ldadd   = $(LDADD) libfdisk.la $(UUID_LIBS)
+libfdisk_tests_ldadd   = libfdisk.la $(LDADD) $(UUID_LIBS)
 
 if BUILD_LIBBLKID
 libfdisk_tests_ldflags += libblkid.la

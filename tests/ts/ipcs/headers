@@ -24,35 +24,35 @@ ts_init "$*"
 ts_check_test_command "$TS_CMD_IPCS"
 
 ts_log "test: shm headers"
-$TS_CMD_IPCS -m -t | grep --after-context=1 "^---"  >> $TS_OUTPUT
-$TS_CMD_IPCS -m -p | grep --after-context=1 "^---"  >> $TS_OUTPUT
-$TS_CMD_IPCS -m -c | grep --after-context=1 "^---"  >> $TS_OUTPUT
+$TS_CMD_IPCS -m -t | grep -A1 "^---"  >> $TS_OUTPUT
+$TS_CMD_IPCS -m -p | grep -A1 "^---"  >> $TS_OUTPUT
+$TS_CMD_IPCS -m -c | grep -A1 "^---"  >> $TS_OUTPUT
 $TS_CMD_IPCS -m -l | grep "^---"  >> $TS_OUTPUT
 $TS_CMD_IPCS -m -u | grep "^---"  >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "test: mesg headers"
-$TS_CMD_IPCS -q -t | grep --after-context=1 "^---"  >> $TS_OUTPUT
-$TS_CMD_IPCS -q -p | grep --after-context=1 "^---"  >> $TS_OUTPUT
-$TS_CMD_IPCS -q -c | grep --after-context=1 "^---"  >> $TS_OUTPUT
+$TS_CMD_IPCS -q -t | grep -A1 "^---"  >> $TS_OUTPUT
+$TS_CMD_IPCS -q -p | grep -A1 "^---"  >> $TS_OUTPUT
+$TS_CMD_IPCS -q -c | grep -A1 "^---"  >> $TS_OUTPUT
 $TS_CMD_IPCS -q -l | grep  "^---"  >> $TS_OUTPUT
 $TS_CMD_IPCS -q -u | grep  "^---"  >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "test: sem headers"
-$TS_CMD_IPCS -s -t | grep --after-context=1 "^---"  >> $TS_OUTPUT
-$TS_CMD_IPCS -s -p | grep --after-context=1 "^---"  >> $TS_OUTPUT
-$TS_CMD_IPCS -s -c | grep --after-context=1 "^---"  >> $TS_OUTPUT
+$TS_CMD_IPCS -s -t | grep -A1 "^---"  >> $TS_OUTPUT
+$TS_CMD_IPCS -s -p | grep -A1 "^---"  >> $TS_OUTPUT
+$TS_CMD_IPCS -s -c | grep -A1 "^---"  >> $TS_OUTPUT
 $TS_CMD_IPCS -s -l | grep  "^---"  >> $TS_OUTPUT
 $TS_CMD_IPCS -s -u | grep  "^---"  >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "test: all headers"
-$TS_CMD_IPCS -a | grep --after-context=1 "^---"  >> $TS_OUTPUT
+$TS_CMD_IPCS -a | grep -A1 "^---"  >> $TS_OUTPUT
 
-$TS_CMD_IPCS -a -t | grep --after-context=1 "^---"  >> $TS_OUTPUT
-$TS_CMD_IPCS -a -p | grep --after-context=1 "^---"  >> $TS_OUTPUT
-$TS_CMD_IPCS -a -c | grep --after-context=1 "^---"  >> $TS_OUTPUT
+$TS_CMD_IPCS -a -t | grep -A1 "^---"  >> $TS_OUTPUT
+$TS_CMD_IPCS -a -p | grep -A1 "^---"  >> $TS_OUTPUT
+$TS_CMD_IPCS -a -c | grep -A1 "^---"  >> $TS_OUTPUT
 $TS_CMD_IPCS -a -l | grep "^---"  >> $TS_OUTPUT
 $TS_CMD_IPCS -a -u | grep "^---"  >> $TS_OUTPUT
 

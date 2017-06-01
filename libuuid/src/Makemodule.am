@@ -1,7 +1,7 @@
 
 check_PROGRAMS += test_uuid_parser
 test_uuid_parser_SOURCES = libuuid/src/test_uuid.c
-test_uuid_parser_LDADD = $(LDADD) libuuid.la $(SOCKET_LIBS)
+test_uuid_parser_LDADD = libuuid.la $(SOCKET_LIBS) $(LDADD)
 test_uuid_parser_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 
 # includes
